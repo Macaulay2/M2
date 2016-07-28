@@ -7,8 +7,8 @@ assert(dim P == 2)
 assert(ambDim P == 3)
 assert(rays P == 0)
 assert(linSpace P == 0)
-M = matrix {{3,4,1}};
-v = matrix {{10}};
+M = promote(matrix {{3,4,1}},QQ);
+v = promote(matrix {{10}},QQ);
 assert(hyperplanes P == (M,v) or hyperplanes P == (-M,-v))
 ///
 
@@ -18,7 +18,7 @@ TEST ///
 P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
 P = convexHull {P,(matrix{{4},{0},{-2}},matrix{{1,0,0},{0,1,-1},{0,0,0}})};
 assert(dim P == 3)
-assert(image linSpace P == image matrix {{0},{1},{0}})
+assert(image linSpace P == image promote(matrix {{0},{1},{0}},QQ))
 assert(hyperplanes P == (0,0))
 ///
 
@@ -28,7 +28,7 @@ TEST ///
 P = convexHull (matrix{{1},{1}},matrix{{1,0},{0,1}});
 M1 = matrix {{-1,0},{0,-1}};
 v = matrix {{-1},{-1}};
-assert(halfspaces P == (M1,v))
+assert(halfspaces P == (promote(M1,QQ),promote(v,QQ)))
 ///
 -- Test 3
 -- Checking convexHull and intersection
@@ -106,3 +106,16 @@ P = intersection(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-
 assert(latticePoints P == {})
 ///
 
+-- Test 38
+-- Checking if Polyhedra live over QQ
+TEST ///
+M = matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+P = convexHull M;
+assert(ring getProperty(P, points) === QQ)
+v = matrix {{1},{1},{1}};
+I = (M,v);
+P = intersection I;
+l = getProperty(P,inequalities);
+assert(ring l#0 === QQ)
+assert(ring l#1 === QQ)
+///

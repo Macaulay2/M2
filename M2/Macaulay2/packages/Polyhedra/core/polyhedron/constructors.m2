@@ -12,7 +12,23 @@ Polyhedron == Polyhedron := (P1,P2) -> (
 
 polyhedron = method()
 polyhedron HashTable := inputProperties -> (
-   constructTypeFromHash(Polyhedron, inputProperties)
+   result := for key in keys inputProperties list(
+      value := inputProperties#key;
+      if instance(value,Sequence) then (
+         if instance(value#0,Matrix) then (
+            if (ring value#0 === ZZ) then (
+               L := apply (value,v->(promote(v,QQ)));
+               key => L
+            ) else key => value
+         ) else key => value
+      ) else if instance(value,Matrix) then (
+         if (ring value === ZZ) then (
+            key => promote(value,QQ)
+         ) else key => value
+      ) else key => value
+   );
+   resultHash := new HashTable from result;
+   constructTypeFromHash(Polyhedron, resultHash)
 )
 
 

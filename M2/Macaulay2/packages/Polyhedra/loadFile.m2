@@ -54,20 +54,20 @@ load "./affineImages.m2"
 load "./legacy.m2"
 
 -- Tests
--- load "./tests/core/cone_basics.m2"
--- load "./tests/core/polyhedron_basics.m2"
--- load "./tests/core/fan_basics.m2"
--- load "./tests/core/tests_from_polymake/fvector.m2"
--- load "./tests/core/tests_from_polymake/hilbert_basis.m2"
--- load "./tests/core/tests_from_polymake/lattice_points.m2"
--- load "./tests/core/tests_from_polymake/normal_fan.m2"
+load "./tests/core/cone_basics.m2"
+load "./tests/core/polyhedron_basics.m2"
+load "./tests/core/fan_basics.m2"
+load "./tests/core/tests_from_polymake/fvector.m2"
+load "./tests/core/tests_from_polymake/hilbert_basis.m2"
+load "./tests/core/tests_from_polymake/lattice_points.m2"
+load "./tests/core/tests_from_polymake/normal_fan.m2"
 -- 
--- load "./tests/extended/polyhedron.m2"
--- load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
+load "./tests/extended/polyhedron.m2"
+load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
-load "./tests/legacy_tests_failing.m2"
+-- load "./tests/legacy_tests_failing.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
@@ -78,6 +78,18 @@ end
 restart
 loadPackage "Polyhedra"
 check "Polyhedra"
+
+restart
+loadPackage "Polyhedra"
+M = matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+P = convexHull M
+assert(ring getProperty(P, points) === QQ)
+v = matrix {{1},{1},{1}};
+I = (M,v)
+P = intersection I
+l = getProperty(P,inequalities)
+assert(ring l#0 === QQ)
+assert(ring l#1 === QQ)
 
 loadPackage "PolyhedraOld"
 P1 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
