@@ -1,75 +1,35 @@
 restart
-load "code/solveViaMonodromy.m2"
+load (currentFileDirectory|"../code/solveViaMonodromy.m2")
 needsPackage "ReactionNetworks"
-needsPackage "NumericalAlgebraicGeometry"
 
 FF = CC
 
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
 R = createRing(CRN, FF)
-CE = flatten entries random(FF^1, FF^2) - conservationEquations(CRN,FF)
-I = ideal CE
-SSE = steadyStateEquations CRN
-J = ideal SSE
-F = I + J
-
-T = transpose gens F
+CEforms = matrix{conservationEquations(CRN,FF)}
+CE =sub(CEforms, apply(gens ring CEforms, x -> x => 1)) - CEforms
+SSE = matrix {steadyStateEquations CRN}
+T = transpose(CE|SSE)
 rM = sub(random(FF^5, FF^7),R)
 G = polySystem(rM * T)
-end
+end ---------------------------------
+restart
 load "example-CRN.m2"
 setUpPolysparse = G -> (
     C := coefficientRing ring G;
     M := sub(sub(G.PolyMap, apply(gens ring G, x -> x => 1)), C);
-    N := numericalIrreducibleDecomposition flatten entries M;
-    
-    
-    c0 = point{ 
-    flatten apply(equations G,f->(
-	    r := # exponents f;
-	    t := apply(r-1, i->random CC);
-	    t | { -sum t }
-	    )) 
-        }
-    pre0 = point{toList(n:1_CC)}
+    N := numericalIrreducibleDecomposition ideal M;
+    c0 := first (first components N).Points; 
+    pre0 := point{toList(numgens ring G : 1_CC)};
+    (c0,pre0)
     )
+setRandomSeed 0
+(c0,pre0) = setUpPolysparse G
+elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)
 
 
 
 
-
-
-
-restart
-needs "code/solveViaMonodromy.m2"
-needs "examples/cyclic.m2"
-plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
-apply(polysP,p->plugin'c0 p) 
-stop = (n,L)->n>3
-getDefault Software
-{*
-setDefault(Software=>PHCPACK)
-*}
-
--- two vertex
-
-elapsedTime sols = twoNodes(SP,c0,{pre0},3,StoppingCriterion=>stop)
-
-G = first sols
-E = G.Edges
-for e in E do (
-    print peek e.Correspondence12;
-    print peek e.Correspondence21;
-    )
-
--- other strategies
-elapsedTime sols = randomFlowerStrategy(SP,c0,{pre0},StoppingCriterion=>stop);
-elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop)
-elapsedTime sols = flowerStrategy(SP,c0,{pre0},StoppingCriterion=>stop);
-sols
-
--- currently not working?
-elapsedTime sols = loopStrategy(SP,c0,{pre0},3,StoppingCriterion=>stop);
 
 
 
