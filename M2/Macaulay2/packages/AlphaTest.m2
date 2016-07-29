@@ -15,7 +15,7 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "computeConstants", "certifySolutions", "certifyDistinctSoln"}
+export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolutions", "certifyDistinctSoln", "frobeniusNormSq"}
 exportMutable {}
 
 absValue = method()
@@ -47,7 +47,7 @@ polyNorm(RingElement) := r -> (
     L := listForm r;
     sum(L,a->(
 	(e,c) := a;
-	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+	((absValue c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
  	))
     )
 
@@ -58,6 +58,11 @@ polySysNorm(PolySystem) := f -> (
     N := sum listOfpolyNorms
     )
 
+frobeniusNormSq = method()
+frobeniusNormSq(Matrix) := r -> (
+    a := flatten entries r;
+    sum apply(a, s -> s^2)
+    )
 
 
 complexToRational = method()
@@ -80,31 +85,107 @@ complexToRational(List, QuotientRing) := (A, FF) -> (
     )
 complexToRational(Matrix, QuotientRing) := (M, FF) -> (
     entri := entries M;
-    chan := apply(entri, s -> complexToRational(s, FF));
+    chan := apply(entri, s -> apply(s, ss -> complexToRational(sub(ss,CC), FF)));
     matrix chan
     )
+complexToRational(PolySystem, QuotientRing) := (f, FF) -> (
+    R := ring f;
+--    coeffsinFF := complexToRational((coefficients f)#1, FF);
+    varss := apply(flatten entries vars R, x -> getSymbol(toString x));
+--    x := symbol x;
+--    y := symbol y;
+    phi := map(FF[varss], R, varss);
+    polySystem apply(flatten entries f.PolyMap, x -> phi(x))
+    )
+
+rationalToComplex = method()
+rationalToComplex PolySystem := f -> (
+    R := ring f;
+    varss := apply(flatten entries vars R, x -> getSymbol(toString x));
+--    x := symbol x;
+--    y := symbol y;
+    phi := map(CC[varss], R, {varss});
+    polySystem apply(flatten entries f.PolyMap, x -> phi(x))
+    )
+rationalToComplex RingElement := f -> (
+    if (degree f)#0 > 0 then (k := sub((leadCoefficient f)*ii + (f - leadTerm f), CC);
+    k)
+    else (k = sub(leadCoefficient f, CC);
+        k)
+	)
+rationalToComplex Point := f -> (
+    point{apply(coordinates f, x -> rationalToComplex x)}
+        )
+
 
 
 computeConstants = method()
-computeConstants(PolySystem, Point) := (f, x) -> (
-    R := ring f;
+computeConstants(PolySystem, Point) := (ff, xx) -> (
+--    R := ring ff;
+--    symbolic := coefficientRing R =!= CC_53;
+--    if symbolic then (f := rationalToComplex(ff);
+--	x := rationalToComplex(xx));
+--    numOfVari := numgens R; 
+--    numOfPoly := # equations ff;
+--    jacobianOfSys := sub(jacobian ff,R);
+--    J := evaluate(jacobianOfSys, xx);
+--    if det J == 0 then error "The Jacobian is not invertible";
+--    eval := evaluate(ff,xx);
+--    if symbolic then y := point(inverse J * eval)
+--   else y = point (solve(J,eval));
+--    degs := flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
+--    diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
+--    deltaD := sub(diagonalMatrix diagonals, coefficientRing R);
+--    if symbolic then (mu := max {1, polySysNorm(f)*norm(solve(J,deltaD))})
+--    else mu = max {1, polySysNorm(ff)*norm(solve(J,deltaD))};    
+--    maxdeg := max degs;
+--    beta := hermitianNorm(y);
+--    gamma := mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(xx));
+--   alpha := beta * gamma;
+--    (alpha, beta, gamma)
+    R := ring ff;
+    symbolic := coefficientRing R =!= CC_53;
+    if symbolic then (f := rationalToComplex(ff);
+	x := rationalToComplex(xx);
     numOfVari := numgens R; 
     numOfPoly := # equations f;
-    jacobianOfSys := sub(jacobian f,R);
+    jacobianOfSys := jacobian f;
     J := evaluate(jacobianOfSys, x);
     if det J == 0 then error "The Jacobian is not invertible";
     eval := evaluate(f,x);
-    y := point solve(J, eval);
+    y := point(inverse J * eval);
     degs := flatten for i from 1 to numOfPoly list degree ((equations f)#(numOfPoly-i));
     diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(x))^((degs)#(numOfPoly-i)-1);
     deltaD := sub(diagonalMatrix diagonals, CC);
-    mu := max {1, polySysNorm(f)*norm(solve(J,deltaD))};
+    mu := max {1, polySysNorm(f)*norm(solve(J,deltaD))};    
     maxdeg := max degs;
     beta := hermitianNorm(y);
     gamma := mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(x));
     alpha := beta * gamma;
-    (alpha, beta, gamma)
+    (alpha, beta, gamma))
+    else   ( numOfVari = numgens R; 
+    numOfPoly = # equations ff;
+    jacobianOfSys = sub(jacobian ff,R);
+    J = evaluate(jacobianOfSys, xx);
+    if det J == 0 then error "The Jacobian is not invertible";
+    eval = evaluate(ff,xx);
+    y = point (solve(J,eval));
+    degs = flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
+    diagonals = flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
+    deltaD = sub(diagonalMatrix diagonals, coefficientRing R);
+    mu = max {1, polySysNorm(ff)*norm(solve(J,deltaD))};    
+    maxdeg = max degs;
+    beta = hermitianNorm(y);
+    gamma = mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(xx));
+    alpha = beta * gamma;
+    (alpha, beta, gamma))
     )
+
+
+
+
+
+
 
 
 certifySolutions = method()
@@ -112,8 +193,8 @@ certifySolutions(PolySystem, Point) := (f, x) -> (
     Consts := computeConstants(f,x);
     if (Consts #0)<((13-3*sqrt(17))/4) then (
 	 print "The point is an approximate solution to the system";
-	 print (computeConstants(f, x))#0 ;
-		 true
+	 << "The value of alpha is " << (computeConstants(f, x))#0 << endl;
+	 true
 	 )
     else (
 	print "The point is not an approximate solution to the system";
@@ -145,14 +226,29 @@ certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
 
 
 TEST ///
+restart
+load "AlphaTest.m2"
+needsPackage "NumericalAlgebraicGeometry"
+
+      polySystem List := L -> (
+           polySystem transpose matrix {L} 
+          )
+      
+
 R = CC[x,y]
 f = polySystem {x + y, x^2 - 4}
 sols = solveSystem f
 assert all(sols, p -> certifySolutions(f,p))
 p = point{{2.0, -2.0}}
 q = point{{-2, 2.000001}}
+computeConstants(f,p)
 certifySolutions(f,p)
 certifyDistinctSoln(f,p,q)
+FFF = QQ[j]/ideal(j^2+1)
+pp = point {complexToRational(coordinates p, FFF)}
+R'=FFF[x,y]
+ff = polySystem {x + y, x^2 - 4}
+certifySolutions(ff,pp)
 ///
 
 end
