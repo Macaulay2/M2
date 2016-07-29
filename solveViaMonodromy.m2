@@ -1,3 +1,4 @@
+needsPackage "PHCpack";
 debug needsPackage "NumericalAlgebraicGeometry"
 debug NAGtypes
 needs(currentFileDirectory | "HomotopyGraphTypes.m2")
@@ -100,7 +101,7 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
 twoNodes = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3), 
 	SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)), 
-    TargetSolutionCount=>null, Potential=>potentialLowerBound})
+    	TargetSolutionCount=>null, Potential=>potentialLowerBound})
 twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
@@ -234,25 +235,8 @@ randomFlowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     )
 )
 
-
--- ideally, this function wouldn't be necessary. Currently there's a bug in PHCpack.m2 that
--- causes it to break when there's a variable named "e". I spent a while trying to fix it,
--- but it was difficult to fix cleanly. Instead, I chose to write a function that maps 
--- to a new ring with variables that phc will tolerate, and then computes the mixed volume.
-needsPackage "PHCpack";
 computeMixedVolume = method()
-computeMixedVolume (List) := polys -> (
-  R1 := ring polys#0;
-  R1Gens := gens R1;
-  numDigits := length (toString (#R1Gens));
-  R2 := (coefficientRing R1) (for i in 1..#R1Gens list (
-    value ("x" | demark ("",for i from 1 to numDigits-(length toString i) list "0") | toString i)
-  ) );
-  R2Gens := gens R2;
-  generatorMapping := for i in 0..#(gens R1) - 1 list (R1Gens#i =>R2Gens#i);
-  ringMap := map(R2, R1, generatorMapping);
-  mixedVolume (polys/ringMap)
-)    
+computeMixedVolume List := polys -> mixedVolume(toRingXphc phcF,StartSystem => false)
 
 diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)
@@ -358,23 +342,5 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     solsList#0
     )
 
--- ?????????
--- edge potential function: counts how many new points are obtained at the target node
--- function definitely needs to be fixed!!!!
-edgePotential = method()
-edgePotential (HomotopyEdge, HomotopyNode) := (E, N) -> (
-    A := N.PartialSols;
-    trackEdge(E, to'a');
-    B := N.PartialSols;
-    New := scan(#B, i -> (
-	    b := B#i;
-	    a := A#i;
-	    if member(b, A) then n := 0  
-	    else (    
-		n = n+1;
-		);
-	    ));
-    << "There are" << n << "new points" 
-    )
 
 
