@@ -136,6 +136,7 @@ compute#Fan#generatingObjects Fan := F -> (
             )
          );
       );
+      cones = unique apply(cones, c -> sort c);
       result := {};
       for cone in cones do (
          test := all(cones,
