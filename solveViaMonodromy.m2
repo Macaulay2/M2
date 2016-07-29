@@ -7,6 +7,44 @@ needs(currentFileDirectory | "random_methods.m2")
 --     point0, (as above)
 --     s0, (as above)
 
+graphStrategy = method(Options=>{
+        TargetSolutionCount => null,
+        StoppingCriterion => ((n,L)->n>3),
+        SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)),
+        GraphInitFunction => null,
+        Potential => potentialLowerBound})
+graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
+    HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
+    if o.TargetSolutionCount =!= null then (
+        HG.TargetSolutionCount = o.TargetSolutionCount;
+        stoppingCriterion := (n,L) -> #L >= o.TargetSolutionCount;
+    )
+    else stoppingCriterion = o.StoppingCriterion; 
+    PA := pointArray s0;
+    node1 := addNode(HG, point0, PA);
+    	
+    if #s0 < 1 then error "at least one solution expected";
+    
+    selectEdgeAndDirection := o.SelectEdgeAndDirection;
+    o.GraphInitFunction(HG, point0, node1);
+
+    same := 0;
+    npaths := 0;    
+    while not stoppingCriterion(same,node1.PartialSols) do (
+        (e, from1to2) := selectEdgeAndDirection(HG);
+        << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
+        << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
+        << "Direction is " << from1to2 << endl;
+        trackedPaths := trackEdge(e, from1to2);
+        npaths = npaths + trackedPaths;
+        << "  node1: " << #(e.Node1.PartialSols) << endl;
+        << "  node2: " << #(e.Node2.PartialSols) << endl;    	
+        << "trackedPaths " << trackedPaths << endl; 
+        if trackedPaths == 0 then same = same + 1 else same = 0; 
+    );
+    (HG, npaths)
+)
+
 solveViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
