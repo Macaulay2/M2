@@ -7,9 +7,6 @@
 
 
 
---   INPUT : 'C',  a Cone
---  OUTPUT : The Fan given by 'C' and all of its faces
-fan Cone := C -> fan {C};
 
 
 -- PURPOSE : Building the PolyhedralComplex 'PC'
@@ -318,15 +315,6 @@ polytope Fan := F -> (
 
 
 
--- PURPOSE : Computing the 'n'-skeleton of a fan
---   INPUT : (n,F),  where 'n' is a positive integer and
---                   'F' is a Fan
---  OUTPUT : the Fan consisting of the 'n' dimensional cones in 'F'
-skeleton = method(TypicalValue => Fan)
-skeleton(ZZ,Fan) := (n,F) -> (
-     -- Checking for input errors
-     if n < 0 or dim F < n then error("The integer must be between 0 and dim F");
-     fan cones(n,F))
 
 skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
      -- Checking for input errors

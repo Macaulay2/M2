@@ -40,6 +40,7 @@ fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
    fan result
 )
 
+
 fan(Matrix, Matrix, Sequence) := (irays, linealityGens, icones) -> (
    fan(irays, linealityGens, toList icones)
 )
@@ -55,22 +56,22 @@ fan(Matrix, Sequence) := (irays, icones) -> (
 )
 
 fan HashTable := inputProperties -> (
-   << "Constructing." << endl;
    constructTypeFromHash(Fan, inputProperties)
 )
 
+--   INPUT : 'C',  a Cone
+--  OUTPUT : The Fan given by 'C' and all of its faces
 fan Cone := C -> (
-   << "In here." << endl;
-   rays := rays C;
-   lineality := linealitySpace C;
-   n := numColumns C;
+   raysC := rays C;
+   linealityC := linealitySpace C;
+   n := numColumns raysC;
    mc := {toList (0..(n-1))};
-   result := fan(rays, lineality, mc);
+   result := fan(raysC, linealityC, mc);
    setProperty(result, honestMaxObjects, C);
    result
 )
 
-addCone := method();
+addCone = method();
 addCone(Fan, Cone) := (F, C) -> (
    if ambDim F != ambDim C then error("Fan and Cone must live in same ambient space.");
    linF := linealitySpace F;
@@ -83,18 +84,23 @@ addCone(Fan, Cone) := (F, C) -> (
    map = rayCorrespondenceMap(rays C, joinedRays);
    newCone := toList apply(numColumns rays C, i -> map#i);
    mc = append(mc, newCone);
-   fan(joinedRays, linF, mc)
+   result := new HashTable from {
+      ambientDimension => ambDim F,
+      computedRays => joinedRays,
+      computedLinealityBasis => linF,
+      inputCones => mc
+   };
+   fan result
 )
 
--- fan List := inputCones -> (
---    if instance(inputCones, Cone) then error("Why did I arrive here?");
---    if not all(inputCones, c -> instance(c, Cone)) then error("This constructor needs a list of cones.");
---    << "Hello!" << #inputCones << endl;
---    << class inputCones#0 << endl;
---    result := fan(inputCones#0);
---    << "Fan initialized.";
---    for i from 1 to #inputCones do (
---       result = addCone(result, inputCones#i);
---    );
---    result
--- )
+addCone(Cone, Fan) := (C, F) -> addCone(F, C)
+
+fan List := inputCones -> (
+   if instance(inputCones, Cone) then error("Why did I arrive here?");
+   if not all(inputCones, c -> instance(c, Cone)) then error("This constructor needs a list of cones.");
+   result := fan(inputCones#0);
+   for i from 1 to #inputCones - 1 do (
+      result = addCone(result, inputCones#i);
+   );
+   result
+)

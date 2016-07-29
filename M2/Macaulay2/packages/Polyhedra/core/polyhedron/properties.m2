@@ -70,7 +70,7 @@ compute#Polyhedron#computedLinealityBasis Polyhedron := P -> (
 
 compute#Polyhedron#underlyingCone = method()
 compute#Polyhedron#underlyingCone Polyhedron := P -> (
-   result := new Cone from {cache => new CacheTable};
+   result := {};
    local r;
    local pMat;
    local rMat;
@@ -81,46 +81,46 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
    if hasProperties(P, {points, inputRays}) then (
       pMat = prependOnes getProperty(P, points);
       rMat = prependZeros getProperty(P, inputRays);
-      setProperty(result, inputRays, pMat | rMat);
+      result = append(result, inputRays => (pMat | rMat));
    );
    if hasProperties(P, {computedVertices, computedRays}) then (
       pMat = prependOnes getProperty(P, computedVertices);
       rMat = prependZeros getProperty(P, computedRays);
-      setProperty(result, computedRays, pMat | rMat);
+      result = append(result, computedRays => (pMat | rMat));
    );
    if hasProperty(P, inputLinealityGenerators) then (
       pMat = prependZeros getProperty(P, inputLinealityGenerators);
-      setProperty(result, inputLinealityGenerators, pMat);
+      result = append(result, inputLinealityGenerators => pMat);
    );
    if hasProperty(P, computedLinealityBasis) then (
       pMat = prependZeros getProperty(P, computedLinealityBasis);
-      setProperty(result, computedLinealityBasis, pMat);
+      result = append(result, computedLinealityBasis => pMat);
    );
    if hasProperty(P, computedFacets) then (
       L = getProperty(P, computedFacets);
       pMat = -L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
-      setProperty(result, inequalities, ezero || (-pMat));
-   );
-   if hasProperty(P, inequalities) then (
+      result = append(result, inequalities => ezero || (-pMat));
+   ) else if hasProperty(P, inequalities) then (
       L = getProperty(P, inequalities);
       pMat = -L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
       -- At this point we do not know whether the height inequality
       -- is implied.
-      setProperty(result, inequalities, ezero || (-pMat));
+      result = append(result, inequalities => ezero || (-pMat));
    );
    if hasProperty(P, computedHyperplanes) then (
       L = getProperty(P, computedHyperplanes);
       pMat = (-L#1) | L#0;
-      setProperty(result, computedHyperplanes, pMat);
+      result = append(result, computedHyperplanes => pMat);
    );
    if hasProperty(P, equations) then (
       L = getProperty(P, equations);
       pMat = (-L#1) | L#0;
-      setProperty(result, equations, pMat);
+      result = append(result, equations => pMat);
    );
-   return result
+   resultHash := new HashTable from result;
+   cone resultHash
 )
 
 

@@ -128,10 +128,12 @@ computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
 makeRaysUniqueAndPrimitive = method()
 makeRaysUniqueAndPrimitive(Matrix) := M -> (
    M = makeRaysPrimitive M;
+   n := numRows M;
    if numColumns M == 0 then return M;
    L := apply(numColumns M, i -> M_i);
    L = select(L, l -> gcd entries l != 0);
-   sort matrix unique L
+   if #L != 0 then sort matrix unique L
+   else map(ZZ^n, ZZ^0, 0)
 )
 
 makeRaysPrimitive = method()

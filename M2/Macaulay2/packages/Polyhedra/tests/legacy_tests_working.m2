@@ -141,6 +141,24 @@ C2 = posHull {matrix {{1,0},{0,1},{0,0}}, C2};
 assert (areCompatible(C1,C2))#0
 ///
 
+-- Test 31
+-- Checking fan and addCone
+TEST ///
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
+F = fan {C,C1,C2,C3};
+assert(ambDim(F) == 3)
+assert(#(maxCones F) == 4)
+assert(isPure F)
+M = transpose matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+assert(sort M == sort rays(F))
+C = posHull matrix {{-1,0},{0,1},{0,0}};
+F1 = addCone(C,F);
+assert(F == F1)
+///
+
 -- Test 39
 -- Checking minkowskiSum
 TEST ///
@@ -154,31 +172,6 @@ P2 = convexHull matrix {{0,0},{0,0},{1,-1}};
 P1 = minkowskiSum(P1,P2);
 P2 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
 assert(P1 == P2)
-///
-
--- Test 54
--- Checking stdSimplex
-TEST ///
-P = stdSimplex 2;
-Q = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{0},{0},{0}},matrix{{1,1,1}},matrix{{1}});
-assert(P == Q)
-///
-
--- Test 43
--- Checking affinePreimage for polyhedra
-TEST ///
-P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
-A = matrix {{1,2},{3,4}};
-v = matrix {{-1},{1}};
-P = affinePreimage(A,P,v);
-Q = convexHull matrix {{0,-2,-4,-6},{0,1,3,4}};
-assert(P == Q)
-P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
-A = matrix {{0,2,0},{1,0,1},{0,0,2}};
-v = matrix {{1},{1},{1}};
-P = affinePreimage(A,P,v);
-Q = convexHull(matrix{{-1},{-1},{-1}},matrix{{1,0,-1},{0,1,0},{0,0,1}});
-assert(P == Q)
 ///
 
 -- Test 41
@@ -206,6 +199,23 @@ A = matrix {{1,-1,0},{0,1,-1},{-1,0,1}};
 C = affineImage(A,C);
 C1 = posHull matrix {{0,-1,1},{-1,1,0},{1,0,-1}};
 assert(C == C1)
+///
+
+-- Test 43
+-- Checking affinePreimage for polyhedra
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+A = matrix {{1,2},{3,4}};
+v = matrix {{-1},{1}};
+P = affinePreimage(A,P,v);
+Q = convexHull matrix {{0,-2,-4,-6},{0,1,3,4}};
+assert(P == Q)
+P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
+A = matrix {{0,2,0},{1,0,1},{0,0,2}};
+v = matrix {{1},{1},{1}};
+P = affinePreimage(A,P,v);
+Q = convexHull(matrix{{-1},{-1},{-1}},matrix{{1,0,-1},{0,1,0},{0,0,1}});
+assert(P == Q)
 ///
 
 -- Test 44
@@ -285,6 +295,14 @@ TEST ///
 C1 = posOrthant 3;
 C2 = intersection matrix {{1,0,0},{0,1,0},{0,0,1}};
 assert(C1 == C2)
+///
+
+-- Test 54
+-- Checking stdSimplex
+TEST ///
+P = stdSimplex 2;
+Q = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{0},{0},{0}},matrix{{1,1,1}},matrix{{1}});
+assert(P == Q)
 ///
 
 -- Test 56

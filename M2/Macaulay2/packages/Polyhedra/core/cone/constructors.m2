@@ -75,7 +75,7 @@ posHull = method(TypicalValue => Cone)
 --		 as the description by defining half-spaces and hyperplanes.
 posHull(Matrix,Matrix) := (Mrays,LS) -> (
    if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
-   result := new Cone from {
+   result := new HashTable from {
       ambientDimension => numRows Mrays,
       inputRays => Mrays,
       inputLinealityGenerators => LS

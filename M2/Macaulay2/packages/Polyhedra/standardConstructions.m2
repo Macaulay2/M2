@@ -266,10 +266,10 @@ pyramid Polyhedron := P -> (
    M := rays C;
    LS := linealitySpace C;
    -- Embedding into n+1 space and adding the new vertex
-   zerorow := map(QQ^1,source M,0);
-   newvertex := 1 || map(QQ^((numRows M)-1),QQ^1,0) || 1;
+   zerorow := map(ZZ^1,source M,0);
+   newvertex := 1 || map(ZZ^((numRows M)-1),ZZ^1,0) || 1;
    M = (M || zerorow) | newvertex;
-   LS = LS || map(QQ^1,source LS,0);
+   LS = LS || map(ZZ^1,source LS,0);
    newC := posHull(M, LS);
    result := new HashTable from {
       underlyingCone => newC

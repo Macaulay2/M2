@@ -28,7 +28,7 @@ maxObjects = method(TypicalValue => List)
 maxObjects PolyhedralObjectFamily := POF -> getProperty(POF, generatingObjects)
 
 objectsOfDim = method(TypicalValue => List)
-objectsOfDim(ZZ,PolyhedralObjectFamily) := (k,POF) -> (
+objectsOfDim(ZZ, PolyhedralObjectFamily) := (k,POF) -> (
 	-- Checking for input errors
 	if k < 0 or dim POF < k then error("k must be between 0 and the dimension of the polyhedral object family.");
 	L := select(maxObjects POF, C -> dim C >= k);

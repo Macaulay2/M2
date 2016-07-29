@@ -40,3 +40,29 @@ smoothSubfan Fan := F -> (
 
 isPolytopal = method(TypicalValue => Boolean)
 isPolytopal Fan := F -> getProperty(F, polytopal)
+
+-- PURPOSE : Giving the k dimensionial Cones of the Fan
+--   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
+--  OUTPUT : a List of Cones
+cones = method(TypicalValue => List)
+cones(ZZ,Fan) := (k,F) -> (
+   d := dim F;
+   faces := getProperty(F, computedFacesThroughRays);
+   faces#(d-k)
+)
+
+-- PURPOSE : Computing the 'n'-skeleton of a fan
+--   INPUT : (n,F),  where 'n' is a positive integer and
+--                   'F' is a Fan
+--  OUTPUT : the Fan consisting of the 'n' dimensional cones in 'F'
+skeleton = method(TypicalValue => Fan)
+skeleton(ZZ,Fan) := (n,F) -> (
+   -- Checking for input errors
+   if n < 0 or dim F < n then error("The integer must be between 0 and dim F");
+   result := new HashTable from {
+      inputRays => rays F,
+      inputCones => cones(n,F),
+      computedLinealityBasis => linealitySpace F
+   };
+   fan result
+)

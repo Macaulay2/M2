@@ -20,45 +20,29 @@ assert(set values L === set L1)
 
 
 
--- Test 31
--- Checking fan and addCone
-TEST ///
-C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
-C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
-C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
-C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
-F = fan {C,C1,C2,C3};
-assert(set maxCones F === set {C,C1,C2,C3})
-assert(ambDim(F) == 3)
-assert(F#"number of generating cones" == 4)
-assert(F#"isPure")
-L = set {matrix {{1},{0},{0}},matrix {{-1},{0},{0}},matrix {{0},{1},{0}},matrix {{0},{-1},{0}},matrix {{0},{0},{1}},matrix {{0},{0},{-1}}};
-assert(L === rays(F))
-C = posHull matrix {{-1,0},{0,1},{0,0}};
-F1 = addCone(C,F);
-assert(F == F1)
-///
-
 -- Test 32
--- Checking fan, skeleton, isComplete, isPure, addCone, isPolytopal, polytope
+-- Checking fan, skeleton, isComplete, isPure, addCone,
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
-L = {posHull matrix {{1,0},{0,-1},{0,0}},posHull matrix {{0,0},{0,-1},{1,0}},posHull matrix {{-1,0},{0,1},{0,0}},posHull matrix {{-1,0},{0,0},{0,1}},posHull matrix {{1,0},{0,0},{0,-1}},posHull matrix {{0,0},{1,0},{0,-1}},posHull matrix {{1,0},{0,1},{0,0}},posHull matrix {{1,0},{0,0},{0,1}},posHull matrix {{0,0},{1,0},{0,1}}};
-assert(set L === set cones(2,F))
 F1 = fan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
 assert(skeleton(1,F) == F1)
 assert not isComplete F
 assert isPure F
+///
+
+-- Test 32a
+-- Checking isPolytopal, polytope
+TEST ///
 C = posHull matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
 C1 = posHull matrix {{-1,0,0},{0,1,0},{0,0,-1}};
 C2 = posHull matrix {{1,0,0},{0,-1,0},{0,0,-1}};
 C3 = posHull matrix {{-1,0,0},{0,-1,0},{0,0,1}};
 F = addCone({C,C1,C2,C3},F);
-assert(F#"number of generating cones" == 8)
+assert(#(maxCones F) == 8)
 assert isPure F
 assert isComplete F
 assert isSmooth F

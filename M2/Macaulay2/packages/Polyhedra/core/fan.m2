@@ -139,11 +139,6 @@ stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
---   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
---  OUTPUT : a List of Cones
-cones = method(TypicalValue => List)
-cones(ZZ,Fan) := (k,F) -> objectsOfDim(k,F)
 
 
 

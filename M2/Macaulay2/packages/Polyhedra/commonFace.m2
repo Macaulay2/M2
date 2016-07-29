@@ -13,10 +13,11 @@ commonFace(Polyhedron,Polyhedron) := (P,Q) -> (
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
 commonFace(Cone,Cone) := (C1,C2) -> (
-     if ambDim(C1) == ambDim(C2) then (
-	  I := intersection(C1,C2);
-	  isFace(I,C1) and isFace(I,C2))
-     else false)
+   if ambDim(C1) == ambDim(C2) then (
+      I := intersection(C1,C2);
+      isFace(I,C1) and isFace(I,C2)
+   ) else false
+)
 
 
 --   INPUT : '(C,F)'  a Cone and a Fan
