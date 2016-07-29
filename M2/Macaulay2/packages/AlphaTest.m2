@@ -91,11 +91,21 @@ complexToRational(Matrix, QuotientRing) := (M, FF) -> (
 complexToRational(PolySystem, QuotientRing) := (f, FF) -> (
     R := ring f;
 --    coeffsinFF := complexToRational((coefficients f)#1, FF);
-    varss := apply(flatten entries vars R, x -> getSymbol(toString x));
+    varss := gens R;
+    -- varss := apply(flatten entries vars R, x -> getSymbol(toString x));
 --    x := symbol x;
 --    y := symbol y;
-    phi := map(FF[varss], R, varss);
-    polySystem apply(flatten entries f.PolyMap, x -> phi(x))
+    R' := FF(monoid [varss]);    
+    ff := polySystem f;
+    Mf := matrix applyTable(entries(f.PolyMap), a->
+	sum(listForm a, ec->(
+		(e,c) := ec;
+		complexToRational(c,FF) * R'_e
+		))
+	);
+    ff.PolyMap = Mf;    
+    ff.Jacobian = transpose jacobian transpose Mf;
+    ff
     )
 
 rationalToComplex = method()
@@ -247,7 +257,7 @@ certifyDistinctSoln(f,p,q)
 FFF = QQ[j]/ideal(j^2+1)
 pp = point {complexToRational(coordinates p, FFF)}
 R'=FFF[x,y]
-ff = polySystem {x + y, x^2 - 4}
+ff = complexToRational(f,FFF)
 certifySolutions(ff,pp)
 ///
 
