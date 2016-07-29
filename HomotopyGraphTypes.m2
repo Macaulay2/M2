@@ -44,6 +44,7 @@ drop (HomotopyGraph, HomotopyEdge, ZZ) := (G,E, k) -> (
 
 addCorrespondence = method()
 addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
+    if  e.Correspondence12#?a or e.Correspondence21#?b then error "correspondence conflict"; 
     e.Correspondence12#a = b;
     e.Correspondence21#b = a;
     )
@@ -150,6 +151,7 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
     n := #tail.PartialSols;
     scan(#untrackedInds, i->(
 	    s := newSols#i;
+	    if status s =!= Regular then error "a singular point encountered"; 
 	    a := untrackedInds#i;
 	    if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
 	    else (    
