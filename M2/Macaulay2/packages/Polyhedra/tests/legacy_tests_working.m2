@@ -181,6 +181,33 @@ Q = convexHull(matrix{{-1},{-1},{-1}},matrix{{1,0,-1},{0,1,0},{0,0,1}});
 assert(P == Q)
 ///
 
+-- Test 41
+-- Checking affineImage for polyhedra
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+A = matrix {{1,2},{3,4}};
+v = matrix {{-1},{1}};
+P = affineImage(A,P,v);
+Q = convexHull matrix {{2,-2,0,-4},{8,0,2,-6}};
+assert(P == Q)
+P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
+A = matrix {{0,2,0},{1,0,1},{0,0,2}};
+v = matrix {{1},{1},{1}};
+P = affineImage(A,P,v);
+Q = convexHull(matrix{{-1},{-1},{-1}},matrix{{0,2,0},{1,0,1},{0,0,2}});
+assert(P == Q)
+///
+
+-- Test 42
+-- Checking affineImage for cones
+TEST ///
+C = posHull matrix {{1,1,2},{1,2,1},{2,1,1}};
+A = matrix {{1,-1,0},{0,1,-1},{-1,0,1}};
+C = affineImage(A,C);
+C1 = posHull matrix {{0,-1,1},{-1,1,0},{1,0,-1}};
+assert(C == C1)
+///
+
 -- Test 44
 -- Checking affinePreimage for cones
 TEST ///
@@ -189,6 +216,15 @@ A = matrix {{1,-1,0},{0,1,-1},{-1,0,0}};
 C = affinePreimage(A,C);
 C1 = posHull matrix {{-2,-1,-1},{-3,-3,-2},{-4,-4,-4}};
 assert(C == C1)
+///
+
+-- Test 45
+-- Checking pyramid
+TEST ///
+P = intersection(matrix {{1,0},{-1,0},{0,1},{0,-1}},matrix {{1},{1},{1},{1}});
+P = pyramid P;
+Q = convexHull matrix {{1,1,-1,-1,0},{1,-1,1,-1,0},{0,0,0,0,1}};
+assert(P == Q)
 ///
 
 -- Test 46
@@ -221,6 +257,16 @@ TEST ///
 P = hypercube (3,3);
 Q = convexHull matrix {{3,3,3,3,-3,-3,-3,-3},{3,3,-3,-3,3,3,-3,-3},{3,-3,3,-3,3,-3,3,-3}};
 assert(P == Q)
+///
+
+-- Test 50
+-- Checking hirzebruch
+TEST ///
+F = hirzebruch 3;
+M = transpose matrix {{1,0},{0,1},{0,-1},{-1,3}};
+L = {{0,1},{0,2},{1,3},{2,3}};
+F1 = fan(M,L);
+assert(F == F1)
 ///
 
 -- Test 51
@@ -263,6 +309,15 @@ assert(F2 == minFace(w,P))
 C = posHull matrix {{2,-1,1},{-1,1,1},{0,-1,1}};
 C1 = posHull matrix {{-1,2},{1,-1},{-1,0}};
 assert(C1 == minFace(w,C))
+///
+
+-- Test 60
+-- Checking volume
+TEST ///
+P = hypercube 3;
+assert(volume P == 8)
+P = crossPolytope 3;
+assert(volume P == 4/3)
 ///
 
 -- Test 64

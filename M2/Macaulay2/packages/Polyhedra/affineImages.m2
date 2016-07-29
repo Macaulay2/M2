@@ -16,7 +16,7 @@ affineImage(Matrix,Polyhedron,Matrix) := (A,P,v) -> (
      if numRows A =!= numRows v then error("Vector must lie in target space of matrix");
      if numColumns v =!= 1 then error("Second argument must be a vector");
      -- Generating nr of vertices many copies of v
-     v = v * (matrix {toList(P#"number of vertices":1_QQ)});
+     v = v * (matrix {toList((numColumns vertices P):1_QQ)});
      Mv := A*(vertices P) + v;
      Mr := A*(rays P);
      if numColumns Mr == 0 then Mr = matrix toList(numRows Mv:{0_QQ});

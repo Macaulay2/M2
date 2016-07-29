@@ -230,7 +230,7 @@ statePolytope Ideal := I -> (
 bipyramid = method(TypicalValue => Polyhedron)
 bipyramid Polyhedron := P -> (
    -- Saving the vertices
-   V := promote(vertices P, QQ);
+   V := vertices P;
    n := numColumns V;
    if n == 0 then error("P must not be empty");
    -- Computing the barycenter of P
@@ -262,14 +262,14 @@ bipyramid Polyhedron := P -> (
 --     	         point (0,...,0,1)
 pyramid = method(TypicalValue => Polyhedron)
 pyramid Polyhedron := P -> (
-   M := rays P;
-   LS := linealitySpace P;
-   r := ring M;
+   C := getProperty(P, underlyingCone);
+   M := rays C;
+   LS := linealitySpace C;
    -- Embedding into n+1 space and adding the new vertex
-   zerorow := map(r^1,source M,0);
-   newvertex := 1 || map(r^((numRows M)-1),r^1,0) || 1;
+   zerorow := map(QQ^1,source M,0);
+   newvertex := 1 || map(QQ^((numRows M)-1),QQ^1,0) || 1;
    M = (M || zerorow) | newvertex;
-   LS = LS || map(r^1,source LS,0);
+   LS = LS || map(QQ^1,source LS,0);
    newC := posHull(M, LS);
    result := new HashTable from {
       underlyingCone => newC

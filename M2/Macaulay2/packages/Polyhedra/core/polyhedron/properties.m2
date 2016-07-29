@@ -127,11 +127,10 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
 compute#Polyhedron#computedFacets = method()
 compute#Polyhedron#computedFacets Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
-   result := facets C;
+   result := promote(facets C, QQ);
    -- Elimination of the trivial half-space
    ezero := matrix {flatten {1 , toList (((numgens source result)-1):0)}};
-   r := ring result;
-   ezero = promote(ezero, r);
+   ezero = promote(ezero, QQ);
    trivialIndex := positions(0..(numRows result)-1, i -> (ezero === result^{i} ));
    if #trivialIndex > 0 then (
       trivialIndex = trivialIndex#0;
@@ -146,7 +145,7 @@ compute#Polyhedron#computedFacets Polyhedron := P -> (
 compute#Polyhedron#computedHyperplanes = method()
 compute#Polyhedron#computedHyperplanes Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
-   result := hyperplanes C;
+   result := promote(hyperplanes C, QQ);
    (submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), -result_{0})
 )
 
@@ -174,7 +173,7 @@ compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
    facetsP := facets P;
    facetsP = (-facetsP#1) | facetsP#0;
    C := getProperty(P, underlyingCone);
-   facetsC := facets C;
+   facetsC := promote(facets C, QQ);
    rayCorrespondenceMap( - transpose facetsC, transpose facetsP)
 )
 
