@@ -24,13 +24,13 @@ sanitizeConeInput HashTable := given -> (
    result := apply(remainingProperties, rp -> rp=>given#rp);
    for rp in rayProperties do (
       if given#?rp then (
-         primitive := makeRaysPrimitive given#rp;
+         primitive := makeRaysUniqueAndPrimitive given#rp;
          result = append(result, rp=>primitive)
       )
    );
    for fp in facetProperties do (
       if given#?fp then (
-         primitive := makeFacetsPrimitive given#fp;
+         primitive := makeFacetsUniqueAndPrimitive given#fp;
          result = append(result, fp=>primitive)
       )
    );

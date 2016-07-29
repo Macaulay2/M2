@@ -127,9 +127,11 @@ computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
 
 makeRaysUniqueAndPrimitive = method()
 makeRaysUniqueAndPrimitive(Matrix) := M -> (
+   M = makeRaysPrimitive M;
+   if numColumns M == 0 then return M;
    L := apply(numColumns M, i -> M_i);
    L = select(L, l -> gcd entries l != 0);
-   matrix unique L
+   sort matrix unique L
 )
 
 makeRaysPrimitive = method()
@@ -156,6 +158,12 @@ makeRaysPrimitive Matrix := M -> (
 makeFacetsPrimitive = method()
 makeFacetsPrimitive Matrix := M -> (
    result := makeRaysPrimitive transpose M;
+   transpose result
+)
+
+makeFacetsUniqueAndPrimitive = method()
+makeFacetsUniqueAndPrimitive Matrix := M -> (
+   result := makeRaysUniqueAndPrimitive transpose M;
    transpose result
 )
 

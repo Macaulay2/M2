@@ -54,8 +54,8 @@ assert(numColumns rays C == 2)
 TEST ///
 C1 = intersection matrix {{0,1,2,3},{1,2,3,0},{2,3,0,1}};
 C2 = intersection matrix {{7,-5,1,1},{0,1,4,-3},{0,9,-6,1},{0,-3,2,9},{-7,5,-1,-1}};
-C1 = dualCone C1;
-assert(C1 == C2)
+C3 = dualCone C1;
+assert(C3 == C2)
 ///
 
 -- Test 16
