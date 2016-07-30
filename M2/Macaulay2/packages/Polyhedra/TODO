@@ -1,5 +1,8 @@
 vertexEdgeMatrix and vertexFacetMatrix seem not to be needed. Also they print indices in the output matrices?
 
+documentation:
+*  statePolytope is documented wrong. It produces more output.
+
 rays has weird definition
 saveSession in own file?
 polar is now defined via dual of underlyingCone. Will this fail for having linealitySpace?

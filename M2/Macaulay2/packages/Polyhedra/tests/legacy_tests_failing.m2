@@ -52,15 +52,6 @@ assert(normalFan polytope F == F)
 
 
 
--- Test 35
---Checking ccRefinement
-TEST ///
-M = matrix {{1,-1,0,0},{0,0,1,-1},{1,1,1,1}};
-F = ccRefinement M;
-F1 = fan {posHull matrix {{1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,-1,0},{1,1,1}},posHull matrix {{1,0,0},{0,-1,0},{1,1,1}}};
-assert(F == F1)
-///
-
 -- Test 36
 -- Checking imageFan
 TEST ///
@@ -93,19 +84,6 @@ assert(F3 == directProduct(F1,F2))
 ///
 
 
--- Test 53
--- Checking statePolytope
-TEST ///
-R = QQ[a,b,c];
-I = ideal(a^2-b,a*b-c);
-(L,P) = statePolytope I;
-Q = convexHull matrix {{21,3,1,1,6,2},{0,9,7,4,0,2},{0,0,2,4,5,5}};
-L1 = { {{b^2,a*b,a^2}}, {{a*c,a*b,a^2,b^3}}, {{b,a^3}}, {{c^2,a*b,a*c,a^2}}, {{c,b}}, {{a^2,c}}};
-L = apply(L,entries);
-assert(P == Q)
-assert(set L === set L1)
-///
-
 -- Test 55
 -- Checking equality of polyhedral objects
 TEST ///
@@ -114,22 +92,6 @@ L2 = set {hirzebruch 5, posOrthant 3, hypercube 2, crossPolytope 4};
 assert(L1 === L2)
 ///
 
-
--- Test 58
--- Checking proximum
-TEST ///
-P = crossPolytope 3;
-p = matrix {{1},{2},{3}};
-q = matrix {{0_QQ},{1},{0}};
-assert(q == proximum(p,P))
-p = matrix {{1},{1/2},{1}};
-q = matrix {{1/2},{0},{1/2}};
-assert(q == proximum(p,P))
-P = convexHull map(QQ^3,QQ^3,1);
-p = matrix {{2},{2},{0}};
-q = matrix {{1/2},{1/2},{0}};
-assert(q == proximum(p,P))
-///
 
 -- Test 59
 -- Checking triangulate

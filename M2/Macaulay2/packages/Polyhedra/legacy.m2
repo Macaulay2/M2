@@ -355,108 +355,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 tailCone = method(TypicalValue => Cone)
 tailCone Polyhedron := P -> posHull(rays(P),linSpace(P))
 
--- PURPOSE : Computing the closest point of a polyhedron to a given point
---   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
---                   'P' is a Polyhedron
---  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
-proximum = method(TypicalValue => Matrix)
-proximum (Matrix,Polyhedron) := (p,P) -> (
-     -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= ambDim(P) then error("The point must lie in the same space");
-     if isEmpty P then error("The polyhedron must not be empty");
-     -- Defining local variables
-     local Flist;
-     d := ambDim P;
-     c := 0;
-     prox := {};
-     -- Checking if 'p' is contained in 'P'
-     if contains(P,p) then p
-     else (
-	  V := vertices P;
-	  R := promote(rays P,QQ);
-	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
-	  if dim P == d then (
-	       -- Continue as long as the proximum has not been found
-	       while instance(prox,List) do (
-		    -- Take the faces of next lower dimension of P
-		    c = c+1;
-		    if c == dim P then (
-			 Vdist := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
-			 pos := min Vdist;
-			 pos = position(Vdist, j -> j == pos);
-			 prox = V_{pos})
-		    else (
-			 Flist = faces(c,P);
-			 -- Search through the faces
-			 any(Flist, F -> (
-				   -- Take the inward pointing normal cone with respect to P
-				   (vL,bL) := hyperplanes F;
-				   -- Check for each ray if it is pointing inward
-				   vL = matrix apply(numRows vL, i -> (
-					     v := vL^{i};
-					     b := first flatten entries bL^{i};
-					     if all(flatten entries (v*(V | R)), e -> e >= b) then flatten entries v
-					     else flatten entries(-v)));
-				   -- Take the polyhedron spanned by the inward pointing normal cone 
-				   -- and 'p' and intersect it with the face
-				   Q := intersection(F,convexHull(p,transpose vL));
-				   -- If this intersection is not empty, it contains exactly one point, 
-				   -- the proximum
-				   if not isEmpty Q then (
-					prox = vertices Q;
-					true)
-				   else false))));
-	       prox)
-	  else (
-	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
-	       while instance(prox,List) do (
-		    if c == dim P then (
-			 Vdist1 := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
-			 pos1 := min Vdist1;
-			 pos1 = position(Vdist1, j -> j == pos1);
-			 prox = V_{pos1})
-		    else (
-			 Flist = faces(c,P);
-			 -- Search through the faces
-			 any(Flist, F -> (
-				   -- Take the inward pointing normal cone with respect to P
-				   (vL,bL) := hyperplanes F;
-				   vL = matrix apply(numRows vL, i -> (
-					     v := vL^{i};
-					     b := first flatten entries bL^{i};
-					     entryList := flatten entries (v*(V | R));
-					     -- the first two ifs find the vectors not in the hyperspace
-					     -- of 'P'
-					     if any(entryList, e -> e > b) then flatten entries v
-					     else if any(entryList, e -> e < b) then flatten entries(-v)
-					     -- If it is an original hyperplane than take the direction from 
-					     -- 'p' to the polyhedron
-					     else (
-						  bCheck := first flatten entries (v*p);
-						  if bCheck < b then flatten entries v
-						  else flatten entries(-v))));
-				   Q := intersection(F,convexHull(p,transpose vL));
-				   if not isEmpty Q then (
-					prox = vertices Q;
-					true)
-				   else false)));
-		    c = c+1);
-	       prox)))
 
-
---   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
---                   'C' is a Cone
---  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
-proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
-
--- PURPOSE : Converts the Cone 'C' into itself as a Polyhedron 'P'
---   INPUT : 'C'  a Cone
---  OUTPUT : 'P' the Cone saved as a polyhedron
-coneToPolyhedron = method(TypicalValue => Polyhedron)
-coneToPolyhedron Cone := C -> (
-     M := map(QQ^(ambDim(C)),QQ^1,0);
-     N := rays C;
-     convexHull(M,N))
 
 -- PURPOSE : Computing the face fan of a polytope
 --   INPUT : 'P',  a Polyhedron, containing the origin in its interior
@@ -477,17 +376,25 @@ faceFan Polyhedron := P -> (
 --     	     'C' under 'M'
 imageFan = method(TypicalValue => Fan)
 imageFan (Matrix,Cone) := (M,C) -> (
-     M = chkZZQQ(M,"map");
-     if numColumns M != ambDim C then error("The source space of the matrix must be the ambient space of the cone");
-     -- Extracting data
-     m := numRows M;
-     n := dim C;
-     -- Compute the images of all 'm' dimensional faces and select those that are again 
-     -- 'm' dimensional
-     L := apply(faces(n-m,C), e -> affineImage(M,e));
-     L = select(L, e -> dim e == m);
-     -- Compute their common refinement
-     refineCones L)
+   M = chkZZQQ(M,"map");
+   if numColumns M != ambDim C then error("The source space of the matrix must be the ambient space of the cone");
+   -- Extracting data
+   m := numRows M;
+   n := dim C;
+   raysC := rays C;
+   lin := linealitySpace C;
+   -- Compute the images of all 'm' dimensional faces and select those that are again 
+   -- 'm' dimensional
+   L := apply(faces(n-m,C), 
+      e -> (
+         Ce := posHull(raysC_e, lin);
+         affineImage(M,Ce)
+      )
+   );
+   L = select(L, e -> dim e == m);
+   -- Compute their common refinement
+   refineCones L
+)
 
 -- PURPOSE : Computing the normal cone of a face of a polytope
 --   INPUT : '(P,Q)',  two polyhedra
@@ -651,21 +558,25 @@ intersectionWithFacetsCone = (L,F) -> (
 --   INPUT : 'L',  a list of cones
 --  OUTPUT : A fan, the common refinement of the cones
 refineCones = L -> (
-     -- Collecting the rays of all cones
-     R := rays L#0;
-     n := numRows R;
-     R = apply(numColumns R, i -> R_{i});
-     L1 := drop(L,1);
-     R = unique flatten (R | apply(L1, C -> apply(numColumns rays C, i -> (rays C)_{i})));
-     -- Writing the rays into one matrix
-     M := matrix transpose apply(R, r -> flatten entries r);
-     -- Compute the coarsest common refinement of these rays
-     F := ccRefinement M;
-     -- Collect for each cone of the ccRef the intersection of all original cones, that contain
-     -- the interior of that cone
-     fan apply(maxCones F, C -> (
-	       v := interiorVector(C);
-	       intersection select(L, c -> contains(c,v)))))
+   -- Collecting the rays of all cones
+   R := rays L#0;
+   n := numRows R;
+   R = apply(numColumns R, i -> R_{i});
+   L1 := drop(L,1);
+   R = unique flatten (R | apply(L1, C -> apply(numColumns rays C, i -> (rays C)_{i})));
+   -- Writing the rays into one matrix
+   M := matrix transpose apply(R, r -> flatten entries r);
+   -- Compute the coarsest common refinement of these rays
+   F := ccRefinement M;
+   -- Collect for each cone of the ccRef the intersection of all original cones, that contain
+   -- the interior of that cone
+   fan apply(getProperty(F, honestMaxObjects), 
+      C -> (
+         v := interiorVector(C);
+         intersection select(L, c -> contains(c,v))
+      )
+   )
+)
 
 
 

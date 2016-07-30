@@ -47,21 +47,21 @@ affineImage(Polyhedron,Matrix) := (P,v) -> (
 --     	    	      	 defining a vector in that target space
 --  OUTPUT : A polyhedron, the affine image of 'C':
 --                       (M*C)+v={(M*c)+v | c in C}
-affineImage(Matrix,Cone,Matrix) := (M,C,v) -> if v == 0 then affineImage(M,C) else affineImage(M,coneToPolyhedron C,v)
+affineImage(Matrix,Cone,Matrix) := (M,C,v) -> if v == 0 then affineImage(M,C) else affineImage(M, polyhedron C,v)
 
 
 --   INPUT : '(M,C)',  where 'M' is a ZZ or QQ matrix from the 
 --     	    	      	 ambient space of the cone 'C' to some target space
 --  OUTPUT : A cone, the affine image of 'C':
 --                       M*C={M*c | c in C}
-affineImage(Matrix,Cone) := (M,C) -> posHull affineImage(M,coneToPolyhedron C)
+affineImage(Matrix,Cone) := (M,C) -> posHull affineImage(M, polyhedron C)
 
 
 --   INPUT : '(C,v)',  where 'C' is a cone and 'v' is a matrix
 --     	    	      	 defining a vector in the ambient space of 'C'
 --  OUTPUT : A polyhedron, the affine image of 'C':
 --                       C+v={c+v | c in C}
-affineImage(Cone,Matrix) := (C,v) -> affineImage(coneToPolyhedron C,v)
+affineImage(Cone,Matrix) := (C,v) -> affineImage(polyhedron C,v)
 
 
 -- PURPOSE : Computing the affine preimage of a cone or polyhedron
@@ -110,19 +110,19 @@ affinePreimage(Polyhedron,Matrix) := (P,b) -> affinePreimage(map(QQ^(ambDim(P)),
 --                       {q | (A*q)+b in C}
 --     	     or a cone, the affine preimage of 'C' if 'b' is 0:
 --     	    	         {q | (A*q) in C}
-affinePreimage(Matrix,Cone,Matrix) := (A,C,b) -> if b == 0 then affinePreimage(A,C) else affinePreimage(A,coneToPolyhedron C,b)
+affinePreimage(Matrix,Cone,Matrix) := (A,C,b) -> if b == 0 then affinePreimage(A,C) else affinePreimage(A,polyhedron C,b)
 
 
 --   INPUT : '(A,C)',  where 'A' is a ZZ or QQ matrix from some source space to the 
 --     	    	      	 ambient space of the cone 'C'
 --  OUTPUT : A cone, the affine preimage of 'C':
 --                       {q | (A*q) in C}
-affinePreimage(Matrix,Cone) := (A,C) -> posHull affinePreimage(A,coneToPolyhedron C)
+affinePreimage(Matrix,Cone) := (A,C) -> posHull affinePreimage(A,polyhedron C)
 
 
 --   INPUT : '(C,b)',   where 'b' is a ZZ or QQ one-column matrix describing a point in
 --                     the ambient space of the cone 'C'
 --  OUTPUT : A polyhedron, the affine preimage of 'C':
 --                       {q | q+b in C}
-affinePreimage(Cone,Matrix) := (C,b) -> affinePreimage(coneToPolyhedron C,b)
+affinePreimage(Cone,Matrix) := (C,b) -> affinePreimage(polyhedron C,b)
 
