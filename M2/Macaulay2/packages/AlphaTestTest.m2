@@ -1,6 +1,7 @@
-needs "~/polysparse/code/solveViaMonodromy.m2"
+-- first, third lines depend  on where polysparse is ocated on your machine
+needs "~/Summer_Projects/polysparse/code/solveViaMonodromy.m2"
 setRandomSeed 0
-needs "~/M2/M2/Macaulay2/packages/ExampleIdeals.m2"
+needs "~/Summer_Projects/M2/M2/Macaulay2/packages/ExampleIdeals.m2"
 n = 6
 S = gens cyclicRoots(n,FF)
 R = ring S
@@ -27,7 +28,7 @@ restart
 needsPackage "AlphaTest"
 FF = CC
 load "AlphaTestTest.m2"
-needs "~/polysparse/code/solveViaMonodromy.m2"
+needs "~/Summer_Projects/polysparse/code/solveViaMonodromy.m2"
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
 stop = (n,L)->n>1
@@ -36,11 +37,30 @@ getDefault Software
 setDefault(Software=>PHCPACK)
 *}
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop);
-complexToRational((coordinates(sols #0)),FFF)
+
 sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop)
 SPP = polySystem(transpose plugin'c0 SP)
 all ( sols, s -> certifySolutions(SPP,s))
+
 FFF = QQ[k]/ideal(k^2+1)
+
+complexToRational((coordinates(sols #0)),FFF)
+
+peek SPP
+M = (coefficients (flatten entries SPP.PolyMap)#0)#0
+pluginR' = map(R', R, vars R)
+pluginR' M_(0,0)
+sub((coefficients M_(0,0))#0, R')
+
+sub(M_(0,0), R')
+R' = FFF[gens ring (flatten entries SPP.PolyMap)#0]
+gens R'
+methods(sub)
+ = 
+methods substitute
+
+substitute(SPP, FFF)
+
 pp=point{apply( coordinates((sols)#0), s -> complexToRational(s,FFF))}
 certifySolutions(SPP,pp)
 certifySolutions(SPP, (sols)#0)
