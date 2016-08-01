@@ -36,14 +36,22 @@ getDefault Software
 setDefault(Software=>PHCPACK)
 *}
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop);
+FFF = QQ[k]/ideal(k^2+1)
 complexToRational((coordinates(sols #0)),FFF)
-sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop)
 SPP = polySystem(transpose plugin'c0 SP)
 all ( sols, s -> certifySolutions(SPP,s))
-FFF = QQ[k]/ideal(k^2+1)
-pp=point{apply( coordinates((sols)#0), s -> complexToRational(s,FFF))}
+opp=point{apply( coordinates((sols)#0), s -> complexToRational(s,FFF))}
 certifySolutions(SPP,pp)
 certifySolutions(SPP, (sols)#0)
 computeConstants(SPP, (sols)#0)
 computeConstants(SPP,pp)
-complexToRational(plugin'c0 SP, FFF)
+SPP' = complexToRational(SPP, FFF)
+sols' = complexToRational(sols,FFF)
+all (sols', s -> certifySolutions(SPP', s))
+apply(sols', s -> computeConstants(SPP', s))
+
+
+
+
+
+
