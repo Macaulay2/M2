@@ -52,7 +52,7 @@ setRandomSeed 0
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic)
 
 --When I try running graphStrategy with potentialAsymptotic and the completeGraphInit, I get div 0 errors from potentialAsymptotic
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialLowerBound, GraphInitFunction=>flowerGraphInit)
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>flowerGraphInit)
 
 
 G = first sols
