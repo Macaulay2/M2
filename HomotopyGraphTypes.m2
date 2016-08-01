@@ -108,7 +108,9 @@ potentialAsymptotic = (e,from1to2) -> (
     d := (e.Graph).TargetSolutionCount;
     c := length keys correspondence;
     print(a,b,c,d);
-    a * (d-c-b) / (d-c)
+    if d!=c then p := a * (d-c-b) / (d-c)
+    else p=0;
+    p
     ) 
 
 
