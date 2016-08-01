@@ -4,27 +4,31 @@ randomPolynomial = (d, R) -> sum(d+1, i -> random(i,R))
 
 
 findTurningPoints = L -> (
-
+    temp := sortTurningPoints L;
     if #temp === 0 then null
-    else {temp#0#1, temp#1#1}
+    else {(temp#0).LastT, (temp#1).LastT}
     )
 
 sortTurningPoints = L -> apply(sort apply(L, sol -> {sol.LastT, sol}), last)    
 
 -- will replace with better method (deflation)
-getXo = tp ->   x0 = (1/2) * (matrix first tp + matrix last tp)
+getXo = tp ->  (1/2) * (matrix first tp + matrix last tp)
+
+gett0 = tp -> (1/2) * ((first tp).LastT + (last tp).LastT)
 
 getTangent = (tp, x0, H) -> (
-   t0 := (first tp).LastT;
+   t0 := gett0 tp;
    J := evaluate(transpose jacobian transpose H, x0 | matrix{{t0}});
    n := numRows H;
    transpose submatrix'(((SVD J)#2)^{n}, ,{n} )
     ) 
 
 -- tp is a pair of points approaching a turning point
+-- this function is currently producing some sort of fatal error
 jump = (tp, H, epsilon) -> (
     if tp === null then error("no turning points inputted");
     x0 := getXo(tp);
+    t0 := gett0(tp);
     v := getTangent(tp, x0, H);    
     if any((first tp).Coordinates | (last tp).Coordinates, c -> not areEqual(imaginaryPart c, 0)) then 
     l1 := {transpose x0 + epsilon * v, transpose x0 - epsilon * v }
@@ -33,13 +37,18 @@ jump = (tp, H, epsilon) -> (
 	x1 := transpose x0 + epsilon * ii * v;
 	l1 = {x1, conjugate x1};
 	);
-    R := RR[drop(gens ring H, -1)];
-    toR := map(R, ring H, gens R | {t0+epsilon^2});
-    -- needs a better stopping criterion
-    for i from 1 to 5 do l1 = apply(l1, l -> newton(polySystem toR H, l));
+    -- following two lines from prev implementation give toR = zero mapping, generates fatal error in solveRealSystem
+    -- R := RR[drop(gens ring H, -1)];
+    -- toR := map(R, ring H, gens R | {sub(t0+ epsilon^2, R)});
+    -- coefficient corrector: c := solve(x0, xprev, ClosestFit=>true), xprev := trackSegment(H, t0, t0- epsilon, x0)
+    -- needs a better stopping criterion (pass number of corrections as option?)
+
+    l1 = apply(l1, l -> l || matrix {{t0 + epsilon^2}});
+    for i from 1 to 5 do l1 = apply(l1, l -> newton(polySystem H, l));
     l1
     )
 
+-- first example seems to generate valid ouput, but gives weird "wrong # of inputs" error message
 solveRealSystem = method()
 solveRealSystem (PolySystem, PolySystem, List) := (f, g, startSols) -> (
     if ring f =!= ring g then error "expected systems from same ring";
@@ -78,7 +87,8 @@ R = CC[x,y]
 f = polySystem {sub(randomPolynomial(d1, RR[gens R]), R),  sub(randomPolynomial(d2, RR[gens R]),R)}
 startSols = solveSystem polySystem f
 g = polySystem {sub(randomPolynomial(d1, RR[gens R]), R),  sub(randomPolynomial(d2, RR[gens R]),R)}
-solveRealSystem(f,g,startSols)
+sols' = solveRealSystem(f,g,startSols)
+apply(sols', p -> evaluate(g, matrix p))
 findTurningPoints track(f,g,startSols)
 
 (sols#1).Coordinates
