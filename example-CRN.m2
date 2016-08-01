@@ -20,7 +20,8 @@ setUpPolysparse = G -> (
     pre0 := point{toList(numgens ring G : 1_CC)};
     (c0,pre0)
     )
-
+-- service function that displays numbering of complexes
+-- display network with correspondence of reaction and complexes
 W = wnt()
 Rw = createRing(W, FF)
 CEformsW = matrix{conservationEquations(W,FF)}
@@ -29,7 +30,7 @@ SSEw = matrix {steadyStateEquations W}
 Tw = transpose(CEw|SSEw)
 rMw = sub(random(FF^19, FF^24),Rw)
 Gw = polySystem(rMw * Tw)
-
+peek Tw
 
 end ---------------------------------
 restart
@@ -43,6 +44,7 @@ elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)
 -- encounters singular points, does not recognize StoppingCriterion
 
 (c0w,pre0w) = setUpPolysparse Gw
+peek Gw
 elapsedTime solsW = twoNodes(transpose Gw.PolyMap,c0w,{pre0w},10)
 elapsedTime solsW = twoNodes(transpose Gw.PolyMap,c0w,{pre0w},5,
     SelectEdgeAndDirection => selectBestEdgeAndDirection, 
@@ -51,13 +53,11 @@ elapsedTime solsW = twoNodes(transpose Gw.PolyMap,c0w,{pre0w},5,
     SelectEdgeAndDirection => selectBestEdgeAndDirection, 
     TargetSolutionCount=>9, 
     Potential=>potentialAsymptotic)
-elapsedTime solsW = flowerStrategy(transpose Gw.PolyMap,c0w,{pre0w},
-    StoppingCriterion=>stop)
-elapsedTime solsW = loopStrategy(transpose Gw.PolyMap,c0w,{pre0w},3,
-    StoppingCriterion=>stop)
+elapsedTime solsW = flowerStrategy(transpose Gw.PolyMap,c0w,{pre0w})
+elapsedTime solsW = loopStrategy(transpose Gw.PolyMap,c0w,{pre0w},3)
 
 
--- some other examples?
+-- some other examples? simpler than wnt but with more solutions?
 
 
 
