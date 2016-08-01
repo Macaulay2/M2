@@ -9,34 +9,32 @@
 -- Checking faces and minkSummandCone
 TEST ///
 P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
+verticesP = vertices P;
+raysP = rays P;
+linP = linealitySpace P;
 F1 = faces(1,P);
+F1 = apply(F1, f-> verticesP_(f#0));
 F2 = {convexHull matrix{{-1,0},{1,1}},convexHull matrix{{0,1},{1,0}},convexHull matrix{{1,1},{0,-1}},convexHull matrix{{1,0},{-1,-1}},convexHull matrix{{0,-1},{-1,0}},convexHull matrix{{-1,-1},{0,1}}};
+F2 = apply(F2, f->vertices f);
 assert(set F1 === set F2)
 (C,L,M) = minkSummandCone(P);
 assert(rays(C)*M == matrix{{1_QQ,1},{1,1},{1,1},{1,1},{1,1},{1,1}})
 L1 = {convexHull matrix{{0,1},{0,0}},convexHull matrix{{0,0},{0,1}},convexHull matrix{{0,1},{0,-1}},convexHull matrix{{0,0,1},{0,1,0}},convexHull matrix{{0,1,1},{0,0,-1}}};
-assert(set values L === set L1)
+L = apply(values L, l-> vertices l);
+L1 = apply(L1, l-> vertices l);
+assert(set L === set L1)
 ///
 
 
 
--- Test 32
--- Checking fan, skeleton, isComplete, isPure, addCone,
+-- Test 32a
+-- Checking isPolytopal, polytope
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
-F1 = fan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
-assert(skeleton(1,F) == F1)
-assert not isComplete F
-assert isPure F
-///
-
--- Test 32a
--- Checking isPolytopal, polytope
-TEST ///
 C = posHull matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
 C1 = posHull matrix {{-1,0,0},{0,1,0},{0,0,-1}};
 C2 = posHull matrix {{1,0,0},{0,-1,0},{0,0,-1}};
@@ -51,18 +49,6 @@ assert(normalFan polytope F == F)
 ///
 
 
-
--- Test 36
--- Checking imageFan
-TEST ///
-C = posHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
-F = imageFan(matrix {{1,0,0},{0,1,0}},C);
-F1 = fan {posHull matrix {{1,1},{1,-1}},posHull matrix {{1,-1},{1,1}},posHull matrix {{-1,-1},{1,-1}},posHull matrix {{1,-1},{-1,-1}}};
-assert(F == F1)
-F = imageFan(matrix {{1,2,0},{0,0,1}},C);
-F1 = fan {posHull matrix {{-3,-1},{1,1}},posHull matrix {{-1,1},{1,1}},posHull matrix {{1,3},{1,1}}};
-assert(F == F1)
-///
 
 -- Test 40
 -- Checking directProduct

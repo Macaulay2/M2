@@ -66,3 +66,10 @@ skeleton(ZZ,Fan) := (n,F) -> (
    };
    fan result
 )
+
+-- PURPOSE : Returning a polytope of which the fan is the normal if the fan is polytopal
+--   INPUT : 'F',  a Fan
+--  OUTPUT : A Polytope of which 'F' is the normal fan
+polytope = method(TypicalValue => Polyhedron)
+polytope Fan := F -> getProperty(F, computedPolytope)
+

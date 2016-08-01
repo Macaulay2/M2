@@ -95,6 +95,15 @@ addCone(Fan, Cone) := (F, C) -> (
 
 addCone(Cone, Fan) := (C, F) -> addCone(F, C)
 
+addCone(List, Fan) := (L, F) -> (
+   if not all(L, l->instance(l, Cone)) then error("List does not contain cones");
+   result := F;
+   for cone in L do (
+      result = addCone(result, cone)
+   );
+   result
+)
+
 fan List := inputCones -> (
    if instance(inputCones, Cone) then error("Why did I arrive here?");
    if not all(inputCones, c -> instance(c, Cone)) then error("This constructor needs a list of cones.");

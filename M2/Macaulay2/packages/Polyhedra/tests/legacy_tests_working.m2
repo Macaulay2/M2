@@ -159,12 +159,38 @@ F1 = addCone(C,F);
 assert(F == F1)
 ///
 
+-- Test 32
+-- Checking fan, skeleton, isComplete, isPure, addCone,
+TEST ///
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
+F = fan {C,C1,C2,C3};
+F1 = fan {posHull matrix {{1},{0},{0}},posHull matrix {{-1},{0},{0}},posHull matrix {{0},{1},{0}},posHull matrix {{0},{-1},{0}},posHull matrix {{0},{0},{1}},posHull matrix {{0},{0},{-1}}};
+assert(skeleton(1,F) == F1)
+assert not isComplete F
+assert isPure F
+///
+
 -- Test 35
 --Checking ccRefinement
 TEST ///
 M = matrix {{1,-1,0,0},{0,0,1,-1},{1,1,1,1}};
 F = ccRefinement M;
 F1 = fan {posHull matrix {{1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,1,0},{1,1,1}},posHull matrix {{-1,0,0},{0,-1,0},{1,1,1}},posHull matrix {{1,0,0},{0,-1,0},{1,1,1}}};
+assert(F == F1)
+///
+
+-- Test 36
+-- Checking imageFan
+TEST ///
+C = posHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
+F = imageFan(matrix {{1,0,0},{0,1,0}},C);
+F1 = fan {posHull matrix {{1,1},{1,-1}},posHull matrix {{1,-1},{1,1}},posHull matrix {{-1,-1},{1,-1}},posHull matrix {{1,-1},{-1,-1}}};
+assert(F == F1)
+F = imageFan(matrix {{1,2,0},{0,0,1}},C);
+F1 = fan {posHull matrix {{-3,-1},{1,1}},posHull matrix {{-1,1},{1,1}},posHull matrix {{1,3},{1,1}}};
 assert(F == F1)
 ///
 

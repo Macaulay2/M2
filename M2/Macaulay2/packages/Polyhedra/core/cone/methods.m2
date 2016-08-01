@@ -1,7 +1,5 @@
 
 
-
-
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
 isSmooth Cone := C -> (
