@@ -5,7 +5,7 @@ compute#Polyhedron#computedNormal Polyhedron := P -> (
    L := hilbertBasis C;
    n := ambDim P;
    -- Do all lattice points lie in height one?
-   all(L,v -> v_(n,0) == 1)
+   all(L,v -> v_(0,0) == 1)
 )
 
 

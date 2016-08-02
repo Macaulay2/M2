@@ -51,8 +51,24 @@ directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
 --   INPUT : '(F1,F2)',  two fans
 --  OUTPUT : A fan, the direct product
 directProduct (Fan,Fan) := (F1,F2) -> (
-     -- computing the direct products of all pairs of generating cones
-     fan flatten apply(maxCones F1, C1 -> apply(maxCones F2, C2 -> directProduct(C1,C2))))
+-- computing the direct products of all pairs of generating cones
+   resultRays := rays F1 | map(ZZ^(numRows rays F1), ZZ^(numColumns rays F2), 0); 
+   resultRays = resultRays || (map(ZZ^(numColumns rays F1), ZZ^(numRows rays F2), 0) | rays F2);
+   mc1 := maxCones F1;
+   mc2 := maxCones F2;
+   shift := numColumns rays F1;
+   mc2 = apply(mc2,
+      m -> (
+         apply(m, e -> e + shift)
+      )
+   );
+   resultCones := apply(mc1,
+      m1 -> (
+         apply(mc2, m2 -> flatten {m1, m2})
+      )
+   );
+   fan(resultRays, flatten resultCones)
+)
 
 
 Polyhedron * Polyhedron := directProduct

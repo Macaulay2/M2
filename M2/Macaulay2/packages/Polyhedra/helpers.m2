@@ -150,6 +150,7 @@ makeRaysPrimitive Matrix := M -> (
       l -> (
          g := gcd entries l;
          if g == 0 then g = 1;
+         if g < 0 then g = -g;
          newEntries := apply(entries l, e -> e/g);
          newCols = append(newCols, vector newEntries)
       )
