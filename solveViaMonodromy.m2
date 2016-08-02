@@ -22,7 +22,9 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     else stoppingCriterion = o.StoppingCriterion; 
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
-    	
+    HG.MasterNode = node1;
+    HG.MasterFactor = 10;
+    
     if #s0 < 1 then error "at least one solution expected";
     
     selectEdgeAndDirection := o.SelectEdgeAndDirection;

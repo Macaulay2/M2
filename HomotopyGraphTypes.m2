@@ -93,6 +93,7 @@ potentialLowerBound = (e,from1to2) -> (
 
 
 potentialAsymptotic = (e,from1to2) -> (
+    G := e.Graph;
     if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);
 	correspondence := e.Correspondence12;
@@ -107,9 +108,22 @@ potentialAsymptotic = (e,from1to2) -> (
     b := #(keys tail.PartialSols - set keys correspondence');
     d := (e.Graph).TargetSolutionCount;
     c := length keys correspondence;
-    print(a,b,c,d);
+--    << "# of sols to track" << a << endl;
+--    << "# of sols in target w/o correspondence" << b << endl;
+--    << "# of established correspondences" << c << endl;
+--    << "target solution count" << d << endl;
+        
     if d!=c then p := a * (d-c-b) / (d-c)
     else p=0;
+    if tail === G.MasterNode then (
+        << "we've hit the master node" << endl;
+	p = p*G.MasterFactor;
+	);
+    if head === G.MasterNode then (
+        << "we've hit the master node backwards" << endl;
+	p = p*(1/G.MasterFactor);
+	);
+        
     p
     ) 
 
