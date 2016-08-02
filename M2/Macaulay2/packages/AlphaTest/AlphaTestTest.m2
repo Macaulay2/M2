@@ -26,7 +26,7 @@ end ------------------------------------------------
 restart
 needsPackage "AlphaTest"
 FF = CC
-load "AlphaTestTest.m2"
+load "AlphaTest/AlphaTestTest.m2"
 needs "~/polysparse/code/solveViaMonodromy.m2"
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
@@ -40,7 +40,7 @@ FFF = QQ[k]/ideal(k^2+1)
 complexToRational((coordinates(sols #0)),FFF)
 SPP = polySystem(transpose plugin'c0 SP)
 all ( sols, s -> certifySolutions(SPP,s))
-opp=point{apply( coordinates((sols)#0), s -> complexToRational(s,FFF))}
+pp=point{apply( coordinates((sols)#0), s -> complexToRational(s,FFF))}
 certifySolutions(SPP,pp)
 certifySolutions(SPP, (sols)#0)
 computeConstants(SPP, (sols)#0)

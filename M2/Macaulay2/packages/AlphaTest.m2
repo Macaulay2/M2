@@ -164,37 +164,37 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
     R := ring ff;
     symbolic := coefficientRing R =!= CC_53;
     if symbolic then (numOfVari := numgens R; 
-    numOfPoly := # equations ff;
-    jacobianOfSys := jacobian ff;
-    J := evaluate(jacobianOfSys, xx);
-    if det J == 0 then error "The Jacobian is not invertible";
-    eval := evaluate(ff,xx);
-    y := point(inverse J * eval);
-    degs := flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
-    diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
-    deltaD := complexToRational(diagonalMatrix diagonals, coefficientRing R);
-    mu := max {1, complexToRational(polySysNorm(ff),coefficientRing R)*complexToRational(frobeniusNormSq(inverse J * deltaD),coefficientRing R)};    
-    maxdeg := max degs;
-    beta := complexToRational(hermitianNorm(y), coefficientRing R);
-    gamma := mu*complexToRational(((maxdeg)^(3))*(1/4)*(1/oneNorm(xx))^2,coefficientRing R);
-    alpha := beta^2 * gamma;
-    (alpha, beta, gamma))
+    	numOfPoly := # equations ff;
+    	jacobianOfSys := jacobian ff;
+    	J := evaluate(jacobianOfSys, xx);
+    	if det J == 0 then error "The Jacobian is not invertible";
+    	eval := evaluate(ff,xx);
+    	y := point(inverse J * eval);
+    	degs := flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
+    	diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
+    	deltaD := complexToRational(diagonalMatrix diagonals, coefficientRing R);
+    	mu := max {1, complexToRational((polySysNorm(ff))^2,coefficientRing R)*complexToRational(frobeniusNormSq(inverse J * deltaD),coefficientRing R)};    
+    	maxdeg := max degs;
+    	beta := complexToRational(hermitianNorm(y), coefficientRing R);
+    	gamma := mu*complexToRational(((maxdeg)^(3))*(1/4)*(1/oneNorm(xx))^2,coefficientRing R);
+    	alpha := beta^2 * gamma;
+    	(alpha, beta, gamma))
     else   ( numOfVari = numgens R; 
-    numOfPoly = # equations ff;
-    jacobianOfSys = sub(jacobian ff,R);
-    J = evaluate(jacobianOfSys, xx);
-    if det J == 0 then error "The Jacobian is not invertible";
-    eval = evaluate(ff,xx);
-    y = point (solve(J,eval));
-    degs = flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
-    diagonals = flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
-    deltaD = sub(diagonalMatrix diagonals, coefficientRing R);
-    mu = max {1, polySysNorm(ff)*norm(solve(J,deltaD))};    
-    maxdeg = max degs;
-    beta = hermitianNorm(y);
-    gamma = mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(xx));
-    alpha = beta^2 * gamma^2;
-    (alpha, beta, gamma))
+    	numOfPoly = # equations ff;
+    	jacobianOfSys = sub(jacobian ff,R);
+    	J = evaluate(jacobianOfSys, xx);
+    	if det J == 0 then error "The Jacobian is not invertible";
+    	eval = evaluate(ff,xx);
+    	y = point (solve(J,eval));
+    	degs = flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
+    	diagonals = flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
+    	deltaD = sub(diagonalMatrix diagonals, coefficientRing R);
+    	mu = max {1, polySysNorm(ff)*norm(solve(J,deltaD))};    
+    	maxdeg = max degs;
+    	beta = hermitianNorm(y);
+    	gamma = mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(xx));
+    	alpha = beta^2 * gamma^2;
+    	(alpha, beta, gamma))
     )
 
 
@@ -209,7 +209,7 @@ certifySolutions(PolySystem, Point) := (f, x) -> (
     Consts := computeConstants(f,x);
     if rationalToComplex(Consts #0)<((13-3*sqrt(17))/4)^2 then (
 	 print "The point is an approximate solution to the system";
-	 << "The value of alpha is " << rationalToComplex((computeConstants(f, x))#0) << endl;
+	 << "The value of alpha is " << sqrt(rationalToComplex((Consts)#0)) << endl;
 	 true
 	 )
     else (
