@@ -9,31 +9,27 @@ getDefault Software
 setDefault(Software=>PHCPACK)
 *}
 
-twoNodeGraphInit = (G, p, node1) -> (
-    nedges := 10;
+twoNodeGraphInit = (G, p, node1, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
     node2 := addNode(G, nextP(p), pointArray {});
     apply(nedges, i -> addEdge(G, node1, node2));
     )
 
-completeGraphInit = (G, p, node1) -> (
-    nedges := 10;
-    nnodes := 5;
+completeGraphInit = (G, p, node1, nedges, nnodes) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes do (
+    for i from 1 to nnodes-1 do (
         addNode(G,nextP(p), pointArray {});
     );
     print(peek(G));
-    for i from 0 to nnodes do (
-        for j from i+1 to nnodes do (
+    for i from 0 to nnodes-1 do (
+        for j from i+1 to nnodes-1 do (
             apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
         );
     );
     )
 
-flowerGraphInit = (G, p, node1) -> (
-    nedges := 10;
-    nnodes := 3;
+-- static flower
+flowerGraphInit = (G, p, node1, nedges, nnodes) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
     for i from 1 to nnodes do (
         newNode := addNode(G,nextP(p), pointArray {});
@@ -43,16 +39,24 @@ flowerGraphInit = (G, p, node1) -> (
 
 -- two vertex
 
-nedges = 10
+end
+restart
+load "example1.m2"
+
+nedges = 3
 setRandomSeed 0
 elapsedTime sols = twoNodes(SP,c0,{pre0},nedges,StoppingCriterion=>stop)
 setRandomSeed 0
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70)
 setRandomSeed 0
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic)
+setRandomSeed 0
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+     TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,3))
+setRandomSeed 0
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+     TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,6))
 
---When I try running graphStrategy with potentialAsymptotic and the completeGraphInit, I get div 0 errors from potentialAsymptotic
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>flowerGraphInit)
 
 
 G = first sols
