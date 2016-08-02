@@ -17,13 +17,13 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
         HG.TargetSolutionCount = o.TargetSolutionCount;
-        stoppingCriterion := (n,L) -> #L >= o.TargetSolutionCount;
+        stoppingCriterion := (n,L) -> (#L >= o.TargetSolutionCount or n>= 10);
     )
     else stoppingCriterion = o.StoppingCriterion; 
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
     HG.MasterNode = node1;
-    HG.MasterFactor = 10;
+    HG.MasterFactor = 1;
     
     if #s0 < 1 then error "at least one solution expected";
     
@@ -44,6 +44,7 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
         << "trackedPaths " << trackedPaths << endl; 
         if trackedPaths == 0 then same = same + 1 else same = 0; 
     );
+    if same == 10 then npaths = (HG.TargetSolutionCount)^2; -- some unrealistically high value for npaths, indicating failure
     (HG, npaths)
 )
 

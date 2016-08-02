@@ -113,7 +113,7 @@ potentialAsymptotic = (e,from1to2) -> (
 --    << "# of established correspondences" << c << endl;
 --    << "target solution count" << d << endl;
         
-    if d!=c then p := a * (d-c-b) / (d-c)
+    if d!=c and a!=0 then p := (d-c-b) / (d-c)
     else p=0;
     if tail === G.MasterNode then (
         << "we've hit the master node" << endl;
