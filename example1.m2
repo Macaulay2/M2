@@ -43,10 +43,27 @@ end
 restart
 load "example1.m2"
 
-nedges = 3
+setRandomSeed 0
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+     TargetSolutionCount=>70, Potential=>potentialAsymptotic, 
+     GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,4))
+
+
+nedges = 5
 setRandomSeed 0
 elapsedTime sols = twoNodes(SP,c0,{pre0},nedges,StoppingCriterion=>stop)
 setRandomSeed 0
+
+x = {}
+for i from 0 to 100  do (
+    setRandomSeed i;
+    x = append(x,(graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+     TargetSolutionCount=>70, Potential=>potentialAsymptotic, 
+     GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,4)))#1))
+"firsttwonodesexperiment" << concatenate between("\n", apply(x, n -> toExternalString n)) << close
+
+-- to generate plot in R: hist(as.numeric(scan("firsttwonodesexperiment")))
+
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70)
 setRandomSeed 0
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic)
