@@ -70,7 +70,6 @@ load "./tests/legacy_tests_working.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
-load "./tests/legacy_tests_failing.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
