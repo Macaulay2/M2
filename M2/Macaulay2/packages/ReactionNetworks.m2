@@ -23,7 +23,8 @@ export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes",
     "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
     "stoichiometricSubspace", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
-    "laplacian", "FullEdges", "NullEdges", "glue" --, "netComplex", "networkToHRF", "kk"
+    "laplacian", "FullEdges", "NullEdges", "glue",
+    "displayComplexes" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -411,6 +412,15 @@ conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     St := flatten entries (M*sub(S, FF));
     St	  
     )
+
+displayComplexes = (Rn, FF) -> (
+    R := createRing(Rn, FF);
+    A := sub(transpose matrix{toList(0..#Rn.Complexes-1)}, R);
+    B := matrix(apply(toList(0..#Rn.Complexes-1),
+	    i -> flatten entries((sub(Rn.Complexes#i, R))*(transpose matrix vars R))
+	    ));
+    A | B
+	) 
 
 TEST ///
 restart 
