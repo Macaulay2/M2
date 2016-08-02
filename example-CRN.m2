@@ -4,7 +4,7 @@ needsPackage "ReactionNetworks"
 
 FF = CC
 
-stop = (n,L)-> #L >= 9
+stop = (n,L)-> #L >= 6
 
 CRN = reactionNetwork "A <--> 2B, A+C<-->D, B+E-->A+C, A+C-->D, D-->B+E"
 R = createRing(CRN, FF)
@@ -24,9 +24,8 @@ setUpPolysparse = G -> (
     )
 
 
--- service function that displays numbering of complexes
-
--- display network with correspondence of reaction and complexes
+-- simplify code -- too much stuff!
+-- more examples!
 
 
 
@@ -41,9 +40,18 @@ T' = transpose(CE'|SSE')
 rM' = sub(random(FF^19, FF^24),R')    
 G' = polySystem(rM' * T')
 
+-- phosphorilation 
 
+F = twoSiteModificationF()
+R'' = createRing(F, FF)
+CEforms'' = matrix{conservationEquations(F,FF)}
+CE'' =sub(CEforms'', apply(gens ring CEforms'', x -> x => 1)) - CEforms''
+SSE'' = matrix {steadyStateEquations F}	       	   
+T'' = transpose(CE''|SSE'')
+rM'' = sub(random(FF^10, FF^14),R'')
+G'' = polySystem(rM'' * T'')
 
-
+-- using random points
 setUpPolysparse' = G' -> (
     C' := coefficientRing ring G';
     M' := sub(sub(G'.PolyMap, randomList), C');
@@ -61,16 +69,19 @@ setRandomSeed 0
 elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)
 
 
--- try WNT ???  
--- encounters singular points
--- cannot get random value substitution to work. 
-
 (c0',pre0') = setUpPolysparse' G'
 matrix c0'
 matrix pre0'
 elapsedTime sols' = twoNodes(transpose G'.PolyMap,c0',{pre0'},20)
 
 
+(c0'', pre0'') = setUpPolysparse G''
+elapsedTime sols'' = twoNodes(transpose G''.PolyMap,c0'',{pre0''},5)
+elapsedTime sols'' = graphStrategy(transpose G''.PolyMap,c0'',{pre0''}, 
+    SelectEdgeAndDirection => selectBestEdgeAndDirection, 
+    TargetSolutionCount=>6, 
+    Potential=>potentialAsymptotic, 
+    GraphInitFunction=>flowerGraphInit)
 -- some other examples? simpler than wnt but with more solutions?
 
 
