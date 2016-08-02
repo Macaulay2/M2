@@ -3,7 +3,6 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    n := ambDim P;
    homogVert := promote(rays C, QQ);
-   r := ring homogVert;
    vList := {};
    rList := {};
    latticeTest := true;
@@ -19,8 +18,8 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
       );
    );
    setProperty(P, lattice, latticeTest);
-   vMat := matrixFromVectorList(vList, n, r);
-   rMat := matrixFromVectorList(rList, n, r);
+   vMat := matrixFromVectorList(vList, n, QQ);
+   rMat := matrixFromVectorList(rList, n, QQ);
    setProperty(P, computedRays, rMat);
    setProperty(P, empty, numColumns vMat == 0);
    return vMat

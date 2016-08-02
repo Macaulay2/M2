@@ -59,6 +59,7 @@ load "./tests/core/cone_basics.m2"
 load "./tests/core/polyhedron_basics.m2"
 load "./tests/core/fan_basics.m2"
 load "./tests/core/tests_from_polymake/fvector.m2"
+load "./tests/core/tests_from_polymake/representation.m2"
 load "./tests/core/tests_from_polymake/hilbert_basis.m2"
 load "./tests/core/tests_from_polymake/lattice_points.m2"
 load "./tests/core/tests_from_polymake/normal_fan.m2"
@@ -81,6 +82,22 @@ restart
 loadPackage "Polyhedra"
 check "Polyhedra"
 
+restart
+loadPackage "Polyhedra"
+verticesP = map(QQ^0, QQ^1, 0);
+raysP = map(QQ^0, QQ^0, 0);
+linealityP = map(QQ^0, QQ^0, 0);
+P = convexHull(verticesP,raysP,linealityP);
+ineqlhsPd = map(QQ^1, QQ^0, 0);
+ineqrhsPd = matrix {{1}};
+eqlhsPd = map(QQ^0, QQ^0, 0);
+eqrhsPd = map(QQ^0, QQ^1, 0);
+Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+assert(Pd == P)
+assert(isEmpty Pd === isEmpty P)
+assert(isCompact Pd === isCompact P)
+assert(isLatticePolytope Pd === isLatticePolytope P)
+assert(isNormal Pd === isNormal P)
 
 
 restart

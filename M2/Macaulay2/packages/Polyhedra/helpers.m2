@@ -76,7 +76,12 @@ slice = method()
 slice(Vector, List) := (v, L) -> (
    result := entries v;
    result = result_L;
-   vector result
+   if #result > 0 then vector result
+   else (
+      r := ring v;
+      result := map(r^0, r^1, 0);
+      result_0
+   )
 )
 
 
