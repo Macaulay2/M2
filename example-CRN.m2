@@ -62,7 +62,7 @@ elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)
 
 -- try WNT ???  
 -- encounters singular points
--- cannot get random value substitution to work
+-- cannot get random value substitution to work. 
 
 (c0',pre0') = setUpPolysparse' G'
 
