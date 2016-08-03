@@ -18,6 +18,25 @@ newPackage(
 export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolutions", "certifyDistinctSoln", "frobeniusNormSq"}
 exportMutable {}
 
+-- in: a rational number a, precision parameter epsilon
+-- out: a rational q(a) with q(a) >= sqrt(a) and |q(a) - sqrt(a) | <= epsilon
+-- potentially of use in computing gamma parameter
+sqrtUpper = method()
+sqrtUpper (QQ, QQ) := (a, epsilon) -> (
+    p := (1+a)/2;
+    while abs(p^2 - a) >= epsilon * (p + min(a,1)) do (
+	p = p - (p^2-a)/(p+a)
+	);
+    p
+    )
+sqrtUpper (ZZ, QQ) := (a, epsilon) -> (
+    p := (1+a)/2;
+    while abs(p^2 - a) >= epsilon * (p + min(a,1))  do (
+	p = p - (p^2-a)/(p+a)
+	);
+    p
+    )
+
 absValue = method()
 absValue ZZ := abs
 absValue QQ := abs
