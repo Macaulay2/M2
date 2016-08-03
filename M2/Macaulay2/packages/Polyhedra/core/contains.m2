@@ -67,7 +67,7 @@ contains(Polyhedron,Cone) := (P,C) -> (
       -- checking for input errors
       if ambDim(C) =!= ambDim(P) then error("Polyhedron and Cone must lie in the same ambient space");
       -- Saving the cone 'C' as a polyhedron and using the function on two polyhedra
-      Q := coneToPolyhedron C;
+      Q := polyhedron C;
       contains(P,Q))
 
 

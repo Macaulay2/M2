@@ -84,7 +84,7 @@ convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
       ambientDimension => ambDim P1,
       underlyingCone => posHull(C1, C2)
    };
-   polyhedron result;
+   polyhedron result
 )
    
 --   INPUT : 'L',   a list of Cones, Polyhedra, vertices given by M, 

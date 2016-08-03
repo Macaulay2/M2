@@ -64,5 +64,7 @@ export {
    "honestMaxObjects",  -- maximal cones as honest cones
    "computedComplete",  -- is the fan complete?
    "smoothCones",  -- smooth cones of fan as list of index lists
-   "polytopal" -- Is the fan the normal fan of a polytope?
+   "polytopal", -- Is the fan the normal fan of a polytope?
+
+   "underlyingFan" -- The underlying fan of a polyhedral complex, i.e. intersecting at ht 1 gives complex
 }

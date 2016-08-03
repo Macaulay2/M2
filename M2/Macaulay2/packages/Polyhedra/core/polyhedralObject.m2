@@ -17,10 +17,6 @@ hyperplanes PolyhedralObject := PO -> (
 linSpace = method(TypicalValue => Matrix)
 linSpace PolyhedralObject := P -> linealitySpace P
 
-linealitySpace = method(TypicalValue => Matrix)
-linealitySpace PolyhedralObject := PO -> (
-   getProperty(PO, computedLinealityBasis)
-)
 
 
 
@@ -38,9 +34,6 @@ facets PolyhedralObject := PO -> (
 )
 
 
-rays PolyhedralObject := PO -> (
-   getProperty(PO, computedRays)
-)
 
 -- PURPOSE : Computing the f-vector of a polyhedron
 --   INPUT : 'P'  a Polyhedron or fan
@@ -61,7 +54,8 @@ faces PolyhedralObject := PO -> (
 --  OUTPUT : a List, containing the indices of rays used for the faces
 faces(ZZ,PolyhedralObject) := (k,PO) -> (
    result := faces PO;
-   result#k
+   if result#?k then result#k
+   else {}
 )
 
 

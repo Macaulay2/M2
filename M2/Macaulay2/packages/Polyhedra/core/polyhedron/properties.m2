@@ -9,7 +9,7 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    for i from 0 to numColumns homogVert - 1 do (
       current := homogVert_i;
       if current_0 > 0 then (
-         current = (1/(current_0)) * vectorToQQ(current);
+         current = (1/(current_0)) * current;
          vList = append(vList, slice(current, 1..n));
       ) else if current_0 == 0 then (
          rList = append(rList, slice(current, 1..n));
@@ -253,9 +253,23 @@ compute#Polyhedron#computedFVector Polyhedron := P -> (
    apply(dim P + 1, d -> #faces(dim P - d,P))
 )
 
+
 compute#Polyhedron#computedCompact = method()
 compute#Polyhedron#computedCompact Polyhedron := P -> (
    linealitySpace(P) == 0 and rays(P) == 0
 )
+
+
+compute#Polyhedron#simplicial = method()
+compute#Polyhedron#simplicial Polyhedron := P -> (
+   facetsP := faces(1, P);
+   vertP := vertices P;
+   raysP := rays P;
+   linP := linealitySpace P;
+   facetsP = apply(facetsP, f->(vertP_(f#0) | raysP_(f#1) | linP));
+   all(facetsP, m -> numColumns m == rank m)
+)
+
+
 
 

@@ -63,3 +63,12 @@ getSufficientVertexData Polyhedron := P -> (
       return(vertices P, rays P, linealitySpace P)
    )
 )
+
+facesAsPolyhedra = method();
+facesAsPolyhedra(ZZ, Polyhedron) := (d, P) -> (
+   vertP := vertices P;
+   raysP := rays P;
+   linP := linealitySpace P;
+   result := faces(d, P);
+   apply(result, f -> convexHull(vertP_(f#0), raysP_(f#1), linP))
+)

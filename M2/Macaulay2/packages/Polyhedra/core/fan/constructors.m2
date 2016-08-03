@@ -56,8 +56,26 @@ fan(Matrix, Sequence) := (irays, icones) -> (
 )
 
 fan HashTable := inputProperties -> (
-   constructTypeFromHash(Fan, inputProperties)
+   resultHash := sanitizeFanInput inputProperties;
+   constructTypeFromHash(Fan, resultHash)
 )
+
+
+sanitizeFanInput = method()
+sanitizeFanInput HashTable := given -> (
+   rayProperties := {inputRays, inputLinealityGenerators, computedRays, computedLinealityBasis};
+   remainingProperties := keys given;
+   remainingProperties = select(remainingProperties, p -> all(rayProperties, rp -> rp=!=p));
+   result := apply(remainingProperties, rp -> rp=>given#rp);
+   for rp in rayProperties do (
+      if given#?rp then (
+         primitive := makeRaysPrimitive given#rp;
+         result = append(result, rp=>primitive)
+      )
+   );
+   new HashTable from result
+)
+
 
 --   INPUT : 'C',  a Cone
 --  OUTPUT : The Fan given by 'C' and all of its faces
@@ -67,7 +85,7 @@ fan Cone := C -> (
    n := numColumns raysC;
    mc := {toList (0..(n-1))};
    result := fan(raysC, linealityC, mc);
-   setProperty(result, honestMaxObjects, C);
+   setProperty(result, honestMaxObjects, {C});
    result
 )
 

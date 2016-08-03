@@ -9,131 +9,6 @@
 
 
 
--- PURPOSE : Building the PolyhedralComplex 'PC'
---   INPUT : 'L',  a list of polyhedra in the same ambient space
---  OUTPUT : The polyhedral complex of all Polyhedra in 'L' and all their faces
-polyhedralComplex = method(TypicalValue => PolyhedralComplex)
-polyhedralComplex List := L -> (
-     -- Checking for input errors
-     if L == {} then error("List of polyhedra must not be empty");
-     if (not instance(L#0,Polyhedron)) and (not instance(L#0,PolyhedralComplex)) then error("Input must be a list of polyhedra and polyhedral complexes");
-     -- Starting with the first Polyhedron in the list and extracting its information
-     P := L#0;
-     L = drop(L,1);
-     ad := ambDim(P);
-     local PC;
-     if instance(P,PolyhedralComplex) then PC = P
-     else (
-	  verticesList := vertices P;
-	  -- Collecting the vertices
-	  verticesList = apply(numColumns verticesList, i-> verticesList_{i});
-	  -- Generating the new fan
-	  PC = new PolyhedralComplex from {
-	       "generatingObjects" => set {P},
-	       "ambient dimension" => ad,
-	       "dimension" => dim P,
-	       "number of generating polyhedra" => 1,
-	       "vertices" => set verticesList,
-	       "number of vertices" => #verticesList,
-	       "isPure" => true,
-	       symbol cache => new CacheTable});
-     -- Checking the remaining list for input errors and reducing polyhedral complexes in the list
-     -- to their list of generating polyhedra
-     L = flatten apply(L, e -> if instance(e,Polyhedron) then e else if instance(e,PolyhedralComplex) then maxPolyhedra e else 
-	  error ("Input must be a list of polyhedra and polyhedral complexes"));       
-     -- Adding the remaining polyhedra of the list with 'addPolyhedron'
-     scan(L, e -> PC = addPolyhedron(e,PC));
-     PC);
-
-polyhedralComplex Polyhedron := P -> polyhedralComplex {P}
-
-
-addPolyhedron = method(TypicalValue => PolyhedralComplex)
-addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
-     -- Checking for input errors
-     if ambDim(P) != ambDim(PC) then error("The polyhedra must lie in the same ambient space.");
-     -- Extracting data
-     GP := maxPolyhedra PC;
-     d := dim P;
-     inserted := false;
-     -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GP into two seperate lists
-     GP = partition(Pf -> (dim Pf) >= d,GP);
-     GP = {if GP#?true then GP#true else {},if GP#?false then GP#false else {}};
-     if all(GP#0, Pf ->  (
-	       (a,b) := areCompatible(Pf,P);
-	       -- if 'Pf' and 'P' are not compatible then there is an error
-	       if not a then error("The polyhedra are not compatible");
-	       -- if they are compatible and 'P' is a face of 'Pf' then 'C' does not 
-	       -- need to be added to 'GP'
-	       b != P)) then (
-	  -- otherwise 'Pf' is still a generating Polyhedron and has to be kept and the remaining polyhedra
-	  -- have to be checked
-	  GP = GP#0 | {P} | select(GP#1, Pf -> (
-		    (a,b) := areCompatible(Pf,P);
-		    if not a then error("The polyhedra are not compatible");
-		    -- if one of the remaining polyhedra is a face of 'P' this Polyhedron can be dropped
-		    b != Pf));
-	  inserted = true)     
-     -- Otherwise 'P' was already a face of one of the original polyhedra and does not need to be added
-     else GP = flatten GP;
-     -- If 'P' was added to the Polyhedron as a generating polyhedron then the codim 1 faces on the boundary have to changed to check for 
-     -- completeness
-     verticesList := toList vertices(PC);
-     if inserted then (
-	  -- The vertices of 'P' have to be added
-	  Vm := vertices P;
-	  Vm = apply(numColumns Vm, i -> Vm_{i});
-	  verticesList = unique(verticesList|Vm));
-     -- Saving the polyhedral complex
-     new PolyhedralComplex from {
-	       "generatingObjects" => set GP,
-	       "ambient dimension" => ambDim(P),
-	       "dimension" => dim(GP#0),
-	       "number of generating polyhedra" => #GP,
-	       "vertices" => set verticesList,
-	       "number of vertices" => #verticesList,
-	       "isPure" => dim first GP == dim last GP,
-	       symbol cache => new CacheTable})
-     
-     
---   INPUT : '(L,PC)',  where 'L' is a list of Polyhedra in the same ambient space as the PolyhedralComplex 'PC'
---  OUTPUT : The original PolyhedralComplex 'PC' together with polyhedra in the list 'L'
-addPolyhedron (List,PolyhedralComplex) := (L,PC) -> (     
-    -- Checking for input errors
-    if L == {} then error("The list must not be empty");
-    if (not instance(L#0,Polyhedron)) and (not instance(L#0,PolyhedralComplex)) then error("The list may only contain polyhedra and polyhedral complexes");
-    if #L == 1 then addPolyhedron(L#0,PC) else addPolyhedron(drop(L,1),addPolyhedron(L#0,PC)))
-
-
---   INPUT : '(PC1,PC2)',  where 'PC1' is a PolyhedralComplex in the same ambient space as the PolyhedralComplex 'PC2'
---  OUTPUT : The original fan 'PC2' together with cones of the fan 'PC1'
-addPolyhedron (PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> (
-     -- Checking for input errors
-     if ambDim PC2 != ambDim PC1 then error("The polyhedral complexes must be in the same ambient space");
-     L := maxCones PC1;
-     addCone(L,PC2))
-     
-Cone ? Cone := (C1,C2) -> (
-    if C1 == C2 then symbol == else (
-	if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
-	    if dim C1 != dim C2 then dim C1 ? dim C2 else (
-		R1 := rays C1;
-		R2 := rays C2;
-		if R1 != R2 then (
-		    R1 = apply(numColumns R1, i -> R1_{i});
-		    R2 = apply(numColumns R2, i -> R2_{i});
-		    (a,b) := (set R1,set R2); 
-		    r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
-		    if a#?r then symbol > else symbol <)
-		else (
-		    R1 = linSpace C1;
-		    R2 = linSpace C2;
-		    R1 = apply(numColumns R1, i -> R1_{i});
-		    R2 = apply(numColumns R2, i -> R2_{i});
-		    (c,d) := (set R1,set R2);
-		    l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
-		    if c#?l then symbol > else symbol <)))))
 
 areCompatible(Cone,Cone) := (C1,C2) -> (
      if ambDim(C1) == ambDim(C2) then (
@@ -308,20 +183,6 @@ objectiveVector (Polyhedron,Polyhedron) := (P,Q) -> (
 
 
 
-skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
-     -- Checking for input errors
-     if n < 0 or dim PC < n then error("The integer must be between 0 and dim F");
-     GP := polyhedra(n,PC);
-     verticesList := unique flatten apply(GP, P -> (Vm := vertices P; apply(numColumns Vm, i -> Vm_{i})));
-     new PolyhedralComplex from {
-	       "generatingObjects" => set GP,
-	       "ambient dimension" => ambDim PC,
-	       "dimension" => n,
-	       "number of generating polyhedra" => #GP,
-	       "vertices" => set verticesList,
-	       "number of vertices" => #verticesList,
-	       "isPure" => true,
-	       symbol cache => new CacheTable});
      
 --   INPUT : '(p,C)',  where 'p' is point given as a matrix and
 --     	    	       'C' is a Cone
@@ -349,17 +210,6 @@ tailCone Polyhedron := P -> posHull(rays(P),linSpace(P))
 
 
 
--- PURPOSE : Computing the face fan of a polytope
---   INPUT : 'P',  a Polyhedron, containing the origin in its interior
---  OUTPUT : The Fan generated by the cones over all facets of the polyhedron
-faceFan = method(TypicalValue => Fan)
-faceFan Polyhedron := P -> (
-     -- Checking for input errors
-     if not inInterior(map(QQ^(ambDim P),QQ^1,0),P) then  error("The origin must be an interior point.");
-     F := fan apply(faces(1,P), posHull);
-     F.cache.isPolytopal = true;
-     F.cache.polytope = polar P;
-     F)
    
    
 -- PURPOSE : Computing the image fan of a cone

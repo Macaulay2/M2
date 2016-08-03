@@ -20,22 +20,22 @@ maxCones Fan := F -> maxObjects F
 --  OUTPUT : A fan, which is the stellar subdivision
 stellarSubdivision = method()
 stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
-     -- Checking for input errors
-     if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
-     divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
-     L := flatten apply(maxCones F, C -> if contains(C,r) then divider(C,r) else {C});
-     L = sort select(L, l -> all(L, e -> not contains(e,l) or e == l));
-     n := dim L#0;
-     R := unique(rays F|{promote(r,QQ)});
-     new Fan from {
-	  "generatingObjects" => set L,
-	  "ambient dimension" => ambDim L#0,
-	  "dimension" => n,
-	  "number of generating cones" => #L,
-	  "rays" => set R,
-	  "number of rays" => #R,
-	  "isPure" => dim L#0 == dim last L,
-	  symbol cache => new CacheTable})
+   -- Checking for input errors
+   if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
+   divider := (C,r) -> (
+      if dim C != 1 then (
+         raysC := rays C;
+         linC := linealitySpace C;
+         flatten apply(faces(1,C), f -> (
+            conef := posHull(raysC_f, linC); 
+            if not contains(conef,r) then posHull {conef,r} else divider(conef,r)) 
+         )
+      )
+      else {C}
+   );
+   L := flatten apply(getProperty(F, honestMaxObjects), C -> if contains(C,r) then divider(C,r) else {C});
+   fan L
+)
 
 
 

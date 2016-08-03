@@ -53,17 +53,17 @@ incompPolyhedra List := L -> (
 --   INPUT : '(P,PC)',  a Polyhedron and a PolyhedralComplex
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of 'P' with the polyhedra of 
 --                 	'PC' that are not compatible
-incompPolyhedra(Polyhedron,PolyhedralComplex) := (P,PC) -> select(apply(maxPolyhedra PC, p -> (P,p)), e -> not commonFace e)
+incompPolyhedra(Polyhedron,PolyhedralComplex) := (P,PC) -> select(apply(getProperty(PC, honestMaxObjects), p -> (P,p)), e -> not commonFace e)
 
 
 --   INPUT : '(PC,P)',  a PolyhedralComplex and a Polyhedron
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of 'P' with the polyhedra of 
 --                 	'PC' that are not compatible
-incompPolyhedra(PolyhedralComplex,Polyhedron) := (PC,P) -> select(apply(maxPolyhedra PC, p -> (p,P)), e -> not commonFace e)
+incompPolyhedra(PolyhedralComplex,Polyhedron) := (PC,P) -> select(apply(getProperty(PC, honestMaxObjects), p -> (p,P)), e -> not commonFace e)
 
 
 --   INPUT : '(PC1,PC2)',  two PolyhedralComplexes
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of polyhedra of 'PC1' and polyhedra of 
 --                 	'PC2' that are not compatible
-incompPolyhedra(PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> flatten apply(maxPolyhedra PC1, P1 -> flatten apply(maxPolyhedra PC2, P2 -> if not commonFace(P1,P2) then (P1,P2) else {}))
+incompPolyhedra(PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> flatten apply(getProperty(PC1, honestMaxObjects), P1 -> flatten apply(getProperty(PC2, honestMaxObjects), P2 -> if not commonFace(P1,P2) then (P1,P2) else {}))
      

@@ -40,12 +40,12 @@ directProduct (Cone,Cone) := (C1,C2) -> (
 
 --   INPUT : '(C,P)',  a cone and a polyhedron
 --  OUTPUT : A polyhedron, the direct product
-directProduct (Cone,Polyhedron) := (C,P) -> directProduct(coneToPolyhedron C,P)
+directProduct (Cone,Polyhedron) := (C,P) -> directProduct(polyhedron C,P)
 
 
 --   INPUT : '(P,C)',  a polyhedron and a cone
 --  OUTPUT : A polyhedron, the direct product
-directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
+directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,polyhedron C)
 
 
 --   INPUT : '(F1,F2)',  two fans
@@ -53,7 +53,7 @@ directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
 directProduct (Fan,Fan) := (F1,F2) -> (
 -- computing the direct products of all pairs of generating cones
    resultRays := rays F1 | map(ZZ^(numRows rays F1), ZZ^(numColumns rays F2), 0); 
-   resultRays = resultRays || (map(ZZ^(numColumns rays F1), ZZ^(numRows rays F2), 0) | rays F2);
+   resultRays = resultRays || (map(ZZ^(numRows rays F2), ZZ^(numColumns rays F1), 0) | rays F2);
    mc1 := maxCones F1;
    mc2 := maxCones F2;
    shift := numColumns rays F1;

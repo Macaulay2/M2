@@ -79,7 +79,7 @@ slice(Vector, List) := (v, L) -> (
    if #result > 0 then vector result
    else (
       r := ring v;
-      result := map(r^0, r^1, 0);
+      result = map(r^0, r^1, 0);
       result_0
    )
 )

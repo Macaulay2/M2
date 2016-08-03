@@ -8,24 +8,17 @@ saveSession in own file?
 polar is now defined via dual of underlyingCone. Will this fail for having linealitySpace?
 
 generate polymake tests for:
-*  hilbertBasis
-*  minkowskiSum (this used to ignore the lineality space completely?)
-*  normalFan
+*  hilbertBasis (DONE)
+*  minkowskiSum (this used to ignore the lineality space completely?) (DONE)
+*  normalFan (DONE)
 *  faceFan
-*  toric variety things
 
 Thoughts:
-*  The faceBuilders should be completely removed.
-*  The newMinkSum method should be removed.
-*  The latticePoints method should be replaced by something better.
 *  Sanitize input matrices at some point?
-*  addCone should be completely be removed.
 *  There are too many intersection methods.
 *  Completeness of fans is probably very expensive to check at the moment.
 *  What is a better naming scheme for the properties? Should we adapt the
    polymake scheme?
-*  minkowSki sum potentially checks equality of polyhedra? This seems super
-   expensive.
 
 Packages that use Polyhedra:
 [lars@sunfish packages]$ grep -R "Polyhedra" . | grep needsPackage
@@ -45,3 +38,10 @@ Packages that should go away:
 Undocumented methods, that have been removed:
 *  newMinkSum: No reference for algorithm given and too long to fix.
 *  dualCayley, dualCayleyFace: Not documented at all, never tested.
+
+Methods without tests
+*  stellarSubdivision
+*  cellDecomposition
+*  faceFan
+*  polarFace
+*  Everything concerning PolyhedralComplex

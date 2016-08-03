@@ -362,3 +362,64 @@ compute#Fan#polytopal Fan := F -> (
    );
    return false
 )
+
+
+compute#Fan#computedPolytope = method()
+compute#Fan#computedPolytope Fan := F -> (
+   if not isPolytopal F then error("Fan is not polytopal")
+   else polytope F
+)
+
+
+-- PURPOSE : Computes the mixed volume of n polytopes in n-space
+--   INPUT : 'L'  a list of n polytopes in n-space
+--  OUTPUT : the mixed volume
+-- COMMENT : Note that at the moment the input is NOT checked!
+mixedVolume = method()
+mixedVolume List := L -> (
+   n := #L;
+   if not all(L, isCompact) then error("Polyhedra must be compact.");
+   EdgeList := apply(L, 
+      P -> (
+         vertP := vertices P;
+         apply(faces(dim P -1,P), f -> vertP_(f#0))
+      )
+   );
+   liftings := apply(n, i -> map(ZZ^n,ZZ^n,1)||matrix{apply(n, j -> random 25)});
+   Qlist := apply(n, i -> affineImage(liftings#i,L#i));
+   local Qsum;
+   Qsums := apply(n, i -> if i == 0 then Qsum = Qlist#0 else Qsum = Qsum + Qlist#i);
+   mV := 0;
+   EdgeList = apply(n, i -> apply(EdgeList#i, e -> (e,(liftings#i)*e)));
+   E1 := EdgeList#0;
+   EdgeList = drop(EdgeList,1);
+   center := matrix{{1/2},{1/2}};
+   edgeTuple := {};
+   k := 0;
+   selectRecursion := (E1,edgeTuple,EdgeList,mV,Qsums,Qlist,k) -> (
+      for e1 in E1 do (
+         Elocal := EdgeList;
+         if Elocal == {} then mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
+         else (
+            Elocal = for i from 0 to #Elocal-1 list (
+               P := Qsums#k + Qlist#(k+i+1);
+               hyperplanesTmp := halfspaces(P);
+               hyperplanesTmp = for j from 0 to numRows(hyperplanesTmp#0)-1 list 
+                  if (hyperplanesTmp#0)_(j,n) < 0 then ((hyperplanesTmp#0)^{j},(hyperplanesTmp#1)^{j}) 
+                  else continue;
+               returnE := select(Elocal#i, 
+                  e -> (
+                     p := (sum apply(edgeTuple|{e1}, et -> et#1 * center)) + (e#1 * center);
+                     any(hyperplanesTmp, pair -> (pair#0)*p - pair#1 == 0)
+                  )
+               );
+               --if returnE == {} then break{};
+               returnE
+            );
+            mV = selectRecursion(Elocal#0,edgeTuple|{e1},drop(Elocal,1),mV,Qsums,Qlist,k+1)
+         )
+      );
+      mV
+   );
+   selectRecursion(E1,edgeTuple,EdgeList,mV,Qsums,Qlist,k)
+)
