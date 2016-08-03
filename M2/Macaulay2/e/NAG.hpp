@@ -35,7 +35,7 @@ public:
     Weight w = weight(a);
     int p = lookup(a);
     if (p!=-1) return p;
-    if (mMap.find(w)==mMap.end()) return -1; 
+    if (mMap.find(w)!=mMap.end()) return -1; 
     int ret = static_cast<int>(mPoints.size());
     mPoints.push_back(a);
     mMap.insert(std::pair<Weight,int>(w,ret));
