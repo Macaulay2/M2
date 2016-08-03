@@ -21,6 +21,16 @@ public:
   using RealVector = std::vector<double>;
   using Weight = double;
   PointArray(Weight epsilon, const RealVector& weights) : mEpsilon(epsilon), mWeights(weights) {}
+  PointArray(Weight epsilon, int n) : mEpsilon(epsilon) {
+    double s = 0;
+    for(int i=0; i<n; i++) {
+      double r = rand();
+      s +=r;
+      mWeights.push_back(r);
+    }
+    for(int i=0; i<n; i++)
+      mWeights[i] /= s;
+  }
   int lookup_or_append(const RealVector& a) {
     Weight w = weight(a);
     int p = lookup(a);

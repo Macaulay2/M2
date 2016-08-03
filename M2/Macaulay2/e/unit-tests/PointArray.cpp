@@ -13,4 +13,5 @@
 TEST(PointArray, constructor)
 {
   PointArray p(0.001,{0.3,0.7});
+  PointArray q(0.001,10);
 }
