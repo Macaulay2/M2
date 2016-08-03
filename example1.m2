@@ -59,7 +59,7 @@ for i from 0 to 100  do (
     setRandomSeed i;
     x = append(x,(graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      TargetSolutionCount=>70, Potential=>potentialAsymptotic, 
-     GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,4)))#1))
+     GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,5)))#1))
 "firsttwonodesexperiment" << concatenate between("\n", apply(x, n -> toExternalString n)) << close
 
 -- to generate plot in R: hist(as.numeric(scan("firsttwonodesexperiment")))
