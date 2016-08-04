@@ -1415,7 +1415,7 @@ tutorial = x -> (
      x = apply(x, line -> if mat("^--$",line) then PARA{} else line);
      x = sublists(x,
 	  line -> class line === String and match("^--",line),
-	  sublist -> TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))),
+	  sublist -> PARA TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))),
 	  identity);
      x = sublists(x,
 	  line -> class line === String,
