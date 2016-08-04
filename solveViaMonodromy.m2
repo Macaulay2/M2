@@ -34,9 +34,10 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     npaths := 0;    
     while not stoppingCriterion(same,node1.PartialSols) do (
         (e, from1to2) := selectEdgeAndDirection(HG);
-        << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
+        {*  << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
         << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
         << "Direction is " << from1to2 << endl;
+	*}
         trackedPaths := trackEdge(e, from1to2);
         npaths = npaths + trackedPaths;
         << "  node1: " << #(e.Node1.PartialSols) << endl;
@@ -167,12 +168,14 @@ twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     E := apply(nedges, i -> addEdge(HG, node1, node2));
     while not stoppingCriterion(same,node1.PartialSols) do (
 	(e, from1to2) := selectEdgeAndDirection(HG);
+	{*
 	<< "Correspondences are " << (keys e.Correspondence12 , e.Potential12) << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
 	<< "Direction is " << from1to2 << endl;
+	*}
 	trackedPaths := trackEdge(e, from1to2);
         npaths = npaths + trackedPaths;
-        << "  node1: " << #(node1.PartialSols) << endl;
-        << "  node2: " << #(node2.PartialSols) << endl;    	
+        << "  node1: " << length node1.PartialSols << endl;
+        << "  node2: " << length node2.PartialSols << endl;    	
         << "trackedPaths " << trackedPaths << endl; 
         if trackedPaths == 0 then same = same + 1 else same = 0; 
     );

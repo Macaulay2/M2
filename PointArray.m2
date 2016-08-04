@@ -16,43 +16,73 @@ position        -- find a poisiton of a point in the array (null = not there)
 !!!The goal is to make searching the array fast, 
 but for now it works only in linear time!!!
 *}
+
+FAST = version#"VERSION" === "1.9.1.1"
+if FAST then debug Core
+
 needsPackage "NAGtypes"
 PointArray = new Type of MutableHashTable
 pointArray = method()
 pointArray List := B -> (
     A := new PointArray from {};
+    if FAST then A.raw = null;
     appendPoints(A,B);
     A	 
     ) 
 net PointArray := P -> net values P
 
+length PointArray := P -> if FAST then #P - 1 else #P
+
+indices PointArray := P -> toList(0..length(P)-1) 
+
 appendPoint = method()
-appendPoint(PointArray,Point) := (A,b) -> A#(#A) = b
+appendPoint(PointArray,Point) := (A,b) -> (
+    if FAST then (
+	if A.raw === null then A.raw = rawPointArray(1e-5,#coordinates b);
+	if rawPointArrayLookupOrAppend(A.raw,raw mutableMatrix transpose matrix b,0) =!= length A 
+    	then error "can't append"
+	);
+    A#(length A) = b
+    )
 appendPoints = method()
 appendPoints(PointArray,List) := (A,B) -> for b in B do appendPoint(A,b)
 
 member(Point,PointArray) := (b,A) -> position(b,A) =!= null
 
-position(Point,PointArray) := o -> (b,A) -> position(keys A, k->areEqual(A#k,b))
-
+position(Point,PointArray) := o -> (b,A) -> 
+    if FAST then (
+	if A.raw === null then return null;
+	ret := rawPointArrayLookup(A.raw,raw mutableMatrix transpose matrix b,0);
+	if ret == -1 then null else ret
+	) else position(keys A, k->areEqual(A#k,b))
+    
 PointArray_List := (A,inds) -> apply(inds,i->A#i)
 
 PointArray_ZZ := (A,i) -> A#i
 
 --This is inefficient, but it works for now.
 positions(PointArray, Function) := (A, f) -> (
-  select(keys A,k->f(A#k))
-);
+    error "this function is probably not needed...";
+    select(keys A,k->f(A#k))
+    );
 
 TEST /// 
     restart
+    path = {"~/R/polysparse/code/"} | path
     needs "PointArray.m2"
-    A = {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}}} /point // pointArray
-    b = point {{1,3.0001}}
+    p = point {{1_CC,2_CC}}
+    A = pointArray {p}
+    assert(position(p,A)==0)    
+    assert(try appendPoint(A,p) else true)
+    A = {{{1,3_CC}},{{2_CC,5_CC}},{{0_CC,3_CC}},{{1+ii,3}}} /point // pointArray
+    b = point {{1,3.000001_CC}}
     c = point {{2+1e-7*ii,5.000001}}
     member(b,A)
     member(c,A)
     position(b,A)    
     position(c,A)
     A_{1,2}
+    p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
+    A = pointArray {p}
+    rawPointArrayLookupOrAppend(A.raw,raw mutableMatrix transpose matrix p,0)
 ///

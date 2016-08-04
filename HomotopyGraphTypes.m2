@@ -86,8 +86,8 @@ potentialLowerBound = (e,from1to2) -> (
 	correspondence = e.Correspondence21;
 	correspondence' = e.Correspondence12;
 	);
-    n1 := #(keys head.PartialSols - set keys correspondence);
-    n2 := #(keys tail.PartialSols - set keys correspondence');
+    n1 := #(indices head.PartialSols - set keys correspondence);
+    n2 := #(indices tail.PartialSols - set keys correspondence');
     max(n1-n2, 0)
     ) 
 
@@ -104,8 +104,8 @@ potentialAsymptotic = (e,from1to2) -> (
 	correspondence = e.Correspondence21;
 	correspondence' = e.Correspondence12;
 	);
-    a := #(keys head.PartialSols - set keys correspondence);
-    b := #(keys tail.PartialSols - set keys correspondence');
+    a := #(indices head.PartialSols - set keys correspondence);
+    b := #(indices tail.PartialSols - set keys correspondence');
     d := (e.Graph).TargetSolutionCount;
     c := length keys correspondence;
 --    << "# of sols to track" << a << endl;
@@ -161,10 +161,10 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
 	(gammaHead, gammaTail) =  (e.gamma2, e.gamma1);
 	correspondence = e.Correspondence21;
 	);
-    untrackedInds := keys head.PartialSols - set keys correspondence;
+    untrackedInds := indices head.PartialSols - set keys correspondence;
     newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * head.System), polySystem(gammaTail * tail.System), (head.PartialSols)_(untrackedInds))
     else {};
-    n := #tail.PartialSols;
+    n := length tail.PartialSols;
     scan(#untrackedInds, i->(
 	    s := newSols#i;
 	    if status s =!= Regular then error "a singular point encountered"; 
