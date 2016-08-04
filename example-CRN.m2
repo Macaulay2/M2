@@ -102,7 +102,7 @@ setRandomSeed 0
 elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)
 
 (c0', pre0') = setUpPolysparse G'
-elapsedTime sols' = twoNodes(transpose G'.PolyMap,c0',{pre0'},20)
+elapsedTime sols' = twoNodes(transpose G'.PolyMap,c0',{pre0'},5)
 
 W = wnt()
 R = createRing(W, FF)

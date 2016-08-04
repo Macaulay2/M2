@@ -1,6 +1,6 @@
 restart
-needs "code/solveViaMonodromy.m2"
-needs "examples/cyclic.m2"
+needs (currentFileDirectory|"../code/solveViaMonodromy.m2")
+needs (currentFileDirectory|"cyclic.m2")
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
 stop = (n,L)-> #L >= 70
