@@ -45,7 +45,7 @@ load "example1.m2"
 
 setRandomSeed 0
 elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
-     TargetSolutionCount=>70, Potential=>potentialAsymptotic, 
+     TargetSolutionCount=>300, Potential=>potentialAsymptotic, 
      GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,4))
 
 
