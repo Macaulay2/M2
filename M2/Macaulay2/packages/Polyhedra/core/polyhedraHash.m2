@@ -7,6 +7,13 @@ globalAssignment PolyhedraHash
 -- interfacing polymake much easier.
 compute = new MutableHashTable
 
+alternative = new MutableHashTable
+
+fourierMotzkinWrapper = method()
+fourierMotzkinWrapper(Matrix, Matrix) := (A, B) -> (
+   if alternative#?fourierMotzkin then alternative#fourierMotzkin(A, B)
+   else fourierMotzkin(A, B)
+)
 
 
 --   INPUT : 'P'  a Polyhedron 

@@ -120,13 +120,13 @@ orthogonalComplement Matrix := M -> (
 
 computeRaysFromFacetData = method()
 computeRaysFromFacetData(Matrix, Matrix) := (facetData, hyperplaneData) -> (
-   fourierMotzkin(transpose(-facetData), transpose(hyperplaneData))
+   fourierMotzkinWrapper(transpose(-facetData), transpose(hyperplaneData))
 )
 
 
 computeFacetsFromRayData = method()
 computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
-   (A, B) := fourierMotzkin(rayData, linealityData);
+   (A, B) := fourierMotzkinWrapper(rayData, linealityData);
    (transpose(-A), transpose(B))
 )
 
