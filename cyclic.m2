@@ -1,6 +1,7 @@
 needs (currentFileDirectory|"../code/solveViaMonodromy.m2")
 setRandomSeed 0
 needsPackage "ExampleIdeals"
+n=6
 S = gens cyclicRoots(n,CC)
 R = ring S
 polys = flatten entries S
@@ -23,7 +24,6 @@ pre0 = point{toList(n:1_CC)}
 end ------------------------------------------------
 
 restart
-n = 9
 load "cyclic.m2" 
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
