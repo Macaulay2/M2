@@ -67,6 +67,8 @@ G = createPolySystem(CRN, FF)
 F = twoSiteModificationF()
 G' = createPolySystem(F, FF)
 
+C = clusterModelCellDeath()
+GC = createPolySystem(C, FF)
 
 
 -- example below is work in progress
@@ -112,14 +114,16 @@ F = createPolySystem(W, FF, L)
 elapsedTime sols = twoNodes(transpose F.PolyMap,c0,{pre0},5)
 
 
+(c0, pre0) = setUpPolysparse GC
+elapsedTime sols = twoNodes(transpose GC.PolyMap,c0,{pre0},5)
+
+
+
+
 -- some other examples? simpler than wnt but with more solutions?
 
 
 (c01,pre01) = setUpPolysparse G1
 elapsedTime sols = twoNodes(transpose G1.PolyMap,c01,{pre01},5)
-
-
-
-
 
 
