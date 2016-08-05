@@ -75,6 +75,9 @@ load "./tests/legacy_tests_working.m2"
 -- Failing tests
 -- load "./tests/failing.m2"
 
+load "./alternatives/lrs.m2"
+-- alternative#fourierMotzkin = lrsZZ
+
 -- Documentation
 load "./legacy_doc.m2"
 
@@ -87,7 +90,40 @@ check "Polyhedra"
 
 restart
 loadPackage "Polyhedra"
+-- debugLevel = 3
+C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
+F = fan {C,C1,C2,C3};
+C = posHull matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
+C1 = posHull matrix {{-1,0,0},{0,1,0},{0,0,-1}};
+C2 = posHull matrix {{1,0,0},{0,-1,0},{0,0,-1}};
+C3 = posHull matrix {{-1,0,0},{0,-1,0},{0,0,1}};
+F = addCone({C,C1,C2,C3},F);
+A = isPolytopal F
+B = id_(ZZ^12)
+P = intersection(B, A)
+rays P
+
+
+assert isPolytopal F
+assert(normalFan polytope F == F)
+
+
+P = hypercube 3;
+w = matrix {{1},{2},{1}};
+F1 = convexHull matrix {{1},{1},{1}};
+F2 = convexHull matrix {{-1},{-1},{-1}};
+assert(F1 == maxFace(w,P))
+assert(F2 == minFace(w,P))
+C = posHull matrix {{2,-1,1},{-1,1,1},{0,-1,1}};
+C1 = posHull matrix {{-1,2},{1,-1},{-1,0}};
+assert(C1 == minFace(w,C))
+
+
 P = hypercube 3
+vertices P
 f = first faces(1,P)
 f = convexHull (vertices P)_(f#0)
 fv = polarFace f

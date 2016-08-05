@@ -11,7 +11,11 @@ alternative = new MutableHashTable
 
 fourierMotzkinWrapper = method()
 fourierMotzkinWrapper(Matrix, Matrix) := (A, B) -> (
-   if alternative#?fourierMotzkin then alternative#fourierMotzkin(A, B)
+   if debugLevel > 2 then << "Executing fourierMotzkin." << endl;
+   if alternative#?fourierMotzkin then (
+      if debugLevel > 2 then << "Using alternative fourierMotzkin." << endl;
+      alternative#fourierMotzkin(A, B)
+   )
    else fourierMotzkin(A, B)
 )
 
@@ -62,7 +66,7 @@ getProperty = method()
 getProperty(PolyhedraHash, Symbol) := (PH, property) -> (
    accessProperty := (cacheValue property)(X -> (
       type := class X;
-      << "Computing property " << property << " of " << type << endl;
+      if debugLevel > 3 then << "Computing property " << property << " of " << type << endl;
       if compute#type#?property then (
          return compute#type#property X
       ) else (
@@ -104,7 +108,7 @@ constructTypeFromHash(Type, HashTable) := (PType, H) -> (
       symbol cache => new CacheTable
    };
    for key in keys H do (
-      << "Setting property " << key << endl;
+      if debugLevel > 3 then << "Setting property " << key << endl;
       setProperty(result, key, H#key);
    );
    result

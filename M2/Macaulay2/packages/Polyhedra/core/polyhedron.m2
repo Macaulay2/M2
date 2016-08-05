@@ -155,29 +155,31 @@ interiorPoint Polyhedron := P -> (
 --     	     	       Polyhedron 'P'
 --  OUTPUT : a Polyhedron, the face of 'P' where 'v' attains its minimum
 minFace (Matrix,Polyhedron) := (v,P) -> (
-     -- Checking for input errors
-     if numColumns v =!= 1 or numRows v =!= ambDim(P) then error("The vector must lie in the same space as the polyhedron");
-     C := dualCone tailCone P;
-     V := vertices P;
-     R := rays P;
-     LS := linSpace P;
-     -- The weight must lie in the dual of the tailcone of the polyhedron, otherwise there is 
-     -- no minimum and the result is the empty polyhedron
-     if contains(C,v) then (
-	  -- Compute the values of 'v' on the vertices of 'V'
-	  Vind := flatten entries ((transpose v)*V);
-	  -- Take the minimal value(s)
-	  Vmin := min Vind;
-	  Vind = positions(Vind, e -> e == Vmin);
-	  -- If 'v' is in the interior of the dual tailCone then the face is exactly spanned 
-	  -- by these vertices
-	  if inInterior(v,C) then convexHull(V_Vind,LS | -LS)
-	  else (
-	       -- Otherwise, one has to add the rays of the tail cone that are orthogonal to 'v'
-	       Rind := flatten entries ((transpose v)*R);
-	       Rind = positions(Rind, e -> e == 0);
-	       convexHull(V_Vind,R_Rind | LS | -LS)))
-     else emptyPolyhedron ambDim P)
+   -- Checking for input errors
+   if numColumns v =!= 1 or numRows v =!= ambDim(P) then error("The vector must lie in the same space as the polyhedron");
+   C := dualCone tailCone P;
+   V := vertices P;
+   R := rays P;
+   LS := linSpace P;
+   -- The weight must lie in the dual of the tailcone of the polyhedron, otherwise there is 
+   -- no minimum and the result is the empty polyhedron
+   if contains(C,v) then (
+      -- Compute the values of 'v' on the vertices of 'V'
+      Vind := flatten entries ((transpose v)*V);
+      -- Take the minimal value(s)
+      Vmin := min Vind;
+      Vind = positions(Vind, e -> e == Vmin);
+      -- If 'v' is in the interior of the dual tailCone then the face is exactly spanned 
+      -- by these vertices
+      if inInterior(v,C) then convexHull(V_Vind,LS | -LS)
+      else (
+         -- Otherwise, one has to add the rays of the tail cone that are orthogonal to 'v'
+         Rind := flatten entries ((transpose v)*R);
+         Rind = positions(Rind, e -> e == 0);
+         convexHull(V_Vind,R_Rind | LS | -LS)
+      )
+   ) else emptyPolyhedron ambDim P
+)
 
 
 -- PURPOSE : Computing the face of a Polyhedron where a given weight attains its maximum
