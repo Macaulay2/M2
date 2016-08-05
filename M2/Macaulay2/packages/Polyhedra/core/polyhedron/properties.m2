@@ -9,6 +9,7 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    for i from 0 to numColumns homogVert - 1 do (
       current := homogVert_i;
       if current_0 > 0 then (
+         if current_0 > 1 then latticeTest = false;
          current = (1/(current_0)) * current;
          vList = append(vList, slice(current, 1..n));
       ) else if current_0 == 0 then (
@@ -25,15 +26,6 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    return vMat
 )
 
-vectorToQQ = method()
-vectorToQQ Vector := v -> (
-   r := ring v;
-   if r === QQ then return v
-   else (
-      newEntries := apply(entries v, e -> promote(e, QQ));
-      return vector newEntries
-   )
-)
 
 
 compute#Polyhedron#empty = method()

@@ -423,3 +423,25 @@ mixedVolume List := L -> (
    );
    selectRecursion(E1,edgeTuple,EdgeList,mV,Qsums,Qlist,k)
 )
+
+
+Cone ? Cone := (C1,C2) -> (
+    if C1 == C2 then symbol == else (
+	if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
+	    if dim C1 != dim C2 then dim C1 ? dim C2 else (
+		R1 := rays C1;
+		R2 := rays C2;
+		if R1 != R2 then (
+		    R1 = apply(numColumns R1, i -> R1_{i});
+		    R2 = apply(numColumns R2, i -> R2_{i});
+		    (a,b) := (set R1,set R2); 
+		    r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
+		    if a#?r then symbol > else symbol <)
+		else (
+		    R1 = linSpace C1;
+		    R2 = linSpace C2;
+		    R1 = apply(numColumns R1, i -> R1_{i});
+		    R2 = apply(numColumns R2, i -> R2_{i});
+		    (c,d) := (set R1,set R2);
+		    l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
+		    if c#?l then symbol > else symbol <)))))
