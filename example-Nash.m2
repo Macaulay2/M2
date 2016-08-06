@@ -113,6 +113,17 @@ pre0 = point{apply(SubList, i -> i#1)}
 (c0,pre0)
 
 elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)   
+J = first sols
+E = J.Edges
+for e in E do (
+    print peek e.Correspondence12;
+    print peek e.Correspondence21;
+    )
+V = J.Vertices
+for v in V do (
+    print peek v.PartialSols;
+    )
+
 
 
 
