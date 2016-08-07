@@ -375,6 +375,7 @@ compute#Fan#computedPolytope Fan := F -> (
 --   INPUT : 'L'  a list of n polytopes in n-space
 --  OUTPUT : the mixed volume
 -- COMMENT : Note that at the moment the input is NOT checked!
+--           The name of this algorithm is the "Lift-Prune algorithm"
 mixedVolume = method()
 mixedVolume List := L -> (
    n := #L;
@@ -396,17 +397,17 @@ mixedVolume List := L -> (
    center := matrix{{1/2},{1/2}};
    edgeTuple := {};
    k := 0;
-   selectRecursion := (E1,edgeTuple,EdgeList,mV,Qsums,Qlist,k) -> (
-      for e1 in E1 do (
+   selectRecursion := (currentEdges,edgeTuple,EdgeList,mV,Qsums,Qlist,k) -> (
+      if k > n then << "Alarm!!! Forgot to do something." << endl;
+      for e1 in currentEdges do (
          Elocal := EdgeList;
-         if Elocal == {} then mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
+         if Elocal == {} then (
+            mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
+         )
          else (
             Elocal = for i from 0 to #Elocal-1 list (
                P := Qsums#k + Qlist#(k+i+1);
-               hyperplanesTmp := halfspaces(P);
-               hyperplanesTmp = for j from 0 to numRows(hyperplanesTmp#0)-1 list 
-                  if (hyperplanesTmp#0)_(j,n) < 0 then ((hyperplanesTmp#0)^{j},(hyperplanesTmp#1)^{j}) 
-                  else continue;
+               hyperplanesTmp := getLowerEnvelopeHyperplanes P;
                returnE := select(Elocal#i, 
                   e -> (
                      p := (sum apply(edgeTuple|{e1}, et -> et#1 * center)) + (e#1 * center);
@@ -422,6 +423,18 @@ mixedVolume List := L -> (
       mV
    );
    selectRecursion(E1,edgeTuple,EdgeList,mV,Qsums,Qlist,k)
+)
+
+getLowerEnvelopeHyperplanes = method();
+getLowerEnvelopeHyperplanes Polyhedron := P -> (
+   n := ambDim P - 1;
+   F := facets P;
+   H := hyperplanes P;
+   FH := (F#0 || H#0 || -H#0, F#1 || H#1 || -H#1);
+   result := for j from 0 to numRows(FH#0)-1 list 
+      if (FH#0)_(j,n) < 0 then ((FH#0)^{j},(FH#1)^{j}) 
+      else continue;
+   result
 )
 
 

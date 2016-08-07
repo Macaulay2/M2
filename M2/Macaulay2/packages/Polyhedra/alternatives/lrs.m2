@@ -73,7 +73,7 @@ readLrsInput String := (filename) -> (
       else A = map(ZZ^(m-1), ZZ^0, 0);
       (A, map(ZZ^(numRows A),ZZ^0,0))
    ) else (
-      lin := apply(drop(select(separateRegexp("[[:space:]]", L#1),m-> m=!=""),1), l->(<<l<<endl; (value l)-1));
+      lin := apply(drop(select(separateRegexp("[[:space:]]", L#1),m-> m=!=""),1), l-> (value l)-1);
       M = select(separateRegexp("[[:space:]]", L#2), m->m=!="");
       m = value( M#1);
       mat :=  pack_m apply(drop(M,3), o-> lift(promote(value replace("E\\+?","e",o),RR),QQ));

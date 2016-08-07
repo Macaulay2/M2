@@ -69,6 +69,7 @@ load "./tests/core/tests_from_polymake/normal_fan.m2"
  
 load "./tests/extended/polyhedron.m2"
 load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
+load "./tests/extended/mixedVolume.m2"
 
 load "./tests/legacy_tests_working.m2"
 
@@ -90,6 +91,25 @@ check "Polyhedra"
 
 restart
 loadPackage "Polyhedra"
+C = hypercube 3;
+mixedVolume({C, C, C})
+
+
+restart
+loadPackage "Polyhedra"
+M1 = matrix{{0,0,0,0,0},{1,1,0,0,0},{1,2,0,0,0}}
+P1 = convexHull transpose M1
+M2 = matrix{{0,0,0,0,0},{1,0,1,0,0},{1,0,2,0,0}}
+P2 = convexHull transpose M2
+M3 = matrix{{0,0,0,0,0},{1,0,0,1,0},{1,0,0,2,0}}
+P3 = convexHull transpose M3
+M4 = matrix{{0,0,0,0,0},{1,0,0,0,1},{1,0,0,0,2}}
+P4 = convexHull transpose M4
+M5 = matrix{{0,1,1,0,0},{0,0,0,1,1}}
+P5 = convexHull transpose M5
+mixedVolume({P1,P2, P3,P4, P5})
+
+
 -- debugLevel = 3
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
