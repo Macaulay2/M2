@@ -16,7 +16,7 @@ html TEX := str -> (
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
-     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///); -- <div> can't be inside <p>
+     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///);
      f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
      if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
      f(///\\\{///,///\lbrace ///);
@@ -67,7 +67,7 @@ html TEX := str -> (
 	  f(///\{ *\\em +([^{}]*)\}///,///{<em>\1</em>}///);
 	  f(///\{ *\\cal +([^{}]*)\}///,///{<i>\1</i>}///);
 	  f(///\{ *\\mathcal +([^{}]*)\}///,///{<i>\1</i>}///);
-	  f(///\\url *\{([^{}]*)\}///,///<a href="\1" target=blank>\1</a>///);
+	  f(///\\url *\{([^{}]*)\}///,///<a href="\1">\1</a>///);
 	  f(///\\frac *\{([^{}]*)\}\{([^{}]*)\}///,///{(\1)/(\2)}///);
 	  f(///\{([^{}]*)\\over *([^{}]*)\}///,///{\1/\2}///);
 	  f(///\^ *\{([^{}]*)\}///,///<sup>\1</sup>///);
@@ -143,7 +143,7 @@ html TEX := str -> (
      f(///\\delta\> *///,///&delta;///);
      f(///\\dots\> *///,///&hellip;///);
      f(///\\ell\> *///,///<em>l</em>///);
-     f(///\\emptyset\> *///,///&Oslash///);
+     f(///\\emptyset\> *///,///&Oslash;///);
      f(///\\epsilon\> *///,///&epsilon;///);
      f(///\\equiv\> *///,///&equiv;///);
      f(///\\exists\> *///,///&exist;///);
@@ -171,8 +171,7 @@ html TEX := str -> (
      f(///\\omega\> *///,///&omega;///);
      f(///\\oplus\> *///,///&oplus;///);
      f(///\\otimes\> *///,///&otimes;///);
-     f(///\\par\> *///,///<p>///);
-     f(///\\par\> *///,///<p>///);
+     f(///\\par\> *///,///<p/>///);
      f(///\\partial\> *///,///&part;///);
      f(///\\phi\> *///,///&phi;///);
      f(///\\pi\> *///,///&pi;///);

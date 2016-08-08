@@ -2160,11 +2160,11 @@ doc ///
     Description
         Text
             Displays a digraph or graph using Graphviz
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --displayGraph("chuckDot","chuckJpg", G)
-            --displayGraph("chuck", G)
-            --displayGraph G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --displayGraph("chuckDot","chuckJpg", G)
+        --     --displayGraph("chuck", G)
+        --     --displayGraph G
     SeeAlso
         showTikZ
         writeDotFile
@@ -2186,9 +2186,9 @@ doc ///
     Description
         Text
             Writes a string of TikZ syntax that can be pasted into a .tex file to display G
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --showTikZ G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --showTikZ G
     SeeAlso
         displayGraph
 ///
@@ -2208,9 +2208,9 @@ doc ///
     Description
         Text
             Writes the code for an inputted graph to be constructed in Graphviz with specified file name.
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --writeDotFile("chuck", G)
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --writeDotFile("chuck", G)
     SeeAlso
 ///
 

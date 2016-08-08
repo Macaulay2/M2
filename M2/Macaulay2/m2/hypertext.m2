@@ -4,10 +4,11 @@
 -- html output
 -----------------------------------------------------------------------------
 
-htmlLiteral = s -> if not match("<|&|]]>",s) then s else (
+htmlLiteral = s -> if not match("<|&|]]>|\42",s) then s else (
      s = replace("&","&amp;",s);			    -- do this one first
      s = replace("<","&lt;",s);
      s = replace("]]>","]]&gt;",s);
+     s = replace("\42","&quot;",s);  -- note: \42 is "
      s )
 
 -----------------------------------------------------------------------------

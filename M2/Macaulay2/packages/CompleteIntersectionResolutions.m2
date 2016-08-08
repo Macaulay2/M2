@@ -1684,7 +1684,7 @@ Description
   {TO "evenExtModule"},
   {TO "oddExtModule"},
   {TO "ExtModuleData"},
-  {TO "complexity"},
+  {TO "complexity"}
   }@
  Text
   @SUBSECTION "Representing a module as Ext_R(M,k)"@
@@ -2299,8 +2299,6 @@ Description
   Implements the construction in the paper
   "Matrix Factorizations in Higher Codimension"
   by Eisenbud and Peeva.  
- Example
-    
 SeeAlso
  makeFiniteResolution
 ///
@@ -2455,7 +2453,6 @@ doc ///
      then highSyzygy(M,Optimism=>r) chooses the (p-r)-th syzygy.
      (Positive Optimism chooses a lower "high" syzygy, negative
      Optimism a higher "high" syzygy.
-    Example
    Caveat
     Are there cases when positive Optimism is justified?
    SeeAlso

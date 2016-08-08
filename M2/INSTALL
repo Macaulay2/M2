@@ -497,6 +497,19 @@ To combine those two steps, run :
    ./configure --build=`config/config.guess`
 
 ----------------------
+HTML validation
+----------------------
+
+To validate all our HTML files, run:
+
+   make validate-html
+
+This depends on the installation of the validator (e.g., the Ubuntu package
+"w3c-markup-validator") and the script "validator-runner.py" from
+http://github.com/ysangkok/w3c-validator-runner, so we don't run it
+automatically.
+
+----------------------
 MacOS X notes
 ----------------------
 
