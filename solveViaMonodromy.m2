@@ -12,7 +12,9 @@ graphStrategy = method(Options=>{
         StoppingCriterion => ((n,L)->n>3),
         SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)),
         GraphInitFunction => null,
-        Potential => potentialLowerBound})
+        Potential => potentialLowerBound,
+	nnodes => 2,
+	nedges => 2})
 graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
@@ -28,7 +30,7 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";
     
     selectEdgeAndDirection := o.SelectEdgeAndDirection;
-    o.GraphInitFunction(HG, point0, node1);
+    o.GraphInitFunction(HG, point0, node1, o.nnodes, o.nedges);
 
     same := 0;
     npaths := 0;    
