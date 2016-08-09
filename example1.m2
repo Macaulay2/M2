@@ -15,7 +15,11 @@ twoNodeGraphInit = (G, p, node1, nedges) -> (
     apply(nedges, i -> addEdge(G, node1, node2));
     )
 
+<<<<<<< Updated upstream
 completeGraphInit = (G, p, node1, nedges, nnodes) -> (
+=======
+completeGraphInit = (G, p, node1, nnodes, nedges) -> (
+>>>>>>> Stashed changes
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
     for i from 1 to nnodes-1 do (
         addNode(G,nextP(p), pointArray {});
@@ -74,8 +78,21 @@ setRandomSeed 0
 elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,6))
 
+<<<<<<< Updated upstream
+=======
+--When I try running graphStrategy with potentialAsymptotic and the completeGraphInit, I get div 0 errors from potentialAsymptotic
+setRandomSeed 0
+N = 3
+E = 4
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E)
+sols'#1
+>>>>>>> Stashed changes
 
+trackedlist = apply(pairs(0..15), (graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, 
+	TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E))#1)
 
+apply(0..3,0..4, (i, j) -> i*j)
+0..3
 G = first sols
 E = G.Edges
 for e in E do (
