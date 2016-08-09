@@ -1,7 +1,3 @@
-export{
-   "lrsZZ"
-}
-
 -- Get a temporary filename.
 getFilename = () -> (
      filename := temporaryFileName();
@@ -87,10 +83,11 @@ readLrsInput String := (filename) -> (
    )
 )
 
+lrs = new MutableHashTable
 -- Method for calling lrs.
 -- Creates an input file from the given matrices, applies lrs and parses output.
-lrsZZ = method()
-lrsZZ Matrix := Matrix => A ->(
+lrs#fourierMotzkin = method()
+lrs#fourierMotzkin Matrix := Matrix => A ->(
    input := {-A};
    runLrsOnInput input
 --   filename := getFilename();
@@ -106,13 +103,15 @@ lrsZZ Matrix := Matrix => A ->(
 --   )
 )
 
-lrsZZ (Matrix,Matrix) := Matrix => (A,B) ->(
-   if B==0 then return lrsZZ A 
+lrs#fourierMotzkin (Matrix,Matrix) := Matrix => (A,B) ->(
+   if B==0 then return lrs#fourierMotzkin A 
    else(
       input := {-A, B};
       runLrsOnInput input
    )
 )
+
+
 
 runLrsOnInput = method()
 runLrsOnInput List := inputMatrices -> (
@@ -141,6 +140,7 @@ primitive List := List => L -> (
    if g === 1 then L
    else apply(L, i -> i // g)
 )
+
 
 
 -- Converts a list of 'QQ' to 'ZZ' by multiplying by a common denominator

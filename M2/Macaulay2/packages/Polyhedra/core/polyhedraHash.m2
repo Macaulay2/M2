@@ -6,8 +6,39 @@ globalAssignment PolyhedraHash
 -- polyhedral objects for easy access via the getProperties method. This will make
 -- interfacing polymake much easier.
 compute = new MutableHashTable
-
 alternative = new MutableHashTable
+
+export{
+   "loadAlternative"
+}
+
+
+loadAlternative = method()
+loadAlternative String := name -> (
+   if name == "lrs" then insertAlternatives(lrs)
+)
+
+insertAlternatives = method()
+insertAlternatives MutableHashTable := newAlternatives -> (
+   mergeMutableHashTables(alternative, newAlternatives)
+)
+
+
+mergeMutableHashTables = method()
+mergeMutableHashTables(MutableHashTable, MutableHashTable) := (old, given) -> (
+   for key in keys given do (
+      if not old#?key then (
+         old#key = given#key
+      ) else if instance(old#key, MutableHashTable) and instance(given#key, MutableHashTable) then (
+         mergeMutableHashTables(old#key, given#key);
+      ) else if instance(old#key, MethodFunction) and instance(given#key, MethodFunction) then (
+         -- Warning?
+         old#key = given#key
+      )
+   )
+)
+
+
 
 fourierMotzkinWrapper = method()
 fourierMotzkinWrapper(Matrix, Matrix) := (A, B) -> (
