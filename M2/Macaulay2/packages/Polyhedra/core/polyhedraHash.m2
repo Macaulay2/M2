@@ -9,7 +9,8 @@ compute = new MutableHashTable
 alternative = new MutableHashTable
 
 export{
-   "loadAlternative"
+   "loadAlternative",
+   "dropAlternatives"
 }
 
 
@@ -17,6 +18,9 @@ loadAlternative = method()
 loadAlternative String := name -> (
    if name == "lrs" then insertAlternatives(lrs)
 )
+
+dropAlternatives = method()
+installMethod(dropAlternatives, o -> (alternative = new MutableHashTable))
 
 insertAlternatives = method()
 insertAlternatives MutableHashTable := newAlternatives -> (

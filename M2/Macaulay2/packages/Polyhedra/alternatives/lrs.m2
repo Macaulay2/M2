@@ -30,7 +30,7 @@ writeLrsInput (File, Matrix, Matrix) := (F,C,B) -> (
 
 writeMatrixToLrsInputFile = method()
 writeMatrixToLrsInputFile(File, Matrix) := (F, A) -> (
-   if debugLevel > 2 then << "lrs input is " << A << endl;
+   if debugLevel > 4 then << "lrs input is " << A << endl;
    m := numColumns A;
    n := numRows A;
    if m==0 then (
@@ -55,7 +55,7 @@ readLrsInput String := (filename) -> (
    if debugLevel > 3 then << get filename << endl;
    L := separateRegexp("linearity|begin|end", get filename);
    L = select(L, l -> not match("converted to inequality", l));
-   if debugLevel > 3 then << "lrs output: " << L << endl << "end lrs output" << endl;
+   if debugLevel > 4 then << "lrs output: " << L << endl << "end lrs output" << endl;
    if #L<3 then error "-- lrs or cdd failed to compute the dual cone.";
    local m;
    local M;

@@ -91,6 +91,8 @@ check "Polyhedra"
 
 restart
 loadPackage "Polyhedra"
+debugLevel = 3
+loadAlternative "lrs"
 C = hypercube 3;
 mixedVolume({C, C, C})
 
