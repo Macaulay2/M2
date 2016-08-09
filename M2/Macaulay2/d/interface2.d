@@ -27,7 +27,6 @@ export rawPointArray(e:Expr):Expr := (
      );
 setupfun("rawPointArray",rawPointArray);
 
--- rawPointArrayLookupOrAppend
 export rawPointArrayLookupOrAppend(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3)

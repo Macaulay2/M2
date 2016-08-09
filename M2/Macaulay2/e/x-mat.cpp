@@ -844,9 +844,9 @@ unsigned int rawPathTrackerHash(PathTracker *p) {
 
 // PointArray
 
-M2_string rawPointArrayToString(PointArray *) { 
+M2_string rawPointArrayToString(PointArray *pa) { 
   buffer o;
-  o << "PointArray";
+  pa->text_out(o);
   return o.to_string();
   }
 unsigned int rawPointArrayHash(PointArray *) { return 0; }

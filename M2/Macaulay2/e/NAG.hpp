@@ -64,6 +64,12 @@ public:
       if (fabs(a[i]-b[i]) >= mEpsilon) return false;
     return true;
   }
+  void text_out(buffer& o) const { 
+    o << "PointArray( " << mPoints.size() << " points: ";
+    for(auto i=mMap.begin(); i!=mMap.end(); ++i)
+      o << i->second << " ";
+    o << ")" << newline;
+  }
 private:   
   std::map<Weight,int> mMap;
   std::vector<RealVector> mPoints;
