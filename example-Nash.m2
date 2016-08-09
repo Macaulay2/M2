@@ -42,66 +42,51 @@ bkkBound(5,3)
 -- Polynomial system of N equations with N unknowns
 
 -- 3 players 3 strategies each
+needsPackage "NumericalAlgebraicGeometry";
+getNashSystem = method()
+getNashSystem (ZZ,ZZ) := (n, S) -> (
+	-- Set up the ring and create all of the indexed variables.
+	R := CC[a_(toSequence((for i from 1 to (n+1) list 1)))..a_(toSequence({n} | (for i from 1 to (n) list S)))][p_(1,1)..p_(n,S-1)];
 
-S = 3
-n = 3
-N = S*(n-1)
+	-- Create all of the p_(i,n).
+	for i from 1 to n do (
+		p_(i,S) = 1 - (sum for j from 1 to S-1 list p_(i,j));
+	);
 
-R = FF[a_(1,1,1,1)..a_(S,n,n,n)][p_(1,1)..p_(S,n-1)]
+	-- This isn't very clean. The "a_" subscripts are in two parts: the first part
+	-- is (i,j) while the second half is (S,S,..,S) for n S's. subscriptSuffixes
+	-- is a list of all of the possible second halves, so they're easy to spin
+	-- through when we're multiplying. fullSubscript joins a suffix with a distinct
+	-- (i,j) pair. If anyone has a better idea of how to do this, feel free to
+	-- implement it.
+	subscriptSuffixes := toSequence(for i from 1 to (n-1) list 1)..toSequence(for i from 1 to (n-1) list S);
+	for i from 1 to n do (
+		for j from 1 to S do (
+			P_(i,j) = 0;
+			for subscriptSuffix in subscriptSuffixes do (
+				fullSubscript := prepend(i,prepend(j,subscriptSuffix));
+				val := a_fullSubscript;
+				--Create a list of the indices of all of the polynomials
+				--except for the i-th polynomial.
+				PolyList := delete(i, for q from 1 to n list (q));
+				for k from 2 to #fullSubscript - 1 do (
+					val = val*p_(PolyList#(k-2), fullSubscript#k);
+				);
+				P_(i,j) = P_(i,j) + val;
+			);
+		);
+	);
 
-P = symbol P
-
-p_(1,3) = 1 - p_(1,1) - p_(1,2)
-p_(2,3) = 1 - p_(2,1) - p_(2,2)
-p_(3,3) = 1 - p_(3,1) - p_(3,2)
-
-P11 = for j from 1 to n list (
-    	for i from 1 to n list (a_(1,1,j,i)*p_(2,j)*p_(3,i)))
-P_(1,1) = sum flatten P11   
-
-P12 = for j from 1 to n list (
-    	for i from 1 to n list (a_(1,2,j,i)*p_(2,j)*p_(3,i)))
-P_(1,2) = sum flatten P12 
-
-P13 = for j from 1 to n list (
-    	for i from 1 to n list (a_(1,3,j,i)*p_(2,j)*p_(3,i)))
-P_(1,3) = sum flatten P13	    
-
-P21 = for j from 1 to n list (
-    	for i from 1 to n list (a_(2,1,j,i)*p_(1,j)*p_(3,i)))
-P_(2,1) = sum flatten P21   
-
-P22 = for j from 1 to n list (
-    	for i from 1 to n list (a_(2,2,j,i)*p_(1,j)*p_(3,i)))
-P_(2,2) = sum flatten P22
-
-P23 = for j from 1 to n list (
-    	for i from 1 to n list (a_(2,3,j,i)*p_(1,j)*p_(3,i)))
-P_(2,3) = sum flatten P23 	    
-
-P31 = for j from 1 to n list (
-    	for i from 1 to n list (a_(3,1,j,i)*p_(1,j)*p_(2,i)))
-P_(3,1) = sum flatten P31   
-
-P32 = for j from 1 to n list (
-    	for i from 1 to n list (a_(3,2,j,i)*p_(1,j)*p_(2,i)))
-P_(3,2) = sum flatten P32 
-
-P33 = for j from 1 to n list (
-    	for i from 1 to n list (a_(3,3,j,i)*p_(1,j)*p_(2,i)))
-P_(3,3) = sum flatten P33 	    
-
--- 6 equations with 6 unknowns to set up polySystem
-P_1 = P_(1,1) - P_(1,2)
-P_2 = P_(1,1) - P_(1,3)
-P_3 = P_(2,1) - P_(2,2)
-P_4 = P_(2,1) - P_(2,3)
-P_5 = P_(3,1) - P_(3,2)
-P_6 = P_(3,1) - P_(3,3)
-
-
-Q = matrix{{P_1}, {P_2}, {P_3}, {P_4}, {P_5}, {P_6}}
-G = polySystem Q
+	-- Create the equations. Could be a one liner, but this is more readable.
+	Eqs = {};
+	for i from 1 to n list (
+		for j from 2 to S list (
+			Eqs = append(Eqs, {P_(i,1) - P_(i,j)});
+		);
+	);
+	polySystem (matrix Eqs)
+);
+G = getNashSystem(3,3)
 peek G
 L = apply(toList(1..numgens R), i -> random(0.,1.))
 SubList := apply(toList(0..numgens R-1), i -> (gens R)#i => L#i)
