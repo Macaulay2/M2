@@ -1,64 +1,50 @@
 restart
 needs (currentFileDirectory|"../code/solveViaMonodromy.m2")
+n=5; count=70;
 needs (currentFileDirectory|"cyclic.m2")
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
-stop = (n,L)-> #L >= 70
+stop = (n,L)-> #L >= count
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
 *}
 
-twoNodeGraphInit = (G, p, node1, nedges) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    node2 := addNode(G, nextP(p), pointArray {});
-    apply(nedges, i -> addEdge(G, node1, node2));
-    )
-
-completeGraphInit = (G, p, node1, nedges, nnodes) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes-1 do (
-        addNode(G,nextP(p), pointArray {});
-    );
-    print(peek(G));
-    for i from 0 to nnodes-1 do (
-        for j from i+1 to nnodes-1 do (
-            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
-        );
-    );
-    )
-
--- static flower
-flowerGraphInit = (G, p, node1, nedges, nnodes) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes do (
-        newNode := addNode(G,nextP(p), pointArray {});
-        apply(nedges, k -> addEdge(G, node1, newNode));
-    );
-    )
-
--- two vertex
+coin = prob -> if random RR <= prob then return 1 else return 0
 
 end
 restart
 load "example1.m2"
 
 setRandomSeed 0
+-- bare bones
+elapsedTime sols' = graphStrategy(SP,c0,{pre0})
+
+-- default potential
 elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
-     TargetSolutionCount=>300, Potential=>potentialAsymptotic, 
-     GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,4))
+     NumberOfNodes=>4, NumberOfEdges=>1)
 
+-- 
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+     TargetSolutionCount=>count, 
+     Potential=>potentialE, 
+     GraphInitFunction=>completeGraphInit,
+     NumberOfNodes=>4, NumberOfEdges=>1)
 
+-- obsolete: twoNodes = completeGraphInit with NumberOfNodes => 2
 nedges = 5
 setRandomSeed 0
 elapsedTime sols = twoNodes(SP,c0,{pre0},nedges,StoppingCriterion=>stop)
-setRandomSeed 0
 
+
+-----------------------------------------------------------------------------------
+-- plotting
+setRandomSeed 0
 x = {}
 for i from 0 to 100  do (
     setRandomSeed i;
     x = append(x,(graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
-     TargetSolutionCount=>70, Potential=>potentialAsymptotic, 
+     TargetSolutionCount=>70, Potential=>potentialE, 
      GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,5)))#1))
 "firsttwonodesexperiment" << concatenate between("\n", apply(x, n -> toExternalString n)) << close
 
@@ -66,22 +52,22 @@ for i from 0 to 100  do (
 
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70)
 setRandomSeed 0
-elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic)
+elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialE)
 setRandomSeed 0
 elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
-     TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,3))
+     TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,3))
 setRandomSeed 0
 elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
-     TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,6))
+     TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,6))
 
 setRandomSeed 0
 N = 3
 E = 4
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E)
+elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E)
 sols'#1
 
 trackedlist = apply(pairs(0..15), (graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, 
-	TargetSolutionCount=>70, Potential=>potentialAsymptotic, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E))#1)
+	TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>completeGraphInit, NumberOfNodes => N, NumberOfEdges => E))#1)
 
 apply(0..3,0..4, (i, j) -> i*j)
 0..3

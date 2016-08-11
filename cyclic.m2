@@ -1,7 +1,7 @@
 needs (currentFileDirectory|"../code/solveViaMonodromy.m2")
 setRandomSeed 0
 needsPackage "ExampleIdeals"
-n=6
+
 S = gens cyclicRoots(n,CC)
 R = ring S
 polys = flatten entries S
