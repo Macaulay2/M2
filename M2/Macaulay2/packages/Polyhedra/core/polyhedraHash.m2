@@ -83,6 +83,8 @@ linealitySpace PolyhedraHash := PH -> (
    getProperty(PH, computedLinealityBasis)
 )
 
+isWellDefined PolyhedraHash := Ph -> true
+
 -- 
 -- 	if instance(X,Cone) then (isPointed X and numColumns rays X == dim X)
 -- 	else if instance(X,Fan) then all(maxCones X,isSimplicial)
