@@ -1,3 +1,10 @@
+export {
+    "pointArray",
+    "appendPoint",
+    "appendPoints",
+    "PointArray"
+    }
+
 {*
 PointArray
 is an array of points (labelled with 0,1,...)
@@ -18,14 +25,16 @@ but for now it works only in linear time!!!
 *}
 
 FAST = version#"VERSION" === "1.9.1.1"
-if FAST then debug Core
+if not FAST then (
+    export {"rawPointArray","rawPointArrayLookupOrAppend","rawPointArrayLookup"} 
+    )
 
 needsPackage "NAGtypes"
 PointArray = new Type of MutableHashTable
 pointArray = method()
 pointArray List := B -> (
     A := new PointArray from {};
-    if FAST then A.raw = null;
+    if FAST then A#"raw" = null;
     appendPoints(A,B);
     A	 
     ) 
@@ -38,8 +47,8 @@ indices PointArray := P -> toList(0..length(P)-1)
 appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if FAST then (
-	if A.raw === null then A.raw = rawPointArray(1e-5,#coordinates b);
-	if rawPointArrayLookupOrAppend(A.raw,raw mutableMatrix transpose matrix b,0) =!= length A 
+	if A#"raw" === null then A#"raw" = rawPointArray(1e-5,#coordinates b);
+	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0) =!= length A 
     	then error "can't append"
 	);
     A#(length A) = b
@@ -51,8 +60,8 @@ member(Point,PointArray) := (b,A) -> position(b,A) =!= null
 
 position(Point,PointArray) := o -> (b,A) -> 
     if FAST then (
-	if A.raw === null then return null;
-	ret := rawPointArrayLookup(A.raw,raw mutableMatrix transpose matrix b,0);
+	if A#"raw" === null then return null;
+	ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose matrix b,0);
 	if ret == -1 then null else ret
 	) else position(keys A, k->areEqual(A#k,b))
     
@@ -84,5 +93,5 @@ TEST ///
     A_{1,2}
     p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
     A = pointArray {p}
-    rawPointArrayLookupOrAppend(A.raw,raw mutableMatrix transpose matrix p,0)
+    rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix p,0)
 ///

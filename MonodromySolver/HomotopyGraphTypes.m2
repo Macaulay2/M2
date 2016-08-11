@@ -1,5 +1,11 @@
-needs (currentFileDirectory | "PointArray.m2")
-
+export {
+    "selectBestEdgeAndDirection",
+    "potentialLowerBound",
+    "potentialE",
+    "HomotopyGraph",
+    "HomotopyEdge",
+    "HomotopyNode"
+    }
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
 HomotopyGraph = new Type of MutableHashTable
