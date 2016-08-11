@@ -30,7 +30,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
         };
     a.Edges#(#a.Edges) = E;
     b.Edges#(#b.Edges) = E;
-    G.Edges = prepend(E, G.Edges);
+    G.Edges = append(G.Edges,E);
     if G.Potential =!= null then (	
     	E.Potential12 = G.Potential (E, true);
     	E.Potential21 = G.Potential (E, false);
@@ -38,9 +38,14 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
     E
 )
 
-drop (HomotopyGraph, HomotopyEdge, ZZ) := (G,E, k) -> (
-    G.Edges = drop(G.Edges, k);
+removeEdge = method()
+removeEdge(HomotopyGraph, HomotopyEdge) := (G,e) -> (
+    (N1, N2) := (G.Node1, G.Node2);
+    N1.Edges = remove(N1.Edges, e);
+    N2.Edges = remove(N2.Edges, e);
+    G.Edges = remove(G.Edges, e);
     )
+
 
 addCorrespondence = method()
 addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
@@ -75,6 +80,12 @@ toSystem (HomotopyGraph, Point, Matrix) := (G, p, M) -> (
     flatten entries (map(R,PR,X|matrix p)) PF
     )
 
+-- convenience function for WS init
+edgeInds = (G,v) -> (
+    i := (positions(G.Vertices, x -> x == v))#0;
+    positions(G.Vertices, x -> member(x,G.Edges)) 
+    )
+
 potentialLowerBound = (e,from1to2) -> (
     if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);
@@ -92,7 +103,7 @@ potentialLowerBound = (e,from1to2) -> (
     ) 
 
 
-potentialAsymptotic = (e,from1to2) -> (
+potentialE = (e,from1to2) -> (
     G := e.Graph;
     if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);

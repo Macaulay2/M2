@@ -11,10 +11,10 @@ graphStrategy = method(Options=>{
         TargetSolutionCount => null,
         StoppingCriterion => ((n,L)->n>3),
         SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)),
-        GraphInitFunction => null,
+        GraphInitFunction => completeGraphInit,
         Potential => potentialLowerBound,
-	nnodes => 2,
-	nedges => 2})
+	NumberOfNodes => 2,
+	NumberOfEdges => 3})
 graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
@@ -30,7 +30,7 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";
     
     selectEdgeAndDirection := o.SelectEdgeAndDirection;
-    o.GraphInitFunction(HG, point0, node1, o.nnodes, o.nedges);
+    o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
 
     same := 0;
     npaths := 0;    
@@ -387,6 +387,67 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     ;
     solsList#0
     )
+
+-- ...GraphInit
+
+completeGraphInit = (G, p, node1, nnodes, nedges) -> (
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes-1 do (
+        addNode(G,nextP(p), pointArray {});
+    );
+    print(peek(G));
+    for i from 0 to nnodes-1 do (
+        for j from i+1 to nnodes-1 do (
+            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
+        );
+    );
+    )
+
+-- static flower
+flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes do (
+        newNode := addNode(G,nextP(p), pointArray {});
+        apply(nedges, k -> addEdge(G, node1, newNode));
+    );
+    )
+
+///
+eRGraphInit = (G, p, node1, nnodes, prob) -> (
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes-1 do (
+        addNode(G,nextP(p), pointArray {});
+    );
+    for i from 0 to nnodes-1 do (
+        for j from i+1 to nnodes-1 do (
+            if coin(prob) == 1 then addEdge(G.Vertices#i, G.Vertices#j);
+	    );
+        );
+    );
+    )
+///
+
+-- in progress: Watts Strogartz random graph generator
+-- assumes K even, might be nice to experiment with version where rewiring probability is arbitrary
+///
+wsInit = (G, p, nnodes, K) -> (
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes-1 do (
+	addNode(G,nextP(p), pointArray {}))
+    for i from 0 to nnodes -1 do (
+	vl := select(1..N, j -> (abs(i-j))%(N-1-sub(K/2,ZZ)) > 0 and (abs(i-j))%(N-1-sub(K/2,ZZ)) <= sub(K/2, ZZ));
+	apply(vl, v-> apply(nedges, k -> addEdge(G, G.Vertices#i, v)))) 
+    for e in G.Edges do (
+	N1 := e.Node1;
+	i := (positions(G.Vertices, N1))#0;
+	if random(2) == 1 then (
+	    remove(
+	  
+	)    
+    )
+///
+
+
 
 
 
