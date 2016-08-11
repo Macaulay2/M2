@@ -1,5 +1,4 @@
-restart
-needs (currentFileDirectory|"../code/solveViaMonodromy.m2")
+needsPackage "MonodromySolver"
 n=5; count=70;
 needs (currentFileDirectory|"cyclic.m2")
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
@@ -13,6 +12,7 @@ setDefault(Software=>PHCPACK)
 coin = prob -> if random RR <= prob then return 1 else return 0
 
 end
+-- make sure /code/MonodromySolve is in your path
 restart
 load "example1.m2"
 

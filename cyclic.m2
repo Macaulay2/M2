@@ -1,4 +1,4 @@
-needs (currentFileDirectory|"../code/solveViaMonodromy.m2")
+needsPackage "MonodromySolver"
 setRandomSeed 0
 needsPackage "ExampleIdeals"
 
