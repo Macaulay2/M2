@@ -144,7 +144,7 @@ hasProperties(PolyhedralObject, List) := (PO, properties) -> (
 getAvailableProperties = method()
 getAvailableProperties PolyhedralObject := PO -> (
    result := keys PO;
-   if result#?cache then result = flatten { result, keys PO.cache}
+   if PO#?cache then result = flatten { result, keys PO.cache}
    else << "Warning: Your PolyhedralObject does not have a cache." << endl;
    result = select(result, r-> r =!= cache);
    result
