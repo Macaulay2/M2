@@ -3,8 +3,6 @@ export {
    "accessKey",
 
    "PolyhedralObject", 
-   "PolyhedraHash",
-   "PolyhedralObjectFamily",
 -- Cone object with associated methods:
    "Cone", 
    "posHull", 

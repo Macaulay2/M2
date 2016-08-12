@@ -2,13 +2,6 @@
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
 linSpace Fan := F -> linealitySpace F
 
-linealitySpace Fan := F -> (
-   getProperty(F, computedLinealityBasis)
-)
-
-
---   INPUT : 'F'  a Fan
-rays Fan := F -> getProperty(F, computedRays)
 
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
@@ -73,3 +66,15 @@ skeleton(ZZ,Fan) := (n,F) -> (
 polytope = method(TypicalValue => Polyhedron)
 polytope Fan := F -> getProperty(F, computedPolytope)
 
+
+
+isPure Fan := F -> getProperty(F, pure)
+isComplete Fan := F -> getProperty(F, computedComplete)
+maxObjects Fan := F -> getProperty(F, generatingObjects)
+
+objectsOfDim(ZZ, Fan) := (k,F) -> (
+	-- Checking for input errors
+	if k < 0 or dim F < k then error("k must be between 0 and the dimension of the polyhedral object family.");
+	L := select(getProperty(F, honestMaxObjects), C -> dim C >= k);
+	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
+	unique flatten apply(L, C -> faces(dim(C)-k,C)))

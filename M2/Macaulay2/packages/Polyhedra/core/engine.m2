@@ -1,6 +1,6 @@
--- Defining the new type PolyhedraHash
-PolyhedraHash = new Type of MutableHashTable
-globalAssignment PolyhedraHash
+-- Defining the new type PolyhedralObject
+PolyhedralObject = new Type of MutableHashTable
+globalAssignment PolyhedralObject
 
 -- This MutableHashTable will store all methods computing properties of
 -- polyhedral objects for easy access via the getProperties method. This will make
@@ -58,32 +58,22 @@ fourierMotzkinWrapper(Matrix, Matrix) := (A, B) -> (
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : an integer, the dimension of the ambient space
 ambDim = method(TypicalValue => ZZ)
-ambDim PolyhedraHash := X -> (
-   getProperty(X, ambientDimension)
-)
+ambDim PolyhedralObject := X -> getProperty(X, ambientDimension)
 
 isSimplicial = method(TypicalValue => Boolean)
-isSimplicial PolyhedraHash := X -> (
-   getProperty(X, simplicial)
-)
+isSimplicial PolyhedralObject := X -> getProperty(X, simplicial)
+
 
 isFullDimensional = method(TypicalValue => Boolean)
-isFullDimensional PolyhedraHash := X -> (
-   getProperty(X, fullDimensional)
-)
+isFullDimensional PolyhedralObject := X -> getProperty(X, fullDimensional)
 
-
-rays PolyhedraHash := PH -> (
-   getProperty(PH, computedRays)
-)
-
+rays PolyhedralObject := PH -> getProperty(PH, computedRays)
 
 linealitySpace = method(TypicalValue => Matrix)
-linealitySpace PolyhedraHash := PH -> (
-   getProperty(PH, computedLinealityBasis)
-)
+linealitySpace PolyhedralObject := PH -> getProperty(PH, computedLinealityBasis)
 
-isWellDefined PolyhedraHash := Ph -> true
+
+isWellDefined PolyhedralObject := Ph -> true
 
 -- 
 -- 	if instance(X,Cone) then (isPointed X and numColumns rays X == dim X)
@@ -95,12 +85,11 @@ isWellDefined PolyhedraHash := Ph -> true
 --   INPUT : 'PH'  a Polyhedron, Cone, Fan or Polyhedral Complex
 --  OUTPUT : an integer, the dimension of the Polyhedron, Cone, Fan or Polyhedral Complex,
 --           where for the last two it is defined as the maximum dimension of the subobjects
-dim PolyhedraHash := PH -> (
-   getProperty(PH, computedDimension)
-)
+dim PolyhedralObject := PH -> getProperty(PH, computedDimension)
+
 
 getProperty = method()
-getProperty(PolyhedraHash, Symbol) := (PH, property) -> (
+getProperty(PolyhedralObject, Symbol) := (PH, property) -> (
    accessProperty := (cacheValue property)(X -> (
       type := class X;
       if debugLevel > 3 then << "Computing property " << property << " of " << type << endl;
@@ -114,25 +103,25 @@ getProperty(PolyhedraHash, Symbol) := (PH, property) -> (
 )
 
 setProperty = method()
-setProperty(PolyhedraHash, Symbol, Thing) := (PH, property, value) -> (
+setProperty(PolyhedralObject, Symbol, Thing) := (PH, property, value) -> (
    if not hasProperty(PH, property) then PH.cache#property = value
    else << "Warning: Property " << property << " already assigned." << endl
 )
 
 hasProperty = method()
-hasProperty(PolyhedraHash, Thing) := (PH, property) -> (
+hasProperty(PolyhedralObject, Thing) := (PH, property) -> (
    hasProperties(PH, {property})
 )
 
 hasProperties = method()
-hasProperties(PolyhedraHash, List) := (PH, properties) -> (
+hasProperties(PolyhedralObject, List) := (PH, properties) -> (
    givenProperties := getAvailableProperties PH;
    result := apply(properties, p-> positions(givenProperties, g -> g===p));
    all(result, r -> #r > 0)
 )
 
 getAvailableProperties = method()
-getAvailableProperties PolyhedraHash := PH -> (
+getAvailableProperties PolyhedralObject := PH -> (
    result := keys PH;
    result = flatten { result, keys PH.cache};
    result = select(result, r-> r =!= cache);
@@ -151,7 +140,7 @@ constructTypeFromHash(Type, HashTable) := (PType, H) -> (
    result
 )
 
-net PolyhedraHash := X -> (
+net PolyhedralObject := X -> (
    properties := getAvailableProperties X;
    horizontalJoin flatten (
       "{",
@@ -161,7 +150,7 @@ net PolyhedraHash := X -> (
             val := getProperty(X, property);
             local rhs;
             -- Avoid recursion, e.g. for normalFans
-            if instance(val, PolyhedraHash) then
+            if instance(val, PolyhedralObject) then
                rhs = class val
             else
                rhs = val;

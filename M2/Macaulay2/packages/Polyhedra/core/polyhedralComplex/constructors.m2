@@ -1,5 +1,5 @@
 -- Defining the new type PolyhedralComplex
-PolyhedralComplex = new Type of PolyhedralObjectFamily
+PolyhedralComplex = new Type of PolyhedralObject
 globalAssignment PolyhedralComplex
 
 compute#PolyhedralComplex = new MutableHashTable;

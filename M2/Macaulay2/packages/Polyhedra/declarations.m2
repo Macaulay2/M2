@@ -80,6 +80,23 @@ linSpace = method(TypicalValue => Matrix)
 hyperplanes = method()
 
 
+-------------------------------------------------------------------------------
+-- Fan and PolyhedralComplex
+
+-- PURPOSE : Tests if a Fan or PolyhedralComplex is complete
+--   INPUT : 'POF'  a Fan or PolyhedralComplex
+--  OUTPUT : 'true' or 'false'
+isComplete = method(TypicalValue => Boolean)
+
+-- PURPOSE : Checks if the Fan or PolyhedralComplex is of pure dimension
+--   INPUT : 'PC'  a Fan or PolyhedralComplex
+--  OUTPUT : 'true' or 'false'
+isPure = method(TypicalValue => Boolean)
+
+
+maxObjects = method(TypicalValue => List)
+objectsOfDim = method(TypicalValue => List)
+
 
 
 

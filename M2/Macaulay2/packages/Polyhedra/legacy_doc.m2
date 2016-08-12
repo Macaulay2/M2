@@ -540,10 +540,10 @@ document {
      }
 
 document {
-     Key => PolyhedraHash,
+     Key => PolyhedralObject,
      Headline => "the class of all polyhedral objects in Polyhedra",
           
-     TT "PolyhedraHash"," is the parent class of the four polyhedral objects in Polyhedra:",
+     TT "PolyhedralObject"," is the parent class of the four polyhedral objects in Polyhedra:",
      
      UL {
 	  {TO "Cone"},
@@ -1175,7 +1175,7 @@ document {
      }
 
 document {
-     Key => {ambDim, (ambDim,PolyhedraHash)},
+     Key => {ambDim, (ambDim,PolyhedralObject)},
      Headline => "ambient dimension of a Polyhedron, Cone or Fan",
      Usage => "d = ambDim P \nd = ambDim C \nd = ambDim F",
      Inputs => {
@@ -1412,7 +1412,7 @@ document {
      }
 
 document {
-     Key => {(rays,Fan), (rays,PolyhedraHash)},
+     Key => {(rays,Fan), (rays,PolyhedralObject)},
      Headline => "displays all rays of a Cone, a Fan, or a Polyhedron",
      Usage => " R = rays F \nR = rays P",
      Inputs => {
@@ -1612,7 +1612,7 @@ document {
      }
 
 document {
-     Key => {isComplete, (isComplete,PolyhedralObjectFamily)},
+     Key => {isComplete, (isComplete, Fan), (isComplete, PolyhedralComplex)},
      Headline => "checks completeness of a Fan or PolyhedralComplex",
      Usage => " b = isComplete X",
      Inputs => {
@@ -1807,7 +1807,7 @@ document {
      }
 
 document {
-     Key => {isPure,(isPure,PolyhedralObjectFamily)},
+     Key => {isPure,(isPure, Fan), (isPure, PolyhedralComplex)},
      Headline => "checks if a Fan or PolyhedralComplex is of pure dimension",
      Usage => " b = isPure X",
      Inputs => {
@@ -1869,14 +1869,14 @@ document {
      }
 
 document {
-     Key => {isSimplicial, (isSimplicial,PolyhedraHash)},
+     Key => {isSimplicial, (isSimplicial,PolyhedralObject)},
      Headline => " checks if a polyhedral object is simplicial",
      Usage => " b = isSimplicial X",
      Inputs => {
-	  "X" => PolyhedraHash
+	  "X" => PolyhedralObject
 	  },
      Outputs => {
-	  "b" => {TO true," if the ",TO PolyhedraHash," is simplicial, ",TO false," otherwise"}
+	  "b" => {TO true," if the ",TO PolyhedralObject," is simplicial, ",TO false," otherwise"}
 	  },
      
      PARA{},"A ",TO Polyhedron," of dimension ",TEX///$d$///," is simplicial if it is compact and 
@@ -3895,11 +3895,11 @@ document {
      }
 
 document {
-     Key => {(dim,PolyhedraHash)},
+     Key => {(dim,PolyhedralObject)},
      Headline => "computes the dimension of a cone, polyhedron, fan or polyhedral complex",
-     Usage => " d = dim PH",
+     Usage => " d = dim PO",
      Inputs => {
-	  "PH" => PolyhedraHash
+	  "PO" => PolyhedralObject
 	  },
      Outputs => {
 	  "d" => ZZ

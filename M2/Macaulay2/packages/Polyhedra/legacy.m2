@@ -24,7 +24,7 @@ areCompatible(Polyhedron,Polyhedron) := (P1,P2) -> (
      else (false,emptyPolyhedron(ambDim(P1))))
 
 
-faceOf = method(TypicalValue => PolyhedraHash)
+faceOf = method(TypicalValue => PolyhedralObject)
 faceOf Polyhedron := (cacheValue symbol faceOf)( P -> P)
   	  
 -- PURPOSE : Computing the Cone of the Minkowskisummands of a Polyhedron 'P', the minimal 
@@ -293,14 +293,14 @@ saveSession String := F -> (
 	  F << "needsPackage \"PPDivisor\"" << endl);
      --Save all Matrices to the file
      scan(userSymbols Matrix, s -> F << s << " = " << toExternalString value s << endl);
-     scan(userSymbols PolyhedraHash, s -> F << s << " = " << toExternalString value s << endl);
+     scan(userSymbols PolyhedralObject, s -> F << s << " = " << toExternalString value s << endl);
      -- Save all Lists and Sequences containing only convex polyhedral objects and/or lists of them to the file
      scan(userSymbols List | userSymbols Sequence, s -> (
 	       L := value s;
 	       while L =!= flatten L do L = flatten L;
 	       if all(L, l -> (
-			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedraHash) or instance(l,Matrix)) 
-			 else instance(l,PolyhedraHash) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
+			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedralObject) or instance(l,Matrix)) 
+			 else instance(l,PolyhedralObject) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
      
 
 ---------------------------------------

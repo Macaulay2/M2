@@ -32,3 +32,15 @@ skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
    linPC := linealitySpace PC;
    polyhedralComplex(vertPC, raysPC, linPC, GP)
 )
+
+
+isPure PolyhedralComplex := PC -> getProperty(PC, pure)
+isComplete PolyhedralComplex := PC -> getProperty(PC, computedComplete)
+maxObjects PolyhedralComplex := PC -> getProperty(PC, generatingObjects)
+
+objectsOfDim(ZZ, PolyhedralComplex) := (k,PC) -> (
+	-- Checking for input errors
+	if k < 0 or dim PC < k then error("k must be between 0 and the dimension of the polyhedral object family.");
+	L := select(getProperty(PC, honestMaxObjects), C -> dim C >= k);
+	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
+	unique flatten apply(L, C -> faces(dim(C)-k,C)))

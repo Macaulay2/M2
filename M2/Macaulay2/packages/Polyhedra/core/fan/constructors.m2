@@ -1,5 +1,5 @@
 -- Defining the new type Fan
-Fan = new Type of PolyhedralObjectFamily
+Fan = new Type of PolyhedralObject
 globalAssignment Fan
 compute#Fan = new MutableHashTable;
 
