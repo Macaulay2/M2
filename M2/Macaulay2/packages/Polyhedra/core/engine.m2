@@ -171,7 +171,7 @@ net PolyhedralObject := X -> (
             val := getProperty(X, property);
             local rhs;
             -- Avoid recursion, e.g. for normalFans
-            if instance(val, PolyhedralObject) then
+            if not (instance(val, Matrix) or instance(val, Vector)) then
                rhs = class val
             else
                rhs = val;
