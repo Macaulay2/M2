@@ -125,3 +125,21 @@ getSufficientRayData Cone := C -> (
       return (rays C, linealitySpace C)
    );
 )
+
+
+
+hyperplanes Cone := C -> getProperty(C, computedHyperplanes)
+linSpace Cone := P -> linealitySpace P
+halfspaces Cone := P -> facets P
+facets Cone := C -> getProperty(C, computedFacets)
+fVector Cone := C -> getProperty(C, computedFVector)
+faces Cone := C -> getProperty(C, computedFacesThroughRays)
+
+--   INPUT : 'k'  an integer between 0 and the dimension of
+--     	     'C'  a cone
+--  OUTPUT : a List, containing the indices of rays used for the faces
+faces(ZZ, Cone) := (k,C) -> (
+   result := faces C;
+   if result#?k then result#k
+   else {}
+)
