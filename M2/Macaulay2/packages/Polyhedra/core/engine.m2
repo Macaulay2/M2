@@ -98,7 +98,7 @@ polyhedralClass PolyhedralObject := PO -> (
 
 
 getProperty = method()
-getProperty(PolyhedralObject, Symbol) := (PO, property) -> (
+getProperty(PolyhedralObject, Thing) := (PO, property) -> (
    accessProperty := (cacheValue property)(X -> (
       polyhedralType := polyhedralClass X;
       type := class X;
@@ -144,7 +144,8 @@ hasProperties(PolyhedralObject, List) := (PO, properties) -> (
 getAvailableProperties = method()
 getAvailableProperties PolyhedralObject := PO -> (
    result := keys PO;
-   result = flatten { result, keys PO.cache};
+   if result#?cache then result = flatten { result, keys PO.cache}
+   else << "Warning: Your PolyhedralObject does not have a cache." << endl;
    result = select(result, r-> r =!= cache);
    result
 )
@@ -171,8 +172,13 @@ net PolyhedralObject := X -> (
             val := getProperty(X, property);
             local rhs;
             -- Avoid recursion, e.g. for normalFans
-            if not (instance(val, Matrix) or instance(val, Vector)) then
+            if not (instance(val, Matrix) or 
+                     instance(val, Vector) or 
+                     instance(val, ZZ) or 
+                     instance(val, List) or 
+                     instance(val, Sequence)) then (
                rhs = class val
+            )
             else
                rhs = val;
             (net property, " => ", net rhs)
