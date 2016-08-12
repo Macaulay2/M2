@@ -67,10 +67,10 @@ isSimplicial PolyhedralObject := X -> getProperty(X, simplicial)
 isFullDimensional = method(TypicalValue => Boolean)
 isFullDimensional PolyhedralObject := X -> getProperty(X, fullDimensional)
 
-rays PolyhedralObject := PH -> getProperty(PH, computedRays)
+rays PolyhedralObject := PO -> getProperty(PO, computedRays)
 
 linealitySpace = method(TypicalValue => Matrix)
-linealitySpace PolyhedralObject := PH -> getProperty(PH, computedLinealityBasis)
+linealitySpace PolyhedralObject := PO -> getProperty(PO, computedLinealityBasis)
 
 
 isWellDefined PolyhedralObject := Ph -> true
@@ -82,48 +82,69 @@ isWellDefined PolyhedralObject := Ph -> true
 -- 	else all(maxPolyhedra X,isSimplicial)))
 
 
---   INPUT : 'PH'  a Polyhedron, Cone, Fan or Polyhedral Complex
+--   INPUT : 'PO'  a Polyhedron, Cone, Fan or Polyhedral Complex
 --  OUTPUT : an integer, the dimension of the Polyhedron, Cone, Fan or Polyhedral Complex,
 --           where for the last two it is defined as the maximum dimension of the subobjects
-dim PolyhedralObject := PH -> getProperty(PH, computedDimension)
+dim PolyhedralObject := PO -> getProperty(PO, computedDimension)
+
+polyhedralClass = method()
+polyhedralClass PolyhedralObject := PO -> (
+   if instance(PO, Cone) then Cone
+   else if instance(PO, Polyhedron) then Polyhedron
+   else if instance(PO, Fan) then Fan
+   else if instance(PO, PolyhedralComplex) then PolyhedralComplex
+   else class PO
+)
 
 
 getProperty = method()
-getProperty(PolyhedralObject, Symbol) := (PH, property) -> (
+getProperty(PolyhedralObject, Symbol) := (PO, property) -> (
    accessProperty := (cacheValue property)(X -> (
+      polyhedralType := polyhedralClass X;
       type := class X;
-      if debugLevel > 3 then << "Computing property " << property << " of " << type << endl;
-      if compute#type#?property then (
-         return compute#type#property X
+      if debugLevel > 3 then << "Computing property " << property << " of " << polyhedralType << endl;
+      if alternative#?type and alternative#type#?property then (
+         if debugLevel>2 then << "Using alternative method for computing " << property << " of " << type << endl;
+         -- If the user has defined a derived type and made a method for
+         -- computing this property, use this.
+         return alternative#type#property X
+      ) else if alternative#?polyhedralType and alternative#polyhedralType#?property then (
+         if debugLevel>2 then << "Using loaded method for computing " << property << " of " << polyhedralType << endl;
+         -- If an alternative method has been loaded, use this
+         return alternative#type#property X
+      ) else if compute#polyhedralType#?property then (
+         if debugLevel>2 then << "Using default method for computing " << property << " of " << polyhedralType << endl;
+         -- If there is a default method, use this
+         return compute#polyhedralType#property X
       ) else (
-         error("No method to compute property ", property," for type ", type, ".")
+         error("No method to compute property ", property," for polyhedralType ", polyhedralType, ".")
       )
    ));
-   if PH#?property then return PH#property else accessProperty PH
+   if PO#?property then return PO#property else accessProperty PO
 )
 
 setProperty = method()
-setProperty(PolyhedralObject, Symbol, Thing) := (PH, property, value) -> (
-   if not hasProperty(PH, property) then PH.cache#property = value
+setProperty(PolyhedralObject, Symbol, Thing) := (PO, property, value) -> (
+   if not hasProperty(PO, property) then PO.cache#property = value
    else << "Warning: Property " << property << " already assigned." << endl
 )
 
 hasProperty = method()
-hasProperty(PolyhedralObject, Thing) := (PH, property) -> (
-   hasProperties(PH, {property})
+hasProperty(PolyhedralObject, Thing) := (PO, property) -> (
+   hasProperties(PO, {property})
 )
 
 hasProperties = method()
-hasProperties(PolyhedralObject, List) := (PH, properties) -> (
-   givenProperties := getAvailableProperties PH;
+hasProperties(PolyhedralObject, List) := (PO, properties) -> (
+   givenProperties := getAvailableProperties PO;
    result := apply(properties, p-> positions(givenProperties, g -> g===p));
    all(result, r -> #r > 0)
 )
 
 getAvailableProperties = method()
-getAvailableProperties PolyhedralObject := PH -> (
-   result := keys PH;
-   result = flatten { result, keys PH.cache};
+getAvailableProperties PolyhedralObject := PO -> (
+   result := keys PO;
+   result = flatten { result, keys PO.cache};
    result = select(result, r-> r =!= cache);
    result
 )
