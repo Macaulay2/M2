@@ -72,7 +72,7 @@ document {
      
      EXAMPLE {
 	  " rays P",
-	  " linSpace P"
+	  " linealitySpace P"
 	  },
      
      PARA{}, "Furthermore, we can construct the convex hull of a set of points and a set of rays.",
@@ -113,7 +113,7 @@ document {
      EXAMPLE {
 	  " P3 = intersection(HS,v)",
 	  " vertices P3",
-	  " linSpace P3"
+	  " linealitySpace P3"
 	  },
      
      PARA{}, "Note that the vertices are given modulo the lineality space. Besides constructing 
@@ -291,7 +291,7 @@ document {
      EXAMPLE {
 	  " C3 = intersection HS",
 	  " rays C3",
-	  " linSpace C3"
+	  " linealitySpace C3"
 	  },
      
      PARA{}, "Again, the rays are given modulo the lineality space. Also, one can use 
@@ -316,7 +316,7 @@ document {
      EXAMPLE {
 	  " C6 = posHull(C1,C2)",
 	  " rays C6",
-	  " linSpace C6"
+	  " linealitySpace C6"
 	  },
 
      PARA{}, "Furthermore, both functions (",TO intersection," and ",TO posHull,") can 
@@ -328,7 +328,7 @@ document {
 	  " R2 = matrix {{2,-1},{-1,2},{-1,-1}}",
 	  " C7 = posHull {R2,C3,C4}",
 	  " rays C7",
-	  " linSpace C7"
+	  " linealitySpace C7"
 	  },
      
      PARA{}, "Since they are all cones their positive hull is the same as their 
@@ -354,7 +354,7 @@ document {
      EXAMPLE {
 	  " C8 = C * C1",
 	  " rays C8",
-	  " linSpace C8"
+	  " linealitySpace C8"
 	  },
      
      PARA{}, "The result is in QQ^5.",
@@ -1308,7 +1308,7 @@ document {
      }
 
 document {
-     Key => {halfspaces, (halfspaces,PolyhedralObject)},
+     Key => {halfspaces, (halfspaces, Cone), (halfspaces, Polyhedron)},
      Headline => "computes the defining half-spaces of a Cone or a Polyhedron",
      Usage => " M = halfspaces C \n(M,v) = halfspaces P",
      Inputs => {
@@ -1349,7 +1349,7 @@ document {
      }
 
 document {
-     Key => {hyperplanes, (hyperplanes,PolyhedralObject)},
+     Key => {hyperplanes, (hyperplanes, Cone), (hyperplanes, Polyhedron)},
      Headline => "computes the defining hyperplanes of a Cone or a Polyhedron",
      Usage => " N = hyperplanes C \n(N,w) = hyperplanes P",
      Inputs => {
@@ -1383,19 +1383,17 @@ document {
      }
 
 document {
-     Key => {linSpace, (linSpace,Fan), (linSpace,PolyhedralObject)},
+     Key => {linealitySpace, (linealitySpace, PolyhedralObject)},
      Headline => "computes a basis of the lineality space",
-     Usage => " LS = linSpace C \nLS = linSpace F \nLS = linSpace P",
+     Usage => " LS = linealitySpace C \nLS = linealitySpace F \nLS = linealitySpace P",
      Inputs => {
-	  "C" => Cone,
-	  "F" => Fan,
-	  "P" => Polyhedron
+	  "PO" => PolyhedralObject
 	  },
      Outputs => {
 	  "LS" => Matrix
 	  },
      
-     PARA{}, TT "linSpace", " returns a basis of the lineality space of the 
+     PARA{}, TT "linealitySpace", " returns a basis of the lineality space of the 
      input as the columns of the matrix ", TT "LS", ". The lineality space of a 
      Fan is the lineality space of any Cone of the Fan, since they all have the 
      same lineality space.",
@@ -1404,19 +1402,19 @@ document {
 	  " M = matrix {{1,1,1},{0,1,0},{-1,1,-1},{-1,-1,-1},{0,-1,0},{1,-1,1}};",
 	  " v = matrix {{2},{1},{2},{2},{1},{2}};",
 	  " P = intersection(M,v)",
-	  " linSpace P",
+	  " linealitySpace P",
 	  " C = dualCone intersection M",
-	  " linSpace C"
+	  " linealitySpace C"
 	  }
      
      }
 
 document {
-     Key => {(rays,Fan), (rays,PolyhedralObject)},
+     Key => {(rays,PolyhedralObject)},
      Headline => "displays all rays of a Cone, a Fan, or a Polyhedron",
      Usage => " R = rays F \nR = rays P",
      Inputs => {
-	  "F" => Fan
+	  "PO" => PolyhedralObject
 	  },
      Outputs => {
 	  "R" => Matrix
@@ -1966,7 +1964,7 @@ document {
 
 
 document {
-     Key => {faces, (faces,ZZ,PolyhedralObject)},
+     Key => {faces, (faces,ZZ,Polyhedron), (faces,ZZ,Cone)},
      Headline => "computes all faces of a certain codimension of a Cone or Polyhedron",
      Usage => " L = faces(k,C) \nL = faces(k,P)",
      Inputs => {
@@ -1997,7 +1995,7 @@ document {
      }
 
 document {
-     Key => {fVector, (fVector,PolyhedralObject)},
+     Key => {fVector, (fVector, Cone), (fVector,Polyhedron)},
      Headline => "computes the f-vector of a Cone or Polyhedron",
      Usage => " f = fVector C \nf = fVector P",
      Inputs => {
@@ -2726,7 +2724,7 @@ document {
      EXAMPLE {
 	  " P = stdSimplex 3",
 	  " Q = affineHull P",
-	  " linSpace Q"
+	  " linealitySpace Q"
 	  }
      
      }
