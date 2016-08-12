@@ -1,5 +1,4 @@
-restart
-load (currentFileDirectory|"../code/solveViaMonodromy.m2")
+needsPackage "MonodromySolver"
 needsPackage "ReactionNetworks"
 
 FF = CC
@@ -95,27 +94,38 @@ G1 = polySystem(rM1 * T1)
 #C.Species
 
 
+Q = reactionNetwork "A <--> 2B, A+3C<-->D, B+4E-->A+3C, A+3C-->D, D-->B+4E"
+GQ = createPolySystem(Q, FF)
+
+
+
 
 end ---------------------------------
 restart
 load "example-CRN.m2"
 setRandomSeed 0
 (c0, pre0) = setUpPolysparse G
-elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)
+elapsedTime sols = graphStrategy(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5)
 
 (c0', pre0') = setUpPolysparse G'
-elapsedTime sols' = twoNodes(transpose G'.PolyMap,c0',{pre0'},5)
+elapsedTime sols' = graphStrategy(transpose G'.PolyMap,c0',{pre0'},NumberOfEdges => 5)
 
 W = wnt()
 R = createRing(W, FF)
 L = apply(toList(1..numgens R), i -> random CC)
 F = createPolySystem(W, FF, L)
 (c0, pre0) = setUpPolysparse(F, L)
-elapsedTime sols = twoNodes(transpose F.PolyMap,c0,{pre0},5)
+elapsedTime sols = graphStrategy(transpose F.PolyMap,c0,{pre0},NumberOfEdges => 5)
+
+
+(c0, pre0) = setUpPolysparse GQ
+elapsedTime sols = graphStrategy(transpose GQ.PolyMap,c0,{pre0},NumberOfEdges => 3, NumberOfNodes => 3)
+
+
 
 
 (c0, pre0) = setUpPolysparse GC
-elapsedTime sols = twoNodes(transpose GC.PolyMap,c0,{pre0},5)
+elapsedTime sols = graphStrategy(transpose GC.PolyMap,c0,{pre0},NumberOfEdges => 5)
 
 
 
