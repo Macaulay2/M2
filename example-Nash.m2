@@ -1,5 +1,4 @@
-restart
-load (currentFileDirectory|"../code/solveViaMonodromy.m2")
+needsPackage "MonodromySolver"
 needsPackage "Permanents"
 
 FF = CC
@@ -42,7 +41,6 @@ bkkBound(5,3)
 -- Polynomial system of N equations with N unknowns
 
 -- 3 players 3 strategies each
-needsPackage "NumericalAlgebraicGeometry";
 getNashSystem = method()
 getNashSystem (ZZ,ZZ) := (n, S) -> (
 	-- Set up the ring and create all of the indexed variables.
@@ -103,7 +101,8 @@ N = numericalIrreducibleDecomposition ideal M
 c0 = first (first components N).Points
 pre0 = point{apply(SubList, i -> i#1)}
 
-elapsedTime sols = twoNodes(transpose G.PolyMap,c0,{pre0},5)   
+elapsedTime sols = graphStrategy(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(3,3))   
+
 J = first sols
 E = J.Edges
 for e in E do (
