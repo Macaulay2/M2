@@ -1,4 +1,5 @@
 export {
+    "computeMixedVolume",
     "graphStrategy",
     "completeGraphInit",
     "flowerStrategy",
@@ -190,8 +191,8 @@ loopStrategy (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nodecount) -> (
             e := addEdge(HG, node1, node2);
             trackedPaths = trackedPaths + trackEdge(e, true);
             npaths = npaths + trackedPaths;
-            << "  node1: " << #(node1.PartialSols) << endl;
-            << "  node2: " << #(node2.PartialSols) << endl;    	
+            << "  node1: " << length(node1.PartialSols) << endl;
+            << "  node2: " << length(node2.PartialSols) << endl;    	
             << "npaths " << npaths << endl; 
         );
         if #((HG.Vertices#0).PartialSols) == nSols then same = same + 1 else (
@@ -245,9 +246,9 @@ randomFlowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
         );
         
         npaths = npaths + trackEdge(e1, true);
-        << "  H01: " << #(e1.Node2.PartialSols) << endl;
+        << "  H01: " << length(e1.Node2.PartialSols) << endl;
         npaths = npaths + trackEdge(e2, true);
-        << "  H10: " << #(e1.Node1.PartialSols) << endl;    	
+        << "  H10: " << length(e1.Node1.PartialSols) << endl;    	
         << "npaths " << npaths << endl; 
 
         if #((HG.Vertices#0).PartialSols) == nSols then same = same + 1 else (
@@ -257,10 +258,8 @@ randomFlowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     )
 )
 
-///
 computeMixedVolume = method()
 computeMixedVolume List := polys -> mixedVolume(toRingXphc polys,StartSystem => false)
-///
 
 diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)
@@ -321,11 +320,12 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
         << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
         << "Direction is " << from1to2 << endl;
 	*}
+	<< "-------------------------------------------------" << endl;
         trackedPaths := trackEdge(e, from1to2);
         npaths = npaths + trackedPaths;
 	solutions = (if from1to2 then e.Node2 else e.Node1).PartialSols;
-        << "  node1: " << #(e.Node1.PartialSols) << endl;
-        << "  node2: " << #(e.Node2.PartialSols) << endl;    	
+        << "  node1: " << length e.Node1.PartialSols << endl;
+        << "  node2: " << length e.Node2.PartialSols << endl;    	
         << "trackedPaths " << trackedPaths << endl; 
         if trackedPaths == 0 then same = same + 1 else same = 0; 
     );

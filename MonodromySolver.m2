@@ -18,6 +18,7 @@ newPackage(
     	)
 
 debug NAGtypes
+debug NumericalAlgebraicGeometry
 debug Core
 needs "./MonodromySolver/PointArray.m2"
 needs "./MonodromySolver/HomotopyGraphTypes.m2"

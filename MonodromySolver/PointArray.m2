@@ -24,6 +24,7 @@ position        -- find a poisiton of a point in the array (null = not there)
 but for now it works only in linear time!!!
 *}
 
+PointArrayTolerance = 1e-4
 FAST = version#"VERSION" === "1.9.1.1"
 if not FAST then (
     export {"rawPointArray","rawPointArrayLookupOrAppend","rawPointArrayLookup"} 
@@ -47,7 +48,7 @@ indices PointArray := P -> toList(0..length(P)-1)
 appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if FAST then (
-	if A#"raw" === null then A#"raw" = rawPointArray(1e-5,#coordinates b);
+	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,#coordinates b);
 	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0) =!= length A 
     	then error "can't append"
 	);

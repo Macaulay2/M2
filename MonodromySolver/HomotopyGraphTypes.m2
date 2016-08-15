@@ -52,12 +52,14 @@ removeEdge(HomotopyGraph, HomotopyEdge) := (G,e) -> (
     G.Edges = remove(G.Edges, e);
     )
 
-
 addCorrespondence = method()
 addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
-    if  e.Correspondence12#?a or e.Correspondence21#?b then error "correspondence conflict"; 
-    e.Correspondence12#a = b;
-    e.Correspondence21#b = a;
+    if  e.Correspondence12#?a or e.Correspondence21#?b then false
+    else ( 
+    	e.Correspondence12#a = b;
+    	e.Correspondence21#b = a;
+	true
+	)
     )
 
 homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Family=>"IdSupport", Potential=>null})
@@ -103,8 +105,8 @@ potentialLowerBound = (e,from1to2) -> (
 	correspondence = e.Correspondence21;
 	correspondence' = e.Correspondence12;
 	);
-    n1 := #(indices head.PartialSols - set keys correspondence);
-    n2 := #(indices tail.PartialSols - set keys correspondence');
+    n1 := length head.PartialSols - length keys correspondence;
+    n2 := length tail.PartialSols - length keys correspondence';
     max(n1-n2, 0)
     ) 
 
@@ -121,8 +123,8 @@ potentialE = (e,from1to2) -> (
 	correspondence = e.Correspondence21;
 	correspondence' = e.Correspondence12;
 	);
-    a := #(indices head.PartialSols - set keys correspondence);
-    b := #(indices tail.PartialSols - set keys correspondence');
+    a := length head.PartialSols - length keys correspondence;
+    b := length tail.PartialSols - length keys correspondence';
     d := (e.Graph).TargetSolutionCount;
     c := length keys correspondence;
 --    << "# of sols to track" << a << endl;
@@ -184,18 +186,26 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
     else {};
     n := length tail.PartialSols;
     scan(#untrackedInds, i->(
-	    s := newSols#i;
-	    if status s =!= Regular then error "a singular point encountered"; 
 	    a := untrackedInds#i;
-	    if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
-	    else (    
-		appendPoint(tail.PartialSols, s);
-		b = n;
-		n = n+1;
-		);
-	    addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
+	    s := newSols#i;
+	    if status s =!= Regular then (
+		print "failure: a singular point"; 
+		correspondence#a = null; -- record failure
+	      	)
+	    else ( 
+	    	if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
+	    	else (    
+		    appendPoint(tail.PartialSols, s);
+		    b = n;
+		    n = n+1;
+		    );
+	    	if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
+	    	then (
+		    print "failure: correspondence conflict";
+		    correspondence#a = null -- record failure 
+		    )
+		)
 	    ));
-
     for e in tail.Edges do (
     	e.Potential12 = G.Potential (e, true);
     	e.Potential21 = G.Potential (e, false);
