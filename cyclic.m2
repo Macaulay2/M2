@@ -24,7 +24,15 @@ pre0 = point{toList(n:1_CC)}
 end ------------------------------------------------
 
 restart
-load "cyclic.m2" 
+n = 10
+load "../examples/cyclic.m2" 
+{*
+load "~/R/polysparse/examples/cyclic.m2" 
+*}
+
+debug MonodromySolver
+mixedVolume = computeMixedVolume polys
+
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
 stop = (n,L)->n>1
@@ -33,6 +41,7 @@ getDefault Software
 setDefault(Software=>PHCPACK)
 *}
 setRandomSeed 0
+
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop);
 {*
 number of paths tracked: 151542
@@ -42,7 +51,7 @@ found 11016 points in the fiber so far
 
 setRandomSeed 0
 nedges = 4
-elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges)
+elapsedTime sols' = graphStrategy(SP,c0,{pre0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
 {*
      -- 181.88 seconds elapsed
 
