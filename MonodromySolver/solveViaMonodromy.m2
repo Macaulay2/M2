@@ -314,7 +314,8 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
     same := 0;
     npaths := 0;    
-    while not stoppingCriterion(same,node1.PartialSols) do (
+    solutions := node1.PartialSols;
+    while not stoppingCriterion(same,solutions) do (
         (e, from1to2) := selectEdgeAndDirection(HG);
         {*  << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
         << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
@@ -322,6 +323,7 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 	*}
         trackedPaths := trackEdge(e, from1to2);
         npaths = npaths + trackedPaths;
+	solutions = (if from1to2 then e.Node2 else e.Node1).PartialSols;
         << "  node1: " << #(e.Node1.PartialSols) << endl;
         << "  node2: " << #(e.Node2.PartialSols) << endl;    	
         << "trackedPaths " << trackedPaths << endl; 

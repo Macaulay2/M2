@@ -132,6 +132,7 @@ potentialE = (e,from1to2) -> (
         
     if d!=c and a!=0 then p := (d-c-b) / (d-c)
     else p=0;
+    {*
     if tail === G.MasterNode then (
         << "we've hit the master node" << endl;
 	p = p*G.MasterFactor;
@@ -140,7 +141,7 @@ potentialE = (e,from1to2) -> (
         << "we've hit the master node backwards" << endl;
 	p = p*(1/G.MasterFactor);
 	);
-        
+    *}        
     p
     ) 
 
