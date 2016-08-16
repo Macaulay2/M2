@@ -53,16 +53,21 @@ elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCo
 o16 = (HomotopyNode{...5...}, 42898)
 *}
 
--- cyclic10 takes ~17min
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
 mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+{*
+     -- 701.916 seconds elapsed
 
+o12 = (HomotopyNode{...5...}, 142950)
+*}
 
 -- this is the old naive solver ("dynamic flower")
 setRandomSeed 0
-debug MonodromySolver
+polys = parametrizedCyclic 9
+(p0,x0) = createSeedPair polySystem polys
+mdebug MonodromySolver
 stop = (n,L)->n>1
 elapsedTime sols = solveViaMonodromy(transpose polys.PolyMap,c0,{pre0});
 {*
