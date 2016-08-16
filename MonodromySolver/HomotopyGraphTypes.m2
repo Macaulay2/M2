@@ -1,5 +1,6 @@
 export {
     "specializeSystem",
+    "selectRandomEdgeAndDirection",
     "selectBestEdgeAndDirection",
     "potentialLowerBound",
     "potentialE",
@@ -149,7 +150,7 @@ potentialE = (e,from1to2) -> (
     p
     ) 
 
-
+selectRandomEdgeAndDirection = G-> (G.Edges#(random (#G.Edges)),random 2 == 0)
 selectBestEdgeAndDirection = G -> (
     p12 := apply(G.Edges, e -> e.Potential12);
     p21 := apply(G.Edges, e -> e.Potential21);
@@ -209,7 +210,8 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
 		    )
 		)
 	    ));
-    for e in tail.Edges do (
+    if G.Potential =!= null 
+    then for e in tail.Edges do (
     	e.Potential12 = G.Potential (e, true);
     	e.Potential21 = G.Potential (e, false);
 	);

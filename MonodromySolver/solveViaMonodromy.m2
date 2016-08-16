@@ -3,7 +3,7 @@ export {
     "computeMixedVolume",
     "monodromySolve",
     "completeGraphInit",
-    "flowerStrategy",
+    "flowerGraphInit",
     "ExtraNodeCount",
     "RandomPointFunction",
     "NumberOfEdges",
@@ -123,7 +123,7 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
 twoNodes = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3), 
 	SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)), 
-    	TargetSolutionCount=>null, Potential=>potentialLowerBound})
+    	TargetSolutionCount=>null, Potential=>null})
 twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
@@ -311,9 +311,9 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
 monodromySolve = method(Options=>{
         TargetSolutionCount => null,
         StoppingCriterion => ((n,L)->n>3),
-        SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)),
+        SelectEdgeAndDirection => selectRandomEdgeAndDirection,
         GraphInitFunction => completeGraphInit,
-        Potential => potentialLowerBound,
+        Potential => null,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3})
 monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0,s0)
