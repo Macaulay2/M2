@@ -1,6 +1,7 @@
 export {
+    "createSeedPair",
     "computeMixedVolume",
-    "graphStrategy",
+    "monodromySolve",
     "completeGraphInit",
     "flowerStrategy",
     "ExtraNodeCount",
@@ -284,9 +285,30 @@ flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
         apply(nedges, k -> addEdge(G, node1, newNode));
     );
     )
+-- find the "seed" for the parametric system
+createSeedPair = method(Options=>{"initial parameters" => "random"})
+createSeedPair PolySystem := o -> G -> (
+    R := ring G;   
+    C := coefficientRing coefficientRing R; 
+    init := o#"initial parameters";
+    createSeedPair(G,
+	if init == "random" then apply(numgens R, i->random C)
+	else if init == "one" then toList(numgens R:1_C)
+	else error "unknown option"
+	)
+    )
+createSeedPair(PolySystem, List) := o -> (G, L) -> (
+    SubList := apply(toList(0..numgens ring G-1), i -> (gens ring G)#i => L#i);
+    C := coefficientRing ring G;
+    M := sub(sub(G.PolyMap, SubList), C);
+    N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
+    c0 := first (first components N).Points; 
+    pre0 := point{apply(SubList, i -> i#1)};
+    (c0,pre0)
+    )
 
-
-graphStrategy = method(Options=>{
+-- main function
+monodromySolve = method(Options=>{
         TargetSolutionCount => null,
         StoppingCriterion => ((n,L)->n>3),
         SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)),
@@ -294,17 +316,17 @@ graphStrategy = method(Options=>{
         Potential => potentialLowerBound,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3})
-graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
+monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
         HG.TargetSolutionCount = o.TargetSolutionCount;
-        stoppingCriterion := (n,L) -> (#L >= o.TargetSolutionCount or n>= 10);
+        stoppingCriterion := (n,L) -> (length L >= o.TargetSolutionCount or n>= 10);
     )
     else stoppingCriterion = o.StoppingCriterion; 
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
-    HG.MasterNode = node1;
-    HG.MasterFactor = 1;
+    HG.MasterNode = node1; -- not using this
+    HG.MasterFactor = 1; -- ....
     
     if #s0 < 1 then error "at least one solution expected";
     
@@ -313,8 +335,8 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
     same := 0;
     npaths := 0;    
-    solutions := node1.PartialSols;
-    while not stoppingCriterion(same,solutions) do (
+    lastNode := node1;
+    while not stoppingCriterion(same,lastNode.PartialSols) do (
         (e, from1to2) := selectEdgeAndDirection(HG);
         {*  << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
         << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
@@ -323,14 +345,14 @@ graphStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 	<< "-------------------------------------------------" << endl;
         trackedPaths := trackEdge(e, from1to2);
         npaths = npaths + trackedPaths;
-	solutions = (if from1to2 then e.Node2 else e.Node1).PartialSols;
+	lastNode = if from1to2 then e.Node2 else e.Node1;
         << "  node1: " << length e.Node1.PartialSols << endl;
         << "  node2: " << length e.Node2.PartialSols << endl;    	
         << "trackedPaths " << trackedPaths << endl; 
         if trackedPaths == 0 then same = same + 1 else same = 0; 
     );
     if same == 10 then npaths = (HG.TargetSolutionCount)^2; -- some unrealistically high value for npaths, indicating failure
-    (HG, npaths)
+    (lastNode, npaths)
 )
 
 ///
