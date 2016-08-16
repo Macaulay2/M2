@@ -101,7 +101,7 @@ N = numericalIrreducibleDecomposition ideal M
 c0 = first (first components N).Points
 pre0 = point{apply(SubList, i -> i#1)}
 
-elapsedTime sols = graphStrategy(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(3,3))   
+elapsedTime sols = monodromySolve(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(3,3))   
 
 J = first sols
 E = J.Edges

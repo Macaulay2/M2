@@ -51,7 +51,7 @@ found 11016 points in the fiber so far
 
 setRandomSeed 0
 nedges = 4
-elapsedTime sols' = graphStrategy(SP,c0,{pre0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+elapsedTime sols' = monodromySolve(SP,c0,{pre0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
 {*
      -- 181.88 seconds elapsed
 

@@ -18,14 +18,14 @@ load "example1.m2"
 
 setRandomSeed 0
 -- bare bones
-elapsedTime sols' = graphStrategy(SP,c0,{pre0})
+elapsedTime sols' = monodromySolve(SP,c0,{pre0})
 
 -- default potential
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+elapsedTime sols' = monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      NumberOfNodes=>4, NumberOfEdges=>1)
 
 -- 
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+elapsedTime sols' = monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      TargetSolutionCount=>count, 
      Potential=>potentialE, 
      GraphInitFunction=>completeGraphInit,
@@ -43,7 +43,7 @@ setRandomSeed 0
 x = {}
 for i from 0 to 100  do (
     setRandomSeed i;
-    x = append(x,(graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+    x = append(x,(monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      TargetSolutionCount=>70, Potential=>potentialE, 
      GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,5)))#1))
 "firsttwonodesexperiment" << concatenate between("\n", apply(x, n -> toExternalString n)) << close
@@ -54,19 +54,19 @@ elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => sele
 setRandomSeed 0
 elapsedTime sols' = twoNodes(SP,c0,{pre0},nedges, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialE)
 setRandomSeed 0
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+elapsedTime sols' = monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>(G,p,n1)->twoNodeGraphInit(G,p,n1,3))
 setRandomSeed 0
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
+elapsedTime sols' = monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection,
      TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>(G,p,n1)->completeGraphInit(G,p,n1,1,6))
 
 setRandomSeed 0
 N = 3
 E = 4
-elapsedTime sols' = graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E)
+elapsedTime sols' = monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>completeGraphInit, nnodes => N, nedges => E)
 sols'#1
 
-trackedlist = apply(pairs(0..15), (graphStrategy(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, 
+trackedlist = apply(pairs(0..15), (monodromySolve(SP,c0,{pre0}, SelectEdgeAndDirection => selectBestEdgeAndDirection, 
 	TargetSolutionCount=>70, Potential=>potentialE, GraphInitFunction=>completeGraphInit, NumberOfNodes => N, NumberOfEdges => E))#1)
 
 apply(0..3,0..4, (i, j) -> i*j)

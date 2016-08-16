@@ -105,27 +105,27 @@ restart
 load "example-CRN.m2"
 setRandomSeed 0
 (c0, pre0) = setUpPolysparse G
-elapsedTime sols = graphStrategy(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5)
+elapsedTime sols = monodromySolve(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5)
 
 (c0', pre0') = setUpPolysparse G'
-elapsedTime sols' = graphStrategy(transpose G'.PolyMap,c0',{pre0'},NumberOfEdges => 5)
+elapsedTime sols' = monodromySolve(transpose G'.PolyMap,c0',{pre0'},NumberOfEdges => 5)
 
 W = wnt()
 R = createRing(W, FF)
 L = apply(toList(1..numgens R), i -> random CC)
 F = createPolySystem(W, FF, L)
 (c0, pre0) = setUpPolysparse(F, L)
-elapsedTime sols = graphStrategy(transpose F.PolyMap,c0,{pre0},NumberOfEdges => 5)
+elapsedTime sols = monodromySolve(transpose F.PolyMap,c0,{pre0},NumberOfEdges => 5)
 
 
 (c0, pre0) = setUpPolysparse GQ
-elapsedTime sols = graphStrategy(transpose GQ.PolyMap,c0,{pre0},NumberOfEdges => 3, NumberOfNodes => 3)
+elapsedTime sols = monodromySolve(transpose GQ.PolyMap,c0,{pre0},NumberOfEdges => 3, NumberOfNodes => 3)
 
 
 
 
 (c0, pre0) = setUpPolysparse GC
-elapsedTime sols = graphStrategy(transpose GC.PolyMap,c0,{pre0},NumberOfEdges => 5)
+elapsedTime sols = monodromySolve(transpose GC.PolyMap,c0,{pre0},NumberOfEdges => 5)
 
 
 
