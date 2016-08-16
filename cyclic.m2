@@ -29,32 +29,42 @@ end ------------------------------------------------
 
 restart
 load "../examples/cyclic.m2" 
-{*
-load "~/R/polysparse/examples/cyclic.m2" 
-*}
-
-polys = parametrizedCyclic 5
-(p0,x0) = createSeedPair polySystem polys
-mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
 *}
-setRandomSeed 0
 nedges = 4
-elapsedTime sols' = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
-{*
-     -- 181.88 seconds elapsed
 
-o21 = (HomotopyGraph{...4...}, 44064)
+
+setRandomSeed 0
+polys = parametrizedCyclic 5
+(p0,x0) = createSeedPair polySystem polys
+mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+
+setRandomSeed 0
+polys = parametrizedCyclic 9
+(p0,x0) = createSeedPair polySystem polys
+mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+{*
+     -- 140.501 seconds elapsed
+
+o16 = (HomotopyNode{...5...}, 42898)
 *}
+
+-- cyclic10 takes ~17min
+polys = parametrizedCyclic 10 
+(p0,x0) = createSeedPair polySystem polys
+mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+
 
 -- this is the old naive solver ("dynamic flower")
 setRandomSeed 0
 debug MonodromySolver
 stop = (n,L)->n>1
-elapsedTime sols = solveViaMonodromy(SP,c0,{pre0});
+elapsedTime sols = solveViaMonodromy(transpose polys.PolyMap,c0,{pre0});
 {*
 number of paths tracked: 151542
 found 11016 points in the fiber so far
