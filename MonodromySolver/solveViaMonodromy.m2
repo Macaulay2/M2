@@ -316,8 +316,9 @@ monodromySolve = method(Options=>{
         Potential => potentialLowerBound,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3})
-monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
-    HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
+monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0,s0)
+monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+    HG := homotopyGraph(PS, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
         HG.TargetSolutionCount = o.TargetSolutionCount;
         stoppingCriterion := (n,L) -> (length L >= o.TargetSolutionCount or n>= 10);

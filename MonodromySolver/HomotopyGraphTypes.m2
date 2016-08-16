@@ -1,4 +1,5 @@
 export {
+    "specializeSystem",
     "selectBestEdgeAndDirection",
     "potentialLowerBound",
     "potentialE",
@@ -16,7 +17,7 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
         BasePoint => params,
         PartialSols => partialSols,
         Graph => G,
-        SpecializedSystem => toSystem (G, params, G.Family.PolyMap),
+        SpecializedSystem => specializeSystem (params, G.Family.PolyMap),
 	Edges => new MutableList from {}
     };
     G.Vertices = append(G.Vertices, N);
@@ -74,8 +75,9 @@ homotopyGraph PolySystem := o -> PF -> (
     G
     )
 
-toSystem = method()
-toSystem (HomotopyGraph, Point, Matrix) := (G, p, M) -> (
+specializeSystem = method()
+specializeSystem (Point, PolySystem) := (p, F) -> specializeSystem(p,F.PolyMap) 
+specializeSystem (Point, Matrix) := (p, M) -> (
     PF := transpose M;
     nParameters := numgens coefficientRing ring PF;
     assert(nParameters == #coordinates p);
@@ -164,8 +166,9 @@ selectBestEdgeAndDirection = G -> (
     )
 
 -- prototype for edge tracking function
--- assumptions: 1) member function is working/optimized for PointAray objects 2) toSystem method
--- which converts parametric coefficients to a list of polynomials (inputs to track),
+-- assumptions: 
+-- 1) member function is working/optimized for PointAray objects 
+-- 2) specializeSystem method which converts parametric coefficients to a list of polynomials (inputs to track),
 -- 3) positions method defined for pointset object
 -- Output: 
 trackEdge = method()
