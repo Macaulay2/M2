@@ -1,10 +1,10 @@
+restart
 needsPackage "MonodromySolver"
 needsPackage "ReactionNetworks"
 
 FF = CC
 
-stop = (n,L)-> #L >= 6
-
+-- creates a polynomial system from a chemical reaction network
 createPolySystem = method()
 createPolySystem (ReactionNetwork, Ring) := (Rn, FF) -> (
     S := createRing(Rn, FF);
@@ -40,100 +40,48 @@ L = toList (#vars R:random CC)
 createPolySystem(CRN, FF, L)
 ///
 
-setUpPolysparse = method()
-setUpPolysparse PolySystem := G -> (
-    C := coefficientRing ring G;
-    M := sub(sub(G.PolyMap, apply(gens ring G, x -> x => 1)), C);
-    N := numericalIrreducibleDecomposition ideal M;
-    c0 := first (first components N).Points; 
-    pre0 := point{toList(numgens ring G : 1_CC)};
-    (c0,pre0)
-    )
-setUpPolysparse(PolySystem, List) := (G, L) -> (
-    SubList := apply(toList(0..numgens ring G-1), i -> (gens ring G)#i => L#i);
-    C := coefficientRing ring G;
-    M := sub(sub(G.PolyMap, SubList), C);
-    N := numericalIrreducibleDecomposition ideal M; 
-    c0 := first (first components N).Points; 
-    pre0 := point{apply(SubList, i -> i#1)};
-    (c0,pre0)
-    )
-
-CRN = reactionNetwork "A <--> 2B, A+C<-->D, B+E-->A+C, A+C-->D, D-->B+E"
+-- example from Elizabeth's talk
+CRN = reactionNetwork "A <--> 2B, A+C<-->D, B+E-->A+C, D-->B+E"
 G = createPolySystem(CRN, FF)
 
-
+-- example of a motif
 F = twoSiteModificationF()
 G' = createPolySystem(F, FF)
 
+-- example of a motif
 C = clusterModelCellDeath()
 GC = createPolySystem(C, FF)
 
-
--- example below is work in progress
-A = oneSiteModificationA()
-A.Species
-A' = sub(oneSiteModificationA(), {"S_0" => "S_1", "S_1" => "S_2"})
-A'' = sub(oneSiteModificationA(), {"S_0" => "S_2", "S_1" => "S_3"})
-A'''=sub(oneSiteModificationA(), {"S_0" => "S_3", "S_1" => "S_4"})
-B = sub(oneSiteModificationA(), {"S_0" => "S_4", "S_1" => "S_5"})
-C'' = glue(A,A')
-C' = glue(C'',A'')
-D = glue (C',A''')
-C = glue(D,B)
-R1 = createRing(C, FF)
-CEforms1 = matrix{conservationEquations(C,FF)}
-CE1 =sub(CEforms1, apply(gens ring CEforms1, x -> x => 1)) - CEforms1
-SSE1 = matrix {steadyStateEquations C}	       	   
-T1 = transpose(CE1|SSE1)
-rM1 = sub(random(FF^10, FF^13),R1)
-G1 = polySystem(rM1 * T1)
-
-
-
-#C.Species
-
-
+-- random example to test number of solutions
 Q = reactionNetwork "A <--> 2B, A+3C<-->D, B+4E-->A+3C, A+3C-->D, D-->B+4E"
 GQ = createPolySystem(Q, FF)
-
-
 
 
 end ---------------------------------
 restart
 load "example-CRN.m2"
+
 setRandomSeed 0
-(c0, pre0) = setUpPolysparse G
-elapsedTime sols = monodromySolve(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5)
+-- system for example from Elizabeth's talk
+(p0, x0) = createSeedPair(G,"initial parameters" => "one")  -- random doesn't work
+elapsedTime sols = monodromySolve(G,p0,{x0}, NumberOfEdges => 5)
 
-(c0', pre0') = setUpPolysparse G'
-elapsedTime sols' = monodromySolve(transpose G'.PolyMap,c0',{pre0'},NumberOfEdges => 5)
+-- system for motif twoSiteModificationF
+(p0, x0) = createSeedPair(G',"initial parameters" => "one")
+elapsedTime sols = monodromySolve(G',p0,{x0},NumberOfEdges => 3)
 
+-- system for wnt signaling pathway
 W = wnt()
 R = createRing(W, FF)
 L = apply(toList(1..numgens R), i -> random CC)
 F = createPolySystem(W, FF, L)
-(c0, pre0) = setUpPolysparse(F, L)
-elapsedTime sols = monodromySolve(transpose F.PolyMap,c0,{pre0},NumberOfEdges => 5)
+(p0, x0) = createSeedPair(F, L)
+elapsedTime sols = monodromySolve(F,p0,{x0},NumberOfEdges => 4, TargetSolutionCount => 9)
+
+-- system for random example
+(p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
+elapsedTime sols = monodromySolve(GQ,p0,{x0}, NumberOfEdges => 1, NumberOfNodes => 5)
 
 
-(c0, pre0) = setUpPolysparse GQ
-elapsedTime sols = monodromySolve(transpose GQ.PolyMap,c0,{pre0},NumberOfEdges => 3, NumberOfNodes => 3)
-
-
-
-
-(c0, pre0) = setUpPolysparse GC
-elapsedTime sols = monodromySolve(transpose GC.PolyMap,c0,{pre0},NumberOfEdges => 5)
-
-
-
-
--- some other examples? simpler than wnt but with more solutions?
-
-
-(c01,pre01) = setUpPolysparse G1
-elapsedTime sols = twoNodes(transpose G1.PolyMap,c01,{pre01},5)
 
 
