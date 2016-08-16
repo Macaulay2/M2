@@ -64,7 +64,7 @@ position(Point,PointArray) := o -> (b,A) ->
 	if A#"raw" === null then return null;
 	ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose matrix b,0);
 	if ret == -1 then null else ret
-	) else position(keys A, k->areEqual(A#k,b))
+	) else position(keys A, k->areEqual(A#k,b,Tolerance => PointArrayTolerance))
     
 PointArray_List := (A,inds) -> apply(inds,i->A#i)
 

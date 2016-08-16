@@ -17,6 +17,13 @@ newPackage(
     	DebuggingMode => true		 -- set to true only during development
     	)
 
+
+-- Any symbols or functions that the user is to have access to
+-- must be placed in one of the following two lists
+
+export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
+     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12"}
+
 debug NAGtypes
 debug NumericalAlgebraicGeometry
 debug Core
@@ -25,10 +32,4 @@ needs "./MonodromySolver/HomotopyGraphTypes.m2"
 needs "./MonodromySolver/random_methods.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
 
-
--- Any symbols or functions that the user is to have access to
--- must be placed in one of the following two lists
-
-export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "System", "Potential12",
-     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12"}
 

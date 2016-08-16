@@ -16,7 +16,7 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
         BasePoint => params,
         PartialSols => partialSols,
         Graph => G,
-        System => toSystem (G, params, G.Family.PolyMap),
+        SpecializedSystem => toSystem (G, params, G.Family.PolyMap),
 	Edges => new MutableList from {}
     };
     G.Vertices = append(G.Vertices, N);
@@ -182,7 +182,7 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
 	correspondence = e.Correspondence21;
 	);
     untrackedInds := indices head.PartialSols - set keys correspondence;
-    newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * head.System), polySystem(gammaTail * tail.System), (head.PartialSols)_(untrackedInds))
+    newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * head.SpecializedSystem), polySystem(gammaTail * tail.SpecializedSystem), (head.PartialSols)_(untrackedInds))
     else {};
     n := length tail.PartialSols;
     scan(#untrackedInds, i->(
