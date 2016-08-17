@@ -122,7 +122,8 @@ DEFAULT = new MutableHashTable from {
      EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
      InfinityThreshold => 1e9, -- used to tell if the path is diverging
      -- projectivize and normalize
-     Normalize => true, -- normalize in the Bombieri-Weyl norm
+     -- Normalize => true, -- normalize in the Bombieri-Weyl norm -- turning this on fails something in NSC!!!
+     Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
      AffinePatches => DynamicPatch,
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
