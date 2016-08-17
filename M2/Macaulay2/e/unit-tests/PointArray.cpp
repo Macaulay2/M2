@@ -21,7 +21,7 @@ TEST(PointArray, lookup)
   PointArray  p(0.001,2);
   EXPECT_EQ(p.lookup({0.1,-0.1}),-1);
   EXPECT_EQ(p.lookup_or_append({0.1,-0.1}),0);
-  EXPECT_EQ(p.lookup_or_append({0.1,-0.1}),-1);
+  EXPECT_EQ(p.lookup_or_append({0.1,-0.1}),0);
   EXPECT_EQ(p.lookup_or_append({0.1,-0.2}),1);
   EXPECT_EQ(p.lookup({0.1,-0.10001}),0);  
   EXPECT_EQ(p.lookup_or_append({0.1,-0.10001}),0);  
