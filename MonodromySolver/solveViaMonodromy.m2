@@ -10,11 +10,14 @@ export {
     "NumberOfNodes",
     "StoppingCriterion",
     "GraphInitFunction",
-    "SelectEdgeAndDirection"}
+    "SelectEdgeAndDirection",
+    "randomWeights"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
 --     s0, (as above)
+
+needs "./random_methods.m2"
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
@@ -307,7 +310,9 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     for i from 1 to length l - 1 do A = A | l#i;
     K := numericalKernel(transpose A, 10^(-6));
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
-    v := K * transpose matrix {toList ((numcols K):1_CC)};  
+    --v := K * transpose matrix {toList ((numcols K):1_CC)};  
+    w := transpose randomWeights(numcols K);
+    v := K * w;
     c0 := point matrix v;
     -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
     --c0 := first (first components N).Points; 
