@@ -1,3 +1,5 @@
+-- something still broken in linear algebra...
+
 needsPackage "AlphaTest"
 load "example-Nash.m2"
 
