@@ -17,5 +17,5 @@ load "example-NashCertify.m2"
 G = getNashSystem(3,3)
 (c0,pre0) = createSeedPair G
 
-(graph,n') = monodromySolve(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(3,3))   
-certifySystem graph
+(node,n') = monodromySolve(transpose G.PolyMap,c0,{pre0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(3,3))   
+certifySystem node
