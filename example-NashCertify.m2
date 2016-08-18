@@ -1,4 +1,4 @@
--- something still broken in linear algebra...
+-- everything working except certify
 
 needsPackage "AlphaTest"
 load "example-Nash.m2"
@@ -23,6 +23,7 @@ setRandomSeed 0
 (c0,pre0) = createSeedPair G
 (node,n') = monodromySolve(transpose G.PolyMap,c0,{pre0},
     NumberOfEdges => 5,
+    NumberOfNodes => 5,
     TargetSolutionCount => mixedVolume
     )
 assert(length node.PartialSols == mixedVolume)   
