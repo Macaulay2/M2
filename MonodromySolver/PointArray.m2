@@ -18,7 +18,7 @@ _               -- return points corresponding to labels
 appendPoint     -- tack on a point at the end
 appendPoints    -- ....... list of points ..........
 position        -- find a poisiton of a point in the array (null = not there)
-
+points          -- returns a List of points
 
 !!!The goal is to make searching the array fast, 
 but for now it works only in linear time!!!
@@ -44,6 +44,8 @@ net PointArray := P -> net values P
 length PointArray := P -> if FAST then #P - 1 else #P
 
 indices PointArray := P -> toList(0..length(P)-1) 
+
+points PointArray := P -> if FAST then P_(indices P) else values P
 
 appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
