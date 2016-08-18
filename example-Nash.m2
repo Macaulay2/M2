@@ -13,20 +13,21 @@ bkkBound = method()
 bkkBound (ZZ, ZZ) := (S, n) -> (
     N := S*(n-1);
     -- A is an NxN matrix of 1's and 0's
+    FF := ZZ;
     A := matrix flatten toList(apply(0..S-1,i -> toList (
 		if i == 0 then (
-		    for j from 1 to n-1 list join(toList(n-1: 0_CC), toList(N-((n-1)*(i+1)): 1_CC))
+		    for j from 1 to n-1 list join(toList(n-1: 0_FF), toList(N-((n-1)*(i+1)): 1_FF))
 		    ) 
 		else if  i == S-1 then (
-		    for j from 1 to n-1 list join(toList((n-1)*i: 1_CC), toList(n-1: 0_CC))
+		    for j from 1 to n-1 list join(toList((n-1)*i: 1_FF), toList(n-1: 0_FF))
 		    ) 
 		else (
 		    for j from 1 to n-1 list 
-		    join(toList((n-1)*i: 1_CC), toList(n-1: 0_CC), toList(N-(n-1)*(i+1): 1_CC)))
+		    join(toList((n-1)*i: 1_FF), toList(n-1: 0_FF), toList(N-(n-1)*(i+1): 1_FF)))
 		))
 	);
     permA := glynn A;
-    Bound := permA/((n-1)!^S);
+    Bound := permA//((n-1)!^S);
     Bound
     )
 
