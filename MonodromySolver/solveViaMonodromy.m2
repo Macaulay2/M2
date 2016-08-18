@@ -8,6 +8,7 @@ export {
     "RandomPointFunction",
     "NumberOfEdges",
     "NumberOfNodes",
+    "NumberOfRepeats",
     "StoppingCriterion",
     "GraphInitFunction",
     "SelectEdgeAndDirection",
@@ -17,7 +18,14 @@ export {
 --     point0, (as above)
 --     s0, (as above)
 
-needs "./random_methods.m2"
+--needs "./random_methods.m2"
+
+-- random complex vector via Box-Mueller transform
+randomWeights = n -> matrix(CC, {apply(n,i-> (
+	    us := apply(2, i -> random(sub(0,RR), sub(1,RR)));
+	    us = {sqrt(-2* log first us), 2*pi* last us};
+	    first us * cos last us + ii * first us * sin last us))})
+
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
@@ -328,13 +336,14 @@ monodromySolve = method(Options=>{
         GraphInitFunction => completeGraphInit,
         Potential => null,
 	NumberOfNodes => 2,
-	NumberOfEdges => 3})
+	NumberOfEdges => 3,
+	NumberOfRepeats => 10})
 monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0,s0)
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     HG := homotopyGraph(PS, Potential=>o.Potential);
     if o.TargetSolutionCount =!= null then (
         HG.TargetSolutionCount = o.TargetSolutionCount;
-        stoppingCriterion := (n,L) -> (length L >= o.TargetSolutionCount or n>= 10);
+        stoppingCriterion := (n,L) -> (length L >= o.TargetSolutionCount or n>= o.NumberOfRepeats);
     )
     else stoppingCriterion = o.StoppingCriterion; 
     PA := pointArray s0;
