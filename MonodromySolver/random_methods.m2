@@ -1,6 +1,4 @@
--- one idea for a better point array (untested)
--- other ideas: use image of random projection as key in a hash table (this would be simpler, but how do we mainain 
--- sorted order in key list?), balanced BSTs (not as simple, not sure if hese get used in practice)
+-- this file is probably deprecated: solveViaMonodromy depends on randomWeights, which is essentially a rewrite of rp1d below
 
 needsPackage "NumericalAlgebraicGeometry"
 
