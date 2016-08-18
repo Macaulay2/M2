@@ -15,7 +15,7 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolutions", "certifyDistinctSoln", "frobeniusNormSq"}
+export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolution", "certifyDistinctSoln", "frobeniusNormSq"}
 exportMutable {}
 
 -- in: a rational number a, precision parameter epsilon
@@ -223,12 +223,13 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
 
 
 
-certifySolutions = method()
-certifySolutions(PolySystem, Point) := (f, x) -> (
+certifySolution = method()
+certifySolution(PolySystem, Point) := (f, x) -> (
     Consts := computeConstants(f,x);
     if rationalToComplex(Consts #0)<((13-3*sqrt(17))/4)^2 then (
 	 print "The point is an approximate solution to the system";
 	 << "The value of alpha is " << sqrt(rationalToComplex((Consts)#0)) << endl;
+	 << "The radius is " << 2*rationalToComplex((Consts)#1) << endl;
 	 true
 	 )
     else (
@@ -273,18 +274,18 @@ needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]
 f = polySystem {x + y, x^2 - 4}
 sols = solveSystem f
-assert all(sols, p -> certifySolutions(f,p))
+assert all(sols, p -> certifySolution(f,p))
 p = point{{2.0, -2.0}}
 q = point{{-2, 2.000001}}
 computeConstants(f,p)
-certifySolutions(f,p)
+certifySolution(f,p)
 certifyDistinctSoln(f,p,q)
 FFF = QQ[j]/ideal(j^2+1)
 pp = point {complexToRational(coordinates q, FFF)}
 qq = point {complexToRational(coordinates p, FFF)}
 R'=FFF[x,y]
 ff = complexToRational(f,FFF)
-certifySolutions(ff,pp)
+certifySolution(ff,pp)
 certifyDistinctSoln(ff,pp,qq)
 ///
 

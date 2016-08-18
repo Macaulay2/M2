@@ -1,4 +1,4 @@
-needs "~/polysparse/code/solveViaMonodromy.m2"
+needs "~/polysparse/code/MonodromySolver/solveViaMonodromy.m2"
 setRandomSeed 0
 needs "~/M2/M2/Macaulay2/packages/ExampleIdeals.m2"
 n = 6
@@ -27,7 +27,7 @@ restart
 needsPackage "AlphaTest"
 FF = CC
 load "AlphaTest/AlphaTestTest.m2"
-needs "~/polysparse/code/solveViaMonodromy.m2"
+needs "~/polysparse/code/MonodromySolver/solveViaMonodromy.m2"
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
 stop = (n,L)->n>1
