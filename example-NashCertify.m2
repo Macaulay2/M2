@@ -19,14 +19,14 @@ load "example-NashCertify.m2"
 G = getNashSystem(3,3)
 mixedVolume = bkkBound(3,3)
 
-s = 10
+s = 0
 setRandomSeed s
 (c0,pre0) = createSeedPair G
 setRandomSeed s
 (node,n') = monodromySolve(transpose G.PolyMap,c0,{pre0},
     NumberOfEdges => 5,
-    NumberOfNodes => 5,
-    TargetSolutionCount => mixedVolume
+    NumberOfNodes => 6,
+    TargetSolutionCount => mixedVolume,
+    NumberOfRepeats => 50
     )
-assert(length node.PartialSols == mixedVolume)   
 certifySystem node
