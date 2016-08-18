@@ -29,6 +29,7 @@ end ------------------------------------------------
 
 restart
 load "../examples/cyclic.m2" 
+load "examples/cyclic.m2"
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
@@ -41,6 +42,21 @@ polys = parametrizedCyclic 5
 (p0,x0) = createSeedPair polySystem polys
 mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+
+-- seed 0 gives seemingly unreasonable # of tracked paths
+setRandomSeed 0
+polys = parametrizedCyclic 7
+(p0,x0) = createSeedPair polySystem polys
+mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+
+
+setRandomSeed 0
+polys = parametrizedCyclic 8
+(p0,x0) = createSeedPair polySystem polys
+mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+
 
 setRandomSeed 0
 polys = parametrizedCyclic 9
