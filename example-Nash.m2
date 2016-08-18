@@ -91,6 +91,7 @@ restart
 load "example-Nash.m2"
 
 G = getNashSystem(3,3)
+(p0, x0) = createSeedPair G
 peek G
 R = ring G
 L = apply(toList(1..numgens R), i -> random(0.,1.))
