@@ -8,7 +8,7 @@ certifySystem HomotopyNode := x -> (
     FF := QQ[i]/ideal(i^2+1);
     SP := complexToRational(polySystem x.SpecializedSystem,FF);
     sols := complexToRational(points x.PartialSols,FF);
-    all(sols, s -> certifySolutions(SP,s))
+    all(sols, s -> certifySolution(SP,s))
     )
 
 end
@@ -22,10 +22,10 @@ mixedVolume = bkkBound(3,3)
 s = 0
 setRandomSeed s
 (c0,pre0) = createSeedPair G
-setRandomSeed s
+assert(norm sub(matrix{specializeSystem(c0,G)},matrix pre0) < 0.001)
 (node,n') = monodromySolve(transpose G.PolyMap,c0,{pre0},
-    NumberOfEdges => 5,
-    NumberOfNodes => 6,
+    NumberOfEdges => 3,
+    NumberOfNodes => 3,
     TargetSolutionCount => mixedVolume,
     NumberOfRepeats => 50
     )

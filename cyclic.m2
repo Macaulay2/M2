@@ -28,8 +28,7 @@ pre0 = point{toList(n:1_CC)}
 end ------------------------------------------------
 
 restart
-load "../examples/cyclic.m2" 
-load "examples/cyclic.m2"
+load "cyclic.m2"
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
@@ -42,6 +41,7 @@ polys = parametrizedCyclic 5
 (p0,x0) = createSeedPair polySystem polys
 mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE)
 
 -- seed 0 gives seemingly unreasonable # of tracked paths
 setRandomSeed 0
