@@ -20,19 +20,26 @@ export {
 
 --needs "./random_methods.m2"
 
--- random complex vector via Box-Mueller transform
-randomWeights = n -> matrix(CC, {apply(n,i-> (
-	    us := apply(2, i -> random(sub(0,RR), sub(1,RR)));
-	    us = {sqrt(-2* log first us), 2*pi* last us};
-	    first us * cos last us + ii * first us * sin last us))})
+-- change the behavior of random CC (pick uniformly in a unit disk)
+old'random'Type = lookup(random,Type)
+random Type := o -> R -> (
+    if class R === ComplexField then (
+	-- random complex via Box-Mueller transform
+	us := apply(2, i -> random RR);
+	us = {sqrt(-2* log first us), 2*pi* last us};
+	first us * cos last us + ii * first us * sin last us
+	) 
+    else (old'random'Type o) R
+    ) 
 
+-- random complex vector
+randomWeights = n -> matrix(CC, {apply(n,i->random CC)})
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
     for i from 1 to nnodes-1 do (
         addNode(G,nextP(p), pointArray {});
     );
-    print(peek(G));
     for i from 0 to nnodes-1 do (
         for j from i+1 to nnodes-1 do (
             apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
@@ -297,13 +304,14 @@ flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
     );
     )
 -- find the "seed" for the parametric system
-createSeedPair = method(Options=>{"initial parameters" => "random"})
+createSeedPair = method(Options=>{"initial parameters" => "random unit"})
 createSeedPair PolySystem := o -> G -> (
     R := ring G;   
     C := coefficientRing coefficientRing R; 
     init := o#"initial parameters";
     createSeedPair(G,
-	if init == "random" then apply(numgens R, i->random C)
+	if init == "random unit" then apply(numgens R, i->(x:=random C; x/abs x))
+	else if init == "random" then apply(numgens R, i->random C)
 	else if init == "one" then toList(numgens R:1_C)
 	else error "unknown option"
 	)
@@ -316,7 +324,7 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     l := apply(M, g -> (coefficients(g, Monomials => gens C))#1);
     A := l#0;
     for i from 1 to length l - 1 do A = A | l#i;
-    K := numericalKernel(transpose A, 10^(-6));
+    K := numericalKernel(transpose A, 1e-6);
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
     --v := K * transpose matrix {toList ((numcols K):1_CC)};  
     w := transpose randomWeights(numcols K);
@@ -325,6 +333,8 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
     --c0 := first (first components N).Points; 
     pre0 := point{apply(SubList, i -> i#1)};
+    G0 := specializeSystem(c0,G);
+    pre0' := first refine(G0,{pre0});
     (c0,pre0)
     )
 
@@ -338,14 +348,14 @@ monodromySolve = method(Options=>{
 	NumberOfNodes => 2,
 	NumberOfEdges => 3,
 	NumberOfRepeats => 10})
-monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0,s0)
+monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     HG := homotopyGraph(PS, Potential=>o.Potential);
+    stoppingCriterion := o.StoppingCriterion; 
     if o.TargetSolutionCount =!= null then (
         HG.TargetSolutionCount = o.TargetSolutionCount;
-        stoppingCriterion := (n,L) -> (length L >= o.TargetSolutionCount or n>= o.NumberOfRepeats);
-    )
-    else stoppingCriterion = o.StoppingCriterion; 
+        stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount or n>= o.NumberOfRepeats);
+    ); 
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
     HG.MasterNode = node1; -- not using this
@@ -374,7 +384,8 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
         << "trackedPaths " << trackedPaths << endl; 
         if trackedPaths == 0 then same = same + 1 else same = 0; 
     );
-    if same == 10 then npaths = (HG.TargetSolutionCount)^2; -- some unrealistically high value for npaths, indicating failure
+    if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
+    then npaths = "failed"; 
     (lastNode, npaths)
 )
 

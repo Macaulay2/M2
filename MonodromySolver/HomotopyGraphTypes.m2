@@ -152,10 +152,11 @@ potentialE = (e,from1to2) -> (
 
 selectRandomEdgeAndDirection = G-> (G.Edges#(random (#G.Edges)),random 2 == 0)
 selectBestEdgeAndDirection = G -> (
-    p12 := apply(G.Edges, e -> e.Potential12);
-    p21 := apply(G.Edges, e -> e.Potential21);
-    m12 := max toList p12;
-    m21 := max toList p21;
+    p12 := toList apply(G.Edges, e -> e.Potential12);
+    p21 := toList apply(G.Edges, e -> e.Potential21);
+    m12 := max p12;
+    m21 := max p21;
+--    print (p12,p21);
     if m12 > m21 then (
 	e := positions(p12, m -> m == m12);
 	(G.Edges#(e#(random length e)), true)
