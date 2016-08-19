@@ -156,7 +156,8 @@ monodromySolve = method(Options=>{
         Potential => null,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3,
-	NumberOfRepeats => 10})
+	NumberOfRepeats => 10,
+	Verbose => false})
 monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     HG := homotopyGraph(PS, Potential=>o.Potential);
@@ -180,17 +181,20 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     lastNode := node1;
     while not stoppingCriterion(same,lastNode.PartialSols) do (
         (e, from1to2) := selectEdgeAndDirection(HG);
-        {*  << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
-        << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
-        << "Direction is " << from1to2 << endl;
-	*}
-	<< "-------------------------------------------------" << endl;
+        if o.Verbose then (
+            << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
+            << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
+            << "Direction is " << from1to2 << endl;
+            << "-------------------------------------------------" << endl;
+        );
         trackedPaths := trackEdge(e, from1to2);
         npaths = npaths + trackedPaths;
-	lastNode = if from1to2 then e.Node2 else e.Node1;
-        << "  node1: " << length e.Node1.PartialSols << endl;
-        << "  node2: " << length e.Node2.PartialSols << endl;    	
-        << "trackedPaths " << trackedPaths << endl; 
+        lastNode = if from1to2 then e.Node2 else e.Node1;
+        if o.Verbose then (
+            << "  node1: " << length e.Node1.PartialSols << endl;
+            << "  node2: " << length e.Node2.PartialSols << endl;    	
+            << "trackedPaths " << trackedPaths << endl; 
+        );
         if trackedPaths == 0 then same = same + 1 else same = 0; 
     );
     if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
