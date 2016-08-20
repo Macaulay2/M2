@@ -50,7 +50,7 @@ for opt in testOptions do (
 		(length node.PartialSols == mixedVolume, numPaths)
 		));
     	success := select(pairs,p->first p);
-    	file << " & " << 100.*#success/#pairs << "%" << ",\\ " << toRR sum(success,p->last p)/#success 
+    	file << " & " << 100.*#success/#pairs << "\%" << ",\\ " << toRR sum(success,p->last p)/#success 
     	);
     file << "\\\\" << endl;
     )
