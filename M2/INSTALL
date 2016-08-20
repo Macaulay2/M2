@@ -118,7 +118,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion
+      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion libmpc-devel
     Some debugging aids:
       sudo debuginfo-install strace
 
