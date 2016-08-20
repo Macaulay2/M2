@@ -139,6 +139,7 @@ then if test -f /usr/bin/sw_vers
 	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
+	 "arch") ISSUE_FLAVOR=ArchLinux ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
