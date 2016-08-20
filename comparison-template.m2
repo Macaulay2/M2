@@ -1,6 +1,11 @@
 load "../examples/cyclic.m2" 
 load "../examples/example-Nash.m2"
 load "../examples/katsura.m2"
+load "../examples/example-CRN.m2"
+
+-- for chemical reaction networks
+R = wnt()
+polynomialSystem = "crn"
 
 n = 4
 S = 2 --Only applicable for nash
@@ -8,6 +13,7 @@ polynomialSystem = "nash"
 if polynomialSystem == "cyclic" then (polys = parametrizedCyclic n;) else 
 if polynomialSystem == "katsura" then (polys = parametrizedKatsura n;) else
 if polynomialSystem == "nash" then (polys = getNashSystem (n, S);) else
+if polynomialSystem == "crn" then (polys = createPolySystem(R, CC);) else
 (error "Unknown polynomial system")
 
 

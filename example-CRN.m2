@@ -72,11 +72,13 @@ elapsedTime sols = monodromySolve(G',p0,{x0},NumberOfEdges => 3)
 
 -- system for wnt signaling pathway
 W = wnt()
-R = createRing(W, FF)
-L = apply(toList(1..numgens R), i -> random CC)
-F = createPolySystem(W, FF, L)
-(p0, x0) = createSeedPair(F, L)
-elapsedTime sols = monodromySolve(F,p0,{x0},NumberOfEdges => 4, TargetSolutionCount => 9)
+F = createPolySystem(W, CC)
+(p0, x0) = createSeedPair(F,"initial parameters" => "random")
+elapsedTime sols = monodromySolve(F,p0,{x0},
+    GraphInitFunction=>completeGraphInit,
+    NumberOfNodes=>3,
+    NumberOfEdges=>7,
+    TargetSolutionCount => 9)
 
 -- system for random example
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
