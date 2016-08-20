@@ -29,7 +29,7 @@ n = 5
 polys = parametrizedCyclic n;
 (p0,x0) = createSeedPair polySystem polys;
 mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-numSeeds = 3
+numSeeds = 100
 
 file = openOut (currentFileDirectory | "cyclic-" | n | ".output")         
 file << "\\begin{array}{|c||" << concatenate(#testTriples:"c|") << "} " << endl;
