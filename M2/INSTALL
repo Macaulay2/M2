@@ -154,15 +154,18 @@ various modern operating systems:
     to make RPM files for distribution to generic hardware.
 
   Arch Linux:
-      sudo pacman -S archlinux-keyring
+    You may prefer to use the Arch package for Macaulay2 at https://aur.archlinux.org/packages/macaulay2/.
+    For compiling it yourself:
+      sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip
     We recommend adding
-    	 --enable-build-libraries="pari flint ntl gc"
-      to the "configure" command line below in the section on compiling Macaulay2, since it seems to
-      avoid undiagnosed problems with invalid libgc pointers.    
+    	 --enable-build-libraries="pari flint ntl gc givaro"
+      to the "configure" command line below in the section on compiling Macaulay2
+      Adding "gc" here seems to avoid undiagnosed problems with invalid libgc pointers.
+      Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
     To upgrade the system:
-      pacman -Syu
+      sudo pacman --sync --refresh --sysupgrade
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
