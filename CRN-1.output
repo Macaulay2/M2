@@ -1,0 +1,5 @@
+\begin{array}{|c||c|c|c|c|c|c|c|c|c|c|c|c|} 
+selectRandomEdgeAndDirection => null & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ - \\
+selectBestEdgeAndDirection => potentialLowerBound & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ - \\
+selectBestEdgeAndDirection => potentialE & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ -  & 0%,\ - \\
+\end{array}
