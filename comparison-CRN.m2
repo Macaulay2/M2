@@ -48,7 +48,8 @@ for opt in testOptions do (
 		    NumberOfEdges=>nedges,
 		    SelectEdgeAndDirection=>first opt,
 		    Potential=>last opt,
-		    TargetSolutionCount=>solsCount);
+		    TargetSolutionCount=>solsCount,
+		    Verbose=>true);
 		(length node.PartialSols == solsCount, numPaths)
 		));
     	success := select(pairs,p->first p);
