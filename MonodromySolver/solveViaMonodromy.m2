@@ -25,10 +25,11 @@ export {
 old'random'Type = lookup(random,Type)
 random Type := o -> R -> (
     if class R === ComplexField then (
-	-- random complex via Box-Mueller transform
-	us := apply(2, i -> random RR);
-	us = {sqrt(-2* log first us), 2*pi* last us};
-	first us * cos last us + ii * first us * sin last us
+	exp(2 * pi * random RR * ii)
+	-- old code for Box-Mueller transform
+	--us := apply(2, i -> random RR);
+	--us = {sqrt(-2* log first us), 2*pi* last us};
+	--first us * cos last us + ii * first us * sin last us
 	) 
     else (old'random'Type o) R
     ) 
