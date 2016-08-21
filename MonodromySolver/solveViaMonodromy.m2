@@ -183,9 +183,11 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     while not stoppingCriterion(same,lastNode.PartialSols) do (
         (e, from1to2) := selectEdgeAndDirection(HG);
         if o.Verbose then (
-            << "Correspondences are " << (keys e.Correspondence12 , e.Potential12);
-            << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
-            << "Direction is " << from1to2 << endl;
+            << "Correspondences are " << keys e.Correspondence12;
+	    if e.?Potential12 then << " (potential = " << e.Potential12 << ")";
+            << " and " << keys e.Correspondence21;
+	    if e.?Potential21 then << " (potential = " << e.Potential21 << ")";
+            << endl << "Direction is " << from1to2 << endl;
             << "-------------------------------------------------" << endl;
         );
         trackedPaths := trackEdge(e, from1to2);
