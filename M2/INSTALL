@@ -166,6 +166,9 @@ various modern operating systems:
       Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
     To upgrade the system:
       sudo pacman --sync --refresh --sysupgrade
+    Compilation doesn't succeed with gcc 6, so install gcc 5 with
+      sudo pacman --sync --needed gcc5
+    and add "CC=gcc-5 CXX=g++-5" to the "configure" command line below.
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
