@@ -779,6 +779,7 @@ egbSignature (List) := o -> F -> (
     out := o.OutFile;
     H := {};
     G := {};
+    coveredCount := 0;
     while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
@@ -790,6 +791,7 @@ egbSignature (List) := o -> F -> (
 	                  *} 
 	   then (
 	    out << "  covered pair in JP: " << j << endl;
+	    coveredCount = coveredCount + 1;
 	    continue
 	    );
 	out << "  processing pair: " << j << endl;
@@ -806,6 +808,7 @@ egbSignature (List) := o -> F -> (
 	      F#(#F) = p;
 	      Fwidths#(#Fwidths) = width leadMonomial p;
 	      j = mPair(shiftMonomial(1_R,shift{}),#F,F,p);
+	      << "-- F contains " << #F << " elements now" << endl;
 	      );
 	    G = append(G,j);
 	    out << "-- " << #G << "th basis element is: " << j << endl;
@@ -815,6 +818,7 @@ egbSignature (List) := o -> F -> (
 		newJP = select(newJP, j->not isCoveredByTrivSyg(j,Fwidths#(j.pos)) and not isCovered(j,H));
 		scan(newJP, j->insert(JP,j));
 		out << "   new NOT covered J-pairs: " << #newJP << endl;
+		coveredCount = coveredCount - #newJP;
 		if o.PrincipalSyzygies then (
 		  newPS = select(newPS, s->not isCoveredByTrivSyg(s,Fwidths#(s.pos)) and not isCovered(s,H));
 		  H = H | newPS;
@@ -824,6 +828,7 @@ egbSignature (List) := o -> F -> (
 	    out << "  syzygies in H: " << #H << endl;
 	    );
 	);
+    << "-- TOTAL covered pairs = " << coveredCount << endl;
     apply(G, g->g.polynomial)
     )
 
