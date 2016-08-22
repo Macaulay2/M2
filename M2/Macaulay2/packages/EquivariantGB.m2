@@ -29,6 +29,7 @@ export {
      "Incremental",
      "reduce",
      "OutFile",
+     "PrincipalSyzygies",
      "exponentMatrix",
      "incOrbit",
      --priority queue
@@ -52,10 +53,10 @@ MPair = new Type of HashTable
 
 -- In:
 -- Out: 
-egb = method(Options=>{Symmetrize=>false, OutFile=>null, Algorithm=>Buchberger})
+egb = method(Options=>{Symmetrize=>false, OutFile=>null, Algorithm=>Buchberger, PrincipalSyzygies=>false})
 egb (List) := o -> F -> (
      if o.Algorithm == Incremental then return egbIncremental(F,Symmetrize=>o.Symmetrize,OutFile=>o.OutFile);
-     if o.Algorithm == Signature   then return egbSignature(F,OutFile=>o.OutFile);
+     if o.Algorithm == Signature   then return egbSignature(F,OutFile=>o.OutFile,PrincipalSyzygies=>o.PrincipalSyzygies);
      g := o.OutFile;
      n := width ring first F;
      k := 0;
