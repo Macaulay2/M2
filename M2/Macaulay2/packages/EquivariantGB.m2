@@ -41,7 +41,7 @@ export {
 
 protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, 
     Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len, degreesList, 
-    CompleteReduce, PrincipalSyzygies, Diagonal }
+    CompleteReduce, PrincipalSyzygies, Diagonal, basisList }
 
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
@@ -718,18 +718,23 @@ ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 
 net MPair := M -> net "(" | net toString M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
-mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
-MPair ? MPair := (m,n) -> if width m == width n then (
-    if degree m.polynomial == degree n.polynomial then (
-    	-- if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
-    	if m.shM == n.shM then m.pos ? n.pos else m.shM ? n.shM
-    	) else degree m.polynomial ? degree n.polynomial
-    ) else width m ? width n
-MPair == MPair := (M,N) -> (M ? N) === symbol ==
-ShiftMonomial * MPair := (S,M) -> (
-    new MPair from hashTable{shM=>S*M.shM, pos=>M.pos, polynomial=>S*M.polynomial}
+mPair (ShiftMonomial,ZZ,MutableList,RingElement) := (S,i,F,v) -> new MPair from hashTable{shM=>S,pos=>i,basisList=>F,polynomial=>v}
+MPair ? MPair := (m,n) -> (
+    memon := leadMonomial((m.basisList)#(m.pos));
+    nemon := leadMonomial((m.basisList)#(m.pos));
+    L := matchRing {memon,m.polynomial,nemon,n.polynomial};
+    (ms,ns) := (L#0*L#1, L#2*L#3);
+    if ms == ns then m.pos ? n.pos else ms ? ns
     )
-Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,I*M.polynomial)
+--MPair ? MPair := (m,n) -> if width m == width n then (
+--    if degree m.polynomial == degree n.polynomial then (
+--    	-- if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+--    	if m.shM == n.shM then m.pos ? n.pos else m.shM ? n.shM
+--    	) else degree m.polynomial ? degree n.polynomial
+--    ) else width m ? width n
+MPair == MPair := (M,N) -> (M ? N) === symbol ==
+ShiftMonomial * MPair := (S,M) -> mPair(S*M.shM,M.pos,M.basisList,S*M.polynomial)
+Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,M.basisList,I*M.polynomial)
 width MPair := M -> max {width M.shM, width M.polynomial}
 
 matchRing = method()
@@ -745,7 +750,7 @@ matchRing(RingElement,ZZ) := (p,n) -> (
     )
 matchRing(RingElement,Ring) := (p,S) -> (ringMap(S,ring p))p
 matchRing List := L -> (
-    n := max width@@ring\L;
+    n := max (width@@ring\L);
     apply(L, p->(matchRing(p,n)))
     )
 compare = method()
@@ -767,9 +772,10 @@ width List := L -> max(L / width)
 
 egbSignature = method(Options=>{PrincipalSyzygies=>false, CompleteReduce=>true, OutFile=>null})
 egbSignature (List) := o -> F -> (
+    F = new MutableList from F;
     R := ring first F;
-    Fwidths := F/(width@@leadMonomial);
-    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i));
+    Fwidths := apply(F,width@@leadMonomial);
+    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F,F#i));
     out := o.OutFile;
     H := {};
     G := {};
@@ -797,9 +803,9 @@ egbSignature (List) := o -> F -> (
 	    if o.CompleteReduce then p = completeReduce(p,apply(G,g->g.polynomial));
 	    if p == 0 then continue; -- p==0 is not enough to record a syzygy
 	    if p =!= j.polynomial then (
-	      j = mPair(shiftMonomial(1_R,shift{}),#F,p);
-	      F       = append(F,p);
-	      Fwidths = append(Fwidths,width leadMonomial p);
+	      F#(#F) = p;
+	      Fwidths#(#Fwidths) = width leadMonomial p;
+	      j = mPair(shiftMonomial(1_R,shift{}),#F,F,p);
 	      );
 	    G = append(G,j);
 	    out << "-- " << #G << "th basis element is: " << j << endl;
@@ -857,7 +863,7 @@ regularTopReduce = (j,G) -> (
 	    if isDiv and Q*g < j then (
 		-- << "  reducing j = " << j << endl << "  by Q*g = " << Q << "*" << g << endl;
 		v := reduction(j.polynomial,Q*g.polynomial);
-		return regularTopReduce(mPair(j.shM,j.pos,v),G);
+		return regularTopReduce(mPair(j.shM,j.pos,j.basisList,v),G);
 		);
 	    if isDiv then seed = Q.Sh;
 	    );
