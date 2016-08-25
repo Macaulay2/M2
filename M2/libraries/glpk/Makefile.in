@@ -4,6 +4,7 @@ VERSION = 4.59
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 HOMEPAGE = http://www.gnu.org/software/glpk/
 CONFIGOPTIONS = --disable-shared
+INSTALLTARGET = install-strip
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/glpk/Makefile
 # Local Variables:

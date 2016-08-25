@@ -118,14 +118,13 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion
+      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion libmpc-devel
     Some debugging aids:
       sudo debuginfo-install strace
 
   Scientific linux:
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign
-      sudo yum install -y git-all zlib-devel xz-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time
     Some debugging aids:
       sudo yum install -y strace
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
@@ -155,15 +154,21 @@ various modern operating systems:
     to make RPM files for distribution to generic hardware.
 
   Arch Linux:
-      sudo pacman -S archlinux-keyring
+    You may prefer to use the Arch package for Macaulay2 at https://aur.archlinux.org/packages/macaulay2/.
+    For compiling it yourself:
+      sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip
     We recommend adding
-    	 --enable-build-libraries="pari flint ntl gc"
-      to the "configure" command line below in the section on compiling Macaulay2, since it seems to
-      avoid undiagnosed problems with invalid libgc pointers.    
+    	 --enable-build-libraries="pari flint ntl gc givaro"
+      to the "configure" command line below in the section on compiling Macaulay2
+      Adding "gc" here seems to avoid undiagnosed problems with invalid libgc pointers.
+      Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
     To upgrade the system:
-      pacman -Syu
+      sudo pacman --sync --refresh --sysupgrade
+    Compilation doesn't succeed with gcc 6, so install gcc 5 with
+      sudo pacman --sync --needed gcc5
+    and add "CC=gcc-5 CXX=g++-5" to the "configure" command line below.  (We succeeded with gcc 5.4.0.)
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
