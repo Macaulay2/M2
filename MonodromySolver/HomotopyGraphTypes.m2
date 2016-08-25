@@ -18,7 +18,7 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
         BasePoint => params,
         PartialSols => partialSols,
         Graph => G,
-        SpecializedSystem => specializeSystem (params, G.Family.PolyMap),
+        SpecializedSystem => specializeSystem (params, G.Family),
 	Edges => new MutableList from {}
     };
     G.Vertices = append(G.Vertices, N);
@@ -26,23 +26,27 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
 )
 
 addEdge = method()
-addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
+addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,n1,n2) -> (
     E := new HomotopyEdge from {
-            Node1 => a, 
-            Node2 => b, 
+            Node1 => n1, 
+            Node2 => n2, 
 	    Graph => G,
             gamma1 => exp(2 * pi* ii * random RR), 
             gamma2 => exp(2 * pi* ii * random RR), 
             Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
-            Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
+            Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
         };
-    a.Edges#(#a.Edges) = E;
-    b.Edges#(#b.Edges) = E;
+    n1.Edges#(#n1.Edges) = E;
+    n2.Edges#(#n2.Edges) = E;
     G.Edges = append(G.Edges,E);
     if G.Potential =!= null then (	
     	E.Potential12 = G.Potential (E, true);
     	E.Potential21 = G.Potential (E, false);
     	);
+    F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
+    F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
+    E#"homotopy12" = segmentHomotopy(F1,F2);
+    E#"homotopy21" = segmentHomotopy(F2,F1);
     E
 )
 
@@ -77,18 +81,30 @@ homotopyGraph PolySystem := o -> PF -> (
     )
 
 specializeSystem = method()
-specializeSystem (Point, PolySystem) := (p, F) -> specializeSystem(p,F.PolyMap) 
+specializeSystemInternal := (p, M, R'PR'toPR'X) -> (
+    (R, PR, toPR, X) := R'PR'toPR'X; -- see below for ingredients
+    flatten entries (map(R,PR,X|matrix p)) toPR transpose M
+    )   
+specializeSystem (Point, PolySystem) := (p, F) -> (
+    if not F#?"specialization ingredients" then (
+    	nParameters := numgens coefficientRing ring F;
+    	assert(nParameters == #coordinates p);
+    	(PR,toPR) := flattenRing ring F;
+    	X := drop(gens PR, -nParameters);
+	R := (coefficientRing PR)[X]; 
+    	X = vars R;
+    	F#"specialization ingredients" = (R,PR,toPR,X);
+	);
+    specializeSystemInternal(p, F#PolyMap, F#"specialization ingredients")
+    )
 specializeSystem (Point, Matrix) := (p, M) -> (
-    PF := transpose M;
-    nParameters := numgens coefficientRing ring PF;
+    nParameters := numgens coefficientRing ring M;
     assert(nParameters == #coordinates p);
-    (PR,toPR) := flattenRing ring PF;
+    (PR,toPR) := flattenRing ring M;
     X := drop(gens PR, -nParameters); 
-    PF = toPR PF;
-    C := coefficientRing PR;
-    R := C[X];
+    R := (coefficientRing PR)[X];
     X = vars R;
-    flatten entries (map(R,PR,X|matrix p)) PF
+    specializeSystemInternal(p,M,(R,PR,toPR,X))
     )
 
 -- convenience function for WS init
@@ -176,30 +192,40 @@ selectBestEdgeAndDirection = G -> (
 trackEdge = method()
 trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
     G := e.Graph;
+    homotopy := null;
     if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);
 	(gammaHead, gammaTail) :=  (e.gamma1, e.gamma2);
 	correspondence := e.Correspondence12;
+	if e#?"homotopy12" then homotopy = e#"homotopy12";
 	)
     else  (
 	(head, tail) = (e.Node2, e.Node1);
 	(gammaHead, gammaTail) =  (e.gamma2, e.gamma1);
 	correspondence = e.Correspondence21;
+	if e#?"homotopy21" then homotopy = e#"homotopy21";
 	);
     untrackedInds := indices head.PartialSols - set keys correspondence;
-    newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * head.SpecializedSystem), polySystem(gammaTail * tail.SpecializedSystem), (head.PartialSols)_(untrackedInds))
+    startSolutions := (head.PartialSols)_(untrackedInds);
+    newSols := if #untrackedInds > 0 then (
+	if getDefault Software === M2engine and homotopy =!= null then trackHomotopy(homotopy,startSolutions)  
+	else track(polySystem (gammaHead * head.SpecializedSystem), 
+	    polySystem(gammaTail * tail.SpecializedSystem), 
+	    startSolutions)
+	)
     else {};
     n := length tail.PartialSols;
     scan(#untrackedInds, i->(
 	    a := untrackedInds#i;
 	    s := newSols#i;
 	    if status s =!= Regular then (
-		print "failure: a singular point"; 
+		<< "failure: status = " << status s << endl;
 		correspondence#a = null; -- record failure
 	      	)
 	    else ( 
 	    	if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
 	    	else (    
+		    s = point {toList new MutableList from coordinates s};--!!!
 		    appendPoint(tail.PartialSols, s);
 		    b = n;
 		    n = n+1;
