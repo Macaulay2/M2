@@ -458,3 +458,143 @@ Cone ? Cone := (C1,C2) -> (
 		    (c,d) := (set R1,set R2);
 		    l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
 		    if c#?l then symbol > else symbol <)))))
+
+
+-- PURPOSE : Computing the Cone of the Minkowskisummands of a Polyhedron 'P', the minimal 
+--           Minkowskisummands, and minimal decompositions
+--   INPUT : 'P',  a polyhedron
+--  OUTPUT : '(C,L,M)'  where 'C' is the Cone of the Minkowskisummands, 'L' is a list of 
+--                      Polyhedra corresponding to the generators of 'C', and 'M' is a 
+--                      matrix where the columns give the minimal decompositions of 'P'.
+minkSummandCone = method()
+minkSummandCone Polyhedron := P -> (
+     -- Subfunction to save the two vertices of a compact edge in a matrix where the vertex with the smaller entries comes first
+     -- by comparing the two vertices entry-wise
+     normvert := M -> ( 
+	  M = toList M; 
+	  v := (M#0)-(M#1);
+	  normrec := w -> if (entries w)#0#0 > 0 then 0 else if (entries w)#0#0 < 0 then 1 else (w = w^{1..(numRows w)-1}; normrec w);
+          i := normrec v;
+	  if i == 1 then M = {M#1,M#0};
+	  M);
+     -- If the polyhedron is 0 or 1 dimensional itself is its only summand
+     if dim P == 0 or dim P == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
+     else (
+	  -- Extracting the data to compute the 2 dimensional faces and the edges
+	  d := ambDim(P);
+          dP := dim P;
+          (HS,v) := halfspaces P;
+          (hyperplanesTmp,w) := hyperplanes P;
+	  F := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
+	  F = apply(F, f -> (
+		    V := vertices f;
+		    R := rays f;
+		    (set apply(numColumns V, i -> V_{i}),set apply(numColumns R, i -> R_{i}))));
+	  LS := linSpace P;
+	  L := F;
+	  i := 1;
+	  while i < dP-2 do (
+	       L = intersectionWithFacets(L,F);
+	       i = i+1);
+	  -- Collect the compact edges
+	  L1 := select(L, l -> l#1 === set{});
+	  -- if the polyhedron is 2 dimensional and not compact then every compact edge with the tailcone is a summand
+	  if dim P == 2 and (not isCompact P) then (
+	       L1 = intersectionWithFacets(L,F);
+	       L1 = select(L, l -> l#1 === set{});
+	       if #L1 == 0 or #L1 == 1 then (posHull matrix{{1}},hashTable {0 => P},matrix{{1}})
+	       else (
+		    TailC := rays P;
+		    if linSpace P != 0 then TailC = TailC | linSpace P | -linSpace(P);
+		    (posHull map(QQ^(#L1),QQ^(#L1),1),hashTable apply(#L1, i -> i => convexHull((L1#i)#0 | (L1#i)#1,TailC)),matrix toList(#L1:{1_QQ}))))
+	  else (
+	       -- If the polyhedron is compact and 2 dimensional then there is only one 2 faces
+	       if dim P == 2 then L1 = {(set apply(numColumns vertices P, i -> (vertices P)_{i}), set {})};
+	       edges := {};
+	       edgesTable := edges;
+	       condmatrix := map(QQ^0,QQ^0,0);
+	       scan(L1, l -> (
+			 -- for every 2 face we get a couple of rows in the condition matrix for the edges of this 2 face
+			 -- for this the edges if set in a cyclic order must add up to 0. These conditions are added to 
+			 -- 'condmatrix' by using the indices in edges
+			 ledges := apply(intersectionWithFacets({l},F), e -> normvert e#0);
+			 -- adding e to edges if not yet a member
+			 newedges := select(ledges, e -> not member(e,edges));
+			 -- extending the condmatrix by a column of zeros for the new edge
+			 condmatrix = condmatrix | map(target condmatrix,QQ^(#newedges),0);
+			 edges = edges | newedges;
+			 -- Bring the edges into cyclic order
+			 oedges := {(ledges#0,1)};
+			 v := ledges#0#1;
+			 ledges = drop(ledges,1);
+			 nledges := #ledges;
+			 oedges = oedges | apply(nledges, i -> (
+				   i = position(ledges, e -> e#0 == v or e#1 == v);
+				   e := ledges#i;
+				   ledges = drop(ledges,{i,i});
+				   if e#0 == v then (
+					v = e#1;
+					(e,1))
+				   else (
+					v = e#0;
+					(e,-1))));
+			 M := map(QQ^d,source condmatrix,0);
+			 -- for the cyclic order in oedges add the corresponding edgedirections to condmatrix
+			 scan(oedges, e -> (
+				   ve := (e#0#1 - e#0#0)*(e#1);
+				   j := position(edges, edge -> edge == e#0);
+				   M = M_{0..j-1} | ve | M_{j+1..(numColumns M)-1}));
+			 condmatrix = condmatrix || M));
+	       -- if there are no conditions then the polyhedron has no compact 2 faces
+	       if condmatrix == map(QQ^0,QQ^0,0) then (
+		    -- collect the compact edges
+		    LL := select(faces(dim P - 1,P), fLL -> isCompact fLL);
+		    -- if there is only none or one compact edge then the only summand is the polyhedron itself
+		    if #LL == 0 or #LL == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
+		    -- otherwise we get a summand for each compact edge
+		    else (
+			 TailCLL := rays P;
+			 if linSpace P != 0 then TailCLL = TailCLL | linSpace P | -linSpace(P);
+			 (posHull map(QQ^(#LL),QQ^(#LL),1),hashTable apply(#LL, i -> i => convexHull(vertices LL#i,TailCLL)),matrix toList(#LL:{1_QQ}))))
+	       -- Otherwise we can compute the Minkowski summand cone
+	       else (
+		    Id := map(source condmatrix,source condmatrix,1);
+		    C := intersection(Id,condmatrix);
+		    R := rays C;
+		    TC := map(ZZ^(ambDim(P)),ZZ^1,0) | rays(P) | linSpace(P) | -(linSpace(P));
+		    v = (vertices P)_{0};
+		    -- computing the actual summands
+		    summList := hashTable apply(numColumns R, i -> (
+			      remedges := edges;
+			      -- recursive function which takes 'L' the already computed vertices of the summandpolyhedron,
+			      -- the set of remaining edges, the current vertex of the original polyhedron, the current 
+			      -- vertex of the summandpolyhedron, and the ray of the minkSummandCone. It computes the
+			      -- edges emanating from the vertex, scales these edges by the corresponding factor in mi, 
+			      -- computes the vertices at the end of those edges (for the original and for the 
+			      -- summandpolyhedron) and calls itself with each of the new vertices, if there are edges 
+			      -- left in the list
+			      edgesearch := (v,v0,mi) -> (
+				   remedges = partition(e -> member(v,e),remedges);
+				   Lnew := {};
+				   if remedges#?true then Lnew = apply(remedges#true, e -> (
+					     j := position(edges, edge -> edge == e);
+					     edir := e#0 + e#1 - 2*v;
+					     vnew := v0 + (mi_(j,0))*edir;
+					     (v+edir,vnew,vnew != v0)));
+				   if remedges#?false then remedges = remedges#false else remedges = {};
+				   L := apply(select(Lnew, e -> e#2),e -> e#1);
+				   Lnew = apply(Lnew, e -> (e#0,e#1));
+				   L = L | apply(Lnew, (u,w) -> if remedges =!= {} then edgesearch(u,w,mi) else {});
+				   flatten L);
+			      mi := R_{i};
+			      v0 := map(QQ^d,QQ^1,0);
+			      -- Calling the edgesearch function to get the vertices of the summand
+			      L := {v0} | edgesearch(v,v0,mi);
+			      L = matrix transpose apply(L, e -> flatten entries e);
+			      i => convexHull(L,TC)));
+		    -- computing the inclusion minimal decompositions
+		     onevec := matrix toList(numRows R: {1_QQ});
+		     negId := map(source R,source R,-1);
+		     zerovec :=  map(source R,ZZ^1,0);
+		     Q := intersection(negId,zerovec,R,onevec);
+		     (C,summList,vertices(Q))))))

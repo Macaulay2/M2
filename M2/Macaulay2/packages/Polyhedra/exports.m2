@@ -49,7 +49,6 @@ export {
    "boundaryMap", 
    "dualFaceLattice", 
    "faceLattice",
-   "faceOf", 
    "faces", 
    "facesAsPolyhedra",
    "fVector", 
