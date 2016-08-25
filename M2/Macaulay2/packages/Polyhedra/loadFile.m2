@@ -21,19 +21,27 @@ load "./helpers.m2"
 -- Methods declarations for methods defined for several objects, but not all of polyhedraHash
 load "./declarations.m2"
 
--- Core
-load "./core/engine.m2"
+-- Engine
+load "./engine/properties.m2"
+load "./engine/alternatives.m2"
+
+-- Core functionality
+load "./core/globalMethods.m2"
+   -- Cone
    load "./core/cone/constructors.m2"
    load "./core/cone/properties.m2"
    load "./core/cone/methods.m2"
+   -- Polyhedron (relies on cone)
    load "./core/polyhedron/constructors.m2"
    load "./core/polyhedron/properties.m2"
    load "./core/polyhedron/methods.m2"
    load "./core/polyhedron.m2"
+   -- Fan
    load "./core/fan/constructors.m2"
    load "./core/fan/methods.m2"
    load "./core/fan/properties.m2"
    load "./core/fan.m2"
+   -- PolyhedralComplex (relies on Fan)
    load "./core/polyhedralComplex/constructors.m2"
    load "./core/polyhedralComplex/properties.m2"
    load "./core/polyhedralComplex/methods.m2"

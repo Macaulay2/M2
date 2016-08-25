@@ -1878,7 +1878,7 @@ document {
 	  },
      
      PARA{},"A ",TO Polyhedron," of dimension ",TEX///$d$///," is simplicial if it is compact and 
-     has ",TEX///$d+1$///," vertices.",
+     every facet is (isomorphic to) a simplex.",
      
      EXAMPLE {
 	  " P = convexHull matrix {{3,0,0,0,1},{0,3,0,0,1},{0,0,3,0,1}}",
@@ -1887,8 +1887,7 @@ document {
 	  " isSimplicial P"
 	  },
      
-     PARA{},"A ",TO Fan," of dimension ",TEX///$d$///," is simplicial if it is pointed and 
-     has ",TEX///$d$///," rays.",
+     PARA{},"A pointed ",TO Cone," of dimension ",TEX///$d$///," is simplicial if it has ",TEX///$d$///," rays.",
      
      EXAMPLE {
 	  " C = posHull matrix {{1,0,0,1},{0,1,0,1},{0,0,1,1}}",

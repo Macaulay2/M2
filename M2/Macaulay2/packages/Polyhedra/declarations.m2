@@ -18,13 +18,6 @@ boundaryMap = method(TypicalValue => Matrix)
 
 
 
--------------------------------------------------------------------------------
--- For polyhedron and cone and fan
-
--- PURPOSE : Giving the rays
---   INPUT : 'P'  a Polyhedron or Cone
---  OUTPUT : a Matrix, containing the rays of P as column vectors
--- rays = method()
 
 
 
@@ -51,14 +44,7 @@ isFace = method(TypicalValue => Boolean)
 --     	    	      	   	the intersection
 areCompatible = method()
 
--- PURPOSE : Computing the faces of codimension 'k' of 'P'
-faces = method(TypicalValue => List)
 
--- PURPOSE : Computing the f-vector of a polyhedron
---   INPUT : 'P'  a Polyhedron or fan
---  OUTPUT : polyhedral case: a List of integers, starting with the number of vertices and going up in dimension
---           cone case: a List of integers, starting with the number of vertices and going up in dimension
-fVector = method(TypicalValue => List)
 
 -- PURPOSE : Giving the defining affine half-spaces
 --   INPUT : 'P'  a Polyhedron or Cone

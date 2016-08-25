@@ -77,8 +77,8 @@ compute#PolyhedralComplex#generatingObjects PolyhedralComplex := PC -> (
 )
 
 
-compute#PolyhedralComplex#computedFacesThroughVertices = method()
-compute#PolyhedralComplex#computedFacesThroughVertices PolyhedralComplex := PC -> (
+compute#PolyhedralComplex#computedFacesThroughRays = method()
+compute#PolyhedralComplex#computedFacesThroughRays PolyhedralComplex := PC -> (
    F := getProperty(PC, underlyingFan);
    vertPC := vertices PC;
    raysPC := rays PC;

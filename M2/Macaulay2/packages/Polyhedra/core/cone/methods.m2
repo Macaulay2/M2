@@ -133,7 +133,6 @@ linSpace Cone := P -> linealitySpace P
 halfspaces Cone := P -> facets P
 facets Cone := C -> getProperty(C, computedFacets)
 fVector Cone := C -> getProperty(C, computedFVector)
-faces Cone := C -> getProperty(C, computedFacesThroughRays)
 
 --   INPUT : 'k'  an integer between 0 and the dimension of
 --     	     'C'  a cone
