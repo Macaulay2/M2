@@ -1963,20 +1963,22 @@ document {
 
 
 document {
-     Key => {faces, (faces,ZZ,Polyhedron), (faces,ZZ,Cone)},
+     Key => {faces, (faces,ZZ,PolyhedralObject)},
      Headline => "computes all faces of a certain codimension of a Cone or Polyhedron",
-     Usage => " L = faces(k,C) \nL = faces(k,P)",
+     Usage => " L = faces(k,C) \nL = faces(k,P) \nL = faces(F)",
      Inputs => {
 	  "k" => ZZ,
-	  "P" => PolyhedralObject
+	  "PO" => PolyhedralObject
 	  },
      Outputs => {
-	  "L" => List => {"containing the indices of the vertices/rays used in the codim  ",TT "k", "faces of ", TT "P"}
+	  "L" => MutableHashTable => {"containing the indices of the vertices/rays used in the codim  ",TT "k", "faces of ", TT "P"}
 	  },
      
      PARA{}, TT "faces"," computes the faces of codimension ",TT "k"," of the given ",TO Cone," 
      or ",TO Polyhedron,", where ",TT "k"," must be between 0 and the dimension of the second 
-     argument. The faces will be of the same class as the original convex object.",
+     argument. The faces will be of the same class as the original convex object. If the parameter",
+     TT "k","is omitted,", TT "faces"," will return a ",TT "MutableHashTable"," containing the faces
+     with the codimensions as keys.",
      
      PARA{}, "For example, we can look at the edges of the cyclicPolytope with 5 vertices in 3 space",
      
@@ -1994,8 +1996,8 @@ document {
      }
 
 document {
-     Key => {fVector, (fVector, Cone), (fVector,Polyhedron)},
-     Headline => "computes the f-vector of a Cone or Polyhedron",
+     Key => {fVector, (fVector, PolyhedralObject)},
+     Headline => "computes the f-vector of a Cone, Polyhedron, Fan or PolyhedralComplex",
      Usage => " f = fVector C \nf = fVector P",
      Inputs => {
 	  "P" => PolyhedralObject

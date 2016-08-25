@@ -25,7 +25,7 @@ export {
    "ambientDimension",
    "computedDimension",
    "computedFacets",
-   "computedFacesThroughRayData", -- Which rays span a face?
+   "computedFacesThroughRays", -- Which rays span a face?
    "computedFacetsThroughRays", -- Which rays span a facet?
    "computedFVector",
    "computedRaysThroughFacets", -- Which facets intersect in a ray?
