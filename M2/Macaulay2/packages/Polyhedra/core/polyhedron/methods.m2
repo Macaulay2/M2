@@ -51,7 +51,7 @@ latticePoints Polyhedron := P -> (
 --          completely, avoid fourierMotzkin. Always pick best possible data.
 getSufficientVertexData = method()
 getSufficientVertexData Polyhedron := P -> (
-   if hasProperties(P, {computedVertices, computedRays, computedLinealityBasis}) then (
+   if hasProperties(P, {computedVertices, rays, computedLinealityBasis}) then (
       return(vertices P, rays P, linealitySpace P)
    ) else if hasProperties(P, {points, inputRays, inputLinealityGenerators}) then (
       return (

@@ -37,7 +37,7 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
    raysC := rays C;
    ldim := rank linealitySpace C;
    result#0 = {toList (0..(getProperty(C, nRays) - 1))};
-   result#(1) = toList getProperty(C, computedFacetsThroughRays);
+   result#(1) = toList getProperty(C, computedFacetsThroughRayData);
    for i from 0 to d-2-ldim do (
       oldFaces := result#(1+i);
       newFaces := unique flatten apply(oldFaces,
@@ -64,8 +64,8 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
 )
 
 
-compute#Cone#computedFacetsThroughRays = method()
-compute#Cone#computedFacetsThroughRays Cone := C -> (
+compute#Cone#computedFacetsThroughRayData = method()
+compute#Cone#computedFacetsThroughRayData Cone := C -> (
    raysC := rays C;
    facetsC := facets C;
    nFacetsC := getProperty(C, nFacets);
@@ -85,8 +85,8 @@ compute#Cone#computedFacetsThroughRays Cone := C -> (
 )
 
 
-compute#Cone#computedRaysThroughFacets = method()
-compute#Cone#computedRaysThroughFacets Cone := C -> (
+compute#Cone#raysThroughFacets = method()
+compute#Cone#raysThroughFacets Cone := C -> (
    raysC := rays C;
    facetsC := facets C;
    nFacetsC := getProperty(C, nFacets);
@@ -114,7 +114,7 @@ compute#Cone#computedFVector Cone := C -> (
 
 compute#Cone#computedDimension = method(TypicalValue => ZZ)
 compute#Cone#computedDimension Cone := C -> (
-   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+   if hasProperties(C, {rays, computedLinealityBasis}) then (
       return (rank rays C) + (numColumns linealitySpace C)
    ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
       return rank (getProperty(C, inputRays) | getProperty(C, inputLinealityGenerators))
@@ -158,7 +158,7 @@ compute#Cone#computedLinealityBasis Cone := C -> (
 compute#Cone#computedHyperplanes = method()
 compute#Cone#computedHyperplanes Cone := C -> (
    local containingSpace;
-   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+   if hasProperties(C, {rays, computedLinealityBasis}) then (
       containingSpace = rays C | linealitySpace C;
    ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
       containingSpace = getProperty(C, inputRays) | getProperty(C, inputLinealityGenerators);
@@ -176,7 +176,7 @@ compute#Cone#computedHyperplanes Cone := C -> (
 compute#Cone#computedFacets = method()
 compute#Cone#computedFacets Cone := C -> (
    (facetData, hyperplaneData) := (0,0);
-   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+   if hasProperties(C, {rays, computedLinealityBasis}) then (
       (facetData, hyperplaneData) = computeFacetsFromRayData(rays C, linealitySpace C);
    ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
       (facetData, hyperplaneData) = computeFacetsFromRayData(getProperty(C, inputRays), getProperty(C, inputLinealityGenerators));
@@ -190,8 +190,8 @@ compute#Cone#computedFacets Cone := C -> (
 )
 
 
-compute#Cone#computedRays = method()
-compute#Cone#computedRays Cone := C -> (
+compute#Cone#rays = method()
+compute#Cone#rays Cone := C -> (
    local rayData;
    local linealityData;
    if hasProperties(C, {computedFacets, computedHyperplanes}) then (
@@ -220,7 +220,7 @@ compute#Cone#simplicial Cone := C -> (
 compute#Cone#ambientDimension = method()
 compute#Cone#ambientDimension Cone := C -> (
    if hasProperty(C, inputRays) then numRows getProperty(C, inputRays)
-   else if hasProperty(C, computedRays) then numRows rays C
+   else if hasProperty(C, rays) then numRows rays C
    else if hasProperty(C, inputLinealityGenerators) then numRows getProperty(C, inputLinealityGenerators)
    else if hasProperty(C, computedLinealityBasis) then numRows linealitySpace C
    else if hasProperty(C, inequalities) then numColumns getProperty(C, inequalities)

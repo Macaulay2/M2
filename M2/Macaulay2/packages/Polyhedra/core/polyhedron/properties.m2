@@ -21,7 +21,7 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    setProperty(P, lattice, latticeTest);
    vMat := matrixFromVectorList(vList, n, QQ);
    rMat := matrixFromVectorList(rList, n, QQ);
-   setProperty(P, computedRays, rMat);
+   setProperty(P, rays, rMat);
    setProperty(P, empty, numColumns vMat == 0);
    return vMat
 )
@@ -35,10 +35,10 @@ compute#Polyhedron#empty Polyhedron := P -> (
 )
 
 
-compute#Polyhedron#computedRays = method()
-compute#Polyhedron#computedRays Polyhedron := P -> (
+compute#Polyhedron#rays = method()
+compute#Polyhedron#rays Polyhedron := P -> (
    vertices P;
-   getProperty(P, computedRays)
+   getProperty(P, rays)
 )
 
 
@@ -74,10 +74,10 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
       rMat = prependZeros getProperty(P, inputRays);
       result = append(result, inputRays => (pMat | rMat));
    );
-   if hasProperties(P, {computedVertices, computedRays}) then (
+   if hasProperties(P, {computedVertices, rays}) then (
       pMat = prependOnes getProperty(P, computedVertices);
-      rMat = prependZeros getProperty(P, computedRays);
-      result = append(result, computedRays => (pMat | rMat));
+      rMat = prependZeros getProperty(P, rays);
+      result = append(result, rays => (pMat | rMat));
    );
    if hasProperty(P, inputLinealityGenerators) then (
       pMat = prependZeros getProperty(P, inputLinealityGenerators);
@@ -175,7 +175,7 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
    raysC := rays C;
    raysNF := - transpose (facets P)#0;
    facetMap := getProperty(P, facetToFacetMap);
-   maximalConesNF := getProperty(C, computedRaysThroughFacets);
+   maximalConesNF := getProperty(C, raysThroughFacets);
    goodConeIndices := select(numColumns raysC, i -> (raysC_i)_0 > 0);
    maximalConesNF = maximalConesNF_goodConeIndices;
    maximalConesNF = apply(maximalConesNF,

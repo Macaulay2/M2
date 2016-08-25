@@ -32,7 +32,7 @@ smoothSubfan Fan := F -> (
    cones := getProperty(F, smoothCones);
    result := new HashTable from {
       inputCones => cones,
-      computedRays => rays F,
+      rays => rays F,
       computedLinealityBasis => linealitySpace F
    };
    fan result

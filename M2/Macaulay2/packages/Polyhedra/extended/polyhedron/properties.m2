@@ -37,7 +37,7 @@ compute#Polyhedron#computedVeryAmple Polyhedron := P -> (
          Ev = matrix{Ev};
          HSV := matrix for h in HS list if all(flatten entries(h*Ev), e -> e >= 0) then {h} else continue;
          CH := new HashTable from {
-            computedRays => Ev,
+            rays => Ev,
             computedLinealityBasis => map(ZZ^(numRows Ev),ZZ^0,0),
             computedFacets => HSV,
             computedHyperplanes => map(ZZ^0,ZZ^(numRows Ev),0)

@@ -14,7 +14,7 @@ isFullDimensional PolyhedralObject := X -> getProperty(X, fullDimensional)
 -- PURPOSE : Giving the rays
 --   INPUT : 'PO'  a PolyhedralObject
 --  OUTPUT : a Matrix, containing the rays of PO as column vectors
-rays PolyhedralObject := PO -> getProperty(PO, computedRays)
+rays PolyhedralObject := PO -> getProperty(PO, rays)
 
 linealitySpace = method(TypicalValue => Matrix)
 linealitySpace PolyhedralObject := PO -> getProperty(PO, computedLinealityBasis)

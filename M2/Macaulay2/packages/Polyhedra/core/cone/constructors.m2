@@ -16,7 +16,7 @@ cone HashTable := inputProperties -> (
 
 sanitizeConeInput = method()
 sanitizeConeInput HashTable := given -> (
-   rayProperties := {inputRays, inputLinealityGenerators, computedRays, computedLinealityBasis};
+   rayProperties := {inputRays, inputLinealityGenerators, rays, computedLinealityBasis};
    facetProperties := {inequalities, equations, computedFacets, computedHyperplanes};
    remainingProperties := keys given;
    remainingProperties = select(remainingProperties, p -> all(rayProperties, rp -> rp=!=p));
@@ -44,7 +44,7 @@ coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      if numRows iRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
      result := new HashTable from {
          ambientDimension => numRows iRays,
-         computedRays => iRays,
+         rays => iRays,
          computedLinealityBasis => linealityGenerators
      };
      cone result
@@ -107,7 +107,7 @@ posHull Matrix := R -> (
 posHull(Cone,Cone) := (C1,C2) -> (
    local iRays;
    local linealityGens;
-   if hasProperties(C1, {computedRays, computedLinealityBasis}) then (
+   if hasProperties(C1, {rays, computedLinealityBasis}) then (
       iRays = rays C1;
       linealityGens = linealitySpace C1;
    ) else if hasProperties(C1, {inputRays, inputLinealityGenerators}) then (
@@ -117,7 +117,7 @@ posHull(Cone,Cone) := (C1,C2) -> (
       iRays = rays C1;
       linealityGens = linealitySpace C1;
    );
-   if hasProperties(C2, {computedRays, computedLinealityBasis}) then (
+   if hasProperties(C2, {rays, computedLinealityBasis}) then (
       iRays = iRays | rays C2;
       linealityGens = linealityGens | linealitySpace C2;
    ) else if hasProperties(C2, {inputRays, inputLinealityGenerators}) then (

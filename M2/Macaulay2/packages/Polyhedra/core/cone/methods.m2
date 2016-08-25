@@ -106,9 +106,9 @@ dualCone Cone := C -> (
    if hasProperty(C, equations) then result#inputLinealityGenerators = transpose getProperty(C, equations);
    if hasProperty(C, inputRays) then result#inequalities = transpose getProperty(C, inputRays);
    if hasProperty(C, inputLinealityGenerators) then result#equations = transpose getProperty(C, inputLinealityGenerators);
-   if hasProperty(C, computedRays) then result#computedFacets = transpose getProperty(C, computedRays);
+   if hasProperty(C, rays) then result#computedFacets = transpose getProperty(C, rays);
    if hasProperty(C, computedLinealityBasis) then result#computedHyperplanes = transpose getProperty(C, computedLinealityBasis);
-   if hasProperty(C, computedFacets) then result#computedRays = transpose getProperty(C, computedFacets);
+   if hasProperty(C, computedFacets) then result#rays = transpose getProperty(C, computedFacets);
    if hasProperty(C, computedHyperplanes) then result#computedLinealityBasis = transpose getProperty(C, computedHyperplanes);
    return new Cone from {ambientDimension => ambDim C, cache => result}
 )
@@ -117,7 +117,7 @@ dualCone Cone := C -> (
 --          avoid fourierMotzkin. Always pick best possible data.
 getSufficientRayData = method()
 getSufficientRayData Cone := C -> (
-   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+   if hasProperties(C, {rays, computedLinealityBasis}) then (
       return (rays C, linealitySpace C)
    ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
       return (getProperty(C, inputRays), getProperty(C, inputLinealityGenerators))

@@ -32,7 +32,7 @@ contains(Cone,Cone) := (C1,C2) -> (
    local C2rays;
    local C2lineality;
    -- Extracting rays of C2
-   if hasProperty(C2, computedRays) then C2rays = rays C2
+   if hasProperty(C2, rays) then C2rays = rays C2
    else if hasProperty(C2, inputRays) then C2rays = getProperty(C2, inputRays)
    else C2rays = rays C2;
    -- Extracting lineality of C2

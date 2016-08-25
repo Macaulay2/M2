@@ -81,7 +81,7 @@ compute#Fan#computedComplete Fan := F -> (
          if dim C == n then (
             R := rays C;
             L := linealitySpace C;
-            CFacets := toList getProperty(C, computedFacetsThroughRays);
+            CFacets := toList getProperty(C, computedFacetsThroughRayData);
             CFacets = apply(CFacets, facet -> posHull(R_facet, L));
             CFsave = flatten {CFsave, {CFacets}};
             Lfaces = symmDiff(Lfaces, CFacets);
@@ -92,8 +92,8 @@ compute#Fan#computedComplete Fan := F -> (
    Lfaces == {}
 )
 
-compute#Fan#computedRays = method()
-compute#Fan#computedRays Fan := F -> (
+compute#Fan#rays = method()
+compute#Fan#rays Fan := F -> (
    if hasProperty(F, inputRays) then (
       given := getProperty(F, inputRays);
       makeRaysUniqueAndPrimitive given
@@ -183,7 +183,7 @@ compute#Fan#smoothCones Fan := F -> (
 
 compute#Fan#ambientDimension = method()
 compute#Fan#ambientDimension Fan := F -> (
-   if hasProperty(F, computedRays) then return numRows rays F
+   if hasProperty(F, rays) then return numRows rays F
    else if hasProperty(F, computedLinealityBasis) then return numRows linealitySpace F
    else if hasProperty(F, inputRays) then return numRows getProperty(F, inputRays)
    else if hasProperty(F, inputLinealityGenerators) then return numRows getProperty(F, inputLinealityGenerators)

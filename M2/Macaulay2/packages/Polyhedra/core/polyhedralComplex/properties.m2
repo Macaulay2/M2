@@ -18,16 +18,16 @@ compute#PolyhedralComplex#computedVertices PolyhedralComplex := PC -> (
    );
    vMat := matrixFromVectorList(vList, n, QQ);
    rMat := matrixFromVectorList(rList, n, QQ);
-   setProperty(PC, computedRays, rMat);
+   setProperty(PC, rays, rMat);
    setProperty(PC, empty, numColumns vMat == 0);
    return vMat
 )
 
 
-compute#PolyhedralComplex#computedRays = method()
-compute#PolyhedralComplex#computedRays PolyhedralComplex := PC -> (
+compute#PolyhedralComplex#rays = method()
+compute#PolyhedralComplex#rays PolyhedralComplex := PC -> (
    vertices PC;
-   getProperty(PC, computedRays)
+   getProperty(PC, rays)
 )
 
 

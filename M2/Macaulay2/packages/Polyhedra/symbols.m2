@@ -12,7 +12,7 @@
 -- protect computedHyperplanes
 -- protect computedHilbertBasis
 -- protect computedLinealityBasis
--- protect computedRays
+-- protect rays
 --   "pointed",
 --   "smooth",
 --   "fullDimensional"
@@ -26,13 +26,13 @@ export {
    "computedDimension",
    "computedFacets",
    "computedFacesThroughRays", -- Which rays span a face?
-   "computedFacetsThroughRays", -- Which rays span a facet?
+   "computedFacetsThroughRayData", -- Which rays span a facet?
    "computedFVector",
-   "computedRaysThroughFacets", -- Which facets intersect in a ray?
+   "raysThroughFacets", -- Which facets intersect in a ray?
    "computedHyperplanes",
    "computedHilbertBasis",
    "computedLinealityBasis",
-   "computedRays",
+   -- "rays",
    "pointed",
    "smooth",
    "fullDimensional",
