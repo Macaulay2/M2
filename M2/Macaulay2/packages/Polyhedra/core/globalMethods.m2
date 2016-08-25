@@ -37,9 +37,18 @@ dim PolyhedralObject := PO -> getProperty(PO, computedDimension)
 -- PURPOSE : Computing the faces of codimension 'k' of 'P'
 faces = method(TypicalValue => MutableHashTable)
 faces PolyhedralObject := PO -> getProperty(PO, computedFacesThroughRays)
+--   INPUT : 'k'  an integer between 0 and the dimension of
+--     	     'PO'  a polyhedralObject
+--  OUTPUT : a List, containing the indices of rays used for the faces
+faces(ZZ, PolyhedralObject) := (k,PO) -> (
+   result := faces PO;
+   if result#?k then result#k
+   else {}
+)
 
 -- PURPOSE : Computing the f-vector of a polyhedron
 --   INPUT : 'P'  a Polyhedron or fan
 --  OUTPUT : polyhedral case: a List of integers, starting with the number of vertices and going up in dimension
 --           cone case: a List of integers, starting with the number of vertices and going up in dimension
 fVector = method(TypicalValue => List)
+fVector PolyhedralObject := PO -> getProperty(PO, computedFVector)

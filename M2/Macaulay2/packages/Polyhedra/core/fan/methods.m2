@@ -44,7 +44,6 @@ cones(ZZ,Fan) := (k,F) -> (
    faces#(d-k)
 )
 
-faces Fan := F -> getProperty(F, computedFacesThroughRays);
 
 -- PURPOSE : Computing the 'n'-skeleton of a fan
 --   INPUT : (n,F),  where 'n' is a positive integer and

@@ -7,6 +7,13 @@ compute#Fan#smooth Fan := F -> (
    all(MC, r -> spanSmoothCone(transpose r, L))
 )
 
+
+compute#Fan#computedFVector = method()
+compute#Fan#computedFVector Fan := F -> (
+   reverse apply(dim F + 1, d -> #faces(dim F - d,F))
+)
+
+
 compute#Fan#simplicial = method()
 compute#Fan#simplicial Fan := F -> (
    if hasProperty(F, honestMaxObjects) then (

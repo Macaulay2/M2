@@ -78,14 +78,3 @@ hyperplanes Polyhedron := P -> getProperty(P, computedHyperplanes)
 linSpace Polyhedron := P -> linealitySpace P
 halfspaces Polyhedron := P -> facets P
 facets Polyhedron := P -> getProperty(P, computedFacets)
-fVector Polyhedron := P -> getProperty(P, computedFVector)
-faces Polyhedron := P -> getProperty(P, computedFacesThroughRays)
-
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'C'  a cone
---  OUTPUT : a List, containing the indices of rays used for the faces
-faces(ZZ, Polyhedron) := (k,P) -> (
-   result := faces P;
-   if result#?k then result#k
-   else {}
-)
