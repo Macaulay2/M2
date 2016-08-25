@@ -29,13 +29,14 @@ n = 5
 polys = parametrizedCyclic n;
 (p0,x0) = createSeedPair polySystem polys;
 mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-numSeeds = 100
+numSeeds = 10
 
 file = openOut (currentFileDirectory | "cyclic-" | n | ".output")         
 file << "\\begin{array}{|c||" << concatenate(#testTriples:"c|") << "} " << endl;
 for opt in testOptions do (
     file << opt;
     for triple in testTriples do (
+	print triple;
 	(init,nnodes,nedges) := triple;
     	pairs := apply(numSeeds, seed -> (
 		setRandomSeed seed;
@@ -50,7 +51,7 @@ for opt in testOptions do (
 		(length node.PartialSols == mixedVolume, numPaths)
 		));
     	success := select(pairs,p->first p);
-    	file << " & " << 100.*#success/#pairs << "\%" << ",\\ " << toRR sum(success,p->last p)/#success 
+    	file << " & " << 100.*#success/#pairs << "\\%" << ",\\ " << toRR sum(success,p->last p)/#success 
     	);
     file << "\\\\" << endl;
     )
