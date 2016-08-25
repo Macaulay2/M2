@@ -1,20 +1,3 @@
-
-
-
-
-
-
-   
--- PURPOSE : Giving the generating Cones of the Fan
---   INPUT : 'F'  a Fan
---  OUTPUT : a List of Cones
-maxCones = method(TypicalValue => List)
-maxCones Fan := F -> maxObjects F
-
-
-
-
-
 -- PURPOSE : Computing the stellar subdivision
 --   INPUT : '(F,r)', where 'F' is a Fan and 'r' is a ray
 --  OUTPUT : A fan, which is the stellar subdivision
@@ -36,9 +19,6 @@ stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
    L := flatten apply(getProperty(F, honestMaxObjects), C -> if contains(C,r) then divider(C,r) else {C});
    fan L
 )
-
-
-
 
 
 

@@ -78,3 +78,37 @@ hyperplanes Polyhedron := P -> getProperty(P, computedHyperplanes)
 linSpace Polyhedron := P -> linealitySpace P
 halfspaces Polyhedron := P -> facets P
 facets Polyhedron := P -> getProperty(P, computedFacets)
+
+
+-- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
+--   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
+--     	    	             'P' is a Polyhedron
+--  OUTPUT : The polyehdron 'P' scaled by 'k'
+QQ * Polyhedron := (k,P) -> (
+   -- Checking for input errors
+   if k <= 0 then error("The factor must be strictly positiv");
+   vertP := vertices P;
+   vertP = promote(vertP, QQ);
+   raysP := promote(rays P, QQ);
+   linP := promote(linealitySpace P, QQ);
+   convexHull(k * vertP, raysP, linP)
+)
+
+ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
+
+
+-- PURPOSE : Checks if the polyhedron is a lattice polytope
+--   INPUT : 'P'  a Polyhedron, which must be compact
+--  OUTPUT : 'true' or 'false'
+-- COMMENT : Tests if the vertices are in ZZ
+isLatticePolytope = method()
+isLatticePolytope Polyhedron := Boolean => P -> isCompact P and liftable(vertices P,ZZ)
+
+
+-- PURPOSE : Computing the interior lattice points of a compact Polyhedron
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : 'L',  a list containing the interior lattice points
+interiorLatticePoints = method(TypicalValue => List)
+interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P -> (
+     L := latticePoints P;
+     select(L,e -> inInterior(e,P))))

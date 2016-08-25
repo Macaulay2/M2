@@ -35,12 +35,10 @@ load "./core/globalMethods.m2"
    load "./core/polyhedron/constructors.m2"
    load "./core/polyhedron/properties.m2"
    load "./core/polyhedron/methods.m2"
-   load "./core/polyhedron.m2"
    -- Fan
    load "./core/fan/constructors.m2"
    load "./core/fan/methods.m2"
    load "./core/fan/properties.m2"
-   load "./core/fan.m2"
    -- PolyhedralComplex (relies on Fan)
    load "./core/polyhedralComplex/constructors.m2"
    load "./core/polyhedralComplex/properties.m2"
@@ -53,6 +51,7 @@ load "./extended/directProduct.m2"
 load "./extended/minkowskiSum.m2"
 load "./extended/polyhedron/properties.m2"
 load "./extended/polyhedron/methods.m2"
+load "./extended/fan/methods.m2"
 
 load "./standardConstructions.m2"
 load "./commonFace.m2"
@@ -83,10 +82,9 @@ load "./tests/legacy_tests_working.m2"
 -- load "./tests/failing.m2"
 
 load "./alternatives/lrs.m2"
--- alternative#fourierMotzkin = lrsZZ
 
 -- Documentation
-load "./legacy_doc.m2"
+load "./documentation.m2"
 
 end
 

@@ -209,6 +209,29 @@ tailCone = method(TypicalValue => Cone)
 tailCone Polyhedron := P -> posHull(rays(P),linSpace(P))
 
 
+-- PURPOSE : Computes the common refinement of a list of cones
+--   INPUT : 'L',  a list of cones
+--  OUTPUT : A fan, the common refinement of the cones
+refineCones = L -> (
+   -- Collecting the rays of all cones
+   R := rays L#0;
+   n := numRows R;
+   R = apply(numColumns R, i -> R_{i});
+   L1 := drop(L,1);
+   R = unique flatten (R | apply(L1, C -> apply(numColumns rays C, i -> (rays C)_{i})));
+   -- Writing the rays into one matrix
+   M := matrix transpose apply(R, r -> flatten entries r);
+   -- Compute the coarsest common refinement of these rays
+   F := ccRefinement M;
+   -- Collect for each cone of the ccRef the intersection of all original cones, that contain
+   -- the interior of that cone
+   fan apply(getProperty(F, honestMaxObjects), 
+      C -> (
+         v := interiorVector(C);
+         intersection select(L, c -> contains(c,v))
+      )
+   )
+)
 
    
    
@@ -374,51 +397,8 @@ intersectionWithFacets = (L,F) -> (
 	  newL);
 
 
--- PURPOSE : intersect every face in L with every facet in F and return the inclusion maximal intersections that
---     	     are not equal to one element in L
---   INPUT : 'L',  a list of sets each containing the rays of the faces of a certain dimension of a polyhedron
---     	     'F', a list of sets each containing the rays of the facets of the same polyhedron
---  OUTPUT : a list of sets each containing the rays of the faces of the same polyhedron one dimension lower 
---     	     then the ones in 'L'
-intersectionWithFacetsCone = (L,F) -> (
-	  -- Function to check if 'e' has at least one vertex and is not equal to 'l'
-	  isValid := (e,l) -> if e =!= set{} then e =!= l else false;
-	  newL := {};
-	  -- Intersecting each element of 'L' with each element of 'F'
-	  scan(L, l -> (
-		    scan(F, f -> (
-			      e := l*f;
-			      -- if the intersection is valid add it to newL if it is not contained in one of the elements 
-			      -- already in newL and remove those contained in 'e'
-			     if isValid(e,l) then (
-				  if not any(newL, g -> isSubset(e,g)) then (
-					newL = select(newL, g -> not isSubset(g,e))|{e}))))));
-	  newL);
 
 
--- PURPOSE : Computes the common refinement of a list of cones
---   INPUT : 'L',  a list of cones
---  OUTPUT : A fan, the common refinement of the cones
-refineCones = L -> (
-   -- Collecting the rays of all cones
-   R := rays L#0;
-   n := numRows R;
-   R = apply(numColumns R, i -> R_{i});
-   L1 := drop(L,1);
-   R = unique flatten (R | apply(L1, C -> apply(numColumns rays C, i -> (rays C)_{i})));
-   -- Writing the rays into one matrix
-   M := matrix transpose apply(R, r -> flatten entries r);
-   -- Compute the coarsest common refinement of these rays
-   F := ccRefinement M;
-   -- Collect for each cone of the ccRef the intersection of all original cones, that contain
-   -- the interior of that cone
-   fan apply(getProperty(F, honestMaxObjects), 
-      C -> (
-         v := interiorVector(C);
-         intersection select(L, c -> contains(c,v))
-      )
-   )
-)
 
 
 

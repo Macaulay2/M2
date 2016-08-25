@@ -1,3 +1,10 @@
+-- PURPOSE : Giving the generating Cones of the Fan
+--   INPUT : 'F'  a Fan
+--  OUTPUT : a List of Cones
+maxCones = method(TypicalValue => List)
+maxCones Fan := F -> maxObjects F
+
+
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
 linSpace Fan := F -> linealitySpace F
