@@ -22,7 +22,7 @@ contains(Cone,Cone) := (C1,C2) -> (
    local C1ineq;
    local C1eq;
    -- Extracting inequalities of C1
-   if hasProperty(C1, computedFacets) then C1ineq = facets C1
+   if hasProperty(C1, facets) then C1ineq = facets C1
    else if hasProperty(C1, inequalities) then C1ineq = getProperty(C1, inequalities)
    else C1ineq = facets C1;
    -- Extracting equations of C1

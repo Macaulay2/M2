@@ -8,7 +8,7 @@
 -- -- Computed properties
 -- protect ambientDimension
 -- protect computedDimension
--- protect computedFacets
+-- protect facets
 -- protect computedHyperplanes
 -- protect computedHilbertBasis
 -- protect computedLinealityBasis
@@ -24,9 +24,9 @@ export {
    "inputRays",
    "ambientDimension",
    "computedDimension",
-   "computedFacets",
+   -- "facets",
    "computedFacesThroughRays", -- Which rays span a face?
-   "computedFacetsThroughRayData", -- Which rays span a facet?
+   "facetsThroughRayData", -- Which rays span a facet?
    "computedFVector",
    "raysThroughFacets", -- Which facets intersect in a ray?
    "computedHyperplanes",

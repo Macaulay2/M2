@@ -81,7 +81,7 @@ compute#Fan#computedComplete Fan := F -> (
          if dim C == n then (
             R := rays C;
             L := linealitySpace C;
-            CFacets := toList getProperty(C, computedFacetsThroughRayData);
+            CFacets := toList getProperty(C, facetsThroughRayData);
             CFacets = apply(CFacets, facet -> posHull(R_facet, L));
             CFsave = flatten {CFsave, {CFacets}};
             Lfaces = symmDiff(Lfaces, CFacets);

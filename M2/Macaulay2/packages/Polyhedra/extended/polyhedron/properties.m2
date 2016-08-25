@@ -39,7 +39,7 @@ compute#Polyhedron#computedVeryAmple Polyhedron := P -> (
          CH := new HashTable from {
             rays => Ev,
             computedLinealityBasis => map(ZZ^(numRows Ev),ZZ^0,0),
-            computedFacets => HSV,
+            facets => HSV,
             computedHyperplanes => map(ZZ^0,ZZ^(numRows Ev),0)
          };
          C := cone CH;

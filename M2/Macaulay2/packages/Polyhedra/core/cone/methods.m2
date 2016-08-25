@@ -106,9 +106,9 @@ dualCone Cone := C -> (
    if hasProperty(C, equations) then result#inputLinealityGenerators = transpose getProperty(C, equations);
    if hasProperty(C, inputRays) then result#inequalities = transpose getProperty(C, inputRays);
    if hasProperty(C, inputLinealityGenerators) then result#equations = transpose getProperty(C, inputLinealityGenerators);
-   if hasProperty(C, rays) then result#computedFacets = transpose getProperty(C, rays);
+   if hasProperty(C, rays) then result#facets = transpose getProperty(C, rays);
    if hasProperty(C, computedLinealityBasis) then result#computedHyperplanes = transpose getProperty(C, computedLinealityBasis);
-   if hasProperty(C, computedFacets) then result#rays = transpose getProperty(C, computedFacets);
+   if hasProperty(C, facets) then result#rays = transpose getProperty(C, facets);
    if hasProperty(C, computedHyperplanes) then result#computedLinealityBasis = transpose getProperty(C, computedHyperplanes);
    return new Cone from {ambientDimension => ambDim C, cache => result}
 )
@@ -131,5 +131,5 @@ getSufficientRayData Cone := C -> (
 hyperplanes Cone := C -> getProperty(C, computedHyperplanes)
 linSpace Cone := P -> linealitySpace P
 halfspaces Cone := P -> facets P
-facets Cone := C -> getProperty(C, computedFacets)
+facets Cone := C -> getProperty(C, facets)
 

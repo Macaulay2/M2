@@ -77,7 +77,7 @@ facesAsPolyhedra(ZZ, Polyhedron) := (d, P) -> (
 hyperplanes Polyhedron := P -> getProperty(P, computedHyperplanes)
 linSpace Polyhedron := P -> linealitySpace P
 halfspaces Polyhedron := P -> facets P
-facets Polyhedron := P -> getProperty(P, computedFacets)
+facets Polyhedron := P -> getProperty(P, facets)
 
 
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron

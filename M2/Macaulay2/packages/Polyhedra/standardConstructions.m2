@@ -187,7 +187,7 @@ crossPolytope(ZZ,QQ) := (d,s) -> (
    C := new HashTable from {
       rays => homVert#0,
       computedLinealityBasis => homVert#1,
-      computedFacets => transpose(-homHalf#0),
+      facets => transpose(-homHalf#0),
       computedHyperplanes => transpose(homHalf#1)
    };
    C = cone C;

@@ -87,8 +87,8 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
       pMat = prependZeros getProperty(P, computedLinealityBasis);
       result = append(result, computedLinealityBasis => pMat);
    );
-   if hasProperty(P, computedFacets) then (
-      L = getProperty(P, computedFacets);
+   if hasProperty(P, facets) then (
+      L = getProperty(P, facets);
       pMat = -L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
       result = append(result, inequalities => ezero || (-pMat));
@@ -115,8 +115,8 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
 )
 
 
-compute#Polyhedron#computedFacets = method()
-compute#Polyhedron#computedFacets Polyhedron := P -> (
+compute#Polyhedron#facets = method()
+compute#Polyhedron#facets Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    result := promote(facets C, QQ);
    -- Elimination of the trivial half-space

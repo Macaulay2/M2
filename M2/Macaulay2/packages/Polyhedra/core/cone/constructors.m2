@@ -17,7 +17,7 @@ cone HashTable := inputProperties -> (
 sanitizeConeInput = method()
 sanitizeConeInput HashTable := given -> (
    rayProperties := {inputRays, inputLinealityGenerators, rays, computedLinealityBasis};
-   facetProperties := {inequalities, equations, computedFacets, computedHyperplanes};
+   facetProperties := {inequalities, equations, facets, computedHyperplanes};
    remainingProperties := keys given;
    remainingProperties = select(remainingProperties, p -> all(rayProperties, rp -> rp=!=p));
    remainingProperties = select(remainingProperties, p -> all(facetProperties, rp -> rp=!=p));
@@ -56,7 +56,7 @@ coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
    if numColumns ineq =!= numColumns eq then error("facets and hyperplanes must lie in same space");
    result := new HashTable from {
       ambientDimension => numColumns ineq,
-      computedFacets => ineq,
+      facets => ineq,
       computedHyperplanes => eq
    };
    cone result
