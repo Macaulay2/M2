@@ -29,6 +29,7 @@ Fan == Fan := (F1, F2) -> (
 --  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
 fan = method(TypicalValue => Fan)
 fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
+   if numRows irays != numRows linealityGens then error("Rays and lineality must have same ambient dimension.");
    irays = makeRaysPrimitive(irays);
    lineality := makeRaysPrimitive(linealityGens);
    result := new HashTable from {

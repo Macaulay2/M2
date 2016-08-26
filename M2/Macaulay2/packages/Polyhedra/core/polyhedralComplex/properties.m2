@@ -24,6 +24,13 @@ compute#PolyhedralComplex#computedVertices PolyhedralComplex := PC -> (
 )
 
 
+compute#PolyhedralComplex#isWellDefined = method()
+compute#PolyhedralComplex#isWellDefined PolyhedralComplex := PC -> (
+   F := getProperty(PC, underlyingFan);
+   return isWellDefined F
+)
+
+
 compute#PolyhedralComplex#rays = method()
 compute#PolyhedralComplex#rays PolyhedralComplex := PC -> (
    vertices PC;

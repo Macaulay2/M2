@@ -44,3 +44,6 @@ objectsOfDim(ZZ, PolyhedralComplex) := (k,PC) -> (
 	L := select(getProperty(PC, honestMaxObjects), C -> dim C >= k);
 	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
+
+
+isWellDefined PolyhedralComplex := PC -> getProperty(PC, isWellDefined)

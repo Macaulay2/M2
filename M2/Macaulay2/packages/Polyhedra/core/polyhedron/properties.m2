@@ -159,6 +159,13 @@ compute#Polyhedron#verticesThroughFacets Polyhedron := P -> (
 )
 
 
+compute#Polyhedron#isWellDefined = method()
+compute#Polyhedron#isWellDefined Polyhedron := P -> (
+   C := getProperty(P, underlyingCone);
+   return isWellDefined C
+)
+
+
 compute#Polyhedron#facetToFacetMap = method()
 compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
    facetsP := facets P;

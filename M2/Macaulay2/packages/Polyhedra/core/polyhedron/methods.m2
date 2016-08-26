@@ -112,3 +112,6 @@ interiorLatticePoints = method(TypicalValue => List)
 interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P -> (
      L := latticePoints P;
      select(L,e -> inInterior(e,P))))
+
+
+isWellDefined Polyhedron := P -> getProperty(P, isWellDefined)

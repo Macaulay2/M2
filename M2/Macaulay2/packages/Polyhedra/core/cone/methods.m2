@@ -133,3 +133,4 @@ linSpace Cone := P -> linealitySpace P
 halfspaces Cone := P -> facets P
 facets Cone := C -> getProperty(C, facets)
 
+isWellDefined Cone := C -> getProperty(C, isWellDefined)

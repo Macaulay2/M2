@@ -78,6 +78,8 @@ load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 load "./tests/extended/mixedVolume.m2"
 
 load "./tests/legacy_tests_working.m2"
+load "./tests/shouldFail.m2"
+load "./tests/isWellDefined.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
@@ -93,6 +95,13 @@ end
 restart
 loadPackage "Polyhedra"
 check "Polyhedra"
+
+restart
+loadPackage "Polyhedra"
+R = transpose matrix {{1,0},{1,1},{0,1}}
+L = {{0,2},{1,2}}
+F = fan(R,L)
+isWellDefined F
 
 restart
 loadPackage "Polyhedra"

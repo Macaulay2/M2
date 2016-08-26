@@ -1,3 +1,18 @@
+compute#Fan#isWellDefined = method()
+compute#Fan#isWellDefined Fan := F -> (
+   cones := getProperty(F, honestMaxObjects);
+   n := #cones;
+   for i from 0 to n-1 do (
+      Ci := cones#i;
+      for j from i to n-1 do (
+         Cj := cones#j;
+         if not commonFace(Ci, Cj) then return false
+      )
+   );
+   return true
+)
+
+
 compute#Fan#smooth = method()
 compute#Fan#smooth Fan := F -> (
    R := rays F;
@@ -92,6 +107,7 @@ compute#Fan#computedComplete Fan := F -> (
    Lfaces == {}
 )
 
+
 compute#Fan#rays = method()
 compute#Fan#rays Fan := F -> (
    if hasProperty(F, inputRays) then (
@@ -102,6 +118,7 @@ compute#Fan#rays Fan := F -> (
       error("No input rays given.")
    )
 )
+
 
 compute#Fan#computedFacesThroughRays = method()
 compute#Fan#computedFacesThroughRays Fan := F -> (

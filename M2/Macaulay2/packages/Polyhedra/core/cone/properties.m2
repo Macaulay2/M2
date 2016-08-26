@@ -1,3 +1,40 @@
+compute#Cone#isWellDefined = method()
+compute#Cone#isWellDefined Cone := C -> (
+   hasEnoughProperties := false;
+   testDim := dim C;
+   testAmbientDim := ambDim C;
+   if hasProperties(C, {rays, computedLinealityBasis}) then (
+      hasEnoughProperties = true;
+      C1 := posHull(rays C, linealitySpace C);
+      if not testDim == dim C1 then return false;
+      if not testAmbientDim == ambDim C1 then return false;
+      if not C1 == C then return false
+   );
+   if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
+      hasEnoughProperties = true;
+      C2 := posHull(getProperty(C, inputRays), getProperty(C, inputLinealityGenerators));
+      if not testDim == dim C2 then return false;
+      if not testAmbientDim == ambDim C2 then return false;
+      if not (C2 == C) then return false
+   );
+   if hasProperties(C, {inequalities, equations}) then (
+      hasEnoughProperties = true;
+      C3 := intersection(getProperty(C, inequalities), getProperty(C, equations));
+      if not testDim == dim C3 then return false;
+      if not testAmbientDim == ambDim C3 then return false;
+      if not (C3 == C) then return false
+   );
+   if hasProperties(C, {facets, computedHyperplanes}) then (
+      hasEnoughProperties = true;
+      C4 := intersection(facets C, hyperplanes C);
+      if not testDim == dim C4 then return false;
+      if not testAmbientDim == ambDim C4 then return false;
+      if not (C4 == C) then return false
+   );
+   return hasEnoughProperties
+)
+
+
 compute#Cone#pointed = method()
 compute#Cone#pointed Cone := C -> (
    rank linealitySpace C == 0

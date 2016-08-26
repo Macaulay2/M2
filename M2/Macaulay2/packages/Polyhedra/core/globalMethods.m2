@@ -7,6 +7,10 @@ isSimplicial = method(TypicalValue => Boolean)
 isSimplicial PolyhedralObject := X -> getProperty(X, simplicial)
 
 
+-- This method is never triggered, presumably because M2 applies isWellDefined for MutableHashTables
+-- isWellDefined PolyhedralObject := X -> getProperty(X, isWellDefined)
+
+
 isFullDimensional = method(TypicalValue => Boolean)
 isFullDimensional PolyhedralObject := X -> getProperty(X, fullDimensional)
 
