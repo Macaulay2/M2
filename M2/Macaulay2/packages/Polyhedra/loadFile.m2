@@ -24,6 +24,7 @@ load "./declarations.m2"
 -- Engine
 load "./engine/properties.m2"
 load "./engine/alternatives.m2"
+-- load "./engine/display.m2"  -- For displaying polyhedra, probably not needed anymore
 
 -- Core functionality
 load "./core/globalMethods.m2"
