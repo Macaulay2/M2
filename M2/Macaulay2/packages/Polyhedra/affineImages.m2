@@ -9,18 +9,18 @@ affineImage = method(TypicalValue => Polyhedron)
 --  OUTPUT : a polyhedron, the affine image of 'P':
 --                       A*P+v={A*p+v | p in P}
 affineImage(Matrix,Polyhedron,Matrix) := (A,P,v) -> (
-     -- Checking for input errors
-     A = chkZZQQ(A,"linear map");
-     v = chkZZQQ(v,"translation vector");
-     if ambDim(P) =!= numColumns A then error("Matrix source must be ambient space");
-     if numRows A =!= numRows v then error("Vector must lie in target space of matrix");
-     if numColumns v =!= 1 then error("Second argument must be a vector");
-     -- Generating nr of vertices many copies of v
-     v = v * (matrix {toList((numColumns vertices P):1_QQ)});
-     Mv := A*(vertices P) + v;
-     Mr := A*(rays P);
-     if numColumns Mr == 0 then Mr = matrix toList(numRows Mv:{0_QQ});
-     convexHull(Mv,Mr))
+   -- Checking for input errors
+   A = chkZZQQ(A,"linear map");
+   v = chkZZQQ(v,"translation vector");
+   if ambDim(P) =!= numColumns A then error("Matrix source must be ambient space");
+   if numRows A =!= numRows v then error("Vector must lie in target space of matrix");
+   if numColumns v =!= 1 then error("Second argument must be a vector");
+   -- Generating nr of vertices many copies of v
+   v = v * (matrix {toList((numColumns vertices P):1_QQ)});
+   Mv := A*(vertices P) + v;
+   Mr := A*(rays P);
+   convexHull(Mv,Mr)
+)
 
 
 --   INPUT : '(A,P)',  where 'A' is a ZZ or QQ matrix from the ambient space of the 

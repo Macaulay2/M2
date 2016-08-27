@@ -64,22 +64,23 @@ load "./legacy.m2"
 load "./not_refactored.m2"
 
 -- Tests
-load "./tests/core/cone_basics.m2"
-load "./tests/core/polyhedron_basics.m2"
-load "./tests/core/fan_basics.m2"
-load "./tests/core/tests_from_polymake/fvector.m2"
-load "./tests/core/tests_from_polymake/representation.m2"
-load "./tests/core/tests_from_polymake/hilbert_basis.m2"
-load "./tests/core/tests_from_polymake/lattice_points.m2"
-load "./tests/core/tests_from_polymake/normal_fan.m2"
- 
-load "./tests/extended/polyhedron.m2"
-load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
-load "./tests/extended/mixedVolume.m2"
+-- load "./tests/core/cone_basics.m2"
+-- load "./tests/core/polyhedron_basics.m2"
+-- load "./tests/core/fan_basics.m2"
+-- load "./tests/core/tests_from_polymake/fvector.m2"
+-- load "./tests/core/tests_from_polymake/representation.m2"
+-- load "./tests/core/tests_from_polymake/hilbert_basis.m2"
+-- load "./tests/core/tests_from_polymake/lattice_points.m2"
+-- load "./tests/core/tests_from_polymake/normal_fan.m2"
+--  
+-- load "./tests/extended/polyhedron.m2"
+-- load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
+-- load "./tests/extended/mixedVolume.m2"
+load "./tests/extended/tests_from_polymake/ehrhart_and_volume.m2"
 
-load "./tests/legacy_tests_working.m2"
-load "./tests/shouldFail.m2"
-load "./tests/isWellDefined.m2"
+-- load "./tests/legacy_tests_working.m2"
+-- load "./tests/shouldFail.m2"
+-- load "./tests/isWellDefined.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
@@ -98,7 +99,26 @@ check "Polyhedra"
 
 restart
 loadPackage "Polyhedra"
-R = transpose matrix {{1,0},{1,1},{0,1}}
+verticesP = matrix {{3},{4}};
+raysP = map(QQ^2, QQ^0, 0);
+linealityP = map(QQ^2, QQ^0, 0);
+P = convexHull(verticesP,raysP,linealityP);
+ineqlhsPd = matrix {{0,0}};
+ineqrhsPd = matrix {{1}};
+eqlhsPd = matrix {{-1,0},{0,-1}};
+eqrhsPd = matrix {{-3},{-4}};
+Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+assert(volume P == 1)
+assert(volume Pd == 1)
+LE = {1};
+etest = vector apply(LE, e->promote(e, QQ));
+ep = vector apply(flatten entries (coefficients ehrhart P)#1, e->lift(e, QQ));
+epd = vector apply(flatten entries (coefficients ehrhart Pd)#1, e->lift(e, QQ));
+assert(ep == etest)
+assert(epd == etest)
+
+
+t = transpose matrix {{1,0},{1,1},{0,1}}
 L = {{0,2},{1,2}}
 F = fan(R,L)
 isWellDefined F
