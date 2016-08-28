@@ -64,23 +64,23 @@ load "./legacy.m2"
 load "./not_refactored.m2"
 
 -- Tests
--- load "./tests/core/cone_basics.m2"
--- load "./tests/core/polyhedron_basics.m2"
--- load "./tests/core/fan_basics.m2"
--- load "./tests/core/tests_from_polymake/fvector.m2"
--- load "./tests/core/tests_from_polymake/representation.m2"
--- load "./tests/core/tests_from_polymake/hilbert_basis.m2"
--- load "./tests/core/tests_from_polymake/lattice_points.m2"
--- load "./tests/core/tests_from_polymake/normal_fan.m2"
---  
--- load "./tests/extended/polyhedron.m2"
--- load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
--- load "./tests/extended/mixedVolume.m2"
+load "./tests/core/cone_basics.m2"
+load "./tests/core/polyhedron_basics.m2"
+load "./tests/core/fan_basics.m2"
+load "./tests/core/tests_from_polymake/fvector.m2"
+load "./tests/core/tests_from_polymake/representation.m2"
+load "./tests/core/tests_from_polymake/hilbert_basis.m2"
+load "./tests/core/tests_from_polymake/lattice_points.m2"
+load "./tests/core/tests_from_polymake/normal_fan.m2"
+ 
+load "./tests/extended/polyhedron.m2"
+load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
+load "./tests/extended/mixedVolume.m2"
 load "./tests/extended/tests_from_polymake/ehrhart_and_volume.m2"
 
--- load "./tests/legacy_tests_working.m2"
--- load "./tests/shouldFail.m2"
--- load "./tests/isWellDefined.m2"
+load "./tests/legacy_tests_working.m2"
+load "./tests/shouldFail.m2"
+load "./tests/isWellDefined.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"

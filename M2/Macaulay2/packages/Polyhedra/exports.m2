@@ -59,6 +59,7 @@ export {
    "interiorVector",
    "interiorLatticePoints", 
    "latticePoints", 
+   "latticeVolume",
    "maxFace", 
    "minFace", 
    "objectiveVector",

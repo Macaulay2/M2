@@ -255,6 +255,8 @@ triangulate Polyhedron := P -> (
 	  P))
 
 
+latticeVolume Polyhedron := P -> getProperty(P, latticeVolume)
+
 
 -- PURPOSE : Computing the volume of a full dimensional polytope
 --   INPUT : 'P',  a compact polyhedron
@@ -262,31 +264,11 @@ triangulate Polyhedron := P -> (
 volume = method(TypicalValue => QQ)
 volume Polyhedron := P -> (
    d := dim P;
-   if d == 0 and (not isEmpty P) then return 1;
-   if isEmpty P then return 0;
-   -- Checking for input errors
-   if  not isCompact P then error("The polyhedron must be compact, i.e. a polytope.");
-   -- If P is not full dimensional then project it down
-   if d != ambDim P then (
-      A := substitute((hyperplanes P)#0,ZZ);
-      A = inverse (smithNormalForm A)#2;
-      n := ambDim P;
-      A = A^{n-d..n-1};
-      P = affineImage(A,P);
-   );
-   -- Computing the triangulation of P
-   P = triangulate P;
-   -- Computing the volume of each simplex without the dimension factor, by 
-   -- taking the absolute of the determinant of |v_1-v_0..v_d-v_0|
-   P = apply(P, 
-      p -> (
-         if #p == 0 then 1
-         else abs det matrix transpose apply(toList(1..d), i -> flatten entries(p#i - p#0))
-      )
-   );
-   -- Summing up the volumes and dividing out the dimension factor
-   (sum P)/(d!)
+   result := latticeVolume P;
+   result/(d!)
 )
+
+
 	       
 -- PURPOSE : Computing a point in the relative interior of a Polyhedron 
 --   INPUT : 'P',  a Polyhedron
