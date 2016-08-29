@@ -110,7 +110,7 @@ for e in E do (
     print peek e.Correspondence12;
     print peek e.Correspondence21;
     )
-V = J.Vertices
+V = J.Graph.Vertices
 for v in V do (
     print peek v.PartialSols;
     )
