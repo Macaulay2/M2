@@ -29,21 +29,20 @@ end ------------------------------------------------
 
 restart
 load "cyclic.m2"
-getDefault Software
-{*
-setDefault(Software=>PHCPACK)
-*}
 nedges = 4
-
-
 setRandomSeed 0
 polys = parametrizedCyclic 5
 (p0,x0) = createSeedPair polySystem polys
 mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
 elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+    SelectEdgeAndDirection=>selectBestEdgeAndDirection, 
+    Potential=>makeBatchPotential 10, BatchSize=>10, Verbose=>true)
+elapsedTime  monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+    SelectEdgeAndDirection=>makeRandomizedSelect 0.1, 
+    Potential=>potentialE, BatchSize=>10, Verbose=>true)
 
--- seed 0 gives seemingly unreasonable # of tracked paths
 setRandomSeed 0
 polys = parametrizedCyclic 7
 (p0,x0) = createSeedPair polySystem polys
