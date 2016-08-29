@@ -13,6 +13,7 @@ export {
     "StoppingCriterion",
     "GraphInitFunction",
     "SelectEdgeAndDirection",
+    "BatchSize",
     "randomWeights"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
@@ -154,6 +155,7 @@ monodromySolve = method(Options=>{
         StoppingCriterion => ((n,L)->n>3),
         SelectEdgeAndDirection => selectRandomEdgeAndDirection,
         GraphInitFunction => completeGraphInit,
+	BatchSize => infinity,
         Potential => null,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3,
@@ -183,14 +185,14 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     while not stoppingCriterion(same,lastNode.PartialSols) do (
         (e, from1to2) := selectEdgeAndDirection(HG);
         if o.Verbose then (
-            << "Correspondences are " << keys e.Correspondence12;
-	    if e.?Potential12 then << " (potential = " << e.Potential12 << ")";
-            << " and " << keys e.Correspondence21;
-	    if e.?Potential21 then << " (potential = " << e.Potential21 << ")";
+            -- << "Correspondences are " << keys e.Correspondence12;
+	    if e.?Potential12 then << " (potential12 = " << e.Potential12 << ")";
+            -- << " and " << keys e.Correspondence21;
+	    if e.?Potential21 then << " (potential21 = " << e.Potential21 << ")";
             << endl << "Direction is " << from1to2 << endl;
             << "-------------------------------------------------" << endl;
         );
-        trackedPaths := trackEdge(e, from1to2);
+        trackedPaths := trackEdge(e, from1to2, o.BatchSize);
         npaths = npaths + trackedPaths;
         lastNode = if from1to2 then e.Node2 else e.Node1;
         if o.Verbose then (

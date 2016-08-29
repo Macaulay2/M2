@@ -2,7 +2,9 @@ export {
     "specializeSystem",
     "selectRandomEdgeAndDirection",
     "selectBestEdgeAndDirection",
+    "makeRandomizedSelect",
     "potentialLowerBound",
+    "makeBatchPotential",
     "potentialE",
     "HomotopyGraph",
     "HomotopyEdge",
@@ -45,8 +47,10 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,n1,n2) -> (
     	);
     F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
     F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
-    E#"homotopy12" = segmentHomotopy(F1,F2);
-    E#"homotopy21" = segmentHomotopy(F2,F1);
+    if getDefault Software === M2engine then (
+    	E#"homotopy12" = segmentHomotopy(F1,F2);
+    	E#"homotopy21" = segmentHomotopy(F2,F1);
+    	);
     E
 )
 
@@ -113,35 +117,22 @@ edgeInds = (G,v) -> (
     positions(G.Vertices, x -> member(x,G.Edges)) 
     )
 
+-- returns (head,tail,correspondence,correspondence')
+head'n'tail = (e, from1to2) -> 
+    if from1to2 then (e.Node1, e.Node2, e.Correspondence12, e.Correspondence21) else
+	             (e.Node2, e.Node1,	e.Correspondence21, e.Correspondence12)
+
 potentialLowerBound = (e,from1to2) -> (
-    if from1to2 then (
-	(head, tail) := (e.Node1, e.Node2);
-	correspondence := e.Correspondence12;
-	correspondence' := e.Correspondence21;
-	)
-    else  (
-	(head, tail) = (e.Node2, e.Node1);
-	correspondence = e.Correspondence21;
-	correspondence' = e.Correspondence12;
-	);
+    (head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
     n1 := length head.PartialSols - length keys correspondence;
     n2 := length tail.PartialSols - length keys correspondence';
     max(n1-n2, 0)
     ) 
 
-
+{*
 potentialE = (e,from1to2) -> (
     G := e.Graph;
-    if from1to2 then (
-	(head, tail) := (e.Node1, e.Node2);
-	correspondence := e.Correspondence12;
-	correspondence' := e.Correspondence21;
-	)
-    else  (    
-	(head, tail) = (e.Node2, e.Node1);
-	correspondence = e.Correspondence21;
-	correspondence' = e.Correspondence12;
-	);
+    (head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
     a := length head.PartialSols - length keys correspondence;
     b := length tail.PartialSols - length keys correspondence';
     d := (e.Graph).TargetSolutionCount;
@@ -150,21 +141,26 @@ potentialE = (e,from1to2) -> (
 --    << "# of sols in target w/o correspondence" << b << endl;
 --    << "# of established correspondences" << c << endl;
 --    << "target solution count" << d << endl;
-        
     if d!=c and a!=0 then p := (d-c-b) / (d-c)
     else p=0;
-    {*
-    if tail === G.MasterNode then (
-        << "we've hit the master node" << endl;
-	p = p*G.MasterFactor;
-	);
-    if head === G.MasterNode then (
-        << "we've hit the master node backwards" << endl;
-	p = p*(1/G.MasterFactor);
-	);
-    *}        
     p
     ) 
+*}
+
+makeBatchPotential = method()
+makeBatchPotential ZZ := batchSize -> (
+    (e,from1to2) -> (
+    	G := e.Graph;
+    	(head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
+    	c := length keys correspondence;
+   	a := length head.PartialSols - c; -- known head sols without correspondence
+    	b := length tail.PartialSols - c; -- known tail sols without correspondence
+    	d := (e.Graph).TargetSolutionCount;
+ 	if d!=c and a!=0 then min(batchSize,a) * (d-c-b) / (d-c)
+	else -infinity
+    	)
+    ) 
+potentialE = makeBatchPotential 1
 
 selectRandomEdgeAndDirection = G-> (G.Edges#(random (#G.Edges)),random 2 == 0)
 selectBestEdgeAndDirection = G -> (
@@ -182,6 +178,11 @@ selectBestEdgeAndDirection = G -> (
 	(G.Edges#(e#(random length e)), false)
 	)
     )
+makeRandomizedSelect = method()
+makeRandomizedSelect RR := p -> (
+    assert (p<=1 and p>=0);
+    G -> if random RR < p then selectRandomEdgeAndDirection G else selectBestEdgeAndDirection G
+    )
 
 -- prototype for edge tracking function
 -- assumptions: 
@@ -190,7 +191,8 @@ selectBestEdgeAndDirection = G -> (
 -- 3) positions method defined for pointset object
 -- Output: 
 trackEdge = method()
-trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
+trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> trackEdge(e,from1to2,infinity)
+trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     G := e.Graph;
     homotopy := null;
     if from1to2 then (
@@ -206,6 +208,7 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
 	if e#?"homotopy21" then homotopy = e#"homotopy21";
 	);
     untrackedInds := indices head.PartialSols - set keys correspondence;
+    untrackedInds = take(untrackedInds, min(#untrackedInds, batchSize));
     startSolutions := (head.PartialSols)_(untrackedInds);
     newSols := if #untrackedInds > 0 then (
 	if getDefault Software === M2engine and homotopy =!= null then trackHomotopy(homotopy,startSolutions)  
