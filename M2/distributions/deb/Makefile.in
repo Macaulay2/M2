@@ -19,24 +19,7 @@ endif
 
 ############################## main targets
 
-ifeq (@ARCH@,x86_64)
-DEBARCH=amd64
-else
-ifeq (@ARCH@,i686)
-# libgc needs to be compiled with i686 to get multiple threads
-DEBARCH=i386
-else
-ifeq (@ARCH@,armv7l)
-DEBARCH=armel
-else
-ifeq (@ARCH@,armv6l)
-DEBARCH=armhf
-else
-$(error unrecognized architecture @ARCH@)
-endif
-endif
-endif
-endif
+DEBARCH=$(shell dpkg-architecture -q DEB_TARGET_ARCH)
 
 PKG_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-common.deb
