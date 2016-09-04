@@ -33,3 +33,11 @@ needs "./MonodromySolver/random_methods.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
 
 
+beginDocumentation()
+scan({
+	"./MonodromySolver/Documents/DocMonodromysolver.m2"
+    }, 
+    docs -> load(docs)
+    )
+
+end
