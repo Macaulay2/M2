@@ -83,7 +83,6 @@ export {
    "imageFan", 
    "minkowskiSum", 
    "normalFan", 
-   "nFacets",
    "nVertices",
    "polar",
    "polarFace", 

@@ -35,7 +35,6 @@ protect smooth
 protect fullDimensional
 protect simplicial
 protect nRays
-protect nFacets
 protect points
 protect computedVertices
 protect underlyingCone

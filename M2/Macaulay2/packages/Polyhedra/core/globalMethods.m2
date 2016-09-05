@@ -91,7 +91,6 @@ nVertices = method(TypicalValue => ZZ)
 -- For polyhedron and cone
 minFace = method()
 maxFace = method()
-nFacets = method(TypicalValue => ZZ)
 
 
 -- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 
