@@ -519,7 +519,7 @@ isSimplicialMA=method()
 isSimplicialMA List := B ->(
   A:=first\(findGeneratorsOfSubalgebra B);
   P:=posHull transpose matrix B;
-  d:=P#"dimension of the cone";
+  d:=dim P;
   #A==d)
 
 isSimplicialMA PolynomialRing :=R->(
@@ -542,9 +542,9 @@ testHomogeneous PolynomialRing :=R->(
 findGeneratorsOfSubalgebra=method()
 findGeneratorsOfSubalgebra List := B ->(
   P:=posHull transpose matrix B;
-  d:=P#"dimension of the cone";
-  embdim:=P#"ambient dimension";
-  if P#"dimension of lineality space">0 then error("expected cone without lineality space");
+  d:=dim P;
+  embdim:=ambDim P;
+  if (numColumns linealitySpace P)>0 then error("expected cone without lineality space");
   L:=entries transpose rays(P);
   apply(L,v->findGenerator(B,v)));
 
@@ -664,7 +664,7 @@ regularityMonomialCurve(HashTable,List):=(dc,B)->(
 codimMA=method()
 codimMA List := B ->(
   P:=posHull transpose matrix B;
-  d:=P#"dimension of the cone";
+  d:=dim P;
   --embdim:=P#"ambient dimension";
   #B-d)
 
@@ -746,7 +746,7 @@ randomSemigroup(ZZ,ZZ,ZZ):=opt->(a,d,c)->(
          E=remove(E,j);
        );
        PB:=posHull transpose matrix B;
-       dPB=PB#"dimension of the cone";
+       dPB=dim PB;
      );
    );
    B));
