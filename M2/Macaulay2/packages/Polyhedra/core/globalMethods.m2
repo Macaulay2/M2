@@ -78,7 +78,6 @@ isSmooth = method(TypicalValue => Boolean)
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the vertices of P as column vectors
 vertices = method()
-boundaryMap = method(TypicalValue => Matrix)
 
 
 

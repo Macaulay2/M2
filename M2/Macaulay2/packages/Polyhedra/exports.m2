@@ -46,7 +46,6 @@ export {
    "isSimplicial", 
    "isSmooth", 
    "isVeryAmple",
-   "boundaryMap", 
    "dualFaceLattice", 
    "faceLattice",
    "faces", 
