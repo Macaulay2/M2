@@ -104,13 +104,13 @@ cayley(List,ZZ):=(Plist,k)->(
 	print "Must be more than one polytope!";
 	return);
     ---Single out the case when all polytopes are points
-    if all(Plist,p->p#"dimension of polyhedron"==0) then (
+    if all(Plist,p->dim p==0) then (
     	return convexHull(matrix(mutableMatrix(ZZ,n-1,1))|(k*id_(ZZ^(n-1)))));
     ------Assert that the ambient dimension of the polytopes is the same.
-    m:=max for P in Plist list P#"ambient dimension";
+    m:=max for P in Plist list ambDim P;
     Plist=apply(Plist,P->(
-	    if (j:=P#"ambient dimension")<m then (
-		convexHull(vertices P||matrix(for i from m-j+1 to m list(toList(P#"number of vertices":0)))))else(P)));
+	    if (j:=ambDim P)<m then (
+		convexHull(vertices P||matrix(for i from m-j+1 to m list(toList((nVertices P):0)))))else(P)));
     ---------
     N:=(vertices Plist_0)||matrix(mutableMatrix(ZZ,n-1,numcols (vertices Plist_0)));
     N=N|((vertices Plist_1)||matrix{toList((numcols (vertices Plist_1)):k)}||matrix(mutableMatrix(ZZ,n-2,numcols (vertices Plist_1))));
@@ -152,21 +152,21 @@ areIsomorphic(Polyhedron,Polyhedron) := opts -> (P,Q) -> (
     if opts.smoothTest then (if not (isSmooth(normalFan P) and isSmooth(normalFan Q)) then (
 	    print "Polytopes must be smooth!";
 	    return));
-    if (P#"number of facets"==Q#"number of facets") and (P#"number of rays"==Q#"number of rays") and (P#"number of vertices"==Q#"number of vertices") and (P#"dimension of polyhedron"==Q#"dimension of polyhedron") and (#latticePoints(P)==#latticePoints(Q)) then(
-	origo:=(faces(P#"dimension of polyhedron",P))_0;
+    if ((nFacets P)==(nFacets Q)) and ((numColumns rays P)==(numColumns rays Q)) and ((nVertices P)==(nVertices Q)) and ((dim P)==(dim Q)) and (#latticePoints(P)==#latticePoints(Q)) then(
+	origo:=(facesAsPolyhedra((dim P),P))_0;
 	edges:={};
 	--Create edges through origo
-	for edge in faces((P#"dimension of polyhedron")-1,P) do(
+	for edge in facesAsPolyhedra(((dim P))-1,P) do(
 	    if contains(edge,origo) then(
 		e:=matrix{(vertices edge)_0-( vertices origo)_0+(vertices edge)_1-(vertices origo)_0}*(1/(#latticePoints(edge)-1));
 	    	edges=append(edges,e)));
 	Ainv:=matrix{edges};
 	A:=inverse(Ainv);
 	Ptransformed:=affineImage(A,(affineImage(P,(vertices origo)*(-1))));
-	for v in faces(Q#"dimension of polyhedron",Q) do (
+	for v in facesAsPolyhedra((dim Q),Q) do (
 	    edges={};
 	    --Create edges through v
-	    for edge in faces((Q#"dimension of polyhedron")-1,Q) do (
+	    for edge in facesAsPolyhedra(((dim Q))-1,Q) do (
 	    	if contains(edge,v) then (
 		    e:=matrix{(vertices edge)_0-(vertices v)_0+(vertices edge)_1-(vertices v)_0}*(1/(#latticePoints(edge)-1));
 	    	    edges=append(edges,e)));
@@ -203,8 +203,8 @@ toricBlowUp(Polyhedron,Polyhedron,ZZ) := (P,F,k) -> (
 	B:=matrix{toList((numcols(vertices(F))):(b^{i})_0_0)};
 	if (sub(A^{i}*(vertices F),ZZ)==B) then (
 	    E=E+sub(A^{i},QQ)*(1/gcd(flatten entries A^{i}))));
-    Edges:=faces((P#"dimension of polyhedron"-1),P);
-    i:=position(Edges,e->(not contains(F,e) and contains(e,(faces((F#"dimension of polyhedron"),F))_0)));
+    Edges:=facesAsPolyhedra(((dim P)-1),P);
+    i:=position(Edges,e->(not contains(F,e) and contains(e,(facesAsPolyhedra(((dim F)),F))_0)));
     pt:=k*matrix{(vertices Edges_i)_0+(vertices Edges_i)_1-2*(vertices F)_0}*(1/(#latticePoints(Edges_i)-1))+matrix((vertices F)_0);
     return intersection(A||E,b||(E*pt)));
 
@@ -240,7 +240,7 @@ codegree(Matrix) := M -> (
     codegree(convexHull(M)));
 
 codegree(Polyhedron) := P -> (
-    for k from 1 to (P#"dimension of polyhedron"+1) do (
+    for k from 1 to ((dim P)+1) do (
     	if not (interiorLatticePoints(k*P)=={}) then return k));
 
 
@@ -472,8 +472,8 @@ gaussFiber(List) := (A) -> (
 --- PURPOSE : Compute the halfspace description of a polytope
 ambientHalfspaces = method(TypicalValue => Sequence)
 ambientHalfspaces(Polyhedron) := P -> (
-    if P#"dimension of polyhedron"==P#"ambient dimension" then(return halfspaces(P));
-    orto:=matrix(entries inducedMap(cokernel linSpace(affineHull(P)),ZZ^(P#"ambient dimension")));
+    if (dim P)==(ambDim P) then(return halfspaces(P));
+    orto:=matrix(entries inducedMap(cokernel linSpace(affineHull(P)),ZZ^((ambDim P))));
     orto=transpose gens trim image transpose(orto);
     (A,b):=halfspaces(P);
     vert:=vertices(P);
@@ -524,7 +524,7 @@ randQPoly = method(TypicalValue => Polyhedron)
 
 randQPoly(ZZ,ZZ) := (v,n) -> (
     P:=convexHull(randS(v,n,10));
-    if not (v1:=P#"number of vertices")==v then (
+    if not (v1:=(nVertices P))==v then (
 	print("This has only "|toString v1|" vertices. Is it possible to have #vertices == "|toString v|"? If so, try again!"));
     P) 
 
@@ -540,7 +540,7 @@ randZPoly(ZZ,ZZ,ZZ) := (v,n,e) -> (
     M:=(randS(v,n,e))*10^e;
     P:=convexHull(M);
     test:=r->sub(sub(r,ZZ),QQ)==r;
-    if not (v1:=P#"number of vertices")==v then (
+    if not (v1:=(nVertices P))==v then (
 	print("This has only "|toString v1|" vertices. Is it possible to have #vertices == "|toString v|"? If so, try again!"));
     if not all(entries M, p -> all(p,pp->test(pp))) then (
 	print "For some reason this is not a lattice polytope. We do not know why. Try again");
@@ -661,7 +661,7 @@ iskCayleykEdges(Polyhedron):=P->(
     boolean:=true;
     (A,b):=halfspaces(P);
     V:=vertices(P);
-    E:=faces(P#"dimension of polyhedron"-1,P);
+    E:=facesAsPolyhedra((dim P)-1,P);
     minLen:=infinity;
     for e in E do(
 	len:=gcd(flatten entries((vertices(e))_0-(vertices(e))_1));
