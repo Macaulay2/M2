@@ -97,14 +97,3 @@ constructTypeFromHash(Type, HashTable) := (PType, H) -> (
 )
 
 
-
-
--- Debug export
-export {
-   "hasProperties",
-   "getAvailableProperties",
-   "hasProperty",
-   "getProperty"
-}
-
-
