@@ -135,7 +135,6 @@ doc ///
 
 doc ///
    Key
-      isWellDefined
       (isWellDefined,Cone)
       (isWellDefined,Fan)
       (isWellDefined,Polyhedron)
