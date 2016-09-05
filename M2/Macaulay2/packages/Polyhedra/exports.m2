@@ -1,12 +1,9 @@
 export {
--- this export is only temporary
-   "accessKey",
 
    "PolyhedralObject", 
 -- Cone object with associated methods:
    "Cone", 
    "posHull", 
-   "facetsThroughRays",
  
 -- Polyhedron object with associated methods:
    "Polyhedron", 
@@ -46,8 +43,6 @@ export {
    "isSimplicial", 
    "isSmooth", 
    "isVeryAmple",
-   "dualFaceLattice", 
-   "faceLattice",
    "faces", 
    "facesAsPolyhedra",
    "facesAsCones",
@@ -67,7 +62,6 @@ export {
    "mixedVolume", 
    "polytope", 
    "proximum", 
-   "scalarProduct",
    "skeleton", 
    "smallestFace", 
    "smoothSubfan", 
