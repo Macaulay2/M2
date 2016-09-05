@@ -143,14 +143,8 @@ doc ///
       Checks whether a polyhedral object is well-defined.
    Usage
       b = isWellDefined C
-      b = isWellDefined F
-      b = isWellDefined P
-      b = isWellDefined PC
    Inputs
       C:Cone
-      F:Fan
-      P:Polyhedron
-      PC:PolyhedralComplex
    Outputs
       b:Boolean
    Description
@@ -167,12 +161,11 @@ doc ///
 
 doc ///
    Key
+      (fan,Matrix,Matrix,List)
       (fan,Matrix,List)
-      (Matrix,Matrix,List)
    Headline
       Constructing a fan.
    Usage
-      F = fan(M,L)
       F = fan(M,N,L)
    Inputs
       M:Matrix
@@ -201,16 +194,17 @@ doc ///
 
 doc ///
    Key
-      (polyhedralComplex,Matrix,List)
       (polyhedralComplex,Matrix,Matrix,Matrix,List)
+      (polyhedralComplex,Matrix,List)
    Headline
       Constructing a polyhedral complex.
    Usage
-      PC = polyhedralComplex(V,L)
-      PC = polyhedralComplex(V,N,L)
+      PC = polyhedralComplex(V,R,N,L)
    Inputs
       V:Matrix
          Matrix containing the vertices as columns
+      R:Matrix
+         Matrix containing rays as columns.
       N:Matrix
          Matrix containing generators of the lineality space as columns
       L:List
@@ -221,7 +215,7 @@ doc ///
       Text
          Basic constructor for polyhedral complices that takes a matrix containing the
          vertices of the polyhedral complex and a list of lists with the indices of the
-         vertices in the maximal cells. Optionally one may provide a lineality space.
+         vertices and rays in the maximal cells. Optionally one may provide a lineality space.
          
          This constructor does not check well-definedness, see {\tt isWellDefined}.
 
