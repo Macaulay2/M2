@@ -61,6 +61,5 @@ protect honestMaxObjects  -- maximal cones as honest cones
 protect computedComplete  -- is the fan complete?
 protect smoothCones  -- smooth cones of fan as list of index lists
 protect polytopal -- Is the fan the normal fan of a polytope?
-
 protect underlyingFan -- The underlying fan of a polyhedral complex, i.e. intersecting at ht 1 gives complex
-   "computedFacesThroughVertices"
+protect computedFacesThroughVertices

@@ -78,7 +78,7 @@ isSmooth = method(TypicalValue => Boolean)
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the vertices of P as column vectors
 vertices = method()
-
+nVertices = method(TypicalValue => ZZ)
 
 
 
@@ -91,6 +91,7 @@ vertices = method()
 -- For polyhedron and cone
 minFace = method()
 maxFace = method()
+nFacets = method(TypicalValue => ZZ)
 
 
 -- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 

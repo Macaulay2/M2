@@ -275,5 +275,16 @@ compute#Polyhedron#simplicial Polyhedron := P -> (
 )
 
 
+compute#Polyhedron#nFacets = method()
+compute#Polyhedron#nFacets Polyhedron := P -> (
+   numRows ((facets P)#0)
+)
+
+
+compute#Polyhedron#nVertices = method()
+compute#Polyhedron#nVertices Polyhedron := P ->(
+   numColumns vertices P
+)
+
 
 

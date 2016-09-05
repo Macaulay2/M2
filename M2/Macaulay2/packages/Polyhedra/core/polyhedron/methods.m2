@@ -115,3 +115,9 @@ interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P 
 
 
 isWellDefined Polyhedron := P -> getProperty(P, isWellDefined)
+
+
+nFacets Polyhedron := P -> getProperty(P, nFacets)
+
+
+nVertices Polyhedron := P -> getProperty(P, nVertices)
