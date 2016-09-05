@@ -27,6 +27,11 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
 )
 
 
+compute#Polyhedron#lattice = method()
+compute#Polyhedron#lattice Polyhedron := P -> (
+   try (lift(vertices P, ZZ); true) else false
+)
+
 
 compute#Polyhedron#empty = method()
 compute#Polyhedron#empty Polyhedron := P -> (

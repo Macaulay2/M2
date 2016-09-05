@@ -1,11 +1,5 @@
-
-
----------------------------------------------------------------
-
--- WISHLIST
---  -Symmetry group for polytopes
-
-
+-- Legacy methods that have not been changed at all.
+-- Since most of these do not have tests, probably many are broken (now).
 
 areCompatible(Cone,Cone) := (C1,C2) -> (
      if ambDim(C1) == ambDim(C2) then (
@@ -183,7 +177,6 @@ saveSession String := F -> (
 -- >> not public <<
 ---------------------------------------
 
-liftable (Matrix,Number) := (f,k) -> try (lift(f,k); true) else false; 
 
 makePrimitiveMatrix = M -> if M != 0 then lift(transpose matrix apply(entries transpose M, w -> (g := abs gcd w; apply(w, e -> e//g))),ZZ) else lift(M,ZZ);
      

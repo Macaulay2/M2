@@ -98,11 +98,11 @@ ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
 
 
 -- PURPOSE : Checks if the polyhedron is a lattice polytope
---   INPUT : 'P'  a Polyhedron, which must be compact
+--   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : Tests if the vertices are in ZZ
 isLatticePolytope = method()
-isLatticePolytope Polyhedron := Boolean => P -> isCompact P and liftable(vertices P,ZZ)
+isLatticePolytope Polyhedron := Boolean => P -> getProperty(P, lattice)
 
 
 -- PURPOSE : Computing the interior lattice points of a compact Polyhedron

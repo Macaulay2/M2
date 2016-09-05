@@ -18,15 +18,17 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 -- Helper methods
 load "./helpers.m2"
 
--- Methods declarations for methods defined for several objects, but not all of polyhedraHash
-load "./declarations.m2"
 
+-------------------------------------------------------------------------------
 -- Engine
+--
 load "./engine/properties.m2"
 load "./engine/alternatives.m2"
 -- load "./engine/display.m2"  -- For displaying polyhedra, probably not needed anymore
 
+-------------------------------------------------------------------------------
 -- Core functionality
+--
 load "./core/globalMethods.m2"
    -- Cone
    load "./core/cone/constructors.m2"
@@ -47,23 +49,25 @@ load "./core/globalMethods.m2"
 load "./core/contains.m2"
 load "./core/intersection.m2"
 
+-------------------------------------------------------------------------------
 -- Extended
+--
 load "./extended/directProduct.m2"
 load "./extended/minkowskiSum.m2"
 load "./extended/polyhedron/properties.m2"
 load "./extended/polyhedron/methods.m2"
 load "./extended/fan/methods.m2"
+load "./extended/standardConstructions.m2"
+load "./extended/commonFace.m2"
+load "./extended/incompare.m2"
+load "./extended/affineImages.m2"
+load "./extended/legacy.m2"
+load "./extended/not_refactored.m2"
 
-load "./standardConstructions.m2"
-load "./commonFace.m2"
-load "./incompare.m2"
-load "./affineImages.m2"
-
--- Legacy code
-load "./legacy.m2"
-load "./not_refactored.m2"
-
+-------------------------------------------------------------------------------
 -- Tests
+--
+-- Core:
 load "./tests/core/cone_basics.m2"
 load "./tests/core/polyhedron_basics.m2"
 load "./tests/core/fan_basics.m2"
@@ -72,22 +76,25 @@ load "./tests/core/tests_from_polymake/representation.m2"
 load "./tests/core/tests_from_polymake/hilbert_basis.m2"
 load "./tests/core/tests_from_polymake/lattice_points.m2"
 load "./tests/core/tests_from_polymake/normal_fan.m2"
- 
+-- Extended:
 load "./tests/extended/polyhedron.m2"
 load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 load "./tests/extended/mixedVolume.m2"
 load "./tests/extended/tests_from_polymake/ehrhart_and_volume.m2"
-
+-- Other:
 load "./tests/legacy_tests_working.m2"
 load "./tests/shouldFail.m2"
 load "./tests/isWellDefined.m2"
 
--- Failing tests
--- load "./tests/failing.m2"
 
+-------------------------------------------------------------------------------
+-- Interfaces to other software
+--
 load "./alternatives/lrs.m2"
 
+-------------------------------------------------------------------------------
 -- Documentation
+--
 load "./documentation.m2"
 
 end
