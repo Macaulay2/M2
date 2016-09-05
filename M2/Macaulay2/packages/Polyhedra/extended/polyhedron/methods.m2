@@ -334,20 +334,6 @@ inInterior (Matrix,Polyhedron) := (p,P) -> (
 	  all(flatten entries HS, e -> e < 0)))
 
 
-boundaryMap (ZZ,Polyhedron) := (i,P) -> (
-     L1 := facesAsPolyhedra(dim P - i,P);
-     L2 := facesAsPolyhedra(dim P - i + 1,P);
-     L1 = apply(L1, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
-     L2 = apply(L2, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
-     transpose matrix apply(L1, l1 -> (
-	       apply(L2, l2 -> (
-			 if isSubset(set l2,set l1) then (
-			      l3 := toList(set l1 - set l2);
-			      l3 = apply(l3, e -> position(l1, e1 -> e1 == e));
-			      l := #l3; 
-			      k := #l2; 
-			      (-1)^(k*l + sum l3 - substitute((l^2-l)/2,ZZ))) else 0)))))
-
 
 -- PURPOSE : Computing the affine hull
 --   INPUT : 'P',  a Polyhedron
