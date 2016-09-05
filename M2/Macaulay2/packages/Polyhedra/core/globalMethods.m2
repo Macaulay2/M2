@@ -161,4 +161,4 @@ sublatticeBasis = method(TypicalValue => Matrix)
 -- PURPOSE : Computing a polyhedron as the intersection of affine half-spaces and hyperplanes
 intersection = method()
 
-latticeVolume = method(TypicalValue => ZZ)
+latticeVolume = method(TypicalValue => QQ)
