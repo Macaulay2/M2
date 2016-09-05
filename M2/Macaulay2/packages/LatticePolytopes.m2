@@ -152,7 +152,7 @@ areIsomorphic(Polyhedron,Polyhedron) := opts -> (P,Q) -> (
     if opts.smoothTest then (if not (isSmooth(normalFan P) and isSmooth(normalFan Q)) then (
 	    print "Polytopes must be smooth!";
 	    return));
-    if ((nFacets P)==(nFacets Q)) and ((numColumns rays P)==(numColumns rays Q)) and ((nVertices P)==(nVertices Q)) and ((dim P)==(dim Q)) and (#latticePoints(P)==#latticePoints(Q)) then(
+    if ((numRows ((factes P)#0))==(numRows ((facets Q)#0))) and ((numColumns rays P)==(numColumns rays Q)) and ((nVertices P)==(nVertices Q)) and ((dim P)==(dim Q)) and (#latticePoints(P)==#latticePoints(Q)) then(
 	origo:=(facesAsPolyhedra((dim P),P))_0;
 	edges:={};
 	--Create edges through origo
