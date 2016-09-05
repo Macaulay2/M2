@@ -111,11 +111,11 @@ assert(latticePoints P == {})
 TEST ///
 M = matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
 P = convexHull M;
-assert(ring getProperty(P, points) === QQ)
+assert(ring vertices P === QQ)
 v = matrix {{1},{1},{1}};
 I = (M,v);
 P = intersection I;
-l = getProperty(P,inequalities);
+l = facets P;
 assert(ring l#0 === QQ)
 assert(ring l#1 === QQ)
 ///

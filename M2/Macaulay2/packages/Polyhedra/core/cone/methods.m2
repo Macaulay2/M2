@@ -1,4 +1,12 @@
 
+facesAsCones = method();
+facesAsCones(ZZ, Cone) := (d, C) -> (
+   raysC := rays C;
+   linC := linealitySpace C;
+   result := faces(d, C);
+   apply(result, f -> posHull(raysC, linC))
+)
+
 
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
