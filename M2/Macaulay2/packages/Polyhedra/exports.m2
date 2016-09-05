@@ -28,6 +28,7 @@ export {
    "halfspaces", 
    "hyperplanes", 
    "linSpace", 
+   "linealitySpace",
    "polyhedra", 
    "vertices",
    "areCompatible", 

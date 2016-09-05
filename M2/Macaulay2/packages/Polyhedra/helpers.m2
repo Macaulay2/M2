@@ -32,9 +32,6 @@ rayCorrespondenceMap(Matrix, Matrix) := (sources, targets) -> (
    rayCorrespondenceMap(sources, map(r^(numRows sources), r^0, 0), targets)
 )
 
-export{
-   "rayCorrespondenceMap"
-}
 
 pointInSameDirection = method()
 pointInSameDirection(Matrix, Matrix, Matrix) := (v1, v2, lineality) -> (

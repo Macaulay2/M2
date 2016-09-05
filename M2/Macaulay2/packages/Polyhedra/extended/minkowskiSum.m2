@@ -14,11 +14,6 @@ minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
    else return pointwiseMinkowskiSum(P1,P2)
 )
 
-export{
-   "getSufficientVertexData",
-   "linealitySpace"
-}
-
 pointwiseMinkowskiSum = (P1,P2) -> (
      vertexData1 := getSufficientVertexData(P1);
      vertexData2 := getSufficientVertexData(P2);
