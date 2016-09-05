@@ -96,6 +96,7 @@ load "./alternatives/lrs.m2"
 -- Documentation
 --
 load "./documentation.m2"
+load "./new_documentation.m2"
 
 end
 
