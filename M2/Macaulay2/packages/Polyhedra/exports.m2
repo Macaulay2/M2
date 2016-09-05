@@ -51,6 +51,7 @@ export {
    "faceLattice",
    "faces", 
    "facesAsPolyhedra",
+   "facesAsCones",
    "fVector", 
    "incompCones",
    "incompPolyhedra",
