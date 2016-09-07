@@ -51,8 +51,9 @@ appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if FAST then (
 	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,#coordinates b);
-	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0) =!= length A 
-    	then error "can't append"
+	p := rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0);
+	if p =!= length A 
+    	then (if p==-1 then print p; return false)
 	);
     A#(length A) = b
     )
