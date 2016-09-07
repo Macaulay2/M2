@@ -15,8 +15,27 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolutions", "certifyDistinctSoln", "frobeniusNormSq"}
+export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolution", "certifyDistinctSoln", "frobeniusNormSq"}
 exportMutable {}
+
+-- in: a rational number a, precision parameter epsilon
+-- out: a rational q(a) with q(a) >= sqrt(a) and |q(a) - sqrt(a) | <= epsilon
+-- potentially of use in computing gamma parameter
+sqrtUpper = method()
+sqrtUpper (QQ, QQ) := (a, epsilon) -> (
+    p := (1+a)/2;
+    while abs(p^2 - a) >= epsilon * (p + min(a,1)) do (
+	p = p - (p^2-a)/(p+a)
+	);
+    p
+    )
+sqrtUpper (ZZ, QQ) := (a, epsilon) -> (
+    p := (1+a)/2;
+    while abs(p^2 - a) >= epsilon * (p + min(a,1))  do (
+	p = p - (p^2-a)/(p+a)
+	);
+    p
+    )
 
 absValue = method()
 absValue ZZ := abs
@@ -26,7 +45,7 @@ absValue CC := abs
 absValue(RingElement) := r -> (
     R := ring(r);
     LT := leadTerm(sub(r,R));
-    VV := leadCoefficient(LT)^2 + (sub(r,R)-LT)^2;
+    VV := (leadCoefficient(LT))^2 + (sub(r,R)-LT)^2;
     sqrt(sub(VV,RR))
     )
 
@@ -61,7 +80,7 @@ polySysNorm(PolySystem) := f -> (
 frobeniusNormSq = method()
 frobeniusNormSq(Matrix) := r -> (
     a := flatten entries r;
-    sum apply(a, s -> s^2)
+    sum apply(a, s -> (absValue(s))^2)
     )
 
 
@@ -79,6 +98,9 @@ complexToRational(CC, QuotientRing) := (x,FF) -> (
     im := promote(round(37, imaginaryPart x),QQ);
     re := promote(round(37, realPart x),QQ);
     Gaussian := re + im*((generators FF)#0)
+    )
+complexToRational(Point, QuotientRing) := (p, FF) -> (
+    point matrix{complexToRational(coordinates p, FF)}
     )
 complexToRational(List, QuotientRing) := (A, FF) -> (
     apply(A, a -> complexToRational(a, FF))
@@ -108,7 +130,12 @@ complexToRational(PolySystem, QuotientRing) := (f, FF) -> (
     ff
     )
 
+
 rationalToComplex = method()
+rationalToComplex CC := x -> x
+rationalToComplex RR := x -> x
+rationalToComplex QQ := x -> x
+
 rationalToComplex PolySystem := f -> (
     R := ring f;
     varss := apply(flatten entries vars R, x -> getSymbol(toString x));
@@ -118,7 +145,7 @@ rationalToComplex PolySystem := f -> (
     polySystem apply(flatten entries f.PolyMap, x -> phi(x))
     )
 rationalToComplex RingElement := f -> (
-    if (degree f)#0 > 0 then (k := sub((leadCoefficient f)*ii + (f - leadTerm f), CC);
+    if (degree f)#0 > 0 then (k := sub((leadCoefficient f)*ii + leadCoefficient((f - leadTerm f)), CC);
     k)
     else (k = sub(leadCoefficient f, CC);
         k)
@@ -155,40 +182,38 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
 --    (alpha, beta, gamma)
     R := ring ff;
     symbolic := coefficientRing R =!= CC_53;
-    if symbolic then (f := rationalToComplex(ff);
-	x := rationalToComplex(xx);
-    numOfVari := numgens R; 
-    numOfPoly := # equations f;
-    jacobianOfSys := jacobian f;
-    J := evaluate(jacobianOfSys, x);
-    if det J == 0 then error "The Jacobian is not invertible";
-    eval := evaluate(f,x);
-    y := point(inverse J * eval);
-    degs := flatten for i from 1 to numOfPoly list degree ((equations f)#(numOfPoly-i));
-    diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(x))^((degs)#(numOfPoly-i)-1);
-    deltaD := sub(diagonalMatrix diagonals, CC);
-    mu := max {1, polySysNorm(f)*norm(solve(J,deltaD))};    
-    maxdeg := max degs;
-    beta := hermitianNorm(y);
-    gamma := mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(x));
-    alpha := beta * gamma;
-    (alpha, beta, gamma))
+    if symbolic then (numOfVari := numgens R; 
+    	numOfPoly := # equations ff;
+    	jacobianOfSys := jacobian ff;
+    	J := evaluate(jacobianOfSys, xx);
+    	if det J == 0 then error "The Jacobian is not invertible";
+    	eval := evaluate(ff,xx);
+    	y := point(inverse J * eval);
+    	degs := flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
+    	diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
+    	deltaD := complexToRational(diagonalMatrix diagonals, coefficientRing R);
+    	mu := max {1, complexToRational((polySysNorm(ff))^2,coefficientRing R)*complexToRational(frobeniusNormSq(inverse J * deltaD),coefficientRing R)};    
+    	maxdeg := max degs;
+    	beta := complexToRational(hermitianNorm(y), coefficientRing R);
+    	gamma := mu*complexToRational(((maxdeg)^(3))*(1/4)*(1/oneNorm(xx))^2,coefficientRing R);
+    	alpha := beta^2 * gamma;
+    	(alpha, beta, gamma))
     else   ( numOfVari = numgens R; 
-    numOfPoly = # equations ff;
-    jacobianOfSys = sub(jacobian ff,R);
-    J = evaluate(jacobianOfSys, xx);
-    if det J == 0 then error "The Jacobian is not invertible";
-    eval = evaluate(ff,xx);
-    y = point (solve(J,eval));
-    degs = flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
-    diagonals = flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
-    deltaD = sub(diagonalMatrix diagonals, coefficientRing R);
-    mu = max {1, polySysNorm(ff)*norm(solve(J,deltaD))};    
-    maxdeg = max degs;
-    beta = hermitianNorm(y);
-    gamma = mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(xx));
-    alpha = beta * gamma;
-    (alpha, beta, gamma))
+    	numOfPoly = # equations ff;
+    	jacobianOfSys = sub(jacobian ff,R);
+    	J = evaluate(jacobianOfSys, xx);
+    	if det J == 0 then error "The Jacobian is not invertible";
+    	eval = evaluate(ff,xx);
+    	y = point (solve(J,eval));
+    	degs = flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
+    	diagonals = flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(xx))^((degs)#(numOfPoly-i)-1);
+    	deltaD = sub(diagonalMatrix diagonals, coefficientRing R);
+    	mu = max {1, polySysNorm(ff)*norm(solve(J,deltaD))};    
+    	maxdeg = max degs;
+    	beta = hermitianNorm(y);
+    	gamma = mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(xx));
+    	alpha = beta^2 * gamma^2;
+    	(alpha, beta, gamma))
     )
 
 
@@ -198,12 +223,13 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
 
 
 
-certifySolutions = method()
-certifySolutions(PolySystem, Point) := (f, x) -> (
+certifySolution = method()
+certifySolution(PolySystem, Point) := (f, x) -> (
     Consts := computeConstants(f,x);
-    if (Consts #0)<((13-3*sqrt(17))/4) then (
+    if rationalToComplex(Consts #0)<((13-3*sqrt(17))/4)^2 then (
 	 print "The point is an approximate solution to the system";
-	 << "The value of alpha is " << (computeConstants(f, x))#0 << endl;
+	 << "The value of alpha is " << sqrt(rationalToComplex((Consts)#0)) << endl;
+	 << "The radius is " << 2*rationalToComplex((Consts)#1) << endl;
 	 true
 	 )
     else (
@@ -216,19 +242,19 @@ certifyDistinctSoln = method()
 certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
     Consts1 := computeConstants(f,x1);
     Consts2 := computeConstants(f,x2);
-    if (Consts1 #0) >= ((13-3*sqrt(17))/4) then (
+    if rationalToComplex(Consts1 #0) >= ((13-3*sqrt(17))/4)^2 then (
 	print "The first point is not an approximate solution to the system";
 	false
 	)
-    else if (Consts2 #0) >= ((13-3*sqrt(17))/4) then (
+    else if rationalToComplex(Consts2 #0) >= ((13-3*sqrt(17))/4) then (
 	print "The second point is not an approximate solution to the system";
 	false
 	)
-    else if hermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*((Consts1)#1 + (Consts2)#1) then (
+    else if hermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*(rationalToComplex((Consts1)#1) + rationalToComplex((Consts2)#1)) then (
 	print "Associated solutions are distinct";
 	true
 	)
-    else if (Consts1)#0 < 0.03 and hermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and hermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then (
+    else if rationalToComplex((Consts1)#0) < (0.03)^2 and hermitianNorm(point{(coordinates x1)-(coordinates x2)})^2 < 1/(400*rationalToComplex((Consts1)#2)) or rationalToComplex((Consts2)#0) < 0.009 and hermitianNorm(point{(coordinates x1)-(coordinates x2)})^2 < 1/(400*rationalToComplex((Consts2)#2)) then (
 	print "Associated solutions are not distinct";
 	false
 	)
@@ -248,17 +274,19 @@ needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]
 f = polySystem {x + y, x^2 - 4}
 sols = solveSystem f
-assert all(sols, p -> certifySolutions(f,p))
+assert all(sols, p -> certifySolution(f,p))
 p = point{{2.0, -2.0}}
 q = point{{-2, 2.000001}}
 computeConstants(f,p)
-certifySolutions(f,p)
+certifySolution(f,p)
 certifyDistinctSoln(f,p,q)
 FFF = QQ[j]/ideal(j^2+1)
-pp = point {complexToRational(coordinates p, FFF)}
+pp = point {complexToRational(coordinates q, FFF)}
+qq = point {complexToRational(coordinates p, FFF)}
 R'=FFF[x,y]
 ff = complexToRational(f,FFF)
-certifySolutions(ff,pp)
+certifySolution(ff,pp)
+certifyDistinctSoln(ff,pp,qq)
 ///
 
 end
