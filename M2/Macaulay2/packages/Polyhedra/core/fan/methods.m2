@@ -12,9 +12,7 @@ linSpace Fan := F -> linealitySpace F
 
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
-isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed = isPointed((maxCones F)#0);
-     F.cache.isPointed)
+isPointed Fan := F -> all(getProperty(F, honestMaxObjects), c->isPointed c)
 
 
 --   INPUT : 'F'  a Fan

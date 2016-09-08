@@ -206,3 +206,10 @@ compute#Fan#ambientDimension Fan := F -> (
    else if hasProperty(F, inputLinealityGenerators) then return numRows getProperty(F, inputLinealityGenerators)
    else error("No property available to compute ambient dimension.")
 )
+
+
+compute#Fan#pointed = method()
+compute#Fan#pointed Fan := F -> (
+   all(getProperty(F, honestMaxObjects), C -> isPointed C)
+)
+
