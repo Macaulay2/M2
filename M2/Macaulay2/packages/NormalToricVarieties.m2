@@ -380,16 +380,7 @@ isProjective NormalToricVariety := (cacheValue symbol isProjective)(X -> (
 
 fan NormalToricVariety := X -> (
   V := promote(matrix transpose rays X, QQ);
-  L := sort apply(max X, C -> posHull V_C);
-  return new Fan from {
-    "generatingCones" => set L,
-    "ambient dimension" => numRows V,
-    "top dimension of the cones" => dim L#0,
-    "number of generating cones" => #L,
-    "rays" => set apply(rays X, r -> promote(matrix transpose {r},QQ)),
-    "number of rays" => numColumns V,
-    "isPure" => dim L#0 == dim last L,
-    symbol cache => new CacheTable})
+  return fan(V, max X))
 
 -- This method is not exported
 facesOfCone = method(TypicalValue => HashTable)
