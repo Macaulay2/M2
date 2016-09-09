@@ -48,4 +48,14 @@ elapsedTime for i to 100 do (
     )
 length arrayT
 
-
+restart 
+d = 10
+load "track.gc-bug.m2"  
+debug NumericalAlgebraicGeometry
+H = segmentHomotopy(S,T)
+sols = new MutableHashTable
+N = 100
+elapsedTime for i to N-1 do sols#i = trackHomotopy(H,solsS)/coordinates 
+1e6*(164-87)/(N*d^3) -- N = 100
+1e6*(1025-87)/(N*d^3) -- N = 1000 
+1e6*(8800-87)/(N*d^3) -- N = 10000 
