@@ -323,6 +323,18 @@ normalToricVariety Fan := opts -> FF -> (
     CoefficientRing => opts.CoefficientRing,
     Variable => opts.Variable))
 
+normalToricVariety Fan := opts -> FF -> (
+--  R := rays FF;
+--  F := sort apply(maxCones FF, C -> (
+--      Cr := rays C; 
+--      Cr = set apply(numColumns Cr, i -> Cr_{i}); 
+--      positions(R,r -> Cr#?r)));
+--  R = apply(R, r -> flatten entries r);
+  return normalToricVariety(entries transpose rays FF, sort maxCones FF,  
+    WeilToClass => opts.WeilToClass,
+    CoefficientRing => opts.CoefficientRing,
+    Variable => opts.Variable))
+
 -- this function interfaces with the Polyhedra package
 normalToricVariety Polyhedron := opts -> P -> normalToricVariety normalFan P
 
@@ -710,8 +722,8 @@ isAmple ToricDivisor := D -> (
 	if w_(0,0) < 0 then w = (-1)* w;
 	(v // w)_(0,0) > 0))))
 
-hilbertBasis Matrix := Matrix => C -> (
-  transpose (normaliz(transpose C,"integral_closure"))#"gen")
+hilbertBasis(Matrix,Thing) := Matrix => opts -> (C,notused) -> (
+    transpose (normaliz(transpose C,"integral_closure"))#"gen")
 
 isVeryAmple ToricDivisor := Boolean => D -> (
   if not isAmple D then return false
@@ -723,7 +735,7 @@ isVeryAmple ToricDivisor := Boolean => D -> (
     L := latticePoints D;
     m := numColumns L;
     return all(n, i -> (
-	H := hilbertBasis(V - matrix {toList(n:1)} ** V_{i});
+	H := hilbertBasis(V - matrix {toList(n:1)} ** V_{i}, "notused");
 	P := L - matrix {toList(m:1)} ** V_{i};
 	isSubset(set entries transpose H, set entries transpose P)))))
      
@@ -1081,7 +1093,9 @@ makeSmooth NormalToricVariety := opts -> X -> (
       tau := first select(select(subsets(sigma), t -> #t > 1), 
   	f -> #f =!= rank V_f or 1 != minors(#f,V_f));
       Vt := V_tau;
-      H := entries transpose hilbertBasis Vt;
+      H := hilbertBasis(posHull Vt);
+      H = H/(v -> flatten entries v);
+      --time H := entries transpose hilbertBasis(Vt,"notused");
       w := select(H, h -> not member(h, (rays Y)_sigma));
       if w === {} then Y = makeSimplicial(Y, Strategy => opts.Strategy)
       else Y = blowup(tau,Y, first w)));
