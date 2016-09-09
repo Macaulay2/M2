@@ -56,6 +56,19 @@ H = segmentHomotopy(S,T)
 sols = new MutableHashTable
 N = 100
 elapsedTime for i to N-1 do sols#i = trackHomotopy(H,solsS)/coordinates 
+elapsedTime for i to N-1 do sols#i = (trackHomotopy(H,solsS))/(m -> mutableMatrix {coordinates m})
+elapsedTime for i to N-1 do sols#i = mutableMatrix((trackHomotopy(H,solsS))/(m -> coordinates m)) -- 92.6-80
+
+elapsedTime for i to N-1 do sols#i = (for j from 1 to 1000 list for k from 1 to 3 list random(CC_53)) -- 154-80
+elapsedTime for i to N-1 do sols#i = (for j from 1 to 3000 list random(CC_53)) -- 144-80
+elapsedTime for i to N-1 do sols#i = (for j from 1 to 3000 list random(CC_60)) -- 144-80
+elapsedTime for i to N-1 do sols#i = mutableMatrix(for j from 1 to 1000 list for k from 1 to 3 list random(CC_53)) -- 86-80
+elapsedTime for i to N-1 do sols#i = (for j from 1 to 1000 list mutableMatrix{for k from 1 to 3 list random(CC_53)}) -- 137-80 SLOW (9.xx sec)
+elapsedTime for i to N-1 do sols#i = (for j from 1 to 1000 list matrix{for k from 1 to 3 list random(CC_53)}) -- 438-80, ALSO SLOW (8.4 sec)
+M = mutableMatrix(CC_53, 4, 1)
+fillMatrix M
+
+M_(1,1) = 3.1
 1e6*(164-87)/(N*d^3) -- N = 100
 1e6*(1025-87)/(N*d^3) -- N = 1000 
 1e6*(8800-87)/(N*d^3) -- N = 10000 
