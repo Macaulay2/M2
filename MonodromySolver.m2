@@ -41,3 +41,19 @@ scan({
     )
 
 end
+
+restart
+uninstallPackage "MonodromySolver"
+installPackage "MonodromySolver"
+installPackage("MonodromySolver", RemakeAllDocumentation=>true)
+check "MonodromySolver"
+peek MonodromySolver
+--help "OnesiteModificationA"
+--viewHelp "OnesiteModificationA"
+--examples "OnesiteModificationA"
+viewHelp MonodromySolver
+viewHelp potentialE
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
+-- End:
