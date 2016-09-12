@@ -160,9 +160,11 @@ monodromySolve = method(Options=>{
 	NumberOfNodes => 2,
 	NumberOfEdges => 3,
 	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
 monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+    USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
     HG := homotopyGraph(PS, Potential=>o.Potential);
     stoppingCriterion := o.StoppingCriterion; 
     if o.TargetSolutionCount =!= null then (

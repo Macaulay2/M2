@@ -14,6 +14,8 @@ HomotopyNode = new Type of MutableHashTable
 HomotopyEdge = new Type of MutableHashTable
 HomotopyGraph = new Type of MutableHashTable
 
+USEtrackHomotopy = false -- determines whether to use trackHomotopy (new engine)
+
 addNode = method()
 addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
     N := new HomotopyNode from {
@@ -47,7 +49,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,n1,n2) -> (
     	);
     F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
     F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
-    if getDefault Software === M2engine then (
+    if USEtrackHomotopy then (
     	E#"homotopy12" = segmentHomotopy(F1,F2);
     	E#"homotopy21" = segmentHomotopy(F2,F1);
     	);
@@ -211,7 +213,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     untrackedInds = take(untrackedInds, min(#untrackedInds, batchSize));
     startSolutions := (head.PartialSols)_(untrackedInds);
     newSols := if #untrackedInds > 0 then (
-	if getDefault Software === M2engine and homotopy =!= null then trackHomotopy(homotopy,startSolutions)  
+	if USEtrackHomotopy then trackHomotopy(homotopy,startSolutions)  
 	else track(polySystem (gammaHead * head.SpecializedSystem), 
 	    polySystem(gammaTail * tail.SpecializedSystem), 
 	    startSolutions)
