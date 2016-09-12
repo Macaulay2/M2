@@ -1,3 +1,21 @@
+restart ---------------------------------------------------
+load "cyclic.m2"
+nedges = 3
+setRandomSeed 0
+polys = parametrizedCyclic 11
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+print mixedVolume
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+{* -- Anton's office machine:
+
+     mixedVolume = 184756
+-- 7747.72 seconds elapsed
+
+o8 = (HomotopyNode{...5...}, 540155)
+*}
+
+restart ---------------------------------------------------
 load "cyclic.m2"
 nedges = 4
 setRandomSeed 0
@@ -12,9 +30,8 @@ elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,Targ
      npaths = 737432
      6.3G
 *}
-end
 
-restart
+restart --------------------------------------------------
 load "cyclic.m2"
 nedges = 4
 setRandomSeed 0
@@ -30,7 +47,21 @@ elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,Targ
      6.7G
 *}
 
-restart
+restart ---PHCpack------------------------------------------------------------------
+load "cyclic.m2"
+needsPackage "PHCpack"
+polys = parametrizedCyclic 11 
+(p0,x0) = createSeedPair polySystem polys
+specPolys = specializeSystem (p0,polys)
+R = CC[x_1..x_(numgens ring first specPolys)]
+toR = map(R,ring first specPolys,vars R)
+elapsedTime (mv,q,qsols) = mixedVolume(specPolys/toR,StartSystem => true);
+
+{*
+-- 4256.73 seconds elapsed
+*}
+
+restart--------------------------------------------
 needsPackage "NumericalAlgebraicGeometry"
 getDefault Software
 {*
