@@ -6,23 +6,9 @@ FF = CC
 
 -- creates a polynomial system from a chemical reaction network
 createPolySystem = method()
-createPolySystem (ReactionNetwork, Ring) := (Rn, FF) -> (
-    S := createRing(Rn, FF);
-    CEforms := matrix{conservationEquations(Rn,FF)};
-    CE := sub(CEforms, apply(gens S, x -> x => 1)) - CEforms;
-    SSE := matrix {steadyStateEquations Rn};	       	   
-    T := transpose(CE|SSE);
-    rM := sub(random(FF^(numgens S), FF^(numrows T)), S);
-    G := polySystem(rM * T)
-    )
 createPolySystem (ReactionNetwork, InexactFieldFamily):= (Rn, FF) -> (
     S := createRing(Rn, FF);
-    CEforms := matrix{conservationEquations(Rn,FF)};
-    CE := sub(CEforms, apply(gens S, x -> x => 1)) - CEforms;
-    SSE := matrix {steadyStateEquations Rn};	       	   
-    T := transpose(CE|SSE);
-    rM := sub(random(FF^(numgens S), FF^(numrows T)), S);
-    G := polySystem(rM * T)
+    createPolySystem(Rn,FF,toList(numgens S : 1_FF))
     )
 createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
     S := createRing(Rn, FF);
@@ -32,7 +18,7 @@ createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
     SSE := matrix {steadyStateEquations Rn};	       	   
     T := transpose(CE|SSE);
     rM := sub(random(FF^(numgens S), FF^(numrows T)), S);
-    G := polySystem(rM * T)
+    polySystem(rM * T)
     )
 
 TEST ///
@@ -72,21 +58,27 @@ elapsedTime sols = monodromySolve(G',p0,{x0},NumberOfEdges => 3)
 
 -- system for wnt signaling pathway
 W = wnt()
-F = createPolySystem(W, CC)
-setRandomSeed 1
-(p0, x0) = createSeedPair(F,"initial parameters" => "random")
+setRandomSeed 0
+L = apply(numgens createRing(W,FF), i->random FF)
+F = createPolySystem(W, FF, L)
+(p0, x0) = createSeedPair(F,L)
 elapsedTime sols = monodromySolve(F,p0,{x0},
     GraphInitFunction=>completeGraphInit,
     NumberOfNodes=>3,
-    NumberOfEdges=>7,
-    TargetSolutionCount => 9)
-{* fails more than 50% with the same random seed. Worked 1/6 times with 29 paths, 
--- 0.651003 seconds elapsed
-*}
+    NumberOfEdges=>3,
+    TargetSolutionCount => 9,
+    "new tracking routine"=>false,
+    Verbose=>true)
 
 -- system for random example
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
 elapsedTime sols = monodromySolve(GQ,p0,{x0}, NumberOfEdges => 1, NumberOfNodes => 5)
+
+
+
+
+
+
 
 
 
