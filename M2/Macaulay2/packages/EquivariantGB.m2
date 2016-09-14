@@ -720,19 +720,19 @@ ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 net MPair := M -> net "(" | net toString M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
 mPair (ShiftMonomial,ZZ,MutableList,RingElement) := (S,i,F,v) -> new MPair from hashTable{shM=>S,pos=>i,basisList=>F,polynomial=>v}
-MPair ? MPair := (m,n) -> (
-    memon := leadMonomial((m.basisList)#(m.pos));
-    nemon := leadMonomial((m.basisList)#(m.pos));
-    L := matchRing {memon,m.polynomial,nemon,n.polynomial};
-    (ms,ns) := (L#0*L#1, L#2*L#3);
-    if ms == ns then m.pos ? n.pos else ms ? ns
-    )
---MPair ? MPair := (m,n) -> if width m == width n then (
---    if degree m.polynomial == degree n.polynomial then (
---    	-- if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
---    	if m.shM == n.shM then m.pos ? n.pos else m.shM ? n.shM
---    	) else degree m.polynomial ? degree n.polynomial
---    ) else width m ? width n
+--MPair ? MPair := (m,n) -> (
+--    memon := leadMonomial((m.basisList)#(m.pos));
+--    nemon := leadMonomial((m.basisList)#(m.pos));
+--    L := matchRing {memon,m.polynomial,nemon,n.polynomial};
+--    (ms,ns) := (L#0*L#1, L#2*L#3);
+--    if ms == ns then m.pos ? n.pos else ms ? ns
+--    )
+MPair ? MPair := (m,n) -> if width m == width n then (
+    if degree m.polynomial == degree n.polynomial then (
+    	-- if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+    	if m.shM == n.shM then m.pos ? n.pos else m.shM ? n.shM
+    	) else degree m.polynomial ? degree n.polynomial
+    ) else width m ? width n
 MPair == MPair := (M,N) -> (M ? N) === symbol ==
 ShiftMonomial * MPair := (S,M) -> mPair(S*M.shM,M.pos,M.basisList,S*M.polynomial)
 Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,M.basisList,I*M.polynomial)
