@@ -209,42 +209,35 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     (lastNode, npaths)
 )
 
-///
-eRGraphInit = (G, p, node1, nnodes, prob) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes-1 do (
-        addNode(G,nextP(p), pointArray {});
-    );
-    for i from 0 to nnodes-1 do (
-        for j from i+1 to nnodes-1 do (
-            if coin(prob) == 1 then addEdge(G.Vertices#i, G.Vertices#j);
-	    );
-        );
-    );
-    )
-///
+------------------------------------------
+------------------------------------------
+-- Documentation
+------------------------------------------
+------------------------------------------
 
--- in progress: Watts Strogartz random graph generator
--- assumes K even, might be nice to experiment with version where rewiring probability is arbitrary
+beginDocumentation()
+
+doc ///
+  Key
+      monodromySolve
+      (monodromySolve, Matrix, Point, List)
+      (monodromySolve, PolySystem, Point, List)
+  Headline
+      Finds solutions for a given polynomial system (generic relative to a given family) given some seed solution.
+  Usage
+      (N,m) = monodromySolve(SP, c0, {pre0})
+      (N,m) = monodromySolve(polys, c0, {pre0})
+  Inputs
+      SP:Matrix
+      polys:PolySystem
+      c0:Point
+      p0:Point
+  Outputs
+      N:HomotopyNode
+      m:ZZ
+  Description
+      Text      
+          There are a lot of options. Where should we describe these?
 ///
-wsInit = (G, p, nnodes, K) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes-1 do (
-	addNode(G,nextP(p), pointArray {}))
-    for i from 0 to nnodes -1 do (
-	vl := select(1..N, j -> (abs(i-j))%(N-1-sub(K/2,ZZ)) > 0 and (abs(i-j))%(N-1-sub(K/2,ZZ)) <= sub(K/2, ZZ));
-	apply(vl, v-> apply(nedges, k -> addEdge(G, G.Vertices#i, v)))) 
-    for e in G.Edges do (
-	N1 := e.Node1;
-	i := (positions(G.Vertices, N1))#0;
-	if random(2) == 1 then (
-	    remove(
-	  
-	)    
-    )
-///
-
-
-
 
 
