@@ -21,13 +21,15 @@ doc ///
     	completeGraphInit
 
     Headline
-
+        solve via monodromy by using complete graph.
     Description
     	Text
-
+            This is an option for the function monodromySolve which makes one to use the complete graph.
     	Example
-
-	Text
+            R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) = createSeedPair polys
+            monodromySolve(polys,p0,{x0},GraphInitFunction => completeGraphInit)	
     /// 
 
 
@@ -58,23 +60,20 @@ doc ///
     	Text
             This function is the main function to solve the system of equations by using monodromy loops.
     	Example
-	    nedges = 4
-	    setRandomSeed 0
-	    polys = parametrizedCyclic 5
-	    (p0,x0) = createSeedPair polySystem polys
+            R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
 	Text
-	    Setting up the polynomial system to solve
-	Example
-	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-	Text
-	    The mixed volume represents the maximum number of solutions.
-	Example
-	    monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume)
-	Text
-	    Function takes polynomial system and its starting point as inputs.
+	    Set the polynomial ring and the system of polynomials.    
+        Example
+	    (p0,x0) = createSeedPair polys
+	Text 
+	    Set nodes by using createSeedPair function.
+	Example    
+            monodromySolve(polys,p0,{x0})
     SeeAlso
-        "potentialE"
-	
+        "createSeedPair"
+	"flowerGraphInit"
+	"completeGraphInit"
     /// 
     
 
@@ -82,16 +81,18 @@ doc ///
     
 doc ///
     Key
-    	dynamicFlowerSolve
-	(dynamicFlowerSolve, Matrix, Point, List)
+    	createSeedPair
+	(createSeedPair, PolySystem)
+	(createSeedPair, PolySystem, List)
     Headline
-
+        Taking random points for polynomial system.
     Description
     	Text
-
+            This function is used to take points for polynomial system randomly.
     	Example
-
-	Text
+            R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) = createSeedPair polys
     /// 
     
     
@@ -101,13 +102,15 @@ doc ///
     	flowerGraphInit
 
     Headline
-
+        solve via monodromy by using flower shaped graph.
     Description
     	Text
-
+            This is an option for the function monodromySolve which makes one to use the flower shaped graph.
     	Example
-
-	Text
+            R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) = createSeedPair polys
+            monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit)	
     /// 
     
     
