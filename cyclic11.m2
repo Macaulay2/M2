@@ -61,10 +61,14 @@ elapsedTime (mv,q,qsols) = mixedVolume(specPolys/toR,StartSystem => true);
 -- 4256.73 seconds elapsed
 *}
 
-restart--------------------------------------------
-needsPackage "NumericalAlgebraicGeometry"
-getDefault Software
-{*
+restart ---linear tracker in PHCpack------------------------------------------------------------------
+load "cyclic.m2"
+-- setDefault(Software=>PHCPACK) -- if this is HERE we get SIGSEGV
+nedges = 4
+setRandomSeed 0
+polys = parametrizedCyclic 10
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+debug Core
 setDefault(Software=>PHCPACK)
-*}
-load "cyclic11.m2"
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
