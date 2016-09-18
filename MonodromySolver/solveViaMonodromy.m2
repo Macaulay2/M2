@@ -176,6 +176,7 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     HG.MasterNode = node1; -- not using this
     HG.MasterFactor = 1; -- ....
     
+        
     if #s0 < 1 then error "at least one solution expected";
     
     selectEdgeAndDirection := o.SelectEdgeAndDirection;
@@ -208,6 +209,8 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     then npaths = "failed"; 
     (lastNode, npaths)
 )
+
+end
 
 ------------------------------------------
 ------------------------------------------

@@ -250,6 +250,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     #untrackedInds
     )
 
+end
 
 ------------------------------------------
 ------------------------------------------

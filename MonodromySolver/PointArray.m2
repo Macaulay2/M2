@@ -51,6 +51,7 @@ appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if FAST then (
 	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,#coordinates b);
+	-- 1/0;
 	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0) =!= length A 
     	then error "can't append"
 	);
@@ -81,7 +82,7 @@ positions(PointArray, Function) := (A, f) -> (
 TEST /// 
     restart
     path = {"~/R/polysparse/code/"} | path
-    needs "PointArray.m2"
+    needsPackage "MonodromySolver"
     p = point {{1_CC,2_CC}}
     A = pointArray {p}
     assert(position(p,A)==0)    
