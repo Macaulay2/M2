@@ -23,10 +23,11 @@ c0 = point{
     }
 pre0 = point{toList(n:1_CC)}
 
+mixedVolume = computeMixedVolume polys
 numSeeds = 20
 result = for i from 0 to numSeeds - 1 list (
   setRandomSeed i;
-  dynamicFlowerSolve(SP,c0,{pre0}))
+  (dynamicFlowerSolve(SP,c0,{pre0},TargetSolutionCount=>mixedVolume))#1)
   
 << sum(result)/numSeeds;
 end ------------------------------------------------
