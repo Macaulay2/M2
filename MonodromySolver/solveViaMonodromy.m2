@@ -50,10 +50,14 @@ completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     );
     )
 
-dynamicFlowerSolve = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := matrix point0; -- points are row matrices
+    stoppingCriterion := o.StoppingCriterion;
+    if o.TargetSolutionCount =!= null then (
+        stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount);
+    );
     nParameters := numgens coefficientRing ring PF;
     assert(nParameters == numcols p0);
     (PR,toPR) := flattenRing ring PF; -- ring PF = C[a][x]
@@ -74,7 +78,7 @@ dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     makeDirectory dir;
     nPathsTracked := 0;
     << "--backup directory created: "<< toString dir << endl;
-    while not o.StoppingCriterion(same,sols0) do --try 
+    while not stoppingCriterion(same,sols0) do --try 
     (
     	p1 := matrix nextP(); -- row matrix
 	F0 := flatten entries (map(R,PR,X|p0)) PF;
@@ -99,7 +103,7 @@ dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     	<< "found " << #sols0 << " points in the fiber so far" << endl;
     	) -- else print "something went wrong"
     ;
-    sols0
+    (sols0,nPathsTracked)
     )        
 
 computeMixedVolume = method()
@@ -242,5 +246,4 @@ doc ///
       Text      
           There are a lot of options. Where should we describe these?
 ///
-
 
