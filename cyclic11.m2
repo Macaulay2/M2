@@ -66,9 +66,10 @@ load "cyclic.m2"
 -- setDefault(Software=>PHCPACK) -- if this is HERE we get SIGSEGV
 nedges = 4
 setRandomSeed 0
-polys = parametrizedCyclic 10
+polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 debug Core
 setDefault(Software=>PHCPACK)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+getTrackTime V.Graph

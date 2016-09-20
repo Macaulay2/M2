@@ -5,11 +5,14 @@ setRandomSeed 0
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,
+    TargetSolutionCount=>mixedVolume, Verbose=>true)
+getTrackTime V.Graph
 {* -- Anton's office machine:
 mixedVolume = 35940
--- 618.102 seconds elapsed
+-- 610.357 seconds elapsed
 o7 = (HomotopyNode{...5...}, 107820)
+08 = 579.812715933
 *}
 
 restart ---------------------------------------------------------------------
@@ -19,13 +22,16 @@ setRandomSeed 0
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,
+    TargetSolutionCount=>mixedVolume, Verbose=>true)
+getTrackTime V.Graph
 {* -- Anton's office machine:
 
      -- 610.323 seconds elapsed (track, 3.9G)
-     -- 745.344 seconds elapsed (trackHomotopy, 1.9G)
-      
-o17 = (HomotopyNode{...5...}, 129910)
+     -- 740.461 seconds elapsed
+
+o7 = (HomotopyNode{...5...}, 129910)
+o8 = 704.35711509
 *}
 
 restart ---------------------------------------------------------------------
@@ -35,19 +41,37 @@ setRandomSeed 0
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
-    SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+    SelectEdgeAndDirection=>selectBestEdgeAndDirection, Verbose=>true, 
+    Potential=>potentialE)
+getTrackTime V.Graph
 {*
      -- 617.643 seconds elapsed
 
 o9 = (HomotopyNode{...5...}, 107640)
 
 trackHomotopy:
-     -- 1265.95 seconds elapsed, 4.2G
+     -- 1083.45 seconds elapsed
+     o7 = (HomotopyNode{...5...}, 107700)
+     o8 = 585.668276680999
+*}
 
-o7 = (HomotopyNode{...5...}, 107700)
-
-
+restart --- PotentialE, BatchSize => 1 ----------------------------------------------------
+load "cyclic.m2"
+nedges = 4
+setRandomSeed 0
+polys = parametrizedCyclic 10 
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+    SelectEdgeAndDirection=>selectBestEdgeAndDirection, -- Verbose=>true, 
+    Potential=>potentialE, BatchSize=>1)
+getTrackTime V.Graph
+{*
+trackHomotopy:
+     -- 3784.71 seconds elapsed
+o7 = (HomotopyNode{...5...}, 104739)
+o8 = 576.537621946002
 *}
 
 restart ---------------------------------------------------------------------
