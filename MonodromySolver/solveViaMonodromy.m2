@@ -177,10 +177,12 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     ); 
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
+    {*
     HG.MasterNode = node1; -- not using this
     HG.MasterFactor = 1; -- ....
-    
-        
+    *}
+    setTrackTime(HG,0);
+      
     if #s0 < 1 then error "at least one solution expected";
     
     selectEdgeAndDirection := o.SelectEdgeAndDirection;

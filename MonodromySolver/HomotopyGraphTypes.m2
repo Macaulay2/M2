@@ -8,7 +8,8 @@ export {
     "potentialE",
     "HomotopyGraph",
     "HomotopyEdge",
-    "HomotopyNode"
+    "HomotopyNode",
+    "getTrackTime"
     }
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
@@ -186,6 +187,12 @@ makeRandomizedSelect RR := p -> (
     G -> if random RR < p then selectRandomEdgeAndDirection G else selectBestEdgeAndDirection G
     )
 
+setTrackTime = method()
+setTrackTime (HomotopyGraph, Number) := (G,t) -> G#"track time" = t
+ 
+getTrackTime = method()
+getTrackTime HomotopyGraph := G -> G#"track time"
+
 -- prototype for edge tracking function
 -- assumptions: 
 -- 1) member function is working/optimized for PointAray objects 
@@ -213,10 +220,16 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     untrackedInds = take(untrackedInds, min(#untrackedInds, batchSize));
     startSolutions := (head.PartialSols)_(untrackedInds);
     newSols := if #untrackedInds > 0 then (
-	if USEtrackHomotopy then trackHomotopy(homotopy,startSolutions)  
-	else track(polySystem (gammaHead * head.SpecializedSystem), 
-	    polySystem(gammaTail * tail.SpecializedSystem), 
-	    startSolutions)
+	t'sols := elapsedTiming(    	 
+	    if USEtrackHomotopy then trackHomotopy(homotopy,startSolutions)  
+	    else track(polySystem (gammaHead * head.SpecializedSystem), 
+	    	polySystem(gammaTail * tail.SpecializedSystem), 
+	    	startSolutions)
+	    );
+	t := first t'sols;
+	sols := last t'sols;
+	setTrackTime(G,getTrackTime(G)+t);
+	sols
 	)
     else {};
     n := length tail.PartialSols;
@@ -230,7 +243,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	    else ( 
 	    	if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
 	    	else (    
-		    s = point {toList new MutableList from coordinates s};--!!!
+		    s = point {coordinates s}; -- lose the rest of info
 		    appendPoint(tail.PartialSols, s);
 		    b = n;
 		    n = n+1;
