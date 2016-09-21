@@ -14,6 +14,9 @@
 
     * dynamicFlowerTest.m2
         * Used to get the average number of paths for dynamicFlowerTest for cyclic7.
+        
+    * cyclic-batchsize-test.m2
+        * Test varying batchsizes with monodromySolve
 
 * System Definitions
     * example-CRN.m2, example-Nash.m2, cyclic.m2, katsura.m2
