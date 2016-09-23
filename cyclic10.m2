@@ -111,6 +111,22 @@ o7 = (HomotopyNode{...5...}, 110192)
 4.1G
 *}
 
+restart --- naive ------------------------------------------------------------------
+load "cyclic.m2"
+setRandomSeed 0
+polys = parametrizedCyclic 10 
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime (V,npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0},TargetSolutionCount=>mixedVolume)
+getTrackTime V.Graph
+{* -- Anton's office machine:
+mixedVolume = 35940
+-- 610.357 seconds elapsed
+o7 = (HomotopyNode{...5...}, 107820)
+08 = 579.812715933
+*}
+
+
 restart ---PHCpack------------------------------------------------------------------
 load "cyclic.m2"
 needsPackage "PHCpack"
