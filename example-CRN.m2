@@ -69,6 +69,12 @@ elapsedTime sols = monodromySolve(F,p0,{x0},
     TargetSolutionCount => 9,
     "new tracking routine"=>false,
     Verbose=>true)
+-- wnt via Bertini
+specPolys = specializeSystem (p0,F);
+R = CC[x_1..x_(numgens ring first specPolys)]
+toR = map(R,ring first specPolys,vars R)
+elapsedTime sols = solveSystem(specPolys/toR);
+elapsedTime sols = solveSystem(specPolys/toR, Software=>BERTINI);
 
 -- system for random example
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
