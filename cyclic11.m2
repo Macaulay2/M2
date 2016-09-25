@@ -47,6 +47,17 @@ elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,Targ
      6.7G
 *}
 
+restart --- naive ------------------------------------------------------------------
+load "cyclic.m2"
+setRandomSeed 0
+polys = parametrizedCyclic 11
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+elapsedTime (V,npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0},TargetSolutionCount=>mixedVolume);
+npaths
+{* -- Anton's office machine:
+*}
+
 restart ---PHCpack------------------------------------------------------------------
 load "cyclic.m2"
 needsPackage "PHCpack"

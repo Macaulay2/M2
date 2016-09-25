@@ -1,4 +1,3 @@
-restart
 needsPackage "MonodromySolver"
 needsPackage "ReactionNetworks"
 
@@ -10,15 +9,16 @@ createPolySystem (ReactionNetwork, InexactFieldFamily):= (Rn, FF) -> (
     S := createRing(Rn, FF);
     createPolySystem(Rn,FF,toList(numgens S : 1_FF))
     )
-createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
+createPolySystem'overdetemined = (Rn, FF, L) -> (
     S := createRing(Rn, FF);
     CEforms := matrix{conservationEquations(Rn,FF)};
     SubList := apply(toList(0..numgens S-1), i -> (gens S)#i => L#i);
     CE := sub(CEforms, SubList) - CEforms;    
     SSE := matrix {steadyStateEquations Rn};	       	   
-    T := transpose(CE|SSE);
-    rM := sub(random(FF^(numgens S), FF^(numrows T)), S);
-    polySystem(rM * T)
+    polySystem transpose(CE|SSE)
+    )
+createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
+    squareUp createPolySystem'overdetemined(Rn,FF,L)
     )
 
 TEST ///
@@ -44,6 +44,7 @@ GQ = createPolySystem(Q, FF)
 
 
 end ---------------------------------
+
 restart
 load "example-CRN.m2"
 
@@ -70,11 +71,11 @@ elapsedTime sols = monodromySolve(F,p0,{x0},
     "new tracking routine"=>false,
     Verbose=>true)
 -- wnt via Bertini
-specPolys = specializeSystem (p0,F);
+specPolys = specializeSystem (p0,createPolySystem'overdetemined(W,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
-elapsedTime sols = solveSystem(specPolys/toR);
-elapsedTime sols = solveSystem(specPolys/toR, Software=>BERTINI);
+elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
+assert(#NV#0 == 9)
 
 -- system for random example
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
