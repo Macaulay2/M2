@@ -246,6 +246,22 @@ report-M2-location:
 	: Macaulay2 executable location:
 	:    @pre_bindir@/M2@EXE@
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+validate-html:
+	TMP="/tmp/validate-$$$$"				; \
+	find @pre_prefix@/@tail_htmldir@ -name \*.html          | \
+	    ( i=0						; \
+	      n=0						; \
+	      while read x					; \
+	      do validator-runner.py "$$x" > $$TMP		; \
+		 i=$$(($$i + 1))				; \
+		 if [ -s $$TMP ]				; \
+		 then n=$$(($$n + 1))				; \
+		      echo " *** invalid HTML: $$x"		; \
+		      cat $$TMP					; \
+		 fi						; \
+	      done						; \
+	      echo "$$i HTML files checked; $$n invalid"	; \
+	      [ $$n = 0 ] ) >&2
 help:
 	@ echo "Macaulay2 version @PACKAGE_VERSION@"
 	@ echo ""

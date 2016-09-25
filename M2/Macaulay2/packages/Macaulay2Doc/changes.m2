@@ -18,8 +18,48 @@ document {
 	  TO "changes, 1.8.2",
 	  TO "changes, 1.9",
 	  TO "changes, 1.9.1",
+	  TO "changes, 1.9.2",
 	  TO "list of obsolete functions"
 	  }
+     }
+
+document {
+     Key => "changes, 1.9.2",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --       -- UL {
+	  --       --     }
+          --   },
+	  -- LI { "packages that have been published and certified:",
+	  --      -- UL {
+	  --      -- 	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	  --      -- 	    }
+	  --      },
+	  LI { "new packages:",                       -- got this with git diff version-1.8.2 =distributed-packages 
+	       UL {
+		    LI { TO "RationalMaps::RationalMaps", ", a package by Karl Schwede, Daniel Smolkin, S. Hamid Hassanzadeh, and C. J. Bott, for working with rational maps, has been added." }
+	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+	       	    }
+	       },
+	  -- LI { "improved packages:",
+	  --     -- UL {
+	  --     -- 	  }
+	  --     },
+	  LI { "functionality added or improved:",
+	       UL {
+		   LI { "The generation of the documentation in HTML format has been improved, and
+			validity is now verified overnight automatically." }
+		   }
+	       },
+	  -- LI { "new constants and operators:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
+	  --      -- UL {
+	  --      -- 	    }
+	  --      },
+	  -- LI { "functionality changed:",
+	  --      UL {
+	  -- 	       }
+          --      }
+    	  }
      }
 
 document {
