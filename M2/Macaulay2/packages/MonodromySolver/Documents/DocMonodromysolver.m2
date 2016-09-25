@@ -4,15 +4,45 @@ doc ///
         selectRandomEdgeAndDirection
 	
     Headline
-
+    	random selection of edge and direction for homotopy 
     Description
     	Text
-
+    	    This is an option for the function @TO "monodromySolve" @. By default, the option
+	    SelectEdgeAndDirection is set to selectRandomEdgeAndDirection.
     	Example
-
+	    polys = parametrizedCyclic 5
+	    (p0,x0) = createSeedPair polySystem polys
+	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+	    monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>mixedVolume)
 	Text
+	    Note that in this example we have not specified the type of selection for edge and direction for the homotopy;
+	    this implies that selectRandomEdgeAndDirection is used. 
+	SeeAlso
+	    "selectBestEdgeAndDirection"
     /// 
 
+doc ///
+    Key
+        selectBestEdgeAndDirection
+
+    Headline
+    	selects edge and direction based on highest potential for obtaining new information
+    Description
+    	Text
+    	    This is an option for the function @TO "monodromySolve" @. By default, the option
+	    SelectEdgeAndDirection is set to selectRandomEdgeAndDirection; it can be changed to 
+	    selectBestEdgeAndDirection as shown below. The use of selectBestEdgeAndDirection requires
+	    the choice of a potential function as well. 
+    	Example
+    	    polys = parametrizedCyclic 5
+	    (p0,x0) = createSeedPair polySystem polys
+	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+	    monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>mixedVolume,
+		SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE)
+	SeeAlso
+	    "potentialE"
+	    
+    /// 
 
 
 
@@ -23,6 +53,7 @@ doc ///
     Headline
         solve via monodromy by using complete graph.
     Description
+
     	Text
             This is an option for the function monodromySolve which makes one to use the complete graph.
     	Example
@@ -33,19 +64,6 @@ doc ///
     /// 
 
 
-doc ///
-    Key
-        selectBestEdgeAndDirection
-
-    Headline
-
-    Description
-    	Text
-
-    	Example
-
-	Text
-    /// 
 
     
     
@@ -119,7 +137,7 @@ doc ///
     	computeMixedVolume
 	(computeMixedVolume, List)
     Headline
-
+    	
     Description
     	Text
 
