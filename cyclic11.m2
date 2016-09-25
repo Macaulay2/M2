@@ -47,6 +47,19 @@ elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,Targ
      6.7G
 *}
 
+restart ------make failure rate high ---------------------------------------------------------------
+load "cyclic.m2"
+nedges = 4
+setRandomSeed 0
+polys = parametrizedCyclic 11
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+setDefault(tStepMin=>0.005)
+elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+         Verbose=>true)
+{*    
+     *}
+
 restart --- naive ------------------------------------------------------------------
 load "cyclic.m2"
 setRandomSeed 0

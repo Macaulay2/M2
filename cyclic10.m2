@@ -111,6 +111,23 @@ o7 = (HomotopyNode{...5...}, 110192)
 4.1G
 *}
 
+restart ------make failure rate high ---------------------------------------------------------------
+load "cyclic.m2"
+nedges = 4
+setRandomSeed 0
+polys = parametrizedCyclic 10 
+(p0,x0) = createSeedPair polySystem polys
+elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+setDefault(tStepMin=>0.005)
+elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+     Verbose=>true)
+
+{*
+     -- 802.092 seconds elapsed
+
+o8 = (HomotopyNode{...5...}, 162038)
+*}
+
 restart --- naive ------------------------------------------------------------------
 load "cyclic.m2"
 setRandomSeed 0
