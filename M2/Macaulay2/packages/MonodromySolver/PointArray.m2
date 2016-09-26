@@ -25,7 +25,7 @@ but for now it works only in linear time!!!
 *}
 
 PointArrayTolerance = 1e-4
-FAST = version#"VERSION" === "1.9.1.1"
+FAST = class rawPointArray === CompiledFunction
 if not FAST then (
     export {"rawPointArray","rawPointArrayLookupOrAppend","rawPointArrayLookup"} 
     )

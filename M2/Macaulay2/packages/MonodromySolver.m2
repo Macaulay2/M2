@@ -36,12 +36,7 @@ needs "./MonodromySolver/solveViaMonodromy.m2"
 
 
 beginDocumentation()
-scan({
-	"./MonodromySolver/Documents/DocMonodromysolver.m2"
-    }, 
-    docs -> load(docs)
-    )
-
+load "MonodromySolver/Documents/DocMonodromysolver.m2"
 end
 
 restart

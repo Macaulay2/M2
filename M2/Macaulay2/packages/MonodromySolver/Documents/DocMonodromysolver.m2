@@ -1,8 +1,6 @@
-beginDocumentation()
 doc ///
     Key
         selectRandomEdgeAndDirection
-	
     Headline
     	random selection of edge and direction for homotopy 
     Description
@@ -17,8 +15,8 @@ doc ///
 	Text
 	    Note that in this example we have not specified the type of selection for edge and direction for the homotopy;
 	    this implies that selectRandomEdgeAndDirection is used. 
-	SeeAlso
-	    "selectBestEdgeAndDirection"
+    SeeAlso
+	selectBestEdgeAndDirection
     /// 
 
 doc ///
@@ -39,9 +37,8 @@ doc ///
 	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 	    monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>mixedVolume,
 		SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE)
-	SeeAlso
-	    "potentialE"
-	    
+    SeeAlso
+         "potentialE"
     /// 
 
 
@@ -64,9 +61,6 @@ doc ///
     /// 
 
 
-
-    
-    
 doc ///
     Key
         monodromySolve
@@ -137,11 +131,6 @@ doc ///
     	computeMixedVolume
 	(computeMixedVolume, List)
     Headline
-    	
+    	compute mixed volume via PHCpack
     Description
-    	Text
-
-    	Example
-
-	Text
     /// 
