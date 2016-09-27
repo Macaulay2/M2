@@ -455,7 +455,7 @@ doc ///
  Headline
    Uses monodromy to find more solutions to a parameterized system of polynomial equations.
  Usage
-   b'PHSequence(s) 
+   b'PHMonodromyCollect(s) 
  Inputs
    s:String
      The directory where the files are stored.
@@ -1345,6 +1345,20 @@ doc ///
     Text
        Use OutputSyle to change the style of output. 
 ///;
+
+doc ///
+  Key
+   PrintMidStatus
+   [b'PHMonodromyCollect, PrintMidStatus]
+  Headline
+    Print outputs of intermediate computations.
+  Usage
+    b'PHMonodromyCollect(...,PrintMidStatus=>true)
+  Description
+    Text
+       Print outputs of intermediate computations. Set to false to silence.  
+///;
+
 
 
 doc ///

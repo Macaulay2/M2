@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "2.1.2.2", 
-  Date => "June 6, 2016",
+  Date => "September 27, 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -26,6 +26,7 @@ newPackage(
 ) 
 
 export {
+  "PrintMidStatus",
   "OutputSyle",
   "TopDirectory",
   "StorageFolder", 
@@ -2551,7 +2552,8 @@ b'PHMonodromyCollect=method(TypicalValue=>Thing,Options=>{
   	NumberOfLoops=>1,
   	NumSolBound=>infinity,
 	SpecifyLoops=>false,
-	Verbose=>false
+	Verbose=>false,
+	PrintMidStatus=>true,--Set to false to silence additional output.
 	})
 b'PHMonodromyCollect(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
@@ -2585,7 +2587,7 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
       if (o.SpecifyLoops===false) then listsOfListsOfParameterValues={for i to 2-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
-	if o.Verbose then print ("Monodromy loop number",loopCount);
+	if o.Verbose or o.PrintMidStatus then print ("Starting monodromy loop number: "|toString(loopCount)|".");
 --    	print (	    append(listsOfParameterValues,bP));	
         if fileExists(storeFiles|"start")===false then error "start file for b'PHSequence is missing.";
         if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file for b'PHSequence is missing.";        
@@ -2594,33 +2596,33 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
 	    B'Exe=>o.B'Exe,
 	    NameSolutionsFile=>o.NameSolutionsFile,---ProblemLine
        	    NameB'InputFile=>o.NameB'InputFile);
-	if o.Verbose then print ".5";
-    	if o.Verbose then print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
+--	if o.Verbose then print ".5";
+--    	if o.Verbose then print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 	preSolCollection:=sortSolutions(
 	    solCollection|importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
-    	if o.Verbose then print "1";
-    	if o.Verbose then print preSolCollection;
+--    	if o.Verbose then print "1";
+--    	if o.Verbose then print preSolCollection;
 --removing multiplicities 
     	if #preSolCollection>=2 then (
 	    solCollection={};
 	    for i to #preSolCollection-2 do 
-	    if (not areEqual(preSolCollection_i,preSolCollection_(i+1),Tolerance=>1e-6)) 
+	    if (not areEqual(preSolCollection_i,preSolCollection_(i+1),Tolerance=>1e-10)) 
 	    then (
 --    	      print (preSolCollection_i,preSolCollection_(i+1));
 --	      print areEqual(preSolCollection_i,preSolCollection_(i+1)) ;
 	      solCollection=append(solCollection,preSolCollection_i));
 	    solCollection=append(solCollection,preSolCollection_-1));
     	if #preSolCollection<2 then solCollection=preSolCollection;
-	if o.Verbose then print ("Number of solutions found", #solCollection));
+	if o.Verbose or o.PrintMidStatus then print ("Number of solutions found: "|toString( #solCollection)|"."));
       writeStartFile(storeFiles,solCollection);
       if loopCount>=o.NumberOfLoops then (
 	breakLoop=true;
-	if o.Verbose then print "NumberOfLoops has been reached.");
+	if o.Verbose or o.PrintMidStatus then print "NumberOfLoops has been reached.");
       if #solCollection>= o.NumSolBound then (
 	breakLoop=true;
 	if o.Verbose then print (#solCollection);
-	if o.Verbose then print ("Number of loops: "|toString loopCount);
-	if o.Verbose then print "NumSolBound has been reached");      
+	if o.Verbose or o.PrintMidStatus then print ("Number of loops: "|toString loopCount|".");
+	if o.Verbose or o.PrintMidStatus then print "NumSolBound has been reached.");      
       );
     return solCollection);
 	    
