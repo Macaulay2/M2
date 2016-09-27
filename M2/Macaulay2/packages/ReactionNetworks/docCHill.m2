@@ -19,9 +19,15 @@ doc ///
 	       
 		$\bullet$ @TO "reactionNetwork"@
 		   
-	        $\bullet$ @TO "steadyStateEquations"@
+		$\bullet$ @TO "isDeficient"@
+		   
+		$\bullet$ @TO "isWeaklyReversible"@
+	        
+		$\bullet$ @TO "steadyStateEquations"@
 		   
         	$\bullet$ @TO "conservationEquations"@
+		
+		$\bullet$ @TO "injectivityTest"@
 		   
 		$\bullet$ @TO "glue"@
 

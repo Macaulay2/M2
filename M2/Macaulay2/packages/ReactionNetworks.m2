@@ -24,7 +24,8 @@ export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes",
     "stoichiometricSubspace", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue",
-    "displayComplexes" --, "netComplex", "networkToHRF", "kk"
+    "displayComplexes", "isDeficient", "isWeaklyReversible",
+    "injectivityTest" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -242,7 +243,7 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
-stoichiometricSubspace CRN
+assert(rank(stoichiometricSubspace CRN) == 3)
 ///
 
 concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
@@ -428,6 +429,7 @@ needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 peek N
+displayComplexes(N,QQ)
 createRing(N, QQ)
 stoichiometricSubspace N
 CE = conservationEquations N
@@ -437,6 +439,16 @@ I = ideal CE
 J = ideal SSE
 I+J
 ///
+
+
+--New functions to be created
+--isDeficient = Rn ->
+
+--isWeaklyReversible = Rn ->
+
+--injectivityTest = Rn ->
+
+
 
 
 load "ReactionNetworks/motifs-Kisun.m2"
