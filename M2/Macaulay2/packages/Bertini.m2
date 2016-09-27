@@ -250,7 +250,7 @@ bertiniZeroDimSolve = method(TypicalValue => List, Options=>knownConfigs|{
     	NameSolutionsFile=>"raw_solutions",
     	NameMainDataFile=>"main_data",
 	M2Precision=>53,
-    	Verbose=>1
+    	Verbose=>false
 	} )
 bertiniZeroDimSolve(List) := o -> (myPol) ->(        
     --myPol are your polynomial system that you want to solve.
@@ -267,8 +267,8 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
     then (myAVG=gens ring first myPol)
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --%%-- Verbose set greater than 1 will print the variable groups.
-  if o.Verbose>1 then print myAVG;
-  if o.Verbose>1 then  print myHVG;
+  if o.Verbose then print myAVG;
+  if o.Verbose then  print myHVG;
 --%%--We need to set the CONFIGS of the Bertini input file. 
 --%%%%--These CONFIGS come in two flavors: 
 --%%%%--If the same configuration is set twice then Bertini will use the one set last.
@@ -335,7 +335,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 
  
 bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
-	Verbose=>true,MPType=>-1,PRECISION=>-1,
+	Verbose=>false,MPType=>-1,PRECISION=>-1,
 	IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
 	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
 	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
@@ -351,7 +351,7 @@ bertiniPosDimSolve List := o -> F -> (
          bertiniSolve(F,o3)
          ) 
 
-bertiniSample = method(TypicalValue => List, Options=>{Verbose=>true, MPType=>-1,
+bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false, MPType=>-1,
 	PRECISION=>-1, IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
 	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
 	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
@@ -370,7 +370,7 @@ bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
          ) 
 
 
-bertiniComponentMemberTest = method(TypicalValue => List, Options=>{Verbose=>true, 
+bertiniComponentMemberTest = method(TypicalValue => List, Options=>{Verbose=>false, 
 	MPType=>-1, 
 	PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
 	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
@@ -389,7 +389,7 @@ bertiniComponentMemberTest (List, NumericalVariety) := o -> (pts, NV) -> (
          bertiniSolve(NV.Equations, o3)
          ) 
 
-bertiniRefineSols = method(TypicalValue => List, Options=>{Verbose=>true, 
+bertiniRefineSols = method(TypicalValue => List, Options=>{Verbose=>false, 
 	MPType=>-1, 
 	PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
 	TrackTolDuringEG=>-1,FinalTol=>1e-4,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
@@ -410,7 +410,7 @@ bertiniRefineSols (ZZ, List, List) := o -> (d, F,p) -> (
 
 
 bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
-	  Verbose=>true,MPType=>-1,PRECISION=>-1, 
+	  Verbose=>false,MPType=>-1,PRECISION=>-1, 
 	  IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
 	  TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
 	  MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
@@ -441,7 +441,7 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
       	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
       	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
     	M2Precision=>53,
-	Verbose=>1
+	Verbose=>false
 	} )
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
     --myPol are your polynomial system that you want to solve.
@@ -510,7 +510,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
 
 bertiniSolve = method(TypicalValue => List, Options=>{
 	AllowStrings=>-1,
-	Verbose=>true,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,
+	Verbose=>false,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,
 	IsProjective=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,
 	MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,
@@ -524,7 +524,7 @@ bertiniSolve = method(TypicalValue => List, Options=>{
 	PathVariable=>null})
 bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	  dir := makeBertiniInput(F,o);   -- creates the input file
-          if o.Verbose==true then stdio << "The version of Bertini 
+          if o.Verbose then stdio << "The version of Bertini 
 	    you have installed on your computer 
 	    was used for this run. \nBertini is under ongoing development by 
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.\n\n";
@@ -587,7 +587,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 
 makeBertiniInput = method(TypicalValue=>Nothing,Options=>{
 	AllowStrings=>-1,
-	Verbose=>true,MultiplicityTol=>1e-6,ConditionNumTol=>1e10, 
+	Verbose=>false,MultiplicityTol=>1e-6,ConditionNumTol=>1e10, 
 	Parameters=>null,ParameterValues=>null,StartSystem=>{}, 
 	StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,
 	MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,
@@ -912,7 +912,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
           );
 
       if (o.runType=!=8) then (
-	  if o.Verbose==true then stdio 
+	  if o.Verbose then stdio 
 	       << "Temporary directory for input and output files:" << dir << endl << endl);
       
       dir
@@ -925,7 +925,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 -----------------------
 
 readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{
-	Verbose=>true,MultiplicityTol=>1e-6, AllowStrings=>-1,
+	Verbose=>false,MultiplicityTol=>1e-6, AllowStrings=>-1,
 	ConditionNumTol=>1e10,IsProjective=>-1,Parameters=>null,
 	ParameterValues=>null, StartSystem=>{},NVariety=>null, 
 	StartSolutions=>{},RawData=>null,WitnessData=>null,MPType=>-1,
@@ -989,7 +989,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     failedPaths := lines get (dir|"/failed_paths"); -- get contents of failed paths file and check if non-empty
     
     if  failedPaths=!={""} then (
-	if o.Verbose==true then 
+	if o.Verbose then 
 	stdio << "Warning: Some paths failed, the set of solutions may be incomplete" <<endl<<endl) ;
         
   --raw_data, for zeroDim 
@@ -1498,7 +1498,7 @@ cleanupOutput String := s -> (
   t = replace("e\\+","e",t)
   )
 
-stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{Verbose=>true, 
+stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{Verbose=>false, 
 	MultiplicityTol=>1e-6, AllowStrings=>-1,
 	ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,
 	StartSystem=>{},StartSolutions=>{},RawData=>null,WitnessData=>null,
@@ -1569,7 +1569,7 @@ makeB'InputFile = method(TypicalValue => String, Options=>{
 	NamePolynomials=>{}, --A list of names (names are always strings) of the polynomials which we want to find the common zero set of.
 	B'Polynomials=>{},--A list  of polynomials we want to solve.   	
 	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  
-	Verbose=>1--Set to 0 to silence additional outputs. 
+	Verbose=>false
 	})
 makeB'InputFile(String) := o ->(IFD)->(    
     IFD=addSlash(IFD);
@@ -1586,7 +1586,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      if o.StorageFolder=!=null 
      then (
 	 filesGoHere:=addSlash(IFD|o.StorageFolder);
-	 if o.Verbose>0 then print filesGoHere;
+	 if o.Verbose then print filesGoHere;
 	 if not fileExists(filesGoHere) then mkdir(filesGoHere))
      else filesGoHere=IFD;
      openedInputFile:= openOut(filesGoHere|o.NameB'InputFile);
@@ -1749,7 +1749,7 @@ makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
 	NameB'InputFile=>"input",
 	SpecifyComponent=>-2,
 	StorageFolder=>null,
-	Verbose=>1
+	Verbose=>false
 		})
 makeWitnessSetFiles(String,Number) := o ->(IFD,theDim)->(
     IFD=addSlash(IFD);
@@ -1781,7 +1781,7 @@ makeSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
 	NameB'InputFile=>"input",
 	StorageFolder=>null,
 	SpecifyComponent=>{},
-	Verbose=>1
+	Verbose=>false
 		})
 makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(    
     IFD=addSlash(IFD);
@@ -1819,7 +1819,7 @@ makeMembershipFile = method(TypicalValue => Nothing, Options=>{
 	StorageFolder=>null,
 	TestSolutions=>{},
 	M2Precision=>53,
-	Verbose=>1
+	Verbose=>false
 		})
 makeMembershipFile(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
@@ -1833,8 +1833,8 @@ makeMembershipFile(String) := o ->(IFD)->(
 	NameStartFile=>o.NameSolutionsFile,
 	M2Precision=>o.M2Precision	);	
     if not fileExists(IFD|o.NameSolutionsFile) then error("The file "|o.NameSolutionsFile|" does not exist in "|IFD|". ");
-    if o.Verbose>0 then print (filesGoHere);
-    if o.Verbose>0 then print o.NameSolutionsFile;
+    if o.Verbose then print (filesGoHere);
+    if o.Verbose then print o.NameSolutionsFile;
     moveB'File(IFD,o.NameSolutionsFile,"member_points");    
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
     s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 3; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
@@ -1904,7 +1904,7 @@ b'TraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory 
 	M2Precision=>53,
 	SubIntoCC=>true,
 	StopBeforeTest=>false,
-    	Verbose=>1
+    	Verbose=>false
 		})
 b'TraceTestImage(String) := o ->(storeFiles)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
@@ -2010,7 +2010,7 @@ valueBM2(String) := o->(aString)->(
   
 importSliceFile=method(TypicalValue=>String,Options=>{
 	NameWitnessSliceFile=>"linear_slice_file",
- 	Verbose=>1}    )
+ 	Verbose=>false}    )
 importSliceFile(String) := o->(aString)->(
     if aString_-1=!="/" then aString=aString|"/";
     allInfo:=lines get(aString|o.NameWitnessSliceFile);
@@ -2018,8 +2018,8 @@ importSliceFile(String) := o->(aString)->(
     theLinearSystems:={};
     for aLine in allInfo do (
       sepLine:=separate("=",aLine);
-      if o.Verbose>1 then print sepLine;
-      if o.Verbose>1 then print ( #sepLine);
+      if o.Verbose then print sepLine;
+      if o.Verbose then print ( #sepLine);
       if #sepLine==2 then (
 	if #select("const",sepLine_0)==1
 	then theConstants=append(theConstants,{sepLine_0,
@@ -2034,7 +2034,7 @@ importMainDataFile=method(TypicalValue=>String,Options=>{
 	M2Precision=>53,
 	NameMainDataFile=>"main_data",
 	SpecifyDim=>false,
-	Verbose=>1
+	Verbose=>false
 	})
 importMainDataFile(String) := o->(aString)->(
     aString=addSlash aString;
@@ -2056,12 +2056,12 @@ importMainDataFile(String) := o->(aString)->(
     linesPerSolutions:=theNumberOfVariables+13;
     theListOfPoints:={};
     while #select("Solution",allInfo_0)=!=0 do(
-      if o.Verbose>1 then print "win";
+      if o.Verbose then print "win";
       aNewPoint:=new Point;
       --Sol. Number and path number      
       theLine0:=separate(" ",allInfo_0);      
       aNewPoint.SolutionNumber=value (theLine0_1);
-      if o.Verbose>1 then print theLine0;
+      if o.Verbose then print theLine0;
       aNewPoint.PathNumber=value replace(")","",(theLine0_4));
       --Estimated condition number
       theLine1:=separate(":",allInfo_1);
@@ -2104,46 +2104,46 @@ importMainDataFile(String) := o->(aString)->(
       theLineY:=separate(":",allInfo_(10+theNumberOfVariables+1));
       aNewPoint.Multiplicity=value(theLineY_1);
       theListOfPoints=append(theListOfPoints,aNewPoint);
-      if o.Verbose>1 then   print linesPerSolutions;
+      if o.Verbose then   print linesPerSolutions;
       allInfo=drop(allInfo,linesPerSolutions);
-      if o.Verbose>1 then print allInfo
+      if o.Verbose then print allInfo
       );
     return theListOfPoints);
     if posDimCase 
     then   (
-    if o.Verbose>1 then print 1;
+    if o.Verbose then print 1;
     allInfo=drop(allInfo,4);
     linesPerSolutions=theNumberOfVariables+6;
     theListOfPoints={};
     while #select("reproduce",allInfo_0)=!=1 do(
-      if o.Verbose>1 then print 2;
+      if o.Verbose then print 2;
       if #select("DIMENSION",allInfo_0)=!=0
       then (
-	if o.Verbose>1 then print 3;
+	if o.Verbose then print 3;
 	theDim:=value (select("[0-9]+",allInfo_0))_0;
         if o.SpecifyDim=!=false and o.SpecifyDim=!=theDim then dimFlag:=false else dimFlag=true;
 	allInfo=drop(allInfo,1))
       else if #select("NONSINGULAR",allInfo_0)=!=0 and #select("UNCLASSIFIED",allInfo_0)===0 
       then (
-	if o.Verbose>1 then print 4;
+	if o.Verbose then print 4;
 	solUnclassified:=0;
 	theSolutionType:="NONSINGULAR";
 	allInfo=drop(allInfo,1))	
       else if #select("SINGULAR",allInfo_0)=!=0 and #select("NON",allInfo_0)===0 and #select("UNCLASSIFIED",allInfo_0)===0   
       then (
-	if o.Verbose>1 then print 5;
+	if o.Verbose then print 5;
 	solUnclassified=0;
 	theSolutionType="SINGULAR";
 	allInfo=drop(allInfo,1))
       else if #select("UNCLASSIFIED NONSINGULAR",allInfo_0)=!=0  
       then (
-	if o.Verbose>1 then print 5.1;
+	if o.Verbose then print 5.1;
 	solUnclassified=1;
 	theSolutionType="NONSINGULAR";
 	allInfo=drop(allInfo,1))
       else if #select("UNCLASSIFIED SINGULAR",allInfo_0)=!=0  
       then (
-	if o.Verbose>1 then print 5.2;
+	if o.Verbose then print 5.2;
     	solUnclassified=1;
 	theSolutionType="SINGULAR";
 	allInfo=drop(allInfo,1))
@@ -2188,7 +2188,7 @@ runBertini= method(TypicalValue => String, Options=>{
 	PreparePH2=>false,
 	B'Exe=>BERTINIexe,
 	TextScripts=>"",
-	Verbose=>1})
+	Verbose=>false})
 runBertini(String) := o ->(IFD)->(--IFD=input file directory
     	IFD=addSlash(IFD);
     	if o.StorageFolder=!=null 
@@ -2197,7 +2197,7 @@ runBertini(String) := o ->(IFD)->(--IFD=input file directory
 	  if not fileExists(filesGoHere) then mkdir(filesGoHere))
         else filesGoHere=addSlash(IFD);
     	if o.TextScripts=!="" then theTS:=" < "|o.TextScripts else theTS="";
-    	if o.Verbose>0 then print o.B'Exe;
+    	if o.Verbose then print o.B'Exe;
     	runSuccess:=run("cd "|filesGoHere|"; "|(o.B'Exe)|" "|IFD|o.NameB'InputFile|theTS|" >bertini_session.log");
     	if runSuccess=!=0 
 	then (
@@ -2321,7 +2321,7 @@ importSolutionsFile= method(TypicalValue=>Nothing,Options=>{
 	NameSolutionsFile=>"raw_solutions",
 	M2Precision=>53, OrderPaths=>false,
 	StorageFolder=>null,
-	Verbose=>1 })
+	Verbose=>false })
 importSolutionsFile(String) := o -> (importFrom)-> (
     importFrom=addSlash importFrom;
     if o.StorageFolder=!=null 
@@ -2336,16 +2336,16 @@ importSolutionsFile(String) := o -> (importFrom)-> (
     importFrom=importFrom|NSF;
     if false=== fileExists importFrom then error ("File "|NSF|" does not exist.");
     importedFileLines := apply(lines get (importFrom),i->select("[0-9.e+-]+",i)); -- grabs all lines of the solution file and selects desired words.
-    if o.Verbose>1 then for i in importedFileLines do print i;
+    if o.Verbose then for i in importedFileLines do print i;
     numberOfsolutionsInFile:=value(importedFileLines_0_0);--the first line of the solution file gives the number of solutions in the file
     if numberOfsolutionsInFile==0 then return {};
     importedFileLines=drop(importedFileLines,1);--drop the first  line
     storeSolutions:={};---We will store the solutions we specified and return this in the end
     collectedCoordinates:={};
-    if o.Verbose>1 then print collectedCoordinates;
+    if o.Verbose then print collectedCoordinates;
     if o.OrderPaths===false then(
     for i in importedFileLines do(
-    	if o.Verbose>1 then print( "i",i);
+    	if o.Verbose then print( "i",i);
 	if #i==2 then  (
 	    coordRealPart:=select("[0-9.+-]+",i_0);
 	    coordImagPart:=select("[0-9.+-]+",i_1);
@@ -2371,22 +2371,22 @@ importSolutionsFile(String) := o -> (importFrom)-> (
 	if #coordRealPart===1 then coordRealPart=append(coordRealPart,"0");
 	if #coordImagPart===1 then coordImagPart=append(coordImagPart,"0");
 	oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
-	if o.Verbose>1 then print oneCoord;
+	if o.Verbose then print oneCoord;
 	collectedCoordinates=append(collectedCoordinates,
 	  value((oneCoord_0)|"p"|o.M2Precision|"e"|toString(value(oneCoord_1)))+
 	    ii*value((oneCoord_2)|"p"|o.M2Precision|"e"|toString(value(oneCoord_3)))
 	      ));
-	if o.Verbose>1 then print collectedCoordinates;
+	if o.Verbose then print collectedCoordinates;
     	if  #i>2  then error ("Line was not parsed: "|i_0|"...")));
     	numberOfCoordinates:=numerator(#collectedCoordinates/numberOfsolutionsInFile);
-	if o.Verbose>1 then print numberOfCoordinates;
+	if o.Verbose then print numberOfCoordinates;
     	storeSolutions=for i to numberOfsolutionsInFile-1 list 
 	  for j to numberOfCoordinates-1 list collectedCoordinates_(i*numberOfCoordinates+j);
     	if o.OrderPaths===true then(
-	  if o.Verbose>1 then print "inLoop";
+	  if o.Verbose then print "inLoop";
 	  sortStoreSolutions:=sort storeSolutions;
 	  storeSolutions=for i in sortStoreSolutions list drop(i,1);   
-    	  if o.Verbose>1 then for i in sortStoreSolutions do print i_0;
+    	  if o.Verbose then for i in sortStoreSolutions do print i_0;
     	  if #storeSolutions=!=solutionCount then print "Warning: Unexpected solution count. OrderPaths option should only be set to 'true' when importing solution files with path numbers."
 	    );	
     return storeSolutions    );
@@ -2396,7 +2396,7 @@ importSolutionsFile(String) := o -> (importFrom)-> (
 importIncidenceMatrix= method(TypicalValue=>Nothing,Options=>{
 	NameIncidenceMatrixFile=>"incidence_matrix",
 	StorageFolder=>null,
-	Verbose=>1 })
+	Verbose=>false })
 importIncidenceMatrix(String) := o -> (importFrom)-> (
     if  class o.NameIncidenceMatrixFile===String 
     then NSF:=o.NameIncidenceMatrixFile;
@@ -2406,7 +2406,7 @@ importIncidenceMatrix(String) := o -> (importFrom)-> (
     importFrom=importFrom|NSF;
     if false=== fileExists importFrom then error ("File "|NSF|" does not exist.");
     importedFileLines := apply(lines get (importFrom),i->select("[0-9.e+-]+",i)); -- grabs all lines of the file and selects desired words.
-    if o.Verbose>1 then for i in importedFileLines do print i;
+    if o.Verbose then for i in importedFileLines do print i;
     numberOfNonEmptyCodims:=value(importedFileLines_0_0);--the first line of the incident_matrix file gives the number of non-empty codims. see page p.299 of [NSPSB] 
     importedFileLines=drop(importedFileLines,1);--drop the first  line
     indexListForComponents:={};---We will index the components by codimension and component number. 
@@ -2439,7 +2439,7 @@ b'PHSequence=method(TypicalValue=>Thing,Options=>{
 	SaveData=>false, 
 	B'Exe=>BERTINIexe,
 	SolutionFileStyle=>"simple"	,
-	Verbose=>1
+	Verbose=>false
 	})
 b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     IFD=addSlash IFD;
@@ -2465,15 +2465,15 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     sfIn:=openIn(storeFiles|"start");
     NumPathsToTrack:=value(read(sfIn,1));
     close sfIn;
-    if o.Verbose>1 then print (NumPathsToTrack, "paths");
+    if o.Verbose then print (NumPathsToTrack, "paths");
     for listPV in listOfListOfParameterValues do(
 	runCount=1+runCount;
-    	if o.Verbose>1 then print ("rc seq",runCount);
+    	if o.Verbose then print ("rc seq",runCount);
     	writeParameterFile(storeFiles,listPV,NameParameterFile=>"final_parameters");--writes final parameter file
-	if o.Verbose>1 then print listPV;
+	if o.Verbose then print listPV;
 	runBertini(storeFiles,Verbose=>o.Verbose,
 	    NameB'InputFile=>o.NameB'InputFile,B'Exe=>o.B'Exe);
-	if o.Verbose>1 then print "-rc";
+	if o.Verbose then print "-rc";
     	if fileExists(storeFiles|o.NameSolutionsFile)===false and o.NameSolutionsFile=!="simple_raw_solutions" then (
 	  start0pnts:= openOut(storeFiles|"start");  
      	  start0pnts << "0" << endl << endl;
@@ -2488,8 +2488,8 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
 	    moveB'File(storeFiles,o.NameSolutionsFile,o.NameSolutionsFile|toString(runCount),CopyB'File=>true);
 	    moveB'File(storeFiles,"final_parameters","start_parameters"|toString(runCount),CopyB'File=>true)
 	    );
-	if o.Verbose>1 then print o.NameSolutionsFile;
-	if o.Verbose>1 then print ("Number of solutions: "|toString(#importSolutionsFile(storeFiles,NameSolutionsFile=>o.NameSolutionsFile|toString(runCount))));
+	if o.Verbose then print o.NameSolutionsFile;
+	if o.Verbose then print ("Number of solutions: "|toString(#importSolutionsFile(storeFiles,NameSolutionsFile=>o.NameSolutionsFile|toString(runCount))));
 	moveB'File(storeFiles,"final_parameters","start_parameters");
 	moveB'File(storeFiles,o.NameSolutionsFile,"start");
     	sfIn=openIn(storeFiles|"start");
@@ -2497,8 +2497,8 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
 	close sfIn;
 	if NumPathsToTrack=!=NumPathsTracked then print ("Warning: The number of paths tracked in this seqence dropped at iteration "|toString(runCount));
 	if 0===NumPathsTracked then print ("Warning: There are no paths to track at iteration "|toString(runCount));
-    	if o.Verbose>1 then print "seq";
-	if o.Verbose>1 then print(importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
+    	if o.Verbose then print "seq";
+	if o.Verbose then print(importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
     	));
  
 simplifyRawSolutions=(aDirectory)->(
@@ -2551,11 +2551,11 @@ b'PHMonodromyCollect=method(TypicalValue=>Thing,Options=>{
   	NumberOfLoops=>1,
   	NumSolBound=>infinity,
 	SpecifyLoops=>false,
-	Verbose=>1
+	Verbose=>false
 	})
 b'PHMonodromyCollect(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
-    if o.Verbose>0 then print IFD;
+    if o.Verbose then print IFD;
 --
     if o.MonodromyStartPoints=!=false then writeStartFile(IFD,o.MonodromyStartPoints);--write a start file.
     if o.MonodromyStartParameters=!=false then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file.
@@ -2578,14 +2578,14 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
     bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");---we pull the base parameters
     solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
     loopCount:=0;
-    if o.Verbose>1 then print solCollection;
+    if o.Verbose then print solCollection;
     breakLoop:=false;
     if o.SpecifyLoops=!=false then listsOfListsOfParameterValues:=o.SpecifyLoops;
     while not breakLoop do(
       if (o.SpecifyLoops===false) then listsOfListsOfParameterValues={for i to 2-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
-	if o.Verbose>0 then print ("Monodromy loop number",loopCount);
+	if o.Verbose then print ("Monodromy loop number",loopCount);
 --    	print (	    append(listsOfParameterValues,bP));	
         if fileExists(storeFiles|"start")===false then error "start file for b'PHSequence is missing.";
         if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file for b'PHSequence is missing.";        
@@ -2594,12 +2594,12 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
 	    B'Exe=>o.B'Exe,
 	    NameSolutionsFile=>o.NameSolutionsFile,---ProblemLine
        	    NameB'InputFile=>o.NameB'InputFile);
-	if o.Verbose>1 then print ".5";
-    	if o.Verbose>1 then print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
+	if o.Verbose then print ".5";
+    	if o.Verbose then print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 	preSolCollection:=sortSolutions(
 	    solCollection|importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
-    	if o.Verbose>1 then print "1";
-    	if o.Verbose>1 then print preSolCollection;
+    	if o.Verbose then print "1";
+    	if o.Verbose then print preSolCollection;
 --removing multiplicities 
     	if #preSolCollection>=2 then (
 	    solCollection={};
@@ -2611,16 +2611,16 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
 	      solCollection=append(solCollection,preSolCollection_i));
 	    solCollection=append(solCollection,preSolCollection_-1));
     	if #preSolCollection<2 then solCollection=preSolCollection;
-	if o.Verbose>1 then print ("Number of solutions found", #solCollection));
+	if o.Verbose then print ("Number of solutions found", #solCollection));
       writeStartFile(storeFiles,solCollection);
       if loopCount>=o.NumberOfLoops then (
 	breakLoop=true;
-	if o.Verbose>1 then print "NumberOfLoops has been reached.");
+	if o.Verbose then print "NumberOfLoops has been reached.");
       if #solCollection>= o.NumSolBound then (
 	breakLoop=true;
-	if o.Verbose>0 then print (#solCollection);
-	if o.Verbose>1 then print ("Number of loops: "|toString loopCount);
-	if o.Verbose>1 then print "NumSolBound has been reached");      
+	if o.Verbose then print (#solCollection);
+	if o.Verbose then print ("Number of loops: "|toString loopCount);
+	if o.Verbose then print "NumSolBound has been reached");      
       );
     return solCollection);
 	    
@@ -2660,7 +2660,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 	M2Precision=>52,
 	ReturnGaloisGroupGeneratorFile=>true,
     	StorageFolder=>null,
-	Verbose=>1	
+	Verbose=>false	
 --	SpecifyLoops=>false
 	})
 b'PHGaloisGroup(String) := o ->(IFD)->(
@@ -2686,16 +2686,16 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     if o.MonodromyStartParameters=!=false then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file. 
     --Now we want to do our computations in a the directory specified by storeFiles. 
     --So we copy files from IFD to the directory given by storeFiles. 
-    if o.Verbose>1 then print 1;
+    if o.Verbose then print 1;
     if o.NameStartFile=!="start" or null=!=o.StorageFolder 
     then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
-    if o.Verbose>1 then print 2;
+    if o.Verbose then print 2;
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder 
     then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
-    if o.Verbose>1 then print 3;
+    if o.Verbose then print 3;
     if null=!=o.StorageFolder 
     then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
-    if o.Verbose>1 then print "3.1";
+    if o.Verbose then print "3.1";
     --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
     moveB'File(IFD,"start","ggStartJade",SubFolder=>o.StorageFolder,CopyB'File=>true);
     --Now all computations are done 
@@ -2730,11 +2730,11 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     then theLoopRadius=1/2*min flatten(for i to #branchPointsT-2 list for j from i+1 to #branchPointsT-1 list abs(branchPointsT_i-branchPointsT_j));
 --
     loopPointsT:={};
-    if o.Verbose>1 then print 4;
+    if o.Verbose then print 4;
     for oneBranchPointT in branchPointsT  do (
     	--NWSWE
       if imaginaryPart(oneBranchPointT-basePointT)<0 
-      then(if o.Verbose>1 then print "below p";
+      then(if o.Verbose then print "below p";
 	         loopPointsT={
 	  oneBranchPointT+ii*theLoopRadius,
 	  oneBranchPointT-theLoopRadius,
@@ -2743,7 +2743,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
 	  basePointT}) 
   ---SENW 
       else if imaginaryPart(oneBranchPointT-basePointT)>0 
-      then(if o.Verbose>1 then print "above p";
+      then(if o.Verbose then print "above p";
 	         loopPointsT={
 	  oneBranchPointT-ii*theLoopRadius,
 	  oneBranchPointT+theLoopRadius,
@@ -2751,9 +2751,9 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
 	  oneBranchPointT-theLoopRadius,
 	  basePointT}) 
       else print "An error occurred while creating the loops."      ;       
-      if o.Verbose>1 then print loopPointsT;
-      if o.Verbose>1 then   print for i in loopPointsT list {i};
-      if o.Verbose>1 then   print 6;
+      if o.Verbose then print loopPointsT;
+      if o.Verbose then   print for i in loopPointsT list {i};
+      if o.Verbose then   print 6;
       b'PHSequence(storeFiles,for i in loopPointsT list {i},
 	  Verbose=>o.Verbose,
 	  B'Exe=>o.B'Exe,
@@ -2766,7 +2766,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
         trackingSucess:=(#solCollection==#permutedSols);
         if not trackingSucess then (
 	  loopFailures=loopFailures+1;
-	  if o.Verbose>.5 then print ("Warning: There was a path tracking failure durin loop "|toString(loopCount))
+	  if o.Verbose then print ("Warning: There was a path tracking failure durin loop "|toString(loopCount))
 	  );
         if trackingSucess then(    	
           if o.SaveData==true then writeStartFile(storeFiles,permutedSols,NameStartFile=>("newSols"|toString(loopCount)));
@@ -2776,11 +2776,11 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
 	    if areEqual( for k to #solCollection_0-1 list solCollection_i_k,
 		for l to #solCollection_0-1 list permutedSols_j_l,Tolerance=>1e-10) then ggGenerator=append(ggGenerator,j+1);
     	  if #solCollection=!=#ggGenerator then (
-    	    if o.Verbose>.5 then print (#ggGenerator, #solCollection);
+    	    if o.Verbose then print (#ggGenerator, #solCollection);
 	    loopFailures=loopFailures+1;
-	    if o.Verbose>.5 then print ("Warning: Monodrompy loop "|loopCount|" found unexpected new solutions or a numerical error involving tolerances occurred.")
+	    if o.Verbose then print ("Warning: Monodrompy loop "|loopCount|" found unexpected new solutions or a numerical error involving tolerances occurred.")
 	    );
-    	  if o.Verbose>.5 then print ("gg",new Array from ggGenerator);--check that this works.
+    	  if o.Verbose then print ("gg",new Array from ggGenerator);--check that this works.
 	  gggFile << toString (new Array from ggGenerator);
 	  if loopCount=!=#branchPointsT-1 then gggFile << "," << endl;
 	  loopCount=loopCount+1	)      );
