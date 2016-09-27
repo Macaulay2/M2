@@ -21,7 +21,7 @@ newPackage(
 
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
     "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
-    "stoichiometricSubspace", "createRing", "ParameterRing",
+    "stoichiometricSubspace", "stoichSubspaceKer", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue",
     "displayComplexes", "isDeficient", "isWeaklyReversible",
@@ -227,11 +227,11 @@ stoichiometricSubspace ReactionNetwork := N -> (
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
     for i from 1 to #reactions - 1 do M=M||reactions#i;
-    mingens image M
+    mingens image transpose M
     )
 
 stoichSubspaceKer = method()
-stoichSubspaceKer := N -> (
+stoichSubspaceKer ReactionNetwork := N -> (
     C := N.Complexes;
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
@@ -244,6 +244,10 @@ restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
 assert(rank(stoichiometricSubspace CRN) == 3)
+assert(stoichiometricSubspace CRN == 
+    mingens image transpose matrix{{1,-2,0,0,0},{1,-1,1,0,-1},{1,0,1,-1,0}})
+assert(stoichSubspaceKer CRN ==
+    mingens image transpose matrix{{2,1,-1,1,0},{-2,-1,2,0,1}})
 ///
 
 concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
@@ -431,7 +435,6 @@ N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 peek N
 displayComplexes(N,QQ)
 createRing(N, QQ)
-stoichiometricSubspace N
 CE = conservationEquations N
 SSE = steadyStateEquations N
 F = join (CE, SSE)
@@ -442,9 +445,30 @@ I+J
 
 
 --New functions to be created
---isDeficient = Rn ->
+isDeficient = Rn -> (
+    d := rank(stoichiometricSubspace Rn);
+    G := underlyingGraph(Rn.ReactionGraph);
+    l := numberOfComponents G;
+    p := #Rn.Complexes;
+    delta := p - l - d;
+    delta
+    )
 
---isWeaklyReversible = Rn ->
+--Do we want True/False or the actual value?
+
+TEST ///
+N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+assert(isDeficient N == 0)
+W = wnt()
+assert(isDeficient W == 4)
+///
+
+
+isWeaklyReversible = Rn -> (
+    D := Rn.ReactionGraph;
+    C := connectedComponents(underlyingGraph D);
+    --how to extract parts of digraph corresponding to connected componenets?
+    )
 
 --injectivityTest = Rn ->
 
