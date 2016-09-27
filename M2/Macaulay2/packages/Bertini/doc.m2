@@ -1315,20 +1315,20 @@ doc ///
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
-    bertiniZeroDimSolve(...,Verbose=>Number)
-    bertiniParameterHomotopy(...,Verbose=>Number)
-    makeB'InputFile(...,Verbose=>Number)
-    makeMembershipFile(...,Verbose=>Number)
-    b'PHGaloisGroup(...,Verbose=>Number)
-    b'PHMonodromyCollect(...,Verbose=>Number)
-    importIncidenceMatrix(...,Verbose=>Number)
-    importMainDataFile(...,Verbose=>Number)
-    importSliceFile(...,Verbose=>Number)
-    importSolutionsFile(...,Verbose=>Number)
-    runBertini(...,Verbose=>Number)
+    bertiniZeroDimSolve(...,Verbose=>Boolean)
+    bertiniParameterHomotopy(...,Verbose=>Boolean)
+    makeB'InputFile(...,Verbose=>Boolean)
+    makeMembershipFile(...,Verbose=>Boolean)
+    b'PHGaloisGroup(...,Verbose=>Boolean)
+    b'PHMonodromyCollect(...,Verbose=>Boolean)
+    importIncidenceMatrix(...,Verbose=>Boolean)
+    importMainDataFile(...,Verbose=>Boolean)
+    importSliceFile(...,Verbose=>Boolean)
+    importSolutionsFile(...,Verbose=>Boolean)
+    runBertini(...,Verbose=>Boolean)
   Description
     Text
-       Use {\tt Verbose=>false} or {\tt Verbose=>0}  to silence additional output.
+       Use {\tt Verbose=>false} to silence additional output.
 ///;
 
 doc ///
