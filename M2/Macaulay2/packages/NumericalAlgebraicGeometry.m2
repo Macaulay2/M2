@@ -15,6 +15,8 @@ newPackage select((
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
      PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions"},
      PackageImports => {"PHCpack","Bertini"},
+     -- DebuggingMode should be true while developing a package, 
+     --   but false after it is done
      DebuggingMode => true,
      --DebuggingMode => false,
      Certification => {
