@@ -37,7 +37,9 @@ export {
      "priorityQueue",
      "mergePQ",
      "deleteMin",
-     "pop"
+     "pop",
+     "Shift",
+     "shift"
      }
 
 protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, 
@@ -391,7 +393,7 @@ shiftMap(Ring,List) := o -> (R,L) -> shiftMap(R,shift L,Extend=>o.Extend)
 shiftMap(Ring,Shift) := o -> (R,I) -> (
     I = crop(I,width R);
     S := R;
-    if o.Extend then S = buildERing(R,(I*(width R-1))+1);
+    if o.Extend then S = buildERing(R, (max apply(width R,i->I#i))+1);
     mapList := apply(R.varIndices, ind->(
 	    indnew := new MutableList from ind;
 	    for j from 1 to #ind-1 do (
@@ -672,7 +674,7 @@ crop (Shift,ZZ) := (I,n) -> (
     if k > n then return shift take(I,n);
     I
     )
-degree (Shift) := I -> if #I == 0 then 0 else last I + 1 - #I
+degree (Shift) := I -> if #I == 0 then 0 else max(I) + 1 - #I
 Shift ? Shift := (I,J) -> (
     if degree I == degree J then (
 	(gapsI,gapsJ) := (I,J)/gaps;
