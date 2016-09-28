@@ -87,7 +87,7 @@ R = createRing(NN, QQ)
 createRing(NN, RR)
 ///
 
---apply(C, c-> (apply(subsets(c,2), s -> isReachable(D,s#0,s#1) and isReachable(D,s#1, s#0))))
+
 
 -- todo: do we need to duplicate code in first two methods?
 createRing = method()
@@ -404,14 +404,12 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     S := stoichSubspaceKer N;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
-    cc := gens coefficientRing N.ReactionRing;
+    cc := gens coefficientRing(coefficientRing N.ReactionRing);
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
-    M := matrix{xx};
-    St := flatten entries (M*sub(S, FF)-
-	--working
-	matrix{cc#(positions(toList(1..rank S),))});
+    M := matrix{xx}-matrix{cc};
+    St := flatten entries (M*sub(S, FF));
     St	  
     )
 conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
@@ -419,10 +417,11 @@ conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     S := stoichSubspaceKer N;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
+    cc := gens coefficientRing(coefficientRing N.ReactionRing);
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
-    M := matrix{xx};
+    M := matrix{xx}-matrix{cc};
     St := flatten entries (M*sub(S, FF));
     St	  
     )
@@ -476,12 +475,26 @@ assert(isDeficient W == 4)
 isWeaklyReversible = Rn -> (
     D := Rn.ReactionGraph;
     C := connectedComponents(underlyingGraph D);
-    --how to extract parts of digraph corresponding to connected componenets?
+    L := flatten apply(C, c-> (apply(subsets(c,2), s -> 
+		isReachable(D,s#0,s#1) and isReachable(D,s#1, s#0)
+		)));
+
+    
+    
     )
+    --how to extract parts of digraph corresponding to connected componenets?
+    
 
 --injectivityTest = Rn ->
 
-
+TEST ///
+restart
+needsPackage "ReactionNetworks"
+needsPackage "Graphs"
+N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+isWeaklyReversible N
+isWeaklyReversible wnt()
+///
 
 
 load "ReactionNetworks/motifs-Kisun.m2"
