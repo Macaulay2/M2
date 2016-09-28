@@ -1,0 +1,6 @@
+These are files that were using for testing certain errors.
+At the moment, they are untracked and we need to see if there
+are for any use and include them either in the test suit or
+in examples.
+
+There should not be any files in this folder at the end.
