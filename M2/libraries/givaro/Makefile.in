@@ -3,19 +3,20 @@
 # our snapshot taken from:
 #  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
 
+# see also (for older releases) https://forge.imag.fr/projects/givaro for source code
+
+# see also (for newer releases) https://github.com/linbox-team/givaro/releases
+
+
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 3.7.0
-#URL = http://macaulay2.com/Downloads/OtherSourceCode
-#URL = http://forge.imag.fr/frs/download.php/207/
+
+# VERSION = 3.7.1
 
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 ## version 4.0.1: works with ffpack 2.2.1, but that doesn't yet compile.
 #VERSION = 4.0.1
-#URL = https://github.com/linbox-team/givaro/releases/download/v$(VERSION)/
-
-
-#URL = http://forge.imag.fr/frs/download.php/370/
 
 #PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 

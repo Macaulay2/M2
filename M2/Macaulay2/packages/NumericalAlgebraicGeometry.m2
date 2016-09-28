@@ -124,6 +124,7 @@ DEFAULT = new MutableHashTable from {
      EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
      InfinityThreshold => 1e9, -- used to tell if the path is diverging
      -- projectivize and normalize
+     -- Normalize => true, -- normalize in the Bombieri-Weyl norm -- turning this on fails something in NSC!!!
      Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
      AffinePatches => DynamicPatch,
@@ -304,6 +305,10 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 	  imc*a#1*conjugate a#1 -- ring=CC[...]
 	  ))
 
+normalize RingElement := f -> (
+    a := 1/sqrt(numgens ring f * BombieriWeylNormSquared f);
+    promote(a,coefficientRing ring f) * f
+    )
 ------------------------------------------------------
 checkCCpolynomials (List,List) := (S,T) -> (
     n := #T;

@@ -1479,6 +1479,7 @@ doc ///
             of each and how the argument $a$ is used.
 
             The sixteen vertex invariants are:
+
             @UL ({
                 "$i = 0$: none,",
                 "$i = 1$: twopaths,",

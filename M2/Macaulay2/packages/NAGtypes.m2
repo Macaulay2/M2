@@ -1652,11 +1652,13 @@ doc ///
       This type stores a finite dimensional vector subspace of a polynomial ring, given by a spanning set. 
       The spanning set is generally assumed to be a basis although this is not enforced.  
       The following methods can be used to access a {\tt PolySpace}: 
+
       @UL {
 	  {"gens -- a one-row matrix of the generators"},
 	  {"dim -- the number of generators"},
 	  {"ring -- the ring of the generators"}
 	  }@
+
   SeeAlso
     polySpace
     DualSpace
@@ -1701,6 +1703,7 @@ doc ///
       In practice, the subspace is stored as a @TO PolySpace@ with functionals represented by the
       corresponding polynomial, along with a @TO Point@. 
       The following methods can be used to access a {\tt DualSpace}: 
+
       @UL {
 	  {"gens -- a one-row matrix of the generators"},
 	  {"dim -- the number of generators"},

@@ -413,6 +413,54 @@ utf8(y:Expr):Expr := (
      else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
 setupfun("utf8",utf8);
 
+errucheck():Expr := buildErrorPacket("string ended unexpectedly during utf-8 checking");
+errbcheck():Expr := buildErrorPacket("unexpected byte encountered in utf-8 checking");
+utf8check(y:Expr):Expr := (
+     when y is ss:stringCell do (
+	  s := ss.v;
+	  n := length(s);
+	  i := 0;
+	  while i < n do (
+	       c := int(uchar(s.i));
+	       if (c & 0x80) == 0 then (
+		    i = i+1;
+		    )
+	       else if (c & 0xe0) == 0xc0 then (
+		    if i+1 < n then (
+		    	 d := int(uchar(s.(i+1)));
+			 if (d & 0xc0) != 0x80 then return errbcheck();
+			 i = i+2;
+	       		 )
+		    else return errucheck();
+		    )
+	       else if (c & 0xf0) == 0xe0 then (
+		    if i+2 < n then (
+		    	 d := int(uchar(s.(i+1)));
+			 if (d & 0xc0) != 0x80 then return errbcheck();
+		    	 e := int(uchar(s.(i+2)));
+			 if (e & 0xc0) != 0x80 then return errbcheck();
+			 i = i+3;
+			 )
+		    else return errucheck();
+		    )
+	       else if (c & 0xf8) == 0xf0 then (
+		    if i+3 < n then (
+		    	 d := int(uchar(s.(i+1)));
+			 if (d & 0xc0) != 0x80 then return errbcheck();
+		    	 e := int(uchar(s.(i+2)));
+			 if (e & 0xc0) != 0x80 then return errbcheck();
+		    	 f := int(uchar(s.(i+3)));
+			 if (f & 0xc0) != 0x80 then return errbcheck();
+			 i = i+4;
+			 )
+		    else return errucheck();
+		    )
+	       else return errbcheck();
+	       );
+     	  nullE)
+     else buildErrorPacket("expects a string"));
+setupfun("utf8check",utf8check);
+
 export checknoargs(e:Expr):Expr := (
      when e
      is v:Sequence do (
@@ -996,11 +1044,14 @@ tostringfun(e:Expr):Expr := (
      is x:RawFreeModuleCell do toExpr(Ccode(string, "IM2_FreeModule_to_string(",x.p,")" ))
      is x:RawMatrixCell do toExpr(Ccode(string, "IM2_Matrix_to_string(",x.p,")" ))
      is x:RawMutableMatrixCell do toExpr(Ccode(string, "IM2_MutableMatrix_to_string(",x.p,")" ))
+     -- NAG stuff begin
      is x:RawHomotopyCell do toExpr(Ccode(string, "rawHomotopyToString(",x.p,")" ))
      is x:RawSLEvaluatorCell do toExpr(Ccode(string, "rawSLEvaluatorToString(",x.p,")" ))
      is x:RawSLProgramCell do toExpr(Ccode(string, "rawSLProgramToString(",x.p,")" ))
      is x:RawStraightLineProgramCell do toExpr(Ccode(string, "rawStraightLineProgramToString(",x.p,")" ))
      is x:RawPathTrackerCell do toExpr(Ccode(string, "rawPathTrackerToString(",x.p,")" ))
+     is x:RawPointArrayCell do toExpr(Ccode(string, "rawPointArrayToString(",x.p,")" ))
+     -- NAG stuff end
      is x:RawRingMapCell do toExpr(Ccode(string, "IM2_RingMap_to_string(",x.p,")" ))
      is x:RawMonomialOrderingCell do toExpr(Ccode(string, "IM2_MonomialOrdering_to_string(",x.p,")" ))
      is x:RawMonoidCell do toExpr(Ccode(string, "IM2_Monoid_to_string(",x.p,")" ))

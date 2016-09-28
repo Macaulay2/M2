@@ -1246,7 +1246,7 @@ doc ///
         Text	
     
 	     [Carr] Carr.   A polygonal presentation of $Pic(\bar{M}_{0,n})$, arXiv:0911.2649.
-	     [KM] Keel and McKernan.  Contractible extremal rays. p. 113-128 in {\it Handbook of Moduli, Vol. II.}  Higher Education & International Press, Beijing-Boston, 2012.	     
+	     [KM] Keel and McKernan.  Contractible extremal rays. p. 113-128 in {\it Handbook of Moduli, Vol. II.}  Higher Education \& International Press, Beijing-Boston, 2012.	     
 	     [MS] Moon and Swinarski.  Effective curves on $\bar{M}_{0,n}$ from group actions.  Manuscripta Math.  147 (2015) 239-268.  
 	     [S] Swinarski.  A basis of F-curves on $\bar{M}_{0,n}$, available at  http://faculty.fordham.edu/dswinarski/Fcurves/.
 	    

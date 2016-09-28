@@ -33,10 +33,15 @@ command, assuming you have installed "git" on your machine:
     git clone https://github.com/Macaulay2/M2
 
 A directory called M2, which you can move or rename, will be created, and this
-INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch
-to the branch containing version 1.6 with the following command:
+INSTALL file is in the subdirectory "M2" of it.  The "release" branches tend to
+be more stable, and if you compile from one of those, you'll have the same
+functionality as those who download our binary releases.  So, after cloning,
+you can switch to the branch containing version 1.6, for example, with the
+following command:
 
     git checkout release-1.6
+
+Instead of release-1.6 you should, of course, use the most recent one.
 
 The following command shows the list of release branches:
 
@@ -75,10 +80,7 @@ various modern operating systems:
 
   Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses
-    On all systems, add
-        --enable-build-libraries="ntl pari"
-      to the "configure" command line below.
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses libmpc-dev
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -121,14 +123,13 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion
+      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion libmpc-devel
     Some debugging aids:
       sudo debuginfo-install strace
 
   Scientific linux:
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign
-      sudo yum install -y git-all zlib-devel xz-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time
     Some debugging aids:
       sudo yum install -y strace
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
@@ -145,7 +146,7 @@ various modern operating systems:
 
   Suse Linux Leap 42.1:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel
 
     Add
 
@@ -158,15 +159,21 @@ various modern operating systems:
     to make RPM files for distribution to generic hardware.
 
   Arch Linux:
-      sudo pacman -S archlinux-keyring
+    You may prefer to use the Arch package for Macaulay2 at https://aur.archlinux.org/packages/macaulay2/.
+    For compiling it yourself:
+      sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip
     We recommend adding
-    	 --enable-build-libraries="pari flint ntl gc"
-      to the "configure" command line below in the section on compiling Macaulay2, since it seems to
-      avoid undiagnosed problems with invalid libgc pointers.    
+    	 --enable-build-libraries="pari flint ntl gc givaro"
+      to the "configure" command line below in the section on compiling Macaulay2
+      Adding "gc" here seems to avoid undiagnosed problems with invalid libgc pointers.
+      Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
     To upgrade the system:
-      pacman -Syu
+      sudo pacman --sync --refresh --sysupgrade
+    Compilation doesn't succeed with gcc 6, so install gcc 5 with
+      sudo pacman --sync --needed gcc5
+    and add "CC=gcc-5 CXX=g++-5" to the "configure" command line below.  (We succeeded with gcc 5.4.0.)
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
@@ -498,6 +505,19 @@ To find a suitable target, run :
 To combine those two steps, run :
 
    ./configure --build=`config/config.guess`
+
+----------------------
+HTML validation
+----------------------
+
+To validate all our HTML files, run:
+
+   make validate-html
+
+This depends on the installation of the validator (e.g., the Ubuntu package
+"w3c-markup-validator") and the script "validator-runner.py" from
+http://github.com/ysangkok/w3c-validator-runner, so we don't run it
+automatically.
 
 ----------------------
 MacOS X notes

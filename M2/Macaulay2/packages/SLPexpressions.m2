@@ -30,7 +30,7 @@ export {
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 
     "constants",  
-    "printAsSLP",
+    "printAsSLP", "cCode",
     "ValueHashTable","valueHashTable"
     }
 exportMutable {
@@ -488,14 +488,17 @@ diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
     applyTable(entries xx, x->diff(x,M)), 
     row-> joinHorizontal row
     )
+
+-------------------------
+-- printAsSLP functions
 PrintTable = new Type of MutableHashTable
 newPrintTable := method()
 newPrintTable List := o -> (h := new PrintTable; h#"#consts"=h#"#vars"=h#"#gates"=h#"#lines"=0; h.Outputs=o; h)
 addLine := method()
 addLine (PrintTable, Thing) := (h,t) -> ( h#(h#"#lines") = t; h#"#lines" = h#"#lines" + 1; )    
 printName = method()
-printName (Gate, HashTable) := (g,h) -> error "not implemented"
-printName (InputGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (Gate, PrintTable) := (g,h) -> error "not implemented"
+printName (InputGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     if isConstant g then (
 	h#g = "C"|toString h#"#consts";
 	addLine(h,h#g | " = " | toString g.Name);
@@ -507,28 +510,28 @@ printName (InputGate, HashTable) := (g,h) -> if h#?g then h#g else (
 	);
     h#g
     )
-printName (SumGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (SumGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     s := between(" + ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = " | concatenateNets s);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
-printName (ProductGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (ProductGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     s := between(" * ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = " | concatenateNets s);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
-printName (DivideGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (DivideGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     (x,y) := toSequence apply(g.Inputs, gg->printName(gg,h));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = " | x | " / " | y);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
-printName (DetGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (DetGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = det " | toString applyTable(g.Inputs, gg->printName(gg,h)));  
     h#"#gates" = h#"#gates" + 1;
@@ -545,6 +548,84 @@ printAsSLP List := outputs -> (
     )
 printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 
+TEST ///
+X = inputGate symbol X
+C = inputGate symbol C
+XpC = X+C
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+printAsSLP matrix{{XXC,detXCCX,XoC}}
+///
+
+-----------------------------------------------
+-- cCode functions (use PrintTable from above)
+
+cCode = method()
+cCode (Gate, PrintTable) := (g,h) -> error "not implemented"
+cCode (InputGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    if isConstant g then (
+	h#g = "C"|toString h#"#consts";
+	addLine(h,h#g | " = " | toString g.Name |";");
+    	h#"#consts" = h#"#consts" + 1;
+	)
+    else (
+	h#g = "X"|toString h#"#vars";
+    	h#"#vars" = h#"#vars" + 1;
+	);
+    h#g
+    )
+cCode (SumGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    s := between(" + ", apply(g.Inputs, gg->cCode(gg,h)));  
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = " | concatenateNets s | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (ProductGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    s := between(" * ", apply(g.Inputs, gg->cCode(gg,h)));  
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = " | concatenateNets s | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (DivideGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    (x,y) := toSequence apply(g.Inputs, gg->cCode(gg,h));  
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = " | x | " / " | y | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (DetGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = det " | toString applyTable(g.Inputs, gg->cCode(gg,h)) | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (List,List) := (outputs,inputs) -> (
+    h := newPrintTable outputs;
+    scan(inputs, g->cCode(g,h));
+    scan(outputs, g->cCode(g,h));
+    print("void evaluate(const C* x, C* y) {");
+    scan(h#"#vars", i->print ("C X"|i|" = x["|i|"];"));
+    scan(h#"#lines", i->print ("C "| h#i));
+    scan(#outputs, i->print ("y["|i|"] = "|cCode(h.Outputs#i,h)|";")); 
+    print("}");
+    )
+cCode (GateMatrix,GateMatrix) := (M,I) -> cCode(flatten entries M, flatten entries I)
+
+
+TEST ///
+restart
+needsPackage "SLPexpressions"
+X = inputGate symbol X
+C = inputGate symbol C
+XpC = X+C+2
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+cCode (matrix{{XXC,detXCCX,0},{XoC,1,2}},matrix{{X,C}})
+///
 
 --fill m x n matrix with values from another matrix
 matrix (Matrix,ZZ,ZZ) := o -> (M,m,n) -> (
@@ -684,6 +765,7 @@ sumGate,
 printAsSLP,
 (printAsSLP,GateMatrix),
 (printAsSLP,List),
+cCode,
 productGate,
 (productGate,List),
 detGate,

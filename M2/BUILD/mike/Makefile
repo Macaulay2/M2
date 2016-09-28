@@ -155,6 +155,15 @@ linux-profile64 : always
 		--enable-download \
 		--enable-build-libraries="gc mpir flint pari ntl"
 
+linux-opt64-gcc6 : always
+	mkdir -p builds.tmp/opt64-gcc6
+	cd builds.tmp/opt64-gcc6; ../../../../configure \
+		CC="gcc-6 -m64" CXX="g++-6 -m64" \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
+
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \
 

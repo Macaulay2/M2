@@ -12,7 +12,7 @@ dnl    - make a git tag of the form version-X.Y.Z
 dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
-AC_INIT(Macaulay2, 1.9.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.9.2.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
@@ -139,6 +139,7 @@ then if test -f /usr/bin/sw_vers
 	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
+	 "arch") ISSUE_FLAVOR=ArchLinux ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
@@ -806,6 +807,7 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
+#    pari uses gmp, so if we build gmp, we should build pari
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
@@ -1044,6 +1046,12 @@ then AC_MSG_CHECKING(for gmp ostream compatibility)
 	[AC_MSG_RESULT(yes)],
 	[BUILD_mpir=yes
          AC_MSG_RESULT([no, will build mpir])])
+fi
+
+if [[ $BUILD_mpir = yes ]]
+then AC_MSG_NOTICE([mpir is being built, so we will build pari])
+     BUILD_pari=yes
+     BUILD_ALWAYS="pari $BUILD_ALWAYS"
 fi
 
 if test "$PARI" = yes
