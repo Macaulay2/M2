@@ -87,27 +87,31 @@ R = createRing(NN, QQ)
 createRing(NN, RR)
 ///
 
+--apply(C, c-> (apply(subsets(c,2), s -> isReachable(D,s#0,s#1) and isReachable(D,s#1, s#0))))
+
 -- todo: do we need to duplicate code in first two methods?
 createRing = method()
 createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     kk := symbol kk; 
     cc := symbol cc;
-    constants := apply(toList(1..rank(stoichSubspaceKer Rn)), i->cc_i);
+    P := apply(Rn.Species,a->(a,0));
+    C := FF[apply(P, i->cc_(first i))];
     rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    K := FF[rates,constants];
-    C := apply(Rn.Species,a->(a,0));
+    K := C[rates];
     xx := symbol xx;
-    RING := K[apply(C,i->xx_(first i))];
+    RING := K[apply(P,i->xx_(first i))];
     Rn.ReactionRing = RING;
     Rn.ReactionRing
     )
 createRing(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
-    kk := symbol kk; 
+   kk := symbol kk; 
+    cc := symbol cc;
+    P := apply(Rn.Species,a->(a,0));
+    C := FF[apply(P, i->cc_(first i))];
     rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    K := FF[rates];
-    C := apply(Rn.Species,a->(a,0));
+    K := C[rates];
     xx := symbol xx;
-    RING := K[apply(C,i->xx_(first i))];
+    RING := K[apply(P,i->xx_(first i))];
     Rn.ReactionRing = RING;
     Rn.ReactionRing
     )
