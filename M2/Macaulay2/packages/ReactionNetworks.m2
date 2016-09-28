@@ -91,8 +91,10 @@ createRing(NN, RR)
 createRing = method()
 createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     kk := symbol kk; 
+    cc := symbol cc;
+    constants := apply(toList(1..rank(stoichSubspaceKer Rn)), i->cc_i);
     rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    K := FF[rates];
+    K := FF[rates,constants];
     C := apply(Rn.Species,a->(a,0));
     xx := symbol xx;
     RING := K[apply(C,i->xx_(first i))];
@@ -398,11 +400,14 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     S := stoichSubspaceKer N;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
+    cc := gens coefficientRing N.ReactionRing;
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
     M := matrix{xx};
-    St := flatten entries (M*sub(S, FF));
+    St := flatten entries (M*sub(S, FF)-
+	--working
+	matrix{cc#(positions(toList(1..rank S),))});
     St	  
     )
 conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
