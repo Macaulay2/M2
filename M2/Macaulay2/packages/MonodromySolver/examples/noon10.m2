@@ -25,11 +25,11 @@ x_10*x_1^2+x_10*x_2^2+x_10*x_3^2+x_10*x_4^2+x_10*x_5^2+x_10*x_6^2+x_10*x_7^2+x_1
 end ------------------------------------------------
 
 restart ---------------------------------------------------------------------
-load "noon10.m2"
+load "MonodromySolver/examples/noon10.m2"
 nedges = 3
 setRandomSeed 0
 polys = parametrizedNoon 10 
-(p0,x0) = createSeedPair polySystem polys
+(p0,x0) = createSeedPair polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
 {* -- Anton's office machine:

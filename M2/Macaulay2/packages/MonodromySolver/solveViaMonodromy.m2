@@ -156,7 +156,7 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
 -- main function
 monodromySolve = method(Options=>{
         TargetSolutionCount => null,
-        StoppingCriterion => ((n,L)->n>3),
+        StoppingCriterion => null,
         SelectEdgeAndDirection => selectRandomEdgeAndDirection,
         GraphInitFunction => completeGraphInit,
 	BatchSize => infinity,
@@ -173,8 +173,9 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
     stoppingCriterion := o.StoppingCriterion; 
     if o.TargetSolutionCount =!= null then (
         HG.TargetSolutionCount = o.TargetSolutionCount;
-        stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount or n>= o.NumberOfRepeats);
-    ); 
+        stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount or n >= o.NumberOfRepeats);
+    	);
+    if stoppingCriterion === null then stoppingCriterion = (n,L) -> n >= o.NumberOfRepeats;      
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
     {*
