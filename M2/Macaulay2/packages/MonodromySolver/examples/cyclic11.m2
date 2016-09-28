@@ -6,7 +6,8 @@ polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 print mixedVolume
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+getTrackTime V.Graph
 {* -- Anton's office machine:
 
      mixedVolume = 184756
@@ -54,11 +55,13 @@ setRandomSeed 0
 polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-setDefault(tStepMin=>0.005)
+setDefault(tStepMin=>0.001)
 elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
          Verbose=>true)
 {*    
-     *}
+-- 9327.69 seconds elapsed
+o11 = (HomotopyNode{...5...}, 759189)
+*}
 
 restart --- naive ------------------------------------------------------------------
 load "cyclic.m2"
