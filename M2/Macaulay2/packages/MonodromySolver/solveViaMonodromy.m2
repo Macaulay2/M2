@@ -133,17 +133,21 @@ createSeedPair PolySystem := o -> G -> (
     )
 createSeedPair(PolySystem, List) := o -> (G, L) -> (
     SubList := apply(toList(0..numgens ring G-1), i -> (gens ring G)#i => L#i);
+    subZeros := apply(gens coefficientRing ring G, g -> g => 0)
+    b := sub(matrix {apply(M, m-> sub(m, subZeros))}, coefficientRing coefficientRing ring G);
     C := coefficientRing ring G;
     M := sub(sub(G.PolyMap, SubList), C);
     M = flatten entries generators ideal M; 
     l := apply(M, g -> (coefficients(g, Monomials => gens C))#1);
     A := l#0;
     for i from 1 to length l - 1 do A = A | l#i;
+    A = sub(A, coefficientRing coefficientRing ring G)
     K := numericalKernel(transpose A, 1e-6);
+    offset := solve(transpose A,transpose b);
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
     --v := K * transpose matrix {toList ((numcols K):1_CC)};  
     w := transpose randomWeights(numcols K);
-    v := K * w;
+    v := K * w + offset;
     c0 := point matrix v;
     -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
     --c0 := first (first components N).Points; 
