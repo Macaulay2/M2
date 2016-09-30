@@ -287,7 +287,7 @@ numericalImageDegree'MonodromySolver (List, Ideal, Thing, Point) := PseudoWitnes
 	    SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound, 
 	    NumberOfRepeats=>100, Verbose=>true
 	    );
-	sols := vertex.PartialSols;
+	sols := points vertex.PartialSols;
 	{* 
 	-- look at residuals 	
 	polys0 := specializeSystem(vertex.BasePoint,polys);
