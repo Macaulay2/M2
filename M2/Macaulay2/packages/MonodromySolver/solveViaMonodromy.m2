@@ -202,16 +202,18 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
             << endl << "Direction is " << from1to2 << endl;
             << "-------------------------------------------------" << endl;
         );
+        lastNode = if from1to2 then e.Node2 else e.Node1;
+	nKnownPoints := length lastNode.PartialSols;
         trackedPaths := trackEdge(e, from1to2, o.BatchSize);
         npaths = npaths + trackedPaths;
-        lastNode = if from1to2 then e.Node2 else e.Node1;
         if o.Verbose then (
             << "  node1: " << length e.Node1.PartialSols << endl;
             << "  node2: " << length e.Node2.PartialSols << endl;    	
             << "trackedPaths " << trackedPaths << endl; 
-        );
-        if trackedPaths == 0 then same = same + 1 else same = 0; 
-    );
+            );
+    	if length lastNode.PartialSols == nKnownPoints 
+    	then same = same + 1 else same = 0
+    	);
     if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
     then npaths = "failed"; 
     (lastNode, npaths)
