@@ -136,8 +136,8 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     subZeros := apply(gens coefficientRing ring G, g -> g => 0);
     C := coefficientRing ring G;
     M := sub(sub(G.PolyMap, SubList), C);
-    b := sub(matrix {apply(M, m-> sub(m, subZeros))}, coefficientRing coefficientRing ring G);
     M = flatten entries generators ideal M; 
+    b := sub(matrix {apply(M, m-> sub(m, subZeros))}, coefficientRing coefficientRing ring G);
     l := apply(M, g -> (coefficients(g, Monomials => gens C))#1);
     A := l#0;
     for i from 1 to length l - 1 do A = A | l#i;
