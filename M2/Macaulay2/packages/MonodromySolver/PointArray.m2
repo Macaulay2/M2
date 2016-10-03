@@ -50,8 +50,7 @@ points PointArray := P -> if FAST then P_(indices P) else values P
 appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if FAST then (
-	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,#coordinates b);
-	-- 1/0;
+	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,2*#coordinates b); -- 2*n real coordinates
 	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0) =!= length A 
     	then error "can't append"
 	);

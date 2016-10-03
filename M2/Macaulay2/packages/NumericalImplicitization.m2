@@ -208,7 +208,7 @@ numericalImageDegree (List, Ideal, Thing, Point) := PseudoWitnessSet => opts -> 
     traceResult := opts.traceTestThreshold + 1;
     while not traceResult < opts.traceTestThreshold and numFailedTraceTests < opts.maxTraceTests do (
         if numFailedTraceTests > 0 then (
-	    if W == {} and not I == 0 then W = first components numericalIrreducibleDecomposition(I, Software => opts.Software);
+	    if W === {} and not I == 0 then W = first components numericalIrreducibleDecomposition(I, Software => opts.Software);
 	    sourcePoint = numericalSourceSample(I, W);
 	);
 	newSamplePair = first numericalEval(F, {sourcePoint}, true);
@@ -282,10 +282,13 @@ numericalImageDegree'MonodromySolver (List, Ideal, Thing, Point) := PseudoWitnes
 	(combs, toCR) := parametricCombinations(F, dims);
 	polys := polySystem(combs || transpose gens (toCR I)); 
 	(p0,x0) := createSeedPair(polys, coordinates sourcePoint);
-	nnodes := 2; nedges := 7;
-	elapsedTime (vertex,npaths) := monodromySolve(squareUp polys,p0,{x0},NumberOfNodes=>nnodes, NumberOfEdges=>nedges, Verbose=>true);
-	sols := vertex.PartialSols;
-    	{* 
+	nnodes := 5; nedges := 1;
+	elapsedTime (vertex,npaths) := monodromySolve(squareUp polys,p0,{x0},NumberOfNodes=>nnodes, NumberOfEdges=>nedges, 
+	    SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound, 
+	    NumberOfRepeats=>100, Verbose=>true
+	    );
+	sols := points vertex.PartialSols;
+	{* 
 	-- look at residuals 	
 	polys0 := specializeSystem(vertex.BasePoint,polys);
     	for i from 0 to length sols-1 do (
@@ -372,7 +375,7 @@ parametricCombinations (List, List) := (polys, dims) -> (
     CR := C (monoid[gens R]);
     toCR := map(CR,R,gens CR);
     coeffs := genericMatrix(C, c, #polys);
-    combs := coeffs * toCR polysM + genericMatrix(C,a_(numgens R,0),c,1); 
+    combs := coeffs * toCR polysM + genericMatrix(C,a_(#polys,0),c,1); 
     if fiberSlices then ( 
 	coeffs = genericMatrix(C,  b_(0,0), c'-c, numgens R);
 	combs = combs || (coeffs * toCR transpose vars R + genericMatrix(C,b_(numgens R,0),c'-c,1)); 
