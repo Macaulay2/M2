@@ -133,7 +133,7 @@ createSeedPair PolySystem := o -> G -> (
     )
 createSeedPair(PolySystem, List) := o -> (G, L) -> (
     SubList := apply(toList(0..numgens ring G-1), i -> (gens ring G)#i => L#i);
-    subZeros := apply(gens coefficientRing ring G, g -> g => 0)
+    subZeros := apply(gens coefficientRing ring G, g -> g => 0);
     b := sub(matrix {apply(M, m-> sub(m, subZeros))}, coefficientRing coefficientRing ring G);
     C := coefficientRing ring G;
     M := sub(sub(G.PolyMap, SubList), C);
