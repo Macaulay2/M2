@@ -10,8 +10,8 @@ W = numericalImageDegree(F, ideal 0_R)
 R = CC[s,t]; F = flatten entries basis(15,R);
 W = numericalImageDegree(F, ideal 0_R, Software=>MonodromySolver)
 R = CC[s,t]; F = flatten entries basis(15,R);
--- W' = numericalImageDegree(F, ideal(s-1), Software=>MonodromySolver) -- PointArray error
-W' = numericalImageDegree(F, ideal(random(1,R)-1), Software=>MonodromySolver) -- PointArray error
+W' = numericalImageDegree(F, ideal(s-1), Software=>MonodromySolver) 
+W' = numericalImageDegree(F, ideal(random(1,R)-1), Software=>MonodromySolver)
 
 R = CC[s,t]; F = flatten entries basis(50,R);
 W = numericalImageDegree(F, ideal 0_R, Software=>BERTINI)
