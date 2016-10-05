@@ -296,7 +296,7 @@ basicReduce (RingElement, BasicList) := o -> (f,B) -> (
 	       iS := indexSupport({divisor});
 	       maxi := position(iS, i->(i != 0), Reverse=>true);
 	       if sigma#maxi >= n then return null;
-	       sd := (shiftMap(R,sigma)) divisor;
+	       sd := (shiftMap(R,sigma)) sub(divisor,R);
 	       f = f - (leadTerm f//leadTerm sd)*sd;
 	       --print("reduce:",g,f,divisor,sd);
 	       );
