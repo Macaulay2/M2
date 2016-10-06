@@ -8,21 +8,20 @@ doc ///
     	    This is an option for the function @TO "monodromySolve" @. By default, the option
 	    SelectEdgeAndDirection is set to selectRandomEdgeAndDirection.
     	Example
-	    polys = parametrizedCyclic 5
-	    (p0,x0) = createSeedPair polySystem polys
-	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-	    monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>mixedVolume)
+	    R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) = createSeedPair polys
+            monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
 	Text
 	    Note that in this example we have not specified the type of selection for edge and direction for the homotopy;
 	    this implies that selectRandomEdgeAndDirection is used. 
     SeeAlso
-	selectBestEdgeAndDirection
+	"selectBestEdgeAndDirection"
     /// 
 
 doc ///
     Key
         selectBestEdgeAndDirection
-
     Headline
     	selects edge and direction based on highest potential for obtaining new information
     Description
@@ -32,13 +31,12 @@ doc ///
 	    selectBestEdgeAndDirection as shown below. The use of selectBestEdgeAndDirection requires
 	    the choice of a potential function as well. 
     	Example
-    	    polys = parametrizedCyclic 5
-	    (p0,x0) = createSeedPair polySystem polys
-	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-	    monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>mixedVolume,
-		SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE)
+	    R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) = createSeedPair polys
+            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection)
     SeeAlso
-         "potentialE"
+         "selectRandomEdgeAndDirection"
     /// 
 
 
