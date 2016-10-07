@@ -3,8 +3,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.9",
-     Date => "Apr 2016",
+     Version => "1.9.2",
+     Date => "Oct 2016",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,

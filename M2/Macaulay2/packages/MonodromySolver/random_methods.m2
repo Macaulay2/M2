@@ -1,7 +1,5 @@
 -- this file is probably deprecated: solveViaMonodromy depends on randomWeights, which is essentially a rewrite of rp1d below
 
-needsPackage "NumericalAlgebraicGeometry"
-
 -- computes a random projection p:R^n->R^1
 rp1d = n -> matrix(RR, {drop(flatten apply(ceiling(n/2),i-> (
 	    us := apply(2, i -> random(sub(0,RR), sub(1,RR)));

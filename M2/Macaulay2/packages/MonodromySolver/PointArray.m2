@@ -30,7 +30,7 @@ if not FAST then (
     export {"rawPointArray","rawPointArrayLookupOrAppend","rawPointArrayLookup"} 
     )
 
-needsPackage "NAGtypes"
+-- needsPackage "NAGtypes"
 PointArray = new Type of MutableHashTable
 pointArray = method()
 pointArray List := B -> (
@@ -80,7 +80,6 @@ positions(PointArray, Function) := (A, f) -> (
 
 TEST /// 
     restart
-    path = {"~/R/polysparse/code/"} | path
     needsPackage "MonodromySolver"
     p = point {{1_CC,2_CC}}
     A = pointArray {p}

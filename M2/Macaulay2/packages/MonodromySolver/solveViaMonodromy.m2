@@ -20,8 +20,6 @@ export {
 --     point0, (as above)
 --     s0, (as above)
 
---needs "./random_methods.m2"
-
 -- change the behavior of random CC (pick uniformly in a unit disk)
 old'random'Type = lookup(random,Type)
 random Type := o -> R -> (
