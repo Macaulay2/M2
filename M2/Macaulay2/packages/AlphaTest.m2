@@ -9,7 +9,8 @@ newPackage(
     	Headline => "Alpha Test",
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-    	DebuggingMode => true		 -- set to true only during development
+    	--DebuggingMode => true		 -- set to true only during development
+    	DebuggingMode => false
     	)
 
 -- Any symbols or functions that the user is to have access to
@@ -262,15 +263,6 @@ certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
 
 
 TEST ///
-restart
-load "AlphaTest.m2"
-needsPackage "NumericalAlgebraicGeometry"
-
-      polySystem List := L -> (
-           polySystem transpose matrix {L} 
-          )
-      
-
 R = CC[x,y]
 f = polySystem {x + y, x^2 - 4}
 sols = solveSystem f
@@ -302,3 +294,9 @@ hermitianNorm(p1)
 absValue(2)
 absValue(4+i)
 
+
+restart
+check "AlphaTest"
+uninstallAllPackages()
+installPackage "AlphaTest"
+viewHelp AlphaTest
