@@ -8,22 +8,20 @@ doc ///
     	    This is an option for the function @TO "monodromySolve" @. By default, the option
 	    SelectEdgeAndDirection is set to selectRandomEdgeAndDirection.
     	Example
-    	    CC[a,b,c][x]
-	    polys = matrix{{a*x^2+b*x+c}}
-	    (p0,x0) := createSeedPair polySystem polys
-	    (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>2)
-	    points V.PartialSols
+	    R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) := createSeedPair polys
+            monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
 	Text
 	    Note that in this example we have not specified the type of selection for edge and direction for the homotopy;
 	    this implies that selectRandomEdgeAndDirection is used. 
     SeeAlso
-	selectBestEdgeAndDirection
+	"selectBestEdgeAndDirection"
     /// 
 
 doc ///
     Key
         selectBestEdgeAndDirection
-
     Headline
     	selects edge and direction based on highest potential for obtaining new information
     Description
@@ -33,14 +31,12 @@ doc ///
 	    selectBestEdgeAndDirection as shown below. The use of selectBestEdgeAndDirection requires
 	    the choice of a potential function as well. 
     	Example
-    	    CC[a,b,c][x]
-	    polys = matrix{{a*x^2+b*x+c}}
-	    (p0,x0) := createSeedPair polySystem polys
-	    (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>4,TargetSolutionCount=>2,
-		SelectEdgeAndDirection=>selectBestEdgeAndDirection,Potential=>potentialE)
-	    points V.PartialSols
+	    R = CC[a,b,c,d][A,B]
+            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+	    (p0,x0) = createSeedPair polys
+            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
     SeeAlso
-         "potentialE"
+         "selectRandomEdgeAndDirection"
     /// 
 
 
@@ -83,7 +79,8 @@ doc ///
 	Text 
 	    Set nodes by using createSeedPair function.
 	Example    
-            monodromySolve(polys,p0,{x0})
+            (V,npaths) = monodromySolve(polys,p0,{x0})
+	    points V.PartialSols
     SeeAlso
         "createSeedPair"
 	"flowerGraphInit"
