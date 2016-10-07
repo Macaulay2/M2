@@ -1238,7 +1238,7 @@ doc ///
      Key
           reduce
 	  (reduce,RingElement,List)
-	  [reduce, Completely]
+	  [reduce,Completely]
      Headline
           computes an equivariant normal form
      Usage
@@ -1609,11 +1609,9 @@ TEST ///
 R = buildERing({symbol x}, {1}, QQ, 2);
 G = egb({x_0 + x_1}, Algorithm=>Incremental)
 assert(G == {x_0})
-G = egb({x_0 + x_1}, Algorithm=>Incremental)
-assert(G == {x_0})
 R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2);
 egb({y_(0,0) - x_0^2, y_(1,0) - x_1*x_0, y_(0,1) - x_0*x_1}, Algorithm=>Incremental)
-egb({y_(0,1) - x_0^2*x_1, y_(1,0) - x_1^2*x_0}, Algorithm=>Incremental)
+-- egb({y_(0,1) - x_0^2*x_1, y_(1,0) - x_1^2*x_0}, Algorithm=>Incremental) -- takes too long
 ///
 
 TEST ///
