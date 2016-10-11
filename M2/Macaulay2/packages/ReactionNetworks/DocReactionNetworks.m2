@@ -74,8 +74,9 @@ doc ///
 	    F' = steadyStateEquations N
 	    F'' = conservationEquations N
 	    F = join(F',F'')
-	    -- I = ideal F
+	    I = ideal F
 	    -- Assign random values for parameters kk. How to do this?
+	    -- dimension and degree are wrt to R = QQ[cc][kk][xx], incorrect
 ///
 
 doc /// 

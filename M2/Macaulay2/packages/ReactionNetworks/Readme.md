@@ -1,5 +1,22 @@
 TO DO List
 
+October 2016
+
+* Create isInjective function
+* Create reactionMatrix function
+* Fix laplacian function
+* Create A matrix
+* Can we have random, user, and parameter kk's and cc's?
+* Can we group the kk's with the xx's, i.e. make them variables?
+* Create examples that demonstrate how to treat the cc's and kk's
+* Create several examples not within documentation but as
+stand-alone.
+* Update documentation and add new functions
+
+
+
+
+
 * Basic Functions
  * Constructors (parsing non-HR formats) (Tim)
  * Print complexes with labels, i.e. 1->A+B, 2->C+2D,...   (Chill)
