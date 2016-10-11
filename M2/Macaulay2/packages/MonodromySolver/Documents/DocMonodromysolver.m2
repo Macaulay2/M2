@@ -163,12 +163,13 @@ doc ///
     Description
     /// 
 
-doc ///
+{* doc ///
     Key
     	"Example 1"
     Headline
+
     Description
     	Text
 	Example
 
-    ///
+    /// *}
