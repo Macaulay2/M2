@@ -141,7 +141,7 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     for i from 1 to length l - 1 do A = A | l#i;
     A = sub(A, coefficientRing coefficientRing ring G);
     K := numericalKernel(transpose A, 1e-6);
-    offset := solve(transpose A,transpose b);
+    offset := solve(transpose A,transpose b,ClosestFit=>true);
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
     --v := K * transpose matrix {toList ((numcols K):1_CC)};  
     w := transpose randomWeights(numcols K);
