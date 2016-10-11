@@ -471,18 +471,22 @@ W = wnt()
 assert(isDeficient W == 4)
 ///
 
-
+--Weakly reversible if each connected component is strongly connected
 isWeaklyReversible = Rn -> (
     D := Rn.ReactionGraph;
     C := connectedComponents(underlyingGraph D);
     L := flatten apply(C, c-> (apply(subsets(c,2), s -> 
 		isReachable(D,s#0,s#1) and isReachable(D,s#1, s#0)
 		)));
-
-    
-    
+    Q := toList{i:=-1; while i<#L-1 do (
+	    i=i+1;
+	    l:=L#i;
+	    if l==false then break i
+	    )
+	};
+    if Q===toList{null} then true else false
     )
-    --how to extract parts of digraph corresponding to connected componenets?
+
     
 
 --injectivityTest = Rn ->
@@ -492,8 +496,8 @@ restart
 needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
-isWeaklyReversible N
-isWeaklyReversible wnt()
+assert(isWeaklyReversible N == true)
+assert(isWeaklyReversible wnt() == false)
 ///
 
 
