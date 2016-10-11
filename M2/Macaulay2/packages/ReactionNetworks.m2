@@ -21,7 +21,7 @@ newPackage(
 
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
     "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
-    "stoichiometricSubspace", "stoichSubspaceKer", "createRing", "ParameterRing",
+    "stoichiometricMatrix", "stoichSubspaceKer", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue",
     "displayComplexes", "isDeficient", "isWeaklyReversible",
@@ -227,8 +227,8 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
 net ReactionNetwork := N -> stack networkToHRF N 
 
 
-stoichiometricSubspace = method()
-stoichiometricSubspace ReactionNetwork := N -> (
+stoichiometricMatrix = method()
+stoichiometricMatrix ReactionNetwork := N -> (
     C := N.Complexes;
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
@@ -249,8 +249,8 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
-assert(rank(stoichiometricSubspace CRN) == 3)
-assert(stoichiometricSubspace CRN == 
+assert(rank(stoichiometricMatrix CRN) == 3)
+assert(stoichiometricMatrix CRN == 
     mingens image transpose matrix{{1,-2,0,0,0},{1,-1,1,0,-1},{1,0,1,-1,0}})
 assert(stoichSubspaceKer CRN ==
     mingens image transpose matrix{{2,1,-1,1,0},{-2,-1,2,0,1}})
@@ -454,7 +454,7 @@ I+J
 
 --New functions to be created
 isDeficient = Rn -> (
-    d := rank(stoichiometricSubspace Rn);
+    d := rank(stoichiometricMatrix Rn);
     G := underlyingGraph(Rn.ReactionGraph);
     l := numberOfComponents G;
     p := #Rn.Complexes;
@@ -516,7 +516,7 @@ scan({
      "TwolayerCascadeL.m2",
      "TwositeModificationE.m2",
      "TwositeModificationF.m2",
-     "docCHill.m2"
+     "DocReactionNetworks.m2"
     },
     motif -> load("./ReactionNetworks/"|motif) 
     )

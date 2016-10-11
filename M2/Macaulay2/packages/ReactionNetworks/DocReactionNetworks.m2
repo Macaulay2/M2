@@ -70,8 +70,9 @@ doc ///
 		by the steady-state and conservation equations.  
 	Example
 	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    R = createRing(N, QQ)
 	    F' = steadyStateEquations N
-	    F'' = conservationEquations N - flatten entries random(QQ^1, QQ^(#F''))
+	    F'' = conservationEquations N
 	    F = join(F',F'')
 	    -- I = ideal F
 	    -- Assign random values for parameters kk. How to do this?
@@ -143,18 +144,25 @@ doc ///
     	creates steady-state equations of a reaction network
     Description
     	Text
-	    Obtain the steady-state equations for a given network.
+	    Obtain the steady-state equations for a given network. 
+	    Before any equations can be created, you must invoke the @TO createRing @ 
+	    function, which creates the reaction network ring. If you do not create the ring,
+	    you will receive an error message.
     	Example
 	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    R = createRing(N, QQ)
 	    steadyStateEquations N
 	Text
 	    Obtain the steady-state equations for a motif and display equations.
 	Example
-	    netList steadyStateEquations modificationOfTwoSubstratesI()
+	    N = modificationOfTwoSubstratesI()
+	    R = createRing(N, QQ)
+	    steadyStateEquations N
 	Text
 	    Generate the steady-state equations in a specific ring.
 	Example
 	    N = twoLayerCascadeL()
+	    R = createRing(N, ZZ/2)
 	    F = steadyStateEquations(N, ZZ/2)
     SeeAlso
 	"reactionNetwork"
@@ -173,28 +181,37 @@ doc ///
     Description
     	Text
 	    Generate the conservation equations using the stoichiometric subspace.
+	    Before any equations can be created, you must invoke the @TO createRing @ 
+	    function, which creates the reaction network ring. If you do not create the ring,
+	    you will receive an error message.
     	Example
 	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    R = createRing(N, QQ)
 	    conservationEquations N
 	Text
 	    Obtain the conservation equations for a motif and display equations.
 	Example
-	    netList conservationEquations modificationOfTwoSubstratesI()
+	    N = modificationOfTwoSubstratesI()
+	    createRing(N,QQ)
+	    netList conservationEquations N
 	Text
 	    Generate the conservation equations in a specific ring.
 	Example
 	    N = twoLayerCascadeL()
+	    R = createRing(N, ZZ/2)
 	    G = conservationEquations(N, ZZ/2)
 	Text
 	    The conservation equations describe a linear subspace going through
 	    the origin.  To translate the subspace, the user may choose to use
 	    random values for the parameters, or enter specific values, such as 
-	    initial conditions.  The examples below illustrate these options. 
+	    initial conditions.  
+	    --The examples below illustrate these options. Show both options.
 	Example
 	    N = twoLayerCascadeL()
 	    N.Species
+	    R = createRing(N,QQ)
 	    G = conservationEquations(N, QQ)
-    	    S1 = netList(G - flatten entries random(QQ^1, QQ^(#G)))
+--    	    S1 = netList(G - flatten entries random(QQ^1, QQ^(#G)))
 	    --S2 = sub(G, {xx_(S_0) => (xx_(S_0)-1), xx_E => (xx_E-6/13), xx_(F_1) => (xx_(F_1)-7/10)})	    
 	    --need to cache parameter ring first	    
     SeeAlso
@@ -435,7 +452,7 @@ doc ///
  ///
  
     --"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
-    --"stoichiometricSubspace", 
+    --"stoichiometricMatrix", 
     --"steadyStateEquations", "conservationEquations", 
     --"laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
     --"ReactionRing", "createRing", "ParameterRing",
