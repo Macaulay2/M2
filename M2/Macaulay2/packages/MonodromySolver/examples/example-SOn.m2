@@ -11,7 +11,7 @@ G = polySystem join (polys,linearSlice)--the incidence variety.
 end
 
 restart
-N=6;
+N=7;
 --where N is as in SO(N)
 load "example-SOn.m2"
 describe R
@@ -20,3 +20,24 @@ x0coords = flatten entries id_(CC^N)
 (p0, x0) := createSeedPair(G,x0coords);
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>4,Verbose=>true)
 length V.PartialSols
+
+{* N=6
+
+  node1: 4768
+  node2: 4768
+trackedPaths 0
+     -- 630.504 seconds elapsed
+
+o16 = (HomotopyNode{...5...}, 19087)
+
+-- N=7 -----------------------------------------------                                                                              
+
+(not correct. too many failures?)
+  node1: 111616                                                                                                                
+  node2: 111616                                                                                                                
+trackedPaths 0                                                                                                                 
+     -- 42790.9 seconds elapsed                                                                                                
+                                                                                                                               
+o7 = (HomotopyNode{...5...}, 447568)                                                                                           
+
+*}
