@@ -91,31 +91,39 @@ end
 restart
 load "example-Nash.m2"
 
+-- completeGraph(2,3)
+setRandomSeed 0 -- this seed fails with defaults
 G = getNashSystem(3,3)
 (p0, x0) = createSeedPair G
---peek G
---R = ring G
---L = apply(toList(1..numgens R), i -> random(0.,1.))
---SubList := apply(toList(0..numgens R-1), i -> (gens R)#i => L#i)
---C = coefficientRing ring G
---M = sub(sub(G.PolyMap, SubList), C)
---N = numericalIrreducibleDecomposition ideal M
---c0 = first (first components N).Points
---pre0 = point{apply(SubList, i -> i#1)}
-elapsedTime sols = monodromySolve(transpose G.PolyMap,p0,{x0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(3,3))   
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0})
+points V.PartialSols
+length V.PartialSols
 
-J = first sols
-E = J.Edges
-for e in E do (
-    print peek e.Correspondence12;
-    print peek e.Correspondence21;
-    )
-V = J.Graph.Vertices
-for v in V do (
-    print peek v.PartialSols;
-    )
+bkkBound(3,3)
 
-G = getNashSystem(5,3)
+options monodromySolve
+
+-- completeGraph(2,10)
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
+    NumberOfEdges => 10,TargetSolutionCount => bkkBound(3,3),
+    SelectEdgeAndDirection => selectBestEdgeAndDirection,
+    Potential=>potentialE, 
+    Verbose=>true
+    )   
+points V.PartialSols
+length V.PartialSols
+
+-- completeGraph(2,5)
+G = getNashSystem(4,3)
 (p0, x0) = createSeedPair G
-elapsedTime sols = monodromySolve(transpose G.PolyMap,p0,{x0},NumberOfEdges => 5,TargetSolutionCount => bkkBound(5,3))   
+elapsedTime (V,npaths) = monodromySolve(transpose G.PolyMap,p0,{x0},
+    NumberOfEdges => 5,TargetSolutionCount => bkkBound(4,3),
+    Verbose=>true)   
+getTrackTime(V.Graph)
+solsM2 = points V.PartialSols;
 
+-- same with Bertini's blackbox
+specPolys = specializeSystem (p0,G)
+R = CC[x_1..x_(numgens ring first specPolys)]
+toR = map(R,ring first specPolys,vars R)
+elapsedTime solsB = solveSystem(specPolys/toR, Software=>BERTINI);

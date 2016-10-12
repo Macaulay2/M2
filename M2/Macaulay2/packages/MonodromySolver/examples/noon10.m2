@@ -84,5 +84,4 @@ polys = parametrizedNoon 10
 specPolys = specializeSystem (p0,polys)
 elapsedTime sols = solveSystem specPolys;
 -- 250.841 seconds elapsed -- finds only 59027 
-elapsedTime sols = solveSystem( specPolys, Software=>BERTINI);
 

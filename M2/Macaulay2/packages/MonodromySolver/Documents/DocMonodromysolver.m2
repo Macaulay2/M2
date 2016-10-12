@@ -25,7 +25,7 @@ doc ///
 	    SelectEdgeAndDirection is set to selectRandomEdgeAndDirection.
     	Example
 	    R = CC[a,b,c,d][A,B]
-            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+            polys = polySystem {A*a+B*b,A*B*c+d}
 	    (p0,x0) := createSeedPair polys
             monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
 	Text
@@ -48,7 +48,7 @@ doc ///
 	    the choice of a potential function as well. 
     	Example
 	    R = CC[a,b,c,d][A,B]
-            polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+            polys = polySystem {A*a+B*b,A*B*c+d}
 	    (p0,x0) = createSeedPair polys
             monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
     SeeAlso
