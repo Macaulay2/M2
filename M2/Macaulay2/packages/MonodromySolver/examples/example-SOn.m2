@@ -15,11 +15,10 @@ N=7;
 --where N is as in SO(N)
 load "example-SOn.m2"
 describe R
-setRandomSeed 0 
 x0coords = flatten entries id_(CC^N)
+setRandomSeed 0
 (p0, x0) := createSeedPair(G,x0coords);
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>4,Verbose=>true)
-length V.PartialSols
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfNodes=>2,NumberOfEdges=>4,Verbose=>true)
 
 {* N=6
 
@@ -39,5 +38,18 @@ trackedPaths 0
      -- 42790.9 seconds elapsed                                                                                                
                                                                                                                                
 o7 = (HomotopyNode{...5...}, 447568)                                                                                           
+*}
 
+setRandomSeed 1
+(p0, x0) := createSeedPair(G,x0coords);
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfNodes=>4,NumberOfEdges=>1,Verbose=>true)
+
+{*
+node1: 111616
+node2: 111616
+trackedPaths 0
+-- 58735.3 seconds elapsed
+    	 
+ o9 = (HomotopyNode{...5...}, 671313)
+	 
 *}
