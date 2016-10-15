@@ -1,7 +1,8 @@
 export {
     "createSeedPair",
     "computeMixedVolume",
-    "monodromySolve",
+    "staticMonodromySolve",
+    "dynamicMonodromySolve",
     "completeGraphInit",
     "flowerGraphInit",
     "dynamicFlowerSolve",
@@ -14,6 +15,7 @@ export {
     "GraphInitFunction",
     "SelectEdgeAndDirection",
     "BatchSize",
+    "AugmentGraphFunction",
     "randomWeights"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
@@ -155,70 +157,121 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     (c0,pre0')
     )
 
+
+staticMonodromySolve = method(Options=>{
+	TargetSolutionCount => null,
+	StoppingCriterion => null,
+	SelectEdgeAndDirection => null,
+	GraphInitFunction => null,
+	BatchSize => null,
+	Potential => null,
+	NumberOfNodes => null,
+	NumberOfEdges => null,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false})
+staticMonodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> staticMonodromySolve(polySystem transpose PF, point0, s0, o)
+staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+	mutableOptions := new MutableHashTable from o;
+	if mutableOptions.TargetSolutionCount =!= null then (
+		mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+	);
+	if mutableOptions.StoppingCriterion === null then mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
+	
+	--Remove all the null options so we can set the default just at the core level and not at both dynamic and static levels
+	for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
+	immutableOptions := new OptionTable from (new HashTable from mutableOptions);
+	coreMonodromySolve(PS, point0, s0, immutableOptions)
+)
+
+dynamicMonodromySolve = method(Options=>{
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => null,
+	GraphInitFunction => null,
+	AugmentGraphFunction => null, --NEED SOME DEFAULT HERE. Add edge(s)? Add node?
+	BatchSize => null,
+	Potential => null,
+	NumberOfNodes => null,
+	NumberOfEdges => null,
+	NumberOfRepeats => null,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false})
+dynamicMonodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> staticMonodromySolve(polySystem transpose PF, point0, s0, o)
+dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+	mutableOptions := new MutableHashTable from o;
+	--Looping for some number of times and then quitting doesn't seem to make
+	--sense for the dynamic strategy. After you fail some number of times, you
+	--should augment the graph, not quit.
+	if mutableOptions.TargetSolutionCount === null then
+		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
+
+	--Remove all the null options so we can set the default just at the core level and not at both dynamic and static levels
+	for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
+	immutableOptions := new OptionTable from (new HashTable from mutableOptions);
+	coreMonodromySolve(PS, point0, s0, immutableOptions)
+)
+
 -- main function
-monodromySolve = method(Options=>{
-        TargetSolutionCount => null,
-        StoppingCriterion => null,
-        SelectEdgeAndDirection => selectRandomEdgeAndDirection,
-        GraphInitFunction => completeGraphInit,
+coreMonodromySolve = method(Options=>{
+	TargetSolutionCount => null,
+	StoppingCriterion => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	AugmentGraphFunction => null,
+	GraphInitFunction => completeGraphInit,
 	BatchSize => infinity,
-        Potential => null,
+	Potential => null,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
-monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
-monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-    USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
-    HG := homotopyGraph(PS, Potential=>o.Potential);
-    stoppingCriterion := o.StoppingCriterion; 
-    if o.TargetSolutionCount =!= null then (
-        HG.TargetSolutionCount = o.TargetSolutionCount;
-        stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount or n >= o.NumberOfRepeats);
-    	);
-    if stoppingCriterion === null then stoppingCriterion = (n,L) -> n >= o.NumberOfRepeats;      
-    PA := pointArray s0;
-    node1 := addNode(HG, point0, PA);
-    {*
-    HG.MasterNode = node1; -- not using this
-    HG.MasterFactor = 1; -- ....
-    *}
-    setTrackTime(HG,0);
-      
-    if #s0 < 1 then error "at least one solution expected";
-    
-    selectEdgeAndDirection := o.SelectEdgeAndDirection;
-    o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
+coreMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
+	HG := homotopyGraph(PS, Potential=>o.Potential);
+	if o.TargetSolutionCount =!= null then (
+		HG.TargetSolutionCount = o.TargetSolutionCount;
+	);
+	PA := pointArray s0;
+	node1 := addNode(HG, point0, PA);
+	setTrackTime(HG,0);
 
-    same := 0;
-    npaths := 0;    
-    lastNode := node1;
-    while not stoppingCriterion(same,lastNode.PartialSols) do (
-        (e, from1to2) := selectEdgeAndDirection(HG);
-        if o.Verbose then (
-            -- << "Correspondences are " << keys e.Correspondence12;
-	    if e.?Potential12 then << " (potential12 = " << e.Potential12 << ")";
-            -- << " and " << keys e.Correspondence21;
-	    if e.?Potential21 then << " (potential21 = " << e.Potential21 << ")";
-            << endl << "Direction is " << from1to2 << endl;
-            << "-------------------------------------------------" << endl;
-        );
-        lastNode = if from1to2 then e.Node2 else e.Node1;
-	nKnownPoints := length lastNode.PartialSols;
-        trackedPaths := trackEdge(e, from1to2, o.BatchSize);
-        npaths = npaths + trackedPaths;
-        if o.Verbose then (
-            << "  node1: " << length e.Node1.PartialSols << endl;
-            << "  node2: " << length e.Node2.PartialSols << endl;    	
-            << "trackedPaths " << trackedPaths << endl; 
-            );
-    	if length lastNode.PartialSols == nKnownPoints 
-    	then same = same + 1 else same = 0
-    	);
-    if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
-    then npaths = "failed"; 
-    (lastNode, npaths)
+	if #s0 < 1 then error "at least one solution expected";
+
+	selectEdgeAndDirection := o.SelectEdgeAndDirection;
+	o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
+
+	same := 0;
+	npaths := 0;    
+	lastNode := node1;
+	while not o.StoppingCriterion(same,lastNode.PartialSols) do (
+		(e, from1to2) := selectEdgeAndDirection(HG);
+		if o.Verbose then (
+			-- << "Correspondences are " << keys e.Correspondence12;
+			if e.?Potential12 then << " (potential12 = " << e.Potential12 << ")";
+			-- << " and " << keys e.Correspondence21;
+			if e.?Potential21 then << " (potential21 = " << e.Potential21 << ")";
+			<< endl << "Direction is " << from1to2 << endl;
+			<< "-------------------------------------------------" << endl;
+		);
+		lastNode = if from1to2 then e.Node2 else e.Node1;
+		nKnownPoints := length lastNode.PartialSols;
+		trackedPaths := trackEdge(e, from1to2, o.BatchSize);
+		npaths = npaths + trackedPaths;
+		if o.Verbose then (
+			<< "  node1: " << length e.Node1.PartialSols << endl;
+			<< "  node2: " << length e.Node2.PartialSols << endl;    	
+			<< "trackedPaths " << trackedPaths << endl; 
+		);
+		if length lastNode.PartialSols == nKnownPoints 
+		then same = same + 1 else same = 0;
+		if o.AugmentGraphFunction =!= null then (
+			o.AugmentGraphFunction(HG);
+			same = 0;
+		);
+	);
+	if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
+	then npaths = "failed";
+	(lastNode, npaths)
 )
 
 end
@@ -253,4 +306,3 @@ doc ///
       Text      
           There are a lot of options. Where should we describe these?
 ///
-
