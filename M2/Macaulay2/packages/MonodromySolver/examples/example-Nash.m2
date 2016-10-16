@@ -89,7 +89,7 @@ getNashSystem (ZZ,ZZ) := (n, S) -> (
 end 
 
 restart
-load "example-Nash.m2"
+load "MonodromySolver/examples/example-Nash.m2"
 
 -- completeGraph(2,3)
 setRandomSeed 0 -- this seed fails with defaults

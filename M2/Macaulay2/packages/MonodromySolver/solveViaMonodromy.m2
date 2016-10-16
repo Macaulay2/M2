@@ -1,6 +1,7 @@
 export {
     "createSeedPair",
     "computeMixedVolume",
+    "monodromySolve",
     "staticMonodromySolve",
     "dynamicMonodromySolve",
     "completeGraphInit",
@@ -161,17 +162,18 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
 staticMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
 	StoppingCriterion => null,
-	SelectEdgeAndDirection => null,
-	GraphInitFunction => null,
-	BatchSize => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	GraphInitFunction => completeGraphInit,
+	BatchSize => infinity,
 	Potential => null,
-	NumberOfNodes => null,
-	NumberOfEdges => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 3,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
 staticMonodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> staticMonodromySolve(polySystem transpose PF, point0, s0, o)
 staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount =!= null then (
 		mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
@@ -179,10 +181,34 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if mutableOptions.StoppingCriterion === null then mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
 	
 	--Remove all the null options so we can set the default just at the core level and not at both dynamic and static levels
-	for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
+	-- for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
+	
+	HG := homotopyGraph(PS, Potential=>o.Potential);
+	if o.TargetSolutionCount =!= null then (
+		HG.TargetSolutionCount = o.TargetSolutionCount;
+	);
+	PA := pointArray s0;
+	node1 := addNode(HG, point0, PA);
+	setTrackTime(HG,0);
+
+	if #s0 < 1 then error "at least one solution expected";
+
+	o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
+
 	immutableOptions := new OptionTable from (new HashTable from mutableOptions);
-	coreMonodromySolve(PS, point0, s0, immutableOptions)
+	coreMonodromySolve(HG,node1,immutableOptions)
 )
+
+TEST /// 
+restart
+needsPackage "MonodromySolver"
+R = CC[a,b,c,d][A,B]
+polys = polySystem {A*a+B*b,A*B*c+d}
+(p0,x0) := createSeedPair polys
+monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
+///
+
+monodromySolve = staticMonodromySolve -- for now!!!
 
 dynamicMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
@@ -208,38 +234,31 @@ dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	--Remove all the null options so we can set the default just at the core level and not at both dynamic and static levels
 	for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
 	immutableOptions := new OptionTable from (new HashTable from mutableOptions);
-	coreMonodromySolve(PS, point0, s0, immutableOptions)
+	
+	{* 
+	(1) (node1,npaths) = staticMonodromySolve(PS,point0,s0,o) 
+	(2) while not success do ( 
+	    o.AugmentGraphFunction(HG);
+	    (node1,npaths) = coreMonodromySolve(HG, node1)
+	    )
+	*}
 )
 
 -- main function
 coreMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
 	StoppingCriterion => null,
-	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
-	AugmentGraphFunction => null,
-	GraphInitFunction => completeGraphInit,
-	BatchSize => infinity,
+	SelectEdgeAndDirection => null,
+	GraphInitFunction => null,
+	BatchSize => null,
 	Potential => null,
-	NumberOfNodes => 2,
-	NumberOfEdges => 3,
+	NumberOfNodes => null,
+	NumberOfEdges => null,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
-coreMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
-	HG := homotopyGraph(PS, Potential=>o.Potential);
-	if o.TargetSolutionCount =!= null then (
-		HG.TargetSolutionCount = o.TargetSolutionCount;
-	);
-	PA := pointArray s0;
-	node1 := addNode(HG, point0, PA);
-	setTrackTime(HG,0);
-
-	if #s0 < 1 then error "at least one solution expected";
-
+coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;
-	o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
-
 	same := 0;
 	npaths := 0;    
 	lastNode := node1;
@@ -264,10 +283,6 @@ coreMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 		);
 		if length lastNode.PartialSols == nKnownPoints 
 		then same = same + 1 else same = 0;
-		if o.AugmentGraphFunction =!= null then (
-			o.AugmentGraphFunction(HG);
-			same = 0;
-		);
 	);
 	if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
 	then npaths = "failed";
