@@ -265,6 +265,16 @@ moveCheckers Array := blackred -> (
 	 )
 )
 
+----------------------------------------------------
+-- Statistics
+---------------
+stats = new MutableHashTable;
+resetStats = () -> stats =  new MutableHashTable from flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0})  
+resetStats()
+
+statsIncrementMove = m -> stats#m = stats#m + 1;
+
+getStats = () -> stats
 
 --------------------------------------------------------
 -- playCheckers
@@ -340,6 +350,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  IsResolved => false,
 	  Fathers => {}
 	  };
+     statsIncrementMove typeofmove;
      if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)}; -- add the new way to get to this node
      if not node'exists then ( --add the ultimate node part here...
          --<< "this is node'exists "<< node'exists<<endl;
