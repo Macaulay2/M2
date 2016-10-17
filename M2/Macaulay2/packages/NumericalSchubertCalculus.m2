@@ -40,6 +40,7 @@ protect Solutions
 protect SolutionsSuperset -- temporary
 
 -- NC means no checker in that column
+--  16.09.29:  Frank thinks we should choose one or the other, but not both
 NC = infinity
 
 -- OUR FIELD
@@ -84,7 +85,6 @@ installMethod(setFlags, o -> () -> scan(keys o, k->if o#k=!=null then
 	else if k === NSC'VERIFY'SOLUTIONS then VERIFY'SOLUTIONS = o#k
 	else if k === NSC'BLACKBOX then BLACKBOX = o#k
 	))
-
  
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 load "NumericalSchubertCalculus/pieri.m2"
@@ -98,12 +98,11 @@ load "NumericalSchubertCalculus/galois.m2"
 ---------------------
 -- redChkrPos 
 --
--- given two partitions, computes the positions 
--- of the red checkers
+-- given two brackets, computes the positions of the 
+-- red checkers at the start of a checkerboard game
 ---------------------
--- input: two Schubert conditions l and m
---			entered as brackets
---		  the Grassmannian G(k,n)
+-- input: two Schubert conditions l and m written 
+--	   as brackets the Grassmannian G(k,n)
 --
 -- Output: checkboard coordinates for the 
 --         red checkers
@@ -115,7 +114,7 @@ load "NumericalSchubertCalculus/galois.m2"
 --partition2bracket({2},3,6)
 --     o = {2, 5, 6}
 --redChkrPos({2,4,6},{2,5,6},3,6)  
---     o = {NC, 5, NC, 4, NC, 1}
+--     o = {infinity, 5, infinity, 4, infinity, 1}
 --------------------
 redChkrPos = method(TypicalValue => List)
 redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
@@ -227,7 +226,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 -- blackCheckersPosition = {0,1,3,4,5,2};
 -- redCheckersPosition = {0, NC, NC, 4, NC, NC};
 --
--- moveCheckers [blackCheckers, redCheckers];
+-- moveCheckers [blackCheckersPosition, redCheckersPosition];
 --    o =  ({[{0, 1, 2, 4, 5, 3}, {0, infinity, infinity, 4, infinity, infinity}, {1, 2, 0}]}, 2)
 -------------------------------------
 moveCheckers = method(TypicalValue => List)
@@ -244,11 +243,15 @@ moveCheckers Array := blackred -> (
      blackdown1 := position(blackposition, x->x == n-1) + 1;
      if blackdown1 == n then return ({},"leaf");
      blackup1 := position(blackposition, x-> x == 1+blackposition#blackdown1);
-     -- The column of the right black checker to be sorted goes from desccol 
-     -- to the end of the board.
-     -- Determine the rows of the next pair of black checkers to be sorted.
+     -- Determine the rows of the pair of black checkers that will be sorted.  They are row r and 
+     --    r+1 in the paper with r the critical row of the falling checker.
+     --  n-blackdown1 is one more thatn the number of checkers in the upper right corner 
+     --     (region A in paper)
+     --  blackup1 is the number of checkers above and to the left of rising checker (as we are 0-based)
+     --  Their sum is one more than the number of checkers above the moving pair = row of rising checker
      blackup2 := n-blackdown1+blackup1;
-     blackdown2 := blackup2-1; -- this is the critical row
+     blackdown2 := blackup2-1; -- this is the critical row 
+     -- Now we figure out how to move the red checkers
      listofredpositions := moveRed({blackup1,blackup2},{blackdown1,blackdown2}, redposition);
      blackposition = new MutableList from blackposition;
      blackposition#blackup1 = blackposition#blackup1 - 1;
@@ -962,12 +965,13 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
 ------------------------
 -- isRedCheckerInRegionE
 ------------------------
--- Binary function that tells if 
--- a given red checker is NorthWest to
--- a the critical black checker. (better explained in the paper) 
--- 
--- This function is necessary for
--- Ravi's change of coordinates
+-- Binary function that tells if a given red checker, indicated by its row number,
+--  lies in the `critical diagonal', also referred to as `Region E'.  This is explained in 
+--  the paper.   This is equivalent to the column C of this red checker satisfying
+--   a \leq C < b, where a is the column of the rising black checker and b that of 
+--   the falling (these are in rows r and r+1, where r is the `critical row'
+--
+-- This function is needed to set up the homotopy in (at least) case II (again, see the paper).
 ----------------------------
 -- Input: 
 --     i = coordinates of a red checker
