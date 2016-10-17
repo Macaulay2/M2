@@ -2,8 +2,26 @@ TO DO List
 
 October 2016
 
+*  Currently:  There is a ReactionRing stored in reactionNetwork hash
+	table. It is created using createRing and it is of the form
+	FF[cc][kk][xx], where cc are parameters used in the stoichiometric
+	equations creation, kk are the reaction rates used in the creation of
+	the steady-state equations, and xx are the concentrations.
+
+*  We need:  The parameters cc and kk to have options for user input and
+   random. How to create this and update the ReactionRing?
+
+*  I don't understand how this is different from keeping the kk's as
+   unknown parameters:  We also want the option of grouping the parameters kk with the
+   variables xx, thus making kk variables as well.
+
+*  Once the ReactionRing is fixed there should be no more changes that
+   will afftect the examples we use in MonodromySolver. The rest of
+   the functions are auxiliary. 
+
+
 * Create isInjective function
-* Create reactionMatrix function
+* Create reactionMatrix, reactantMatrix, stoichiometricMatrix
 * Fix laplacian function
 * Create A matrix
 * Can we have random, user, and parameter kk's and cc's?
@@ -15,7 +33,7 @@ stand-alone.
 
 
 
-
+Summer 2016
 
 * Basic Functions
  * Constructors (parsing non-HR formats) (Tim)

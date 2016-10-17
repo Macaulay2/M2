@@ -390,6 +390,7 @@ CRN.ReactionRing
 createRing(CRN, QQ)
 F = steadyStateEquations CRN
 steadyStateEquations CRN
+matrix{F}
 netList F
 ///
 
