@@ -82,7 +82,7 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
 --
 -- DESCRIPTION :
 --    Returns the global coordinates for the homotopy in the stay case, which is 
---       case II in the paper.
+--       case II in the paper.  By global coordinates, we mean the Steifel coordinates MX.
 --
 -- IN :
 --    father : the current father to the node,
@@ -103,7 +103,7 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
       if isRedCheckerInRegionE(position(red, i->i==red'sorted#j),father)
          -- column of the j-th red checker on the board
       then (
-         -- The 0_FFF in position r+1,j here is a red herring.  It is 0_FF already in Xt
+         -- The 0_FFF in position r+1,j here is a red herring.  It is 0_FFF already in Xt
          submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
          || submatrix(Xt, {r+2..n-1}, {j})
       ) else (
@@ -125,7 +125,7 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    rings,checkers,rsnM) -> (
 --
 -- DESCRIPTION :
---    Returns the global coordinates for the homotopy in the swap case.
+--    Returns the global coordinates for the homotopy in the swap case, case III in paper
 --
 -- IN :
 --    father : the current father to the node,
@@ -153,6 +153,10 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
       (
       -- note: this part can be optimized for speed
          transpose matrix { apply(n, i -> (
+      --
+      --  Frank thinks a case is missing
+      --  What happens if i lies in Region E and is not r+1 or R ???
+      --
             if i==r then Xt_(r+1,s+1)
             else if i==r+1 then -t*Xt_(r+1,s+1)
             else if isRegionA i then -t*Xt_(i,s+1)
@@ -162,12 +166,14 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
          transpose matrix { apply(n, i -> (
             if i==bigR then 1
             else if i==r+1 then Xt_(r+1,s+1)
+	    --  This above case is only executed when bigR is not equal to r+1
             else if i==r then 0
             else Xt_(i,s+1))) }
       ) else if isRedCheckerInRegionE(
          position(red,i->i==red'sorted#j), father)
          -- column of the j-th red checker on the board
-         then (
+         then (  -- this case has a red Herring in it:  
+	         --   submatrix(Xt,{r+1},{j}) is always 0  (See globalStayCoords above)
             submatrix(Xt,{0..r-1},{j}) 
             || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
             || matrix{{0_FFF}}
@@ -281,7 +287,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       ) 
       else
          normalizeColumn(X'',r,s)
-      ) -- end second argument of apply
+     ) -- end second argument of apply
    ) -- end apply targetSolutions
 );
 
