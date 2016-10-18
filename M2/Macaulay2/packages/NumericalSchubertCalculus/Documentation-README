@@ -41,14 +41,14 @@ makeLocalCoordinates
 
 solutionToChart
 				-- takes a solution matrix in global coordinates and converts it into local coordinates 
-				-- (just giving the values of the variables)
+				-- (making the linear transformation but just giving the values of the variables)
 
 changeFlags (better name?) (only used when LinearAlgebra is set to false!) ** NEEDS TO BE VERIFIED
 				-- function to convert solutions written wrt FlagsA to solutions written wrt FlagsB
 				-- it is called recursively: first only makes a change of coordinates (linear transformation)
 				-- the other call makes parameter homotopy changing one column at the time
 
-toRawSolutions  ** WHAT IS THE DIFFERENCE WITH solutionToChart?
+toRawSolutions  
 				-- takes solutions in local coordinates written as nxk matrices and just makes the list of values for the variables
 						of the local coordinates coordX in the checkerboard variety
 						(mainly used for writing solutions for the homotopy functions)
@@ -156,6 +156,8 @@ notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
 
 === Not Exported ===
 
+squareUpPolynomials(ZZ,Matrix)
+squareUpPolynomials(ZZ,Ideal)
 
 
 ====================================================
@@ -199,4 +201,22 @@ randomSchubertProblemSolution
 oneSolutionForOneInstance
 
 parametricSchubertProblem
+
+
+
+====================================================
+==        galois.m2 
+====================================================
+
+=== Exported ===
+
+findGaloisElement
+isFullSymmetric
+isGaloisFullSymmetric
+
+=== Not Exported ===
+
+
+
+
 
