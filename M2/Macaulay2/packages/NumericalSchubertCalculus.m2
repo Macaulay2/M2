@@ -14,9 +14,6 @@ newPackage(
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
---    PackageExports => {
---	"NAGtypes"
---	},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry"
@@ -25,7 +22,8 @@ newPackage(
     DebuggingMode => true
     )
 debug NumericalAlgebraicGeometry
-export {
+export { 
+   "changeFlags", "bigCellLocalCoordinates", 
    "setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
    "solveSchubertProblem"
    --   changeFlags  -- better name?
@@ -90,6 +88,17 @@ load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
 load "NumericalSchubertCalculus/galois.m2"
+
+--------------------------------------
+-- produces a matrix that parmeterizes
+-- the "big cell" of Gr(k,n)
+------------------------------
+bigCellLocalCoordinates = method()
+bigCellLocalCoordinates(ZZ,ZZ) := (k,n) -> (
+    x := symbol x;
+    R := FFF(monoid[x_(1,1)..x_(n-k,k)]);
+    transpose genericMatrix(R,k,n-k) || map(R^k)
+    )
 
 -----------------------------
 -- Numerical LR-Homotopies
@@ -671,7 +680,11 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    R := FFF[x_(1,1)..x_(k,n-k)];
    MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    -- THE SOLUTIONS MIGHT NOT FIT MX (that's why I have an error for some problems)
+   
+   -- NEW: solutionsB := changeFlags'oneHomotopy(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
+   -- OLD: 
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
+   
    -- the following clean is a hack, instead, we need to do a newton step check
    -- when we changeFlags as there is a numerical check in there... 
    -- the following is a hack
@@ -738,6 +751,26 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
    solutionsS
    )
 
+changeFlags'oneHomotopy = method()
+changeFlags'oneHomotopy(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
+   (conditions,flagsA,flagsB) := conds'A'B; 
+   if #solutionsA == 0 then return {};
+   t:= symbol t;
+   n := numcols last flagsA;
+   R := ring last flagsA;
+   R1 := R[t];
+   toR1 := map(R1,R);
+   flagsHomot := apply(flagsA, flagsB, (A,B)->toR1 A * (1-t) + toR1 B * t); 
+   RMx := ring MX;
+   m := numgens RMx;
+   R2 := (coefficientRing RMx)[gens RMx,t];
+   Polys := flatten entries squareUpPolynomials(m, 
+       makePolynomialsGivenConditionsFlags(sub(MX,R2),conditions,flagsHomot)
+       );
+   solutionsB := trackHomotopy(transpose matrix {Polys}, apply(solutionsA,s->point{s}));      	  
+   solutionsB/coordinates
+   )
+
 
 TEST ///
 ---------
@@ -745,31 +778,24 @@ TEST ///
 -- moves solutions wrt flags A
 -- to solutions wrt flags B
 --
--- This function doesn't really test if they are actual solutions
------------------
--- If you want to run this example:
--- 1.- you need to uncomment it AFTER loading NumericalSchubertCalculus package
--- 2.- you need to load the NumercialAlgebraicGeometry package
--- 3.- you need to manually load the function makePolynomials
--- 4.- you need to manually load the function changeFlags
--- 5.- you need to manually load the function changeflagsLinear
---
--- You could avoid all this maybe if you can run this example at the end of
--- the code, where the other examples are.
------------------
---
-debug needsPackage "NumericalSchubertCalculus"
+restart
 needsPackage "NumericalAlgebraicGeometry"
+debug needsPackage "NumericalSchubertCalculus"
+FFF = CC_53
 Rng = FFF[x_{1,1}, x_{1,2}];
 MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
 conds = {{1},{1}};
 Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
+-- Flags1 = {rsort id_(FFF^4), id_(FFF^4)_{1,3,0,2}};
 sols = solveSystem (
     first makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i)),{})
     )_*
 Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
 solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+solsT = changeFlags'oneHomotopy(MX, sols, (conds, Flags1, Flags2))
+assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+
 /// --end of TEST
 
 --------------------------
@@ -912,9 +938,10 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 -- input:     S -- matrix of solutions
 --    	      	    assumes the matrix lives in the Schubert cell for l with
 --                  the standard flag, but not all pivots are 1.
---    	       b -- the bracket corresponding to the standard flag
+--    	      b -- the bracket corresponding to the standard flag
 --    	      	    this is just a list of the parts of the flag that are afected by a partition lambda
 --    	      	    (equivalent to a partition with k parts of size <= n-k)
+--            (the default bracket is  
 -- output:  Sred  --matrix reduced
 -------------------
 columnReduce=method(TypicalValue=> Matrix )
