@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: -644878192 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R=CC[x0,x1,x2]
 
@@ -29,18 +29,20 @@ i4 : makeB'InputFile(storeBM2Files,
          B'Functions=>{sliceH},
          B'Polynomials=>{"H0+T","H1"}|F)
 
-o4 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22737-0/0/input
+o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74600-0/0/input
 
 o4 : File
 
 i5 : runBertini(storeBM2Files,PreparePH2=>true)
-bertini
+~/bertini
 
 i6 : b'TraceTestImage(storeBM2Files)
-bertini
-bertini
+~/bertini
+~/bertini
 
-o6 = {-2.22045e-16, 1.33227e-15+8.88178e-16*ii, 2.22045e-16*ii}
+o6 = {1.11022e-16+1.11022e-16*ii, -8.88178e-16-1.11022e-15*ii,
+     ------------------------------------------------------------------------
+     -8.88178e-16-1.55431e-15*ii}
 
 o6 : List
 
@@ -72,30 +74,30 @@ i10 : makeB'InputFile(storeBM2Files,
           B'Functions=>xyzSub|{sliceH},
           B'Polynomials=>{"H1","H0+T"})
 
-o10 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22737-0/0/input
+o10 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74600-0/0/input
 
 o10 : File
 
 i11 : runBertini(storeBM2Files,PreparePH2=>true)
-bertini
+~/bertini
 
 i12 : s=importSolutionsFile(storeBM2Files)
 
-o12 = {{-.754356-.423415*ii, -.492855-1.17821*ii}, {.027381-.750045*ii,
+o12 = {{-.562602+3.24657*ii, 4.05316+.575333*ii}, {-.223317+1.21526*ii,
       -----------------------------------------------------------------------
-      .286528+.954772*ii}, {-.652062+3.14353*ii, 3.90141+.686495*ii},
+      -1.97609-.300483*ii}, {-.159001-.844238*ii, .327621+.733062*ii},
       -----------------------------------------------------------------------
-      {-.318508+1.03827*ii, -1.69508-.463055*ii}}
+      {-.752626-.609256*ii, -.40469-1.00791*ii}}
 
 o12 : List
 
 i13 : b'TraceTestImage(storeBM2Files,MapPoints=>({a,a^2+b,a^2+b^2},{a,b}))
-bertini
-bertini
+~/bertini
+~/bertini
 
-o13 = {8.88178e-16, - 8.88178e-16 - 3.55271e-15*ii, - 1.68754e-14 -
+o13 = {- 8.88178e-16 + 4.88498e-15*ii, - 1.42109e-14 - 1.06581e-14*ii, -
       -----------------------------------------------------------------------
-      2.13163e-14*ii}
+      1.15463e-14 - 1.5099e-14*ii}
 
 o13 : List
 
@@ -127,22 +129,22 @@ i17 : makeB'InputFile(storeBM2Files,
           B'Functions=>{sliceH},
           B'Polynomials=>{"H0+T","H1"}|F)
 
-o17 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22737-0/0/input
+o17 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74600-0/0/input
 
 o17 : File
 
 i18 : runBertini(storeBM2Files,PreparePH2=>true)
-bertini
+~/bertini
 
 i19 : b'TraceTestImage(storeBM2Files,StopBeforeTest=>true)--Returns the trace for each parameter homotopy using -gammma, 0, and gamma respectively.
-bertini
-bertini
+~/bertini
+~/bertini
 
-o19 = {{.394888-.926156*ii, .547558+.406091*ii, -2.58635+.632553*ii},
+o19 = {{-.259475-.866203*ii, .481912+.264561*ii, -2.07986+.87759*ii},
       -----------------------------------------------------------------------
-      {.035457-1.22597*ii, .585902+.301786*ii, -2.45511+1.01123*ii},
+      {-.618906-1.16602*ii, .520256+.160256*ii, -1.94863+1.25627*ii},
       -----------------------------------------------------------------------
-      {-.323974-1.52579*ii, .624247+.197481*ii, -2.32387+1.38991*ii}}
+      {-.978337-1.46584*ii, .558601+.055951*ii, -1.81739+1.63495*ii}}
 
 o19 : List
 

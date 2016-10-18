@@ -19,11 +19,12 @@ fromRingXbertini (List,Ring) := (F,R) -> (
 
 toBertiniOptions = method()
 toBertiniOptions OptionTable := OptionTable => o -> (
+    o = fillInDefaultOptions o;
     opt := {
-	TRACKTOLBEFOREEG=>o.CorrectorTolerance,
-	TRACKTOLDURINGEG=>o.CorrectorTolerance*o.EndZoneFactor,
-	FINALTOL=>o.CorrectorTolerance*o.EndZoneFactor,
-	Verbose=>false	
+	TrackTolBeforeEG=>o.CorrectorTolerance,
+	TrackTolDuringEG=>o.CorrectorTolerance*o.EndZoneFactor,
+	FinalTol=>o.CorrectorTolerance*o.EndZoneFactor,
+	Verbose=>DBG
 	};
     new OptionTable from opt -- TODO: write all options
     )
@@ -44,7 +45,7 @@ solveBertini (List,OptionTable) := List => (F,o) -> (
 trackHomotopyBertini = method(TypicalValue => List)
 trackHomotopyBertini (List,RingElement,List,OptionTable) := List => (F,t,solS,o) -> (
     (F',t'list) := toRingXbertini(F,{t});    
-    bertiniTrackHomotopy(first t'list,F',solS,toBertiniOptions o)
+    bertiniTrackHomotopy(first t'list,F',solS,Verbose=>false {*,toBertiniOptions o*})
     )
 
 trackBertini = method(TypicalValue => List)

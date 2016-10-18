@@ -11,7 +11,11 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/arith.h>
+#pragma GCC diagnostic pop
 
 namespace M2 {
   /**

@@ -1,6 +1,5 @@
--- -*- M2-comint -*- {* hash: -1868039377 *}
--- COMPILE TIME: Oct 14 2015, 14:51:21
---loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- {* hash: -2016842973 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R=CC[u1,u2,u3,x,y];
 
@@ -8,29 +7,24 @@ i2 : f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
 
 i3 : f2=(x-11)*(x-12)*(x-13)-u1;
 
-i4 : paramValues0={{1,0,0}};
+i4 : paramValues0={1,0,0};
 
-i5 : paramValues1={{0,1+2*ii,0}};
+i5 : paramValues1={0,1+2*ii,0};
 
 i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
-Temporary directory for input and output files:/tmp/M2-30313-0/1
+~/bertini
+~/bertini
+~/bertini
 
-The version of Bertini 
-	    you have installed on your computer 
-	    was used for this run. 
-Bertini is under ongoing development by 
-	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
-
-o6 = {{{11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}, {13.3247, 1}}, {{11,
+o6 = {{{13.3247, 1}, {11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}}, {{13,
      ------------------------------------------------------------------------
-     2}, {12, 2}, {13, 2}}}
+     2}, {12, 2}, {11, 2}}}
 
 o6 : List
 
 i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
 
-o7 = {{11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}, {13.3247, 1}}
+o7 = {{13.3247, 1}, {11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}}
 
 o7 : List
 
@@ -53,48 +47,94 @@ o10 = x*u1 + y*u2
 
 o10 : R
 
-i11 : finalParameters0={{0,1}}
+i11 : finalParameters0={0,1}
 
-o11 = {{0, 1}}
+o11 = {0, 1}
 
 o11 : List
 
-i12 : finalParameters1={{1,0}}
+i12 : finalParameters1={1,0}
 
-o12 = {{1, 0}}
+o12 = {1, 0}
 
 o12 : List
 
-i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },ISPROJECTIVE=>1)
-Temporary directory for input and output files:/tmp/M2-30313-0/3
+i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
+~/bertini
+~/bertini
+~/bertini
 
-The version of Bertini 
-	    you have installed on your computer 
-	    was used for this run. 
-Bertini is under ongoing development by 
-	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
-
-o13 = {{{-.728824-.337967*ii, 6.02762e-16+3.20924e-17*ii,
+o13 = {{{1, -2.91473e-16-2.22419e-17*ii, 1}, {-1,
       -----------------------------------------------------------------------
-      -.728824-.337967*ii}, {.719626-1.1201*ii, 2.5083e-16-3.07093e-16*ii,
+      -8.25667e-16-7.54243e-17*ii, 1}}, {{-5.15841e-19+5.81336e-19*ii, 1,
       -----------------------------------------------------------------------
-      -.719626+1.1201*ii}}, {{2.9138e-18+1.33465e-16*ii, -.499672+.461577*ii,
-      -----------------------------------------------------------------------
-      -.499672+.461577*ii}, {1.12323e-16-1.32923e-16*ii, .456259+.890904*ii,
-      -----------------------------------------------------------------------
-      -.456259-.890904*ii}}}
+      -1}, {1.34848e-17-5.05943e-17*ii, 1, 1}}}
 
 o13 : List
 
 i14 : bPH_0--The two solutions for finalParameters0
 
-o14 = {{-.728824-.337967*ii, 6.02762e-16+3.20924e-17*ii,
+o14 = {{1, -2.91473e-16-2.22419e-17*ii, 1}, {-1, -8.25667e-16-7.54243e-17*ii,
       -----------------------------------------------------------------------
-      -.728824-.337967*ii}, {.719626-1.1201*ii, 2.5083e-16-3.07093e-16*ii,
-      -----------------------------------------------------------------------
-      -.719626+1.1201*ii}}
+      1}}
 
 o14 : List
 
-i15 : 
+i15 : finParamValues={{1},{2}}
+
+o15 = {{1}, {2}}
+
+o15 : List
+
+i16 : bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
+~/bertini
+~/bertini
+~/bertini
+
+o16 = {{{1}, {-1}}, {{1.41421}, {-1.41421}}}
+
+o16 : List
+
+i17 : bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")
+~/bertini
+~/bertini
+~/bertini
+
+o17 = {{{1}, {-1}}, {{1.41421}, {-1.41421}}}
+
+o17 : List
+
+i18 : class bPH1_0_0
+
+o18 = Point
+
+o18 : Type
+
+i19 : class bPH2_0_0
+
+o19 = List
+
+o19 : Type
+
+i20 : dir1 := temporaryFileName(); -- build a directory to store temporary data
+
+i21 : makeDirectory dir1;
+
+i22 : bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)
+~/bertini
+~/bertini
+~/bertini
+
+i23 : B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
+
+o23 = {{1}, {-1}}
+
+o23 : List
+
+i24 : B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
+
+o24 = {{1.41421}, {-1.41421}}
+
+o24 : List
+
+i25 : 

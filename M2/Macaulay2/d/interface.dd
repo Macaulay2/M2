@@ -1552,6 +1552,22 @@ export rawFactor(e:Expr):Expr := (
      );
 setupfun("rawFactor",rawFactor);
 
+export rawRoots(e:Expr):Expr := (
+    when e
+    is s:Sequence do (
+      if length(s) == 3 then
+        when s.0 is x:RawRingElementCell do
+        when s.1 is n:ZZcell do
+        if isBoolean(s.2) then 
+          toExpr(Ccode(RawRingElementArrayOrNull, "rawRoots(", x.p, ",", toInt(n.v), ",", toBoolean(s.2), ")" ))
+        else WrongArg(3, "a boolean")
+        else WrongArg(2, "a raw ring element")
+        else WrongArg(1, "an integer")
+      else WrongNumArgs(2))
+    else WrongArg("a raw ring element and an integer")
+);
+setupfun("rawRoots", rawRoots);
+
 export rawCharSeries(e:Expr):Expr := (
      when e
      is x:RawMatrixCell do toExpr( Ccode( RawMatrixArrayOrNull, "rawCharSeries(", x.p, ")" ))
@@ -3550,6 +3566,26 @@ export rawMarkedGB(e:Expr):Expr := (
      else WrongNumArgs(5)
      else WrongNumArgs(5));
 setupfun("rawMarkedGB", rawMarkedGB);
+
+export rawMinimalBetti(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 3 then
+    when s.0 is rawC:RawComputationCell do
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else -- degree_limit ...
+     if getLengthOfSequence(s.1)>1 then WrongArg(2,"a sequence of small integers of length at most 1") else -- ... converted to a heft value
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
+     if getLengthOfSequence(s.2)>1 then WrongArg(3,"a sequence of small integers of length at most 1") else
+     toExpr(Ccode(RawArrayIntOrNull,"rawMinimalBetti(",
+             rawC.p, ",",
+             getSequenceOfSmallIntegers(s.1), ",",
+             getSequenceOfSmallIntegers(s.2), 
+             ")"
+             ))
+     else WrongArg(1, "a raw resolution computation")
+     else WrongNumArgs(3)
+     else WrongNumArgs(3)
+    );
+setupfun("rawMinimalBetti", rawMinimalBetti);
 
 export rawGBSetStop(e:Expr):Expr := (
      when e is s:Sequence do

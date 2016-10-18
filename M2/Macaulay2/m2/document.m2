@@ -939,9 +939,10 @@ processInputOutputItems := (key,fn) -> x -> (
      default := if optsymb =!= null and text =!= null and #text > 0 then (
 	  if fn === null or fn === ()
 	  then error ("default value for option ",toString optsymb, " not accessible, base function not specified (with BaseFunction => ...)");
-	  if not (options fn)#?optsymb
+     	  opts := if instance(key,Sequence) and options key =!= null then options key else options fn;
+	  if not opts#?optsymb
 	  then error("symbol ",optsymb," is not the name of an optional argument for function '",fn,"'");
-	  t := toString (options fn)#optsymb;
+	  t := toString opts#optsymb;
 	  if not match("^\\{\\*Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 
 	  if idname =!= null then TT idname, 
@@ -1414,7 +1415,7 @@ tutorial = x -> (
      x = apply(x, line -> if mat("^--$",line) then PARA{} else line);
      x = sublists(x,
 	  line -> class line === String and match("^--",line),
-	  sublist -> TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))),
+	  sublist -> PARA TEX concatenate between(newline,apply(sublist,line -> replace("^-- *","",line))),
 	  identity);
      x = sublists(x,
 	  line -> class line === String,

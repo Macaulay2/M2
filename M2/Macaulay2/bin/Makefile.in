@@ -37,6 +37,8 @@ relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
+foo : ; : @libdir@ $(BUILTLIBPATH)
+
 check: $(EXEFILE)
 	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 --stop -E "exit 0"
 

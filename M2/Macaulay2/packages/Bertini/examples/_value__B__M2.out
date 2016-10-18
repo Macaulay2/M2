@@ -1,5 +1,5 @@
--- -*- M2-comint -*- {* hash: -1065082940 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- {* hash: 438712966 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : valueBM2("1.22e-2 4e-5")
 
@@ -25,13 +25,13 @@ o4 = 122+4*ii
 
 o4 : CC (of precision 53)
 
-i5 : n1=valueBM2("1.11",UsePrecision=>52)
+i5 : n1=valueBM2("1.11",M2Precision=>52)
 
 o5 = 1.11
 
 o5 : RR (of precision 52)
 
-i6 : n2=valueBM2("1.11",UsePrecision=>300)
+i6 : n2=valueBM2("1.11",M2Precision=>300)
 
 o6 = 1.11
 

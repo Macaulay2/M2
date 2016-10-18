@@ -11,7 +11,6 @@ TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 # see https://www.debian.org/doc/debian-policy/ch-controlfields.html, section 5.6.12, description of "Version"
 # use it this way, for example:
 #    make DEBIAN_REVISION=1
-DEBIAN_REVISION =
 ifeq ($(DEBIAN_REVISION),)
 DIST_VERSION = @PACKAGE_VERSION@
 else
@@ -20,24 +19,7 @@ endif
 
 ############################## main targets
 
-ifeq (@ARCH@,x86_64)
-DEBARCH=amd64
-else
-ifeq (@ARCH@,i686)
-# libgc needs to be compiled with i686 to get multiple threads
-DEBARCH=i386
-else
-ifeq (@ARCH@,armv7l)
-DEBARCH=armel
-else
-ifeq (@ARCH@,armv6l)
-DEBARCH=armhf
-else
-$(error unrecognized architecture @ARCH@)
-endif
-endif
-endif
-endif
+DEBARCH=$(shell dpkg-architecture -q DEB_TARGET_ARCH)
 
 PKG_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-common.deb
@@ -182,7 +164,7 @@ macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	 size=`gunzip<macaulay2/data.tar.gz|wc -c` &&				\
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` &&	\
 	 echo Installed-Size: $$size &&						\
-	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" &&		\
+	 echo -n "Depends: macaulay2-common (= $(DIST_VERSION))" &&		\
 	 cat packages-used | while read x ; do echo -n ", $$x" ; done &&	\
 	 echo									\
 	) >$@

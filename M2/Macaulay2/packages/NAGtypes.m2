@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.9",
-     Date => "Apr 2016",
+     Version => "1.9.2",
+     Date => "Oct 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -89,7 +89,6 @@ globalAssignment PolySystem
 polySystem = method()
 polySystem PolySystem := P -> new PolySystem from P
 polySystem List := L -> (
-    checkCCpolynomials L;
     polySystem transpose matrix {L} 
     )
 polySystem Matrix := M -> (
@@ -122,8 +121,9 @@ evaluate (PolySystem,Matrix) := (P,X) -> (
     else error "evaluation not implemented for this type of PolyMap"
     )    
 evaluate (Matrix,Matrix) := (M,X) ->  (
-    if numColumns X == 1 then sub(M,transpose X)
-    else if numRows X == 1 then sub(M,X)
+    C := coefficientRing ring M;
+    if numColumns X == 1 then sub(M,sub(transpose X,C))
+    else if numRows X == 1 then sub(M,sub(X,C))
     else error "expected a row or a column vector"
     )
 evaluate (PolySystem,Point) := (P,p) -> evaluate(P,matrix p)
@@ -133,71 +133,6 @@ jacobian PolySystem := P -> (
     else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
     )
 
-{*
-segmentHomotopy = method()
-segmentHomotopy (PolySystem,PolySystem) := (S,T) -> (
-    R := ring S;
-    if R =!= ring T then error "systems over the same ring expected";
-    K := coefficientRing R;
-    t := symbol t;
-    Rt := K(monoid[gens R, t]);
-    toRt := map(Rt,R,drop(gens Rt,-1));
-    t = last gens Rt;       
-    H := polySystem((1-t)*toRt S.PolyMap + t*toRt T.PolyMap);
-    H.ContinuationParameter = t;
-    H.SpecializationRing = R;
-    H 
-    )
-
-substituteContinuationParameter = method()
-substituteContinuationParameter (PolySystem,RingElement) := (H,t') -> (
-    -- t' contains typically a linear expression in t=H.ContinuationParameter
-    -- but will work for any polynomial expression in ring H.
-    if not H.?ContinuationParameter then error "system has no continuation parameter";
-    R := ring H;
-    H' := polySystem (map(R,R,drop(gens R,-1)|{t'})) H.PolyMap;
-    H'.ContinuationParameter = H.ContinuationParameter;
-    H'.SpecializationRing = H.SpecializationRing;
-    H'	
-    )
-
-specializeContinuationParameter = method()
-specializeContinuationParameter (PolySystem, Number) := (H,t0) -> (
-    if not H.?ContinuationParameter then error "system has no continuation parameter";
-    Rt := ring H;
-    K := coefficientRing Rt;
-    i := position(gens Rt, x->x===H.ContinuationParameter);
-    R := H.SpecializationRing;
-    specializeTo't0 := map(R,Rt,apply(numgens Rt, j->
-	    if j<i then R_j 
-	    else if j>i then R_(j-1) 
-	    else t0
-	    ));
-    polySystem specializeTo't0 H.PolyMap
-    )
-
-TEST ///
-CC[x,y]
-polySystem transpose matrix{{x,y^2+1,x+1}}
-QQ[x,y]
-polySystem {x,y^2+1,x+1}
-RR[x,y]
-polySystem {x,y^2+1,x+1}
-CC[x,y]
-S = polySystem {x^2+y^2-6, 2*x^2-y}
-p = point {{1.0_CC,2.3_CC}};
-assert (
-    clean_0.1 ( (100*evaluate(S,p)) - transpose matrix{{29, -30}} )==0
-    )
-T = polySystem {x^2-1, y^2-1}
-H = segmentHomotopy(S,T)
-H' = substituteContinuationParameter(H,1-H.ContinuationParameter)
-S' = specializeContinuationParameter(H,0_CC) 
-assert(S'.PolyMap - S.PolyMap == 0)
-T' = specializeContinuationParameter(H',0_CC) 
-assert(T'.PolyMap - T.PolyMap == 0)
-///
-*}
 
 -----------------------------------------------------------------------
 -- POINT = {
@@ -1716,11 +1651,13 @@ doc ///
       This type stores a finite dimensional vector subspace of a polynomial ring, given by a spanning set. 
       The spanning set is generally assumed to be a basis although this is not enforced.  
       The following methods can be used to access a {\tt PolySpace}: 
+
       @UL {
 	  {"gens -- a one-row matrix of the generators"},
 	  {"dim -- the number of generators"},
 	  {"ring -- the ring of the generators"}
 	  }@
+
   SeeAlso
     polySpace
     DualSpace
@@ -1765,6 +1702,7 @@ doc ///
       In practice, the subspace is stored as a @TO PolySpace@ with functionals represented by the
       corresponding polynomial, along with a @TO Point@. 
       The following methods can be used to access a {\tt DualSpace}: 
+
       @UL {
 	  {"gens -- a one-row matrix of the generators"},
 	  {"dim -- the number of generators"},

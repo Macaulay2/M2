@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.9",
-     Date => "Apr 2016",
+     Version => "1.9.2",
+     Date => "Oct 2016",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -124,6 +124,7 @@ DEFAULT = new MutableHashTable from {
      EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
      InfinityThreshold => 1e9, -- used to tell if the path is diverging
      -- projectivize and normalize
+     -- Normalize => true, -- normalize in the Bombieri-Weyl norm -- turning this on fails something in NSC!!!
      Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
      AffinePatches => DynamicPatch,
@@ -304,6 +305,10 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 	  imc*a#1*conjugate a#1 -- ring=CC[...]
 	  ))
 
+normalize RingElement := f -> (
+    a := 1/sqrt(numgens ring f * BombieriWeylNormSquared f);
+    promote(a,coefficientRing ring f) * f
+    )
 ------------------------------------------------------
 checkCCpolynomials (List,List) := (S,T) -> (
     n := #T;
@@ -389,7 +394,8 @@ squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
     n := P.NumberOfVariables;
     m := P.NumberOfPolys;
     if m<=n then "overdetermined system expected";
-    M := sub(randomOrthonormalRows(n,m),coefficientRing ring P);
+    C := coefficientRing ring P;
+    M := if class C === ComplexField then sub(randomOrthonormalRows(n,m), C) else random(C^n,C^m);
     squareUp(P,M)
     )
 squareUp(PolySystem,Matrix) := (P,M) -> (
