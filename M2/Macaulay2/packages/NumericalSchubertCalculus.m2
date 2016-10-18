@@ -735,7 +735,7 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
        R1 := R[t];
        Mt := matrix{{t}};
        Mt1 := matrix{{1-t}};
-        scan(n, i->(
+       scan(n, i->(
 	       -- start when t = 0, target when t = 1
 	       flagsHomot := apply(#flagsA, f-> (
 		       FlagBB := sub(flagsB#f,R1);
