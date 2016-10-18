@@ -5,6 +5,211 @@ export{"LRrule", "LRtriple", "parseTriplet", "wrapTriplet", "LRcheater"}
 
 debug needsPackage "PHCpack"
 
+stripLeadingSpaces := (s) -> (
+-- 
+-- DESCRIPTION :
+--   Returns the string s with leading spaces stripped.
+--
+  if #s == 0 then
+    return s
+  else
+    if first(s) == " " then
+    (
+       s1 := substring(s,1,#s);
+       return stripLeadingSpaces(s1)
+    )
+    else
+       return s
+);
+
+stripTrailingSpaces := (s) -> (
+-- 
+-- DESCRIPTION :
+--   Returns the string s with trailing spaces stripped.
+--
+  if #s == 0 then
+    return s
+  else
+    if last(s) == " " then
+    (
+       s1 := substring(s,0,#s-1);
+       return stripTrailingSpaces(s1)
+    )
+    else
+       return s
+);
+
+replaceConsecutiveSpaces := (s) -> (
+-- 
+-- DESCRIPTION :
+--   Replaces sequences of consecutive spaces by exactly one.
+--
+  doubles := select("  ", s);
+  if #doubles == 0 then
+    return s
+  else
+  (
+    s1 := replace("  ", " ", s);
+    return replaceConsecutiveSpaces(s1)
+  )
+);
+
+makeRealRow := (line) -> (
+--
+-- DESCRIPTION :
+--   Given in line is a line of double numbers in scientific format,
+--   with the big E notation.  Returns a list of real numbers.
+--
+  data := replace("E", "e", line);       -- replace the "E" by "e"
+  data = replace("e\\+00", "", data);    -- M2 does not want 2.3e+00"
+  data = stripLeadingSpaces(data);       -- remove leading spaces
+  data = stripTrailingSpaces(data);      -- remove trailing spaces
+  data = replaceConsecutiveSpaces(data); -- exactly one space as separator
+  nbrs := separate(" ", data);           -- separate the list
+  return apply(nbrs, x-> value(x));     -- list of doubles
+);
+
+makeComplexRow := (line) -> (
+--
+-- DESCRIPTION :
+--   Given in line is a line of double numbers in scientific format,
+--   with the big E notation.  Returns a list of complex numbers,
+--   using the consecutive doubles as real and imaginary parts.
+--
+  data := replace("E", "e", line);       -- replace the "E" by "e"
+  data = replace("e\\+00", "", data);    -- M2 does not want 2.3e+00"
+  data = stripLeadingSpaces(data);       -- remove leading spaces
+  data = stripTrailingSpaces(data);      -- remove trailing spaces
+  data = replaceConsecutiveSpaces(data); -- exactly one space as separator
+  nbrs := separate(" ", data);           -- separate the list
+  vals := apply(nbrs, x-> value(x));     -- list of doubles
+  twos := pack(2, vals);                 -- make list of pairs
+  return apply(twos, x-> x#0 + ii*x#1)   -- turn each pair into complex number
+);
+
+makeRealMatrix := (dim, data) -> (
+--
+-- DESCRIPTION :
+--   Returns a matrix with as many rows as the value of dim,
+--   taking the values on the lines in data.
+--
+  result := {};
+  for k from 0 to dim-1 do
+    if k < #data then
+      result = append(result, makeRealRow(data#k));
+  return matrix(result)
+);
+
+makeComplexMatrix := (dim, data) -> (
+--
+-- DESCRIPTION :
+--   Returns a matrix with as many rows as the value of dim,
+--   taking the values on the lines in data.
+--
+  result := {};
+  for k from 0 to dim-1 do
+    if k < #data then
+      result = append(result, makeComplexRow(data#k));
+  return matrix(result)
+);
+
+extractMovedFlag := (dim, data) -> (
+--
+-- DESCRIPTTION :
+--   Given a list of lines in data.
+--   Searches for the line which contains the banner "MOVED"
+--   and then returns the matrix of as many rows as the value
+--   of dim, stores in the lines of data following the banner.
+--
+  for k from 0 to #data-1 do
+  (
+    moved := select("MOVED", data#k);
+    if #moved > 0 then
+    (
+      subdata := {};
+      for i from 1 to dim do
+      (
+        row = k + i;
+        subdata = append(subdata, data#row);
+      );
+      return makeRealMatrix(dim, subdata)
+    )
+  );
+  return {}
+);
+
+extractSolutionPlane := (dim, data) -> (
+--
+-- DESCRIPTTION :
+--   Given a list of lines in data.
+--   Searches for the line which contains the banner "SOLUTION"
+--   and then returns the matrix of as many rows as the value
+--   of dim, stores in the lines of data following the banner.
+--
+  for k from 0 to #data-1 do
+  (
+    solplane := select("SOLUTION", data#k);
+    if #solplane > 0 then
+    (
+      subdata := {};
+      row := 0;
+      for i from 1 to dim do
+      (
+        row = k + i;
+        subdata = append(subdata, data#row);
+      );
+      return makeComplexMatrix(dim, subdata)
+    )
+  );
+  return {}
+);
+
+extractSubList := (startIdx, nbr, data) -> (
+--
+-- DESCRIPTION :
+--   Given a list of lists in data, returns a sublist of data,
+--   with as many sublists as the value of nbr,
+--   starting at the startIdx+1.
+--
+  result := {};
+  row := startIdx;
+  for i from 1 to nbr do
+  (
+    row = startIdx + i;
+    if row < #data then
+      result = append(result, data#row);
+  );
+  return result
+);
+
+extractSolutionPlanes := (dim, data) -> (
+--
+-- DESCRIPTTION :
+--   Given a list of lines in data.
+--   Searches for the line which contains the banner "SOLUTION"
+--   and then returns the matrix of as many rows as the value
+--   of dim, stores in the lines of data following the banner.
+--
+  result := {};
+  for k from 0 to #data-1 do
+  (
+    solplane := select("SOLUTION", data#k);
+    if #solplane > 0 then
+    (
+      subdata := extractSubList(k, dim, data);
+      result = append(result, makeComplexMatrix(dim, subdata));
+      current := k+dim+1;
+      while current+dim < #data-1 do
+      (   
+        subdata = extractSubList(current, dim, data);
+        result = append(result, makeComplexMatrix(dim, subdata));
+        current = current + dim + 1;
+      )
+    )
+  );
+  return result
+);
+ 
 LRruleIn = method();
 LRruleIn(ZZ,ZZ,Matrix) := (a,n,m) -> (
 -- 
