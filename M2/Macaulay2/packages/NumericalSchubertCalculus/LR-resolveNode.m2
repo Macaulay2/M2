@@ -103,11 +103,7 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
       if isRedCheckerInRegionE(position(red, i->i==red'sorted#j),father)
          -- column of the j-th red checker on the board
       then (
-         -- The 0_FFF in position r+1,j here is a red herring.  It is 0_FFF already in Xt
-	 assert(Xt_(r+1,j)==0);
 	submatrix(Xt,{0..n-1},{j})
-        --submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
-         --|| submatrix(Xt, {r+2..n-1}, {j})
       ) else (
          submatrix(Xt,{0..r},{j}) 
          || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
@@ -150,15 +146,29 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
    -- check if the black checker in the i'th row is in region B
    isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
+--------  Frank/Abr. revision
+   YtCoords := map(Rt^n,Rt^0,{}); -- an empty column vector
+   scan(#red'sorted, j -> YtCoords = YtCoords |
+      if j == s then 
+      (
+      -- note: this part can be optimized for speed
+         transpose matrix { apply(n, i -> (
+            if i==r then Xt_(r+1,s+1)
+            else if i==r+1 then -t*Xt_(r+1,s+1)
+            else if isRegionA i then -t*Xt_(i,s+1)
+            else if isRegionB i then Xt_(r+1,s+1)*Xt_(i,s)
+            else 0)) }
+      ) else
+      (
+	  submatrix(Xt, {0..n-1}, {j})
+       )
+   );  -- end scan red'sorted
+----------  The old function
    scan(#red'sorted, j -> VwrtM = VwrtM |
       if j == s then 
       (
       -- note: this part can be optimized for speed
          transpose matrix { apply(n, i -> (
-      --
-      --  Frank thinks a case is missing
-      --  What happens if i lies in Region E and is not r+1 or R ???
-      --
             if i==r then Xt_(r+1,s+1)
             else if i==r+1 then -t*Xt_(r+1,s+1)
             else if isRegionA i then -t*Xt_(i,s+1)
@@ -186,6 +196,11 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
             || submatrix(Xt, {r+2..n-1}, {j})	    
       )
    ); -- end scan red'sorted
+----------------
+ print(YtCoords - VwrtM);
+ assert(entries(YtCoords) == entries(VwrtM));
+ assert(YtCoords - VwrtM == 0);
+----------------
    result := promote(M,Rt) * VwrtM;
    if DBG>1 then (
       << "via M*" << VwrtM << " = " << result
