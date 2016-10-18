@@ -368,6 +368,36 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
      self
 )
 
+-----------------------------------
+-- Example:
+--
+-- We play the game {2,1} vs {1,1,1} in G36
+-- Game = playCheckers({2,1},{1,1,1}, 3,6) -- plays the game {2,1} vs. {1,1,1} in G36
+--    o =  MutableHashTable{Board => [{5, 4, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}]}
+--                      Children => {MutableHashTable{...5...}}
+--                      CriticalRow => 4
+--                      Fathers => {}
+--                      IsResolved => false
+--
+-- G = first Game.Children -- this is a Hash table with the first node below the root from above
+--              we can now test the recursive call of playCheckers 
+--              NOTE: the key Fathers has value a list of sequences of fathers and movetypes 
+--
+-- These are the values in G
+--    	  Board =  [{4, 5, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}]
+--    	  Children = {MutableHashTable{...5...}}
+--    	  CriticalRow = 3
+--        Fathers = {([{5, 4, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}], {2, 2, 0})}
+--    	  IsResolved = false
+--
+-- playCheckers(G.Board, first first G.Fathers, last first G.Fathers, first Q.Children)
+--    o =  MutableHashTable{Board => [{4, 5, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}]}
+--                       Children => {MutableHashTable{...5...}}
+--                       CriticalRow => 3
+--                       Fathers => {(MutableHashTable{...5...}, {2, 2, 0})}
+--                       IsResolved => false
+-------------------------------------
+
 
 -----------------
 --- makeLocalCoordinates

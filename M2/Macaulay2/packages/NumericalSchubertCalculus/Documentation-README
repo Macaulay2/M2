@@ -24,11 +24,14 @@ solveSchubertProblem
 === Not Exported ===
 
 redChkrPos 
-				-- given two partitions, computes the positions of the red checkers in the board
+				-- given two brackets, computes the positions of the red checkers in the board
 moveRed  
 				-- makes the move of the red checkers during a game
 moveCheckers 
 				-- makes the next move of black and red checkers during a game
+				
+-- Statistics -- a few functions that count the frequencies of each type of move (of the 3x3 table) ** Needs to be documented and programmed properly
+
 playCheckers 
 				-- given two partitions, plays the combinatorial checkerboard game and outputs the hashtable of the checkermoves played
         -- it is also called recursively to play the next game of the Tournament and creates the Hashtable
