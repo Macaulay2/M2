@@ -34,23 +34,24 @@ moveCheckers
 
 playCheckers 
 				-- given two partitions, plays the combinatorial checkerboard game and outputs the hashtable of the checkermoves played
-        -- it is also called recursively to play the next game of the Tournament and creates the Hashtable
+				-- it is also called recursively to play the next game of the Tournament and creates the Hashtable
 
 makeLocalCoordinates
 				-- translates a checkerboard into a matrix with 0s,1s, and variables
 
 solutionToChart
-				-- takes a solution matrix in global coordinates and converts it into local coordinates
+				-- takes a solution matrix in global coordinates and converts it into local coordinates 
+				-- (just giving the values of the variables)
 
-changeFlags (better name?) (only used when LinearAlgebra is set to false!)
+changeFlags (better name?) (only used when LinearAlgebra is set to false!) ** NEEDS TO BE VERIFIED
 				-- function to convert solutions written wrt FlagsA to solutions written wrt FlagsB
 				-- it is called recursively: first only makes a change of coordinates (linear transformation)
 				-- the other call makes parameter homotopy changing one column at the time
 
-toRawSolutions
-				-- takes solutions as nxk matrices and writes a list of values that 
-						match with the variables of the local coordinates coordX in the 
-						checkerboard variety (mainly used for writing solutions for the homotopy functions)
+toRawSolutions  ** WHAT IS THE DIFFERENCE WITH solutionToChart?
+				-- takes solutions in local coordinates written as nxk matrices and just makes the list of values for the variables
+						of the local coordinates coordX in the checkerboard variety
+						(mainly used for writing solutions for the homotopy functions)
 
 normalizeColumn
 				-- given a matrix X, will create a 1 in position X_(r,c) by normalizing the column, i.e.

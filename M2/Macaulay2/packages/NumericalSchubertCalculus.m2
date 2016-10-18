@@ -424,7 +424,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 -- blackCheckersPosition = {0,1,3,4,5,2};
 -- redCheckersPosition = {0, NC, NC, 4, NC, NC};
 --
--- makeLocalCoordinates [blackCheckers, redCheckers]
+-- makeLocalCoordinates [blackCheckersPosition, redCheckersPosition]
 --   o = | 1 0       |
 --       | 0 x_(1,1) |
 --       | 0 0       |
@@ -469,7 +469,7 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 -- Function that solves a Schubert problem
 -- by first taking two of the conditions,
--- then create a tree (with nodes) by playing a 
+-- then create a tree/Dag (with nodes) by playing a 
 -- checker game, then resolve the node numerically
 -- using homotopies, and gluing the solutions to each
 -- node
@@ -503,13 +503,13 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	-- resolveNode expects flags to be the following list:
 	--  flagM, Id, F3'....  
 	--
-	-- we make compute the linear transformations s.t.
+	-- we compute the linear transformations s.t.
 	-- A*F1 = FlagM*T1
 	-- A*F2 = ID * T2
 	ID := id_(FFF^n);
 	-- 
 	-- There is a fundamental difference between the case
-	-- with two or more than two partitions
+	-- with only two conditions and the one with 3 or more Schubert conditions
 	--
 	LocalFlags1 := {F1,F2};
 	flgM := matrix;
@@ -521,7 +521,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    flgM = MovingFlag'at'Root n;
 	    LocalFlags2 = {flgM, ID};
 	    );
-	At1t2 := moveFlags2Flags(LocalFlags1,LocalFlags2);
+	At1t2 := moveFlags2Flags(LocalFlags1,LocalFlags2); --Gets the transformations A, T1, T2
 	A := first At1t2;	    
 	-- we update the given flags F3 ... Fm
 	-- to F3' .. Fm' where Fi' = A*Fi
@@ -543,7 +543,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	--  we need to make a change of coordinates back to the user-defined flags
 	-- that is, send (FlagM,Id)-->(F1,F2), which is done by A^(-1)	
 	-------------------------------
-	--############ Fork to decide if you want to do
+	--############ Fork to decide if you want to do this
 	-- change of flags via homotopy or via Linear Algebra
 	-- ########################################
 	if o.LinearAlgebra then(
@@ -614,6 +614,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 ---------------------------------
 -- Example:
 --
+-- R = FFF[x_(1,1),x_(3,1)]
 -- MX = matrix {{1,    0}, 
 --              {0, x_(1,1)}, 
 --              {0,    0}, 
@@ -626,6 +627,13 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 --
 -- solutionToChart(s,MX)
 --         o = {.115385, .269231}
+------
+-- s2 = promote(transpose matrix{
+--     	       	       	   {2,3,5,7,11,13},
+--     	       	       	   {1,4,9,25,49,-1}},FFF);
+-- solutionToChart(s2,MX)
+--
+--    	  o = {.0755344, .491155}
 ---------------------------------    
 solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of values of the parameters)
 solutionToChart(Matrix, Matrix) := (s,MX) -> (
@@ -801,7 +809,7 @@ assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually 
 --------------------------
 -- toRawSolutions
 --
--- Function that takes solutions as nxk matrices
+-- Function that takes solutions (in local coordinates) as nxk matrices
 -- and writes them into a list of values cooresponding to
 -- the variables in the local coordinates coordX of the 
 -- checkerboard variety 
