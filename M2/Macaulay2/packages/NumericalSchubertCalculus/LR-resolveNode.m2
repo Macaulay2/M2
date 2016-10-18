@@ -92,14 +92,17 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
 --    rnM : the critical row r, the dimension n, and flag M.
 --
 -- OUT :
---    returns the M'X as needed in the stay honotopy.
+--    returns the M YtCoords(t) as needed in the stay homotopy.
+--     YtCoords are the Stiefel Coordinates used in the homotopy
+--     Note: Xt is used for the Stiefel coordinates Y_{\cbd} in the ring [t]
+--     Also, Xt = YtCoords(t=0)
 --
    (Rt, Xt, t) := rings;
    (red, red'sorted) := redchk;
    (r, n, M) := rnM;
-   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
-   -- V(t) = M'(t) X'(t) ... we write everything in terms of M
-   scan(#red'sorted, j-> VwrtM = VwrtM |
+   YtCoords := map(Rt^n,Rt^0,{}); -- an empty column vector
+   -- V(t) = M YtCoords(t) ... we write everything in terms of M
+   scan(#red'sorted, j-> YtCoords = YtCoords |
       if isRedCheckerInRegionE(position(red, i->i==red'sorted#j),father)
          -- column of the j-th red checker on the board
       then (
@@ -110,9 +113,9 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
          || submatrix(Xt, {r+2..n-1}, {j})	    
       )
    );
-   result := promote(M,Rt) * VwrtM;
+   result := promote(M,Rt) * YtCoords;
    if DBG>1 then (
-      << "via M*" << VwrtM << " = " << result
+      << "via M*" << YtCoords << " = " << result
       << " where M = " << promote(M,Rt) << endl;
    );
    result
@@ -132,13 +135,14 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
 --    rsnM : the critical row r, the index s, the dimension n, and flag M.
 --
 -- OUT :
---    returns the M'X as needed in the swap honotopy.
+--    returns the M YtCoords as needed in the swap homotopy.
+--      YtCoords are the Stiefel coordinates used in the homotopy, depends on t
 --
    (Rt, Xt, t) := rings;
    (black, red, red'sorted) := checkers;
    (r, s, n, M) := rsnM;
-   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
-   -- V(t) = M'(t) X'(t) ... we write everything in terms of M
+   YtCoords := map(Rt^n,Rt^0,{}); -- an empty column vector
+   -- V(t) = M YtCoords(t) ... we write everything in terms of M
    bigR := red'sorted#(s+1);   -- row of the second moving red checker
    rightmost'col'B := position(black, j->j==r);
    leftmost'col'A  := position(black, j->j==r+1)+1;
@@ -147,7 +151,6 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    -- check if the black checker in the i'th row is in region B
    isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
 --------  Frank/Abr. revision
-   YtCoords := map(Rt^n,Rt^0,{}); -- an empty column vector
    scan(#red'sorted, j -> YtCoords = YtCoords |
       if j == s then 
       (
@@ -163,47 +166,10 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
 	  submatrix(Xt, {0..n-1}, {j})
        )
    );  -- end scan red'sorted
-----------  The old function
-   scan(#red'sorted, j -> VwrtM = VwrtM |
-      if j == s then 
-      (
-      -- note: this part can be optimized for speed
-         transpose matrix { apply(n, i -> (
-            if i==r then Xt_(r+1,s+1)
-            else if i==r+1 then -t*Xt_(r+1,s+1)
-            else if isRegionA i then -t*Xt_(i,s+1)
-            else if isRegionB i then Xt_(r+1,s+1)*Xt_(i,s)
-            else 0)) }
-      ) else if j == s+1 then (
-         transpose matrix { apply(n, i -> (
-            if i==bigR then 1
-            else if i==r+1 then Xt_(r+1,s+1)
-	    --  This above case is only executed when bigR is not equal to r+1
-            else if i==r then 0
-            else Xt_(i,s+1))) }
-      ) else if isRedCheckerInRegionE(
-         position(red,i->i==red'sorted#j), father)
-         -- column of the j-th red checker on the board
-         then (  -- this case has a red Herring in it:  
-	         --   submatrix(Xt,{r+1},{j}) is always 0  (See globalStayCoords above)
-            submatrix(Xt,{0..r-1},{j}) 
-            || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
-            || matrix{{0_FFF}}
-            || submatrix(Xt, {r+2..n-1}, {j})
-      ) else (
-         submatrix(Xt,{0..r},{j}) 
-            || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
-            || submatrix(Xt, {r+2..n-1}, {j})	    
-      )
-   ); -- end scan red'sorted
 ----------------
- print(YtCoords - VwrtM);
- assert(entries(YtCoords) == entries(VwrtM));
- assert(YtCoords - VwrtM == 0);
-----------------
-   result := promote(M,Rt) * VwrtM;
+   result := promote(M,Rt) * YtCoords;
    if DBG>1 then (
-      << "via M*" << VwrtM << " = " << result
+      << "via M*" << YtCoords << " = " << result
       << " where M = " << promote(M,Rt) << endl;
    );
    result
