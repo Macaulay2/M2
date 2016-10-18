@@ -129,8 +129,10 @@ redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
 )
 
 ----------------------------------------------------
--- "moveRed" moves the red checkers
+-- moveRed
 --
+-- makes the move of the red checkers during a game
+---------------------------------------------------
 -- input: {(blackup, blackdown, redposition)}
 --       blackup - Coordinates of the ascending black checker
 --       blackdown - Coordinates of the descending black checker
@@ -157,7 +159,8 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     critrow := 0;
     critdiag := 0;
     g:=2; -- g answers where is the red checker in the critical row
-    r:=2; -- r answers where is the red checker in the critical row
+    r:=2; -- r answers where is the red checker in the critical diagonal
+    -- r,g is the coordinate of the moving situaion in the 3x3 table of moves
     indx := new List;
     redpos := new MutableList from redposition;
     -- find the critical row, and how the red checkers sit with respect to it
@@ -218,7 +221,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 -- Output:
 --         a Sequence containing:
 --    board --> the new checkerboard [blackCheckers, redCheckers]
---    move --> the type of move that we realized: {i,j,splt} (from Ravi's notes) 
+--    move --> the type of move that we realized: {i,j,splt} (3x3 table from Ravi's notes) 
 --    critrow --> the critical row
 -----------------------------------
 -- Example:
@@ -291,7 +294,7 @@ getStats = () -> stats
 -- we first play the checkers with X1 and X2
 --
 -- input1:
---         l1, l2, two partitions (representing X1 and X2)
+--         partn1, partn2, two partitions (representing X1 and X2)
 --         k,n the Grassmannian where they live
 -- Output1:
 --         Dag - a Hashtable with all the checkermoves played
@@ -310,6 +313,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
      if DBG>1 then print(partn1,partn2);
      if DBG>1 then print([blackChkrs, redChkrs]);
      if DBG>0 then cpu0 := cpuTime();
+     -- we call playCheckers recursively
      root :=playCheckers ([blackChkrs, redChkrs], null, {}, all'nodes);  -- returns the root of the tree
      if DBG>0 then << "-- cpu time = " << cpuTime()-cpu0 << endl;
      if DBG>1 then print VerticalList keys all'nodes;
@@ -322,7 +326,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
 -- Input: 
 --       board 
 --       father (the checkergame this game came from)
---       typeofmove?
+--       typeofmove - the type of move in the 3x3 table we perform to go to the father
 --       all'nodes - the list of games played already
 --
 -- THIS IS THE RECURSIVE CALL OF PLAYCHECKERS
@@ -340,7 +344,6 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
     -- and this is where we store all nodes that we have
     -- already visited.
     --
-    -- Abr started the documentation of this function on Feb 6, 2013
     --------------------------------------------
      node'exists := all'nodes#?board; -- check if we already played this game
      self := if node'exists  
@@ -352,7 +355,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  };
      statsIncrementMove typeofmove; -- here we are collecting statistics for the number of times we see each type of move
      if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)}; -- add the new way to get to this node
-     if not node'exists then ( --add the ultimate node part here...
+     if not node'exists then (
          --<< "this is node'exists "<< node'exists<<endl;
 	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
      	 if numgens ring coordX > 0 then ( 

@@ -12,6 +12,14 @@ setVerboseLevel,
 solveSchubertProblem
 			---uses homotopies of the Geometrical LR-rule to solve Schubert problems on a Grassmannian
 
+------------------
+-- Debug Level --
+------------------
+-- 0 = no debug mode
+-- 1 = print progress info and time main processes
+-- 2 = ... + checkerboard steps info
+-- >2 = new experimental stuff kicks in
+
 
 === Not Exported ===
 
@@ -60,14 +68,6 @@ columnReduce
 isRedCheckerInRegionE
 				-- Boolean to tell if a checker is northwest
 
-
-------------------
--- Debug Level --
-------------------
--- 0 = no debug mode
--- 1 = print progress info and time main processes
--- 2 = ... + checkerboard steps info
--- >2 = new experimental stuff kicks in
 
 ====================================================
 ==        pieri.m2 
