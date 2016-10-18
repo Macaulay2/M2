@@ -17,6 +17,7 @@ export {
     "SelectEdgeAndDirection",
     "BatchSize",
     "AugmentGraphFunction",
+    "AugmentationStoppingCriterion",
     "randomWeights"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
@@ -53,85 +54,84 @@ completeGraphInit = (G, p, node1, nnodes, nedges) -> (
 
 dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
-    if #s0 < 1 then error "at least one solution expected";  
-    p0 := matrix point0; -- points are row matrices
-    stoppingCriterion := o.StoppingCriterion;
-    if o.TargetSolutionCount =!= null then (
-        stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount);
-    );
-    nParameters := numgens coefficientRing ring PF;
-    assert(nParameters == numcols p0);
-    (PR,toPR) := flattenRing ring PF; -- ring PF = C[a][x]
-    -- toPR: ring PF -> PR
-    X := drop(gens PR, -nParameters); 
-    PF = toPR PF;
-    C := coefficientRing PR;
-    R := C[X];
-    X = vars R;
-    nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
-	K := ring p0;
-	()->point {apply(numcols p0, i->exp(2*pi*ii*random RR))}
+	if #s0 < 1 then error "at least one solution expected";  
+	p0 := matrix point0; -- points are row matrices
+	stoppingCriterion := o.StoppingCriterion;
+	if o.TargetSolutionCount =!= null then (
+		stoppingCriterion = (n,L) -> (length L >= o.TargetSolutionCount);
+	);
+	nParameters := numgens coefficientRing ring PF;
+	assert(nParameters == numcols p0);
+	(PR,toPR) := flattenRing ring PF; -- ring PF = C[a][x]
+	-- toPR: ring PF -> PR
+	X := drop(gens PR, -nParameters); 
+	PF = toPR PF;
+	C := coefficientRing PR;
+	R := C[X];
+	X = vars R;
+	nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
+		K := ring p0;
+		()->point {apply(numcols p0, i->exp(2*pi*ii*random RR))}
 	); 
-    sols0 := s0;
-    nSols := #sols0; 
-    same := 0;
-    dir := temporaryFileName(); -- build a directory to store temporary data 
-    makeDirectory dir;
-    nPathsTracked := 0;
-    << "--backup directory created: "<< toString dir << endl;
-    while not stoppingCriterion(same,sols0) do --try 
-    (
-    	p1 := matrix nextP(); -- row matrix
-	F0 := flatten entries (map(R,PR,X|p0)) PF;
-	F1 := flatten entries (map(R,PR,X|p1)) PF;
-	elapsedTime sols1 := track(F0,F1,sols0);
-        nPathsTracked = nPathsTracked + #sols0;
-	sols1 = select(sols1, s->status s === Regular);
-	<< "  H01: " << #sols1 << endl;
-    	elapsedTime sols0' := track(F1,F0,gamma=>exp(2*pi*ii*random RR),sols1);
-        nPathsTracked = nPathsTracked + #sols1;
-	sols0' = select(sols0', s->status s === Regular);
-	<< "  H10: " << #sols0' << endl;
-	elapsedTime sols0 = clusterSolutions(sols0 | sols0'); -- take the union	
-    << "number of paths tracked: " << nPathsTracked << endl;
-	if #sols0 == nSols then same = same + 1 else (
-	    nSols = #sols0; 
-	    same = 0;
-	    ff := openOut (dir|"/backup-"|toString nSols|"-solutions"); 
-	    ff << toExternalString sols0;
-	    close ff; 
-	    );  
-    	<< "found " << #sols0 << " points in the fiber so far" << endl;
-    	) -- else print "something went wrong"
-    ;
-    (sols0,nPathsTracked)
-    )        
+	sols0 := s0;
+	nSols := #sols0; 
+	same := 0;
+	dir := temporaryFileName(); -- build a directory to store temporary data 
+	makeDirectory dir;
+	nPathsTracked := 0;
+	<< "--backup directory created: "<< toString dir << endl;
+	while not stoppingCriterion(same,sols0) do (
+		p1 := matrix nextP(); -- row matrix
+		F0 := flatten entries (map(R,PR,X|p0)) PF;
+		F1 := flatten entries (map(R,PR,X|p1)) PF;
+		elapsedTime sols1 := track(F0,F1,sols0);
+		nPathsTracked = nPathsTracked + #sols0;
+		sols1 = select(sols1, s->status s === Regular);
+		<< "  H01: " << #sols1 << endl;
+		elapsedTime sols0' := track(F1,F0,gamma=>exp(2*pi*ii*random RR),sols1);
+		nPathsTracked = nPathsTracked + #sols1;
+		sols0' = select(sols0', s->status s === Regular);
+		<< "  H10: " << #sols0' << endl;
+		elapsedTime sols0 = clusterSolutions(sols0 | sols0'); -- take the union	
+		<< "number of paths tracked: " << nPathsTracked << endl;
+		if #sols0 == nSols then same = same + 1 else (
+			nSols = #sols0; 
+			same = 0;
+			ff := openOut (dir|"/backup-"|toString nSols|"-solutions"); 
+			ff << toExternalString sols0;
+			close ff;
+		);
+		<< "found " << #sols0 << " points in the fiber so far" << endl;
+	); -- else print "something went wrong"
+
+	(sols0,nPathsTracked)
+)
 
 computeMixedVolume = method()
 computeMixedVolume List := polys -> mixedVolume(toRingXphc polys,StartSystem => false)
 
 -- static flower
 flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes do (
-        newNode := addNode(G,nextP(p), pointArray {});
-        apply(nedges, k -> addEdge(G, node1, newNode));
-    );
-    )
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nnodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		apply(nedges, k -> addEdge(G, node1, newNode));
+	);
+)
 
 -- find the "seed" for the parametric system
 createSeedPair = method(Options=>{"initial parameters" => "random unit"})
 createSeedPair PolySystem := o -> G -> (
-    R := ring G;   
-    C := coefficientRing coefficientRing R; 
-    init := o#"initial parameters";
-    createSeedPair(G,
-	if init == "random unit" then apply(numgens R, i->(x:=random C; x/abs x))
-	else if init == "random" then apply(numgens R, i->random C)
-	else if init == "one" then toList(numgens R:1_C)
-	else error "unknown option"
+	R := ring G;   
+	C := coefficientRing coefficientRing R; 
+	init := o#"initial parameters";
+	createSeedPair(G,
+		if init == "random unit" then apply(numgens R, i->(x:=random C; x/abs x))
+		else if init == "random" then apply(numgens R, i->random C)
+		else if init == "one" then toList(numgens R:1_C)
+		else error "unknown option"
 	)
-    )
+)
 createSeedPair(PolySystem, List) := o -> (G, L) -> (
     SubList := apply(toList(0..numgens ring G-1), i -> (gens ring G)#i => L#i);
     subZeros := apply(gens coefficientRing ring G, g -> g => 0);
@@ -158,31 +158,27 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     (c0,pre0')
     )
 
-
 staticMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
 	StoppingCriterion => null,
-	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
-	GraphInitFunction => completeGraphInit,
-	BatchSize => infinity,
+	SelectEdgeAndDirection => null,
+	GraphInitFunction => null,
+	BatchSize => null,
 	Potential => null,
-	NumberOfNodes => 2,
-	NumberOfEdges => 3,
-	NumberOfRepeats => 10,
+	NumberOfNodes => null,
+	NumberOfEdges => null,
+	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
-staticMonodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> staticMonodromySolve(polySystem transpose PF, point0, s0, o)
 staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
-	if mutableOptions.TargetSolutionCount =!= null then (
+	if mutableOptions.TargetSolutionCount =!= null then
 		mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
-	);
-	if mutableOptions.StoppingCriterion === null then mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
-	
-	--Remove all the null options so we can set the default just at the core level and not at both dynamic and static levels
-	-- for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
-	
+
+	if mutableOptions.StoppingCriterion === null then 
+		mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
+		
 	HG := homotopyGraph(PS, Potential=>o.Potential);
 	if o.TargetSolutionCount =!= null then (
 		HG.TargetSolutionCount = o.TargetSolutionCount;
@@ -194,9 +190,8 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if #s0 < 1 then error "at least one solution expected";
 
 	o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
-
-	immutableOptions := new OptionTable from (new HashTable from mutableOptions);
-	coreMonodromySolve(HG,node1,immutableOptions)
+	--Needs to return HG for use by dynamicMonodromySolve
+	(coreMonodromySolve(HG,node1, new OptionTable from (new HashTable from mutableOptions)), HG)
 )
 
 TEST /// 
@@ -208,13 +203,49 @@ polys = polySystem {A*a+B*b,A*B*c+d}
 monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
 ///
 
-monodromySolve = staticMonodromySolve -- for now!!!
+monodromySolve = method(Options=>{
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	GraphInitFunction => completeGraphInit,
+	AugmentGraphFunction => null,
+	AugmentationStoppingCriterion => null,
+	BatchSize => infinity,
+	Potential => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 3,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false})
+monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
+monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+	if o.AugmentGraphFunction =!= null then
+		result := dynamicMonodromySolve(PS,point0,s0)
+	else if o.AugmentationStoppingCriterion =!= null then 
+		error "AugmentationStoppingCriterion does not work if AugmentGraphFunction is undefined"
+	else (
+		(result,HG) := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
+	);
+	result
+);
+
+trimDynamicOptions = method()
+trimDynamicOptions OptionTable := opt -> (
+	mutableOptions := new MutableHashTable from opt;
+	
+	--if we ever add more dynamic-only options, add them into dynamicOptions.
+	dynamicOptions := (AugmentGraphFunction, AugmentationStoppingCriterion); 
+	for opt in dynamicOptions do (remove(mutableOptions,opt));
+	
+	new OptionTable from (new HashTable from mutableOptions)
+)
 
 dynamicMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
 	SelectEdgeAndDirection => null,
+	StoppingCriterion => null,
 	GraphInitFunction => null,
 	AugmentGraphFunction => null, --NEED SOME DEFAULT HERE. Add edge(s)? Add node?
+	AugmentationStoppingCriterion => null,
 	BatchSize => null,
 	Potential => null,
 	NumberOfNodes => null,
@@ -222,25 +253,19 @@ dynamicMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
-dynamicMonodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> staticMonodromySolve(polySystem transpose PF, point0, s0, o)
 dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-	mutableOptions := new MutableHashTable from o;
-	--Looping for some number of times and then quitting doesn't seem to make
-	--sense for the dynamic strategy. After you fail some number of times, you
-	--should augment the graph, not quit.
-	if mutableOptions.TargetSolutionCount === null then
-		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
+	staticOptions := trimDynamicOptions(o);
 
-	--Remove all the null options so we can set the default just at the core level and not at both dynamic and static levels
-	for pair in pairs mutableOptions do ( if pair#1 === null then remove(mutableOptions,pair#0));
-	immutableOptions := new OptionTable from (new HashTable from mutableOptions);
-	
-	{* 
-	(1) (node1,npaths) = staticMonodromySolve(PS,point0,s0,o) 
-	(2) while not success do ( 
-	    o.AugmentGraphFunction(HG);
-	    (node1,npaths) = coreMonodromySolve(HG, node1)
-	    )
+	{*
+	(staticMSReturn,HG) = staticMonodromySolve(PS,point0,s0,staticOptions);
+	(node1,npaths) = staticMSReturn;
+	success := npaths != "failed";
+	while not success and not o.AugmentationStoppingCriterion do (
+		o.AugmentGraphFunction(HG);
+		(node1,npaths) = coreMonodromySolve(HG, node1, staticOptions);
+		success = npaths != "failed";
+	)
+	(node1,npaths)
 	*}
 )
 
