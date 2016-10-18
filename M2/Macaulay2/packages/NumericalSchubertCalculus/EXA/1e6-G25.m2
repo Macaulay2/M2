@@ -1,4 +1,4 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
 --setFlags(NSC'DBG=>2)
 

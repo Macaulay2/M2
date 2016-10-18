@@ -25,7 +25,7 @@ newPackage(
     DebuggingMode => true
     )
 debug NumericalAlgebraicGeometry
-export {   
+export {
    "setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
    "solveSchubertProblem"
    --   changeFlags  -- better name?
@@ -350,7 +350,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  IsResolved => false,
 	  Fathers => {}
 	  };
-     statsIncrementMove typeofmove;
+     statsIncrementMove typeofmove; -- here we are collecting statistics for the number of times we see each type of move
      if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)}; -- add the new way to get to this node
      if not node'exists then ( --add the ultimate node part here...
          --<< "this is node'exists "<< node'exists<<endl;
