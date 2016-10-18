@@ -12,7 +12,6 @@ if version#"VERSION" == "1.8.2" then ( -- temporary det bug fix
 export {
     "skewSchubertVariety",
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
-    "checkNewtonIteration", -- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
     "bracket2partition",
@@ -25,11 +24,13 @@ export {
 -- partition2bracket(List,ZZ,ZZ)
 -- output2partition(List) --input redcheckers
 -- output2bracket(List)
+-- bracket2partition(List,ZZ)
 -- printTree(MutableHashTable)--input node
 -- dist(List,List) -- computes euclidean distance of 2 vectors
 -- moveFlags2Flags (List, List) --input two list of flags (F's, G's)
 -- MovingFlag'at'Root ZZ
 -- notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
+--    "checkNewtonIteration", -- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
 
 
 ---------------------
@@ -70,7 +71,7 @@ output2partition(List) := redpos ->(
 		reverse sort toList partitn
 )
 
--- not using this function (we use redChkrPos instead)
+-- *** not using this function (we use redChkrPos instead)
 bracket2input = method(TypicalValue => List)
 bracket2input(List,ZZ) := (br,n) ->(
      inp := for i to n-1 list NC;
@@ -122,14 +123,16 @@ printTree MutableHashTable := node ->(
 -- the convergence of the approximated solution
 ----------------------
 -- Input: 
---    Solns - list of solutions 
+--    Solns - list of solutions
 --    Pblm - list of (li,Fi) representing the SchubertProblem
 --    (k,n) - sequence with (k,n) that indicate the Grassmannian G(k,n)
 -- Output:
 --    Newt - List where each entry is the l_1 norm of (s-NewtStep(s)) for s\in Solns
 --------------------------------------------------------------------
---        These is the info necessary to create a system of eqns
+--       ?? This is the info necessary to create a system of eqns
 --------------------------------------------------------------------
+--    *** NOT USING THIS FUNCTION ***
+--    *** NEEDS TO BE REMOVED AS IT WAS CREATED BEFORE LONG TIME AGO
 checkNewtonIteration = method()
 checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
     (k,n):= kn;

@@ -113,9 +113,6 @@ skewSchubertVariety
 checkIncidenceSolution
 				--this is only for our tests... shouldn't be used by the user
 
-checkNewtonIteration
-				-- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
-
 solutionsToAffineCoords
 
 partition2bracket
@@ -131,16 +128,24 @@ verifyLength(List, ZZ)
 				-- check if a partition l has k elements and adds 0s if not
 
 partition2bracket(List,ZZ,ZZ)
-				-- Dictionary function input partition and k,n
+				-- Dictionary function input partition and k,n --> bracket 
 
 output2partition(List) --input redcheckers
 				-- Dictionary function RedCheckers --> partition
 				
-
 output2bracket(List)
-				-- Dictionary
+				-- Dictionary function RedCheckers --> bracket
+
+bracket2partition(List,ZZ)
+				-- Dictionary function (bracket, n) -- the partition corresponding to the bracket
+
 
 printTree(MutableHashTable)--input node
+
+checkNewtonIteration
+				-- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
+				-- NOT USED at the moment
+
 
 dist(List,List) -- computes euclidean distance of 2 vectors
 
@@ -149,6 +154,8 @@ moveFlags2Flags (List, List) --input two list of flags (F's, G's)
 MovingFlag'at'Root ZZ
 
 notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
+				-- Given a partition Lambda, this function computes all those that are
+				   not above Lambda in the Bruhat order. The output is a bracket?
 
 ====================================================
 ==        LR-makePolynomials.m2 

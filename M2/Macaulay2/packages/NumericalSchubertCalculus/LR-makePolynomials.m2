@@ -6,6 +6,7 @@ needsPackage "NAGtypes"
 -- m random linear combinations of generators of the ideal
 squareUpPolynomials = method()
 squareUpPolynomials(ZZ,Matrix) := (m,eqs) ->  eqs
+-- seems that if you give a matrix, then it won't do anything...
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  if numgens eqs == m then gens eqs else gens eqs * random(FFF^(numgens eqs), FFF^m)  
 
 ----------------------------------------------
