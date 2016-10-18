@@ -9,7 +9,10 @@ check'changeFlags = (SchPblm,k,n) -> (
     assert all(sols,s->checkIncidenceSolution(s, SchPblm));
     Flags1 := SchPblm / last;
     FFF := CC_53;
-    Flags2 = apply(#Flags1, i->random(FFF^6,FFF^6));
+    setRandomSeed 0;
+    extra := 100; -- does not fail with 1000
+    preFlag := random(FFF^n,FFF^(n+extra));
+    Flags2 = apply(#Flags1, i->submatrix(preFlag,,drop(random toList(0..n+extra-1),extra))); 
     MX := bigCellLocalCoordinates(k,n);
     conds := SchPblm / first;
     sols = apply(sols1, s->flatten take(entries s,n-k));
@@ -20,12 +23,12 @@ check'changeFlags = (SchPblm,k,n) -> (
 end
 
 restart
-load "NumericalSchubertCalculus/TST/changeFlags.m2"
+load "NumericalSchubertCalculus/TST/changeFlags-special.m2"
 load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 check'changeFlags(SchPblm,3,6)
 
 restart
 -- this one upsets trackHomotopy
-load "NumericalSchubertCalculus/TST/changeFlags.m2"
+load "NumericalSchubertCalculus/TST/changeFlags-special.m2"
 load "NumericalSchubertCalculus/TST/2e4-G26.m2"
 check'changeFlags(SchPblm,2,6)
