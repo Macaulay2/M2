@@ -201,9 +201,12 @@ LRtriple(ZZ,Matrix) := (n,m) -> (
    PHCsessionFile := temporaryFileName() | "PHCses";
    PHCsolutions := temporaryFileName() | "PHCsolutions";
    d = concatenate(d,"\n0\n");  -- solve a generic instance for random flags
+   d = concatenate(d,"0\n");  -- standard double precision
    d = concatenate(d,"0\n");  -- generate random flags
    d = concatenate(d,PHCoutputFile,"\n");
-   d = concatenate(d,"y\n");  -- monitor Littlewood-Richardson homotopies
+   d = concatenate(d,"0\n");  -- no intermediate output written to file
+   d = concatenate(d,"y\n");  -- use an efficient problem formulation
+   d = concatenate(d,"y\n");  -- square the overdetermined homotopies
    d = concatenate(d,"0\n");  -- do not change default continuation parameters
    d = concatenate(d,"0\n");  -- no intermediate output during continuation
    stdio << "the input data for phc -e : " << endl <<  d;
