@@ -9,11 +9,15 @@ October 2016
 	the steady-state equations, and xx are the concentrations.
 
 *  We need:  The parameters cc and kk to have options for user input and
-   random. How to create this and update the ReactionRing?
+random. How to create this and update the ReactionRing?
+ * This is not necessary. Let's have a unique master ring; let's also flatten the ring, i.e., have FF[cc,kk,xx]
+ * Create an auxiliary function specialize(variables, values), which creates e.g.
+ map(FF[cc,xx],FF[cc,kk,xx],...)
+ that the user may then apply to anything.
 
-*  I don't understand how this is different from keeping the kk's as
+*  (I don't understand how this is different from keeping the kk's as
    unknown parameters:  We also want the option of grouping the parameters kk with the
-   variables xx, thus making kk variables as well.
+   variables xx, thus making kk variables as well.)
 
 *  Once the ReactionRing is fixed there should be no more changes that
    will afftect the examples we use in MonodromySolver. The rest of
