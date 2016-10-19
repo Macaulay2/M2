@@ -53,9 +53,59 @@ doc ///
             monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
     SeeAlso
          "selectRandomEdgeAndDirection"
+	 "potentialLowerBound"
+	 "potentialE"
     /// 
 
 
+doc ///
+    Key
+        potentialLowerBound
+    Headline
+    	the potential which is equal to the minimal number of new points guaranteed to be discovered
+    Description
+    	Text
+    	    This is an option for the Potential option for @TO "monodromySolve" @ when we use
+	    @TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
+	    observes discovered and undiscovered points first, and then follows the homotopy which
+	    has the minimal number of new points quaranteed to be found.
+    	Example
+	    R = CC[a,b,c,d][A,B]
+            polys = polySystem {A*a+B*b,A*B*c+d}
+	    (p0,x0) = createSeedPair polys
+            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
+    SeeAlso
+         "selectBestEdgeAndDirection"
+	 "potentialE"
+    /// 
+
+
+
+doc ///
+    Key
+        potentialE
+    Headline
+    	the potential which is equal to the expected number of new points obtained by tracking one point from the other
+    Description
+    	Text
+    	    This is an option for the Potential option for @TO "monodromySolve" @ when we use
+	    @TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
+	    computes the expected number of new points obtained by tracking points. The expected value
+	    is computed by the ratio of unmatched points and the difference between the total solution count and
+	    the number of the known points.
+    	Example
+	    R = CC[a,b,c,d][A,B]
+            polys = polySystem {A*a+B*b,A*B*c+d}
+	    (p0,x0) = createSeedPair polys
+	Text
+	    In here, we need the target number of solutions, and we will use the mixed volume for that.
+	Example    
+	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
+            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
+    SeeAlso
+         "selectBestEdgeAndDirection"
+	 "potentialLowerBound"
+    /// 
 
 doc ///
     Key
@@ -102,7 +152,7 @@ doc ///
 	Text
 	    Below is the output of the main function, which displays the number of
 	    paths followed to obtain the solutions. To view the solutions
-	    use the last comman displayed. 
+	    use the last command displayed. 
 	Example    
             (V,npaths) = monodromySolve(polys,p0,{x0})
 	    points V.PartialSols
