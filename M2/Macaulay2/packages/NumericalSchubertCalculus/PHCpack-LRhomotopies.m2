@@ -126,7 +126,7 @@ extractMovedFlag := (dim, data) -> (
     moved := select("MOVED", data#k);
     if #moved > 0 then
     (
-      subdata := {};
+      subdata := {}; row := 0;
       for i from 1 to dim do
       (
         row = k + i;
