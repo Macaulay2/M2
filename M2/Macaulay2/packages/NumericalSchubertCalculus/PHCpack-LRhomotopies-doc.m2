@@ -14,7 +14,7 @@ doc ///
       The user must have the executable program {\tt phc} available,
       preferably in the executation path.
   Caveat
-    The program "phc" (at least version 2.3.52, but preferably higher)
+    The program "phc" (at least version 2.4.02, but preferably higher)
     of PHCpack needs to in the path for execution.
 
     The current implementation resolves only one triple intersection
@@ -136,11 +136,11 @@ doc ///
     Text
       The parseTriplet allows to process the output of LRtriple.
     Example
-      r = LRtriple(6,matrix{{3, 2, 4, 6}});
-      (R, pols, sols, flag) = parseTriplet(r);
+      (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
+      (R, pols, sols, fixed, moved, solplanes) = parseTriplet(f, p, s);
       vars(R)
       peek sols
-      peek flag
+      peek solplanes
 ///;
 
 doc ///
@@ -167,6 +167,8 @@ doc ///
       the flag, the polynomial system and its solutions
       are wrapped into one string.
 ///;
+
+end; -- terminate reading because LRcheater does not work yet
 
 doc ///
   Key
@@ -240,12 +242,8 @@ Description
       w = wrapTriplet(S)
       print LRcheater(N,M,w)
 Caveat
-   The program "phc" built with version 2.3.52 (or higher)
+   The program "phc" built with version 2.4.02 (or higher)
    of PHCpack needs to be executable on the computer.
    Executables for various platforms and source code for phc
    are available from the web page of the author.
-
-   The current output of the calculations consist of strings
-   and requires still parsing and independent verification
-   with proper Macaulay 2 arithmetic.
 ///
