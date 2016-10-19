@@ -545,12 +545,61 @@ checkSchubertProblem = method()
 checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
     scan(conds, c -> if #c > k or 
 	c != rsort c or
-	first c > n-k then error ("wrong partition: "|toString c)
+	first c > n-k then error ("wrong partition: "|toString c|" verify your input")
 	);
     if sum flatten conds != k*(n-k) then 
     error "sum of codimensions of partitions should equal the dimension of the Grassmannian";
     ) 
 
+
+--------------------------
+-- verifyInput
+-------------------------
+-- Detects if the user gave partitions
+-- or brackets to define Schubert conditions
+-- checks if the input makes a feasible Schubert pblm
+-- and if the flags are general
+-------------------------
+-- Input:
+--    conds'flags - List of Schubert conditions with flags
+--                  {(cond_List, flag_Matrix),...}
+--
+--    k,n         - integers defining Gr(k,n)
+--
+-- Output:
+--    Pblm - List of Schubert conditions with flags
+--            {(partition_List, flag_Matrix),...}
+--    or ERROR - if the input was not correct
+--------------------------
+-- Note: Our methods assume you give Schubert
+--       conditions as partitions and flags
+--       as square invertible matrices
+-------------------------
+---------------
+-- Examples in TST/tstVerifyInput.m2 
+---------------
+
+verifyInput = method()
+verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
+    conds := conds'flags/first; -- list of schubert conditions
+    flags := conds'flags/last; -- list of flags
+    -- detect if conds are partitions or brackets
+    areAllBrackets:=apply(conds, c->(
+	    if #c == k and c == sort unique c then true else false
+	    ));
+    if #unique(areAllBrackets) > 1 then (
+	   error "verify your conditions: some seemed partitions some brackets"
+    	)else if areAllBrackets_0 == true then(
+	   conds = conds/(i-> bracket2partition(i,n)); -- we transform them into partitions now 
+	);
+    -- check if these conditions impose a 0-dimensional Schubert Problem
+    checkSchubertProblem(conds,k,n);
+    --- Verify that the flags are square matrices of full rank
+    scan(flags, F->(
+	    if not instance(F,Matrix) or numColumns F != numRows F or det F < ERROR'TOLERANCE  then error(toString F|" should be an invertible square matrix of size "| toString n)	    
+	    ));
+    apply(#conds, i-> (conds_i, flags_i))
+    )
 
 ----------------------
 -- randomSchubertProblemInstance

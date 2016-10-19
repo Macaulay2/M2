@@ -169,6 +169,19 @@ notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
 				   not above Lambda in the Bruhat order. The output is a list of brackets
 				 ** used for making polynomials **
 
+checkSchubertProblem (List,ZZ,ZZ) 
+              -- checks if a list of partitions form a valid Schubert Problem
+
+verifyInput(List, ZZ,ZZ)
+			-- checks if the input is either partition or bracket and if it impose
+			-- a valid Schubert problem
+
+
+randomSchubertProblemInstance
+				-- Creates an instance of a Schubert problem by creating
+				-- random unitary matrices
+
+
 ====================================================
 ==        LR-makePolynomials.m2 
 ====================================================
