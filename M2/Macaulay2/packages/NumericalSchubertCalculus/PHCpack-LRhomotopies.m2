@@ -61,7 +61,8 @@ makeRealRow := (line) -> (
 --   with the big E notation.  Returns a list of real numbers.
 --
   data := replace("E", "e", line);       -- replace the "E" by "e"
-  data = replace("e\\+00", "", data);    -- M2 does not want 2.3e+00"
+  data = replace("e\\+00", "", data);    -- M2 complaints at 2.3e+00
+  data = replace("e\\+", "e", data);     -- M2 complaints at 2.3e+01
   data = stripLeadingSpaces(data);       -- remove leading spaces
   data = stripTrailingSpaces(data);      -- remove trailing spaces
   data = replaceConsecutiveSpaces(data); -- exactly one space as separator
@@ -77,7 +78,8 @@ makeComplexRow := (line) -> (
 --   using the consecutive doubles as real and imaginary parts.
 --
   data := replace("E", "e", line);       -- replace the "E" by "e"
-  data = replace("e\\+00", "", data);    -- M2 does not want 2.3e+00"
+  data = replace("e\\+00", "", data);    -- M2 complaints at 2.3e+00
+  data = replace("e\\+", "e", data);     -- M2 complaints at 2.3e+01
   data = stripLeadingSpaces(data);       -- remove leading spaces
   data = stripTrailingSpaces(data);      -- remove trailing spaces
   data = replaceConsecutiveSpaces(data); -- exactly one space as separator
