@@ -476,6 +476,7 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 -- input:
 --    SchPblm := list of Schubert conditions with general flags
+--               {(partition_List, flag_Matrix),...}
 --    k,n := the Grassmannian G(k,n)
 --    (option) LinAlgebra [default = true] 
 --             move to user flags via Linear Algebra (if false via homotopy continuation)
