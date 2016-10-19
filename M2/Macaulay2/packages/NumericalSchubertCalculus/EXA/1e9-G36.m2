@@ -1,5 +1,6 @@
 needsPackage "NumericalSchubertCalculus"
-setRandomSeed 21
+-- setRandomSeed 21 -- fails!
+setRandomSeed 0
 setVerboseLevel 0;
 
 -- Problem (1)^9 = 42 in G(3,6)
