@@ -787,24 +787,25 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,Homotopy) and not o.Software =!= M2engine then ( -- main case... but M2engine does not need evaluation functions 
-     	 K = CC_53; --!!!
-      	 --
-       	 evalH = (x0,t0)-> (
-	     tr := timing evaluateH(H,x0,t0);
-	     etH = etH + tr#0;
-	     tr#1
-	     );
-       	 evalHx = (x0,t0)-> (
-	     tr := timing evaluateHx(H,x0,t0);
-	     etHx = etHx + tr#0;
-	     tr#1
-	     );  
-       	 evalHt = (x0,t0)->(
-	     tr := timing evaluateHt(H,x0,t0);
-	     etHt = etHt + tr#0;
-	     tr#1
-	     );
+     else if instance(H,Homotopy) then ( -- main case
+     	 if o.Software =!= M2engine then (--... but M2engine does not need evaluation functions 
+	     K = CC_53; --!!!
+      	     evalH = (x0,t0)-> (
+	     	 tr := timing evaluateH(H,x0,t0);
+	     	 etH = etH + tr#0;
+	     	 tr#1
+	     	 );
+       	     evalHx = (x0,t0)-> (
+	     	 tr := timing evaluateHx(H,x0,t0);
+	     	 etHx = etHx + tr#0;
+	     	 tr#1
+	     	 );  
+       	     evalHt = (x0,t0)->(
+	     	 tr := timing evaluateHt(H,x0,t0);
+	     	 etHt = etHt + tr#0;
+	     	 tr#1
+	     	 );
+	     )
     	 )     
      else error "unexpected type of homotopy (first parameter)";
      

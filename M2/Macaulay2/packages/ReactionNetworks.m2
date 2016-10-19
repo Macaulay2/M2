@@ -21,7 +21,7 @@ newPackage(
 
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
     "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
-    "stoichiometricSubspace", "stoichSubspaceKer", "createRing", "ParameterRing",
+    "stoichiometricMatrix", "stoichSubspaceKer", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue",
     "displayComplexes", "isDeficient", "isWeaklyReversible",
@@ -227,8 +227,8 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
 net ReactionNetwork := N -> stack networkToHRF N 
 
 
-stoichiometricSubspace = method()
-stoichiometricSubspace ReactionNetwork := N -> (
+stoichiometricMatrix = method()
+stoichiometricMatrix ReactionNetwork := N -> (
     C := N.Complexes;
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
@@ -249,8 +249,8 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
-assert(rank(stoichiometricSubspace CRN) == 3)
-assert(stoichiometricSubspace CRN == 
+assert(rank(stoichiometricMatrix CRN) == 3)
+assert(stoichiometricMatrix CRN == 
     mingens image transpose matrix{{1,-2,0,0,0},{1,-1,1,0,-1},{1,0,1,-1,0}})
 assert(stoichSubspaceKer CRN ==
     mingens image transpose matrix{{2,1,-1,1,0},{-2,-1,2,0,1}})
@@ -390,6 +390,7 @@ CRN.ReactionRing
 createRing(CRN, QQ)
 F = steadyStateEquations CRN
 steadyStateEquations CRN
+matrix{F}
 netList F
 ///
 
@@ -454,7 +455,7 @@ I+J
 
 --New functions to be created
 isDeficient = Rn -> (
-    d := rank(stoichiometricSubspace Rn);
+    d := rank(stoichiometricMatrix Rn);
     G := underlyingGraph(Rn.ReactionGraph);
     l := numberOfComponents G;
     p := #Rn.Complexes;
@@ -471,18 +472,22 @@ W = wnt()
 assert(isDeficient W == 4)
 ///
 
-
+--Weakly reversible if each connected component is strongly connected
 isWeaklyReversible = Rn -> (
     D := Rn.ReactionGraph;
     C := connectedComponents(underlyingGraph D);
     L := flatten apply(C, c-> (apply(subsets(c,2), s -> 
 		isReachable(D,s#0,s#1) and isReachable(D,s#1, s#0)
 		)));
-
-    
-    
+    Q := toList{i:=-1; while i<#L-1 do (
+	    i=i+1;
+	    l:=L#i;
+	    if l==false then break i
+	    )
+	};
+    if Q===toList{null} then true else false
     )
-    --how to extract parts of digraph corresponding to connected componenets?
+
     
 
 --injectivityTest = Rn ->
@@ -492,8 +497,8 @@ restart
 needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
-isWeaklyReversible N
-isWeaklyReversible wnt()
+assert(isWeaklyReversible N == true)
+assert(isWeaklyReversible wnt() == false)
 ///
 
 
@@ -512,7 +517,7 @@ scan({
      "TwolayerCascadeL.m2",
      "TwositeModificationE.m2",
      "TwositeModificationF.m2",
-     "docCHill.m2"
+     "DocReactionNetworks.m2"
     },
     motif -> load("./ReactionNetworks/"|motif) 
     )
