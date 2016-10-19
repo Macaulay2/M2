@@ -1,7 +1,7 @@
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "0.4", 
-    Date => "September 29, 2014",
+    Version => "1.9.2.1", 
+    Date => "Oct 2016",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
@@ -9,6 +9,9 @@ newPackage(
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@cimat.mx", 
 	    HomePage => "http://www.cimat.mx/~abraham.mc"},
+	{Name => "Frank Sottile", 
+	    Email => "sottile@math.tamu.edu", 
+	    HomePage => "http://www.math.tamu.edu/~sottile"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
