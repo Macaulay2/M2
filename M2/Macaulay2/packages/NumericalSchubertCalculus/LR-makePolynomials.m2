@@ -1,5 +1,3 @@
-needsPackage "SLPexpressions" 
-needsPackage "NAGtypes"
 ---------------------------------
 -- squareUpPolynomials
 ---------------------------------
@@ -154,14 +152,24 @@ makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy =
     (sum(Ilist,I->sub(I,R)),sols'/entries//flatten) 
     ) else error "unknown Strategy"
 
--- ******* old way (used in changeFlags) ********************************
-makePolynomialsGivenConditionsFlags = method()
-makePolynomialsGivenConditionsFlags(Matrix, List, List) := (MX, conds, flagsHomotopy)->(
+-- (used in changeFlags) ********************************
+-- Input: 
+--     MX, local coordinates
+--     conds, list of partitions
+--     flags, list of flags (given by square matrices)
+-- Output:
+--     polynomial equations for the given Schubert problem
+-- Note: 
+--     if flags involve any variables 
+--     (e.g., if flags depend on the continuation parameter t)
+--     MX should be over the same ring as flags 
+schubertPolySystem = method()
+schubertPolySystem(Matrix, List, List) := (MX, conds, flags)->(
     R := ring MX;
     k := numcols MX;
     n := numrows MX;
     eqs := sum(#conds, i->(
-	    MXF := MX|sub(flagsHomotopy#i,R);
+	    MXF := MX|sub(flags#i,R);
 	    b:= partition2bracket(conds#i,k,n);
 	    sum(#b,r->(
 		    c := b#r;
@@ -170,5 +178,168 @@ makePolynomialsGivenConditionsFlags(Matrix, List, List) := (MX, conds, flagsHomo
 	    ));
     eqs
     )
+
+---------------------------------
+--- changeFlags
+---------------------------------
+---
+-- changeFlags is a function to
+-- write solutions written w.r.t. flagsA
+-- to solutions written w.r.t flagsB
+--
+-- Input:
+--    MX -- X -> A localization pattern, M -> flag (Information about the 
+--    	      first two flags determines the localization pattern X)
+--    solutionsA -> solutions to the problem specialized to flagsA
+--    conds'A'B -> sequence with conditions and flags as follows: 
+--    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
+--    	  flagsA = (A3,...,Am)
+--    	  flagsB = (B3,...,Bm)
+-- Output:
+--    List of solutions written w.r.t flags B
+---------------------------------
+changeFlags = method(Options=>{"one homotopy"=>true})
+changeFlags(List, Sequence) := o->(solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
+   if #solutionsA == 0 then return {};
+   (conditions,flagsA,flagsB) := conds'A'B; 
+   SchA := apply(#conditions, i->(conditions#i,flagsA#i));
+   SchB := apply(#conditions, i->(conditions#i,flagsB#i));
+   -- August 20, 2013:
+   -------------------
+   -- commenting th checkIncidenceSolutions check as we discovered
+   -- this is a test that is numerical unstable!
+   --assert all(solutionsA, s->checkIncidenceSolution(s,SchA));
+   s := first solutionsA;
+   n := numrows s;
+   k := numcols s;
+   x := symbol x;
+   R := FFF[x_(1,1)..x_(k,n-k)];
+   MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
+   -- THE SOLUTIONS MIGHT NOT FIT MX (that's why I have an error for some problems)
+   
+   -- NEW: solutionsB := changeFlags'oneHomotopy(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
+   -- OLD: 
+   solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B,o);
+   
+   -- the following clean is a hack, instead, we need to do a newton step check
+   -- when we changeFlags as there is a numerical check in there... 
+   -- the following is a hack
+   ret := apply(solutionsB, s-> clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
+   --print(" changing solutions from flagsA to FlagsB using parameter homotopy\n we verify the returned solutions using newton Iteration");
+   --print(checkNewtonIteration(ret,SchB,(k,n))); --this is not working with the new way to create eqns
+   --assert all(ret, s->checkIncidenceSolution(s,SchB));
+   ret
+   )
+
+---------------------------------
+-- changeFlags (recursive call!!!)
+--
+-- This function is doing a parameter homotopy
+-- change one column at a time to move solutions
+-- w.r.t. flags A to solutions w.r.t. flags B
+--
+-- CAVEAT:
+--     it generates the polynomial equations using
+--     all minors of the incidence conditions
+--     (not the efficient way later implemented)
+---------------------------------
+-- Input:
+--    MX --> matrix of local coordinates
+--    solutionsA -> solutions to the problem specialized to flagsA
+--    conds'A'B -> sequence with conditions and flags as follows: 
+--    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
+--    	  flagsA = (A3,...,Am)
+--    	  flagsB = (B3,...,Bm)
+-- Output:
+--    List of solutions to the problem specialized to flagsB
+-- Option:
+--     "one homotopy"=>true [default]       
+--        there are two strategies, "one homotopy"=>true assumes flagsA are generic
+--        "one homotopy"=>false make a gradual random change of flags (one column at a time)   
+--        and uses only linear homotopies.
+----------------------------------
+changeFlags(Matrix, List, Sequence) := o -> (MX, solutionsA, conds'A'B) ->
+if o#"one homotopy" then changeFlags'oneHomotopy(MX, solutionsA, conds'A'B) else ( 
+   -- solutionsA is a list of lists (of values for the parameters)
+   (conditions,flagsA,flagsB) := conds'A'B; 
+   solutionsS := solutionsA;
+   if solutionsA!={} then(
+       t:= symbol t;
+       n := numcols last flagsA;
+       R := ring last flagsA;
+       R1 := R[t];
+       Mt := matrix{{t}};
+       Mt1 := matrix{{1-t}};
+       scan(n, i->(
+	       -- start when t = 0, target when t = 1
+	       flagsHomot := apply(#flagsA, f-> (
+		       FlagBB := sub(flagsB#f,R1);
+		       FlagAA := sub(flagsA#f,R1);
+		       FlagBB_{0..i-1}|
+		       (FlagBB_{i}*Mt - FlagAA_{i}*Mt1)|
+		       FlagAA_{i+1..n-1}
+		       ));
+	       RMx := ring MX;
+	       m := numgens RMx;
+       	       R2 := (coefficientRing RMx)[t,gens RMx];
+	       Polys := flatten entries squareUpPolynomials(m, 
+		   schubertPolySystem(sub(MX,R2),conditions,flagsHomot));
+	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
+	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
+	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, 
+		   NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR));
+      	       solutionsS = solutionsT/coordinates;
+	       ));
+       );
+   solutionsS
+   )
+
+changeFlags'oneHomotopy = method()
+changeFlags'oneHomotopy(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
+   (conditions,flagsA,flagsB) := conds'A'B; 
+   if #solutionsA == 0 then return {};
+   t:= symbol t;
+   n := numcols last flagsA;
+   R := ring last flagsA;
+   R1 := R[t];
+   toR1 := map(R1,R);
+   flagsHomot := apply(flagsA, flagsB, (A,B)->toR1 A * (1-t) + toR1 B * t); 
+   RMx := ring MX;
+   m := numgens RMx;
+   R2 := (coefficientRing RMx)[gens RMx,t];
+   Polys := flatten entries squareUpPolynomials(m, 
+       schubertPolySystem(sub(MX,R2),conditions,flagsHomot)
+       );
+   solutionsB := trackHomotopy(transpose matrix {Polys}, apply(solutionsA,s->point{s}));      	  
+   solutionsB/coordinates
+   )
+
+
+TEST ///
+---------
+-- Test the function changeFlags that
+-- moves solutions wrt flags A
+-- to solutions wrt flags B
+--
+restart
+needsPackage "NumericalAlgebraicGeometry"
+debug needsPackage "NumericalSchubertCalculus"
+FFF = CC_53
+Rng = FFF[x_{1,1}, x_{1,2}];
+MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
+conds = {{1},{1}};
+Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
+-- Flags1 = {rsort id_(FFF^4), id_(FFF^4)_{1,3,0,2}};
+sols = solveSystem (
+    first makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i)),{})
+    )_*
+Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
+solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
+assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+solsT = changeFlags'oneHomotopy(MX, sols, (conds, Flags1, Flags2))
+assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+
+/// --end of TEST
+
 
 
