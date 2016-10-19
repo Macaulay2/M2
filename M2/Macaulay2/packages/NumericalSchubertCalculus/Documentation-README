@@ -30,7 +30,8 @@ moveRed
 moveCheckers 
 				-- makes the next move of black and red checkers during a game
 				
--- Statistics -- a few functions that count the frequencies of each type of move (of the 3x3 table) ** Needs to be documented and programmed properly
+-- Statistics -- a few functions that count the frequencies of each type of move (of the 3x3 table) 
+			  --** Needs to be documented and programmed properly
 
 playCheckers 
 				-- given two partitions, plays the combinatorial checkerboard game and outputs the hashtable of the checkermoves played
@@ -114,6 +115,11 @@ checkIncidenceSolution
 				--this is only for our tests... shouldn't be used by the user
 
 solutionsToAffineCoords
+				-- takes a list of solutions in global coordinates (as matrices)
+				   and writes it in terms of the coordinate chart: [**||id]
+				   *** This function may fail if the solutions cannot fit this local coordinates
+				******* This function is used ONLY in the checkNewtonIteration which in turn is not used anymore
+				        however, it is documented (we should remove it from doc.m2)
 
 partition2bracket
 
@@ -143,19 +149,25 @@ bracket2partition(List,ZZ)
 printTree(MutableHashTable)--input node
 
 checkNewtonIteration
-				-- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
+				-- this is for testing only should be removed from the final version 
+					(seems not working with the new way to create eqns)
 				-- NOT USED at the moment
 
 
-dist(List,List) -- computes euclidean distance of 2 vectors
+dist(List,List) -- computes euclidean distance of 2 vectors 
+				--** NOT USED anymore
 
-moveFlags2Flags (List, List) --input two list of flags (F's, G's)
+moveFlags2Flags (List, List) --input two list of 2 flags (F's, G's)
+				-- it finds the transformations that sends (F1,F2) to (G1,G2) 
 
-MovingFlag'at'Root ZZ
+MovingFlag'at'Root ZZ 
+				-- Creates a matrix that has the same shape as the moving flag obtained at the root
+				   from the specialization in the checkerboard game
 
 notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
 				-- Given a partition Lambda, this function computes all those that are
-				   not above Lambda in the Bruhat order. The output is a bracket?
+				   not above Lambda in the Bruhat order. The output is a list of brackets
+				 ** used for making polynomials **
 
 ====================================================
 ==        LR-makePolynomials.m2 

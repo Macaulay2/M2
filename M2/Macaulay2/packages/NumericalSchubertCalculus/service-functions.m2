@@ -123,7 +123,7 @@ printTree MutableHashTable := node ->(
 -- the convergence of the approximated solution
 ----------------------
 -- Input: 
---    Solns - list of solutions
+--    Solns - list of solutions (in local coordinates?)
 --    Pblm - list of (li,Fi) representing the SchubertProblem
 --    (k,n) - sequence with (k,n) that indicate the Grassmannian G(k,n)
 -- Output:
@@ -132,7 +132,7 @@ printTree MutableHashTable := node ->(
 --       ?? This is the info necessary to create a system of eqns
 --------------------------------------------------------------------
 --    *** NOT USING THIS FUNCTION ***
---    *** NEEDS TO BE REMOVED AS IT WAS CREATED BEFORE LONG TIME AGO
+--    *** NEEDS TO BE REMOVED AS IT WAS CREATED LONG TIME AGO
 checkNewtonIteration = method()
 checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
     (k,n):= kn;
@@ -201,6 +201,7 @@ checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
 -- M2 function norm(2,_) does not give the 2-norm
 -- of the complex vector (x1,...,xn)
 ----------------------- 
+-- ** NOT USED ANYMORE
 dist = method()
 dist(List,List) := (solns1,solns2) -> (
     apply(#solns1, i->(
@@ -231,6 +232,8 @@ dist(List,List) := (solns1,solns2) -> (
 -- transformation of the solutions (and flags) before calling
 -- this function
 --------------------------------------------------
+-- *** ONLY used in checkNewtonIteration which is no longer used
+--------------------------------------------------
 solutionsToAffineCoords = method()
 solutionsToAffineCoords List := Solutions ->(
     apply(Solutions, s->(
@@ -247,18 +250,19 @@ solutionsToAffineCoords List := Solutions ->(
 -- checkIncidenceSolution
 ----------------------
 -- August 20,2013
--- THIS FUNCTION NEEDS TO BE DELETED
+-- THIS FUNCTION NEEDS TO BE DELETED??  (Does it?)
 -- it was for testing solutions of Schubert varieties
 -- but this is not numerical stable... we replace this
 -- with a Newton step check
 ----------------------
 -- Function that given a proposed
--- n by k matrix, it checks
--- if it satisfies incidence conditions
+-- n by k matrix, and a list of Schubert conditions,
+--  it checks if the solution satisfies the incidence conditions
+--  by computing the corresponding minors and see if they vanish
 ----------------------
 -- Input:
---    M -- n by k matrix (representing an element of G(k,n)
---        (make it so that M can have matrices with variables)
+--    H -- n by k matrix (representing an element of G(k,n)
+--        (make it so that H can have matrices with variables)
 --    SchbPrblm -- Schubert problem given as
 --    	           list of sequences of the form
 --    	      	   {(l1,F1),...,(lm,Fm)}
@@ -271,7 +275,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
   k:= numColumns H;
   verif:= true;
   scan(SchbPrblm, T->(
-    (l,F) := T;
+    (l,F) := T; -- (partition, flag)
     b:=partition2bracket(l,k,n);
     HXF:=promote(H|F,ring H);
     scan(#b, r->( 
@@ -327,7 +331,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 -- Output:
 --    (A,T1,T2) - sequence of three matrices
 --         A - invertible nxn matrix
---         T1 - upper triangular matrix with 1's in
+--         T1 - upper triangular matrix
 --              with 1's in the diagonal
 --         T2 - upper triangular matrix with nonzero
 --              entries in the diagonal
@@ -360,14 +364,48 @@ moveFlags2Flags (List, List) := (F's, G's)->(
     X := transpose solve(A1,b1);
     (sub(A, X), sub(T1, X), sub(T2, X))
     )
-
+--------------------
+--  Example:
+--------------------
+-- F1 = id_(FFF^4)
+-- F2 = rsort id_(FFF^4)
+-- G1 = random(FFF^4,FFF^4)
+-- G2 = random(FFF^4,FFF^4)
+-- 
+-- moveFlags2Flags({F1,F2},{G1,G2})
+-- o =(| .942485+.841897i -.453529+.038107i  -1.17023-1.18863i -.0211864+.39196i |,
+--     | .033580+.866902i -.0844235-.340175i 1.06488-.119899i  .0185506+.411333i | 
+--     | .725934+.355448i .229312+.274355i   -.467423+1.25503i -.195849+.736079i | 
+--     | .542686+.238398i -.150172+.371548i  -1.36279+.224972i -.055652+.890821i | 
+--    ------------------------------------------------------------------------------
+--     | 1 -.584783+.236584i -2.07229-1.56411i -.628292-.794925i |, 
+--     | 0 1                 1.4547+3.57843i   -.791082+1.93156i |  
+--     | 0 0                 1                 .686317+.55597i   |  
+--     | 0 0                 0                 1                 |  
+--      ------------------------------------------------------------------------------
+--     | .461031+.52935i .674426+3.90896i  .957904-.133557i  -1.95461-.07167i  |)
+--     | 0               -1.98146-3.05206i -.619948+.386562i 3.38618+.656677i  |
+--     | 0               0                 -.387966+.161397i -.064671+1.15621i |
+--     | 0               0                 0                 .038901-4.54283i  |
+--
+--------------------
 
 -------------------------
 -- MovingFlag'at'Root 
 -------------------------
 -- function to create the moving flag node.FlagM
--- that will be the same for every checkerboard Tree
--- this is used to solve Internal Problem
+-- observed in the root of a Dag, after the specialization
+-- in the checkerboard game.
+-- this will be the same for every checkerboard Tree
+-- and it is used to solve Internal Problem
+------------------------
+-- Example:
+--
+-- MovingFlag'at'Root 4
+--  o =  | 1  1  1  1 |
+--       | -1 -1 -1 0 |
+--       | 1  1  0  0 |
+--       | -1 0  0  0 |
 ------------------------
 MovingFlag'at'Root = method(TypicalValue => Matrix)
 MovingFlag'at'Root ZZ := n -> (
@@ -379,6 +417,7 @@ MovingFlag'at'Root ZZ := n -> (
 	    ));
     matrix M
     )
+
 
 -- NotAboveLambda
 --
@@ -395,6 +434,27 @@ MovingFlag'at'Root ZZ := n -> (
 --                 corresponding partition m is not above l 
 --
 ----------------------------- 
+-- Example:
+-- 
+-- the Bruhat order near the partition {2,1} in G(3,6) is:
+--
+--        /  \  |  / \ 
+--    {1,1,1} {2,1}  {3}
+--         \   /  \  /
+--         {1,1}   {2}
+--             \   /
+--              {1}
+--               |
+--              { }
+---------
+-- notAboveLambda({2,1},3,6)
+--  o = {{4, 5, 6}, {3, 5, 6}, {3, 4, 6}, 
+--       {2, 5, 6}, {3, 4, 5}, {1, 5, 6}}
+--
+--  and these brackets corresponds to the partitions:
+--      {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, 
+--       {2, 0, 0}, {1, 1, 1}, {3, 0, 0}}
+-----------------------------
 notAboveLambda = method()
 notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
   -- We Assume that lambda is not the zero partition {0,0,...,0}
@@ -425,6 +485,9 @@ notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
   apply(flatten values notAbove, la->partition2bracket(la,k,n))
   )
 
+---******************************---
+------ For Pieri Homotopies ---------
+---******************************----
 ---------------------------
 --  skewSchubertVariety  --
 -- Creates Matrix E_{m,l} --
@@ -462,6 +525,21 @@ skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
      (M,toList apply(d,i->inputGate (o.Inputs)_i))
      )
 
+
+
+----------------------
+-- checkSchubertProblem
+----------------------
+-- Function that checks if a list of partitions
+-- impose a feasible Schubert problem
+----------------------
+-- Input: 
+--    conds - list of partitions
+--    k,n   - integers that indicate the Grassmannian G(k,n)
+-- Output:
+--    none - if the partitions are good for a Schubert problem
+--      or ERROR otherwise
+--------------------------------------------------------------------
 -- sanity check
 checkSchubertProblem = method()
 checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
@@ -473,6 +551,23 @@ checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
     error "sum of codimensions of partitions should equal the dimension of the Grassmannian";
     ) 
 
+
+----------------------
+-- randomSchubertProblemInstance
+----------------------
+-- Creates a random instance of a Schubert problem
+-- by computing random unitary matrices to specify the flags
+----------------------
+-- Input: 
+--    conds - list of partitions
+--    k,n   - integers that indicate the Grassmannian G(k,n)
+--
+--    Options:  Strategy => "unitary" : uses the Random Unitary Matrix from NAG4M2.
+--                          "unit cirle": fills up the matrix with random
+--                             [default]  complex numbers in the unit circle
+-- Output:
+--
+------------------------
 -- create an instance of a Schubert problem with random unitary matrices specifying flags
 randomSchubertProblemInstance = method(Options=>{Strategy=>"unit circle"})
 randomSchubertProblemInstance (List,ZZ,ZZ) := o -> (conds,k,n) -> (
