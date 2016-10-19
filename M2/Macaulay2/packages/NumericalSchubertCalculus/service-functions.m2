@@ -30,7 +30,8 @@ export {
 -- moveFlags2Flags (List, List) --input two list of flags (F's, G's)
 -- MovingFlag'at'Root ZZ
 -- notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
---    "checkNewtonIteration", -- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
+--    "checkNewtonIteration", -- this is for testing only should be removed from the final version (test if it works with the new way to create eqns)
+-- verifyInput
 
 
 ---------------------
@@ -132,7 +133,6 @@ printTree MutableHashTable := node ->(
 --       ?? This is the info necessary to create a system of eqns
 --------------------------------------------------------------------
 --    *** NOT USING THIS FUNCTION ***
---    *** NEEDS TO BE REMOVED AS IT WAS CREATED LONG TIME AGO
 checkNewtonIteration = method()
 checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
     (k,n):= kn;
@@ -162,23 +162,7 @@ checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
 	    Jinv*transpose(Mp matrix{squareSyst})
 	    ))
     )
---checkNewtonIteration(List,Matrix,List) := (Solns,coordX,remaining'conditions'flags) -> (
---    polySyst := makePolynomials(coordX,remaining'conditions'flags);
---    solutions := apply(Solns, X-> toRawSolutions(coordX,X));
---    NewtStep:=checkNewtonIteration(solutions,polySyst);
---    apply(NewtStep, n-> map(FFF,ring coordX, matrix{n}) coordX)
---    )
 
-
-
---squareSyst := flatten entries gens makePolynomials(coordX, remaining'conditions'flags);
---polysquares := squareUpPolynomials(numgens ring coordX, ideal(squareSyst));
---Sols:=  apply(node.Solutions, X->toRawSolutions(coordX,X));
---NewtonStep1 := refine(squareSyst, Sols, Software=>M2, Iterations=>1);
---NewtonStep2 := refine(squareSyst, NewtonStep1, Software=>M2, Iterations=>1);
---print(dist(NewtonStep1,Sols));
---print("distance between two newton steps:");
---print(dist(NewtonStep2,NewtonStep1));
 
 ------------------------
 -- dist
@@ -255,9 +239,9 @@ solutionsToAffineCoords List := Solutions ->(
 -- but this is not numerical stable... we replace this
 -- with a Newton step check
 ----------------------
--- Function that given a proposed
--- n by k matrix, and a list of Schubert conditions,
---  it checks if the solution satisfies the incidence conditions
+-- Function that given a proposed 
+-- n by k matrix, and a list of Schubert conditions and flags,
+--  it checks if the matrix satisfies the incidence conditions
 --  by computing the corresponding minors and see if they vanish
 ----------------------
 -- Input:
@@ -454,6 +438,9 @@ MovingFlag'at'Root ZZ := n -> (
 --  and these brackets corresponds to the partitions:
 --      {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, 
 --       {2, 0, 0}, {1, 1, 1}, {3, 0, 0}}
+--
+------- 
+--  More examples in TST/tstNotAbove.m2
 -----------------------------
 notAboveLambda = method()
 notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
@@ -534,15 +521,29 @@ skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
 -- impose a feasible Schubert problem
 ----------------------
 -- Input: 
---    conds - list of partitions
+--    conds - list of partitions or brackets
 --    k,n   - integers that indicate the Grassmannian G(k,n)
 -- Output:
 --    none - if the partitions are good for a Schubert problem
 --      or ERROR otherwise
 --------------------------------------------------------------------
 -- sanity check
+--------------------------------------------------------------------
+-- CAVEAT: if the user entered the conditions as brackets
+--         it changes them into partitions and do the check
+--------------------------------------------------------------------
 checkSchubertProblem = method()
 checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
+    -- detect if conds are partitions or brackets and transforms them in partitions if not
+    areAllBrackets:=apply(conds, c->(
+	    if #c == k and c == sort unique c then true else false
+	    ));
+    if #unique(areAllBrackets) > 1 then (
+	   error "verify your conditions: some seemed partitions some brackets"
+    	)else if areAllBrackets_0 == true then(
+	   conds = conds/(i-> bracket2partition(i,n)); -- we transform them into partitions
+	);
+    --------------
     scan(conds, c -> if #c > k or 
 	c != rsort c or
 	first c > n-k then error ("wrong partition: "|toString c|" verify your input")
@@ -583,15 +584,6 @@ verifyInput = method()
 verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
     conds := conds'flags/first; -- list of schubert conditions
     flags := conds'flags/last; -- list of flags
-    -- detect if conds are partitions or brackets
-    areAllBrackets:=apply(conds, c->(
-	    if #c == k and c == sort unique c then true else false
-	    ));
-    if #unique(areAllBrackets) > 1 then (
-	   error "verify your conditions: some seemed partitions some brackets"
-    	)else if areAllBrackets_0 == true then(
-	   conds = conds/(i-> bracket2partition(i,n)); -- we transform them into partitions now 
-	);
     -- check if these conditions impose a 0-dimensional Schubert Problem
     checkSchubertProblem(conds,k,n);
     --- Verify that the flags are square matrices of full rank
@@ -615,7 +607,8 @@ verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
 --                          "unit cirle": fills up the matrix with random
 --                             [default]  complex numbers in the unit circle
 -- Output:
---
+--    a list of sequences of the from (cond_List,flag_Matrix)
+--      where flag_Matrix is a random nxn matrix
 ------------------------
 -- create an instance of a Schubert problem with random unitary matrices specifying flags
 randomSchubertProblemInstance = method(Options=>{Strategy=>"unit circle"})
