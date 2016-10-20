@@ -199,8 +199,6 @@ toricBlowUp(Polyhedron,Polyhedron,ZZ) := (P,F,k) -> (
 	return P
         );
     (A,b) := ambientHalfspaces(P);
-    b = lift(b, ZZ);
-    A = lift(A, ZZ);
     E := matrix{toList((numcols A):0)};
     for i to (numrows(A)-1) do (
 	B := matrix{
@@ -482,16 +480,20 @@ gaussFiber(List) := (A) -> (
 --- PURPOSE : Compute the halfspace description of a polytope
 ambientHalfspaces = method(TypicalValue => Sequence)
 ambientHalfspaces(Polyhedron) := P -> (
-    if (dim P)==(ambDim P) then(return halfspaces(P));
-    orto:=matrix(entries inducedMap(cokernel linSpace(affineHull(P)),QQ^((ambDim P))));
-    orto=transpose gens trim image transpose(orto);
-    (A,b):=halfspaces(P);
-    vert:=vertices(P);
-    for i to numrows orto-1 do(
-	A=A||matrix(orto^{i})||(-1)*matrix(orto^{i});
-	b=b||matrix( matrix(orto^{i})*vert_0)||matrix((matrix(orto^{i})*vert_0));
-	);
-    return (A,b)
+    local A;
+    local b;
+    if (dim P)==(ambDim P) then (A,b) = halfspaces(P)
+    else (
+        orto:=matrix(entries inducedMap(cokernel linSpace(affineHull(P)),QQ^((ambDim P))));
+        orto=transpose gens trim image transpose(orto);
+        (A,b)=halfspaces(P);
+        vert:=vertices(P);
+        for i to numrows orto-1 do(
+	    A=A||matrix(orto^{i})||(-1)*matrix(orto^{i});
+	    b=b||matrix( matrix(orto^{i})*vert_0)||matrix((matrix(orto^{i})*vert_0));
+	    );
+        );
+    (lift(A,ZZ),lift(b,ZZ))
     )
 
 -- Used in randQPoly and randZPoly
