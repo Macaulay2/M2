@@ -1,3 +1,16 @@
+----------------
+--Functions contained here but not exported:
+----------------
+-- blackBoxSolve
+-- verifyTarget
+-- verifyStart
+-- globalStayCoords
+-- globalSwapCoords
+-- caseSwapStay
+-- verifyParent
+-- solveCases
+-- resolveNode
+----------------
 blackBoxSolve = method();
 blackBoxSolve(MutableHashTable,List,Matrix) := (node,
    remaining'conditions'flags,coordX) -> (
@@ -150,7 +163,7 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
    -- check if the black checker in the i'th row is in region B
    isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
---------  Frank/Abr. revision
+--------  Frank/Abr. revision Oct. 2016
    scan(#red'sorted, j -> YtCoords = YtCoords |
       if j == s then 
       (

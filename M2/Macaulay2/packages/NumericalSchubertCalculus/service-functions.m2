@@ -1,16 +1,5 @@
-if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
-if version#"VERSION" == "1.8.2" then ( -- temporary det bug fix
-    olddet := lookup(det,Matrix);
-    det Matrix := o -> M -> ( 
-	R := ring M;
-	if instance(R, ComplexField) or instance(R, RealField) then (
-	RP := R[];
-	lift((olddet o) sub(M,RP), R)
-	) else (olddet o) M
-    	)
-    ) 
 export {
-    "skewSchubertVariety",
+    "skewSchubertVariety", -- for Pieri Homotopies
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
@@ -26,13 +15,12 @@ export {
 -- output2bracket(List)
 -- bracket2partition(List,ZZ)
 -- printTree(MutableHashTable)--input node
--- dist(List,List) -- computes euclidean distance of 2 vectors
+-- checkNewtonIteration -- this is for testing only should be removed from the final version (test if it works with the new way to create eqns)
 -- moveFlags2Flags (List, List) --input two list of flags (F's, G's)
 -- MovingFlag'at'Root ZZ
 -- notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
---    "checkNewtonIteration", -- this is for testing only should be removed from the final version (test if it works with the new way to create eqns)
+-- checkSchubertProblem(conds,k,n)  
 -- verifyInput
-
 
 ---------------------
 --   verifyLength  --
@@ -162,40 +150,6 @@ checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
 	    Jinv*transpose(Mp matrix{squareSyst})
 	    ))
     )
-
-
-------------------------
--- dist
-------------------------
--- function to measure the 
--- euclidean distance between
--- two points: (x1,...,xn) and (y1,...,yn)
--- it computes:
---    sqrt(sum( (xi-yi)^2 ))
--- 
--- Input: two Lists representing two set of solutions to a system
--- Output: list of distances between the elements of the list
---   
---- Notice that solns1 could come from a numerical Newton step,
--- so the function first check if the solution is of type List or 
--- of type Point
---
---------- FOR DAN AND MIKE -------
--- Notice we had to do this function because
--- M2 function norm(2,_) does not give the 2-norm
--- of the complex vector (x1,...,xn)
------------------------ 
--- ** NOT USED ANYMORE
-dist = method()
-dist(List,List) := (solns1,solns2) -> (
-    apply(#solns1, i->(
-	    v1 := solns1#i;
-	    v2 := solns2#i;
-	    if instance(v1,Point) then v1 = coordinates(v1);
-	    if instance(v2,Point) then v2 = coordinates(v2);
-	    sqrt(sum(apply(v2-v1, i->i^2)))
-   ))
-)
 
 
 ------------------------

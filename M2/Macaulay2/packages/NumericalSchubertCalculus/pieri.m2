@@ -2,6 +2,15 @@ export {
    "createRandomFlagsForSimpleSchubert",
    "solveSimpleSchubert"
    }
+----------------
+--Functions contained here but not exported:
+----------------
+-- generateChildren
+-- positionVariableChildren
+-- precookPieriHomotopy
+-- solveEasy
+-- trackSimpleSchubert
+
 protect StartSolutions
 protect Memoize
 

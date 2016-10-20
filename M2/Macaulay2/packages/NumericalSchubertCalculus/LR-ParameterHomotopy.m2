@@ -1,4 +1,10 @@
 export {"randomSchubertProblemSolution"}
+----------------
+--Functions contained here but not exported:
+----------------
+-- parametricSchubertProblem
+-- oneSolutionForOneInstance
+
 needsPackage "NumericalAlgebraicGeometry"
 parametricSchubertProblem = method()
 p := symbol p;

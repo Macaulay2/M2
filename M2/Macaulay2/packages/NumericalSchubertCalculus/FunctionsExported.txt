@@ -1,0 +1,36 @@
+-- Functions Exported that need to be in the documentation
+----------------------------------------------------------
+
+	==== Already Done ===
+
+
+	==== Not Done Yet ===
+// NumericalSchubertCalculus.m2 //
+
+"changeFlags", -- in LR-makePolynomials.m2
+"bigCellLocalCoordinates", 
+"schubertPolySystem",
+"setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
+"solveSchubertProblem"
+
+// service-functions.m2 //
+"skewSchubertVariety",
+"checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
+"solutionsToAffineCoords", --Temporary! User shouldn't use this function
+"partition2bracket",
+"bracket2partition",
+"randomSchubertProblemInstance"
+
+// LR-ParameterHomotopy.m2 //
+"randomSchubertProblemSolution"
+
+// pieri.m2 //
+"createRandomFlagsForSimpleSchubert",
+"solveSimpleSchubert"
+
+
+// galois.m2 //
+"findGaloisElement",
+"isFullSymmetric",
+"isGaloisFullSymmetric"
+
