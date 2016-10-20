@@ -8,6 +8,8 @@ Gs = createRandomFlagsForSimpleSchubert((2,4),{1},{1})
 
 -- this creates random matrices for all
 G1 = randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
+
+solveSimpleSchubert(G1,2,4)
 -- since the flags afected are the id, rsort id, and two general
 -- but only the first n-k part of them, we do the following
 G1 = drop(G1,2)
@@ -44,6 +46,9 @@ GforSimple = apply(G, g->(
 	transpose (last g)_{0..6-2-1}
 	))
 
+G2 = apply(G, g->(
+	submatrix(transpose last g,{0..6-2-1}, )
+	))
 Sols = solveSimpleSchubert((2,6),{2,1},{1,1}, GforSimple)
 
 E = skewSchubertVariety((2,6),{2,1},{1,1})

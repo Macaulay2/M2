@@ -203,7 +203,7 @@ solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
    l1 := verifyLength(first first twoconds, k);
    l2 := verifyLength(first last twoconds, k); 
    simplConds := remaining'conditons'flags/first;
-   remaining'flags := remaining'conditions'flags/last;   
+   remaining'flags := remaining'conditons'flags/last;   
    Slns:={};
    -- checks if it is a Simple Schubert problem
    checkSimpleSchubertProblem({l1,l2}|simplConds, k,n);
@@ -211,8 +211,15 @@ solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
    if min(checkPartitionsOverlap) < 0 then
       Slns
    else(
-       
-       )   
+       -- we take the first n-k columns and transpose
+       -- because SimpleSchubert are solved with rowSpan and not colSpan
+       flagsForSimple:= apply(remaining'flags, F->(
+          transpose F_{0..n-k-1}
+	));
+       Sols := solveSimpleSchubert((k,n),l1,l2,flagsForSimple);
+       E:= skewSchubertVariety((k,n),l1,l2);
+       Sols := apply(Sols, s->(transpose sub(E,matrix{s})));
+       ) 
 )
 
 -----------------------------
