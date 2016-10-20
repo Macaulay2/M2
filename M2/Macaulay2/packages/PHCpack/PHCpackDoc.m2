@@ -895,9 +895,9 @@ doc ///
       places:
     
     Example
-      R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; roots = solveSystem(S);
-      r0 = roots#0#Coordinates#1
-      newRoots = refineSolutions(S,roots,64)
+      R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; ourRoots = solveSystem(S);
+      r0 = ourRoots#0#Coordinates#1
+      newRoots = refineSolutions(S,ourRoots,64)
       newRoots#0 -- recall that solutions are of type Point
       r1 = newRoots#0#Coordinates#1
 ///;
@@ -1712,11 +1712,11 @@ doc ///
     
     Example
       R = CC[x,y,z];
-      twisted = {z^2-y, y*z-x, y^2-x*z};
-      (w, ns) = topWitnessSet(twisted, 1);
-      slc = realSlice1D(w);
-      solsRR = intersectSlice(w,slc)
-      for i to #solsRR-1 do print solsRR_i
+     -- twisted = {z^2-y, y*z-x, y^2-x*z};
+     -- (w, ns) = topWitnessSet(twisted, 1);
+     -- slc = realSlice1D(w);
+     -- solsRR = intersectSlice(w,slc)
+     -- for i to #solsRR-1 do print solsRR_i
     
   SeeAlso
     intersectSlice
@@ -1748,11 +1748,11 @@ doc ///
     
     Example
       R = CC[x,y,z];
-      paraboloid = {z - x^2 - y^2};
-      (w, ns) = topWitnessSet(paraboloid, 2);
-      slc = realSlice2D(w, searchNpoints=>5);
-      solsRR = intersectSlice(w,slc)
-      for i to #solsRR-1 do print solsRR_i
+     -- paraboloid = {z - x^2 - y^2};
+     -- (w, ns) = topWitnessSet(paraboloid, 2);
+     -- slc = realSlice2D(w, searchNpoints=>5);
+     -- solsRR = intersectSlice(w,slc)
+     -- for i to #solsRR-1 do print solsRR_i
     
   SeeAlso
     intersectSlice
