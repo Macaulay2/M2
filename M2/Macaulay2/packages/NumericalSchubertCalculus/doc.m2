@@ -1,3 +1,65 @@
+doc ///
+   Key
+      NumericalSchubertCalculus
+   Headline
+      A collection of tools for solving Schubert problems on Grassmannians using homotopy continuation
+   Description
+      Text 
+      	   General functions are
+	   
+	   @TO randomSchubertProblemInstance@
+	   
+	   @TO randomSchubertProblemSolution@
+	   
+	   TO changeFlags
+	   
+	   TO checkIncidenceSolution
+	   
+	   TO skewSchubertVariety
+           
+	   Functions related to the geometric Littlewood-Richardson rule include
+	   
+	   TO solveSchubertProblem
+	   
+	   and several functions to interface with the alternative implementation in PHCpack 
+	   
+	   @TO LRrule@, @TO LRtriple@, @TO parseTriplet@, @TO wrapTriplet@, @TO LRcheater@
+	   
+	   Functions related to the Pieri rule:
+	   
+	   Service functions:
+	   
+	   @ TO setVerboseLevel @
+	   
+	   @ TO bracket2partition @
+	   
+	   @ TO partition2bracket @
+
+      Text
+	   This package implements algorithms appearing in 
+	   
+	   @HREF("https://arxiv.org/???")@
+	   
+	   @HREF("https://arxiv.org/???")@
+	   
+	   @HREF("https://arxiv.org/???")@
+	   
+	   @HREF("https://arxiv.org/???")@
+	   
+	   @HREF("https://arxiv.org/???")@
+   	   
+	   For example, solve Schubert problem \{2,1\}^3 in Gr(3,6) with respect to random flags
+      Example
+	 k = 3;
+	 n = 6;
+	 SchPblm = {
+    	     ({2,1}, random(CC^6,CC^6)),
+    	     ({2,1}, random(CC^6,CC^6)),
+    	     ({2,1}, random(CC^6,CC^6))
+    	     };
+	 solveSchubertProblem(SchPblm, k,n)
+///
+
 -- Documentation Littlewood-Richardson homotopies
 --------------
 doc ///
