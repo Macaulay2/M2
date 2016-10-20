@@ -107,6 +107,10 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
 -- for solving the system defined by these random matrices
 -- using Homotopy Continuation
 --------------------------
+-- input: 
+--    kn   - sequence with two numbers (k,n) specifying Gr(k,n)
+--    l,m  - Lists each a partition 
+-------------------------- 
 createRandomFlagsForSimpleSchubert = method( )
 createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
 	 (k,n) := kn;
@@ -117,7 +121,21 @@ createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
    apply(d, i-> random(FFF^(n-k),FFF^n))
    )
 
-     
+
+------------------------
+-- solveSimpleSchubert
+-----------------------
+-- Uses Pieri homotopies to solve
+-- a simple Schubert problem
+-----------------------
+-- Input:
+--    kn   - a sequence of 2 integers (k,n) specifying Gr(k,n)
+--    l,m  - Lists of two partitions indicating the non-simple Schubert conditions
+--    G    - List of flags indicated as (n-k)xn matrices
+------------------------
+-- Note:   Solves the Schubert problem l,m,{1}^d in Gr(k,n)
+--         w.r.t. the flags Id, rsort Id, G
+------------------------
 solveSimpleSchubert = method(TypicalValue=>List)
 solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
    -- l and m are partitions of n
@@ -167,6 +185,58 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
       )
 )
 
+---------------
+-- Input:
+--    SchPblm  - a Schubert problem given as a list
+--               of the form {(cond_List, flag_Matrix), ...}
+--    k,n      - integers that specify the Grassmannian Gr(k,n)
+-- Output:
+--    A list of kxn-matrices that are solutions to the problem
+-------------------------
+-- NOTE:  This way to call it is using the same input
+--        as the LR-Homotopies. Here flags are complete (invertible square matrices)
+-------------------------
+
+solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
+   twoconds := take(SchPblm,2);
+   remaining'conditons'flags := drop (SchPblm,2);
+   l1 := verifyLength(first first twoconds, k);
+   l2 := verifyLength(first last twoconds, k); 
+   simplConds := remaining'conditons'flags/first;
+   remaining'flags := remaining'conditions'flags/last;   
+   Slns:={};
+   -- checks if it is a Simple Schubert problem
+   checkSimpleSchubertProblem({l1,l2}|simplConds, k,n);
+   checkPartitionsOverlap := (l1+reverse l2)/(i->n-k-i);
+   if min(checkPartitionsOverlap) < 0 then
+      Slns
+   else(
+       
+       )   
+)
+
+-----------------------------
+--  checkSimpleSchubertProblem
+-----------------------------
+-- verify if the user gave a Simple Schubert Problem
+-- the first two non-simple condition and the rest
+-- should be the condition {1} and must add to dim Gr(k,n)
+----------------------------
+-- Input:
+--    conds    - list of partitions {l,m,{1},...,{1}}
+--    k,n      - integers specifying Gr(k,n)
+-- Output:
+--    none - if the Schubert problem is Simple
+--    or ERROR otherwise
+---------------------------
+checkSimpleSchubertProblem = method()
+checkSimpleSchubertProblem(List,ZZ,ZZ) := (conds,k,n) ->(    
+    checkSchubertProblem(conds,k,n);
+    simpleconds:= drop(conds,2);
+    scan(simpleconds, c->(
+	    if sum c != 1 then error (toString c| " is not a single box partition");
+	    )); 
+    )
 
 -----------------------------
 ---- function written to solve
