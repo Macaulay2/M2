@@ -31,7 +31,7 @@ newPackage("ToricVectorBundles",
 	 "volume number" => "2",
 	 "volume URI" => "http://j-sag.org/Volume2/"
 	 },
-    DebuggingMode => false,
+    DebuggingMode => true,
     Configuration => {},
     PackageExports => {"Polyhedra"}
     )
@@ -152,7 +152,10 @@ net ToricVectorBundleKlyachko := tvb -> ( horizontalJoin flatten (
 -- matrices doesn't affect what we do.
 
 raySort = value Polyhedra#"private dictionary"#"raySort"
-
+raySortOfFan = (fan) -> (
+    r := rays fan;
+    raySort for i from 0 to numColumns r - 1 list r_{i}
+    )
 ---------------------------------------------------------------
 -- FUNCTIONS TO CONSTRUCT VECTOR BUNDLES AND MODIFY THEM
 ---------------------------------------------------------------
@@ -188,7 +191,7 @@ addBase (ToricVectorBundleKlyachko,List) := (tvb,L) -> (
      -- Extracting data out of tvb
      k := tvb#"rank of the vector bundle";
      n := tvb#"number of rays";
-     R := raySort toList tvb#"ToricVariety"#"rays";
+     R := raySortOfFan tvb#"ToricVariety";
      -- Checking for input errors
      if n != #L then error("Expected number of matrices to match number of rays of the fan.");
      if any(L, l -> not instance(l,Matrix)) then error("Expected the bases to be given as matrices.");
@@ -1200,7 +1203,7 @@ rank ToricVectorBundle := T -> T#"rank of the vector bundle"
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundle
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
-rays ToricVectorBundle := tvb -> raySort toList tvb#"ToricVariety"#"rays"
+rays ToricVectorBundle := tvb -> raySortOfFan tvb#"ToricVariety"
 
 
 -- PURPOSE : Computing the 'l'-th symmetric power of a Toric Vector Bundle
@@ -1361,7 +1364,7 @@ twist (ToricVectorBundleKlyachko,List) := (T,d) -> (
 --     	     an error is returned
 cartierIndex = method(TypicalValue => ZZ)
 cartierIndex (List,Fan) := (L,F) -> (
-     rl := raySort toList (rays F);
+     rl := raySortOfFan F;
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1395,7 +1398,7 @@ weilToCartier = method(Options => {"Type" => "Klyachko"})
 --  OUTPUT : 'tvb',  a ToricVectorBundle
 -- COMMENT : If no option is given the function will return a ToricVectorBundleKlyachko, if "Type" => "Kaneyama" is given it returns a ToricVectorBundleKaneyama
 weilToCartier (List,Fan) := opts -> (L,F) -> (
-     rl := raySort toList (rays F);
+     rl := raySortOfFan F;
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1887,7 +1890,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
      if k < 0 then error("The vector bundle must have a positive rank.");
      if not isPointed F then error("The Fan has to be pointed");
      -- Writing the table of rays
-     rT := raySort toList (rays F);
+     rT := raySortOfFan F;
      rT = hashTable apply(#rT, i -> rT#i => i);
      -- Writing the table of identity matrices for the vector bundle bases
      bT := hashTable apply(keys rT, i -> i => map(QQ^k,QQ^k,1));
