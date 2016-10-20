@@ -942,8 +942,8 @@ doc ///
    Headline
       Numerical Schubert Calculus
 ///
---load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 load "NumericalSchubertCalculus/doc.m2"
+load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 
 -------------------
 -- Tests         --
