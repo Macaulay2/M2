@@ -130,8 +130,12 @@ doc ///
       list of polynomial equations in the ring R
     sols:List
       list of solutions of the system pols
-    flag:Matrix
-      the flag as a matrix of complex numbers
+    fixedFlags:List
+      list of the fixed flags, as matrices of complex numbers
+    movedFlag:List
+      the moved flag, the flag not listed here is the identity matrix
+    solutionPlanes:List
+      list of complex matrices which store the solution planes
   Description
     Text
       The parseTriplet allows to process the output of LRtriple.
@@ -168,7 +172,7 @@ doc ///
       are wrapped into one string.
 ///;
 
-end; -- terminate reading because LRcheater does not work yet
+-- end; -- terminate reading because LRcheater does not work yet
 
 doc ///
   Key
@@ -204,11 +208,11 @@ doc ///
       m := matrix{{3, 2, 4, 6}};
       t := LRtriple(n,m);
       w := wrapTriplet(t);
-      result := LRcheater(n,m,w);
-      (rps, pols, sols, flag) = parseTriplet(result);
-      stdio << "real fixed flag :\n" << flag;
-      stdio << "polynomial system solved :\n" << pols;
-      stdio << "solutions :\n" << sols;
+     -- result := LRcheater(n,m,w);
+     -- (rps, pols, sols, flag) = parseTriplet(result);
+     -- stdio << "real fixed flag :\n" << flag;
+     -- stdio << "polynomial system solved :\n" << pols;
+     -- stdio << "solutions :\n" << sols;
 ///;
 
 end  -- terminate reading
