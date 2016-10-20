@@ -1,5 +1,5 @@
--- an interface to the Littlewood-Richardson homotopies in PHCpack.
--- Note that this package needs version 1.6.1 of PHCpack.m2.
+-- An interface to the Littlewood-Richardson homotopies in PHCpack.
+-- Note that this package needs version 1.8 of PHCpack.m2.
 
 export{"LRrule", "LRtriple", "parseTriplet", "wrapTriplet", "LRcheater"}
 
@@ -266,6 +266,8 @@ LRruleIn(ZZ,ZZ,Matrix) := (a,n,m) -> (
 --   Prepares the input for phc -e option #4 to resolve a Schubert
 --   intersection condition, for example: [2 4 6]^3.
 --
+-- REQUIRED : phc must be in the execution path.
+--
 -- ON ENTRY :
 --   a         should be 4 for root count, 5 for solutions;
 --   n         ambient dimension;
@@ -274,25 +276,31 @@ LRruleIn(ZZ,ZZ,Matrix) := (a,n,m) -> (
 --             the intersection bracket must be taken.
 -- 
 -- ON RETURN :
---   s         a string with input for phc -e, i.e.: if s is place
+--   result    a string with input for phc -e, i.e.: if s is place
 --             in the file "input" then phc -e < input will work.
 --
-   s := concatenate(toString(a),"\n");
-   nr := numgens target m;
-   nc := numgens source m;
-   s = concatenate(s,toString(n),"\n");
-   for i from 0 to nr-1 do
+   versionPHC := versionNumber(, Verbose=>true);
+   result := "";
+   if #versionPHC#0 > 0 then
    (
-       s = concatenate(s,"[ ");
-       for j from 1 to nc-1 do s = concatenate(s,toString(m_(i,j))," ");
-       if m_(i,0) > 1 then
-          s = concatenate(s,"]^",toString(m_(i,0)))
-       else
-          s = concatenate(s,"]");
-       if i < nr-1 then s = concatenate(s,"*");
+      result = concatenate(toString(a),"\n");
+      nr := numgens target m;
+      nc := numgens source m;
+      result = concatenate(result,toString(n),"\n");
+      for i from 0 to nr-1 do
+      (
+         result = concatenate(result,"[ ");
+         for j from 1 to nc-1 do
+            result = concatenate(result,toString(m_(i,j))," ");
+         if m_(i,0) > 1 then
+            result = concatenate(result,"]^",toString(m_(i,0)))
+         else
+            result = concatenate(result,"]");
+         if i < nr-1 then result = concatenate(result,"*");
+      );
+      result = concatenate(result,";");
    );
-   s = concatenate(s,";");
-   s
+   return result
 );
 
 dataToFile = method()
