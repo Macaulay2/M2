@@ -223,7 +223,8 @@ monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	else if o.AugmentationStoppingCriterion =!= null then 
 		error "AugmentationStoppingCriterion does not work if AugmentGraphFunction is undefined"
 	else (
-		(result,HG) := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
+	    	local HG;
+		(result,HG) = staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
 	);
 	result
 );

@@ -28,7 +28,7 @@ debug NumericalAlgebraicGeometry
 export { 
    "changeFlags", "bigCellLocalCoordinates", 
    "schubertPolySystem",
-   "setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
+   "setVerboseLevel", 
    "solveSchubertProblem"
    --   changeFlags  -- better name?
    }
@@ -75,17 +75,16 @@ setVerboseLevel ZZ := i->DBG=i
 --
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
-"setVerboseLevel"
 
 --INITIALIZING THE KEYS OF NODE
 --Board= symbol Board
 
 
-setFlags = method(Options=>{NSC'DBG=>null,NSC'VERIFY'SOLUTIONS=>null,NSC'BLACKBOX=>null})
-installMethod(setFlags, o -> () -> scan(keys o, k->if o#k=!=null then
-	if k === NSC'DBG then DBG = o#k
-	else if k === NSC'VERIFY'SOLUTIONS then VERIFY'SOLUTIONS = o#k
-	else if k === NSC'BLACKBOX then BLACKBOX = o#k
+setDebugOptions = method(Options=>{"debug"=>null,"verify solutions"=>null,"blackbox"=>null})
+installMethod(setDebugOptions, o -> () -> scan(keys o, k->if o#k=!=null then
+	if k == "debug" then DBG = o#k
+	else if k === "verify solutions" then VERIFY'SOLUTIONS = o#k
+	else if k === "blackbox" then BLACKBOX = o#k
 	))
  
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
@@ -936,12 +935,6 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -- Documentation --
 -------------------
 beginDocumentation()
-doc ///
-   Key
-      NumericalSchubertCalculus
-   Headline
-      Numerical Schubert Calculus
-///
 load "NumericalSchubertCalculus/doc.m2"
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 

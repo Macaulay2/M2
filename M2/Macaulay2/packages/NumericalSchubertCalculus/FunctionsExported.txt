@@ -10,7 +10,7 @@
 "changeFlags", -- in LR-makePolynomials.m2
 "bigCellLocalCoordinates", 
 "schubertPolySystem",
-"setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
+"setVerboseLevel", 
 "solveSchubertProblem"
 
 // service-functions.m2 //
