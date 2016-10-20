@@ -437,7 +437,7 @@ doc ///
     Example
       R = CC[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      fSols = solveSystem(f);
+      fSols = solveSystem(f, randomSeed=>3);
       fSols/print
       isCoordinateZero(fSols_0,1,1.0e-10)
 
@@ -775,7 +775,7 @@ doc ///
     Example
       R = CC[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      fSols = solveSystem(f);
+      fSols = solveSystem(f, randomSeed=>3);
       fSols/print
       nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
       nonZeroSols / print 
@@ -1613,7 +1613,7 @@ doc ///
     Example
       R = CC[x,y];  
       f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-      fSols = solveSystem(f);
+      fSols = solveSystem(f, randomSeed=>3);
       fSols/print
     Text
     
