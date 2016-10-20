@@ -202,23 +202,33 @@ solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
    remaining'conditons'flags := drop (SchPblm,2);
    l1 := verifyLength(first first twoconds, k);
    l2 := verifyLength(first last twoconds, k); 
+   F1:= promote(last first twoconds, FFF);
+   F2:= promote(last last twoconds, FFF);
    simplConds := remaining'conditons'flags/first;
    remaining'flags := remaining'conditons'flags/last;   
-   Slns:={};
-   -- checks if it is a Simple Schubert problem
+   --Slns:={};
+   -- checks if it is a valid Simple Schubert problem
    checkSimpleSchubertProblem({l1,l2}|simplConds, k,n);
    checkPartitionsOverlap := (l1+reverse l2)/(i->n-k-i);
    if min(checkPartitionsOverlap) < 0 then
-      Slns
+      {}
    else(
+       ID:= id_(FFF^n);
+       LocalFlags1 := {F1,F2}; 
+       LocalFlags2 := {ID,rsort ID}; -- maybe goes ID, resort ID
+       At1t2 := moveFlags2Flags(LocalFlags1, LocalFlags2);
+       A := first At1t2;
+       Ainv := solve(A,ID);
+       -- we update the given flags F3 ... Fm
+       -- to F3' .. Fm' where Fi' = A*Fi
+       new'remaining'flags := apply(remaining'flags, F-> A*F);
        -- we take the first n-k columns and transpose
-       -- because SimpleSchubert are solved with rowSpan and not colSpan
-       flagsForSimple:= apply(remaining'flags, F->(
-          transpose F_{0..n-k-1}
-	));
-       Sols := solveSimpleSchubert((k,n),l1,l2,flagsForSimple);
-       E:= skewSchubertVariety((k,n),l1,l2);
-       Sols := apply(Sols, s->(transpose sub(E,matrix{s})));
+       -- because SimpleSchubert solves wtr rowSpan and not colSpan
+       flagsForSimple:= apply(new'remaining'flags, F->transpose F_{0..n-k-1});
+       Sols := solveSimpleSchubert((k,n),l2,l1,flagsForSimple);
+       E:= skewSchubertVariety((k,n),l2,l1);
+       Sols= apply(Sols, s->(transpose sub(E,matrix{s})));
+       Ainv*Sols
        ) 
 )
 
@@ -241,7 +251,7 @@ checkSimpleSchubertProblem(List,ZZ,ZZ) := (conds,k,n) ->(
     checkSchubertProblem(conds,k,n);
     simpleconds:= drop(conds,2);
     scan(simpleconds, c->(
-	    if sum c != 1 then error (toString c| " is not a single box partition");
+	    if sum c != 1 then error (toString c| " is not a codimension one condition");
 	    )); 
     )
 
