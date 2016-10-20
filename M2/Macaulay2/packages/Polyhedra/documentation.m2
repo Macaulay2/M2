@@ -1329,7 +1329,7 @@ document {
      
      PARA{}, " For a cone ", TT "C", " the output is the matrix", TT "M"," that is the 
      same matrix as before but ", TT "v", " is omitted since it is 0, 
-     so ", TT "C = {c in H | M*c =< 0}", " and ", TT "H", " is the intersection 
+     so ", TT "C = {c in H | M*c => 0}", " and ", TT "H", " is the intersection 
      of the defining linear hyperplanes.",
      
      EXAMPLE {
