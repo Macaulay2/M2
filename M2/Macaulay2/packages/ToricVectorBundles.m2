@@ -822,7 +822,7 @@ existsDecomposition (ToricVectorBundleKlyachko,List) := (T,L) -> (
      L = apply(L, l -> if instance(l,List) then l else if instance(l,Matrix) then {l} else error("The elements of the list have to be either matrices or lists of them."));
      if not T.cache.?degreesList then T.cache.degreesList = {};
      mC := maxCones T;
-     mC = apply(mC, C -> (C = C#"rays"; apply(numColumns C, i -> C_{i})));
+     mC = apply(mC, C -> (C = (rays C); apply(numColumns C, i -> C_{i})));
      -- Checking for input errors
      if #mC != #L then error("There has to be a degree matrix or list of degree matrices for each maximal cone of the fan.");
      -- Check if any combination of matrices in L has already been checked and thus saved in the cache
@@ -933,7 +933,7 @@ findWeights = method(TypicalValue => List)
 findWeights ToricVectorBundleKlyachko := (cacheValue symbol weights)( T -> (
      	  -- Get the maximal cones and save their rays
 	  mC := maxCones T;
-     	  mC = apply(mC, C -> (C = C#"rays"; apply(numColumns C, i -> C_{i})));
+     	  mC = apply(mC, C -> (C = (rays C); apply(numColumns C, i -> C_{i})));
      	  n := T#"dimension of the variety";
      	  k := rank T;
 	  -- Recursive function that goes through the rays and checks for the current ray which filtration steps are possible and for 
@@ -1079,7 +1079,7 @@ isGeneral ToricVectorBundleKlyachko := (cacheValue symbol isGeneral)( tvb -> (
 	       	    n - numColumns E == codimSum));
      	  F := maxCones tvb#"ToricVariety";
      	  all(F, C -> (
-	       	    C = C#"rays";
+	       	    C = (rays C);
 	       	    C = apply(numColumns C, i -> C_{i});
 	       	    recursiveCheck(apply(C, r -> L#r),{})))))
 
@@ -1361,7 +1361,7 @@ twist (ToricVectorBundleKlyachko,List) := (T,d) -> (
 --     	     an error is returned
 cartierIndex = method(TypicalValue => ZZ)
 cartierIndex (List,Fan) := (L,F) -> (
-     rl := raySort toList F#"rays";
+     rl := raySort toList (rays F);
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1372,7 +1372,7 @@ cartierIndex (List,Fan) := (L,F) -> (
      denom := 1;
      -- Computing the degree vector for every top dimensional cone
      scan(sort maxCones F, C -> (
-	       rC := C#"rays";
+	       rC := (rays C);
 	       -- Taking the first n x n submatrix
 	       rC1 := rC_{0..n-1};
 	       -- Setting up the solution vector by composing the corresponding weights
@@ -1395,7 +1395,7 @@ weilToCartier = method(Options => {"Type" => "Klyachko"})
 --  OUTPUT : 'tvb',  a ToricVectorBundle
 -- COMMENT : If no option is given the function will return a ToricVectorBundleKlyachko, if "Type" => "Kaneyama" is given it returns a ToricVectorBundleKaneyama
 weilToCartier (List,Fan) := opts -> (L,F) -> (
-     rl := raySort toList F#"rays";
+     rl := raySort toList (rays F);
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1413,7 +1413,7 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 	  tvb := makeVBKaneyama(1,F);
 	  gC := sort keys tvb#"degreeTable";
 	  gC = apply(gC, C -> (
-		    rC := C#"rays";
+		    rC := (rays C);
 		    -- Taking the first n x n submatrix
 		    rC1 := rC_{0..n-1};
 		    -- Setting up the solution vector by composing the corresponding weights
@@ -1555,7 +1555,7 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
 			 -- for each n-k cone in the fan compute Er, the bundle over this cone for the degree u
 			 F1 = hashTable apply(#F1, Cnum -> (
 				   C := F1#Cnum;
-				   R := C#"rays";
+				   R := (rays C);
 				   R = apply(numColumns R, i -> (R_{i}));
 				   R = sort apply(R, r -> (rT#r,r));
 				   Esum := apply(R, r -> (r#0,((transpose u)*(r#1))_(0,0),r#1));
@@ -1832,7 +1832,7 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      if not isPointed F then error("The fan has to be pointed.");
      -- Writing the table of Cones of maximal dimension
      n := dim F;
-     topConeTable := sort toList F#"generatingCones";
+     topConeTable := sort toList (maxCones F);
      topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
@@ -1887,7 +1887,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
      if k < 0 then error("The vector bundle must have a positive rank.");
      if not isPointed F then error("The Fan has to be pointed");
      -- Writing the table of rays
-     rT := raySort toList F#"rays";
+     rT := raySort toList (rays F);
      rT = hashTable apply(#rT, i -> rT#i => i);
      -- Writing the table of identity matrices for the vector bundle bases
      bT := hashTable apply(keys rT, i -> i => map(QQ^k,QQ^k,1));
@@ -1906,7 +1906,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
 	  "filtrationMatricesTable" => fMT,
 	  "filtrationTable" => fT,
 	  "ToricVariety" => F,
-	  "number of affine charts" => #(F#"generatingCones"),
+	  "number of affine charts" => #((maxCones F)),
 	  "dimension of the variety" => dim F,
 	  "rank of the vector bundle" => k,
 	  "number of rays" => #rT,
