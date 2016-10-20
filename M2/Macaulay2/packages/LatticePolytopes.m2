@@ -22,7 +22,7 @@ newPackage("LatticePolytopes",
 	    Email => "gss@math.kth.se"}
       	},
     PackageExports => {"Polyhedra","NormalToricVarieties"},
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export{
@@ -152,7 +152,7 @@ areIsomorphic(Polyhedron,Polyhedron) := opts -> (P,Q) -> (
     if opts.smoothTest then (if not (isSmooth(normalFan P) and isSmooth(normalFan Q)) then (
 	    print "Polytopes must be smooth!";
 	    return));
-    if ((numRows ((factes P)#0))==(numRows ((facets Q)#0))) and ((numColumns rays P)==(numColumns rays Q)) and ((nVertices P)==(nVertices Q)) and ((dim P)==(dim Q)) and (#latticePoints(P)==#latticePoints(Q)) then(
+    if ((numRows ((facets P)#0))==(numRows ((facets Q)#0))) and ((numColumns rays P)==(numColumns rays Q)) and ((nVertices P)==(nVertices Q)) and ((dim P)==(dim Q)) and (#latticePoints(P)==#latticePoints(Q)) then(
 	origo:=(facesAsPolyhedra((dim P),P))_0;
 	edges:={};
 	--Create edges through origo
@@ -196,16 +196,25 @@ toricBlowUp(Matrix,Matrix,ZZ) := (M,N,k) -> (
 toricBlowUp(Polyhedron,Polyhedron,ZZ) := (P,F,k) -> (
     if not contains (P,F) then (
 	print "The second Polyhedron is not a face of the first!";
-	return P);
-    (A,b):=ambientHalfspaces(P);
-    E:=matrix{toList((numcols A):0)};
+	return P
+        );
+    (A,b) := ambientHalfspaces(P);
+    b = lift(b, ZZ);
+    A = lift(A, ZZ);
+    E := matrix{toList((numcols A):0)};
     for i to (numrows(A)-1) do (
-	B:=matrix{toList((numcols(vertices(F))):(b^{i})_0_0)};
+	B := matrix{
+            toList( (numcols(vertices(F))) : (b^{i})_0_0)
+            };
 	if (sub(A^{i}*(vertices F),ZZ)==B) then (
-	    E=E+sub(A^{i},QQ)*(1/gcd(flatten entries A^{i}))));
-    Edges:=facesAsPolyhedra(((dim P)-1),P);
-    i:=position(Edges,e->(not contains(F,e) and contains(e,(facesAsPolyhedra(((dim F)),F))_0)));
-    pt:=k*matrix{(vertices Edges_i)_0+(vertices Edges_i)_1-2*(vertices F)_0}*(1/(#latticePoints(Edges_i)-1))+matrix((vertices F)_0);
+	    E=E+sub(A^{i},QQ)*(1/gcd(flatten entries A^{i})));
+        );
+    Edges := facesAsPolyhedra(((dim P)-1),P);
+    i := position(Edges,e -> (
+            not contains(F,e) 
+            and contains(e,(facesAsPolyhedra((dim F),F))_0)
+        ));
+    pt := k * matrix{(vertices Edges_i)_0+(vertices Edges_i)_1-2*(vertices F)_0}*(1/(#latticePoints(Edges_i)-1))+matrix((vertices F)_0);
     return intersection(A||E,b||(E*pt)));
 
 
@@ -225,9 +234,9 @@ toricDiv(Polyhedron) := (P) -> (
     X:=normalToricVariety(P);
     Zeros:=toList(rank(wDiv(X)):0);
     D:=toricDivisor(Zeros,X);
-    for i to #r-1 do(
+    for i to numColumns r - 1 do (
     	for j to numrows(A)-1 do (
-	    if (-A^{j}==transpose r_i) then (
+	    if (-A^{j}==transpose r_{i}) then (
     	    	D=D+(b^{j})_0_0*X_i)));
     return D);
 
@@ -464,6 +473,7 @@ gaussFiber(List) := (A) -> (
     	);
     BminusB=unique(BminusB);
     M:=linSpace(affineHull(convexHull(BminusB)));
+    M = lift(M,ZZ);
     seq:=toSequence(for i to (numcols M)-1 list M_i);
     if seq==() then (return torusEmbedding(A));
     projection:=inducedMap(ZZ^(numrows A_0)/seq,ZZ^(numrows A_0));
@@ -473,7 +483,7 @@ gaussFiber(List) := (A) -> (
 ambientHalfspaces = method(TypicalValue => Sequence)
 ambientHalfspaces(Polyhedron) := P -> (
     if (dim P)==(ambDim P) then(return halfspaces(P));
-    orto:=matrix(entries inducedMap(cokernel linSpace(affineHull(P)),ZZ^((ambDim P))));
+    orto:=matrix(entries inducedMap(cokernel linSpace(affineHull(P)),QQ^((ambDim P))));
     orto=transpose gens trim image transpose(orto);
     (A,b):=halfspaces(P);
     vert:=vertices(P);
@@ -605,6 +615,7 @@ gausskFiber(List,ZZ) := (A,k) -> (
     	BminusB=join(BminusB,apply(B,c->c-b));
     	BminusB=unique(BminusB));
     M:=linSpace(affineHull(convexHull(BminusB)));
+    M = lift(M,ZZ);
     seq:=toSequence(for i to (numcols M)-1 list M_i);
     if seq==() then (return torusEmbedding(A));
     projection:=inducedMap(ZZ^(numrows A_0)/seq,ZZ^(numrows A_0));
@@ -1378,7 +1389,7 @@ assert(isJetSpanned(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{
 ///
 
 TEST ///
-assert(jetMatrix(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}})==matrix{{1, 1, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 2}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 1, 0},{0, 1, 2, 0, 1, 0}, {0, 0, 2, 0, 0, 0}});
+assert(jetMatrix(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}})==matrix {{1, 1, 1, 1, 1, 1}, {0, 0, 1, 2, 1, 0}, {0, 0, 0, 2, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 2, 1, 0, 0, 1}, {0, 2, 0, 0, 0, 0}});
 ///
 
 TEST ///
