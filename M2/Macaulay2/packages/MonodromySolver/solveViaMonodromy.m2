@@ -47,7 +47,8 @@ completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     );
     for i from 0 to nnodes-1 do (
         for j from i+1 to nnodes-1 do (
-            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
+            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j,
+		    "random gamma" => (nedges>1)));
         );
     );
     )

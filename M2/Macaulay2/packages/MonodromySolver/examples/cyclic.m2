@@ -14,21 +14,10 @@ parametrizedCyclic = n -> (
     sum(exponents polys#i, t->A_(i,t)*AR_(t));
     polySystem transpose matrix {polysP}
     )
-
-///
-c0 = point{ 
-    flatten apply(polys,f->(
-	    r := # exponents f;
-	    t := apply(r-1, i->random CC);
-	    t | { -sum t }
-	    )) 
-    }
-pre0 = point{toList(n:1_CC)}
-///
 end ------------------------------------------------
 
 restart
-load "cyclic.m2"
+load "MonodromySolver/examples/cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 5

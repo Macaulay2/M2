@@ -19,7 +19,8 @@ newPackage(
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
     PackageImports => {
 	"PHCpack",
-	"NumericalAlgebraicGeometry"
+	"NumericalAlgebraicGeometry",
+	"MonodromySolver"
 	},
     AuxiliaryFiles => true,
     DebuggingMode => true
