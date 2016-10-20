@@ -2,10 +2,10 @@ export {
     "createSeedPair",
     "computeMixedVolume",
     "monodromySolve",
-    "staticMonodromySolve",
-    "dynamicMonodromySolve",
     "completeGraphInit",
+    "completeGraphAugment",
     "flowerGraphInit",
+    "flowerGraphAugment",
     "dynamicFlowerSolve",
 --    "ExtraNodeCount",
     "RandomPointFunction",
@@ -18,6 +18,8 @@ export {
     "BatchSize",
     "AugmentGraphFunction",
     "AugmentationStoppingCriterion",
+    "AugmentEdgeCount",
+    "AugmentNodeCount",
     "randomWeights"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
@@ -41,16 +43,54 @@ random Type := o -> R -> (
 randomWeights = n -> matrix(CC, {apply(n,i->random CC)})
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
-    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-    for i from 1 to nnodes-1 do (
-        addNode(G,nextP(p), pointArray {});
-    );
-    for i from 0 to nnodes-1 do (
-        for j from i+1 to nnodes-1 do (
-            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
-        );
-    );
-    )
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nnodes-1 do (
+		addNode(G,nextP(p), pointArray {});
+	);
+	for i from 0 to nnodes-1 do (
+		for j from i+1 to nnodes-1 do (
+			apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
+		);
+	);
+)
+
+completeGraphAugment = (G, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nNewNodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		for j from 0 to #(G.Vertices) - 2 do (
+			apply(nStartingEdges, k -> addEdge(G, newNode, G.Vertices#j));
+		);
+	);
+	
+	nNodes := #(G.Vertices);
+	for i from 0 to nNodes-1 do (
+		for j from i+1 to nNodes-1 do (
+			apply(nNewEdges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
+		);
+	);
+);
+
+-- static flower
+flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nnodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		apply(nedges, k -> addEdge(G, node1, newNode));
+	);
+)
+
+-- static flower
+flowerGraphAugment = (G, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nNewNodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		apply(nStartingEdges, k -> addEdge(G, node1, newNode));
+	);
+	for i from 1 to #(G.Vertices) - 1 do (
+		apply(nNewEdges, k -> addEdge(G, G.Vertices#i, node1));
+	);
+)
 
 dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
@@ -109,15 +149,6 @@ dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
 computeMixedVolume = method()
 computeMixedVolume List := polys -> mixedVolume(toRingXphc polys,StartSystem => false)
-
--- static flower
-flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
-	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-	for i from 1 to nnodes do (
-		newNode := addNode(G,nextP(p), pointArray {});
-		apply(nedges, k -> addEdge(G, node1, newNode));
-	);
-)
 
 -- find the "seed" for the parametric system
 createSeedPair = method(Options=>{"initial parameters" => "random unit"})
@@ -201,6 +232,27 @@ R = CC[a,b,c,d][A,B]
 polys = polySystem {A*a+B*b,A*B*c+d}
 (p0,x0) := createSeedPair polys
 monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
+
+--Dynamic examples
+monodromySolve(polys,p0,{x0},
+	GraphInitFunction=>completeGraphInit,
+	NumberOfNodes=>2,
+	NumberOfEdges=>1,
+	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+	Potential=>potentialE,
+	AugmentGraphFunction=>completeGraphAugment,
+	AugmentEdgeCount=>1,
+	AugmentNodeCount=>2)
+
+monodromySolve(polys,p0,{x0},
+	GraphInitFunction=>flowerGraphInit,
+	NumberOfNodes=>2,
+	NumberOfEdges=>1,
+	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+	Potential=>potentialE,
+	AugmentGraphFunction=>flowerGraphAugment,
+	AugmentEdgeCount=>1,
+	AugmentNodeCount=>2)
 ///
 
 monodromySolve = method(Options=>{
@@ -209,6 +261,8 @@ monodromySolve = method(Options=>{
 	GraphInitFunction => completeGraphInit,
 	AugmentGraphFunction => null,
 	AugmentationStoppingCriterion => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
 	BatchSize => infinity,
 	Potential => null,
 	NumberOfNodes => 2,
@@ -219,24 +273,27 @@ monodromySolve = method(Options=>{
 monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
-		result := dynamicMonodromySolve(PS,point0,s0)
+		result := dynamicMonodromySolve(PS,point0,s0, o)
 	else if o.AugmentationStoppingCriterion =!= null then 
 		error "AugmentationStoppingCriterion does not work if AugmentGraphFunction is undefined"
 	else (
-		(result,HG) := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
+		staticReturn := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
+		result = staticReturn#0;
 	);
 	result
 );
 
 trimDynamicOptions = method()
-trimDynamicOptions OptionTable := opt -> (
-	mutableOptions := new MutableHashTable from opt;
-	
+trimDynamicOptions OptionTable := opt -> trimDynamicOptions(new MutableHashTable from opt)
+trimDynamicOptions MutableHashTable := MutableOptions -> (
 	--if we ever add more dynamic-only options, add them into dynamicOptions.
-	dynamicOptions := (AugmentGraphFunction, AugmentationStoppingCriterion); 
-	for opt in dynamicOptions do (remove(mutableOptions,opt));
+	dynamicOptions := (AugmentGraphFunction, 
+		AugmentationStoppingCriterion, 
+		AugmentEdgeCount, 
+		AugmentNodeCount);
+	for opt in dynamicOptions do (remove(MutableOptions,opt));
 	
-	new OptionTable from (new HashTable from mutableOptions)
+	new OptionTable from (new HashTable from MutableOptions)
 )
 
 dynamicMonodromySolve = method(Options=>{
@@ -246,6 +303,8 @@ dynamicMonodromySolve = method(Options=>{
 	GraphInitFunction => null,
 	AugmentGraphFunction => null, --NEED SOME DEFAULT HERE. Add edge(s)? Add node?
 	AugmentationStoppingCriterion => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
 	BatchSize => null,
 	Potential => null,
 	NumberOfNodes => null,
@@ -254,19 +313,26 @@ dynamicMonodromySolve = method(Options=>{
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
 dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-	staticOptions := trimDynamicOptions(o);
+	mutableOptions := new MutableHashTable from o;
+	if mutableOptions.TargetSolutionCount === null then 
+		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
+	mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+	staticOptions := trimDynamicOptions(mutableOptions);
 
-	{*
-	(staticMSReturn,HG) = staticMonodromySolve(PS,point0,s0,staticOptions);
-	(node1,npaths) = staticMSReturn;
-	success := npaths != "failed";
-	while not success and not o.AugmentationStoppingCriterion do (
-		o.AugmentGraphFunction(HG);
+	(staticMSReturn,HG) := staticMonodromySolve(PS,point0,s0,staticOptions);
+	(node1,npaths) := staticMSReturn;
+	success := class(npaths) === ZZ;
+	edgeCount := o.NumberOfEdges;
+	iterations := 0;
+	while not (success) do ( -- or o.AugmentationStoppingCriterion(iterations)) do (
+		o.AugmentGraphFunction(
+			HG, point0, HG.Vertices#0, edgeCount, o.AugmentEdgeCount, o.AugmentNodeCount);
+		edgeCount = edgeCount + o.AugmentEdgeCount;
 		(node1,npaths) = coreMonodromySolve(HG, node1, staticOptions);
-		success = npaths != "failed";
-	)
+		success = class(npaths) === ZZ;
+		iterations = iterations + 1;
+	);
 	(node1,npaths)
-	*}
 )
 
 -- main function
