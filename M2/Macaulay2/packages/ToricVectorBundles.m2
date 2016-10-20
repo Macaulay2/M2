@@ -356,7 +356,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
      	  L := hashTable {};
      	  -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      	  -- and save the list of indices of these topCones as an element in L
-     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(faces(2,topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
+     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsPolyhedra(2,topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
      	  -- Finding the cyclic order of every list of topCones in L and write this cyclic order as a 
      	  -- list of consecutive pairs
      	  L = for l in values L list (
@@ -1554,7 +1554,7 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
 		    -- if k==-1 the chain is 0
 		    else if k == -1 then T.cache.cech#(k,u) = (hashTable { 0 => ({},map(tvbR^tvbrank,tvbR^0,0))},hashTable {0 => 0},hashTable {})
 		    else (
-			 F1 := cones(n-k,T#"ToricVariety");
+			 F1 := facesAsCones(n-k,T#"ToricVariety");
 			 -- for each n-k cone in the fan compute Er, the bundle over this cone for the degree u
 			 F1 = hashTable apply(#F1, Cnum -> (
 				   C := F1#Cnum;
@@ -1839,7 +1839,7 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
-     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(faces(1,C), e -> e => a),(b,c) -> if b < c then (b,c) else (c,b)));
+     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsPolyhedra(1,C), e -> e => a),(b,c) -> if b < c then (b,c) else (c,b)));
      Ltable = hashTable flatten apply(pairs Ltable, p -> if instance(p#1,Sequence) then p#1 => p#0 else {});
      -- Removing Cones on the "border" of F, which have only 1 index
      pairlist := sort keys Ltable;
