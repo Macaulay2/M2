@@ -2,51 +2,30 @@ doc ///
    Key
       NumericalSchubertCalculus
    Headline
-      A collection of tools for solving Schubert problems on Grassmannians using homotopy continuation
+      collection of tools for solving Schubert problems on Grassmannians using homotopy continuation
    Description
       Text 
-      	   General functions are
+      	   General functions include:
 	   
-	   @TO randomSchubertProblemInstance@
+	   @TO randomSchubertProblemInstance@ (generates an instance of a Schubert problem with random flags,
+	   @TO randomSchubertProblemSolution@ (???),
+	   @TO changeFlags@ (continue solutions from one instance to another),
+	   @TO checkIncidenceSolution@ (verifies that a solution satisfies the given incidence conditions),
+	   @TO skewSchubertVariety@ (local cooerdinates for skew Schubert variety).
 	   
-	   @TO randomSchubertProblemSolution@
+	   Functions related to the geometric Littlewood-Richardson (LR) rule include:
 	   
-	   TO changeFlags
-	   
-	   TO checkIncidenceSolution
-	   
-	   TO skewSchubertVariety
-           
-	   Functions related to the geometric Littlewood-Richardson rule include
-	   
-	   TO solveSchubertProblem
-	   
-	   and several functions to interface with the alternative implementation in PHCpack 
-	   
+	   @TO solveSchubertProblem@ (main function),
+	   and several functions to interface with the alternative implementation in PHCpack:
 	   @TO LRrule@, @TO LRtriple@, @TO parseTriplet@, @TO wrapTriplet@, @TO LRcheater@
 	   
 	   Functions related to the Pieri rule:
 	   
 	   Service functions:
-	   
-	   @ TO setVerboseLevel @
-	   
-	   @ TO bracket2partition @
-	   
-	   @ TO partition2bracket @
+	   @ TO setVerboseLevel @ (how talkative the functions are),	   
+	   @ TO bracket2partition @,  	   
+	   @ TO partition2bracket @.
 
-      Text
-	   This package implements algorithms appearing in 
-	   
-	   @HREF("https://arxiv.org/???")@
-	   
-	   @HREF("https://arxiv.org/???")@
-	   
-	   @HREF("https://arxiv.org/???")@
-	   
-	   @HREF("https://arxiv.org/???")@
-	   
-	   @HREF("https://arxiv.org/???")@
    	   
 	   For example, solve Schubert problem \{2,1\}^3 in Gr(3,6) with respect to random flags
       Example
@@ -58,6 +37,18 @@ doc ///
     	     ({2,1}, random(CC^6,CC^6))
     	     };
 	 solveSchubertProblem(SchPblm, k,n)
+      Text
+	   References: 
+	   
+	   @HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""}@,
+	     
+	   @HREF{"https://arxiv.org/abs/alg-geom/9505001", "Sottile, \"Pieri's rule for flag manifolds and Schubert polynomials\""}@,
+	   
+	   @HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""}@
+	   
+	   @HREF("https://arxiv.org/???")@
+	   
+	   @HREF("https://arxiv.org/???")@
 ///
 
 -- Documentation Littlewood-Richardson homotopies
