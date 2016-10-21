@@ -356,7 +356,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
      	  L := hashTable {};
      	  -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      	  -- and save the list of indices of these topCones as an element in L
-     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsPolyhedra(2,topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
+     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsCones(2,topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
      	  -- Finding the cyclic order of every list of topCones in L and write this cyclic order as a 
      	  -- list of consecutive pairs
      	  L = for l in values L list (
@@ -1081,7 +1081,7 @@ isGeneral ToricVectorBundleKlyachko := (cacheValue symbol isGeneral)( tvb -> (
 	       	    scan(Es, A -> E = intersectMatrices(E,A));
 	       	    n - numColumns E == codimSum));
      	  F := maxCones tvb#"ToricVariety";
-        Frays := rays F;
+        Frays := rays tvb#"ToricVariety";
      	  all(F, C -> (
 	       	    C = Frays_C;
 	       	    C = apply(numColumns C, i -> C_{i});
@@ -1563,7 +1563,10 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
 		    -- if k==-1 the chain is 0
 		    else if k == -1 then T.cache.cech#(k,u) = (hashTable { 0 => ({},map(tvbR^tvbrank,tvbR^0,0))},hashTable {0 => 0},hashTable {})
 		    else (
-			 F1 := facesAsCones(n-k,T#"ToricVariety");
+			 F1 := faces(n-k,T#"ToricVariety");
+          Frays := rays T#"ToricVariety";
+          Flineality := linealitySpace T#"ToricVariety";
+          F1 = apply(F1, f-> posHull(Frays_f, Flineality));
 			 -- for each n-k cone in the fan compute Er, the bundle over this cone for the degree u
 			 F1 = hashTable apply(#F1, Cnum -> (
 				   C := F1#Cnum;
