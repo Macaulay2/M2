@@ -239,7 +239,7 @@ addBaseChange (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
      pairlist := sort keys tvb#"baseChangeTable";
      k := tvb#"rank of the vector bundle";
      -- Checking for input errors
-     if #pairlist != #L theConesExpected the number of matrices to match the number of codim 1 Cones.");
+     if #pairlist != #L then error("Expected the number of matrices to match the number of codim 1 Cones.");
      baseChangeTable := hashTable apply(#pairlist, i -> ( 
 	       M := L#i;
 	       -- Checking for more input errors
