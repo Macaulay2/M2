@@ -9,7 +9,6 @@
 
 "changeFlags", -- in LR-makePolynomials.m2
 "bigCellLocalCoordinates", 
-"schubertPolySystem",
 "setVerboseLevel", 
 "solveSchubertProblem"
 
@@ -22,7 +21,6 @@
 "randomSchubertProblemInstance"
 
 // LR-ParameterHomotopy.m2 //
-"randomSchubertProblemSolution"
 
 // pieri.m2 //
 "createRandomFlagsForSimpleSchubert",

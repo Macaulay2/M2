@@ -1,9 +1,8 @@
-export {"randomSchubertProblemSolution"}
-----------------
---Functions contained here but not exported:
-----------------
--- parametricSchubertProblem
--- oneSolutionForOneInstance
+-------------------------------------------------------------
+-- These are functions setting up monodromy-based computation
+-- (not used by anything else at the moment; 
+--  something to look at in the future)
+----------------------------------------
 
 -- experimental monodromy solver
 solveSchubertProblemViaMonodromy = method(Options=>{Verbose=>false})
@@ -41,7 +40,7 @@ parametricSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
 		    )))
 	));   
     (PX,X) := skewSchubertVariety((k,n),c1,c2,Inputs=>symbol x);
-    (X,P,makeSquareSystem(transpose PX,remaining'conditions'flags))
+    (X,P,plueckerSystem(transpose PX,remaining'conditions'flags))
     )
 
 oneSolutionForOneInstance = method()

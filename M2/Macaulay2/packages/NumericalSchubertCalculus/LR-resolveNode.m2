@@ -246,10 +246,10 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       else
          error "an unaccounted case";
    if DBG>0 then timemakePolys1 := cpuTime();
-   strategy := --"Cauchy-Binet";
+   strategy := 
      if all(remaining'conditions'flags/first, c->#c==1) and 
         #remaining'conditions'flags*numrows M'X' <= 30 
-     then "deflation" else "Cauchy-Binet";
+     then "lifting" else "Pluecker";
    (all'polys,startSolutions) := makePolynomials(M'X', remaining'conditions'flags, 
        apply(node.Solutions, X->toRawSolutions(coordX,X)), --start solutions
        Strategy=>strategy
@@ -271,7 +271,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       << " for " << node.Board << endl;
    );
    apply(targetSolutions, sln -> (
-      x'sln := if strategy != "deflation" 
+      x'sln := if strategy != "lifting" 
                then matrix sln else (matrix sln)_{0..numgens R-1};
       M''X'' := (map(FFF,Rt,matrix{{1}}|x'sln)) M'X';
       X'' := inverse M'' * M''X'';

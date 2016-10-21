@@ -7,6 +7,37 @@ squareUpPolynomials(ZZ,Matrix) := (m,eqs) ->  eqs
 -- seems that if you give a matrix, then it won't do anything...
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  if numgens eqs == m then gens eqs else gens eqs * random(FFF^(numgens eqs), FFF^m)  
 
+
+-- -----------------------------
+-- Naive way to makePolynomials 
+-- (take all minors)
+--------------------------
+-- Input: 
+--     MX, local coordinates
+--     conds, list of partitions
+--     flags, list of flags (given by square matrices)
+-- Output:
+--     polynomial equations for the given Schubert problem
+-- Note: 
+--     if flags involve any variables 
+--     (e.g., if flags depend on the continuation parameter t)
+--     MX should be over the same ring as flags 
+naivePolynomials = method()
+naivePolynomials(Matrix, List, List) := (MX, conds, flags)->(
+    R := ring MX;
+    k := numcols MX;
+    n := numrows MX;
+    eqs := sum(#conds, i->(
+	    MXF := MX|sub(flags#i,R);
+	    b:= partition2bracket(conds#i,k,n);
+	    sum(#b,r->(
+		    c := b#r;
+		    minors(k+c-(r+1)+1, MXF_{0..k+c-1})
+		    ))
+	    ));
+    eqs
+    )
+
 ----------------------------------------------
 -- Optimization of makePolynomials
 
@@ -58,27 +89,27 @@ makeGG (ZZ,ZZ,List) := (k,n,schubertProblem) -> (
     ) 
 
 -- #4: called once per checker move
-makeSquareSystem = method()
+plueckerSystem = method()
 GGstash := new MutableHashTable
 resetGGstash = () -> (GGstash = new MutableHashTable;)
-makeSquareSystemGGMX := (GG,MX) -> (
+plueckerSystemGGMX := (GG,MX) -> (
     k := numColumns MX; 
     n := numRows MX; 
     B := getB(k,n);
     plueckerCoords := transpose matrix {apply(B,b->det MX^b)};
     (if instance(GG,GateMatrix) or instance(plueckerCoords,GateMatrix) then GG else promote(GG,ring plueckerCoords))*plueckerCoords  
     ) 
-makeSquareSystem'Matrix'GateMatrix := (MX,remaining'conditions'flags) -> (
+plueckerSystem'Matrix'GateMatrix := (MX,remaining'conditions'flags) -> (
     r := #remaining'conditions'flags;
     k := numColumns MX; 
     n := numRows MX; 
     GG := if GGstash#?r then GGstash#r else (
 	GGstash#r = makeGG(k,n,remaining'conditions'flags)
 	);
-    makeSquareSystemGGMX(GG,MX)  	  
+    plueckerSystemGGMX(GG,MX)  	  
     )
-makeSquareSystem (Matrix,List) := makeSquareSystem'Matrix'GateMatrix
-makeSquareSystem (GateMatrix,List) := makeSquareSystem'Matrix'GateMatrix
+plueckerSystem (Matrix,List) := plueckerSystem'Matrix'GateMatrix
+plueckerSystem (GateMatrix,List) := plueckerSystem'Matrix'GateMatrix
 
 --##########################################
 -----------------
@@ -93,40 +124,30 @@ makeSquareSystem (GateMatrix,List) := makeSquareSystem'Matrix'GateMatrix
 --     	   MX = global coordinates for an open subset
 --     	        of a checkerboard variety (or MX' in the homotopy (in Ravi's notes))
 --
---     	    conds = list of pairs (l,F) where l is a Schubert condition and F is a flag
+--     	   conds = list of pairs (l,F) where l is a Schubert condition and F is a flag
 --
--- output:  a matrix of polynomials
+--         sols = list of solutions (used only by "lifting" strategy)  
+-- output:  (Ideal, List) = (system, solutions)
+-- note: solutions = sols (or new lifted solutions) 
 -----------------
 
-makePolynomials = method(TypicalValue => Ideal, Options=>{Strategy=>"Cauchy-Binet"})
+makePolynomials = method(TypicalValue => Ideal, Options=>{Strategy=>"Pluecker"})
 
-makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy == "good old way" then (
+makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy == "naive" then (
     -- **************** original (less efficient) way ***********
-    R := ring MX;
-    k := numgens source MX;
-    n := numgens target MX;
-    eqs := sum(conds, lF ->(
-	    (l,F) := lF;
-	    MXF:=MX|sub(F,R);
-	    b := partition2bracket(l,k,n);
-	    sum(#b, r->( 
-		    c := b#r;
-		    minors(k+c-(r+1)+1, MXF_{0..k+c-1})
-		    ))
-	    ));    
-    (eqs,sols) 
-    ) else if o.Strategy == "Cauchy-Binet" then (
+    (naivePolynomials(MX,conds/first,conds/last), sols) 
+    ) else if o.Strategy == "Pluecker" then (
     -- ********* new (more efficient) way ***************************
     if DBG>0 then start := cpuTime(); 
-    I := ideal makeSquareSystem (MX,conds);
+    I := ideal plueckerSystem (MX,conds);
     if DBG>0 then << "time(makePolynomials) = " << cpuTime()-start << endl;
     (I,sols)
-    ) else if o.Strategy == "deflation" then ( 
+    ) else if o.Strategy == "lifting" then ( 
     -- ********* extra variables introduced *************************
-    R = ring MX;
+    R := ring MX;
     C := coefficientRing R;
-    k = numColumns MX; 
-    n = numRows MX;   
+    k := numColumns MX; 
+    n := numRows MX;   
     assert all(conds, c->#first c==1); -- assuming all partitions are {a}  
     sols = sols / (s->matrix {s});
     sols' := sols;
@@ -151,33 +172,6 @@ makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy =
 	    ));
     (sum(Ilist,I->sub(I,R)),sols'/entries//flatten) 
     ) else error "unknown Strategy"
-
--- (used in changeFlags) ********************************
--- Input: 
---     MX, local coordinates
---     conds, list of partitions
---     flags, list of flags (given by square matrices)
--- Output:
---     polynomial equations for the given Schubert problem
--- Note: 
---     if flags involve any variables 
---     (e.g., if flags depend on the continuation parameter t)
---     MX should be over the same ring as flags 
-schubertPolySystem = method()
-schubertPolySystem(Matrix, List, List) := (MX, conds, flags)->(
-    R := ring MX;
-    k := numcols MX;
-    n := numrows MX;
-    eqs := sum(#conds, i->(
-	    MXF := MX|sub(flags#i,R);
-	    b:= partition2bracket(conds#i,k,n);
-	    sum(#b,r->(
-		    c := b#r;
-		    minors(k+c-(r+1)+1, MXF_{0..k+c-1})
-		    ))
-	    ));
-    eqs
-    )
 
 ---------------------------------
 --- changeFlags
@@ -283,7 +277,7 @@ if o#"one homotopy" then changeFlags'oneHomotopy(MX, solutionsA, conds'A'B) else
 	       m := numgens RMx;
        	       R2 := (coefficientRing RMx)[t,gens RMx];
 	       Polys := flatten entries squareUpPolynomials(m, 
-		   schubertPolySystem(sub(MX,R2),conditions,flagsHomot));
+		   naivePolynomials(sub(MX,R2),conditions,flagsHomot));
 	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
 	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, 
@@ -308,7 +302,7 @@ changeFlags'oneHomotopy(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->
    m := numgens RMx;
    R2 := (coefficientRing RMx)[gens RMx,t];
    Polys := flatten entries squareUpPolynomials(m, 
-       schubertPolySystem(sub(MX,R2),conditions,flagsHomot)
+       naivePolynomials(sub(MX,R2),conditions,flagsHomot)
        );
    solutionsB := trackHomotopy(transpose matrix {Polys}, apply(solutionsA,s->point{s}));      	  
    solutionsB/coordinates

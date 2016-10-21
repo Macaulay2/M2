@@ -8,24 +8,28 @@ doc ///
       	   General functions include:
 	   
 	   @TO randomSchubertProblemInstance@ (generates an instance of a Schubert problem with random flags,
-	   @TO randomSchubertProblemSolution@ (???),
 	   @TO changeFlags@ (continue solutions from one instance to another),
 	   @TO checkIncidenceSolution@ (verifies that a solution satisfies the given incidence conditions),
-	   @TO skewSchubertVariety@ (local cooerdinates for skew Schubert variety).
+	   @TO skewSchubertVariety@ (local coordinates for skew Schubert variety).
 	   
-	   Functions related to the geometric Littlewood-Richardson (LR) rule include:
+	   Functions implementing homotopies specific to Schubert calculus:
 	   
-	   @TO solveSchubertProblem@ (main function),
-	   and several functions to interface with the alternative implementation in PHCpack:
-	   @TO LRrule@, @TO LRtriple@, @TO parseTriplet@, @TO wrapTriplet@, @TO LRcheater@
-	   
-	   Functions related to the Pieri rule:
+	   @TO solveSchubertProblem@ (geometric Littlewood-Richardson (LR) rule) 
+	   @TO solveSimpleSchubert@ (Pieri rule)
 	   
 	   Service functions:
+	   
 	   @ TO setVerboseLevel @ (how talkative the functions are),	   
 	   @ TO bracket2partition @,  	   
 	   @ TO partition2bracket @.
-
+    	    
+	   An alternative implementation using PHCpack (download @HREF{"http://homepages.math.uic.edu/~jan/download.html","here"}@) includes:
+	   
+	   @TO LRrule@ (combinatorial root count), 
+	   @TO LRtriple@ (LR homotopies), 
+	   @TO parseTriplet@ (parses results), 
+	   @TO wrapTriplet@ (unexport???), 
+	   @TO LRcheater@ (similar to @TO changeFlags@)
    	   
 	   For example, solve Schubert problem \{2,1\}^3 in Gr(3,6) with respect to random flags
       Example
@@ -238,7 +242,7 @@ doc ///
 
 -------------------
 -- Documentation Pieri Homotopies
-
+{*
 doc ///
    Key
       createRandomFlagsForSimpleSchubert
@@ -266,7 +270,6 @@ doc ///
    SeeAlso
          solveSimpleSchubert
 ///
-
 doc ///
    Key
       solveSimpleSchubert
@@ -444,6 +447,7 @@ doc ///
    Caveat
       This assumes that GAP runs when you type in the terminal {\tt gap} and that we already know that the Galois group is the full symmetric group, otherwise it will output {\tt false} after {\tt mx} repetitions.
 ///
+*}
 end
 
 -- previous functions

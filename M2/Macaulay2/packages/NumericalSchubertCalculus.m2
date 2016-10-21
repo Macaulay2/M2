@@ -28,7 +28,6 @@ newPackage(
 debug NumericalAlgebraicGeometry
 export { 
    "changeFlags", "bigCellLocalCoordinates", 
-   "schubertPolySystem",
    "setVerboseLevel", 
    "solveSchubertProblem"
    --   changeFlags  -- better name?
