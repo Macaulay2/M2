@@ -221,14 +221,14 @@ solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
        Ainv := solve(A,ID);
        -- we update the given flags F3 ... Fm
        -- to F3' .. Fm' where Fi' = A*Fi
-       new'remaining'flags := apply(remaining'flags, F-> A*F);
+       new'remaining'flags := A*remaining'flags;
+       --new'remaining'flags := apply(remaining'flags, F-> A*F);
        -- we take the first n-k columns and transpose
        -- because SimpleSchubert solves wtr rowSpan and not colSpan
        flagsForSimple:= apply(new'remaining'flags, F->transpose F_{0..n-k-1});
        Sols := solveSimpleSchubert((k,n),l2,l1,flagsForSimple);
        E:= skewSchubertVariety((k,n),l2,l1);
-       Sols= apply(Sols, s->(transpose sub(E,matrix{s})));
-       Ainv*Sols
+       apply(Sols, s->Ainv*(transpose sub(E,matrix{s})))
        ) 
 )
 
