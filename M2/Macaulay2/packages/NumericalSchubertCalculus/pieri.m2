@@ -139,7 +139,7 @@ solveInternalSimple(Sequence,List,List,List) := (kn,l,m,G)->(
       -- once the children problems are solved
       -- store solutions in "start" 
       start := flatten(apply(L, p->(
-         C := solveSimpleSchubert(kn,l,p,G);
+         C := solveInternalSimple(kn,l,p,G);
          i := positionVariableChildren((k,n),l,m,p);
          apply(C,c->insert(i-1,0,c))
          )
@@ -245,7 +245,7 @@ trackSimpleSchubert(Sequence, Sequence, List, List) := o->(kn,cond,G,F) ->(
    (k,n) := kn;
    -- l and m are partitions of n
    (l,m) := cond;
-   Sols:= (if o.StartSolutions === null then solveSimpleSchubert(kn,l,m,G) else o.StartSolutions);
+   Sols:= (if o.StartSolutions === null then solveInternalSimple(kn,l,m,G) else o.StartSolutions);
    E := skewSchubertVariety(kn,l,m);
    Start:=apply(G, g->det( matrix E || sub(g, ring E),Strategy=>Cofactor));
    Target:=apply(F,f->det( matrix E || sub(f, ring E),Strategy=>Cofactor));

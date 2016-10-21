@@ -1,6 +1,6 @@
---restart
+restart
 debug needsPackage "NumericalSchubertCalculus"
-setRandomSeed 2
+setRandomSeed 730
 
 ------------------------------
 -- problem (2,1),(1,1),1^3 = 2 in G(2,6)
@@ -13,7 +13,7 @@ SchbPblm = randomSchubertProblemInstance(conds, k,n);
 
 Sols=solveSimpleSchubert(SchbPblm,2,6)
 #Sols
-scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm))
 
 ---------------------------------------------
 -- problem (2),(2),1^5 = 11  in G(3,6)
