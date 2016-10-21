@@ -481,8 +481,9 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
      run("phc -e < " | PHCinputFile | " > " | PHCsessionFile)
    else
    (
-     cmdphc := "phc -e -0" | opt.luckySeed | " " | PHCinputFile; 
+     cmdphc := "phc -e -0" | opt.luckySeed | " < " | PHCinputFile; 
      cmdphc = cmdphc | " > " | PHCsessionFile;
+     stdio << "running " << cmdphc;
      run(cmdphc)
    );
    run("phc -z " | PHCoutputFile | " " | PHCsolutions);
