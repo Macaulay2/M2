@@ -1,4 +1,4 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 -- setRandomSeed 21 -- fails!
 setRandomSeed 0
 setVerboseLevel 0;
@@ -11,6 +11,8 @@ Pblm = randomSchubertProblemInstance(
 setVerboseLevel 1
 elapsedTime S = solveSchubertProblem(Pblm,3,6)
 assert all(S,s->checkIncidenceSolution(s,Pblm))
+
+printStatistics()
 end
 
 restart

@@ -262,12 +262,11 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    polys := squareUpPolynomials(numgens ring all'polys-1, all'polys);
    -- check at t=0
    if VERIFY'SOLUTIONS then verifyStart(polys, startSolutions);
-   if DBG>0 then t1:= currentTime();
    -- track homotopy and plug in the solution together with t=1 into Xt
-   targetSolutions := trackHomotopyNSC(polys,startSolutions);
+   (ti,targetSolutions) := toSequence elapsedTiming trackHomotopyNSC(polys,startSolutions);
+   statsIncrementTrackingTime ti; 
    if DBG>0 then (
-      t2 := currentTime();
-      << " -- trackHomotopy time = " << (t2-t1) << " sec."
+      << " -- trackHomotopy time = " << ti << " sec."
       << " for " << node.Board << endl;
    );
    apply(targetSolutions, sln -> (

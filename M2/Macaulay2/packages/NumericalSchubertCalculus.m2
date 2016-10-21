@@ -28,6 +28,7 @@ newPackage(
 debug NumericalAlgebraicGeometry
 export { 
    "changeFlags", "bigCellLocalCoordinates", 
+   "printStatistics",
    "setVerboseLevel", 
    "solveSchubertProblem"
    --   changeFlags  -- better name?
@@ -284,12 +285,21 @@ moveCheckers Array := blackred -> (
 -- Statistics
 ---------------
 stats = new MutableHashTable;
-resetStats = () -> stats =  new MutableHashTable from flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0})  
+resetStats = () -> stats =  new MutableHashTable from 
+flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
+{ "tracking time" => 0 }  
 resetStats()
 
 statsIncrementMove = m -> stats#m = stats#m + 1;
-
-getStats = () -> stats
+statsIncrementTrackingTime = t -> stats#"tracking time" = stats#"tracking time" + t
+printStatistics = () -> (
+    scan(sort select(keys stats, k->class k === List), k-> 
+    	<< "# moves of type " << k << " = " << stats#k << endl
+	);
+    scan(select(keys stats, k->class k =!= List), k-> 
+	<< k << " = " << stats#k << endl
+	)
+    )
 
 --------------------------------------------------------
 -- playCheckers
