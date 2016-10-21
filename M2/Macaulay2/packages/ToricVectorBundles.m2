@@ -239,7 +239,7 @@ addBaseChange (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
      pairlist := sort keys tvb#"baseChangeTable";
      k := tvb#"rank of the vector bundle";
      -- Checking for input errors
-     if #pairlist != #L then error("Expected the number of matrices to match the number of codim 1 Cones.");
+     if #pairlist != #L theConesExpected the number of matrices to match the number of codim 1 Cones.");
      baseChangeTable := hashTable apply(#pairlist, i -> ( 
 	       M := L#i;
 	       -- Checking for more input errors
@@ -980,13 +980,13 @@ findWeights ToricVectorBundleKlyachko := (cacheValue symbol weights)( T -> (
 			 M := R^{0..Rrank-1};
 			 for F in Flist list (
 			      D := systemSolver(M,F^{0..Rrank-1});
-			      if liftable(D,ZZ) and R*D == F then lift(D,ZZ)
+			      if (try(lift(D,ZZ); true) else false) and R*D == F then lift(D,ZZ)
 			      else continue))
 		    else (
 			 Rn := inverse R^{0..n-1};
 			 for F in Flist list (
 			      Dn := Rn * (F^{0..Rrank-1});
-			      if liftable(Dn,ZZ) and R*Dn == F then lift(Dn,ZZ)
+			      if (try(lift(Dn,ZZ); true) else false) and R*Dn == F then lift(Dn,ZZ)
 			      else continue))))))
 
 
@@ -1081,8 +1081,9 @@ isGeneral ToricVectorBundleKlyachko := (cacheValue symbol isGeneral)( tvb -> (
 	       	    scan(Es, A -> E = intersectMatrices(E,A));
 	       	    n - numColumns E == codimSum));
      	  F := maxCones tvb#"ToricVariety";
+        Frays := rays F;
      	  all(F, C -> (
-	       	    C = (rays C);
+	       	    C = Frays_C;
 	       	    C = apply(numColumns C, i -> C_{i});
 	       	    recursiveCheck(apply(C, r -> L#r),{})))))
 
@@ -1155,7 +1156,14 @@ ker (ToricVectorBundleKlyachko,Matrix) := opts -> (T,M) -> (
 -- PURPOSE : Returning the maximal cones of the underlying fan
 --   INPUT : 'T',  a ToricVectorBundle
 --  OUTPUT : a List of Cones
-maxCones ToricVectorBundle := T -> sort maxCones T#"ToricVariety"
+maxCones ToricVectorBundle := T -> (
+      TV := T#"ToricVariety";
+      TR := rays TV;
+      TL := linealitySpace TV;
+      mC := maxCones TV;
+      sort apply(mC, c -> posHull(TR_c, TL))
+    -- sort maxCones T#"ToricVariety"
+   )
 
 
 -- PURPOSE : Compute a random deformation of a ToricVectorBundleKlyachko
@@ -1374,8 +1382,9 @@ cartierIndex (List,Fan) := (L,F) -> (
      -- to check wether the divisor itself is Cartier or which multiple
      denom := 1;
      -- Computing the degree vector for every top dimensional cone
+     Frays := rays F;
      scan(sort maxCones F, C -> (
-	       rC := (rays C);
+	       rC := Frays_C;
 	       -- Taking the first n x n submatrix
 	       rC1 := rC_{0..n-1};
 	       -- Setting up the solution vector by composing the corresponding weights
@@ -1835,11 +1844,13 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      if not isPointed F then error("The fan has to be pointed.");
      -- Writing the table of Cones of maximal dimension
      n := dim F;
-     topConeTable := sort toList (maxCones F);
+     Frays := rays F;
+     Flineality := linealitySpace F;
+     topConeTable := sort toList (apply(maxCones F, c->posHull(Frays_c, Flineality)));
      topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
-     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsPolyhedra(1,C), e -> e => a),(b,c) -> if b < c then (b,c) else (c,b)));
+     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,C), e -> e => a),(b,c) -> if b < c then (b,c) else (c,b)));
      Ltable = hashTable flatten apply(pairs Ltable, p -> if instance(p#1,Sequence) then p#1 => p#0 else {});
      -- Removing Cones on the "border" of F, which have only 1 index
      pairlist := sort keys Ltable;
@@ -3309,7 +3320,8 @@ document {
      
      EXAMPLE {
 	  " F = pp1ProductFan 2",
-	  " apply(maxCones F, rays)"
+     " rays F",
+	  " maxCones F"
 	  },
      
      SeeAlso => {"Polyhedra::Fan",
@@ -3333,7 +3345,8 @@ document {
      
      EXAMPLE {
 	  " F = projectiveSpaceFan 2",
-	  " apply(maxCones F, rays)"
+     " rays F",
+	  " maxCones F"
 	  },
      
      SeeAlso => {"Polyhedra::Fan",
