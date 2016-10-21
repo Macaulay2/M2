@@ -117,9 +117,9 @@ scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
 
 
 ---------------------------------------------------------------------
--- This failed, too
+-- This failed, too, for one seed, but not the other
 ---------------------------------------------------------------------
--- problem (2,1),(3,1),1^11 =   in G(3,9)   -- used  
+-- problem (2,1),(3,1),1^11 = 5115  in G(3,9)   -- used  390.581 seconds
 k=3;n=9;
 conds = {{2,1},{3,1}}|toList(11:{1})
 SchbPblm = randomSchubertProblemInstance(conds, k,n);
