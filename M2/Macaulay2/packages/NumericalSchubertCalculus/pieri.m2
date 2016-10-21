@@ -45,11 +45,19 @@ solutionsHash := new MutableHashTable;
 -- Numerical Pieri Homotopies --
 --------------------------------
 
+-------------------
+-- generateChildren
 ---------------------
 -- Generate partitions for 
 -- Children problems of a 
 -- partition 'm' 
 ---------------------
+-- Input:
+--    kn     - sequence of integers (k,n)
+--    l,m    - partitions
+-- Output:
+--    a list of children partitions for m (i.e. multiplying m by one box)
+----------------------
 generateChildren = method(TypicalValue=>List)
 generateChildren(Sequence, List, List) := (kn, l, m) -> (
      (k,n):=kn;
@@ -57,10 +65,19 @@ generateChildren(Sequence, List, List) := (kn, l, m) -> (
      select(L, a-> a=!=null and a==reverse sort a)
 )
 -------------------
+-- positionVariableChildren
+-------------------
 -- find the position where you need
 -- to add a solution of the children problem
 -- to have a solution of the parent problem
 ------------------
+-- Input:
+--    kn    - sequence of integers (k,n)
+--    l,m,v - partitions where v is a children
+--            partition of m
+-- Output:
+--    the position where m gets modified to get to v?
+---------------------------
 positionVariableChildren = method(TypicalValue=>ZZ)
 positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
    -- kn is a sequence (k,n)
@@ -78,6 +95,14 @@ positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
 -- creates a special matrix G_\mu
 -- and attach it to E_{\mu\lambda}
 ----------------------- 
+-- Input:
+--       kn   - sequence of integers (k,n)
+--       l,m  - partitions each given as a list
+-- Output:
+--       F    - an nxn matrix with the skewySchubert variety E
+--              on top, and a matrix G of size n-k x n in the shape
+--              of a specific Affine patch of Gr(n-k,n)
+-----------------------
 precookPieriHomotopy = method(TypicalValue=>List)
 precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      -- k and n are the integers defining the Grassmanian G(k,n)
@@ -110,7 +135,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
 -- Input:
 --    kn   - a sequence of 2 integers (k,n) specifying Gr(k,n)
 --    l,m  - Lists of two partitions indicating the non-simple Schubert conditions
---    G    - List of flags indicated as (n-k)xn matrices
+--    G    - List of flags indicated by (n-k)xn matrices
 ------------------------
 -- Note:   Solves the Schubert problem l,m,{1}^d in Gr(k,n)
 --         w.r.t. the flags Id, rsort Id, G
@@ -164,7 +189,9 @@ solveInternalSimple(Sequence,List,List,List) := (kn,l,m,G)->(
       )
 )
 
----------------
+-------------------------
+-- solveSimpleSchubert
+------------------------
 -- Input:
 --    SchPblm  - a Schubert problem given as a list
 --               of the form {(cond_List, flag_Matrix), ...}
@@ -211,9 +238,18 @@ solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
        ) 
 )
 
+
+---------------------------
+--      solveEasy
 -----------------------------
 ---- function written to solve
 ---- a simple linear equation
+-----------------------------
+-- Input:
+--     p   - a linear polynomial a*X + b
+-- Output:
+--    a list with the solution {{-b/a}}
+------------------------------
 solveEasy = method(TypicalValue=>CC)
 solveEasy(RingElement) := (p)->(
    R:=ring p;
@@ -236,7 +272,12 @@ solveEasy(RingElement) := (p)->(
 --- the Schubert problem, but with respect 
 --- to a different flag
 --------------------------------------
-
+-- Input:
+--      kn     - sequence of integers (k,n)
+--      conds  - sequence with two partitions (l,m)
+--      G, F   - List of flags, G is the starting set of Flags
+--               and F is the target
+---------------------------------------
 trackSimpleSchubert = method(TypicalValue=>List, Options=>{Memoize => false, StartSolutions=>null})
 trackSimpleSchubert(Sequence, Sequence, List, List) := o->(kn,cond,G,F) ->(
    -- G is the start flag and F the target flag

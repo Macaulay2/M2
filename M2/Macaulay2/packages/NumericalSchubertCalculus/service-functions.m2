@@ -471,7 +471,7 @@ skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
 ----------------------
 -- checkSchubertProblem
 ----------------------
--- Function that checks if a list of partitions
+-- Function that checks if a list of partitions or brackets
 -- impose a feasible Schubert problem
 ----------------------
 -- Input: 
