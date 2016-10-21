@@ -17,7 +17,7 @@ export {
     "SelectEdgeAndDirection",
     "BatchSize",
     "AugmentGraphFunction",
-    "AugmentationStoppingCriterion",
+    "AugmentNumberOfRepeats",
     "AugmentEdgeCount",
     "AugmentNodeCount",
     "randomWeights"}
@@ -225,42 +225,97 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	(coreMonodromySolve(HG,node1, new OptionTable from (new HashTable from mutableOptions)), HG)
 )
 
-TEST /// 
+TEST ///
 restart
 needsPackage "MonodromySolver"
-R = CC[a,b,c,d][A,B]
-polys = polySystem {A*a+B*b,A*B*c+d}
-(p0,x0) := createSeedPair polys
-monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
+for index from 1 to 2 do (
+	if index == 1 then (
+		R1 = CC[a,b,c,d][A,B];
+		polys = polySystem {A*a+B*b,A*B*c+d};
+		(p0,x0) = createSeedPair polys;
+		mixedVol = computeMixedVolume specializeSystem (p0,polys);
+	) else if index == 2 then (
+		--Cyclic-4
+		R2 = CC[a,b,c,d,e,f,g,h,i,j,k,l,m,n][A,B,C,D];
+		polys = polySystem {
+			a*A+b*B+c*C+d*D,
+			e*A*B+f*B*C+g*C*D+h*D*A,
+			i*A*B*C+j*B*C*D+k*C*D*A+l*D*A*B,
+			m*A*B*C*D-n*1};
+		(p0,x0) = createSeedPair polys;
+		mixedVol = computeMixedVolume specializeSystem (p0,polys);
+	);
+	-- Can provide no options
+	monodromySolve(polys,p0,{x0});
 
---Dynamic examples
-monodromySolve(polys,p0,{x0},
-	GraphInitFunction=>completeGraphInit,
-	NumberOfNodes=>2,
-	NumberOfEdges=>1,
-	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
-	Potential=>potentialE,
-	AugmentGraphFunction=>completeGraphAugment,
-	AugmentEdgeCount=>1,
-	AugmentNodeCount=>2)
+	--Can provide TargetSolutionCount (mixed volume)
+	monodromySolve(polys,p0,{x0},
+		TargetSolutionCount=>mixedVol);
 
-monodromySolve(polys,p0,{x0},
-	GraphInitFunction=>flowerGraphInit,
-	NumberOfNodes=>2,
-	NumberOfEdges=>1,
-	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
-	Potential=>potentialE,
-	AugmentGraphFunction=>flowerGraphAugment,
-	AugmentEdgeCount=>1,
-	AugmentNodeCount=>2)
+	--Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
+	--must also provide a Potential function.
+	monodromySolve(polys,p0,{x0},
+		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
+	monodromySolve(polys,p0,{x0},
+		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+		TargetSolutionCount=>mixedVol,
+		Potential=>potentialE);
+	monodromySolve(polys,p0,{x0},
+		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+		Potential=>potentialLowerBound);
+
+	--Two different GraphInitFunctions
+	monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>flowerGraphInit);
+	monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>completeGraphInit);
+
+	--BatchSize changes the number of paths tracked at once.
+	monodromySolve(polys,p0,{x0},
+		BatchSize=>1);
+	
+	--NumberOfNodes, NumberOfEdges, NumberOfRepeats
+	monodromySolve(polys,p0,{x0},
+		NumberOfNodes=>2,
+		NumberOfEdges=>3,
+		NumberOfRepeats=>10);
+
+	--"new tracking routine" is a boolean
+	monodromySolve(polys,p0,{x0},
+		"new tracking routine"=>true);
+	monodromySolve(polys,p0,{x0},
+		"new tracking routine"=>false);
+	
+	--Verbose is a boolean
+	monodromySolve(polys,p0,{x0},
+		Verbose=>true);
+	monodromySolve(polys,p0,{x0},
+		Verbose=>false);
+
+	--Set dynamic options. Need to provide an AugmentGraphFunction and
+	--the AugmentEdgeCount and/or AugmentNodeCount should be greater than 0 if
+	--any augmenting is going to happen. AugmentNumberOfRepeats can be used to
+	--keep it from running indefinitely.
+	monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>completeGraphInit,
+		AugmentGraphFunction=>completeGraphAugment,
+		AugmentNodeCount=>1,
+		AugmentNumberOfRepeats=>10);
+	monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>flowerGraphInit,
+		AugmentGraphFunction=>flowerGraphAugment,
+		AugmentEdgeCount=>1,
+		AugmentNumberOfRepeats=>10);
+);
 ///
 
 monodromySolve = method(Options=>{
 	TargetSolutionCount => null,
 	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
 	GraphInitFunction => completeGraphInit,
 	AugmentGraphFunction => null,
-	AugmentationStoppingCriterion => null,
+	AugmentNumberOfRepeats => null,
 	AugmentEdgeCount=>0,
 	AugmentNodeCount=>0,
 	BatchSize => infinity,
@@ -274,8 +329,6 @@ monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(po
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
 		result := dynamicMonodromySolve(PS,point0,s0, o)
-	else if o.AugmentationStoppingCriterion =!= null then 
-		error "AugmentationStoppingCriterion does not work if AugmentGraphFunction is undefined"
 	else (
 		staticReturn := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
 		result = staticReturn#0;
@@ -288,7 +341,7 @@ trimDynamicOptions OptionTable := opt -> trimDynamicOptions(new MutableHashTable
 trimDynamicOptions MutableHashTable := MutableOptions -> (
 	--if we ever add more dynamic-only options, add them into dynamicOptions.
 	dynamicOptions := (AugmentGraphFunction, 
-		AugmentationStoppingCriterion, 
+		AugmentNumberOfRepeats,
 		AugmentEdgeCount, 
 		AugmentNodeCount);
 	for opt in dynamicOptions do (remove(MutableOptions,opt));
@@ -301,8 +354,8 @@ dynamicMonodromySolve = method(Options=>{
 	SelectEdgeAndDirection => null,
 	StoppingCriterion => null,
 	GraphInitFunction => null,
-	AugmentGraphFunction => null, --NEED SOME DEFAULT HERE. Add edge(s)? Add node?
-	AugmentationStoppingCriterion => null,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
 	AugmentEdgeCount=>0,
 	AugmentNodeCount=>0,
 	BatchSize => null,
@@ -324,7 +377,11 @@ dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	success := class(npaths) === ZZ;
 	edgeCount := o.NumberOfEdges;
 	iterations := 0;
-	while not (success) do ( -- or o.AugmentationStoppingCriterion(iterations)) do (
+	augmentNumberOfRepeats := 1000000; -- Arbirtary large number
+	if (o.AugmentNumberOfRepeats =!= null) then
+		augmentNumberOfRepeats = o.AugmentNumberOfRepeats;
+
+	while not (success) and (augmentNumberOfRepeats > iterations) do (
 		o.AugmentGraphFunction(
 			HG, point0, HG.Vertices#0, edgeCount, o.AugmentEdgeCount, o.AugmentNodeCount);
 		edgeCount = edgeCount + o.AugmentEdgeCount;
