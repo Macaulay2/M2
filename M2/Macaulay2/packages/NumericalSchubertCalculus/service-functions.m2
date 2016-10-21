@@ -506,6 +506,29 @@ checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
     error "sum of codimensions of partitions should equal the dimension of the Grassmannian";
     ) 
 
+-----------------------------
+--  checkSimpleSchubertProblem
+-----------------------------
+-- verify if the user gave a Simple Schubert Problem
+-- the first two non-simple condition and the rest
+-- should be the condition {1} and must add to dim Gr(k,n)
+----------------------------
+-- Input:
+--    conds    - list of partitions {l,m,{1},...,{1}}
+--    k,n      - integers specifying Gr(k,n)
+-- Output:
+--    none - if the Schubert problem is Simple
+--    or ERROR otherwise
+---------------------------
+checkSimpleSchubertProblem = method()
+checkSimpleSchubertProblem(List,ZZ,ZZ) := (conds,k,n) ->(    
+    checkSchubertProblem(conds,k,n);
+    simpleconds:= drop(conds,2);
+    scan(simpleconds, c->(
+	    if sum c != 1 then error (toString c| " is not a codimension one condition");
+	    )); 
+    )
+
 
 --------------------------
 -- verifyInput

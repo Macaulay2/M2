@@ -34,3 +34,24 @@ dist(List,List) := (solns1,solns2) -> (
 	    sqrt(sum(apply(v2-v1, i->i^2)))
    ))
 )
+
+--------------------------
+-- Given the partitions l, and m for the Grassmannian Gr(k,n)
+-- it creates a flags as random numeric matrices G_1,...,G_m
+-- for solving the system defined by these random matrices
+-- using Homotopy Continuation
+--------------------------
+-- input: 
+--    kn   - sequence with two numbers (k,n) specifying Gr(k,n)
+--    l,m  - Lists each a partition 
+-------------------------- 
+createRandomFlagsForSimpleSchubert = method( )
+createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
+	 (k,n) := kn;
+	 l = verifyLength(l, k);
+	 m = verifyLength(m, k);
+   d := k*(n-k)-sum(l)-sum(m);
+   --apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
+   apply(d, i-> random(FFF^(n-k),FFF^n))
+   )
+

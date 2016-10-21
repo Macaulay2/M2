@@ -24,7 +24,7 @@ solutionsHash := new MutableHashTable;
 --
 -- Date:  October 29, 2009
 --
--- Last Update: August 11, 2010
+-- Last Update: October, 2016
 ------------------------------------
 -- Littlewood-Richardson Homotopy --
 ------------------------------------
@@ -101,32 +101,12 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      return F;
 )
 
---------------------------
--- Given the partitions l, and m for the Grassmannian Gr(k,n)
--- it creates a flags as random numeric matrices G_1,...,G_m
--- for solving the system defined by these random matrices
--- using Homotopy Continuation
---------------------------
--- input: 
---    kn   - sequence with two numbers (k,n) specifying Gr(k,n)
---    l,m  - Lists each a partition 
--------------------------- 
-createRandomFlagsForSimpleSchubert = method( )
-createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
-	 (k,n) := kn;
-	 l = verifyLength(l, k);
-	 m = verifyLength(m, k);
-   d := k*(n-k)-sum(l)-sum(m);
-   --apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
-   apply(d, i-> random(FFF^(n-k),FFF^n))
-   )
-
 
 ------------------------
--- solveSimpleSchubert
+-- solveInternalSimple
 -----------------------
 -- Uses Pieri homotopies to solve
--- a simple Schubert problem
+-- a simple Schubert problem internally
 -----------------------
 -- Input:
 --    kn   - a sequence of 2 integers (k,n) specifying Gr(k,n)
@@ -136,8 +116,8 @@ createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
 -- Note:   Solves the Schubert problem l,m,{1}^d in Gr(k,n)
 --         w.r.t. the flags Id, rsort Id, G
 ------------------------
-solveSimpleSchubert = method(TypicalValue=>List)
-solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
+solveInternalSimple = method(TypicalValue=>List)
+solveInternalSimple(Sequence,List,List,List) := (kn,l,m,G)->(
    -- l and m are partitions of n
    -- G is a flag
    (k,n) := kn;
@@ -226,34 +206,11 @@ solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
        -- we take the first n-k columns and transpose
        -- because SimpleSchubert solves wtr rowSpan and not colSpan
        flagsForSimple:= apply(new'remaining'flags, F->transpose F_{0..n-k-1});
-       Sols := solveSimpleSchubert((k,n),l2,l1,flagsForSimple);
+       Sols := solveInternalSimple((k,n),l2,l1,flagsForSimple);
        E:= skewSchubertVariety((k,n),l2,l1);
        apply(Sols, s->Ainv*(transpose sub(E,matrix{s})))
        ) 
 )
-
------------------------------
---  checkSimpleSchubertProblem
------------------------------
--- verify if the user gave a Simple Schubert Problem
--- the first two non-simple condition and the rest
--- should be the condition {1} and must add to dim Gr(k,n)
-----------------------------
--- Input:
---    conds    - list of partitions {l,m,{1},...,{1}}
---    k,n      - integers specifying Gr(k,n)
--- Output:
---    none - if the Schubert problem is Simple
---    or ERROR otherwise
----------------------------
-checkSimpleSchubertProblem = method()
-checkSimpleSchubertProblem(List,ZZ,ZZ) := (conds,k,n) ->(    
-    checkSchubertProblem(conds,k,n);
-    simpleconds:= drop(conds,2);
-    scan(simpleconds, c->(
-	    if sum c != 1 then error (toString c| " is not a codimension one condition");
-	    )); 
-    )
 
 -----------------------------
 ---- function written to solve
