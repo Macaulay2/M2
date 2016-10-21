@@ -67,12 +67,25 @@ doc ///
 
 doc ///
   Key
+    [LRtriple,luckySeed]
+  Headline
+    option to set the seed of the random number generators
+  Usage
+    LRtriple(...,luckySeed=>ZZ)
+  Description
+    Text
+      Use {\tt luckySeed=>12345} to set the seed to 12345.
+///;
+
+doc ///
+  Key
     LRtriple
     (LRtriple,ZZ,Matrix)
   Headline
     runs the Littlewood-Richardson homotopies to solve a generic Schubert problem
   Usage
-    (f,p,s) = LRtriple(n,m)
+    LRtriple(n,m)
+    LRtriple(n,m, luckySeed=>12345)
   Inputs
     n:ZZ
       the ambient dimension
@@ -81,12 +94,10 @@ doc ///
       the first element of each row is the number of times
       the intersection bracket must be taken.
   Outputs
-    f:String
-      represents the generic flags, the moved flags, and the solution planes
-    p:String
-      represents a polynomial system
-    s:String
-      solutions to the polynomial system
+    :Sequence
+      first a string with the generic flags, the moved flags, 
+      and the solution planes; then a string with the polynomial system
+      solved; and thirdly a list of solutions.
   Description
     Text
       LRtriple applies the Littlewood-Richardson homotopies
