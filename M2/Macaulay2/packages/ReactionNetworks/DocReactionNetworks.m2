@@ -453,7 +453,7 @@ doc ///
  ///
  
     --"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
-    --"stoichiometricMatrix", 
+    --"stoichiometricSubspace", 
     --"steadyStateEquations", "conservationEquations", 
     --"laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
     --"ReactionRing", "createRing", "ParameterRing",

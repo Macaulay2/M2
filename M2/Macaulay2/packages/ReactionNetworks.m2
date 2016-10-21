@@ -21,11 +21,12 @@ newPackage(
 
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
     "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
-    "stoichiometricMatrix", "stoichSubspaceKer", "createRing", "ParameterRing",
+    "stoichiometricSubspace", "stoichSubspaceKer", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue",
     "displayComplexes", "isDeficient", "isWeaklyReversible",
-    "injectivityTest" --, "netComplex", "networkToHRF", "kk"
+    "injectivityTest", "ReactionRates", "InitialValues", 
+    "createReactionRates", "createInitialValues" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -70,7 +71,8 @@ reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
     Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, 
-	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null};
+	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null, ReactionRates => null, 
+	InitialValues => null};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
@@ -87,29 +89,41 @@ R = createRing(NN, QQ)
 createRing(NN, RR)
 ///
 
+createReactionRates = method()
+createReactionRates ReactionNetwork := Rn -> (
+    kk := symbol kk;
+    rates := apply(edges Rn.ReactionGraph, e->kk_e);
+    Rn.ReactionRates = rates;
+    Rn.ReactionRates
+    )
 
+createInitialValues = method()
+createInitialValues ReactionNetwork := Rn -> (
+    cc := symbol cc;
+    P := apply(Rn.Species,a->(a,0));
+    C := apply(P, i->cc_(first i));
+    Rn.InitialValues = C;
+    Rn.InitialValues
+    )
 
 -- todo: do we need to duplicate code in first two methods?
 createRing = method()
+createRing ReactionNetwork := Rn -> createRing(Rn, QQ)
 createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
-    kk := symbol kk; 
-    cc := symbol cc;
+    createInitialValues Rn;
+    createReactionRates Rn;
     P := apply(Rn.Species,a->(a,0));
-    C := FF[apply(P, i->cc_(first i))];
-    rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    K := C[rates];
+    K := FF[Rn.ReactionRates, Rn.InitialValues];
     xx := symbol xx;
     RING := K[apply(P,i->xx_(first i))];
     Rn.ReactionRing = RING;
     Rn.ReactionRing
     )
 createRing(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
-   kk := symbol kk; 
-    cc := symbol cc;
+    createInitialValues Rn;
+    createReactionRates Rn;
     P := apply(Rn.Species,a->(a,0));
-    C := FF[apply(P, i->cc_(first i))];
-    rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    K := C[rates];
+    K := FF[Rn.ReactionRates, Rn.InitialValues];
     xx := symbol xx;
     RING := K[apply(P,i->xx_(first i))];
     Rn.ReactionRing = RING;
@@ -227,8 +241,8 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
 net ReactionNetwork := N -> stack networkToHRF N 
 
 
-stoichiometricMatrix = method()
-stoichiometricMatrix ReactionNetwork := N -> (
+stoichiometricSubspace = method()
+stoichiometricSubspace ReactionNetwork := N -> (
     C := N.Complexes;
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
@@ -249,8 +263,8 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
-assert(rank(stoichiometricMatrix CRN) == 3)
-assert(stoichiometricMatrix CRN == 
+assert(rank(stoichiometricSubspace CRN) == 3)
+assert(stoichiometricSubspace CRN == 
     mingens image transpose matrix{{1,-2,0,0,0},{1,-1,1,0,-1},{1,0,1,-1,0}})
 assert(stoichSubspaceKer CRN ==
     mingens image transpose matrix{{2,1,-1,1,0},{-2,-1,2,0,1}})
@@ -321,7 +335,8 @@ steadyStateEquations = method()
 steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
 steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
-    kk := gens coefficientRing N.ReactionRing;
+    G := gens coefficientRing N.ReactionRing;
+    kk := toList apply(0..(length N.ReactionRates-1), i -> G#i);
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
@@ -352,7 +367,8 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
     )
 steadyStateEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
-    kk := gens coefficientRing N.ReactionRing;
+    G := gens coefficientRing N.ReactionRing;
+    kk := toList apply(0..(length N.ReactionRates-1), i -> G#i);
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
@@ -403,9 +419,10 @@ conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     S := stoichSubspaceKer N;
-    -- C is a list of pairs (species, input_rate)
-    C := apply(N.Species,a->(a,0));
-    cc := gens coefficientRing(coefficientRing N.ReactionRing);
+    G := gens coefficientRing N.ReactionRing;
+    cc := toList apply(
+	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1), 
+	i -> G#i);
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
@@ -416,9 +433,10 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
 conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     S := stoichSubspaceKer N;
-    -- C is a list of pairs (species, input_rate)
-    C := apply(N.Species,a->(a,0));
-    cc := gens coefficientRing(coefficientRing N.ReactionRing);
+    G := gens coefficientRing N.ReactionRing;
+    cc := toList apply(
+	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1), 
+	i -> G#i);
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
@@ -455,7 +473,7 @@ I+J
 
 --New functions to be created
 isDeficient = Rn -> (
-    d := rank(stoichiometricMatrix Rn);
+    d := rank(stoichiometricSubspace Rn);
     G := underlyingGraph(Rn.ReactionGraph);
     l := numberOfComponents G;
     p := #Rn.Complexes;
