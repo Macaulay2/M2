@@ -87,6 +87,48 @@ time Sols=solveSimpleSchubert(SchbPblm,k,n);
 #Sols
 scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
 
+
+---------------------------------------------------------------------
+-- problem (3,2),(3,2),1^8 = 449  in G(3,9)   -- used 37.6086 seconds
+k=3;n=9;
+conds = {{3,2},{3,2}}|toList(8:{1})
+SchbPblm = randomSchubertProblemInstance(conds, k,n);
+time Sols=solveSimpleSchubert(SchbPblm,k,n);
+#Sols
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+
+---------------------------------------------------------------------
+-- problem (3,2),(3,1),1^9 = 1101  in G(3,9)   -- used  86.4608 seconds
+k=3;n=9;
+conds = {{3,2},{3,1}}|toList(9:{1})
+SchbPblm = randomSchubertProblemInstance(conds, k,n);
+time Sols=solveSimpleSchubert(SchbPblm,k,n);
+#Sols
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+
+---------------------------------------------------------------------
+-- problem (2,2),(3,1),1^10 = 1515  in G(3,9)   -- used  139.109 seconds
+k=3;n=9;
+conds = {{2,2},{3,1}}|toList(10:{1})
+SchbPblm = randomSchubertProblemInstance(conds, k,n);
+time Sols=solveSimpleSchubert(SchbPblm,k,n);
+#Sols
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+
+
+---------------------------------------------------------------------
+-- This failed, too
+---------------------------------------------------------------------
+-- problem (2,1),(3,1),1^11 =   in G(3,9)   -- used  
+k=3;n=9;
+conds = {{2,1},{3,1}}|toList(11:{1})
+SchbPblm = randomSchubertProblemInstance(conds, k,n);
+time Sols=solveSimpleSchubert(SchbPblm,k,n);
+#Sols
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+
+
+
 ---------------------------------------------------------------------
 -- problem (3,1),(3,1),1^8 =  398 in G(4,8)   -- used 10.7846 seconds
 k=4;n=8;
@@ -105,6 +147,8 @@ time Sols=solveSimpleSchubert(SchbPblm,k,n);
 #Sols
 scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
 
+---------------------------------------------------------------------
+-- This has a problem (Frank 20 Oct 2016)
 ---------------------------------------------------------------------
 -- problem (1,1),(2,1),1^11 =  in G(4,8)   -- 
 k=4;n=8;
