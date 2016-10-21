@@ -127,6 +127,30 @@ time Sols=solveSimpleSchubert(SchbPblm,k,n);
 #Sols
 scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
 
+---------------------------------------------------------------------
+-- 
+---------------------------------------------------------------------
+-- problem (2,1),(3),1^12 = 7260  in G(3,9)    -- used 698.935 seconds
+k=3;n=9;
+conds = {{2,1},{3}}|toList(12:{1})
+SchbPblm = randomSchubertProblemInstance(conds, k,n);
+time Sols=solveSimpleSchubert(SchbPblm,k,n);
+#Sols
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+
+
+---------------------------------------------------------------------
+-- 3 faiures
+---------------------------------------------------------------------
+-- problem (2,1),(2),1^13 =   in G(3,9)    -- used 
+k=3;n=9;
+conds = {{2,1},{2}}|toList(13:{1})
+SchbPblm = randomSchubertProblemInstance(conds, k,n);
+time Sols=solveSimpleSchubert(SchbPblm,k,n);
+#Sols
+scan(Sols,s -> checkIncidenceSolution(s,SchbPblm));
+
+
 
 
 ---------------------------------------------------------------------
