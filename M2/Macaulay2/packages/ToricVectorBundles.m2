@@ -406,7 +406,7 @@ regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
 	       	    A := bCT#p;
 	       	    B := inverse A;
 	       	    -- Computing the dual of the codim 1 cone
-	       	    C := dualCone c1T#p;
+	       	    C := dualCone posHull c1T#p;
 	       	    -- Check for all pairs of degree vectors of the two top Cones the reg condition
 	       	    all(k, i -> (
 			      ri := (dT#(tCT#(p#1)))_{i};
@@ -1853,7 +1853,7 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
-     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,C), e -> e => a),(b,c) -> if b < c then (b,c) else (c,b)));
+     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,C), e -> (rays e, linealitySpace e) => a),(b,c) -> if b < c then (b,c) else (c,b)));
      Ltable = hashTable flatten apply(pairs Ltable, p -> if instance(p#1,Sequence) then p#1 => p#0 else {});
      -- Removing Cones on the "border" of F, which have only 1 index
      pairlist := sort keys Ltable;
