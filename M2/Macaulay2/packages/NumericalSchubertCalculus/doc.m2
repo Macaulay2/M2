@@ -50,13 +50,46 @@ doc ///
 	   
 	   @HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""}@
 	   
-	   @HREF("https://arxiv.org/???")@
+	   @HREF("https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" ")@
 	   
 	   @HREF("https://arxiv.org/???")@
 ///
 
 -- Documentation Littlewood-Richardson homotopies
 --------------
+doc ///
+   Key
+      randomSchubertProblemInstance
+      (randomSchubertProblemInstance,List,ZZ,ZZ)
+   Headline
+      Creates random unitary matrices representing Flags that specify an instance of the Schubert problem
+   Usage
+      randomSchubertProblemInstance(conditions,k,n)
+   Inputs
+      conditions:List
+         Schubert conditions written as partitions (weakly decreasing integers) or brackets (strictly increasing integers)
+      k:ZZ
+      n:ZZ
+         integers defining the Grassmannian Gr(k,n)
+   Outputs
+      :List
+         random instance of the Schubert problem, each Schubert condition of the form (condition,flag)
+   Description
+      Text
+         Verifies if the conditions imposed represent a zero-dimensional Schubert variety and 
+	 Creates a list of random squared invertible matrices that represent flags for the Schubert problem
+      Example
+         -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
+	 randomSchubertProblemInstance({1},{1},{1},{1},2,4)
+	 -- the same problem but using brackets instead of partitions
+	 randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
+   SeeAlso
+         solveSchubertProblem
+	 partition2bracket
+	 bracket2partition
+///
+
+
 doc ///
    Key
       solveSchubertProblem

@@ -2,7 +2,8 @@
 ----------------------------------------------------------
 
 	==== Already Done ===
-
+"NumericalSchubertCalculus" -- front page
+"randomSchubertProblemInstance"
 
 	==== Not Done Yet ===
 // NumericalSchubertCalculus.m2 //
@@ -18,7 +19,7 @@
 "solutionsToAffineCoords", --Temporary! User shouldn't use this function
 "partition2bracket",
 "bracket2partition",
-"randomSchubertProblemInstance"
+
 
 // LR-ParameterHomotopy.m2 //
 
