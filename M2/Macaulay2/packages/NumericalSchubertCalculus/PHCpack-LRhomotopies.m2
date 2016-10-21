@@ -1,7 +1,8 @@
 -- An interface to the Littlewood-Richardson homotopies in PHCpack.
 -- Note that this package needs version 1.8 of PHCpack.m2.
 
-export{"LRrule", "LRtriple", "parseTriplet", "wrapTriplet", "LRcheater"}
+export{"LRrule", "LRtriple", "luckySeed",
+       "parseTriplet", "wrapTriplet", "LRcheater"}
 
 debug needsPackage "PHCpack"
 
@@ -437,8 +438,8 @@ SchubertSystemFromFile(String) := (name) -> (
    result
 );
 
-LRtriple = method();
-LRtriple(ZZ,Matrix) := (n,m) -> (
+LRtriple = method(TypicalValue => Sequence, Options => {luckySeed => -1});
+LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --
 -- DESCRIPTION :
 --   Solves one checker game for a triple Schubert intersection.
@@ -450,7 +451,7 @@ LRtriple(ZZ,Matrix) := (n,m) -> (
 --             the intersection bracket must be taken.
 -- 
 -- ON RETURN :
---   (f,r,p,s) a sequence with the result of the Schubert problem:
+--   (r,f,p,s) a sequence with the result of the Schubert problem:
 --   r         the polynomial ring for the symbols of the variables
 --             representing the solutions in the matrix representations,
 --   f         a string representation of a fixed flag,
@@ -476,7 +477,14 @@ LRtriple(ZZ,Matrix) := (n,m) -> (
    dataToFile(d,PHCinputFile);
    stdio << "running phc -e, session output to " << PHCsessionFile << endl;
    stdio << "                writing output to " << PHCoutputFile << endl;
-   run("phc -e < " | PHCinputFile | " > " | PHCsessionFile);
+   if opt.luckySeed == -1 then
+     run("phc -e < " | PHCinputFile | " > " | PHCsessionFile)
+   else
+   (
+     cmdphc := "phc -e -0" | opt.luckySeed | " " | PHCinputFile; 
+     cmdphc = cmdphc | " > " | PHCsessionFile;
+     run(cmdphc)
+   );
    run("phc -z " | PHCoutputFile | " " | PHCsolutions);
    stdio << "opening output file " << PHCsolutions << endl;
   -- stdio << endl << "extracting fixed flags, polynomial system, solutions";
