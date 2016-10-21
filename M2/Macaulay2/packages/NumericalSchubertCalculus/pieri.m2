@@ -176,7 +176,7 @@ solveInternalSimple(Sequence,List,List,List) := (kn,l,m,G)->(
 -- NOTE:  This way to call it is using the same input
 --        as the LR-Homotopies. Here flags are complete (invertible square matrices)
 -------------------------
-
+solveSimpleSchubert = method(TypicalValue=>List)
 solveSimpleSchubert(List,ZZ,ZZ) := (SchPblm,k,n)->(
    twoconds := take(SchPblm,2);
    remaining'conditons'flags := drop (SchPblm,2);
