@@ -18,17 +18,14 @@ check'changeFlags = (SchPblm,k,n) -> (
     sols = apply(sols1, s->flatten take(entries s,n-k));
     solsT := changeFlags'oneHomotopy(MX, sols, (conds, Flags1, Flags2));
     sols2 := changeFlags(MX, sols, (conds, Flags1, Flags2));
-    assert areEqual(sortSolutions sols2, sortSolutions solsT)
+    assert areEqual(sortSolutions sols2, sortSolutions solsT,Tolerance=>1e-4)
     )
-end
-
-restart
-load "NumericalSchubertCalculus/TST/changeFlags-special.m2"
 load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 check'changeFlags(SchPblm,3,6)
+end
+load "NumericalSchubertCalculus/TST/changeFlags-special.m2"
 
 restart
 -- this one upsets trackHomotopy
-load "NumericalSchubertCalculus/TST/changeFlags-special.m2"
 load "NumericalSchubertCalculus/TST/2e4-G26.m2"
 check'changeFlags(SchPblm,2,6)

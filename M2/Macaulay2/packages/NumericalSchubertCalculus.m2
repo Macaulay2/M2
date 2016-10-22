@@ -963,6 +963,9 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
+TEST ///
+load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
+///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------
