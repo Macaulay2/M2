@@ -824,7 +824,7 @@ for i in $PROGLIST
 do eval BUILD_$i=yes
 done
 dnl make some programs optional:
-BUILD_lrslib=no
+BUILD_lrslib=yes
 BUILD_cddplus=no
 
 BUILD_mpir=yes
