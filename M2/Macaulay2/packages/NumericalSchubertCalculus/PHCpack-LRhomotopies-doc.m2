@@ -102,7 +102,7 @@ doc ///
     Text
       LRtriple applies the Littlewood-Richardson homotopies
       to solve a generic instance of a Schubert problem defined
-      by three intersection conditions.
+      by at least three intersection conditions.
 
       Use the method parseTriplet to parse the three strings f, p, and s
       into proper Macaulay2 polynomials, solution lists, and complex matrices.
