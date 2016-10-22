@@ -1563,7 +1563,7 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
 		    -- if k==-1 the chain is 0
 		    else if k == -1 then T.cache.cech#(k,u) = (hashTable { 0 => ({},map(tvbR^tvbrank,tvbR^0,0))},hashTable {0 => 0},hashTable {})
 		    else (
-			 F1 := faces(n-k,T#"ToricVariety");
+			 F1 := faces(k,T#"ToricVariety");
           Frays := rays T#"ToricVariety";
           Flineality := linealitySpace T#"ToricVariety";
           F1 = apply(F1, f-> posHull(Frays_f, Flineality));
