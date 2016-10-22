@@ -1,3 +1,5 @@
+<< "Warning: This package is deprecated. Please consider using Polyhedra.m2 instead." << endl;
+
 --*- coding: utf-8 -*-
 ---------------------------------------------------------------------------
 --
