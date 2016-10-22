@@ -1,65 +1,63 @@
-doc ///
-   Key
-      NumericalSchubertCalculus
-   Headline
-      tools for solving Schubert problems on Grassmannians using homotopy continuation
-   Description
-      Text 
-           The package collect implementations of methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation.
-  
-      	   {\bf General functions include}:
-	   
-	   @TO randomSchubertProblemInstance@ (an instance of a Schubert problem with random flags),
-	   
-	   @TO changeFlags@ (continues solutions from one instance to another),
-	   
-	   @TO checkIncidenceSolution@ (verifies that a solution satisfies the given incidence conditions),
-	   
-	   @TO skewSchubertVariety@ (local coordinates for skew Schubert variety).
-	   
-	   {\bf Functions implementing homotopies specific to Schubert calculus}:
-	   
-	   @TO solveSchubertProblem@ (geometric Littlewood-Richardson (LR) rule) 
-	   
-	   @TO solveSimpleSchubert@ (Pieri rule)
-	   
-	   {\bf Service functions}:
-	   
-	   @ TO setVerboseLevel @ (how talkative the functions are),	   
-	   
-	   @ TO bracket2partition @, @ TO partition2bracket @ (conversion).
-    	    
-	   {\bf An alternative implementation using PHCpack} (download @HREF{"http://homepages.math.uic.edu/~jan/download.html","here"}@) includes:
-	   
-	   @TO LRrule@ (combinatorial root count), 
-	   
-	   @TO LRtriple@ (LR homotopies), 
-	   
-	   @TO parseTriplet@ (parses results), 
-	   
-	   @TO LRcheater@ (similar to @TO changeFlags@)
-   	   
-	   For example, solve Schubert problem \{2,1\}^3 in Gr(3,6) with respect to random flags
-      Example
-	 k = 3;
-	 n = 6;
-	 SchPblm = {
-    	     ({2,1}, random(CC^6,CC^6)),
-    	     ({2,1}, random(CC^6,CC^6)),
-    	     ({2,1}, random(CC^6,CC^6))
-    	     };
-	 solveSchubertProblem(SchPblm, k,n)
-      Text
-	   References: 
-	   
-	   @HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""}@,
-	   
-	   @HREF{"https://arxiv.org/abs/alg-geom/9505001", "Sottile, \"Pieri's rule for flag manifolds and Schubert polynomials\""}@,
-	   
-	   @HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""}@,
-	   
-	   @HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "}@
-///
+document {
+     Key => NumericalSchubertCalculus,
+     Headline => "Numerical Algorithms for Schubert Calculus",
+     "Tools for solving Schubert problems on Grassmannians using homotopy continuation",
+     PARA {"The package collects implementations of methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation."},
+     HEADER3 {"General functions include:"},
+     UL{
+        TO randomSchubertProblemInstance, 
+	--(an instance of a Schubert problem with random flags),   
+	 TO changeFlags,
+	 --(continues solutions from one instance to another),
+	 TO checkIncidenceSolution, 
+	 --(verifies that a solution satisfies the given incidence conditions),
+	 TO skewSchubertVariety
+	 --(local coordinates for skew Schubert variety).
+     },
+     HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
+     UL{
+	 TO solveSchubertProblem,
+	 TO solveSimpleSchubert
+	 },
+     HEADER3{"Service functions:"},
+     UL{
+	 TO setVerboseLevel,
+	 --(how talkative the functions are)
+	 TO bracket2partition,
+	 TO partition2bracket
+	 },
+     HEADER3{"Using PHCpack:"},
+     "An alternative implementation using PHCpack (download from ",
+     HREF{"http://homepages.math.uic.edu/~jan/download.html","here"},
+     ") includes the following functions:",
+     UL{
+	 TO LRrule,
+	 TO LRtriple,
+	 TO parseTriplet,
+	 TO LRcheater
+	 },
+     "Note that ",TO LRcheater," is similar to ", TO changeFlags,
+     HR{},
+     "For example, the Schubert problem (2,1)^3 in Gr(3,6) with respect to random flags has 2 solutions",
+     EXAMPLE lines ///
+     k = 3;
+     n = 6;
+     SchPblm = {
+	 ({2,1}, random(CC^6,CC^6)),
+	 ({2,1}, random(CC^6,CC^6)),
+	 ({2,1}, random(CC^6,CC^6))
+	 };
+     solveSchubertProblem(SchPblm, k,n)
+     ///,
+     HR{},
+     HEADER4{"References:"},
+     UL{
+	 HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""},
+	 HREF{"https://arxiv.org/abs/alg-geom/9505001", "Sottile, \"Pieri's rule for flag manifolds and Schubert polynomials\""},
+	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""},
+	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "}
+	 },
+ }
 
 -- Documentation Littlewood-Richardson homotopies
 --------------
