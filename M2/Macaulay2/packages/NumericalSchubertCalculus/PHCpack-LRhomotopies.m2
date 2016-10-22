@@ -1,7 +1,7 @@
 -- An interface to the Littlewood-Richardson homotopies in PHCpack.
 -- Note that this package needs version 1.8 of PHCpack.m2.
 
-export{"LRrule", "LRtriple", "luckySeed",
+export{"LRrule", "LRtriple", "luckySeed", "higherWorkingPrecision", 
        "parseTriplet", "wrapTriplet", "LRcheater"}
 
 debug needsPackage "PHCpack"
@@ -438,7 +438,8 @@ SchubertSystemFromFile(String) := (name) -> (
    result
 );
 
-LRtriple = method(TypicalValue => Sequence, Options => {luckySeed => -1});
+LRtriple = method(TypicalValue => Sequence,
+  Options => {higherWorkingPrecision => 0, luckySeed => -1});
 LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --
 -- DESCRIPTION :
@@ -450,7 +451,14 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --   m         matrix with in rows the intersection conditions,
 --             the first element of each row is the number of times
 --             the intersection bracket must be taken;
---   the option luckySeed controls the seed for the random number generator,
+--
+-- OPTIONS :
+--   The option higherWorkingPrecision allow to set the working precision
+--   to double double or quad double precision.  The values are
+--   0 : the default working precision is double precision,
+--   1 : double double precision, and
+--   2 : quad double precision.
+--   The option luckySeed controls the seed for the random number generator,
 --   which ensures reproducible results, and in case of numerical problems,
 --   lucky values which give correct results.
 -- 
@@ -462,13 +470,27 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --   p         the polynomial system solved,
 --   s         a string with solutions to the polynomial system.
 --
+   if not member(opt.higherWorkingPrecision,{0,1,2}) then
+     error "The working precision must be set to 0, 1, or 2.";
+
    d := LRruleIn(5,n,m);  -- option 5 of phc -e
    PHCinputFile := temporaryFileName() | "PHCip";
    PHCoutputFile := temporaryFileName() | "PHCout";
    PHCsessionFile := temporaryFileName() | "PHCses";
    PHCsolutions := temporaryFileName() | "PHCsolutions";
    d = concatenate(d,"\n0\n");  -- solve a generic instance for random flags
-   d = concatenate(d,"0\n");  -- standard double precision
+   if opt.higherWorkingPrecision == 0 then
+   (
+     d = concatenate(d,"0\n");  -- standard double precision
+   )
+   else if opt.higherWorkingPrecision == 1 then
+   (
+     d = concatenate(d,"1\n");  -- double double precision
+   )
+   else
+   (
+     d = concatenate(d,"2\n");  -- quad double precision
+   );
    d = concatenate(d,"0\n");  -- generate random flags
    d = concatenate(d,PHCoutputFile,"\n");
    d = concatenate(d,"0\n");  -- no intermediate output written to file
