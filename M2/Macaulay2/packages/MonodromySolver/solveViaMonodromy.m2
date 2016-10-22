@@ -247,65 +247,80 @@ for index from 1 to 2 do (
 	);
 	-- Can provide no options
 	monodromySolve(polys,p0,{x0});
-
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	    
 	--Can provide TargetSolutionCount (mixed volume)
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		TargetSolutionCount=>mixedVol);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 
 	--Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 	--must also provide a Potential function.
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
-	monodromySolve(polys,p0,{x0},
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
 		TargetSolutionCount=>mixedVol,
 		Potential=>potentialE);
-	monodromySolve(polys,p0,{x0},
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
 		Potential=>potentialLowerBound);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 
 	--Two different GraphInitFunctions
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		GraphInitFunction=>flowerGraphInit);
-	monodromySolve(polys,p0,{x0},
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		GraphInitFunction=>completeGraphInit);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 
 	--BatchSize changes the number of paths tracked at once.
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		BatchSize=>1);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 	
 	--NumberOfNodes, NumberOfEdges, NumberOfRepeats
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		NumberOfNodes=>2,
 		NumberOfEdges=>3,
 		NumberOfRepeats=>10);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 
 	--"new tracking routine" is a boolean
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		"new tracking routine"=>true);
-	monodromySolve(polys,p0,{x0},
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		"new tracking routine"=>false);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 	
 	--Verbose is a boolean
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		Verbose=>true);
-	monodromySolve(polys,p0,{x0},
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		Verbose=>false);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 
 	--Set dynamic options. Need to provide an AugmentGraphFunction and
 	--the AugmentEdgeCount and/or AugmentNodeCount should be greater than 0 if
 	--any augmenting is going to happen. AugmentNumberOfRepeats can be used to
 	--keep it from running indefinitely.
-	monodromySolve(polys,p0,{x0},
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		GraphInitFunction=>completeGraphInit,
 		AugmentGraphFunction=>completeGraphAugment,
 		AugmentNodeCount=>1,
 		AugmentNumberOfRepeats=>10);
-	monodromySolve(polys,p0,{x0},
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
 		GraphInitFunction=>flowerGraphInit,
 		AugmentGraphFunction=>flowerGraphAugment,
 		AugmentEdgeCount=>1,
 		AugmentNumberOfRepeats=>10);
+    	assert(length V.PartialSols == (if index==1 then 2 else if index==2 then 16)
 );
 ///
 
