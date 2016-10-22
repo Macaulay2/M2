@@ -272,7 +272,7 @@ addBaseChange (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
 addDegrees = method(TypicalValue => ToricVectorBundleKaneyama)
 addDegrees (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
      -- Extracting data out of tvb
-     tCT := sort keys tvb#"degreeTable";
+     tCT := keys tvb#"degreeTable";
      k := tvb#"rank of the vector bundle";
      n := tvb#"dimension of the variety";
      -- Checking for input errors
@@ -352,11 +352,11 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
      	  n := tvb#"dimension of the variety";
      	  k := tvb#"rank of the vector bundle";
      	  bCT := tvb#"baseChangeTable";
-     	  topCones := sort keys tvb#"topConeTable";
+     	  topCones := keys tvb#"topConeTable";
      	  L := hashTable {};
      	  -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      	  -- and save the list of indices of these topCones as an element in L
-     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsCones(2,topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
+     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsCones(2,posHull topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
      	  -- Finding the cyclic order of every list of topCones in L and write this cyclic order as a 
      	  -- list of consecutive pairs
      	  L = for l in values L list (
@@ -364,13 +364,13 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 	       start := l#0;
 	       a := start;
 	       l = drop(l,1);
-	       i := position(l, e -> dim intersection(topCones#a,topCones#e) == n-1);
+	       i := position(l, e -> dim intersection(posHull topCones#a, posHull topCones#e) == n-1);
 	       while i =!= null do (
 		    pairings = pairings | {(a,l#i)};
 		    a = l#i;
 		    l = drop(l,{i,i});
-		    i = position(l, e -> dim intersection(topCones#a,topCones#e) == n-1));
-	       if dim intersection(topCones#a,topCones#start) == n-1 then pairings | {(a,start)} else continue);
+		    i = position(l, e -> dim intersection(posHull topCones#a, posHull topCones#e) == n-1));
+	       if dim intersection(posHull topCones#a, posHull topCones#start) == n-1 then pairings | {(a,start)} else continue);
      	  -- Check for every cyclic order of topCones if the product of the corresponding transition
      	  -- matrices is the identity
      	  all(L, l -> product apply(reverse l, e -> if e#0 > e#1 then inverse bCT#(e#1,e#0) else bCT#e) == map(QQ^k,QQ^k,1))))
@@ -383,7 +383,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 -- COMMENT : This function gives the posibillity to have a quick overview on the main properties of a ToricVectorBundleKaneyama
 details = method()
 details ToricVectorBundle := tvb -> (
-     if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")
+     if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays posHull p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")
      else hashTable apply(rays tvb, r -> r => (tvb#"baseTable"#r,tvb#"filtrationMatricesTable"#r)))
 
 
@@ -396,7 +396,7 @@ details ToricVectorBundle := tvb -> (
 regCheck = method(TypicalValue => Boolean)
 regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
      	  -- Extracting the neccesary data
-     	  tCT := sort keys tvb#"topConeTable";
+     	  tCT := keys tvb#"topConeTable";
      	  c1T := tvb#"codim1Table";
      	  bCT := tvb#"baseChangeTable";
      	  dT := tvb#"degreeTable";
@@ -1790,10 +1790,10 @@ cotangentBundleKaneyama = F -> (
      -- Generating the trivial bundle of dimension n
      n := dim F;
      tvb := makeVBKaneyama(n,F);
-     tCT := sort keys tvb#"topConeTable";
+     tCT := keys tvb#"topConeTable";
      pairlist := keys tvb#"baseChangeTable";
      -- Computing the degrees and transition matrices of the cotangent bundle
-     degreeTable := hashTable apply(tCT, p -> p => substitute(rays dualCone p,ZZ));
+     degreeTable := hashTable apply(tCT, p -> p => substitute(rays dualCone posHull p,ZZ));
      baseChangeTable := hashTable apply(pairlist, p -> ( p => substitute(inverse(degreeTable#(tCT#(p#1)))*(degreeTable#(tCT#(p#0))),QQ)));
      -- Writing the data into the bundle
      E := new ToricVectorBundleKaneyama from {
@@ -1850,10 +1850,11 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      Frays := rays F;
      Flineality := linealitySpace F;
      topConeTable := sort toList (apply(maxCones F, c->posHull(Frays_c, Flineality)));
+     topConeTable = apply(topConeTable, C -> (rays C, linealitySpace C));
      topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
-     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,C), e -> (rays e, linealitySpace e) => a),(b,c) -> if b < c then (b,c) else (c,b)));
+     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,posHull C), e -> (rays e, linealitySpace e) => a),(b,c) -> if b < c then (b,c) else (c,b)));
      Ltable = hashTable flatten apply(pairs Ltable, p -> if instance(p#1,Sequence) then p#1 => p#0 else {});
      -- Removing Cones on the "border" of F, which have only 1 index
      pairlist := sort keys Ltable;
