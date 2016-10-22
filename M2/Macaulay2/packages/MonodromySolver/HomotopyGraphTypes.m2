@@ -1,3 +1,5 @@
+debug needsPackage "SLPexpressions"
+debug needsPackage "NumericalAlgebraicGeometry"
 export {
     "specializeSystem",
     "selectRandomEdgeAndDirection",
@@ -30,14 +32,14 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
     N
 )
 
-addEdge = method()
-addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,n1,n2) -> (
+addEdge = method(Options=>{"random gamma"=>true})
+addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
     E := new HomotopyEdge from {
             Node1 => n1, 
             Node2 => n2, 
 	    Graph => G,
-            gamma1 => exp(2 * pi* ii * random RR), 
-            gamma2 => exp(2 * pi* ii * random RR), 
+            gamma1 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
+            gamma2 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
             Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
             Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
         };
@@ -51,8 +53,26 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,n1,n2) -> (
     F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
     F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
     if USEtrackHomotopy then (
-    	E#"homotopy12" = segmentHomotopy(F1,F2);
-    	E#"homotopy21" = segmentHomotopy(F2,F1);
+	if o#"random gamma" then (
+	    E#"homotopy12" = segmentHomotopy(F1,F2);
+    	    E#"homotopy21" = segmentHomotopy(F2,F1);
+	    )
+	else ( -- this is a hack engaged for a more general purpose (e.g., nonlinear systems)
+	    F := G.Family.PolyMap;
+	    (FR, mapFR) := flattenRing ring F;
+            FF := mapFR F;
+	    t := symbol t;
+	    Rt := CC(monoid [gens ring F, t]);
+	    t = last gens Rt;
+	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint - t*coordinates n2.BasePoint))) FF;   		
+	    F21 := sub(F12,t=>1-t);   		
+	    XT := getVarGates Rt;
+	    X := gateMatrix{drop(XT,-1)};
+	    T := last XT; 
+	    print "-- setting up gateHomotopy for an edge...";
+	    E#"homotopy12" = gateHomotopy(gateMatrix polySystem F12, X, T, Strategy=>compress);
+	    E#"homotopy21" = gateHomotopy(gateMatrix polySystem F21, X, T, Strategy=>compress);
+	    )
     	);
     E
 )

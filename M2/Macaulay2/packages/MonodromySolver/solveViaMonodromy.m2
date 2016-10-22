@@ -43,16 +43,17 @@ random Type := o -> R -> (
 randomWeights = n -> matrix(CC, {apply(n,i->random CC)})
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
-	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-	for i from 1 to nnodes-1 do (
-		addNode(G,nextP(p), pointArray {});
-	);
-	for i from 0 to nnodes-1 do (
-		for j from i+1 to nnodes-1 do (
-			apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
-		);
-	);
-)
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes-1 do (
+        addNode(G,nextP(p), pointArray {});
+    );
+    for i from 0 to nnodes-1 do (
+        for j from i+1 to nnodes-1 do (
+            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j,
+		    "random gamma" => (nedges>1)));
+        );
+    );
+    )
 
 completeGraphAugment = (G, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
 	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});

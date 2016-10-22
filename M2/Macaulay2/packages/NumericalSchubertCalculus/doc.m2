@@ -1,5 +1,99 @@
+document {
+     Key => NumericalSchubertCalculus,
+     Headline => "Numerical Algorithms for Schubert Calculus",
+     "Tools for solving Schubert problems on Grassmannians using homotopy continuation",
+     PARA {"The package collects implementations of methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation."},
+     HEADER3 {"General functions include:"},
+     UL{
+        TO randomSchubertProblemInstance, 
+	--(an instance of a Schubert problem with random flags),   
+	 TO changeFlags,
+	 --(continues solutions from one instance to another),
+	 TO checkIncidenceSolution, 
+	 --(verifies that a solution satisfies the given incidence conditions),
+	 TO skewSchubertVariety
+	 --(local coordinates for skew Schubert variety).
+     },
+     HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
+     UL{
+	 TO solveSchubertProblem,
+	 TO solveSimpleSchubert
+	 },
+     HEADER3{"Service functions:"},
+     UL{
+	 TO setVerboseLevel,
+	 --(how talkative the functions are)
+	 TO bracket2partition,
+	 TO partition2bracket
+	 },
+     HEADER3{"Using PHCpack:"},
+     "An alternative implementation using PHCpack (download from ",
+     HREF{"http://homepages.math.uic.edu/~jan/download.html","here"},
+     ") includes the following functions:",
+     UL{
+	 TO LRrule,
+	 TO LRtriple,
+	 TO parseTriplet,
+	 TO LRcheater
+	 },
+     "Note that ",TO LRcheater," is similar to ", TO changeFlags,
+     HR{},
+     "For example, the Schubert problem (2,1)^3 in Gr(3,6) with respect to random flags has 2 solutions",
+     EXAMPLE lines ///
+     k = 3;
+     n = 6;
+     SchPblm = {
+	 ({2,1}, random(CC^6,CC^6)),
+	 ({2,1}, random(CC^6,CC^6)),
+	 ({2,1}, random(CC^6,CC^6))
+	 };
+     solveSchubertProblem(SchPblm, k,n)
+     ///,
+     HR{},
+     HEADER4{"References:"},
+     UL{
+	 HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""},
+	 HREF{"https://arxiv.org/abs/alg-geom/9505001", "Sottile, \"Pieri's rule for flag manifolds and Schubert polynomials\""},
+	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""},
+	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "}
+	 },
+ }
+
 -- Documentation Littlewood-Richardson homotopies
 --------------
+doc ///
+   Key
+      randomSchubertProblemInstance
+      (randomSchubertProblemInstance,List,ZZ,ZZ)
+   Headline
+      Creates random unitary matrices representing Flags that specify an instance of the Schubert problem
+   Usage
+      randomSchubertProblemInstance(conditions,k,n)
+   Inputs
+      conditions:List
+         Schubert conditions written as partitions (weakly decreasing integers) or brackets (strictly increasing integers)
+      k:ZZ
+      n:ZZ
+         integers defining the Grassmannian Gr(k,n)
+   Outputs
+      :List
+         random instance of the Schubert problem, each Schubert condition of the form (condition,flag)
+   Description
+      Text
+         Verifies if the conditions imposed represent a zero-dimensional Schubert variety and 
+	 Creates a list of random squared invertible matrices that represent flags for the Schubert problem
+      Example
+         -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
+	 randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
+	 -- the same problem but using brackets instead of partitions
+	 randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
+   SeeAlso
+         solveSchubertProblem
+	 partition2bracket
+	 bracket2partition
+///
+
+
 doc ///
    Key
       solveSchubertProblem
@@ -185,7 +279,7 @@ doc ///
 
 -------------------
 -- Documentation Pieri Homotopies
-
+{*
 doc ///
    Key
       createRandomFlagsForSimpleSchubert
@@ -213,7 +307,6 @@ doc ///
    SeeAlso
          solveSimpleSchubert
 ///
-
 doc ///
    Key
       solveSimpleSchubert
@@ -391,6 +484,7 @@ doc ///
    Caveat
       This assumes that GAP runs when you type in the terminal {\tt gap} and that we already know that the Galois group is the full symmetric group, otherwise it will output {\tt false} after {\tt mx} repetitions.
 ///
+*}
 end
 
 -- previous functions
