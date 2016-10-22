@@ -14,7 +14,7 @@ doc ///
       The user must have the executable program {\tt phc} available,
       preferably in the executation path.
   Caveat
-    The program "phc" (at least version 2.4.02, but preferably higher)
+    The program "phc" (at least version 2.4.27, but preferably higher)
     of PHCpack needs to in the path for execution.
 
     The current implementation resolves only one triple intersection
@@ -93,6 +93,31 @@ doc ///
 
 doc ///
   Key
+    higherWorkingPrecision
+  Headline
+    option to raise the working precision to double double or quad double
+  Description
+    Text
+      The default working precision is double precision.
+      As the problems grow larger, so do the numerical roundoff errors.
+      To 
+///;
+
+doc ///
+  Key
+    [LRtriple,higherWorkingPrecision]
+  Headline
+    option to raise the working precision to double double or quad double
+  Usage
+    LRtriple(...,higherWorkingPrecision=>ZZ)
+  Description
+    Text
+      Use {\tt higherWorkingPrecision=>1} for double double precision.
+      Use {\tt higherWorkingPrecision=>2} for quad double precision.
+///;
+
+doc ///
+  Key
     LRtriple
     (LRtriple,ZZ,Matrix)
   Headline
@@ -100,6 +125,7 @@ doc ///
   Usage
     LRtriple(n,m)
     LRtriple(n,m, luckySeed=>12345)
+    LRtriple(n,m, higherWorkingPrecision=>2)
   Inputs
     n:ZZ
       the ambient dimension
