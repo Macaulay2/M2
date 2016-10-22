@@ -442,13 +442,17 @@ LRtriple = method(TypicalValue => Sequence, Options => {luckySeed => -1});
 LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --
 -- DESCRIPTION :
---   Solves one checker game for a triple Schubert intersection.
+--   Solves several checker games, each checker game involes
+--   a triple Schubert intersection.
 --
 -- ON ENTRY :
 --   n         ambient dimension;
 --   m         matrix with in rows the intersection conditions,
 --             the first element of each row is the number of times
---             the intersection bracket must be taken.
+--             the intersection bracket must be taken;
+--   the option luckySeed controls the seed for the random number generator,
+--   which ensures reproducible results, and in case of numerical problems,
+--   lucky values which give correct results.
 -- 
 -- ON RETURN :
 --   (r,f,p,s) a sequence with the result of the Schubert problem:
