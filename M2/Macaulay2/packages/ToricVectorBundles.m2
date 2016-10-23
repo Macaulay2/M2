@@ -1423,9 +1423,9 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 	  denom := 1;
 	  -- Computing the degree vector for every top dimensional cone
 	  tvb := makeVBKaneyama(1,F);
-	  gC := sort keys tvb#"degreeTable";
+	  gC := keys tvb#"degreeTable";
 	  gC = apply(gC, C -> (
-		    rC := (rays C);
+		    rC := (rays posHull C);
 		    -- Taking the first n x n submatrix
 		    rC1 := rC_{0..n-1};
 		    -- Setting up the solution vector by composing the corresponding weights
@@ -1651,7 +1651,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
 	       L := select(toList(0..rk-1), i -> not member(i,p#1#0));
 	       for i from last(p#0)+1 to l-1 do (
 		    cl := append(p#0,i);
-		    C := intersection(p#1#1,tCT#i);
+		    C := intersection(p#1#1, posHull tCT#i);
 		    degs := dT#(tCT#(cl#0));
 		    M2 = append(M2,cl => (sort unique join(p#1#0,select(L, i -> contains(dualCone C,u- degs_{i}))),C))));
 	  M2 = hashTable M2;
@@ -1701,7 +1701,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      if not tvb.cache.?cech then tvb.cache.cech = new MutableHashTable;
      rk := tvb#"rank of the vector bundle";
      l := tvb#"number of affine charts";
-     tCT := sort keys tvb#"topConeTable";
+     tCT := keys tvb#"topConeTable";
      bCT := tvb#"baseChangeTable";
      dT := tvb#"degreeTable";
      if not tvb.cache.cech#?(k,u) then (

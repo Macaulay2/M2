@@ -87,3 +87,11 @@ objectsOfDim(ZZ, Fan) := (k,F) -> (
 
 
 isWellDefined Fan := F -> getProperty(F, isWellDefined)
+
+
+facesAsCones(ZZ, Fan) := (d, F) -> (
+   raysF := rays F;
+   linF := linealitySpace F;
+   result := faces(d, F);
+   apply(result, f -> posHull(raysF_f, linF))
+)
