@@ -223,7 +223,7 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 
 	o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
 	--Needs to return HG for use by dynamicMonodromySolve
-	(coreMonodromySolve(HG,node1, new OptionTable from (new HashTable from mutableOptions)), HG)
+	coreMonodromySolve(HG,node1, new OptionTable from (new HashTable from mutableOptions))
 )
 
 TEST ///
@@ -345,10 +345,8 @@ monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(po
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
 		result := dynamicMonodromySolve(PS,point0,s0, o)
-	else (
-		staticReturn := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
-		result = staticReturn#0;
-	);
+	else
+		result = staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
 	result
 );
 
@@ -388,8 +386,8 @@ dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
 	staticOptions := trimDynamicOptions(mutableOptions);
 
-	(staticMSReturn,HG) := staticMonodromySolve(PS,point0,s0,staticOptions);
-	(node1,npaths) := staticMSReturn;
+	(node1,npaths) := staticMonodromySolve(PS,point0,s0,staticOptions);
+	HG := node1.Graph;
 	success := class(npaths) === ZZ;
 	edgeCount := o.NumberOfEdges;
 	iterations := 0;
