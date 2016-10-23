@@ -109,6 +109,39 @@ protect isomorphic
 ---------------------------------------------------------------------------
 
 
+-- For some reason it is important for ToricVectorBundles to be able to sort
+-- cones. Since cones as keys in hashtables do not work anymore we move the old
+-- code for sorting cones here from OldPolyhedra.m2 and implement a method for
+-- sorting the new keys.
+Cone ? Cone := (C1,C2) -> (
+     if C1 == C2 then symbol == else (
+     if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
+          if dim C1 != dim C2 then dim C1 ? dim C2 else (
+          R1 := rays C1;
+          R2 := rays C2;
+          if R1 != R2 then (
+          R1 = apply(numColumns R1, i -> R1_{i});
+          R2 = apply(numColumns R2, i -> R2_{i});
+          (a,b) := (set R1,set R2); 
+          r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
+          if a#?r then symbol > else symbol <)
+          else (
+          R1 = linSpace C1;
+          R2 = linSpace C2;
+          R1 = apply(numColumns R1, i -> R1_{i});
+          R2 = apply(numColumns R2, i -> R2_{i});
+          (c,d) := (set R1,set R2);
+          l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
+          if c#?l then symbol > else symbol <)))))
+
+customConeSort = method()
+customConeSort List := L -> (
+	L = apply(L, l -> posHull l);
+	L = sort L;
+	L = apply(L, l -> (rays l, linealitySpace l));
+	L
+)
+
 -- Defining the new type ToricVectorBundle, the parent type to the two types of TVB
 ToricVectorBundle = new Type of HashTable
 
@@ -272,7 +305,7 @@ addBaseChange (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
 addDegrees = method(TypicalValue => ToricVectorBundleKaneyama)
 addDegrees (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
      -- Extracting data out of tvb
-     tCT := keys tvb#"degreeTable";
+     tCT := customConeSort keys tvb#"degreeTable";
      k := tvb#"rank of the vector bundle";
      n := tvb#"dimension of the variety";
      -- Checking for input errors
@@ -352,7 +385,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
      	  n := tvb#"dimension of the variety";
      	  k := tvb#"rank of the vector bundle";
      	  bCT := tvb#"baseChangeTable";
-     	  topCones := keys tvb#"topConeTable";
+     	  topCones := customConeSort keys tvb#"topConeTable";
      	  L := hashTable {};
      	  -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      	  -- and save the list of indices of these topCones as an element in L
@@ -396,7 +429,7 @@ details ToricVectorBundle := tvb -> (
 regCheck = method(TypicalValue => Boolean)
 regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
      	  -- Extracting the neccesary data
-     	  tCT := keys tvb#"topConeTable";
+     	  tCT := customConeSort keys tvb#"topConeTable";
      	  c1T := tvb#"codim1Table";
      	  bCT := tvb#"baseChangeTable";
      	  dT := tvb#"degreeTable";
@@ -1423,7 +1456,7 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 	  denom := 1;
 	  -- Computing the degree vector for every top dimensional cone
 	  tvb := makeVBKaneyama(1,F);
-	  gC := keys tvb#"degreeTable";
+	  gC := customConeSort keys tvb#"degreeTable";
 	  gC = apply(gC, C -> (
 		    rC := (rays posHull C);
 		    -- Taking the first n x n submatrix
@@ -1701,7 +1734,7 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      if not tvb.cache.?cech then tvb.cache.cech = new MutableHashTable;
      rk := tvb#"rank of the vector bundle";
      l := tvb#"number of affine charts";
-     tCT := keys tvb#"topConeTable";
+     tCT := customConeSort keys tvb#"topConeTable";
      bCT := tvb#"baseChangeTable";
      dT := tvb#"degreeTable";
      if not tvb.cache.cech#?(k,u) then (
@@ -1790,7 +1823,7 @@ cotangentBundleKaneyama = F -> (
      -- Generating the trivial bundle of dimension n
      n := dim F;
      tvb := makeVBKaneyama(n,F);
-     tCT := keys tvb#"topConeTable";
+     tCT := customConeSort keys tvb#"topConeTable";
      pairlist := keys tvb#"baseChangeTable";
      -- Computing the degrees and transition matrices of the cotangent bundle
      degreeTable := hashTable apply(tCT, p -> p => substitute(rays dualCone posHull p,ZZ));
@@ -3862,14 +3895,14 @@ document {
 TEST ///
 T = toricVectorBundle(2,pp1ProductFan 2,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^2,QQ^2,1),(0,2) => map(QQ^2,QQ^2,1),(1,3) => map(QQ^2,QQ^2,1),(2,3) => map(QQ^2,QQ^2,1)})
-assert(T#"degreeTable" === hashTable apply(maxCones pp1ProductFan 2, C -> C => map(ZZ^2,ZZ^2,0)))
+assert(T#"degreeTable" === hashTable apply(facesAsCones(0,pp1ProductFan 2), C -> (rays C, linealitySpace C) => map(ZZ^2,ZZ^2,0)))
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 L1 = {matrix {{1,0},{0,1}},matrix{{0,1},{1,0}},matrix{{-1,0},{-1,1}}}
 L2 = {matrix {{-1,0},{0,-1}},matrix{{0,1},{1,0}},matrix{{0,-1},{-1,0}}}
 T = toricVectorBundle(2,projectiveSpaceFan 2,L1,L2,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix {{-1/1,0},{0,-1}},(0,2) => matrix{{0/1,1},{1,0}},(1,2) => matrix{{0/1,-1},{-1,0}}})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,-1},{0,-1}} => matrix{{-1,0},{-1,1}}, posHull matrix {{1,0},{0,1}} => matrix{{0,1},{1,0}},posHull matrix {{-1,0},{-1,1}} => matrix{{1,0},{0,1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,-1},{0,-1}}, map(ZZ^2,0,0)) => matrix{{-1,0},{-1,1}}, (matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{0,1},{1,0}}, (matrix {{-1,0},{-1,1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,1}}})
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 ///
