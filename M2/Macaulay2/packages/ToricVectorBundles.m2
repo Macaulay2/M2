@@ -90,7 +90,8 @@ export {"ToricVectorBundle",
      "weilToCartier", 
      "hirzebruchFan",
      "pp1ProductFan", 
-     "projectiveSpaceFan"}
+     "projectiveSpaceFan",
+     "customConeSort"}
 
 
 protect allRaysTable
@@ -117,8 +118,8 @@ Cone ? Cone := (C1,C2) -> (
      if C1 == C2 then symbol == else (
      if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
           if dim C1 != dim C2 then dim C1 ? dim C2 else (
-          R1 := rays C1;
-          R2 := rays C2;
+          R1 := sort rays C1;
+          R2 := sort rays C2;
           if R1 != R2 then (
           R1 = apply(numColumns R1, i -> R1_{i});
           R2 = apply(numColumns R2, i -> R2_{i});
@@ -389,7 +390,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
      	  L := hashTable {};
      	  -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      	  -- and save the list of indices of these topCones as an element in L
-     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsCones(2,posHull topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
+     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsCones(2,posHull topCones#i), C -> (rays C, linealitySpace C) => {i}),L,(a,b) -> sort join(a,b));
      	  -- Finding the cyclic order of every list of topCones in L and write this cyclic order as a 
      	  -- list of consecutive pairs
      	  L = for l in values L list (
@@ -1882,9 +1883,10 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      n := dim F;
      Frays := rays F;
      Flineality := linealitySpace F;
-     topConeTable := sort toList (apply(maxCones F, c->posHull(Frays_c, Flineality)));
-     topConeTable = apply(topConeTable, C -> (rays C, linealitySpace C));
-     topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
+     topConeTable := customConeSort apply(maxCones F, c-> (Frays_c, Flineality));
+     topConeTable = apply(#topConeTable, i -> topConeTable#i => i);
+     topConeTable = hashTable topConeTable;
+     
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
      scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,posHull C), e -> (rays e, linealitySpace e) => a),(b,c) -> if b < c then (b,c) else (c,b)));
@@ -3952,12 +3954,12 @@ assert regCheck T1
 TEST ///
 T = tangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}}), (0,2) => map(QQ^2,QQ^2,{{-1, 0}, {0, 1}}), (1,3) => map(QQ^2,QQ^2,{{-1, 0}, {0, 1}}), (2,3) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}})})
-assert(T#"degreeTable" === hashTable {posHull matrix {{-1,0},{0,1}} => matrix{{1,0},{0,-1}},posHull matrix {{-1,0},{0,-1}} => matrix{{1,0},{0,1}},posHull matrix {{1,0},{0,1}} => matrix{{-1,0},{0,-1}}, posHull matrix{{1,0},{0,-1}} => matrix{{-1,0},{0,1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{-1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,-1}},(matrix {{-1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,1}},(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{-1,0},{0,-1}}, (matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{-1,0},{0,1}}})
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 T = tangentBundle(projectiveSpaceFan 3, "Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^3,QQ^3,{{1, -1, 0}, {0, -1, 0}, {0, -1, 1}}), (0,2) => map(QQ^3,QQ^3,{{-1, 0, 0}, {-1, 1, 0}, {-1, 0, 1}}), (1,2) => map(QQ^3,QQ^3,{{-1, 1, 0}, {-1, 0, 0}, {-1, 0, 1}}), (0,3) => map(QQ^3,QQ^3,{{1, 0, -1}, {0, 0, -1}, {0, 1, -1}}), (1,3) => map(QQ^3,QQ^3,{{1, 0, -1}, {0, 1, -1}, {0, 0, -1}}), (2,3) => map(QQ^3,QQ^3,{{0, 0, -1}, {1, 0, -1}, {0, 1, -1}})})
-assert(T#"degreeTable" === hashTable {posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{-1,0,0},{0,-1,0},{0,0,-1}},posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0},{0,0,-1},{1,1,1}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{1,1,1},{0,-1,0},{0,0,-1}}, posHull matrix{{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0},{1,1,1},{0,0,-1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,-1,0},{0,0,-1}},(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0},{0,0,-1},{1,1,1}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{1,1,1},{0,-1,0},{0,0,-1}}, (matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0},{1,1,1},{0,0,-1}}})
 assert(rank T == 3)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -3983,12 +3985,12 @@ assert(rank T == 3)
 TEST ///
 T = cotangentBundle(hirzebruchFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}}), (0,2) => map(QQ^2,QQ^2,{{-1, 3}, {0, 1}}), (1,3) => map(QQ^2,QQ^2,{{-1, -3}, {0, 1}}), (2,3) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}})})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,0},{0,-1}} => matrix{{1,0},{0,-1}},posHull matrix {{1,0},{0,1}} => matrix{{1,0},{0,1}},posHull matrix {{0,-1},{1,3}} => matrix{{-1,3},{0,1}}, posHull matrix{{0,-1},{-1,3}} => matrix{{-1,-3},{0,-1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,-1}},(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,1}},(matrix {{0,-1},{1,3}}, map(ZZ^2,0,0)) => matrix{{-1,3},{0,1}}, (matrix {{0,-1},{-1,3}}, map(ZZ^2,0,0)) => matrix{{-1,-3},{0,-1}}})
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 T = cotangentBundle(pp1ProductFan 3, "Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(2,6) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}, (4,5) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (4,6) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (3,7) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}, (5,7) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (6,7) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (0,1) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (0,2) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (1,3) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (0,4) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}, (2,3) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (1,5) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}})
-assert(T#"degreeTable" === hashTable {posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{1,0,0},{0,1,0},{0,0,1}},posHull matrix{{-1,0,0},{0,1,0},{0,0,1}} => matrix{{-1,0,0},{0,1,0},{0,0,1}},posHull matrix{{1,0,0},{0,-1,0},{0,0,1}} => matrix{{1,0,0},{0,-1,0},{0,0,1}},posHull matrix{{1,0,0},{0,1,0},{0,0,-1}} => matrix{{1,0,0},{0,1,0},{0,0,-1}},posHull matrix{{-1,0,0},{0,-1,0},{0,0,1}} => matrix{{-1,0,0},{0,-1,0},{0,0,1}},posHull matrix{{-1,0,0},{0,1,0},{0,0,-1}} => matrix{{-1,0,0},{0,1,0},{0,0,-1}},posHull matrix{{1,0,0},{0,-1,0},{0,0,-1}} => matrix{{1,0,0},{0,-1,0},{0,0,-1}},posHull matrix{{-1,0,0},{0,-1,0},{0,0,-1}} => matrix{{-1,0,0},{0,-1,0},{0,0,-1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,1,0},{0,0,1}},(matrix {{-1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,1,0},{0,0,1}},(matrix {{1,0,0},{0,-1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,-1,0},{0,0,1}},(matrix {{1,0,0},{0,1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,1,0},{0,0,-1}},(matrix {{-1,0,0},{0,-1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,-1,0},{0,0,1}},(matrix {{-1,0,0},{0,1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,1,0},{0,0,-1}},(matrix {{1,0,0},{0,-1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,-1,0},{0,0,-1}},(matrix {{-1,0,0},{0,-1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,-1,0},{0,0,-1}}})
 assert(rank T == 3)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -4090,7 +4092,7 @@ assert(cohomology(3,T) == (ring T)^0)
 TEST ///
 T = weilToCartier({1,4,3,2},projectiveSpaceFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^1,QQ^1,1),(0,2) => map(QQ^1,QQ^1,1),(0,3) => map(QQ^1,QQ^1,1),(1,2) => map(QQ^1,QQ^1,1),(1,3) => map(QQ^1,QQ^1,1),(2,3) => map(QQ^1,QQ^1,1)})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{-2},{-3},{6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{8},{-3},{-4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{-2},{7},{-4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{-2},{-3},{-4}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-2},{-3},{6}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{8},{-3},{-4}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-2},{7},{-4}}, (map(ZZ^3,ZZ^3,1), map(ZZ^3,0,0)) => matrix{{-2},{-3},{-4}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 3)
 T = weilToCartier({1,4,3,2},projectiveSpaceFan 3)
@@ -4108,7 +4110,7 @@ T1 = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T2 = weilToCartier({1,7,5,3},projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = T1 ++ T2
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix{{1_QQ,-1,0,0},{0,-1,0,0},{0,-1,1,0},{0,0,0,1}}, (0,2) => matrix{{-1_QQ,0,0,0},{-1,1,0,0},{-1,0,1,0},{0,0,0,1}}, (1,2) => matrix{{-1_QQ,1,0,0},{-1,0,0,0},{-1,0,1,0},{0,0,0,1}}, (0,3) => matrix{{1_QQ,0,-1,0},{0,0,-1,0},{0,1,-1,0},{0,0,0,1}}, (1,3) => matrix{{1_QQ,0,-1,0},{0,1,-1,0},{0,0,-1,0},{0,0,0,1}}, (2,3) => matrix{{0_QQ,0,-1,0},{1,0,-1,0},{0,1,-1,0},{0,0,0,1}}})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0,-3},{0,0,-1,-5},{1,1,1,9}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{1,1,1,13},{0,-1,0,-5},{0,0,-1,-7}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0,-3},{1,1,1,11},{0,0,-1,-7}},posHull map(ZZ^3,ZZ^3,1) => matrix{{-1,0,0,-3},{0,-1,0,-5},{0,0,-1,-7}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-3},{0,0,-1,-5},{1,1,1,9}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{1,1,1,13},{0,-1,0,-5},{0,0,-1,-7}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-3},{1,1,1,11},{0,0,-1,-7}}, (map(ZZ^3,ZZ^3,1),map(ZZ^3,0,0)) => matrix{{-1,0,0,-3},{0,-1,0,-5},{0,0,-1,-7}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 3)
 assert(T == directSum {T1,T2})
@@ -4116,7 +4118,7 @@ T1 = cotangentBundle(hirzebruchFan 3,"Type" => "Kaneyama")
 T2 = tangentBundle(hirzebruchFan 3,"Type" => "Kaneyama")
 T = T1 ++ T2
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}, (0,2) => matrix{{-1_QQ,3,0,0},{0,1,0,0},{0,0,-1,0},{0,0,3,1}}, (1,3) => matrix{{-1_QQ,-3,0,0},{0,1,0,0},{0,0,-1,0},{0,0,-3,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}})
-assert(T#"degreeTable" === hashTable {posHull matrix{{1,0},{0,-1}} => matrix{{1,0,-1,0},{0,-1,0,1}}, posHull matrix{{0,-1},{1,3}} => matrix{{-1,3,1,-3},{0,1,0,-1}}, posHull matrix{{1,0},{0,1}} => matrix{{1,0,-1,0},{0,1,0,-1}}, posHull matrix{{0,-1},{-1,3}} => matrix {{-1,-3,1,3},{0,-1,0,1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1,0,-1,0},{0,-1,0,1}}, (matrix {{0,-1},{1,3}}, map(ZZ^2,0,0)) => matrix{{-1,3,1,-3},{0,1,0,-1}}, (matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1,0,-1,0},{0,1,0,-1}}, (matrix {{0,-1},{-1,3}}, map(ZZ^2,0,0)) => matrix {{-1,-3,1,3},{0,-1,0,1}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 ///
@@ -4148,13 +4150,13 @@ assert(T#"dimension of the variety" == 2)
 TEST ///
 T = dual weilToCartier({1,4,3,2},projectiveSpaceFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ}},(0,2) => matrix{{1_QQ}}, (0,3) => matrix{{1_QQ}}, (1,2) => matrix{{1_QQ}},(1,3) => matrix{{1_QQ}},(2,3) => matrix{{1_QQ}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{2},{3},{-6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{-8},{3},{4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{2},{-7},{4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{2},{3},{4}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{2},{3},{-6}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-8},{3},{4}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{2},{-7},{4}}, (map(ZZ^3,ZZ^3,1), map(ZZ^3,0,0)) => matrix{{2},{3},{4}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 3)
 T1 = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = dual(T1 ++ T)
 assert(T#"baseChangeTable" === hashTable{(0,2) => matrix{{-1_QQ,-1,-1,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}},(0,1) => matrix{{1_QQ,0,0,0},{-1,-1,-1,0},{0,0,1,0},{0,0,0,1}}, (0,3) => matrix{{1_QQ,0,0,0},{-1,-1,-1,0},{0,1,0,0},{0,0,0,1}}, (1,2) => matrix{{0_QQ,1,0,0},{-1,-1,-1,0},{0,0,1,0},{0,0,0,1}},(1,3) => matrix{{1_QQ,0,0,0},{0,1,0,0},{-1,-1,-1,0},{0,0,0,1}},(2,3) => matrix{{-1_QQ,-1,-1,0},{1,0,0,0},{0,1,0,0},{0,0,0,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,1,0,-2},{0,0,1,-3},{-1,-1,-1,6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{-1,-1,-1,8},{0,1,0,-3},{0,0,1,-4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,1,0,-2},{-1,-1,-1,7},{0,0,1,-4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{1,0,0,-2},{0,1,0,-3},{0,0,1,-4}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,1,0,-2},{0,0,1,-3},{-1,-1,-1,6}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-1,-1,-1,8},{0,1,0,-3},{0,0,1,-4}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,1,0,-2},{-1,-1,-1,7},{0,0,1,-4}}, (map(ZZ^3,ZZ^3,1), map(ZZ^3,0,0)) => matrix{{1,0,0,-2},{0,1,0,-3},{0,0,1,-4}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -4184,7 +4186,7 @@ T1 = tangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
 T2 = cotangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
 T = T1 ** T2
 assert(T#"baseChangeTable" === hashTable{(0,2) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}},(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}}, (1,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{-1,0},{0,1}} => matrix{{0,-1,1,0},{0,-1,1,0}},posHull matrix {{-1,0},{0,-1}} => matrix{{0,-1,1,0},{0,1,-1,0}},posHull matrix {{1,0},{0,-1}} => matrix{{0,1,-1,0},{0,1,-1,0}},posHull map(ZZ^2,ZZ^2,1) => matrix{{0,1,-1,0},{0,-1,1,0}}})
+assert(T#"degreeTable" === hashTable{(matrix {{-1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{0,-1,1,0},{0,-1,1,0}},(matrix {{-1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{0,-1,1,0},{0,1,-1,0}},(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{0,1,-1,0},{0,1,-1,0}}, (map(ZZ^2,ZZ^2,1), map(ZZ^2,0,0)) => matrix{{0,1,-1,0},{0,-1,1,0}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 T1 = tangentBundle(hirzebruchFan 2,"Type" => "Kaneyama")
@@ -4192,7 +4194,7 @@ T2 = weilToCartier({5,1,7,3},hirzebruchFan 2,"Type" => "Kaneyama")
 T2 = T2 ++ T2
 T = T1 ** T2
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}},(0,2) => matrix{{-1_QQ,0,0,0},{2,1,0,0},{0,0,-1,0},{0,0,2,1}}, (1,3) => matrix{{-1_QQ,0,0,0},{-2,1,0,0},{0,0,-1,0},{0,0,-2,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{1,0},{0,1}} => matrix{{-4,-3,-4,-3},{-1,-2,-1,-2}},posHull matrix {{1,0},{0,-1}} => matrix{{-4,-3,-4,-3},{5,6,5,6}},posHull matrix {{0,-1},{-1,2}} => matrix{{18,19,18,19},{5,6,5,6}},posHull matrix{{0,-1},{1,2}} => matrix{{6,3,6,3},{-1,-2,-1,-2}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{-4,-3,-4,-3},{-1,-2,-1,-2}},(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{-4,-3,-4,-3},{5,6,5,6}},(matrix {{0,-1},{-1,2}}, map(ZZ^2,0,0)) => matrix{{18,19,18,19},{5,6,5,6}},(matrix {{0,-1},{1,2}}, map(ZZ^2,0,0)) => matrix{{6,3,6,3},{-1,-2,-1,-2}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 ///
@@ -4225,7 +4227,7 @@ TEST ///
 T = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = symmetricPower(2,T)
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ,-1,0,1,0,0},{0,-1,0,2,0,0},{0,-1,1,2,-1,0},{0,0,0,1,0,0},{0,0,0,2,-1,0},{0,0,0,1,-1,1}},(0,2) => matrix{{1_QQ,0,0,0,0,0},{2,-1,0,0,0,0},{2,0,-1,0,0,0},{1,-1,0,1,0,0},{2,-1,-1,0,1,0},{1,0,-1,0,0,1}}, (0,3) => matrix{{1_QQ,0,-1,0,0,1},{0,0,-1,0,0,2},{0,1,-1,0,-1,2},{0,0,0,0,0,1},{0,0,0,0,-1,2},{0,0,0,1,-1,1}}, (1,2) => matrix{{1_QQ,-1,0,1,0,0},{2,-1,0,0,0,0},{2,-1,-1,0,1,0},{1,0,0,0,0,0},{2,0,-1,0,0,0},{1,0,-1,0,0,1}}, (1,3) => matrix{{1_QQ,0,-1,0,0,1},{0,1,-1,0,-1,2},{0,0,-1,0,0,2},{0,0,0,1,-1,1},{0,0,0,0,-1,2},{0,0,0,0,0,1}},(2,3) => matrix{{0_QQ,0,0,0,0,1},{0,0,-1,0,0,2},{0,0,0,0,-1,2},{1,0,-1,0,0,1},{0,1,-1,0,-1,2},{0,0,0,1,-1,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix{{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0,-2,-1,0},{2,2,2,2,2,2},{0,0,-1,0,-1,-2}},posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{-2,-1,-1,0,0,0},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}},posHull matrix{{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2},{2,2,2,2,2,2}},posHull matrix{{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{2,2,2,2,2,2},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-2,-1,0},{2,2,2,2,2,2},{0,0,-1,0,-1,-2}},(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-2,-1,-1,0,0,0},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}},(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2},{2,2,2,2,2,2}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{2,2,2,2,2,2},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}}})
 assert(rank T == 6)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -4248,13 +4250,13 @@ TEST ///
 T = cotangentBundle(hirzebruch 3,"Type" => "Kaneyama")
 T = exteriorPower(2,T)
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{-1_QQ}}, (0,2) => matrix{{-1_QQ}}, (1,3) => matrix{{-1_QQ}}, (2,3) => matrix{{-1_QQ}}})
-assert(T#"degreeTable" === hashTable{posHull matrix{{1,0},{0,1}} => matrix{{1},{1}},posHull matrix{{1,0},{0,-1}} => matrix{{1},{-1}},posHull matrix{{0,-1},{1,3}} => matrix {{2},{1}},posHull matrix{{0,-1},{-1,3}} => matrix {{-4},{-1}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1},{1}},(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1},{-1}},(matrix {{0,-1},{1,3}}, map(ZZ^2,0,0)) => matrix {{2},{1}},(matrix {{0,-1},{-1,3}}, map(ZZ^2,0,0)) => matrix {{-4},{-1}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 2)
 T = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = exteriorPower(2,T)
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{-1_QQ,0,0},{-1,1,-1},{0,0,-1}}, (0,2) => matrix{{-1_QQ,0,0},{0,-1,0},{1,-1,1}}, (0,3) => matrix{{0_QQ,-1,0},{1,-1,1},{0,0,1}}, (1,2) => matrix{{1_QQ,0,0},{1,-1,1},{0,-1,0}}, (1,3) => matrix{{1_QQ,-1,1},{0,-1,0},{0,0,-1}}, (2,3) => matrix{{0_QQ,1,0},{0,0,1},{1,-1,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix{{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{-1,0,-1},{2,2,2},{0,-1,-1}},posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{-1,-1,0},{-1,0,-1},{0,-1,-1}},posHull matrix{{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{-1,0,-1},{0,-1,-1},{2,2,2}},posHull matrix{{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{2,2,2},{-1,0,-1},{0,-1,-1}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,-1},{2,2,2},{0,-1,-1}},(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,-1,0},{-1,0,-1},{0,-1,-1}},(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-1,0,-1},{0,-1,-1},{2,2,2}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{2,2,2},{-1,0,-1},{0,-1,-1}}})
 assert(rank T == 3)
 assert(T#"dimension of the variety" == 3)
 ///
