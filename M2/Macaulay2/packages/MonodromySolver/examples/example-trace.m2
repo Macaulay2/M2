@@ -12,9 +12,34 @@ end
 
 restart
 load "example-trace.m2"
+load "../HomotopyGraphTypes.m2"
 (p0, x0) := createSeedPair(G);
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>4,Verbose=>true)
 length V.PartialSols
+
+G = V.Graph
+sys = polySystem specializeSystem(V.BasePoint, G.Family)
+sols = points V.PartialSols
+
+
+computeTrace = L -> transpose sum apply(T, t -> matrix t)
+
+params = gens coefficientRing ring G.Family
+lastB = last params
+traces = {computeTrace sols}
+linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)))
+for i from 0 to 2 do (
+    sys' = polySystem apply(linearSlice, F->sub(F, lastB => random(CC)));
+    T = track(sys, sys', sols);
+    traces = append(traces, computeTrace T)
+    );
+
+rank (traces#0 | traces#1 | traces#2)
+(t1,t2) = (traces#0- traces#1, traces#0- traces#2)
+rank (t1 | t2)
+
+
+-- b = apply(specializeSystem(p0, G.Family), F -> sub(F,apply(gens ring F, g-> g=> 0)))
 
 {* TRACE TEST needed!
 

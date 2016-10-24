@@ -24,7 +24,7 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12"}
+     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12", "homotopyGraph"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry
