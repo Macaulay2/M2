@@ -17,26 +17,30 @@ load "../HomotopyGraphTypes.m2"
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>4,Verbose=>true)
 length V.PartialSols
 
+-- collect system and solutions obtained 
 G = V.Graph
 sys = polySystem specializeSystem(V.BasePoint, G.Family)
 sols = points V.PartialSols
 
+-- INPUT: list of points OUTPUT: coordinatewise sum as column vector
+computeTrace = L -> sum apply(T, t -> matrix t)
 
-computeTrace = L -> transpose sum apply(T, t -> matrix t)
-
+-- pick 3 generic points on 
 params = gens coefficientRing ring G.Family
 lastB = last params
-traces = {computeTrace sols}
+traces = {transpose(computeTrace sols | matrix {{last coordinates p0}})}
 linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)))
 for i from 0 to 2 do (
-    sys' = polySystem apply(linearSlice, F->sub(F, lastB => random(CC)));
+    b = random(CC);
+    sys' = polySystem apply(linearSlice, F->sub(F, lastB => b));
     T = track(sys, sys', sols);
-    traces = append(traces, computeTrace T)
+    
+    traces = append(traces, transpose (computeTrace T | matrix{{-b}}))
     );
 
-rank (traces#0 | traces#1 | traces#2)
-(t1,t2) = (traces#0- traces#1, traces#0- traces#2)
-rank (t1 | t2)
+(traces#0 | traces#1 | traces#2)
+(t1,t2,t3) = (traces#0- traces#1, traces#0- traces#2, traces#1-traces#2)
+rank (t1 | t2 | t3)
 
 
 -- b = apply(specializeSystem(p0, G.Family), F -> sub(F,apply(gens ring F, g-> g=> 0)))
