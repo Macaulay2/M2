@@ -1685,9 +1685,9 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
 	       L := select(toList(0..rk-1), i -> not member(i,p#1#0));
 	       for i from last(p#0)+1 to l-1 do (
 		    cl := append(p#0,i);
-		    C := intersection(p#1#1, posHull tCT#i);
+		    C := intersection(posHull p#1#1, posHull tCT#i);
 		    degs := dT#(tCT#(cl#0));
-		    M2 = append(M2,cl => (sort unique join(p#1#0,select(L, i -> contains(dualCone C,u- degs_{i}))),C))));
+		    M2 = append(M2,cl => (sort unique join(p#1#0,select(L, i -> contains(dualCone C,u- degs_{i}))),(rays C, linealitySpace C)))));
 	  M2 = hashTable M2;
 	  -- Constructing the zero map over QQ
      	  d1 := map(QQ^0,QQ^0,0);
@@ -1741,20 +1741,20 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      if not tvb.cache.cech#?(k,u) then (
      	  if k == 0 then (
 	       M20 := hashTable apply(subsets(l,k+1), cl -> (
-		    	 C := intersection apply(cl, i -> tCT#i);
+		    	 C := intersection apply(cl, i -> posHull tCT#i);
 		    	 degs := dT#(tCT#(cl#0));
 		    	 L := select(toList(0..rk-1), i -> contains(dualCone C,u - degs_{i}));
-		    	 cl => (L,C)));
+		    	 cl => (L,(rays C, linealitySpace C))));
 	       (d20,M30) := makeNewDiffAndTarget(M20,rk,l,tCT,bCT,dT);
 	       tvb.cache.cech#(k,u) = (M20,d20);
 	       tvb.cache.cech#(k+1,u) = M30)
 	  else (
 	       M1 := if not tvb.cache.cech#?(k-1,u) then (
 	       	    hashTable apply(subsets(l,k), cl -> (
-		    	      C := intersection apply(cl, i -> tCT#i);
+		    	      C := intersection apply(cl, i -> posHull tCT#i);
 		    	      degs := dT#(tCT#(cl#0));
 		    	      L := select(toList(0..rk-1), i -> contains(dualCone C,u - degs_{i}));
-		    	      cl => (L,C)))) else tvb.cache.cech#(k-1,u);
+		    	      cl => (L,(rays C, linealitySpace C))))) else tvb.cache.cech#(k-1,u);
 	       (d1,M2) := makeNewDiffAndTarget(M1,rk,l,tCT,bCT,dT);
 	       (d2,M3) := makeNewDiffAndTarget(M2,rk,l,tCT,bCT,dT);
 	       tvb.cache.cech#(k-1,u) = (M1,d1);
@@ -4049,16 +4049,16 @@ assert(deltaE T == convexHull matrix {{-1,1,0,0,0,0},{0,0,-1,1,0,0},{0,0,0,0,-1,
 -- Checking cohomology for Kaneyama
 TEST ///
 T = toricVectorBundle(2,pp1ProductFan 2,"Type" => "Kaneyama")
-assert(cohomology(0,T,matrix{{0},{0}}) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(0,T) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(1,T) == (ring T)^0)
-assert(cohomology(2,T) == (ring T)^0)
+assert(sort degrees cohomology(0,T,matrix{{0},{0}}) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(1,T) == sort degrees (ring T)^0)
+assert(sort degrees cohomology(2,T) == sort degrees (ring T)^0)
 T1 = tangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
-assert(cohomology(0,T1,matrix{{0},{0}}) == (ring T1)^{{0,0},{0,0}})
-assert(cohomology(0,T1,matrix{{1},{1}}) == (ring T1)^0)
-assert(cohomology(0,T1) == (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
-assert(cohomology(1,T1) == (ring T1)^0)
-assert(cohomology(2,T1) == (ring T1)^0)
+assert(sort degrees cohomology(0,T1,matrix{{0},{0}}) == sort degrees (ring T1)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T1,matrix{{1},{1}}) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(0,T1) == sort degrees (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
+assert(sort degrees cohomology(1,T1) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(2,T1) == sort degrees (ring T1)^0)
 T = tangentBundle(hirzebruchFan 3 * projectiveSpaceFan 1,"Type" => "Kaneyama")
 assert(cohomology(0,T,{matrix {{2},{1},{0}}, matrix{{3},{1},{0}}}) == {(ring T)^{{-2,-1,0}},(ring T)^{{-3,-1,0}}})
 assert(cohomology(1,T,{matrix {{-2},{-1},{0}}, matrix{{-1},{-1},{0}}}) == {(ring T)^{{2, 1, 0}},(ring T)^{{1, 1, 0}}})
@@ -4070,21 +4070,21 @@ assert(cohomology(3,T,matrix{{0},{0},{0}}) == (ring T)^0)
 -- Checking cohomology for Klyachko
 TEST ///
 T = toricVectorBundle(2,pp1ProductFan 2)
-assert(cohomology(0,T,matrix{{0},{0}}) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(0,T) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(1,T) == (ring T)^0)
-assert(cohomology(2,T) == (ring T)^0)
+assert(sort degrees cohomology(0,T,matrix{{0},{0}}) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(1,T) == sort degrees (ring T)^0)
+assert(sort degrees cohomology(2,T) == sort degrees (ring T)^0)
 T1 = tangentBundle pp1ProductFan 2
-assert(cohomology(0,T1,matrix{{0},{0}}) == (ring T1)^{{0,0},{0,0}})
-assert(cohomology(0,T1,matrix{{1},{1}}) == (ring T1)^0)
-assert(cohomology(0,T1) == (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
-assert(cohomology(1,T1) == (ring T1)^0)
-assert(cohomology(2,T1) == (ring T1)^0)
+assert(sort degrees cohomology(0,T1,matrix{{0},{0}}) == sort degrees (ring T1)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T1,matrix{{1},{1}}) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(0,T1) == sort degrees (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
+assert(sort degrees cohomology(1,T1) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(2,T1) == sort degrees (ring T1)^0)
 T = tangentBundle(hirzebruchFan 3 * projectiveSpaceFan 1)
-assert(cohomology(0,T) == (ring T)^{{0, 0, 1}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {-1, 0, 0}, {0, 0, -1}, {0, -1, 0}, {-1, -1, 0}, {-2, -1, 0}, {-3, -1, 0}})
-assert(cohomology(1,T) == (ring T)^{{2, 1, 0}, {1, 1, 0}})
-assert(cohomology(2,T) == (ring T)^0)
-assert(cohomology(3,T) == (ring T)^0)
+assert(sort degrees cohomology(0,T) == sort degrees (ring T)^{{0, 0, 1}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {-1, 0, 0}, {0, 0, -1}, {0, -1, 0}, {-1, -1, 0}, {-2, -1, 0}, {-3, -1, 0}})
+assert(sort degrees cohomology(1,T) == sort degrees (ring T)^{{2, 1, 0}, {1, 1, 0}})
+assert(sort degrees cohomology(2,T) == sort degrees (ring T)^0)
+assert(sort degrees cohomology(3,T) == sort degrees (ring T)^0)
 ///
 
 -- Test 13
