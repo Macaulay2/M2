@@ -82,32 +82,7 @@ doc ///
 
 
 doc ///
-<<<<<<< HEAD
-    Key
-        potentialE
-    Headline
-    	the potential which is equal to the expected number of new points obtained by tracking one point from the other
-    Description
-    	Text
-    	    This is an option for the Potential option for @TO "monodromySolve" @ when we use
-	    @TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
-	    computes the expected number of new points obtained by tracking points. The expected value
-	    is computed by the ratio of unmatched points and the difference between the total solution count and
-	    the number of the known points.
-    	Example
-	    R = CC[a,b,c,d,e,f,g,h][A,B,C]
-            polys = polySystem {A*a+B*b+c*C,d*A*B+e*B*C+f*A*C,g*A*B*C+h}
-	    (p0,x0) = createSeedPair polys
-	Text
-	    In here, we need the target number of solutions, and we will use the mixed volume for that.
-	Example    
-	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>6)
-    SeeAlso
-         "selectBestEdgeAndDirection"
-	 "potentialLowerBound"
-    /// 
-=======
+
 	Key
 		potentialE
 	Headline
@@ -132,7 +107,6 @@ doc ///
 		"selectBestEdgeAndDirection"
 		"potentialLowerBound"
 	/// 
->>>>>>> 7aca927649405b576561b2748b514011a67c417f
 
 doc ///
 	Key
