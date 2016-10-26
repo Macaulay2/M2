@@ -94,14 +94,14 @@ doc ///
 	    is computed by the ratio of unmatched points and the difference between the total solution count and
 	    the number of the known points.
     	Example
-	    R = CC[a,b,c,d][A,B]
-            polys = polySystem {A*a+B*b,A*B*c+d}
+	    R = CC[a,b,c,d,e,f,g,h][A,B,C]
+            polys = polySystem {A*a+B*b+c*C,d*A*B+e*B*C+f*A*C,g*A*B*C+h}
 	    (p0,x0) = createSeedPair polys
 	Text
 	    In here, we need the target number of solutions, and we will use the mixed volume for that.
 	Example    
 	    mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
+            monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>6)
     SeeAlso
          "selectBestEdgeAndDirection"
 	 "potentialLowerBound"
