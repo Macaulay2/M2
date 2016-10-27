@@ -17,8 +17,8 @@ newPackage select((
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true
-     -- DebuggingMode => false
+     -- DebuggingMode => true
+     DebuggingMode => false
      ), x -> x =!= null)
 
 -- Any symbols or functions that the user is to have access to

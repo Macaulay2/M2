@@ -319,9 +319,12 @@ export xmlAttrClass := newbasictype();
 export taskClass := newbasictype();
 export symbolBodyClass := newbasictype();
 export fileOutputSyncStateClass := newbasictype();
+-- NAG begin
 export rawHomotopyClass := newtypeof(rawObjectClass);    -- RawHomotopy
 export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
 export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
+export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
+-- NAG end
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

@@ -22,11 +22,14 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+// NAG begin
 class SLEvaluator;
 class Homotopy;
 class SLProgram;
 class StraightLineProgram;
 class PathTracker;
+class PointArray;
+// NAG end
 
 typedef struct MonomialOrdering MonomialOrdering;
 #else
@@ -43,11 +46,14 @@ typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
+// NAG begin
 typedef struct SLEvaluator SLEvaluator;
 typedef struct Homotopy Homotopy;
 typedef struct SLProgram SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
+typedef struct PointArray PointArray;
+// NAG end
 #endif
 
 #if defined(NO_CONST)
@@ -1989,6 +1995,11 @@ enum gbTraceValues
   M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
   M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
   M2_string rawHomotopyToString(Homotopy *); /* connected */
+  M2_string rawSLProgramToString(SLProgram *); /* connected */
+  unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
+  unsigned int rawHomotopyHash(Homotopy *); /* connected */
+  unsigned int rawSLProgramHash(SLProgram *); /* connected */
+
   M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
                            MutableMatrix* output_extras,  
                            gmp_RR init_dt, gmp_RR min_dt,
@@ -1996,10 +2007,7 @@ enum gbTraceValues
                            int max_corr_steps, 
                            gmp_RR infinity_threshold,
                            M2_bool checkPrecision);
-  M2_string rawSLProgramToString(SLProgram *); /* connected */
-  unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
-  unsigned int rawHomotopyHash(Homotopy *); /* connected */
-  unsigned int rawSLProgramHash(SLProgram *); /* connected */
+
   gmp_ZZ rawSLPInputGate(SLProgram *S);
   gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
   gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a);
@@ -2036,6 +2044,13 @@ enum gbTraceValues
   gmp_RRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN);
   gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
   const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine);
+  // PointArray
+  unsigned int rawPointArrayHash(PointArray *); 
+  M2_string rawPointArrayToString(PointArray *);
+  PointArray /* or null */ *rawPointArray(double epsilon, int n);
+  int rawPointArrayLookup(PointArray *pa, const MutableMatrix *M, int col);
+  int rawPointArrayLookupOrAppend(PointArray *pa, const MutableMatrix *M, int col);
+  // NAG end  
   const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
   const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);
 #if defined(__cplusplus)
