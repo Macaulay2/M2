@@ -19,14 +19,34 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
-    "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
-    "stoichiometricSubspace", "stoichSubspaceKer", "createRing", "ParameterRing",
-    "steadyStateEquations", "conservationEquations", 
-    "laplacian", "FullEdges", "NullEdges", "glue",
-    "displayComplexes", "isDeficient", "isWeaklyReversible",
-    "injectivityTest", "ReactionRates", "InitialValues", 
-    "createReactionRates", "createInitialValues" --, "netComplex", "networkToHRF", "kk"
+export {"reactionNetwork", 
+    "ReactionNetwork", 
+    "Species", 
+    "Complexes", 
+    "ReactionRing", 
+    "NullSymbol", 
+    "NullIndex", 
+    "ReactionGraph",
+    "stoichiometricSubspace", 
+    "stoichSubspaceKer", 
+    "createRing", 
+ --   "ParameterRing",
+    "steadyStateEquations", 
+    "conservationEquations", 
+    "laplacian", 
+    "FullEdges", 
+    "NullEdges", 
+    "glue",
+    "displayComplexes", 
+    "isDeficient", 
+    "isWeaklyReversible",
+    "injectivityTest", 
+    "InitialValues",
+    "ReactionRates",
+    "specializeReactionRates", 
+    "specializeInitialValues", 
+    "createReactionRates", 
+    "createInitialValues" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -87,6 +107,7 @@ NN.NullSymbol
 NN.ReactionGraph
 R = createRing(NN, QQ)
 createRing(NN, RR)
+createRing NN
 ///
 
 createReactionRates = method()
@@ -108,7 +129,7 @@ createInitialValues ReactionNetwork := Rn -> (
 
 -- todo: do we need to duplicate code in first two methods?
 createRing = method()
-createRing ReactionNetwork := Rn -> createRing(Rn, QQ)
+createRing ReactionNetwork := Rn -> createRing (Rn, QQ);
 createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     createInitialValues Rn;
     createReactionRates Rn;
@@ -129,6 +150,34 @@ createRing(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
     Rn.ReactionRing = RING;
     Rn.ReactionRing
     )
+
+specializeInitialValues = method()
+specializeInitialValues(ReactionNetwork, Ring, List) := (Rn, FF, L) -> (
+    createInitialValues Rn;
+    createReactionRates Rn;
+    Iv := toList(apply(0..length Rn.InitialValues-1, i-> value(Rn.InitialValues#i)));
+    S := toList(apply(0..length Rn.InitialValues-1, i -> value(Rn.InitialValues#i) => L#i));
+    T := new HashTable from S;
+    Rn.InitialValues = for v in Iv list (if T#?v then T#v else v);
+    P := apply(Rn.Species,a->(a,0));
+    K := FF[Rn.ReactionRates];
+    xx := symbol xx;
+    RING := K[apply(P,i->xx_(first i))];
+    Rn.ReactionRing = RING;
+    Rn.ReactionRing
+    )
+
+TEST ///
+restart
+needsPackage "ReactionNetworks"
+N = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
+R = createRing N
+specializeInitialValues(N, QQ, {1, 2, 3, 4})
+N.InitialValues
+steadyStateEquations N
+conservationEquations N
+///
+
 
 addSpecies = method()
 addSpecies(String, ReactionNetwork) := (s,Rn) -> 
@@ -406,6 +455,7 @@ CRN.ReactionRing
 createRing(CRN, QQ)
 F = steadyStateEquations CRN
 steadyStateEquations CRN
+conservationEquations CRN
 matrix{F}
 netList F
 ///
@@ -419,10 +469,11 @@ conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     S := stoichSubspaceKer N;
-    G := gens coefficientRing N.ReactionRing;
-    cc := toList apply(
-	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1), 
-	i -> G#i);
+    cc := toList(apply(0..length N.InitialValues-1, i -> value(N.InitialValues#i)));
+ --   G := gens coefficientRing N.ReactionRing;
+ --   cc := toList apply(
+ --	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1), 
+ --	i -> G#i);
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
