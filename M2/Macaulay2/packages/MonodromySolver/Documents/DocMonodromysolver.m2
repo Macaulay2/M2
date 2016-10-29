@@ -126,7 +126,11 @@ doc ///
 			monodromySolve(polys,p0,{x0},GraphInitFunction => completeGraphInit)	
 	/// 
 
-
+doc ///
+  Key 		
+    [monodromySolve,Verbose]
+  Headline
+    If the value is true, reports progress./// 
 doc ///
 	Key
 		monodromySolve
@@ -334,6 +338,16 @@ doc ///
 			(p0,x0) := createSeedPair polys
 			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
 	///
+
+doc ///
+    Key
+    	HomotopyGraph
+	Vertices
+	Edges
+	Family
+    Headline
+        a graph organizing homotopies for monodromy computation
+///
     
 {* doc ///
     Key
