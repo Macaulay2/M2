@@ -244,6 +244,9 @@ for exampleIndex from 1 to 2 do (
 		(p0,x0) = createSeedPair polys;
 		count = 16;
 	);
+    	-- Blackbox
+	(V,npaths) = monodromySolve polys;
+		assert( length V.PartialSols <= count );
 	-- Can provide no options
 	(V,npaths) = monodromySolve(polys,p0,{x0});
 		assert( length V.PartialSols <= count );
@@ -339,7 +342,10 @@ monodromySolve = method(Options=>{
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false})
-monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
+monodromySolve PolySystem := o -> PS -> (
+    (p0,x0) := createSeedPair PS;
+    monodromySolve(PS,p0,{x0},o)
+    )
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
 		result := dynamicMonodromySolve(PS,point0,s0, o)

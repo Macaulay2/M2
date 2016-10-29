@@ -8,10 +8,16 @@ doc ///
 			This package provides tools to find all solutions of a generic system
 			in a family of polynomial systems with parametric coefficients using
 			numerical homotopy continuation and the action of the monodromy group. 
-
-			This package implements an algorithm introduced in 
-			@HREF("https://arxiv.org/abs/1609.08722","Solving polynomial systems
-			via homotopy continuation and monodromy")@.
+		Example
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			(V, npaths) = monodromySolve polys; 
+			<< "tracked " << npaths << " homotopy paths"; 
+			points V.PartialSols
+    	    	Text
+			The algorithm is introduced in 
+			@HREF("https://arxiv.org/abs/1609.08722","\"Solving polynomial systems
+			via homotopy continuation and monodromy\" (2016)")@.
 	///
 
 doc ///
@@ -24,10 +30,9 @@ doc ///
 			This is an option for the function @TO "monodromySolve" @. By default, the option
 			SelectEdgeAndDirection is set to selectRandomEdgeAndDirection.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem {A*a+B*b,A*B*c+d}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
 		Text
 			Note that in this example we have not specified the type of selection for edge and direction for the homotopy;
 			this implies that selectRandomEdgeAndDirection is used. 
@@ -47,10 +52,9 @@ doc ///
 			selectBestEdgeAndDirection as shown below. The use of selectBestEdgeAndDirection requires
 			the choice of a potential function as well. 
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem {A*a+B*b,A*B*c+d}
-			(p0,x0) = createSeedPair polys
-			monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
 	SeeAlso
 		"selectRandomEdgeAndDirection"
 		"potentialLowerBound"
@@ -70,10 +74,9 @@ doc ///
 			observes discovered and undiscovered points first, and then follows the homotopy which
 			has the minimal number of new points quaranteed to be found.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem {A*a+B*b,A*B*c+d}
-			(p0,x0) = createSeedPair polys
-			monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
 	SeeAlso
 		"selectBestEdgeAndDirection"
 		"potentialE"
@@ -95,17 +98,18 @@ doc ///
 			is computed by the ratio of unmatched points and the difference between the total solution count and
 			the number of the known points.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem {A*a+B*b,A*B*c+d}
-			(p0,x0) = createSeedPair polys
+		        R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
 		Text
 			In here, we need the target number of solutions, and we will use the mixed volume for that.
 		Example
-			mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-			monodromySolve(polys,p0,{x0}, SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
+		        (p0,x0) := createSeedPair polys
+			mixedVolume = computeMixedVolume specializeSystem(p0,polys)
+			monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
 	SeeAlso
 		"selectBestEdgeAndDirection"
 		"potentialLowerBound"
+		"computeMixedVolume"
 	/// 
 
 doc ///
@@ -120,10 +124,9 @@ doc ///
 			each pair of vertices. Then the homotopy will run on the complete graph
 			on 4 vertices, where each edge is doubled. 
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => completeGraphInit)	
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => completeGraphInit)	
 	/// 
 
 doc ///
@@ -134,7 +137,7 @@ doc ///
 doc ///
 	Key
 		monodromySolve
-		(monodromySolve, Matrix, Point, List)
+		(monodromySolve, PolySystem)
 		(monodromySolve, PolySystem, Point, List)
 	Headline
 		solving system of equations by using monodromy loops
@@ -147,7 +150,7 @@ doc ///
 			Set the polynomial ring and the system of polynomials. 
 		Example
 			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}  
+			polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
 		Text
 			Create the "seed" used to initiate the homotopy process.
 			This function uses a seed solution to the generic system, which is then 
@@ -183,8 +186,8 @@ doc ///
 			argument p0 below is the tuple corresponding to the parameters, and 
 			x0 is the seed solution to the system with those parameters.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
 			(p0,x0) := createSeedPair polys
 	///
     
@@ -202,10 +205,9 @@ doc ///
 			vertex of the graph; it is connected to all other vertices by two
 			paths, thus creating a "petal" for each additional vertex.  
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit)	
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit)	
 	/// 
     
     
@@ -220,10 +222,9 @@ doc ///
 			Computes mixed volume of a polynomial system, which is a sharp bound on the
 			number of roots.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) = createSeedPair polys;
-			mixedVol = computeMixedVolume specializeSystem (p0,polys);
+			R = CC[x,y]
+			polys = {x+y^2,x*y+1}
+			mixedVol = computeMixedVolume polys
 	///
 
 
@@ -240,10 +241,9 @@ doc ///
 			To use it, it is necessary to specify a number of nodes or
 			edges to augment by using AugmentNodeCount or AugmentEdgeCount.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>flowerGraphAugment,AugmentNodeCount=>1)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>flowerGraphAugment,AugmentNodeCount=>1)
 	///
     
     
@@ -260,10 +260,9 @@ doc ///
 			To use it, it is necessary to specify a number of nodes or
 			edges to augment by using AugmentNodeCount or AugmentEdgeCount.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
 	///
 
 doc ///
@@ -279,10 +278,9 @@ doc ///
 			be able to augment the graph and have the process try again. If set, this
 			function tells MonodromySolve in what way to modify the HomotopyGraph.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
 	///
 
 doc ///
@@ -299,10 +297,9 @@ doc ///
 			AugmentNumberOfRepeats can be set to stop the number of times that the
 			process will iterate.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1,AugmentNumberOfRepeats=>10)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1,AugmentNumberOfRepeats=>10)
 	///
 
 doc ///
@@ -316,10 +313,9 @@ doc ///
 			how many edges should be used to augment the graph. This will not do
 			anything if AugmentGraphFunction is not set.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentEdgeCount=>1)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentEdgeCount=>1)
 	///
 
 doc ///
@@ -333,10 +329,9 @@ doc ///
 			how many nodes should be used to augment the graph. This will not do
 			anything if AugmentGraphFunction is not set.
 		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem matrix{{A*a+B*b},{A*B*c+d}}
-			(p0,x0) := createSeedPair polys
-			monodromySolve(polys,p0,{x0},GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
 	///
 
 doc ///
