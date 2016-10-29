@@ -50,16 +50,13 @@ for predictor in {RungeKutta4,Tangent,Certified} do (
 -- a non-square system
 CC[x,y]
 solveSystem{x^2,y^2,x+y}
-
+{*
+QQ[x,y]
+solveSystem{x^2,y^2,x+y}
+*}
 end
 
 restart
 load "SoftwareM2engine.tst.m2"
-
-T = cyclic(6,CC) 
-S = solveSystem(T_*, Software=>M2engine);
-#select(S, s->status s === Regular)
-#select(S, s->s.ConditionNumber < 1000)
-
 
 

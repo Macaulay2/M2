@@ -39,9 +39,12 @@ trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
      )
 
 refinePHCpack = method(TypicalValue => List)
-refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> (
-     refineSolutions(toRingXphc T, sols, ceiling(log(10,2)*o.Bits))
-     )
+refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> 
+     refineSolutions(toRingXphc T, sols, 
+	 if o.Bits === infinity 
+	 then getDefault Precision 
+	 else ceiling(log(10,2)*o.Bits)
+	 )
 
 solveGenericSystemInTorus = method()
 solveGenericSystemInTorus PolySystem := F -> solveGenericSystemInTorus equations F
@@ -51,6 +54,6 @@ solveGenericSystemInTorus List := F -> (
     (fromRingXphc(S,ring ideal F), solsS)
     )
  
-numericalIrreducibleDecompositionPHCpack = I -> PHCpack$numericalIrreducibleDecomposition toRingXphc I_*
+numericalIrreducibleDecompositionPHCpack = (I,o) -> PHCpack$numericalIrreducibleDecomposition toRingXphc I_*
 
 dismiss PHCpack

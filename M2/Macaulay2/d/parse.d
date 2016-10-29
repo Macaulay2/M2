@@ -390,11 +390,14 @@ export Expr := (
      RawMonomialIdealCell or
      RawMonomialOrderingCell or
      RawMutableMatrixCell or
+     -- NAG begin
      RawHomotopyCell or
      RawSLEvaluatorCell or
      RawSLProgramCell or
      RawStraightLineProgramCell or
      RawPathTrackerCell or
+     RawPointArrayCell or
+     -- NAG end
      RawRingCell or
      RawRingElementCell or
      RawRingMapCell or

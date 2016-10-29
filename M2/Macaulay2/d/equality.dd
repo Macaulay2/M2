@@ -198,11 +198,14 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is MysqlFieldWrapper do False
      is MysqlResultWrapper do False
      is RawMutableMatrixCell do False			    -- mutable matrices may not stay equal, so they aren't equal
+     -- NAG begin
      is RawHomotopyCell do False
      is RawSLEvaluatorCell do False
      is RawSLProgramCell do False
      is RawStraightLineProgramCell do False
      is RawPathTrackerCell do False
+     is RawPointArrayCell do False
+     -- NAG end
      is x:RawComputationCell do (
 	  when rhs
 	  is y:RawComputationCell do (
