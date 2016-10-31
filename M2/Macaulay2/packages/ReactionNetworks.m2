@@ -465,9 +465,12 @@ netList F
 -- stoichiometric subspace
 -- Not sure if this is the right way to do this???
 conservationEquations = method()
-conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
+conservationEquations ReactionNetwork := N -> (
+        if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+	conservationEquations(N, coefficientRing coefficientRing N.ReactionRing)
+	)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
-    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+    if N.ReactionRing === null then createRing(N, FF);
     S := stoichSubspaceKer N;
     cc := toList(apply(0..length N.InitialValues-1, i -> value(N.InitialValues#i)));
  --   G := gens coefficientRing N.ReactionRing;

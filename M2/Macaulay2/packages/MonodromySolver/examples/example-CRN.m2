@@ -91,15 +91,17 @@ computeTrace = L -> sum apply(L, t -> matrix t)
 params = gens coefficientRing ring G.Family
 lastB = last params
 traces = {transpose(computeTrace sols | matrix {{last coordinates p0}})}
-linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)))
+linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)));
+setRandomSeed 0
 for i from 0 to 2 do (
     b = random(RR);
     sys' = polySystem apply(linearSlice, F->sub(F, lastB => b));
     T = track(sys, sys', sols);
-    print (T/matrix/transpose , transpose computeTrace T);
+    -- print (T/matrix/transpose , transpose computeTrace T);
     traces = append(traces, transpose (computeTrace T | matrix{{b}}))
     );
-first SVD(traces#2-traces#1|traces#3-traces#1)
+first SVD(traces#3-traces#1|traces#2-traces#1)
+first SVD(traces#2-traces#0|traces#1-traces#0)
 
 
 
