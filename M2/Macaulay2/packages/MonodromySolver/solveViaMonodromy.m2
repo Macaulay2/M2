@@ -20,7 +20,8 @@ export {
     "AugmentNumberOfRepeats",
     "AugmentEdgeCount",
     "AugmentNodeCount",
-    "randomWeights"}
+    "randomWeights",
+    "EdgesSaturated"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
@@ -201,7 +202,8 @@ staticMonodromySolve = method(Options=>{
 	NumberOfEdges => null,
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
@@ -341,7 +343,8 @@ monodromySolve = method(Options=>{
 	NumberOfEdges => 3,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 monodromySolve PolySystem := o -> PS -> (
     (p0,x0) := createSeedPair PS;
     monodromySolve(PS,p0,{x0},o)
@@ -382,7 +385,8 @@ dynamicMonodromySolve = method(Options=>{
 	NumberOfEdges => null,
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount === null then 
@@ -422,7 +426,8 @@ coreMonodromySolve = method(Options=>{
 	NumberOfEdges => null,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;
 	same := 0;
@@ -452,6 +457,7 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	);
 	if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
 	then npaths = "failed";
+	if o.EdgesSaturated then saturateEdges HG;
 	(lastNode, npaths)
 )
 

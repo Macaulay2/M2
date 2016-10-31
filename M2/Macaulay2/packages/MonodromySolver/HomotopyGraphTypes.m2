@@ -11,8 +11,9 @@ export {
     "HomotopyGraph",
     "HomotopyEdge",
     "HomotopyNode",
-    "getTrackTime"
-    }
+    "getTrackTime",
+    "saturateEdges"}
+    
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
 HomotopyGraph = new Type of MutableHashTable
@@ -282,6 +283,13 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	);
     #untrackedInds
     )
+
+saturateEdges = method()
+saturateEdges HomotopyGraph := G -> (
+    apply(G.Edges, e -> trackEdge(e, false));
+    apply(G.Edges, e -> trackEdge(e, true));
+    )
+
 
 end
 

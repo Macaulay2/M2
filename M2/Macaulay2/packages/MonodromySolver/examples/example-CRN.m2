@@ -50,7 +50,7 @@ load "example-CRN.m2"
 setRandomSeed 0
 -- system for example from Elizabeth's talk
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4)
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
 assert(length V.PartialSols == 4)
 
 -- system for motif twoSiteModificationF
@@ -83,6 +83,23 @@ assert(#NV#0 == 9)
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(GQ,p0,{x0}, NumberOfEdges => 1, NumberOfNodes => 5)
 
+-- affine trace test for Wnt
+G = V.Graph
+sys = polySystem specializeSystem(V.BasePoint, G.Family)
+sols = points V.PartialSols
+computeTrace = L -> sum apply(L, t -> matrix t)
+params = gens coefficientRing ring G.Family
+lastB = last params
+traces = {transpose(computeTrace sols | matrix {{last coordinates p0}})}
+linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)))
+for i from 0 to 2 do (
+    b = random(RR);
+    sys' = polySystem apply(linearSlice, F->sub(F, lastB => b));
+    T = track(sys, sys', sols);
+    print (T/matrix/transpose , transpose computeTrace T);
+    traces = append(traces, transpose (computeTrace T | matrix{{b}}))
+    );
+first SVD(traces#2-traces#1|traces#3-traces#1)
 
 
 
