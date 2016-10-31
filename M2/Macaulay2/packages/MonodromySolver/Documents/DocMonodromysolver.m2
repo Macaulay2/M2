@@ -134,9 +134,96 @@ doc ///
     [monodromySolve,Verbose]
   Headline
     If the value is true, reports progress./// 
+    
+doc ///
+  Key 		
+    [monodromySolve,TargetSolutionCount]
+  Headline
+    Number of solutions to the polynomial system to be found./// 
+    
+doc ///
+  Key 		
+    [monodromySolve,StoppingCriterion]
+  Headline
+    Stopping criterion for the algorithm./// 
+    
+doc ///
+  Key 		
+    [monodromySolve,SelectEdgeAndDirection]
+  Headline
+    Select edge and direction for homotopy./// 
+
+doc ///
+  Key 		
+    [monodromySolve,Potential]
+  Headline
+    Specify type of potential function for selection of edge in homotopy./// 
+    
+doc ///
+  Key 		
+    [monodromySolve,NumberOfEdges]
+  Headline
+    Specify the number of edges in the HomotopyGraph./// 
+
+doc ///
+  Key 		
+    [monodromySolve,NumberOfNodes]
+  Headline
+    Specify the number of nodes in the HomotopyGraph./// 
+    
+doc ///
+  Key 		
+    [monodromySolve,NumberOfRepeats]
+  Headline
+    Number of repeats for the output before termination./// 
+    
+doc ///
+  Key 		
+    [monodromySolve,BatchSize]
+  Headline
+    Changes the number of paths tracked at once.///   
+    
+doc ///
+    Key 
+    	[monodromySolve, GraphInitFunction]
+    Headline
+    	Type of initial graph: flowerGraphInit or completeGraphInit.///  
+    
+doc ///
+    Key 
+    	[monodromySolve, AugmentGraphFunction]
+    Headline
+    	Specify a function to be used to augment the HomotopyGraph./// 
+	
+doc ///
+    Key 
+    	[monodromySolve, AugmentNodeCount]
+    Headline
+    	Number of nodes by which to augment graph./// 	 
+	
+doc ///
+    Key 
+    	[monodromySolve, AugmentEdgeCount]
+    Headline
+    	Number of edges by which to augment graph./// 
+	
+doc ///
+    Key 
+    	[monodromySolve, AugmentNumberOfRepeats]
+    Headline
+    	Number of times to augment the graph before termination./// 	
+
 doc ///
 	Key
 		monodromySolve
+		BatchSize
+		GraphInitFunction
+		SelectEdgeAndDirection
+		StoppingCriterion
+		TargetSolutionCount
+		NumberOfEdges
+		NumberOfNodes
+		NumberOfRepeats
 		(monodromySolve, PolySystem)
 		(monodromySolve, PolySystem, Point, List)
 	Headline
@@ -170,7 +257,19 @@ doc ///
 		"completeGraphInit"
 	/// 
     
-
+doc ///
+    	Key
+	    	specializeSystem
+		(specializeSystem, Point, PolySystem)
+		(specializeSystem, Point, Matrix)
+	Headline
+	    	speliaze system at a point in the parameter space.///
+		
+doc ///
+    	Key
+	    	randomWeights
+	Headline
+	    	Generates a random complex vector.///		
 
     
 doc ///
@@ -336,6 +435,57 @@ doc ///
 
 doc ///
     Key
+    	pointArray
+    Headline
+    	an array of labelled points, to which one may append new elements///
+
+doc ///
+    Key
+    	makeRandomizedSelect
+    Headline
+    	randomly chooses SelectEdgeAndDirection option///	
+
+doc ///
+    Key
+    	makeBatchPotential	  
+    Headline
+	expected number of new points based on batch size///
+
+doc ///
+    Key
+    	homotopyGraph
+    Headline
+    	creates HomotopyGraph of a polynomial system///
+
+doc ///
+    Key
+    	getTrackTime
+	(getTrackTime, HomotopyGraph)
+    Headline
+    	tracks time///
+	
+doc ///
+    Key
+    	dynamicFlowerSolve
+    Headline
+    	a naive dynamic strategy///	
+
+doc ///
+    Key
+    	appendPoint
+	(appendPoint, PointArray, Point)
+    Headline
+    	append a point at the end of a PointArray///
+
+doc ///
+    Key
+    	appendPoints
+	(appendPoints, PointArray, List)
+    Headline
+    	append a list of points at the end of a PointArray///	
+			
+doc ///
+    Key
     	HomotopyGraph
 	Vertices
 	Edges
@@ -343,7 +493,17 @@ doc ///
     Headline
         a graph organizing homotopies for monodromy computation
 ///
-    
+ 
+doc ///
+    Key
+    	HomotopyEdge
+	gamma1
+	gamma2
+	Correspondence12
+	Correspondence21
+    Headline
+    	stores gamma values for the homotopy and correspondences between two nodes
+///   
 {* doc ///
     Key
     	"Example 1"
