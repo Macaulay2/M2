@@ -509,6 +509,18 @@ doc ///
     Headline
     	stores gamma values for the homotopy and correspondences between two nodes
 ///   
+
+doc ///
+    Key
+    	PointArray
+    	(indices, PointArray)
+	(length, PointArray)
+	(member, Point, PointArray)
+	(net, PointArray)
+    Headline
+    	an array of points (labelled with 0,1,...) to which one may append new elements
+///
+    	
 {* doc ///
     Key
     	"Example 1"
