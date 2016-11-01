@@ -610,6 +610,7 @@ annihilator = method(
      )
 
 annihilator Module := Ideal => o -> (M) -> (
+     if isWeylAlgebra ring M then error "no meaning for modules over a Weyl algebra"; 
      f := presentation M;
      if o.Strategy === Intersection then (
 	  F := target f;
