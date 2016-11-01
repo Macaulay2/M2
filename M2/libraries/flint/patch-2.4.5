@@ -1,0 +1,553 @@
+diff -ur --new-file /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/CPimport.h flint-2.4.5/CPimport.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/CPimport.h	1969-12-31 19:00:00.000000000 -0500
++++ flint-2.4.5/CPimport.h	2015-07-10 17:27:06.000000000 -0400
+@@ -0,0 +1,2 @@
++#include <stdint.h>
++extern const int32_t CPimport [];
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/Makefile.in flint-2.4.5/Makefile.in
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/Makefile.in	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/Makefile.in	2015-07-10 14:00:55.000000000 -0400
+@@ -26,7 +26,7 @@
+ 
+ export
+ 
+-SOURCES = printf.c fprintf.c sprintf.c scanf.c fscanf.c sscanf.c clz_tab.c memory_manager.c version.c profiler.c thread_support.c
++SOURCES = printf.c fprintf.c sprintf.c scanf.c fscanf.c sscanf.c clz_tab.c memory_manager.c version.c profiler.c thread_support.c CPimport.c
+ LIB_SOURCES = $(wildcard $(patsubst %, %/*.c, $(BUILD_DIRS)))  $(patsubst %, %/*.c, $(TEMPLATE_DIRS))
+ 
+ HEADERS = $(patsubst %, %.h, $(BUILD_DIRS)) NTL-interface.h flint.h longlong.h config.h gmpcompat.h fft_tuning.h fmpz-conversions.h profiler.h templates.h $(patsubst %, %.h, $(TEMPLATE_DIRS))
+@@ -77,6 +77,9 @@
+ dist:
+ 	git archive --format tar --prefix flint-2.4.5/ flint-2.4 > ../flint-2.4.5.tar; gzip ../flint-2.4.5.tar
+ 
++CPimport.c: qadic/CPimport.txt Makefile
++	( echo "#include <CPimport.h>"; echo "const int32_t CPimport [] = {" ; sed -e 's/  */,/g' -e 's/ *$$/,-1,/' <$< ; echo ' -2 } ;' ) >$@
++
+ profile: library $(PROF_SOURCES) $(EXT_PROF_SOURCES) build/profiler.o
+ 	mkdir -p build/profile
+ ifndef MOD
+@@ -181,8 +184,6 @@
+ 	$(AT)if [ ! -z $(EXT_HEADERS) ]; then \
+ 		cp $(EXT_HEADERS) $(DESTDIR)$(PREFIX)/include/flint; \
+ 	fi
+-	mkdir -p $(DESTDIR)$(FLINT_CPIMPORT_DIR)
+-	cp qadic/CPimport.txt $(DESTDIR)$(FLINT_CPIMPORT_DIR)
+ 	mkdir -p $(DESTDIR)$(PREFIX)/include/flint/flintxx
+ 	cp flintxx/*.h $(DESTDIR)$(PREFIX)/include/flint/flintxx
+ 	cp *xx.h $(DESTDIR)$(PREFIX)/include/flint
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/configure flint-2.4.5/configure
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/configure	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/configure	2015-07-10 11:20:32.000000000 -0400
+@@ -27,9 +27,6 @@
+ EXT_MODS=
+ EXTRA_BUILD=
+ 
+-FLINT_CPIMPORT_DIR="$PREFIX/share/flint"
+-FLINT_CPIMPORT="$FLINT_CPIMPORT_DIR/CPimport.txt"
+-
+ usage()
+ {
+    echo "Usage: ./configure <options> <args>"
+@@ -108,8 +105,6 @@
+          ;;
+       --prefix)
+          PREFIX=$VALUE
+-         FLINT_CPIMPORT_DIR="$PREFIX/share/flint"
+-         FLINT_CPIMPORT="$FLINT_CPIMPORT_DIR/CPimport.txt"
+          ;;
+       --enable-shared)
+          SHARED=1
+@@ -486,10 +481,6 @@
+    fi
+ fi
+ 
+-#Conway polynomials database
+-
+-CFLAGS="$CFLAGS -DFLINT_CPIMPORT=\\\"$FLINT_CPIMPORT\\\""
+-
+ #this is needed on PPC G5 and does not hurt on other OS Xes
+ 
+ if [ "$KERNEL" = Darwin ]; then
+@@ -620,9 +611,6 @@
+ echo "" >> Makefile
+ echo "WANT_NTL=$WANT_NTL" >> Makefile
+ echo "" >> Makefile
+-echo "FLINT_CPIMPORT_DIR=$FLINT_CPIMPORT_DIR" >> Makefile
+-echo "FLINT_CPIMPORT=$FLINT_CPIMPORT" >> Makefile
+-echo "" >> Makefile
+ echo "INCS=$INCS" >> Makefile
+ echo "LIBS=$LIBS" >> Makefile
+ echo "LIBS2=$LIBS2" >> Makefile
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq/ctx_init_conway.c flint-2.4.5/fq/ctx_init_conway.c
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq/ctx_init_conway.c	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/fq/ctx_init_conway.c	2015-07-10 21:19:07.000000000 -0400
+@@ -26,82 +26,31 @@
+ ******************************************************************************/
+ 
+ #include <stdio.h>
++#include <assert.h>
+ #include <string.h>
+ 
+ #include "fq.h"
+-
+-#ifndef FLINT_CPIMPORT
+-#define FLINT_CPIMPORT "../qadic/CPimport.txt"
+-#endif
++#include "CPimport.h"
+ 
+ int
+ _fq_ctx_init_conway(fq_ctx_t ctx, const fmpz_t p, slong d, const char *var)
+ {
+-    char *buf;
+-    FILE *file;
+-
+-    if (fmpz_cmp_ui(p, 109987) > 0)
+-    {
+-        return 0;
+-    }
+-
+-    buf = flint_malloc(832);
+-    file = fopen(FLINT_CPIMPORT, "r");
+-
+-    if (!file)
+-    {
+-        file = fopen("../qadic/CPimport.txt", "r");
+-
+-        if (!file)
+-        {
+-            flint_printf("Exception (fq_ctx_init_conway).  File loading.\n");
+-            abort();
+-        }
+-    }
+-
+-    while (fgets(buf, 832, file))
+-    {
+-        char *tmp = buf;
+-
+-        /* Different prime? */
+-        if (fmpz_cmp_ui(p, atoi(tmp)))
+-            continue;
+-
+-        while (*tmp++ != ' ') ;
+-
+-        /* Same degree? */
+-        if (d == atoi(tmp))
+-        {
+-            fmpz_mod_poly_t mod;
+-            slong i;
+-            char *ptr;
+-
+-            fmpz_mod_poly_init(mod, p);
+-
+-            /* Copy the polynomial */
+-            ptr = tmp;
+-
+-            for (i = 0; i < d; i++)
+-            {
+-                int coeff;
+-
+-                while (*ptr++ != ' ') ;
+-
+-                coeff = atoi(ptr);
+-                fmpz_mod_poly_set_coeff_ui(mod, i, coeff);
+-            }
+-            fmpz_mod_poly_set_coeff_ui(mod, d, 1);
+-
+-            fq_ctx_init_modulus(ctx, mod, var);
+-
+-            fmpz_mod_poly_clear(mod);
+-            fclose(file);
+-            flint_free(buf);
+-            return 1;
+-        }
++    /* compare with _fq_nmod_ctx_init_conway and qadic_ctx_init_conway */
++    const int *cp = CPimport;
++    while (*cp != -2) {
++	 if (fmpz_cmp_ui(p, *cp++) == 0 && d == *cp++) {
++	      fmpz_mod_poly_t mod;
++	      int i;
++	      fmpz_mod_poly_init(mod, p);
++	      for (i = 0; i < d; i++) fmpz_mod_poly_set_coeff_ui(mod, i, *cp++);
++	      /*For M2 issue #354: assert( *cp == -1); */
++	      fmpz_mod_poly_set_coeff_ui(mod, d, 1);
++	      fq_ctx_init_modulus(ctx, mod, var);
++	      fmpz_mod_poly_clear(mod);
++	      return 1;
++	      }
++	 else while (*cp++ != -1);
+     }
+-    fclose(file);
+-    flint_free(buf);
+     return 0;
+ }
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq_nmod/ctx_init_conway.c flint-2.4.5/fq_nmod/ctx_init_conway.c
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq_nmod/ctx_init_conway.c	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/fq_nmod/ctx_init_conway.c	2015-07-10 21:18:26.000000000 -0400
+@@ -27,80 +27,29 @@
+ 
+ #include <stdio.h>
+ #include <string.h>
++#include <assert.h>
+ 
+ #include "fq_nmod.h"
++#include "CPimport.h"
+ 
+ int _fq_nmod_ctx_init_conway(fq_nmod_ctx_t ctx, const fmpz_t p, slong d, const char *var)
+ {
+-    char *buf;
+-    FILE *file;
+-
+-    if (fmpz_cmp_ui(p, 109987) > 0)
+-    {
+-        return 0;
+-    }
+-
+-    buf  = flint_malloc(832);
+-    file = fopen(FLINT_CPIMPORT, "r");
+-
+-    if (!file)
+-    {
+-        file = fopen("../qadic/CPimport.txt", "r");
+-
+-        if (!file)
+-        {
+-            flint_printf("Exception (fq_nmod_ctx_init_conway).  File loading.\n");
+-            abort();
+-        }
+-    }
+-
+-    while (fgets(buf, 832, file))
+-    {
+-        char *tmp = buf;
+-
+-        /* Different prime? */
+-        if (fmpz_cmp_ui(p, atoi(tmp)))
+-            continue;
+-
+-        while (*tmp++ != ' ') ;
+-
+-        /* Same degree? */
+-        if (d == atoi(tmp))
+-        {
+-            nmod_poly_t mod;
+-            slong i;
+-            char *ptr;
+-
+-            nmod_poly_init(mod, fmpz_get_ui(p));
+-            
+-            /* Copy the polynomial */
+-            ptr = tmp;
+-
+-            for (i = 0; i < d; i++)
+-            {
+-                int coeff;
+-
+-                while (*ptr++ != ' ') ;
+-
+-                coeff = atoi(ptr);
+-                
+-                nmod_poly_set_coeff_ui(mod, i, coeff);
+-            }
+-
+-            nmod_poly_set_coeff_ui(mod, d, 1);
+-
+-            fq_nmod_ctx_init_modulus(ctx, mod, var);
+-
+-            nmod_poly_clear(mod);
+-            fclose(file);
+-            flint_free(buf);
+-            return 1;
+-        }
+-    }
+-
+-    fclose(file);
+-    flint_free(buf);
+-
++    /* compare with _fq_ctx_init_conway and qadic_ctx_init_conway */
++    const int *cp = CPimport;
++    while (*cp != -2) {
++	 if (fmpz_cmp_ui(p, *cp++) == 0 && d == *cp++) {
++	      nmod_poly_t mod;
++	      int i;
++	      nmod_poly_init(mod, fmpz_get_ui(p));
++	      for (i = 0; i < d; i++) nmod_poly_set_coeff_ui(mod, i, *cp++);
++	      /*For M2 issue #354: assert( *cp == -1); */
++	      nmod_poly_set_coeff_ui(mod, d, 1);
++	      fq_nmod_ctx_init_modulus(ctx, mod, var);
++	      nmod_poly_clear(mod);
++	      return 1;
++	      }
++	 else while (*cp++ != -1);
++	 }
+     return 0;
+ }
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/qadic/ctx_init_conway.c flint-2.4.5/qadic/ctx_init_conway.c
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/qadic/ctx_init_conway.c	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/qadic/ctx_init_conway.c	2015-07-10 21:19:46.000000000 -0400
+@@ -25,100 +25,45 @@
+ ******************************************************************************/
+ 
+ #include <stdio.h>
++#include <assert.h>
+ #include <string.h>
+ 
+ #include "fmpz_vec.h"
+ #include "padic.h"
+ #include "qadic.h"
+-
+-#define FLINT_SRC_CPIMPORT "../qadic/CPimport.txt"
+-
+-#ifndef FLINT_CPIMPORT
+-#define FLINT_CPIMPORT FLINT_SRC_CPIMPORT
+-#endif
++#include "CPimport.h"
+ 
+ void qadic_ctx_init_conway(qadic_ctx_t ctx,
+                            const fmpz_t p, slong d, slong min, slong max, 
+                            const char *var, enum padic_print_mode mode)
+ {
+-    char *buf;
+-    FILE *file;
+-
+-    if (fmpz_cmp_ui(p, 109987) > 0)
+-    {
+-        flint_printf("Exception (qadic_ctx_init_conway).  Conway polynomials \n");
+-        flint_printf("are only available for primes up to 109987.\n");
+-        abort();
+-    }
+-
+-    buf  = flint_malloc(832);
+-    file = fopen(FLINT_CPIMPORT, "r");
+-
+-    if (!file)
+-       file = fopen(FLINT_SRC_CPIMPORT, "r");
+-
+-    if (!file)
+-    {
+-        file = fopen("CPimport.txt", "r");
+-
+-        if (!file)
+-        {
+-            flint_printf("Exception (qadic_ctx_init_conway).  File loading.\n");
+-            abort();
+-        }
+-    }
+-
+-    while (fgets(buf, 832, file))
+-    {
+-        char *tmp = buf;
+-
+-        /* Different prime? */
+-        if (fmpz_cmp_ui(p, atoi(tmp)))
+-            continue;
+-
+-        while (*tmp++ != ' ') ;
+-
+-        /* Same degree? */
+-        if (d == atoi(tmp))
+-        {
++    /* compare with _fq_nmod_ctx_init_conway and _fq_ctx_init_conway */
++    const int *cp = CPimport;
++    while (*cp != -2) {
++	 if (fmpz_cmp_ui(p, *cp++) == 0 && d == *cp++) {
+             slong i, j;
+-            char *ptr;
+-
+             /* Find number of non-zero coefficients */
+             ctx->len = 1;
+-            ptr = tmp;
+-
+-            for (i = 0; i < d; i++)
+-            {
+-                while (*ptr++ != ' ') ;
+-
+-                if (atoi(ptr))
+-                    ctx->len ++;
+-            }
++            for (i = 0; i < d; i++) if (cp[i] != 0) ctx->len ++;
+ 
+             ctx->a = _fmpz_vec_init(ctx->len);
+             ctx->j = flint_malloc(ctx->len * sizeof(slong));
+ 
+             /* Copy the polynomial */
+             j = 0;
+-            ptr = tmp;
+ 
+             for (i = 0; i < d; i++)
+             {
+-                int coeff;
+-
+-                while (*ptr++ != ' ') ;
+-
+-                coeff = atoi(ptr);
+-
+-                if (coeff)
++                if (cp[i] != 0)
+                 {
+-                    fmpz_set_ui(ctx->a + j, coeff);
++                    fmpz_set_ui(ctx->a + j, cp[i]);
+                     ctx->j[j] = i;
+                     j++;
+                 }
+             }
+ 
++	    /*For M2 issue #354: assert(cp[d] == -1); */
++
+             fmpz_set_ui(ctx->a + j, 1);
+             ctx->j[j] = d;
+ 
+@@ -128,15 +73,11 @@
+             ctx->var = flint_malloc(strlen(var) + 1);
+             strcpy(ctx->var, var);
+ 
+-            fclose(file);
+-            flint_free(buf);
+             return;
+         }
++	else while (*cp++ != -1);
+     }
+ 
+-    fclose(file);
+-    flint_free(buf);
+-
+     flint_printf("Exception (qadic_ctx_init_conway).  The polynomial for \n");
+     flint_printf("(p,d) = (%wd,%wd) is not present in the database.\n", *p, d);
+     abort();
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_nmod.h flint-2.4.5/fq_nmod.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_nmod.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/fq_nmod.h	2015-10-23 14:30:38.000000000 -0400
+@@ -95,7 +95,7 @@
+     int r;
+     slong i, k;
+ 
+-    r = flint_fprintf(file, "p = ");
++    r = (int) flint_fprintf(file, "p = ");
+     if (r <= 0)
+         return r;
+ 
+@@ -103,45 +103,45 @@
+     if (r <= 0)
+         return r;
+ 
+-    r = flint_fprintf(file, "\nd = %wd\nf(X) = ", ctx->j[ctx->len - 1]);
++    r = (int) flint_fprintf(file, "\nd = %wd\nf(X) = ", ctx->j[ctx->len - 1]);
+     if (r <= 0)
+         return r;
+ 
+-    r = flint_fprintf(file, "%wu", ctx->a[0]);
++    r = (int) flint_fprintf(file, "%wu", ctx->a[0]);
+     if (r <= 0)
+         return r;
+ 
+     for (k = 1; k < ctx->len; k++)
+     {
+         i = ctx->j[k];
+-        r = flint_fprintf(file, " + ");
++        r = (int) flint_fprintf(file, " + ");
+         if (r <= 0)
+             return r;
+ 
+         if (ctx->a[k] == UWORD(1))
+         {
+             if (i == 1)
+-                r = flint_fprintf(file, "X");
++              r = (int) flint_fprintf(file, "X");
+             else
+-                r = flint_fprintf(file, "X^%wd", i);
++              r = (int) flint_fprintf(file, "X^%wd", i);
+             if (r <= 0)
+                 return r;
+         }
+         else
+         {
+-            r = flint_fprintf(file, "%wu", ctx->a[k]);
++          r = (int) flint_fprintf(file, "%wu", ctx->a[k]);
+             if (r <= 0)
+                 return r;
+ 
+             if (i == 1)
+-                r = flint_fprintf(file, "*X");
++              r = (int) flint_fprintf(file, "*X");
+             else
+-                r = flint_fprintf(file, "*X^%wd", i);
++              r = (int) flint_fprintf(file, "*X^%wd", i);
+             if (r <= 0)
+                 return r;
+         }
+     }
+-    r = flint_fprintf(file, "\n");
++    r = (int) flint_fprintf(file, "\n");
+     return r;
+ }
+ 
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_zech.h flint-2.4.5/fq_zech.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_zech.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/fq_zech.h	2015-10-23 14:32:26.000000000 -0400
+@@ -99,7 +99,7 @@
+ fq_zech_ctx_fprint(FILE * file, const fq_zech_ctx_t ctx)
+ {
+     int r;
+-    r = flint_fprintf(file, "Zech Representation:\n");
++    r = (int) flint_fprintf(file, "Zech Representation:\n");
+     if (r <= 0)
+         return r;
+     return fq_nmod_ctx_fprint(file, ctx->fq_nmod_ctx);
+@@ -267,7 +267,7 @@
+ static __inline__ int
+ fq_zech_fprint_pretty(FILE * file, const fq_zech_t op, const fq_zech_ctx_t ctx)
+ {
+-    return flint_fprintf(file, "%s^%wd", ctx->fq_nmod_ctx->var, op->value);
++  return (int) flint_fprintf(file, "%s^%wd", ctx->fq_nmod_ctx->var, op->value);
+ }
+ 
+ static __inline__ void
+@@ -279,7 +279,7 @@
+ static __inline__ int
+ fq_zech_fprint(FILE * file, const fq_zech_t op, const fq_zech_ctx_t ctx)
+ {
+-    return flint_fprintf(file, "%wd", op->value);
++  return (int) flint_fprintf(file, "%wd", op->value);
+ }
+ 
+ static __inline__ void
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/longlong.h flint-2.4.5/longlong.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/longlong.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/longlong.h	2015-10-23 14:16:33.000000000 -0400
+@@ -75,7 +75,7 @@
+     mp_limb_t __cbtmp;                                                \
+     FLINT_ASSERT ((x) != 0);                                          \
+     __asm__ ("bsrq %1,%0" : "=r" (__cbtmp) : "rm" ((mp_limb_t)(x)));  \
+-    (count) = __cbtmp ^ (mp_limb_t) 63;                               \
++    (count) = (int)(__cbtmp ^ (mp_limb_t) 63);                       \
+   } while (0)
+ 
+ /* bsfq destination must be a 64-bit register, "%q0" forces this in case
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/nmod_poly.h flint-2.4.5/nmod_poly.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/nmod_poly.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/nmod_poly.h	2015-10-23 14:18:38.000000000 -0400
+@@ -343,7 +343,7 @@
+     r = flint_printf("%wd %wu", a->length, a->mod.n);
+ 
+     if (a->length == 0)
+-        return r;
++      return (int) r;
+     else
+         if (r > 0)
+             r = flint_printf(" ");
+diff -ur /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c flint-2.4.5/fmpz_factor /factor_pp1.c
+--- /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c     2015-02-17 09:56:55.0000 00000 -0500
++++ flint-2.4.5/fmpz_factor/factor_pp1.c        2015-11-19 09:32:37.252776183 -0500
+@@ -35,6 +35,11 @@
+ #include "mpn_extras.h"
+ #include "ulong_extras.h"
+ 
++/* DEBUG can be defined already */
++#ifdef DEBUG
++#undef DEBUG
++#endif
++
+ #define DEBUG 0 /* turn on some trace information */
+ 
+ #define pp1_mulmod(rxx, axx, bxx, nnn, nxx, ninv, norm)             \

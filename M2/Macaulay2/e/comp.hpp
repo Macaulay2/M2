@@ -16,7 +16,6 @@ class ResolutionComputation;
 
 class EngineComputation;
 class EngineGBComputation;
-class EngineResolutionComputation;
 
 class buffer;
 class GBComputation;
@@ -155,7 +154,6 @@ public:
   // This routine should set the status of the computation.
 
   virtual EngineGBComputation * cast_to_EngineGBComputation() { return 0; }
-  virtual EngineResolutionComputation * cast_to_EngineResolutionComputation() { return 0; }
 
   virtual void text_out(buffer &o) const;
 

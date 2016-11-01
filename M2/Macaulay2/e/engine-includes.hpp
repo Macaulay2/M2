@@ -41,7 +41,7 @@
 #endif
 #endif
 
-#ifdef DEBUG
+#ifndef NDEBUG
 #ifdef _cplusplus
 #include <cassert>
 #else

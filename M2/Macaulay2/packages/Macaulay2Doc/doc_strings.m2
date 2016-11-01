@@ -189,9 +189,9 @@ document {
       \\xxx           ascii character with octal value xxx
       \\uxxxx         unicode character with hex value xxxx, encoded with utf-8",
      EXAMPLE lines ///
-     " \" \f \r \\ \t \013 \u4f60 "
-     ascii oo
-     utf8 ooo
+     x = " \" \f \r \\ \t \013 \u4f60 ";
+     ascii x
+     utf8 x
      ///,
      SeeAlso => {String, "///", ascii, utf8}
      }

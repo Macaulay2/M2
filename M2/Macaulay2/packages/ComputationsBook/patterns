@@ -31,3 +31,8 @@ s/\$\([[:alpha:]]\)/\1/g
 
 # free modules now have parentheses around the ring, if it's a polynomial ring
 # s/\(, quotient of \)(\(.*\))/\1\2/g
+
+# Debugging mode can produce extra output.
+/^--changing factory characteristic \(back \)\{0,1\}from [0-9][0-9]* to [0-9][0-9]*$/d
+/^--setting factory rational mode \(back \)\{0,1\}on$/d
+/^--setting factory rational mode \(back \)\{0,1\}off$/d

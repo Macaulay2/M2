@@ -146,7 +146,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
             return 0;
         }
      try {
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
+#if 1
 
         if (prime <= 1  )
         {
@@ -242,7 +242,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
 
 M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 {
-#if defined(HAVE_GIVARO)
+#if 1
   const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
   if (RGF == 0)
     {
@@ -260,7 +260,7 @@ M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 
 M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 {
-#if defined(HAVE_GIVARO)
+#if 1
   const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(f->get_ring());
   if (RGF == 0)
   {
@@ -290,8 +290,7 @@ const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
     const M2::ARingZZpFFPACK &A = Kp->ring();
 
     // Get the names into the correct form:
-    std::vector<std::string> varnames;
-    M2_ArrayString_to_stdvector(names, varnames);
+    auto varnames = M2_ArrayString_to_stdvector(names);
     const M2::ARingTower *T = M2::ARingTower::create(A, varnames);
     return M2::ConcreteRing<M2::ARingTower>::create(T);
   }
@@ -311,9 +310,8 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1, M2_ArrayString new_name
         return NULL;
       }
     const M2::ARingTower &A = K->ring();
-    
-    std::vector<std::string> new_varnames;
-    M2_ArrayString_to_stdvector(new_names, new_varnames);
+
+    auto new_varnames = M2_ArrayString_to_stdvector(new_names);
     const M2::ARingTower *T = M2::ARingTower::create(A, new_varnames);
     return M2::ConcreteRing<M2::ARingTower>::create(T);
   }

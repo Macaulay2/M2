@@ -6,6 +6,14 @@ CONFIG_MAKEFILE = loaded
 .PHONY: all check initialize clean distclean install always reconfigure big-check
 all:
 
+# clear this environment variable so the ambient system doesn't offer advice to
+# our libraries that use autoconf about where to install install things.  The
+# first example we encountered is under opensuse leap 42.1, which sets the
+# autoconf variable libdir to ${exec_prefix}/lib64 instead of
+# ${exec_prefix}/lib.  Our libraries' files are installed in only our private
+# directories, so it's safe to ignore such system conventions.
+export CONFIG_SITE =
+
 SHELL = /bin/sh
 
 .DELETE_ON_ERROR:
@@ -62,9 +70,7 @@ CPPFLAGS :=						\
 	-I@abs_top_srcdir@/include			\
 	-I@abs_top_builddir@/include			\
 	-I$(BUILTLIBPATH)/include			\
-	-I@abs_top_srcdir@/submodules/memtailor/src	\
-	-I@abs_top_srcdir@/submodules/mathic/src	\
-	-I@abs_top_srcdir@/submodules/mathicgb/src	\
+	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src) \
 	$(CPPFLAGS)
 
 ifeq "@ENABLE_MPACK@" "yes"
@@ -74,15 +80,11 @@ endif
 vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
-	-L@abs_top_builddir@/submodules/memtailor	\
-	-L@abs_top_builddir@/submodules/mathic		\
-	-L@abs_top_builddir@/submodules/mathicgb	\
+	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
 LDFLAGS_FOR_BUILD :=					\
 	-L$(BUILTLIBPATH)/lib				\
-	-L@abs_top_builddir@/submodules/memtailor	\
-	-L@abs_top_builddir@/submodules/mathic		\
-	-L@abs_top_builddir@/submodules/mathicgb	\
+	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
@@ -90,7 +92,11 @@ vpath %.so $(BUILTLIBPATH)/lib
 export PATH := @abs_top_srcdir@/usr-build/bin:${PATH}
 -include @abs_top_srcdir@/usr-build/aclocal-path
 -include @abs_top_srcdir@/usr-build/aclocal-path2
-export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
+# it is a mistake to set PKG_CONFIG_PATH here, because when this makefile calls upon
+# "configure", it should find only pre-installed libaries, not libraries installed by
+# M2
+M2_PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))
 MAKEFLAGS += -w
@@ -150,12 +156,6 @@ endif
 endif
 endif
 STRIP = @STRIP@
-ifeq "$(ENABLE_STRIP)" "yes"
-ifneq "@OS@" "Darwin"
-LDFLAGS  += -s
-LDFLAGS_FOR_BUILD  += -s
-endif
-endif
 MKDIR_P = @INSTALL@ -d
 always:
 

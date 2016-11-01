@@ -1,10 +1,8 @@
-# license for ntl: GPL v2 or later, see ntl-5.5.2/doc/copying.txt
+# a library for doing number theory
 LICENSEFILES = doc/copying.txt
 # @configure_input@
-# http://www.shoup.net
-# a library for doing number theory
-VERSION = 6.2.1
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 9.7.0
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
@@ -26,11 +24,12 @@ endif
 
 CONFIGUREOPTIONS =						\
 	WIZARD=off						\
+	NATIVE=off						\
 	PREFIX=@pre_libm2dir@					\
 	LIBDIR=@pre_librariesdir@				\
 	INCLUDEDIR=@pre_libm2dir@/include			\
 	DOCDIR=@pre_libm2dir@/share/doc				\
-	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on	\
+	NTL_GMP_LIP=on NTL_NO_INIT_TRANS=on	\
 	RANLIB="@RANLIB@"					\
 	CXX="@CXX@"						\
 	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"			\
@@ -48,6 +47,9 @@ BUILDOPTIONS =					\
 	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"	\
 	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"	\
 	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
+
+# ntl's makefiles give too many warning messages about "jobserver unavailable: using -j1.  Add `+' to parent make rule."
+BUILDOPTIONS += -j1
 
 ifeq (@NTL_WIZARD@,yes)
 BUILDOPTIONS += WIZARD=on

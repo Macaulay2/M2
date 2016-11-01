@@ -53,16 +53,18 @@ TEST ///
   assert(minprimes ideal(1_A) == {})
 ///
 
-TEST ///
-  needsPackage "MinimalPrimes"
-  R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
-  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
-  time minprimes(I, Verbosity=>2)
+-- the following test sometimes crashes on the last line, but you might have to run it more than 30 times to observe it
+
+-- TEST ///
+--   needsPackage "MinimalPrimes"
+--   R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
+--   I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+--   time minprimes(I, Verbosity=>2)
   
-  R = QQ[b][u][x,r,v, MonomialOrder=>{Lex=>3}]
-  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
-  time minprimes(I, Verbosity=>2)
-///
+--   R = QQ[b][u][x,r,v, MonomialOrder=>{Lex=>3}]
+--   I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+--   time minprimes(I, Verbosity=>2)
+-- ///
 
 -- radicalContainment
 TEST ///
@@ -1475,6 +1477,24 @@ TEST ///
   assert(detectMembership(1_R,J') === null)
 ///
 
+TEST ///
+  -- this test occurs as a crash in github issue #190.
+  -- seems to work after recent changes to factory.
+  -- it might be too long for a test...
+ needsPackage "MinimalPrimes"
+  R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
+  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+  time C1 = minprimes(I, Verbosity=>2)
+  assert(#oo == 2)
+
+  R = QQ[b][u][x,r,v, MonomialOrder=>{Lex=>3}]
+  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+  time C2 = minprimes(I, Verbosity=>2)
+  assert(#C2 == 2)
+  C1' = for i in C1 list sub(i,R);
+  assert(C1'_0 == C2_0 or C1'_0 == C2_1);
+  assert(C1'_1 == C2_0 or C1'_1 == C2_1);
+///
 end
 
 -- UHOH problem with finite fields

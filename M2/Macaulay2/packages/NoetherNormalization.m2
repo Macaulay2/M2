@@ -31,7 +31,7 @@ newPackage(
 
 --=========================================================================--
      
-export{noetherNormalization,LimitList,RandomRange} 
+export{"noetherNormalization","LimitList","RandomRange"}
         
 --=========================================================================--
 -- initial comments: noetherNormalization takes an ideal I of a ring R

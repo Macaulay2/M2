@@ -14,7 +14,7 @@ needsPackage "XML"
 
 -- we should remove the dependence of this on the unix "date" command!
 
-export {runBenchmarks}
+export {"runBenchmarks"}
 
 benchmarks = new HashTable from {
      "res39" => "res of a generic 3 by 9 matrix over ZZ/101" => () -> (
@@ -239,11 +239,14 @@ runBenchmarks0 List := x -> (
 	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
 	  << endl;
 	  );
-     -- The following string can also be obtained with 
-     --    /usr/sbin/sysctl -n machdep.cpu.brand_string
-     -- or
-     --    /sbin/sysctl -n machdep.cpu.brand_string
-     if fileExists "/proc/sys/machdep/cpu/brand_string" then << "-- Processor: " << get "/proc/sys/machdep/cpu/brand_string";
+     runsysctl := sysctl -> (
+	  args := "-n machdep.cpu.brand_string";
+	  if 0 == run (sysctl| " "|args|" 2>/dev/null 1>/dev/null") then get ("!"|sysctl|" "|args));
+     brandString := (
+     	  if fileExists "/usr/sbin/sysctl" then runsysctl "/usr/sbin/sysctl" 
+	  else if fileExists "/sbin/sysctl" then runsysctl "/sbin/sysctl" 
+	  else if fileExists "/proc/sys/machdep/cpu/brand_string" then get "/proc/sys/machdep/cpu/brand_string");
+     if brandString =!= null then << "-- Processor: " << brandString;
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
@@ -284,7 +287,8 @@ Node
  Description
   Text
    The tests available are: @
-   UL apply(sort pairs benchmarks, (n,x) -> LI { toExternalString n, " -- ", x#0})
+   BR{}, 
+   apply(sort pairs benchmarks, (n,x) -> { toExternalString n, " -- ", x#0, BR{}})
    @
   Example
    runBenchmarks "res39"

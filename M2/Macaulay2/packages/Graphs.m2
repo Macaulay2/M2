@@ -73,14 +73,15 @@ export {
   --"vertices",
     --
     -- Display Methods
-    displayGraph,
-    showTikZ,
-    writeDotFile,
+    "displayGraph",
+    "showTikZ",
+    "writeDotFile",
     --
     -- Derivative graphs
     "barycenter",
     "complementGraph",
     "digraphTranspose",
+    "lineGraph",
     "underlyingGraph",
     --
     -- Enumerators
@@ -143,6 +144,7 @@ export {
     "distanceMatrix",
     "eccentricity",
     "edgeIdeal",
+    "expansion",
     "findPaths",
     "floydWarshall",
     "forefathers",
@@ -152,6 +154,7 @@ export {
     "independenceNumber",
     "leaves",
     "lowestCommonAncestors",
+    "minimalDegree",
     "neighbors",
     "nondescendants",
     "nondescendents",
@@ -183,6 +186,7 @@ export {
     "isPerfect",
     "isReachable",
     "isRegular",
+    "isRigid",
     "isSimple",
     "isSink",
     "isSource",
@@ -436,6 +440,29 @@ complementGraph Graph := Graph => G -> graph(vertexSet G, subsets(vertexSet G, 2
 digraphTranspose = method()
 digraphTranspose Digraph := Digraph => D -> digraph(vertexSet D, reverse \ edges D, EntryMode => "edges")
 
+
+lineGraph = method()
+lineGraph Graph := Graph => (G) -> (
+   E:=edges(G);
+   if #E==0 then return graph({});
+   EE:={};
+   for e in E do (
+      for f in E do (
+         if not e===f then (
+            if #(e*f)>0 then (
+               EE=EE|{{e,f}};
+               ); 
+            );   
+         ); 
+      );
+   --non-singeltons
+   nS:=unique flatten EE;
+   --singeltons
+   S:=for e in E list if member(e,nS)===false then e else continue;
+   return graph(EE,Singletons=>S);
+)
+
+
 underlyingGraph = method()
 underlyingGraph Digraph := Graph => D -> graph(vertexSet D, edges D, EntryMode => "edges")
 
@@ -633,11 +660,23 @@ minimalVertexCuts Graph := List => G -> (
         if #VC != 0 then break;
         );
     VC
-    )
+)
+
+minimalDegree = method()
+minimalDegree Graph := ZZ => G -> (
+   return min for v in vertexSet(G) list degree(G,v);
+)
 
 vertexConnectivity = method()
 --returns n-1 for K_n as suggested by West
-vertexConnectivity Graph := ZZ => G -> if cliqueNumber G == #vertexSet G then #vertexSet G - 1 else #first minimalVertexCuts G
+vertexConnectivity Graph := ZZ => G -> (
+if #(vertexSet G)==0 then return 0;
+if cliqueNumber G == #(vertexSet G) then (
+    return #(vertexSet G) - 1;
+    ) else (
+    return #(first minimalVertexCuts G);
+    );
+)
 
 vertexCuts = method()
 --West does not specify, but Wikipedia does, that K_n has no vertex cuts.  
@@ -679,7 +718,7 @@ center Graph := List => G -> select(vertexSet G, i -> eccentricity(G, i) == radi
 
 children = method()
 children (Digraph, Thing) := Set => (G, v) -> (
-    i := position(vertexSet G, u -> u == v);
+    i := position(vertexSet G, u -> u === v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(first entries (adjacencyMatrix G)^{i}, j -> j != 0))
     )
@@ -872,7 +911,7 @@ distance (Digraph, Thing, Thing) := ZZ => (G,v,u) -> (
 distance (Digraph, Thing) := HashTable => (G, v) -> (
     if not member(v, vertexSet G) then error "The given vertex is not a vertex of G.";
     n := #vertexSet G;
-    v = position(vertexSet G, i -> i == v);
+    v = position(vertexSet G, i -> i === v);
     C := new MutableList from toList(#vertexSet G:infinity);
     Q := {v};
     C#v = 0;
@@ -903,14 +942,37 @@ eccentricity (Graph, Thing) := ZZ => (G,v) ->(
 
 edgeIdeal = method()
 edgeIdeal Graph := Ideal => G -> (
+    G = indexLabelGraph G;
     V := vertexSet G;
     x := local x;
     R := QQ(monoid[x_1..x_(#V)]);
     monomialIdeal (
         if #edges G == 0 then 0_R
-        else apply(toList \ edges G, e -> R_(position(V, i -> i == e_0)) * R_(position(V, i -> i == e_1)))
+        else apply(toList \ edges G, e -> R_(position(V, i -> i === e_0)) * R_(position(V, i -> i === e_1)))
         )
     )
+
+expansion = method ()
+expansion Graph := QQ => G -> (
+   V:=set(vertexSet(G));
+   E:=edges(G);
+   --return 0 if graph is empty graph
+   if #E===0 then return 0;
+   n:=floor((#V)/2);
+   --CS:={};
+   RS:={};
+   qq:=0;
+   ee:=degree(G,(toList(V))_0);
+   for i in 1..n do (
+      for S in subsets(V,i) do (
+           CS:=V-S;
+           qq:=sum for e in edges(G) list if #(e*S)>0 and #(e*CS)>0 then 1 else 0;
+           ee=min(ee,qq/#S);
+           if(ee == qq) then RS=S;
+           );
+      );
+   return ee;
+)
 
 findPaths = method()
 findPaths (Digraph,Thing,ZZ) := List => (G,v,l) -> (
@@ -1016,7 +1078,7 @@ highestCommonDescendant(Digraph,Thing,Thing) := Thing => (D,u,v) -> (
 
 neighbors = method()
 neighbors (Graph, Thing) := Set => (G,v) -> (
-    i := position(vertexSet G, u -> u == v);
+    i := position(vertexSet G, u -> u === v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(first entries (adjacencyMatrix G)^{i}, j -> j != 0))
     )
@@ -1036,7 +1098,7 @@ numberOfTriangles Graph := ZZ => G -> number(ass (coverIdeal G)^2, i -> codim i 
 
 parents = method()
 parents (Digraph, Thing) := Set => (G, v) -> (
-    i := position(vertexSet G, u -> u == v);
+    i := position(vertexSet G, u -> u === v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(flatten entries (adjacencyMatrix G)_{i}, j -> j != 0))
     )
@@ -1206,6 +1268,29 @@ isRegular Graph := Boolean => G -> (
     n := degree(G, first vertexSet G);
     all(drop(vertexSet G,1), v -> degree(G,v) == n)
     )
+
+
+-- input: A graph G
+-- output: Uses Laman's Theorem to determine if a graph is rigid or not
+-- written by Tom Enkosky
+--
+isRigid = method();
+isRigid Graph := G -> (
+    local rigidity; local i; local j;
+    
+    rigidity=true;
+    
+    if #edges G < 2*#vertices G-3 then rigidity = false
+    else (
+	 for j from 2 to #vertices G-1 do(
+	     for i in subsets(vertices G,j) do(
+		 if #edges inducedSubgraph(G,i)>2*#i-3  then rigidity = false 
+		 );
+	     );
+	 );
+    return rigidity;
+    )
+
 
 isSimple = method()
 isSimple Graph := Boolean => G -> (
@@ -1383,9 +1468,9 @@ bipartiteColoring Graph := List => G -> (
 
 deleteEdges = method()
 deleteEdges (Graph, List) := Graph => (G,L) -> (
-    E := sort \ toList \ edges G;
-    E' := E - set (sort \ L);
-    graph(vertexSet G, E', EntryMode => "edges")
+    E := set edges G;
+    E' := E - set(for l in L list set l);
+    graph(vertexSet G, toList(E'), EntryMode => "edges")
     )
 deleteEdges (Digraph, List) := Graph => (G,L) -> digraph(vertexSet G, edges G - set L)
 
@@ -1703,6 +1788,47 @@ collateVertices MixedGraph := g -> (
 ------------------------------------------
 
 beginDocumentation()
+
+-- authors: add some text to this documentation node:
+doc ///
+  Key
+    Graphs
+///
+
+-------------------------------
+--Data Types
+-------------------------------
+doc ///
+    Key
+    	Bigraph
+///
+
+doc ///
+    Key
+    	Digraph
+///
+
+doc ///
+    Key
+    	Graph
+///
+
+doc ///
+    Key
+    	LabeledGraph
+///
+
+doc ///
+    Key
+    	MixedGraph
+///
+
+doc ///
+    Key
+    	SortedDigraph
+///
+
+
 
 -------------------------------
 --Graph Constructors
@@ -2034,11 +2160,11 @@ doc ///
     Description
         Text
             Displays a digraph or graph using Graphviz
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --displayGraph("chuckDot","chuckJpg", G)
-            --displayGraph("chuck", G)
-            --displayGraph G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --displayGraph("chuckDot","chuckJpg", G)
+        --     --displayGraph("chuck", G)
+        --     --displayGraph G
     SeeAlso
         showTikZ
         writeDotFile
@@ -2060,9 +2186,9 @@ doc ///
     Description
         Text
             Writes a string of TikZ syntax that can be pasted into a .tex file to display G
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --showTikZ G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --showTikZ G
     SeeAlso
         displayGraph
 ///
@@ -2082,9 +2208,9 @@ doc ///
     Description
         Text
             Writes the code for an inputted graph to be constructed in Graphviz with specified file name.
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --writeDotFile("chuck", G)
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --writeDotFile("chuck", G)
     SeeAlso
 ///
 
@@ -2160,6 +2286,32 @@ doc ///
             D = digraph ({{1,2},{2,3},{3,4},{4,1},{1,3},{4,2}},EntryMode=>"edges")
             D' = digraphTranspose D
             D'' = digraphTranspose D'
+///
+
+--lineGraph
+doc ///
+    Key
+        lineGraph
+        (lineGraph, Graph)
+    Headline
+        Returns the line graph of an undirected graph
+    Usage
+        L = lineGraph G
+    Inputs
+        G:Graph
+    Outputs
+        L:Graph
+            The line graph of G
+    Description
+        Text
+            The line graph L of an undirected graph G is the graph whose
+            vertex set is the edge set of the original graph G and in
+            which two vertices are adjacent if their corresponding
+            edges share a common endpoint in G.
+        Example
+            G = graph({{1,2},{2,3},{3,4},{4,1},{1,3},{4,2}},EntryMode=>"edges")
+            lineGraph G
+    SeeAlso
 ///
 
 --underlyingGraph
@@ -2759,6 +2911,32 @@ doc ///
     SeeAlso
         vertexCuts
         vertexConnectivity
+///
+
+
+--minimalDegree
+doc ///
+    Key
+        minimalDegree
+        (minimalDegree, Graph)
+    Headline
+       computes the minimal degree of a graph 
+    Usage
+        d = minimalDegree G
+    Inputs
+        G:Graph
+    Outputs
+        d:ZZ
+            the minimal degree of a graph
+    Description
+        Text
+           This computes the minimal vertex degree of an undirected
+           graph.
+        Example
+            G = graph({{1,2}});
+            minimalDegree G
+    SeeAlso
+        degree
 ///
 
 --vertexConnectivity
@@ -3396,6 +3574,35 @@ doc ///
     SeeAlso
         coverIdeal
         independenceComplex
+///
+
+--expansion
+doc ///
+    Key
+        expansion
+        (expansion, Graph)
+    Headline
+        returns the expansion of a graph
+    Usage
+        h=expansion G
+    Inputs
+        G:Graph
+    Outputs
+        h:QQ
+            the expansion of a graph G
+    Description
+        Text
+            The expansion of a subset S of vertices is the ratio of
+            the number of edges leaving S and the size of S. The
+            (edge) expansion of a graph G is the minimal expansion of
+            all not too large subsets of the vertex set. The expansion
+            of a disconnected graph is 0 whereas the expansion of the
+            complete graph on n vertices is ceiling(n/2)
+        Example
+            G = graph({{1, 2}, {1, 3}, {2, 3}, {3, 4}},EntryMode=>"edges");
+            expansion G
+            expansion pathGraph 7
+            
 ///
 
 --findPaths
@@ -4342,6 +4549,34 @@ doc ///
         cycleGraph
 ///
 
+--isRigid
+doc ///
+    Key
+        isRigid
+        (isRigid,Graph)
+    Headline
+        checks if a graph is rigid
+    Usage
+        r = isRigid G
+    Inputs
+        G:Graph
+    Outputs
+        r:Boolean
+    Description
+        Text
+            A drawing of a graph is rigid in the plane if any continuous motion 
+	    of the vertices that preserve edge lengths must preserve the distance 
+	    between every pair of vertices.  A graph is generically rigid if any 
+	    drawing of the graph with vertices in general position is rigid. This 
+	    method uses Laman's Theorem to determine if a graph is rigid or not.
+        Example
+            G = cycleGraph 4;
+            isRigid G
+	    G' = addEdges' (G, {{1,1},{3,1}})
+            isRigid G'
+///
+
+
 --isSimple
 doc ///
     Key
@@ -4988,4 +5223,110 @@ doc ///
 ///
 
 
+TEST ///
+--test expansion of graphs
+G=pathGraph(7);
+assert(expansion(G)===1/3);
+///
+
+TEST ///
+--test connectivity
+G=completeGraph(5);
+assert(vertexConnectivity(G)===4);
+assert(edgeConnectivity(G)===4);
+H=graph({{1,2},{1,3},{2,4},{3,4},{4,5},{4,6},{5,7},{6,7}});
+assert(vertexConnectivity(H)===1);
+assert(edgeConnectivity(H)===2);
+///
+
+TEST ///
+--test cuts
+G=completeGraph(4);
+--complete graphs have no vertex cuts
+assert(vertexCuts(G)==={});
+assert(edgeCuts(G)==={{{0,1},{0,2},{0,3}},{{0,1},{1,2},
+{1,3}},{{0,2},{1,2},{2,3}},{{0,3},{1,3},{2,3}}});
+H=graph({{1,2},{2,3},{3,4},{4,1}});
+assert(vertexCuts(H)==={{1,3},{2,4}});
+assert(edgeCuts(H)==={{{1,2},{4,1}},{{1,2},{2,3}},
+{{4,1},{2,3}},{{1,2},{4,3}},{{4,1},{4,3}},{{2,3},{4,3}}});
+///
+
+TEST ///
+--vertices of complete graphs start at zero
+assert(vertexSet(completeGraph(4))==={0,1,2,3});
+--vertices of path graphs start at zero
+assert(vertexSet(pathGraph(4))==={0,1,2,3});
+///
+
+TEST ///
+--check diameter
+assert(diameter(pathGraph(7))===6);
+///
+
+TEST ///
+--check chromatic number
+G=starGraph(4);
+H=completeGraph(3);
+assert(chromaticNumber(G)===2);
+assert(chromaticNumber(H)===3);
+assert(chromaticNumber(cartesianProduct(G,H))===max(2,3));
+///
+
+TEST ///
+--check graphs with vertices from different classes
+G=graph({{1,2},{a,b},{3,c}});
+assert(numberOfComponents(G)===3);
+assert(chromaticNumber(G)===2);
+assert(isConnected(G)===false);
+assert(neighbors(G,a)===set({b}));
+assert(deleteEdges(G,{{a,b}})===graph({1,2,a,b,3,c},{{1,2},{c,3}}));
+
+H=digraph({{1,2},{a,b},{3,c}});
+assert(children(H,3)===set({c}));
+assert(parents(H,c)===set({3}));
+assert(degree(H,c)===1);
+///
+
+TEST ///
+--check properties of empty graph
+G=graph({});
+assert(vertexSet(G)==={});
+assert(expansion(G)===0);
+assert(edgeConnectivity(G)===0);
+assert(vertexConnectivity(G)===0);
+assert(edgeCuts(G)==={{}});
+assert(vertexCuts(G)==={});
+assert(connectedComponents(G)==={});
+assert(cliqueNumber(G)===0);
+assert(chromaticNumber(G)===0);
+assert(independenceNumber(G)===0);
+assert(numberOfComponents(G)===0);
+assert(isConnected(G)===true);
+assert(isBipartite(G)===true);
+assert(isCyclic(G)===true);
+assert(isForest(G)===true);
+assert(isChordal(G)===true);
+assert(isSimple(G)===true);
+///
+
+TEST ///
+--check rigidity
+assert( isRigid ( graph({{0,1},{0,3},{0,4},{1,3},{2,3}},Singletons => {5}) ) === false )
+assert( isRigid ( graph({{0,4},{0,5},{0,6},{1,4},{1,5},{1,6},{2,4},{2,5},{2,6}}) ) === true )
+assert( isRigid(graph{{0,1}}) === true )
+assert( isRigid(graph{{0,1},{1,2}}) === false )
+///
+
 end;
+
+loadPackage(Graphs, Reload => true)
+
+restart
+uninstallPackage "Graphs"
+restart
+installPackage "Graphs"
+viewHelp Graphs
+
+check Graphs
+

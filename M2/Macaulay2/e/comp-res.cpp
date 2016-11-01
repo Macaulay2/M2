@@ -6,45 +6,9 @@
 #include "res-a0.hpp"
 #include "res-a2.hpp"
 #include "finalize.hpp"
+#include "f4/res-f4-computation.hpp"
 
-//////////////////////////////////////////////
-// EngineResolutionComputation ///////////////
-//////////////////////////////////////////////
-EngineResolutionComputation::EngineResolutionComputation(ResolutionComputation *C0)
-  : C(C0)
-{
-}
-
-EngineResolutionComputation *EngineResolutionComputation::create(ResolutionComputation *C0)
-{
-  EngineResolutionComputation *E = new EngineResolutionComputation(C0);
-  intern_computation(E);
-  return E;
-}
-
-EngineResolutionComputation::~EngineResolutionComputation()
-{
-  destroy();
-}
-
-void EngineResolutionComputation::destroy()
-{
-  if (C) delete C;
-}
-
-void EngineResolutionComputation::start_computation()
-{
-  if (C == 0) return;
-  //  long deg;
-  //  ComputationStatusCode ret = C->compute(stop_,deg);
-  //  set_status(ret);
-}
-
-long EngineResolutionComputation::complete_thru_degree() const
-{
-  return C->complete_thru_degree();
-}
-//////////////////////////////////////////////
+#include <iostream>
 
 ResolutionComputation::ResolutionComputation()
 {
@@ -52,11 +16,6 @@ ResolutionComputation::ResolutionComputation()
 
 ResolutionComputation::~ResolutionComputation()
 {
-}
-
-void ResolutionComputation::remove_res()
-{
-  // This is the default behavior: doing nothing
 }
 
 ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
@@ -68,6 +27,11 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
                                                          int strategy
                                                          )
 {
+  // The following modification is because some algorithms do not work if max_level is 0.
+  // github issue (crash, #368).
+  if (max_level <= 0)
+    max_level = 1;
+      
   const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;
@@ -131,8 +95,23 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>3");
     C = new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
     break;
+ case 4:
+    if (!resolve_cokernel)
+      {
+        ERROR("resolution Strategy=>4 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
+        return 0;
+      }
+    if (!P->is_skew_commutative() and !R->is_commutative_ring())
+      {
+        ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
+        return 0;
+      }
+    if (M2_gbTrace > 0) emit_line("resolution Strategy=>4 (res-f4)");
+    C = createF4Res(m, max_level, strategy);
+    if (C == nullptr)
+      return nullptr;
+   break;
   }
-
   if (C == 0)
     {
       ERROR("unknown resolution algorithm");
@@ -142,13 +121,13 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
   return C;
 }
 
-void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis) const
+void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis)
 {
   int z = (hi-lo+1) * (len+1);
   bettis = newarray_atomic_clear(int,z);
 }
 
-M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bettis) const
+M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bettis)
 {
   int d, lev;
   int hi1 = hi+1;
@@ -195,7 +174,7 @@ M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bett
   return result;
 }
 
-void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar) const
+void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar)
 {
   int *a = ar->array;
   int total_sum = 0;
@@ -228,6 +207,13 @@ void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar) const
         }
       o << newline;
     }
+}
+
+MutableMatrix /* or null */ *ResolutionComputation::get_matrix(int level, int degree)
+{  
+  // the default version gives an error that it isn't defined
+  ERROR("this function not defined for this resolution type");
+  return 0;
 }
 
 // Local Variables:

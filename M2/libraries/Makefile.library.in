@@ -33,7 +33,7 @@ CFLAGS += -O0
 FCFLAGS += -O0
 endif
 
-ifeq (@OS@,MacOS)
+ifeq (@OS@,Darwin)
 ## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
 ## the editing is done in distributions/dmg/Makefile
 LDFLAGS += -headerpad_max_install_names
@@ -106,7 +106,7 @@ uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
 diffs: .untarred2-$(VERSION) always
-	D=`pwd`; cd $(UNTARDIR) && diff -ur $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
+	D=`pwd`; cd $(UNTARDIR) && diff -ur $(DIFF_OPTIONS) $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean

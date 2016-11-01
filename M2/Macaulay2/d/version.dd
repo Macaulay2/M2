@@ -37,8 +37,12 @@ header "
    extern char timestamp[];
    #undef ASSERT
    #ifdef HAVE_FROBBY
-     #include <stdinc.h>		// to get version number of frobby
-     #define FROBBY_VERSION constants::version
+     #if HAVE_FROBBY_VERSION_NUMBER
+       #include <stdinc.h>		// to get version number of frobby
+       #define FROBBY_VERSION constants::version
+     #else
+       #define FROBBY_VERSION \"unknown\"
+     #endif
    #else
      #define FROBBY_VERSION \"not present\"
    #endif
@@ -55,9 +59,8 @@ header "
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
    #include <readline/readline.h>
-   #ifdef HAVE_GIVARO
-       #include <givaro/givconfig.h>
-   #endif
+   #include <givaro/givinit.h>
+   Givaro::GivaroMain givaroMain;
    #ifdef HAVE_LINBOX
        #include <linbox/linbox-config.h>
    #endif
@@ -87,15 +90,9 @@ atomicopsversion():constcharstar := Ccode(returns,"
 #endif
      ");
 
-givaroVersion():constcharstar := Ccode(returns,"
-     #ifdef HAVE_GIVARO
-	  static char buf[40];
-	  sprintf(buf,\"%d.%d.%d\", GIVARO_MAJOR_VERSION, GIVARO_MINOR_VERSION, GIVARO_REVISION_VERSION);
-	  return buf;
-     #else
-	  return \"not present\";
-     #endif
-     ");
+header "#include <fflas-ffpack/fflas-ffpack-config.h>";
+ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
+
 factoryversion():constcharstar := Ccode(returns,"
      extern const char factoryVersion[]; /* extracted from factory's factory.h */
      char const * p = strrchr(factoryVersion,' ');
@@ -160,7 +157,8 @@ setupconst("version", Expr(toHashTable(Sequence(
 		   \"not present\"
 	  #endif
 	  "),
-   "givaro version" => givaroVersion(),
+   "givaro version" => Ccode(constcharstar, "givaroMain.Version()"),
+   "fflas_ffpack version" => ffpackVersion(),
    "linbox version" => Ccode(constcharstar,"
 	  #ifdef HAVE_LINBOX
 	       __LINBOX_VERSION
@@ -226,7 +224,8 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "threads" => USE_THREADS
+   "threads" => USE_THREADS,
+   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
    ))));
 
 -- Local Variables:

@@ -6,7 +6,7 @@ needsPackage "Bertini"
      F = {(y^2+x^2+z^2-1)*x*z,
 	  (y^2+x^2+z^2-1)*y*z}
 --NV is a numerical variety  consisting of 2 components
-     NV = bertiniPosDimSolve(F,RANDOMSEED=>1)
+     NV = bertiniPosDimSolve(F,RandomSeed=>1)
 --W1 is the 1 dimensional component
 --W2 is the 2 dimensional component
      W1 = NV#1_0 --z-axis

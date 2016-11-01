@@ -1,5 +1,6 @@
 // Copyright 1996  Michael E. Stillman
 
+#include "util.hpp"
 #include "freemod.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
@@ -52,7 +53,12 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
 FreeModule *FreeModule::make_schreyer(const Matrix *m)
 {
   int i;
-  const Ring *R = m->get_ring();
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return nullptr;
+    }
   FreeModule *F = R->make_FreeModule();
   int rk = m->n_cols();
   if (rk == 0) return F;
@@ -69,7 +75,11 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
 {
   const FreeModule *F = m->get_free_module();
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
-  assert(R);
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return nullptr;
+    }
   FreeModule *G = R->make_FreeModule();
   int rk = INTSIZE(m->elems);
   if (rk == 0) return G;
@@ -401,7 +411,6 @@ static bool degree_in_box(int len, int *deg, M2_arrayint lo, M2_arrayint hi)
       if (deg[i] > hi->array[i]) return false;
   return true;
 }
-extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
 
 M2_arrayintOrNull FreeModule::select_by_degrees(M2_arrayintOrNull lo, M2_arrayintOrNull hi) const
 {

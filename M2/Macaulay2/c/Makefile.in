@@ -36,7 +36,8 @@ CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPP
 CFLAGS += -std=c99
 # CFLAGS += -pedantic-errors
 
-CFLAGS += -Wall -Werror
+# we include -Wno-unknown-attributes because libgc incorrectly assumes that clang 6 accepts __attribute__((__alloc_size__(1))):
+CFLAGS += -Wall -Wno-unknown-attributes -Werror
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wimplicit-function-declaration
 endif
@@ -47,8 +48,7 @@ LOADLIBES += @GC_LIBS@
 
 ############################## compiling
 scc1: $(OFILES) 
-	@echo "LDFLAGS: $(LDFLAGS)"
-	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) $(LIBS) -o scc1
+	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) -o scc1
 
 $(OFILES) : $(HFILES)
 grammar.o: grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
@@ -73,7 +73,7 @@ tags: @srcdir@/TAGS
 wc : $(SRCFILES) ; wc -l $^
 ############################## cleaning
 clean::; rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
-		scc.install scc core y.tab.h y.output grammar.c \
+		scc.install scc core y.tab.h y.output grammar.c TAGS \
 		*-exports.h *-exports.h.tmp *.sig *.sig.tmp typecode.db *.sym *.dep *.log *-tmp.c *.out *.dep.tmp
 distclean: clean
 	rm -f Makefile @srcdir@/TAGS

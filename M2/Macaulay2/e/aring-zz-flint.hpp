@@ -11,7 +11,11 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/arith.h>
+#pragma GCC diagnostic pop
 
 namespace M2 {
   /**
@@ -55,7 +59,12 @@ namespace M2 {
         @{ */
     
     bool is_equal(const ElementType& f,const ElementType& g) const {return fmpz_equal(&f,&g);}
-    int compare_elems(const ElementType& f,const ElementType& g) const {return fmpz_cmp(&f,&g);}
+    int compare_elems(const ElementType& f,const ElementType& g) const {
+      int cmp = fmpz_cmp(&f,&g);
+      if (cmp > 0) return 1;
+      if (cmp < 0) return -1;
+      return 0;
+    }
     /** @} */
     
     /** @name init_set

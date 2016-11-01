@@ -1028,18 +1028,18 @@ floor(e:Expr):Expr := (
      is x:RRcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
-	  toExpr(floor(x.v))				    -- # typical value: floor, RR, ZZ
+	  toExpr(floor(x.v))
 	  )
      is x:CCcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
-	  toExpr(floor(x.v.re))				    -- # typical value: floor, CC, ZZ
+	  toExpr(floor(x.v.re))
 	  )
-     is x:QQcell do toExpr(floor(x.v))				    -- # typical value: floor, QQ, ZZ
-     is ZZcell do e				    -- # typical value: floor, ZZ, ZZ
+     is x:QQcell do toExpr(floor(x.v))
+     is ZZcell do e
      else buildErrorPacket("expected an integral, rational, or real number")
      );
-setupfun("floor",floor);
+setupfun("floor0",floor);
 
 round0(e:Expr):Expr := (
      when e

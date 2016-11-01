@@ -24,8 +24,8 @@
 
 newPackage(
   "MultiplierIdeals",
-  Version => "1.0", 
-  Date => "February 4, 2014",
+  Version => "1.1", 
+  Date => "April 14, 2015",
   Authors => {
     {
       Name => "Zach Teitler",
@@ -48,7 +48,21 @@ newPackage(
   PackageExports=>{
     "HyperplaneArrangements"
   },
-  DebuggingMode=>false
+  DebuggingMode=>false,
+  Certification => {
+       "journal name" => "The Journal of Software for Algebra and Geometry",
+       "journal URI" => "http://j-sag.org/",
+       "article title" => "Software for multiplier ideals",
+       "acceptance date" => "5 June 2015",
+       "published article URI" => "http://msp.org/jsag/2015/7-1/p01.xhtml",
+       "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.1",
+       "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x01-MultiplierIdeals.m2",
+       "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplierIdeals.m2",
+       "release at publication" => "a71903e3507b0384ece1ed43f815b9344258ed1a",
+       "version at publication" => "1.1",
+       "volume number" => "7",
+       "volume URI" => "http://msp.org/jsag/2015/7-1/"
+       }
 )
 
 -- Main functionality:
@@ -93,11 +107,11 @@ newPackage(
 --------------------------------------------------------------------------------
 
 export {
-  multiplierIdeal,
-  logCanonicalThreshold,
-  jumpingNumbers,
-  Interval,
-  IntervalType
+  "multiplierIdeal",
+  "logCanonicalThreshold",
+  "jumpingNumbers",
+  "Interval",
+  "IntervalType"
 }
 
 -- exportMutable {}

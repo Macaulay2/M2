@@ -33,7 +33,11 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/fq_nmod.h>
+#pragma GCC diagnostic pop
 
 unsigned int rawRingHash(const Ring *R)
 {
@@ -221,9 +225,14 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
               ERROR("expected polynomial ring");
               return 0;
             }
-          if (P->getMonoid()->getNonTermOrderVariables()->len > 0)
+          if (P->getMonoid()->numNonTermOrderVariables() > 0)
             {
               ERROR("cannot currently make fraction field over a polynomial ring with a non-global monomial order");
+              return 0;
+            }
+          if (P->getMonoid()->numInvertibleVariables() > 0)
+            {
+              ERROR("cannot currently make fraction field over a polynomial ring with Laurent variables, i.e. Inverses=>true set");
               return 0;
             }
           if (R->get_precision() > 0)

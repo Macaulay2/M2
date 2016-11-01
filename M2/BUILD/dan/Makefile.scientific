@@ -9,5 +9,5 @@ endif
 include Makefile.include
 default: check
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific NTL_WIZARD=no "
+# compile-command: "time make -f Makefile.scientific "
 # End:

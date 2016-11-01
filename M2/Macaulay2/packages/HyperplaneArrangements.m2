@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 -----------------------------------------------------------------------
--- Copyright 2008,2009,2010,2011 Graham Denham, Gregory G. Smith
+-- Copyright 2008--2016 Graham Denham, Gregory G. Smith
 --
 -- You may redistribute this program under the terms of the GNU General
 -- Public License as published by the Free Software Foundation, either
@@ -10,6 +10,8 @@
 -- Jan 27 2011: hyperplane arrangements package;
 -- Graham Denham and Greg Smith, with
 -- thanks to Sorin Popescu for the Orlik-Solomon code
+--
+-- release 0.9, March 2016: fixed base-field bug in Orlik-Solomon code 
 --
 -- release 0.8:
 -- * previously, all arrangements were assumed to be central:
@@ -45,12 +47,12 @@ newPackage(
      DebuggingMode => false
      )
 
-export {Arrangement, arrangement, arrangementLibrary, CentralArrangement,
-     deCone, deletion, orlikSolomon, orlikTerao, HypAtInfinity,
-     NaiveAlgorithm, typeA, typeB, typeD, graphic, Flat, flat, flats,
-     circuits, tolist, closure, meet, vee, subArrangement, changeRing,
-     restriction, arrangementSum, EPY, der, HS, isDecomposable, isCentral, 
-     multIdeal, lct, randomArrangement}
+export {"Arrangement", "arrangement", "arrangementLibrary", "CentralArrangement",
+     "deCone", "deletion", "orlikSolomon", "orlikTerao", "HypAtInfinity",
+     "NaiveAlgorithm", "typeA", "typeB", "typeD", "graphic", "Flat", "flat", "flats",
+     "circuits", "tolist", "closure", "meet", "vee", "subArrangement", "changeRing",
+     "restriction", "arrangementSum", "EPY", "der", "HS", "isDecomposable", "isCentral", 
+     "multIdeal", "lct", "randomArrangement"}
 
 -- these are already defined: compress, trim, coefficients,
 -- euler, poincare, cone, rank, ring, matrix
@@ -114,6 +116,12 @@ arrangement Matrix := Arrangement => M -> (
      R := k[x_1..x_n];
      arrangement(M,R));
 
+-- arrangement from a polynomial: if it's unreduced, have multiplicities
+
+arrangement RingElement := Arrangement => Q -> (
+     l := select(toList factor Q, p -> 0 < (degree p#0)_0);  -- kill scalar
+     arrangement (flatten (l/(p->toList(p#1:p#0)))));
+         
 -- look up a canned arrangement
 
 arrangement String := Arrangement => name -> (
@@ -241,7 +249,7 @@ dual CentralArrangement := CentralArrangement => A -> (
 Arrangement == Arrangement := (A,B) -> (
      if (A.ring === B.ring) then ((tolist A) == (tolist B))
      	  else false)
-
+     
 -- deletion; restriction is a special case of res. to a flat, so comes 
 -- later
 
@@ -304,25 +312,27 @@ monomialSubIdeal := I -> (  -- note: add options (See SP's code)
 --
 -- we also expect this method to cache the circuits of A, as a 
 -- list of exterior monomials, since this calculation is expensive.
+-- bug fix in June 2013: circuits are defined over the coefficient ring
+-- of the arrangement.  
 
 orlikSolomon = method(TypicalValue => Ideal, 
                       Options => {Projective => false, HypAtInfinity => 0});
 
-orlikSolomon (CentralArrangement,PolynomialRing) := Ideal => o -> (A,E) -> (
+orlikSolomon (CentralArrangement, PolynomialRing) := Ideal => o -> (A,E) -> (
      n := #A.hyperplanes;
      if n == 0 then (
 	  if o.Projective then error "Empty projective arrangement is not allowed."
 	  else return ideal(0_E)); -- empty affine arrangement is contractible.
      e := symbol e;
-     k := coefficientRing(E);
-     if not A.cache.?circuits then A.cache.circuits = new MutableHashTable;
-     if not A.cache.circuits#?k then ( -- cache the next part if possible
-          Ep := k[e_1..e_n,SkewCommutative=>true];
+     nativeField := coefficientRing ring A;
+     if not A.cache.?circuits then (
+          A.cache.circuits = new MutableHashTable;
+          Ep := nativeField[e_1..e_n,SkewCommutative=>true];
      	  C := substitute(syz coefficients A,Ep);
      	  M := monomialSubIdeal( ideal( (vars Ep) * C));
-	  A.cache.circuits#k = (Ep, flatten entries gens M));
-     f := map(E,A.cache.circuits#k_0,vars E);
-     I := ideal append( apply(A.cache.circuits#k_1/f, r -> partial r),0_E);
+	  A.cache.circuits = (Ep, flatten entries gens M));
+     f := map(E,A.cache.circuits_0,vars E); -- note: map changes coefficient ring
+     I := ideal append( apply(A.cache.circuits_1/f, r -> partial r),0_E);
      if o.Projective then trim I+ideal(E_(o.HypAtInfinity)) else trim I);
 
 -- if the arrangement is not central, cone first, then project back
@@ -462,6 +472,12 @@ euler (Flat) := ZZ => F -> (
 tolist Flat := List => F -> (
      F.flat);
 
+-- test equality
+
+Flat == Flat := (X,Y) -> (
+     if (arrangement X == arrangement Y) then ((tolist X) == (tolist Y))
+          else false)
+     
 closure = method(TypicalValue => Flat)  
 closure (Arrangement,Ideal) := Flat => (A,I) -> (
      flat(A,positions(A.hyperplanes,h -> h % gb I == 0)));
@@ -551,9 +567,9 @@ circuits = method(TypicalValue => List)
 circuits Arrangement := List => A -> (
      if #tolist A == 0 then return({}); -- empty arrangement is special
      k := coefficientRing(ring A);
-     if not A.cache.?circuits or A.cache.circuits#?k then orlikSolomon A;
+     if not A.cache.?circuits then orlikSolomon A;
 -- turn each monomial in list into its set of indices
-     (m -> indices m)\A.cache.circuits#k_1);     
+     (m -> indices m)\A.cache.circuits_1);     
      
 -- direct sum of two arrangements  ( can't overload "directSum" or "tensor")
 
@@ -718,7 +734,7 @@ multIdeal = method(TypicalValue => Ideal)
 -- whose keys are the lists of exponents on each ideal, and whose
 -- values are the intersection.
 
-multIdeal (RR,CentralArrangement,List) := Ideal => (s,A,m) -> (
+multIdeal (QQ,CentralArrangement,List) := Ideal => (s,A,m) -> (
      if (#tolist A != #m) then error "expected one weight for each hyperplane";
      R := ring A;
      if not A.cache.?irreds then
@@ -731,13 +747,13 @@ multIdeal (RR,CentralArrangement,List) := Ideal => (s,A,m) -> (
      else
      	  A.cache.multipliers#exps);
 
-multIdeal (RR,CentralArrangement) := Ideal => (s,A) -> (
+multIdeal (QQ,CentralArrangement) := Ideal => (s,A) -> (
      if not A.cache.?simple then trim A;
      multIdeal(s,A.cache.simple,A.cache.m));
 
--- numeric argument might be in a subring of RR:
-multIdeal (Number,CentralArrangement) := Ideal => (s,A) -> multIdeal(numeric(s), A);
-multIdeal (Number,CentralArrangement,List) := Ideal => (s,A,m) -> multIdeal(numeric(s), A, m);
+-- numeric argument might be an integer:
+multIdeal (ZZ,CentralArrangement) := Ideal => (s,A) -> multIdeal(s*1/1, A);
+multIdeal (ZZ,CentralArrangement,List) := Ideal => (s,A,m) -> multIdeal(s*1/1, A, m);
 
 -- log-canonical threshold:
 -- use the observation that the jumping numbers must be rationals with
@@ -789,15 +805,18 @@ document {  Key => CentralArrangement,
 
 document { 
      Key => {arrangement, (arrangement,List), (arrangement,List,Ring),
-     	  (arrangement,Arrangement,Ring), (arrangement,Matrix), (arrangement,Matrix,Ring)},
+     	  (arrangement,Arrangement,Ring), (arrangement,Matrix), (arrangement,Matrix,Ring),
+	  (arrangement,RingElement)},
      Headline => "create a hyperplane arrangement",
-     Usage => "arrangement(L,R) or arrangement(M) or arrangement(M,R)",
+     Usage => "arrangement(L,R) or arrangement(M) or arrangement(M,R) or
+     arrangement Q",
      Inputs => {
 	  "L" => {"a list of affine-linear equations in the ring ", TT "R"},
 	  "R" => {"a polynomial ring or linear quotient of a
 	       polynomial ring"},	  
 	  "M" => {"a matrix whose columns represent linear forms defining
 	       hyperplanes"},
+	  "Q" => {"a product of linear forms"},
           },
      Outputs => {
 	  Arrangement => {"the hyperplane arrangement determined by ",
@@ -829,10 +848,17 @@ document {
 	  "describe trivial",
 	  "ring trivial",
 	  },
+     EXAMPLE {
+	  "use S;",
+	  "arrangement (x^2*y^2*(x^2-y^2)*(x^2-z^2))",
+	  },
      Caveat => {"If the elements of ", TT "L", " are not ",
 	  TO2(RingElement, "ring elements"), " in ", TT "R", ", then
 	  the induced identity map is used to map them from ", 
-	  TT "ring L#0", " into ", TT "R", "."},
+	  TT "ring L#0", " into ", TT "R", ".",
+	  PARA{},
+          " If ", TT "arrangement Q", " is used, the order of the
+	  factors is determined internally."},
      SeeAlso => {HyperplaneArrangements,(arrangement,String,PolynomialRing)}
      }
 
@@ -1571,15 +1597,15 @@ document {
      }     
 
 document {
-     Key => {multIdeal, (multIdeal,RR,CentralArrangement), 
-	  (multIdeal,RR,CentralArrangement,List), 
-	  (multIdeal,Number,CentralArrangement),
-	  (multIdeal,Number,CentralArrangement,List)},
+     Key => {multIdeal, (multIdeal,QQ,CentralArrangement), 
+	  (multIdeal,QQ,CentralArrangement,List),
+	  (multIdeal,ZZ,CentralArrangement),
+	  (multIdeal,ZZ,CentralArrangement,List)},
      Headline => "compute a multiplier ideal",
      Usage => "multIdeal(s,A) or multIdeal(s,A,m)",
      Inputs => {
 	  "A" => CentralArrangement => "a central hyperplane arrangement",
-	  "s" => RR => "a real number",
+	  "s" => QQ => "a rational number",
 	  "m" => List => "optional list of positive integer multiplicities",
      },
      Outputs => {
@@ -1596,8 +1622,7 @@ document {
      arXiv:1002.1475v2:",
      EXAMPLE lines ///
           R := QQ[x,y,z];
-	  f := toList factor((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z) / first;
-	  A := arrangement f
+	  A := arrangement ((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z);
 	  multIdeal(3/7,A)
      ///,
      "Since the multiplier ideal is a step function of its
@@ -1628,14 +1653,12 @@ document {
      arXiv:1002.1475v2:",
      EXAMPLE lines ///
           R := QQ[x,y,z];
-	  f := toList factor((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z) / first;
-	  A := arrangement f
+	  A := arrangement ((x^2 - y^2)*(x^2 - z^2)*(y^2 - z^2)*z);
 	  lct A
      ///,
      "note that ", TT "A", " is allowed to be a multiarrangement.",
      SeeAlso => multIdeal
 }
-	  
 
 document {
      Key => {EPY, (EPY,Arrangement), (EPY,Ideal), 
@@ -1722,14 +1745,14 @@ assert((prune image der(A, {2,2,2,2,2,2})) == (ring A)^{-4,-4,-4})
 A3 = arrangement({x,y,z,x-y,x-z,y-z},R)
 describe A3
 assert(rank A3 == 3)
-assert(pdim EPY A3 == 3)
+assert(pdim EPY (A3**QQ) == 3)
 assert(not isDecomposable A3)
 
 X3 = arrangement "X3"
 assert(isDecomposable X3)
-assert(multIdeal(2,X3) == multIdeal(2.2,X3))
-time I1 := orlikTerao(X3);
-time I2 := orlikTerao(X3,ring I1,NaiveAlgorithm=>true);
+assert(multIdeal(2,X3) == multIdeal(11/5,X3))
+time I1 = orlikTerao(X3);
+time I2 = orlikTerao(X3,ring I1,NaiveAlgorithm=>true);
 assert(I1==I2)
 
 M = arrangement "MacLane"

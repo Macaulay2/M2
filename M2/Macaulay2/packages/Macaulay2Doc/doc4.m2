@@ -29,9 +29,20 @@ document {
 document {
      Key => fork,
      Headline => "fork the process",
-     TT "fork()", " -- forks the process, returning the process id of the child
-     in the parent, and returning 0 in the child.  Warning: if threads are running,
-     any attempt to allocate memory in the child will hang the process."
+     Usage => "fork()",
+     Outputs => {
+         "When successful, it returns the process id of the child in the parent, and returns 0 in
+         the child.  When unsuccessful, it returns -1."
+         },
+     PARA{
+         "Platforms that do not have a built-in ", TT "fork()", " function will always return -1."
+         },
+     PARA{
+         "Warning: in multithreaded programs like Macaulay2, very few operations can be safely
+         done in the child.  This is especially true when the user has been ",
+         TO "parallel programming with threads and tasks", ".
+         Even allocating memory in the child may hang the process."
+         }
      }
 
 document {
@@ -121,14 +132,48 @@ document {
      }
 
 document {
-     Key => {pairs,(pairs, HashTable)},
+     Key => {pairs},
+     Headline => "list the pairs in a hash table, dictionary, or basic list",
+     }
+
+document {
+     Key => {(pairs, HashTable)},
      Headline => "list the pairs in a hash table",
-     TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
-     a hash table ", TT "x", ".",
-     PARA{},
+     Usage => "pairs x",
+     Inputs => { "x" },
+     Outputs => {{ "a list of all pairs ", TT "(k,x#k)" }},
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2, c => 3}",
 	  "pairs x",
+	  }
+     }
+
+document {
+     Key => {(pairs, Dictionary)},
+     Headline => "list the pairs in a dictionary",
+     Usage => "pairs d",
+     Inputs => { "d" },
+     Outputs => {{ "a list of all pairs ", TT "(k,d#k)" }},
+     EXAMPLE lines ///
+     	  d = new Dictionary
+	  getGlobalSymbol (d,"foo")
+	  getGlobalSymbol (d,"bar")
+	  pairs d
+	  first oo
+	  class \ oo
+	  ///
+     }
+
+document {
+     Key => {(pairs, BasicList)},
+     Headline => "list the pairs in a sequence or list",
+     Usage => "pairs L",
+     Inputs => { "L" },
+     Outputs => {{ "a list of pairs ", TT "(i,L#i)" }},
+     EXAMPLE {
+	  "L = (a,b,c)",
+	  "pairs L",
+	  "pairs {x,y,z}",
 	  }
      }
 

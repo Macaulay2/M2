@@ -1,13 +1,11 @@
 # -*- makefile-gmake -*-
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
-CC ?= gcc
-CXX ?= g++
-FC ?= gfortran
 .PHONY : $(TARGETS)
 .NOTPARALLEL:
 $(TARGETS): banner
-banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
+banner:
+	@echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
@@ -17,18 +15,21 @@ else
 $(warning DIRECTORY variable unset)
 endif
 all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
-clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
+validate-html clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) ReinstallPackages=true RemakeAllDocumentation=true RerunExamples=true -k all check
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
-big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
+big-check check:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) -k $@
+help:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
 configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
-	D=`pwd` ;\
-	  echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" &&\
-	  cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS) &&\
-	  echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
+	D=`cd ../.. ; /bin/pwd` ;\
+	E=`pwd` ;\
+	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
+	  cd builds.tmp/$(DIRECTORY) && $$D/configure $(CONFIGOPTIONS) &&\
+	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all
 default: check-links
 distclean: distclean1
@@ -50,9 +51,9 @@ install-info:
 cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/server signature
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
-rebuild-world1: arch-chk distclean-or-rm-rf
-distclean-or-rm-rf:
-	@set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
+rebuild-world1: arch-chk distclean2
+distclean2:
+	@if [ -f "builds.tmp/$(DIRECTORY)/GNUmakefile" ] ; then set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean ; fi
 rebuild-world2:make-configure
 make-configure:; $(MAKE) -C ../.. -o helpful
 rebuild-world3: configure all check check-links
@@ -64,12 +65,12 @@ find-M2:
 	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
+# we avoid CC, CXX, and FC here, because gnu "make" sets default values for them, which we don't want to use:
+CONFIGOPTIONS += CC="$(_CC)" CXX="$(_CXX)" FC="$(_FC)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
-ifeq ($(NTL_WIZARD),no)
-   CONFIGOPTIONS += --disable-ntl-wizard 
-endif
+CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

@@ -9,7 +9,7 @@ PRE.cc   = $(COMPILE.cc) -E
 include @srcdir@/Makefile.files
 include Makefile.common
 CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors
-CXXFLAGS += -std=c++0x -Wno-sign-conversion #-Wno-unused-local-typedefs
+CXXFLAGS += -std=c++11 -Wno-sign-conversion #-Wno-unused-local-typedefs
 
 # to exclude files in documentation itself from processing it is neccesary to divide the path into 2 parts.
 # M2_E_DOXYGEN_OUTPUT_DIR_POSTFIX should be unique in the sense that the pattern *$(M2_E_DOXYGEN_OUTPUT_DIR_POSTFIX)* does not match for any of the source file directories.
@@ -82,7 +82,7 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
 Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
-clean::; rm -f *.dep dep-*.tmp typecode.db
+clean::; rm -f *.dep dep-*.tmp typecode.db TAGS
 ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
 endif

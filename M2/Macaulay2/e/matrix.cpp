@@ -512,7 +512,7 @@ Matrix /* or null */ *Matrix::reshape(const FreeModule *F, const FreeModule *G) 
     }
 
   // EFFICIENCY: might be better to sort columns at end?
-  MatrixConstructor mat(F,G,0);
+  MatrixConstructor mat(F,G,degree_shift());
   for (int c=0; c<n_cols(); c++)
     for (vecterm *p = elem(c); p != NULL; p = p->next)
       {
@@ -920,6 +920,11 @@ M2_arrayintOrNull Matrix::support() const
 Matrix *Matrix::top_coefficients(Matrix *&monoms) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected polynomial ring");
+      return nullptr;
+    }
   MatrixConstructor result(rows(), 0);
   MatrixConstructor cons_monoms(R->make_FreeModule(1), 0);
   for (int i=0; i<n_cols(); i++)
@@ -1544,7 +1549,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   int *mon = M->make_one();
   int *exp = newarray_atomic(int,M->n_vars());
   ring_elem one = K->from_long(1);
-  exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the coefficient
+  exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the component
 
   for (int c=0; c<n_cols(); c++)
     {

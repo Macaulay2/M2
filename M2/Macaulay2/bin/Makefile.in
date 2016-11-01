@@ -37,10 +37,12 @@ relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
+foo : ; : @libdir@ $(BUILTLIBPATH)
+
 check: $(EXEFILE)
 	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 --stop -E "exit 0"
 
-ifeq (@OS@,MacOS)
+ifeq (@OS@,Darwin)
 # We specify the search path for finding shareable libraries, in case there are any,
 # but we haven't yet distributed any shareable libraries.  This is in addition to 
 # setting DYLD_LIBRARY_PATH in the shell script M2, so it's redundant.  But it works, once
@@ -62,7 +64,7 @@ M2_LDFLAGS += -Wl,-z,noexecstack
 # If necessary, we could reinstate its use, by moving the file to /tmp temporarily.
 endif
 
-ifeq (@OS@,MacOS)
+ifeq (@OS@,Darwin)
 
 ## This option should increase the stack size to 16MB, but it makes M2 crash.
 ## The number 1000000 is hex.
@@ -118,7 +120,7 @@ ifeq (@OS@,SunOS)
 TOSTATIC = -Wl,-Bstatic
 UNSTATIC = -Wl,-Bdynamic
 else
-ifeq (@OS@,MacOS)
+ifeq (@OS@,Darwin)
 # we know about it
 else
 $(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE@))
@@ -156,7 +158,6 @@ endif
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-M2_LIBRARIES += -lmathicgb -lmathic -lmemtailor
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
@@ -170,9 +171,6 @@ M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATI
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif
-ifeq (@XML@,yes)
-M2_LIBRARIES += -lxml2
-endif
 M2_LIBRARIES += -lm
 ifneq (@host_os@,mingw32)
 M2_LIBRARIES += -lc
@@ -183,9 +181,7 @@ else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
 M2_LIBDEPS += ../d/libM2inits2.a				\
-	@abs_top_builddir@/submodules/memtailor/libmemtailor.a	\
-	@abs_top_builddir@/submodules/mathic/libmathic.a	\
-	@abs_top_builddir@/submodules/mathicgb/libmathicgb.a
+	$(foreach S, @BUILDSUBLIST@, @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else
@@ -210,8 +206,12 @@ ifneq ("$(EXECSTACK)","no")
 	       fi ;\
 	  fi
 endif
-	- printenv LD_LIBRARY_PATH
+	printenv LD_LIBRARY_PATH || true
 ifneq (@LDD@,false)
+	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
+	then echo "some libraries not found" >&2;							\
+	     exit 1;											\
+	fi
 	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
 ifneq (@OTOOL@,false)

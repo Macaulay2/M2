@@ -798,9 +798,11 @@ namespace M2 {
       default: return false;
       }
     default:
+#ifndef NDEBUG
       fprintf(stderr, "oh no: rings not in list\n, R->ringID()=%d S->ringID()=%d\n",
               R->ringID(), 
               S->ringID());
+#endif
       break;
     };
     return false;

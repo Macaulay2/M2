@@ -18,19 +18,19 @@ newPackage(
         )
 
 export { 
-   runTests,
-   testNorm,
-   testClean,
-   hasFFPACK,
-   fields,
-    finitefields,
-    fieldsFFPACK,
-    fieldsFLINT,
-    fieldsGivaro,
-    fieldsGF,
-    ringsPID,
-    ringsRR,
-    ringsCC
+   "runTests",
+   "testNorm",
+   "testClean",
+   "hasFFPACK",
+   "fields",
+   "finitefields",
+   "fieldsFFPACK",
+   "fieldsFLINT",
+   "fieldsGivaro",
+   "fieldsGF",
+   "ringsPID",
+   "ringsRR",
+   "ringsCC"
    }
 
 debug Core
@@ -41,7 +41,8 @@ fieldsFLINT = {
     "ZZpFlint 2",
     "ZZpFlint 5",
     "ZZpFlint 101",
-    "ZZpFlint 8589934669"
+    "ZZpFlint 4294967291"		  -- less than 2^32
+--    "ZZpFlint 8589934669"
 --    "ZZpFlint 4611686018427387847",
 --    "ZZpFlint 9223372036854775783"
     }
@@ -258,6 +259,7 @@ load "EngineTests/MutableMatrix.Test.Driver.m2"
 load "EngineTests/Ring.Test.Driver.m2"
 load "EngineTests/GB.Test.Mathic.m2"
 
+load "EngineTests/Res.f4.m2"
 --check  EngineTests
 
 

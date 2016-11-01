@@ -167,7 +167,8 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
-	  N := if M.?generators then (
+     	  if not M.?generators then M = subquotient(ambient M,id_(ambient M),if M.?relations then M.relations);
+	  N := (
 	       if M.?relations then (
 		    if opts.Strategy === Complement then (
 			 gns := mingens(M,opts);
@@ -187,39 +188,30 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 		    if opts.Strategy === Complement then (
 			 g := mingens(M,opts);
 			 if g === M.generators then M else (
-			      M' := image g;		    -- this submodule has the same gb as M does
-			      Mgc := M.generators.cache;
-			      M'gc := M'.generators.cache;
-			      scan(pairs Mgc, (k,v) -> (
-					if instance(k,GroebnerBasisOptions) then (
-					     if not k.Syzygies then M'gc#k = v
-					     else (
-						  k' := new GroebnerBasisOptions from {
-						       HardDegreeLimit => k.HardDegreeLimit,
-						       Syzygies => false,
-						       SyzygyRows => 0
-						       };
-						  M'gc#k' = v; -- the gb, v, may actually have syzygies, but they won't be accessed
-						  )
-					     );
-					));
+			      M' := image g;
+			      -- The code below was intended to give M' a cheap Groebner basis,
+     			      -- but we comment out it, because even if Syzygies is set to false, ChangeMatrix might have been true, and we don't record that somehow.
+			      -- Mgc := M.generators.cache;
+			      -- M'gc := M'.generators.cache;
+			      -- scan(pairs Mgc, (k,v) -> (
+			      -- 		if instance(k,GroebnerBasisOptions) then (
+			      -- 		     if not k.Syzygies then M'gc#k = v
+			      -- 		     else (
+			      -- 			  k' := new GroebnerBasisOptions from {
+			      -- 			       HardDegreeLimit => k.HardDegreeLimit,
+			      -- 			       Syzygies => false,
+			      -- 			       SyzygyRows => 0
+			      -- 			       };
+			      -- 			  M'gc#k' = v; -- the gb, v, may actually have syzygies, but they won't be accessed
+			      -- 			  )
+			      -- 		     );
+			      -- 		));
 			      M'))
 		    else if opts.Strategy === null then (
 	  	    	 tot = mingb M.generators;
 		    	 subquotient(F, if not epi raw tot then mingens tot, ))
-		    else error "trim: unrecognized Strategy option"))
-	  else (
-	       if M.?relations then (
-		    if opts.Strategy === Complement then (
-			 rel = mingens(image M.relations,opts);
-			 if rel === M.relations then M 
-			 else if rel == 0 then F
-			 else cokernel rel)
-		    else if opts.Strategy === null then (
-		    	 subquotient(F, , zr mingens mingb M.relations ))
-		    else error "trim: unrecognized Strategy option")
-	       else F
-	       );
+		    else error "trim: unrecognized Strategy option"));
+	  if N.?generators and epi raw mingb N.generators then N = subquotient(ambient N,,if N.?relations then N.relations);
 	  if ring M === ZZ then (
 	       LLLBases := needsPackage "LLLBases";
 	       LLL := value LLLBases.Dictionary#"LLL";
@@ -297,7 +289,7 @@ quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     L := source f;					    -- result may not be well-defined if L is not free
+     L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
      if M != target g then error "expected maps with the same target";
@@ -311,13 +303,18 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
-     f = matrix f;
-     g = matrix g;
-     map(N, L, f //
-	  if M.?relations 
-	  then gb(g | presentation M, ChangeMatrix => true, SyzygyRows => rank source g)
-	  else gb(g,                  ChangeMatrix => true),
-	  Degree => degree f - degree g  -- do this in the engine instead
+     -- now M is a quotient module, without explicit generators
+     f' := matrix f;
+     g' := matrix g;
+     G := (
+	  if g.cache#?"gb for quotient"
+	  then g.cache#"gb for quotient"
+	  else g.cache#"gb for quotient" = (
+	       if M.?relations 
+	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
+	       else gb(g',               ChangeMatrix => true)));
+     map(N, L, f' // G, 
+	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  ))
 
 RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
@@ -339,22 +336,24 @@ remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
 remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
      R := ring n;
      if R =!= ring m then error "expected matrices over the same ring";
-     if not isFreeModule source n or not isFreeModule source m
-     or not isFreeModule target n or not isFreeModule target m
-     then error "expected maps between free modules";
-     n % gb m)
+     if target m =!= target n then error "expected matrices with the same target";
+     if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
+     if not isQuotientModule target m then error "expected maps to a quotient module";
+     n % gb image m)
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
 RingElement % Ideal := (r,I) -> (
-     if ring r =!= ring I then error "expected ring element and ideal for the same ring";
+     R := ring I;
+     if ring r =!= R then error "expected ring element and ideal for the same ring";
      if r == 0 then return r;
-     r % if isHomogeneous I then gb(I, DegreeLimit => degree r) else gb I)
+     r % if isHomogeneous I and heft R =!= null then gb(I, DegreeLimit => degree r) else gb I)
 Number % Ideal := (r,I) -> (
-     r = promote(r,ring I);
+     R := ring I;
+     r = promote(r,R);
      if r == 0 then return r;
-     r % if isHomogeneous I then gb(I,DegreeLimit=>0) else gb I)
+     r % if isHomogeneous I and heft R =!= null then gb(I,DegreeLimit => toList (degreeLength R : 0)) else gb I)
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be sped up: compute gb matrix {{r}} first, tensor with id matrix, force gb, etc
 

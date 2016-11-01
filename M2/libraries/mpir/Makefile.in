@@ -1,9 +1,6 @@
 VPATH = @srcdir@
-
-# license for mpir: GNU LGPL v2.1 or later
 LICENSEFILES = README COPYING COPYING.LIB
-
-VERSION = 2.6.0
+VERSION = 2.7.2
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 

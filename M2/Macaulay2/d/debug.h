@@ -1,7 +1,7 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_ 1
 
-#ifdef DEBUG
+#ifndef NDEBUG
 
 #if defined(__cplusplus)
 extern "C" {
@@ -12,13 +12,14 @@ extern "C" {
   extern int trapcount;
   extern int trapset;
   extern void trapchk(void *);
+  extern void trapchk_size(size_t);
   extern int badBlock();
 
-#ifdef DEBUG
+#ifndef NDEBUG
   static __attribute__ ((unused)) void debug_version() {}
 #endif
 
-#ifdef GC_DEBUG
+#ifndef NDEBUG
   extern void GC_check(void *);
   extern void gmp_GC_check(void *);
 # define GC_CHECK(p) GC_check((void *)p)
@@ -33,10 +34,12 @@ extern "C" {
 #endif
 
 #define TRAPCHK(p) trapchk(p)
+#define TRAPCHK_SIZE(n) trapchk_size(n)
 
 #else
 
 #define TRAPCHK(p)
+#define TRAPCHK_SIZE(n)
 
 #endif
 

@@ -10,10 +10,18 @@
 
 #define Matrix FactoryMatrix
 #include <factory/factory.h>             // from Messollen's libfac
+#if !HAVE_FACTORY_PREM
+  CanonicalForm
+  Prem (const CanonicalForm& F, const CanonicalForm& G);
+#endif
 #undef INT64
 #undef Matrix
 #undef ASSERT
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <NTL/ZZ.h>
+#pragma GCC diagnostic pop
 
 #include "matrix.hpp"
 #include "ZZp.hpp"
@@ -46,7 +54,7 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
 }
 
 int debugging
-    #ifdef DEBUG
+    #ifndef NDEBUG
       = true
     #endif
     ;
@@ -221,7 +229,7 @@ static struct enter_factory foo1;
 
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio
-#if 1
+#if FACTORY_STREAMIO
 void showvar(Variable &t) { std::cout << t << std::endl; }
 void showcf(CanonicalForm &t) { std::cout << t << std::endl; }
 void showcfl(CFList &t) { std::cout << t << std::endl; }

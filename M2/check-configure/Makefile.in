@@ -1,8 +1,7 @@
 VPATH = @srcdir@
 LDFLAGS = -L$(BUILTLIBPATH)/lib
-CPPFLAGS =  -I$(BUILTLIBPATH)/include
+CPPFLAGS = -I$(BUILTLIBPATH)/include
 include ../include/config.Makefile
-export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 check: clean-and-config
 clean:; rm -rf tmp
 clean-and-config: check-config
@@ -10,14 +9,20 @@ check-config:
 	rm -rf tmp
 	mkdir tmp
 	@ echo "make: [check-config] remark: the test below is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
-	cd tmp && @abs_top_srcdir@/configure \
-	    LDFLAGS="$(LDFLAGS)" \
-	    CPPFLAGS="$(CPPFLAGS)" \
-	    CC="$(CC)" \
-	    CXX="$(CXX)" \
-	    CFLAGS="$(CFLAGS)" \
-	    CXXFLAGS="$(CXXFLAGS)" \
-	    --build="@build_alias@" \
+	cd tmp &&												\
+	    LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)"			\
+	    PATH="$(BUILTLIBPATH)/bin:$(PATH)"									\
+	    @abs_top_srcdir@/configure										\
+	    PKG_CONFIG_PATH=$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)	\
+	    GFTABLESDIR=@pre_packagesdir@/Core/factory/								\
+	    LDFLAGS="$(LDFLAGS)"										\
+	    --with-gtest-source-path="@GTEST_PATH@"								\
+	    CPPFLAGS="$(CPPFLAGS)"										\
+	    CC="$(CC)"												\
+	    CXX="$(CXX)"											\
+	    CFLAGS="$(CFLAGS)"											\
+	    CXXFLAGS="$(CXXFLAGS)"										\
+	    --build="@build_alias@"										\
 	    --disable-building
 distclean:: clean; rm -f Makefile
 Makefile: Makefile.in ; cd .. && ./config.status check-configure/Makefile

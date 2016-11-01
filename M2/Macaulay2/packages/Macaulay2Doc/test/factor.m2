@@ -52,7 +52,11 @@ assert ( factor (x^9-1) ===
 R=ZZ/101[x,a]
 debug Core
 t = rawFactor ( raw(x^4 - 2), raw(a^2 - 2) )
-assert( t === ((raw 1_R, raw (x^2+a), raw (x^2-a)), (1, 1, 1)) )
+assert(
+     t === ((raw 1_R, raw (x^2+a), raw (x^2-a)), (1, 1, 1)) 
+     or
+     t === ((raw 1_R, raw (x^2-a), raw (x^2+a)), (1, 1, 1)) 
+     )
 
 -- factoring a Laurent polynomial
 R=ZZ[x,MonomialOrder=>Lex,Inverses=>true];
@@ -63,6 +67,12 @@ assert (r === new Product from
      {    new Power from {x^2+x+1,1},
 	  new Power from {2*x^2+x+1,1},
 	  new Power from {x^(-3),1}})
+
+-- factoring in an iterated polynomial ring
+R=QQ[x];
+R2=R[y];
+r=factor(x^2*y^2-1);
+assert (r === new Product from { new Power from {x*y-1,1}, new Power from {x*y+1,1} } )
 
 -- isPrime
 

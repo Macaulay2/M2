@@ -1,12 +1,9 @@
-# license: for mpfr version 2.4.1: LGPL 2.1 or later and GPL (version number unspecified)
-# license: for mpfr version 2.4.2: same
-# license:          version 3.0  : GNU Lesser General Public License version 3 or later (LGPL v3+)
-#				   so our binary distributions should be distributed under GPL 3
-
 #############################################################################
 
-VERSION = 3.1.2
+VERSION = 3.1.4
 LICENSEFILES = README COPYING.LESSER
+TARFILE = $(LIBNAME)-$(VERSION).tar.xz
+TAROPTIONS = --xz
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe
@@ -39,9 +36,6 @@ CONFIGOPTIONS += --disable-shared
 endif
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
-
-# the DEBUG flag just makes lots of junk print out:
-CPPFLAGS += -UDEBUG
 
 BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"

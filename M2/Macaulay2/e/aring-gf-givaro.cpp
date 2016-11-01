@@ -3,8 +3,6 @@
 #include "aring-gf-givaro.hpp"
 #include "error.h"
 
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-
 #include "ringmap.hpp"
 
 // Uncomment the following line to see debugging output
@@ -574,12 +572,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
       b = tmp;
     }
 
-    void ARingGFGivaro::elem_text_out(buffer &o, 
-                const ElementType a, 
-                bool p_one, 
-                bool p_plus, 
-                bool p_parens) const;
-
     /** @brief returns x,y  s.y.  x*a + y*b == 0.
        if possible, x is set to 1.
        no need to consider the case a==0 or b==0.
@@ -678,7 +670,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
 
 };
 
-#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil
