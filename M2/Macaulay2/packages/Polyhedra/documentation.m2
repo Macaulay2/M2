@@ -929,7 +929,7 @@ document {
      PARA{}, "When inserting any of the combination of matrices into ", 
      TT "intersection", ", it considers the given matrices as defining 
      inequalities and equalities. Thus, it either computes the polyhedron ",
-     TT "P = {p | M*p <= v and N*p = w }",". Therefore, ", TT "M", " and ",
+     TT "P = {p | M*p <= v and N*p = w }"," or the cone ",TT "C = {p | M*p >= 0 and N*p=0}",". Therefore, ", TT "M", " and ",
      TT "N", " must have the same number of columns, which will be the 
      dimension of the ambient space, and ", TT "M", " and ", TT "v", " as 
      well as ", TT "N", " and ", TT "w", " must have the same number of 
