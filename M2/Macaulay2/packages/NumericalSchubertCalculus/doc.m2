@@ -2,7 +2,8 @@ document {
      Key => NumericalSchubertCalculus,
      Headline => "Numerical Algorithms for Schubert Calculus",
      "Tools for solving Schubert problems on Grassmannians using homotopy continuation",
-     PARA {"The package collects implementations of methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation."},
+     PARA {"The package NumericalSchubertCalculus implements methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation."}, 
+     
      HEADER3 {"General functions include:"},
      UL{
         TO randomSchubertProblemInstance, 
