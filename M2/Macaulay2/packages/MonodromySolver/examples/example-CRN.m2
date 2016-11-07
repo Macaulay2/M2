@@ -22,8 +22,7 @@ createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
     )
 
 TEST ///
-L = toList (#vars R:random CC)
-createPolySystem(CRN, FF, L)
+createPolySystem(CRN, FF)
 ///
 
 -- example from Elizabeth's talk
@@ -50,12 +49,14 @@ load "example-CRN.m2"
 
 setRandomSeed 0
 -- system for example from Elizabeth's talk
-(p0, x0) = createSeedPair(G,"initial parameters" => "one")  -- random doesn't work
-elapsedTime sols = monodromySolve(G,p0,{x0}, NumberOfEdges => 5)
+(p0, x0) = createSeedPair(G,"initial parameters" => "one")  
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
+assert(length V.PartialSols == 4)
 
 -- system for motif twoSiteModificationF
 (p0, x0) = createSeedPair(G',"initial parameters" => "one")
-elapsedTime sols = monodromySolve(G',p0,{x0},NumberOfEdges => 3)
+elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5)
+assert(length V.PartialSols == 6)
 
 -- system for wnt signaling pathway
 W = wnt()
@@ -63,13 +64,14 @@ setRandomSeed 0
 L = apply(numgens createRing(W,FF), i->random FF)
 F = createPolySystem(W, FF, L)
 (p0, x0) = createSeedPair(F,L)
-elapsedTime sols = monodromySolve(F,p0,{x0},
+elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
     GraphInitFunction=>completeGraphInit,
-    NumberOfNodes=>3,
-    NumberOfEdges=>3,
-    TargetSolutionCount => 9,
+    NumberOfEdges=>5,
+--    TargetSolutionCount => 9,
     "new tracking routine"=>false,
     Verbose=>true)
+assert(length V.PartialSols == 9)
+
 -- wnt via Bertini
 specPolys = specializeSystem (p0,createPolySystem'overdetemined(W,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
@@ -79,8 +81,27 @@ assert(#NV#0 == 9)
 
 -- system for random example
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
-elapsedTime sols = monodromySolve(GQ,p0,{x0}, NumberOfEdges => 1, NumberOfNodes => 5)
+elapsedTime (V,npaths) = monodromySolve(GQ,p0,{x0}, NumberOfEdges => 1, NumberOfNodes => 5)
 
+-- affine trace test for Wnt
+G = V.Graph
+sys = polySystem specializeSystem(V.BasePoint, G.Family)
+sols = points V.PartialSols
+computeTrace = L -> sum apply(L, t -> matrix t)
+params = gens coefficientRing ring G.Family
+lastB = last params
+traces = {transpose(computeTrace sols | matrix {{last coordinates p0}})}
+linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)));
+setRandomSeed 0
+for i from 0 to 2 do (
+    b = random(RR);
+    sys' = polySystem apply(linearSlice, F->sub(F, lastB => b));
+    T = track(sys, sys', sols);
+    -- print (T/matrix/transpose , transpose computeTrace T);
+    traces = append(traces, transpose (computeTrace T | matrix{{b}}))
+    );
+first SVD(traces#3-traces#1|traces#2-traces#1)
+first SVD(traces#2-traces#0|traces#1-traces#0)
 
 
 

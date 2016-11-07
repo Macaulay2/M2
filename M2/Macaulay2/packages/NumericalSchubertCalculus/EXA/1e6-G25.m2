@@ -1,6 +1,5 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
---setFlags(NSC'DBG=>2)
 
 -- Problem (1)^6 = 5 in G(2,5)
 
