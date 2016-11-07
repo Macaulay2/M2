@@ -49,6 +49,14 @@ isCommutative Ring := R -> R.isCommutative
 isSkewCommutative = method(TypicalValue => Boolean)
 isSkewCommutative Ring := R -> false
 
+isWeylAlgebra = method(TypicalValue => Boolean)
+isWeylAlgebra Ring := R -> (
+    not isCommutative R and 
+    isPolynomialRing R and 
+    R.monoid.Options.?WeylAlgebra and 
+    #R.monoid.Options.WeylAlgebra > 0
+    )
+
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
