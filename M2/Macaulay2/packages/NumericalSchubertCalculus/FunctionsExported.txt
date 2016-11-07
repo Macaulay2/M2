@@ -10,6 +10,7 @@
 
 "changeFlags", -- in LR-makePolynomials.m2
 "bigCellLocalCoordinates", 
+"printStatistics",
 "setVerboseLevel", 
 "solveSchubertProblem"
 
