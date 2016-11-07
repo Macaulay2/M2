@@ -681,11 +681,21 @@ doc///
 	Description
 	        Text
         		This function computes the invariants of a group-based phylogenetic
-	        	tree model using the toric fiber product structure
-		        based on theorem 24 of the paper Toric Ideals of
+	        	tree model based on theorem 24 of the paper Toric Ideals of
 		        Phylogenetic Invariants by Sturmfels and Sullivant.
-		Example    
-	        	phyloToricFP(4,{{0,1}},CFNmodel)
+			
+			Invariants are formed in three different ways.  The linear and
+			quadratic invariants are computed as in @TO phyloToricLinears@ and 
+			@TO phyloToricQuads@ respectively.  Finally higher degree invariants
+			are built using a fiber product construction from the invariants of
+			claw trees.
+			
+			In particular, the neighborhood of any internal vertex of a tree is
+			a claw tree.  The invariants on this claw tree tree subgraph are extended
+			to invariants on the entire graph in various ways.
+		Example
+		        T = leafTree(4, {{0,1}})    
+	        	phyloToricFP(T, CFNmodel)
 
 	SeeAlso
 	        phyloToric42
@@ -724,8 +734,9 @@ doc///
 	               tree model by computing the transpose of the matrix
 	               that encondes the monomial map and the using the function toricMarkov of the
 	               4ti2 package.	
-		Example    
-	               phyloToric42(4,{{0,1}},CFNmodel)
+		Example
+		       T = leafTree(4, {{0,1}})
+	               phyloToric42(T, CFNmodel)
 		        
 	SeeAlso
 	        phyloToricFP
