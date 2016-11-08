@@ -66,6 +66,7 @@ doc ///
    Key
       randomSchubertProblemInstance
       (randomSchubertProblemInstance,List,ZZ,ZZ)
+      [randomSchubertProblemInstance, Strategy]
    Headline
       Creates random unitary matrices representing Flags that specify an instance of the Schubert problem
    Usage
@@ -99,11 +100,10 @@ doc ///
    Key
       solveSchubertProblem
       (solveSchubertProblem,List,ZZ,ZZ)
-      [solveSchubertProblem, LinearAlgebra] --verify this optional input with Anton
    Headline
       uses homotopies of geometric Littlewood-Richardson rule to solve Schubert problems on Grassmannians
    Usage
-      s = solveSchubertProblem(P,n,m)
+      S = solveSchubertProblem(P,n,m)
    Inputs
       P:List
          Schubert problem given as a list of sequences of the 
@@ -112,11 +112,11 @@ doc ///
       k:ZZ
       n:ZZ
       	 k and n denote the Grassmannian G(k,n)
-      LinearAlgebra:Boolean
-         when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
+      --LinearAlgebra:Boolean
+      --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
-      s:List
-         solutions of the Schubert Problem given as k by n matrices
+      S:List
+         solutions of the Schubert Problem given as n by k matrices
    Description
       Text
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
@@ -157,7 +157,23 @@ doc ///
    SeeAlso
          solveSimpleSchubert
 ///;
-
+doc ///
+   Key
+      [solveSchubertProblem, LinearAlgebra] --verify this optional input with Anton
+   Headline
+      switch between Linear Algebra and Parameter Homotopy
+   Usage
+      solveSchubertProblem(...,LinearAlgebra=>T)
+   Inputs
+      T:Boolean
+         true for Linear Algebra, false for Parameter Homotopy 
+   Description
+    Text
+      Chooses the method for glueing solutions from the top of one node (tournament game) to the leaf of the previous node.
+      When true (default), uses Linear Algebra, otherwise uses Parameter Homotopies.
+   Caveat
+      Parameter Homotopies usually take longer than simple Linear Algebra.
+///
 doc ///
    Key
       partition2bracket
