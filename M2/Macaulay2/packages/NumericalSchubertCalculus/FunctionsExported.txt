@@ -4,6 +4,8 @@
 	==== Already Done ===
 "NumericalSchubertCalculus" -- front page
 "randomSchubertProblemInstance"
+"setVerboseLevel", 
+"solveSchubertProblem"
 
 	==== Not Done Yet ===
 // NumericalSchubertCalculus.m2 //
@@ -11,8 +13,6 @@
 "changeFlags", -- in LR-makePolynomials.m2
 "bigCellLocalCoordinates", 
 "printStatistics",
-"setVerboseLevel", 
-"solveSchubertProblem"
 
 // service-functions.m2 //
 "skewSchubertVariety",
