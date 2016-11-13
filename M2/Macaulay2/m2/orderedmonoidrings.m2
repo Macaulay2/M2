@@ -281,7 +281,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		       p:=new RM from facs#i;
 		       if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
 		       ));
-	       if liftable(facs#0,R) then (
+    	       if liftable(facs#0,RM.basering) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
 		    c = c*(facs#0);
