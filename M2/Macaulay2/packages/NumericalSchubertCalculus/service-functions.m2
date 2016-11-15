@@ -573,7 +573,7 @@ verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
 ----------------------
 -- randomSchubertProblemInstance
 ----------------------
--- Creates a random instance of a Schubert problem FFFFF
+-- Creates a random instance of a Schubert problem 
 -- by computing random matrices to specify the flags
 ----------------------
 -- Input: 
@@ -581,8 +581,8 @@ verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
 --    k,n   - integers that indicate the Grassmannian G(k,n)
 --
 --    Options:  Strategy => "unitary" : uses the Random Unitary Matrix from NAG4M2.
---                          "unit cirle": creates a matrix whose entries are random
---                             [default]  complex numbers in the unit circle
+--                          "unit circle" : [default] creates a matrix whose entries are 
+--                                           random complex numbers in the unit circle
 -- Output:
 --    a list of sequences of the from (cond_List,flag_Matrix)
 --      where flag_Matrix is a random nxn matrix
@@ -594,6 +594,6 @@ randomSchubertProblemInstance (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     apply(conds, c->(c, 
 	    if o.Strategy == "unitary" then randomUnitaryMatrix n else
 	    if o.Strategy == "unit circle" then matrix table(n,n,(i,j)->exp(2*pi*ii*random RR))
-	    else error "unknown strategy"   
+	    else error "unknown strategy for random matrix"   
 	    ))
     )  

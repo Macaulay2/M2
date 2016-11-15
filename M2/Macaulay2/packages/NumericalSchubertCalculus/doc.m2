@@ -99,15 +99,31 @@ doc ///
 	 bracket2partition
 ///
 
+doc ///
+   Key
+      [randomSchubertProblemInstance, Strategy]
+   Headline
+      Strategy for creating a random matrix representing a random flag
+   Usage
+      randomSchubertProblemInstance(...,Strsagegy=>S)
+   Inputs
+      S:String
+        "unit circle" entries are random unit complex numbers [default] 
+	"unitary" uses the Random Unitary Matrix from NAG4M2
+   Description
+    Text
+     Determines how a random matrix for a random flag is created
+///;
+
 
 doc ///
    Key
       solveSchubertProblem
       (solveSchubertProblem,List,ZZ,ZZ)
    Headline
-      uses homotopies of geometric Littlewood-Richardson rule to solve Schubert problems on Grassmannians
+      uses Littlewood-Richardson homotopy to solve Schubert problems on Grassmannians
    Usage
-      S = solveSchubertProblem(P,n,m)
+      S = solveSchubertProblem(P,k,n)
    Inputs
       P:List
          Schubert problem given as a list of sequences of the 
@@ -176,7 +192,7 @@ doc ///
       Chooses the method for glueing solutions from the top of one node (tournament game) to the leaf of the previous node.
       When true (default), uses Linear Algebra, otherwise uses Parameter Homotopies.
    Caveat
-      Parameter Homotopies usually take longer than simple Linear Algebra.
+      Parameter Homotopies usually take longer than simple Linear Algebra.  They are also unnecessasy.
 ///
 doc ///
    Key
