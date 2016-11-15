@@ -106,7 +106,7 @@ doc ///
    Headline
       Strategy for creating a random matrix representing a random flag
    Usage
-      randomSchubertProblemInstance(...,Strsagegy=>S)
+      randomSchubertProblemInstance(...,Strategy=>S)
    Inputs
       S:String
         "unit circle" entries are random unit complex numbers [default] 
