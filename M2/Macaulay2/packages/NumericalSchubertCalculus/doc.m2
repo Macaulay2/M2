@@ -2,7 +2,7 @@ document {
      Key => NumericalSchubertCalculus,
      Headline => "Numerical Algorithms for Schubert Calculus",
      "Tools for solving Schubert problems on Grassmannians using homotopy continuation",
-     PARA {"The package NumericalSchubertCalculus implements methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation."}, 
+     PARA {"The package NumericalSchubertCalculus implements methods for solving Schubert problems on Grassmannians using numerical homotopy continuation."}, 
      
      HEADER3 {"General functions include:"},
      UL{
@@ -13,19 +13,23 @@ document {
 	 TO checkIncidenceSolution, 
 	 --(verifies that a solution satisfies the given incidence conditions),
 	 TO skewSchubertVariety
-	 --(local coordinates for skew Schubert variety).
+	 --(local coordinates for a skew Schubert variety).
      },
      HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
      UL{
 	 TO solveSchubertProblem,
+	 --(Core routine:  solves a Schubert problem using the Littlewood-Richardson homotopy)
 	 TO solveSimpleSchubert
+	 --(Solves a simple Schubert problem using the Pieri homotopy algorithm)
 	 },
      HEADER3{"Service functions:"},
      UL{
 	 TO setVerboseLevel,
 	 --(how talkative the functions are)
 	 TO bracket2partition,
+	 --(converts a bracket into a partition)
 	 TO partition2bracket
+	 --(converts a parition into a beacket)
 	 },
      HEADER3{"Using PHCpack:"},
      "An alternative implementation using PHCpack (download from ",
@@ -68,22 +72,22 @@ doc ///
       (randomSchubertProblemInstance,List,ZZ,ZZ)
       [randomSchubertProblemInstance, Strategy]
    Headline
-      Creates random unitary matrices representing Flags that specify an instance of the Schubert problem
+      Returns a random instance of a given Schubert problem by computing random matrices representing flags
    Usage
       randomSchubertProblemInstance(conditions,k,n)
    Inputs
       conditions:List
-         Schubert conditions written as partitions (weakly decreasing integers) or brackets (strictly increasing integers)
+         A list of Schubert conditions that are either all partitions or all brackets (see below for details)
       k:ZZ
       n:ZZ
          integers defining the Grassmannian Gr(k,n)
    Outputs
       :List
-         random instance of the Schubert problem, each Schubert condition of the form (condition,flag)
+         random instance of the Schubert problem, which is a list of pairs of the form (condition,flag)
    Description
       Text
-         Verifies if the conditions imposed represent a zero-dimensional Schubert variety and 
-	 Creates a list of random squared invertible matrices that represent flags for the Schubert problem
+         Verifies if the conditions form a Schubert problem and 
+	 creates a list of random square invertible matrices that represent flags for the Schubert problem
       Example
          -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
 	 randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)

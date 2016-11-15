@@ -573,21 +573,21 @@ verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
 ----------------------
 -- randomSchubertProblemInstance
 ----------------------
--- Creates a random instance of a Schubert problem
--- by computing random unitary matrices to specify the flags
+-- Creates a random instance of a Schubert problem FFFFF
+-- by computing random matrices to specify the flags
 ----------------------
 -- Input: 
 --    conds - list of partitions
 --    k,n   - integers that indicate the Grassmannian G(k,n)
 --
 --    Options:  Strategy => "unitary" : uses the Random Unitary Matrix from NAG4M2.
---                          "unit cirle": fills up the matrix with random
+--                          "unit cirle": creates a matrix whose entries are random
 --                             [default]  complex numbers in the unit circle
 -- Output:
 --    a list of sequences of the from (cond_List,flag_Matrix)
 --      where flag_Matrix is a random nxn matrix
 ------------------------
--- create an instance of a Schubert problem with random unitary matrices specifying flags
+-- create an instance of a Schubert problem with random matrices specifying flags
 randomSchubertProblemInstance = method(Options=>{Strategy=>"unit circle"})
 randomSchubertProblemInstance (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     checkSchubertProblem(conds,k,n);
