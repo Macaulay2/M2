@@ -77,7 +77,7 @@ doc ///
       randomSchubertProblemInstance(conditions,k,n)
    Inputs
       conditions:List
-         A list of Schubert conditions that are either all partitions or all brackets (see below for details)
+        which is a list of Schubert conditions that are either all partitions or all brackets (see bracket2partition for details)
       k:ZZ
       n:ZZ
          integers defining the Grassmannian Gr(k,n)
@@ -86,8 +86,9 @@ doc ///
          random instance of the Schubert problem, which is a list of pairs of the form (condition,flag)
    Description
       Text
-         Verifies if the conditions form a Schubert problem and 
-	 creates a list of random square invertible matrices that represent flags for the Schubert problem
+         This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $G(k,n)$.
+	 
+	 Then it creates a list of random square invertible matrices that represent flags for the Schubert problem.
       Example
          -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
 	 randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
@@ -210,19 +211,21 @@ doc ///
          k and n represent the Grassmannian G(k,n)
    Outputs
       b:List
-         representing the bracket notation
+         the corresponding bracket
    Description
     Text
-       A Schubert condition in the Grassmannian $Gr(k,n)$ can be denoted 
+       A Schubert condition in the Grassmannian $Gr(k,n)$ is encoded either 
        by a partition $l$ or by a bracket $b$. 
        
-       A partition is a weakly decreasing list of nonnegative 
-       integers less than or equal to $n-k$.
+       A partition is a weakly decreasing list of at most $k$ nonnegative 
+       integers less than or equal to $n-k$.  It may be padded with zeroes to be of length $k$.
        
        A bracket is a strictly increasing list of length $k$ of 
        positive integers between $1$ and $n$.
        
        This function writes a partition as a bracket.
+       They are related as follows $b_{k+1-i}=n-i-l_i$, for $i=1,...,k$.
+       
     Example
        l = {2,1};
        k = 2;
@@ -251,19 +254,20 @@ doc ///
          k and n represent the Grassmannian G(k,n)
    Outputs
       l:List
-         the partition notation
+         the corresponding partition 
    Description
     Text
-       A Schubert condition in the Grassmannian $Gr(k,n)$ can be denoted 
+       A Schubert condition in the Grassmannian $Gr(k,n)$ is encoded either 
        by a partition $l$ or by a bracket $b$. 
        
-       A partition is a weakly decreasing list of nonnegative 
-       integers less than or equal to $n-k$.
+       A partition is a weakly decreasing list of at most $k$ nonnegative 
+       integers less than or equal to $n-k$.  It may be padded with zeroes to be of length $k$.
        
        A bracket is a strictly increasing list of length $k$ of 
        positive integers between $1$ and $n$.
        
        This function writes a bracket as a partition.
+       They are related as follows  $b_{k+1-i}=n-i-l_i$, for $i=1,...,k$.
     Example
        b = {1,3};
        n = 4;
