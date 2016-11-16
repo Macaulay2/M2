@@ -290,14 +290,17 @@ LRruleIn(ZZ,ZZ,Matrix) := (a,n,m) -> (
       result = concatenate(result,toString(n),"\n");
       for i from 0 to nr-1 do
       (
-         result = concatenate(result,"[ ");
-         for j from 1 to nc-1 do
-            result = concatenate(result,toString(m_(i,j))," ");
-         if m_(i,0) > 1 then
-            result = concatenate(result,"]^",toString(m_(i,0)))
-         else
-            result = concatenate(result,"]");
-         if i < nr-1 then result = concatenate(result,"*");
+         if m_(i,0) > 0 then
+         (
+            result = concatenate(result,"[ ");
+            for j from 1 to nc-1 do
+               result = concatenate(result,toString(m_(i,j))," ");
+            if m_(i,0) == 1 then
+               result = concatenate(result,"]")
+            else
+               result = concatenate(result,"]^",toString(m_(i,0)));
+            if i < nr-1 then result = concatenate(result,"*");
+         )
       );
       result = concatenate(result,";");
    );
