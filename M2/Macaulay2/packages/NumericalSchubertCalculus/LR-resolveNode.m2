@@ -299,20 +299,22 @@ verifyParent(MutableHashTable,List) := (father, parent'solutions) -> (
 --   parent'solutions : solutions computed by solveCases.
 --
 -- OUT :
---   asserts that all solutions fits the pattern of the parent.
+--   verifies that all solutions fits the pattern of the parent.
 --
    parentX := makeLocalCoordinates father.Board;
    parentXlist := flatten entries parentX;
    scan(parent'solutions, X'''-> ( 
       -- check that solutions fit the parent's pattern
       a := flatten entries X''';
-      scan(#a, i -> assert(
-            (abs a#i < ERROR'TOLERANCE and parentXlist#i == 0)
-            or (abs(a#i-1) < ERROR'TOLERANCE and parentXlist#i == 1)
-            or (parentXlist#i != 0 and parentXlist#i != 1)
-         ) -- end assert
-      ); -- end scan on #a
-      ) -- end of second argument of scan
+      scan(#a, i -> 
+	  if not (
+              (abs a#i < ERROR'TOLERANCE and parentXlist#i == 0)
+              or (abs(a#i-1) < ERROR'TOLERANCE and parentXlist#i == 1)
+              or (parentXlist#i != 0 and parentXlist#i != 1)
+	      )
+	  then error "a solution does not fit the expected pattern (numerical error occured)"         	 
+      	 ); -- end scan on #a
+     ) -- end of second argument of scan
    ) -- end scan parent'solutions
 );
 
