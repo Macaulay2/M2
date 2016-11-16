@@ -58,3 +58,11 @@ assert all(toList(0..3), i -> (
 	  if (apps == 0) then true
 	  else (apps % directSum apply(toList(1..rank target apps), 
 		    j -> matrix{W.dpairVars#1}) == 0) ));
+
+--2015-06: Uli's bug 
+A = matrix{{1,1,1},{0,1,3}}
+I = Fourier(gkz(A,{0,0}));
+M = coker transpose matrix{{I_0,0},{I_1,0},{I_2,0},{0,I_0},{0,I_1-1},{0,I_2-2}}
+RM = Drestriction(M,{0,1,0})
+assert( toString RM#0 == "cokernel matrix {{x_3*D_3+3, x_1*D_1+4, x_1^4}}" )
+assert( toString RM#1 == "cokernel matrix {{x_1, x_3*D_3+1}}" )
