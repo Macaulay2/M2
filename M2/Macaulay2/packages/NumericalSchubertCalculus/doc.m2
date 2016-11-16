@@ -2,7 +2,8 @@ document {
      Key => NumericalSchubertCalculus,
      Headline => "Numerical Algorithms for Schubert Calculus",
      "Tools for solving Schubert problems on Grassmannians using homotopy continuation",
-     PARA {"The package collects implementations of methods for solving Schubert problems on Grassmannians using numerical polynomial homotopy continuation."},
+     PARA {"The package NumericalSchubertCalculus implements methods for solving Schubert problems on Grassmannians using numerical homotopy continuation."}, 
+     
      HEADER3 {"General functions include:"},
      UL{
         TO randomSchubertProblemInstance, 
@@ -12,19 +13,23 @@ document {
 	 TO checkIncidenceSolution, 
 	 --(verifies that a solution satisfies the given incidence conditions),
 	 TO skewSchubertVariety
-	 --(local coordinates for skew Schubert variety).
+	 --(local coordinates for a skew Schubert variety).
      },
      HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
      UL{
 	 TO solveSchubertProblem,
+	 --(Core routine:  solves a Schubert problem using the Littlewood-Richardson homotopy)
 	 TO solveSimpleSchubert
+	 --(Solves a simple Schubert problem using the Pieri homotopy algorithm)
 	 },
      HEADER3{"Service functions:"},
      UL{
 	 TO setVerboseLevel,
 	 --(how talkative the functions are)
 	 TO bracket2partition,
+	 --(converts a bracket into a partition)
 	 TO partition2bracket
+	 --(converts a parition into a beacket)
 	 },
      HEADER3{"Using PHCpack:"},
      "An alternative implementation using PHCpack (download from ",
@@ -65,23 +70,25 @@ doc ///
    Key
       randomSchubertProblemInstance
       (randomSchubertProblemInstance,List,ZZ,ZZ)
+      [randomSchubertProblemInstance, Strategy]
    Headline
-      Creates random unitary matrices representing Flags that specify an instance of the Schubert problem
+      Returns a random instance of a given Schubert problem by computing random matrices representing flags
    Usage
       randomSchubertProblemInstance(conditions,k,n)
    Inputs
       conditions:List
-         Schubert conditions written as partitions (weakly decreasing integers) or brackets (strictly increasing integers)
+        which is a list of Schubert conditions that are either all partitions or all brackets (see bracket2partition for details)
       k:ZZ
       n:ZZ
          integers defining the Grassmannian Gr(k,n)
    Outputs
       :List
-         random instance of the Schubert problem, each Schubert condition of the form (condition,flag)
+         random instance of the Schubert problem, which is a list of pairs of the form (condition,flag)
    Description
       Text
-         Verifies if the conditions imposed represent a zero-dimensional Schubert variety and 
-	 Creates a list of random squared invertible matrices that represent flags for the Schubert problem
+         This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $G(k,n)$.
+	 
+	 Then it creates a list of random square invertible matrices that represent flags for the Schubert problem.
       Example
          -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
 	 randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
@@ -93,16 +100,31 @@ doc ///
 	 bracket2partition
 ///
 
+doc ///
+   Key
+      [randomSchubertProblemInstance, Strategy]
+   Headline
+      Strategy for creating a random matrix representing a random flag
+   Usage
+      randomSchubertProblemInstance(...,Strategy=>S)
+   Inputs
+      S:String
+        "unit circle" entries are random unit complex numbers [default] 
+	"unitary" uses the Random Unitary Matrix from NAG4M2
+   Description
+    Text
+     Determines how a random matrix for a random flag is created
+///;
+
 
 doc ///
    Key
       solveSchubertProblem
       (solveSchubertProblem,List,ZZ,ZZ)
-      [solveSchubertProblem, LinearAlgebra] --verify this optional input with Anton
    Headline
-      uses homotopies of geometric Littlewood-Richardson rule to solve Schubert problems on Grassmannians
+      uses Littlewood-Richardson homotopy to solve Schubert problems on Grassmannians
    Usage
-      s = solveSchubertProblem(P,n,m)
+      S = solveSchubertProblem(P,k,n)
    Inputs
       P:List
          Schubert problem given as a list of sequences of the 
@@ -111,11 +133,11 @@ doc ///
       k:ZZ
       n:ZZ
       	 k and n denote the Grassmannian G(k,n)
-      LinearAlgebra:Boolean
-         when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
+      --LinearAlgebra:Boolean
+      --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
-      s:List
-         solutions of the Schubert Problem given as k by n matrices
+      S:List
+         solutions of the Schubert Problem given as n by k matrices
    Description
       Text
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
@@ -156,7 +178,23 @@ doc ///
    SeeAlso
          solveSimpleSchubert
 ///;
-
+doc ///
+   Key
+      [solveSchubertProblem, LinearAlgebra] --verify this optional input with Anton
+   Headline
+      switch between Linear Algebra and Parameter Homotopy
+   Usage
+      solveSchubertProblem(...,LinearAlgebra=>T)
+   Inputs
+      T:Boolean
+         true for Linear Algebra, false for Parameter Homotopy 
+   Description
+    Text
+      Chooses the method for glueing solutions from the top of one node (tournament game) to the leaf of the previous node.
+      When true (default), uses Linear Algebra, otherwise uses Parameter Homotopies.
+   Caveat
+      Parameter Homotopies usually take longer than simple Linear Algebra.  They are also unnecessasy.
+///
 doc ///
    Key
       partition2bracket
@@ -173,19 +211,21 @@ doc ///
          k and n represent the Grassmannian G(k,n)
    Outputs
       b:List
-         representing the bracket notation
+         the corresponding bracket
    Description
     Text
-       A Schubert condition in the Grassmannian $Gr(k,n)$ can be denoted 
+       A Schubert condition in the Grassmannian $Gr(k,n)$ is encoded either 
        by a partition $l$ or by a bracket $b$. 
        
-       A partition is a weakly decreasing list of nonnegative 
-       integers less than or equal to $n-k$.
+       A partition is a weakly decreasing list of at most $k$ nonnegative 
+       integers less than or equal to $n-k$.  It may be padded with zeroes to be of length $k$.
        
        A bracket is a strictly increasing list of length $k$ of 
        positive integers between $1$ and $n$.
        
        This function writes a partition as a bracket.
+       They are related as follows $b_{k+1-i}=n-i-l_i$, for $i=1,...,k$.
+       
     Example
        l = {2,1};
        k = 2;
@@ -214,19 +254,20 @@ doc ///
          k and n represent the Grassmannian G(k,n)
    Outputs
       l:List
-         the partition notation
+         the corresponding partition 
    Description
     Text
-       A Schubert condition in the Grassmannian $Gr(k,n)$ can be denoted 
+       A Schubert condition in the Grassmannian $Gr(k,n)$ is encoded either 
        by a partition $l$ or by a bracket $b$. 
        
-       A partition is a weakly decreasing list of nonnegative 
-       integers less than or equal to $n-k$.
+       A partition is a weakly decreasing list of at most $k$ nonnegative 
+       integers less than or equal to $n-k$.  It may be padded with zeroes to be of length $k$.
        
        A bracket is a strictly increasing list of length $k$ of 
        positive integers between $1$ and $n$.
        
        This function writes a bracket as a partition.
+       They are related as follows  $b_{k+1-i}=n-i-l_i$, for $i=1,...,k$.
     Example
        b = {1,3};
        n = 4;
@@ -239,6 +280,41 @@ doc ///
        bracket2partition(b,n);
    SeeAlso
       partition2bracket
+///
+doc ///
+   Key
+      setVerboseLevel
+      (setVerboseLevel,ZZ)
+   Headline
+      Set different levels of information printed on screen.
+   Usage
+      setVerboseLevel n
+   Inputs
+      n:ZZ
+         takes values 0,1,2, or grater
+   Description
+    Text
+       The function changes different levels of information visible on
+       the screen:
+       
+       0 = no extra information displayed (default).
+       1 = print the progress information and time the main process
+       2 = besides the information of level 1, it also displays the checkerboard steps.
+    Example
+       -- The problem of 4 lines w.r.t. random flags
+       SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
+       setVerboseLevel 0;
+       S = solveSchubertProblem(SchPblm,2,4)
+       assert all(S,s->checkIncidenceSolution(s,SchPblm))
+       setVerboseLevel 1;
+       S = solveSchubertProblem(SchPblm,2,4)
+       assert all(S,s->checkIncidenceSolution(s,SchPblm))
+       setVerboseLevel 2;
+       S = solveSchubertProblem(SchPblm,2,4)
+       assert all(S,s->checkIncidenceSolution(s,SchPblm))
+   SeeAlso
+      checkIncidenceSolution
+      printStatistics
 ///
 
 doc ///

@@ -40,12 +40,11 @@ solutionsHash := new MutableHashTable;
 -- needsPackage "NumericalAlgebraicGeometry"
 -- we need to use GAP's package
 
-
 --------------------------------
 -- Numerical Pieri Homotopies --
 --------------------------------
 
--------------------
+---------------------
 -- generateChildren
 ---------------------
 -- Generate partitions for 
@@ -126,7 +125,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
 )
 
 
-------------------------
+-----------------------
 -- solveInternalSimple
 -----------------------
 -- Uses Pieri homotopies to solve

@@ -284,6 +284,28 @@ moveCheckers Array := blackred -> (
 ----------------------------------------------------
 -- Statistics
 ---------------
+-- this function displays some information about
+-- the type of moves that are performed in each
+-- checkerboard game. These are the redcheker moves
+-- encoded in the 9x9 table in the paper, where we
+-- denote them by a triplet {i,j,k} where i is the
+-- row (0,1, or 2), j is the column (0,1,2) and
+-- k is 0 or 1 depending if we have a swap or not
+----------
+-- NOTE: the move {} indicates to be in the top
+--       of a dag, i.e. the beginning of a game
+--
+-- NOTE: the tracking time we report is the whole
+--       time used when tracking 
+--
+-- CAVEAT: printStatistics will display the information
+--        about moves performed every time you run
+--        a checker board game. Thus, if you use the
+--        function solveSchubertProblem twice, the function 
+--        will report the information of both Tournaments,
+--        to avoid that, you need to export the following:
+--            resetStats()
+---------------------------------
 stats = new MutableHashTable;
 resetStats = () -> stats =  new MutableHashTable from 
 flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
@@ -963,9 +985,9 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
-TEST ///
-load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
-///
+--TEST ///
+--load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
+--///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------
@@ -973,4 +995,5 @@ restart
 check "NumericalSchubertCalculus"
 installPackage "NumericalSchubertCalculus"
 installPackage ("NumericalSchubertCalculus", RerunExamples=>true)
+installPackage ("NumericalSchubertCalculus", RunExamples=>false)
 
