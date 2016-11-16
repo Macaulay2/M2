@@ -46,7 +46,10 @@ export {"reactionNetwork",
     "specializeReactionRates", 
     "specializeInitialValues", 
     "createReactionRates", 
-    "createInitialValues" --, "netComplex", "networkToHRF", "kk"
+    "createInitialValues",
+    "stoichiometricMatrix",
+    "reactionMatrix",
+    "reactantMatrix" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -289,6 +292,40 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
 
 net ReactionNetwork := N -> stack networkToHRF N 
 
+-- Matrices
+
+stoichiometricMatrix = method()
+stoichiometricMatrix ReactionNetwork := N -> (
+    C := N.Complexes;
+    reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
+    M := reactions#0;
+    for i from 1 to #reactions -1 do M=M||reactions#i;
+    transpose M
+    )
+
+reactionMatrix = method()
+reactionMatrix ReactionNetwork := N -> (
+    M := stoichiometricMatrix N;
+    - transpose M
+    )
+
+reactantMatrix = method()
+reactantMatrix ReactionNetwork := N -> (
+    C := N.Complexes;
+    reactions := apply(edges N.ReactionGraph, e -> C#(first e));
+    M := reactions#0;
+    for i from 1 to #reactions-1 do M=M||reactions#i;
+    M
+    )
+    
+TEST ///
+restart
+needs "ReactionNetworks.m2"
+N = reactionNetwork "A <--> 2B, A+C <--> D, D --> B+E, B+E --> A+C"
+stoichiometricMatrix N
+reactionMatrix N
+reactantMatrix N
+///
 
 stoichiometricSubspace = method()
 stoichiometricSubspace ReactionNetwork := N -> (
