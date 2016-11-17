@@ -58,7 +58,7 @@ document {
      HEADER4{"References:"},
      UL{
 	 HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""},
-	 HREF{"https://arxiv.org/abs/alg-geom/9505001", "Sottile, \"Pieri's rule for flag manifolds and Schubert polynomials\""},
+	 HREF{"https://arxiv.org/abs/alg-geom/9706004", "Huber, Sottile, Sturmfels, \"Pieri's rule for flag manifolds and Schubert polynomials\",  J. Symb. Comp., 26 (1998), 767-788."},
 	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""},
 	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "}
 	 },
@@ -85,7 +85,7 @@ doc ///
          random instance of the Schubert problem, which is a list of pairs of the form (condition,flag)
    Description
       Text
-         This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $G(k,n)$.
+         This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $Gr(k,n)$.
 	 
 	 Then it creates a list of random square invertible matrices that represent flags for the Schubert problem.
       Example
@@ -130,7 +130,7 @@ doc ///
 	 decreasing integers) and F is a flag (n by n matrix) 
       k:ZZ
       n:ZZ
-      	 k and n denote the Grassmannian G(k,n)
+      	 k and n denote the Grassmannian Gr(k,n)
       --LinearAlgebra:Boolean
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
@@ -210,7 +210,7 @@ doc ///
          Necessarily, all partitions except possible the first two are {1}
       k:ZZ
       n:ZZ
-      	 k and n denote the Grassmannian G(k,n)
+      	 k and n denote the Grassmannian Gr(k,n)
       --LinearAlgebra:Boolean
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
@@ -272,7 +272,7 @@ doc ///
          partition representing a Schubert condition
       k:ZZ
       n:ZZ
-         k and n represent the Grassmannian G(k,n)
+         k and n represent the Grassmannian Gr(k,n)
    Outputs
       b:List
          the corresponding bracket
@@ -315,7 +315,7 @@ doc ///
       b:List
          of length k, a bracket representing a Schubert condition.
       n:ZZ
-         k and n represent the Grassmannian G(k,n)
+         k and n represent the Grassmannian Gr(k,n)
    Outputs
       l:List
          the corresponding partition 
