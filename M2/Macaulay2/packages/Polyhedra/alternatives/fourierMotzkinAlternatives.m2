@@ -7,8 +7,8 @@ getFilename = () -> (
 
 -- Method for creating the input files for glrs, lcdd, lcdd_gmp, lrs.
 -- Matrices are the same as in fourierMotzkin. 
-writeLrsInput = method()
-writeLrsInput (File, Matrix) := (F,A) ->(
+writeFMInput = method()
+writeFMInput (File, Matrix) := (F,A) ->(
    F << "polytope" << endl;
    F << "H-representation" << endl;
    F << "begin" << endl;
@@ -16,7 +16,7 @@ writeLrsInput (File, Matrix) := (F,A) ->(
    F << "end" << endl;
 )
 
-writeLrsInput (File, Matrix, Matrix) := (F,C,B) -> (
+writeFMInput (File, Matrix, Matrix) := (F,C,B) -> (
    F << "polytope" << endl;
    F << "H-representation" << endl;
    F << "linearity " << numColumns B << " ";
@@ -38,7 +38,7 @@ writeMatrixToLrsInputFile(File, Matrix) := (F, A) -> (
       m = 1;
    );
    A = matrix({toList(m:0)})||A;
-   F << m << " " << n+1 << " rational" << endl;
+   F << m << " " << n+1 << " integer" << endl;
    L := entries transpose A;
    for i from 0 to m-1 do (
       for j from 0 to n do (
@@ -50,8 +50,8 @@ writeMatrixToLrsInputFile(File, Matrix) := (F, A) -> (
 )
 
 -- Method for parsing the output files of lcdd and lrs.
-readLrsInput = method()
-readLrsInput String := (filename) -> (
+readFMOutput = method()
+readFMOutput String := (filename) -> (
    if debugLevel > 3 then << get filename << endl;
    L := separateRegexp("linearity|begin|end", get filename);
    L = select(L, l -> not match("converted to inequality", l));
@@ -83,47 +83,18 @@ readLrsInput String := (filename) -> (
    )
 )
 
-lrs = new MutableHashTable
--- Method for calling lrs.
--- Creates an input file from the given matrices, applies lrs and parses output.
-lrs#fourierMotzkin = method()
-lrs#fourierMotzkin Matrix := Matrix => A ->(
-   input := {-A};
-   runLrsOnInput input
---   filename := getFilename();
---   if debugLevel > 0 then << "using temporary file name " << filename << endl;
---   F := openOut(filename|".ine");
---   writeLrsInput(F,-A);
---   close F;
---   execstr := "lrs " |rootPath | filename | ".ine " | rootPath | filename | ".ext > " | rootPath | filename |".txt 2>&1";
---   if run execstr =!= 0 then error( "-- Error with lrs, for details see " | rootPath | filename | ".txt.");
---   apply(readLrsInput (filename | ".ext"), 
---      b-> if b!=0 then transpose matrix apply(entries transpose b, e-> primitive toZZ e) 
---      else b
---   )
-)
 
-lrs#fourierMotzkin (Matrix,Matrix) := Matrix => (A,B) ->(
-   if B==0 then return lrs#fourierMotzkin A 
-   else(
-      input := {-A, B};
-      runLrsOnInput input
-   )
-)
-
-
-
-runLrsOnInput = method()
-runLrsOnInput List := inputMatrices -> (
+runFMAlternativeOnInput = method()
+runFMAlternativeOnInput(String, List) := (command, inputMatrices) -> (
    filename := getFilename();
    if debugLevel > 0 then << "using temporary file name " << filename << endl;
    F := openOut(filename|".ine");
    input := prepend(F, inputMatrices);
-   writeLrsInput(toSequence input);
+   writeFMInput(toSequence input);
    close F;
-   execstr := "lrs " |rootPath | filename | ".ine " | rootPath | filename | ".ext > " | rootPath | filename |".txt 2>&1";
+   execstr := command | " " |rootPath | filename | ".ine " | rootPath | filename | ".ext > " | rootPath | filename |".txt 2>&1";
    if run execstr =!= 0 then error( "-- Error with lrs, for details see " | rootPath | filename | ".txt.");
-   apply(readLrsInput (filename | ".ext"), b-> if b!=0 then transpose matrix apply(entries transpose b, e-> primitive toZZ e) else b)
+   apply(readFMOutput (filename | ".ext"), b-> if b!=0 then transpose matrix apply(entries transpose b, e-> primitive toZZ e) else b)
 )
 
 
@@ -152,3 +123,54 @@ toZZ List := List => L -> (
    apply(L, e -> (numerator(l*e)))
 )
 
+
+-- Method for calling lrs.
+-- Creates an input file from the given matrices, applies lrs and parses output.
+lrs = new MutableHashTable
+lrs#fourierMotzkin = method()
+lrs#fourierMotzkin Matrix := Matrix => A ->(
+   input := {-A};
+   runFMAlternativeOnInput("lrs", input)
+)
+lrs#fourierMotzkin (Matrix,Matrix) := Matrix => (A,B) ->(
+   if B==0 then return lrs#fourierMotzkin A 
+   else(
+      input := {-A, B};
+      runFMAlternativeOnInput("lrs", input)
+   )
+)
+
+
+
+-- Method for calling lcdd
+-- Creates an input file from the given matrices, applies lcdd and parses output.
+lcdd = new MutableHashTable
+lcdd#fourierMotzkin = method()
+lcdd#fourierMotzkin Matrix := Matrix => A ->(
+   input := {-A};
+   runFMAlternativeOnInput("lcdd", input)
+)
+lcdd#fourierMotzkin (Matrix,Matrix) := Matrix => (A,B) ->(
+   if B==0 then return lcdd#fourierMotzkin A 
+   else(
+      input := {-A, B};
+      runFMAlternativeOnInput("lcdd", input)
+   )
+)
+
+
+-- Method for calling lcdd_gmp
+-- Creates an input file from the given matrices, applies lcdd_gmp and parses output.
+lcddGmp = new MutableHashTable
+lcddGmp#fourierMotzkin = method()
+lcddGmp#fourierMotzkin Matrix := Matrix => A ->(
+   input := {-A};
+   runFMAlternativeOnInput("lcdd_gmp", input)
+)
+lcddGmp#fourierMotzkin (Matrix,Matrix) := Matrix => (A,B) ->(
+   if B==0 then return lcddGmp#fourierMotzkin A 
+   else(
+      input := {-A, B};
+      runFMAlternativeOnInput("lcdd_gmp", input)
+   )
+)

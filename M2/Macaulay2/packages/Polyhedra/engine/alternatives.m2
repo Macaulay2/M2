@@ -8,7 +8,9 @@ export{
 
 loadAlternative = method()
 loadAlternative String := name -> (
-   if name == "lrs" then insertAlternatives(lrs)
+   if name == "lrs" then insertAlternatives(lrs);
+   if name == "lcdd" then insertAlternatives(lcdd);
+   if name == "lcdd_gmp" then insertAlternatives(lcddGmp)
 )
 
 dropAlternatives = method()

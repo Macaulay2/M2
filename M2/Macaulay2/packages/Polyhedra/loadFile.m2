@@ -90,7 +90,7 @@ load "./tests/isWellDefined.m2"
 -------------------------------------------------------------------------------
 -- Interfaces to other software
 --
-load "./alternatives/lrs.m2"
+load "./alternatives/fourierMotzkinAlternatives.m2"
 
 -------------------------------------------------------------------------------
 -- Documentation
