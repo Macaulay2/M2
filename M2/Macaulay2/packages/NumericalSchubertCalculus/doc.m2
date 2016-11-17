@@ -70,7 +70,6 @@ doc ///
    Key
       randomSchubertProblemInstance
       (randomSchubertProblemInstance,List,ZZ,ZZ)
-      [randomSchubertProblemInstance, Strategy]
    Headline
       Returns a random instance of a given Schubert problem by computing random matrices representing flags
    Usage
