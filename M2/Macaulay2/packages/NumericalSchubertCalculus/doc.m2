@@ -116,7 +116,6 @@ doc ///
      Determines how a random matrix for a random flag is created
 ///;
 
-
 doc ///
    Key
       solveSchubertProblem
@@ -150,8 +149,8 @@ doc ///
 	 sum of the entries of $l_i$.
          -----
 	 
-	 The function solves the Schubert problem by Littlewood-Richardson
-	 homotopies. This algorithm uses homotopy continuation to track 
+	 The function solves the Schubert problem by the Littlewood-Richardson
+	 homotopy. This algorithm uses homotopy continuation to track 
 	 solutions of a simpler problem to a general problem according 
 	 to the specializations of the geometric Littlewood-Richardson.
 
@@ -174,7 +173,7 @@ doc ///
    Caveat
       Need to input partitions together with flags. In the future, 
       there will be an option for generating random flags and just 
-      input the partitions.
+      input the partitions.   Also, it will be able to take brackets.
    SeeAlso
          solveSimpleSchubert
 ///;
@@ -195,6 +194,72 @@ doc ///
    Caveat
       Parameter Homotopies usually take longer than simple Linear Algebra.  They are also unnecessasy.
 ///
+
+doc ///
+   Key
+      solveSimpleSchubert
+      (solveSimpleSchubert,List,ZZ,ZZ)
+   Headline
+      uses Pieri homotopy algorithm to solve simple Schubert problems on Grassmannians
+   Usage
+      S = solveSchubertProblem(P,k,n)
+   Inputs
+      P:List
+         Simple Schubert problem given as a list of sequences of the 
+	 form (l,F) where l is a partition (a list of weakly 
+	 decreasing integers) and F is a flag (n by n matrix).
+         Necessarily, all partitions except possible the first two are {1}
+      k:ZZ
+      n:ZZ
+      	 k and n denote the Grassmannian G(k,n)
+      --LinearAlgebra:Boolean
+      --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
+   Outputs
+      S:List
+         solutions of the simple Schubert Problem given as n by k matrices
+   Description
+      Text
+      	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
+	 by a partition $l$ (a weakly decreasing
+	 list of nonegative integers less than $n-k$) and a flag $F$ 
+	 (given as an $n{\times} n$ matrix).
+	 A Schubert problem is a list of Schubert varieties 
+	 $(l^1, F^1), \ldots, (l^m, F^m)$ such that 
+	 $|l^1|+|l^2| + \cdots + |l^m| = k(n-k)$, where $|l^i|$ is the 
+	 sum of the entries of $l_i$.
+         -----
+	 
+	 The function solves the Schubert problem by the Pieri homotopy algorithm. 
+	 This algorithm uses homotopy continuation to track 
+	 solutions of a simpler problem to a general problem according 
+	 to the specializations of the geometric Pieri rule.
+
+	 This algorithm is described in the paper:
+	 Huber, Sottile, and Sturmfels, "Numerical Schubert Calculus"
+	 
+      Example
+         -- Problem (2,1)^2 1^3 = 6 in Gr(3,6)
+       	 -- a problem with 2 solutions
+	 k = 3;
+	 n = 6;
+	 SchPblm = {
+    	     ({2,1}, random(CC^6,CC^6)),
+    	     ({2,1}, random(CC^6,CC^6)),
+    	     ({1}, random(CC^6,CC^6)),
+    	     ({1}, random(CC^6,CC^6)),
+    	     ({1}, random(CC^6,CC^6))
+    	     };
+	 stdio << "Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags"<<endl;
+	 
+	 solveSchubertProblem(SchPblm, k,n)
+   Caveat
+      Need to input partitions together with flags. In the future, 
+      there will be an option for generating random flags and just 
+      input the first two partitions.   Also, it will be able to take brackets.
+   SeeAlso
+         solveSchubertProblem
+///
+
 doc ///
    Key
       partition2bracket
