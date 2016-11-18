@@ -142,7 +142,7 @@ compute#Fan#computedFacesThroughRays Fan := F -> (
          result#i = sort unique flatten {result#i, codimiCones};
       );
    );
-   return result
+   return hashTable pairs result
 )
 
 compute#Fan#generatingObjects = method()

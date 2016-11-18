@@ -97,7 +97,7 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
       -- << "Select ok." << endl;
       result#(2+i) = newFaces
    );
-   result
+   hashTable pairs result
 )
 
 

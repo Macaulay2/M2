@@ -106,7 +106,7 @@ compute#PolyhedralComplex#computedFacesThroughRays PolyhedralComplex := PC -> (
          )
       )
    );
-   result
+   hashTable pairs result
 )
 
 compute#PolyhedralComplex#honestMaxObjects = method()
