@@ -248,7 +248,7 @@ compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
       facesPcodim = select(facesPcodim, face -> #(face#0) > 0);
       codim  => facesPcodim
    );
-   new MutableHashTable from result
+   new HashTable from result
 )
 
 

@@ -38,10 +38,10 @@ doc ///
    Inputs
       PO:PolyhedralObject
    Outputs
-      M:MutableHashTable
+      M:HashTable
    Description
       Text
-         Returns a MutableHashTable with the faces of a polyhedral object sorted
+         Returns a HashTable with the faces of a polyhedral object sorted
          by codimension. The faces are given as lists containing the indices of the
          rays/vertices of the original object contained in the face.
 
@@ -142,15 +142,20 @@ doc ///
    Headline
       Checks whether a polyhedral object is well-defined.
    Usage
-      b = isWellDefined C
+      b = isWellDefined PO
    Inputs
-      C:Cone
+      PO:Cone
+         or @ofClass Fan@
+         or @ofClass Polyhedron@
+         or @ofClass PolyhedralComplex@
    Outputs
       b:Boolean
    Description
       Text
          This method checks whether all description given and computed for a polyhedral
-         object yield the same. In particular, for a fan or polyhedral complex, it will
+         object yield the same. 
+         
+         Furthermore, for a fan or polyhedral complex, it will
          check whether the intersection of two subobjects always yields a face.
 
          This method can be very expensive computationally.
