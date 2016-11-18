@@ -38,8 +38,8 @@ sanitizeConeInput HashTable := given -> (
 )
 
 
-coneFromRayData = method(TypicalValue => Cone)
-coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
+coneFromMinimalVData = method(TypicalValue => Cone)
+coneFromMinimalVData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      -- checking for input errors
      if numRows iRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
      result := new HashTable from {
@@ -51,8 +51,8 @@ coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
 )
 
 
-coneFromFacetData = method(TypicalValue => Cone)
-coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
+coneFromMinimalHData = method(TypicalValue => Cone)
+coneFromMinimalHData(Matrix, Matrix) := (ineq, eq) -> (
    if numColumns ineq =!= numColumns eq then error("facets and hyperplanes must lie in same space");
    result := new HashTable from {
       ambientDimension => numColumns ineq,
@@ -82,6 +82,7 @@ posHull(Matrix,Matrix) := (Mrays,LS) -> (
    };
    cone result
 )
+
 
 --   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
 --  OUTPUT : 'C', the Cone
