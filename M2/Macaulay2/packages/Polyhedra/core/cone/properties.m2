@@ -5,14 +5,14 @@ compute#Cone#isWellDefined Cone := C -> (
    testAmbientDim := ambDim C;
    if hasProperties(C, {rays, computedLinealityBasis}) then (
       hasEnoughProperties = true;
-      C1 := posHull(rays C, linealitySpace C);
+      C1 := coneFromRays(rays C, linealitySpace C);
       if not testDim == dim C1 then return false;
       if not testAmbientDim == ambDim C1 then return false;
       if not C1 == C then return false
    );
    if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
       hasEnoughProperties = true;
-      C2 := posHull(getProperty(C, inputRays), getProperty(C, inputLinealityGenerators));
+      C2 := coneFromRays(getProperty(C, inputRays), getProperty(C, inputLinealityGenerators));
       if not testDim == dim C2 then return false;
       if not testAmbientDim == ambDim C2 then return false;
       if not (C2 == C) then return false

@@ -93,5 +93,5 @@ facesAsCones(ZZ, Fan) := (d, F) -> (
    raysF := rays F;
    linF := linealitySpace F;
    result := faces(d, F);
-   apply(result, f -> posHull(raysF_f, linF))
+   apply(result, f -> coneFromRays(raysF_f, linF))
 )

@@ -3,7 +3,7 @@ export {
    "PolyhedralObject", 
 -- Cone object with associated methods:
    "Cone", 
-   "posHull", 
+   "coneFromRays", 
  
 -- Polyhedron object with associated methods:
    "Polyhedron", 

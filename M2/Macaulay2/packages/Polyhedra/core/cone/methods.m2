@@ -4,7 +4,7 @@ facesAsCones(ZZ, Cone) := (d, C) -> (
    raysC := rays C;
    linC := linealitySpace C;
    result := faces(d, C);
-   apply(result, f -> posHull(raysC_f, linC))
+   apply(result, f -> coneFromRays(raysC_f, linC))
 )
 
 
@@ -53,7 +53,7 @@ minFace (Matrix,Cone) := (v,C) -> (
 	  -- Take the rays of the cone that are orthogonal to 'v'
 	  Rind := flatten entries ((transpose v)*R);
 	  Rind = positions(Rind, e -> e == 0);
-	  posHull(R_Rind,LS))
+	  coneFromRays(R_Rind,LS))
      else emptyPolyhedron ambDim C)   
 
 
