@@ -58,7 +58,7 @@ doc ///
       (linSpace,Polyhedron)
       (linSpace,Fan)
    Headline
-      Deprecated version of {\tt linealitySpace}
+      Deprecated version of @TO "linealitySpace"@
 ///
 
 doc ///
