@@ -62,6 +62,7 @@ export {
    "minkSummandCone", 
    "mixedVolume", 
    "polytope", 
+   "posHull",
    "proximum", 
    "skeleton", 
    "smallestFace", 
