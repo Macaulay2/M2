@@ -151,10 +151,3 @@ coneFromRays List := L -> (
    );
    result
 )
-
--- Method that recovers posHull from older version.
-posHull = method()
-posHull(Thing) := (T) -> (
-   c := coneFromRays(T);
-	c
-)
