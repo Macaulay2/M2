@@ -9,6 +9,8 @@ export {
    "Polyhedron", 
    "convexHull",
    "polyhedron",
+   "polyhedronFromHData",
+   "polyhedronFromInequalities" => "polyhedronFromHData",
 
    "facets",
    "Fan", 

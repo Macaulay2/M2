@@ -52,7 +52,7 @@ assert isEmpty P2
 assert isFace(P2,P1)
 P3 = convexHull matrix {{1,1,1},{1,1,-1},{1,-1,1}};
 assert not isFace(P3,P1)
-P4 = intersection {P3,{matrix{{0,1,0}},matrix{{1}}}};
+P4 = intersection {P3,(map(ZZ^0,ZZ^3,0),map(ZZ^0,ZZ^1,0),matrix{{0,1,0}},matrix{{1}})};
 assert isFace(P4,P1)
 ///
 
