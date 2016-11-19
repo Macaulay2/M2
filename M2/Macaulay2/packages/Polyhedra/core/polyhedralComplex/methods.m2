@@ -47,3 +47,5 @@ objectsOfDim(ZZ, PolyhedralComplex) := (k,PC) -> (
 
 
 isWellDefined PolyhedralComplex := PC -> getProperty(PC, isWellDefined)
+
+fan (PolyhedralComplex) := PC -> getProperty(PC, underlyingFan)
