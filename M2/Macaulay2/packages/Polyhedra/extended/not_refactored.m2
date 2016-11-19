@@ -493,6 +493,7 @@ minkSummandCone Polyhedron := P -> (
 	  LS := linSpace P;
 	  L := F;
 	  i := 1;
+     << "Hello." << endl;
 	  while i < dP-2 do (
 	       L = intersectionWithFacets(L,F);
 	       i = i+1);
@@ -539,6 +540,7 @@ minkSummandCone Polyhedron := P -> (
 					v = e#0;
 					(e,-1))));
 			 M := map(QQ^d,source condmatrix,0);
+     << "Hello." << endl;
 			 -- for the cyclic order in oedges add the corresponding edgedirections to condmatrix
 			 scan(oedges, e -> (
 				   ve := (e#0#1 - e#0#0)*(e#1);
@@ -550,6 +552,7 @@ minkSummandCone Polyhedron := P -> (
 		    -- collect the compact edges
 		    LL := select(faces(dim P - 1,P), fLL -> isCompact fLL);
 		    -- if there is only none or one compact edge then the only summand is the polyhedron itself
+     << "Hello." << endl;
 		    if #LL == 0 or #LL == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
 		    -- otherwise we get a summand for each compact edge
 		    else (
@@ -564,6 +567,7 @@ minkSummandCone Polyhedron := P -> (
 		    TC := map(ZZ^(ambDim(P)),ZZ^1,0) | rays(P) | linSpace(P) | -(linSpace(P));
 		    v = (vertices P)_{0};
 		    -- computing the actual summands
+     << "Hello." << endl;
 		    summList := hashTable apply(numColumns R, i -> (
 			      remedges := edges;
 			      -- recursive function which takes 'L' the already computed vertices of the summandpolyhedron,

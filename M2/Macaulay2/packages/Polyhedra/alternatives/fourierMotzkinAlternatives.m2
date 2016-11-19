@@ -49,45 +49,72 @@ writeMatrixToLrsInputFile(File, Matrix) := (F, A) -> (
    );
 )
 
+
+preMatrixFromStringList = method()
+preMatrixFromStringList List := (L)->(
+   L = apply(L,l -> select(separateRegexp("[[:space:]]", l),m-> m=!=""));
+   L = apply(L,l -> apply(l,e->replace("E\\+?","e",e)));
+   L = apply(L,l -> apply(l,e->value(e)));
+   L = apply(L,l -> apply(l, e -> lift(promote(e, RR), QQ)))
+)
+
+
+sanitizeFMOutput = method()
+sanitizeFMOutput String := filename -> (
+   L := lines get filename;
+   if L#0 === "" then L = drop(L,1);
+   L = drop(L,1);
+   while(match("Input linearity", L#0)) do L = drop(L,1);
+   i := 0;
+   while(not match("end", L#i)) do i = i+1;
+   L = L_(toList(0..i))
+)
+
+
 -- Method for parsing the output files of lcdd and lrs.
 readFMOutput = method()
 readFMOutput String := (filename) -> (
-   if debugLevel > 3 then << get filename << endl;
-   L := separateRegexp("linearity|begin|end", get filename);
-   L = select(L, l -> not match("converted to inequality", l));
-   if debugLevel > 4 then << "lrs output: " << L << endl << "end lrs output" << endl;
-   if #L<3 then error "-- lrs or cdd failed to compute the dual cone.";
-   local m;
-   local M;
-   if #L==3 then (
-      L = L#1;
-      M = select(separateRegexp("[[:space:]]", L), m->m=!="");
-      m = value( M#1);
-      R := select(pack_m apply(drop(M,3), m-> lift(promote(value replace("E\\+?","e",m),RR),QQ)),i-> i#0==0);
-      local A;
-      if #R != 0 then A = sort transpose matrix apply(R, l->drop(l,1))
-      else A = map(ZZ^(m-1), ZZ^0, 0);
-      (A, map(ZZ^(numRows A),ZZ^0,0))
+   L := sanitizeFMOutput filename;
+   if debugLevel > 4 then << "output: " << L << endl << "end lrs output" << endl;
+   hasLineality := match("linearity",L#1);
+   local lin;
+   local nrows;
+   local ncols;
+   local linComp;
+   local preMat;
+   if hasLineality then (
+      lin = apply(drop(select(separateRegexp("[[:space:]]", L#1),m-> m=!=""),2), l-> (value l)-1);    
+      preMat = L_{4 .. #L-2};
+      nrows = (#L-2) - 4;
+      ncols = L#3;
+      linComp = set (0..nrows) - lin;
+      linComp = elements linComp;
    ) else (
-      lin := apply(drop(select(separateRegexp("[[:space:]]", L#1),m-> m=!=""),1), l-> (value l)-1);
-      M = select(separateRegexp("[[:space:]]", L#2), m->m=!="");
-      m = value( M#1);
-      mat :=  pack_m apply(drop(M,3), o-> lift(promote(value replace("E\\+?","e",o),RR),QQ));
-      linearity := sort transpose matrix apply(mat_lin, l-> drop(l,1));
-      r := select(toList(0..#mat-1), n-> not member(n,lin));
-      preRays := select(mat_r, l-> l#0==0);
-      local rays;
-      if #preRays > 0 then rays = sort transpose matrix apply(preRays,l-> drop(l,1))
-      else rays = map(ZZ^(m-1),ZZ^0,0);
-      (rays, linearity)
-   )
+      preMat = L_{3 .. #L-2};
+      lin = {};
+      nrows = (#L-2) - 3;
+      ncols = L#2;
+      linComp = toList (0..nrows);
+   );
+   ncols = select(separateRegexp("[[:space:]]", ncols),m-> m=!="");
+   ncols = value(ncols#1);
+   local preMat;
+   preRays := preMatrixFromStringList(preMat_linComp);
+   preRays = select(preRays, pr -> pr#0 == 0);
+   preRays = apply(preRays, pr -> drop(pr, 1));
+   rays := if #preRays == 0 then map(ZZ^0,ZZ^(ncols-1),0) else matrix preRays;
+   lineality := if #lin == 0 then map(ZZ^0,ZZ^(ncols-1),0) else (
+      matrix apply(preMatrixFromStringList(preMat_lin), pr -> drop(pr, 1))
+   );
+   (sort transpose rays, sort transpose lineality)
 )
 
 
 runFMAlternativeOnInput = method()
 runFMAlternativeOnInput(String, List) := (command, inputMatrices) -> (
    filename := getFilename();
-   if debugLevel > 0 then << "using temporary file name " << filename << endl;
+   if debugLevel > 1 then << "using temporary file name " << filename << endl;
+   if debugLevel > 2 then << "Running FM command " << command << endl;
    F := openOut(filename|".ine");
    input := prepend(F, inputMatrices);
    writeFMInput(toSequence input);
