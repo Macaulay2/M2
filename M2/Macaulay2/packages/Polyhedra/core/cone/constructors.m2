@@ -38,8 +38,8 @@ sanitizeConeInput HashTable := given -> (
 )
 
 
-coneFromRayData = method(TypicalValue => Cone)
-coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
+coneFromMinimalVData = method(TypicalValue => Cone)
+coneFromMinimalVData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      -- checking for input errors
      if numRows iRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
      result := new HashTable from {
@@ -51,8 +51,8 @@ coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
 )
 
 
-coneFromFacetData = method(TypicalValue => Cone)
-coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
+coneFromMinimalHData = method(TypicalValue => Cone)
+coneFromMinimalHData(Matrix, Matrix) := (ineq, eq) -> (
    if numColumns ineq =!= numColumns eq then error("facets and hyperplanes must lie in same space");
    result := new HashTable from {
       ambientDimension => numColumns ineq,
@@ -65,7 +65,7 @@ coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
 --		 space generators
-posHull = method(TypicalValue => Cone)
+coneFromRays = method(TypicalValue => Cone)
 
 --   INPUT : 'Mrays'  a Matrix containing the generating rays as column vectors
 --		 'LS'  a Matrix containing the generating rays of the 
@@ -73,7 +73,7 @@ posHull = method(TypicalValue => Cone)
 --  OUTPUT : 'C'  a Cone
 -- COMMENT : The description by rays and lineality space is stored in C as well 
 --		 as the description by defining half-spaces and hyperplanes.
-posHull(Matrix,Matrix) := (Mrays,LS) -> (
+coneFromRays(Matrix,Matrix) := (Mrays,LS) -> (
    if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
    result := new HashTable from {
       ambientDimension => numRows Mrays,
@@ -82,6 +82,7 @@ posHull(Matrix,Matrix) := (Mrays,LS) -> (
    };
    cone result
 )
+
 
 --   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
 --  OUTPUT : 'C', the Cone
@@ -95,16 +96,16 @@ intersection Matrix := M -> (
 
 
 --   INPUT : 'R'  a Matrix containing the generating rays as column vectors
-posHull Matrix := R -> (
+coneFromRays Matrix := R -> (
    r := ring R;
    -- Generating the zero lineality space LS
    LS := map(target R, r^0,0);
-   posHull(R,LS)
+   coneFromRays(R,LS)
 )
 
 
 --   INPUT : '(C1,C2)'  two cones
-posHull(Cone,Cone) := (C1,C2) -> (
+coneFromRays(Cone,Cone) := (C1,C2) -> (
    local iRays;
    local linealityGens;
    if hasProperties(C1, {rays, computedLinealityBasis}) then (
@@ -127,17 +128,17 @@ posHull(Cone,Cone) := (C1,C2) -> (
       iRays = iRays | rays C2;
       linealityGens = linealityGens | linealitySpace C2;
    );
-   posHull(iRays, linealityGens)
+   coneFromRays(iRays, linealityGens)
 )
 
 
 --   INPUT : 'L',   a list of Cones, Polyhedra, rays given by R, 
 --     	    	    and (rays,linSpace) given by '(R,LS)'
-posHull List := L -> (
+coneFromRays List := L -> (
    -- Turn everything into cones.
    cones := apply(L, 
       l -> (
-         if not instance(l, Cone) then posHull l
+         if not instance(l, Cone) then coneFromRays l
          else l
       )
    );
@@ -146,7 +147,7 @@ posHull List := L -> (
    -- Adding the cones is not expensive, since we will not do fourierMotzkin
    -- every time.
    for cone in cones do (
-      result = posHull(result, cone);
+      result = coneFromRays(result, cone);
    );
    result
 )

@@ -40,7 +40,7 @@ minkowskiSum(Cone,Cone) := (C1,C2) -> (
      -- Saving the vertices and rays
      R := rays(C1) | rays(C2);
      LS := linSpace(C1) | linSpace(C2);
-     posHull(R,LS))
+     coneFromRays(R,LS))
 
 
 --   INPUT : '(C,P)',  a cone and a polyhedron

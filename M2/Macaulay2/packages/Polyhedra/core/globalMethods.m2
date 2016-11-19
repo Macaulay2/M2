@@ -42,7 +42,7 @@ isWellDefined PolyhedralObject := Ph -> true
 dim PolyhedralObject := PO -> getProperty(PO, computedDimension)
 
 -- PURPOSE : Computing the faces of codimension 'k' of 'P'
-faces = method(TypicalValue => MutableHashTable)
+faces = method(TypicalValue => HashTable)
 faces PolyhedralObject := PO -> getProperty(PO, computedFacesThroughRays)
 --   INPUT : 'k'  an integer between 0 and the dimension of
 --     	     'PO'  a polyhedralObject

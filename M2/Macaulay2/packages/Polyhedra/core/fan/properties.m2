@@ -76,7 +76,7 @@ compute#Fan#honestMaxObjects Fan := F -> (
    R := rays F;
    MC := maxCones F;
    L := linealitySpace F;
-   apply(MC, m -> posHull(R_m, L))
+   apply(MC, m -> coneFromRays(R_m, L))
 )
 
 compute#Fan#computedComplete = method()
@@ -97,7 +97,7 @@ compute#Fan#computedComplete Fan := F -> (
             R := rays C;
             L := linealitySpace C;
             CFacets := toList getProperty(C, facetsThroughRayData);
-            CFacets = apply(CFacets, facet -> posHull(R_facet, L));
+            CFacets = apply(CFacets, facet -> coneFromRays(R_facet, L));
             CFsave = flatten {CFsave, {CFacets}};
             Lfaces = symmDiff(Lfaces, CFacets);
          )
@@ -142,7 +142,7 @@ compute#Fan#computedFacesThroughRays Fan := F -> (
          result#i = sort unique flatten {result#i, codimiCones};
       );
    );
-   return result
+   return hashTable pairs result
 )
 
 compute#Fan#generatingObjects = method()

@@ -54,7 +54,7 @@ affineImage(Matrix,Cone,Matrix) := (M,C,v) -> if v == 0 then affineImage(M,C) el
 --     	    	      	 ambient space of the cone 'C' to some target space
 --  OUTPUT : A cone, the affine image of 'C':
 --                       M*C={M*c | c in C}
-affineImage(Matrix,Cone) := (M,C) -> posHull affineImage(M, polyhedron C)
+affineImage(Matrix,Cone) := (M,C) -> coneFromRays affineImage(M, polyhedron C)
 
 
 --   INPUT : '(C,v)',  where 'C' is a cone and 'v' is a matrix
@@ -117,7 +117,7 @@ affinePreimage(Matrix,Cone,Matrix) := (A,C,b) -> if b == 0 then affinePreimage(A
 --     	    	      	 ambient space of the cone 'C'
 --  OUTPUT : A cone, the affine preimage of 'C':
 --                       {q | (A*q) in C}
-affinePreimage(Matrix,Cone) := (A,C) -> posHull affinePreimage(A,polyhedron C)
+affinePreimage(Matrix,Cone) := (A,C) -> coneFromRays affinePreimage(A,polyhedron C)
 
 
 --   INPUT : '(C,b)',   where 'b' is a ZZ or QQ one-column matrix describing a point in

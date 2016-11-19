@@ -78,7 +78,7 @@ statePolytope Ideal := I -> (
       linC := linealitySpace C;
       apply(faces(1,C), 
          f -> (
-            fCone := posHull(raysC_f, linealitySpace C);
+            fCone := coneFromRays(raysC_f, linealitySpace C);
             (interiorVector fCone,fCone,C)
          )
       )
@@ -248,7 +248,7 @@ compute#Fan#polytopal Fan := F -> (
       edges := cones(n-1,F);
       raysF := rays F;
       linF := linealitySpace F;
-      edges = apply(edges, e -> posHull(raysF_e, linF));
+      edges = apply(edges, e -> coneFromRays(raysF_e, linF));
       -- Making a table that indicates in which generating cones each 'edge' is contained
       edgeTCTable := hashTable apply(edges, e -> select(1..#L, j -> contains(L#j,e)) => e);
       i = 0;
@@ -478,7 +478,7 @@ minkSummandCone Polyhedron := P -> (
 	  if i == 1 then M = {M#1,M#0};
 	  M);
      -- If the polyhedron is 0 or 1 dimensional itself is its only summand
-     if dim P == 0 or dim P == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
+     if dim P == 0 or dim P == 1 then (coneFromRays matrix{{1}}, hashTable {0 => P},matrix{{1}})
      else (
 	  -- Extracting the data to compute the 2 dimensional faces and the edges
 	  d := ambDim(P);
@@ -493,7 +493,6 @@ minkSummandCone Polyhedron := P -> (
 	  LS := linSpace P;
 	  L := F;
 	  i := 1;
-     << "Hello." << endl;
 	  while i < dP-2 do (
 	       L = intersectionWithFacets(L,F);
 	       i = i+1);
@@ -503,11 +502,11 @@ minkSummandCone Polyhedron := P -> (
 	  if dim P == 2 and (not isCompact P) then (
 	       L1 = intersectionWithFacets(L,F);
 	       L1 = select(L, l -> l#1 === set{});
-	       if #L1 == 0 or #L1 == 1 then (posHull matrix{{1}},hashTable {0 => P},matrix{{1}})
+	       if #L1 == 0 or #L1 == 1 then (coneFromRays matrix{{1}},hashTable {0 => P},matrix{{1}})
 	       else (
 		    TailC := rays P;
 		    if linSpace P != 0 then TailC = TailC | linSpace P | -linSpace(P);
-		    (posHull map(QQ^(#L1),QQ^(#L1),1),hashTable apply(#L1, i -> i => convexHull((L1#i)#0 | (L1#i)#1,TailC)),matrix toList(#L1:{1_QQ}))))
+		    (coneFromRays map(QQ^(#L1),QQ^(#L1),1),hashTable apply(#L1, i -> i => convexHull((L1#i)#0 | (L1#i)#1,TailC)),matrix toList(#L1:{1_QQ}))))
 	  else (
 	       -- If the polyhedron is compact and 2 dimensional then there is only one 2 faces
 	       if dim P == 2 then L1 = {(set apply(numColumns vertices P, i -> (vertices P)_{i}), set {})};
@@ -540,7 +539,6 @@ minkSummandCone Polyhedron := P -> (
 					v = e#0;
 					(e,-1))));
 			 M := map(QQ^d,source condmatrix,0);
-     << "Hello." << endl;
 			 -- for the cyclic order in oedges add the corresponding edgedirections to condmatrix
 			 scan(oedges, e -> (
 				   ve := (e#0#1 - e#0#0)*(e#1);
@@ -552,13 +550,12 @@ minkSummandCone Polyhedron := P -> (
 		    -- collect the compact edges
 		    LL := select(faces(dim P - 1,P), fLL -> isCompact fLL);
 		    -- if there is only none or one compact edge then the only summand is the polyhedron itself
-     << "Hello." << endl;
-		    if #LL == 0 or #LL == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
+		    if #LL == 0 or #LL == 1 then (coneFromRays matrix{{1}}, hashTable {0 => P},matrix{{1}})
 		    -- otherwise we get a summand for each compact edge
 		    else (
 			 TailCLL := rays P;
 			 if linSpace P != 0 then TailCLL = TailCLL | linSpace P | -linSpace(P);
-			 (posHull map(QQ^(#LL),QQ^(#LL),1),hashTable apply(#LL, i -> i => convexHull(vertices LL#i,TailCLL)),matrix toList(#LL:{1_QQ}))))
+			 (coneFromRays map(QQ^(#LL),QQ^(#LL),1),hashTable apply(#LL, i -> i => convexHull(vertices LL#i,TailCLL)),matrix toList(#LL:{1_QQ}))))
 	       -- Otherwise we can compute the Minkowski summand cone
 	       else (
 		    Id := map(source condmatrix,source condmatrix,1);
@@ -567,7 +564,6 @@ minkSummandCone Polyhedron := P -> (
 		    TC := map(ZZ^(ambDim(P)),ZZ^1,0) | rays(P) | linSpace(P) | -(linSpace(P));
 		    v = (vertices P)_{0};
 		    -- computing the actual summands
-     << "Hello." << endl;
 		    summList := hashTable apply(numColumns R, i -> (
 			      remedges := edges;
 			      -- recursive function which takes 'L' the already computed vertices of the summandpolyhedron,

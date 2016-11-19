@@ -57,7 +57,7 @@ newtonPolytope RingElement := p -> convexHull transpose matrix exponents p
 --   INPUT : 'n",  a strictly positive integer
 --  OUTPUT : The cone that is the positive orthant in n-space
 posOrthant = method(TypicalValue => Cone)
-posOrthant ZZ := n -> posHull map(QQ^n,QQ^n,1)
+posOrthant ZZ := n -> coneFromRays map(QQ^n,QQ^n,1)
 
 
 	  
@@ -138,7 +138,7 @@ bipyramid Polyhedron := P -> (
    newvertices := makePrimitiveMatrix(matrix {{1,1}} || v || matrix {{1,-1}});
    M = (M || zerorow) | newvertices;
    LS = LS || map(r^1,source LS,0);
-   newC := posHull(M, LS);
+   newC := coneFromRays(M, LS);
    result := new HashTable from {
       underlyingCone => newC
    };
@@ -161,7 +161,7 @@ pyramid Polyhedron := P -> (
    newvertex := 1 || map(ZZ^((numRows M)-1),ZZ^1,0) || 1;
    M = (M || zerorow) | newvertex;
    LS = LS || map(ZZ^1,source LS,0);
-   newC := posHull(M, LS);
+   newC := coneFromRays(M, LS);
    result := new HashTable from {
       underlyingCone => newC
    };
@@ -215,7 +215,7 @@ emptyPolyhedron = method(TypicalValue => Polyhedron)
 emptyPolyhedron ZZ := n -> (
    -- Checking for input errors
    if n < 1 then error("The ambient dimension must be positive");
-   C := posHull map(ZZ^(n+1), ZZ^0,0);
+   C := coneFromRays map(ZZ^(n+1), ZZ^0,0);
    result := new HashTable from {
       underlyingCone => C
    };

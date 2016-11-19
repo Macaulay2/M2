@@ -57,7 +57,7 @@ TEST ///
 P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
 Q = intersection(matrix{{1,0},{-1,0},{0,1},{0,-1}},matrix{{1},{1},{1},{1}});
 assert(P == Q)
-C1 = posHull matrix {{1,2},{2,1}};
+C1 = coneFromRays matrix {{1,2},{2,1}};
 C2 =intersection matrix {{2,-1},{-1,2}};
 assert(C1 == C2)
 ///
