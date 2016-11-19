@@ -67,7 +67,7 @@ export {
    "minkSummandCone", 
    "mixedVolume", 
    "polytope", 
-   "posHull" => "coneFromRays",
+   "posHull" => "coneFromVData",
    "proximum", 
    "skeleton", 
    "smallestFace", 

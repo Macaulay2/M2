@@ -66,7 +66,7 @@ coneFromMinimalHData(Matrix, Matrix) := (ineq, eq) -> (
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
 --		 space generators
-coneFromRays = method(TypicalValue => Cone)
+coneFromVData = method(TypicalValue => Cone)
 
 --   INPUT : 'Mrays'  a Matrix containing the generating rays as column vectors
 --		 'LS'  a Matrix containing the generating rays of the 
@@ -74,7 +74,7 @@ coneFromRays = method(TypicalValue => Cone)
 --  OUTPUT : 'C'  a Cone
 -- COMMENT : The description by rays and lineality space is stored in C as well 
 --		 as the description by defining half-spaces and hyperplanes.
-coneFromRays(Matrix,Matrix) := (Mrays,LS) -> (
+coneFromVData(Matrix,Matrix) := (Mrays,LS) -> (
    if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
    result := new HashTable from {
       ambientDimension => numRows Mrays,
@@ -105,16 +105,16 @@ coneFromHData(Matrix, Matrix) := (ineq, eq) -> (
 
 
 --   INPUT : 'R'  a Matrix containing the generating rays as column vectors
-coneFromRays Matrix := R -> (
+coneFromVData Matrix := R -> (
    r := ring R;
    -- Generating the zero lineality space LS
    LS := map(target R, r^0,0);
-   coneFromRays(R,LS)
+   coneFromVData(R,LS)
 )
 
 
 --   INPUT : '(C1,C2)'  two cones
-coneFromRays(Cone,Cone) := (C1,C2) -> (
+coneFromVData(Cone,Cone) := (C1,C2) -> (
    local iRays;
    local linealityGens;
    if hasProperties(C1, {rays, computedLinealityBasis}) then (
@@ -137,17 +137,17 @@ coneFromRays(Cone,Cone) := (C1,C2) -> (
       iRays = iRays | rays C2;
       linealityGens = linealityGens | linealitySpace C2;
    );
-   coneFromRays(iRays, linealityGens)
+   coneFromVData(iRays, linealityGens)
 )
 
 
 --   INPUT : 'L',   a list of Cones, Polyhedra, rays given by R, 
 --     	    	    and (rays,linSpace) given by '(R,LS)'
-coneFromRays List := L -> (
+coneFromVData List := L -> (
    -- Turn everything into cones.
    cones := apply(L, 
       l -> (
-         if not instance(l, Cone) then coneFromRays l
+         if not instance(l, Cone) then coneFromVData l
          else l
       )
    );
@@ -156,7 +156,7 @@ coneFromRays List := L -> (
    -- Adding the cones is not expensive, since we will not do fourierMotzkin
    -- every time.
    for cone in cones do (
-      result = coneFromRays(result, cone);
+      result = coneFromVData(result, cone);
    );
    result
 )
