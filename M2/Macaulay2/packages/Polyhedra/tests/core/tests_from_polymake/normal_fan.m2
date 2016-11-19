@@ -33,7 +33,7 @@ verticesP = promote(verticesP, QQ);
 raysP = promote(raysP, QQ);
 linealityP = promote(linealityP, QQ);
 P = convexHull(verticesP,raysP,linealityP);
-raysdesired = matrix {{0},{0}};
+raysdesired = map(ZZ^2,ZZ^0,0);
 linealitydesired = matrix {{1,0},{0,1}};
 raysdesired = promote(raysdesired, QQ);
 linealitydesired = promote(linealitydesired, QQ);
@@ -42,7 +42,7 @@ desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
 computed = normalFan P;
 assert(computed == desired)
 assert(isPolytopal computed)
-assert(not isSmooth computed)
+assert(isSmooth computed)
 assert(isPure computed)
 assert(isSimplicial computed)
 assert(isComplete computed)

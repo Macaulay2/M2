@@ -123,11 +123,15 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
 compute#Polyhedron#facets = method()
 compute#Polyhedron#facets Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
+   hpC := promote(hyperplanes C, QQ);
    result := promote(facets C, QQ);
    -- Elimination of the trivial half-space
    ezero := matrix {flatten {1 , toList (((numgens source result)-1):0)}};
    ezero = promote(ezero, QQ);
-   trivialIndex := positions(0..(numRows result)-1, i -> (ezero === result^{i} ));
+   trivialIndex := positions(0..(numRows result)-1, i -> 
+      if numRows hpC != 0 then pointInSameDirection(transpose ezero, transpose result^{i}, transpose hpC)
+      else ezero === result^{i}
+   );
    if #trivialIndex > 0 then (
       trivialIndex = trivialIndex#0;
    ) else (

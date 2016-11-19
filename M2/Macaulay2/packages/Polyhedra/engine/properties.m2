@@ -15,8 +15,18 @@ fourierMotzkinWrapper(Matrix, Matrix) := (A, B) -> (
    if alternative#?fourierMotzkin then (
       if debugLevel > 2 then << "Using alternative fourierMotzkin." << endl;
       alternative#fourierMotzkin(A, B)
+   ) else (
+      (R, L) := fourierMotzkin(A, B);
+      (R, linealityWorkaround L)
    )
-   else fourierMotzkin(A, B)
+)
+
+
+linealityWorkaround = method()
+linealityWorkaround Matrix := M -> (   
+   -- << numRows M << " " << numColumns M << endl;
+   if numColumns M == 0 then M
+   else sort transpose matrix apply(entries transpose hermite M, m -> primitive m)
 )
 
 

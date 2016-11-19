@@ -79,13 +79,13 @@ intersection(Cone,Cone) := (C1,C2) -> (
    
 --   INPUT : '(C,P)',  a Cone and a Polyhedron
 --  OUTPUT : 'Q', the Polyhedron that is the intersection of both
-intersection(Cone,Polyhedron) := (C,P) -> intersection {C,P}
+intersection(Cone,Polyhedron) := (C,P) -> intersection(polyhedron C, P)
 
 
 
 --   INPUT : '(P,C)',  a Polyhedron and a Cone
 --  OUTPUT : 'Q', the Polyhedron that is the intersection of both
-intersection(Polyhedron,Cone) := (P,C) -> intersection {P,C}
+intersection(Polyhedron,Cone) := (P,C) -> intersection(C,P)
 
 
 
@@ -95,7 +95,7 @@ intersection List := L -> (
      -- This function checks if the inserted pair is a pair of matrices that gives valid in/equalities
      isValidPair := S -> #S == 2 and if S#1 == 0 then instance(S#0,Matrix) else instance(S#1,Matrix) and numRows S#0 == numRows S#1 and numColumns S#1 == 1;
      -- Checking for input errors  
-     if L == {} then error("List of cones must not be empty");   
+     if L == {} then error("List of cones or polyhedra must not be empty");   
      C := L#0;
      -- The first entry in the list determines the ambient dimension 'n'
      n := 0;

@@ -43,7 +43,8 @@ pointInSameDirection(Matrix, Matrix, Matrix) := (v1, v2, lineality) -> (
    if rank(v2 | lineality) == r then error("v2 is lineality");
    testmat := v1 | -v2 | lineality;
    K := generators kernel testmat;
-   K_(0,0) * K_(1,0) > 0
+   if 0 == numColumns K then false
+   else K_(0,0) * K_(1,0) > 0
 )
 
 rayCorrespondenceMap(Matrix, Matrix, Matrix) := (sources, lineality, targets) -> (
@@ -172,3 +173,28 @@ makeFacetsUniqueAndPrimitive Matrix := M -> (
    transpose result
 )
 
+
+-- divides a list of integers by their gcd.
+primitive = method();
+primitive List := List => L -> (
+   -- finding greatest common divisor
+   n := #L-1;
+   g := abs(L#n);
+   while (n > 0) do (
+   n = n-1;
+   g = gcd(g, L#n);
+   if g === 1 then n = 0);
+   if g === 1 then L
+   else apply(L, i -> i // g)
+)
+
+
+
+-- Converts a list of 'QQ' to 'ZZ' by multiplying by a common denominator
+toZZ = method();
+toZZ List := List => L -> (
+   -- finding common denominator
+   d := apply(L, e -> denominator e);
+   l := lcm d;
+   apply(L, e -> (numerator(l*e)))
+)
