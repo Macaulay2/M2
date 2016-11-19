@@ -2,7 +2,7 @@
 --     	    	      	  that the polyhedron is given by P={x | Mx<=v and Nx=w} 
 --  OUTPUT : 'P', the polyhedron
 intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
-   << "Warning: This method is deprecated, please use polyhedronFromHData." << endl;
+   << "Warning: This method is deprecated. Please consider using polyhedronFromHData instead." << endl;
    polyhedronFromHData(M,v,N,w)
 )
 
@@ -11,17 +11,13 @@ intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
 --     	    	       or, if 'N' is only a Column vector the Polyhedron {x | Mx<=v} 
 --  OUTPUT : 'P', the Cone or Polyhedron
 intersection(Matrix,Matrix) := (M,N) -> (
+   << "Warning: This method is deprecated. Please consider using coneFromHData or polyhedronFromHData instead." << endl;
 	-- Checking for input errors
 	if ((numColumns M =!= numColumns N and numColumns N =!= 1) or (numColumns N == 1 and numRows M =!= numRows N)) and N != 0*N then 
 		error("invalid condition vector for half-spaces");
 	-- Decide whether 'M,N' gives the Cone C={p | M*p >= 0, N*p = 0}
-   local result;
 	if numColumns M == numColumns N and numColumns N != 1 then (
-      result = new HashTable from {
-         inequalities => M,
-         equations => N
-      };
-      return cone result
+      coneFromHData(M,N)
 	-- or the Polyhedron P={p | M*p >= N != 0}
 	) else (	
       polyhedronFromHData(M, N)
@@ -29,6 +25,10 @@ intersection(Matrix,Matrix) := (M,N) -> (
 )
    
 
+intersection Matrix := M -> (
+   << "Warning: This method is deprecated. Please consider using coneFromHData instead." << endl;
+   coneFromHData M
+)
 
 
 --   INPUT : '(P1,P2)',  two polyhedra 

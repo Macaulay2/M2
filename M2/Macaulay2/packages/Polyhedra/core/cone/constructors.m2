@@ -84,15 +84,23 @@ coneFromRays(Matrix,Matrix) := (Mrays,LS) -> (
    cone result
 )
 
-
 --   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
 --  OUTPUT : 'C', the Cone
-intersection Matrix := M -> (
-   r := ring M;
-   N := transpose map(source M, r^0, 0); 
-   intersection(M, N)
+coneFromHData = method(TypicalValue => Cone)
+
+coneFromHData Matrix := ineq -> (
+   coneFromHData(ineq, map(ZZ^0,ZZ^(numColumns ineq), 0))
 )
 
+coneFromHData(Matrix, Matrix) := (ineq, eq) -> (
+   if numColumns ineq != numColumns eq then error("Column dimensions of inequalities and equations do not agree.");
+   result := new HashTable from {
+      inequalities => M,
+      equations => N
+   };
+   return cone result
+
+)
 
 
 

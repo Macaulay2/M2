@@ -4,6 +4,8 @@ export {
 -- Cone object with associated methods:
    "Cone", 
    "coneFromRays", 
+   "coneFromHData",
+   "coneFromInequalities => coneFromHData",
  
 -- Polyhedron object with associated methods:
    "Polyhedron", 
