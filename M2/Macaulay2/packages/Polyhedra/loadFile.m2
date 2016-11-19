@@ -92,6 +92,7 @@ load "./tests/isWellDefined.m2"
 --
 load "./alternatives/fourierMotzkinAlternatives.m2"
 load "./alternatives/normaliz.m2"
+loadAlternative "lcdd_gmp"
 
 -------------------------------------------------------------------------------
 -- Documentation
