@@ -56,7 +56,7 @@ contains(Cone,Polyhedron) := (C,P) -> (
       -- Saving the equations of C and vertices/rays of P
       M := makePrimitiveMatrix vertices(P) | rays(P);
       LS := linSpace(P);
-      C1 := coneFromRays(M,LS);
+      C1 := coneFromVData(M,LS);
       contains(C,C1))
 
 

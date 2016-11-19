@@ -34,10 +34,10 @@ polyhedron HashTable := inputProperties -> (
 
      
 --   INPUT : 'P'  a Polyhedron
-coneFromRays Polyhedron := P -> (
+coneFromVData Polyhedron := P -> (
      Mrays := makePrimitiveMatrix vertices(P) | rays(P);
      Mlinspace := linSpace(P);
-     coneFromRays(Mrays,Mlinspace)
+     coneFromVData(Mrays,Mlinspace)
 )
 
 -- PURPOSE : Computing the Convex Hull of a given set of points and rays
@@ -83,7 +83,7 @@ convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
    C2 := getProperty(P2, underlyingCone);
    result := new HashTable from {
       ambientDimension => ambDim P1,
-      underlyingCone => coneFromRays(C1, C2)
+      underlyingCone => coneFromVData(C1, C2)
    };
    polyhedron result
 )
@@ -98,7 +98,7 @@ convexHull List := L -> (
       )
    );
    cones := apply(polyhedra, p -> getProperty(p, underlyingCone));
-   underLyingResult := coneFromRays(cones);
+   underLyingResult := coneFromVData(cones);
    result := new HashTable from {
       underlyingCone => underLyingResult
    };

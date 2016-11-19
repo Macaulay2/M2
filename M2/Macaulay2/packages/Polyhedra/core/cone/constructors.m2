@@ -95,8 +95,8 @@ coneFromHData Matrix := ineq -> (
 coneFromHData(Matrix, Matrix) := (ineq, eq) -> (
    if numColumns ineq != numColumns eq then error("Column dimensions of inequalities and equations do not agree.");
    result := new HashTable from {
-      inequalities => M,
-      equations => N
+      inequalities => ineq,
+      equations => eq
    };
    return cone result
 

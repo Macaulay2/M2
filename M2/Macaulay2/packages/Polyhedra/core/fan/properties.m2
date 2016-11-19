@@ -76,7 +76,7 @@ compute#Fan#honestMaxObjects Fan := F -> (
    R := rays F;
    MC := maxCones F;
    L := linealitySpace F;
-   apply(MC, m -> coneFromRays(R_m, L))
+   apply(MC, m -> coneFromVData(R_m, L))
 )
 
 compute#Fan#computedComplete = method()
@@ -97,7 +97,7 @@ compute#Fan#computedComplete Fan := F -> (
             R := rays C;
             L := linealitySpace C;
             CFacets := toList getProperty(C, facetsThroughRayData);
-            CFacets = apply(CFacets, facet -> coneFromRays(R_facet, L));
+            CFacets = apply(CFacets, facet -> coneFromVData(R_facet, L));
             CFsave = flatten {CFsave, {CFacets}};
             Lfaces = symmDiff(Lfaces, CFacets);
          )

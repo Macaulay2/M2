@@ -1,9 +1,9 @@
--- coneFromRays fails with wrong number of rows
+-- coneFromVData fails with wrong number of rows
 TEST /// 
 R = matrix {{1,0},{0,1}};
 L = matrix {{}};
-assert((try coneFromRays(R, L) else oops) === oops)
-assert((try coneFromRays(L, R) else oops) === oops)
+assert((try coneFromVData(R, L) else oops) === oops)
+assert((try coneFromVData(L, R) else oops) === oops)
 ///
 
 -- convexHull fails with wrong number of rows

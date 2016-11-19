@@ -32,14 +32,14 @@ assert(set L === set L1)
 -- Test 18
 -- Checking is Face
 TEST ///
-C1 = coneFromRays matrix {{1,1,1,1},{1,-1,0,0},{0,0,1,-1}};
-C2 = coneFromRays matrix {{1,1},{1,-1},{0,0}};
+C1 = coneFromVData matrix {{1,1,1,1},{1,-1,0,0},{0,0,1,-1}};
+C2 = coneFromVData matrix {{1,1},{1,-1},{0,0}};
 assert not isFace(C2,C1)
-C2 = coneFromRays matrix {{1},{1},{1}};
+C2 = coneFromVData matrix {{1},{1},{1}};
 assert not isFace(C2,C1)
-C2 = coneFromRays matrix {{1},{0},{-1}};
+C2 = coneFromVData matrix {{1},{0},{-1}};
 assert isFace(C2,C1)
-C2 = coneFromRays matrix {{0},{0},{0}};
+C2 = coneFromVData matrix {{0},{0},{0}};
 assert isFace(C2,C1)
 ///
 
@@ -71,10 +71,10 @@ assert isCompact P
 -- Checking tailCone
 TEST ///
 P = intersection(matrix {{1,0},{-1,0},{0,1}},matrix {{1},{2},{3}});
-C = coneFromRays matrix {{0},{-1}};
+C = coneFromVData matrix {{0},{-1}};
 assert(tailCone P == C)
 P = intersection (matrix{{2,1,1},{1,2,1},{1,1,2}},matrix{{2},{2},{2}});
-C = coneFromRays matrix{{1,1,-3},{1,-3,1},{-3,1,1}};
+C = coneFromVData matrix{{1,1,-3},{1,-3,1},{-3,1,1}};
 assert(tailCone P == C)
 ///
 
@@ -94,9 +94,9 @@ assert(smallestFace(matrix{{1},{1},{3/4}},P) == F2)
 -- Test 23
 -- Checking smallestFace for cones
 TEST ///
-C = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,1}};
-F1 = coneFromRays matrix {{1,0},{0,1},{0,0}};
-F2 = coneFromRays matrix {{0},{0},{1}};
+C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}};
+F1 = coneFromVData matrix {{1,0},{0,1},{0,0}};
+F2 = coneFromVData matrix {{0},{0},{1}};
 assert(smallestFace(matrix{{1},{2},{3}},C) == C)
 assert(smallestFace(matrix{{2},{3},{0}},C) == F1)
 assert(smallestFace(matrix{{0},{0},{5}},C) == F2)
@@ -109,7 +109,7 @@ P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
 assert not inInterior(matrix{{2},{1}},P)
 assert not inInterior(matrix{{1},{0}},P)
 assert inInterior(matrix{{0},{0}},P)
-C = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,1}};
+C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}};
 assert not inInterior(matrix{{0},{0},{0}},C)
 assert not inInterior(matrix{{-1},{0},{0}},C)
 assert inInterior(matrix{{1},{2},{3}},C)
@@ -126,7 +126,7 @@ assert(interiorPoint P == p)
 -- Test 26
 -- Checking interiorVector
 TEST ///
-C = coneFromRays matrix {{1,2,3},{2,3,1},{3,1,2}};
+C = coneFromVData matrix {{1,2,3},{2,3,1},{3,1,2}};
 p = matrix {{1},{1},{1}};
 assert(interiorVector C == p)
 ///
@@ -144,37 +144,37 @@ assert commonFace(P1,P2)
 -- Test 28
 -- Checking commonFace for cones
 TEST ///
-C1 = coneFromRays matrix {{1,2},{2,1}};
-C2 = coneFromRays matrix {{1,1},{1,0}};
+C1 = coneFromVData matrix {{1,2},{2,1}};
+C2 = coneFromVData matrix {{1,1},{1,0}};
 assert not commonFace(C1,C2)
-C1 = coneFromRays matrix {{1,1},{2,1}};
+C1 = coneFromVData matrix {{1,1},{2,1}};
 assert commonFace(C1,C2)
 ///
 
 -- Test 29
 -- Checking areCompatible
 TEST ///
-C1 = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,1}};
-C2 = coneFromRays matrix {{1,1,0},{1,0,1},{0,-1,-1}};
+C1 = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}};
+C2 = coneFromVData matrix {{1,1,0},{1,0,1},{0,-1,-1}};
 assert not (areCompatible(C1,C2))#0
-C2 = coneFromRays {matrix {{1,0},{0,1},{0,0}}, C2};
+C2 = coneFromVData {matrix {{1,0},{0,1},{0,0}}, C2};
 assert (areCompatible(C1,C2))#0
 ///
 
 -- Test 31
 -- Checking fan and addCone
 TEST ///
-C = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,1}};
-C1 = coneFromRays matrix {{1,0,0},{0,-1,0},{0,0,1}};
-C2 = coneFromRays matrix {{-1,0,0},{0,1,0},{0,0,1}};
-C3 = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,-1}};
+C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = coneFromVData matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = coneFromVData matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
 assert(ambDim(F) == 3)
 assert(#(maxCones F) == 4)
 assert(isPure F)
 M = transpose matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
 assert(sort M == sort rays(F))
-C = coneFromRays matrix {{-1,0},{0,1},{0,0}};
+C = coneFromVData matrix {{-1,0},{0,1},{0,0}};
 F1 = addCone(C,F);
 assert(F == F1)
 ///
@@ -182,12 +182,12 @@ assert(F == F1)
 -- Test 32
 -- Checking fan, skeleton, isComplete, isPure, addCone,
 TEST ///
-C = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,1}};
-C1 = coneFromRays matrix {{1,0,0},{0,-1,0},{0,0,1}};
-C2 = coneFromRays matrix {{-1,0,0},{0,1,0},{0,0,1}};
-C3 = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,-1}};
+C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = coneFromVData matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = coneFromVData matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
-F1 = fan {coneFromRays matrix {{1},{0},{0}},coneFromRays matrix {{-1},{0},{0}},coneFromRays matrix {{0},{1},{0}},coneFromRays matrix {{0},{-1},{0}},coneFromRays matrix {{0},{0},{1}},coneFromRays matrix {{0},{0},{-1}}};
+F1 = fan {coneFromVData matrix {{1},{0},{0}},coneFromVData matrix {{-1},{0},{0}},coneFromVData matrix {{0},{1},{0}},coneFromVData matrix {{0},{-1},{0}},coneFromVData matrix {{0},{0},{1}},coneFromVData matrix {{0},{0},{-1}}};
 assert(skeleton(1,F) == F1)
 assert not isComplete F
 assert isPure F
@@ -196,15 +196,15 @@ assert isPure F
 -- Test 32a
 -- Checking isPolytopal, polytope
 TEST ///
-C = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,1}};
-C1 = coneFromRays matrix {{1,0,0},{0,-1,0},{0,0,1}};
-C2 = coneFromRays matrix {{-1,0,0},{0,1,0},{0,0,1}};
-C3 = coneFromRays matrix {{1,0,0},{0,1,0},{0,0,-1}};
+C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}};
+C1 = coneFromVData matrix {{1,0,0},{0,-1,0},{0,0,1}};
+C2 = coneFromVData matrix {{-1,0,0},{0,1,0},{0,0,1}};
+C3 = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
-C = coneFromRays matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
-C1 = coneFromRays matrix {{-1,0,0},{0,1,0},{0,0,-1}};
-C2 = coneFromRays matrix {{1,0,0},{0,-1,0},{0,0,-1}};
-C3 = coneFromRays matrix {{-1,0,0},{0,-1,0},{0,0,1}};
+C = coneFromVData matrix {{-1,0,0},{0,-1,0},{0,0,-1}};
+C1 = coneFromVData matrix {{-1,0,0},{0,1,0},{0,0,-1}};
+C2 = coneFromVData matrix {{1,0,0},{0,-1,0},{0,0,-1}};
+C3 = coneFromVData matrix {{-1,0,0},{0,-1,0},{0,0,1}};
 F = addCone({C,C1,C2,C3},F);
 assert(#(maxCones F) == 8)
 assert isPure F
@@ -219,19 +219,19 @@ assert(normalFan polytope F == F)
 TEST ///
 M = matrix {{1,-1,0,0},{0,0,1,-1},{1,1,1,1}};
 F = ccRefinement M;
-F1 = fan {coneFromRays matrix {{1,0,0},{0,1,0},{1,1,1}},coneFromRays matrix {{-1,0,0},{0,1,0},{1,1,1}},coneFromRays matrix {{-1,0,0},{0,-1,0},{1,1,1}},coneFromRays matrix {{1,0,0},{0,-1,0},{1,1,1}}};
+F1 = fan {coneFromVData matrix {{1,0,0},{0,1,0},{1,1,1}},coneFromVData matrix {{-1,0,0},{0,1,0},{1,1,1}},coneFromVData matrix {{-1,0,0},{0,-1,0},{1,1,1}},coneFromVData matrix {{1,0,0},{0,-1,0},{1,1,1}}};
 assert(F == F1)
 ///
 
 -- Test 36
 -- Checking imageFan
 TEST ///
-C = coneFromRays matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
+C = coneFromVData matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
 F = imageFan(matrix {{1,0,0},{0,1,0}},C);
-F1 = fan {coneFromRays matrix {{1,1},{1,-1}},coneFromRays matrix {{1,-1},{1,1}},coneFromRays matrix {{-1,-1},{1,-1}},coneFromRays matrix {{1,-1},{-1,-1}}};
+F1 = fan {coneFromVData matrix {{1,1},{1,-1}},coneFromVData matrix {{1,-1},{1,1}},coneFromVData matrix {{-1,-1},{1,-1}},coneFromVData matrix {{1,-1},{-1,-1}}};
 assert(F == F1)
 F = imageFan(matrix {{1,2,0},{0,0,1}},C);
-F1 = fan {coneFromRays matrix {{-3,-1},{1,1}},coneFromRays matrix {{-1,1},{1,1}},coneFromRays matrix {{1,3},{1,1}}};
+F1 = fan {coneFromVData matrix {{-3,-1},{1,1}},coneFromVData matrix {{-1,1},{1,1}},coneFromVData matrix {{1,3},{1,1}}};
 assert(F == F1)
 ///
 
@@ -258,10 +258,10 @@ P2 = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
 P1 = directProduct(P1,P2);
 P2 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
 assert(P1 == P2)
-C1 = coneFromRays matrix {{1,2},{2,1}};
-C2 = coneFromRays matrix {{1,0},{0,1}};
+C1 = coneFromVData matrix {{1,2},{2,1}};
+C2 = coneFromVData matrix {{1,0},{0,1}};
 C1 = directProduct(C1,C2);
-C2 = coneFromRays matrix {{1,2,0,0},{2,1,0,0},{0,0,1,0},{0,0,0,1}};
+C2 = coneFromVData matrix {{1,2,0,0},{2,1,0,0},{0,0,1,0},{0,0,0,1}};
 assert(C1 == C2)
 F1 = normalFan hypercube 1;
 F2 = normalFan hypercube 2;
@@ -289,10 +289,10 @@ assert(P == Q)
 -- Test 42
 -- Checking affineImage for cones
 TEST ///
-C = coneFromRays matrix {{1,1,2},{1,2,1},{2,1,1}};
+C = coneFromVData matrix {{1,1,2},{1,2,1},{2,1,1}};
 A = matrix {{1,-1,0},{0,1,-1},{-1,0,1}};
 C = affineImage(A,C);
-C1 = coneFromRays matrix {{0,-1,1},{-1,1,0},{1,0,-1}};
+C1 = coneFromVData matrix {{0,-1,1},{-1,1,0},{1,0,-1}};
 assert(C == C1)
 ///
 
@@ -316,10 +316,10 @@ assert(P == Q)
 -- Test 44
 -- Checking affinePreimage for cones
 TEST ///
-C = coneFromRays matrix {{1,1,2},{1,2,1},{2,1,1}};
+C = coneFromVData matrix {{1,1,2},{1,2,1},{2,1,1}};
 A = matrix {{1,-1,0},{0,1,-1},{-1,0,0}};
 C = affinePreimage(A,C);
-C1 = coneFromRays matrix {{-2,-1,-1},{-3,-3,-2},{-4,-4,-4}};
+C1 = coneFromVData matrix {{-2,-1,-1},{-3,-3,-2},{-4,-4,-4}};
 assert(C == C1)
 ///
 
@@ -444,8 +444,8 @@ F1 = convexHull matrix {{1},{1},{1}};
 F2 = convexHull matrix {{-1},{-1},{-1}};
 assert(F1 == maxFace(w,P))
 assert(F2 == minFace(w,P))
-C = coneFromRays matrix {{2,-1,1},{-1,1,1},{0,-1,1}};
-C1 = coneFromRays matrix {{-1,2},{1,-1},{-1,0}};
+C = coneFromVData matrix {{2,-1,1},{-1,1,1},{0,-1,1}};
+C1 = coneFromVData matrix {{-1,2},{1,-1},{-1,0}};
 assert(C1 == minFace(w,C))
 ///
 
@@ -496,14 +496,14 @@ assert(volume P == 4/3)
 -- Test 61
 -- Checking incompCones
 TEST ///
-L = {coneFromRays matrix{{1,0},{1,1}},coneFromRays matrix{{1,0},{0,-1}},coneFromRays matrix{{-1,0},{0,1}},coneFromRays matrix{{1,1},{0,1}},coneFromRays matrix {{1,2},{2,1}}};
+L = {coneFromVData matrix{{1,0},{1,1}},coneFromVData matrix{{1,0},{0,-1}},coneFromVData matrix{{-1,0},{0,1}},coneFromVData matrix{{1,1},{0,1}},coneFromVData matrix {{1,2},{2,1}}};
 assert(set incompCones L === set {(L#0,L#4),(L#3,L#4)})
 L = L_{0..3}|{hirzebruch 3};
 assert(incompCones L == {(L#0,L#4),(L#2,L#4),(L#3,L#4)})
-desired = {(L#2,coneFromRays matrix {{0,-1},{1,3}}),(L#2,coneFromRays matrix {{0,-1},{-1,3}})};
+desired = {(L#2,coneFromVData matrix {{0,-1},{1,3}}),(L#2,coneFromVData matrix {{0,-1},{-1,3}})};
 computed = incompCones(L#2,L#4);
 assert(sort computed == sort desired)
-L = {coneFromRays matrix {{-1,0},{0,1}},coneFromRays matrix {{-1,0},{0,-1}},coneFromRays matrix {{0,-1},{-1,3}},coneFromRays matrix {{0,-1},{1,3}}};
+L = {coneFromVData matrix {{-1,0},{0,1}},coneFromVData matrix {{-1,0},{0,-1}},coneFromVData matrix {{0,-1},{-1,3}},coneFromVData matrix {{0,-1},{1,3}}};
 L = {(L#0,L#2),(L#0,L#3),(L#1,L#2)};
 L1 = incompCones(normalFan hypercube 2,hirzebruch 3);
 L = apply(L, l-> set {rays l#0, rays l#1});
@@ -592,7 +592,7 @@ assert (numColumns vertices p == 92)
 -- One polyhedron with tail cone
 -- Currently fails
 TEST ///
-nef = coneFromRays matrix {{1, 1, 1, 1, 2, 1, 2, 2, 2, 2}, {0, 1, 0, 0, 1, 0, 1, 1, 0, 1}, {0, 0, 1, 0, 1, 0, 1, 0, 1, 1}, {0, 0, 0, 1, 1, 0, 0, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 1, 1, 1, 1}}
+nef = coneFromVData matrix {{1, 1, 1, 1, 2, 1, 2, 2, 2, 2}, {0, 1, 0, 0, 1, 0, 1, 1, 0, 1}, {0, 0, 1, 0, 1, 0, 1, 0, 1, 1}, {0, 0, 0, 1, 1, 0, 0, 1, 1, 1}, {0, 0, 0, 0, 0, 1, 1, 1, 1, 1}}
 p = convexHull transpose matrix {{1,0,0,0,0}}
 p = p+nef
 assert(numColumns rays p == 10)

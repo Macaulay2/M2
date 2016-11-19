@@ -71,7 +71,7 @@ sub hilbert_basis_test_inner{
    print "Desired ok.\n";
    $result .= ";\n";
    $result .= "desiredHB = sort desiredHB;\n";
-   $result .= "C = coneFromRays(raysC)\n";
+   $result .= "C = coneFromVData(raysC)\n";
    $result .= "computedHB = sort matrix {hilbertBasis C};\n";
    $result .= "assert(desiredHB == computedHB);\n";
 }

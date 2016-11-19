@@ -3,9 +3,10 @@ export {
    "PolyhedralObject", 
 -- Cone object with associated methods:
    "Cone", 
-   "coneFromRays", 
+   "coneFromVData",
+   "coneFromRays" => "coneFromVData", 
    "coneFromHData",
-   "coneFromInequalities => coneFromHData",
+   "coneFromInequalities" => "coneFromHData",
  
 -- Polyhedron object with associated methods:
    "Polyhedron", 
