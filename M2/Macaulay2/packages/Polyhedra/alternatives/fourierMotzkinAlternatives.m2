@@ -51,60 +51,62 @@ writeMatrixToLrsInputFile(File, Matrix) := (F, A) -> (
 
 
 preMatrixFromStringList = method()
-preMatrixFromStringList List := (L)->(
-   L = apply(L,l -> select(separateRegexp("[[:space:]]", l),m-> m=!=""));
-   L = apply(L,l -> apply(l,e->replace("E\\+?","e",e)));
-   L = apply(L,l -> apply(l,e->value(e)));
-   L = apply(L,l -> apply(l, e -> lift(promote(e, RR), QQ)))
+preMatrixFromStringList(List, List) := (L, indices)->(
+   apply(indices, 
+      i -> (
+         line := L#i;
+         line = select(separateRegexp("[[:space:]]", line),m-> m=!="");
+         -- line = apply(line, e-> value replace("E\\+?","e",e))
+         -- line = primitive toZZ apply(line, e-> lift(promote(value replace("E\\+?","e",e),RR), QQ))
+         line = primitive toZZ apply(line, e-> promote(value replace("E\\+?","e",e), QQ))
+      )
+   )
 )
 
 
-sanitizeFMOutput = method()
-sanitizeFMOutput String := filename -> (
-   L := lines get filename;
-   if L#0 === "" then L = drop(L,1);
-   L = drop(L,1);
-   while(match("Input linearity", L#0)) do L = drop(L,1);
-   i := 0;
-   while(not match("end", L#i)) do i = i+1;
-   L = L_(toList(0..i))
+getSaneOutputPart = method()
+getSaneOutputPart List := L -> (
+   start := 0;
+   if L#0 === "" then start = start + 1;
+   start = start + 1;
+   while(match("Input linearity", L#start)) do start = start + 1;
+   end := start;
+   while(not match("end", L#end)) do end = end+1;
+   (start, end)
 )
 
 
 -- Method for parsing the output files of lcdd and lrs.
 readFMOutput = method()
 readFMOutput String := (filename) -> (
-   L := sanitizeFMOutput filename;
+   L := lines get filename;
+   (start, end) := getSaneOutputPart L;
    if debugLevel > 4 then << "output: " << L << endl << "end lrs output" << endl;
-   hasLineality := match("linearity",L#1);
+   hasLineality := match("linearity",L#(start+1));
    local lin;
    local nrows;
    local ncols;
    local linComp;
-   local preMat;
    if hasLineality then (
-      lin = apply(drop(select(separateRegexp("[[:space:]]", L#1),m-> m=!=""),2), l-> (value l)-1);    
-      preMat = L_{4 .. #L-2};
-      nrows = (#L-2) - 4;
-      ncols = L#3;
-      linComp = set (0..nrows) - lin;
+      lin = apply(drop(select(separateRegexp("[[:space:]]", L#(start+1)),m-> m=!=""),2), l-> (value l)-1 + start+4);    
+      nrows = (end-start) - 4;
+      ncols = L#(start+3);
+      linComp = set ((start+4)..(end-1)) - lin;
       linComp = elements linComp;
    ) else (
-      preMat = L_{3 .. #L-2};
       lin = {};
-      nrows = (#L-2) - 3;
-      ncols = L#2;
-      linComp = toList (0..nrows);
+      nrows = (end-start) - 3;
+      ncols = L#(start+2);
+      linComp = toList ((start+3)..(end-1));
    );
    ncols = select(separateRegexp("[[:space:]]", ncols),m-> m=!="");
    ncols = value(ncols#1);
-   local preMat;
-   preRays := preMatrixFromStringList(preMat_linComp);
-   preRays = select(preRays, pr -> pr#0 == 0);
-   preRays = apply(preRays, pr -> drop(pr, 1));
+   preRays := preMatrixFromStringList(L, linComp);
+   preRaysIndices := select(#preRays, pr -> preRays#pr#0 == 0);
+   preRays = apply(preRaysIndices, pr -> drop(preRays#pr, 1));
    rays := if #preRays == 0 then map(ZZ^0,ZZ^(ncols-1),0) else matrix preRays;
    lineality := if #lin == 0 then map(ZZ^0,ZZ^(ncols-1),0) else (
-      matrix apply(preMatrixFromStringList(preMat_lin), pr -> drop(pr, 1))
+      matrix apply(preMatrixFromStringList(L, lin), pr -> drop(pr, 1))
    );
    (sort transpose rays, sort transpose lineality)
 )
@@ -121,7 +123,7 @@ runFMAlternativeOnInput(String, List) := (command, inputMatrices) -> (
    close F;
    execstr := command | " " |rootPath | filename | ".ine " | rootPath | filename | ".ext > " | rootPath | filename |".txt 2>&1";
    if run execstr =!= 0 then error( "-- Error with lrs, for details see " | rootPath | filename | ".txt.");
-   apply(readFMOutput (filename | ".ext"), b-> if b!=0 then transpose matrix apply(entries transpose b, e-> primitive toZZ e) else b)
+   readFMOutput (filename | ".ext")
 )
 
 
