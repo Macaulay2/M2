@@ -118,3 +118,7 @@ isWellDefined Polyhedron := P -> getProperty(P, isWellDefined)
 
 
 nVertices Polyhedron := P -> getProperty(P, nVertices)
+
+cone (Polyhedron) := P->(
+   getProperty(P,underlyingCone)
+)

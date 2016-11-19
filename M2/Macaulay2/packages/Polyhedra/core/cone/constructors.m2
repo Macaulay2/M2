@@ -14,6 +14,7 @@ cone HashTable := inputProperties -> (
    constructTypeFromHash(Cone, resultHash)
 )
 
+
 sanitizeConeInput = method()
 sanitizeConeInput HashTable := given -> (
    rayProperties := {inputRays, inputLinealityGenerators, rays, computedLinealityBasis};
