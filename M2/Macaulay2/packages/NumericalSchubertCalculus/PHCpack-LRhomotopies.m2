@@ -2,7 +2,8 @@
 -- Note that this package needs version 1.8 of PHCpack.m2.
 
 export{"LRrule", "LRtriple", "luckySeed", "higherWorkingPrecision", 
-       "parseTriplet", "wrapTriplet", "LRcheater"}
+       "parseTriplet", "wrapTriplet", "LRcheater",
+       "PieriRootCount", "PieriHomotopies"}
 
 debug needsPackage "PHCpack"
 
@@ -215,6 +216,68 @@ extractSolutionPlanes := (dim, data) -> (
   return result
 );
 
+extractPieriSolutionPlanes := (dim, data) -> (
+--
+-- DESCRIPTTION :
+--   Given a list of lines in data.
+--   Searches for the line which contains the banner "SOLUTION PLANES"
+--   and then returns the matrix of as many rows as the value
+--   of dim, stores in the lines of data following the banner.
+--   The reading stops when there is a blank line instead of
+--   the first line with coefficient for another solution plane.
+--
+  result := {};
+  for k from 0 to #data-1 do
+  (
+    solplane := select("SOLUTION PLANES", data#k);
+    if #solplane > 0 then
+    (
+      subdata := extractSubList(k, dim, data);
+      result = append(result, makeComplexMatrix(dim, subdata));
+      current := k+dim+1;
+      while current+dim < #data-1 do
+      (   
+        subdata = extractSubList(current, dim, data);
+        if #subdata_0 == 0 then return result;
+        result = append(result, makeComplexMatrix(dim, subdata));
+        current = current + dim + 1;
+      )
+    )
+  );
+  return result
+);
+
+extractPieriInputPlanes := (dim, data) -> (
+--
+-- DESCRIPTTION :
+--   Given a list of lines in data.
+--   Searches for the line which contains the banner "input planes"
+--   and then returns the matrix of as many rows as the value
+--   of dim, stores in the lines of data following the banner.
+--   The reading stops when there is a blank line instead of
+--   the first line with coefficient for another input plane.
+--
+  result := {};
+  for k from 0 to #data-1 do
+  (
+    solplane := select("input planes", data#k);
+    if #solplane > 0 then
+    (
+      subdata := extractSubList(k, dim, data);
+      result = append(result, makeComplexMatrix(dim, subdata));
+      current := k+dim+1;
+      while current+dim < #data-1 do
+      (   
+        subdata = extractSubList(current, dim, data);
+        if #subdata_0 == 0 then return result;
+        result = append(result, makeComplexMatrix(dim, subdata));
+        current = current + dim + 1;
+      )
+    )
+  );
+  return result
+);
+
 extractFixedFlags := (dim, nbr, data) -> (
 --
 -- DESCRIPTION :
@@ -324,11 +387,26 @@ lastLine(String) := (name) -> (
 --
 -- DESCRIPTION :
 --   Returns a string with the contents of the last line
---   ond file with the given name.
+--   on the file with the given name.
 --
    s := get name;
    L := lines(s);
    n := #L-1;
+   result := L_n;
+   result
+);
+
+tailLine = method()
+tailLine(String, ZZ) := (name, k) -> (
+--
+-- DESCRIPTION :
+--   Returns a string with the contents of the line
+--   counting from the last line, counting k lines back,
+--   on the file with the given name.
+--
+   s := get name;
+   L := lines(s);
+   n := #L-1-k;
    result := L_n;
    result
 );
@@ -628,5 +706,127 @@ LRcheater(ZZ,Matrix,String) := (n,m,w) -> (
    fp := SchubertSystemFromFile(PHCoutputCheater);
    -- s := get PHCsolutionsCheater;
    result := (fp_0,fp_1,fp_2);
+   result
+);
+
+PieriRootCount = method(TypicalValue => List,
+  Options => { Verbose => false });
+PieriRootCount(ZZ, ZZ, ZZ) := o -> (m, p, q) -> (
+--
+-- DESCRIPTION :
+--   Returns the number of curves of the degree q which produce p-planes 
+--   which meet m*p + q*(m+p) generic m-planes in a space of dimension m+p.
+--
+-- ON ENTRY :
+--   m         the dimension of the input planes;
+--   p         the dimension of the output planes,
+--             the ambient dimension is m+p;
+--   q         the degree of the output planes.
+
+-- OPTION :
+--   Verbose   if true, then additional output is written to screen,
+--             if false, then the method remains silent.
+--
+-- ON RETURN :
+--   r         the number of solutions of a generic instance of
+--             degree q curves producing p-planes meeting m*p + q*(m+p)
+--             given m-planes at generic interpolation points.
+--
+   versionPHC := versionNumber(, Verbose=>o.Verbose);
+   result := 0;
+   if o.Verbose then
+      stdio << "Pieri root count for m = " << m 
+            << ", p = " << p << ", and q = " << q << ".\n";
+   if #versionPHC#0 > 0 then
+   (
+      choices := toString(3);
+      choices = concatenate(choices, "\n");
+      choices = concatenate(choices, toString(p), "\n"); -- dim output planes
+      choices = concatenate(choices, toString(m), "\n"); -- dim input planes
+      choices = concatenate(choices, toString(q), "\n"); -- degree output
+      choices = concatenate(choices, "3", "\n"); -- mixed bottom/top poset
+      choices = concatenate(choices, "n", "\n"); -- no Pieri homotopies
+      if o.Verbose then
+         stdio << "choices given to phc -e when prompted :\n"
+               << choices << endl;
+      PHCinputFile := temporaryFileName() | "PHCinput";
+      PHCoutputFile := temporaryFileName() | "PHCoutput";
+      if o.Verbose then
+         stdio << endl << "writing choices to file " << PHCinputFile << endl;
+      dataToFile(choices, PHCinputFile);
+      if o.Verbose then
+         stdio << "running phc -e, writing output to "
+               << PHCoutputFile << endl;
+      run("phc -e < " | PHCinputFile | " > " | PHCoutputFile);
+      outcome := tailLine(PHCoutputFile, 2);
+      if o.Verbose then
+         stdio << "the relevant line on the output file :\n"
+               << outcome << endl;
+      nbrs := separate(":", outcome);
+      result = value nbrs_1
+   );
+   result
+);
+
+PieriHomotopies = method(TypicalValue => List,
+  Options => { Verbose => false });
+PieriHomotopies(ZZ, ZZ) := o -> (m, p) -> (
+--
+-- DESCRIPTION :
+--   Returns the p-planes which meet m*p generic m-planes 
+--   in a space of dimension m+p.
+--
+-- ON ENTRY :
+--   m         the dimension of the input planes;
+--   p         the dimension of the output planes,
+--             the ambient dimension is m+p.
+
+-- OPTION 
+--   Verbose   if true, then additional output is written to screen,
+--             if false, then the method remains silent.
+--
+-- ON RETURN :
+--   t         tuple with the input m-planes and the output p-planes.
+--
+   versionPHC := versionNumber(, Verbose=>o.Verbose);
+   result := 0;
+   if o.Verbose then
+      stdio << "Pieri homotopies for m = " << m << " and p = " << p << ".\n";
+   if #versionPHC#0 > 0 then
+   (
+      PHCinputFile := temporaryFileName() | "PHCinput";
+      PHCsessionFile := temporaryFileName() | "PHCsession";
+      PHCoutputFile := temporaryFileName() | "PHCoutput";
+      choices := toString(2); -- for q = 0
+      choices = concatenate(choices, "\n");
+      choices = concatenate(choices, toString(p), "\n"); -- dim output planes
+      choices = concatenate(choices, toString(m), "\n"); -- dim input planes
+      choices = concatenate(choices, "3", "\n"); -- mixed bottom/top poset
+      choices = concatenate(choices, "y", "\n"); -- yes to Pieri homotopies
+      choices = concatenate(choices, PHCoutputFile, "\n"); -- output file
+      choices = concatenate(choices, toString(m*p), "\n"); -- default
+      choices = concatenate(choices, "n", "\n"); -- no homotopies to file
+      choices = concatenate(choices, "0", "\n"); -- default test
+      choices = concatenate(choices, "0", "\n"); -- default tolerances
+      choices = concatenate(choices, "0", "\n"); -- no intermediate output
+      if o.Verbose then
+         stdio << "choices given to phc -e when prompted :\n"
+               << choices << endl;
+      if o.Verbose then
+         stdio << endl << "writing choices to file " << PHCinputFile << endl;
+      dataToFile(choices, PHCinputFile);
+      if o.Verbose then
+      (
+         stdio << "running phc -e, writing output of session to "
+               << PHCsessionFile << endl;
+         stdio << "running phc -e, writing output of Pieri homotopies to "
+               << PHCoutputFile << endl
+      );
+      run("phc -e < " | PHCinputFile | " > " | PHCsessionFile);
+      soldata := get PHCoutputFile;
+      linesol := lines soldata;
+      result = (extractPieriInputPlanes(m+p, linesol),
+                extractPieriSolutionPlanes(m+p, linesol))
+   );
    result
 );
