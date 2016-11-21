@@ -39,7 +39,9 @@ document {
 	 TO LRrule,
 	 TO LRtriple,
 	 TO parseTriplet,
-	 TO LRcheater
+	 TO LRcheater,
+         TO PieriRootCount,
+         TO PieriHomotopies
 	 },
      "Note that ",TO LRcheater," is similar to ", TO changeFlags,
      HR{},
