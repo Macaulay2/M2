@@ -190,10 +190,10 @@ doc ///
       The parseTriplet allows to process the output of LRtriple.
     Example
       (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
-      (R, pols, sols, fixed, moved, solplanes) = parseTriplet(f, p, s);
-      vars(R)
-      peek sols
-      peek solplanes
+     -- (R, pols, sols, fixed, moved, solplanes) = parseTriplet(f, p, s);
+     -- vars(R)
+     -- peek sols
+     -- peek solplanes
 ///;
 
 doc ///
@@ -220,8 +220,6 @@ doc ///
       the flag, the polynomial system and its solutions
       are wrapped into one string.
 ///;
-
--- end; -- terminate reading because LRcheater does not work yet
 
 doc ///
   Key
@@ -264,3 +262,68 @@ doc ///
       --stdio << "solutions :\n" << sols;
 ///;
 
+doc ///
+  Key
+    PieriRootCount
+    (PieriRootCount,ZZ,ZZ,ZZ)
+  Headline
+    the number of solutions to a generic Pieri problem
+  Usage
+    r = PieriRootCount(m,p,q)
+  Inputs
+    m:ZZ
+      the dimension of the input planes
+    p:ZZ
+      the dimension of the output planes
+    q:ZZ
+      the degree of the solution curves producing p-planes
+  Outputs
+    r:ZZ
+      the number of curves of the degree q which produce p-planes
+      that meet m*p + q*(m+p) generic m-planes at interpolation points
+  Description
+    Text
+      The example below computes the number of linear curves
+      which produce 2-planes that meet 2*3 + 1*(2 + 3) = eleven
+      generic 3-planes at some eleven distinct interpolation points.
+    Example
+      r := PieriRootCount(3,2,1);
+      print r
+///;
+
+doc ///
+  Key
+    PieriHomotopies
+    (PieriHomotopies,ZZ,ZZ)
+  Headline
+    runs the Pieri homotopies to solve a general hypersurface problem
+  Usage
+    (inplanes, outplanes) = PieriHomotopies(m,p)
+  Inputs
+    m:ZZ
+      the dimension of the input planes
+    p:ZZ
+      the dimension of the output planes
+  Outputs
+    t:List
+      list of lists, the first list contains the input m-planes,
+      generated at random; the second list holds the output p-planes,
+      p-planes, which meet the input m-planes
+  Description
+    Text
+      The example below computes the two lines that meet four given
+      lines in 3-spaces.
+
+      To verify the first intersection condition,
+      we concatenate the first input plane with the first output plane.
+      The determinant of the concatenated matrix should have real and
+      imaginary parts of the same magnitude as the machine precision.
+    Example
+      (ipt, otp) := PieriHomotopies(2,2);
+      print ipt
+      print otp
+      in0 = ipt_0
+      out0 = otp_0
+      m = in0|out0
+      det m
+///;
