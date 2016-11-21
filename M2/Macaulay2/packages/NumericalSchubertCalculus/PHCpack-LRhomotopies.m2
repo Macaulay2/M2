@@ -577,6 +577,7 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    d = concatenate(d,"0\n");  -- no intermediate output written to file
    d = concatenate(d,"y\n");  -- use an efficient problem formulation
    d = concatenate(d,"y\n");  -- square the overdetermined homotopies
+   d = concatenate(d,"0\n");  -- no multitasking
    d = concatenate(d,"0\n");  -- do not change default continuation parameters
    d = concatenate(d,"0\n");  -- no intermediate output during continuation
    stdio << "the input data for phc -e : " << endl <<  d;
@@ -709,7 +710,7 @@ LRcheater(ZZ,Matrix,String) := (n,m,w) -> (
    result
 );
 
-PieriRootCount = method(TypicalValue => List,
+PieriRootCount = method(TypicalValue => ZZ,
   Options => { Verbose => false });
 PieriRootCount(ZZ, ZZ, ZZ) := o -> (m, p, q) -> (
 --
