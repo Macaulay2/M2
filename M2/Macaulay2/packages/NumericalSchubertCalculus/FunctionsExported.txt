@@ -6,6 +6,8 @@
 "randomSchubertProblemInstance"
 "setVerboseLevel", 
 "solveSchubertProblem"
+"partition2bracket",
+"bracket2partition",
 
 	==== Not Done Yet ===
 // NumericalSchubertCalculus.m2 //
@@ -18,8 +20,6 @@
 "skewSchubertVariety",
 "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
 "solutionsToAffineCoords", --Temporary! User shouldn't use this function
-"partition2bracket",
-"bracket2partition",
 
 
 // LR-ParameterHomotopy.m2 //

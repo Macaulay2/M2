@@ -419,6 +419,52 @@ doc ///
    SeeAlso
 ///
 
+doc ///
+   Key
+      changeFlags 
+      (changeFlags,List,Sequence)
+   Headline
+      Parameter homotopies to move solutions from one instance to another
+   Usage
+      changeFlags(Solns,conds'A'B)
+   Inputs
+      Solns:List
+         solutions of a problem written as nxk matrices
+      conds'F'G:Sequence
+         a triplet (C,F,G) where C is a list of m Schubert conditions,
+	 F is a list of m flags imposing an instance for which S are solutions to,
+	 G is a list of m flags imposing the instance that we want to solve.
+   Outputs
+      :List
+         solutions of the problem with respect to flags G.
+   Description
+    Text
+       If $S$ is a set of solutions to a Schubert problem $l_1,\ldots,l_m$
+       with respect to a set of flags $F_1,\ldots, F_m$, uses parameter homotopies
+       to move $S$ to a solution set $S'$ for the same Schubert problem, but with
+       respect to another set of flags $G_1,\ldots, G_m$
+    Example
+       -- Schubert problem (2,1)^3 in Gr(3,6)--
+       k=3; n=6;
+       l1={2,1}; 
+       l2={2,1};
+       l3={2,1};
+       ---- Generate flags F: standard flag, oposite flag, and one random ----
+       F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
+       ---- Generate a random set of flags G ----
+       G = randomSchubertProblemInstance({l1,l2,l3},k,n)
+       -- We solve with respect to F
+       S = solveSchubertProblem(F,k,n)
+       FlagsF = F/last;
+       FlagsG = G/last;
+       -- and transform the solutions to get solutions with respect to G --
+       S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
+       assert all(S', s-> checkIncidenceSolution(s,G))
+   SeeAlso
+      randomSchubertProblemInstance
+      solveSchubertProblem
+      checkIncidenceSolution
+///
 -------------------
 -- Documentation Pieri Homotopies
 {*
