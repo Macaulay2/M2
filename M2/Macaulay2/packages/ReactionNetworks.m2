@@ -43,10 +43,12 @@ export {"reactionNetwork",
     "injectivityTest", 
     "InitialValues",
     "ReactionRates",
+    "ConcentrationRates",
     "specializeReactionRates", 
     "specializeInitialValues", 
     "createReactionRates", 
     "createInitialValues",
+    "createConcentrationRates",
     "stoichiometricMatrix",
     "reactionMatrix",
     "reactantMatrix" --, "netComplex", "networkToHRF", "kk"
@@ -94,8 +96,8 @@ reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
     Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, 
-	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null, ReactionRates => null, 
-	InitialValues => null};
+	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null, 
+	ReactionRates => null, InitialValues => null, ConcentrationRates => null};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
@@ -130,30 +132,35 @@ createInitialValues ReactionNetwork := Rn -> (
     Rn.InitialValues
     )
 
+createConcentrationRates = method()
+createConcentrationRates ReactionNetwork := Rn -> (
+    xx := symbol xx;
+    P := apply(Rn.Species,a->(a,0));
+    Rn.ConcentrationRates = apply(P,i->xx_(first i));
+    Rn.ConcentrationRates
+    )
+
 -- todo: do we need to duplicate code in first two methods?
 createRing = method()
 createRing ReactionNetwork := Rn -> createRing (Rn, QQ);
 createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     createInitialValues Rn;
     createReactionRates Rn;
-    P := apply(Rn.Species,a->(a,0));
-    K := FF[Rn.ReactionRates, Rn.InitialValues];
-    xx := symbol xx;
-    RING := K[apply(P,i->xx_(first i))];
-    Rn.ReactionRing = RING;
+    createConcentrationRates Rn;
+    R := FF[Rn.ConcentrationRates, Rn.InitialValues, Rn.ReactionRates];
+    Rn.ReactionRing = R;
     Rn.ReactionRing
     )
 createRing(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
     createInitialValues Rn;
     createReactionRates Rn;
-    P := apply(Rn.Species,a->(a,0));
-    K := FF[Rn.ReactionRates, Rn.InitialValues];
-    xx := symbol xx;
-    RING := K[apply(P,i->xx_(first i))];
-    Rn.ReactionRing = RING;
+    createConcentrationRates Rn;
+    R := FF[Rn.ConcentrationRates, Rn.InitialValues, Rn.ReactionRates];
+    Rn.ReactionRing = R;
     Rn.ReactionRing
     )
 
+--needs work
 specializeInitialValues = method()
 specializeInitialValues(ReactionNetwork, Ring, List) := (Rn, FF, L) -> (
     createInitialValues Rn;
@@ -175,8 +182,10 @@ restart
 needsPackage "ReactionNetworks"
 N = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
 R = createRing N
-specializeInitialValues(N, QQ, {1, 2, 3, 4})
+--specializeInitialValues(N, QQ, {1, 2, 3, 4})
 N.InitialValues
+N.ConcentrationRates
+N.ReactionRates
 steadyStateEquations N
 conservationEquations N
 ///
@@ -357,15 +366,79 @@ assert(stoichSubspaceKer CRN ==
 ///
 
 concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
-    
-termInp = (a,inp,out,N,R) -> if member(a,inp/first) then (     
+
+--I think this is part of the code that is a problem    
+termInp = (a,inp,out,N,R) -> if member(a,inp/first) then (
+    xx := symbol xx;     
     p := position(inp/first,x->x==a);
-    - last inp#p * product(inp,b->(concentration(first b,N,R))^(last b)) 
+    - last inp#p * product(inp,b->(xx_(first b,N,R))^(last b)) 
     ) else 0
-termOut = (a,inp,out,N,R) -> if member(a,out/first) then (     
+termOut = (a,inp,out,N,R) -> if member(a,out/first) then ( 
+    xx := symbol xx;     
     p := position(out/first,x->x==a);
-    last out#p * product(inp,b->(concentration(first b,N,R))^(last b)) 
+    last out#p * product(inp,b->(xx_(first b,N,R))^(last b)) 
     ) else 0
+
+
+--maybe useful to fix steadyStateEquations
+-- W = for i from 0 to length R-1 list positions(first first R#i, (a,b) -> b=!=0)
+-- Z=for i from 0 to #R-1 list (R#i)#1
+-- X=for i from 0 to #W-1 list apply(flatten W#i, w-> xx#w)
+-- E=for i from 0 to #R-1 list (for j from 0 to #W#i-1 list (last (first first R#i)#((flatten W#i)#j)))
+-- P = for i from 0 to #R-1 list product(X#i, E#i, (x,y) -> x^y)
+-- Y=for i from 0 to #R-1 list Z#i*P#i
+-- M = transpose matrix{Y}
+-- S = sub(stoichiometricMatrix N, N.ReactionRing)
+-- steadyStateEquations = S*M
+--R := apply(edges N.ReactionGraph, e->(
+--	    (i,j) := toSequence e;
+--	    (
+--		apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
+--	    	apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c)),
+--		kk#(position(edges N.ReactionGraph,e'->e'==e)),0  --the last coordinate of 0 is not necessary
+--		)  
+--	    ));
+--    RING := N.ReactionRing;
+
+steadyStateEquations = method()
+steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
+steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
+    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+    kk := toList(apply(0..length N.ReactionRates-1, i -> value(N.ReactionRates#i)));
+    xx := toList(apply(0..length N.ConcentrationRates-1, i -> value(N.ConcentrationRates#i)));
+    -- C is a list of pairs (species, input_rate)
+    -- C := apply(N.Species,a->(a,0));
+    -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => 
+    -- {(specie, coefficient), ...}, fwdrate, bckwd rate)
+    RE := apply(edges N.ReactionGraph, e->(
+	    (i,j) := toSequence e;
+	    (apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
+	     apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c)),
+	     kk#(position(edges N.ReactionGraph,e'->e'==e)))  
+	    ));
+    l := length RE-1;
+    W := for i from 0 to l list positions(first first RE#i, 
+	(a,b) -> b=!=0);
+    X := for i from 0 to length W-1 list apply(flatten W#i, w -> xx#w);
+    E := for i from 0 to l list (
+	for j from 0 to length W#i-1 list (last(first first RE#i)#((flatten W#i)#j))
+	);
+    P := for i from 0 to l list product(X#i, E#i, (x,e) -> x^e);
+    Z := for i from 0 to l list (RE#i)#1;
+    Y := for i from 0 to l list Z#i*P#i;
+    M := transpose matrix{Y};
+    S := sub(stoichiometricMatrix N, N.ReactionRing);
+    S*M
+    )
+
+TEST ///
+restart
+needs "ReactionNetworks.m2"
+N = reactionNetwork "A <--> 2B, A+C <--> D, D --> B+E, B+E --> A+C"
+createRing N
+steadyStateEquations N
+///
+
 
 -- helper function for laplacian: partitions ReactionGraph edges according to those which dont contain a null complex
 sepEdges = Rn -> (
@@ -376,6 +449,7 @@ sepEdges = Rn -> (
     seps
 	)
 
+--laplacian needs to be redone
 -- interface can be greatly improved, but this seems to work, and also handles CRNs with NullSymbols
 laplacian = (Rn, FF) -> (
     -- step 1) build parameter ring
@@ -417,40 +491,10 @@ laplacian = (Rn, FF) -> (
     mons*L*Y
     )
 
-steadyStateEquations = method()
-steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
-steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
-    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
-    G := gens coefficientRing N.ReactionRing;
-    kk := toList apply(0..(length N.ReactionRates-1), i -> G#i);
-    -- C is a list of pairs (species, input_rate)
-    C := apply(N.Species,a->(a,0));
-    -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
-    R := apply(edges N.ReactionGraph, e->(
-	    (i,j) := toSequence e;
-	    (
-		apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
-	    	apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c))
-		,
-		kk#(position(edges N.ReactionGraph,e'->e'==e))
-		,
-		0
-		)  
-	    ));
-    xx := symbol xx;
-    RING := N.ReactionRing;
-    xx = gens N.ReactionRing;
-    F := for i in C list (
-	(a,af) := i;
-	sum(R,reaction->(
-		(inp'out,k1,k2) := reaction;
-		r1 := first inp'out;
-		r2 := last inp'out;
-		k1 * (termInp(a,r1,r2,N,RING) + termOut(a,r1,r2,N,RING)) +
-		k2 * (termInp(a,r2,r1,N,RING) + termOut(a,r2,r1,N,RING))
-		))  
-	)
-    )
+--why are initial values showing up here????? 
+--cc_{species} show up in place of xx_{species}, have not been able to resolve why
+
+
 steadyStateEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     G := gens coefficientRing N.ReactionRing;
@@ -504,7 +548,7 @@ netList F
 conservationEquations = method()
 conservationEquations ReactionNetwork := N -> (
         if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
-	conservationEquations(N, coefficientRing coefficientRing N.ReactionRing)
+	conservationEquations(N, coefficientRing N.ReactionRing)
 	)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     if N.ReactionRing === null then createRing(N, FF);
@@ -514,9 +558,8 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
  --   cc := toList apply(
  --	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1), 
  --	i -> G#i);
-    xx := symbol xx;
     RING := N.ReactionRing;
-    xx = gens RING;
+    xx := toList(apply(0..length N.ConcentrationRates-1, i -> value(N.ConcentrationRates#i)));
     M := matrix{xx}-matrix{cc};
     St := flatten entries (M*sub(S, FF));
     St	  
