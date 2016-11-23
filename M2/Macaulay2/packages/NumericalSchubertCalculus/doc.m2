@@ -426,14 +426,14 @@ doc ///
    Headline
       Parameter homotopies to move solutions from one instance to another
    Usage
-      changeFlags(Solns,conds'A'B)
+      changeFlags(Solns,conds'F'G)
    Inputs
       Solns:List
          solutions of a problem written as nxk matrices
       conds'F'G:Sequence
          a triplet (C,F,G) where C is a list of m Schubert conditions,
-	 F is a list of m flags imposing an instance for which S are solutions to,
-	 G is a list of m flags imposing the instance that we want to solve.
+	 F is a list of m flags defining an instance with solution set S,
+	 G is a list of m flags defining the instance that we want to solve.
    Outputs
       :List
          solutions of the problem with respect to flags G.
@@ -460,11 +460,62 @@ doc ///
        -- and transform the solutions to get solutions with respect to G --
        S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
        assert all(S', s-> checkIncidenceSolution(s,G))
+   Caveat
+      There are two strategies: when "one homotopy" is set to true (default) uses straight
+      line homotopies to change flags, but assumes the initial flags are generic.
+      When "one homotopy" is set to false, it makes gradual changes in the flags by changing
+      one column at a time, and using only linear homotopies, but in this setting, it generates
+      polynomial equations using all minors of the incidence conditions (thus is not very effective).
    SeeAlso
       randomSchubertProblemInstance
       solveSchubertProblem
       checkIncidenceSolution
 ///
+
+doc ///
+   Key
+      (changeFlags,Matrix,List,Sequence)
+   Headline
+      Recursive call of change flags
+   Usage
+      changeFlags(MX,SolsF,conds'F'G)
+   Inputs
+      MX:Matrix
+         matrix of local coordinates
+      SolsF:List
+         solutions with respect to flags F
+      conds'F'G:Sequence
+         a triplet (C,F,G) where C is a list of m Schubert conditions,
+	 F is a list of m flags defining an instance with solution set S,
+	 G is a list of m flags defining an instance that we want to solve.
+   Outputs
+      :List
+         solutions of the problem C with respect to flags G.
+///
+{*
+doc ///
+   Key
+      [changeFlags, "one homotopy"]
+   Headline
+      Uses either one homotopy or gradual random changes of flags (one column at a time)
+   Usage
+      changeFlags(...,"one homotopy"=>T)
+   Inputs
+      T:Boolean
+         true for one homotopy, false for changing one column at a time
+   Description
+    Text
+      There are two strategies to change solutions with respect to one
+      set of flags to another. When this option is set to true (default),
+      uses a straight line homotopy between the two sets of flags;
+      otherwise, it makes a gradual change of flags by changing one
+      column at a time and uses only linear homotopies.
+   Caveat
+      When true, assumes that the initial flags are generic. 
+      When false, it generates polynomial equations using all minors
+      of the incidence conditions (and not the efficient way implemented later).
+///
+*}
 -------------------
 -- Documentation Pieri Homotopies
 {*
