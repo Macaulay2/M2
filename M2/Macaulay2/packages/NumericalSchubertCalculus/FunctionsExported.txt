@@ -8,11 +8,12 @@
 "solveSchubertProblem"
 "partition2bracket",
 "bracket2partition",
+"changeFlags", -- in LR-makePolynomials.m2
 
 	==== Not Done Yet ===
 // NumericalSchubertCalculus.m2 //
 
-"changeFlags", -- in LR-makePolynomials.m2
+
 "bigCellLocalCoordinates", 
 "printStatistics",
 
