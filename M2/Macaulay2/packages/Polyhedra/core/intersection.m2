@@ -56,7 +56,8 @@ intersection(Cone,Cone) := (C1,C2) -> (
 	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
 	M := halfspaces C1 || halfspaces C2;
 	N := hyperplanes C1 || hyperplanes C2;
-	intersection(M,N))
+	coneFromHData(M,N)
+)
    
    
    
