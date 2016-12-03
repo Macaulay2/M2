@@ -2292,7 +2292,7 @@ MJ = mingens J;
 FToP = fourierToProbability(R1,ring J,4,M)
 J = ideal(FToP MJ_(0,0), FToP MJ_(0,1))
 assert(J == I)
-////
+///
 
 
 
