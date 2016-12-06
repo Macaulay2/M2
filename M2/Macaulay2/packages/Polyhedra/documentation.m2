@@ -1113,8 +1113,8 @@ document {
      if we divide C into two parts, we get a fan.",
      
      EXAMPLE {
-	  " C1 = intersection {C, (matrix {{0,1,-1}}, matrix {{0}})};",
-	  " C2 = intersection {C, (matrix {{0,-1,1}}, matrix {{0}})};",
+	  " C1 = intersection {C, coneFromHData(matrix {{0,1,-1}})};",
+	  " C2 = intersection {C, coneFromHData(matrix {{0,-1,1}})};",
 	  " F = addCone({C1,C2},F)"
 	  }
      
@@ -1761,7 +1761,7 @@ document {
      EXAMPLE {
 	  " C = intersection(matrix{{1,1,-1},{-1,-1,-1}})",
 	  " isPointed C",
-	  " C = intersection{C,(matrix{{1,-1,-1}},0)}",
+	  " C = intersection{C, coneFromHData(matrix{{1,-1,-1}})}",
 	  " isPointed C"
 	  }
      
