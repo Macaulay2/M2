@@ -32,8 +32,7 @@ export {"reactionNetwork",
     "createRing", 
  --   "ParameterRing",
     "steadyStateEquations", 
-    "conservationEquations", 
-    "laplacian", 
+    "conservationEquations",  
     "FullEdges", 
     "NullEdges", 
     "glue",
@@ -51,7 +50,8 @@ export {"reactionNetwork",
     "createConcentrationRates",
     "stoichiometricMatrix",
     "reactionMatrix",
-    "reactantMatrix" --, "netComplex", "networkToHRF", "kk"
+    "reactantMatrix",
+    "negativeLaplacian" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -451,6 +451,7 @@ sepEdges = Rn -> (
 
 --laplacian needs to be redone
 -- interface can be greatly improved, but this seems to work, and also handles CRNs with NullSymbols
+{*
 laplacian = (Rn, FF) -> (
     -- step 1) build parameter ring
     n := #Rn.Complexes;
@@ -490,6 +491,7 @@ laplacian = (Rn, FF) -> (
     L = substitute(matrix L, R);
     mons*L*Y
     )
+*}
 
 --why are initial values showing up here????? 
 --cc_{species} show up in place of xx_{species}, have not been able to resolve why
@@ -640,7 +642,14 @@ isWeaklyReversible = Rn -> (
     if Q===toList{null} then true else false
     )
 
-    
+--negative laplacian
+negativeLaplacian = method()
+negativeLaplacian ReactionNetwork := Rn -> (
+    G := underlyingGraph Rn.ReactionGraph;
+    L := laplacianMatrix G;
+    -L
+    )
+         
 
 --injectivityTest = Rn ->
 
@@ -649,6 +658,7 @@ restart
 needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+negativeLaplacian N
 assert(isWeaklyReversible N == true)
 assert(isWeaklyReversible wnt() == false)
 ///
