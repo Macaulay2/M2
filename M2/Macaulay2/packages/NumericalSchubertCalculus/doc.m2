@@ -203,7 +203,7 @@ doc ///
    Headline
       uses Pieri homotopy algorithm to solve simple Schubert problems on Grassmannians
    Usage
-      S = solveSchubertProblem(P,k,n)
+      S = solveSimpleSchubert(P,k,n)
    Inputs
       P:List
          Simple Schubert problem given as a list of sequences of the 
@@ -252,7 +252,7 @@ doc ///
     	     };
 	 stdio << "Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags"<<endl;
 	 
-	 solveSchubertProblem(SchPblm, k,n)
+	 solveSimpleSchubert(SchPblm, k,n)
    Caveat
       Need to input partitions together with flags. In the future, 
       there will be an option for generating random flags and just 
@@ -343,7 +343,7 @@ doc ///
        bracket2partition(b,n)
        
        b = {2,4,6};
-       bracket2partition(b,n);
+       bracket2partition(b,n)
    SeeAlso
       partition2bracket
 ///
@@ -444,20 +444,20 @@ doc ///
        to move $S$ to a solution set $S'$ for the same Schubert problem, but with
        respect to another set of flags $G_1,\ldots, G_m$
     Example
-       -- Schubert problem (2,1)^3 in Gr(3,6)--
+       stdio<< "Schubert problem (2,1)^3 in Gr(3,6)"<<endl;
        k=3; n=6;
        l1={2,1}; 
        l2={2,1};
        l3={2,1};
-       ---- Generate flags F: standard flag, oposite flag, and one random ----
+       stdio<<"Generate flags F: standard flag, oposite flag, and one random"<<endl;
        F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
-       ---- Generate a random set of flags G ----
+       stdio<<"Generate a random set of flags G"<<endl;
        G = randomSchubertProblemInstance({l1,l2,l3},k,n)
-       -- We solve with respect to F
+       stdio<<"We solve with respect to F"<<endl;
        S = solveSchubertProblem(F,k,n)
        FlagsF = F/last;
        FlagsG = G/last;
-       -- and transform the solutions to get solutions with respect to G --
+       stdio<< "and we transform the solutions to get solutions with respect to G"<<endl;
        S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
        assert all(S', s-> checkIncidenceSolution(s,G))
    Caveat
@@ -492,6 +492,35 @@ doc ///
       :List
          solutions of the problem C with respect to flags G.
 ///
+
+doc ///
+   Key
+      checkIncidenceSolution
+      (checkIncidenceSolution,Matrix, List)
+   Headline
+      Check if a solution satisfies the incidence conditions of a Schubert problem
+   Usage
+      changeFlags(s, P)
+   Inputs
+      P:List
+         A schubert problem as a list {(l1,F1),...,(lm,Fm)}
+      s:Matrix
+         A matrix of size k x n representing a solution to the Schubert problem P
+   Outputs
+      :Boolean
+         true if s satisfies all the incidence conditions
+   Description
+    Text
+      For each pair $(l,F)$ in the Schubert problem $P$, where $l$ is a Schubert
+      condition given as a partition, and $F$ is a flag given as an $n\times n$ matrix,
+      the function verifies if the matrix $s$ satisfies the incidence conditions imposed
+      by $l$ with respect to the flag $F$, for each of the pairs in $P$, by computing
+      the corresponding minor conditions.
+   Caveat
+      This function was created for testing purposes and will be deleted later
+      as it may not be numerically stable.
+///
+
 {*
 doc ///
    Key
