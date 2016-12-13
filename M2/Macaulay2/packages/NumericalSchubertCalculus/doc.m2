@@ -1,8 +1,8 @@
 document {
      Key => NumericalSchubertCalculus,
      Headline => "Numerical Algorithms for Schubert Calculus",
-     "Tools for solving Schubert problems on Grassmannians using homotopy continuation",
-     PARA {"The package NumericalSchubertCalculus implements methods for solving Schubert problems on Grassmannians using numerical homotopy continuation."}, 
+     "Tools for solving Schubert problems on Grassmannians using numerical homotopy continuation.",
+     PARA {"The package NumericalSchubertCalculus implements the Littlewood-Richardson and Pieri homotopy algorithms."}, 
      
      HEADER3 {"General functions include:"},
      UL{
@@ -11,9 +11,7 @@ document {
 	 TO changeFlags,
 	 --(continues solutions from one instance to another),
 	 TO checkIncidenceSolution, 
-	 --(verifies that a solution satisfies the given incidence conditions),
-	 TO skewSchubertVariety
-	 --(local coordinates for a skew Schubert variety).
+	 --(verifies that a solution satisfies the given incidence conditions).
      },
      HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
      UL{
@@ -111,10 +109,10 @@ doc ///
    Inputs
       S:String
         "unit circle" entries are random unit complex numbers [default] 
-	"unitary" uses the Random Unitary Matrix from NAG4M2
+	"unitary" uses the Random Unitary Matrix from NAG4M2.
    Description
     Text
-     Determines how a random matrix for a random flag is created
+     Determines how a random matrix for a random flag is created.
 ///;
 
 doc ///
@@ -442,7 +440,7 @@ doc ///
        If $S$ is a set of solutions to a Schubert problem $l_1,\ldots,l_m$
        with respect to a set of flags $F_1,\ldots, F_m$, uses parameter homotopies
        to move $S$ to a solution set $S'$ for the same Schubert problem, but with
-       respect to another set of flags $G_1,\ldots, G_m$
+       respect to another set of flags $G_1,\ldots, G_m$.
     Example
        stdio<< "Schubert problem (2,1)^3 in Gr(3,6)"<<endl;
        k=3; n=6;
@@ -460,8 +458,11 @@ doc ///
        stdio<< "and we transform the solutions to get solutions with respect to G"<<endl;
        S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
        assert all(S', s-> checkIncidenceSolution(s,G))
+       stdio<< "We can also choose a different strategy"<<endl;
+       S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), "one homotopy"=>false)
+       assert all(S', s-> checkIncidenceSolution(s,G))
    Caveat
-      There are two strategies: when "one homotopy" is set to true (default) uses straight
+      There are two strategies: when "one homotopy" is set to true (default) it uses straight
       line homotopies to change flags, but assumes the initial flags are generic.
       When "one homotopy" is set to false, it makes gradual changes in the flags by changing
       one column at a time, and using only linear homotopies, but in this setting, it generates
@@ -471,6 +472,7 @@ doc ///
       solveSchubertProblem
       checkIncidenceSolution
 ///
+
 
 doc ///
    Key
