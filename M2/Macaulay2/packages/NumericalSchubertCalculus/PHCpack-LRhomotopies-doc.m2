@@ -26,50 +26,52 @@ doc ///
     LRrule
     (LRrule,ZZ,Matrix)
   Headline
-    calls phc -e to resolve a Schubert intersection condition
+    uses the geometric Littlewood-Richardson rule to resolve a Schubert intersection problem.
   Usage
-    s = LRrule(n,m)
+    s = LRrule(n,M)
   Inputs
     n:ZZ
-      the ambient dimension
-    m:Matrix
-      in the rows are the intersection conditions,
-      the first element of each row is the number of times
-      the intersection bracket must be taken.
+      the dimension of the ambient space of the Grassmannian $Gr(k,n)$.
+    M:Matrix
+      whose rows encode Schubert conditions.
+      Each row is a $k+1$-tuple, {m,b}, where $m$ is a nonegative integer and $b$ a bracket (see bracket2partition for details).
+      The bracket $b$ represents a Schubert condition and $m$ is its multiplicity in this Schubert intersection problem.
   Outputs
     s:String
       contains an equation, with at the left the
-      intersection condition and at the right the result.
+      product of Schubert conditions  and at the right the result as a formal sum of brackets.
   Description
     Text
-      The LRrule computes the number of solutions to
-      a Schubert intersection condition.
+      LRrule uses the geometric Littlewood-Richardson rule to compute a product in the Chow ring of the Grassmannian.  
+      This writes a product of brackets as a formal sum of brackets, which represents an intersection of Schubert varieties as a formal sum of Schubert varieties.
+      When the input matrix M is a Schubert problem, this gives the number of solutions to that Schubert problem.
     Example
-      R := ZZ;
-      n := 7;
-      m := matrix{{1, 2, 4, 6},{2, 3, 5, 7}};
-      print LRrule(n,m);
+      R = ZZ;
+      n = 7;
+      M = matrix{{3, 3, 6, 7},{2, 3, 5, 7}};
+      print LRrule(n,M);
     Text
-      The Schubert condition [2 4 6]*[3 5 7]^2 resolves to 2[1 2 3]
-      means that there are two 3-planes that satisfy the condition.
+      The output: [ 3 6 7 ]^3*[ 3 5 7 ]^2 = +10[1 2 3] means that the Schubert problem [ 3 6 7 ]^3*[ 3 5 7 ]^2 in multiplicative form
+      has 10 solution 3-planes.   That is, there are 10 3-planes that satisfy three Schubert conditions given by the bracket [3, 6, 7] and
+      two conditions given by the bracket [3, 5, 7].
     
       If the right hand side of the equation returned by LRrule
       consists of one bracket of consecutive natural numbers starting
-      at zero, then there are finitely many solutions.
+      at 1 (as above), then there are finitely many solutions.
       Otherwise, the problem may be underdetermined,
       consider the example:
     Example
       LRrule(7, matrix{{2,3,6,7},{1,3,5,7},{1,2,5,7}})
     Text
-      Littlewood-Richardson homotopies work only for fully determined
-      Schubert intersection conditions.
+      Littlewood-Richardson homotopies work only for Schubert problems, when the sum of the codimensions of the Schubert varieties 
+      equals the dimension of the Grassmannian.
 ///;
 
 doc ///
   Key
     luckySeed
   Headline
-    seed for the random number generators
+    seed for the random number generators.
   Description
     Text
       To avoid singularities during complex path following,
@@ -83,19 +85,20 @@ doc ///
   Key
     [LRtriple,luckySeed]
   Headline
-    option to set the seed of the random number generators
+    option to set the seed of the random number generators.
   Usage
     LRtriple(...,luckySeed=>ZZ)
   Description
     Text
       Use {\tt luckySeed=>12345} to set the seed to 12345.
+      This can be used to make the generation of random flas deterministic and hence reproducible.
 ///;
 
 doc ///
   Key
     higherWorkingPrecision
   Headline
-    option to raise the working precision to double double or quad double
+    option to raise the working precision to double double or quad double.
   Description
     Text
       The default working precision is double precision.
@@ -107,7 +110,7 @@ doc ///
   Key
     [LRtriple,higherWorkingPrecision]
   Headline
-    option to raise the working precision to double double or quad double
+    option to raise the working precision to double double or quad double.
   Usage
     LRtriple(...,higherWorkingPrecision=>ZZ)
   Description
@@ -121,18 +124,18 @@ doc ///
     LRtriple
     (LRtriple,ZZ,Matrix)
   Headline
-    runs the Littlewood-Richardson homotopies to solve a generic Schubert problem
+    runs the Littlewood-Richardson homotopy to solve a generic Schubert problem.
   Usage
-    LRtriple(n,m)
-    LRtriple(n,m, luckySeed=>12345)
-    LRtriple(n,m, higherWorkingPrecision=>2)
+    LRtriple(n,M)
+    LRtriple(n,M, luckySeed=>12345)
+    LRtriple(n,M, higherWorkingPrecision=>2)
   Inputs
     n:ZZ
-      the ambient dimension
-    m:Matrix
-      in the rows are the intersection conditions,
-      the first element of each row is the number of times
-      the intersection bracket must be taken.
+       the dimension of the ambient space of the Grassmannian $Gr(k,n)$.
+    M:Matrix
+      whose rows encode the Schubert condition.
+      Each row is a $k+1$-tuple, {m,b}, where $m$ is a nonegative integer and $b$ a bracket (see bracket2partition for details).
+      The bracket $b$ represents a Schubert condition and $m$ is its multiplicity in this Schubert problem.
   Outputs
     :Sequence
       first a string with the generic flags, the moved flags, 
@@ -142,7 +145,7 @@ doc ///
     Text
       LRtriple applies the Littlewood-Richardson homotopies
       to solve a generic instance of a Schubert problem defined
-      by at least three intersection conditions.
+      by at least three Schubert conditions.  The flags defining the instance are generated in the routine.
 
       Use the method parseTriplet to parse the three strings f, p, and s
       into proper Macaulay2 polynomials, solution lists, and complex matrices.
@@ -161,39 +164,39 @@ doc ///
     parseTriplet
     (parseTriplet,String,String,String)
   Headline
-    Parses a flag, system, and solutions into Macaulay2 objects.
+    Parses a flag, system, and solutions (the output from LRtriple) into Macaulay2 objects.
   Usage
     (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
   Inputs
     f:String
-      represents the fixed flag
+      represents the fixed flag.
     p:String
-      represents a polynomial system
+      represents a polynomial system.
     s:String
-      solutions to the polynomial system
+      solutions to the polynomial system.
   Outputs
     R:Ring
       a polynomial ring with complex floating-point coefficients
-      and in the variables used in the systems p
+      and in the variables used in the systems p.
     pols:List
-      list of polynomial equations in the ring R
+      list of polynomial equations in the ring R.
     sols:List
-      list of solutions of the system pols
+      list of solutions of the system pols.
     fixedFlags:List
-      list of the fixed flags, as matrices of complex numbers
+      list of the fixed flags, as matrices of complex numbers.
     movedFlag:List
-      the moved flag, the flag not listed here is the identity matrix
+      the moved flag, the flag not listed here is the identity matrix.
     solutionPlanes:List
-      list of complex matrices which store the solution planes
+      list of complex matrices which store the solution planes.
   Description
     Text
       The parseTriplet allows to process the output of LRtriple.
     Example
       (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
-     -- (R, pols, sols, fixed, moved, solplanes) = parseTriplet(f, p, s);
-     -- vars(R)
-     -- peek sols
-     -- peek solplanes
+      (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
+      vars(R)
+      peek sols
+      peek solutionPlanes
 ///;
 
 doc ///
