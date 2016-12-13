@@ -79,7 +79,7 @@ doc ///
         which is a list of Schubert conditions that are either all partitions or all brackets (see bracket2partition for details)
       k:ZZ
       n:ZZ
-         integers defining the Grassmannian Gr(k,n)
+         $k$ and $n$ define the Grassmannian $Gr(k,n)$
    Outputs
       :List
          random instance of the Schubert problem, which is a list of pairs of the form (condition,flag)
@@ -126,26 +126,24 @@ doc ///
    Inputs
       P:List
          Schubert problem given as a list of sequences of the 
-	 form (l,F) where l is a partition (a list of weakly 
-	 decreasing integers) and F is a flag (n by n matrix) 
+	 form ($l,F$) where $l$ is a partition (a list of weakly 
+	 decreasing integers) and $F$ is a flag ($n$ by $n$ matrix) 
       k:ZZ
       n:ZZ
-      	 k and n denote the Grassmannian Gr(k,n)
+      	 $k$ and $n$ denote the Grassmannian $Gr(k,n)$
       --LinearAlgebra:Boolean
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
       S:List
-         solutions of the Schubert Problem given as n by k matrices
+         solutions of the Schubert Problem given as $n$ by $k$ matrices
    Description
       Text
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
-	 by a partition $l$ (a weakly decreasing
-	 list of nonegative integers less than $n-k$) and a flag $F$ 
+	 by a condition $c$ either a partition or a bracket (see TO "partition2bracket" for details) and a flag $F$ 
 	 (given as an $n{\times} n$ matrix).
-	 A Schubert problem is a list of Schubert varieties 
-	 $(l^1, F^1), \ldots, (l^m, F^m)$ such that 
-	 $|l^1|+|l^2| + \cdots + |l^m| = k(n-k)$, where $|l^i|$ is the 
-	 sum of the entries of $l_i$.
+	 The codimention of the Schubert variety is $|C|$.
+	 A Schubert problem is a list of Schubert varieties, whose codimention
+	 add up to $k(n-k)$, which is the dimension of the Grassmannian.
          -----
 	 
 	 The function solves the Schubert problem by the Littlewood-Richardson
@@ -170,11 +168,10 @@ doc ///
 	 
 	 solveSchubertProblem(SchPblm, k,n)
    Caveat
-      Need to input partitions together with flags. In the future, 
-      there will be an option for generating random flags and just 
-      input the partitions.   Also, it will be able to take brackets.
+      The Schubert conditions are either all partitions or all brackets.
    SeeAlso
          solveSimpleSchubert
+	 partition2bracket
 ///;
 doc ///
    Key
@@ -355,14 +352,14 @@ doc ///
       setVerboseLevel n
    Inputs
       n:ZZ
-         takes values 0,1,2, or grater
+         takes values 0,1,2, or greater
    Description
     Text
        The function changes different levels of information visible on
        the screen:
        
        0 = no extra information displayed (default).
-       1 = print the progress information and time the main process
+       1 = print the progress information and time the main process.
        2 = besides the information of level 1, it also displays the checkerboard steps.
     Example
        -- The problem of 4 lines w.r.t. random flags
@@ -422,7 +419,7 @@ doc ///
       changeFlags 
       (changeFlags,List,Sequence)
    Headline
-      Parameter homotopies to move solutions from one instance to another
+      Parameter homotopies to move solutions of a Schubert problem from one instance to another
    Usage
       changeFlags(Solns,conds'F'G)
    Inputs
@@ -502,12 +499,12 @@ doc ///
    Headline
       Check if a solution satisfies the incidence conditions of a Schubert problem
    Usage
-      changeFlags(s, P)
+      checkIncidenceSolution(s, P)
    Inputs
       P:List
-         A schubert problem as a list {(l1,F1),...,(lm,Fm)}
+         A Schubert problem as a list {($l_1,F_1$),...,($l_m,F_m$)}
       s:Matrix
-         A matrix of size k x n representing a solution to the Schubert problem P
+         A matrix of size $k\times n$ representing a solution to the Schubert problem P
    Outputs
       :Boolean
          true if s satisfies all the incidence conditions
