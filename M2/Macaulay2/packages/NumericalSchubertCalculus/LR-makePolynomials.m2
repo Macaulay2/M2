@@ -192,7 +192,7 @@ makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy =
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
-changeFlags = method(Options=>{"one homotopy"=>true})
+changeFlags = method(Options=>{oneHomotopy=>true})
 changeFlags(List, Sequence) := o->(solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
    if #solutionsA == 0 then return {};
    (conditions,flagsA,flagsB) := conds'A'B; 
@@ -253,7 +253,7 @@ changeFlags(List, Sequence) := o->(solutionsA, conds'A'B)->( -- solutionsA is a 
 --        and uses only linear homotopies.
 ----------------------------------
 changeFlags(Matrix, List, Sequence) := o -> (MX, solutionsA, conds'A'B) ->
-if o#"one homotopy" then changeFlags'oneHomotopy(MX, solutionsA, conds'A'B) else ( 
+if o#oneHomotopy then changeFlags'oneHomotopy(MX, solutionsA, conds'A'B) else ( 
    -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
    solutionsS := solutionsA;

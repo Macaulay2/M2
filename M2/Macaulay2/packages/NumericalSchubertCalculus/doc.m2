@@ -93,6 +93,8 @@ doc ///
 	 randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
 	 -- the same problem but using brackets instead of partitions
 	 randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
+   Caveat
+      The output are numerical matrices that must be invertible. The code does not check for this invertibility condition.
    SeeAlso
          solveSchubertProblem
 	 partition2bracket
@@ -188,7 +190,7 @@ doc ///
       Chooses the method for glueing solutions from the top of one node (tournament game) to the leaf of the previous node.
       When true (default), uses Linear Algebra, otherwise uses Parameter Homotopies.
    Caveat
-      Parameter Homotopies usually take longer than simple Linear Algebra.  They are also unnecessasy.
+      Parameter Homotopies usually take longer than simple Linear Algebra.  They are also unnecessary.
 ///
 
 doc ///
@@ -370,9 +372,9 @@ doc ///
        setVerboseLevel 1;
        S = solveSchubertProblem(SchPblm,2,4)
        assert all(S,s->checkIncidenceSolution(s,SchPblm))
-       setVerboseLevel 2;
-       S = solveSchubertProblem(SchPblm,2,4)
-       assert all(S,s->checkIncidenceSolution(s,SchPblm))
+       --setVerboseLevel 2;
+       --S = solveSchubertProblem(SchPblm,2,4)
+       --assert all(S,s->checkIncidenceSolution(s,SchPblm))
    SeeAlso
       checkIncidenceSolution
       printStatistics
@@ -453,11 +455,11 @@ doc ///
        FlagsF = F/last;
        FlagsG = G/last;
        stdio<< "and we transform the solutions to get solutions with respect to G"<<endl;
-       S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-       assert all(S', s-> checkIncidenceSolution(s,G))
+       --time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
+       --assert all(S', s-> checkIncidenceSolution(s,G))
        stdio<< "We can also choose a different strategy"<<endl;
-       S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), "one homotopy"=>false)
-       assert all(S', s-> checkIncidenceSolution(s,G))
+       --time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), "one homotopy"=>false)
+       --assert all(S', s-> checkIncidenceSolution(s,G))
    Caveat
       There are two strategies: when "one homotopy" is set to true (default) it uses straight
       line homotopies to change flags, but assumes the initial flags are generic.
@@ -470,6 +472,26 @@ doc ///
       checkIncidenceSolution
 ///
 
+doc ///
+   Key
+      [changeFlags, oneHomotopy]
+   Headline
+      Strategy for moving solutions to a Schubert problem from one instance to another.
+   Usage
+      changeFlags(...,oneHomotopy=>T)
+   Inputs
+      T:Boolean
+        when true [default] it uses one line homotopies, 
+	otherwise it makes a gradual change in the flags.
+   Description
+    Text
+      There are two strategies: when oneHomotopy is set to true (default) it uses straight
+      line homotopies to change flags, but assumes the initial flags are generic.
+      
+      When oneHomotopy is set to false, it makes gradual changes in the flags by changing
+      one column at a time, and using only linear homotopies, but in this setting, it generates
+      polynomial equations using all minors of the incidence conditions (thus is not very effective).
+///
 
 doc ///
    Key
@@ -491,7 +513,20 @@ doc ///
       :List
          solutions of the problem C with respect to flags G.
 ///
-
+doc ///
+  Key
+    oneHomotopy
+  Headline
+    Strategy for changing flags.
+  Description
+    Text
+      There are two strategies to change flags: when oneHomotopy is set to true (default) it uses straight
+      line homotopies to change flags, but assumes the initial flags are generic.
+      
+      When oneHomotopy is set to false, it makes gradual changes in the flags by changing
+      one column at a time, and using only linear homotopies, but in this setting, it generates
+      polynomial equations using all minors of the incidence conditions (thus is not very effective).
+///;
 doc ///
    Key
       checkIncidenceSolution
