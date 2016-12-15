@@ -60,7 +60,8 @@ document {
 	 HREF{"https://arxiv.org/abs/math/0302294", "Vakil, \"A geometric Littlewood-Richardson rule\""},
 	 HREF{"https://arxiv.org/abs/alg-geom/9706004", "Huber, Sottile, Sturmfels, \"Pieri's rule for flag manifolds and Schubert polynomials\",  J. Symb. Comp., 26 (1998), 767-788."},
 	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""},
-	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "}
+	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "},
+	 HREF{" ", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\" "}
 	 },
  }
 
@@ -94,7 +95,7 @@ doc ///
 	 -- the same problem but using brackets instead of partitions
 	 randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
    Caveat
-      The output are numerical matrices that must be invertible. The code does not check for this invertibility condition.
+      The output consists of random numerical matrices that are assumed invertible. The code does not check for this invertibility condition.
    SeeAlso
          solveSchubertProblem
 	 partition2bracket
@@ -154,7 +155,8 @@ doc ///
 	 to the specializations of the geometric Littlewood-Richardson.
 
 	 This algorithm is described in the paper:
-	 Sottile,Vakil, and Verschelde, "Littlewood-Richardson homotopies"
+ 	 HREF{" ", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\" "}
+
 	 
       Example
          -- Problem (2,1)^3 = 2 in Gr(3,6)
@@ -430,7 +432,7 @@ doc ///
       conds'F'G:Sequence
          a triplet (C,F,G) where C is a list of m Schubert conditions,
 	 F is a list of m flags defining an instance with solution set S,
-	 G is a list of m flags defining the instance that we want to solve.
+	 G is a list of m flags defining the instance whose solutions we want.
    Outputs
       :List
          solutions of the problem with respect to flags G.
@@ -461,9 +463,10 @@ doc ///
        --time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), "one homotopy"=>false)
        --assert all(S', s-> checkIncidenceSolution(s,G))
    Caveat
-      There are two strategies: when "one homotopy" is set to true (default) it uses straight
+      There are two strategies: when oneHomotopy is set to true (default) it uses straight
       line homotopies to change flags, but assumes the initial flags are generic.
-      When "one homotopy" is set to false, it makes gradual changes in the flags by changing
+      
+      When oneHomotopy is set to false, it makes gradual changes in the flags by changing
       one column at a time, and using only linear homotopies, but in this setting, it generates
       polynomial equations using all minors of the incidence conditions (thus is not very effective).
    SeeAlso
