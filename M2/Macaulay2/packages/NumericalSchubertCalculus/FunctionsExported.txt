@@ -14,11 +14,11 @@
 // NumericalSchubertCalculus.m2 //
 
 
-"bigCellLocalCoordinates", 
+--"bigCellLocalCoordinates", 
 "printStatistics",
 
 // service-functions.m2 //
-"skewSchubertVariety",
+--"skewSchubertVariety",
 "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
 "solutionsToAffineCoords", --Temporary! User shouldn't use this function
 

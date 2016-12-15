@@ -61,7 +61,7 @@ document {
 	 HREF{"https://arxiv.org/abs/alg-geom/9706004", "Huber, Sottile, Sturmfels, \"Pieri's rule for flag manifolds and Schubert polynomials\",  J. Symb. Comp., 26 (1998), 767-788."},
 	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\""},
 	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\" "},
-	 HREF{" ", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\" "}
+	 HREF{"http:// ", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\" "}
 	 },
  }
 
@@ -77,7 +77,7 @@ doc ///
       randomSchubertProblemInstance(conditions,k,n)
    Inputs
       conditions:List
-        which is a list of Schubert conditions that are either all partitions or all brackets (see bracket2partition for details)
+        which is a list of Schubert conditions that are either all partitions or all brackets (see TO "bracket2partition" for details)
       k:ZZ
       n:ZZ
          $k$ and $n$ define the Grassmannian $Gr(k,n)$
@@ -155,7 +155,7 @@ doc ///
 	 to the specializations of the geometric Littlewood-Richardson.
 
 	 This algorithm is described in the paper:
- 	 HREF{" ", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\" "}
+ 	 Leykin, Martin del Campo, Sottile, Vakil, Verschelde "Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm".
 
 	 
       Example
@@ -192,7 +192,7 @@ doc ///
       Chooses the method for glueing solutions from the top of one node (tournament game) to the leaf of the previous node.
       When true (default), uses Linear Algebra, otherwise uses Parameter Homotopies.
    Caveat
-      Parameter Homotopies usually take longer than simple Linear Algebra.  They are also unnecessary.
+      Parameter Homotopies are not necessary and usually take longer than simple Linear Algebra.  
 ///
 
 doc ///
@@ -235,7 +235,7 @@ doc ///
 	 to the specializations of the geometric Pieri rule.
 
 	 This algorithm is described in the paper:
-	 Huber, Sottile, and Sturmfels, "Numerical Schubert Calculus"
+	 Huber, Sottile, and Sturmfels, "Numerical Schubert Calculus".
 	 
       Example
          -- Problem (2,1)^2 1^3 = 6 in Gr(3,6)
