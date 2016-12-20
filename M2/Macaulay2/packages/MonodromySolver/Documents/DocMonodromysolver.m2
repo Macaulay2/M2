@@ -12,7 +12,8 @@ doc ///
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
 			(V, npaths) = monodromySolve polys; 
-			<< "tracked " << npaths << " homotopy paths"; 
+			<< "tracked " << npaths << " homotopy paths";
+			V.BasePoint 
 			points V.PartialSols
     	    	Text
 			The algorithm is introduced in 
