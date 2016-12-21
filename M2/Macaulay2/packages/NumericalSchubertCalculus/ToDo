@@ -18,7 +18,7 @@ Need to:
  Frank will write a PHC wrapper for this with standard checks 
    (general flag, Schubert problem, etc.)
 
- We will want to verify all input, and use breaks to return a 
+ the service function verifyInput verifies all inputs, using breaks to return a 
    useful error message to the user.
 
  First step:  Read the TST and EXA dirctory, as well as the bugs,
