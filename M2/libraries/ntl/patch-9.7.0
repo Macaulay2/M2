@@ -1,0 +1,87 @@
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/ntl/tmp/ntl-9.7.0/src/def_makefile ntl-9.7.0/src/def_makefile
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/ntl/tmp/ntl-9.7.0/src/def_makefile	2016-03-12 14:44:59.000000000 -0600
++++ ntl-9.7.0/src/def_makefile	2016-12-21 11:27:41.000000000 -0600
+@@ -325,11 +325,11 @@
+ # again.
+ 
+ all:
+-	make setup1
+-	make setup2
+-	make setup3
+-	make setup4
+-	make ntl.a
++	$(MAKE) setup1
++	$(MAKE) setup2
++	$(MAKE) setup3
++	$(MAKE) setup4
++	$(MAKE) ntl.a
+ 	touch all
+ 
+ 
+@@ -408,7 +408,7 @@
+ 
+ check:
+ 	sh RemoveProg $(PROGS)
+-	make QuickTest
++	$(MAKE) QuickTest
+ 	./QuickTest
+ 	sh RemoveProg QuickTest
+ 	sh TestScript
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/ntl/tmp/ntl-9.7.0/src/makefile ntl-9.7.0/src/makefile
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/ntl/tmp/ntl-9.7.0/src/makefile	2016-03-12 14:45:00.000000000 -0600
++++ ntl-9.7.0/src/makefile	2016-12-21 11:28:01.000000000 -0600
+@@ -325,11 +325,11 @@
+ # again.
+ 
+ all:
+-	make setup1
+-	make setup2
+-	make setup3
+-	make setup4
+-	make ntl.a
++	$(MAKE) setup1
++	$(MAKE) setup2
++	$(MAKE) setup3
++	$(MAKE) setup4
++	$(MAKE) ntl.a
+ 	touch all
+ 
+ 
+@@ -408,7 +408,7 @@
+ 
+ check:
+ 	sh RemoveProg $(PROGS)
+-	make QuickTest
++	$(MAKE) QuickTest
+ 	./QuickTest
+ 	sh RemoveProg QuickTest
+ 	sh TestScript
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/ntl/tmp/ntl-9.7.0/src/mfile ntl-9.7.0/src/mfile
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/ntl/tmp/ntl-9.7.0/src/mfile	2016-03-12 14:44:59.000000000 -0600
++++ ntl-9.7.0/src/mfile	2016-12-21 11:28:00.000000000 -0600
+@@ -325,11 +325,11 @@
+ # again.
+ 
+ all:
+-	make setup1
+-	make setup2
+-	make setup3
+-	make setup4
+-	make ntl.a
++	$(MAKE) setup1
++	$(MAKE) setup2
++	$(MAKE) setup3
++	$(MAKE) setup4
++	$(MAKE) ntl.a
+ 	touch all
+ 
+ 
+@@ -408,7 +408,7 @@
+ 
+ check:
+ 	sh RemoveProg $(PROGS)
+-	make QuickTest
++	$(MAKE) QuickTest
+ 	./QuickTest
+ 	sh RemoveProg QuickTest
+ 	sh TestScript
