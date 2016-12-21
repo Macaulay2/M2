@@ -27,7 +27,7 @@ newPackage(
     )
 debug NumericalAlgebraicGeometry
 export { 
-   "changeFlags", "bigCellLocalCoordinates", 
+   "changeFlags", -- "bigCellLocalCoordinates", 
    "printStatistics",
    "setVerboseLevel", 
    "solveSchubertProblem",
@@ -1002,3 +1002,5 @@ installPackage ("NumericalSchubertCalculus", RunExamples=>false)
 --SchubProb =  matrix{{3, 2,4,6}};
 --(f, p, s) := LRtriple(n,SchubProb);
 --(R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
+viewHelp NumericalSchubertCalculus
+--first PieriHomotopies(2,2)

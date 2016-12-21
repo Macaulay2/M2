@@ -1,5 +1,5 @@
 export {
-    "skewSchubertVariety", -- for Pieri Homotopies
+    --"skewSchubertVariety", -- for Pieri Homotopies
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",

@@ -346,7 +346,29 @@ doc ///
    SeeAlso
       partition2bracket
 ///
-doc ///
+document{
+    Key => setVerboseLevel,
+    Headline => "Set different levels of information printed on screen",
+    Usage => "setVerboseLevel n",
+    Inputs =>{"n" =>{TO "ZZ", " takes values 0,1,2, or greater"}},
+    Consequences=>{"Prints information on the screen depending on the value of n"},
+    PARA{"The function displays different levels of information visible on
+       the screen:"},
+    UL{"0 = no extra information displayed [default]",
+       "1 = print the progress information and time the main process",
+       "2 = besides the information of level 1, it also displays the checkerboard steps"},
+   EXAMPLE{
+       "-- The problem of 4 lines w.r.t. random flags",
+       "SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
+       "setVerboseLevel 0;",
+       "S = solveSchubertProblem(SchPblm,2,4)",
+       "assert all(S,s->checkIncidenceSolution(s,SchPblm))",
+       "setVerboseLevel 1;",
+       "S = solveSchubertProblem(SchPblm,2,4)",
+       "assert all(S,s->checkIncidenceSolution(s,SchPblm))"},
+   SeeAlso => {checkIncidenceSolution}
+    }
+{*doc ///
    Key
       setVerboseLevel
       (setVerboseLevel,ZZ)
@@ -381,7 +403,7 @@ doc ///
       checkIncidenceSolution
       printStatistics
 ///
-
+*}
 doc ///
    Key
       solutionsToAffineCoords
