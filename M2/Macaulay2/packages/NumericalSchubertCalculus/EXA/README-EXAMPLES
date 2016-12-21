@@ -23,8 +23,7 @@
 21e4-G37.m2                  Finds eight solutions in two ways 
                                  LinearAlgebra true: 12.131s
                                  LinearAlgebra false: 141.01s
-														        with Seed 2, this last one doesn't assert all checkIncidenceSolution
-
+        with Seed 2, this last one doesn't assert all checkIncidenceSolution
 21e422-G48.m2               42 solutions found and tested with all 3 engines:
 																M2engine: 4m 25.335s
 																BERTINI:  2m41.881s
