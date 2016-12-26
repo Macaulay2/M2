@@ -69,10 +69,16 @@ assert (r === new Product from
 	  new Power from {x^(-3),1}})
 
 -- factoring in an iterated polynomial ring
-R=QQ[x];
+R=ZZ/101[x];
 R2=R[y];
 r=factor(x^2*y^2-1);
 assert (r === new Product from { new Power from {x*y-1,1}, new Power from {x*y+1,1} } )
+r=factor promote(x^2,R2);
+assert (r === new Product from { new Power from {promote(x,R2),2} })
+
+R=QQ[x,Inverses=>true,MonomialOrder=>Lex];
+R2=R[y,Inverses=>true,MonomialOrder=>Lex];
+assert (value factor(x^(-1)*y^(-1)) == x^(-1)*y^(-1) )
 
 -- isPrime
 
