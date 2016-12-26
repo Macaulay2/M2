@@ -99,9 +99,10 @@ various modern operating systems:
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
     On Ubuntu 14.10 and later, add
-        --enable-build-libraries=pari
+        --enable-build-libraries="pari givaro"
       to the "configure" command line below.  (The version of pari possibly installed there
-      will crash when M2 exits.)
+      will crash when M2 exits.  The version of givaro that might be installed by Ubuntu
+      might be too recent for us.)
     (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
     "do-release-upgrade" for a command line interface.)
 
