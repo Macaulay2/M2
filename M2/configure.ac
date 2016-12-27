@@ -289,6 +289,7 @@ AC_MSG_CHECKING(whether exceptions are caught)
   AC_LANG(C++)
   AC_RUN_IFELSE([AC_LANG_SOURCE([
     #include <stdexcept>
+    #include <string>
     int main () {
       const std::string s("caught");
       try { throw(std::runtime_error(s)); } 
