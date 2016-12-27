@@ -27,10 +27,11 @@ newPackage(
     )
 debug NumericalAlgebraicGeometry
 export { 
-   "changeFlags", "bigCellLocalCoordinates", 
+   "changeFlags", -- "bigCellLocalCoordinates", 
    "printStatistics",
    "setVerboseLevel", 
-   "solveSchubertProblem"
+   "solveSchubertProblem",
+   "oneHomotopy"-- symbol?
    --   changeFlags  -- better name?
    }
 protect Board
@@ -611,7 +612,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    	print(flgM*newDag.Solutions);
 	    	);
 	    changeFlags(flgM*newDag.Solutions, -- these are matrices in absolute coordinates
-	    	(conds, LocalFlags2, LocalFlags1), "one homotopy"=>false
+	    	(conds, LocalFlags2, LocalFlags1), oneHomotopy=>false
 		)
 	    ) --
 	)
@@ -997,3 +998,9 @@ installPackage "NumericalSchubertCalculus"
 installPackage ("NumericalSchubertCalculus", RerunExamples=>true)
 installPackage ("NumericalSchubertCalculus", RunExamples=>false)
 
+--n = 6;
+--SchubProb =  matrix{{3, 2,4,6}};
+--(f, p, s) := LRtriple(n,SchubProb);
+--(R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
+viewHelp NumericalSchubertCalculus
+--first PieriHomotopies(2,2)
