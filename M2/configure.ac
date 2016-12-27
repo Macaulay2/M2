@@ -285,6 +285,20 @@ fi
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
 dnl AC_PROG_MKDIR_P()
 
+AC_MSG_CHECKING(whether exceptions are caught)
+  AC_LANG(C++)
+  AC_RUN_IFELSE([AC_LANG_SOURCE([
+    #include <stdexcept>
+    int main () {
+      const std::string s("caught");
+      try { throw(std::runtime_error(s)); } 
+      catch (std::runtime_error e) { }
+      return 0;
+    }])],
+    [AC_MSG_RESULT(yes)],
+    [AC_MSG_RESULT([no, use a different C++ compiler])]; exit 1
+    )
+
 AC_CHECK_SIZEOF([int *])
 AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
