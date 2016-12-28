@@ -1,0 +1,157 @@
+-- -*- M2-comint -*- {* hash: 303501410 *}
+-- COMPILE TIME: Oct  7 2016, 07:56:28
+--loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+--loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
+
+i1 : -- The problem of 4 lines w.r.t. random flags
+     SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
+
+o1 = {({1}, | .781262-.624203i  -.462954-.886382i -.272832+.962062i
+            | .9868+.161945i    -.219207-.975678i .778029-.628229i 
+            | -.971549+.236839i .157598-.987503i  .841103-.540875i 
+            | .893324+.449414i  .360485-.932765i  -.651048+.759036i
+     ------------------------------------------------------------------------
+     -.670948-.741504i |), ({1}, | .696205+.717843i  -.028156+.999604i
+     .118767+.992922i  |         | -.58234+.812945i  -.924052-.382267i
+     -.396553+.918012i |         | .486335-.873772i  -.970803-.23988i 
+     -.272372-.962192i |         | -.783999-.620762i .577597-.816322i 
+     ------------------------------------------------------------------------
+     -.056229-.998418i .776937+.629579i  |), ({1}, | -.746312-.665596i
+     .023444+.999725i  .570649+.821194i  |         | -.936289-.351232i
+     .701149-.713015i  -.863646+.504099i |         | -.164243+.98642i 
+     .357971+.933733i  -.820726+.571321i |         | .85817-.513365i  
+     ------------------------------------------------------------------------
+     .995687+.092774i .168661+.985674i  -.765803+.643076i |), ({1}, |
+     .701342-.712825i -.286823-.957983i -.415126-.909764i |         |
+     -.78761-.616174i .976163-.21704i   -.416188-.909278i |         |
+     .759918-.650019i .482783+.87574i   .975922-.218119i  |         |
+     ------------------------------------------------------------------------
+     .918399+.395655i  .719639-.694348i  .9772+.212322i   -.998741-.050173i
+     .58629+.810101i   -.554833-.831962i .454813+.890587i -.698649-.715464i
+     -.590887+.806754i -.726792+.686857i .080013+.996794i .742918+.669382i 
+     -.939129+.343564i -.616052-.787706i .339065+.940763i -.99319-.116506i 
+     ------------------------------------------------------------------------
+     |)}
+     |
+     |
+     |
+
+o1 : List
+
+i2 : setVerboseLevel 0;
+
+i3 : S = solveSchubertProblem(SchPblm,2,4)
+
+o3 = {| -1.65573-.600637i .0201935+.0437095i   |, | -.154703+.175591i
+      | -1.23037-1.66989i -.0308057-.00120618i |  | -.801221-.035430i
+      | 1.35971-.743988i  -.0713133-.049047i   |  | .325581-2.08048i 
+      | -.397038-1.8974i  .0102261-.024397i    |  | -.475895-.209388i
+     ------------------------------------------------------------------------
+     .0376857+.0683239i   |}
+     -.00368075+.0317504i |
+     -.0350432-.250817i   |
+     -.0336427+.0141017i  |
+
+o3 : List
+
+i4 : assert all(S,s->checkIncidenceSolution(s,SchPblm))
+
+i5 : setVerboseLevel 1;
+
+i6 : S = solveSchubertProblem(SchPblm,2,4)
+-- playCheckers
+-- cpu time = .002944
+-- making a recursive call to resolveNode
+-- playCheckers
+-- cpu time = .000385
+-- making a recursive call to resolveNode
+-- playCheckers
+-- cpu time = .000347
+resolveNode reached node of no remaining conditions
+-- time to make equations: .003715
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005259 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .05082
+-- time of performing one checker move: .000296
+-- time of performing one checker move: .000045
+-- time to make equations: .003754
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005779 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .011982
+-- time to make equations: .002584
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005154 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .010927
+-- time to make equations: .002759
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .006136 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
+-- time of performing one checker move: .012165
+-- time to make equations: .006752
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005839 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
+-- time of performing one checker move: .015972
+-- time to make equations: .006314
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005536 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
+-- time of performing one checker move: .014952
+-- time of performing one checker move: .000234
+-- time of performing one checker move: .000237
+-- time to make equations: .007203
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .006501 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
+-- time of performing one checker move: .017873
+-- making a recursive call to resolveNode
+-- playCheckers
+-- cpu time = .002169
+-- making a recursive call to resolveNode
+-- playCheckers
+-- cpu time = .000356
+resolveNode reached node of no remaining conditions
+-- time to make equations: .003084
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005108 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .050841
+-- time of performing one checker move: .000243
+-- time to make equations: .00256
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .005662 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
+-- time of performing one checker move: .011515
+-- time of performing one checker move: .000255
+-- time of performing one checker move: .000228
+-- time of performing one checker move: .000787
+-- time of performing one checker move: .000587
+-- time of performing one checker move: .000233
+-- time of performing one checker move: .000413
+-- time of performing one checker move: .000232
+-- time to make equations: .007714
+Setup time: 0
+Computing time:0
+ -- trackHomotopy time = .006007 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
+-- time of performing one checker move: .016844
+-- time of performing one checker move: .000246
+
+o6 = {| -1.65573-.600637i .0201935+.0437095i   |, | -.154703+.175591i
+      | -1.23037-1.66989i -.0308057-.00120618i |  | -.801221-.035430i
+      | 1.35971-.743988i  -.0713133-.049047i   |  | .325581-2.08048i 
+      | -.397038-1.8974i  .0102261-.024397i    |  | -.475895-.209388i
+     ------------------------------------------------------------------------
+     .0376857+.0683239i   |}
+     -.00368075+.0317504i |
+     -.0350432-.250817i   |
+     -.0336427+.0141017i  |
+
+o6 : List
+
+i7 : assert all(S,s->checkIncidenceSolution(s,SchPblm))
+
+i8 : 

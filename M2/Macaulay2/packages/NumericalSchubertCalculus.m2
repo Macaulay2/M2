@@ -23,6 +23,7 @@ newPackage(
 	"MonodromySolver"
 	},
     AuxiliaryFiles => true,
+    CacheExampleOutput => true,
     DebuggingMode => true
     )
 debug NumericalAlgebraicGeometry
