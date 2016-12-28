@@ -14,6 +14,7 @@ SchPblm = randomSchubertProblemInstance (
 time sols = solveSchubertProblem(SchPblm,4,8);
 assert(#sols == 42)
 
+end
 setDefault(Software=>BERTINI) --works ~161.881s
 time sols = solveSchubertProblem(SchPblm,4,8);
 assert(#sols == 42)
