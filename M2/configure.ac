@@ -1208,11 +1208,14 @@ then AC_MSG_CHECKING(whether package atomic_ops is provided)
      fi
 fi
 
+AC_SUBST(GC_LIBS)
 if test $BUILD_gc = no
 then AC_MSG_CHECKING(whether package bdw-gc is provided)
      if [ pkg-config --exists bdw-gc ]
      then AC_MSG_RESULT(yes)
 	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc` $CPPFLAGS"
+	  GC_LIBS=`pkg-config --libs-only-l bdw-gc`
+	  LIBS="$GC_LIBS $LIBS"
      else AC_MSG_RESULT([no, will be built from downloaded sources])
 	  BUILD_gc=yes
      fi
@@ -1222,12 +1225,11 @@ then AC_MSG_CHECKING(whether package bdw-gc is provided)
         [ AC_MSG_RESULT(yes) ],
         [ AC_MSG_RESULT([no, version at least 7.2 is required (gc and atomic_ops will be built from downloaded sources)]); BUILD_atomic_ops=yes ; BUILD_gc=yes ])
 fi
-AC_SUBST(GC_LIBS,-lgc)
 if test $BUILD_gc = yes
 then 
      # libpthread isn't really built by us, but gc will need to link against it
-     BUILTLIBS="$GC_LIBS -lpthread $BUILTLIBS"
-     GC_LIBS="$GC_LIBS -lpthread"
+     GC_LIBS="-lgc -lpthread"
+     BUILTLIBS="$GC_LIBS $BUILTLIBS"
 fi
 
 if test $BUILD_gdbm = no
