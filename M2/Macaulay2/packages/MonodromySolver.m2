@@ -16,7 +16,8 @@ newPackage(
 	PackageImports => {"PHCpack"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-    	DebuggingMode => true		 -- set to true only during development
+  	CacheExampleOutput => true,
+  	DebuggingMode => true		 -- set to true only during development
     	)
 
 
