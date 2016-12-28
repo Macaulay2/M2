@@ -6,7 +6,7 @@ newPackage(
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
-              DebuggingMode => true, --should be false when submitted
+              DebuggingMode => false, --should be false when submitted
 	      PackageExports => {"MCMApproximations","BGG"} 
 	      )
 	  export{
