@@ -52,9 +52,9 @@ _CXX := /usr/bin/g++
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 export CFLAGS += -Wno-unknown-attributes
 else
-_CC  := gcc-4.9
-_CXX := g++-4.9
-_FC  := gfortran-4.9
+_CC  := gcc-4.9.4
+_CXX := g++-4.9.4
+_FC  := gfortran-4.9.4
 endif
 endif
 endif
@@ -74,7 +74,6 @@ ifeq ($(PRODUCTION),yes)
    default: check
    CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY)-production
-   PREFIX = /Applications/Macaulay2-1.6
    CONFIGOPTIONS += --enable-dmg
    ifeq ($(DEBUG),yes)
       $(error PRODUCTION=yes and DEBUG=yes)
