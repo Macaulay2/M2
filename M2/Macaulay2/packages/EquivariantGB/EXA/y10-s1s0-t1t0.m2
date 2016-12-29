@@ -4,4 +4,4 @@ needsPackage "EquivariantGB"
 R = buildERing({symbol s, symbol t, symbol y}, {1,1,2}, QQ, 2, MonomialOrder=>Lex, Degrees=>{1,1,2});
 gens R
 F = {y_(1,0) - s_0*s_1 - t_0*t_1}; 
-egbSignature(F, PrincipalSyzygies=>false)
+egb(F, Algorithm=>Signature, OutFile=>stdio)

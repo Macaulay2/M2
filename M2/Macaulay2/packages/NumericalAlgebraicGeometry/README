@@ -18,7 +18,7 @@
 
 SYSTEMS/	-- examples of systems of polynomials: 
 		-- load "SYSTEM/examplename.m2" makes F = list of polynomials
-TST/		-- tests: loaded by the package via TEST
+TST/		-- tests loaded by the package via TEST, other tests
 
 PHCpack/        -- interface wrappers for PHCpack
 
@@ -37,7 +37,6 @@ benchmarks.m2	-- a script used to benchmark internal and external 0-dim solvers
 showcase.m2 	-- interesting examples
 		-- TO DO: split up in several "topics", create SHOWCASE/ ???
 
-external_software_test.m2      -- tests external software (if installed)
 
 
 

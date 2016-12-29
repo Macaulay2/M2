@@ -267,7 +267,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  factor RM := opts -> f -> (
 	       c := 1_R; 
 	       if (options RM).Inverses then (
-		   minexps:=min \ transpose exponents f;
+        	   minexps:=min\transpose apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m));
 		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
@@ -281,7 +281,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		       p:=new RM from facs#i;
 		       if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
 		       ));
-	       if liftable(facs#0,R) then (
+    	       if liftable(facs#0,RM.basering) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
 		    c = c*(facs#0);

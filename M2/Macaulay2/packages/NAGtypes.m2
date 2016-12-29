@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.9",
-     Date => "Apr 2016",
+     Version => "1.9.2",
+     Date => "Oct 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -89,7 +89,6 @@ globalAssignment PolySystem
 polySystem = method()
 polySystem PolySystem := P -> new PolySystem from P
 polySystem List := L -> (
-    checkCCpolynomials L;
     polySystem transpose matrix {L} 
     )
 polySystem Matrix := M -> (

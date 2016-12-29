@@ -1044,11 +1044,14 @@ tostringfun(e:Expr):Expr := (
      is x:RawFreeModuleCell do toExpr(Ccode(string, "IM2_FreeModule_to_string(",x.p,")" ))
      is x:RawMatrixCell do toExpr(Ccode(string, "IM2_Matrix_to_string(",x.p,")" ))
      is x:RawMutableMatrixCell do toExpr(Ccode(string, "IM2_MutableMatrix_to_string(",x.p,")" ))
+     -- NAG stuff begin
      is x:RawHomotopyCell do toExpr(Ccode(string, "rawHomotopyToString(",x.p,")" ))
      is x:RawSLEvaluatorCell do toExpr(Ccode(string, "rawSLEvaluatorToString(",x.p,")" ))
      is x:RawSLProgramCell do toExpr(Ccode(string, "rawSLProgramToString(",x.p,")" ))
      is x:RawStraightLineProgramCell do toExpr(Ccode(string, "rawStraightLineProgramToString(",x.p,")" ))
      is x:RawPathTrackerCell do toExpr(Ccode(string, "rawPathTrackerToString(",x.p,")" ))
+     is x:RawPointArrayCell do toExpr(Ccode(string, "rawPointArrayToString(",x.p,")" ))
+     -- NAG stuff end
      is x:RawRingMapCell do toExpr(Ccode(string, "IM2_RingMap_to_string(",x.p,")" ))
      is x:RawMonomialOrderingCell do toExpr(Ccode(string, "IM2_MonomialOrdering_to_string(",x.p,")" ))
      is x:RawMonoidCell do toExpr(Ccode(string, "IM2_Monoid_to_string(",x.p,")" ))

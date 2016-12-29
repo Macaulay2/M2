@@ -1,7 +1,7 @@
 # a library for doing number theory
 LICENSEFILES = doc/copying.txt
 # @configure_input@
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 VERSION = 9.7.0
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
