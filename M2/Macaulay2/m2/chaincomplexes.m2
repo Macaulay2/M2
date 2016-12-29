@@ -855,11 +855,14 @@ Ring ^ BettiTally := (R,b) -> (
 	     ));
    F)
 -----------------------------------------------------------------------------
+nonMinRes = m -> (
+     F' := resolution image m;
+     complete F';
+     chainComplex apply(1+length F', j-> if j==0 then m else F'.dd_j))
+
 syzygyScheme = (C,i,v) -> (
-     -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel
-     -- by a minimal one.  The right way to fix it is to add an option to resolution.
-     g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
-     minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
+           g := extend(nonMinRes transpose (C.dd_i * v), dual C[-i], transpose v);
+           minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
 -----------------------------------------------------------------------------
 chainComplex GradedModule := ChainComplex => {} >> opts -> (M) -> (
      C := new ChainComplex from M;
