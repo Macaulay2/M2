@@ -107,6 +107,10 @@ various modern operating systems:
         --enable-build-libraries=pari
       to the "configure" command line below.  (The version of pari possibly installed there
       will crash when M2 exits.)
+    On all systems, add
+        CPPFLAGS=-I/usr/include/cdd
+      to the "configure" command line below.  Otherwise the configure script will
+      decide to build cddlib from downloaded sources.
     (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
     "do-release-upgrade" for a command line interface.)
 
