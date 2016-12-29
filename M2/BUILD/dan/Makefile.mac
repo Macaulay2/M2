@@ -23,7 +23,6 @@ DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
-CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 # see the INSTALL file:
 # export MACOSX_DEPLOYMENT_TARGET=10.9
