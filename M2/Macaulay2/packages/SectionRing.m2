@@ -459,7 +459,7 @@ doc ///
 TEST ///
 R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
 I = ideal(x,y-z);
-assert( globallyGenerated(I) == 1)
+assert( globallyGenerated(I) == 2)
 ///
 
 
