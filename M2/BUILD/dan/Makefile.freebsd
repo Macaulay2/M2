@@ -7,8 +7,9 @@ DIRECTORY = freebsd
 include Makefile.include
 CONFIGOPTIONS += --prefix=/usr/local
 CONFIGOPTIONS += --enable-freebsd
-CONFIGOPTIONS += CPPFLAGS="-I/usr/local/include"
-CONFIGOPTIONS += LDFLAGS="-L/usr/local/lib"
+
+CPPFLAGS="-I/usr/local/include"
+LDFLAGS="-L/usr/local/lib"
 
 # The other freebsd ports all put man pages in /usr/local/man, so
 # I put these two options together just in case the common staging area is

@@ -1134,23 +1134,16 @@ then AC_LANG(C++)
      AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
 fi
 
-AC_CHECK_HEADERS([setoper.h cdd/setoper.h])
-if test "$ac_cv_header_setoper_h" = yes
-then SETOPER_H="#include <setoper.h>"
-else if test "$ac_cv_header_cdd_setoper_h" = yes
-     then SETOPER_H="#include <cdd/setoper.h>"
-     else SETOPER_H=""
-     fi
-fi
-
-AC_CHECK_HEADERS([cdd.h cdd/cdd.h],,,[$SETOPER_H])
 if test $BUILD_cddlib = no
 then AC_LANG(C)
+     SETOPER_H="#include <setoper.h>"
+     AC_CHECK_HEADERS([cdd.h],,,[$SETOPER_H])
      dnl Homebrew installs cdd.h in /usr/local/include
      dnl Ubuntu installs cdd.h in /usr/include/cdd
-     dnl But we can't refer to /usr/include here, because we don't know whether the compiler looks there.
-     dnl So we have to know whether to load "cdd/cdd.h" or "cdd.h"
-     if test $ac_cv_header_cdd_h = no -a $ac_cv_header_cdd_cdd_h = no
+     dnl the cddlib source code installs cdd.h in $prefix/include
+     dnl We can't refer to /usr/include here, because we don't know whether the compiler looks there.
+     dnl So under Ubuntu, the installer may include -I/usr/include/cdd in $CPPFLAGS
+     if test $ac_cv_header_cdd_h = no
      then AC_MSG_NOTICE(will build cddlib from downloaded sources)
           BUILD_cddlib=yes
      fi
