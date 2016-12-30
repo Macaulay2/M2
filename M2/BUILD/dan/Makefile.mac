@@ -47,8 +47,9 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-# _FC  := false
-CONFIGOPTIONS += --disable-frobby  --disable-gfan
+# disable some libraries that don't compile with clang:
+# CONFIGOPTIONS += --disable-frobby  --disable-gfan
+CONFIGOPTIONS += --disable-strip
 export CFLAGS += -Wno-unknown-attributes
 else
 _CC  := gcc-4.9.4
