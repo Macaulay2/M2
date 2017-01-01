@@ -1,4 +1,4 @@
-// Copyright 1996 Michael E. Stillman
+// Copyright 1996-2017 Michael E. Stillman
 
 #include "schur2.hpp"
 #include <stdio.h>
@@ -46,14 +46,14 @@ int tableau2::elem(int x, int y) const
   return 0;
 }
 
-void tableau2::fill(int *lamb, int *pp)
+void tableau2::fill(int *lamb, int *pp) //FLAG: should be const, schur_word..
      // Fill the skew tableau2 p\lambda with 1..nboxes
      // starting at top right, moving left and then down
      // row by row.
 {
   int i, j;
-  p = pp;
-  lambda = lamb;
+  p = pp; //FLAG: why is this here?
+  lambda = lamb; //FLAG: why is this here?
 
   int next = 1;
   for (i=1; i<p[0]; i++)
@@ -85,7 +85,7 @@ void tableau2::display() const
 //////////////////////////////////////////
 unsigned int SchurRing2::computeHashValue(const ring_elem a) const
 {
-  // TODO HASH
+  // TODO HASH //FLAG: should be written
   return 95864398;
 }
 
@@ -353,7 +353,7 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
 }
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  /* write me */
+  /* write me */ //FLAG: do this.
 #warning "compare_elems method needs to be written"
   return 0;
 }
@@ -679,8 +679,8 @@ ring_elem SchurRing2::eval(const RingMap *map, const ring_elem f, int first_var)
 }
 
 /////// Littlewood-Richardson algorithm /////////////////////////
-
-void SchurRing2::SMinitialize(int n, int maxwt)
+//FLAG: put in a reference to the paper/algorithm being used here.
+void SchurRing2::SMinitialize(int n, int maxwt) //FLAG: only called with maxwt==0
 {
   SMmaxrows = n;
   SMmaxweight = maxwt;  // need this?
@@ -689,7 +689,7 @@ void SchurRing2::SMinitialize(int n, int maxwt)
   SMfilled.initialize(SMmaxrows, SMmaxweight);
   SMcurrent = 0;
   SMfinalwt = 0;
-  SMtab.p = new int[nvars+1];
+  SMtab.p = new int[nvars+1]; //FLAG: is this correct? use schur_word?
   for (int i=0; i<=nvars; i++) SMtab.p[i] = 0;
   SMheap = new schur_poly_heap(this);
 }
@@ -794,8 +794,8 @@ ring_elem SchurRing2::skew_schur(const_schur_partition lambda, const_schur_parti
   if (nvars != -1 && SMmaxrows > nvars)
     SMmaxrows = nvars;
 
-  delete [] SMtab.p;
-  SMtab.p = new int[SMmaxrows+1];
+  delete [] SMtab.p; //FLAG: should use gc for this?  or not use it, but not both!
+  SMtab.p = new int[SMmaxrows+1]; //FLAG: should use gc for this?  or not use it, but not both!
   for (int i=0; i<=SMmaxrows; i++) SMtab.p[i] = 0;
 
   SMtab.wt = SMfinalwt;
@@ -803,23 +803,19 @@ ring_elem SchurRing2::skew_schur(const_schur_partition lambda, const_schur_parti
   SMfilled.resize(SMfinalwt);
 
   // lambda and p should not be modified in the following call
-  SMfilled.fill(const_cast<schur_partition>(lambda), const_cast<schur_partition>(p));
-  lambda++;
-  p++;
+  SMfilled.fill(const_cast<schur_partition>(lambda), const_cast<schur_partition>(p)); //FLAG:fill should take const arguments...
+  lambda++; //FLAG: why is this here?
+  p++; //FLAG: why is this here?
   SM();
   return SMheap->value(); // resets itself back to new
 }
 
 ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition b)
 {
-  int i;
+  int maxsize = (a[0] - 1 + b[0] - 1) + 1; // this is the max number of elements in the output partition, plus one
 
-  SMmaxrows = a[0] - 1 + b[0] - 1; // this is the max number of elements in the output partition
-  if (nvars != -1 && SMmaxrows > nvars)
-    SMmaxrows = nvars;
-
-  schur_partition lambda = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
-  schur_partition p = ALLOCATE_EXPONENTS(2 * sizeof(int) * SMmaxrows);
+  schur_partition lambda = ALLOCATE_EXPONENTS(sizeof(schur_word) * maxsize); //FLAG
+  schur_partition p = ALLOCATE_EXPONENTS(sizeof(schur_word) * maxsize); //FLAG
 
   // Second: make the skew partition (note: r,s>=1)
   // this is: if a = r+1 a1 a2 ... ar
@@ -833,13 +829,17 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
   int s = b[0]-1;
   int c = b[1];
 
-  for (i=1; i<=r; i++)
+  M2_ASSERT(r+s+1 == maxsize);
+  
+  for (int i=1; i<=r; i++)
     {
+      M2_ASSERT(i < maxsize);
       p[i] = c + a[i];
       lambda[i] = c;
     }
-  for (i=r+1; i<r+s+1; i++)
+  for (int i=r+1; i<r+s+1; i++)
     {
+      M2_ASSERT(i < maxsize);      
       p[i] = b[i-r];
       lambda[i] = 0;
     }
@@ -847,6 +847,59 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
   lambda[0] = r+1;
   return skew_schur(lambda, p);
 }
+
+#if 0
+#undef NDEBUG
+#include <assert.h>
+
+ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition b)
+{
+  int i;
+
+  SMmaxrows = a[0] - 1 + b[0] - 1; // this is the max number of elements in the output partition
+  if (nvars != -1 && SMmaxrows > nvars)
+    SMmaxrows = nvars;
+
+  int lambda_len = 2 * SMmaxrows;
+  schur_partition lambda = ALLOCATE_EXPONENTS(sizeof(int) * lambda_len);
+  int p_len = 2 * SMmaxrows;
+  schur_partition p = ALLOCATE_EXPONENTS(sizeof(int) * p_len);
+
+  // Second: make the skew partition (note: r,s>=1)
+  // this is: if a = r+1 a1 a2 ... ar
+  //             b = s+1 b1 b2 ... bs
+  // p is:
+  //   (r+s+1) b1+a1 b1+a2 ... b1+ar b1 b2 ... bs
+  // lambda is:
+  //   (r+1)   b1    b1    ... b1    0  0  ... 0
+
+  int r = a[0]-1;
+  int s = b[0]-1;
+  int c = b[1];
+
+  std::cout << "schur2: mult_terms: " << r << " " << s << " " << p_len << " " << lambda_len << std::endl;
+  
+  for (i=1; i<=r; i++)
+    {
+      assert(i < p_len);
+      p[i] = c + a[i];
+      assert(i < lambda_len);
+      lambda[i] = c;
+    }
+  for (i=r+1; i<r+s+1; i++)
+    {
+      assert(i < p_len);
+      p[i] = b[i-r];
+      assert(i < lambda_len);
+      lambda[i] = 0;
+    }
+  assert(0 < p_len);
+  p[0] = r+s+1;
+  assert(0 < lambda_len);
+  lambda[0] = r+1;
+  return skew_schur(lambda, p);
+}
+#endif
 
 /////////////////////////////////////////////////////////////////
 
