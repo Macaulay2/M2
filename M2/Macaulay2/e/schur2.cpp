@@ -13,11 +13,10 @@ const int LARGE_NUMBER = 32000;
 
 void tableau2::initialize(int nvars, int maxwt0)
 {
-  dim = nvars;
   maxwt = SCHUR_MAX_WT;
   wt = 0;
-  lambda = 0;
-  p = 0;
+  lambda = nullptr;
+  p = nullptr;
   xloc = newarray_atomic(int,SCHUR_MAX_WT+1);
   yloc = newarray_atomic(int,SCHUR_MAX_WT+1);
 }
@@ -689,7 +688,7 @@ void SchurRing2::SMinitialize(int n, int maxwt) //FLAG: only called with maxwt==
   SMfilled.initialize(SMmaxrows, SMmaxweight);
   SMcurrent = 0;
   SMfinalwt = 0;
-  SMtab.p = new int[nvars+1]; //FLAG: is this correct? use schur_word?
+  SMtab.p = new int[nvars+1]; //FLAG: is this correct? use schur_word?, what about nvars==-1
   for (int i=0; i<=nvars; i++) SMtab.p[i] = 0;
   SMheap = new schur_poly_heap(this);
 }
@@ -814,8 +813,8 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
 {
   int maxsize = (a[0] - 1 + b[0] - 1) + 1; // this is the max number of elements in the output partition, plus one
 
-  schur_partition lambda = ALLOCATE_EXPONENTS(sizeof(schur_word) * maxsize); //FLAG
-  schur_partition p = ALLOCATE_EXPONENTS(sizeof(schur_word) * maxsize); //FLAG
+  schur_partition lambda = ALLOCATE_EXPONENTS(sizeof(schur_word) * maxsize);
+  schur_partition p = ALLOCATE_EXPONENTS(sizeof(schur_word) * maxsize);
 
   // Second: make the skew partition (note: r,s>=1)
   // this is: if a = r+1 a1 a2 ... ar
@@ -847,59 +846,6 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
   lambda[0] = r+1;
   return skew_schur(lambda, p);
 }
-
-#if 0
-#undef NDEBUG
-#include <assert.h>
-
-ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition b)
-{
-  int i;
-
-  SMmaxrows = a[0] - 1 + b[0] - 1; // this is the max number of elements in the output partition
-  if (nvars != -1 && SMmaxrows > nvars)
-    SMmaxrows = nvars;
-
-  int lambda_len = 2 * SMmaxrows;
-  schur_partition lambda = ALLOCATE_EXPONENTS(sizeof(int) * lambda_len);
-  int p_len = 2 * SMmaxrows;
-  schur_partition p = ALLOCATE_EXPONENTS(sizeof(int) * p_len);
-
-  // Second: make the skew partition (note: r,s>=1)
-  // this is: if a = r+1 a1 a2 ... ar
-  //             b = s+1 b1 b2 ... bs
-  // p is:
-  //   (r+s+1) b1+a1 b1+a2 ... b1+ar b1 b2 ... bs
-  // lambda is:
-  //   (r+1)   b1    b1    ... b1    0  0  ... 0
-
-  int r = a[0]-1;
-  int s = b[0]-1;
-  int c = b[1];
-
-  std::cout << "schur2: mult_terms: " << r << " " << s << " " << p_len << " " << lambda_len << std::endl;
-  
-  for (i=1; i<=r; i++)
-    {
-      assert(i < p_len);
-      p[i] = c + a[i];
-      assert(i < lambda_len);
-      lambda[i] = c;
-    }
-  for (i=r+1; i<r+s+1; i++)
-    {
-      assert(i < p_len);
-      p[i] = b[i-r];
-      assert(i < lambda_len);
-      lambda[i] = 0;
-    }
-  assert(0 < p_len);
-  p[0] = r+s+1;
-  assert(0 < lambda_len);
-  lambda[0] = r+1;
-  return skew_schur(lambda, p);
-}
-#endif
 
 /////////////////////////////////////////////////////////////////
 
