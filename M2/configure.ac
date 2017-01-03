@@ -824,7 +824,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
 
@@ -840,7 +840,6 @@ for i in $PROGLIST
 do eval BUILD_$i=yes
 done
 dnl make some programs optional:
-BUILD_lrslib=yes
 BUILD_cddplus=no
 
 BUILD_mpir=yes
