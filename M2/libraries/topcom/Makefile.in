@@ -4,7 +4,9 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 0.17.8
 TARFILE = TOPCOM-$(VERSION).tar.gz
 LICENSEFILES = COPYING 
-INSTALLTARGET = install-strip
+PROGRAMS = src-reg/checkregularity src/points2finetriang
+STRIPFILES = $(PROGRAMS)
+INSTALLCMD = :
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/topcom/Makefile
 # Local Variables:

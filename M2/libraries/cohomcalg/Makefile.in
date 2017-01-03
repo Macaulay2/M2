@@ -13,6 +13,7 @@ LICENSEFILES = "GPLv3 License.txt"
 CONFIGURECMD = :
 INSTALLCMD = :
 PROGRAMS = bin/cohomcalg
+STRIPFILES = $(PROGRAMS)
 TARDIR = .
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cohomcalg/Makefile
