@@ -13,7 +13,7 @@ TARFILE = lrslib-$(VERSION).tar.gz
 #PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
 PROGRAMS = lrs #redund lrs1 redund1 setnash setnash2 2nash
 STRIPFILES = $(PROGRAMS)
-LICENSEFILES = lrslib.html COPYING
+LICENSEFILES = COPYING
 CONFIGURECMD = true
 BUILDTARGET = lrs
 BUILDOPTIONS = LDFLAGS="$(LDFLAGS)" CC="$(CC)" TARGET_ARCH=$(TARGET_ARCH) RANLIB=true
