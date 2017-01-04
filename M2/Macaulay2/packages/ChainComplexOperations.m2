@@ -1,10 +1,10 @@
        newPackage(
-               "Chi2",
-               Version => "0.1", 
-               Date => "Jan 2, 2017",
+               "ChainComplexOperations",
+               Version => "0.2", 
+               Date => "Jan 4, 2017",
                Authors => {{Name => "David Eisenbud", 
                          Email => "de@msri.org"}},
-               Headline => "Implements sym2,wedge2, Chi2 of a ChainComplex",
+               Headline => "Implements sym2, wedge2, chi2 of a ChainComplex",
                DebuggingMode => false
                )
 
@@ -21,10 +21,10 @@
 	   }
 ///
 restart
-uninstallPackage"Chi2"
-installPackage"Chi2"
-check "Chi2"
-viewHelp Chi2
+uninstallPackage"ChainComplexOperations"
+installPackage"ChainComplexOperations"
+check "ChainComplexOperations"
+viewHelp ChainComplexOperations
 ///
 
 reverseFactors = method()
@@ -122,22 +122,53 @@ testWalker = M ->(F:=res M;
 beginDocumentation()
        doc ///
        Key
-         Chi2
+         ChainComplexOperations
        Headline
-         Symmetric and exterior squares of a complex
+         Symmetric and exterior squares of a complex and the 2nd Adams operation
        Description
          Text
 	  This package implements the constructions
-	  used in Walker's proof of Buchsbaum-Eisenbud-Horrocks
-	  conjecture that the sum of the betti numbers is exponential.
-
-          The main new (to me) tool is the function chi2, whence the name of the package.
-	  If F is a ChainComplex with finite length homology, then
+	  used in Mark Walker's November 2016 proof of the (weak) Buchsbaum-Eisenbud-Horrocks
+	  conjecture, which states: If M is a module of codimension c
+	  over a regular local ring S, then the sum of the ranks of the free modules
+	  in a free resolution of M is at least 2^c. Walker's proof
+	  works for rings where 2 is invertible, and in this package we work over a field
+	  of characteristic $\neq 2$.
+	  
+	  The main new (to Eisenbud) tool in Walker's proof was the function chi2. Explicitly,
+	  if F is a ChainComplex of free S-modules with finite length homology, then
 	  chi2 F is the Euler characteristic of sym2 F minus that of wedge2 F.
 	  The function chi2 should be regarded as the Euler characteristic of the 2nd Adams operation,
-	  applied to F. Like the Euler characteristic of F, chi2 F is additive on
-	  short exact sequences of complexes, and moreover, for a regular local ring
-	  of dimension d with residue field k we have chi2 res k = 2^d.
+	  applied to F. It has two properties relevant for the proof:
+	  1) Like the Euler characteristic of F, chi2 F is additive on
+	  short exact sequences of complexes. 2) If S is a regular local ring
+	  of dimension d with residue field k, then chi2 res k = 2^d.
+	  
+	  Sketch of Walker's proof:
+	  
+	  The question reduces by localization to the case where M has finite length.
+	  Let F = res M, and let B be the sum of the ranks of the free modules in F.
+	  Since F**F = sym2 F ++ wedge2 F, we may drop the negative terms
+	  in the expression for chi2 --- the odd terms in the Euler characteristic
+	  of sym2 F and the even terms in the Euler characteristic of wedge2 F --- to get
+	  chi2 F \leq\ length HH(F**F). This length is evidently \leq  B*length M. 
+	  On the other hand, the additivity of chi2 implies chi2 F = 2^d*length M. Thus
+	  
+	  	  2^d*length M = chi2 F\leq length HH(F**F) \leq B*length M
+
+    	  QED
+
+          Chi2 should be regarded as the Euler characteristic of
+	  the second Adams operation, applied to a free Chain complex. Its additivity
+	  follows from the fact that the Adams operations are ring homomorphism.
+	  This is also easy to prove directly.
+	  
+	  It would be good to have the whole decomposition
+	  of tensor powers of a module or complex under the action of the symmetric group
+          (and thus also the Adams operations) available in M2. 
+	  Stillman and Eisenbud have discussed
+	  implementing this in the future, and anyone wishing to help with this project is
+	  welcome to join (or replace!) us.
        ///
 
 doc ///
@@ -396,10 +427,10 @@ assert all(apply(length (F**G), i -> (rank phi_i) == rank ((F**G)_i)), i->i==tru
 
 end--
 restart
-uninstallPackage"Chi2"
-installPackage"Chi2"
-check "Chi2"
-viewHelp Chi2
+uninstallPackage"ChainComplexOperations"
+installPackage"ChainComplexOperations"
+check "ChainComplexOperations"
+viewHelp ChainComplexOperations
 
 --Walker's inequality:
 --If F is  a resolution of a module M of finite length, then
