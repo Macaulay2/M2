@@ -39,12 +39,10 @@ export {"reactionNetwork",
     "displayComplexes", 
     "isDeficient", 
     "isWeaklyReversible",
-    "injectivityTest", 
+--    "injectivityTest", 
     "InitialValues",
     "ReactionRates",
     "ConcentrationRates",
-    "specializeReactionRates", 
-    "specializeInitialValues", 
     "createReactionRates", 
     "createInitialValues",
     "createConcentrationRates",
@@ -187,7 +185,23 @@ N.InitialValues
 N.ConcentrationRates
 N.ReactionRates
 steadyStateEquations N
-conservationEquations N
+CE=conservationEquations N
+
+--EXAMPLES FOR SUBSTITUTION
+--substitute initial values (cc)
+L={1,2,3,4} --list the values in order of species; 1 is the value for cc_A
+Iv = toList(apply(0..length N.InitialValues-1, i-> value(N.InitialValues#i)))
+S=toList(apply(0..length Iv-1, i-> Iv#i=>L#i))
+toList apply(0..length CE-1, i-> sub(CE#i,S))
+
+--substitute reaction rates (kk)
+M = reactionNetwork "A <--> 2B, A+C <--> D, D --> B+E, B+E --> A+C"
+R=createRing M
+K = toList(apply(0..length M.ReactionRates-1, i-> random(QQ)))
+Rr = toList(apply(0..length M.ReactionRates-1, i-> value(M.ReactionRates#i)))
+P = toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,R)))
+SSE = flatten entries steadyStateEquations M
+toList apply(0..length SSE-1, i-> sub(SSE#i,P))
 ///
 
 
