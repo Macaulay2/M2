@@ -52,7 +52,7 @@ length ChainComplex := (C) -> (
 ChainComplex == ChainComplex := (C,D) -> (
      complete C;
      complete D;
-     all(sort union(spots C, spots D), i -> C_i == D_i)
+     all(sort union(spots C, spots D), i -> C.dd_i == D.dd_i)
      )     
 
 ChainComplex == ZZ := (C,i) -> (complete C; all(spots C, i -> C_i == 0))
