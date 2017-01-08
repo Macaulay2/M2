@@ -71,12 +71,37 @@ doc ///
 	Example
 	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 	    R = createRing(N, QQ)
-	    F' = steadyStateEquations N
-	    F'' = conservationEquations N
-	    F = join(flatten entries F',F'')
+    	Text
+	    After creating the reaction network and the corresponding ring,
+	    we create the steady state equations and substitute random values
+	    for the reaction rates; this will allows us to compute the degree
+	    of the ideal.
+	Example    	    
+	    SS = flatten entries steadyStateEquations N
+	    K = toList(apply(0..length N.ReactionRates-1, i-> random(QQ)))
+	    Rr = toList(apply(0..length N.ReactionRates-1, i-> 
+		    value(N.ReactionRates#i)))
+	    P = toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,R)))
+	    F' = toList apply(0..length SS-1, i-> sub(SS#i,P))
+	Text
+	    Next, we create the conservation equations and assume there is no
+	    translation, i.e., the intial conditions are all zero.
+	Example        
+	    C = conservationEquations N
+	    L = {0,0,0,0,0} 
+	    Iv = toList(apply(0..length N.InitialValues-1, i-> 
+		    value(N.InitialValues#i)))
+	    S = toList(apply(0..length Iv-1, i-> Iv#i=>L#i))
+	    F'' = toList apply(0..length C-1, i-> sub(C#i,S))
+	Text
+	    Finally, we join the two sets of equations and create an ideal. Thus,
+	    the degree and dimension can be computed.
+	Example        
+	    F = join(F',F'')
 	    I = ideal F
-	    -- Assign random values for parameters kk. How to do this?
-	    -- dimension and degree are wrt to R = QQ[cc][kk][xx], incorrect
+	    degree I
+	    dim I
+
 ///
 
 doc /// 
