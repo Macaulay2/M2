@@ -1,6 +1,27 @@
-export {"randomSchubertProblemSolution"}
-needsPackage "NumericalAlgebraicGeometry"
-if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
+-------------------------------------------------------------
+-- These are functions setting up monodromy-based computation
+-- (not used by anything else at the moment; 
+--  something to look at in the future)
+----------------------------------------
+
+-- experimental monodromy solver
+solveSchubertProblemViaMonodromy = method(Options=>{Verbose=>false})
+solveSchubertProblemViaMonodromy (List, ZZ, ZZ) := o -> (conds, k, n) -> (
+    (X,P,PS) := parametricSchubertProblem(conds,k,n);
+    R := FFF[P/(p->p.Name)][X/(x->x.Name)];
+    PR := P/(p->R_(p.Name));
+    XR := X/(x->R_(x.Name));
+    PSR := value(PS,valueHashTable(P|X,PR|XR));
+    -- get seed solution
+    (s0,XX,inverse'flags) := oneSolutionForOneInstance(conds,k,n);
+    p0 := point{inverse'flags/entries//flatten//flatten};
+    elapsedTime (V,npaths) := monodromySolve(polySystem PSR, p0, {s0}, 
+	NumberOfNodes=>4, NumberOfEdges=>1, 
+	--"new tracking routine"=>false, 
+	Verbose=>o.Verbose);
+    (V, npaths, getTrackTime(V.Graph))
+    )
+
 parametricSchubertProblem = method()
 p := symbol p;
 x := symbol x; 
@@ -19,7 +40,7 @@ parametricSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
 		    )))
 	));   
     (PX,X) := skewSchubertVariety((k,n),c1,c2,Inputs=>symbol x);
-    (X,P,makeSquareSystem(transpose PX,remaining'conditions'flags))
+    (X,P,plueckerSystem(transpose PX,remaining'conditions'flags))
     )
 
 oneSolutionForOneInstance = method()

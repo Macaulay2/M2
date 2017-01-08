@@ -23,7 +23,6 @@ DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
-CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 # see the INSTALL file:
 # export MACOSX_DEPLOYMENT_TARGET=10.9
@@ -48,13 +47,14 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-# _FC  := false
-CONFIGOPTIONS += --disable-frobby  --disable-gfan
+# disable some libraries that don't compile with clang:
+# CONFIGOPTIONS += --disable-frobby  --disable-gfan
+CONFIGOPTIONS += --disable-strip
 export CFLAGS += -Wno-unknown-attributes
 else
-_CC  := gcc-4.9
-_CXX := g++-4.9
-_FC  := gfortran-4.9
+_CC  := gcc-4.9.4
+_CXX := g++-4.9.4
+_FC  := gfortran-4.9.4
 endif
 endif
 endif
@@ -74,7 +74,6 @@ ifeq ($(PRODUCTION),yes)
    default: check
    CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY)-production
-   PREFIX = /Applications/Macaulay2-1.6
    CONFIGOPTIONS += --enable-dmg
    ifeq ($(DEBUG),yes)
       $(error PRODUCTION=yes and DEBUG=yes)
@@ -99,5 +98,6 @@ CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=no GCC5=no GCC6=no "
 # End:
+g

@@ -13,37 +13,38 @@ newPackage(
      AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true 
+     DebuggingMode => true,
+     AuxiliaryFiles => true
      )
 
 export {
      "egb",
      "egbToric",
-     "egbSignature",
      "buildERing",
      "buildEMonomialMap",
      "Symmetrize",
      "Completely",
-     "Diagonal",
+     "Signature",
+     "Buchberger",
+     "Incremental",
      "reduce",
      "OutFile",
      "PrincipalSyzygies",
-     "CompleteReduce",
      "exponentMatrix",
-     --for testing
-     "Shift",
-     "shift",
-     "ShiftMonomial",
-     "shiftMonomial",
-     "divWitness",
+     "incOrbit",
      --priority queue
      "PriorityQueue",
      "priorityQueue",
      "mergePQ",
-     "deleteMin"
+     "deleteMin",
+     "pop",
+     "Shift",
+     "shift"
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len, degreesList }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, 
+    Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len, degreesList, 
+    CompleteReduce, PrincipalSyzygies, Diagonal, basisList }
 
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
@@ -54,8 +55,10 @@ MPair = new Type of HashTable
 
 -- In:
 -- Out: 
-egb = method(Options=>{Symmetrize=>false, OutFile=>null})
+egb = method(Options=>{Symmetrize=>false, OutFile=>null, Algorithm=>Buchberger, PrincipalSyzygies=>false})
 egb (List) := o -> F -> (
+     if o.Algorithm == Incremental then return egbIncremental(F,Symmetrize=>o.Symmetrize,OutFile=>o.OutFile);
+     if o.Algorithm == Signature   then return egbSignature(F,OutFile=>o.OutFile,PrincipalSyzygies=>o.PrincipalSyzygies);
      g := o.OutFile;
      n := width ring first F;
      k := 0;
@@ -293,7 +296,7 @@ basicReduce (RingElement, BasicList) := o -> (f,B) -> (
 	       iS := indexSupport({divisor});
 	       maxi := position(iS, i->(i != 0), Reverse=>true);
 	       if sigma#maxi >= n then return null;
-	       sd := (shiftMap(R,sigma)) divisor;
+	       sd := (shiftMap(R,sigma)) sub(divisor,R);
 	       f = f - (leadTerm f//leadTerm sd)*sd;
 	       --print("reduce:",g,f,divisor,sd);
 	       );
@@ -386,10 +389,11 @@ shiftPairs = (n0,n1,k) -> (
 --     If Extend => false then S = R, otherwise S has index bound equal to the max entry of s -1.
 --     If s#i == -1 then all variables with index i go to 0_S.
 shiftMap = method(Options=>{Extend=>false})
+shiftMap(Ring,List) := o -> (R,L) -> shiftMap(R,shift L,Extend=>o.Extend)
 shiftMap(Ring,Shift) := o -> (R,I) -> (
     I = crop(I,width R);
     S := R;
-    if o.Extend then S = buildERing(R,(I*(width R-1))+1);
+    if o.Extend then S = buildERing(R, (max apply(width R,i->I#i))+1);
     mapList := apply(R.varIndices, ind->(
 	    indnew := new MutableList from ind;
 	    for j from 1 to #ind-1 do (
@@ -412,7 +416,7 @@ symmetrize RingElement := f -> (
      R := ring f;
      is := indexSupport {f};
      IS := select(#is, j->(is#j > 0)); -- list of indices present in f
-     apply(permutations IS, p->((shiftMap(R,p)) f))
+     apply(permutations IS, p->((shiftMap(R,shift p)) f))
      )
 
 
@@ -531,7 +535,8 @@ printT = (T,f) -> (
 
 --builds an equivariant monomial map from ERing R to S.
 --F is a list storing the image of y_(0,1,...,k-1) for each block of variables in R.
-buildEMonomialMap = (S,R,F) -> (
+buildEMonomialMap = method()
+buildEMonomialMap(Ring,Ring,List) := (S,R,F) -> (
      if width S != width R then (
 	  S' := buildERing(S,width R);
           F = F / ringMap(S',S);
@@ -556,9 +561,11 @@ matrixFromMap = m -> (
      transpose matrix A
      )
 
-egbToric = M -> (
+egbToric = method(Options=>{OutFile=>null})
+egbToric(RingMap) := o -> M -> (
      R := source M;
      S := target M;
+     out := o.OutFile;
      r := R.semigroup;
      F := apply(#r, p -> M(R.varTable#((1:p)|0..(r#p-1))));
      k := width R;
@@ -569,23 +576,22 @@ egbToric = M -> (
      while 2*lastNewk > k+1 do (
 	  collectGarbage();
 	  k = k+1;
-	  print k;
+	  out << k << endl;
 	  Rnew := buildERing(R,k);
 	  Tnew := buildEMonomialMap(S,Rnew,F);
-	  Gnew := transpose toricGroebner matrixFromMap Tnew;
+	  Gnew := printT(timing transpose toricGroebner matrixFromMap Tnew, out);
 	  shifts := subsets(k,k-1);
 	  sList := apply(shifts, s -> (
 		    m := shiftMap(Rnew,s)*ringMap(Rnew,R);
 		    matrixFromMap m
 		    ));
 	  L1 := matrix{apply(sList, s->s*G)};
-	  L1 = time sort L1;
-	  uniqueCols := time select(numgens source L1, i->(i == 0 or L1_{i} != L1_{i-1}));
+	  L1 = sort L1;
+	  uniqueCols := printT(timing select(numgens source L1, i->(i == 0 or L1_{i} != L1_{i-1})), out);
 	  L1 = L1_uniqueCols;
-	  print numgens target Gnew;
-	  print numgens source Gnew;
-	  L2 := time sort Gnew;
-	  if L1 != L2 then (print "new stuff found"; lastNewk = k; lastNewG = Gnew);
+	  out << (numgens target Gnew,numgens source Gnew) << endl;
+	  L2 := sort Gnew;
+	  if L1 != L2 then (out << "new stuff found" << endl; lastNewk = k; lastNewG = Gnew);
 	  R = Rnew;
 	  T = Tnew;
 	  G = Gnew;
@@ -593,21 +599,59 @@ egbToric = M -> (
      k = lastNewk;
      R = buildERing(R,lastNewk);
      GBtrad := flatten entries sort gens toBinomial(transpose lastNewG, R);
-     seen := new MutableHashTable;
-     GB := select(GBtrad, g -> (
-	       if not seen#?g then (
-	       	    n := width g;
-	       	    shifts := subsets(k,n);
-		    shifts = apply(shifts, s->(s|(toList ((k-n):(-1)))));
-		    --print shiftMap(R,shifts#0);
-	       	    for s in shifts do seen#((shiftMap(R,s))g) = true;
-		    true
-		    )
-	       else false
-	       ));
-     GB
+     minIncGens GBtrad
      )
 
+minIncGens = F -> (
+    n := width F;
+    seen := new MutableHashTable;
+    select(F, g -> (
+	    if not seen#?g then (
+	        for f in incOrbit(g,n,Symmetrize=>false) do (seen#f = true; seen#(-1*f) = true);
+		true
+		)
+	    else false
+	    ))
+    )
+
+incOrbit = method(Options=>{Symmetrize => false})
+incOrbit(RingElement,ZZ) := o -> (f,n) -> incOrbit({f},n,Symmetrize=>o.Symmetrize)
+incOrbit(List,ZZ) := o -> (F,n) -> (
+    F = apply(F, f->matchRing(f,n));
+    R := ring first F;
+    flatten for f in F list (
+	k := width f;
+	shifts := subsets(n,k);
+	if o.Symmetrize then shifts = flatten apply(shifts, permutations);
+	shifts = apply(shifts, shift);
+	for s in shifts list (shiftMap(R,s))f
+	)
+    )
+
+egbIncremental = method(Options=>{Symmetrize=>false, OutFile=>null})
+egbIncremental(List) := o -> F -> (
+    if #F == 0 then return F;
+    k := width F;
+    lastNewk := k;
+    while 2*lastNewk > k do (
+	F = sort apply(F, f->matchRing(f,k));
+	incF := incOrbit(F,k,Symmetrize=>o.Symmetrize);
+	incG := flatten entries gens gb ideal incF;
+	G := sort minIncGens incG;
+	if G != F then (
+	    F = G;
+	    lastNewk = k;
+	    );
+	k = k+1;
+	);
+    n := width G;
+    apply(G, g->matchRing(g,n))
+    )
+
+ 
+-----------------------------------------------------
+--Shift and ShiftMonomial for egbSignature
+-----------------------------------------------------
 net Shift := S -> net toList S 
 shift = method()
 shift List := L -> new Shift from L
@@ -630,7 +674,7 @@ crop (Shift,ZZ) := (I,n) -> (
     if k > n then return shift take(I,n);
     I
     )
-degree (Shift) := I -> if #I == 0 then 0 else last I + 1 - #I
+degree (Shift) := I -> if #I == 0 then 0 else max(I) + 1 - #I
 Shift ? Shift := (I,J) -> (
     if degree I == degree J then (
 	(gapsI,gapsJ) := (I,J)/gaps;
@@ -677,7 +721,14 @@ ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 
 net MPair := M -> net "(" | net toString M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
-mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
+mPair (ShiftMonomial,ZZ,MutableList,RingElement) := (S,i,F,v) -> new MPair from hashTable{shM=>S,pos=>i,basisList=>F,polynomial=>v}
+--MPair ? MPair := (m,n) -> (
+--    memon := leadMonomial((m.basisList)#(m.pos));
+--    nemon := leadMonomial((m.basisList)#(m.pos));
+--    L := matchRing {memon,m.polynomial,nemon,n.polynomial};
+--    (ms,ns) := (L#0*L#1, L#2*L#3);
+--    if ms == ns then m.pos ? n.pos else ms ? ns
+--    )
 MPair ? MPair := (m,n) -> if width m == width n then (
     if degree m.polynomial == degree n.polynomial then (
     	-- if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
@@ -685,30 +736,28 @@ MPair ? MPair := (m,n) -> if width m == width n then (
     	) else degree m.polynomial ? degree n.polynomial
     ) else width m ? width n
 MPair == MPair := (M,N) -> (M ? N) === symbol ==
-ShiftMonomial * MPair := (S,M) -> (
-    new MPair from hashTable{shM=>S*M.shM, pos=>M.pos, polynomial=>S*M.polynomial}
-    )
-Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,I*M.polynomial)
+ShiftMonomial * MPair := (S,M) -> mPair(S*M.shM,M.pos,M.basisList,S*M.polynomial)
+Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,M.basisList,I*M.polynomial)
 width MPair := M -> max {width M.shM, width M.polynomial}
 
 matchRing = method()
-matchRing (RingElement,RingElement) := (p,q) -> (
+matchRing(RingElement,RingElement) := (p,q) -> (
     (R,S) := (p,q)/ring;
     if width R < width S then p = (ringMap(S,R))p;
     if width R > width S then q = (ringMap(R,S))q;
     (p,q)
     )
-matchRing (RingElement,ZZ) := (p,n) -> (
+matchRing(RingElement,ZZ) := (p,n) -> (
     S := buildERing(ring p, n);
-    ringMap(S,ring p)*p
+    (ringMap(S,ring p))p
     )
-matchRing (RingElement,Ring) := (p,S) -> ringMap(S,ring p)*p
+matchRing(RingElement,Ring) := (p,S) -> (ringMap(S,ring p))p
 matchRing List := L -> (
-    n := max width@@ring\L;
+    n := max (width@@ring\L);
     apply(L, p->(matchRing(p,n)))
     )
 compare = method()
-compare (RingElement,RingElement) := (p,q) -> (
+compare(RingElement,RingElement) := (p,q) -> (
     (p,q) = matchRing(p,q);
     p ? q
     )
@@ -724,13 +773,16 @@ width Shift := I -> (
 width List := L -> max(L / width)
 
 
-egbSignature = method(Options=>{PrincipalSyzygies=>false, CompleteReduce=>true})
+egbSignature = method(Options=>{PrincipalSyzygies=>false, CompleteReduce=>true, OutFile=>null})
 egbSignature (List) := o -> F -> (
+    F = new MutableList from F;
     R := ring first F;
-    Fwidths := F/(width@@leadMonomial);
-    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i));
+    Fwidths := apply(F,width@@leadMonomial);
+    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F,F#i));
+    out := o.OutFile;
     H := {};
     G := {};
+    coveredCount := 0;
     while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
@@ -741,41 +793,45 @@ egbSignature (List) := o -> F -> (
 			  Another question: why do we check if a j-pair is covered by syzygies only when we insert it in JP? 
 	                  *} 
 	   then (
-	    << "  covered pair in JP: " << j << endl;
+	    out << "  covered pair in JP: " << j << endl;
+	    coveredCount = coveredCount + 1;
 	    continue
 	    );
-	<< "  processing pair: " << j << endl;
+	out << "  processing pair: " << j << endl;
 	j = regularTopReduce(j,G);
 	p := j.polynomial;
 	if p == 0 then ( 
 	    H = append(H,j); 
-	    << "-- " << #H << "th syzygy is: " << j << endl;
+	    out << "-- " << #H << "th syzygy is: " << j << endl;
 	    )
 	else (
 	    if o.CompleteReduce then p = completeReduce(p,apply(G,g->g.polynomial));
 	    if p == 0 then continue; -- p==0 is not enough to record a syzygy
 	    if p =!= j.polynomial then (
-	      j = mPair(shiftMonomial(1_R,shift{}),#F,p);
-	      F       = append(F,p);
-	      Fwidths = append(Fwidths,width leadMonomial p);
+	      F#(#F) = p;
+	      Fwidths#(#Fwidths) = width leadMonomial p;
+	      j = mPair(shiftMonomial(1_R,shift{}),#F,F,p);
+	      << "-- F contains " << #F << " elements now" << endl;
 	      );
 	    G = append(G,j);
-	    << "-- " << #G << "th basis element is: " << j << endl;
+	    out << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		(newJP,newPS) := jPairs(j,g);
-		<< "   new J-pairs: " << #newJP << endl;
+		out << "   new J-pairs: " << #newJP << endl;
 		newJP = select(newJP, j->not isCoveredByTrivSyg(j,Fwidths#(j.pos)) and not isCovered(j,H));
 		scan(newJP, j->insert(JP,j));
-		<< "   new NOT covered J-pairs: " << #newJP << endl;
+		out << "   new NOT covered J-pairs: " << #newJP << endl;
+		coveredCount = coveredCount - #newJP;
 		if o.PrincipalSyzygies then (
 		  newPS = select(newPS, s->not isCoveredByTrivSyg(s,Fwidths#(s.pos)) and not isCovered(s,H));
 		  H = H | newPS;
 		  )
 		);
-	    << "  JP queue length: " << length JP << endl;
-	    << "  syzygies in H: " << #H << endl;
+	    out << "  JP queue length: " << length JP << endl;
+	    out << "  syzygies in H: " << #H << endl;
 	    );
 	);
+    << "-- TOTAL covered pairs = " << coveredCount << endl;
     apply(G, g->g.polynomial)
     )
 
@@ -815,7 +871,7 @@ regularTopReduce = (j,G) -> (
 	    if isDiv and Q*g < j then (
 		-- << "  reducing j = " << j << endl << "  by Q*g = " << Q << "*" << g << endl;
 		v := reduction(j.polynomial,Q*g.polynomial);
-		return regularTopReduce(mPair(j.shM,j.pos,v),G);
+		return regularTopReduce(mPair(j.shM,j.pos,j.basisList,v),G);
 		);
 	    if isDiv then seed = Q.Sh;
 	    );
@@ -928,7 +984,7 @@ min PriorityQueue := Q -> if Q.Min === null then null else nValue Q.Min
 deleteMin = method()
 deleteMin (PriorityQueue) := Q -> (
     if Q.Min === null then return null;
-    Q.len = Q.len - 1;
+    l := Q.len;
     m := min Q;
     k := position(toList Q.Roots, r->(r === Q.Min));
     Rroots := (Q.Roots#k).Children;
@@ -939,7 +995,9 @@ deleteMin (PriorityQueue) := Q -> (
     Q.Min = if #Qroots == 0 then null else min toList Qroots;
     deg := position(toList Q.Roots, r->(r =!= null), Reverse=>true);
     Q.Degree = if deg === null then 0 else deg + 1;
-    mergePQ(Q,R)
+    mergePQ(Q,R);
+    Q.len = l-1;
+    Q
     )
 
 pop = method()
@@ -962,6 +1020,27 @@ doc ///
           EquivariantGB
      Headline
           a package for computing equivariant Gröbner bases
+     Description
+          Text
+	       EquivariantGB is a package for computing in polynomial rings with an infinite 
+	       number of variables, but with an action of the infinite symmetric group.
+	       Alternatively such a ring can be considered as the limit of a family of rings 
+	       with symmetric action.  A representation of such a ring can be created using
+	       the method @TO buildERing@.
+	       
+	       For example consider the ring R = $\mathbb{Q}[x_i,y_i \mid i,j\in \mathbb{Z}_{\geq 0}]$,
+	       the coordinate ring of 2 by infinite matrices.  The infinite symmetric group acts
+	       by permuting columns.
+	  Example
+	       R = buildERing({symbol x,symbol y},{1,1},QQ,4)
+	       vars R
+	  Text
+	       Here the output ring stores only a truncation of the set of variables, with indices
+	       from 0 to 3, but this bound will be adjusted as necessary in the computations.
+	       
+	       We now consider ideals of R that are closed under the symmetric group action.
+	       For example, let I be the set of vanishing equations of the rank 1 matrices.
+	       I is generated by all 2 by 2 minors $x_iy_j - x_jy_i$.
      Subnodes
           egb
 	  buildERing
@@ -971,6 +1050,8 @@ doc ///
      Key
           buildERing
 	  (buildERing,List,List,Ring,ZZ)
+	  [buildERing,MonomialOrder]
+	  [buildERing,Degrees]
      Headline
           creates a ring to be used with other functions in the EquivariantGB package
      Usage
@@ -981,21 +1062,47 @@ doc ///
 	  I:List
 	       a list of integers, the number of indices for each variable block
 	  F:Ring
+	       the coefficient ring
 	  n:ZZ
+	       the width bound
      Outputs
           R:Ring
-	       a Ring with coefficient field {\tt F}, and a block of variables for each entry of {\tt X}.
+	       a polynomial ring with coefficient field {\tt F}, and a block of variables for each entry of {\tt X}.
 	       The coresponding integers in {\tt I} determine how many indices each block of variables has.
 	       Variables with all index values from {\tt 0} to {\tt n-1} are included.
      Description
           Text
-	       For now the monomial order on {\tt R} is always @TO Lex@, with variables ordered from the last
-	       block to the first, with larger indices before smaller indices.  For blocks with multiple indices
-	       the first index is most significant, followed by the second, etc.
+	       The object produced by {\tt buildERing} is a @TO Ring@ with additional stored information.
+	       It is used to represent a polynomial ring {\tt F[Y]} with an infinite set of variables {\tt Y}, and
+	       an action of the infinte symmetric group on {\tt Y} such that it is composed of a finite number
+	       of orbits.  Macaulay2 cannot store a ring with an infinite number of variables, so the ring produced
+	       contains only some of the variables.
+	       
+	       We assume {\tt Y} decomposes into a finite number of "blocks",  each block consisting of variables
+	       of the form {\tt x_{(i_1,...,i_k)}} for some {\tt k} and each index {\tt i_j} ranging over all non-negative
+	       integers.  The symbol {\tt x} to be used for each block is listed in {\tt X}.  The value of {\tt k}
+	       for each block is listed in {\tt I}.  The variables in the ring output by {\tt buildERing} are those
+	       with index values ranging from {\tt 0} to {\tt n-1}.  The same ring with a different index bound {\tt n} can
+	       be produced by @TO (buildERing,Ring,ZZ)@.
+	  Example
+	       S = buildERing({symbol z}, {1}, QQ, 4)
+	       vars S
+	       coefficientRing S
           Example
-               R = buildERing({symbol y, symbol x}, {2,1}, QQ, 2)
+               R = buildERing({symbol y, symbol x}, {2,1}, QQ, 3)
                vars R
-               coefficientRing R
+	  Text
+	       The monomial order can be chosen with optional argument @TO MonomialOrder@.
+	       Currently valid choices are @TO Lex@, @TO GLex@ or @TO GRevLex@.
+	       The variables are always ordered from the last
+	       block to the first, with larger indices before smaller indices.  For blocks with multiple indices
+	       the order of the variables is also lexicographic with first index most significant, followed by
+	       the second, etc.
+	       
+	       The grading of the ring can be chosen with optional argument @TO Degrees@.
+	       The grading is specified by listing the degree of each variable block.
+	       Because the degree function must be invariant under the symmetric action,
+	       every variable in the same block must have the same degree.
 ///
 	       
 doc ///
@@ -1007,11 +1114,17 @@ doc ///
 	  R = buildERing(S,n)
      Inputs
 	  S:Ring
-	       a Ring built by {\tt buildERing}
+	       a Ring built by @TO buildERing@
 	  n:ZZ
      Outputs
           R:Ring
 	       a Ring with the same variable structure as {\tt S}, but with different index ranges.
+     Description
+     	  Example
+	       S = buildERing({symbol z}, {1}, QQ, 2)
+	       vars S
+	       R = buildERing(S,5)
+	       vars R
 ///
 
 doc ///
@@ -1040,8 +1153,92 @@ doc ///
 
 doc ///
      Key
+          egbToric
+	  (egbToric,RingMap)
+     Headline
+          computes the kernel of an equivariant monomial map
+     Usage
+          G = egbToric m
+     Inputs
+          m:RingMap
+	       an equivariant monomial map between rings with symmetric action
+     Outputs
+          G:List
+	       an equivariant Gröbner basis for the kernel of the map
+     Description
+          Text
+               {\tt m} should be a monomial map between rings created by @TO buildERing@.  Such a map can be constructed with
+	       @TO buildEMonomialMap@ but this is not required.
+	  Text
+	       For a map to ring {\tt R} from ring {\tt S}, the algorithm infers the entire equivariant map from where {\tt m} sends
+	       the variable orbit generators of S.  In particular for each orbit of variables of the form {\tt x_{(i_1,...,i_k)}},
+	       the image of {\tt x_{(0,...,k-1)}} is used.
+	       
+	       {\tt egbToric} uses an incremental strategy, computing Gröbner bases for truncations using @TO FourTiTwo@.  Because of FourTiTwo's
+	       efficiency, this strategy tends to be much faster than general equivariant Gröbner basis algorithms such as @TO egb@.
+
+	       In the following example we compute an equivariant Gröbner basis for the vanishing equations of the second Veronese of P^n,
+	       i.e. the variety of n x n rank 1 symmetric matrices.
+          Example
+               R = buildERing({symbol x}, {1}, QQ, 2);
+	       S = buildERing({symbol y}, {2}, QQ, 2);
+               m = buildEMonomialMap(R,S,{x_0*x_1})
+	       G = egbToric(m, OutFile=>stdio)
+     Caveat
+	  It is not checked if {\tt m} is equivariant.  Only the images of the orbit generators of the source ring are examined and
+	  the rest of the map ignored.
+     SeeAlso
+          egb
+	  buildEMonomialMap
+///
+
+doc ///
+     Key
+          buildEMonomialMap
+	  (buildEMonomialMap,Ring,Ring,List)
+     Headline
+          builds an equivariant ring map
+     Usage
+          m = buildEMonomialMap
+     Inputs
+          R:Ring
+	       the target ring with symmetric action, produced by @TO buildERing@
+	  S:Ring
+	       the source ring with symmetric action, produced by @TO buildERing@
+	  L:List
+	       a list of monomials in {\tt R}, the images of each of the variable orbit generators of {\tt S}
+     Outputs
+          m:RingMap
+	       an equivariant monomial map to {\tt R} from {\tt S}
+     Description
+          Text
+               {\tt R} and {\tt S} must be rings created by @TO buildERing@. Each orbit of variables in {\tt S} consists of variables of the form 
+	       {\tt x_{(i_1,...,i_k)}} for some width {\tt k}.  {\tt L} is a list that for each such orbit gives the desired image of 
+	       {\tt x_{(0,...,k-1)}}.  The rest of the map is extrapolated from these value.
+          Example
+               R = buildERing({symbol x, symbol y}, {1,1}, QQ, 3);
+	       vars R
+	       n = buildEMonomialMap(R,R,{x_0,x_0^3})
+	       n(x_1^3*y_0)
+	  Example
+	       S = buildERing({symbol z}, {2}, QQ, 3);
+	       vars S
+               m = buildEMonomialMap(R,S,{x_0^2*y_1})
+	       m(z_(1,2))
+
+     Caveat
+	  If a given variable orbit of {\tt S} has {\tt k} indices, then the target monomial list in {\tt L} should only use
+	  indices between {\tt 0} and {\tt k-1}.
+     SeeAlso
+          egbToric
+	  buildERing
+///
+
+doc ///
+     Key
           reduce
 	  (reduce,RingElement,List)
+	  [reduce,Completely]
      Headline
           computes an equivariant normal form
      Usage
@@ -1055,6 +1252,16 @@ doc ///
           r:RingElement
 	       an equivariant normal form of {\tt f} with respect to {\tt F}.
      Description
+          Text
+	       Reduces {\tt f} by the Inc-orbits of the set {\tt F} until {\tt f} is in a normal form.
+	       That is the lead monomial of {\tt f} is a standard monomial, not divisible by any monomial
+	       in the orbit of any lead monomial of an element of {\tt F}.  If
+	       {\tt F} is an equivariant Gröbner basis then {\tt r} is {\tt 0} if and only if {\tt f} is in the ideal
+	       generated by the orbits of {\tt F}.
+	       
+	       If the optional argument {\tt Completely} is set to {\tt true} then normal form {\tt r} will
+	       contain only standard monomials.  If {\tt F} is an equivariant Gröbner basis, then the completely
+	       reduced normal form {\tt r} is uniquely determined, otherwise there is no such gaurantee.  
           Example
                R = buildERing({symbol x}, {1}, QQ, 3);
                reduce(x_0^2 + x_0*x_2, {x_1})
@@ -1062,13 +1269,357 @@ doc ///
 	  The output does not necessarily belong to the same ring as the input.
 ///
 
-undocumented {Symmetrize, Completely, [egb,Symmetrize]}
+doc ///
+     Key
+          [egb,Algorithm]
+	  Buchberger
+	  Signature
+	  Incremental
+     Headline
+          algorithm choice for egb
+     Description
+          Text
+	       {\bf Buchberger:}  This is a top level implementation of the equivariant Buchberger algorithm.
+	       
+	       {\bf Incremental:} This strategy uses Macaulay2's built in Gröbner basis algorithm @TO gb@.
+	       A Gröbner basis is computed for each truncated ideal.  If no new elements are discovered up
+	       to Inc-action are discovered between the {\tt n} truncation and the {\tt 2n-1} truncation
+	       for some {\tt n} larger than the width of the generators, then the result is returned.
+	       
+	       {\bf Signature:} This is an implementation of an equivariant variant of the Gao-Volny-Wang
+	       signature based Gröbner basis algorithm.  Experimental!
+          Example
+               R = buildERing({symbol x}, {1}, QQ, 2);
+               egb({x_0+x_1}, Algorithm=>Buchberger)
+	       use R;
+	       egb({x_0+x_1}, Algorithm=>Incremental)
+	       use R;
+	       egb({x_0+x_1}, Algorithm=>Signature)
+///
 
--- TEST ///
--- needs concatenate(EquivariantGB#"source directory","./examples.m2")
--- I = exampleISSAC()
--- assert(toString egb(I,Symmetrize=>true) == toString {x_1*x_0^3, x_1^2*x_0^2, x_1^3*x_0, x_2*x_1*x_0^2, x_2*x_1^2-x_2*x_0^2, x_2^2*x_0-x_1^2*x_0, x_2^2*x_1-x_1*x_0^2})
--- ///
+doc ///
+     Key
+          OutFile
+	  [egb,OutFile]
+	  [egbToric,OutFile]
+     Headline
+          where to send messages
+     Description
+          Text
+	       Both @TO egb@ and @TO egbToric@ have the option to print text while running,
+	       describing what it is doing, giving timings of certain steps,
+	       and printing intermediate outputs.
+	       
+	       Specify where to write this information.  Passing @TO null@ will discard the messages
+	       Passing @TO stdio@ will print them in the Macaulay2 session.  You can also pass a file
+	       to save this information.
+///
+
+doc ///
+     Key
+          exponentMatrix
+	  (exponentMatrix,RingElement)
+     Headline
+          puts the exponent of a monomial into matrix form
+     Usage
+          A = exponentMatrix m
+     Inputs
+          m:RingElement
+	       an element of a ring created by @TO buildERing@.
+     Outputs
+          A:Matrix
+     Description
+          Text
+	       Let {\tt R} be a ring such that all variables have a single index on which the symmetric group acts.
+	       Then monomials in {\tt R} can be represented by a {\tt k} by infinite exponent matrix where {\tt k}
+	       is the number of variable orbits.
+	       
+	       This representation can be helpful for visualizing the structure of a monomial. 
+          Example
+               R = buildERing({symbol x, symbol y}, {1,1}, QQ, 4);
+               exponentMatrix(x_0^3*y_2)
+	       exponentMatrix(x_0*x_1*y_0*y_3)
+     Caveat
+	  The ring in which the monomial resides must have all variable orbits with exactly one index.
+///
+
+doc ///
+     Key
+          incOrbit
+	  (incOrbit,RingElement,ZZ)
+	  (incOrbit,List,ZZ)
+	  [incOrbit,Symmetrize]
+     Headline
+          the increasing map orbit of an element
+     Usage
+          O = incOrbit(f,n)
+	  O = incOrbit(F,n)
+     Inputs
+          f:RingElement
+	       an element of a ring created by @TO buildERing@
+	  F:List
+	       a list of ring elements
+	  n:ZZ
+	       the index bound
+     Outputs
+          O:List
+	       a list of all elements in the orbit of {\tt f} or {\tt F}
+     Description
+          Text
+	       If {\tt F} is an equivariant Gröbner basis for invariant ideal {\tt I}
+	       with respect to a width order then this method produces a traditional Gröbner basis
+	       for the {\tt n}th truncation of {\tt I}.
+	       
+	       If the optional argument {\tt Symmetrize} is set to true, then the full S_n orbit
+	       is produced.
+          Example
+               R = buildERing({symbol x}, {1}, QQ, 2);
+	       O = incOrbit(x_0^2, 4)
+               P = incOrbit(x_0 + x_1^2, 3, Symmetrize=>true)
+     Caveat
+	  The output is not necessarily in the same ring as the input.  The width bound of the ring
+	  of the output will always be {\tt n}.
+///
+
+-------------------------------------
+-- PriorityQueue
+-------------------------------------
+doc ///
+    Key
+        PriorityQueue
+    Headline
+        an efficient mutable priority queue implementation
+    Description
+        Text
+            A priority queue is a data structure for storing a collection of totally ordered 
+	    objects and keeping track of the minimum. This binomial heap implementation allows 
+	    for efficiently adding a new element to the queue, accessing or deleting the minimum 
+	    element, or merging two queues.  Efficiently means time logarithmic in the size of the
+	    queue, or better.
+    Subnodes
+        priorityQueue
+	(insert,PriorityQueue,Thing)
+	(min,PriorityQueue)
+	deleteMin
+	pop
+	mergePQ
+	(length,PriorityQueue)
+    Description
+        Example
+	    Q = priorityQueue {3,7,1,5}
+	    min Q
+	    deleteMin Q;
+	    insert(Q,2);
+	    min Q
+	    R = priorityQueue {4,6,8};
+	    QR = mergePQ(Q,R);
+	    length QR
+///
+
+doc ///
+    Key
+        priorityQueue
+	(priorityQueue,List)
+	1:(priorityQueue)
+    Headline
+        create a new PriorityQueue
+    Usage
+        Q = priorityQueue()
+        Q = priorityQueue L
+    Inputs
+        L:List
+     	    a list of comparable elements
+    Outputs
+        Q:PriorityQueue
+            a priority queue storing the elements of L
+    Description
+        Example
+            Q = priorityQueue {1,5,2,-3,0}
+            min Q
+///
+
+doc ///
+    Key
+	(min,PriorityQueue)
+    Headline
+        return the minimum element of the queue
+    Usage
+        m = min Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        m:Thing
+            the minimum of {\tt Q}
+    Description
+        Example
+            Q = priorityQueue {1,5,2,-3,0}
+            min Q
+    Caveat
+        If the queue is empty, {\tt null} is returned.
+///
+
+doc ///
+    Key
+	(insert,PriorityQueue,Thing)
+    Headline
+        insert a new element into the queue
+    Usage
+        Q = insert(Q,x)
+    Inputs
+        Q:PriorityQueue
+	x:Thing
+    Outputs
+        Q:PriorityQueue
+            the same PriorityQueue as the input, now with a new element inserted
+    Description
+        Example
+            Q = priorityQueue {1,2,3}
+            insert(Q,0)
+	    insert(Q,4)
+	    min Q
+    Caveat
+        The priority queue {\tt Q} is mutable and is altered by insert.
+	{\tt Q} is also the output of the function.
+///
+
+doc ///
+    Key
+        deleteMin
+	(deleteMin,PriorityQueue)
+    Headline
+        deletes the minimum element of the queue
+    Usage
+        Q = deleteMin Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        Q:PriorityQueue
+            the same PriorityQueue as the input, now with the minimum deleted
+    Description
+        Example
+            Q = priorityQueue {1,2,3}
+            deleteMin Q
+	    min Q
+    Caveat
+        The priority queue {\tt Q} is mutable and is altered by deleteMin.
+	{\tt Q} is also the output of the function.
+    SeeAlso
+        pop
+///
+
+doc ///
+    Key
+        pop
+	(pop,PriorityQueue)
+    Headline
+        returns the minimum element of the queue and deletes it
+    Usage
+        m = pop Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        m:Thing
+            the minimum element
+    Description
+        Text
+	    pop both returns the minimum element and deletes it from the queue.
+        Example
+            Q = priorityQueue {1,2,3}
+            pop Q
+	    pop Q
+	    pop Q
+	    pop Q
+    Caveat
+        Both {\tt pop Q} and {\tt min Q} return the same value, but Q is altered by pop.
+    SeeAlso
+        (min,PriorityQueue)
+	deleteMin
+///
+
+doc ///
+    Key
+	(length,PriorityQueue)
+    Headline
+        returns the number of elements in the queue
+    Usage
+        n = length Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        n:ZZ
+    Description
+        Example
+            Q = priorityQueue {1,2,3}
+            length Q
+	    insert(Q,0)
+	    length Q
+///
+
+doc ///
+    Key
+        mergePQ
+	(mergePQ,PriorityQueue,PriorityQueue)
+    Headline
+        merges two queues
+    Usage
+        Q = mergePQ(Q,R)
+    Inputs
+        Q:PriorityQueue
+	R:PriorityQueue
+    Outputs
+        Q:PriorityQueue
+            the same PriorityQueue as the first input, now with the second merged into it
+    Description
+        Text
+	    The output of the function is the priority queue whose elements are the disjoint union of
+	    the elements of {\tt Q} and {\tt R}.  Note that {\tt Q} is altered in the process to become
+	    the merged queue.
+        Example
+            Q = priorityQueue {2,4,6}
+	    R = priorityQueue {1,3,5}
+            mergePQ(Q,R)
+	    pop Q
+	    pop Q
+    Caveat
+        The priority queue {\tt Q} is mutable and is altered by mergePQ.
+        The elements of {\tt Q} and {\tt R} must be comparable to each other.
+///
+
+undocumented {(buildERing,Sequence,Ring,ZZ)}
+
+TEST ///
+R = buildERing({symbol x, symbol y, symbol z}, {0,1,2}, QQ, 3);
+assert(numgens R == 13)
+S = buildERing(R,1)
+assert(numgens S == 3)
+T = buildERing(S,0)
+assert(numgens T == 1)
+///
+
+
+TEST ///
+R = buildERing({symbol a, symbol b}, {1,1}, QQ, 3);
+S = buildERing({symbol c}, {2}, QQ, 3);
+m = buildEMonomialMap(R,S,{a_0*b_1})
+assert(m(S_0) == a_2*b_2)
+assert(m(S_1) == a_2*b_1)
+///
+
+TEST ///
+R = buildERing({symbol x}, {1}, QQ, 2);
+G = egb({x_0 + x_1}, Algorithm=>Incremental)
+assert(G == {x_0})
+R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2);
+egb({y_(0,0) - x_0^2, y_(1,0) - x_1*x_0, y_(0,1) - x_0*x_1}, Algorithm=>Incremental)
+-- egb({y_(0,1) - x_0^2*x_1, y_(1,0) - x_1^2*x_0}, Algorithm=>Incremental) -- takes too long
+///
+
+TEST ///
+R = buildERing({symbol x, symbol y}, {1,1}, QQ, 3);
+M = exponentMatrix(x_1^2*y_2)
+assert(M == matrix{{0,2,0},{0,0,1}})
+///
+
 
 end
 

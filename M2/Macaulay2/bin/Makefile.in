@@ -162,9 +162,6 @@ M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
 
-# I'm not sure whether compiling statically with libstdc++ is a good idea
-M2_LIBRARIES += -lstdc++
-
 M2_LDFLAGS += @FCLIBS_FLAGS@
 M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
 
@@ -194,7 +191,7 @@ clean::; rm -f $(EXEFILE) timestamp.o
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	@ echo "compiling timestamp.c"
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
-	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
+	time @CXX@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 ifneq ("$(EXECSTACK)","no")
 	@ if [ -x /usr/bin/execstack ] ;\
 	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \

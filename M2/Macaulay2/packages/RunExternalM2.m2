@@ -595,7 +595,7 @@ Node
 			routine to 2 seconds of computational time,
 			while the system is asked to use 3 seconds of computational time:
 		Example
-			h=runExternalM2(fn,"spin",3,PreRunScript=>"ulimit -t 2");
+			h=runExternalM2(fn,"spin",5,PreRunScript=>"ulimit -t 2");
 			h
 			fileExists(h#"output file")
 			if fileExists(h#"output file") then get(h#"output file")
@@ -1060,7 +1060,7 @@ spin = (x,t) -> (
 );
 ////<<endl<<close;
 
-r=runExternalM2(fn,"spin",(5,4),PreRunScript=>"ulimit -t 2");
+r=runExternalM2(fn,"spin",(5,6),PreRunScript=>"ulimit -t 2");
 assert(not(r#"exit code"===0));
 assert(r#value===null);
 

@@ -200,11 +200,14 @@ export toExpr(x:RawMonomial):Expr := Expr(RawMonomialCell(x));
 export toExpr(x:RawMonomialIdeal):Expr := Expr(RawMonomialIdealCell(x));
 export toExpr(x:RawMonomialOrdering):Expr := Expr(RawMonomialOrderingCell(x));
 export toExpr(x:RawMutableMatrix):Expr := Expr(RawMutableMatrixCell(x));
+-- NAG begin
 export toExpr(x:RawHomotopy):Expr := Expr(RawHomotopyCell(x));
 export toExpr(x:RawSLEvaluator):Expr := Expr(RawSLEvaluatorCell(x));
 export toExpr(x:RawSLProgram):Expr := Expr(RawSLProgramCell(x));
 export toExpr(x:RawStraightLineProgram):Expr := Expr(RawStraightLineProgramCell(x));
 export toExpr(x:RawPathTracker):Expr := Expr(RawPathTrackerCell(x));
+export toExpr(x:RawPointArray):Expr := Expr(RawPointArrayCell(x));
+-- NAG end
 export toExpr(x:RawRing):Expr := Expr(RawRingCell(x));
 export toExpr(x:RawRingElement):Expr := Expr(RawRingElementCell(x));
 export toExpr(x:RawRingMap):Expr := Expr(RawRingMapCell(x));
@@ -227,11 +230,14 @@ export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr
 export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(RawFreeModuleCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(RawMatrixCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(RawMutableMatrixCell(r)) is null do engineErrorMessage();
+-- NAG begin
 export toExpr(x:RawHomotopyOrNull):Expr := when x is r:RawHomotopy do Expr(RawHomotopyCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawSLEvaluatorOrNull):Expr := when x is r:RawSLEvaluator do Expr(RawSLEvaluatorCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawSLProgramOrNull):Expr := when x is r:RawSLProgram do Expr(RawSLProgramCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawStraightLineProgramOrNull):Expr := when x is r:RawStraightLineProgram do Expr(RawStraightLineProgramCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawPathTrackerOrNull):Expr := when x is r:RawPathTracker do Expr(RawPathTrackerCell(r)) is null do engineErrorMessage();
+export toExpr(x:RawPointArrayOrNull):Expr := when x is r:RawPointArray do Expr(RawPointArrayCell(r)) is null do engineErrorMessage();
+-- NAG end
 export toExpr(x:ZZorNull):Expr := when x is i:ZZ do Expr(ZZcell(i)) is null do engineErrorMessage();
 export toExpr(x:QQorNull):Expr := when x is i:QQ do Expr(QQcell(i)) is null do engineErrorMessage();
 export toExpr(x:RRorNull):Expr := when x is i:RR do Expr(RRcell(i)) is null do engineErrorMessage();
