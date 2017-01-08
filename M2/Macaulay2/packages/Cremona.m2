@@ -1,13 +1,14 @@
 
 newPackage(
        "Cremona",
-	Version => "3.0", Date => "Jan 4, 2017 (first version: Apr 10, 2016, included with Macaulay2 1.9)",
+	Version => "3.0", Date => "Jan 8, 2017 (first version: Apr 10, 2016, included with Macaulay2 1.9)",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
     	DebuggingMode => false, Reload => true
     	)
 
 export{
+   "SegreClass",
    "graph",
    "composeRationalMaps",
    "degreeOfRationalMap",   
@@ -28,6 +29,7 @@ export{
 MathVerb:=true;
 certificate:="MathMode: output certified!\n";
 
+SegreClass = method(TypicalValue => RingElement, Options => {MathMode => false});
 graph=method();
 composeRationalMaps=method(TypicalValue => RingMap);
 degreeOfRationalMap=method(TypicalValue => ZZ, Options => {MathMode => false});
@@ -436,6 +438,21 @@ inverseImage (RingMap,Ideal) := o -> (phi,J) -> (
    saturate(phi J,F)
 );
 
+SegreClass (Ideal) := o -> (I) -> (
+   if not isHomogeneous I then error "expected a homogeneous ideal";
+   I = trim I;
+   d1:=max flatten degrees I;
+   r:=dim I -1; n:=dim ring I -1;
+   N:=numgens ambient ring I -1;
+   phi:=toMap(I,d1);
+      verb:=MathVerb; MathVerb=false; 
+   d:=projectiveDegrees(phi,MathMode=>o.MathMode);
+      MathVerb=verb;
+   H:=local H; R:=ZZ[H]/H^(N+1); h:=first gens R;
+   if o.MathMode and MathVerb then <<certificate;
+   sum(r+1,k->(-1)^(n-k-1)*sum(n-k+1,i->(-1)^i*binomial(n-k,i)*d1^(n-k-i)*d_i)*h^(N-k))
+);
+
 checkRationalMap = (phi) -> ( -- phi RingMap
    if not isField coefficientRing target phi then error("the coefficient ring needs to be a field");
    if not ((isPolynomialRing source phi or isQuotientRing source phi) and (isPolynomialRing target phi or isQuotientRing target phi) and isPolynomialRing ambient source phi and isPolynomialRing ambient target phi and isHomogeneous ideal source phi and isHomogeneous ideal target phi) then error("source and target of the ring map need to be quotients of polynomial rings by homogeneous ideals");
@@ -456,7 +473,8 @@ beginDocumentation()
    document { 
     Key => Cremona, 
     Headline => "package for some computations on rational maps between projective varieties", 
-          EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". The main methods are available both in version probabilistic and version deterministic (see ",TO "MathMode",").",
+          EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". The main methods are available both in version probabilistic 
+and in version deterministic, and one can switch from one to the other with the boolean option ",TO "MathMode",".",
           PARA{"Let ",TEX///$\Phi:X ---> Y$///,"  be a rational map from a subvariety ",TEX///$X=V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///," to a subvariety ",TEX///$Y=V(J)\subseteq\mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The map ",TEX///$\Phi $///," can be represented, although not uniquely, by a homogeneous ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," of quotients of polynomial rings by homogeneous ideals. These kinds of ring maps are the typical inputs for the methods in this package. The method ", TO toMap," constructs such a map from a list of ",TEX///$m+1$///," homogeneous elements of the same degree in ",TEX///$K[x_0,...,x_n]/I$///,"."}, 
          PARA{"Below is an example using the methods provided by this package, dealing with a birational transformation ",TEX///$\Phi:\mathbb{P}^6 ---> \mathbb{G}(2,4)\subset\mathbb{P}^9$///," of bidegree ",TEX///$(3,3)$///,"."},
     EXAMPLE { 
@@ -536,7 +554,6 @@ phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
      Outputs => { {"the list of the projective degrees of ",TEX///$\Phi$///} 
           }, 
        PARA{"Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension; for the precise definition, see Harris's book (Algebraic geometry: A first course - Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,". So, replacing in the definition, ", EM "general linear subspace", " by ", EM "random linear subspace", ", we get a probabilistic algorithm to compute all projective degrees. This is what the method uses if ", TO MathMode, " is set to ", TT "false",". If instead ", TO MathMode, " is set to ", TT "true", ", then the method simply computes the ",TO "multidegree"," of the ",TO "graph","."},
-    PARA{"We point out that in the package ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", P. Aluffi implemented the same deterministic algorithm to compute projective degrees in the case when the source of the rational map is a projective space (this is done in an internal routine called ",TT "presegre","). Moreover, another probabilistic algorithm, due to M. Helmer, to compute projective degrees is internally implemented in the package ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9.2/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},"."},
     EXAMPLE { 
           "-- map from P^4 to G(1,3) given by the quadrics through a rational normal curve of degree 4
 GF(331^2)[t_0..t_4]; phi=toMap minors(2,matrix{{t_0..t_3},{t_1..t_4}})", 
@@ -550,13 +567,13 @@ ZZ/300007[x_0..x_6]; phi=toMap {x_2*x_4-x_1*x_5, x_0*x_4-70731*x_1*x_4+129378*x_
           "time projectiveDegrees phi", 
           "time projectiveDegrees(phi,OnlySublist=>1)" 
           }, 
-    SeeAlso => {degreeOfRationalMap} 
+    SeeAlso => {degreeOfRationalMap, SegreClass} 
           } 
    document { 
-    Key => {MathMode, [invertBirMap,MathMode], [projectiveDegrees,MathMode],[degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode]}, 
+    Key => {MathMode, [invertBirMap,MathMode], [projectiveDegrees,MathMode],[degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode]}, 
     Headline => "whether or not to ensure correctness of output", 
     "This option accepts a ", TO Boolean, " value, default value ",TT "false",".",
-     PARA{"If turned on in the methods ", TO invertBirMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeOfRationalMap, ", ", TO isBirational," and ", TO isDominant, ", it means whether or not to use a deterministic algorithm."}
+     PARA{"If turned on in the methods ", TO invertBirMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeOfRationalMap, ", ", TO isBirational,", ", TO isDominant, " and ", TO SegreClass, ", it means whether or not to use a deterministic algorithm."}
           } 
    document { 
     Key => {Dominant, [toMap,Dominant]}, 
@@ -774,7 +791,39 @@ time psi'=approximateInverseMap(phi,CodimBsInv=>4,MathMode=>true)",
           },
     SeeAlso => {graphIdeal}
          }
-
+   document { 
+    Key => {SegreClass,(SegreClass,Ideal)}, 
+    Headline => "Segre class of a closed subscheme of a projective variety", 
+     Usage => "SegreClass I", 
+     Inputs => { 
+          Ideal => "I" => {"a homogeneous ideal of a graded quotient ring ",TEX///$K[x_0,\ldots,x_n]/J$///," representing a subscheme ",TEX///$X=V(I)$///," of ",TEX///$Y=Proj(K[x_0,\ldots,x_n]/J)\subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///}
+          }, 
+     Outputs => { 
+          RingElement => {"the pushforward to the Chow ring of ",TEX///$\mathbb{P}^n$///," of the Segre class ",TEX///$s(X,Y)$///," of ",TEX///$X$///," in ",TEX///$Y$///}
+          }, 
+       PARA{"This is an example of application of the method ", TO "projectiveDegrees",". See Proposition 4.4 in ",HREF{"http://link.springer.com/book/10.1007%2F978-3-662-02421-8","Intersection theory"},", by W. Fulton, and Subsection 2.3 in ",HREF{"http://www.math.lsa.umich.edu/~idolga/cremonalect.pdf","Lectures on Cremona transformations"},", by I. Dolgachev. See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9.2/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
+       PARA{"In the example below, we take ", TEX///$Y\subset\mathbb{P}^7$///," to be the dual hypersurface of ",TEX///$\mathbb{P}^1\times\mathbb{P}^1\times\mathbb{P}^1\subset\mathbb{P}^7^*$///, " and ",TEX///$X\subset Y$///, " its singular locus. We compute the Segre class both of ",TEX///$X$///, " in ",TEX///$Y$///, " and of ",TEX///$X$///, " in ",TEX///$\mathbb{P}^7$///, ", using both a probabilistic and a deterministic approach."},
+    EXAMPLE { 
+          "P7 = ZZ/100003[x_0..x_7]",
+          "Y = ideal(x_3^2*x_4^2-2*x_2*x_3*x_4*x_5+x_2^2*x_5^2-2*x_1*x_3*x_4*x_6-2*x_1*x_2*x_5*x_6+4*x_0*x_3*x_5*x_6+x_1^2*x_6^2+4*x_1*x_2*x_4*x_7-2*x_0*x_3*x_4*x_7-2*x_0*x_2*x_5*x_7-2*x_0*x_1*x_6*x_7+x_0^2*x_7^2)",
+          "X = sub(ideal jacobian Y,P7/Y)",
+          "time SegreClass X",
+          "time SegreClass lift(X,P7)",
+          "time SegreClass(X,MathMode=>true)",
+          "time SegreClass(lift(X,P7),MathMode=>true)"
+          },
+       PARA{"In the next example, we compute the Segre class of the base locus of a birational map ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9 ---> \mathbb{P}^6$///,"."},
+     EXAMPLE {
+          "use ZZ/100003[x_0..x_6]",
+          "time phi = invertBirMap toMap(minors(2,matrix{{x_0,x_1,x_3,x_4,x_5},{x_1,x_2,x_4,x_5,x_6}}),Dominant=>2)",
+          "B = ideal matrix phi",
+          "-- Segre class of B in G(1,4)
+time SegreClass B",
+          "-- Segre class of B in P^9
+time SegreClass lift(B,ambient ring B)"
+          },
+    SeeAlso => {projectiveDegrees} 
+         }
 
 TEST ///  --- quadro-quadric Cremona transformations 
     K=ZZ/3331; ringP5=ZZ/33331[x_0..x_5]; ringP8=GF(331^2)[x_0..x_8]; ringP14=QQ[x_0..x_14]; ringP20=(ZZ/3331)[t_0..t_20]; 
@@ -879,7 +928,7 @@ phi = toMap minors(3,matrix{{-z_1,z_0,-z_1^2+z_0*z_3},{z_0,z_1,z_0^2-z_1*z_2},{0
 assert isInverseMap(phi,invertBirMap phi)
 ///
 
- <<"--** Cremona (v"|Cremona.Options.Version|") loaded **--"<<endl;
+print("--** Cremona (v"|toString(Cremona.Options.Version)|") loaded **--");
 
 end 
 
