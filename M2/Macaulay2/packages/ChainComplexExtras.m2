@@ -1571,10 +1571,8 @@ restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
 check "ChainComplexExtras"
-
-
-
 viewHelp ChainComplexExtras
+
 
 
 
