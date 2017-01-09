@@ -27,7 +27,7 @@ doc ///
 		   
         	$\bullet$ @TO "conservationEquations"@
 		
-		$\bullet$ @TO "injectivityTest"@
+	--	$\bullet$ @TO "injectivityTest"@
 		   
 		$\bullet$ @TO "glue"@
 
@@ -71,17 +71,51 @@ doc ///
 	Example
 	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 	    R = createRing(N, QQ)
-	    F' = steadyStateEquations N
-	    F'' = conservationEquations N
+    	Text
+	    After creating the reaction network and the corresponding ring,
+	    we create the steady state equations and substitute random values
+	    for the reaction rates; this will allows us to compute the degree
+	    of the ideal.
+	Example    	    
+	    SS = flatten entries steadyStateEquations N
+	    K = toList(apply(0..length N.ReactionRates-1, i-> random(QQ)))
+	    Rr = toList(apply(0..length N.ReactionRates-1, i-> 
+		    value(N.ReactionRates#i)))
+	    P = toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,R)))
+	    F' = toList apply(0..length SS-1, i-> sub(SS#i,P))
+	Text
+	    Next, we create the conservation equations and assume there is no
+	    translation, i.e., the intial conditions are all zero.
+	Example        
+	    C = conservationEquations N
+	    L = {0,0,0,0,0} 
+	    Iv = toList(apply(0..length N.InitialValues-1, i-> 
+		    value(N.InitialValues#i)))
+	    S = toList(apply(0..length Iv-1, i-> Iv#i=>L#i))
+	    F'' = toList apply(0..length C-1, i-> sub(C#i,S))
+	Text
+	    Finally, we join the two sets of equations and create an ideal. Thus,
+	    the degree and dimension can be computed.
+	Example        
 	    F = join(F',F'')
 	    I = ideal F
-	    -- Assign random values for parameters kk. How to do this?
-	    -- dimension and degree are wrt to R = QQ[cc][kk][xx], incorrect
+	    degree I
+	    dim I
+
 ///
 
 doc /// 
     Key
     	ReactionNetwork
+	Complexes
+	ConcentrationRates
+	InitialValues
+	NullSymbol
+	NullIndex
+	ReactionGraph
+	ReactionRates
+	ReactionRing
+	Species
     Headline
     	a mutable hash table, stores information about a reaction network
     Description
@@ -165,6 +199,22 @@ doc ///
 	    N = twoLayerCascadeL()
 	    R = createRing(N, ZZ/2)
 	    F = steadyStateEquations(N, ZZ/2)
+        Text
+	    {\bf Substitute ReactionRates}
+	    
+	    The example below demonstrates how to substitute randomly generated values, 
+	    for the reaction rates, directly into the steady state equations. For specific
+	    user-input values create a list with the corresponding values for each 
+	    reaction rate; to view the order: N.ReactionRates, where N is the name of
+	    the reaction network.
+	Example
+	    M = reactionNetwork "A <--> 2B, A+C <--> D, D --> B+E, B+E --> A+C"
+	    R = createRing M
+	    K = toList(apply(0..length M.ReactionRates-1, i-> random(QQ)))
+	    Rr = toList(apply(0..length M.ReactionRates-1, i-> value(M.ReactionRates#i)))
+	    P = toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,R)))
+	    SSE = flatten entries steadyStateEquations M
+	    toList apply(0..length SSE-1, i-> sub(SSE#i,P)) 
     SeeAlso
 	"reactionNetwork"
 	"conservationEquations"
@@ -214,7 +264,24 @@ doc ///
 	    G = conservationEquations(N, QQ)
 --    	    S1 = netList(G - flatten entries random(QQ^1, QQ^(#G)))
 	    --S2 = sub(G, {xx_(S_0) => (xx_(S_0)-1), xx_E => (xx_E-6/13), xx_(F_1) => (xx_(F_1)-7/10)})	    
-	    --need to cache parameter ring first	    
+	    --need to cache parameter ring first
+	Text
+	    {\bf Substitute InitialValues}
+	    
+	    The example below demonstrates how to substitue specific values for 
+	    the initial values in a reaction network. The list of desired values
+	    must be input in the order of the initial values; for that order use
+	    N.InitialValues, where N is the name of the reaction network. 
+	    To substitute random values refer to the example at the end of
+	    @TO "steadyStateEquations" @.
+	Example
+	    N = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
+	    R = createRing N
+	    CE = conservationEquations N
+	    L = {1,2,3,4} 
+	    Iv = toList(apply(0..length N.InitialValues-1, i-> value(N.InitialValues#i)))
+	    S=toList(apply(0..length Iv-1, i-> Iv#i=>L#i))
+	    toList apply(0..length CE-1, i-> sub(CE#i,S))	    
     SeeAlso
 	"reactionNetwork"
 	"steadyStateEquations"
@@ -452,11 +519,69 @@ doc ///
 	     sub(N, {"S_0" => "A", "X_1" => "B", "X_2" => "C", "S_1" => "D"})
  ///
  
+doc ///
+    Key
+    	createRing
+	(createRing, ReactionNetwork)
+	(createRing, ReactionNetwork, Ring)
+    Headline
+        creates a ring with generators species concentrations, reaction rates, initial values
+///
+
+doc ///
+    Key
+    	createConcentrationRates
+    Headline
+    	used in creating reaction network ring///
+	
+doc ///
+    Key
+    	createReactionRates
+    Headline
+    	used in creating reaction network ring///
+	
+doc ///
+    Key
+    	createInitialValues
+    Headline
+    	used in creating reaction network ring/// 
+	
+doc ///
+    Key
+    	isDeficient
+    Headline
+    	determines deficiency of a network
+    Description	
+    	Text
+	    Example
+    	Example
+    	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    isDeficient N
+	    W = wnt()
+	    isDeficient W 
+    ///
+	
+doc ///
+    Key
+    	isWeaklyReversible
+    Headline
+    	determines if a network is weakly reversible
+    Description
+    	Text
+	    Example
+        Example 
+    	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    isWeaklyReversible N
+	
+	    isWeaklyReversible wnt()
+	///				
+
+	
     --"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
     --"stoichiometricSubspace", 
     --"steadyStateEquations", "conservationEquations", 
     --"laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
-    --"ReactionRing", "createRing", "ParameterRing",
+    --"ReactionRing", "ParameterRing",
     		    
  
  
