@@ -1684,7 +1684,7 @@ doc///
 	    This leaf label is determined by the user and input as newl.
         Example
 	    T = leafTree(4,{{0,1}})
-	    P = edgeCut(T, set {0,1});
+	    P = edgeCut(T, set {0,1}, 4);
 	    P#0
 	    P#1
     SeeAlso
@@ -1730,7 +1730,7 @@ doc///
 	    This leaf label is determined by the user and input as newl.
         Example
 	    T = leafTree(4,{{0,1}})
-	    P = vertexCut(T, set {0,1}, 0);
+	    P = vertexCut(T, set {0,1}, 0, 4);
 	    P#0
 	    P#1
 	    P#2
@@ -1795,11 +1795,6 @@ doc///
 -----------------------------------------------------------
 ----- TESTS -----
 -----------------------------------------------------------
---This first test should always fail. If it does not, there is something going
---on with your m2 interface.
-TEST ///
-assert( (2+2) === 5 )
-///
 
 --Here is a test for the leafTree function. The tests depend on the
 --internalEdges and leaves methods, to be tested elsewhere.
