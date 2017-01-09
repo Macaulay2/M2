@@ -14,7 +14,7 @@ createPolySystem'overdetemined = (Rn, FF, L) -> (
     CEforms := matrix{conservationEquations(Rn,FF)};
     SubList := apply(toList(0..numgens S-1), i -> (gens S)#i => L#i);
     CE := sub(CEforms, SubList) - CEforms;    
-    SSE := matrix {steadyStateEquations Rn};	       	   
+    SSE := steadyStateEquations Rn;	       	   
     polySystem transpose(CE|SSE)
     )
 createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
@@ -22,6 +22,7 @@ createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
     )
 
 TEST ///
+CRN = reactionNetwork "A <--> 2B, A+C<-->D, B+E-->A+C, D-->B+E"
 createPolySystem(CRN, FF)
 ///
 
