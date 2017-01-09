@@ -5,23 +5,63 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes, 1.0 and 1.1",
-	  TO "changes, 1.2",
-	  TO "changes, 1.3",
-	  TO "changes, 1.3.1",
-	  TO "changes, 1.4",
-	  TO "changes, 1.5",
-	  TO "changes, 1.6",
-	  TO "changes, 1.7",
-	  TO "changes, 1.8",
-	  TO "changes, 1.8.1",
-	  TO "changes, 1.8.2",
-	  TO "changes, 1.9",
-	  TO "changes, 1.9.1",
+	  TO "changes, 2.0.0",
 	  TO "changes, 1.9.2",
+	  TO "changes, 1.9.1",
+	  TO "changes, 1.9",
+	  TO "changes, 1.8.2",
+	  TO "changes, 1.8.1",
+	  TO "changes, 1.8",
+	  TO "changes, 1.7",
+	  TO "changes, 1.6",
+	  TO "changes, 1.5",
+	  TO "changes, 1.4",
+	  TO "changes, 1.3.1",
+	  TO "changes, 1.3",
+	  TO "changes, 1.2",
+      TO "changes, 1.0 and 1.1",
 	  TO "list of obsolete functions"
 	  }
      }
+
+document {
+     Key => "changes, 2.0.0",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --       -- UL {
+	  --       --     }
+          --   },
+	  -- LI { "packages that have been published and certified:",
+	  --      -- UL {
+	  --      -- 	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	  --      -- 	    }
+	  --      },
+      LI { "major improvements and additions:",
+          UL {
+              { TO "Polyhedra::Polyhedra", " has been rewritten by Lars Kastner for improved performance.  Many bugs have been fixed, 
+                  and there are now a large number of tests.
+                  Some changes are not backward compatible.  Some changes include: ",
+                  UL {
+                    LI { TO "Polyhedra::Fan", ", is no longer a collection of Cone objects, but contains a matrix of rays (over ZZ),
+                        and a list of lists of integer indices, indicating the maximal cones.  Well-defined-ness is no longer 
+                        automatically checked.  Use ", TO "Polyhedra::(isWellDefined,Fan)"},
+                    LI { TO "Polyhedra::Polyhedron", ", is now a wrapper for the homogenized cone."},
+                    LI { TO "Polyhedra::PolyhedralComplex", ", is now a wrapper for the homogenized fan."},
+                    LI { TO "Polyhedra::Cone", ", has basically the same functionality, except that not everything is computed ahead of time."},
+                    LI { TO "Polyhedra::faces", ", now returns a list of lists of integer indices.  There are two new functions
+                        for recovering the old behavior: ", TO "Polyhedra::facesAsCones", " (for fans and cones), and  ", TO "Polyhedra::facesAsPolyhedra", 
+                        " for polyhedra and polyhedral complexes." }
+                      },
+                  "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
+                  are implemented as mutable hash tables. In particular ", TO "symbol===", " no longer works on cones.  Instead, use 
+                  a sorted list of e.g. vertices and lineality space.",
+                  PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
+                  However, if possible, change your code to run with the new package."}
+                  }
+          }
+         }
+     }
+ }
 
 document {
      Key => "changes, 1.9.2",

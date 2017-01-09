@@ -157,7 +157,6 @@ endif
 endef
 $(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
 $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
-$(foreach t,all check clean distclean,$(eval $t-in-Macaulay2:$t-in-submodules))
 
 # installation into usr-dist
 all-in-Macaulay2:install-licenses

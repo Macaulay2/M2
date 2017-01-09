@@ -22,7 +22,7 @@ cd tmp
 	     --enable-build-libraries="pari flint readline"	\
              CC="gcc-4.9"					\
 	     CXX="g++-4.9"
-make
+make IgnoreExampleErrors=false
 # Local Variables:
 # compile-command: "sh -x ./INSTALL.mac "
 # End:

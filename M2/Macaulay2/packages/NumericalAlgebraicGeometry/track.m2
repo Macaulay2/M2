@@ -720,10 +720,17 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  } )
 trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 -- tracks homotopy H starting with solutions solsS 
--- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t] -- !!! not implemented 
+-- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t]  -- the last variable is assumed to be the _continuation parameter_
 --          or an SLP representing one -- !!! at this point it is preSLP
 --      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
+     if instance(H,Matrix) then (
+	 F := gateMatrix polySystem H;
+	 XT := getVarGates ring H;
+	 X := drop(XT,-1);
+	 T := last XT;
+	 H = gateHomotopy(F, gateMatrix{X}, T); 
+	 );
      if #solsS === 0 then return {};
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
@@ -780,24 +787,25 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,Homotopy) then ( -- main case... but M2engine does not need these !!!  
-     	 K = CC_53; --!!!
-      	 --
-       	 evalH = (x0,t0)-> (
-	     tr := timing evaluateH(H,x0,t0);
-	     etH = etH + tr#0;
-	     tr#1
-	     );
-       	 evalHx = (x0,t0)-> (
-	     tr := timing evaluateHx(H,x0,t0);
-	     etHx = etHx + tr#0;
-	     tr#1
-	     );  
-       	 evalHt = (x0,t0)->(
-	     tr := timing evaluateHt(H,x0,t0);
-	     etHt = etHt + tr#0;
-	     tr#1
-	     );
+     else if instance(H,Homotopy) then ( -- main case
+     	 if o.Software =!= M2engine then (--... but M2engine does not need evaluation functions 
+	     K = CC_53; --!!!
+      	     evalH = (x0,t0)-> (
+	     	 tr := timing evaluateH(H,x0,t0);
+	     	 etH = etH + tr#0;
+	     	 tr#1
+	     	 );
+       	     evalHx = (x0,t0)-> (
+	     	 tr := timing evaluateHx(H,x0,t0);
+	     	 etHx = etHx + tr#0;
+	     	 tr#1
+	     	 );  
+       	     evalHt = (x0,t0)->(
+	     	 tr := timing evaluateHt(H,x0,t0);
+	     	 etHt = etHt + tr#0;
+	     	 tr#1
+	     	 );
+	     )
     	 )     
      else error "unexpected type of homotopy (first parameter)";
      

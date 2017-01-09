@@ -26,10 +26,8 @@ bFunction(Module, List, List) := RingElement => o -> (M, w, m) -> (
      i := 0;
      while i < n do (
 	  -- N = i-th component of F
-	  N := image matrix( (toList(i : {0_R})) | 
-	       {{1}} | (toList((n-i-1):{0_R})) );  
+	  N := image map(ambient M', R^1, (toList(i : {0_R})) | {{1}} | (toList((n-i-1):{0_R})) );  
 	  NM := intersect(M', N);
-	  pInfo(666, NM);
 	  I := ideal apply(numgens NM, j -> NM_j_i);
 	  bf' := bFunction(I, w);
 	  bf' = (map(S, ring bf', matrix{{s}})) bf';

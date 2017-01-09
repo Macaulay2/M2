@@ -1,7 +1,7 @@
 newPackage(
               "CompleteIntersectionResolutions",
-              Version => "1.0", 
-              Date => "April 7, 2016",
+              Version => "1.1", 
+              Date => "December 30, 2016",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
@@ -158,9 +158,9 @@ Shamash(Ring, ChainComplex,ZZ) := (Rbar, F, len) ->(
     P FF
 )    
 
-layeredResolution = method()
+layeredResolution = method(Options =>{Verbose=>false})
 --version that produces the finite layered resolution
-layeredResolution(Matrix, Module) := (ff, M) ->(
+layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
     --ff is a 1 x c matrix over a Gorenstein ring S
     --M is an S-module annihilated by I = ideal ff.
     --returns a pair (L,aug), where aug: L_0 \to M is the augmentation.
@@ -168,7 +168,10 @@ layeredResolution(Matrix, Module) := (ff, M) ->(
     --MCM approximation of M over R' = S/(ideal ff'), and ff' = ff_{0..(c-2)}.
     L := null;
     cod := numcols ff;
-    if cod <=1 then return (L = res M, map(M,L_0,id_(L_0)));
+    if cod <=1 then (
+	L = res M;
+    	<<{rank L_0, rank L_1} << " in codimension "<< cod<<endl;	
+        return (L, map(M,L_0,id_(L_0))));
     S := ring ff;
     R := S/(ideal ff);
     ff' := ff_{0..cod-2};
@@ -196,10 +199,11 @@ layeredResolution(Matrix, Module) := (ff, M) ->(
     bS := substitute(b,S);
     B0S := target bS;
     B1S := source bS;    
+    if opts.Verbose === true then << {rank B1S, rank B0S} << " in codimension " << cod<<endl;
     KK := koszul(ff');
     B := chainComplex{bS};
     
-    (L',aug') := layeredResolution(ff', M'S);
+    (L',aug') := layeredResolution(ff', M'S, Verbose => opts.Verbose);
     assert(target aug' == M'S);
     psiS0 := map(M'S, B1S, sub(matrix psi,S));
     psiS := psiS0//aug';
@@ -217,7 +221,7 @@ layeredResolution(Matrix, Module) := (ff, M) ->(
 
 
 
-layeredResolution(Matrix, Module, ZZ) := (ff, M, len) ->(
+layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
     --ff is a 1 x c matrix over a Gorenstein ring S and ff' = ff_{0..(c-2)}, ff'' = ff_{c-1}.
     --R = S/ideal ff
     --R' = S/ideal ff'
@@ -259,7 +263,6 @@ layeredResolution(Matrix, Module, ZZ) := (ff, M, len) ->(
     psib :=  inducedMap(M' ++ B0, BB1)*(B1.cache.pruningMap);
     psi := psib^[0];
     b := psib^[1];
---error();
 (L',aug') := layeredResolution(ff',M',len);
 --L' := res(M', LengthLimit=> len);
 --    aug' = map(M', L'_0, id_(L'_0));
@@ -940,7 +943,8 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
      hashTable apply(keys H, k->
      {k, map(F_(k_1+2*sum (k_0)-1), 
-	     tensorWithComponents( S^(-sum(#k_0,i->(k_0)_i*degs_i)),F_(k_1)), 
+--	     tensorWithComponents( S^(-sum(#k_0,i->(k_0)_i*degs_i)),F_(k_1)), 
+	     tensorWithComponents( S^{-sum(#k_0,i->(k_0)_i*degs_i)},F_(k_1)), 
 				         H#k)})
      )
 ///
@@ -1002,7 +1006,8 @@ makeHomotopies1 (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
      hashTable apply(keys H, k->
      {k, map(F_(k_1+1), 
-	     tensorWithComponents(S^(-degs_(k_0)),F_(k_1)), 
+--	     tensorWithComponents(S^(-degs_(k_0)),F_(k_1)), 	     
+	     tensorWithComponents(S^{-degs_(k_0)},F_(k_1)), 
 				         H#k)})
 --     hashTable pairs H
      )
@@ -3976,6 +3981,7 @@ doc ///
     layeredResolution
     (layeredResolution, Matrix, Module)
     (layeredResolution, Matrix, Module, ZZ)    
+    [layeredResolution,Verbose]
    Headline
     layered finite and infinite layered resolutions of CM modules
    Usage
@@ -3995,6 +4001,9 @@ doc ///
     Text
      The resolutions computed are those described in the paper "Layered Resolutions of Cohen-Macaulay modules"
      by Eisenbud and Peeva. They are both minimal when M is a suffiently high syzygy of a module N.
+     If the option Verbose=>true is set, then (in the case of the resolution over S) the ranks of the 
+     modules B_s in the resolution are output.
+     
      Here is an example computing 5 terms of an infinite resolution:
     Example
      S = ZZ/101[a,b,c]
@@ -4011,6 +4020,7 @@ doc ///
     Example
      MS = pushForward(map(R,S), M);
      (GG, aug) = layeredResolution(ff,MS)
+     (GG, aug) = layeredResolution(ff,MS, Verbose =>true)
      betti GG
      betti res MS
      C = chainComplex flatten {{aug} |apply(length GG -1, i-> GG.dd_(i+1))}    
@@ -4495,9 +4505,10 @@ assert(ring Eo === U)
 
 end--
 
---notify=true
 uninstallPackage "CompleteIntersectionResolutions"
 restart
+notify=true
+loadPackage("CompleteIntersectionResolutions", Reload =>true)
 installPackage "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
 

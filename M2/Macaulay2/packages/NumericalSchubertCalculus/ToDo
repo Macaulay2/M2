@@ -1,19 +1,24 @@
 To Do for the Numerical Schubert Calculus project
 
-* Finish Main paper
-   - Frank needs to read the guts of the program
-   - Need to describe the local coordiantes and 
-   - Give a proof of correctness
-   - Conclusion
-   - Can state that the PHC version computes certain *big* examples
+Notes from talk with Abraham  Dec 15?
 
-* Decent library of examples, for both Macaulay2 and Phc Pack
-   - Run all problems in G(3,7), G(3,8), and G(4,8)
+Need to:
+ - Find examples where the software breaks and examine them.
 
-* Write Software for Macaulay2 paper
+ - Make a table comparing all four implementations on the same problem
+    for the software paper.
 
-* Test repopulating the fiber
+ - Standard input that should work for everything:
 
-* Documentation
+   solveMe(SchubertProblem, k, n)
 
-* Need parameter homotopy for user defined flags
+ where SchubertProblem is a list of pairs
+   { ( bracket, flag ), (anotherBracket, anotherFlag),...}
+
+ Frank will write a PHC wrapper for this with standard checks 
+   (general flag, Schubert problem, etc.)
+
+ the service function verifyInput verifies all inputs, using breaks to return a 
+   useful error message to the user.
+
+ First step:  Read the TST and EXA dirctory, as well as the bugs,

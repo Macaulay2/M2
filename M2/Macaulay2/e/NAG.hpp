@@ -52,14 +52,14 @@ public:
   Weight weight(const RealVector& a) const { 
     Weight w = 0;
     auto n = mWeights.size();
-    assert(n == a.size);
+    assert(n == a.size());
     for(int i=0; i<n; ++i)
       w += mWeights[i]*a[i];
     return w;
   }
   bool are_same(const RealVector& a, const RealVector& b) const {
     auto n = a.size();
-    assert(n == b.size);
+    assert(n == b.size());
     for(int i=0; i<n; ++i)
       if (fabs(a[i]-b[i]) >= mEpsilon) return false;
     return true;

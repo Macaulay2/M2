@@ -1,0 +1,193 @@
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givgfq.h givaro-3.7.1/src/kernel/zpz/givgfq.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givgfq.h	2012-05-07 05:41:22.000000000 -0700
++++ givaro-3.7.1/src/kernel/zpz/givgfq.h	2016-12-28 21:00:04.000000000 -0800
+@@ -91,6 +91,8 @@
+     	template<typename Vector>
+     	GFqDom(const UTT P, const UTT e, const Vector& modPoly);
+ 
++        GFqDom( const UTT P, const UTT e, const std::vector<UTT>& modPoly, const std::vector<UTT>& generatorPoly);
++
+ 	GFqDom( const GFqDom<TT>& F)
+ 	{
+ 		zero = F.zero;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givgfq.inl givaro-3.7.1/src/kernel/zpz/givgfq.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givgfq.inl	2012-05-07 05:41:22.000000000 -0700
++++ givaro-3.7.1/src/kernel/zpz/givgfq.inl	2016-12-28 21:03:10.000000000 -0800
+@@ -632,7 +632,7 @@
+                     tr = double((UTT)tr % _characteristic) ;
+             }
+ 
+-            if (tr)
++            if (tr != 0)
+                 return r = (Rep)_pol2log[ UT(_characteristic - (UTT)tr) ];
+             else
+                 return r = zero;
+@@ -1075,6 +1075,77 @@
+         _plus1[(UT)_qm1o2] = 0;
+     }
+ 
++template<typename TT>
++    inline GFqDom<TT>::GFqDom(const UTT P, const UTT e, const std::vector<UTT>& modPoly, const std::vector<UTT>& generatorPol):
++            zero(0)
++        , one (power(P,e) - 1  )
++        , _characteristic(P)
++        , _exponent(e)
++        , _q( one + 1 )
++        , _qm1 ( one )
++        , _qm1o2(  (P==2)?  (one)  :  (_q >> 1) )   // 1 == -1 in GF(2^k)
++        , _log2pol( _q )
++        , _pol2log( _q )
++        , _plus1( _q )
++        , _dcharacteristic( (double)P )
++    {
++
++            // 1 is represented by q-1, zero by 0
++        _log2pol[0] = zero;
++
++        GFqDom<TT> Zp(P,1);
++        typedef Poly1FactorDom< GFqDom<TT>, Dense > PolDom;
++        PolDom Pdom( Zp );
++        typename PolDom::Element Ft, F(e+1), G(e), H;
++
++        for( size_t i = 0; i < F.size(); ++i )
++            Zp.init( F[i], modPoly[i]);
++
++        for( size_t i = 0; i < G.size(); ++i )
++        {
++            if (i <  generatorPol.size() )
++            {   Zp.init( G[i], generatorPol[i]); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl;}
++            } else
++            {    Zp.init( G[i], 0 ); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl; }
++        }}
++
++        //Pdom.give_prim_root(G,F);
++        Pdom.assign(H,G);
++
++        typedef Poly1PadicDom< GFqDom<TT>, Dense > PadicDom;
++        PadicDom PAD(Pdom);
++
++        PAD.eval(_log2pol[1],H);
++        PAD.eval(_irred, F);
++
++        for (UTT i = 2; i < _qm1; ++i) {
++            Pdom.mulin(H, G);
++            Pdom.modin(H, F);
++            PAD.eval(_log2pol[i], H);
++        }
++        _log2pol[_qm1] = 1;
++
++        _log2pol[0] = 0;
++
++        for (UTT i = 0; i < _q; ++i)
++            _pol2log[ _log2pol[i] ] = i;
++
++        _plus1[0] = 0;
++
++        UTT a,b,r;
++        for (UTT i = 1; i < _q; ++i) {
++            a = _log2pol[i];
++            r = a % P;
++            if (r == (P - 1))
++                b = a - r;
++            else
++                b = a + 1;
++            _plus1[i] = _pol2log[b] - _qm1;
++        }
++
++        _plus1[_qm1o2] = 0;
++    }
++
+         // Dan Roche 6-15-04, adapted my/ported back to Givaro
+         // by Martin Albrecht 10-06-06
+         // This constructor takes a vector of ints that represent the polynomial
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givmontg32.inl givaro-3.7.1/src/kernel/zpz/givmontg32.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givmontg32.inl	2012-02-21 07:51:48.000000000 -0800
++++ givaro-3.7.1/src/kernel/zpz/givmontg32.inl	2016-12-28 21:03:50.000000000 -0800
+@@ -292,7 +292,7 @@
+       // a = p-b [p]
+     if ( Residu <= (Integer)(-_p) ) tr = long( (-Residu) % _p) ;
+     else tr = long(-Residu);
+-    if (tr)
++    if (tr != 0)
+       r = Rep(_p - (unsigned long)tr);
+     else
+       r = zero;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz16table1.inl givaro-3.7.1/src/kernel/zpz/givzpz16table1.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz16table1.inl	2012-02-21 07:53:08.000000000 -0800
++++ givaro-3.7.1/src/kernel/zpz/givzpz16table1.inl	2016-12-28 21:04:10.000000000 -0800
+@@ -448,7 +448,7 @@
+ 			// a = p-b [p]
+ 			if ( Residu <= (Integer)(-_p) ) tr = int16_t( (-Residu) % _p) ;
+ 			else tr = int16_t(-Residu);
+-			if (tr)
++			if (tr != 0)
+ 				return r = _tab_value2rep[ _p - (uint16_t)tr ];
+ 			else
+ 				return r = (Rep) zero;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz32std.inl givaro-3.7.1/src/kernel/zpz/givzpz32std.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz32std.inl	2012-02-21 07:53:33.000000000 -0800
++++ givaro-3.7.1/src/kernel/zpz/givzpz32std.inl	2016-12-28 21:04:19.000000000 -0800
+@@ -378,7 +378,7 @@
+ 			       	tr = long( (-Residu) % _p) ;
+ 			else
+ 				tr = long(-Residu);
+-			if (tr)
++			if (tr != 0)
+ 				return r = Rep(_p - (unsigned long)tr);
+ 			else
+ 				return r = zero;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz32uns.inl givaro-3.7.1/src/kernel/zpz/givzpz32uns.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz32uns.inl	2012-02-21 07:53:55.000000000 -0800
++++ givaro-3.7.1/src/kernel/zpz/givzpz32uns.inl	2016-12-28 21:04:19.000000000 -0800
+@@ -399,7 +399,7 @@
+ 				tr = long( (-Residu) % _p) ;
+ 			else
+ 				tr = long(-Residu);
+-			if (tr)
++			if (tr != 0)
+ 				return r = Rep( _p - (unsigned long)tr );
+ 			else
+ 				return r = zero;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz64std.inl givaro-3.7.1/src/kernel/zpz/givzpz64std.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/kernel/zpz/givzpz64std.inl	2012-05-21 08:06:27.000000000 -0700
++++ givaro-3.7.1/src/kernel/zpz/givzpz64std.inl	2016-12-28 21:04:19.000000000 -0800
+@@ -382,7 +382,7 @@
+           // a = p-b [p]
+       if ( (-Residu) >= (Integer)(_p) ) tr = int64_t( (-Residu) % (Integer)_p) ;
+       else tr = int64_t(-Residu);
+-      if (tr)
++      if (tr != 0)
+           return r = (Rep)( (uint64_t)_p - (uint64_t)tr ) ;
+       else
+           return r = zero;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/library/poly1/givpoly1kara.inl givaro-3.7.1/src/library/poly1/givpoly1kara.inl
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-clang-production/libraries/givaro/tmp/givaro-3.7.1/src/library/poly1/givpoly1kara.inl	2012-05-31 09:58:40.000000000 -0700
++++ givaro-3.7.1/src/library/poly1/givpoly1kara.inl	2016-12-28 21:00:04.000000000 -0800
+@@ -29,11 +29,11 @@
+ template <class Domain>
+ inline typename Poly1Dom<Domain,Dense>::Rep& Poly1Dom<Domain,Dense>::stdmul( Rep& R, const Rep& P, const Rep& Q ) const
+ {
+-	const size_t sR = R.size();
++	size_t sR = R.size();
+ 	const size_t sP = P.size();
+ 	const size_t sQ = Q.size();
+ 	if ((sQ ==0) || (sP ==0)) { R.reallocate(0); return R; }
+-	if (sR != sQ+sP) R.reallocate(sR = sP+sQ-1);
++	if (sR != sQ+sP-1) R.reallocate(sR = sP+sQ-1);
+ 
+  	stdmul(R, R.begin(), R.end(),
+             P, P.begin(), P.end(),
+@@ -46,11 +46,11 @@
+ template <class Domain>
+ inline typename Poly1Dom<Domain,Dense>::Rep& Poly1Dom<Domain,Dense>::karamul( Rep& R, const Rep& P, const Rep& Q ) const
+ {
+-	const size_t sR = R.size();
++	size_t sR = R.size();
+ 	const size_t sP = P.size();
+ 	const size_t sQ = Q.size();
+ 	if ((sQ ==0) || (sP ==0)) { R.reallocate(0); return R; }
+-	if (sR != sQ+sP) R.reallocate(sR = sP+sQ-1);
++	if (sR != sQ+sP-1) R.reallocate(sR = sP+sQ-1);
+ 
+  	karamul(R, R.begin(), R.end(),
+             P, P.begin(), P.end(),
