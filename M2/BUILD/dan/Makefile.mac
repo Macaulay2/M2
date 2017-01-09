@@ -100,4 +100,3 @@ include Makefile.include
 # Local Variables:
 # compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=no GCC5=no GCC6=no "
 # End:
-g
