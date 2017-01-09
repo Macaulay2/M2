@@ -91,7 +91,7 @@ darwin64-debug : always
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-profile : always
 	mkdir -p builds.tmp/darwin64-profile
