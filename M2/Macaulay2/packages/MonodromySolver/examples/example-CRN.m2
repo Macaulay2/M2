@@ -1,3 +1,4 @@
+-- to execute look below for "EXECUTE...FROM HERE" -------------------------
 needsPackage "MonodromySolver"
 needsPackage "ReactionNetworks"
 
@@ -48,6 +49,7 @@ GQ = createPolySystem(Q, FF)
 
 end ---------------------------------
 
+--------EXECUTE line-by-line FROM HERE -----------------------------------
 restart
 load "example-CRN.m2"
 
@@ -77,7 +79,7 @@ elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
 assert(length V.PartialSols == 9)
 
 -- wnt via Bertini
-specPolys = specializeSystem (p0,createPolySystem'overdetemined(W,FF,L));
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(W,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
