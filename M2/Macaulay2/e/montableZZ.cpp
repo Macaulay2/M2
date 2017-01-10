@@ -599,7 +599,7 @@ void MonomialTableZZ::find_strong_generators(int nvars,
 
   /* The following sorts in ascending lex order, considering the component, exp vector
      and finally the coefficient */
-  sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
+  std::stable_sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
 #if 0
 //   fprintf(stderr, "sorted terms: ");
