@@ -8,9 +8,9 @@ newPackage(
     	HomePage => "http://people.math.edu/~klee669",
     	Headline => "Alpha Test",
 	PackageExports => {"NumericalAlgebraicGeometry"},
-	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     	--DebuggingMode => true		 -- set to true only during development
-    	DebuggingMode => false
+    	DebuggingMode => false,
+	AuxiliaryFiles => true
     	)
 
 -- Any symbols or functions that the user is to have access to

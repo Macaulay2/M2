@@ -12,8 +12,9 @@ newPackage(
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "Reaction networks",
 	PackageImports => {"Graphs"},
-	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-    	DebuggingMode => true		 -- set to true only during development
+  	DebuggingMode => false,		
+  	-- DebuggingMode => true,		 -- set to true only during development
+	AuxiliaryFiles => true
     	)
 
 -- Any symbols or functions that the user is to have access to
