@@ -7,18 +7,21 @@ FF = CC
 createPolySystem = method()
 createPolySystem (ReactionNetwork, InexactFieldFamily):= (Rn, FF) -> (
     S := createRing(Rn, FF);
-    createPolySystem(Rn,FF,toList(numgens S : 1_FF))
+    createPolySystem(Rn,FF,toList(length Rn.ConcentrationRates : 1_FF))
     )
-createPolySystem'overdetemined = (Rn, FF, L) -> (
+createPolySystem'overdetermined = (Rn, FF, L) -> (
     S := createRing(Rn, FF);
     CEforms := matrix{conservationEquations(Rn,FF)};
-    SubList := apply(toList(0..numgens S-1), i -> (gens S)#i => L#i);
+    SubList := toList(apply(0..length Rn.ConcentrationRates-1, i -> 
+	    value(Rn.ConcentrationRates#i) => L#i));
     CE := sub(CEforms, SubList) - CEforms;    
-    SSE := steadyStateEquations Rn;	       	   
-    polySystem transpose(CE|SSE)
+    SSE := steadyStateEquations Rn;
+    R := CC[Rn.ReactionRates][Rn.ConcentrationRates];	       	   
+    M := sub((transpose CE || SSE), R);
+    polySystem M
     )
 createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
-    squareUp createPolySystem'overdetemined(Rn,FF,L)
+    squareUp createPolySystem'overdetermined(Rn,FF,L)
     )
 
 TEST ///
