@@ -1,7 +1,7 @@
 
 newPackage(
        "Cremona",
-	Version => "3.1", Date => "Jan 8, 2017 (first version: Apr 10, 2016, included with Macaulay2 1.9)",
+	Version => "3.0", Date => "Jan 10, 2017 (first version: Apr 10, 2016, included with Macaulay2 1.9)",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
     	DebuggingMode => false, Reload => true
@@ -820,7 +820,7 @@ time psi'=approximateInverseMap(phi,CodimBsInv=>4,MathMode=>true)",
           "time SegreClass(X,MathMode=>true)",
           "time SegreClass(lift(X,P7),MathMode=>true)"
           },
-       PARA{"The method also accepts as input a ring map ",TT"phi"," representing a rational map ",TEX///$\Phi:X--->Y$///," beetween projective varieties. In this case, the method returns the push-forward to the Chow ring of the ambient projective space of ",TEX///$X$///," of the Segre class of the base locus of ",TEX///$\Phi$///, " in ",TEX///$X$///, ", i.e. it basically computes ",TT"SegreClass ideal matrix phi",". In the next example, we compute the Segre class of the base locus of a birational map ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9 ---> \mathbb{P}^6$///,"."},
+       PARA{"The method also accepts as input a ring map ",TT"phi"," representing a rational map ",TEX///$\Phi:X--->Y$///," between projective varieties. In this case, the method returns the push-forward to the Chow ring of the ambient projective space of ",TEX///$X$///," of the Segre class of the base locus of ",TEX///$\Phi$///, " in ",TEX///$X$///, ", i.e. it basically computes ",TT"SegreClass ideal matrix phi",". In the next example, we compute the Segre class of the base locus of a birational map ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9 ---> \mathbb{P}^6$///,"."},
      EXAMPLE {
           "use ZZ/100003[x_0..x_6]",
           "time phi = invertBirMap toMap(minors(2,matrix{{x_0,x_1,x_3,x_4,x_5},{x_1,x_2,x_4,x_5,x_6}}),Dominant=>2)",
