@@ -50,7 +50,10 @@ public:
                              bool p_plus,
                              bool p_parens) const;
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
-  
+
+  virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR,
+                                              const ring_elem f) const;
+
   // some internal functions for the above routines
   ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monom) const;
   ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monom) const;
@@ -63,6 +66,10 @@ public:
 
   void debug_display(const Poly* f) const;
   void debug_display(const ring_elem ff) const;
+
+  // helper functions
+  void getMonomial(const int* monom, std::vector<int>& result) const;
+
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;

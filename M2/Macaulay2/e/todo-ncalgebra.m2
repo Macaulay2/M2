@@ -1,3 +1,39 @@
+-- Monomial type: want to allow non-commutative values in front end.
+--   any obstructions to do this?
+  RawMonomial -- at m2 level
+  RawMonomialCell
+  RawMonomialArray
+  RawMonomialOrNull
+  RawArrayPair
+  RawMonomailPair
+  RawMonomailPairOrNull
+  *, ^, /, ==
+  tostring, hash
+  rawVarMonomial
+  rawSparseListFormMonomial
+  rawMakeMonomial
+  rawMonomialIsOne
+  rawCompareMonomial
+  rawMonomialDivides
+  rawMonomialDivide
+  rawGCD
+  rawLCM
+  rawSaturateMonomial
+  rawSyzygy
+  rawColonMonomial
+  rawLeadMonomial
+  toExpr
+
+  used in 'listForm RingElement'
+  used in 'standardForm RingElement'
+  used in 'leadMonomial RingElement'  (rawLeadMonomial)
+  leadTerm -> someTerms --> rawGetTerms(nvars, rawelem, lo, hi) (doesn't use Monomial)
+  
+  Question: how to create a Monomial at top level?
+  
+  monomial.{hpp,cpp}: make_noncommutative
+---------------------------------------
+
 Steps to make NCalgebra arithmetic in the engine
 
 . make a rawNCFreeAlgebra(coeff ring, NCmonoid?):

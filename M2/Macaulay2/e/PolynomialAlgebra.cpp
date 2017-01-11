@@ -1,7 +1,11 @@
 #include "PolynomialAlgebra.hpp"
+#include "monomial.hpp"
+#include "relem.hpp"
+
 #include <vector>
 #include <string>
 #include <iostream>
+
 
 PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
                                      M2_ArrayString names,
@@ -529,6 +533,31 @@ void PolynomialAlgebra::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
+void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) const
+// The output is of the form:
+// [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0.
+{
+  int start = result.size();
+  result.push_back(0);
+  auto mon_length = *monom - 2;
+  auto mon_ptr = monom + 2;
+  for (auto j = 0; j < mon_length; j++)
+    {
+      int curvar = mon_ptr[j];
+      int curvarPower = 0;
+      result.push_back(curvar);
+      while ((j < mon_length) && (mon_ptr[j] == curvar))
+        {
+          j++;
+          curvarPower++;
+        }
+      result.push_back(curvarPower);
+      // back j up one since we went too far looking ahead.
+      j--;
+    }
+  result[start] = result.size() - start;
+}
+
 void PolynomialAlgebra::elem_text_out(buffer &o,
                              const ring_elem ff,
                              bool p_one,
@@ -586,23 +615,47 @@ ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem f, int fir
   return f; // TODO: Bad return value;
 }
 
-/*
-engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const ring_elem f) const
+engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const ring_elem ff) const
 {
   // Either coeffR should be the actual coefficient ring (possible a "toField"ed ring)
   // or a polynomial ring.  If not, NULL is returned and an error given
   // In the latter case, the last set of variables are part of
   // the coefficients.
+
+  const Poly* f = reinterpret_cast<const Poly*>(ff.poly_val);
+  if (coeffR != &mCoefficientRing)
+    {
+      ERROR("expected coefficient ring");
+      return nullptr;
+    }
+  int nterms = f->numTerms();
+  engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,nterms));
+  engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,nterms));
+  engine_RawArrayPair result = newitem(struct engine_RawArrayPair_struct);
+  monoms->len = nterms;
+  coeffs->len = nterms;
+  result->monoms = monoms;
+  result->coeffs = coeffs;
+
+  // fill result
+  std::vector<int> vp;
+  int next = 0;
+  for (auto i=f->cbegin(); i != f->cend(); ++i, ++next)
+    {
+      ring_elem c = mCoefficientRing.copy(i.coeff());
+      vp.resize(0);
+      getMonomial(*i.monom(), vp);
+      coeffs->array[next] = RingElement::make_raw(coeffR, c);
+      monoms->array[next] = Monomial::make(vp);
+    }
+  
+  return result;
+#if 0    
   int nvars0 = check_coeff_ring(coeffR, this);
   if (nvars0 < 0) return 0;
   int n = n_logical_terms(nvars0,f);
-  engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,n));
-  engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,n));
   monoms->len = n;
   coeffs->len = n;
-  engine_RawArrayPair result = newitem(struct engine_RawArrayPair_struct);
-  result->monoms = monoms;
-  result->coeffs = coeffs;
 
   int *exp = newarray_atomic(int, n_vars());
   intarray resultvp;
@@ -621,8 +674,8 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
     }
   deletearray(exp);
   return result;
+#endif
 }
-*/
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

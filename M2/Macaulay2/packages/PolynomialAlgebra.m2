@@ -70,12 +70,16 @@ Ring List := (A, varList) -> (
 NCPolynomialRing _ ZZ := (R, n) -> (R.generators)#n
 coefficientRing NCPolynomialRing := R -> last R.baseRings
 
+degreesRing NCPolynomialRing := PolynomialRing => R -> (
+   if R#?(symbol degreesRing) then R#(symbol degreesRing)
+   else error "no degreesRing for this ring"
+   )
 
 -- toExternalString
 -- toString
 -- expression
 -- net
-
+-- listForm
 beginDocumentation()
 
 doc ///
@@ -144,7 +148,13 @@ a == R_0
 raw(a-b)
 promote(2,R)
 
-
+f = 3*a^2*b*a
+rawPairs(raw coefficientRing R, raw f)
+first last oo
+rawSparseListFormMonomial oo
+-- play with listForm
+-- calls rawPairs, which calls IM2_RingElement_list_form in engine
+-- each ring has its own "list_form(coeff ring, ring_elem)"
 
 doc ///
 Key

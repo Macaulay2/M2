@@ -19,6 +19,23 @@ Monomial::Monomial(const int *vp)
   varpower::copy(vp, val);
 }
 
+Monomial::Monomial(const std::vector<int>& vp)
+{
+  // SIGH... these are for non-commutative monomials, but the
+  // front end flips the monomials.  We can't change it for all monomials
+  // as we would need to review all uses of Monomial to make sure that is ok.
+  // A good idea, but for later...
+  // 
+  // [7 0 1 2 1 0 2]
+  // i=5, i=3, i=1
+  val.append(vp[0]);
+  for (int i = vp[0]-2; i > 0; i -= 2)
+    {
+      val.append(vp[i]);
+      val.append(vp[i+1]);
+    }
+}
+
 Monomial::Monomial(M2_arrayint m)
 {
   varpower::from_arrayint(m, val);
@@ -53,6 +70,12 @@ Monomial *Monomial::make(const int * vp)
 {
   Monomial *result = new Monomial(vp);
   if (error()) return 0;
+  return result;
+}
+
+Monomial* Monomial::make(const std::vector<int>& vp)
+{
+  Monomial* result = new Monomial(vp);
   return result;
 }
 

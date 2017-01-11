@@ -7,15 +7,20 @@
 #include "varpower.hpp"
 #include "hash.hpp"
 
+#include <vector>
+
 class Monomial : public EngineObject
 {
+  // The format of a monomial is from varpower.hpp:
+  // [2n+1, v1, e1, ..., vn, en]
   intarray val;
 
   Monomial();
   Monomial(int v, int e);
   Monomial(const int *vp);
   Monomial(M2_arrayint a);
-
+  Monomial(const std::vector<int>& vp);
+  
   int * ints() { return val.raw(); }
 protected:
   virtual unsigned int computeHashValue() const;
@@ -23,6 +28,12 @@ public:
   static Monomial *make(int v, int e);
   static Monomial *make(M2_arrayint m);
   static Monomial *make(const int *vp);
+
+  // format for this is that of a 'varpower' monomial:
+  // [2n+1, v1, e1, v2, e2, ..., vn, en]
+  // with each ei != 0.
+  static Monomial* make(const std::vector<int>& monom);
+  
   const int * ints() const { return val.raw(); }
 
   Monomial *operator*(const Monomial &b) const;

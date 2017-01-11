@@ -1013,23 +1013,24 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
           const RingElement *f)
 {
   try {
-    const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
-    if (P != 0)
+    const PolynomialRing* P = f->get_ring()->cast_to_PolynomialRing();
+    if (P != nullptr)
       {
         return P->list_form(coeffRing, f->get_value());
       }
-    const SchurRing2 *S = f->get_ring()->cast_to_SchurRing2();
-    if (S != 0)
+    const SchurRing2* S = f->get_ring()->cast_to_SchurRing2();
+    if (S != nullptr)
       {
         return S->list_form(coeffRing, f->get_value());
       }
-    /* added by Frank
-    const NCFreeAlgebra *ncP = f->get_ring()->cast_to_NCFreeAlgebra();
-    if (ncP != 0)
+    /* added by Frank */
+    const PolynomialAlgebra* ncP = dynamic_cast<const PolynomialAlgebra*>(f->get_ring());
+    //const PolynomialAlgebra *ncP = f->get_ring()->cast_to_PolynomialAlgebra();
+    if (ncP != nullptr)
       {
+        std::cout << "Calling correct list_form" << std::endl;
         return ncP->list_form(coeffRing, f->get_value());
       }
-    */
     ERROR("expected a polynomial");
     return 0;
   }
