@@ -1,7 +1,7 @@
 newPackage(
      "ChainComplexExtras",
-     Version => "1",
-     Date => "December 3, 2014",
+     Version => "1.1",
+     Date => "Jan 11, 2016",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
@@ -262,10 +262,10 @@ isChainComplexMap(ChainComplexMap):=(inputMap)->(
 isChainComplexMap=method()
 isChainComplexMap(ChainComplexMap):=(inputMap)->(
    degs := sort select(keys inputMap, k->class inputMap#k === Matrix);
+   if degs == {} then return true;
    A := trivialHomologicalTruncation(source inputMap, min degs, max degs);
    B := trivialHomologicalTruncation(target inputMap, min degs, max degs);
    restrictedMap := chainComplexMap(B,A,apply(degs, i-> inputMap_i), InitialDegree => min degs);
---   error();
    isChainComplex(cone restrictedMap))
 ///
 restart
@@ -275,6 +275,29 @@ C = chainComplex map (S^1,S^1,t)
 D = chainComplex{map(S^1/t, S^1,1), map(S^1,S^1,-t)}[1]
 phi = chainComplexMap(D,C,apply({0,1},i->id_(C_i)))
 isChainComplexMap phi
+
+--A test from BGG
+restart
+  needsPackage "BGG"
+  needsPackage "ChainComplexExtras"  
+  kk = ZZ/101
+  A = kk[a]
+  S = A[x,y]
+  M1 = S^{{-1,0},{0,0}}
+  C1 = directImageComplex(id_M1)
+  assert(C1_0 == 1)
+  assert isChainComplexMap C1
+
+  M2 = S^{{-1,0}}
+  C2 = directImageComplex(id_M2)
+  assert isChainComplexMap C2
+  assert(C2_0 == 0)
+
+  M3 = S^{{-2,0}}
+  C3 = directImageComplex(id_M3)
+  assert isChainComplexMap C3
+  assert(C3_0 == 0)
+
 ///
 
 isQuasiIsomorphism=method(Options => {LengthLimit => infinity})
