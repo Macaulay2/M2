@@ -2,12 +2,12 @@
 newPackage("DGAlgebras",
      Headline => "Data type for DG algebras",
      Version => "1.0.1",
-     Date => "July 14, 2011",
+     Date => "January 11, 2017",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
 	   Email => "moorewf@wfu.edu"}},
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff", "natural", "cycles",
