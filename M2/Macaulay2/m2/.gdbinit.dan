@@ -20,6 +20,9 @@ b GC_err_puts
 set args -q --no-randomize --no-time
 handle SIGPWR nostop noprint
 handle SIGXCPU nostop noprint
+set unwindonsignal on
+set env GC_NPROCS 1
+set env GC_MARKERS 1
 # source .gdb-run-it
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

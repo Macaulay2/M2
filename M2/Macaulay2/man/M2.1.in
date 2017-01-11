@@ -30,9 +30,6 @@ debug warning message n by signalling an error
 \fB\-\-dumpdata\fR
 read source code, dump data if so configured, exit (no init.m2)
 .TP
-\fB\-\-fullbacktrace\fR
-print full backtrace after error
-.TP
 \fB\-\-no\-loaddata\fR
 don't try to load the dumpdata file
 .TP

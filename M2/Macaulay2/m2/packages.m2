@@ -562,6 +562,16 @@ getPackage String := opts -> pkgname -> (
 	  UserMode => opts.UserMode);
      )
 
+installedPackages = () -> (
+ docdir := applicationDirectory() | "local/" | Layout#1#"docdir";
+ if isDirectory docdir then for p in readDirectory docdir list if p =!= "." and p =!= ".." then p else continue else {}
+ )
+
+uninstallAllPackages = () -> for p in installedPackages() do (
+ << "-- uninstalling package " << p << endl;
+ uninstallPackage p
+ )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

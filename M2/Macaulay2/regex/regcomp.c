@@ -611,7 +611,7 @@ free_dfa_content (re_dfa_t *dfa)
 #ifdef RE_ENABLE_I18N
   re_free (dfa->sb_char);
 #endif
-#ifdef DEBUG
+#ifndef NDEBUG
   re_free (dfa->re_str);
 #endif
 
@@ -758,7 +758,7 @@ re_compile_internal (preg, pattern, length, syntax)
       preg->allocated = 0;
       return err;
     }
-#ifdef DEBUG
+#ifndef NDEBUG
   dfa->re_str = re_malloc (char, length + 1);
   strncpy (dfa->re_str, pattern, length + 1);
 #endif
@@ -1142,7 +1142,7 @@ calc_first (dfa, node)
 
   switch (type)
     {
-#ifdef DEBUG
+#ifndef NDEBUG
     case OP_OPEN_BRACKET:
     case OP_CLOSE_BRACKET:
     case OP_OPEN_DUP_NUM:
@@ -1179,7 +1179,7 @@ calc_first (dfa, node)
       break;
       /* else fall through */
     default:
-#ifdef DEBUG
+#ifndef NDEBUG
       assert (node->left != NULL);
 #endif
       if (node->left->first == -1)
@@ -1478,7 +1478,7 @@ calc_eclosure (dfa)
      re_dfa_t *dfa;
 {
   int node_idx, incomplete;
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (dfa->nodes_len > 0);
 #endif
   incomplete = 0;
@@ -1495,7 +1495,7 @@ calc_eclosure (dfa)
 	  node_idx = 0;
 	}
 
-#ifdef DEBUG
+#ifndef NDEBUG
       assert (dfa->eclosures[node_idx].nelem != -1);
 #endif
       /* If we have already calculated, skip it.  */
@@ -2264,7 +2264,7 @@ parse_expression (regexp, preg, token, syntax, nest, err)
       return NULL;
     default:
       /* Must not happen?  */
-#ifdef DEBUG
+#ifndef NDEBUG
       assert (0);
 #endif
       return NULL;

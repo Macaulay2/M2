@@ -391,7 +391,6 @@ Description
     
     The best known upper bound is $2^n-1$ due to Grenet. More specifically, Grenet constructs a $2^n-1x2^n-1$ matrix $M$ with entries $0,1,-1$ and individual 
     variables of the $nxn$ generic matrix $N$, such that the determinant of $M$ is equal to the permanent of $N$. See B. Grenet, "An Upper Bound for the Permanent versus Determinant Problem" (2012).   
-  Example
 Caveat
   Computationally intensive
 SeeAlso

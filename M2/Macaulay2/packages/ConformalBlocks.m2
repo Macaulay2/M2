@@ -741,7 +741,7 @@ doc ///
 	     
 	     [Humphreys] Humphreys.  {\it Introduction to Lie Algebras and Representation Theory.}  Graduate Texts in Mathematics, Springer.
 	     
-	     [KM] Keel and McKernan.  Contractible extremal rays. p. 113-128 in {\it Handbook of Moduli, Vol. II.}  Higher Education & International Press, Beijing-Boston, 2012.	     
+	     [KM] Keel and McKernan.  Contractible extremal rays. p. 113-128 in {\it Handbook of Moduli, Vol. II.}  Higher Education \& International Press, Beijing-Boston, 2012.	     
 	     
 	    
 	    

@@ -84,7 +84,32 @@ int SkewMultiplication::skew_vars(const int *exp, int *result) const
   return next;
 }
 
+int SkewMultiplication::skew_vars(const long *exp, int *result) const
+    // The number s of skew variables in 'exp' is returned, and their
+    // indices are placed in result[0], ..., result[s-1].
+    // The space that 'result' points to MUST hold at least n_skew ints
+{
+  int i;
+  int next = 0;
+  for (i=0; i<_n_skew; i++)
+    {
+      int v = _skew_list[i];
+      if (exp[v] > 0)
+        result[next++] = v;
+    }
+  return next;
+}
+
 int SkewMultiplication::mult_sign(const int *exp1, const int *exp2) const
+{
+  exponents SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
+  exponents SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);
+  int a = skew_vars(exp1, SKEW1);
+  int b = skew_vars(exp2, SKEW2);
+  return sort_sign(a,SKEW1, b, SKEW2);
+}
+
+int SkewMultiplication::mult_sign(const long *exp1, const long *exp2) const
 {
   exponents SKEW1 = ALLOCATE_EXPONENTS(skew_byte_size);
   exponents SKEW2 = ALLOCATE_EXPONENTS(skew_byte_size);

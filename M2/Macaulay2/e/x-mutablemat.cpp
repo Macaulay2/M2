@@ -36,8 +36,8 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
                                             int ncols,
                                             M2_bool is_dense)
 {
-  M2_ASSERT(nrows >= 0);
-  M2_ASSERT(ncols >= 0);
+  assert(nrows >= 0);
+  assert(ncols >= 0);
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
   //  return R->makeMutableMatrix(nr,nc,is_dense);
@@ -73,8 +73,12 @@ MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S,
   // Given a natural map i : R --> S
   // f is a matrix over R.
   // returns a matrix over S.
+  ERROR("MutableMatrix promote not implemented yet");
+  return nullptr;
+#if 0  
   auto result = MutableMatrix::zero_matrix(S, f->n_rows(), f->n_cols(), f->is_dense());
   return result;
+#endif
 }
 
 MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, 
@@ -85,9 +89,14 @@ MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return,
   // f is a matrix over S.
   // returns a matrix over R.
 
+  //ERROR("MutableMatrix lift not implemented yet");
+  *success_return = 0;
+  return nullptr;
+#if 0
   auto result = MutableMatrix::zero_matrix(R, f->n_rows(), f->n_cols(), f->is_dense());
   *success_return = 1;
   return result;
+#endif
 }
 
 int IM2_MutableMatrix_n_rows(const MutableMatrix *M)
@@ -1162,7 +1171,7 @@ engine_RawRingElementArray convertRingelemsToArray(const Ring *R,
 engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
 // returns an array whose coefficients give the characteristic polynomial of the square matrix A
 {
-#ifdef HAVE_FFLAS_FFPACK
+#if 1
   const Ring *R = A->get_ring();
   typedef DMat<M2::ARingZZpFFPACK> DMatZZp;
   MutableMat<DMatZZp>* B = A->cast_to_MutableMat< DMatZZp >();
@@ -1189,7 +1198,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
 engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A)
 // returns an array whose coefficients give the minimal polynomial of the square matrix A
 {
-#ifdef HAVE_FFLAS_FFPACK
+#if 1
   const Ring *R = A->get_ring();
   typedef DMat<M2::ARingZZpFFPACK> DMatZZp;
   MutableMat<DMatZZp>* B = A->cast_to_MutableMat< DMatZZp >();

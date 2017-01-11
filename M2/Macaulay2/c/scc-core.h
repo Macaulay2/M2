@@ -18,7 +18,7 @@
     extern void fatalarraylen(int,const char*,int,int);
     extern void fatalarrayindex(int,int,const char*,int,int);
     extern void outofmem2(size_t);
-    #if defined(GC_DEBUG) && !defined(NDEBUG)
+    #ifndef NDEBUG
       #include <assert.h>
       void *GC_check_annotated_obj(void *);
       #define GC_CHECK_CLOBBER(p) assert((p) == 0 || 0 == GC_check_annotated_obj(GC_base((void *)(p))))

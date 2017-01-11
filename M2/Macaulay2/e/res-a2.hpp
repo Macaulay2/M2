@@ -265,7 +265,6 @@ public:
   gbres_comp(const Matrix *m, int length, int orig_syz,
           const RingElement *hf, int strategy);
 
-  virtual void remove_res();
   virtual ~gbres_comp();
 
   // Performing the computation

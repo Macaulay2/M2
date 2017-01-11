@@ -36,7 +36,11 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/fq_nmod.h>
+#pragma GCC diagnostic pop
 
 unsigned int rawRingHash(const Ring *R)
 {
@@ -611,7 +615,7 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
       gmp_ZZ result = newitem(__mpz_struct);
 
       std::pair<bool,long> res = R->coerceToLongInteger(a->get_value());
-      M2_ASSERT(res.first);
+      assert(res.first);
 
       mpz_init_set_si(result, static_cast<int>(res.second));
       return result;

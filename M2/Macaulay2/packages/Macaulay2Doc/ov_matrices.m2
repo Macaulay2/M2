@@ -229,9 +229,9 @@ document {
      SUBSECTION "inverse of a matrix",
        "If a matrix ", TT "f", " is invertible, then ", TT "f^-1", 
        " will work.",
-       EXAMPLE {				
-	    -- f^-1 tends to work except no error if not working
-	    },
+       -- EXAMPLE {				
+       -- 	    -- f^-1 tends to work except no error if not working
+       -- 	    },
 
      SUBSECTION "==", 
        "To check whether two matrices are equal, one can use ", TO "==", ".",

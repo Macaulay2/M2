@@ -721,14 +721,31 @@ M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix
                          gmp_RR init_dt, gmp_RR min_dt,
                          gmp_RR epsilon, // o.CorrectorTolerance,
                          int max_corr_steps, 
-                         gmp_RR infinity_threshold) 
+                         gmp_RR infinity_threshold,
+                         M2_bool checkPrecision) 
 {
+  /*
+  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
+  if (inp!=nullptr) { // check precision!!!
+    std::cout << "-- precisions:" << std::endl;      
+    auto& m = inp->getMat();
+    for(int i=0; i<m.numRows(); i++)
+      for(int j=0; j<m.numColumns(); j++) {
+        auto& e = m.entry(i,j);
+        auto p_re = mpfr_get_prec(&m.ring().realPartReference(e));
+        auto p_im = mpfr_get_prec(&m.ring().imaginaryPartReference(e));
+        std::cout << "(" << p_re << "," << p_im << ") ";
+      }
+    std::cout << std::endl;      
+  }
+  */
   return H->track(inputs,outputs, 
                   output_extras,  
                   init_dt, min_dt,
                   epsilon, // o.CorrectorTolerance,
                   max_corr_steps, 
-                  infinity_threshold);
+                  infinity_threshold,
+                  checkPrecision);
 }
 
 M2_string rawHomotopyToString(Homotopy * H) { 
@@ -823,6 +840,40 @@ M2_string rawPathTrackerToString(PathTracker *p) {
 
 unsigned int rawPathTrackerHash(PathTracker *p) {
   return p->hash();
+}
+
+// PointArray
+
+M2_string rawPointArrayToString(PointArray *pa) { 
+  buffer o;
+  pa->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawPointArrayHash(PointArray *) { return 0; }
+
+PointArray /* or null */ *rawPointArray(double epsilon, int n) {
+  return new PointArray(epsilon,n);
+}
+
+PointArray::RealVector getRealVector(const MutableMatrix *M, int col) {
+  PointArray::RealVector result;
+  auto MC = dynamic_cast<const MutableMat< DMat<M2::ARingCC> > *> (M);
+  // if (MC == nullptr)
+  auto i = MC->getMat().columnBegin(col);
+  auto iEnd = MC->getMat().columnEnd(col);
+  for(; i!=iEnd; ++i) {
+    result.push_back((*i).re);
+    result.push_back((*i).im);
+  }
+  return result;
+}
+
+int rawPointArrayLookup(PointArray *pa, const MutableMatrix *M, int col) {
+  return pa->lookup(getRealVector(M,col));
+}
+
+int rawPointArrayLookupOrAppend(PointArray *pa, const MutableMatrix *M, int col) {
+  return pa->lookup_or_append(getRealVector(M,col));
 }
 
 

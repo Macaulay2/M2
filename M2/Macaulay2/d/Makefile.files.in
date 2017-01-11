@@ -77,7 +77,7 @@ M2_DFILES += mysqldummy.d
 endif
 M2_DFILES += pthread.d
 M2_DFILES += actors.d
-M2_DFILES += actors2.d
+M2_DFILES += actors2.dd
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
 # M2_DFILES += tasks.d
@@ -87,6 +87,7 @@ else
 M2_SRCFILES += xmlactors.d
 endif
 M2_DFILES += actors5.d
+M2_DFILES += actors6.dd
 M2_DFILES += threads.dd
 ifeq (@PARI@,yes)
 M2_DFILES += pari.d
@@ -95,6 +96,9 @@ M2_CFILES += pari-c.c
 else
 M2_SRCFILES += pari.d pari-c.h pari-c.c
 endif
+
+M2_HFILES += pari-gnump.h
+M2_CFILES += pari-gnump.c
 
 M2_DFILES += flint.d
 
@@ -107,7 +111,7 @@ endif
 M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
 # this one is last, because it contains the top level interpreter
-M2_DFILES += interp.d
+M2_DFILES += interp.dd
 
 # should automate these dependencies
 actors5.o : @srcdir@/startup-header.h

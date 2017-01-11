@@ -3,8 +3,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.8.2.1",
-     Date => "Jan 2016",
+     Version => "1.9.2",
+     Date => "Oct 2016",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
@@ -16,8 +16,8 @@ newPackage select((
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true
-     --DebuggingMode => false
+     --DebuggingMode => true
+     DebuggingMode => false
      ), x -> x =!= null)
 
 -- Any symbols or functions that the user is to have access to
@@ -30,7 +30,7 @@ export {
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 
     "constants",  
-    "printAsSLP",
+    "printAsSLP", "cCode",
     "ValueHashTable","valueHashTable"
     }
 exportMutable {
@@ -401,7 +401,7 @@ gateMatrix = method()
 gateMatrix GateMatrix := M -> M
 gateMatrix List := L -> (
     if not isTable L then error "a table is expected";
-    new GateMatrix from L
+    new GateMatrix from applyTable(L,x->if instance(x,Gate) then x else inputGate x) 
     )
 gateMatrix Matrix := M -> if numcols M == 0 then gateMatrix toList (numrows M:{}) else gateMatrix entries M
 
@@ -488,14 +488,17 @@ diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
     applyTable(entries xx, x->diff(x,M)), 
     row-> joinHorizontal row
     )
+
+-------------------------
+-- printAsSLP functions
 PrintTable = new Type of MutableHashTable
 newPrintTable := method()
 newPrintTable List := o -> (h := new PrintTable; h#"#consts"=h#"#vars"=h#"#gates"=h#"#lines"=0; h.Outputs=o; h)
 addLine := method()
 addLine (PrintTable, Thing) := (h,t) -> ( h#(h#"#lines") = t; h#"#lines" = h#"#lines" + 1; )    
 printName = method()
-printName (Gate, HashTable) := (g,h) -> error "not implemented"
-printName (InputGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (Gate, PrintTable) := (g,h) -> error "not implemented"
+printName (InputGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     if isConstant g then (
 	h#g = "C"|toString h#"#consts";
 	addLine(h,h#g | " = " | toString g.Name);
@@ -507,28 +510,28 @@ printName (InputGate, HashTable) := (g,h) -> if h#?g then h#g else (
 	);
     h#g
     )
-printName (SumGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (SumGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     s := between(" + ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = " | concatenateNets s);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
-printName (ProductGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (ProductGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     s := between(" * ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = " | concatenateNets s);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
-printName (DivideGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (DivideGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     (x,y) := toSequence apply(g.Inputs, gg->printName(gg,h));  
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = " | x | " / " | y);  
     h#"#gates" = h#"#gates" + 1;
     h#g 
     )
-printName (DetGate, HashTable) := (g,h) -> if h#?g then h#g else (
+printName (DetGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     h#g = "G"|toString h#"#gates";
     addLine(h, h#g | " = det " | toString applyTable(g.Inputs, gg->printName(gg,h)));  
     h#"#gates" = h#"#gates" + 1;
@@ -545,6 +548,84 @@ printAsSLP List := outputs -> (
     )
 printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 
+TEST ///
+X = inputGate symbol X
+C = inputGate symbol C
+XpC = X+C
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+printAsSLP matrix{{XXC,detXCCX,XoC}}
+///
+
+-----------------------------------------------
+-- cCode functions (use PrintTable from above)
+
+cCode = method()
+cCode (Gate, PrintTable) := (g,h) -> error "not implemented"
+cCode (InputGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    if isConstant g then (
+	h#g = "C"|toString h#"#consts";
+	addLine(h,h#g | " = " | toString g.Name |";");
+    	h#"#consts" = h#"#consts" + 1;
+	)
+    else (
+	h#g = "X"|toString h#"#vars";
+    	h#"#vars" = h#"#vars" + 1;
+	);
+    h#g
+    )
+cCode (SumGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    s := between(" + ", apply(g.Inputs, gg->cCode(gg,h)));  
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = " | concatenateNets s | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (ProductGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    s := between(" * ", apply(g.Inputs, gg->cCode(gg,h)));  
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = " | concatenateNets s | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (DivideGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    (x,y) := toSequence apply(g.Inputs, gg->cCode(gg,h));  
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = " | x | " / " | y | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (DetGate, PrintTable) := (g,h) -> if h#?g then h#g else (
+    h#g = "G"|toString h#"#gates";
+    addLine(h, h#g | " = det " | toString applyTable(g.Inputs, gg->cCode(gg,h)) | ";");  
+    h#"#gates" = h#"#gates" + 1;
+    h#g 
+    )
+cCode (List,List) := (outputs,inputs) -> (
+    h := newPrintTable outputs;
+    scan(inputs, g->cCode(g,h));
+    scan(outputs, g->cCode(g,h));
+    print("void evaluate(const C* x, C* y) {");
+    scan(h#"#vars", i->print ("C X"|i|" = x["|i|"];"));
+    scan(h#"#lines", i->print ("C "| h#i));
+    scan(#outputs, i->print ("y["|i|"] = "|cCode(h.Outputs#i,h)|";")); 
+    print("}");
+    )
+cCode (GateMatrix,GateMatrix) := (M,I) -> cCode(flatten entries M, flatten entries I)
+
+
+TEST ///
+restart
+needsPackage "SLPexpressions"
+X = inputGate symbol X
+C = inputGate symbol C
+XpC = X+C+2
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+cCode (matrix{{XXC,detXCCX,0},{XoC,1,2}},matrix{{X,C}})
+///
 
 --fill m x n matrix with values from another matrix
 matrix (Matrix,ZZ,ZZ) := o -> (M,m,n) -> (
@@ -566,7 +647,7 @@ makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
     	};
     E#"constant positions" = positionsOfInputGates(consts,E#"rawSLP");
     E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
-    E#"constants" = matrix{consts/(c->c.Name)};
+    E#"constants" = matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
     E
     )
 
@@ -675,3 +756,161 @@ document {
     SeeAlso=>{Gate, Matrix}
     }
 
+undocumented {
+"zeroGate",
+inputGate,
+(inputGate,Thing),
+sumGate,
+(sumGate,List),
+printAsSLP,
+(printAsSLP,GateMatrix),
+(printAsSLP,List),
+cCode,
+productGate,
+(productGate,List),
+detGate,
+(detGate,List),
+DetGate,
+"minusOneGate",
+DivideGate,
+valueHashTable,
+(valueHashTable,List,List),
+ValueHashTable,
+constants,
+(constants,DetGate),
+(constants,DivideGate),
+(constants,GateMatrix),
+(constants,InputGate),
+(constants,List),
+(constants,ProductGate),
+(constants,SumGate),
+"oneGate",
+(symbol -,Gate),
+(symbol *,CC,Gate),
+(symbol +,CC,Gate),
+(symbol -,CC,Gate),
+(compress,Gate),
+(compress,GateMatrix),
+(compress,ProductGate),
+(compress,SumGate),
+(depth,DetGate),
+(depth,DivideGate),
+(depth,GateMatrix),
+(depth,InputGate),
+(depth,ProductGate),
+(depth,SumGate),
+(determinant,GateMatrix),
+(diff,GateMatrix,GateMatrix),
+(diff,InputGate,DetGate),
+(diff,InputGate,DivideGate),
+(diff,InputGate,GateMatrix),
+(diff,InputGate,InputGate),
+(diff,InputGate,ProductGate),
+(diff,InputGate,SumGate),
+(entries,GateMatrix),
+(symbol *,Gate,CC),
+(symbol *,Gate,Gate),
+(symbol *,Gate,Matrix),
+(symbol *,Gate,QQ),
+(symbol *,Gate,RR),
+(symbol *,Gate,ZZ),
+(symbol +,Gate,CC),
+(symbol +,Gate,Gate),
+(symbol +,Gate,QQ),
+(symbol +,Gate,RR),
+(symbol +,Gate,ZZ),
+(symbol -,Gate,CC),
+(symbol -,Gate,Gate),
+(symbol -,Gate,QQ),
+(symbol -,Gate,RR),
+(symbol -,Gate,ZZ),
+(symbol /,Gate,Gate),
+(symbol ^,Gate,ZZ),
+(symbol *,GateMatrix,GateMatrix),
+(symbol *,GateMatrix,Matrix),
+(symbol *,GateMatrix,RingElement),
+(symbol +,GateMatrix,GateMatrix),
+(symbol +,GateMatrix,Matrix),
+(symbol -,GateMatrix,GateMatrix),
+(symbol -,GateMatrix,Matrix),
+(symbol ^,GateMatrix,List),
+(symbol _,GateMatrix,List),
+(symbol _,GateMatrix,Sequence),
+(symbol |,GateMatrix,GateMatrix),
+(symbol |,GateMatrix,Matrix),
+(symbol ||,GateMatrix,GateMatrix),
+(symbol ||,GateMatrix,Matrix),
+(isConstant,InputGate),
+(symbol *,Matrix,Gate),
+(symbol *,Matrix,GateMatrix),
+(symbol +,Matrix,GateMatrix),
+(symbol -,Matrix,GateMatrix),
+(symbol |,Matrix,GateMatrix),
+(symbol ||,Matrix,GateMatrix),
+(net,DetGate),
+(net,DivideGate),
+(net,InputGate),
+(net,ProductGate),
+(net,SumGate),
+(numColumns,GateMatrix),
+(numRows,GateMatrix),
+(symbol *,QQ,Gate),
+(symbol +,QQ,Gate),
+(symbol -,QQ,Gate),
+(symbol *,RingElement,GateMatrix),
+(symbol *,RR,Gate),
+(symbol +,RR,Gate),
+(symbol -,RR,Gate),
+(submatrix,GateMatrix,List,List),
+(substitute,DetGate,Option),
+(substitute,DivideGate,Option),
+(substitute,Gate,GateMatrix,GateMatrix),
+(substitute,Gate,List),
+(substitute,GateMatrix,GateMatrix,GateMatrix),
+(substitute,GateMatrix,List),
+(substitute,InputGate,Option),
+(substitute,ProductGate,Option),
+(substitute,SumGate,Option),
+(support,DetGate),
+(support,DivideGate),
+(support,GateMatrix),
+(support,InputGate),
+(support,ProductGate),
+(support,SumGate),
+(transpose,GateMatrix),
+(value,DetGate,ValueHashTable),
+(value,DivideGate,ValueHashTable),
+(value,GateMatrix,ValueHashTable),
+(value,InputGate,ValueHashTable),
+(value,ProductGate,ValueHashTable),
+(value,SumGate,ValueHashTable),
+(symbol *,ZZ,Gate),
+(symbol +,ZZ,Gate),
+(symbol -,ZZ,Gate)
+    }
+
+end
+
+-- Here place M2 code that you find useful while developing this
+-- package.  None of it will be executed when the file is loaded,
+-- because loading stops when the symbol "end" is encountered.
+
+restart
+uninstallPackage "SLPexpressions"
+installPackage "SLPexpressions"
+installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
+installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
+
+-- (old way) installPackage("SLPexpressions", SeparateExec=>true, AbsoluteLinks=>false)
+
+-- install docs with no absolute links
+uninstallPackage "Style"
+installPackage("Style", AbsoluteLinks=>false)
+installPackage("SLPexpressions", AbsoluteLinks=>false)
+
+installPackage ("SLPexpressions", MakeDocumentation=>false)
+check "SLPexpressions"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SLPexpressions "
+-- End:

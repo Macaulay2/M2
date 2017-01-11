@@ -11,5 +11,6 @@ document {
 	  { "the links to the files and the files of the specified package created by ", 
 	       TO "installPackage", ", in case encapsulation is enabled, are removed,
 	       for every version of the package." }
-	  }
+	  },
+     SeeAlso => uninstallAllPackages
      }

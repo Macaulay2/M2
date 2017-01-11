@@ -1,0 +1,132 @@
+/* CSS styles common to 2-dimensional visualization templates */
+
+.noselect {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+}
+
+a { cursor: pointer; cursor: hand; }
+
+#canvasElement2d {
+    background-color: #FFF;
+    cursor: default;
+    display:inline;
+    z-index:2;
+    padding-bottom: 10px;
+}
+
+#canvasElement2d:not(.active):not(.shift) {
+    cursor: crosshair;
+}
+        
+path.link {
+    fill: none;
+    stroke: #B6B6B6;
+    stroke-width: 2px;
+    cursor: default;
+}
+
+#canvasElement2d:not(.active):not(.shift) path.link {
+    cursor: pointer;
+}
+
+path.link.selected {
+    stroke-dasharray: 10,2;
+}
+        
+path.link.highlighted {
+    fill: none;
+    /* stroke: #B6B6B6; */
+    stroke: #FF0000;
+    stroke-width: 4px;
+    cursor: default;
+}
+
+path.link.dragline {
+    pointer-events: none;
+}
+
+path.link.hidden {
+    stroke-width: 0;
+}
+
+circle.node {
+    stroke-width: 0px;
+    cursor: pointer;
+}
+
+circle.node.reflexive {
+    stroke: #000 !important;
+    stroke-width: 2.5px;
+}
+     
+circle.node.highlighted {
+    stroke: #000 !important;    
+    stroke-width: 2.5px;
+}
+
+text {
+    font: 12px sans-serif;
+    pointer-events: none;
+}
+
+text.id {
+    text-anchor: middle;
+    font-weight: bold;
+}
+
+/* CSS for sliders */
+#charge-slider{
+    margin: 10px;
+    display: inline-block;
+    height: 10px;
+    width: 120px;
+}
+    
+#linkdist-slider{
+    margin: 10px;
+    display: inline-block;
+    height: 10px;
+    width: 120px;
+}
+
+.noUi-horizontal .noUi-handle {
+    width: 24px;
+    height: 18px;
+    left: -17px;
+    top: -6px;
+}
+    
+.noUi-horizontal {
+    height: 14px;
+}
+
+/* Vertical lines on the handles */
+.noUi-handle:before,
+.noUi-handle:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 10px;
+    width: 1px;
+    background: #E8E7E6;
+    left: 10px;
+    top: 3px;
+}
+.noUi-handle:after {
+    left: 12px;
+}
+        
+.noUi-horizontal.noUi-extended {
+    padding-right: 20px;
+}
+.noUi-horizontal.noUi-extended .noUi-handle {
+    left: -2px;
+}
+.noUi-horizontal.noUi-extended .noUi-origin  {
+    right: -32px;
+}

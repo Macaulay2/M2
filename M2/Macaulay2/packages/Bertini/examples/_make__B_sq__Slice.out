@@ -1,0 +1,134 @@
+-- -*- M2-comint -*- {* hash: -1061455288 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+
+i1 : sliceType={1,1}
+
+o1 = {1, 1}
+
+o1 : List
+
+i2 : variableGroups={{x0,x1},{y0,y1,y2}}
+
+o2 = {{x0, x1}, {y0, y1, y2}}
+
+o2 : List
+
+i3 : xySlice=makeB'Slice(sliceType,variableGroups)
+2
+{{}, {}}
+
+o3 = B'Slice{...4...}
+
+o3 : B'Slice
+
+i4 : peek xySlice
+
+o4 = B'Slice{B'NumberCoefficients => {{1.49144+.713846*ii, -.840113+1.1986*ii}, {.014842+1.23548*ii, -.214468+.911293*ii, -.486176+.400577*ii}}                       }
+             B'SectionString => {(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1), (.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)}
+             ListB'Sections => {B'Section{...2...}, B'Section{...2...}}
+             NameB'Slice => null
+
+i5 : for i in  xySlice#B'SectionString do print i
+(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)
+(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)
+
+i6 : aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
+3
+{{}, {}, {}}
+
+i7 : aSlice#NameB'Slice
+
+o7 = {f0, f1, f2}
+
+o7 : List
+
+i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
+
+o8 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
+
+o8 : File
+
+i9 : f1="x0*y0+x1*y0+x2*y2"
+
+o9 = x0*y0+x1*y0+x2*y2
+
+i10 : f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
+
+o10 = x0*y0^2+x1*y1*y2+x2*y0*y2
+
+i11 : variableGroups={{x0,x1,x2},{y0,y1,y2}}
+
+o11 = {{x0, x1, x2}, {y0, y1, y2}}
+
+o11 : List
+
+i12 : xxSlice=makeB'Slice({2,0},variableGroups)
+2
+{{}, {}}
+
+o12 = B'Slice{...4...}
+
+o12 : B'Slice
+
+i13 : xySlice=makeB'Slice({1,1},variableGroups)
+2
+{{}, {}}
+
+o13 = B'Slice{...4...}
+
+o13 : B'Slice
+
+i14 : yySlice=makeB'Slice({0,2},variableGroups)
+2
+{{}, {}}
+
+o14 = B'Slice{...4...}
+
+o14 : B'Slice
+
+i15 : makeB'InputFile(storeBM2Files,
+          HomVariableGroup=>variableGroups,
+          B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
+
+o15 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
+
+o15 : File
+
+i16 : runBertini(storeBM2Files)
+~/bertini
+
+i17 : xxDegree=#importSolutionsFile(storeBM2Files)
+
+o17 = 2
+
+i18 : makeB'InputFile(storeBM2Files,
+          HomVariableGroup=>variableGroups,
+          B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
+
+o18 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
+
+o18 : File
+
+i19 : runBertini(storeBM2Files)
+~/bertini
+
+i20 : xyDegree=#importSolutionsFile(storeBM2Files)
+
+o20 = 3
+
+i21 : makeB'InputFile(storeBM2Files,
+          HomVariableGroup=>variableGroups,
+          B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
+
+o21 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
+
+o21 : File
+
+i22 : runBertini(storeBM2Files)
+~/bertini
+
+i23 : yyDegree=#importSolutionsFile(storeBM2Files)
+
+o23 = 1
+
+i24 : 

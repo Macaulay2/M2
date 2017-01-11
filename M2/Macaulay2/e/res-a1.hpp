@@ -165,8 +165,7 @@ public:
            int LengthLimit,
            int strategy);
 
-  virtual void remove_res();
-  virtual ~res_comp() { remove_res(); }
+  virtual ~res_comp();
 
   void resize(const Ring *new_ring);
 

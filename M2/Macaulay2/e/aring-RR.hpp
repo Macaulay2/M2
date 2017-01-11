@@ -146,6 +146,11 @@ namespace M2 {
       result = a+b;
     }
 
+    void addMultipleTo(ElementType &result, const ElementType& a, const ElementType& b) const
+    {
+      result += a*b;
+    }
+
     void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       result = a-b;
@@ -242,6 +247,12 @@ namespace M2 {
       if (mpfr_cmp_d(norm, d) < 0)
         mpfr_set_d(norm, d, GMP_RNDN);
     }
+
+    double coerceToDouble(const ElementType& a) const
+    {
+      return a;
+    }
+    
   };
 
 }; // end namespace M2

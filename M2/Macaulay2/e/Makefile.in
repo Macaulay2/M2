@@ -9,7 +9,7 @@ PRE.cc   = $(COMPILE.cc) -E
 include @srcdir@/Makefile.files
 include Makefile.common
 CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors
-CXXFLAGS += -std=c++0x -Wno-sign-conversion #-Wno-unused-local-typedefs
+CXXFLAGS += -std=c++11 -Wno-sign-conversion #-Wno-unused-local-typedefs
 
 # to exclude files in documentation itself from processing it is neccesary to divide the path into 2 parts.
 # M2_E_DOXYGEN_OUTPUT_DIR_POSTFIX should be unique in the sense that the pattern *$(M2_E_DOXYGEN_OUTPUT_DIR_POSTFIX)* does not match for any of the source file directories.

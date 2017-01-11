@@ -1,3 +1,4 @@
+#!/bin/sh
 cd HOM4PS2
 ./bin/sym2num < $1 > ./bin/input.num
 echo "2" | ./bin/flwcrv

@@ -33,6 +33,7 @@ validate2 LATER := x -> validate2 x#0()
 
 validate = method()
 validate String := x -> (
+     utf8check x;
      -- activate this later, after we convert the strings with htmlLiteral
      -- if match("<",x) then oops stderr << "--warning: string contains tag start character '<' : \"" << x << "\"" << endl;
      )

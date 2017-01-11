@@ -1,15 +1,65 @@
 newPackage(
               "CompleteIntersectionResolutions",
-              Version => "0.9", 
-              Date => "June 10, 2015",
+              Version => "1.1", 
+              Date => "December 30, 2016",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
-	      PackageExports => {"BGG"},
-              DebuggingMode => false --should be false when submitted
-              )
+              DebuggingMode => false, --should be false when submitted
+	      PackageExports => {"MCMApproximations","BGG"} 
+	      )
 	  export{
+	--things related to Ext over a complete intersection
+	   "ExtModule", 
+	   "evenExtModule", 
+	   "OutRing",
+	   "oddExtModule",
+	   "ExtModuleData",
+	--tools used to construct the "higher matrix factorization"
+	--of a high syzygy
+	   "matrixFactorization",
+	   "Check", -- optional arg for matrixFactorization
+	   "highSyzygy",
+  	   "Optimism", -- optional arg for highSyzygy etc	   
+	   "makeT",
+	   "koszulExtension",
+       --scripts to unpack the info in a matrix factorization
+	   "BRanks",
+	   "ARanks",
+	   "bMaps",
+	   "dMaps",
+	   "psiMaps",
+	   "hMaps",
+	   "mfBound",
+	   "finiteBettiNumbers",
+           "infiniteBettiNumbers",
+	--Routines that make other resolutions
+	   "Shamash",
+	   "layeredResolution",
+	   "makeFiniteResolution",	   
+	   "makeFiniteResolutionCodim2",	   	   
+	   "TateResolution",
+	--modules over the exterior algebra
+   	   "exteriorTorModule",
+	   "exteriorExtModule",	   
+	   "makeHomotopies",
+	   "makeHomotopies1",
+    	   "makeHomotopiesOnHomology",
+	   "exteriorHomologyModule",
+	   "BGGL",	   
+	   "extVsCohomology",
+	   "freeExteriorSummand",
+       --Representing a module as Ext_R(M,k)
+	   "moduleAsExt",
+	   "hfModuleAsExt",
+	   "complexity",
+	--some routines to test particular conjectures
+	    "regularitySequence",
+	    "extIsOnePolynomial",
+	--some families of examples
+	   "twoMonomials",
+	   "sumTwoMonomials",
          --some utilities
 	   "splittings",
 	   "S2",
@@ -23,51 +73,212 @@ newPackage(
 	   "dualWithComponents",
 	   "HomWithComponents",
 	   "tensorWithComponents",
-	   "toArray",
-	--things related to Ext over a complete intersection
-	   "ExtModule", 
-	   "evenExtModule", 
-	   "oddExtModule",
-	   "ExtModuleData",
-	   "highSyzygy",
-  	   "Optimism", -- optional arg for highSyzygy etc	   
-	--tools used to construct the matrix factorization and 
-        --things related to it
-	   "makeT",
-	   "koszulExtension",
-	   "matrixFactorization",
-	   "Check", -- optional arg for matrixFactorization
-       --scripts to unpack the info in a matrix factorization
-	   "BRanks",
-	   "ARanks",
-	   "bMaps",
-	   "dMaps",
-	   "psiMaps",
-	   "hMaps",
-	   "mfBound",
-	   "finiteBettiNumbers",
-           "infiniteBettiNumbers",
-	   "makeFiniteResolution",	   
-	   "makeFiniteResolution2",	   	   
-	--some families of examples
-	   "twoMonomials",
-	   "sumTwoMonomials",
-    	--modules over the exterior algebra
-	   "makeHomotopies",
-	   "makeHomotopies1",
-    	   "makeHomotopiesOnHomology",
-	   "exteriorHomologyModule",
-   	   "exteriorTorModule",
-	   "exteriorExtModule",	   
-	   "TateResolution",
-	   "BGGL",	   
-	   "extVsCohomology",
-	   "freeExteriorSummand",
-       --the inverse problem: represent a module as an Ext_R(M,k)
-	   "moduleAsExt",
-	   "hfModuleAsExt",
-	   "complexity"
+	   "toArray"
 	   }
+
+{*
+restart
+loadPackage("CompleteIntersectionResolutions", Reload=>true)
+
+     S = ZZ/101[x,y,z]
+     R = S/ideal"x3,y3"
+     M = R^1/ideal(x,y,z)
+     ff = matrix{{z^3}}
+     --
+     m = random(R^3, R^{3:-1})
+     ff = matrix{{det m}}
+     M = coker m     
+     R1 = R/ideal ff
+     F = res M
+     FF = Shamash(ff,F,5)
+     betti FF
+
+    H =  makeHomotopies(ff,F)
+
+     GG = Shamash(R1,F,4)
+     betti FF
+     betti GG
+     ring GG
+     apply(length GG, i->prune HH_i FF)
+*}
+
+regularitySequence = method()
+regularitySequence(List, Module) := (R,M) ->(
+    --R = complete intersection list R_(i+1) = R_i/f_(i+1), i= 0..c.
+    --M = module over R_c
+    --returns the list of pairs {reg evenExtModule M_i, reg oddExtModule M_i}
+    --where M_i is the MCM approximation of M over R_i
+    if M == 0 then return{- infinity, {}, - infinity, {}};
+    em := null;
+    om := null;
+    c := length R-1;
+    (MList,kkk,p) := setupModules(R,M);
+    MM := apply(c+1, j->source approximation(pushForward(p_c_j, M),Total =>false));
+    MM = select(MM, m-> not isFreeModule m);
+    <<"reg even ext, soc degs even ext, reg odd ext, soc degs odd ext"<<endl<<endl;
+    scan(reverse MM, m-> (
+	    em = evenExtModule m;
+	    om = oddExtModule m;
+     <<{regularity em, socleDegrees em, regularity om, socleDegrees om})
+     <<endl);
+    )
+
+Shamash = method()
+Shamash(Matrix, ChainComplex,ZZ) := (ff, F, len) ->(
+    --Given a 1 x 1 matrix ff over a ring R and a chain complex F
+    --admitting a homotopy for ff_0, produce the Shamash complex
+    -- F as a chain complex Fbar over Rbar = R/ideal ff.
+    R := ring ff;
+    deg := (degrees source ff)_0_0;
+    H :=  makeHomotopies(ff,F);
+    --simplify the notation for the map from F_j to F_i
+    d := (i,j) -> if (even(i-j) or (i-j<(-1)) or (F_i==0) or (F_j==0)) 
+                     then map(F_i,F_j,0) else 
+                          map(F_i,F_j, H#{{(1+i-j)//2},j});
+--    error();
+        --make the modules
+    G := apply(1+len, i->directSum(
+	         if even i then apply(1+i//2, j->R^{ -deg*((i-2*j)//2)}**F_(2*j))
+	     	 else apply((i+1)//2, j->R^{ -deg*(i-(2*j+1))//2}**F_(1+2*j))));
+    --make maps G_(i) to G_(i-1)
+    D := i-> if even i then
+    	   --if i is even then G_i = F_0++..++F_i, a total of i//2 terms, and G_(i-1) = F_1++.. has i//2-1 terms
+           map(G_(i-1),G_i,matrix apply(i//2, p-> apply(1+i//2, q-> d(2*p+1,2*q)))) else
+           map(G_(i-1),G_i,matrix apply(1+(i-1)//2, p-> apply(1+i//2, q-> d(2*p,2*q+1))));
+    Rbar := ring ff/ideal ff;
+    chainComplex apply(len, i-> Rbar**D(i+1))
+)
+
+Shamash(Ring, ChainComplex,ZZ) := (Rbar, F, len) ->(
+    P := map(Rbar,ring F);
+    ff := gens ker P;
+    if numcols ff != 1 then error"given ring must be quotient of ring of complex by one element";
+    FF := Shamash(ff, F,len);
+    P = map(Rbar, ring FF, vars Rbar);
+    P FF
+)    
+
+layeredResolution = method(Options =>{Verbose=>false})
+--version that produces the finite layered resolution
+layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
+    --ff is a 1 x c matrix over a Gorenstein ring S
+    --M is an S-module annihilated by I = ideal ff.
+    --returns a pair (L,aug), where aug: L_0 \to M is the augmentation.
+    --Here L_0 = L'_0 ++ B_0, and L' is the resolution of M', the 
+    --MCM approximation of M over R' = S/(ideal ff'), and ff' = ff_{0..(c-2)}.
+    L := null;
+    cod := numcols ff;
+    if cod <=1 then (
+	L = res M;
+    	<<{rank L_0, rank L_1} << " in codimension "<< cod<<endl;	
+        return (L, map(M,L_0,id_(L_0))));
+    S := ring ff;
+    R := S/(ideal ff);
+    ff' := ff_{0..cod-2};
+    R' := S/(ideal ff');
+    p:= map(R,R');
+    q := map(R',S);
+        
+    MR := prune R**M;
+    MR' := prune(R'**M);
+    (alpha, beta) := approximation MR';
+    B0 := source beta;
+    M' := source alpha;
+--    assert(M' == prune M');
+
+    gamma := map(MR', M'++B0, (alpha)|beta);
+    BB1 := ker gamma;
+    B1 := minimalPresentation BB1;
+--    assert(isFreeModule B1);
+    psib :=  inducedMap(M' ++ B0, BB1)*(B1.cache.pruningMap);
+    psi := psib^[0];
+    b := psib^[1];
+--    assert(source psi == B1 and source b == B1);
+--    assert(target psi == M' and target b == B0);
+    M'S := pushForward(q,M');
+    bS := substitute(b,S);
+    B0S := target bS;
+    B1S := source bS;    
+    if opts.Verbose === true then << {rank B1S, rank B0S} << " in codimension " << cod<<endl;
+    KK := koszul(ff');
+    B := chainComplex{bS};
+    
+    (L',aug') := layeredResolution(ff', M'S, Verbose => opts.Verbose);
+    assert(target aug' == M'S);
+    psiS0 := map(M'S, B1S, sub(matrix psi,S));
+    psiS := psiS0//aug';
+    Psi1 := extend(L',B[1],matrix psiS);
+    Psi2 := Psi1**KK;
+    Psi := extend(L',L'**KK, id_(L'_0))*Psi2;
+    L = cone Psi; -- L', the target of Psi, is the first summand, so this is L_0==L'_0++B_0
+    assert(L_0 == L'_0 ++ B_0);
+    m := (sub((matrix alpha),S)*matrix aug') |sub(matrix beta,S);
+    aug := map(M,L'_0++B_0,m);
+--Check exactness
+--    scan(length L -1, s->assert( HH_(s+1) L == 0));
+    (L,aug)
+    )
+
+
+
+layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
+    --ff is a 1 x c matrix over a Gorenstein ring S and ff' = ff_{0..(c-2)}, ff'' = ff_{c-1}.
+    --R = S/ideal ff
+    --R' = S/ideal ff'
+    --NOTE R =!= R'/ideal ff''; we need to use a map to go between them.
+    --M is an MCM R-module.
+    --The script returns a pair (L,aug), where L is the first len steps of an R-free resolution of M 
+    --and aug: L_0 \to M is the augmentation.
+    -- Let
+    --        B_1 --> B_0 ++ M' --> M
+    -- be the MCM approximation of M over R'.
+    -- If L' is the layered R'-free resolution of M', then
+    --     L_0 = R\otimes (L'_0 ++ B_0),
+    --     L_1 = R\otimes (L'_1 ++ B_1).
+    -- and L is the Shamash construction applied to the box complex.
+    -- The resolution is returned over the ring R.
+    cod := numcols ff;
+    R := ring M;
+    S := if cod >0 then ring ff else R;
+    StoR := map(R,S);
+    MS := pushForward(StoR, M);
+    
+    if cod == 0 then (
+    	L := res(M,LengthLimit => len);
+    	return (L, map(M, L_0, id_(L_0))));
+    ff' := ff_{0..cod-2};
+    R' := S/ideal ff';
+    ff'' := R'** ff_{cod-1};
+--    R1 := R'/ideal ff'';
+    
+    R'toR := map(R,R');
+--    MR := R**M;
+    MR':= pushForward(R'toR,M);
+    (alpha, beta) := approximation MR';
+    B0 := source beta;
+    M' := source alpha;
+    gamma := map(MR', M'++B0, (alpha|beta));
+    BB1 := ker gamma;
+    B1 := minimalPresentation BB1;
+    psib :=  inducedMap(M' ++ B0, BB1)*(B1.cache.pruningMap);
+    psi := psib^[0];
+    b := psib^[1];
+(L',aug') := layeredResolution(ff',M',len);
+--L' := res(M', LengthLimit=> len);
+--    aug' = map(M', L'_0, id_(L'_0));
+assert(ring L' === R');
+assert(ring aug' === R');
+assert(ring b === R');
+    B := chainComplex {b};
+    Psi := extend(L', B[1], matrix(psi//aug'));
+    box := cone Psi;
+    L =  Shamash(R, box, len);    
+    aug := map(M, L_0, 
+          R'toR matrix( 
+	      map(MR',M'++B0, (alpha|beta))*map(M'++ B0, box_0, aug'++id_(B0))));
+    (L, aug)
+    )
+
 
 dualWithComponents = method()
 dualWithComponents Module := M -> (
@@ -163,28 +374,33 @@ ExtModule Module := M -> (
      prune coker v presentation E)
 
   
-evenExtModule = method()
-evenExtModule Module := M -> (
+evenExtModule = method(Options =>{OutRing => 0})
+evenExtModule Module := opts -> M -> (
      --If M is a module over a complete intersection R
      --of codim c, the script returns 
      --Ext^(even)(M,(ring M)^1/(ideal vars ring M))
      --as a module generated in degree 0
      --over the polynomial ring kk[X_1..X_(codim R)],
      --where the vars have degree 1
+     --unless the option Outring => outring is given, with outring being
+     --a polynomial ring with numGens ring E, in chich case this ring is used.
      E := ExtModule M;
      P := positions(flatten degrees E, even);
      Ee:=prune image (E_P);
      T := ring E;
+     if class opts#OutRing === PolynomialRing then T1 := opts#OutRing else
+     (
      kk:= coefficientRing T;
      X := symbol X;
-     T1 := kk[X_0..X_(numgens T -1)];
+     T1 = kk[X_0..X_(numgens T -1)]
+     );
      v1 := map(T1, T, vars T1, DegreeMap => i->{(first i)//2});
      coker v1 presentation Ee
      )
 
 
-oddExtModule = method()
-oddExtModule Module := M -> (
+oddExtModule = method(Options =>{OutRing => 0})
+oddExtModule Module := opts -> M -> (
      --If M is a module over a complete intersection R
      --of codim c, the script returns 
      --Ext^(odd)(M,(ring M)^1/(ideal vars ring M))
@@ -195,44 +411,47 @@ oddExtModule Module := M -> (
      P := positions(flatten degrees E, odd);
      Eo:=prune image (E_P);
      T := ring E;
+     if class opts#OutRing === PolynomialRing then T1 := opts#OutRing else
+     (
      kk:= coefficientRing T;
      X := symbol X;
-     T1 := kk[X_0..X_(numgens T -1)];
+     T1 = kk[X_0..X_(numgens T -1)]
+     );
      v1 := map(T1, T,vars T1, DegreeMap => i->{(first i)//2});
      coker v1 presentation Eo
      )
 
+
 makeT = method()
-makeT(Matrix, ChainComplex,ZZ) := (F,G,i) ->(
+makeT(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
      {*
-     If F is an m x 1 matrix and
-     G is a resolution of a module at least up to the i-th step,
-     over R = S/(ideal F), 
+     If ff is an c x 1 matrix and
+     F is a chain complex
+     over R = S/(ideal ff), 
      of codim c this returns a list of the c ci-operators
-     G_i \to G_{i-2}
-     corresponding to the entries of F.
+     F_i \to F_{i-2}
+     corresponding to the entries of ff.
      *}
-     c := numcols F;
-     degsF := flatten((degrees F)_1);
-     R := ring G;
-     S := ring F;
-     d0 := sub(G.dd_i, S);
-     d1 := sub(G.dd_(i-1), S);
-     Gtar := target d1;
-     Gsour := source d0;
+     c := numcols ff;
+     degsff := flatten((degrees ff)_1);
+     R := ring F;
+     S := ring ff;
+     complete F;
+     minF := min F;
+     d0 := sub(F.dd_i, S);
+     d1 := sub(F.dd_(i-1), S);
+     Ftar := target d1;
+     Fsour := source d0;
      d2 := d1*d0;
-     utemp := local utemp;
-     u := apply(c,i ->(
-	     utemp = map(S^{-degsF_i}**Gtar, Gsour, d2//((target d2)**F_{i}));
-	     d2 = d2 - utemp**F_{i};
-	     utemp));
-     --check: is d1*d0 = sum F_{i}*u_i 
-     if d1*d0 != map(Gtar, Gsour, sum(c, i-> u_i**F_{i})) then 
+     T := (d2//(ff**Ftar));
+     I := id_(source ff);
+     u := apply(c, j-> (I^{j}**Ftar)*T);
+     --check: is d1*d0 = sum ff_{i}*u_i 
+     if d1*d0 != map(Ftar, Fsour, sum(c, i-> u_i**ff_{i})) then 
                   error{"doesn't add up"};
      ret := map(R,S);
      apply(u, u1 -> ret u1)
      )
-
 
 splittings = method()
 splittings (Matrix, Matrix) := (a,b) -> (
@@ -479,7 +698,7 @@ Hlist1 := apply(#Hlist, m -> htar_(toArray toList(0..m))*Hlist_m);
 h = Hlist1_0;
 scan(#Hlist1 -1, i-> h=h|Hlist1_(i+1));
 h = map(htar, directSum (Hlist1/source), h);
-
+--error();
 {d,h}
 )
 
@@ -530,8 +749,25 @@ hMaps List := mf-> (
         p -> (
           map(directSum ((components target h)_(toList(0..p))),
               directSum(((components source h)/components)_p),
-	      h_[p]^(toArray toList(0..p)))
-	     )))
+	      --(target h)^(toArray toList(0..p))*h*((source h)_[p]))))
+              h_[p]^(toArray toList(0..p)))))
+    	       )
+-- the commented line was necessary when we had ^[ ] being frobeniusPower in our init.m2
+
+///  
+restart
+loadPackage("CompleteIntersectionResolutions", Reload =>true)
+setRandomSeed 0
+kk=ZZ/101
+S = kk[a,b]
+ff = matrix"a4,b4"
+R = S/ideal ff
+N = coker vars R
+M = highSyzygy N
+mf = matrixFactorization(ff, M)
+(hMaps mf)_0
+(hMaps mf)_1
+///
 
 ExtModuleData = method()
 ExtModuleData Module := M -> (
@@ -707,7 +943,8 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
      hashTable apply(keys H, k->
      {k, map(F_(k_1+2*sum (k_0)-1), 
-	     tensorWithComponents( S^(-sum(#k_0,i->(k_0)_i*degs_i)),F_(k_1)), 
+--	     tensorWithComponents( S^(-sum(#k_0,i->(k_0)_i*degs_i)),F_(k_1)), 
+	     tensorWithComponents( S^{-sum(#k_0,i->(k_0)_i*degs_i)},F_(k_1)), 
 				         H#k)})
      )
 ///
@@ -769,7 +1006,8 @@ makeHomotopies1 (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
      hashTable apply(keys H, k->
      {k, map(F_(k_1+1), 
-	     tensorWithComponents(S^(-degs_(k_0)),F_(k_1)), 
+--	     tensorWithComponents(S^(-degs_(k_0)),F_(k_1)), 	     
+	     tensorWithComponents(S^{-degs_(k_0)},F_(k_1)), 
 				         H#k)})
 --     hashTable pairs H
      )
@@ -965,7 +1203,7 @@ freeExteriorSummand(Module) := M -> (
 
 S2 = method()
 S2(ZZ,Module) := Matrix => (b,M)-> (
-     --returns a map M --> M', where M' = \oplus_d>=b H^0(\tilde M).
+     --returns a map M --> M', where M' = \oplus_{d>=b} H^0(\tilde M).
      --the map is equal to the S2-ification AT LEAST in degrees >=b.
      S := ring M;
      r:= regularity M;
@@ -980,13 +1218,26 @@ S2(ZZ,Module) := Matrix => (b,M)-> (
 
 
 TateResolution = method()
-TateResolution(Module,ZZ,ZZ) := (M,lower,upper) ->(
+TateResolution(Module,ZZ,ZZ) := (M,low,high) ->(
+         d := transpose ((res(M, LengthLimit => high)).dd_high);
+	 F := res (coker d, LengthLimit =>(high-low+2));
+	 complete F;
+         T := (chainComplex reverse apply(high-low+1, j->transpose (F.dd_j)))[-low];
+	 T
+         )
+TateResolution(Module,ZZ) := (M,b) -> TateResolution(M,b,b)
+TateResolution(Module) := M-> TateResolution(M,-5,5)
+
+{*Old version returned a betti table; now use 
+betti TateResolution
+instead.
+
+TateResolution0 = method()
+TateResolution0(Module,ZZ,ZZ) := (M,lower,upper) ->(
     d := transpose (res(M, LengthLimit => upper)).dd_upper;
     betti res (coker d, LengthLimit =>upper+lower)
     )
-TateResolution(Module,ZZ) := (M,b) -> TateResolution(M,b,b)
-TateResolution(Module) := M-> TateResolution(M,5,5)
-
+*}
 ------------
 --special purpose code
 --
@@ -1221,8 +1472,8 @@ makeFiniteResolution(List,Matrix) := (MF,ff) -> (
     A
     )
 
-makeFiniteResolution2 = method()
-makeFiniteResolution2(List,Matrix) := (MF,ff) -> (
+makeFiniteResolutionCodim2 = method()
+makeFiniteResolutionCodim2(List,Matrix) := (MF,ff) -> (
     --given a codim 2 matrix factorization, makes all the maps
     --that are relevant, as in 4.2.3 of Eisenbud-Peeva 
     --"Minimal Free Resolutions and Higher Matrix Factorizations"
@@ -1292,7 +1543,8 @@ makeFiniteResolution2(List,Matrix) := (MF,ff) -> (
     assert(hconst_0*F.dd_1+F.dd_2*hconst_1 == f2*id_(F_1));
     assert(hconst_1*F.dd_2 == map(S^{deg1}**F_2, F_2, f2*id_(F_2)));
     if hh1 !=hh1' then 
-           <<"matrixFactorization did not produce a strong matrix factorization"<<endl;
+           <<"homotopy for first f1 (which is ff_0) 
+	   had component mapping to e_1**B_0(2)."<<endl;
     out
     )
 
@@ -1343,7 +1595,7 @@ extVsCohomology(Matrix, Module) := (ff,N) ->(
     exter := ring Ee;
     E := exteriorExtModule(ff,MS);
     T := exteriorTorModule(ff,MS);
-TE := (betti (S^{-5})[6])**TateResolution(E,5,5);
+TE := (betti (S^{-5})[6])**betti TateResolution(E,-5,5);
 TEe := (cohomologyTable(presentation (Ee), ring E,-5,5));	
 TEo:= cohomologyTable(presentation (Eo), ring E,-5,5);
     <<"Tate Resolution of Ext_S(M,k) as exterior module:"<<endl;
@@ -1358,19 +1610,298 @@ TEo:= cohomologyTable(presentation (Eo), ring E,-5,5);
     <<TEo<<endl;
     (E,T))
 
+extIsOnePolynomial = method()
+extIsOnePolynomial Module := M ->(
+    Ee := evenExtModule M;
+    Eo := oddExtModule M;
+    pe := hilbertPolynomial(Ee, Projective => false);
+    po := hilbertPolynomial(Eo, Projective => false);
+    z := local z;
+    U := QQ[z];
+    V := ring pe;
+    s := map(U,V,{U_0});
+    pe = s pe;
+    po = s po;
+    H := sub(pe, {z =>z/2});
+    (H, H == sub(po, {z =>z/2-1/2}))
+    )
+
+///
+restart
+--notify=true
+uninstallPackage "CompleteIntersectionResolutions"
+installPackage "CompleteIntersectionResolutions"
+loadPackage("CompleteIntersectionResolutions", Reload=>true)
+check "CompleteIntersectionResolutions"
+///
+
 
 -----------------------------
---------Documentation-----------
+--------Documentation-----------documentation--DOCUMENT
 --------------------------------
---
+
 --<<docTemplate
 {*
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
+viewHelp "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
 *}
+
+beginDocumentation()
+
+doc///
+Key
+  CompleteIntersectionResolutions
+Headline 
+  "Resolution over a Complete Intersection"
+Description 
+ Text
+  The resolution of a module over a hypersurface ring 
+  (graded or local) is always periodic of period at most 2 (Eisenbud, "Homological Algebra Over A Complete Intersection",
+  Trans. Am. Math. Soc. 260 (1980) 35--64),
+  but the asymptotic structure of minimal resolutions over a 
+  complete intersection is a topic of active research. 
+  
+  Most of our routines for constructing resolutions over complete intersections
+  work with a polynomial ring S and a complete
+  intersection R = S/(ideal ff), where 
+  $$
+  ff = matrix\{\{f_1,\dots,f_c\}\}
+  $$
+  is a 1-rowed
+  matrix whose entries are (sufficiently general) generators
+  of a complete intersection ideal, usually all of the same degree.
+ Text
+  Most of this package is related to the notions introduced and studied in the
+  Springer Lecture Notes, ``Minimal Free Resolutions over Complete Intersections''
+  by David Eisenbud and Irena Peeva (2016).
+
+  The routines fall into several groups:
+  --  
+ Text
+  @SUBSECTION "Routines to analyze Ext_R(M,k) as a module over the ring of operators"@
+ Text
+  @UL {
+  {TO "ExtModule"},
+  {TO "evenExtModule"},
+  {TO "oddExtModule"},
+  {TO "ExtModuleData"},
+  {TO "complexity"}
+  }@
+ Text
+  @SUBSECTION "Representing a module as Ext_R(M,k)"@
+ Text
+  @UL {
+  {TO "moduleAsExt"},
+  {TO "hfModuleAsExt"}
+  }@
+ Text
+  @SUBSECTION "Routines Related to Particular Conjectures"@
+ Text
+  @UL {
+  {TO "regularitySequence"},
+  {TO "extIsOnePolynomial"}
+  }@
+ Text
+  @SUBSECTION "Routines that make resolutions of various kinds"@
+ Text
+  @UL {
+  {TO "TateResolution"},
+  {TO "Shamash"},
+  {TO "layeredResolution"},
+  {TO "makeFiniteResolution"},
+  {TO "makeFiniteResolutionCodim2"}
+  }@
+ Text
+  @SUBSECTION "Tools for construction of higher matrix factorizations"@
+ Text
+  @UL {
+  {TO "matrixFactorization"},
+  {TO "highSyzygy"},
+  {TO "koszulExtension"},
+  {TO "makeT"}
+  }@
+ Text
+  @SUBSECTION "Tools to unpack the info in higher matrix factorizations"@
+ Text
+  @UL {
+  {TO "BRanks"},
+  {TO "ARanks"},
+  {TO "bMaps"},
+  {TO "dMaps"},
+  {TO "psiMaps"},
+  {TO "hMaps"},
+  {TO "mfBound"},
+  {TO "finiteBettiNumbers"},
+  {TO "infiniteBettiNumbers"}
+  }@
+ Text
+  @SUBSECTION "Ext_S(M,k), Tor^S(M,k), homology and linear resolutions as modules over the exterior algebra"@
+ Text
+  @UL {
+  {TO "exteriorExtModule"},
+  {TO "exteriorTorModule"},
+  {TO "exteriorHomologyModule"},
+  {TO "BGGL"},
+  {TO "extVsCohomology"},
+  {TO "freeExteriorSummand"}
+  }@
+ Text
+  @SUBSECTION "Routines for general module theory"@
+ Text
+  @UL {
+  {TO "S2"},
+  {TO "isQuasiRegular"},
+  {TO "stableHom"},
+  {TO "isStablyTrivial"},  
+  {TO "makeModule"},  
+  {TO "isLinear"}
+  }@
+ Text
+  @SUBSECTION "Utilities"@
+ Text
+  @UL {
+  {TO "cosyzygyRes"},
+  {TO "dualWithComponents"},
+  {TO "HomWithComponents"},
+  {TO "tensorWithComponents"},  
+  {TO "toArray"}
+  }@
+ Text
+  @SUBSECTION "Some families of Examples"@
+ Text
+  @UL {
+  {TO "twoMonomials"},
+  {TO "sumTwoMonomials"}
+  }@
+ 
+ Text  
+  The construction of the
+  matrix factorizations for high syzygies of a module N,
+  introduced in the
+  paper
+  "Matrix Factorizations in Higher Codimension"
+  by Eisenbud and Peeva. The routine ``mfBound'' determines
+  which syzygy to take.
+  The routine matrixFactorization constructs
+  the higher matrix factorization 
+  of a module over R defined by Eisenbud and Peeva in the 2016 Springer Lecture Notes
+  ``Minimal Free Resolutions over Complete Intersections''.
+  The ranks of the stack of matrices b_p that are used 
+  in the construction of the matrix factorization, and the various matrices
+  themselves, are obtained from the routines BRanks, ARanks, bMaps, dMaps, psiMaps, hMaps
+  (the notation is explained in the Lecture Notes). 
+  
+  Here is an example of a matrix factorization in codimension 2:
+ Example
+  setRandomSeed 0
+  c = 2;
+  S = ZZ/101[x_1..x_c, a_(1,1)..a_(c,c)];
+  X = matrix{{x_1..x_c}};
+  ff = X*map(source X, , genericMatrix(S,a_(1,1),c,c));
+  R = S/ideal ff;
+  mbound = mfBound coker (R**X)
+  F = res(coker (R**X) , LengthLimit =>mbound+1);
+  M = coker F.dd_(mbound+1);
+  MF = matrixFactorization(ff,M)
+  netList BRanks MF
+  netList ARanks MF
+  netList bMaps MF
+  netList dMaps MF
+  netList psiMaps MF
+  netList hMaps MF
+ Text
+  The routines infiniteBettiNumbers and finiteBettiNumbers compute the Betti numbers of
+  M over R and over S from the BRanks.   The minimal free
+  resolution of M as a module over R/(f_1..f_s), where
+  s=c-complexity M, is reconstructed (in a special form)
+  from the matrix factorization MF by the routine
+  makeFiniteResolution(MF, ff).
+ Example
+  betti res M
+  infiniteBettiNumbers(MF,7)
+  betti res pushForward(map(R,S),M)
+  finiteBettiNumbers MF  
+  G = makeFiniteResolution (MF,ff)
+  G' = res(pushForward(map(R,S),M))
+ Text
+  The group of routines ExtModule, evenExtModule, oddExtmodule,
+  extModuleData (which call the routine
+  Ext(M,N) of Avramov-Grayson) are useful for analyzing the
+  module Ext_R(M,k). TateResolution returns 
+  a specified part of the Tate resolution of a 
+  maximal Cohen-Macaulay module M
+  first calling the routine cosysyzy.
+  
+  The routines moduleAsExt and hfModuleAsExt give
+  partial converse constructions (following Avramov-Jorgensen)
+  
+  The routines twoMonomials and sumTwoMonomials provide some
+  interesting examples.
+  
+  The routine makeT constructs CI operators on a resolution
+  over a complete intersection, while the routine makeHomotopies
+  constructs a set of higher homotopies on the resolution
+  of a module M for a sequence of 
+  elements in the annihilator of M(makeHomotopies1 constructs
+  just the ordinare ``first'' homotopies).
+
+  The routine exteriorTorModule constructs the module $Tor^S(M,k)$
+  as a module over the exterior algebra $\wedge(k^n)$.
+  
+  The routine S2 takes a graded module M and returns the map
+  $$
+  M -> \oplus_{-p}^\infty H^0(sheaf M(p)).
+  $$
+  
+Caveat
+  Unless the complete intersection is homogeneous 
+  AND generated by elements of a single degree,
+  it may not be possible to choose sufficiently general HOMOGENEOUS generators
+  for some of our construction routines to work, 
+  even when the ideal of the complete intersection is homogeneous, so our examples
+  in the routines for are primarily using complete intersections of equal degree.
+  The theory takes place in the local case, however, where this is not a problem.
+///
+
+
+doc///
+   Key
+    regularitySequence
+    (regularitySequence, List,Module)
+   Headline
+    regularity of Ext modules for a sequence of MCM approximations
+   Usage
+    L = regularitySequence (R,M)
+
+   Inputs
+    R:List
+     list of rings R_i = S/(f_0..f_{(i-1)}), complete intersections
+    M:Module
+     module over R_c where c = length R - 1.
+   Outputs
+    L:List
+     List of pairs {regularity evenExtModule M_i, regularity oddExtModule M_i)
+   Description
+    Text
+     Computes the non-free parts M_i of the MCM approximation to M over R_i, 
+     stopping when M_i becomes free, and
+     returns the list whose elements are the pairs of regularities, starting
+     with M_{(c-1)}
+     Note that the first pair is for the 
+    Example
+     c = 3;d=2
+     R = setupRings(c,d);
+     Rc = R_c
+     M = coker matrix{{Rc_0,Rc_1,Rc_2},{Rc_1,Rc_2,Rc_0}}
+     regularitySequence(R,M)
+   SeeAlso
+    approximation
+    auslanderInvariant
+///
 
 
 doc ///
@@ -1493,7 +2024,7 @@ doc ///
      phi is a hash-table of homogeneous maps phi#{j,i}: H#i**F_j\to H#(i+1)
      where F_j = source (E_{j} = matrix {{e_j}}).
      Thus the maps
-     p#{j,i} = (E_j || -phi#{j,i}): t_i**F_j \to t_i++t_(i+1),
+     p#{j,i} = (E_j || -phi#{j,i}): t_i**F_j \to t_i++t_{(i+1)},
      are homogeneous.
      The script returns M = \oplus_i T_
      as an SE-module,
@@ -1673,12 +2204,12 @@ SeeAlso
 
 doc ///
    Key
-    makeFiniteResolution2
-    (makeFiniteResolution2, List, Matrix)
+    makeFiniteResolutionCodim2
+    (makeFiniteResolutionCodim2, List, Matrix)
    Headline
     Maps associated to the finite resolution of a high syzygy module in codim 2
    Usage
-    maps = makeFiniteResolution2(mf,ff)
+    maps = makeFiniteResolutionCodim2(mf,ff)
    Inputs
     mf:List
      matrix factorization
@@ -1703,7 +2234,7 @@ doc ///
      M = highSyzygy N
      MS = pushForward(map(R,S),M)
      mf = matrixFactorization(ff, M)
-     G = makeFiniteResolution2(mf, ff)
+     G = makeFiniteResolutionCodim2(mf, ff)
      F = G#"resolution"
    SeeAlso
     makeFiniteResolution
@@ -1773,127 +2304,10 @@ Description
   Implements the construction in the paper
   "Matrix Factorizations in Higher Codimension"
   by Eisenbud and Peeva.  
- Example
-    
 SeeAlso
  makeFiniteResolution
 ///
 
-doc///
-Key
-  CompleteIntersectionResolutions
-Headline 
-  "Resolution over a Complete Intersection"
-Description 
- Text
-  The resolution of a module over a hypersurface ring 
-  (graded or local) is always periodic of period at most 2 (Eisenbud, "Homological Algebra Over A Complete Intersection",
-  Trans. Am. Math. Soc. 260 (1980) 35--64),
-  but the asymptotic structure of minimal resolutions over a 
-  complete intersection is a topic of active research. 
-  This package contains code that helps analyze (graded) examples. 
-  
-  Most of our routines work with a polynomial ring S and a complete
-  intersection R = S/(ideal ff), where 
-  $$
-  ff = matrix\{\{f_1,\dots,f_c\}\}
-  $$
-  is a 1-rowed
-  matrix whose entries are (sufficiently general) generators
-  of a complete intersection ideal. (Unless
-  the complete intersection is homogeneous 
-  and generated by elements of a single degree,
-  it may not be possible to choose sufficiently general homogeneous elements, 
-  even when the ideal of the complete intersection is homogeneous.)
-
-  The routines fall into several groups:
-  
-  1) One group centers around the construction of the
-  matrix factorizations for high syzygies of a module N,
-  introduced in the
-  paper
-  "Matrix Factorizations in Higher Codimension"
-  by Eisenbud and Peeva. The routine ``mfBound'' determines
-  which syzygy to take.
-  The routine matrixFactorization constructs
-  the higher matrix factorization 
-  of a module over R defined by Eisenbud and Peeva in 
-  The ranks of the stack of matrices b_p that are used 
-  in the construction of the matrix factorization, and the various matrices
-  themselves, are obtained from the routines BRanks, ARanks, bMaps, dMaps, psiMaps, hMaps
-  (the notation is explained in the paper). 
-  
-  
-  Here is an example of a matrix factorization in codimension 2:
- Example
-  setRandomSeed 0
-  c = 2;
-  S = ZZ/101[x_1..x_c, a_(1,1)..a_(c,c)];
-  X = matrix{{x_1..x_c}};
-  ff = X*map(source X, , genericMatrix(S,a_(1,1),c,c));
-  R = S/ideal ff;
-  mbound = mfBound coker (R**X)
-  F = res(coker (R**X) , LengthLimit =>mbound+1);
-  M = coker F.dd_(mbound+1);
-  MF = matrixFactorization(ff,M)
-  netList BRanks MF
-  netList ARanks MF
-  netList bMaps MF
-  netList dMaps MF
-  netList psiMaps MF
-  netList hMaps MF
- Text
-  The routines infiniteBettiNumbers and finiteBettiNumbers compute the Betti numbers of
-  M over R and over S from the BRanks.   The minimal free
-  resolution of M as a module over R/(f_1..f_s), where
-  s=c-complexity M, is reconstructed (in a special form)
-  from the matrix factorization MF by the routine
-  makeFiniteResolution(MF, ff).
- Example
-  betti res M
-  infiniteBettiNumbers(MF,7)
-  betti res pushForward(map(R,S),M)
-  finiteBettiNumbers MF  
-  G = makeFiniteResolution (MF,ff)
-  G' = res(pushForward(map(R,S),M))
- Text
-  The group of routines ExtModule, evenExtModule, oddExtmodule,
-  extModuleData (which call the routine
-  Ext(M,N) of Avramov-Grayson) are useful for analyzing the
-  module Ext_R(M,k). TateResolution returns the betti table
-  of a specified part of the Tate resolution of a 
-  maximal Cohen-Macaulay module M
-  first calling the routine cosysyzy.
-  
-  The routines moduleAsExt and hfModuleAsExt give
-  partial converse constructions (following Avramov-Jorgensen)
-  
-  The routines twoMonomials and sumTwoMonomials provide some
-  interesting examples.
-  
-  The routine makeT constructs CI operators on a resolution
-  over a complete intersection, while the routine makeHomotopies
-  constructs a set of higher homotopies on the resolution
-  of a module M for a sequence of 
-  elements in the annihilator of M(makeHomotopies1 constructs
-  just the ordinare ``first'' homotopies).
-
-  The routine exteriorTorModule constructs the module $Tor^S(M,k)$
-  as a module over the exterior algebra $\wedge(k^n)$.
-  
-  The routine S2 takes a graded module M and returns the map
-  $$
-  M -> \oplus_{-p}^\infty H^0(sheaf M(p)).
-  $$
-  
-  In all examples I know (as of 4/14/2013), if $M$ is a module
-  over the complete intersection R and $E$ is
-  the stable Ext module ``stable Ext(M,k)'',  the natural map from E to the 
-  S2-ification of E is surjective (that is, the first local
-  cohomology of a truncation of E is 0 in the range of the
-  truncation.
-
-///
 
 
 
@@ -2044,7 +2458,6 @@ doc ///
      then highSyzygy(M,Optimism=>r) chooses the (p-r)-th syzygy.
      (Positive Optimism chooses a lower "high" syzygy, negative
      Optimism a higher "high" syzygy.
-    Example
    Caveat
     Are there cases when positive Optimism is justified?
    SeeAlso
@@ -2092,12 +2505,6 @@ doc ///
      such that general ci-operators have split kernels
      when applied recursively on cosyzygy chains of 
      previous kernels.
-     
-     ASSUMING our
-     conjecture that Ext surjects onto its S2-ification, this
-     should be the first syzygy beyond the regularity of
-     the even and odd Ext modules Ext(M,k). This position is
-     computed by the script mfBound.
      
      If p = mfBound M0, then highSyzygy M0
      returns the p-th syzygy of M0.
@@ -2317,7 +2724,11 @@ doc ///
      E = ZZ/101[a,b,c, SkewCommutative=>true]
      M = coker map(E^2, E^{-1}, matrix"ab;bc")
      presentation M
-     TateResolution(M,2,7) 
+     TateResolution(M,-2,7) 
+   Caveat
+    In a previous version of this script,
+    this command returned a betti table; now use 
+    "betti TateResolution" instead.
 ///
 
 doc ///
@@ -2417,9 +2828,20 @@ doc ///
 	  oddExtModule
 ///
 doc ///
+   Key
+    OutRing
+   Headline
+    Option allowing specification of the ring over which the output is defined
+   SeeAlso
+    evenExtModule
+    oddExtModule
+///
+
+doc ///
         Key 
 	 evenExtModule
 	 (evenExtModule, Module)
+	 [evenExtModule, OutRing]
         Headline 
 	 even part of Ext^*(M,k) over a complete intersection as module over CI operator ring
         Usage
@@ -2433,6 +2855,8 @@ doc ///
         Description
          Text
 	  Extracts the even degree part from ExtModule M
+	  If the optional argument OutRing => T is given, and class T === PolynomialRing,
+	  then the output will be a module over T.
          Example
 	  kk= ZZ/101
 	  S = kk[x,y,z]
@@ -2447,12 +2871,14 @@ doc ///
         SeeAlso 
 	  ExtModule 
 	  oddExtModule
+	  OutRing
 
      ///
 doc ///
         Key 
 	 oddExtModule
 	 (oddExtModule, Module)
+	 [oddExtModule,OutRing]
         Headline 
 	 odd part of Ext^*(M,k) over a complete intersection as module over CI operator ring
         Usage
@@ -2465,7 +2891,9 @@ doc ///
 	   over a polynomial ring with gens in degree 1
         Description
          Text
-	  Extracts the odd degree part from ExtModule M
+	  Extracts the odd degree part from ExtModule M.
+	  If the optional argument OutRing => T is given, and class T === PolynomialRing,
+	  then the output will be a module over T.
          Example
 	  kk= ZZ/101
 	  S = kk[x,y,z]
@@ -2480,6 +2908,7 @@ doc ///
         SeeAlso 
 	  ExtModule 
 	  evenExtModule
+          OutRing
      ///
 
 
@@ -2530,7 +2959,7 @@ Description
   sum_{J<I} H#\{I\setminus J, \} H#\{J, \} = 0.
   $$
   
-  To make themaps homogeneous, $H\#\{J,i\}$ is actually a map from
+  To make the maps homogeneous, $H\#\{J,i\}$ is actually a map from
   a an appropriate negative twist of F to a shift of S.
  Example
   kk=ZZ/101
@@ -2624,7 +3053,7 @@ Description
  Text
   If M is a graded module over a ring S, then the S2-ification
   of M is \sum_{d \in ZZ} H^0((sheaf M)(d)), which may be computed
-  as lim_{d->\infty} Hom(S/I_d,M), where I_d is any sequence
+  as lim_{d->\infty} Hom(I_d,M), where I_d is any sequence
   of ideals contained in higher and higher powers of S_+.
   There is a natural restriction map 
   f: M = Hom(S,M) \to Hom(I_d,M).
@@ -2647,6 +3076,31 @@ Description
   M = S^1/intersect(ideal"a,b,c", ideal"b,c,d",ideal"c,d,a",ideal"d,a,b")
   prune source S2(0,M)
   prune target S2(0,M)
+ Text
+  At one time DE hoped that, if M were a module over the complete intersection R with
+  residue field k,
+  then the natural map from "complete" Ext module "(widehat Ext)_R(M,k)"
+  to the the S2-ification of Ext_R(M,k) would be surjective; equivalently, if
+  N were a sufficiently negative syzygy of M, then the first local cohomology module
+  of Ext_R(M,k) would be zero. This is false, as shown by the following example:
+ Example
+  needsPackage "CompleteIntersectionResolutions"
+  S = ZZ/101[x_0..x_2];
+  ff = apply(3, i->x_i^2);
+  R = S/ideal ff;
+  M = cokernel matrix {{x_0, x_1*x_2}};
+  b = 5;
+  Mb = prune syzygyModule(-b,M);
+  E = prune evenExtModule Mb;
+  S2map = S2(0,E);
+  SE = prune target S2map;
+  extra = prune coker S2map;
+  KE = prune ker S2map;
+  betti res(Mb, LengthLimit => 10)
+  apply (5, i-> hilbertFunction(i, KE))
+  apply (5, i-> hilbertFunction(i, E))
+  apply (5, i-> hilbertFunction(i, SE))
+  apply (5, i-> hilbertFunction(i, extra))
 SeeAlso
   "IntegralClosure"
   "makeS2"
@@ -3078,7 +3532,7 @@ doc ///
      resolving the cokernel of the transpose of 
      the presentation of M
      for len steps. Thus M is the len-th syzygy of the module
-     resolved by F. When the second argument len is omitted, 
+     resolved by F. When the first argument len is omitted, 
      the value defaults to len = 2.
     Example
      S = ZZ/101[a,b,c];
@@ -3103,7 +3557,7 @@ doc ///
 	  output of a matrixFactorization computation
         Outputs
 	 br: List
-	  list of pairs {rank B_(d), rank B_0(d)
+	  list of pairs {rank B_1(d), rank B_0(d)}
         Description
          Example
 	  c = 2
@@ -3380,7 +3834,7 @@ doc ///
    Description
     Text
      ff is quasi-regular if the length of ff is <= dim M and the annihilator of ff_i on
-     M/(ff_0..ff_(i-1))M has finite length for all i=0..(length ff)-1.
+     M/(ff_0..ff_{(i-1))}M has finite length for all i=0..(length ff)-1.
     Example
      kk=ZZ/101;
      S = kk[a,b,c];
@@ -3435,7 +3889,7 @@ doc ///
      A possible obstruction to the commutativity of the CI operators in codim c,
      even assymptotically,
      would be the non-triviality of the map
-     M_(k+4) --> M_k \otimes \wedge^2(S^c)
+     M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.
     
      In thw following example, studied in the paper ***** of
@@ -3466,8 +3920,265 @@ doc ///
     stableHom
 ///
 
+doc ///
+   Key
+    Shamash
+    (Shamash, Matrix, ChainComplex, ZZ)
+    (Shamash, Ring, ChainComplex, ZZ)
+   Headline
+    Computes the Shamash Complex
+   Usage
+    FF = Shamash(ff,F,len)
+    FF = Shamash(Rbar,F,len)
+   Inputs
+    ff:Matrix
+     1 x 1 Matrix over ring F.
+    Rbar:Ring
+     ring F mod ideal ff
+    F:ChainComplex
+     starting from F_0, defined over the same ring as ff
+    len: ZZ
+   Outputs
+    FF:ChainComplex
+     chain complex over (ring F)/(ideal ff)
+   Description
+    Text
+     Let R = ring F = ring ff, and Rbar = R/(ideal ff).
+     The complex F should admit a system of higher homotopies for the entry of ff,
+     returned by the call makeHomotopies(ff,F).
+     
+     The complex FF has terms 
+     
+     FF_{2*i} = F_0 ++ F_2 ++ .. ++ F_i
+     
+     FF_{2*i+1} = F_1 ++ F_3 ++..++F_{2*i+1}
+     
+     and maps made from the higher homotopies
+     In the form Shamash(Rbar,F,len) the complex F is moved over to the ring Rbar.
+    Example
+     S = ZZ/101[x,y,z]
+     R = S/ideal"x3,y3"
+     M = R^1/ideal(x,y,z)
+     ff = matrix{{z^3}}
+     R1 = R/ideal ff
+     F = res M
+     betti F
+     FF = Shamash(ff,F,4)
+     GG = Shamash(R1,F,4)
+     betti FF
+     betti GG
+     ring GG
+     apply(length GG, i->prune HH_i FF)
+   Caveat
+    F is assumed to be a homological complex starting from F_0.
+    The matrix ff must be 1x1.
+   SeeAlso
+    makeHomotopies
+///
+
+doc ///
+   Key
+    layeredResolution
+    (layeredResolution, Matrix, Module)
+    (layeredResolution, Matrix, Module, ZZ)    
+    [layeredResolution,Verbose]
+   Headline
+    layered finite and infinite layered resolutions of CM modules
+   Usage
+    (FF, aug) = layeredResolution(ff,M)
+    (FF, aug) = layeredResolution(ff,M,len)    
+   Inputs
+    ff:Matrix
+     1 x c matrix whose entries are a regular sequence in the Gorenstein ring S
+    M:Module
+     MCM module over R, represented as an S-module in the first case and as an R-module in the second
+    len:ZZ
+     length of the segment of the resolution to be computed over R, in the second form.
+   Outputs
+    FF:ChainComplex
+     resolution of M over S in the first case; length len segment of the resolution over R in the second.
+   Description
+    Text
+     The resolutions computed are those described in the paper "Layered Resolutions of Cohen-Macaulay modules"
+     by Eisenbud and Peeva. They are both minimal when M is a suffiently high syzygy of a module N.
+     If the option Verbose=>true is set, then (in the case of the resolution over S) the ranks of the 
+     modules B_s in the resolution are output.
+     
+     Here is an example computing 5 terms of an infinite resolution:
+    Example
+     S = ZZ/101[a,b,c]
+     ff = matrix"a3, b3, c3" 
+     R = S/ideal ff
+     M = syzygyModule(2,coker vars R)
+     (FF, aug) = layeredResolution(ff,M,5)
+     betti FF
+     betti res(M, LengthLimit=>5)
+     C = chainComplex flatten {{aug} |apply(4, i-> FF.dd_(i+1))}
+     apply(5, j-> prune HH_j C == 0)
+    Text
+     And one computing the whole finite resolution:
+    Example
+     MS = pushForward(map(R,S), M);
+     (GG, aug) = layeredResolution(ff,MS)
+     (GG, aug) = layeredResolution(ff,MS, Verbose =>true)
+     betti GG
+     betti res MS
+     C = chainComplex flatten {{aug} |apply(length GG -1, i-> GG.dd_(i+1))}    
+     apply(length GG +1 , j-> prune HH_j C == 0)     
+///
+
+doc ///
+   Key
+    extIsOnePolynomial
+    (extIsOnePolynomial, Module)
+   Headline
+    check whether the Hilbert function of Ext(M,k) is one polynomial
+   Usage
+    (p,t) = extIsOnePolynomial M
+   Inputs
+    M:Module
+     module over a complete intersection
+   Outputs
+    p:RingElement
+     p(z)=pe(z/2), where pe is the Hilbert poly of Ext^{even}(M,k)
+    t:Boolean
+     true if the even and odd polynomials match to form one polynomial
+   Description
+    Text
+     Computes the Hilbert polynomials pe(z), po(z) of evenExtModule and oddExtModule.
+     It returns pe(z/2), and compares to see whethe this is equal to po(z/2-1/2).
+     Avramov, Seceleanu and Zheng have proven that if the ideal of quadratic leading
+     forms of a complete intersection of codimension c generate an ideal of codimension
+     at least c-1, then the betti numbers of any module grow, eventually, as a 
+     single polynomial (instead of requiring separate polynomials for even and 
+     odd terms.) This script checks the result in the homogeneous case (in which
+     case the condition is necessary and sufficient.)
+    Example
+     R1=ZZ/101[a,b,c]/ideal(a^2,b^2,c^5)
+     R2=ZZ/101[a,b,c]/ideal(a^3,b^3)     
+     extIsOnePolynomial coker random(R1^{0,1},R1^{3:-1})
+     extIsOnePolynomial coker random(R2^{0,1},R2^{3:-1})
+   SeeAlso
+    evenExtModule
+    oddExtModule
+///
 
 ------TESTs------
+TEST/// -- tests of the "with components" functions
+S = ZZ/101[a,b]
+M = S^{1,2}
+N = S^{3,5}
+M' = (S^{1}++S^{2})
+N' = S^{3}++S^{5}
+
+H = Hom(M,N) 
+T = M**N
+D = dual M
+H' = HomWithComponents (M',N')
+T' = tensorWithComponents(M',N')
+D' = dualWithComponents M'
+assert( H == H' and T == T' and D == D')
+assert(HomWithComponents(M',N') == tensorWithComponents(dualWithComponents M', N'))
+assert(components HomWithComponents(M',N') == components tensorWithComponents(dualWithComponents M', N'))
+M = S^{1,2}/ideal(a^2)
+M' = S^{1}/ideal(a^2)++S^{2}/ideal(a^2)
+M == M'
+(T = M**N) == M'**N'
+assert(T == tensorWithComponents(M',N'))
+M= S^0
+M'=S^0++S^0
+assert(M**M == tensorWithComponents (M',M'))
+///
+TEST///
+setRandomSeed 0
+R1=ZZ/101[a,b,c]/ideal(a^2,b^2,c^5)
+R2=ZZ/101[a,b,c]/ideal(a^3,b^3)     
+
+(p,t) = extIsOnePolynomial coker random(R1^{0,1},R1^{3:-1});
+assert(t === true)
+z = (ring p)_0
+assert(p ===(1/2)*z^2-(1/2)*z+3)
+
+(p,t) = extIsOnePolynomial coker random(R2^{0,1},R2^{3:-1});
+z = (ring p)_0
+assert(t === false)
+assert(p ===(3*z - 2))
+///
+
+TEST///
+setRandomSeed 100
+c = 2
+d = 2
+R = setupRings(c,d)
+(M,k,p) = setupModules(R,coker vars R_c);
+regularitySequence(R,coker vars R_c)
+///
+
+///TEST
+S1 = ZZ/101[a,b,c]
+len = 4
+--codim 0
+ff = matrix{{}}
+M = S1^1
+(FF, aug) = layeredResolution(ff,M,len)
+betti FF == betti res(M, LengthLimit=>len)
+--codim 1
+use S1
+ff = matrix"a3" 
+R1 = S1/ideal ff
+M = syzygyModule(3,coker vars R1)
+(FF, aug) = layeredResolution(ff,M,len)
+betti FF == betti res(M, LengthLimit=>len)
+--codim 2
+use S1
+ff = matrix"a3, b3" 
+R1 = S1/ideal ff
+M = syzygyModule(2,coker vars R1)
+(FF, aug) = layeredResolution(ff,M,len)
+assert(betti FF == betti res(M, LengthLimit=>len))
+--codim 3
+use S1
+len = 5
+ff = matrix"a3, b3, c3" 
+R1 = S1/ideal ff
+M = syzygyModule(2,coker vars R1)
+(FF, aug) = layeredResolution(ff,M,len)
+assert(betti FF == betti res(M, LengthLimit=>len))
+C = chainComplex flatten {{aug} |apply(len-1, i-> FF.dd_(i+1))}
+scan(len, j-> assert(prune HH_j C == 0))
+///
+
+TEST///
+S = ZZ/101[a,b,c]
+ff1 = matrix"a3,b3,c3"
+setRandomSeed 0
+ff = ff1*random(source ff1, source ff1)
+R = S/(ideal ff)
+M = coker matrix {{R_0,R_1,R_2},{R_1,R_2,R_0}}
+F = res coker vars R
+F0 = res (M, LengthLimit =>3)
+makeT(ff, F0, 4)
+min F0
+--generateAssertions"makeT(ff, F0, 2)"
+assert( (makeT(ff, F0, 2)) === {map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3}},{{39, 0, 0, -26, 0},
+      --------------------------------------------------------------------------------------------------------
+      {0, 39, 0, 0, 26}}),map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3}},{{33, 0, 0, 31, 0}, {0, 33, 0, 0,
+      --------------------------------------------------------------------------------------------------------
+      -31}}),map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3}},{{8, 0, 0, -31, 0}, {0, 8, 0, 0, 31}})} );
+///
+
+///TEST
+S = ZZ/101[x,y,z]
+R = S/ideal"x3,y3"
+M = R^1/ideal(x,y,z)
+F = res M
+ff = matrix{{z^3}}
+FF = Shamash(ff,F,4)
+scan(length FF -1, i->assert(0==(HH_(i+1)FF)))
+Rbar = R/ideal(z^3)
+assert (Shamash(Rbar,F,4) == (map(Rbar,ring FF))FF)
+///
+
 TEST///
 kk=ZZ/101
 S = kk[a,b]
@@ -3782,16 +4493,24 @@ assert(isFreeModule E);
 assert(rank E==1);
 ///
 
+///TEST
+R = ZZ/101[a,b,c]/ideal"a3,b3,c3"
+M = R^1/ideal"ab,ac,bc"
+U = ZZ/101[A,B,C]
+Ee = evenExtModule(M, OutRing => U)
+Eo = oddExtModule(M, OutRing => U)
+assert(ring Ee === U)
+assert(ring Eo === U)
+///
+
 end--
+
+uninstallPackage "CompleteIntersectionResolutions"
 restart
 notify=true
-uninstallPackage "CompleteIntersectionResolutions"
+loadPackage("CompleteIntersectionResolutions", Reload =>true)
 installPackage "CompleteIntersectionResolutions"
-loadPackage("CompleteIntersectionResolutions", Reload=>true)
 check "CompleteIntersectionResolutions"
 
-restart
-uninstallPackage "CompleteIntersectionResolutions"
-installPackage "CompleteIntersectionResolutions"
-
+viewHelp CompleteIntersectionResolutions
 

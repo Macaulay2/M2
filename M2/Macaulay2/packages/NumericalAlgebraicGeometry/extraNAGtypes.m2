@@ -4,7 +4,9 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy" }
+export{ 
+    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "parametricSegmentHomotopy"
+    }
 
 debug SLPexpressions
 
@@ -18,6 +20,12 @@ debug SLPexpressions
 --   K, a ring: rawEvaluator for the ring
 GateHomotopy = new Type of Homotopy    
 GateParameterHomotopy = new Type of ParameterHomotopy
+
+numVars = method()
+numVars GateHomotopy := H->numcols H#"X"
+numVars ParameterHomotopy := H->numcols H.GateHomotopy#"X" - numcols H.Parameters
+numVars SpecializedParameterHomotopy := H -> numVars H.ParameterHomotopy 
+ 
 
 canHaveRawHomotopy = method()
 canHaveRawHomotopy Thing := T -> false 
@@ -65,6 +73,7 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     if para then (
 	GPH := new GateParameterHomotopy;
 	GPH.GateHomotopy = GH;
+	GPH.Parameters = o.Parameters;
 	GPH
 	) 
     else GH
@@ -100,7 +109,9 @@ evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) ->
 
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
-    SPH := new SpecializedParameterHomotopy;                                                                                                                  
+    if numcols M != 1 then error "1-column matrix expected"; 
+    if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
+    SPH := new SpecializedParameterHomotopy;
     SPH.ParameterHomotopy = PH;                                                                                                                               
     SPH.Parameters = M;                                                                                                                                       
     SPH                                                                                                                                                       
@@ -108,19 +119,81 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
 
 getVarGates = method()
 getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
- 
-gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else (
-    S := F.PolyMap;
-    R := ring S; 
+
+gatePolynomial = method()
+gatePolynomial RingElement := p -> (
+    -- one naive way of converting a sparse polynomial to a circuit  
+    X := getVarGates ring p;
+    sumGate apply(listForm p, mc->(
+	    (m,c) := mc;
+	    c*product(#m,i->X#i^(m#i))
+	    ))
+    ) 
+	
+makeGateMatrix = method(Options=>{Parameters=>{}})
+makeGateMatrix PolySystem := o -> F -> (
+    R := ring F; 
+    if not isSubset(o.Parameters, gens R) then "some parameters are not among generators of the ring";
     X := getVarGates R;
-    -- monoms := flatten entries monomials S;
-    polys := flatten entries S;
-    F.GateMatrix = gateMatrix apply(polys, p->{ sumGate apply(listForm p,mc->(
-		    (m,c) := mc;
-		    c*product(#m,i->X#i^(m#i))
-		    )) }
-    	)	 
+    F.Variables = X_(positions(gens R, x->not member(x,o.Parameters)));  
+    F.NumberOfVariables = #F.Variables; -- reconsile 
+    F.Parameters =X_(positions(gens R, x->member(x,o.Parameters)));
+    polys := flatten entries F.PolyMap;
+    F.GateMatrix = gateMatrix apply(polys, p->{gatePolynomial p})   
+    ) 
+ 
+gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else makeGateMatrix F
+
+-- Homotopy that follows a segment in the parameter space 
+parametricSegmentHomotopy = method()
+
+-- in:
+--     F, PolySystem (F.GateMatrix, F.Variables, F.Parameters are assumed to be set)
+-- in-place: 
+--     the output is stored in F.GateParameterHomotopy
+-- out:
+--     GateParameterHomotopy
+parametricSegmentHomotopy PolySystem := F -> if F.?GateParameterHomotopy then F.GateParameterHomotopy else     
+    parametricSegmentHomotopy(F.GateMatrix,F.Variables,F.Parameters)    
+
+-- in: 
+--     S, polynomials (GateMatrix)
+--     V, variables (list of InputGates)
+--     W, parameters
+-- out: 
+--     Homotopy that has A_w and B_w as parameters, 
+--     	       	      where v in V|W  are coordinates of the source space 
+parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
+    A := matrix{apply(W, w->inputGate symbol A_w)};
+    B := matrix{apply(W, w->inputGate symbol B_w)};
+    t := inputGate symbol t;
+    H := sub(S,matrix{W},(1-t)*A+t*B);
+    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
+TEST /// 
+debug needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y,a]
+PS = polySystem {x^2+y^2-1, x+a*y, (a^2+1)*y^2-1}
+PS.NumberOfVariables = 2 -- hack!!!
+squarePS = squareUp PS
+makeGateMatrix(squarePS,Parameters=>drop(gens R,2))  
+PH := parametricSegmentHomotopy squarePS
+a0 = 0; a1 = 1;
+H = specialize (PH, transpose matrix{{a0,a1}})
+s'sols = { {{0,1}},{{0,-1}} }/point
+time sols = trackHomotopy(H,s'sols)
+assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.707107, -.707107}, SolutionStatus => Regular }} / point)
+///
+
+TEST ///
+needsPackage "NAGtools"
+X = inputGate x
+F = matrix{{X^2}} 
+PH = gateHomotopy4preimage(F,{X})
+K = CC_53
+H = specialize (PH, transpose matrix{{1_K,2}})
+time sols = trackHomotopy(H,{point{{1_K}}})
+///
 
 TEST ///
 needsPackage "NumericalAlgebraicGeometry"
@@ -136,6 +209,16 @@ assert(evaluate(S,p) == value(gS,vals))
 assert(evaluate(jacobian S, p)== value(diff(matrix{X},gS),vals))
 ///
 
+segmentHomotopy = method(Options=>{gamma=>1})
+segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
+segmentHomotopy (PolySystem, PolySystem) := o -> (S,T) -> (
+    R := ring T;
+    if R =!= ring S then error "systems in the same ring expected";  
+    t := local t;
+    tt := inputGate [t];
+    gateHomotopy(o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T, 
+	gateMatrix{getVarGates R}, tt, Strategy=>compress)
+    )
 -------------------------------------------------------
 -- trackHomotopy tests
 TEST /// 

@@ -10,10 +10,18 @@
 
 #define Matrix FactoryMatrix
 #include <factory/factory.h>             // from Messollen's libfac
+#if !HAVE_FACTORY_PREM
+  CanonicalForm
+  Prem (const CanonicalForm& F, const CanonicalForm& G);
+#endif
 #undef INT64
 #undef Matrix
 #undef ASSERT
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <NTL/ZZ.h>
+#pragma GCC diagnostic pop
 
 #include "matrix.hpp"
 #include "ZZp.hpp"
@@ -46,7 +54,7 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
 }
 
 int debugging
-    #ifdef DEBUG
+    #ifndef NDEBUG
       = true
     #endif
     ;
@@ -221,7 +229,7 @@ static struct enter_factory foo1;
 
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio
-#if 1
+#if FACTORY_STREAMIO
 void showvar(Variable &t) { std::cout << t << std::endl; }
 void showcf(CanonicalForm &t) { std::cout << t << std::endl; }
 void showcfl(CFList &t) { std::cout << t << std::endl; }
@@ -266,9 +274,9 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension);
 ////////////////////////////////////////////////////////////////////////
 static Variable set_GF_minimal_poly(const PolynomialRing* P)
 {
-  M2_ASSERT(P->getCoefficientRing()->isGaloisField());
+  assert(P->getCoefficientRing()->isGaloisField());
   const Ring* kk = P->getCoefficientRing();
-  M2_ASSERT(kk != 0);
+  assert(kk != 0);
   RingElement F = RingElement(kk, kk->var(0));
   F.promote(P, algebraicElement_M2); // sets algebraicElement_M2
   Variable a = rootOf(convertToFactory(* kk->getMinimalPolynomial(),notInExtension),'a');
@@ -277,9 +285,9 @@ static Variable set_GF_minimal_poly(const PolynomialRing* P)
 }
 static void getGFRepresentation(const Ring* kk1, const ring_elem& a, std::vector<long>& result_rep)
 {
-  M2_ASSERT(kk1->isGaloisField());
+  assert(kk1->isGaloisField());
   //  const GF* kk = kk1->cast_to_GF();
-  //  M2_ASSERT(kk != 0);
+  //  assert(kk != 0);
   const RingElement* F = kk1->getRepresentation(a);
   //  RingElement F(kk->originalR(), kk->get_rep(a));
   F->getSmallIntegerCoefficients(result_rep);
@@ -320,7 +328,7 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
     M->to_varpower(t->monom,vp);
 
     std::pair<bool,long> res = Zn->coerceToLongInteger(t->coeff);
-    M2_ASSERT(res.first);
+    assert(res.first);
     int coef = static_cast<int>(res.second);
 
     CanonicalForm m = CanonicalForm(coef);
@@ -353,7 +361,7 @@ static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
        if (foo.mode == modeZn)
          {
            std::pair<bool,long> res = foo.Zn->coerceToLongInteger(t->coeff);
-           M2_ASSERT(res.first);
+           assert(res.first);
            coef = static_cast<int>(res.second);
          }
        CanonicalForm m = (

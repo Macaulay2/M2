@@ -13,6 +13,73 @@
 #include "aring-glue.hpp"
 #include "SLP.hpp"
 
+#include <map>
+// PointArray
+class PointArray 
+{
+public:
+  using RealVector = std::vector<double>;
+  using Weight = double;
+  PointArray(Weight epsilon, const RealVector& weights) : mEpsilon(epsilon), mWeights(weights) {}
+  PointArray(Weight epsilon, int n) : mEpsilon(epsilon) {
+    double s = 0;
+    for(int i=0; i<n; i++) {
+      double r = rand();
+      s +=r;
+      mWeights.push_back(r);
+    }
+    for(int i=0; i<n; i++)
+      mWeights[i] /= s;
+  }
+  int lookup_or_append(const RealVector& a) {
+    Weight w = weight(a);
+    int p = lookup(a);
+    if (p!=-1) return p;
+    if (mMap.find(w)!=mMap.end()) return -1; 
+    int ret = static_cast<int>(mPoints.size());
+    mPoints.push_back(a);
+    mMap.insert(std::pair<Weight,int>(w,ret));
+    return ret;
+  }  
+  int lookup(const RealVector& a) const {
+    Weight w = weight(a);
+    auto le = left(w);
+    auto ri = right(w);
+    for(auto i=le; i!=ri; ++i)
+      if (are_same(mPoints[i->second],a)) return i->second;
+    return -1;
+  }
+  Weight weight(const RealVector& a) const { 
+    Weight w = 0;
+    auto n = mWeights.size();
+    assert(n == a.size());
+    for(int i=0; i<n; ++i)
+      w += mWeights[i]*a[i];
+    return w;
+  }
+  bool are_same(const RealVector& a, const RealVector& b) const {
+    auto n = a.size();
+    assert(n == b.size());
+    for(int i=0; i<n; ++i)
+      if (fabs(a[i]-b[i]) >= mEpsilon) return false;
+    return true;
+  }
+  void text_out(buffer& o) const { 
+    o << "PointArray( " << mPoints.size() << " points: ";
+    for(auto i=mMap.begin(); i!=mMap.end(); ++i)
+      o << i->second << " ";
+    o << ")" << newline;
+  }
+private:   
+  std::map<Weight,int> mMap;
+  std::vector<RealVector> mPoints;
+  Weight mEpsilon; // tolerance
+  RealVector mWeights; // random positive numbers summing up to 1  
+
+  decltype(mMap)::const_iterator left(Weight key) const {return mMap.lower_bound(key-mEpsilon);}
+  decltype(mMap)::const_iterator right(Weight key) const {return mMap.upper_bound(key+mEpsilon);}
+};
+
 // patching defs and functions: /////////////////////////////////////////
 // switching from CCC to ConcreteRing<ARingCC> /////////////////////////
 #define CCC M2::ConcreteRing<M2::ARingCC>
@@ -615,7 +682,7 @@ public:
 };
 #endif
 
-// enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
+// enum SolutionStatus { ... defined in SLP-imp.hpp ... };
 struct Solution
 {
   int n; // number of coordinates

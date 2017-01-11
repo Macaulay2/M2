@@ -1,21 +1,24 @@
-*.m2 loaded by ../NumericalAlgebraicGeometry.m2 :
+.m2 files loaded by ../NumericalAlgebraicGeometry.m2 :
 
-     extraNAGtypes				-- NAGtypes that are not shared (yet) by other numerical packages
-     track					-- core homotopy tracking routines
-     refine 					-- refining/sharpening routines 
-     BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
      0-dim-methods				-- routines for 0-dim solution sets 
+     BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
+     SLP 					-- (depreciated) preSLPs, old way of handling straight line programs
      decomposition				-- numerical irreducible decomposition
-     witness-set				-- witness set manipulation routines 
-     positive-dim-methods			-- routines for positive-dimensional solution sets 
+     deflation 					-- deflation (0- and positive-dimensional)
+     doc.m2 (and numericalAG.simpledoc)		-- documentation
+     extraNAGtypes				-- NAGtypes that are not shared (yet) by other numerical packages
+     intersection				-- intersection of two numerical varieties
      npd					-- numerical primary decomposition
      polynomial-space 				-- PolySpace and DualSpace operations
+     positive-dim-methods			-- routines for positive-dimensional solution sets 
+     refine 					-- refining/sharpening routines 
+     track					-- core homotopy tracking routines
+     witness-set				-- witness set manipulation routines 
      
-doc.m2		-- documentation
 
 SYSTEMS/	-- examples of systems of polynomials: 
 		-- load "SYSTEM/examplename.m2" makes F = list of polynomials
-TST/		-- tests: loaded by the package via TEST
+TST/		-- tests loaded by the package via TEST, other tests
 
 PHCpack/        -- interface wrappers for PHCpack
 
@@ -34,7 +37,6 @@ benchmarks.m2	-- a script used to benchmark internal and external 0-dim solvers
 showcase.m2 	-- interesting examples
 		-- TO DO: split up in several "topics", create SHOWCASE/ ???
 
-external_software_test.m2      -- TO DO: eliminate
 
 
 

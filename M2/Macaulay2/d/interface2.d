@@ -9,6 +9,64 @@ use util;
 use struct;
 header "#include <engine.h>";
 
+
+-- rawPointArray
+export rawPointArray(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is epsilon:RRcell do 
+          if !isSmallInt(s.1) then WrongArgSmallInteger(2) else
+          toExpr(Ccode(RawPointArrayOrNull,
+		  "rawPointArray(",
+		    toDouble(epsilon), ",",
+		    getSmallInt(s.1),
+		    ")"
+		  ))
+	  else WrongArgRR(1)
+     else WrongNumArgs(2)
+     );
+setupfun("rawPointArray",rawPointArray);
+
+export rawPointArrayLookupOrAppend(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is pa:RawPointArrayCell do 
+	  when s.1 is M:RawMutableMatrixCell do 
+	  if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+	  toExpr(Ccode(int, 
+		       "rawPointArrayLookupOrAppend(",
+		       pa.p, ",",
+ 		       M.p, ",",
+		       getSmallInt(s.2),
+		       ")"
+		       ))
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1, "a RawPointArray")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPointArrayLookupOrAppend",rawPointArrayLookupOrAppend);
+
+export rawPointArrayLookup(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is pa:RawPointArrayCell do 
+	  when s.1 is M:RawMutableMatrixCell do 
+	  if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+	  toExpr(Ccode(int, 
+		       "rawPointArrayLookup(",
+		       pa.p, ",",
+ 		       M.p, ",",
+		       getSmallInt(s.2),
+		       ")"
+		       ))
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1, "a RawPointArray")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPointArrayLookup",rawPointArrayLookup);
+
+
+--------------------------
 -- straight line programs
 
 export rawSLProgram(e:Expr):Expr := (
@@ -204,7 +262,7 @@ setupfun("rawHomotopy",rawHomotopy);
 
 export rawHomotopyTrack(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 9 then WrongNumArgs(9)
+     if length(s) != 10 then WrongNumArgs(10)
      else when s.0 is H:RawHomotopyCell do 
 	  when s.1 is inputs:RawMutableMatrixCell do 
 	  when s.2 is outputs:RawMutableMatrixCell do
@@ -214,19 +272,22 @@ export rawHomotopyTrack(e:Expr):Expr := (
 	  when s.6 is epsilon:RRcell do 
 	  when s.7 is maxCorrSteps:ZZcell do
 	  when s.8 is infinityThreshold:RRcell do 
+	  if isBoolean(s.9) then -- checkPrecision 
 	  possibleEngineError(Ccode(bool, 
-		     "rawHomotopyTrack(",
-		     H.p, ",",
-		     inputs.p, ",",
-		     outputs.p, ",",
-		     output_extras.p, ",",
-		     initDt.v,",",
-		     minDt.v,",",
-		     epsilon.v,",",
-		     toInt(s.7),",",
-		     infinityThreshold.v,
-		     ")"
-		     ))
+		  "rawHomotopyTrack(",
+		  H.p, ",",
+		  inputs.p, ",",
+		  outputs.p, ",",
+		  output_extras.p, ",",
+		  initDt.v,",",
+		  minDt.v,",",
+		  epsilon.v,",",
+		  toInt(s.7),",",
+		  infinityThreshold.v,",",
+		  toBoolean(s.9),
+		  ")"
+		  ))
+	  else WrongArgBoolean(10)   
 	  else WrongArgRR(9)
 	  else WrongArgZZ(8)
 	  else WrongArgRR(7)
@@ -274,7 +335,7 @@ export rawEvaluateSLP(e:Expr):Expr := (
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
 
--- ols path trackers
+-- old path trackers --------------------------------------------------------
 
 export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      when e is s:Sequence do

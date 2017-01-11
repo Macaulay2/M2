@@ -77,7 +77,7 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
 	ls -l $1-temporary
 	rm -rf $1-temporary
-	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
+	- install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info

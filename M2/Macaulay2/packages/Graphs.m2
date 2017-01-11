@@ -81,6 +81,7 @@ export {
     "barycenter",
     "complementGraph",
     "digraphTranspose",
+    "lineGraph",
     "underlyingGraph",
     --
     -- Enumerators
@@ -153,6 +154,7 @@ export {
     "independenceNumber",
     "leaves",
     "lowestCommonAncestors",
+    "minimalDegree",
     "neighbors",
     "nondescendants",
     "nondescendents",
@@ -184,6 +186,7 @@ export {
     "isPerfect",
     "isReachable",
     "isRegular",
+    "isRigid",
     "isSimple",
     "isSink",
     "isSource",
@@ -437,6 +440,29 @@ complementGraph Graph := Graph => G -> graph(vertexSet G, subsets(vertexSet G, 2
 digraphTranspose = method()
 digraphTranspose Digraph := Digraph => D -> digraph(vertexSet D, reverse \ edges D, EntryMode => "edges")
 
+
+lineGraph = method()
+lineGraph Graph := Graph => (G) -> (
+   E:=edges(G);
+   if #E==0 then return graph({});
+   EE:={};
+   for e in E do (
+      for f in E do (
+         if not e===f then (
+            if #(e*f)>0 then (
+               EE=EE|{{e,f}};
+               ); 
+            );   
+         ); 
+      );
+   --non-singeltons
+   nS:=unique flatten EE;
+   --singeltons
+   S:=for e in E list if member(e,nS)===false then e else continue;
+   return graph(EE,Singletons=>S);
+)
+
+
 underlyingGraph = method()
 underlyingGraph Digraph := Graph => D -> graph(vertexSet D, edges D, EntryMode => "edges")
 
@@ -634,7 +660,12 @@ minimalVertexCuts Graph := List => G -> (
         if #VC != 0 then break;
         );
     VC
-    )
+)
+
+minimalDegree = method()
+minimalDegree Graph := ZZ => G -> (
+   return min for v in vertexSet(G) list degree(G,v);
+)
 
 vertexConnectivity = method()
 --returns n-1 for K_n as suggested by West
@@ -645,7 +676,7 @@ if cliqueNumber G == #(vertexSet G) then (
     ) else (
     return #(first minimalVertexCuts G);
     );
-);
+)
 
 vertexCuts = method()
 --West does not specify, but Wikipedia does, that K_n has no vertex cuts.  
@@ -1238,6 +1269,29 @@ isRegular Graph := Boolean => G -> (
     all(drop(vertexSet G,1), v -> degree(G,v) == n)
     )
 
+
+-- input: A graph G
+-- output: Uses Laman's Theorem to determine if a graph is rigid or not
+-- written by Tom Enkosky
+--
+isRigid = method();
+isRigid Graph := G -> (
+    local rigidity; local i; local j;
+    
+    rigidity=true;
+    
+    if #edges G < 2*#vertices G-3 then rigidity = false
+    else (
+	 for j from 2 to #vertices G-1 do(
+	     for i in subsets(vertices G,j) do(
+		 if #edges inducedSubgraph(G,i)>2*#i-3  then rigidity = false 
+		 );
+	     );
+	 );
+    return rigidity;
+    )
+
+
 isSimple = method()
 isSimple Graph := Boolean => G -> (
     A := adjacencyMatrix G;
@@ -1735,6 +1789,47 @@ collateVertices MixedGraph := g -> (
 
 beginDocumentation()
 
+-- authors: add some text to this documentation node:
+doc ///
+  Key
+    Graphs
+///
+
+-------------------------------
+--Data Types
+-------------------------------
+doc ///
+    Key
+    	Bigraph
+///
+
+doc ///
+    Key
+    	Digraph
+///
+
+doc ///
+    Key
+    	Graph
+///
+
+doc ///
+    Key
+    	LabeledGraph
+///
+
+doc ///
+    Key
+    	MixedGraph
+///
+
+doc ///
+    Key
+    	SortedDigraph
+///
+
+
+
 -------------------------------
 --Graph Constructors
 -------------------------------
@@ -2065,11 +2160,11 @@ doc ///
     Description
         Text
             Displays a digraph or graph using Graphviz
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --displayGraph("chuckDot","chuckJpg", G)
-            --displayGraph("chuck", G)
-            --displayGraph G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --displayGraph("chuckDot","chuckJpg", G)
+        --     --displayGraph("chuck", G)
+        --     --displayGraph G
     SeeAlso
         showTikZ
         writeDotFile
@@ -2091,9 +2186,9 @@ doc ///
     Description
         Text
             Writes a string of TikZ syntax that can be pasted into a .tex file to display G
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --showTikZ G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --showTikZ G
     SeeAlso
         displayGraph
 ///
@@ -2113,9 +2208,9 @@ doc ///
     Description
         Text
             Writes the code for an inputted graph to be constructed in Graphviz with specified file name.
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --writeDotFile("chuck", G)
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --writeDotFile("chuck", G)
     SeeAlso
 ///
 
@@ -2191,6 +2286,32 @@ doc ///
             D = digraph ({{1,2},{2,3},{3,4},{4,1},{1,3},{4,2}},EntryMode=>"edges")
             D' = digraphTranspose D
             D'' = digraphTranspose D'
+///
+
+--lineGraph
+doc ///
+    Key
+        lineGraph
+        (lineGraph, Graph)
+    Headline
+        Returns the line graph of an undirected graph
+    Usage
+        L = lineGraph G
+    Inputs
+        G:Graph
+    Outputs
+        L:Graph
+            The line graph of G
+    Description
+        Text
+            The line graph L of an undirected graph G is the graph whose
+            vertex set is the edge set of the original graph G and in
+            which two vertices are adjacent if their corresponding
+            edges share a common endpoint in G.
+        Example
+            G = graph({{1,2},{2,3},{3,4},{4,1},{1,3},{4,2}},EntryMode=>"edges")
+            lineGraph G
+    SeeAlso
 ///
 
 --underlyingGraph
@@ -2790,6 +2911,32 @@ doc ///
     SeeAlso
         vertexCuts
         vertexConnectivity
+///
+
+
+--minimalDegree
+doc ///
+    Key
+        minimalDegree
+        (minimalDegree, Graph)
+    Headline
+       computes the minimal degree of a graph 
+    Usage
+        d = minimalDegree G
+    Inputs
+        G:Graph
+    Outputs
+        d:ZZ
+            the minimal degree of a graph
+    Description
+        Text
+           This computes the minimal vertex degree of an undirected
+           graph.
+        Example
+            G = graph({{1,2}});
+            minimalDegree G
+    SeeAlso
+        degree
 ///
 
 --vertexConnectivity
@@ -4402,6 +4549,34 @@ doc ///
         cycleGraph
 ///
 
+--isRigid
+doc ///
+    Key
+        isRigid
+        (isRigid,Graph)
+    Headline
+        checks if a graph is rigid
+    Usage
+        r = isRigid G
+    Inputs
+        G:Graph
+    Outputs
+        r:Boolean
+    Description
+        Text
+            A drawing of a graph is rigid in the plane if any continuous motion 
+	    of the vertices that preserve edge lengths must preserve the distance 
+	    between every pair of vertices.  A graph is generically rigid if any 
+	    drawing of the graph with vertices in general position is rigid. This 
+	    method uses Laman's Theorem to determine if a graph is rigid or not.
+        Example
+            G = cycleGraph 4;
+            isRigid G
+	    G' = addEdges' (G, {{1,1},{3,1}})
+            isRigid G'
+///
+
+
 --isSimple
 doc ///
     Key
@@ -5047,6 +5222,7 @@ doc ///
             H = vertexMultiplication(G, 0, 6)
 ///
 
+
 TEST ///
 --test expansion of graphs
 G=pathGraph(7);
@@ -5134,4 +5310,23 @@ assert(isChordal(G)===true);
 assert(isSimple(G)===true);
 ///
 
+TEST ///
+--check rigidity
+assert( isRigid ( graph({{0,1},{0,3},{0,4},{1,3},{2,3}},Singletons => {5}) ) === false )
+assert( isRigid ( graph({{0,4},{0,5},{0,6},{1,4},{1,5},{1,6},{2,4},{2,5},{2,6}}) ) === true )
+assert( isRigid(graph{{0,1}}) === true )
+assert( isRigid(graph{{0,1},{1,2}}) === false )
+///
+
 end;
+
+loadPackage(Graphs, Reload => true)
+
+restart
+uninstallPackage "Graphs"
+restart
+installPackage "Graphs"
+viewHelp Graphs
+
+check Graphs
+

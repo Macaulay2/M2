@@ -156,3 +156,18 @@ diff -ur /home/dan/src/M2/Macaulay2-master/M2/BUILD/dan/builds.tmp/scientific-64
 -  __gmp_reallocate_func = realloc_func;
 -  __gmp_free_func = free_func;
  }
+diff -ur /home/bapike/git/M2/M2/libraries/mpir/tmp/mpir-2.6.0/mpn/generic/mulmod_2expp1_basecase.c mpir-2.6.0/mpn/generic/mulmod_2expp1_basecase.c
+--- /home/bapike/git/M2/M2/libraries/mpir/tmp/mpir-2.6.0/mpn/generic/mulmod_2expp1_basecase.c	2012-10-03 16:07:20.000000000 -0400
++++ mpir-2.6.0/mpn/generic/mulmod_2expp1_basecase.c	2015-11-19 12:11:49.344734735 -0500
+@@ -48,8 +48,10 @@
+   ASSERT_MPN (zp, n);
+   ASSERT (!MPN_OVERLAP_P (tp, 2 * n, yp, n));
+   ASSERT (!MPN_OVERLAP_P (tp, 2 * n, zp, n));
++  /*
++    Backport a fix from MPIR commit 691f114d92c3448d0d6d725faede4f97d6323b85 that fixes MPIR issue #12
+   ASSERT (!MPN_OVERLAP_P (xp, n, yp, n));
+-  ASSERT (!MPN_OVERLAP_P (xp, n, zp, n));
++  ASSERT (!MPN_OVERLAP_P (xp, n, zp, n));*/
+   ASSERT (MPN_SAME_OR_SEPARATE_P (xp, tp, n));
+   ASSERT (MPN_SAME_OR_SEPARATE_P (xp, tp + n, n));
+   ASSERT (k == 0 || yp[n - 1] >> (GMP_NUMB_BITS - k) == 0);

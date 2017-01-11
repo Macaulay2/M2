@@ -149,6 +149,11 @@ namespace M2 {
       mpfr_add(&result, &a, &b, GMP_RNDN);
     }
 
+    void addMultipleTo(ElementType &result, const ElementType& a, const ElementType& b) const
+    {
+      mpfr_fma(&result, &a, &b, &result, GMP_RNDN);
+    }
+
     void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_sub(&result, &a, &b, GMP_RNDN);
@@ -247,6 +252,11 @@ namespace M2 {
         set(result, a);
     }
 
+    double coerceToDouble(const ElementType& a) const
+    {
+      return mpfr_get_d(&a, GMP_RNDN);
+    }
+    
   private:
       unsigned long mPrecision;
   };

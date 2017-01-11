@@ -14,5 +14,5 @@ default: install check
 #    yum list emacs
 #    yum provides /usr/include/gc/gc.h
 # Local Variables:
-# compile-command: "time make -f Makefile.fedora64 NTL_WIZARD=no "
+# compile-command: "time make -f Makefile.fedora64 "
 # End:

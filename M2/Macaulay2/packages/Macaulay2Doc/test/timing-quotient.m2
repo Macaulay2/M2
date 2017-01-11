@@ -214,4 +214,4 @@ tim = timing(jacW : comp1); -- recomputes the same GB 150 times in 1.8.  We want
 -- version 1.8: 17.5 seconds
 -- after fix: .166 seconds
 assert(numgens tim#1 == 33)
-assert(tim#0 < .3 * standardSecond)
+assert(tim#0 < .5 * standardSecond)

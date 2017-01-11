@@ -8,5 +8,7 @@ outHyper=bertiniPosDimSolve(
      {(z+2)*x*(x^2+y^2-1),(y-1)*(2+y)*(x^2+y^2-1),(2+y)*(x-3)*(x^2+y^2-1)})
 
 numDecomp=for i from 0 to 2 list  apply(outHyper#i,degree)
-assert (numDecomp=={{1}, {1, 1}, {2}})
+assert(member({1},numDecomp))
+assert(member({1,1},numDecomp))
+assert(member({2},numDecomp))
 

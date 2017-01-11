@@ -7,8 +7,12 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 //#include <flint/arith.h>
 #include <flint/fmpq.h>
+#pragma GCC diagnostic pop
 
 #include "aring.hpp"
 #include "buffer.hpp"
@@ -141,7 +145,7 @@ namespace M2 {
     }
     
     void power(ElementType& result, const ElementType& a, long n) const {
-      M2_ASSERT(n >= 0);
+      assert(n >= 0);
       return fmpq_pow_si(&result,&a,n);
     }
     

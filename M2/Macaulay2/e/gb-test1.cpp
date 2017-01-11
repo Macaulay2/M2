@@ -638,7 +638,7 @@ public:
 void gbB::minimalize_pairs(spairs &new_set)
      /* new_set: array of spair*  */
 {
-  sort(new_set.begin(), new_set.end(), spair_sorter(nvars));
+  std::stable_sort(new_set.begin(), new_set.end(), spair_sorter(nvars));
   MonomialTable *montab = MonomialTable::make(nvars);
 
   //  array_sort(new_set, (compareFcn)spair_compare, 0);

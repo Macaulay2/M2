@@ -220,6 +220,21 @@ namespace M2 {
       mpfr_add(&result.im, &a.im, &b.im, GMP_RNDN);
     }
 
+    void addMultipleTo(ElementType &result, const RealElementType& a, const ElementType& b) const
+    {
+      mRRR.addMultipleTo(result.re, a, b.re);
+      mRRR.addMultipleTo(result.im, a, b.im);
+    }
+
+    void addMultipleTo(ElementType &result, const ElementType& a, const ElementType& b) const
+    {
+      ElementType ab;
+      init(ab);
+      mult(ab,a,b);
+      add(result,result,ab);
+      clear(ab);
+    }
+
     void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_sub(&result.re, &a.re, &b.re, GMP_RNDN);

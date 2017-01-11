@@ -1,4 +1,4 @@
-needsPackage "NumericalAlgebraicGeometry"
+debug needsPackage "NumericalAlgebraicGeometry"
 needs "NumericalAlgebraicGeometry/benchmarks.m2"
 NAGtrace 1
 
@@ -13,7 +13,7 @@ for predictor in {RungeKutta4,Tangent,Euler} do (
      )
 (S,T,solsS) = smallInfinityExample()
 M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine);
-assert all({0,2}, i->M#i#SolutionStatus==Infinity) 
+assert all({0,2}, i->M#i#SolutionStatus!=Regular) 
 assert all({1,3}, i->M#i#SolutionStatus==Regular) 
 
 assert(M#3#LastT>0.99999 and M#3#NumberOfSteps < 20)
@@ -25,7 +25,7 @@ M = solveSystem(T_*,
 sum(M,s->s.NumberOfSteps)
 S = apply(M,status);
 assert(#select(S, s->s==Regular) == 70
-    and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
+    and #select(S, s->s==IncreasePrecision) + #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
 
 -- projective tracking (including Certified)
 for predictor in {RungeKutta4,Tangent,Certified} do (
@@ -50,16 +50,13 @@ for predictor in {RungeKutta4,Tangent,Certified} do (
 -- a non-square system
 CC[x,y]
 solveSystem{x^2,y^2,x+y}
-
+{*
+QQ[x,y]
+solveSystem{x^2,y^2,x+y}
+*}
 end
 
 restart
 load "SoftwareM2engine.tst.m2"
-
-T = cyclic(6,CC) 
-S = solveSystem(T_*, Software=>M2engine);
-#select(S, s->status s === Regular)
-#select(S, s->s.ConditionNumber < 1000)
-
 
 

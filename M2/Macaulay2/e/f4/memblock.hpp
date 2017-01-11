@@ -31,6 +31,8 @@ class MemoryBlock : public our_new_delete
   T * allocate(int len=1); // reserve and intern
 
   int n_slabs() const;
+
+  long memoryUsage() const; // total number of bytes allocated in slabs (plus size of this)
 };
 
 /////////////////
@@ -120,6 +122,14 @@ int MemoryBlock<T,NSLAB>::n_slabs() const
 {
   int result = 0;
   for (slab *p = first_slab; p != 0; p = p->next) result++;
+  return result;
+}
+
+template<typename T, long int NSLAB>
+long MemoryBlock<T,NSLAB>::memoryUsage() const
+{
+  long result = sizeof(*this);
+  result += n_slabs() * sizeof(slab);
   return result;
 }
 

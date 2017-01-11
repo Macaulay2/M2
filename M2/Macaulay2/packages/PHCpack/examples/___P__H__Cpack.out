@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- {* hash: -1388999538 *}
+-- COMPILE TIME: Oct  7 2016, 07:56:28
+--loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x,y,z]
 
@@ -14,6 +16,7 @@ o2 = {- x  + y, - x  + z, x + y + z - 1}
 o2 : List
 
 i3 : solns = solveSystem(system)
+*** variables in the ring : {x, y, z} ***
 
 o3 = {{.543689, .295598, .160713}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
      ------------------------------------------------------------------------

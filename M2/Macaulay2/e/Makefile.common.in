@@ -3,7 +3,7 @@
 # these are from include/config.Makefile
 CPPFLAGS := $(M2_CPPFLAGS) $(CPPFLAGS)
 CFLAGS   := $(M2_CFLAGS)   $(CFLAGS)
-CXXFLAGS := $(M2_CXXFLAGS) $(CXXFLAGS)
+CXXFLAGS := $(M2_CXXFLAGS) $(CXXFLAGS) -Wno-unused-local-typedefs
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC

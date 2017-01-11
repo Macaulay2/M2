@@ -168,7 +168,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +	      int i;
 +	      fmpz_mod_poly_init(mod, p);
 +	      for (i = 0; i < d; i++) fmpz_mod_poly_set_coeff_ui(mod, i, *cp++);
-+	      assert( *cp == -1);
++	      /*For M2 issue #354: assert( *cp == -1); */
 +	      fmpz_mod_poly_set_coeff_ui(mod, d, 1);
 +	      fq_ctx_init_modulus(ctx, mod, var);
 +	      fmpz_mod_poly_clear(mod);
@@ -272,7 +272,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +	      int i;
 +	      nmod_poly_init(mod, fmpz_get_ui(p));
 +	      for (i = 0; i < d; i++) nmod_poly_set_coeff_ui(mod, i, *cp++);
-+	      assert( *cp == -1);
++	      /*For M2 issue #354: assert( *cp == -1); */
 +	      nmod_poly_set_coeff_ui(mod, d, 1);
 +	      fq_nmod_ctx_init_modulus(ctx, mod, var);
 +	      nmod_poly_clear(mod);
@@ -393,7 +393,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
                  }
              }
  
-+	    assert(cp[d] == -1);
++	    /*For M2 issue #354: assert(cp[d] == -1); */
 +
              fmpz_set_ui(ctx->a + j, 1);
              ctx->j[j] = d;
@@ -536,3 +536,18 @@ diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/f
      else
          if (r > 0)
              r = flint_printf(" ");
+diff -ur /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c flint-2.4.5/fmpz_factor /factor_pp1.c
+--- /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c     2015-02-17 09:56:55.0000 00000 -0500
++++ flint-2.4.5/fmpz_factor/factor_pp1.c        2015-11-19 09:32:37.252776183 -0500
+@@ -35,6 +35,11 @@
+ #include "mpn_extras.h"
+ #include "ulong_extras.h"
+ 
++/* DEBUG can be defined already */
++#ifdef DEBUG
++#undef DEBUG
++#endif
++
+ #define DEBUG 0 /* turn on some trace information */
+ 
+ #define pp1_mulmod(rxx, axx, bxx, nnn, nxx, ninv, norm)             \

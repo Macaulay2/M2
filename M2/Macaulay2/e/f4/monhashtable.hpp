@@ -1,9 +1,63 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2016  Michael E. Stillman
 
 #ifndef _monhashtable_h_
 #define _monhashtable_h_
 
 #include "moninfo.hpp"
+#include "res-moninfo.hpp"
+
+class MonomialsWithComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  MonomialsWithComponent(const MonomialInfo& MI) : mMonoid(MI) {}
+private:
+  const MonomialInfo& mMonoid;
+};
+
+class MonomialsIgnoringComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0]; }
+  bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  MonomialsIgnoringComponent(const MonomialInfo& MI) : mMonoid(MI) {}
+private:
+  const MonomialInfo& mMonoid;
+};
+
+
+
+class ResMonomialsWithComponent {
+public:
+  typedef res_packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsWithComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
+};
+
+class ResMonomialsIgnoringComponent {
+public:
+  typedef res_packed_monomial value;
+  long hash_value(value m) const { return m[0]; }
+  bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsIgnoringComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
+};
+
+#include <memory>  // For std::unique_ptr
+
 
 // ValueType must implement the following:
 // values should have computed hash values stored with them
@@ -19,7 +73,7 @@ class MonomialHashTable
 
 private:
   const ValueType *M;
-  value *hashtab;
+  std::unique_ptr<value[]> hashtab;
 
   unsigned long size;
   unsigned int  logsize;
@@ -37,7 +91,7 @@ private:
   void initialize(int logsize0);
 public:
 
-  MonomialHashTable(const ValueType *M0, int logsize = 16);
+  MonomialHashTable(const ValueType *M0, int logsize = 24);
   // The hash table size will be a power of 2, and this
   // is the initial power.
 
@@ -49,8 +103,9 @@ public:
   // BUT: the size is kept the same.
 
   bool find_or_insert(value m, value &result);
-  // return true if the value already exists in the table.
-  // otherwise, result is set to the new value.
+  // If the pointer m is in the hashtable already, then return true,
+  // set result to the already existing pointer.  If m is not yet in
+  // the hashtable, insert it, set result to be m, and return false;
 
   void dump() const;
   // displays on stderr some info about the hash table

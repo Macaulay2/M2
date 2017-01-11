@@ -1,6 +1,6 @@
 #include "pi.h"
 
-#ifdef DEBUG
+#ifndef NDEBUG
 void trap () {}
 #endif
 

@@ -51,11 +51,15 @@ inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(
 -- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
 -- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .
 -- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
-gfdir = prefixDirectory | currentLayout#"factory gftables"
-gftestfile = gfdir | "gftables/961" -- 961==31^2
-if not fileExists gftestfile
-then error ("sample Factory finite field addition table file missing, needed for factorization: ", gftestfile)
-setFactoryGFtableDirectory gfdir
+gfdirs = {prefixDirectory | currentLayout#"factory gftables",
+	  currentLayout#"factory gftables"}
+i := position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
+if i === null
+then error ("sample Factory finite field addition table file missing, needed for factorization: ",
+    prefixDirectory, currentLayout#"factory gftables",
+    " or ",
+    currentLayout#"factory gftables")
+setFactoryGFtableDirectory gfdirs_i
 
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
@@ -80,11 +84,11 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
 factor ZZ := ( f -> opts -> f ) (
-     if instance(Pari$factorint, Function) 
+     if instance(Pari$factorint, Function)
      then n -> (
 	  if n === 0 then Product { Power{0,1} }
 	  else (
-	       r := Pari$factorint n; 
+	       r := Pari$factorint n;
 	       Product apply(r#0,r#1,(p,i)-> Power{p,i})
 	       )
 	  )
@@ -109,7 +113,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  (I',F) := flattenRing I; -- F is not needed
 	  A := ring I';
 	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-     	  --I = trim I';	  
+     	  --I = trim I';
 	  I = I';
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
 	  if not isCommutative A then
@@ -142,8 +146,8 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  Psi = select(Psi, I -> I != 1);
 	  Psi = new MutableList from Psi;
 	  p := #Psi;
-	  scan(0 .. p-1, i -> if Psi#i =!= null then 
-	       scan(i+1 .. p-1, j -> 
+	  scan(0 .. p-1, i -> if Psi#i =!= null then
+	       scan(i+1 .. p-1, j ->
 		    if Psi#i =!= null and Psi#j =!= null then
 		    if isSubset(Psi#i, Psi#j) then Psi#j = null else
 		    if isSubset(Psi#j, Psi#i) then Psi#i = null));
@@ -157,6 +161,10 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  ))
 
 isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
+
+roots = method(Options => true);
+roots RingElement := {Precision => -1, Unique => false} >> o -> p ->
+  toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

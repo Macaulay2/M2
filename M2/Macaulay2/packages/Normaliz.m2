@@ -2,7 +2,7 @@
 
 {*
 Copyright 2009, 2010 Winfried Bruns and Gesa Kaempf.
-Copyright 2011, 2012 Christof Soeger
+Copyright 2011, 2012, 2015, 2016 Christof Soeger
 
 You may redistribute this file under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 2 of
@@ -11,8 +11,8 @@ the License, or any later version.
 
 newPackage(
            "Normaliz",
-           Version=>"2.3",
-           Date=>"June 30, 2012",
+           Version=>"2.6",
+           Date=>"February 18, 2016",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
                     {Name=> "Christof Soeger",
@@ -105,14 +105,14 @@ nmzNumberThreads=1;
 nmzFile="";        -- Internal name of the data files
 nmzVersion="";     -- normaliz
 nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
-nmzMinExecVersion="2.8"; -- minimal normaliz version
+nmzMinExecVersion="2.11"; -- minimal normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
+
 -- component 1 is name of option
 -- 2 is default value
 -- 3 is command line option to be passed to Normaliz
 -- 4 indicates whether file "gen" is generated
 -- value 2 of 4 indicates "no influence"
-
 nmzOptions= new MutableList from {
             new MutableList from {"supp",false,"-s",false},
             new MutableList from {"triang",false,"-tT",false},
@@ -175,7 +175,7 @@ getNmzExec=()->
 -- removes the files created for and by normaliz
 rmNmzFiles=()->
 (
-    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext","cst","tgn"};
+    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext","cst","tgn","lat","mod","dec"};
 
     checkNmzFile("rmNmzFiles");
 
@@ -259,7 +259,7 @@ doWriteNmzData(List):=(matrices)->
       1 => "normalization",
       2 => "polytope",
       3 => "rees_algebra",
-      4 => "hyperplanes",
+      4 => "inequalities",
       5 => "equations",
       6 => "congruences",
       10 => "lattice_ideal",
@@ -286,8 +286,11 @@ doWriteNmzData(List):=(matrices)->
         );
         outf << s << endl;
      );
-     if nmzModes#?nmzMode then
-        outf << nmzModes#nmzMode << endl
+     if nmzModes#?nmzMode then(
+        -- deprecated input type as integer
+        print("Using Normaliz integer input types is deprecated, please use " | nmzModes#nmzMode | " instead of " | nmzMode);
+        outf << nmzModes#nmzMode << endl;
+     )
      else
         outf << nmzMode << endl;
   );
@@ -296,9 +299,14 @@ doWriteNmzData(List):=(matrices)->
 
 -- writes the given data in a normaliz input file
 writeNmzData=method()
+writeNmzData(Matrix,String):=(sgr, nmzMode)->
+(
+    doWriteNmzData({(sgr,nmzMode)});
+);
+
+-- deprecated input type as integer
 writeNmzData(Matrix,ZZ):=(sgr, nmzMode)->
 (
-    --doWriteNmzData(sgr,numColumns(sgr), nmzMode);
     doWriteNmzData({(sgr,nmzMode)});
 );
 
@@ -498,7 +506,7 @@ showNmzOptions=()->
 checkNmzExecVersion=()->
 (
   if (nmzExecVersion=="") then (
-    cmd := "! " | getNmzExec() | " 2>&1 </dev/null || true";
+    cmd := "! " | getNmzExec() | " --version 2>&1 </dev/null || true";
     result := get cmd;
     if not match("Normaliz ([0-9.]*)",result) then error("normaliz executable not found: " | getNmzExec());
     nmzExecVersion = replace("(.|\n)*Normaliz ([0-9.]+)(.|\n)*", "\\2", result);
@@ -510,6 +518,14 @@ checkNmzExecVersion=()->
 
 
 normaliz=method(Options=>true)
+opts={allComputations=>false, grading=>{}}
+normaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
+(
+  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
+                     {(sgr,nmzMode)});
+);
+
+-- deprecated input type as integer
 opts={allComputations=>false, grading=>{}}
 normaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
 (
@@ -523,10 +539,10 @@ normaliz(List):=opts>>o->(s)->
 );
 
 
--- sequence should contain pairs (sgr,nmzMode); with nmzMode=4,5 or 6 if sequence has length >1, 20 (grading) is allowed additionally
+-- sequence should contain pairs (sgr,nmzMode)
 runNormaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
-runNormaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
+runNormaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
 (
   return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
                      {(sgr,nmzMode)});
@@ -538,17 +554,8 @@ runNormaliz(List):=opts>>o->(s)->
 
     checkNmzExecVersion();
 
-    if(#s>1) -- check whether modes ok
-    then(
-         for p in s
-         do(
-            if(p#1!=4 and p#1!=5 and p#1!=6 and p#1!=20)
-            then error("normaliz: multiple input matrices are only allowed in modes 4,5 or 6");
-         );
-    );
-
     if (#o.grading > 0) then (
-        s = append(s, (matrix{o.grading}, 20));
+        s = append(s, (matrix{o.grading}, "grading"));
     );
     doWriteNmzData(s);
     options:=collectNmzOptions();
@@ -684,7 +691,7 @@ intmat2mons(Matrix,Ring,ZZ,ZZ):=(expoVecs,r,d,c)->
 
 runIntclToricRing=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
-runIntclToricRing(Ideal,ZZ):=opts>>o->(I,nmzMode)->
+runIntclToricRing(Ideal,String):=opts>>o->(I,nmzMode)->
 (
     expoVecs:=mons2intmat(I);
 
@@ -709,7 +716,7 @@ intclToricRing List :=opts>>o->L->
     if(#L==0)
       then error("intclToricRing: empty list");
     return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,
-                             ideal L,0);
+                             ideal L,"integral_closure");
   );
 );
 
@@ -726,7 +733,7 @@ normalToricRing List :=opts>>o->L->
   then error("normalToricRing: monomials must be elements of the same ring")
   else( if(#L==0)
        then error("normalToricRing: empty list");
-    return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,ideal L,1);
+    return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,ideal L,"normalization");
   );
 );
 
@@ -755,7 +762,7 @@ normalToricRing (Ideal,Thing) :=opts>>o->(I,t)->(
      );
    );
    M=matrix M;
-   nmzCone:=normaliz(allComputations=>o.allComputations,grading=>o.grading,M,10);
+   nmzCone:=normaliz(allComputations=>o.allComputations,grading=>o.grading,M,"lattice_ideal");
    nmzData:=nmzCone#"gen";
    r:=rank nmzData;
    n:=numgens R;
@@ -773,7 +780,7 @@ normalToricRing (Ideal,Thing) :=opts>>o->(I,t)->(
 
 runIntclMonIdeal=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
-runIntclMonIdeal(Ideal,ZZ):=opts>>o->(I,nmzMode)->
+runIntclMonIdeal(Ideal,String):=opts>>o->(I,nmzMode)->
 (
    -- new variable for Rees algebra
     alph:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -794,7 +801,7 @@ runIntclMonIdeal(Ideal,ZZ):=opts>>o->(I,nmzMode)->
 );
 
 
-runIntclMonIdeal(Ideal,ZZ,RingElement):=opts>>o->(I,nmzMode,t)->
+runIntclMonIdeal(Ideal,String,RingElement):=opts>>o->(I,nmzMode,t)->
 (
     if(not member(t,gens ring I))
     then error("runIntclMonIdeal: second argument must be a variable of the ring of the ideal.");
@@ -821,7 +828,7 @@ intclMonIdeal=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 intclMonIdeal Ideal :=opts>>o->I->
 (
-    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,3);
+    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,"rees_algebra");
     return (ideal gens intcl,alg);
 );
 
@@ -831,7 +838,7 @@ intclMonIdeal (Ideal,RingElement) :=opts>>o->(I,t)->
     if(not member(t, gens ring I))
     then error("intclMonIdeal: second argument must be a variable of the ring of the ideal.");
 
-    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,3,t);
+    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,"rees_algebra",t);
     return (ideal gens intcl, alg);
 );
 
@@ -850,7 +857,7 @@ ehrhartRing List :=opts1>>o->L->
   else( if(#L==0)
        then error("ehrhartRing: empty list");
   );
-  return  runIntclMonIdeal(allComputations=>o.allComputations,ideal L,2);
+  return  runIntclMonIdeal(allComputations=>o.allComputations,ideal L,"polytope");
 );
 
 --ehrhartRing MonomialSubalgebra :=opts1>>o->S->
@@ -870,7 +877,7 @@ ehrhartRing (List,RingElement):=opts1>>o->(L,t)->
     if(not member(t,gens ring I))
     then error("ehrhartRing: second argument must be a variable of the ring of the ideal.");
 
-    (latticePoints,ehrhartRing):= runIntclMonIdeal(allComputations=>o.allComputations,I,2,t);
+    (latticePoints,ehrhartRing):= runIntclMonIdeal(allComputations=>o.allComputations,I,"polytope",t);
     return (latticePoints,ehrhartRing);
 );
 
@@ -895,7 +902,7 @@ torusInvariants (Matrix, Ring) := opts>>o -> (T,R) ->
           error("torusInvariants: wrong number of columns in matrix");
     );
 
-    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, T,5);
+    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, T,"equations");
     if(not nmzGen) then return;  -- M=null
 
     rt:=createMonomialSubalgebra intmat2mons(M#"gen",R);
@@ -909,7 +916,7 @@ finiteDiagInvariants (Matrix,Ring) := opts>>o -> (M,R) ->
   if(numgens R != numColumns M-1)
   then error("finiteDiagInvariants: wrong number of columns in matrix");
 
-  cone:= normaliz(allComputations=>o.allComputations, grading=>o.grading,M,6);
+  cone:= normaliz(allComputations=>o.allComputations, grading=>o.grading,M,"congruences");
   rt := cone#"gen";
   if(instance(rt,Nothing,rt)) then return createEmptyMonomialSubalgebra R;
 
@@ -924,7 +931,7 @@ diagInvariants (Matrix,Matrix,Ring) := opts>>o -> (T,F,R) ->
   if(numgens R != numColumns T or numgens R != numColumns F -1)
   then error("diagInvariants: wrong number of columns in matrix");
 
-  cone:=(normaliz(allComputations=>o.allComputations, grading=>o.grading,{(T,5),(F,6)}));
+  cone:=(normaliz(allComputations=>o.allComputations, grading=>o.grading,{(T,"equations"),(F,"congruences")}));
   rt := cone#"gen";
 
   if(instance(rt,Nothing)) then return createEmptyMonomialSubalgebra R;
@@ -945,7 +952,7 @@ intersectionValRings (Matrix,Ring) := opts>>o -> (V,R) ->
     I:=id_(ZZ^(numColumns(V))); -- identity matrix
     V1:=I||V;
 
-    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,4);
+    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,"inequalities");
 
 
     if(not nmzGen) then return; -- M=null
@@ -975,7 +982,7 @@ intersectionValRingIdeals (Matrix,Ring) := opts>>o -> (V,R) ->
     );
     V1=matrix(V1);
 
-    nmzCone:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,4);
+    nmzCone:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,"inequalities");
     if(not nmzGen) then return; -- nmzCone=null
     M:=nmzCone#"gen";
 
@@ -1045,7 +1052,7 @@ document {
 UL{
    "a system of generators;",
    "a linear system of inequalities;",
-   " a linear system of equations."
+   "a linear system of equations."
 },
 PARA{}, "First of all consider the cone generated by the 16 vectors",
 
@@ -1090,7 +1097,7 @@ PARA{}, "It is also possible to call ", TT "Normaliz", " directly to do this com
 
 EXAMPLE lines ///
 M=matrix l;
-d=(normaliz(M,0))#"gen"
+d=(normaliz(M,"normalization"))#"gen"
 set entries d===set hb
 ///,
 PARA{}, "The result is an object of type ", TO RationalCone, " from which you obtain the Hilbert basis via the key \"gen\".",
@@ -1110,9 +1117,9 @@ EXAMPLE lines ///
 ///,
 
 HR{},
-PARA{}, "Conversely, suppose the cone is given by the above hyperplanes. In that case, to compute the Hilbert basis, you should use ", TT "Normaliz", " in type 4. The result is an object of type ", TO RationalCone,". The Hilbert basis is accessible via the key \"gen\". Not surprisingly, it is the same Hilbert basis as above (but in another order).",
+PARA{}, "Conversely, suppose the cone is given by the above hyperplanes. In that case, to compute the Hilbert basis, you should use ", TT "Normaliz", " in type inequalities. The result is an object of type ", TO RationalCone,". The Hilbert basis is accessible via the key \"gen\". Not surprisingly, it is the same Hilbert basis as above (but in another order).",
 EXAMPLE lines ///
-normaliz(hypes,4)
+normaliz(hypes,"inequalities")
 set entries oo#"gen"===set hb
 ///,
 
@@ -1131,7 +1138,7 @@ PRE"
 PARA{}, "(this is the solution cone for a 3x3 magic square). To this end one has to choose type 5.",
 EXAMPLE lines ///
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
-normaliz(eq,5)
+normaliz(eq,"equations")
 ///,
 "Again the rows of this matrix are the elements of the Hilbert basis.",
 }
@@ -1157,7 +1164,7 @@ PARA{},"The lattice points of the polytope are the exponent vectors of the gener
 PARA{}, "It is also possible to call ", TT "Normaliz", " directly to do this computation by using the function ", TO normaliz, ". It takes a matrix as input, whose rows are the vertices of the polytope, and the type for the computation. It returns an object of type ", TO RationalCone, " that gives access to the lattice points via the key \" gen\".",
 EXAMPLE lines ///
 M=matrix {{0,0,0},{2,0,0},{0,3,0},{0,0,5}};
-(normaliz(M,2))#"gen"
+(normaliz(M,"polytope"))#"gen"
 ///,
 }
 
@@ -1291,13 +1298,13 @@ PARA{}, "The method ", TO normaliz, " returns an object of type RationalCone. By
 EXAMPLE lines ///
 setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
-rc=normaliz(eq,5);
+rc=normaliz(eq,"equations");
 rc#"gen"
 rc#"inv"
 ///,
 PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true. Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file (also to be read line by line).",
 EXAMPLE lines ///
-arc=normaliz(allComputations=>true,eq,5);
+arc=normaliz(allComputations=>true,eq,"equations");
 arc#"gen"
 arc#"ext"
 ///,
@@ -1307,17 +1314,20 @@ SeeAlso => {allComputations, readNmzData, "Keeping results of the computation by
 
 document {
    Key => "output files written by Normaliz",
-PARA{},"Depending on the options enabled (see ", TO setNmzOption, "), ", TT "Normaliz", " writes additional output files. To obtain the content of these files within Macaulay2, use ", TO readNmzData, " or ", TO allComputations,". The following files may be written, provided certain conditions are satisfied and the information that should go into them has been computed. We denote the files simply by their types. In types 0,1,4,5 the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types 2 and 3 the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. In type 6 the ambient lattice is ", TEX "\\ZZ^n", ", in type 10 ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz.  See the documentation  for Normaliz at ", HREF "http://www.math.uos.de/normaliz/Normaliz2.2Documentation", " for more details.",
+PARA{},"Depending on the options enabled (see ", TO setNmzOption, "), ", TT "Normaliz", " writes additional output files. To obtain the content of these files within Macaulay2, use ", TO readNmzData, " or ", TO allComputations,". The following files may be written, provided certain conditions are satisfied and the information that should go into them has been computed. We denote the files simply by their types.
+For the most types of inputs the ambient lattice is ", TEX "\\ZZ^n", " if the input of Normaliz is a matrix of n columns. In types polytope and rees_algebra the ambient lattice is ", TEX "\\ZZ^{n+1}", " since the input vectors are extended by 1 component. For congruences and inhomogeneous input it is ", TEX "\\ZZ^{n-1}", " and for inhomogenouse congruences ", TEX "\\ZZ^{n-2}", ".
+For input of type lattice_ideal the lattice is ", TEX "\\ZZ^{r}", " where n-r is the rank of the input matrix. The essential lattice is gp(M) where M is the monoid computed by Normaliz internally, i.e. after a linear transformation such that the cone is full-dimensional and the integral closure has to be computed.
+See the documentation of Normaliz at ", HREF "http://www.math.uos.de/normaliz/Normaliz2.12.2/Normaliz.pdf", " for more details.",
 UL{
-    {TT "gen      ", "   The Hilbert basis is written to this file, provided it has been computed."},
-   {TT "ext       ", "   The file ", TT "ext", " contains the extreme rays, provided they have ben computed."},
-   {TT "cst       ", "   The file ", TT "cst", " contains the constraints defining the cone and the lattice in the same format as they would appear in the input: matrices of types 4,5,6 following each other. Each matrix is concluded by the integer denoting its type. Empty matrices are indicated by 0 as the number of rows. Therefore there will always be 3 matrices. Using this file as input for ", TT "Normaliz"," will reproduce the Hilbert basis and all the other data computed."},
-   {TT "egn, esp   ", "   These contain the Hilbert basis and the support hyperplanes respectively, however with respect to the essential lattice and a basis of it."},
+   {TT "gen      ", "   The Hilbert basis"},
+   {TT "ext      ", "   The extreme rays"},
+   {TT "cst      ", "   The constraints defining the cone and the lattice in the same format as they would appear in the input. Using this file as input for ", TT "Normaliz"," will reproduce the Hilbert basis and all the other data computed."},
+   {TT "egn, esp  ", "   These contain the Hilbert basis and the support hyperplanes respectively, however with respect to the essential lattice and a basis of it."},
    {TT "typ       ", "   This is the product of the matrices corresponding to ", TT "egn", " and ",  TT "esp", ". That is, the support hyperplanes of the cone are evaluated (as  linear forms) on the generators. "},
    {TT "tri       ", "   The file ", TT "tri", " contains a triangulation of the cone computed by ", TT "Normaliz", ". Each of the rows of the matrix specifies a simplicial cone D: the entries except the last are the indices (with respect to the order in ", TT "tgn",") of those generators that span D, and the last entry is the multiplicity of D in the essential lattice, i.e. the absolute value of the determinant of the matrix of the spanning vectors (as elements of the essential lattice)."},
    {TT "tgn        ", "The file ", TT "tgn", " contains a matrix of vectors (in the coordinates of the ambient lattice) spanning the simplicial cones in the triangulation."},
-   {TT "ht1        ", "If the associated semigroup is homogeneous, the file ", TT "ht1", " contains the height 1 elements of the cone."},
-   {TT "inv         ", "   The file ", TT "inv", " contains all the information computed that is not contained in any of the other files, i.e. the h-vector, the number of height 1 elements, the cardinality of the Hilbert basis, the Hilbert polynomial, whether the semigroup is homogeneous, the index, the multiplicity, the number of extreme rays, the number of support hyperplanes, whether the ideal is primary and the rank."},
+   {TT "ht1        ", "If the there was a grading available, the file ", TT "ht1", " contains the degree 1 elements of the cone."},
+   {TT "inv         ", "   The file ", TT "inv", " contains all the information computed that is not contained in any of the other files, e.g. the h-vector, the Hilbert polynomial, whether the semigroup is generated in degree 1, the index, the multiplicity, and the cardinality of sets like the Hilbert basis, support hyperplanes and so one."},
 },
 }
 
@@ -1429,43 +1439,35 @@ document {
 document {
      Key => {writeNmzData, },
      Headline => "creates an input file for Normaliz",
-     PARA{},"This function creates an input file for ", TT "Normaliz", " containing one or several matrices, whose rows   are considered  according to the type: ",
+     PARA{},"This function creates an input file for ", TT "Normaliz", " containing one or several matrices, whose rows are considered according to the type:",
      UL {
-         "type 0,1: generators of a rational cone",
-         "type 2:   lattice points spanning a polytope",
-         "type 3:   exponent vectors of monomials generating an ideal",
-         "type 4:   hyperplanes defining the cone to be computed",
-         "type 5:   linear system of equations",
-         "type 6:   homogeneous congruences",
-         "type 10:  generators of a lattice ideal"
+         "integral closure, normalization: generators of a rational cone",
+         "polytope:   lattice points spanning a polytope",
+         "rees_algebra:   exponent vectors of monomials generating an ideal",
+         "inequalities, equations, congruences:   constraints defining the cone to be computed",
+         "inhom_inequalities, inhom_equations, inhom_congruences:   inhomogenouse constraints defining the cone to be computed",
+         "lattice_ideal:  generators of a lattice ideal",
+         "grading:  a grading which gives positive degree to all generators"
      },
+     "For a more detailed list see the Normaliz documentation.",
 }
 
 document {
-     Key => {(writeNmzData, Matrix, ZZ),},
+     Key => {(writeNmzData, Matrix, String),},
      Headline => "creates an input file for Normaliz with one matrix",
      Usage => "writeNmzData(mat, nmzType)",
      Inputs =>{
                 Matrix => "whose rows are interpreted according to the type",
-                ZZ => "the type"
+                String => "the type"
       },
       Consequences => {"an input file filename.in is written, using the last filename created"},
-     PARA{},"This function creates an input file for ", TT "Normaliz", ". The rows of ", TT "mat", " are considered  according to the type: ",
-     UL {
-         "type 0,1: generators of a rational cone",
-         "type 2:   lattice points spanning a polytope",
-         "type 3:   exponent vectors of monomials generating an ideal",
-         "type 4:   hyperplanes defining the cone to be computed",
-         "type 5:   linear system of equations",
-         "type 6:   homogeneous congruences",
-         "type 10:  generators of a lattice ideal"
-     },
-     "If no filename has been specified, an error occurs.",
+     PARA{},"This function creates an input file for ", TT "Normaliz", " with a single input matrix and its type. ",
+            "If no filename has been specified, an error occurs.",
      PARA{},
      EXAMPLE lines ///
           nmzFilename="example"; -- to keep the files
           mat=matrix({{1,2,3},{4,5,6},{7,8,10}})
-          writeNmzData(mat,1)
+          writeNmzData(mat,"normalization")
           get ("example.in")
           rmNmzFiles();
           ///,
@@ -1473,7 +1475,7 @@ document {
      TEST ///
       nmzFilename="example";
           sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
-          writeNmzData(sgr,1)
+          writeNmzData(sgr,"normalization")
           assert (lines get (nmzDataPath|nmzFilename|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","normalization"})
      ///,
      }
@@ -1484,12 +1486,12 @@ document {
      Usage => "writeNmzData L",
      Inputs =>{
                List => "containing pairs (mat,nmzType)",},
-PARA{},"This function writes an input file for ", TT "Normaliz", " containing several matrices. The input is a list consisting of pairs (mat,nmzType), each is handled as in ", TO writeNmzData," but all written into the same input file. Note that in this situation only  choices of the types 4, 5 and 6 are allowed. If no filename has been specified, an error occurs.",
+PARA{},"This function writes an input file for ", TT "Normaliz", " containing several matrices. The input is a list consisting of pairs (mat,nmzType), each is handled as in ", TO writeNmzData," but all written into the same input file. If no filename has been specified, an error occurs.",
      EXAMPLE lines ///
           nmzFilename="example"; -- to keep the files
-          hy=(matrix {{1, -1, 0},{1, 1, -2}},4)
-          eq=(matrix {{1, 2, 3},{2, 2, 3}},5)
-          cg=(matrix {{9, 8, 7},{7, 6, 5}},6)
+          hy=(matrix {{1, -1, 0},{1, 1, -2}},"inequalities")
+          eq=(matrix {{1, 2, 3},{2, 2, 3}},"equations")
+          cg=(matrix {{9, 8, 7},{7, 6, 5}},"congruences")
           writeNmzData {hy, eq, cg};
           get ("example.in")
           rmNmzFiles();
@@ -1512,7 +1514,7 @@ document {
          nmzFilename="example" -- to keep the files
          setNmzOption("allf",true); -- to write all files
          mat=matrix({{1,2,3},{4,5,6},{7,8,10}});
-         normaliz(mat,0)
+         normaliz(mat,"integral_closure")
          readNmzData "typ"
          rmNmzFiles();
           ///,
@@ -1526,7 +1528,7 @@ document {
 {1, 1, 0,  0,  0, -1,  0,  0, -1},
 {0, 1, 1,  0, -1,  0,  0,  0, -1},
 {1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
-          normaliz(sgr,5);
+          normaliz(sgr,"equations");
           assert ( sort transpose readNmzData "gen"==sort transpose matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
 {0, 2, 1, 2, 1, 0, 1, 0, 2},
 {1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -1551,7 +1553,7 @@ document {
     EXAMPLE lines ///
          nmzFilename="example" -- to keep the files
          mat=matrix({{1,2,3},{4,5,6},{7,8,10}});
-         normaliz(allComputations => true,mat,0)
+         normaliz(allComputations => true,mat,"integral_closure")
          readMultipleNmzData "cst"
          rmNmzFiles();
 ///,
@@ -1560,27 +1562,30 @@ document {
 document {
      Key => {normaliz},
      Headline => "calls Normaliz",
-     PARA{}, "This function applies ", TT "Normaliz", " to the input data, which can be a matrix specifying a cone and an integer indicating the type for ", TT "Normaliz", " or a list consisting of pairs of such a matrix and an integer. The function returns an object of type ", TO RationalCone, ". The type determines how the rows of the matrix are interpreted, see also ", TO writeNmzData, ", and decides what the program will do: ",
+     PARA{}, "This function applies ", TT "Normaliz", " to the input data, which can be a matrix specifying a cone and an integer indicating the type for ", TT "Normaliz", " or a list consisting of pairs of such a matrix and an integer. The function returns an object of type ", TO RationalCone, ". The type determines how the rows of the matrix are interpreted, see also ", TO writeNmzData, ":",
      UL{
-        {"type 0: Computes the Hilbert basis of the rational cone generated by the rows with respect to the ambient lattice ", TEX "\\ZZ^n", ";"},
-        {"type 1: The same as 0, but with respect to the sublattice of ", TEX "\\ZZ^n", " generated by the rows;"},
-        {"type 2: Computes the integral points in the polytope spanned by the rows and its Ehrhart semigroup (the semigroup determined by the polytope);"},
-        {"type 3: Computes the integral closure of the Rees algebra of the ideal generated by the monomials with exponent vectors the rows;"},
-        {"type 4: Computes the Hilbert basis of the rational cone in ", TEX "\\RR^m", " given by the system of homogeneous inequalities ", TT "mat ", TEX "x\\ \\geq\\ 0", ";"},
-        {"type 5: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the homogeneous system ", TT "mat ", TEX "x\\ =\\ 0", "."},
-        {"type 6: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_{i_1},\\dots,x_{i_n},c",") represents a congruence ",TEX "x_{i_1}z_1+\\dots+x_{i_n}z_n \\equiv \\ 0 \\mod c","."},
-        {"type 10: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
+        {"integral_closure: Computes the Hilbert basis of the rational cone generated by the rows with respect to the ambient lattice ", TEX "\\ZZ^n", ";"},
+        {"normalization: The same as integral_closure, but with respect to the sublattice of ", TEX "\\ZZ^n", " generated by the rows;"},
+        {"polytope: Computes the integral points in the polytope spanned by the rows and its Ehrhart semigroup (the semigroup determined by the polytope);"},
+        {"rees_algebra: Computes the integral closure of the Rees algebra of the ideal generated by the monomials with exponent vectors the rows;"},
+        {"inequalities: Computes the Hilbert basis of the rational cone in ", TEX "\\RR^m", " given by the system of homogeneous inequalities ", TT "mat ", TEX "x\\ \\geq\\ 0", ";"},
+        {"equations: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the homogeneous system ", TT "mat ", TEX "x\\ =\\ 0", "."},
+        {"congruences: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_1,\\dots,x_n,c",") represents a congruence ",TEX "x_1 z_1+\\dots+x_n z_n \\equiv \\ 0 \\mod \\ c","."},
+        {"inhom_inequalities: Computes the Hilbert basis of the rational cone in ", TEX "\\RR^m", " given by the system of inhomogeneous inequalities. Each row (",TEX "x_1,\\dots,x_n,b",") represents an inequality ",TEX "x_1 z_1+\\dots+x_n z_n + b \\geq \\ 0","."},
+        {"inhom_equations: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the inhomogeneous system ", TT "mat ", TEX "x\\ =\\ b", "."},
+        {"inhom_congruences: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_1,\\dots,x_n,b,c",") represents a congruence ",TEX "x_1 z_1+\\dots+x_n z_n + b \\equiv \\ 0 \\mod \\ c","."},
+        {"lattice_ideal: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
      },
-PARA{},"It is possible to combine the types 4,5 and 6, see ", TO (normaliz,List),".",
+PARA{},"It is possible to combine certain input types, see ", TO (normaliz,List),". If you want to input only one matrix you can also use ", TO (normaliz,Matrix,String),".",
  PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".",
 EXAMPLE lines ///
 setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
-rc=normaliz(eq,5)
+rc=normaliz(eq,"equations")
 ///,
 PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,").",
 EXAMPLE lines ///
-arc=normaliz(allComputations=>true,eq,5);
+arc=normaliz(allComputations=>true,eq,"equations");
 arc#"gen"
 arc#"ext"
 arc#"inv"
@@ -1595,7 +1600,7 @@ TEST ///
 {1, 1, 0,  0,  0, -1,  0,  0, -1},
 {0, 1, 1,  0, -1,  0,  0,  0, -1},
 {1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
-          normaliz(mat,5);
+          normaliz(mat,"equations");
           assert ( sort transpose readNmzData "gen"==sort transpose matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
 {0, 2, 1, 2, 1, 0, 1, 0, 2},
 {1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -1607,34 +1612,24 @@ TEST ///
 
 
 document {
-     Key => {(normaliz, Matrix, ZZ), [(normaliz, Matrix, ZZ), allComputations], [(normaliz,Matrix,ZZ),grading]},
+     Key => {(normaliz, Matrix, String), [(normaliz, Matrix, String), allComputations], [(normaliz,Matrix,String),grading]},
      Headline => "calls Normaliz",
      Usage => "normaliz(mat,nmzType)",
      Inputs => {
                 Matrix => {TT "mat", " the input matrix for ", TT "Normaliz"},
-                ZZ =>{TT "nmzType", " the type"}},
+                String =>{TT "nmzType", " the type"}},
      Outputs => {RationalCone => {"generators of the integral closure and optional output from ", TT "Normaliz"}},
-     PARA{}, "This function applies ", TT "Normaliz", " to the parameter ", TT "mat", " in the type set by ", TT "nmzType", ". The function returns an object of type ", TO RationalCone, " defined by the file with suffix ", TT "gen", " , if computed, and possibly some additional information. The type determines how the rows of the matrix are interpreted, see also ", TO writeNmzData, ", and decides what the program will do: ",
-     UL{
-        {"type 0: Computes the Hilbert basis of the rational cone generated by the rows with respect to the ambient lattice ", TEX "\\ZZ^n", ";"},
-        {"type 1: The same as 0, but with respect to the sublattice of ", TEX "\\ZZ^n", " generated by the rows;"},
-        {"type 2: Computes the integral points in the polytope spanned by the rows and its Ehrhart semigroup (the semigroup determined by the polytope);"},
-        {"type 3: Computes the integral closure of the Rees algebra of the ideal generated by the monomials with exponent vectors the rows;"},
-        {"type 4: Computes the Hilbert basis of the rational cone in ", TEX "\\RR^m", " given by the system of homogeneous inequalities ", TT "mat ", TEX "x\\ \\geq\\ 0", ";"},
-        {"type 5: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the homogeneous system ", TT "mat ", TEX "x\\ =\\ 0", "."},
-        {"type 6: Computes the Hilbert basis of the rational cone given by the nonnegative solutions of the system of congruences defined by the rows as follows: Each row (",TEX "x_{i_1},\\dots,x_{i_n},c",") represents a congruence ",TEX "x_{i_1}z_1+\\dots+x_{i_n}z_n \\equiv \\ 0 \\mod c","."},
-        {"type 10: Computes the monoid as a quotient of ", TEX"\\ZZ_+^n"," modulo a system of congruences (in the semigroup sense) defined by the rows of the input matrix."},
-     },
+     PARA{}, "This function applies ", TT "Normaliz", " to the parameter ", TT "mat", " in the type set by ", TT "nmzType", ". The function returns an object of type ", TO RationalCone, " defined by the file with suffix ", TT "gen", " , if computed, and possibly some additional information. The type determines how the rows of the matrix are interpreted, see also ", TO (normaliz,List)," and ", TO writeNmzData, ".",
  PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line, and the content of the output file .inv, under the key \"inv\".",
 EXAMPLE lines ///
 setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
-rc=normaliz(eq,5);
+rc=normaliz(eq,"equations");
 rc#"gen"
 ///,
 PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,"). It can also be used with the option ", TO grading ,".",
 EXAMPLE lines ///
-arc=normaliz(allComputations=>true,eq,5);
+arc=normaliz(allComputations=>true,eq,"equations");
 arc#"gen"
 arc#"ext"
 arc#"inv"
@@ -1649,7 +1644,7 @@ TEST ///
 {1, 1, 0,  0,  0, -1,  0,  0, -1},
 {0, 1, 1,  0, -1,  0,  0,  0, -1},
 {1, 1, 0,  0, -1,  0, -1,  0,  0}}); --3x3magic
-          normaliz(mat,5);
+          normaliz(mat,"equations");
           assert ( sort transpose readNmzData "gen"==sort transpose matrix({{1, 2, 0, 0, 1, 2, 2, 0, 1},
 {0, 2, 1, 2, 1, 0, 1, 0, 2},
 {1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -1667,19 +1662,20 @@ document{
                 List => {"a list of pairs (mat,nmzType)"}},
      Outputs => {RationalCone => {"generators of the integral closure and optional output from ", TT "Normaliz"}},
 
-     PARA{}, "This function applies ", TT "Normaliz", " to all ", TT "mat", " each in the type set by the second parameter ", TT "nmzType", ". The function returns an object of type ", TO RationalCone, " defined by the file with suffix ", TT "gen", " , if computed, and possibly some additional information. At the moment only choices of the types 4, 5 and 6 are possible.  The type determines how the rows of the matrix are interpreted, see also ", TO writeNmzData, ", and decides what the program will do. Let L be the sublattice of ", TEX "\\ZZ^n", " that consists of the solutions of the system of congruences defined by the input matrix of type 6 (", TEX "L=\\ZZ^n"," if there is no matrix of type 6). Let A be the matrix of type 4 and B be the matrix of type 5. Then the cone specified by this input data is the cone ", TEX "C=\\{x\\in \\RR n: Ax=0, Bx \\geq 0\\}"," and the Hilbert basis of ", TEX "C\\cap L", " is computed. If there is no matrix of type 5, then the system of equations is empty, satisfied by all vectors of ", TEX "\\RR^n",". Note that there is always a matrix of type 4, either explicitly, if it is in the input, or implicitly, namely the ", TEX "n \\times n"," unit matrix, if there is no matrix of type 4 in the input (but one of type 5 or 6). It is possibly to give several matrices of the same type. All matrices of one type are then appended to one matrix by ", TT "Normaliz",".",
+     PARA{}, "This function applies ", TT "Normaliz", " to all ", TT "mat", " each in the type set by the second parameter ", TT "nmzType", ". The function returns an object of type ", TO RationalCone, " defined by the file with suffix ", TT "gen", " , if computed, and possibly some additional information.",
+"It is possibly to give several matrices of the same type. All matrices of one type are then appended to one matrix by ", TT "Normaliz",".",
  PARA{},"By default, the cone returned contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed, line by line and the content of the output file .inv, under the key \"inv\".",
 EXAMPLE lines ///
 hy=matrix {{-1,0,-1,0,3,0,0,0,0},{-1,0,1,0,1,0,0,0,0},{1,0,1,0,-1,0,0,0,0},{1,0,-1,0,1,0,0,0,0}};
 eq=matrix {{1,1,1,-1,-1,-1,0,0,0},{1,1,1,0,0,0,-1,-1,-1},{0,1,1,-1,0, 0,-1,0,0},{1,0,1,0,-1,0,0,-1,0},{1,1,0,0,0,-1,0,0,-1},{0,1,1,0,-1,0,0,0,-1},{1,1,0,0,-1,0,-1,0,0}};
 cg=matrix {{1,0,0,0,0,0,0,0,0,2},{0,0,1,0,0,0,0,0,0,2},{0,0,0,0,0,0,1,0,0,2},{0,0,0,0,0,0,0,0,1,2}};
-rc=normaliz({(hy,4),(eq,5),(cg,6)});
+rc=normaliz({(hy,"inequalities"),(eq,"equations"),(cg,"congruences")});
 rc#"gen"
 ///,
 PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,"). It can also be used with the option ", TO grading ,".",
 EXAMPLE lines ///
 setNmzOption("allf",true);
-arc=normaliz(allComputations=>true,{(hy,4),(eq,5),(cg,6)});
+arc=normaliz(allComputations=>true,{(hy,"inequalities"),(eq,"equations"),(cg,"congruences")});
 arc#"gen"
 arc#"ext"
 arc#"inv"
@@ -1740,9 +1736,9 @@ TEST ///
 {0, 3, 0, 1},
 {0, 0, 5, 1},
 {0, 0, 0, 1}});
-          normaliz(sgr,0);
+          normaliz(sgr,"integral_closure");
           n=getNumInvs();
-          assert ( n#"hilbert basis elements"==19 and n#"number extreme rays"==4 and n#"rank"==4 and n#"index"==30 and n#"number support hyperplanes"==4 and n#"graded"==true and n#"degree 1 elements"==18 and n#"grading"==(0,0,0,1) and n#"multiplicity"==30 )
+          assert ( n#"hilbert basis elements"==19 and n#"number extreme rays"==4 and n#"rank"==4 and n#"number support hyperplanes"==4 and n#"graded"==true and n#"degree 1 elements"==18 and n#"grading"==(0,0,0,1) and n#"multiplicity"==30 )
     rmNmzFiles();
      ///,
      }

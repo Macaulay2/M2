@@ -20,7 +20,7 @@ namespace M2 {
     mOriginalRing(R),
     mPrimitiveElement(prim)
   {
-    M2_ASSERT(mOriginalRing.n_quotients() == 1);
+    assert(mOriginalRing.n_quotients() == 1);
 
     mGenerator = RingElement::make_raw(&R, R.copy(prim));
     ring_elem f = mOriginalRing.quotient_element(0);
@@ -60,8 +60,8 @@ namespace M2 {
         std::cerr << "\n";
       }
 #endif
-    M2_ASSERT(polys.size() == mOrder);
-    M2_ASSERT(mGeneratorExponent != static_cast<GFElement>(-1));
+    assert(polys.size() == mOrder);
+    assert(mGeneratorExponent != static_cast<GFElement>(-1));
     
     // Set 'one_table'.
     mOneTable = newarray_atomic(GFElement,mOrder);

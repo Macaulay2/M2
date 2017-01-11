@@ -29,9 +29,20 @@ document {
 document {
      Key => fork,
      Headline => "fork the process",
-     TT "fork()", " -- forks the process, returning the process id of the child
-     in the parent, and returning 0 in the child.  Warning: if threads are running,
-     any attempt to allocate memory in the child will hang the process."
+     Usage => "fork()",
+     Outputs => {
+         "When successful, it returns the process id of the child in the parent, and returns 0 in
+         the child.  When unsuccessful, it returns -1."
+         },
+     PARA{
+         "Platforms that do not have a built-in ", TT "fork()", " function will always return -1."
+         },
+     PARA{
+         "Warning: in multithreaded programs like Macaulay2, very few operations can be safely
+         done in the child.  This is especially true when the user has been ",
+         TO "parallel programming with threads and tasks", ".
+         Even allocating memory in the child may hang the process."
+         }
      }
 
 document {

@@ -1,6 +1,5 @@
 -- -*- M2-comint -*- {* hash: 704393788 *}
--- COMPILE TIME: Oct 14 2015, 14:51:21
---loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = QQ[x,y,z]
 
@@ -16,7 +15,7 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : S = bertiniPosDimSolve F
-Temporary directory for input and output files:/tmp/M2-29634-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74631-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -31,9 +30,9 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{-4.96427e-67-2.19502e-67*ii, 4.23657e-67+3.49117e-67*ii,
+o4 = {{7.04287e-72-2.03471e-71*ii, -1.11324e-71+1.99008e-71*ii,
      ------------------------------------------------------------------------
-     -.0238961+.0049947*ii}}
+     -.269568+.0962813*ii}}
 
 o4 : VerticalList
 
@@ -45,11 +44,11 @@ o5 : List
 
 i6 : peek oo_0 --then list position
 
-o6 = WitnessSet{ComponentNumber => 0                                                                        }
+o6 = WitnessSet{ComponentNumber => 0                                                                             }
                 IsIrreducible => null
-                Points => {{-4.96427e-67-2.19502e-67*ii, 4.23657e-67+3.49117e-67*ii, -.0238961+.0049947*ii}}
-                Slice => | .171754+.11906i 2.00545-1.96198i 3.56221-1.04751i -.631895+.796449i |
-                WitnessDataFileName => /tmp/M2-29634-0/1/witness_data
+                Points => {{7.04287e-72-2.03471e-71*ii, -1.11324e-71+1.99008e-71*ii, -.269568+.0962813*ii}}
+                Slice => | -.530752-.444061i .838626+1.11211i -.578245-1.75016i -.139469-.0251951i |
+                WitnessDataFileName => /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74631-0/1/witness_data
                                3      2      2       2     3      2
                 Equations => {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 

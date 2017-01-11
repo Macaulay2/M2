@@ -31,14 +31,14 @@ static void init_gc(void) {
 void *malloc_function (size_t new) {
      void *p = malloc(new);
      if (p == NULL) outofmem2(new);
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(p);
 #    endif
      return p;
      }
 
 void free_function (void *s, size_t old) {
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(s);
 #    endif
      free(s);
@@ -49,7 +49,7 @@ void *realloc_function (void *s, size_t old, size_t new) {
      if (p == NULL) outofmem2(new);
      memcpy(p, s, old<new ? old : new);
      free(s);
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(p);
 #    endif
      return p;
@@ -96,7 +96,7 @@ void M2inits(void) {
   static int done = 0;
   if (!done) {
     done = 1;
-#   ifdef DEBUG
+#   ifndef NDEBUG
     trap();			/* we call trap() once so variables (such as trapset) can be set */
 #   endif
     init_gc();

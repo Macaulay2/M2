@@ -3,9 +3,16 @@
 -- not included in other files
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
+satisfiesOverdeterminedSystem = method(Options=>{ResidualTolerance=>null})
+satisfiesOverdeterminedSystem (Point, List) := o -> (s,F) -> (
+    o = fillInDefaultOptions o;    
+    norm evaluate(matrix{F},s) < o.ResidualTolerance    
+    )
+
 solveSystem = method(TypicalValue => List, Options =>{
 	PostProcess=>true, 
-	-- *** below are the relevant options of track ***
+	-- *** below are the relevant options of trackHomotopy ***
+	Precision=>null,
 	Software=>null, 
 	NumericalAlgebraicGeometry$gamma=>null, 
 	NumericalAlgebraicGeometry$tDegree=>null,
@@ -22,7 +29,8 @@ solveSystem = method(TypicalValue => List, Options =>{
 	-- end of path
 	EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
 	InfinityThreshold => null, -- used to tell if the path is diverging
-	SingularConditionNumber=>null, -- threshold for the condition number of the jacobian
+	SingularConditionNumber=> null, -- threshold for the condition number of the jacobian
+	ResidualTolerance => null, -- threshold for the norm of the residual
 	-- projectivize and normalize
 	Normalize => null, -- normalize in the Bombieri-Weyl norm
 	Projectivize => null
@@ -46,23 +54,23 @@ solveSystem PolySystem := List => o -> P -> (
      v := flatten entries vars R;
      if numgens R > #F then error "expected a 0-dimensional system";
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
+	  if o.Normalize then F = apply(F,normalize);
 	  overdetermined := numgens R < #F; 
 	  T := (if overdetermined 
 	       then generalEquations(numgens R, F)
 	       else F);  
   	  result = (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       --track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
-	       gamma := exp(random(0.,2*pi)*ii);
-	       t := local t;
-	       tt := inputGate [t];
-	       --H := gateHomotopy(gamma*(1-tt)*gateMatrix polySystem S + gamma*tt*gateMatrix polySystem T, 
-	       --   gateMatrix{getVarGates R}, tt, Strategy=>null);
-	       --time elapsedTime trackHomotopy(H,solsS); -- !!! fill in options
-	       H := gateHomotopy(gamma*(1-tt)*gateMatrix polySystem S + tt*gateMatrix polySystem T, 
-		   gateMatrix{getVarGates R}, tt,Strategy=>compress);
-	       --time elapsedTime trackHomotopy(H,solsS) -- !!! fill in options
+	       polyS := polySystem S;
+	       polyT := polySystem T;
+	       unit := exp(random(0.,2*pi)*ii);
+	       if DBG>2 then (
+		   << "H = segmentHomotopy(" << toExternalString polyS << "," << toExternalString polyT << ",gamma=>" << toExternalString unit << ")" << endl;    
+	       	   << "trackHomotopy(H," << toExternalString solsS << ")" << endl;
+		   );
+	       H := segmentHomotopy(polyS, polyT, NumericalAlgebraicGeometry$gamma=>unit);
 	       trackHomotopy(H,solsS,
+		   Precision => o.Precision,
 		   CorrectorTolerance => o.CorrectorTolerance,
 		   maxCorrSteps => o.maxCorrSteps,
 		   numberSuccessesBeforeIncrease => o.numberSuccessesBeforeIncrease,
@@ -72,19 +80,24 @@ solveSystem PolySystem := List => o -> P -> (
                    tStep => o.tStep,
                    tStepMin => o.tStepMin)
 	       );
-	   if o.PostProcess and not overdetermined 
-	   then (
-	       result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
-	       result = solutionsWithMultiplicity result;
-	       -- below is a hack!!!
-	       scan(result, s->if status s =!= Regular 
-		   and s.?ErrorBoundEstimate 
-		   and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
-			 if DBG>1 then print "path jump occured";
-			 s.Multiplicity = 1;
-			 s.SolutionStatus = Regular;
-			 ));
-	       )
+	  if o.PostProcess 
+	  then (
+	      plausible := select(result, p-> status p =!= Regular and status p =!= Infinity 
+		  and p.LastT > 1-o.EndZoneFactor);
+	        
+	      result = select(result, p->status p === Regular) | select( 
+		  apply(#plausible,     
+		      i -> (
+			  p := plausible#i;
+			  q := endGameCauchy(p#"H",1,p,"backtrack factor"=>2); -- endgame ...
+    	    	    	  if DBG>0 then if (i+1)%10 == 0 or i+1==#plausible then << endl;
+      	      	      	  q
+			  )
+		      ),
+		  p -> norm evaluateH(H,transpose matrix p,1) < o.ResidualTolerance -- ... may result in non-solution
+		  );
+	      );
+	  if overdetermined then result = select(result, s->satisfiesOverdeterminedSystem(s,F))  	      
 	  )
      else if o.Software === PHCPACK then result = solvePHCpack(F,o)
      else if o.Software === BERTINI then result = solveBertini(F,o)

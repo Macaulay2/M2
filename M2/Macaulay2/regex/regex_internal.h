@@ -663,7 +663,7 @@ struct re_dfa_t
   int mb_cur_max;
   bitset word_char;
   reg_syntax_t syntax;
-#ifdef DEBUG
+#ifndef NDEBUG
   char* re_str;
 #endif
 };

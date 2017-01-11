@@ -13,7 +13,7 @@ for predictor in {RungeKutta4,
 (S,T,solsS) = smallInfinityExample()
 M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2);
 SM = sortSolutions M;
-assert all({0,3}, i->status SM#i===Infinity) 
+assert all({0,3}, i->status SM#i=!=Regular) 
 assert all({1,2}, i->status SM#i===Regular) 
 
 for predictor in {RungeKutta4,Certified} do (
@@ -36,4 +36,4 @@ assert(
 
 end
 restart
-load "SoftwareM2.tst.m2"
+load "NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2"

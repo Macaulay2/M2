@@ -201,8 +201,8 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
   upper.resize(min, LU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   auto LUraw = LU.rowMajorArray();
   auto L = lower.rowMajorArray();
@@ -242,8 +242,8 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
   upper.resize(min, LU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   for (size_t c=0; c<LU.numColumns(); c++)
     {
@@ -277,7 +277,7 @@ void DMatLinAlg<RingType>::determinant(ElementType& result)
   const Mat& LU = mLUObject.LUinPlace();
 
   // This is just the product of the diagonal entries of mLU.
-  M2_ASSERT(LU.numRows() == LU.numColumns());
+  assert(LU.numRows() == LU.numColumns());
 
   if (mLUObject.signOfPermutation()) 
     ring().set_from_long(result, 1);
@@ -446,8 +446,8 @@ template <class RingType>
 bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
 {
   // possible TODO: incorporate a faster method if we know matrix is invertible...
-  M2_ASSERT(mLUObject.numRows() == mLUObject.numColumns());
-  M2_ASSERT(mLUObject.numRows() == B.numRows());
+  assert(mLUObject.numRows() == mLUObject.numColumns());
+  assert(mLUObject.numRows() == B.numRows());
 
   if (rank() < mLUObject.numRows()) return false;
   solve(B,X);
@@ -503,8 +503,8 @@ bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
 {
   //printf("in dmat-lu solveInvertible\n");
   // possible TODO: incorporate a faster method if we know matrix is invertible...
-  M2_ASSERT(mLUObject.numRows() == mLUObject.numColumns());
-  M2_ASSERT(mLUObject.numRows() == B.numRows());
+  assert(mLUObject.numRows() == mLUObject.numColumns());
+  assert(mLUObject.numRows() == B.numRows());
 
   X.resize(mLUObject.numColumns(), B.numColumns());
   mLUObject.LUinPlace();

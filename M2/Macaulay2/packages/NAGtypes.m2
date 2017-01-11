@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.8.2.1",
-     Date => "Jan, 2016",
+     Version => "1.9.2",
+     Date => "Oct 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -36,14 +36,17 @@ export {
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
+     -- values for status(Point) 
      "Regular", "Singular", "Infinity", 
      "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
+     "Origin", "IncreasePrecision", "DecreasePrecision", 
      -- point sets 
      "PointSet", "pointSet", "unionPointSet", "differencePointSet",
      -- polynomial systems
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
      "ContinuationParameter", "SpecializationRing",
-     "polySystem", "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
+     "polySystem", 
+     -- "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
      "evaluate",
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
@@ -86,7 +89,6 @@ globalAssignment PolySystem
 polySystem = method()
 polySystem PolySystem := P -> new PolySystem from P
 polySystem List := L -> (
-    checkCCpolynomials L;
     polySystem transpose matrix {L} 
     )
 polySystem Matrix := M -> (
@@ -99,6 +101,7 @@ ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
+toExternalString PolySystem := P -> "polySystem " | toExternalString equations P 
 
 isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()
@@ -118,8 +121,9 @@ evaluate (PolySystem,Matrix) := (P,X) -> (
     else error "evaluation not implemented for this type of PolyMap"
     )    
 evaluate (Matrix,Matrix) := (M,X) ->  (
-    if numColumns X == 1 then sub(M,transpose X)
-    else if numRows X == 1 then sub(M,X)
+    C := coefficientRing ring M;
+    if numColumns X == 1 then sub(M,sub(transpose X,C))
+    else if numRows X == 1 then sub(M,sub(X,C))
     else error "expected a row or a column vector"
     )
 evaluate (PolySystem,Point) := (P,p) -> evaluate(P,matrix p)
@@ -129,75 +133,12 @@ jacobian PolySystem := P -> (
     else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
     )
 
-segmentHomotopy = method()
-segmentHomotopy (PolySystem,PolySystem) := (S,T) -> (
-    R := ring S;
-    if R =!= ring T then error "systems over the same ring expected";
-    K := coefficientRing R;
-    t := symbol t;
-    Rt := K(monoid[gens R, t]);
-    toRt := map(Rt,R,drop(gens Rt,-1));
-    t = last gens Rt;       
-    H := polySystem((1-t)*toRt S.PolyMap + t*toRt T.PolyMap);
-    H.ContinuationParameter = t;
-    H.SpecializationRing = R;
-    H 
-    )
-
-substituteContinuationParameter = method()
-substituteContinuationParameter (PolySystem,RingElement) := (H,t') -> (
-    -- t' contains typically a linear expression in t=H.ContinuationParameter
-    -- but will work for any polynomial expression in ring H.
-    if not H.?ContinuationParameter then error "system has no continuation parameter";
-    R := ring H;
-    H' := polySystem (map(R,R,drop(gens R,-1)|{t'})) H.PolyMap;
-    H'.ContinuationParameter = H.ContinuationParameter;
-    H'.SpecializationRing = H.SpecializationRing;
-    H'	
-    )
-
-specializeContinuationParameter = method()
-specializeContinuationParameter (PolySystem, Number) := (H,t0) -> (
-    if not H.?ContinuationParameter then error "system has no continuation parameter";
-    Rt := ring H;
-    K := coefficientRing Rt;
-    i := position(gens Rt, x->x===H.ContinuationParameter);
-    R := H.SpecializationRing;
-    specializeTo't0 := map(R,Rt,apply(numgens Rt, j->
-	    if j<i then R_j 
-	    else if j>i then R_(j-1) 
-	    else t0
-	    ));
-    polySystem specializeTo't0 H.PolyMap
-    )
-
-TEST ///
-CC[x,y]
-polySystem transpose matrix{{x,y^2+1,x+1}}
-QQ[x,y]
-polySystem {x,y^2+1,x+1}
-RR[x,y]
-polySystem {x,y^2+1,x+1}
-CC[x,y]
-S = polySystem {x^2+y^2-6, 2*x^2-y}
-p = point {{1.0_CC,2.3_CC}};
-assert (
-    clean_0.1 ( (100*evaluate(S,p)) - transpose matrix{{29, -30}} )==0
-    )
-T = polySystem {x^2-1, y^2-1}
-H = segmentHomotopy(S,T)
-H' = substituteContinuationParameter(H,1-H.ContinuationParameter)
-S' = specializeContinuationParameter(H,0_CC) 
-assert(S'.PolyMap - S.PolyMap == 0)
-T' = specializeContinuationParameter(H',0_CC) 
-assert(T'.PolyMap - T.PolyMap == 0)
-///
 
 -----------------------------------------------------------------------
 -- POINT = {
 --   Coordinates => List of CC,
 --   NumberOfSteps => ZZ, -- number of steps made while tracking the path
---   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure, null}
+--   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure, Origin, null}
 --   LastT => RR in [0,1]
 --   ConditionNumber => condition number of the Jacobian
 --   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)
@@ -216,21 +157,30 @@ net Point := p -> (
   	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
   	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
   	);
-     if not p.?SolutionStatus or p.SolutionStatus === Regular then net p.Coordinates 
-     else if p.SolutionStatus === Singular then net toSequence p.Coordinates
-     else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
-     else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
-     else if p.SolutionStatus === NumericalRankFailure then net "[N]"
-     else if p.SolutionStatus === RefinementFailure then net "[RF:" | net toSequence p.Coordinates | net "]"
-     else error "the point is corrupted"
+    s := if p.?SolutionStatus then p.SolutionStatus else Regular;
+    if s === Regular then net p.Coordinates 
+    else if s === Singular then net toSequence p.Coordinates
+    else if s === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
+    else if s === Infinity then net "[I,t=" | net p.LastT | net "]"
+    else if s === NumericalRankFailure then net "[NF]"
+    else if s === RefinementFailure then net "[RF]"
+    else if s === IncreasePrecision then net "[P+]"
+    else if s === DecreasePrecision then net "[P-]"         
+    else if s === Origin then net "[0]"         
+    else error "the point is corrupted"
     ) 
 globalAssignment Point
 
 point = method()
 point Point := p -> new Point from p
-point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
+point List := s -> new Point from {Coordinates=>(
+	c := first s;
+	if instance(c,List) then c	
+	else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
+	else error "wrong type of coordinates: List or Matrix expected"   
+	)} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
-toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
+toExternalString Point := p -> "point { " | toExternalString coordinates p |" }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol < 
@@ -850,17 +800,20 @@ evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H
 evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
 evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
 
+TEST /// -- miscellaneous tests
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
+assert (round (1000*norm(4.5,p)) == 2312)
+assert isRealPoint p
+assert(round (10000*residual(S,p)) == 4173)
+p2 =  point {{1.001,2.3+ii}}
+p3 =  point {{.999,2.3+ii}}
+assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
+///
+
 
 -- DOCUMENTATION ------------------------------------------------------
-undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
-undocumented {
-    ParameterHomotopy, 
-    Parameters, SpecializedParameterHomotopy, Homotopy,
-    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
-    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
-    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
-    }
-
 beginDocumentation()
 
 document {
@@ -903,6 +856,7 @@ peek O
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), (net, Point),
 	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
+	  Origin, IncreasePrecision, DecreasePrecision,
 	  Multiplicity,
 	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate,
 	  MaxPrecision, WindingNumber, DeflationNumber
@@ -920,10 +874,13 @@ document {
      "Possible types of Points (accessed by ", TO "status", "): ",
      UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
 	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
-	  {"Infinity", " -- the solution path has been deemed divergent"},
+	  {"Infinity", " -- the solution path is deemed divergent"},
 	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"},
 	  {"NumericalRankFailure", " -- it is likely that in a sequence of deflations numerical rank did not give the correct rank"},
 	  {"RefinementFailure", " -- a solution refinement function failed"},
+	  {"Origin", " -- the solution path approaches the origin (impossible to give a relative error estimate)"},
+	  {"IncreasePrecision", " -- the current precision is deemed inadequate for robust computation"},
+	  {"DecreasePrecision", " -- the current precision is deemed excessive (more than the double of sufficient precision)"},
 	  {"null", " -- the point has not been classified"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
@@ -938,11 +895,13 @@ document {
        coordinates pt
        status pt
      ///,
+     {* condition number is not computed by default anymore !!!
      PARA{"For example, one may see the condition number of the Jacobian of the polynomial system, evaluated at this point
       (the smaller the value, the better) as follows."},
      EXAMPLE lines ///
        pt.ConditionNumber
      ///,
+     *}
      PARA{"The other keys that may be attached include "}, 
      UL{
 	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
@@ -984,7 +943,7 @@ q := point p
 	}
 
 document {
-	Key => {(sortSolutions,List), sortSolutions},
+	Key => {(sortSolutions,List), sortSolutions, [sortSolutions,Weights]},
 	Headline => "sort the list of solutions",
 	Usage => "t = sortSolutions s",
 	Inputs => { 
@@ -1002,7 +961,10 @@ R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
 sortSolutions s
      	///,
-	SeeAlso => {"solveSystem", "track", areEqual}
+	Caveat => {"The sorting described above does not possess good properties, since there may be near ties in specific coordinate values between several points. ",
+	    "A better way is to specify a random weight (of length 2n where n=#points) as an optional parameter ", TO [sortSolutions,Weights], 
+	    ", which provides a linear functional that evaluates to distinct (and sufficiently) real numbers on the given points. " }, 
+	SeeAlso => {"solveSystem", "track", "areEqual"}
 	}
 
 document { Key => {Tolerance, 
@@ -1011,7 +973,8 @@ document { Key => {Tolerance,
 	[isGEQ,Tolerance], 
 	[isRealPoint,Tolerance], 
 	[realPoints,Tolerance], 
-	[solutionsWithMultiplicity,Tolerance]
+	[solutionsWithMultiplicity,Tolerance],
+	[differencePointSet,Tolerance], [unionPointSet,Tolerance]
 	},
      Headline => "the tolerance of a numerical computation" 
      }
@@ -1226,13 +1189,14 @@ document {
 	 {TT "PolyMap", " of type ", TO Matrix, ", a column matrix over a polynomial ring"},
     	 {TT "Jacobian", " of type ", TO Matrix, ", the jacobian of ", TT "PolyMap"},
 	 },
-     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
+{*     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
      UL {
 	 {TT "ContinuationParameter", " -- stores one variable of the ring" },
 	 {TT "SpecializationRing", 
 	     " -- stores the subring generated my all variables except the additional parameter",
 	     " (e.g., used by ", TO specializeContinuationParameter, ")"}
 	 },
+     *}
      EXAMPLE lines ///
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
@@ -1244,8 +1208,8 @@ evaluate(jacobian S, p)
      UL{
     	TO polySystem,
 	TO evaluate,
-	TO segmentHomotopy,
-	TO specializeContinuationParameter,
+	--TO segmentHomotopy,
+	--TO specializeContinuationParameter,
 	},     
      SeeAlso => {WitnessSet}
      }
@@ -1356,6 +1320,7 @@ ring T
     SeeAlso => {homogenize,PolySystem}
     }
 
+{*
 document {
     Key => {"polynomial homotopy", 
 	segmentHomotopy, (segmentHomotopy,PolySystem,PolySystem), 
@@ -1397,7 +1362,7 @@ H' := substituteContinuationParameter(H,1-t)
     ///,    
     SeeAlso => {ContinuationParameter,SpecializationRing}
     }
-
+*}
 -- WitnessSet ------------------------------------------------------------------------------
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
@@ -1686,11 +1651,13 @@ doc ///
       This type stores a finite dimensional vector subspace of a polynomial ring, given by a spanning set. 
       The spanning set is generally assumed to be a basis although this is not enforced.  
       The following methods can be used to access a {\tt PolySpace}: 
+
       @UL {
 	  {"gens -- a one-row matrix of the generators"},
 	  {"dim -- the number of generators"},
 	  {"ring -- the ring of the generators"}
 	  }@
+
   SeeAlso
     polySpace
     DualSpace
@@ -1735,6 +1702,7 @@ doc ///
       In practice, the subspace is stored as a @TO PolySpace@ with functionals represented by the
       corresponding polynomial, along with a @TO Point@. 
       The following methods can be used to access a {\tt DualSpace}: 
+
       @UL {
 	  {"gens -- a one-row matrix of the generators"},
 	  {"dim -- the number of generators"},
@@ -1774,17 +1742,21 @@ doc ///
       D = dualSpace(M,p)
 ///
 
-TEST /// -- miscellaneous tests
-CC[x,y]
-S = polySystem {x^2+y^2-6, 2*x^2-y}
-p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
-assert (round (1000*norm(4.5,p)) == 2312)
-assert isRealPoint p
-assert(round (10000*residual(S,p)) == 4173)
-p2 =  point {{1.001,2.3+ii}}
-p3 =  point {{.999,2.3+ii}}
-assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
-///
+undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
+undocumented {
+    ParameterHomotopy, 
+    Parameters, SpecializedParameterHomotopy, Homotopy,
+    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
+    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
+    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+    }
+
+undocumented {(toExternalString,Point), (toExternalString,PolySystem),
+    unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
+    differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
+    (symbol ==,PointSet,PointSet), (symbol ?,Point,Point), (net,PointSet), 
+    (symbol +,PointSet,PointSet), (symbol -,PointSet,PointSet),
+    }
 
 endPackage "NAGtypes" 
 

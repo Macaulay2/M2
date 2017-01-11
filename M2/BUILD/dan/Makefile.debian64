@@ -5,8 +5,7 @@
 # see ../../INSTALL for the list of packages
 
 CONFIGOPTIONS += --enable-deb --enable-strip
-CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu --with-mpir-config-options="ABI=64"
-CONFIGOPTIONS += --enable-build-libraries="ntl pari"
+CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
 DIRECTORY = debian64
 include Makefile.include
 default: check

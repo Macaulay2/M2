@@ -1,72 +1,23 @@
+
 /*
-* change Matrix to MutableMatrix in interface functions:
 
-  rawSLEvaluator -> SLEvaluator constructor
-  rawSLEvaluatorEvaluate -> SLEvaluator::evaluate(...)
-
-* evaluation with Aring
-
-* return values: not-a-value, division-by-zero... or null
+* return values: not-a-value, division-by-zero... or null ???
 
 Distant future:
 
 * more general Gates
 */
 
-class MutableMatrix { // mat.hpp
-  virtual SLEvaluator* createSLEvaluator(SLProgram* P, M2_arrayint constsPos, M2_arrayint varsPos) = 0; // this = const matrix
-};
 
-class SLEvaluator : public MutableObject // TO DO: should we inherit from MutableObject? or nothing?
-{
-public:
-  virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0; // false = division by 0, etc. 
-};
 
-template<typename RT>
-class SLEvaluatorConcrete : public SLEvaluator
-{
-public:
-  SLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
-	      const MutableMat< DMat<RT> > *consts);
-  // SLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMat<SMat<RT>> *consts);
-  const RT& ring() const { return mRing; }
-  bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
-  bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
-private:
-  const RT& mRing;
-};
 
-// MT = DMat<RT> or SMat<RT> 
-template <typename MT> // mutablemat.hpp
-class MutableMat<MT> : public MutableMatrix
-{
-  SLEvaluator* createSLEvaluator(M2_arrayint constsPos, M2_arrayint varsPos, SLProgram* P)  
-  {
-    // RT = CoeffRing
-    return new SLEvaluatorConcrete<CoeffRing>(constsPos, varsPos, P, this);
-  }
-};
 
-bool rawSLEvaluatorEvaluate(SLEvaluator* P, const MutableMatrix* inputs, MutableMatrix* outputs) {
-  return P->evaluate(inputs,outputs);
-}
 
-template <typename RT>
-bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) 
-{
-  // coerce P, outputs to the correct templated types.
-  // if that fails, this function fails.
-  auto Minputs = dynamic_cast< const MutableMat<DMat<RT>>* >(inputs);
-  if (Minputs == nullptr) { error...}
 
-  auto Moutputs = dynamic_cast< const MutableMat<DMat<RT>>* >(outputs);
-  if (Moutputs == nullptr) { error...}
-  
-  return evaluate(Minputs->getMat(),Moutputs->getMat());
-}
 
-bool SLEvaluatorConcrete<RT>::evaluate(DMat<RT>& inputs, DMat<RT>& outputs)
-{
-  ring().add(a,b,c);
-}
+
+
+
+
+
+

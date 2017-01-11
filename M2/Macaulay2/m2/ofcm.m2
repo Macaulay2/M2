@@ -208,6 +208,29 @@ fixWA := diffs -> (
 	       fix x#0 => fix x#1)
 	  else fix x))
 
+findSymbols = varlist -> (
+    -- varlist is a list or sequence of items we wish to use for variable names.
+    -- these may be: Symbol's, RingElement's (which are variables in a ring)
+    -- or lists or sequences of such.
+    -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
+    varlist = deepSplice sequence varlist;
+    v := flatten toList apply(varlist, x->if class x === MutableList then toList x else x);
+    genList := for i from 0 to #v-1 list (
+            try baseName v#i
+            else if instance(v#i,String) and match("[[:alnum:]$]+",v#i) then getSymbol v#i
+            else (
+                msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
+                preX := "        ";
+                pw := max(printWidth,80);
+                error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)));
+                )
+            );
+     -- is this next line needed?
+     -- what is the purpose of this line?
+     scan(genList, sym -> if not (instance(sym,Symbol) or null =!= lookup(symbol <-, class sym)) then error "expected variable or symbol");
+     genList
+    )
+
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;

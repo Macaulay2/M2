@@ -102,8 +102,8 @@ export toArrayExpr(v:array(int)):Sequence := (
      new Sequence len length(v) do foreach i in v do provide Expr(ZZcell(toInteger(i)))
      );
 
-export newlist(class:HashTable,v:Sequence):List := (
-     x := List(class,v,0,false);
+export newlist(classs:HashTable,v:Sequence):List := (
+     x := List(classs,v,0,false);
      x.hash = hash(x);
      x);
 export basictype(o:HashTable):HashTable := (

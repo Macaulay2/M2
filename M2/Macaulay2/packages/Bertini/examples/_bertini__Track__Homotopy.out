@@ -1,6 +1,5 @@
--- -*- M2-comint -*- {* hash: 1952980000 *}
--- COMPILE TIME: Oct 14 2015, 14:51:21
---loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- {* hash: -1393920928 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,t]; -- include the path variable in the ring
 
@@ -13,7 +12,7 @@ i4 : sol2 = point {{-1}};
 i5 : S1= { sol1, sol2  };--solutions to H when t=1
 
 i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
-Temporary directory for input and output files:/tmp/M2-29839-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74655-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -65,8 +64,8 @@ o14 = {sol1, sol2}
 
 o14 : List
 
-i15 : S0=bertiniTrackHomotopy(t, H, S1, ISPROJECTIVE=>1) --solutions to H when t=0
-Temporary directory for input and output files:/tmp/M2-29839-0/2
+i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74655-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -75,9 +74,9 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o15 = {{-.33556+.473291*ii, .162849+.328819*ii}, {-.088739+1.46972*ii,
+o15 = {{.720337-.299683*ii, .382957+.311162*ii}, {.982183-1.46707*ii,
       -----------------------------------------------------------------------
-      -.844926+.391508*ii}}
+      -.522176-.986978*ii}}
 
 o15 : List
 

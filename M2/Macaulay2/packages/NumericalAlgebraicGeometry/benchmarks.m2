@@ -176,7 +176,7 @@ randomGeneralizedEigenvalueProblem = n -> (
      x := transpose matrix{drop(gens R,1)};
      T := flatten entries (A*x-R_0*B*x) | {n - 1 - sum flatten entries x};
      S := apply(n,i->(R_0-exp(ii*i/(2*pi*n)))*(x_(i,0)-1)) | {n - 1 - sum flatten entries x};
-     solsS := apply(n,i->toSequence({exp(ii*i/(2*pi*n))} | toList(i:1) | {0} | toList(n-i-1:1)));
+     solsS := apply(n,i->point{{exp(ii*i/(2*pi*n))} | toList(i:1) | {0} | toList(n-i-1:1)});
      (T,S,solsS)
      )
 

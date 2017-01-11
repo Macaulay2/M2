@@ -14,6 +14,7 @@
 void *trapaddr = (void *)1;
 int trapcount = 0;
 int trapset = 0;
+size_t trapsize = (size_t)-1;
 
 void trap(void) {}		/* I used to be concerned that this function would get optimized away, but it isn't static ... */
 
@@ -21,6 +22,10 @@ void *pointers[10];		/* during debugging we can put pointers here, visible to th
 void trapchk(void *p) { 
      trapcount++;
      if (trapcount == trapset || p == trapaddr || p == (void *)~(intptr_t)trapaddr) trap();
+}
+void trapchk_size(size_t n) { 
+     trapcount++;
+     if (trapcount == trapset || trapsize == n) trap();
 }
 
 #define STDERR 2
@@ -31,7 +36,7 @@ int badBlock() {
      abort();
 }
 
-#if GC_DEBUG
+#ifndef NDEBUG
 extern unsigned int GC_debug_header_size;
 extern void *GC_check_annotated_obj(void *); /* returns NULL or pointer to clobbered debug header location */
 void GC_check(void *p) {

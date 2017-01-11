@@ -91,7 +91,7 @@ public:
                                    const VECTOR(exponents) &exps,
                                    const VECTOR(int) &comps,
                                    VECTOR(int) &result_positions,
-                                   bool use_stable_sort=false);
+                                   bool use_stable_sort=true);
 
   static void find_strong_generators(int nvars,
                                    const VECTOR(mpz_ptr) &coeffs,
