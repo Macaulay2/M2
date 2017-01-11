@@ -1,13 +1,14 @@
 
 newPackage(
        "Cremona",
-	Version => "3.0", Date => "Jan 10, 2017 (first version: Apr 10, 2016, included with Macaulay2 1.9)",
+	Version => "3.0", Date => "Jan 10, 2017 (first version: Apr 11, 2016, included with Macaulay2 1.9)",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
     	DebuggingMode => false, Reload => true
     	)
 
 export{
+   "ChernSchwartzMacPherson",
    "SegreClass",
    "graph",
    "composeRationalMaps",
@@ -29,6 +30,7 @@ export{
 MathVerb:=true;
 certificate:="MathMode: output certified!\n";
 
+ChernSchwartzMacPherson = method(TypicalValue => RingElement, Options => {MathMode => false});
 SegreClass = method(TypicalValue => RingElement, Options => {MathMode => false});
 graph=method();
 composeRationalMaps=method(TypicalValue => RingMap);
@@ -461,6 +463,33 @@ SegreClass (RingMap) := o -> (phi) -> (
    sum(r+1,k->(-1)^(n-k-1)*sum(n-k+1,i->(-1)^i*binomial(n-k,i)*d1^(n-k-i)*d_i)*h^(N-k))
 );
 
+ChernSchwartzMacPherson (Ideal) := o -> (X) -> ( 
+   Pn:=ring X;
+   if not (isPolynomialRing Pn and isHomogeneous X) then error "expected homogeneous ideal in a polynomial ring";
+   n:=numgens Pn -1;
+   H:=local H;
+   R:=ZZ[H]/H^(n+1); 
+   H=first gens R;
+   verb:=MathVerb; MathVerb=false;
+   csm := (I) -> (
+      if numgens I == 1 then (
+           g:=projectiveDegrees(map(Pn,Pn,transpose jacobian I),MathMode=>o.MathMode);
+           return (1+H)^(n+1)-sum(n+1,j->g_j*(-H)^j*(1+H)^(n-j));
+      );
+      I1:=ideal I_0; I2:=ideal submatrix'(gens I,{0});
+      csm(I1) + csm(I2) - csm(I1*I2) 
+   );
+   csmX:=csm trim X;
+   MathVerb=verb;
+   if o.MathMode and MathVerb then <<certificate;
+   csmX
+);
+
+ChernSchwartzMacPherson (RingMap) := o -> (phi) -> (
+  checkRationalMap phi;
+  ChernSchwartzMacPherson(lift(ideal toMatrix phi,ambient target phi),MathMode=>o.MathMode)
+); 
+
 checkRationalMap = (phi) -> ( -- phi RingMap
    if not isField coefficientRing target phi then error("the coefficient ring needs to be a field");
    if not ((isPolynomialRing source phi or isQuotientRing source phi) and (isPolynomialRing target phi or isQuotientRing target phi) and isPolynomialRing ambient source phi and isPolynomialRing ambient target phi and isHomogeneous ideal source phi and isHomogeneous ideal target phi) then error("source and target of the ring map need to be quotients of polynomial rings by homogeneous ideals");
@@ -578,10 +607,10 @@ ZZ/300007[x_0..x_6]; phi=toMap {x_2*x_4-x_1*x_5, x_0*x_4-70731*x_1*x_4+129378*x_
     SeeAlso => {degreeOfRationalMap, SegreClass} 
           } 
    document { 
-    Key => {MathMode, [invertBirMap,MathMode], [projectiveDegrees,MathMode],[degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode]}, 
+    Key => {MathMode, [invertBirMap,MathMode], [projectiveDegrees,MathMode],[degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode],[ChernSchwartzMacPherson,MathMode]}, 
     Headline => "whether or not to ensure correctness of output", 
     "This option accepts a ", TO Boolean, " value, default value ",TT "false",".",
-     PARA{"If turned on in the methods ", TO invertBirMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeOfRationalMap, ", ", TO isBirational,", ", TO isDominant, " and ", TO SegreClass, ", it means whether or not to use a deterministic algorithm."}
+     PARA{"If turned on in the methods ", TO invertBirMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeOfRationalMap, ", ", TO isBirational,", ", TO isDominant, ", ", TO SegreClass, " and ", TO ChernSchwartzMacPherson, ", it means whether or not to use a deterministic algorithm."}
           } 
    document { 
     Key => {Dominant, [toMap,Dominant]}, 
@@ -831,7 +860,38 @@ time SegreClass B",
           "-- Segre class of B in P^9
 time SegreClass lift(B,ambient ring B)"
           },
-    SeeAlso => {projectiveDegrees} 
+    SeeAlso => {projectiveDegrees,ChernSchwartzMacPherson} 
+         }
+   document { 
+    Key => {ChernSchwartzMacPherson,(ChernSchwartzMacPherson,Ideal),(ChernSchwartzMacPherson,RingMap)}, 
+    Headline => "Chern-Schwartz-MacPherson class of a projective scheme", 
+     Usage => "ChernSchwartzMacPherson I", 
+     Inputs => { 
+          Ideal => "I" => {"a homogeneous ideal defining a closed subscheme ",TEX///$X\subset\mathbb{P}^n$///}
+          }, 
+     Outputs => { 
+          RingElement => {"the push-forward to the Chow ring of ",TEX///$\mathbb{P}^n$///," of the Chern-Schwartz-MacPherson class ",TEX///$c_{SM}(X)$///," of ",TEX///$X$///}
+          }, 
+     Consequences => {"The coefficient of H^n gives the Euler characteristic of the support of X"},
+       PARA{"This is an example of application of the method ", TO "projectiveDegrees",", due to results shown in ",HREF{"http://www.sciencedirect.com/science/article/pii/S0747717102000895","Computing characteristic classes of projective schemes"},", by P. Aluffi. See also the corresponding methods in the packages ", HREF{"http://www.math.fsu.edu/~aluffi/CSM/CSM.html", "CSM-A"},", by P. Aluffi, and ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9.2/share/doc/Macaulay2/CharacteristicClasses/html/", "CharacteristicClasses"},", by M. Helmer and C. Jost."},
+       PARA{"In the example below, we compute the push-forward to the Chow ring of ",TEX///$\mathbb{P}^3$///, " of the Chern-Schwartz-MacPherson class of the cone over the twisted cubic curve, using both a probabilistic and a deterministic approach."},
+    EXAMPLE { 
+          "GF(5^7)[x_0..x_4]",
+          "C = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}})",
+          "time ChernSchwartzMacPherson C",
+          "time ChernSchwartzMacPherson(C,MathMode=>true)"
+          },
+       PARA{"If a ring map representing a rational map between projective varieties is passed as input, then the computation is done for the ideal of the base locus."},
+       PARA{"In the case when the input ideal ",TT"I"," defines a smooth projective variety ",TEX///$X$///,", the push-forward of ",TEX///$c_{SM}(X)$///," can be computed much more efficiently using ",TO SegreClass, ". Indeed, in this case, ", TEX///$c_{SM}(X)$///," coincides with the (total) Chern class of the tangent bundle of ",TEX///$X$///," and can be obtained as follows (in general the routine below gives the push-forward of the so-called Chern-Fulton class)."},
+    EXAMPLE {
+           "-- I homogeneous ideal in a polynomial ring
+ChernClass = {mathmode => false} >> o -> (I) -> (s:=SegreClass(I,MathMode=>o.mathmode);s*(1+first gens ring s)^(numgens ring I))",
+           "-- example: Chern class of G(1,4)
+G = Grassmannian(1,4,CoefficientRing=>ZZ/190181)",
+          "time ChernClass G",
+          "time ChernClass(G,mathmode=>true)"
+            },
+    SeeAlso => {euler,SegreClass} 
          }
 
 TEST ///  --- quadro-quadric Cremona transformations 
