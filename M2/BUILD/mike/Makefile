@@ -21,7 +21,7 @@ darwin64-gcc6 : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-gcc5 : always
 	mkdir -p builds.tmp/darwin64-gcc5
@@ -34,7 +34,7 @@ darwin64-gcc5 : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
@@ -45,7 +45,7 @@ darwin64-gcc4.9 : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-clang : always
 	mkdir -p builds.tmp/darwin64-clang
@@ -104,24 +104,34 @@ darwin64-profile : always
 		--enable-profile \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint ntl"
+		--enable-build-libraries="mpir flint pari ntl"
 
 
 darwin64-debug-clang : always
 	mkdir -p builds.tmp/darwin64-debug-clang
 	cd builds.tmp/darwin64-debug-clang; ../../../../configure \
-		CC="clang -m64" CXX="clang++ -m64" \
-		--disable-gfan \
-		--disable-frobby \
+		CC="clang" CXX="clang++" \
 		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include -DENGINE_DEBUG_" \
 		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--prefix="`pwd`/installed" \
 		--build=x86_64-apple-darwin \
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-build-libraries="mpir flint pari ntl"
+
+darwin64-profile-clang : always
+	mkdir -p builds.tmp/darwin64-profile-clang
+	cd builds.tmp/darwin64-profile-clang; ../../../../configure \
+		CC="clang" CXX="clang++" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--prefix="`pwd`/installed" \
+		--build=x86_64-apple-darwin \
+		--enable-profile \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="mpir flint pari ntl"
 
 ###################
 ## linux ##########
