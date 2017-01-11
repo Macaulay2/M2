@@ -1,11 +1,21 @@
+# https://linbox-team.github.io/fflas-ffpack/
 # svn://linalg.org/fflas-ffpack/
-# http://linalg.org/projects/fflas-ffpack
+# This link is broken: http://linalg.org/projects/fflas-ffpack
+# http://linalg.org/
+
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 1.6.0
-URL = http://linalg.org/
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
+## version 2.2.1 works with (only) givaro 4.0.1
+## version 2.2.1 doesn't yet compile with e dir.
+#VERSION = 2.2.1
+#URL = https://github.com/linbox-team/fflas-ffpack/releases/download/v2.2.1/
+# 2.2.2 is now available
 
 TARDIR = fflas-ffpack-$(VERSION)
 TARFILE = fflas-ffpack-$(VERSION).tar.gz
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
 LICENSEFILES = COPYING
 PRECONFIGURE = NOCONFIGURE=yes 
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \

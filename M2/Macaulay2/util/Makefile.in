@@ -6,10 +6,6 @@ VPATH = @srcdir@
 EXES := echoout timestmp
 CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
 
-ifeq (@OS@,Linux)
-EXES += screen
-endif
-
 all: $(EXES)
 clean:
 	rm -f gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) gc_tested gc_test

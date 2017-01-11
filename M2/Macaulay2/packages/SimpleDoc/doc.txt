@@ -160,8 +160,11 @@ Node
     The text in the {\bf Description} section occurs in subsections labeled
     with the keywords {\bf Text}, {\bf Example}, {\bf CannedExample}, {\bf
     Pre}, and {\bf Code}.  The text in a {\bf Text} subsection can be separated
-    into paragraphs with blank lines.  Each paragraph can contain markup as
-    described above.  The text in an {\bf Example} subsection consists of lines
+    into paragraphs with blank lines.  (A paragraph, when rendered in HTML,
+    will normally be enclosed in an HTML P tag, except if its top level markup is an instance of
+    @TO HypertextContainer@ or @TO HypertextParagraph@.)
+
+    The text in an {\bf Example} subsection consists of lines
     of Macaulay2 code to be used as examples in the documentation node; within
     in each complete expression, indent lines after the first one more than the
     first; output will be generated automatically and incorporated into the

@@ -3,8 +3,6 @@
 #include "aring-gf-givaro.hpp"
 #include "error.h"
 
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-
 #include "ringmap.hpp"
 
 // Uncomment the following line to see debugging output
@@ -574,12 +572,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
       b = tmp;
     }
 
-    void ARingGFGivaro::elem_text_out(buffer &o, 
-                const ElementType a, 
-                bool p_one, 
-                bool p_plus, 
-                bool p_parens) const;
-
     /** @brief returns x,y  s.y.  x*a + y*b == 0.
        if possible, x is set to 1.
        no need to consider the case a==0 or b==0.
@@ -625,7 +617,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         elem a, b;
 
         std::pair<bool,long> res = mOriginalRing->getCoefficientRing()->coerceToLongInteger(t->coeff);
-        M2_ASSERT(res.first);
+        assert(res.first);
         set_from_long(a, res.second);
 
         mOriginalRing->getMonoid()->to_expvector(t->monom, exp);
@@ -654,7 +646,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         //   mPrimitiveElement^a
         // Also: want to insure that mPrimitiveElement is the same element as zeta!
         // (And the defining polynomials are the same too).
-        // TODO: add tests and M2_ASSERT's for all of these conditions
+        // TODO: add tests and assert's for all of these conditions
         result = mOriginalRing->power(mPrimitiveElement, static_cast<int>(f));
       }
   }
@@ -678,7 +670,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
 
 };
 
-#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil

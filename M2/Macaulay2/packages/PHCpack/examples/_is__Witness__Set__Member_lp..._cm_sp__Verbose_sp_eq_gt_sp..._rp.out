@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- {* hash: -1300376990 *}
+-- COMPILE TIME: Oct  7 2016, 07:56:28
+--loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x11,x22,x21,x12,x23,x13];
 
@@ -14,10 +16,10 @@ i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 o5 = true
 
 i6 : isWitnessSetMember(W, point{{0,0,0,0,0,0}},Verbose=>true)
-writing witness set to file /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/17PHCwitset
-writing test point to file /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/18PHCtestpoint
-calling phc -f < /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/19PHCbatch > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/21PHCsession
-output of phc -f is in file /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/20PHCoutput
+writing witness set to file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-30059-0/17PHCwitset
+writing test point to file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-30059-0/18PHCtestpoint
+calling phc -f < /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-30059-0/19PHCbatch > /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-30059-0/21PHCsession
+output of phc -f is in file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-30059-0/20PHCoutput
 
 o6 = true
 

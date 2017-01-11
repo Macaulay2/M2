@@ -1,7 +1,6 @@
   //////////////////////
   // ZZpFFPACK /////////
   //////////////////////
-#ifdef HAVE_FFLAS_FFPACK
 namespace ffpackInterface {
   // Functions for DMatZZpFFPACK, in dmat.cpp
   size_t rank(const DMatZZpFFPACK& A);
@@ -67,7 +66,6 @@ private:
   const Mat& mLU; // reference to the original matrix
 };
 
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

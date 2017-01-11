@@ -543,8 +543,9 @@ doc ///
 	       techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
 	       They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
 	       In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
-	  Text
+
 	       Methods for computing and manipulating local dual spaces:
+
 	       @UL {
 		   {TO "truncatedDual"},
 		   {TO "zeroDimensionalDual"},
@@ -555,15 +556,16 @@ doc ///
 		   {TO "innerProduct"},
                    {TO "reduceSpace"}
 		   }@
-	  Text
+
 	       Auxiliary numerical linear algebra methods:
+
 	       @UL {
 		   {TO "numericalKernel"},
 		   {TO "numericalImage"},
 		   {TO "colReduce"},
 		   {TO "adjointMatrix"}
 		   }@
-	   Text
+
 	       The algorithm used for computing truncated dual spaces is that of B. Mourrain ("Isolated points, duality and residues." 
 	       J. Pure Appl. Algebra, 117/118:469–493, 1997).  To compute the initial ideal and Hilbert regularity of positive dimensional
 	       ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
@@ -1019,11 +1021,12 @@ doc ///
      Description
           Text
 	       The two available algorithm choices are
+
 	       @UL {
 		   {TOH "BM"},
 		   {TOH "DZ"}
 		   }@
-	  Text
+
 	       Both should produce roughly 
 	       the same output, but there may be differences in performance.  Generally @TT "BM"@ should be more efficient and is the default, 
 	       but @TT "DZ"@ is left as an option to the user.

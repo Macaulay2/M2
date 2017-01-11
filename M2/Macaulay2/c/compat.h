@@ -58,11 +58,7 @@ extern char errfmtnc[];
 #include <stdio.h>
 #include <fcntl.h>
 
-#ifdef __STDC__
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 /*
 # Local Variables:

@@ -174,7 +174,7 @@ int Subsets::concatenateSubsets(const Subset &s,
 {
   size_t p = s.size();
   size_t q = t.size();
-  M2_ASSERT(p+q == result.size());
+  assert(p+q == result.size());
   size_t a = 0;
   size_t b = 0;
   size_t c = 0;

@@ -2,9 +2,6 @@
 
 #include "aring-zzp-ffpack.hpp"
 #include "error.h"
-#define M2_ASSERT assert
-
-#if defined(HAVE_FFLAS_FFPACK)
 
 #include "ringmap.hpp"
 
@@ -17,7 +14,7 @@ namespace M2 {
     mDimension            (1),
     mGeneratorComputed    (false)
   {
-    M2_ASSERT( FieldType::getMaxModulus()>=mCharac );
+    assert( FieldType::getMaxModulus()>=mCharac );
   }
  
   void ARingZZpFFPACK::elem_text_out
@@ -58,7 +55,7 @@ namespace M2 {
             return currElem;
           }
       }
-    M2_ASSERT(false); // we should not get here, if the program logic is OK
+    assert(false); // we should not get here, if the program logic is OK
     return ElementType(1);    
   }
         
@@ -91,7 +88,7 @@ namespace M2 {
 
   void ARingZZpFFPACK::init(ElementType &result) const
   { 
-    //    M2_ASSERT(0 == mFfpackField.zero);
+    //    assert(0 == mFfpackField.zero);
     result = 0;
   } 
 
@@ -102,7 +99,7 @@ namespace M2 {
    
   void ARingZZpFFPACK::set_zero(ElementType &result) const
   { 
-    // M2_ASSERT(0 == mFfpackField.zero);
+    // assert(0 == mFfpackField.zero);
     result = 0;
   }
   
@@ -150,7 +147,7 @@ namespace M2 {
 
   void ARingZZpFFPACK::unsafeInvert(ElementType &result, const ElementType a) const
   {
-    M2_ASSERT(not is_zero(a));
+    assert(not is_zero(a));
     mFfpackField.inv(result, a);
   }
 
@@ -206,7 +203,7 @@ namespace M2 {
       return;
 
     // Now use doubling algorithm
-    M2_ASSERT(n > 0);
+    assert(n > 0);
     for (;;)
       {
         if ((n % 2) != 0)
@@ -270,7 +267,6 @@ namespace M2 {
   
 };
 
-#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil

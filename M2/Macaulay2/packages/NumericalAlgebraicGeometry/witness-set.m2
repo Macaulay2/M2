@@ -239,9 +239,8 @@ witnessSet (Ideal,ZZ) := (I,d) -> ( -- assume: dim I == d
      SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
      S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
      P := solveSystem(F | S_*);
-     witnessSet(ideal F, SM, 
-	 if numgens I == n-d then P else select(P, p->isOn(p,I))
-	 )
+     w'points := if numgens I == n-d then P else select(P, p->isOn(p,I));
+     witnessSet(ideal F, SM, w'points)
      )
 
 TEST ///

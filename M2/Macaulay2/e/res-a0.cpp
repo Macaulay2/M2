@@ -6,6 +6,9 @@
 #include "buffer.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
+#include "betti.hpp"
+
+#include <iostream>
 bool res2_comp::stop_conditions_ok()
 {
 
@@ -596,7 +599,7 @@ void res2_comp::remove_res2_level(res2_level *lev)
   deleteitem(lev);
 }
 
-void res2_comp::remove_res()
+res2_comp::~res2_comp()
 {
   int i;
   for (i=0; i<resn.length(); i++)
@@ -605,11 +608,6 @@ void res2_comp::remove_res()
   delete res2_pair_stash;
   delete mi_stash;
   delete R;
-}
-
-res2_comp::~res2_comp()
-{
-  remove_res();
 }
 //////////////////////////////////////////////
 //  Data structure insertion and access  /////
@@ -1816,8 +1814,10 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 //////////// res-a0-aux /////////////////////
 #include "matrix-con.hpp"
 
+#if 0
 M2_arrayint res2_comp::betti_skeleton() const
 {
+  fprintf(stdout, "In res-a0.cpp:betti_skeleton old\n");
   int lo = lodegree;
   int hi = lo+hidegree;
   int len = resn.length()-1;
@@ -1835,6 +1835,28 @@ M2_arrayint res2_comp::betti_skeleton() const
   deletearray(bettis);
   return result;
 }
+#endif
+
+#if 1
+M2_arrayint res2_comp::betti_skeleton() const
+{
+  fprintf(stdout, "In res-a0.cpp:betti_skeleton new\n");
+  int lo = lodegree;
+  int hi = lo+hidegree;
+  int len = resn.length()-1;
+  BettiDisplay B(lo,hi,len);
+
+  for (int lev=0; lev<=len; lev++)
+    {
+      for (res2_pair *p = resn[lev]->pairs; p != NULL; p = p->next)
+        {
+          int d = p->degree;
+          B.entry(d,lev) ++;
+        }
+    }
+  return B.getBetti();
+}
+#endif
 
 M2_arrayint res2_comp::betti_remaining() const
 {
@@ -1910,6 +1932,9 @@ M2_arrayint res2_comp::get_betti(int type) const
     return betti_remaining();
   case 3:
     return betti_nmonoms();
+  case 4:
+    ERROR("cannot use Minimize=>true unless res(...,FastNonminimal=>true) was used");
+    return 0;
   }
   ERROR("received unknown betti type");
   return 0;

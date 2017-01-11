@@ -1552,6 +1552,22 @@ export rawFactor(e:Expr):Expr := (
      );
 setupfun("rawFactor",rawFactor);
 
+export rawRoots(e:Expr):Expr := (
+    when e
+    is s:Sequence do (
+      if length(s) == 3 then
+        when s.0 is x:RawRingElementCell do
+        when s.1 is n:ZZcell do
+        if isBoolean(s.2) then 
+          toExpr(Ccode(RawRingElementArrayOrNull, "rawRoots(", x.p, ",", toInt(n.v), ",", toBoolean(s.2), ")" ))
+        else WrongArg(3, "a boolean")
+        else WrongArg(2, "a raw ring element")
+        else WrongArg(1, "an integer")
+      else WrongNumArgs(2))
+    else WrongArg("a raw ring element and an integer")
+);
+setupfun("rawRoots", rawRoots);
+
 export rawCharSeries(e:Expr):Expr := (
      when e
      is x:RawMatrixCell do toExpr( Ccode( RawMatrixArrayOrNull, "rawCharSeries(", x.p, ")" ))
@@ -3551,6 +3567,26 @@ export rawMarkedGB(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMarkedGB", rawMarkedGB);
 
+export rawMinimalBetti(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 3 then
+    when s.0 is rawC:RawComputationCell do
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else -- degree_limit ...
+     if getLengthOfSequence(s.1)>1 then WrongArg(2,"a sequence of small integers of length at most 1") else -- ... converted to a heft value
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
+     if getLengthOfSequence(s.2)>1 then WrongArg(3,"a sequence of small integers of length at most 1") else
+     toExpr(Ccode(RawArrayIntOrNull,"rawMinimalBetti(",
+             rawC.p, ",",
+             getSequenceOfSmallIntegers(s.1), ",",
+             getSequenceOfSmallIntegers(s.2), 
+             ")"
+             ))
+     else WrongArg(1, "a raw resolution computation")
+     else WrongNumArgs(3)
+     else WrongNumArgs(3)
+    );
+setupfun("rawMinimalBetti", rawMinimalBetti);
+
 export rawGBSetStop(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 10 then WrongNumArgs(10) else
@@ -3657,6 +3693,22 @@ export rawResolutionGetMatrix(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawResolutionGetMatrix", rawResolutionGetMatrix);
+
+export rawResolutionGetMatrix2(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 3 then 
+     when a.0 is G:RawComputationCell do 
+     when a.1 is level:ZZcell do
+     when a.2 is degree:ZZcell do
+     if !isInt(level) then WrongArgSmallInteger(2) else
+     if !isInt(degree) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(RawMutableMatrixOrNull, "rawResolutionGetMatrix2(", G.p, ",", toInt(level), ",", toInt(degree), ")" ))
+     else WrongArgZZ(3)
+     else WrongArgZZ(2)     
+     else WrongArg(1,"a raw computation")
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
+setupfun("rawResolutionGetMatrix2", rawResolutionGetMatrix2);
 
 export rawResolutionStatusLevel(e:Expr):Expr := (
      when e is s:Sequence do

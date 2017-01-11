@@ -1,0 +1,16 @@
+M2 scripts testing the functions/methods should go here.
+They should be engaged via TEST commands from the main file of the package.
+Type check "NumericalSchubertCalculus" to run these.
+
+-----------------------------------------------------------------------------
+Files                    Remarks (Timings on Frank's Mac) 25 Sept 2014
+
+Included currently as TEST in NumericalSchubertCalculus.m2:
+poincare-G36.m2
+21e3-G36.m2                  Finds both solutions in 1.92839s
+                                  (tests the internal function changeFlags)
+2e4-G26.m2                   Finds three solutions after 3.18034s using LinearAlgebra=>true
+4LinesOsculating_changeFlags.m2   Finds (real) solutions for 4 lines in special position
+4lines.m2                    Finds two solutions after 0.575023s
+columnReduce.m2
+

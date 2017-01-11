@@ -1,0 +1,17 @@
+-- certification of regular solutions
+
+-- conversion (to/from QQ, RR, CC, ...)
+
+-- ARingCCarb and linear algebra
+
+-- solve univariate polynomials
+
+-- install cleanly?
+
+RELATED:
+
+-- QQ[ii]
+
+-- tower of algebraic extensions
+
+-- conversion to algebraic numbers 

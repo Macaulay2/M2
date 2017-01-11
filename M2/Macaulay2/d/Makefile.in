@@ -86,14 +86,14 @@ endif
 pari-c.o: ../../include/M2/config.h ../../config.status
 endif
 
+pari-gnump.o: CFLAGS += -Wno-error
+
 pthread-tmp.c : SCCFLAGS += -noline
 
 ## the problem with this is that it can make "make" think the targets were made:
 # actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
 
-version.o : ../../include/M2/config.h git-description.c
-git-description.c: git-description; echo "const char * gitDescription = \"`cat $<`\";" >$@
-git-description: .; (git describe --dirty --long --always --abbrev=40 --tags --match 'version-*' || echo unknown) > $@
+version.o : ../../include/M2/config.h
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
@@ -164,9 +164,16 @@ endif
 
 CFLAGS   += -Wreturn-type -Werror
 CXXFLAGS += -Wreturn-type -Werror
-CXXFLAGS += -std=c++0x
+CXXFLAGS += -std=c++11
 
 python-c.o : | python-exports.h.tmp
+
+# see https://github.com/Macaulay2/M2/issues/430
+# adding this prevents an error when gcc 6 compiles stack_trace in M2lib.c
+ifeq (@HAVE_WFRAME_ADDRESS@,yes)
+M2lib.o : M2_CFLAGS += -Wno-frame-address
+endif
+
 M2lib.o scclib.o : | interp-exports.h.tmp
 scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
 M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h

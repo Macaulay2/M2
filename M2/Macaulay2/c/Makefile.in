@@ -48,8 +48,7 @@ LOADLIBES += @GC_LIBS@
 
 ############################## compiling
 scc1: $(OFILES) 
-	@echo "LDFLAGS: $(LDFLAGS)"
-	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) $(LIBS) -o scc1
+	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) -o scc1
 
 $(OFILES) : $(HFILES)
 grammar.o: grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)

@@ -329,10 +329,12 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
   for (int i=0; i<min; i++)
     {
       int thisloc = perm[i]-1;
-      size_t tmp = mPerm[thisloc];
-      mPerm[thisloc] = mPerm[i];
-      mPerm[i] = tmp;
-      mSign = not mSign;
+      if(i!=thisloc) {
+        mSign = not mSign;
+        size_t tmp = mPerm[thisloc];
+        mPerm[thisloc] = mPerm[i];
+        mPerm[i] = tmp;
+      }
     }
 
 
@@ -397,10 +399,12 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
   for (int i=0; i<min; i++)
     {
       int thisloc = perm[i]-1;
-      size_t tmp = mPerm[thisloc];
-      mPerm[thisloc] = mPerm[i];
-      mPerm[i] = tmp;
-      mSign = not mSign;
+      if(i!=thisloc) {
+        mSign = not mSign;
+        size_t tmp = mPerm[thisloc];
+        mPerm[thisloc] = mPerm[i];
+        mPerm[i] = tmp;
+      }
     }
 
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
@@ -419,8 +423,8 @@ void LUUtil<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
   upper.resize(min, LU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   for (size_t c=0; c<LU.numColumns(); c++)
     {

@@ -435,8 +435,8 @@ bool RingElement::getSmallIntegerCoefficients(std::vector<long>& result_coeffs) 
         long coeff = res.second;
 
         R->getMonoid()->to_expvector(t->monom, exp);
-        M2_ASSERT(exp[0] >= 0);
-        M2_ASSERT(exp[0] <= deg);
+        assert(exp[0] >= 0);
+        assert(exp[0] <= deg);
         result_coeffs[exp[0]] = coeff;
       }
   return true;

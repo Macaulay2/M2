@@ -1,30 +1,14 @@
 VPATH = @srcdir@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
-VERSION = 6.0.0a
-TARDIR = gmp-6.0.0
+VERSION = 6.1.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 LICENSEFILES = README COPYING* doc/gmp.info*
-
 CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
-
-# re-enable check, because we want gmp to work if we use it
-# # disable check, because it fails on various 64 bit machines
-# CHECKTARGET = .
-
-# core 2 duo patch:
-# http://www.math.jmu.edu/~martin/
-# http://www.math.jmu.edu/~martin/gmp-4.2.x-core2-port.tar.gz
-
-# ifeq (Darwin i386,$(shell uname -sm))
-# PRECONFIGURE = autoreconf -i && (cd mpn/x86 && rm -f *dive_1* */*dive_1* */*/*dive_1* */*mode1o* */*/*mode1o*) || false
-# else 
-# PRECONFIGURE = autoreconf -i
-# endif
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gmp/Makefile
 # Local Variables:

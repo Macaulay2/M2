@@ -1,0 +1,24 @@
+To Do for the Numerical Schubert Calculus project
+
+Notes from talk with Abraham  Dec 15?
+
+Need to:
+ - Find examples where the software breaks and examine them.
+
+ - Make a table comparing all four implementations on the same problem
+    for the software paper.
+
+ - Standard input that should work for everything:
+
+   solveMe(SchubertProblem, k, n)
+
+ where SchubertProblem is a list of pairs
+   { ( bracket, flag ), (anotherBracket, anotherFlag),...}
+
+ Frank will write a PHC wrapper for this with standard checks 
+   (general flag, Schubert problem, etc.)
+
+ the service function verifyInput verifies all inputs, using breaks to return a 
+   useful error message to the user.
+
+ First step:  Read the TST and EXA dirctory, as well as the bugs,

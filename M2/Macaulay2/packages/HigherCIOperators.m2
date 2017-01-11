@@ -6,17 +6,17 @@ newPackage(
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
         Headline => "Higer CI operators",
-        DebuggingMode => false
+        DebuggingMode => false,
+	PackageExports =>{"MCMApproximations"}
         )
 
 export {"exteriorMultiplication",
 	"higherCIOperators",
 	"makeALDifferential",
 	"ciOperatorResolution",
-	"syzygyModule",
+	--"syzygyModule",
 	"trueKoszul"
        }
-
 --notify = true
 needsPackage "CompleteIntersectionResolutions"
 
@@ -32,11 +32,11 @@ trueKoszul Matrix := ff -> (
     chainComplex mapList
     )
 
-syzygyModule = method()
+{*syzygyModule = method()
 syzygyModule (ZZ, Module) := (d,M)->(
     F:= res(M, LengthLimit => d+1);
     coker F.dd_(d+1))
-
+*}
 ciOperatorResolution=method()
 ciOperatorResolution(ChainComplex, ChainComplex) := (A,L) ->(
     u :=higherCIOperators(A,L);
@@ -418,7 +418,7 @@ doc ///
     higherCIOperators
 ///
 
-
+{*
 doc ///
    Key
     syzygyModule
@@ -434,6 +434,7 @@ doc ///
    Outputs
     M:Module
 ///
+*}
 doc ///
    Key
     HigherCIOperators
@@ -467,3 +468,4 @@ uninstallPackage "HigherCIOperators"
 installPackage "HigherCIOperators"
 viewHelp HigherCIOperators
 check HigherCIOperators
+

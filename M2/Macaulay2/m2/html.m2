@@ -3,7 +3,7 @@
 
 fixtitle = method()
 fixtitle Nothing := identity
-fixtitle String := s -> replace("\"","&quot;",s)	    -- " just in case emacs gets confused
+fixtitle String := htmlLiteral
 
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 
@@ -140,6 +140,7 @@ html HREF := x -> (
      concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+
 html TO   := x -> (
      tag := x#0;
      d := fetchPrimaryRawDocumentation tag;
@@ -204,6 +205,11 @@ links := tag -> (
      LINK { "href" => toURL doccss, "rel" => "stylesheet", "type" => "text/css" }
      )
 
+-- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
+-- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
+-- character encoding.  Locally-stored documentation does not have an HTTP header.)
+defaultCharSet := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
+
 BUTTON := (s,alt) -> (
      s = toURL s;
      if alt === null
@@ -213,7 +219,7 @@ BUTTON := (s,alt) -> (
 html HTML := t -> concatenate(
 ///<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
 <!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd" >
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd" >
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 ///,
      apply(t,html), 
@@ -283,7 +289,7 @@ net TreeNode := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode := x -> SPAN { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode := x -> DIV { TOH checkIsTag x#0, toDoc x#1 }
 
 local visitCount
 local duplicateReferences
@@ -408,7 +414,7 @@ makeMasterIndex := (keylist,verbose) -> (
      title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
-	  HEAD splice { TITLE title, links() },
+	  HEAD splice { TITLE title, defaultCharSet(), links() },
 	  BODY nonnull {
 	       DIV { topNodeButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
@@ -430,7 +436,7 @@ maketableOfContents := (verbose) -> (
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
-	  HEAD splice { TITLE title, links() },
+	  HEAD splice { TITLE title, defaultCharSet(), links() },
 	  BODY {
 	       DIV { topNodeButton, " | ", masterIndexButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
@@ -577,7 +583,7 @@ installPackage = method(Options => {
 	  EncapsulateDirectory => pkg -> pkg#"title"|"-"|pkg.Options.Version|"/",
 	  IgnoreExampleErrors => false,
 	  FileName => null,
-	  CacheExampleOutput => false,			    -- overrides the value specified by newPackage
+	  CacheExampleOutput => null,			    -- overrides the value specified by newPackage if true or false
 	  CheckDocumentation => true,
 	  MakeDocumentation => true,
 	  MakeInfo => true,
@@ -668,7 +674,13 @@ installPackage Package := opts -> pkg -> (
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildPrefix|pkgDirectory|bn, Verbose => debugLevel > 5);
 
-     excludes := Exclude => {"^CVS$", "^\\.svn$"};
+     excludes := Exclude => {
+	  "^CVS$", 
+	  "^\\.svn$", 
+	  -- The package Style has a read-only file "Makefile", made from "Makefile.in", that doesn't need to be distributed.
+	  -- Better would be to fix copyDirectory so it manages to copy even when the target file is read-only
+	  "Makefile"
+	  };
 
      if pkg === Core then (
 	  ) else (
@@ -786,8 +798,8 @@ installPackage Package := opts -> pkg -> (
 		    changefun := () -> remove(rawDocUnchanged,fkey);
 		    inputhash := hash inputs;
 	  	    possiblyCache := () -> (
-			 if opts.CacheExampleOutput or (options pkg).CacheExampleOutput === true 
-			 and not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' 
+			 if opts.CacheExampleOutput =!= false and (options pkg).CacheExampleOutput === true 
+			 and ( not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' )
 			 then (
 			      if verbose then stderr << "--caching example output for " << fkey << " in " << outf' << endl;
 			      if not isDirectory exampleDir' then makeDirectory exampleDir';
@@ -991,6 +1003,7 @@ installPackage Package := opts -> pkg -> (
 	       << html HTML { 
 		    HEAD splice {
 			 TITLE {fkey, commentize headline fkey}, -- I hope this works...
+			 defaultCharSet(),
 			 links tag
 			 },
 		    BODY { 
@@ -1177,6 +1190,7 @@ makePackageIndex List := path -> (
      fn << html HTML { 
 	  HEAD splice {
 	       TITLE {key, commentize headline key},
+	       defaultCharSet(),
 	       links()
 	       },
 	  BODY { 
@@ -1284,7 +1298,8 @@ showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {
-	       TITLE "Macaulay2 Output"
+	       TITLE "Macaulay2 Output",
+	       defaultCharSet()
 	       },
      	  BODY {
 	       x

@@ -13,7 +13,7 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {schurRing, SchurRing, symmRing, toS, toE, toP, jacobiTrudi, SchurRingIndexedVariableTable}
+export {"schurRing", "SchurRing", "symmRing", "toS", "toE", "toP", "jacobiTrudi", "SchurRingIndexedVariableTable"}
 -- Improve the names/interface of the following:
 --, symmRing, plethysmMap, jacobiTrudi, plethysm, cauchy, bott}
 

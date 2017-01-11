@@ -287,7 +287,8 @@ Node
  Description
   Text
    The tests available are: @
-   UL apply(sort pairs benchmarks, (n,x) -> LI { toExternalString n, " -- ", x#0})
+   BR{}, 
+   apply(sort pairs benchmarks, (n,x) -> { toExternalString n, " -- ", x#0, BR{}})
    @
   Example
    runBenchmarks "res39"

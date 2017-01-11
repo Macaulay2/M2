@@ -7,7 +7,7 @@ MatrixStream::MatrixStream(const FreeModule* F)
     mCurrentComponent(0)
 {
   mPolyRing = F->get_ring()->cast_to_PolyRing();
-  M2_ASSERT(mPolyRing != 0);
+  assert(mPolyRing != 0);
   mCurrentExponents = newarray_clear(Exponent,mPolyRing->n_vars());
   mCurrentColumn = newarray_clear(Nterm*, F->rank());
   mLastTerms = newarray_clear(Nterm*, F->rank());
@@ -38,8 +38,8 @@ void MatrixStream::appendTermBegin(Component com)
 
 void MatrixStream::appendExponent(VarIndex index, Exponent exponent)
 {
-  M2_ASSERT(index >= 0);
-  M2_ASSERT(index < mPolyRing->n_vars());
+  assert(index >= 0);
+  assert(index < mPolyRing->n_vars());
   mCurrentExponents[index] = exponent;
 }
 void MatrixStream::appendTermDone(Coefficient coefficient)

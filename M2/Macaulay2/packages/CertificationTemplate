@@ -5,12 +5,12 @@
 		"journal URI" => "http://j-sag.org/",
 		"article title" => "...",
 		"acceptance date" => "...",
-		"published article URI" => "http://j-sag.org/Volume.../....pdf",
-         	"published article DOI" => "http://dx.doi.org/...",
-		"published code URI" => "http://j-sag.org/Volume.../....m2",
+		"published article URI" => "...",
+         	"published article DOI" => "...",
+		"published code URI" => "...",
      	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
 		"release at publication" => "...",	    -- git commit number in hex
 		"version at publication" => "...",
 		"volume number" => "...",
-		"volume URI" => "http://j-sag.org/Volume.../"
+		"volume URI" => "http://msp.org/jsag/2015/7-1/"
 		},

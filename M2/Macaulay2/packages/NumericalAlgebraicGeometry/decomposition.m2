@@ -148,8 +148,9 @@ for i to 5 do (
 ///
 
 
-numericalIrreducibleDecompositionM2 = I -> numericalVariety flatten (components regeneration (I_*,Software=>M2engine) / decompose)
-numericalIrreducibleDecompositionBertini = I -> bertiniPosDimSolve I_*
+numericalIrreducibleDecompositionM2 = (I,o) -> numericalVariety flatten (components regeneration (I_*,Software=>M2engine) / decompose)
+toBertiniOptions'numericalIrreducibleDecomposition = o -> new OptionTable from {Verbose=>false}
+numericalIrreducibleDecompositionBertini = (I,o) -> bertiniPosDimSolve(I_*, toBertiniOptions'numericalIrreducibleDecomposition o)
 numericalIrreducibleDecomposition = method(Options=>{Software=>null})
 numericalIrreducibleDecomposition Ideal := o -> I -> (
     o = fillInDefaultOptions o;   
@@ -161,7 +162,7 @@ numericalIrreducibleDecomposition Ideal := o -> I -> (
     	else if member(o.Software,{M2,M2engine})  
 	then numericalIrreducibleDecompositionM2
     	else error "allowed values for Software: M2engine, M2, BERTINI, PHCPACK"
-    	) I
+    	) (I,o)
     )
 
 TEST /// -- example with one nonreduced component

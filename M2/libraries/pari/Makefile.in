@@ -8,7 +8,7 @@ VPATH = @srcdir@
 # pari maintainers have been known to break URL's, so we copy their software to another server:
 # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.7.3
+VERSION = 2.7.5
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
@@ -55,21 +55,15 @@ CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib ./Configure --prefix=
 GETODIR  = `cd $(BUILDDIR) && find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
 GETODIR2 = `find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
 
-ifeq (@PROFILING@,yes)
-CONFIGURECMD += -pg
 INSTALLOPTIONS = -C $(GETODIR2)
 BUILDOPTIONS = -C $(GETODIR2)
 CHECKOPTIONS = -C $(GETODIR2)
+
+ifeq (@PROFILING@,yes)
+CONFIGURECMD += -pg
 else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
-INSTALLOPTIONS = -C $(GETODIR2)
-BUILDOPTIONS = -C $(GETODIR2)
-CHECKOPTIONS = -C $(GETODIR2)
-else
-INSTALLOPTIONS = -C $(GETODIR2)
-BUILDOPTIONS = -C $(GETODIR2)
-CHECKOPTIONS = -C $(GETODIR2)
 endif
 endif
 

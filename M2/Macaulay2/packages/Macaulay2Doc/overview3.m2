@@ -58,6 +58,8 @@ document {
 	  TO "NTL library",
 	  TO "FLINT",
 	  TO "mpack",
+	  TO "givaro",
+	  TO "fflas-ffpack",
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
@@ -66,6 +68,22 @@ document {
 	  TO "cdd+",
 	  TO "lrslib"
      	  }
+     }
+
+document {
+     Key => "givaro",
+     PARA {
+	  "The library ", TT "givaro", " is a library required for ", TO "fflas-ffpack", " available from ", HREF "https://github.com/linbox-team/givaro", "."
+	  }
+     }
+
+document {
+     Key => "fflas-ffpack",
+     PARA {
+	  "The library ", TT "fflas-ffpack", " is a library
+	  for dense and some sparse linear algebra over a finite field or the ring of integers
+ 	  available from ", HREF "https://github.com/linbox-team/fflas-ffpack", "."
+	  }
      }
 
 document {

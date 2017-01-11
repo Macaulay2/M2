@@ -88,21 +88,19 @@ markup2 = (textlines, keylinenum) -> (
      sp := separateRegexp(///(^|[^\])(@)///, 2, s);
      sp = apply(sp, s -> replace(///\\@///,"@",s));
      if not odd(#sp) then error "unmatched @";
-     for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else safevalue concatenate("(",sp#i,")")
+     t := for i from 0 to #sp-1 list if even i then if sp#i != "" then TEX sp#i else "" else safevalue concatenate("(",sp#i,")");
+     t = select(t, x -> x =!= "");
+     if instance(t,List) and #t === 1 then t = first t;
+     t
      )
 
 markup = (textlines, keylinenum) -> (
      textlines = prepend(makeTextline("",infinity,if #textlines == 0 then "unknown" else getLinenum first textlines - 1), textlines);
      splits := splitByIndent(textlines,true);
-     apply(splits, (i,j) -> (
-	       m := markup2(textlines_{i+1..j},getLinenum textlines#i);
-	       if not (#m == 3 and m#0 === "" and instance(m#1,UL) and m#2 === "") 
-	       then m = (
-		    -- LI{PARA{...},PARA{...},PARA{...}} results in too much vertical space at top and bottom when viewed
-		    -- in a browser, so here we try to arrange for LI{DIV{...},PARA{...},DIV{...}}
-		    if i+1 != 0 and j+1 != #textlines then PARA else DIV
-		    ) m;
-	       m)))
+     DIV apply(splits, (i,j) -> (
+	       x := markup2(textlines_{i+1..j},getLinenum textlines#i);
+	       if not (instance(x,HypertextContainer) or instance(x,HypertextParagraph)) then x = PARA x;
+	       x)))
     
 items = (textlines, keylinenum) -> (
      apply(splitByIndent(textlines, false), (i,j) -> (
@@ -128,7 +126,7 @@ DescriptionFunctions = new HashTable from {
 	  splitByIndent(textlines,false),
 	  (i,j) -> reassemble(getIndent textlines#0, take(textlines, {i,j}))),
      "CannedExample" => (textlines,keylinenum) -> EXAMPLE { PRE reassemble(getIndent textlines#0, textlines) },
-     "Text" => toSequence @@ markup,
+     "Text" => markup,
      "Pre" => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
      "Code" => (textlines, keylinenum) -> ( 
 	  m := min\\getIndent\textlines; 

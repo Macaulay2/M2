@@ -348,7 +348,7 @@ static void interrupt_handler(int sig) {
 			      exit(12);
 			      }
 			 if (buf[0]=='y' || buf[0]=='Y') {
-			      #                   ifdef DEBUG
+			      #                   ifndef NDEBUG
 			      trap();
 			      #                   endif
 			      #                   ifdef ABORT

@@ -1,7 +1,7 @@
 newPackage(
 "Pullback",
-Version => "1.0",
-Date => "October 18th, 2015",
+Version => "1.01",
+Date => "November 17th, 2015",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
 Headline => "Pullback of rings.",
 DebuggingMode => false,
@@ -44,6 +44,11 @@ pullback(RingMap, RingMap) := o -> (f,g) -> (
     --***We grab names of the generators***
     IGens := flatten(entries(gens(I))); --gens(ideal) returns matrix so this one looks different
     CGens := gens(ambient C);
+    --***In order to handle bug #350, we are handling the case when CGens is empty specially.
+    if (#CGens == 0) then (
+        C = baseRing[Heft=>{1}];
+        g = map(B, C, {});
+    );
     AGens := gens(ambient A);
 
     --***We take the images of various generators in B, and then also take a set of pre-images in A***
@@ -186,9 +191,11 @@ pullback(RingMap, RingMap) := o -> (f,g) -> (
     	    	addedTerms = listProduct(currentATermsInR,(IGens));
 		
 		listAddedTerms = varNameFixer(addedTerms, concatenate("A",toString(AExponent),"I"));
-		print "varsCandidatesA, varsCandidates";
-		print varsCandidatesA;
-		print varsCandidates;
+		if (o.Verbose == true) then (-- print the new stuff we are adding
+			print "varsCandidatesA, varsCandidates";
+			print varsCandidatesA;
+			print varsCandidates;
+		);
 		varsCandidatesA = varsCandidatesA | addedTerms;
 		varsCandidates = varsCandidates | apply(addedTerms, zz->sub(zz,AsumCasRing));
 		
@@ -410,7 +417,7 @@ document{
   g = map(B, C, {0});
   (pullback(f,g))#0
   ///,
-  TEX "We next construct the pinch point, otherwise known as Whitneys umbrella by gluing.",
+  TEX "We next construct the pinch point, otherwise known as Whitneys umbrella, by gluing.",
   EXAMPLE lines ///
   A = QQ[x,y];
   I = ideal(x);
@@ -420,14 +427,14 @@ document{
   g = map(B, C, {y^2});
   (pullback(f,g))#0
   ///,
-  TEX "We include a final example showing how to create a cusp.  Note we have to make C be QQ[u]/(u) since certain other functions this package calls need lists of variables to be non-empty.  See issue https://github.com/Macaulay2/M2/issues/350",
+  TEX "We include a final example showing how to create a cusp.",
   EXAMPLE lines ///
   A = QQ[x];
   I = ideal(x^2);
   B = A/I;
-  C = QQ[u]/ideal(u); 
+  C = QQ[]; 
   f = map(B, A); 
-  g = map(B, C, {0});
+  g = map(B, C, {});
   (pullback(f,g))#0
   ///
   }
@@ -522,3 +529,7 @@ TEST ///
 ///
 
 end
+
+--***Changelog***---
+
+--1.01, added support for C with no variables.  Improved documentation.  Turned off some printed text when Verbose is turned off.

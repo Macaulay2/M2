@@ -1,8 +1,8 @@
 # temporary beta testing version
-VERSION = 1.6.2
-TARDIR = 4ti2-1.6.2
+VERSION = 1.6.7
+TARDIR = 4ti2-$(VERSION)
 
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 # URL = http://www.4ti2.de/version_$(VERSION)
@@ -16,9 +16,10 @@ STRIPFILES =					\
 	src/util/output				\
 	src/zsolve/zsolve
 
-# we have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
-# support provided by GMP, so this file will not be there:
-# STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
+# # We have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
+# # support provided by GMP, so this file will not be there:
+# But now it is there, and we get a complaint when checking for unstripped binaries.
+STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
 
 # according to the documentation, the line below should prevent GMP from being used,
 # but it doesn't

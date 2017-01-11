@@ -737,10 +737,7 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 		    then smallintarrays0.j
 		    else if i==1 && j<length(smallintarrays1)
 		    then smallintarrays1.j
-		    else (
-			 if j-i+1 > 100000
-			 then buildErrorPacket("ZZ .. ZZ: very long sequence requested")
-			 else Expr(new Sequence len j-i+1 at k do provide toExpr(i+k))))
+		    else Expr(new Sequence len j-i+1 at k do provide toExpr(i+k)))
 	       else (
 		    z := y-x;
 		    if z <= 0 then emptySequenceE

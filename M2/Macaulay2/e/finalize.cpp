@@ -92,7 +92,7 @@ extern "C" void remove_res(void *p, void *cd)
   AO_t nremoved = AO_fetch_and_add1(&res_nremoved);
   if (M2_gbTrace>=3)
     fprintf(stderr, "\n -- removing res %zd at %p\n",nremoved, G);
-  G->remove_res();
+  delete G;
 }
 void intern_res(ResolutionComputation *G)
 {
@@ -158,3 +158,59 @@ MutableMatrix* internMutableMatrix(MutableMatrix *G)
   return G;
 }
 //////////////////////////////////////////////////////
+extern long nres;
+extern long nres_destruct;
+
+M2_string engineMemory()
+{
+  buffer o;
+  try {
+    stash::stats(o);
+    o << newline;
+    
+    o << "Finalizations of new resolutions:" << newline;
+    o << "# of res objects constructed/deconstructed=(" << nres << "," << nres_destruct << ") #left = " << (nres - nres_destruct) << newline;
+    o << newline;
+
+    o << "# of GB objects       registered/finalized=("
+      << gbs_nfinalized << "," << gbs_nremoved << ") #left = "
+      << (gbs_nfinalized - gbs_nremoved) << newline;
+    
+    o << "# of res objects      registered/finalized=("
+      << res_nfinalized << "," << res_nremoved << ") #left = "
+      << (res_nfinalized - res_nremoved) << newline;
+
+    o << "# of computations     registered/finalized=("
+      << comp_nfinalized << "," << comp_nremoved << ") #left = "
+      << (comp_nfinalized - comp_nremoved) << newline;
+
+    o << newline;
+    
+    o << "# of monomial ideals  registered/finalized=("
+      << monideals_nfinalized << "," << monideals_nremoved << ") #left = "
+      << (monideals_nfinalized - monideals_nremoved) << newline;    
+
+    o << "# of mutable matrices registered/finalized=("
+      << mutablematrices_nfinalized << "," << mutablematrices_nremoved << ") #left = "
+      << (mutablematrices_nfinalized - mutablematrices_nremoved) << newline;    
+
+    o << "# of polynomial rings registered/finalized=("
+      << polyrings_nfinalized << "," << polyrings_nremoved << ") #left = "
+      << (polyrings_nfinalized - polyrings_nremoved) << newline;    
+
+    o << "# of schreyer orders  registered/finalized=("
+      << schorder_nfinalized << "," << schorder_nremoved << ") #left = "
+      << (schorder_nfinalized - schorder_nremoved) << newline;
+
+    return o.to_string();
+  }
+  catch (exc::engine_error e) {
+    o << "Internal error: [unprintable memory display]";
+    return o.to_string();
+  }
+}
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
+// End:

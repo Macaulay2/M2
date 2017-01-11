@@ -839,6 +839,25 @@ rawResolutionGetMatrix(Computation *C,
      }
 }
 
+MutableMatrix /* or null */ *
+rawResolutionGetMatrix2(Computation *C,
+                        int level,
+                        int degree)
+{
+  try {
+    clear_emit_size();
+    ResolutionComputation *G = C->cast_to_ResolutionComputation();
+    if (G != 0)
+      return G->get_matrix(level, degree);
+    ERROR("expected resolution computation type");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 const FreeModule /* or null */ *
 rawResolutionGetFree(Computation *C,
                      int level)
@@ -943,19 +962,6 @@ Matrix /* or null */ * rawSubduction(const Matrix *M,
      catch (exc::engine_error e) {
           ERROR(e.what());
           return NULL;
-     }
-}
-
-M2_string engineMemory()
-{
-     buffer o;
-     try {
-       stash::stats(o);
-       return o.to_string();
-     }
-     catch (exc::engine_error e) {
-          o << "Internal error: [unprintable memory display]";
-          return o.to_string();
      }
 }
 

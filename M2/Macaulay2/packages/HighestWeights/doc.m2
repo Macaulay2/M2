@@ -32,7 +32,7 @@ doc ///
 	       representations.
 	       
 	       This package implements an algorithm introduced in 
-	       @HREF("http://arxiv.org/abs/1406.1900","Galetto - Propagating 
+	       @HREF("http://dx.doi.org/10.1016/j.jsc.2015.05.004","Galetto - Propagating 
 		weights of tori along free resolutions")@.
 	       The methods of this package are meant to be used in 
 	       characteristic zero.
@@ -311,8 +311,8 @@ doc ///
 	       equivariant map, instead of the highest weights decomposition.
 
 	       This method implements an algorithm introduced in 
-	       Galetto - {\it Propagating weights of tori along free 
-	       resolutions} (in preparation).
+	       @HREF("http://dx.doi.org/10.1016/j.jsc.2015.05.004","Galetto - Propagating 
+		weights of tori along free resolutions")@.
      SeeAlso
      	  setWeights
 ///
@@ -379,8 +379,8 @@ doc ///
 	       not retuned.
 	       
 	       This method implements an algorithm introduced in 
-	       Galetto - {\it Propagating weights of tori along free 
-	       resolutions} (in preparation).
+	       @HREF("http://dx.doi.org/10.1016/j.jsc.2015.05.004","Galetto - Propagating 
+		weights of tori along free resolutions")@.
 	       
 	       In the following example, the polynomial ring @TT "R"@ is the
 	       symmetric algebra over $\mathbb{C}^2 \otimes \mathbb{C}^4$, 

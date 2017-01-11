@@ -143,7 +143,6 @@ TEST(ARingZZp, fromStream)
   R.clear(a);
 }
 
-#if defined(HAVE_FFLAS_FFPACK)
 template<>
 void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::ARingZZpFFPACK::ElementType& result)
 {
@@ -257,7 +256,6 @@ TEST(ARingZZp, read) {
 
   EXPECT_TRUE(R.is_equal(b,c));
 }
-#endif 
 
 ////////////////////////////
 // Flint ZZ/p arithmetic ///

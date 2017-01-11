@@ -229,6 +229,8 @@ status = method (
      	  Monomials => false
      	  })
 
+minimalBetti = method(Options => true)
+
 sopts := 
 Options => {
      DegreeOrder => null,				    -- used to be Ascending

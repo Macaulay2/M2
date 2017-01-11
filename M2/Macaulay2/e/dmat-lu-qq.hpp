@@ -91,8 +91,8 @@ public:
     U.resize(min, LU.numColumns());
     
     // At this point, lower and upper should be zero matrices.
-    M2_ASSERT(MatrixOps::isZero(L));
-    M2_ASSERT(MatrixOps::isZero(U));
+    assert(MatrixOps::isZero(L));
+    assert(MatrixOps::isZero(U));
 
     fmpq_t b;
     fmpq_init(b);

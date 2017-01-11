@@ -286,7 +286,7 @@ onecolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1
 twocolon = method()
 twocolon RR := x -> toString floor x | ":" | twodigits onecolon (60 * (x - floor x))
 twocolon QQ := twocolon ZZ := x -> twocolon (0. + x)
-twocolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
+twocolon Measurement := m -> toString ( expression twocolon m#0 * expression m#1 )
 
 export keys Units#"private dictionary"
 
