@@ -1,7 +1,7 @@
 
 newPackage(
        "Cremona",
-	Version => "3.0", Date => "Jan 10, 2017 (first version: Apr 11, 2016, included with Macaulay2 1.9)",
+	Version => "3.0", Date => "Jan 11, 2017 (first version: Apr 10, 2016, included with Macaulay2 1.9)",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
     	DebuggingMode => false, Reload => true
