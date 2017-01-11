@@ -7,7 +7,7 @@ NCFreeAlgebra* NCFreeAlgebra::create(const Ring* K,
                                      M2_ArrayString names,
                                      const PolynomialRing* degreeRing)
 {
-  M2_ASSERT(K != nullptr);
+  assert(K != nullptr);
   NCFreeAlgebra* result = new NCFreeAlgebra(K, names);
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   return result;

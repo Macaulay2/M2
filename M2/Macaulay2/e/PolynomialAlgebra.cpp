@@ -11,7 +11,7 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
                                      M2_ArrayString names,
                                      const PolynomialRing* degreeRing)
 {
-  M2_ASSERT(K != nullptr);
+  assert(K != nullptr);
   PolynomialAlgebra* result = new PolynomialAlgebra(K, names);
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   return result;

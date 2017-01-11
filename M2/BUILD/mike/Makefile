@@ -40,6 +40,8 @@ darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
 	cd builds.tmp/darwin64-gcc4.9; ../../../../configure \
 		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

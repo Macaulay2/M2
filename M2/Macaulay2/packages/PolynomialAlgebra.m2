@@ -47,6 +47,16 @@ NCAlgebra(Ring, Sequence) := (A, variables) -> (
     genSymbols
     )
 
+-- TODO (11 Jan 2017 MS+FM)
+--   1. handle multigradings
+--   2. handle different monomial orders
+--     e.g. elimination order.
+--   3. check on: ring map evaluations, promote, lift?
+--   4. look at other top level rings
+--   5. net, expression, toString...
+--   6. check on listForm.
+--   7. use, ...
+--   8. make sure multiplication is using a heap based approach.
 Ring List := (A, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    varSymbols := NCAlgebra(A, toSequence varList);
