@@ -828,17 +828,17 @@ ring_elem SchurRing2::mult_terms(const_schur_partition a, const_schur_partition 
   int s = b[0]-1;
   int c = b[1];
 
-  M2_ASSERT(r+s+1 == maxsize);
+  assert(r+s+1 == maxsize);
   
   for (int i=1; i<=r; i++)
     {
-      M2_ASSERT(i < maxsize);
+      assert(i < maxsize);
       p[i] = c + a[i];
       lambda[i] = c;
     }
   for (int i=r+1; i<r+s+1; i++)
     {
-      M2_ASSERT(i < maxsize);      
+      assert(i < maxsize);      
       p[i] = b[i-r];
       lambda[i] = 0;
     }

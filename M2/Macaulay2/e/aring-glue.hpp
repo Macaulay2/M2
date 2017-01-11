@@ -594,8 +594,8 @@ namespace M2 {
     template<typename SourceRing, typename TargetRing>
     bool promoter(const Ring *R, const Ring *S, const ring_elem fR, ring_elem &resultS)
     {
-      M2_ASSERT(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
-      M2_ASSERT(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
+      assert(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
+      assert(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
       const SourceRing &R1 = dynamic_cast< const ConcreteRing<SourceRing> * >(R)->ring();
       const TargetRing &S1 = dynamic_cast< const ConcreteRing<TargetRing> * >(S)->ring();
     
@@ -616,8 +616,8 @@ namespace M2 {
     template<typename SourceRing, typename TargetRing>
     bool lifter(const Ring *R, const Ring *S, ring_elem &result_gR, const ring_elem gS)
     {
-      M2_ASSERT(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
-      M2_ASSERT(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
+      assert(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
+      assert(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
       const SourceRing &R1 = dynamic_cast< const ConcreteRing<SourceRing> * >(R)->ring();
       const TargetRing &S1 = dynamic_cast< const ConcreteRing<TargetRing> * >(S)->ring();
     

@@ -4,8 +4,8 @@
 
 ResGausser *ResGausser::newResGausser(int p)
 {
-  M2_ASSERT(p < 32767);
-  M2_ASSERT(p > 1);
+  assert(p < 32767);
+  assert(p > 1);
   return new ResGausser(p);
 }
 

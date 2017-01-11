@@ -145,7 +145,7 @@ namespace M2 {
     }
     
     void power(ElementType& result, const ElementType& a, long n) const {
-      M2_ASSERT(n >= 0);
+      assert(n >= 0);
       return fmpq_pow_si(&result,&a,n);
     }
     

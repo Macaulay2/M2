@@ -295,9 +295,9 @@ namespace MatrixOps
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
-    M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == result_product.numRows());
-    M2_ASSERT(B.numColumns() == result_product.numColumns());
+    assert(A.numColumns() == B.numRows());
+    assert(A.numRows() == result_product.numRows());
+    assert(B.numColumns() == result_product.numColumns());
 
     ElementType* result = result_product.array();
 
@@ -341,9 +341,9 @@ namespace MatrixOps
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
-    M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == C.numRows());
-    M2_ASSERT(B.numColumns() == C.numColumns());
+    assert(A.numColumns() == B.numRows());
+    assert(A.numRows() == C.numRows());
+    assert(B.numColumns() == C.numColumns());
 
     ElementType* result = C.array();
 

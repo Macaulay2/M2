@@ -68,8 +68,8 @@ public:
   static void interchange_rows(Mat& mat, size_t i, size_t j)
   /* swap rows: row(i) <--> row(j) */
   {
-    M2_ASSERT(i < mat.numRows());
-    M2_ASSERT(j < mat.numRows());
+    assert(i < mat.numRows());
+    assert(j < mat.numRows());
     if (i == j) return;
 
     auto ii = mat.rowBegin(i);
@@ -82,8 +82,8 @@ public:
   static void interchange_columns(Mat& mat, size_t i, size_t j)
   /* swap columns: column(i) <--> column(j) */
   {
-    M2_ASSERT(i < mat.numColumns());
-    M2_ASSERT(j < mat.numColumns());
+    assert(i < mat.numColumns());
+    assert(j < mat.numColumns());
     if (i == j) return;
 
     auto ii = mat.columnBegin(i);
@@ -96,7 +96,7 @@ public:
   static void scale_row(Mat& mat, size_t i, const ElementType &r)
   /* row(i) <- r * row(i) */
   {
-    M2_ASSERT(i < mat.numRows());
+    assert(i < mat.numRows());
 
     auto loc = mat.rowBegin(i);
     auto end = mat.rowEnd(i);
@@ -107,7 +107,7 @@ public:
   static void scale_column(Mat& mat, size_t i, const ElementType &r)
   /* column(i) <- r * column(i) */
   {
-    M2_ASSERT(i < mat.numColumns());
+    assert(i < mat.numColumns());
 
     auto loc = mat.columnBegin(i);
     auto end = mat.columnEnd(i);
@@ -118,7 +118,7 @@ public:
   static void divide_row(Mat& mat, size_t i, const ElementType &r)
   /* row(i) <- row(i) / r */
   {
-    M2_ASSERT(i < mat.numRows());
+    assert(i < mat.numRows());
 
     auto loc = mat.rowBegin(i);
     auto end = mat.rowEnd(i);
@@ -129,7 +129,7 @@ public:
   static void divide_column(Mat& mat, size_t i, const ElementType &r)
   /* column(i) <- column(i) / r */
   {
-    M2_ASSERT(i < mat.numColumns());
+    assert(i < mat.numColumns());
 
     auto loc = mat.columnBegin(i);
     auto end = mat.columnEnd(i);
@@ -140,9 +140,9 @@ public:
   static void row_op(Mat& mat, size_t i, const ElementType &r, size_t j)
   /* row(i) <- row(i) + r * row(j) */
   {
-    M2_ASSERT(i < mat.numRows());
-    M2_ASSERT(j < mat.numRows());
-    M2_ASSERT(i != j);
+    assert(i < mat.numRows());
+    assert(j < mat.numRows());
+    assert(i != j);
 
     ElementType f;
     mat.ring().init(f);
@@ -163,9 +163,9 @@ public:
   static void column_op(Mat& mat, size_t i, const ElementType &r, size_t j)
   /* column(i) <- column(i) + r * column(j) */
   {
-    M2_ASSERT(i < mat.numColumns());
-    M2_ASSERT(j < mat.numColumns());
-    M2_ASSERT(i != j);
+    assert(i < mat.numColumns());
+    assert(j < mat.numColumns());
+    assert(i != j);
 
     ElementType f;
     mat.ring().init(f);
@@ -225,9 +225,9 @@ public:
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
   {
-    M2_ASSERT(r1 < mat.numRows());
-    M2_ASSERT(r2 < mat.numRows());
-    M2_ASSERT(r1 != r2);
+    assert(r1 < mat.numRows());
+    assert(r2 < mat.numRows());
+    assert(r1 != r2);
 
     auto loc1 = mat.rowBegin(r1);
     auto loc2 = mat.rowBegin(r2);
@@ -247,9 +247,9 @@ public:
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
   {
-    M2_ASSERT(c1 < mat.numColumns());
-    M2_ASSERT(c2 < mat.numColumns());
-    M2_ASSERT(c1 != c2);
+    assert(c1 < mat.numColumns());
+    assert(c2 < mat.numColumns());
+    assert(c1 != c2);
 
     auto loc1 = mat.columnBegin(c1);
     auto loc2 = mat.columnBegin(c2);
@@ -263,8 +263,8 @@ public:
 
   static void dot_product(const Mat& mat, size_t i, size_t j, ElementType &result)
   {
-    M2_ASSERT(i < mat.numColumns());
-    M2_ASSERT(j < mat.numColumns());
+    assert(i < mat.numColumns());
+    assert(j < mat.numColumns());
 
     auto loc1 = mat.columnBegin(i);
     auto loc2 = mat.columnBegin(j);
@@ -442,9 +442,9 @@ public:
   static void delete_columns(Mat& mat, size_t i, size_t j)
   /* Delete columns i .. j from M. TODO: use iterators */
   {
-    M2_ASSERT(i < mat.numColumns());
-    M2_ASSERT(j < mat.numColumns());
-    M2_ASSERT(i <= j);
+    assert(i < mat.numColumns());
+    assert(j < mat.numColumns());
+    assert(i <= j);
     size_t n_to_delete = j-i+1;
     size_t new_ncols = mat.numColumns() - n_to_delete;
     Mat newMatrix(mat.ring(), mat.numRows(), new_ncols);
@@ -462,9 +462,9 @@ public:
   static void delete_rows(Mat& mat, size_t i, size_t j)
   /* Delete rows i .. j from M. TODO: use iterators */
   {
-    M2_ASSERT(i < mat.numRows());
-    M2_ASSERT(j < mat.numRows());
-    M2_ASSERT(i <= j);
+    assert(i < mat.numRows());
+    assert(j < mat.numRows());
+    assert(i <= j);
     size_t n_to_delete = j-i+1;
     size_t new_nrows = mat.numRows() - n_to_delete;
     Mat newMatrix(mat.ring(), new_nrows, mat.numColumns());
@@ -612,8 +612,8 @@ public:
   static void setFromSubmatrix(const Mat& mat, size_t r0, size_t r1, size_t c0, size_t c1, Mat& result)
   /* Set 'result' with the given submatrix of 'mat'. TODO: use iterator on result */
   {
-    // M2_assert(r1-r0+1<=result.numRows());
-    // M2_assert(c1-c0+1<=result.numColumns());
+    // assert(r1-r0+1<=result.numRows());
+    // assert(c1-c0+1<=result.numColumns());
     for (size_t r = r0; r <= r1; r++)
       for (size_t c = c0; c <= c1; c++)
         mat.ring().set(result.entry(r-r0,c-c0), mat.entry(r,c));

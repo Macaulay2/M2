@@ -556,7 +556,7 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
       gmp_ZZ result = newitem(__mpz_struct);
 
       std::pair<bool,long> res = R->coerceToLongInteger(a->get_value());
-      M2_ASSERT(res.first);
+      assert(res.first);
 
       mpz_init_set_si(result, static_cast<int>(res.second));
       return result;

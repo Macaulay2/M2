@@ -861,7 +861,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 
 void gbA::update_pairs(int id)
 {
-  M2_ASSERT(gb[id] != nullptr);
+  assert(gb[id] != nullptr);
   gbelem *r = gb[id];
   int x = gbelem_COMPONENT(r);
 

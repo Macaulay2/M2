@@ -237,7 +237,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
 
 long SchreyerFrame::computeNextLevel()
 {
-  M2_ASSERT(currentLevel() >= 2);
+  assert(currentLevel() >= 2);
   if (currentLevel() >= mFrame.mLevels.size()) return 0;
   //  std::cout << "computeNextLevel: level = " << currentLevel() << std::endl;
   // loop through all the elements at level currentLevel()-2

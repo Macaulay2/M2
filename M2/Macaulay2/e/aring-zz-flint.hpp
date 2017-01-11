@@ -87,7 +87,7 @@ namespace M2 {
       fmpz_set_mpz(&result, a);
     }
     
-    void set_from_mpq(ElementType& result,const mpq_ptr a) const {M2_ASSERT(false);}
+    void set_from_mpq(ElementType& result,const mpq_ptr a) const {assert(false);}
     
     bool set_from_BigReal(ElementType& result, gmp_RR a) const {return false;}
     
@@ -120,7 +120,7 @@ namespace M2 {
     }
     
     void power(ElementType& result,const  ElementType& a,const unsigned long  n) const {
-      M2_ASSERT(n >= 0);
+      assert(n >= 0);
       return fmpz_pow_ui(&result,&a,n);
     }
     

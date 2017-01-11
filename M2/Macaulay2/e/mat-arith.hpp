@@ -68,7 +68,7 @@ struct SubMatrix
 
   void operator=(SubMatrix<MatType> src)
   {
-    M2_ASSERT(sameSize(src));
+    assert(sameSize(src));
     long rA = begin_row;
     long rB = src.begin_row;
     for ( ; rA < end_row; ++rA, ++rB)
@@ -83,7 +83,7 @@ struct SubMatrix
 
   void operator+=(SubMatrix<MatType> src)
   {
-    M2_ASSERT(sameSize(src));
+    assert(sameSize(src));
     long rA = begin_row;
     long rB = src.begin_row;
     for ( ; rA < end_row; ++rA, ++rB)
@@ -101,7 +101,7 @@ struct SubMatrix
   template<typename ElementType>
   void addMultipleTo(ElementType& c, SubMatrix<MatType> src)
   {
-    M2_ASSERT(sameSize(src));
+    assert(sameSize(src));
     long rA = begin_row;
     long rB = src.begin_row;
     for ( ; rA < end_row; ++rA, ++rB)
@@ -172,7 +172,7 @@ namespace MatrixOps
   template <typename RT>
   bool isEqual(const DMat<RT>& A, const DMat<RT>& B)
   {
-    M2_ASSERT(&A.ring() == &B.ring());
+    assert(&A.ring() == &B.ring());
     if (B.numRows() != A.numRows()) return false;
     if (B.numColumns() != A.numColumns()) return false;
     size_t top = A.numRows() * A.numColumns();
@@ -208,9 +208,9 @@ namespace MatrixOps
   void addInPlace(DMat<RT>&A, const DMat<RT>& B)
   // A += B.
   {
-    M2_ASSERT(&B.ring() == &A.ring());
-    M2_ASSERT(B.numRows() == A.numRows());
-    M2_ASSERT(B.numColumns() == A.numColumns());
+    assert(&B.ring() == &A.ring());
+    assert(B.numRows() == A.numRows());
+    assert(B.numColumns() == A.numColumns());
     
     size_t len = A.numRows() * A.numColumns();
     for (size_t i=0; i<len; i++)
@@ -223,9 +223,9 @@ namespace MatrixOps
   void subtractInPlace(DMat<RT>& A, const DMat<RT>& B)
   // A -= B
   {
-    M2_ASSERT(&B.ring() == &A.ring());
-    M2_ASSERT(B.numRows() == A.numRows());
-    M2_ASSERT(B.numColumns() == A.numColumns());
+    assert(&B.ring() == &A.ring());
+    assert(B.numRows() == A.numRows());
+    assert(B.numColumns() == A.numColumns());
     
     size_t len = A.numRows() * A.numColumns();
     for (size_t i=0; i<len; i++)
@@ -237,9 +237,9 @@ namespace MatrixOps
   template <typename RT>
   void transpose(const DMat<RT>& A, DMat<RT>& result)
   {
-    M2_ASSERT(&A != &result);  // these cannot be aliased!
-    M2_ASSERT(result.numRows() == A.numColumns());
-    M2_ASSERT(result.numColumns() == A.numRows());
+    assert(&A != &result);  // these cannot be aliased!
+    assert(result.numRows() == A.numColumns());
+    assert(result.numColumns() == A.numRows());
     for (size_t c = 0; c < A.numColumns(); ++c)
       {
         auto i = A.columnBegin(c);
@@ -272,7 +272,7 @@ namespace MatrixOps
   template <typename RT>
   void set(DMat<RT>& A, MatrixWindow wA, const DMat<RT>& B, MatrixWindow wB)
   {
-    M2_ASSERT(wA.sameSize(wB));
+    assert(wA.sameSize(wB));
     long rA = wA.begin_row;
     long rB = wB.begin_row;
     for ( ; rA < wA.end_row; ++rA, ++rB)
@@ -288,7 +288,7 @@ namespace MatrixOps
   template <typename RT>
   void addTo(DMat<RT>& A, MatrixWindow wA, const DMat<RT>& B, MatrixWindow wB)
   {
-    M2_ASSERT(wA.sameSize(wB));
+    assert(wA.sameSize(wB));
     long rA = wA.begin_row;
     long rB = wB.begin_row;
     for ( ; rA < wA.end_row; ++rA, ++rB)
@@ -307,7 +307,7 @@ namespace MatrixOps
   template <typename RT>
     void addMultipleTo(DMat<RT>& A, MatrixWindow wA, const typename RT::ElementType& c, const DMat<RT>& B, MatrixWindow wB)
   {
-    M2_ASSERT(wA.sameSize(wB));
+    assert(wA.sameSize(wB));
     typename RT::ElementType tmp;
     A.ring().init(tmp);
     long rA = wA.begin_row;
@@ -330,7 +330,7 @@ namespace MatrixOps
   template <typename RT>
     void scalarMult(DMat<RT>& A, MatrixWindow wA, const typename RT::ElementType& c, const DMat<RT>& B, MatrixWindow wB)
   {
-    M2_ASSERT(wA.sameSize(wB));
+    assert(wA.sameSize(wB));
     long rA = wA.begin_row;
     long rB = wB.begin_row;
     for ( ; rA < wA.end_row; ++rA, ++rB)
@@ -393,9 +393,9 @@ namespace MatrixOps
   template <typename RT>
   void addInPlace(SMat<RT>&A, const SMat<RT>& B) 
   {
-    M2_ASSERT(&B.ring() == &A.ring());
-    M2_ASSERT(B.numRows() == A.numRows());
-    M2_ASSERT(B.numColumns() == A.numColumns());
+    assert(&B.ring() == &A.ring());
+    assert(B.numRows() == A.numRows());
+    assert(B.numColumns() == A.numColumns());
 
     A.addInPlace(B);
   }
@@ -404,9 +404,9 @@ namespace MatrixOps
   void subtractInPlace(SMat<RT>& A, const SMat<RT>& B)
   // A -= B
   {
-    M2_ASSERT(&B.ring() == &A.ring());
-    M2_ASSERT(B.numRows() == A.numRows());
-    M2_ASSERT(B.numColumns() == A.numColumns());
+    assert(&B.ring() == &A.ring());
+    assert(B.numRows() == A.numRows());
+    assert(B.numColumns() == A.numColumns());
 
     A.subtractInPlace(B);
   }
@@ -415,9 +415,9 @@ namespace MatrixOps
   void transpose(const SMat<RT>& A, SMat<RT>& result)
   {
     // result should be the 0 matrix of the correct size.
-    M2_ASSERT(&A != &result);  // these cannot be aliased!
-    M2_ASSERT(result.numRows() == A.numColumns());
-    M2_ASSERT(result.numColumns() == A.numRows());
+    assert(&A != &result);  // these cannot be aliased!
+    assert(result.numRows() == A.numColumns());
+    assert(result.numColumns() == A.numRows());
     throw exc::engine_error("'transpose' not writtten for sparse mutable matrices");
     //TODO: MES: write this!!
   }

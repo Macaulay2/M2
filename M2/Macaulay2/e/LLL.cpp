@@ -249,7 +249,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
   if (LLLstate->get_entry(0,n,a))
     {
       std::pair<bool,long> res = globalZZ->coerceToLongInteger(a);
-      M2_ASSERT(res.first);
+      assert(res.first);
       k = static_cast<int>(res.second);
     }
   else
@@ -258,7 +258,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
   if (LLLstate->get_entry(0,n+1,a))
     {
       std::pair<bool,long> res = globalZZ->coerceToLongInteger(a);
-      M2_ASSERT(res.first);
+      assert(res.first);
       kmax = static_cast<int>(res.second);
     }
   else
