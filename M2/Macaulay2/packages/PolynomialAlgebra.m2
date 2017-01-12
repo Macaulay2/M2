@@ -60,12 +60,14 @@ NCAlgebra(Ring, Sequence) := (A, variables) -> (
 Ring List := (A, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    varSymbols := NCAlgebra(A, toSequence varList);
-   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing 1);
+   degreelen := 1;
+   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degreelen);
    R := new NCPolynomialRing from {
        (symbol RawRing) => rawR,
        (symbol generators) => {},
        (symbol generatorSymbols) => varSymbols,
-       (symbol degreesRing) => degreesRing 1,
+       (symbol degreesRing) => degreesRing degreelen,
+       (symbol degreeLength) => degreelen,
        (symbol CoefficientRing) => A,
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)
