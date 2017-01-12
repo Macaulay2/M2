@@ -1279,7 +1279,7 @@ then AC_MSG_CHECKING(for fflas_ffpack library)
      FFLAS_FFPACK_CPPFLAGS=`fflas-ffpack-config --cflags 2>&1`
      if test $? = 0
      then AC_MSG_RESULT(found)
-          M2_CPPFLAGS="$M2_CPPFLAGS $FFLAS_FFPACK_CPPFLAGS="
+          M2_CPPFLAGS="$M2_CPPFLAGS $FFLAS_FFPACK_CPPFLAGS"
      else AC_MSG_RESULT(not found, will build)
           BUILD_fflas_ffpack=yes
      fi
