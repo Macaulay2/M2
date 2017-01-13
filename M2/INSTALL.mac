@@ -3,7 +3,7 @@
 # This version of the script does not take care to avoid vector optimizations that may not run on other machines.
 # The result is provided in the build directory "./tmp".
 set -e
-xcode-select --install
+: remember to install Xcode command line tools with "Software Update"
 brew tap homebrew/versions
 brew tap homebrew/science
 brew tap homebrew/homebrew-x11
