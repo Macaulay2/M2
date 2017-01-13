@@ -2,7 +2,8 @@
 # This shell script contains the instructions for building Macaulay2 in the file 'INSTALL'.
 # This version of the script does not take care to avoid vector optimizations that may not run on other machines.
 # The result is provided in the build directory "./tmp".
-xcode-select --install
+set -e
+: remember to install Xcode command line tools with "Software Update"
 brew tap homebrew/versions
 brew tap homebrew/science
 brew tap homebrew/homebrew-x11
@@ -20,8 +21,8 @@ mkdir tmp
 cd tmp
 ../configure --enable-download					\
 	     --enable-build-libraries="pari flint readline"	\
-             CC="gcc-4.9"					\
-	     CXX="g++-4.9"
+             CC="clang"					\
+	     CXX="clang++"
 make IgnoreExampleErrors=false
 # Local Variables:
 # compile-command: "sh -x ./INSTALL.mac "

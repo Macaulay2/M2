@@ -144,6 +144,7 @@ M2_CFLAGS   += $(M2_BOTH) -Wwrite-strings
 M2_CXXFLAGS += $(M2_BOTH) -Wconversion
 
 M2_CFLAGS += @M2_CFLAGS@
+M2_CXXFLAGS += @M2_CXXFLAGS@
 
 # M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
 ifeq "@__INTEL_COMPILER@" "no"

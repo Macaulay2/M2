@@ -222,6 +222,7 @@ AC_SUBST(NTL_WIZARD,no) AC_ARG_ENABLE(ntl-wizard, AS_HELP_STRING(--enable-ntl-wi
 
 AC_SUBST(M2_CPPFLAGS,)
 AC_SUBST(M2_CFLAGS,)
+AC_SUBST(M2_CXXFLAGS,)
 
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
@@ -1276,10 +1277,10 @@ test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING(for fflas_ffpack library)
-     FFLAS_FFPACK_CPPFLAGS=`fflas-ffpack-config --cflags 2>&1`
+     FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
      if test $? = 0
      then AC_MSG_RESULT(found)
-          M2_CPPFLAGS="$M2_CPPFLAGS $FFLAS_FFPACK_CPPFLAGS="
+          M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
      else AC_MSG_RESULT(not found, will build)
           BUILD_fflas_ffpack=yes
      fi
