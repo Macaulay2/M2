@@ -21,29 +21,25 @@ unexport PROFILE
 
 DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
-BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-# see the INSTALL file:
-# export MACOSX_DEPLOYMENT_TARGET=10.9
-
+ifeq ($(GCC4),yes)
+_CC  := gcc-4.9.4
+_CXX := g++-4.9.4
+_FC  := gfortran-4.9.4
+DIRECTORY := $(DIRECTORY)-gcc4
+else
 ifeq ($(GCC5),yes)
-BUILDLIBS += mpir flint
 _CC  = gcc-5
 _CXX = g++-5
 DIRECTORY := $(DIRECTORY)-gcc5
 else
 ifeq ($(GCC6),yes)
-BUILDLIBS += mpir flint
 _CC  = gcc-6
 _CXX = g++-6
 DIRECTORY := $(DIRECTORY)-gcc6
 else
 ifeq ($(CLANG),yes)
-# The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
-# To test pari for that bug, make pari's gp and try this factorization:
-#   factor(28752093487520394720397634653456)
-# One of our M2 examples factors the same number, which causes M2 to crash.
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
@@ -52,23 +48,19 @@ _CXX := /usr/bin/g++
 CONFIGOPTIONS += --disable-strip
 export CFLAGS += -Wno-unknown-attributes
 else
-_CC  := gcc-4.9.4
-_CXX := g++-4.9.4
-_FC  := gfortran-4.9.4
+$(error compiler not specified)
+endif
 endif
 endif
 endif
 
 default: all
 
-# we build pari because brew's pari brings in gmp
-# we build flint because of the gmp problem Mike found once
-# we build gc because homebrew compiles with clang and produces non-generic code and ignores the command line option -mtune=generic
+# we used to build gc because homebrew compiles with clang and produces non-generic code and ignores the command line option -mtune=generic
 #   $ gdb /usr/local/lib/libgc.1.dylib 
 #   (gdb) x/i min_bytes_allocd+100
 #   0x2dec <min_bytes_allocd+100>:	shrx   %rcx,%rax,%rcx
 #   Alternatively, could use "brew install --cc=gcc-4.9 --build-from-source bdw-gc".
-BUILDLIBS += pari flint readline
 
 ifeq ($(PRODUCTION),yes)
    default: check
@@ -94,9 +86,8 @@ ifeq ($(PROFILE),yes)
    DIRECTORY := $(DIRECTORY)-profile
 endif
 
-CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=no GCC5=no GCC6=no "
+# compile-command: "time gmake -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=yes GCC5=no GCC6=no GCC4=no "
 # End:
