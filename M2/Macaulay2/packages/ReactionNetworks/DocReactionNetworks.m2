@@ -321,7 +321,7 @@ doc ///
     	Text
 	    A two-site phosphorylation cycle, where phosphorylation is
 	    catalyzed by the same kinase at both sites and dephosphorylation is 
-	    catalyzed by the same phosphatase at both sites [Feliu & Wiuf].
+	    catalyzed by the same phosphatase at both sites [Feliu, Wiuf].
     	Example
          -- Two-site Modification G
 	    twoSiteModificationG()
@@ -347,7 +347,7 @@ doc ///
     Description
     	Text
 	    In this system, two cycles are connected through a joint 
-	    catalyzing kinase [Feliu & Wiuf].
+	    catalyzing kinase [Feliu, Wiuf].
     	Example
         -- Modification of Two Substrates H
 	    modificationOfTwoSubstratesH()
@@ -374,7 +374,7 @@ doc ///
     Description
     	Text
 	    In this system, two cycles are connected through a joint 
-	    catalyzing kinase and a joint catalyzing phosphotase [Feliu & Wiuf].
+	    catalyzing kinase and a joint catalyzing phosphotase [Feliu, Wiuf].
         Example 
         -- Modification of Two Substrates I
 	    modificationOfTwoSubstratesI()
@@ -401,7 +401,7 @@ doc ///
     	Text
 	    A combination of two one-site modification cycles in a
 	    cascade motif with a specific phosphotase acting in each 
-	    layer [Feliu & Wiuf].
+	    layer [Feliu, Wiuf].
         Example
         -- Two-layer Cascade J
 	    twoLayerCascadeJ()	
@@ -428,7 +428,7 @@ doc ///
     	Text
 	    A combination of two one-site modification cycles in a
 	    cascade motif where the phosphotase is not layer specific;
-	    that is the same phosphotase acts in both layers [Feliu & Wiuf].
+	    that is the same phosphotase acts in both layers [Feliu, Wiuf].
         Example
         -- Two-layer Cascade K
 	    twoLayerCascadeK()
@@ -457,7 +457,7 @@ doc ///
 	    (L, X, Y, Z), where L represents FasL and X, Y, and Z are three 
 	    posited forms of Fas, denoting closed, open and unstable, 
 	    and open and stable, i.e., active and signaling, receptors, 
-	    respectively [Feliu & Wiuf].
+	    respectively [Feliu, Wiuf].
         Example
     	-- Cluster Model Cell Death
 	   clusterModelCellDeath()
@@ -477,9 +477,9 @@ doc ///
     	Text
 	    The cannonical Wnt/beta-catenin signaling pathway is important for essential
 	    cellular functions such as development, homeostasis, and is implicated in many
-	    diseases [MacLean, Rosen, Byrne, & Harrington]. The Wnt shuttle model includes
+	    diseases [MacLean, Rosen, Byrne, Harrington]. The Wnt shuttle model includes
 	    an abstraction of the signal transduction pathway 
-	    [Gross, Harrington, Rosen, & Sturmfels]. 
+	    [Gross, Harrington, Rosen, Sturmfels]. 
 	Example
 	    wnt()
 	Text
@@ -495,7 +495,7 @@ doc ///
 	    0: empty set;
 	    
 	    For more details see Algebraic Systems Biology: A Case Study for the Wnt Pathway:
-	    Gross, Harrington, Rosen, & Sturmfels.
+	    Gross, Harrington, Rosen, Sturmfels.
 				
 	    To rename species, use @TO (substitute, ReactionNetwork, List) @.
     ///    
