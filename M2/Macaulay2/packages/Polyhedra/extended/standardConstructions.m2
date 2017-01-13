@@ -33,7 +33,7 @@ hypercube(ZZ,QQ) := (d,s) -> (
      if d < 1 then error("dimension must at least be 1");
      if s <= 0 then error("size of the hypercube must be positive");
      -- Generating half-spaces matrix and vector
-     intersection(map(QQ^d,QQ^d,1) || -map(QQ^d,QQ^d,1),matrix toList(2*d:{s})))
+     polyhedronFromHData(map(QQ^d,QQ^d,1) || -map(QQ^d,QQ^d,1),matrix toList(2*d:{s})))
 
 
 
