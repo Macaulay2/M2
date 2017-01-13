@@ -8,6 +8,13 @@ A = genericMatrix(C,n,m)
 B = genericMatrix(C,b_1,1,m)
 L = flatten entries (vars R * A + B) -- slice of complimentary dimension 
 G = polySystem(F|L)
+
+clearAll()
+C = CC[b]
+R = C[x,y,z]
+F = {y-x^2, z-x^3} 
+L = { 2*x + 3*y + 5*z - b }
+G = polySystem(F|L)
 end
 
 restart
@@ -16,15 +23,20 @@ load "example-trace.m2"
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>4,Verbose=>true)
 length V.PartialSols
 
-{* TRACE TEST needed!
-
-(1) create a graph that includes three nodes that correspond to generic slices in an affine linear one-parameter family
-    (e.g., fix all parameters except b_1; pick random 3 values for b_1) 
-
-(2) the sum of the solutions for these 3 nodes will behave linearly (as a function of b_1) iff...
-
-(3) ... the 3 solution sets are complete
-
-(4) check that by making a 3-by-(n+1) matrix which is rank-deficient iff (2)  
-
-*}
+-- affine trace test
+G = V.Graph
+sys = polySystem specializeSystem(V.BasePoint, G.Family)
+sols = points V.PartialSols
+computeTrace = L -> sum apply(L, t -> matrix t)
+params = gens coefficientRing ring G.Family
+lastB = last params
+traces = {transpose(computeTrace sols | matrix {{last coordinates p0}})}
+linearSlice = apply(flatten entries G.Family.PolyMap, F -> sub(sub(F, ring G.Family), toList apply(0..(length params -2), i -> params#i => (p0.Coordinates)#i)))
+for i from 0 to 2 do (
+    b = random(RR);
+    sys' = polySystem apply(linearSlice, F->sub(F, lastB => b));
+    T = track(sys, sys', sols);
+    print (T/matrix/transpose , transpose computeTrace T);
+    traces = append(traces, transpose (computeTrace T | matrix{{b}}))
+    );
+first SVD(traces#2-traces#1|traces#3-traces#1)

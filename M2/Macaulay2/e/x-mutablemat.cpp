@@ -36,8 +36,8 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
                                             int ncols,
                                             M2_bool is_dense)
 {
-  M2_ASSERT(nrows >= 0);
-  M2_ASSERT(ncols >= 0);
+  assert(nrows >= 0);
+  assert(ncols >= 0);
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
   //  return R->makeMutableMatrix(nr,nc,is_dense);

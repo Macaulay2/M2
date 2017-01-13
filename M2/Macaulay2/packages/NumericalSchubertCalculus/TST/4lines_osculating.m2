@@ -1,6 +1,6 @@
 needsPackage "NumericalSchubertCalculus"
 setRandomSeed 2
-setFlags(NSC'DBG=>2)
+setDebugOptions("debug"=>2)
  
 -- problem of 4 lines w.r.t. id, idop, 2 osculating flags
 FFF = CC;

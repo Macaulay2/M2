@@ -215,7 +215,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
     }
 #endif
   PreElementSorter C;
-  std::sort(elements.begin(), elements.end(), C);
+  std::stable_sort(elements.begin(), elements.end(), C);
 
   long n_elems = 0;
   for (auto i = elements.begin(); i != elements.end(); ++i)
@@ -237,7 +237,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
 
 long SchreyerFrame::computeNextLevel()
 {
-  M2_ASSERT(currentLevel() >= 2);
+  assert(currentLevel() >= 2);
   if (currentLevel() >= mFrame.mLevels.size()) return 0;
   //  std::cout << "computeNextLevel: level = " << currentLevel() << std::endl;
   // loop through all the elements at level currentLevel()-2
@@ -280,7 +280,7 @@ void SchreyerFrame::setSchreyerOrder(int lev)
       long comp = monoid().get_component(myframe[i].mMonom);
       tiebreakers[i] = i + myframe.size() * prevframe[comp].mTiebreaker;
     }
-  std::sort(tiebreakers, tiebreakers + myframe.size());
+  std::stable_sort(tiebreakers, tiebreakers + myframe.size());
   for (long i=0; i<myframe.size(); i++)
     {
       myframe[tiebreakers[i] % myframe.size()].mTiebreaker = i;

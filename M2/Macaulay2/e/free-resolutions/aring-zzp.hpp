@@ -141,7 +141,7 @@ namespace M2 {
 
     void divide(elem &result, elem a, elem b) const
     {
-      M2_ASSERT(b != 0);
+      assert(b != 0);
       if (a != 0 && b != 0)
         {
           int c = a-b;

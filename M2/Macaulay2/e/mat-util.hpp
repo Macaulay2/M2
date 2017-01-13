@@ -61,7 +61,7 @@ void displayMat(const Mat& A)
 template<typename Mat>
 static void concatenateMatrices(const Mat& A, const Mat&B, Mat& C)
 {
-  M2_ASSERT(A.numRows() == B.numRows());
+  assert(A.numRows() == B.numRows());
   C.resize(A.numRows(), A.numColumns() + B.numColumns());
   for (long r=0; r<A.numRows(); r++)
     for (long c=0; c<A.numColumns(); c++)

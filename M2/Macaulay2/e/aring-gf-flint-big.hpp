@@ -128,7 +128,7 @@ namespace M2 {
       init(d);
       set_from_mpz(n, mpq_numref(a));
       set_from_mpz(d, mpq_denref(a));
-      M2_ASSERT(not is_zero(d));  //TODO actually: we need to check for this...
+      assert(not is_zero(d));  //TODO actually: we need to check for this...
       divide(result,n,d);
     }
 
@@ -137,7 +137,7 @@ namespace M2 {
     void negate(ElementType& result, const ElementType& a) const { fq_nmod_neg(&result, &a, mContext); }
 
     void invert(ElementType& result, const ElementType& a) const { 
-      M2_ASSERT(not is_zero(a)); 
+      assert(not is_zero(a)); 
       fq_nmod_inv(&result, &a, mContext); 
     }
 
@@ -172,7 +172,7 @@ namespace M2 {
       printf("\n  b = ");
       fq_nmod_print_pretty(&b, mContext);
 #endif
-      M2_ASSERT(not is_zero(b));
+      assert(not is_zero(b));
       invert(c,b); 
 #if 0
       printf("\n  1/b = ");
@@ -239,8 +239,8 @@ namespace M2 {
     // if possible, x is set to 1.
     // no need to consider the case a==0 or b==0.
     {
-      M2_ASSERT(not is_zero(a));
-      M2_ASSERT(not is_zero(b));
+      assert(not is_zero(a));
+      assert(not is_zero(b));
       set_from_long(x, 1);
       divide(y,a,b);
       negate(y,y);

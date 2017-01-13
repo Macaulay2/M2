@@ -7,7 +7,6 @@
 #include "monhashtable.hpp"
 #include "res-poly-ring.hpp"
 #include <assert.h>
-#define M2_ASSERT assert
 
 class ResGausser;
 class ResMonoid;

@@ -23,6 +23,7 @@
 #include "skew.hpp"
 // #include "ntuple.hpp"
 #include "coeffrings.hpp"
+#include <iostream>
 
 struct gbvector {
   gbvector * next;
@@ -607,6 +608,24 @@ public:
   // to stdout
 };
 
+template<typename container, typename fcn>
+//void displayElements(GBRing* R, const FreeModule* F, iter a, iter b, fcn f)
+void displayElements(std::string header, GBRing* R, container a, fcn f)
+{
+  std::cout << header << std::endl;
+  long count = 0;
+  //  for (auto c = a; c != b; ++c)
+  for (auto c : a)
+    {
+      buffer o;
+      const gbvector* g = f(c);
+      o <<  "[" << count << "] = ";
+      R->gbvector_text_out(o, nullptr, g, 3);
+      o << newline;
+      std::cout << o.str();
+      ++count;
+    }
+}
 
 #endif
 

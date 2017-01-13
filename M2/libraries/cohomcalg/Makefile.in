@@ -1,0 +1,24 @@
+# replace FOO by the name of the library or package
+# install this file as FOO/Makefile.in
+# add libraries/FOO/Makefile to ../config/files
+# run make -C ../..
+# reconfigure in the build directory
+HOMEPAGE = http://wwwth.mpp.mpg.de/members/bjurke/cohomcalg/
+# http://wwwth.mppmu.mpg.de/members/bjurke/cohomcalg/content/cohomCalg-031b.zip
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+VERSION = 031b
+TARFILE = cohomCalg-$(VERSION).zip
+UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
+LICENSEFILES = "GPLv3 License.txt"
+CHECKTARGET = .
+CONFIGURECMD = :
+INSTALLCMD = :
+PROGRAMS = bin/cohomcalg
+STRIPFILES = $(PROGRAMS)
+TARDIR = .
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cohomcalg/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/cohomcalg "
+# End:

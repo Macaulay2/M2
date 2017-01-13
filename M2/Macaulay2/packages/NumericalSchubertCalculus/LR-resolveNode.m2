@@ -1,3 +1,16 @@
+----------------
+--Functions contained here but not exported:
+----------------
+-- blackBoxSolve
+-- verifyTarget
+-- verifyStart
+-- globalStayCoords
+-- globalSwapCoords
+-- caseSwapStay
+-- verifyParent
+-- solveCases
+-- resolveNode
+----------------
 blackBoxSolve = method();
 blackBoxSolve(MutableHashTable,List,Matrix) := (node,
    remaining'conditions'flags,coordX) -> (
@@ -81,37 +94,41 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    rings,redchk,rnM) -> (
 --
 -- DESCRIPTION :
---    Returns the global coordinates for the homotopy in the stay case.
+--    Returns the global coordinates for the homotopy in the stay case, which is 
+--       case II in the paper.  By global coordinates, we mean the Steifel coordinates MX.
 --
 -- IN :
 --    father : the current father to the node,
 --    rings : the homotopy ring Rt, the Xt, and the symbol t,
 --    redchk : the checkers red and red'sorted,
+--                red'sorted is just the rows containing red checkers
 --    rnM : the critical row r, the dimension n, and flag M.
 --
 -- OUT :
---    returns the M'X as needed in the stay honotopy.
+--    returns the M YtCoords(t) as needed in the stay homotopy.
+--     YtCoords are the Stiefel Coordinates used in the homotopy
+--     Note: Xt is used for the Stiefel coordinates Y_{\cbd} in the ring [t]
+--     Also, Xt = YtCoords(t=0)
 --
    (Rt, Xt, t) := rings;
    (red, red'sorted) := redchk;
    (r, n, M) := rnM;
-   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
-   -- V(t) = M'(t) X'(t) ... we write everything in terms of M
-   scan(#red'sorted, j-> VwrtM = VwrtM |
+   YtCoords := map(Rt^n,Rt^0,{}); -- an empty column vector
+   -- V(t) = M YtCoords(t) ... we write everything in terms of M
+   scan(#red'sorted, j-> YtCoords = YtCoords |
       if isRedCheckerInRegionE(position(red, i->i==red'sorted#j),father)
          -- column of the j-th red checker on the board
       then (
-         submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
-         || submatrix(Xt, {r+2..n-1}, {j})
+	submatrix(Xt,{0..n-1},{j})
       ) else (
          submatrix(Xt,{0..r},{j}) 
          || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
          || submatrix(Xt, {r+2..n-1}, {j})	    
       )
    );
-   result := promote(M,Rt) * VwrtM;
+   result := promote(M,Rt) * YtCoords;
    if DBG>1 then (
-      << "via M*" << VwrtM << " = " << result
+      << "via M*" << YtCoords << " = " << result
       << " where M = " << promote(M,Rt) << endl;
    );
    result
@@ -122,7 +139,7 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    rings,checkers,rsnM) -> (
 --
 -- DESCRIPTION :
---    Returns the global coordinates for the homotopy in the swap case.
+--    Returns the global coordinates for the homotopy in the swap case, case III in paper
 --
 -- IN :
 --    father : the current father to the node,
@@ -131,13 +148,14 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
 --    rsnM : the critical row r, the index s, the dimension n, and flag M.
 --
 -- OUT :
---    returns the M'X as needed in the swap honotopy.
+--    returns the M YtCoords as needed in the swap homotopy.
+--      YtCoords are the Stiefel coordinates used in the homotopy, depends on t
 --
    (Rt, Xt, t) := rings;
    (black, red, red'sorted) := checkers;
    (r, s, n, M) := rsnM;
-   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
-   -- V(t) = M'(t) X'(t) ... we write everything in terms of M
+   YtCoords := map(Rt^n,Rt^0,{}); -- an empty column vector
+   -- V(t) = M YtCoords(t) ... we write everything in terms of M
    bigR := red'sorted#(s+1);   -- row of the second moving red checker
    rightmost'col'B := position(black, j->j==r);
    leftmost'col'A  := position(black, j->j==r+1)+1;
@@ -145,7 +163,8 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
    -- check if the black checker in the i'th row is in region B
    isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
-   scan(#red'sorted, j -> VwrtM = VwrtM |
+--------  Frank/Abr. revision Oct. 2016
+   scan(#red'sorted, j -> YtCoords = YtCoords |
       if j == s then 
       (
       -- note: this part can be optimized for speed
@@ -155,29 +174,15 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
             else if isRegionA i then -t*Xt_(i,s+1)
             else if isRegionB i then Xt_(r+1,s+1)*Xt_(i,s)
             else 0)) }
-      ) else if j == s+1 then (
-         transpose matrix { apply(n, i -> (
-            if i==bigR then 1
-            else if i==r+1 then Xt_(r+1,s+1)
-            else if i==r then 0
-            else Xt_(i,s+1))) }
-      ) else if isRedCheckerInRegionE(
-         position(red,i->i==red'sorted#j), father)
-         -- column of the j-th red checker on the board
-         then (
-            submatrix(Xt,{0..r-1},{j}) 
-            || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
-            || matrix{{0_FFF}}
-            || submatrix(Xt, {r+2..n-1}, {j})
-      ) else (
-         submatrix(Xt,{0..r},{j}) 
-            || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
-            || submatrix(Xt, {r+2..n-1}, {j})	    
-      )
-   ); -- end scan red'sorted
-   result := promote(M,Rt) * VwrtM;
+      ) else
+      (
+	  submatrix(Xt, {0..n-1}, {j})
+       )
+   );  -- end scan red'sorted
+----------------
+   result := promote(M,Rt) * YtCoords;
    if DBG>1 then (
-      << "via M*" << VwrtM << " = " << result
+      << "via M*" << YtCoords << " = " << result
       << " where M = " << promote(M,Rt) << endl;
    );
    result
@@ -190,6 +195,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
 --
 -- DESCRIPTION :
 --   Applies a homotopy in the cases of swap or stay. II, III(a), and III(b) from the paper.
+--    In all of these, there is a red checker in the critical row, r
 --
 -- IN :
 --    node : see the resolveNode documentation for all items
@@ -199,7 +205,8 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
 --     (0) r : index of the CriticalRow
 --     (1) Mdprime : M'' in the solveCases below
 --     (2) father : the current father node
---     (3) movetype : to decide which case aplies
+--     (3) movetype : to decide which case applies (position in 3x3 array of questions
+--                      where red checker is in critical diagonal, critical row
 --     (4) black : black checkers
 --     (5) red : the red checkers
 --     (6) red'sorted : sorted red checkers
@@ -219,7 +226,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    mapRtoRt := map(Rt,R,drop(gens Rt,1));
    Xt := mapRtoRt coordX; --  "homotopy" X 
    s := position(red'sorted, i->i==r);
-   -- number of the first moving red checker
+   -- Column of red checker in the critical row
    local M'X'; -- homotopy in global coordinates
    -- (produced by each case) these are used only in SWAP cases
    if member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- stay case, case II in paper
@@ -239,10 +246,10 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       else
          error "an unaccounted case";
    if DBG>0 then timemakePolys1 := cpuTime();
-   strategy := --"Cauchy-Binet";
+   strategy := 
      if all(remaining'conditions'flags/first, c->#c==1) and 
         #remaining'conditions'flags*numrows M'X' <= 30 
-     then "deflation" else "Cauchy-Binet";
+     then "lifting" else "Pluecker";
    (all'polys,startSolutions) := makePolynomials(M'X', remaining'conditions'flags, 
        apply(node.Solutions, X->toRawSolutions(coordX,X)), --start solutions
        Strategy=>strategy
@@ -255,16 +262,15 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    polys := squareUpPolynomials(numgens ring all'polys-1, all'polys);
    -- check at t=0
    if VERIFY'SOLUTIONS then verifyStart(polys, startSolutions);
-   if DBG>0 then t1:= currentTime();
    -- track homotopy and plug in the solution together with t=1 into Xt
-   targetSolutions := trackHomotopyNSC(polys,startSolutions);
+   (ti,targetSolutions) := toSequence elapsedTiming trackHomotopyNSC(polys,startSolutions);
+   statsIncrementTrackingTime ti; 
    if DBG>0 then (
-      t2 := currentTime();
-      << " -- trackHomotopy time = " << (t2-t1) << " sec."
+      << " -- trackHomotopy time = " << ti << " sec."
       << " for " << node.Board << endl;
    );
    apply(targetSolutions, sln -> (
-      x'sln := if strategy != "deflation" 
+      x'sln := if strategy != "lifting" 
                then matrix sln else (matrix sln)_{0..numgens R-1};
       M''X'' := (map(FFF,Rt,matrix{{1}}|x'sln)) M'X';
       X'' := inverse M'' * M''X'';
@@ -276,7 +282,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       ) 
       else
          normalizeColumn(X'',r,s)
-      ) -- end second argument of apply
+     ) -- end second argument of apply
    ) -- end apply targetSolutions
 );
 
@@ -293,20 +299,22 @@ verifyParent(MutableHashTable,List) := (father, parent'solutions) -> (
 --   parent'solutions : solutions computed by solveCases.
 --
 -- OUT :
---   asserts that all solutions fits the pattern of the parent.
+--   verifies that all solutions fits the pattern of the parent.
 --
    parentX := makeLocalCoordinates father.Board;
    parentXlist := flatten entries parentX;
    scan(parent'solutions, X'''-> ( 
       -- check that solutions fit the parent's pattern
       a := flatten entries X''';
-      scan(#a, i -> assert(
-            (abs a#i < ERROR'TOLERANCE and parentXlist#i == 0)
-            or (abs(a#i-1) < ERROR'TOLERANCE and parentXlist#i == 1)
-            or (parentXlist#i != 0 and parentXlist#i != 1)
-         ) -- end assert
-      ); -- end scan on #a
-      ) -- end of second argument of scan
+      scan(#a, i -> 
+	  if not (
+              (abs a#i < ERROR'TOLERANCE and parentXlist#i == 0)
+              or (abs(a#i-1) < ERROR'TOLERANCE and parentXlist#i == 1)
+              or (parentXlist#i != 0 and parentXlist#i != 1)
+	      )
+	  then error "a solution does not fit the expected pattern (numerical error occured)"         	 
+      	 ); -- end scan on #a
+     ) -- end of second argument of scan
    ) -- end scan parent'solutions
 );
 
@@ -331,12 +339,17 @@ solveCases(MutableHashTable,List,Matrix) := (node,
    (
       (father, movetype) := father'movetype; 
       r := father.CriticalRow; 
-      -- critical row: rows r and r+1 are the most important ones
+      -- The critical row r and the next one r+1 are where the black checkers are moving.
+      --  These are where all of the action in the homotopy is.
       red := last father.Board;     
       red'sorted := sort delete(NC, red);
       M := node.FlagM;
+      --  The moving flag is modified.  In the paper, this is the flag M' defined on 
+      --   page 12 (Reference needs to be put in)
       M'':= M_{0..(r-1)} | M_{r} - M_{r+1} | M_{r}| M_{(r+2)..(n-1)};
+      -- Defined the flag for the next level if it is empty
       if not father.?FlagM then father.FlagM = M''; 
+      -- If that flag exists, checks it equals this one, for consistency.
       assert (father.FlagM == M'');
       if DBG>1 then (
          << "-- FROM " << node.Board << " TO " << father.Board << endl;
@@ -349,20 +362,24 @@ solveCases(MutableHashTable,List,Matrix) := (node,
       parent'solutions :=  -- this is where the main action happens
          if node.Solutions == {} then
             {} -- means: not implemented
-         else if movetype#1 == 2 then ( -- case (_,2).  The conditions on the k-plane do not change.
-	     --  This is case I in the paper, and is just a coordinate change.
+         else if movetype#1 == 2 then ( -- case movetype = (_,2).  The conditions on the k-plane do not change.
+	     --  This is case I in Section 3.3.1 in the paper, and it is just a coordinate change,
+	     --   see Equation (???) on page 13.
+	     --  The paper uses Y for the Stiefel coordinates, and only a single '.  
             apply(node.Solutions, X -> (
                X'' := (X^{0..r-1}) || (-X^{r+1})
                                    || (X^{r}+X^{r+1}) ||( X^{r+2..n-1});
+               -- These coordinates are not in echelon form if there is a red checker in row r+1.
+	       --  We need to check for this and if so, get its column.
                j := position(red'sorted, i-> i == r+1);
-               -- In this case, we need to normalize the jth column to return to coordinates
-	       --   to echelon form
+               -- If so, then we need to divide the jth column by the entry in position (r+1,j) to put the
+	       --  coordinates in echelon form
                if j =!= null then
                   redCheckersColumnReduce2(normalizeColumn(X'',r+1,j), father)
                else X'' )
             ) -- end apply to node.Solutions
-         ) -- end case (_,2)
-         else -- cases swap and stay require a homotopy
+         ) -- end case movetype = (_,2) 
+         else -- The other cases require a homotopy, and were implemented in caseSwapStay
             caseSwapStay(node, remaining'conditions'flags, coordX,
                (r, M'',father, movetype, black, red, red'sorted));
          if VERIFY'SOLUTIONS then

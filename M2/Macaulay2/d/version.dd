@@ -119,6 +119,9 @@ compiler := (
 	  else tostring(ic/100) + "." + tostring(ic%100)
 	  )
      else tostring(Ccode(constcharstar,"
+	    #ifdef __clang__
+	        \"clang \" __clang_version__
+	    #else
 	    #if defined(__GNUC__)
 	    #ifdef __GNUC_PATCHLEVEL__
 		 \"gcc \" stringize(__GNUC__) \".\" stringize(__GNUC_MINOR__) \".\" stringize(__GNUC_PATCHLEVEL__)
@@ -127,6 +130,7 @@ compiler := (
 	    #endif
 	    #else
 	    \"unknown\"
+	    #endif
 	    #endif
 	    ")));
 

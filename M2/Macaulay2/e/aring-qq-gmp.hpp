@@ -149,7 +149,7 @@ namespace M2 {
     }
     
     void power(ElementType& result, const ElementType& a, long n) const {
-      M2_ASSERT(n >= 0);
+      assert(n >= 0);
       mpz_pow_ui(mpq_numref(&result),mpq_numref(&a),n);
       mpz_pow_ui(mpq_denref(&result),mpq_denref(&a),n);
     }

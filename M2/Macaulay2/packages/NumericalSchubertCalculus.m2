@@ -1,7 +1,7 @@
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "0.4", 
-    Date => "September 29, 2014",
+    Version => "1.9.2.1", 
+    Date => "Oct 2016",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
@@ -9,25 +9,30 @@ newPackage(
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@cimat.mx", 
 	    HomePage => "http://www.cimat.mx/~abraham.mc"},
+	{Name => "Frank Sottile", 
+	    Email => "sottile@math.tamu.edu", 
+	    HomePage => "http://www.math.tamu.edu/~sottile"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
---    PackageExports => {
---	"NAGtypes"
---	},
     PackageImports => {
 	"PHCpack",
-	"NumericalAlgebraicGeometry"
+	"NumericalAlgebraicGeometry",
+	"MonodromySolver"
 	},
     AuxiliaryFiles => true,
+    CacheExampleOutput => true,
     DebuggingMode => true
     )
 debug NumericalAlgebraicGeometry
-export {   
-   "setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
-   "solveSchubertProblem"
+export { 
+   "changeFlags", -- "bigCellLocalCoordinates", 
+   "printStatistics",
+   "setVerboseLevel", 
+   "solveSchubertProblem",
+   "oneHomotopy"-- symbol?
    --   changeFlags  -- better name?
    }
 protect Board
@@ -40,6 +45,7 @@ protect Solutions
 protect SolutionsSuperset -- temporary
 
 -- NC means no checker in that column
+--  16.09.29:  Frank thinks we should choose one or the other, but not both
 NC = infinity
 
 -- OUR FIELD
@@ -72,24 +78,33 @@ setVerboseLevel ZZ := i->DBG=i
 --
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
-"setVerboseLevel"
 
 --INITIALIZING THE KEYS OF NODE
 --Board= symbol Board
 
 
-setFlags = method(Options=>{NSC'DBG=>null,NSC'VERIFY'SOLUTIONS=>null,NSC'BLACKBOX=>null})
-installMethod(setFlags, o -> () -> scan(keys o, k->if o#k=!=null then
-	if k === NSC'DBG then DBG = o#k
-	else if k === NSC'VERIFY'SOLUTIONS then VERIFY'SOLUTIONS = o#k
-	else if k === NSC'BLACKBOX then BLACKBOX = o#k
+setDebugOptions = method(Options=>{"debug"=>null,"verify solutions"=>null,"blackbox"=>null})
+installMethod(setDebugOptions, o -> () -> scan(keys o, k->if o#k=!=null then
+	if k == "debug" then DBG = o#k
+	else if k === "verify solutions" then VERIFY'SOLUTIONS = o#k
+	else if k === "blackbox" then BLACKBOX = o#k
 	))
-
  
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
 load "NumericalSchubertCalculus/galois.m2"
+
+--------------------------------------
+-- produces a matrix that parmeterizes
+-- the "big cell" of Gr(k,n)
+------------------------------
+bigCellLocalCoordinates = method()
+bigCellLocalCoordinates(ZZ,ZZ) := (k,n) -> (
+    x := symbol x;
+    R := FFF(monoid[x_(1,1)..x_(n-k,k)]);
+    transpose genericMatrix(R,k,n-k) || map(R^k)
+    )
 
 -----------------------------
 -- Numerical LR-Homotopies
@@ -98,12 +113,11 @@ load "NumericalSchubertCalculus/galois.m2"
 ---------------------
 -- redChkrPos 
 --
--- given two partitions, computes the positions 
--- of the red checkers
+-- given two brackets, computes the positions of the 
+-- red checkers at the start of a checkerboard game
 ---------------------
--- input: two Schubert conditions l and m
---			entered as brackets
---		  the Grassmannian G(k,n)
+-- input: two Schubert conditions l and m written 
+--	   as brackets the Grassmannian G(k,n)
 --
 -- Output: checkboard coordinates for the 
 --         red checkers
@@ -115,7 +129,7 @@ load "NumericalSchubertCalculus/galois.m2"
 --partition2bracket({2},3,6)
 --     o = {2, 5, 6}
 --redChkrPos({2,4,6},{2,5,6},3,6)  
---     o = {NC, 5, NC, 4, NC, 1}
+--     o = {infinity, 5, infinity, 4, infinity, 1}
 --------------------
 redChkrPos = method(TypicalValue => List)
 redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
@@ -130,8 +144,10 @@ redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
 )
 
 ----------------------------------------------------
--- "moveRed" moves the red checkers
+-- moveRed
 --
+-- makes the move of the red checkers during a game
+---------------------------------------------------
 -- input: {(blackup, blackdown, redposition)}
 --       blackup - Coordinates of the ascending black checker
 --       blackdown - Coordinates of the descending black checker
@@ -158,7 +174,8 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     critrow := 0;
     critdiag := 0;
     g:=2; -- g answers where is the red checker in the critical row
-    r:=2; -- r answers where is the red checker in the critical row
+    r:=2; -- r answers where is the red checker in the critical diagonal
+    -- r,g is the coordinate of the moving situaion in the 3x3 table of moves
     indx := new List;
     redpos := new MutableList from redposition;
     -- find the critical row, and how the red checkers sit with respect to it
@@ -219,7 +236,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 -- Output:
 --         a Sequence containing:
 --    board --> the new checkerboard [blackCheckers, redCheckers]
---    move --> the type of move that we realized: {i,j,splt} (from Ravi's notes) 
+--    move --> the type of move that we realized: {i,j,splt} (3x3 table from Ravi's notes) 
 --    critrow --> the critical row
 -----------------------------------
 -- Example:
@@ -227,7 +244,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 -- blackCheckersPosition = {0,1,3,4,5,2};
 -- redCheckersPosition = {0, NC, NC, 4, NC, NC};
 --
--- moveCheckers [blackCheckers, redCheckers];
+-- moveCheckers [blackCheckersPosition, redCheckersPosition];
 --    o =  ({[{0, 1, 2, 4, 5, 3}, {0, infinity, infinity, 4, infinity, infinity}, {1, 2, 0}]}, 2)
 -------------------------------------
 moveCheckers = method(TypicalValue => List)
@@ -244,11 +261,15 @@ moveCheckers Array := blackred -> (
      blackdown1 := position(blackposition, x->x == n-1) + 1;
      if blackdown1 == n then return ({},"leaf");
      blackup1 := position(blackposition, x-> x == 1+blackposition#blackdown1);
-     -- The column of the right black checker to be sorted goes from desccol 
-     -- to the end of the board.
-     -- Determine the rows of the next pair of black checkers to be sorted.
+     -- Determine the rows of the pair of black checkers that will be sorted.  They are row r and 
+     --    r+1 in the paper with r the critical row of the falling checker.
+     --  n-blackdown1 is one more thatn the number of checkers in the upper right corner 
+     --     (region A in paper)
+     --  blackup1 is the number of checkers above and to the left of rising checker (as we are 0-based)
+     --  Their sum is one more than the number of checkers above the moving pair = row of rising checker
      blackup2 := n-blackdown1+blackup1;
-     blackdown2 := blackup2-1; -- this is the critical row
+     blackdown2 := blackup2-1; -- this is the critical row 
+     -- Now we figure out how to move the red checkers
      listofredpositions := moveRed({blackup1,blackup2},{blackdown1,blackdown2}, redposition);
      blackposition = new MutableList from blackposition;
      blackposition#blackup1 = blackposition#blackup1 - 1;
@@ -262,6 +283,47 @@ moveCheckers Array := blackred -> (
 	 )
 )
 
+----------------------------------------------------
+-- Statistics
+---------------
+-- this function displays some information about
+-- the type of moves that are performed in each
+-- checkerboard game. These are the redcheker moves
+-- encoded in the 9x9 table in the paper, where we
+-- denote them by a triplet {i,j,k} where i is the
+-- row (0,1, or 2), j is the column (0,1,2) and
+-- k is 0 or 1 depending if we have a swap or not
+----------
+-- NOTE: the move {} indicates to be in the top
+--       of a dag, i.e. the beginning of a game
+--
+-- NOTE: the tracking time we report is the whole
+--       time used when tracking 
+--
+-- CAVEAT: printStatistics will display the information
+--        about moves performed every time you run
+--        a checker board game. Thus, if you use the
+--        function solveSchubertProblem twice, the function 
+--        will report the information of both Tournaments,
+--        to avoid that, you need to export the following:
+--            resetStats()
+---------------------------------
+stats = new MutableHashTable;
+resetStats = () -> stats =  new MutableHashTable from 
+flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
+{ "tracking time" => 0 }  
+resetStats()
+
+statsIncrementMove = m -> stats#m = stats#m + 1;
+statsIncrementTrackingTime = t -> stats#"tracking time" = stats#"tracking time" + t
+printStatistics = () -> (
+    scan(sort select(keys stats, k->class k === List), k-> 
+    	<< "# moves of type " << k << " = " << stats#k << endl
+	);
+    scan(select(keys stats, k->class k =!= List), k-> 
+	<< k << " = " << stats#k << endl
+	)
+    )
 
 --------------------------------------------------------
 -- playCheckers
@@ -278,7 +340,7 @@ moveCheckers Array := blackred -> (
 -- we first play the checkers with X1 and X2
 --
 -- input1:
---         l1, l2, two partitions (representing X1 and X2)
+--         partn1, partn2, two partitions (representing X1 and X2)
 --         k,n the Grassmannian where they live
 -- Output1:
 --         Dag - a Hashtable with all the checkermoves played
@@ -297,6 +359,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
      if DBG>1 then print(partn1,partn2);
      if DBG>1 then print([blackChkrs, redChkrs]);
      if DBG>0 then cpu0 := cpuTime();
+     -- we call playCheckers recursively
      root :=playCheckers ([blackChkrs, redChkrs], null, {}, all'nodes);  -- returns the root of the tree
      if DBG>0 then << "-- cpu time = " << cpuTime()-cpu0 << endl;
      if DBG>1 then print VerticalList keys all'nodes;
@@ -309,7 +372,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
 -- Input: 
 --       board 
 --       father (the checkergame this game came from)
---       typeofmove?
+--       typeofmove - the type of move in the 3x3 table we perform to go to the father
 --       all'nodes - the list of games played already
 --
 -- THIS IS THE RECURSIVE CALL OF PLAYCHECKERS
@@ -327,7 +390,6 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
     -- and this is where we store all nodes that we have
     -- already visited.
     --
-    -- Abr started the documentation of this function on Feb 6, 2013
     --------------------------------------------
      node'exists := all'nodes#?board; -- check if we already played this game
      self := if node'exists  
@@ -337,8 +399,9 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  IsResolved => false,
 	  Fathers => {}
 	  };
+     statsIncrementMove typeofmove; -- here we are collecting statistics for the number of times we see each type of move
      if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)}; -- add the new way to get to this node
-     if not node'exists then ( --add the ultimate node part here...
+     if not node'exists then (
          --<< "this is node'exists "<< node'exists<<endl;
 	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
      	 if numgens ring coordX > 0 then ( 
@@ -350,6 +413,36 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	 );
      self
 )
+
+-----------------------------------
+-- Example:
+--
+-- We play the game {2,1} vs {1,1,1} in G36
+-- Game = playCheckers({2,1},{1,1,1}, 3,6) -- plays the game {2,1} vs. {1,1,1} in G36
+--    o =  MutableHashTable{Board => [{5, 4, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}]}
+--                      Children => {MutableHashTable{...5...}}
+--                      CriticalRow => 4
+--                      Fathers => {}
+--                      IsResolved => false
+--
+-- G = first Game.Children -- this is a Hash table with the first node below the root from above
+--              we can now test the recursive call of playCheckers 
+--              NOTE: the key Fathers has value a list of sequences of fathers and movetypes 
+--
+-- These are the values in G
+--    	  Board =  [{4, 5, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}]
+--    	  Children = {MutableHashTable{...5...}}
+--    	  CriticalRow = 3
+--        Fathers = {([{5, 4, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}], {2, 2, 0})}
+--    	  IsResolved = false
+--
+-- playCheckers(G.Board, first first G.Fathers, last first G.Fathers, first Q.Children)
+--    o =  MutableHashTable{Board => [{4, 5, 3, 2, 1, 0}, {infinity, infinity, 5, 3, 1, infinity}]}
+--                       Children => {MutableHashTable{...5...}}
+--                       CriticalRow => 3
+--                       Fathers => {(MutableHashTable{...5...}, {2, 2, 0})}
+--                       IsResolved => false
+-------------------------------------
 
 
 -----------------
@@ -368,7 +461,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 -- blackCheckersPosition = {0,1,3,4,5,2};
 -- redCheckersPosition = {0, NC, NC, 4, NC, NC};
 --
--- makeLocalCoordinates [blackCheckers, redCheckers]
+-- makeLocalCoordinates [blackCheckersPosition, redCheckersPosition]
 --   o = | 1 0       |
 --       | 0 x_(1,1) |
 --       | 0 0       |
@@ -413,13 +506,14 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 -- Function that solves a Schubert problem
 -- by first taking two of the conditions,
--- then create a tree (with nodes) by playing a 
+-- then create a tree/Dag (with nodes) by playing a 
 -- checker game, then resolve the node numerically
 -- using homotopies, and gluing the solutions to each
 -- node
 ---------------
 -- input:
 --    SchPblm := list of Schubert conditions with general flags
+--               {(partition_List, flag_Matrix),...}
 --    k,n := the Grassmannian G(k,n)
 --    (option) LinAlgebra [default = true] 
 --             move to user flags via Linear Algebra (if false via homotopy continuation)
@@ -447,13 +541,13 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	-- resolveNode expects flags to be the following list:
 	--  flagM, Id, F3'....  
 	--
-	-- we make compute the linear transformations s.t.
+	-- we compute the linear transformations s.t.
 	-- A*F1 = FlagM*T1
 	-- A*F2 = ID * T2
 	ID := id_(FFF^n);
 	-- 
 	-- There is a fundamental difference between the case
-	-- with two or more than two partitions
+	-- with only two conditions and the one with 3 or more Schubert conditions
 	--
 	LocalFlags1 := {F1,F2};
 	flgM := matrix;
@@ -465,7 +559,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    flgM = MovingFlag'at'Root n;
 	    LocalFlags2 = {flgM, ID};
 	    );
-	At1t2 := moveFlags2Flags(LocalFlags1,LocalFlags2);
+	At1t2 := moveFlags2Flags(LocalFlags1,LocalFlags2); --Gets the transformations A, T1, T2
 	A := first At1t2;	    
 	-- we update the given flags F3 ... Fm
 	-- to F3' .. Fm' where Fi' = A*Fi
@@ -487,7 +581,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	--  we need to make a change of coordinates back to the user-defined flags
 	-- that is, send (FlagM,Id)-->(F1,F2), which is done by A^(-1)	
 	-------------------------------
-	--############ Fork to decide if you want to do
+	--############ Fork to decide if you want to do this
 	-- change of flags via homotopy or via Linear Algebra
 	-- ########################################
 	if o.LinearAlgebra then(
@@ -519,7 +613,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    	print(flgM*newDag.Solutions);
 	    	);
 	    changeFlags(flgM*newDag.Solutions, -- these are matrices in absolute coordinates
-	    	(conds, LocalFlags2, LocalFlags1)
+	    	(conds, LocalFlags2, LocalFlags1), oneHomotopy=>false
 		)
 	    ) --
 	)
@@ -558,6 +652,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 ---------------------------------
 -- Example:
 --
+-- R = FFF[x_(1,1),x_(3,1)]
 -- MX = matrix {{1,    0}, 
 --              {0, x_(1,1)}, 
 --              {0,    0}, 
@@ -570,6 +665,13 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 --
 -- solutionToChart(s,MX)
 --         o = {.115385, .269231}
+------
+-- s2 = promote(transpose matrix{
+--     	       	       	   {2,3,5,7,11,13},
+--     	       	       	   {1,4,9,25,49,-1}},FFF);
+-- solutionToChart(s2,MX)
+--
+--    	  o = {.0755344, .491155}
 ---------------------------------    
 solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of values of the parameters)
 solutionToChart(Matrix, Matrix) := (s,MX) -> (
@@ -587,148 +689,10 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
     X := solve(A,b, ClosestFit=>true);
     drop(flatten entries X, k*k) -- drop a_(i,j) coordinates
     )
----------------------------------
---- changeFlags
----------------------------------
----
--- changeFlags is a function to
--- write solutions written w.r.t. flagsA
--- to solutions written w.r.t flagsB
---
--- Input:
---    MX -- X -> A localization pattern, M -> flag (Information about the 
---    	      first two flags determines the localization pattern X)
---    solutionsA -> solutions to the problem specialized to flagsA
---    conds'A'B -> sequence with conditions and flags as follows: 
---    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
---    	  flagsA = (A3,...,Am)
---    	  flagsB = (B3,...,Bm)
--- Output:
---    List of solutions written w.r.t flags B
----------------------------------
-changeFlags = method()
-changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
-   if #solutionsA == 0 then return {};
-   (conditions,flagsA,flagsB) := conds'A'B; 
-   SchA := apply(#conditions, i->(conditions#i,flagsA#i));
-   SchB := apply(#conditions, i->(conditions#i,flagsB#i));
-   -- August 20, 2013:
-   -------------------
-   -- commenting th checkIncidenceSolutions check as we discovered
-   -- this is a test that is numerical unstable!
-   --assert all(solutionsA, s->checkIncidenceSolution(s,SchA));
-   s := first solutionsA;
-   n := numrows s;
-   k := numcols s;
-   x := symbol x;
-   R := FFF[x_(1,1)..x_(k,n-k)];
-   MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
-   -- THE SOLUTIONS MIGHT NOT FIT MX (that's why I have an error for some problems)
-   solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
-   -- the following clean is a hack, instead, we need to do a newton step check
-   -- when we changeFlags as there is a numerical check in there... 
-   -- the following is a hack
-   ret := apply(solutionsB, s-> clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
-   --print(" changing solutions from flagsA to FlagsB using parameter homotopy\n we verify the returned solutions using newton Iteration");
-   --print(checkNewtonIteration(ret,SchB,(k,n))); --this is not working with the new way to create eqns
-   --assert all(ret, s->checkIncidenceSolution(s,SchB));
-   ret
-   )
-
----------------------------------
--- changeFlags (recursive call!!!)
---
--- This function is doing a parameter homotopy
--- change one column at a time to move solutions
--- w.r.t. flags A to solutions w.r.t. flags B
---
--- CAVEAT:
---     it generates the polynomial equations using
---     all minors of the incidence conditions
---     (not the efficient way later implemented)
----------------------------------
--- Input:
---    MX --> matrix of local coordinates
---    solutionsA -> solutions to the problem specialized to flagsA
---    conds'A'B -> sequence with conditions and flags as follows: 
---    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
---    	  flagsA = (A3,...,Am)
---    	  flagsB = (B3,...,Bm)
--- Output:
---    List of solutions to the problem specialized to flagsB
-----------------------------------
-changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
-   (conditions,flagsA,flagsB) := conds'A'B; 
-   solutionsS := solutionsA;
-   if solutionsA!={} then(
-       t:= symbol t;
-       n := numcols last flagsA;
-       R := ring last flagsA;
-       R1 := R[t];
-       Mt := matrix{{t}};
-       Mt1 := matrix{{1-t}};
-        scan(n, i->(
-	       -- start when t = 0, target when t = 1
-	       flagsHomot := apply(#flagsA, f-> (
-		       FlagBB := sub(flagsB#f,R1);
-		       FlagAA := sub(flagsA#f,R1);
-		       FlagBB_{0..i-1}|
-		       (FlagBB_{i}*Mt - FlagAA_{i}*Mt1)|
-		       FlagAA_{i+1..n-1}
-		       ));
-	       RMx := ring MX;
-	       m := numgens RMx;
-       	       R2 := (coefficientRing RMx)[t,gens RMx];
-	       Polys := flatten entries squareUpPolynomials(m, 
-		   makePolynomialsGivenConditionsFlags(sub(MX,R2),conditions,flagsHomot));
-	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
-	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
-	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, 
-		   NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR));
-      	       solutionsS = solutionsT/coordinates;
-	       ));
-       );
-   solutionsS
-   )
-
-
-TEST ///
----------
--- Test the function changeFlags that
--- moves solutions wrt flags A
--- to solutions wrt flags B
---
--- This function doesn't really test if they are actual solutions
------------------
--- If you want to run this example:
--- 1.- you need to uncomment it AFTER loading NumericalSchubertCalculus package
--- 2.- you need to load the NumercialAlgebraicGeometry package
--- 3.- you need to manually load the function makePolynomials
--- 4.- you need to manually load the function changeFlags
--- 5.- you need to manually load the function changeflagsLinear
---
--- You could avoid all this maybe if you can run this example at the end of
--- the code, where the other examples are.
------------------
---
-debug needsPackage "NumericalSchubertCalculus"
-needsPackage "NumericalAlgebraicGeometry"
-Rng = FFF[x_{1,1}, x_{1,2}];
-MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
-conds = {{1},{1}};
-Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
-sols = solveSystem (
-    first makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i)),{})
-    )_*
-Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
-solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
-assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
-/// --end of TEST
-
 --------------------------
 -- toRawSolutions
 --
--- Function that takes solutions as nxk matrices
+-- Function that takes solutions (in local coordinates) as nxk matrices
 -- and writes them into a list of values cooresponding to
 -- the variables in the local coordinates coordX of the 
 -- checkerboard variety 
@@ -865,9 +829,10 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 -- input:     S -- matrix of solutions
 --    	      	    assumes the matrix lives in the Schubert cell for l with
 --                  the standard flag, but not all pivots are 1.
---    	       b -- the bracket corresponding to the standard flag
+--    	      b -- the bracket corresponding to the standard flag
 --    	      	    this is just a list of the parts of the flag that are afected by a partition lambda
 --    	      	    (equivalent to a partition with k parts of size <= n-k)
+--            (the default bracket is  
 -- output:  Sred  --matrix reduced
 -------------------
 columnReduce=method(TypicalValue=> Matrix )
@@ -962,12 +927,13 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
 ------------------------
 -- isRedCheckerInRegionE
 ------------------------
--- Binary function that tells if 
--- a given red checker is NorthWest to
--- a the critical black checker. (better explained in the paper) 
--- 
--- This function is necessary for
--- Ravi's change of coordinates
+-- Binary function that tells if a given red checker, indicated by its row number,
+--  lies in the `critical diagonal', also referred to as `Region E'.  This is explained in 
+--  the paper.   This is equivalent to the column C of this red checker satisfying
+--   a \leq C < b, where a is the column of the rising black checker and b that of 
+--   the falling (these are in rows r and r+1, where r is the `critical row'
+--
+-- This function is needed to set up the homotopy in (at least) case II (again, see the paper).
 ----------------------------
 -- Input: 
 --     i = coordinates of a red checker
@@ -1003,14 +969,8 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -- Documentation --
 -------------------
 beginDocumentation()
-doc ///
-   Key
-      NumericalSchubertCalculus
-   Headline
-      Numerical Schubert Calculus
-///
---load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 load "NumericalSchubertCalculus/doc.m2"
+load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 
 -------------------
 -- Tests         --
@@ -1027,6 +987,9 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
+--TEST ///
+--load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
+--///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------
@@ -1034,4 +997,11 @@ restart
 check "NumericalSchubertCalculus"
 installPackage "NumericalSchubertCalculus"
 installPackage ("NumericalSchubertCalculus", RerunExamples=>true)
+installPackage ("NumericalSchubertCalculus", RunExamples=>false)
 
+--n = 6;
+--SchubProb =  matrix{{3, 2,4,6}};
+--(f, p, s) := LRtriple(n,SchubProb);
+--(R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
+viewHelp NumericalSchubertCalculus
+--first PieriHomotopies(2,2)

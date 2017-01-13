@@ -617,7 +617,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         elem a, b;
 
         std::pair<bool,long> res = mOriginalRing->getCoefficientRing()->coerceToLongInteger(t->coeff);
-        M2_ASSERT(res.first);
+        assert(res.first);
         set_from_long(a, res.second);
 
         mOriginalRing->getMonoid()->to_expvector(t->monom, exp);
@@ -646,7 +646,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         //   mPrimitiveElement^a
         // Also: want to insure that mPrimitiveElement is the same element as zeta!
         // (And the defining polynomials are the same too).
-        // TODO: add tests and M2_ASSERT's for all of these conditions
+        // TODO: add tests and assert's for all of these conditions
         result = mOriginalRing->power(mPrimitiveElement, static_cast<int>(f));
       }
   }

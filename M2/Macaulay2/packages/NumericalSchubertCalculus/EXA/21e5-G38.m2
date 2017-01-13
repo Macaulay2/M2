@@ -1,7 +1,7 @@
 needsPackage "NumericalSchubertCalculus"
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
-setFlags(NSC'DBG=>1,NSC'VERIFY'SOLUTIONS=>false)
+setDebugOptions("debug"=>1,"verify solutions"=>false)
 
 -- Problem (2,1)^5 in Gr(3,8)
 -- a problem with 32 solutions

@@ -2,10 +2,10 @@ export {
     "createSeedPair",
     "computeMixedVolume",
     "monodromySolve",
-    "staticMonodromySolve",
-    "dynamicMonodromySolve",
     "completeGraphInit",
+    "completeGraphAugment",
     "flowerGraphInit",
+    "flowerGraphAugment",
     "dynamicFlowerSolve",
 --    "ExtraNodeCount",
     "RandomPointFunction",
@@ -17,8 +17,11 @@ export {
     "SelectEdgeAndDirection",
     "BatchSize",
     "AugmentGraphFunction",
-    "AugmentationStoppingCriterion",
-    "randomWeights"}
+    "AugmentNumberOfRepeats",
+    "AugmentEdgeCount",
+    "AugmentNodeCount",
+    "randomWeights",
+    "EdgesSaturated"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
@@ -47,10 +50,49 @@ completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     );
     for i from 0 to nnodes-1 do (
         for j from i+1 to nnodes-1 do (
-            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
+            apply(nedges, k -> addEdge(G, G.Vertices#i, G.Vertices#j,
+		    "random gamma" => (nedges>1)));
         );
     );
     )
+
+completeGraphAugment = (G, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nNewNodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		for j from 0 to #(G.Vertices) - 2 do (
+			apply(nStartingEdges, k -> addEdge(G, newNode, G.Vertices#j));
+		);
+	);
+	
+	nNodes := #(G.Vertices);
+	for i from 0 to nNodes-1 do (
+		for j from i+1 to nNodes-1 do (
+			apply(nNewEdges, k -> addEdge(G, G.Vertices#i, G.Vertices#j));
+		);
+	);
+);
+
+-- static flower
+flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nnodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		apply(nedges, k -> addEdge(G, node1, newNode));
+	);
+)
+
+-- static flower
+flowerGraphAugment = (G, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
+	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+	for i from 1 to nNewNodes do (
+		newNode := addNode(G,nextP(p), pointArray {});
+		apply(nStartingEdges, k -> addEdge(G, node1, newNode));
+	);
+	for i from 1 to #(G.Vertices) - 1 do (
+		apply(nNewEdges, k -> addEdge(G, G.Vertices#i, node1));
+	);
+)
 
 dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
@@ -110,15 +152,6 @@ dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 computeMixedVolume = method()
 computeMixedVolume List := polys -> mixedVolume(toRingXphc polys,StartSystem => false)
 
--- static flower
-flowerGraphInit = (G, p, node1, nnodes, nedges) -> (
-	nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
-	for i from 1 to nnodes do (
-		newNode := addNode(G,nextP(p), pointArray {});
-		apply(nedges, k -> addEdge(G, node1, newNode));
-	);
-)
-
 -- find the "seed" for the parametric system
 createSeedPair = method(Options=>{"initial parameters" => "random unit"})
 createSeedPair PolySystem := o -> G -> (
@@ -169,7 +202,8 @@ staticMonodromySolve = method(Options=>{
 	NumberOfEdges => null,
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
@@ -191,52 +225,149 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 
 	o.GraphInitFunction(HG, point0, node1, o.NumberOfNodes, o.NumberOfEdges);
 	--Needs to return HG for use by dynamicMonodromySolve
-	(coreMonodromySolve(HG,node1, new OptionTable from (new HashTable from mutableOptions)), HG)
+	coreMonodromySolve(HG,node1, new OptionTable from (new HashTable from mutableOptions))
 )
 
-TEST /// 
-restart
-needsPackage "MonodromySolver"
-R = CC[a,b,c,d][A,B]
-polys = polySystem {A*a+B*b,A*B*c+d}
-(p0,x0) := createSeedPair polys
-monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
+TEST ///
+for exampleIndex from 1 to 2 do (
+	if exampleIndex == 1 then (
+		R1 = CC[a,b,c,d][A,B];
+		polys = polySystem {A*a+B*b,A*B*c+d};
+		(p0,x0) = createSeedPair polys;
+		count = 2;
+	) else if exampleIndex == 2 then (
+		--Cyclic-4
+		R2 = CC[a,b,c,d,e,f,g,h,i,j,k,l,m,n][A,B,C,D];
+		polys = polySystem {
+			a*A+b*B+c*C+d*D,
+			e*A*B+f*B*C+g*C*D+h*D*A,
+			i*A*B*C+j*B*C*D+k*C*D*A+l*D*A*B,
+			m*A*B*C*D-n*1};
+		(p0,x0) = createSeedPair polys;
+		count = 16;
+	);
+    	-- Blackbox
+	(V,npaths) = monodromySolve polys;
+		assert( length V.PartialSols <= count );
+	-- Can provide no options
+	(V,npaths) = monodromySolve(polys,p0,{x0});
+		assert( length V.PartialSols <= count );
+	    
+	--Can provide TargetSolutionCount (mixed volume)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		TargetSolutionCount=>count);
+		assert( length V.PartialSols <= count );
+
+	--Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
+	--must also provide a Potential function.
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
+		assert( length V.PartialSols <= count );
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+		TargetSolutionCount=>count,
+		Potential=>potentialE);
+		assert( length V.PartialSols <= count );
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+		Potential=>potentialLowerBound);
+		assert( length V.PartialSols <= count );
+
+	--Two different GraphInitFunctions
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>flowerGraphInit);
+		assert( length V.PartialSols <= count );
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>completeGraphInit);
+		assert( length V.PartialSols <= count );
+
+	--BatchSize changes the number of paths tracked at once.
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		BatchSize=>1);
+		assert( length V.PartialSols <= count );
+	
+	--NumberOfNodes, NumberOfEdges, NumberOfRepeats
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		NumberOfNodes=>2,
+		NumberOfEdges=>3,
+		NumberOfRepeats=>10);
+		assert( length V.PartialSols <= count );
+
+	--"new tracking routine" is a boolean
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		"new tracking routine"=>true);
+		assert( length V.PartialSols <= count );
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		"new tracking routine"=>false);
+		assert( length V.PartialSols <= count );
+	
+	--Verbose is a boolean
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		Verbose=>true);
+		assert( length V.PartialSols <= count );
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		Verbose=>false);
+		assert( length V.PartialSols <= count );
+
+	--Set dynamic options. Need to provide an AugmentGraphFunction and
+	--the AugmentEdgeCount and/or AugmentNodeCount should be greater than 0 if
+	--any augmenting is going to happen. AugmentNumberOfRepeats can be used to
+	--keep it from running indefinitely.
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>completeGraphInit,
+		AugmentGraphFunction=>completeGraphAugment,
+		AugmentNodeCount=>1,
+		AugmentNumberOfRepeats=>10);
+		assert( length V.PartialSols == count );
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		GraphInitFunction=>flowerGraphInit,
+		AugmentGraphFunction=>flowerGraphAugment,
+		AugmentEdgeCount=>1,
+		AugmentNumberOfRepeats=>10);
+		assert( length V.PartialSols == count );
+);
 ///
 
 monodromySolve = method(Options=>{
 	TargetSolutionCount => null,
 	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
 	GraphInitFunction => completeGraphInit,
 	AugmentGraphFunction => null,
-	AugmentationStoppingCriterion => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
 	BatchSize => infinity,
 	Potential => null,
 	NumberOfNodes => 2,
 	NumberOfEdges => 3,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
-monodromySolve (Matrix, Point, List) := o -> (PF,point0,s0) -> monodromySolve(polySystem transpose PF, point0, s0, o)
+	Verbose => false,
+	EdgesSaturated => false})
+monodromySolve PolySystem := o -> PS -> (
+    (p0,x0) := createSeedPair PS;
+    monodromySolve(PS,p0,{x0},o)
+    )
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
-		result := dynamicMonodromySolve(PS,point0,s0)
-	else if o.AugmentationStoppingCriterion =!= null then 
-		error "AugmentationStoppingCriterion does not work if AugmentGraphFunction is undefined"
-	else (
-		(result,HG) := staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
-	);
+		result := dynamicMonodromySolve(PS,point0,s0, o)
+	else
+		result = staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
 	result
 );
 
 trimDynamicOptions = method()
-trimDynamicOptions OptionTable := opt -> (
-	mutableOptions := new MutableHashTable from opt;
-	
+trimDynamicOptions OptionTable := opt -> trimDynamicOptions(new MutableHashTable from opt)
+trimDynamicOptions MutableHashTable := MutableOptions -> (
 	--if we ever add more dynamic-only options, add them into dynamicOptions.
-	dynamicOptions := (AugmentGraphFunction, AugmentationStoppingCriterion); 
-	for opt in dynamicOptions do (remove(mutableOptions,opt));
+	dynamicOptions := (AugmentGraphFunction, 
+		AugmentNumberOfRepeats,
+		AugmentEdgeCount, 
+		AugmentNodeCount);
+	for opt in dynamicOptions do (remove(MutableOptions,opt));
 	
-	new OptionTable from (new HashTable from mutableOptions)
+	new OptionTable from (new HashTable from MutableOptions)
 )
 
 dynamicMonodromySolve = method(Options=>{
@@ -244,29 +375,43 @@ dynamicMonodromySolve = method(Options=>{
 	SelectEdgeAndDirection => null,
 	StoppingCriterion => null,
 	GraphInitFunction => null,
-	AugmentGraphFunction => null, --NEED SOME DEFAULT HERE. Add edge(s)? Add node?
-	AugmentationStoppingCriterion => null,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
 	BatchSize => null,
 	Potential => null,
 	NumberOfNodes => null,
 	NumberOfEdges => null,
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-	staticOptions := trimDynamicOptions(o);
+	mutableOptions := new MutableHashTable from o;
+	if mutableOptions.TargetSolutionCount === null then 
+		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
+	mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+	staticOptions := trimDynamicOptions(mutableOptions);
 
-	{*
-	(staticMSReturn,HG) = staticMonodromySolve(PS,point0,s0,staticOptions);
-	(node1,npaths) = staticMSReturn;
-	success := npaths != "failed";
-	while not success and not o.AugmentationStoppingCriterion do (
-		o.AugmentGraphFunction(HG);
+	(node1,npaths) := staticMonodromySolve(PS,point0,s0,staticOptions);
+	HG := node1.Graph;
+	success := class(npaths) === ZZ;
+	edgeCount := o.NumberOfEdges;
+	iterations := 0;
+	augmentNumberOfRepeats := 1000000; -- Arbirtary large number
+	if (o.AugmentNumberOfRepeats =!= null) then
+		augmentNumberOfRepeats = o.AugmentNumberOfRepeats;
+
+	while not (success) and (augmentNumberOfRepeats > iterations) do (
+		o.AugmentGraphFunction(
+			HG, point0, HG.Vertices#0, edgeCount, o.AugmentEdgeCount, o.AugmentNodeCount);
+		edgeCount = edgeCount + o.AugmentEdgeCount;
 		(node1,npaths) = coreMonodromySolve(HG, node1, staticOptions);
-		success = npaths != "failed";
-	)
+		success = class(npaths) === ZZ;
+		iterations = iterations + 1;
+	);
 	(node1,npaths)
-	*}
 )
 
 -- main function
@@ -281,7 +426,8 @@ coreMonodromySolve = method(Options=>{
 	NumberOfEdges => null,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false})
+	Verbose => false,
+	EdgesSaturated => false})
 coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;
 	same := 0;
@@ -311,6 +457,7 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	);
 	if o.TargetSolutionCount =!= null and o.TargetSolutionCount != length lastNode.PartialSols 
 	then npaths = "failed";
+	if o.EdgesSaturated then saturateEdges HG;
 	(lastNode, npaths)
 )
 

@@ -1,22 +1,24 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.9.2", 
-    	Date => "Oct 2016",
+    	Version => "1.9.2.1", 
+    	Date => "Nov 2016",
     	Authors => {
-	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
-	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
-	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"},
-	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"}
+	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
+	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
+	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
     	Headline => "Solving polynomial systems via monodromy",
 	PackageImports => {"PHCpack"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-    	DebuggingMode => true		 -- set to true only during development
+  	DebuggingMode => false,		
+  	-- DebuggingMode => true,		 -- set to true only during development
+  	CacheExampleOutput => true
     	)
 
 
@@ -24,7 +26,7 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12"}
+     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12", "homotopyGraph"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry
