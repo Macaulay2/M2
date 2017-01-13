@@ -27,7 +27,13 @@ newPackage("Polyhedra",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
-	  Email => "rbirkner@mi.fu-berlin.de"}},
+	  Email => "rbirkner@mi.fu-berlin.de"},
+      {
+         Name => "Lars Kastner (Maintaining author)",
+         HomePage => "http://page.mi.fu-berlin.de/lkastner/",
+         Email => "k.l@fu-berlin.de",
+      }
+     },
     DebuggingMode => false,
     PackageExports=>{"FourTiTwo"}
     )
