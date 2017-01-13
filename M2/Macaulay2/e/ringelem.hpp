@@ -12,6 +12,7 @@ struct Nterm;
 
 typedef Nterm *tpoly;
 class schur_poly;
+class Poly;
 
 union ring_elem
 {
@@ -20,6 +21,7 @@ union ring_elem
   Nterm * poly_val;
   schur_poly *schur_poly_val;
   mpfr_ptr mpfr_val;
+  Poly *mPolyVal;
  private:                       // move this line up to the top eventually
   mpz_ptr  mpz_val;
 

@@ -53,7 +53,8 @@ unsigned int PolynomialAlgebra::computeHashValue(const ring_elem a) const
 int PolynomialAlgebra::index_of_var(const ring_elem a) const
 {
   // This function is needed at top level to be able to determine if a ring element is a variable
-  const Poly* f = reinterpret_cast<Poly*>(a.poly_val);
+  //const Poly* f = reinterpret_cast<Poly*>(a.poly_val);
+  auto f = reinterpret_cast<const Poly*>(a.mPolyVal);
 
   // f is a variable iff: #terms is 1, monomial is [3,1,v], coeff is 1
   if (f->numTerms() != 1) return -1;
@@ -66,9 +67,10 @@ int PolynomialAlgebra::index_of_var(const ring_elem a) const
 
 ring_elem PolynomialAlgebra::from_long(long n) const
 {
-  Poly* result = new Poly;
+  auto result = new Poly;
 
   result->getCoeffInserter().push_back(mCoefficientRing.from_long(n));
+  // would eventually like:
   //monoid().make_one(result->getMonomInserter());
   result->getMonomInserter().push_back(2); // length of the monomial data
   result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
@@ -77,7 +79,7 @@ ring_elem PolynomialAlgebra::from_long(long n) const
 
 ring_elem PolynomialAlgebra::from_int(mpz_ptr n) const
 {
-  Poly* result = new Poly;
+  auto result = new Poly;
   result->getCoeffInserter().push_back(mCoefficientRing.from_int(n));
   //monoid().make_one(result->getMonomInserter());
   result->getMonomInserter().push_back(2); // length of the monomial data
@@ -87,7 +89,7 @@ ring_elem PolynomialAlgebra::from_int(mpz_ptr n) const
 
 ring_elem PolynomialAlgebra::from_rational(mpq_ptr q) const
 {
-  Poly* result = new Poly;
+  auto result = new Poly;
   result->getCoeffInserter().push_back(mCoefficientRing.from_rational(q));
   //monoid().make_one(result->getMonomInserter());
   result->getMonomInserter().push_back(2); // length of the monomial data
@@ -97,7 +99,7 @@ ring_elem PolynomialAlgebra::from_rational(mpq_ptr q) const
 
 ring_elem PolynomialAlgebra::var(int v) const
 {
-  Poly* result = new Poly;
+  auto result = new Poly;
 
   result->getCoeffInserter().push_back(mCoefficientRing.from_long(1));
   // monoid().make_variable(result->getMonomInserter(), v)
@@ -123,7 +125,7 @@ bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f, ring_elem &result
 
 bool PolynomialAlgebra::is_unit(const ring_elem f1) const
 {
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
 
   if (f->numTerms() != 1) return false;
   auto i = f->cbegin();
@@ -134,7 +136,7 @@ bool PolynomialAlgebra::is_unit(const ring_elem f1) const
 
 bool PolynomialAlgebra::is_zero(const ring_elem f1) const
 {
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
   return (f->numTerms() == 0);
 }
 
@@ -146,8 +148,8 @@ bool PolynomialAlgebra::is_equal(const ring_elem f, const ring_elem g) const
 
 int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) const
 {
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
-  const Poly* g = reinterpret_cast<Poly*>(g1.poly_val);
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
   auto fIt = f->cbegin();
   auto gIt = g->cbegin();
   auto fEnd = f->cend();
@@ -203,7 +205,7 @@ void PolynomialAlgebra::remove(ring_elem &f) const
 
 ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
 {
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
   Poly* result = new Poly;
 
   auto& outmonom = result->getMonomInserter();
@@ -220,9 +222,9 @@ ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
 
 ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
 {
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
-  const Poly* g = reinterpret_cast<Poly*>(g1.poly_val);
-  Poly* result = new Poly;
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
+  auto result = new Poly;
   auto fIt = f->cbegin();
   auto gIt = g->cbegin();
   auto fEnd = f->cend();
@@ -307,9 +309,9 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
 
 ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) const
 {
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
-  const Poly* g = reinterpret_cast<Poly*>(g1.poly_val);
-  Poly* result = new Poly;
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
+  auto result = new Poly;
   auto fIt = f->cbegin();
   auto gIt = g->cbegin();
   auto fEnd = f->cend();
@@ -396,9 +398,9 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
   // TODO: make this a geobucket heap multiply function?
   //
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
-  const Poly* g = reinterpret_cast<Poly*>(g1.poly_val);
-  Poly* result = new Poly;
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
+  auto result = new Poly;
   ring_elem resultW = reinterpret_cast<Nterm*>(result);
 
   for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
@@ -406,12 +408,12 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
       ring_elem tmp = mult_by_term_left(g1, fIt.coeff(), fIt.monom());
       ring_elem resultW1 = add(resultW, tmp);
       std::swap(resultW1, resultW);
-      delete reinterpret_cast<Poly*>(tmp.poly_val);
-      delete reinterpret_cast<Poly*>(resultW1.poly_val);
+      delete reinterpret_cast<Poly*>(tmp.mPolyVal);
+      delete reinterpret_cast<Poly*>(resultW1.mPolyVal);
     }
   return resultW;
-#if 0  
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
+#if 0 // what is this for?
+  const Poly* f = reinterpret_cast<Poly*>(f1.mPolyVal);
   Poly* zeroPoly = new Poly;
   ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
   for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
@@ -428,8 +430,8 @@ ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
                                             const ring_elem c, const Monom m) const
 {
   // return f*c*m
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
-  Poly* result = new Poly;
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto result = new Poly;
   auto& outcoeff = result->getCoeffInserter();
   auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
@@ -463,8 +465,8 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
                                            const ring_elem c, const Monom m) const
 {
   // return (c*m)*f
-  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
-  Poly* result = new Poly;
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto result = new Poly;
   auto& outcoeff = result->getCoeffInserter();
   auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
@@ -529,7 +531,7 @@ void PolynomialAlgebra::debug_display(const Poly* f) const
 void PolynomialAlgebra::debug_display(const ring_elem ff) const
 
 {
-  const Poly* f = reinterpret_cast<const Poly*>(ff.poly_val);
+  auto f = reinterpret_cast<const Poly*>(ff.mPolyVal);
   debug_display(f);
 }
 
@@ -564,7 +566,7 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
-  const Poly* f = reinterpret_cast<const Poly*>(ff.poly_val);
+  auto f = reinterpret_cast<const Poly*>(ff.mPolyVal);
 
   bool two_terms = (f->numTerms() > 1);
   bool needs_parens = p_parens && two_terms;
@@ -622,7 +624,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
   // In the latter case, the last set of variables are part of
   // the coefficients.
 
-  const Poly* f = reinterpret_cast<const Poly*>(ff.poly_val);
+  auto f = reinterpret_cast<const Poly*>(ff.mPolyVal);
   if (coeffR != &mCoefficientRing)
     {
       ERROR("expected coefficient ring");

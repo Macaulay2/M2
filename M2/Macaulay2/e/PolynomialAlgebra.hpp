@@ -13,7 +13,7 @@ class PolynomialAlgebra : public Ring
   PolynomialAlgebra(const Ring* K,
                 M2_ArrayString names);
 public:
-  typedef Polynomial<CoefficientRingTypeExample> Poly;
+  using Poly = Polynomial<CoefficientRingTypeExample>;
   
   static PolynomialAlgebra* create(const Ring* K,
                                M2_ArrayString names,

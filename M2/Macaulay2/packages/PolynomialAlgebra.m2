@@ -151,7 +151,11 @@ a+b
 a == b
 a == a
 b*a + a*b + b*a
-(a*a*b+a+1)*(a*a*b+a+1)
+(a*a*b+a+1)*(a*a*b+a+1) == a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1 -- ?
+f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
+g = (a*a*b+a+1)*(a*a*b+a+1) - 1
+f - g == 0
+f == g -- isEqual bug?
 R_0
 R_1 + R_2
 a == b
@@ -159,14 +163,38 @@ a*b
 a == R_0
 raw(a-b)
 promote(2,R)
+--- matrices!
+M = matrix {{a,b}}
+transpose M
+M * transpose M
+transpose M * M
+matrix {{a}} * matrix {{b}}
 
-f = 3*a^2*b*a
-rawPairs(raw coefficientRing R, raw f)
+-- trying to get pairs from the engine working so 'coefficients' will work.
+f = 3*a^2*b*a + 2*a^4
+pairs f -- weird return value
+leadTerm f -- fails
+leadCoefficient f -- fails
+terms f -- fails
+degree f -- wrong answer
+rawPairs(raw coefficientRing R, raw f) -- folded incorrectly
 first last oo
 rawSparseListFormMonomial oo
+M = R^2 -- works
+N = mutableMatrix(R,2,3) -- SIGSEGV
+
 -- play with listForm
 -- calls rawPairs, which calls IM2_RingElement_list_form in engine
 -- each ring has its own "list_form(coeff ring, ring_elem)"
+
+-- TODO: 1/13/17 MS+FM
+-- 1. isEqual
+-- 2. mutable matrices
+-- 3. promote/lift
+-- 4. pairs and rawPairs, etc
+-- 5. leadTerm/Coefficient/Monomial
+-- 6. terms
+-- 7. degrees/weights of variables
 
 doc ///
 Key
