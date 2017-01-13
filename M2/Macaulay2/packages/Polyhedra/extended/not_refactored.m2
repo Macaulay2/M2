@@ -485,7 +485,7 @@ minkSummandCone Polyhedron := P -> (
           dP := dim P;
           (HS,v) := halfspaces P;
           (hyperplanesTmp,w) := hyperplanes P;
-	  F := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
+	  F := apply(numRows HS, i -> polyhedronFromHData(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
 	  F = apply(F, f -> (
 		    V := vertices f;
 		    R := rays f;
@@ -559,7 +559,7 @@ minkSummandCone Polyhedron := P -> (
 	       -- Otherwise we can compute the Minkowski summand cone
 	       else (
 		    Id := map(source condmatrix,source condmatrix,1);
-		    C := intersection(Id,condmatrix);
+		    C := coneFromHData(Id,condmatrix);
 		    R := rays C;
 		    TC := map(ZZ^(ambDim(P)),ZZ^1,0) | rays(P) | linSpace(P) | -(linSpace(P));
 		    v = (vertices P)_{0};
@@ -596,5 +596,5 @@ minkSummandCone Polyhedron := P -> (
 		     onevec := matrix toList(numRows R: {1_QQ});
 		     negId := map(source R,source R,-1);
 		     zerovec :=  map(source R,ZZ^1,0);
-		     Q := intersection(negId,zerovec,R,onevec);
+		     Q := polyhedronFromHData(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
