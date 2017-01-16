@@ -167,11 +167,25 @@ TEST ///
   3_R
   assert(promote(3,R) == 3_R)
   assert(promote(23423/324,R) == (23423/324)_R)
+  
+  A = ZZ/101[s,t]
+  B = A{x,y,z}
+  promote(s,B)
+  (s + x + y)^2
+
+
+  A = ZZ/101[t]/t^2
+  B = A{x,y,z}
+  promote(t,B)
+  t_B
+  (t*x + t*y)^2 == 0
+  (x + t*y)^2 == x^2 + t*x*y + t*y*x  -- should be equal, BUG
 ///
 
 TEST ///
   R = QQ{b,c,d}
   f = 3*b^2*c*b + 2*b^4
+  assert(size (b+c) == 2) -- WRONG
   pairs f -- fails
   leadTerm f -- fails
   leadCoefficient f -- fails

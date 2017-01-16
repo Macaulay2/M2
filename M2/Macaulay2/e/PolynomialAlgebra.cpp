@@ -77,6 +77,18 @@ ring_elem PolynomialAlgebra::from_long(long n) const
   return reinterpret_cast<Nterm*>(result);
 }
 
+ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
+{
+  auto result = new Poly;
+
+  result->getCoeffInserter().push_back(a);
+  // would eventually like:
+  //monoid().make_one(result->getMonomInserter());
+  result->getMonomInserter().push_back(2); // length of the monomial data
+  result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
+  return reinterpret_cast<Nterm*>(result);
+}
+
 ring_elem PolynomialAlgebra::from_int(mpz_ptr n) const
 {
   auto result = new Poly;
@@ -112,14 +124,19 @@ ring_elem PolynomialAlgebra::var(int v) const
 
 bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &result) const
 {
-  std::cout << "Called promote" << std::endl;
-  // TODO
+  // Currently the only case to handle is R = A --> this, and A is the coefficient ring of this.
+  // XXX
+  if (R == & mCoefficientRing)
+    {
+      result = from_coefficient(f);
+      return true;
+    }
   return false;
 }
 
 bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f, ring_elem &result) const
 {
-  // TODO
+  // Currently, until quotient rings are in place, the only lift is from a polynomial ring with this as coefficient ring.
   return false;
 }
 
@@ -505,6 +522,7 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
 
 ring_elem PolynomialAlgebra::invert(const ring_elem f) const
 {
+  
   return f; // TODO: bad return value.
 }
 
