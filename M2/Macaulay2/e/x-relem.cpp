@@ -1032,7 +1032,6 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
     //const PolynomialAlgebra *ncP = f->get_ring()->cast_to_PolynomialAlgebra();
     if (ncP != nullptr)
       {
-        std::cout << "Calling correct list_form" << std::endl;
         return ncP->list_form(coeffRing, f->get_value());
       }
     ERROR("expected a polynomial");

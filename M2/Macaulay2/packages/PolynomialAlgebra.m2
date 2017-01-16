@@ -78,7 +78,16 @@ Ring List := (A, varList) -> (
    R.generators = newGens;
    commonEngineRingInitializations R;
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
-   net R := f -> net raw f;
+   expression R := f -> (
+	       (
+		    (coeffs,monoms) -> (
+			 if #coeffs === 0
+			 then expression 0
+			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,A)) * expression (if m == 1 then 1 else m))
+			 )
+		    ) rawPairs(raw A, raw f)
+        );
+   net R := f -> net expression f;
    R
    );
 
@@ -149,9 +158,6 @@ TEST ///
   assert(toExternalString(f - g) == "0")
   f - g
   exprf = expression f
-  debug Core
-  toExternalFormat exprf
-  (hold a)^2*b*a^2*b + (hold a)^3*b -- looks bad
 ///
 
 TEST ///
