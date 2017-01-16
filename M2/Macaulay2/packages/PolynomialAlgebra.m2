@@ -147,6 +147,11 @@ TEST ///
   f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
   g = (a*a*b+a+1)*(a*a*b+a+1)
   assert(toExternalString(f - g) == "0")
+  f - g
+  exprf = expression f
+  debug Core
+  toExternalFormat exprf
+  (hold a)^2*b*a^2*b + (hold a)^3*b -- looks bad
 ///
 
 TEST ///

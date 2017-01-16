@@ -578,6 +578,12 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
 {
   auto f = reinterpret_cast<const Poly*>(ff.mPolyVal);
 
+  if (f->numTerms() == 0)
+    {
+      o << "0";
+      return;
+    }
+
   bool two_terms = (f->numTerms() > 1);
   bool needs_parens = p_parens && two_terms;
   if (needs_parens)
@@ -586,6 +592,7 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
       o << '(';
       p_plus = false;
     }
+
 
   for (auto i = f->cbegin(); i != f->cend(); i++)
     {
