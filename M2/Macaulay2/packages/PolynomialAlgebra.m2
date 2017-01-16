@@ -27,25 +27,23 @@ new NCPolynomialRing from List := (EngineRing, inits) -> new EngineRing of RingE
 
 sequenceToVariableSymbols = args -> (
     variables := splice args;
-     v := flatten toList apply(variables, x->if class x === MutableList then toList x else x);
-     v = for v0 in v list (
-		    try baseName v0
-		    else if instance(v0,String) and match("[[:alnum:]$]+",v0) then getSymbol v0
-		    else error ("name " | v0 | " not usable as a variable")
-        );
-    v
+    v := flatten toList apply(variables, x -> if class x === MutableList then toList x else x);
+    for v0 in v list (
+	    try baseName v0
+	    else if instance(v0,String) and match("[[:alnum:]$]+",v0) then getSymbol v0
+	    else error ("name " | v0 | " not usable as a variable")
+       )
     )
 
-NCAlgebra = method()
-NCAlgebra(Ring, Sequence) := (A, variables) -> (
-    if not (A.?Engine and A.Engine) then
-      error "expected coefficient ring handled by the engine";
+{*getVariableSymbols = method()
+getVariableSymbols List := variables -> (
     genSymbols := sequenceToVariableSymbols variables;
-    if #genSymbols == 0 then error "Expected at least one variable.";
+
     << "symbols: " << genSymbols << endl;
     --newNCAlgebra(A, v)
     genSymbols
     )
+*}
 
 -- TODO (11 Jan 2017 MS+FM)
 --   1. handle multigradings
@@ -57,9 +55,13 @@ NCAlgebra(Ring, Sequence) := (A, variables) -> (
 --   6. check on listForm.
 --   7. use, ...
 --   8. make sure multiplication is using a heap based approach.
+
 Ring List := (A, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
-   varSymbols := NCAlgebra(A, toSequence varList);
+   if not (A.?Engine and A.Engine) then
+       error "expected coefficient ring handled by the engine";
+   varSymbols := sequenceToVariableSymbols toSequence varList;
+   if #varSymbols == 0 then error "Expected at least one variable.";
    degreelen := 1;
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degreelen);
    R := new NCPolynomialRing from {
@@ -79,6 +81,7 @@ Ring List := (A, varList) -> (
    net R := f -> net raw f;
    R
    );
+
 NCPolynomialRing _ ZZ := (R, n) -> (R.generators)#n
 coefficientRing NCPolynomialRing := R -> last R.baseRings
 
@@ -113,6 +116,7 @@ SeeAlso
 ///
 
 TEST ///
+  --- generators test
   debug Core -- for generatorSymbols
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
@@ -121,67 +125,77 @@ TEST ///
   R = QQ{(a,b,c),(d,e)}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
   R = QQ{b..f}; assert(R.generatorSymbols == splice {vars(1,2,3,4,5)})
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
-  R = QQ{x_1..x_10}
-  R = QQ{x_1..x_100, y_1..y_100}
-  numgens R == 200
+  R = QQ{x_1..x_100, y_1..y_100}; assert(numgens R == 200)
 ///
-end
+
+TEST ///
+  --- equality tests
+  R = QQ{a,b,c}
+  assert(a != b)
+  assert(a == a)
+  assert(b*a + a*b + b*a == 2*b*a + a*b)
+  assert(R_0 == a)
+  f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
+  g = (a*a*b+a+1)*(a*a*b+a+1)
+  assert(f == g)
+  assert(f - g == 0)
+///
+
+TEST ///
+  -- printing tests
+  R = QQ{a,b,c}
+  f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
+  g = (a*a*b+a+1)*(a*a*b+a+1)
+  assert(toExternalString(f - g) == "0")
+///
+
+TEST ///
+  --- promote/lift tests
+  R = QQ{a,b,c}
+  3_R
+  assert(promote(3,R) == 3_R)
+  assert(promote(23423/324,R) == (23423/324)_R)
+///
+
+TEST ///
+  R = QQ{b,c,d}
+  f = 3*b^2*c*b + 2*b^4
+  pairs f -- fails
+  leadTerm f -- fails
+  leadCoefficient f -- fails
+  terms f -- fails
+  assert(degree f == {4})
+  debug Core
+  rawSparseListFormMonomial raw f
+  rawPairs(raw coefficientRing R, raw f)
+///
+
+TEST ///
+  R = QQ{b,c,d}
+  M = R^2 -- works
+  B = matrix {{b}}
+  C = matrix {{c}}
+  assert(B*C == matrix {{c*b}})
+  N = mutableMatrix(R,2,3) -- SIGSEGV
+  D = matrix {{b,c}}
+  assert(D * transpose D == matrix {{b^2 + c^2}})
+  assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}})
+///
+
+end--
 
 restart
+needsPackage "PolynomialAlgebra"
 installPackage "PolynomialAlgebra"
 uninstallPackage "PolynomialAlgebra"
 viewHelp "PolynomialAlgebra"
+check "PolynomialAlgebra"
 
 -- XXX
 restart
 needsPackage "PolynomialAlgebra"
 debug Core
 check PolynomialAlgebra
-
-R = QQ{a,b,c}
-gens R
-R.RawRing
-degreesRing R
-
-3_R
-promote(3,R) -- interesting, this is not calling promote?
-(23423/324)_R
-a+b
--a
-a == b
-a == a
-b*a + a*b + b*a
-(a*a*b+a+1)*(a*a*b+a+1) == a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1 -- ?
-f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
-g = (a*a*b+a+1)*(a*a*b+a+1) - 1
-f - g == 0
-f == g -- isEqual bug?
-R_0
-R_1 + R_2
-a == b
-a*b
-a == R_0
-raw(a-b)
-promote(2,R)
---- matrices!
-M = matrix {{a,b}}
-transpose M
-M * transpose M
-transpose M * M
-matrix {{a}} * matrix {{b}}
-
--- trying to get pairs from the engine working so 'coefficients' will work.
-f = 3*a^2*b*a + 2*a^4
-pairs f -- weird return value
-leadTerm f -- fails
-leadCoefficient f -- fails
-terms f -- fails
-degree f -- wrong answer
-rawPairs(raw coefficientRing R, raw f) -- folded incorrectly
-first last oo
-rawSparseListFormMonomial oo
-M = R^2 -- works
-N = mutableMatrix(R,2,3) -- SIGSEGV
 
 -- play with listForm
 -- calls rawPairs, which calls IM2_RingElement_list_form in engine

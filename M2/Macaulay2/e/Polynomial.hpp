@@ -148,9 +148,9 @@ public:
   void copyAllMonoms(const monomVector & rhs ) { mMonomials = rhs; }
 
   const coeffVector & getCoeffVector() const { return mCoefficients; }
-  const monomVector & getMonomVector() const { return mMonomials; }
 
 #endif  
+  const monomVector & getMonomVector() const { return mMonomials; }
 
   size_t numTerms() const { return mCoefficients.size(); }
 private:

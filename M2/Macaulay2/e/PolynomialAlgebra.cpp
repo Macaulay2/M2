@@ -140,10 +140,21 @@ bool PolynomialAlgebra::is_zero(const ring_elem f1) const
   return (f->numTerms() == 0);
 }
 
-bool PolynomialAlgebra::is_equal(const ring_elem f, const ring_elem g) const
+bool PolynomialAlgebra::is_equal(const ring_elem f1, const ring_elem g1) const
 {
-  std::cout << "Called is_equal" << std::endl;
-  return false; // TODO
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
+  if (f->numTerms() != g->numTerms()) return false;
+  if (f->getMonomVector() != g->getMonomVector()) return false;
+  auto fCoeffIt = f->cbeginCoeff();
+  auto gCoeffIt = g->cbeginCoeff();
+  auto fEnd = f->cendCoeff();
+  for ( ; fCoeffIt != fEnd ; fCoeffIt++, gCoeffIt++)
+    {
+      bool cmp = mCoefficientRing.is_equal(*fCoeffIt, *gCoeffIt);
+      if (!cmp) return false;
+    }
+  return true;
 }
 
 int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) const
@@ -399,7 +410,6 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
   // TODO: make this a geobucket heap multiply function?
   //
   auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
-  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
   auto result = new Poly;
   ring_elem resultW = reinterpret_cast<Nterm*>(result);
 
@@ -539,7 +549,7 @@ void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) 
 // The output is of the form:
 // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0.
 {
-  int start = result.size();
+  auto start = result.size();
   result.push_back(0);
   auto mon_length = *monom - 2;
   auto mon_ptr = monom + 2;
@@ -557,7 +567,7 @@ void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) 
       // back j up one since we went too far looking ahead.
       j--;
     }
-  result[start] = result.size() - start;
+  result[start] = static_cast<int>(result.size() - start);
 }
 
 void PolynomialAlgebra::elem_text_out(buffer &o,
@@ -630,7 +640,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
       ERROR("expected coefficient ring");
       return nullptr;
     }
-  int nterms = f->numTerms();
+  int nterms = static_cast<int>(f->numTerms());
   engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,nterms));
   engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,nterms));
   engine_RawArrayPair result = newitem(struct engine_RawArrayPair_struct);
