@@ -80,6 +80,7 @@ Ring List := (A, varList) -> (
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
    expression R := f -> (
 	       (
+		    -- apply the following function to the output of rawPairs
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
@@ -194,6 +195,9 @@ TEST ///
 ///
 
 end--
+
+-- The following is the directory of my M2 build.
+workingDir = ~/Macaulay2/M2-frank/M2/BUILD/frank/builds.tmp/darwin64-clang/M2
 
 restart
 needsPackage "PolynomialAlgebra"
