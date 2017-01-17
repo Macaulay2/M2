@@ -2,14 +2,6 @@
 #ifndef _polyroots_hpp_
 #define _polyroots_hpp_
 
-#define timer timer1
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#include <pari/pari.h>
-#pragma GCC diagnostic pop
-
-#undef timer
 
 #include "relem.hpp"
 #include "polyring.hpp"
@@ -21,6 +13,15 @@
 
 #define abs(x)  ( ( (x) < 0) ? -(x) : (x) )
 #define max(a, b)  ( ( (a) > (b) ) ? (a) : (b) )
+
+#define timer timer1
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#include <pari/pari.h>
+#pragma GCC diagnostic pop
+
+#undef timer
 
 extern "C" {
   #include "../d/pari-gnump.h"

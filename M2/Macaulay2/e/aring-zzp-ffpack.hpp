@@ -3,13 +3,15 @@
 #ifndef _aring_ffpack_hpp_
 #define _aring_ffpack_hpp_
 
+#include <fflas-ffpack/ffpack/ffpack.h>
+#include <fflas-ffpack/field/modular-balanced.h>
+#include <fflas-ffpack/field/modular-double.h>
+
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include <iostream>
-#include <fflas-ffpack/field/modular-balanced.h>
-#include <fflas-ffpack/field/modular-double.h>
-#include <fflas-ffpack/ffpack/ffpack.h>
 //#include <givaro/givgfq.h>
 
 namespace M2 {

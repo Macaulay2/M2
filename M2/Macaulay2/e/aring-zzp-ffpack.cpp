@@ -1,5 +1,7 @@
 // Copyright 2011 Michael E. Stillman
 
+#include <fflas-ffpack/fflas-ffpack.h>
+
 #include "aring-zzp-ffpack.hpp"
 #include "error.h"
 

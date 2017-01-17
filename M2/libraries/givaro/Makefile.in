@@ -9,11 +9,11 @@
 
 
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 3.7.1
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+#VERSION = 3.7.1
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 ## version 4.0.1: works with ffpack 2.2.1, but that doesn't yet compile.
-#VERSION = 4.0.1
+VERSION = 4.0.2
 
 #PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 
