@@ -20,7 +20,7 @@ namespace M2 {
       mDimension(extensionDegree_),
       mOriginalRing(0),
       givaroField(FieldType(charact_, extensionDegree_)),
-      givaroRandomIterator( FieldType::randIter(givaroField ))     
+      givaroRandomIterator( FieldType::RandIter(givaroField ))     
     {
            mCardinality = mCharac;
            for (int j=1; j<mDimension; j++)
@@ -56,7 +56,7 @@ namespace M2 {
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
       givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial) )),
-      givaroRandomIterator( FieldType::randIter(givaroField )),
+      givaroRandomIterator( FieldType::RandIter(givaroField )),
       mGeneratorExponent(1)
     {
            mCardinality = mCharac;
@@ -85,7 +85,7 @@ namespace M2 {
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
       givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial), ARingGFGivaro::M2arrayToStdVec(charact_, generatorPoly) )),
-      givaroRandomIterator( FieldType::randIter(givaroField )),
+      givaroRandomIterator( FieldType::RandIter(givaroField )),
       mGeneratorExponent(1)
     {
 
@@ -587,7 +587,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     }
 
     /// @jakob: document possible overflow and other nasty things
-    void ARingGFGivaro::random(FieldType::randIter &it, ElementType &result) const
+    void ARingGFGivaro::random(FieldType::RandIter &it, ElementType &result) const
     {
          givaroField.random( it,result);
       //   std::cerr << " givaroField.cardinality()" << givaroField.cardinality();

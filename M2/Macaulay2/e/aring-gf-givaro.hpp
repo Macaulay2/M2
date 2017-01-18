@@ -42,14 +42,14 @@ namespace M2 {
 };
 
 #else
-#include <givaro/givgfq.h>
+#include <givaro/gfq.h>
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
-#include <givaro/givextension.h>     //multiple definition problem...   solvable by encapsulating (see linbox)? Also solvable with the namespace trick, but do not overuse that...
+#include <givaro/extension.h>     //multiple definition problem...   solvable by encapsulating (see linbox)? Also solvable with the namespace trick, but do not overuse that...
 #include <math.h>
 #include <givaro/givinteger.h>
 #include <givaro/givintnumtheo.h>
-#include <givaro/givpower.h>
+//#include <givaro/givpower.h>
 #include <givaro/givpoly1padic.h>
 
 #include <type_traits>
@@ -70,17 +70,13 @@ class ARingGFGivaro : public RingInterface
   public:
     static const RingID ringID = ring_GFGivaro;
 
-    typedef Givaro::GFqDom<long>    FieldType;
-    typedef FieldType::Element      ElementType;
-    typedef M2::ARingGFGivaro             ring_type ;
-  
-    typedef ElementType     elem;
+    using FieldType = Givaro::GFqDom<long>;
+    using ElementType = FieldType::Element;  
+    using ring_type = M2::ARingGFGivaro;
+    using elem = ElementType;  
 
-    typedef  FieldType::Residu_t     UTT; ///< types depends on FieldType definition!
-    //typedef Signed_Trait<FieldType::Residu_t>::signed_type  STT;///< types depends on FieldType definition!
-
-    typedef std::make_signed<FieldType::Residu_t>::type STT;
-
+    using UTT = FieldType::Residu_t;
+    using STT = std::make_signed<UTT>::type;
 
     ARingGFGivaro( UTT charac_,   UTT dimension_);
 
@@ -116,7 +112,7 @@ class ARingGFGivaro : public RingInterface
 
     const FieldType     givaroField;
  
-    mutable  FieldType::randIter     givaroRandomIterator;
+    mutable  FieldType::RandIter     givaroRandomIterator;
 
     size_t      mGeneratorExponent;  
 
@@ -263,7 +259,7 @@ class ARingGFGivaro : public RingInterface
             void swap(ElementType &a, ElementType &b) const;
 
 
-            void random(FieldType::randIter &it, ElementType &result) const;
+            void random(FieldType::RandIter &it, ElementType &result) const;
             void random(ElementType &result) const;
             
     /** @} */

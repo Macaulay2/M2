@@ -3,9 +3,17 @@
 #ifndef _aring_ffpack_hpp_
 #define _aring_ffpack_hpp_
 
-#include <fflas-ffpack/ffpack/ffpack.h>
-#include <fflas-ffpack/field/modular-balanced.h>
-#include <fflas-ffpack/field/modular-double.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshorten-64-to-32"
+#include <fflas-ffpack/fflas-ffpack.h>
+#pragma GCC diagnostic pop
+
+#include <givaro/modular-balanced.h>
+#include <givaro/modular-double.h>
+
+//#include <fflas-ffpack/field/modular-balanced.h>
+//#include <fflas-ffpack/field/modular-double.h>
 
 
 #include "aring.hpp"
@@ -19,7 +27,7 @@ namespace M2 {
   /**
      @ingroup rings
      
-     @brief wrapper for the FFPACK::ModularBalanced<double> field implementation
+     @brief wrapper for the Givaro::ModularBalanced<double> field implementation
   */ 
   
   class ARingZZpFFPACK : public RingInterface
@@ -31,8 +39,8 @@ namespace M2 {
     // problem: givaro isn't necessarily defined here
     static const RingID ringID = ring_ZZpFfpack;
     
-    //typedef FFPACK::ModularBalanced<double> FieldType;
-    typedef FFPACK::Modular<double> FieldType;
+    //typedef Givaro::ModularBalanced<double> FieldType;
+    typedef Givaro::Modular<double> FieldType;
 
     typedef FieldType::Element ElementType;
     typedef ElementType elem;
@@ -206,11 +214,11 @@ namespace M2 {
     
     static inline double getMaxModulus() 
     {
-      if  (std::is_same<FFPACK::Modular<double> , FieldType>::value)
+      if  (std::is_same<Givaro::Modular<double> , FieldType>::value)
       {
-	    return FieldType::getMaxModulus()/2;
+	    return FieldType::maxCardinality()/2;
       }
-      return FieldType::getMaxModulus();
+      return FieldType::maxCardinality();
     }
   /** @} */
 
