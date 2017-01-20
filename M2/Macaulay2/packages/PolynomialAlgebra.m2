@@ -68,6 +68,7 @@ Ring List := (A, varList) -> (
        (symbol RawRing) => rawR,
        (symbol generators) => {},
        (symbol generatorSymbols) => varSymbols,
+       (symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
        (symbol degreesRing) => degreesRing degreelen,
        (symbol degreeLength) => degreelen,
        (symbol CoefficientRing) => A,
@@ -78,15 +79,11 @@ Ring List := (A, varList) -> (
    R.generators = newGens;
    commonEngineRingInitializations R;
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
-   {*processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
-   processTrms := trms -> (
-	  if # trms === 1
-	  then processTrm trms#0
-	  else new Product from apply(trms, processTrm));
-   exprMonomial := x -> (
-	  processTrms rawSparseListFormMonomial x
-	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
-   );*}
+   processFactor := (k,v) -> if v =!= 1 then Power{R.generatorExpressions#k, v} else R.generatorExpressions#k;
+   processFactors := facs -> (
+	  if #facs  === 1
+	  then processFactor facs#0
+	  else new Product from apply(facs, processFactor));
    -- TODO:
    -- In order to get expression R to display monomials correctly, one must:
    -- 1. Create a new function which returns (coeff, a list of integers representing the monomial)
@@ -94,13 +91,14 @@ Ring List := (A, varList) -> (
    --    create an expression of a monomial.
    expression R := f -> (
 	       (
+		    rawP := rawPairs(raw coefficientRing R, raw f);
 		    -- apply the following function to the output of rawPairs
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
-			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,A)) * expression (if m == 1 then 1 else m))
+			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,A)) * expression (if m == {} then 1 else processFactors m))
 			 )
-		    ) rawPairs(raw A, raw f)
+		    ) (rawP#0, rawP#1 / rawSparseListFormMonomial)
         );
    net R := f -> net expression f;
    R
@@ -206,14 +204,14 @@ TEST ///
   R = QQ{b,c,d}
   f = 3*b^2*c*b + 2*b^4
   assert(size (b+c) == 2) -- WRONG
-  pairs f -- fails
+  pairs f -- WRONG
   leadTerm f -- fails
   leadCoefficient f -- fails
   terms f -- fails
   assert(degree f == {4})
   debug Core
-  rawSparseListFormMonomial raw f
-  rawPairs(raw coefficientRing R, raw f)
+  rawP = rawPairs(raw coefficientRing R, raw f)
+  last rawP / rawSparseListFormMonomial
 ///
 
 TEST ///
@@ -280,3 +278,13 @@ TEST ///
 -- may have as many TEST sections as needed
 ///
 
+restart
+needsPackage "PolynomialAlgebra"
+debug Core
+A = QQ[x,y]
+R = A{b,c,d}
+f = 3*x*y*b^2*c*b + 2*b^4
+rawP = rawPairs(raw coefficientRing R, raw f)
+(rawP#0, rawP#1 / rawSparseListFormMonomial)
+-- this code can be used, for example, to get the 'monomial part' of terms.
+toList apply(last rawP / rawSparseListFormMonomial, t -> product(apply(t, p -> R_(p#0)^(p#1))))
