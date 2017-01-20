@@ -78,6 +78,20 @@ Ring List := (A, varList) -> (
    R.generators = newGens;
    commonEngineRingInitializations R;
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
+   {*processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
+   processTrms := trms -> (
+	  if # trms === 1
+	  then processTrm trms#0
+	  else new Product from apply(trms, processTrm));
+   exprMonomial := x -> (
+	  processTrms rawSparseListFormMonomial x
+	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
+   );*}
+   -- TODO:
+   -- In order to get expression R to display monomials correctly, one must:
+   -- 1. Create a new function which returns (coeff, a list of integers representing the monomial)
+   -- 2. Use this function below, together with a modified version of the code above to
+   --    create an expression of a monomial.
    expression R := f -> (
 	       (
 		    -- apply the following function to the output of rawPairs
@@ -156,10 +170,14 @@ TEST ///
   R = QQ{a,b,c}
   f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
   g = (a*a*b+a+1)*(a*a*b+a+1)
-  assert(toExternalString(f - g) == "0")
+    assert(toExternalString(f - g) == "0")
   f - g
+  {f,g}
   exprf = expression f
 ///
+
+--- question: why is engine code slower for this computation than NCAlgebra?
+-- apply(11, i -> time(h = g^i));  -- SIGSEGV?
 
 TEST ///
   --- promote/lift tests
@@ -168,11 +186,13 @@ TEST ///
   assert(promote(3,R) == 3_R)
   assert(promote(23423/324,R) == (23423/324)_R)
   
+  debug Core
   A = ZZ/101[s,t]
   B = A{x,y,z}
   promote(s,B)
-  (s + x + y)^2
-
+  f = (s + x + y)^2
+  (coeff, monoms) = rawPairs(raw A, raw f)
+  peek first monoms
 
   A = ZZ/101[t]/t^2
   B = A{x,y,z}

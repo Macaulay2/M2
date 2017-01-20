@@ -26,7 +26,7 @@ Monomial::Monomial(const std::vector<int>& vp)
   // as we would need to review all uses of Monomial to make sure that is ok.
   // A good idea, but for later...
   // 
-  // [7 0 1 2 1 0 2]
+  // vp = [7 0 1 2 1 0 2] = aca^2
   // i=5, i=3, i=1
   val.append(vp[0]);
   for (int i = vp[0]-2; i > 0; i -= 2)

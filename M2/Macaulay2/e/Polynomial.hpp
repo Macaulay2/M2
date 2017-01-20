@@ -32,13 +32,6 @@ private:
   const int* mValue; // We are visiting this monomial, we do not own it!
 };
 
-#if 0
-// Example code for template type for Polynomial
-class CoefficientRingTypeExample {
-public:
-  typedef ring_elem ElementType;
-}
-#endif
   
 /**
  * \ingroup polynomialrings
