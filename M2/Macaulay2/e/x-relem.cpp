@@ -222,6 +222,7 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
                                                M2_ArrayString names,
                                                const Ring* degreeRing)
 {
+  // MIKE: Can we remove this now?
   Polynomial<CoefficientRingTypeExample> noop; // This is just to force a compile of the code, until we have more of PolynomialAlgebra running.
   try {
     if (coefficientRing == nullptr)

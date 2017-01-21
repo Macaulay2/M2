@@ -288,3 +288,7 @@ rawP = rawPairs(raw coefficientRing R, raw f)
 (rawP#0, rawP#1 / rawSparseListFormMonomial)
 -- this code can be used, for example, to get the 'monomial part' of terms.
 toList apply(last rawP / rawSparseListFormMonomial, t -> product(apply(t, p -> R_(p#0)^(p#1))))
+--- this is how terms is computed.  rawTerm calls IM2_RingElement_term in the engine.
+--- Q: Do we change this code to work for PolynomialAlgebra objects as well, or will they
+---    get their own function?  (We added a separate function for these types of things in the past).
+apply(rawP#0,rawP#1,(c,m) -> new R from rawTerm(raw R, c, m))
