@@ -69,7 +69,18 @@ public:
   void debug_display(const ring_elem ff) const;
 
   // helper functions
+  // getMonomial:
+  // Input is of the form: [len deg v1 v2 ... vn]
+  //                        where len = n + 2 and deg is the sum of the degree of vi
+  // The output is of the form, and stored in result.
+  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
   void getMonomial(const int* monom, std::vector<int>& result) const;
+  // fromMonomial:
+  // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
+  // The output is of the form, and stored in result.
+  // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
+  // where len = n+2 and deg = sum of the degrees of the vi 
+  void fromMonomial(const int* monomial, std::vector<int>& result) const;
 
 private:
   std::vector<std::string> mVariableNames;

@@ -564,8 +564,10 @@ void PolynomialAlgebra::debug_display(const ring_elem ff) const
 }
 
 void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) const
-// The output is of the form:
-// [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0.
+// Input is of the form: [len degree v1 v2 ... vn]
+//                        where len = n + 2
+// The output is of the form, and stored in result.
+// [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 {
   auto start = result.size();
   result.push_back(0);
@@ -586,6 +588,33 @@ void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) 
       j--;
     }
   result[start] = static_cast<int>(result.size() - start);
+}
+
+void PolynomialAlgebra::fromMonomial(const int* monom, std::vector<int>& result) const
+  // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
+  // The output is of the form, and stored in result.
+  // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
+  // where len = n+2 and deg = sum of the degrees of the vi 
+{
+  int inputMonomLength = *monom;
+  int monDeg = 0;
+  int startMon = static_cast<int>(result.size());  
+  // make a space for the length
+  result.push_back(0);
+  // make a space for the degree
+  result.push_back(0);
+  for (int j = 1; j < inputMonomLength; j += 2)
+    {
+      auto v = monom[j];
+      int degv = 1;
+      for (int k = 0; k < monom[j+1]; k++)
+        {
+          monDeg += degv;
+          result.push_back(v);
+        }
+    }
+  result[startMon] = static_cast<int>(result.size() - startMon);
+  result[startMon+1] = monDeg;
 }
 
 void PolynomialAlgebra::elem_text_out(buffer &o,

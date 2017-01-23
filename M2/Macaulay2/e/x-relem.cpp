@@ -223,7 +223,6 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
                                                const Ring* degreeRing)
 {
   // MIKE: Can we remove this now?
-  Polynomial<CoefficientRingTypeExample> noop; // This is just to force a compile of the code, until we have more of PolynomialAlgebra running.
   try {
     if (coefficientRing == nullptr)
       {
@@ -929,24 +928,35 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
 {
      try {
           const PolynomialRing *P = R->cast_to_PolynomialRing();
-          if (P == 0)
+          if (P != nullptr)
             {
-              ERROR("requires a polynomial ring");
-              return 0;
+              int nvars0 = P->n_vars();
+              const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
+              if (K != nullptr && K != P->getCoefficients())
+                nvars0 -= K->n_vars();
+              int *exp = newarray_atomic(int,nvars0);
+              varpower::to_ntuple(nvars0, m->ints(), exp);
+              ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
+              return RingElement::make_raw(R,val);
             }
-
-          int nvars0 = P->n_vars();
-          const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
-          if (K != 0 && K != P->getCoefficients())
-            nvars0 -= K->n_vars();
-          int *exp = newarray_atomic(int,nvars0);
-          varpower::to_ntuple(nvars0, m->ints(), exp);
-          ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
-          return RingElement::make_raw(R,val);
+          auto Q = dynamic_cast<const PolynomialAlgebra *>(R);
+          if (Q != nullptr)
+            {
+              if (Q->coefficientRing() != a->get_ring())
+                {
+                  ERROR("wrong coefficient ring");
+                  return nullptr;
+                }
+              return RingElement::make_raw(Q,
+                                           Q->makeTerm(a->get_value(),
+                                                       m->ints()));
+            }
+          ERROR("requires a polynomial ring");
+          return nullptr;
      }
      catch (exc::engine_error e) {
           ERROR(e.what());
-          return NULL;
+          return nullptr;
      }
 }
 
