@@ -144,11 +144,11 @@ public:
 
 #endif  
   const monomVector & getMonomVector() const { return mMonomials; }
+  monomVector & getMonomInserter() { return mMonomials; }
 
   size_t numTerms() const { return mCoefficients.size(); }
 private:
   coeffVector & getCoeffInserter() { return mCoefficients; }
-  monomVector & getMonomInserter() { return mMonomials; }
   
 private:
   VECTOR(ElementType) mCoefficients;

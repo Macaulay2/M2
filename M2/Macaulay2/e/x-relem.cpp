@@ -942,7 +942,7 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
           auto Q = dynamic_cast<const PolynomialAlgebra *>(R);
           if (Q != nullptr)
             {
-              if (Q->coefficientRing() != a->get_ring())
+              if (Q->getCoefficientRing() != a->get_ring())
                 {
                   ERROR("wrong coefficient ring");
                   return nullptr;

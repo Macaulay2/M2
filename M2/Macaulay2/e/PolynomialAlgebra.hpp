@@ -19,6 +19,7 @@ public:
                                M2_ArrayString names,
                                const PolynomialRing* degreeRing);
 
+  const Ring* getCoefficientRing() const { return &mCoefficientRing; }
   // these are all the functions from Ring that must exist for PolynomialAlgebra to be instantiated
   virtual int index_of_var(const ring_elem a) const;
   
@@ -68,6 +69,10 @@ public:
   void debug_display(const Poly* f) const;
   void debug_display(const ring_elem ff) const;
 
+  ring_elem makeTerm(const ring_elem a, const int* monom) const;
+  // 'monom' is in 'varpower' format
+  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+  
   // helper functions
   // getMonomial:
   // Input is of the form: [len deg v1 v2 ... vn]

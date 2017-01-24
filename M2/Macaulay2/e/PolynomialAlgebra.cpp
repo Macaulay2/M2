@@ -563,6 +563,18 @@ void PolynomialAlgebra::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
+ring_elem PolynomialAlgebra::makeTerm(const ring_elem a, const int* monom) const
+  // 'monom' is in 'varpower' format
+  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+{
+  auto result = new Poly;
+
+  result->getCoeffInserter().push_back(a);
+  fromMonomial(monom, result->getMonomInserter());
+  return reinterpret_cast<Nterm*>(result);
+  
+}
+
 void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) const
 // Input is of the form: [len degree v1 v2 ... vn]
 //                        where len = n + 2
