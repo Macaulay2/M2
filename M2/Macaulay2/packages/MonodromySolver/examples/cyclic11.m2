@@ -11,7 +11,8 @@ getTrackTime V.Graph
 {* -- Anton's office machine:
 
      mixedVolume = 184756
--- 7747.72 seconds elapsed
+-- 6514.17 seconds elapsed
+(tracking = 6295.760326436)
 
 o8 = (HomotopyNode{...5...}, 540155)
 *}
