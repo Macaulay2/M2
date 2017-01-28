@@ -1,8 +1,8 @@
 
 newPackage(
        "Resultants",
-	Version => "0.9", 
-    	Date => "Jan 26, 2017",
+	Version => "1.0", 
+    	Date => "Jan 28, 2017",
     	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
@@ -13,11 +13,13 @@ newPackage(
     	)
 
 export{
-       "Poisson", 
-       "Macaulay",
        "Resultant",
        "Discriminant",
        "genericPolynomials",
+       "Poisson",
+       "Poisson2", 
+       "Macaulay",
+       "Macaulay2",
        "fromPluckerToStiefel",
        "Grass", 
        "dualize",
@@ -44,52 +46,49 @@ needsPackage "PushForward"
 Resultant=method(TypicalValue => RingElement, Options => {Algorithm => Poisson});
     
 Resultant Matrix := o -> (F) -> (
-      if numgens target F != 1 then error("expected a matrix with one row");
-      if not isPolynomialRing ring F then error("the base ring must be a polynomial ring");
-      if numgens source F != numgens ring F then error("the number of variables in the ring must be equal to the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
---    if not isHomogeneous F then error("expected a homogeneous matrix");
-      if o.Algorithm =!= Poisson and o.Algorithm =!= Macaulay then error "bad value for option Algorithm; possible values are Poisson and Macaulay";
-    n:=numgens source F-1;
-    d:=for i to n list first degree F_(0,i);
-    if o.Algorithm === Macaulay then (if (min d > -1 and sum(d) > n) then return macaulayRes F else <<"--warning: option Algorithm=>Macaulay ignored\n");
-    if n == 1 then if min d > 0 then return standardRes F;
-    if {2,2,2} === d then return Res222 F;
+    if numgens target F != 1 then error("expected a matrix with one row");
+    if not isPolynomialRing ring F then error("the base ring must be a polynomial ring");
+    n:=numgens source F -1;
+    if n+1 != numgens ring F then error("the number of variables in the ring must be equal to the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
+    if o.Algorithm =!= Poisson and o.Algorithm =!= Poisson2 and o.Algorithm =!= Macaulay and o.Algorithm =!= Macaulay2 then error "bad value for option Algorithm; possible values are Poisson, Poisson2, Macaulay, and Macaulay2";         
     K:=coefficientRing ring F;
     x:=local x;
     Pn:=K[x_0..x_n];
-    F=sub(F,vars Pn);
-    F':=F;
-       if not isField K then (K':=frac(K); Pn':=K'[x_0..x_n]; F'=sub(F,Pn'));
-    R:=internalResultant F';
+    F=sub(F,vars Pn); F':=F;
+    d:=apply(flatten entries F,ee->first degree ee);
+    if not isField K then (K':=frac K; Pn':=K'[x_0..x_n]; F'=sub(F,Pn'));
+    if not isHomogeneous ideal F' then error("the matrix entries need to be homogeneous polynomials");
+    if o.Algorithm === Macaulay then (if (min d > -1 and sum(d) > n) then return MacaulayResultant F else <<"--warning: option Algorithm=>Macaulay ignored\n");
+    if o.Algorithm === Poisson2 then return interpolateRes(F,Poisson);
+    if o.Algorithm === Macaulay2 then return interpolateRes(F,Macaulay);
+    R:=PoissonFormula F';
     if R != 0 then (
-        if not isField K then (
-             if not isUnit denominator R then return R else return (denominator R)^(-1) * (numerator R);
-        );
-        return R;
+        if isField K then return R;
+        if isUnit denominator R then return (denominator R)^(-1) * (numerator R) else return R;
     );
     if dim ideal F' > 0 then return sub(0,K);
-    return Resultant wobble F; 
+    return Resultant(wobble F,Algorithm=>Poisson); 
 );
 
 Resultant List := o -> (s) -> (
     return Resultant(matrix{s},Algorithm=>o.Algorithm);
 );
     
-internalResultant = (F) -> (
-    -- "Poisson Formula": Theorem 3.4, p. 96 of [David A. Cox and John Little and Donal O'shea - Using Algebraic Geometry - (2005)]
+PoissonFormula = (F) -> (
+    -- Theorem 3.4, p. 96 of [David A. Cox and John Little and Donal O'shea - Using Algebraic Geometry - (2005)]
     n:=numgens source F-1;
     K:=coefficientRing ring F;
     x:=local x;
     R:=K[x_0..x_n];
     F=sub(F,vars R);
-    if n == 1 then if (first degree F_(0,0) > 0 and first degree F_(0,1) > 0) then return standardRes F;
+    d:=apply(flatten entries F,ee->first degree ee);
     if n == 0 then return leadCoefficient F_(0,0);
-    d:=flatten degrees ideal F;
+    if n == 1 then if min d > 0 then return standardRes F;
     if d === {2,2,2} then return Res222 F; 
     xn:=x_n; S:=K[x_0..x_(n-1)];
     f:=sub(sub(F,{xn=>1}),S);
-    Fbar:=submatrix'(sub(sub(F,{xn=>0}),S),,{n});
-    Res0:=internalResultant Fbar;
+    Fbar:=sub(sub(submatrix'(F,,{n}),{xn=>0}),S);
+    Res0:=PoissonFormula Fbar;
        if Res0 == 0 then return Res0;
     A:=S/ideal(submatrix'(f,,{n}));
     mf:=map(A^1,A^1,matrix{{sub(f_(0,n),A)}});
@@ -97,11 +96,11 @@ internalResultant = (F) -> (
     Res0^(d_n) * sub(det mf,K)
 );
 
-macaulayRes = (F) -> (
+MacaulayResultant = (F) -> (
     -- Theorem 4.9, p. 108 of [David A. Cox and John Little and Donal O'shea - Using Algebraic Geometry - (2005)]
     K:=coefficientRing ring F;
     n:=numgens source F -1;
-    d:=for j to n list first degree F_(0,j);
+    d:=apply(flatten entries F,ee->first degree ee);
     x:=gens ring F;
     mons:=flatten entries gens (ideal x)^(sum(d)-n);
     eqs:={}; nonReducedMons:={}; q:=local q; r:=local r; divs:=local divs;
@@ -118,10 +117,33 @@ macaulayRes = (F) -> (
     Mn':=submatrix(Mn,nonReducedMons,nonReducedMons);
     Dn:=det Mn;
     Dn':=det Mn';
-    if Dn' == 0 then return macaulayRes wobble F;
+    if Dn' == 0 then (
+          F':=F;
+          if not isField K then F'=sub(F',frac(K)[x]);
+          if dim ideal F' > 0 then return sub(0,K);
+          return MacaulayResultant wobble F;
+    );
     resF:=Dn/Dn';
     try lift(resF,K) else resF
 );   
+
+interpolateRes = (F,Alg) -> (    
+    R:=coefficientRing ring F; 
+    if not (isPolynomialRing R and numgens R > 0) then error "expected coefficient ring to be polynomial";
+    if not isHomogeneous ideal F then error "the matrix entries need to be homogeneous polynomials";
+    K:=coefficientRing R; 
+    if not isField K then K=frac K;
+    n:=numgens source F -1;
+    x:=local x; Rx:=R[x_0..x_n]; Kx:=K[x_0..x_n];
+    F=sub(F,vars Rx);
+    d:=sum(0..n,i -> (degree F_(0,i))_1 * product first entries submatrix'(matrix{apply(flatten entries F,ee -> first degree ee)},,{i}));
+    if d<=0 then error "interpolation not possible";
+    points:=sub(matrix apply(flatten entries gens (ideal gens R)^d,G->apply(gens R,t->degree(t,G))),K); 
+    M:=points|transpose matrix{apply(entries points,p->Resultant(sub(sub(F,apply(numgens R,i -> R_i=>p_i)),Kx),Algorithm=>Alg))};
+    if K === coefficientRing R then return interpolate(M,R,d);
+    Res:=interpolate(M,K[gens R],d);
+    sub(Res * lcm apply(flatten entries sub(last coefficients Res,coefficientRing ring Res),u->denominator u),vars R)
+);
 
 wobble = (F) -> (  
     R:=ring F;
@@ -184,8 +206,8 @@ Res222 = (F) -> (
 Discriminant=method(TypicalValue => RingElement, Options => {Algorithm => Poisson});
     
 Discriminant RingElement := o -> (G) -> (
---  if not (isPolynomialRing ring G and isHomogeneous G) then error("expected a homogeneous polynomial");   
     if not (isPolynomialRing ring G) then error("expected a homogeneous polynomial");   
+--  if not (isHomogeneous G) then error("expected a homogeneous polynomial");   
     n:=numgens ring G;
     d:=first degree G;
     a:=((d-1)^n - (-1)^n)/d;
@@ -203,6 +225,22 @@ genericPolynomials (Ring,List) := (K,d) -> (
    apply(#d,i -> (sub(vars A_i,R) * transpose gens (ideal vars P)^(d_i))_(0,0) )
 ); 
 genericPolynomials (List) := (d) -> genericPolynomials(ZZ,d);
+
+interpolate = method(TypicalValue => RingElement)
+interpolate (Matrix,PolynomialRing,ZZ) := (M,R,d) -> (
+    --  input: M=matrix{{a_(0,0),...,a_(n,0),b_0},...,{a_(0,N),...,a_(n,N),b_N}}
+    --  output: homogeneous polynomial P of degree d s.t. P(a_(0,i),...,a_(n,i))=b_i
+    Det := (i,M) -> sum(0..(numgens source M -1), j -> (-1)^(i+j) * M_(i,j) * det submatrix'(M,{i},{j}));
+    n:=numgens source M -2;   
+    N:=numgens target M -1;
+    K:=coefficientRing R;
+    mons:=gens (ideal gens R)^d;
+    if not (isField K and K === ring M and n+1 === numgens R and N+1 === numgens source mons) then error "invalid input data for interpolation";
+    S:=matrix apply(N+1,i -> first entries ((map(K,R,submatrix(M,{i},0..n))) mons));
+    detS:=det S; if detS == 0 then error "interpolation failed";
+    B:=flatten entries submatrix(M,,{n+1})/detS;
+    sum(0..N,i -> B_i * Det(i,submatrix'(S,{i..N},)||mons||submatrix'(S,{0..i},)))
+);
 
 ----------------------------------------------------------------------------------
 ---------------------------- ChowForms -------------------------------------------
@@ -531,17 +569,29 @@ C5 = minors(2,matrix{(gens ring D)_{0..4},(gens ring D)_{1..5}})",
     },
     PARA{"This package uses the package ", TO PushForward,"."}
 }
+undocumented{Poisson,Macaulay,Poisson2,Macaulay2}
 document { 
-    Key => {[Resultant,Algorithm],[Discriminant,Algorithm],Poisson,Macaulay}, 
-    "This option determines which algorithm will be used to compute the ",TO Resultant, ". There are currently two algorithms implemented: ",
+    Key => {[Resultant,Algorithm],[Discriminant,Algorithm]}, 
+    "This option determines which algorithm will be used to compute the ",TO Resultant, ". There are currently four algorithms implemented: ",
     PARA{},
     "[",TT "Algorithm => Poisson", "]"," (default) the resultant is computed, recursively, through the Poisson Formula (see [1, Theorem 3.4]);",
     PARA{}, 
-    "[", TT "Algorithm => Macaulay" ,"]"," the resultant is computed as a Macaulay resultant, i.e. as a ratio of two determinants (see [1, Theorem 4.9]).",
+    "[", TT "Algorithm => Macaulay" ,"]"," the resultant is computed as a Macaulay resultant, i.e. as a ratio of two determinants (see [1, Theorem 4.9]);",
+    PARA{}, 
+    "[", TT "Algorithm => Poisson2"," and ",TT "Algorithm => Macaulay2" ,"]"," these are variants of the above ones using interpolation of multivariate polynomials.",
     PARA{},
     "[1] David A. Cox, John Little, Donal O'shea - ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"}, ", Graduate Texts in Mathematics, Volume 185 (2005).", 
+    PARA{},
+    EXAMPLE {
+        "R = ZZ/1013[a,b][x,y,z]",
+        "F = {(3*a+51*b)*x^2+(375*a-94*b)*x*y+(-452*a+42*b)*y^2+(175*a+318*b)*x*z+(-380*a+93*b)*y*z+(-44*a-452*b)*z^2,(305*a-487*b)*x^2+(-506*a+302*b)*x*y+(-343*a-143*b)*y^2+(449*a-109*b)*x*z+(-36*a-500*b)*y*z+(275*a+422*b)*z^2,(-84*a+124*b)*x+(-77*a-347*b)*y+(-463*a-493*b)*z}",
+        "time Resultant(F,Algorithm=>Poisson)",
+        "time Resultant(F,Algorithm=>Macaulay)",
+        "time Resultant(F,Algorithm=>Poisson2)",
+        "time Resultant(F,Algorithm=>Macaulay2)",
+         "o3 == o4 and o4 == o5 and o5 == o6"
+            }
 } 
-
 document { 
     Key => {Xresultant,(Xresultant,Ideal)}, 
     Headline => "X-resultant of a projective variety", 
@@ -900,8 +950,7 @@ w' = sub(random(2,ambient Grass(1,3)),Grass(1,3))",
 
 TEST /// 
 genericResultant = {Algorithm => Poisson} >> o -> (d,K) -> ( 
-    d=toList d;
-    F:=matrix{genericPolynomials(K,d)};
+    F:=matrix{genericPolynomials(K,toList d)};
     Resultant(F,Algorithm=>o.Algorithm)
 );
 a:=local a; ring112=ZZ[a_(0,0),a_(0,1),a_(0,2),a_(1,0),a_(1,1),a_(1,2),a_(2,0),a_(2,1),a_(2,2),a_(2,3),a_(2,4),a_(2,5)];
@@ -947,16 +996,12 @@ assert(PoissonVsMacaulay((3,2,2,2),ZZ/33331))
 
 TEST /// 
 genericDiscriminant = {Algorithm => Poisson} >> o -> (d,n,K) -> ( 
-    N:=binomial(n+d,d)-1;
-    a:=local a; x:=local x;
-    S:=K[a_0..a_N];
-    R:=S[x_0..x_n];
-    F:=((vars S)*transpose(gens (ideal vars R)^d))_(0,0);
+    F:=first genericPolynomials(K,prepend(d,toList(n:(-1))));
     Discriminant(F,Algorithm=>o.Algorithm)
 );
 Veronese = (d,n,K) -> (
-    t:=local t; x:=local x; T:=K[t_0..t_n]; R:=K[x_0..x_(binomial(n+d,d)-1)];
-    kernel map(T,R,gens((ideal vars T)^d))
+    Gg:=Grass(0,n,K,Variable=>h);
+    kernel map(Gg,Grass(0,binomial(n+d,d)-1,K),gens (ideal vars Gg)^d)
 );
 compareDiscriminants = (d,n,K) -> (
     D1:=genericDiscriminant(d,n,K,Algorithm=>Poisson);
@@ -970,6 +1015,57 @@ assert compareDiscriminants(4,1,QQ)
 assert compareDiscriminants(5,1,ZZ/33331) 
 assert compareDiscriminants(2,2,ZZ/101)
 /// 
+
+TEST ///
+randomPols = (K,m,e,d) -> ( -- homogeneous polynomials in K[a_0..a_m][x_0..x_n]
+  n:=#d-1; assert(#d==#e);
+  a:=local a; x:=local x;
+  R:=K[a_0..a_m,x_0..x_n,Degrees=>{(m+1):{1,0},(n+1):{0,1}}];   
+  R':=K[a_0..a_m][x_0..x_n];
+  toList apply(0..n,i->sub(random({e_i,d_i},R),R'))
+)
+checkInterpolate = (K,m,e,d) -> (
+   F:=randomPols(K,m,e,d);
+   <<"F="<<F<<endl;
+   time R1 := Resultant(F,Algorithm=>Poisson2);
+   time R2 := Resultant(F,Algorithm=>Macaulay2);
+   time R3 := Resultant(F,Algorithm=>Poisson);
+   time R4 := Resultant(F,Algorithm=>Macaulay);
+   <<"Res="<<R2<<endl;
+   assert(R1 == R3 and R2 == R4 and (R1-R2)*(R1+R2) == 0);
+);
+checkInterpolate(QQ,1,{1,1},{1,2});
+checkInterpolate(GF(331^2),1,{1,1},{1,2});
+checkInterpolate(QQ,1,{1,3},{1,2});
+checkInterpolate(QQ,1,{1,2},{3,2})
+checkInterpolate(ZZ/3331,1,{2,3},{3,4});
+checkInterpolate(ZZ,2,{0,1},{3,2});
+checkInterpolate(ZZ/3331,1,{2,0},{2,2});
+checkInterpolate(ZZ,1,{1,3,0},{1,2,2});
+checkInterpolate(ZZ,0,{1,3,0},{1,2,2});
+checkInterpolate(ZZ,1,{1,0,0,2},{1,2,1,1});
+G=first randomPols(ZZ,1,{1,0,0},{3,0,0})
+assert(Discriminant(G,Algorithm=>Poisson2) == Discriminant(G,Algorithm=>Macaulay2))
+///
+
+TEST ///
+pencil = (d,n,K) -> (
+F:=random(d,Grass(0,n,K));
+G:=random(d,Grass(0,n,K));
+t:=local t;
+x:=local x;
+R:=(coefficientRing ring F)[t_0,t_1][x_0..x_(numgens ring F -1)];
+G=t_0*sub(F,vars R)+t_1*sub(G,vars R);
+time T1 = Discriminant(G,Algorithm=>Poisson2);
+time T2 = Discriminant(G,Algorithm=>Macaulay2);
+time T3 = Discriminant G;
+assert(T1 == T3 and (T1+T2)*(T1-T2) == 0)
+);
+pencil(2,2,ZZ)
+pencil(4,1,GF(101^3))
+pencil(2,4,ZZ/331)
+pencil(3,2,ZZ/331)
+///
 
 TEST ///
 -- testing dualize
