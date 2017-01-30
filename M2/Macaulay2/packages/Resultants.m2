@@ -2,7 +2,7 @@
 newPackage(
        "Resultants",
 	Version => "1.0", 
-    	Date => "Jan 28, 2017",
+    	Date => "Jan 30, 2017",
     	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
@@ -40,8 +40,6 @@ export{
 ----------------------------------------------------------------------------------
 ----------------------- MultipolynomialResultats ---------------------------------
 ----------------------------------------------------------------------------------
-
-needsPackage "PushForward"
     
 Resultant=method(TypicalValue => RingElement, Options => {Algorithm => Poisson});
     
@@ -91,9 +89,11 @@ PoissonFormula = (F) -> (
     Res0:=PoissonFormula Fbar;
        if Res0 == 0 then return Res0;
     A:=S/ideal(submatrix'(f,,{n}));
-    mf:=map(A^1,A^1,matrix{{sub(f_(0,n),A)}});
-    mf=pushFwd(map(A,K[],{}),mf);
-    Res0^(d_n) * sub(det mf,K)
+    bs:=basis(A,Limit=>(product d_{0..(#d-2)}));  
+       entriesBs:=flatten entries bs; if not apply(entriesBs,leadMonomial) === entriesBs then error "internal method expected to receive a monomial basis, but received something else";
+    mf:=sub(submatrix(f,{n}),A);
+    mf=sub(last coefficients(mf*bs,Monomials=>bs),K);
+    Res0^(d_n) * det(mf)
 );
 
 MacaulayResultant = (F) -> (
@@ -124,7 +124,8 @@ MacaulayResultant = (F) -> (
           return MacaulayResultant wobble F;
     );
     resF:=Dn/Dn';
-    try lift(resF,K) else resF
+    if ring resF === K then return resF;
+    if isUnit denominator resF then return (denominator resF)^(-1) * (numerator resF) else return resF;
 );   
 
 interpolateRes = (F,Alg) -> (    
@@ -566,8 +567,7 @@ G = first genericPolynomials(QQ,{5,-1})",
       "-- Dual hypersurface of the rational normal quintic curve
 C5 = minors(2,matrix{(gens ring D)_{0..4},(gens ring D)_{1..5}})",
       "D == (Dual C5)_0"
-    },
-    PARA{"This package uses the package ", TO PushForward,"."}
+    }
 }
 undocumented{Poisson,Macaulay,Poisson2,Macaulay2}
 document { 
@@ -583,12 +583,12 @@ document {
     "[1] David A. Cox, John Little, Donal O'shea - ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"}, ", Graduate Texts in Mathematics, Volume 185 (2005).", 
     PARA{},
     EXAMPLE {
-        "R = ZZ/1013[a,b][x,y,z]",
-        "F = {(3*a+51*b)*x^2+(375*a-94*b)*x*y+(-452*a+42*b)*y^2+(175*a+318*b)*x*z+(-380*a+93*b)*y*z+(-44*a-452*b)*z^2,(305*a-487*b)*x^2+(-506*a+302*b)*x*y+(-343*a-143*b)*y^2+(449*a-109*b)*x*z+(-36*a-500*b)*y*z+(275*a+422*b)*z^2,(-84*a+124*b)*x+(-77*a-347*b)*y+(-463*a-493*b)*z}",
-        "time Resultant(F,Algorithm=>Poisson)",
-        "time Resultant(F,Algorithm=>Macaulay)",
+        "R = QQ[a,b][x,y,z,w]",
+        "F = {(7/3)*x+(7/2)*y+z+2*w, ((10/7)*a+b)*x^2+(a+(5/4)*b)*x*y+(2*a+(1/2)*b)*y^2+((7/8)*a+(7/5)*b)*x*z+((3/4)*a+b)*y*z+((7/8)*a+(1/7)*b)*z^2+((5/7)*a+(4/3)*b)*x*w+(9*a+10*b)*y*w+((7/5)*a+(3/4)*b)*z*w+((4/3)*a+5*b)*w^2, ((1/2)*a+(7/5)*b)*x^3+((1/2)*a+10*b)*x^2*y+((8/9)*a+(3/5)*b)*x*y^2+(a+(7/6)*b)*y^3+((3/7)*a+(3/4)*b)*x^2*z+((1/3)*a+(9/10)*b)*x*y*z+((9/4)*a+b)*y^2*z+((1/6)*a+(1/5)*b)*x*z^2+(3*a+(5/2)*b)*y*z^2+((5/3)*a+(3/7)*b)*z^3+(a+b)*x^2*w+((4/5)*a+(5/4)*b)*x*y*w+((5/3)*a+(5/8)*b)*y^2*w+((3/2)*a+(1/6)*b)*x*z*w+((1/3)*a+(4/5)*b)*y*z*w+(9*a+(1/3)*b)*z^2*w+((7/3)*a+(5/4)*b)*x*w^2+(a+(3/4)*b)*y*w^2+((9/8)*a+(7/8)*b)*z*w^2+((9/7)*a+2*b)*w^3, 2*x+(1/4)*y+(8/3)*z+(4/5)*w}",
         "time Resultant(F,Algorithm=>Poisson2)",
         "time Resultant(F,Algorithm=>Macaulay2)",
+        "time Resultant(F,Algorithm=>Poisson)",
+        "time Resultant(F,Algorithm=>Macaulay)",
          "o3 == o4 and o4 == o5 and o5 == o6"
             }
 } 
@@ -631,7 +631,7 @@ document {
     "F = genericPolynomials {2,2,2}",
     "time # terms Resultant F"
     },
-    SeeAlso => {resultant,ChowForm,Discriminant} 
+    SeeAlso => {resultant,ChowForm,Xresultant,Discriminant} 
 }
 
 document { 
@@ -853,14 +853,11 @@ document {
               }, 
     Outputs => { {"the coordinate ring of the Grassmannian variety of all projective ",TEX///$k$///,"-planes in ",TEX///$\mathbb{P}^n$///}
                },
-    "This method calls the method ", TO "Grassmannian", ", and ", TT "Grass(k,n,K,UseVarible=>p)", " can be considered equivalent to ", TT "last(G=Grassmannian(k,n,Variable=>p,CoefficientRing=>K),(ring G)/G)", ". However, over ", TT "QQ", " and ", TT "ZZ/p", ", the method ",TT "Grass", " creates only an instance of ring for any given ", TT "(k,n,K,p)",".", 
+    "This method calls the method ", TO "Grassmannian", ", and ", TT "Grass(k,n,K,UseVarible=>p)", " can be considered equivalent to ", TT "quotient Grassmannian(k,n,Variable=>p,CoefficientRing=>K)", ". However, over ", TT "QQ", " and ", TT "ZZ/p", ", the method ",TT "Grass", " creates only an instance of ring for any given ", TT "(k,n,K,p)",".", 
     PARA{},
     EXAMPLE { 
-          "R_0 = Grass(1,3)",
-          "R_1 = Grass(2,4,ZZ/11,Variable=>t)",
-          "S_0 = Grass(1,3)",
-          "S_1 = Grass(2,4,ZZ/11,Variable=>t)",
-          "R_0 === S_0 and R_1 === S_1"
+          "Grass(1,3) === Grass(1,3)",
+          "Grass(2,4,ZZ/11,Variable=>t) === Grass(2,4,ZZ/11,Variable=>t)"
             },
      PARA{},
      "In order to facilitate comparisons, the outputs of the methods ", TO "ChowForm",", ",TO "tangentialChowForm",", ",TO "ChowEquations",", and ",TO "dualize", " always lie in these rings.",
