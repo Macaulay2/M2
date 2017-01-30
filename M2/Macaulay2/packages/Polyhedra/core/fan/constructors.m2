@@ -32,6 +32,9 @@ fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
    if numRows irays != numRows linealityGens then error("Rays and lineality must have same ambient dimension.");
    irays = makeRaysPrimitive(irays);
    lineality := makeRaysPrimitive(linealityGens);
+   minRays := unique apply(select(numcols irays, i -> irays_{i} != 0), i -> irays_{i});
+   if not numcols irays == #minRays then error("Input rays are not minimal.");
+   if not checkConesForMaximality(icones) then error("Input cones are not maximal.");
    result := new HashTable from {
       ambientDimension => numRows irays,
       rays => irays,

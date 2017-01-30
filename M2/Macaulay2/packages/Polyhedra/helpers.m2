@@ -198,3 +198,24 @@ toZZ List := List => L -> (
    l := lcm d;
    apply(L, e -> (numerator(l*e)))
 )
+
+
+-- Checks cones given by indices for maximality
+checkConesForMaximality = method();
+checkConesForMaximality List := cones -> (
+	all(cones, 
+		cone -> (
+			all(cones,
+				c -> (
+					n := #((set c) * (set cone));
+					if n == #cone then (
+						cone == c
+					) else (
+						true
+					)
+				)
+			)
+		)
+	)
+)
+
