@@ -2,7 +2,7 @@
 newPackage(
        "Resultants",
 	Version => "1.0", 
-    	Date => "Jan 30, 2017",
+    	Date => "Feb 5, 2017",
     	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
@@ -345,8 +345,7 @@ tangentialChowForm (Ideal,ZZ) := o -> (I,s) -> (
    if mnr =!= false then (try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and #set mnr == r+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(r+1)|" distinct integers beetween 0 and "|toString(n)|" but got "|toString(mnr))); 
    if mnr =!= false then mnr=sort mnr; 
    if (class o.AssumeOrdinary =!= Boolean and o.AssumeOrdinary =!= null) then error "expected true or false for option AssumeOrdinary";
-   limitNumGens:=if (mnr === false) and (o.AssumeOrdinary === true or (o.AssumeOrdinary === null and s==0)) then 1 else infinity;
-   if (o.AssumeOrdinary === true and o.AffineChartGrass =!= false) then (<<"-- warning: option AssumeOrdinary ignored, you should use this with AffineChartGrass=>false"<<endl);      
+   limitNumGens:=if (o.AssumeOrdinary === true or (o.AssumeOrdinary === null and s==0)) then 1 else infinity;  
    x:=local x; t:=local t; u:=local u;
    R:=if useDuality then K[x_0..x_n,u_(0,0)..u_(r,n),MonomialOrder=>Eliminate(n+1)] else K[x_0..x_n,t_0..t_r,u_(0,0)..u_(r,n),MonomialOrder=>Eliminate(n+r+2)];
    U:=genericMatrix(R,u_(0,0),n+1,r+1);
@@ -389,6 +388,7 @@ tangentialChowForm (Ideal,ZZ) := o -> (I,s) -> (
    Z:=trim Sub' ideal selectInSubring(1,gens gb(Inc,SubringLimit=>limitNumGens)); 
    G:=Grass(r,n,K,Variable=>p);
    f:=map(Ru/Z,G,gens minors(r+1,Sub' U));
+   if mnr =!= false then limitNumGens=infinity; 
    Zs:=kernel(f,SubringLimit=>limitNumGens);
    if mnr =!= false then Zs=homogenize(Zs,(p_(tosequence mnr))_G); 
    if useDuality then Zs=dualize Zs;
@@ -404,6 +404,33 @@ ChowForm = method(TypicalValue => RingElement, Options => {Variable => null, Dua
 
 ChowForm (Ideal) := o -> (I) -> (
    return tangentialChowForm(I,0,Variable=>o.Variable,Duality=>o.Duality,AffineChartGrass=>o.AffineChartGrass,AffineChartProj=>o.AffineChartProj);
+);
+
+ChowForm (RingMap) := o -> (phi) -> ( -- undocumented
+   -- Input: an isomorphism phi:P^r ---> X \subset P^n
+   -- Output: form defining the hypersurface Z_0(X) subset GG(r,P^n*) = GG(n-r-1,P^n)
+   if not isPolynomialRing target phi then error("the target of the ring map needs to be a polynomial ring");
+   if not ((isPolynomialRing source phi or isQuotientRing source phi) and isPolynomialRing ambient source phi and isHomogeneous ideal source phi) then error("the source of the ring map needs to be either a polynomial ring or a quotient of a polynomial ring by a homogeneous ideal");
+   K:=coefficientRing ambient source phi; 
+   if not (K === coefficientRing target phi) then error("different coefficient rings encountered");
+   if not isField K then error("the coefficient ring needs to be a field");
+   F:=submatrix(matrix phi,{0..(numgens source phi -1)});
+   if not (isHomogeneous ideal F and # unique degrees ideal F == 1) then error("the map needs to be defined by homogeneous polynomials of the same degree");
+   p:=if o.Variable === null then getVariable ambient source phi else getSymbol toString o.Variable;
+   if (o.AffineChartGrass =!= true or o.AffineChartProj =!= true or o.Duality =!= null) then error "option not available with ChowForm(RingMap); you can use it with ChowForm(Ideal)"; 
+   n:=numgens ambient source phi -1;
+   r:=numgens target phi -1;
+   x:=local x; u:=local u;
+   R:=K[x_1..x_r,u_(0,0)..u_(r,n-r-1),MonomialOrder=>Eliminate r];
+   U:=(transpose genericMatrix(R,u_(0,0),n-r,r+1)) | sub(matrix for i to r list for j to r list if i == j then 1 else 0,R);
+   F=(map(R,target phi,{1,x_1..x_r})) transpose F;
+   Ru:=K[u_(0,0)..u_(r,n-r-1)];
+   Z:=sub(ideal selectInSubring(1,gens gb(ideal(U*F),SubringLimit=>1)),Ru); 
+   G:=Grass(r,n,K,Variable=>p);
+   f:=map(Ru/Z,G,gens minors(r+1,sub(U,Ru)));
+   Zs:=kernel(f,SubringLimit=>2);
+   Zs=trim dualize homogenize(Zs,(p_((n-r)..n))_G); 
+   if numgens Zs == 1 then Zs_0 else Zs
 );
 
 SegreProduct = method(Options => {Variable => null});
@@ -494,6 +521,27 @@ Dual (Ideal) := o -> (I) -> (
    I'=dualize I';
    if not isIdeal I' then I'=ideal I';
    sub(I',vars ring I)
+);
+
+Dual (RingMap) := o -> (phi) -> ( -- undocumented 
+   -- Input: an isomorphism phi:P^n ---> X \subset P^m 
+   -- Output: the dual variety of X 
+   if not isPolynomialRing target phi then error("the target of the ring map needs to be a polynomial ring");
+   if not ((isPolynomialRing source phi or isQuotientRing source phi) and isPolynomialRing ambient source phi and isHomogeneous ideal source phi) then error("the source of the ring map needs to be either a polynomial ring or a quotient of a polynomial ring by a homogeneous ideal");
+   K:=coefficientRing ambient source phi; 
+   if not (K === coefficientRing target phi) then error("different coefficient rings encountered");
+   if not isField K then error("the coefficient ring needs to be a field");
+   F:=submatrix(matrix phi,{0..(numgens source phi -1)});
+   if not (isHomogeneous ideal F and # unique degrees ideal F == 1) then error("the map needs to be defined by homogeneous polynomials of the same degree");
+   if (class o.AssumeOrdinary =!= Boolean and o.AssumeOrdinary =!= null) then error "expected true or false for option AssumeOrdinary";
+   n:=numgens target phi -1;
+   m:=numgens ambient source phi -1;
+   x:=local x; y:=local y;
+   R:=K[x_1..x_n,y_0..y_m,MonomialOrder=>Eliminate n];
+   jacF:=(map(R,target phi,{1,x_1..x_n})) transpose jacobian F;
+   J:=ideal(matrix{{y_0..y_m}} * jacF);
+   gbJ:=if o.AssumeOrdinary === true then gb(J,SubringLimit=>1) else gb J;
+   sub(sub(ideal selectInSubring(1,gens gbJ),K[y_0..y_m]),vars ambient source phi)
 );
 
 projectionMap = method(Options => {Variable => null, AffineChartGrass => true});
@@ -723,7 +771,7 @@ time dualize tangentialChowForm(S',3) == S"
 }
 
 document { 
-    Key => {ChowForm,(ChowForm,Ideal)}, 
+    Key => {ChowForm,(ChowForm,Ideal),(ChowForm,RingMap)}, 
     Headline => "Chow form of a projective variety", 
     Usage => "ChowForm I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///},
@@ -902,7 +950,7 @@ document {
 } 
 
 document { 
-    Key => {Dual,(Dual,Ideal)}, 
+    Key => {Dual,(Dual,Ideal),(Dual,RingMap)}, 
     Headline => "projective dual variety", 
     Usage => "Dual I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///},
