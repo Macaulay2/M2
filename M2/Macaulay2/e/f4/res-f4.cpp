@@ -490,10 +490,11 @@ void F4Res::gaussReduce()
 
   // allocate a dense row, of correct size
   //std::cout << "gaussReduce: entering" << std::flush;
+
+  ///CoefficientVector gauss_row = mRing.resGausser().allocateCoefficientVector(static_cast<ComponentIndex>(mColumns.size()));
+
   ResGausser::dense_row gauss_row;
   mRing.resGausser().dense_row_allocate(gauss_row, static_cast<ComponentIndex>(mColumns.size()));
-  FieldElement one;
-  mRing.resGausser().set_one(one);
 
   for (long i=0; i<mSPairs.size(); i++)
     {
@@ -507,9 +508,7 @@ void F4Res::gaussReduce()
 
       Row& r = mSPairs[i]; // row to be reduced.
       long comp = mSPairComponents[i];
-      result.appendTerm(mFrame.level(mThisLevel)[comp].mMonom,
-                        one);
-      ///mFrame.mAllMonomials.accountForMonomial(mFrame.level(mThisLevel)[comp].mMonom);
+      result.appendMonicTerm(mFrame.level(mThisLevel)[comp].mMonom);
       
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
@@ -535,8 +534,6 @@ void F4Res::gaussReduce()
               std::cout << "about to reduce with col " << firstcol << std::endl;
               #endif
           
-              FieldElement elem;
-
               #if 0
               for (ComponentIndex p=0; p<mColumns.size(); p++)
                 {
@@ -545,24 +542,14 @@ void F4Res::gaussReduce()
               fprintf(stdout, "\n");
               #endif
 
-#if 0             
-              mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
-              result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-              ///mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
-              mRing.resGausser().dense_row_cancel_sparse_monic(gauss_row,
-                                                         static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
-                                                         & mReducers[firstcol].mCoeffs[0],
-                                                         & mReducers[firstcol].mComponents[0]
-                                                         );
-#else
               mRing.resGausser().dense_row_cancel_sparse(gauss_row,
                                                          static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
                                                          mReducers[firstcol].mCoeffs.data(),
                                                          mReducers[firstcol].mComponents.data(),
-                                                         elem
+                                                         result.coefficientInserter()
                                                          );
-              result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-#endif
+              result.pushBackTerm(mReducers[firstcol].mLeadTerm);
+
               firstcol = mRing.resGausser().dense_row_next_nonzero(gauss_row, firstcol+1, lastcol);
             }
         }

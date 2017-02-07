@@ -10,6 +10,16 @@
 typedef int FieldElement;
 typedef int ComponentIndex;
 
+class CoefficientVector {
+  // disallow copy...
+  friend class ResGausser;
+  CoefficientVector() : mValue(nullptr) {}
+private:
+  void * mValue;
+};
+
+typedef struct { void * mValue; } NewCoefficientArray;
+
 class ResGausser
 {
   enum {ZZp} typ;
@@ -18,6 +28,9 @@ class ResGausser
   CoefficientRingZZp *Kp;
 
   ResGausser(int p);
+
+  FieldElement* coefficientArray(NewCoefficientArray f) const { return reinterpret_cast<FieldElement*>(f.mValue); }
+  std::vector<FieldElement>& coefficientVector(CoefficientVector f) const { return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue); }
 public:
   typedef FieldElement* CoefficientArray;
   //  typedef void *CoefficientArray;
@@ -90,7 +103,14 @@ public:
   // dense += c * sparse, where c is chosen to cancel column comps[0].
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
-  
+
+  void dense_row_cancel_sparse(dense_row& r,
+                               ComponentIndex len,
+                               CoefficientArray sparse,
+                               ComponentIndex* comps,
+                               std::vector<FieldElement>& result_loc
+                               ) const;
+
   int coeff_to_int(FieldElement f) const
   // Returns an integer in the range -a..a, (or 0..1) where a = floor(p/2),  p is the characteristic.
   {
@@ -99,6 +119,52 @@ public:
 
   mutable long n_dense_row_cancel;
   mutable long n_subtract_multiple;
+
+private:
+  CoefficientVector coefficientVector(std::vector<FieldElement>* vals) const {
+    CoefficientVector result;
+    result.mValue = vals;
+    vals = nullptr;
+    return result;
+  }
+
+public:
+  size_t size(CoefficientVector r) const;
+  
+  CoefficientVector allocateCoefficientVector(ComponentIndex nelems) const;
+  // create a row of 0's (over K).
+
+  void clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const;
+  // set the elements in the range first..last to 0.
+
+  void deallocate(CoefficientVector r) const;
+
+  ComponentIndex nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const;
+  // returns last+1 in the case when there are no non-zero elements left.
+
+  void fillFromSparse(CoefficientVector r,
+                      ComponentIndex len,
+                      CoefficientVector sparse,
+                      ComponentIndex* comps) const;
+  // Fills 'r' from 'sparse' (and 'comps')
+
+  void sparseCancelGivenMonic(CoefficientVector r,
+                              ComponentIndex len,
+                              CoefficientVector sparse,
+                              ComponentIndex* comps) const;
+  // dense += c * sparse, where c is chosen to cancel column comps[0].
+  // ASSUMPTION: the lead coeff of 'sparse' is 1.
+
+  void sparseCancel(CoefficientVector r,
+                    ComponentIndex len,
+                    CoefficientVector sparse,
+                    ComponentIndex* comps,
+                    CoefficientVector result_loc
+                    ) const;
+  // dense += c * sparse, where c is chosen to cancel column comps[0].
+  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+  // The value of c is recorded in result_c.
+  
 };
 
 #endif

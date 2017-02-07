@@ -70,6 +70,21 @@ public:
   static long ncalls_fromarray;
 
   poly_constructor(const ResPolyRing& R) : mRing(R) { }
+
+  void appendMonicTerm(res_packed_monomial monom)
+  {
+    monoms.push_back(monom); // a pointer
+    FieldElement one;
+    mRing.resGausser().set_one(one);
+    coeffs.push_back(one);
+  }
+
+  void pushBackTerm(res_packed_monomial monom)
+  {
+    monoms.push_back(monom); // a pointer
+  }
+
+  std::vector<FieldElement>& coefficientInserter() { return coeffs; }
   
   void appendTerm(res_packed_monomial monom, FieldElement coeff)
   {
