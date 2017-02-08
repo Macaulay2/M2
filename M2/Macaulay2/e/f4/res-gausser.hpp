@@ -129,6 +129,11 @@ private:
   }
 
 public:
+  void pushBackOne(std::vector<FieldElement>& coeffs) const;
+  void pushBackMinusOne(std::vector<FieldElement>& coeffs) const;
+  void pushBackElement(std::vector<FieldElement>& coeffs, const FieldElement* take_from_here, size_t loc) const;
+  void pushBackNegatedElement(std::vector<FieldElement>& coeffs, const FieldElement* take_from_here, size_t loc) const;
+  
   size_t size(CoefficientVector r) const;
   
   CoefficientVector allocateCoefficientVector(ComponentIndex nelems) const;

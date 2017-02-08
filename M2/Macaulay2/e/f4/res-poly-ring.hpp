@@ -145,7 +145,8 @@ public:
       coeff_index(elem.len),
       monom_index(0)
   {}
-  
+
+  int coefficient_index() const { return coeff_index; }
   int coefficient() const { return elem.coeffs[coeff_index]; }
   res_packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
   void operator++() { coeff_index++; monom_index += mRing.monoid().max_monomial_size(); }

@@ -53,6 +53,35 @@ void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIn
 ///////// Dense row routines ////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
+void ResGausser::pushBackOne(std::vector<FieldElement>& coeffs) const
+{
+  FieldElement one;
+  set_one(one);
+  coeffs.push_back(one);
+}
+
+void ResGausser::pushBackMinusOne(std::vector<FieldElement>& coeffs) const
+{
+  FieldElement minus_one;
+  set_one(minus_one);
+  negate(minus_one, minus_one);
+  coeffs.push_back(minus_one);
+}
+void ResGausser::pushBackElement(std::vector<FieldElement>& coeffs,
+                                 const FieldElement* take_from_here,
+                                 size_t loc) const
+{
+  coeffs.push_back(take_from_here[loc]);
+}
+void ResGausser::pushBackNegatedElement(std::vector<FieldElement>& coeffs,
+                                        const FieldElement* take_from_here,
+                                        size_t loc) const
+{
+  FieldElement a = take_from_here[loc];
+  negate(a,a);
+  coeffs.push_back(a);
+}
+
 void ResGausser::dense_row_allocate(dense_row &r, ComponentIndex nelems) const
 {
   int *elems = new int[nelems];

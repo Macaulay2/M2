@@ -177,8 +177,6 @@ void F4Res::loadRow(Row& r)
   //  std::cout << std::endl;
   int skew_sign; // will be set to 1, unless ring().isSkewCommutative() is true, then it can be -1,0,1.
   // however, if it is 0, then "val" below will also be -1.
-  FieldElement one;
-  resGausser().set_one(one);
   long comp = monoid().get_component(r.mLeadTerm);
   auto& thiselement = mFrame.level(mThisLevel-1)[comp];
   //std::cout << "  comp=" << comp << " mDegree=" << thiselement.mDegree << " mThisDegree=" << mThisDegree << std::endl;
@@ -190,13 +188,11 @@ void F4Res::loadRow(Row& r)
       if (val < 0) fprintf(stderr, "ERROR: expected monomial to live\n");
       r.mComponents.push_back(val);
       if (skew_sign > 0)
-        r.mCoeffs.push_back(one);
+        mRing.resGausser().pushBackOne(r.mCoeffs);
       else
         {
           // Only happens if we are in a skew commuting ring.
-          FieldElement c;
-          ring().resGausser().negate(one, c);
-          r.mCoeffs.push_back(c);
+          ring().resGausser().pushBackMinusOne(r.mCoeffs);
         }
       return;
     }
@@ -210,13 +206,11 @@ void F4Res::loadRow(Row& r)
       if (val < 0) continue;
       r.mComponents.push_back(val);
       if (skew_sign > 0)
-        r.mCoeffs.push_back(i.coefficient());
+        mRing.resGausser().pushBackElement(r.mCoeffs, p.coeffs.get(), i.coefficient_index());
       else
         {
           // Only happens if we are in a skew commuting ring.
-          FieldElement c;
-          ring().resGausser().negate(i.coefficient(), c);
-          r.mCoeffs.push_back(c);
+          mRing.resGausser().pushBackNegatedElement(r.mCoeffs, p.coeffs.get(), i.coefficient_index());
         }
     }
 } 
