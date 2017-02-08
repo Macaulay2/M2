@@ -5,7 +5,6 @@
 
 #include "../skew.hpp"
 #include "res-varpower-monomial.hpp"
-//#include "ntuple-monomial.hpp"
 #include "res-moninfo.hpp"
 #include "res-gausser.hpp"
 #include "res-schreyer-order.hpp"
@@ -23,15 +22,16 @@ public:
   static long npoly_destructor;
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
-  std::unique_ptr<FieldElement[]> coeffs;
+  CoefficientVector coeffs;
+  //  std::unique_ptr<FieldElement[]> coeffs;
   std::unique_ptr<res_monomial_word[]> monoms;
 
 public:  
-  poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
+  poly() : len(0), coeffs(), monoms(nullptr) {}
 
   ~poly()
   {
-    if (coeffs) npoly_destructor++;
+    if (!coeffs.isNull()) npoly_destructor++;
     //    std::cout << "Calling ~poly()" << std::endl << std::flush;
   }
   
@@ -63,20 +63,21 @@ private:
 class poly_constructor {
 private:
   std::vector<res_packed_monomial> monoms;
-  std::vector<FieldElement> coeffs;
+  CoefficientVector coeffs;
+  //  std::vector<FieldElement> coeffs;
   const ResPolyRing& mRing;
 public:
   static long ncalls;
   static long ncalls_fromarray;
 
-  poly_constructor(const ResPolyRing& R) : mRing(R) { }
+  poly_constructor(const ResPolyRing& R) : mRing(R) { coeffs = R.resGausser().allocateCoefficientVector(); }
 
+  ~poly_constructor() { mRing.resGausser().deallocate(coeffs); }
+  
   void appendMonicTerm(res_packed_monomial monom)
   {
     monoms.push_back(monom); // a pointer
-    FieldElement one;
-    mRing.resGausser().set_one(one);
-    coeffs.push_back(one);
+    mRing.resGausser().pushBackOne(coeffs);
   }
 
   void pushBackTerm(res_packed_monomial monom)
@@ -84,24 +85,15 @@ public:
     monoms.push_back(monom); // a pointer
   }
 
-  std::vector<FieldElement>& coefficientInserter() { return coeffs; }
+  CoefficientVector& coefficientInserter() { return coeffs; }
   
-  void appendTerm(res_packed_monomial monom, FieldElement coeff)
-  {
-    monoms.push_back(monom); // a pointer
-    coeffs.push_back(coeff);
-  }
-
   void setPoly(poly& result)
   {
     ncalls++;
-    result.len = static_cast<int>(coeffs.size());
-    result.coeffs.reset(new FieldElement[result.len]);
+    result.len = static_cast<int>(mRing.resGausser().size(coeffs));
+    std::swap(result.coeffs, coeffs);
     result.monoms.reset(new res_monomial_word[mRing.monoid().max_monomial_size()*result.len]);
 
-    // copy coeffs
-    for (int i=0; i<result.len; i++)
-      result.coeffs[i] = coeffs[i];
     // copy monoms: not pointers, actual monoms
     res_monomial_word* monomptr = result.monoms.get();
     for (int i=0; i<result.len; i++)
@@ -113,13 +105,13 @@ public:
 
   static void setPolyFromArrays(poly& result,
                                 int len,
-                                std::unique_ptr<FieldElement[]>& coeffs,
+                                CoefficientVector& coeffs,
                                 std::unique_ptr<res_monomial_word[]>& monoms)
   {
     ncalls_fromarray++;
     result.len = len;
     result.coeffs.swap(coeffs);
-    result.monoms.swap(monoms);
+    std::swap(result.monoms,monoms);
   }
 };
 
@@ -146,8 +138,8 @@ public:
       monom_index(0)
   {}
 
-  int coefficient_index() const { return coeff_index; }
-  int coefficient() const { return elem.coeffs[coeff_index]; }
+  int coefficient_index() const { return static_cast<int>(coeff_index); }
+  //  int coefficient() const { return elem.coeffs[coeff_index]; }
   res_packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
   void operator++() { coeff_index++; monom_index += mRing.monoid().max_monomial_size(); }
 };
@@ -157,6 +149,7 @@ inline bool operator!=(const poly_iter& a, const poly_iter& b) { return a.coeff_
 
 inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
 {
+#if 0
   auto end = poly_iter(R, f, 1); // end
   for (auto it = poly_iter(R, f); it != end; ++it)
     {
@@ -165,6 +158,7 @@ inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
       if (c != 1) fprintf(fil, "%d", c);
       R.monoid().showAlpha(mon);
     }
+#endif
 }
 
 bool check_poly(const ResPolyRing& R, const poly&f, const ResSchreyerOrder& O);

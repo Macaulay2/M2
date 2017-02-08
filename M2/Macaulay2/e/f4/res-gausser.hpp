@@ -13,7 +13,14 @@ typedef int ComponentIndex;
 class CoefficientVector {
   // disallow copy...
   friend class ResGausser;
+public:
   CoefficientVector() : mValue(nullptr) {}
+
+  bool isNull() const { return mValue == nullptr; }
+  void swap(CoefficientVector& b)
+  {
+    std::swap(mValue, b.mValue);
+  }
 private:
   void * mValue;
 };
@@ -23,11 +30,10 @@ typedef struct { void * mValue; } NewCoefficientArray;
 class ResGausser
 {
   enum {ZZp} typ;
-  const Z_mod *K; // only used to construct Kp.  Will be removed MES.
-
+  const Ring *K;
   CoefficientRingZZp *Kp;
 
-  ResGausser(int p);
+  ResGausser(const Ring* K);
 
   FieldElement* coefficientArray(NewCoefficientArray f) const { return reinterpret_cast<FieldElement*>(f.mValue); }
   std::vector<FieldElement>& coefficientVector(CoefficientVector f) const { return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue); }
@@ -42,7 +48,7 @@ public:
 
   ~ResGausser() {}
 
-  static ResGausser *newResGausser(int p);
+  static ResGausser *newResGausser(const Ring* K1);
 
   const Ring * get_ring() const { return K; }
 
@@ -56,10 +62,6 @@ public:
     Kp->negate(result, a);
   }
   
-  CoefficientArray from_ints(ComponentIndex len, const int* elems) const;
-
-  void to_ints(ComponentIndex len, CoefficientArray, int *result) const;
-
   // other routines:
   void deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const;
 
@@ -133,11 +135,26 @@ public:
   void pushBackMinusOne(std::vector<FieldElement>& coeffs) const;
   void pushBackElement(std::vector<FieldElement>& coeffs, const FieldElement* take_from_here, size_t loc) const;
   void pushBackNegatedElement(std::vector<FieldElement>& coeffs, const FieldElement* take_from_here, size_t loc) const;
+
+  void pushBackOne(CoefficientVector& coeffs) const;
+  void pushBackMinusOne(CoefficientVector& coeffs) const;
+  void pushBackElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
+  void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
+
+  ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
   
-  size_t size(CoefficientVector r) const;
+  CoefficientVector from_ints(ComponentIndex len, const int* elems) const;
+  std::vector<int> to_ints(CoefficientVector coeffs) const;
+  
+  size_t size(CoefficientVector r) const {
+    return coefficientVector(r).size();
+  }
   
   CoefficientVector allocateCoefficientVector(ComponentIndex nelems) const;
   // create a row of 0's (over K).
+
+  CoefficientVector allocateCoefficientVector() const;
+  // create an empty array
 
   void clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const;
   // set the elements in the range first..last to 0.
@@ -161,7 +178,6 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1.
 
   void sparseCancel(CoefficientVector r,
-                    ComponentIndex len,
                     CoefficientVector sparse,
                     ComponentIndex* comps,
                     CoefficientVector result_loc
@@ -169,7 +185,9 @@ public:
   // dense += c * sparse, where c is chosen to cancel column comps[0].
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
-  
+
+  void debugDisplay(CoefficientVector r) const;
+  void debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
 };
 
 #endif

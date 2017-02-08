@@ -19,6 +19,14 @@
 #include <vector>
 #include <iostream>
 
+ring_elem ResGausser::to_ring_elem(const CoefficientVector& coeffs, size_t loc) const
+{
+  auto& elems = coefficientVector(coeffs); 
+  ring_elem result;
+  result.int_val = K->from_long(coeff_to_int(elems[loc]));
+  return result;
+}
+
 void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                   const FreeModule *F,
                                   vec v,
@@ -52,7 +60,8 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
       nextmonom += R.monoid().monomial_size(nextmonom);
       n++;
     }
-  auto coeffs = std::unique_ptr<FieldElement[]>(R.resGausser().from_ints(n, relem_array));
+
+  auto coeffs = R.resGausser().from_ints(n, relem_array);
   poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
   GR->gbvector_remove(f);
   delete [] exp;
@@ -81,9 +90,6 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   int *exp = new int[M->n_vars()+1];
   res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
-  int* relem_array = new int[f.len];
-  R.resGausser().to_ints(f.len, f.coeffs.get(), relem_array);
-
   const res_monomial_word *w = f.monoms.get();
   for (int i=0; i<f.len; i++)
     {
@@ -93,7 +99,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       for (int a=0; a<M->n_vars(); a++)
         exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
-      ring_elem a = K->from_long(relem_array[i]);
+      ring_elem a = R.resGausser().to_ring_elem(f.coeffs, i);
       Nterm * g = origR->make_flat_term(a, m1);
       g->next = 0;
       if (last[comp] == 0)
@@ -119,7 +125,6 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
         }
     }
 
-  delete [] relem_array;
   delete [] exp;
   delete [] lexp;
   return result;
@@ -224,8 +229,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(
           long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              ring_elem a;
-              a = K->from_long(C.ring().resGausser().coeff_to_int(i.coefficient()));
+              ring_elem a = C.ring().resGausser().to_ring_elem(f.coeffs, i.coefficient_index());
               result->set_entry(newcomps[comp], col, a);
             }
         }
@@ -286,7 +290,7 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
           long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              R.set_from_long(result.entry(newcomps[comp], col), C.gausser().coeff_to_int(i.coefficient()));
+              R.from_ring_elem(result.entry(newcomps[comp], col), C.gausser().to_ring_elem(f.coeffs, i.coefficient_index()));;
               nnonzeros++;
             }
         }

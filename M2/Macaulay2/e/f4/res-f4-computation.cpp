@@ -77,7 +77,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       return nullptr;
     }
 
-  ResGausser *KK = ResGausser::newResGausser(static_cast<int>(K->characteristic()));
+  ResGausser *KK = ResGausser::newResGausser(K);
   if (KK == 0)
     {
       ERROR("cannot use res(...,FastNonminimal=>true) with this type of coefficient ring");

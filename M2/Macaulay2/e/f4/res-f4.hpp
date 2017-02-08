@@ -44,8 +44,7 @@ private:
     res_packed_monomial mLeadTerm; // monomial (level lev-1) giving rise to this row
     // The following two should have the same length.
     std::vector<ComponentIndex> mComponents; // indices into mColumns
-    std::vector<FieldElement> mCoeffs;
-    //ResGausser::CoefficientArray mCoeffs; // from an ResF4Mem..
+    CoefficientVector mCoeffs;
     Row() : mLeadTerm(nullptr) {}
   };
 
