@@ -12,6 +12,7 @@ typedef int ComponentIndex;
 class CoefficientVector {
   // disallow copy...
   friend class ResGausser;
+  friend class ResGausserZZp;
 public:
   CoefficientVector() : mValue(nullptr) {}
 
@@ -26,94 +27,61 @@ private:
 
 class ResGausser
 {
-  typedef int FieldElement;
-
-  enum {ZZp} typ;
-  const Ring *K;
-  CoefficientRingZZp *Kp;
-
-  ResGausser(const Ring* K);
-
-  std::vector<FieldElement>& coefficientVector(CoefficientVector f) const {
-    return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue);
-  }
 public:
+  ResGausser(const Ring* K) : mOriginalRing(K) {}
   virtual ~ResGausser() {}
 
   static ResGausser *newResGausser(const Ring* K1);
 
-  const Ring * get_ring() const { return K; }
-
-  const CoefficientRingZZp* get_coeff_ring() const { return Kp; }
-
-  void set_one(FieldElement& one) const { one = 0; } // exponent for 1
-
-  void negate(FieldElement a, FieldElement& result) const
-  {
-    Kp->negate(result, a);
-  }
-  
-  int coeff_to_int(FieldElement f) const
-  // Returns an integer in the range -a..a, (or 0..1) where a = floor(p/2),  p is the characteristic.
-  {
-    return Kp->to_int(f);
-  }
-
-  mutable long n_dense_row_cancel;
-  mutable long n_subtract_multiple;
-
-private:
-  CoefficientVector coefficientVector(std::vector<FieldElement>* vals) const {
-    CoefficientVector result;
-    result.mValue = vals;
-    vals = nullptr;
-    return result;
-  }
+  const Ring * get_ring() const { return mOriginalRing; }
 
 public:
-  virtual void pushBackOne(CoefficientVector& coeffs) const;
-  virtual void pushBackMinusOne(CoefficientVector& coeffs) const;
-  virtual void pushBackElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
-  virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
+  virtual void pushBackOne(CoefficientVector& coeffs) const = 0;
+  virtual void pushBackMinusOne(CoefficientVector& coeffs) const = 0;
+  virtual void pushBackElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const = 0;
+  virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const = 0;
 
-  virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
-  virtual void from_ring_elem(CoefficientVector& result, ring_elem a) const; // appends to result.
+  virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const = 0; // in res-f4-m2-interface.cpp
+  virtual void from_ring_elem(CoefficientVector& result, ring_elem a) const = 0; // appends to result.
   
-  virtual size_t size(CoefficientVector r) const {
-    return coefficientVector(r).size();
-  }
+  virtual size_t size(CoefficientVector r) const  = 0;
   
-  virtual CoefficientVector allocateCoefficientVector(ComponentIndex nelems) const;
+  virtual CoefficientVector allocateCoefficientVector(ComponentIndex nelems) const = 0;
   // create a row of 0's (over K).
 
-  virtual CoefficientVector allocateCoefficientVector() const;
+  virtual CoefficientVector allocateCoefficientVector() const = 0;
   // create an empty array
 
-  virtual void clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const;
+  virtual void clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const = 0;
   // set the elements in the range first..last to 0.
 
-  virtual void deallocate(CoefficientVector r) const;
+  virtual void deallocate(CoefficientVector r) const = 0;
 
-  virtual ComponentIndex nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const;
+  virtual ComponentIndex nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const = 0;
   // returns last+1 in the case when there are no non-zero elements left.
 
   virtual void fillFromSparse(CoefficientVector r,
                       ComponentIndex len,
                       CoefficientVector sparse,
-                      ComponentIndex* comps) const;
+                      ComponentIndex* comps) const = 0;
   // Fills 'r' from 'sparse' (and 'comps')
 
   virtual void sparseCancel(CoefficientVector r,
                             CoefficientVector sparse,
                             ComponentIndex* comps,
                             CoefficientVector result_loc
-                            ) const;
+                            ) const = 0;
   // dense += c * sparse, where c is chosen to cancel column comps[0].
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
 
-  virtual void debugDisplay(CoefficientVector r) const;
-  virtual void debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
+  virtual void debugDisplay(CoefficientVector r) const = 0;
+  virtual void debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const = 0;
+public:
+  mutable long n_dense_row_cancel;
+  mutable long n_subtract_multiple;
+private:
+  const Ring* mOriginalRing;
 };
 
 #endif
