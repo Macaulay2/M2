@@ -27,13 +27,20 @@ ring_elem ResGausser::to_ring_elem(const CoefficientVector& coeffs, size_t loc) 
   return result;
 }
 
+void ResGausser::from_ring_elem(CoefficientVector& result, ring_elem a) const
+{
+  auto& elems = coefficientVector(result);
+  int a1;
+  Kp->set_from_long(a1, static_cast<int>(K->coerceToLongInteger(a).second));
+  elems.push_back(a1);
+}
+
 void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                   const FreeModule *F,
                                   vec v,
                                   poly &result)
 {
   const PolynomialRing* origR = F->get_ring()->cast_to_PolynomialRing();
-  const Ring* K = origR->getCoefficientRing();
   const Monoid* M = origR->getMonoid();
 
   ring_elem denom;
@@ -44,15 +51,14 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   int *exp = new int[M->n_vars()+1];
   res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
-  //  result.len = n;
-  int* relem_array = new int[n]; // doesn't need to be allocated with gc, as
+  CoefficientVector coeffs = R.resGausser().allocateCoefficientVector();
           // all these pointers (or values) are still in the element f.
   auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n * R.monoid().max_monomial_size()]);
   n = 0;
   res_monomial_word *nextmonom = monoms.get();
   for (gbvector *t = f; t != 0; t=t->next)
     {
-      relem_array[n] = static_cast<int>(K->coerceToLongInteger(t->coeff).second);
+      R.resGausser().from_ring_elem(coeffs, t->coeff);
       M->to_expvector(t->monom, exp);
       for (int a =0; a<M->n_vars(); a++)
         lexp[a] = exp[a];
@@ -61,12 +67,10 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
       n++;
     }
 
-  auto coeffs = R.resGausser().from_ints(n, relem_array);
   poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
   GR->gbvector_remove(f);
   delete [] exp;
   delete [] lexp;
-  delete [] relem_array;
 }
 
 vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
@@ -74,7 +78,6 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
                                const FreeModule *F)
 {
   const PolynomialRing *origR = F->get_ring()->cast_to_PolynomialRing();
-  const Ring* K = origR->getCoefficientRing();
   const Monoid *M = origR->getMonoid();
   
   int *m1 = M->make_one();

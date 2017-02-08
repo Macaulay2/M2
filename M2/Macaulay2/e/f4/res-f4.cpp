@@ -543,14 +543,6 @@ void F4Res::gaussReduce()
               mRing.resGausser().debugDisplay(result.coefficientInserter()); fprintf(stdout, "\n");
               #endif
           
-              #if 0
-              for (ComponentIndex p=0; p<mColumns.size(); p++)
-                {
-                  fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(gauss_row.coeffs[p]));
-                }
-              fprintf(stdout, "\n");
-              #endif
-
               mRing.resGausser().sparseCancel(gauss_row,
                                               mReducers[firstcol].mCoeffs,
                                               mReducers[firstcol].mComponents.data(),
@@ -676,7 +668,7 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 {
   for (ComponentIndex i=0; i<rows.size(); i++)
     {
-      mRing.resGausser().debugDisplayRow(mColumns.size(), rows[i].mComponents, rows[i].mCoeffs);
+      mRing.resGausser().debugDisplayRow(static_cast<int>(mColumns.size()), rows[i].mComponents, rows[i].mCoeffs);
     }
 }
 void F4Res::debugOutputReducerMatrix()

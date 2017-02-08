@@ -516,7 +516,6 @@ void SchreyerFrame::setSchreyerOrder(int lev)
       return;
     }
 
-  auto& prevframe = level(lev-1);
   auto& prevorder = schreyerOrder(lev-1);
   long* tiebreakers = new long[myframe.size()];
   
@@ -549,7 +548,6 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   auto myTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
   if (lev > 0)
     {
-      auto& prevlevel = level(lev-1);
       auto& prevorder = schreyerOrder(lev-1);
       long comp = monoid().get_component(myelem.mMonom);
       monoid().unchecked_mult(myelem.mMonom, prevorder.mTotalMonom[comp], myTotalMonom);

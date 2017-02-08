@@ -1,4 +1,4 @@
-// Copyright 2005-2016 Michael E. Stillman.
+// Copyright 2005-2017 Michael E. Stillman.
 
 #include "res-gausser.hpp"
 
@@ -25,186 +25,6 @@ ResGausser::ResGausser(const Ring* K1)
   auto K2 = Z_mod::create(p);
   Kp = K2->get_CoeffRing();
 }
-
-void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const
-{
-  int* elems = F;
-  switch (typ) {
-  case ZZp:
-    delete [] elems;
-    F = nullptr;
-  };
-}
-/////////////////////////////////////////////////////////////////////
-///////// Dense row routines ////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-
-void ResGausser::pushBackOne(std::vector<FieldElement>& coeffs) const
-{
-  FieldElement one;
-  set_one(one);
-  coeffs.push_back(one);
-}
-
-void ResGausser::pushBackMinusOne(std::vector<FieldElement>& coeffs) const
-{
-  FieldElement minus_one;
-  set_one(minus_one);
-  negate(minus_one, minus_one);
-  coeffs.push_back(minus_one);
-}
-void ResGausser::pushBackElement(std::vector<FieldElement>& coeffs,
-                                 const FieldElement* take_from_here,
-                                 size_t loc) const
-{
-  coeffs.push_back(take_from_here[loc]);
-}
-void ResGausser::pushBackNegatedElement(std::vector<FieldElement>& coeffs,
-                                        const FieldElement* take_from_here,
-                                        size_t loc) const
-{
-  FieldElement a = take_from_here[loc];
-  negate(a,a);
-  coeffs.push_back(a);
-}
-
-
-void ResGausser::dense_row_allocate(dense_row &r, ComponentIndex nelems) const
-{
-  int *elems = new int[nelems];
-  r.coeffs = elems;
-  r.len = nelems;
-  for (ComponentIndex i=0; i<nelems; i++)
-    Kp->set_zero(elems[i]);
-}
-
-void ResGausser::dense_row_clear(dense_row &r, ComponentIndex first, ComponentIndex last) const
-{
-  int* elems = r.coeffs;
-  for (ComponentIndex i=first; i<=last; i++)
-    Kp->set_zero(elems[i]);
-}
-
-void ResGausser::dense_row_deallocate(dense_row &r) const
-{
-  deallocate_F4CCoefficientArray(r.coeffs, r.len);
-  r.len = 0;
-}
-
-void ResGausser::dense_row_fill_from_sparse(dense_row &r,
-                                         ComponentIndex len,
-                                         CoefficientArray sparse,
-                                         ComponentIndex *comps) const
-{
-  int* elems = r.coeffs;
-  int* sparseelems = sparse;
-  for (ComponentIndex i=0; i<len; i++)
-    elems[*comps++] = *sparseelems++;
-
-}
-
-ComponentIndex ResGausser::dense_row_next_nonzero(dense_row &r, ComponentIndex first, ComponentIndex last) const
-{
-  int* elems = r.coeffs;
-  elems += first;
-  for (ComponentIndex i=first; i<=last; i++)
-    if (!Kp->is_zero(*elems++))
-      return i;
-  return last+1;
-}
-
-void ResGausser::dense_row_cancel_sparse_monic(dense_row &r,
-                                      ComponentIndex len,
-                                      CoefficientArray sparse,
-                                      ComponentIndex *comps) const
-{
-  // KEY ASSUMPTION HERE: sparse[0] is "1".
-  int* elems = r.coeffs;
-  int* sparseelems = sparse;
-
-  // Basically, over ZZ/p, we are doing: r += a*sparse,
-  // where sparse is monic, and a is -r.coeffs[*comps].
-
-  n_dense_row_cancel++;
-  n_subtract_multiple += len;
-  int a = elems[*comps];
-  for (ComponentIndex i=len; i>0; i--)
-    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
-}
-
-void ResGausser::dense_row_cancel_sparse(dense_row &r,
-                                         ComponentIndex len,
-                                         CoefficientArray sparse,
-                                         ComponentIndex *comps,
-                                         FieldElement& a
-                                         ) const
-{
-  // r += a*sparse
-  // ASSUMPTIONS:
-  //   len > 0,
-  //   sparse[0] = 1 or -1 (in the field)
-  // where a is
-  //   r[comps[0]], if sparse[0]==1
-  //   -r[comps[0]], if sparse[0]==-1
-  // r = [...., b, .....]
-  // sparse = [1,...]  then a = -b
-  // sparse = [-1,...] then a = b
-  
-  int* elems = r.coeffs;
-  int* sparseelems = sparse;
-  int one;
-  set_one(one);
-  
-  // Basically, over ZZ/p, we are doing: r += a*sparse,
-  // where sparse is monic, and a is -r.coeffs[*comps].
-
-  n_dense_row_cancel++;
-  n_subtract_multiple += len;
-  a = elems[*comps];
-  if (sparse[0] != one) // should be minus_one
-    Kp->negate(a, a);
-  for (ComponentIndex i=len; i>0; i--)
-    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
-  Kp->negate(a,a);
-}
-
-void ResGausser::dense_row_cancel_sparse(dense_row &r,
-                                         ComponentIndex len,
-                                         CoefficientArray sparse,
-                                         ComponentIndex *comps,
-                                         std::vector<FieldElement>& coeffInserter
-                                         ) const
-{
-  // r += a*sparse
-  // ASSUMPTIONS:
-  //   len > 0,
-  //   sparse[0] = 1 or -1 (in the field)
-  // where a is
-  //   r[comps[0]], if sparse[0]==1
-  //   -r[comps[0]], if sparse[0]==-1
-  // r = [...., b, .....]
-  // sparse = [1,...]  then a = -b
-  // sparse = [-1,...] then a = b
-  
-  int* elems = r.coeffs;
-  int* sparseelems = sparse;
-  int one;
-  set_one(one);
-  
-  // Basically, over ZZ/p, we are doing: r += a*sparse,
-  // where sparse is monic, and a is -r.coeffs[*comps].
-
-  n_dense_row_cancel++;
-  n_subtract_multiple += len;
-  FieldElement a = elems[*comps];
-  if (sparse[0] != one) // should be minus_one
-    Kp->negate(a, a);
-  for (ComponentIndex i=len; i>0; i--)
-    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
-  Kp->negate(a,a);
-  coeffInserter.push_back(a);
-}
-
 
 //////////////////////////////////
 // CoefficientVector handling ////
@@ -245,23 +65,6 @@ void ResGausser::pushBackNegatedElement(CoefficientVector& coeffs,
   elems.push_back(a);
 }
 
-CoefficientVector ResGausser::from_ints(ComponentIndex len, const int* elems) const
-{
-  auto result = new std::vector<int>(len);
-  for (int i=0; i<len; i++)
-    Kp->set_from_long((*result)[i], elems[i]);
-  return coefficientVector(result);
-}
-std::vector<int> ResGausser::to_ints(CoefficientVector coeffs) const
-{
-  auto& elems = coefficientVector(coeffs); 
-  std::vector<int> result;
-  for (ComponentIndex i=0; i<elems.size(); i++)
-    result.push_back(coeff_to_int(elems[i]));
-  return elems;
-}
-
-
 CoefficientVector ResGausser::allocateCoefficientVector(ComponentIndex nelems) const
   // create a row of 0's (over K).
 {
@@ -287,6 +90,7 @@ void ResGausser::clear(CoefficientVector r, ComponentIndex first, ComponentIndex
 void ResGausser::deallocate(CoefficientVector r) const
 {
   delete reinterpret_cast<std::vector<FieldElement>*>(r.mValue);
+  r.mValue = nullptr;
 }
 
 ComponentIndex ResGausser::nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
@@ -314,28 +118,6 @@ void ResGausser::fillFromSparse(CoefficientVector r,
 
   for (ComponentIndex i=0; i<len; i++)
     elems[*comps++] = *sparseelems++;
-}
-
-void ResGausser::sparseCancelGivenMonic(CoefficientVector r,
-                                        ComponentIndex len,
-                                        CoefficientVector sparse,
-                                        ComponentIndex* comps) const
-  // r += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1.
-{
-  auto& vec = coefficientVector(r);
-  auto elems = vec.data();
-  auto& svec = coefficientVector(sparse);
-  auto sparseelems = svec.data();
-
-  // Basically, over ZZ/p, we are doing: r += a*sparse,
-  // where sparse is monic, and a is -r.coeffs[*comps].
-
-  n_dense_row_cancel++;
-  n_subtract_multiple += len;
-  int a = elems[*comps];
-  for (ComponentIndex i=len; i>0; i--)
-    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
 }
 
 void ResGausser::sparseCancel(CoefficientVector r,

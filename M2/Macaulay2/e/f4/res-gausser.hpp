@@ -7,7 +7,6 @@
 #include "../ZZp.hpp"
 #include "../coeffrings.hpp"
 
-typedef int FieldElement;
 typedef int ComponentIndex;
 
 class CoefficientVector {
@@ -25,27 +24,20 @@ private:
   void * mValue;
 };
 
-typedef struct { void * mValue; } NewCoefficientArray;
-
 class ResGausser
 {
+  typedef int FieldElement;
+
   enum {ZZp} typ;
   const Ring *K;
   CoefficientRingZZp *Kp;
 
   ResGausser(const Ring* K);
 
-  FieldElement* coefficientArray(NewCoefficientArray f) const { return reinterpret_cast<FieldElement*>(f.mValue); }
-  std::vector<FieldElement>& coefficientVector(CoefficientVector f) const { return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue); }
+  std::vector<FieldElement>& coefficientVector(CoefficientVector f) const {
+    return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue);
+  }
 public:
-  typedef FieldElement* CoefficientArray;
-  //  typedef void *CoefficientArray;
-
-  struct dense_row {
-    ComponentIndex len; // coeffs is an array 0..len-1
-    CoefficientArray coeffs;
-  };
-
   ~ResGausser() {}
 
   static ResGausser *newResGausser(const Ring* K1);
@@ -54,7 +46,6 @@ public:
 
   const CoefficientRingZZp* get_coeff_ring() const { return Kp; }
 
-
   void set_one(FieldElement& one) const { one = 0; } // exponent for 1
 
   void negate(FieldElement a, FieldElement& result) const
@@ -62,57 +53,6 @@ public:
     Kp->negate(result, a);
   }
   
-  // other routines:
-  void deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const;
-
-  // reduce mod p. (QQ --> ZZ/p) (place in double's??)
-
-  // other reductions
-
-  // combine them (ZZ/p1, ..., ZZ/pn --> QQ)
-
-  // Hensel lift routine?
-
-  // evaluation of multivariate poly's or fcn's.
-
-  void dense_row_allocate(dense_row &r, ComponentIndex nelems) const;
-  // create a row of 0's (over K).
-
-  void dense_row_clear(dense_row &r, ComponentIndex first, ComponentIndex last) const;
-
-  void dense_row_deallocate(dense_row &r) const;
-
-  ComponentIndex dense_row_next_nonzero(dense_row &r, ComponentIndex first, ComponentIndex last) const;
-
-  void dense_row_fill_from_sparse(dense_row& r,
-                                  ComponentIndex len,
-                                  CoefficientArray sparse,
-                                  ComponentIndex* comps) const;
-  // Fills 'r' from 'sparse' (and 'comps')
-
-  void dense_row_cancel_sparse_monic(dense_row& r,
-                               ComponentIndex len,
-                               CoefficientArray sparse,
-                               ComponentIndex* comps) const;
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1.
-
-  void dense_row_cancel_sparse(dense_row& r,
-                               ComponentIndex len,
-                               CoefficientArray sparse,
-                               ComponentIndex* comps,
-                               FieldElement& result_c) const;
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
-  // The value of c is recorded in result_c.
-
-  void dense_row_cancel_sparse(dense_row& r,
-                               ComponentIndex len,
-                               CoefficientArray sparse,
-                               ComponentIndex* comps,
-                               std::vector<FieldElement>& result_loc
-                               ) const;
-
   int coeff_to_int(FieldElement f) const
   // Returns an integer in the range -a..a, (or 0..1) where a = floor(p/2),  p is the characteristic.
   {
@@ -131,20 +71,13 @@ private:
   }
 
 public:
-  void pushBackOne(std::vector<FieldElement>& coeffs) const;
-  void pushBackMinusOne(std::vector<FieldElement>& coeffs) const;
-  void pushBackElement(std::vector<FieldElement>& coeffs, const FieldElement* take_from_here, size_t loc) const;
-  void pushBackNegatedElement(std::vector<FieldElement>& coeffs, const FieldElement* take_from_here, size_t loc) const;
-
   void pushBackOne(CoefficientVector& coeffs) const;
   void pushBackMinusOne(CoefficientVector& coeffs) const;
   void pushBackElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
   void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
 
   ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
-  
-  CoefficientVector from_ints(ComponentIndex len, const int* elems) const;
-  std::vector<int> to_ints(CoefficientVector coeffs) const;
+  void from_ring_elem(CoefficientVector& result, ring_elem a) const; // appends to result.
   
   size_t size(CoefficientVector r) const {
     return coefficientVector(r).size();
@@ -169,13 +102,6 @@ public:
                       CoefficientVector sparse,
                       ComponentIndex* comps) const;
   // Fills 'r' from 'sparse' (and 'comps')
-
-  void sparseCancelGivenMonic(CoefficientVector r,
-                              ComponentIndex len,
-                              CoefficientVector sparse,
-                              ComponentIndex* comps) const;
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1.
 
   void sparseCancel(CoefficientVector r,
                     CoefficientVector sparse,
