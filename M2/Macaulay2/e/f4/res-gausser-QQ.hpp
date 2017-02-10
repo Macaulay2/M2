@@ -1,4 +1,4 @@
-// Copyright 2014 Michael E. Stillman.
+// Copyright 2017 Michael E. Stillman.
 
 #ifndef _res_gausser_qq_hpp_
 #define _res_gausser_qq_hpp_
@@ -7,60 +7,29 @@
 #include "../ZZp.hpp"
 #include "../coeffrings.hpp"
 
-typedef int ComponentIndex;
-
-class CoefficientVector {
-  // disallow copy...
-  friend class ResGausser;
-public:
-  CoefficientVector() : mValue(nullptr) {}
-
-  bool isNull() const { return mValue == nullptr; }
-  void swap(CoefficientVector& b)
-  {
-    std::swap(mValue, b.mValue);
-  }
-private:
-  void * mValue;
-};
-
+#include "res-gausser.hpp"
+#include "../aring-RR.hpp"
+#include "../aring-zzp-flint.hpp"
+#include "../aring-qq-gmp.hpp"
 class ResGausserQQ : public ResGausser
 {
-  typedef int FieldElement;
+  struct FieldElement
+  {
+    double mDouble;
+    M2::ARingZZpFlint::ElementType mMod1;
+    int mDenominatorSize;
+  };
 
-  enum {ZZp} typ;
-  const Ring *K;
-  CoefficientRingZZp *Kp;
+  const M2::ARingQQGMP mQQRing;
+  const M2::ARingZZpFlint Kp1;
 
-  ResGausser(const Ring* K);
-
-  std::vector<FieldElement>& coefficientVector(CoefficientVector f) const {
-    return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue);
-  }
+  FieldElement mZero;
+  FieldElement mMinusOne;
+  FieldElement mOne;
 public:
-  virtual ~ResGausser() {}
+  ResGausserQQ(const Ring* K, size_t p1);
 
-  static ResGausser *newResGausser(const Ring* K1);
-
-  const Ring * get_ring() const { return K; }
-
-  const CoefficientRingZZp* get_coeff_ring() const { return Kp; }
-
-  void set_one(FieldElement& one) const { one = 0; } // exponent for 1
-
-  void negate(FieldElement a, FieldElement& result) const
-  {
-    Kp->negate(result, a);
-  }
-  
-  int coeff_to_int(FieldElement f) const
-  // Returns an integer in the range -a..a, (or 0..1) where a = floor(p/2),  p is the characteristic.
-  {
-    return Kp->to_int(f);
-  }
-
-  mutable long n_dense_row_cancel;
-  mutable long n_subtract_multiple;
+  virtual ~ResGausserQQ() {}
 
 private:
   CoefficientVector coefficientVector(std::vector<FieldElement>* vals) const {
@@ -70,6 +39,9 @@ private:
     return result;
   }
 
+  std::vector<FieldElement>& coefficientVector(CoefficientVector f) const {
+    return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue);
+  }
 public:
   virtual void pushBackOne(CoefficientVector& coeffs) const;
   virtual void pushBackMinusOne(CoefficientVector& coeffs) const;
@@ -77,7 +49,7 @@ public:
   virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
 
   virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
-  virtual void from_ring_elem(CoefficientVector& result, ring_elem a) const; // appends to result.
+  virtual void from_ring_elem(CoefficientVector& result, ring_elem numer, ring_elem denom) const; // appends to result. bit numer, denom are in ARingZZGMP.
   
   virtual size_t size(CoefficientVector r) const {
     return coefficientVector(r).size();
@@ -112,8 +84,10 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
 
-  virtual void debugDisplay(CoefficientVector r) const;
-  virtual void debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
+  void out(std::ostream& o, FieldElement& f) const;
+  virtual void out(std::ostream& o, CoefficientVector f, int loc) const;
+  virtual void debugDisplay(std::ostream& o, CoefficientVector r) const;
+  virtual void debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
 };
 
 #endif

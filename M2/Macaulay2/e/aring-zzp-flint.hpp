@@ -144,6 +144,8 @@ namespace M2 {
 
     void subtract_multiple(ElementType &result, ElementType a, ElementType b) const
     {
+      ElementType a1 = nmod_neg(a, mModulus);
+      NMOD_ADDMUL(result, a1, b, mModulus);
     }
 
     void mult(ElementType &result, ElementType a, ElementType b) const

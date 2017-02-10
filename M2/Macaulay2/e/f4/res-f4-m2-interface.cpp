@@ -19,20 +19,60 @@
 #include <vector>
 #include <iostream>
 
-ring_elem ResGausser::to_ring_elem(const CoefficientVector& coeffs, size_t loc) const
+#include "res-gausser-ZZp.hpp"
+#include "res-gausser-QQ.hpp"
+
+ring_elem ResGausserZZp::to_ring_elem(const CoefficientVector& coeffs, size_t loc) const
 {
   auto& elems = coefficientVector(coeffs); 
   ring_elem result;
-  result.int_val = K->from_long(coeff_to_int(elems[loc]));
+  result.int_val = get_ring()->from_long(coeff_to_int(elems[loc]));
   return result;
 }
 
-void ResGausser::from_ring_elem(CoefficientVector& result, ring_elem a) const
+void ResGausserZZp::from_ring_elem(CoefficientVector& result, ring_elem a, ring_elem unused) const
 {
   auto& elems = coefficientVector(result);
   int a1;
-  Kp->set_from_long(a1, static_cast<int>(K->coerceToLongInteger(a).second));
+  Kp->set_from_long(a1, static_cast<int>(get_ring()->coerceToLongInteger(a).second));
   elems.push_back(a1);
+}
+
+////////////////////
+// NOTE!! //////////
+// Even though the ring is the rationals, gbring 'ring_elem's are in ZZ.
+ring_elem ResGausserQQ::to_ring_elem(const CoefficientVector& coeffs, size_t loc) const
+{
+  auto& elems = coefficientVector(coeffs); 
+  ring_elem result;
+  // TODO: NEED TO FIX THIS!!!!!!!
+  return result;
+}
+
+void ResGausserQQ::from_ring_elem(CoefficientVector& result, ring_elem numer, ring_elem denom) const
+{
+  const M2::ARingZZGMP *Z = globalZZ->get_ARing();
+  auto& elems = coefficientVector(result);
+  M2::ARingZZGMP::ElementType numer1;
+  M2::ARingZZGMP::ElementType denom1;
+  Z->init(numer1);
+  Z->from_ring_elem(numer1, numer);
+  Z->init(denom1);
+  Z->from_ring_elem(denom1, denom);
+  bool isunit = Z->is_equal(numer1,denom1);
+  mpq_t c;
+  mpq_init(c);
+  mpq_set_num(c, &numer1);
+  mpq_set_den(c, &denom1);
+  mpq_canonicalize(c);
+  FieldElement b;
+  b.mDouble = mpq_get_d(c);
+  Kp1.set_from_mpq(b.mMod1, c);
+  b.mDenominatorSize = (isunit ? 0 : 1);
+  elems.push_back(b);
+  mpq_clear(c);
+  mpz_clear(&numer1);
+  mpz_clear(&denom1);
 }
 
 void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
@@ -45,9 +85,15 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
 
   ring_elem denom;
   gbvector *f = origR->translate_gbvector_from_vec(F,v, denom);
+  bool isQQ = origR->is_QQ();
   GBRing *GR = origR->get_gb_ring();
   int n = GR->gbvector_n_terms(f);
 
+  buffer o;
+  o << "input: ";
+  GR->gbvector_text_out(o,F,f,-1);
+  o << newline;
+  emit(o.str());
   int *exp = new int[M->n_vars()+1];
   res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
@@ -58,7 +104,8 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   res_monomial_word *nextmonom = monoms.get();
   for (gbvector *t = f; t != 0; t=t->next)
     {
-      R.resGausser().from_ring_elem(coeffs, t->coeff);
+      R.resGausser().from_ring_elem(coeffs, t->coeff, f->coeff); // note: f->coeff is assumed to be 1 for finite fields, but for QQ both of these are integers
+      
       M->to_expvector(t->monom, exp);
       for (int a =0; a<M->n_vars(); a++)
         lexp[a] = exp[a];

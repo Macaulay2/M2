@@ -9,6 +9,7 @@ F4_CCFILES := \
   res-f4-computation \
   res-gausser \
   res-gausser-ZZp \
+  res-gausser-QQ \
   f4 \
   f4-syz \
   f4-mem \

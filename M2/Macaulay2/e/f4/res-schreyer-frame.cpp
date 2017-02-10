@@ -498,9 +498,9 @@ long SchreyerFrame::computeNextLevel()
           elem.mEnd = n_elems_added;
         }
     }
-  //show();
   setSchreyerOrder(mCurrentLevel);
   mCurrentLevel++;
+
   return n_elems_added;
 }
 
@@ -541,7 +541,7 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom,degree));
   auto& myelem = myframe[idx];
-
+  myelem.mSyzygy.coeffs = gausser().allocateCoefficientVector();
   // The rest of this code simply sets the total monomial for the Schreyer order
   // and should be moved out of here. (MES 3 Feb 2016)
   auto& myorder = schreyerOrder(lev);
@@ -596,7 +596,7 @@ bool SchreyerFrame::insertLevelOne(res_packed_monomial monom, int deg, poly& syz
       if (M2_gbTrace >= 1)
         {
           std::cout << "Error: expected terms of polynomial to be in order, in poly#" << last << ": ";
-          display_poly(stdout, ring(), syzygy);
+          display_poly(std::cout, ring(), syzygy);
           std::cout << std::endl;
         }
       return false;
@@ -622,7 +622,7 @@ bool SchreyerFrame::debugCheckOrder(int lev) const
         {
           std::cout << "Error: terms of polynomial at level " << lev << " location " << which << " not in order" << std::endl;
           std::cout << "  poly = ";
-          display_poly(stdin, ring(), i->mSyzygy);
+          display_poly(std::cout, ring(), i->mSyzygy);
           std::cout << std::endl;
           result = false;
         }
@@ -727,13 +727,17 @@ void SchreyerFrame::show(int len) const
         {
           std::cout << "    " << j << " " << myframe[j].mDegree 
                     << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
+          if (myframe[j].mSyzygy.coeffs.isNull())
+            std::cout << "coeffs=null " << std::flush;
           std::cout << "(size:" << myframe[j].mSyzygy.len << ") [";
           monoid().showAlpha(myorder.mTotalMonom[j]);
           std::cout << "  " << myorder.mTieBreaker[j] << "] ";
           if (len == 0 or myframe[j].mSyzygy.len == 0)
             monoid().showAlpha(myframe[j].mMonom);
           else
-            display_poly(stdout, ring(), myframe[j].mSyzygy);
+            {
+              display_poly(std::cout, ring(), myframe[j].mSyzygy);
+            }
           std::cout << std::endl;
         }
     }
@@ -843,6 +847,7 @@ void SchreyerFrame::computeSyzygies(int slanted_degree, int maxlevel)
       {
         fillinSyzygies(deg,lev);
       }
+  //  show(-1);
 }
 void SchreyerFrame::computeRanks(int slanted_degree, int maxlevel)
 {
@@ -872,6 +877,7 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
     }
   mComputer.construct(lev, slanted_deg+lev);
   status = 2;
+  
   if (M2_gbTrace >= 2)
     {
       std::cout << "done" << std::endl;

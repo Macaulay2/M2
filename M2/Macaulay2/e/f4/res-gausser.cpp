@@ -2,21 +2,26 @@
 
 #include "res-gausser.hpp"
 #include "res-gausser-ZZp.hpp"
+#include "res-gausser-QQ.hpp"
 
 ResGausser *ResGausser::newResGausser(const Ring* K1)
 {
-  if (!K1->isFinitePrimeField())
+  if (K1->isFinitePrimeField())
     {
-      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields");
-      return nullptr;
+      auto p = K1->characteristic();
+      if (p > 32767)
+        {
+          ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields with p < 32767");
+          return nullptr;
+        }
+      return new ResGausserZZp(K1);
     }
-  auto p = K1->characteristic();
-  if (p > 32767)
+  if (K1->is_QQ())
     {
-      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields with p < 32767");
-      return nullptr;
+      return new ResGausserQQ(K1, 32003);
     }
-  return new ResGausserZZp(K1);
+  ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields or funny QQ");  
+  return nullptr;
 }
 
 // Local Variables:

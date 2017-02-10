@@ -478,6 +478,8 @@ void F4Res::makeMatrix()
     }
 
 #if 0
+  debugOutputReducers();
+  debugOutputColumns();
   std :: cout << "-- reducer matrix --" << std::endl;
   debugOutputMatrix(mReducers);
   debugOutputMatrixSparse(mReducers);
@@ -489,6 +491,7 @@ void F4Res::makeMatrix()
   reorderColumns();
 }
 
+//#define DEBUG_GAUSS 
 void F4Res::gaussReduce()
 {
   // Reduce to zero every spair. Recording creates the
@@ -501,7 +504,7 @@ void F4Res::gaussReduce()
 
   for (long i=0; i<mSPairs.size(); i++)
     {
-      #if 0
+      #ifdef DEBUG_GAUSS
       std::cout << "reducing row " << i << std::endl;
       #endif
       // Reduce spair #i
@@ -515,7 +518,7 @@ void F4Res::gaussReduce()
       
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
-      #if 0
+      #ifdef DEBUG_GAUSS
       std::cout << "about to fill from sparse " << i << std::endl;
       #endif
 
@@ -533,14 +536,14 @@ void F4Res::gaussReduce()
           
           while (firstcol <= lastcol)
             {
-              #if 0
+              #ifdef DEBUG_GAUSS
               std::cout << "about to reduce with col " << firstcol << std::endl;
               std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null") << std::endl;
               std::cout << "mReducers[" << firstcol << "]: " << (mReducers[firstcol].mCoeffs.isNull() ? "null" : "not-null") << std::endl;
               std::cout << "result: " << (result.coefficientInserter().isNull() ? "null" : "not-null") << std::endl;
-              mRing.resGausser().debugDisplay(gauss_row); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(result.coefficientInserter()); fprintf(stdout, "\n");
+              mRing.resGausser().debugDisplay(std::cout, gauss_row); fprintf(stdout, "\n");
+              mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
+              mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
               #endif
           
               mRing.resGausser().sparseCancel(gauss_row,
@@ -549,15 +552,15 @@ void F4Res::gaussReduce()
                                               result.coefficientInserter()
                                               );
 
-              #if 0
-              mRing.resGausser().debugDisplay(gauss_row); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(result.coefficientInserter()); fprintf(stdout, "\n");
+              #ifdef DEBUG_GAUSS
+              mRing.resGausser().debugDisplay(std::cout, gauss_row); fprintf(stdout, "\n");
+              mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
+              mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
               #endif
               
               result.pushBackTerm(mReducers[firstcol].mLeadTerm);
 
-              #if 0
+              #ifdef DEBUG_GAUSS
               std::cout << "done with col " << firstcol << std::endl;
               #endif
               
@@ -655,12 +658,12 @@ void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
 {
   for (ComponentIndex i=0; i<rows.size(); i++)
     {
-      fprintf(stdout, "coeffs = ");
-      mRing.resGausser().debugDisplay(rows[i].mCoeffs);
-      fprintf(stdout, "\n comps = ");
+      std::cout << "coeffs = ";
+      mRing.resGausser().debugDisplay(std::cout, rows[i].mCoeffs);
+      std::cout << std::endl << " comps = ";
       for (long j=0; j<rows[i].mComponents.size(); ++j)
-        fprintf(stdout, " %d", rows[i].mComponents[j]);
-      fprintf(stdout, "\n");
+        std::cout << rows[i].mComponents[j] << " ";
+      std::cout << std::endl;
     }
 }
 
@@ -668,7 +671,7 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 {
   for (ComponentIndex i=0; i<rows.size(); i++)
     {
-      mRing.resGausser().debugDisplayRow(static_cast<int>(mColumns.size()), rows[i].mComponents, rows[i].mCoeffs);
+      mRing.resGausser().debugDisplayRow(std::cout, static_cast<int>(mColumns.size()), rows[i].mComponents, rows[i].mCoeffs);
     }
 }
 void F4Res::debugOutputReducerMatrix()

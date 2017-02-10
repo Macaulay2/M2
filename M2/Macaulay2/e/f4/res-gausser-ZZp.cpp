@@ -1,7 +1,7 @@
 // Copyright 2005-2017 Michael E. Stillman.
 
 #include "res-gausser-ZZp.hpp"
-
+#include <iostream>
 ResGausserZZp::ResGausserZZp(const Ring* K1)
   : ResGausser(K1)
 {
@@ -149,16 +149,38 @@ void ResGausserZZp::sparseCancel(CoefficientVector r,
   result.push_back(a);
 }
 
-void ResGausserZZp::debugDisplay(CoefficientVector r) const
+void ResGausserZZp::out(std::ostream& o, FieldElement& f) const
+{
+  o << Kp->to_int(f);
+}
+
+void ResGausserZZp::out(std::ostream& o, CoefficientVector r, int loc) const
+{
+  if (r.isNull())
+    {
+      o << "[vector is null!]";
+      return;
+    }
+  auto& elems = coefficientVector(r);
+  out(o, elems[loc]);
+}
+void ResGausserZZp::debugDisplay(std::ostream& o, CoefficientVector r) const
 {
   if (r.isNull())
     fprintf(stdout, "vector is null!");
   auto& elems = coefficientVector(r);
-  for (long j=0; j<elems.size(); ++j)
-    fprintf(stdout, " %d", coeff_to_int(elems[j]));
+  for (int j=0; j<elems.size(); ++j)
+    {
+      out(o, r, j);
+      o << " ";
+    }
+  o << std::endl;
 }
 
-void ResGausserZZp::debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const
+void ResGausserZZp::debugDisplayRow(std::ostream& o,
+                                   int ncolumns,
+                                   const std::vector<int>& comps,
+                                   CoefficientVector coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
   auto monom = comps.begin();
@@ -167,15 +189,15 @@ void ResGausserZZp::debugDisplayRow(int ncolumns, const std::vector<int>& comps,
   for (ComponentIndex c=0; c<ncolumns; c++)
     {
       if (coeff == end or *monom != c)
-        fprintf(stdout, " .");
+        o << " .";
       else
         {
-          fprintf(stdout, " %d", coeff_to_int(*coeff));
+          out(o, *coeff);
           ++coeff;
           ++monom;
         }
     }
-  fprintf(stdout, "\n");
+  o << std::endl;
 }
 
 // Local Variables:

@@ -1,4 +1,4 @@
-// Copyright 2014 Michael E. Stillman.
+// Copyright 2014-2017 Michael E. Stillman.
 
 #ifndef _res__gausser_zzp_hpp_
 #define _res__gausser_zzp_hpp_
@@ -52,7 +52,7 @@ public:
   virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
 
   virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
-  virtual void from_ring_elem(CoefficientVector& result, ring_elem a) const; // appends to result.
+  virtual void from_ring_elem(CoefficientVector& result, ring_elem a, ring_elem unused) const; // appends to result.
   
   virtual size_t size(CoefficientVector r) const {
     return coefficientVector(r).size();
@@ -87,8 +87,10 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
 
-  virtual void debugDisplay(CoefficientVector r) const;
-  virtual void debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
+  void out(std::ostream& o, FieldElement& f) const;
+  virtual void out(std::ostream& o, CoefficientVector f, int loc) const;
+  virtual void debugDisplay(std::ostream& o, CoefficientVector r) const;
+  virtual void debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
 };
 
 #endif

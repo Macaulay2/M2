@@ -1,51 +1,36 @@
 // Copyright 2005-2017 Michael E. Stillman.
 
-#include "res-gausser.hpp"
+#include "res-gausser-QQ.hpp"
+#include <iostream>
 
-ResGausser *ResGausser::newResGausser(const Ring* K1)
+ResGausserQQ::ResGausserQQ(const Ring* K1, size_t p1)
+  : ResGausser(K1), Kp1(p1)
 {
-  if (!K1->isFinitePrimeField())
-    {
-      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields");
-      return nullptr;
-    }
-  auto p = K1->characteristic();
-  if (p > 32767)
-    {
-      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields with p < 32767");
-      return nullptr;
-    }
-  return new ResGausser(K1);
-}
-
-ResGausser::ResGausser(const Ring* K1)
-  : typ(ZZp), K(K1), n_dense_row_cancel(0), n_subtract_multiple(0)
-{
-  int p = static_cast<int>(K->characteristic());
-  auto K2 = Z_mod::create(p);
-  Kp = K2->get_CoeffRing();
+  // set RR, ring of ZZ/p too.
+  mZero = FieldElement { 0.0, 0, 0 };
+  mOne = FieldElement { 1.0, 0, 0};
+  mMinusOne = FieldElement { -1.0, 0, 0};
+  Kp1.set_zero(mZero.mMod1);
+  Kp1.set_from_long(mOne.mMod1, 1);
+  Kp1.negate(mMinusOne.mMod1, mOne.mMod1);
 }
 
 //////////////////////////////////
 // CoefficientVector handling ////
 //////////////////////////////////
-void ResGausser::pushBackOne(CoefficientVector& coeffs) const
+void ResGausserQQ::pushBackOne(CoefficientVector& coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
-  FieldElement one;
-  set_one(one);
-  elems.push_back(one);
+  elems.push_back(mOne);
 }
 
-void ResGausser::pushBackMinusOne(CoefficientVector& coeffs) const
+void ResGausserQQ::pushBackMinusOne(CoefficientVector& coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
-  FieldElement minus_one;
-  set_one(minus_one);
-  negate(minus_one, minus_one);
-  elems.push_back(minus_one);
+  elems.push_back(mMinusOne);
 }
-void ResGausser::pushBackElement(CoefficientVector& coeffs,
+
+void ResGausserQQ::pushBackElement(CoefficientVector& coeffs,
                                  const CoefficientVector& take_from_here,
                                  size_t loc) const
 {
@@ -53,7 +38,7 @@ void ResGausser::pushBackElement(CoefficientVector& coeffs,
   auto& elems_to_take = coefficientVector(take_from_here);
   elems.push_back(elems_to_take[loc]);
 }
-void ResGausser::pushBackNegatedElement(CoefficientVector& coeffs,
+void ResGausserQQ::pushBackNegatedElement(CoefficientVector& coeffs,
                                  const CoefficientVector& take_from_here,
                                  size_t loc) const
 {
@@ -61,51 +46,52 @@ void ResGausser::pushBackNegatedElement(CoefficientVector& coeffs,
   auto& elems_to_take = coefficientVector(take_from_here);
  
   FieldElement a = elems_to_take[loc];
-  negate(a,a);
+  a.mDouble = - a.mDouble;
+  Kp1.negate(a.mMod1, a.mMod1);
   elems.push_back(a);
 }
 
-CoefficientVector ResGausser::allocateCoefficientVector(ComponentIndex nelems) const
+CoefficientVector ResGausserQQ::allocateCoefficientVector(ComponentIndex nelems) const
   // create a row of 0's (over K).
 {
-  auto result = new std::vector<int>(nelems);
+  auto result = new std::vector<FieldElement>(nelems);
   for (ComponentIndex i=0; i<nelems; i++)
-    Kp->set_zero((*result)[i]);
+    (*result)[i] = mZero;
   return coefficientVector(result);
 }
-CoefficientVector ResGausser::allocateCoefficientVector() const
+CoefficientVector ResGausserQQ::allocateCoefficientVector() const
   // create a row of 0's (over K).
 {
-  return coefficientVector(new std::vector<int>);
+  return coefficientVector(new std::vector<FieldElement>);
 }
 
-void ResGausser::clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
+void ResGausserQQ::clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
   // set the elements in the range first..last to 0.
 {
   auto& elems = coefficientVector(r);
   for (ComponentIndex i=first; i<=last; i++)
-    Kp->set_zero(elems[i]);
+    elems[i] = mZero;
 }
 
-void ResGausser::deallocate(CoefficientVector r) const
+void ResGausserQQ::deallocate(CoefficientVector r) const
 {
   delete reinterpret_cast<std::vector<FieldElement>*>(r.mValue);
   r.mValue = nullptr;
 }
 
-ComponentIndex ResGausser::nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
+ComponentIndex ResGausserQQ::nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
   // returns last+1 in the case when there are no non-zero elements left.
 {
   auto& vec = coefficientVector(r);
   auto elems = vec.data();
   elems += first;
   for (ComponentIndex i=first; i<=last; i++)
-    if (!Kp->is_zero(*elems++))
+    if (!Kp1.is_zero((*elems++).mMod1))
       return i;
   return last+1;
 }
 
-void ResGausser::fillFromSparse(CoefficientVector r,
+void ResGausserQQ::fillFromSparse(CoefficientVector r,
                                 ComponentIndex len,
                                 CoefficientVector sparse,
                                 ComponentIndex* comps) const
@@ -120,7 +106,7 @@ void ResGausser::fillFromSparse(CoefficientVector r,
     elems[*comps++] = *sparseelems++;
 }
 
-void ResGausser::sparseCancel(CoefficientVector r,
+void ResGausserQQ::sparseCancel(CoefficientVector r,
                               CoefficientVector sparse,
                               ComponentIndex* comps,
                               CoefficientVector result_loc
@@ -148,33 +134,70 @@ void ResGausser::sparseCancel(CoefficientVector r,
 
   auto& result = coefficientVector(result_loc);
 
-  int one;
-  set_one(one);
-  
   // Basically, over ZZ/p, we are doing: r += a*sparse,
   // where sparse is monic, and a is -r.coeffs[*comps].
 
   n_dense_row_cancel++;
   n_subtract_multiple += len;
   FieldElement a = elems[*comps];
-  if (sparseelems[0] != one) // should be minus_one
-    Kp->negate(a, a);
+  if (sparseelems[0].mDouble < 0) // should be minus_one, since it is either 1 or -1.
+    {
+      a.mDouble = -a.mDouble;
+      Kp1.negate(a.mMod1, a.mMod1);
+    }
   for (ComponentIndex i=len; i>0; i--)
-    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
-  Kp->negate(a,a);
+    {
+      FieldElement& sparse = *sparseelems++;
+      FieldElement& result = elems[*comps++];
+      result.mDouble = result.mDouble - a.mDouble * sparse.mDouble;
+      Kp1.subtract_multiple(result.mMod1, a.mMod1, sparse.mMod1);
+      int newsize = a.mDenominatorSize + sparse.mDenominatorSize;
+      if (newsize > result.mDenominatorSize)
+        result.mDenominatorSize = newsize;
+    }
+  a.mDouble = - a.mDouble;
+  Kp1.negate(a.mMod1, a.mMod1);
+  if (a.mDenominatorSize > 2)
+    {
+      std::cout << "coeff with den = " << a.mDenominatorSize << ": ";
+      out(std::cout, a);
+      std::cout << std::endl;
+    }
   result.push_back(a);
 }
 
-void ResGausser::debugDisplay(CoefficientVector r) const
+void ResGausserQQ::out(std::ostream& o, FieldElement& f) const
+{
+  o << "[" << f.mDouble << "," << Kp1.coerceToLongInteger(f.mMod1) << "," << f.mDenominatorSize << "]";
+}
+
+void ResGausserQQ::out(std::ostream& o, CoefficientVector r, int loc) const
+{
+  if (r.isNull())
+    {
+      o << "[vector is null!]";
+      return;
+    }
+  auto& elems = coefficientVector(r);
+  out(o, elems[loc]);
+}
+void ResGausserQQ::debugDisplay(std::ostream& o, CoefficientVector r) const
 {
   if (r.isNull())
     fprintf(stdout, "vector is null!");
   auto& elems = coefficientVector(r);
-  for (long j=0; j<elems.size(); ++j)
-    fprintf(stdout, " %d", coeff_to_int(elems[j]));
+  for (int j=0; j<elems.size(); ++j)
+    {
+      out(o, r, j);
+      o << " ";
+    }
+  o << std::endl;
 }
 
-void ResGausser::debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const
+void ResGausserQQ::debugDisplayRow(std::ostream& o,
+                                   int ncolumns,
+                                   const std::vector<int>& comps,
+                                   CoefficientVector coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
   auto monom = comps.begin();
@@ -183,15 +206,15 @@ void ResGausser::debugDisplayRow(int ncolumns, const std::vector<int>& comps, Co
   for (ComponentIndex c=0; c<ncolumns; c++)
     {
       if (coeff == end or *monom != c)
-        fprintf(stdout, " .");
+        o << " .";
       else
         {
-          fprintf(stdout, " %d", coeff_to_int(*coeff));
+          out(o, *coeff);
           ++coeff;
           ++monom;
         }
     }
-  fprintf(stdout, "\n");
+  o << std::endl;
 }
 
 // Local Variables:

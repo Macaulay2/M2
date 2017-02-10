@@ -71,12 +71,6 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //   (a) coefficients are ZZ/p, for p in range.
   
   const Ring *K = origR->getCoefficients();
-  if (!K->isFinitePrimeField())
-    {
-      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields");
-      return nullptr;
-    }
-
   ResGausser *KK = ResGausser::newResGausser(K);
   if (KK == 0)
     {

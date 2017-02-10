@@ -147,18 +147,16 @@ public:
 inline bool operator==(const poly_iter& a, const poly_iter& b) { return a.coeff_index == b.coeff_index; }
 inline bool operator!=(const poly_iter& a, const poly_iter& b) { return a.coeff_index != b.coeff_index; }
 
-inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
+inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
 {
-#if 0
   auto end = poly_iter(R, f, 1); // end
-  for (auto it = poly_iter(R, f); it != end; ++it)
+  int i=0;
+  for (auto it = poly_iter(R, f); it != end; ++it, ++i)
     {
-      FieldElement c = R.resGausser().coeff_to_int(it.coefficient());
+      R.resGausser().out(o, f.coeffs, i);
       res_packed_monomial mon = it.monomial();
-      if (c != 1) fprintf(fil, "%d", c);
       R.monoid().showAlpha(mon);
     }
-#endif
 }
 
 bool check_poly(const ResPolyRing& R, const poly&f, const ResSchreyerOrder& O);

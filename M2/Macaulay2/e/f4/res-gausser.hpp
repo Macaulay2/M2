@@ -13,6 +13,7 @@ class CoefficientVector {
   // disallow copy...
   friend class ResGausser;
   friend class ResGausserZZp;
+  friend class ResGausserQQ;
 public:
   CoefficientVector() : mValue(nullptr) {}
 
@@ -42,7 +43,7 @@ public:
   virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const = 0;
 
   virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const = 0; // in res-f4-m2-interface.cpp
-  virtual void from_ring_elem(CoefficientVector& result, ring_elem a) const = 0; // appends to result.
+  virtual void from_ring_elem(CoefficientVector& result, ring_elem a, ring_elem b) const = 0; // appends to result.
   
   virtual size_t size(CoefficientVector r) const  = 0;
   
@@ -75,8 +76,9 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
 
-  virtual void debugDisplay(CoefficientVector r) const = 0;
-  virtual void debugDisplayRow(int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const = 0;
+  virtual void out(std::ostream& o, CoefficientVector r, int loc) const = 0;  
+  virtual void debugDisplay(std::ostream& o, CoefficientVector r) const = 0;
+  virtual void debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const = 0;
 public:
   mutable long n_dense_row_cancel;
   mutable long n_subtract_multiple;
