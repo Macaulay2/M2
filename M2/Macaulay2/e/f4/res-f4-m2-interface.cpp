@@ -22,11 +22,16 @@
 #include "res-gausser-ZZp.hpp"
 #include "res-gausser-QQ.hpp"
 
-ring_elem ResGausserZZp::to_ring_elem(const CoefficientVector& coeffs, size_t loc) const
+bool ResGausserZZp::isAllowedCoefficientRing(const Ring* K) const
+{
+  return K->isFinitePrimeField();
+}
+
+ring_elem ResGausserZZp::to_ring_elem(const Ring* K, const CoefficientVector& coeffs, size_t loc) const
 {
   auto& elems = coefficientVector(coeffs); 
   ring_elem result;
-  result.int_val = get_ring()->from_long(coeff_to_int(elems[loc]));
+  result.int_val = K->from_long(coeff_to_int(elems[loc]));
   return result;
 }
 
@@ -41,11 +46,19 @@ void ResGausserZZp::from_ring_elem(CoefficientVector& result, ring_elem a, ring_
 ////////////////////
 // NOTE!! //////////
 // Even though the ring is the rationals, gbring 'ring_elem's are in ZZ.
-ring_elem ResGausserQQ::to_ring_elem(const CoefficientVector& coeffs, size_t loc) const
+bool ResGausserQQ::isAllowedCoefficientRing(const Ring* K) const
 {
-  auto& elems = coefficientVector(coeffs); 
+  return K->ringID() == M2::ring_RR or (K->isFinitePrimeField() and K->characteristic() == Kp1.characteristic());
+}
+
+ring_elem ResGausserQQ::to_ring_elem(const Ring* K, const CoefficientVector& coeffs, size_t loc) const
+{
+  auto& elems = coefficientVector(coeffs);
   ring_elem result;
-  // TODO: NEED TO FIX THIS!!!!!!!
+  if (K->ringID() == M2::ring_RR)
+    K->from_double(elems[loc].mDouble, result);
+  else 
+    Kp1.to_ring_elem(result, elems[loc].mMod1);
   return result;
 }
 
@@ -89,11 +102,14 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   GBRing *GR = origR->get_gb_ring();
   int n = GR->gbvector_n_terms(f);
 
+  #if 0
   buffer o;
   o << "input: ";
   GR->gbvector_text_out(o,F,f,-1);
   o << newline;
   emit(o.str());
+  #endif
+  
   int *exp = new int[M->n_vars()+1];
   res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
@@ -149,7 +165,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       for (int a=0; a<M->n_vars(); a++)
         exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
-      ring_elem a = R.resGausser().to_ring_elem(f.coeffs, i);
+      ring_elem a = R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
       Nterm * g = origR->make_flat_term(a, m1);
       g->next = 0;
       if (last[comp] == 0)
@@ -234,12 +250,99 @@ Matrix *ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
   return result.to_matrix();
 }
 
+// NEW
+MutableMatrix *ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
+                                                       const Ring* R,
+                                                       int lev)
+{
+  // Ring will be R, which should be a polynomial ring with the same monoid as ring of C.
+  const PolynomialRing *RP = R->cast_to_PolynomialRing();
+  const Monoid *M = RP->getMonoid(); 
+  const Ring * K = RP->getCoefficientRing();
+ 
+  if (lev <= 0 or lev > C.maxLevel())
+    {
+      return MutableMatrix::zero_matrix(R,
+                                        0, //TODO: set this correctly?  
+                                        0,//TODO: set this correctly?  i.e. one of these might be in range,
+                                        //so getting the rank correct might be good.
+                                        true);
+    }
+
+  auto& thislevel = C.level(lev);
+  int ncols = thislevel.size();
+  int nrows = C.level(lev-1).size();
+
+  // create the mutable matrix
+  MutableMatrix* result = MutableMatrix::zero_matrix(R,
+                                                     nrows,
+                                                     ncols,
+                                                     true);
+  
+  //  Nterm **comps = newarray(Nterm *, nrows);
+  Nterm **comps = newarray(Nterm *, nrows);  
+  Nterm **last = newarray(Nterm *, nrows);
+
+  int *m1 = M->make_one();
+  int *exp = new int[M->n_vars()+1];
+  res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
+
+  int j = 0;
+  for (auto j1 = thislevel.cbegin(); j1 != thislevel.cend(); ++j1, ++j)
+    {
+      // Now we create the polynomials for column j
+      // into 'comps', 'last'.
+      const poly& f = (*j1).mSyzygy;
+      for (int i=0; i<nrows; i++)
+        {
+          comps[i] = nullptr;
+          last[i] = nullptr; // used to easily placce monomials in the correct bin, at the end of the polynomials.
+        }
+
+      const res_monomial_word *w = f.monoms.get();
+      for (int i=0; i<f.len; i++)
+        {
+          long comp;
+          C.ring().monoid().to_exponent_vector(w, lexp, comp);
+          w = w + C.ring().monoid().monomial_size(w);
+          for (int a=0; a<M->n_vars(); a++)
+            exp[a] = static_cast<int>(lexp[a]);
+          M->from_expvector(exp, m1);
+          ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
+          Nterm * g = RP->make_flat_term(a, m1);
+          g->next = 0;
+          if (last[comp] == 0)
+            {
+              comps[comp] = g;
+              last[comp] = g;
+            }
+          else
+            {
+              last[comp]->next = g;
+              last[comp] = g;
+            }
+        }
+      // Now we have run through the entire vector, so put it into result
+      for (int r=0; r<nrows; r++)
+        result->set_entry(r, j, comps[r]);
+    }
+
+  delete [] exp;
+  delete [] lexp;
+  deletearray(comps);
+  deletearray(last);
+  return result;
+}
+
 MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(
-                                                       const Ring* K,
                                                        SchreyerFrame& C,
+                                                       const Ring* K,
                                                        int lev,
                                                        int degree)
 {
+  // The ring K should be the coefficient ring of the poly ring of C,
+  // OR: if the coefficient ring is QQ, then it can be RR, or a finite field.
+  
   // Now we loop through the elements of degree 'degree' at level 'lev'
   auto& thislevel = C.level(lev);
   int n = 0;
@@ -279,7 +382,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(
           long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              ring_elem a = C.ring().resGausser().to_ring_elem(f.coeffs, i.coefficient_index());
+              ring_elem a = C.ring().resGausser().to_ring_elem(K, f.coeffs, i.coefficient_index());
               result->set_entry(newcomps[comp], col, a);
             }
         }
@@ -340,7 +443,8 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
           long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              R.from_ring_elem(result.entry(newcomps[comp], col), C.gausser().to_ring_elem(f.coeffs, i.coefficient_index()));;
+              long val = C.gausser().to_modp_long(f.coeffs, i.coefficient_index());
+              R.set_from_long(result.entry(newcomps[comp], col), val);
               nnonzeros++;
             }
         }

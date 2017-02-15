@@ -4,7 +4,7 @@
 #include <iostream>
 
 ResGausserQQ::ResGausserQQ(const Ring* K1, size_t p1)
-  : ResGausser(K1), Kp1(p1)
+  : ResGausser(K1), Kp1(p1), mMaxDenominatorSize(1)
 {
   // set RR, ring of ZZ/p too.
   mZero = FieldElement { 0.0, 0, 0 };
@@ -18,6 +18,11 @@ ResGausserQQ::ResGausserQQ(const Ring* K1, size_t p1)
 //////////////////////////////////
 // CoefficientVector handling ////
 //////////////////////////////////
+long ResGausserQQ::to_modp_long(CoefficientVector& coeffs, size_t loc) const {
+  auto& elems = coefficientVector(coeffs);
+  return Kp1.coerceToLongInteger(elems[loc].mMod1);
+}
+
 void ResGausserQQ::pushBackOne(CoefficientVector& coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
@@ -157,8 +162,9 @@ void ResGausserQQ::sparseCancel(CoefficientVector r,
     }
   a.mDouble = - a.mDouble;
   Kp1.negate(a.mMod1, a.mMod1);
-  if (a.mDenominatorSize > 2)
+  if (a.mDenominatorSize > mMaxDenominatorSize)
     {
+      mMaxDenominatorSize = a.mDenominatorSize;
       std::cout << "coeff with den = " << a.mDenominatorSize << ": ";
       out(std::cout, a);
       std::cout << std::endl;

@@ -3710,6 +3710,39 @@ export rawResolutionGetMatrix2(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawResolutionGetMatrix2", rawResolutionGetMatrix2);
 
+export rawResolutionGetMutableMatrixB(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 3 then 
+     when a.0 is G:RawComputationCell do 
+     when a.1 is R:RawRingCell do 
+     when a.2 is level:ZZcell do
+     if !isInt(level) then WrongArgSmallInteger(2) else
+     toExpr(Ccode(RawMutableMatrixOrNull, "rawResolutionGetMutableMatrixB(", G.p, ",", R.p, ",", toInt(level), ")" ))
+     else WrongArgZZ(3)
+     else WrongArg(2,"a raw ring")
+     else WrongArg(1,"a raw computation")
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
+setupfun("rawResolutionGetMutableMatrixB", rawResolutionGetMutableMatrixB);
+
+export rawResolutionGetMutableMatrix2B(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 4 then 
+     when a.0 is G:RawComputationCell do 
+     when a.1 is R:RawRingCell do
+     when a.2 is level:ZZcell do
+     when a.3 is degree:ZZcell do
+     if !isInt(level) then WrongArgSmallInteger(2) else
+     if !isInt(degree) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(RawMutableMatrixOrNull, "rawResolutionGetMutableMatrix2B(", G.p, ",", R.p, ",", toInt(level), ",", toInt(degree), ")" ))
+     else WrongArgZZ(4)
+     else WrongArgZZ(3)
+     else WrongArg(2,"a raw ring")
+     else WrongArg(1,"a raw computation")
+     else WrongNumArgs(4)
+     else WrongNumArgs(4));
+setupfun("rawResolutionGetMutableMatrix2B", rawResolutionGetMutableMatrix2B);
+
 export rawResolutionStatusLevel(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else

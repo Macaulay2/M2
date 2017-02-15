@@ -13,6 +13,11 @@ ResGausserZZp::ResGausserZZp(const Ring* K1)
 //////////////////////////////////
 // CoefficientVector handling ////
 //////////////////////////////////
+long ResGausserZZp::to_modp_long(CoefficientVector& coeffs, size_t loc) const {
+  auto& elems = coefficientVector(coeffs);
+  return coeff_to_int(elems[loc]);
+}
+
 void ResGausserZZp::pushBackOne(CoefficientVector& coeffs) const
 {
   auto& elems = coefficientVector(coeffs);

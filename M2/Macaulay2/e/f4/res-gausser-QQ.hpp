@@ -26,6 +26,8 @@ class ResGausserQQ : public ResGausser
   FieldElement mZero;
   FieldElement mMinusOne;
   FieldElement mOne;
+
+  mutable int mMaxDenominatorSize; // only used for ring being QQ.
 public:
   ResGausserQQ(const Ring* K, size_t p1);
 
@@ -48,8 +50,10 @@ public:
   virtual void pushBackElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
   virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
 
-  virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
+  virtual bool isAllowedCoefficientRing(const Ring* K) const;  
+  virtual ring_elem to_ring_elem(const Ring* K, const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
   virtual void from_ring_elem(CoefficientVector& result, ring_elem numer, ring_elem denom) const; // appends to result. bit numer, denom are in ARingZZGMP.
+  virtual long to_modp_long(CoefficientVector& coeffs, size_t loc) const;
   
   virtual size_t size(CoefficientVector r) const {
     return coefficientVector(r).size();

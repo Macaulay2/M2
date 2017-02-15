@@ -6,10 +6,17 @@ newPackage(
                   Email => "", 
                   HomePage => ""}},
         Headline => "Experimental versions of free resolutions",
+        PackageExports => {"AGR"},
         DebuggingMode => true
         )
 
 export {
+    -- svd more complexes code
+    "constantStrand",
+    "constantStrands",
+    "laplacians",
+    "getNonminimalRes",
+    -- top level resolution experiments
     "ModuleMonomial",
     "component",
     "monomial",
@@ -28,6 +35,7 @@ export {
     "Coefficients",
     "DescendentRange",
     "getMatrix",
+    -- examples
     "AGRExample"
     }
 
@@ -379,30 +387,294 @@ betti(ResolutionData) := opts -> (D) -> (
         )
     )
 
--- Examples --
 
-AGRExample = method()
-AGRExample(ZZ,ZZ,ZZ,Ring) := (n,d,s,kk) -> (
-    x := getSymbol "x";
-    R := kk[x_0..x_n];
-    F := sum for i from 1 to s list (random(1,R))^d;
-    trim sum for i from 1 to d list (
-        B := basis(i,R);
-        G := diff(transpose B, matrix{{F}});
-        M := monomials flatten G;
-        cfs := contract(transpose M, transpose G);
-        ideal(B * (syz cfs))
+-----------------------------------------------
+-- Code for SVD of a complex ------------------
+-----------------------------------------------
+debug Core
+constantStrand = method()
+constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
+    -- base ring of C should be QQ
+    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
+    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
+    len := length C;
+    reg := regularity C;
+    if deg <= 2 or deg > len+reg then error("degree should be in the range 2.."|len+reg);
+    chainComplex for lev from 1 to len list (
+        << "computing map with " << deg << " " << lev << endl;
+        matrix map(kk, rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw kk, deg,lev))
         )
-    )
-AGRExample(ZZ,ZZ,ZZ) := (n,d,s) -> AGRExample(n,d,s,ZZ/10007)
+    )    
 
-CNC = method()
-CNC(ZZ, Ring) := (g,kk) -> (
+constantStrands = method()
+constantStrands(ChainComplex, Ring) := (C, kk) -> (
+    -- base ring of C should be QQ
+    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
+    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
+    len := length C;
+    reg := regularity C;
+    for deg from 3 to len+reg list constantStrand(C,kk,deg)
     )
-CNC ZZ := (g) -> CNC(g, ZZ/32003)
-end
+
+laplacians = method()
+laplacians ChainComplex := (L) -> (
+      rg := select(spots L, i -> L_i != 0);
+      for i in rg list ((transpose L.dd_(i)) *  L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1))))
+      )
+
+getNonminimalRes = method()
+getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
+    -- if C was created using FastNonminimal=>true, then returns the nonmimal complex.
+    -- if ring C is not QQ, this should be exactly C (with C.dd set).
+    -- if ring C is QQ, then R must be either RR_53 (monoid ring C), or (ZZ/p)(monoid ring C), where p is the prime used to
+    --  construct the resolution (later, there might be several such primes, and also we can
+    --  query and get them.  But not yet.)
+    rawC := C.Resolution.RawComputation;
+    result := new MutableList;
+    for i from 0 to length C - 1 do (
+      result#i = matrix map(R, rawResolutionGetMutableMatrixB(rawC, raw R, i+1));
+      if i > 0 then result#i = map(source result#(i-1),,result#i);
+      );
+    chainComplex toList result
+    )
+
+-- TODO for free res stuff with Frank:
+-- add QR
+-- add symmetric matrix eigenvals/evecs.
+-- make sure code doesn't crash when doing minimalBetti over QQ...
+-- allow choice of ZZ/p?
+-- 
+TEST ///
+  -- warning: this currently requires test code on res2017 branch.
+  -- XXXX
+restart
+  needsPackage "FreeResolutions"
+  R = QQ[a..d]
+  F = randomForm(3, R)
+  I = ideal fromDual matrix{{F}}
+  C = res(I, FastNonminimal=>true)
+
+  Rp = (ZZ/32003)(monoid R)
+  R0 = (RR_53) (monoid R)
+  Ls = constantStrands(C,RR_53)  
+  L = Ls_1
+  Lp = laplacians L
+  Lp/eigenvalues
+  Lp/SVD/first
+  
+  Cp = getNonminimalRes(C, Rp)
+  C0 = getNonminimalRes(C, R0)
+  Cp.dd^2
+  C0.dd^2
+  -- lcm of lead term entries: 8902598454
+  -- want to solve x = y/8902598454^2, where y is an integer, and we know x to double precision
+  --  and we know x mod 32003.
+  -- example: 
+  cf = leadCoefficient ((C0.dd_2)_(9,8))
+  -- .293215710985088
+  leadCoefficient ((Cp.dd_2)_(9,8))
+  -- -10338
+  -- what is y? (x mod p) = (y mod p)/(lcm mod p)^2
+  kk = coefficientRing Rp
+  (-10338_kk) / (8902598454_kk)^2
+  -- -391...
+  (-391 + 32003*k) / 8902598454^2 == .293215710985088
+  (cf * 8902598454^2 + 391)/32003.0
+  y = 726156310379351
+  (y+0.0)/8902598454^2
+  oo * 1_kk
+///
+
+TEST ///
+  -- warning: this currently requires test code on res2017 branch.
+  -- XXXX
+restart
+  needsPackage "FreeResolutions"
+  R = QQ[a..f]
+  deg = 6
+  nextra = 10
+  nextra = 20
+  --F = randomForm(deg, R)
+  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
+  I = ideal fromDual matrix{{F}};
+  C = res(I, FastNonminimal=>true)
+
+  Rp = (ZZ/32003)(monoid R)
+  Ip = sub(I,Rp)
+  minimalBetti Ip
+  R0 = (RR_53) (monoid R)
+  Ls = constantStrands(C,RR_53)  
+  Lps = constantStrands(C,ZZ/32003)
+  netList oo
+  L = Ls_3
+  Lp = laplacians L;
+  --Lp/eigenvalues
+  
+  -- compute using projection method the SVD of the complex L
+  L.dd_2
+  (sigma, U1, V1t) = SVD mutableMatrix L.dd_2
+  sigma
+  
+  betti U1
+  betti V1t
+  M = mutableMatrix L.dd_2
+  sigma1 = mutableMatrix diagonalMatrix matrix sigma
+  sigma1 = flatten entries sigma
+  sigmaplus = mutableMatrix(RR_53, 75, 5)
+  for i from 0 to 4 do sigmaplus_(i,i) = 1/sigma1#i
+  sigmaplus
+  Mplus = (transpose V1t) * sigmaplus * (transpose U1)
+  pkerM = submatrix(V1t, 5..74,);
+  M2 = pkerM * mutableMatrix(L.dd_3);
+  (sigma2,U2,V2t) = SVD M2  
+  sigma2 = flatten entries sigma2
+  nonzerosing = position(0..#sigma2-2, i -> (sigma2#(i+1)/sigma2#i < 1.0e-10))
+  pkerM2 = submatrix(V2t, nonzerosing+1 .. numRows V2t-1,)  
+  sigma2_{0..49}
+  sigma2_50  
+  M3 = pkerM2 * mutableMatrix(L.dd_4)  ;
+  (sigma3,U3,V3t) = SVD M3
+  sigma3 = flatten entries sigma3
+  nonzerosing3 = position(0..#sigma3-2, i -> (sigma3#(i+1)/sigma3#i < 1.0e-10))
+  sigma3#-1 / sigma3#-2 < 1.0e-10
+    
+  evs = Lp/SVD/first
+  loc = 2
+  vals = sort join(for a in evs#loc list (a,loc), for a in evs#(loc+1) list (a,loc+1))
+  for i from 0 to #vals-2 list (
+      if vals_i_1 != vals_(i+1)_1 then (
+          abs(vals_i_0 - vals_(i+1)_0) / (vals_i_0 + vals_(i+1)_0), vals_i, vals_(i+1)
+          )
+      else null
+      )      
+  errs = select(oo, x -> x =!= null)
+  netList oo
+  select(errs, x -> x#0 < .1) -- 66
+    select(errs, x -> x#0 < .01) -- 50 
+    select(errs, x -> x#0 < .001) -- 47
+  Cp = getNonminimalRes(C, Rp)
+  C0 = getNonminimalRes(C, R0)
+  Cp.dd^2
+  C0.dd^2 -- TODO: make it so we can "clean" the results here.
+///
+
+
+TEST ///
+  -- warning: this currently requires test code on res2017 branch.
+  -- XXXX
+restart
+  needsPackage "FreeResolutions"
+  R = QQ[a..g]
+  deg = 6
+  nextra = 10
+  nextra = 30
+  --F = randomForm(deg, R)
+  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
+  elapsedTime I = ideal fromDual matrix{{F}};
+  elapsedTime C = res(I, FastNonminimal=>true)
+
+  kk = ZZ/32003
+  Rp = kk(monoid R)
+  Ip = sub(I,Rp);
+  elapsedTime minimalBetti Ip
+  R0 = (RR_53) (monoid R)
+
+  Ls = constantStrands(C,RR_53)  
+  netList oo
+  Lps = constantStrands(C,kk)
+  debug Core
+  kkflint = ZZp(32003, Strategy=>"Ffpack")
+  Lps = constantStrands(C,kkflint)
+  Lp = Lps_5
+  L = Ls_5
+  for i from 3 to 6 list elapsedTime first SVD L.dd_i  
+  for i from 3 to 6 list rank mutableMatrix Lp.dd_i
+  Lp = laplacians L;
+  --Lp/eigenvalues
+  evs = Lp/SVD/first
+  loc = 2
+  vals = sort join(for a in evs#loc list (a,loc), for a in evs#(loc+1) list (a,loc+1))
+  for i from 0 to #vals-2 list (
+      if vals_i_1 != vals_(i+1)_1 then (
+          abs(vals_i_0 - vals_(i+1)_0) / (vals_i_0 + vals_(i+1)_0), vals_i, vals_(i+1)
+          )
+      else null
+      )      
+  errs = select(oo, x -> x =!= null)
+  netList oo
+  select(errs, x -> x#0 < .1) -- 66
+    select(errs, x -> x#0 < .01) -- 50 
+    select(errs, x -> x#0 < .001) -- 47
+  Cp = getNonminimalRes(C, Rp)
+  C0 = getNonminimalRes(C, R0)
+  Cp.dd^2
+  C0.dd^2 -- TODO: make it so we can "clean" the results here.
+///
+
+
+TEST ///
+  -- warning: this currently requires test code on res2017 branch.
+  -- XXXX
+restart
+  needsPackage "FreeResolutions"
+  deg = 6
+  nv = 7
+  nextra = binomial(nv + 1, 2) - nv - 10
+  R = QQ[vars(0..nv-1)]
+
+
+  --F = randomForm(deg, R)
+  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
+  elapsedTime I = ideal fromDual matrix{{F}};
+  elapsedTime C = res(I, FastNonminimal=>true)
+
+  kk = ZZ/32003
+  Rp = kk(monoid R)
+  Ip = sub(I,Rp);
+  elapsedTime Cp = res(Ip, FastNonminimal=>true)
+  elapsedTime minimalBetti Ip
+  R0 = (RR_53) (monoid R)
+
+  Ls = constantStrands(C,RR_53)  
+  mats = flatten for L in Ls list (
+      kf := keys L.dd;
+      nonzeros := select(kf, k -> instance(k,ZZ) and L.dd_k != 0);
+      nonzeros/(i -> L.dd_i)
+      );
+  elapsedTime(mats/(m -> first SVD m))
+  netList oo
+  Lps = constantStrands(C,kk)
+  debug Core
+  kkflint = ZZp(32003, Strategy=>"Ffpack")
+  Lps = constantStrands(C,kkflint)
+  Lp = Lps_5
+  L = Ls_5
+  for i from 3 to 6 list rank mutableMatrix Lp.dd_i
+  Lp = laplacians L;
+  --Lp/eigenvalues
+  evs = Lp/SVD/first
+  loc = 2
+  vals = sort join(for a in evs#loc list (a,loc), for a in evs#(loc+1) list (a,loc+1))
+  for i from 0 to #vals-2 list (
+      if vals_i_1 != vals_(i+1)_1 then (
+          abs(vals_i_0 - vals_(i+1)_0) / (vals_i_0 + vals_(i+1)_0), vals_i, vals_(i+1)
+          )
+      else null
+      )      
+  errs = select(oo, x -> x =!= null)
+  netList oo
+  select(errs, x -> x#0 < .1) -- 66
+    select(errs, x -> x#0 < .01) -- 50 
+    select(errs, x -> x#0 < .001) -- 47
+  Cp = getNonminimalRes(C, Rp)
+  C0 = getNonminimalRes(C, R0)
+  Cp.dd^2
+  C0.dd^2 -- TODO: make it so we can "clean" the results here.
+///
 
 beginDocumentation()
+
+end--
 
 doc ///
 Key
@@ -436,7 +708,7 @@ TEST ///
 -- may have as many TEST sections as needed
 ///
 
-end
+
 
 -- Example 1
 XXXXXXXXXXX
@@ -614,4 +886,26 @@ M3 = getMatrix(3,D)
 M2 * M3
 M4 = getMatrix(4,D)
 M3 * M4
+
+-- Examples -- these are now elsewhere, or they should be.
+
+AGRExample = method()
+AGRExample(ZZ,ZZ,ZZ,Ring) := (n,d,s,kk) -> (
+    x := getSymbol "x";
+    R := kk[x_0..x_n];
+    F := sum for i from 1 to s list (random(1,R))^d;
+    trim sum for i from 1 to d list (
+        B := basis(i,R);
+        G := diff(transpose B, matrix{{F}});
+        M := monomials flatten G;
+        cfs := contract(transpose M, transpose G);
+        ideal(B * (syz cfs))
+        )
+    )
+AGRExample(ZZ,ZZ,ZZ) := (n,d,s) -> AGRExample(n,d,s,ZZ/10007)
+
+CNC = method()
+CNC(ZZ, Ring) := (g,kk) -> (
+    )
+CNC ZZ := (g) -> CNC(g, ZZ/32003)
 

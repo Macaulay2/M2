@@ -226,7 +226,7 @@ const Matrix /* or null */ *F4ResComputation::get_matrix(int level)
 
 MutableMatrix /* or null */ *F4ResComputation::get_matrix(int level, int degree)
 {
-  return ResF4toM2Interface::to_M2_MutableMatrix(mOriginalRing.getCoefficientRing(), *mComp, level, degree);
+  return ResF4toM2Interface::to_M2_MutableMatrix(*mComp, mOriginalRing.getCoefficientRing(), level, degree);
 }
 
 const FreeModule /* or null */ *F4ResComputation::get_free(int lev) 
@@ -234,6 +234,16 @@ const FreeModule /* or null */ *F4ResComputation::get_free(int lev)
   if (lev < 0 or lev > mComp->maxLevel()) return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
   return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, *mComp, lev);
+}
+
+MutableMatrix /* or null */ *F4ResComputation::get_mutable_matrix(const Ring* R, int level)
+{
+  return ResF4toM2Interface::to_M2_MutableMatrix(frame(),R,level);
+}
+
+MutableMatrix /* or null */ *F4ResComputation::get_mutable_matrix(const Ring* KK, int slanted_degree, int level)
+{
+  return ResF4toM2Interface::to_M2_MutableMatrix(frame(),KK,level, slanted_degree);  
 }
 
 // Local Variables:

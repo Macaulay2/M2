@@ -51,8 +51,10 @@ public:
   virtual void pushBackElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
   virtual void pushBackNegatedElement(CoefficientVector& coeffs, const CoefficientVector& take_from_here, size_t loc) const;
 
-  virtual ring_elem to_ring_elem(const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
+  virtual bool isAllowedCoefficientRing(const Ring* K) const;
+  virtual ring_elem to_ring_elem(const Ring* K, const CoefficientVector& coeffs, size_t loc) const; // in res-f4-m2-interface.cpp
   virtual void from_ring_elem(CoefficientVector& result, ring_elem a, ring_elem unused) const; // appends to result.
+  virtual long to_modp_long(CoefficientVector& coeffs, size_t loc) const;
   
   virtual size_t size(CoefficientVector r) const {
     return coefficientVector(r).size();
