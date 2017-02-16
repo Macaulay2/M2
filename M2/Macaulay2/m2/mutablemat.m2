@@ -60,6 +60,8 @@ RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
 MutableMatrix * RingElement := (n,f) -> map(ring f, raw n * raw f)
 ZZ * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
 MutableMatrix * ZZ := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
+RR * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * RR := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
 
 MutableMatrix _ Sequence = (M,ij,val) -> (
      val = promote(val,ring M);
@@ -261,6 +263,21 @@ SVD Matrix := o -> A -> (
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
+
+QR = method(Options=>{ReturnQR=>true})
+QR MutableMatrix := o -> A -> (
+     k := ring A;
+     if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
+     Q := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
+     R := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
+     rawQR(raw A, raw Q, raw R, o.ReturnQR);
+     (Q,R))
+QR Matrix := o -> A -> (
+     k := ring A;
+     if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
+     A = mutableMatrix(A,Dense=>true);
+     (Q,R) := QR(A,o);
+     (matrix Q,matrix R))
 
 rank MutableMatrix := (M) -> rawLinAlgRank raw M
 

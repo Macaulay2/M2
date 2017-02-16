@@ -908,6 +908,20 @@ M2_bool rawLeastSquares(MutableMatrix *A,
   }
 }
 
+M2_bool rawQR(const MutableMatrix *A,
+              MutableMatrix *Q,
+              MutableMatrix *R,
+              M2_bool return_QR)
+{
+  try {
+    return A->QR(Q,R,return_QR);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
 ////////////////////////////////////////
 // Support for RRR and CCC operations //
 ////////////////////////////////////////
