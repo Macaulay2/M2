@@ -16,6 +16,12 @@ export {
     "constantStrands",
     "laplacians",
     "getNonminimalRes",
+    "degreeZeroMatrix",
+    "minimizeBetti",
+    "SVDComplex",
+    "Projection",
+    "Laplacian",
+    "newChainComplexMap",
     -- top level resolution experiments
     "ModuleMonomial",
     "component",
@@ -438,6 +444,116 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     chainComplex toList result
     )
 
+degreeZeroMatrix = method()
+degreeZeroMatrix(ChainComplex, Ring, ZZ, ZZ) := (C, kk, slanteddeg, level) -> (
+    rawC := C.Resolution.RawComputation;
+    matrix map(kk, rawResolutionGetMutableMatrix2B(rawC, raw kk, slanteddeg+level,level))
+    )
+
+-- given a mutable Betti table, find the spots (deg,lev) where there are degree 0 maps.
+degzero = (B) -> (
+    degsB := select(keys B, (lev,deglist,deg) -> B#?(lev-1,deglist,deg));
+    degsB = degsB/(x -> (x#0, x#2-x#0));
+    degsB = degsB/reverse//sort -- (deg,lev) pairs.
+    )  
+
+numericRank = method()
+numericRank Matrix := (M) -> (
+    if ring M =!= RR_53 then error "expected real matrix";
+    (sigma, U, Vt) := SVD M;
+    # select(sigma, s -> s > 1e-10)
+    )
+
+minimizeBetti = method()
+minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
+    B := betti C;
+    mB := new MutableHashTable from B;
+    rk := if kk =!= RR_53 then rank else numericRank;
+    for x in degzero B do (
+      (sdeg,lev) := x;
+      m := degreeZeroMatrix(C, kk, sdeg, lev);
+      r := rk m;
+      << "doing " << (sdeg, lev) << " rank[" << numRows m << "," << numColumns m << "] = " << r << endl;
+      mB#(lev,{lev+sdeg},lev+sdeg) = mB#(lev,{lev+sdeg},lev+sdeg) - r;
+      mB#(lev-1,{lev+sdeg},lev+sdeg) = mB#(lev-1,{lev+sdeg},lev+sdeg) - r;
+      if debugLevel > 2 then << "new betti = " << betti mB << endl;
+      );
+  new BettiTally from mB
+  )
+
+newChainComplexMap = method()
+newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
+     f := new ChainComplexMap;
+     f.cache = new CacheTable;
+     f.source = src;
+     f.target = tar;
+     f.degree = 0;
+     scan(spots src, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
+     f
+    )
+SVDComplex = method(Options => {
+        Strategy => Projection -- other choice: Laplacian
+        }
+    )
+SVDComplex ChainComplex := opts -> (C) -> (
+    if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
+    goodspots := select(spots C, i -> C_i != 0);
+    (lo, hi) := (min goodspots, max goodspots);
+    Cranks := for ell from 0 to hi list rank C_ell;
+    rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    hs := new MutableList; -- lo..hi, rank of homology at that step.
+    Sigmas := new MutableList; -- the singular values in the SVD complex, indexed lo+1..hi
+    Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
+    rks#lo = 0;
+    B := null;
+    sigma1 := null;
+    U := null;
+    Vt := null;
+    if opts.Strategy == symbol Projection then (
+        B = matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        for ell from lo+1 to hi do (
+            m1 := B * (C.dd_ell); -- crashes if mutable matrices.
+            (sigma1, U, Vt) = SVD m1;
+            Sigmas#ell = sigma1;
+            -- TODO: the following line needs to be un-hardcoded!!
+            rks#ell = # select(sigma1, x -> x > 1e-10);
+            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
+            len1 := rks#ell;
+            len2 := rks#(ell-1);
+            len3 := hs#(ell-1);
+            -- note len1+len2+len3 == Cranks#(ell-1)
+            assert(len1+len2+len3 == Cranks#(ell-1));
+            u11 := matrix submatrix(U, 0..len1-1, 0..len1-1);
+            u13 := matrix submatrix(U, 0..len1-1, rks#ell..numColumns U - 1);
+            u31 := matrix submatrix(U, rks#ell..numColumns U-1, 0..rks#ell-1);
+            u33 := matrix submatrix(U, rks#ell..numColumns U-1, rks#ell..numColumns U - 1);
+            u12 := matrix mutableMatrix(RR_53, len1, len2);
+            u21 := matrix mutableMatrix(RR_53, len2, len1);
+            u22 := matrix mutableIdentity(RR_53, len2);
+            u23 := matrix mutableMatrix(RR_53, len2, len3);
+            u32 := matrix mutableMatrix(RR_53, len3, len2);
+            Orthos#(ell-1) = matrix{{u11,u12,u13},
+                {u21,u22,u23},
+                {u31,u32,u33}};
+            B = Vt^(toList(rks#ell..numRows Vt-1));
+            );
+        -- Now create the Sigma matrices
+        Orthos#hi = Vt;
+        rks#(hi+1) = 0;
+        hs#hi = Cranks#hi - rks#hi;
+        SigmaMatrices := for ell from lo+1 to hi list (
+            m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
+            for i from 0 to rks#ell-1 do m_(i, rks#(ell+1)+i) = Sigmas#ell#i;
+            matrix m
+            );
+        targetComplex := (chainComplex SigmaMatrices)[-lo];
+        result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
+        return (result, hs);
+        );
+    if opts.Strategy == symbol Laplacian then (
+        );
+    error "expected Strategy=>Projection or Strategy=>Laplacian"
+    )
 -- TODO for free res stuff with Frank:
 -- add QR
 -- add symmetric matrix eigenvals/evecs.
@@ -487,8 +603,9 @@ restart
 
 TEST ///
   -- warning: this currently requires test code on res2017 branch.
-  -- XXXX
 restart
+  -- YYYYY
+
   needsPackage "FreeResolutions"
   R = QQ[a..f]
   deg = 6
@@ -499,16 +616,42 @@ restart
   I = ideal fromDual matrix{{F}};
   C = res(I, FastNonminimal=>true)
 
-  Rp = (ZZ/32003)(monoid R)
-  Ip = sub(I,Rp)
-  minimalBetti Ip
-  R0 = (RR_53) (monoid R)
+  betti C
   Ls = constantStrands(C,RR_53)  
-  Lps = constantStrands(C,ZZ/32003)
+  C = Ls_3
+  
+  (F, hs) = SVDComplex C;
+  for i from 2 to 4 list (C.dd_i - (-1)^i * ((transpose F_(i-1)) * (target F).dd_i * F_i));
+  oo/(x -> (flatten entries x)/abs//max)
+  i = 2
+  (C.dd_i + ((transpose F_(i-1)) * (target F).dd_i * F_i));
+F_i
+(target F).dd_i
+clean(1e-12, (transpose F_(i-1)) * F_(i-1))
+clean(1e-12, (transpose F_(i)) * F_(i))
+  targetC  
+  peek hs
+  
+  debug Core
+  kk = ZZp(32003, Strategy=>"Flint")
+  Rp = kk(monoid R)
+  R0 = (RR_53) (monoid R)
+  Cp = getNonminimalRes(C,Rp)
+  C0 = getNonminimalRes(C,R0)
+
+  minimizeBetti(C, kk)
+  minimizeBetti(C, RR_53)
+
+  Ip = sub(I,Rp);
+  minimalBetti Ip
+
+  Lps = constantStrands(C,kk)
   netList oo
   L = Ls_3
   Lp = laplacians L;
   --Lp/eigenvalues
+
+  SVDComplex L
   
   -- compute using projection method the SVD of the complex L
   L.dd_2
