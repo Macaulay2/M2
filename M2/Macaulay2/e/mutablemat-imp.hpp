@@ -236,6 +236,23 @@ bool MutableMat<T>::least_squares(const MutableMatrix* B,
 }
 
 template<typename T>
+bool MutableMat<T>::QR(MutableMatrix* Q,
+                       MutableMatrix* R,
+                       bool return_QR) const
+{
+  if (!is_dense())
+    throw exc::engine_error("'QR' is only implemented for dense matrices");
+
+  auto Q1 = Q->coerce< DMat<CoeffRing> >();
+  if (Q1 == 0)
+    throw exc::engine_error("Q matrix is of the wrong type/ring");
+  auto R1 = R->coerce< DMat<CoeffRing> >();
+  if (R1 == 0)
+    throw exc::engine_error("R matrix is of the wrong type/ring");
+  return MatrixOps::QR(mat,*Q1, *R1, return_QR);
+}
+
+template<typename T>
 bool MutableMat<T>::SVD(MutableMatrix* Sigma,
                         MutableMatrix* U,
                         MutableMatrix* Vt,

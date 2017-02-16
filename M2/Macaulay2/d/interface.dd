@@ -4184,6 +4184,25 @@ export rawLeastSquares(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawLeastSquares", rawLeastSquares);
 
+export rawQR(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 4 then WrongNumArgs(4) else
+     when s.0 
+     is M:RawMutableMatrixCell do 
+     when s.1 is Q:RawMutableMatrixCell do
+     when s.2 is R:RawMutableMatrixCell do
+     if isBoolean(s.3) then possibleEngineError(
+	  Ccode(bool, "rawQR(",
+	       M.p, ",", Q.p, ",", R.p, ",", 
+	       toBoolean(s.3),				    -- type of result: true means Q, false means encoded Householder
+	       ")"))
+     else WrongArgBoolean(4)
+     else WrongArgMutableMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(4));
+setupfun("rawQR", rawQR);
+
 pi0(e:Expr):Expr := (
      when e is prec:ZZcell do
      if !isULong(prec) then WrongArgSmallUInteger(1)
