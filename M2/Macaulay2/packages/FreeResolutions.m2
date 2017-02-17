@@ -519,67 +519,7 @@ SVDComplex = method(Options => {
         Strategy => Projection -- other choice: Laplacian
         }
     )
-SVDComplex ChainComplex := opts -> (C) -> (
-    if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
-    goodspots := select(spots C, i -> C_i != 0);
-    (lo, hi) := (min goodspots, max goodspots);
-    Cranks := for ell from 0 to hi list rank C_ell;
-    rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
-    hs := new MutableList; -- lo..hi, rank of homology at that step.
-    Sigmas := new MutableList; -- the singular values in the SVD complex, indexed lo+1..hi
-    Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
-    rks#lo = 0;
-    B := null;
-    sigma1 := null;
-    U := null;
-    Vt := null;
-    if opts.Strategy == symbol Projection then (
-        B = matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
-        for ell from lo+1 to hi do (
-            m1 := B * (C.dd_ell); -- crashes if mutable matrices.
-            (sigma1, U, Vt) = SVD m1;
-            Sigmas#ell = sigma1;
-            -- TODO: the following line needs to be un-hardcoded!!
-            rks#ell = # select(sigma1, x -> x > 1e-10);
-            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
-            len1 := rks#ell;
-            len2 := rks#(ell-1);
-            len3 := hs#(ell-1);
-            -- note len1+len2+len3 == Cranks#(ell-1)
-            assert(len1+len2+len3 == Cranks#(ell-1));
-            u11 := matrix submatrix(U, 0..len1-1, 0..len1-1);
-            u13 := matrix submatrix(U, 0..len1-1, rks#ell..numColumns U - 1);
-            u31 := matrix submatrix(U, rks#ell..numColumns U-1, 0..rks#ell-1);
-            u33 := matrix submatrix(U, rks#ell..numColumns U-1, rks#ell..numColumns U - 1);
-            u12 := matrix mutableMatrix(RR_53, len1, len2);
-            u21 := matrix mutableMatrix(RR_53, len2, len1);
-            u22 := matrix mutableIdentity(RR_53, len2);
-            u23 := matrix mutableMatrix(RR_53, len2, len3);
-            u32 := matrix mutableMatrix(RR_53, len3, len2);
-            Orthos#(ell-1) = matrix{{u11,u12,u13},
-                {u21,u22,u23},
-                {u31,u32,u33}};
-            B = Vt^(toList(rks#ell..numRows Vt-1));
-            );
-        -- Now create the Sigma matrices
-        Orthos#hi = Vt;
-        rks#(hi+1) = 0;
-        hs#hi = Cranks#hi - rks#hi;
-        SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
-            m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
-            for i from 0 to rks#ell-1 do m_(i, rks#(ell+1)+i) = Sigmas#ell#i;
-            matrix m
-            );
-        targetComplex := (chainComplex SigmaMatrices);
-        result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
-        return (result, hs);
-        );
-    if opts.Strategy == symbol Laplacian then (
-        );
-    error "expected Strategy=>Projection or Strategy=>Laplacian"
-    )
 
--- New version:
 SVDComplex ChainComplex := opts -> (C) -> (
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
     goodspots := select(spots C, i -> C_i != 0);
@@ -596,19 +536,20 @@ SVDComplex ChainComplex := opts -> (C) -> (
     U := null;
     Vt := null;
     if opts.Strategy == symbol Projection then (
-        P0 := matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
-        Q0 := matrix mutableMatrix(ring C, 0, Cranks#lo);
+        P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        Q0 := mutableMatrix(ring C, 0, Cranks#lo);
         for ell from lo+1 to hi do (
-            << "-------------" << endl;
-            elapsedTime m1 := P0 * (C.dd_ell); -- crashes if mutable matrices??
-            elapsedTime (sigma1, U, Vt) = SVD m1;
+            m1 := P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
+            (sigma1, U, Vt) = SVD m1;
+            sigma1 = flatten entries sigma1;
             Sigmas#ell = sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
             rks#ell = # select(sigma1, x -> x > 1e-10);
             smallestSing#ell = sigma1#(rks#ell-1);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
-            elapsedTime Orthos#(ell-1) = matrix{{Q0},{(transpose U) * P0}};
+            ortho1 := (transpose U) * P0;
+            Orthos#(ell-1) = matrix{{matrix Q0},{matrix ortho1}};
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
             Q0 = Vt^(toList(0..rks#ell-1));
@@ -619,7 +560,7 @@ SVDComplex ChainComplex := opts -> (C) -> (
         SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
             m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
             for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
-            matrix m
+            matrix m -- TODO: make this via diagonal matrices and block matrices.
             );
         targetComplex := (chainComplex SigmaMatrices);
         result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
@@ -729,7 +670,7 @@ restart
   elapsedTime SVDComplex Ls_5;
   last oo
 
-  for i from 0 to #Ls-1 list elapsedTime SVDComplex Ls_i;
+  elapsedTime for i from 0 to #Ls-1 list elapsedTime SVDComplex Ls_i;
 
   for i from 0 to #Ls-1 list 
     max flatten checkSVDComplex(Ls_i, SVDComplex Ls_i)
