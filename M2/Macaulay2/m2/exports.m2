@@ -308,7 +308,7 @@ export {
 	"Pseudocode",
 	"PushforwardComputation",
 	"QQ",
-    "QR",
+    "QRDecomposition",
 	"Quotient",
 	"QuotientRing",
 	"RR",
