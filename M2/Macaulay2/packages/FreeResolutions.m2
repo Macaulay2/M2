@@ -596,21 +596,22 @@ SVDComplex ChainComplex := opts -> (C) -> (
     U := null;
     Vt := null;
     if opts.Strategy == symbol Projection then (
-        B1 := matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
-        B2 := matrix mutableMatrix(ring C, 0, Cranks#lo);
+        P0 := matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        Q0 := matrix mutableMatrix(ring C, 0, Cranks#lo);
         for ell from lo+1 to hi do (
-            m1 := B1 * (C.dd_ell); -- crashes if mutable matrices??
-            (sigma1, U, Vt) = SVD m1;
+            << "-------------" << endl;
+            elapsedTime m1 := P0 * (C.dd_ell); -- crashes if mutable matrices??
+            elapsedTime (sigma1, U, Vt) = SVD m1;
             Sigmas#ell = sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
             rks#ell = # select(sigma1, x -> x > 1e-10);
             smallestSing#ell = sigma1#(rks#ell-1);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
-            Orthos#(ell-1) = matrix{{B2},{(transpose U) * B1}};
+            elapsedTime Orthos#(ell-1) = matrix{{Q0},{(transpose U) * P0}};
             -- now split Vt into 2 parts.
-            B1 = Vt^(toList(rks#ell..numRows Vt-1));
-            B2 = Vt^(toList(0..rks#ell-1));
+            P0 = Vt^(toList(rks#ell..numRows Vt-1));
+            Q0 = Vt^(toList(0..rks#ell-1));
             );
         -- Now create the Sigma matrices
         Orthos#hi = Vt;
