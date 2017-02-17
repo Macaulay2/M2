@@ -22,6 +22,7 @@ export {
     "Laplacian",
     "newChainComplexMap",
     "numericRank",
+    "checkSVDComplex",
     -- top level resolution experiments
     "ModuleMonomial",
     "component",
@@ -582,32 +583,29 @@ SVDComplex ChainComplex := opts -> (C) -> (
 SVDComplex ChainComplex := opts -> (C) -> (
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
     goodspots := select(spots C, i -> C_i != 0);
+    if #goodspots === 1 then return (id_C, hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
     (lo, hi) := (min goodspots, max goodspots);
     Cranks := for ell from 0 to hi list rank C_ell;
     rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
-    hs := new MutableList; -- lo..hi, rank of homology at that step.
+    hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
     Sigmas := new MutableList; -- the singular values in the SVD complex, indexed lo+1..hi
     Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
+    smallestSing := new MutableHashTable;
     rks#lo = 0;
-    B := null;
-    B1 := null; -- [B1 || B2] is the U or U^T from the SVD at each step
-    B2 := null;
     sigma1 := null;
     U := null;
     Vt := null;
     if opts.Strategy == symbol Projection then (
-        B1 = matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
-        B2 = matrix mutableMatrix(ring C, 0, Cranks#lo);
+        B1 := matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        B2 := matrix mutableMatrix(ring C, 0, Cranks#lo);
         for ell from lo+1 to hi do (
             m1 := B1 * (C.dd_ell); -- crashes if mutable matrices??
             (sigma1, U, Vt) = SVD m1;
             Sigmas#ell = sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
             rks#ell = # select(sigma1, x -> x > 1e-10);
+            smallestSing#ell = sigma1#(rks#ell-1);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
-            len1 := rks#(ell-1);
-            len2 := rks#ell;
-            len3 := hs#(ell-1);
             -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
             Orthos#(ell-1) = matrix{{B2},{(transpose U) * B1}};
             -- now split Vt into 2 parts.
@@ -616,7 +614,6 @@ SVDComplex ChainComplex := opts -> (C) -> (
             );
         -- Now create the Sigma matrices
         Orthos#hi = Vt;
-        rks#(hi+1) = 0;
         hs#hi = Cranks#hi - rks#hi;
         SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
             m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
@@ -625,15 +622,39 @@ SVDComplex ChainComplex := opts -> (C) -> (
             );
         targetComplex := (chainComplex SigmaMatrices);
         result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
-        return (result, hs);
+        return (result, new HashTable from hs, new HashTable from smallestSing);
         );
     if opts.Strategy == symbol Laplacian then (
         );
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
+
+debug Core  
+maxEntry = method()
+maxEntry(Matrix) := (m) -> (flatten entries m)/abs//max
+maxEntry(ChainComplexMap) := (F) -> max for m in spots F list maxEntry(F_m)
+checkSVDComplex = (C, Fhs) -> (
+    -- routine to find the smallest errors which occur.
+    -- where here (F,hs) = SVDComplex C, C is a complex over RR_53.
+    (F,hs, minsing) := Fhs;
+    debug Core;
+    tar2 := (target F).dd^2;
+    src2 := (source F).dd^2;
+    val1 := maxEntry tar2;
+    val2 := maxEntry src2;
+    vals3 := for m in spots F list (flatten entries (((transpose F_m) * F_m) - id_(source F_m)))/abs//max;
+    vals4 := for i in spots F list (
+        m := (target F).dd_i * F_i - F_(i-1) * (source F).dd_i;
+        (flatten entries m)/abs//max
+        );
+    vals5 := for i in spots F list (
+        m := (C.dd_i - ((transpose F_(i-1)) * (target F).dd_i * F_i));
+        (flatten entries m)/abs//max
+        );
+    (val1, val2, vals3, vals4, vals5)
+    )
 -- TODO for free res stuff with Frank:
 -- add QR
--- add symmetric matrix eigenvals/evecs.
 -- make sure code doesn't crash when doing minimalBetti over QQ...
 -- allow choice of ZZ/p?
 -- 
@@ -698,42 +719,25 @@ restart
   Ls = constantStrands(C,RR_53)  
   Lp = constantStrands(C,ZZ/32003)  
   D = Ls_3
-  D.dd^2
   
-  (F, hs) = SVDComplex D;
-  peek hs
+  (F, hs, minsing) = SVDComplex D;
+  hs, minsing
   numericRank D.dd_4
-  
-  D2 = D.dd^2
-  tar2 = (target F).dd^2
-  src2 = (source F).dd^2;
-  debug Core
-  for m in spots tar2 list (flatten entries tar2_m)/abs//max
-  for m in spots src2 list (flatten entries src2_m)/abs//max
-  for m in spots D2 list (flatten entries D2_m)/abs//max
-  for m in spots F list (flatten entries (((transpose F_m) * F_m) - id_(source F_m)))/abs//max
-  -- now check that the maps are basically commutative
 
-  for i from 2 to 4 list (
-      m := (target F).dd_i * F_i - F_(i-1) * (source F).dd_i;
-      (flatten entries m)/abs//max
-      )
+  elapsedTime SVDComplex Ls_4;
+  elapsedTime SVDComplex Ls_5;
+  last oo
 
-  for i from 2 to 4 list (
-      m := (D.dd_i - ((transpose F_(i-1)) * (target F).dd_i * F_i));
-      (flatten entries m)/abs//max
-      )
-  
-  oo/(x -> (flatten entries x)/abs//max)
-  i = 2
-  (D.dd_i + ((transpose F_(i-1)) * (target F).dd_i * F_i));
-F_i
-(target F).dd_i
-clean(1e-12, (transpose F_(i-1)) * F_(i-1))
-clean(1e-12, (transpose F_(i)) * F_(i))
-  targetC  
-  peek hs
-  
+  for i from 0 to #Ls-1 list elapsedTime SVDComplex Ls_i;
+
+  for i from 0 to #Ls-1 list 
+    max flatten checkSVDComplex(Ls_i, SVDComplex Ls_i)
+
+  hashTable for i from 0 to #Ls-1 list 
+    i => last SVDComplex Ls_i
+
+  ------ end of example above
+    
   debug Core
   kk = ZZp(32003, Strategy=>"Flint")
   Rp = kk(monoid R)
