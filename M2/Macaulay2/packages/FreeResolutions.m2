@@ -6,7 +6,6 @@ newPackage(
                   Email => "", 
                   HomePage => ""}},
         Headline => "Experimental versions of free resolutions",
-        PackageExports => {"AGR"},
         DebuggingMode => true
         )
 
@@ -22,6 +21,7 @@ export {
     "Projection",
     "Laplacian",
     "newChainComplexMap",
+    "numericRank",
     -- top level resolution experiments
     "ModuleMonomial",
     "component",
@@ -481,6 +481,29 @@ minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
   new BettiTally from mB
   )
 
+chainComplex(HashTable) := (maps) -> (
+    -- maps should be a HashTable with keys integers.  values are maps at that spot.
+    rgs := (values maps)/ring//unique;
+    if #rgs != 1 then error "expected matrices over the same ring";
+    R := rgs#0;
+    C := new ChainComplex;
+    C.ring = R;
+    for i in keys maps do (
+        f := maps#i;
+        F := source f;
+        G := target f;
+        if C#?i then (if C#i =!= F then error("different modules at index "|i))
+        else C#i = F;
+        if C#?(i-1) then (if C#(i-1) =!= G then error("different modules at index "|i-1))
+        else C#(i-1) = G;
+        );
+    C.dd.cache = new CacheTable;
+    lo := min keys maps - 1;
+    hi := max keys maps;
+    for i from lo+1 to hi do C.dd#i = if maps#?i then maps#i else map(C_i, C_(i-1), 0);
+    C
+    )
+
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      f := new ChainComplexMap;
@@ -541,12 +564,66 @@ SVDComplex ChainComplex := opts -> (C) -> (
         Orthos#hi = Vt;
         rks#(hi+1) = 0;
         hs#hi = Cranks#hi - rks#hi;
-        SigmaMatrices := for ell from lo+1 to hi list (
+        SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
             m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
             for i from 0 to rks#ell-1 do m_(i, rks#(ell+1)+i) = Sigmas#ell#i;
             matrix m
             );
-        targetComplex := (chainComplex SigmaMatrices)[-lo];
+        targetComplex := (chainComplex SigmaMatrices);
+        result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
+        return (result, hs);
+        );
+    if opts.Strategy == symbol Laplacian then (
+        );
+    error "expected Strategy=>Projection or Strategy=>Laplacian"
+    )
+
+-- New version:
+SVDComplex ChainComplex := opts -> (C) -> (
+    if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
+    goodspots := select(spots C, i -> C_i != 0);
+    (lo, hi) := (min goodspots, max goodspots);
+    Cranks := for ell from 0 to hi list rank C_ell;
+    rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    hs := new MutableList; -- lo..hi, rank of homology at that step.
+    Sigmas := new MutableList; -- the singular values in the SVD complex, indexed lo+1..hi
+    Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
+    rks#lo = 0;
+    B := null;
+    B1 := null; -- [B1 || B2] is the U or U^T from the SVD at each step
+    B2 := null;
+    sigma1 := null;
+    U := null;
+    Vt := null;
+    if opts.Strategy == symbol Projection then (
+        B1 = matrix mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        B2 = matrix mutableMatrix(ring C, 0, Cranks#lo);
+        for ell from lo+1 to hi do (
+            m1 := B1 * (C.dd_ell); -- crashes if mutable matrices??
+            (sigma1, U, Vt) = SVD m1;
+            Sigmas#ell = sigma1;
+            -- TODO: the following line needs to be un-hardcoded!!
+            rks#ell = # select(sigma1, x -> x > 1e-10);
+            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
+            len1 := rks#(ell-1);
+            len2 := rks#ell;
+            len3 := hs#(ell-1);
+            -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
+            Orthos#(ell-1) = matrix{{B2},{(transpose U) * B1}};
+            -- now split Vt into 2 parts.
+            B1 = Vt^(toList(rks#ell..numRows Vt-1));
+            B2 = Vt^(toList(0..rks#ell-1));
+            );
+        -- Now create the Sigma matrices
+        Orthos#hi = Vt;
+        rks#(hi+1) = 0;
+        hs#hi = Cranks#hi - rks#hi;
+        SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
+            m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
+            for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
+            matrix m
+            );
+        targetComplex := (chainComplex SigmaMatrices);
         result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
         return (result, hs);
         );
@@ -607,6 +684,7 @@ restart
   -- YYYYY
 
   needsPackage "FreeResolutions"
+  needsPackage "AGRExamples"
   R = QQ[a..f]
   deg = 6
   nextra = 10
@@ -618,13 +696,37 @@ restart
 
   betti C
   Ls = constantStrands(C,RR_53)  
-  C = Ls_3
+  Lp = constantStrands(C,ZZ/32003)  
+  D = Ls_3
+  D.dd^2
   
-  (F, hs) = SVDComplex C;
-  for i from 2 to 4 list (C.dd_i - (-1)^i * ((transpose F_(i-1)) * (target F).dd_i * F_i));
+  (F, hs) = SVDComplex D;
+  peek hs
+  numericRank D.dd_4
+  
+  D2 = D.dd^2
+  tar2 = (target F).dd^2
+  src2 = (source F).dd^2;
+  debug Core
+  for m in spots tar2 list (flatten entries tar2_m)/abs//max
+  for m in spots src2 list (flatten entries src2_m)/abs//max
+  for m in spots D2 list (flatten entries D2_m)/abs//max
+  for m in spots F list (flatten entries (((transpose F_m) * F_m) - id_(source F_m)))/abs//max
+  -- now check that the maps are basically commutative
+
+  for i from 2 to 4 list (
+      m := (target F).dd_i * F_i - F_(i-1) * (source F).dd_i;
+      (flatten entries m)/abs//max
+      )
+
+  for i from 2 to 4 list (
+      m := (D.dd_i - ((transpose F_(i-1)) * (target F).dd_i * F_i));
+      (flatten entries m)/abs//max
+      )
+  
   oo/(x -> (flatten entries x)/abs//max)
   i = 2
-  (C.dd_i + ((transpose F_(i-1)) * (target F).dd_i * F_i));
+  (D.dd_i + ((transpose F_(i-1)) * (target F).dd_i * F_i));
 F_i
 (target F).dd_i
 clean(1e-12, (transpose F_(i-1)) * F_(i-1))
