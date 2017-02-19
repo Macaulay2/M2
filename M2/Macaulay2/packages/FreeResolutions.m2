@@ -18,6 +18,8 @@ export {
     "degreeZeroMatrix",
     "minimizeBetti",
     "SVDComplex",
+    "SVDHomology",
+    "SVDBetti",
     "Projection",
     "Laplacian",
     "newChainComplexMap",
@@ -406,7 +408,7 @@ constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
     len := length C;
     reg := regularity C;
-    if deg <= 2 or deg > len+reg then error("degree should be in the range 2.."|len+reg);
+    --if deg <= 2 or deg > len+reg then error("degree should be in the range 2.."|len+reg);
     chainComplex for lev from 1 to len list (
         << "computing map with " << deg << " " << lev << endl;
         matrix map(kk, rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw kk, deg,lev))
@@ -420,7 +422,10 @@ constantStrands(ChainComplex, Ring) := (C, kk) -> (
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
     len := length C;
     reg := regularity C;
-    for deg from 3 to len+reg list constantStrand(C,kk,deg)
+    hashTable for deg from 0 to len+reg list (
+        D := constantStrand(C,kk,deg);
+        if D == 0 then continue else deg => D
+        )
     )
 
 laplacians = method()
@@ -512,7 +517,8 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      f.source = src;
      f.target = tar;
      f.degree = 0;
-     scan(spots src, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
+     goodspots := select(spots src, i -> src_i != 0);
+     scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
 SVDComplex = method(Options => {
@@ -525,7 +531,7 @@ SVDComplex ChainComplex := opts -> (C) -> (
     goodspots := select(spots C, i -> C_i != 0);
     if #goodspots === 1 then return (id_C, hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
     (lo, hi) := (min goodspots, max goodspots);
-    Cranks := for ell from 0 to hi list rank C_ell;
+    Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
     rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
     hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
     Sigmas := new MutableList; -- the singular values in the SVD complex, indexed lo+1..hi
@@ -555,7 +561,7 @@ SVDComplex ChainComplex := opts -> (C) -> (
             Q0 = Vt^(toList(0..rks#ell-1));
             );
         -- Now create the Sigma matrices
-        Orthos#hi = Vt;
+        Orthos#hi = matrix Vt;
         hs#hi = Cranks#hi - rks#hi;
         SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
             m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
@@ -571,6 +577,56 @@ SVDComplex ChainComplex := opts -> (C) -> (
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
 
+SVDHomology = method (Options => options SVDComplex)
+SVDHomology ChainComplex := opts -> (C) -> (
+    -- returns a hash table of the ranks of the homology of C
+    if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
+    goodspots := select(spots C, i -> C_i != 0);
+    if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
+    (lo, hi) := (min goodspots, max goodspots);
+    Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
+    rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
+    smallestSing := new MutableHashTable;
+    rks#lo = 0;
+    sigma1 := null;
+    U := null;
+    Vt := null;
+    if opts.Strategy == symbol Projection then (
+        P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        for ell from lo+1 to hi do (
+            m1 := P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
+            (sigma1, U, Vt) = SVD m1;
+            sigma1 = flatten entries sigma1;
+            -- TODO: the following line needs to be un-hardcoded!!
+            rks#ell = # select(sigma1, x -> x > 1e-10);
+            smallestSing#ell = sigma1#(rks#ell-1);
+            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
+            -- now split Vt into 2 parts.
+            P0 = Vt^(toList(rks#ell..numRows Vt-1));
+            );
+        hs#hi = Cranks#hi - rks#hi;
+        return (new HashTable from hs, new HashTable from smallestSing);
+        );
+    if opts.Strategy == symbol Laplacian then (
+        );
+    error "expected Strategy=>Projection or Strategy=>Laplacian"
+    )
+
+toBetti = method()
+toBetti(ZZ, HashTable) := (deg, H) -> (
+      new BettiTally from for k in keys H list (k, {deg}, deg) => H#k
+      )
+
+SVDBetti = method()
+SVDBetti ChainComplex := (C) -> (
+    if coefficientRing ring C =!= QQ then error "expected FastNonminimal resolution over QQ"; 
+    Ls := constantStrands(C,RR_53);
+    H := hashTable for i in keys Ls list i => SVDHomology Ls#i;
+    H2 := hashTable for i in keys H list i => last H#i;
+    << "singular values: " << H2 << endl;
+    sum for i in keys H list toBetti(i, first H#i)
+    )
 debug Core  
 maxEntry = method()
 maxEntry(Matrix) := (m) -> (flatten entries m)/abs//max
@@ -657,12 +713,15 @@ restart
   I = ideal fromDual matrix{{F}};
   C = res(I, FastNonminimal=>true)
 
+  SVDBetti C  
+
   betti C
   Ls = constantStrands(C,RR_53)  
   Lp = constantStrands(C,ZZ/32003)  
   D = Ls_3
   
   (F, hs, minsing) = SVDComplex D;
+  (hs, minsing) = SVDHomology D;
   hs, minsing
   numericRank D.dd_4
 
@@ -670,8 +729,17 @@ restart
   elapsedTime SVDComplex Ls_5;
   last oo
 
-  elapsedTime for i from 0 to #Ls-1 list elapsedTime SVDComplex Ls_i;
+  hashTable for k in keys Ls list (k => betti Ls#k)
+  sumBetti = method()
+  sumBetti HashTable := H -> (
+      for k in keys H list (betti H#k)(-k)
+      )
 
+  elapsedTime hashTable for i in keys Ls list i => SVDComplex Ls#i;
+  
+  elapsedTime hashTable for i in keys Ls list i => toBetti(i, first SVDHomology Ls#i);
+
+      
   for i from 0 to #Ls-1 list 
     max flatten checkSVDComplex(Ls_i, SVDComplex Ls_i)
 
@@ -749,6 +817,67 @@ restart
   C0.dd^2 -- TODO: make it so we can "clean" the results here.
 ///
 
+TEST ///
+restart
+  needsPackage "FreeResolutions"
+  needsPackage "AGRExamples"
+  I = getAGR(6,9,50,0);
+  R = ring I
+  elapsedTime C = res(I, FastNonminimal=>true)
+
+  betti C
+  elapsedTime SVDBetti C  
+
+  Rp = (ZZ/32003)(monoid R)
+  Ip = ideal sub(gens I, Rp);
+  elapsedTime minimalBetti Ip
+  elapsedTime Cp = res(Ip, FastNonminimal=>true)
+///
+
+TEST ///
+restart
+  -- ZZZZ
+  needsPackage "FreeResolutions"
+  needsPackage "AGRExamples"
+
+  I = value get "agr-6-7-37-0.m2";
+  makeAGR(6,7,50,0)
+  
+  I = getAGR(6,7,50,0);
+{*  
+  R = QQ[a..h]
+  deg = 6
+  nextra = 30
+  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
+  elapsedTime I = ideal fromDual matrix{{F}};
+*}
+  
+  elapsedTime C = res(I, FastNonminimal=>true)
+  betti C
+  elapsedTime SVDBetti C  
+
+  Rp = (ZZ/32003)(monoid R)
+  Ip = ideal sub(gens I, Rp);
+  elapsedTime minimalBetti Ip
+  
+  D = constantStrand(C, RR_53, 7)
+  SVDComplex D;
+  E = target first oo
+  for i from 2 to 5 list sort flatten entries compress flatten E.dd_i
+  Ls = constantStrands(C, RR_53)
+///
+
+TEST ///
+restart
+  needsPackage "FreeResolutions"
+  needsPackage "AGRExamples"
+
+  elapsedTime makeAGR(7,7,100,32003)
+  I = getAGR(7,7,100,32003);
+
+  elapsedTime minimalBetti I
+    
+///
 
 TEST ///
   -- warning: this currently requires test code on res2017 branch.
