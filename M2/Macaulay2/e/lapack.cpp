@@ -2614,7 +2614,7 @@ bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
           if (orgqr_work_size > work_size)
             {
               delete [] workspace;
-              work_size - orgqr_work_size;
+              work_size = orgqr_work_size;
               workspace = new double[work_size];
               std::cout << "work size increased to: " << work_size << std::endl;
             }
