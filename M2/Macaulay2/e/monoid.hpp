@@ -115,6 +115,8 @@ public:
   // not a weight vector
   std::vector<int> getFirstWeightVector() const;
 
+  std::vector<int> getPrimaryDegreeVector() const;
+  
   void text_out(buffer &o) const;
 
   int n_vars()        const { return nvars_; }
