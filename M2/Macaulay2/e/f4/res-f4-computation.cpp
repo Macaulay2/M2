@@ -138,10 +138,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           int loc = pos->array[i];
           poly&f = input_polys[loc];
           if (f.len == 0) continue;
-          if (MI->get_component(f.monoms.get()) != j)
+          if (MI->get_component(f.monoms.data()) != j)
             continue;
           res_packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
-          MI->copy(f.monoms.get(), elem);
+          MI->copy(f.monoms.data(), elem);
           // the following line grabs f.
           if (!frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f))
             {

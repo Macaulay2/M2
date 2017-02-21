@@ -205,7 +205,9 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(
 
   if (M2_gbTrace >= 1)
     {
+      std::cout << "displaying stats" << std::endl;
       showMemoryUsage();
+      monoid().show();
       std::cout << "total setPoly: " << poly_constructor::ncalls << std::endl;
       std::cout << "total setPolyFromArray: " << poly_constructor::ncalls_fromarray << std::endl;
       std::cout << "total ~poly: " << poly::npoly_destructor << std::endl;
@@ -419,7 +421,7 @@ SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(res_packed_monom
   mVarpowers.intern(len);
   return vp;
 }
-long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
+component_index SchreyerFrame::computeIdealQuotient(int lev, component_index begin, component_index elem)
 {
   ///  std::cout << "computeIdealQuotient(" << lev << "," << begin << "," << elem << ")" << std::endl;
   // Returns the number of elements added
@@ -443,7 +445,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
         }
       delete [] skewvars;
     }
-  for (long i=begin; i<elem; i++)
+  for (component_index i=begin; i<elem; i++)
     elements.push_back(createQuotientElement(monomial(lev,i), m));
   typedef ResF4MonomialLookupTableT<int32_t> MonomialLookupTable;
   MonomialLookupTable montab(monoid().n_vars());
@@ -459,7 +461,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
   PreElementSorter C;
   std::stable_sort(elements.begin(), elements.end(), C);
 
-  long n_elems = 0;
+  component_index n_elems = 0;
   for (auto i = elements.begin(); i != elements.end(); ++i)
     {
       int32_t not_used;
@@ -477,7 +479,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
   return n_elems;
 }
 
-long SchreyerFrame::computeNextLevel()
+component_index SchreyerFrame::computeNextLevel()
 {
   if (currentLevel() == 1) return 0;
   if (currentLevel() >= mFrame.mLevels.size()) return 0;
@@ -485,12 +487,12 @@ long SchreyerFrame::computeNextLevel()
   // loop through all the elements at level currentLevel()-2
   int level0 = currentLevel()-2;
   int level1 = level0+1;
-  long n_elems_added = 0;
+  component_index n_elems_added = 0;
   for (auto i = level(level0).begin(); i != level(level0).end(); ++i)
     {
-      long begin = (*i).mBegin;
-      long end = (*i).mEnd;
-      for (long i=begin; i<end; ++i)
+      component_index begin = (*i).mBegin;
+      component_index end = (*i).mEnd;
+      for (component_index i=begin; i<end; ++i)
         {
           auto& elem = level(level1)[i];
           elem.mBegin = n_elems_added;
@@ -509,29 +511,32 @@ void SchreyerFrame::setSchreyerOrder(int lev)
   auto& myframe = level(lev);
   auto& myorder = schreyerOrder(lev);
   myorder.mTieBreaker.resize(myframe.size());
+  //  std::cout << "setSchreyerOrder: entering, lev=" << lev << ", nelems=" << myframe.size() << std::endl;
   if (lev == 0)
     {
-      for (long i=0; i<myorder.mTieBreaker.size(); i++)
+      for (component_index i=0; i<myorder.mTieBreaker.size(); i++)
         myorder.mTieBreaker[i] = i;
       return;
     }
 
   auto& prevorder = schreyerOrder(lev-1);
   long* tiebreakers = new long[myframe.size()];
-  
-  for (long i=0; i<myframe.size(); i++)
+
+  auto n_frame_elems = myframe.size();
+  for (component_index i=0; i<n_frame_elems; i++)
     {
-      long comp = monoid().get_component(myframe[i].mMonom);
-      tiebreakers[i] = i + myframe.size() * prevorder.mTieBreaker[comp];
+      component_index comp = monoid().get_component(myframe[i].mMonom);
+      tiebreakers[i] = i + n_frame_elems * prevorder.mTieBreaker[comp];
     }
-  std::stable_sort(tiebreakers, tiebreakers + myframe.size());
+  std::stable_sort(tiebreakers, tiebreakers + n_frame_elems);
 
   
-  for (long i=0; i<myframe.size(); i++)
+  for (component_index i=0; i<n_frame_elems; i++)
     {
-      myorder.mTieBreaker[tiebreakers[i] % myframe.size()] = i;
+      myorder.mTieBreaker[tiebreakers[i] % n_frame_elems] = i;
     }
   delete [] tiebreakers;
+  //  std::cout << "  setSchreyerOrder: exiting, lev=" << lev << std::endl;
 }
 
 void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
@@ -549,7 +554,7 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   if (lev > 0)
     {
       auto& prevorder = schreyerOrder(lev-1);
-      long comp = monoid().get_component(myelem.mMonom);
+      component_index comp = monoid().get_component(myelem.mMonom);
       monoid().unchecked_mult(myelem.mMonom, prevorder.mTotalMonom[comp], myTotalMonom);
       monoid().set_component(monoid().get_component(prevorder.mTotalMonom[comp]), myTotalMonom);
     }
@@ -573,7 +578,7 @@ void SchreyerFrame::insertLevelZero(res_packed_monomial monom, int degree, int m
   auto myTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
   // Create the total monomial.  It is monom * (firstvar)^(maxdeglevel0-degree)
 #if 0
-  long comp;
+  component_index comp;
   ntuple_monomial exp = new int[monoid().n_vars()];
   to_exponent_vector(monom, exp, comp);
   exp[0] += (maxdeglevel0 - XXXX);
@@ -585,8 +590,8 @@ void SchreyerFrame::insertLevelZero(res_packed_monomial monom, int degree, int m
 bool SchreyerFrame::insertLevelOne(res_packed_monomial monom, int deg, poly& syzygy)
 {
   insertBasic(1, monom, deg); // deg is the actual degree of this element.
-  long comp = monoid().get_component(monom);
-  auto last = level(1).size();
+  component_index comp = monoid().get_component(monom);
+  auto last = static_cast<component_index>(level(1).size());
   auto& p = level(0)[comp];
   if (p.mBegin == -1)
     p.mBegin = last-1;

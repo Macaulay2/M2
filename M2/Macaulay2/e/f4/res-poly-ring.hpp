@@ -24,10 +24,11 @@ public:
            // in the case of fixed length monomials
   CoefficientVector coeffs;
   //  std::unique_ptr<FieldElement[]> coeffs;
-  std::unique_ptr<res_monomial_word[]> monoms;
+  std::vector<res_monomial_word> monoms;
+  //  std::unique_ptr<res_monomial_word[]> monoms;
 
 public:  
-  poly() : len(0), coeffs(), monoms(nullptr) {}
+  poly() : len(0), coeffs() {}
 
   ~poly()
   {
@@ -92,21 +93,21 @@ public:
     ncalls++;
     result.len = static_cast<int>(mRing.resGausser().size(coeffs));
     std::swap(result.coeffs, coeffs);
-    result.monoms.reset(new res_monomial_word[mRing.monoid().max_monomial_size()*result.len]);
+    result.monoms.resize(result.len * mRing.monoid().max_monomial_size());
 
     // copy monoms: not pointers, actual monoms
-    res_monomial_word* monomptr = result.monoms.get();
+    res_monomial_word* monomptr = result.monoms.data();
     for (int i=0; i<result.len; i++)
       {
         mRing.monoid().copy(monoms[i], monomptr);
-        monomptr += mRing.monoid().max_monomial_size();
+        monomptr += mRing.monoid().monomial_size(monoms[i]);
       }
   }
 
   static void setPolyFromArrays(poly& result,
                                 int len,
                                 CoefficientVector& coeffs,
-                                std::unique_ptr<res_monomial_word[]>& monoms)
+                                std::vector<res_monomial_word>& monoms)
   {
     ncalls_fromarray++;
     result.len = len;
@@ -140,8 +141,8 @@ public:
 
   int coefficient_index() const { return static_cast<int>(coeff_index); }
   //  int coefficient() const { return elem.coeffs[coeff_index]; }
-  res_packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
-  void operator++() { coeff_index++; monom_index += mRing.monoid().max_monomial_size(); }
+  res_const_packed_monomial monomial() const { return elem.monoms.data() + monom_index; }
+  void operator++() { coeff_index++; monom_index += mRing.monoid().monomial_size( elem.monoms.data() + monom_index); }
 };
 
 inline bool operator==(const poly_iter& a, const poly_iter& b) { return a.coeff_index == b.coeff_index; }
@@ -154,7 +155,7 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
   for (auto it = poly_iter(R, f); it != end; ++it, ++i)
     {
       R.resGausser().out(o, f.coeffs, i);
-      res_packed_monomial mon = it.monomial();
+      res_const_packed_monomial mon = it.monomial();
       R.monoid().showAlpha(mon);
     }
 }

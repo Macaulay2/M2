@@ -32,6 +32,7 @@ class ResMonoid
   //    [hashvalue, len, component, v1, v2, ..., vr] each vi is potentially packed too.
   //    [hashvalue, component, wt1, ..., wtr, pack1, ..., packr]
 
+  mutable unsigned long ncalls_hash_value;  
   mutable unsigned long ncalls_compare;
   mutable unsigned long ncalls_mult;
   mutable unsigned long ncalls_get_component;
@@ -65,7 +66,7 @@ public:
 
   void show() const;
 
-  res_monomial_word hash_value(res_const_packed_monomial m) const { return *m; }
+  res_monomial_word hash_value(res_const_packed_monomial m) const { ncalls_hash_value++; return *m; }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
   void copy(res_const_packed_monomial src, res_packed_monomial target) const {
@@ -77,9 +78,9 @@ public:
     return m[nslots-1];
   }
 
-  void set_component(long component, res_packed_monomial m) const { m[1] = component; }
+  void set_component(component_index component, res_packed_monomial m) const { m[1] = component; }
 
-  long get_component(res_const_packed_monomial m) const { ncalls_get_component++; return m[1]; }
+  component_index get_component(res_const_packed_monomial m) const { ncalls_get_component++; return m[1]; }
 
   bool from_exponent_vector(res_const_ntuple_monomial e, component_index comp, res_packed_monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.
@@ -100,7 +101,7 @@ public:
         res_monomial_word val = 0;
         for (int i=0; i<nvars; i++)
           {
-            long a = e[i];
+            auto a = e[i];
             if (a > 0)
               val += a * wt[i];
           }
@@ -166,7 +167,7 @@ public:
     *result = len;
   }
 
-  void from_varpower_monomial(res_const_varpower_monomial m, long comp, res_packed_monomial result) const {
+  void from_varpower_monomial(res_const_varpower_monomial m, component_index comp, res_packed_monomial result) const {
     // 'result' must have enough space allocated
     ncalls_from_varpower++;
     result[0] = 0;
@@ -189,12 +190,12 @@ public:
     const int *wt = weight_vectors.data();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
-        long val = 0;
+        res_monomial_word val = 0;
         for (index_res_varpower_monomial i = m; i.valid(); ++i)
           {
-            res_varpower_word v = i.var();
-            res_varpower_word e = i.exponent();
-            long w = wt[v];
+            auto v = i.var();
+            auto e = i.exponent();
+            auto w = wt[v];
             if (e == 1)
               val += w;
             else
@@ -287,7 +288,7 @@ public:
 
   int compare_schreyer(res_const_packed_monomial m, res_const_packed_monomial n,
                        res_const_packed_monomial m0, res_const_packed_monomial n0,
-                       long tie1, long tie2) const {
+                       component_index tie1, component_index tie2) const {
     ncalls_compare++;
     #if 0
     printf("compare_schreyer: ");

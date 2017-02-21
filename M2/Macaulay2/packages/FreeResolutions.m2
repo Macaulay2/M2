@@ -410,7 +410,6 @@ constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
     reg := regularity C;
     --if deg <= 2 or deg > len+reg then error("degree should be in the range 2.."|len+reg);
     chainComplex for lev from 1 to len list (
-        << "computing map with " << deg << " " << lev << endl;
         matrix map(kk, rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw kk, deg,lev))
         )
     )    

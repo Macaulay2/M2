@@ -98,7 +98,6 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
 
   ring_elem denom;
   gbvector *f = origR->translate_gbvector_from_vec(F,v, denom);
-  bool isQQ = origR->is_QQ();
   GBRing *GR = origR->get_gb_ring();
   int n = GR->gbvector_n_terms(f);
 
@@ -115,9 +114,10 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
 
   CoefficientVector coeffs = R.resGausser().allocateCoefficientVector();
           // all these pointers (or values) are still in the element f.
-  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n * R.monoid().max_monomial_size()]);
+  //  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n * R.monoid().max_monomial_size()]);
+  std::vector<res_monomial_word> monoms(n * R.monoid().max_monomial_size()) ;
   n = 0;
-  res_monomial_word *nextmonom = monoms.get();
+  res_monomial_word *nextmonom = monoms.data();
   for (gbvector *t = f; t != 0; t=t->next)
     {
       R.resGausser().from_ring_elem(coeffs, t->coeff, f->coeff); // note: f->coeff is assumed to be 1 for finite fields, but for QQ both of these are integers
@@ -156,10 +156,10 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   int *exp = new int[M->n_vars()+1];
   res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
-  const res_monomial_word *w = f.monoms.get();
+  const res_monomial_word *w = f.monoms.data();
   for (int i=0; i<f.len; i++)
     {
-      long comp;
+      component_index comp;
       R.monoid().to_exponent_vector(w, lexp, comp);
       w = w + R.monoid().monomial_size(w);
       for (int a=0; a<M->n_vars(); a++)
@@ -219,7 +219,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       // Now grab the Schreyer info
       // unpack to exponent vector, then repack into monoid element
       monomial totalmonom = M->make_one();
-      long comp;
+      component_index comp;
       C.monoid().to_exponent_vector(S.mTotalMonom[i], longexp, comp);
       for (int j=0; j<M->n_vars(); ++j)
         exp[j] = static_cast<int>(longexp[j]);
@@ -270,8 +270,8 @@ MutableMatrix *ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
     }
 
   auto& thislevel = C.level(lev);
-  int ncols = thislevel.size();
-  int nrows = C.level(lev-1).size();
+  int ncols = static_cast<int>(thislevel.size());
+  int nrows = static_cast<int>(C.level(lev-1).size());
 
   // create the mutable matrix
   MutableMatrix* result = MutableMatrix::zero_matrix(R,
@@ -299,10 +299,10 @@ MutableMatrix *ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           last[i] = nullptr; // used to easily placce monomials in the correct bin, at the end of the polynomials.
         }
 
-      const res_monomial_word *w = f.monoms.get();
+      const res_monomial_word *w = f.monoms.data();
       for (int i=0; i<f.len; i++)
         {
-          long comp;
+          component_index comp;
           C.ring().monoid().to_exponent_vector(w, lexp, comp);
           w = w + C.ring().monoid().monomial_size(w);
           for (int a=0; a<M->n_vars(); a++)

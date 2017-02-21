@@ -53,9 +53,9 @@ private:
   ////////////////////////////////////
   void resetMatrix(int lev, int degree); // remember to clearMatrix before calling this.
   void clearMatrix();
-  bool findDivisor(res_packed_monomial m, res_packed_monomial result);
+  bool findDivisor(res_const_packed_monomial m, res_packed_monomial result);
   ComponentIndex processCurrentMonomial(); // process mNextMonomial
-  ComponentIndex processMonomialProduct(res_packed_monomial m, res_packed_monomial n, int& result_sign_if_skew);
+  ComponentIndex processMonomialProduct(res_const_packed_monomial m, res_const_packed_monomial n, int& result_sign_if_skew);
     // if result_sign_if_skew is set to 0, then result is set to -1.
   void loadRow(Row& r);
   void reorderColumns();

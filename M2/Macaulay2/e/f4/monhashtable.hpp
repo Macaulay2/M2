@@ -35,7 +35,7 @@ private:
 class ResMonomialsWithComponent {
 public:
   typedef res_packed_monomial value;
-  long hash_value(value m) const { return m[0] + m[1]; }
+  long hash_value(value m) const { return mMonoid.hash_value(m) + mMonoid.get_component(m); } // m[0] + m[1]
   bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
   void show(value m) const { mMonoid.show(m); }
   

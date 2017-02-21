@@ -67,7 +67,7 @@ void F4Res::clearMatrix()
 //    m: monomial at level mThisLevel-1
 //    result: monomial at level mThisLevel, IF true is returned
 //  returns true if 'm' == inG(result), for some (unique) 'result'.
-bool F4Res::findDivisor(res_packed_monomial m, res_packed_monomial result)
+bool F4Res::findDivisor(res_const_packed_monomial m, res_packed_monomial result)
 {
   // get component of m
   // find the range of monomials to check
@@ -109,7 +109,7 @@ bool F4Res::findDivisor(res_packed_monomial m, res_packed_monomial result)
 //     of the coeff matrices.  It uses mThisLevel.
 //
 // If the ring has skew commuting variables, then result_sign_if_skew is set to 0, 1, or -1.
-ComponentIndex F4Res::processMonomialProduct(res_packed_monomial m, res_packed_monomial n, int& result_sign_if_skew)
+ComponentIndex F4Res::processMonomialProduct(res_const_packed_monomial m, res_const_packed_monomial n, int& result_sign_if_skew)
 {
   result_sign_if_skew = 1;
   auto x = monoid().get_component(n);
@@ -567,7 +567,13 @@ void F4Res::gaussReduce()
               firstcol = mRing.resGausser().nextNonzero(gauss_row, firstcol+1, lastcol);
             }
         }
+      #ifdef DEBUG_GAUSS
+      std::cout << "about to set syz" << std::endl;
+      #endif
       result.setPoly(syz);
+      #ifdef DEBUG_GAUSS
+      std::cout << "just set syz" << std::endl;
+      #endif
     }
 
   mRing.resGausser().deallocate(gauss_row);

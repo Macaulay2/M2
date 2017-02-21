@@ -18,7 +18,8 @@ ResMonoid::ResMonoid(int nvars0,
     hashfcn[i] = rand();
   mask = 0x10000000;
   mVarDegrees = var_degrees;
-  
+
+  ncalls_hash_value = 0;
   ncalls_compare = 0;
   ncalls_mult = 0;
   ncalls_get_component = 0;
@@ -83,10 +84,11 @@ void ResMonoid::show() const
   fprintf(stderr, "monomial info\n");
   fprintf(stderr, "  nvars  = %d",nvars);
   fprintf(stderr, "  nslots = %d",nslots);
-  fprintf(stderr, "  mask   = %ld",mask);
+  fprintf(stderr, "  mask   = %d",mask);
   fprintf(stderr, "  hash values for each variable\n");
   for (int i=0; i<nvars; i++)
-    fprintf(stderr, "    %ld\n",hashfcn[i]);
+    fprintf(stderr, "    %d\n",hashfcn[i]);
+  fprintf(stderr, "  #calls hashval = %lu\n", ncalls_hash_value);
   fprintf(stderr, "  #calls compare = %lu\n", ncalls_compare);
   fprintf(stderr, "  #calls mult    = %lu\n", ncalls_mult);
   fprintf(stderr, "  #calls get comp= %lu\n", ncalls_get_component);
@@ -108,7 +110,7 @@ void ResMonoid::show(res_const_packed_monomial m) const
   for (int v=1; v<monomial_size(m); v++)
     {
       if (v > 1) fprintf(stderr, " ");
-      fprintf(stderr, "%ld", m[v]);
+      fprintf(stderr, "%d", m[v]);
     }
   fprintf(stderr, "]");
 }
