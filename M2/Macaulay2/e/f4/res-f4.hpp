@@ -8,8 +8,6 @@
 #include "res-poly-ring.hpp"
 #include <assert.h>
 
-class ResGausser;
-class ResMonoid;
 class SchreyerFrame;
 
 /////////////////////////////////////////////////////////////////////////////

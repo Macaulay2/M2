@@ -77,10 +77,18 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       ERROR("cannot use res(...,FastNonminimal=>true) with this type of coefficient ring");
       return nullptr;
     }
+
+  auto mo = origR->getMonoid()->getMonomialOrdering(); // mon ordering
+  auto motype = MonomialOrderingType::Weights;
+  if (moIsLex(mo))
+    motype = MonomialOrderingType::Lex;
+  else if (moIsGRevLex(mo))
+    motype = MonomialOrderingType::GRevLex;
+  
   auto MI = new ResMonoid(origR->n_vars(),
-                          origR->getMonoid()->primary_degree_of_vars(),
+                          origR->getMonoid()->getPrimaryDegreeVector(),
                           origR->getMonoid()->getFirstWeightVector(),
-                          origR->getMonoid()->getMonomialOrdering());
+                          motype);
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {

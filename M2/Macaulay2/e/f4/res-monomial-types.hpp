@@ -5,6 +5,10 @@
 
 #include <cstdint>
 
+enum class MonomialOrderingType {
+  Lex, GRevLex, Weights
+};
+
 //typedef long myword;
 typedef int32_t myword;
 
