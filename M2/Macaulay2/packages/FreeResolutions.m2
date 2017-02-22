@@ -450,9 +450,19 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     )
 
 degreeZeroMatrix = method()
-degreeZeroMatrix(ChainComplex, Ring, ZZ, ZZ) := (C, kk, slanteddeg, level) -> (
+degreeZeroMatrix(ChainComplex, ZZ, ZZ) := (C, slanteddeg, level) -> (
+    if ring C === QQ then error "need to provide a target coefficient ring, QQ is not allowed";
+    kk := coefficientRing ring C;
     rawC := C.Resolution.RawComputation;
-    matrix map(kk, rawResolutionGetMutableMatrix2B(rawC, raw kk, slanteddeg+level,level))
+    matrix map(coefficientRing ring C, rawResolutionGetMatrix2(rawC, level, slanteddeg+level))
+    )
+
+degreeZeroMatrix(ChainComplex, Ring, ZZ, ZZ) := (C, kk, slanteddeg, level) -> (
+    if kk =!= QQ then degreeZeroMatrix(C,slanteddeg, level)
+    else (
+        rawC := C.Resolution.RawComputation;
+        matrix map(kk, rawResolutionGetMutableMatrix2B(rawC, raw kk, slanteddeg+level,level))
+        )
     )
 
 -- given a mutable Betti table, find the spots (deg,lev) where there are degree 0 maps.

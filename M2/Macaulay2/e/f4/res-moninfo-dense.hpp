@@ -11,6 +11,7 @@ struct MonomialOrdering;
 
 #include <vector>
 #include <memory>
+#include <iostream>
 
 class ResMonoidDense
 {
@@ -370,6 +371,7 @@ public:
     result[0] = len;
   }
 
+  void dump(std::ostream& o, res_const_packed_monomial mon);
 };
 #endif
 

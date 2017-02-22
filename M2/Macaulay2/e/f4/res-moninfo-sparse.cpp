@@ -57,9 +57,9 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
         fprintf(stderr, "weight order\n");
     }
 
-  nslots = 2 + nvars + mNumWeights;
-  mFirstVar = 2 + mNumWeights;
-  mFirstWeight = 2;
+  nslots = 3 + nvars + mNumWeights;
+  mFirstVar = 3 + mNumWeights;
+  mFirstWeight = 3;
 }
 
 ResMonoidSparse::~ResMonoidSparse()
@@ -111,6 +111,17 @@ void ResMonoidSparse::showAlpha(res_const_packed_monomial m) const
       fprintf(stdout, "%c", 'a' + *v);
     }
   fprintf(stdout, "<%d>", comp);
+}
+
+void ResMonoidSparse::dump(std::ostream& o, res_const_packed_monomial mon)
+{
+  o << "[";
+  for (int ell = 0; ell < monomial_size(mon); ell++)
+    {
+      if (ell != 0) o << " ";
+      o << mon[ell];
+    }
+  o << "]";
 }
 
 

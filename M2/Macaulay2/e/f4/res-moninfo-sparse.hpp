@@ -11,6 +11,7 @@ struct MonomialOrdering;
 
 #include <vector>
 #include <memory>
+#include <iostream>
 
 // Format for monomials here:
 // a. length (in bytes) (int32)
@@ -438,6 +439,8 @@ public:
     result[0] = len;
   }
 
+  void dump(std::ostream& o, res_const_packed_monomial mon);
+  
 };
 #endif
 

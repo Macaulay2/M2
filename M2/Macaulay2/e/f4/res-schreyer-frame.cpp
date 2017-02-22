@@ -541,6 +541,7 @@ void SchreyerFrame::setSchreyerOrder(int lev)
 
 void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
 {
+  assert(lev >= 1); // Should not be called with lev==0.
   // if lev >= 2, then level(lev-1)[comp].(mBegin,mEnd) is set separately.
   auto& myframe = level(lev);
   long idx = myframe.size();
@@ -551,39 +552,23 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   // and should be moved out of here. (MES 3 Feb 2016)
   auto& myorder = schreyerOrder(lev);
   auto myTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
-  if (lev > 0)
-    {
-      auto& prevorder = schreyerOrder(lev-1);
-      component_index comp = monoid().get_component(myelem.mMonom);
-      monoid().unchecked_mult(myelem.mMonom, prevorder.mTotalMonom[comp], myTotalMonom);
-      monoid().set_component(monoid().get_component(prevorder.mTotalMonom[comp]), myTotalMonom);
-    }
-  else
-    {
-      monoid().copy(myelem.mMonom, myTotalMonom);
-    }
+  auto& prevorder = schreyerOrder(lev-1);
+  component_index comp = monoid().get_component(myelem.mMonom);
+  monoid().unchecked_mult(myelem.mMonom, prevorder.mTotalMonom[comp], myTotalMonom);
+  monoid().set_component(monoid().get_component(prevorder.mTotalMonom[comp]), myTotalMonom);
   myorder.mTotalMonom.push_back(myTotalMonom);
 }
 
 void SchreyerFrame::insertLevelZero(res_packed_monomial monom, int degree, int maxdeglevel0)
 {
-  //  return insertBasic(0, monom, degree);
-
   auto& myframe = level(0);
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom,degree));
   auto& myelem = myframe[idx];
 
   auto& myorder = schreyerOrder(0);
-  auto myTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
+  auto myTotalMonom = monomialBlock().allocate(monoid().monomial_size(myelem.mMonom));
   // Create the total monomial.  It is monom * (firstvar)^(maxdeglevel0-degree)
-#if 0
-  component_index comp;
-  ntuple_monomial exp = new int[monoid().n_vars()];
-  to_exponent_vector(monom, exp, comp);
-  exp[0] += (maxdeglevel0 - XXXX);
-  from_exponent_vector(exp, comp, monom); // XXXX not correct, I think.
-#endif
   monoid().copy(myelem.mMonom, myTotalMonom);
   myorder.mTotalMonom.push_back(myTotalMonom);
 }
@@ -609,10 +594,6 @@ bool SchreyerFrame::insertLevelOne(res_packed_monomial monom, int deg, poly& syz
   std::swap(level(1)[level(1).size()-1].mSyzygy, syzygy);
   return true;
 }
-//long SchreyerFrame::insert(res_packed_monomial monom)
-//{
-//  return insertBasic(currentLevel(), monom, degree(currentLevel(), monom));
-//}
 
 bool SchreyerFrame::debugCheckOrder(int lev) const
 {

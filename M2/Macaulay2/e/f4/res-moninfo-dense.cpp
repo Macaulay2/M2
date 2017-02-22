@@ -116,6 +116,16 @@ void ResMonoidDense::showAlpha(res_const_packed_monomial m) const
   fprintf(stdout, "<%d>", comp);
 }
 
+void ResMonoidDense::dump(std::ostream& o, res_const_packed_monomial mon)
+{
+  o << "[";
+  for (int ell = 0; ell < monomial_size(mon); ell++)
+    {
+      if (ell != 0) o << " ";
+      o << mon[ell];
+    }
+  o << "]";
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

@@ -7,6 +7,7 @@
 #include "res-moninfo-sparse.hpp"
 
 using ResMonoid = ResMonoidDense;
+//using ResMonoid = ResMonoidSparse;
 
 #endif
 
