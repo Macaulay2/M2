@@ -22,43 +22,78 @@ genNumArgs = method()
 genArg = method()
 genFunctionCall = method()
 
-genTitle(String) := (fcnName) -> (innards) -> (
-    "export "|fcnName|"(e:Expr):Expr := (\n"|
-      innards|"\n"|
-      indentStr|");\n"|
-      "setupfun(\""|fcnName|"\","|fcnName|");"
-    )
-genNumArgs ZZ := (N) -> innards -> (
-    indentStr|"when e is s:Sequence do (\n"|
-    indentStr|"if length(s) == "|N|" then (\n"|
-    innards|"\n"|
-    indentStr|") else wrongNumArgs("|N|")\n"|
-    indentStr|") else wrongNumArgs("|N|")"
- )
+indent = method()
+indent String := (str) -> indentStr | str
+indent List := (L) -> L/indent
+indent(ZZ, String) := (n,str) -> concatenate(n:indentStr) | str
+indent(ZZ, List) := (n,L) -> L/(str -> indent(n,str))
+
+str = method()
+str String := (str) -> str | "\n"
+str List := (L) -> concatenate(L/str)
+
+genTitle(String) := (fcnName) -> (innards) ->
+    {
+        "export "|fcnName|"(e:Expr):Expr := (",
+        indent innards,
+        indent ");",
+        "setupfun(\""|fcnName|"\","|fcnName|");"
+    }
+genNumArgs ZZ := (N) -> innards ->
+    {
+      "when e is s:Sequence do (",
+      "if length(s) == "|N|" then (",
+      innards,
+      ") else WrongNumArgs("|N|")",
+      ") else WrongNumArgs("|N|")"
+    }
 
 genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
-    suffix := celltype#argtype#2;
-    indentStr|"when s."|argnum|" is wrapped"|argname|":"|celltype#argtype#0|" do ("|argname|" := wrapped"|argname|suffix|";\n"|
-    innards|"\n"|
-    indentStr|") else WrongArg("|argnum|",\""|celltype#argtype#1|"\")"
-    )
-
-
-genFunctionCall(String, String, Sequence) := (fcnname, returntype, args) -> (innards) -> (
-    innards := "toExpr(Ccode("|celltype#returntype#3, XXX
-    str := indentStr | indentStr | innards;
+    suffix := celltype#argtype#Suffix;
+    {
+      "when s."|argnum|" is wrapped"|argname|":"|celltype#argtype#DType|" do ("|argname|" := wrapped"|argname|suffix|";",
+      innards,
+      ") else WrongArg("|argnum|",\""|celltype#argtype#Synonym|"\")"
+      }
+  )
+        
+genFunctionCall(String, String, Sequence) := (fcnname, returntype, args) -> (
+    argnames := (toList args)/(x -> x#0);
+    cargs := (concatenate between(", \",\", ", argnames)) | ", ";
+    innards := {
+        "toExpr(Ccode("|celltype#returntype#DType|",",
+        indent ///"///|fcnname|///(",///,
+        indent indent cargs,
+        indent ///")"///,
+        "))"
+        };
+    L := indent innards;
     scan(#args, i -> (
         argnum := #args-1-i;
         argtype := args#argnum#1;
         argname := args#argnum#0;
-        str = (genArg(argnum, argtype,argname)) str;
+        L = (genArg(argnum, argtype,argname)) L;
         ));
-    (genTitle fcnname) (genNumArgs (#args)) str
+    (genTitle fcnname) (genNumArgs (#args)) L
     )
 end--
 restart
 load "generateD.m2"
-print ((genFunctionCall("rawHomogenizeMatrix", "Matrix", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix"))) "innards")
+
+(genTitle "foo") "innards"
+str oo
+
+(genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
+str oo
+print (genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
+
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawHomogenizeMatrix(",
+        a,",",
+        b,","
+        c,")"
+    ))
+
 
 (genArg(1, "Matrix", "M")) (genArg(2, "Matrix", "N")) (indentStr | "innards")
 (genTitle "rawHomogenizeMatrix") "innards"
