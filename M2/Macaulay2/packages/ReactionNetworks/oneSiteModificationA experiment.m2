@@ -13,6 +13,7 @@ R = createRing(A, QQ)
 
 F = join(subRandomInitVals A, subRandomReactionRates A)
 I = ideal F
+netList flatten entries mingens I
 E = eliminate(drop(toList(apply(0..length A.ConcentrationRates-1, i-> 
 		value(A.ConcentrationRates#i))),{2,2}), I)
 
@@ -43,6 +44,7 @@ R = createRing(C'', QQ)
 
 F = join(subRandomInitVals C'', subRandomReactionRates C'')
 I = ideal F
+netList flatten entries mingens I
 E = eliminate(drop(toList(apply(0..length C''.ConcentrationRates-1, i-> 
 		value(C''.ConcentrationRates#i))),{2,2}), I)
 
@@ -77,6 +79,7 @@ R = createRing(C', QQ)
 
 F = join(subRandomInitVals C', subRandomReactionRates C')
 I = ideal F
+netList flatten entries mingens I
 E = eliminate(drop(toList(apply(0..length C'.ConcentrationRates-1, i-> 
 		value(C'.ConcentrationRates#i))),{2,2}), I)
 
@@ -118,6 +121,7 @@ R = createRing(D, QQ)
 
 F = join(subRandomInitVals D, subRandomReactionRates D)
 I = ideal F
+netList flatten entries mingens I
 E = eliminate(drop(toList(apply(0..length D.ConcentrationRates-1, i-> 
 		value(D.ConcentrationRates#i))),{2,2}), I)
 
