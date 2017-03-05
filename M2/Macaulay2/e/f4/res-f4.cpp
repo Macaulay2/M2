@@ -242,13 +242,16 @@ private:
   static long ncmps;
   static long ncmps0;
 public:
+#if 0
   int compare(value a, value b)
   {
     ncmps ++;
     fprintf(stdout, "ERROR: should not get here\n");
-    return M.compare_grevlex(cols[a],cols[b]);
+    //return M.compare_grevlex(cols[a],cols[b]);
+    return 0;
   }
-
+#endif
+  
   bool operator()(value a, value b)
   {
     ncmps0++;
@@ -350,7 +353,7 @@ void F4Res::reorderColumns()
     }
 
   if (M2_gbTrace >= 2)
-    fprintf(stderr, "  ncomparisons = ");
+    fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
 
   std::stable_sort(column_order, column_order+ncols, C);
 

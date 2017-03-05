@@ -32,6 +32,7 @@ ResMonoidDense::ResMonoidDense(int nvars0,
   ncalls_quotient_as_vp = 0;
 
   nweights = 0;
+#if 0  
   if (moType == MonomialOrderingType::Lex) // moIsLex(mo)
     {
       compare = &ResMonoidDense::compare_lex;
@@ -55,7 +56,8 @@ ResMonoidDense::ResMonoidDense(int nvars0,
       if (M2_gbTrace >= 1)
         fprintf(stderr, "weight order\n");
     }
-
+#endif
+  
   nslots = 2 + nvars + nweights;
   firstvar = 2 + nweights;
 }

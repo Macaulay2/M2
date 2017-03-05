@@ -250,6 +250,7 @@ public:
 
   void showAlpha(res_const_packed_monomial m) const;
 
+#if 0  
   int compare_grevlex(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_compare++;
     res_const_packed_monomial m1 = m+nslots;
@@ -264,7 +265,8 @@ public:
     if (cmp > 0) return -1;
     return 0;
   }
-
+#endif
+  
   int compare_schreyer(res_const_packed_monomial m, res_const_packed_monomial n,
                        res_const_packed_monomial m0, res_const_packed_monomial n0,
                        component_index tie1, component_index tie2) const {
@@ -279,7 +281,7 @@ public:
     showAlpha(m0);
     printf("  n0=");    
     showAlpha(n0);
-    printf("  tiebreakers: %ld %ld\n", tie1, tie2);
+    printf("  tiebreakers: %d %d\n", tie1, tie2);
     #endif
     res_const_packed_monomial m1 = m+nslots;
     res_const_packed_monomial n1 = n+nslots;
@@ -296,6 +298,7 @@ public:
     return 0;
   }
 
+#if 0  
   int compare_lex(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_compare++;
     res_const_packed_monomial m1 = m+2;
@@ -334,7 +337,8 @@ public:
   }
 
   int (ResMonoidDense::*compare)(res_const_packed_monomial m, res_const_packed_monomial n) const;
-
+#endif
+  
   void variable_as_vp(int v,
                       res_varpower_monomial result) const
   {

@@ -19,6 +19,7 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
 
   ncalls_hash_value = 0;
   ncalls_compare = 0;
+  ncalls_compare_grevlex = 0;
   ncalls_mult = 0;
   ncalls_get_component = 0;
   ncalls_from_exponent_vector = 0;
@@ -35,14 +36,14 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
   mNumWeights = 0;
   if (moType == MonomialOrderingType::Lex) // moIsLex(mo)
     {
-      mCompareFcn = &ResMonoidSparse::compare_lex;
+      //      mCompareFcn = &ResMonoidSparse::compare_lex;
 
       if (M2_gbTrace >= 1)
         fprintf(stderr, "lex order\n");
     }
   else if (moType == MonomialOrderingType::GRevLex) // moIsGRevLex(mo)
     {
-      mCompareFcn = &ResMonoidSparse::compare_grevlex;
+      //      mCompareFcn = &ResMonoidSparse::compare_grevlex;
 
       if (M2_gbTrace >= 1)
         fprintf(stderr, "grevlex order\n");
@@ -51,7 +52,7 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
     {
       mWeightVectors = weightvecs;
       mNumWeights = static_cast<int>(mWeightVectors.size()) / nvars;
-      mCompareFcn = &ResMonoidSparse::compare_weightvector;
+      //      mCompareFcn = &ResMonoidSparse::compare_weightvector;
 
       if (M2_gbTrace >= 1)
         fprintf(stderr, "weight order\n");
@@ -77,6 +78,7 @@ void ResMonoidSparse::show() const
     fprintf(stderr, "    %d\n",hashfcn[i]);
   fprintf(stderr, "  #calls hashval = %lu\n", ncalls_hash_value);
   fprintf(stderr, "  #calls compare = %lu\n", ncalls_compare);
+  fprintf(stderr, "  #calls grevlex = %lu\n", ncalls_compare_grevlex);
   fprintf(stderr, "  #calls mult    = %lu\n", ncalls_mult);
   fprintf(stderr, "  #calls get comp= %lu\n", ncalls_get_component);
   fprintf(stderr, "  #calls fromexp = %lu\n", ncalls_from_exponent_vector);
