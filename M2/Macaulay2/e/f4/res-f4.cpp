@@ -594,6 +594,9 @@ void F4Res::construct(int lev, int degree)
   mFrame.timeMakeMatrix += seconds(timeB-timeA);  
 
   if (M2_gbTrace >= 2)
+    mHashTable.dump();
+  
+  if (M2_gbTrace >= 2)
     std::cout << "  make matrix time: " << seconds(timeB-timeA) << " sec"  << std::endl;
 
 #if 0

@@ -80,6 +80,7 @@ private:
   unsigned long hashmask;
 
   unsigned long threshold;
+  unsigned long nfind_or_insert;
   unsigned long count;
   unsigned long nclashes;
   unsigned long max_run_length;

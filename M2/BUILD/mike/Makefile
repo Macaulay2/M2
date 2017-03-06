@@ -57,6 +57,7 @@ darwin64-clang : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download \
+		--enable-dmg \
 		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-clang-3.8 : always
