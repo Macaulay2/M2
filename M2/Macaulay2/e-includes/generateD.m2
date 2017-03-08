@@ -42,13 +42,15 @@ celltype = new HashTable from {
     "MatrixOrNull" => hashTable {
         DType => "RawMatrixOrNull",
         Synonym => "a raw matrix or null", 
-        Suffix => ".p"
+        Prefix => "&",
+        Suffix => ""
         }
     }
 
 indentStr = "  ";
 genTitle = method()
 genNumArgs = method()
+genOneArg = method()
 genArg = method()
 genFunctionCall = method()
 
@@ -78,6 +80,29 @@ genNumArgs ZZ := (N) -> innards ->
       ") else WrongNumArgs("|N|")"
     }
 
+genNumArgs ZZ := (N) -> innards -> (
+    if N === 1 then (
+        {
+            "when e"
+        }
+        )
+    else {
+      "when e is s:Sequence do (",
+      "if length(s) == "|N|" then (",
+      innards,
+      ") else WrongNumArgs("|N|")",
+      ") else WrongNumArgs("|N|")"
+    })
+
+genOneArg(String,String) := (argtype, argname) -> (innards) -> (
+    suffix := celltype#argtype#Suffix;
+    {
+      "when e is wrapped"|argname|":"|celltype#argtype#DType|" do ("|argname|" := wrapped"|argname|suffix|";",
+      innards,
+      ///) else WrongArg("///|celltype#argtype#Synonym|///")///
+      }
+  )
+
 genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
     suffix := celltype#argtype#Suffix;
     {
@@ -87,7 +112,8 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
       }
   )
         
-genFunctionCall(String, String, Sequence) := (fcnname, returntype, args) -> (
+genFunctionCall(String, String, Thing) := (fcnname, returntype, args) -> (
+    if not instance(args,Sequence) then args = 1:args;
     argnames := (toList args)/(x -> x#0);
     cargs := (concatenate between(", \",\", ", argnames)) | ", ";
     innards := {
@@ -98,13 +124,17 @@ genFunctionCall(String, String, Sequence) := (fcnname, returntype, args) -> (
         "))"
         };
     L := indent innards;
-    scan(#args, i -> (
-        argnum := #args-1-i;
-        argtype := args#argnum#1;
-        argname := args#argnum#0;
-        L = (genArg(argnum, argtype,argname)) L;
-        ));
-    (genTitle fcnname) (genNumArgs (#args)) L
+    if #args === 1 then 
+       (genTitle fcnname) (genOneArg (args#0#1, args#0#0)) L
+    else if #args > 1 then (
+      scan(#args, i -> (
+              argnum := #args-1-i;
+              argtype := args#argnum#1;
+              argname := args#argnum#0;
+              L = (genArg(argnum, argtype,argname)) L;
+              ));
+      (genTitle fcnname) (genNumArgs (#args)) L
+      )
     )
 end--
 restart
@@ -121,7 +151,7 @@ str (genFunctionCall(
 str (genFunctionCall(
         "rawRingElementAntipode",
         "RingElementOrNull", 
-        1:("a"=>"RingElement")
+        "a"=>"RingElement"
         ))
 str (genFunctionCall(
         "rawTerm",
