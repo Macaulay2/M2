@@ -4,6 +4,36 @@
 -- e.g. 
 
 celltype = new HashTable from {
+    "Monomial" => hashTable {
+        DType => "RawMonomialCell",
+        Synonym => "a raw monomial", 
+        Suffix => ".p"
+        },
+    "MonomialOrNull" => hashTable {
+        DType => "RawMonomialOrNull",
+        Synonym => "a raw monomial or null", 
+        Suffix => ".p"
+        },
+    "Ring" => hashTable {
+        DType => "RawRingCell",
+        Synonym => "a raw ring", 
+        Suffix => ".p"
+        },
+    "RingOrNull" => hashTable {
+        DType => "RawRingOrNull",
+        Synonym => "a raw ring or null", 
+        Suffix => ".p"
+        },
+    "RingElement" => hashTable {
+        DType => "RawRingElementCell",
+        Synonym => "a raw ring element", 
+        Suffix => ".p"
+        },
+    "RingElementOrNull" => hashTable {
+        DType => "RawRingElementOrNull",
+        Synonym => "a raw ring element", 
+        Suffix => ".p"
+        },
     "Matrix" => hashTable {
         DType => "RawMatrixCell",
         Synonym => "a raw matrix", 
@@ -83,7 +113,22 @@ load "generateD.m2"
 (genTitle "foo") "innards"
 str oo
 
-(genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
+str (genFunctionCall(
+        "rawHomogenizeMatrix", 
+        "MatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")
+        ))
+str (genFunctionCall(
+        "rawRingElementAntipode",
+        "RingElementOrNull", 
+        1:("a"=>"RingElement")
+        ))
+str (genFunctionCall(
+        "rawTerm",
+        "RingElementOrNull",
+        ("a"=>"Ring", "b"=>"RingElement", "c" => "Monomial")
+        ))
+
 str oo
 print (genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
 
