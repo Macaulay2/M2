@@ -3,15 +3,19 @@ load "example-CRN.m2"
 setRandomSeed 0
 -- system for example from Elizabeth's talk
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
+(V,npaths) = monodromySolve G
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
 assert(length V.PartialSols ==4)
 Gr = V.Graph
 
 R = ring Gr.Family
-R' = CC[gens R]
-T =  (flattenRing R)#0
-mSys = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
 S = coefficientRing R
+T =  CC[a][gens S, gens R]
+mSys = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
+slicedSys = mSys | {sub(random(1,CC[gens R]), T)-a} | apply(5,i->sub(random(1,CC[gens S])-1, T))
+(V',npaths) = monodromySolve polySystem slicedSys
+length V'.PartialSols
+
 m = numgens S
 n = numgens R'
 vs = V.BasePoint.Coordinates
