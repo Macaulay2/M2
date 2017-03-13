@@ -59,7 +59,7 @@ private:
   void reorderColumns();
   void makeMatrix();
   void gaussReduce();
-
+  
   void debugOutputReducers();
   void debugOutputColumns();
   void debugOutputMatrix(std::vector<Row>&);

@@ -476,7 +476,9 @@ numericRank = method()
 numericRank Matrix := (M) -> (
     if ring M =!= RR_53 then error "expected real matrix";
     (sigma, U, Vt) := SVD M;
-    # select(sigma, s -> s > 1e-10)
+    pos := select(#sigma-1, i -> sigma#i/sigma#(i+1) > 1e4);
+    if #pos === 0 then #sigma else (min pos)+1
+    --# select(sigma, s -> s > 1e-10)
     )
 
 minimizeBetti = method()
@@ -608,8 +610,10 @@ SVDHomology ChainComplex := opts -> (C) -> (
             (sigma1, U, Vt) = SVD m1;
             sigma1 = flatten entries sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
-            rks#ell = # select(sigma1, x -> x > 1e-10);
-            smallestSing#ell = sigma1#(rks#ell-1);
+            pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e4);
+            rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
+            --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
+            smallestSing#ell = (sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
@@ -670,6 +674,7 @@ TEST ///
   -- XXXX
 restart
   needsPackage "FreeResolutions"
+  needsPackage "AGRExamples"
   R = QQ[a..d]
   F = randomForm(3, R)
   I = ideal fromDual matrix{{F}}
@@ -678,7 +683,7 @@ restart
   Rp = (ZZ/32003)(monoid R)
   R0 = (RR_53) (monoid R)
   Ls = constantStrands(C,RR_53)  
-  L = Ls_1
+  L = Ls#3
   Lp = laplacians L
   Lp/eigenvalues
   Lp/SVD/first
@@ -717,17 +722,22 @@ restart
   deg = 6
   nextra = 10
   nextra = 20
+  nextra = 30
   --F = randomForm(deg, R)
-  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
-  I = ideal fromDual matrix{{F}};
+  setRandomSeed "1000"
+   F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
+elapsedTime  I = ideal fromDual matrix{{F}};
   C = res(I, FastNonminimal=>true)
 
+  Rp = (ZZ/32003)(monoid R)
+  R0 = (RR_53) (monoid R)
+  minimalBetti sub(I, Rp)
   SVDBetti C  
 
   betti C
   Ls = constantStrands(C,RR_53)  
   Lp = constantStrands(C,ZZ/32003)  
-  D = Ls_3
+  D = Ls#7
   
   (F, hs, minsing) = SVDComplex D;
   (hs, minsing) = SVDHomology D;
@@ -946,6 +956,7 @@ TEST ///
   -- XXXX
 restart
   needsPackage "FreeResolutions"
+  needsPackage "AGRExamples"
   deg = 6
   nv = 7
   nextra = binomial(nv + 1, 2) - nv - 10
@@ -963,7 +974,8 @@ restart
   elapsedTime Cp = res(Ip, FastNonminimal=>true)
   elapsedTime minimalBetti Ip
   R0 = (RR_53) (monoid R)
-
+  SVDBetti C
+  
   Ls = constantStrands(C,RR_53)  
   mats = flatten for L in Ls list (
       kf := keys L.dd;

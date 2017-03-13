@@ -154,6 +154,46 @@ void ResGausserZZp::sparseCancel(CoefficientVector r,
   result.push_back(a);
 }
 
+void ResGausserZZp::sparseCancel(CoefficientVector r,
+                              CoefficientVector sparse,
+                              ComponentIndex* comps
+                              ) const
+  // dense += c * sparse, where c is chosen to cancel column comps[0].
+  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+  // The value of c is appended to not recorded
+{
+  // r += a*sparse
+  // ASSUMPTIONS:
+  //   len > 0,
+  //   sparse[0] = 1 or -1 (in the field)
+  // where a is
+  //   r[comps[0]], if sparse[0]==1
+  //   -r[comps[0]], if sparse[0]==-1
+  // r = [...., b, .....]
+  // sparse = [1,...]  then a = -b
+  // sparse = [-1,...] then a = b
+
+  auto& vec = coefficientVector(r);
+  auto elems = vec.data();
+  auto& svec = coefficientVector(sparse);
+  auto sparseelems = svec.data();
+  ComponentIndex len = static_cast<ComponentIndex>(svec.size());
+
+  int one;
+  set_one(one);
+  
+  // Basically, over ZZ/p, we are doing: r += a*sparse,
+  // where sparse is monic, and a is -r.coeffs[*comps].
+
+  n_dense_row_cancel++;
+  n_subtract_multiple += len;
+  FieldElement a = elems[*comps];
+  if (sparseelems[0] != one) // should be minus_one
+    Kp->negate(a, a);
+  for (ComponentIndex i=len; i>0; i--)
+    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
+}
+
 void ResGausserZZp::out(std::ostream& o, FieldElement& f) const
 {
   o << Kp->to_int(f);
@@ -198,6 +238,7 @@ void ResGausserZZp::debugDisplayRow(std::ostream& o,
       else
         {
           out(o, *coeff);
+          o << " ";
           ++coeff;
           ++monom;
         }

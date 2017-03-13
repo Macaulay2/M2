@@ -209,6 +209,15 @@ public:
     return true;
   }
 
+  bool is_divisible_by_var_in_range(res_const_packed_monomial monom, int lo, int hi) const
+  {
+    monom += 2 + nweights;
+
+    for (int i=lo; i<=hi; i++)
+      if (monom[i] > 0) return false;
+    return true;
+  }
+  
   bool check_monomial(res_const_packed_monomial m) const {
     // Determine if m represents a well-formed monomial.
     m++;

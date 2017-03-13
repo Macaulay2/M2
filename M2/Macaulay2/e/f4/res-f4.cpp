@@ -480,6 +480,8 @@ void F4Res::makeMatrix()
           std::cout << "makeMatrix red: " << mNextReducerToProcess << " #rows = " << mReducers.size() << std::endl;
     }
 
+  reorderColumns();
+  
 #if 0
   debugOutputReducers();
   debugOutputColumns();
@@ -491,12 +493,24 @@ void F4Res::makeMatrix()
   debugOutputMatrix(mSPairs);
   debugOutputMatrixSparse(mSPairs);
 #endif
-  reorderColumns();
 }
 
-//#define DEBUG_GAUSS 
+//#define DEBUG_GAUSS
+
 void F4Res::gaussReduce()
 {
+  bool onlyConstantMaps = false;
+  std::vector<bool> track(mReducers.size());
+  if (onlyConstantMaps) // and not exterior algebra?
+    {
+      for (auto i=0; i<mReducers.size(); i++)
+        {
+          track[i] = monoid().is_divisible_by_var_in_range(mReducers[i].mLeadTerm,
+                                                           monoid().n_vars()-mThisLevel+1,
+                                                           monoid().n_vars()-1);
+        }
+    }
+  
   // Reduce to zero every spair. Recording creates the
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
@@ -548,37 +562,45 @@ void F4Res::gaussReduce()
               mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
               mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
               #endif
-          
-              mRing.resGausser().sparseCancel(gauss_row,
-                                              mReducers[firstcol].mCoeffs,
-                                              mReducers[firstcol].mComponents.data(),
-                                              result.coefficientInserter()
-                                              );
 
-              #ifdef DEBUG_GAUSS
-              mRing.resGausser().debugDisplay(std::cout, gauss_row); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
-              #endif
-              
-              result.pushBackTerm(mReducers[firstcol].mLeadTerm);
-
-              #ifdef DEBUG_GAUSS
-              std::cout << "done with col " << firstcol << std::endl;
-              #endif
-              
+              if (onlyConstantMaps and not track[firstcol])
+                {
+                  mRing.resGausser().sparseCancel(gauss_row,
+                                                  mReducers[firstcol].mCoeffs,
+                                                  mReducers[firstcol].mComponents.data()
+                                                  );
+                }
+              else
+                {
+                  mRing.resGausser().sparseCancel(gauss_row,
+                                                  mReducers[firstcol].mCoeffs,
+                                                  mReducers[firstcol].mComponents.data(),
+                                                  result.coefficientInserter()
+                                                  );
+                  
+                  #ifdef DEBUG_GAUSS
+                  mRing.resGausser().debugDisplay(std::cout, gauss_row); fprintf(stdout, "\n");
+                  mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
+                  mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
+                  #endif
+                  
+                  result.pushBackTerm(mReducers[firstcol].mLeadTerm);
+                  
+                  #ifdef DEBUG_GAUSS
+                  std::cout << "done with col " << firstcol << std::endl;
+                  #endif
+                }
               firstcol = mRing.resGausser().nextNonzero(gauss_row, firstcol+1, lastcol);
             }
         }
-      #ifdef DEBUG_GAUSS
+#ifdef DEBUG_GAUSS
       std::cout << "about to set syz" << std::endl;
-      #endif
+#endif
       result.setPoly(syz);
-      #ifdef DEBUG_GAUSS
+#ifdef DEBUG_GAUSS
       std::cout << "just set syz" << std::endl;
-      #endif
+#endif
     }
-
   mRing.resGausser().deallocate(gauss_row);
 }
 
@@ -649,6 +671,7 @@ void F4Res::construct(int lev, int degree)
 
 void F4Res::debugOutputReducers()
 {
+  std::cout << "-- reducers(rows) -- " << std::endl;
   auto end = mReducers.cend();
   for (auto i=mReducers.cbegin(); i != end; ++i)
     {
@@ -658,6 +681,7 @@ void F4Res::debugOutputReducers()
 }
 void F4Res::debugOutputColumns()
 {
+  std::cout << "-- columns --" << std::endl;  
   auto end = mColumns.cend();
   for (auto i=mColumns.cbegin(); i != end; ++i)
     {
@@ -670,9 +694,9 @@ void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
 {
   for (ComponentIndex i=0; i<rows.size(); i++)
     {
-      std::cout << "coeffs = ";
+      std::cout << "coeffs[" << i << "] = ";
       mRing.resGausser().debugDisplay(std::cout, rows[i].mCoeffs);
-      std::cout << std::endl << " comps = ";
+      std::cout  << " comps = ";
       for (long j=0; j<rows[i].mComponents.size(); ++j)
         std::cout << rows[i].mComponents[j] << " ";
       std::cout << std::endl;

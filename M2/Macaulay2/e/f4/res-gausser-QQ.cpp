@@ -172,6 +172,54 @@ void ResGausserQQ::sparseCancel(CoefficientVector r,
   result.push_back(a);
 }
 
+void ResGausserQQ::sparseCancel(CoefficientVector r,
+                              CoefficientVector sparse,
+                              ComponentIndex* comps
+                              ) const
+  // dense += c * sparse, where c is chosen to cancel column comps[0].
+  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+  // The value of c is not recorded.
+{
+  // r += a*sparse
+  // ASSUMPTIONS:
+  //   len > 0,
+  //   sparse[0] = 1 or -1 (in the field)
+  // where a is
+  //   r[comps[0]], if sparse[0]==1
+  //   -r[comps[0]], if sparse[0]==-1
+  // r = [...., b, .....]
+  // sparse = [1,...]  then a = -b
+  // sparse = [-1,...] then a = b
+
+  auto& vec = coefficientVector(r);
+  auto elems = vec.data();
+  auto& svec = coefficientVector(sparse);
+  auto sparseelems = svec.data();
+  ComponentIndex len = static_cast<ComponentIndex>(svec.size());
+
+  // Basically, over ZZ/p, we are doing: r += a*sparse,
+  // where sparse is monic, and a is -r.coeffs[*comps].
+
+  n_dense_row_cancel++;
+  n_subtract_multiple += len;
+  FieldElement a = elems[*comps];
+  if (sparseelems[0].mDouble < 0) // should be minus_one, since it is either 1 or -1.
+    {
+      a.mDouble = -a.mDouble;
+      Kp1.negate(a.mMod1, a.mMod1);
+    }
+  for (ComponentIndex i=len; i>0; i--)
+    {
+      FieldElement& sparse = *sparseelems++;
+      FieldElement& result = elems[*comps++];
+      result.mDouble = result.mDouble - a.mDouble * sparse.mDouble;
+      Kp1.subtract_multiple(result.mMod1, a.mMod1, sparse.mMod1);
+      int newsize = a.mDenominatorSize + sparse.mDenominatorSize;
+      if (newsize > result.mDenominatorSize)
+        result.mDenominatorSize = newsize;
+    }
+}
+
 void ResGausserQQ::out(std::ostream& o, FieldElement& f) const
 {
   o << "[" << f.mDouble << "," << Kp1.coerceToLongInteger(f.mMod1) << "," << f.mDenominatorSize << "]";

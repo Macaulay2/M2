@@ -82,6 +82,7 @@ MonomialHashTable<ValueType>::~MonomialHashTable()
   // Nothing more to do here
 }
 
+#if 0
 template <typename ValueType>
 bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
 {
@@ -128,6 +129,49 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
               monequal_fails++;
             }
           nclashes++;
+        }
+    }
+}
+#endif
+template <typename ValueType>
+bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
+{
+  auto mhash = HASHVALUE(m);
+  auto hashval = mhash & hashmask;
+  if (!hashtab[hashval])
+    {
+      // No entry is there.  So, we insert it directly.
+      hashtab[hashval] = m;
+      result = m;
+      count++;
+      if (count > threshold) grow();
+      return false;
+    }
+  else
+    {
+      // Something is there, so we need to find either this value,
+      // or a free spot, whichever comes first.
+      value *hashtop = hashtab.get() + size;
+      for (value *i = hashtab.get() + hashval; ; i++)
+        {
+          if (i == hashtop) i = hashtab.get();
+          if (!(*i))
+            {
+              // Spot is empty, so m is a new value
+              *i = m;
+              result = m;
+              count++;
+              if (count > threshold) grow();
+              return false;
+            }
+          //          if (HASHVALUE(*i) == mhash)
+          //            {
+              if (MONOMIAL_EQUAL(m, *i))
+                {
+                  result = *i;
+                  return true;
+                }
+              //            }
         }
     }
 }
