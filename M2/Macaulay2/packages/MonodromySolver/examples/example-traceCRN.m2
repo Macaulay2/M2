@@ -1,20 +1,16 @@
-(p0, x0) = createSeedPair(G);
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>4,Verbose=>true)
-Gr = V.Graph
-
 load "example-CRN.m2"
 
 setRandomSeed 0
 -- system for example from Elizabeth's talk
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
-
+assert(length V.PartialSols ==4)
 Gr = V.Graph
 
 R = ring Gr.Family
 R' = CC[gens R]
 T =  (flattenRing R)#0
-dadSys = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
+mSys = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
 S = coefficientRing R
 m = numgens S
 n = numgens R'
@@ -55,14 +51,14 @@ formsy= apply(m, i->sub(random(1,S),T))
 patchesx= apply(m, i->sub(random(1,R'),T))
 patchesy= apply(m, i->sub(random(1,S),T))
 
-endSys = polySystem(dadSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + patchesx#i * patchesy#i))
+endSys = polySystem(mSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + patchesx#i * patchesy#i))
 tracked = track(masterSys,endSys,masterSols)
 
 -- now create parallel slices to endSys
 -- tracking seems to fail periodically here
 (r1,r2) = (random(CC), random(CC))
-E1 = polySystem(dadSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + r1* patchesx#i * patchesy#i))
-E2 = polySystem(dadSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + r2* patchesx#i * patchesy#i))
+E1 = polySystem(mSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + r1* patchesx#i * patchesy#i))
+E2 = polySystem(mSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + r2* patchesx#i * patchesy#i))
 t1 = track(endSys,E1,tracked)
 t2 = track(endSys,E2,tracked)
 
