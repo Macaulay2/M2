@@ -14,6 +14,7 @@ R = createRing(A, QQ)
 F = join(subRandomInitVals A, subRandomReactionRates A)
 I = ideal F
 netList flatten entries mingens I
+
 E = eliminate(drop(toList(apply(0..length A.ConcentrationRates-1, i-> 
 		value(A.ConcentrationRates#i))),{2,2}), I)
 
@@ -45,8 +46,49 @@ R = createRing(C'', QQ)
 F = join(subRandomInitVals C'', subRandomReactionRates C'')
 I = ideal F
 netList flatten entries mingens I
+
+S = QQ[value(C''.ConcentrationRates)#0, value(C''.ConcentrationRates)#1,
+    value(C''.ConcentrationRates)#3, value(C''.ConcentrationRates)#4,
+    value(C''.ConcentrationRates)#5, value(C''.ConcentrationRates)#6,
+    value(C''.ConcentrationRates)#2, MonomialOrder => {Eliminate 6}]
+J = sub(I,S)
+netList flatten entries gens gb J
+
+gb(J, BasisElementLimit=>1)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>2)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>3)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>4)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>5)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>6)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>7)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>8)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>9)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>10)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>11)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>12)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>13)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>14)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>15)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>16)
+netList flatten entries gbSnapshot J
+
 E = eliminate(drop(toList(apply(0..length C''.ConcentrationRates-1, i-> 
-		value(C''.ConcentrationRates#i))),{2,2}), I)
+		value(C''.ConcentrationRates#i))),{6,6}), I)
 
 degree I
 dim sub(I, QQ[C''.ConcentrationRates]) 

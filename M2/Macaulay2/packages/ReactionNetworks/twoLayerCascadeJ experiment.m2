@@ -10,8 +10,7 @@ I = ideal FJ
 degree I
 dim sub(I, QQ[J.ConcentrationRates])
 
-J' = sub(twoLayerCascadeJ(), {"S_0" => "S_1", "S_1" => "S_2", 
-	"F_1" => "F_2", "F_2" => "F_3", "P_0" => "P_1", "P_1" => "P_2"})
+J' = sub(twoLayerCascadeJ(), {"S_0" => "S_1", "S_1" => "S_2"})
 J2 = glue(J,J')
 R = createRing(J2, QQ)
 
@@ -21,7 +20,7 @@ netList flatten entries mingens I
 degree I
 dim sub(I, QQ[J2.ConcentrationRates]) --positive dimension???
 
-J.ConcentrationRates
+J2.ConcentrationRates
 
 
 
