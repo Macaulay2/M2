@@ -45,27 +45,6 @@ GC = createPolySystem(C, FF)
 Q = reactionNetwork "A <--> 2B, A+3C<-->D, B+4E-->A+3C, A+3C-->D, D-->B+4E"
 GQ = createPolySystem(Q, FF)
 
--- 5 copies of oneSiteModificationA
-A = oneSiteModificationA();
-A' = sub(oneSiteModificationA(), {"S_0" => "S_1", "S_1" => "S_2"});
-A'' = sub(oneSiteModificationA(), {"S_0" => "S_2", "S_1" => "S_3"});
-A'''=sub(oneSiteModificationA(), {"S_0" => "S_3", "S_1" => "S_4"});
-B = sub(oneSiteModificationA(), {"S_0" => "S_4", "S_1" => "S_5"});
-C'' = glue(A,A');
-C' = glue(C'',A'');
-D = glue (C',A''');
-J = glue(D,B)
-H = createPolySystem(J, FF)
-
--- experiment 
-X = reactionNetwork "A+B <--> C, X <--> 2A+D, 2A+D <--> Y, D <--> C+W, B+D <--> Z"
-XS = createPolySystem(X, FF)
-
-X' = reactionNetwork ({"A+B <--> C", "X <--> 2A+D", "2A+D <--> Y", 
-    "D <--> C+W", "B+D <--> Z", "0 <--> A", "0 <--> B", "0 <--> C", 
-    "0 <--> D", "0 <--> W", "0 <--> X", "0 <--> Y", "0 <--> Z"}, NullSymbol => "0")
-X'S = createPolySystem(X', FF) --not working
-
 end ---------------------------------
 
 restart
@@ -82,10 +61,6 @@ assert(length V.PartialSols == 4)
 elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5)
 assert(length V.PartialSols == 6)
 
--- system for 5 copies of oneSiteModificationA
-(p0, x0) = createSeedPair(H,"initial parameters" => "one")
-elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5)
-
 -- system for wnt signaling pathway
 W = wnt()
 setRandomSeed 0
@@ -101,7 +76,7 @@ elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
 assert(length V.PartialSols == 9)
 
 -- wnt via Bertini
-specPolys = specializeSystem (p0,createPolySystem'overdetemined(W,FF,L));
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(W,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
