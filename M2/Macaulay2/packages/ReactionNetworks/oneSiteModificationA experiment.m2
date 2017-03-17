@@ -221,6 +221,24 @@ M = M'*B
 --compute mixed volume
 computeMixedVolume (flatten entries M)
 
+-- experiment
+X = reactionNetwork "A+B <--> C, X <--> 2A+D, 2A+D <--> Y, D <--> C+W, B+D <--> Z"
+R = createRing(X, QQ)
+F = join(subRandomInitVals X, subRandomReactionRates X)
+I = ideal F
+dim sub(I, QQ[X.ConcentrationRates])
+degree I
+M=sub(matrix{F}, CC[X.ConcentrationRates])
+solveSystem flatten entries M
+
+XAugmented = reactionNetwork ({"A+B <--> C", "X <--> 2A+D", "2A+D <--> Y", 
+    "D <--> C+W", "B+D <--> Z", "0 <--> A", "0 <--> B", "0 <--> C", 
+    "0 <--> D", "0 <--> W", "0 <--> X", "0 <--> Y", "0 <--> Z"}, NullSymbol => "0")
+RAugmented = createRing(XAugmented, QQ)
+FAugmented = join(subRandomInitVals XAugmented, subRandomReactionRates XAugmented)
+IAugmented = ideal FAugmented
+dim sub(IAugmented, QQ[XAugmented.ConcentrationRates])
+degree IAugmented
 
 
 FF = QQ

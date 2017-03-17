@@ -57,6 +57,15 @@ D = glue (C',A''');
 J = glue(D,B)
 H = createPolySystem(J, FF)
 
+-- experiment 
+X = reactionNetwork "A+B <--> C, X <--> 2A+D, 2A+D <--> Y, D <--> C+W, B+D <--> Z"
+XS = createPolySystem(X, FF)
+
+X' = reactionNetwork ({"A+B <--> C", "X <--> 2A+D", "2A+D <--> Y", 
+    "D <--> C+W", "B+D <--> Z", "0 <--> A", "0 <--> B", "0 <--> C", 
+    "0 <--> D", "0 <--> W", "0 <--> X", "0 <--> Y", "0 <--> Z"}, NullSymbol => "0")
+X'S = createPolySystem(X', FF) --not working
+
 end ---------------------------------
 
 restart
