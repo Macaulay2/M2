@@ -45,6 +45,17 @@ GC = createPolySystem(C, FF)
 Q = reactionNetwork "A <--> 2B, A+3C<-->D, B+4E-->A+3C, A+3C-->D, D-->B+4E"
 GQ = createPolySystem(Q, FF)
 
+-- 5 copies of oneSiteModificationA
+A = oneSiteModificationA();
+A' = sub(oneSiteModificationA(), {"S_0" => "S_1", "S_1" => "S_2"});
+A'' = sub(oneSiteModificationA(), {"S_0" => "S_2", "S_1" => "S_3"});
+A'''=sub(oneSiteModificationA(), {"S_0" => "S_3", "S_1" => "S_4"});
+B = sub(oneSiteModificationA(), {"S_0" => "S_4", "S_1" => "S_5"});
+C'' = glue(A,A');
+C' = glue(C'',A'');
+D = glue (C',A''');
+J = glue(D,B)
+H = createPolySystem(J, FF)
 
 end ---------------------------------
 
@@ -61,6 +72,10 @@ assert(length V.PartialSols == 4)
 (p0, x0) = createSeedPair(G',"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5)
 assert(length V.PartialSols == 6)
+
+-- system for 5 copies of oneSiteModificationA
+(p0, x0) = createSeedPair(H,"initial parameters" => "one")
+elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5)
 
 -- system for wnt signaling pathway
 W = wnt()

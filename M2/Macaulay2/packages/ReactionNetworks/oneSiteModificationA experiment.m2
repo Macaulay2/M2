@@ -47,10 +47,14 @@ F = join(subRandomInitVals C'', subRandomReactionRates C'')
 I = ideal F
 netList flatten entries mingens I
 
-S = QQ[value(C''.ConcentrationRates)#0, value(C''.ConcentrationRates)#1,
-    value(C''.ConcentrationRates)#3, value(C''.ConcentrationRates)#4,
-    value(C''.ConcentrationRates)#5, value(C''.ConcentrationRates)#6,
-    value(C''.ConcentrationRates)#2, MonomialOrder => {Eliminate 6}]
+S = QQ[value(C''.ConcentrationRates)#2, 
+    value(C''.ConcentrationRates)#5,
+    value(C''.ConcentrationRates)#3, 
+    value(C''.ConcentrationRates)#6,
+    value(C''.ConcentrationRates)#0, 
+    value(C''.ConcentrationRates)#4,
+    value(C''.ConcentrationRates)#1, 
+    MonomialOrder => {Eliminate 1,Lex}]
 J = sub(I,S)
 netList flatten entries gens gb J
 
@@ -220,7 +224,7 @@ computeMixedVolume (flatten entries M)
 
 
 FF = QQ
-CEforms1 = matrix{conservationEquations(C,FF)}
+CEforms1 = conservationEquations(C,FF)
 CE1 =sub(CEforms1, apply(gens ring CEforms1, x -> x => 1)) - CEforms1
 SSE1 = steadyStateEquations C     	   
 T1 = (transpose CE1 || SSE1)
