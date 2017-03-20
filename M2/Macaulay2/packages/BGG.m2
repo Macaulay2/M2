@@ -1,7 +1,7 @@
 newPackage(
 	"BGG",
-    	Version => "1.4.1", 
-    	Date => "Jan 29, 2012",
+    	Version => "1.4.2", 
+    	Date => "Jan 11, 2016",
     	Authors => {
 	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"},
 	     {Name => "Wolfram Decker", Email => "decker@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/decker/"},
@@ -880,6 +880,26 @@ doc ///
     Text
       Forms a minimal free complex representing the direct image complex of $F$ in the
       derived category, where $F$ is a module, chain complex or map of modules.
+   Caveat
+    The option "Regularity" is currently not supported.
+///
+
+doc ///
+   Key
+    Regularity
+   Headline
+    Option for directImageComplex
+   Caveat
+    Currently not supported
+///
+doc ///
+   Key
+    Exterior
+   Headline
+    dual exterior algebra cached in a polynomial ring
+   Description
+    Text
+     checked for, and possibly installed, by "symmetricToExterior"
 ///
 
 doc ///
@@ -1070,6 +1090,7 @@ doc ///
 doc ///
    Key 
      universalExtension
+     (universalExtension, List, List)
    Headline
      Universal extension of vector bundles on P^1
    Usage
@@ -1367,6 +1388,6 @@ end
 
 restart
 uninstallPackage "BGG"
-notify=true
 installPackage "BGG"
+check "BGG"
 viewHelp BGG

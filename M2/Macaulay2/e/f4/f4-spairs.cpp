@@ -289,7 +289,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       //TODO: MES remove all uses of QuickSorter here.
       //      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
 
-      std::sort(bins[i].begin(), bins[i].end(), C);
+      std::stable_sort(bins[i].begin(), bins[i].end(), C);
 
       // Loop through each degree and potentially insert...
       spairs::iterator first = bins[i].begin();

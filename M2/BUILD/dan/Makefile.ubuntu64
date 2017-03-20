@@ -2,6 +2,9 @@
 
 PRODUCTION = yes
 
+# Ubuntu installs the include files for cddlib in an unusual place:
+CPPFLAGS += -I/usr/include/cdd
+
 ifeq ($(SHARED),yes)
 CONFIGOPTIONS += --enable-shared
 endif

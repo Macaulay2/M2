@@ -33,6 +33,8 @@ distributions/deb/macaulay2/postinst
 distributions/deb/macaulay2/prerm
 distributions/deb/macaulay2/preinst
 libraries/Makefile
+libraries/cohomcalg/Makefile
+libraries/topcom/Makefile
 libraries/atomic_ops/Makefile
 libraries/Makefile.library
 libraries/M2/Makefile

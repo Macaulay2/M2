@@ -54,7 +54,7 @@ namespace M2 {
   void ARingZZ::syzygy(const ElementType& a, const ElementType& b,
                        ElementType& x, ElementType& y) const
   {
-    M2_ASSERT(!is_zero(b));
+    assert(!is_zero(b));
     // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
     if (is_zero(a))
       {

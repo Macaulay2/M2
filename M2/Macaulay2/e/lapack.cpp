@@ -72,6 +72,41 @@ void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCCC>& resu
     }
 }
 
+void fill_from_lapack_upper(double* lapack_numbers,  // column-major order
+                            int numrows,
+                            int numcols,
+                            DMat<M2::ARingRR>& upper)
+// original matrix has size nrows x ncols
+// lapack_numbers is an array of this size
+// result: upper: size min(nrows, ncols) x ncols
+//
+// lapack_numbers is in column major form
+// upper is in row major form
+{
+  // At this point, upper should be a zero matrix.
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
+#if 0  
+  for (int i=0; i< numrows * numcols; ++i)
+    std::cout << lapack_numbers[i] << " ";
+  std::cout << std::endl;
+#endif
+  auto U = upper.rowMajorArray();
+
+  for (size_t c=0; c<upper.numColumns(); c++)
+    {
+      auto U1 = U;
+      for (size_t r=0; r<=c; r++)
+        {
+          if (r >= upper.numRows()) break;
+          *U1 = lapack_numbers[r];
+          U1 += upper.numColumns();
+        }
+      U++; // change to next column
+      lapack_numbers += numrows;
+    }
+}
+
 void fill_lower_and_upper(double* lapack_numbers,  // column-major order
                           DMat<M2::ARingRRR>& lower,
                           DMat<M2::ARingRRR>& upper)
@@ -84,8 +119,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -128,8 +163,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -1740,8 +1775,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -1772,6 +1807,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
     }
 }
 
+
 void fill_lower_and_upper(double* lapack_numbers,  // column-major order
                           DMat<M2::ARingCC>& lower,
                           DMat<M2::ARingCC>& upper)
@@ -1784,8 +1820,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOps::isZero(lower));
-  M2_ASSERT(MatrixOps::isZero(upper));
+  assert(MatrixOps::isZero(lower));
+  assert(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -2493,6 +2529,132 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   deletearray(workspace);
   deletearray(sing);
 
+  return ret;
+}
+
+bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
+{
+  // sizes:
+  //  input: A[m,n]
+  //  output for returnQR==true:
+  //   case m >= n:  Q[m,n], R[n,n]
+  //   case m < n: Q[m,m], R[m,n]
+  //  output for returnQR==false:
+  //   Q[m,n], R[1,min(m,n)]
+  bool ret = true;
+  int rows = static_cast<int>(A->numRows());
+  int cols = static_cast<int>(A->numColumns());
+  int info1=0, info2=0, info3=0, info4=0;
+  int min = (rows <= cols) ? rows : cols;
+  int max = (rows >= cols) ? rows : cols;
+  
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  double *copyA = make_lapack_array(*A); // delete as well.
+  double *tau = newarray_atomic(double, min); // make via new.
+  double workspace_size[1];
+  int work_size = -1;
+  // find optimal workspace
+  dgeqrf_(&rows,
+          &cols,
+          copyA,
+          &rows,
+          tau,
+          workspace_size,
+          &work_size,
+          &info1);
+  work_size = static_cast<int>(workspace_size[0]);
+  std::cout << "work size for QR:  " << work_size << std::endl;
+  double *workspace = new double[work_size];
+
+  dgeqrf_(&rows,
+          &cols,
+          copyA,
+          &rows,
+          tau,
+          workspace,
+          &work_size,
+          &info2);
+
+  if (info1 < 0 or info2 < 0)
+    {
+      ERROR("argument passed to dgeqrf had an illegal value");
+      ret = false;
+    }
+  if (info1 > 0 or info2 > 0)
+    {
+      ERROR("can this happen?");
+      ret = false;
+    }
+
+  if (ret)
+    {
+      if (return_QR)
+        {
+          Q->resize(rows,cols);
+          R->resize(cols,cols);
+          fill_from_lapack_upper(copyA, rows, cols, *R);
+          
+          // Reset Q, R, with their values.
+          int orgqr_work_size = -1;
+          dorgqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows, // lda?
+                  tau,
+                  workspace_size,
+                  &orgqr_work_size,
+                  &info3);
+          orgqr_work_size = static_cast<int>(workspace_size[0]);
+          if (orgqr_work_size > work_size)
+            {
+              delete [] workspace;
+              work_size = orgqr_work_size;
+              workspace = new double[work_size];
+              std::cout << "work size increased to: " << work_size << std::endl;
+            }
+          dorgqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows, // lda?
+                  tau,
+                  workspace,
+                  &work_size,
+                  &info4);
+          if (info3 < 0 or info4 < 0)
+            {
+              ERROR("argument passed to dorgqr or dorgqr had an illegal value");
+              ret = false;
+            }
+          else if (info3 > 0 or info4 > 0)
+            {
+              ERROR("can this happen?");
+              ret = false;
+            }
+          else
+            {
+              fill_from_lapack_array(copyA, *Q);
+            }
+        }
+      else
+        {
+          // Return the raw values for QR: the "A" matrix encodes R and the Householders, and tau has the multipliers.
+          Q->resize(rows,cols);
+          R->resize(1, min);
+          fill_from_lapack_array(copyA, *Q);
+          fill_from_lapack_array(tau, *R);
+        }
+    }
+
+  delete [] workspace;
+  deletearray(copyA);
+  deletearray(tau);
   return ret;
 }
 

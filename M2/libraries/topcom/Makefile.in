@@ -1,0 +1,15 @@
+HOMEPAGE = http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+# URL = http://www.rambau.wm.uni-bayreuth.de/Software/TOPCOM-0.17.8.tar.gz
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+VERSION = 0.17.8
+TARFILE = TOPCOM-$(VERSION).tar.gz
+LICENSEFILES = COPYING 
+PROGRAMS = src-reg/checkregularity src/points2finetriang
+STRIPFILES = $(PROGRAMS)
+INSTALLCMD = :
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/topcom/Makefile
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/topcom "
+# End:

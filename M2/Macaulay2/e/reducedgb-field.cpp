@@ -54,8 +54,15 @@ void ReducedGB_Field::minimalize(const VECTOR(POLY) &polys0,
   for (int i=0; i<polys0.size(); i++)
     positions.push_back(i);
 
-  sort(positions.begin(), positions.end(), ReducedGB_Field_sorter(R,F,polys0));
+  //  displayElements("-- before sort --", R, polys0, [](auto& g) { return g.f; } );
+  
+  std::stable_sort(positions.begin(), positions.end(), ReducedGB_Field_sorter(R,F,polys0));
 
+  //  VECTOR(gbvector*) sorted_elements_debug_only;
+  //  for (int i=0; i<positions.size(); i++)
+  //    sorted_elements_debug_only.push_back(polys0[positions[i]].f);
+  //  displayElements("-- after sort --", R, sorted_elements_debug_only, [](auto& g) { return g; } );
+  
   // Now loop through each element, and see if the lead monomial is in T.
   // If not, add it in , and place element into 'polys'.
 

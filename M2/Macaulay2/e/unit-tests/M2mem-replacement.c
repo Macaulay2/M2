@@ -5,9 +5,11 @@
 #include "M2mem-replacement.h"
 
 /* trapchk: taken from d/debug.h *************************************/
+
 void *trapaddr = (void *)1;
 int trapcount = 0;
 int trapset = 0;
+size_t trapsize = (size_t)-1;
 
 void trap(void) {}		/* I used to be concerned that this function would get optimized away, but it isn't static ... */
 
@@ -16,6 +18,11 @@ void trapchk(void *p) {
      trapcount++;
      if (trapcount == trapset || p == trapaddr || p == (void *)~(intptr_t)trapaddr) trap();
 }
+void trapchk_size(size_t n) { 
+     trapcount++;
+     if (trapcount == trapset || trapsize == n) trap();
+}
+
 /*********************************************************************/
 
 void outofmem(void) {

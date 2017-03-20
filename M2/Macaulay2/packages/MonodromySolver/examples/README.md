@@ -24,6 +24,6 @@
 * Alpha test application:
     * example-NashCertify.m2: certifying solutions for a a particular problem
 
-* Possibly unnecessary
-    * comparison-CRN, comparison-cyclic: both should have been superceded by comparison-template
-
+* Ignore:
+    * (possibly unnecessary) comparison-CRN, comparison-cyclic: both should have been superceded by comparison-template 
+	* (.out files) output of documentation examples cached by M2 

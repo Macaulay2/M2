@@ -107,12 +107,16 @@ various modern operating systems:
         --enable-build-libraries=pari
       to the "configure" command line below.  (The version of pari possibly installed there
       will crash when M2 exits.)
+    On all systems, add
+        CPPFLAGS=-I/usr/include/cdd
+      to the "configure" command line below.  Otherwise the configure script will
+      decide to build cddlib from downloaded sources.
     (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
     "do-release-upgrade" for a command line interface.)
 
   Raspbian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -179,9 +183,10 @@ various modern operating systems:
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
-    Install the Xcode Command Line Tools, available from Apple.  One may use
-      the following command for installing it:
+    Install the Xcode Command Line Tools, available from Apple.  On older versions of Mac OS X
+      one may use the following command for installing it:
       	 xcode-select --install
+      On newer versions, one installs the tools with "Software Update".
       After upgrading the OS, it will be necessary to install it again.  (One symptom of
       forgetting to do this is that /usr/include may be missing.)
     Optionally install a good version of emacs, such as the one available from 
@@ -198,39 +203,31 @@ various modern operating systems:
 	brew tap homebrew/science
 	brew tap homebrew/homebrew-x11
 	brew update
-	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost libmpc xz
+	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz
+	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk
+      You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
+      binaries to other people with CPU's that may not have the same capabilities as yours.
+    If you have previously installed homebrew, will be distributing your
+      Macaulay2 binaries to other people, and perhaps not used the option
+      --build-bottle when installing packages, then use the command
+         find /usr/local/Cellar -name INSTALL_RECEIPT.json | xargs grep built_as_bottle..false
+      to find packages that aren't bottled, and then use commands like
+         brew remove --ignore-dependencies FOO && brew install --build-bottle FOO
+      to reinstall them.
     Periodically upgrade the programs and libraries to the latest versions with
 	brew update
         brew upgrade
-    Next, if intending to distribute the Macaulay2 binaries to others, do:
-	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp cddlib glpk
-      else do:    
-	brew install bdw-gc libatomic_ops gdbm gmp cddlib glpk
+	brew cleanup
     Note: the libraries pari and flint are also available from homebrew, but we build them
-      ourselves.
-    Note: the reason we compile from source with gcc is that the precompiled
-      packages that brew would otherwise download are compiled using "clang"
-      and assume that the CPU supports advanced vector extensions, which not
-      all of the machines of our users do.
+      ourselves, and that is automatically arranged by the configure script.
     Now remember to add 
-        --enable-build-libraries="pari flint readline" CC="gcc-4.9" CXX="g++-4.9"
+        --enable-build-libraries="readline"
       to the "configure" command line below in the section on compiling Macaulay2.
     Note: including "readline" in the "--enable-build-libraries" option is
       necessary because it doesn't seem to be possible to recompile it from
       source; the binary distribution used by homebrew uses "clang", which will
       optimize the code in "gc" for your particular CPU.  If you won't be
       distributing the code to others, it can be omitted.
-    Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
-      g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding
-        MACOSX_DEPLOYMENT_TARGET=10.9
-      to the environment (e.g., with the "sh" command
-        export MACOSX_DEPLOYMENT_TARGET=10.9
-      ) may help.  Apparently the tools have trouble determining that 10.10 is a
-      newer version number than 10.9.  Linking alternatively with libgcc_eh
-      seems to break C++ exception handling.
-    Note: homebrew uses /usr/bin/gcc to compile its libraries.  If compiling
-      with clang instead of gcc, then run this first:
-        brew install gmp mpfr
     Note: software installed by "fink", if not kept up to date, can interfere
       with the Macaulay2 build process.  To test, for example, whether the
       correct version of "automake" is available, run the shell command
@@ -519,32 +516,6 @@ This depends on the installation of the validator (e.g., the Ubuntu package
 "w3c-markup-validator") and the script "validator-runner.py" from
 http://github.com/ysangkok/w3c-validator-runner, so we don't run it
 automatically.
-
-----------------------
-MacOS X notes
-----------------------
-
-    The standard gcc under Mac OS X is actually "clang", is based on LLVM, and
-    has been buggy, so we compile the latest gcc or we use "brew" to install
-    it, as described above.
-
-    To build Macaulay2, add the option
-
-        --build=x86_64-apple-darwin
-
-    to the appropriate "configure" command line above, for else it will try to
-    build a 32 bit version of Macaulay2.
-
-    If you are using version 4.9 of gcc, as installed by homebrew, you should
-    add
-
-        CC=gcc-4.9 CXX=g++-4.9
-
-    to the "configure" command line (or, better, to your environment setting in
-    your .profile).  To sum up, your command line, with all those options, will
-    look something like this:
-
-        ./configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.9 CXX=g++-4.9
 
 ----------------------
 Rerunning the package examples

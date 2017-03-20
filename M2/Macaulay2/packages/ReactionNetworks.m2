@@ -4,16 +4,17 @@ newPackage(
     	Version => "1.0", 
     	Date => "June, 2016",
     	Authors => {
-	     {Name => "Anton Leykin", Email => "doe@math.uiuc.edu"},
-	     {Name => "Timothy Duff", Email => "doe@math.uiuc.edu"},
-	     {Name => "Kisun Lee", Email => "doe@math.uiuc.edu"},
-	     {Name => "Cvetelina Hill", Email => "doe@math.uiuc.edu"}
+	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
+	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
+	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
+	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "Reaction networks",
 	PackageImports => {"Graphs"},
-	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-    	DebuggingMode => true		 -- set to true only during development
+  	DebuggingMode => false,		
+  	-- DebuggingMode => true,		 -- set to true only during development
+	AuxiliaryFiles => true
     	)
 
 -- Any symbols or functions that the user is to have access to

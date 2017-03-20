@@ -270,6 +270,15 @@ namespace MatrixOps
     throw exc::engine_error("'SVD' not implemented for this kind of matrix over this ring");
   }
 
+  template<typename Mat, typename Mat2, typename Mat3>
+  bool QR(const Mat& A, 
+          Mat2& Q,
+          Mat3& R,
+          bool return_QR)
+  {
+    throw exc::engine_error("'QR' not implemented for this kind of matrix over this ring");
+  }
+  
   template<typename T>
   void clean(gmp_RR epsilon, T& mat)
   {
@@ -295,9 +304,9 @@ namespace MatrixOps
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
-    M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == result_product.numRows());
-    M2_ASSERT(B.numColumns() == result_product.numColumns());
+    assert(A.numColumns() == B.numRows());
+    assert(A.numRows() == result_product.numRows());
+    assert(B.numColumns() == result_product.numColumns());
 
     ElementType* result = result_product.array();
 
@@ -341,9 +350,9 @@ namespace MatrixOps
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
-    M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == C.numRows());
-    M2_ASSERT(B.numColumns() == C.numColumns());
+    assert(A.numColumns() == B.numRows());
+    assert(A.numRows() == C.numRows());
+    assert(B.numColumns() == C.numColumns());
 
     ElementType* result = C.array();
 
@@ -1003,6 +1012,14 @@ namespace MatrixOps
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
   }
 
+  inline bool QR(const DMatRR& A, 
+           DMatRR& Q, 
+           DMatRR& R,
+           bool return_QR)
+  {
+    return Lapack::QR(&A, &Q, &R, return_QR);
+  }
+  
   inline void clean(gmp_RR epsilon, DMatRR& mat)
   {
     auto p = mat.array(); 

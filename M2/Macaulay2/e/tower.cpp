@@ -462,7 +462,7 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
       M->to_expvector(t->monom, exp);
 
       std::pair<bool,long> res = K->coerceToLongInteger(t->coeff);
-      M2_ASSERT(res.first);
+      assert(res.first);
       int c1 = static_cast<int>(res.second);
 
       D->add_term(result, c1, exp);

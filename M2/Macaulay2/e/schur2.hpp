@@ -1,4 +1,4 @@
-// Copyright 1996-2011 Michael E. Stillman
+// Copyright 1996-2017 Michael E. Stillman
 
 #ifndef _Schurring2_hh_
 #define _Schurring2_hh_
@@ -6,11 +6,21 @@
 #include <vector>
 #include "poly.hpp"
 
+using schur_word = int;
+//typedef int schur_word;
+
+// Format for a schur_partition, const_schur_partition
+// (n+1) a1 a2 ... an
+// where a1 >= a2 >= ... >= an (can these be negative?  I think so)
+// and n+1 is the length of the entire allocated amount.
+
+typedef schur_word *schur_partition;
+typedef const schur_word *const_schur_partition;
+
 class tableau2
 {
   friend class SchurRing2;
 
-  int dim;
   int maxwt;
   int wt;
   int *lambda;                  // A partition vector 0..nvars-1
@@ -31,10 +41,6 @@ class tableau2
   void display() const;
 };
 
-typedef int schur_word;
-typedef schur_word *schur_partition;
-typedef const schur_word *const_schur_partition;
-
 class schur_poly_iterator;
 class schur_poly_heap;
 
@@ -42,10 +48,7 @@ class schur_poly : public our_new_delete {
   friend class SchurRing2;
   friend class schur_poly_iterator;
   VECTOR(ring_elem) coeffs;
-  VECTOR(schur_word) monoms; // each monomial is a partition
-  // of the form:  len a_1 a_2 ... a_len,
-  // where a_1 >= a_2 >= ... >= a_len
-
+  VECTOR(schur_word) monoms; // each monomial is aschur_partition, all of these concatenated together
 public:
   typedef schur_poly_iterator iterator;
 

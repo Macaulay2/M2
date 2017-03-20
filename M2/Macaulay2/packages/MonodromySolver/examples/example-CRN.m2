@@ -1,3 +1,4 @@
+-- to execute look below for "EXECUTE...FROM HERE" -------------------------
 needsPackage "MonodromySolver"
 needsPackage "ReactionNetworks"
 
@@ -47,6 +48,7 @@ GQ = createPolySystem(Q, FF)
 
 end ---------------------------------
 
+--------EXECUTE line-by-line FROM HERE -----------------------------------
 restart
 load "example-CRN.m2"
 

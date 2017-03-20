@@ -1,3 +1,4 @@
+-- to execute look below for "EXECUTE...FROM HERE" -------------------------
 needsPackage "MonodromySolver"
 needsPackage "Permanents"
 
@@ -88,6 +89,7 @@ getNashSystem (ZZ,ZZ) := (n, S) -> (
 --------------------------------------------------------------
 end 
 
+--------EXECUTE line-by-line FROM HERE -----------------------------------
 restart
 load "MonodromySolver/examples/example-Nash.m2"
 
@@ -116,7 +118,7 @@ length V.PartialSols
 -- completeGraph(2,5)
 G = getNashSystem(4,3)
 (p0, x0) = createSeedPair G
-elapsedTime (V,npaths) = monodromySolve(transpose G.PolyMap,p0,{x0},
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
     NumberOfEdges => 5,TargetSolutionCount => bkkBound(4,3),
     Verbose=>true)   
 getTrackTime(V.Graph)

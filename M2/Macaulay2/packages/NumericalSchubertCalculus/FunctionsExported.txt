@@ -6,20 +6,21 @@
 "randomSchubertProblemInstance"
 "setVerboseLevel", 
 "solveSchubertProblem"
+"partition2bracket",
+"bracket2partition",
+"changeFlags", -- in LR-makePolynomials.m2
 
 	==== Not Done Yet ===
 // NumericalSchubertCalculus.m2 //
 
-"changeFlags", -- in LR-makePolynomials.m2
-"bigCellLocalCoordinates", 
+
+--"bigCellLocalCoordinates", 
 "printStatistics",
 
 // service-functions.m2 //
-"skewSchubertVariety",
+--"skewSchubertVariety",
 "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
 "solutionsToAffineCoords", --Temporary! User shouldn't use this function
-"partition2bracket",
-"bracket2partition",
 
 
 // LR-ParameterHomotopy.m2 //

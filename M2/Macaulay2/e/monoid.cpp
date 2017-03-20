@@ -602,6 +602,15 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
   return ntuple::weight(sz, EXP1, wts);
 }
 
+int Monoid::simple_degree(const_monomial m) const
+{
+  if (nvars_ == 0) return 0;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  to_expvector(m, EXP1);
+  return ntuple::degree(nvars_, EXP1);
+}
+
 bool Monoid::is_one(const_monomial m) const
 {
   for (int i=0; i<monomial_size(); i++)
