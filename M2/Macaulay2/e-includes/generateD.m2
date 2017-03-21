@@ -136,9 +136,38 @@ genFunctionCall(String, String, Thing) := (fcnname, returntype, args) -> (
       (genTitle fcnname) (genNumArgs (#args)) L
       )
     )
+
+parseTemplate = method()
+parseTemplate List := (strs) -> (
+    -- 
+    netList strs
+    )
+readTemplateFile = method()
+readTemplateFile String := (filename) -> (
+    -- return a hash table of all function templates found
+    L := lines get filename;
+    L = select(L, s -> #s > 0);
+    pos := positions(L, s -> s#0 != " ");
+    pos = append(pos, #L);
+    hashTable for i from 0 to #pos-2 list L_(pos#i) => parseTemplate L_{pos#i+1..pos#(i+1)-1}
+    )
+
+{*
+debug needsPackage "SimpleDoc"
+
+SplitByNameFcns = new HashTable from {
+    "Node" => (textlines, keylinenum) -> << textlines << " " << keylinenum << endl;
+    }
+
+errorDepth=0
+toDoc(SplitByNameFcns, get "templates.txt")
+*}
+
 end--
 restart
 load "generateD.m2"
+readTemplateFile "templates.txt"
+
 
 (genTitle "foo") "innards"
 str oo
@@ -159,6 +188,26 @@ str (genFunctionCall(
         ("a"=>"Ring", "b"=>"RingElement", "c" => "Monomial")
         ))
 
+genFunctionCall hashTable {
+    Name => "rawHomogenizeMatrix",
+    ReturnValue => "MatrixOrNull",
+    Arguments => list of arguments ("M" => "Matrix")
+    Doc => String, -- or list of strings
+    Code => String -- or list of strings
+    }
+-- creates 3 strings:
+-- (1) d function
+-- (2) engine.h extern line
+-- (3) x-files interface c++ function.
+
+rawHomogenizeMatrix
+  returns MatrixOrNull
+  arg a Matrix
+  arg b Matrix
+  arg c Matrix
+  doc Homogenize a matrix
+
+  
 str oo
 print (genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
 
