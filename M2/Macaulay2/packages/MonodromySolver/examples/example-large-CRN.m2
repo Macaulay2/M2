@@ -40,15 +40,32 @@ X' = reactionNetwork ({"A+B <--> C", "X <--> 2A+D", "2A+D <--> Y",
 X'S = createPolySystem(X', FF) --not working
 *}
 
+N = reactionNetwork ({"A+R-->RA", "A+RD-->RDA", "A+RT-->RTA", "E+R-->RE",
+	"E+RD-->RDE", "E+RT-->RTE", "R-->RD", "R-->RT", "RA-->A+R", "RD-->R",
+	"RDA-->A+RD", "RDE-->E+RD", "RDE-->RE", "RE-->E+R", "RE-->RTE", "RE-->RDE",
+	"RT-->R", "RT-->RD", "RTA-->A+RT", "RTA-->RDA", "RTE-->E+RT", "RTE-->RDE", "RTE-->RE"
+	})
+R = createRing(N,QQ)
+F = join(subRandomInitVals N, subRandomReactionRates N)
+I = ideal F
+S = QQ[N.ConcentrationRates]
+J=sub(I,S)
+dim J
+degree J
+
+
+
+
 end
 restart
 load "example-large-CRN.m2"
 
 setRandomSeed 0
--- system for 5 copies of oneSiteModificationA
+-- system for n copies of oneSiteModificationA
 n = 7
 W = X
 W = multipleModificationA n
+W = N
 H = createPolySystem(W, FF)
 (p0, x0) = createSeedPair(H,"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfEdges => 5)
