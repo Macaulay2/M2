@@ -7,6 +7,7 @@
 restart
 needsPackage "ReactionNetworks"
 needsPackage "MonodromySolver"
+load "realroots.m2"
 
 A = oneSiteModificationA()
 R = createRing(A, QQ)
@@ -14,6 +15,52 @@ R = createRing(A, QQ)
 F = join(subRandomInitVals A, subRandomReactionRates A)
 I = ideal F
 netList flatten entries mingens I
+
+A.ConcentrationRates
+
+S = QQ[value(A.ConcentrationRates)#2, 
+    value(A.ConcentrationRates)#5,
+    value(A.ConcentrationRates)#0, 
+    value(A.ConcentrationRates)#3,
+    value(A.ConcentrationRates)#4, 
+    value(A.ConcentrationRates)#1, 
+    MonomialOrder => {Eliminate 1,Lex}]
+
+J = sub(I,S)
+
+gb(J, BasisElementLimit=>1)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>2)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>3)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>4)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>5)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>6)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>7)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>8)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>9)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>10)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>11)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>12)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>13)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>14)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>15)
+netList flatten entries gbSnapshot J
+gb(J, BasisElementLimit=>16)
+netList flatten entries gbSnapshot J
+
 
 E = eliminate(drop(toList(apply(0..length A.ConcentrationRates-1, i-> 
 		value(A.ConcentrationRates#i))),{2,2}), I)
@@ -37,6 +84,7 @@ computeMixedVolume (flatten entries M)
 restart
 needsPackage "ReactionNetworks"
 needsPackage "MonodromySolver"
+load "realroots.m2"
 
 A = oneSiteModificationA()
 A' = sub(oneSiteModificationA(), {"S_0" => "S_1", "S_1" => "S_2"})
@@ -49,9 +97,9 @@ netList flatten entries mingens I
 
 S = QQ[value(C''.ConcentrationRates)#2, 
     value(C''.ConcentrationRates)#5,
-    value(C''.ConcentrationRates)#3, 
-    value(C''.ConcentrationRates)#6,
     value(C''.ConcentrationRates)#0, 
+    value(C''.ConcentrationRates)#3,
+    value(C''.ConcentrationRates)#6, 
     value(C''.ConcentrationRates)#4,
     value(C''.ConcentrationRates)#1, 
     MonomialOrder => {Eliminate 1,Lex}]
@@ -98,16 +146,22 @@ degree I
 dim sub(I, QQ[C''.ConcentrationRates]) 
 
 --make a ring that only has conc rates as vars
-Rx = CC[C''.ConcentrationRates]
+Rx = QQ[C''.ConcentrationRates]
 --create a random linear combination of equations to get a square system
 J = sub(I,Rx)
 F2 = flatten entries gens J
 M' = matrix{F2},
-B = random(CC^10, CC^7)
+B = random(QQ^10, QQ^7)
 M = M'*B
 --compute mixed volume
 computeMixedVolume (flatten entries M)
 
+--quotient ring
+A = S/J
+B = basis A
+dim A
+value(C''.ConcentrationRates)#3//basis A
+--dim A = degree J when J is prime (We can prove J is prime)
 
 
 -- 3 copies of A
