@@ -76,6 +76,7 @@ elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
     "new tracking routine"=>false,
     Verbose=>true)
 assert(length V.PartialSols == 9)
+     -- 42.8331 seconds elapsed
 
 -- wnt via Bertini
 specPolys = specializeSystem (p0,createPolySystem'overdetermined(W,FF,L));
@@ -83,6 +84,12 @@ R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
 assert(#NV#0 == 9)
+
+-- wnt via PHCpack
+elapsedTime sols = solveSystem(specPolys,Software=>PHCPACK);
+      -- 862.295 seconds elapsed
+#sols
+     
 
 -- system for random example
 (p0, x0) = createSeedPair(GQ, "initial parameters" => "one")
