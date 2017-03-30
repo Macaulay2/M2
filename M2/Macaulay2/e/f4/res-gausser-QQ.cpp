@@ -220,22 +220,24 @@ void ResGausserQQ::sparseCancel(CoefficientVector r,
     }
 }
 
-void ResGausserQQ::out(std::ostream& o, FieldElement& f) const
+std::ostream& ResGausserQQ::out(std::ostream& o, FieldElement& f) const
 {
   o << "[" << f.mDouble << "," << Kp1.coerceToLongInteger(f.mMod1) << "," << f.mDenominatorSize << "]";
+  return o;
 }
 
-void ResGausserQQ::out(std::ostream& o, CoefficientVector r, int loc) const
+std::ostream& ResGausserQQ::out(std::ostream& o, CoefficientVector r, int loc) const
 {
   if (r.isNull())
     {
       o << "[vector is null!]";
-      return;
+      return o;
     }
   auto& elems = coefficientVector(r);
   out(o, elems[loc]);
+  return o;
 }
-void ResGausserQQ::debugDisplay(std::ostream& o, CoefficientVector r) const
+std::ostream& ResGausserQQ::debugDisplay(std::ostream& o, CoefficientVector r) const
 {
   if (r.isNull())
     fprintf(stdout, "vector is null!");
@@ -246,9 +248,10 @@ void ResGausserQQ::debugDisplay(std::ostream& o, CoefficientVector r) const
       o << " ";
     }
   o << std::endl;
+  return o;
 }
 
-void ResGausserQQ::debugDisplayRow(std::ostream& o,
+std::ostream& ResGausserQQ::debugDisplayRow(std::ostream& o,
                                    int ncolumns,
                                    const std::vector<int>& comps,
                                    CoefficientVector coeffs) const
@@ -269,6 +272,7 @@ void ResGausserQQ::debugDisplayRow(std::ostream& o,
         }
     }
   o << std::endl;
+  return o;
 }
 
 // Local Variables:

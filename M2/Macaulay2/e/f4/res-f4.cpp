@@ -535,9 +535,6 @@ void F4Res::gaussReduce()
       
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
-      #ifdef DEBUG_GAUSS
-      std::cout << "about to fill from sparse " << i << std::endl;
-      #endif
 
       // Note: in the polynomial ring case, the row r is non-zero.
       // BUT: for skew commuting variables, it can happen that r is zero
@@ -546,6 +543,11 @@ void F4Res::gaussReduce()
         {
           ComponentIndex firstcol = r.mComponents[0];
           ComponentIndex lastcol = static_cast<ComponentIndex>(mColumns.size()-1); // maybe: r.mComponents[r.mComponents.size()-1];
+
+          #ifdef DEBUG_GAUSS
+          std::cout << "about to fill from sparse " << i << std::endl;
+          #endif
+          
           mRing.resGausser().fillFromSparse(gauss_row,
                                             static_cast<ComponentIndex>(r.mComponents.size()),
                                             r.mCoeffs,
@@ -558,9 +560,9 @@ void F4Res::gaussReduce()
               std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null") << std::endl;
               std::cout << "mReducers[" << firstcol << "]: " << (mReducers[firstcol].mCoeffs.isNull() ? "null" : "not-null") << std::endl;
               std::cout << "result: " << (result.coefficientInserter().isNull() ? "null" : "not-null") << std::endl;
-              mRing.resGausser().debugDisplay(std::cout, gauss_row); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
-              mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
+              std::cout << "  dense: "; mRing.resGausser().debugDisplay(std::cout, gauss_row) << std::endl;
+              mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); std::cout  << std::endl;
+              mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); std::cout << std::endl;
               #endif
 
               if (onlyConstantMaps and not track[firstcol])
@@ -579,9 +581,11 @@ void F4Res::gaussReduce()
                                                   );
                   
                   #ifdef DEBUG_GAUSS
-                  mRing.resGausser().debugDisplay(std::cout, gauss_row); fprintf(stdout, "\n");
-                  mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); fprintf(stdout, "\n");
-                  mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); fprintf(stdout, "\n");
+                  std::cout << "  done with sparseCancel" << std::endl;
+                  mRing.resGausser().debugDisplay(std::cout, gauss_row) << std::endl;
+                  mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs) << std::endl;
+                  mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()) << std::endl;
+                  std::cout << "  about to push back term" << std::endl;
                   #endif
                   
                   result.pushBackTerm(mReducers[firstcol].mLeadTerm);

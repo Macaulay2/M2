@@ -3,6 +3,7 @@
 #include "res-gausser.hpp"
 #include "res-gausser-ZZp.hpp"
 #include "res-gausser-QQ.hpp"
+#include "res-gausser-QQ-hybrid.hpp"
 
 ResGausser *ResGausser::newResGausser(const Ring* K1)
 {
@@ -15,6 +16,11 @@ ResGausser *ResGausser::newResGausser(const Ring* K1)
           return nullptr;
         }
       return new ResGausserZZp(K1);
+    }
+  if (K1->is_QQ())
+    {
+      // return new ResGausserQQHybrid(K1, 1000, 32003, 32009);
+      return new ResGausserQQHybrid(K1, 1000, 1073741891, 1073741909);
     }
   if (K1->is_QQ())
     {

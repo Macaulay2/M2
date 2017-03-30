@@ -21,6 +21,7 @@
 
 #include "res-gausser-ZZp.hpp"
 #include "res-gausser-QQ.hpp"
+#include "res-gausser-QQ-hybrid.hpp"
 
 bool ResGausserZZp::isAllowedCoefficientRing(const Ring* K) const
 {
@@ -57,7 +58,11 @@ ring_elem ResGausserQQ::to_ring_elem(const Ring* K, const CoefficientVector& coe
   ring_elem result;
   if (K->ringID() == M2::ring_RR)
     K->from_double(elems[loc].mDouble, result);
-  else 
+  else if (K == globalZZ)
+    {
+      result = K->from_long(elems[loc].mDenominatorSize);
+    }
+  else
     Kp1.to_ring_elem(result, elems[loc].mMod1);
   return result;
 }
@@ -88,6 +93,79 @@ void ResGausserQQ::from_ring_elem(CoefficientVector& result, ring_elem numer, ri
   mpz_clear(&denom1);
 }
 
+////////////////////////////////////
+// QQ Hybrid ring //////////////////
+////////////////////////////////////
+////////////////////
+// NOTE!! //////////
+// Even though the ring is the rationals, gbring 'ring_elem's are in ZZ.
+bool ResGausserQQHybrid::isAllowedCoefficientRing(const Ring* K) const
+{
+  return K->ringID() == M2::ring_RR
+    or (K->isFinitePrimeField() and (
+         K->characteristic() == Kp1.characteristic()
+         or
+         K->characteristic() == Kp2.characteristic()))
+    or (K->get_precision() == mRRing.get_precision())
+    or (K == globalZZ);
+}
+
+ring_elem ResGausserQQHybrid::to_ring_elem(const Ring* K, const CoefficientVector& coeffs, size_t loc) const
+{
+  auto& elems = coefficientVector(coeffs);
+  ring_elem result;
+  if (K->ringID() == M2::ring_RR)
+    K->from_double(elems[loc].mDouble, result);
+  else if (K->ringID() == M2::ring_RRR)
+    K->from_BigReal(& (elems[loc].mLongDouble), result);
+  else if (K == globalZZ)
+    {
+      result = K->from_long(elems[loc].mDenominatorSize);
+    }
+  else if (K->characteristic() == Kp1.characteristic())
+    Kp1.to_ring_elem(result, elems[loc].mMod1);
+  else if (K->characteristic() == Kp2.characteristic())
+    Kp2.to_ring_elem(result, elems[loc].mMod2);
+  else
+    {
+      std::cout << "Internal logic error: should not get to this statement" << std::endl;
+      exit(1);
+    }
+  return result;
+}
+
+void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result, ring_elem numer, ring_elem denom) const
+{
+  //  std::cout << "creating element..." << std::flush;
+  const M2::ARingZZGMP *Z = globalZZ->get_ARing();
+  auto& elems = coefficientVector(result);
+  M2::ARingZZGMP::ElementType numer1;
+  M2::ARingZZGMP::ElementType denom1;
+  Z->init(numer1);
+  Z->from_ring_elem(numer1, numer);
+  Z->init(denom1);
+  Z->from_ring_elem(denom1, denom);
+  bool isunit = Z->is_equal(numer1,denom1);
+  mpq_t c;
+  mpq_init(c);
+  mpq_set_num(c, &numer1);
+  mpq_set_den(c, &denom1);
+  mpq_canonicalize(c);
+
+  FieldElement b;
+  init_element(b);
+  from_mpq_element(b, c, (isunit ? 0 : 1));
+
+  elems.emplace_back(std::move(b));
+
+  mpq_clear(c);
+  mpz_clear(&numer1);
+  mpz_clear(&denom1);
+  //  out(std::cout, result, elems.size()-1);
+  //  std::cout << " done" << std::endl;
+}
+
+////////////////////////////////////
 void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                   const FreeModule *F,
                                   vec v,

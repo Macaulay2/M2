@@ -1,7 +1,7 @@
 // Copyright 2017 Michael E. Stillman.
 
-#ifndef _res_gausser_qq_hpp_
-#define _res_gausser_qq_hpp_
+#ifndef _res_gausser_qq_hybrid_hpp_
+#define _res_gausser_qq_hybrid_hpp_
 
 #include "../ring.hpp"
 #include "../ZZp.hpp"
@@ -9,29 +9,36 @@
 
 #include "res-gausser.hpp"
 #include "../aring-RR.hpp"
+#include "../aring-RRR.hpp"
 #include "../aring-zzp-flint.hpp"
 #include "../aring-qq-gmp.hpp"
-class ResGausserQQ : public ResGausser
+class ResGausserQQHybrid : public ResGausser
 {
+  using RRRType = M2::ARingRRR;
   struct FieldElement
   {
     double mDouble;
     M2::ARingZZpFlint::ElementType mMod1;
+    M2::ARingZZpFlint::ElementType mMod2;
     int mDenominatorSize;
+    int mAccuracy;
+    bool mIsPresent;
+    RRRType::ElementType mLongDouble;
   };
 
   const M2::ARingQQGMP mQQRing;
   const M2::ARingZZpFlint Kp1;
-
+  const M2::ARingZZpFlint Kp2;
+  const M2::ARingRRR mRRing;
   FieldElement mZero;
   FieldElement mMinusOne;
   FieldElement mOne;
 
-  mutable int mMaxDenominatorSize; // only used for ring being QQ.
+  mutable int mMaxDenominatorSize;
 public:
-  ResGausserQQ(const Ring* K, size_t p1);
+  ResGausserQQHybrid(const Ring* K, unsigned long precision1, size_t p1, size_t p2);
 
-  virtual ~ResGausserQQ() {}
+  virtual ~ResGausserQQHybrid() {}
 
 private:
   CoefficientVector coefficientVector(std::vector<FieldElement>* vals) const {
@@ -44,6 +51,18 @@ private:
   std::vector<FieldElement>& coefficientVector(CoefficientVector f) const {
     return * reinterpret_cast<std::vector<FieldElement>* >(f.mValue);
   }
+
+  void init_element(FieldElement& a) const;
+  void clear_element(FieldElement& a) const;
+  void from_long_element(FieldElement& a, long val) const;
+  void from_mpq_element(FieldElement& a, mpq_t val, int denomPower) const;
+  void copy_element(FieldElement& result, const FieldElement& a) const;
+  void negate_element(FieldElement& a) const;
+  bool is_zero_element(FieldElement& a) const;
+
+  void subtract_multiple_to_element(FieldElement& result, const FieldElement& a, const FieldElement& b) const;
+  // result = result - a*b
+  
 public:
   virtual void pushBackOne(CoefficientVector& coeffs) const;
   virtual void pushBackMinusOne(CoefficientVector& coeffs) const;

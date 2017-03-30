@@ -14,6 +14,7 @@ class CoefficientVector {
   friend class ResGausser;
   friend class ResGausserZZp;
   friend class ResGausserQQ;
+  friend class ResGausserQQHybrid;
 public:
   CoefficientVector() : mValue(nullptr) {}
 
@@ -28,6 +29,8 @@ private:
 
 class ResGausser
 {
+protected:
+  static long numAdditions;
 public:
   ResGausser(const Ring* K) : mOriginalRing(K) {}
   virtual ~ResGausser() {}
@@ -36,6 +39,7 @@ public:
 
   const Ring * get_ring() const { return mOriginalRing; }
 
+  long getNumAdditions() const { return numAdditions; }
 public:
   virtual void pushBackOne(CoefficientVector& coeffs) const = 0;
   virtual void pushBackMinusOne(CoefficientVector& coeffs) const = 0;
@@ -86,9 +90,9 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is not recorded in this version.
   
-  virtual void out(std::ostream& o, CoefficientVector r, int loc) const = 0;  
-  virtual void debugDisplay(std::ostream& o, CoefficientVector r) const = 0;
-  virtual void debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const = 0;
+  virtual std::ostream& out(std::ostream& o, CoefficientVector r, int loc) const = 0;  
+  virtual std::ostream& debugDisplay(std::ostream& o, CoefficientVector r) const = 0;
+  virtual std::ostream& debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const = 0;
 public:
   mutable long n_dense_row_cancel;
   mutable long n_subtract_multiple;

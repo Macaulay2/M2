@@ -12,6 +12,7 @@ F4_CCFILES := \
   res-gausser \
   res-gausser-ZZp \
   res-gausser-QQ \
+  res-gausser-QQ-hybrid \
   f4 \
   f4-syz \
   f4-mem \

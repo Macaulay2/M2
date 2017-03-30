@@ -13,6 +13,7 @@ newPackage(
         )
 
 export {
+    "uniquify",
     "constantStrand",
     "constantStrands",
     "laplacians",
@@ -28,6 +29,32 @@ export {
     "numericRank",
     "checkSVDComplex"
 }
+
+uniquify = method()
+uniquify(List,List,RR) := (L1, L2, threshold) -> (
+    -- L1, L2 are lists of floats, sorted in descending order
+    -- returns lists L1', L2' also sorted, with no common entries
+    M1 := {};
+    M2 := {};
+    i := 0;
+    j := 0;
+    while i < #L1 and j < #L2 do (
+        a := L1_i;
+        b := L2_j;
+        << "comparing " << (i,j) << " values: " << (a,b) << endl;
+        if abs(a-b)/(abs(a)+abs(b)) < threshold then (
+            i = i+1;
+            j = j+1;
+            )
+        else (
+            if a > b then (M1 = append(M1, a); i = i+1)
+            else (M2 = append(M2,b); j = j+1)
+            )
+        );
+    return if i == #L1 then (M1,join(M2,L2_{j..#L2-1}))
+    else if j == #L2 then (join(M1,L1_{i..#L1-1}), M2)
+    else error "damn, our logic is messed up!"
+    )
 
 -----------------------------------------------
 -- Code for SVD of a complex ------------------
@@ -245,7 +272,7 @@ SVDHomology ChainComplex := opts -> (C) -> (
             pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e4);
             rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
             --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
-            smallestSing#ell = (sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            smallestSing#ell = (if rks#ell > 1 then sigma1#(rks#ell-2) else null, sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
@@ -305,6 +332,108 @@ checkSVDComplex = (C, Fhs) -> (
 beginDocumentation()
 
 end--
+
+///
+restart
+needsPackage "SVDComplexes"
+needsPackage "AGRExamples"
+R=QQ[a..h]
+Rp=(ZZ/32003)(monoid R)
+Rp1=(ZZ/1073741891)(monoid R)
+R0=(RR_53)(monoid R)
+deg=4
+nextra=10
+setRandomSeed "1"
+F=sum(gens R,x->x^deg)+sum(nextra,i->(random(1,R))^deg);
+elapsedTime I=ideal fromDual matrix{{F}};
+elapsedTime C=res(I,FastNonminimal =>true);
+C0 = getNonminimalRes(C, R0);
+betti C
+elapsedTime minimalBetti sub(I,Rp)
+elapsedTime SVDBetti C
+
+            0  1   2   3   4   5   6  7 8
+o14 = total: 1 28 105 288 420 288 104 30 4
+         0: 1  .   .   .   .   .   .  . .
+         1: . 18  42   .   .   .   .  . .
+         2: . 10  63 288 420 288  63  9 1
+         3: .  .   .   .   .   .  41 19 2
+         4: .  .   .   .   .   .   .  2 1
+=> does not gives correct values for any choice off the cut off value.
+the value here is 1.5e1
+
+debug Core
+rawResolutionGetMutableMatrixB(C.Resolution.RawComputation, raw R0, 3);
+
+
+rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(ZZ/32003), 3,2)
+rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(RR_53), 3,2)
+rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(ZZ), 9,7)
+rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(RR_53), 9,7)
+for i from 1 to 5 list for j from 1 to 5 list
+  rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(RR_53), i,j)
+  
+Ls = constantStrands(C, RR_53)
+Ls1 = constantStrands(C, RR_1000)
+m1 = Ls#9 .dd_6;
+m2 = Ls1#9 .dd_6;
+elapsedTime SVDHomology Ls#9
+elapsedTime SVDHomology Ls1#9
+first SVD m1, first SVD m2
+m1 = Ls#9 .dd_7;
+m2 = Ls1#9 .dd_7;
+clean(1e-7, m1-m2)
+ratios = (L) -> prepend(L#0, for i from 0 to #L-2 list L#i/L#(i+1)) -- L is a sorted list of singular values
+ratios first o20
+ratios first SVD Ls#11 .dd_8
+ratios first SVD Ls#10 .dd_7
+ratios first SVD Ls#10 .dd_8
+ratios first SVD Ls#9 .dd_6
+(a1,a2,a3) = SVDComplex Ls#9;
+first SVD Ls#9 .dd_6
+first SVD Ls#9 .dd_7
+a3
+a2
+target a1
+(source a1).dd_8
+(target a1).dd_8
+a1_8
+Ls#10 .dd_8
+
+laps = laplacians Ls#9;
+laps = laplacians Ls#3;
+#laps
+evs = laps/(m -> rsort eigenvalues(m, Hermitian=>true))
+
+laps1 = laplacians Ls1#9;
+evs1 = laps1/(m -> rsort eigenvalues(m, Hermitian=>true))
+
+
+(M1, M2) = uniquify(evs_0, evs_1, 1e-3);
+(M2', M3) = uniquify(M2, evs_2, 1e-3);
+#M1
+#M2'
+#M3
+
+(M1, M2) = uniquify(evs1_0, evs1_1, 1e-3);
+(M2', M3) = uniquify(M2, evs1_2, 1e-3);
+
+
+(M1, M2) = (VerticalList M1, VerticalList M2)
+(VerticalList M2', VerticalList M3)
+(M1',M2')=uniquify(M1,M2,1e-1)
+(#M1', #M2')
+sings = (first SVD laps_0, first SVD laps_1, first SVD laps_2)
+
+rsort join(evs_0, evs_2), rsort evs_1
+sings = (eigenvalues( laps_0, first SVD laps_1, first SVD laps_2)
+
+rsort join(sings_0, sings_1)
+R32009=(ZZ/32009)(monoid R)
+minimalBetti sub(I, R32009)
+
+
+///
 
 TEST ///
   -- warning: this currently requires test code on res2017 branch.
@@ -684,4 +813,3 @@ TEST ///
 -- test code and assertions here
 -- may have as many TEST sections as needed
 ///
-

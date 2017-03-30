@@ -194,22 +194,24 @@ void ResGausserZZp::sparseCancel(CoefficientVector r,
     Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
 }
 
-void ResGausserZZp::out(std::ostream& o, FieldElement& f) const
+std::ostream& ResGausserZZp::out(std::ostream& o, FieldElement& f) const
 {
   o << Kp->to_int(f);
+  return o;
 }
 
-void ResGausserZZp::out(std::ostream& o, CoefficientVector r, int loc) const
+std::ostream& ResGausserZZp::out(std::ostream& o, CoefficientVector r, int loc) const
 {
   if (r.isNull())
     {
       o << "[vector is null!]";
-      return;
+      return o;
     }
   auto& elems = coefficientVector(r);
   out(o, elems[loc]);
+  return o;
 }
-void ResGausserZZp::debugDisplay(std::ostream& o, CoefficientVector r) const
+std::ostream& ResGausserZZp::debugDisplay(std::ostream& o, CoefficientVector r) const
 {
   if (r.isNull())
     fprintf(stdout, "vector is null!");
@@ -220,9 +222,10 @@ void ResGausserZZp::debugDisplay(std::ostream& o, CoefficientVector r) const
       o << " ";
     }
   o << std::endl;
+  return o;
 }
 
-void ResGausserZZp::debugDisplayRow(std::ostream& o,
+std::ostream& ResGausserZZp::debugDisplayRow(std::ostream& o,
                                    int ncolumns,
                                    const std::vector<int>& comps,
                                    CoefficientVector coeffs) const
@@ -244,6 +247,7 @@ void ResGausserZZp::debugDisplayRow(std::ostream& o,
         }
     }
   o << std::endl;
+  return o;
 }
 
 // Local Variables:

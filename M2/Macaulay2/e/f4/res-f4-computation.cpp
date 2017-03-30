@@ -227,6 +227,12 @@ void F4ResComputation::text_out(buffer &o) const
 
 const Matrix /* or null */ *F4ResComputation::get_matrix(int level) 
 {
+  if (mOriginalRing.getCoefficientRing()->is_QQ())
+    {
+      std::cout << "setting error message, returning null" << std::endl;
+      ERROR("cannot creat differential over this ring");
+      return nullptr;
+    }
   const FreeModule* tar = get_free(level-1);
   const FreeModule* src = get_free(level);
   return ResF4toM2Interface::to_M2_matrix(*mComp, level, tar, src);
@@ -234,6 +240,11 @@ const Matrix /* or null */ *F4ResComputation::get_matrix(int level)
 
 MutableMatrix /* or null */ *F4ResComputation::get_matrix(int level, int degree)
 {
+  if (mOriginalRing.getCoefficientRing()->is_QQ())
+    {
+      ERROR("cannot creat differential over this ring");
+      return nullptr;
+    }
   return ResF4toM2Interface::to_M2_MutableMatrix(*mComp, mOriginalRing.getCoefficientRing(), level, degree);
 }
 

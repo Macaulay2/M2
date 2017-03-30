@@ -97,10 +97,10 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is not recorded.
   
-  void out(std::ostream& o, FieldElement& f) const;
-  virtual void out(std::ostream& o, CoefficientVector f, int loc) const;
-  virtual void debugDisplay(std::ostream& o, CoefficientVector r) const;
-  virtual void debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
+  std::ostream& out(std::ostream& o, FieldElement& f) const;
+  virtual std::ostream& out(std::ostream& o, CoefficientVector f, int loc) const;
+  virtual std::ostream& debugDisplay(std::ostream& o, CoefficientVector r) const;
+  virtual std::ostream& debugDisplayRow(std::ostream& o, int ncolumns, const std::vector<int>& comps, CoefficientVector coeffs) const;
 };
 
 #endif

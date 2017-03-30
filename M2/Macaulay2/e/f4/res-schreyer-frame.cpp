@@ -867,6 +867,8 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
   if (M2_gbTrace >= 2)
     {
       std::cout << "done" << std::endl;
+      std::cout << "#additions so far: " << gausser().getNumAdditions() << std::endl;
+
     }
 }
 void SchreyerFrame::computeRank(int slanted_degree, int lev)
