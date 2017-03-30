@@ -5,16 +5,41 @@ setRandomSeed 0
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
 (V,npaths) = monodromySolve G
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
-assert(length V.PartialSols ==4)
+assert(length V.PartialSols ==5)
 Gr = V.Graph
 
 R = ring Gr.Family
 S = coefficientRing R
 T =  CC[a][gens S, gens R]
-mSys = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
-slicedSys = mSys | {sub(random(1,CC[gens R]), T)-a} | apply(5,i->sub(random(1,CC[gens S])-1, T))
-(V',npaths) = monodromySolve polySystem slicedSys
-length V'.PartialSols
+mSysEqs = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
+
+-- generate a random point on the solution variety
+mSys = polySystem mSysEqs
+svcodim = (mSys.NumberOfVariables - mSys.NumberOfPolys)
+nSliceParams = svcodim*(numgens T)
+U = CC[apply(nSliceParams, i-> symbol ww_i)][gens T]
+hyperplanes = apply(svcodim, j -> sum(apply(numgens T, i-> sub((gens T)#i,U)*(gens coefficientRing U)#(j*svcodim +i))))
+svCut = polySystem( apply(mSysEqs, e-> sub(e,U))| hyperplanes)
+setRandomSeed(3)
+(q0,y0) = createSeedPair(svCut,"initial parameters" => "random")
+
+-- check that it worked: for some seeds it doesn't	    
+apply(mSysEqs, e -> sub(e, apply(numgens T, i -> (gens T)#i => (y0.Coordinates)#i)))
+
+-- now slice with xes: might need to generate new hyperplanes 
+specializedHyperplanes = specializeSystem(q0,polySystem drop(hyperplanes,-1))
+xSliceOpts = apply(numgens S,  i -> (gens T)#i => 0)
+xSlices = apply(specializedHyperplanes, h -> sub(sub(h,T), xSliceOpts))
+
+-- solve System: still not working
+P' = polySystem(mSysEqs | xSlices  | {sub(random(1,S),T)-a})
+(V',npaths) = monodromySolve(P', point {{random(CC)}}, {y0})
+
+
+
+(p0, x0) = createSeedPair(G,"initial parameters" => "one")  
+
+
 
 m = numgens S
 n = numgens R'
