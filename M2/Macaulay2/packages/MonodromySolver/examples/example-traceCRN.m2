@@ -32,9 +32,14 @@ xSliceOpts = apply(numgens S,  i -> (gens T)#i => 0)
 xSlices = apply(specializedHyperplanes, h -> sub(sub(h,T), xSliceOpts))
 
 -- solve System: still not working
-P' = polySystem(mSysEqs | xSlices  | {sub(random(1,S),T)-a})
-(V',npaths) = monodromySolve(P', point {{random(CC)}}, {y0})
+kSliceOpts = apply(numgens S,  i -> (gens T)#i => (y0.Coordinates)#i)
+kslice = sub(random(1,S),T)
+a0 = point {{ sub(kslice, kSliceOpts) }}
+P' = polySystem(mSysEqs | xSlices  | {kslice-a})
+(V',npaths) = monodromySolve(P', a0, {y0})
+ring P'
 
+specializeSystem(a0,P')
 
 
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
