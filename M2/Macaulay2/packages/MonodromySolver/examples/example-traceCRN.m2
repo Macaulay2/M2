@@ -1,11 +1,11 @@
 load "example-CRN.m2"
 
+
 setRandomSeed 0
--- system for example from Elizabeth's talk
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
 (V,npaths) = monodromySolve G
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
-assert(length V.PartialSols ==5)
+assert(length V.PartialSols ==4)
 Gr = V.Graph
 
 R = ring Gr.Family
@@ -31,11 +31,13 @@ specializedHyperplanes = specializeSystem(q0,polySystem drop(hyperplanes,-1))
 xSliceOpts = apply(numgens S,  i -> (gens T)#i => 0)
 xSlices = apply(specializedHyperplanes, h -> sub(sub(h,T), xSliceOpts))
 
--- solve System: still not working
+-- set up system
 kSliceOpts = apply(numgens S,  i -> (gens T)#i => (y0.Coordinates)#i)
 kslice = sub(random(1,S),T)
 a0 = point {{ sub(kslice, kSliceOpts) }}
 P' = polySystem(mSysEqs | xSlices  | {kslice-a})
+
+-- solve system: still failing
 (V',npaths) = monodromySolve(P', a0, {y0})
 ring P'
 
