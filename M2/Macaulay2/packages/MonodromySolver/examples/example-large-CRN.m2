@@ -50,8 +50,17 @@ F = join(subRandomInitVals N, subRandomReactionRates N)
 I = ideal F
 S = QQ[N.ConcentrationRates]
 J=sub(I,S)
-dim J
-degree J
+
+DHFR = reactionNetwork ({"E+H2F <--> EH2F", "E+NH <--> ENH", "EH2F+NH <--> ENHH2F", 
+	"ENHH2F <--> ENH+H2F", "ENHH2F <--> ENH4F", "EH4F+N <--> ENH4F", "ENH4F <--> EN+H4F",
+	"EN <--> E+N", "EH4F <--> E+H4F", "ENH+H4F <--> ENHH4F", "ENHH4F <--> EH4F+NH",
+	"EH2F+N <--> ENH2F", "ENH2F <--> EN+H2F"
+	})
+R = createRing(DHFR, QQ)
+F = join(subRandomInitVals DHFR, subRandomReactionRates DHFR)
+I = ideal F
+S = QQ[DHFR.ConcentrationRates]
+J=sub(I,S)
 
 
 
@@ -66,6 +75,7 @@ n = 7
 W = X
 W = multipleModificationA n
 W = N
+W = DHFR
 H = createPolySystem(W, FF)
 (p0, x0) = createSeedPair(H,"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfEdges => 5)

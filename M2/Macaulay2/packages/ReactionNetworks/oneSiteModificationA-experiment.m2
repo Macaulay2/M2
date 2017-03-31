@@ -180,6 +180,20 @@ R = createRing(C', QQ)
 F = join(subRandomInitVals C', subRandomReactionRates C')
 I = ideal F
 netList flatten entries mingens I
+
+S = QQ[value(C'.ConcentrationRates)#2, 
+    value(C'.ConcentrationRates)#5,
+    value(C'.ConcentrationRates)#0, 
+    value(C'.ConcentrationRates)#3,
+    value(C'.ConcentrationRates)#6,
+    value(C'.ConcentrationRates)#7, 
+    value(C'.ConcentrationRates)#4,
+    value(C'.ConcentrationRates)#1, 
+    MonomialOrder => {Eliminate 1,Lex}]
+J = sub(I,S)
+netList flatten entries gens J
+
+
 E = eliminate(drop(toList(apply(0..length C'.ConcentrationRates-1, i-> 
 		value(C'.ConcentrationRates#i))),{2,2}), I)
 
@@ -222,6 +236,20 @@ R = createRing(D, QQ)
 F = join(subRandomInitVals D, subRandomReactionRates D)
 I = ideal F
 netList flatten entries mingens I
+
+S = QQ[value(D.ConcentrationRates)#2, 
+    value(D.ConcentrationRates)#5,
+    value(D.ConcentrationRates)#0, 
+    value(D.ConcentrationRates)#3,
+    value(D.ConcentrationRates)#6,
+    value(D.ConcentrationRates)#7, 
+    value(D.ConcentrationRates)#8,
+    value(D.ConcentrationRates)#4,
+    value(D.ConcentrationRates)#1, 
+    MonomialOrder => {Eliminate 1,Lex}]
+J = sub(I,S)
+netList flatten entries gens J
+
 E = eliminate(drop(toList(apply(0..length D.ConcentrationRates-1, i-> 
 		value(D.ConcentrationRates#i))),{2,2}), I)
 
