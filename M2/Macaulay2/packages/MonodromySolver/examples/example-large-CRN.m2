@@ -31,38 +31,34 @@ multipleModificationA = n -> (
     A = glue(A, sub(oneSiteModificationA(), {"S_0" => "2S_"|(i-1), "S_1" => "S_"|i}));
     A
     )
--- experiment 
-X = reactionNetwork "A+B <--> C, X <--> 2A+D, 2A+D <--> Y, D <--> C+W, B+D <--> Z"
-{*
-X' = reactionNetwork ({"A+B <--> C", "X <--> 2A+D", "2A+D <--> Y", 
-    "D <--> C+W", "B+D <--> Z", "0 <--> A", "0 <--> B", "0 <--> C", 
-    "0 <--> D", "0 <--> W", "0 <--> X", "0 <--> Y", "0 <--> Z"}, NullSymbol => "0")
-X'S = createPolySystem(X', FF) --not working
-*}
 
 N = reactionNetwork ({"A+R-->RA", "A+RD-->RDA", "A+RT-->RTA", "E+R-->RE",
 	"E+RD-->RDE", "E+RT-->RTE", "R-->RD", "R-->RT", "RA-->A+R", "RD-->R",
 	"RDA-->A+RD", "RDE-->E+RD", "RDE-->RE", "RE-->E+R", "RE-->RTE", "RE-->RDE",
 	"RT-->R", "RT-->RD", "RTA-->A+RT", "RTA-->RDA", "RTE-->E+RT", "RTE-->RDE", "RTE-->RE"
 	})
-R = createRing(N,QQ)
-F = join(subRandomInitVals N, subRandomReactionRates N)
-I = ideal F
-S = QQ[N.ConcentrationRates]
-J=sub(I,S)
+--R = createRing(N,QQ)
+
 
 DHFR = reactionNetwork ({"E+H2F <--> EH2F", "E+NH <--> ENH", "EH2F+NH <--> ENHH2F", 
 	"ENHH2F <--> ENH+H2F", "ENHH2F <--> ENH4F", "EH4F+N <--> ENH4F", "ENH4F <--> EN+H4F",
 	"EN <--> E+N", "EH4F <--> E+H4F", "ENH+H4F <--> ENHH4F", "ENHH4F <--> EH4F+NH",
 	"EH2F+N <--> ENH2F", "ENH2F <--> EN+H2F"
 	})
-R = createRing(DHFR, QQ)
-F = join(subRandomInitVals DHFR, subRandomReactionRates DHFR)
+--R = createRing(DHFR, QQ)
+
+GC = reactionNetwork ({"G+ATP-->G6P+ADP+H", "G6P<-->F6P", "F6P+ATP<-->FBP+ADP+H", 
+	"FBP<-->DHAP", "FEP<-->GAP", "DHAP<-->GAP", "GAP+NAD+P<-->BPG+NADH+H",
+	"BPG+ADP<-->TrPG+ATP", "TrPG<-->TwPG", "TwPG<-->PEP+HOH",
+	"PEP+ADP+H-->Pyr+ATP", "G+2ADP+2P+2NAD-->2Pyr+2ATP+2NADH+2HOH+2H"}
+	) 
+R = createRing(GC,QQ)
+F = join(subRandomInitVals GC, subRandomReactionRates GC)
 I = ideal F
-S = QQ[DHFR.ConcentrationRates]
-J=sub(I,S)
-
-
+S = QQ[GC.ConcentrationRates]
+J = sub(I, S)
+dim J
+degree J
 
 
 end
@@ -72,16 +68,16 @@ load "example-large-CRN.m2"
 setRandomSeed 0
 -- system for n copies of oneSiteModificationA
 n = 7
-W = X
-W = multipleModificationA n
-W = N
-W = DHFR
-H = createPolySystem(W, FF)
+An = multipleModificationA n
+N
+DHFR
+GC
+H = createPolySystem(GC, FF)
 (p0, x0) = createSeedPair(H,"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfEdges => 5)
 length V.PartialSols
 
-L = apply(numgens createRing(W,FF), i->random FF)
+L = apply(numgens createRing(GC,FF), i->random FF)
 specPolys = specializeSystem (p0,createPolySystem'overdetermined(W,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
