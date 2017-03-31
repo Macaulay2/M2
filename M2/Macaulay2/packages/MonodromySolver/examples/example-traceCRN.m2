@@ -1,9 +1,8 @@
+restart
 load "example-CRN.m2"
 
-
-setRandomSeed 0
+setRandomSeed 1
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
-(V,npaths) = monodromySolve G
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
 assert(length V.PartialSols ==4)
 Gr = V.Graph
@@ -16,6 +15,35 @@ mSysEqs = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
 -- generate a random point on the solution variety
 mSys = polySystem mSysEqs
 svcodim = (mSys.NumberOfVariables - mSys.NumberOfPolys)
+assert(svcodim == numgens S and svcodim == #coordinates p0)
+
+-- make sure p0 lies on all khyperplanes
+khyperplanes = (sub(vars S,T) - matrix p0) * random(CC^svcodim,CC^(svcodim-1))
+xcoeffs = random(CC^(numgens R),CC^1) 
+-- ... and (x0,a0) satisfies the following. 
+xhyperplane = (sub(vars R,T) * xcoeffs)_(0,0) - a
+a0 = (matrix x0 * xcoeffs)_(0,0)
+
+P' = polySystem transpose (matrix{mSysEqs} | khyperplanes  | xhyperplane)
+
+-- the max I got is 11. That seems correct: 15-4.
+-- to get 11 more frequently, perhaps use more than one parameters?
+-- of course, we should be using trace test to stop. then we stop only when we reach 11.
+(V',npaths) = monodromySolve(P', point{{a0}}, {point{coordinates p0 | coordinates x0}},  NumberOfNodes => 7, NumberOfEdges => 2, Verbose=>true)
+length V'.PartialSols
+
+-- something is wrong with the setup... when NumberOfEdges=>1
+(V',npaths) = monodromySolve(P', point{{a0}}, {point{coordinates p0 | coordinates x0}},  NumberOfNodes => 4, NumberOfEdges => 1, Verbose=>true)
+
+-- end -- Anton's edits
+
+
+
+
+
+
+
+
 nSliceParams = svcodim*(numgens T)
 U = CC[apply(nSliceParams, i-> symbol ww_i)][gens T]
 hyperplanes = apply(svcodim, j -> sum(apply(numgens T, i-> sub((gens T)#i,U)*(gens coefficientRing U)#(j*svcodim +i))))
