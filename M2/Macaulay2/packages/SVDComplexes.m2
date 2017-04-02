@@ -13,7 +13,19 @@ newPackage(
         )
 
 export {
-    "uniquify",
+    -- these belong in Core?
+    "meanValue",
+    "variance",
+    "histogram",
+    "randomUpper", 
+    "randomSL",
+    "newChainComplexMap",
+    -- also in here:
+    -- clean
+    -- chainComplex
+    -- what else?
+    -- 
+    "randomChainComplex",
     "constantStrand",
     "constantStrands",
     "laplacians",
@@ -22,44 +34,114 @@ export {
     "minimizeBetti",
     "SVDComplex",
     "SVDHomology",
+    "pseudoInverse",
     "SVDBetti",
     "Projection",
     "Laplacian",
-    "newChainComplexMap",
     "numericRank",
+    "commonEntries",
+    "uniquify",
     "checkSVDComplex"
 }
 
-uniquify = method()
-uniquify(List,List,RR) := (L1, L2, threshold) -> (
-    -- L1, L2 are lists of floats, sorted in descending order
-    -- returns lists L1', L2' also sorted, with no common entries
-    M1 := {};
-    M2 := {};
-    i := 0;
-    j := 0;
-    while i < #L1 and j < #L2 do (
-        a := L1_i;
-        b := L2_j;
-        << "comparing " << (i,j) << " values: " << (a,b) << endl;
-        if abs(a-b)/(abs(a)+abs(b)) < threshold then (
-            i = i+1;
-            j = j+1;
-            )
-        else (
-            if a > b then (M1 = append(M1, a); i = i+1)
-            else (M2 = append(M2,b); j = j+1)
-            )
-        );
-    return if i == #L1 then (M1,join(M2,L2_{j..#L2-1}))
-    else if j == #L2 then (join(M1,L1_{i..#L1-1}), M2)
-    else error "damn, our logic is messed up!"
+--------------------------------------------------
+-- Some basic functions that should not be here --
+-- Move these to the core? -----------------------
+--------------------------------------------------
+meanValue = method()
+meanValue List := L -> (sum L)/#L
+
+variance = method()
+variance List := L-> (
+    m := meanValue L;
+    (sum(L,l-> (l-m)^2))/#L
     )
 
+histogram = method()
+histogram(List,ZZ) := (L,t) -> (
+    minL := min L;
+    h := (max L - minL)/t;
+    L1 := L; 
+    a := #L1; 
+    for i from 1 to t list (
+        b:=a;
+	L1 = select(L1,x->x > (minL+i*h));
+	a=#L1;
+        b-a
+        )
+    )
+
+euler List := L -> sum(#L,i->(-1)^i*L_i)
+
+TEST ///
+  needsPackage "SVDComplexes"
+  c={2,4,5,3} 
+  r={1,3,2}
+  assert(0 == euler c)
+  assert(euler {1,2,3,4} == -2)
+
+///
+-------------------------------------------------
+-- Code for random complexes over the integers --
+-------------------------------------------------
+randomUpper = method(Options=>{Height=>10})
+randomUpper ZZ := opts -> n -> (
+    if n == 0 then return map(ZZ^0, ZZ^0, {});
+    matrix(ZZ, for i from 0 to n-1 list for j from 0 to n-1 list (
+	    if i > j then 0
+	    else if i == j then 1 
+            else random(ZZ,opts) - floor(opts.Height/2)
+            ))
+    )
+randomSL = method(Options=>{Height=>10})
+randomSL(ZZ) := opts -> n -> randomUpper(n,opts) * transpose randomUpper(n,opts)
+
+randomChainComplex = method(Options=>{Height=>10})
+randomChainComplex(List,List) := opts -> (h,r)-> (
+    -- lists h_0,..,h_n,r_1,...,r_n
+    -- of possible possible homology dimensions and ranks of maps in a chain complex
+    if #h =!= #r+1 then error "expected list of non-negative integers of length n+1 and n";
+    rr :=append(prepend(0,r),0);
+    c :=for i from 0 to #h-1 list h_i+rr_i+rr_(i+1); 
+    A := id_(ZZ^(c_0));
+    B := random(ZZ^(c_0),ZZ^(rr_1),opts);
+    C := random(ZZ^(rr_1),ZZ^(c_1),opts);
+    L :={B*C};
+    for i from 2 to #c-1 do (
+	A =LLL syz C;
+	B = random(source A, ZZ^(rr_i),opts);
+	C = random( ZZ^(rr_i),ZZ^(c_i),opts);
+	L =append(L,A*B*C);
+	);
+    chainComplex L
+    )
+
+TEST ///
+restart
+  needsPackage "SVDComplexes"
+  h={1,4,6,5,1} 
+  r={1,3,3,4}
+  C=randomChainComplex(h,r)
+  assert(C.dd^2 == 0)
+  prune HH C
+  for i from 0 to #h-1 do assert(rank HH_i C == h#i)
+  CR=C**RR_53    
+  SVDComplex CR
+
+  assert(det randomSL 0 == 1)
+  assert(det randomSL 1 == 1)
+  assert(det randomSL 5 == 1)
+  randomSL(10, Height=>100)
+  randomSL(10)
+  randomSL(10, Height=>1000) -- height isn't correct...
+  randomSL(10, Height=>10000) -- height isn't correct...
+///
+
 -----------------------------------------------
--- Code for SVD of a complex ------------------
+-- Code for nonminimal resolutions over QQ ----
 -----------------------------------------------
 debug Core
+
 constantStrand = method()
 constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
     -- base ring of C should be QQ
@@ -67,7 +149,6 @@ constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
     len := length C;
     reg := regularity C;
-    --if deg <= 2 or deg > len+reg then error("degree should be in the range 2.."|len+reg);
     chainComplex for lev from 1 to len list (
         matrix map(kk, rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw kk, deg,lev))
         )
@@ -86,12 +167,6 @@ constantStrands(ChainComplex, Ring) := (C, kk) -> (
         )
     )
 
-laplacians = method()
-laplacians ChainComplex := (L) -> (
-      rg := select(spots L, i -> L_i != 0);
-      for i in rg list ((transpose L.dd_(i)) *  L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1))))
-      )
-
 getNonminimalRes = method()
 getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     -- if C was created using FastNonminimal=>true, then returns the nonmimal complex.
@@ -107,6 +182,49 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
       );
     chainComplex toList result
     )
+
+TEST ///
+  -- constantStrand, constantStrands
+  -- these are from nonminimal free resolutions over QQ
+restart
+  needsPackage "SVDComplexes"
+  
+  R = QQ[a..e]
+  I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
+  C = res(I, FastNonminimal=>true)
+  betti C
+  constantStrand(C, RR_53, 4)
+  constantStrand(C, RR_53, 5)
+  constantStrand(C, RR_53, 10)
+
+  constantStrands(C, RR_53)  
+  constantStrands(C, RR_1000)  
+  constantStrands(C, RR_300)  
+  kk1 = ZZ/1073741891
+  kk2 = ZZ/1073741909
+  constantStrands(C, kk1)
+  constantStrands(C, kk2)  
+  constantStrands(C, ZZ)
+  
+  R1 = RR_53 (monoid R)
+  R2 = RR_1000 (monoid R)
+  R3 = kk1 (monoid R)
+  R4 = kk2 (monoid R)
+  getNonminimalRes(C, R1) -- CRASH!!
+  getNonminimalRes(C, R2) -- CRASH!!
+  getNonminimalRes(C, R3) -- CRASH!!
+  getNonminimalRes(C, R4) -- CRASH!!
+///
+
+-----------------------------------------------
+-- Code for SVD of a complex ------------------
+-----------------------------------------------
+
+laplacians = method()
+laplacians ChainComplex := (L) -> (
+      rg := toList(min L..max L);
+      for i in rg list ((transpose L.dd_(i)) *  L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1))))
+      )
 
 degreeZeroMatrix = method()
 degreeZeroMatrix(ChainComplex, ZZ, ZZ) := (C, slanteddeg, level) -> (
@@ -136,7 +254,7 @@ numericRank Matrix := (M) -> (
     if ring M =!= RR_53 then error "expected real matrix";
     (sigma, U, Vt) := SVD M;
     pos := select(#sigma-1, i -> sigma#i/sigma#(i+1) > 1e4);
-    if #pos === 0 then #sigma else (min pos)+1
+    if #pos === 0 then #sigma else min pos+1
     --# select(sigma, s -> s > 1e-10)
     )
 
@@ -191,6 +309,51 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
+
+commonEntries = method()
+commonEntries(List,List) := (A,B) -> (
+    -- A, B decending list of real numbers
+    -- returns list of position, where these numbers coincide up to 4 digits
+    Ac:={};Bc:={};
+    i:=0;j:=0;
+    while (
+	    if abs((A_i-B_j)/(A_i+B_j)) < 1e-4 then (
+	        Ac=append(Ac,i);
+            Bc=append(Bc,j);
+	        i=i+1;j=j+1)
+    	else if A_i<B_j then j=j+1 else i=i+1;
+    	i<#A and j< #B
+        ) do ();
+    return(Ac,Bc)
+    )
+
+uniquify = method()
+uniquify(List,List,RR) := (L1, L2, threshold) -> (
+    -- L1, L2 are lists of floats, sorted in descending order
+    -- returns lists L1', L2' also sorted, with no common entries
+    M1 := {};
+    M2 := {};
+    i := 0;
+    j := 0;
+    while i < #L1 and j < #L2 do (
+        a := L1_i;
+        b := L2_j;
+        << "comparing " << (i,j) << " values: " << (a,b) << endl;
+        if abs(a-b)/(abs(a)+abs(b)) < threshold then (
+            i = i+1;
+            j = j+1;
+            )
+        else (
+            if a > b then (M1 = append(M1, a); i = i+1)
+            else (M2 = append(M2,b); j = j+1)
+            )
+        );
+    return if i == #L1 then (M1,join(M2,L2_{j..#L2-1}))
+    else if j == #L2 then (join(M1,L1_{i..#L1-1}), M2)
+    else error "damn, our logic is messed up!"
+    )
+
+
 SVDComplex = method(Options => {
         Strategy => Projection -- other choice: Laplacian
         }
@@ -220,7 +383,10 @@ SVDComplex ChainComplex := opts -> (C) -> (
             sigma1 = flatten entries sigma1;
             Sigmas#ell = sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
-            rks#ell = # select(sigma1, x -> x > 1e-10);
+	        pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e11);
+            rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
+            smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             smallestSing#ell = sigma1#(rks#ell-1);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
@@ -240,9 +406,47 @@ SVDComplex ChainComplex := opts -> (C) -> (
             );
         targetComplex := (chainComplex SigmaMatrices);
         result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
-        return (result, new HashTable from hs, new HashTable from smallestSing);
+        --return (result, new HashTable from hs, new HashTable from smallestSing);
+        return result;
         );
     if opts.Strategy == symbol Laplacian then (
+	    deltas := laplacians C;
+        eigVec := apply(deltas,m->eigenvectors(m,Hermitian=>true));
+	    eigVal := apply(eigVec,p->reverse toList first p);
+	    posEigVal:=apply(eigVal,p->select(p,lambda->lambda >0));
+	    apply(posEigVal,p-> if #unique p != #p then error "Have multiple eigenvalues");
+	    n:=#deltas-1;
+	    commonPositions := apply(n,i->commonEntries(eigVal_i,eigVal_(i+1)));
+	    apply(n-3,i->(k:=
+		        #unique(last commonPositions_(i+1)|(first commonPositions_(i+2))) ==
+		        #last commonPositions_(i+1)+#first commonPositions_(i+2)
+			    ; 
+    		    if not k then error "Have multiple eigenvalues";
+	            k));
+    	for ell from lo+1 to hi do rks#ell = #first (commonPositions_(ell-lo-1));
+	    rks#(hi+1) = 0;
+    	for ell from lo to hi do hs#ell = Cranks#ell-rks#ell-rks#(ell+1);
+	    -- now arrange the columns of the orthogonal matrices in three steps
+     	col1 := for i from 0 to n  list (
+	        if i== 0 then first commonPositions_0 
+    	    else if i==length C then last commonPositions_(i-1)
+    	    else first commonPositions_i|last commonPositions_(i-1)); 
+	    col2 := for i from 0 to n list (
+    	    leftOver := toList(0..#eigVal_i-1);
+            apply(col1_i,j->leftOver=delete(j,leftOver));
+    	    leftOver);
+	    col3 := for i from 0 to n list (
+    	    c:=col1_i|col2_i;
+	        -- a reversal is necessary because eigenvectors returns the eigenvalues in increasing order
+    	    cmax:=max c;
+    	    apply(c,j->cmax-j));
+	    for ell from lo to hi do Orthos#ell = (last eigVec_(ell-lo))_(col3_(ell-lo));
+	    Us:= new HashTable from Orthos;
+	    h:=new HashTable from hs;
+    	return(h,Us);
+	    -- todo: build the sigma complex eg by concugationg c with the Us
+	    -- this will lead to a complex with +- the singular values in the sigma block
+	    -- fix the signs of the singulat values and of the det U_i  
         );
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
@@ -269,10 +473,10 @@ SVDHomology ChainComplex := opts -> (C) -> (
             (sigma1, U, Vt) = SVD m1;
             sigma1 = flatten entries sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
-            pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e4);
+            pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e10);
             rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
             --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
-            smallestSing#ell = (if rks#ell > 1 then sigma1#(rks#ell-2) else null, sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            smallestSing#ell = (if rks#ell-1>0 then sigma1#(rks#ell-2) else null, sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
@@ -281,6 +485,35 @@ SVDHomology ChainComplex := opts -> (C) -> (
         return (new HashTable from hs, new HashTable from smallestSing);
         );
     if opts.Strategy == symbol Laplacian then (
+	    deltas := laplacians C;
+        eigVec := apply(deltas,m->eigenvectors(m,Hermitian=>true));
+	    eigVal := apply(eigVec,p->reverse toList first p);
+	    posEigVal:=apply(eigVal,p->select(p,lambda->lambda >0));
+	    apply(posEigVal,p-> if #unique p != #p then error "Have multiple eigenvalues");
+	    n:=#deltas-1;
+	    commonPositions := apply(n,i->commonEntries(eigVal_i,eigVal_(i+1)));
+	    apply(n-3,i->(k:=
+		        #unique(last commonPositions_(i+1)|(first commonPositions_(i+2))) ==
+		        #last commonPositions_(i+1)+#first commonPositions_(i+2)
+			    ; 
+    		    if not k then error "Have multiple eigenvalues";
+	            k));
+    	for ell from lo+1 to hi do rks#ell = #first (commonPositions_(ell-lo-1));
+	    rks#(hi+1) = 0;
+    	for ell from lo to hi do hs#ell = Cranks#ell-rks#ell-rks#(ell+1);
+	    for ell from lo to hi do (
+	        lamb1:= if ell<hi then (
+	    	    pos1:=last (first commonPositions#(ell-lo));
+	    	    (eigVal#(ell-lo))_pos1)
+	        else null;
+	        lamb2 := if ell > lo then (
+	    	    pos2:=last (last commonPositions#(ell-lo-1));
+	            (eigVal#(ell-lo))_pos2)
+	        else null;
+	        lamb3:=if hs#ell > 0 then eigVal#(ell-lo)_(Cranks#ell-hs#ell) else null;
+	        smallestSing#ell =(lamb1,lamb2,lamb3);
+	        );
+	    return (new HashTable from hs, new HashTable from smallestSing);
         );
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
@@ -323,6 +556,63 @@ checkSVDComplex = (C, Fhs) -> (
         );
     (val1, val2, vals3, vals4, vals5)
     )
+
+pseudoInverse=method()
+pseudoInverse ChainComplex := C -> (
+    U := SVDComplex C;
+    SigmaComplex := target U;
+    minC := min C;
+    maxC := max C;
+    range := toList(minC+1..maxC);
+    At := apply(range, i->transpose SigmaComplex.dd_i);
+    SigmaPlus := apply(At,A->matrix (apply(numrows A,i->apply(numcols A,j-> 
+		    if A_(i,j)==0 then 0 else 1/(A_(i,j))))));
+    CplusMats := apply(#SigmaPlus,i->
+	    transpose U_(minC+i+1)*SigmaPlus_i* U_(minC+i));
+    Cplus := (chainComplex reverse CplusMats)[maxC];
+    Cplus
+    )
+
+TEST ///
+restart
+  needsPackage "SVDComplexes"
+  h={1,4,6,5,1} 
+  r={1,3,3,4}
+  C=randomChainComplex(h,r)
+  C = C ** RR_53
+  SVDComplex C
+  pseudoInverse C
+///
+
+conjugateComplex=method(Options=>{Height=>10})
+conjugateComplex ChainComplex := opts -> C -> (
+    minC:= min C;
+    maxC:= max C;  
+    U:=for i from minC to maxC list (
+	r:=rank C_i;
+	randomSL(r,opts));
+    C':=for i from minC+1 to maxC list (
+	U_(i-1)*C.dd_i*inverse U_i);
+    (chainComplex C')[-minC])
+    
+normalize=method()
+normalize ChainComplex := C-> (
+    if not ring C === RR_53 then error "expected a complex over RR_53";
+    minC:= min C;
+    maxC:= max C;  
+    C':=for i from minC+1 to maxC list (
+	m:=max(flatten entries C.dd_i/abs);
+	1/m*C.dd_i);
+    chainComplex C'[-minC])
+
+clean(RR, ChainComplex) := (epsilon, C) -> (
+    chainComplex hashTable for i from min C + 1 to max C list i => clean(epsilon, C.dd_i)
+    )
+
+clean(RR, ChainComplexMap) := (epsilon, f) -> (
+    H := hashTable for k in keys f list if instance(k,ZZ) then k => clean(epsilon, f_k) else continue;
+    newChainComplexMap(clean(epsilon, target f), clean(epsilon, source f), H)
+    )
 -- TODO for free res stuff with Frank:
 -- add QR
 -- make sure code doesn't crash when doing minimalBetti over QQ...
@@ -331,11 +621,172 @@ checkSVDComplex = (C, Fhs) -> (
 
 beginDocumentation()
 
+doc ///
+   Key
+     SVDComplexes
+   Headline
+     support for computing homology, ranks and SVD complexes, from a chain complex over the real numbers
+   Description
+    Text
+      Some functionality here should be moved elsewhere.
+      
+      Here is an example of the usage.
+   Caveat
+     Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
+///
+
+doc ///
+   Key
+     randomChainComplex
+     (randomChainComplex,List,List)
+     [randomChainComplex, Height]
+   Headline
+     random chain complex over the integers with prescribed homology group and matrix ranks
+   Usage
+     C = randomChainComplex(h,r)
+   Inputs
+     h:List
+       of desired ranks of the homology groups, of some length $n$
+     r:List
+       of desired ranks of the matrices in the complex, of length $n-1$
+     Height => ZZ
+       the sizes of the random integers used
+   Outputs
+     C:ChainComplex
+       a random chain complex over the integers whose homology ranks match $h$, and 
+       whose matrices have ranks given by $r$
+   Description
+    Text
+      Here is an example.
+    Example
+      h={1,4,6,5,1} 
+      r={1,3,3,4}
+      C=randomChainComplex(h,r)
+      prune HH C
+      for i from 0 to 4 list rank HH_i C
+      for i from 1 to 4 list rank(C.dd_i)
+    Text
+      The optional argument {\tt Height} chooses the maximum sizes of the random numbers used.
+      The actual numbers are somewhat larger (twice as many bits), as matrices are multiplied together.
+    Example
+      h={1,4,0,5,1} 
+      r={1,3,3,4}
+      C=randomChainComplex(h,r, Height=>1000)
+      C.dd
+      C.dd^2 == 0
+      prune HH C
+      for i from 0 to 4 list rank HH_i C
+      for i from 1 to 4 list rank(C.dd_i)
+   Caveat
+     This returns a chain complex over the integers.  Notice that if one gives h to be a list of zeros, then
+     that doesn't mean that the complex is exact, just that the ranks are as expected.
+   SeeAlso
+     SVDComplexes
+///
+
+TEST ///
+  h={1,4,6,5,1} 
+  r={1,3,3,4}
+  C=randomChainComplex(h,r)
+  prune HH C
+  assert(C.dd^2 == 0)
+  assert(h == for i from 0 to 4 list rank HH_i C)
+  assert(r == for i from 1 to 4 list rank(C.dd_i))
+
+  C = randomChainComplex(h={1,6,4,7}, r={1,1,1})
+  prune HH C
+  assert(C.dd^2 == 0)
+  assert(h == for i from 0 to length C list rank HH_i C)
+  assert(r == for i from 1 to length C list rank(C.dd_i))
+
+  assert try (C = randomChainComplex({1,6,4,7,4}, {1,1,1}); false) else true
+
+  C = randomChainComplex(h={0,0}, r={10})
+  prune HH C
+  assert(C.dd^2 == 0)
+  assert(h == for i from 0 to length C list rank HH_i C)
+  assert(r == for i from 1 to length C list rank(C.dd_i))
+  
+  C = randomChainComplex(h={1,1},r={0})
+  prune HH C
+  assert(C.dd_1 == 0)
+  assert(C.dd^2 == 0)
+  assert(h == for i from 0 to length C list rank HH_i C)
+  assert(r == for i from 1 to length C list rank(C.dd_i))
+///
+
+doc ///
+   Key
+     constantStrand
+     (constantStrand, ChainComplex, Ring, ZZ)
+   Headline
+     a constant strand of a chain complex
+   Usage
+     Cd = constantStrand(C, kk, deg)
+   Inputs
+     C:ChainComplex
+       A chain complex created using {\tt res(I, FastNonminimal=>true)}
+     kk:Ring
+       if the coefficient ring of the ring of C is QQ, then this should be either:
+       RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909.  
+     deg:ZZ
+       the degree that one wants to choose.
+   Outputs
+     Cd:ChainComplex
+       a chain complex over {\tt kk}, consisting of the submatrices of {\tt C} of degree {\tt deg}
+   Description
+    Text
+      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      as in the example below.  But it should be much more general, handling other rings with grace,
+      and also it should handle arbitrary (graded) chain complexes.
+    Example
+      R = QQ[a..d]
+      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+      C = res(I, FastNonminimal=>true)
+      betti C
+      CR = constantStrand(C, RR_53, 8)
+      CR.dd_4
+      CR2 = constantStrand(C, RR_1000, 8)
+      CR2.dd_4
+      kk1 = ZZ/1073741891
+      kk2 = ZZ/1073741909
+      Cp1 = constantStrand(C, kk1, 8)
+      Cp2 = constantStrand(C, kk2, 8)
+      (CR.dd_4, CR2.dd_4, Cp1.dd_4, Cp2.dd_4)
+      (clean(1e-14,CR)).dd_4
+      (clean(1e-299,CR2)).dd_4
+    Text
+      Setting the input ring to be the integers, although a hack, sets each entry to the 
+      number of multiplications used to create this number.  Warning: the result is almost certainly
+      not a complex!  This part of this function is experimental, and will likely change
+      in later versions.
+    Example
+      CZ = constantStrand(C, ZZ, 8)
+      CZ.dd_4
+   Caveat
+     This function should be defined for any graded chain complex, not just ones created
+     using {\tt res(I, FastNonminimal=>true)}.  Currently, it is used to extract information 
+     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
+     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
+     together with information about how many multiplications were performed to obtain this number.
+   SeeAlso
+     constantStrands
+///
+
 end--
 
-///
+restart
+uninstallPackage "SVDComplexes"
+restart
+installPackage "SVDComplexes"
+viewHelp "SVDComplexes"
+restart
+check "SVDComplexes"
 restart
 needsPackage "SVDComplexes"
+
+///
+
 needsPackage "AGRExamples"
 R=QQ[a..h]
 Rp=(ZZ/32003)(monoid R)
