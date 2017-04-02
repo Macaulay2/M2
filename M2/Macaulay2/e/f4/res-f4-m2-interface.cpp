@@ -376,7 +376,6 @@ MutableMatrix *ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           comps[i] = nullptr;
           last[i] = nullptr; // used to easily placce monomials in the correct bin, at the end of the polynomials.
         }
-
       const res_monomial_word *w = f.monoms.data();
       for (int i=0; i<f.len; i++)
         {
@@ -388,6 +387,7 @@ MutableMatrix *ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           M->from_expvector(exp, m1);
           ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
           Nterm * g = RP->make_flat_term(a, m1);
+          if (g == nullptr) continue;
           g->next = 0;
           if (last[comp] == 0)
             {

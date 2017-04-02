@@ -142,22 +142,38 @@ restart
 -----------------------------------------------
 debug Core
 
+isMadeFromFastNonminimal = (C) -> C.?Resolution and C.Resolution.?RawComputation
+fastNonminimalComputation = (C) -> if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation else null
+
 constantStrand = method()
 constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
-    -- base ring of C should be QQ
-    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
+    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
+    comp := fastNonminimalComputation C;
+    if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
+    len := length C;
+    reg := regularity C;
+    chainComplex for lev from 1 to len list (
+        matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
+        )
+    )    
+
+constantStrand(ChainComplex, ZZ) := (C, deg) -> (
+    kk := coefficientRing ring C;
+    if kk === QQ then error "coefficient ring is QQ: need to provide a ring: RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909, or ZZ";
+    comp := fastNonminimalComputation C;
+    if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
     len := length C;
     reg := regularity C;
     chainComplex for lev from 1 to len list (
-        matrix map(kk, rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw kk, deg,lev))
+        matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
         )
     )    
 
 constantStrands = method()
 constantStrands(ChainComplex, Ring) := (C, kk) -> (
     -- base ring of C should be QQ
-    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
+--    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
     len := length C;
     reg := regularity C;
@@ -166,6 +182,7 @@ constantStrands(ChainComplex, Ring) := (C, kk) -> (
         if D == 0 then continue else deg => D
         )
     )
+constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C)
 
 getNonminimalRes = method()
 getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
@@ -178,12 +195,16 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     result := new MutableList;
     for i from 0 to length C - 1 do (
       result#i = matrix map(R, rawResolutionGetMutableMatrixB(rawC, raw R, i+1));
+      << " i=" << i << " matrix = " << netList result#i << endl;
       if i > 0 then result#i = map(source result#(i-1),,result#i);
       );
     chainComplex toList result
     )
 
 TEST ///
+-- TODO for constantStrand, constantStrands:
+--  a. make it work for complexes constructed in different manners, not just for FastNonminimal
+--  b. allow a single multi-degree
   -- constantStrand, constantStrands
   -- these are from nonminimal free resolutions over QQ
 restart
@@ -210,12 +231,31 @@ restart
   R2 = RR_1000 (monoid R)
   R3 = kk1 (monoid R)
   R4 = kk2 (monoid R)
-  getNonminimalRes(C, R1) -- CRASH!!
-  getNonminimalRes(C, R2) -- CRASH!!
-  getNonminimalRes(C, R3) -- CRASH!!
-  getNonminimalRes(C, R4) -- CRASH!!
+  betti'ans = new BettiTally from {(0,{0},0) => 1, (1,{3},3) => 6, (1,{4},4) => 1, (1,{5},5) => 3, (1,{6},6) => 6,
+      (2,{4},4) => 1, (2,{5},5) => 3, (2,{6},6) => 22, (2,{7},7) => 29, (2,{8},8) => 9, (3,{6},6) => 1, (3,{7},7)
+      => 14, (3,{8},8) => 52, (3,{9},9) => 45, (3,{10},10) => 4, (4,{8},8) => 4, (4,{9},9) => 35, (4,{10},10) =>
+      52, (4,{11},11) => 14, (4,{12},12) => 4, (5,{10},10) => 9, (5,{11},11) => 29, (5,{12},12) => 10, (5,{13},13)
+      => 3, (5,{14},14) => 1, (6,{12},12) => 6, (6,{13},13) => 3, (6,{14},14) => 1}
+  assert(betti'ans == betti (C1 = getNonminimalRes(C, R1)))
+  assert(betti'ans == betti (C2 = getNonminimalRes(C, R2)))
+  assert(betti'ans == betti (C3 = getNonminimalRes(C, R3)))
+  assert(betti'ans == betti (C4 = getNonminimalRes(C, R4)))
+  assert(C1.dd^2 == 0)
+  assert(C2.dd^2 == 0)
+  assert(C3.dd^2 == 0)
+  assert(C4.dd^2 == 0)
 ///
 
+TEST ///
+restart
+  needsPackage "SVDComplexes"
+  
+  R = ZZ/32003[a..e]
+  I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
+  C = res(I, FastNonminimal=>true)
+  C1 = getNonminimalRes(C, R)
+  assert(C == C1)
+///
 -----------------------------------------------
 -- Code for SVD of a complex ------------------
 -----------------------------------------------
@@ -771,6 +811,38 @@ doc ///
      together with information about how many multiplications were performed to obtain this number.
    SeeAlso
      constantStrands
+///
+
+TEST ///
+  R = QQ[a..d]
+  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+  C = res(I, FastNonminimal=>true)
+  betti C
+  betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
+  CR = constantStrand(C, RR_53, 8)
+  CR2 = constantStrand(C, RR_1000, 8)
+
+  kk1 = ZZ/1073741891
+  kk2 = ZZ/1073741909
+  Cp1 = constantStrand(C, kk1, 8)
+  Cp2 = constantStrand(C, kk2, 8)
+
+  assert(betti'deg8 == betti CR)
+  assert(betti'deg8 == betti CR2)  
+  assert(betti'deg8 == betti Cp1)
+  assert(betti'deg8 == betti Cp2)
+  
+  (CR.dd_4, CR2.dd_4, Cp1.dd_4, Cp2.dd_4)
+  (clean(1e-14,CR)).dd_4
+  (clean(1e-299,CR2)).dd_4
+///
+
+TEST ///
+  kk = ZZ/32003
+  R = kk[a..d]
+  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+  C = res(I, FastNonminimal=>true)
+  constantStrand(C, kk, 8) -- fails, as it doesn't even make it to that code
 ///
 
 end--
