@@ -25,9 +25,9 @@ export {
     -- chainComplex
     -- what else?
     -- 
-    "randomChainComplex",
-    "constantStrand",
-    "constantStrands",
+    "randomChainComplex", -- documented, tests
+    "constantStrand", -- documented, tests
+    "constantStrands", -- documented, tests
     "laplacians",
     "getNonminimalRes",
     "degreeZeroMatrix",
@@ -48,6 +48,42 @@ export {
 -- Some basic functions that should not be here --
 -- Move these to the core? -----------------------
 --------------------------------------------------
+debug Core
+chainComplex(HashTable) := (maps) -> (
+    -- maps should be a HashTable with keys integers.  values are maps at that spot.
+    rgs := (values maps)/ring//unique;
+    if #rgs != 1 then error "expected matrices over the same ring";
+    R := rgs#0;
+    C := new ChainComplex;
+    C.ring = R;
+    for i in keys maps do (
+        f := maps#i;
+        F := source f;
+        G := target f;
+        if C#?i then (if C#i =!= F then error("different modules at index "|i))
+        else C#i = F;
+        if C#?(i-1) then (if C#(i-1) =!= G then error("different modules at index "|i-1))
+        else C#(i-1) = G;
+        );
+    C.dd.cache = new CacheTable;
+    lo := min keys maps - 1;
+    hi := max keys maps;
+    for i from lo+1 to hi do C.dd#i = if maps#?i then maps#i else map(C_i, C_(i-1), 0);
+    C
+    )
+
+newChainComplexMap = method()
+newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
+     f := new ChainComplexMap;
+     f.cache = new CacheTable;
+     f.source = src;
+     f.target = tar;
+     f.degree = 0;
+     goodspots := select(spots src, i -> src_i != 0);
+     scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
+     f
+    )
+
 meanValue = method()
 meanValue List := L -> (sum L)/#L
 
@@ -116,32 +152,9 @@ randomChainComplex(List,List) := opts -> (h,r)-> (
     chainComplex L
     )
 
-TEST ///
-restart
-  needsPackage "SVDComplexes"
-  h={1,4,6,5,1} 
-  r={1,3,3,4}
-  C=randomChainComplex(h,r)
-  assert(C.dd^2 == 0)
-  prune HH C
-  for i from 0 to #h-1 do assert(rank HH_i C == h#i)
-  CR=C**RR_53    
-  SVDComplex CR
-
-  assert(det randomSL 0 == 1)
-  assert(det randomSL 1 == 1)
-  assert(det randomSL 5 == 1)
-  randomSL(10, Height=>100)
-  randomSL(10)
-  randomSL(10, Height=>1000) -- height isn't correct...
-  randomSL(10, Height=>10000) -- height isn't correct...
-///
-
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
 -----------------------------------------------
-debug Core
-
 isMadeFromFastNonminimal = (C) -> C.?Resolution and C.Resolution.?RawComputation
 fastNonminimalComputation = (C) -> if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation else null
 
@@ -290,13 +303,23 @@ degzero = (B) -> (
     )  
 
 numericRank = method()
-numericRank Matrix := (M) -> (
-    if ring M =!= RR_53 then error "expected real matrix";
+numericRank(RR, Matrix) := (epsilon, M) -> (
+    invEps := 1/epsilon;
+    if ring M =!= RR_53 and ring M =!= CC_53 then error "expected a real or complex matrix";
     (sigma, U, Vt) := SVD M;
-    pos := select(#sigma-1, i -> sigma#i/sigma#(i+1) > 1e4);
+    pos := select(#sigma-1, i -> sigma#i/sigma#(i+1) > invEps);
     if #pos === 0 then #sigma else min pos+1
-    --# select(sigma, s -> s > 1e-10)
     )
+numericRank(RR, MutableMatrix) := (epsilon, M) -> (
+    invEps := 1/epsilon;
+    if ring M =!= RR_53 and ring M =!= CC_53 then error "expected a real or complex matrix";
+    (sigma, U, Vt) := SVD M;
+    sigma = flatten entries sigma;
+    pos := select(#sigma-1, i -> sigma#i/sigma#(i+1) > invEps);
+    if #pos === 0 then #sigma else min pos+1
+    )
+numericRank MutableMatrix :=
+numericRank Matrix := (M) -> numericRank(1e-4, M)
 
 minimizeBetti = method()
 minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
@@ -314,41 +337,6 @@ minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
       );
   new BettiTally from mB
   )
-
-chainComplex(HashTable) := (maps) -> (
-    -- maps should be a HashTable with keys integers.  values are maps at that spot.
-    rgs := (values maps)/ring//unique;
-    if #rgs != 1 then error "expected matrices over the same ring";
-    R := rgs#0;
-    C := new ChainComplex;
-    C.ring = R;
-    for i in keys maps do (
-        f := maps#i;
-        F := source f;
-        G := target f;
-        if C#?i then (if C#i =!= F then error("different modules at index "|i))
-        else C#i = F;
-        if C#?(i-1) then (if C#(i-1) =!= G then error("different modules at index "|i-1))
-        else C#(i-1) = G;
-        );
-    C.dd.cache = new CacheTable;
-    lo := min keys maps - 1;
-    hi := max keys maps;
-    for i from lo+1 to hi do C.dd#i = if maps#?i then maps#i else map(C_i, C_(i-1), 0);
-    C
-    )
-
-newChainComplexMap = method()
-newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
-     f := new ChainComplexMap;
-     f.cache = new CacheTable;
-     f.source = src;
-     f.target = tar;
-     f.degree = 0;
-     goodspots := select(spots src, i -> src_i != 0);
-     scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
-     f
-    )
 
 commonEntries = method()
 commonEntries(List,List) := (A,B) -> (
@@ -572,7 +560,7 @@ SVDBetti ChainComplex := (C) -> (
     << "singular values: " << H2 << endl;
     sum for i in keys H list toBetti(i, first H#i)
     )
-debug Core  
+
 maxEntry = method()
 maxEntry(Matrix) := (m) -> (flatten entries m)/abs//max
 maxEntry(ChainComplexMap) := (F) -> max for m in spots F list maxEntry(F_m)
@@ -755,6 +743,19 @@ TEST ///
   assert(r == for i from 1 to length C list rank(C.dd_i))
 ///
 
+
+TEST ///
+  debug needsPackage "SVDComplexes"
+  assert(det randomSL 0 == 1)
+  assert(det randomSL 1 == 1)
+  assert(det randomSL 5 == 1)
+  randomSL(10, Height=>100)
+  randomSL(10)
+  assert((flatten entries randomSL(10, Height=>1000))/abs//max < 1000^2)
+  assert((flatten entries randomSL(10, Height=>500))/abs//max < 500^2)
+  assert((flatten entries randomSL(10, Height=>10000))/abs//max < 10000^2)
+///
+
 doc ///
    Key
      constantStrand
@@ -843,6 +844,54 @@ TEST ///
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
   C = res(I, FastNonminimal=>true)
   constantStrand(C, kk, 8) -- fails, as it doesn't even make it to that code
+///
+
+doc ///
+   Key
+     numericRank
+     (numericRank,Matrix)
+     (numericRank,MutableMatrix)
+     (numericRank,RR,Matrix)
+     (numericRank,RR,MutableMatrix)
+   Headline
+     approximate rank of a matrix, using SVD
+   Usage
+     rk = numericRank A
+     rk = numericRank(eps, A)
+   Inputs
+     A:Matrix
+       a matrix or a mutable matrix over RR_53 or CC_53
+   Outputs
+     rk:ZZ
+       an approximation to the rank of the matrix A
+   Description
+    Text
+      The singular value decomposition (over RR_53, or CC_53) of the matrix A
+      is performed.  If there is a large cutoff in the list of singular values, that
+      value separates the zero singular values from the rest, and the number of
+      singular values larger than this separating value is called the numeric rank.
+    Example
+      B = random(RR^30, RR^5);
+      C = random(RR^5, RR^30);
+      A = B*C;
+      numericRank A
+      first SVD A
+      
+      B = mutableMatrix random(RR^100, RR^50);
+      C = mutableMatrix random(RR^50, RR^100);
+      A = B*C;
+      numericRank A
+
+      B = mutableMatrix random(CC^100, CC^50);
+      C = mutableMatrix random(CC^50, CC^100);
+      A = B*C;
+      numericRank A
+   Caveat
+     The heuristic for determining approximate rank is just that: a heuristic.
+     Thus if you really need to make sure the answer is correct or meaningful, 
+     you should review the singular values yourself
+   SeeAlso
+     SVD
 ///
 
 end--

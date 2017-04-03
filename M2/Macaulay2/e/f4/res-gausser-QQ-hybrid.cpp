@@ -278,9 +278,12 @@ void ResGausserQQHybrid::sparseCancel(CoefficientVector r,
   if (a.mDenominatorSize > mMaxDenominatorSize)
     {
       mMaxDenominatorSize = a.mDenominatorSize;
-      std::cout << "coeff with den = " << a.mDenominatorSize << ": ";
-      out(std::cout, a);
-      std::cout << std::endl;
+      if (M2_gbTrace >= 1)
+        {
+          std::cout << "coeff with den = " << a.mDenominatorSize << ": ";
+          out(std::cout, a);
+          std::cout << std::endl;
+        }
     }
   result.emplace_back(std::move(a));
 }

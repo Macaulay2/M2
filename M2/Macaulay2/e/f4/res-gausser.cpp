@@ -20,7 +20,8 @@ ResGausser *ResGausser::newResGausser(const Ring* K1)
   if (K1->is_QQ())
     {
       // return new ResGausserQQHybrid(K1, 1000, 32003, 32009);
-      return new ResGausserQQHybrid(K1, 1000, 1073741891, 1073741909);
+      //      return new ResGausserQQHybrid(K1, 1000, 1073741891, 1073741909);
+      return new ResGausserQQHybrid(K1, 1000, 32003, 1073741909);
     }
   if (K1->is_QQ())
     {
