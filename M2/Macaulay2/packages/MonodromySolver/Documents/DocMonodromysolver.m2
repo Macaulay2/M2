@@ -274,6 +274,7 @@ doc ///
 doc ///
     	Key
 	    	randomWeights
+		(randomWeights, ZZ)
 	Headline
 	    	Generates a random complex vector.///		
 

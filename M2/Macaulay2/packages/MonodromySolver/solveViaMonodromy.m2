@@ -41,7 +41,8 @@ random Type := o -> R -> (
     ) 
 
 -- random complex vector
-randomWeights = n -> matrix(CC, {apply(n,i->random CC)})
+randomWeights = method()
+randomWeights ZZ := n -> matrix(CC, {apply(n,i->random CC)})
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
@@ -292,7 +293,13 @@ for exampleIndex from 1 to 2 do (
 		NumberOfEdges=>3,
 		NumberOfRepeats=>10);
 		assert( length V.PartialSols <= count );
-
+	--NumberOfEdges=>1 (no randomization)
+	(V,npaths) = monodromySolve(polys,p0,{x0},
+		NumberOfNodes=>6, 
+		NumberOfEdges=>1);
+	    print(length V.PartialSols, count );
+	    assert( length V.PartialSols == count );
+		
 	--"new tracking routine" is a boolean
 	(V,npaths) = monodromySolve(polys,p0,{x0},
 		"new tracking routine"=>true);

@@ -1,9 +1,9 @@
 restart
 load "example-CRN.m2"
 
-setRandomSeed 1
+setRandomSeed 0
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 5, EdgesSaturated=>true)
 assert(length V.PartialSols ==4)
 Gr = V.Graph
 
@@ -19,8 +19,8 @@ assert(svcodim == numgens S and svcodim == #coordinates p0)
 
 -- make sure p0 lies on all khyperplanes
 khyperplanes = (sub(vars S,T) - matrix p0) * random(CC^svcodim,CC^(svcodim-1))
-xcoeffs = random(CC^(numgens R),CC^1) 
 -- ... and (x0,a0) satisfies the following. 
+xcoeffs = random(CC^(numgens R),CC^1) 
 xhyperplane = (sub(vars R,T) * xcoeffs)_(0,0) - a
 a0 = (matrix x0 * xcoeffs)_(0,0)
 
