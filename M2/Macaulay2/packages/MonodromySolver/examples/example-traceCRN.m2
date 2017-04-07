@@ -32,7 +32,9 @@ xcoeffs = random(CC^(numgens R),CC^1)
 xhyperplane = (sub(vars R, T) * transpose submatrix'(vars coefficientRing T,,{0}))_(0,0) - a 
 
 matrix x0 * xcoeffs
-a0 = {(matrix x0 * xcoeffs)_(0,0)}
+seedCoeffs = (matrix x0 * xcoeffs)_(0,0)
+a0 = {seedCoeffs}
+xhseed = specializeSystem(point {(a0 | x0.Coordinates)}, polySystem matrix {{xhyperplane}})
 
 P' = polySystem transpose (matrix{mSysEqs} | khyperplanes  | xhyperplane)
 -- the max I got is 11. That seems correct: 15-4.
@@ -49,15 +51,18 @@ W2 = apply(toList points V'.PartialSols, p -> matrix p)
 sols = apply(W1 | W2, s -> point s);
 
 U = CC[(symbol b)][gens T]
-sub(numericalKernel(matrix {p0.Coordinates},10-9) * random(CC^30,CC^1), U) * submatrix'(vars U, 0..numgens S-1)
-P'' = polySystem sub(transpose (matrix{mSysEqs} | khyperplanes  | xhyperplane * (first flatten entries khyperplanes')), U);
-(slices, charts) = apply(0..1,i->random(CC^1,CC^(numgens U)))
+-- sub below producing strage result
+sub(xhseed, U) * sub(first flatten entries khyperplanes'),U) - b
+P'' = polySystem sub(transpose (matrix{mSysEqs} | khyperplanes  | , U);
+
+{*(slices, charts) = apply(0..1,i->random(CC^1,CC^(numgens U)))
 slicex = (submatrix'(slices, 0..(numgens S-1)) * transpose submatrix'(vars U, 0..(numgens S-1)))_(0,0)
 slicek = (submatrix(slices, 0..(numgens S-1)) * transpose submatrix(vars U, 0..(numgens S-1)))_(0,0)
 chartx = (submatrix'(charts, 0..(numgens S-1)) * transpose submatrix'(vars U, 0..(numgens S-1)))_(0,0)
 chartk = (submatrix(charts, 0..(numgens S-1)) * transpose submatrix(vars U, 0..(numgens S-1)))_(0,0)
 parslice = slicex * chartk + slicek * chartx + chartx*chartk
 P''' = polySystem transpose (transpose (sub(transpose (matrix{mSysEqs} | khyperplanes), U)) | matrix {{parslice}});
+*}
 
 tracked = track(P'',P''',sols)
 failed = select(tracked, x -> x.NumberOfSteps==0)
