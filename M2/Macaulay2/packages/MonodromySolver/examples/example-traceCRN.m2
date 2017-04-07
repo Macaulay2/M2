@@ -10,6 +10,7 @@ elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
     Verbose=>true)
 assert(length V.PartialSols ==4)
 Gr = V.Graph
+W1 = apply(toList Gr.Vertices, v->  apply(toList points v.PartialSols, p -> matrix p) )
 
 R = ring Gr.Family
 S = coefficientRing R
@@ -40,5 +41,7 @@ P' = polySystem transpose (matrix{mSysEqs} | khyperplanes  | xhyperplane)
 length V'.PartialSols
 -- end -- Anton's edits
 G= V'.Graph
-traces = apply(toList G.Vertices, v-> sum apply(toList points v.PartialSols, p -> matrix p) )
-min first SVD ((transpose (traces#0 -traces#1)) | (transpose (traces#0-traces#1)))
+W2 = apply(toList G.Vertices, v->  apply(toList points v.PartialSols, p -> matrix p) )
+
+
+-- todo: combine points 
