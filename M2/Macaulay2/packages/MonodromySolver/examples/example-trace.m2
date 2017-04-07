@@ -34,50 +34,6 @@ vs = V.BasePoint.Coordinates
 cIndex = position(vs,i->i == max vs)
 bps = apply(m, i->sub((gens S)#i, dadRing) - vs#i)
 
-
--- next steps: create and solve the system "H" created by slicing with random hyperplanes in x vars
-
-preGranDadRing = (coefficientRing S)[apply(n*m, i->(symbol W)_i)] -- W is just an unused symbol
-granDadRing = preGranDadRing[gens dadRing]
-forms2 = apply(m, i -> sum(apply(n, 
-	    j -> (gens preGranDadRing)#(j+i*n)*sub((gens R)#j, granDadRing))))
-H = polySystem(apply(equations Gr.Family, p -> sub(p, granDadRing)) | forms2)
-(q0,y0) = createSeedPair(H, "initial parameters" => "random")
-elapsedTime (V',npaths') = monodromySolve(H,q0,{y0},NumberOfEdges=>4,Verbose=>true)
- -- no points found, as expected since there are "too many equations" solely in xs
- npaths'
-if min apply(toList (V'.Graph).Vertices, i->  length i.PartialSols) == 0 then (
-    newPoints = {}
-    )
-else (
-    -- TODO: need to modify V'.partialSols as list exluding W-coordinates
-    )
-
--- now set up master system
-
-masterSys = polySystem(apply(equations Gr.Family,i -> sub(i, dadRing)) | apply(m,i->bps#i * sub(first specializeSystem(q0, polySystem {forms2#i}), dadRing)))
-masterSols = apply(length V.PartialSols, i -> point {((V.PartialSols)#i).Coordinates | p0.Coordinates}) | 
-apply(length newPoints, i -> point {newPoints#i | q0.Coordinates})
-
-
--- now create random billinear forms
-
-formsx = apply(m, i->sub(random(1,R'),dadRing))
-formsy= apply(m, i->sub(random(1,S),dadRing))
-patchesx= apply(m, i->sub(random(1,R'),dadRing))
-patchesy= apply(m, i->sub(random(1,S),dadRing))
-
-endSys = polySystem(dadSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + patchesx#i * patchesy#i))
-tracked = track(masterSys,endSys,masterSols)
-
--- now create parallel slices to endSys
--- tracking seems to fail periodically here
-(r1,r2) = (random(CC), random(CC))
-E1 = polySystem(dadSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + r1* patchesx#i * patchesy#i))
-E2 = polySystem(dadSys | apply(m, i-> formsx#i * patchesy#i + formsy#i * patchesx#i + r2* patchesx#i * patchesy#i))
-t1 = track(endSys,E1,tracked)
-t2 = track(endSys,E2,tracked)
-
 -- rough affine trace test example contains functions for computing traces
 H = V.Graph
 sys = polySystem specializeSystem(V.BasePoint, H.Family)
