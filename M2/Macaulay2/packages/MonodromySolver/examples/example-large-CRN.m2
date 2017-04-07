@@ -60,6 +60,8 @@ J = sub(I, S)
 dim J
 degree J
 
+K4 = reactionNetwork({"3Y+Z --> 2Y+2Z", "3Y+Z --> 4Z", "3Y+Z --> Y+3Z", 
+	"2Y+2Z --> Y+3Z", "2Y+2Z --> 4Z", "Y+3Z --> 4Z"})
 
 end
 restart
@@ -72,13 +74,13 @@ An = multipleModificationA n
 N
 DHFR
 GC
-H = createPolySystem(GC, FF)
+H = createPolySystem(DHFR, FF)
 (p0, x0) = createSeedPair(H,"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfEdges => 5)
 length V.PartialSols
 
-L = apply(numgens createRing(GC,FF), i->random FF)
-specPolys = specializeSystem (p0,createPolySystem'overdetermined(W,FF,L));
+L = apply(numgens createRing(DHFR,FF), i->random FF)
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(DHFR,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV = numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
