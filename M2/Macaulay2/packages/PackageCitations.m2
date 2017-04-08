@@ -107,7 +107,7 @@ hasGoodHeadline Package := P -> (
 -- method for converting pairs " " of quotes to latex style `` " 
 quotesToTex = method (TypicalValue => String)
 quotesToTex String := S -> (
-    quoteLocations := select (#characters S, i -> (characters S)#i == "\"");
+    quoteLocations := select (#characters S, i -> (characters S)#i == "\""); -- another " for emacs
     charS := characters S;
     i := 0;
     while i < #quoteLocations do (
