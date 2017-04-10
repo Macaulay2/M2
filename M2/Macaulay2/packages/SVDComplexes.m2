@@ -13,19 +13,6 @@ newPackage(
         )
 
 export {
-    -- these belong in Core?
-    "meanValue",
-    "variance",
-    "histogram",
-    "randomUpper", 
-    "randomSL",
-    "newChainComplexMap",
-    -- also in here:
-    -- clean
-    -- chainComplex
-    -- what else?
-    -- 
-    "randomChainComplex", -- documented, tests
     "constantStrand", -- documented, tests
     "constantStrands", -- documented, tests
     "laplacians",
@@ -84,39 +71,8 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      f
     )
 
-meanValue = method()
-meanValue List := L -> (sum L)/#L
 
-variance = method()
-variance List := L-> (
-    m := meanValue L;
-    (sum(L,l-> (l-m)^2))/#L
-    )
 
-histogram = method()
-histogram(List,ZZ) := (L,t) -> (
-    minL := min L;
-    h := (max L - minL)/t;
-    L1 := L; 
-    a := #L1; 
-    for i from 1 to t list (
-        b:=a;
-	L1 = select(L1,x->x > (minL+i*h));
-	a=#L1;
-        b-a
-        )
-    )
-
-euler List := L -> sum(#L,i->(-1)^i*L_i)
-
-TEST ///
-  needsPackage "SVDComplexes"
-  c={2,4,5,3} 
-  r={1,3,2}
-  assert(0 == euler c)
-  assert(euler {1,2,3,4} == -2)
-
-///
 -------------------------------------------------
 -- Code for random complexes over the integers --
 -------------------------------------------------
@@ -132,25 +88,6 @@ randomUpper ZZ := opts -> n -> (
 randomSL = method(Options=>{Height=>10})
 randomSL(ZZ) := opts -> n -> randomUpper(n,opts) * transpose randomUpper(n,opts)
 
-randomChainComplex = method(Options=>{Height=>10})
-randomChainComplex(List,List) := opts -> (h,r)-> (
-    -- lists h_0,..,h_n,r_1,...,r_n
-    -- of possible possible homology dimensions and ranks of maps in a chain complex
-    if #h =!= #r+1 then error "expected list of non-negative integers of length n+1 and n";
-    rr :=append(prepend(0,r),0);
-    c :=for i from 0 to #h-1 list h_i+rr_i+rr_(i+1); 
-    A := id_(ZZ^(c_0));
-    B := random(ZZ^(c_0),ZZ^(rr_1),opts);
-    C := random(ZZ^(rr_1),ZZ^(c_1),opts);
-    L :={B*C};
-    for i from 2 to #c-1 do (
-	A =LLL syz C;
-	B = random(source A, ZZ^(rr_i),opts);
-	C = random( ZZ^(rr_i),ZZ^(c_i),opts);
-	L =append(L,A*B*C);
-	);
-    chainComplex L
-    )
 
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
@@ -275,8 +212,10 @@ restart
 
 laplacians = method()
 laplacians ChainComplex := (L) -> (
-      rg := toList(min L..max L);
-      for i in rg list ((transpose L.dd_(i)) *  L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1))))
+      laps := new MutableHashTable;
+      for i from min L to max L do (
+	  laps#i=((transpose L.dd_(i))*L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1)))));
+      new HashTable from laps
       )
 
 degreeZeroMatrix = method()
@@ -393,9 +332,9 @@ SVDComplex ChainComplex := opts -> (C) -> (
     if #goodspots === 1 then return (id_C, hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
     (lo, hi) := (min goodspots, max goodspots);
     Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
-    rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
     hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
-    Sigmas := new MutableList; -- the singular values in the SVD complex, indexed lo+1..hi
+    Sigmas := new MutableHashTable; -- the singular values in the SVD complex, indexed lo+1..hi
     Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
     smallestSing := new MutableHashTable;
     rks#lo = 0;
@@ -406,19 +345,21 @@ SVDComplex ChainComplex := opts -> (C) -> (
         P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
         Q0 := mutableMatrix(ring C, 0, Cranks#lo);
         for ell from lo+1 to hi do (
-            m1 := P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
+            m1 :=  P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
             (sigma1, U, Vt) = SVD m1;
             sigma1 = flatten entries sigma1;
             Sigmas#ell = sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
-	        pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e11);
+	    pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e11);
             rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
+            --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
             smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             smallestSing#ell = sigma1#(rks#ell-1);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
-            ortho1 := (transpose U) * P0;
+            ortho1 := (transpose U) * P0; 
+	    --ortho1 := (transpose U) *matrix P0;
             Orthos#(ell-1) = matrix{{matrix Q0},{matrix ortho1}};
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
@@ -432,52 +373,69 @@ SVDComplex ChainComplex := opts -> (C) -> (
             for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
             matrix m -- TODO: make this via diagonal matrices and block matrices.
             );
-        targetComplex := (chainComplex SigmaMatrices);
-        result := newChainComplexMap(targetComplex, C, new HashTable from Orthos);
-        --return (result, new HashTable from hs, new HashTable from smallestSing);
-        return result;
+        sourceComplex := (chainComplex SigmaMatrices);
+	-- transpose all ortho matrices to get the map in the right direction 
+	for i from lo to hi do Orthos#i=transpose Orthos#i;
+        result := newChainComplexMap(C, sourceComplex,  new HashTable from Orthos);
+        return ( new HashTable from hs,result);--,
+	 new HashTable from hs, new HashTable from smallestSing;
         );
     if opts.Strategy == symbol Laplacian then (
-	    deltas := laplacians C;
-        eigVec := apply(deltas,m->eigenvectors(m,Hermitian=>true));
-	    eigVal := apply(eigVec,p->reverse toList first p);
-	    posEigVal:=apply(eigVal,p->select(p,lambda->lambda >0));
-	    apply(posEigVal,p-> if #unique p != #p then error "Have multiple eigenvalues");
-	    n:=#deltas-1;
-	    commonPositions := apply(n,i->commonEntries(eigVal_i,eigVal_(i+1)));
-	    apply(n-3,i->(k:=
-		        #unique(last commonPositions_(i+1)|(first commonPositions_(i+2))) ==
-		        #last commonPositions_(i+1)+#first commonPositions_(i+2)
-			    ; 
-    		    if not k then error "Have multiple eigenvalues";
-	            k));
-    	for ell from lo+1 to hi do rks#ell = #first (commonPositions_(ell-lo-1));
-	    rks#(hi+1) = 0;
+	deltas := laplacians C;
+	eigVec := new MutableHashTable;
+	eigVal := new MutableHashTable;
+	commonPositions := new MutableHashTable;
+	for ell from lo to hi do (
+	    eigVec#ell = eigenvectors(deltas#ell,Hermitian=>true);
+	    -- eigenvectors returns the eigenvalue in increasing order --
+            eigVal#ell = reverse toList first eigVec#ell);
+	posEigVal:= for ell from lo to hi list (select(eigVal#ell,lambda->lambda>0));
+	apply(posEigVal,p-> if #unique p != #p then return 
+	    ( "Have multiple eigenvalues in a single Laplacian"));
+	for ell from lo to hi-1 do (
+	    commonPositions#ell = commonEntries(eigVal#ell,eigVal#(ell+1)));
+	for ell from lo+1 to hi-2 do (k:=
+		#unique(last commonPositions#ell|(first commonPositions#(ell+1))) == 
+		#last commonPositions#ell+#first commonPositions#(ell+1); 
+    		if not k then return "Have multiple eigenvalues for Laplacians";);
+    	for ell from lo+1 to hi-1 do rks#ell = #first (commonPositions#(ell-1));
+	rks#hi = #last commonPositions#(hi-1);
+	rks#(hi+1) = 0;
+	rks#(lo) = 0; 
     	for ell from lo to hi do hs#ell = Cranks#ell-rks#ell-rks#(ell+1);
-	    -- now arrange the columns of the orthogonal matrices in three steps
-     	col1 := for i from 0 to n  list (
-	        if i== 0 then first commonPositions_0 
-    	    else if i==length C then last commonPositions_(i-1)
-    	    else first commonPositions_i|last commonPositions_(i-1)); 
-	    col2 := for i from 0 to n list (
-    	    leftOver := toList(0..#eigVal_i-1);
-            apply(col1_i,j->leftOver=delete(j,leftOver));
-    	    leftOver);
-	    col3 := for i from 0 to n list (
-    	    c:=col1_i|col2_i;
-	        -- a reversal is necessary because eigenvectors returns the eigenvalues in increasing order
-    	    cmax:=max c;
-    	    apply(c,j->cmax-j));
-	    for ell from lo to hi do Orthos#ell = (last eigVec_(ell-lo))_(col3_(ell-lo));
-	    Us:= new HashTable from Orthos;
-	    h:=new HashTable from hs;
-    	return(h,Us);
-	    -- todo: build the sigma complex eg by concugationg c with the Us
-	    -- this will lead to a complex with +- the singular values in the sigma block
-	    -- fix the signs of the singulat values and of the det U_i  
-        );
+	-- now arrange the columns of the orthogonal matrices in three steps
+	pos := new MutableHashTable;
+     	for ell from lo to hi  do (  
+	    pos#ell = if ell == lo then first commonPositions#ell 
+    	    else if ell==hi then last commonPositions#(ell-1)
+    	    else last commonPositions#(ell-1)| first commonPositions#ell; 
+	    leftOver := toList(0..#eigVal#ell-1);
+            apply(pos#ell,j->leftOver=delete(j,leftOver));
+    	    pos#ell=pos#ell|leftOver;
+	    -- a reversal is necessary because eigenvectors returns the eigenvalues in increasing order
+    	    cmax:=max pos#ell;
+    	    pos#ell=apply(#pos#ell,j->cmax-pos#ell_j));
+	for ell from lo to hi do Orthos#ell = (last eigVec#ell)_(pos#ell);
+	SigmaMatrices = hashTable for ell from lo+1 to hi list ell => (
+	    sigma:= transpose( Orthos#(ell-1)) *C.dd_ell* Orthos#ell;
+            m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
+	    d := mutableIdentity(RR_53, Cranks#(ell));
+            for i from 0 to rks#ell-1 do (m_(rks#(ell-1)+i, i) = abs sigma_(rks#(ell-1)+i,i);
+		if sigma_(rks#(ell-1)+i,i) < 0 then d_(i,i)=-1);
+	    Orthos#ell = Orthos#ell * matrix d;
+	    matrix m
+            );
+	sourceComplex = (chainComplex SigmaMatrices);
+	-- do not transpose all ortho matrices to get the map in the right direction 
+        -- for i from lo to hi do Orthos#i=transpose Orthos#i;
+        U = newChainComplexMap(C, sourceComplex,  new HashTable from Orthos);
+	h := new HashTable from hs;
+    	return(h,U);
+	);
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
+
+
 
 SVDHomology = method (Options => options SVDComplex)
 SVDHomology ChainComplex := opts -> (C) -> (
@@ -487,7 +445,7 @@ SVDHomology ChainComplex := opts -> (C) -> (
     if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
     (lo, hi) := (min goodspots, max goodspots);
     Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
-    rks := new MutableList; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
     hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
     smallestSing := new MutableHashTable;
     rks#lo = 0;
@@ -504,7 +462,7 @@ SVDHomology ChainComplex := opts -> (C) -> (
             pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e10);
             rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
             --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
-            smallestSing#ell = (if rks#ell-1>0 then sigma1#(rks#ell-2) else null, sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
@@ -513,38 +471,76 @@ SVDHomology ChainComplex := opts -> (C) -> (
         return (new HashTable from hs, new HashTable from smallestSing);
         );
     if opts.Strategy == symbol Laplacian then (
-	    deltas := laplacians C;
-        eigVec := apply(deltas,m->eigenvectors(m,Hermitian=>true));
-	    eigVal := apply(eigVec,p->reverse toList first p);
-	    posEigVal:=apply(eigVal,p->select(p,lambda->lambda >0));
-	    apply(posEigVal,p-> if #unique p != #p then error "Have multiple eigenvalues");
-	    n:=#deltas-1;
-	    commonPositions := apply(n,i->commonEntries(eigVal_i,eigVal_(i+1)));
-	    apply(n-3,i->(k:=
-		        #unique(last commonPositions_(i+1)|(first commonPositions_(i+2))) ==
-		        #last commonPositions_(i+1)+#first commonPositions_(i+2)
-			    ; 
-    		    if not k then error "Have multiple eigenvalues";
-	            k));
-    	for ell from lo+1 to hi do rks#ell = #first (commonPositions_(ell-lo-1));
-	    rks#(hi+1) = 0;
+	deltas := laplacians C;
+	eigVec := new MutableHashTable;
+	eigVal := new MutableHashTable;
+	commonPositions := new MutableHashTable;
+	for ell from lo to hi do (
+	    eigVec#ell = eigenvectors(deltas#ell,Hermitian=>true);
+	    -- eigenvectors returns the eigenvalue in increasing order --
+            eigVal#ell = reverse toList first eigVec#ell);
+		posEigVal:= for ell from lo to hi list (select(eigVal#ell,lambda->lambda>0));
+	apply(posEigVal,p-> if #unique p != #p then error "Have multiple eigenvalues in a single Laplacian");
+	for ell from lo to hi-1 do (
+	    commonPositions#ell = commonEntries(eigVal#ell,eigVal#(ell+1)));
+	for ell from lo+1 to hi-2 do (k:=
+		#unique(last commonPositions#ell|(first commonPositions#(ell+1))) == 
+		#last commonPositions#ell+#first commonPositions#(ell+1); 
+    		if not k then return "Have multiple eigenvalues for Laplacians";);
+    	for ell from lo+1 to hi-1 do rks#ell = #first (commonPositions#(ell-1));
+	rks#hi = #last commonPositions#(hi-1);
+	rks#(hi+1) = 0;
+	rks#(lo) = 0;
     	for ell from lo to hi do hs#ell = Cranks#ell-rks#ell-rks#(ell+1);
-	    for ell from lo to hi do (
-	        lamb1:= if ell<hi then (
-	    	    pos1:=last (first commonPositions#(ell-lo));
-	    	    (eigVal#(ell-lo))_pos1)
-	        else null;
-	        lamb2 := if ell > lo then (
-	    	    pos2:=last (last commonPositions#(ell-lo-1));
-	            (eigVal#(ell-lo))_pos2)
-	        else null;
-	        lamb3:=if hs#ell > 0 then eigVal#(ell-lo)_(Cranks#ell-hs#ell) else null;
-	        smallestSing#ell =(lamb1,lamb2,lamb3);
-	        );
-	    return (new HashTable from hs, new HashTable from smallestSing);
+
+    	for ell from lo to hi do hs#ell = Cranks#ell-rks#ell-rks#(ell+1);
+	for ell from lo to hi do (
+	    lamb2:= if ell<hi then (
+	    	pos1:=last (first commonPositions#(ell));
+	    	(eigVal#(ell))_pos1)
+	    else null;
+	    lamb1 := if ell > lo then (
+	    	pos2:=last (last commonPositions#(ell-1));
+	        (eigVal#(ell))_pos2)
+	    else null;
+	    lamb3:=if hs#ell > 0 then eigVal#(ell)_(Cranks#ell-hs#ell) else null;
+	    smallestSing#ell =(lamb1,lamb2,lamb3);
+	    );
+	 return (new HashTable from hs, new HashTable from smallestSing);
         );
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
+
+TEST ///
+restart
+needsPackage "SVDComplexes"
+needsPackage "RandomComplexes"
+
+h={1,3,5,2,1} 
+r={5,11,3,2}
+elapsedTime C=randomChainComplex(h,r,Height=>4)
+
+CR=(C**RR_53)
+elapsedTime SVDHomology CR
+elapsedTime SVDHomology(CR,Strategy=>Laplacian)
+elapsedTime (h,U)=SVDComplex CR;
+h
+Sigma =source U
+Sigma.dd_0
+errors=apply(toList(min CR+1..max CR),ell->C.dd_ell-U_(ell-1)*Sigma.dd_ell*transpose U_ell);
+maximalEntry chainComplex errors
+
+
+elapsedTime (h,U)=SVDComplex(CR,Strategy=>Laplacian);
+h
+SigmaL =source U
+maximalEntry(SigmaL.dd_1 -Sigma.dd_1)
+errors=apply(toList(min C+1..max C),ell->C.dd_ell-U_(ell-1)*SigmaL.dd_ell*transpose U_ell);
+maximalEntry chainComplex errors
+
+///
+
+
 
 toBetti = method()
 toBetti(ZZ, HashTable) := (deg, H) -> (
@@ -564,6 +560,7 @@ SVDBetti ChainComplex := (C) -> (
 maxEntry = method()
 maxEntry(Matrix) := (m) -> (flatten entries m)/abs//max
 maxEntry(ChainComplexMap) := (F) -> max for m in spots F list maxEntry(F_m)
+
 checkSVDComplex = (C, Fhs) -> (
     -- routine to find the smallest errors which occur.
     -- where here (F,hs) = SVDComplex C, C is a complex over RR_53.
@@ -663,56 +660,10 @@ doc ///
      Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
 ///
 
-doc ///
-   Key
-     randomChainComplex
-     (randomChainComplex,List,List)
-     [randomChainComplex, Height]
-   Headline
-     random chain complex over the integers with prescribed homology group and matrix ranks
-   Usage
-     C = randomChainComplex(h,r)
-   Inputs
-     h:List
-       of desired ranks of the homology groups, of some length $n$
-     r:List
-       of desired ranks of the matrices in the complex, of length $n-1$
-     Height => ZZ
-       the sizes of the random integers used
-   Outputs
-     C:ChainComplex
-       a random chain complex over the integers whose homology ranks match $h$, and 
-       whose matrices have ranks given by $r$
-   Description
-    Text
-      Here is an example.
-    Example
-      h={1,4,6,5,1} 
-      r={1,3,3,4}
-      C=randomChainComplex(h,r)
-      prune HH C
-      for i from 0 to 4 list rank HH_i C
-      for i from 1 to 4 list rank(C.dd_i)
-    Text
-      The optional argument {\tt Height} chooses the maximum sizes of the random numbers used.
-      The actual numbers are somewhat larger (twice as many bits), as matrices are multiplied together.
-    Example
-      h={1,4,0,5,1} 
-      r={1,3,3,4}
-      C=randomChainComplex(h,r, Height=>1000)
-      C.dd
-      C.dd^2 == 0
-      prune HH C
-      for i from 0 to 4 list rank HH_i C
-      for i from 1 to 4 list rank(C.dd_i)
-   Caveat
-     This returns a chain complex over the integers.  Notice that if one gives h to be a list of zeros, then
-     that doesn't mean that the complex is exact, just that the ranks are as expected.
-   SeeAlso
-     SVDComplexes
-///
+
 
 TEST ///
+ needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
   r={1,3,3,4}
   C=randomChainComplex(h,r)
@@ -894,6 +845,56 @@ doc ///
      SVD
 ///
 
+doc ///
+   Key
+     SVDComplex
+     (SVDComplex,ChainComplex)
+   Headline
+     Compute the SVD decomposition of a chainComplex over RR
+   Usage
+     (h,U)=SVDComplex C
+   Inputs
+     C:ChainComplex
+       over RR_53
+   Outputs
+     h:HashTable
+       the dimensions of the homology groups HH C
+     U:ChainComplexMap
+       a map C <- Sigma
+       where the source is the chainComplex of the singular value matrices
+       and U is given by orthogonal matrices  
+   Description
+    Text
+      We compute the singular value decomposition either by the iterated Projections or by the 
+      Laplacian method
+    Example
+      needsPackage "RandomComplexes"
+      h={1,3,5,2,1} 
+      r={5,11,3,2}
+      elapsedTime C=randomChainComplex(h,r,Height=>4)
+      C.dd^2
+      CR=(C**RR_53)[1]
+      elapsedTime (h,U)=SVDComplex CR;
+      h
+      Sigma =source U
+      Sigma.dd_0
+      errors=apply(toList(min CR+1..max CR),ell->CR.dd_ell-U_(ell-1)*Sigma.dd_ell*transpose U_ell);
+      maximalEntry chainComplex errors
+
+      elapsedTime (hL,U)=SVDComplex(CR,Strategy=>Laplacian);
+      hL === h
+      SigmaL =source U;
+      for i from min CR+1 to max CR list maximalEntry(SigmaL.dd_i -Sigma.dd_i)
+      errors=apply(toList(min C+1..max C),ell->CR.dd_ell-U_(ell-1)*SigmaL.dd_ell*transpose U_ell);
+      maximalEntry chainComplex errors
+    Text
+      The optional argument 
+   Caveat
+      The algorithm might fails if the conditions numbers of the differential are too bad
+   SeeAlso
+     
+///
+
 end--
 
 restart
@@ -1070,16 +1071,18 @@ elapsedTime  I = ideal fromDual matrix{{F}};
   C = res(I, FastNonminimal=>true)
 
   Rp = (ZZ/32003)(monoid R)
+ betti res  substitute(I,Rp)
   R0 = (RR_53) (monoid R)
   minimalBetti sub(I, Rp)
   SVDBetti C  
 
   betti C
   Ls = constantStrands(C,RR_53)  
-  Lp = constantStrands(C,ZZ/32003)  
-  D = Ls#7
+--  Lp = constantStrands(C,ZZ/32003)  
+  D = Ls#8
   
-  (F, hs, minsing) = SVDComplex D;
+--  (F, hs, minsing) = 
+  U=SVDComplex D;
   (hs, minsing) = SVDHomology D;
   hs, minsing
   numericRank D.dd_4
