@@ -1,6 +1,6 @@
 restart
 load "example-CRN.m2"
-setRandomSeed 2
+setRandomSeed 0
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")
 --(p0, x0) = createSeedPair G -- change createPolySystem to make this work
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
@@ -34,7 +34,7 @@ xhyperplane = (sub(vars R, T) * transpose submatrix'(vars coefficientRing T,,{0}
 
 seedCoeffs = (matrix x0 * xcoeffs)_(0,0)
 a0 = {seedCoeffs}
-xhyperplane0 = first specializeSystem(point {(a0 | flatten entries xcoeffs)}, polySystem {xhyperplane})
+-- xhyperplane0 = first specializeSystem(point {(a0 | flatten entries xcoeffs)}, polySystem {xhyperplane})
 
 P' = polySystem transpose (matrix{mSysEqs} | khyperplanes0  | xhyperplane)
 -- the max I got is 11. That seems correct: 15-4.
@@ -44,10 +44,12 @@ P' = polySystem transpose (matrix{mSysEqs} | khyperplanes0  | xhyperplane)
 assert(length V'.PartialSols == 11)
 
 
+W = last V'.Graph.Vertices
+xhyperplane0 = first specializeSystem(W.BasePoint, polySystem {xhyperplane})
 --xhyperplane0 = last V'.SpecializedSystem
 U = ring xhyperplane0
-V0 = first V'.Graph.Vertices -- the seed vertex 
-W2 = apply(points V0.PartialSols, p -> matrix p)
+--V0 = first V'.Graph.Vertices -- the seed vertex 
+W2 = apply(points W.PartialSols, p -> matrix p)
 -- consolidate witness sets for trace test
 sols = apply(W1 | W2, s -> point s);
 
