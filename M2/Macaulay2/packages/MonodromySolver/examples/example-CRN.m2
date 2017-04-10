@@ -50,9 +50,10 @@ end ---------------------------------
 
 --------EXECUTE line-by-line FROM HERE -----------------------------------
 restart
+setRandomSeed 0
+
 load "example-CRN.m2"
 
-setRandomSeed 0
 -- system for example from Elizabeth's talk
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
