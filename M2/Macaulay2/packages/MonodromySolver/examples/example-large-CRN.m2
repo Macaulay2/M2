@@ -40,12 +40,20 @@ N = reactionNetwork ({"A+R-->RA", "A+RD-->RDA", "A+RT-->RTA", "E+R-->RE",
 --R = createRing(N,QQ)
 
 
-DHFR = reactionNetwork ({"E+H2F <--> EH2F", "E+NH <--> ENH", "EH2F+NH <--> ENHH2F", 
-	"ENHH2F <--> ENH+H2F", "ENHH2F <--> ENH4F", "EH4F+N <--> ENH4F", "ENH4F <--> EN+H4F",
-	"EN <--> E+N", "EH4F <--> E+H4F", "ENH+H4F <--> ENHH4F", "ENHH4F <--> EH4F+NH",
-	"EH2F+N <--> ENH2F", "ENH2F <--> EN+H2F"
+D1 = reactionNetwork ({"X_0+X_1 <--> X_3", "X_0+X_3 <--> X_4", "X_2+X_3 <--> X_5", 
+	"X_5 <--> X_4+X_1", "X_5 <--> X_6", "X_7+X_8 <--> X_6", "X_6 <--> X_9+Y_0",
+	"X_9 <--> X_0+X_8", "X_7 <--> X_0+Y_0", "X_4+Y_0 <--> Y_1", "Y_1 <--> X_7+X_3",
+	"X_2+X_8 <--> Y_2", "Y_2 <--> X_9+X_1"
 	})
---R = createRing(DHFR, QQ)
+D2 = glue(D1, sub(D1, {"X_0"=>"Z_0"}))
+
+R = createRing(D2,QQ)
+F = join(subRandomInitVals D2, subRandomReactionRates D2)
+I = ideal F
+S = QQ[D2.ConcentrationRates]
+J = sub(I, S)
+dim J
+degree J
 
 GC = reactionNetwork ({"G+ATP-->G6P+ADP+H", "G6P<-->F6P", "F6P+ATP<-->FBP+ADP+H", 
 	"FBP<-->DHAP", "FEP<-->GAP", "DHAP<-->GAP", "GAP+NAD+P<-->BPG+NADH+H",
@@ -90,18 +98,27 @@ J = sub(I, S);
 dim J
 degree J
 
-E = reactionNetwork({"E+S1<-->ES1", "E+S2<-->ES2", "S2+ES1<-->ES1S2",
-	"ES1S2<-->S1+ES2", "ES1S2-->E+P"})
-R = createRing(E,QQ);
-F = join(subRandomInitVals E, subRandomReactionRates E);
-I = ideal F;
-S = QQ[MAPK.ConcentrationRates];
-J = sub(I, S);
+--e1 is bad
+e1 = reactionNetwork({"E_1+S_1<-->E_1S_1", "S_2+E_1<-->E_1S_1S_2",
+	"E_1S_1S_2<-->P_1+E_1", "S_2+E_2<-->E_2S_2", "E_2S_2-->2S_1+E_2"
+	
+	--"S_3+E_2S_2<-->E_2S_2S_3",
+	--"E_2S_2S_3<-->P_2+E_2", "S_3+E_3<-->E_3S_3", "S_4+E_3S_3<-->E_3S_3S_4",
+	--"E_3S_3S_4<-->P_3+E_3", "S_4+E_4<-->E_4S_4",
+	--"E_4S_4-->2S_1+E_4"
+	})
+R = createRing(e1,QQ);
+F = join(subRandomInitVals e1, subRandomReactionRates e1)
+I = ideal F
+S = QQ[e1.ConcentrationRates]
+J = sub(I, S)
 dim J
+degree J
 
 
+end-----------------------------------
 
-end
+
 restart
 load "example-large-CRN.m2"
 
@@ -109,19 +126,15 @@ setRandomSeed 0
 -- system for n copies of oneSiteModificationA
 n = 7
 An = multipleModificationA n
-N
-DHFR
-GC
-OR
-MAPK
-E
-H = createPolySystem(E, FF)
-(p0, x0) = createSeedPair(H,"initial parameters" => "one")
-elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfEdges => 5)
+-- testing different networks
+D1
+H = createPolySystem(D2, FF)
+(p0, x0) = createSeedPair(H, "initial parameters" => "one")
+elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfNodes => 2, NumberOfEdges => 4)
 length V.PartialSols
 
-L = apply(numgens createRing(E,FF), i->random FF)
-specPolys = specializeSystem (p0,createPolySystem'overdetermined(E,FF,L));
+L = apply(numgens createRing(D1,FF), i->random FF)
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(D1,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV = numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
