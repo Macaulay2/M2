@@ -9,6 +9,16 @@ needsPackage "ReactionNetworks"
 needsPackage "MonodromySolver"
 load "realroots.m2"
 
+multipleModificationA = n -> (
+    A := oneSiteModificationA();
+    for i from 2 to n do 
+    A = glue(A, sub(oneSiteModificationA(), {"S_0" => "2S_"|(i-1), "S_1" => "S_"|i}));
+    A
+    )
+
+
+
+
 A = oneSiteModificationA()
 R = createRing(A, QQ)
 
@@ -86,14 +96,25 @@ needsPackage "ReactionNetworks"
 needsPackage "MonodromySolver"
 load "realroots.m2"
 
-A = oneSiteModificationA()
+{*A = oneSiteModificationA()
 A' = sub(oneSiteModificationA(), {"S_0" => "S_1", "S_1" => "S_2"})
-C'' = glue(A,A')
-R = createRing(C'', QQ)
-
-F = join(subRandomInitVals C'', subRandomReactionRates C'')
-I = ideal F
-netList flatten entries mingens I
+C'' = glue(A,A')*}
+n = 5
+FF = QQ
+An = multipleModificationA n
+Rn = createRing(An, FF)
+Fn = join(subRandomInitVals An, subRandomReactionRates An)
+In = ideal Fn
+Sn = FF[value(An.ConcentrationRates)#2,
+    value(An.ConcentrationRates)#5,
+    value(An.ConcentrationRates)#0, 
+    value(An.ConcentrationRates)#3,
+    toList(apply(6..n+4, i-> value(An.ConcentrationRates)#i)),
+    value(An.ConcentrationRates)#4,
+    value(An.ConcentrationRates)#1, 
+    MonomialOrder => {Eliminate 1,Lex}]
+Jn = sub(In, Sn)    
+    
 
 S = QQ[value(C''.ConcentrationRates)#2, 
     value(C''.ConcentrationRates)#5,
