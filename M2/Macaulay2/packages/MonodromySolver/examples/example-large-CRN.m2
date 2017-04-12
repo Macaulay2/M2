@@ -11,15 +11,26 @@ createPolySystem (ReactionNetwork, InexactFieldFamily):= (Rn, FF) -> (
     )
 createPolySystem'overdetermined = (Rn, FF, L) -> (
     S := createRing(Rn, FF);
+    if conservationEquations Rn == {} 
+    then (
+	SubList := toList(apply(0..length Rn.ConcentrationRates-1, i -> 
+	    value(Rn.ConcentrationRates#i) => L#i));
+    	SSE := steadyStateEquations Rn;
+	R := CC[Rn.ReactionRates][Rn.ConcentrationRates];	       	   
+    	M := sub(SSE, R);
+    	polySystem M
+	) 
+    else (
     CEforms := matrix{conservationEquations(Rn,FF)};
-    SubList := toList(apply(0..length Rn.ConcentrationRates-1, i -> 
+    SubList = toList(apply(0..length Rn.ConcentrationRates-1, i -> 
 	    value(Rn.ConcentrationRates#i) => L#i));
     CE := sub(CEforms, SubList) - CEforms;    
-    SSE := steadyStateEquations Rn;
-    R := CC[Rn.ReactionRates][Rn.ConcentrationRates];	       	   
-    M := sub((transpose CE || SSE), R);
+    SSE = steadyStateEquations Rn;
+    R = CC[Rn.ReactionRates][Rn.ConcentrationRates];	       	   
+    M = sub((transpose CE || SSE), R);
     polySystem M
-    )
+    ))
+
 createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
     squareUp createPolySystem'overdetermined(Rn,FF,L)
     )
@@ -115,6 +126,10 @@ J = sub(I, S)
 dim J
 degree J
 
+E7 = reactionNetwork({"A<-->2A", "A+B<-->C", "C<-->B", "B<-->2B", "B+C<-->D", "D<-->C",
+	"C<-->2C", "C+D<-->F", "F<-->D", "D<-->2D", "D+F<-->G", "G<-->F",
+	"F<-->2F", "F+G<-->H", "H<-->G", "G<-->2G", "G+H<-->K", "K<-->H"
+	})
 
 end-----------------------------------
 
@@ -127,14 +142,14 @@ setRandomSeed 0
 n = 7
 An = multipleModificationA n
 -- testing different networks
-D1
-H = createPolySystem(D2, FF)
-(p0, x0) = createSeedPair(H, "initial parameters" => "one")
+E7
+H = createPolySystem(E7, FF)
+(p0, x0) = createSeedPair(H, "initial parameters" => "random unit")
 elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfNodes => 2, NumberOfEdges => 4)
 length V.PartialSols
 
-L = apply(numgens createRing(D1,FF), i->random FF)
-specPolys = specializeSystem (p0,createPolySystem'overdetermined(D1,FF,L));
+L = apply(numgens createRing(E7,FF), i->random FF)
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(E7,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV = numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)

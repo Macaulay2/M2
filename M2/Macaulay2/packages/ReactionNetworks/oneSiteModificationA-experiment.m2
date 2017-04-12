@@ -7,7 +7,7 @@
 restart
 needsPackage "ReactionNetworks"
 needsPackage "MonodromySolver"
-load "realroots.m2"
+--load "realroots.m2"
 
 multipleModificationA = n -> (
     A := oneSiteModificationA();
@@ -67,10 +67,10 @@ computeMixedVolume (flatten entries M)
 end -------------------------------
 
 restart
-load ".../packages/ReactionNetworks/oneSiteModificationA-experiment.m2"
+load "~/M2/M2/Macaulay2/packages/ReactionNetworks/oneSiteModificationA-experiment.m2"
 
 
-n = 3
+n = 2
 FF = QQ
 An = multipleModificationA n
 Rn = createRing(An, FF)
@@ -85,6 +85,8 @@ Sn = FF[value(An.ConcentrationRates)#2,
     value(An.ConcentrationRates)#1, 
     MonomialOrder => {Eliminate 1,Lex}]
 Jn = sub(In, Sn)    
+netList (flatten entries gens Jn//unique)
+
     
 
 
