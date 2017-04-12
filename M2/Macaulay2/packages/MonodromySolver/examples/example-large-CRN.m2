@@ -111,12 +111,11 @@ degree J
 
 --e1 is bad
 e1 = reactionNetwork({"E_1+S_1<-->E_1S_1", "S_2+E_1<-->E_1S_1S_2",
-	"E_1S_1S_2<-->P_1+E_1", "S_2+E_2<-->E_2S_2", "E_2S_2-->2S_1+E_2"
-	
-	--"S_3+E_2S_2<-->E_2S_2S_3",
-	--"E_2S_2S_3<-->P_2+E_2", "S_3+E_3<-->E_3S_3", "S_4+E_3S_3<-->E_3S_3S_4",
-	--"E_3S_3S_4<-->P_3+E_3", "S_4+E_4<-->E_4S_4",
-	--"E_4S_4-->2S_1+E_4"
+	"E_1S_1S_2<-->P_1+E_1", "S_2+E_2<-->E_2S_2", "E_2S_2-->2S_1+E_2",
+	"S_3+E_2S_2<-->E_2S_2S_3",
+	"E_2S_2S_3<-->P_2+E_2", "S_3+E_3<-->E_3S_3", "S_4+E_3S_3<-->E_3S_3S_4",
+	"E_3S_3S_4<-->P_3+E_3", "S_4+E_4<-->E_4S_4",
+	"E_4S_4-->2S_1+E_4"
 	})
 R = createRing(e1,QQ);
 F = join(subRandomInitVals e1, subRandomReactionRates e1)
@@ -143,13 +142,13 @@ n = 7
 An = multipleModificationA n
 -- testing different networks
 E7
-H = createPolySystem(E7, FF)
+H = createPolySystem(e1, FF)
 (p0, x0) = createSeedPair(H, "initial parameters" => "random unit")
-elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfNodes => 2, NumberOfEdges => 4)
+elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfNodes => 4, NumberOfEdges => 1)
 length V.PartialSols
 
-L = apply(numgens createRing(E7,FF), i->random FF)
-specPolys = specializeSystem (p0,createPolySystem'overdetermined(E7,FF,L));
+L = apply(numgens createRing(e1,FF), i->random FF)
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(e1,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV = numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
