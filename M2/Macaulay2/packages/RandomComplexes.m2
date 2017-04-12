@@ -17,6 +17,7 @@ export {
     "testTimeForLLLonSyzygies",
     "randomChainComplex",
     "oneMatrix",
+    "disturb",
     "normalize",
     "WithLLL",
     "zeroMean"
@@ -133,6 +134,17 @@ Cplus.dd^2
     apply(#proj3,i->clean_e(proj2_i*proj1_i))
 ///
 
+disturb = method()
+disturb(ChainComplex,RR) := (C,epsilon) -> (   
+    chainComplex for i from 1 to length C list (
+	c := rank C_(i-1);
+	d := rank C_i;
+	e := maximalEntry C.dd_i;
+	entry:=null;
+	matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
+		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(RR_53)-1)))))
+--	C.dd_i +e*epsilon*(2*random(RR^c,RR^d)-oneMatrix(c,d))
+    ))
     
 normalize=method()
 normalize ChainComplex := C-> (
@@ -236,7 +248,7 @@ viewHelp "RandomComplexes"
 TEST ///
 restart
 needsPackage "RandomComplexes"
-
+needsPackage "SVDComplexes"
 h={1,3,5,2,1} 
 r={5,11,3,2}
 setRandomSeed "alpha"
@@ -255,10 +267,10 @@ CR=normalize(C**RR_53)
 --CR=C**RR_53
 elapsedTime SVDHomology CR
 elapsedTime SVDHomology(CR,Strategy=>Laplacian)
-elapsedTime U=SVDComplex CR;
-elapsedTime (h,V)=SVDComplex(CR,Strategy=>Laplacian);
+elapsedTime (h,U)=SVDComplex CR;
+elapsedTime (hL,V)=SVDComplex(CR,Strategy=>Laplacian);
 e=1e-9
-clean_e (U_0*C.dd_1*transpose U_1)
+clean_e (transpose U#0*C.dd_1* U#1)
 clean_e (transpose V#0*C.dd_1*V#1)
 ///
 
@@ -356,7 +368,8 @@ assert(A_0 === B)
 
 TEST ///
 restart
-load "randomComplexes.m2"
+needsPackage "randomComplexes"
+needsPackage "SVDComplexes"
 setRandomSeed"test SVD"
 h={1,4,10,4,1} 
 r={10,20,20,10}
@@ -380,6 +393,25 @@ assert(A_0===B_0)
 
 TEST ///
 restart
+needsPackage "RandomComplexes"
+needsPackage "SVDComplexes"
+setRandomSeed"test SVD"
+h={1,5,20,5,1} 
+r={10,20,20,10}
+elapsedTime C=randomChainComplex(h,r,Height=>3,WithLLL=>true,zeroMean=>true)
+maximalEntry C
+CR=C**RR_53
+elapsedTime SVDHomology(CR,Strategy=>Laplacian)
+D=disturb(CR,1e-5)
+elapsedTime SVDHomology D
+elapsedTime SVDHomology CR
+elapsedTime SVDHomology(D,CR)
+elapsedTime SVDHomology(D,Strategy=>Laplacian)
+///
+
+
+TEST ///
+restart
 load "randomComplexes.m2"
 hts=new MutableHashTable
 for r from 4 to 18 do (
@@ -395,37 +427,7 @@ min t, max t
 histogram(t,10)
 ///
 
-TEST ///
-restart
-load "randomComplexes.m2"
-needsPackage "FreeResolutions"
-needsPackage "AGRExamples"
-R=QQ[a..h]
-Rp=(ZZ/32003)(monoid R)
-R0=(RR_53)(monoid R)
-deg=4
-nextra=10
-setRandomSeed "1"
-F=sum(gens R,x->x^deg)+sum(nextra,i->(random(1,R))^deg);
-elapsedTime I=ideal fromDual matrix{{F}};
-elapsedTime C=res(I,FastNonminimal =>true);
-betti C
-elapsedTime minimalBetti sub(I,Rp)
-elapsedTime SVDBetti C 
-C1=constantStrand(C,RR_53,9)
 
-
-C=chainComplex({C1.dd_6,C1.dd_7})
-betti C
-maximalEntry C
-SVDHomology C
-SVDHomology(C,Strategy=>Laplacian)
-
-histogram(first SVD C.dd_1/log,10)
-histogram(first SVD C.dd_2/log,10)
-numericRank C.dd_1, numericRank C.dd_2
-betti C
-///
 
 TEST ///
 restart
@@ -441,4 +443,174 @@ histogram(first SVD(M*D**RR_53)/log,10)
 D=diagonalMatrix apply(100,i->(i+1)^10);
 histogram(first SVD(M*D**RR_53)/log,10)
 numericRank(M*D**RR_53)
+///
+
+
+TEST ///
+-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-- for paper??
+-- %%%%%%%%%%%%%%%%%%%%%%%
+restart
+needsPackage "RandomComplexes"
+needsPackage "SVDComplexes"
+h={1,1,1,1}
+r={2,2,2}
+setRandomSeed 2
+C=randomChainComplex(h,r,Height=>9,WithLLL=>true,zeroMean=>true)
+prune HH C
+C.dd_1,C.dd_2,C.dd_3
+ker transpose C.dd_1,LLL syz C.dd_2,LLL syz transpose C.dd_2,ker C.dd_3 
+--C1=randomChainComplex({1,1},{5},Height=>5,WithLLL=>true,zeroMean=>true)
+CR=C**RR_53
+tally sort apply(10,c->random(RR_53)) --CR=C**C1**RR_53
+elapsedTime SVDHomology(CR,threshold=>1e-15)
+elapsedTime SVDHomology(CR,Strategy=>Laplacian,threshold=>1e-13)
+28.7143^2,47.1932^2,35.208^2
+U=last SVDComplex CR
+V=last SVDComplex (CR,Strategy=>Laplacian)
+(source U).dd_1, (source V).dd_1
+(source U).dd_2, (source V).dd_2
+(source U).dd_3, (source V).dd_3
+U#0-V#0
+U#1-V#1,U#1_4
+U#2-V#2,U#2_0
+U#3-V#3
+setRandomSeed 1
+D=disturb(CR,1e-3)
+D'=disturb(CR,1e-3)
+D.dd_1,D.dd_2,D.dd_3
+CR.dd_1
+(h,Ud) = SVDComplex(D',D,threshold=>1e-2);
+h 
+elapsedTime SVDHomology(D,threshold=>1e-2)
+elapsedTime SVDHomology(D,Strategy=>Laplacian,threshold=>1e-5)
+elapsedTime SVDHomology(D,CR,threshold=>1e-2)
+elapsedTime SVDHomology CR
+Ud=last SVDComplex(D,CR,threshold=>1e-2);
+Vd=last SVDComplex (D,Strategy=>Laplacian);
+
+(source Ud).dd_1, (source Vd).dd_1, (source V).dd_1
+(source Ud).dd_2, (source Vd).dd_2, (source V).dd_2
+(source Ud).dd_3,(source Vd).dd_3, (source V).dd_3
+
+2.0^(-53)
+ apply(3,i->maximalEntry(U#i*transpose U#i-id_(source U#i)))
+U#0 *(source U).dd_1 *transpose U#1 - CR.dd_1
+Ud#0 *(source Ud).dd_1 *transpose Ud#1 - CR.dd_1  
+Ud#0 *(source Ud).dd_1 *transpose Ud#1 - D.dd_1 
+Ud#1 *(source Ud).dd_2 *transpose Ud#2 - D.dd_2 
+Ud#2 *(source Ud).dd_3 *transpose Ud#3 - D.dd_3 
+D.dd_1-CR.dd_1
+F=chainComplex apply(3,i->U#i *(source U).dd_(i+1) *transpose U#(i+1))
+E=chainComplex apply(3,i->Ud#i *(source Ud).dd_(i+1) *transpose Ud#(i+1))
+(h,Ue)=SVDComplex(E,Strategy=>Laplacian);
+h
+Ud
+Ue#0 *(source Ue).dd_1 *transpose Ue#1 - E.dd_1 
+Ue#1 *(source Ue).dd_2 *transpose Ue#2 - E.dd_2 
+Ue#2 *(source Ue).dd_3 *transpose Ue#3 - E.dd_3 
+sum(flatten entries (E.dd_1-D.dd_1)/abs)
+sum(flatten entries (CR.dd_1-D.dd_1)/abs)
+,D.dd_1-E.dd_1
+,E.dd_2,E.dd_3
+
+first SVD CR.dd_1, first SVD D.dd_1
+first SVD CR.dd_2, first SVD D.dd_2
+first SVD CR.dd_3, first SVD D.dd_3
+Cplus=(pseudoInverse CR)
+CplusL=pseudoInverse(CR,Strategy=>Laplacian)
+apply(3,i->Cplus.dd_(i+1)-CplusL.dd_(i+1))
+CplusL.dd^2
+Uplus=last SVDComplex Cplus
+apply(3,i->(source Uplus).dd_(i+1))
+Cplusplus =pseudoInverse Cplus
+Cplusplus.dd_1,Cplusplus.dd_2,Cplusplus.dd_3
+Cplus.dd_1,Cplus.dd_2,Cplus.dd_3
+p1=C.dd_1* Cplus.dd_3
+p1^2-p1
+p2=C.dd_2*Cplus.dd_2
+p3=C.dd_3*Cplus.dd_1
+
+p2^2-p2,
+p3^2-p3
+q1=Cplus.dd_3*C.dd_1
+q1^2-q1
+q2=Cplus.dd_2*C.dd_2
+q2^2-q2
+q3=Cplus.dd_1*C.dd_3
+q3^2-q3
+betti p1, betti p2, betti p3
+betti q1, betti q2, betti q3
+q1*p2-p2*q1
+q2*p3-p3*q2
+h1=id_(RR^5)-p2-q1
+h1^2-h1
+first SVD h1
+C.dd_3
+Cplus.dd^2
+apply(3,i->Cplus.dd_(-i))
+(source Ue).dd^2
+E.dd^2
+F.dd^2
+D.dd^2
+CR.dd^2
+maximalEntry CR, maximalEntry D
+U#0 *(source U).dd_1 *transpose U#1 - CR.dd_1 
+U#1 *(source U).dd_2 *transpose U#2 - CR.dd_2 
+U#2 *(source U).dd_3 *transpose U#3 - CR.dd_TEST 
+
+--viewHelp 
+tex C.dd_1
+tex C.dd_2
+tex C.dd_3
+
+printingPrecision = 5
+tex (source U).dd_1
+tex  (source U).dd_2
+tex  (source U).dd_3
+
+printingAccuracy = 4
+tex U#0
+tex U#1
+tex U#2
+tex U#3
+
+viewHelp random
+
+///
+
+ ///
+restart
+needsPackage "SVDComplexes"
+needsPackage "AGRExamples"
+needsPackage "RandomComplexes"
+R=QQ[a..h]
+Rp=(ZZ/32003)(monoid R)
+R0=(RR_53)(monoid R)
+deg=4
+nextra=10
+setRandomSeed "1"
+F=sum(gens R,x->x^deg)+sum(nextra,i->(random(1,R))^deg);
+elapsedTime I=ideal fromDual matrix{{F}};
+elapsedTime C=res(I,FastNonminimal =>true);
+betti C
+elapsedTime minimalBetti sub(I,Rp)
+elapsedTime SVDBetti C
+Ls=constantStrands(C,RR_53)
+D=Ls#9
+SVDHomology(D)
+SVDHomology(D,Strategy=>Laplacian,threshold=>1e-2)
+Ls1=constantStrands(C,RR_1000)
+D1=Ls1#9
+D1=D1**RR_53
+SVDHomology(D1,Strategy=>Laplacian)
+SVDHomology(D1,D)
+SVDHomology D1
+(h,U)=SVDComplex(D,D1);
+(h,U)=SVDComplex(D1,D);
+reverse sort unique flatten entries (source U).dd_6
+reverse sort unique flatten entries (source U).dd_7
+
+
+maximalEntry D1
 ///
