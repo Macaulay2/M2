@@ -142,7 +142,7 @@ disturb(ChainComplex,RR) := (C,epsilon) -> (
 	e := maximalEntry C.dd_i;
 	entry:=null;
 	matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
-		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(RR_53)-1)))))
+		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(2)-1)))))
 --	C.dd_i +e*epsilon*(2*random(RR^c,RR^d)-oneMatrix(c,d))
     ))
     
@@ -463,8 +463,8 @@ ker transpose C.dd_1,LLL syz C.dd_2,LLL syz transpose C.dd_2,ker C.dd_3
 --C1=randomChainComplex({1,1},{5},Height=>5,WithLLL=>true,zeroMean=>true)
 CR=C**RR_53
 tally sort apply(10,c->random(RR_53)) --CR=C**C1**RR_53
-elapsedTime SVDHomology(CR,threshold=>1e-15)
-elapsedTime SVDHomology(CR,Strategy=>Laplacian,threshold=>1e-13)
+elapsedTime SVDHomology(CR,Threshold=>1e-15)
+elapsedTime SVDHomology(CR,Strategy=>Laplacian,Threshold=>1e-13)
 28.7143^2,47.1932^2,35.208^2
 U=last SVDComplex CR
 V=last SVDComplex (CR,Strategy=>Laplacian)
@@ -476,18 +476,19 @@ U#1-V#1,U#1_4
 U#2-V#2,U#2_0
 U#3-V#3
 setRandomSeed 1
-D=disturb(CR,1e-3)
-D'=disturb(CR,1e-3)
+D=disturb(CR,1e-2)
 D.dd_1,D.dd_2,D.dd_3
+D.dd^2
+D'=disturb(CR,1e-3)
 CR.dd_1
-(h,Ud) = SVDComplex(D',D,threshold=>1e-2);
+(h,Ud) = SVDComplex(D',D,Threshold=>1e-2);
 h 
-elapsedTime SVDHomology(D,threshold=>1e-2)
-elapsedTime SVDHomology(D,Strategy=>Laplacian,threshold=>1e-5)
-elapsedTime SVDHomology(D,CR,threshold=>1e-2)
+elapsedTime SVDHomology(D,Threshold=>1e-2)
+elapsedTime SVDHomology(D,Strategy=>Laplacian,Threshold=>1e-2)
+elapsedTime SVDHomology(D,CR,Threshold=>1e-2)
 elapsedTime SVDHomology CR
-Ud=last SVDComplex(D,CR,threshold=>1e-2);
-Vd=last SVDComplex (D,Strategy=>Laplacian);
+Vd=last SVDComplex(D,CR,Threshold=>1e-2);
+Ud=last SVDComplex (D,Strategy=>Laplacian,Threshold=>1e-2);
 
 (source Ud).dd_1, (source Vd).dd_1, (source V).dd_1
 (source Ud).dd_2, (source Vd).dd_2, (source V).dd_2
@@ -496,16 +497,19 @@ Vd=last SVDComplex (D,Strategy=>Laplacian);
 2.0^(-53)
  apply(3,i->maximalEntry(U#i*transpose U#i-id_(source U#i)))
 U#0 *(source U).dd_1 *transpose U#1 - CR.dd_1
+D.dd_1-CR.dd_1
 Ud#0 *(source Ud).dd_1 *transpose Ud#1 - CR.dd_1  
 Ud#0 *(source Ud).dd_1 *transpose Ud#1 - D.dd_1 
 Ud#1 *(source Ud).dd_2 *transpose Ud#2 - D.dd_2 
 Ud#2 *(source Ud).dd_3 *transpose Ud#3 - D.dd_3 
-D.dd_1-CR.dd_1
+
 F=chainComplex apply(3,i->U#i *(source U).dd_(i+1) *transpose U#(i+1))
 E=chainComplex apply(3,i->Ud#i *(source Ud).dd_(i+1) *transpose Ud#(i+1))
-(h,Ue)=SVDComplex(E,Strategy=>Laplacian);
+D.dd^2
+E.dd^2
+(h,Ue)=SVDComplex(E,Strategy=>Laplacian,Threshold=>1e-8);
 h
-Ud
+SVDHomology(E,Strategy=>Laplacian)
 Ue#0 *(source Ue).dd_1 *transpose Ue#1 - E.dd_1 
 Ue#1 *(source Ue).dd_2 *transpose Ue#2 - E.dd_2 
 Ue#2 *(source Ue).dd_3 *transpose Ue#3 - E.dd_3 
@@ -548,7 +552,7 @@ h1^2-h1
 first SVD h1
 C.dd_3
 Cplus.dd^2
-apply(3,i->Cplus.dd_(-i))
+apply(3,i->Cplus.dd_(i+1))
 (source Ue).dd^2
 E.dd^2
 F.dd^2
@@ -557,7 +561,8 @@ CR.dd^2
 maximalEntry CR, maximalEntry D
 U#0 *(source U).dd_1 *transpose U#1 - CR.dd_1 
 U#1 *(source U).dd_2 *transpose U#2 - CR.dd_2 
-U#2 *(source U).dd_3 *transpose U#3 - CR.dd_TEST 
+U#2 *(source U).dd_3 *transpose U#3 - CR.dd_3
+
 
 --viewHelp 
 tex C.dd_1
@@ -599,7 +604,7 @@ elapsedTime SVDBetti C
 Ls=constantStrands(C,RR_53)
 D=Ls#9
 SVDHomology(D)
-SVDHomology(D,Strategy=>Laplacian,threshold=>1e-2)
+SVDHomology(D,Strategy=>Laplacian,Threshold=>1e-2)
 Ls1=constantStrands(C,RR_1000)
 D1=Ls1#9
 D1=D1**RR_53

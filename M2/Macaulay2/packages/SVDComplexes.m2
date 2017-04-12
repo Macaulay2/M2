@@ -25,6 +25,7 @@ export {
     "SVDBetti",
     "Projection",
     "Laplacian",
+---    "Threshold",
     "numericRank",
     "commonEntries",
     "uniquify",
@@ -277,14 +278,14 @@ minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
   new BettiTally from mB
   )
 
-commonEntries = method()
-commonEntries(List,List) := (A,B) -> (
+commonEntries = method(Options =>{Threshold=>1e-4})
+commonEntries(List,List) := opts -> (A,B) -> (
     -- A, B decending list of real numbers
     -- returns list of position, where these numbers coincide up to 4 digits
     Ac:={};Bc:={};
     i:=0;j:=0;
     while (
-	    if abs((A_i-B_j)/(A_i+B_j)) < 1e-4 then (
+	    if abs((A_i-B_j)/(A_i+B_j)) < opts.Threshold then (
 	        Ac=append(Ac,i);
             Bc=append(Bc,j);
 	        i=i+1;j=j+1)
@@ -295,7 +296,7 @@ commonEntries(List,List) := (A,B) -> (
     )
 
 uniquify = method()
-uniquify(List,List,RR) := (L1, L2, threshold) -> (
+uniquify(List,List,RR) := (L1, L2, Threshold) -> (
     -- L1, L2 are lists of floats, sorted in descending order
     -- returns lists L1', L2' also sorted, with no common entries
     M1 := {};
@@ -306,7 +307,7 @@ uniquify(List,List,RR) := (L1, L2, threshold) -> (
         a := L1_i;
         b := L2_j;
         << "comparing " << (i,j) << " values: " << (a,b) << endl;
-        if abs(a-b)/(abs(a)+abs(b)) < threshold then (
+        if abs(a-b)/(abs(a)+abs(b)) < Threshold then (
             i = i+1;
             j = j+1;
             )
@@ -322,7 +323,8 @@ uniquify(List,List,RR) := (L1, L2, threshold) -> (
 
 
 SVDComplex = method(Options => {
-        Strategy => Projection -- other choice: Laplacian
+        Strategy => Projection, -- other choice: Laplacian,
+	Threshold => 1e-4
         }
     )
 
@@ -346,16 +348,19 @@ SVDComplex ChainComplex := opts -> (C) -> (
         Q0 := mutableMatrix(ring C, 0, Cranks#lo);
         for ell from lo+1 to hi do (
             m1 :=  P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
-            (sigma1, U, Vt) = SVD m1;
+            (sigma1, U, Vt) = if numrows m1 > 0 then SVD m1 else 
+	    (matrix{{}},matrix{{}},id_(C_ell));
             sigma1 = flatten entries sigma1;
             Sigmas#ell = sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
-	    pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e11);
+	    pos := select(#sigma1-1, i -> sigma1#i*opts.Threshold >= sigma1#(i+1));
             rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
             --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
             smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
-            smallestSing#ell = sigma1#(rks#ell-1);
+	    smallestSing#ell = if #sigma1==0 then null else
+	    (if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), 
+		if rks#ell < #sigma1-1 and rks#ell>0 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
             ortho1 := (transpose U) * P0; 
@@ -393,7 +398,7 @@ SVDComplex ChainComplex := opts -> (C) -> (
 	apply(posEigVal,p-> if #unique p != #p then return 
 	    ( "Have multiple eigenvalues in a single Laplacian"));
 	for ell from lo to hi-1 do (
-	    commonPositions#ell = commonEntries(eigVal#ell,eigVal#(ell+1)));
+	    commonPositions#ell = commonEntries(eigVal#ell,eigVal#(ell+1),Threshold=>opts.Threshold));
 	for ell from lo+1 to hi-2 do (k:=
 		#unique(last commonPositions#ell|(first commonPositions#(ell+1))) == 
 		#last commonPositions#ell+#first commonPositions#(ell+1); 
@@ -435,6 +440,67 @@ SVDComplex ChainComplex := opts -> (C) -> (
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
 
+SVDComplex(ChainComplex,ChainComplex) := opts -> (C,C') -> (
+    -- returns a hash table of the ranks of the homology of C
+    if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
+    goodspots := select(spots C, i -> C_i != 0);
+    if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
+    (lo, hi) := (min goodspots, max goodspots);
+    if not betti C == betti C' then error "expected two complexes which differ only by their precision";
+    Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
+    rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
+    Sigmas := new MutableHashTable; -- the singular values in the SVD complex, indexed lo+1..hi
+    Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
+    smallestSing := new MutableHashTable;
+    rks#lo = 0;
+    sigma1 := null; sigma1' := null;
+    U := null; U' := null;
+    Vt := null;Vt' := null;
+    if opts.Strategy == symbol Projection then (
+        P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        P0' := mutableIdentity(ring C, rank C_lo);
+	Q0 := mutableMatrix(ring C, 0, Cranks#lo);
+	for ell from lo+1 to hi do (
+            m1 := P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
+            (sigma1, U, Vt) = SVD m1;
+            sigma1 = flatten entries sigma1;
+	    Sigmas#ell = sigma1;
+	    m1' := P0' * (mutableMatrix C'.dd_ell); -- crashes if mutable matrices??
+            (sigma1', U', Vt') = SVD m1';
+            sigma1' = flatten entries sigma1';
+            -- TODO: the following line needs to be un-hardcoded!!
+            pos := select(#sigma1, i -> abs(sigma1#i-sigma1'#i)/(sigma1#i+sigma1'#i) < opts.Threshold);
+            rks#ell = #pos;
+            --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
+            smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
+            -- now split Vt into 2 parts.
+	    ortho1 := (transpose U) * P0; 
+	    --ortho1 := (transpose U) *matrix P0;
+            Orthos#(ell-1) = matrix{{matrix Q0},{matrix ortho1}};
+            -- now split Vt into 2 parts.
+            P0 = Vt^(toList(rks#ell..numRows Vt-1));
+	    P0' = Vt'^(toList(rks#ell..numRows Vt-1));
+            Q0 = Vt^(toList(0..rks#ell-1));
+            );
+        -- Now create the Sigma matrices
+        Orthos#hi = matrix Vt;
+        hs#hi = Cranks#hi - rks#hi;
+        SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
+            m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
+            for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
+            matrix m -- TODO: make this via diagonal matrices and block matrices.
+            );
+        sourceComplex := (chainComplex SigmaMatrices);
+	-- transpose all ortho matrices to get the map in the right direction 
+	for i from lo to hi do Orthos#i=transpose Orthos#i;
+        result := newChainComplexMap(C, sourceComplex,  new HashTable from Orthos);
+        return ( new HashTable from hs,result);--,
+	-- new HashTable from hs, new HashTable from smallestSing;
+	);   
+    if opts.Strategy == symbol Laplacian then error "not implemented for complexes in two precisions";
+    )
 
 
 SVDHomology = method (Options => options SVDComplex)
@@ -456,13 +522,15 @@ SVDHomology ChainComplex := opts -> (C) -> (
         P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
         for ell from lo+1 to hi do (
             m1 := P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
-            (sigma1, U, Vt) = SVD m1;
+            (sigma1, U, Vt) = if numrows m1 > 0 then SVD m1 else (matrix{{}},null,id_(C_ell));
             sigma1 = flatten entries sigma1;
             -- TODO: the following line needs to be un-hardcoded!!
-            pos := select(#sigma1-1, i -> sigma1#i/sigma1#(i+1) > 1e10);
+            pos := select(#sigma1-1, i -> sigma1#i*opts.Threshold >=sigma1#(i+1));
             rks#ell = if #pos === 0 then #sigma1 else (min pos)+1;
             --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
-            smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            smallestSing#ell = if #sigma1==0 then null else
+	    (if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), 
+		if rks#ell < #sigma1-1 and rks#ell>0 then sigma1#(rks#ell) else null);
             hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
             -- now split Vt into 2 parts.
             P0 = Vt^(toList(rks#ell..numRows Vt-1));
@@ -482,7 +550,7 @@ SVDHomology ChainComplex := opts -> (C) -> (
 		posEigVal:= for ell from lo to hi list (select(eigVal#ell,lambda->lambda>0));
 	apply(posEigVal,p-> if #unique p != #p then error "Have multiple eigenvalues in a single Laplacian");
 	for ell from lo to hi-1 do (
-	    commonPositions#ell = commonEntries(eigVal#ell,eigVal#(ell+1)));
+	    commonPositions#ell = commonEntries(eigVal#ell,eigVal#(ell+1),Threshold=>opts.Threshold));
 	for ell from lo+1 to hi-2 do (k:=
 		#unique(last commonPositions#ell|(first commonPositions#(ell+1))) == 
 		#last commonPositions#ell+#first commonPositions#(ell+1); 
@@ -510,6 +578,49 @@ SVDHomology ChainComplex := opts -> (C) -> (
         );
     error "expected Strategy=>Projection or Strategy=>Laplacian"
     )
+
+
+SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
+    -- returns a hash table of the ranks of the homology of C
+    if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
+    goodspots := select(spots C, i -> C_i != 0);
+    if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
+    (lo, hi) := (min goodspots, max goodspots);
+    if not betti C == betti C' then error "expected two complexes which differ only by their precision";
+    Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
+    rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
+    hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
+    smallestSing := new MutableHashTable;
+    rks#lo = 0;
+    sigma1 := null; sigma1' := null;
+    U := null; U' := null;
+    Vt := null;Vt' := null;
+    if opts.Strategy == symbol Projection then (
+        P0 := mutableIdentity(ring C, rank C_lo); -- last projector matrix constructed
+        P0' := mutableIdentity(ring C, rank C_lo);
+	for ell from lo+1 to hi do (
+            m1 := P0 * (mutableMatrix C.dd_ell); -- crashes if mutable matrices??
+            (sigma1, U, Vt) = SVD m1;
+            sigma1 = flatten entries sigma1;
+	    m1' := P0' * (mutableMatrix C'.dd_ell); -- crashes if mutable matrices??
+            (sigma1', U', Vt') = SVD m1';
+            sigma1' = flatten entries sigma1';
+            -- TODO: the following line needs to be un-hardcoded!!
+            pos := select(#sigma1, i -> abs(sigma1#i-sigma1'#i)/(sigma1#i+sigma1'#i) < opts.Threshold);
+            rks#ell = #pos;
+            --remove?-- rks#ell = # select(sigma1, x -> x > 1e-10);
+            smallestSing#ell =(if rks#ell-1>0 then sigma1#(rks#ell-2) else null,  sigma1#(rks#ell-1), if rks#ell < #sigma1-1 then sigma1#(rks#ell) else null);
+            hs#(ell-1) = Cranks#(ell-1) - rks#(ell-1) - rks#ell;
+            -- now split Vt into 2 parts.
+            P0 = Vt^(toList(rks#ell..numRows Vt-1));
+	    P0' = Vt'^(toList(rks#ell..numRows Vt-1));
+            );
+        hs#hi = Cranks#hi - rks#hi;
+        return (new HashTable from hs, new HashTable from smallestSing);
+        );
+    if opts.Strategy == symbol Laplacian then error "not implemented for complexes in two precisions";
+    )
+
 
 TEST ///
 restart
@@ -582,10 +693,10 @@ checkSVDComplex = (C, Fhs) -> (
     (val1, val2, vals3, vals4, vals5)
     )
 
-pseudoInverse=method()
-pseudoInverse ChainComplex := C -> (
-    U := SVDComplex C;
-    SigmaComplex := target U;
+pseudoInverse=method(Options=> options SVDComplex)
+pseudoInverse ChainComplex := opts -> C -> (
+    U := last SVDComplex(C,Strategy=>opts.Strategy);
+    SigmaComplex := source U;
     minC := min C;
     maxC := max C;
     range := toList(minC+1..maxC);
@@ -593,8 +704,8 @@ pseudoInverse ChainComplex := C -> (
     SigmaPlus := apply(At,A->matrix (apply(numrows A,i->apply(numcols A,j-> 
 		    if A_(i,j)==0 then 0 else 1/(A_(i,j))))));
     CplusMats := apply(#SigmaPlus,i->
-	    transpose U_(minC+i+1)*SigmaPlus_i* U_(minC+i));
-    Cplus := (chainComplex reverse CplusMats)[maxC];
+	     U_(minC+i+1)*SigmaPlus_i* transpose U_(minC+i));
+    Cplus := (chainComplex reverse CplusMats);
     Cplus
     )
 
@@ -790,11 +901,12 @@ TEST ///
 ///
 
 TEST ///
-  kk = ZZ/32003
+  kk = QQ
   R = kk[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
   C = res(I, FastNonminimal=>true)
-  constantStrand(C, kk, 8) -- fails, as it doesn't even make it to that code
+  betti C
+  constantStrand(C, RR_53, 8) -- fails, as it doesn't even make it to that code
 ///
 
 doc ///
@@ -849,13 +961,17 @@ doc ///
    Key
      SVDComplex
      (SVDComplex,ChainComplex)
+     (SVDComplex,ChainComplex,ChainComplex)
    Headline
      Compute the SVD decomposition of a chainComplex over RR
    Usage
-     (h,U)=SVDComplex C
+     (h,U)=SVDComplex C or
+     (h,U)=SVDComplex(C,C')
    Inputs
      C:ChainComplex
-       over RR_53
+       over RR_{53}
+     C':ChainComplex
+       in a lower precision
    Outputs
      h:HashTable
        the dimensions of the homology groups HH C
@@ -866,7 +982,8 @@ doc ///
    Description
     Text
       We compute the singular value decomposition either by the iterated Projections or by the 
-      Laplacian method
+      Laplacian method. In case the input consists of two chainComplexes we use the iterated  Projection method, and identify the stable
+      singular values.
     Example
       needsPackage "RandomComplexes"
       h={1,3,5,2,1} 
@@ -890,7 +1007,7 @@ doc ///
     Text
       The optional argument 
    Caveat
-      The algorithm might fails if the conditions numbers of the differential are too bad
+      The algorithm might fail if the conditions numbers of the differential are too bad
    SeeAlso
      
 ///
@@ -908,7 +1025,8 @@ restart
 needsPackage "SVDComplexes"
 
 ///
-
+needsPackage "randomComplexes"
+needsPackage "SVDComplexes"
 needsPackage "AGRExamples"
 R=QQ[a..h]
 Rp=(ZZ/32003)(monoid R)
@@ -920,7 +1038,7 @@ setRandomSeed "1"
 F=sum(gens R,x->x^deg)+sum(nextra,i->(random(1,R))^deg);
 elapsedTime I=ideal fromDual matrix{{F}};
 elapsedTime C=res(I,FastNonminimal =>true);
-C0 = getNonminimalRes(C, R0);
+--C0 = getNonminimalRes(C, R0);
 betti C
 elapsedTime minimalBetti sub(I,Rp)
 elapsedTime SVDBetti C
@@ -1056,7 +1174,7 @@ TEST ///
   -- warning: this currently requires test code on res2017 branch.
 restart
   -- YYYYY
-
+  needsPackage "RandomComplexes"
   needsPackage "SVDComplexes"
   needsPackage "AGRExamples"
   R = QQ[a..f]
@@ -1080,14 +1198,17 @@ elapsedTime  I = ideal fromDual matrix{{F}};
   Ls = constantStrands(C,RR_53)  
 --  Lp = constantStrands(C,ZZ/32003)  
   D = Ls#8
-  
+Ls  
 --  (F, hs, minsing) = 
   U=SVDComplex D;
   (hs, minsing) = SVDHomology D;
   hs, minsing
   numericRank D.dd_4
 
-  elapsedTime SVDComplex Ls_4;
+maximalEntry D
+
+  elapsedTime first SVDComplex D
+  elapsedTime  SVDHomology( D,Strategy=>Laplacian)
   elapsedTime SVDComplex Ls_5;
   last oo
 
