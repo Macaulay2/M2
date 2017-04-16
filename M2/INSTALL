@@ -99,7 +99,7 @@ various modern operating systems:
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
     On Ubuntu 14.10 and later, add
-        --enable-build-libraries="pari givaro"
+        --enable-build-libraries="pari givaro fflas_ffpack"
       to the "configure" command line below.  (The version of pari possibly installed there
       will crash when M2 exits.  The version of givaro that might be installed by Ubuntu
       might be too recent for us.)
