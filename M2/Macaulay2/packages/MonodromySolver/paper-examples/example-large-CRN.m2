@@ -143,7 +143,7 @@ An = multipleModificationA n
 -- testing different networks
 E7
 H = createPolySystem(e1, FF)
-(p0, x0) = createSeedPair(H, "initial parameters" => "random unit")
+(p0, x0) = createSeedPair(H, "initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(H,p0,{x0},NumberOfNodes => 4, NumberOfEdges => 1)
 length V.PartialSols
 
