@@ -11,9 +11,10 @@ endif
 
 default:
 
-_CC  := gcc-4.9
-_CXX := g++-4.9
-_FC  := gfortran-4.9
+# _CC  := gcc-4.9
+# _CXX := g++-4.9
+# _FC  := gfortran-4.9
+_FC := gfortran
 
 DIR_BASE := $(shell lsb_release -s --id)-$(shell lsb_release -s --release)-$(shell uname -m)
 
