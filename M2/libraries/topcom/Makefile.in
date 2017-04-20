@@ -8,6 +8,7 @@ PROGRAMS = src-reg/checkregularity src/points2finetriang
 STRIPFILES = $(PROGRAMS)
 INSTALLCMD = :
 include ../Makefile.library
+BUILDCMD := make -C external gmp && $(BUILDCMD)
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/topcom/Makefile
 # Local Variables:
 # mode: makefile-gmake

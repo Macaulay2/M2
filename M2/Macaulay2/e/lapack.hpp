@@ -111,6 +111,78 @@ int dgelss_(int* rows,     // rows
             int *lwork,    // size of workspace
             int *info);    // error info
 
+  // computes a QR factorization of the matrix A.
+  // to get optimal work size:
+  //   1. call this function with lwork == -1, at exit, work[0] contains optimal size of 'work'
+  //        in number of doubles?  or number of bytes?  probably number of doubles...
+  //   2. after that, allocate space for that size, recall the function.
+  // the answer is encoded in the following manner:
+  //   Q = H(1) H(2) ... H(k), where k = min(m,n).
+  //   H(i) has the form:  I - tau * v * v'
+  // where
+  //   tau is a real scalar
+  //   v is a real vector with v(1:i-1) = 0, v(i)=1, v(i+1:m) is stored on exit in
+  //     A(i+1:m,i), and tau in tau(i).
+  // dgeqrf: QR factorization
+  //   https://docs.oracle.com/cd/E19422-01/819-3691/dgeqrf.html
+  // dorgqr: to get Q as a matrix:
+  //   https://docs.oracle.com/cd/E19422-01/819-3691/dorgqr.html
+  // dormqr: to instead multiply by this Q without creating it:
+  //   https://docs.oracle.com/cd/E19422-01/819-3691/dormqr.html
+
+  int dgeqrf_(int* m,      // #rows (input)
+              int* n,      // #columns (input)
+              double* A,   // input matrix, in row or column major order? (inout)
+              // on output: the top part of A, min(m,n) x n, is R
+              //    under that: A(i+1:m, i) is v_i
+              //    actually, vi[1:i-1] = 0, vi[i] = 1, vi[i+1:m) = A(i+1:m, i)
+              int* lda,    // leading dimension of A (>= max(1, #rows) (input)
+              double * tau, // scalar factors of elementary reflectors (output), size: min(m,n).
+              double * work, // 
+              int * lwork,  // size of workspace? 
+              int * info);  // error info: ==0: successful, ==-i, i-th argument had illegal value
+  int dorgqr_(int* m, // #rows m >= 0
+              int* n, // #cols of Q, m >= n >= 0
+              int* k, // number of elementary reflectors (n >= k >= 0)
+              double * A, // on input: i-th column contains the v_i defining the i-th reflector
+                          // on output: contains the m by n matrix Q.
+              int* lda, // input. 
+              double * tau, // input, 
+              double * work, // workspace, size 'lwork'.  optimally, lwork >= n * nb, where nb is optimal block size.
+              int* lwork, // dimension of 'work'
+              int* info);
+  // as usual, setting lwork to -1, results in work[0] containing the optimal work size.
+  // then allocate space, run again.
+  // todo:
+  //  a. add in routines for QR in lapack.cpp (RR,RRR,CC,CCC), lapack.hpp defs too
+  //        RR: WORKING ON
+  //  b. in mat-linalg.hpp, add in routines for QR as well.
+  //DONE    b1. at top of file: default doesn't exist case.
+  //        b2. 4 routines to add: RR, RRR, CC, CCC
+  //         RR: DONE
+  //DONE  c. mat.hpp: add in QR routine
+  //DONE  d. mutablemat-imp.hpp: add in boiler plate.
+  //DONE   d1. mutablemat-defs.hpp
+  //DONE  e. add in routines in x-mutablemat.cpp, also change engine.h
+  //  f. add in a routine in interface.dd
+  //  g. add in a routine in m2/mutablemat.m2
+  //  h. document and test QR, ReturnQR.
+#if 0  
+  int dormqr_(char *__side,
+              char *__trans,
+              __CLPK_integer *__m,
+              __CLPK_integer *__n,
+              __CLPK_integer *__k,
+              __CLPK_doublereal *__a,
+              __CLPK_integer *__lda,
+              __CLPK_doublereal *__tau,
+              __CLPK_doublereal *__c__,
+              __CLPK_integer *__ldc,
+              __CLPK_doublereal *__work,
+              __CLPK_integer *__lwork,
+              __CLPK_integer *__info);
+#endif
+  
 #ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
@@ -403,6 +475,8 @@ class Lapack {
   static bool least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
 
   static bool least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x);
+
+  static bool QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR);
 
   ////////////////////////////////
   // Input matrices are complex //
