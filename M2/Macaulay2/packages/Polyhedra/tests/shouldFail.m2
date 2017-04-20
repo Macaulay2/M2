@@ -30,3 +30,13 @@ L = matrix {{}};
 assert((try intersection(R, L) else oops) === oops)
 assert((try intersection(L, R) else oops) === oops)
 ///
+
+-- fan constructors
+TEST ///
+RAYS = transpose matrix {{1,0,0},{0,1,0}};
+CONES = {{}, {0}, {1}};
+CONES1 = {{0},{1}};
+assert((try fan(RAYS|RAYS, {{}}) else oops) === oops)
+assert((try fan(RAYS, CONES) else oops) === oops)
+assert((try fan(RAYS, CONES1) else oops) =!= oops)
+///
