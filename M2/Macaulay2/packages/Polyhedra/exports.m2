@@ -20,6 +20,7 @@ export {
    "PolyhedralComplex", 
    "intersection", 
    "fan", 
+   "fanFromGfan",
    "addCone", 
    "polyhedralComplex", 
    "addPolyhedron", 

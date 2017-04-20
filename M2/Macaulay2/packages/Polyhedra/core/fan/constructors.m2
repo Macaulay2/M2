@@ -61,6 +61,26 @@ fan HashTable := inputProperties -> (
    constructTypeFromHash(Fan, resultHash)
 )
 
+fanFromGfan = method()
+fanFromGfan List := gfanOutput -> (
+-- 0 rays -> Matrix
+-- 1 lineality -> Matrix
+-- 2 cones -> List<List>
+-- 3 dimension -> ZZ
+-- 4 amb dimension -> ZZ
+-- 5 pure -> bool
+-- 6 simplicial -> bool
+-- 7 fVector -> List
+   result := fan(gfanOutput#0, gfanOutput#1, gfanOutput#2);
+   setProperty(result, ambDim, gfanOutput#4);
+   setProperty(result, computedFVector, gfanOutput#7);
+   setProperty(result, pure, gfanOutput#5);
+   setProperty(result, simplicial, gfanOutput#6);
+   setProperty(result, computedDimension, gfanOutput#3);
+   return result;
+)
+
+
 
 sanitizeFanInput = method()
 sanitizeFanInput HashTable := given -> (
