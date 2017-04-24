@@ -17,7 +17,7 @@ parametrizedCyclic = n -> (
 end ------------------------------------------------
 
 restart
-load "MonodromySolver/examples/cyclic.m2"
+load "MonodromySolver/paper-examples/cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 5

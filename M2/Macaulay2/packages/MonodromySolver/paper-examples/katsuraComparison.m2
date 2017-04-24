@@ -1,4 +1,4 @@
-load "../examples/katsura.m2"
+load "../paper-examples/katsura.m2"
 
 n = value (get ("sentinelFile")); --File created by python process. It just contains an int for the n value.
 randomSeedValue = value (get ("sentinelFile2")); --File created by python process. It just contains an int for the random seed.

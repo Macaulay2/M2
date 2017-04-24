@@ -91,7 +91,7 @@ end
 
 --------EXECUTE line-by-line FROM HERE -----------------------------------
 restart
-load "MonodromySolver/examples/example-Nash.m2"
+load "MonodromySolver/paper-examples/example-Nash.m2"
 
 -- completeGraph(2,3)
 setRandomSeed 0 -- this seed fails with defaults

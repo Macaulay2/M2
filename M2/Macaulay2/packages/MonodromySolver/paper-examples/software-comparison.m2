@@ -3,7 +3,7 @@
 -- python M2-test-wrapper.py and it will run numTrials runs of the monodromy
 -- solver where numTrials is defined in M2-test-wrapper.py
 
-load "../examples/cyclic.m2" 
+load "../paper-examples/cyclic.m2" 
 needsPackage "NumericalAlgebraicGeometry"
 randomSeedValue = value (get ("sentinelFile")); --File created by python process. It just contains an int for the random seed.
 setRandomSeed randomSeedValue;
@@ -29,7 +29,7 @@ openOutAppend "MonodromyCyclicBigExample.txt" << "Cyclic-" << n <<
 " , Monodromy Result: " << monodromyResult << endl << close;
 end ---------------------------
 
-load "../examples/cyclic.m2" 
+load "../paper-examples/cyclic.m2" 
 needsPackage "NumericalAlgebraicGeometry"
 n = 10;
 numTrials = 3;

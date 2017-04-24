@@ -1,4 +1,4 @@
-load "../examples/cyclic.m2" 
+load "../paper-examples/cyclic.m2" 
 n = 7
 polys = parametrizedCyclic n
 

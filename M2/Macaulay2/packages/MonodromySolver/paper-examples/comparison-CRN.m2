@@ -1,4 +1,4 @@
-load "../examples/example-CRN.m2"
+load "../paper-examples/example-CRN.m2"
 {* each case is a quadruple (
         type of graph, 
       	#nodes,

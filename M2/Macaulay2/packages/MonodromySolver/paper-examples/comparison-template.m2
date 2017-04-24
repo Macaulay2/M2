@@ -1,7 +1,7 @@
-load "../examples/cyclic.m2" 
-load "../examples/example-Nash.m2"
-load "../examples/katsura.m2"
-load "../examples/example-CRN.m2"
+load "../paper-examples/cyclic.m2" 
+load "../paper-examples/example-Nash.m2"
+load "../paper-examples/katsura.m2"
+load "../paper-examples/example-CRN.m2"
 
 -- for chemical reaction networks
 R = wnt()

@@ -1,4 +1,4 @@
-load "../examples/cyclic.m2" 
+load "../paper-examples/cyclic.m2" 
 {* each case is a quadruple (
         type of graph, 
       	#nodes,

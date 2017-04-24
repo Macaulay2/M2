@@ -25,7 +25,7 @@ x_10*x_1^2+x_10*x_2^2+x_10*x_3^2+x_10*x_4^2+x_10*x_5^2+x_10*x_6^2+x_10*x_7^2+x_1
 end ------------------------------------------------
 
 restart ---------------------------------------------------------------------
-load "MonodromySolver/examples/noon10.m2"
+load "MonodromySolver/paper-examples/noon10.m2"
 nedges = 3
 setRandomSeed 0
 polys = parametrizedNoon 10 
