@@ -24,30 +24,21 @@ newPackage(
   CacheExampleOutput => true
 ) 
 
+
 exportMutable{"storeBM2Files",
-  "makeB'InputFile",
-  "b'TraceTestImage",
+    "makeB'InputFile",
+  "b'TraceTestImage", 
   "moveB'File",
-  "CopyB'File"
-  }
-
-
-
-export {
-  "bWriteInputFile",      
-  "bTraceTestImage",
-  "bMoveFile",
-  "BCopyFile",
-  --
+  "CopyB'File",
   "calculateB'Trace",
-  "b'PHGaloisGroup",
+--  "b'PHGaloisGroup",
   "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
   "B'Constants",--A list of pairs
   "B'Polynomials", --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named "jade"  	    	  
   "B'Functions", --A list of list of pairs.  
   "B'Exe",
-  "B'Section",
-  "B'Slice",
+  "makeB'Section",
+  "makeB'Slice",
   "B'NumberCoefficients", 
   "B'Homogenization", 
   "B'SectionString",
@@ -57,7 +48,37 @@ export {
   "makeB'TraceInput",
   "makeWitnessSetFiles",
   "makeSampleSolutionsFile",
-  "makeMembershipFile",
+  "makeMembershipFile"
+  }
+
+
+export {
+  "BertiniHyperplane",
+  "BertiniSlice",
+  "bWriteInputFile",      
+  "bTraceTestImage",
+  "bMoveFile",
+  "BCopyFile",
+"bCalculateTrace",
+"b'PHGaloisGroup",
+"BConfigs",  --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
+"BConstants",--A list of pairs
+"BPolynomials",--a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named "jade"  	    	  
+"BFunctions",--A list of list of pairs. 
+"BExe",
+"bHyperplane",
+"bSlice",
+"BNumberCoefficients",
+"BHomogenization",
+"BHyperplaneString",
+"NameBHyperplane",
+"NameBSlice",
+"ListBHyperplanes",
+  --
+"bWriteTraceTestInput",
+"bWriteWitnessSetFile",
+"bWriteSampleSolutionsFile",
+"bWriteMembershipFile",
   "RandomCoefficientGenerator", 
   "ContinueLoop",
   "bertiniImageMonodromyCollect",
@@ -159,8 +180,6 @@ export {
   "NameB'InputFile",--This option allows us to change the name of the input file.
   "radicalList",
 --  "B'MultiProjectivePoint",
-  "makeB'Section",
-  "makeB'Slice",
   "ContainsPoint", 
   "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
   "replaceFirstLine",
@@ -257,13 +276,13 @@ knownConfigs={
 bertiniZeroDimSolve = method(TypicalValue => List, Options=>knownConfigs|{
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
-	B'Configs=>{},
+	BConfigs=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
       	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
       	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
-      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
-      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
+      	BConstants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+      	BFunctions=>{},--A list of pairs consisting of a name and a polynomial.  	
     	NameSolutionsFile=>"raw_solutions",
     	NameMainDataFile=>"main_data",
 	M2Precision=>53,
@@ -282,7 +301,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={} 
   then (
-    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    if not member (class first myPol,{String,BertiniHyperplane,BertiniSlice,Product})
     then (myAVG=gens ring first myPol)
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --%%-- Verbose set greater than 1 will print the variable groups.
@@ -291,8 +310,8 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%--We need to set the CONFIGS of the Bertini input file. 
 --%%%%--These CONFIGS come in two flavors: 
 --%%%%--If the same configuration is set twice then Bertini will use the one set last.
---%%%%--The first is in B'Configs where we just list the configurations. 
-  myConfigs:=(o.B'Configs);
+--%%%%--The first is in BConfigs where we just list the configurations. 
+  myConfigs:=(o.BConfigs);
 --%%%%--The second is as individual options from 'knownConfigs' (search in Beritni.m2 to see the knownConfigs).
     if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MPType",o.MPType});
     if o.PRECISION=!=-1 then myConfigs=append(myConfigs,{"PRECISION",o.PRECISION});
@@ -322,15 +341,15 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --    print myConfigs;
 --%%-- We use the bWriteInputFile method to write a Bertini file. 
   bWriteInputFile(myTopDir,
-    B'Polynomials=>myPol,
+    BPolynomials=>myPol,
     AffVariableGroup=>myAVG,
     HomVariableGroup=>myHVG,
 --%%--These are extra options the user can specify. For more information refer to their documentation.
-    B'Configs=>o.B'Configs,
+    BConfigs=>o.BConfigs,
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
-    B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
-    B'Functions=>o.B'Functions--A list of pairs consisting of a name and a polynomial.  	
+    BConstants=>o.BConstants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+    BFunctions=>o.BFunctions--A list of pairs consisting of a name and a polynomial.  	
     );
 --%%--Check for some errors.
 --%%%%--
@@ -451,14 +470,14 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
-    	B'Functions=>{},
-	B'Configs=>{},
+    	BFunctions=>{},
+	BConfigs=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
       	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
       	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
-      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
-      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
+      	BConstants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+      	BFunctions=>{},--A list of pairs consisting of a name and a polynomial.  	
     	M2Precision=>53,
 	Verbose=>false
 	} )
@@ -475,7 +494,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
   myHVG:= o.HomVariableGroup;
   if myAVG==={} and myHVG==={} 
   then (
-    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    if not member (class first myPol,{String,BertiniHyperplane,BertiniSlice,Product})
     then (myAVG=gens ring first myPol;
       for i in myParams do myAVG=delete(i,myAVG))
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
@@ -484,16 +503,16 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
 --%%-- We use the bWriteInputFile method to write a Bertini file. 
   bWriteInputFile(myTopDir,
     ParameterGroup=>myParams,
-    B'Polynomials=>myPol,
+    BPolynomials=>myPol,
     AffVariableGroup=>myAVG,
     HomVariableGroup=>myHVG,
 --%%--These are extra options the user can specify. For more information refer to their documentation.
-    B'Configs=>({{ParameterHomotopy,1}}|o.B'Configs),
-    B'Functions=>o.B'Functions,
+    BConfigs=>({{ParameterHomotopy,1}}|o.BConfigs),
+    BFunctions=>o.BFunctions,
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
-    B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
-    B'Functions=>o.B'Functions--A list of pairs consisting of a name and a polynomial.  	
+    BConstants=>o.BConstants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+    BFunctions=>o.BFunctions--A list of pairs consisting of a name and a polynomial.  	
     );
 --%%--We call Bertini and solve the parameter homotopy for random parameters.
 --%%%%--The PreparePH2=>true, will automatically adjust the Bertini input file to set ParameterHomotopy=2.
@@ -1574,7 +1593,7 @@ checkMultiplicity=(listOfPoints)->(
 bWriteInputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
-	B'Configs=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file. 
+	BConfigs=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file. 
 --For different functions using Bertini one must state "homogeneous variable groups", "affine variable groups", "parameters", "variables", or "path variables".
 	HomVariableGroup=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
 	AffVariableGroup=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
@@ -1583,23 +1602,23 @@ bWriteInputFile = method(TypicalValue => String, Options=>{
     	PathVariable=>{}, --A list of path variables or a list of list of path variables.  
     	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
     	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
-	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+	BConstants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
 	NamePolynomials=>{}, --A list of names (names are always strings) of the polynomials which we want to find the common zero set of.
-	B'Polynomials=>{},--A list  of polynomials we want to solve.   	
-	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  
+	BPolynomials=>{},--A list  of polynomials we want to solve.   	
+	BFunctions=>{},--A list of pairs consisting of a name and a polynomial.  
 	Verbose=>false
 	})
 bWriteInputFile(String) := o ->(IFD)->(    
     IFD=addSlash(IFD);
 --Warnings are printed here.     
-     if #o.B'Polynomials===0 and #o.NamePolynomials===0 then (print "Warning: NamePolynomials and B'Polynomials are both empty.");
-     if #o.B'Polynomials=!=0 and #o.NamePolynomials=!=0 then (print "Warning: NamePolynomials and B'Polynomials are both non-empty.");     
+     if #o.BPolynomials===0 and #o.NamePolynomials===0 then (print "Warning: NamePolynomials and BPolynomials are both empty.");
+     if #o.BPolynomials=!=0 and #o.NamePolynomials=!=0 then (print "Warning: NamePolynomials and BPolynomials are both non-empty.");     
      if #o.VariableList===0 and #o.AffVariableGroup===0 and #o.HomVariableGroup===0 then stdio << "Warning: VariableList, AffVariableGroup, and HomVariableGroup are all empty." <<endl<<endl;     
---Errors are printed here. 
-     for onePair to #o.B'Constants-1 do if  class((o.B'Constants)_onePair)===List and #((o.B'Constants)_onePair)=!=2 then  error ("B'Constants is not a list of pairs because of element "|onePair);
-     for onePair to #o.B'Functions-1 do if #((o.B'Functions)_onePair)=!=2  and class ((o.B'Functions)_onePair)=!=B'Section and class ((o.B'Functions)_onePair)=!=B'Slice and class ((o.B'Functions)_onePair)=!=Option then  error ("B'Functions is not a list of pairs because of element "|onePair);
-     for onePair to #o.B'Functions-1 do if  class ((o.B'Functions)_onePair)===B'Section and not member(NameB'Section,keys ((o.B'Functions)_onePair)) then  error ("B'Functions contains an unnamed B'Section because of element "|onePair|". Set the NameB'Section option.");
-     for onePair to #o.B'Functions-1 do if  class ((o.B'Functions)_onePair)===B'Slice and not member(NameB'Slice,keys ((o.B'Functions)_onePair)) then  error ("B'Functions contains an unnamed B'Slice because of element "|onePair|". Set the NameB'Slice option. ");
+--Errors are printed here.  
+     for onePair to #o.BConstants-1 do if  class((o.BConstants)_onePair)===List and #((o.BConstants)_onePair)=!=2 then  error ("BConstants is not a list of pairs because of element "|onePair);
+     for onePair to #o.BFunctions-1 do if #((o.BFunctions)_onePair)=!=2  and class ((o.BFunctions)_onePair)=!=BertiniHyperplane and class ((o.BFunctions)_onePair)=!=BertiniSlice and class ((o.BFunctions)_onePair)=!=Option then  error ("BFunctions is not a list of pairs because of element "|onePair);
+     for onePair to #o.BFunctions-1 do if  class ((o.BFunctions)_onePair)===BertiniHyperplane and not member(NameBHyperplane,keys ((o.BFunctions)_onePair)) then  error ("BFunctions contains an unnamed BertiniHyperplane because of element "|onePair|". Set the NameBHyperplane option.");
+     for onePair to #o.BFunctions-1 do if  class ((o.BFunctions)_onePair)===BertiniSlice and not member(NameBSlice,keys ((o.BFunctions)_onePair)) then  error ("BFunctions contains an unnamed BertiniSlice because of element "|onePair|". Set the NameBSlice option. ");
 --Now we write the file. The first thing we do is create a file named "input" by default (this default is changed by the NameB'InputFile option).
      if o.StorageFolder=!=null 
      then (
@@ -1611,7 +1630,7 @@ bWriteInputFile(String) := o ->(IFD)->(
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
 --The first part of a Bertini input file is the configurations.  We write the configuratiosn followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file. 
      openedInputFile << "CONFIG" << endl << endl;
-     for oneConfig in o.B'Configs do (
+     for oneConfig in o.BConfigs do (
        if class oneConfig===Option 
        then openedInputFile << toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
        else if class oneConfig===List then openedInputFile << toString(oneConfig_0) << " : " << toString(oneConfig_1) << " ; " << endl	 
@@ -1690,64 +1709,64 @@ bWriteInputFile(String) := o ->(IFD)->(
 	 writeNamedListToB'InputFile("random_real",aGroup,openedInputFile)
 	 ));
 --Write the  constants and also the constant ii=I
-     if #o.B'Constants=!=0 then (
+     if #o.BConstants=!=0 then (
      openedInputFile << "constant "  ;
      openedInputFile << "ii"  << ", ";
-     pairsB'Constants:=for i in o.B'Constants list 
-       if class i ===List then i else if class i===Option then toList i else error"B'Constants has an invalid element.";
-     for j to #(pairsB'Constants)-2 do (openedInputFile <<toString ((pairsB'Constants)_j_0)  << ", ");
-     openedInputFile << (pairsB'Constants_(-1))_0 << " ; "<< endl;
+     pairsBConstants:=for i in o.BConstants list 
+       if class i ===List then i else if class i===Option then toList i else error"BConstants has an invalid element.";
+     for j to #(pairsBConstants)-2 do (openedInputFile <<toString ((pairsBConstants)_j_0)  << ", ");
+     openedInputFile << (pairsBConstants_(-1))_0 << " ; "<< endl;
      openedInputFile << "ii = I"  << "; "<<endl;
-     for onePair in (pairsB'Constants) do (
+     for onePair in (pairsBConstants) do (
 	 openedInputFile << toString(onePair_0) << " = " <<toString(onePair_1) <<" ; "<<endl
 	 ));
 --write just the constant "ii = I"
-     if #o.B'Constants===0 then (
+     if #o.BConstants===0 then (
      openedInputFile << "constant "  ;
      openedInputFile << "ii"  << "; "<<endl;
      openedInputFile << "ii = I"  << "; "<<endl);       
      openedInputFile <<endl;
 --
 --We write the names of the polynomials we want to solve.
--- if B'Polynomials is not used then we do the following to name the polynomials.
-     if #o.B'Polynomials===0 and #o.NamePolynomials=!=0 then   (  
+-- if BPolynomials is not used then we do the following to name the polynomials.
+     if #o.BPolynomials===0 and #o.NamePolynomials=!=0 then   (  
      openedInputFile << "function "  ;
      for j to #(o.NamePolynomials)-2 do (openedInputFile <<toString ((o.NamePolynomials)_j)  << ", ");
      openedInputFile << (o.NamePolynomials_(-1)) << " ; "<< endl);
---if B'Polynomials is used then we do the following to name the polynomials.
-     if #o.B'Polynomials=!=0  then (  
+--if BPolynomials is used then we do the following to name the polynomials.
+     if #o.BPolynomials=!=0  then (  
      openedInputFile << "function "  ;
-     for j to #(o.B'Polynomials)-2 do (openedInputFile << "jade"|j  << ", ");
-     openedInputFile << "jade"|toString(#(o.B'Polynomials)-1) << " ; "<< endl);      
+     for j to #(o.BPolynomials)-2 do (openedInputFile << "jade"|j  << ", ");
+     openedInputFile << "jade"|toString(#(o.BPolynomials)-1) << " ; "<< endl);      
 --
      openedInputFile <<endl;
---Now we write B'Functions followed by the B'Polynomials.
---write the B'Functions
-    if #o.B'Functions=!=0 then (
-    for onePair in  o.B'Functions do (
+--Now we write BFunctions followed by the BPolynomials.
+--write the BFunctions
+    if #o.BFunctions=!=0 then (
+    for onePair in  o.BFunctions do (
       if class onePair===List 
       then openedInputFile << toString(onePair_0) << " = "<<toString(onePair_1)<< " ; "<<endl << endl;
       if class onePair===Option 
       then openedInputFile << toString( (toList onePair)_0) << " = "<<toString( (toList onePair)_1)<< " ; "<<endl << endl;
-      if class onePair===B'Section 
-      then (openedInputFile << toString(onePair#NameB'Section) << " = "<<par'String(onePair#B'SectionString)<< " ; "<<endl << endl ); 
-      if class onePair===B'Slice 
-      then for aSection to #(onePair#B'SectionString)-1 do  
-        (openedInputFile << toString((onePair#NameB'Slice)_aSection) << " = "<<par'String((onePair#B'SectionString)_aSection)<< " ; "<<endl << endl ) 
+      if class onePair===BertiniHyperplane 
+      then (openedInputFile << toString(onePair#NameBHyperplane) << " = "<<par'String(onePair#BHyperplaneString)<< " ; "<<endl << endl ); 
+      if class onePair===BertiniSlice 
+      then for aSection to #(onePair#BHyperplaneString)-1 do  
+        (openedInputFile << toString((onePair#NameBSlice)_aSection) << " = "<<par'String((onePair#BHyperplaneString)_aSection)<< " ; "<<endl << endl ) 
  	    );
 	openedInputFile << endl);
---Write the B'Polynomials
-    if #o.B'Polynomials=!=0 then (
-    for onePolynomialIndex to  #o.B'Polynomials-1 do (
-      if class ((o.B'Polynomials)_onePolynomialIndex)===B'Section 
+--Write the BPolynomials
+    if #o.BPolynomials=!=0 then (
+    for onePolynomialIndex to  #o.BPolynomials-1 do (
+      if class ((o.BPolynomials)_onePolynomialIndex)===BertiniHyperplane
       then (
-	if  member(NameB'Section,keys ((o.B'Polynomials)_onePolynomialIndex)) then print ("Warning: Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with a set NameB'Section option that will be ignored. ");
-	if not member(B'SectionString,keys ((o.B'Polynomials)_onePolynomialIndex)) then error("Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with an unset B'SectionString option. ");
-	openedInputFile << "jade"|toString(onePolynomialIndex) << " = "<<((o.B'Polynomials)_onePolynomialIndex)#B'SectionString<< " ; "<<endl << endl   
+	if  member(NameBHyperplane,keys ((o.BPolynomials)_onePolynomialIndex)) then print ("Warning: Element "|onePolynomialIndex|" of BPolynomials is a BertiniHyperplane with a set NameBHyperplane option that will be ignored. ");
+	if not member(BHyperplaneString,keys ((o.BPolynomials)_onePolynomialIndex)) then error("Element "|onePolynomialIndex|" of BPolynomials is a BertiniHyperplane with an unset BHyperplaneString option. ");
+	openedInputFile << "jade"|toString(onePolynomialIndex) << " = "<<((o.BPolynomials)_onePolynomialIndex)#BHyperplaneString<< " ; "<<endl << endl   
 	)
-      else if class ((o.B'Polynomials)_onePolynomialIndex)===B'Slice 
-      then error("Element "|onePolynomialIndex|" of B'Polynomials is a B'Slice. B'Slice's must be converted to a list of B'Sections. ")
-      else openedInputFile << "jade"|toString(onePolynomialIndex) << " = "<<toString((o.B'Polynomials)_onePolynomialIndex)<< " ; "<<endl << endl 
+      else if class ((o.BPolynomials)_onePolynomialIndex)===BertiniSlice 
+      then error("Element "|onePolynomialIndex|" of BPolynomials is a BertiniSlice. BertiniSlice's must be converted to a list of BertiniHyperlane. ")
+      else openedInputFile << "jade"|toString(onePolynomialIndex) << " = "<<toString((o.BPolynomials)_onePolynomialIndex)<< " ; "<<endl << endl 
 	    );
 	openedInputFile << endl);    
     openedInputFile << "END;" << endl << endl;
@@ -1763,7 +1782,7 @@ writeNamedListToB'InputFile=(nameList,oneList,openedInputFile)->(
     )
 
 
-makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
+bWriteWitnessSetFile = method(TypicalValue => Nothing, Options=>{
 	NameWitnessSliceFile=>"linear_slice_file",
     	NameSolutionsFile=>"witness_solutions_file",
 	NameB'InputFile=>"input",
@@ -1771,7 +1790,7 @@ makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
 	StorageFolder=>null,
 	Verbose=>false
 		})
-makeWitnessSetFiles(String,Number) := o ->(IFD,theDim)->(
+bWriteWitnessSetFile(String,Number) := o ->(IFD,theDim)->(
     IFD=addSlash(IFD);
     if o.StorageFolder=!=null 
     then (
@@ -1796,14 +1815,14 @@ addSlash=(aString)->(
     if aString_-1=!="/" then aString=aString|"/";
     return aString    )
 
-makeSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
+bWriteSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
 	NameSolutionsFile=>"sample_solutions_file",
 	NameB'InputFile=>"input",
 	StorageFolder=>null,
 	SpecifyComponent=>{},
 	Verbose=>false
 		})
-makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(    
+bWriteSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(    
     IFD=addSlash(IFD);
     if o.StorageFolder=!=null 
     then (
@@ -1833,7 +1852,7 @@ makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(
     removeFile(filesGoHere|tempfileName)            )
 
 
-makeMembershipFile = method(TypicalValue => Nothing, Options=>{
+bWriteMembershipFile = method(TypicalValue => Nothing, Options=>{
 	NameSolutionsFile=>"member_points",
 	NameB'InputFile=>"input",
 	StorageFolder=>null,
@@ -1841,7 +1860,7 @@ makeMembershipFile = method(TypicalValue => Nothing, Options=>{
 	M2Precision=>53,
 	Verbose=>false
 		})
-makeMembershipFile(String) := o ->(IFD)->(
+bWriteMembershipFile(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
     if o.StorageFolder=!=null 
     then (
@@ -1866,17 +1885,17 @@ makeMembershipFile(String) := o ->(IFD)->(
 
 --To do a trace test we need to evaluate the points using a Bertini Tracktype 4. 
 --the number of variables in this input file equals the number of points times the number of coordinates.
-makeB'TraceInput = method(TypicalValue => Nothing, Options=>{
+bWriteTraceTestInput = method(TypicalValue => Nothing, Options=>{
 	NameB'InputFile=>"inputTT",  --This option allows us to change the name of the input file that we will prodcue. (This imput file is super simple).
-	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
+	BConfigs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
 	})
-makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,NumberOfCoordinates)->(    
+bWriteTraceTestInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,NumberOfCoordinates)->(    
     theVars:= for aSol  to NumberOfPoints-1 list for aCoordinate to NumberOfCoordinates-1 list ("jadeTT"|aSol|"v"|aCoordinate);
     bWriteInputFile(filesGoHere,
 	NameB'InputFile=>o.NameB'InputFile,
-	B'Configs=>o.B'Configs|{{"TRACKTYPE",-4}},
+	BConfigs=>o.BConfigs|{{"TRACKTYPE",-4}},
 	AffVariableGroup=>theVars,
-	B'Polynomials=>for aGroup in transpose theVars list ((makeB'Section(aGroup,B'NumberCoefficients=>for i in aGroup list 1/NumberOfPoints))#B'SectionString)
+	BPolynomials=>for aGroup in transpose theVars list ((bHyperplane(aGroup,BNumberCoefficients=>for i in aGroup list 1/NumberOfPoints))#BHyperplaneString)
 	))
 
 replaceFirstLine = method(TypicalValue => Nothing, Options=>{
@@ -1886,12 +1905,12 @@ replaceFirstLine(String,String,Thing) := o ->(filesGoHere,fileName,aString)->(
     run("sed -i -e "|toExternalString("1s/.*/")|toString(aString)|toExternalString("/")|" "|aDir|fileName)
     )    
 
-calculateB'Trace = method(TypicalValue=>Nothing,Options=>{
+bCalculateTrace = method(TypicalValue=>Nothing,Options=>{
 	NameStartFile=>"start",---we will read these start points.
 	NameFunctionFile=>"calculatedTrace",---the traces will be written to this file.
-	NameB'InputFile=>"inputTT"---this file should be created prior to calling the calculateB'Trace function.
+	NameB'InputFile=>"inputTT"---this file should be created prior to calling the bCalculateTrace function.
 	})
-calculateB'Trace(String) := o ->(
+bCalculateTrace(String) := o ->(
     filesGoHere) ->(
      if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
      if filesGoHere_-1=!="/" then filesGoHere=filesGoHere|"/";     
@@ -1915,7 +1934,7 @@ calculateB'Trace(String) := o ->(
 bTraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
 	NameB'InputFile=>"input",
 	SubFolder=>false,
-	B'Exe=>BERTINIexe,
+	BExe=>BERTINIexe,
 	RandomGamma=>.27890+.31712*ii,
 	StartPoints=>false,
 	StartParameters=>false,
@@ -2200,13 +2219,13 @@ importMainDataFile(String) := o->(aString)->(
 --FUNCTION 2 runBertini
 --To run bertini we need to say where we want to output the files. 
 --Additional options are speciifying the location of the input file (the default is that the input file is located where we output the files)
---B'Exe is how we call Bertini. The default option is how Bertini is usually called in M2 in the init file. 
+--BExe is how we call Bertini. The default option is how Bertini is usually called in M2 in the init file. 
 --InputFileName is default to be input. But we can change this if we wanted to. 
 runBertini= method(TypicalValue => String, Options=>{
 	NameB'InputFile=>"input",
     	StorageFolder=>null,
 	PreparePH2=>false,
-	B'Exe=>BERTINIexe,
+	BExe=>BERTINIexe,
 	TextScripts=>"",
 	Verbose=>false})
 runBertini(String) := o ->(IFD)->(--IFD=input file directory
@@ -2217,8 +2236,8 @@ runBertini(String) := o ->(IFD)->(--IFD=input file directory
 	  if not fileExists(filesGoHere) then mkdir(filesGoHere))
         else filesGoHere=addSlash(IFD);
     	if o.TextScripts=!="" then theTS:=" < "|o.TextScripts else theTS="";
-    	if o.Verbose then print o.B'Exe;
-    	runSuccess:=run("cd "|filesGoHere|"; "|(o.B'Exe)|" "|IFD|o.NameB'InputFile|theTS|" >bertini_session.log");
+    	if o.Verbose then print o.BExe;
+    	runSuccess:=run("cd "|filesGoHere|"; "|(o.BExe)|" "|IFD|o.NameB'InputFile|theTS|" >bertini_session.log");
     	if runSuccess=!=0 
 	then (
 	  print fileExists(filesGoHere|"bertini_session.log");
@@ -2460,7 +2479,7 @@ b'PHSequence=method(TypicalValue=>Thing,Options=>{
 	NameSolutionsFile=>"nonsingular_solutions",
     	StorageFolder=>null,
 	SaveData=>false, 
-	B'Exe=>BERTINIexe,
+	BExe=>BERTINIexe,
 	SolutionFileStyle=>"simple"	,
 	Verbose=>false
 	})
@@ -2495,7 +2514,7 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     	writeParameterFile(storeFiles,listPV,NameParameterFile=>"final_parameters");--writes final parameter file
 	if o.Verbose then print listPV;
 	runBertini(storeFiles,Verbose=>o.Verbose,
-	    NameB'InputFile=>o.NameB'InputFile,B'Exe=>o.B'Exe);
+	    NameB'InputFile=>o.NameB'InputFile,BExe=>o.BExe);
 	if o.Verbose then print "-rc";
     	if fileExists(storeFiles|o.NameSolutionsFile)===false and o.NameSolutionsFile=!="simple_raw_solutions" then (
 	  start0pnts:= openOut(storeFiles|"start");  
@@ -2568,7 +2587,7 @@ b'PHMonodromyCollect=method(TypicalValue=>Thing,Options=>{
 	NameSolutionsFile=>"simple_raw_solutions",
     	StorageFolder=>null,
 	SaveData=>false,
-	B'Exe=>BERTINIexe,
+	BExe=>BERTINIexe,
 	MonodromyStartPoints=>false,
 	MonodromyStartParameters=>false,
   	NumberOfLoops=>1,
@@ -2615,7 +2634,7 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
         if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file for b'PHSequence is missing.";        
     	b'PHSequence(storeFiles,
 	    append(listsOfParameterValues,bP),
-	    B'Exe=>o.B'Exe,
+	    BExe=>o.BExe,
 	    NameSolutionsFile=>o.NameSolutionsFile,---ProblemLine
        	    NameB'InputFile=>o.NameB'InputFile);
 --	if o.Verbose then print ".5";
@@ -2656,15 +2675,15 @@ bertiniImageMonodromyCollect=method(TypicalValue=>Thing,Options=>{
 	NameSolutionsFile=>"simple_raw_solutions",
     	StorageFolder=>null,
 	SaveData=>false,
-	B'Exe=>BERTINIexe,
+	BExe=>BERTINIexe,
 	MonodromyStartParameters=>null,
   	NumberOfLoops=>1,
   	NumSolBound=>infinity,
 	SpecifyLoops=>null,
 	Verbose=>false,
 	AffVariableGroup=>{},
-	B'Functions=>{},
-	B'Constants=>{},
+	BFunctions=>{},
+	BConstants=>{},
 	PrintMidStatus=>true,--Set to false to silence additional output.
 	ImageCoordinates=>{},--ImagePolys,
 	GeneralCoordinate=>null,--This is given by a list of random numbers. The length of the list is the number of image coordinates. 
@@ -2720,8 +2739,8 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
     theWeights:=for i to numImageCoords-1 list "weightJADE"|i=>gcMap_i;
     bWriteInputFile(storeFiles,
       NameB'InputFile=>inputImageMapName,      AffVariableGroup=>o.AffVariableGroup, 
-      B'Constants=>o.B'Constants|theWeights,      B'Functions=>o.B'Functions,      B'Configs=>{{"SecurityLevel",1},{"Tracktype",-4}},
-      B'Polynomials=>{makeB'Section(imagePoly,B'NumberCoefficients=>theWeights/toList/first)});
+      BConstants=>o.BConstants|theWeights,      BFunctions=>o.BFunctions,      BConfigs=>{{"SecurityLevel",1},{"Tracktype",-4}},
+      BPolynomials=>{bHyperplane(imagePoly,BNumberCoefficients=>theWeights/toList/first)});
     runBertini(storeFiles,NameB'InputFile=>inputImageMapName);
     startFiberGenCoord:= flatten importSolutionsFile(storeFiles,NameSolutionsFile=>"function");
     startImageGC:= startFiberGenCoord;
@@ -2751,7 +2770,7 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
       if fileExists(storeFiles|"start")===false then error "start file for b'PHSequence is missing.";
       if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file for b'PHSequence is missing.";        
       b'PHSequence(storeFiles,        append(theCurrentLoop,bP),
-	B'Exe=>o.B'Exe,	NameSolutionsFile=>o.NameSolutionsFile,	NameB'InputFile=>o.NameB'InputFile,	SaveData=>true);
+	BExe=>o.BExe,	NameSolutionsFile=>o.NameSolutionsFile,	NameB'InputFile=>o.NameB'InputFile,	SaveData=>true);
 --    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
       openStartFileToAppend:=openOutAppend(addSlash(storeFiles)|"start_Fiber_JADE");
 --    	print get openStartFileToAppend;
@@ -2823,7 +2842,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 	NameParameterFile=>"start_parameters", --this file is the start_parameters for our start solutions
 	NameSolutionsFile=>"simple_raw_solutions",--this file tells us which solutions to consider at the end
 	SaveData=>false,--if true then we save the NameSolutionsFile's that we produce after the completetion of each loop
-	B'Exe=>BERTINIexe,
+	BExe=>BERTINIexe,
 	MonodromyStartPoints=>false,--This will write a start file in the StartFileDirectory with the name NameStartFile
 	MonodromyStartParameters=>false,--This will write a start_parameters file in the StartParametersFileDirectory with the name NameParameterFile
   	NumberOfLoops=>1,--This is the number of loops we will perform. 
@@ -2928,7 +2947,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
       if o.Verbose then   print 6;
       b'PHSequence(storeFiles,for i in loopPointsT list {i},
 	  Verbose=>o.Verbose,
-	  B'Exe=>o.B'Exe,
+	  BExe=>o.BExe,
 	  NameB'InputFile=>o.NameB'InputFile,
 	  SaveData=>true,
 	  NameSolutionsFile=>"simple_raw_solutions"--"simple_raw_solutions"--this needs to be raw to keep the correct ordering
@@ -2972,30 +2991,30 @@ convertToGap=(aList)->(new Array from for i in aList list  new Array from toList
 
 -------MULTIPROJECTIVE POINTS AND SLICES 
 --B'MultiProjectivePoint=new Type of MutableHashTable;
-B'Section=new Type of MutableHashTable;
-B'Slice= new Type of MutableHashTable;
+BertiniHyperplane=new Type of MutableHashTable;
+BertiniSlice= new Type of MutableHashTable;
 --B'WitnessSet= new Type of MutableHashTable;
 
 
 
 
 par'String=(aString)->("("|toString(aString)|")");
-makeB'Section = method(TypicalValue=>Nothing,Options=>{
+bHyperplane = method(TypicalValue=>Nothing,Options=>{
 	ContainsPoint=>{},
-	B'NumberCoefficients=>{},
-    	B'Homogenization=>1,
+	BNumberCoefficients=>{},
+    	BHomogenization=>1,
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
-	NameB'Section=>null
+	NameBHyperplane=>null
 	 })
-makeB'Section(List) := o -> (oneVariableGroup)-> (
-    theSection:=new B'Section;
+bHyperplane(List) := o -> (oneVariableGroup)-> (
+    theSection:=new BertiniHyperplane;
     theSectionString:="";
     theNumberCoefficients:={};
     createsNumbers:=o.RandomCoefficientGenerator;
     theSpecifiedCoefficients:={};
-    if o.B'NumberCoefficients=!={} then (
-      theSpecifiedCoefficients=o.B'NumberCoefficients;
-      theNumberCoefficients=o.B'NumberCoefficients);
+    if o.BNumberCoefficients=!={} then (
+      theSpecifiedCoefficients=o.BNumberCoefficients;
+      theNumberCoefficients=o.BNumberCoefficients);
     for aVar to #oneVariableGroup-1 do (
       if theSpecifiedCoefficients==={} then (
 	theCoefficient:=createsNumbers();
@@ -3009,27 +3028,27 @@ makeB'Section(List) := o -> (oneVariableGroup)-> (
 	else  theContainsPoint=o.ContainsPoint;
 	if o.ContainsPoint==={}
 	then theSectionString=theSectionString|par'String oneVariableGroup_aVar
-	else theSectionString=theSectionString|"("|toString(oneVariableGroup_aVar)|"-"|par'String(o.B'Homogenization)|"*"|par'String ( (theContainsPoint)_aVar)|")"
+	else theSectionString=theSectionString|"("|toString(oneVariableGroup_aVar)|"-"|par'String(o.BHomogenization)|"*"|par'String ( (theContainsPoint)_aVar)|")"
 	);
       if #oneVariableGroup-1=!=aVar then theSectionString=theSectionString|"+");
-    theSection.B'SectionString=theSectionString;
-    theSection.B'NumberCoefficients=theNumberCoefficients;
-    if o.ContainsPoint=!={} then theSection.B'Homogenization=o.B'Homogenization;
-    if o.NameB'Section=!=null then theSection.NameB'Section=toString(o.NameB'Section);
+    theSection.BHyperplaneString=theSectionString;
+    theSection.BNumberCoefficients=theNumberCoefficients;
+    if o.ContainsPoint=!={} then theSection.BHomogenization=o.BHomogenization;
+    if o.NameBHyperplane=!=null then theSection.NameBHyperplane=toString(o.NameBHyperplane);
     return theSection
   )
 
 
 
-makeB'Slice = method(TypicalValue=>Nothing,Options=>{
+bSlice = method(TypicalValue=>Nothing,Options=>{
 	ContainsMultiProjectivePoint=>{},
     	ContainsPoint=>{},
-	B'NumberCoefficients=>{},
-	B'Homogenization=>{},
+	BNumberCoefficients=>{},
+	BHomogenization=>{},
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
-	NameB'Slice=>null,
+	NameBSlice=>null,
 	 })
-makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
+bSlice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
 --      
     if class sliceType===ZZ then (
       numberOfSections:=sliceType;
@@ -3044,31 +3063,31 @@ makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
     if AssumeOneGroup===true then (
       if class multipleVariableGroups_0===List then error"If sliceType is an integer the second input cannot be a list of lists.";
       multipleVariableGroups={multipleVariableGroups};
-      if o.B'Homogenization=!={} and class o.B'Homogenization===List then error"If sliceType is an integer then B'Homogenization must be {} or not a list.";
-      if o.B'Homogenization==={} then theHomogenization:={1};
-      if o.B'NumberCoefficients=!={} then(
-	if class ((o.B'NumberCoefficients)_0_0)===List then error"When sliceType is an integer B'NumberCoefficients cannot be a list of lists. ";
-	if class ((o.B'NumberCoefficients)_0_0)=!=List then  theCoefs:=o.B'NumberCoefficients));
+      if o.BHomogenization=!={} and class o.BHomogenization===List then error"If sliceType is an integer then BHomogenization must be {} or not a list.";
+      if o.BHomogenization==={} then theHomogenization:={1};
+      if o.BNumberCoefficients=!={} then(
+	if class ((o.BNumberCoefficients)_0_0)===List then error"When sliceType is an integer BNumberCoefficients cannot be a list of lists. ";
+	if class ((o.BNumberCoefficients)_0_0)=!=List then  theCoefs:=o.BNumberCoefficients));
 ---------- 
     if AssumeOneGroup===false then (
-      if class o.B'Homogenization=!=List then error"When sliceType is a list, B'Homogenization should be a list.";
-      if o.B'Homogenization==={} then theHomogenization=for i in multipleVariableGroups list 1;
-      if o.B'Homogenization=!={} then theHomogenization=o.B'Homogenization;
-      if o.B'NumberCoefficients=!={} then(
-	if class ((o.B'NumberCoefficients)_0)=!=List then error"When sliceType is a list B'NumberCoefficients should be a list of lists. ";
-	if class ((o.B'NumberCoefficients)_0)===List then  theCoefs=o.B'NumberCoefficients));          
+      if class o.BHomogenization=!=List then error"When sliceType is a list, BHomogenization should be a list.";
+      if o.BHomogenization==={} then theHomogenization=for i in multipleVariableGroups list 1;
+      if o.BHomogenization=!={} then theHomogenization=o.BHomogenization;
+      if o.BNumberCoefficients=!={} then(
+	if class ((o.BNumberCoefficients)_0)=!=List then error"When sliceType is a list BNumberCoefficients should be a list of lists. ";
+	if class ((o.BNumberCoefficients)_0)===List then  theCoefs=o.BNumberCoefficients));          
 ---------- 
-    if o.B'NumberCoefficients==={} then theCoefs=for i to numberOfSections-1 list {};
-    print numberOfSections;
-    print theCoefs;
-    if #theCoefs=!=numberOfSections then error "The number of sets of coefficients of B'NumberCoefficients does not match the number of sections to be made. ";
-    if #theHomogenization=!=#multipleVariableGroups then error "B'Homogenization does not match the number of variable groups. ";
-    if class o.NameB'Slice===List and #o.NameB'Slice=!=numberOfSections then error"When NameB'Slice is a list, the number of elements should equal the number of sections being made. ";
+    if o.BNumberCoefficients==={} then theCoefs=for i to numberOfSections-1 list {};
+--    print numberOfSections;
+--    print theCoefs;
+    if #theCoefs=!=numberOfSections then error "The number of sets of coefficients of BNumberCoefficients does not match the number of sections to be made. ";
+    if #theHomogenization=!=#multipleVariableGroups then error "BHomogenization does not match the number of variable groups. ";
+    if class o.NameBSlice===List and #o.NameBSlice=!=numberOfSections then error"When NameBSlice is a list, the number of elements should equal the number of sections being made. ";
 --
     createsNumbers:=o.RandomCoefficientGenerator;
     if class sliceType===ZZ then sliceType={sliceType};
 --
-    theSlice:= new B'Slice;
+    theSlice:= new BertiniSlice;
     listSections:={};
 --
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===MutableHashTable then  theMultiProjectivePoint:=o.ContainsMultiProjectivePoint#Coordinates;
@@ -3082,24 +3101,24 @@ makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
       for oneSlice to (sliceType_useGroup)-1 do(
 	oneVariableGroup:=multipleVariableGroups_(useGroup);
       	oneSetCoefs:=theCoefs_sliceCount;
-      	theNameB'Section:=if o.NameB'Slice===null 
+      	theNameBHyperplane:=if o.NameBSlice===null 
 	then null else(
-          if class o.NameB'Slice===List 
-	  then ((o.NameB'Slice)_sliceCount) 
-	  else (toString (o.NameB'Slice)|toString sliceCount));
-      listSections=append(listSections,makeB'Section(oneVariableGroup,
-	  B'Homogenization=>theHomogenization_useGroup,
+          if class o.NameBSlice===List 
+	  then ((o.NameBSlice)_sliceCount) 
+	  else (toString (o.NameBSlice)|toString sliceCount));
+      listSections=append(listSections,bHyperplane(oneVariableGroup,
+	  BHomogenization=>theHomogenization_useGroup,
 	  ContainsPoint=>theMultiProjectivePoint_(useGroup),
-	  B'NumberCoefficients=>oneSetCoefs,
+	  BNumberCoefficients=>oneSetCoefs,
 	  RandomCoefficientGenerator=>createsNumbers,
-	  NameB'Section=>theNameB'Section	  
+	  NameBHyperplane=>theNameBHyperplane	  
 	  ));
       sliceCount=sliceCount+1) );
-    theSlice.ListB'Sections=listSections;
-    theSlice.B'SectionString=for i in theSlice#ListB'Sections list i#B'SectionString;    
-    theSlice.B'NumberCoefficients=for i in theSlice#ListB'Sections list i#B'NumberCoefficients;    
-    if o.B'Homogenization=!={} then theSlice.B'Homogenization=for i in theSlice#ListB'Sections list i#B'Homogenization;    
-    theSlice.NameB'Slice=if o.NameB'Slice=!=null then for i in theSlice#ListB'Sections list i#NameB'Section;    
+    theSlice.ListBHyperplanes=listSections;
+    theSlice.BHyperplaneString=for i in theSlice#ListBHyperplanes list i#BHyperplaneString;    
+    theSlice.BNumberCoefficients=for i in theSlice#ListBHyperplanes list i#BNumberCoefficients;    
+    if o.BHomogenization=!={} then theSlice.BHomogenization=for i in theSlice#ListBHyperplanes list i#BHomogenization;    
+    theSlice.NameBSlice=if o.NameBSlice=!=null then for i in theSlice#ListBHyperplanes list i#NameBHyperplane;    
     return theSlice)
   
 
@@ -3214,6 +3233,27 @@ makeB'InputFile=bWriteInputFile
 b'TraceTestImage=bTraceTestImage
 moveB'File=bMoveFile
 CopyB'File=BCopyFile
+calculateB'Trace=bCalculateTrace
+--b'PHGaloisGroup=b'PHGaloisGroup
+B'Configs=BConfigs
+B'Constants=BConstants
+B'Polynomials=BPolynomials
+B'Functions=BFunctions
+B'Exe=BExe
+makeB'Section=bHyperplane
+makeB'Slice=bSlice
+B'NumberCoefficients=BNumberCoefficients
+B'Homogenization=BHomogenization
+B'SectionString=BHyperplaneString
+NameB'Section=NameBHyperplane
+NameB'Slice=NameBSlice
+ListB'Sections=ListBHyperplanes
+makeB'TraceInput=bWriteTraceTestInput
+makeWitnessSetFiles=bWriteWitnessSetFile
+makeWitnessSetFile=bWriteWitnessSetFile
+makeSampleSolutionsFile=bWriteSampleSolutionsFile
+makeMembershipFile=bWriteMembershipFile
+
 
 
 
@@ -3282,7 +3322,7 @@ load concatenate(Bertini#"source directory","./Bertini/TST/makeBSlice.tst.m2")
 ///
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/makeWitnessSetFiles.tst.m2")
+load concatenate(Bertini#"source directory","./Bertini/TST/bWriteWitnessSetFile.tst.m2")
 ///
 
 TEST///
@@ -3290,7 +3330,7 @@ load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.t
 ///
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/makeMembershipFile.tst.m2")
+load concatenate(Bertini#"source directory","./Bertini/TST/bWriteMembershipFile.tst.m2")
 ///
 
 TEST///
@@ -3326,65 +3366,7 @@ load "./Bertini/doc.m2";
 end
 
 
---##########################################################################--
---DEPRACATED FUNCTIONS
---##########################################################################--
 
-b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
-	NameB'InputFile=>"input",
-	NameStartFile=>"start",
-	NameParameterFile=>"start_parameters",
-    	InputFileDirectory=>{},
---	NameSolutionsFile=>"nonsingular_solutions",		
-	B'Exe=>BERTINIexe,
-	ParameterValues=>{0,.5,1},
-	UseStartPointsFirst=>false	})
-b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoordinates)->(
-    if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
-    if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
---
-    if o.InputFileDirectory==={} then IFD:=storeFiles else IFD=o.InputFileDirectory;
-    if IFD_-1===" " then error (IFD|" cannot end with whitespace.");
-    if IFD_-1=!="/" then IFD=IFD|"/";    
---
-    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
-    if fileExists(storeFiles|o.NameStartFile)===false then error "start file does not exist in correct directory.";
-    if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory.";        
---
-    print "tt1";
-    makeB'TraceInput(storeFiles,NumberOfPoints,NumberOfCoordinates,NameB'InputFile=>"inputTTjade");
-    print "tt2";
-    runCount:=1;
-    if o.UseStartPointsFirst===true then (
-      print "tt3";
-      moveFile(storeFiles|"start",storeFiles|"startPHjade");
-      calculateB'Trace(storeFiles,NameStartFile=>"startPHjade",
-	NameFunctionFile=>"trace"|toString(runCount),
-	NameB'InputFile=>"inputTTjade");
-      moveFile(storeFiles|"startPHjade",storeFiles|"start");      
-      runCount=runCount+1);
-    print "tt4"; 
-    for aParameter in o.ParameterValues do(
-      writeParameterFile(storeFiles,{aParameter});
-      print "tt5Loop";
-      runBertini(IFD,NameB'InputFile=>o.NameB'InputFile,Verbose=>o.Verbose);
-      print readFile(storeFiles,"bertini_session.log",10000);
-      print "tt6Loop";
-      moveFile(storeFiles|"start",storeFiles|"startPHjade");
-      print "tt7Loop";
-      calculateB'Trace(storeFiles,NameStartFile=>"nonsingular_solutions",--need a check to make sure we don't lose solutions
-	NameFunctionFile=>"trace"|toString(runCount),
-	NameB'InputFile=>"inputTTjade");
-      print "tt8Loop";
-      runCount=runCount+1;      
-      moveFile(storeFiles|"startPHjade",storeFiles|"start")      
-	);
-    print "tt9";
-    return for i from 1 to runCount-1 list ((importSolutionsFile(storeFiles,NameSolutionsFile=>"trace"|toString i))_0)    
-     );
- --##########################################################################--
- 
- 
 
 
 
@@ -3396,560 +3378,5 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---##############
-
---To add next version:
-
----------------------------
--- bertiniSegmentHomotopy--
----------------------------
-
-bertiniSegmentHomotopy = method(TypicalValue => List, Options=>{ --StartSystem=>{},-- StartSolutions=>{}
-	  gamma=>1.0,CheckConditionNum=>1,MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1})
-bertiniSegmentHomotopy (List, List,List) := o -> (S,F,Sols) -> (
---F is the list of polynomials
---S is the start system
---Sols are the start solutions
-         L := {runType=>1};
-         o2 := new OptionTable from L;
-         o3 := o ++ o2;
-	 o4 := o3 ++ {StartSystem=>S};
-	 o5 := o4 ++ {StartSolutions=>Sols};
-         bertiniSolve(F,o5)
-         )
-     
-
-----------------------------------
---NEW FUNCTIONS FOR FEBRUARY 2014
----------------------------------
-
-
-
-bertiniRealNumber=(aNumber)->(
-    if class aNumber===QQ then print "WARNING: final parameters cannot have type QQ." else
-    realPartSeparate:=separate("p",toExternalString ( aNumber));
-    realPartMantissa:=realPartSeparate_0;
-    if 1=!=#realPartSeparate 
-    then (separateExponent:=separate("e",realPartSeparate_1);
-    	if 1==#separateExponent
-    	then realPartExponent:="0"
-    	else realPartExponent=(separateExponent)_1;
-    	return(realPartMantissa|"e"|realPartExponent))
-    else return(realPartMantissa|"e0"));
-    
-bertiniComplexNumber=(aCNumber)->{bertiniRealNumber(realPart aCNumber),
-    bertiniRealNumber(imaginaryPart aCNumber)};
-
---IMPORT POINTS
---importPoints gets the solutions from a bertini solutions file to store them as points in M2
---the input is a string, giving the location of the file, and an integer giving the number of coordinates 
---the output is a list of points
-importPoints = method(TypicalValue=>Nothing,Options=>{
-	SpecifyPoints=>{},
-	SpecifyCoordinates=>{} })
-importPoints(String,ZZ) := o -> (importFrom,numberOfCoordinates)-> (
-    importedFileLines := lines     get (importFrom); -- grabs all lines of the solution file
-    numberOfsolutionsInFile:=value(importedFileLines_0);--the first line of the solution file gives the number of solutions in the file
-    importedFileLines=drop(importedFileLines,1);--drop the first line
-    storeSolutions:={};---We will store the solutions we specified and return this in the end
-    for i to numberOfsolutionsInFile-1 do (
-	linesForOnePoint:=for indexLines to numberOfCoordinates+1-1 list importedFileLines_indexLines;--we read a blank line and the coordinates of one solution
-	importedFileLines=drop(importedFileLines,numberOfCoordinates+1);--we drop the lines we just read
-	if  member(i,o.SpecifyPoints) or #o.SpecifyPoints==0 -- We proceed to turn the text file into a point to be stored in M2 if it is a specified solution
-	then(
-      	  cAS:=collectAPointIP(linesForOnePoint,numberOfCoordinates,o.SpecifyCoordinates);
-     	  storeSolutions= append(storeSolutions,cAS)));
-     return storeSolutions);
-
---collectAPointIP is a subfunction for importPoints
-collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
-     collectedCoordinates:={};
-     linesToRead=drop(linesToRead,1);--drops an empty line
-     for j to numberOfCoordinates-1 do (
-	  if member(j,specifyCoordinates) or #specifyCoordinates==0 then (
-	       oneCoord:=select("[0-9.+-]+",first(linesToRead));
-	       collectedCoordinates=append(collectedCoordinates,value((oneCoord_0)|"p300")*10^(value(oneCoord_1))+ii*
-			      value((oneCoord_2)|"p300")*10^(value(oneCoord_3)));
-     	       linesToRead=drop(linesToRead,1)) else (
-	  linesToRead=drop(linesToRead,1)));--drops coordinates you don't care about
-     return  point {collectedCoordinates});
-
-
---   INPUT of phMonodromy 
---String should be a directory (no "/" at then end) that contains start files for bertini parameter homotopy
-----start files needed: input, start_parameters, start	
---ZZ equals number of parameters 
---ZZ equals the number of coordinates of the points.
---List is a a list of lists of numbers not of type QQ. 
-----Each entry of List are parameters for a parameter homotopy. 
-
-
-
-sortSolutions2=(solutionSet,tolerance)->(
-    S:={};
-    for i in solutionSet do S=insertInList(S,i,tolerance);
-    return S)
-
-isSameSolution=(aPoint,bPoint,tolerance)->(
-    if (class tolerance)=!=List  then tolerance=for i to #(coordinates aPoint) list  tolerance;
-    aPoint=coordinates aPoint;
-    bPoint=coordinates bPoint;
-    for i to #aPoint-1 list if abs (realPart aPoint_i-realPart bPoint_i)>tolerance_i or
-    abs (imaginaryPart aPoint_i-imaginaryPart bPoint_i)>tolerance_i then 
-    if   abs (realPart aPoint_i-realPart bPoint_i)>tolerance_i then 
-    	if (realPart aPoint_i-realPart bPoint_i)>0 then return 1 else return -1
-    else if (imaginaryPart aPoint_i-imaginaryPart bPoint_i)>0 then return 1 else return -1;    
-    return true)
-   
-insertInList=(setS,aPoint,theTolerances)->(
-    if #setS==0 then (
-	print 0;
-	 return {aPoint}) else
-    lowerBound:=0;
-    upperBound:=#setS-1;
-    if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
-	print "A";
-	return setS);
-    if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
-	print "B";
-	return setS); 
-    if isSameSolution(setS_lowerBound,aPoint,theTolerances)==-1 then (
-	print 1;
-	return prepend(aPoint,setS));
-    if isSameSolution(setS_upperBound,aPoint,theTolerances)==1 then (
-	print 2;
-	return append(setS,aPoint));    
-    while lowerBound<=upperBound do (
-	if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
-	    print "A1";
-	    return setS);
-        if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
-	    print "A2";
-	    return setS);
-	if isSameSolution(setS_lowerBound,aPoint,theTolerances)==-1 then (
-	    print "B1";
-	    return insert(lowerBound,aPoint,setS));
-    	if isSameSolution(setS_upperBound,aPoint,theTolerances)==1 then (
-	    print "B2";
-	    return insert(upperBound+1,aPoint,setS));    
-        midpoint:=floor((upperBound+lowerBound)/2);
-	if isSameSolution(setS_midpoint,aPoint,theTolerances)===true then (
-	    print "C";
-	    return setS) else
-    	if isSameSolution(setS_midpoint,aPoint,theTolerances)==1 then (
---	    print (midpoint,midpoint+1);
-	    lowerBound=midpoint+1);
-    	if isSameSolution(setS_midpoint,aPoint,theTolerances)==-1 then (
---	    print (midpoint,midpoint-1);
-	    upperBound=midpoint-1)  ;
-    	print isSameSolution(setS_midpoint,aPoint,theTolerances);
-    	print (lowerBound,upperBound,midpoint);
-	print "whileLoop");
-    print "fail";
-    return insert(lowerBound,aPoint,setS))
-	  
-  
-
---PARAMETERHOMOTOPYPOSTPROCESS
---This function takes a directory as its input where a bertini run has alreaddy been made.
---The purpose is so that Alice can email a folder to Bob, and Bob can easily manipulate the data with the Bertini.m2 interface
-phPostProcess = method(TypicalValue=>Nothing,Options=>{
-	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
---    	InputFilesName=>"input",
-	OutputLocation=>-1,
-      	SolutionType=>"nonsingular_solutions",
-	B'InputFile=>"input",
-    	B'StartFile=>"start",
-    	B'StartParameters=>"start_parameters",
-	SpecifyCoordinates=>{},
-	SpecifyPoints=>{}
-	})
-phPostProcess(String,List,ZZ) := o -> (
-    inputLocation,postParameters,numberOfCoordinates)-> (
-    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
-    else(
-	if o.OutputLocation=!=-1 
-	then (OL:=o.OutputLocation; 
-	    copyFile(inputLocation|"/"|o.B'StartFile, OL|"/start");
-	    copyFile(inputLocation|"/"|o.B'StartParameters,
-		OL|"/start_parameters"))
-        else OL=inputLocation;
-	writeParameters(OL,postParameters);   
-    	callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini 
-    importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
-	SpecifyPoints=>o.SpecifyPoints,
-	SpecifyCoordinates=>o.SpecifyCoordinates)    ));
-    
----writeParameters is a subfunction for parameterHomotopyPostProcess    
-writeParameters=(filesGoHere,listParameters)->(
-     finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
-     finalParameterFile << toString(length listParameters) << endl << endl;
-     for c in listParameters do (
-	 cString:=bertiniComplexNumber(c);
-	 finalParameterFile <<cString_0 << " " <<cString_1 <<endl
-	 );
-     finalParameterFile << endl;      
-     close finalParameterFile);      
-
-
---writeParameters=(filesGoHere,listParameters)->(
-  --writing parameter values to file 
-  --   finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
-    -- finalParameterFile << #(listParameters) << endl << endl;
-    -- scan(listParameters, c-> finalParameterFile << (separate("p",toExternalString (realPart c)))_0 << " " << (separate("p",toExternalString (imaginaryPart c)))_0 << " " << endl );
-     --  finalParameterFile << endl;      
-      -- close finalParameterFile);
-
----helper functions for writeParameters
-bertiniRealNumber=(aNumber)->(
-    if class aNumber===QQ then error "final parameters cannot have type QQ" else
-    realPartSeparate:=separate("p",toExternalString ( aNumber));
-    realPartMantissa:=realPartSeparate_0;
-    if 1=!=#realPartSeparate 
-    then (separateExponent:=separate("e",realPartSeparate_1);
-    	if 1==#separateExponent
-    	then realPartExponent:="0"
-    	else realPartExponent=(separateExponent)_1;
-    	return(realPartMantissa|"e"|realPartExponent))
-    else return(realPartMantissa|"e0"));
-    
-bertiniComplexNumber=(aCNumber)->{bertiniRealNumber(realPart aCNumber),
-    bertiniRealNumber(imaginaryPart aCNumber)};
-
-callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
-    run("cd "|inDirectory|"; "|BERTINIexe|" "|inputLocation|"/"|inputFilesName|" >bertini_session.log"));  
---     run("cd "|filesGoTo|"; "|BERTINIexe|" "|fileLocation|"/"|inputFilesName|" >bertini_session.log");  
-
---exportPoints--This function should export the coordinates of the points
---saveFolder--This function should copy a temporary directory to a location specified by the user
---call bertini in a specified folder     
-     
-----------------------------------------------------
---NEW FUNCTIONS FOR FEBRUARY 2014 -- FROM JULY 2014 --
---MAY HAVE DIFFERENT THINGS THAN ABOVE
-----------------------------------------------------
-
-
---IMPORT POINTS
---importPoints gets the solutions from a bertini solutions file to store them as points in M2
---the input is a string, giving the location of the file, and an integer giving the number of coordinates 
---the output is a list of points
-importPoints = method(TypicalValue=>Nothing,Options=>{
-	SpecifyPoints=>{},
-	SpecifyCoordinates=>{} })
-importPoints(String,ZZ) := o -> (importFrom,numberOfCoordinates)-> (
-    importedFileLines := lines     get (importFrom); -- grabs all lines of the solution file
-    numberOfsolutionsInFile:=value(importedFileLines_0);--the first line of the solution file gives the number of solutions in the file
-    importedFileLines=drop(importedFileLines,1);--drop the first line
-    storeSolutions:={};---We will store the solutions we specified and return this in the end
-    for i to numberOfsolutionsInFile-1 do (
-	linesForOnePoint:=for indexLines to numberOfCoordinates+1-1 list importedFileLines_indexLines;--we read a blank line and the coordinates of one solution
-	importedFileLines=drop(importedFileLines,numberOfCoordinates+1);--we drop the lines we just read
-	if  member(i,o.SpecifyPoints) or #o.SpecifyPoints==0 -- We proceed to turn the text file into a point to be stored in M2 if it is a specified solution
-	then(
-      	  cAS:=collectAPointIP(linesForOnePoint,numberOfCoordinates,o.SpecifyCoordinates);
-     	  storeSolutions= append(storeSolutions,cAS)));
-     return storeSolutions);
-
---collectAPointIP is a subfunction for importPoints
-collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
-     collectedCoordinates:={};
-     linesToRead=drop(linesToRead,1);--drops an empty line
-     for j to numberOfCoordinates-1 do (
-	  if member(j,specifyCoordinates) or #specifyCoordinates==0 then (
-	       oneCoord:=select("[0-9.+-]+",first(linesToRead));
-	       collectedCoordinates=append(collectedCoordinates,value((oneCoord_0)|"p300")*10^(value(oneCoord_1))+ii*
-			      value((oneCoord_2)|"p300")*10^(value(oneCoord_3)));
-     	       linesToRead=drop(linesToRead,1)) else (
-	  linesToRead=drop(linesToRead,1)));--drops coordinates you don't care about
-     return  point {collectedCoordinates});
-
-
---   INPUT of phMonodromy 
---String should be a directory (no "/" at then end) that contains start files for bertini parameter homotopy
-----start files needed: input, start_parameters, start	
---ZZ equals number of parameters 
---ZZ equals the number of coordinates of the points.
-----Each entry of List are parameters for a parameter homotopy. 
-
-monPre=30;
-phMonodromy = method(TypicalValue=>Nothing,Options=>{
-	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
-    	B'InputFile=>"input",
-    	B'StartFile=>"nonsingular_solutions",
-    	B'StartParameters=>"start_parameters",
-	OutputLocation=>-1,
-      	SolutionType=>"nonsingular_solutions",
-	SpecifyCoordinates=>{},
-	SpecifyPoints=>{},
-	ParameterValues=>{}
-		})
-phMonodromy(String,ZZ,ZZ) := o -> (--parameterValues is a list of list of complex numbers OR an empty list
-    inputLocation,numberOfParameters,numberOfCoordinates)-> (
-    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
-    else(
-	--Set OL to be the location of files bertini will create
-	--Default location is the same as the location of the input files
-	if o.OutputLocation=!=-1 then OL:=o.OutputLocation else OL=inputLocation;  
-	if fileExists(inputLocation|"/"|o.B'StartFile) then (
-	    if o.B'StartFile=!="nonsingular_solutions" then copyFile(inputLocation|"/"|o.B'StartFile, OL|"/nonsingular_solutions"))
-	else (print o.B'StartFile; error "B'StartFile does not exist."); 
-	if fileExists(inputLocation|"/"|o.B'InputFile) then (	
-	    if o.B'InputFile=!="input" then copyFile(inputLocation|"/"|o.B'InputFile, OL|"/input"))
-	else error "B'InputFile does not exist."; 
-	if fileExists(inputLocation|"/"|o.B'StartParameters) then (
-	    if o.B'StartParameters=!="start_parameters" then  copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parameters"))
-	else error "B'StartParameters does not exist.";
-	copyFile(inputLocation|"/"|"start_parameters",OL|"/base_parametersADEJ"); --save the base parameters of the monodromy so we can come back later
-    	if o.ParameterValues=!={} then PV:=o.ParameterValues else PV=for i to 2-1 list for j to numberOfParameters-1 list 2*random(RR_monPre)-1+ii*(2*random(RR_monPre)-1);
-	for anH in PV do (   
-	    writeParameters(OL,anH);
-	    if fileExists(OL|"/nonsingular_solutions") then copyFile( OL|"/nonsingular_solutions",OL|"/start")
-	    else (print "should break loop now";return {};print "fail");
-       	    callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini
---    	    print"BERTINI called!";
-	    copyFile(OL|"/final_parameters", OL|"/start_parameters")
-	    );
-	copyFile(inputLocation|"/base_parametersADEJ",OL|"/final_parameters");  ---Go back to the base parameters
-	if fileExists(OL|"/nonsingular_solutions") then copyFile( OL|"/nonsingular_solutions",OL|"/start")
-	else (print "should break loop now2";return {};print "fail");
-        callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini
-	copyFile(OL|"/base_parametersADEJ", OL|"/start_parameters");	
---    	print"BERTINI called!!";
-    	if not fileExists(OL|"/"|o.SolutionType) then (print "Warning: no solutions found. FS";return{});
-    	print "Successful Loop!";
-	return importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
-	    SpecifyCoordinates=>o.SpecifyCoordinates,
-	    SpecifyPoints=>o.SpecifyPoints)));
-
-phMonodromySolve = method(TypicalValue=>Nothing,Options=>{
-	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
-    	B'InputFile=>"input",
-    	B'StartFile=>"nonsingular_solutions",
-    	B'StartParameters=>"start_parameters",
-	OutputLocation=>-1,
-      	SolutionType=>"nonsingular_solutions",
---	SpecifyCoordinates=>{},
---	SpecifyPoints=>{},
-	ParameterValues=>{},
-	MonodromyStart=>{},
-	NumberOfLoops=>1,
-	MonodromyTolerance=>1e-6,
-	NumberOfWrites=>1,
-	MonodromyUpperBound=>0	
-		})
-phMonodromySolve(String,ZZ,ZZ) := o -> (
-    inputLocation,numberOfParameters,numberOfCoordinates)->(
-    theTolerances:=o.MonodromyTolerance;
-    setS:=o.MonodromyStart;
-    if o.OutputLocation=!=-1 
-    then OL:=o.OutputLocation --Set OL to be the location of files bertini will create
-    else OL=inputLocation;  --Default location is the same as the location of the input files
-    if not fileExists(inputLocation|"/"|o.B'StartFile) then  error "B'StartFile does not exist. solve."; 
-    if not fileExists(inputLocation|"/"|o.B'InputFile) then  error "B'InputFile does not exist. solve."; 
-    if not fileExists(inputLocation|"/"|o.B'StartParameters)  then error "B'StartParameters does not exist. solve.";
-    if o.B'StartFile=!="nonsingular_solutions" then copyFile(inputLocation|"/"|o.B'StartFile, OL|"/nonsingular_solutions"); 
-    escapeLoops:=false;
-    for rounds to o.NumberOfWrites-1 do if not escapeLoops then (
-    	copyFile(OL|"/nonsingular_solutions",OL|"/nonsingular_solutionsADEJ"); 
-    	if o.B'InputFile=!="input" then copyFile(inputLocation|"/"|o.B'InputFile, OL|"/input"); 
-    	if o.B'StartParameters=!="start_parameters" then  copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parameters");
-    	if o.B'StartParameters=!="start_parameters" then  copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parametersADEJ");
-    	setS=sortSolutions2 (setS,theTolerances);
-	--    print "1";
-	for i to o.NumberOfLoops-1 do if not escapeLoops then (
-	    --	print "2";
-            for bPoint in phMonodromy(OL,numberOfParameters,numberOfCoordinates) do (
-	    	setS=insertInList(setS,bPoint,theTolerances));
-	    if (o.MonodromyUpperBound=!=0 and #setS>=o.MonodromyUpperBound) then (	    
-    	    	escapeLoops=true;
---		print setS;
-	    	writePoints(OL,"nonsingular_solutions",setS);
-	    	print ("MonodromyUpperBound on the number of solutions has been reached."));
---	    print "fail?";
-	    if not fileExists(OL|"/nonsingular_solutions") then (
-	    	print "Warning: A phMonodromy run did not find any solutions.";
-	    	copyFile(OL|"/nonsingular_solutionsADEJ",OL|"/nonsingular_solutions");
-	    	copyFile(OL|"/start_parametersADEJ",OL|"/start_parameters")));
-    	print (toString(#setS)|" points found!");
-    	writePoints(OL,"nonsingular_solutions",setS));
-    return setS) 
-
-sortSolutions2=(solutionSet,tolerance)->(
-    print "sort.";
-    S:={};
-    for i in solutionSet do S=insertInList(S,i,tolerance);
-    print "sort!";
-    return S)
-
-isSameSolution=(aPoint,bPoint,tolerance)->(
-    if (class tolerance)=!=List  then tolerance=for i to #(coordinates aPoint) list  tolerance;
-    aPoint=coordinates aPoint;
-    bPoint=coordinates bPoint;
-    for i to #aPoint-1 list if abs (realPart aPoint_i-realPart bPoint_i)>tolerance_i or
-    abs (imaginaryPart aPoint_i-imaginaryPart bPoint_i)>tolerance_i then 
-    if   abs (realPart aPoint_i-realPart bPoint_i)>tolerance_i then 
-    	if (realPart aPoint_i-realPart bPoint_i)>0 then return 1 else return -1
-    else if (imaginaryPart aPoint_i-imaginaryPart bPoint_i)>0 then return 1 else return -1;    
-    return true)
-   
-insertInList=(setS,aPoint,theTolerances)->(
-    if #setS==0 then (
---	print 0;
-	 return {aPoint}) else
-    lowerBound:=0;
-    upperBound:=#setS-1;
-    if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
---	print "A";
-	return setS);
-    if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
---	print "B";
-	return setS); 
-    if isSameSolution(setS_lowerBound,aPoint,theTolerances)==-1 then (
---	print 1;
-	return prepend(aPoint,setS));
-    if isSameSolution(setS_upperBound,aPoint,theTolerances)==1 then (
---	print 2;
-	return append(setS,aPoint));    
-    while lowerBound<=upperBound do (
-	if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
---	    print "A1";
-	    return setS);
-        if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
---	    print "A2";
-	    return setS);
-	if isSameSolution(setS_lowerBound,aPoint,theTolerances)==-1 then (
---	    print "B1";
-	    return insert(lowerBound,aPoint,setS));
-    	if isSameSolution(setS_upperBound,aPoint,theTolerances)==1 then (
---	    print "B2";
-	    return insert(upperBound+1,aPoint,setS));    
-        midpoint:=floor((upperBound+lowerBound)/2);
-	if isSameSolution(setS_midpoint,aPoint,theTolerances)===true then (
---	    print "C";
-	    return setS) else
-    	if isSameSolution(setS_midpoint,aPoint,theTolerances)==1 then (
---	    print (midpoint,midpoint+1);
-	    lowerBound=midpoint+1);
-    	if isSameSolution(setS_midpoint,aPoint,theTolerances)==-1 then (
---	    print (midpoint,midpoint-1);
-	    upperBound=midpoint-1)   )  ;
---    	print isSameSolution(setS_midpoint,aPoint,theTolerances);
---    	print (lowerBound,upperBound,midpoint);
---	print "whileLoop");
-    print "fail";
-    return insert(lowerBound,aPoint,setS))
-	  
-  
-
-    
-      
-
-
-
-
-
-
---PARAMETERHOMOTOPYPOSTPROCESS
---This function takes a directory as its input where a bertini run has alreaddy been made.
---The purpose is so that Alice can email a folder to Bob, and Bob can easily manipulate the data with the Bertini.m2 interface
-phPostProcess = method(TypicalValue=>Nothing,Options=>{
-	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
---    	InputFilesName=>"input",
-	OutputLocation=>-1,
-      	SolutionType=>"nonsingular_solutions",
-	B'InputFile=>"input",
-    	B'StartFile=>"start",
-    	B'StartParameters=>"start_parameters",
-	SpecifyCoordinates=>{},
-	SpecifyPoints=>{}
-	})
-phPostProcess(String,List,ZZ) := o -> (
-    inputLocation,postParameters,numberOfCoordinates)-> (
-    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
-    else(
-	if o.OutputLocation=!=-1 
-	then (OL:=o.OutputLocation; 
-	    copyFile(inputLocation|"/"|o.B'StartFile, OL|"/start");
-	    copyFile(inputLocation|"/"|o.B'StartParameters,
-		OL|"/start_parameters"))
-        else OL=inputLocation;
-	writeParameters(OL,postParameters);   
-    	callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini 
-    importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
-	SpecifyPoints=>o.SpecifyPoints,
-	SpecifyCoordinates=>o.SpecifyCoordinates)    ));
-    
----writeParameters is a subfunction for parameterHomotopyPostProcess    
-writeParameters=(filesGoHere,listParameters)->(
-     finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
-     finalParameterFile << toString(length listParameters) << endl << endl;
-     for c in listParameters do (
-	 cString:=bertiniComplexNumber(c);
-	 finalParameterFile <<cString_0 << " " <<cString_1 <<endl
-	 );
-     finalParameterFile << endl;      
-     close finalParameterFile);      
-
-
----writeParameters is a subfunction for parameterHomotopyPostProcess    
-writePoints=(filesGoHere,nameOfFile,listPoints)->(
-     startPointsFile:= openOut(filesGoHere|"/"|nameOfFile); 
-     startPointsFile << toString(length listPoints) << endl << endl;
-     for aPoint in listPoints do (
-	 for c in coordinates aPoint do (
-	     cString:=bertiniComplexNumber(c);
-	     startPointsFile <<cString_0 << " " <<cString_1 <<endl
-	     );
-	 startPointsFile << " "<<endl);     	 
-     startPointsFile << endl;      
-     close startPointsFile);      
-
----helper functions for writeParameters
-bertiniRealNumber=(aNumber)->(
-    if class aNumber===QQ then error "final parameters cannot have type QQ" else
-    realPartSeparate:=separate("p",toExternalString ( aNumber));
-    realPartMantissa:=realPartSeparate_0;
-    if 1=!=#realPartSeparate 
-    then (separateExponent:=separate("e",realPartSeparate_1);
-    	if 1==#separateExponent
-    	then realPartExponent:="0"
-    	else realPartExponent=(separateExponent)_1;
-    	return(realPartMantissa|"e"|realPartExponent))
-    else return(realPartMantissa|"e0"));
-    
-bertiniComplexNumber=(aCNumber)->{bertiniRealNumber(realPart aCNumber),
-    bertiniRealNumber(imaginaryPart aCNumber)};
-
-
-
-
-       
-callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
-    run("cd "|inDirectory|"; "|BERTINIexe|" "|inputLocation|"/"|inputFilesName|" >bertini_session.log"));  
---     run("cd "|filesGoTo|"; "|BERTINIexe|" "|fileLocation|"/"|inputFilesName|" >bertini_session.log");
-
-
----Comments: each functions input contains a directory. 
---This directory determines where bertini will put files. 
---One can then copy and move the files later. 
---One can call input files and start files and start parameter files from other directorys. 
-
---one can NameInputFile NameStartFile NameSolutionFile NameParametersFile
 
 

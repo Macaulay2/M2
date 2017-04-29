@@ -608,7 +608,7 @@ doc ///
    Example
      R=CC[x0,x1,x2]
      F={x0^3-x1^3+x2^3+1}
-     sliceH=makeB'Slice({2},{{x0,x1,x2,1}},NameB'Slice=>"H")
+     sliceH=bSlice({2},{{x0,x1,x2,1}},NameB'Slice=>"H")
      bWriteInputFile(storeBM2Files,
     	 AffVariableGroup=>{x0,x1,x2},
     	 ParameterGroup=>{T},
@@ -620,7 +620,7 @@ doc ///
    Example    
      R=CC[x,y,z]**CC[a,b]
      xyzSub={{x,a},{y,a^2+b},{z,a^2+b^2}}
-     sliceH=makeB'Slice({2},{{x,y,z,1}},NameB'Slice=>"H")
+     sliceH=bSlice({2},{{x,y,z,1}},NameB'Slice=>"H")
      bWriteInputFile(storeBM2Files,
     	 AffVariableGroup=>{a,b},
     	 ParameterGroup=>{T},
@@ -634,7 +634,7 @@ doc ///
    Example
      R=CC[x0,x1,x2]
      F={x0^3-x1^3+x2^3+1}
-     sliceH=makeB'Slice(2,{x0,x1,x2,1},NameB'Slice=>"H")
+     sliceH=bSlice(2,{x0,x1,x2,1},NameB'Slice=>"H")
      bWriteInputFile(storeBM2Files,
     	 AffVariableGroup=>{x0,x1,x2},
     	 ParameterGroup=>{T},
@@ -917,12 +917,12 @@ doc ///
 
 doc ///
  Key
-   makeWitnessSetFiles
-   (makeWitnessSetFiles,String,Number)
+   bWriteWitnessSetFile
+   (bWriteWitnessSetFile,String,Number)
  Headline
    This function creates a witness point file and a slice file. 
  Usage
-   makeWitnessSetFiles(theDir,d) 
+   bWriteWitnessSetFile(theDir,d) 
  Inputs
    theDir:String
      The directory where Bertini will store files and the witness_data file and input file are located.
@@ -937,16 +937,16 @@ doc ///
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
-     makeWitnessSetFiles(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
+     bWriteWitnessSetFile(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
      L=importSliceFile(storeBM2Files) 
 --
-     makeWitnessSetFiles(storeBM2Files,2,
+     bWriteWitnessSetFile(storeBM2Files,2,
        NameSolutionsFile=>"custom_name_witness_points",--creates a witness point file with a custom name. 
        SpecifyComponent=>0)  --Component indexing begins at 0. The function creates a witness point file for only a particular component. 
      L1=importSliceFile(storeBM2Files) 
      S0=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"custom_name_witness_points")
 --
-     makeWitnessSetFiles(storeBM2Files,2,
+     bWriteWitnessSetFile(storeBM2Files,2,
        NameSolutionsFile=>"custom_name_witness_points")
      S=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"custom_name_witness_points")
       
@@ -1093,18 +1093,18 @@ doc ///
 
 doc ///
  Key
-   makeB'Section
-   (makeB'Section,List)
+   bHyperplane
+   (bHyperplane,List)
  Headline
-   makeB'Section creates a hash table that represents a hyperplane. 
+   bHyperplane creates a hash table that represents a hyperplane. 
  Usage
-   makeB'Section(l) 
+   bHyperplane(l) 
  Inputs
    l:List
      A list of variables.
  Description
    Text
-     makeB'Section allows for easy creation of equations that define hyperplanes.
+     bHyperplane allows for easy creation of equations that define hyperplanes.
      The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
      The first key is a list of numbers in CC that are coefficients, and the second key is a string representing the linear polynomial.
      The option RandomCoefficientGenerator can be set to a function to generate random numbers for the coefficients. 
@@ -1114,29 +1114,29 @@ doc ///
      To have an affine linear equation that contains a particular point we set the ContainsPoint option to a list of coordinates or a point.
      To get an homogeneous equation that contains a projective point we have to set the ContainsPoint option as well as the B'Homogenization option.
    Example
-     s=makeB'Section({x,y,z})
+     s=bHyperplane({x,y,z})
      class s
      randomRealCoefficientGenerator=()->random(RR)
-     sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
+     sReal=bHyperplane({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
      sReal#B'NumberCoefficients
      randomRationalCoefficientGenerator=()->random(QQ)
-     sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
+     sRational=bHyperplane({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
      sRational#B'NumberCoefficients
    Example
-     affineSection=makeB'Section({x,y,z,1})
+     affineSection=bHyperplane({x,y,z,1})
    Example
      X={x,y,z}
      P={1,2,3}
-     affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
+     affineContainingPoint=bHyperplane({x,y,z},ContainsPoint=>P)
      r= affineContainingPoint#B'SectionString
      print r
    Example
-     rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
+     rHomogeSection= bHyperplane({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
      peek rHomogeSection
      print rHomogeSection#B'SectionString
    Example
      f="y^3-x*y+1"
-     s1=makeB'Section({x,y,1})
+     s1=bHyperplane({x,y,1})
      bWriteInputFile(storeBM2Files,
        AffVariableGroup=>{x,y},
        B'Polynomials=>{f,s1})
@@ -1148,13 +1148,13 @@ doc ///
 
 doc ///
  Key
-   makeB'Slice
+   bSlice
    NameB'Slice
-   (makeB'Slice,Thing,List)
+   (bSlice,Thing,List)
  Headline
-   makeB'Slice creates a hash table that represents a linear slice. 
+   bSlice creates a hash table that represents a linear slice. 
  Usage
-   makeB'Slice(sliceType,variableGroups) 
+   bSlice(sliceType,variableGroups) 
  Inputs
    sliceType:List
      A list of integers or integer.
@@ -1162,21 +1162,21 @@ doc ///
      A list of list of variables or list of variables.
  Description
    Text
-     makeB'Slice allows for easy creation of equations that define linear spaces, i.e. slices.
+     bSlice allows for easy creation of equations that define linear spaces, i.e. slices.
      The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
      When we have a multiprojective variety we can different types of slices.
      To make a slice we need to specify the type of slice we want followed by variable groups.
    Example
      sliceType={1,1}
      variableGroups={{x0,x1},{y0,y1,y2}}
-     xySlice=makeB'Slice(sliceType,variableGroups)
+     xySlice=bSlice(sliceType,variableGroups)
      peek xySlice
      --Our slice consists of two sections. 
      --The ith section is in the variables variableGroups_(sliceType_i)
      for i in  xySlice#B'SectionString do print i
    Example
      --Using the NameB'Slice option we can put a slice in the B'Functions option.
-     aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
+     aSlice=bSlice(3,{x,y,z,1},NameB'Slice=>"f");
      aSlice#NameB'Slice
      bWriteInputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
    Example
@@ -1184,9 +1184,9 @@ doc ///
      f1="x0*y0+x1*y0+x2*y2"
      f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
      variableGroups={{x0,x1,x2},{y0,y1,y2}}
-     xxSlice=makeB'Slice({2,0},variableGroups)
-     xySlice=makeB'Slice({1,1},variableGroups)
-     yySlice=makeB'Slice({0,2},variableGroups)
+     xxSlice=bSlice({2,0},variableGroups)
+     xySlice=bSlice({1,1},variableGroups)
+     yySlice=bSlice({0,2},variableGroups)
      bWriteInputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
     	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
@@ -1373,7 +1373,7 @@ doc ///
    [importSliceFile,Verbose]
    [importSolutionsFile,Verbose]
    [runBertini,Verbose]
-   [makeWitnessSetFiles,Verbose]
+   [bWriteWitnessSetFile,Verbose]
    [b'PHSequence,Verbose]
    [bTraceTestImage,Verbose]
    [makeSampleSolutionsFile,Verbose]
@@ -1762,7 +1762,7 @@ doc///
    [calculateB'Trace,NameB'InputFile]
    [makeB'TraceInput,NameB'InputFile]
    [makeSampleSolutionsFile,NameB'InputFile]
-   [makeWitnessSetFiles,NameB'InputFile]
+   [bWriteWitnessSetFile,NameB'InputFile]
    [runBertini,NameB'InputFile]
    [runBertini,B'Exe]
    [b'PHGaloisGroup,NameParameterFile]
@@ -1774,10 +1774,10 @@ doc///
    [b'PHSequence,NameSolutionsFile]
    [makeMembershipFile,NameSolutionsFile]
    [makeSampleSolutionsFile,NameSolutionsFile]
-   [makeWitnessSetFiles,NameSolutionsFile]
+   [bWriteWitnessSetFile,NameSolutionsFile]
    [b'PHGaloisGroup,NameStartFile]
    [calculateB'Trace,NameStartFile]
-   [makeWitnessSetFiles,NameWitnessSliceFile]
+   [bWriteWitnessSetFile,NameWitnessSliceFile]
    [importMainDataFile,NameMainDataFile]
    NameGaloisGroupGeneratorFile
    [bTraceTestImage,NameB'InputFile]
@@ -2084,22 +2084,22 @@ doc ///
 -------------------
 doc ///
  Key
-   B'Section
+   BertiniHyperplane
  Headline
    This is a mutable hash table that gives information about a hyperplane used to slice a numerical variety.
  Description
    Text
-     B'Section is a type of mutable hash table. It can be created using makeB'Section.
+     BertiniHyperplane is a type of mutable hash table. It can be created using bHyperplane.
 ///;
 
 doc ///
  Key
-   B'Slice
+   BertiniSlice
  Headline
    This is a mutable hash table that gives information about a linear space used to slice a numerical variety.
  Description
    Text
-     B'Slice is a type of mutable hash table. It can be created using makeB'Slice.
+     BertiniSlice is a type of mutable hash table. It can be created using bSlice.
 ///;
 
 
@@ -2161,14 +2161,14 @@ doc ///
    NameB'Section
    B'NumberCoefficients
    B'SectionString
-   [makeB'Slice,B'Homogenization]
-   [makeB'Slice,B'NumberCoefficients]
-   [makeB'Slice,ContainsMultiProjectivePoint]
-   [makeB'Slice,ContainsPoint]
-   [makeB'Slice,NameB'Slice]
-   [makeB'Slice,RandomCoefficientGenerator]
-   [makeB'Section,B'NumberCoefficients]
-   [makeB'Section,NameB'Section]
+   [bSlice,B'Homogenization]
+   [bSlice,B'NumberCoefficients]
+   [bSlice,ContainsMultiProjectivePoint]
+   [bSlice,ContainsPoint]
+   [bSlice,NameB'Slice]
+   [bSlice,RandomCoefficientGenerator]
+   [bHyperplane,B'NumberCoefficients]
+   [bHyperplane,NameB'Section]
    [runBertini,PreparePH2]
    [runBertini,TextScripts]
    [importSolutionsFile,OrderPaths]
@@ -2179,11 +2179,11 @@ doc ///
    [importMainDataFile,M2Precision]
    [b'PHSequence,B'Exe]
    [b'PHSequence,SaveData]
-   [makeWitnessSetFiles,SpecifyComponent]
+   [bWriteWitnessSetFile,SpecifyComponent]
    [writeStartFile,M2Precision]
-   [makeB'Section,B'Homogenization]
-   [makeB'Section,ContainsPoint]
-   [makeB'Section,RandomCoefficientGenerator]
+   [bHyperplane,B'Homogenization]
+   [bHyperplane,ContainsPoint]
+   [bHyperplane,RandomCoefficientGenerator]
    PathVariable
    PathsWithSameEndpoint
    FunctionResidual
@@ -2213,7 +2213,7 @@ doc ///
    [bWriteInputFile,StorageFolder]
    [makeMembershipFile,StorageFolder]
    [makeSampleSolutionsFile,StorageFolder]
-   [makeWitnessSetFiles,StorageFolder]
+   [bWriteWitnessSetFile,StorageFolder]
    [runBertini,StorageFolder]
    [writeParameterFile,StorageFolder]
    [writeStartFile,StorageFolder]
@@ -2240,7 +2240,7 @@ doc ///
    MoveToDirectory
    RandomGamma
    StorageFolder
-   SubFolder
+   SubFolder 
    StartPoints
    StartParameters
    SubIntoCC	  
