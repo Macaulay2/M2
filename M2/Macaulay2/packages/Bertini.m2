@@ -25,10 +25,34 @@ newPackage(
   CacheExampleOutput => true
 ) 
 
-exportMutable{"storeBM2Files"
+exportMutable{"storeBM2Files",
+    "makeB'InputFile"
   }
 
 export {
+  "b'TraceTestImage", 
+  "moveB'File",
+  "CopyB'File",
+  "calculateB'Trace",
+  "b'PHGaloisGroup",
+  "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
+  "B'Constants",--A list of pairs
+  "B'Polynomials", --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named "jade"  	    	  
+  "B'Functions", --A list of list of pairs.  
+  "B'Exe",
+  "B'Section",
+  "B'Slice",
+  "B'NumberCoefficients", 
+  "B'Homogenization", 
+  "B'SectionString",
+  "NameB'Section",
+  "NameB'Slice",
+  "ListB'Sections",
+  "makeB'TraceInput",
+  "makeWitnessSetFiles",
+  "makeSampleSolutionsFile",
+  "makeMembershipFile",
+  "RandomCoefficientGenerator", 
   "ContinueLoop",
   "bertiniImageMonodromyCollect",
   "ImageCoordinates",
@@ -48,7 +72,6 @@ export {
   "StartParameters",
   "StartPoints",
   "OnlyCalculateTrace",
-  "b'TraceTestImage", 
   "subPoint",
   "OrderPaths",
   "bertiniZeroDimSolve",
@@ -88,15 +111,13 @@ export {
   "MaxCycleNum",
   "RegenStartLevel",
   "ParameterValues",
-  "NameB'InputFile",--This option allows us to change the name of the input file.
   "NameParameterFile",
   "NameSolutionsFile",
   "NameIncidenceMatrixFile",
   "NameStartFile",
   "NameFunctionFile",
---
-  "makeB'InputFile",
-  "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
+--  "makeB'InputFile",
+  "bWriteInputFile",
   "HomVariableGroup", --A list of lists of homogeneous variable groups. 
   "AffVariableGroup", --A list of lists of affine variable groups. 	
   "ParameterGroup",
@@ -104,23 +125,18 @@ export {
   "PathVariable",
   "RandomComplex",
   "RandomReal",  --a list of unknowns whose values will be fixed by Bertini
-  "B'Constants",--A list of pairs
-  "B'Polynomials", --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named "jade"  	    	  
   "NamePolynomials", --A list of names of the polynomials which we want to find the common zero set of.
-  "B'Functions", --A list of list of pairs.  
 --
   "runBertini",
   "InputFileDirectory",
   "StartFileDirectory",
   "StartParameterFileDirectory",  
-  "B'Exe",
   "NumberToB'String",
   "M2Precision",--needs doc
   "writeParameterFile",
   "writeStartFile",  
   "importParameterFile",   --need doc
 --  "b'TraceTest", Depracated.
-  "calculateB'Trace",
   "UseStartPointsFirst",
   "b'PHSequence"   ,
   "b'PHMonodromyCollect",
@@ -132,27 +148,17 @@ export {
   "NumberOfLoops",
   "NumSolBound",
   "SpecifyLoops",
-  "b'PHGaloisGroup",
   "LoopRadius",
   "NameGaloisGroupGeneratorFile",
   "BranchPoints",
   "SolutionFileStyle",
-  "B'Section",
-  "B'Slice",
+  "NameB'InputFile",--This option allows us to change the name of the input file.
   "radicalList",
 --  "B'MultiProjectivePoint",
   "makeB'Section",
   "makeB'Slice",
   "ContainsPoint", 
-  "B'NumberCoefficients", 
-  "B'Homogenization", 
-  "RandomCoefficientGenerator", 
-  "B'SectionString",
-  "NameB'Section",
   "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
-  "NameB'Slice",
-  "ListB'Sections",
-  "makeB'TraceInput",
   "replaceFirstLine",
   "PreparePH2",
   "readFile",
@@ -179,15 +185,10 @@ export {
   "TextScripts",
   "NameWitnessSolutionsFile",
   "SpecifyComponent",
-  "makeWitnessSetFiles",
-  "makeSampleSolutionsFile",
   "NameSampleSolutionsFile",
   "TestSolutions",
-  "makeMembershipFile",
   "ComponentNumber",
   "sortMainDataComponents",
-  "moveB'File",
-  "CopyB'File",
   "MoveToDirectory",
   "SpecifyVariables",
   "SubIntoCC"
@@ -1564,8 +1565,7 @@ checkMultiplicity=(listOfPoints)->(
 --the input of makeB'InputFile is a string of the directory where we want to write the files.
 
 
-
-makeB'InputFile = method(TypicalValue => String, Options=>{
+bWriteInputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
 	B'Configs=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file. 
@@ -1583,7 +1583,7 @@ makeB'InputFile = method(TypicalValue => String, Options=>{
 	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  
 	Verbose=>false
 	})
-makeB'InputFile(String) := o ->(IFD)->(    
+bWriteInputFile(String) := o ->(IFD)->(    
     IFD=addSlash(IFD);
 --Warnings are printed here.     
      if #o.B'Polynomials===0 and #o.NamePolynomials===0 then (print "Warning: NamePolynomials and B'Polynomials are both empty.");
@@ -1746,6 +1746,8 @@ makeB'InputFile(String) := o ->(IFD)->(
 	openedInputFile << endl);    
     openedInputFile << "END;" << endl << endl;
     close openedInputFile        		);
+
+
 
 writeNamedListToB'InputFile=(nameList,oneList,openedInputFile)->(
     openedInputFile << nameList|" "  ;
@@ -3198,6 +3200,8 @@ collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
 ///
 
 
+--New names of functions.
+makeB'InputFile=bWriteInputFile
 
 
 
