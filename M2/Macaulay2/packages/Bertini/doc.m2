@@ -419,7 +419,7 @@ doc ///
    Text
      The string s is a directory where the Bertini files are stored. 
      A Bertini input file should be stored in s.
-     The Bertini input file should be named "input", or the NameB'InputFile should be set to a string giving the name of the input file. 
+     The Bertini input file should be named "input", or the NameInputFile should be set to a string giving the name of the input file. 
      A Bertini start (solutions) file should be stored in s. 
      The Bertini start (solutions) file should be named "start", or the NameStartFile should be set to a string giving the name of the start file. 
      A Bertini start parameter file should be stored in s. 
@@ -1702,8 +1702,8 @@ doc///
 
 doc///
  Key
-   NameB'InputFile
-   [bWriteInputFile, NameB'InputFile]
+   NameInputFile
+   [bWriteInputFile, NameInputFile]
  Headline
    This option names the input file. 
  Description
@@ -1714,7 +1714,7 @@ doc///
      bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2},
-	 NameB'InputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
+	 NameInputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
      
 ///;
 
@@ -1756,14 +1756,14 @@ doc///
    NameWitnessSolutionsFile
    NameMainDataFile
    NameSampleSolutionsFile
-   [b'PHGaloisGroup,NameB'InputFile]
-   [b'PHMonodromyCollect,NameB'InputFile]
-   [b'PHSequence,NameB'InputFile]
-   [calculateB'Trace,NameB'InputFile]
-   [makeB'TraceInput,NameB'InputFile]
-   [makeSampleSolutionsFile,NameB'InputFile]
-   [bWriteWitnessSetFile,NameB'InputFile]
-   [runBertini,NameB'InputFile]
+   [b'PHGaloisGroup,NameInputFile]
+   [b'PHMonodromyCollect,NameInputFile]
+   [b'PHSequence,NameInputFile]
+   [calculateB'Trace,NameInputFile]
+   [makeB'TraceInput,NameInputFile]
+   [makeSampleSolutionsFile,NameInputFile]
+   [bWriteWitnessSetFile,NameInputFile]
+   [runBertini,NameInputFile]
    [runBertini,B'Exe]
    [b'PHGaloisGroup,NameParameterFile]
    [b'PHMonodromyCollect,NameParameterFile]
@@ -1780,9 +1780,9 @@ doc///
    [bWriteWitnessSetFile,NameWitnessSliceFile]
    [importMainDataFile,NameMainDataFile]
    NameGaloisGroupGeneratorFile
-   [bTraceTestImage,NameB'InputFile]
+   [bTraceTestImage,NameInputFile]
    [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
-   [makeMembershipFile,NameB'InputFile]
+   [makeMembershipFile,NameInputFile]
    [b'PHMonodromyCollect,NameStartFile]
    [b'PHSequence,NameStartFile]
    NameIncidenceMatrixFile
@@ -1805,8 +1805,8 @@ doc///
      writeStartFile(storeBM2Files,{{2},{ -2}},NameStartFile=>"start");
      writeParameterFile(storeBM2Files,{4},NameParameterFile=>"start_parameters");
      writeParameterFile(storeBM2Files,{3},NameParameterFile=>"final_parameters");
-     bWriteInputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
-     runBertini(storeBM2Files,NameB'InputFile=>"inputWin");
+     bWriteInputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameInputFile=>"inputWin");
+     runBertini(storeBM2Files,NameInputFile=>"inputWin");
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")          
 ///;

@@ -27,6 +27,7 @@ newPackage(
 
 exportMutable{"storeBM2Files",
     "makeB'InputFile",
+    "NameB'InputFile",
   "b'TraceTestImage", 
   "moveB'File",
   "CopyB'File",
@@ -59,6 +60,7 @@ export {
   "bTraceTestImage",
   "bMoveFile",
   "BCopyFile",
+"NameInputFile",--This option allows us to change the name of the input file.
 "bCalculateTrace",
 "b'PHGaloisGroup",
 "BConfigs",  --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
@@ -177,7 +179,6 @@ export {
   "NameGaloisGroupGeneratorFile",
   "BranchPoints",
   "SolutionFileStyle",
-  "NameB'InputFile",--This option allows us to change the name of the input file.
   "radicalList",
 --  "B'MultiProjectivePoint",
   "ContainsPoint", 
@@ -1592,7 +1593,7 @@ checkMultiplicity=(listOfPoints)->(
 
 bWriteInputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
-	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
+	NameInputFile=>"input",  --This option allows us to change the name of the input file that we will make.
 	BConfigs=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file. 
 --For different functions using Bertini one must state "homogeneous variable groups", "affine variable groups", "parameters", "variables", or "path variables".
 	HomVariableGroup=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
@@ -1619,14 +1620,14 @@ bWriteInputFile(String) := o ->(IFD)->(
      for onePair to #o.BFunctions-1 do if #((o.BFunctions)_onePair)=!=2  and class ((o.BFunctions)_onePair)=!=BertiniHyperplane and class ((o.BFunctions)_onePair)=!=BertiniSlice and class ((o.BFunctions)_onePair)=!=Option then  error ("BFunctions is not a list of pairs because of element "|onePair);
      for onePair to #o.BFunctions-1 do if  class ((o.BFunctions)_onePair)===BertiniHyperplane and not member(NameBHyperplane,keys ((o.BFunctions)_onePair)) then  error ("BFunctions contains an unnamed BertiniHyperplane because of element "|onePair|". Set the NameBHyperplane option.");
      for onePair to #o.BFunctions-1 do if  class ((o.BFunctions)_onePair)===BertiniSlice and not member(NameBSlice,keys ((o.BFunctions)_onePair)) then  error ("BFunctions contains an unnamed BertiniSlice because of element "|onePair|". Set the NameBSlice option. ");
---Now we write the file. The first thing we do is create a file named "input" by default (this default is changed by the NameB'InputFile option).
+--Now we write the file. The first thing we do is create a file named "input" by default (this default is changed by the NameInputFile option).
      if o.StorageFolder=!=null 
      then (
 	 filesGoHere:=addSlash(IFD|o.StorageFolder);
 	 if o.Verbose then print filesGoHere;
 	 if not fileExists(filesGoHere) then mkdir(filesGoHere))
      else filesGoHere=IFD;
-     openedInputFile:= openOut(filesGoHere|o.NameB'InputFile);
+     openedInputFile:= openOut(filesGoHere|o.NameInputFile);
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
 --The first part of a Bertini input file is the configurations.  We write the configuratiosn followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file. 
      openedInputFile << "CONFIG" << endl << endl;
@@ -1785,7 +1786,7 @@ writeNamedListToB'InputFile=(nameList,oneList,openedInputFile)->(
 bWriteWitnessSetFile = method(TypicalValue => Nothing, Options=>{
 	NameWitnessSliceFile=>"linear_slice_file",
     	NameSolutionsFile=>"witness_solutions_file",
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	SpecifyComponent=>-2,
 	StorageFolder=>null,
 	Verbose=>false
@@ -1798,7 +1799,7 @@ bWriteWitnessSetFile(String,Number) := o ->(IFD,theDim)->(
 	 if not fileExists(filesGoHere) then mkdir(filesGoHere))
     else filesGoHere=addSlash(IFD);
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
-    s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 4; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
+    s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 4; %%%ENDCONFIG/' "|IFD|o.NameInputFile);
     tempfileName:="JADE_tracktype4_1";
     PFile:= openOut(filesGoHere|tempfileName); 
     PFile << toString(theDim) << endl ;
@@ -1817,7 +1818,7 @@ addSlash=(aString)->(
 
 bWriteSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
 	NameSolutionsFile=>"sample_solutions_file",
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	StorageFolder=>null,
 	SpecifyComponent=>{},
 	Verbose=>false
@@ -1839,7 +1840,7 @@ bWriteSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(
       theComponent=(o.SpecifyComponent)#ComponentNumber);         
     if theNumberOfPoints<1 then error" The number of sample points should be positive. ";
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
-    s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 2; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
+    s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 2; %%%ENDCONFIG/' "|IFD|o.NameInputFile);
     tempfileName:="JADE_tracktype2_1";
     PFile:= openOut(filesGoHere|tempfileName); 
     PFile << toString(theDim) << endl ;
@@ -1854,7 +1855,7 @@ bWriteSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(
 
 bWriteMembershipFile = method(TypicalValue => Nothing, Options=>{
 	NameSolutionsFile=>"member_points",
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	StorageFolder=>null,
 	TestSolutions=>{},
 	M2Precision=>53,
@@ -1876,7 +1877,7 @@ bWriteMembershipFile(String) := o ->(IFD)->(
     if o.Verbose then print o.NameSolutionsFile;
     bMoveFile(IFD,o.NameSolutionsFile,"member_points");    
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
-    s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 3; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
+    s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 3; %%%ENDCONFIG/' "|IFD|o.NameInputFile);
     runBertini(IFD,StorageFolder=>o.StorageFolder,Verbose=>o.Verbose)   
     )
 
@@ -1886,13 +1887,13 @@ bWriteMembershipFile(String) := o ->(IFD)->(
 --To do a trace test we need to evaluate the points using a Bertini Tracktype 4. 
 --the number of variables in this input file equals the number of points times the number of coordinates.
 bWriteTraceTestInput = method(TypicalValue => Nothing, Options=>{
-	NameB'InputFile=>"inputTT",  --This option allows us to change the name of the input file that we will prodcue. (This imput file is super simple).
+	NameInputFile=>"inputTT",  --This option allows us to change the name of the input file that we will prodcue. (This imput file is super simple).
 	BConfigs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
 	})
 bWriteTraceTestInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,NumberOfCoordinates)->(    
     theVars:= for aSol  to NumberOfPoints-1 list for aCoordinate to NumberOfCoordinates-1 list ("jadeTT"|aSol|"v"|aCoordinate);
     bWriteInputFile(filesGoHere,
-	NameB'InputFile=>o.NameB'InputFile,
+	NameInputFile=>o.NameInputFile,
 	BConfigs=>o.BConfigs|{{"TRACKTYPE",-4}},
 	AffVariableGroup=>theVars,
 	BPolynomials=>for aGroup in transpose theVars list ((bHyperplane(aGroup,BNumberCoefficients=>for i in aGroup list 1/NumberOfPoints))#BHyperplaneString)
@@ -1908,7 +1909,7 @@ replaceFirstLine(String,String,Thing) := o ->(filesGoHere,fileName,aString)->(
 bCalculateTrace = method(TypicalValue=>Nothing,Options=>{
 	NameStartFile=>"start",---we will read these start points.
 	NameFunctionFile=>"calculatedTrace",---the traces will be written to this file.
-	NameB'InputFile=>"inputTT"---this file should be created prior to calling the bCalculateTrace function.
+	NameInputFile=>"inputTT"---this file should be created prior to calling the bCalculateTrace function.
 	})
 bCalculateTrace(String) := o ->(
     filesGoHere) ->(
@@ -1917,7 +1918,7 @@ bCalculateTrace(String) := o ->(
      if not fileExists(filesGoHere|o.NameStartFile) then error("The file "|o.NameStartFile|" does not exist in the directory.");
      if o.NameStartFile=!="start" then copyFile(filesGoHere|o.NameStartFile,filesGoHere|"start");
      replaceFirstLine(filesGoHere,"start",1);
-     runBertini(filesGoHere,NameB'InputFile=>o.NameB'InputFile,Verbose=>o.Verbose);--maybe an error because of the backslash at the end. 
+     runBertini(filesGoHere,NameInputFile=>o.NameInputFile,Verbose=>o.Verbose);--maybe an error because of the backslash at the end. 
      if o.NameFunctionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFunctionFile));      
 
 
@@ -1932,7 +1933,7 @@ bCalculateTrace(String) := o ->(
 --We import the start parameter P and fix a Gamma. 
 --We take the trace of solutions for the parameter at P, P+Gamma, P-Gamma 
 bTraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	SubFolder=>false,
 	BExe=>BERTINIexe,
 	RandomGamma=>.27890+.31712*ii,
@@ -2222,7 +2223,7 @@ importMainDataFile(String) := o->(aString)->(
 --BExe is how we call Bertini. The default option is how Bertini is usually called in M2 in the init file. 
 --InputFileName is default to be input. But we can change this if we wanted to. 
 runBertini= method(TypicalValue => String, Options=>{
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
     	StorageFolder=>null,
 	PreparePH2=>false,
 	BExe=>BERTINIexe,
@@ -2237,7 +2238,7 @@ runBertini(String) := o ->(IFD)->(--IFD=input file directory
         else filesGoHere=addSlash(IFD);
     	if o.TextScripts=!="" then theTS:=" < "|o.TextScripts else theTS="";
     	if o.Verbose then print o.BExe;
-    	runSuccess:=run("cd "|filesGoHere|"; "|(o.BExe)|" "|IFD|o.NameB'InputFile|theTS|" >bertini_session.log");
+    	runSuccess:=run("cd "|filesGoHere|"; "|(o.BExe)|" "|IFD|o.NameInputFile|theTS|" >bertini_session.log");
     	if runSuccess=!=0 
 	then (
 	  print fileExists(filesGoHere|"bertini_session.log");
@@ -2245,7 +2246,7 @@ runBertini(String) := o ->(IFD)->(--IFD=input file directory
 	  error"Bertini run failed. ");
 	if o.PreparePH2=!=false and runSuccess===0
 	then (
-	  s:= run("sed -i -e 's/%%%ENDCONFIG/	 PARAMETERHOMOTOPY : 2; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
+	  s:= run("sed -i -e 's/%%%ENDCONFIG/	 PARAMETERHOMOTOPY : 2; %%%ENDCONFIG/' "|IFD|o.NameInputFile);
 	  moveFile(filesGoHere|"nonsingular_solutions",filesGoHere|"start"));		   
 	);
 
@@ -2473,7 +2474,7 @@ importIncidenceMatrix(String) := o -> (importFrom)-> (
 ---
 --This function takes as its input a directory and a list of list of parameter values.
 b'PHSequence=method(TypicalValue=>Thing,Options=>{
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	NameStartFile=>"start",
 	NameParameterFile=>"start_parameters",
 	NameSolutionsFile=>"nonsingular_solutions",
@@ -2485,7 +2486,7 @@ b'PHSequence=method(TypicalValue=>Thing,Options=>{
 	})
 b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     IFD=addSlash IFD;
-    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
+    if fileExists(IFD|o.NameInputFile)===false then error "input file does not exist in correct directory.";
     if fileExists(IFD|o.NameStartFile)===false then error "start file does not exist in correct directory.";
     if fileExists(IFD|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory.";        
 --
@@ -2501,7 +2502,7 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
     if  null=!=o.StorageFolder  
-    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
+    then bMoveFile(IFD,o.NameInputFile,o.NameInputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
 ----a check to see if we keep all solutions NEED to be made. 
     runCount:=0;
     sfIn:=openIn(storeFiles|"start");
@@ -2514,7 +2515,7 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     	writeParameterFile(storeFiles,listPV,NameParameterFile=>"final_parameters");--writes final parameter file
 	if o.Verbose then print listPV;
 	runBertini(storeFiles,Verbose=>o.Verbose,
-	    NameB'InputFile=>o.NameB'InputFile,BExe=>o.BExe);
+	    NameInputFile=>o.NameInputFile,BExe=>o.BExe);
 	if o.Verbose then print "-rc";
     	if fileExists(storeFiles|o.NameSolutionsFile)===false and o.NameSolutionsFile=!="simple_raw_solutions" then (
 	  start0pnts:= openOut(storeFiles|"start");  
@@ -2581,7 +2582,7 @@ simplifyRawSolutions=(aDirectory)->(
      
 
 b'PHMonodromyCollect=method(TypicalValue=>Thing,Options=>{
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	NameStartFile=>"start",
 	NameParameterFile=>"start_parameters",
 	NameSolutionsFile=>"simple_raw_solutions",
@@ -2602,7 +2603,7 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
 --
     if o.MonodromyStartPoints=!=false then writeStartFile(IFD,o.MonodromyStartPoints);--write a start file.
     if o.MonodromyStartParameters=!=false then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file.
-    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
+    if fileExists(IFD|o.NameInputFile)===false then error "input file does not exist in correct directory.";
     if fileExists(IFD|o.NameStartFile)===false then error "start file does not exist in correct directory or MonodromyStartPoints needs to be set.";
     if fileExists(IFD|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory or MonodromyStartParameters needs to be set.";        
 --
@@ -2616,7 +2617,7 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder  
     then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if null=!=o.StorageFolder  
-    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
+    then bMoveFile(IFD,o.NameInputFile,o.NameInputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
     bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");---we pull the base parameters
     solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
@@ -2636,7 +2637,7 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
 	    append(listsOfParameterValues,bP),
 	    BExe=>o.BExe,
 	    NameSolutionsFile=>o.NameSolutionsFile,---ProblemLine
-       	    NameB'InputFile=>o.NameB'InputFile);
+       	    NameInputFile=>o.NameInputFile);
 --	if o.Verbose then print ".5";
 --    	if o.Verbose then print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 	preSolCollection:=sortSolutions(
@@ -2668,7 +2669,7 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
     return solCollection);
 	    
 bertiniImageMonodromyCollect=method(TypicalValue=>Thing,Options=>{
-	NameB'InputFile=>"input",
+	NameInputFile=>"input",
 	MonodromyStartPoints=>null,--Set this option if the start points come from a list.
 	NameStartFile=>"start",--Set this option if the start points come from a file. 
 	NameParameterFile=>"start_parameters",
@@ -2704,7 +2705,7 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
 --
     if o.MonodromyStartParameters=!=null and o.NameParameterFile=!="start_parameters" then print("Warning: MonodromyStartParameters and NameStartParameterFile should not be set at the same time. ");
     if o.MonodromyStartParameters=!=null then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file.
-    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
+    if fileExists(IFD|o.NameInputFile)===false then error "input file does not exist in correct directory.";
     if fileExists(IFD|o.NameStartFile)===false then error "start file does not exist in correct directory or MonodromyStartPoints needs to be set.";
     if fileExists(IFD|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory or MonodromyStartParameters needs to be set.";        
 --Move files to storage folder if necessary. 
@@ -2719,7 +2720,7 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder  
     then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if null=!=o.StorageFolder  
-    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
+    then bMoveFile(IFD,o.NameInputFile,o.NameInputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
 --INSERT SHARPEN POINTS and REMOVE DUPLICATES OPTION HERE--
 --For now assume we are given a good start solution.
@@ -2738,10 +2739,10 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
       gcMap=for i to numImageCoords-1 list random CC);
     theWeights:=for i to numImageCoords-1 list "weightJADE"|i=>gcMap_i;
     bWriteInputFile(storeFiles,
-      NameB'InputFile=>inputImageMapName,      AffVariableGroup=>o.AffVariableGroup, 
+      NameInputFile=>inputImageMapName,      AffVariableGroup=>o.AffVariableGroup, 
       BConstants=>o.BConstants|theWeights,      BFunctions=>o.BFunctions,      BConfigs=>{{"SecurityLevel",1},{"Tracktype",-4}},
       BPolynomials=>{bHyperplane(imagePoly,BNumberCoefficients=>theWeights/toList/first)});
-    runBertini(storeFiles,NameB'InputFile=>inputImageMapName);
+    runBertini(storeFiles,NameInputFile=>inputImageMapName);
     startFiberGenCoord:= flatten importSolutionsFile(storeFiles,NameSolutionsFile=>"function");
     startImageGC:= startFiberGenCoord;
     numStartPoints:=#startImageGC;
@@ -2770,12 +2771,12 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
       if fileExists(storeFiles|"start")===false then error "start file for b'PHSequence is missing.";
       if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file for b'PHSequence is missing.";        
       b'PHSequence(storeFiles,        append(theCurrentLoop,bP),
-	BExe=>o.BExe,	NameSolutionsFile=>o.NameSolutionsFile,	NameB'InputFile=>o.NameB'InputFile,	SaveData=>true);
+	BExe=>o.BExe,	NameSolutionsFile=>o.NameSolutionsFile,	NameInputFile=>o.NameInputFile,	SaveData=>true);
 --    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
       openStartFileToAppend:=openOutAppend(addSlash(storeFiles)|"start_Fiber_JADE");
 --    	print get openStartFileToAppend;
 -----INSERT CONTINUE OPTION.     		
-      runBertini(storeFiles,NameB'InputFile=>inputImageMapName);
+      runBertini(storeFiles,NameInputFile=>inputImageMapName);
       startImageGC= flatten importSolutionsFile(storeFiles,NameSolutionsFile=>"function");
       stringSolutions:= lines get  (addSlash(storeFiles)|"start");
       numStartPoints=value first stringSolutions;
@@ -2837,7 +2838,7 @@ radicalList(List) := o ->(aList)->(
 
 b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
     	LoopRadius=>{},
-	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
+	NameInputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
 	NameStartFile=>"start",  --this start file will be the solutions we start with
 	NameParameterFile=>"start_parameters", --this file is the start_parameters for our start solutions
 	NameSolutionsFile=>"simple_raw_solutions",--this file tells us which solutions to consider at the end
@@ -2867,7 +2868,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     --The other way is by specifying MonodromyStartPoints to a list of points or solutions. 
     --THe following lines check to see if the configurations to run b'PHGaloisGroup are set correctly in regards to the start file. 
     if o.MonodromyStartPoints=!=false then writeStartFile(IFD,o.MonodromyStartPoints);--write a start file.
-    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
+    if fileExists(IFD|o.NameInputFile)===false then error "input file does not exist in correct directory.";
     if o.MonodromyStartPoints===false and fileExists(IFD|o.NameStartFile)===false then error "MonodromyStartPoints needs to be set.";
     --For b'PHGaloisGroup to run we need to have a start_parameter file that consists of a general choice of parameters. 
     --There are two ways to get this start_parameter file. The first way is to tell M2 where to find the start_parameter file by specifying NameParameterFile options. 
@@ -2885,7 +2886,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.Verbose then print 3;
     if null=!=o.StorageFolder 
-    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
+    then bMoveFile(IFD,o.NameInputFile,o.NameInputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.Verbose then print "3.1";
     --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
     bMoveFile(IFD,"start","ggStartJade",SubFolder=>o.StorageFolder,BCopyFile=>true);
@@ -2948,7 +2949,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
       b'PHSequence(storeFiles,for i in loopPointsT list {i},
 	  Verbose=>o.Verbose,
 	  BExe=>o.BExe,
-	  NameB'InputFile=>o.NameB'InputFile,
+	  NameInputFile=>o.NameInputFile,
 	  SaveData=>true,
 	  NameSolutionsFile=>"simple_raw_solutions"--"simple_raw_solutions"--this needs to be raw to keep the correct ordering
 	    );
