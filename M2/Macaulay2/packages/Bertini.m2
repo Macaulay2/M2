@@ -26,16 +26,19 @@ newPackage(
 
 exportMutable{"storeBM2Files",
   "makeB'InputFile",
-  "b'TraceTestImage"
+  "b'TraceTestImage",
+  "moveB'File",
+  "CopyB'File"
   }
+
 
 
 export {
   "bWriteInputFile",      
   "bTraceTestImage",
+  "bMoveFile",
+  "BCopyFile",
   --
-  "moveB'File",
-  "CopyB'File",
   "calculateB'Trace",
   "b'PHGaloisGroup",
   "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
@@ -503,9 +506,9 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
     for i in myParValues do(
       writeParameterFile(myTopDir,i);
       runBertini(myTopDir,Verbose=>o.Verbose);
-      if o.OutputSyle==="OutPoints" then moveB'File(myTopDir,"main_data","ph_jade_"|runNumber);
-      if o.OutputSyle==="OutNone" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
-      if o.OutputSyle==="OutSolutions" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
+      if o.OutputSyle==="OutPoints" then bMoveFile(myTopDir,"main_data","ph_jade_"|runNumber);
+      if o.OutputSyle==="OutNone" then bMoveFile(myTopDir,"raw_solutions","ph_jade_"|runNumber);
+      if o.OutputSyle==="OutSolutions" then bMoveFile(myTopDir,"raw_solutions","ph_jade_"|runNumber);
       runNumber=runNumber+1
       );
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called allSols below.
@@ -1852,7 +1855,7 @@ makeMembershipFile(String) := o ->(IFD)->(
     if not fileExists(IFD|o.NameSolutionsFile) then error("The file "|o.NameSolutionsFile|" does not exist in "|IFD|". ");
     if o.Verbose then print (filesGoHere);
     if o.Verbose then print o.NameSolutionsFile;
-    moveB'File(IFD,o.NameSolutionsFile,"member_points");    
+    bMoveFile(IFD,o.NameSolutionsFile,"member_points");    
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
     s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 3; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
     runBertini(IFD,StorageFolder=>o.StorageFolder,Verbose=>o.Verbose)   
@@ -1937,7 +1940,7 @@ bTraceTestImage(String) := o ->(storeFiles)->(
         error"The option StartPoints needs to be set or the Bertini 'start' file is in the wrong directory.");
     if class o.StartPoints===String then( 
       if false===fileExists(storeFiles|"/"|o.StartPoints) then error"The file "|storeFiles|"/"|o.StartPoints|" does not exist ";
-      if o.StartPoints=!="start" then moveB'File(storeFiles,o.StartPoints,"start",CopyB'File=>true)
+      if o.StartPoints=!="start" then bMoveFile(storeFiles,o.StartPoints,"start",BCopyFile=>true)
       );
     if class o.StartPoints===List then writeStartFile(storeFiles,o.StartPoints, M2Precision=>o.M2Precision);
     if o.StartParameters=!=false then writeParameterFile(storeFiles,o.StartParameters,M2Precision=>o.M2Precision,NameParameterFile=>"start_parameters");
@@ -1948,10 +1951,10 @@ bTraceTestImage(String) := o ->(storeFiles)->(
     if OnlyCalculateTrace=!=true then (
       writeParameterFile(storeFiles,{first startParameters+o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",M2Precision=>o.M2Precision);
       runBertini(storeFiles,Verbose=>o.Verbose);
-      moveB'File(storeFiles,"nonsingular_solutions","traceF");--F is for Forward
+      bMoveFile(storeFiles,"nonsingular_solutions","traceF");--F is for Forward
       writeParameterFile(storeFiles,{first startParameters-o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",M2Precision=>o.M2Precision);
       runBertini(storeFiles,Verbose=>o.Verbose);
-      moveB'File(storeFiles,"nonsingular_solutions","traceB");--B is for Backward
+      bMoveFile(storeFiles,"nonsingular_solutions","traceB");--B is for Backward
       );
     solsF:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceF",M2Precision=>o.M2Precision);
     solsC:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start",M2Precision=>o.M2Precision);
@@ -2473,13 +2476,13 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
       if not fileExists(storeFiles) then mkdir(storeFiles))
     else storeFiles=addSlash(IFD);
     if o.NameStartFile=!="start" or null=!=o.StorageFolder 
-    then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder  
-    then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
     if  null=!=o.StorageFolder  
-    then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
 ----a check to see if we keep all solutions NEED to be made. 
     runCount:=0;
     sfIn:=openIn(storeFiles|"start");
@@ -2505,13 +2508,13 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
 	if o.NameSolutionsFile==="raw_solutions" 
 	then  error "NameSolutionsFiles should not be set as raw_solutions, instead set as simple_raw_solutions";	  
 	if o.SaveData then (
-	    moveB'File(storeFiles,o.NameSolutionsFile,o.NameSolutionsFile|toString(runCount),CopyB'File=>true);
-	    moveB'File(storeFiles,"final_parameters","start_parameters"|toString(runCount),CopyB'File=>true)
+	    bMoveFile(storeFiles,o.NameSolutionsFile,o.NameSolutionsFile|toString(runCount),BCopyFile=>true);
+	    bMoveFile(storeFiles,"final_parameters","start_parameters"|toString(runCount),BCopyFile=>true)
 	    );
 	if o.Verbose then print o.NameSolutionsFile;
 	if o.Verbose then print ("Number of solutions: "|toString(#importSolutionsFile(storeFiles,NameSolutionsFile=>o.NameSolutionsFile|toString(runCount))));
-	moveB'File(storeFiles,"final_parameters","start_parameters");
-	moveB'File(storeFiles,o.NameSolutionsFile,"start");
+	bMoveFile(storeFiles,"final_parameters","start_parameters");
+	bMoveFile(storeFiles,o.NameSolutionsFile,"start");
     	sfIn=openIn(storeFiles|"start");
 	NumPathsTracked:=value(read(sfIn,1));
 	close sfIn;
@@ -2590,11 +2593,11 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
       if false===fileExists storeFiles then mkdir storeFiles)
     else storeFiles=addSlash(IFD);
     if o.NameStartFile=!="start" or null=!=o.StorageFolder 
-    then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder  
-    then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if null=!=o.StorageFolder  
-    then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
     bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");---we pull the base parameters
     solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
@@ -2693,16 +2696,16 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
     else storeFiles=addSlash(IFD);
 --Copy files to have default names.
     if o.NameStartFile=!="start" or null=!=o.StorageFolder 
-    then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder  
-    then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if null=!=o.StorageFolder  
-    then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
 --
 --INSERT SHARPEN POINTS and REMOVE DUPLICATES OPTION HERE--
 --For now assume we are given a good start solution.
 --Maybe change general coordinate to weighted coordinate.
-    moveB'File(storeFiles,"start","start_Fiber_JADE",CopyB'File=>true);
+    bMoveFile(storeFiles,"start","start_Fiber_JADE",BCopyFile=>true);
 --Import base parameters and fiber.
     bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");---we pull the base parameters
     if o.ImageCoordinates==={}     then imagePoly:=flatten (o.AffVariableGroup)    else imagePoly=o.ImageCoordinates;
@@ -2780,7 +2783,7 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
         close openStartFileToAppend;
 	print ("Current fiber size: "|toString numStartPoints);    	  
 	replaceFirstLine(storeFiles,"start_Fiber_JADE",toString numStartPoints)      ;
-      moveB'File(storeFiles,"start_Fiber_JADE","start",CopyB'File=>true);
+      bMoveFile(storeFiles,"start_Fiber_JADE","start",BCopyFile=>true);
 ----Now we check if we have finished the computation by breaking the while loop. 
       if loopCount>=o.NumberOfLoops then (
 	breakLoop=true;
@@ -2857,16 +2860,16 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     --So we copy files from IFD to the directory given by storeFiles. 
     if o.Verbose then print 1;
     if o.NameStartFile=!="start" or null=!=o.StorageFolder 
-    then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.Verbose then print 2;
     if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder 
-    then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.Verbose then print 3;
     if null=!=o.StorageFolder 
-    then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
+    then bMoveFile(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,BCopyFile=>true);
     if o.Verbose then print "3.1";
     --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
-    moveB'File(IFD,"start","ggStartJade",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    bMoveFile(IFD,"start","ggStartJade",SubFolder=>o.StorageFolder,BCopyFile=>true);
     --Now all computations are done 
     solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",M2Precision=>o.M2Precision);
     --We save the start points' parameters as bP in memory rather than a text file. 
@@ -3137,12 +3140,12 @@ subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
       o.SubIntoCC===false then return afterSub else error"SubIntoCC should be set to true or false.")
  
 
-moveB'File = method(TypicalValue=>List,Options=>{
+bMoveFile = method(TypicalValue=>List,Options=>{
     	SubFolder=>null,
 	MoveToDirectory=>null,
-  	CopyB'File=>false
+  	BCopyFile=>false
 	 })
-moveB'File(String,String,String) := o ->(storeFiles,originalName,newName)->(
+bMoveFile(String,String,String) := o ->(storeFiles,originalName,newName)->(
     if o.SubFolder=!=null and o.MoveToDirectory=!=null then error"SubFolder and MoveToDirectory cannot both be set.";
 --
     storeFiles=addSlash(storeFiles);
@@ -3156,8 +3159,8 @@ moveB'File(String,String,String) := o ->(storeFiles,originalName,newName)->(
 --
   if (storeFiles|originalName)=!=(finalDirectory|newName) 
   then(
-    if o.CopyB'File===false then moveFile(storeFiles|originalName,finalDirectory|newName);
-    if o.CopyB'File===true then copyFile(storeFiles|originalName,finalDirectory|newName))    
+    if o.BCopyFile===false then moveFile(storeFiles|originalName,finalDirectory|newName);
+    if o.BCopyFile===true then copyFile(storeFiles|originalName,finalDirectory|newName))    
 )
 
 
@@ -3209,7 +3212,8 @@ collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
 --New names of functions.
 makeB'InputFile=bWriteInputFile
 b'TraceTestImage=bTraceTestImage
-
+moveB'File=bMoveFile
+CopyB'File=BCopyFile
 
 
 

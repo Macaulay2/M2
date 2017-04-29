@@ -1051,12 +1051,12 @@ doc ///
 
 doc ///
  Key
-   moveB'File
-   (moveB'File,String,String,String)
+   bMoveFile
+   (bMoveFile,String,String,String)
  Headline
    Move or copy files. 
  Usage
-   moveB'File(s,f,n) 
+   bMoveFile(s,f,n) 
  Inputs
    s:String
      A string giving a directory.
@@ -1070,22 +1070,22 @@ doc ///
    Example
      writeParameterFile(storeBM2Files,{2,3,5,7})
      fileExists(storeBM2Files|"/final_parameters")
-     moveB'File(storeBM2Files,"final_parameters","start_parameters")
+     bMoveFile(storeBM2Files,"final_parameters","start_parameters")
      fileExists(storeBM2Files|"/final_parameters")
      fileExists(storeBM2Files|"/start_parameters")
-     moveB'File(storeBM2Files,"start_parameters","backup",CopyB'File=>true)
+     bMoveFile(storeBM2Files,"start_parameters","backup",BCopyFile=>true)
      fileExists(storeBM2Files|"/start_parameters")
      fileExists(storeBM2Files|"/backup")
    Example
      Dir1 = temporaryFileName()
      makeDirectory Dir1
      writeParameterFile(storeBM2Files,{2,3,5,7})
-     moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
+     bMoveFile(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
      fileExists(Dir1|"/start_parameters")
    Example
      makeDirectory (storeBM2Files|"/Dir2")
      writeParameterFile(storeBM2Files,{2,3,5,7})
-     moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
+     bMoveFile(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
      fileExists(storeBM2Files|"/Dir2/start_parameters")
       
 ///;
@@ -1507,13 +1507,13 @@ doc ///
 
 doc ///
  Key
-   CopyB'File
-   [moveB'File, CopyB'File]
+   BCopyFile
+   [bMoveFile, BCopyFile]
  Headline
    optional argument to specify whether make a copy of the file.
  Description
    Text
-     When set to true, a file is copy of the file is made rather than just moved. The default in moveB'File is set to false.
+     When set to true, a file is copy of the file is made rather than just moved. The default in bMoveFile is set to false.
 ///;
 
 
@@ -2196,7 +2196,7 @@ doc ///
    ComponentNumber 
    [b'PHGaloisGroup,LoopRadius]
    [bTraceTestImage,MapPoints]
-   [moveB'File,MoveToDirectory]
+   [bMoveFile,MoveToDirectory]
    [bTraceTestImage,OnlyCalculateTrace]
    [bTraceTestImage,RandomGamma]
    [b'PHGaloisGroup,ReturnGaloisGroupGeneratorFile]
@@ -2218,7 +2218,7 @@ doc ///
    [writeParameterFile,StorageFolder]
    [writeStartFile,StorageFolder]
    [bTraceTestImage,SubFolder]
-   [moveB'File,SubFolder]
+   [bMoveFile,SubFolder]
    [bTraceTestImage,SubIntoCC]
    [subPoint,SubIntoCC]
    [subPoint,M2Precision]
