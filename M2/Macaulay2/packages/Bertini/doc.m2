@@ -388,13 +388,13 @@ doc ///
      B'Exe is how we call Bertini. The default option is how Bertini is usually called in M2 in the init file. 
      InputFileName has its default as "input". 
    Example
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
      	 AffVariableGroup=>{x,y},
 	 B'Polynomials=>{"x^2-1","y^2-4"})
      runBertini(storeBM2Files)
      readFile(storeBM2Files)
    Example
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
      	 AffVariableGroup=>{x,y},
 	 B'Polynomials=>{"x^2-1","y^2-4"})
      runBertini(storeBM2Files,StorageFolder=>"StoreMyFiles")
@@ -431,14 +431,14 @@ doc ///
      The resulting nonsingular_solutions and final parameters become start solutions and start parameters for the next parameter homotopy in the sequence.  
      
    Example
-     makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
+     bWriteInputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
 	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 B'Polynomials=>{"x^2-t1","y-t2"})
      runBertini(storeBM2Files,PreparePH2=>true)
      b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions1")
    Example
-     makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
+     bWriteInputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
 	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 B'Polynomials=>{"x^2-t1","y-t2"})
      runBertini(storeBM2Files,PreparePH2=>true)
@@ -473,7 +473,7 @@ doc ///
      --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
      writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
      --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
-     makeB'InputFile(storeBM2Files, 
+     bWriteInputFile(storeBM2Files, 
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
      b'PHMonodromyCollect(storeBM2Files,
 	 NameStartFile=>"startSave",
@@ -482,7 +482,7 @@ doc ///
 	 MonodromyStartParameters=>{1,0}	)
    Example
      f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
-     makeB'InputFile(storeBM2Files, 
+     bWriteInputFile(storeBM2Files, 
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
      b'PHMonodromyCollect(storeBM2Files,
 	 StorageFolder=>"StoreFiles",
@@ -515,7 +515,7 @@ doc ///
      --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
      writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
      --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
-     makeB'InputFile(storeBM2Files, 
+     bWriteInputFile(storeBM2Files, 
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
      bertiniImageMonodromyCollect(storeBM2Files,
 	 NameStartFile=>"startSave",
@@ -525,7 +525,7 @@ doc ///
 	 MonodromyStartParameters=>{1,0}	)
    Example
      f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
-     makeB'InputFile(storeBM2Files, 
+     bWriteInputFile(storeBM2Files, 
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
      bertiniImageMonodromyCollect(storeBM2Files,
     	 AffVariableGroup=>{x,y},
@@ -534,7 +534,7 @@ doc ///
       	 NumberOfLoops=>10,NumSolBound=>3)
    Example
      f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
-     makeB'InputFile(storeBM2Files, 
+     bWriteInputFile(storeBM2Files, 
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
      s1=bertiniImageMonodromyCollect(storeBM2Files,
 	 AffVariableGroup=>{x,y},
@@ -560,6 +560,7 @@ doc ///
 
 
 
+
 doc ///
  Key
    b'PHGaloisGroup
@@ -578,11 +579,11 @@ doc ///
    Example 
      R=CC[x,T]
      f=x^6+2*x^4+3*x^2+T
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,T},B'Polynomials=>{f,diff(x,f)})
+     bWriteInputFile(storeBM2Files,AffVariableGroup=>{x,T},B'Polynomials=>{f,diff(x,f)})
      runBertini(storeBM2Files)
      TCoordinates=importSolutionsFile(storeBM2Files)/last
      TBranchPoints=radicalList(TCoordinates)
-     makeB'InputFile(storeBM2Files,B'Configs=>{{ParameterHomotopy,1}},AffVariableGroup=>{x},ParameterGroup=>{T},B'Polynomials=>{f})
+     bWriteInputFile(storeBM2Files,B'Configs=>{{ParameterHomotopy,1}},AffVariableGroup=>{x},ParameterGroup=>{T},B'Polynomials=>{f})
      runBertini(storeBM2Files,PreparePH2=>true)
      b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints)
      b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints,LoopRadius=>.5)
@@ -592,12 +593,12 @@ doc ///
 
 doc ///
  Key
-   b'TraceTestImage
-   (b'TraceTestImage,String)
+   bTraceTestImage
+   (bTraceTestImage,String)
  Headline
    A trace test for the image of a polynomial map.
  Usage
-   b'TraceTestImage(s) 
+   bTraceTestImage(s) 
  Inputs
    s:String
      The directory where we store the files.
@@ -608,19 +609,19 @@ doc ///
      R=CC[x0,x1,x2]
      F={x0^3-x1^3+x2^3+1}
      sliceH=makeB'Slice({2},{{x0,x1,x2,1}},NameB'Slice=>"H")
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
     	 AffVariableGroup=>{x0,x1,x2},
     	 ParameterGroup=>{T},
     	 B'Configs=>{{ParameterHomotopy,1}},
     	 B'Functions=>{sliceH},
     	 B'Polynomials=>{"H0+T","H1"}|F)
      runBertini(storeBM2Files,PreparePH2=>true)
-     b'TraceTestImage(storeBM2Files)
+     bTraceTestImage(storeBM2Files)
    Example    
      R=CC[x,y,z]**CC[a,b]
      xyzSub={{x,a},{y,a^2+b},{z,a^2+b^2}}
      sliceH=makeB'Slice({2},{{x,y,z,1}},NameB'Slice=>"H")
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
     	 AffVariableGroup=>{a,b},
     	 ParameterGroup=>{T},
     	 B'Configs=>{{ParameterHomotopy,1}},
@@ -628,20 +629,20 @@ doc ///
     	 B'Polynomials=>{"H1","H0+T"})
      runBertini(storeBM2Files,PreparePH2=>true)
      s=importSolutionsFile(storeBM2Files)
-     b'TraceTestImage(storeBM2Files,MapPoints=>({a,a^2+b,a^2+b^2},{a,b}))
+     bTraceTestImage(storeBM2Files,MapPoints=>({a,a^2+b,a^2+b^2},{a,b}))
 
    Example
      R=CC[x0,x1,x2]
      F={x0^3-x1^3+x2^3+1}
      sliceH=makeB'Slice(2,{x0,x1,x2,1},NameB'Slice=>"H")
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
     	 AffVariableGroup=>{x0,x1,x2},
     	 ParameterGroup=>{T},
     	 B'Configs=>{{ParameterHomotopy,1}},
     	 B'Functions=>{sliceH},
     	 B'Polynomials=>{"H0+T","H1"}|F)
      runBertini(storeBM2Files,PreparePH2=>true)
-     b'TraceTestImage(storeBM2Files,StopBeforeTest=>true)--Returns the trace for each parameter homotopy using -gammma, 0, and gamma respectively. 
+     bTraceTestImage(storeBM2Files,StopBeforeTest=>true)--Returns the trace for each parameter homotopy using -gammma, 0, and gamma respectively. 
 
 ///;
 
@@ -652,12 +653,12 @@ doc ///
 
 doc ///
  Key
-   makeB'InputFile
-   (makeB'InputFile,String)
+   bWriteInputFile
+   (bWriteInputFile,String)
  Headline
    write a Bertini input file in a directory
  Usage
-   makeB'InputFile(s) 
+   bWriteInputFile(s) 
  Inputs
    s:String
      a directory where the input file will be written
@@ -672,13 +673,13 @@ doc ///
      R=QQ[x1,x2,y]
      theDir = temporaryFileName()
      makeDirectory theDir
-     makeB'InputFile(theDir,
+     bWriteInputFile(theDir,
 	 B'Configs=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
    Example
      R=QQ[x1,x2,y,X]
-     makeB'InputFile(theDir,
+     bWriteInputFile(theDir,
 	 B'Configs=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 NamePolynomials=>{f1,f2,f3},
@@ -689,7 +690,7 @@ doc ///
 	     {f3,y-2}})     
    Example
      R=QQ[x1,x2,y,X]
-     makeB'InputFile(theDir,
+     bWriteInputFile(theDir,
 	 B'Configs=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
@@ -755,7 +756,7 @@ doc ///
      is set to 5 then "raw_solutions" is imported.
    Example
      R=QQ[x,y]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
      	 AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^3-1})
      runBertini(storeBM2Files)
@@ -804,7 +805,7 @@ doc ///
      The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.
      When TrackType 1 is used, UNCLASSIFIED points will have component number -1.    
    Example
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
@@ -839,7 +840,7 @@ doc ///
    Text
      If the NameIncidenceMatrixFile option is set when we want to import files with a different name.
    Example
-    makeB'InputFile(storeBM2Files,
+    bWriteInputFile(storeBM2Files,
     	B'Configs=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
@@ -871,7 +872,7 @@ doc ///
    Text
      Read the first characters of a file. When fileName is omitted "bertini_session.log" is read.
    Example
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"x^2+2","y^2+3"})
+     bWriteInputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"x^2+2","y^2+3"})
      runBertini(storeBM2Files)
      readFile(storeBM2Files,"nonsingular_solutions",1)
      readFile(storeBM2Files,10000)
@@ -902,7 +903,7 @@ doc ///
    Text
      The option TestSolutions can be set to a list of coordinates of points which will be written to a file. 
    Example
-    makeB'InputFile(storeBM2Files,
+    bWriteInputFile(storeBM2Files,
     	B'Configs=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
@@ -931,7 +932,7 @@ doc ///
    Text
      This function does a track type 4 Bertini run creating a linear system file. The slice information for a positive dimensional run can be recovered from such a file.     
    Example
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
@@ -968,7 +969,7 @@ doc ///
    Text
      This function does a track type 2 Bertini run creating "sample_solutions_file" that contains a list of witness points in the standard Bertini format.     
    Example
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
@@ -997,13 +998,13 @@ doc ///
      To do a paremeter homotopy one must have a start_parameters file and a final_parameters file. 
    Example
      R=QQ[x,y,t]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
      	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-t})
      runBertini(storeBM2Files)
      copyFile(storeBM2Files|"/nonsingular_solutions",storeBM2Files|"/start")
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
      	 B'Configs=>{{"PARAMETERHOMOTOPY",2}},
 	 ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-t})
@@ -1036,7 +1037,7 @@ doc ///
      After importing a main_data file we have a list of points. This function organizes the components by irreducible component. 
    Example
      F={"x*(x+2*y+3*z^2)","(y^3-x+z)*(z)*(x+2*y+3*z^2)"}
-     makeB'InputFile(storeBM2Files,B'Configs=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F)
+     bWriteInputFile(storeBM2Files,B'Configs=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F)
      runBertini(storeBM2Files)
      listPoints=importMainDataFile(storeBM2Files)
      #listPoints
@@ -1136,7 +1137,7 @@ doc ///
    Example
      f="y^3-x*y+1"
      s1=makeB'Section({x,y,1})
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
        AffVariableGroup=>{x,y},
        B'Polynomials=>{f,s1})
      runBertini(storeBM2Files)
@@ -1177,7 +1178,7 @@ doc ///
      --Using the NameB'Slice option we can put a slice in the B'Functions option.
      aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
      aSlice#NameB'Slice
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
+     bWriteInputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
    Example
      --We can use slices to determine multidegrees.
      f1="x0*y0+x1*y0+x2*y2"
@@ -1186,17 +1187,17 @@ doc ///
      xxSlice=makeB'Slice({2,0},variableGroups)
      xySlice=makeB'Slice({1,1},variableGroups)
      yySlice=makeB'Slice({0,2},variableGroups)
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
     	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
      runBertini(storeBM2Files)
      xxDegree=#importSolutionsFile(storeBM2Files)
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
     	 B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
      runBertini(storeBM2Files)
      xyDegree=#importSolutionsFile(storeBM2Files)
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
     	 B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
      runBertini(storeBM2Files)
@@ -1363,7 +1364,7 @@ doc ///
    [bertiniSample, Verbose]
    [bertiniZeroDimSolve, Verbose]
    [bertiniParameterHomotopy, Verbose]
-   [makeB'InputFile, Verbose]
+   [bWriteInputFile, Verbose]
    [makeMembershipFile, Verbose]
    [b'PHGaloisGroup,Verbose]
    [b'PHMonodromyCollect,Verbose]
@@ -1374,7 +1375,7 @@ doc ///
    [runBertini,Verbose]
    [makeWitnessSetFiles,Verbose]
    [b'PHSequence,Verbose]
-   [b'TraceTestImage,Verbose]
+   [bTraceTestImage,Verbose]
    [makeSampleSolutionsFile,Verbose]
   Headline
     Option to silence additional output 
@@ -1385,7 +1386,7 @@ doc ///
     bertiniSample(...,Verbose=>Boolean)
     bertiniZeroDimSolve(...,Verbose=>Boolean)
     bertiniParameterHomotopy(...,Verbose=>Boolean)
-    makeB'InputFile(...,Verbose=>Boolean)
+    bWriteInputFile(...,Verbose=>Boolean)
     makeMembershipFile(...,Verbose=>Boolean)
     b'PHGaloisGroup(...,Verbose=>Boolean)
     b'PHMonodromyCollect(...,Verbose=>Boolean)
@@ -1490,12 +1491,12 @@ doc ///
    HomVariableGroup   
    [bertiniParameterHomotopy, AffVariableGroup]
    [bertiniParameterHomotopy, HomVariableGroup]
-   [makeB'InputFile, AffVariableGroup]
-   [makeB'InputFile, HomVariableGroup]
+   [bWriteInputFile, AffVariableGroup]
+   [bWriteInputFile, HomVariableGroup]
    [bertiniZeroDimSolve,HomVariableGroup]
    [bertiniZeroDimSolve,AffVariableGroup]
  Headline
-   See help for bertiniParameterHomotopy and/or makeB'InputFile.
+   See help for bertiniParameterHomotopy and/or bWriteInputFile.
  Description
    Text
      
@@ -1523,7 +1524,7 @@ doc ///
 doc///
  Key
    ParameterGroup
-   [makeB'InputFile, ParameterGroup]
+   [bWriteInputFile, ParameterGroup]
  Headline
    An option which designates the parameters for a Parameter Homotopy.    
  Description
@@ -1531,7 +1532,7 @@ doc///
      This option should be set to a list of parameters. 
    Example
      R=QQ[x,y,u]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 AffVariableGroup=>{{x,y}},
 	 ParameterGroup=>{u},
@@ -1542,7 +1543,7 @@ doc///
 doc///
  Key
    B'Configs
-   [makeB'InputFile, B'Configs]
+   [bWriteInputFile, B'Configs]
    [makeB'TraceInput,B'Configs]
    [bertiniParameterHomotopy,B'Configs]
    [bertiniZeroDimSolve,B'Configs]
@@ -1553,7 +1554,7 @@ doc///
      This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and and the second element is what the Bertini option will be set to e.g. "2".
    Example
      R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
      	 HomVariableGroup=>{{x0,x1},{y0,y1}},
 	 AffVariableGroup=>{{z}},
@@ -1565,7 +1566,7 @@ doc///
 doc///
  Key
    B'Constants
-   [makeB'InputFile, B'Constants]
+   [bWriteInputFile, B'Constants]
    [bertiniParameterHomotopy,B'Constants]
    [bertiniZeroDimSolve,B'Constants]
  Headline
@@ -1577,7 +1578,7 @@ doc///
      the second element is the value that the consant will be set. 
    Example
      R=QQ[z,a,b,c]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{z}},
 	 B'Constants=>{{a,2},{b,3+2*ii},c=>3/2},
@@ -1590,9 +1591,9 @@ doc///
 doc///
  Key
    RandomReal
-   [makeB'InputFile, RandomReal]
+   [bWriteInputFile, RandomReal]
    RandomComplex
-   [makeB'InputFile, RandomComplex]
+   [bWriteInputFile, RandomComplex]
    [bertiniParameterHomotopy,RandomComplex]
    [bertiniParameterHomotopy,RandomReal]
    [bertiniZeroDimSolve,RandomComplex]
@@ -1605,13 +1606,13 @@ doc///
      Elemenets of this list will be set to random real/complex numbers when Bertini is called.
    Example
      R=QQ[x,y,c1,c2]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
 	 B'Polynomials=>{x-c1,y-c2})
    Example
      R=QQ[x,y,c1,c2]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
 	 B'Polynomials=>{x-c1,y-c2})
@@ -1624,7 +1625,7 @@ doc///
 doc///
  Key
    B'Polynomials
-   [makeB'InputFile, B'Polynomials]
+   [bWriteInputFile, B'Polynomials]
  Headline
    An option which designates the polynomials that we want to solve.    
  Description
@@ -1633,7 +1634,7 @@ doc///
      If B'Polynomials is not used then the user should use the  NamePolynomials option. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2})
@@ -1641,7 +1642,7 @@ doc///
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.  
    Example
      R=QQ[x,y,A]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Functions=>{{A,x^2-1}},
 	 B'Polynomials=>{A+y,x+y-2})
@@ -1652,7 +1653,7 @@ doc///
 doc///
  Key
    B'Functions
-   [makeB'InputFile, B'Functions]
+   [bWriteInputFile, B'Functions]
    [bertiniZeroDimSolve,B'Functions]
    [bertiniParameterHomotopy,B'Functions]
  Headline
@@ -1663,7 +1664,7 @@ doc///
      The user should use the  NamePolynomials option in conjunction with B'Functions whenever B'Polynomials is not used. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
 	 B'Functions=>{{f1,x+y-1},f2=>x^2-2})--f1=x+y+1,f2=x^2-2 is written to the input file
@@ -1671,7 +1672,7 @@ doc///
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.  
    Example
      R=QQ[x,y,A]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Functions=>{{A,x^2-1}},--A=x^2-1 is written to the input file
 	 B'Polynomials=>{A+y,x+y-2})
@@ -1682,7 +1683,7 @@ doc///
 doc///
  Key
    NamePolynomials
-   [makeB'InputFile, NamePolynomials]
+   [bWriteInputFile, NamePolynomials]
  Headline
    An option which designates the names of the polynomials we want to solve.  
  Description
@@ -1691,7 +1692,7 @@ doc///
      The user should use the  NamePolynomials option in conjunction with B'Functions whenever B'Polynomials is not used. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
 	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
@@ -1702,7 +1703,7 @@ doc///
 doc///
  Key
    NameB'InputFile
-   [makeB'InputFile, NameB'InputFile]
+   [bWriteInputFile, NameB'InputFile]
  Headline
    This option names the input file. 
  Description
@@ -1710,7 +1711,7 @@ doc///
      Set this option to a string to name the input file. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2},
 	 NameB'InputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
@@ -1779,7 +1780,7 @@ doc///
    [makeWitnessSetFiles,NameWitnessSliceFile]
    [importMainDataFile,NameMainDataFile]
    NameGaloisGroupGeneratorFile
-   [b'TraceTestImage,NameB'InputFile]
+   [bTraceTestImage,NameB'InputFile]
    [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
    [makeMembershipFile,NameB'InputFile]
    [b'PHMonodromyCollect,NameStartFile]
@@ -1796,7 +1797,7 @@ doc///
    Text
      Set this option to a string to name the file to be imported or written.
    Example
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"});
+     bWriteInputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"});
      runBertini(storeBM2Files);
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions");     
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions");     
@@ -1804,7 +1805,7 @@ doc///
      writeStartFile(storeBM2Files,{{2},{ -2}},NameStartFile=>"start");
      writeParameterFile(storeBM2Files,{4},NameParameterFile=>"start_parameters");
      writeParameterFile(storeBM2Files,{3},NameParameterFile=>"final_parameters");
-     makeB'InputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
+     bWriteInputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
      runBertini(storeBM2Files,NameB'InputFile=>"inputWin");
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")          
@@ -2141,8 +2142,8 @@ doc ///
 --   storeBM2Files
    [b'PHMonodromyCollect,NumSolBound]
    (makeB'TraceInput,String,Number,Number)
-   [makeB'InputFile,PathVariable]
-   [makeB'InputFile,VariableList]
+   [bWriteInputFile,PathVariable]
+   [bWriteInputFile,VariableList]
    [makeMembershipFile,TestSolutions]
    [makeMembershipFile,M2Precision]
    [valueBM2,M2Precision]
@@ -2194,35 +2195,35 @@ doc ///
    AccuracyEstInternal
    ComponentNumber 
    [b'PHGaloisGroup,LoopRadius]
-   [b'TraceTestImage,MapPoints]
+   [bTraceTestImage,MapPoints]
    [moveB'File,MoveToDirectory]
-   [b'TraceTestImage,OnlyCalculateTrace]
-   [b'TraceTestImage,RandomGamma]
+   [bTraceTestImage,OnlyCalculateTrace]
+   [bTraceTestImage,RandomGamma]
    [b'PHGaloisGroup,ReturnGaloisGroupGeneratorFile]
    [subPoint,SpecifyVariables]
-   [b'TraceTestImage,StartParameters]
-   [b'TraceTestImage,StartPoints]
-   [b'TraceTestImage,StopBeforeTest]
+   [bTraceTestImage,StartParameters]
+   [bTraceTestImage,StartPoints]
+   [bTraceTestImage,StopBeforeTest]
    [b'PHGaloisGroup,StorageFolder]    
    [b'PHMonodromyCollect,StorageFolder]	   
    [b'PHSequence,StorageFolder]
    [importIncidenceMatrix,StorageFolder]
    [importParameterFile,StorageFolder]
    [importSolutionsFile,StorageFolder]
-   [makeB'InputFile,StorageFolder]
+   [bWriteInputFile,StorageFolder]
    [makeMembershipFile,StorageFolder]
    [makeSampleSolutionsFile,StorageFolder]
    [makeWitnessSetFiles,StorageFolder]
    [runBertini,StorageFolder]
    [writeParameterFile,StorageFolder]
    [writeStartFile,StorageFolder]
-   [b'TraceTestImage,SubFolder]
+   [bTraceTestImage,SubFolder]
    [moveB'File,SubFolder]
-   [b'TraceTestImage,SubIntoCC]
+   [bTraceTestImage,SubIntoCC]
    [subPoint,SubIntoCC]
    [subPoint,M2Precision]
-   [b'TraceTestImage,B'Exe]
-   [b'TraceTestImage,M2Precision]
+   [bTraceTestImage,B'Exe]
+   [bTraceTestImage,M2Precision]
    [b'PHGaloisGroup,B'Exe]
    [b'PHGaloisGroup,BranchPoints]
    [b'PHGaloisGroup,MonodromyStartParameters]
@@ -2414,7 +2415,7 @@ doc ///
 doc///
  Key
    AffVariableGroup
-   [makeB'InputFile, AffVariableGroup]
+   [bWriteInputFile, AffVariableGroup]
  Headline
    An option which designates the Affine Variable Groups.    
  Description
@@ -2422,7 +2423,7 @@ doc///
      We can group variables together when using zero-dimensional runs in Bertini. 
    Example
      R=QQ[x1,x2,y]
-     makeB'InputFile(storeBM2Files,
+     bWriteInputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})

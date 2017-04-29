@@ -18,19 +18,22 @@ newPackage(
      HomePage => "http://www.math.gatech.edu/~leykin"}
   }, 
   Headline => "Interface to Bertini",
-  Configuration => { "BERTINIexecutable"=>"bertini" },
- -- DebuggingMode => true,
+  Configuration => { "BERTINIexecutable"=>"bertini" }, 
   DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 ) 
 
 exportMutable{"storeBM2Files",
-    "makeB'InputFile"
+  "makeB'InputFile",
+  "b'TraceTestImage"
   }
 
+
 export {
-  "b'TraceTestImage", 
+  "bWriteInputFile",      
+  "bTraceTestImage",
+  --
   "moveB'File",
   "CopyB'File",
   "calculateB'Trace",
@@ -116,8 +119,7 @@ export {
   "NameIncidenceMatrixFile",
   "NameStartFile",
   "NameFunctionFile",
---  "makeB'InputFile",
-  "bWriteInputFile",
+--  "bWriteInputFile",
   "HomVariableGroup", --A list of lists of homogeneous variable groups. 
   "AffVariableGroup", --A list of lists of affine variable groups. 	
   "ParameterGroup",
@@ -136,7 +138,6 @@ export {
   "writeParameterFile",
   "writeStartFile",  
   "importParameterFile",   --need doc
---  "b'TraceTest", Depracated.
   "UseStartPointsFirst",
   "b'PHSequence"   ,
   "b'PHMonodromyCollect",
@@ -193,6 +194,8 @@ export {
   "SpecifyVariables",
   "SubIntoCC"
     }
+  
+  
   
   protect SolutionNumber
   protect StartSystem
@@ -314,8 +317,8 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
     if o.MaxCycleNum=!=-1 then myConfigs=append(myConfigs,{"MaxCycleNum",o.MaxCycleNum});
     if o.RegenStartLevel=!=-1 then myConfigs=append(myConfigs,{"RegenStartLevel",o.RegenStartLevel});    
 --    print myConfigs;
---%%-- We use the makeB'InputFile method to write a Bertini file. 
-  makeB'InputFile(myTopDir,
+--%%-- We use the bWriteInputFile method to write a Bertini file. 
+  bWriteInputFile(myTopDir,
     B'Polynomials=>myPol,
     AffVariableGroup=>myAVG,
     HomVariableGroup=>myHVG,
@@ -475,8 +478,8 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --  print myAVG;
 --  print myHVG;
---%%-- We use the makeB'InputFile method to write a Bertini file. 
-  makeB'InputFile(myTopDir,
+--%%-- We use the bWriteInputFile method to write a Bertini file. 
+  bWriteInputFile(myTopDir,
     ParameterGroup=>myParams,
     B'Polynomials=>myPol,
     AffVariableGroup=>myAVG,
@@ -1561,8 +1564,8 @@ checkMultiplicity=(listOfPoints)->(
         then i.SolutionStatus=Singular)
 
 ---- November 2014 additions
---FUNCTION 1: makeB'InputFile
---the input of makeB'InputFile is a string of the directory where we want to write the files.
+--FUNCTION 1: bWriteInputFile
+--the input of bWriteInputFile is a string of the directory where we want to write the files.
 
 
 bWriteInputFile = method(TypicalValue => String, Options=>{
@@ -1866,7 +1869,7 @@ makeB'TraceInput = method(TypicalValue => Nothing, Options=>{
 	})
 makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,NumberOfCoordinates)->(    
     theVars:= for aSol  to NumberOfPoints-1 list for aCoordinate to NumberOfCoordinates-1 list ("jadeTT"|aSol|"v"|aCoordinate);
-    makeB'InputFile(filesGoHere,
+    bWriteInputFile(filesGoHere,
 	NameB'InputFile=>o.NameB'InputFile,
 	B'Configs=>o.B'Configs|{{"TRACKTYPE",-4}},
 	AffVariableGroup=>theVars,
@@ -1906,7 +1909,7 @@ calculateB'Trace(String) := o ->(
 --We only change the FIRST PARAMETER.
 --We import the start parameter P and fix a Gamma. 
 --We take the trace of solutions for the parameter at P, P+Gamma, P-Gamma 
-b'TraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
+bTraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
 	NameB'InputFile=>"input",
 	SubFolder=>false,
 	B'Exe=>BERTINIexe,
@@ -1920,7 +1923,7 @@ b'TraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory 
 	StopBeforeTest=>false,
     	Verbose=>false
 		})
-b'TraceTestImage(String) := o ->(storeFiles)->(
+bTraceTestImage(String) := o ->(storeFiles)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";
     IFD:=storeFiles;    
@@ -2712,7 +2715,7 @@ bertiniImageMonodromyCollect(String) := o ->(IFD)->(
     if o.GeneralCoordinate===null then   (
       gcMap=for i to numImageCoords-1 list random CC);
     theWeights:=for i to numImageCoords-1 list "weightJADE"|i=>gcMap_i;
-    makeB'InputFile(storeFiles,
+    bWriteInputFile(storeFiles,
       NameB'InputFile=>inputImageMapName,      AffVariableGroup=>o.AffVariableGroup, 
       B'Constants=>o.B'Constants|theWeights,      B'Functions=>o.B'Functions,      B'Configs=>{{"SecurityLevel",1},{"Tracktype",-4}},
       B'Polynomials=>{makeB'Section(imagePoly,B'NumberCoefficients=>theWeights/toList/first)});
@@ -3200,9 +3203,12 @@ collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
 ///
 
 
+
+
+
 --New names of functions.
 makeB'InputFile=bWriteInputFile
-
+b'TraceTestImage=bTraceTestImage
 
 
 
