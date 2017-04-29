@@ -1,8 +1,8 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "2.1.2.2", 
-  Date => "September 27, 2016",
+  Version => "2.1.2.3", 
+  Date => "April 29, 2017",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -25,7 +25,17 @@ newPackage(
   CacheExampleOutput => true
 ) 
 
+exportMutable{"storeBM2Files"
+  }
+
 export {
+  "ContinueLoop",
+  "bertiniImageMonodromyCollect",
+  "ImageCoordinates",
+  "GeneralCoordinate",
+  "OnlyMoveParameters",
+  "EquivalentCoordinates",
+  "ReturnPoints",    
   "PrintMidStatus",
   "OutputSyle",
   "TopDirectory",
@@ -41,7 +51,6 @@ export {
   "b'TraceTestImage", 
   "subPoint",
   "OrderPaths",
-  "storeBM2Files",
   "bertiniZeroDimSolve",
   "bertiniParameterHomotopy",
   "bertiniPosDimSolve",
@@ -254,7 +263,8 @@ bertiniZeroDimSolve = method(TypicalValue => List, Options=>knownConfigs|{
     	Verbose=>false
 	} )
 bertiniZeroDimSolve(List) := o -> (myPol) ->(        
-    --myPol are your polynomial system that you want to solve.
+    --myPol are your polynomial system that you want to solve. If empty return empty.
+  if myPol=={} then error"Polynomial system is the empty list. ";
 --%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini. 
 --%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files. 
 --%%%%--To change the default directory, set the TopDirectory option to the directory you would like.
@@ -262,18 +272,19 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol. 
   myAVG:= o.AffVariableGroup;
   myHVG:= o.HomVariableGroup;
+--%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={} 
   then (
     if not member (class first myPol,{String,B'Section,B'Slice,Product})
     then (myAVG=gens ring first myPol)
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --%%-- Verbose set greater than 1 will print the variable groups.
-  if o.Verbose then print myAVG;
-  if o.Verbose then  print myHVG;
+--  if o.Verbose then print myAVG;
+--  if o.Verbose then  print myHVG;
 --%%--We need to set the CONFIGS of the Bertini input file. 
 --%%%%--These CONFIGS come in two flavors: 
 --%%%%--If the same configuration is set twice then Bertini will use the one set last.
---%%%%--The first is in B'Configs wher we just list the configurations. 
+--%%%%--The first is in B'Configs where we just list the configurations. 
   myConfigs:=(o.B'Configs);
 --%%%%--The second is as individual options from 'knownConfigs' (search in Beritni.m2 to see the knownConfigs).
     if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MPType",o.MPType});
@@ -2204,7 +2215,7 @@ runBertini(String) := o ->(IFD)->(--IFD=input file directory
 	then (
 	  print fileExists(filesGoHere|"bertini_session.log");
 	  print readFile(filesGoHere,"bertini_session.log",10000);
-	  error"Bertin run failed. ");
+	  error"Bertini run failed. ");
 	if o.PreparePH2=!=false and runSuccess===0
 	then (
 	  s:= run("sed -i -e 's/%%%ENDCONFIG/	 PARAMETERHOMOTOPY : 2; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
@@ -2394,6 +2405,9 @@ importSolutionsFile(String) := o -> (importFrom)-> (
 
 
 
+
+
+
 importIncidenceMatrix= method(TypicalValue=>Nothing,Options=>{
 	NameIncidenceMatrixFile=>"incidence_matrix",
 	StorageFolder=>null,
@@ -2479,7 +2493,7 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
 	  start0pnts:= openOut(storeFiles|"start");  
      	  start0pnts << "0" << endl << endl;
 	  close start0pnts;
-	  print ("Warning: No paths in this seqence were successfuly tracked: Run count "|toString(runCount));
+	  print ("Warning: No paths in this sequence were successfuly tracked: Run count "|toString(runCount));
 	  break);
 	if o.NameSolutionsFile==="simple_raw_solutions" then  (
 	  simplifyRawSolutions(storeFiles));	  
@@ -2553,7 +2567,7 @@ b'PHMonodromyCollect=method(TypicalValue=>Thing,Options=>{
   	NumSolBound=>infinity,
 	SpecifyLoops=>false,
 	Verbose=>false,
-	PrintMidStatus=>true,--Set to false to silence additional output.
+	PrintMidStatus=>true--Set to false to silence additional output.
 	})
 b'PHMonodromyCollect(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
@@ -2626,7 +2640,155 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
       );
     return solCollection);
 	    
-----
+bertiniImageMonodromyCollect=method(TypicalValue=>Thing,Options=>{
+	NameB'InputFile=>"input",
+	MonodromyStartPoints=>null,--Set this option if the start points come from a list.
+	NameStartFile=>"start",--Set this option if the start points come from a file. 
+	NameParameterFile=>"start_parameters",
+	NameSolutionsFile=>"simple_raw_solutions",
+    	StorageFolder=>null,
+	SaveData=>false,
+	B'Exe=>BERTINIexe,
+	MonodromyStartParameters=>null,
+  	NumberOfLoops=>1,
+  	NumSolBound=>infinity,
+	SpecifyLoops=>null,
+	Verbose=>false,
+	AffVariableGroup=>{},
+	B'Functions=>{},
+	B'Constants=>{},
+	PrintMidStatus=>true,--Set to false to silence additional output.
+	ImageCoordinates=>{},--ImagePolys,
+	GeneralCoordinate=>null,--This is given by a list of random numbers. The length of the list is the number of image coordinates. 
+	OnlyMoveParameters=>null,--Set to a list, e.g. {0,2} so that the 0th and 2nd parameters are the only ones that move.
+    	EquivalentCoordinates=>((a,b)->(if abs(a-b)<1e-10 then true else false)),
+	M2Precision=>52,
+	ReturnPoints=>true,
+	ContinueLoop=>true
+	})
+bertiniImageMonodromyCollect(String) := o ->(IFD)->(
+    IFD=addSlash(IFD);
+    if o.Verbose then print IFD;
+--Write start_parameter and start files. 
+    if o.SpecifyLoops=!=null and o.OnlyMoveParameters=!=null then print("Warning: SpecifyLoops is set and OnlyMoveParameters will be ignored.");
+--
+    if o.MonodromyStartPoints=!=null and o.NameStartFile=!="start" then print("Warning: MonodromyStartPoints and NameStartFile should not be set at the same time. ");
+    if o.MonodromyStartPoints=!=null then writeStartFile(IFD,o.MonodromyStartPoints);--write a start file.
+--
+    if o.MonodromyStartParameters=!=null and o.NameParameterFile=!="start_parameters" then print("Warning: MonodromyStartParameters and NameStartParameterFile should not be set at the same time. ");
+    if o.MonodromyStartParameters=!=null then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file.
+    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
+    if fileExists(IFD|o.NameStartFile)===false then error "start file does not exist in correct directory or MonodromyStartPoints needs to be set.";
+    if fileExists(IFD|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory or MonodromyStartParameters needs to be set.";        
+--Move files to storage folder if necessary. 
+    if o.StorageFolder=!=null 
+    then (
+      storeFiles:=addSlash(IFD|o.StorageFolder);
+      if false===fileExists storeFiles then mkdir storeFiles)
+    else storeFiles=addSlash(IFD);
+--Copy files to have default names.
+    if o.NameStartFile=!="start" or null=!=o.StorageFolder 
+    then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder  
+    then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    if null=!=o.StorageFolder  
+    then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
+--
+--INSERT SHARPEN POINTS and REMOVE DUPLICATES OPTION HERE--
+--For now assume we are given a good start solution.
+--Maybe change general coordinate to weighted coordinate.
+    moveB'File(storeFiles,"start","start_Fiber_JADE",CopyB'File=>true);
+--Import base parameters and fiber.
+    bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");---we pull the base parameters
+    if o.ImageCoordinates==={}     then imagePoly:=flatten (o.AffVariableGroup)    else imagePoly=o.ImageCoordinates;
+    --print imagePoly;
+    numImageCoords:=#imagePoly;
+    numOriginalCoords:=#flatten o.AffVariableGroup;
+--Set the general coordinate:
+    inputImageMapName:="input_Image_Map_JADE";
+    if o.GeneralCoordinate=!=null then   gcMap:=o.GeneralCoordinate;
+    if o.GeneralCoordinate===null then   (
+      gcMap=for i to numImageCoords-1 list random CC);
+    theWeights:=for i to numImageCoords-1 list "weightJADE"|i=>gcMap_i;
+    makeB'InputFile(storeFiles,
+      NameB'InputFile=>inputImageMapName,      AffVariableGroup=>o.AffVariableGroup, 
+      B'Constants=>o.B'Constants|theWeights,      B'Functions=>o.B'Functions,      B'Configs=>{{"SecurityLevel",1},{"Tracktype",-4}},
+      B'Polynomials=>{makeB'Section(imagePoly,B'NumberCoefficients=>theWeights/toList/first)});
+    runBertini(storeFiles,NameB'InputFile=>inputImageMapName);
+    startFiberGenCoord:= flatten importSolutionsFile(storeFiles,NameSolutionsFile=>"function");
+    startImageGC:= startFiberGenCoord;
+    numStartPoints:=#startImageGC;
+    loopCount:=0;
+    continueLoop:=true;
+    breakLoop:=false; 
+--If the loops are not specified by a lists of lists of parameter values then the default is to take 'triangle-loops' given by lists of list of 2 parameter values.
+    loopGenerator:=(aLoopCount)->(
+      if o.SpecifyLoops=!=null 
+      then oneLoop:=((o.SpecifyLoops)_aLoopCount);
+      if o.SpecifyLoops===null 
+      then oneLoop=for i to 2-1 list for j to #bP-1 list 
+	if o.OnlyMoveParameters===null 
+	then (2*random(CC)-random(CC)) 
+	else if  member(j,o.OnlyMoveParameters) 
+	then (2*random(CC)-random(CC)) else bP_j;
+      return oneLoop);   
+--This for loop tracks one round of monodromy.--listsOfParameterValues=pointsOnLoop--listsOfListsOfParameterValues=listOfLoops
+    while not breakLoop do(
+      --print first loopGenerator(loopCount);
+      ------If monodromy-loops are not specified then at each interation of the while loop we will create a new list of loops but only has one element. 
+      theCurrentLoop:=loopGenerator(loopCount);
+      loopCount=loopCount+1;
+      if o.Verbose or o.PrintMidStatus then print ("Starting monodromy loop number: "|toString(loopCount)|".");
+--    	print (	    append(listsOfParameterValues,bP));	
+      if fileExists(storeFiles|"start")===false then error "start file for b'PHSequence is missing.";
+      if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file for b'PHSequence is missing.";        
+      b'PHSequence(storeFiles,        append(theCurrentLoop,bP),
+	B'Exe=>o.B'Exe,	NameSolutionsFile=>o.NameSolutionsFile,	NameB'InputFile=>o.NameB'InputFile,	SaveData=>true);
+--    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
+      openStartFileToAppend:=openOutAppend(addSlash(storeFiles)|"start_Fiber_JADE");
+--    	print get openStartFileToAppend;
+-----INSERT CONTINUE OPTION.     		
+      runBertini(storeFiles,NameB'InputFile=>inputImageMapName);
+      startImageGC= flatten importSolutionsFile(storeFiles,NameSolutionsFile=>"function");
+      stringSolutions:= lines get  (addSlash(storeFiles)|"start");
+      numStartPoints=value first stringSolutions;
+      stringSolutions=append(drop(stringSolutions,2),"");
+--    	print stringSolutions;
+    	--Need a check for the standardization of Bertini solutions file.
+    	--Assume the structure of the file is solution then whiteline where each line of solution is a coordinate.	
+      for onePoint to #startImageGC-1 do (
+	foundNewSolution:=true;
+	indexStarFiberGenCoord:=0;
+	while  foundNewSolution and indexStarFiberGenCoord<#startFiberGenCoord do( 
+	  foundNewSolution=not o.EquivalentCoordinates(startImageGC_onePoint,(startFiberGenCoord_indexStarFiberGenCoord));
+	  indexStarFiberGenCoord=indexStarFiberGenCoord+1	);
+	if foundNewSolution   
+	then(
+--append to fiber file
+	  for c to numOriginalCoords do(openStartFileToAppend <<stringSolutions_c <<endl);
+	  startFiberGenCoord=append(startFiberGenCoord,startImageGC_onePoint) ;    	    
+	  numStartPoints=numStartPoints+1  
+	    );
+--Drop lines
+	stringSolutions=drop(stringSolutions,numOriginalCoords+1);
+		);
+        close openStartFileToAppend;
+	print ("Current fiber size: "|toString numStartPoints);    	  
+	replaceFirstLine(storeFiles,"start_Fiber_JADE",toString numStartPoints)      ;
+      moveB'File(storeFiles,"start_Fiber_JADE","start",CopyB'File=>true);
+----Now we check if we have finished the computation by breaking the while loop. 
+      if loopCount>=o.NumberOfLoops then (
+	breakLoop=true;
+	if o.Verbose or o.PrintMidStatus then print "NumberOfLoops has been reached.");
+--      print startFiberGenCoord;
+      if #startFiberGenCoord>= o.NumSolBound then (
+	breakLoop=true;
+	if o.Verbose then print (#startFiberGenCoord);
+	if o.Verbose or o.PrintMidStatus then print ("Number of loops: "|toString loopCount|".");
+	if o.Verbose or o.PrintMidStatus then print "NumSolBound has been reached.");      
+      );
+    if o.ReturnPoints then return importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
+
 
 radicalList=method(TypicalValue=>Thing,Options=>{
 	})

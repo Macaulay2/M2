@@ -489,8 +489,76 @@ doc ///
 	 MonodromyStartPoints=>{{1,0}},
       	 NumberOfLoops=>10,NumSolBound=>3,
 	 MonodromyStartParameters=>{1,0}	)
+///;
+
+
+
+
+doc ///
+ Key
+   bertiniImageMonodromyCollect
+   (bertiniImageMonodromyCollect,String)
+ Headline
+   Uses monodromy to find more solutions to a parameterized system of polynomial equations.
+ Usage
+   bertiniImageMonodromyCollect(s) 
+ Inputs
+   s:String
+     The directory where the files are stored.
+ Description
+   Text
+     Given a directory that has a Bertini input file that has ParameterHomotopy set to 2, a start file, for start_parameters,
+     this function uses parameter homotopies to perform a monodromy homotopy.           
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     writeStartFile(storeBM2Files,{{1,0}},NameStartFile=>"startSave");
+     --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
+     writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
+     --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     bertiniImageMonodromyCollect(storeBM2Files,
+	 NameStartFile=>"startSave",
+	 StorageFolder=>"StoreFiles",
+    	 AffVariableGroup=>{x,y},
+      	 NumberOfLoops=>10,NumSolBound=>3,
+	 MonodromyStartParameters=>{1,0}	)
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     bertiniImageMonodromyCollect(storeBM2Files,
+    	 AffVariableGroup=>{x,y},
+	 StorageFolder=>"StoreFiles",
+	 MonodromyStartPoints=>{{1,0}},
+      	 NumberOfLoops=>10,NumSolBound=>3)
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     s1=bertiniImageMonodromyCollect(storeBM2Files,
+	 AffVariableGroup=>{x,y},
+	 MonodromyStartPoints=>{{1,0}},
+      	 MonodromyStartParameters=>{1,0},
+	 NumberOfLoops=>10,NumSolBound=>3,
+      	 MonodromyStartParameters=>{1,0},
+	 ImageCoordinates=>({x}))
+     #s1==1
+     s2=bertiniImageMonodromyCollect(storeBM2Files,
+	 MonodromyStartPoints=>{{1,0}},
+      	 MonodromyStartParameters=>{1,0},
+	 NumberOfLoops=>10,NumSolBound=>3,
+      	 MonodromyStartParameters=>{1,0},
+	 AffVariableGroup=>{x,y},
+	 ImageCoordinates=>{"x^3+x*y^2+y+y^3+x-2"})
+     #s2==1
+
+
       
 ///;
+
+
+
 
 doc ///
  Key
