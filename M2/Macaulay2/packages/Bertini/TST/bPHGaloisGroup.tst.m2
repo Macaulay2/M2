@@ -42,3 +42,6 @@ needsPackage "Bertini"
 
      gg6=b'PHGaloisGroup(storeBM2Files,BranchPoints=>{TBranchPoints_0},StorageFolder=>"StoreFiles")      
      assert(#gg6===1)
+
+
+

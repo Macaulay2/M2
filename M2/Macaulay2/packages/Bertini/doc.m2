@@ -168,17 +168,76 @@ doc ///
 
 doc ///
  Key
-   bertiniTrackHomotopy
-   (bertiniTrackHomotopy, RingElement, List, List)
+   bertiniUserHomotopy
+   (bertiniUserHomotopy, RingElement, List, List,List)
  Headline
    track a user-defined homotopy
  Usage
-   S0=bertiniTrackHomotopy(t, H, S1)
+   S0=bertiniUserHomotopy(t,P, H, S1)
  Inputs
    t:RingElement
      path variable
+   P:List
+     of Options that set the parameters  
    H:List
      of polynomials that define the homotopy
+   S1:List
+     of solutions to the start system  
+ Outputs
+   S0:List
+     of solutions to the target system
+ Consequences
+  Item
+    Writes the homotopy and start solutions to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with configuration keyword {\tt USERHOMOTOPY}. 
+  Item
+    Stores output of {\tt Bertini} in temporary file
+  Item
+    Parses and outputs the solutions       
+ Description
+   Text
+     This method calls {\tt Bertini} to track a user-defined homotopy.  The
+     user needs to specify the homotopy H, the path variable t, and a list
+     of start solutions S1. In the following example, we solve $x^2-2$ by moving
+     from $x^2-1$ with a linear homotopy. {\tt Bertini} tracks homotopies starting at
+     $t=1$ and ending at $t=0$. Final solutions are of type Point.
+   Example
+     R = CC[x,a,t]; -- include the path variable in the ring     
+     H = { (x^2-1)*a + (x^2-2)*(1-a)};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
+     S1= { sol1, sol2  };--solutions to H when t=1	  
+     S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
+     peek S0_0
+   Example     
+     R=CC[x,y,t,a]; -- include the path variable in the ring     
+     f1=(x^2-y^2);
+     f2=(2*x^2-3*x*y+5*y^2);
+     H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
+     sol1=    point{{1,1}}--{{x,y}} coordinates
+     sol2=    point{{ -1,1}}
+     S1={sol1,sol2}--solutions to H when t=1
+     S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0 
+ Caveat
+   Variables must begin with a letter (lowercase or capital) and
+   can only contain letters, numbers, underscores, and square brackets.           
+///;
+
+
+doc ///
+ Key
+   bertiniTrackHomotopy
+   (bertiniTrackHomotopy, RingElement, List,List)
+ Headline
+   track a user-defined homotopy
+ Usage
+   S0=bertiniUserHomotopy(t, H, S1)
+ Inputs
+   t:RingElement
+     path variable
+   P:List
+     of Options that set the parameters  
    S1:List
      of solutions to the start system  
  Outputs
@@ -221,6 +280,9 @@ doc ///
    Variables must begin with a letter (lowercase or capital) and
    can only contain letters, numbers, underscores, and square brackets.           
 ///;
+
+
+
 
 doc ///
  Key
@@ -1105,7 +1167,7 @@ doc ///
  Description
    Text
      bHyperplane allows for easy creation of equations that define hyperplanes.
-     The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
+     The default creates a hash table with two keys: BNumberCoefficients and B'SectionString.
      The first key is a list of numbers in CC that are coefficients, and the second key is a string representing the linear polynomial.
      The option RandomCoefficientGenerator can be set to a function to generate random numbers for the coefficients. 
    Text   
@@ -1118,10 +1180,10 @@ doc ///
      class s
      randomRealCoefficientGenerator=()->random(RR)
      sReal=bHyperplane({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
-     sReal#B'NumberCoefficients
+     sReal#BNumberCoefficients
      randomRationalCoefficientGenerator=()->random(QQ)
      sRational=bHyperplane({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
-     sRational#B'NumberCoefficients
+     sRational#BNumberCoefficients
    Example
      affineSection=bHyperplane({x,y,z,1})
    Example
@@ -1163,7 +1225,7 @@ doc ///
  Description
    Text
      bSlice allows for easy creation of equations that define linear spaces, i.e. slices.
-     The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
+     The default creates a hash table with two keys: BNumberCoefficients and B'SectionString.
      When we have a multiprojective variety we can different types of slices.
      To make a slice we need to specify the type of slice we want followed by variable groups.
    Example
@@ -1357,7 +1419,7 @@ doc ///
 -------------------
 doc ///
   Key
-   [bertiniTrackHomotopy, Verbose]
+   [bertiniUserHomotopy, Verbose]
    [bertiniComponentMemberTest, Verbose]
    [bertiniPosDimSolve, Verbose]
    [bertiniRefineSols, Verbose]
@@ -1380,7 +1442,7 @@ doc ///
   Headline
     Option to silence additional output 
   Usage
-    bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
+    bertiniUserHomotopyVerbose(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
@@ -1466,6 +1528,7 @@ doc ///
  Key
    IsProjective
    [bertiniTrackHomotopy, IsProjective]
+--   [bertiniUserHomotopy, IsProjective]
 --   [bertiniParameterHomotopy, IsProjective]
    [bertiniComponentMemberTest, IsProjective]
    [bertiniPosDimSolve, IsProjective]
@@ -1948,32 +2011,32 @@ doc ///
     [bertiniSample, MaxNumberSteps]
     [bertiniSample, MaxCycleNum]
     [bertiniSample, RegenStartLevel]
-    [bertiniTrackHomotopy, MPType]
-    [bertiniTrackHomotopy, PRECISION]
-    [bertiniTrackHomotopy, ODEPredictor]
-    [bertiniTrackHomotopy, TrackTolBeforeEG]
-    [bertiniTrackHomotopy, TrackTolDuringEG]
-    [bertiniTrackHomotopy, FinalTol]
-    [bertiniTrackHomotopy, MaxNorm]
-    [bertiniTrackHomotopy, MinStepSizeBeforeEG]
-    [bertiniTrackHomotopy, MinStepSizeDuringEG]
-    [bertiniTrackHomotopy, ImagThreshold]
-    [bertiniTrackHomotopy, CoeffBound]
-    [bertiniTrackHomotopy, DegreeBound]
-    [bertiniTrackHomotopy, CondNumThreshold]
-    [bertiniTrackHomotopy, RandomSeed]
-    [bertiniTrackHomotopy, SingValZeroTol]
-    [bertiniTrackHomotopy, EndGameNum]
-    [bertiniTrackHomotopy, UseRegeneration]
-    [bertiniTrackHomotopy, SecurityLevel]
-    [bertiniTrackHomotopy, ScreenOut]
-    [bertiniTrackHomotopy, OutputLevel]
-    [bertiniTrackHomotopy, StepsForIncrease]
-    [bertiniTrackHomotopy, MaxNewtonIts]
-    [bertiniTrackHomotopy, MaxStepSize]
-    [bertiniTrackHomotopy, MaxNumberSteps]
-    [bertiniTrackHomotopy, MaxCycleNum]
-    [bertiniTrackHomotopy, RegenStartLevel]
+    [bertiniUserHomotopy, MPType]
+    [bertiniUserHomotopy, PRECISION]
+    [bertiniUserHomotopy, ODEPredictor]
+    [bertiniUserHomotopy, TrackTolBeforeEG]
+    [bertiniUserHomotopy, TrackTolDuringEG]
+    [bertiniUserHomotopy, FinalTol]
+    [bertiniUserHomotopy, MaxNorm]
+    [bertiniUserHomotopy, MinStepSizeBeforeEG]
+    [bertiniUserHomotopy, MinStepSizeDuringEG]
+    [bertiniUserHomotopy, ImagThreshold]
+    [bertiniUserHomotopy, CoeffBound]
+    [bertiniUserHomotopy, DegreeBound]
+    [bertiniUserHomotopy, CondNumThreshold]
+    [bertiniUserHomotopy, RandomSeed]
+    [bertiniUserHomotopy, SingValZeroTol]
+    [bertiniUserHomotopy, EndGameNum]
+    [bertiniUserHomotopy, UseRegeneration]
+    [bertiniUserHomotopy, SecurityLevel]
+    [bertiniUserHomotopy, ScreenOut]
+    [bertiniUserHomotopy, OutputLevel]
+    [bertiniUserHomotopy, StepsForIncrease]
+    [bertiniUserHomotopy, MaxNewtonIts]
+    [bertiniUserHomotopy, MaxStepSize]
+    [bertiniUserHomotopy, MaxNumberSteps]
+    [bertiniUserHomotopy, MaxCycleNum]
+    [bertiniUserHomotopy, RegenStartLevel]
     [bertiniZeroDimSolve, MPType]
     [bertiniZeroDimSolve, PRECISION]
     [bertiniZeroDimSolve, ODEPredictor]
@@ -2159,15 +2222,15 @@ doc ///
    ContainsPoint
    RandomCoefficientGenerator
    NameB'Section
-   B'NumberCoefficients
+   BNumberCoefficients
    B'SectionString
    [bSlice,B'Homogenization]
-   [bSlice,B'NumberCoefficients]
+   [bSlice,BNumberCoefficients]
    [bSlice,ContainsMultiProjectivePoint]
    [bSlice,ContainsPoint]
    [bSlice,NameB'Slice]
    [bSlice,RandomCoefficientGenerator]
-   [bHyperplane,B'NumberCoefficients]
+   [bHyperplane,BNumberCoefficients]
    [bHyperplane,NameB'Section]
    [runBertini,PreparePH2]
    [runBertini,TextScripts]
