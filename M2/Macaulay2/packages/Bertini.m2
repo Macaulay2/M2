@@ -477,7 +477,7 @@ bertiniUserHomotopy = method(TypicalValue => List, Options=>knownConfigs|{Verbos
 --	IsProjective=>-1
 	--NonPolynomial=>false
 	} )
-bertiniUserHomotopy(RingElement,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
+bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
 --%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini. 
 --%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files. 
 --%%%%--To change the default directory, set the TopDirectory option to the directory you would like.

@@ -1,5 +1,10 @@
 needsPackage "Bertini"
 
+--Ring free.
+H = { "(x^2-y^2)*a +(2*x^2-3*x*y-5*y^2)*(1-a)"}
+s=bertiniUserHomotopy(t, {a=>t},H, {point{{1,1}}, point{{ -1,1}}},HomVariableGroup=>{x,y} ) 
+assert(#s==2)
+
 ---The variables of your ring consist of parameters, then unknowns.
 R=QQ[t0,x,y,T]
 --We have a system of two equations.
@@ -43,3 +48,5 @@ startPoints={point({{1,1}}),     point({{-1,1}})}
 --the output for bertiniTrackHomotopy is a list of points. 
 targetPoints=bertiniTrackHomotopy(t0, aUserHomotopy,startPoints)
 assert(areEqual(sortSolutions targetPoints, {point {{-3, 1}}, point {{3, 1}}}))
+		
+		

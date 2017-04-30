@@ -169,7 +169,7 @@ doc ///
 doc ///
  Key
    bertiniUserHomotopy
-   (bertiniUserHomotopy, RingElement, List, List,List)
+   (bertiniUserHomotopy, Thing, List, List,List)
  Headline
    track a user-defined homotopy
  Usage
