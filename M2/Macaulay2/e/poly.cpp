@@ -1856,7 +1856,7 @@ ring_elem PolyRing::diff_term(const int *m, const int *n,
                                     int use_coeff) const
 {
   int sign = 0;
-  if (!M_->divides(m, n)) return K_->from_long(0);
+  //if (!M_->divides(m, n)) return K_->from_long(0);
   if (is_skew_ && use_coeff)
     {
       exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
