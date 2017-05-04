@@ -98,8 +98,8 @@ vigintillion = 10^63
 centillion = 10^303
 googol = 10^100
 
-kg = 1000 gram
-cm = meter / 100
+kg = kilo gram
+cm = centi meter
 kelvin = degreeKelvin
 mol = mole
 amp = ampere
@@ -207,6 +207,8 @@ bu = bushel = 2150.42 inch^3
 peck = 1/4 * bushel
 NM = nmi = nauticalMile = 1852 meter
 kn = knot = nauticalMile / hour
+cal = calorie = 4.1868 joule
+kcal = Cal = Calorie = kilo calorie
 
 Offset = new Type of BasicList
 Offset + Measurement := (o,m) -> new Offset from { o#0 + m, o#1 }
