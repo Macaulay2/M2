@@ -7,6 +7,8 @@
 -- License, or any later version.
 --------------------------------------------------------------------------------
 
+-- "
+
 newPackage(
 	"GradedLieAlgebras",
 	Version => "1.0",
@@ -2983,6 +2985,7 @@ weightList = x->apply(x,y->if class y===Array then weightLie y else
 
 
 --Documentation
+beginDocumentation()
 load "./GradedLieAlgebras/doc.m2"
 load "./GradedLieAlgebras/doc2.m2"
 load "./GradedLieAlgebras/tut.m2"

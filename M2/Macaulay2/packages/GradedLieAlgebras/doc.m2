@@ -1,7 +1,3 @@
-
-
-beginDocumentation()
-
 doc ///
 	Key 
 		GradedLieAlgebras
