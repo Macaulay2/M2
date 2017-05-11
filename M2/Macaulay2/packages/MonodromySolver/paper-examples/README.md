@@ -1,29 +1,16 @@
 * Experiments
 
-    * katsuraComparison.py
-        * Exists to work around the memory consumption issue. Calls katsuraComparison.m2, which performs the katsura tests used for completion section.
+    * cyclic.m2
+        * Creates tables for the cyclic example in the paper.
 
-    * comparison-template.m2
-        * Used to test monodromySolve for cyclic, katsura, nash, and crn. Doesn't deal with memory issue, so timings may not be valid. Also means that it shouldn't be used for extensive experiments.
+    * katsura.m2
+        * Creates tables for the Katsura example in the paper.
 
-    * M2-test-wrapper.py
-        * Poorly named, calls software-comparison.m2 which compares Bertini/PHCpack/MonodromySolve/HOM4PS2. Again, this python file exists to deal with the memory leak.
+    * example-Nash.m2 and example-NashCertify.m2
+        * Perform experiments with the Nash family of systems.
 
-    * cyclic10.m2, cyclic11.m2, noon10.m2
-        * Files that do software comparisons for single systems. Also has output from Anton's office machine
+    * large-examples
+        * Contains examples for the table of large tests.
 
-    * dynamicFlowerTest.m2
-        * Used to get the average number of paths for dynamicFlowerTest for cyclic7.
-        
-    * cyclic-batchsize-test.m2
-        * Test varying batchsizes with monodromySolve
-
-* System Definitions
-    * example-CRN.m2, example-Nash.m2, cyclic.m2, katsura.m2
-
-* Alpha test application:
-    * example-NashCertify.m2: certifying solutions for a a particular problem
-
-* Ignore:
-    * (possibly unnecessary) comparison-CRN, comparison-cyclic: both should have been superceded by comparison-template 
-	* (.out files) output of documentation examples cached by M2 
+    * sol-count-smaller-than-bkk-examples
+        * Contains examples where the number of solutions is smaller than the BKK bound.
