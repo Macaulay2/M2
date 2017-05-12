@@ -349,9 +349,20 @@ monodromySolve = method(Options=>{
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
+	EdgesSaturated => false,
+	GuessFamily => false})
 monodromySolve PolySystem := o -> PS -> (
-    (p0,x0) := createSeedPair PS;
+    if o.GuessFamily then ( --default family is sparse monomial basis
+	    polys := flatten entries PS.PolyMap;
+    	    ind := flatten apply(#polys,i-> -- indices for parameters
+    		apply(exponents polys#i, t->(i,t))
+    		);
+    	    AR := CC[apply(ind,i->(symbol W)_i)][gens R];
+    	    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
+    	    sum(exponents polys#i, t->W_(i,t)*AR_(t));
+    	    PS := polySystem transpose matrix {polysP};
+	    );
+    	(p0,x0) := createSeedPair PS;
     monodromySolve(PS,p0,{x0},o)
     )
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
@@ -398,7 +409,6 @@ dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
 	mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
 	staticOptions := trimDynamicOptions(mutableOptions);
-
 	(node1,npaths) := staticMonodromySolve(PS,point0,s0,staticOptions);
 	HG := node1.Graph;
 	success := class(npaths) === ZZ;
