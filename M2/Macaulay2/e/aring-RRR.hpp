@@ -222,7 +222,11 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      map->get_ring()->from_BigReal(&f, result);
+      if (!map->get_ring()->from_BigReal(&f, result))
+        {
+          result = map->get_ring()->from_long(0);
+          ERROR("cannot coerce RRR value to ring type");
+        }
     }
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const

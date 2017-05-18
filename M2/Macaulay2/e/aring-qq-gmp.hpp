@@ -228,7 +228,6 @@ namespace M2 {
     }
     
     bool lift(const Ring *Rg, const ElementType& f, ring_elem &result) const {
-      printf("ARingQQGMP::calling lift\n");
       return false;
     }
 #endif

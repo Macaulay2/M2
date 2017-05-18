@@ -6,6 +6,7 @@
 #include "polyring.hpp"
 #include "relem.hpp"
 
+#include <iostream>
 RingMap::RingMap(const Matrix *m)
   : R(m->get_ring())
 {
@@ -236,7 +237,7 @@ RingElement /* or null */ *RingMap::eval(const RingElement *r) const
 {
   RingElement *result = RingElement::make_raw(get_ring(),
                                               r->get_ring()->eval(this, r->get_value(),0) );
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
@@ -245,7 +246,7 @@ Matrix /* or null */ *RingMap::eval(const FreeModule *F, const Matrix *m) const
   MatrixConstructor mat(F, 0);
   for (int i=0; i<m->n_cols(); i++)
     mat.append(m->get_ring()->vec_eval(this, F, m->elem(i)));
-  if (error()) return 0;
+  if (error()) return nullptr;
   return mat.to_matrix();
 }
 

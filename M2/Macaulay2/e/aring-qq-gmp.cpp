@@ -24,6 +24,11 @@ namespace M2 {
     mpq_init(temp);
     mpq_set(temp, &f);
     result = map->get_ring()->from_rational(temp);
+    if (!result)
+      {
+        ERROR("cannot map rational to this ring");
+        result = map->get_ring()->from_long(0);
+      }
     mpq_clear(temp);
   }
 

@@ -729,10 +729,6 @@ namespace M2 {
                                     ring_elem &result_gR) const
   {
     const Ring *S = this;
-    fprintf(stderr, "calling lift\n");
-    fprintf(stderr, "lift: R->ringID()=%d S->ringID()=%d\n",
-            R->ringID(), 
-            S->ringID());
     
     namespace RP = RingPromoter;
     if (R == S)

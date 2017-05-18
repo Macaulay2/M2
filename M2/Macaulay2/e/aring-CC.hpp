@@ -370,7 +370,11 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      map->get_ring()->from_complex_double(f.re, f.im, result);
+      if (!map->get_ring()->from_complex_double(f.re, f.im, result))
+        {
+          result = map->get_ring()->from_long(0);
+          ERROR("cannot coerce CC value to ring type");
+        }
     }
 
     gmp_CC toBigComplex(const ElementType& a) const

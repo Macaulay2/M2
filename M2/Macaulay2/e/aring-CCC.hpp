@@ -465,7 +465,12 @@ namespace M2 {
       gmp_CC_struct g;
       g.re = &f.re;
       g.im = &f.im;
-      map->get_ring()->from_BigComplex(&g, result);
+      if (!map->get_ring()->from_BigComplex(&g, result))
+        {
+          result = map->get_ring()->from_long(0);
+          ERROR("cannot map CC value to ring type");
+        }
+      
     }
 
     gmp_CC toBigComplex(const ElementType& a) const
