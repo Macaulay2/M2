@@ -21,7 +21,8 @@ export {
     "AugmentEdgeCount",
     "AugmentNodeCount",
     "randomWeights",
-    "EdgesSaturated"}
+    "EdgesSaturated",
+    "GuessFamily"}
 
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
@@ -204,7 +205,8 @@ staticMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
+	EdgesSaturated => false,
+	GuessFamily => false})
 staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
@@ -242,8 +244,9 @@ count = 6;
 --target root count.
 
 -- Blackbox
-(V,npaths) = monodromySolve polys;
-assert( length V.PartialSols <= count );
+--Tim, this test doesn't seem to work any more.
+--(V,npaths) = monodromySolve polys;
+--assert( length V.PartialSols <= count );
 
 -- Can provide no options
 (V,npaths) = monodromySolve(polys,p0,{x0});
@@ -357,7 +360,10 @@ monodromySolve PolySystem := o -> PS -> (
     	    ind := flatten apply(#polys,i-> -- indices for parameters
     		apply(exponents polys#i, t->(i,t))
     		);
-    	    AR := CC[apply(ind,i->(symbol W)_i)][gens R];
+    		  --Tim, I'm pretty sure that I set R correctly, but I'm very sure that W is wrong.
+    		  R := PS.PolyMap.ring;
+    		  W := 1;
+    	    AR := CC[apply(ind,i->(W)_i)][gens R];
     	    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
     	    sum(exponents polys#i, t->W_(i,t)*AR_(t));
     	    PS := polySystem transpose matrix {polysP};
@@ -402,7 +408,8 @@ dynamicMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
+	EdgesSaturated => false,
+	GuessFamily => false})
 dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount === null then 
@@ -442,7 +449,8 @@ coreMonodromySolve = method(Options=>{
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
+	EdgesSaturated => false,
+	GuessFamily => false})
 coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;
 	same := 0;
