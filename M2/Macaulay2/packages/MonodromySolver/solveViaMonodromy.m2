@@ -245,8 +245,8 @@ count = 6;
 
 -- Blackbox
 --Tim, this test doesn't seem to work any more.
---(V,npaths) = monodromySolve polys;
---assert( length V.PartialSols <= count );
+(V,npaths) = monodromySolve polys;
+assert( length V.PartialSols <= count );
 
 -- Can provide no options
 (V,npaths) = monodromySolve(polys,p0,{x0});
@@ -334,6 +334,11 @@ assert( length V.PartialSols == count );
 	AugmentEdgeCount=>1,
 	AugmentNumberOfRepeats=>10);
 assert( length V.PartialSols == count );
+
+-- Here is an experimental test for GuessFamily
+S = QQ[x,y]
+P = polySystem {x+y, 2*x+1-2*y^2}
+assert(length (first monodromySolve(P,GuessFamily=>true)).PartialSols == 2)
 ///
 
 monodromySolve = method(Options=>{
@@ -362,11 +367,11 @@ monodromySolve PolySystem := o -> PS -> (
     		);
     		  --Tim, I'm pretty sure that I set R correctly, but I'm very sure that W is wrong.
     		  R := PS.PolyMap.ring;
-    		  W := 1;
-    	    AR := CC[apply(ind,i->(W)_i)][gens R];
+	    W := symbol W;
+    	    AR := CC[apply(ind,i->W_i)][gens R];
     	    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
     	    sum(exponents polys#i, t->W_(i,t)*AR_(t));
-    	    PS := polySystem transpose matrix {polysP};
+    	    PS = polySystem transpose matrix {polysP};
 	    );
     	(p0,x0) := createSeedPair PS;
     monodromySolve(PS,p0,{x0},o)
