@@ -190,6 +190,7 @@ public:
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
   int degree_weights(const_monomial m, M2_arrayint wts) const;
+  int simple_degree(const_monomial m) const;  // simply sum of exponents
   void degree_of_varpower(const_varpower vp, monomial result) const;
 
   bool weight_value_exists() const { return first_weights_slot_ >= 0; }

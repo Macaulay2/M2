@@ -58,7 +58,7 @@ void ReducedGB_ZZ::minimalize(const VECTOR(POLY) &polys0,
   for (int i=0; i<polys0.size(); i++)
     positions.push_back(i);
 
-  sort(positions.begin(), positions.end(), ReducedGB_ZZ_sorter(R,F,polys0));
+  std::stable_sort(positions.begin(), positions.end(), ReducedGB_ZZ_sorter(R,F,polys0));
 
   // Now loop through each element, and see if the lead monomial is in T.
   // If not, add it in , and place element into 'polys'.

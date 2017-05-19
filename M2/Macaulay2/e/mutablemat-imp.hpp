@@ -33,7 +33,7 @@ const RingElement* MutableMat<T>::determinant() const
 template <typename T>
 MutableMatrix* MutableMat<T>::invert() const
 {
-  M2_ASSERT(n_rows() == n_cols());
+  assert(n_rows() == n_cols());
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
   bool val = MatrixOps::inverse(mat, result->mat);
   if (!val)
@@ -233,6 +233,23 @@ bool MutableMat<T>::least_squares(const MutableMatrix* B,
     throw exc::engine_error("expected matrices of the same type");
   bool retval = MatrixOps::leastSquares(mat, *B1, *X1, assume_full_rank);
   return retval;
+}
+
+template<typename T>
+bool MutableMat<T>::QR(MutableMatrix* Q,
+                       MutableMatrix* R,
+                       bool return_QR) const
+{
+  if (!is_dense())
+    throw exc::engine_error("'QR' is only implemented for dense matrices");
+
+  auto Q1 = Q->coerce< DMat<CoeffRing> >();
+  if (Q1 == 0)
+    throw exc::engine_error("Q matrix is of the wrong type/ring");
+  auto R1 = R->coerce< DMat<CoeffRing> >();
+  if (R1 == 0)
+    throw exc::engine_error("R matrix is of the wrong type/ring");
+  return MatrixOps::QR(mat,*Q1, *R1, return_QR);
 }
 
 template<typename T>

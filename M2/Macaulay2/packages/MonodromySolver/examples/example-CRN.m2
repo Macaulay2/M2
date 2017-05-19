@@ -1,3 +1,4 @@
+-- to execute look below for "EXECUTE...FROM HERE" -------------------------
 needsPackage "MonodromySolver"
 needsPackage "ReactionNetworks"
 
@@ -7,21 +8,25 @@ FF = CC
 createPolySystem = method()
 createPolySystem (ReactionNetwork, InexactFieldFamily):= (Rn, FF) -> (
     S := createRing(Rn, FF);
-    createPolySystem(Rn,FF,toList(numgens S : 1_FF))
+    createPolySystem(Rn,FF,toList(length Rn.ConcentrationRates : 1_FF))
     )
-createPolySystem'overdetemined = (Rn, FF, L) -> (
+createPolySystem'overdetermined = (Rn, FF, L) -> (
     S := createRing(Rn, FF);
     CEforms := matrix{conservationEquations(Rn,FF)};
-    SubList := apply(toList(0..numgens S-1), i -> (gens S)#i => L#i);
+    SubList := toList(apply(0..length Rn.ConcentrationRates-1, i -> 
+	    value(Rn.ConcentrationRates#i) => L#i));
     CE := sub(CEforms, SubList) - CEforms;    
-    SSE := matrix {steadyStateEquations Rn};	       	   
-    polySystem transpose(CE|SSE)
+    SSE := steadyStateEquations Rn;
+    R := CC[Rn.ReactionRates][Rn.ConcentrationRates];	       	   
+    M := sub((transpose CE || SSE), R);
+    polySystem M
     )
 createPolySystem (ReactionNetwork, InexactFieldFamily, List) := (Rn, FF, L) -> (
-    squareUp createPolySystem'overdetemined(Rn,FF,L)
+    squareUp createPolySystem'overdetermined(Rn,FF,L)
     )
 
 TEST ///
+CRN = reactionNetwork "A <--> 2B, A+C<-->D, B+E-->A+C, D-->B+E"
 createPolySystem(CRN, FF)
 ///
 
@@ -44,6 +49,7 @@ GQ = createPolySystem(Q, FF)
 
 end ---------------------------------
 
+--------EXECUTE line-by-line FROM HERE -----------------------------------
 restart
 load "example-CRN.m2"
 
@@ -73,7 +79,7 @@ elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
 assert(length V.PartialSols == 9)
 
 -- wnt via Bertini
-specPolys = specializeSystem (p0,createPolySystem'overdetemined(W,FF,L));
+specPolys = specializeSystem (p0,createPolySystem'overdetermined(W,FF,L));
 R = CC[x_1..x_(numgens ring first specPolys)]
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)

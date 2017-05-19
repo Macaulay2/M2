@@ -320,7 +320,7 @@ void F4Res::reorderColumns()
   if (M2_gbTrace >= 2)
     fprintf(stderr, "ncomparisons = ");
 
-  std::sort(column_order, column_order+ncols, C);
+  std::stable_sort(column_order, column_order+ncols, C);
 
   clock_t end_time0 = clock();
   if (M2_gbTrace >= 2)

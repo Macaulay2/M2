@@ -12,8 +12,8 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
       std::cerr << "ERROR: called rank(" << slanted_degree << "," << lev << ")" << std::endl;
       return 0;
     }
-  M2_ASSERT(lev > 0 and lev <= maxLevel());
-  M2_ASSERT(slanted_degree >= mLoSlantedDegree and slanted_degree < mHiSlantedDegree);
+  assert(lev > 0 and lev <= maxLevel());
+  assert(slanted_degree >= mLoSlantedDegree and slanted_degree < mHiSlantedDegree);
   int degree = slanted_degree + lev;
   auto& thislevel = level(lev);
   int ncols = 0;

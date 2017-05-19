@@ -36,8 +36,8 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
                                             int ncols,
                                             M2_bool is_dense)
 {
-  M2_ASSERT(nrows >= 0);
-  M2_ASSERT(ncols >= 0);
+  assert(nrows >= 0);
+  assert(ncols >= 0);
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
   //  return R->makeMutableMatrix(nr,nc,is_dense);
@@ -901,6 +901,20 @@ M2_bool rawLeastSquares(MutableMatrix *A,
         return false;
       }
     return A->least_squares(b,x,assume_full_rank);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
+M2_bool rawQR(const MutableMatrix *A,
+              MutableMatrix *Q,
+              MutableMatrix *R,
+              M2_bool return_QR)
+{
+  try {
+    return A->QR(Q,R,return_QR);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());

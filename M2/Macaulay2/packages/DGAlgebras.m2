@@ -1,73 +1,62 @@
 -- -*- coding: utf-8 -*-
 newPackage("DGAlgebras",
      Headline => "Data type for DG algebras",
-     Version => "0.8",
-     Date => "Sept 19, 2010",
+     Version => "1.0.1",
+     Date => "January 11, 2017",
      Authors => {
 	  {Name => "Frank Moore",
-	   HomePage => "http://www.math.cornell.edu/~frankmoore",
-	   Email => "frankmoore@math.cornell.edu"}},
+	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
+	   Email => "moorewf@wfu.edu"}},
      DebuggingMode => false
      )
 
-export {"DGAlgebra", "freeDGAlgebra", "setDiff", "natural", "cycles",
-	"getBasis", "koszulComplexDGA", "acyclicClosure", "toComplex",
-	"killCycles", "getGenerators", "adjoinVariables", "deviations", "zerothHomology",
-        "homologyAlgebra", "torAlgebra", "maxDegree", "StartDegree", "EndDegree",
-	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation",
+export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff", "natural", "cycles",
+	"getBasis", "koszulComplexDGA", "acyclicClosure", "toComplex", "toComplexMap", "liftToDGMap",
+        "killCycles", "getGenerators", "adjoinVariables", "deviations", "deviationsToPoincare", "expandGeomSeries", "zerothHomology",
+        "torMap", "homologyAlgebra", "torAlgebra", "maxDegree", "StartDegree", "EndDegree", "ringMap",
+	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation", "findNaryTrivialMasseyOperation", "AssertWellDefined",
 	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
-	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule"}
+	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule"
+}
 
--- current bugs:
+-- Questions:
+-- is there a way to present graded pieces of graded A-modules as modules over A_0?
+-- is there a way to make f act like a function for f a DGAlgebraMap?
 
--- Still to document:
--- add some tutorials and nice examples
-
--- Questions for Mike:
--- is there a way to add options to a built-in method that does not have options?
---   See: toComplex, which I would rather be chainComplex
--- is there a way to present graded pieces of graded A-modules as modules over A_0
-
--- Other things to do before version 1
--- [user v1] Change toComplex to chainComplex as per conversation with Dan on the M2 Google group.
--- [functionality v1] Fix setDiff preparation preferences
--- [functionality v1] Allow custom naming of the variables in the DGA, using a list.
--- [functionality v1] Finish trivial Massey operations.  Test for strong Golod? (see Gulliksen-Levin for this?)
--- [functionality v1] Present a degree of the homology algebra as a module over H_0(A) *using the monomial basis* of HA as generators
+-- Things to do before version 2
+-- [user v1.5] Change toComplex to chainComplex as per conversation with Dan on the M2 Google group (9/14/2010)
+-- [functionality v1.5] Single degree homology(DGAlgebraMap,ZZ)
+-- [functionality v1.5] Lift a map from a semifree DGA to another DGA along a quism
+-- [functionality v1.5] Minimal Models
+-- [functionality v1.5] Fix setDiff preparation preferences (symbols, etc)
+-- [functionality v2] Present a degree of the homology algebra as a module over H_0(A) *using the monomial basis* of HA as generators
 --                    In fact, one should do the following:  Let R be a ring, A a f.g. graded R-algebra with A_0 = R, and M a f.g. graded A-module.
 --                                                           Is it possible to compute a presentation of M_i as an R-module (graded, if R is)?
--- [functionality v1] DGAlgebraMap
--- [functionality v1] Lift semifree DGAs along quisms
--- [functionality v1] HH DGAlgebraMap
--- [functionality v1] isQuism DGAlgebraMap
--- [functionality v1] Resolvents (see pg 17 of the green book)
--- [functionality v1] torMap RingMap
--- [functionality v1] torDelta
--- [functionality v1] Golod/Levin/Avramov index? (see paper of Liana)
--- [functionality v1] Matric Massey products? (see Gulliksen-Levin)
--- [functionality v1] Computing Betti numbers using Massey products?
-
--- Other things to do before version 2
--- [functionality v2] Allow non-polynomial underlying algebras
+-- [functionality v2] Allow non-polynomial underlying algebras (Major undertaking.  Would have to test extensively.)
 --                    [--- In order to do this, the 'basis' command needs to be a bit more robust; things have changed in 1.4 but the package does not use the new basis yet. ---]
+-- [functionality v2] Koszul Models and other things with Alex's results regarding Koszul Models (requires non-polynomial underlying algebras)
 -- [functionality v2] A check that the algebra, together with the differential, is indeed a DG Algebra (up to a certain degree...)
--- [functionality v2] isSemiFree
+-- [functionality v2] Update isWellDefined for DGAlgebraMaps between non-polynomial DGAs
 -- [functionality v2] taylorResolutionDGA - Needs non-polynomial underlying algebra
 -- [functionality v2] ekResolutionDGA - Needs non-polynomial underlying algebra
--- [functionality v2] Gorenstein pdim3 Pfaffians resolution (pg 15 of green book) -  needs non-polynomial underlying algebra
+-- [functionality v2] Gorenstein pdim3 Pfaffians resolution (pg 15 of green book) - needs non-polynomial underlying algebra
+-- [functionality v2] isSemiFree
 -- [functionality v2] DGIdeals
 -- [functionality v2] DGModules
 -- [functionality v2] DGModuleMap
+-- [functionality v2] torDelta - is this possible?  Would be great.
+-- [functionality v2] Golod/Levin/Avramov index? (see paper of Liana)
+-- [functionality v2] Matric Massey products? (see Gulliksen-Levin)
+-- [functionality v2] Computing Betti numbers using Massey products? (Ref?)
 
 -- Not sure if the below are possible
+-- [functionality v?] torModule - is this possible? 
 -- [functionality v?] incorporate divided powers somehow?
--- [functionality v?] torModules - is this possible? 
--- [functionality v?] Compute obstructions for the existence of a minimal DG Algebra resolution (see pg 31 of the green book) (req. torModules)
+-- [functionality v?] Compute obstructions for the existence of a minimal DG Algebra resolution (see pg 31 of the green book) (req. torModule)
 
 -----------------------------------------------------
 -- Set DG algebra types and constructor functions. -- 
 -----------------------------------------------------
-
 -- protected symbols (I don't want to export these symbols, but I use them internally in the code at various places)
 protect diffs
 protect basisAlgebra
@@ -76,8 +65,8 @@ protect basisAlgebra
 DGAlgebra = new Type of MutableHashTable
 globalAssignment DGAlgebra
 --DGAlgebraMap still in development
---DGAlgebraMap = new Type of RingMap
---globalAssignment DGAlgebraMap
+DGAlgebraMap = new Type of MutableHashTable
+globalAssignment DGAlgebraMap
 
 -- Modify the standard output for a DGAlgebra
 net DGAlgebra := A -> (
@@ -86,16 +75,17 @@ net DGAlgebra := A -> (
    myOutput = myOutput | {net "Underlying algebra => " | net A.natural};
    if A.diff =!= {} then diffList = take(flatten entries matrix (A.diff),numgens A.natural);
    myOutput = myOutput | {net "Differential => " | net diffList};
-   myOutput = myOutput | {net "isHomogeneous => " | net A.isHomogeneous};
+   -- Take out this part of the output.
+   --myOutput = myOutput | {net "isHomogeneous => " | net A.isHomogeneous};
    horizontalJoin flatten ("{", stack myOutput, "}")
 )
 
-freeDGAlgebra = method(TypicalValue => DGAlgebra)
-freeDGAlgebra (Ring,List) := (R,degList) -> (
+freeDGAlgebra = method(TypicalValue => DGAlgebra, Options => {Variable => "T"})
+freeDGAlgebra (Ring,List) := opts -> (R,degList) -> (
    -- Input:  A ring, a list of degrees of the variables, and a list that defines the differential
    -- Output:  A hash table of type DGAlgebra
    A := new MutableHashTable;
-   T := getSymbol("T");
+   T := getSymbol(opts.Variable);
    A#(symbol ring) = R;
    varsList := toList (T_1..T_(#degList));
    A#(symbol diff) = {};
@@ -140,14 +130,27 @@ setDiff (DGAlgebra,List) := opts -> (A,diffList) -> (
    A
 )
 
+setKoszulDiff = method(TypicalValue => DGAlgebra, Options => {InitializeDegreeZeroHomology => true, InitializeComplex => true})
+setKoszulDiff (DGAlgebra,List) := opts -> (A,diffList) -> (
+   A.diff = map(A.natural,A.natural, substitute(matrix {diffList}, A.natural));
+   A.isHomogeneous = isHomogeneous A.ring and checkIsHomogeneous(A);
+   if opts.InitializeDegreeZeroHomology then (
+      definingIdeal := ideal mingens (ideal A.ring + sub(ideal polyDifferential(1,A), ambient A.ring));
+      if definingIdeal == ideal vars ambient A.ring then A#(symbol zerothHomology) = coefficientRing A.ring else A#(symbol zerothHomology) = (ambient A.ring)/definingIdeal;
+   );
+   if opts.InitializeComplex then A.dd = (koszul(matrix{diffList})).dd;
+   A
+)
+
 checkIsHomogeneous = method()
 checkIsHomogeneous DGAlgebra := A -> (
    gensList := gens A.natural;
    diffList := apply(gensList, f -> A.diff(f));
    homDegreeShift := {1} | (toList ((#(degree first gensList)-1):0));
-   all(apply(#diffList, i -> degree gensList#i - homDegreeShift == degree diffList#i), i -> i)
+   all(#diffList, i -> degree gensList#i - homDegreeShift == degree diffList#i)
 )
 
+-- cache the basis of a DGAlgebra?
 getBasis = method(TypicalValue => Matrix, Options => {Limit => -1})
 getBasis (ZZ,DGAlgebra) := opts -> (homDegree,A) -> getBasis(homDegree,A.natural, Limit => opts.Limit)
 
@@ -158,7 +161,7 @@ getBasis (ZZ,Ring) := opts -> (homDegree,R) -> (
    if tempList == {} then retVal = map((R)^1,(R)^0, 0) else
    (
       -- move this to an assert?
-      -- tempList = reverse sort tempList;
+      tempList = reverse sort tempList;
       degList := apply(tempList, m -> -degree m);
       retVal = map(R^1, R^degList, matrix {tempList});
    );
@@ -176,42 +179,44 @@ isAcyclic DGAlgebra := opts -> A -> (
   not any(1..endDegree,i -> prune HH_i(A) != 0)
 )
 
-
-koszulComplexDGA = method(TypicalValue => DGAlgebra)
-koszulComplexDGA Ring := R -> (
+koszulComplexDGA = method(TypicalValue => DGAlgebra, Options => {Variable => "T"})
+koszulComplexDGA Ring := opts -> R -> (
    local A;
+   local initComplex;
+   --initComplex = (numgens R < 8);
+   initComplex = true;
    if isHomogeneous R then (
       degList := apply(degrees R, i -> {1} | i);
-      A = freeDGAlgebra(R, degList);
+      A = freeDGAlgebra(R, degList, opts);
       use A.ring;
-      setDiff(A, gens R);
+      setKoszulDiff(A, gens R, InitializeComplex=>initComplex);
    )
    else (
-      A = freeDGAlgebra(R, toList ((numgens R):{1}));
+      A = freeDGAlgebra(R, toList ((numgens R):{1}),opts);
       use A.ring;
-      setDiff(A, gens R);
+      setKoszulDiff(A, gens R, InitializeComplex=>initComplex);
    );
    A
 )
 
-koszulComplexDGA Ideal := I -> (
+koszulComplexDGA Ideal := opts -> I -> (
    local A;
    if isHomogeneous I then (
       degList := apply(flatten entries gens I, i -> {1} | degree i); 
-      A = freeDGAlgebra(ring I, degList);
+      A = freeDGAlgebra(ring I, degList, opts);
       use A.ring;
       setDiff(A,I_*);
    )
    else
    (
-      A = freeDGAlgebra(ring I, toList ((numgens I):{1}));
+      A = freeDGAlgebra(ring I, toList ((numgens I):{1}), opts);
       use A.ring;
       setDiff(A, I_*);
    );
    A
 )
 
-koszulComplexDGA List := ringElts -> koszulComplexDGA(ideal ringElts);
+koszulComplexDGA List := opts -> ringElts -> koszulComplexDGA(ideal ringElts, opts);
 
 toComplex = method(TypicalValue=>ChainComplex)
 toComplex DGAlgebra := A -> (
@@ -257,8 +262,9 @@ adjoinVariables (DGAlgebra, List) := (A,cycleList) -> (
    else
       newDegreesList = A.Degrees | apply(cycleList, z -> {first degree z + 1});
    B := freeDGAlgebra(A.ring,newDegreesList);
-   newDiffList := apply(take(flatten entries matrix A.diff, numgens A.natural) | cycleList, f -> substitute(f, B.natural));
-   setDiff(B,newDiffList);
+   phi := map(B.natural,A.natural,matrix {take(gens B.natural, numgens A.natural)});
+   newDiffList := (take(flatten entries matrix A.diff, numgens A.natural) | cycleList) / phi;
+   setDiff(B,newDiffList,InitializeComplex=>false);
    B
 )
 
@@ -290,8 +296,8 @@ polyDiffMonomial := (A,m) -> (
   allTerms := apply(#monSupport, i -> (product apply(i, j -> (-1)^((first degree monSupport#j)*(monExponents#j))))*
                                       (product take(monSupportPowers,i))*
   -- below are both versions of differential, for divided powers and without, should we want to use divided powers later.
-  --                                  (A.diff(monSupport#i)*(monSupport#i)^((monExponents#i)-1))*
-                                      (A.diff(monSupport#i)*(monExponents#i)*(monSupport#i)^((monExponents#i)-1))*
+  --                                  (A.diff(monSupport#i)*(monSupport#i)^((monExponents#i)-1))*  -- divided powers
+                                      (A.diff(monSupport#i)*(monExponents#i)*(monSupport#i)^((monExponents#i)-1))* -- polynomial subalgebra
                                       (product drop(monSupportPowers,i+1)));
   justCoeff * (sum allTerms)
 )
@@ -375,74 +381,101 @@ getDegNModule (ZZ,Ring,Ring) := (n,R,A) -> (
 )
 
 deviations = method(TypicalValue=>Tally,Options=>{DegreeLimit=>3})
-deviations Ring := opts -> R -> tally degrees torAlgebra(R,GenDegreeLimit=>opts.DegreeLimit)
+deviations Ring := opts -> R -> (
+  --tally degrees torAlgebra(R,GenDegreeLimit=>opts.DegreeLimit)
+  kRes := res(coker vars R, LengthLimit => opts.DegreeLimit);
+  deviations kRes
+)
+
+deviations ChainComplex := opts -> C -> (
+  R := ring C;
+  pSeries := poincareN C;
+  degreesR := toList ((numgens degreesRing R):0);
+  if isHomogeneous R then degreesR = degrees R;
+  deviations(pSeries,degreesR)
+)
+
+deviations (RingElement,List) := opts -> (pSeries,degreesR) -> (
+  isHomogeneousR := any(degreesR, deg -> deg =!= 0);
+  A := ring pSeries;
+  homVar := first gens A;
+  homDegree := degree(homVar,pSeries);
+  internalVars := drop(gens A,1);
+  if not isHomogeneousR then pSeries = substitute(pSeries, (first internalVars)=>1);
+  subB := ZZ[internalVars];
+  tempB := subB[homVar];
+  B := tempB/ideal{(substitute(homVar,tempB))^(homDegree+1)};
+  pSeries = substitute(pSeries,B);
+  n := 1;
+  tempSeries := 1_B;
+  tempDiff := pSeries - tempSeries;
+  returnHash := hashTable {};
+  allDeviations := {};
+  while (n <= homDegree and tempDiff != 0) do (
+     tempCoeffs := coefficients someTerms(tempDiff,-1,1);
+     tempCoeffs = (first flatten entries first tempCoeffs, substitute(first flatten entries last tempCoeffs,subB));
+     -- here, tally up the deviations.
+     tempDegrees := (terms last tempCoeffs) / exponents / flatten;
+     leadCoeffs := (terms last tempCoeffs) / leadCoefficient;
+     if isHomogeneousR then allDeviations = allDeviations | apply(#tempDegrees, i -> ((n,tempDegrees#i),leadCoeffs#i))
+                       else allDeviations = allDeviations | apply(#tempDegrees, i -> (n,leadCoeffs#i));
+     newSeries := 1_B;
+     if even n then newSeries = product apply(terms last tempCoeffs, v -> (expandGeomSeries((leadMonomial v)*(first tempCoeffs), homDegree))^(substitute(leadCoefficient v,ZZ)))
+               else newSeries = product apply(terms last tempCoeffs, v -> (1+(leadMonomial v)*(first tempCoeffs))^(substitute(leadCoefficient v,ZZ)));
+     tempSeries = tempSeries*newSeries;
+     n = n + 1;
+     tempDiff = pSeries - tempSeries;
+  );
+  hashTable allDeviations
+)
+
+expandGeomSeries = method()
+expandGeomSeries (RingElement,ZZ) := (f,n) -> expandGeomSeries({f},n)
+
+expandGeomSeries (List,ZZ) := (fList,n) -> (
+   A := ring first fList;
+   homVar := first gens A;
+   B := A/ideal (homVar^(n+1));
+   phi := map(B,A);
+   substitute(product apply(fList, f -> sum apply(n,i -> phi(f)^i)),A)
+)
+
+deviationsToPoincare = method(Options=>{DegreeLimit=>0})
+deviationsToPoincare HashTable := opts -> devHash -> (
+   S := getSymbol("S");
+   T := getSymbol("T");
+   pairsDevHash := pairs devHash;
+   if instance(first first pairsDevHash, Sequence) then pairsDevHash = apply(pairsDevHash, p -> (p#0#0,p#0#1,p#1));
+   numTVars := #(first pairsDevHash) - 3;
+   tVars := toList (T_0..T_numTVars);
+   n := opts.DegreeLimit;
+   n = max(n,max apply(pairsDevHash, p -> first p));
+   A := ZZ[S,tVars];
+   B := A/ideal (first gens A)^(n+1);
+   tVars = drop(gens B,1);
+   powerFunc := p -> if numTVars == -1 then 1_B else product apply(#(p#1), i -> (tVars#i)^(p#1#i));
+   product apply(pairsDevHash, p -> if even first p then (expandGeomSeries((first gens B)^(first p)*(powerFunc p),n))^(last p)
+                                                    else (1+((first gens B)^(first p)*(powerFunc p)))^(last p))
+)
 
 torAlgebra = method(TypicalValue=>Ring, Options=>{GenDegreeLimit=>infinity,RelDegreeLimit=>infinity})
 torAlgebra Ring := opts -> R -> (
-  -- since we are not yet implementing the Hopf structure, only the algebra structure, we need not
-  -- actually use DGAlgebras to compute the Tor algebra.  We use the built in resolution function
-  -- for the resolution of R/(ideal vars R) below since it is much faster.
   n := 3;
   if opts.GenDegreeLimit != infinity then n = opts.GenDegreeLimit;
   baseRing := coefficientRing R;
   kRes := res(coker vars R, LengthLimit => n);
-  bettiNums := apply((length kRes)+1, i -> degrees source kRes.dd_i);
-  local torSoFar;
-  local cacheTorSoFar;
-  local degreeList;
-  local skewList;
-  local numNewVars;
-  local dimInCurDegree;
-  local newDegreeList;
   X := getSymbol("X");
-  if length kRes == 0 then baseRing else (
-     currentDegree := 1;
-     newVars := toList (X_1..X_(#(bettiNums#currentDegree)));
-     if isHomogeneous R then degreeList = apply(bettiNums#currentDegree, i -> {currentDegree} | i) else degreeList = toList (#(bettiNums#currentDegree):{1});
-     skewList = toList (0..#(bettiNums#currentDegree)-1);
-     -- need to also define a cached version of the ring with only the homological grading in the homogeneous case
-     torSoFar = baseRing[newVars,Degrees=>degreeList, SkewCommutative=>skewList];
-     if not isHomogeneous R then cacheTorSoFar = torSoFar else cacheTorSoFar = baseRing[newVars, Degrees => apply(degreeList, i -> {first i}), SkewCommutative => skewList];
-     torSoFar.cache = new CacheTable;
-     torSoFar.cache#(symbol basisAlgebra) = cacheTorSoFar;
-     currentDegree = currentDegree + 1;
-     while currentDegree <= n do (
-        -- this is the command that must change.  I think just doing a setminus from the basis list in the resln minus
-	-- the basis list of the algebra should do the trick.
-	if isHomogeneous R then (
-           -- below we use a Tally object to find the new basis degrees we need to add in the homogeneous case
-	   torSoFarTally := tally degrees source getBasis(currentDegree,torSoFar);
-	   allDegreesTally := tally apply(bettiNums#currentDegree, i -> flatten {currentDegree,i});
-	   newDegreeList = flatten apply(pairs (allDegreesTally - torSoFarTally), p -> toList (p#1:p#0));
-	   numNewVars = #newDegreeList;  
-	)
-        else (
-	   dimInCurDegree = hilbertFunction(currentDegree,torSoFar);
-           numNewVars = #bettiNums#currentDegree - dimInCurDegree;
-	   newDegreeList = toList (numNewVars:currentDegree);
-	);
-	-- the below check will only fail if R is a complete intersection, and currentDegree = 3 (or earlier, if R is regular)
-	-- The numNewVars are the deviations of the ring R; these vanish rigidly by a theorem of Halperin.
-	-- They are returned with the deviations command
-	if numNewVars != 0 then (	 
-           newVars = newVars | toList (X_((numgens torSoFar)+1)..X_((numgens torSoFar) + numNewVars));
-           degreeList = degreeList | newDegreeList;
-           if odd currentDegree then skewList = skewList | toList ((numgens torSoFar)..((numgens torSoFar) + numNewVars - 1));
-           torSoFar = baseRing[newVars,Degrees=>degreeList, SkewCommutative=>skewList];
-           if not isHomogeneous R then cacheTorSoFar = torSoFar else cacheTorSoFar = baseRing[newVars, Degrees => apply(degreeList, i -> {first i}), SkewCommutative => skewList];
-	   torSoFar.cache = new CacheTable;
-	   torSoFar.cache#(symbol basisAlgebra) = cacheTorSoFar;
-           currentDegree = currentDegree + 1;
-	)
-        else currentDegree = n+1;
-     );
-     torSoFar
-  )
+  -- now build the degreeList and skewList out of the output from deviations
+  RDevs := deviations(R,DegreeLimit=>opts.GenDegreeLimit);
+  degreesList := sort flatten apply(pairs RDevs, p -> toList ((p#1):(flatten{p#0#0,p#0#1})));
+  skewList := select(#degreesList, i -> odd first degreesList#i);
+  torVars := toList(X_1..X_(#degreesList));
+  baseRing[torVars,Degrees=>degreesList, SkewCommutative=>skewList]
 )
 
 torAlgebra (Ring,Ring) := opts -> (R,S) -> homologyAlgebra(acyclicClosure(R,EndDegree=>opts.GenDegreeLimit) ** S, opts)
 
-representativeCycles := (n,A) -> (
+representativeCycles = (n,A) -> (
   temp := transpose generators image ((prune homology(n,A)).cache.pruningMap);
   homologyGenerators := entries temp;
   basisList := flatten entries getBasis(n,A);
@@ -618,29 +651,36 @@ findDegNRelations := (A,HA,algGens,N) -> (
   select(retVal, i -> i != 0)
 )
 
-getGenerators = method(TypicalValue=>List, Options => {StartDegree => 1, DegreeLimit => -1})
+getGenerators = method(TypicalValue=>List, Options => {StartDegree => 1, DegreeLimit => -1, Verbosity => 0})
 getGenerators DGAlgebra := opts -> A -> (
   maxDeg := maxDegree A;
   if opts.DegreeLimit != -1 then maxDeg = opts.DegreeLimit;
   if maxDeg == infinity then error "Must specify maximum homological degree of generators.";
   n := opts.StartDegree;
   cycleList := {};
+  local newCycleList;
   while n <= maxDeg do (
-     << "Computing generators in degree " << n << " : ";
-     time newCycleList := findDegNGenerators(A,cycleList,n);
+     if opts.Verbosity >= 2 then (
+        << "Computing generators in degree " << n << " : ";
+        time newCycleList = findDegNGenerators(A,cycleList,n);
+     ) else newCycleList = findDegNGenerators(A,cycleList,n);
      cycleList = cycleList | newCycleList;
      n = n + 1;
   );
   cycleList
 )
 
-getRelations = method()
-getRelations (DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
+getRelations = method(TypicalValue=>Ring, Options => {Verbosity => 0})
+getRelations (DGAlgebra,Ring,List,ZZ) := opts -> (A,HA,cycleList,relDegreeLimit) -> (
    relList := (ideal HA)_*;
    n := 1;
+   local newRelList;
    while n <= relDegreeLimit do (
-      << "Computing relations in degree " << n << "  : ";
-      time newRelList := findDegNRelations(A,HA,cycleList,n);
+      if opts.Verbosity >= 2 then (
+         << "Computing relations in degree " << n << "  : ";
+         time newRelList = findDegNRelations(A,HA,cycleList,n);
+      )
+      else newRelList = findDegNRelations(A,HA,cycleList,n);
       if relList == {} then relList = newRelList
       else if newRelList != {} then (
          -- make sure newRelList and relList are in the same ring
@@ -657,7 +697,7 @@ getRelations (DGAlgebra,Ring,List,ZZ) := (A,HA,cycleList,relDegreeLimit) -> (
    HA
 )
 
-homologyAlgebra = method(TypicalValue=>Ring,Options=>{GenDegreeLimit=>infinity,RelDegreeLimit=>infinity})
+homologyAlgebra = method(TypicalValue=>Ring,Options=>{GenDegreeLimit=>infinity,RelDegreeLimit=>infinity,Verbosity=>0})
 homologyAlgebra DGAlgebra := opts -> A -> (
   local HA;
   if A.cache.homologyAlgebra#?GenDegreeLimit and A.cache.homologyAlgebra#GenDegreeLimit >= opts.GenDegreeLimit and
@@ -665,7 +705,7 @@ homologyAlgebra DGAlgebra := opts -> A -> (
      maxDeg := maxDegree A;
   
      if maxDeg == infinity and (opts.GenDegreeLimit == infinity or opts.RelDegreeLimit == infinity) then
-        error "Must supply upper degree bound on generators and relations if there is a DG algebra generator of even degree.";
+        return "Must supply upper degree bound on generators and relations if there is a DG algebra generator of even degree.";
      if opts.GenDegreeLimit != infinity then maxDeg = opts.GenDegreeLimit;
   
      n := maxDeg;
@@ -673,7 +713,7 @@ homologyAlgebra DGAlgebra := opts -> A -> (
      maxHomologyDegree := n + 1;
      if opts.RelDegreeLimit != infinity then maxHomologyDegree = opts.RelDegreeLimit;
 
-     cycleList := getGenerators(A,DegreeLimit=>maxDeg);
+     cycleList := getGenerators(A,DegreeLimit=>maxDeg,Verbosity=>opts.Verbosity);
 
      if cycleList == {} then (
         -- put the cycles that the variables represent in the cache.
@@ -691,7 +731,7 @@ homologyAlgebra DGAlgebra := opts -> A -> (
            time HA = findEasyRelations(A,cycleList);
         )
         else HA = makeHomologyRing(A,cycleList,{},true);
-        HA = getRelations(A,HA,cycleList,maxHomologyDegree);
+        HA = getRelations(A,HA,cycleList,maxHomologyDegree,Verbosity=>opts.Verbosity);
         A.cache.homologyAlgebra#homologyAlgebra = HA;
 	A.cache.homologyAlgebra#GenDegreeLimit = opts.GenDegreeLimit;
 	A.cache.homologyAlgebra#RelDegreeLimit = opts.RelDegreeLimit;
@@ -701,13 +741,13 @@ homologyAlgebra DGAlgebra := opts -> A -> (
 )
 
 isHomologyAlgebraTrivial = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity})
-isHomologyAlgebraTrivial DGAlgebra := opts -> A -> findTrivialMasseyOperation(A,opts) =!= null
+isHomologyAlgebraTrivial DGAlgebra := opts -> A -> findTrivialMasseyOperation(A,opts,TMOLimit=>2) =!= null
 
 isGolod = method(TypicalValue=>Boolean)
-isGolod Ring := R -> isHomologyAlgebraTrivial(koszulComplexDGA(R))
+isGolod Ring := R -> findTrivialMasseyOperation(koszulComplexDGA(R)) =!= null
 
-isGolodHomomorphism = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity})
-isGolodHomomorphism QuotientRing := opts -> R -> isHomologyAlgebraTrivial(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts)
+isGolodHomomorphism = method(TypicalValue=>Boolean,Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
+isGolodHomomorphism QuotientRing := opts -> R -> findTrivialMasseyOperation(acyclicClosure(ambient R, EndDegree=>opts.GenDegreeLimit) ** R, opts) =!= null
 
 DGAlgebra ** Ring := (A,S) -> (
   B := freeDGAlgebra(S, A.Degrees);
@@ -730,44 +770,329 @@ getBoundaryPreimage = method()
 getBoundaryPreimage (DGAlgebra,List,ZZ) := (A,boundaryList,homDegree) -> (
    dnplus1 := polyDifferential(homDegree+1,A);
    Anbasis := flatten entries getBasis(homDegree,A);
-   if Anbasis == {} then matrix {{0_(A.ring)}} else (
+   Anplus1basis := getBasis(homDegree+1,A);
+   local retVal;
+   if Anbasis == {} then retVal = 0 else (
       boundaryVec := (coefficients(matrix{boundaryList}, Monomials => Anbasis))#1;
       degreeList := apply(degrees target boundaryVec, l -> -drop(l,1));
       boundaryVec = map((A.ring)^degreeList,(A.ring)^(rank source boundaryVec), sub(boundaryVec,A.ring));
-      retVal := boundaryVec // dnplus1;
-      -- if not all elements of the list are boundaries, then return null
-      if (dnplus1 * retVal != boundaryVec) then retVal = null else retVal
-   )
+      retVal = boundaryVec // dnplus1;
+      -- if not all elements of the list are boundaries, then return null - the DGA does not admit a trivial massey operation.
+      if dnplus1 * retVal != boundaryVec then (
+         -- the below error is just for debugging purposes.
+	 --error "err";
+	 retVal = null;
+      );
+   );
+   if retVal =!= null then if retVal == 0 then retVal = apply(#boundaryList, i -> 0_(A.natural)) else retVal = flatten entries (Anplus1basis * substitute(retVal, A.ring));
+   if retVal =!= null then assert(#retVal == #boundaryList);
+   retVal
 )
-
 getBoundaryPreimage (DGAlgebra,RingElement) := (A,b) -> getBoundaryPreimage(A,{b}, first degree b)
 
-findTrivialMasseyOperation = method(TypicalValue=>List, Options=>{GenDegreeLimit=>infinity,TMOLimit=>2})
+findTrivialMasseyOperation = method(TypicalValue=>HashTable, Options=>{GenDegreeLimit=>infinity,TMOLimit=>infinity})
 findTrivialMasseyOperation DGAlgebra := opts -> A -> (
    maxDeg := maxDegree A;
    if maxDeg == infinity and opts.GenDegreeLimit == infinity then error "Must specify an upper bound on the generating degree";
+   if maxDeg == infinity and opts.TMOLimit == infinity then error "Must specify an upper bound of order of Massey operations.";
    if opts.GenDegreeLimit != infinity then maxDeg = opts.GenDegreeLimit; 
-   cycleList := getGenerators(A,DegreeLimit=>maxDeg);
-   --- just do 2-fold TMOs for now
-   prodList := apply(subsets(cycleList,2), l -> (first degree l#0 + first degree l#1,l#0*l#1));
+   -- here we really should take just the homology gens as a module (and even then, only the ones that are in deg leq than
+   -- half the max degree of the DGA).  This should really speed things up.
+   if maxDegree A != infinity then maxDeg = min(maxDeg, ceiling(maxDegree A / 2));
+   cycleList := flatten apply(maxDeg, i -> representativeCycles(i+1,A));
+   retVal := hashTable apply(#cycleList, i -> ({i},cycleList#i));
+   n := 2;
+   maxMasseys := min(maxDeg, opts.TMOLimit);
+   while n <= maxMasseys do (
+      retVal = findNaryTrivialMasseyOperation(A,cycleList,retVal,n);
+      if retVal === null then ( << "No trivial Massey operation exists for this DG Algebra." << endl; n = maxMasseys );
+      n = n + 1;
+   );
+   retVal
+)
+
+-- This method computes all the Nary TMOs.  It takes as input a DGAlgebra A, a list of cycles whose classes
+-- form a basis of the homology of the input (possibly up to a certain degree), a hash table containing the
+-- previous TMOs, and the order of TMOs we are currently computing.
+-- The hash table has (key,values) of the form (list giving the 'tensor monomial' of the MO, the MO itself)
+-- It returns a hash table which, given the 'tensor monomial' gives the element of Massey operation for that monomial.
+-- If at some stage, this can't be computed, then null is returned.
+findNaryTrivialMasseyOperation = method(TypicalValue=>HashTable)
+findNaryTrivialMasseyOperation(DGAlgebra,List,HashTable,ZZ) := (A,cycleList,prevTMOs,N) -> (
+   -- build the list of 'monomials'
+   degreeList := cycleList / degree / first;
+   tensMons := masseyMonomials(degreeList,prevTMOs,N);
+   -- below are some auxiliary functions to make things a little easier.
+   getTMO := (h,m) -> if h#?m then h#m else 0_(A.natural);
+   cleanTMOHash := h -> select(h, z -> z != 0_(A.natural));
+   tensMonDegree := m -> sum apply(m, i -> degreeList#i);
+   -- the elements of prodList are of the form (degree of cycle, corresponding tensor monomial, cycle).  I realize this is redundant, but it makes
+   -- the code cleaner.
+   prodList := apply(tensMons, m -> ((tensMonDegree m) + #m - 2, m, sum apply(#m-1, i -> ((-1)^((tensMonDegree take(m,i+1)) + i + 1))*(getTMO(prevTMOs,take(m,i+1)))*(getTMO(prevTMOs,drop(m,i+1))))));
    n := min (prodList / first);
    maxDegree := max (prodList / first);
-   retVal := {};
+   retVal := hashTable {};
    while n <= maxDegree do (
-      boundaryList := select(prodList, z -> z#0 == n) / last;
+      boundaryList := select(prodList, z -> z#0 == n);
       if boundaryList != {} then (
-         tempVar := getBoundaryPreimage(A,boundaryList,n);
+         tempVar := getBoundaryPreimage(A,boundaryList / last,n);
 	 if (tempVar === null) then (
 	    -- if we are in here, then no trivial Massey operation exists
             retVal = null;
 	    n = maxDegree;
 	 )
-	 else retVal = retVal | {tempVar};
-      )
-      else retVal = retVal | {matrix{{0_(A.ring)}}};
+	 else retVal = merge(retVal, hashTable apply(#tempVar, i -> (boundaryList#i#1,tempVar#i)),first);
+      );
       n = n + 1;
    );
+   -- at this point, we want to concatenate all the new TMOs to the old hash table.
+   if retVal =!= null then retVal = cleanTMOHash merge(prevTMOs, retVal, first);
    retVal
+)
+
+-- this computes the Massey product of a tuple of elements individually.
+-- code under development.
+masseyProduct = method(TypicalValue=>RingElement)
+masseyProduct(DGAlgebra,List) := (A,cycleList) -> (
+   --boundary := {sum apply(#m-1, i -> ((-1)^((tensMonDegree take(m,i+1)) + i + 1))*(getTMO(prevTMOs,take(m,i+1)))*(getTMO(prevTMOs,drop(m,i+1))))))};
+   --tempVar := getBoundaryPreimage(A,boundaryList / last,n);
+   null
+)
+
+masseyMonomials = method(TypicalValue=>List)
+masseyMonomials (List,HashTable,ZZ) := (degreeList, nonzeroMons, n) -> (
+   -- this is not near sufficient.  Need to generate all noncomm. monomials on the keys of nonzeroMons of weight n.
+   select((cartesianPower(2,keys nonzeroMons)) / flatten, m -> #m == n)
+)
+
+cartesianPower = (n,myList) -> (
+   retVal := if n == 2 then toList ((set myList) ** (set myList)) else toList ((set myList) ** (set cartesianPower(n-1,myList)));
+   if n > 2 then apply(retVal, p -> flatten {p#0,flatten p#1}) else retVal / toList
+)
+
+----- DGAlgebraMap functions --------
+
+net DGAlgebraMap := f -> net f.natural
+
+dgAlgebraMap = method(TypicalValue => DGAlgebraMap)
+dgAlgebraMap (DGAlgebra,DGAlgebra,Matrix) := (B,A,fnMatrix) -> (
+   f := new MutableHashTable;
+   f#(symbol source) = A;
+   f#(symbol target) = B;
+   f#(symbol natural) = map(B.natural,A.natural,fnMatrix);
+   f#(symbol ringMap) = map(B.ring,A.ring,drop(flatten entries matrix f.natural,numgens A.natural) / (f -> substitute(f,B.ring)));
+   new DGAlgebraMap from f
+)
+
+target DGAlgebraMap := f -> f.target
+source DGAlgebraMap := f -> f.source
+
+-- overload isWellDefined for DGAlgebraMap
+isWellDefined DGAlgebraMap := f -> (
+   A := source f;
+   B := target f;
+   all(apply(gens A.natural, x -> f.natural(A.diff(x)) == B.diff(f.natural(x))), identity)
+)
+
+toComplexMap = method(TypicalValue=>ChainComplexMap,Options=>{EndDegree=>-1,AssertWellDefined=>true})
+toComplexMap DGAlgebraMap := opts -> f -> (
+   A := source f;
+   B := target f;
+   maxDeg := maxDegree A;
+   if (opts.EndDegree != -1) then maxDeg = opts.EndDegree;
+   if maxDeg == infinity then error "Must specify an upper degree bound if an even generator exists.";
+   if (opts.AssertWellDefined) then assert isWellDefined f;
+   Acc := toComplex(A,maxDeg);
+   Bcc := toComplex(B,maxDeg);
+   if A.ring === B.ring then
+      map(Bcc,Acc,i -> toComplexMap(f,i,opts))
+   else
+      -- the below doesn't work yet since I haven't made pushForward functorial.
+      map(pushForward(f.ringMap,Bcc),Acc, t -> toComplexMap(f,t,opts))
+)
+
+toComplexMap (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
+   A := source f;
+   B := target f;
+   R := A.ring;
+   S := B.ring;
+   sourceList := {};
+   targetList := {};
+   coeffMatrix := {};
+   -- If the rings of A and B differ, then there needs to be a ring map from A.ring to B.ring (unless substitute would work)
+   -- then, need to pullback the rings to be modules over the base so that M2 will recognize the module maps.
+   -- The code below is if the base rings agree.
+   aDiff := polyDifferential(n,A);
+   bDiff := polyDifferential(n,B);
+   if R === S then (
+      sourceList = flatten entries getBasis(n,A);
+      targetList = flatten entries getBasis(n,B);
+      coeffMatrix = substitute((coefficients(matrix {sourceList / f.natural}, Monomials => targetList))#1, B.ring);
+      map(source bDiff, source aDiff, coeffMatrix)
+   )
+   else (
+      sourceList = flatten entries getBasis(n,A);
+      targetList = flatten entries getBasis(n,B);
+      sCoeffMatrix := substitute((coefficients(matrix {sourceList / f.natural}, Monomials => targetList))#1, B.ring);
+      -- the rest of this code converts the matrix over S to a matrix over R.  It's slightly
+      -- different than pushForward(RingMap,Matrix), since the map is between free modules over
+      -- different rings.
+      J := graphIdeal(f.ringMap,VariableBaseName=>(local XX));
+      T := ring J;
+      Tbar := T/J;
+      h := map(Tbar,S,matrix {take((gens T) / (k -> substitute(k,Tbar)),numgens S)});
+      I := ideal 0_Tbar;
+      -- have to be a little careful if graphIdeal is zero.
+      if (Tbar =!= S) then I = image matrix {drop(gens Tbar,numgens S)};
+      Tbarbar := Tbar/I;
+      phi := map(Tbar,Tbarbar);
+      sVars := (flatten entries basis Tbarbar) / (z -> phi(z));
+      -- sVars is so that the coefficients are in the same order as the generators
+      -- chosen in pushForward
+      h2 := map(R,Tbar,matrix map(R^1,R^(numgens S),0_R) | matrix {gens R});
+      entriesOverR := apply(entries sCoeffMatrix, row -> h2(last coefficients(matrix{row / h}, Variables=>take(gens Tbar, numgens R),Monomials=>sVars)));
+      sPushForward := pushForward(f.ringMap,source bDiff);
+      sRank := rank target first entriesOverR;
+      rRank := rank source aDiff;
+      -- finally build the map
+      map(sPushForward, source aDiff, (i,j) -> (entries entriesOverR#(i//sRank))#(i%sRank)#(j%rRank))
+   )
+)
+
+-- make pushForward functorial for maps of free modules
+pushForward(RingMap,Matrix) := opts -> (f,M) -> (
+   -- converts a map of free S-modules (a finite R-algebra) to a map over R
+   R := source f;
+   S := target f;
+   assert (ring M === S);
+   J := graphIdeal(f,VariableBaseName=>(local XX));
+   T := ring J;
+   Tbar := T/J;
+   I := ideal 0_Tbar;
+   -- have to be a little careful if graphIdeal is zero.
+   if (Tbar =!= S) then I = image matrix {drop(gens Tbar,numgens S)};
+   Tbarbar := Tbar/I;
+   phi := map(Tbar,Tbarbar);
+   h := map(Tbar,S,matrix {take(gens Tbar,numgens R)});
+   sVars := (flatten entries basis Tbarbar) / (z -> phi(z));
+   -- sVars is so that the coefficients are in the same order as the generators
+   -- chosen in pushForward (is this true?)
+   h2 := map(R,Tbar,matrix map(R^1,R^(numgens S),0_R) | matrix {gens R});
+   MEntriesOverR := apply(entries M, row -> apply(row, p -> h2(last coefficients(matrix{h(p)*sVars}, Variables=>take(gens Tbar, numgens R),Monomials=>sVars))));
+   targetM := pushForward(f,target M,opts);
+   sourceM := pushForward(f,source M,opts);
+   sRank := #sVars;
+   map(targetM, sourceM, (i,j) -> (entries MEntriesOverR#(i//sRank)#(j//sRank))#(i%sRank)#(j%sRank))
+)
+
+pushForward(RingMap,ChainComplex) := opts -> (f,C) -> chainComplex apply(0..((length C)-1), i -> pushForward(f,C.dd_(i+1),opts))
+
+-- The function below will return HH(f) as a module map over HH_0(A) (provided HH_0(B)
+-- is a finite HH_0(A)-module). 
+homology (DGAlgebraMap,ZZ) := opts -> (f,n) -> (
+)
+
+homology DGAlgebraMap := opts -> f -> (
+   A := source f;
+   B := target f;
+   -- the following commands will fail if A and B have generators in even degree, since one
+   -- needs to specify the degrees to look for gens and relations.
+   HA := HH A;
+   HB := HH B;
+   R := B.ring;
+   HBToB := map(B.natural,HB,HB.cache.cycles);
+   BToR := map(R,B.natural);
+   RToH0B := map(zerothHomology B,R); 
+   -- now need to take the generators of HA, and write their image in terms of the basis
+   -- we have chosen of HB.
+   cycleImages := pack(2,mingle {gens HA,HA.cache.cycles / f.natural});
+   -- this way we use whatever grading the image has to speed up this process.
+   cycleDegrees := cycleImages / (z -> degree last z);
+   degreeTable := hashTable(join, pack(2,mingle {cycleDegrees,apply(cycleImages, z -> {z})}));
+   -- now for each degree (i.e. each (k,v) pair in the hash table), we need to compute a GB for the submodule generated by the cycles of that
+   -- particular degree, together with the image.  Then take the coefficients of the cycles (using getChangeMatrix)
+   -- modulo this GB, and this will give us the element in HB to map that variable from HA to.
+   imageHash := hashTable flatten apply(pairs degreeTable, (cycleDegree,cycleImageGroup) -> (
+	                      hbBasis := flatten entries basis(cycleDegree,HB);
+   	                      bBasis := flatten entries getBasis(first cycleDegree,B);
+			      thisDiff := polyDifferential((first cycleDegree)+1,B);
+			      cycleTargetCoeff := last coefficients(matrix{hbBasis / HBToB},Monomials=>bBasis);
+			      cycleImageGroupCoeff := last coefficients(matrix{apply(cycleImageGroup, z -> last z)},Monomials=>bBasis);
+			      -- the following commands fix the degrees since function application does not seem to maintain them.
+			      cycleTargetCoeff = map(target thisDiff, R^(apply(degrees source cycleTargetCoeff, d -> drop(d,1))), BToR(cycleTargetCoeff));
+			      cycleImageGroupCoeff = map(target thisDiff, R^(apply(degrees source cycleImageGroupCoeff, d->drop(d,1))), BToR(cycleImageGroupCoeff));
+			      hGB := gb (cycleTargetCoeff | thisDiff, ChangeMatrix => true);
+			      -- the first (#cycleTargetCoeff) many rows have the coefficients that we want.  
+			      imageHBCoeffs := RToH0B((cycleImageGroupCoeff // hGB)^{0..(#hbBasis)-1});
+			      images := basis(cycleDegree,HB)*imageHBCoeffs;
+			      pack(2, mingle {apply(cycleImageGroup, z -> first z), flatten entries images})
+			   )
+		        ); 
+   -- now imageHash is a hashTable with key/value pair (source variable, image)
+   map(HB,HA,apply(gens HA, x -> imageHash#x))
+)
+
+-- This function lifts a ring map in degree zero to a map between DGAlgebras
+-- (Conditions on RingMap based on differentials?)
+liftToDGMap = method(TypicalValue => DGAlgebraMap, Options=>{EndDegree=>-1})
+liftToDGMap (DGAlgebra,DGAlgebra,RingMap) := opts -> (B,A,f) -> (
+   -- We assume below that f is an R-algebra map, where R = A.ring, S is a finite R-algebra,
+   -- and that f(\del_1(A)) \subseteq \del_1(B).
+   R := A.ring;
+   S := B.ring;
+   -- phi0 := map(S^1,R^1,f,{{1_R}});
+   -- not ok yet, only works for quotients.
+   phi0 := map(pushForward(f,S^1),R^1,matrix{{1_R}});
+   numgensA := numgens A.natural;
+   maxLiftDegree := max((degrees A.natural) / first);
+   -- if EndDegree is specified, we will send all variables beyond that degree to zero; of course this
+   -- may no longer be a DG algebra map.
+   if opts.EndDegree != -1 then maxLiftDegree = opts.EndDegree;
+   -- degree by degree, we lift.  Because A is semifree (which we will have to check at a later date
+   -- should we add non-polynomial underlying algebras), we can send the variables to any lift we choose.
+   previousMap := phi0;
+   currentMap := 0;
+   n := 1;
+   imageList := {};
+   AGens := select(gens A.natural, z -> first degree z <= maxLiftDegree);
+   gensHash := hashTable(join,pack(2,mingle {(AGens / degree / first),AGens / (i -> {i})}));
+   while n <= maxLiftDegree do (
+      gensList := gensHash#n;
+      -- select the relevant columns of the nth differential
+      diffA := polyDifferential(n,A);
+      basisA := flatten entries getBasis(n,A);
+      -- select the columns corresponding to generators
+      diffA = diffA_(select(#basisA, i -> (first support basisA_i == basisA_i)));
+      diffB := polyDifferential(n,B);
+      -- make diffB into a map of R-modules via pushForward
+      -- must use pushForward so that all modules are over the same ring so we can lift.
+      diffB = map(pushForward(f,target diffB), pushForward(f,source diffB), substitute(diffB,R));
+      -- factor previousMap*diffA through the image of diffB
+      -- note: previousMap must be a map of R-modules so that // will work.
+      factorMap := previousMap*diffA // diffB;
+      images := flatten entries (getBasis(n,B)*(f ** factorMap));
+      -- images has the images of the generators under the lift of f.
+      imageList = imageList | images;
+      padVarList := imageList | apply(numgensA-#imageList,i -> 0) | flatten entries matrix f;
+      -- make a temporary dgAlgebraMap so we can use existing code to build the dg algebra map in degree n
+      tempPhi := dgAlgebraMap(B,A,matrix{padVarList});
+      previousMap = toComplexMap(tempPhi,n,AssertWellDefined=>false);
+      n = n + 1;
+   );
+   dgAlgebraMap(B,A,matrix {imageList})
+)
+
+torMap = method(TypicalValue => RingMap, Options => {GenDegreeLimit=>3})
+torMap RingMap := opts -> f -> (
+   R := source f;
+   S := target f;
+   rTorAlg := torAlgebra(R,opts);
+   sTorAlg := torAlgebra(S,opts);
+   A := acyclicClosure(R,EndDegree=>(opts.GenDegreeLimit-1));
+   B := acyclicClosure(S,EndDegree=>(opts.GenDegreeLimit-1));
+   sSub := map(sTorAlg, B.natural,matrix{gens sTorAlg});
+   phi := liftToDGMap(B,A,f);
+   map(sTorAlg,rTorAlg,matrix{take(flatten entries matrix phi.natural,numgens A.natural) / sSub})
 )
 
 --------------------
@@ -785,20 +1110,80 @@ doc ///
     Text
       This package is used to define and manipulate DG algebras.
   Subnodes
-    "Operations on DG Algebras"
+    "Basic operations on DG Algebras"
     "The Koszul complex as a DG Algebra"
-    "Acyclic closures"
-    "Homology algebra of a DG Algebra"
+    "Basic operations on DG Algebra Maps"
 ///
 
 doc ///
   Key
-    "Operations on DG Algebras"
+    "Basic operations on DG Algebras"
   Headline
     Outlines some basic operations on DG Algebras
   Description
     Text
-      Text here.
+      There are several ways to define a DGAlgebra.  One can start by defining one 'from scratch'.  One does
+      this by specifying the ring over which the DGAlgebra is defined and the degrees of the generators.  The
+      name of the generators of the DGAlgebra by default is $T_i$, but one may change this by specifying the
+      optional (string) argument 'Variable'.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+      A = freeDGAlgebra(R,{{1,1},{1,1},{1,1},{1,1}})
+    Text
+      The command freeDGAlgebra only defines the underlying algebra of A, and not the differential.  To set the differential of A,
+      one uses the command setDiff.
+    Example
+      setDiff(A, gens R)
+    Text
+      Note that the above is the (graded) Koszul complex on a set of generators of R.  A much easier way to define this is to use the
+      function koszulComplexDGA.
+    Example
+      B = koszulComplexDGA(R, Variable=>"S")
+    Text
+      One can compute the homology algebra of a DGAlgebra using the homology (or HH) command.
+    Example
+      HB = HH B
+      describe HB
+      degrees HB
+    Text
+      Note that since R is a complete intersection, its Koszul homology algebra is an exterior algebra, which is a
+      free graded commutative algebra.  Note that the internal degree is preserved in the computation of the homology algebra
+      of B.
+    Text
+      One can also adjoin variables to kill cycles in homology.  The command killCycles looks for the first positive degree
+      nonzero homology (say i), and adjoins variables in homological degree i+1 that differentiate to a minimal generating set of this homology, so that the
+      resulting DGAlgebra now only has homology in degree greater than i (note of course this could introduce new homology in higher degrees).
+      The command adjoinVariables allows finer control over this procedure.  See @ TO adjoinVariables @ for an example.
+    Example
+      HB.cache.cycles
+      C = adjoinVariables(B,{first HB.cache.cycles})
+      homologyAlgebra(C,GenDegreeLimit=>4,RelDegreeLimit=>4)
+      C = killCycles(B)
+      homologyAlgebra(C,GenDegreeLimit=>4,RelDegreeLimit=>4)
+    Text
+      Again, note that since R is a complete intersection, once we adjoin the variables in homological degree two to kill the cycles in degree one,
+      we obtain a minimal DG Algebra resolution of the residue field of R.  Also, note that since C has generators in even degree, one must specify the
+      optional arguments GenDegreeLimit and RelDegreeLimit to specify the max degree of the computation.  To do this, one uses the homologyAlgebra command
+      rather than the HH command.
+    Text
+      This computation could have also been done with the command acyclicClosure.  The command acyclicClosure performs the command killCycles sequentially to ensure that the
+      result has homology in higher and higher degrees, thereby computing (part of) a minimal DG Algebra resolution of the residue field.  acyclicClosure has an optional
+      argument EndDegree that allows the user to specify the maximum homological degree with which to perform this adjunction of variables.  The default value of this is 3, since if there
+      are any variables of degree 3 that need to be added, then each subsequent homological degree will require some variables to be adjoined (Halperin's rigidity theorem).
+    Example
+      D = acyclicClosure R
+      R' = ZZ/101[x,y,z]/ideal{x^2,y^2,z^2,x*y*z}
+      E = acyclicClosure(R',EndDegree=>5)
+      tally degrees E.natural
+    Text
+      As you can see, since R' is not a complete intersection, the acyclic closure of E requires infinitely many variables; we display the degrees of the first 6 here.
+      The tally that is displayed gives the deviations of the ring R.  One can compute the deviations directly from any minimal free resolution of the residue field
+      of R', so that using the one provided by res coker vars R is faster.  To do this, use the command @ TO deviations @.
+    Example
+      deviations(R,DegreeLimit=>6)
+      deviations(R',DegreeLimit=>6)
+    Text
+      As a brief warning, the command @ TO poincareN @ which is used in @ TO deviations @ uses the symbols S and T internally, and may cause problems accessing such rings with the user interface.
 ///
 
 doc ///
@@ -808,27 +1193,104 @@ doc ///
     an example
   Description
     Text
-      Text here.
+      The Koszul complex on a sequence of elements $f_1,\dots,f_r$ is a complex of R-modules whose underlying graded R-module
+      is the exterior algebra on R^r generated in homological degree one.  This algebra structure also respects the boundary map
+      of the complex in the sense that it satisfies the Liebniz rule.  That is, $d(ab) = d(a)b + (-1)^{deg a}ad(b)$.  When one
+      speaks of 'the' Koszul complex of a ring, one means the Koszul complex on a minimal set of generators of the maximal ideal of R.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+      KR = koszulComplexDGA R
+    Text
+      One can specify the name of the variable to easily handle multiple Koszul complexes at once.
+    Example
+      S = ZZ/101[x,y,z]/ideal{x^3,y^3,z^3,x^2*y^2,y^2*z^2}
+      KS = koszulComplexDGA(S,Variable=>"U")
+    Text
+      To obtain the chain complex associated to the Koszul complex, one may use toComplex.  One can also obtain this complex
+      directly without using the DGAlgebras package by using the command @ TO koszul @.
+    Example
+      cxKR = toComplex KR
+      prune HH cxKR
+    Text
+      Since the Koszul complex is a DG algebra, its homology is itself an algebra.  One can obtain this algebra using the command
+      homology, homologyAlgebra, or HH (all commands work).  This algebra structure can detect whether or not the ring is a complete
+      intersection or Gorenstein.
+    Example
+      HKR = HH KR
+      ideal HKR
+      R' = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a*c,a*d,b*c,b*d,a^2*b^2-c^2*d^2}
+      HKR' = HH koszulComplexDGA R'
+      numgens HKR'
+      ann ideal gens HKR'
+    Text
+      Note that since the socle of HKR' is one dimensional, HKR' has Poincare duality, and hence R' is Gorenstein.
+    Text
+      One can also consider the Koszul complex of an ideal, or a sequence of elements.
+    Example
+      Q = ambient R
+      I = ideal {a^3,b^3,c^3,d^3}
+      KI = koszulComplexDGA I
+      HKI = HH KI
+      describe HKI
+      use Q
+      I' = I + ideal{a^2*b^2*c^2*d^2}
+      KI' = koszulComplexDGA I'
+      HKI' = HH KI'
+      describe HKI'
+      HKI'.cache.cycles
+    Text
+      Note that since I is a Q-regular sequence, the Koszul complex is acyclic, and that both homology algebras are algebras over the zeroth homology
+      of the Koszul complex.
 ///
 
 doc ///
   Key
-    "Acyclic closures"
+    "Basic operations on DG Algebra Maps"
   Headline
-    an example
+    Outlines some basic operations on DGAlgebraMaps
   Description
     Text
-      Text here.
-///
-
-doc ///
-  Key
-    "Homology algebra of a DG Algebra"
-  Headline
-    an example
-  Description
+      An algebra map between the underlying graded algebras that satisfies the Leibniz rule is a morphism of DG algebras.  Such objects
+      are created using the DGAlgebraMap class.  As with DGAlgebras, one can define a DGAlgebraMap 'from scratch' using @ TO dgAlgebraMap @.
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
+      K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+      K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
+      f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
     Text
-      Text here.
+      Once we define the DGAlgebraMap, it is a good idea to check to see if it indeed satisfies the Leibniz rule.  This can be checked by using
+      isWellDefined.
+    Example
+      isWellDefined f
+    Text
+      Oops!  Let's try that again.
+    Example
+      g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
+      isWellDefined g
+    Text
+      One can lift a ring homomorphism in degree zero to a map of DGAlgebras (up to a specified degree) using liftToDGMap.  This is helpful
+      in some of the internal functions of the DGAlgebras package, such as computing the map induced on Tor algebras by a RingMap.
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
+      S = R/ideal{a^2*b^2*c^2}
+      f = map(S,R)
+      A = acyclicClosure(R,EndDegree=>3)
+      B = acyclicClosure(S,EndDegree=>3)
+      phi = liftToDGMap(B,A,f)
+    Text
+      Once one has a DGAlgebraMap, one can also obtain the underlying map of complexes via toComplexMap.
+    Example
+      cmPhi = toComplexMap(phi,EndDegree=>3)
+    Text
+      There are also some auxiliary commands associated with DGAlgebraMaps
+    Example
+      source phi
+      target phi
+    Text
+      One can also obtain the map on homology induced by a DGAlgebra map.
+    Example
+      HHg = HH g
+      matrix HHg
 ///
 
 doc ///
@@ -840,21 +1302,14 @@ doc ///
     Text
       Some common ways to create DGAlgebras include @ TO koszulComplexDGA @, @ TO freeDGAlgebra @, @ TO setDiff @, and @ TO acyclicClosure @.
   SeeAlso
-    "Operations on DG Algebras"
+    "Basic operations on DG Algebras"
 ///
 
 doc ///
   Key
     freeDGAlgebra
-  Headline
-    Constructs a free (skew commutative) DGAlgebra
-  Usage
-    A = freeDGAlgebra(R,degreeList) 
-///
-
-doc ///
-  Key
     (freeDGAlgebra,Ring,List)
+    [freeDGAlgebra,Variable]
   Headline
     Constructs a DGAlgebra
   Usage
@@ -895,6 +1350,7 @@ doc ///
       algebra is constructed, so the differential is set later with setDiff.  Many DG algebras that one
       encounters in commutative algebra have been implemented, however, and do not need to be defined 'by hand'.
       For example, if one wants to work with the Koszul complex as a DG algebra, then one should see the command @ TO koszulComplexDGA @.
+      Also, if one wishes to specify the name of the variables used, specify the Variable option; see the example in @ TO dgAlgebraMap @.
   Caveat
     There is currently a bug handling DG algebras that have no monomials in some degree, but some monomials in a later degree;
     for example if one replaces the 3 in the above example with a 5.
@@ -904,6 +1360,7 @@ doc ///
   Key
     koszulComplexDGA
     (koszulComplexDGA,Ring)
+    [koszulComplexDGA,Variable]
   Headline
     Returns the Koszul complex as a DGAlgebra
   Usage
@@ -924,7 +1381,8 @@ doc ///
       ranks = apply(4, i -> numgens prune HH_i(complexA))
       ranks == apply(4, i -> numgens prune HH_i(koszul vars R))
     Text
-      One can also compute the homology of A directly with @ TO (homology,ZZ,DGAlgebra) @.
+      One can also compute the homology of A directly with @ TO (homology,ZZ,DGAlgebra) @.  One may also specify
+      the name of the variable using the Variable option.
 ///
 
 doc ///
@@ -1542,10 +2000,19 @@ doc ///
       R = Q/(ideal vars Q)^2
       isGolod(R)
     Text
-      The above is a (CM) ring minimal of minimal multiplicity, hence Golod.
-  Caveat
-    Currently, it does not try to find a full trivial Massey operation for the ring R, it just computes them to second order.
-    Since there is not currently an example of a ring that is not Golod yet has trivial product on $H(K^R)$, this is ok for now.
+      The above is a (CM) ring minimal of minimal multiplicity, hence Golod.  The next example was found
+      by Lukas Katthan, and appears in his arXiv paper 1511.04883.  It is the first known example
+      of an algebra that is not Golod, but whose Koszul complex has a trivial homology product.
+      A future version of this package will allow for computations of higher order (non-vanishing) Massey operations.
+    Example
+      Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
+      I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
+      R = Q/I
+      isHomologyAlgebraTrivial koszulComplexDGA R
+      isGolod R
+    Text
+      Note that since the Koszul complex is zero in homological degree beyond the embedding dimension, there are only finitely
+      many Massey products that one needs to check to verify that a ring is Golod.
 ///
 
 doc ///
@@ -1573,13 +2040,9 @@ doc ///
     Example
       Q = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
       R = Q/ideal (a^3*b^3*c^3*d^3)
-      isGolodHomomorphism(R,GenDegreeLimit=>5)
+      isGolodHomomorphism(R,GenDegreeLimit=>5,TMOLimit=>3)
     Text
-      The map from Q to R is Golod by a result of Avramov and Levin.
-  Caveat
-    Currently, it does not try to find a full trivial Massey operation on acyclicClosure(Q) ** R, it just computes them to second order.
-    Since there is not currently an example of a ring (or a homomorphism) that is not Golod yet has trivial product on its homotopy fiber,
-    this is ok for now.
+      The map from Q to R is Golod by a result of Avramov and Levin; we can only find the trivial Massey operations out to a given degree.
 ///
 
 doc ///
@@ -1608,8 +2071,10 @@ doc ///
   Key
     deviations
     (deviations,Ring)
+    (deviations,ChainComplex)
+    (deviations,RingElement,List)
   Headline
-    Computes the deviations of the input ring
+    Computes the deviations of the input ring, complex, or power series.
   Usage
     devTally = deviations(R)
   Inputs
@@ -1618,9 +2083,9 @@ doc ///
     devTally:Tally
   Description
     Text
-      This command computes the deviations of the ring R.  The deviations are the same as the degrees of the generators of
-      the acyclic closure of R, or the degrees of the generators of the Tor algebra of R.  This function takes an option
-      called Limit (default value 3) that specifies the largest deviation to compute.
+      This command computes the deviations of a @ TO Ring @, a @ TO ChainComplex @, or a power series in the form of a @ TO RingElement @.
+      The deviations are the same as the degrees of the generators of the acyclic closure of R, or the degrees of the generators of the
+      Tor algebra of R.  This function takes an option called Limit (default value 3) that specifies the largest deviation to compute.
     Example
       R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
       deviations(R)
@@ -1630,13 +2095,53 @@ doc ///
       T = ZZ/101[a,b]/ideal {a^2-b^3}
       deviations(T,DegreeLimit=>4)
     Text
-      Note that the deviations of T are not graded, since T is not graded.
+      Note that the deviations of T are not graded, since T is not graded.  When calling deviations on a ChainComplex, the
+      zeroth free module must be cyclic, and this is checked.  The same goes for the case
+      of a RingElement.
+    Example
+      R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
+      A = degreesRing R
+      kRes = res coker vars R
+      pSeries = poincareN kRes
+      devA = deviations(R,DegreeLimit=>5)
+      devB = deviations(kRes,DegreeLimit=>5)
+      devC = deviations(pSeries,degrees R, DegreeLimit=>5)
+      devA === devB and devB === devC
+///
+
+doc ///
+  Key
+    deviationsToPoincare
+    (deviationsToPoincare,HashTable)
+    [deviationsToPoincare,DegreeLimit]
+  Headline
+    Computes the power series corresponding to a set of deviations.
+  Usage
+    pSeries = deviationsToPoincare(devHash)
+  Inputs
+    devHash:HashTable
+      HashTable of the same form as the output from @ TO deviations @
+  Outputs
+    pSeries:RingElement
+  Description
+    Text
+      This command takes a HashTable of the same form output from @ TO deviations @ and produces the Poincare series corresponding to it.
+      The (key,value) pairs must be of the form homologicalDegree=>number or (homologicalDegree,internalDegree)=>number.
+      Because 
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
+      RDevs = deviations(R,DegreeLimit=>6)
+      devPSeries = deviationsToPoincare(RDevs,DegreeLimit=>6)
+      pSeries = poincareN (res(coker vars R, LengthLimit=>6))
+      substitute(devPSeries,ring pSeries) == pSeries
 ///
 
 doc ///
   Key
     findTrivialMasseyOperation
+    findNaryTrivialMasseyOperation
     (findTrivialMasseyOperation,DGAlgebra)
+    (findNaryTrivialMasseyOperation,DGAlgebra,List,HashTable,ZZ)
   Headline
     Finds a trivial Massey operation on a set of generators of H(A)
   Usage
@@ -1644,13 +2149,13 @@ doc ///
   Inputs
     A:DGAlgebra
   Outputs
-    tmo:List
-      List of matrices whose columns span the image of the multiplication map, one for each homological degree.
+    tmo:HashTable
+      A hash table with keys given by monomials in a generating set of the positive degree homology of A and values the element that bounds the Massey
+      product corresponding to that monomial.
   Description
     Text
-      This function currently just finds the elements whose boundary give the product of every pair of cycles
-      that are chosen as generators.  Eventually, all higher Massey operations will also be computed.  The maximum
-      degree of a generating cycle is specified in the option GenDegreeLimit, if needed.
+      This function the element that bounds all potentially nonzero Massey products (before taking homology class).
+      The maximum degree of a generating cycle is specified in the option GenDegreeLimit, if needed.
     Text
       Golod rings are defined by being those rings whose Koszul complex K^R has a trivial Massey operation.
       Also, the existence of a trivial Massey operation on a DG algebra A forces the multiplication on H(A)
@@ -1680,6 +2185,85 @@ doc ///
       isHomologyAlgebraTrivial(A)
       cycleList = getGenerators(A)
       assert(findTrivialMasseyOperation(A) === null)
+    Text
+      The related function @ TO findNaryTrivialMasseyOperation @ find only the nth order trivial Massey operations.
+///
+
+doc ///
+  Key
+    expandGeomSeries
+    (expandGeomSeries,List,ZZ)
+    (expandGeomSeries,RingElement,ZZ)
+  Headline
+    Expand a geometric series to a specified degree.
+  Usage
+    pSeries = expandGeomSeries(f,n)
+  Inputs
+    f:RingElement
+      Ratio of the geometric series to be expanded.
+    n:ZZ
+      Degree which to expand the geometric series.
+  Outputs
+    pSeries:RingElement
+      Power series representation of the geometric series.
+  Description
+    Text
+      If the user supplies a list instead of a RingElement as the first argument, the return
+      value is the product of all the each of the geometric series expanded to degree n obtained
+      by calling expandGeomSeries on each element of the list.
+    Example
+      A = ZZ[S,T_0,T_1]
+      f = expandGeomSeries(S^2*T_0^8,10)
+      g = expandGeomSeries(S^4*T_1^15,10)
+      h = expandGeomSeries({S^2*T_0^8,S^4*T_1^15},10)
+      B = A/(first gens A)^11
+      substitute(f*g,B) == h
+///
+
+doc ///
+  Key
+    torMap
+    (torMap,RingMap)
+    [torMap,GenDegreeLimit]
+  Headline
+    Compute the map of Tor algebras associated to a RingMap.
+  Usage
+    torPhi = torMap(phi)
+  Inputs
+    phi:RingMap
+  Outputs
+    torPhi:RingMap
+  Description
+    Text
+      The functor Tor_R(M,N) is also functorial in the ring argument.  Therefore, a ring map phi from A to B induces an algebra map
+      from the Tor algebra of A to the Tor algebra of B.
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3,a^2*b^2*c^2}
+      S = R/ideal{a*b^2*c^2,a^2*b*c^2,a^2*b^2*c}
+      f = map(S,R)
+      fTor = torMap(f,GenDegreeLimit=>3)
+      matrix fTor
+    Text
+      In the following example, the map on Tor is surjective, which means that the ring homomorphism is large (Dress-Kramer).
+    Example
+      R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a*c,a*d,b*c,b*d}
+      S = ZZ/101[a,b]/ideal{a^3,b^3}
+      f = map(S,R,matrix{{a,b,0,0}})
+      fTor = torMap(f,GenDegreeLimit=>4)
+      matrix fTor      
+///
+
+doc ///
+  Key
+    ringMap
+  Headline
+    RingMap of a DGAlgebraMap in degree zero.
+  Usage
+    phi = phiLift.ringMap
+  Inputs
+    phiLift:DGAlgebraMap
+  Outputs
+    phi:RingMap
 ///
 
 doc ///
@@ -1695,9 +2279,6 @@ doc ///
   Outputs
     HA0:Ring
       HH_0(A) as a ring.
-  Description
-    Text
-      This is a stub.
 ///
 
 doc ///
@@ -1719,9 +2300,178 @@ doc ///
   Outputs
     M':Module
       M_N as an R = A_0-module
+///
+
+doc ///
+  Key
+    DGAlgebraMap
+  Headline
+    The class of all DG Algebra maps
   Description
     Text
-      This is a stub.
+      A common way to create a DGAlgebraMap is via @ TO liftToDGMap @.
+///
+
+doc ///
+  Key
+    dgAlgebraMap
+    (isWellDefined,DGAlgebraMap)
+    (dgAlgebraMap,DGAlgebra,DGAlgebra,Matrix)
+  Headline
+    Define a DG algebra map between DG algebras.
+  Usage
+    phi = dgAlgebraMap(B,A,M)
+  Inputs
+    A:DGAlgebra
+       Source
+    B:DGAlgebra
+       Target
+    M:Matrix
+       A matrix representing where the generators of A should be mapped to (akin to ringMap)
+  Outputs
+    phi:DGAlgebraMap
+  Description
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
+      K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+      K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
+      g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
+      isWellDefined g
+    Text
+      The function does not check that the DG algebra map is well defined, however.
+    Example
+      f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
+      isWellDefined f
+///
+
+doc ///
+  Key
+    toComplexMap
+    (toComplexMap,DGAlgebraMap)
+    (toComplexMap,DGAlgebraMap,ZZ)
+    [toComplexMap,AssertWellDefined]
+    [toComplexMap,EndDegree]
+  Headline
+    Construct the ChainComplexMap associated to a DGAlgebraMap
+  Usage
+    psi = toComplexMap phi
+  Inputs
+    phi:DGAlgebraMap
+  Outputs
+    psi:ChainComplexMap
+  Description
+    Example
+       R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
+       K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+       K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
+       g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
+       g' = toComplexMap g
+    Text
+      The option @ TO EndDegree @ must be specified if the source of phi has any algebra generators of even degree.  The option @ TO AssertWellDefined @
+      is used if one wishes to assert that the result of this computation is indeed a chain map.  One can construct just the nth map in the
+      chain map by providing the second @ TO ZZ @ parameter.
+    Text
+      This function also works when working over different rings, such as the case when the @ TO DGAlgebraMap @ is produced via
+      @ TO liftToDGMap @ and in the next example.  In this case, the target module is produced via @ TO pushForward @.
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
+      S = R/ideal{a^2*b^2*c^2}
+      f = map(S,R)
+      A = acyclicClosure(R,EndDegree=>3)
+      B = acyclicClosure(S,EndDegree=>3)
+      phi = liftToDGMap(B,A,f)
+      toComplexMap(phi,EndDegree=>3)
+///
+
+doc ///
+  Key
+    liftToDGMap
+    (liftToDGMap,DGAlgebra,DGAlgebra,RingMap)
+    [liftToDGMap,EndDegree]
+  Headline
+    Lift a ring homomorphism in degree zero to a DG algebra morphism
+  Usage
+    phiTilde = liftToDGMap(B,A,phi)
+  Inputs
+    B:DGAlgebra
+      Target
+    A:DGAlgebra
+      Source
+    phi:RingMap
+      Map from A in degree zero to B in degree zero
+  Outputs
+    phiTilde:DGAlgebraMap
+      DGAlgebraMap lifting phi to a map of DGAlgebras.
+  Description
+    Text
+      In order for phiTilde to be defined, phi of the image of the differential of A in degree 1 must lie in the image of the
+      differential of B in degree 1.  At present, this condition is not checked.
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
+      S = R/ideal{a^2*b^2*c^2}
+      f = map(S,R)
+      A = acyclicClosure(R,EndDegree=>3)
+      B = acyclicClosure(S,EndDegree=>3)
+      phi = liftToDGMap(B,A,f)
+      toComplexMap(phi,EndDegree=>3)
+///
+
+doc ///
+  Key
+    (homology,DGAlgebraMap)
+    (homology,DGAlgebraMap,ZZ)
+  Headline
+    Computes the homomorphism in homology associated to a DGAlgebraMap.
+  Usage
+    homologyPhi = homology(phi,n)
+  Inputs
+    phi:DGAlgebraMap
+  Outputs
+    homologyPhi:RingMap
+      The map on homology defined by phi.
+  Description
+    Example
+      R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
+      K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+      K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
+      f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
+      g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
+      toComplexMap g
+      HHg = HH g
+    Text
+      One can also supply the second argument (a ZZ) in order to obtain the map on homology in a specified degree.
+      (This is currently not available).
+///
+
+doc ///
+  Key
+    (source,DGAlgebraMap)
+  Headline
+    Outputs the source of a DGAlgebraMap
+  Usage
+    source phi
+  Inputs
+    phi:DGAlgebraMap
+///
+
+doc ///
+  Key
+    (target,DGAlgebraMap)
+  Headline
+    Outputs the target of a DGAlgebraMap
+  Usage
+    target phi
+  Inputs
+    phi:DGAlgebraMap
+///
+
+doc ///
+  Key
+    AssertWellDefined
+  Headline
+    Option to check whether the lifted map on DGAlgebras is well defined.
+  Usage
+    liftToDGMap(...,AssertWellDefined=>true)
 ///
 
 doc ///
@@ -1730,7 +2480,7 @@ doc ///
   Headline
     Option to specify the degree to start computing the acyclic closure and killing cycles
   Usage
-    acyclicClosure(...,StartDegree=>n) or killCycles(...,StartDegree=>n)
+    acyclicClosure(...,StartDegree=>n)
 ///
 
 doc ///
@@ -1924,6 +2674,33 @@ doc ///
 
 doc ///
   Key
+    [isGolodHomomorphism,TMOLimit]
+  Headline
+    Option to specify the maximum degree to look for generators when computing the deviations
+  Usage
+    isGolodHomomorphism(...,DegreeLimit=>n)
+///
+
+doc ///
+  Key
+    [homologyAlgebra,Verbosity]
+  Headline
+    Option to specify the maximum degree to look for generators when computing the deviations
+  Usage
+    homologyAlgebra(...,DegreeLimit=>n)
+///
+
+doc ///
+  Key
+    [getGenerators,Verbosity]
+  Headline
+    Option to specify the maximum degree to look for generators when computing the deviations
+  Usage
+    getGenerators(...,Verbosity=>n)
+///
+
+doc ///
+  Key
     (net,DGAlgebra)
   Headline
     Outputs the pertinent information about a DGAlgebra
@@ -1931,6 +2708,17 @@ doc ///
     net A
   Inputs
     A:DGAlgebra
+///
+
+doc ///
+  Key
+    (net,DGAlgebraMap)
+  Headline
+    Outputs the pertinent information about a DGAlgebraMap
+  Usage
+    net phi
+  Inputs
+    phi:DGAlgebraMap
 ///
 
 -------------------------------
@@ -2135,7 +2923,7 @@ S = R/ideal{a^3*b^3*c^3*d^3}
 time A = acyclicClosure(R,EndDegree=>6)
 B = A ** S
 assert(isHomologyAlgebraTrivial(B,GenDegreeLimit=>6))
-assert(isGolodHomomorphism(S,GenDegreeLimit=>6))
+assert(isGolodHomomorphism(S,GenDegreeLimit=>6,TMOLimit=>3))
 -- returns true since R --> S is Golod
 R = ZZ/101[a,b,c,d]/ideal{a^4,b^4,c^4,d^4}
 A = koszulComplexDGA(R)
@@ -2188,14 +2976,256 @@ assert(isAcyclic B)
 assert(not isAcyclic C)
 ///
 
+TEST ///
+-- test 11 : isGolod and isHomologyAlgebraTrivial example
+-- Interesting case due to Katthan.
+Q = ZZ/101[x_1,x_2,y_1,y_2,z,w]
+I = ideal {x_1*x_2^2,z^2*w,y_1*y_2^2,x_2^2*z*w,y_2^2*z^2,x_1*x_2*y_1*y_2,x_2^2*y_2^2*z,x_1*y_1*z}
+R = Q/I
+assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
+assert(isGolod R == false)
+///
+
 end
 
 -- How to install the package
 uninstallPackage "DGAlgebras"
 restart
 installPackage "DGAlgebras"
-viewHelp DGAlgebras
 check "DGAlgebras"
+viewHelp DGAlgebras
+
+-- Below, we provide some of the examples used in development, unsupported and undocumented for the user.
+
+-- Bug from the Macaulay2 Google Group
+restart
+needsPackage "DGAlgebras"
+R = ZZ/32003[t, Inverses=>true, MonomialOrder=>RevLex]
+I = ideal t^2
+A = koszulComplexDGA(I)
+skewList = select(toList(0..(#degList-1)), i -> odd first degList#i)
+(A.ring)[varsList, Degrees=>{{1}}, Join => false, SkewCommutative => skewList]
+(A.ring)[varsList]
+-- so the DGAlgebras package does not work over local rings?
+
+-- Demo
+-- 'Finite' DGAlgebras: the Koszul Complex
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+KR = koszulComplexDGA(R)
+toComplex KR
+KR.dd
+HKR = HH KR
+describe HKR
+peek HKR.cache
+
+S = R/ideal{a^2*b^2*c^2*d^2}
+KS = koszulComplexDGA(S)
+HKS = HH KS;
+numgens HKS
+numgens ideal HKS
+(ideal HKS)_*
+peek HKS.cache
+
+-- (potentially) infinite partial DGAlgebras : acyclic closures
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+XR = acyclicClosure(R)
+apply(gens XR.natural, x -> XR.diff(x))
+
+S = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^2*d^2}
+XS = acyclicClosure(S)
+netList apply(gens XS.natural, x -> XS.diff(x))
+
+-- homotopy fiber of projection R --> S
+homotopyFiber = XR ** S
+homologyHomotopyFiber = HH homotopyFiber
+homologyHomotopyFiber = homologyAlgebra( homotopyFiber, GenDegreeLimit=>4, RelDegreeLimit=>8)
+numgens homologyHomotopyFiber
+numgens ideal homologyHomotopyFiber
+peek homologyHomotopyFiber.cache
+
+-- maps on Tor algebras of rings
+phi = map(S,R)
+torPhi = torMap phi
+matrix torPhi
+-- Note: need to add ker for ring maps from skew rings :)
+ker torPhi
+
+-- lifting ring maps to DG maps
+phiTilde = liftToDGMap(XS,XR,phi)
+apply(gens XR.natural, x -> phiTilde.natural x)
+
+-- deviations
+restart
+loadPackage "DGAlgebras"
+R1 = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
+R2 = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^2*d^2}
+devR1 = deviations R1
+devR2 = deviations R2
+poincR2 = deviationsToPoincare devR2
+coefficients(poincR2, Variables=>{first gens ring poincR2})
+res coker vars R2
+R3 = ZZ/101[a,b,c,d,Degrees=>entries id_(ZZ^4)]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^2*d^2}
+degrees R3
+devR3 = deviations R3
+-- bug here!
+deviationsToPoincare devR3
+
+-- Golod DG Algebras and trivial Massey operations
+restart
+loadPackage "DGAlgebras"
+Q = ZZ/101[x_1..x_6]
+I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
+R = Q/I
+A = koszulComplexDGA(R)
+isHomologyAlgebraTrivial A
+cycleList = getGenerators(A)
+tmo = findTrivialMasseyOperation(A)
+
+-- stub function documentation node
+doc ///
+  Key
+    myStub
+    (myStub,DGAlgebra)
+  Headline
+    Stub headline
+  Usage
+    tmo = myStub(A)
+  Inputs
+    A:DGAlgebra
+  Outputs
+    tmo:List
+      Stub Output
+  Description
+    Text
+      This is a stub.
+    Example
+      Q = ZZ/101[x_1..x_6]
+      I = ideal (x_3*x_5,x_4*x_5,x_1*x_6,x_3*x_6,x_4*x_6)
+    Text
+      More stub.
+///
+
+--stub option node
+
+doc ///
+  Key
+    StubOption
+  Headline
+    Stub Option Headline
+  Usage
+    homologyAlgebra(...,StubOption=>n)
+///
+
+-- JSAG examples
+restart
+needsPackage "DGAlgebras";
+R = ZZ/101[a,b,c]/ideal{a^3,b^3,a^2*b^2};
+KR = koszulComplexDGA R
+HKR = HH KR;
+gens HKR
+ideal HKR
+
+-- trying to make pushForward functorial
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[x,y,z]
+S = R[w]/ideal{w^3,x*w^2}
+f = map(S,R)
+M = matrix {{x + x*w + w^2,w},{0,w^2}}
+A = source M
+B = target M
+Mpush = pushForward(f,M)
+-- test functoriality of pushForward
+kSRes = res(coker matrix {{x,y,z,w}}, LengthLimit=>5)
+kSRes1push = pushForward(f,kSRes.dd_1)
+kSRes2push = pushForward(f,kSRes.dd_2)
+kSRes3push = pushForward(f,kSRes.dd_3)
+kSRes1push*kSRes2push
+kSRes2push*kSRes3push
+prune homology(kSRes1push,kSRes2push)
+prune homology(kSRes2push,kSRes3push)
+-- pushforward the ChainComplex
+kSResPush = pushForward(f,kSRes)
+prune HH kSResPush
+
+-- lifting functions
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
+S = R/ideal{a^2*b^2*c^2}
+f = map(S,R)
+A = acyclicClosure(R,EndDegree=>3)
+time(B = acyclicClosure(S,EndDegree=>3))
+phi = liftToDGMap(B,A,f)
+-- can't do the following yet, since M2 can't handle maps between chain complexes
+-- over different rings. (Should pushforward the target and then try?)
+toComplexMap(phi,EndDegree=>3)
+
+-- torMap
+restart
+loadPackage "DGAlgebras"
+printWidth=74
+R = ZZ/101[a,b]/ideal{a^3,b^3,a^2*b^2}
+S = R/ideal{a*b^2,a^2*b}
+f = map(S,R)
+Torf = torMap(f,GenDegreeLimit=>3);
+TorR = source Torf
+TorS = target Torf
+Torf
+
+-- below is a good test, since the target is less complicated than the source
+-- which is backwards than the usual behavior
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c]/ideal{a^2,b^2,c^2,d^2,a*c,a*d,b*c,b*d}
+S = ZZ/101[a,b]/ideal{a^2,b^2}
+f = map(S,R,matrix{{a,b,0,0}})
+Torf = torMap(f,GenDegreeLimit=>4);
+TorR = source Torf;
+TorS = target Torf;
+-- note the homomorphism is large
+matrix Torf
+
+-- DGAlgebraMap Testing
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
+K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+K2 = koszulComplexDGA(ideal {b,c},Variable=>"T")
+f = dgAlgebraMap(K2,K1,matrix{{0,T_1,T_2}})
+isWellDefined f
+g = dgAlgebraMap(K1,K2,matrix{{Y_2,Y_3}})
+isWellDefined g
+source g
+target g
+toComplexMap g
+HHg = HH g
+
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
+K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+K2 = koszulComplexDGA(ideal vars R,Variable=>"Z")
+g = dgAlgebraMap(K2,K1,matrix{{Z_1,Z_2,Z_3}})
+isWellDefined g
+HH g
+
+-- change of rings DGAlgebraMap currently does not work yet, since M2 expects
+-- matrices to be defined between free modules over the same ring.  Need to use
+-- pushForward (for ChainComplex; not yet written) for this to work.
+restart
+loadPackage "DGAlgebras"
+R = ZZ/101[a,b,c]/ideal{a^2+b^2+c^2}
+K1 = koszulComplexDGA(ideal vars R,Variable=>"Y")
+S = ZZ/101[a,b]/ideal{a^2+b^2}
+K2 = koszulComplexDGA(ideal vars S,Variable=>"T")
+f = dgAlgebraMap(K2,K1,matrix{{T_1,T_2,0}})
+isWellDefined f
+toComplexMap f
 
 -- Some examples and things that will eventually make it into the program and documentation.
 ------------------
@@ -2216,7 +3246,6 @@ basis(B)
 -- first of all, it thinks that the module is not finite over the base (R), even though it is.
 -- secondly, if we add in a^n and b^n to make it finite over ZZ/101, the answer given is not a basis -
 --   the basis should be 1,t1,t2,t3,t12,t13,t23,t123 (should not have t1*t2, t1*t3, etc)
-
 -- Note that A is a free R-module, with basis t1,t2,t3,t12,t13,t23,t123.
 -- How can we get this basis in general, at least in the case that A is a free R-module?
 --------------
@@ -2247,12 +3276,14 @@ reduceHilbert hilbertSeries HA3
 
 restart
 loadPackage "DGAlgebras"
-Q = ZZ/101[x,y,z]
+Q = QQ[x,y,z]
 I = ideal{y^3,z*x^2,y*(z^2+y*x),z^3+2*x*y*z,x*(z^2+y*x),z*y^2,x^3,z*(z^2+2*x*y)}
 R = Q/I
+ann ideal vars R
 A = koszulComplexDGA(R)
 time HA = homologyAlgebra(A)
 reduceHilbert hilbertSeries HA
+ann ideal vars HA
 
 -- the following example baffles me.  The 'same' ideal is Gorenstein in characteristic 2, and Golod in characteristic 32003 (probably)
 Q2 = ZZ/2[x,y,z]
@@ -2369,9 +3400,12 @@ restart
 loadPackage "DGAlgebras"
 Q = QQ[a,b,c,d,e,f,g,h,i]
 I = ideal (h^2-a*i,g^2-c*h,f^2-e*g,e*f-b*h,e^2-d*g,d*e-a*h,d^2-c*e,c*g-a*h,c*d-b*f,c^2-a*g,b*d-a*f,b^2-a*c)
+res coker gens I
+oo.dd
 R = Q/I
 A = koszulComplexDGA(R)
 isHomologyAlgebraTrivial(A)
+-- no.
 
 -- connected sum example
 -- goal: get this example to run quicker?
@@ -2554,7 +3588,6 @@ netList tDiffList
 setDiff(A, tDiffList, InitializeComplex => false)
 homologyList = apply(5,i -> numgens prune homology(i,A))
 H0 = HH_0(A); numgens H0
--- something is wrong with number of module generators/number of algebra generators
 H1 = prune HH_1(A); numgens H1
 H2 = prune HH_2(A); numgens H2
 H3 = prune HH_3(A); numgens H3
@@ -2567,5 +3600,61 @@ H9 = prune HH_9(A); numgens H9
 genList = getGenerators(A, DegreeLimit=>3)
 HA = homologyAlgebra(A)
 
+-- CC[x]/x^2 n=2
+restart
+loadPackage "DGAlgebras"
+debug DGAlgebras
+x = symbol x; T = symbol T;
+n = 2
+pairsList = toList (set(1..n)**set(1..n))
+symbolList = var -> apply(pairsList, i -> var_i)
+R = QQ[symbolList x, Degrees=>toList (n^2:1)]
+A = freeDGAlgebra(R,toList ((n^2):{1,2}))
+tDiffList = apply(pairsList, p -> x_(p#0,1)*x_(1,p#1) + x_(p#0,2)*x_(2,p#1))
+netList tDiffList
+setDiff(A, tDiffList, InitializeComplex => false)
+HA = HH(A)
+homologyList = apply(5,i -> numgens prune homology(i,A))
+H0 = HH_0(A); numgens H0
+H1 = prune HH_1(A); numgens H1
+H2 = prune HH_2(A); numgens H2
+H3 = prune HH_3(A); numgens H3
+H4 = prune HH_4(A); numgens H4
+H5 = prune HH_5(A); numgens H5
+H6 = prune HH_6(A); numgens H6
+H7 = prune HH_7(A); numgens H7
+
+-- CC[x]/x^2 n=3
+restart
+loadPackage "DGAlgebras"
+debug DGAlgebras
+x = symbol x; T = symbol T;
+n = 3
+pairsList = toList (set(1..n)**set(1..n))
+symbolList = var -> apply(pairsList, i -> var_i)
+R = QQ[symbolList x, Degrees=>toList (n^2:1)]
+A = freeDGAlgebra(R,toList ((n^2):{1,2}))
+tDiffList = apply(pairsList, p -> x_(p#0,1)*x_(1,p#1) + x_(p#0,2)*x_(2,p#1)+ x_(p#0,3)*x_(3,p#1))
+netList tDiffList
+setDiff(A, tDiffList, InitializeComplex => false)
+HA = HH(A)
+homologyList = apply(5,i -> numgens prune homology(i,A))
+H0 = HH_0(A); numgens H0
+H1 = prune HH_1(A); numgens H1
+H2 = prune HH_2(A); numgens H2
+H3 = prune HH_3(A); numgens H3
+H4 = prune HH_4(A); numgens H4
+H5 = prune HH_5(A); numgens H5
+H6 = prune HH_6(A); numgens H6
+H7 = prune HH_7(A); numgens H7
 
 
+------
+--- From Google Group
+restart
+needsPackage "DGAlgebras"
+R = ZZ/101[x,y,z]
+A = freeDGAlgebra(R,{{1},{1},{1},{3}})
+A.natural
+setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
+isHomogeneous(A)

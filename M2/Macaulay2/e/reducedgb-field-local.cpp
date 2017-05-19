@@ -47,6 +47,8 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
   // auto_reduced flag is ignored, since it can lead to infinite loops here
   ReducedGB_Field::minimalize(polys0,false);
 
+  //displayElements("-- after minimize in field case -- ", R, polys, [](const POLY& g) { return g.f; } );
+
   for (int i=0; i<polys.size(); i++)
     {
       int f_lead_wt;
@@ -58,8 +60,9 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
       t.g = polys[i];
       t.size = R->gbvector_n_terms(f);
       t.alpha = a;
-
       gb_elems.push_back(t);
+
+      // gb_elems.push_back({polys[i], R->gbvector_n_terms(f), a});
     }
 }
 

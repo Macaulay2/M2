@@ -73,7 +73,7 @@ namespace M2 {
 
     void set_from_long(ElementType& result, long a) const {
       printf("called ARingZZxFlint::set_from_long\n");
-      M2_ASSERT(0);
+      assert(0);
     }
 
     void set_var(ElementType& result, int v) const { if (v == 0) fmpz_poly_set_coeff_si(result, 1, 1); }
@@ -83,7 +83,7 @@ namespace M2 {
     }
 
     void set_from_mpq(ElementType& result, mpq_ptr a) const {
-      M2_ASSERT(false); // TODO: what to do here??
+      assert(false); // TODO: what to do here??
     }
 
     bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
@@ -97,7 +97,7 @@ namespace M2 {
     void invert(ElementType &result, ElementType a) const
       // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
     {
-      M2_ASSERT(false); //TODO: what to do here?
+      assert(false); //TODO: what to do here?
     }
 
     void add(ElementType &result, ElementType a, ElementType b) const
@@ -122,7 +122,7 @@ namespace M2 {
 
     void divide(ElementType &result, ElementType a, ElementType b) const
     {
-      M2_ASSERT(b != 0);
+      assert(b != 0);
       result = nmod_div(a,b, mModulus);
     }
 
@@ -156,8 +156,8 @@ namespace M2 {
     // if possible, x is set to 1.
     // no need to consider the case a==0 or b==0.
     {
-      M2_ASSERT(a != 0);
-      M2_ASSERT(b != 0);
+      assert(a != 0);
+      assert(b != 0);
       x = 1;
       divide(y,a,b);
       negate(y,y);

@@ -707,7 +707,7 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 //     debug_spair(new_set[i]);
 //   }
 #endif
-  std::sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
+  std::stable_sort(new_set.begin(), new_set.end(), spair_sorter(_nvars));
   MonomialTable *montab = MonomialTable::make(_nvars);
 
   //  array_sort(new_set, (compareFcn)spair_compare, 0);
@@ -861,7 +861,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 
 void gbA::update_pairs(int id)
 {
-  M2_ASSERT(gb[id] != nullptr);
+  assert(gb[id] != nullptr);
   gbelem *r = gb[id];
   int x = gbelem_COMPONENT(r);
 
@@ -1146,7 +1146,7 @@ void gbA::spairs_sort(int len, spair *&ps)
 
   SPolySorter SP(R,_F);
   //  QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
-  std::sort(a.begin(), a.end(), SP);
+  std::stable_sort(a.begin(), a.end(), SP);
   int asize = INTSIZE(a);
   int bsize = INTSIZE(b);
 

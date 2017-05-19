@@ -33,6 +33,7 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
+m4_include(config/ax_compare_version.m4)
 m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
 m4_include(config/relpaths.m4)
@@ -221,6 +222,7 @@ AC_SUBST(NTL_WIZARD,no) AC_ARG_ENABLE(ntl-wizard, AS_HELP_STRING(--enable-ntl-wi
 
 AC_SUBST(M2_CPPFLAGS,)
 AC_SUBST(M2_CFLAGS,)
+AC_SUBST(M2_CXXFLAGS,)
 
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
@@ -284,6 +286,21 @@ fi
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
 dnl AC_PROG_MKDIR_P()
+
+AC_MSG_CHECKING(whether exceptions are caught)
+  AC_LANG(C++)
+  AC_RUN_IFELSE([AC_LANG_SOURCE([
+    #include <stdexcept>
+    #include <string>
+    int main () {
+      const std::string s("caught");
+      try { throw(std::runtime_error(s)); } 
+      catch (std::runtime_error e) { }
+      return 0;
+    }])],
+    [AC_MSG_RESULT(yes)],
+    [AC_MSG_RESULT([no, use a different C++ compiler])]; exit 1
+    )
 
 AC_CHECK_SIZEOF([int *])
 AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
@@ -808,7 +825,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
 
@@ -824,7 +841,6 @@ for i in $PROGLIST
 do eval BUILD_$i=yes
 done
 dnl make some programs optional:
-BUILD_lrslib=no
 BUILD_cddplus=no
 
 BUILD_mpir=yes
@@ -1110,10 +1126,7 @@ fi
 
 if test $BUILD_glpk = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(glpk.h,,[
-     	CPPFLAGS="-I/usr/include/glpk $CPPFLAGS"
-	unset ac_cv_header_glpk_h
-     	AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)])
+     AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes) dnl perhaps also look for glpk/glpk.h?
 fi
 
 if test $BUILD_boost = no
@@ -1121,17 +1134,19 @@ then AC_LANG(C++)
      AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
 fi
 
-
-
 if test $BUILD_cddlib = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(cdd.h,,
-     	[ 
-	  CPPFLAGS="-I/usr/include/cddlib -I/usr/include/cdd $CPPFLAGS"
-	  unset ac_cv_header_cdd_h
-	  AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
-	],
-	[#include <setoper.h>])
+     SETOPER_H="#include <setoper.h>"
+     AC_CHECK_HEADERS([cdd.h],,,[$SETOPER_H])
+     dnl Homebrew installs cdd.h in /usr/local/include
+     dnl Ubuntu installs cdd.h in /usr/include/cdd
+     dnl the cddlib source code installs cdd.h in $prefix/include
+     dnl We can't refer to /usr/include here, because we don't know whether the compiler looks there.
+     dnl So under Ubuntu, the installer may include -I/usr/include/cdd in $CPPFLAGS
+     if test $ac_cv_header_cdd_h = no
+     then AC_MSG_NOTICE(will build cddlib from downloaded sources)
+          BUILD_cddlib=yes
+     fi
 fi
 
 AC_SUBST(ULIMIT_T,yes)
@@ -1177,45 +1192,37 @@ fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
 if test $BUILD_atomic_ops = no
-then AC_CHECK_HEADER(atomic_ops.h,
-       AC_SEARCH_LIBS(AO_pause,atomic_ops,,
-         BUILD_atomic_ops=yes),
-       BUILD_atomic_ops=yes)
+then AC_MSG_CHECKING(whether package atomic_ops is provided)
+     if [ pkg-config --exists atomic_ops ]
+     then AC_MSG_RESULT(yes)
+	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops` $CPPFLAGS"
+     else AC_MSG_RESULT([no, will be built from downloaded sources])
+          BUILD_atomic_ops=yes
+     fi
 fi
 
+AC_SUBST(GC_LIBS)
 if test $BUILD_gc = no
-then AC_LANG(C)
-     AC_SEARCH_LIBS(GC_free,gc,
-     	[AC_CHECK_HEADER(gc/gc.h,
-	    [
-		AC_MSG_CHECKING(whether libgc is recent enough)
-		AC_RUN_IFELSE([AC_LANG_SOURCE([ 
-		    #include <stdio.h>
-		    #include <gc.h>
-		    int main () {
-		        FILE *msg = fdopen(AS_MESSAGE_FD,"w");
-#		      ifndef GC_VERSION_MICRO
-			if (GC_ALPHA_VERSION==GC_NOT_ALPHA)
-			fprintf(msg,"(version %d.%d found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR);
-			else
-			fprintf(msg,"(version %d.%d.alpha found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR);
-#		      else
-		        fprintf(msg,"(version %d.%d.%d found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_VERSION_MICRO);
-#		      endif
-		        return !( GC_VERSION_MAJOR > 7 || GC_VERSION_MAJOR == 7 && GC_VERSION_MINOR >= 2); }])],
-		[ AC_MSG_RESULT(yes) ],
-		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc and atomic_ops will be built from downloaded sources)]); BUILD_atomic_ops=yes ; BUILD_gc=yes ],
-		[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-	    ],
- 	    BUILD_gc=yes)],
- 	BUILD_gc=yes)
+then AC_MSG_CHECKING(whether package bdw-gc is provided)
+     if [ pkg-config --exists bdw-gc ]
+     then AC_MSG_RESULT(yes)
+	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc` $CPPFLAGS"
+	  GC_LIBS=`pkg-config --libs-only-l bdw-gc`
+	  LIBS="$GC_LIBS $LIBS"
+     else AC_MSG_RESULT([no, will be built from downloaded sources])
+	  BUILD_gc=yes
+     fi
+     AC_MSG_CHECKING(whether libgc is recent enough)
+     TMP=`pkg-config --modversion bdw-gc`
+     AX_COMPARE_VERSION($TMP,ge,7.2,
+        [ AC_MSG_RESULT(yes) ],
+        [ AC_MSG_RESULT([no, version at least 7.2 is required (gc and atomic_ops will be built from downloaded sources)]); BUILD_atomic_ops=yes ; BUILD_gc=yes ])
 fi
-AC_SUBST(GC_LIBS,-lgc)
 if test $BUILD_gc = yes
 then 
      # libpthread isn't really built by us, but gc will need to link against it
-     BUILTLIBS="-lgc -lpthread $BUILTLIBS"
-     GC_LIBS="$GC_LIBS -lpthread"
+     GC_LIBS="-lgc -lpthread"
+     BUILTLIBS="$GC_LIBS $BUILTLIBS"
 fi
 
 if test $BUILD_gdbm = no
@@ -1270,10 +1277,10 @@ test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING(for fflas_ffpack library)
-     FFLAS_FFPACK_CPPFLAGS=`fflas-ffpack-config --cflags 2>&1`
+     FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
      if test $? = 0
      then AC_MSG_RESULT(found)
-          M2_CPPFLAGS="$M2_CPPFLAGS $FFLAS_FFPACK_CPPFLAGS="
+          M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
      else AC_MSG_RESULT(not found, will build)
           BUILD_fflas_ffpack=yes
      fi
@@ -1464,25 +1471,25 @@ else lapack_found=no
 	 [blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
 	 [LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
      if test $blas_found = no
-     then AC_MSG_CHECKING([whether blas is known to pkg-config])
+     then AC_MSG_CHECKING([whether package blas is provided])
 	  if pkg-config --exists blas
 	  then AC_MSG_RESULT(yes)
 	       blas_found=yes
 	       NEWLIBS=`pkg-config --libs blas`
 	       LIBS="$NEWLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags blas` $CPPFLAGS"
+	       CPPFLAGS="`pkg-config --cflags-only-I blas` $CPPFLAGS"
 	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $NEWLIBS))
 	  else AC_MSG_RESULT(no)
 	  fi
      fi
      if test $lapack_found = no
-     then AC_MSG_CHECKING([whether lapack is known to pkg-config])
+     then AC_MSG_CHECKING([whether package lapack is provided])
 	  if pkg-config --exists lapack
 	  then AC_MSG_RESULT(yes)
 	       lapack_found=yes
 	       NEWLIBS=`pkg-config --libs lapack`
 	       LIBS="$NEWLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags lapack` $CPPFLAGS"
+	       CPPFLAGS="`pkg-config --cflags-only-I lapack` $CPPFLAGS"
 	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $NEWLIBS))
 	  else AC_MSG_RESULT(no)
 	  fi
@@ -1550,8 +1557,14 @@ do case $i in
 done
 
 AC_LANG(C)
-CPPFLAGS="-I/usr/local/include/libxml2 -I/usr/include/libxml2 $CPPFLAGS"
-AC_CHECK_HEADER(libxml/parser.h,,[AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS (-I/foo/bar/libxml2) or install libxml2 development files])])
+
+AC_MSG_CHECKING(whether package libxml-2.0 is provided)
+if [ pkg-config --exists libxml-2.0 ]
+then AC_MSG_RESULT(yes)
+     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0` $CPPFLAGS"
+else AC_MSG_ERROR([no, package libxml-2.0 not found, install it])
+fi
+
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
 AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))

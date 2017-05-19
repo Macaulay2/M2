@@ -236,6 +236,10 @@ public:
                              MutableMatrix *x,
                              bool assume_full_rank) const = 0;
 
+  virtual bool QR(MutableMatrix* Q,
+                  MutableMatrix* R,
+                  bool return_QR) const = 0;
+  
   ///////////////////////////////////
   /// LU decomposition routines /////
   ///////////////////////////////////

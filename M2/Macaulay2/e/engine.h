@@ -1494,7 +1494,14 @@ extern "C" {
   /* Case 1: A is a dense matrix over RR.  Then so are b,x.
      Case 2: A is a dense matrix over CC.  Then so are b,x. */
 
-
+  M2_bool rawQR(const MutableMatrix* A, /* input m x n matrix */
+                MutableMatrix* Q, /* output m x n orthonormal columns matrix */
+                MutableMatrix* R, /* output R matrix: upper triangular, nonsingular if A has ker A = 0 */
+                M2_bool return_QR); /* if false, the output is instead the lapack encoded Householder transformations */
+  /* if return_QR is false, then Q will contain the encoded Householder reflections
+     and the multipliers tau_i will appear in R.
+     MES TODO: be more specific here, once we know the exact format!
+  */
 
   /**************************************************/
   /**** Monomial ideal routines *********************/

@@ -4,8 +4,8 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 4.0.2
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 4.1.0
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 BUILDTARGET = all ftmpl_inst.o

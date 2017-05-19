@@ -304,7 +304,7 @@ void MonomialTable::minimalize(int nvars,
 
   /* The following sorts in ascending lex order, considering the component and the
      inhomogeneous part of the exponent vector */
-  sort(positions.begin(), positions.end(), sorter(nvars,exps,comps));
+  std::stable_sort(positions.begin(), positions.end(), sorter(nvars,exps,comps));
 
   T = MonomialTable::make(nvars);
 
@@ -354,7 +354,7 @@ MonomialTable *MonomialTable::make_minimal(int nvars,
 
   /* The following sorts in ascending lex order, considering the component and the
      inhomogeneous part of the exponent vector */
-  sort(positions.begin(), positions.end(), sorter(nvars,exps,comps));
+  std::stable_sort(positions.begin(), positions.end(), sorter(nvars,exps,comps));
 
   T = MonomialTable::make(nvars);
 

@@ -1,5 +1,5 @@
 export {
-    "skewSchubertVariety", -- for Pieri Homotopies
+    --"skewSchubertVariety", -- for Pieri Homotopies
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
@@ -35,19 +35,24 @@ verifyLength(VisibleList, ZZ) := (l,k) ->(
      if #l <= k then (
 	  x = for i to k-#l-1 list 0;
 	  l | x
-     ) else print("wrong size of partition")
+     ) else print("partition has too many parts")
 )
 --------------------------
 -- Dictionaries of different notations
 --------------------------
 
+--
+--  This converts a partition to a bracket
+--
 partition2bracket = method(TypicalValue => List)
 partition2bracket(List,ZZ,ZZ) := (l, k, n) -> (
      l = verifyLength(l, k);
      brackt := for i to #l-1 list (n-k)+(i+1)-l#i
 )
 
-
+--
+--  Frank asks: What does this do?
+--
 output2partition = method(TypicalValue => List)
 output2partition(List) := redpos ->(
 		n:= #redpos;
@@ -81,7 +86,9 @@ output2bracket List := outp -> (
      apply(br, x-> x=x+1)
 ) 
 
-
+--
+--  Converts a bracket into a partition.  This is useful.
+--
 bracket2partition = method(TypicalValue => List)
 bracket2partition(List,ZZ) := (l, n) -> (
 --     l = reverse sort l;
@@ -121,6 +128,10 @@ printTree MutableHashTable := node ->(
 --       ?? This is the info necessary to create a system of eqns
 --------------------------------------------------------------------
 --    *** NOT USING THIS FUNCTION ***
+--
+--   Frank thinks that this might be a useful alterative to checkIncidenceSolution.
+--    However, he has yet to find an instance where checkIncidenceSolution fails (but it should sometime)
+--
 checkNewtonIteration = method()
 checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
     (k,n):= kn;

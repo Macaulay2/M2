@@ -6,7 +6,6 @@
 #include "array.hpp"
 #include <vector>
 #include <iosfwd>
-#define M2_ASSERT assert
 
 // Class: Subsets
 // Manipulate p-subsets of 0..n-1, for fixed n, but possibly several p.

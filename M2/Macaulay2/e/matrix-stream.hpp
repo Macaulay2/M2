@@ -77,12 +77,12 @@ void matrixToStream(const Matrix* M, T& stream)
 {
   const Ring *R = M->get_ring();
   const PolyRing *P = R->cast_to_PolyRing();
-  M2_ASSERT(P != 0);
+  assert(P != 0);
   const Ring *KK = P->getCoefficientRing();
   size_t nvars = P->n_vars();
   size_t ncols = M->n_cols();
   int charac = static_cast<int>(P->characteristic());
-  M2_ASSERT(charac > 0);
+  assert(charac > 0);
   exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(nvars)); // allocated on stack
   stream.idealBegin(ncols);
   Matrix::iterator i(M);
@@ -111,7 +111,7 @@ void matrixToStream(const Matrix* M, T& stream)
                 if (exp[j] != 0)
                   stream.appendExponent(j,exp[j]);
               std::pair<bool,long> b = KK->coerceToLongInteger(s->coeff);
-              M2_ASSERT(b.first);
+              assert(b.first);
               int a = static_cast<int>(b.second); // This will fit, as the charac fits into an int
               if (a < 0) a += charac;
               stream.appendTermDone(a);

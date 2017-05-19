@@ -700,7 +700,9 @@ public:
                              MutableMatrix *x,
                              bool assume_full_rank) const;
 
-
+  virtual bool QR(MutableMatrix* Q,
+                  MutableMatrix* R,
+                  bool return_QR) const;
 
   virtual engine_RawArrayIntPairOrNull LQUPFactorizationInPlace(bool transpose);
 

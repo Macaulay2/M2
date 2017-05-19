@@ -61,7 +61,7 @@ namespace M2 {
   void ARingQQGMP::syzygy(const ElementType& a, const ElementType& b,
                        ElementType& x, ElementType& y) const
   {
-    M2_ASSERT(!is_zero(b));
+    assert(!is_zero(b));
     set_from_long(x, 1);
     divide(y,a,b);
     negate(y,y);

@@ -234,8 +234,8 @@ SchreyerOrder *SchreyerOrder::exterior(int pp) const
   SchreyerOrder *result = new SchreyerOrder(M);
   int rk = rank();
 
-  M2_ASSERT(pp > 0);
-  M2_ASSERT(pp <= rk);
+  assert(pp > 0);
+  assert(pp <= rk);
   size_t p = static_cast<size_t>(pp);
 
   Subset a(p, 0);

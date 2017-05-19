@@ -1916,11 +1916,11 @@ TEST///
 TEST/// 
       R = CC[x,y]; 
       S = {x^2 - 1/3, x*y - 1}; 
-      roots = solveSystem(S);
-      r0 = roots#0#Coordinates#1
-      newRoots = refineSolutions(S,roots,64) --recall that solutions are of type Point. 
+      oldRoots = solveSystem(S);
+      r0 = oldRoots#0#Coordinates#1
+      newRoots = refineSolutions(S,oldRoots,64) --recall that solutions are of type Point. 
       --check if precision increased:
-      assert(precision newRoots#0#Coordinates#1 > precision roots#0#Coordinates#1) 
+      assert(precision newRoots#0#Coordinates#1 > precision oldRoots#0#Coordinates#1) 
       --check if input number of decimal places, 64, used correctly: 
       assert(precision newRoots#0#Coordinates#1 == ceiling(log_2(10^64)))
 ///;

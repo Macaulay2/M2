@@ -45,8 +45,8 @@ public:
   bool solveInvertible(const Mat& B, Mat& X) 
   { 
     //printf("called mat-linalg zzp flint solveInvertible\n");
-    M2_ASSERT(mMatrix.numRows() == mMatrix.numColumns());
-    M2_ASSERT(mMatrix.numRows() == B.numRows());
+    assert(mMatrix.numRows() == mMatrix.numColumns());
+    assert(mMatrix.numRows() == B.numRows());
     X.resize(mMatrix.numColumns(), B.numColumns());
     int isinvertible = nmod_mat_solve(X.nmod_mat(), mMatrix.nmod_mat(), B.nmod_mat());
     return (isinvertible != 0);
@@ -78,7 +78,7 @@ public:
   }
 
   bool inverse(Mat& result_inv) { 
-    M2_ASSERT(mMatrix.numRows() == mMatrix.numColumns());
+    assert(mMatrix.numRows() == mMatrix.numColumns());
     Mat& A = const_cast<Mat&>(mMatrix);
     result_inv.resize(mMatrix.numRows(), mMatrix.numColumns());
     return nmod_mat_inv(result_inv.nmod_mat(), A.nmod_mat());
@@ -88,7 +88,7 @@ public:
     long rank = nmod_mat_rank(mMatrix.nmod_mat());
     result_nullspace.resize(mMatrix.numColumns(), mMatrix.numColumns() - rank); // the largest the answer could be
     long nullity = nmod_mat_nullspace(result_nullspace.nmod_mat(), mMatrix.nmod_mat());
-    M2_ASSERT(rank == mMatrix.numColumns() - nullity);
+    assert(rank == mMatrix.numColumns() - nullity);
     return nullity;
   }
 

@@ -73,13 +73,13 @@ public:
   ElementType*& array() { return mArray->entries; }
 
   ElementType& entry(size_t row, size_t column) { 
-    M2_ASSERT(row < numRows());
-    M2_ASSERT(column < numColumns());
+    assert(row < numRows());
+    assert(column < numColumns());
     return * fmpz_mat_entry(mArray, row, column); 
   }
   const ElementType& entry(size_t row, size_t column) const { 
-    M2_ASSERT(row < numRows());
-    M2_ASSERT(column < numColumns());
+    assert(row < numRows());
+    assert(column < numColumns());
     return * fmpz_mat_entry(mArray, row, column); 
   }
 
