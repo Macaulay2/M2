@@ -22,10 +22,13 @@ export {
     "SVDComplex",
     "SVDHomology",
     "pseudoInverse",
+    "projectToComplex",
+    "euclideanDistance",
     "SVDBetti",
     "Projection",
     "Laplacian",
 ---    "Threshold",
+--    "spots",
     "numericRank",
     "commonEntries",
     "uniquify",
@@ -651,12 +654,11 @@ maximalEntry chainComplex errors
 
 ///
 
-
-
 toBetti = method()
 toBetti(ZZ, HashTable) := (deg, H) -> (
       new BettiTally from for k in keys H list (k, {deg}, deg) => H#k
       )
+
 
 SVDBetti = method()
 SVDBetti ChainComplex := (C) -> (
@@ -668,6 +670,123 @@ SVDBetti ChainComplex := (C) -> (
     sum for i in keys H list toBetti(i, first H#i)
     )
 
+projectToComplex=method()
+projectToComplex(ChainComplex,HashTable) := (B,hs) -> (
+     -- returns a hash table of the ranks of the homology of C
+    if ring B =!= RR_53 then error "excepted chain complex over the reals RR_53";
+    goodspots := select(spots B, i -> B_i != 0);
+    (lo, hi) := (min goodspots, max goodspots);
+    Cranks := hashTable for ell from lo to hi list ell => rank B_ell;
+    rks := new MutableHashTable; 
+    rks#lo = 0;
+    for ell from lo to hi do (
+	rks#(ell+1) = Cranks#ell-hs#ell-rks#ell;
+	if rks#ell <0 then error "Rank conditions cannot be satisfied");
+    if rks#(hi+1) !=0 then error "Rank conditions cannot be satisfied";
+    Sigmas := new MutableHashTable; -- the singular values in the SVD complex, indexed lo+1..hi
+    Orthos := new MutableHashTable; -- the orthog matrices of the SVD complex, indexed lo..hi
+    sigma1 := null;
+    U := null;
+    Vt := null;
+    P0 := mutableIdentity(ring B, Cranks#lo); -- last projector matrix constructed
+    Q0 := mutableMatrix(ring B, 0, Cranks#lo);
+    for ell from lo+1 to hi do (
+            m1 :=  P0 * (mutableMatrix B.dd_ell); -- crashes if mutable matrices??
+            (sigma1, U, Vt) = if numrows m1 > 0 then SVD m1 else 
+	    (matrix{{}},matrix{{}},id_(B_ell));
+            sigma1 = flatten entries sigma1;
+            Sigmas#ell = sigma1;
+            -- For the vertical map, we need to combine the 2 parts of U, and the remaining part of the map from before
+            ortho1 := (transpose U) * P0; 
+	    --ortho1 := (transpose U) *matrix P0;
+            Orthos#(ell-1) = matrix{{matrix Q0},{matrix ortho1}};
+            -- now split Vt into 2 parts.
+            P0 = Vt^(toList(rks#ell..numRows Vt-1));
+            Q0 = Vt^(toList(0..rks#ell-1));
+            );
+     -- Now create the Sigma matrices
+     Orthos#hi = matrix Vt;
+     SigmaMatrices := hashTable for ell from lo+1 to hi list ell => (
+            m := mutableMatrix(RR_53, Cranks#(ell-1), Cranks#ell);
+            for i from 0 to rks#ell-1 do m_(rks#(ell-1)+i, i) = Sigmas#ell#i;
+            matrix m -- TODO: make this via diagonal matrices and block matrices.
+            );
+	-- transpose all ortho matrices to get the map in the right direction 
+     for i from lo to hi do Orthos#i=transpose Orthos#i;
+     As := hashTable for ell from lo+1 to hi list ell => (
+	    Orthos#(ell-1)*SigmaMatrices#ell* transpose Orthos#ell);
+     return chainComplex As)
+
+euclideanDistance=method()
+euclideanDistance(ChainComplex,ChainComplex) := (A,B) -> (
+    (lo,hi) := (min A, max A);
+    if (lo,hi) != (min B,max B) then error "expect complexes of the same range";
+    for i from lo to hi do if  A_i =!= B_i then  error "expected complexe with free modules of the same ranks";
+    d:=  sum for i from lo+1 to hi list sum( flatten entries (A.dd_i-B.dd_i),c->c^2);
+    d^1/2
+    )
+
+TEST ///
+restart
+needsPackage "SVDComplexes"
+needsPackage "RandomComplexes"
+
+h={1,1,1,1}
+r={2,2,2}
+setRandomSeed 2
+C=randomChainComplex(h,r,Height=>9,WithLLL=>true,zeroMean=>true)
+prune HH C
+--signes in dual
+(dual C).dd_0, transpose C.dd_1
+(dual C).dd_(-1), transpose C.dd_2
+dual (dual C[1])[1]== C 
+dual dual C == C
+
+CR=C**RR_53
+B=disturb(CR,1e-3)
+euclideanDistance(B,CR)
+for i from 1 to 3 list maximalEntry(B.dd_i-CR.dd_i)
+SVDHomology B
+
+hs = hashTable {0 =>1,1=>1,2=>1,3=>1}; 
+A=projectToComplex(B,hs);
+euclideanDistance(A,B)
+euclideanDistance(A,CR)
+Ad=dual A[1]
+(hs,c)=SVDHomology Ad
+Bd=dual B[1]
+dual (dual B[1])[1]==B
+Ad1=projectToComplex(Bd,hs)
+A1= dual Ad1[1]
+euclideanDistance(A1,A)
+euclideanDistance(A1,B)
+euclideanDistance(A,B)
+for i from 1 to 3 list (B.dd_i-A.dd_i)
+for i from 1 to 3 list (B.dd_i-A1.dd_i)
+hs = hashTable {0 =>1,1=>2,2=>2,3=>1}; 
+A=projectToComplex(B,hs);
+euclideanDistance(A,B)
+for i from 1 to 3 list maximalEntry(B.dd_i-A.dd_i)
+hs = hashTable {0 =>1,1=>0,2=>0,3=>1}; 
+A=projectToComplex(B,hs);
+euclideanDistance(A,B)
+for i from 1 to 3 list maximalEntry(B.dd_i-A.dd_i)
+
+hs = hashTable {0 =>1,1=>1,2=>0,3=>0}; 
+A=projectToComplex(B,hs);
+euclideanDistance(A,B)
+for i from 1 to 3 list maximalEntry(B.dd_i-A.dd_i)
+hs = hashTable {0 =>2,1=>2,2=>1,3=>1}; 
+A=projectToComplex(B,hs);
+euclideanDistance(A,B)
+for i from 1 to 3 list maximalEntry(B.dd_i-A.dd_i)
+
+
+hs = hashTable {0 =>2,1=>1,2=>1,3=>2}; 
+A=projectToComplex(B,hs);
+for i from 1 to 3 list maximalEntry(B.dd_i-A.dd_i)
+///
+        
 maxEntry = method()
 maxEntry(Matrix) := (m) -> (flatten entries m)/abs//max
 maxEntry(ChainComplexMap) := (F) -> max for m in spots F list maxEntry(F_m)
@@ -855,9 +974,9 @@ doc ///
       kk2 = ZZ/1073741909
       Cp1 = constantStrand(C, kk1, 8)
       Cp2 = constantStrand(C, kk2, 8)
-      (CR.dd_4, CR2.dd_4, Cp1.dd_4, Cp2.dd_4)
+      netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
       (clean(1e-14,CR)).dd_4
-      (clean(1e-299,CR2)).dd_4
+      netList {(clean(1e-14,CR)).dd_4}==netList {(clean(1e-299,CR2)).dd_4}
     Text
       Setting the input ring to be the integers, although a hack, sets each entry to the 
       number of multiplications used to create this number.  Warning: the result is almost certainly
@@ -874,6 +993,47 @@ doc ///
      together with information about how many multiplications were performed to obtain this number.
    SeeAlso
      constantStrands
+///
+
+doc ///
+   Key
+     constantStrands
+     (constantStrands, ChainComplex, Ring)
+   Headline
+     all constant strands of a chain complex
+   Usage
+     Cs = constantStrands(C, kk)
+   Inputs
+     C:ChainComplex
+       A chain complex created using {\tt res(I, FastNonminimal=>true)}
+     kk:Ring
+       if the coefficient ring of the ring of C is QQ, then this should be either:
+       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
+     deg:ZZ
+       the degree that one wants to choose.
+   Outputs
+     Cs:List
+      the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
+   Description
+    Text
+      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      as in the example below.  But it should be much more general, handling other rings with grace,
+      and also it should handle arbitrary (graded) chain complexes.
+    Example
+      R = QQ[a..d]
+      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+      C = res(I, FastNonminimal=>true)
+      betti C
+      Cs = constantStrands(C, RR_53)
+      CR=Cs#8         
+   Caveat
+     This function should be defined for any graded chain complex, not just ones created
+     using {\tt res(I, FastNonminimal=>true)}.  Currently, it is used to extract information 
+     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
+     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
+     together with information about how many multiplications were performed to obtain this number.
+   SeeAlso
+     constantStrand
 ///
 
 TEST ///
@@ -906,7 +1066,8 @@ TEST ///
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
   C = res(I, FastNonminimal=>true)
   betti C
-  constantStrand(C, RR_53, 8) -- fails, as it doesn't even make it to that code
+  constantStrand(C, RR_53, 8)
+   -- fails, as it doesn't even make it to that code
 ///
 
 doc ///
@@ -1013,6 +1174,18 @@ doc ///
 ///
 
 end--
+{*
+Cs2 = (constantStrands(C, RR_1000))#8
+      kk1 = ZZ/1073741891
+      kk2 = ZZ/1073741909
+      Cp1 = (constantStrands(C, kk1))#8
+      Cp2 =(constantStrands(C, kk2))#8
+      CR.dd_4, CR2.dd_4
+      Cp1.dd_4, Cp2.dd_4   
+      netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
+      netList{(clean(1e-14,CR)).dd_4,(clean(1e-299,CR2)).dd_4}
+      netList {(clean(1e-14,CR)).dd_4} == netList{(clean(1e-299,CR2)).dd_4}
+      *}
 
 restart
 uninstallPackage "SVDComplexes"
@@ -1025,7 +1198,7 @@ restart
 needsPackage "SVDComplexes"
 
 ///
-needsPackage "randomComplexes"
+needsPackage "RandomComplexes"
 needsPackage "SVDComplexes"
 needsPackage "AGRExamples"
 R=QQ[a..h]
@@ -1038,7 +1211,7 @@ setRandomSeed "1"
 F=sum(gens R,x->x^deg)+sum(nextra,i->(random(1,R))^deg);
 elapsedTime I=ideal fromDual matrix{{F}};
 elapsedTime C=res(I,FastNonminimal =>true);
---C0 = getNonminimalRes(C, R0);
+C0 = getNonminimalRes(C, R0);
 betti C
 elapsedTime minimalBetti sub(I,Rp)
 elapsedTime SVDBetti C
@@ -1069,7 +1242,8 @@ Ls1 = constantStrands(C, RR_1000)
 m1 = Ls#9 .dd_6;
 m2 = Ls1#9 .dd_6;
 elapsedTime SVDHomology Ls#9
-elapsedTime SVDHomology Ls1#9
+elapsedTime SVDHomology(Ls1#9**RR_53,Ls#9)
+elapsedTime SVDHomology (Ls1#9**RR_53,Strategy=>Laplacian,Threshold=>1e-2)
 first SVD m1, first SVD m2
 m1 = Ls#9 .dd_7;
 m2 = Ls1#9 .dd_7;

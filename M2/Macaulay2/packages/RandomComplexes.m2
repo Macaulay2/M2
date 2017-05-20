@@ -13,19 +13,46 @@ newPackage(
         )
 
 export {
+    "histogram",
     "maximalEntry",
     "testTimeForLLLonSyzygies",
     "randomChainComplex",
-    "oneMatrix",
+    "randomSimplicialComplex",
+--    "oneMatrix",
     "disturb",
     "normalize",
     "WithLLL",
-    "zeroMean"
+    "zeroMean",
+    "Discrete",
+    "Continues"
 }
 
 
 
-
+histogram=method()
+histogram(List,ZZ) := (L,n) -> (
+    -- L list with entries in RR, QQ or ZZ
+    ma:=max L;
+    mi:=min L;
+    delta:= (ma-mi)/n;
+    L1:=prepend(0,append(apply(n-1,i->#select(L,l-> l<=mi+(i+1)*delta)),#L));
+    apply(n,i->L1_(i+1)-L1_i)
+    )    
+TEST ///
+needsPackage "RandomComplexes"
+M=(randomChainComplex({50,50},{50},zeroMean=>true)).dd_1;
+(svds,U,Vt)=SVD(M**RR_53);
+maximalEntry M
+L=svds/log
+histogram(svds/log,10)
+D=diagonalMatrix apply(100,i->2^i);
+histogram(first SVD(D*M**RR_53)/log,10)
+numericRank(M*D**RR_53)
+histogram(first SVD(M*D**RR_53)/log,10)
+D=diagonalMatrix apply(100,i->(i+1)^10);
+histogram(first SVD(M*D**RR_53)/log,10)
+numericRank(M*D**RR_53)
+///    
 
 
 
@@ -40,41 +67,25 @@ maximalEntry(ChainComplex) := C -> (
     error "expect a ChainComplex over ZZ ,QQ or RR_53";
     for i from min C+1 to max C list maximalEntry C.dd_i)
 
-testTimeForLLLonSyzygies=method(Options=>{Height=>3})
+testTimeForLLLonSyzygies=method(Options=>{Height=>11})
 testTimeForLLLonSyzygies(ZZ,ZZ):= opts->(r,n)->(
     mean:=floor (opts.Height/2);
     A:=random(ZZ^r,ZZ^n,Height=>opts.Height)-mean*oneMatrix(r,n);
-    T:=timing (B:=kernelLLL A; LLL B);
-    (maximalEntry chainComplex(A,B),T#0,maximalEntry T#1))
+    t1:=timing (B:=syz A**QQ);
+    B=lift(B,ZZ);
+    t2:=timing(C:=LLL B);
+    (append(maximalEntry chainComplex(A,B),maximalEntry C),t1#0,t2#0)
+    )
+TEST///
+(m,t1,t2)=testTimeForLLLonSyzygies(15,30,Height=>100)
 
+1/10*sum apply(10,c->(testTimeForLLLonSyzygies(10,20))_1)
+1/10*sum apply(10,c->(testTimeForLLLonSyzygies(10,20))_2)
+///
 
 randomChainComplex=method(Options=>{Height=>10,WithLLL=>true,zeroMean=>false})
 
-needsPackage("SimplicialComplexes")
 
-randomChainComplex(ZZ,ZZ):= opts-> (k,n) -> (
-   --k=6,n=15
-   x:= symbol x;
-   S:=QQ[x_0..x_k];
-   sets:=subsets(toList(0..k));
-   N:=#sets-1;
-   I:=monomialIdeal apply(apply(n,i->sets_(random(N)+1)),s->product(s,i->x_i));
-   c:=simplicialComplex I;
-   CQ:=chainComplex c; 
-   C:=(chainComplex apply(length CQ-1,i->lift(CQ.dd_(i+1),ZZ)))
-   )
-
-TEST ///
-A=randomChainComplex(7,25)
-apply(length A+1,i->rank HH_i A)
-prune HH A
-Cs=apply(10,i->(
-	while(
-	while( A=randomChainComplex(8,40);length A <1) do(); 
-	max select(length A+1,i->rank HH_i A !=0)< length A) do();
-    	A))
-netList apply(Cs,A->(A, apply(length A+1,i-> rank HH_i A)) )
-///
 oneMatrix=method()
 oneMatrix(ZZ,ZZ):= (n,m) -> matrix apply(n,i->apply(m,j-> 1))
 
@@ -102,6 +113,7 @@ randomChainComplex(List,List):= opts -> (h,r)-> (
 	);
     return chainComplex L)
 TEST ///
+needsPackage("SVDComplexes")
 h={1,4,6,5,1} 
 r={1,3,3,4}
 C=randomChainComplex(h,r)
@@ -109,7 +121,7 @@ prune HH C
 CR=C**RR_53    
 C=CR
 SVDHomology CR
-U=SVDComplex CR
+(h,U)=SVDComplex CR
 auts=apply(min CR..max CR, i-> U_i*transpose U_i)
 e=1e-10
 apply(auts,M->clean_e M)
@@ -134,17 +146,49 @@ Cplus.dd^2
     apply(#proj3,i->clean_e(proj2_i*proj1_i))
 ///
 
-disturb = method()
-disturb(ChainComplex,RR) := (C,epsilon) -> (   
+disturb = method(Options => {Strategy => Discrete})
+disturb(ChainComplex,RR) := opts -> (C,epsilon) -> (   
     chainComplex for i from 1 to length C list (
 	c := rank C_(i-1);
 	d := rank C_i;
 	e := maximalEntry C.dd_i;
 	entry:=null;
+	if opts.Strategy == symbol Discrete then
 	matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
 		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(2)-1)))))
+	else if opts.Strategy == symbol Continues then
+	matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
+		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(RR)-1)))))
 --	C.dd_i +e*epsilon*(2*random(RR^c,RR^d)-oneMatrix(c,d))
     ))
+
+needsPackage("SimplicialComplexes")
+
+randomSimplicialComplex=method()
+randomSimplicialComplex(ZZ,ZZ):= (k,n) -> (
+   --k=6,n=15
+   x:= symbol x;
+   S:=QQ[x_0..x_k];
+   sets:=subsets(toList(0..k));
+   N:=#sets-k-2;
+   I:=monomialIdeal apply(apply(n,i->sets_(random(N)+k+2)),s->product(s,i->x_i));
+   c:=simplicialComplex I;
+   CQ:=chainComplex c; 
+   C:=(chainComplex apply(length CQ-1,i->lift(CQ.dd_(i+1),ZZ)))
+   )
+
+TEST ///
+A=randomSimplicialComplex(7,25)
+apply(length A+1,i->rank HH_i A)
+prune HH A
+Cs=apply(10,i->(
+	while(
+	while( A=randomSimplicialComplex(8,40);length A <1) do(); 
+	max select(length A+1,i->rank HH_i A !=0)< length A) do();
+    	A))
+netList apply(Cs,A->(A, apply(length A+1,i-> rank HH_i A)) )
+///
+
     
 normalize=method()
 normalize ChainComplex := C-> (
@@ -168,9 +212,16 @@ doc ///
      support for creating randomly complexes over the integers 
    Description
     Text
+      We implement two methods to create a random  ChainComplex over the integers.
+      The first method builds the complex from products of randomly choosen matrices of desired rank.
+      The limitation of this method to produce large complexes over the intergers with
+      moderate Height is the use of the LLL algorithm to improve the presentation of
+      syzygy matrices.
+      The second method uses Stanley-Reisner rings from randomly choosen monomial ideals.
+      
       Some functionality here should be moved elsewhere.
       
-      Here is an example of the usage.
+      
    Caveat
      Currently, this package requires that the Macaulay2 being run is from the res-2107 ?? git branch
 ///
@@ -180,12 +231,11 @@ doc ///
    Key
      randomChainComplex
      (randomChainComplex,List,List)
-     (randomChainComplex,ZZ,ZZ)
      [randomChainComplex, Height]
    Headline
-     random chain complex over the integers with prescribed homology group and matrix ranks
+     random chain complex over the integers with prescribed ranks of the homology group and ranks of the matrices
    Usage
-     C = randomChainComplex(h,r) or randomComplex(k,n)
+     C = randomChainComplex(h,r)
    Inputs
      h:List
        of desired ranks of the homology groups, of some length $n$
@@ -199,12 +249,9 @@ doc ///
      C:ChainComplex
        a random chain complex over the integers whose homology ranks match $h$, and 
        whose matrices have ranks given by $r$
-       or 
-       the chainComplex of the Stanley-Reisner simplicial complex of a random 
-       square free monomial ideal in k+1 variables and n generators
    Description
     Text
-      Here is an example of the first kind
+    
     Example
       h={1,4,6,5,1} 
       r={1,3,3,4}
@@ -224,19 +271,192 @@ doc ///
       prune HH C
       for i from 0 to 4 list rank HH_i C
       for i from 1 to 4 list rank(C.dd_i)
-    Text
-      Here is an example of the second kind
-    Example
-      setRandomSeed "nice example 2";
-      C=randomChainComplex(7,20)
-      prune HH C
    Caveat
      This returns a chain complex over the integers.  Notice that if one gives h to be a list of zeros, then
      that doesn't mean that the complex is exact, just that the ranks are as expected.
    SeeAlso
      SVDComplexes
 ///
-   	    
+
+doc ///
+   Key
+     randomSimplicialComplex
+     (randomSimplicialComplex,ZZ,ZZ)
+   Headline
+     the chainComplex over ZZ of a random Stanley-Reisner simplicial complex 
+   Usage
+     C = randomSimplicialComplex(k,n)
+   Inputs
+     k:ZZ
+     n:ZZ
+   Outputs
+     C:ChainComplex
+       the chainComplex of the Stanley-Reisner simplicial complex of a random 
+       square free monomial ideal in k+1 variables and n generators
+   Description
+    Text
+       We compute the simplicial complex associated to a square free monomial ideal in k+1 variables
+       whose n generators we choose randomly among the square free monomials.
+     
+    Example
+      setRandomSeed "nice example 2";
+      C=randomSimplicialComplex(7,20)
+      prune HH C
+   SeeAlso
+     SVDComplexes
+///
+
+doc ///
+   Key
+     disturb
+     (disturb,ChainComplex,RR)
+   Headline
+     disturb the matrices of a chain complex over RR
+   Usage
+     B = disturb(C,epsilon)
+   Inputs
+     C:ChainComplex
+       over RR or QQ
+     epsilon:RR
+   Outputs
+     B:ChainComplex
+       a sequence of matrices over RR
+   Description
+    Text
+       We disturb the entris of the matrices by a relative error of size epsilon depending on either a discrete with values in {-1,1} or a continues random variable
+       with values in [-1..1].
+     
+    Example
+      setRandomSeed "nice example 2";
+      C=randomChainComplex({1,1,1},{2,2})
+      C.dd
+      B=disturb(C,1e-4)
+      B.dd
+      B.dd^2
+      B1=disturb(C,1e-4,Strategy=> Continues)
+      B1.dd^2
+   Caveat
+      The result is only approximately a complex
+   SeeAlso
+     SVDComplexes
+///
+
+doc ///
+   Key
+     normalize
+     (normalize,ChainComplex)
+   Headline
+     normalize a ChainComplex over QQ or RR
+   Usage
+     B = normalize C
+   Inputs
+     C:ChainComplex
+       over RR or QQ
+   Outputs
+     B:ChainComplex
+       an isomorphic ChainComplex over QQ or RR
+   Description
+    Text
+       We divide each matrix by its entry of maximal absolute value, to obtain a complex with entries of absolute size $\le 1$.
+    Example
+      setRandomSeed "nice example 2";
+      C=randomChainComplex({1,1,1},{2,2})
+      C.dd
+      B=normalize C
+      B.dd
+///
+
+doc ///
+   Key
+     maximalEntry
+     (maximalEntry,ChainComplex)
+   Headline
+     maximal absolute value of the entries of the matrices 
+   Usage
+     m = maximalEntries C
+   Inputs
+     C:ChainComplex
+       over RR or QQ
+   Outputs
+     m:List
+       of the maximal absolut values of the entries in matrices defining the differential
+   Description
+    Text
+       For each matrix we compute the of maximal absolute value of the entries
+    Example
+      setRandomSeed "nice example 2";
+      C=randomChainComplex({1,1,1},{2,2},Height=>10)
+      C.dd
+      maximalEntry C
+      B=randomChainComplex({2,2,4,2,5,2,2},{2,3,3,2,3,3},Height=>5)
+      maximalEntry B
+      apply(min B..max B,i->rank HH_i(B**QQ))
+/// 
+
+doc ///
+   Key
+     histogram 
+     (histogram,List,ZZ)
+   Headline
+     histogram of a list of real numbers 
+   Usage
+     h = histogram(L,n)
+   Inputs
+     L:List
+       of numbers in RR or QQ or ZZ
+     n:ZZ
+       the number of subintervals to be considered.  
+   Outputs
+     h:List
+       of n integers, the number of entries in the L in i-th equi distant
+       subdivion of the interval from min L to max L
+   Description
+    Text
+       We combute h_i th number to elemnts in the i-th equidistant subdivision
+       of the interval [min L, max L] into n parts 
+    Example
+       M=(randomChainComplex({20,20},{20},zeroMean=>true)).dd_1;
+       (svds,U,Vt)=SVD(M**RR_53);
+       (entries matrix {svds})_0/log
+       maximalEntry M
+       histogram(svds/log,10)
+       histogram(svds_{0..19}/log,10)
+       histogram(svds_{20..39}/log,10)
+/// 
+
+
+doc ///
+   Key
+     testTimeForLLLonSyzygies
+     (testTimeForLLLonSyzygies,ZZ,ZZ)
+   Headline
+     test timing for LLL on syzygies 
+   Usage
+     (m,t1,t2)=testTimeForLLLonSyzygies(r,n,Height=>100)
+   Inputs
+     r:ZZ
+     n:ZZ
+   Outputs
+     m:List
+       of maximal absolute values of the entries of A, B and the LLL basis of B
+     t1:RR
+       the time in seconds to compute B = ker A
+     t2:RR
+       the time to compute the LLL basis of B
+   Description
+    Text
+       We randomly choose an $r \times n$ matrix A over ZZ with entries up to the given Height,
+       and take the time to compute the B=ker A and an LLL basis of B.
+    Example
+      setRandomSeed "nice example 2";
+      r=10,n=20
+      (m,t1,t2)=testTimeForLLLonSyzygies(r,n,Height=>11)
+      (m,t1,t2)=testTimeForLLLonSyzygies(15,30,Height=>100)
+      L=apply(10,c->(testTimeForLLLonSyzygies(15,30))_{1,2})
+      1/10*sum(L,t->t_0)
+      1/10*sum(L,t->t_1)
+///   	    
+  	    
 end
 
 restart
@@ -244,6 +464,14 @@ uninstallPackage "RandomComplexes"
 restart
 installPackage "RandomComplexes"
 viewHelp "RandomComplexes"
+
+
+
+
+
+
+
+
 
 TEST ///
 restart
@@ -275,12 +503,10 @@ clean_e (transpose V#0*C.dd_1*V#1)
 ///
 
 TEST ///
-restart
-load "randomComplexes.m2"
 
 setRandomSeed 7
 
-C= randomChainComplex(6,20)
+C= randomSimplicialComplex(6,20)
 prune HH C
 
 F=ZZ/nextPrime 1000
@@ -290,35 +516,35 @@ rF=apply(length C,i-> rank CF.dd_(i+1))
 
 CR=C**RR_53
 elapsedTime SVDHomology CR
-elapsedTime U=SVDComplex CR;
-Sigma = target U
+elapsedTime (h,U)=SVDComplex CR;
+Sigma = source U
 betti Sigma === betti C
 rR=elapsedTime apply(length Sigma ,i-> rank  Sigma.dd_(i+1))
 assert(rR==rF)
 Sigma.dd_1
 
-Sigma = target U
-Sigma.dd_1
 e=1e-10
-apply(length C, i->clean_e (U_i*C.dd_(i+1)*transpose U_(i+1)-Sigma.dd_(i+1)))
+apply(length C, i->clean_e (U_i*Sigma.dd_(i+1)*transpose U_(i+1)-C.dd_(i+1)))
+e=1e-20
+apply(length C, i->clean_e (U_i*Sigma.dd_(i+1)*transpose U_(i+1)-C.dd_(i+1)))
 
 
 setRandomSeed 3
 
 elapsedTime Cs= apply(10,i->(
 	while (
-	    while ( C= randomChainComplex(6,15); length C <1) do ();
+	    while ( C= randomSimplicialComplex(6,15); length C <1) do ();
 	    max select(length C+1, i-> rank HH_i C != 0) < length C) do ();
 	C)
     ) 
 netList apply(Cs, C-> (C, apply(length C+1,i->rank HH_i C)))
     
-Cs=Cs_(sort apply (#Cs,j->(Z=Cs_j;{sum(length Z+1,i->rank Z_i),j}))/last)
+Cs=reverse Cs_(sort apply (#Cs,j->(Z=Cs_j;{sum(length Z+1,i->rank Z_i),j}))/last)
 tally apply(Cs,C-> apply(length C+1,i->rank HH_i C))
 
 netList apply(Cs, C-> (C, apply(length C+1,i->rank HH_i C)))
 
-C=Cs_1**Cs_2
+C=Cs_1**Cs_3
 F=ZZ/nextPrime 1000
 CF=C**F
 hF=elapsedTime apply(length C+1,i-> rank HH_i CF)
@@ -327,22 +553,24 @@ CR=C**RR_53
 A=elapsedTime SVDHomology CR
 hR=apply(keys A_0,k->A_0#k)
  assert(hR == hF)
-elapsedTime U=SVDComplex CR;
-Sigma = target U
+elapsedTime (h,U)=SVDComplex CR;
+Sigma = source U
 
 e=1e-10
-nearlyZero=chainComplex apply(length C,i->(U_i*C.dd_(i+1)*transpose U_(i+1)-Sigma.dd_(i+1)))
+nearlyZero=elapsedTime chainComplex apply(length C,i->(U_i*Sigma.dd_(i+1)*transpose U_(i+1)-C.dd_(i+1)))
+-- needs speed up for multiplication
 maximalEntry nearlyZero
 ///
 TEST ///
 restart
-load "randomComplexes.m2"
+needsPackage("RandomComplexes")
+needsPackage("SVDComplexes")
 
 setRandomSeed 7
 
 elapsedTime Cs= apply(10,i->(
 	while (
-	    while ( C= randomChainComplex(5,10); length C <1) do ();
+	    while ( C= randomSimplicialComplex(5,10); length C <1) do ();
 	    max select(length C+1, i-> rank HH_i C != 0) < length C) do ();
 	C)
     ) 
@@ -356,11 +584,12 @@ netList apply(Cs, C-> (C, apply(length C+1,i->rank HH_i C)))
 C=Cs_0**Cs_0**Cs_1
 CR=C**RR_53
 A=elapsedTime SVDHomology CR  -- 1.75474 seconds elapsed
+A_0
 hF = new MutableHashTable
 F=ZZ/nextPrime 1000
 CF=C**F
 time for i from 0 to length C do hF#i = rank HH_i CF
-B=new HashTable from hQ    
+B=new HashTable from hF    
 assert(A_0 === B)
 ///
 
@@ -368,7 +597,7 @@ assert(A_0 === B)
 
 TEST ///
 restart
-needsPackage "randomComplexes"
+needsPackage "RandomComplexes"
 needsPackage "SVDComplexes"
 setRandomSeed"test SVD"
 h={1,4,10,4,1} 
@@ -412,26 +641,29 @@ elapsedTime SVDHomology(D,Strategy=>Laplacian)
 
 TEST ///
 restart
-load "randomComplexes.m2"
+needsPackage "RandomComplexes"
+needsPackage "SVDComplexes"
 hts=new MutableHashTable
 for r from 4 to 18 do (
     n=r+1; a=testTimeForLLLonSyzygies(r,n);
-    while (n=n+1,b=testTimeForLLLonSyzygies(r,n); b_1 <0.1) do (a=b); 
+    while (n=n+1,b=testTimeForLLLonSyzygies(r,n); b_1+b_2 <0.1) do (a=b); 
     hts#(r,n-1)=a;
     hts#(r,n)=b;
     )
 Hts=new HashTable from hts
 
-t=apply(100,c->(testTimeForLLLonSyzygies(10,43))_1); 
+t=apply(100,c->(b=testTimeForLLLonSyzygies(10,43);b_1+b_2)) 
+e=1e3
+tally apply(t,c->floor(c*e)*1/e)
 min t, max t
-histogram(t,10)
+
 ///
 
 
 
 TEST ///
 restart
-load "randomComplexes.m2"
+needsPackage "RandomComplexes"
 M=(randomChainComplex({50,50},{50},zeroMean=>true)).dd_1;
 (svds,U,Vt)=SVD(M**RR_53);
 maximalEntry M
@@ -471,12 +703,19 @@ V=last SVDComplex (CR,Strategy=>Laplacian)
 (source U).dd_1, (source V).dd_1
 (source U).dd_2, (source V).dd_2
 (source U).dd_3, (source V).dd_3
+CRd=dual CR[-3]
+Ud=last SVDComplex CRd;
+
+
+(source U).dd_1, (source Ud).dd_3
+(source U).dd_2, (source Ud).dd_2
+(source U).dd_3, (source Ud).dd_1
 U#0-V#0
 U#1-V#1,U#1_4
 U#2-V#2,U#2_0
 U#3-V#3
 setRandomSeed 1
-D=disturb(CR,1e-2)
+D=disturb(CR,1e-3)
 D.dd_1,D.dd_2,D.dd_3
 D.dd^2
 D'=disturb(CR,1e-3)
@@ -510,6 +749,9 @@ E.dd^2
 (h,Ue)=SVDComplex(E,Strategy=>Laplacian,Threshold=>1e-8);
 h
 SVDHomology(E,Strategy=>Laplacian)
+euclideanDistance(E,D)
+euclideanDistance(CR,D)
+euclideanDistance(CR,F)
 Ue#0 *(source Ue).dd_1 *transpose Ue#1 - E.dd_1 
 Ue#1 *(source Ue).dd_2 *transpose Ue#2 - E.dd_2 
 Ue#2 *(source Ue).dd_3 *transpose Ue#3 - E.dd_3 
@@ -580,7 +822,7 @@ tex U#1
 tex U#2
 tex U#3
 
-viewHelp random
+
 
 ///
 
@@ -604,6 +846,7 @@ elapsedTime SVDBetti C
 Ls=constantStrands(C,RR_53)
 D=Ls#9
 SVDHomology(D)
+SVDHomology(D,Strategy=>Laplacian)
 SVDHomology(D,Strategy=>Laplacian,Threshold=>1e-2)
 Ls1=constantStrands(C,RR_1000)
 D1=Ls1#9
