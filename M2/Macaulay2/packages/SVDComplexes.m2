@@ -13,22 +13,20 @@ newPackage(
         )
 
 export {
-    "constantStrand", -- documented, tests
-    "constantStrands", -- documented, tests
+    -- These functions should be placed into M2 itself.
+    "newChainComplexMap",
+    "spots",
+    -- Keep the ones below this line
     "laplacians",
-    "getNonminimalRes",
-    "degreeZeroMatrix",
-    "minimizeBetti",
     "SVDComplex",
     "SVDHomology",
     "pseudoInverse",
+    "pseudoInverse1",
     "projectToComplex",
     "euclideanDistance",
-    "SVDBetti",
     "Projection",
     "Laplacian",
 ---    "Threshold",
---    "spots",
     "numericRank",
     "commonEntries",
     "uniquify",
@@ -40,6 +38,13 @@ export {
 -- Move these to the core? -----------------------
 --------------------------------------------------
 debug Core
+
+concentration = method()
+concentration ChainComplex := C -> (
+    goodspots := select(spots C, i -> C_i != 0);
+    if #goodspots == 0 then (0,0) else (min goodspots, max goodspots)
+    )
+
 chainComplex(HashTable) := (maps) -> (
     -- maps should be a HashTable with keys integers.  values are maps at that spot.
     rgs := (values maps)/ring//unique;
@@ -75,175 +80,14 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      f
     )
 
-
-
--------------------------------------------------
--- Code for random complexes over the integers --
--------------------------------------------------
-randomUpper = method(Options=>{Height=>10})
-randomUpper ZZ := opts -> n -> (
-    if n == 0 then return map(ZZ^0, ZZ^0, {});
-    matrix(ZZ, for i from 0 to n-1 list for j from 0 to n-1 list (
-	    if i > j then 0
-	    else if i == j then 1 
-            else random(ZZ,opts) - floor(opts.Height/2)
-            ))
-    )
-randomSL = method(Options=>{Height=>10})
-randomSL(ZZ) := opts -> n -> randomUpper(n,opts) * transpose randomUpper(n,opts)
-
-
------------------------------------------------
--- Code for nonminimal resolutions over QQ ----
------------------------------------------------
-isMadeFromFastNonminimal = (C) -> C.?Resolution and C.Resolution.?RawComputation
-fastNonminimalComputation = (C) -> if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation else null
-
-constantStrand = method()
-constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
-    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
-    comp := fastNonminimalComputation C;
-    if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
-    len := length C;
-    reg := regularity C;
-    chainComplex for lev from 1 to len list (
-        matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
-        )
-    )    
-
-constantStrand(ChainComplex, ZZ) := (C, deg) -> (
-    kk := coefficientRing ring C;
-    if kk === QQ then error "coefficient ring is QQ: need to provide a ring: RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909, or ZZ";
-    comp := fastNonminimalComputation C;
-    if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
-    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
-    len := length C;
-    reg := regularity C;
-    chainComplex for lev from 1 to len list (
-        matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
-        )
-    )    
-
-constantStrands = method()
-constantStrands(ChainComplex, Ring) := (C, kk) -> (
-    -- base ring of C should be QQ
---    if coefficientRing ring C =!= QQ then error "ring of the complex must be a polynomial ring over QQ";
-    -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
-    len := length C;
-    reg := regularity C;
-    hashTable for deg from 0 to len+reg list (
-        D := constantStrand(C,kk,deg);
-        if D == 0 then continue else deg => D
-        )
-    )
-constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C)
-
-getNonminimalRes = method()
-getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
-    -- if C was created using FastNonminimal=>true, then returns the nonmimal complex.
-    -- if ring C is not QQ, this should be exactly C (with C.dd set).
-    -- if ring C is QQ, then R must be either RR_53 (monoid ring C), or (ZZ/p)(monoid ring C), where p is the prime used to
-    --  construct the resolution (later, there might be several such primes, and also we can
-    --  query and get them.  But not yet.)
-    rawC := C.Resolution.RawComputation;
-    result := new MutableList;
-    for i from 0 to length C - 1 do (
-      result#i = matrix map(R, rawResolutionGetMutableMatrixB(rawC, raw R, i+1));
-      << " i=" << i << " matrix = " << netList result#i << endl;
-      if i > 0 then result#i = map(source result#(i-1),,result#i);
-      );
-    chainComplex toList result
+clean(RR, ChainComplex) := (epsilon, C) -> (
+    chainComplex hashTable for i from min C + 1 to max C list i => clean(epsilon, C.dd_i)
     )
 
-TEST ///
--- TODO for constantStrand, constantStrands:
---  a. make it work for complexes constructed in different manners, not just for FastNonminimal
---  b. allow a single multi-degree
-  -- constantStrand, constantStrands
-  -- these are from nonminimal free resolutions over QQ
-restart
-  needsPackage "SVDComplexes"
-  
-  R = QQ[a..e]
-  I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
-  C = res(I, FastNonminimal=>true)
-  betti C
-  constantStrand(C, RR_53, 4)
-  constantStrand(C, RR_53, 5)
-  constantStrand(C, RR_53, 10)
-
-  constantStrands(C, RR_53)  
-  constantStrands(C, RR_1000)  
-  constantStrands(C, RR_300)  
-  kk1 = ZZ/1073741891
-  kk2 = ZZ/1073741909
-  constantStrands(C, kk1)
-  constantStrands(C, kk2)  
-  constantStrands(C, ZZ)
-  
-  R1 = RR_53 (monoid R)
-  R2 = RR_1000 (monoid R)
-  R3 = kk1 (monoid R)
-  R4 = kk2 (monoid R)
-  betti'ans = new BettiTally from {(0,{0},0) => 1, (1,{3},3) => 6, (1,{4},4) => 1, (1,{5},5) => 3, (1,{6},6) => 6,
-      (2,{4},4) => 1, (2,{5},5) => 3, (2,{6},6) => 22, (2,{7},7) => 29, (2,{8},8) => 9, (3,{6},6) => 1, (3,{7},7)
-      => 14, (3,{8},8) => 52, (3,{9},9) => 45, (3,{10},10) => 4, (4,{8},8) => 4, (4,{9},9) => 35, (4,{10},10) =>
-      52, (4,{11},11) => 14, (4,{12},12) => 4, (5,{10},10) => 9, (5,{11},11) => 29, (5,{12},12) => 10, (5,{13},13)
-      => 3, (5,{14},14) => 1, (6,{12},12) => 6, (6,{13},13) => 3, (6,{14},14) => 1}
-  assert(betti'ans == betti (C1 = getNonminimalRes(C, R1)))
-  assert(betti'ans == betti (C2 = getNonminimalRes(C, R2)))
-  assert(betti'ans == betti (C3 = getNonminimalRes(C, R3)))
-  assert(betti'ans == betti (C4 = getNonminimalRes(C, R4)))
-  assert(C1.dd^2 == 0)
-  assert(C2.dd^2 == 0)
-  assert(C3.dd^2 == 0)
-  assert(C4.dd^2 == 0)
-///
-
-TEST ///
-restart
-  needsPackage "SVDComplexes"
-  
-  R = ZZ/32003[a..e]
-  I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
-  C = res(I, FastNonminimal=>true)
-  C1 = getNonminimalRes(C, R)
-  assert(C == C1)
-///
------------------------------------------------
--- Code for SVD of a complex ------------------
------------------------------------------------
-
-laplacians = method()
-laplacians ChainComplex := (L) -> (
-      laps := new MutableHashTable;
-      for i from min L to max L do (
-	  laps#i=((transpose L.dd_(i))*L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1)))));
-      new HashTable from laps
-      )
-
-degreeZeroMatrix = method()
-degreeZeroMatrix(ChainComplex, ZZ, ZZ) := (C, slanteddeg, level) -> (
-    if ring C === QQ then error "need to provide a target coefficient ring, QQ is not allowed";
-    kk := coefficientRing ring C;
-    rawC := C.Resolution.RawComputation;
-    matrix map(coefficientRing ring C, rawResolutionGetMatrix2(rawC, level, slanteddeg+level))
+clean(RR, ChainComplexMap) := (epsilon, f) -> (
+    H := hashTable for k in keys f list if instance(k,ZZ) then k => clean(epsilon, f_k) else continue;
+    newChainComplexMap(clean(epsilon, target f), clean(epsilon, source f), H)
     )
-
-degreeZeroMatrix(ChainComplex, Ring, ZZ, ZZ) := (C, kk, slanteddeg, level) -> (
-    if kk =!= QQ then degreeZeroMatrix(C,slanteddeg, level)
-    else (
-        rawC := C.Resolution.RawComputation;
-        matrix map(kk, rawResolutionGetMutableMatrix2B(rawC, raw kk, slanteddeg+level,level))
-        )
-    )
-
--- given a mutable Betti table, find the spots (deg,lev) where there are degree 0 maps.
-degzero = (B) -> (
-    degsB := select(keys B, (lev,deglist,deg) -> B#?(lev-1,deglist,deg));
-    degsB = degsB/(x -> (x#0, x#2-x#0));
-    degsB = degsB/reverse//sort -- (deg,lev) pairs.
-    )  
 
 numericRank = method()
 numericRank(RR, Matrix) := (epsilon, M) -> (
@@ -264,22 +108,32 @@ numericRank(RR, MutableMatrix) := (epsilon, M) -> (
 numericRank MutableMatrix :=
 numericRank Matrix := (M) -> numericRank(1e-4, M)
 
-minimizeBetti = method()
-minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
-    B := betti C;
-    mB := new MutableHashTable from B;
-    rk := if kk =!= RR_53 then rank else numericRank;
-    for x in degzero B do (
-      (sdeg,lev) := x;
-      m := degreeZeroMatrix(C, kk, sdeg, lev);
-      r := rk m;
-      << "doing " << (sdeg, lev) << " rank[" << numRows m << "," << numColumns m << "] = " << r << endl;
-      mB#(lev,{lev+sdeg},lev+sdeg) = mB#(lev,{lev+sdeg},lev+sdeg) - r;
-      mB#(lev-1,{lev+sdeg},lev+sdeg) = mB#(lev-1,{lev+sdeg},lev+sdeg) - r;
-      if debugLevel > 2 then << "new betti = " << betti mB << endl;
-      );
-  new BettiTally from mB
-  )
+-------------------------------------------------
+-- Code for random complexes over the integers --
+-------------------------------------------------
+randomUpper = method(Options=>{Height=>10})
+randomUpper ZZ := opts -> n -> (
+    if n == 0 then return map(ZZ^0, ZZ^0, {});
+    matrix(ZZ, for i from 0 to n-1 list for j from 0 to n-1 list (
+	    if i > j then 0
+	    else if i == j then 1 
+            else random(ZZ,opts) - floor(opts.Height/2)
+            ))
+    )
+randomSL = method(Options=>{Height=>10})
+randomSL(ZZ) := opts -> n -> randomUpper(n,opts) * transpose randomUpper(n,opts)
+
+-----------------------------------------------
+-- Code for SVD of a complex ------------------
+-----------------------------------------------
+
+laplacians = method()
+laplacians ChainComplex := (L) -> (
+      laps := new MutableHashTable;
+      for i from min L to max L do (
+	  laps#i=((transpose L.dd_(i))*L.dd_(i) + (L.dd_(i+1) * (transpose L.dd_(i+1)))));
+      new HashTable from laps
+      )
 
 commonEntries = method(Options =>{Threshold=>1e-4})
 commonEntries(List,List) := opts -> (A,B) -> (
@@ -333,9 +187,10 @@ SVDComplex = method(Options => {
 
 SVDComplex ChainComplex := opts -> (C) -> (
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
-    goodspots := select(spots C, i -> C_i != 0);
-    if #goodspots === 1 then return (id_C, hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
-    (lo, hi) := (min goodspots, max goodspots);
+    (lo, hi) := concentration C;
+    if lo === hi then (
+        return (id_C, hashTable {lo => rank C_lo}, hashTable{});
+        );
     Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
     rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
     hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
@@ -446,9 +301,8 @@ SVDComplex ChainComplex := opts -> (C) -> (
 SVDComplex(ChainComplex,ChainComplex) := opts -> (C,C') -> (
     -- returns a hash table of the ranks of the homology of C
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
-    goodspots := select(spots C, i -> C_i != 0);
-    if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
-    (lo, hi) := (min goodspots, max goodspots);
+    (lo, hi) := concentration C;
+    if lo === hi then return (hashTable {lo => rank C_lo}, hashTable{});
     if not betti C == betti C' then error "expected two complexes which differ only by their precision";
     Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
     rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
@@ -510,9 +364,8 @@ SVDHomology = method (Options => options SVDComplex)
 SVDHomology ChainComplex := opts -> (C) -> (
     -- returns a hash table of the ranks of the homology of C
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
-    goodspots := select(spots C, i -> C_i != 0);
-    if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
-    (lo, hi) := (min goodspots, max goodspots);
+    (lo, hi) := concentration C;
+    if lo === hi then return (hashTable {lo => rank C_lo}, hashTable{});
     Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
     rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
     hs := new MutableHashTable; -- lo..hi, rank of homology at that step.
@@ -586,9 +439,8 @@ SVDHomology ChainComplex := opts -> (C) -> (
 SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
     -- returns a hash table of the ranks of the homology of C
     if ring C =!= RR_53 then error "excepted chain complex over the reals RR_53";
-    goodspots := select(spots C, i -> C_i != 0);
-    if #goodspots === 1 then return (hashTable {goodspots#0 => rank C_(goodspots#0)}, hashTable{});
-    (lo, hi) := (min goodspots, max goodspots);
+    (lo, hi) := concentration C;
+    if lo === hi then return (hashTable {lo => rank C_lo}, hashTable{});
     if not betti C == betti C' then error "expected two complexes which differ only by their precision";
     Cranks := hashTable for ell from lo to hi list ell => rank C_ell;
     rks := new MutableHashTable; -- from lo to hi, these are the ranks of C.dd_ell, with rks#lo = 0.
@@ -626,8 +478,10 @@ SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
 
 
 TEST ///
-restart
-needsPackage "SVDComplexes"
+{*
+  restart
+  needsPackage "SVDComplexes"
+*}
 needsPackage "RandomComplexes"
 
 h={1,3,5,2,1} 
@@ -654,28 +508,11 @@ maximalEntry chainComplex errors
 
 ///
 
-toBetti = method()
-toBetti(ZZ, HashTable) := (deg, H) -> (
-      new BettiTally from for k in keys H list (k, {deg}, deg) => H#k
-      )
-
-
-SVDBetti = method()
-SVDBetti ChainComplex := (C) -> (
-    if coefficientRing ring C =!= QQ then error "expected FastNonminimal resolution over QQ"; 
-    Ls := constantStrands(C,RR_53);
-    H := hashTable for i in keys Ls list i => SVDHomology Ls#i;
-    H2 := hashTable for i in keys H list i => last H#i;
-    << "singular values: " << H2 << endl;
-    sum for i in keys H list toBetti(i, first H#i)
-    )
-
 projectToComplex=method()
 projectToComplex(ChainComplex,HashTable) := (B,hs) -> (
      -- returns a hash table of the ranks of the homology of C
     if ring B =!= RR_53 then error "excepted chain complex over the reals RR_53";
-    goodspots := select(spots B, i -> B_i != 0);
-    (lo, hi) := (min goodspots, max goodspots);
+    (lo, hi) := concentration B;
     Cranks := hashTable for ell from lo to hi list ell => rank B_ell;
     rks := new MutableHashTable; 
     rks#lo = 0;
@@ -727,8 +564,11 @@ euclideanDistance(ChainComplex,ChainComplex) := (A,B) -> (
     )
 
 TEST ///
-restart
-needsPackage "SVDComplexes"
+{*
+  restart
+  needsPackage "SVDComplexes"
+*}
+
 needsPackage "RandomComplexes"
 
 h={1,1,1,1}
@@ -814,6 +654,7 @@ checkSVDComplex = (C, Fhs) -> (
 
 pseudoInverse=method(Options=> options SVDComplex)
 pseudoInverse ChainComplex := opts -> C -> (
+    if not ring C === RR_53 then pseudoInverse1 C else (
     U := last SVDComplex(C,Strategy=>opts.Strategy);
     SigmaComplex := source U;
     minC := min C;
@@ -826,17 +667,72 @@ pseudoInverse ChainComplex := opts -> C -> (
 	     U_(minC+i+1)*SigmaPlus_i* transpose U_(minC+i));
     Cplus := (chainComplex reverse CplusMats);
     Cplus
+    ))
+
+pseudoInverse1=method()
+    
+pseudoInverse1(ChainComplex) := C-> (
+    if not isField ring C then error " expected a chain complex defined over a field";
+    a := min C;
+    b := max C;
+    Cplus := new ChainComplex;
+    for i from -b to -a do Cplus_i= C_(-i);
+    for i from -b+1 to -a do Cplus.dd_i = pseudoInverse1( C.dd_(-i+1));
+    Cplus
     )
 
+pseudoInverse1(Matrix) := M -> (
+    if not isField ring M then error " expected a matrix defined over a field";
+    if M==0 then return transpose M;
+    rk := rank M;
+    m := numRows M;
+    n:= numColumns M;
+    -- now find an rxr non-zero minar 
+    -- need to be improved    
+    Lm:=subsets(0..m-1,rk);
+    Pm:=Lm_(position(Lm,c->rank M_c==rk));
+    A:= M_Pm;
+    Ln:=subsets(0..n-1,rk);
+    Pn:=Ln_(position(Ln,c->rank A^c==rk));
+    B:= transpose M^Pn;
+    inj:=(id_(source M))_Pn;
+    P1:= ((transpose A)*A)^(-1)*transpose A;
+    P2:= B*((transpose B)*B)^(-1)*transpose B;
+    Mplus:= P2*inj *P1;
+    P:= M*Mplus;
+    Q:= Mplus*M;
+    assert(Mplus*P==Mplus);
+    assert(M*Q==M);
+    return Mplus)    
+    
 TEST ///
-restart
+{*
+  restart
   needsPackage "SVDComplexes"
+*}
+
+  needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
   r={1,3,3,4}
-  C=randomChainComplex(h,r)
-  C = C ** RR_53
+  CZ=randomChainComplex(h,r)
+  C = CZ ** RR_53
   SVDComplex C
-  pseudoInverse C
+  Ci = pseudoInverse C
+  assert(clean(1e-10,Ci.dd^2) == 0)
+  Ci1 = pseudoInverse (C[1])
+  assert(clean(1e-10,Ci1.dd^2) == 0)
+  CQ = CZ**QQ
+  M=CQ.dd_2 
+  pseudoInverse1 M
+  isField RR_53
+  Ci2 = CQ[1]
+  assert(Ci2.dd^2 == 0)
+  Ci3 = pseudoInverse( CQ[1])
+  assert(Ci3.dd^2 == 0)
+
+  kk = ZZ/32003  
+  CF = CZ ** kk
+  assert(CF.dd^2 == 0) -- doesn't always have to happen...  every now and then, this will be false
 ///
 
 conjugateComplex=method(Options=>{Height=>10})
@@ -850,24 +746,6 @@ conjugateComplex ChainComplex := opts -> C -> (
 	U_(i-1)*C.dd_i*inverse U_i);
     (chainComplex C')[-minC])
     
-normalize=method()
-normalize ChainComplex := C-> (
-    if not ring C === RR_53 then error "expected a complex over RR_53";
-    minC:= min C;
-    maxC:= max C;  
-    C':=for i from minC+1 to maxC list (
-	m:=max(flatten entries C.dd_i/abs);
-	1/m*C.dd_i);
-    chainComplex C'[-minC])
-
-clean(RR, ChainComplex) := (epsilon, C) -> (
-    chainComplex hashTable for i from min C + 1 to max C list i => clean(epsilon, C.dd_i)
-    )
-
-clean(RR, ChainComplexMap) := (epsilon, f) -> (
-    H := hashTable for k in keys f list if instance(k,ZZ) then k => clean(epsilon, f_k) else continue;
-    newChainComplexMap(clean(epsilon, target f), clean(epsilon, source f), H)
-    )
 -- TODO for free res stuff with Frank:
 -- add QR
 -- make sure code doesn't crash when doing minimalBetti over QQ...
@@ -887,13 +765,16 @@ doc ///
       
       Here is an example of the usage.
    Caveat
-     Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
 ///
 
 
 
 TEST ///
- needsPackage "RandomComplexes"
+{*
+  restart
+  needsPackage "RandomComplexes"
+*}
+  needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
   r={1,3,3,4}
   C=randomChainComplex(h,r)
@@ -937,138 +818,6 @@ TEST ///
   assert((flatten entries randomSL(10, Height=>10000))/abs//max < 10000^2)
 ///
 
-doc ///
-   Key
-     constantStrand
-     (constantStrand, ChainComplex, Ring, ZZ)
-   Headline
-     a constant strand of a chain complex
-   Usage
-     Cd = constantStrand(C, kk, deg)
-   Inputs
-     C:ChainComplex
-       A chain complex created using {\tt res(I, FastNonminimal=>true)}
-     kk:Ring
-       if the coefficient ring of the ring of C is QQ, then this should be either:
-       RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909.  
-     deg:ZZ
-       the degree that one wants to choose.
-   Outputs
-     Cd:ChainComplex
-       a chain complex over {\tt kk}, consisting of the submatrices of {\tt C} of degree {\tt deg}
-   Description
-    Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
-      as in the example below.  But it should be much more general, handling other rings with grace,
-      and also it should handle arbitrary (graded) chain complexes.
-    Example
-      R = QQ[a..d]
-      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(I, FastNonminimal=>true)
-      betti C
-      CR = constantStrand(C, RR_53, 8)
-      CR.dd_4
-      CR2 = constantStrand(C, RR_1000, 8)
-      CR2.dd_4
-      kk1 = ZZ/1073741891
-      kk2 = ZZ/1073741909
-      Cp1 = constantStrand(C, kk1, 8)
-      Cp2 = constantStrand(C, kk2, 8)
-      netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
-      (clean(1e-14,CR)).dd_4
-      netList {(clean(1e-14,CR)).dd_4}==netList {(clean(1e-299,CR2)).dd_4}
-    Text
-      Setting the input ring to be the integers, although a hack, sets each entry to the 
-      number of multiplications used to create this number.  Warning: the result is almost certainly
-      not a complex!  This part of this function is experimental, and will likely change
-      in later versions.
-    Example
-      CZ = constantStrand(C, ZZ, 8)
-      CZ.dd_4
-   Caveat
-     This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, FastNonminimal=>true)}.  Currently, it is used to extract information 
-     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
-     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
-     together with information about how many multiplications were performed to obtain this number.
-   SeeAlso
-     constantStrands
-///
-
-doc ///
-   Key
-     constantStrands
-     (constantStrands, ChainComplex, Ring)
-   Headline
-     all constant strands of a chain complex
-   Usage
-     Cs = constantStrands(C, kk)
-   Inputs
-     C:ChainComplex
-       A chain complex created using {\tt res(I, FastNonminimal=>true)}
-     kk:Ring
-       if the coefficient ring of the ring of C is QQ, then this should be either:
-       RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
-     deg:ZZ
-       the degree that one wants to choose.
-   Outputs
-     Cs:List
-      the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
-   Description
-    Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
-      as in the example below.  But it should be much more general, handling other rings with grace,
-      and also it should handle arbitrary (graded) chain complexes.
-    Example
-      R = QQ[a..d]
-      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(I, FastNonminimal=>true)
-      betti C
-      Cs = constantStrands(C, RR_53)
-      CR=Cs#8         
-   Caveat
-     This function should be defined for any graded chain complex, not just ones created
-     using {\tt res(I, FastNonminimal=>true)}.  Currently, it is used to extract information 
-     from the not yet implemented ring QQhybrid, whose elements, coming from QQ, are stored as real number 
-     approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
-     together with information about how many multiplications were performed to obtain this number.
-   SeeAlso
-     constantStrand
-///
-
-TEST ///
-  R = QQ[a..d]
-  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(I, FastNonminimal=>true)
-  betti C
-  betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
-  CR = constantStrand(C, RR_53, 8)
-  CR2 = constantStrand(C, RR_1000, 8)
-
-  kk1 = ZZ/1073741891
-  kk2 = ZZ/1073741909
-  Cp1 = constantStrand(C, kk1, 8)
-  Cp2 = constantStrand(C, kk2, 8)
-
-  assert(betti'deg8 == betti CR)
-  assert(betti'deg8 == betti CR2)  
-  assert(betti'deg8 == betti Cp1)
-  assert(betti'deg8 == betti Cp2)
-  
-  (CR.dd_4, CR2.dd_4, Cp1.dd_4, Cp2.dd_4)
-  (clean(1e-14,CR)).dd_4
-  (clean(1e-299,CR2)).dd_4
-///
-
-TEST ///
-  kk = QQ
-  R = kk[a..d]
-  I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(I, FastNonminimal=>true)
-  betti C
-  constantStrand(C, RR_53, 8)
-   -- fails, as it doesn't even make it to that code
-///
 
 doc ///
    Key
@@ -1173,19 +922,8 @@ doc ///
      
 ///
 
+
 end--
-{*
-Cs2 = (constantStrands(C, RR_1000))#8
-      kk1 = ZZ/1073741891
-      kk2 = ZZ/1073741909
-      Cp1 = (constantStrands(C, kk1))#8
-      Cp2 =(constantStrands(C, kk2))#8
-      CR.dd_4, CR2.dd_4
-      Cp1.dd_4, Cp2.dd_4   
-      netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
-      netList{(clean(1e-14,CR)).dd_4,(clean(1e-299,CR2)).dd_4}
-      netList {(clean(1e-14,CR)).dd_4} == netList{(clean(1e-299,CR2)).dd_4}
-      *}
 
 restart
 uninstallPackage "SVDComplexes"
@@ -1193,465 +931,11 @@ restart
 installPackage "SVDComplexes"
 viewHelp "SVDComplexes"
 restart
-check "SVDComplexes"
+check("SVDComplexes", UserMode=>true)
 restart
 needsPackage "SVDComplexes"
 
-///
-needsPackage "RandomComplexes"
-needsPackage "SVDComplexes"
-needsPackage "AGRExamples"
-R=QQ[a..h]
-Rp=(ZZ/32003)(monoid R)
-Rp1=(ZZ/1073741891)(monoid R)
-R0=(RR_53)(monoid R)
-deg=4
-nextra=10
-setRandomSeed "1"
-F=sum(gens R,x->x^deg)+sum(nextra,i->(random(1,R))^deg);
-elapsedTime I=ideal fromDual matrix{{F}};
-elapsedTime C=res(I,FastNonminimal =>true);
-C0 = getNonminimalRes(C, R0);
-betti C
-elapsedTime minimalBetti sub(I,Rp)
-elapsedTime SVDBetti C
-
-            0  1   2   3   4   5   6  7 8
-o14 = total: 1 28 105 288 420 288 104 30 4
-         0: 1  .   .   .   .   .   .  . .
-         1: . 18  42   .   .   .   .  . .
-         2: . 10  63 288 420 288  63  9 1
-         3: .  .   .   .   .   .  41 19 2
-         4: .  .   .   .   .   .   .  2 1
-=> does not gives correct values for any choice off the cut off value.
-the value here is 1.5e1
-
-debug Core
-rawResolutionGetMutableMatrixB(C.Resolution.RawComputation, raw R0, 3);
-
-
-rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(ZZ/32003), 3,2)
-rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(RR_53), 3,2)
-rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(ZZ), 9,7)
-rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(RR_53), 9,7)
-for i from 1 to 5 list for j from 1 to 5 list
-  rawResolutionGetMutableMatrix2B(C.Resolution.RawComputation, raw(RR_53), i,j)
-  
-Ls = constantStrands(C, RR_53)
-Ls1 = constantStrands(C, RR_1000)
-m1 = Ls#9 .dd_6;
-m2 = Ls1#9 .dd_6;
-elapsedTime SVDHomology Ls#9
-elapsedTime SVDHomology(Ls1#9**RR_53,Ls#9)
-elapsedTime SVDHomology (Ls1#9**RR_53,Strategy=>Laplacian,Threshold=>1e-2)
-first SVD m1, first SVD m2
-m1 = Ls#9 .dd_7;
-m2 = Ls1#9 .dd_7;
-clean(1e-7, m1-m2)
-ratios = (L) -> prepend(L#0, for i from 0 to #L-2 list L#i/L#(i+1)) -- L is a sorted list of singular values
-ratios first o20
-ratios first SVD Ls#11 .dd_8
-ratios first SVD Ls#10 .dd_7
-ratios first SVD Ls#10 .dd_8
-ratios first SVD Ls#9 .dd_6
-(a1,a2,a3) = SVDComplex Ls#9;
-first SVD Ls#9 .dd_6
-first SVD Ls#9 .dd_7
-a3
-a2
-target a1
-(source a1).dd_8
-(target a1).dd_8
-a1_8
-Ls#10 .dd_8
-
-laps = laplacians Ls#9;
-laps = laplacians Ls#3;
-#laps
-evs = laps/(m -> rsort eigenvalues(m, Hermitian=>true))
-
-laps1 = laplacians Ls1#9;
-evs1 = laps1/(m -> rsort eigenvalues(m, Hermitian=>true))
-
-
-(M1, M2) = uniquify(evs_0, evs_1, 1e-3);
-(M2', M3) = uniquify(M2, evs_2, 1e-3);
-#M1
-#M2'
-#M3
-
-(M1, M2) = uniquify(evs1_0, evs1_1, 1e-3);
-(M2', M3) = uniquify(M2, evs1_2, 1e-3);
-
-
-(M1, M2) = (VerticalList M1, VerticalList M2)
-(VerticalList M2', VerticalList M3)
-(M1',M2')=uniquify(M1,M2,1e-1)
-(#M1', #M2')
-sings = (first SVD laps_0, first SVD laps_1, first SVD laps_2)
-
-rsort join(evs_0, evs_2), rsort evs_1
-sings = (eigenvalues( laps_0, first SVD laps_1, first SVD laps_2)
-
-rsort join(sings_0, sings_1)
-R32009=(ZZ/32009)(monoid R)
-minimalBetti sub(I, R32009)
-
-
-///
-
-TEST ///
-  -- warning: this currently requires test code on res2017 branch.
-  -- XXXX
-restart
-  needsPackage "SVDComplexes"
-  needsPackage "AGRExamples"
-  R = QQ[a..d]
-  F = randomForm(3, R)
-  I = ideal fromDual matrix{{F}}
-  C = res(I, FastNonminimal=>true)
-
-  C.dd -- want this to currently give an error, or make a ring out of this type...
-  
-  Rp = (ZZ/32003)(monoid R)
-  R0 = (RR_53) (monoid R)
-  Ls = constantStrands(C,RR_53)  
-  L = Ls#3
-  Lp = laplacians L
-  Lp/eigenvalues
-  Lp/SVD/first
-  
-  Cp = getNonminimalRes(C, Rp)
-  C0 = getNonminimalRes(C, R0)
-  Cp.dd^2
-  C0.dd^2
-  -- lcm of lead term entries: 8902598454
-  -- want to solve x = y/8902598454^2, where y is an integer, and we know x to double precision
-  --  and we know x mod 32003.
-  -- example: 
-  cf = leadCoefficient ((C0.dd_2)_(9,8))
-  -- .293215710985088
-  leadCoefficient ((Cp.dd_2)_(9,8))
-  -- -10338
-  -- what is y? (x mod p) = (y mod p)/(lcm mod p)^2
-  kk = coefficientRing Rp
-  (-10338_kk) / (8902598454_kk)^2
-  -- -391...
-  (-391 + 32003*k) / 8902598454^2 == .293215710985088
-  (cf * 8902598454^2 + 391)/32003.0
-  y = 726156310379351
-  (y+0.0)/8902598454^2
-  oo * 1_kk
-///
-
-TEST ///
-  -- warning: this currently requires test code on res2017 branch.
-restart
-  -- YYYYY
-  needsPackage "RandomComplexes"
-  needsPackage "SVDComplexes"
-  needsPackage "AGRExamples"
-  R = QQ[a..f]
-  deg = 6
-  nextra = 10
-  nextra = 20
-  nextra = 30
-  --F = randomForm(deg, R)
-  setRandomSeed "1000"
-   F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
-elapsedTime  I = ideal fromDual matrix{{F}};
-  C = res(I, FastNonminimal=>true)
-
-  Rp = (ZZ/32003)(monoid R)
- betti res  substitute(I,Rp)
-  R0 = (RR_53) (monoid R)
-  minimalBetti sub(I, Rp)
-  SVDBetti C  
-
-  betti C
-  Ls = constantStrands(C,RR_53)  
---  Lp = constantStrands(C,ZZ/32003)  
-  D = Ls#8
-Ls  
---  (F, hs, minsing) = 
-  U=SVDComplex D;
-  (hs, minsing) = SVDHomology D;
-  hs, minsing
-  numericRank D.dd_4
-
-maximalEntry D
-
-  elapsedTime first SVDComplex D
-  elapsedTime  SVDHomology( D,Strategy=>Laplacian)
-  elapsedTime SVDComplex Ls_5;
-  last oo
-
-  hashTable for k in keys Ls list (k => betti Ls#k)
-  sumBetti = method()
-  sumBetti HashTable := H -> (
-      for k in keys H list (betti H#k)(-k)
-      )
-
-  elapsedTime hashTable for i in keys Ls list i => SVDComplex Ls#i;
-  
-  elapsedTime hashTable for i in keys Ls list i => toBetti(i, first SVDHomology Ls#i);
-
-      
-  for i from 0 to #Ls-1 list 
-    max flatten checkSVDComplex(Ls_i, SVDComplex Ls_i)
-
-  hashTable for i from 0 to #Ls-1 list 
-    i => last SVDComplex Ls_i
-
-  ------ end of example above
-    
-  debug Core
-  kk = ZZp(32003, Strategy=>"Flint")
-  Rp = kk(monoid R)
-  R0 = (RR_53) (monoid R)
-  Cp = getNonminimalRes(C,Rp)
-  C0 = getNonminimalRes(C,R0)
-
-  minimizeBetti(C, kk)
-  minimizeBetti(C, RR_53)
-
-  Ip = sub(I,Rp);
-  minimalBetti Ip
-
-  Lps = constantStrands(C,kk)
-  netList oo
-  L = Ls_3
-  Lp = laplacians L;
-  --Lp/eigenvalues
-
-  SVDComplex L
-  
-  -- compute using projection method the SVD of the complex L
-  L.dd_2
-  (sigma, U1, V1t) = SVD mutableMatrix L.dd_2
-  sigma
-  
-  betti U1
-  betti V1t
-  M = mutableMatrix L.dd_2
-  sigma1 = mutableMatrix diagonalMatrix matrix sigma
-  sigma1 = flatten entries sigma
-  sigmaplus = mutableMatrix(RR_53, 75, 5)
-  for i from 0 to 4 do sigmaplus_(i,i) = 1/sigma1#i
-  sigmaplus
-  Mplus = (transpose V1t) * sigmaplus * (transpose U1)
-  pkerM = submatrix(V1t, 5..74,);
-  M2 = pkerM * mutableMatrix(L.dd_3);
-  (sigma2,U2,V2t) = SVD M2  
-  sigma2 = flatten entries sigma2
-  nonzerosing = position(0..#sigma2-2, i -> (sigma2#(i+1)/sigma2#i < 1.0e-10))
-  pkerM2 = submatrix(V2t, nonzerosing+1 .. numRows V2t-1,)  
-  sigma2_{0..49}
-  sigma2_50  
-  M3 = pkerM2 * mutableMatrix(L.dd_4)  ;
-  (sigma3,U3,V3t) = SVD M3
-  sigma3 = flatten entries sigma3
-  nonzerosing3 = position(0..#sigma3-2, i -> (sigma3#(i+1)/sigma3#i < 1.0e-10))
-  sigma3#-1 / sigma3#-2 < 1.0e-10
-    
-  evs = Lp/SVD/first
-  loc = 2
-  vals = sort join(for a in evs#loc list (a,loc), for a in evs#(loc+1) list (a,loc+1))
-  for i from 0 to #vals-2 list (
-      if vals_i_1 != vals_(i+1)_1 then (
-          abs(vals_i_0 - vals_(i+1)_0) / (vals_i_0 + vals_(i+1)_0), vals_i, vals_(i+1)
-          )
-      else null
-      )      
-  errs = select(oo, x -> x =!= null)
-  netList oo
-  select(errs, x -> x#0 < .1) -- 66
-    select(errs, x -> x#0 < .01) -- 50 
-    select(errs, x -> x#0 < .001) -- 47
-  Cp = getNonminimalRes(C, Rp)
-  C0 = getNonminimalRes(C, R0)
-  Cp.dd^2
-  C0.dd^2 -- TODO: make it so we can "clean" the results here.
-///
-
-TEST ///
-restart
-  needsPackage "SVDComplexes"
-  needsPackage "AGRExamples"
-  I = getAGR(6,9,50,0);
-  R = ring I
-  elapsedTime C = res(I, FastNonminimal=>true)
-
-  betti C
-  elapsedTime SVDBetti C  
-
-  Rp = (ZZ/32003)(monoid R)
-  Ip = ideal sub(gens I, Rp);
-  elapsedTime minimalBetti Ip
-  elapsedTime Cp = res(Ip, FastNonminimal=>true)
-///
-
-TEST ///
-restart
-  -- ZZZZ
-  needsPackage "SVDComplexes"
-  needsPackage "AGRExamples"
-
-  I = value get "agr-6-7-37-0.m2";
-  makeAGR(6,7,50,0)
-  
-  I = getAGR(6,7,50,0);
-{*  
-  R = QQ[a..h]
-  deg = 6
-  nextra = 30
-  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
-  elapsedTime I = ideal fromDual matrix{{F}};
-*}
-  
-  elapsedTime C = res(I, FastNonminimal=>true)
-  betti C
-  elapsedTime SVDBetti C  
-
-  Rp = (ZZ/32003)(monoid R)
-  Ip = ideal sub(gens I, Rp);
-  elapsedTime minimalBetti Ip
-  
-  D = constantStrand(C, RR_53, 7)
-  SVDComplex D;
-  E = target first oo
-  for i from 2 to 5 list sort flatten entries compress flatten E.dd_i
-  Ls = constantStrands(C, RR_53)
-///
-
-TEST ///
-restart
-  needsPackage "SVDComplexes"
-  needsPackage "AGRExamples"
-
-  elapsedTime makeAGR(7,7,100,32003)
-  I = getAGR(7,7,100,32003);
-
-  elapsedTime minimalBetti I
-    
-///
-
-TEST ///
-  -- warning: this currently requires test code on res2017 branch.
-  -- XXXX
-restart
-  needsPackage "SVDComplexes"
-  R = QQ[a..g]
-  deg = 6
-  nextra = 10
-  nextra = 30
-  --F = randomForm(deg, R)
-  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
-  elapsedTime I = ideal fromDual matrix{{F}};
-  elapsedTime C = res(I, FastNonminimal=>true)
-
-  kk = ZZ/32003
-  Rp = kk(monoid R)
-  Ip = sub(I,Rp);
-  elapsedTime minimalBetti Ip
-  R0 = (RR_53) (monoid R)
-
-  Ls = constantStrands(C,RR_53)  
-  netList oo
-  Lps = constantStrands(C,kk)
-  debug Core
-  kkflint = ZZp(32003, Strategy=>"Ffpack")
-  Lps = constantStrands(C,kkflint)
-  Lp = Lps_5
-  L = Ls_5
-  for i from 3 to 6 list elapsedTime first SVD L.dd_i  
-  for i from 3 to 6 list rank mutableMatrix Lp.dd_i
-  Lp = laplacians L;
-  --Lp/eigenvalues
-  evs = Lp/SVD/first
-  loc = 2
-  vals = sort join(for a in evs#loc list (a,loc), for a in evs#(loc+1) list (a,loc+1))
-  for i from 0 to #vals-2 list (
-      if vals_i_1 != vals_(i+1)_1 then (
-          abs(vals_i_0 - vals_(i+1)_0) / (vals_i_0 + vals_(i+1)_0), vals_i, vals_(i+1)
-          )
-      else null
-      )      
-  errs = select(oo, x -> x =!= null)
-  netList oo
-  select(errs, x -> x#0 < .1) -- 66
-    select(errs, x -> x#0 < .01) -- 50 
-    select(errs, x -> x#0 < .001) -- 47
-  Cp = getNonminimalRes(C, Rp)
-  C0 = getNonminimalRes(C, R0)
-  Cp.dd^2
-  C0.dd^2 -- TODO: make it so we can "clean" the results here.
-///
-
-
-TEST ///
-  -- warning: this currently requires test code on res2017 branch.
-  -- XXXX
-restart
-  needsPackage "SVDComplexes"
-  needsPackage "AGRExamples"
-  deg = 6
-  nv = 7
-  nextra = binomial(nv + 1, 2) - nv - 10
-  R = QQ[vars(0..nv-1)]
-
-
-  --F = randomForm(deg, R)
-  F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
-  elapsedTime I = ideal fromDual matrix{{F}};
-  elapsedTime C = res(I, FastNonminimal=>true)
-
-  kk = ZZ/32003
-  Rp = kk(monoid R)
-  Ip = sub(I,Rp);
-  elapsedTime Cp = res(Ip, FastNonminimal=>true)
-  elapsedTime minimalBetti Ip
-  R0 = (RR_53) (monoid R)
-  SVDBetti C
-  
-  Ls = constantStrands(C,RR_53)  
-  mats = flatten for L in Ls list (
-      kf := keys L.dd;
-      nonzeros := select(kf, k -> instance(k,ZZ) and L.dd_k != 0);
-      nonzeros/(i -> L.dd_i)
-      );
-  elapsedTime(mats/(m -> first SVD m))
-  netList oo
-  Lps = constantStrands(C,kk)
-  debug Core
-  kkflint = ZZp(32003, Strategy=>"Ffpack")
-  Lps = constantStrands(C,kkflint)
-  Lp = Lps_5
-  L = Ls_5
-  for i from 3 to 6 list rank mutableMatrix Lp.dd_i
-  Lp = laplacians L;
-  --Lp/eigenvalues
-  evs = Lp/SVD/first
-  loc = 2
-  vals = sort join(for a in evs#loc list (a,loc), for a in evs#(loc+1) list (a,loc+1))
-  for i from 0 to #vals-2 list (
-      if vals_i_1 != vals_(i+1)_1 then (
-          abs(vals_i_0 - vals_(i+1)_0) / (vals_i_0 + vals_(i+1)_0), vals_i, vals_(i+1)
-          )
-      else null
-      )      
-  errs = select(oo, x -> x =!= null)
-  netList oo
-  select(errs, x -> x#0 < .1) -- 66
-    select(errs, x -> x#0 < .01) -- 50 
-    select(errs, x -> x#0 < .001) -- 47
-  Cp = getNonminimalRes(C, Rp)
-  C0 = getNonminimalRes(C, R0)
-  Cp.dd^2
-  C0.dd^2 -- TODO: make it so we can "clean" the results here.
-///
-
-
+end--
 doc ///
 Key
   SVDComplexes
