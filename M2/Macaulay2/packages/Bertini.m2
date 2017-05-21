@@ -29,6 +29,8 @@ exportMutable{"storeBM2Files"
   }
 
 export {
+  "SetParameterGroup",
+  "bertiniUserHomotopy",  
   "ContinueLoop",
   "bertiniImageMonodromyCollect",
   "ImageCoordinates",
@@ -275,7 +277,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={} 
   then (
-    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
     then (myAVG=gens ring first myPol)
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --%%-- Verbose set greater than 1 will print the variable groups.
