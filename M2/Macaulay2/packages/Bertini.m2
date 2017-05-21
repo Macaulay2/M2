@@ -423,16 +423,7 @@ bertiniRefineSols (ZZ, List, List) := o -> (d, F,p) -> (
          ) 
 
 
-bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
-	  Verbose=>false,MPType=>-1,PRECISION=>-1, 
-	  IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	  TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
-	  MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
-	  DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
-	  SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,
-	  SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,
-	  MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,
-	  RegenStartLevel=>-1} )
+bertiniTrackHomotopy = method(TypicalValue => List, Options=>{Verbose=>false}|knownConfigs|{IsProjective=>-1} )
 bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
 --t, path variable
 --H, homotopy
