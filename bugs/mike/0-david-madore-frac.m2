@@ -10,7 +10,7 @@ toField K
 
 -- added 9 Sep 2010:
 
-v^-1  -- crashes!
+v^-1  -- crashes! still crashes, 22 May 2017.
 
 1//v -- this one works
 
