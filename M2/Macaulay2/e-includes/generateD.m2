@@ -163,6 +163,26 @@ errorDepth=0
 toDoc(SplitByNameFcns, get "templates.txt")
 *}
 
+generateType = method(Option=>{Dryrun => true})
+generateType String := opts -> (typename) -> (
+    -- This function, depending on optional argument, will either
+    -- display what it would do, or actually write the files.
+    -- actors4.d
+    -- basic.d
+    -- classes.dd
+    -- engine.dd
+    -- equality.dd
+    -- expr.dd
+    -- parse.dd
+    -- util.dd
+    -- engine.h (need to include x-typename.hpp?)
+    -- x-typename.hpp
+    -- x-typename.cpp
+    -- Makefile.files
+    )
+
+--removeType String
+
 end--
 restart
 load "generateD.m2"
