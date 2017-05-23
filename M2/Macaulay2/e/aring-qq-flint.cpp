@@ -25,7 +25,8 @@ namespace M2 {
     bool ok = map->get_ring()->from_rational(temp, result);
     if (!ok)
       {
-        ERROR("cannot map rational to this ring");
+        // if there is already an error message don't add in another
+        if (not error()) ERROR("cannot map rational to this ring");
         result = map->get_ring()->from_long(0);
       }
     flint_mpq_clear_readonly(temp);

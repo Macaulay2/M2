@@ -1,3 +1,4 @@
+-- issue 370:
 A=matrix({{1,2},{2,1}});
 (e,v)=eigenvectors(A);
 assert try (substitute(v_1,RR);false) else true -- used to crash (<= 1.9.2)

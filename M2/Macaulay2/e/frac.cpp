@@ -623,7 +623,7 @@ ring_elem FractionField::eval(const RingMap *map, const ring_elem a, int first_v
   ring_elem bottom = R_->eval(map, f->denom,first_var);
   if (S->is_zero(bottom))
     {
-      ERROR("division by zero!");
+      if (not error()) ERROR("division by zero!");
       S->remove(bottom);
       bottom = S->from_long(1);
     }
