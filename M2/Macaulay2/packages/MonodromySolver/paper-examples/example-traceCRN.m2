@@ -11,20 +11,6 @@ elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
     Verbose=>true)
 assert(length V.PartialSols ==4)
 
-{*
-W = wnt()
-L = apply(numgens createRing(W,FF), i->random FF)
-F = createPolySystem(W, FF, L)
-(p0, x0) = createSeedPair(F,L)
-elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
-    GraphInitFunction=>completeGraphInit,
-    NumberOfEdges=>5,
---    TargetSolutionCount => 9,
-    "new tracking routine"=>false,
-    Verbose=>true)
-assert(length V.PartialSols == 9)
-*}
-
 Gr = V.Graph
 W1 = apply(toList points (first Gr.Vertices).PartialSols, p -> matrix {p0.Coordinates|p.Coordinates})
 

@@ -353,7 +353,7 @@ monodromySolve = method(Options=>{
 	BatchSize => infinity,
 	Potential => null,
 	NumberOfNodes => 2,
-	NumberOfEdges => 3,
+	NumberOfEdges => 4,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
