@@ -1,5 +1,5 @@
 newPackage( "Divisor",
-Version => "0.1s", Date => "May 23rd, 2017", Authors => {
+Version => "0.1sa", Date => "May 23rd, 2017", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
@@ -1397,7 +1397,11 @@ needsPackage "RationalMaps";
 
 isVeryAmple(WDiv) := o->(D1) -> (
     mapFromD1 := mapToProjectiveSpace(D1);
-    isEmbedding(mapFromD1, Verbose=>o.Verbose)
+    if (#(first entries vars source mapFromD1) == 0) then (
+        false)
+    else (
+        isEmbedding(mapFromD1, Verbose=>o.Verbose)
+    )
 );
  	 	
 ----------------------------------------------------------------
@@ -4239,6 +4243,9 @@ end
 ---***************************
 ---*******CHANGELOG***********
 ---***************************
+--changes 0.1s
+------Made isVeryAmple not crash if you passed it a divisor with an empty linear system
+
 --changes 0.1s
 ------Added the command isVeryAmple
 
