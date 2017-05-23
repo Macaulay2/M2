@@ -1,5 +1,5 @@
 restart ---------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 3
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -16,7 +16,7 @@ o7 = (HomotopyNode{...5...}, 107820)
 *}
 
 restart ---------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -35,7 +35,7 @@ o8 = 704.35711509
 *}
 
 restart ---------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -57,7 +57,7 @@ trackHomotopy:
 *}
 
 restart --- PotentialE, BatchSize => 1 ----------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -75,7 +75,7 @@ o8 = 576.537621946002
 *}
 
 restart ---------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -93,7 +93,7 @@ o21 = (HomotopyNode{...5...}, 94889)
 *}
 
 restart ---------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -112,7 +112,7 @@ o7 = (HomotopyNode{...5...}, 110192)
 *}
 
 restart ------make failure rate high ---------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 10 
@@ -129,7 +129,7 @@ o8 = (HomotopyNode{...5...}, 162038)
 *}
 
 restart --- naive ------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 setRandomSeed 0
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
@@ -144,7 +144,7 @@ o11 = 299873
 
 
 restart ---PHCpack------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 needsPackage "PHCpack"
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
@@ -159,7 +159,7 @@ i8 : elapsedTime (mv,q,qsols) = mixedVolume(specPolys/toR,StartSystem => true);
 *}
 
 restart ---linear tracker in PHCpack------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 -- setDefault(Software=>PHCPACK) -- if this is HERE we get SIGSEGV
 nedges = 3
 setRandomSeed 0
