@@ -82,8 +82,13 @@ namespace M2 {
       fmpz_poly_set_mpz(&result, a);
     }
 
-    void set_from_mpq(ElementType& result, mpq_ptr a) const {
-      assert(false); // TODO: what to do here??
+    bool set_from_mpq(ElementType& result, mpq_ptr a) const {
+      if (mpz_cmp_si(mpq_denref(a), 1) == 0)
+        {
+          set_from_mpz(result, mpq_numref(a));
+          return true;
+        }
+      return false;
     }
 
     bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }

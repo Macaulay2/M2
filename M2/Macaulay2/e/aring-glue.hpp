@@ -114,16 +114,14 @@ namespace M2 {
       R->clear(a);
       return result;
     }
-    virtual ring_elem from_rational(mpq_ptr q) const
+    virtual bool from_rational(mpq_ptr q, ring_elem& result) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling from_rational\n");
-      ring_elem result;
       ElementType a;
       R->init(a);
-      R->set_from_mpq(a,q);
-      R->to_ring_elem(result, a);
+      bool ret = R->set_from_mpq(a,q);
+      if (ret) R->to_ring_elem(result, a);
       R->clear(a);
-      return result;
+      return ret;
     }
     virtual bool from_BigReal(gmp_RR q, ring_elem &result) const
     {

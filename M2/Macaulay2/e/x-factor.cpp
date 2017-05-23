@@ -181,7 +181,14 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
           else if (h.inQ()) {
                struct enter_factory c;
                __mpq_struct z = {toInteger(h.num()), toInteger(h.den())};
-               RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
+               ring_elem val;
+               bool ok = R->from_rational(&z, val);
+               if (not ok)
+                 {
+                   std::cout << "internal error: unexpected failure to lift rational number to ring" << std::endl;
+                   val = R->from_long(0);
+                 }
+               RingElement *ret = RingElement::make_raw(R,val);
                mpq_clear(&z);
                return ret;
           }

@@ -462,12 +462,13 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
        // std::cerr << "result " << result << std::endl;
     }
 
-    void ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_ptr a) const {
-      //  std::cerr << "set_from_mpq" << std::endl;
+    bool ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_ptr a) const {
         ElementType n, d;
         set_from_mpz(n, mpq_numref(a));
         set_from_mpz(d, mpq_denref(a));
+        if (is_zero(d)) return false;
         divide(result,n,d);
+        return true;
     }
 
     // arithmetic

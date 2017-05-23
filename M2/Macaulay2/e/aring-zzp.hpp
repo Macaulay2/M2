@@ -118,11 +118,13 @@ namespace M2 {
       result = log_table[b];
     }
 
-    void set_from_mpq(elem &result, mpq_ptr a) const {
-      int n, d;
+    bool set_from_mpq(elem &result, mpq_ptr a) const {
+      ElementType n, d;
       set_from_mpz(n, mpq_numref(a));
       set_from_mpz(d, mpq_denref(a));
+      if (is_zero(d)) return false;
       divide(result,n,d);
+      return true;
     }
 
     bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }

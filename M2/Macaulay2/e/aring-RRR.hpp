@@ -119,8 +119,9 @@ namespace M2 {
       mpfr_set_z(&result, a, GMP_RNDN);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, mpq_ptr a) const {
       mpfr_set_q(&result, a, GMP_RNDN);
+      return true;
     }
 
     bool set_from_double(ElementType &result, double a) const {

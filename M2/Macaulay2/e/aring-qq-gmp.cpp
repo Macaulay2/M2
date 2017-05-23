@@ -20,16 +20,15 @@ namespace M2 {
 
   void ARingQQGMP::eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const
   {
-    mpq_t temp;
-    mpq_init(temp);
-    mpq_set(temp, &f);
-    result = map->get_ring()->from_rational(temp);
-    if (!result)
+    // note: &f is already a mpq_ptr, so we don't need to copy its value, since from_rational
+    // doesn't change its first argument.
+    ElementType& g = const_cast<ElementType&>(f);
+    bool ok = map->get_ring()->from_rational(&g, result);
+    if (!ok)
       {
         ERROR("cannot map rational to this ring");
         result = map->get_ring()->from_long(0);
       }
-    mpq_clear(temp);
   }
 
   void ARingQQGMP::elem_text_out(buffer &o, 

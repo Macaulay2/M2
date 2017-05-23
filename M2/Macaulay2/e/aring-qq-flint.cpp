@@ -22,7 +22,12 @@ namespace M2 {
   {
     mpq_t temp;
     flint_mpq_init_set_readonly(temp, &f);
-    result = map->get_ring()->from_rational(temp);
+    bool ok = map->get_ring()->from_rational(temp, result);
+    if (!ok)
+      {
+        ERROR("cannot map rational to this ring");
+        result = map->get_ring()->from_long(0);
+      }
     flint_mpq_clear_readonly(temp);
   }
 

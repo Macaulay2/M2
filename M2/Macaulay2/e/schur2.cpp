@@ -2,6 +2,7 @@
 
 #include "schur2.hpp"
 #include <stdio.h>
+#include <iostream>
 #include "text-io.hpp"
 #include "ZZ.hpp"
 #include "relem.hpp"
@@ -295,10 +296,13 @@ ring_elem SchurRing2::from_int(mpz_ptr n) const
   ring_elem a = coefficientRing->from_int(n);
   return from_coeff(a);
 }
-ring_elem SchurRing2::from_rational(mpq_ptr q) const
+bool SchurRing2::from_rational(mpq_ptr q, ring_elem& result) const
 {
-  ring_elem a = coefficientRing->from_rational(q);
-  return from_coeff(a);
+  ring_elem a;
+  bool ok = coefficientRing->from_rational(q, a);
+  if (not ok) return false;
+  result = from_coeff(a);
+  return true;
 }
 
 ring_elem SchurRing2::copy(const ring_elem f) const
