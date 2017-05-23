@@ -56,8 +56,7 @@ namespace M2 {
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
       givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial) )),
-      givaroRandomIterator( FieldType::randIter(givaroField )),
-      mGeneratorExponent(1)
+      givaroRandomIterator( FieldType::randIter(givaroField ))
     {
            mCardinality = mCharac;
            for (int j=1; j<mDimension; j++)
@@ -85,8 +84,7 @@ namespace M2 {
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
       givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial), ARingGFGivaro::M2arrayToStdVec(charact_, generatorPoly) )),
-      givaroRandomIterator( FieldType::randIter(givaroField )),
-      mGeneratorExponent(1)
+      givaroRandomIterator( FieldType::randIter(givaroField ))
     {
 
       mCardinality = mCharac;
@@ -438,8 +436,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     /// @todo possible problem if type UTT is smaller than an int?
     void ARingGFGivaro::set_from_long(ElementType &result, long a) const 
     {
-#warning "fix the casting spaghetti here!"
-      //std::cerr << "ARingGFGivaro::set_from_long" << std::endl;
       ElementType p = static_cast<ElementType>(mCharac);
       ElementType a1 = (a >= 0 ? static_cast<ElementType>(a) : static_cast<ElementType>(a + p));
       a1 = a1 % p;
@@ -448,18 +444,13 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
       // e.g:
       //  (-5) % (unsigned long)(5) == 1
       //  (-5) % (long)(5) == 0.  Wow!
-//REmoved, since we are now making it non-negative earlier (28 April 2013)
-//if (a < 0) a += mCharac;
       givaroField.init(result, a);
     }
 
     void ARingGFGivaro::set_from_mpz(ElementType &result, const mpz_ptr a) const 
     {
-        //std::cerr << "set_from_mpz" << std::endl;
         UTT b = static_cast< UTT>(mpz_fdiv_ui(a, mCharac));
-       // std::cerr << "b " << b << std::endl;
         givaroField.init(result,  b);
-       // std::cerr << "result " << result << std::endl;
     }
 
     bool ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_ptr a) const {
@@ -481,7 +472,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     /// I vote for two invert functions, one with this check and one without.(Jakob)
     void ARingGFGivaro::invert(ElementType &result, const ElementType a) const
     {
-       // std::cerr << "ARingGFGivaro::invert" << std::endl;
         if ( givaroField.isZero(a))
             ERROR(" division by zero");
         givaroField.inv(result,a);
