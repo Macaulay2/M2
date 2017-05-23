@@ -624,20 +624,13 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
 
   void ARingGFGivaro::lift_to_original_ring(ring_elem& result, const ElementType& f) const
   {
+    // This code needs review, and tests.  See git issue #612
     if (f == givaroField.zero)
       result = mOriginalRing->from_long(0);
     else if (f == givaroField.one)
       result = mOriginalRing->from_long(1);
     else
       {
-#warning "This call to power might be incorrect.  Jakob: please look at it"
-        // For this code here to work, we need to compute 
-        // If f is (zeta)^a, where zeta is the primitive element, then
-        // we want here:
-        //   mPrimitiveElement^a
-        // Also: want to insure that mPrimitiveElement is the same element as zeta!
-        // (And the defining polynomials are the same too).
-        // TODO: add tests and assert's for all of these conditions
         result = mOriginalRing->power(mPrimitiveElement, static_cast<int>(f));
       }
   }
