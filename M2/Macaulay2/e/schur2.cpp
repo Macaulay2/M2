@@ -356,8 +356,7 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
 }
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  /* write me */ //FLAG: do this.
-#warning "compare_elems method needs to be written"
+  // Write this.  Issue #610.
   return 0;
 }
 bool SchurRing2::promote_coeffs(const SchurRing2 *Rf, const ring_elem f, ring_elem &resultRE) const
