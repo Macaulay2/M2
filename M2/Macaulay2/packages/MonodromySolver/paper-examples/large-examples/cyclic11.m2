@@ -6,7 +6,7 @@ polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 print mixedVolume
-elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 getTrackTime V.Graph
 {* -- Anton's office machine:
 
@@ -25,7 +25,7 @@ polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 print mixedVolume
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 {* -- Anton's office machine:
      -- 8450.44 seconds elapsed
      mixedVolume = 184756
@@ -40,7 +40,7 @@ setRandomSeed 0
 polys = parametrizedCyclic 11 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume,
     SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, Verbose=>true)
 {*
      trackedPaths 159599
@@ -57,7 +57,7 @@ polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 setDefault(tStepMin=>0.001)
-elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume,
          Verbose=>true)
 {*    
 -- 9327.69 seconds elapsed
@@ -99,5 +99,5 @@ polys = parametrizedCyclic 11
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 debug Core
 setDefault(Software=>PHCPACK)
-elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 getTrackTime V.Graph

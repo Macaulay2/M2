@@ -97,7 +97,7 @@ load "example-Nash.m2"
 setRandomSeed 0 -- this seed fails with defaults
 G = getNashSystem(3,3)
 (p0, x0) = createSeedPair G
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0})
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfEdges=>3,NumberOfNodes=>2)
 points V.PartialSols
 length V.PartialSols
 
@@ -107,6 +107,7 @@ options monodromySolve
 
 -- completeGraph(2,10)
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
+    NumberOfNodes=>2
     NumberOfEdges => 10,TargetSolutionCount => bkkBound(3,3),
     SelectEdgeAndDirection => selectBestEdgeAndDirection,
     Potential=>potentialE, 
@@ -118,7 +119,7 @@ length V.PartialSols
 -- completeGraph(2,5)
 G = getNashSystem(4,3)
 (p0, x0) = createSeedPair G
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfNodes=>2
     NumberOfEdges => 5,TargetSolutionCount => bkkBound(4,3),
     Verbose=>true)   
 getTrackTime(V.Graph)

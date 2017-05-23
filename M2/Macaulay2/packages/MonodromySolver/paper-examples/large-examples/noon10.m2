@@ -31,7 +31,7 @@ setRandomSeed 0
 polys = parametrizedNoon 10 
 (p0,x0) = createSeedPair polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 {* -- Anton's office machine:
 mixedVolume = 59029
   node1: 59001
@@ -49,7 +49,7 @@ setRandomSeed 0
 polys = parametrizedNoon 10 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 {* -- Anton's office machine:
      -- 935.657 seconds elapsed
 

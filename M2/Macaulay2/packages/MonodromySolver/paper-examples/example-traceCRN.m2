@@ -7,6 +7,7 @@ setRandomSeed 0
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
     GraphInitFunction=>completeGraphInit,
     NumberOfEdges=>5,
+    NumberOfNodes=>2,
     "new tracking routine"=>false,
     Verbose=>true)
 assert(length V.PartialSols ==4)
