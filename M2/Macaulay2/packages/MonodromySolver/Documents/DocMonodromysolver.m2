@@ -1,3 +1,6 @@
+{* Index
+===
+
 doc ///
 	Key
 		MonodromySolver 
@@ -5,9 +8,33 @@ doc ///
 		solve polynomial systems via homotopy continuation and monodromy
 	Description
 		Text
-			This package provides tools to find all solutions of a generic system
-			in a family of polynomial systems with parametric coefficients using
-			numerical homotopy continuation and the action of the monodromy group. 
+			The main methods implemented in this package find solutions to polynomial systems of equations over the 
+			complex numbers. As described in (references), these methods pair numerical homotopy continuation with the 
+			transitive monodromy action of a suitable covering map. Users uninterested in the specifics may use this 
+			package as a black-box solver for their system of choice, as in the example below.
+		Example
+		    	--a basic example will go here
+		Text 
+		        The core methods of MonodromySolver come equipped with a number of options. (do Targetsolutioncount below
+		Example
+		        ---another simple xample with targetsolcount=>true
+		Text
+		        When we set the option "GuessSystem=>true," we generate loops in the sparsest linear parameter space
+			compatible with the input system. The number of continuation steps may be further reduced if the system belongs to
+			a more structured class of linearly-parametrized systems.  
+		Example
+    	    	    	a simple example of a parametric system goes here
+    	    	Text    				
+			In the example above, we solve a generic member of the associated family of polynomial systems. Since the algorithm
+			is randomized, it's a good idea to experiment with the certain options---these are described elsewhere in the
+			documentation (link.)
+		Example
+		    	R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]   
+			P = polySystem {-a_1+b_1*(x^2-y^2+z^2+u^2-t^2),-a_2+b_2*(x^3-y^3+z^3+u^3-t^3),-a_3+b_3*(x^4-y^4+z^4+u^4-t^4),
+			-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}  				
+    	    	    	--- this is the Reimer system: we should find the right set of options that guarantee success
+		Text
+		        example below is from previous draft of documentatation
 		Example
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
