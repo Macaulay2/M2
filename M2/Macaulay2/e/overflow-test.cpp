@@ -50,7 +50,7 @@ int main (int argc, char **argv) {
        else { printf("unknown test: %s\n", argv[1]); exit(1); }
      }
 #    define roll 100
-     printf("%Ld repetitions\n",(long long)inner*outer*roll);
+     printf("%lld repetitions\n",(long long)inner*outer*roll);
      for (i=outer; i>0; i--) for (j=0; j<inner; j++) { // 100 times ( == roll, defined above )
           { stmt; stmt; stmt; stmt; stmt; stmt; stmt; stmt; stmt; stmt; /* 10 times */ }
           { stmt; stmt; stmt; stmt; stmt; stmt; stmt; stmt; stmt; stmt; /* 10 times */ }
