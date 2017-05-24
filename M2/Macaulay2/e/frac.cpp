@@ -265,12 +265,15 @@ ring_elem FractionField::from_int(mpz_ptr n) const
   return FRAC_RINGELEM(f);
 }
 
-ring_elem FractionField::from_rational(mpq_ptr n) const
+bool FractionField::from_rational(mpq_ptr n, ring_elem& result) const
 {
   frac_elem *f = new_frac_elem();
   f->numer = R_->from_int(mpq_numref(n));
   f->denom = R_->from_int(mpq_denref(n));
-  return FRAC_RINGELEM(f);
+  bool ok = not R_->is_zero(f->denom);
+  if (ok)
+    result = FRAC_RINGELEM(f);
+  return ok;
 }
 
 ring_elem FractionField::var(int v) const
@@ -620,7 +623,7 @@ ring_elem FractionField::eval(const RingMap *map, const ring_elem a, int first_v
   ring_elem bottom = R_->eval(map, f->denom,first_var);
   if (S->is_zero(bottom))
     {
-      ERROR("division by zero!");
+      if (not error()) ERROR("division by zero!");
       S->remove(bottom);
       bottom = S->from_long(1);
     }

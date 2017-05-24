@@ -117,7 +117,6 @@ private:
 
   FreeModule *F;
   FreeModule *Fsyz;     // This is a Schreyer module
-  const SchreyerOrder *S; // If non-NULL, the Schreyer order for F.
 
   int level;                    // what level is this?
   int state;                    // STATE_NEW_DEGREE, STATE_GB, STATE_GENS, STATE_HILB

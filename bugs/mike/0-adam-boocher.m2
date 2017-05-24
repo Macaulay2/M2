@@ -20,7 +20,7 @@ eliminate (List, Ideal) := (v,I) -> (
 
 end
 restart
-load "~/src/M2/Macaulay2/bugs/mike/0-adam-boocher.m2"
+load "~/src/M2/bugs/mike/0-adam-boocher.m2"
 
 R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>Eliminate 2]
 R=QQ[x,y,a,b,c,d,e,f,g,h,i,j,k,l,MonomialOrder=>{2,12}]

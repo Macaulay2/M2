@@ -118,7 +118,8 @@ void testCoercions(const T& R)
       // check that (43999 mod charac)/(i mod charac) == n1 mod charac
       // if (i mod charac) is not zero.
       if (R.characteristic() == 0 or (i % R.characteristic()) == 0) continue;
-      R.set_from_mpq(a, n1);
+      bool ok = R.set_from_mpq(a, n1);
+      EXPECT_TRUE(ok);
       R.set_from_long(b, 43999);
       R.set_from_long(c, i);
       if (!R.is_zero(c))

@@ -134,9 +134,9 @@ namespace M2 {
     // v from 0..n_vars()-1, sets result to 0 if v is out of range
     void set_var(elem &result, int v) const { result = var(mStartLevel,v); }
     
-    void set_from_mpz(elem &result, mpz_ptr a) const { }  // TODO: write this
+    void set_from_mpz(elem &result, mpz_ptr a) const { assert(false); }  // TODO: write this
     
-    void set_from_mpq(elem &result, mpq_ptr a) const { }  // TODO: write this
+    bool set_from_mpq(elem &result, mpq_ptr a) const { assert(false); return false; }  // TODO: write this
     
     bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
 

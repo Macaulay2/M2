@@ -84,7 +84,6 @@ void fill_from_lapack_upper(double* lapack_numbers,  // column-major order
 // upper is in row major form
 {
   // At this point, upper should be a zero matrix.
-  assert(MatrixOps::isZero(lower));
   assert(MatrixOps::isZero(upper));
 #if 0  
   for (int i=0; i< numrows * numcols; ++i)
@@ -997,7 +996,7 @@ bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
   //TODO: MES The next 6 lines need to be removed/cleaned up 
 #if 0
   const CCC *CCR = A->get_ring()->cast_to_CCC();
-  ASSERT(CCR != 0);
+  assert(CCR != 0);
   unsigned long precision= CCR->get_precision();
 #endif
   unsigned long precision = 53; // Just used below in code that I think is not active.
@@ -2546,7 +2545,6 @@ bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
   int cols = static_cast<int>(A->numColumns());
   int info1=0, info2=0, info3=0, info4=0;
   int min = (rows <= cols) ? rows : cols;
-  int max = (rows >= cols) ? rows : cols;
   
   if (min == 0)
     {

@@ -54,8 +54,6 @@ public:
   void text_out(buffer &o) const; // Display statistics about this stash.
   static void stats(buffer &o);
 private:
-  stash *next;
-
   const char *name;
   size_t element_size;          // In bytes
   //n_per_slab provides the number of elements of element_size in each slab.  If 0, elements are new'ed directly.

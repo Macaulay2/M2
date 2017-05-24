@@ -102,8 +102,9 @@ namespace M2 {
       return false;
     }
 
-    void set_from_mpq(ElementType& result,const mpq_ptr a) const { 
-      mpq_set(&result, a); 
+    bool set_from_mpq(ElementType& result,const mpq_ptr a) const { 
+      mpq_set(&result, a);
+      return true;
     }
     
     bool set_from_BigReal(ElementType& result, gmp_RR a) const {return false;}

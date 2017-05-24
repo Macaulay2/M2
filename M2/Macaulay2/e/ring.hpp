@@ -251,8 +251,8 @@ public:
   virtual ring_elem from_long(long n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
 
-  virtual ring_elem from_rational(mpq_ptr q) const = 0;
-  // The default version calls from_long(0). Change it?
+  // from_rational: if the rational q cannot be placed into this ring, false is returned, and result is not touched.
+  virtual bool from_rational(const mpq_ptr q, ring_elem& result) const = 0;
 
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;

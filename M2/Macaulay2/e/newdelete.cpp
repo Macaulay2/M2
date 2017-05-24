@@ -9,13 +9,13 @@
 /* The static inline versions are defined in newdelete.hpp */
 void* operator new    ( size_t size ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 void* operator new [] ( size_t size ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
-void* operator new    ( size_t size, const std::nothrow_t &t ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
-void* operator new [] ( size_t size, const std::nothrow_t &t ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+void* operator new    ( size_t size, const std::nothrow_t &t ) noexcept { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+void* operator new [] ( size_t size, const std::nothrow_t &t ) noexcept { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
-void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-void operator delete    ( void* obj, const std::nothrow_t &t ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-void operator delete [] ( void* obj, const std::nothrow_t &t ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete    ( void* obj ) noexcept { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete [] ( void* obj ) noexcept { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete    ( void* obj, const std::nothrow_t &t ) noexcept { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete [] ( void* obj, const std::nothrow_t &t ) noexcept { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
 
 #if 0
 

@@ -120,14 +120,14 @@ namespace M2 {
     mFfpackField.init(result,  b ); 
   }
   
-  /// @Mike: change all uses of set_from_mpq to return bool
-  //  or, perhaps, to raise an exception.
-  void ARingZZpFFPACK::set_from_mpq(ElementType &result, const mpq_ptr a) const 
+  bool ARingZZpFFPACK::set_from_mpq(ElementType &result, const mpq_ptr a) const 
   {
     ElementType n, d;
     set_from_mpz(n, mpq_numref(a));
     set_from_mpz(d, mpq_denref(a));
+    if (is_zero(d)) return false;
     divide(result, n, d);
+    return true;
   }
 
   // arithmetic

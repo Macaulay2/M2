@@ -3,6 +3,7 @@
 #ifndef _polyquotient_hpp_
 #define _polyquotient_hpp_
 
+#include <iostream>
 #include "poly.hpp"
 #include "monideal.hpp"
 #include "qring.hpp"
@@ -43,10 +44,11 @@ public:
     normal_form(result);
     return result;
   }
-  virtual ring_elem from_rational(mpq_ptr q) const {
-    ring_elem result = numerR_->from_rational(q);
+  virtual bool from_rational(mpq_ptr q, ring_elem& result) const {
+    bool ok = numerR_->from_rational(q, result);
+    if (not ok) return false;
     normal_form(result);
-    return result;
+    return true;
   }
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const
   {

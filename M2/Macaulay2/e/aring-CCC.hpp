@@ -141,9 +141,10 @@ namespace M2 {
       mpfr_set_si(&result.im, 0, GMP_RNDN);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, mpq_ptr a) const {
       mpfr_set_q(&result.re, a, GMP_RNDN);
       mpfr_set_si(&result.im, 0, GMP_RNDN);
+      return true;
     }
 
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {
