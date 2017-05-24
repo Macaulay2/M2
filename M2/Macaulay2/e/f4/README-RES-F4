@@ -1,9 +1,16 @@
 TODO: Notes on implementation Feb 2017.
 
+-- Monomial implementation possibles:
+one way:
+    monomials in the ring are placed in a hash table
+    advantages: monomial equality is fast to check
+                space requirement is very small (one uint32 for a monomial, with one uint32 for the component, inside a polynomial.
+    
+    
 a. allow other coefficient rings.  For QQ: allow to use reals, and severl primes, and denominator size?
 b. allow reals as input too?
 
-On order to do that:
+In order to do that:
   functions/locations which care about the actual coefficients:
   createF4Res -- knows original ring, has test for positive characteristic
     -- calls: newGausser (this could be a dispatch to different rings).
@@ -29,7 +36,29 @@ On order to do that:
     has field: mCoeffs, which refers to FieldElement.
     uses i.coefficient() to push back coefficient in the row of the big matrix
       also needs to negate this element.  i.coefficient() only used in 5 places.
-  
+    gauss_reduce:
+      allocate dense row
+      appendTerm
+      dense_row_fill_from_sparse
+
+  res-gausser: need types:
+  CoefficientArray (is fixed in size).  Perhaps 'void*'
+  CoefficientVector (can be added to).    Perhaps 'void*'
+  need
+    insertOne()
+    insertMinusOne()
+    copy(nelems, from, to)
+    but still need an iterator too...
+    to be able to get the length
+    debug output routine for the entire array
+    debug output for the i-th element
+
+
+  to look for:
+    mCoeffs
+    .coefficients()
+    FieldElement
+    
 
 
     My notes on the algorithm for computing non-minimal free resolutions
