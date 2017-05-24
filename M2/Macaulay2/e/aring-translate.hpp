@@ -111,8 +111,7 @@ namespace M2 {
                         ARingRR::ElementType& fS)
   {
     mpq_ptr f = const_cast<mpq_ptr>(&fR);
-    S.set_from_mpq(fS, f);
-    return true;
+    return S.set_from_mpq(fS, f);
   }
   inline bool mypromote(const ARingQQ& R,
                         const ARingRRR& S,
@@ -120,8 +119,7 @@ namespace M2 {
                         ARingRRR::ElementType& fS)
   {
     mpq_ptr f = const_cast<mpq_ptr>(&fR);
-    S.set_from_mpq(fS, f);
-    return true;
+    return S.set_from_mpq(fS, f);
   }
   inline bool mypromote(const ARingQQ& R,
                         const ARingCC& S,
@@ -129,8 +127,7 @@ namespace M2 {
                         ARingCC::ElementType& fS)
   {
     mpq_ptr f = const_cast<mpq_ptr>(&fR);
-    S.set_from_mpq(fS, f);
-    return true;
+    return S.set_from_mpq(fS, f);
   }
   inline bool mypromote(const ARingQQ& R,
                         const ARingCCC& S,
@@ -138,8 +135,7 @@ namespace M2 {
                         ARingCCC::ElementType& fS)
   {
     mpq_ptr f = const_cast<mpq_ptr>(&fR);
-    S.set_from_mpq(fS, f);
-    return true;
+    return S.set_from_mpq(fS, f);
   }
   /////////////////////////////////////////////////////
   inline bool mypromote(const ARingRR& R,

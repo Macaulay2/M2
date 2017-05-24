@@ -243,13 +243,19 @@ ring_elem GF::from_int(mpz_ptr n) const
   return ring_elem(m);
 }
 
-ring_elem GF::from_rational(mpq_ptr q) const
+bool GF::from_rational(mpq_ptr q, ring_elem& result) const
 {
-  // a should be an element of ZZ/p
-  ring_elem a = _originalR->getCoefficients()->from_rational(q);
+  // a will be an element of ZZ/p
+  ring_elem a;
+  bool ok1 =_originalR->getCoefficients()->from_rational(q, a);
+  if (not ok1) return false;
   std::pair<bool,long> b = _originalR->getCoefficients()->coerceToLongInteger(a);
-  assert(b.first);
-  return GF::from_long(b.second);
+  if (b.first)
+    {
+      result = GF::from_long(b.second);
+      return true;
+    }
+  return false;
 }
 
 ring_elem GF::var(int v) const

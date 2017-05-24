@@ -19,7 +19,10 @@ ring_elem getElement<QQ>(const QQ&  R, int index)
       mpz_set_str(maxH, "100000000000", 10);
     }
   gmp_QQ a1 = rawRandomQQ(maxH);
-  return R.from_rational(a1);
+  ring_elem result;
+  bool ok = R.from_rational(a1, result);
+  assert(ok);
+  return result;
 }
 ////////////////////////////////////////////////////////
 TEST(RingQQ, create)

@@ -41,6 +41,81 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     }
 }
 
+#if 0
+// Code perhaps useful in git issues 568-569, May 2017
+template<typename Iter>
+std::vector< std::pair<int, gbvector*> >
+make_degree_position_vector(GBRing* R, Iter begin, Iter end)
+{
+  using PairVector = std::vector< std::pair<int, gbvector*> >;
+  PairVector positions;
+  int count = 0;
+  for (Iter i = begin; i != end, ++i, ++count)
+    if (R->gbvector_is_zero(*i))
+      continue;
+  else {
+    push_back(std::make_pair(M->simple_degree((*i)->monom), count));    
+  }
+  return positions;
+}
+                                                                     
+void minimalize_lead_terms_of_gbvectors(const VECTOR(POLY) &polys0,
+                                 bool auto_reduced)
+// I have to decide: does this ADD to the existing set?
+{
+  // First sort these elements via increasing lex order (or monomial order?)
+  // Next insert minimal elements into T, and polys
+
+  auto pairvec = make_degree_position_vector(R, polys0.begin(), polys0.end());
+  VECTOR(int) positions;
+  positions.reserve(polys0.size());
+
+  for (int i=0; i<polys0.size(); i++)
+    positions.push_back(i);
+
+  //  displayElements("-- before sort --", R, polys0, [](auto& g) { return g.f; } );
+  
+  std::stable_sort(positions.begin(), positions.end(), ReducedGB_Field_sorter(R,F,polys0));
+
+  //  VECTOR(gbvector*) sorted_elements_debug_only;
+  //  for (int i=0; i<positions.size(); i++)
+  //    sorted_elements_debug_only.push_back(polys0[positions[i]].f);
+  //  displayElements("-- after sort --", R, sorted_elements_debug_only, [](auto& g) { return g; } );
+  
+  // Now loop through each element, and see if the lead monomial is in T.
+  // If not, add it in , and place element into 'polys'.
+
+  for (VECTOR(int)::iterator i = positions.begin(); i != positions.end(); i++)
+    {
+      Bag *not_used;
+      gbvector *f = polys0[*i].f;
+      exponents e = R->exponents_make();
+      R->gbvector_get_lead_exponents(F,f,e);
+      if ((!Rideal || !Rideal->search_expvector(e, not_used))
+          && T->find_divisors(1, e, f->comp) == 0)
+        {
+          // Keep this element
+
+          POLY h;
+          ring_elem junk;
+
+          h.f = R->gbvector_copy(f);
+          h.fsyz = R->gbvector_copy(polys0[*i].fsyz);
+
+          if (auto_reduced)
+            remainder(h,false,junk); // This auto-reduces h.
+
+          R->gbvector_remove_content(h.f,h.fsyz);
+
+          T->insert(e, f->comp, INTSIZE(polys));
+          polys.push_back(h);
+        }
+      else
+        R->exponents_delete(e);
+    }
+}
+#endif
+
 void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
                                        bool auto_reduced)
 {

@@ -63,7 +63,11 @@ ARingRRRZZpTest :  gtest-include.o  \
     $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
- 
+checkGivaro: GivaroTest
+
+GivaroTest: GivaroTest.o
+	@CC@ $(LDFLAGS) $^ -lgivaro -lgmp -lstdc++ -lgmpxx -o $@
+
 checkRingRRR: ARingRRRTest
 	time ./ARingRRRTest
 

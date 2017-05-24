@@ -124,7 +124,7 @@ RunExternalM2
 NumericalSchubertCalculus
 ToricTopology
 Cremona
-MultipolynomialResultants
+Resultants
 VectorFields
 SLPexpressions
 Miura
@@ -135,7 +135,6 @@ ExampleSystems
 RationalMaps
 SpectralSequences
 SectionRing
-ChowForms
 OldPolyhedra
 OldToricVectorBundles
 K3Carpets
@@ -145,3 +144,8 @@ AlphaTest
 PhylogeneticTrees
 MonodromySolver
 ReactionNetworks
+PackageCitations
+NumericSolutions
+GradedLieAlgebras
+InverseSystems
+Pullback

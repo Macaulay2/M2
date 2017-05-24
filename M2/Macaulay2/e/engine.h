@@ -443,6 +443,9 @@ extern "C" {
      this implements the (anti-)isomorphism of the ring and its opposite ring.
   */
 
+  const Matrix* /* or null */ rawHomogenizeMatrix(const Matrix* a, const Matrix* b, const Matrix* c);
+  /* TEST dummy function!! */
+  
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
             int v,

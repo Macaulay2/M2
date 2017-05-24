@@ -115,8 +115,9 @@ namespace M2 {
       result = mpz_get_d(a);
     }
 
-    void set_from_mpq(ElementType &result, const mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, const mpq_ptr a) const {
       result = mpq_get_d(a);
+      return true;
     }
 
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {
@@ -232,7 +233,11 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      map->get_ring()->from_double(f, result);
+      if (!map->get_ring()->from_double(f, result))
+        {
+          result = map->get_ring()->from_long(0);
+          ERROR("cannot map double to ring type");
+        }
     }
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const

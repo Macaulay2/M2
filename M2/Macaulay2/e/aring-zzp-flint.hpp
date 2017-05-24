@@ -106,16 +106,13 @@ namespace M2 {
       result = mpz_fdiv_ui(a, mCharac);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, mpq_ptr a) const {
       ElementType n, d;
       set_from_mpz(n, mpq_numref(a));
       set_from_mpz(d, mpq_denref(a));
-      if (is_zero(d)) {
-         init(result);
-         ERROR("fraction cannot be promoted as it would have zero denominator");
-         return;
-      }
+      if (is_zero(d)) return false;
       divide(result,n,d);
+      return true;
     }
 
     bool set_from_BigReal(ElementType &result, gmp_RR a) const { return false; }

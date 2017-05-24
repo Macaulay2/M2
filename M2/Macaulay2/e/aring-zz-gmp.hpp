@@ -80,7 +80,14 @@ namespace M2 {
       mpz_set(&result, a);
     }
     
-    void set_from_mpq(ElementType &result, const mpq_ptr a) const {assert(false);}
+    bool set_from_mpq(ElementType &result, const mpq_ptr a) const {
+      if (mpz_cmp_si(mpq_denref(a), 1) == 0)
+        {
+          set_from_mpz(result, mpq_numref(a));
+          return true;
+        }
+      return false;
+    }
     
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {return false;}
     

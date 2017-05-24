@@ -89,5 +89,5 @@ endif
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time gmake -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=yes GCC5=no GCC6=no GCC4=no "
+# compile-command: "time gmake -w -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=yes GCC5=no GCC6=no GCC4=no "
 # End:

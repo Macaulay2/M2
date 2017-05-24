@@ -1,12 +1,13 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
+# get releases from https://github.com/Normaliz/Normaliz/releases
 # version 3.2 uses autoconf, so take advantage of that when upgrading
-VERSION = 3.1.1
-VERSION2 = 3.1
+VERSION = 3.3.0
+VERSION2 = 3.3
 # these authors sometimes change the file without changing the name, so we copy it to our own site:
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-TARFILE = Normaliz$(VERSION)Source.zip
-TARDIR = Normaliz$(VERSION2)/source
 FIXTARCMD = :
+
+PRECONFIGURE = autoreconf -vif
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
 # I have filed a bug report, Bug ID# 8338749:
@@ -26,16 +27,15 @@ NORMFLAGS =
 ####
 
 CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . $(CXXFLAGS0)
-UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE) && $(FIXTARCMD)
-CONFIGURECMD = true
 STRIPFILES = normaliz
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
 		RANLIB="@RANLIB@" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
-PROGRAMS = normaliz
-LICENSEFILES = COPYING
+PROGRAMS = source/.libs/normaliz
+LIBRARIES = source/.libs/libnormaliz.3.dylib
+LICENSEFILES = source/COPYING
 INSTALLCMD = true
 CHECKTARGET = .
 include ../Makefile.library

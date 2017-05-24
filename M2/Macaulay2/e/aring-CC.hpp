@@ -139,9 +139,10 @@ namespace M2 {
       result.im = 0.0;
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, mpq_ptr a) const {
       result.re = mpq_get_d(a);
       result.im = 0.0;
+      return true;
     }
 
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {
@@ -370,7 +371,11 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      map->get_ring()->from_complex_double(f.re, f.im, result);
+      if (!map->get_ring()->from_complex_double(f.re, f.im, result))
+        {
+          result = map->get_ring()->from_long(0);
+          if (not error()) ERROR("cannot coerce CC value to ring type");
+        }
     }
 
     gmp_CC toBigComplex(const ElementType& a) const

@@ -135,9 +135,12 @@ ring_elem RingZZ::from_int(mpz_ptr n) const
   return ring_elem(result);
 }
 
-ring_elem RingZZ::from_rational(mpq_ptr q) const
+bool RingZZ::from_rational(mpq_ptr q, ring_elem& result) const
 {
-  return RingZZ::from_int(mpq_numref(q));
+  bool ok = mpz_cmp_si(mpq_denref(q), 1) == 0;
+  if (not ok) return false;
+  result = RingZZ::from_int(mpq_numref(q));
+  return true;
 }
 
 bool RingZZ::promote(const Ring *R, const ring_elem a, ring_elem &result) const

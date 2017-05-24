@@ -115,11 +115,12 @@ ring_elem Tower::from_int(mpz_ptr n) const
   return TOWER_RINGELEM(f);
 }
 
-ring_elem Tower::from_rational(mpq_ptr q) const
+bool Tower::from_rational(mpq_ptr q, ring_elem& result) const
 {
   poly f;
-  D->set_from_rational(f, q);
-  return TOWER_RINGELEM(f);
+  if (not D->set_from_rational(f, q)) return false;
+  result = TOWER_RINGELEM(f);
+  return true;
 }
 
 ring_elem Tower::var(int v) const
@@ -131,11 +132,8 @@ ring_elem Tower::var(int v) const
 
 bool Tower::is_unit(const ring_elem f) const
 {
-  //  poly f1 = TOWER_VAL(f);
-#warning "write Tower::is_unit"
+  // Write this.  Git issue #611.  
   return false;
-  //TODO: finish
-  // Compute inverse of f, see if it is null...
 }
 
 bool Tower::is_zero(const ring_elem f) const
@@ -163,8 +161,8 @@ int Tower::compare_elems(const ring_elem f, const ring_elem g) const
 
 ring_elem Tower::copy(const ring_elem f) const
 {
+  // Write this.  Git issue #611.  
   return f;
-  //TODO: do the copy?
 }
 
 void Tower::remove(ring_elem &) const
@@ -262,7 +260,6 @@ void Tower::elem_text_out(buffer &o,
 
 class TowerEvaluator : public DPolyTraverser
 {
-  const DRing *D;
   const RingMap *map;
   const Ring *K;
   SumCollector *H;
@@ -288,13 +285,12 @@ class TowerEvaluator : public DPolyTraverser
 public:
   TowerEvaluator(const Tower *T, const RingMap *map0, const ring_elem f0, int first_var0)
     : DPolyTraverser(T->D),
-      D(T->D),
       map(map0),
       f(TOWER_VAL(f0)),
       first_var(first_var0),
       nvars(T->n_vars())
   {
-    const Ring *target = map->get_ring();
+    target = map->get_ring();
     H = target->make_SumCollector();
     const PolynomialRing *P = target->cast_to_PolynomialRing();
     K = (P == 0 ? target : P->getCoefficients());
@@ -318,31 +314,20 @@ ring_elem Tower::eval(const RingMap *map, const ring_elem f, int first_var) cons
 
 bool Tower::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
-  //  poly f1 = TOWER_VAL(f);
-#warning "write Tower::promote"
-  // What Rf should be allowed?
-
-  //TODO: finish
-
+  // Write this.  Git issue #611.
   return false;
 }
 
 bool Tower::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
-  //  poly f1 = TOWER_VAL(f);
-  // What Rg should be allowed?
-#warning "write Tower::lift"
-  //TODO: finish
-
+  // Write this.  Git issue #611.  
   return false;
-
 }
 
 void Tower::syzygy(const ring_elem a, const ring_elem b,
                    ring_elem &x, ring_elem &y) const
 {
-#warning "write Tower::syzygy"
-  //TODO: finish
+  // Write this.  Git issue #611.  
 }
 
 ring_elem Tower::gcd(const ring_elem f, const ring_elem g) const

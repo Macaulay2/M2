@@ -119,8 +119,9 @@ namespace M2 {
       mpfr_set_z(&result, a, GMP_RNDN);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, mpq_ptr a) const {
       mpfr_set_q(&result, a, GMP_RNDN);
+      return true;
     }
 
     bool set_from_double(ElementType &result, double a) const {
@@ -222,7 +223,11 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      map->get_ring()->from_BigReal(&f, result);
+      if (!map->get_ring()->from_BigReal(&f, result))
+        {
+          result = map->get_ring()->from_long(0);
+          ERROR("cannot coerce RRR value to ring type");
+        }
     }
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
