@@ -3,19 +3,27 @@
 #include <M2/gc-include.h>
 #include <new>
 
+#if not defined(_NOEXCEPT)
+#if __has_feature(cxx_noexcept)
+#define _NOEXCEPT noexcept
+#else
+#define _NOEXCEPT
+#endif
+#endif
+
 /* Here we redefine operator new and delete, so 3rd party libraries using them that also call gmp, which in turn calls libgc, will
    not have libgc regard their gmp integers as garbage and collect them */
 /* Nevertheless, in our code we prefer to use the classes defined below, one of which offers the use of GC_MALLOC_ATOMIC() */
 /* The static inline versions are defined in newdelete.hpp */
 void* operator new    ( size_t size ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 void* operator new [] ( size_t size ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
-void* operator new    ( size_t size, const std::nothrow_t &t ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
-void* operator new [] ( size_t size, const std::nothrow_t &t ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+void* operator new    ( size_t size, const std::nothrow_t &t ) _NOEXCEPT { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+void* operator new [] ( size_t size, const std::nothrow_t &t ) _NOEXCEPT { TRAPCHK_SIZE(size); void *p = GC_MALLOC_UNCOLLECTABLE( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
-void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-void operator delete    ( void* obj, const std::nothrow_t &t ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
-void operator delete [] ( void* obj, const std::nothrow_t &t ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete    ( void* obj ) _NOEXCEPT { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete [] ( void* obj ) _NOEXCEPT { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete    ( void* obj, const std::nothrow_t &t ) _NOEXCEPT { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
+void operator delete [] ( void* obj, const std::nothrow_t &t ) _NOEXCEPT { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
 
 #if 0
 
