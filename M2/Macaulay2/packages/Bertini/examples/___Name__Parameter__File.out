@@ -3,7 +3,7 @@
 
 i1 : writeParameterFile(storeBM2Files,{.1,.2,.5},NameParameterFile=>"testParameters")  --this function writes a parameter file named testParameters
 
-o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74661-0/0/testParameters
+o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-30628-0/0/testParameters
 
 o1 : File
 

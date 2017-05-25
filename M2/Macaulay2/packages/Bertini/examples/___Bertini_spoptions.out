@@ -4,7 +4,6 @@
 i1 : CC[x,y]; F = {x^2-1,y^2-1};
 
 i3 : bertiniZeroDimSolve(F,B'Configs=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
-~/bertini
 
 o3 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 
@@ -21,14 +20,6 @@ o4 : OptionTable
 i5 : G = {x^2+y^2-1};
 
 i6 : bertiniPosDimSolve(G,opts)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74665-0/1
-
-The version of Bertini 
-	    you have installed on your computer 
-	    was used for this run. 
-Bertini is under ongoing development by 
-	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
 
 o6 = a numerical variety with components in
      dim 1:  [dim=1,deg=2]
