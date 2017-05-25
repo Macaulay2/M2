@@ -46,6 +46,14 @@ void F4Res::clearMatrix()
   mHashTable.reset();
   auto timeB = timer();
   mFrame.timeResetHashTable += seconds(timeB-timeA);
+
+  for (auto& f : mReducers) {
+    mRing.resGausser().deallocate(f.mCoeffs);
+  }
+
+  for (auto& f : mSPairs) {
+    mRing.resGausser().deallocate(f.mCoeffs);
+  }
   
   mReducers.clear();
   mSPairs.clear();
@@ -59,7 +67,7 @@ void F4Res::clearMatrix()
 //    m: monomial at level mThisLevel-1
 //    result: monomial at level mThisLevel, IF true is returned
 //  returns true if 'm' == inG(result), for some (unique) 'result'.
-bool F4Res::findDivisor(res_packed_monomial m, res_packed_monomial result)
+bool F4Res::findDivisor(res_const_packed_monomial m, res_packed_monomial result)
 {
   // get component of m
   // find the range of monomials to check
@@ -101,7 +109,7 @@ bool F4Res::findDivisor(res_packed_monomial m, res_packed_monomial result)
 //     of the coeff matrices.  It uses mThisLevel.
 //
 // If the ring has skew commuting variables, then result_sign_if_skew is set to 0, 1, or -1.
-ComponentIndex F4Res::processMonomialProduct(res_packed_monomial m, res_packed_monomial n, int& result_sign_if_skew)
+ComponentIndex F4Res::processMonomialProduct(res_const_packed_monomial m, res_const_packed_monomial n, int& result_sign_if_skew)
 {
   result_sign_if_skew = 1;
   auto x = monoid().get_component(n);
@@ -172,13 +180,14 @@ ComponentIndex F4Res::processCurrentMonomial()
 }
 void F4Res::loadRow(Row& r)
 {
-  //  std::cout << "loadRow: ";
+  //  std::cout << "loadRow: " << std::endl;
+  
+  r.mCoeffs = resGausser().allocateCoefficientVector();
+  
   //  monoid().showAlpha(r.mLeadTerm);
   //  std::cout << std::endl;
   int skew_sign; // will be set to 1, unless ring().isSkewCommutative() is true, then it can be -1,0,1.
   // however, if it is 0, then "val" below will also be -1.
-  FieldElement one;
-  resGausser().set_one(one);
   long comp = monoid().get_component(r.mLeadTerm);
   auto& thiselement = mFrame.level(mThisLevel-1)[comp];
   //std::cout << "  comp=" << comp << " mDegree=" << thiselement.mDegree << " mThisDegree=" << mThisDegree << std::endl;
@@ -190,13 +199,11 @@ void F4Res::loadRow(Row& r)
       if (val < 0) fprintf(stderr, "ERROR: expected monomial to live\n");
       r.mComponents.push_back(val);
       if (skew_sign > 0)
-        r.mCoeffs.push_back(one);
+        mRing.resGausser().pushBackOne(r.mCoeffs);
       else
         {
           // Only happens if we are in a skew commuting ring.
-          FieldElement c;
-          ring().resGausser().negate(one, c);
-          r.mCoeffs.push_back(c);
+          ring().resGausser().pushBackMinusOne(r.mCoeffs);
         }
       return;
     }
@@ -210,13 +217,11 @@ void F4Res::loadRow(Row& r)
       if (val < 0) continue;
       r.mComponents.push_back(val);
       if (skew_sign > 0)
-        r.mCoeffs.push_back(i.coefficient());
+        mRing.resGausser().pushBackElement(r.mCoeffs, p.coeffs, i.coefficient_index());
       else
         {
           // Only happens if we are in a skew commuting ring.
-          FieldElement c;
-          ring().resGausser().negate(i.coefficient(), c);
-          r.mCoeffs.push_back(c);
+          mRing.resGausser().pushBackNegatedElement(r.mCoeffs, p.coeffs, i.coefficient_index());
         }
     }
 } 
@@ -237,13 +242,16 @@ private:
   static long ncmps;
   static long ncmps0;
 public:
+#if 0
   int compare(value a, value b)
   {
     ncmps ++;
     fprintf(stdout, "ERROR: should not get here\n");
-    return M.compare_grevlex(cols[a],cols[b]);
+    //return M.compare_grevlex(cols[a],cols[b]);
+    return 0;
   }
-
+#endif
+  
   bool operator()(value a, value b)
   {
     ncmps0++;
@@ -345,7 +353,7 @@ void F4Res::reorderColumns()
     }
 
   if (M2_gbTrace >= 2)
-    fprintf(stderr, "  ncomparisons = ");
+    fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
 
   std::stable_sort(column_order, column_order+ncols, C);
 
@@ -436,6 +444,7 @@ void F4Res::reorderColumns()
 
 void F4Res::makeMatrix()
 {
+  //std::cout << "entering makeMatrix()" << std::endl;
   auto& myframe = mFrame.level(mThisLevel);
   long r = 0;
   long comp = 0;
@@ -471,7 +480,11 @@ void F4Res::makeMatrix()
           std::cout << "makeMatrix red: " << mNextReducerToProcess << " #rows = " << mReducers.size() << std::endl;
     }
 
+  reorderColumns();
+  
 #if 0
+  debugOutputReducers();
+  debugOutputColumns();
   std :: cout << "-- reducer matrix --" << std::endl;
   debugOutputMatrix(mReducers);
   debugOutputMatrixSparse(mReducers);
@@ -480,24 +493,35 @@ void F4Res::makeMatrix()
   debugOutputMatrix(mSPairs);
   debugOutputMatrixSparse(mSPairs);
 #endif
-  reorderColumns();
 }
+
+//#define DEBUG_GAUSS
 
 void F4Res::gaussReduce()
 {
+  bool onlyConstantMaps = false;
+  std::vector<bool> track(mReducers.size());
+  if (onlyConstantMaps) // and not exterior algebra?
+    {
+      for (auto i=0; i<mReducers.size(); i++)
+        {
+          track[i] = monoid().is_divisible_by_var_in_range(mReducers[i].mLeadTerm,
+                                                           monoid().n_vars()-mThisLevel+1,
+                                                           monoid().n_vars()-1);
+        }
+    }
+  
   // Reduce to zero every spair. Recording creates the
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
   // allocate a dense row, of correct size
-  //std::cout << "gaussReduce: entering" << std::flush;
-  ResGausser::dense_row gauss_row;
-  mRing.resGausser().dense_row_allocate(gauss_row, static_cast<ComponentIndex>(mColumns.size()));
-  FieldElement one;
-  mRing.resGausser().set_one(one);
+  CoefficientVector gauss_row = mRing.resGausser().allocateCoefficientVector(static_cast<ComponentIndex>(mColumns.size()));
+  //  std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null")  << std::endl;
+  //  std::cout << "gauss_row size: " << mRing.resGausser().size(gauss_row) << std::endl;
 
   for (long i=0; i<mSPairs.size(); i++)
     {
-      #if 0
+      #ifdef DEBUG_GAUSS
       std::cout << "reducing row " << i << std::endl;
       #endif
       // Reduce spair #i
@@ -507,15 +531,10 @@ void F4Res::gaussReduce()
 
       Row& r = mSPairs[i]; // row to be reduced.
       long comp = mSPairComponents[i];
-      result.appendTerm(mFrame.level(mThisLevel)[comp].mMonom,
-                        one);
-      ///mFrame.mAllMonomials.accountForMonomial(mFrame.level(mThisLevel)[comp].mMonom);
+      result.appendMonicTerm(mFrame.level(mThisLevel)[comp].mMonom);
       
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
-      #if 0
-      std::cout << "about to fill from sparse " << i << std::endl;
-      #endif
 
       // Note: in the polynomial ring case, the row r is non-zero.
       // BUT: for skew commuting variables, it can happen that r is zero
@@ -524,52 +543,69 @@ void F4Res::gaussReduce()
         {
           ComponentIndex firstcol = r.mComponents[0];
           ComponentIndex lastcol = static_cast<ComponentIndex>(mColumns.size()-1); // maybe: r.mComponents[r.mComponents.size()-1];
-          mRing.resGausser().dense_row_fill_from_sparse(gauss_row,
-                                                        static_cast<ComponentIndex>(r.mComponents.size()),
-                                                        & r.mCoeffs[0],
-                                                        & r.mComponents[0]); // FIX: not correct call
+
+          #ifdef DEBUG_GAUSS
+          std::cout << "about to fill from sparse " << i << std::endl;
+          #endif
+          
+          mRing.resGausser().fillFromSparse(gauss_row,
+                                            static_cast<ComponentIndex>(r.mComponents.size()),
+                                            r.mCoeffs,
+                                            & r.mComponents[0]); // FIX: not correct call
           
           while (firstcol <= lastcol)
             {
-              #if 0
+              #ifdef DEBUG_GAUSS
               std::cout << "about to reduce with col " << firstcol << std::endl;
+              std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null") << std::endl;
+              std::cout << "mReducers[" << firstcol << "]: " << (mReducers[firstcol].mCoeffs.isNull() ? "null" : "not-null") << std::endl;
+              std::cout << "result: " << (result.coefficientInserter().isNull() ? "null" : "not-null") << std::endl;
+              std::cout << "  dense: "; mRing.resGausser().debugDisplay(std::cout, gauss_row) << std::endl;
+              mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs); std::cout  << std::endl;
+              mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()); std::cout << std::endl;
               #endif
-          
-              FieldElement elem;
 
-              #if 0
-              for (ComponentIndex p=0; p<mColumns.size(); p++)
+              if (onlyConstantMaps and not track[firstcol])
                 {
-                  fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(gauss_row.coeffs[p]));
+                  mRing.resGausser().sparseCancel(gauss_row,
+                                                  mReducers[firstcol].mCoeffs,
+                                                  mReducers[firstcol].mComponents.data()
+                                                  );
                 }
-              fprintf(stdout, "\n");
-              #endif
-
-#if 0             
-              mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
-              result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-              ///mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
-              mRing.resGausser().dense_row_cancel_sparse_monic(gauss_row,
-                                                         static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
-                                                         & mReducers[firstcol].mCoeffs[0],
-                                                         & mReducers[firstcol].mComponents[0]
-                                                         );
-#else
-              mRing.resGausser().dense_row_cancel_sparse(gauss_row,
-                                                         static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
-                                                         mReducers[firstcol].mCoeffs.data(),
-                                                         mReducers[firstcol].mComponents.data(),
-                                                         elem
-                                                         );
-              result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-#endif
-              firstcol = mRing.resGausser().dense_row_next_nonzero(gauss_row, firstcol+1, lastcol);
+              else
+                {
+                  mRing.resGausser().sparseCancel(gauss_row,
+                                                  mReducers[firstcol].mCoeffs,
+                                                  mReducers[firstcol].mComponents.data(),
+                                                  result.coefficientInserter()
+                                                  );
+                  
+                  #ifdef DEBUG_GAUSS
+                  std::cout << "  done with sparseCancel" << std::endl;
+                  mRing.resGausser().debugDisplay(std::cout, gauss_row) << std::endl;
+                  mRing.resGausser().debugDisplay(std::cout, mReducers[firstcol].mCoeffs) << std::endl;
+                  mRing.resGausser().debugDisplay(std::cout, result.coefficientInserter()) << std::endl;
+                  std::cout << "  about to push back term" << std::endl;
+                  #endif
+                  
+                  result.pushBackTerm(mReducers[firstcol].mLeadTerm);
+                  
+                  #ifdef DEBUG_GAUSS
+                  std::cout << "done with col " << firstcol << std::endl;
+                  #endif
+                }
+              firstcol = mRing.resGausser().nextNonzero(gauss_row, firstcol+1, lastcol);
             }
         }
+#ifdef DEBUG_GAUSS
+      std::cout << "about to set syz" << std::endl;
+#endif
       result.setPoly(syz);
+#ifdef DEBUG_GAUSS
+      std::cout << "just set syz" << std::endl;
+#endif
     }
-
-  mRing.resGausser().dense_row_deallocate(gauss_row);
+  mRing.resGausser().deallocate(gauss_row);
 }
 
 void F4Res::construct(int lev, int degree)
@@ -583,6 +619,9 @@ void F4Res::construct(int lev, int degree)
   timeB = timer();
   mFrame.timeMakeMatrix += seconds(timeB-timeA);  
 
+  if (M2_gbTrace >= 2)
+    mHashTable.dump();
+  
   if (M2_gbTrace >= 2)
     std::cout << "  make matrix time: " << seconds(timeB-timeA) << " sec"  << std::endl;
 
@@ -636,6 +675,7 @@ void F4Res::construct(int lev, int degree)
 
 void F4Res::debugOutputReducers()
 {
+  std::cout << "-- reducers(rows) -- " << std::endl;
   auto end = mReducers.cend();
   for (auto i=mReducers.cbegin(); i != end; ++i)
     {
@@ -645,6 +685,7 @@ void F4Res::debugOutputReducers()
 }
 void F4Res::debugOutputColumns()
 {
+  std::cout << "-- columns --" << std::endl;  
   auto end = mColumns.cend();
   for (auto i=mColumns.cbegin(); i != end; ++i)
     {
@@ -657,13 +698,12 @@ void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
 {
   for (ComponentIndex i=0; i<rows.size(); i++)
     {
-      fprintf(stdout, "coeffs = ");
-      for (long j=0; j<rows[i].mCoeffs.size(); ++j)
-        fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(rows[i].mCoeffs[j]));
-      fprintf(stdout, "\n comps = ");
+      std::cout << "coeffs[" << i << "] = ";
+      mRing.resGausser().debugDisplay(std::cout, rows[i].mCoeffs);
+      std::cout  << " comps = ";
       for (long j=0; j<rows[i].mComponents.size(); ++j)
-        fprintf(stdout, " %d", rows[i].mComponents[j]);
-      fprintf(stdout, "\n");
+        std::cout << rows[i].mComponents[j] << " ";
+      std::cout << std::endl;
     }
 }
 
@@ -671,21 +711,7 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 {
   for (ComponentIndex i=0; i<rows.size(); i++)
     {
-      auto coeff = rows[i].mCoeffs.begin();
-      auto end = rows[i].mCoeffs.end();
-      auto monom = rows[i].mComponents.begin();
-      for (ComponentIndex c=0; c<mColumns.size(); c++)
-        {
-          if (coeff == end or *monom != c)
-            fprintf(stdout, " .");
-          else
-            {
-              fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(*coeff));
-              ++coeff;
-              ++monom;
-            }
-        }
-      fprintf(stdout, "\n");
+      mRing.resGausser().debugDisplayRow(std::cout, static_cast<int>(mColumns.size()), rows[i].mComponents, rows[i].mCoeffs);
     }
 }
 void F4Res::debugOutputReducerMatrix()

@@ -168,8 +168,8 @@ TEST ///
       checkQR(M,Q,R)
       )
   checkQRs = (M) -> (
-      (m1,m2) := QR(M, ReturnQR=>false);
-      (Q,R) := QR M;
+      (m1,m2) := QRDecomposition(M, ReturnQR=>false);
+      (Q,R) := QRDecomposition M;
       checkEncodedQR(M,m1,m2);
       checkQR(M,Q,R);
       (Q1,R1) := makeQR(m1,m2);
@@ -194,12 +194,12 @@ TEST ///
   
   M = mutableMatrix(RR_53, 50, 10)
   fillMatrix M
-  elapsedTime (Q,R) = QR M;
+  elapsedTime (Q,R) = QRDecomposition M;
   checkQRs M
 
   M = mutableMatrix(RR_53, 10, 10)
   fillMatrix M
-  elapsedTime (Q,R) = QR M;
+  elapsedTime (Q,R) = QRDecomposition M;
   checkQRs M
 
   -- TODO: QR doesn't yet work for #rows < #cols.  What should it do in this case?

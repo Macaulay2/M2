@@ -1,9 +1,11 @@
 // Copyright 1996 Michael E. Stillman
 
+#include <limits>
+#include <cstdlib>
+
 #include "hilb.hpp"
 #include "relem.hpp"
 #include "interrupted.hpp"
-#include <limits>
 
 int partition_table::representative(int x)
 {

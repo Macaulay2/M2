@@ -5,10 +5,16 @@
 
 #include <cstdint>
 
-typedef long myword;
-//typedef int32_t myword;
+enum class MonomialOrderingType {
+  Lex, GRevLex, Weights
+};
 
-typedef long component_index;
+//typedef long myword;
+typedef int32_t myword;
+
+//typedef long component_index;
+typedef myword component_index;
+
 typedef myword res_ntuple_word;
 typedef res_ntuple_word * res_ntuple_monomial;
 typedef const res_ntuple_word * res_const_ntuple_monomial;

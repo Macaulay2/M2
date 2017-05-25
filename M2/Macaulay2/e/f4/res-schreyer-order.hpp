@@ -6,7 +6,7 @@
 struct ResSchreyerOrder
 {
   std::vector<res_packed_monomial> mTotalMonom;
-  std::vector<long> mTieBreaker;
+  std::vector<component_index> mTieBreaker;
   // keep a memory block for these monomials?  Probably...
 };
 
