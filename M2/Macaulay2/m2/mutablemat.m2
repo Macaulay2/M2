@@ -268,8 +268,9 @@ QRDecomposition = method(Options=>{ReturnQR=>true})
 QRDecomposition MutableMatrix := o -> A -> (
      k := ring A;
      if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
-     Q := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
-     R := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
+     Q := mutableMatrix(k,0,0,Dense=>true);
+     R := mutableMatrix(k,0,0,Dense=>true);
+     --R := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
      rawQR(raw A, raw Q, raw R, o.ReturnQR);
      (Q,R))
 QRDecomposition Matrix := o -> A -> (

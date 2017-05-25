@@ -106,6 +106,47 @@ void fill_from_lapack_upper(double* lapack_numbers,  // column-major order
     }
 }
 
+void fill_from_lapack_upper(double* lapack_numbers,  // column-major order
+                            int numrows,
+                            int numcols,
+                            DMat<M2::ARingCC>& upper)
+// original matrix has size nrows x ncols
+// lapack_numbers is an array of this size
+// result: upper: size min(nrows, ncols) x ncols
+//
+// lapack_numbers is in column major form
+// upper is in row major form
+{
+  // At this point, upper should be a zero matrix.
+  std::cout << "entering fill_from_lapack_upper "  << std::endl;        
+  assert(MatrixOps::isZero(upper));
+#if 0  
+  for (int i=0; i< numrows * numcols; ++i)
+    std::cout << lapack_numbers[i] << " ";
+  std::cout << std::endl;
+#endif
+  auto U = upper.rowMajorArray();
+
+  for (size_t c=0; c<upper.numColumns(); c++)
+    {
+      std::cout << "doing col " << c << std::endl;      
+      auto U1 = U;
+      for (size_t r=0; r<=c; r++)
+        {
+          std::cout << "doing row " << r << std::endl;
+          if (r >= upper.numRows()) break;
+          double re = lapack_numbers[2*r];
+          double im = lapack_numbers[2*r+1];
+          upper.ring().set_from_doubles(*U1, re, im);
+          
+          U1 += upper.numColumns();
+        }
+      U++; // change to next column
+      lapack_numbers += 2*numrows;
+    }
+  std::cout << "done!" << std::endl;
+}
+
 void fill_lower_and_upper(double* lapack_numbers,  // column-major order
                           DMat<M2::ARingRRR>& lower,
                           DMat<M2::ARingRRR>& upper)
@@ -2653,6 +2694,141 @@ bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
   delete [] workspace;
   deletearray(copyA);
   deletearray(tau);
+  return ret;
+}
+
+bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
+{
+  // sizes:
+  //  input: A[m,n]
+  //  output for returnQR==true:
+  //   case m >= n:  Q[m,n], R[n,n]
+  //   case m < n: Q[m,m], R[m,n]
+  //  output for returnQR==false:
+  //   Q[m,n], R[1,min(m,n)]
+  bool ret = true;
+  int rows = static_cast<int>(A->numRows());
+  int cols = static_cast<int>(A->numColumns());
+  int info1=0, info2=0, info3=0, info4=0;
+  int min = (rows <= cols) ? rows : cols;
+  
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  double *copyA = make_lapack_array(*A); // delete as well.
+  double *tau = new double[10*min]; // make via new.
+  double workspace_size[1];
+  int work_size = -1;
+  // find optimal workspace
+  zgeqrf_(&rows,
+          &cols,
+          copyA,
+          &rows,
+          tau,
+          workspace_size,
+          &work_size,
+          &info1);
+  work_size = static_cast<int>(workspace_size[0]);
+  std::cerr << "work size for QR:  " << work_size << std::endl;
+  double *workspace = new double[20*work_size];
+
+  zgeqrf_(&rows,
+          &cols,
+          copyA,
+          &rows,
+          tau,
+          workspace,
+          &work_size,
+          &info2);
+  std::cerr << "done computing QR in lapack" << std::endl;
+  
+  if (info1 < 0 or info2 < 0)
+    {
+      std::cerr << "error" << std::endl;
+      ERROR("argument passed to zgeqrf had an illegal value");
+      ret = false;
+    }
+  if (info1 > 0 or info2 > 0)
+    {
+      std::cerr << "error" << std::endl; 
+      ERROR("can this happen?");
+      ret = false;
+    }
+
+  if (ret)
+    {
+      if (return_QR)
+        {
+          std::cerr << "resize Q" << std::endl;
+          Q->resize(rows,cols);
+          std::cerr << "resize R" << std::endl;
+          R->resize(cols,cols);
+          std::cerr << "about to fill_from_lapack_upper" << std::endl;
+          fill_from_lapack_upper(copyA, rows, cols, *R);
+          
+          // Reset Q, R, with their values.
+          int orgqr_work_size = -1;
+          std::cerr << "about to find zungr work size" << std::endl;          
+          zungqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows, // lda?
+                  tau,
+                  workspace_size,
+                  &orgqr_work_size,
+                  &info3);
+          orgqr_work_size = static_cast<int>(workspace_size[0]);
+          if (orgqr_work_size > work_size)
+            {
+              delete [] workspace;
+              work_size = orgqr_work_size;
+              workspace = new double[2*work_size];
+              std::cerr << "work size increased to: " << work_size << std::endl;
+            }
+          std::cerr << "work size for qungr:  " << work_size << std::endl; 
+          zungqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows, // lda?
+                  tau,
+                  workspace,
+                  &work_size,
+                  &info4);
+          std::cerr << "computed qungr:  " << work_size << std::endl;
+          std::cerr << "computed qungr:  " << work_size << std::endl << std::flush;           
+          if (info3 < 0 or info4 < 0)
+            {
+              ERROR("argument passed to dorgqr or dorgqr had an illegal value");
+              ret = false;
+            }
+          else if (info3 > 0 or info4 > 0)
+            {
+              ERROR("can this happen?");
+              ret = false;
+            }
+          else
+            {
+              fill_from_lapack_array(copyA, *Q);
+            }
+        }
+      else
+        {
+          // Return the raw values for QR: the "A" matrix encodes R and the Householders, and tau has the multipliers.
+          Q->resize(rows,cols);
+          R->resize(1, min);
+          fill_from_lapack_array(copyA, *Q);
+          fill_from_lapack_array(tau, *R);
+        }
+    }
+
+  delete [] workspace;
+  delete [] tau;
+  deletearray(copyA);
   return ret;
 }
 
