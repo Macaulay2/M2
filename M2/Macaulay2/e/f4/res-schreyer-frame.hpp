@@ -68,8 +68,8 @@ namespace SchreyerFrameTypes {
     //    res_packed_monomial mTotalMonom; // used for Schreyer order
     //    long mTiebreaker; // used for Schreyer order
     int mDegree; // actual degree, not slanted degree
-    long mBegin; // points into next level's elements
-    long mEnd;
+    component_index mBegin; // points into next level's elements
+    component_index mEnd;
     poly mSyzygy;
     FrameElement() {}
     FrameElement(res_packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1) {}
@@ -131,9 +131,9 @@ public:
   void setSchreyerOrder(int lev);
 
 
-  long computeNextLevel(); // returns true if new elements are constructed
+  component_index computeNextLevel(); // returns # of new elements added
   
-  res_packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
+  res_packed_monomial monomial(int lev, component_index component) { return level(lev)[component].mMonom; }
 
   M2_arrayint getBettiFrame() const;
   void setBettiDisplays();
@@ -162,7 +162,7 @@ private:
   };
 
   int currentLevel() const { return mCurrentLevel; }
-  int degree(int lev, long component) const { return level(lev)[component].mDegree; }
+  int degree(int lev, component_index component) const { return level(lev)[component].mDegree; }
 public:
   ResSchreyerOrder& schreyerOrder(int lev) { return mFrame.mLevels[lev].mSchreyerOrder; }
   const ResSchreyerOrder& schreyerOrder(int lev) const { return mFrame.mLevels[lev].mSchreyerOrder; }
@@ -179,8 +179,8 @@ private:
   // Private functions for frame construction //
   //////////////////////////////////////////////
   PreElement* createQuotientElement(res_packed_monomial m1, res_packed_monomial m);
-  long computeIdealQuotient(int lev, long begin, long elem);
-  long insertElements(int lev, long elem);
+  component_index computeIdealQuotient(int lev, component_index begin, component_index elem);
+  component_index insertElements(int lev, component_index elem);
 
 private:
   ///////////////////

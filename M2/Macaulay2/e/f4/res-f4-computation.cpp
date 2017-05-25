@@ -71,22 +71,24 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //   (a) coefficients are ZZ/p, for p in range.
   
   const Ring *K = origR->getCoefficients();
-  if (!K->isFinitePrimeField())
-    {
-      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields");
-      return nullptr;
-    }
-
-  ResGausser *KK = ResGausser::newResGausser(static_cast<int>(K->characteristic()));
+  ResGausser *KK = ResGausser::newResGausser(K);
   if (KK == 0)
     {
       ERROR("cannot use res(...,FastNonminimal=>true) with this type of coefficient ring");
       return nullptr;
     }
+
+  auto mo = origR->getMonoid()->getMonomialOrdering(); // mon ordering
+  auto motype = MonomialOrderingType::Weights;
+  if (moIsLex(mo))
+    motype = MonomialOrderingType::Lex;
+  else if (moIsGRevLex(mo))
+    motype = MonomialOrderingType::GRevLex;
+  
   auto MI = new ResMonoid(origR->n_vars(),
-                          origR->getMonoid()->primary_degree_of_vars(),
+                          origR->getMonoid()->getPrimaryDegreeVector(),
                           origR->getMonoid()->getFirstWeightVector(),
-                          origR->getMonoid()->getMonomialOrdering());
+                          motype);
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
@@ -144,10 +146,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           int loc = pos->array[i];
           poly&f = input_polys[loc];
           if (f.len == 0) continue;
-          if (MI->get_component(f.monoms.get()) != j)
+          if (MI->get_component(f.monoms.data()) != j)
             continue;
           res_packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
-          MI->copy(f.monoms.get(), elem);
+          MI->copy(f.monoms.data(), elem);
           // the following line grabs f.
           if (!frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f))
             {
@@ -225,6 +227,12 @@ void F4ResComputation::text_out(buffer &o) const
 
 const Matrix /* or null */ *F4ResComputation::get_matrix(int level) 
 {
+  if (mOriginalRing.getCoefficientRing()->is_QQ())
+    {
+      std::cout << "setting error message, returning null" << std::endl;
+      ERROR("cannot creat differential over this ring");
+      return nullptr;
+    }
   const FreeModule* tar = get_free(level-1);
   const FreeModule* src = get_free(level);
   return ResF4toM2Interface::to_M2_matrix(*mComp, level, tar, src);
@@ -232,7 +240,12 @@ const Matrix /* or null */ *F4ResComputation::get_matrix(int level)
 
 MutableMatrix /* or null */ *F4ResComputation::get_matrix(int level, int degree)
 {
-  return ResF4toM2Interface::to_M2_MutableMatrix(mOriginalRing.getCoefficientRing(), *mComp, level, degree);
+  if (mOriginalRing.getCoefficientRing()->is_QQ())
+    {
+      ERROR("cannot creat differential over this ring");
+      return nullptr;
+    }
+  return ResF4toM2Interface::to_M2_MutableMatrix(*mComp, mOriginalRing.getCoefficientRing(), level, degree);
 }
 
 const FreeModule /* or null */ *F4ResComputation::get_free(int lev) 
@@ -240,6 +253,16 @@ const FreeModule /* or null */ *F4ResComputation::get_free(int lev)
   if (lev < 0 or lev > mComp->maxLevel()) return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
   return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, *mComp, lev);
+}
+
+MutableMatrix /* or null */ *F4ResComputation::get_mutable_matrix(const Ring* R, int level)
+{
+  return ResF4toM2Interface::to_M2_MutableMatrix(frame(),R,level);
+}
+
+MutableMatrix /* or null */ *F4ResComputation::get_mutable_matrix(const Ring* KK, int slanted_degree, int level)
+{
+  return ResF4toM2Interface::to_M2_MutableMatrix(frame(),KK,level, slanted_degree);  
 }
 
 // Local Variables:

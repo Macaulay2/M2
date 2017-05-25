@@ -33,9 +33,13 @@ public:
                               const FreeModule* tar,
                               const FreeModule* src);
 
+  static MutableMatrix *to_M2_MutableMatrix(SchreyerFrame& C,
+                                            const Ring* R, // a polynomial ring, same monoid as C, coeffs allowed depend on ring of C.
+                                            int lev);
+  
   static MutableMatrix* to_M2_MutableMatrix(
-                                            const Ring* K, // should be a ZZ/p ring.
                                             SchreyerFrame& C,
+                                            const Ring* K, // should be a ZZ/p ring.
                                             int lev,
                                             int degree);
 

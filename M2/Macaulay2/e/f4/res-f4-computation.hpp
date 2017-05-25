@@ -35,6 +35,9 @@ public:
   M2_arrayint minimal_betti(M2_arrayint slanted_degree_limit,
                             M2_arrayint length_limit);
 
+public:
+  MutableMatrix /* or null */ *get_mutable_matrix(const Ring* R, int level);
+  MutableMatrix /* or null */ *get_mutable_matrix(const Ring* KK, int slanted_degree, int level);
 protected:
   // These functions override those in ResolutionComputation
   bool stop_conditions_ok() { 
@@ -53,10 +56,14 @@ protected:
 
   MutableMatrix /* or null */ *get_matrix(int slanted_degree, int level);
 
+
+  
   const FreeModule /* or null */ *get_free(int level);
 
   M2_arrayint get_betti(int type) const;
   // type is documented under rawResolutionBetti, in engine.h
+
+
   
   void text_out(buffer &o) const;
 private:

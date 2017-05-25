@@ -91,3 +91,25 @@ R = ZZ[x,y,z];
 A3 = arrangement({x,y,z,x-y,x-z,y-z},R)
 assert(pdim EPY A3 == 3)
 
+-- Examples in git issue 146:
+-- Example 1.
+P = ZZ[a, c1, c2, d]
+J = ideal(3_a_c1^2+2_a^2_c2-6_c1^2-11_a_c2-6_c2^2+6_a+39_c2-38,a_c1^2_d+a^2_c2_d-2_c1^2_d-4_a_c2_d-2_c2^2_d+2_a_d+15_c2_d-17_d-1,a^2_c2^2+3_a_c1^2+2_a_c2^2+3_c1^2-9_a_c2+3_c2^2+6_a-13_c2+6,a^3_c2+5_a_c2-13_a-13,a^2_c1^2-a_c1^2-3_a^2_c2-2_a_c2^2+2_a^2-2_c1^2+6_a_c2-2_c2^2-2_a+13_c2-4,a^3_c1^2+2_a^3+a^2_c2+10_c1^2+27_a_c2+10_c2^2-39_a-52*c2+7 ); J = promote(J,P);
+Jmin = trim J
+assert (Jmin == J)
+assert (ideal first entries gens Jmin == J)
+-- Example 2.
+P = ZZ[a, c1, c2, d]
+J1 = ideal(3*a*c1^2+2*a^2*c2-6*c1^2-11*a*c2-6*c2^2+6*a+39*c2-38,a*c1^2*d+a^2*c2*d-2*c1^2*d-4*a*c2*d-2*c2^2*d+2*a*d+15*c2*d-17*d-1,a^2*c2^2+3*a*c1^2+2*a*c2^2+3*c1^2-9*a*c2+3*c2^2+6*a-13*c2+6,a^3*c2+5*a*c2-13*a-13,a^2*c1^2-a*c1^2-3*a^2*c2-2*a*c2^2+2*a^2-2*c1^2+6*a*c2-2*c2^2-2*a+13*c2-4,a^3*c1^2+2*a^3+a^2*c2+10*c1^2+27*a*c2+10*c2^2-39*a-52*c2+7 )
+J2 = trim J1
+J3 = ideal first entries gens J2
+gens J1 % J2
+gens J2 % J3
+gens J1 % J3
+a^2*c2*d % J1 == a^2*c2*d % J3
+2*c2*d % J1 == 2*c2*d % J3
+leadTerm gens gb J1
+leadTerm gens gb J3
+assert(J1 == J2)
+assert(J1 == J3)
+assert(J2 == J3)

@@ -22,6 +22,7 @@ UNITTEST_CCFILES := \
     RingQQTest \
     RingTowerTest \
     DMatZZpTest \
+    ResTest \
     SubsetTest  
 
 #    RingRRRTest \

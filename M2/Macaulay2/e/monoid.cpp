@@ -206,6 +206,18 @@ std::vector<int> Monoid::getFirstWeightVector() const
   return result;
 }
 
+std::vector<int> Monoid::getPrimaryDegreeVector() const
+{
+  std::vector<int> result;
+
+  M2_arrayint degs = primary_degree_of_vars();
+
+  for (int i=0; i<degs->len; i++)
+    result.push_back(degs->array[i]);
+
+  return result;
+}
+
 void Monoid::set_overflow_flags()
 {
   overflow = newarray_atomic(enum overflow_type, monomial_size_);
