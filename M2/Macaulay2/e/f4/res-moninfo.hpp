@@ -3,51 +3,29 @@
 #ifndef _res_moninfo_hpp_
 #define _res_moninfo_hpp_
 
-#include <cstdio>
-
-#include <M2/config.h>
-#include <stdio.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#elif HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#error integer type definitions not available
-#endif
-
 struct MonomialOrdering;
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
 #include "../skew.hpp"
 
-//typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
-typedef long monomial_word; // Used for all types of monomials.  Is this OK?
-typedef monomial_word * packed_monomial;
-typedef const monomial_word * const_packed_monomial;
-  // format: [hash,component,e1,...,envars],
-  // where [e1,...,envars] is packed.
-  // OR: [hash,component,weight,e1,...,envars]
-  // and weight is NOT packed.
-  // packing info, hash values, weights are all
-  // defined in: PackedMonomials
+#include "res-monomial-types.hpp"
+#include "res-varpower-monomial.hpp"
 
+#include <vector>
+#include <memory>
 
-// with weight vector values:
-// [hashvalue comp w1 w2 ... wr e1 e2 ... en]
-// or is it:
-// [hashvalue comp e1 e2 ... en -wr ... -w1]
-
-class ResMonoid : public our_new_delete
+class ResMonoid
 {
   int nvars;
   int nslots;
-  monomial_word *hashfcn; // array 0..nvars-1 of hash values for each variable
-  monomial_word mask;
+  std::unique_ptr<res_monomial_word[]> hashfcn; // array 0..nvars-1 of hash values for each variable
+  res_monomial_word mask;
   M2_arrayint mVarDegrees; // array 0..nvars-1 of primary (heft) degrees for each variable.
   
   int firstvar; // = 2, if no weight vector, otherwise 2 + nweights
   int nweights; // number of weight vector values placed.  These should all be positve values?
-  M2_arrayint weight_vectors; // array 0..nweights of array 0..nvars-1 of longs
+
+  // flattened array 0..nweights of array 0..nvars-1 of longs
+  std::vector<int> weight_vectors;
+  ////  M2_arrayint weight_vectors; 
 
   // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
   // other possible:
@@ -68,39 +46,42 @@ class ResMonoid : public our_new_delete
   mutable unsigned long ncalls_unneccesary;
   mutable unsigned long ncalls_quotient_as_vp;
 public:
-  typedef packed_monomial monomial;
-  typedef const_packed_monomial const_monomial;
+  typedef res_packed_monomial monomial;
+  typedef res_const_packed_monomial const_monomial;
   typedef monomial value;
 
-  ResMonoid(int nvars, M2_arrayint var_degrees, const MonomialOrdering *mo);
+  ResMonoid(int nvars,
+            M2_arrayint var_degrees,
+            const std::vector<int>& weightvecs,
+            const MonomialOrdering *mo);
 
-  virtual ~ResMonoid();
+  ~ResMonoid();
 
   int n_vars() const { return nvars; }
 
   int max_monomial_size() const { return nslots; }
 
-  int monomial_size(const_packed_monomial m) const { return nslots; }
+  int monomial_size(res_const_packed_monomial m) const { return nslots; }
 
   void show() const;
 
-  long hash_value(const_packed_monomial m) const { return *m; }
+  res_monomial_word hash_value(res_const_packed_monomial m) const { return *m; }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
-  void copy(const_packed_monomial src, packed_monomial target) const {
+  void copy(res_const_packed_monomial src, res_packed_monomial target) const {
     for (int i=0; i<nslots; i++)
       *target++ = *src++;
   }
 
-  long last_exponent(const_packed_monomial m) const {
+  long last_exponent(res_const_packed_monomial m) const {
     return m[nslots-1];
   }
 
-  void set_component(long component, packed_monomial m) const { m[1] = component; }
+  void set_component(long component, res_packed_monomial m) const { m[1] = component; }
 
-  long get_component(const_packed_monomial m) const { ncalls_get_component++; return m[1]; }
+  long get_component(res_const_packed_monomial m) const { ncalls_get_component++; return m[1]; }
 
-  bool from_exponent_vector(const_ntuple_monomial e, long comp, packed_monomial result) const {
+  bool from_exponent_vector(res_const_ntuple_monomial e, component_index comp, res_packed_monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.
     ncalls_from_exponent_vector++;
     result[0] = 0;
@@ -113,10 +94,10 @@ public:
           result[0] += hashfcn[i] * e[i];
       }
 
-    int *wt = weight_vectors->array;
+    const int *wt = weight_vectors.data();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
-        long val = 0;
+        res_monomial_word val = 0;
         for (int i=0; i<nvars; i++)
           {
             long a = e[i];
@@ -128,15 +109,15 @@ public:
     return true;
   }
 
-  int skew_vars(const SkewMultiplication* skew, const_packed_monomial m, int* skewvars) const {
+  int skew_vars(const SkewMultiplication* skew, res_const_packed_monomial m, int* skewvars) const {
     return skew->skew_vars(m + 2 + nweights, skewvars);
   }
 
-  int skew_mult_sign(const SkewMultiplication* skew, const_packed_monomial m, const_packed_monomial n) const {
+  int skew_mult_sign(const SkewMultiplication* skew, res_const_packed_monomial m, res_const_packed_monomial n) const {
     return skew->mult_sign(m + 2 + nweights, n + 2 + nweights);
   }
   
-  bool one(long comp, packed_monomial result) const {
+  bool one(component_index comp, res_packed_monomial result) const {
     // Pack the vector (0,...,0,comp) with nvars zeroes.
     // Hash value = 0. ??? Should the hash-function take component into account ???
     result[0] = 0;
@@ -146,7 +127,7 @@ public:
     return true;
   }
 
-  bool to_exponent_vector(const_packed_monomial m, ntuple_monomial result, long &result_comp) const {
+  bool to_exponent_vector(res_const_packed_monomial m, res_ntuple_monomial result, component_index &result_comp) const {
     // Unpack the monomial m.
     ncalls_to_exponent_vector++;
     result_comp = m[1];
@@ -156,7 +137,7 @@ public:
     return true;
   }
 
-  bool to_intstar_vector(const_packed_monomial m, int * result, int &result_comp) const {
+  bool to_intstar_vector(res_const_packed_monomial m, int * result, int &result_comp) const {
     // Unpack the monomial m into result, which should already be allocated 0..nvars-1
     // this is to connect with older 'int *' monomials.
     ncalls_to_exponent_vector++;
@@ -167,11 +148,11 @@ public:
     return true;
   }
 
-  void to_varpower_monomial(const_packed_monomial m, varpower_monomial result) const {
+  void to_varpower_monomial(res_const_packed_monomial m, res_varpower_monomial result) const {
     // 'result' must have enough space allocated
     ncalls_to_varpower++;
-    varpower_word *t = result+1;
-    const_packed_monomial m1 = m + nslots;
+    res_varpower_word *t = result+1;
+    res_const_packed_monomial m1 = m + nslots;
     int len = 0;
     for (int i=nvars-1; i>=0; i--)
       {
@@ -185,7 +166,7 @@ public:
     *result = len;
   }
 
-  void from_varpower_monomial(const_varpower_monomial m, long comp, packed_monomial result) const {
+  void from_varpower_monomial(res_const_varpower_monomial m, long comp, res_packed_monomial result) const {
     // 'result' must have enough space allocated
     ncalls_from_varpower++;
     result[0] = 0;
@@ -194,10 +175,10 @@ public:
       {
         result[i] = 0;
       }
-    for (index_varpower_monomial j = m; j.valid(); ++j)
+    for (index_res_varpower_monomial j = m; j.valid(); ++j)
       {
-        varpower_word v = j.var();
-        varpower_word e = j.exponent();
+        res_varpower_word v = j.var();
+        res_varpower_word e = j.exponent();
         result[firstvar + v] = e;
         if (e == 1)
           result[0] += hashfcn[v];
@@ -205,14 +186,14 @@ public:
           result[0] += e * hashfcn[v];
       }
 
-    int *wt = weight_vectors->array;
+    const int *wt = weight_vectors.data();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
         long val = 0;
-        for (index_varpower_monomial i = m; i.valid(); ++i)
+        for (index_res_varpower_monomial i = m; i.valid(); ++i)
           {
-            varpower_word v = i.var();
-            varpower_word e = i.exponent();
+            res_varpower_word v = i.var();
+            res_varpower_word e = i.exponent();
             long w = wt[v];
             if (e == 1)
               val += w;
@@ -223,7 +204,7 @@ public:
       }
   }
 
-  bool is_equal(const_packed_monomial m, const_packed_monomial n) const {
+  bool is_equal(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_is_equal++;
     for (int j=nslots; j>0; --j)
       if (*m++ != *n++) return false;
@@ -231,7 +212,7 @@ public:
     return true;
   }
 
-  bool monomial_part_is_equal(const_packed_monomial m, const_packed_monomial n) const {
+  bool monomial_part_is_equal(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_is_equal++;
     if (*m++ != *n++) return false;
     m++; n++;
@@ -241,7 +222,7 @@ public:
     return true;
   }
 
-  bool check_monomial(const_packed_monomial m) const {
+  bool check_monomial(res_const_packed_monomial m) const {
     // Determine if m represents a well-formed monomial.
     m++;
     for (int j=nslots-1; j>0; --j)
@@ -249,27 +230,27 @@ public:
     return true;
   }
 
-  void unchecked_mult(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+  void unchecked_mult(res_const_packed_monomial m, res_const_packed_monomial n, res_packed_monomial result) const {
     ncalls_mult++;
     for (int j=nslots; j>0; --j) *result++ = *m++ + *n++;
   }
 
-  void unchecked_divide(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+  void unchecked_divide(res_const_packed_monomial m, res_const_packed_monomial n, res_packed_monomial result) const {
     ncalls_divide++;
     for (int j=nslots; j>0; --j) *result++ = *m++ - *n++;
   }
 
-  bool divide(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+  bool divide(res_const_packed_monomial m, res_const_packed_monomial n, res_packed_monomial result) const {
     ncalls_divide++;
     // First, divide monomials
     // Then, if the division is OK, set the component, hash value and rest of the monomial
     if (m[1] != n[1]) // components are not equal
       return false;
-    const_packed_monomial m1 = m+nslots;
-    const_packed_monomial n1 = n+nslots;
-    packed_monomial result1 = result+nslots;
+    res_const_packed_monomial m1 = m+nslots;
+    res_const_packed_monomial n1 = n+nslots;
+    res_packed_monomial result1 = result+nslots;
     for (int i=nslots-2; i>0; i--) {
-      varpower_word cmp = *--m1 - *--n1;
+      res_varpower_word cmp = *--m1 - *--n1;
       if (cmp < 0) return false;
       *--result1 = cmp;
     }
@@ -278,34 +259,34 @@ public:
     return true;
   }
 
-  bool mult(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+  bool mult(res_const_packed_monomial m, res_const_packed_monomial n, res_packed_monomial result) const {
     unchecked_mult(m,n,result);
     return check_monomial(result);
   }
 
-  monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const;
+  res_monomial_word monomial_weight(res_const_packed_monomial m, const M2_arrayint wts) const;
 
-  void show(const_packed_monomial m) const;
+  void show(res_const_packed_monomial m) const;
 
-  void showAlpha(const_packed_monomial m) const;
+  void showAlpha(res_const_packed_monomial m) const;
 
-  int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const {
+  int compare_grevlex(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_compare++;
-    const_packed_monomial m1 = m+nslots;
-    const_packed_monomial n1 = n+nslots;
+    res_const_packed_monomial m1 = m+nslots;
+    res_const_packed_monomial n1 = n+nslots;
     for (int i=nslots-2; i>0; i--) {
-      varpower_word cmp = *--m1 - *--n1;
+      res_varpower_word cmp = *--m1 - *--n1;
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
     }
-    monomial_word cmp = m[1]-n[1];
+    res_monomial_word cmp = m[1]-n[1];
     if (cmp < 0) return 1;
     if (cmp > 0) return -1;
     return 0;
   }
 
-  int compare_schreyer(const_packed_monomial m, const_packed_monomial n,
-                       const_packed_monomial m0, const_packed_monomial n0,
+  int compare_schreyer(res_const_packed_monomial m, res_const_packed_monomial n,
+                       res_const_packed_monomial m0, res_const_packed_monomial n0,
                        long tie1, long tie2) const {
     ncalls_compare++;
     #if 0
@@ -320,86 +301,86 @@ public:
     showAlpha(n0);
     printf("  tiebreakers: %ld %ld\n", tie1, tie2);
     #endif
-    const_packed_monomial m1 = m+nslots;
-    const_packed_monomial n1 = n+nslots;
-    const_packed_monomial m2 = m0+nslots;
-    const_packed_monomial n2 = n0+nslots;
+    res_const_packed_monomial m1 = m+nslots;
+    res_const_packed_monomial n1 = n+nslots;
+    res_const_packed_monomial m2 = m0+nslots;
+    res_const_packed_monomial n2 = n0+nslots;
     for (int i=nslots-2; i>0; i--) {
-      varpower_word cmp = *--m1 - *--n1 + *--m2 - *--n2;
+      res_varpower_word cmp = *--m1 - *--n1 + *--m2 - *--n2;
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
     }
-    monomial_word cmp = tie1-tie2;
+    res_monomial_word cmp = tie1-tie2;
     if (cmp < 0) return 1;
     if (cmp > 0) return -1;
     return 0;
   }
 
-  int compare_lex(const_packed_monomial m, const_packed_monomial n) const {
+  int compare_lex(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_compare++;
-    const_packed_monomial m1 = m+2;
-    const_packed_monomial n1 = n+2;
+    res_const_packed_monomial m1 = m+2;
+    res_const_packed_monomial n1 = n+2;
     for (int i=nslots-2; i>0; i--) {
-      varpower_word cmp = *m1++ - *n1++;
+      res_varpower_word cmp = *m1++ - *n1++;
       if (cmp > 0) return -1;
       if (cmp < 0) return 1;
     }
-    monomial_word cmp = m[1]-n[1];
+    res_monomial_word cmp = m[1]-n[1];
     if (cmp < 0) return 1;
     if (cmp > 0) return -1;
     return 0;
   }
 
-  int compare_weightvector(const_packed_monomial m, const_packed_monomial n) const {
+  int compare_weightvector(res_const_packed_monomial m, res_const_packed_monomial n) const {
     ncalls_compare++;
-    const_packed_monomial m1 = m+2;
-    const_packed_monomial n1 = n+2;
+    res_const_packed_monomial m1 = m+2;
+    res_const_packed_monomial n1 = n+2;
     for (int i=0; i<nweights; i++) {
-      varpower_word cmp = *m1++ - *n1++;
+      res_varpower_word cmp = *m1++ - *n1++;
       if (cmp > 0) return -1;
       if (cmp < 0) return 1;
     }
     m1 = m+nslots;
     n1 = n+nslots;
     for (int i=nvars-1; i>0; i--) {
-      varpower_word cmp = *--m1 - *--n1;
+      res_varpower_word cmp = *--m1 - *--n1;
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
     }
-    monomial_word cmp = m[1]-n[1];
+    res_monomial_word cmp = m[1]-n[1];
     if (cmp < 0) return 1;
     if (cmp > 0) return -1;
     return 0;
   }
 
-  int (ResMonoid::*compare)(const_packed_monomial m, const_packed_monomial n) const;
+  int (ResMonoid::*compare)(res_const_packed_monomial m, res_const_packed_monomial n) const;
 
   void variable_as_vp(int v,
-                      varpower_monomial result) const
+                      res_varpower_monomial result) const
   {
     result[0] = 1;
     result[1] = v;
     result[2] = 1;
   }
 
-  int degree_of_vp(const_varpower_monomial a) const
+  int degree_of_vp(res_const_varpower_monomial a) const
   {
-    return static_cast<int>(varpower_monomials::weight(a, mVarDegrees));
+    return static_cast<int>(res_varpower_monomials::weight(a, mVarDegrees));
   }
   
-  void quotient_as_vp(const_packed_monomial a,
-                      const_packed_monomial b,
-                      varpower_monomial result) const
+  void quotient_as_vp(res_const_packed_monomial a,
+                      res_const_packed_monomial b,
+                      res_varpower_monomial result) const
   {
     // sets result
     ncalls_quotient_as_vp++;
     a += firstvar;
     b += firstvar;
     int len = 0;
-    varpower_word *r = result+1;
+    res_varpower_word *r = result+1;
     for (int i=nvars-1; i>=0; --i)
       {
-        long c = a[i] - b[i];
+        res_varpower_word c = a[i] - b[i];
         if (c > 0)
           {
             *r++ = i;

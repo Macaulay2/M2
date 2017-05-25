@@ -653,7 +653,7 @@ trackHomotopyM2engine = (H, inp,
 	checkPrecision)
     )
 extractM2engineOutput = method()
-extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut) -> (
+extractM2engineOutput (MutableMatrix,MutableMatrix) := (out,statusOut) -> (
     nSols := numColumns out; 
     n := numRows out - 2;
     assert(nSols == numColumns statusOut);
@@ -675,8 +675,7 @@ extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut
 		SolutionStatus => s'status, 
 		NumberOfSteps => count,
 		LastT => out_(n,sN), 
-		LastIncrement => out_(n+1,sN),
-		"H" => H
+		LastIncrement => out_(n+1,sN)
 		}
 	    ))
     )    
@@ -721,10 +720,17 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  } )
 trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 -- tracks homotopy H starting with solutions solsS 
--- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t] -- !!! not implemented 
+-- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t]  -- the last variable is assumed to be the _continuation parameter_
 --          or an SLP representing one -- !!! at this point it is preSLP
 --      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
+     if instance(H,Matrix) then (
+	 F := gateMatrix polySystem H;
+	 XT := getVarGates ring H;
+	 X := drop(XT,-1);
+	 T := last XT;
+	 H = gateHomotopy(F, gateMatrix{X}, T); 
+	 );
      if #solsS === 0 then return {};
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
@@ -781,24 +787,25 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,Homotopy) then ( -- main case... but M2engine does not need these !!!  
-     	 K = CC_53; --!!!
-      	 --
-       	 evalH = (x0,t0)-> (
-	     tr := timing evaluateH(H,x0,t0);
-	     etH = etH + tr#0;
-	     tr#1
-	     );
-       	 evalHx = (x0,t0)-> (
-	     tr := timing evaluateHx(H,x0,t0);
-	     etHx = etHx + tr#0;
-	     tr#1
-	     );  
-       	 evalHt = (x0,t0)->(
-	     tr := timing evaluateHt(H,x0,t0);
-	     etHt = etHt + tr#0;
-	     tr#1
-	     );
+     else if instance(H,Homotopy) then ( -- main case
+     	 if o.Software =!= M2engine then (--... but M2engine does not need evaluation functions 
+	     K = CC_53; --!!!
+      	     evalH = (x0,t0)-> (
+	     	 tr := timing evaluateH(H,x0,t0);
+	     	 etH = etH + tr#0;
+	     	 tr#1
+	     	 );
+       	     evalHx = (x0,t0)-> (
+	     	 tr := timing evaluateHx(H,x0,t0);
+	     	 etHx = etHx + tr#0;
+	     	 tr#1
+	     	 );  
+       	     evalHt = (x0,t0)->(
+	     	 tr := timing evaluateHt(H,x0,t0);
+	     	 etHt = etHt + tr#0;
+	     	 tr#1
+	     	 );
+	     )
     	 )     
      else error "unexpected type of homotopy (first parameter)";
      
@@ -835,7 +842,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     checkPrecision);
 	 if DBG>2 then 
 	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
-    	 sols := new MutableList from extractM2engineOutput(H,out,statusOut);
+    	 sols := new MutableList from extractM2engineOutput(out,statusOut);
 	 if o.Precision === infinity then (
 	     tempInpMatrix := memoize (F->mutableMatrix(F,n+1,1));
 	     tempOutMatrix := memoize (F->mutableMatrix(F,n+2,1));
@@ -866,7 +873,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			     checkPrecision);
 			 if DBG>3 then 
 			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
-			 sols#nS = first extractM2engineOutput(H,out,statusOut);
+			 sols#nS = first extractM2engineOutput(out,statusOut);
 			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
 			 s = sols#nS;
 			 )
@@ -888,7 +895,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 				 checkPrecision);
 	 		     if DBG>3 then 
 	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
-			     sols#nS = first extractM2engineOutput(H,out,statusOut);
+			     sols#nS = first extractM2engineOutput(out,statusOut);
 			     (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
 			     s = sols#nS;
     	 		     )			 
@@ -1012,13 +1019,14 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     
     if DBG>3 then print rawSols;
     ret := if instance(first rawSols,Point) then rawSols else
-         apply(rawSols,s->point({flatten entries first s} | drop(toList s,1)));
+         apply(rawSols,s->point({flatten entries first s} | drop(toList s,1))); 	 
     if DBG>1 then (
 	if member(o.Software,{M2,M2engine}) then (
 	    << "Number of solutions = " << #ret << endl 
 	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 	    )
 	);
+     scan(ret,s->s#"H"=H);
      ret
      ) -- trackHomotopy
 

@@ -1,7 +1,7 @@
 newPackage(
      "ChainComplexExtras",
-     Version => "1",
-     Date => "December 3, 2014",
+     Version => "1.1",
+     Date => "Jan 11, 2016",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
@@ -9,7 +9,7 @@ newPackage(
 	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
 	  },
      Headline => "Some additional ChainComplex Functions.",
-     DebuggingMode =>true
+     DebuggingMode =>false
      )
 
 export "isExact"
@@ -34,6 +34,7 @@ export "removeZeroTrailingTerms" -- remove trailing zero terms of a chain comple
 export "trivialHomologicalTruncation" -- return the trivial truncation of a chain complex
 export "nonzeroMin" -- computes the homological position of the first non-zero module in a ChainComplex
 export "nonzeroMax" -- computes the homological position of the last non-zero module in a ChainComplex
+--for debugging purposes -- comment out when done:
 --export "chainComplexData"
 --export "chainComplexFromData"
 
@@ -42,10 +43,12 @@ substitute(ChainComplex,Ring):=(C,newRing)->(
    chainComplex(apply((min C + 1..max C), i -> substitute(C.dd_i, newRing)))
 )
 
+{*
 chainComplexData = C->(
     minC := min C;
     maxC := max C;
     C':=C[minC];
+    --note that this changes the signs of the differentials by (-1)^minC
     {minC, maxC, apply(toList(1..maxC-minC), i-> (C').dd_i)}
 )
 chainComplexFromData = method()
@@ -54,6 +57,7 @@ chainComplexFromData List := L ->(
     --shifted maps
     C := chainComplex L_2;
     assert( min C == 0);
+    --this is indeed the inverse of chainComplexData, but the maps may have different signs than those in the list.
     C[-L_0])
 
 
@@ -63,6 +67,29 @@ chainComplexFromData(ZZ, List) := (minC,L) ->(
     C := chainComplex L;
     assert( min C ==0);
     C[-minC])
+*}
+chainComplexData = C->(
+    minC := min C;
+    maxC := max C;
+    C':=C[minC];
+    {minC, maxC, apply(toList(1..maxC-minC), i-> (-1)^minC*(C').dd_i)}
+)
+chainComplexFromData = method()
+chainComplexFromData List := L ->(
+    --format of L is desired min, desired max, list of 
+    --shifted maps
+    C := chainComplex apply(L_2, d->(-1)^(L_0)*d);
+    assert( min C == 0);
+    C[-L_0])
+
+
+--the functionality of this form is subsumed by that of the form without the ZZ option!
+chainComplexFromData(ZZ, List) := (minC,L) ->(
+    --minC will become the min of the output complex
+    C := chainComplex apply(L, d->(-1)^minC*d);
+    assert( min C ==0);
+    C[-minC])
+
 
 ///
 S=ZZ[x,y]/ideal(x*y)
@@ -98,7 +125,7 @@ trivialHomologicalTruncation(C1,-3,3)
 ///
 	
     
-
+{*
 prependZeroMap= method()
 prependZeroMap ChainComplex := C->(
     L := chainComplexData(C[-1]);
@@ -124,8 +151,37 @@ removeZeroTrailingTerms(ChainComplex) := W -> (
     if mi==ma then (return (chainComplex({map(E^0,W'_0,0),map(W'_0,E^0,0)}))[-mi+1]) else
     (chainComplex apply(toList(1..ma-mi),i->W'.dd_i))[-mi]
     )
+*}
+
+prependZeroMap= method()
+prependZeroMap ChainComplex := C->(
+    L := chainComplexData(C);
+    minC := L_0;
+    newd := map((ring C)^0, target L_2_0, 0);
+    (chainComplexFromData(minC-1,prepend(newd,L_2)))
+    )
+    
+appendZeroMap= method()
+appendZeroMap ChainComplex := C->(
+    L := chainComplexData(C);
+    minC := L_0;
+    newd := map(source last L_2,(ring C)^0, 0);
+    chainComplexFromData(minC,append(L_2,newd))
+    )    
+    
+removeZeroTrailingTerms = method()
+removeZeroTrailingTerms(ChainComplex) := W -> (
+    E := ring W;
+    mi := nonzeroMin W;
+    ma := nonzeroMax W;
+    W' := W[mi];
+    if mi==ma then (return (chainComplex({map(E^0,W'_0,0),map(W'_0,E^0,0)}))[-mi+1]) else
+    (chainComplex apply(toList(1..ma-mi),i->W'.dd_i))[-mi]
+    )
 
 ///
+restart
+loadPackage("ChainComplexExtras", Reload =>true)
 R=ZZ[tt]
 C=chainComplex {matrix{{R_0}}}
 C1=appendZeroMap prependZeroMap C
@@ -197,10 +253,52 @@ isChainComplex(ChainComplex):=(inputComplex)->(
    if (inputComplex.dd^2 == 0) then true else false
 )
 
+{*
 isChainComplexMap=method()
 isChainComplexMap(ChainComplexMap):=(inputMap)->(
    isChainComplex(cone inputMap)
 )
+*}
+isChainComplexMap=method()
+isChainComplexMap(ChainComplexMap):=(inputMap)->(
+   degs := sort select(keys inputMap, k->class inputMap#k === Matrix);
+   if degs == {} then return true;
+   A := trivialHomologicalTruncation(source inputMap, min degs, max degs);
+   B := trivialHomologicalTruncation(target inputMap, min degs, max degs);
+   restrictedMap := chainComplexMap(B,A,apply(degs, i-> inputMap_i), InitialDegree => min degs);
+   isChainComplex(cone restrictedMap))
+///
+restart
+loadPackage("ChainComplexExtras", Reload =>true)
+S = ZZ/101[t]
+C = chainComplex map (S^1,S^1,t)
+D = chainComplex{map(S^1/t, S^1,1), map(S^1,S^1,-t)}[1]
+phi = chainComplexMap(D,C,apply({0,1},i->id_(C_i)))
+isChainComplexMap phi
+
+--A test from BGG
+restart
+  needsPackage "BGG"
+  needsPackage "ChainComplexExtras"  
+  kk = ZZ/101
+  A = kk[a]
+  S = A[x,y]
+  M1 = S^{{-1,0},{0,0}}
+  C1 = directImageComplex(id_M1)
+  assert(C1_0 == 1)
+  assert isChainComplexMap C1
+
+  M2 = S^{{-1,0}}
+  C2 = directImageComplex(id_M2)
+  assert isChainComplexMap C2
+  assert(C2_0 == 0)
+
+  M3 = S^{{-2,0}}
+  C3 = directImageComplex(id_M3)
+  assert isChainComplexMap C3
+  assert(C3_0 == 0)
+
+///
 
 isQuasiIsomorphism=method(Options => {LengthLimit => infinity})
 isQuasiIsomorphism(ChainComplexMap):= o -> (phi)-> (
@@ -707,14 +805,20 @@ document {
 	  {"Boolean"}
      },
      EXAMPLE {
-	     "R = ZZ/101[a,b,c]",
-	     "kRes = res coker vars R",
+	     "S = ZZ/101[a,b,c]",
+	     "kRes = res coker vars S",
 	     "multBya = extend(kRes,kRes,matrix{{a}})",
 	     "isChainComplexMap(multBya)",
+	     "",
+	     "T = chainComplex(map(S^1,S^1,a))",
+	     "T' = chainComplex{map(S^1/(ideal a),S^1, 1), map(S^1,S^1, -a)}[1]",
+	     "phi = chainComplexMap(T',T,apply(toList(min T..max T), i->id_(T_i)))",
+	     "isChainComplexMap phi"
 	     },
      PARA{},
-     "Caveat: There is a problem that leads to a wrong answer
-     when the complexes have different lengths"
+     "Caveat: The script uses trivialHomologicalTruncation to truncates the source and target of the map phi
+     to include only the indices for which phi has matrices. This eliminates the problem of complexes of
+     different lengths seen in an earlier version, which would have made the last line in the example return false."
      }
 
 document {
@@ -1526,7 +1630,7 @@ j = ideal"ab4,a2b3,abc2"
 T = taylorResolution i
 Tr = res i
 Tr.dd_2 
-T' = chainComplex({map(S^1/j,S^1,1)}|apply(3, i->T.dd_(i+1)))
+T' = chainComplex({map(S^1/j,S^1,1)}|apply(3, i->(-1)*T.dd_(i+1)))[1]
 assert(isExact T')
 assert(
     taylor(2,i)==map(T_1,T_2,
@@ -1539,19 +1643,27 @@ assert(true ==
 	T,T,apply(toList(min T..max T), i->id_(T_i))))
 assert(T == trivialHomologicalTruncation (T,0,3))
 assert (T != trivialHomologicalTruncation (T,1,4))
-assert (T == trivialHomologicalTruncation (T'[1], 0, 3))
+
+assert (T == trivialHomologicalTruncation (T', 0, 3))
+
 T'' = prependZeroMap (T[-1])
 assert (1 ==nonzeroMin T'')
 
 --NOTE: the following should return "true" but instead creates
 --an error
---chainComplexMap(T'[1],T, apply(toList(min T..max T), i->id_(T_i)))
---isChainComplexMap oo
+--Actually if a "chainComplexMap is one for which the cone is a complex, this is NOT an error.
+--phi = chainComplexMap(T',T, apply(toList(min T..max T), i->id_(T_i)))
+--phi1 = chainComplexMap(T'[1],T[1], apply(toList(min (T[1])..max (T[1])), i->id_((T[1])_i)))
+--(cone phi).dd
 
---chainComplexMap(T'[1],prependZeroMap T, apply(toList(min T..max T), i->id_(T_i)))
---isChainComplexMap oo
---prependZeroMap T
---isChainComplexMap 
+phi = chainComplexMap(T', prependZeroMap T, apply(toList(min T..max T), i->id_(T_i)), InitialDegree => 0)
+assert(isChainComplexMap phi)
+
+S = ZZ/101[t]
+T = chainComplex(map(S^1,S^1,t))
+T' = chainComplex{map(S^1/(ideal t),S^1, 1), map(S^1,S^1, -t)}[1]
+phi = chainComplexMap(T',T,apply(toList(min T..max T), i->id_(T_i)))
+assert(isChainComplexMap phi == true)
 ///
 
 TEST///
@@ -1566,14 +1678,13 @@ assert(max C2 == 4)
 assert(max C3 == 2)
 assert(max appendZeroMap C3 == 3)
 ///
+
 end--
+
 restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
 check "ChainComplexExtras"
-
-
-
 viewHelp ChainComplexExtras
 
 

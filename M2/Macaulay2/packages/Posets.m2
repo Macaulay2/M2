@@ -1724,18 +1724,18 @@ doc ///
             routines which use or produce posets.  A poset (partially ordered
             set) is a set together with a binary relation satisfying reflexivity,
             antisymmetry, and transitivity.
-        Text
-            @SUBSECTION "Contributors"@
-            --
+
+            {\bf Contributors}:
+
             The following people have generously contributed code to the package:
             @HREF("http://www.math.cornell.edu/People/Grads/fisher.html","Kristine Fisher")@,
             @HREF("http://www.mathstat.dal.ca/~handrew/","Andrew Hoefel")@,
             @HREF("http://www.math.purdue.edu/~nkummini/","Manoj Kummini")@,
             @HREF("mailto:stephen.sturgeon\@uky.edu", "Stephen Sturgeon")@, and
             @HREF("http://people.math.gatech.edu/~jyu67/Josephine_Yu/Main.html", "Josephine Yu")@.
-        Text
-            @SUBSECTION "Other acknowledgements"@
-            --
+
+            {\bf Other acknowledgements}:
+
             A few methods in this package have been ported from John Stembridge's Maple
             package implementing posets, which is available at
             @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.  Such methods

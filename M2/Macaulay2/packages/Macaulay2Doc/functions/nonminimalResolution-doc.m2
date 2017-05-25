@@ -22,7 +22,8 @@ doc ///
       The key benefit of this function is that it allows
       a much faster method for computing the 
       betti numbers of the {\bf minimal} free resolution.
-      
+      If that is your only interest (i.e. you don't need the complex itself), 
+      instead use @TO minimalBetti@.
     Example
       I = Grassmannian(1,6, CoefficientRing => ZZ/101);
       S = ring I      
@@ -37,6 +38,14 @@ doc ///
       betti C
       betti(C, Minimize => true)
     Text
+
+      As mentioned above, if you are just interested in the minimal betti numbers of the ideal or
+      module, then use @TO minimalBetti@, as it avoids construction of the
+      non-minimal free resolution.
+    Example
+      minimalBetti I
+    Text
+
       If the resolution is not large, this function can be slower than
       the usual function @TO resolution@.  But for larger examples, 
       if one is only interested in the betti numbers, this function
@@ -44,6 +53,7 @@ doc ///
    Caveat
      Released in M2 1.9, still experimental.  Only works over finite prime fields. Uses quite alot of memory.
    SeeAlso
+     minimalBetti
      betti
      [betti,Minimize]
      resolution

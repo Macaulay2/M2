@@ -43,13 +43,15 @@ Bp = genericMatrix (R1,b_(1,1),3,n)
 Cp = genericMatrix (R1,c_(1,1),3,n)
 P1 = E * transpose E * E - (1/2) * trace(E * transpose E) * E
 P2 = for i to n-1 list transpose Bp_{i} * E * Cp_{i}  
-PS = polySystem (ideal P1 + ideal P2)
+-- PS = polySystem (ideal P1 + ideal P2)
+PS = polySystem (ideal {P1_(0,0),P1_(0,1),P1_(2,2)} + ideal P2)
 
 debug NumericalAlgebraicGeometry
 PS.NumberOfVariables = 8 -- hack!!!
-squarePS = squareUp PS
-makeGateMatrix(squarePS,Parameters=>drop(gens R1,8))  
-PH = parametricSegmentHomotopy squarePS
+-- squarePS = squareUp PS 
+makeGateMatrix(PS,Parameters=>drop(gens R1,8));  
+PH = parametricSegmentHomotopy PS
+printAsSLP PH.GateHomotopy#"Hx" 
 
 -- start solutions
 BC = matrix{flatten flatten(B/entries) | flatten flatten(C/entries)}
@@ -64,7 +66,7 @@ B' = apply(n,i->random(F^3,F^1))
 C' = apply(n,i->random(F^3,F^1))
 BC' = matrix{flatten flatten(B'/entries) | flatten flatten(C'/entries)}
 H = specialize (PH, transpose (BC|BC'))
-time sols = trackHomotopy(H,ten'sols)
+time sols = trackHomotopy(H,ten'sols);
 assert all(sols,s->norm evaluate(PS,matrix s | BC') < 0.001)
 sols / (s->s.NumberOfSteps)
 
@@ -78,7 +80,6 @@ H2 = specialize (PH, transpose (BC|BC''))
 time sols2 = trackHomotopy(H2,ten'sols);
 assert all(sols2,s->norm evaluate(PS,matrix s | BC'') < 0.001)
 sols2 / (s->s.NumberOfSteps)
-
 end --------------------------------------------------------------------------------------
 restart
 load "vision.m2"

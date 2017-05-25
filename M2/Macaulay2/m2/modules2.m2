@@ -560,7 +560,7 @@ flip = method()
 flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 -----------------------------------------------------------------------------
-pdim Module := M -> length resolution trim M
+pdim Module := M -> length resolution minimalPresentation M
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;
@@ -610,6 +610,7 @@ annihilator = method(
      )
 
 annihilator Module := Ideal => o -> (M) -> (
+     if isWeylAlgebra ring M then error "no meaning for modules over a Weyl algebra"; 
      f := presentation M;
      if o.Strategy === Intersection then (
 	  F := target f;

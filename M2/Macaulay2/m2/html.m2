@@ -3,7 +3,7 @@
 
 fixtitle = method()
 fixtitle Nothing := identity
-fixtitle String := s -> replace("\"","&quot;",s)	    -- " just in case emacs gets confused
+fixtitle String := htmlLiteral
 
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 
@@ -140,6 +140,7 @@ html HREF := x -> (
      concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+
 html TO   := x -> (
      tag := x#0;
      d := fetchPrimaryRawDocumentation tag;
@@ -288,7 +289,7 @@ net TreeNode := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode := x -> SPAN { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode := x -> DIV { TOH checkIsTag x#0, toDoc x#1 }
 
 local visitCount
 local duplicateReferences

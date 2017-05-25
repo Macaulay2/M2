@@ -166,7 +166,7 @@ doc ///
   Description
     Text
       This package consists almost entirely of example code for the main text and exercises of the book
-      '3264 & All That: Intersection Theory in Algebraic Geometry' by Eisenbud and Harris.  Most of the
+      '3264 \& All That: Intersection Theory in Algebraic Geometry' by Eisenbud and Harris.  Most of the
       example code relies on the package @TO Schubert2@.  The information in this package is best
       accessed via the @TO help@ or @TO viewHelp@ commands.
       

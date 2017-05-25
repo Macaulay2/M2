@@ -120,6 +120,23 @@ res_comp::res_comp(const Matrix *m,
   initialize(m, LengthLimit, strategy);
 }
 
+res_comp::~res_comp()
+{
+  int i;
+  for (i=0; i<resn.length(); i++)
+    remove_res_level(resn[i]);
+
+  for (i=0; i<search_mi.length(); i++)
+    delete search_mi[i];
+
+  delete res_pair_stash;
+  delete mi_stash;
+  delete R;
+
+  // base_components have all been removed by this point
+  // Since they appear in resn[0].
+}
+
 void res_comp::remove_res_pair(res_pair *p)
 {
   if (p == NULL) return;
@@ -152,23 +169,6 @@ void res_comp::remove_res_level(res_level *lev)
       remove_res_degree(mypairs);
     }
   deleteitem(lev);
-}
-
-void res_comp::remove_res()
-{
-  int i;
-  for (i=0; i<resn.length(); i++)
-    remove_res_level(resn[i]);
-
-  for (i=0; i<search_mi.length(); i++)
-    delete search_mi[i];
-
-  delete res_pair_stash;
-  delete mi_stash;
-  delete R;
-
-  // base_components have all been removed by this point
-  // Since they appear in resn[0].
 }
 
 //////////////////////////////////////////////

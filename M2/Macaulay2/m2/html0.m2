@@ -115,7 +115,11 @@ makeExampleItem String := s -> ExampleItem s
 makeExampleItem Thing := s -> error ("EXAMPLE expected a string or a PRE item, but encountered ", toString s)
 
 EXAMPLE = method(Dispatch => Thing)
-EXAMPLE VisibleList := x -> TABLE splice { "class" => "examples", apply(nonnull trimfront toSequence x, item -> TR TD makeExampleItem item) }
+EXAMPLE VisibleList := x -> (
+     x = nonnull trimfront toSequence x;
+     if #x === 0 then error "empty list of examples encountered";
+     TABLE splice { "class" => "examples", apply(x, item -> TR TD makeExampleItem item) }
+     )
 EXAMPLE String := x -> (
      if #x == 0 then error "empty example string";
      if x#0 == newline then error "empty first line in example";

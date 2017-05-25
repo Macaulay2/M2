@@ -1,15 +1,19 @@
 // Copyright 2016  Michael E. Stillman
 
-#include "../newdelete.hpp"
+// THe following is apparently only for moIsLex, and the like.
+#include "../engine.h"
 #include "res-moninfo.hpp"
 #include "monordering.h"
 #include <cstdio>
 #include <cstdlib>
 
-ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering *mo)
+ResMonoid::ResMonoid(int nvars0,
+                     M2_arrayint var_degrees,
+                     const std::vector<int>& weightvecs,
+                     const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  hashfcn = newarray_atomic(monomial_word,nvars);
+  hashfcn = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[nvars]);
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;
@@ -30,7 +34,6 @@ ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering
   ncalls_quotient_as_vp = 0;
 
   nweights = 0;
-  weight_vectors = 0;
   if (moIsLex(mo))
     {
       compare = &ResMonoid::compare_lex;
@@ -47,8 +50,8 @@ ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering
     }
   else
     {
-      weight_vectors = moGetWeightValues(mo);
-      nweights = weight_vectors->len / nvars;
+      weight_vectors = weightvecs;
+      nweights = static_cast<int>(weight_vectors.size()) / nvars;
       compare = &ResMonoid::compare_weightvector;
 
       if (M2_gbTrace >= 1)
@@ -61,16 +64,16 @@ ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering
 
 ResMonoid::~ResMonoid()
 {
-  deletearray(hashfcn);
+  //  delete [] hashfcn;
 }
 
-monomial_word ResMonoid::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const
+res_monomial_word ResMonoid::monomial_weight(res_const_packed_monomial m, const M2_arrayint wts) const
 {
   ncalls_weight++;
-  const_packed_monomial m1 = m+2;
+  res_const_packed_monomial m1 = m+2;
   int top = wts->len;
   int *n = wts->array;
-  monomial_word sum = 0;
+  res_monomial_word sum = 0;
   for (int j=top; j>0; --j) sum += *m1++ * *n++;
   return sum;
 }
@@ -99,7 +102,7 @@ void ResMonoid::show() const
   fprintf(stderr, "  #calls vp quot = %lu\n", ncalls_quotient_as_vp);
 }
 
-void ResMonoid::show(const_packed_monomial m) const
+void ResMonoid::show(res_const_packed_monomial m) const
 {
   fprintf(stderr, "[");
   for (int v=1; v<monomial_size(m); v++)
@@ -110,7 +113,7 @@ void ResMonoid::show(const_packed_monomial m) const
   fprintf(stderr, "]");
 }
 
-void ResMonoid::showAlpha(const_packed_monomial m) const
+void ResMonoid::showAlpha(res_const_packed_monomial m) const
 {
   long comp = get_component(m);
 

@@ -22,6 +22,7 @@ static void* TS_Test1_Func(void* vtup)
     if(!finished[tup->x][j])
       abort();
   finished[tup->x][tup->y]=1;
+  return NULL;
 }
 
 static int TS_Test1()
@@ -47,6 +48,7 @@ static int TS_Test1()
 	pushTask(tasks[i][j]);
       }
   waitOnTask(tasks[20-1][20-1]);
+  return 0;
 }
 
 static volatile bool canceled = false;
@@ -60,12 +62,15 @@ static void* TS_Test2_Func1(void* vtup)
      sleep(0);
      }
    canceled = true;
- }
- static void* TS_Test2_Func2(void* vtup)
+   return NULL;
+}
+
+static void* TS_Test2_Func2(void* vtup)
  {
+  return NULL;
  }
 
- int TS_Test2()
+static int TS_Test2()
  {
    for(int i = 0; i < 1; ++i)
      {
@@ -79,6 +84,7 @@ static void* TS_Test2_Func1(void* vtup)
        waitOnTask(task1);
        assert(canceled || !started);
      }
+   return 0;
  }
 
 extern "C" {

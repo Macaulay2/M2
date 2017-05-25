@@ -52,7 +52,8 @@ length ChainComplex := (C) -> (
 ChainComplex == ChainComplex := (C,D) -> (
      complete C;
      complete D;
-     all(sort union(spots C, spots D), i -> C_i == D_i)
+     I := sort union(spots C, spots D);
+     all(I, i -> C_i == D_i) and all(I, i -> C.dd_i == D.dd_i)
      )     
 
 ChainComplex == ZZ := (C,i) -> (complete C; all(spots C, i -> C_i == 0))
@@ -715,6 +716,20 @@ betti GroebnerBasis := opts -> G -> betti(generators G, opts)
 betti Ideal := opts -> I -> betti(generators I, opts)
 betti Module := opts -> M -> betti(presentation M, opts)
 
+unpackEngineBetti = (w) -> (
+    -- w is the result of e.g. rawGBBetti.
+    -- this is an array of ints, of the form:
+    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
+     lo := w#0;
+     hi := w#1;
+     len := w#2;
+     w = drop(w,3);
+     w = pack(len+1,w);
+     w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j},i+j) => w#(i-lo)#j); -- no weight option used here
+     w = toList splice w;
+     w = select(w, option -> option#1 != 0);
+     new BettiTally from w)
+
 rawBetti = (computation, type) -> (
      w := rawGBBetti(computation, type);
      lo := w#0;
@@ -739,6 +754,34 @@ betti Resolution := opts -> X -> (
      heftfn := heftfun(opts.Weights,heft X);
      b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
      b)
+
+minimalBetti Ideal := 
+minimalBetti Module := {
+        DegreeLimit => null,
+        LengthLimit => null,
+        Weights => null
+    } >> opts -> (I) -> (
+   C := if opts.LengthLimit === null then 
+           resolution(I, StopBeforeComputation=>true, FastNonminimal=>true)
+       else
+           resolution(I, StopBeforeComputation=>true, FastNonminimal=>true, LengthLimit=>opts.LengthLimit+1);
+   if not C.?Resolution or not C.Resolution.?RawComputation then 
+     error "cannot use 'minimalBetti' with this input.  
+     Input must be an ideal or module in a polynomial 
+     ring or skew commutative polynomial ring over 
+     a finite field, which is singly graded.  
+     These restrictions might be removed in the future.";
+   rawC := C.Resolution.RawComputation;
+   w := rawMinimalBetti(rawC, 
+       if opts.DegreeLimit =!= null then {opts.DegreeLimit} else {},
+       if opts.LengthLimit =!= null then {opts.LengthLimit} else {}
+       );
+   b := unpackEngineBetti w;
+   -- The following code is lifted directly from 'betti Resolution'
+   heftfn := heftfun(opts.Weights,heft ring C.Resolution);
+   b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
+   b
+   )
 
 betti GradedModule := opts -> C -> (
      if C.?Resolution and degreeLength ring C === 1 and heft C === {1} then betti(C.Resolution,opts)
@@ -813,11 +856,14 @@ Ring ^ BettiTally := (R,b) -> (
 	     ));
    F)
 -----------------------------------------------------------------------------
+nonMinRes = m -> (
+     F' := resolution image m;
+     complete F';
+     chainComplex apply(1+length F', j-> if j==0 then m else F'.dd_j))
+
 syzygyScheme = (C,i,v) -> (
-     -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel
-     -- by a minimal one.  The right way to fix it is to add an option to resolution.
-     g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
-     minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
+           g := extend(nonMinRes transpose (C.dd_i * v), dual C[-i], transpose v);
+           minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
 -----------------------------------------------------------------------------
 chainComplex GradedModule := ChainComplex => {} >> opts -> (M) -> (
      C := new ChainComplex from M;

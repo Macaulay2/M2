@@ -31,7 +31,7 @@ newPackage("ToricVectorBundles",
 	 "volume number" => "2",
 	 "volume URI" => "http://j-sag.org/Volume2/"
 	 },
-    DebuggingMode => false,
+    DebuggingMode => true,
     Configuration => {},
     PackageExports => {"Polyhedra"}
     )
@@ -90,7 +90,8 @@ export {"ToricVectorBundle",
      "weilToCartier", 
      "hirzebruchFan",
      "pp1ProductFan", 
-     "projectiveSpaceFan"}
+     "projectiveSpaceFan",
+     "customConeSort"}
 
 
 protect allRaysTable
@@ -108,6 +109,39 @@ protect isomorphic
 -- DEFINING NEW TYPES
 ---------------------------------------------------------------------------
 
+
+-- For some reason it is important for ToricVectorBundles to be able to sort
+-- cones. Since cones as keys in hashtables do not work anymore we move the old
+-- code for sorting cones here from OldPolyhedra.m2 and implement a method for
+-- sorting the new keys.
+Cone ? Cone := (C1,C2) -> (
+     if C1 == C2 then symbol == else (
+     if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
+          if dim C1 != dim C2 then dim C1 ? dim C2 else (
+          R1 := sort rays C1;
+          R2 := sort rays C2;
+          if R1 != R2 then (
+          R1 = apply(numColumns R1, i -> R1_{i});
+          R2 = apply(numColumns R2, i -> R2_{i});
+          (a,b) := (set R1,set R2); 
+          r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
+          if a#?r then symbol > else symbol <)
+          else (
+          R1 = linSpace C1;
+          R2 = linSpace C2;
+          R1 = apply(numColumns R1, i -> R1_{i});
+          R2 = apply(numColumns R2, i -> R2_{i});
+          (c,d) := (set R1,set R2);
+          l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
+          if c#?l then symbol > else symbol <)))))
+
+customConeSort = method()
+customConeSort List := L -> (
+	L = apply(L, l -> posHull l);
+	L = sort L;
+	L = apply(L, l -> (rays l, linealitySpace l));
+	L
+)
 
 -- Defining the new type ToricVectorBundle, the parent type to the two types of TVB
 ToricVectorBundle = new Type of HashTable
@@ -152,7 +186,10 @@ net ToricVectorBundleKlyachko := tvb -> ( horizontalJoin flatten (
 -- matrices doesn't affect what we do.
 
 raySort = value Polyhedra#"private dictionary"#"raySort"
-
+raySortOfFan = (fan) -> (
+    r := rays fan;
+    raySort for i from 0 to numColumns r - 1 list r_{i}
+    )
 ---------------------------------------------------------------
 -- FUNCTIONS TO CONSTRUCT VECTOR BUNDLES AND MODIFY THEM
 ---------------------------------------------------------------
@@ -188,7 +225,7 @@ addBase (ToricVectorBundleKlyachko,List) := (tvb,L) -> (
      -- Extracting data out of tvb
      k := tvb#"rank of the vector bundle";
      n := tvb#"number of rays";
-     R := raySort toList tvb#"ToricVariety"#"rays";
+     R := raySortOfFan tvb#"ToricVariety";
      -- Checking for input errors
      if n != #L then error("Expected number of matrices to match number of rays of the fan.");
      if any(L, l -> not instance(l,Matrix)) then error("Expected the bases to be given as matrices.");
@@ -269,7 +306,7 @@ addBaseChange (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
 addDegrees = method(TypicalValue => ToricVectorBundleKaneyama)
 addDegrees (ToricVectorBundleKaneyama,List) := (tvb,L) -> (
      -- Extracting data out of tvb
-     tCT := sort keys tvb#"degreeTable";
+     tCT := customConeSort keys tvb#"degreeTable";
      k := tvb#"rank of the vector bundle";
      n := tvb#"dimension of the variety";
      -- Checking for input errors
@@ -349,11 +386,11 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
      	  n := tvb#"dimension of the variety";
      	  k := tvb#"rank of the vector bundle";
      	  bCT := tvb#"baseChangeTable";
-     	  topCones := sort keys tvb#"topConeTable";
+     	  topCones := customConeSort keys tvb#"topConeTable";
      	  L := hashTable {};
      	  -- For each codim 2 Cone computing the list of topCones which have this Cone as a face
      	  -- and save the list of indices of these topCones as an element in L
-     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(faces(2,topCones#i), C -> C => {i}),L,(a,b) -> sort join(a,b));
+     	  for i from 0 to #topCones - 1  do L = merge(hashTable apply(facesAsCones(2,posHull topCones#i), C -> (rays C, linealitySpace C) => {i}),L,(a,b) -> sort join(a,b));
      	  -- Finding the cyclic order of every list of topCones in L and write this cyclic order as a 
      	  -- list of consecutive pairs
      	  L = for l in values L list (
@@ -361,13 +398,13 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 	       start := l#0;
 	       a := start;
 	       l = drop(l,1);
-	       i := position(l, e -> dim intersection(topCones#a,topCones#e) == n-1);
+	       i := position(l, e -> dim intersection(posHull topCones#a, posHull topCones#e) == n-1);
 	       while i =!= null do (
 		    pairings = pairings | {(a,l#i)};
 		    a = l#i;
 		    l = drop(l,{i,i});
-		    i = position(l, e -> dim intersection(topCones#a,topCones#e) == n-1));
-	       if dim intersection(topCones#a,topCones#start) == n-1 then pairings | {(a,start)} else continue);
+		    i = position(l, e -> dim intersection(posHull topCones#a, posHull topCones#e) == n-1));
+	       if dim intersection(posHull topCones#a, posHull topCones#start) == n-1 then pairings | {(a,start)} else continue);
      	  -- Check for every cyclic order of topCones if the product of the corresponding transition
      	  -- matrices is the identity
      	  all(L, l -> product apply(reverse l, e -> if e#0 > e#1 then inverse bCT#(e#1,e#0) else bCT#e) == map(QQ^k,QQ^k,1))))
@@ -380,7 +417,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 -- COMMENT : This function gives the posibillity to have a quick overview on the main properties of a ToricVectorBundleKaneyama
 details = method()
 details ToricVectorBundle := tvb -> (
-     if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")
+     if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays posHull p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")
      else hashTable apply(rays tvb, r -> r => (tvb#"baseTable"#r,tvb#"filtrationMatricesTable"#r)))
 
 
@@ -393,7 +430,7 @@ details ToricVectorBundle := tvb -> (
 regCheck = method(TypicalValue => Boolean)
 regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
      	  -- Extracting the neccesary data
-     	  tCT := sort keys tvb#"topConeTable";
+     	  tCT := customConeSort keys tvb#"topConeTable";
      	  c1T := tvb#"codim1Table";
      	  bCT := tvb#"baseChangeTable";
      	  dT := tvb#"degreeTable";
@@ -403,7 +440,7 @@ regCheck ToricVectorBundleKaneyama := (cacheValue symbol regCheck)( tvb -> (
 	       	    A := bCT#p;
 	       	    B := inverse A;
 	       	    -- Computing the dual of the codim 1 cone
-	       	    C := dualCone c1T#p;
+	       	    C := dualCone posHull c1T#p;
 	       	    -- Check for all pairs of degree vectors of the two top Cones the reg condition
 	       	    all(k, i -> (
 			      ri := (dT#(tCT#(p#1)))_{i};
@@ -822,7 +859,7 @@ existsDecomposition (ToricVectorBundleKlyachko,List) := (T,L) -> (
      L = apply(L, l -> if instance(l,List) then l else if instance(l,Matrix) then {l} else error("The elements of the list have to be either matrices or lists of them."));
      if not T.cache.?degreesList then T.cache.degreesList = {};
      mC := maxCones T;
-     mC = apply(mC, C -> (C = C#"rays"; apply(numColumns C, i -> C_{i})));
+     mC = apply(mC, C -> (C = (rays C); apply(numColumns C, i -> C_{i})));
      -- Checking for input errors
      if #mC != #L then error("There has to be a degree matrix or list of degree matrices for each maximal cone of the fan.");
      -- Check if any combination of matrices in L has already been checked and thus saved in the cache
@@ -933,7 +970,7 @@ findWeights = method(TypicalValue => List)
 findWeights ToricVectorBundleKlyachko := (cacheValue symbol weights)( T -> (
      	  -- Get the maximal cones and save their rays
 	  mC := maxCones T;
-     	  mC = apply(mC, C -> (C = C#"rays"; apply(numColumns C, i -> C_{i})));
+     	  mC = apply(mC, C -> (C = (rays C); apply(numColumns C, i -> C_{i})));
      	  n := T#"dimension of the variety";
      	  k := rank T;
 	  -- Recursive function that goes through the rays and checks for the current ray which filtration steps are possible and for 
@@ -977,13 +1014,13 @@ findWeights ToricVectorBundleKlyachko := (cacheValue symbol weights)( T -> (
 			 M := R^{0..Rrank-1};
 			 for F in Flist list (
 			      D := systemSolver(M,F^{0..Rrank-1});
-			      if liftable(D,ZZ) and R*D == F then lift(D,ZZ)
+			      if (try(lift(D,ZZ); true) else false) and R*D == F then lift(D,ZZ)
 			      else continue))
 		    else (
 			 Rn := inverse R^{0..n-1};
 			 for F in Flist list (
 			      Dn := Rn * (F^{0..Rrank-1});
-			      if liftable(Dn,ZZ) and R*Dn == F then lift(Dn,ZZ)
+			      if (try(lift(Dn,ZZ); true) else false) and R*Dn == F then lift(Dn,ZZ)
 			      else continue))))))
 
 
@@ -1078,8 +1115,9 @@ isGeneral ToricVectorBundleKlyachko := (cacheValue symbol isGeneral)( tvb -> (
 	       	    scan(Es, A -> E = intersectMatrices(E,A));
 	       	    n - numColumns E == codimSum));
      	  F := maxCones tvb#"ToricVariety";
+        Frays := rays tvb#"ToricVariety";
      	  all(F, C -> (
-	       	    C = C#"rays";
+	       	    C = Frays_C;
 	       	    C = apply(numColumns C, i -> C_{i});
 	       	    recursiveCheck(apply(C, r -> L#r),{})))))
 
@@ -1152,7 +1190,14 @@ ker (ToricVectorBundleKlyachko,Matrix) := opts -> (T,M) -> (
 -- PURPOSE : Returning the maximal cones of the underlying fan
 --   INPUT : 'T',  a ToricVectorBundle
 --  OUTPUT : a List of Cones
-maxCones ToricVectorBundle := T -> sort maxCones T#"ToricVariety"
+maxCones ToricVectorBundle := T -> (
+      TV := T#"ToricVariety";
+      TR := rays TV;
+      TL := linealitySpace TV;
+      mC := maxCones TV;
+      sort apply(mC, c -> posHull(TR_c, TL))
+    -- sort maxCones T#"ToricVariety"
+   )
 
 
 -- PURPOSE : Compute a random deformation of a ToricVectorBundleKlyachko
@@ -1200,7 +1245,7 @@ rank ToricVectorBundle := T -> T#"rank of the vector bundle"
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundle
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
-rays ToricVectorBundle := tvb -> raySort toList tvb#"ToricVariety"#"rays"
+rays ToricVectorBundle := tvb -> raySortOfFan tvb#"ToricVariety"
 
 
 -- PURPOSE : Computing the 'l'-th symmetric power of a Toric Vector Bundle
@@ -1361,7 +1406,7 @@ twist (ToricVectorBundleKlyachko,List) := (T,d) -> (
 --     	     an error is returned
 cartierIndex = method(TypicalValue => ZZ)
 cartierIndex (List,Fan) := (L,F) -> (
-     rl := raySort toList F#"rays";
+     rl := raySortOfFan F;
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1371,8 +1416,9 @@ cartierIndex (List,Fan) := (L,F) -> (
      -- to check wether the divisor itself is Cartier or which multiple
      denom := 1;
      -- Computing the degree vector for every top dimensional cone
+     Frays := rays F;
      scan(sort maxCones F, C -> (
-	       rC := C#"rays";
+	       rC := Frays_C;
 	       -- Taking the first n x n submatrix
 	       rC1 := rC_{0..n-1};
 	       -- Setting up the solution vector by composing the corresponding weights
@@ -1395,7 +1441,7 @@ weilToCartier = method(Options => {"Type" => "Klyachko"})
 --  OUTPUT : 'tvb',  a ToricVectorBundle
 -- COMMENT : If no option is given the function will return a ToricVectorBundleKlyachko, if "Type" => "Kaneyama" is given it returns a ToricVectorBundleKaneyama
 weilToCartier (List,Fan) := opts -> (L,F) -> (
-     rl := raySort toList F#"rays";
+     rl := raySortOfFan F;
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1411,9 +1457,9 @@ weilToCartier (List,Fan) := opts -> (L,F) -> (
 	  denom := 1;
 	  -- Computing the degree vector for every top dimensional cone
 	  tvb := makeVBKaneyama(1,F);
-	  gC := sort keys tvb#"degreeTable";
+	  gC := customConeSort keys tvb#"degreeTable";
 	  gC = apply(gC, C -> (
-		    rC := C#"rays";
+		    rC := (rays posHull C);
 		    -- Taking the first n x n submatrix
 		    rC1 := rC_{0..n-1};
 		    -- Setting up the solution vector by composing the corresponding weights
@@ -1551,11 +1597,14 @@ cechComplex (ZZ,ToricVectorBundleKlyachko,Matrix) := (k,T,u) -> (
 		    -- if k==-1 the chain is 0
 		    else if k == -1 then T.cache.cech#(k,u) = (hashTable { 0 => ({},map(tvbR^tvbrank,tvbR^0,0))},hashTable {0 => 0},hashTable {})
 		    else (
-			 F1 := cones(n-k,T#"ToricVariety");
+			 F1 := faces(k,T#"ToricVariety");
+          Frays := rays T#"ToricVariety";
+          Flineality := linealitySpace T#"ToricVariety";
+          F1 = apply(F1, f-> posHull(Frays_f, Flineality));
 			 -- for each n-k cone in the fan compute Er, the bundle over this cone for the degree u
 			 F1 = hashTable apply(#F1, Cnum -> (
 				   C := F1#Cnum;
-				   R := C#"rays";
+				   R := (rays C);
 				   R = apply(numColumns R, i -> (R_{i}));
 				   R = sort apply(R, r -> (rT#r,r));
 				   Esum := apply(R, r -> (r#0,((transpose u)*(r#1))_(0,0),r#1));
@@ -1636,9 +1685,9 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
 	       L := select(toList(0..rk-1), i -> not member(i,p#1#0));
 	       for i from last(p#0)+1 to l-1 do (
 		    cl := append(p#0,i);
-		    C := intersection(p#1#1,tCT#i);
+		    C := intersection(posHull p#1#1, posHull tCT#i);
 		    degs := dT#(tCT#(cl#0));
-		    M2 = append(M2,cl => (sort unique join(p#1#0,select(L, i -> contains(dualCone C,u- degs_{i}))),C))));
+		    M2 = append(M2,cl => (sort unique join(p#1#0,select(L, i -> contains(dualCone C,u- degs_{i}))),(rays C, linealitySpace C)))));
 	  M2 = hashTable M2;
 	  -- Constructing the zero map over QQ
      	  d1 := map(QQ^0,QQ^0,0);
@@ -1686,26 +1735,26 @@ cechComplex (ZZ,ToricVectorBundleKaneyama,Matrix) := (k,tvb,u) -> (
      if not tvb.cache.?cech then tvb.cache.cech = new MutableHashTable;
      rk := tvb#"rank of the vector bundle";
      l := tvb#"number of affine charts";
-     tCT := sort keys tvb#"topConeTable";
+     tCT := customConeSort keys tvb#"topConeTable";
      bCT := tvb#"baseChangeTable";
      dT := tvb#"degreeTable";
      if not tvb.cache.cech#?(k,u) then (
      	  if k == 0 then (
 	       M20 := hashTable apply(subsets(l,k+1), cl -> (
-		    	 C := intersection apply(cl, i -> tCT#i);
+		    	 C := intersection apply(cl, i -> posHull tCT#i);
 		    	 degs := dT#(tCT#(cl#0));
 		    	 L := select(toList(0..rk-1), i -> contains(dualCone C,u - degs_{i}));
-		    	 cl => (L,C)));
+		    	 cl => (L,(rays C, linealitySpace C))));
 	       (d20,M30) := makeNewDiffAndTarget(M20,rk,l,tCT,bCT,dT);
 	       tvb.cache.cech#(k,u) = (M20,d20);
 	       tvb.cache.cech#(k+1,u) = M30)
 	  else (
 	       M1 := if not tvb.cache.cech#?(k-1,u) then (
 	       	    hashTable apply(subsets(l,k), cl -> (
-		    	      C := intersection apply(cl, i -> tCT#i);
+		    	      C := intersection apply(cl, i -> posHull tCT#i);
 		    	      degs := dT#(tCT#(cl#0));
 		    	      L := select(toList(0..rk-1), i -> contains(dualCone C,u - degs_{i}));
-		    	      cl => (L,C)))) else tvb.cache.cech#(k-1,u);
+		    	      cl => (L,(rays C, linealitySpace C))))) else tvb.cache.cech#(k-1,u);
 	       (d1,M2) := makeNewDiffAndTarget(M1,rk,l,tCT,bCT,dT);
 	       (d2,M3) := makeNewDiffAndTarget(M2,rk,l,tCT,bCT,dT);
 	       tvb.cache.cech#(k-1,u) = (M1,d1);
@@ -1775,10 +1824,10 @@ cotangentBundleKaneyama = F -> (
      -- Generating the trivial bundle of dimension n
      n := dim F;
      tvb := makeVBKaneyama(n,F);
-     tCT := sort keys tvb#"topConeTable";
+     tCT := customConeSort keys tvb#"topConeTable";
      pairlist := keys tvb#"baseChangeTable";
      -- Computing the degrees and transition matrices of the cotangent bundle
-     degreeTable := hashTable apply(tCT, p -> p => substitute(rays dualCone p,ZZ));
+     degreeTable := hashTable apply(tCT, p -> p => substitute(rays dualCone posHull p,ZZ));
      baseChangeTable := hashTable apply(pairlist, p -> ( p => substitute(inverse(degreeTable#(tCT#(p#1)))*(degreeTable#(tCT#(p#0))),QQ)));
      -- Writing the data into the bundle
      E := new ToricVectorBundleKaneyama from {
@@ -1832,11 +1881,15 @@ makeVBKaneyama (ZZ,Fan) := (k,F) -> (
      if not isPointed F then error("The fan has to be pointed.");
      -- Writing the table of Cones of maximal dimension
      n := dim F;
-     topConeTable := sort toList F#"generatingCones";
-     topConeTable = hashTable apply(#topConeTable, i -> topConeTable#i => i);
+     Frays := rays F;
+     Flineality := linealitySpace F;
+     topConeTable := customConeSort apply(maxCones F, c-> (Frays_c, Flineality));
+     topConeTable = apply(#topConeTable, i -> topConeTable#i => i);
+     topConeTable = hashTable topConeTable;
+     
      -- Saving the index pairs of top dimensional Cones that intersect in a codim 1 Cone
      Ltable := hashTable {};
-     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(faces(1,C), e -> e => a),(b,c) -> if b < c then (b,c) else (c,b)));
+     scan(pairs topConeTable, (C,a) -> Ltable = merge(Ltable,hashTable apply(facesAsCones(1,posHull C), e -> (rays e, linealitySpace e) => a),(b,c) -> if b < c then (b,c) else (c,b)));
      Ltable = hashTable flatten apply(pairs Ltable, p -> if instance(p#1,Sequence) then p#1 => p#0 else {});
      -- Removing Cones on the "border" of F, which have only 1 index
      pairlist := sort keys Ltable;
@@ -1887,7 +1940,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
      if k < 0 then error("The vector bundle must have a positive rank.");
      if not isPointed F then error("The Fan has to be pointed");
      -- Writing the table of rays
-     rT := raySort toList F#"rays";
+     rT := raySortOfFan F;
      rT = hashTable apply(#rT, i -> rT#i => i);
      -- Writing the table of identity matrices for the vector bundle bases
      bT := hashTable apply(keys rT, i -> i => map(QQ^k,QQ^k,1));
@@ -1906,7 +1959,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
 	  "filtrationMatricesTable" => fMT,
 	  "filtrationTable" => fT,
 	  "ToricVariety" => F,
-	  "number of affine charts" => #(F#"generatingCones"),
+	  "number of affine charts" => #((maxCones F)),
 	  "dimension of the variety" => dim F,
 	  "rank of the vector bundle" => k,
 	  "number of rays" => #rT,
@@ -3306,7 +3359,8 @@ document {
      
      EXAMPLE {
 	  " F = pp1ProductFan 2",
-	  " apply(maxCones F, rays)"
+     " rays F",
+	  " maxCones F"
 	  },
      
      SeeAlso => {"Polyhedra::Fan",
@@ -3330,7 +3384,8 @@ document {
      
      EXAMPLE {
 	  " F = projectiveSpaceFan 2",
-	  " apply(maxCones F, rays)"
+     " rays F",
+	  " maxCones F"
 	  },
      
      SeeAlso => {"Polyhedra::Fan",
@@ -3842,14 +3897,14 @@ document {
 TEST ///
 T = toricVectorBundle(2,pp1ProductFan 2,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^2,QQ^2,1),(0,2) => map(QQ^2,QQ^2,1),(1,3) => map(QQ^2,QQ^2,1),(2,3) => map(QQ^2,QQ^2,1)})
-assert(T#"degreeTable" === hashTable apply(maxCones pp1ProductFan 2, C -> C => map(ZZ^2,ZZ^2,0)))
+assert(T#"degreeTable" === hashTable apply(facesAsCones(0,pp1ProductFan 2), C -> (rays C, linealitySpace C) => map(ZZ^2,ZZ^2,0)))
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 L1 = {matrix {{1,0},{0,1}},matrix{{0,1},{1,0}},matrix{{-1,0},{-1,1}}}
 L2 = {matrix {{-1,0},{0,-1}},matrix{{0,1},{1,0}},matrix{{0,-1},{-1,0}}}
 T = toricVectorBundle(2,projectiveSpaceFan 2,L1,L2,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix {{-1/1,0},{0,-1}},(0,2) => matrix{{0/1,1},{1,0}},(1,2) => matrix{{0/1,-1},{-1,0}}})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,-1},{0,-1}} => matrix{{-1,0},{-1,1}}, posHull matrix {{1,0},{0,1}} => matrix{{0,1},{1,0}},posHull matrix {{-1,0},{-1,1}} => matrix{{1,0},{0,1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,-1},{0,-1}}, map(ZZ^2,0,0)) => matrix{{-1,0},{-1,1}}, (matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{0,1},{1,0}}, (matrix {{-1,0},{-1,1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,1}}})
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 ///
@@ -3899,12 +3954,12 @@ assert regCheck T1
 TEST ///
 T = tangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}}), (0,2) => map(QQ^2,QQ^2,{{-1, 0}, {0, 1}}), (1,3) => map(QQ^2,QQ^2,{{-1, 0}, {0, 1}}), (2,3) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}})})
-assert(T#"degreeTable" === hashTable {posHull matrix {{-1,0},{0,1}} => matrix{{1,0},{0,-1}},posHull matrix {{-1,0},{0,-1}} => matrix{{1,0},{0,1}},posHull matrix {{1,0},{0,1}} => matrix{{-1,0},{0,-1}}, posHull matrix{{1,0},{0,-1}} => matrix{{-1,0},{0,1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{-1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,-1}},(matrix {{-1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,1}},(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{-1,0},{0,-1}}, (matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{-1,0},{0,1}}})
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 T = tangentBundle(projectiveSpaceFan 3, "Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^3,QQ^3,{{1, -1, 0}, {0, -1, 0}, {0, -1, 1}}), (0,2) => map(QQ^3,QQ^3,{{-1, 0, 0}, {-1, 1, 0}, {-1, 0, 1}}), (1,2) => map(QQ^3,QQ^3,{{-1, 1, 0}, {-1, 0, 0}, {-1, 0, 1}}), (0,3) => map(QQ^3,QQ^3,{{1, 0, -1}, {0, 0, -1}, {0, 1, -1}}), (1,3) => map(QQ^3,QQ^3,{{1, 0, -1}, {0, 1, -1}, {0, 0, -1}}), (2,3) => map(QQ^3,QQ^3,{{0, 0, -1}, {1, 0, -1}, {0, 1, -1}})})
-assert(T#"degreeTable" === hashTable {posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{-1,0,0},{0,-1,0},{0,0,-1}},posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0},{0,0,-1},{1,1,1}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{1,1,1},{0,-1,0},{0,0,-1}}, posHull matrix{{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0},{1,1,1},{0,0,-1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,-1,0},{0,0,-1}},(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0},{0,0,-1},{1,1,1}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{1,1,1},{0,-1,0},{0,0,-1}}, (matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0},{1,1,1},{0,0,-1}}})
 assert(rank T == 3)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -3930,12 +3985,12 @@ assert(rank T == 3)
 TEST ///
 T = cotangentBundle(hirzebruchFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}}), (0,2) => map(QQ^2,QQ^2,{{-1, 3}, {0, 1}}), (1,3) => map(QQ^2,QQ^2,{{-1, -3}, {0, 1}}), (2,3) => map(QQ^2,QQ^2,{{1, 0}, {0, -1}})})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,0},{0,-1}} => matrix{{1,0},{0,-1}},posHull matrix {{1,0},{0,1}} => matrix{{1,0},{0,1}},posHull matrix {{0,-1},{1,3}} => matrix{{-1,3},{0,1}}, posHull matrix{{0,-1},{-1,3}} => matrix{{-1,-3},{0,-1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,-1}},(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1,0},{0,1}},(matrix {{0,-1},{1,3}}, map(ZZ^2,0,0)) => matrix{{-1,3},{0,1}}, (matrix {{0,-1},{-1,3}}, map(ZZ^2,0,0)) => matrix{{-1,-3},{0,-1}}})
 assert(rank T == 2)
 assert(T#"dimension of the variety" == 2)
 T = cotangentBundle(pp1ProductFan 3, "Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(2,6) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}, (4,5) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (4,6) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (3,7) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}, (5,7) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (6,7) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (0,1) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (0,2) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (1,3) => matrix{{1_QQ,0,0},{0,-1,0},{0,0,1}}, (0,4) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}, (2,3) => matrix{{1_QQ,0,0},{0,1,0},{0,0,-1}}, (1,5) => matrix{{-1_QQ,0,0},{0,1,0},{0,0,1}}})
-assert(T#"degreeTable" === hashTable {posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{1,0,0},{0,1,0},{0,0,1}},posHull matrix{{-1,0,0},{0,1,0},{0,0,1}} => matrix{{-1,0,0},{0,1,0},{0,0,1}},posHull matrix{{1,0,0},{0,-1,0},{0,0,1}} => matrix{{1,0,0},{0,-1,0},{0,0,1}},posHull matrix{{1,0,0},{0,1,0},{0,0,-1}} => matrix{{1,0,0},{0,1,0},{0,0,-1}},posHull matrix{{-1,0,0},{0,-1,0},{0,0,1}} => matrix{{-1,0,0},{0,-1,0},{0,0,1}},posHull matrix{{-1,0,0},{0,1,0},{0,0,-1}} => matrix{{-1,0,0},{0,1,0},{0,0,-1}},posHull matrix{{1,0,0},{0,-1,0},{0,0,-1}} => matrix{{1,0,0},{0,-1,0},{0,0,-1}},posHull matrix{{-1,0,0},{0,-1,0},{0,0,-1}} => matrix{{-1,0,0},{0,-1,0},{0,0,-1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,1,0},{0,0,1}},(matrix {{-1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,1,0},{0,0,1}},(matrix {{1,0,0},{0,-1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,-1,0},{0,0,1}},(matrix {{1,0,0},{0,1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,1,0},{0,0,-1}},(matrix {{-1,0,0},{0,-1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,-1,0},{0,0,1}},(matrix {{-1,0,0},{0,1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,1,0},{0,0,-1}},(matrix {{1,0,0},{0,-1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{1,0,0},{0,-1,0},{0,0,-1}},(matrix {{-1,0,0},{0,-1,0},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-1,0,0},{0,-1,0},{0,0,-1}}})
 assert(rank T == 3)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -3994,16 +4049,16 @@ assert(deltaE T == convexHull matrix {{-1,1,0,0,0,0},{0,0,-1,1,0,0},{0,0,0,0,-1,
 -- Checking cohomology for Kaneyama
 TEST ///
 T = toricVectorBundle(2,pp1ProductFan 2,"Type" => "Kaneyama")
-assert(cohomology(0,T,matrix{{0},{0}}) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(0,T) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(1,T) == (ring T)^0)
-assert(cohomology(2,T) == (ring T)^0)
+assert(sort degrees cohomology(0,T,matrix{{0},{0}}) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(1,T) == sort degrees (ring T)^0)
+assert(sort degrees cohomology(2,T) == sort degrees (ring T)^0)
 T1 = tangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
-assert(cohomology(0,T1,matrix{{0},{0}}) == (ring T1)^{{0,0},{0,0}})
-assert(cohomology(0,T1,matrix{{1},{1}}) == (ring T1)^0)
-assert(cohomology(0,T1) == (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
-assert(cohomology(1,T1) == (ring T1)^0)
-assert(cohomology(2,T1) == (ring T1)^0)
+assert(sort degrees cohomology(0,T1,matrix{{0},{0}}) == sort degrees (ring T1)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T1,matrix{{1},{1}}) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(0,T1) == sort degrees (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
+assert(sort degrees cohomology(1,T1) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(2,T1) == sort degrees (ring T1)^0)
 T = tangentBundle(hirzebruchFan 3 * projectiveSpaceFan 1,"Type" => "Kaneyama")
 assert(cohomology(0,T,{matrix {{2},{1},{0}}, matrix{{3},{1},{0}}}) == {(ring T)^{{-2,-1,0}},(ring T)^{{-3,-1,0}}})
 assert(cohomology(1,T,{matrix {{-2},{-1},{0}}, matrix{{-1},{-1},{0}}}) == {(ring T)^{{2, 1, 0}},(ring T)^{{1, 1, 0}}})
@@ -4015,21 +4070,21 @@ assert(cohomology(3,T,matrix{{0},{0},{0}}) == (ring T)^0)
 -- Checking cohomology for Klyachko
 TEST ///
 T = toricVectorBundle(2,pp1ProductFan 2)
-assert(cohomology(0,T,matrix{{0},{0}}) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(0,T) == (ring T)^{{0,0},{0,0}})
-assert(cohomology(1,T) == (ring T)^0)
-assert(cohomology(2,T) == (ring T)^0)
+assert(sort degrees cohomology(0,T,matrix{{0},{0}}) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T) == sort degrees (ring T)^{{0,0},{0,0}})
+assert(sort degrees cohomology(1,T) == sort degrees (ring T)^0)
+assert(sort degrees cohomology(2,T) == sort degrees (ring T)^0)
 T1 = tangentBundle pp1ProductFan 2
-assert(cohomology(0,T1,matrix{{0},{0}}) == (ring T1)^{{0,0},{0,0}})
-assert(cohomology(0,T1,matrix{{1},{1}}) == (ring T1)^0)
-assert(cohomology(0,T1) == (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
-assert(cohomology(1,T1) == (ring T1)^0)
-assert(cohomology(2,T1) == (ring T1)^0)
+assert(sort degrees cohomology(0,T1,matrix{{0},{0}}) == sort degrees (ring T1)^{{0,0},{0,0}})
+assert(sort degrees cohomology(0,T1,matrix{{1},{1}}) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(0,T1) == sort degrees (ring T1)^{{1,0},{0,1},{0,0},{0,0},{0,-1},{-1,0}})
+assert(sort degrees cohomology(1,T1) == sort degrees (ring T1)^0)
+assert(sort degrees cohomology(2,T1) == sort degrees (ring T1)^0)
 T = tangentBundle(hirzebruchFan 3 * projectiveSpaceFan 1)
-assert(cohomology(0,T) == (ring T)^{{0, 0, 1}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {-1, 0, 0}, {0, 0, -1}, {0, -1, 0}, {-1, -1, 0}, {-2, -1, 0}, {-3, -1, 0}})
-assert(cohomology(1,T) == (ring T)^{{2, 1, 0}, {1, 1, 0}})
-assert(cohomology(2,T) == (ring T)^0)
-assert(cohomology(3,T) == (ring T)^0)
+assert(sort degrees cohomology(0,T) == sort degrees (ring T)^{{0, 0, 1}, {1, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {-1, 0, 0}, {0, 0, -1}, {0, -1, 0}, {-1, -1, 0}, {-2, -1, 0}, {-3, -1, 0}})
+assert(sort degrees cohomology(1,T) == sort degrees (ring T)^{{2, 1, 0}, {1, 1, 0}})
+assert(sort degrees cohomology(2,T) == sort degrees (ring T)^0)
+assert(sort degrees cohomology(3,T) == sort degrees (ring T)^0)
 ///
 
 -- Test 13
@@ -4037,7 +4092,7 @@ assert(cohomology(3,T) == (ring T)^0)
 TEST ///
 T = weilToCartier({1,4,3,2},projectiveSpaceFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^1,QQ^1,1),(0,2) => map(QQ^1,QQ^1,1),(0,3) => map(QQ^1,QQ^1,1),(1,2) => map(QQ^1,QQ^1,1),(1,3) => map(QQ^1,QQ^1,1),(2,3) => map(QQ^1,QQ^1,1)})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{-2},{-3},{6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{8},{-3},{-4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{-2},{7},{-4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{-2},{-3},{-4}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-2},{-3},{6}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{8},{-3},{-4}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-2},{7},{-4}}, (map(ZZ^3,ZZ^3,1), map(ZZ^3,0,0)) => matrix{{-2},{-3},{-4}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 3)
 T = weilToCartier({1,4,3,2},projectiveSpaceFan 3)
@@ -4055,7 +4110,7 @@ T1 = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T2 = weilToCartier({1,7,5,3},projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = T1 ++ T2
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix{{1_QQ,-1,0,0},{0,-1,0,0},{0,-1,1,0},{0,0,0,1}}, (0,2) => matrix{{-1_QQ,0,0,0},{-1,1,0,0},{-1,0,1,0},{0,0,0,1}}, (1,2) => matrix{{-1_QQ,1,0,0},{-1,0,0,0},{-1,0,1,0},{0,0,0,1}}, (0,3) => matrix{{1_QQ,0,-1,0},{0,0,-1,0},{0,1,-1,0},{0,0,0,1}}, (1,3) => matrix{{1_QQ,0,-1,0},{0,1,-1,0},{0,0,-1,0},{0,0,0,1}}, (2,3) => matrix{{0_QQ,0,-1,0},{1,0,-1,0},{0,1,-1,0},{0,0,0,1}}})
-assert(T#"degreeTable" === hashTable {posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0,-3},{0,0,-1,-5},{1,1,1,9}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{1,1,1,13},{0,-1,0,-5},{0,0,-1,-7}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0,-3},{1,1,1,11},{0,0,-1,-7}},posHull map(ZZ^3,ZZ^3,1) => matrix{{-1,0,0,-3},{0,-1,0,-5},{0,0,-1,-7}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-3},{0,0,-1,-5},{1,1,1,9}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{1,1,1,13},{0,-1,0,-5},{0,0,-1,-7}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-3},{1,1,1,11},{0,0,-1,-7}}, (map(ZZ^3,ZZ^3,1),map(ZZ^3,0,0)) => matrix{{-1,0,0,-3},{0,-1,0,-5},{0,0,-1,-7}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 3)
 assert(T == directSum {T1,T2})
@@ -4063,7 +4118,7 @@ T1 = cotangentBundle(hirzebruchFan 3,"Type" => "Kaneyama")
 T2 = tangentBundle(hirzebruchFan 3,"Type" => "Kaneyama")
 T = T1 ++ T2
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}, (0,2) => matrix{{-1_QQ,3,0,0},{0,1,0,0},{0,0,-1,0},{0,0,3,1}}, (1,3) => matrix{{-1_QQ,-3,0,0},{0,1,0,0},{0,0,-1,0},{0,0,-3,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}})
-assert(T#"degreeTable" === hashTable {posHull matrix{{1,0},{0,-1}} => matrix{{1,0,-1,0},{0,-1,0,1}}, posHull matrix{{0,-1},{1,3}} => matrix{{-1,3,1,-3},{0,1,0,-1}}, posHull matrix{{1,0},{0,1}} => matrix{{1,0,-1,0},{0,1,0,-1}}, posHull matrix{{0,-1},{-1,3}} => matrix {{-1,-3,1,3},{0,-1,0,1}}})
+assert(T#"degreeTable" === hashTable {(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1,0,-1,0},{0,-1,0,1}}, (matrix {{0,-1},{1,3}}, map(ZZ^2,0,0)) => matrix{{-1,3,1,-3},{0,1,0,-1}}, (matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1,0,-1,0},{0,1,0,-1}}, (matrix {{0,-1},{-1,3}}, map(ZZ^2,0,0)) => matrix {{-1,-3,1,3},{0,-1,0,1}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 ///
@@ -4095,13 +4150,13 @@ assert(T#"dimension of the variety" == 2)
 TEST ///
 T = dual weilToCartier({1,4,3,2},projectiveSpaceFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ}},(0,2) => matrix{{1_QQ}}, (0,3) => matrix{{1_QQ}}, (1,2) => matrix{{1_QQ}},(1,3) => matrix{{1_QQ}},(2,3) => matrix{{1_QQ}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{2},{3},{-6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{-8},{3},{4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{2},{-7},{4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{2},{3},{4}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{2},{3},{-6}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-8},{3},{4}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{2},{-7},{4}}, (map(ZZ^3,ZZ^3,1), map(ZZ^3,0,0)) => matrix{{2},{3},{4}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 3)
 T1 = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = dual(T1 ++ T)
 assert(T#"baseChangeTable" === hashTable{(0,2) => matrix{{-1_QQ,-1,-1,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}},(0,1) => matrix{{1_QQ,0,0,0},{-1,-1,-1,0},{0,0,1,0},{0,0,0,1}}, (0,3) => matrix{{1_QQ,0,0,0},{-1,-1,-1,0},{0,1,0,0},{0,0,0,1}}, (1,2) => matrix{{0_QQ,1,0,0},{-1,-1,-1,0},{0,0,1,0},{0,0,0,1}},(1,3) => matrix{{1_QQ,0,0,0},{0,1,0,0},{-1,-1,-1,0},{0,0,0,1}},(2,3) => matrix{{-1_QQ,-1,-1,0},{1,0,0,0},{0,1,0,0},{0,0,0,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,1,0,-2},{0,0,1,-3},{-1,-1,-1,6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{-1,-1,-1,8},{0,1,0,-3},{0,0,1,-4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,1,0,-2},{-1,-1,-1,7},{0,0,1,-4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{1,0,0,-2},{0,1,0,-3},{0,0,1,-4}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,1,0,-2},{0,0,1,-3},{-1,-1,-1,6}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-1,-1,-1,8},{0,1,0,-3},{0,0,1,-4}},(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,1,0,-2},{-1,-1,-1,7},{0,0,1,-4}}, (map(ZZ^3,ZZ^3,1), map(ZZ^3,0,0)) => matrix{{1,0,0,-2},{0,1,0,-3},{0,0,1,-4}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -4131,7 +4186,7 @@ T1 = tangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
 T2 = cotangentBundle(pp1ProductFan 2,"Type" => "Kaneyama")
 T = T1 ** T2
 assert(T#"baseChangeTable" === hashTable{(0,2) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}},(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}}, (1,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,0,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{-1,0},{0,1}} => matrix{{0,-1,1,0},{0,-1,1,0}},posHull matrix {{-1,0},{0,-1}} => matrix{{0,-1,1,0},{0,1,-1,0}},posHull matrix {{1,0},{0,-1}} => matrix{{0,1,-1,0},{0,1,-1,0}},posHull map(ZZ^2,ZZ^2,1) => matrix{{0,1,-1,0},{0,-1,1,0}}})
+assert(T#"degreeTable" === hashTable{(matrix {{-1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{0,-1,1,0},{0,-1,1,0}},(matrix {{-1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{0,-1,1,0},{0,1,-1,0}},(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{0,1,-1,0},{0,1,-1,0}}, (map(ZZ^2,ZZ^2,1), map(ZZ^2,0,0)) => matrix{{0,1,-1,0},{0,-1,1,0}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 T1 = tangentBundle(hirzebruchFan 2,"Type" => "Kaneyama")
@@ -4139,7 +4194,7 @@ T2 = weilToCartier({5,1,7,3},hirzebruchFan 2,"Type" => "Kaneyama")
 T2 = T2 ++ T2
 T = T1 ** T2
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}},(0,2) => matrix{{-1_QQ,0,0,0},{2,1,0,0},{0,0,-1,0},{0,0,2,1}}, (1,3) => matrix{{-1_QQ,0,0,0},{-2,1,0,0},{0,0,-1,0},{0,0,-2,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix {{1,0},{0,1}} => matrix{{-4,-3,-4,-3},{-1,-2,-1,-2}},posHull matrix {{1,0},{0,-1}} => matrix{{-4,-3,-4,-3},{5,6,5,6}},posHull matrix {{0,-1},{-1,2}} => matrix{{18,19,18,19},{5,6,5,6}},posHull matrix{{0,-1},{1,2}} => matrix{{6,3,6,3},{-1,-2,-1,-2}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{-4,-3,-4,-3},{-1,-2,-1,-2}},(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{-4,-3,-4,-3},{5,6,5,6}},(matrix {{0,-1},{-1,2}}, map(ZZ^2,0,0)) => matrix{{18,19,18,19},{5,6,5,6}},(matrix {{0,-1},{1,2}}, map(ZZ^2,0,0)) => matrix{{6,3,6,3},{-1,-2,-1,-2}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 ///
@@ -4172,7 +4227,7 @@ TEST ///
 T = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = symmetricPower(2,T)
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ,-1,0,1,0,0},{0,-1,0,2,0,0},{0,-1,1,2,-1,0},{0,0,0,1,0,0},{0,0,0,2,-1,0},{0,0,0,1,-1,1}},(0,2) => matrix{{1_QQ,0,0,0,0,0},{2,-1,0,0,0,0},{2,0,-1,0,0,0},{1,-1,0,1,0,0},{2,-1,-1,0,1,0},{1,0,-1,0,0,1}}, (0,3) => matrix{{1_QQ,0,-1,0,0,1},{0,0,-1,0,0,2},{0,1,-1,0,-1,2},{0,0,0,0,0,1},{0,0,0,0,-1,2},{0,0,0,1,-1,1}}, (1,2) => matrix{{1_QQ,-1,0,1,0,0},{2,-1,0,0,0,0},{2,-1,-1,0,1,0},{1,0,0,0,0,0},{2,0,-1,0,0,0},{1,0,-1,0,0,1}}, (1,3) => matrix{{1_QQ,0,-1,0,0,1},{0,1,-1,0,-1,2},{0,0,-1,0,0,2},{0,0,0,1,-1,1},{0,0,0,0,-1,2},{0,0,0,0,0,1}},(2,3) => matrix{{0_QQ,0,0,0,0,1},{0,0,-1,0,0,2},{0,0,0,0,-1,2},{1,0,-1,0,0,1},{0,1,-1,0,-1,2},{0,0,0,1,-1,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix{{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0,-2,-1,0},{2,2,2,2,2,2},{0,0,-1,0,-1,-2}},posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{-2,-1,-1,0,0,0},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}},posHull matrix{{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2},{2,2,2,2,2,2}},posHull matrix{{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{2,2,2,2,2,2},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-2,-1,0},{2,2,2,2,2,2},{0,0,-1,0,-1,-2}},(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-2,-1,-1,0,0,0},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}},(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2},{2,2,2,2,2,2}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{2,2,2,2,2,2},{0,-1,0,-2,-1,0},{0,0,-1,0,-1,-2}}})
 assert(rank T == 6)
 assert(T#"dimension of the variety" == 3)
 ///
@@ -4195,13 +4250,13 @@ TEST ///
 T = cotangentBundle(hirzebruch 3,"Type" => "Kaneyama")
 T = exteriorPower(2,T)
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{-1_QQ}}, (0,2) => matrix{{-1_QQ}}, (1,3) => matrix{{-1_QQ}}, (2,3) => matrix{{-1_QQ}}})
-assert(T#"degreeTable" === hashTable{posHull matrix{{1,0},{0,1}} => matrix{{1},{1}},posHull matrix{{1,0},{0,-1}} => matrix{{1},{-1}},posHull matrix{{0,-1},{1,3}} => matrix {{2},{1}},posHull matrix{{0,-1},{-1,3}} => matrix {{-4},{-1}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,0},{0,1}}, map(ZZ^2,0,0)) => matrix{{1},{1}},(matrix {{1,0},{0,-1}}, map(ZZ^2,0,0)) => matrix{{1},{-1}},(matrix {{0,-1},{1,3}}, map(ZZ^2,0,0)) => matrix {{2},{1}},(matrix {{0,-1},{-1,3}}, map(ZZ^2,0,0)) => matrix {{-4},{-1}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 2)
 T = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = exteriorPower(2,T)
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{-1_QQ,0,0},{-1,1,-1},{0,0,-1}}, (0,2) => matrix{{-1_QQ,0,0},{0,-1,0},{1,-1,1}}, (0,3) => matrix{{0_QQ,-1,0},{1,-1,1},{0,0,1}}, (1,2) => matrix{{1_QQ,0,0},{1,-1,1},{0,-1,0}}, (1,3) => matrix{{1_QQ,-1,1},{0,-1,0},{0,0,-1}}, (2,3) => matrix{{0_QQ,1,0},{0,0,1},{1,-1,1}}})
-assert(T#"degreeTable" === hashTable{posHull matrix{{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{-1,0,-1},{2,2,2},{0,-1,-1}},posHull matrix{{1,0,0},{0,1,0},{0,0,1}} => matrix{{-1,-1,0},{-1,0,-1},{0,-1,-1}},posHull matrix{{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{-1,0,-1},{0,-1,-1},{2,2,2}},posHull matrix{{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{2,2,2},{-1,0,-1},{0,-1,-1}}})
+assert(T#"degreeTable" === hashTable{(matrix {{1,-1,0},{0,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{-1,0,-1},{2,2,2},{0,-1,-1}},(matrix {{1,0,0},{0,1,0},{0,0,1}}, map(ZZ^3,0,0)) => matrix{{-1,-1,0},{-1,0,-1},{0,-1,-1}},(matrix {{1,0,-1},{0,1,-1},{0,0,-1}}, map(ZZ^3,0,0)) => matrix{{-1,0,-1},{0,-1,-1},{2,2,2}},(matrix {{0,-1,0},{1,-1,0},{0,-1,1}}, map(ZZ^3,0,0)) => matrix{{2,2,2},{-1,0,-1},{0,-1,-1}}})
 assert(rank T == 3)
 assert(T#"dimension of the variety" == 3)
 ///

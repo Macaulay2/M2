@@ -132,21 +132,21 @@ ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
 #	Note: /usr/bin/install on Mac OS X is not gnu install, and doesn't know about --strip-program
 #	Stop stripping, anyway, so users can debug.
-	$(CDBUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
+	set -e ; $(CDBUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
 endif
 ifneq ($(LIBRARIES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/lib
-	$(CDBUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
+	set -e ; $(CDBUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
 endif
 ifneq ($(INCLUDEFILES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/include
-	$(CDBUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
+	set -e ; $(CDBUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
 endif
 ifeq ($(LICENSEFILES),)
 	@ echo "warning: *** no license files to be installed"
 else
 	$(MKDIR_P) $(LICENSE_DIR)
-	cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
+	set -e ; cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ "$$p" $(LICENSE_DIR)) ; done
 endif
 	touch $@
 
@@ -212,7 +212,7 @@ else
 	@ false
 endif
 distclean: package-distclean
-clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
+clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile
 
 SLIMIT ?= 8192

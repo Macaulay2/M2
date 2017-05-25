@@ -1,4 +1,4 @@
--- - * - coding: utf-8 - * -
+-- -*- coding: utf-8 -*-
 
 newPackage(
         "MultiplierIdealsDim2",
@@ -549,8 +549,8 @@ document {
 	BR{},BR{},
 	BOLD "Literature \n",
 	UL {
-	  LI {"[AAD14] ", EM "Multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carrami\361ana, J. \300lvarez Montaner, F. Dachs-Cadefau, 2014).\n"},
-	  LI {"[AADG14] ", EM "Poincar\351 series of multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carrami\361ana, J. \300lvarez Montaner, F. Dachs-Cadefau, V. Gonz\341lez-Alonso, 2014)\n"},
+	  LI {"[AAD14] ", EM "Multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carramiñana, J. Àlvarez Montaner, F. Dachs-Cadefau, 2014).\n"},
+	  LI {"[AADG14] ", EM "Poincaré series of multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carramiñana, J. Àlvarez Montaner, F. Dachs-Cadefau, V. González-Alonso, 2014)\n"},
 	  LI {"[Tuc10] ", EM " Jumping numbers on algebraic surfaces with rational singularities", " (K. Tucker, 2010)"}
 	  }
 }
@@ -696,8 +696,8 @@ document {
      	BR{},BR{},
 	BOLD "Literature \n",
 	UL {
-	  LI {"[AAD14] ", EM "Multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carrami\361ana, J. \300lvarez Montaner, F. Dachs-Cadefau, 2014).\n"},
-	  LI {"[AADG14] ", EM "Poincar\351 series of multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carrami\361ana, J. \300lvarez Montaner, F. Dachs-Cadefau, V. Gonz\341lez-Alonso, 2014)\n"},
+	  LI {"[AAD14] ", EM "Multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carramiñana, J. Àlvarez Montaner, F. Dachs-Cadefau, 2014).\n"},
+	  LI {"[AADG14] ", EM "Poincaré series of multiplier ideals in two-dimensional local rings with rational singularities", " (M. Alberich-Carramiñana, J. Àlvarez Montaner, F. Dachs-Cadefau, V. González-Alonso, 2014)\n"},
 	  LI {"[Tuc10] ", EM " Jumping numbers on algebraic surfaces with rational singularities", " (K. Tucker, 2010)"}
 	  }
 }

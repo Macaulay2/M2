@@ -187,6 +187,25 @@ void Monoid::set_degrees()
   degree_of_var_.append(degree_monoid_->make_one());
 }
 
+std::vector<int> Monoid::getFirstWeightVector() const
+{
+  std::vector<int> result;
+
+  // grab the first weight vector
+  if (getMonomialOrdering()->len > 0
+      and getMonomialOrdering()->array[0]->type == MO_WEIGHTS)
+    {
+      int i;
+      result.reserve(n_vars());
+      const int *wts = getMonomialOrdering()->array[0]->wts;
+      for (i=0; i<getMonomialOrdering()->array[0]->nvars; i++)
+        result.push_back(wts[i]);
+      for (; i<n_vars(); i++)
+        result.push_back(0);
+    }
+  return result;
+}
+
 void Monoid::set_overflow_flags()
 {
   overflow = newarray_atomic(enum overflow_type, monomial_size_);
@@ -581,6 +600,15 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
   to_expvector(m, EXP1);
   int sz = (wts->len < nvars_ ? wts->len : nvars_);
   return ntuple::weight(sz, EXP1, wts);
+}
+
+int Monoid::simple_degree(const_monomial m) const
+{
+  if (nvars_ == 0) return 0;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  to_expvector(m, EXP1);
+  return ntuple::degree(nvars_, EXP1);
 }
 
 bool Monoid::is_one(const_monomial m) const

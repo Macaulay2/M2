@@ -18,7 +18,7 @@ newPackage(
 --if ((options SRdeformations).Configuration)#"UseConvex"==true then (
   needsPackage "ConvexInterface"
 --);
-needsPackage "Polyhedra"
+needsPackage "OldPolyhedra"
 
 
 
@@ -38,10 +38,10 @@ please set up "ConvexInterface" first.
 If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
-Then automatically the package "Polyhedra" is used,
+Then automatically the package "OldPolyhedra" is used,
 but that is several magnitues slower compared to maple/convex.
 
-"Polyhedra" relies on the package "FourierMotzkin".
+"OldPolyhedra" relies on the package "FourierMotzkin".
 
 These packages are only used for computing convex hulls and lattice points thereof.
 Methods of "SRdeformations" relying on this package are so far:
@@ -3285,7 +3285,7 @@ Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
 vt:=joinVectors(preLv);
 P:=convexHull vt;
--- this is needed for a bug in Polyhedra
+-- this is needed for a bug in OldPolyhedra
 if dim(P)==0 then (
   lP:={vertices P};
 ) else (
@@ -3875,15 +3875,15 @@ doc ///
 
         {\it Jul 13, 2010 (Version 0.52)}
         
-           Some changes to ensure compatibility with the current version of Polyhedra (1.1), in particular
-           the method isSimplicial has been renamed to @TO isSimp@, as Polyhedra is now using the name
+           Some changes to ensure compatibility with the current version of OldPolyhedra (1.1), in particular
+           the method isSimplicial has been renamed to @TO isSimp@, as OldPolyhedra is now using the name
            name isSimplicial.
 
 
         {\it Jan 28, 2010 (Version 0.51)}
         
            Minor changes to ensure compatibility with the previous M2 version 1.2. Note that you will nevertheless
-           need to install a more recent version of Polyhedra which also works with 1.2 (tested with 1.0.6).
+           need to install a more recent version of OldPolyhedra which also works with 1.2 (tested with 1.0.6).
 
 
         {\it Oct 24, 2009 (Version 0.50)}
@@ -3893,11 +3893,11 @@ doc ///
 
         {\it Oct 18, 2009 (Version 0.49)}
 
-           Fixed a problem in @TO convHull@ (correspondence of P.polytopalFacets with the vertices of the dual). This was only a problem when using Polyhedra.m2.
+           Fixed a problem in @TO convHull@ (correspondence of P.polytopalFacets with the vertices of the dual). This was only a problem when using OldPolyhedra.m2.
 
         {\it Oct 6, 2009 (Version 0.48)}
 
-           Resolved a compatiblity issue with the new version of the M2 package {\it Polyhedra}.
+           Resolved a compatiblity issue with the new version of the M2 package {\it OldPolyhedra}.
 
 
         {\it Oct 3, 2009 (Version 0.47)}
@@ -3958,13 +3958,13 @@ doc ///
 
       There are two choices of M2 packages to be called for computations with polyhedra:
 
-      @TO Polyhedra@:
+      @TO OldPolyhedra@:
 
       Works without additional configuration, but is not very fast.
 
       It uses the M2 package {\it FourierMotzkin}.
 
-      To use {\it Polyhedra} do
+      To use {\it OldPolyhedra} do
 
       @TO loadPackage@("SRdeformations",Configuration=>\{"UseConvex"=>false\})
 
@@ -3976,7 +3976,7 @@ doc ///
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is faster than Polyhedra, hence the perferable choice.
+      It calls the Maple package Convex and is faster than OldPolyhedra, hence the perferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
@@ -6217,7 +6217,7 @@ doc ///
   SeeAlso
      Complex
   Caveat
-     This uses the package Polyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
@@ -6400,8 +6400,8 @@ doc ///
      globalSections(A,b)
      globalSections(A,b,{1})
   Caveat
-    This uses the package Polyhedra.m2 (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
-    constructHilbertBasis of the package Polyhedra.m2 used by latticePoints overwrites global variable C.
+    This uses the package OldPolyhedra.m2 (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
+    constructHilbertBasis of the package OldPolyhedra.m2 used by latticePoints overwrites global variable C.
     Fixed this in my local version.
      
 ///
@@ -7684,7 +7684,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO Polyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7725,7 +7725,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO Polyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7890,7 +7890,7 @@ doc ///
      The cone is represented as a complex on its rays, hence if @TO (dim,Face)@ is applied to a @TO Face@ it
      will return the dimension of the corresponding cone minus one.
       
-     This uses the package Polyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.

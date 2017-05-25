@@ -24,6 +24,7 @@ export RawFreeModule := Pointer "const struct FreeModule *";
 export RawFreeModuleOrNull := RawFreeModule or null;
 export RawMatrix := Pointer "const struct Matrix *";
 export RawMatrixOrNull := RawMatrix or null;
+-- NAG begin
 export RawHomotopy := Pointer "struct Homotopy *";
 export RawHomotopyOrNull := RawHomotopy or null;
 export RawSLEvaluator := Pointer "struct SLEvaluator *";
@@ -34,6 +35,9 @@ export RawStraightLineProgram := Pointer "struct StraightLineProgram *";
 export RawStraightLineProgramOrNull := RawStraightLineProgram or null;
 export RawPathTracker := Pointer "struct PathTracker *";
 export RawPathTrackerOrNull := RawPathTracker or null;
+export RawPointArray := Pointer "struct PointArray *";
+export RawPointArrayOrNull := RawPointArray or null;
+-- NAG end
 export RawMutableMatrix := Pointer "struct MutableMatrix *";
 export RawMutableMatrixOrNull := RawMutableMatrix or null;
 export RawMonomialOrderingArray := array(RawMonomialOrdering);
@@ -64,11 +68,14 @@ export RawMonomialCell := {+ p:RawMonomial };
 export RawMonomialIdealCell := {+ p:RawMonomialIdeal };
 export RawMonomialOrderingCell := {+ p:RawMonomialOrdering };
 export RawMutableMatrixCell := {+ p:RawMutableMatrix };
+-- NAG begin
 export RawHomotopyCell := {+ p:RawHomotopy };
 export RawSLEvaluatorCell := {+ p:RawSLEvaluator };
 export RawSLProgramCell := {+ p:RawSLProgram };
 export RawStraightLineProgramCell := {+ p:RawStraightLineProgram };
 export RawPathTrackerCell := {+ p:RawPathTracker };
+export RawPointArrayCell := {+ p:RawPointArray };
+-- NAG end
 export RawRingCell := {+ p:RawRing };
 export RawRingElementCell := {+ p:RawRingElement };
 export RawRingMapCell := {+ p:RawRingMap };

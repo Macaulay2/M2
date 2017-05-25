@@ -18,11 +18,6 @@ ResolutionComputation::~ResolutionComputation()
 {
 }
 
-void ResolutionComputation::remove_res()
-{
-  // This is the default behavior: doing nothing
-}
-
 ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
                                                          M2_bool resolve_cokernel,
                                                          int max_level,

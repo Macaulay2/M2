@@ -1,0 +1,14 @@
+Node
+  Name
+    rawHomogenizeMatrix 
+  ReturnValue
+    MatrixOrNull 
+  Arguments
+    M:Matrix 
+    varindex:int 
+    varweights:M2_arrayint
+  Doc
+    Return the homogenization of M with respect to the variable with index 'varindex'
+    where we assume that 'varweights' contains the weights of each variable.
+  Code
+    return name1->homogenize(name2, name3);

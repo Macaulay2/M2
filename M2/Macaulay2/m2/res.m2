@@ -222,7 +222,7 @@ resolution Matrix := ChainComplexMap => options -> (f) -> extend(
 resolution Ideal := ChainComplex => options -> (I) -> resolution(
      if I.cache.?quotient 
      then I.cache.quotient
-     else I.cache.quotient = (ring I)^1/I,
+     else I.cache.quotient = cokernel generators I, -- used to be (ring I)^1/I, but that needs GB recomputation...
      options)
 
 -----------------------------------------------------------------------------

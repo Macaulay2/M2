@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+long nres = 0;
+long nres_destruct = 0;
 
 /** createF4Res
  * The only function to create an (F4) resolution computation
@@ -81,15 +83,18 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       ERROR("cannot use res(...,FastNonminimal=>true) with this type of coefficient ring");
       return nullptr;
     }
-  auto MI = new ResMonoid(origR->n_vars(), origR->getMonoid()->primary_degree_of_vars(), origR->getMonoid()->getMonomialOrdering());
+  auto MI = new ResMonoid(origR->n_vars(),
+                          origR->getMonoid()->primary_degree_of_vars(),
+                          origR->getMonoid()->getFirstWeightVector(),
+                          origR->getMonoid()->getMonomialOrdering());
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
-      R = new ResPolyRing(*KK, *MI, & (origR->getSkewInfo()));
+      R = new ResPolyRing(KK, MI, & (origR->getSkewInfo()));
     }
   else
     {
-      R = new ResPolyRing(*KK, *MI);
+      R = new ResPolyRing(KK, MI);
     }
   auto result = new F4ResComputation(origR,
                                      R,
@@ -112,7 +117,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   SchreyerFrame& frame = result->frame();
   for (int i=0; i<F->rank(); i++)
     {
-      packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+      res_packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       MI->one(i, elem);
       frame.insertLevelZero(elem, F->primary_degree(i), maxdeg);
     }
@@ -127,7 +132,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       poly f;
       ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
-      input_polys.emplace_back(f);
+      input_polys.emplace_back(std::move(f));
     }
 
   // Set level 1.
@@ -139,10 +144,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           int loc = pos->array[i];
           poly&f = input_polys[loc];
           if (f.len == 0) continue;
-          if (MI->get_component(f.monoms) != j)
+          if (MI->get_component(f.monoms.get()) != j)
             continue;
-          packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
-          MI->copy(f.monoms, elem);
+          res_packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+          MI->copy(f.monoms.get(), elem);
           // the following line grabs f.
           if (!frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f))
             {
@@ -166,15 +171,19 @@ F4ResComputation::F4ResComputation(const PolynomialRing* origR,
                                    int max_level)
 
   : mOriginalRing(*origR),
+    mInputGroebnerBasis(*gbmatrix),
     mRing(R),
-    mInputGroebnerBasis(*gbmatrix)
+    mComp(new SchreyerFrame(*mRing, max_level))
 {
-  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
+  //  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
+  nres++;
 }
 
 F4ResComputation::~F4ResComputation()
 {
-  remove_res();
+  // The following lines should not be required.
+  //  mComp.reset(); mComp = nullptr;
+  nres_destruct++;
 }
 
 void F4ResComputation::start_computation()
@@ -189,15 +198,23 @@ int F4ResComputation::complete_thru_degree() const
   throw exc::engine_error("complete_thru_degree not implemented");
 }
 
-void F4ResComputation::remove_res()
-{
-  mComp.reset(); mComp = nullptr;
-}
-
 M2_arrayint F4ResComputation::get_betti(int type) const
   // type is documented under rawResolutionBetti, in engine.h  
 {
   return mComp->getBetti(type);
+}
+
+M2_arrayint F4ResComputation::minimal_betti(M2_arrayint slanted_degree_limit,
+                                            M2_arrayint length_limit)
+{
+  bool stop_after_degree = (slanted_degree_limit->len == 1);
+  int top_slanted_degree = slanted_degree_limit->array[0];
+  int new_length_limit = (length_limit->len == 1 ? length_limit->array[0] : frame().maxLevel()-1);
+  
+  BettiDisplay B = frame().minimalBettiNumbers(stop_after_degree,
+                                               top_slanted_degree,
+                                               new_length_limit);
+  return B.getBetti();
 }
 
 void F4ResComputation::text_out(buffer &o) const
@@ -223,9 +240,6 @@ const FreeModule /* or null */ *F4ResComputation::get_free(int lev)
   if (lev < 0 or lev > mComp->maxLevel()) return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
   return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, *mComp, lev);
-
-  //return mOriginalRing.make_FreeModule(static_cast<int>(mComp->level(lev).size()));
-  // TODO: this should return a schreyer order free module, or at least a graded one
 }
 
 // Local Variables:

@@ -120,21 +120,26 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
 getVarGates = method()
 getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
 
+gatePolynomial = method()
+gatePolynomial RingElement := p -> (
+    -- one naive way of converting a sparse polynomial to a circuit  
+    X := getVarGates ring p;
+    sumGate apply(listForm p, mc->(
+	    (m,c) := mc;
+	    c*product(#m,i->X#i^(m#i))
+	    ))
+    ) 
+	
 makeGateMatrix = method(Options=>{Parameters=>{}})
 makeGateMatrix PolySystem := o -> F -> (
     R := ring F; 
-    if not isSubset(o.Parameters, gens R) then "parameters do appear in the ring";
+    if not isSubset(o.Parameters, gens R) then "some parameters are not among generators of the ring";
     X := getVarGates R;
     F.Variables = X_(positions(gens R, x->not member(x,o.Parameters)));  
     F.NumberOfVariables = #F.Variables; -- reconsile 
     F.Parameters =X_(positions(gens R, x->member(x,o.Parameters)));
     polys := flatten entries F.PolyMap;
-    -- one naive way of converting a sparse system to a circuit  
-    F.GateMatrix = gateMatrix apply(polys, p->{ sumGate apply(listForm p,mc->(
-		    (m,c) := mc;
-		    c*product(#m,i->X#i^(m#i))
-		    )) }
-    	)   
+    F.GateMatrix = gateMatrix apply(polys, p->{gatePolynomial p})   
     ) 
  
 gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else makeGateMatrix F

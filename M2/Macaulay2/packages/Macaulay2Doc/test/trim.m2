@@ -13,7 +13,19 @@ R = ZZ/32003[a..j]
 I = ideal random(R^1, R^{-2,-2,-2,-2,-2,-2,-2});
 trim I  -- fixed: this fails because it takes a long time...  It should stop after mingens are known to be computed:
 
-end
+-- see https://github.com/Macaulay2/M2/issues/450
+R = QQ[]
+M = subquotient ( map(R^1,R^1,1), map(R^1,R^1,1) )
+N = subquotient (               , map(R^1,R^1,1) )
+P = subquotient (               , map(R^1,R^1,0) )
+assert ( M == 0 )
+assert ( N == 0 )
+assert (trim M === trim N)
+assert (trim(M,Strategy=>Complement) === trim(N,Strategy=>Complement))
+assert (trim P === R^1)
+assert (trim(P,Strategy=>Complement) === R^1)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test trim.out"
 -- End:
+

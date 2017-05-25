@@ -4,9 +4,13 @@
 #include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <NTL/ZZ.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/LLL.h>
+#pragma GCC diagnostic pop
 
 //NTL_USE_NNS
 

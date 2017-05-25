@@ -31,8 +31,8 @@
 #if RETAIN_PARI_STATE
 static void initpari() __attribute__ ((constructor));
 static void closepari() __attribute__ ((destructor));
-#define INIT 
-#define CLOSE 
+#define INIT
+#define CLOSE
 #else
 #define INIT initpari()
 #define CLOSE closepari()
@@ -41,6 +41,18 @@ static void closepari() __attribute__ ((destructor));
 static int self_initialized;
 
 static int pari_disabled;
+
+/*
+ * This function overrides the cb_pari_err_recover which is initialized to pari_exit() by default.
+ * The cb_pari_err_recover function is called after PARI has cleaned-up from an error. In our case
+ * it will be called by PARI with errnum = -1 after using allocatemem.
+ */
+
+static void m2_pari_err_recover(long errnum) {
+  if (errnum != -1) {
+    exit(1);
+  }
+}
 
 static void initpari() {
   if (pari_disabled) return;
@@ -57,6 +69,7 @@ static void initpari() {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
     self_initialized = TRUE;
   }
+  cb_pari_err_recover = m2_pari_err_recover;
   enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 
@@ -80,10 +93,10 @@ static void closepari() {
 
 static GEN toPari(mpz_t x) {
   if (pari_disabled) return NULL;
+  GEN z;
   int n = x->_mp_size, i;
   long m;
   long sign = 1;
-  GEN z;
   if (n<0) { n=-n; sign=-1; }
   m = n+2;
   z = cgeti(m);
@@ -127,12 +140,41 @@ mpz_mat *pari_factorint(mpz_t x, long flags) {
   mpz_mat *f;
   {
     if (pari_disabled) return NULL;
+
     INIT;
-    pari_sp save_stack_pointer = avma;
-    f = MATtoGmp(factorint(toPari(x),flags));
-    avma = save_stack_pointer;
+    /* Start PARI computations. */
+    pari_CATCH(e_STACK) {
+#ifdef NDEBUG
+      /*
+       * Every time the stack is changed PARI writes a message to the file pari_errfile
+       * which by default is /dev/stderr. To avoid showing this message to the user we
+       * redirect to /dev/null before the PARI's stack is modified.
+       */
+      FILE *tmp, *dev_null = fopen("/dev/null", "w");
+      if (dev_null != NULL) {
+        tmp = pari_errfile;
+        pari_errfile = dev_null;
+      }
+#endif
+      allocatemem(0); // passing 0 will double the current stack size.
+#ifdef NDEBUG
+      /*
+       * We set pari_errfile back to the default value just in case PARI crashes.
+       */
+      if (dev_null != NULL) {
+        pari_errfile = tmp;
+        fclose(dev_null);
+      }
+#endif
+    } pari_RETRY {
+      pari_sp save_stack_pointer = avma;
+      f = MATtoGmp(factorint(toPari(x),flags));
+      avma = save_stack_pointer;
+    }
+    pari_ENDCATCH
     CLOSE;
   }
+
   return f;
 }
 
@@ -140,12 +182,41 @@ int pari_isprime(mpz_t x) {
   long f;
   {
     if (pari_disabled) return -1;
+
     INIT;
-    pari_sp save_stack_pointer = avma;
-    f = isprime(toPari(x));
-    avma = save_stack_pointer;
+    /* Start PARI computations. */
+    pari_CATCH(e_STACK) {
+#ifdef NDEBUG
+      /*
+       * Every time the stack is changed PARI writes a message to the file pari_errfile
+       * which by default is /dev/stderr. To avoid showing this message to the user we
+       * redirect to /dev/null before the PARI's stack is modified.
+       */
+      FILE *tmp, *dev_null = fopen("/dev/null", "w");
+      if (dev_null != NULL) {
+        tmp = pari_errfile;
+        pari_errfile = dev_null;
+      }
+#endif
+      allocatemem(0); // passing 0 will double the current stack size.
+#ifdef NDEBUG
+      /*
+       * We set pari_errfile back to the default value just in case PARI crashes.
+       */
+      if (dev_null != NULL) {
+        pari_errfile = tmp;
+        fclose(dev_null);
+      }
+#endif
+    } pari_RETRY {
+      pari_sp save_stack_pointer = avma;
+      f = isprime(toPari(x));
+      avma = save_stack_pointer;
+    }
+    pari_ENDCATCH
     CLOSE;
   }
+
   return f != 0;
 }
 
@@ -153,12 +224,41 @@ int pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
   long f;
   {
     if (pari_disabled) return -1;
+
     INIT;
-    pari_sp save_stack_pointer = avma;
-    f = ispseudoprime(toPari(x), flags);
-    avma = save_stack_pointer;
+    /* Start PARI computations. */
+    pari_CATCH(e_STACK) {
+#ifdef NDEBUG
+      /*
+       * Every time the stack is changed PARI writes a message to the file pari_errfile
+       * which by default is /dev/stderr. To avoid showing this message to the user we
+       * redirect to /dev/null before the PARI's stack is modified.
+       */
+      FILE *tmp, *dev_null = fopen("/dev/null", "w");
+      if (dev_null != NULL) {
+        tmp = pari_errfile;
+        pari_errfile = dev_null;
+      }
+#endif
+      allocatemem(0); // passing 0 will double the current stack size.
+#ifdef NDEBUG
+      /*
+       * We set pari_errfile back to the default value just in case PARI crashes.
+       */
+      if (dev_null != NULL) {
+        pari_errfile = tmp;
+        fclose(dev_null);
+      }
+#endif
+    } pari_RETRY {
+      pari_sp save_stack_pointer = avma;
+      f = ispseudoprime(toPari(x), flags);
+      avma = save_stack_pointer;
+    }
+    pari_ENDCATCH
     CLOSE;
   }
+
   return f != 0;
 }
 

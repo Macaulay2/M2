@@ -687,8 +687,10 @@ imaginaryPart(e:Expr):Expr := (
 setupfun("imaginaryPart",imaginaryPart);
 
 Foo := { foo:void };					    -- make a new type of pointer that's innocuous and unusable
+numfinalizer := 0;
 finalizer(x:Foo,msg:string):void := (
-     stderr << "--finalization: " << msg << endl ;
+     numfinalizer = numfinalizer + 1;
+     stderr << "--finalization: (" << tostring(numfinalizer) << ")" << msg << endl ;
      );
 finalizerCount := 0;
 registerFinalizer(e:Expr):Expr := (
@@ -698,7 +700,7 @@ registerFinalizer(e:Expr):Expr := (
 	       msg := msg0.v;
 	       msg = "[" + tostring(finalizerCount) + "]: " + msg;
 	       finalizerCount = finalizerCount + 1;
-	       Ccode(void, "GC_REGISTER_FINALIZER((void *)",e,",(GC_finalization_proc)",finalizer,",",msg,",0,0)");
+	       Ccode(void, "GC_REGISTER_FINALIZER((void *)",s.0,",(GC_finalization_proc)",finalizer,",",msg,",0,0)");
 	       toExpr(finalizerCount))
      	  else WrongArgString(2))
      else WrongNumArgs(2));

@@ -8,7 +8,7 @@
 toRingXphc = method()
 toRingXphc (List,List) := (F,G) -> (
     R := ring ideal (F|G); 
-    Xphc := getSymbol "xX";
+    Xphc := getSymbol "phcX";
     XphcRing := (coefficientRing R)[Xphc_1..Xphc_(numgens R)];
     M := map(XphcRing,R,gens XphcRing);
     ((M ideal F)_*, (M ideal G)_*)
@@ -35,13 +35,16 @@ trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
      --trackPaths(S,T,sols,PHCpack$gamma=>o.NAG$gamma,PHCpack$tDegree=>o.NAG$tDegree)     
      (T',S') := toRingXphc (T,S);
      sols' := sols / (s-> if instance(s,Point) then s else point {s});
-     trackPaths(T',S',sols',gamma=>o.NumericalAlgebraicGeometry$gamma,tDegree=>o.NumericalAlgebraicGeometry$tDegree)
+     trackPaths(T',S',sols',gamma=>o.NumericalAlgebraicGeometry$gamma,tDegree=>o.NumericalAlgebraicGeometry$tDegree,Verbose=>(DBG>0))
      )
 
 refinePHCpack = method(TypicalValue => List)
-refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> (
-     refineSolutions(toRingXphc T, sols, ceiling(log(10,2)*o.Bits))
-     )
+refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> 
+     refineSolutions(toRingXphc T, sols, 
+	 if o.Bits === infinity 
+	 then getDefault Precision 
+	 else ceiling(log(10,2)*o.Bits)
+	 )
 
 solveGenericSystemInTorus = method()
 solveGenericSystemInTorus PolySystem := F -> solveGenericSystemInTorus equations F
@@ -51,6 +54,6 @@ solveGenericSystemInTorus List := F -> (
     (fromRingXphc(S,ring ideal F), solsS)
     )
  
-numericalIrreducibleDecompositionPHCpack = I -> PHCpack$numericalIrreducibleDecomposition toRingXphc I_*
+numericalIrreducibleDecompositionPHCpack = (I,o) -> PHCpack$numericalIrreducibleDecomposition toRingXphc I_*
 
 dismiss PHCpack

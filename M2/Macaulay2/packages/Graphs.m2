@@ -186,6 +186,7 @@ export {
     "isPerfect",
     "isReachable",
     "isRegular",
+    "isRigid",
     "isSimple",
     "isSink",
     "isSource",
@@ -1268,6 +1269,29 @@ isRegular Graph := Boolean => G -> (
     all(drop(vertexSet G,1), v -> degree(G,v) == n)
     )
 
+
+-- input: A graph G
+-- output: Uses Laman's Theorem to determine if a graph is rigid or not
+-- written by Tom Enkosky
+--
+isRigid = method();
+isRigid Graph := G -> (
+    local rigidity; local i; local j;
+    
+    rigidity=true;
+    
+    if #edges G < 2*#vertices G-3 then rigidity = false
+    else (
+	 for j from 2 to #vertices G-1 do(
+	     for i in subsets(vertices G,j) do(
+		 if #edges inducedSubgraph(G,i)>2*#i-3  then rigidity = false 
+		 );
+	     );
+	 );
+    return rigidity;
+    )
+
+
 isSimple = method()
 isSimple Graph := Boolean => G -> (
     A := adjacencyMatrix G;
@@ -1772,6 +1796,41 @@ doc ///
 ///
 
 -------------------------------
+--Data Types
+-------------------------------
+doc ///
+    Key
+    	Bigraph
+///
+
+doc ///
+    Key
+    	Digraph
+///
+
+doc ///
+    Key
+    	Graph
+///
+
+doc ///
+    Key
+    	LabeledGraph
+///
+
+doc ///
+    Key
+    	MixedGraph
+///
+
+doc ///
+    Key
+    	SortedDigraph
+///
+
+
+
+-------------------------------
 --Graph Constructors
 -------------------------------
 
@@ -2101,11 +2160,11 @@ doc ///
     Description
         Text
             Displays a digraph or graph using Graphviz
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --displayGraph("chuckDot","chuckJpg", G)
-            --displayGraph("chuck", G)
-            --displayGraph G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --displayGraph("chuckDot","chuckJpg", G)
+        --     --displayGraph("chuck", G)
+        --     --displayGraph G
     SeeAlso
         showTikZ
         writeDotFile
@@ -2127,9 +2186,9 @@ doc ///
     Description
         Text
             Writes a string of TikZ syntax that can be pasted into a .tex file to display G
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --showTikZ G
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --showTikZ G
     SeeAlso
         displayGraph
 ///
@@ -2149,9 +2208,9 @@ doc ///
     Description
         Text
             Writes the code for an inputted graph to be constructed in Graphviz with specified file name.
-        Example
-            --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
-            --writeDotFile("chuck", G)
+        -- Example
+        --     --G = graph({1,2,3,4,5},{{1,3},{3,4},{4,5}});
+        --     --writeDotFile("chuck", G)
     SeeAlso
 ///
 
@@ -4490,6 +4549,34 @@ doc ///
         cycleGraph
 ///
 
+--isRigid
+doc ///
+    Key
+        isRigid
+        (isRigid,Graph)
+    Headline
+        checks if a graph is rigid
+    Usage
+        r = isRigid G
+    Inputs
+        G:Graph
+    Outputs
+        r:Boolean
+    Description
+        Text
+            A drawing of a graph is rigid in the plane if any continuous motion 
+	    of the vertices that preserve edge lengths must preserve the distance 
+	    between every pair of vertices.  A graph is generically rigid if any 
+	    drawing of the graph with vertices in general position is rigid. This 
+	    method uses Laman's Theorem to determine if a graph is rigid or not.
+        Example
+            G = cycleGraph 4;
+            isRigid G
+	    G' = addEdges' (G, {{1,1},{3,1}})
+            isRigid G'
+///
+
+
 --isSimple
 doc ///
     Key
@@ -5135,6 +5222,7 @@ doc ///
             H = vertexMultiplication(G, 0, 6)
 ///
 
+
 TEST ///
 --test expansion of graphs
 G=pathGraph(7);
@@ -5222,4 +5310,23 @@ assert(isChordal(G)===true);
 assert(isSimple(G)===true);
 ///
 
+TEST ///
+--check rigidity
+assert( isRigid ( graph({{0,1},{0,3},{0,4},{1,3},{2,3}},Singletons => {5}) ) === false )
+assert( isRigid ( graph({{0,4},{0,5},{0,6},{1,4},{1,5},{1,6},{2,4},{2,5},{2,6}}) ) === true )
+assert( isRigid(graph{{0,1}}) === true )
+assert( isRigid(graph{{0,1},{1,2}}) === false )
+///
+
 end;
+
+loadPackage(Graphs, Reload => true)
+
+restart
+uninstallPackage "Graphs"
+restart
+installPackage "Graphs"
+viewHelp Graphs
+
+check Graphs
+

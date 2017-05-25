@@ -12,8 +12,13 @@ class RingMap;
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include "flint/arith.h"
 #include "flint/nmod_vec.h"
+#pragma GCC diagnostic pop
 
 namespace M2 {
 /**
@@ -148,7 +153,7 @@ namespace M2 {
 
     void divide(ElementType &result, ElementType a, ElementType b) const
     {
-      M2_ASSERT(b != 0);
+      assert(b != 0);
       result = nmod_div(a,b, mModulus);
     }
 
@@ -182,8 +187,8 @@ namespace M2 {
     // if possible, x is set to 1.
     // no need to consider the case a==0 or b==0.
     {
-      M2_ASSERT(a != 0);
-      M2_ASSERT(b != 0);
+      assert(a != 0);
+      assert(b != 0);
       x = 1;
       divide(y,a,b);
       negate(y,y);

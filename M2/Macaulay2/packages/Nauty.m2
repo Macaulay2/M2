@@ -1550,8 +1550,8 @@ doc ///
             graph.  See the nauty documentation for a more complete description
             of each and how the argument $a$ is used.
 
-            The sixteen vertex invariants are:
-            @UL ({
+            The sixteen vertex invariants are: \break
+            @ {
                 "$i = 0$: none,",
                 "$i = 1$: twopaths,",
                 "$i = 2$: adjtriang(K),",
@@ -1568,7 +1568,7 @@ doc ///
                 "$i = 13$: adjacencies,",
                 "$i = 14$: cellfano, and",
                 "$i = 15$: cellfano2."
-            } / TEX) @
+            } / (x -> ( TEX ("\\ \\ \\ \\ " | x), BR{} )) @
         Example
             R = QQ[a..e];
             G = graph {a*e, e*c, c*b, b*d, d*a};

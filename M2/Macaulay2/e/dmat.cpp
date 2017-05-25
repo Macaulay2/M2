@@ -25,11 +25,11 @@ namespace MatrixOps {
 
     size_t m = A.numRows();
     size_t k = A.numColumns();
-    M2_ASSERT(A.numColumns() == B.numRows());
+    assert(A.numColumns() == B.numRows());
     size_t n = B.numColumns();
     
-    M2_ASSERT(C.numRows() == m);
-    M2_ASSERT(C.numColumns() == n);
+    assert(C.numRows() == m);
+    assert(C.numColumns() == n);
 
     DMatZZpFFPACK::ElementType b;
     C.ring().init(b);
@@ -113,11 +113,11 @@ namespace ffpackInterface
   bool inverse(const DMatZZpFFPACK& mat, 
                DMatZZpFFPACK& result_inv)
   {
-    M2_ASSERT(mat.numRows() == mat.numColumns());
+    assert(mat.numRows() == mat.numColumns());
     result_inv.resize(mat.numRows(), mat.numRows());
 
-    M2_ASSERT(result_inv.numRows() == mat.numRows());
-    M2_ASSERT(result_inv.numColumns() == mat.numRows());
+    assert(result_inv.numRows() == mat.numRows());
+    assert(result_inv.numColumns() == mat.numRows());
 
     if (mat.numRows() == 0)
       {

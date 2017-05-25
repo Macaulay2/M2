@@ -1,4 +1,4 @@
-/* Copyright 2014, Michael E. Stillman */
+/* Copyright 2014-2016, Michael E. Stillman */
 
 #ifndef _res_f4_computation_hpp_
 #define _res_f4_computation_hpp_
@@ -26,6 +26,15 @@ public:
                                             );
 
   virtual ~F4ResComputation();
+
+  // Compute (if needed) enough to return the minimial betti numbers
+  // of the free resolution.
+  // 'length_limit': value is infinity if it has length 0, else it is first entry.
+  // 'slanted_degree_limit': value is infinity if it has length 0, else it is first entry.
+  // then all returned values will be correct for 
+  M2_arrayint minimal_betti(M2_arrayint slanted_degree_limit,
+                            M2_arrayint length_limit);
+
 protected:
   // These functions override those in ResolutionComputation
   bool stop_conditions_ok() { 
@@ -40,8 +49,6 @@ protected:
   int complete_thru_degree() const;
   // The computation is complete up through this slanted degree.
 
-  void remove_res();
-
   const Matrix /* or null */ *get_matrix(int level);
 
   MutableMatrix /* or null */ *get_matrix(int slanted_degree, int level);
@@ -50,12 +57,12 @@ protected:
 
   M2_arrayint get_betti(int type) const;
   // type is documented under rawResolutionBetti, in engine.h
-
+  
   void text_out(buffer &o) const;
 private:
   const PolynomialRing& mOriginalRing;
-  ResPolyRing* mRing;
   const Matrix& mInputGroebnerBasis;
+  std::unique_ptr<ResPolyRing> mRing;
   std::unique_ptr<SchreyerFrame> mComp;
 };
 

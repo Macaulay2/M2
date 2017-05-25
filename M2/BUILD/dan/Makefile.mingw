@@ -44,8 +44,8 @@ export PATH := /usr/x86_64-w64-mingw32/sys-root/mingw/bin:$(PATH)
 
 DIRECTORY = mingw
 CONFIGOPTIONS += --host=x86_64-w64-mingw32
-CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2 -DLIBXML_STATIC"
-CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
+CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2 -DLIBXML_STATIC"
+LDFLAGS="-L$(HOME)/local/x86_64-w64-mingw32/lib"
 CONFIGOPTIONS += --with-issue=mingw64
 
 ifeq ($(DEBUG),yes)

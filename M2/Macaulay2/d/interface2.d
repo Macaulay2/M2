@@ -9,6 +9,64 @@ use util;
 use struct;
 header "#include <engine.h>";
 
+
+-- rawPointArray
+export rawPointArray(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is epsilon:RRcell do 
+          if !isSmallInt(s.1) then WrongArgSmallInteger(2) else
+          toExpr(Ccode(RawPointArrayOrNull,
+		  "rawPointArray(",
+		    toDouble(epsilon), ",",
+		    getSmallInt(s.1),
+		    ")"
+		  ))
+	  else WrongArgRR(1)
+     else WrongNumArgs(2)
+     );
+setupfun("rawPointArray",rawPointArray);
+
+export rawPointArrayLookupOrAppend(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is pa:RawPointArrayCell do 
+	  when s.1 is M:RawMutableMatrixCell do 
+	  if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+	  toExpr(Ccode(int, 
+		       "rawPointArrayLookupOrAppend(",
+		       pa.p, ",",
+ 		       M.p, ",",
+		       getSmallInt(s.2),
+		       ")"
+		       ))
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1, "a RawPointArray")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPointArrayLookupOrAppend",rawPointArrayLookupOrAppend);
+
+export rawPointArrayLookup(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is pa:RawPointArrayCell do 
+	  when s.1 is M:RawMutableMatrixCell do 
+	  if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+	  toExpr(Ccode(int, 
+		       "rawPointArrayLookup(",
+		       pa.p, ",",
+ 		       M.p, ",",
+		       getSmallInt(s.2),
+		       ")"
+		       ))
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1, "a RawPointArray")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPointArrayLookup",rawPointArrayLookup);
+
+
+--------------------------
 -- straight line programs
 
 export rawSLProgram(e:Expr):Expr := (

@@ -599,7 +599,7 @@ void res2_comp::remove_res2_level(res2_level *lev)
   deleteitem(lev);
 }
 
-void res2_comp::remove_res()
+res2_comp::~res2_comp()
 {
   int i;
   for (i=0; i<resn.length(); i++)
@@ -608,11 +608,6 @@ void res2_comp::remove_res()
   delete res2_pair_stash;
   delete mi_stash;
   delete R;
-}
-
-res2_comp::~res2_comp()
-{
-  remove_res();
 }
 //////////////////////////////////////////////
 //  Data structure insertion and access  /////

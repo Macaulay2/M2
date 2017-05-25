@@ -2,11 +2,19 @@
 
 PRODUCTION = yes
 
+# Ubuntu installs the include files for cddlib in an unusual place:
+CPPFLAGS += -I/usr/include/cdd
+
 ifeq ($(SHARED),yes)
 CONFIGOPTIONS += --enable-shared
 endif
 
 default:
+
+# _CC  := gcc-4.9
+# _CXX := g++-4.9
+# _FC  := gfortran-4.9
+_FC := gfortran
 
 DIR_BASE := $(shell lsb_release -s --id)-$(shell lsb_release -s --release)-$(shell uname -m)
 
@@ -26,9 +34,9 @@ ifeq ($(PRODUCTION),yes)
     CONFIGOPTIONS += --disable-common-staging-area
 ifeq ($(PROFILE),yes)
     CONFIGOPTIONS += --enable-profile
-export CC = gcc -pg
-export CXX = g++ -pg
-export FC = gfortran -pg
+export _CC = gcc -pg
+export _CXX = g++ -pg
+export _FC = gfortran -pg
     DIRECTORY = $(DIR_BASE).profile
 else
     DIRECTORY = $(DIR_BASE).production
@@ -43,7 +51,7 @@ CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
 CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
 
 # /usr/lib/x86_64-linux-gnu/libpari-gmp-tls.so.4 crashes on exit, so avoid it:
-CONFIGOPTIONS += --enable-build-libraries=pari
+CONFIGOPTIONS += --enable-build-libraries="pari givaro fflas_ffpack"
 
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)

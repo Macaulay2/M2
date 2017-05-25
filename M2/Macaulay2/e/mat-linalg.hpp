@@ -52,7 +52,11 @@ typedef DMat<M2::ARingCC> DMatCC;
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/fmpz_mat.h>
+#pragma GCC diagnostic pop
 
 namespace MatrixOps
 {
@@ -266,6 +270,15 @@ namespace MatrixOps
     throw exc::engine_error("'SVD' not implemented for this kind of matrix over this ring");
   }
 
+  template<typename Mat, typename Mat2, typename Mat3>
+  bool QR(const Mat& A, 
+          Mat2& Q,
+          Mat3& R,
+          bool return_QR)
+  {
+    throw exc::engine_error("'QR' not implemented for this kind of matrix over this ring");
+  }
+  
   template<typename T>
   void clean(gmp_RR epsilon, T& mat)
   {
@@ -291,9 +304,9 @@ namespace MatrixOps
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
-    M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == result_product.numRows());
-    M2_ASSERT(B.numColumns() == result_product.numColumns());
+    assert(A.numColumns() == B.numRows());
+    assert(A.numRows() == result_product.numRows());
+    assert(B.numColumns() == result_product.numColumns());
 
     ElementType* result = result_product.array();
 
@@ -337,9 +350,9 @@ namespace MatrixOps
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
-    M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == C.numRows());
-    M2_ASSERT(B.numColumns() == C.numColumns());
+    assert(A.numColumns() == B.numRows());
+    assert(A.numRows() == C.numRows());
+    assert(B.numColumns() == C.numColumns());
 
     ElementType* result = C.array();
 
@@ -470,6 +483,46 @@ namespace MatrixOps
   // ZZ (ARingZZGMP) ///
   //////////////////////
 
+  inline M2_arrayintOrNull LU(const DMatZZGMP& A, 
+                              DMatZZGMP& L,
+                              DMatZZGMP& U)
+  {
+    throw exc::engine_error("'LU' not implemented for this kind of matrix over this ring");
+  }
+
+  inline M2_arrayintOrNull rankProfile(const DMatZZGMP& A, 
+                                       bool row_profile)
+  {
+    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  inline bool inverse(const DMatZZGMP& A, 
+               DMatZZGMP& result_inv)
+  {
+    throw exc::engine_error("'invert' not implemented for this kind of matrix over this ring");
+  }
+
+  inline size_t nullSpace(const DMatZZGMP& A, 
+                   DMatZZGMP& result_nullspace)
+  {
+    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
+  }
+
+  inline bool solveLinear(const DMatZZGMP& A, 
+                   const DMatZZGMP& B, 
+                   DMatZZGMP& X)
+  {
+    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+  }
+
+  inline bool solveInvertible(const DMatZZGMP& A, 
+                   const DMatZZGMP& B, 
+                   DMatZZGMP& X)
+  {
+    throw exc::engine_error("'solveInvertible' not implemented for this kind of matrix over this ring");
+  }
+
+  
   inline void mult(const DMatZZGMP& A, 
                    const DMatZZGMP& B, 
                    DMatZZGMP& result_product) 
@@ -959,6 +1012,14 @@ namespace MatrixOps
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
   }
 
+  inline bool QR(const DMatRR& A, 
+           DMatRR& Q, 
+           DMatRR& R,
+           bool return_QR)
+  {
+    return Lapack::QR(&A, &Q, &R, return_QR);
+  }
+  
   inline void clean(gmp_RR epsilon, DMatRR& mat)
   {
     auto p = mat.array(); 

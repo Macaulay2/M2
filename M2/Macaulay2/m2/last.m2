@@ -4,6 +4,8 @@
 
 recursionLimit = 300
 
+protect Example
+
 degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples

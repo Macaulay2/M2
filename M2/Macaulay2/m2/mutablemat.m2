@@ -60,6 +60,8 @@ RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
 MutableMatrix * RingElement := (n,f) -> map(ring f, raw n * raw f)
 ZZ * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
 MutableMatrix * ZZ := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
+RR * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * RR := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
 
 MutableMatrix _ Sequence = (M,ij,val) -> (
      val = promote(val,ring M);
@@ -190,19 +192,6 @@ LUdecomposition Matrix := (A) -> (
      (p, matrix L,matrix U))
 
 solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0, Invertible=>false })
-solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
-     R := ring A;
-     if not opts.ClosestFit then (
-         );
-     if (opts#Precision !=0) then (
-		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
-		b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
-	);
---     if (precision A > precision b) then b=promote(b, ring A);
---     if (precision b > precision A) then A=promote(A, ring b);
-     x := mutableMatrix(ring A,0,0,Dense=>true);
-     rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
-     x)
 
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
@@ -225,6 +214,9 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
 
 solve(Matrix,Matrix) := opts -> (A,b) -> (
     if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";
+     if ultimate(coefficientRing, ring A) === ZZ then (
+         return (b // A);
+        );
      matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))
@@ -271,6 +263,21 @@ SVD Matrix := o -> A -> (
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
+
+QRDecomposition = method(Options=>{ReturnQR=>true})
+QRDecomposition MutableMatrix := o -> A -> (
+     k := ring A;
+     if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
+     Q := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
+     R := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
+     rawQR(raw A, raw Q, raw R, o.ReturnQR);
+     (Q,R))
+QRDecomposition Matrix := o -> A -> (
+     k := ring A;
+     if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
+     A = mutableMatrix(A,Dense=>true);
+     (Q,R) := QRDecomposition(A,o);
+     (matrix Q,matrix R))
 
 rank MutableMatrix := (M) -> rawLinAlgRank raw M
 

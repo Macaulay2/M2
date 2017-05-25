@@ -965,19 +965,6 @@ Matrix /* or null */ * rawSubduction(const Matrix *M,
      }
 }
 
-M2_string engineMemory()
-{
-     buffer o;
-     try {
-       stash::stats(o);
-       return o.to_string();
-     }
-     catch (exc::engine_error e) {
-          o << "Internal error: [unprintable memory display]";
-          return o.to_string();
-     }
-}
-
 #include "mathicgb.h"
 #include "matrix-stream.hpp"
 void rawDisplayMatrixStream(const Matrix *inputMatrix)

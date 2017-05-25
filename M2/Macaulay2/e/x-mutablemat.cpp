@@ -36,8 +36,8 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
                                             int ncols,
                                             M2_bool is_dense)
 {
-  M2_ASSERT(nrows >= 0);
-  M2_ASSERT(ncols >= 0);
+  assert(nrows >= 0);
+  assert(ncols >= 0);
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
   //  return R->makeMutableMatrix(nr,nc,is_dense);
@@ -73,8 +73,12 @@ MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S,
   // Given a natural map i : R --> S
   // f is a matrix over R.
   // returns a matrix over S.
+  ERROR("MutableMatrix promote not implemented yet");
+  return nullptr;
+#if 0  
   auto result = MutableMatrix::zero_matrix(S, f->n_rows(), f->n_cols(), f->is_dense());
   return result;
+#endif
 }
 
 MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, 
@@ -85,9 +89,14 @@ MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return,
   // f is a matrix over S.
   // returns a matrix over R.
 
+  //ERROR("MutableMatrix lift not implemented yet");
+  *success_return = 0;
+  return nullptr;
+#if 0
   auto result = MutableMatrix::zero_matrix(R, f->n_rows(), f->n_cols(), f->is_dense());
   *success_return = 1;
   return result;
+#endif
 }
 
 int IM2_MutableMatrix_n_rows(const MutableMatrix *M)
@@ -892,6 +901,20 @@ M2_bool rawLeastSquares(MutableMatrix *A,
         return false;
       }
     return A->least_squares(b,x,assume_full_rank);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
+M2_bool rawQR(const MutableMatrix *A,
+              MutableMatrix *Q,
+              MutableMatrix *R,
+              M2_bool return_QR)
+{
+  try {
+    return A->QR(Q,R,return_QR);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());

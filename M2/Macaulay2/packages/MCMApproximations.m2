@@ -170,6 +170,7 @@ auslanderInvariant Module := opts->M-> (
     numgens prune coker phi)
 
 setupRings = method(Options =>{Characteristic => 101, Randomize =>true})
+
 setupRings(ZZ,ZZ) := opts -> (c,d)->(
     x := local x;
     p := opts.Characteristic;
@@ -178,6 +179,13 @@ setupRings(ZZ,ZZ) := opts -> (c,d)->(
     if opts.Randomize===true then ff = ff*random(source ff, source ff);
     {S}|apply(c, j->(S/ideal(ff_{0..j})))
     )
+
+setupRings(Matrix) := opts -> (ff)->(
+     S := ring ff;
+     c := numcols ff;
+     if opts.Randomize===true then ff = ff*random(source ff, source ff);
+     {S}|apply(c, j->(S/ideal(ff_{0..j})))
+     )
 
 
 setupModules = method()
@@ -243,7 +251,7 @@ Description
    gives the coapproximation sequence
    0\to M \to N''\to M'' \to 0.
    
-   The routine coapproximation M resurns the map M --> N''.
+   The routine coApproximation M resurns the map M --> N''.
   Example
    setRandomSeed 0
    T = setupRings(3,3)
@@ -376,6 +384,7 @@ doc ///
     coApproximation
     (coApproximation, Module)
     [coApproximation, CoDepth]
+    [coApproximation, Total]
    Headline
     Maximal Cohen-Macaulay co-approximation of M
    Usage
@@ -604,25 +613,29 @@ doc ///
    Key
     setupRings
     (setupRings, ZZ, ZZ)
+    (setupRings, Matrix)
     [setupRings, Characteristic]
     [setupRings, Randomize]
    Headline
     Sets up a complete intersection for experiments
    Usage
     R = setupRings(c,d)
+    R = setupRings(ff)    
    Inputs
     c:ZZ
      desired codimension
     d:ZZ
      degree of homogoneous generators
+    ff:Matrix
+     a regular sequence
    Outputs
     R:List
      List of rings R_0..R_c with R_i = S/(f_0..f_(i-1))
    Description
     Text
-     Makes a complete intersection f_0..f_(c-1) = x_0^d..x_(c-1)^d
+     Makes a complete intersection f_0..f_{c-1} = x_0^d..x_{c-1}^d
      or, when Random=>true (the default), random linear combinations of these,
-     in the polynomial ring ZZ/p[x_0..x_(c-1)], where p can be set by the optional 
+     in the polynomial ring ZZ/p[x_0..x_{c-1}], where p can be set by the optional 
      argument Characteristic=>p. By default, p = 101.
     Example
      netList setupRings(2,2)
@@ -647,7 +660,7 @@ doc ///
     R:List
      of complete intersections R_i = S/(f_0..f_(i-1))
     M:Module
-     over the ring R_(c-1) where c = length R.
+     over the ring R_{c-1} where c = length R.
    Outputs
     MM:List
      of c+1 modules M_i over R_i
@@ -659,7 +672,7 @@ doc ///
     Text
      This is useful for setting up an experiment. For example, we conjecture
      that the regularity of Ext_{R_i}(M_i,k_i) is a non-decreasing function of i.
-     Here ring M = R_(c-1) and  M_i = pushForward(p_(c-1)_i, M).
+     Here ring M = R_{c-1} and  M_i = pushForward(p_{(c-1)}_i, M).
     Example
      needsPackage "CompleteIntersectionResolutions" -- for "evenExtModule"
      R =setupRings(3,2);--codims 0..3, degrees = 2
@@ -815,10 +828,12 @@ assert (betti L == betti res M);
 end--
 restart
 loadPackage("MCMApproximations", Reload=>true)
+
 uninstallPackage"MCMApproximations"
+restart
 installPackage"MCMApproximations"
 check "MCMApproximations"
 viewHelp MCMApproximations
 
 viewHelp approximation
-
+restart

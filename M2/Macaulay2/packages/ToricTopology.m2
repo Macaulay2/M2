@@ -385,8 +385,6 @@ doc ///
   Description
    Text
        A small cover is represented by a simplicial complex K and matrix which is characteristic for K.
-   Example
-
   SeeAlso
     QuasiToricManifold
 ///
@@ -399,8 +397,6 @@ doc ///
   Description
    Text
        A quasi-toric manifold is represented by a simplicial complex K and matrix which is characteristic for K.
-   Example
-
   SeeAlso
    SmallCover
 ///
@@ -421,9 +417,6 @@ doc ///
   Description
    Text
         Checks whether chi is characteristic for K.
-
-   Example
-     
   SeeAlso
      
 ///
@@ -447,9 +440,6 @@ doc ///
         Create a small cover over K with characteristic matrix chi.
         If chi is not characteristic for K, then an error is returned.
         The entries of chi are automatically converted to ZZ/2 entries, if they not already so.
-
-   Example
-     
   SeeAlso
      
 ///
@@ -471,9 +461,6 @@ doc ///
    Text
         Create a quasi-toric manifold over K with characteristic matrix chi.
         If chi is not characteristic for K, an error is returned.
-
-   Example
-     
   SeeAlso
 ///
 
@@ -496,9 +483,6 @@ doc ///
   Description
    Text
         Compute the cohomology ring of a small cover (over ZZ/2) or quasi-toric manifold (over ZZ). 
-
-   Example
-     
   SeeAlso
      
 ///
@@ -520,8 +504,6 @@ doc ///
    Text
         Compute the Stiefel-Whitney classes of a small cover.
         The output is a list of elements in the cohomology ring of N.
-   Example
-     
   SeeAlso
     cohomologyRing
 ///
@@ -542,8 +524,6 @@ doc ///
    Text
         Compute the Chern classes of a quasi-toric manifold.
         The output is a list of elements in the cohomology ring of M.
-   Example
-     
   SeeAlso
     cohomologyRing
 ///
@@ -570,9 +550,6 @@ doc ///
         Compute the betti numbers of a small cover.
         If a dimension k is specified, then only the k-th betti number of N is computed.
         If no dimension is specified, all the betti numbers between 0 and the dimension of N are computed.
-
-   Example
-     
   SeeAlso
      
 ///
@@ -598,9 +575,6 @@ doc ///
         Compute the betti numbers of a quasi-toric manifold.
         If a dimension k is specified, then only the k-th betti number of M is computed.
         If no dimension is specified, all the betti numbers between 0 and the dimension of M are computed.
-
-   Example
-     
   SeeAlso
      
 ///
@@ -620,8 +594,6 @@ doc ///
   Description
    Text
         Real projective space of dimension n, as small cover.
-   Example
-     
   SeeAlso
     complexProjectiveSpace
 ///
@@ -641,8 +613,6 @@ doc ///
   Description
    Text
         Complex projective space of dimension n, as small cover.
-   Example
-     
   SeeAlso
     realProjectiveSpace
 ///
@@ -663,8 +633,6 @@ doc ///
   Description
    Text
        Hessenberg variety asscoiated to the n-permutahedron, as small cover.
-   Example
-     
   SeeAlso
     
 ///

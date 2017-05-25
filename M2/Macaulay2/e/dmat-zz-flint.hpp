@@ -5,9 +5,14 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include <flint/fmpq_mat.h>
+#pragma GCC diagnostic pop
+
 #include "aring-zz-flint.hpp"
 
 template<typename ACoeffRing> class DMat;
@@ -68,13 +73,13 @@ public:
   ElementType*& array() { return mArray->entries; }
 
   ElementType& entry(size_t row, size_t column) { 
-    M2_ASSERT(row < numRows());
-    M2_ASSERT(column < numColumns());
+    assert(row < numRows());
+    assert(column < numColumns());
     return * fmpz_mat_entry(mArray, row, column); 
   }
   const ElementType& entry(size_t row, size_t column) const { 
-    M2_ASSERT(row < numRows());
-    M2_ASSERT(column < numColumns());
+    assert(row < numRows());
+    assert(column < numColumns());
     return * fmpz_mat_entry(mArray, row, column); 
   }
 

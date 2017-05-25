@@ -3,13 +3,10 @@
 #ifndef _res__gausser_hpp_
 #define _res__gausser_hpp_
 
-#include "res-f4-mem.hpp"
-
 #include "../ring.hpp"
 #include "../ZZp.hpp"
 #include "../coeffrings.hpp"
 
-class ResF4Mem;
 typedef int FieldElement;
 typedef int ComponentIndex;
 
@@ -19,7 +16,6 @@ class ResGausser
   const Z_mod *K; // only used to construct Kp.  Will be removed MES.
 
   CoefficientRingZZp *Kp;
-  mutable ResF4Mem Mem;
 
   ResGausser(int p);
 public:
@@ -50,12 +46,6 @@ public:
   CoefficientArray from_ints(ComponentIndex len, const int* elems) const;
 
   void to_ints(ComponentIndex len, CoefficientArray, int *result) const;
-
-  // leading coefficient
-  FieldElement lead_coeff(CoefficientArray coeffs) const
-  {
-    return coeffs[0];
-  }
 
   // other routines:
   void deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const;

@@ -2,7 +2,7 @@
 -- functions related to numerical primary decomposition
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 -------------------------------------------------------
-export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible" }
+export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible", "Regularity" }
 
 debug NumericalHilbert
 
@@ -157,16 +157,21 @@ M = matrix{{x_1^2,x_1*x_2^2*x_3,x_1*x_2*x_3^3}}
 ///
 
 
-isPointEmbeddedInCurve = method()
-isPointEmbeddedInCurve (Point,Ideal) := (p,I) -> (
+isPointEmbeddedInCurve = method(Options=>{Regularity=>-1})
+isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
     R := ring I;
     I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     p' := origin(R);
     m := matrix{apply(gens R, v->random(1,R))}; -- matrix for random linear change of coordinates
     I' = (map(R,R,m)) I'; -- I with new coordinates
-    r := 12;--localHilbertRegularity(p',I'); 
-    E := eliminatingDual(p',I',{0},r+1); -- assume I is in general position w.r.t. x = R_0
-    E1 := truncate(E,{0},r);
+    r := o.Regularity;
+    if r == -1 then (
+	r1 := localHilbertRegularity(p',I');
+	r2 := dim truncatedDual(p',I',r);
+	r = max{r1,r2-1};
+	);
+    E := eliminatingDual(p',I',{0},r); -- assume I is in general position w.r.t. x = R_0
+    E1 := truncate(E,{0},r-1);
     E2 := colon(E,R_0);
     print (dim E1, dim E2, areEqual(E1,E2));
     dim E1 != dim E2 -- "truncate" extracts a lesser truncated eliminating dual from E
