@@ -90,7 +90,7 @@ solveSystem PolySystem := List => o -> P -> (
 		      i -> (
 			  p := plausible#i;
 			  q := endGameCauchy(p#"H",1,p,"backtrack factor"=>2); -- endgame ...
-    	    	    	  if DBG>0 then if (i+1)%10 == 0 or i+1==#plausible then << endl;
+    	    	    	  -- if DBG>0 then if (i+1)%10 == 0 or i+1==#plausible then << endl;
       	      	      	  q
 			  )
 		      ),

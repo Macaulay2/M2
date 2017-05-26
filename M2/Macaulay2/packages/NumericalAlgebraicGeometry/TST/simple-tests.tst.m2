@@ -1,9 +1,16 @@
+///
+restart
+needsPackage "NumericalAlgebraicGeometry"
+///
+
 TEST ///
 R=ZZ[x,y]
 sols = solveSystem {x^2-1,y}
 assert (#sols == 2 and all(sols,s->status s === Regular))
-///
 
+errorDepth = 2
+sols = solveSystem {x*(x-1),y}
+///
 -- MISC. TESTS
 --------------
 
