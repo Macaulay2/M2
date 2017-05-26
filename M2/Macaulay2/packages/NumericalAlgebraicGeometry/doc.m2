@@ -879,7 +879,20 @@ document {
 document {
     Key => {(parameterHomotopy,List,List,List),parameterHomotopy},
     Headline => "solve a parametric system of equations",
+       Usage => "sols = parameterHomotopy(F,varsP,valuesP)",
+    Inputs => { 
+	"F" => {" contains the polynomials in the system"},
+	"varsP" => {" names of the parameters"},
+	"valuesP" => {" contains (possibly several sets of) values of the parameters"}  
+	},
+    Outputs => { "sols"=>" lists of lists of solutions for each set of the parameters" },
     "Solves a parameteric polynomial system for several values of parameters.", 
+    EXAMPLE lines ///
+    R = CC[u1,u2,u3,x,y]
+    f1 = u1*(y-1)+u2*(y-2)+u3*(y-3)
+    f2 = (x-11)*(x-12)*(x-13)
+    try parameterHomotopy({f1,f2},{u1,u2,u3},{{1,0,0},{0,1+2*ii,0}}, Software=>BERTINI) else "need to install Bertini to run these lines"
+///,
     Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
     }
 
