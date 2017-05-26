@@ -1,5 +1,5 @@
 restart
-load "../paper-examples/example-CRN.m2"
+load "../paper-examples/sol-count-smaller-than-bkk-examples/example-CRN.m2"
 setRandomSeed 0
 
 
