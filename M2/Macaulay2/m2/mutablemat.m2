@@ -267,15 +267,14 @@ SVD Matrix := o -> A -> (
 QRDecomposition = method(Options=>{ReturnQR=>true})
 QRDecomposition MutableMatrix := o -> A -> (
      k := ring A;
-     if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
+     if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      Q := mutableMatrix(k,0,0,Dense=>true);
      R := mutableMatrix(k,0,0,Dense=>true);
-     --R := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
      rawQR(raw A, raw Q, raw R, o.ReturnQR);
      (Q,R))
 QRDecomposition Matrix := o -> A -> (
      k := ring A;
-     if not instance(k,InexactField) then error "QR requires matrices over RR or CC";
+     if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      A = mutableMatrix(A,Dense=>true);
      (Q,R) := QRDecomposition(A,o);
      (matrix Q,matrix R))
