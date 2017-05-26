@@ -8,44 +8,31 @@ doc ///
 		solve polynomial systems via homotopy continuation and monodromy
 	Description
 		Text
+		    	This package provides randomized numerical methods for finding complex solutions to systems of polynomial equations.
 			The main methods implemented in this package find solutions to polynomial systems of equations over the 
-			complex numbers. As described in (references), these methods pair numerical homotopy continuation with the 
-			transitive monodromy action of a suitable covering map. Users uninterested in the specifics may use this 
-			package as a black-box solver for their system of choice, as in the example below.
+			complex numbers. As described in @HREF("https://arxiv.org/abs/1609.08722","\"Solving polynomial systems
+			via homotopy continuation and monodromy\" (2016)")@, these methods pair numerical homotopy continuation with the 
+			transitive monodromy action of a suitable covering map. The most basic interface is provided by the method 
+			"sparseMonodromySolve," which generates loops in the sparsest linear parameter space compatible with the input system.
 		Example
-		    	--a basic example will go here
-		Text 
-		        The core methods of MonodromySolver come equipped with a number of options. (do Targetsolutioncount below
-		Example
-		        ---another simple xample with targetsolcount=>true
+		    	setRandomSeed 0
+		    	R=CC[x,y,z]
+    	    	    	F=random(3,R)
+    	    	    	P=sum apply(gens R,g->diff(g,F)*random CC)
+                        sparseMonodromySolve polySystem {F,P,random(1,R)-1}			    
 		Text
-		        When we set the option "GuessSystem=>true," we generate loops in the sparsest linear parameter space
-			compatible with the input system. The number of continuation steps may be further reduced if the system belongs to
-			a more structured class of linearly-parametrized systems.  
+		        The number of continuation steps may be further reduced if the system belongs to a more structured 
+			class of linearly-parametrized systems. The example below is the 5-variable Reimer system from the Posso test
+			suite: the generic solution count is 144, while the Bezout number and mixed volume are both 720.
 		Example
-    	    	    	a simple example of a parametric system goes here
-    	    	Text    				
-			In the example above, we solve a generic member of the associated family of polynomial systems. Since the algorithm
-			is randomized, it's a good idea to experiment with the certain options---these are described elsewhere in the
-			documentation (link.)
-		Example
+    	    	    	setRandomSeed 0
 		    	R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]   
 			P = polySystem {-a_1+b_1*(x^2-y^2+z^2+u^2-t^2),-a_2+b_2*(x^3-y^3+z^3+u^3-t^3),-a_3+b_3*(x^4-y^4+z^4+u^4-t^4),
-			-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}  				
-    	    	    	--- this is the Reimer system: we should find the right set of options that guarantee success
-		Text
-		        example below is from previous draft of documentatation
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			(V, npaths) = monodromySolve polys; 
-			<< "tracked " << npaths << " homotopy paths";
-			V.BasePoint 
-			points V.PartialSols
-    	    	Text
-			The algorithm is introduced in 
-			@HREF("https://arxiv.org/abs/1609.08722","\"Solving polynomial systems
-			via homotopy continuation and monodromy\" (2016)")@.
+			-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}  
+		    	(N,npaths) = monodromySolve P				
+			N.SpecializedSystem -- a randomly generated system in the family defined by P
+			first N.PartialSols -- a solution to N.SpecializedSystem
+			npaths -- total number of paths tracked in call to monodromySolver
 	///
 
 doc ///

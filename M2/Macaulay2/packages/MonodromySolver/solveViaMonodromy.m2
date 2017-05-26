@@ -22,21 +22,14 @@ export {
     "AugmentNodeCount",
     "randomWeights",
     "EdgesSaturated",
-    "GuessFamily"}
-
--- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
---     point0, (as above)
---     s0, (as above)
+    "solveFamily",
+    "sparseMonodromySolve"}
 
 -- change the behavior of random CC (pick uniformly in a unit disk)
 old'random'Type = lookup(random,Type)
 random Type := o -> R -> (
     if class R === ComplexField then (
 	exp(2 * pi * random RR * ii)
-	-- old code for Box-Mueller transform
-	--us := apply(2, i -> random RR);
-	--us = {sqrt(-2* log first us), 2*pi* last us};
-	--first us * cos last us + ii * first us * sin last us
 	) 
     else (old'random'Type o) R
     ) 
@@ -205,8 +198,7 @@ staticMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false,
-	GuessFamily => false})
+	EdgesSaturated => false})
 staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
@@ -243,8 +235,6 @@ count = 6;
 --The first set of tests may not find all solutions, as there is no
 --target root count.
 
--- Blackbox
---Tim, this test doesn't seem to work any more.
 (V,npaths) = monodromySolve polys;
 assert( length V.PartialSols <= count );
 
@@ -335,10 +325,10 @@ assert( length V.PartialSols == count );
 	AugmentNumberOfRepeats=>10);
 assert( length V.PartialSols == count );
 
--- Here is an experimental test for GuessFamily
+-- test for sparseSolver which sometimes fails: 3 iterations is to reduce failure probability, but might slow tests down
 S = QQ[x,y]
 P = polySystem {x+y, 2*x+1-2*y^2}
-assert(length (first monodromySolve(P,GuessFamily=>true)).PartialSols == 2)
+assert(max(apply(3,i->length sparseMonodromySolve P))==2)
 ///
 
 monodromySolve = method(Options=>{
@@ -357,23 +347,9 @@ monodromySolve = method(Options=>{
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false,
-	GuessFamily => false})
+	EdgesSaturated => false})
 monodromySolve PolySystem := o -> PS -> (
-    if o.GuessFamily then ( --default family is sparse monomial basis
-	    polys := flatten entries PS.PolyMap;
-    	    ind := flatten apply(#polys,i-> -- indices for parameters
-    		apply(exponents polys#i, t->(i,t))
-    		);
-    		  --Tim, I'm pretty sure that I set R correctly, but I'm very sure that W is wrong.
-    		  R := PS.PolyMap.ring;
-	    W := symbol W;
-    	    AR := CC[apply(ind,i->W_i)][gens R];
-    	    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
-    	    sum(exponents polys#i, t->W_(i,t)*AR_(t));
-    	    PS = polySystem transpose matrix {polysP};
-	    );
-    	(p0,x0) := createSeedPair PS;
+    (p0,x0) := createSeedPair PS;
     monodromySolve(PS,p0,{x0},o)
     )
 monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
@@ -413,8 +389,7 @@ dynamicMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false,
-	GuessFamily => false})
+	EdgesSaturated => false})
 dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount === null then 
@@ -454,8 +429,7 @@ coreMonodromySolve = method(Options=>{
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false,
-	GuessFamily => false})
+	EdgesSaturated => false})
 coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;
 	same := 0;
@@ -488,6 +462,40 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	if o.EdgesSaturated then saturateEdges HG;
 	(lastNode, npaths)
 )
+
+-- 
+sparseMonodromySolve = method(Options=>{
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
+	GraphInitFunction => completeGraphInit,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
+	BatchSize => infinity,
+	Potential => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 4,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false,
+	EdgesSaturated => false})
+sparseMonodromySolve PolySystem := o ->  PS -> (
+    polys := flatten entries PS.PolyMap;
+    ind := flatten apply(#polys,i-> -- indices for parameters
+	apply(exponents polys#i, t->(i,t))
+	);
+    R := PS.PolyMap.ring;
+    W := symbol W;
+    AR := CC[apply(ind,i->W_i)][gens R];
+    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
+    sum(exponents polys#i, t->W_(i,t)*AR_(t));
+    PS = polySystem transpose matrix {polysP};
+    N := first monodromySolve(PS,o);
+    track(PS,polySystem N.SpecializedSystem,points N.PartialSols)
+)
+
 
 end
 
