@@ -196,17 +196,23 @@ ring_elem PolyRing::from_int(mpz_t n) const
   return result;
 }
 
-ring_elem PolyRing::from_rational(mpq_ptr q) const
+bool PolyRing::from_rational(mpq_ptr q, ring_elem& result) const
 {
-  ring_elem a = K_->from_rational(q);
+  ring_elem a;
+  bool ok = K_->from_rational(q, a);
+  if (not ok) return false;
   if (K_->is_zero(a))
     {
-      return ZERO_RINGELEM;
+      result = ZERO_RINGELEM;
     }
-  Nterm *result = new_term();
-  result->coeff = a;
-  M_->one(result->monom);
-  return result;
+  else
+    {
+      Nterm *resultpoly = new_term();
+      resultpoly->coeff = a;
+      M_->one(resultpoly->monom);
+      result = resultpoly;
+    }
+  return true;
 }
 
 ring_elem PolyRing::fromCoefficient(ring_elem& coeff) const

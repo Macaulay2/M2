@@ -283,7 +283,7 @@ bool ResF4MonomialLookupTableT<Key>::find_one_divisor_packed(const ResMonoid *M,
                                                    Key &result_k) const
   // mi is the top: where to start looking
 {
-  long comp = M->get_component(m);
+  auto comp = M->get_component(m);
   if (comp >= mis.size()) return false;
   mi_node *mi = mis[comp];
   if (mi == NULL) return false;
@@ -296,7 +296,7 @@ void ResF4MonomialLookupTableT<Key>::find_all_divisors_packed(const ResMonoid *M
                                                     const_packed_monomial m,
                                                     VECTOR(Key) &result_k) const
 {
-  long comp = M->get_component(m);
+  auto comp = M->get_component(m);
   if (comp >= mis.size()) return;
   mi_node *mi = mis[comp];
   if (mi == NULL) return;

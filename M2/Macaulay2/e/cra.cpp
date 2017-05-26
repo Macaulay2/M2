@@ -425,6 +425,7 @@ ring_elem ChineseRemainder::ratConversion(const ring_elem ff,
   const Monoid *M = RQ->getMonoid();
   const Ring *K = RQ->getCoefficientRing();
 
+  bool ok = true;
   for (;f!=NULL;f=f->next)
   {
     result->next=RQ->new_term();
@@ -432,7 +433,8 @@ ring_elem ChineseRemainder::ratConversion(const ring_elem ff,
     result->next=0;
     M->copy(f->monom,result->monom);
     ratConversion(f->coeff.get_mpz(),m,result_coeff);
-    result->coeff=K->from_rational(result_coeff);
+    bool ok1 = K->from_rational(result_coeff, result->coeff);
+    ok = ok and ok1;
   }
 
   mpq_clear(result_coeff);

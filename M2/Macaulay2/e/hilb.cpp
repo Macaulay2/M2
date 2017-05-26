@@ -1,9 +1,11 @@
 // Copyright 1996 Michael E. Stillman
 
+#include <limits>
+#include <cstdlib>
+
 #include "hilb.hpp"
 #include "relem.hpp"
 #include "interrupted.hpp"
-#include <limits>
 
 int partition_table::representative(int x)
 {
@@ -678,7 +680,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
       else if (exp[0] == deg)
         {
           std::pair<bool,long> res = P->getCoefficientRing()->coerceToLongInteger(f->coeff);
-          assert(res.first && abs(res.second) < std::numeric_limits<int>::max());
+          assert(res.first && std::abs(res.second) < std::numeric_limits<int>::max());
           int n = static_cast<int>(res.second);
           result += n;
         }

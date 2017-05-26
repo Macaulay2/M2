@@ -13,7 +13,7 @@ int slab::n_slabs = 0;
 doubling_stash *doubles = NULL;
 
 stash::stash(const char *s, size_t len)
-: next(NULL), name(s), slabs(NULL), free_list(NULL),
+: name(s), slabs(NULL), free_list(NULL),
   n_allocs(0), n_inuse(0), highwater(0), n_frees(0)
 {
   // Make sure element_size is a multiple of the word size.
@@ -22,10 +22,6 @@ stash::stash(const char *s, size_t len)
   // number of elements per slab is the slab size divided by the element size rounded down.
   n_per_slab = static_cast<int>((slab_size - sizeof(void *)) / element_size);
   n_per_slab=0;
-  //This is for debugging purposes only -- NOT THREADSAFE
-  //  this->next = stash_list;
-  //  stash_list = this;
-
   initializeSpinLock(&list_spinlock);
 }
 
@@ -39,20 +35,6 @@ stash::~stash()
       GC_FREE(p);               // this dramatically improves our memory usage
       //printf("removed %p\n", p);
     }
-  /*  assert(stash_list != NULL);
-  if (stash_list == this)
-    stash_list = next;
-  else
-    {
-      for (stash *q = stash_list; q->next != NULL; q = q->next)
-        if (q->next == this)
-          {
-            q->next = next;
-            next = NULL;
-            return;
-          }
-      assert(0);
-      }*/
 }
 
 
@@ -61,16 +43,7 @@ void stash::chop_slab()
   // grab a new slab, and chop it into element_size pieces, placing them
   // onto the free list.
 
-  slab *new_slab;
-    {
-      new_slab = new slab;
-      //      printf("new %p\n", new_slab);
-      //new_slab = new slab;
-      //printf("new %p\n", new_slab);
-      //new_slab = new slab;
-      //printf("new %p\n", new_slab);
-    }
-
+  slab *new_slab = new slab;
   new_slab->next = slabs;
   slabs = new_slab;
 
@@ -135,11 +108,6 @@ void stash::stats(buffer &o)
       o << s;
 
     }
-
-  /*  for (stash *p = stash_list; p != NULL; p = p->next)
-    //    if (p->n_allocs > 0)
-      p->text_out(o);
-  */
 }
 
 //--------- Doubling Stashes -----------------------------------------

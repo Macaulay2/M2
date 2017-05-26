@@ -11,14 +11,20 @@
 #include <engine-exports.h>
 #endif
 
+#include <vector>
+
 class res_varpower_monomials {
 public:
   static long length(res_const_varpower_monomial m) { return ((*(m))*2+1); }
 
   static res_varpower_word simple_degree(res_const_varpower_monomial m);
 
-  static res_varpower_word weight(res_const_varpower_monomial m,
-                              M2_arrayint wts);
+  //  static res_varpower_word weight(res_const_varpower_monomial m,
+  //                              M2_arrayint wts);
+
+  template<typename T>
+  inline static res_varpower_word weight(res_const_varpower_monomial m,
+                                         const std::vector<T>& wts);
 
   static int equal(res_const_varpower_monomial m1,
                    res_const_varpower_monomial m2);
@@ -69,6 +75,21 @@ public:
   res_varpower_word exponent() { return loc[1]; }
 };
 
+template<typename T>
+inline res_varpower_word res_varpower_monomials::weight(res_const_varpower_monomial m,
+                                                        const std::vector<T>& wts)
+{
+  res_varpower_word i;
+  res_varpower_word sum = 0;
+  res_varpower_word npairs = *m;
+  m += 1;
+  for (i=npairs; i>0; i--, m += 2)
+    if (*m >= wts.size())
+      sum += m[1];
+    else
+      sum += m[1] * wts[*m];
+  return sum;
+}
 
 #endif
 

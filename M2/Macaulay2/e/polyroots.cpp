@@ -1,6 +1,24 @@
 
 #include "polyroots.hpp"
 
+#define timer timer1
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#undef ulong
+#define register
+#include <pari/pari.h>
+#pragma GCC diagnostic pop
+
+#undef timer
+
+extern "C" {
+  #include "../d/pari-gnump.h"
+};
+
+#define abs(x)  ( ( (x) < 0) ? -(x) : (x) )
+#define max(a, b)  ( ( (a) > (b) ) ? (a) : (b) )
+
 engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
                                           int unique) {
   const Ring *R = p->get_ring();

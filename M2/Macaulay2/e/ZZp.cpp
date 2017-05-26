@@ -154,13 +154,13 @@ ring_elem Z_mod::from_int(mpz_ptr n) const
   return ring_elem(m);
 }
 
-ring_elem Z_mod::from_rational(mpq_ptr q) const
+bool Z_mod::from_rational(mpq_ptr q, ring_elem& result) const
 {
   ring_elem a = Z_mod::from_int(mpq_numref(q));
   ring_elem b = Z_mod::from_int(mpq_denref(q));
-  if (b == _ZERO)
-    return _ZERO;
-  return Z_mod::divide(a,b);
+  if (b == _ZERO) return false;
+  result = Z_mod::divide(a,b);
+  return true;
 }
 
 bool Z_mod::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const

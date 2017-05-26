@@ -1,6 +1,8 @@
 F4_CCFILES := \
   res-varpower-monomial \
   res-f4-monlookup \
+  res-moninfo-dense \
+  res-moninfo-sparse \
   res-moninfo \
   res-poly-ring \
   res-f4-m2-interface \
@@ -8,6 +10,9 @@ F4_CCFILES := \
   res-f4 \
   res-f4-computation \
   res-gausser \
+  res-gausser-ZZp \
+  res-gausser-QQ \
+  res-gausser-QQ-hybrid \
   f4 \
   f4-syz \
   f4-mem \

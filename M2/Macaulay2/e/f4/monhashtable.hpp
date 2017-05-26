@@ -35,7 +35,7 @@ private:
 class ResMonomialsWithComponent {
 public:
   typedef res_packed_monomial value;
-  long hash_value(value m) const { return m[0] + m[1]; }
+  int hash_value(value m) const { return mMonoid.hash_value(m) + 34141 * mMonoid.get_component(m); } // m[0] + m[1]
   bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
   void show(value m) const { mMonoid.show(m); }
   
@@ -47,7 +47,7 @@ private:
 class ResMonomialsIgnoringComponent {
 public:
   typedef res_packed_monomial value;
-  long hash_value(value m) const { return m[0]; }
+  int hash_value(value m) const { return m[0]; }
   bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
   void show(value m) const { mMonoid.show(m); }
   
@@ -80,6 +80,7 @@ private:
   unsigned long hashmask;
 
   unsigned long threshold;
+  unsigned long nfind_or_insert;
   unsigned long count;
   unsigned long nclashes;
   unsigned long max_run_length;

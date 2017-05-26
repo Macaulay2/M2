@@ -52,7 +52,10 @@ void MatrixConstructor::append(vec v)
 }
 void MatrixConstructor::append(vec v, const int *deg0)
 {
-  assert(!cols_frozen);
+  if (cols_frozen)
+    {
+      INTERNAL_ERROR("trying to append to an immutable free module.");
+    }
   entries.push_back(v);
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->append(deg0);
@@ -70,22 +73,30 @@ void MatrixConstructor::set_column(int c, vec v)
 void MatrixConstructor::compute_column_degrees()
  /* Takes into acount the matrix degree */
 {
-  assert(!cols_frozen);
+  if (cols_frozen)
+    {
+      INTERNAL_ERROR("trying to append to an immutable free module.");
+    }
   for (int i=0; i<cols->rank(); i++)
     compute_column_degree(i);
 }
 
 void MatrixConstructor::set_column_degree(int i, const int *deg0)
 {
-  assert(!cols_frozen);
+  if (cols_frozen)
+    {
+      INTERNAL_ERROR("trying to append to an immutable free module.");
+    }
   FreeModule *mutable_cols = const_cast<FreeModule *>(cols);
   mutable_cols->change_degree(i,deg0);
 }
 
 void MatrixConstructor::compute_column_degree(int i)
 {
-
-  assert(!cols_frozen);
+  if (cols_frozen)
+    {
+      INTERNAL_ERROR("trying to append to an immutable free module.");
+    }
   int *d = R->degree_monoid()->make_one();
   const vec v = entries[i];
   if (v != 0) R->vec_degree(rows, v, d);

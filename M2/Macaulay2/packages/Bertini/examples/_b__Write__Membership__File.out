@@ -1,0 +1,24 @@
+-- -*- M2-comint -*- {* hash: 350653056 *}
+
+i1 : bWriteInputFile(storeBM2Files,
+         B'Configs=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
+
+o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-26062-0/0/input
+
+o1 : File
+
+i2 : runBertini(storeBM2Files)
+
+i3 : makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
+
+i4 : makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
+
+i5 : makeMembershipFile(storeBM2Files,TestSolutions=>{{1,2,0},{3,2,1}})
+
+i6 : importIncidenceMatrix(storeBM2Files)
+
+o6 = {{(1, 0)}, {}}
+
+o6 : List
+
+i7 : 

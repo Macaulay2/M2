@@ -171,12 +171,13 @@ namespace M2 {
       result = mGF.fromZZTable(b);
     }
 
-    void set_from_mpq(elem &result, mpq_ptr a) const {
+    bool set_from_mpq(elem &result, mpq_ptr a) const {
       elem n, d;
       set_from_mpz(n, mpq_numref(a));
       set_from_mpz(d, mpq_denref(a));
-      ASSERT(d != 0);  //TODO actually: we need to check for this...
+      if (is_zero(d)) return false;
       divide(result,n,d);
+      return true;
     }
 
     bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }

@@ -1019,7 +1019,15 @@ namespace MatrixOps
   {
     return Lapack::QR(&A, &Q, &R, return_QR);
   }
-  
+
+  inline bool QR(const DMatCC& A, 
+           DMatCC& Q, 
+           DMatCC& R,
+           bool return_QR)
+  {
+    return Lapack::QR(&A, &Q, &R, return_QR);
+  }
+
   inline void clean(gmp_RR epsilon, DMatRR& mat)
   {
     auto p = mat.array(); 

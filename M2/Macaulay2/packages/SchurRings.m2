@@ -574,6 +574,8 @@ plethysm(BasicList,RingElement) := (lambda,g) -> (
 plethysm(RingElement,ClassFunction) := (f,cF) ->
 (
      R := ring(cF#(first keys cF));
+     if R === ZZ then R = QQ;
+
      pf := toP f;
      n := degree cF;
      k := (ring pf).dim;

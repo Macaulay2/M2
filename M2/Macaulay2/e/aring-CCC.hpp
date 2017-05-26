@@ -141,9 +141,10 @@ namespace M2 {
       mpfr_set_si(&result.im, 0, GMP_RNDN);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType &result, mpq_ptr a) const {
       mpfr_set_q(&result.re, a, GMP_RNDN);
       mpfr_set_si(&result.im, 0, GMP_RNDN);
+      return true;
     }
 
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {
@@ -465,7 +466,12 @@ namespace M2 {
       gmp_CC_struct g;
       g.re = &f.re;
       g.im = &f.im;
-      map->get_ring()->from_BigComplex(&g, result);
+      if (!map->get_ring()->from_BigComplex(&g, result))
+        {
+          result = map->get_ring()->from_long(0);
+          ERROR("cannot map CC value to ring type");
+        }
+      
     }
 
     gmp_CC toBigComplex(const ElementType& a) const

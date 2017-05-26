@@ -18,6 +18,7 @@ res_varpower_word res_varpower_monomials::simple_degree(res_const_varpower_monom
   return sum;
 }
 
+#if 0
 res_varpower_word res_varpower_monomials::weight(res_const_varpower_monomial m, M2_arrayint wts)
 {
   res_varpower_word i;
@@ -31,6 +32,7 @@ res_varpower_word res_varpower_monomials::weight(res_const_varpower_monomial m, 
       sum += m[1] * wts->array[*m];
   return sum;
 }
+#endif
 
 int res_varpower_monomials::equal(res_const_varpower_monomial m1,
                               res_const_varpower_monomial m2)
@@ -297,11 +299,11 @@ void res_varpower_monomials::elem_text_out(FILE *fil, res_const_varpower_monomia
     } else if (v < 52) {
       int c = 'A'+static_cast<int>(v);
       fprintf(fil, "%c", c);
-    } else fprintf(fil, "x[%ld]",v);
+    } else fprintf(fil, "x[%d]",v);
     if (e > 1)
       fprintf(fil, "%ld", e);
     else if (e < 0)
-      fprintf(fil, "^(%ld)", e);
+      fprintf(fil, "^(%d)", e);
   }
 }
 

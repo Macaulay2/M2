@@ -2,6 +2,7 @@
 
 #include "schur2.hpp"
 #include <stdio.h>
+#include <iostream>
 #include "text-io.hpp"
 #include "ZZ.hpp"
 #include "relem.hpp"
@@ -295,10 +296,13 @@ ring_elem SchurRing2::from_int(mpz_ptr n) const
   ring_elem a = coefficientRing->from_int(n);
   return from_coeff(a);
 }
-ring_elem SchurRing2::from_rational(mpq_ptr q) const
+bool SchurRing2::from_rational(mpq_ptr q, ring_elem& result) const
 {
-  ring_elem a = coefficientRing->from_rational(q);
-  return from_coeff(a);
+  ring_elem a;
+  bool ok = coefficientRing->from_rational(q, a);
+  if (not ok) return false;
+  result = from_coeff(a);
+  return true;
 }
 
 ring_elem SchurRing2::copy(const ring_elem f) const
@@ -352,8 +356,7 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
 }
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  /* write me */ //FLAG: do this.
-#warning "compare_elems method needs to be written"
+  // Write this.  Issue #610.
   return 0;
 }
 bool SchurRing2::promote_coeffs(const SchurRing2 *Rf, const ring_elem f, ring_elem &resultRE) const

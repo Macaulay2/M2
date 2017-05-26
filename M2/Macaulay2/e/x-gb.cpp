@@ -16,6 +16,7 @@
 #include <sstream>
 #include <iostream>
 #include "interrupted.hpp"
+#include "f4/res-f4-computation.hpp"
 
 #include <limits>
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
@@ -850,6 +851,50 @@ rawResolutionGetMatrix2(Computation *C,
     if (G != 0)
       return G->get_matrix(level, degree);
     ERROR("expected resolution computation type");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+MutableMatrix /* or null */ *
+rawResolutionGetMutableMatrixB(Computation *C,
+                        const Ring* R,
+                       int level)
+// Perhaps a HACK that might change.
+// First: C must be a nonminimal res computation, over QQ M.
+// Second: R must be a polynomial ring with the same monoid M as C's,
+//  and the coefficient ring must be either RR, or ZZ/p, where p is the (a)
+//  prime being used in the computaiton.
+{
+  try {
+    clear_emit_size();
+    F4ResComputation *G = dynamic_cast<F4ResComputation*>(C);
+    if (G != 0)
+      return G->get_mutable_matrix(R, level);
+    ERROR("expected fast nonminimal resolution computation type");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+MutableMatrix /* or null */ *
+rawResolutionGetMutableMatrix2B(Computation *C,
+                         const Ring* KK, // should be RR, or a finite field used in C.
+                         int level,
+                         int degree)
+{
+  try {
+    clear_emit_size();
+    F4ResComputation *G = dynamic_cast<F4ResComputation*>(C);
+    if (G != 0)
+      return G->get_mutable_matrix(KK, level, degree);
+    ERROR("expected fast nonminimal resolution computation type");
     return 0;
   }
   catch (exc::engine_error e) {

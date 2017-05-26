@@ -118,13 +118,6 @@ class ARingGFGivaro : public RingInterface
  
     mutable  FieldType::randIter     givaroRandomIterator;
 
-    size_t      mGeneratorExponent;  
-
-    //  int p1; // p-1
-    // int minus_one;
-    // int prim_root; // element we will use for our primitive root
-
-
     M2_arrayint     representationToM2Array(UTT representation,  long coeffNum ) const;
 
     static M2_arrayint     representationToM2Array(UTT representation,  long coeffNum, UTT charac ) ;
@@ -223,7 +216,7 @@ class ARingGFGivaro : public RingInterface
 
         void set_from_mpz(elem &result,const mpz_ptr a) const ;
 
-        void set_from_mpq(elem &result,const mpq_ptr a) const ;
+        bool set_from_mpq(elem &result,const mpq_ptr a) const ;
 
         bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
 

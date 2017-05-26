@@ -21,6 +21,7 @@ void MonomialHashTable<ValueType>::reset()
     }
 
   count = 0;
+  nfind_or_insert = 0;
   nclashes = 0;
   max_run_length = 0;
   monequal_count = 0;
@@ -59,7 +60,7 @@ template <typename ValueType>
 void MonomialHashTable<ValueType>::grow()
 {
   // Increase logsize, reset fields, and repopulate new hash table.
-  if (M2_gbTrace >= 2) dump();
+  //  if (M2_gbTrace >= 2) dump();
   std::unique_ptr<value[]> oldtab = std::move(hashtab);
   long oldsize = size;
   initialize(logsize+1);
@@ -81,10 +82,12 @@ MonomialHashTable<ValueType>::~MonomialHashTable()
   // Nothing more to do here
 }
 
+#if 0
 template <typename ValueType>
 bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
 {
   long hashval = HASHVALUE(m) & hashmask;
+  nfind_or_insert++;
   if (!hashtab[hashval])
     {
       // No entry is there.  So, we insert it directly.
@@ -120,7 +123,6 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
               monequal_count++;
               if (MONOMIAL_EQUAL(m, *i))
                 {
-                  monequal_count++;
                   result = *i;
                   return true;
                 }
@@ -130,11 +132,56 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
         }
     }
 }
+#endif
+template <typename ValueType>
+bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
+{
+  auto mhash = HASHVALUE(m);
+  auto hashval = mhash & hashmask;
+  if (!hashtab[hashval])
+    {
+      // No entry is there.  So, we insert it directly.
+      hashtab[hashval] = m;
+      result = m;
+      count++;
+      if (count > threshold) grow();
+      return false;
+    }
+  else
+    {
+      // Something is there, so we need to find either this value,
+      // or a free spot, whichever comes first.
+      value *hashtop = hashtab.get() + size;
+      for (value *i = hashtab.get() + hashval; ; i++)
+        {
+          if (i == hashtop) i = hashtab.get();
+          if (!(*i))
+            {
+              // Spot is empty, so m is a new value
+              *i = m;
+              result = m;
+              count++;
+              if (count > threshold) grow();
+              return false;
+            }
+          //          if (HASHVALUE(*i) == mhash)
+          //            {
+              if (MONOMIAL_EQUAL(m, *i))
+                {
+                  result = *i;
+                  return true;
+                }
+              //            }
+        }
+    }
+}
 
 template <typename ValueType>
 void MonomialHashTable<ValueType>::dump() const
 {
-  fprintf(stderr, "size of hashtable   = %ld\n",size);
+  fprintf(stderr, "--hash table info--\n");
+  fprintf(stderr, "  size of hashtable = %ld\n",size);
+  fprintf(stderr, "  number of calls   = %ld\n",nfind_or_insert);
   fprintf(stderr, "  number of monoms  = %ld\n",count);
   fprintf(stderr, "  number of clashes = %ld\n",nclashes);
   fprintf(stderr, "  max run length    = %ld\n",max_run_length);

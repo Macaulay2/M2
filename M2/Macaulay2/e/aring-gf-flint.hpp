@@ -118,14 +118,15 @@ namespace M2 {
       set_from_long(result, b);
     }
 
-    void set_from_mpq(ElementType& result, mpq_ptr a) const {
+    bool set_from_mpq(ElementType& result, mpq_ptr a) const {
       ElementType n, d;
       init(n);
       init(d);
       set_from_mpz(n, mpq_numref(a));
       set_from_mpz(d, mpq_denref(a));
-      assert(not is_zero(d));  //TODO actually: we need to check for this...
+      if (is_zero(d)) return false;
       divide(result,n,d);
+      return true;
     }
 
     bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
