@@ -236,49 +236,49 @@ count = 6;
 --target root count.
 
 (V,npaths) = monodromySolve polys;
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 -- Can provide no options
 (V,npaths) = monodromySolve(polys,p0,{x0});
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 --NumberOfNodes, NumberOfEdges, NumberOfRepeats
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	NumberOfNodes=>2,
-	NumberOfEdges=>3,
+	NumberOfEdges=>4,
 	NumberOfRepeats=>5);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 --Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 --must also provide a Potential function.
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	SelectEdgeAndDirection=>selectRandomEdgeAndDirection,
 	NumberOfRepeats=>5);
-	assert( length V.PartialSols <= count );
+	assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
 	Potential=>potentialLowerBound,
 	NumberOfRepeats=>5);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 --Two different GraphInitFunctions. Also, BatchSize can be set,
 --which will change the number of paths tracked simultaneously.
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	GraphInitFunction=>flowerGraphInit,
 	NumberOfEdges=>5);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	GraphInitFunction=>completeGraphInit,
 	BatchSize=>1);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 --NumberOfEdges=>1 (no randomization)
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	NumberOfNodes=>10,
 	NumberOfEdges=>1);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 --The next two tests test booleans: "new tracking routine" (defaults to true)
 --and Verbose (defaults to false). We test that both the defaults work
@@ -286,12 +286,12 @@ assert( length V.PartialSols <= count );
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	"new tracking routine"=>false,
 	Verbose=>false);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	"new tracking routine"=>true,
 	Verbose=>true);
-assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
 
 --The next three tests use strict equality, as they ought to always succeed.
