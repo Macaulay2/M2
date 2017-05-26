@@ -1,12 +1,12 @@
 restart ---------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 3
 setRandomSeed 0
 polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 print mixedVolume
-elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 getTrackTime V.Graph
 {* -- Anton's office machine:
 
@@ -18,14 +18,14 @@ o8 = (HomotopyNode{...5...}, 540155)
 *}
 
 restart ---------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 print mixedVolume
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 {* -- Anton's office machine:
      -- 8450.44 seconds elapsed
      mixedVolume = 184756
@@ -34,13 +34,13 @@ elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,Targ
 *}
 
 restart --------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 11 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
-elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume,
     SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, Verbose=>true)
 {*
      trackedPaths 159599
@@ -50,14 +50,14 @@ elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,Targ
 *}
 
 restart ------make failure rate high ---------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 nedges = 4
 setRandomSeed 0
 polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 setDefault(tStepMin=>0.001)
-elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume,
+elapsedTime monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume,
          Verbose=>true)
 {*    
 -- 9327.69 seconds elapsed
@@ -65,7 +65,7 @@ o11 = (HomotopyNode{...5...}, 759189)
 *}
 
 restart --- naive ------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 setRandomSeed 0
 polys = parametrizedCyclic 11
 (p0,x0) = createSeedPair polySystem polys
@@ -76,7 +76,7 @@ npaths
 *}
 
 restart ---PHCpack------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 needsPackage "PHCpack"
 polys = parametrizedCyclic 11 
 (p0,x0) = createSeedPair polySystem polys
@@ -90,7 +90,7 @@ elapsedTime (mv,q,qsols) = mixedVolume(specPolys/toR,StartSystem => true);
 *}
 
 restart ---linear tracker in PHCpack------------------------------------------------------------------
-load "cyclic.m2"
+load "../cyclic.m2"
 -- setDefault(Software=>PHCPACK) -- if this is HERE we get SIGSEGV
 nedges = 4
 setRandomSeed 0
@@ -99,5 +99,5 @@ polys = parametrizedCyclic 11
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 debug Core
 setDefault(Software=>PHCPACK)
-elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,TargetSolutionCount=>mixedVolume, Verbose=>true)
+elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
 getTrackTime V.Graph

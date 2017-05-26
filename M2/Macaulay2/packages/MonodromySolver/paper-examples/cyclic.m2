@@ -14,6 +14,15 @@ parametrizedCyclic = n -> (
 	polySystem transpose matrix {polysP}
 );
 
+
+--------------------------------------------------------------
+end 
+
+restart
+load "cyclic.m2"
+
+
+
 polys = parametrizedCyclic 7;
 
 

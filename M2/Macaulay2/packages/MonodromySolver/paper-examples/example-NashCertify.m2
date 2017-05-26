@@ -1,5 +1,3 @@
--- everything working except certify
-
 needsPackage "AlphaTest"
 load "example-Nash.m2"
 

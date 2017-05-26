@@ -56,12 +56,12 @@ load "example-CRN.m2"
 
 -- system for example from Elizabeth's talk
 (p0, x0) = createSeedPair(G,"initial parameters" => "one")  
-elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, EdgesSaturated=>true)
+elapsedTime (V,npaths) = monodromySolve(G,p0,{x0}, NumberOfEdges => 4, NumberOfNodes=>2, EdgesSaturated=>true)
 assert(length V.PartialSols == 4)
 
 -- system for motif twoSiteModificationF
 (p0, x0) = createSeedPair(G',"initial parameters" => "one")
-elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5)
+elapsedTime (V,npaths) = monodromySolve(G',p0,{x0},NumberOfEdges => 5, NumberOfNodes=>2)
 assert(length V.PartialSols == 6)
 
 -- system for wnt signaling pathway
@@ -73,6 +73,7 @@ F = createPolySystem(W, FF, L)
 elapsedTime (V,npaths) = monodromySolve(F,p0,{x0},
     GraphInitFunction=>completeGraphInit,
     NumberOfEdges=>5,
+    NumberOfNodes=>2,
 --    TargetSolutionCount => 9,
     "new tracking routine"=>false,
     Verbose=>true)
@@ -115,12 +116,4 @@ for i from 0 to 2 do (
     );
 first SVD(traces#3-traces#1|traces#2-traces#1)
 first SVD(traces#2-traces#0|traces#1-traces#0)
-
-
-
-
-
-
-
-
 
