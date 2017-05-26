@@ -7,7 +7,6 @@ export {
     "flowerGraphInit",
     "flowerGraphAugment",
     "dynamicFlowerSolve",
---    "ExtraNodeCount",
     "RandomPointFunction",
     "NumberOfEdges",
     "NumberOfNodes",
@@ -22,8 +21,8 @@ export {
     "AugmentNodeCount",
     "randomWeights",
     "EdgesSaturated",
-    "solveFamily",
-    "sparseMonodromySolve"}
+    "sparseMonodromySolve",
+    "solveFamily"}
 
 -- change the behavior of random CC (pick uniformly in a unit disk)
 old'random'Type = lookup(random,Type)
@@ -492,9 +491,32 @@ sparseMonodromySolve PolySystem := o ->  PS -> (
     polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
     sum(exponents polys#i, t->W_(i,t)*AR_(t));
     PS = polySystem transpose matrix {polysP};
-    N := first monodromySolve(PS,o);
-    track(PS,polySystem N.SpecializedSystem,points N.PartialSols)
+    last solveFamily PS
 )
+
+-- IN: parametric Polysystem OUT: a sequence (random system, its solutions)
+solveFamily = method(Options=>{
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
+	GraphInitFunction => completeGraphInit,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
+	BatchSize => infinity,
+	Potential => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 4,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false,
+	EdgesSaturated => false})
+solveFamily PolySystem := o -> PS -> (
+    N := first monodromySolve(PS,o);
+    sols := track(PS,polySystem N.SpecializedSystem,points N.PartialSols);
+    (N.SpecializedSystem, sols)
+    )
 
 
 end
