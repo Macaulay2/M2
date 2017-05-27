@@ -8,6 +8,7 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 FIXTARCMD = :
 
 PRECONFIGURE = autoreconf -vif
+CONFIGOPTIONS += --disable-shared
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
 # I have filed a bug report, Bug ID# 8338749:
@@ -33,10 +34,8 @@ BUILDOPTIONS =  CXX="$(CXX)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
 		RANLIB="@RANLIB@" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
-PROGRAMS = source/.libs/normaliz
-LIBRARIES = source/.libs/libnormaliz.3.dylib
+PROGRAMS = source/normaliz
 LICENSEFILES = source/COPYING
-INSTALLCMD = true
 CHECKTARGET = .
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/normaliz/Makefile
