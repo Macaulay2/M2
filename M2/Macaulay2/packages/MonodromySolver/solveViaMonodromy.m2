@@ -490,8 +490,9 @@ sparseMonodromySolve PolySystem := o ->  PS -> (
     AR := CC[apply(ind,i->W_i)][gens R];
     polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
     sum(exponents polys#i, t->W_(i,t)*AR_(t));
-    PS = polySystem transpose matrix {polysP};
-    last solveFamily PS
+    genericPS := polySystem transpose matrix {polysP};
+    (sys,sols):=solveFamily genericPS;
+    track(polySystem sys,PS,sols)
 )
 
 -- IN: parametric Polysystem OUT: a sequence (random system, its solutions)
@@ -514,8 +515,7 @@ solveFamily = method(Options=>{
 	EdgesSaturated => false})
 solveFamily PolySystem := o -> PS -> (
     N := first monodromySolve(PS,o);
-    sols := track(PS,polySystem N.SpecializedSystem,points N.PartialSols);
-    (N.SpecializedSystem, sols)
+    (N.SpecializedSystem, points N.PartialSols)
     )
 
 

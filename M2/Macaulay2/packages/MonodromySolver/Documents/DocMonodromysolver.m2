@@ -14,22 +14,14 @@ doc ///
 		    	It includes several blackbox functions based on these methods.
 		Code
 		        UL {
-	   		    TO monodromySolve,
+	   		    TO sparseMonodromySolve,
 			    TO solveFamily,
-	   		    TO sparseMonodromySolve
+	   		    TO monodromySolve,
+			    TO dynamicFlowerSolve
 	   	   	    } 
 		Text
-			The most basic interface is provided by the method 
-			"sparseMonodromySolve," which generates loops in the sparsest linear parameter space compatible with the input system.
-		Example
-		    	setRandomSeed 0
-		    	R=CC[x,y,z]
-    	    	    	F=random(3,R)
-    	    	    	P=sum apply(gens R,g->diff(g,F)*random CC)
-                        sparseMonodromySolve polySystem {F,P,random(1,R)-1}			    
-		Text
-		        The number of continuation steps may be further reduced if the system belongs to a more structured 
-			class of linearly-parametrized systems. The example below is the 5-variable Reimer system from the Posso test
+			The most basic interface is provided by the method @TO "sparseMonodromySolve" @. The other solvers currently handle
+			linearly parametrized families. The family in the example below is the 5-variable Reimer system from the Posso test
 			suite: the generic solution count is 144, while the Bezout number and mixed volume are both 720.
 		Example
     	    	    	setRandomSeed 0
@@ -39,7 +31,46 @@ doc ///
 			first N.SpecializedSystem -- (the first polynomial of) a randomly generated system in the family defined by P
 			first N.PartialSols -- a solution to N.SpecializedSystem
 			npaths -- total number of paths tracked in call to monodromySolver
+		Text
+		    	A specific system in this family may be solved by passing N.SpecializedSystem and N.PartialSols to the track function.
+		Text
+		    	Each solver works by assembling randomly generated systems within a @TO HomotopyGraph@ and tracking paths between
+			them. They are also equipped with a number of options, which may be useful for speeding up computation or 
+			increasing the probability of success.
 	///
+
+doc ///
+    Key
+    	"sparseMonodromySolve"
+    Headline
+    	an "out of the box" polynomial system solver
+    Usage
+        sparseMonodromySolve PS
+    Description
+    	Text
+	    Blackbox monodromy solver for a square polynomial system without parameters.
+	    The example below finds all six intersection of a generic cubic with its quadratic polar curve.
+	Example
+        	setRandomSeed 0;
+		R=CC[x,y,z];
+		F=random(3,R);
+		P=sum apply(gens R,g->diff(g,F)*random CC);
+		sparseMonodromySolve polySystem {F,P,random(1,R)-1}
+	Text
+	    For systems with dense support such as the above, the number of paths tracked is generally not optimal, though timings may 
+	    compare favorably.
+    ///
+
+doc ///
+    Key
+    	"solveFamily"
+    Headline
+
+    Description
+    	Text
+	Example
+
+    ///
 
 doc ///
 	Key

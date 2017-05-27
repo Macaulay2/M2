@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.9.2.1", 
+    	Version => "1.1", 
     	Date => "Nov 2016",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
@@ -13,7 +13,7 @@ newPackage(
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
     	Headline => "Solving polynomial systems via monodromy",
-	PackageImports => {"PHCpack"},
+	PackageImports => {"PHCpack","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => false,		
