@@ -1341,7 +1341,8 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	      --turn these points into a witness set
     	      else (
 		  ws = witnessSet(ideal(1),N,ptsInWS);
-		  ws.Equations=F
+		  ws.Equations=F;
+		  ws.IsIrreducible=true
 	        );
 
            -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
