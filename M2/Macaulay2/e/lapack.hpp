@@ -11,8 +11,13 @@
 #include <mpack/mlapack_mpfr.h>
 #endif
 #include <mpfr.h>
+
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */
+
+/* MES, On my mac, 10.12.4, lapack include file is at
+  /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/Headers/clapack.h
+*/
 extern "C" {
 int dgesv_(int *n,    // number of rows in A
            int *nrhs, // number of right hand sides
@@ -167,6 +172,28 @@ int dgelss_(int* rows,     // rows
   //  f. add in a routine in interface.dd
   //  g. add in a routine in m2/mutablemat.m2
   //  h. document and test QR, ReturnQR.
+  int zgeqrf_(int* m,      // #rows (input)
+              int* n,      // #columns (input)
+              double* A,   // input matrix, in row or column major order? (inout)
+              // on output: the top part of A, min(m,n) x n, is R
+              //    under that: A(i+1:m, i) is v_i
+              //    actually, vi[1:i-1] = 0, vi[i] = 1, vi[i+1:m) = A(i+1:m, i)
+              int* lda,    // leading dimension of A (>= max(1, #rows) (input)
+              double * tau, // scalar factors of elementary reflectors (output), size: min(m,n).
+              double * work, // 
+              int * lwork,  // size of workspace? 
+              int * info);  // error info: ==0: successful, ==-i, i-th argument had illegal value
+  int zungqr_(int* m, // #rows m >= 0
+              int* n, // #cols of Q, m >= n >= 0
+              int* k, // number of elementary reflectors (n >= k >= 0)
+              double * A, // on input: i-th column contains the v_i defining the i-th reflector
+                          // on output: contains the m by n matrix Q.
+              int* lda, // input. 
+              double * tau, // input, 
+              double * work, // workspace, size 'lwork'.  optimally, lwork >= n * nb, where nb is optimal block size.
+              int* lwork, // dimension of 'work'
+              int* info);
+
 #if 0  
   int dormqr_(char *__side,
               char *__trans,
@@ -510,6 +537,7 @@ class Lapack {
 
   static bool least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
 
+  static bool QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR);
 
   // should we dump the following.... ?
 #ifdef HAVE_MPACK
