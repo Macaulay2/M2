@@ -521,7 +521,7 @@ beginDocumentation()
 load "./NumericalAlgebraicGeometry/doc.m2";
 
 undocumented {
-    Field, "DoublePrecision", 
+    Field, 
     GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
     (endGameCauchy,GateHomotopy,Number,Point),
@@ -534,7 +534,6 @@ undocumented {
 (specialize,GateParameterHomotopy,MutableMatrix),
 [gateHomotopy,Software],
 [trackHomotopy,Software],
-[setDefault,Precision],
 [gateHomotopy,Parameters],
 [gateHomotopy,Strategy],
     }
