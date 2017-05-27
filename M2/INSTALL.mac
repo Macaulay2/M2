@@ -6,17 +6,16 @@ set -e
 : 'remember to install Xcode command line tools with "Software Update" or by running the command "xcode-select --install"'
 brew tap homebrew/versions
 brew tap homebrew/science
-brew tap homebrew/homebrew-x11
 brew update
 brew upgrade; stty -onlcr -echo
-brew install --build-bottle gcc49 pkg-config autoconf automake gnu-tar libtool boost; stty -onlcr -echo
+brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost; stty -onlcr -echo
 brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz; stty -onlcr -echo
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
 make -f Makefile
 rm -rf tmp
 mkdir tmp
 cd tmp
-../configure --enable-download --enable-build-libraries="readline"
+../configure --enable-download --enable-build-libraries="readline" CC=/usr/bin/gcc CXX=/usr/bin/g++
 make IgnoreExampleErrors=false
 # Local Variables:
 # compile-command: "sh -x ./INSTALL.mac "
