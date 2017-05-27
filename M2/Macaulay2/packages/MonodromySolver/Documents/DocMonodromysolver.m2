@@ -9,7 +9,17 @@ doc ///
 			The main methods implemented in this package find solutions to polynomial systems of equations over the 
 			complex numbers. As described in @HREF("https://arxiv.org/abs/1609.08722","\"Solving polynomial systems
 			via homotopy continuation and monodromy\" (2016)")@, these methods pair numerical homotopy continuation with the 
-			transitive monodromy action of a suitable covering map. The most basic interface is provided by the method 
+			transitive monodromy action of a suitable covering map.
+		Text
+		    	It includes several blackbox functions based on these methods.
+		Code
+		        UL {
+	   		    TO monodromySolve,
+			    TO solveFamily,
+	   		    TO sparseMonodromySolve
+	   	   	    } 
+		Text
+			The most basic interface is provided by the method 
 			"sparseMonodromySolve," which generates loops in the sparsest linear parameter space compatible with the input system.
 		Example
 		    	setRandomSeed 0
@@ -26,7 +36,7 @@ doc ///
 		    	R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]   
 			P = polySystem {-a_1+b_1*(x^2-y^2+z^2+u^2-t^2),-a_2+b_2*(x^3-y^3+z^3+u^3-t^3),-a_3+b_3*(x^4-y^4+z^4+u^4-t^4),-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}  				
 		    	(N,npaths) = monodromySolve P				
-			N.SpecializedSystem -- a randomly generated system in the family defined by P
+			first N.SpecializedSystem -- (the first polynomial of) a randomly generated system in the family defined by P
 			first N.PartialSols -- a solution to N.SpecializedSystem
 			npaths -- total number of paths tracked in call to monodromySolver
 	///
