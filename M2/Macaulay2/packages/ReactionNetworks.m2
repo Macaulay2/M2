@@ -599,13 +599,16 @@ conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     St	  
     )
 
-displayComplexes = (Rn, FF) -> (
-    R := createRing(Rn, FF);
-    A := sub(transpose matrix{toList(0..#Rn.Complexes-1)}, R);
-    B := matrix(apply(toList(0..#Rn.Complexes-1),
-	    i -> flatten entries((sub(Rn.Complexes#i, R))*(transpose matrix vars R))
+
+displayComplexes = method()
+displayComplexes ReactionNetwork := N -> (
+    R := createRing N;
+    A := sub(transpose matrix{toList(0..#N.Complexes-1)}, R);
+    B := matrix{toList(apply(0..length N.ConcentrationRates-1, i -> value(N.ConcentrationRates#i)))};
+    C := matrix(apply(toList(0..#N.Complexes-1),
+	    i -> flatten entries((sub(N.Complexes#i, R))*(transpose B))
 	    ));
-    A | B
+    A | C
 	) 
 
 TEST ///
