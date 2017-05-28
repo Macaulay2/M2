@@ -223,6 +223,7 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 )
 
 TEST ///
+setRandomSeed 0
 R = CC[a,b,c,d,e,f,g,h][A,B,C];
 polys = polySystem {
 	a*A+b*B+c*C,
@@ -241,24 +242,23 @@ assert( length V.PartialSols == count );
 (V,npaths) = monodromySolve(polys,p0,{x0});
 assert( length V.PartialSols == count );
 
+setRandomSeed 0
 --NumberOfNodes, NumberOfEdges, NumberOfRepeats
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	NumberOfNodes=>2,
 	NumberOfEdges=>4,
-	NumberOfRepeats=>5);
+	NumberOfRepeats=>11);
 assert( length V.PartialSols == count );
 
 --Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 --must also provide a Potential function.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-	SelectEdgeAndDirection=>selectRandomEdgeAndDirection,
-	NumberOfRepeats=>5);
+	SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
 	assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
-	Potential=>potentialLowerBound,
-	NumberOfRepeats=>5);
+	Potential=>potentialLowerBound);
 assert( length V.PartialSols == count );
 
 --Two different GraphInitFunctions. Also, BatchSize can be set,
@@ -268,6 +268,7 @@ assert( length V.PartialSols == count );
 	NumberOfEdges=>5);
 assert( length V.PartialSols == count );
 
+setRandomSeed 0
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	GraphInitFunction=>completeGraphInit,
 	BatchSize=>1);
@@ -286,12 +287,6 @@ assert( length V.PartialSols == count );
 	"new tracking routine"=>false,
 	Verbose=>false);
 assert( length V.PartialSols == count );
-
-(V,npaths) = monodromySolve(polys,p0,{x0},
-	"new tracking routine"=>true,
-	Verbose=>true);
-assert( length V.PartialSols == count );
-
 
 --The next three tests use strict equality, as they ought to always succeed.
 --Can provide TargetSolutionCount
