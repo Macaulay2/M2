@@ -23,6 +23,8 @@ doc ///
 			The most basic interface is provided by the method @TO "sparseMonodromySolve" @. More advanced solvers can be applied to
 			linearly parametrized families. The family in the example below is the 5-variable Reimer system from the Posso test
 			suite: the generic solution count is 144, while the Bezout number and mixed volume are both 720.
+		Text
+		
 		Example
     	    	    	setRandomSeed 0
 		    	R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]   
@@ -32,7 +34,7 @@ doc ///
 			first N.PartialSols -- a solution to N.SpecializedSystem
 			npaths -- total number of paths tracked in call to monodromySolve
 		Text
-		    	A specific system in this family may be solved by passing N.SpecializedSystem and N.PartialSols to the track function.
+
 		Text
 		    	Each solver works by assembling randomly generated systems within a @TO HomotopyGraph@ and tracking paths between
 			them. They are also equipped with a number of options, which may be useful for speeding up computation or 
@@ -40,7 +42,7 @@ doc ///
 		Text
 		    	In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
 			for instance, in cases where there are equations without parameters. In such a case, the user may find a seed pair
-			themselves and pass the result along with the parametric system as the arguments to the solver.
+			themselves (see @TO (monodromySolve, PolySystem, Point, List) @ for an example.)
 	///
 
 doc ///
@@ -61,6 +63,8 @@ doc ///
     	Text
 	    Blackbox monodromy solver for a square polynomial system without parameters.
 	    The example below finds all six intersection of a generic cubic with its quadratic polar curve.
+	Text
+	
 	Example
         	setRandomSeed 0;
 		R=CC[x,y,z];
@@ -99,39 +103,63 @@ doc ///
     ///
 
 doc ///
-	Key
+    	Key
 		monodromySolve
-		(monodromySolve, PolySystem)
+    	Description
+		Code
+		    	  HEADER3 "Ways to use:",
+		     	  UL {
+    	    	    	    TO (monodromySolve, PolySystem, Point, List),			 
+			    TO (monodromySolve, PolySystem)
+			    }
+       ///	   
+
+doc ///
+	Key
 		(monodromySolve, PolySystem, Point, List)
-	Headline
-		solving system of equations by using monodromy loops
 	Usage
-	    	
+	    	(N, npaths) = monodromySolve(PS,p0,L)
+	Inputs
+	    	PS:PolySystem
+		    with parametric coefficients
+		p0:Point
+		    representing a parametrized system
+		L:List
+		    containing solutions associated to p0, each represented as a @TO Point @.
+	Outputs
+	    	N:HomotopyNode
+		npaths:ZZ
+		    reporting the number of paths tracked.
+	Description
+	    	Text
+		        Most solvers rely on the manual seeding function @TO createSeedPair @. The example below demonstrates how one might
+			seed manually when some equations don't have parameters---ie. the projection map onto the variables is non-dominant.
+		Example
+		    	setRandomSeed 0;
+			S = CC[a,b,c];
+			R = S[x,w];
+			(h, f) = (a*x+b*w+c, 3*x^2 - w + 1);
+			x0 = point {{ii_CC,-2}}; -- clearly a zero of f
+			l = apply(2,i->random CC);
+			p0 = point({append(l,- sum apply(l, x0.Coordinates,(i,x)->i*x))});
+			(N, npaths) = monodromySolve(polySystem {h,f},p0,{x0},NumberOfNodes=>3);		
+        ///		
+
+doc ///
+	Key
+		(monodromySolve, PolySystem)
 	Description
 		Text
-			This is the main function used to solve the polynomial system
-			by using homotopy continuation and monodromy loops. 
-		Text
-			Set the polynomial ring and the system of polynomials. 
+		        This blackbox solver is similar in usage to @TO sparseMonodromySolve @, but with "technical" output.
 		Example
 			R = CC[a,b,c,d][A,B]
 			polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
-		Text
-			Create the "seed" used to initiate the homotopy process.
-			This function uses a seed solution to the generic system, which is then 
-			traced via linear homotopies to obtain all solutions of the system.  
-		Example
-			(p0,x0) := createSeedPair polys
-		Text
-			Below is the output of the main function, which displays the number of
-			paths followed to obtain the solutions. To view the solutions
-			use the last command displayed. 
 		Example    
-			(V,npaths) = monodromySolve(polys,p0,{x0})
-			points V.PartialSols
+		    	setRandomSeed 0;
+    	    	    	(V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
 	SeeAlso
 	    	"MonodromySolverOptions"
-		"createSeedPair"
+		"(monodromySolve, PolySystem, Point, List)"
 		"flowerGraphInit"
 		"completeGraphInit"
 	/// 
@@ -414,59 +442,6 @@ doc ///
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
 			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
-	///
-
-doc ///
-	Key
-		AugmentGraphFunction
-	Headline
-		specify a function to be used to augment the HomotopyGraph
-	Description
-		Text
-			This is an option of the function monodromySolve.
-			It is possible that static graph strategies will fail to find all 
-			solutions to a polynomial system. In that eventuality, it is convenient to
-			be able to augment the graph and have the process try again. If set, this
-			function tells MonodromySolve in what way to modify the HomotopyGraph.
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
-	///
-
-doc ///
-	Key
-		AugmentNumberOfRepeats
-	Headline
-		number of times to augment the graph before termination
-	Description
-		Text
-			This optional input to monodromySolve guarantees that when a 
-			HomotopyGraph is repeatedly augmented, the process eventually terminates.
-			It is possible that after multiple augmentations and reattempts that all
-			solutions could still not have been found. In that case, 
-			AugmentNumberOfRepeats can be set to stop the number of times that the
-			process will iterate.
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1,AugmentNumberOfRepeats=>10)
-	///
-
-doc ///
-	Key
-		AugmentEdgeCount
-	Headline
-		number of edges by which to augment graph
-	Description
-		Text
-			This is an option of monodromySolve which tells the AugmentGraphFunction
-			how many edges should be used to augment the graph. This will not do
-			anything if AugmentGraphFunction is not set.
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentEdgeCount=>1)
 	///
 
 doc ///
