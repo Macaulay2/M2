@@ -514,7 +514,11 @@ solveFamily = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false})
 solveFamily PolySystem := o -> PS -> (
-    N := first monodromySolve(PS,o);
+    (point0,s0) := createSeedPair PS;
+    solveFamily(PS, point0, {s0})
+    )
+solveFamily (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+    N := first monodromySolve(PS,point0,s0,o);
     (N.SpecializedSystem, points N.PartialSols)
     )
 

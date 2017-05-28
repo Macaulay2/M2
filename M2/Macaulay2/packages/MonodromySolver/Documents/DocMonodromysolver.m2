@@ -20,7 +20,7 @@ doc ///
 			    TO dynamicFlowerSolve
 	   	   	    } 
 		Text
-			The most basic interface is provided by the method @TO "sparseMonodromySolve" @. The other solvers currently handle
+			The most basic interface is provided by the method @TO "sparseMonodromySolve" @. More advanced solvers can be applied to
 			linearly parametrized families. The family in the example below is the 5-variable Reimer system from the Posso test
 			suite: the generic solution count is 144, while the Bezout number and mixed volume are both 720.
 		Example
@@ -30,22 +30,33 @@ doc ///
 		    	(N,npaths) = monodromySolve P				
 			first N.SpecializedSystem -- (the first polynomial of) a randomly generated system in the family defined by P
 			first N.PartialSols -- a solution to N.SpecializedSystem
-			npaths -- total number of paths tracked in call to monodromySolver
+			npaths -- total number of paths tracked in call to monodromySolve
 		Text
 		    	A specific system in this family may be solved by passing N.SpecializedSystem and N.PartialSols to the track function.
 		Text
 		    	Each solver works by assembling randomly generated systems within a @TO HomotopyGraph@ and tracking paths between
 			them. They are also equipped with a number of options, which may be useful for speeding up computation or 
 			increasing the probability of success.
+		Text
+		    	In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
+			for instance, in cases where there are equations without parameters. In such a case, the user may find a seed pair
+			themselves and pass the result along with the parametric system as the arguments to the solver.
 	///
 
 doc ///
     Key
-    	"sparseMonodromySolve"
+    	sparseMonodromySolve
+	(sparseMonodromySolve, PolySystem)
     Headline
     	an "out of the box" polynomial system solver
     Usage
-        sparseMonodromySolve PS
+    	sols = sparseMonodromySolve PS
+    Inputs 
+    	PS:PolySystem
+	   whose coefficients are complex numbers
+    Outputs
+	sols:List
+	    containing solutions to sys, each represented as a @TO Point @.
     Description
     	Text
 	    Blackbox monodromy solver for a square polynomial system without parameters.
@@ -58,19 +69,106 @@ doc ///
 		sparseMonodromySolve polySystem {F,P,random(1,R)-1}
 	Text
 	    For systems with dense support such as the above, the number of paths tracked is generally not optimal, though timings may 
-	    compare favorably.
-    ///
+	    be comparable.
+        ///
 
 doc ///
     Key
-    	"solveFamily"
+        solveFamily
     Headline
-
+    	a solver for parametric families with simple ouput
+    Usage
+    	(sys,sols) = solveFamily PS
+    Inputs 
+    	PS:PolySystem
+	   whose underlying coefficient ring is defined by parameters.
+    Outputs
+    	sys:List
+	    containing the equations of a random specialization of PS.
+	sols:List
+	    containing solutions to sys, each represented as a @TO Point @.
     Description
     	Text
+	    The output of @TO monodromySolve @ is "technical." This method is intended for users uninterested in the underlying
+	    @TO HomotopyGraph @ and its satellite data.
 	Example
-
+	    R = CC[a,b,c,d,e,f][x,y];
+	    q  = a*x^2+b*y+c;
+	    l = d*x+e*y+f;
+    	    (sys, sols) = solveFamily polySystem {q,l}
     ///
+
+doc ///
+	Key
+		monodromySolve
+		(monodromySolve, PolySystem)
+		(monodromySolve, PolySystem, Point, List)
+	Headline
+		solving system of equations by using monodromy loops
+	Usage
+	    	
+	Description
+		Text
+			This is the main function used to solve the polynomial system
+			by using homotopy continuation and monodromy loops. 
+		Text
+			Set the polynomial ring and the system of polynomials. 
+		Example
+			R = CC[a,b,c,d][A,B]
+			polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
+		Text
+			Create the "seed" used to initiate the homotopy process.
+			This function uses a seed solution to the generic system, which is then 
+			traced via linear homotopies to obtain all solutions of the system.  
+		Example
+			(p0,x0) := createSeedPair polys
+		Text
+			Below is the output of the main function, which displays the number of
+			paths followed to obtain the solutions. To view the solutions
+			use the last command displayed. 
+		Example    
+			(V,npaths) = monodromySolve(polys,p0,{x0})
+			points V.PartialSols
+	SeeAlso
+	    	"MonodromySolverOptions"
+		"createSeedPair"
+		"flowerGraphInit"
+		"completeGraphInit"
+	/// 
+    
+doc ///
+    	Key
+	    	specializeSystem
+		(specializeSystem, Point, PolySystem)
+		(specializeSystem, Point, Matrix)
+	Headline
+	    	speliaze system at a point in the parameter space.///
+		
+doc ///
+    	Key
+	    	randomWeights
+		(randomWeights, ZZ)
+	Headline
+	    	Generates a random complex vector.///		
+
+    
+doc ///
+	Key
+		createSeedPair
+		(createSeedPair, PolySystem)
+		(createSeedPair, PolySystem, List)
+	Headline
+		create initial seed for the homotopy continuation
+	Description
+		Text
+			This function creates a seed by selecting generic parameter. The
+			argument p0 below is the tuple corresponding to the parameters, and 
+			x0 is the seed solution to the system with those parameters.
+		Example
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			(p0,x0) := createSeedPair polys
+	///
 
 doc ///
 	Key
@@ -111,7 +209,119 @@ doc ///
 		"selectRandomEdgeAndDirection"
 		"potentialLowerBound"
 		"potentialE"
-	/// 
+	///
+
+doc ///
+	Key
+    	    	MonodromySolverOptions
+		AugmentEdgeCount
+		[monodromySolve,AugmentEdgeCount]
+		[solveFamily,AugmentEdgeCount]
+		[sparseMonodromySolve,AugmentEdgeCount]
+		AugmentGraphFunction
+		[monodromySolve,AugmentGraphFunction]
+		[solveFamily,AugmentGraphFunction]
+		[sparseMonodromySolve,AugmentGraphFunction]
+		AugmentNumberOfRepeats
+		[monodromySolve,AugmentNumberOfRepeats]
+		[solveFamily,AugmentNumberOfRepeats]
+		[sparseMonodromySolve,AugmentNumberOfRepeats]
+		BatchSize
+		[monodromySolve,BatchSize]
+		[solveFamily,BatchSize]
+		[sparseMonodromySolve,BatchSize]
+		EdgesSaturated
+		[monodromySolve,EdgesSaturated]
+		[solveFamily,EdgesSaturated]
+		[sparseMonodromySolve,EdgesSaturated]
+		GraphInitFunction
+		[monodromySolve,GraphInitFunction]
+		[solveFamily,GraphInitFunction]
+		[sparseMonodromySolve,GraphInitFunction]
+                NumberOfEdges
+		[monodromySolve,NumberOfEdges]
+		[solveFamily,NumberOfEdges]
+		[sparseMonodromySolve,NumberOfEdges]
+		NumberOfNodes
+		[monodromySolve,NumberOfNodes]
+		[solveFamily,NumberOfNodes]
+		[sparseMonodromySolve,NumberOfNodes]
+		NumberOfRepeats
+		[monodromySolve,NumberOfRepeats]
+		[solveFamily,NumberOfRepeats]
+		[sparseMonodromySolve,NumberOfRepeats]
+		[monodromySolve,Potential]
+		[solveFamily,Potential]
+		[sparseMonodromySolve,Potential]
+		SelectEdgeAndDirection
+		[monodromySolve,SelectEdgeAndDirection]
+		[solveFamily,SelectEdgeAndDirection]
+		[sparseMonodromySolve,SelectEdgeAndDirection]
+		StoppingCriterion
+    		[dynamicFlowerSolve,StoppingCriterion]		
+		[monodromySolve,StoppingCriterion]
+    		[solveFamily,StoppingCriterion]
+    		[sparseMonodromySolve,StoppingCriterion]
+		TargetSolutionCount
+		[monodromySolve,TargetSolutionCount]
+		[solveFamily,TargetSolutionCount]
+		[sparseMonodromySolve,TargetSolutionCount]
+		[monodromySolve,Verbose]
+		[solveFamily,Verbose]
+		[sparseMonodromySolve,Verbose]	
+	Description
+		Text
+			Here are some options for the solvers. The current defaults for a given solver may be accessed like so:
+		Example
+		    	options monodromySolve
+		Code
+		    	UL {
+			    "BatchSize: maximum number of solutions tracked across an edge",
+			    "EdgesSaturated: fills correspondence tables after stopping criteria satisfied",
+			    {"GraphInitFunction: underlying graph topology (eg. complete, flower)", TO completeGraphInit},
+			    "NumberOfEdges: number of edges in underlying graph",
+			    "NumberOfNodes: number of nodes in underlying graph",
+			    "NumberOfRepeats: argument for StoppingCriterion",
+			    {"Potential: a function that assigns a number to a ", TO HomotopyEdge, " in each iteration, indicating its
+				potential for producing new solutions. Current supported potential functions are ", TO potentialE , " and ", 
+				TO potentialLowerBound},
+			    {"SelectEdgeAndDirection: currently accepts either ", TO selectBestEdgeAndDirection, " or ",
+				 TO selectRandomEdgeAndDirection, ". Note that the former also requires setting " },
+			    "StoppingCriterion: eg. stop if no progress has been made",
+			    "TargetSolutionCount: expected/desired number of solutions (overrides StoppingCriterion)",
+			    "Verbose: reports progress in each iteration"
+			    }
+	///
+
+doc ///
+	Key
+    	    	HomotopyNode
+		Edges
+		PartialSols
+		SpecializedSystem
+    	///
+	
+
+doc ///
+	Key
+    	    	HomotopyGraph
+		Family
+		Graph
+		Potential
+    	///
+	
+doc ///
+	Key
+	    	HomotopyEdge
+		Correspondence12
+		Correspondence21
+		gamma1
+		gamma2
+		Node1
+		Node2
+		Potential12
+		Potential21
+    	///		
 
 
 doc ///
@@ -134,222 +344,6 @@ doc ///
 		"potentialE"
 	///
 
-
-
-doc ///
-
-	Key
-		potentialE
-	Headline
-		the potential which is equal to the expected number of new points obtained by tracking one point from the other
-	Description
-		Text
-			This is an option for the Potential option for @TO "monodromySolve" @ when we use
-			@TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
-			computes the expected number of new points obtained by tracking points. The expected value
-			is computed by the ratio of unmatched points and the difference between the total solution count and
-			the number of the known points.
-		Example
-		        R = CC[a,b,c,d,e,f,g,h][x,y,z];
-			polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
-		Text
-			In here, we need the target number of solutions, and we will use the mixed volume for that.
-		Example
-		        (p0,x0) := createSeedPair polys
-		Text
-		        We will comput the mixed volume to find the number of solution counts.
-		Example
-			mixedVolume = computeMixedVolume specializeSystem(p0,polys)
-			monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
-	SeeAlso
-		"selectBestEdgeAndDirection"
-		"potentialLowerBound"
-		"computeMixedVolume"
-	/// 
-
-
-
-doc ///
-	Key
-		completeGraphInit
-	Headline
-		solve via monodromy by using complete graph.
-	Description
-		Text
-			This is an option for the function monodromySolve which uses a complete graph.
-			For instance, the user can choose to have 4 vertices and 2 edges connecting
-			each pair of vertices. Then the homotopy will run on the complete graph
-			on 4 vertices, where each edge is doubled. 
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,GraphInitFunction => completeGraphInit)	
-	/// 
-
-doc ///
-  Key 		
-    [monodromySolve,Verbose]
-  Headline
-    If the value is true, reports progress./// 
-    
-doc ///
-  Key 		
-    [monodromySolve,TargetSolutionCount]
-  Headline
-    Number of solutions to the polynomial system to be found./// 
-    
-doc ///
-  Key 		
-    [monodromySolve,StoppingCriterion]
-  Headline
-    Stopping criterion for the algorithm./// 
-    
-doc ///
-  Key 		
-    [monodromySolve,SelectEdgeAndDirection]
-  Headline
-    Select edge and direction for homotopy./// 
-
-doc ///
-  Key 		
-    [monodromySolve,Potential]
-  Headline
-    Specify type of potential function for selection of edge in homotopy./// 
-    
-doc ///
-  Key 		
-    [monodromySolve,NumberOfEdges]
-  Headline
-    Specify the number of edges in the HomotopyGraph./// 
-
-doc ///
-  Key 		
-    [monodromySolve,NumberOfNodes]
-  Headline
-    Specify the number of nodes in the HomotopyGraph./// 
-    
-doc ///
-  Key 		
-    [monodromySolve,NumberOfRepeats]
-  Headline
-    Number of repeats for the output before termination./// 
-    
-doc ///
-  Key 		
-    [monodromySolve,BatchSize]
-  Headline
-    Changes the number of paths tracked at once.///   
-    
-doc ///
-    Key 
-    	[monodromySolve, GraphInitFunction]
-    Headline
-    	Type of initial graph: flowerGraphInit or completeGraphInit.///  
-    
-doc ///
-    Key 
-    	[monodromySolve, AugmentGraphFunction]
-    Headline
-    	Specify a function to be used to augment the HomotopyGraph./// 
-	
-doc ///
-    Key 
-    	[monodromySolve, AugmentNodeCount]
-    Headline
-    	Number of nodes by which to augment graph./// 	 
-	
-doc ///
-    Key 
-    	[monodromySolve, AugmentEdgeCount]
-    Headline
-    	Number of edges by which to augment graph./// 
-	
-doc ///
-    Key 
-    	[monodromySolve, AugmentNumberOfRepeats]
-    Headline
-    	Number of times to augment the graph before termination./// 	
-
-doc ///
-	Key
-		monodromySolve
-		BatchSize
-		GraphInitFunction
-		SelectEdgeAndDirection
-		StoppingCriterion
-		TargetSolutionCount
-		NumberOfEdges
-		NumberOfNodes
-		NumberOfRepeats
-		(monodromySolve, PolySystem)
-		(monodromySolve, PolySystem, Point, List)
-	Headline
-		solving system of equations by using monodromy loops
-	Description
-		Text
-			This is the main function used to solve the polynomial system
-			by using homotopy continuation and monodromy loops. 
-			--For examples on how to use the options see @TO "Examples" @.
-		Text
-			Set the polynomial ring and the system of polynomials. 
-		Example
-			R = CC[a,b,c,d][A,B]
-			polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
-		Text
-			Create the "seed" used to initiate the homotopy process.
-			This function uses a seed solution to the generic system, which is then 
-			traced via linear homotopies to obtain all solutions of the system.  
-		Example
-			(p0,x0) := createSeedPair polys
-		Text
-			Below is the output of the main function, which displays the number of
-			paths followed to obtain the solutions. To view the solutions
-			use the last command displayed. 
-		Example    
-			(V,npaths) = monodromySolve(polys,p0,{x0})
-			points V.PartialSols
-	SeeAlso
-		"createSeedPair"
-		"flowerGraphInit"
-		"completeGraphInit"
-	/// 
-    
-doc ///
-    	Key
-	    	specializeSystem
-		(specializeSystem, Point, PolySystem)
-		(specializeSystem, Point, Matrix)
-	Headline
-	    	speliaze system at a point in the parameter space.///
-		
-doc ///
-    	Key
-	    	randomWeights
-		(randomWeights, ZZ)
-	Headline
-	    	Generates a random complex vector.///		
-
-    
-doc ///
-	Key
-		createSeedPair
-		(createSeedPair, PolySystem)
-		(createSeedPair, PolySystem, List)
-	Headline
-		create initial seed for the homotopy continuation
-	Description
-		Text
-			This function creates a seed by selecting generic parameter. The
-			argument p0 below is the tuple corresponding to the parameters, and 
-			x0 is the seed solution to the system with those parameters.
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			(p0,x0) := createSeedPair polys
-	///
-    
-    
-    
 doc ///
 	Key
 		flowerGraphInit
@@ -541,27 +535,6 @@ doc ///
 	(appendPoints, PointArray, List)
     Headline
     	append a list of points at the end of a PointArray///	
-			
-doc ///
-    Key
-    	HomotopyGraph
-	Vertices
-	Edges
-	Family
-    Headline
-        a graph organizing homotopies for monodromy computation
-///
- 
-doc ///
-    Key
-    	HomotopyEdge
-	gamma1
-	gamma2
-	Correspondence12
-	Correspondence21
-    Headline
-    	stores gamma values for the homotopy and correspondences between two nodes
-///   
 
 doc ///
     Key
@@ -573,6 +546,56 @@ doc ///
     Headline
     	an array of points (labelled with 0,1,...) to which one may append new elements
 ///
+
+ 
+doc ///
+	Key
+		completeGraphInit
+	Headline
+		solve via monodromy by using complete graph.
+	Description
+		Text
+		        This is an option for the function monodromySolve which uses a complete graph.
+			For instance, the user can choose to have 4 vertices and 2 edges connecting
+			each pair of vertices. Then the homotopy will run on the complete graph
+			on 4 vertices, where each edge is doubled. 
+		Example
+			R = CC[a,b,c,d][x,y];
+			polys = polySystem {a*x+b*y^2,c*x*y+d};
+			monodromySolve(polys,GraphInitFunction => completeGraphInit)	
+    			///
+
+
+
+doc ///
+	Key
+		potentialE
+	Headline
+		the potential which is equal to the expected number of new points obtained by tracking one point from the other
+	Description
+		Text
+			This is an option for the Potential option for @TO "monodromySolve" @ when we use
+			@TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
+			computes the expected number of new points obtained by tracking points. The expected value
+			is computed by the ratio of unmatched points and the difference between the total solution count and
+			the number of the known points.
+		Example
+		        R = CC[a,b,c,d,e,f,g,h][x,y,z];
+			polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
+		Text
+			In here, we need the target number of solutions, and we will use the mixed volume for that.
+		Example
+		        (p0,x0) := createSeedPair polys
+		Text
+		        We will comput the mixed volume to find the number of solution counts.
+		Example
+			mixedVolume = computeMixedVolume specializeSystem(p0,polys)
+			monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
+	SeeAlso
+		"selectBestEdgeAndDirection"
+		"potentialLowerBound"
+		"computeMixedVolume"
+	///  
     	
 {* doc ///
     Key
