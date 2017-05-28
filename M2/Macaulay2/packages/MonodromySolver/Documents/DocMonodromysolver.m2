@@ -1,3 +1,9 @@
+-- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
+undocumented {Vertices, (homotopyGraph,PolySystem), homotopyGraph, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+    Edges, SpecializedSystem, Correspondence21, Correspondence12, Potential21, Potential, Potential12, Family, PartialSols, gamma1, gamma2, Graph, Node1,  Node2,  HomotopyEdge, HomotopyNode, HomotopyGraph}
+-- undocument tags
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function), [monodromySolve,AugmentNodeCount],  [solveFamily,AugmentNodeCount], [sparseMonodromySolve,AugmentNodeCount], 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount], [homotopyGraph,Family]}
+
 doc ///
 	Key
 		MonodromySolver 
@@ -79,6 +85,8 @@ doc ///
 doc ///
     Key
         solveFamily
+    	(solveFamily,PolySystem)
+	(solveFamily,PolySystem,Point,List)
     Headline
     	a solver for parametric families with simple ouput
     Usage
@@ -117,6 +125,7 @@ doc ///
 doc ///
 	Key
 		(monodromySolve, PolySystem, Point, List)
+		"(monodromySolve, PolySystem, Point, List)"
 	Usage
 	    	(N, npaths) = monodromySolve(PS,p0,L)
 	Inputs
@@ -351,6 +360,7 @@ doc ///
 			    }
 	///
 
+{* ---------- GHOSTS?
 doc ///
 	Key
     	    	HomotopyNode
@@ -379,7 +389,7 @@ doc ///
 		Potential12
 		Potential21
     	///		
-
+*}
 
 doc ///
 	Key

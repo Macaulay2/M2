@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1667467916 *}
+-- -*- M2-comint -*- {* hash: -810748276 *}
 -- COMPILE TIME: Mar  1 2017, 17:44:47
 --loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
 --loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
@@ -8,105 +8,45 @@ i1 : setRandomSeed 0
 
 o1 = 0
 
-i2 : R=CC[x,y,z]
+i2 : R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]
 
 o2 = R
 
 o2 : PolynomialRing
 
-i3 : F=random(3,R)
--- warning: experimental computation over inexact field begun
---          results not reliable (one warning given per session)
+i3 : P = polySystem {-a_1+b_1*(x^2-y^2+z^2+u^2-t^2),-a_2+b_2*(x^3-y^3+z^3+u^3-t^3),-a_3+b_3*(x^4-y^4+z^4+u^4-t^4),-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}
 
-                            3                            2                
-o3 = (.781262 - .624203*ii)x  + (- .462954 - .886382*ii)x y + (- .670948 -
+o3 = P
+
+o3 : PolySystem
+
+i4 : (N,npaths) = monodromySolve P
+
+o4 = (HomotopyNode{...5...}, 576)
+
+o4 : Sequence
+
+i5 : first N.SpecializedSystem -- (the first polynomial of) a randomly generated system in the family defined by P
+
+                              2                          2               
+o5 = (- .272372 - .962192*ii)x  + (.272372 + .962192*ii)y  + (- .272372 -
      ------------------------------------------------------------------------
-                   2                          3                            2 
-     .741504*ii)x*y  + (.778029 - .628229*ii)y  + (- .272832 + .962062*ii)x z
+                 2                          2                            2
+     .962192*ii)z  + (.272372 + .962192*ii)t  + (- .272372 - .962192*ii)u  -
      ------------------------------------------------------------------------
-                                                          2                
-     + (.9868 + .161945*ii)x*y*z + (.118767 + .992922*ii)y z + (- .219207 -
-     ------------------------------------------------------------------------
-                   2                              2             
-     .975678*ii)x*z  + (- .971549 + .236839*ii)y*z  + (.157598 -
-     ------------------------------------------------------------------------
-                 3
-     .987503*ii)z
+     .841103 + .540875*ii
 
-o3 : R
+o5 : CC  [x, y, z, t, u]
+       53
 
-i4 : P=sum apply(gens R,g->diff(g,F)*random CC)
+i6 : first N.PartialSols -- a solution to N.SpecializedSystem
 
-                            2                                           
-o4 = (1.27972 - 2.17943*ii)x  + (.964676 - 1.04591*ii)x*y + (- .500957 +
-     ------------------------------------------------------------------------
-                 2                                                          
-     3.56969*ii)y  + (.527086 + .814973*ii)x*z + (- 2.94832 - 1.41706*ii)y*z
-     ------------------------------------------------------------------------
-                            2
-     + (1.2095 - 4.1219*ii)z
+o6 = {.851837+.102702*ii, -.312865+.878644*ii, .053494+.506022*ii, -.606275-.104337*ii, -.208647-.72906*ii}
 
-o4 : R
+o6 : Point
 
-i5 : sparseMonodromySolve polySystem {F,P,random(1,R)-1}
+i7 : npaths -- total number of paths tracked in call to monodromySolve
 
-o5 = {{1.05949+.041039*ii, .0670603-.379602*ii, -.075592-.559328*ii},
-     ------------------------------------------------------------------------
-     {.281631+.503608*ii, -.429425+.180502*ii, .193603-.522153*ii},
-     ------------------------------------------------------------------------
-     {.686052+.275226*ii, -1.03878+.697281*ii, -.716358+.349507*ii},
-     ------------------------------------------------------------------------
-     {-.112793-.597815*ii, -.804568-.132409*ii, .343788+.238172*ii},
-     ------------------------------------------------------------------------
-     {.436736-.110687*ii, -.0652222+.112664*ii, .48866-.0008521*ii},
-     ------------------------------------------------------------------------
-     {.360601-.0391366*ii, -.338696+.240294*ii, .296029+.07517*ii}}
+o7 = 576
 
-o5 : List
-
-i6 : setRandomSeed 0
-
-o6 = 0
-
-i7 : R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]
-
-o7 = R
-
-o7 : PolynomialRing
-
-i8 : P = polySystem {-a_1+b_1*(x^2-y^2+z^2+u^2-t^2),-a_2+b_2*(x^3-y^3+z^3+u^3-t^3),-a_3+b_3*(x^4-y^4+z^4+u^4-t^4),-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}
-
-o8 = P
-
-o8 : PolySystem
-
-i9 : (N,npaths) = monodromySolve P
-
-o9 = (HomotopyNode{...5...}, 576)
-
-o9 : Sequence
-
-i10 : first N.SpecializedSystem -- a randomly generated system in the family defined by P
-
-                               2                          2               
-o10 = (- .272372 - .962192*ii)x  + (.272372 + .962192*ii)y  + (- .272372 -
-      -----------------------------------------------------------------------
-                  2                          2                            2
-      .962192*ii)z  + (.272372 + .962192*ii)t  + (- .272372 - .962192*ii)u  -
-      -----------------------------------------------------------------------
-      .841103 + .540875*ii
-
-o10 : CC  [x, y, z, t, u]
-        53
-
-i11 : first N.PartialSols -- a solution to N.SpecializedSystem
-
-o11 = {.851837+.102702*ii, -.312865+.878644*ii, .053494+.506022*ii, -.606275-.104337*ii, -.208647-.72906*ii}
-
-o11 : Point
-
-i12 : npaths -- total number of paths tracked in call to monodromySolver
-
-o12 = 576
-
-i13 : 
+i8 : 
