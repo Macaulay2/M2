@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: -699724426 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,a,t]; -- include the path variable in the ring
 
@@ -18,20 +19,20 @@ o6 : List
 
 i7 : peek S0_0
 
-o7 = Point{AccuracyEst => 2.63837e-12        }
-           AccuracyEstInternal => 8.58761e-13
-           ConditionNumber => 5.31051
+o7 = Point{AccuracyEst => 8.76697e-13        }
+           AccuracyEstInternal => 1.96593e-13
+           ConditionNumber => 2.67757
            Coordinates => {1.41421}
            CycleNumber => 1
            FinalTValue => .0015625
-           FunctionResidual => 7.1089e-16
+           FunctionResidual => 1.24127e-16
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 7.61044e-17
+           NewtonResidual => 9.86703e-17
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
-           SolutionNumber => 1
+           SolutionNumber => 0
 
 i8 : R=CC[x,y,t,a]; -- include the path variable in the ring
 
