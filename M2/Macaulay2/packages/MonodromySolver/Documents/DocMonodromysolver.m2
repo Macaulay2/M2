@@ -1,6 +1,6 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
-undocumented {Vertices, (homotopyGraph,PolySystem), homotopyGraph, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
-    Edges, SpecializedSystem, Correspondence21, Correspondence12, Potential21, Potential, Potential12, Family, PartialSols, gamma1, gamma2, Graph, Node1,  Node2,  HomotopyEdge, HomotopyNode, HomotopyGraph}
+undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+    Edges, SpecializedSystem, Correspondence21, Correspondence12, Potential21, Potential12, Family, PartialSols, gamma1, gamma2, Graph, Node1,  Node2,  HomotopyEdge, HomotopyNode, HomotopyGraph}
 -- undocument tags
 undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function), [monodromySolve,AugmentNodeCount],  [solveFamily,AugmentNodeCount], [sparseMonodromySolve,AugmentNodeCount], 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount], [homotopyGraph,Family]}
 
@@ -514,13 +514,6 @@ doc ///
 
 doc ///
     Key
-    	pointArray
-    Headline
-    	Constructor for PointArray
-	///
-
-doc ///
-    Key
     	makeRandomizedSelect
     Headline
     	randomly chooses SelectEdgeAndDirection option///	
@@ -530,9 +523,10 @@ doc ///
     	makeBatchPotential	  
     Headline
 	batch sensitive potentialE
-    Description Text
-    	This is a more general @TO potentialE @, which accounts for the fact that the expected number of points discovered along an edge 
-	depends on the @TO BatchSize @.
+    Description 
+        Text
+    	    This is a more general @TO potentialE @, which accounts for the fact that the expected number of points discovered along an edge 
+	    depends on the @TO BatchSize @.
     SeeAlso
     	"potentialE"
 	"MonodromySolverOptions"
@@ -577,20 +571,6 @@ doc ///
 	(appendPoints, PointArray, List)
     Headline
     	append a list of points at the end of a PointArray///	
-
-doc ///
-    Key
-    	PointArray
-    	(indices, PointArray)
-	(length, PointArray)
-	(member, Point, PointArray)
-	(net, PointArray)
-    Headline
-    	This is an internal data structure used by the solvers. Each homotopy node V carries a PointArray accessed by V.PartialSols,
-	which represents thus-far discovered solutions to the associated polynomial system. A fingerprinting scheme is used to optimize
-	point comparisons. 
-///
-
  
 doc ///
 	Key
