@@ -28,13 +28,13 @@ NORMFLAGS =
 ####
 
 CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . $(CXXFLAGS0)
-STRIPFILES = normaliz
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
 		RANLIB="@RANLIB@" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 PROGRAMS = source/normaliz
+STRIPFILES = source/normaliz
 LICENSEFILES = source/COPYING
 CHECKTARGET = .
 include ../Makefile.library
