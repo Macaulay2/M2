@@ -481,6 +481,11 @@ sparseMonodromySolve = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false})
 sparseMonodromySolve PolySystem := o ->  PS -> (
+{*    mutableOptions := new MutableHashTable from o;
+    if mutableOptions.TargetSolutionCount =!= null then
+        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+    if mutableOptions.StoppingCriterion === null then 
+        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;*}
     polys := flatten entries PS.PolyMap;
     ind := flatten apply(#polys,i-> -- indices for parameters
 	apply(exponents polys#i, t->(i,t))
@@ -491,7 +496,7 @@ sparseMonodromySolve PolySystem := o ->  PS -> (
     polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
     sum(exponents polys#i, t->W_(i,t)*AR_(t));
     genericPS := polySystem transpose matrix {polysP};
-    (sys,sols):=solveFamily genericPS;
+    (sys,sols):=solveFamily(genericPS,o);--new OptionTable from (new HashTable from mutableOptions));
     track(polySystem sys,PS,sols)
 )
 
@@ -515,10 +520,15 @@ solveFamily = method(Options=>{
 	EdgesSaturated => false})
 solveFamily PolySystem := o -> PS -> (
     (point0,s0) := createSeedPair PS;
-    solveFamily(PS, point0, {s0})
+    solveFamily(PS, point0, {s0},o)
     )
 solveFamily (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-    N := first monodromySolve(PS,point0,s0,o);
+    mutableOptions := new MutableHashTable from o;
+    if mutableOptions.TargetSolutionCount =!= null then
+        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+    if mutableOptions.StoppingCriterion === null then 
+        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
+    N := first monodromySolve(PS,point0,s0,new OptionTable from (new HashTable from mutableOptions));
     (N.SpecializedSystem, points N.PartialSols)
     )
 

@@ -154,14 +154,9 @@ doc ///
 		Example
 			R = CC[a,b,c,d][A,B]
 			polys = polySystem {A^2*a+B^2*b,A*B*c+d}  
-		Example    
 		    	setRandomSeed 0;
     	    	    	(V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
-	SeeAlso
-	    	"MonodromySolverOptions"
-		"(monodromySolve, PolySystem, Point, List)"
-		"flowerGraphInit"
-		"completeGraphInit"
+			peek V
 	/// 
     
 doc ///
@@ -169,15 +164,34 @@ doc ///
 	    	specializeSystem
 		(specializeSystem, Point, PolySystem)
 		(specializeSystem, Point, Matrix)
+	Usage
+    	    	equations = specializeSystem(p0, PS)
+	Inputs
+	    	p0:Point
+		    in parameter space
+	        PS:PolySystem
+		    with parameters as coefficients
+	Outputs
+	    	equations:List
+		    containing equtaions of system with parameters specialized at p0
 	Headline
-	    	speliaze system at a point in the parameter space.///
+	    	specialize parametric system at a point in the parameter space.///
 		
 doc ///
     	Key
 	    	randomWeights
 		(randomWeights, ZZ)
 	Headline
-	    	Generates a random complex vector.///		
+	    	generates a random complex vector.
+	Usage 
+	    	v = randomWeights n
+	Inputs
+	    	n:ZZ
+	Outputs
+	    	v:Matrix
+	SeeAlso
+	        "RandomPointFunction"
+		///		
 
     
 doc ///
@@ -187,15 +201,31 @@ doc ///
 		(createSeedPair, PolySystem, List)
 	Headline
 		create initial seed for the homotopy continuation
+	Usage
+	    	(p0,x0) = createSeedPair PS
+	Inputs
+	    	PS:PolySystem
+		    a parametric polynomial system
+	Outputs
+	    	p0:Point
+		    representing a random system
+		x0:Point
+		    representing a solution to the system defined by p0
 	Description
 		Text
-			This function creates a seed by selecting generic parameter. The
-			argument p0 below is the tuple corresponding to the parameters, and 
-			x0 is the seed solution to the system with those parameters.
+		    	The "seed pair" appearing in the output of this function is used to initialize the @TO HomotopyGraph @ in blackbox
+			solvers. To diagnose failures for the parametric solvers, it may be helpful to check that seeding worked
+			as in the example provided below.
 		Example
+		    	setRandomSeed 0
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			(p0,x0) := createSeedPair polys
+			(p0,x0) := createSeedPair polys;
+			polys0=specializeSystem(p0,polys);
+			-- line below checks that the system defined by p0 nearly vanishes at x0
+			apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
+       SeeAlso
+               "(monodromySolve,PolySystem,Point,List)"
 	///
 
 doc ///
@@ -205,17 +235,13 @@ doc ///
 		random selection of edge and direction for homotopy 
 	Description
 		Text
-			This is an option for the function @TO "monodromySolve" @. By default, the option
-			SelectEdgeAndDirection is set to selectRandomEdgeAndDirection.
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,SelectEdgeAndDirection=>selectRandomEdgeAndDirection)
-		Text
-			Note that in this example we have not specified the type of selection for edge and direction for the homotopy;
-			this implies that selectRandomEdgeAndDirection is used. 
+		    	This is the random edge-selection strategy for solvers. An edge is chosen uniformly at random from all edges in the
+			underlying @TO HomotopyGraph @, then its direction is chosen randomly. This is currently the default behavior for
+			all solvers.
 	SeeAlso
 		"selectBestEdgeAndDirection"
+		"HomotopyEdge"
+		"MonodromySolverOptions"
 	/// 
 
 doc ///
@@ -225,18 +251,18 @@ doc ///
 		selects edge and direction based on highest potential for obtaining new information
 	Description
 		Text
-			This is an option for the function @TO "monodromySolve" @. By default, the option
-			SelectEdgeAndDirection is set to selectRandomEdgeAndDirection; it can be changed to 
-			selectBestEdgeAndDirection as shown below. The use of selectBestEdgeAndDirection requires
-			the choice of a potential function as well. 
+		        By default, the solver option SelectEdgeAndDirection is set to selectRandomEdgeAndDirection; it may be changed to 
+			selectBestEdgeAndDirection as shown below. This will return an error unless the option @TO Potential @ is also set.
 		Example
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
+			(V,npaths) = monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
 	SeeAlso
 		"selectRandomEdgeAndDirection"
 		"potentialLowerBound"
 		"potentialE"
+		"HomotopyEdge"
+		"MonodromySolverOptions"
 	///
 
 doc ///
@@ -278,6 +304,7 @@ doc ///
 		[monodromySolve,NumberOfRepeats]
 		[solveFamily,NumberOfRepeats]
 		[sparseMonodromySolve,NumberOfRepeats]
+		Potential
 		[monodromySolve,Potential]
 		[solveFamily,Potential]
 		[sparseMonodromySolve,Potential]
@@ -304,9 +331,12 @@ doc ///
 		    	options monodromySolve
 		Code
 		    	UL {
+			    "AugmentEdgeCount: ",
+			    "AugmentGraphCount: ",
+			    "AugmentNodeCount: ",
 			    "BatchSize: maximum number of solutions tracked across an edge",
 			    "EdgesSaturated: fills correspondence tables after stopping criteria satisfied",
-			    {"GraphInitFunction: underlying graph topology (eg. complete, flower)", TO completeGraphInit},
+			    {"GraphInitFunction: the underlying graph topology, see ", TO completeGraphInit, " and ", TO flowerGraphInit},
 			    "NumberOfEdges: number of edges in underlying graph",
 			    "NumberOfNodes: number of nodes in underlying graph",
 			    "NumberOfRepeats: argument for StoppingCriterion",
@@ -335,7 +365,6 @@ doc ///
     	    	HomotopyGraph
 		Family
 		Graph
-		Potential
     	///
 	
 doc ///
@@ -366,10 +395,13 @@ doc ///
 		Example
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
+			(V, npaths) = monodromySolve(polys,SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialLowerBound)
+			G = V.Graph;
+			apply(toList G.Edges,e->e.Potential12)--potentials for all edges of a given direction
 	SeeAlso
 		"selectBestEdgeAndDirection"
 		"potentialE"
+		"HomotopyEdge"
 	///
 
 doc ///
@@ -396,14 +428,24 @@ doc ///
 		(computeMixedVolume, List)
 	Headline
 		compute mixed volume via PHCpack
+	Usage
+	    	d = computeMixedVolume polys
+	Inputs
+	    	polys:List
+		    containing polynomials
+		    
+	Outputs
+	    	d:ZZ
 	Description
 		Text
-			Computes mixed volume of a polynomial system, which is a sharp bound on the
-			number of roots.
+			Computes mixed volume of a polynomial system. For generic systems of a given support set, this is the generic
+			root count. 
 		Example
-			R = CC[x,y]
-			polys = {x+y^2,x*y+1}
-			mixedVol = computeMixedVolume polys
+    	    	    	setRandomSeed 0;
+			R = CC[x,y];
+			polys = {x+y^2,x*y+1};
+			mixedVol = computeMixedVolume polys;
+			sparseMonodromySolve(polySystem polys,TargetSolutionCount=>mixedVol,NumberOfNodes=>3)
 	///
 
 
@@ -414,7 +456,7 @@ doc ///
 		augment graph with the flower graph structure
 	Description
 		Text
-			This is a possible value of the option AugmentGraphFunction of the
+			This is a possible value of the option @TO AugmentGraphFunction @ of the
 			function monodromySolve. It will augment the graph while respecting the flower
 			graph structure, so it should be used in conjunction with flowerGraphInit. 
 			To use it, it is necessary to specify a number of nodes or
@@ -464,7 +506,8 @@ doc ///
     Key
     	pointArray
     Headline
-    	an array of labelled points, to which one may append new elements///
+    	Constructor for PointArray
+	///
 
 doc ///
     Key
@@ -476,13 +519,27 @@ doc ///
     Key
     	makeBatchPotential	  
     Headline
-	expected number of new points based on batch size///
+	batch sensitive potentialE
+    Description Text
+    	This is a more general @TO potentialE ", which accounts for the fact that the expected number of points discovered along an edge 
+	depends on the @TO BatchSize @.
+    SeeAlso
+    	"potentialE"
+	"MonodromySolverOptions"
+	///
 
 doc ///
     Key
     	homotopyGraph
     Headline
-    	creates HomotopyGraph of a polynomial system///
+    	HomotopyGraph Constructor
+    Usage
+    	G = homotopyGraph PS
+    Inputs
+    	PS:PolySystem
+    Outputs
+    	G:HomotopyGraph
+	///
 
 doc ///
     Key
@@ -519,7 +576,9 @@ doc ///
 	(member, Point, PointArray)
 	(net, PointArray)
     Headline
-    	an array of points (labelled with 0,1,...) to which one may append new elements
+    	This is an internal data structure used by the solvers. Each homotopy node V carries a PointArray accessed by V.PartialSols,
+	which represents thus-far discovered solutions to the associated polynomial system. A fingerprinting scheme is used to optimize
+	point comparisons. 
 ///
 
  
@@ -527,7 +586,7 @@ doc ///
 	Key
 		completeGraphInit
 	Headline
-		solve via monodromy by using complete graph.
+		initialize the topology of a complete graph
 	Description
 		Text
 		        This is an option for the function monodromySolve which uses a complete graph.
@@ -540,20 +599,18 @@ doc ///
 			monodromySolve(polys,GraphInitFunction => completeGraphInit)	
     			///
 
-
-
 doc ///
 	Key
 		potentialE
 	Headline
-		the potential which is equal to the expected number of new points obtained by tracking one point from the other
+		the "expected" of an edge
 	Description
 		Text
 			This is an option for the Potential option for @TO "monodromySolve" @ when we use
 			@TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
-			computes the expected number of new points obtained by tracking points. The expected value
-			is computed by the ratio of unmatched points and the difference between the total solution count and
-			the number of the known points.
+			computes the expected number of new points obtained by tracking points (under suitable randomness asumptions
+			about the permutations generated by the underlying graph.) The expected value is computed by the ratio of unmatched
+		        points and the difference between the total solution count and the number of the known points.
 		Example
 		        R = CC[a,b,c,d,e,f,g,h][x,y,z];
 			polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
@@ -570,6 +627,7 @@ doc ///
 		"selectBestEdgeAndDirection"
 		"potentialLowerBound"
 		"computeMixedVolume"
+		"Potential"
 	///  
     	
 {* doc ///
