@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- {* hash: -1723429091 *}
+
+i1 : R=QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : bWriteInputFile(storeBM2Files,
+         AffVariableGroup=>{{x,y}},
+         B'Polynomials=>{x+y-1,x^2-2},
+         NameInputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
+
+o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-26108-0/0/testInput
+
+o2 : File
+
+i3 : 
