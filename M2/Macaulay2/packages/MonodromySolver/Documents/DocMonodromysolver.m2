@@ -521,7 +521,7 @@ doc ///
     Headline
 	batch sensitive potentialE
     Description Text
-    	This is a more general @TO potentialE ", which accounts for the fact that the expected number of points discovered along an edge 
+    	This is a more general @TO potentialE @, which accounts for the fact that the expected number of points discovered along an edge 
 	depends on the @TO BatchSize @.
     SeeAlso
     	"potentialE"
