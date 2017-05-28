@@ -9,7 +9,7 @@ doc ///
      (Q,R) = QRDecomposition A
    Inputs
      A:Matrix
-       or @ofClass "MutableMatrix"@, over $RR_{53}$
+       or @ofClass MutableMatrix@, over $RR_{53}$
    Outputs
      Q:Matrix
      R:Matrix
