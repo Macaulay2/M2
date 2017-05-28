@@ -2303,6 +2303,52 @@ doc ///
    StartPoints
    StartParameters
    SubIntoCC	  
+   storeBM2Files
+   MultiplicityTol
+   SetParameterGroup
+   ReturnPoints
+   GeneralCoordinate
+   OnlyMoveParameters
+   ImageCoordinates
+   ConditionNumTol
+   ContinueLoop
+   EquivalentCoordinates
+   [bertiniImageMonodromyCollect,AffVariableGroup]
+   [bertiniUserHomotopy,AffVariableGroup]
+   [bertiniUserHomotopy,B'Configs]
+   [bertiniImageMonodromyCollect,B'Constants]
+   [bertiniUserHomotopy,B'Constants]
+   [bertiniImageMonodromyCollect,B'Functions]
+   [bertiniUserHomotopy,B'Functions]
+   [bertiniImageMonodromyCollect,ContinueLoop]
+   [bertiniImageMonodromyCollect,EquivalentCoordinates]
+   [bertiniImageMonodromyCollect,GeneralCoordinate]
+   [bertiniImageMonodromyCollect,ImageCoordinates]
+   [bertiniImageMonodromyCollect,M2Precision]
+   [bertiniUserHomotopy,M2Precision]
+   [bertiniImageMonodromyCollect,NameB'InputFile]
+   [bertiniImageMonodromyCollect,NameParameterFile]
+   [bertiniImageMonodromyCollect,NameSolutionsFile]
+   [bertiniImageMonodromyCollect,OnlyMoveParameters]
+   [bertiniUserHomotopy,OutputSyle]
+   [bertiniImageMonodromyCollect,PrintMidStatus]
+   [bertiniUserHomotopy,RandomReal]
+   [bertiniImageMonodromyCollect,ReturnPoints]
+   [makeB'InputFile,SetParameterGroup]
+   [bertiniUserHomotopy,TopDirectory]
+   [bertiniImageMonodromyCollect,B'Exe]
+   [bertiniImageMonodromyCollect,MonodromyStartParameters]
+   [bertiniImageMonodromyCollect,MonodromyStartPoints]
+   [bertiniImageMonodromyCollect,NameStartFile]
+   [bertiniImageMonodromyCollect,NumberOfLoops]
+   [bertiniImageMonodromyCollect,NumSolBound]
+   [bertiniImageMonodromyCollect,SaveData]
+   [bertiniImageMonodromyCollect,SpecifyLoops]
+   [bertiniImageMonodromyCollect,StorageFolder]
+   [bertiniImageMonodromyCollect,Verbose]
+   [bertiniUserHomotopy,HomVariableGroup]
+   [bertiniUserHomotopy,RandomComplex]
+
 
  Headline
    This option or key is for a function that is in active development. 

@@ -495,7 +495,7 @@ bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
     then allSols=importSolutionsFile(myTopDir,NameSolutionsFile=>"raw_solutions",OrderPaths=>true,M2Precision=>o.M2Precision);
     if o.OutputSyle=!="OutNone"
     then return allSols)   
-bertiniUserHomotopy(RingElement, List, List) := o -> (pathT, myPol, S1) -> bertiniUserHomotopy(pathT,{},myPol,S1)
+--bertiniUserHomotopy(RingElement, List, List) := o -> (pathT, myPol, S1) -> bertiniUserHomotopy(pathT,{},myPol,S1)
 
 
 
@@ -3372,6 +3372,11 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bPHGaloisGroup.tst.m2
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/radicalList.tst.m2")
 ///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniUserHomotopy.tst.m2")
+///
+
 
 
 ---newtst
