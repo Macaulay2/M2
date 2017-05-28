@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "2.1.2.3", 
-  Date => "May 21, 2017",
+  Date => "May 28, 2017",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -3125,8 +3125,8 @@ makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
 	if class ((o.B'NumberCoefficients)_0)===List then  theCoefs=o.B'NumberCoefficients));          
 ---------- 
     if o.B'NumberCoefficients==={} then theCoefs=for i to numberOfSections-1 list {};
-    print numberOfSections;
-    print theCoefs;
+--    print numberOfSections;
+--    print theCoefs;
     if #theCoefs=!=numberOfSections then error "The number of sets of coefficients of B'NumberCoefficients does not match the number of sections to be made. ";
     if #theHomogenization=!=#multipleVariableGroups then error "B'Homogenization does not match the number of variable groups. ";
     if class o.NameB'Slice===List and #o.NameB'Slice=!=numberOfSections then error"When NameB'Slice is a list, the number of elements should equal the number of sections being made. ";
@@ -3416,35 +3416,35 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
     if fileExists(storeFiles|o.NameStartFile)===false then error "start file does not exist in correct directory.";
     if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory.";        
 --
-    print "tt1";
+--    print "tt1";
     makeB'TraceInput(storeFiles,NumberOfPoints,NumberOfCoordinates,NameB'InputFile=>"inputTTjade");
-    print "tt2";
+--    print "tt2";
     runCount:=1;
     if o.UseStartPointsFirst===true then (
-      print "tt3";
+--      print "tt3";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       calculateB'Trace(storeFiles,NameStartFile=>"startPHjade",
 	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
       moveFile(storeFiles|"startPHjade",storeFiles|"start");      
       runCount=runCount+1);
-    print "tt4"; 
+--    print "tt4"; 
     for aParameter in o.ParameterValues do(
       writeParameterFile(storeFiles,{aParameter});
-      print "tt5Loop";
+--      print "tt5Loop";
       runBertini(IFD,NameB'InputFile=>o.NameB'InputFile,Verbose=>o.Verbose);
-      print readFile(storeFiles,"bertini_session.log",10000);
-      print "tt6Loop";
+--      print readFile(storeFiles,"bertini_session.log",10000);
+  --    print "tt6Loop";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
-      print "tt7Loop";
+    --  print "tt7Loop";
       calculateB'Trace(storeFiles,NameStartFile=>"nonsingular_solutions",--need a check to make sure we don't lose solutions
 	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
-      print "tt8Loop";
+      --print "tt8Loop";
       runCount=runCount+1;      
       moveFile(storeFiles|"startPHjade",storeFiles|"start")      
 	);
-    print "tt9";
+--    print "tt9";
     return for i from 1 to runCount-1 list ((importSolutionsFile(storeFiles,NameSolutionsFile=>"trace"|toString i))_0)    
      );
  --##########################################################################--
@@ -3583,12 +3583,12 @@ isSameSolution=(aPoint,bPoint,tolerance)->(
    
 insertInList=(setS,aPoint,theTolerances)->(
     if #setS==0 then (
-	print 0;
+--	print 0;
 	 return {aPoint}) else
     lowerBound:=0;
     upperBound:=#setS-1;
     if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
-	print "A";
+--	print "A";
 	return setS);
     if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
 	print "B";
