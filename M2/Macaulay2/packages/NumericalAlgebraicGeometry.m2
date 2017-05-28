@@ -310,19 +310,6 @@ normalize RingElement := f -> (
     promote(a,coefficientRing ring f) * f
     )
 ------------------------------------------------------
-checkCCpolynomials (List,List) := (S,T) -> (
-    n := #T;
-    if #S != n then error "expected same number of polynomials in start and target systems";
-    ST := checkCCpolynomials(S|T);
-    )
-
-toCCpolynomials = method()
-toCCpolynomials (List,ZZ) := (F,prec) -> (
-    checkCCpolynomials F;
-    R := CC_prec(monoid[gens commonRing F]);
-    apply(F,f->sub(f,R)) 
-    )    
-
 load "./NumericalAlgebraicGeometry/extraNAGtypes.m2"
 load "./NumericalAlgebraicGeometry/track.m2"
 load "./NumericalAlgebraicGeometry/refine.m2"

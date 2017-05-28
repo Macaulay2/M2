@@ -268,7 +268,6 @@ endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.
 endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
     x0 := mutableMatrix transpose {coordinates p0 | {p0.LastT}} ; 
     w := endGameCauchy(H,t'end,x0,o);
-    -- error "BREAKPOINT";
     -- if w == 0 then error "endGameCauchy: something went wrong";
     p := point {drop(first entries transpose x0,-1)};
     if w>0 then ( 

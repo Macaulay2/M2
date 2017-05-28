@@ -5,7 +5,7 @@
 ------------------------------------------------------
 satisfiesOverdeterminedSystem = method(Options=>{ResidualTolerance=>null})
 satisfiesOverdeterminedSystem (Point, List) := o -> (s,F) -> (
-    o = fillInDefaultOptions o;    
+    o = fillInDefaultOptions o; 
     norm evaluate(matrix{F},s) < o.ResidualTolerance    
     )
 
@@ -48,7 +48,6 @@ solveSystem PolySystem := List => o -> P -> (
 --     	       m = list of corresponding multiplicities	 
      o = fillInDefaultOptions o;
      local result;
-     -- F = toCCpolynomials(F,53);
      F := equations P; 
      R := ring F#0;
      v := flatten entries vars R;
@@ -82,10 +81,9 @@ solveSystem PolySystem := List => o -> P -> (
 	       );
 	  if o.PostProcess 
 	  then (
-	      plausible := select(result, p-> status p =!= Regular and status p =!= Infinity 
+	      plausible := select(result, p-> status p =!= Regular and status p != Origin and status p =!= Infinity 
 		  and p.LastT > 1-o.EndZoneFactor);
-	        
-	      result = select(result, p->status p === Regular) | select( 
+  	      result = select(result, p->status p === Regular or status p === Origin) | select( 
 		  apply(#plausible,     
 		      i -> (
 			  p := plausible#i;
