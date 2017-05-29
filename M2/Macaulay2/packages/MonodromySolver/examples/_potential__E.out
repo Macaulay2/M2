@@ -1,0 +1,33 @@
+-- -*- M2-comint -*- {* hash: -491356505 *}
+-- COMPILE TIME: Mar  1 2017, 17:44:47
+--loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
+--loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
+
+i1 : R = CC[a,b,c,d,e,f,g,h][x,y,z];
+
+i2 : polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
+
+i3 : (p0,x0) := createSeedPair polys
+
+o3 = ({.302305-.0022597*ii, -.104267-.470079*ii, -.151501-.0959349*ii,
+     ------------------------------------------------------------------------
+     -.493959-.451223*ii, .658738+.072703*ii, -.194472-1.31476*ii,
+     ------------------------------------------------------------------------
+     .733494-.676514*ii, .053173+.996422*ii}, {.781262-.624203*ii,
+     ------------------------------------------------------------------------
+     -.462954-.886382*ii, -.272832+.962062*ii})
+
+o3 : Sequence
+
+i4 : mixedVolume = computeMixedVolume specializeSystem(p0,polys)
+
+o4 = 6
+
+i5 : monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
+
+o5 = (HomotopyNode{...5...}, 12)
+
+o5 : Sequence
+
+i6 : 

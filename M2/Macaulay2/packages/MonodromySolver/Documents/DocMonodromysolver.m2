@@ -89,7 +89,7 @@ doc ///
     	(solveFamily,PolySystem)
 	(solveFamily,PolySystem,Point,List)
     Headline
-    	a solver for parametric families with simple ouput
+    	a solver for parametric families with simple output
     Usage
     	(sys,sols) = solveFamily PS
     Inputs 
@@ -114,6 +114,8 @@ doc ///
 doc ///
     	Key
 		monodromySolve
+	Headline
+	        the main function of the MonodromySolver package
     	Description
 		Code
 		    	  HEADER3 "Ways to use:",
@@ -218,7 +220,7 @@ doc ///
 			-- line below checks that the system defined by p0 nearly vanishes at x0
 			apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
        SeeAlso
-               "(monodromySolve,PolySystem,Point,List)"
+               (monodromySolve,PolySystem,Point,List)
 	///
 
 doc ///
