@@ -1,8 +1,9 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
-undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
-    Edges, SpecializedSystem, Correspondence21, Correspondence12, Potential21, Potential12, Family, PartialSols, gamma1, gamma2, Graph, Node1,  Node2,  HomotopyEdge, HomotopyNode, HomotopyGraph}
+undocumented {randomWeights, Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+     Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect}
+    --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
-undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function), [monodromySolve,AugmentNodeCount],  [solveFamily,AugmentNodeCount], [sparseMonodromySolve,AugmentNodeCount], 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount], [homotopyGraph,Family]}
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function),  1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount], [homotopyGraph,Family]}
 
 doc ///
 	Key
@@ -185,23 +186,6 @@ doc ///
 		    containing equtaions of system with parameters specialized at p0
 	Headline
 	    	specialize parametric system at a point in the parameter space.///
-		
-doc ///
-    	Key
-	    	randomWeights
-		(randomWeights, ZZ)
-	Headline
-	    	generates a random complex vector.
-	Usage 
-	    	v = randomWeights n
-	Inputs
-	    	n:ZZ
-	Outputs
-	    	v:Matrix
-	SeeAlso
-	        "RandomPointFunction"
-		///		
-
     
 doc ///
 	Key
@@ -289,6 +273,10 @@ doc ///
 		[monodromySolve,AugmentNumberOfRepeats]
 		[solveFamily,AugmentNumberOfRepeats]
 		[sparseMonodromySolve,AugmentNumberOfRepeats]
+		AugmentNodeCount
+		[monodromySolve,AugmentNodeCount]
+		[solveFamily,AugmentNodeCount]
+		[sparseMonodromySolve,AugmentNodeCount]
 		BatchSize
 		[monodromySolve,BatchSize]
 		[solveFamily,BatchSize]
@@ -339,17 +327,22 @@ doc ///
 		Example
 		    	options monodromySolve
 		Code
+		    	HEADER3 "List of Options",
 		    	UL {
-			    "AugmentEdgeCount: ",
-			    "AugmentGraphCount: ",
-			    "AugmentNodeCount: ",
+			    {BOLD "Augmentation Options (trigger dynamic strategies)", 
+				UL {
+			    "AugmentEdgeCount: number of edges added in augmentation step",
+			    {"AugmentGraphFunction: see ", TO flowerGraphAugment, " and ", TO completeGraphAugment},
+			    "AugmentNodeCount: number of nodes in augmentation step (dynamic strategy triggered if >0)",
+			    "AugmentNumberOfRepeats: max number of augmentation steps should be set to ensure termination"				    
+				    }},
 			    "BatchSize: maximum number of solutions tracked across an edge",
 			    "EdgesSaturated: fills correspondence tables after stopping criteria satisfied",
 			    {"GraphInitFunction: the underlying graph topology, see ", TO completeGraphInit, " and ", TO flowerGraphInit},
 			    "NumberOfEdges: number of edges in underlying graph",
 			    "NumberOfNodes: number of nodes in underlying graph",
 			    "NumberOfRepeats: argument for StoppingCriterion",
-			    {"Potential: a function that assigns a number to a ", TO HomotopyEdge, " in each iteration, indicating its
+			    {"Potential: a function that assigns a number to each edge in each iteration, indicating its
 				potential for producing new solutions. Current supported potential functions are ", TO potentialE , " and ", 
 				TO potentialLowerBound},
 			    {"SelectEdgeAndDirection: currently accepts either ", TO selectBestEdgeAndDirection, " or ",
@@ -361,21 +354,7 @@ doc ///
 	///
 
 {* ---------- GHOSTS?
-doc ///
-	Key
-    	    	HomotopyNode
-		Edges
-		PartialSols
-		SpecializedSystem
-    	///
-	
 
-doc ///
-	Key
-    	    	HomotopyGraph
-		Family
-		Graph
-    	///
 	
 doc ///
 	Key
@@ -390,7 +369,45 @@ doc ///
 		Potential21
     	///		
 *}
+doc ///
+	Key
+    	    	HomotopyNode
+		PartialSols
+		SpecializedSystem
+	Description
+	    	Text
+		    	Object associated to a polynomial system.
+		Code 
+    	    	        HEADER3 "Keys associated with HomotopyNode",
+		          UL {
+		    	      "BasePoint: not exported",
+		    	      "Edges: a mutable list of edges",
+		    	      "Graph: a HomotopyGraph containing the node",
+		    	      {"PartialSols: a ", TO PointArray, " of associated solutions"},
+		    	      "SpecializedSystem: a list of equations associated to the node"
+		    	      }	    
 
+    	///
+	
+doc ///
+	Key
+    	    	HomotopyGraph
+        Description
+	    Text
+	    	The graph of systems connected by homotopies. Inherits from
+		@TO MutableHashTable @.
+	    Code 
+    	    	HEADER3 "Keys associated with HomotopyGraph",
+		UL {
+		    "Edges: a mutable list of edges",
+		    "Family: the parametric system (or null)",
+		    "Potential: the potential function used (or null)",
+		    "Vertices: a mutable list of nodes"
+		    }	    
+	SeeAlso
+            "HomotopyNode"
+    	///
+	
 doc ///
 	Key
 		potentialLowerBound
@@ -468,7 +485,7 @@ doc ///
 		Text
 			This is a possible value of the option @TO AugmentGraphFunction @ of the
 			function monodromySolve. It will augment the graph while respecting the flower
-			graph structure, so it should be used in conjunction with flowerGraphInit. 
+			graph structure, so it should be used in conjunction with @TO flowerGraphInit @. 
 			To use it, it is necessary to specify a number of nodes or
 			edges to augment by using AugmentNodeCount or AugmentEdgeCount.
 		Example
@@ -494,29 +511,7 @@ doc ///
 			R = CC[a,b,c,d][x,y];
 			polys = polySystem {a*x+b*y^2,c*x*y+d};
 			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
-	///
-
-doc ///
-	Key
-		AugmentNodeCount
-	Headline
-		number of nodes by which to augment graph
-	Description
-		Text
-			This is an option of monodromySolve which tells the AugmentGraphFunction
-			how many nodes should be used to augment the graph. This will not do
-			anything if AugmentGraphFunction is not set.
-		Example
-			R = CC[a,b,c,d][x,y];
-			polys = polySystem {a*x+b*y^2,c*x*y+d};
-			monodromySolve(polys,GraphInitFunction => flowerGraphInit, AugmentGraphFunction=>completeGraphAugment,AugmentNodeCount=>1)
-	///
-
-doc ///
-    Key
-    	makeRandomizedSelect
-    Headline
-    	randomly chooses SelectEdgeAndDirection option///	
+	///	
 
 doc ///
     Key
@@ -550,18 +545,57 @@ doc ///
     	getTrackTime
 	(getTrackTime, HomotopyGraph)
     Headline
-    	tracks time///
+    	elapsed time taken by solver
+    Usage
+    	t = getTrackTime G
+    Inputs
+    	G:HomotopyGraph
+    Outputs
+    	t:RR
+    Description
+    	Text
+	    This only works on graphs which have been modified by a solver.
+    SeeAlso	
+	"elapsedTime"
+	///
 	
 doc ///
     Key
     	dynamicFlowerSolve
     Headline
-    	a naive dynamic strategy///	
+    	a naive dynamic strategy
+    Usage
+    	(L, npaths) = dynamicFlowerSolve(M,p0,L)
+    Inputs
+    	M:Matrix
+	    defining polynomial system
+	p0:Point
+	    assoiated to a specialized system
+        L:List
+	    containing partial solutions associated to p0
+    Outputs
+    	L:List
+	npaths:ZZ
+    Description
+    	Text
+    	    Output is verbose. For other dynamic strategies, see 
+	    @TO MonodromySolverOptions @.
+        Example
+    	    R = CC[a,b,c,d][x,y];
+	    polys = polySystem {a*x+b*y^2,c*x*y+d};
+	    (p0, x0) = createSeedPair polys;
+	    (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
+	///	
 
 doc ///
     Key
     	appendPoint
 	(appendPoint, PointArray, Point)
+    Usage
+    	appendPoint(A,p)
+    Inputs
+    	A:PointArray
+    	p:Point
     Headline
     	append a point at the end of a PointArray///
 
@@ -570,7 +604,13 @@ doc ///
     	appendPoints
 	(appendPoints, PointArray, List)
     Headline
-    	append a list of points at the end of a PointArray///	
+    	append a list of points at the end of a PointArray
+    Usage
+    	appendPoints(A,L)
+    Inputs
+    	A:PointArray
+    	L:List
+	///	
  
 doc ///
 	Key
@@ -593,7 +633,7 @@ doc ///
 	Key
 		potentialE
 	Headline
-		the "expected" of an edge
+		the "expected" potential of an edge
 	Description
 		Text
 			This is an option for the Potential option for @TO "monodromySolve" @ when we use
@@ -619,7 +659,89 @@ doc ///
 		"computeMixedVolume"
 		"Potential"
 	///  
-    	
+
+doc ///
+    Key
+    	pointArray
+    Headline
+    	constructor for PointArray
+    Usage
+    	A = pointArray L
+    Inputs
+    	L:List
+    	    containing objects of type @TO Point@
+    Outputs
+    	A:PointArray
+	///
+
+doc ///
+    Key
+    	PointArray
+    Headline
+    	    a container for solutions
+    Description
+    	Text
+	    PointArray is a data structure that organizes the solutions found
+	    by a solver. Each @TO HomotopyNode @ object V has an assocaciated
+	    PointArray accessed via V.PartialSols. A "fingerprinting"
+	    scheme allows for equality of points to be checked quickly.    	
+	///
+
+doc ///
+    Key
+    	(indices,PointArray)
+    Headline
+    	returns indices of a PointArray
+    Usage
+    	indices A
+    Inputs
+    	A:PointArray
+    SeeAlso
+    	"indices"
+    ///
+
+
+doc ///
+    Key
+    	(length, PointArray)
+    Headline
+    	number of items stored in a PointArray
+    Usage
+    	length A
+    Inputs
+    	A:PointArray
+    SeeAlso
+    	"length"
+    ///
+
+doc ///
+    Key
+    	(net, PointArray)
+    Headline
+    	pretty printing
+    Usage
+        net A 
+    Inputs
+    	A:PointArray
+    SeeAlso
+    	"Net"
+    ///
+
+doc ///
+    Key
+    	(member, Point, PointArray)
+    Headline
+    	test Point membership in a PointArray
+    Usage
+        member(p,A)
+    Inputs
+    	p:Point
+    	A:PointArray
+    SeeAlso
+    	"member"
+    ///
+    
+    
 {* doc ///
     Key
     	"Example 1"
