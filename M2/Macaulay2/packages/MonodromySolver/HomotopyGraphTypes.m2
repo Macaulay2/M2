@@ -65,7 +65,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
 	    t := symbol t;
 	    Rt := CC(monoid [gens ring F, t]);
 	    t = last gens Rt;
-	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint - t*coordinates n2.BasePoint))) FF;   		
+	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint + t*coordinates n2.BasePoint))) FF;   		
 	    F21 := sub(F12,t=>1-t);   		
 	    XT := getVarGates Rt;
 	    X := gateMatrix{drop(XT,-1)};
