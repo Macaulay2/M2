@@ -1468,7 +1468,7 @@ else lapack_found=no
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
+	 [USE_FCLIBS=no; blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
 	 [LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
      if test $blas_found = no
      then AC_MSG_CHECKING([whether package blas is provided])
@@ -1494,7 +1494,9 @@ else lapack_found=no
 	  else AC_MSG_RESULT(no)
 	  fi
      fi
-     LIBS="$FCLIBS $LIBS"; added_fclibs=yes
+     if test $USE_FCLIBS != no
+     then LIBS="$FCLIBS $LIBS"; added_fclibs=yes
+     fi
      if test $blas_found = no
      then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,blas_found=yes)
           # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
