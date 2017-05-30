@@ -12,6 +12,9 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 3.7.1
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
+# disable the test because it fails to find <bits/stl_pair.h>
+CHECKTARGET = .
+
 ## version 4.0.1: works with ffpack 2.2.1, but that doesn't yet compile.
 #VERSION = 4.0.1
 
