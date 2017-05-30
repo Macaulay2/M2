@@ -39,9 +39,6 @@ distclean1:
 	fi
 	-! [ -d builds.tmp/$(DIRECTORY) ] || ! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | head -50 | grep . \
 		|| echo "========== files left after make distclean (first 50) ========" >&2
-	if [ -e builds.tmp/$(DIRECTORY)/. ] ; \
-	then rm -rf builds.tmp/$(DIRECTORY) ; \
-	fi
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 install-info:
