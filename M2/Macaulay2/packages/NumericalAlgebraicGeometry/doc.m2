@@ -87,13 +87,15 @@ document {
 	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], 
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], 
 	     [refine, SingularConditionNumber],  [track,SingularConditionNumber],
+	     [setDefault,Precision],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...), v = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" (meaning Attempts = ", toString DEFAULT.Attempts, "). The maximal number of attempts (e.g., to make a random regular homotopy)."},
 		  SingularConditionNumber => {" (meaning SingularConditionNumber = ", toString DEFAULT.SingularConditionNumber, "). Matrix is considered to be singular 
-		       if its condition number is greater than this value."}
+		      if its condition number is greater than this value."},
+		  Precision =>{" (meaning bits of precision)"}		      	   
 		  },
 	Outputs => {
 	     {TT "setDefault", " returns ", TO null, "."}, 
@@ -879,7 +881,20 @@ document {
 document {
     Key => {(parameterHomotopy,List,List,List),parameterHomotopy},
     Headline => "solve a parametric system of equations",
+       Usage => "sols = parameterHomotopy(F,varsP,valuesP)",
+    Inputs => { 
+	"F" => {" contains the polynomials in the system"},
+	"varsP" => {" names of the parameters"},
+	"valuesP" => {" contains (possibly several sets of) values of the parameters"}  
+	},
+    Outputs => { "sols"=>" lists of lists of solutions for each set of the parameters" },
     "Solves a parameteric polynomial system for several values of parameters.", 
+    EXAMPLE lines ///
+    R = CC[u1,u2,u3,x,y]
+    f1 = u1*(y-1)+u2*(y-2)+u3*(y-3)
+    f2 = (x-11)*(x-12)*(x-13)
+    try parameterHomotopy({f1,f2},{u1,u2,u3},{{1,0,0},{0,1+2*ii,0}}, Software=>BERTINI) else "need to install Bertini to run these lines"
+///,
     Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
     }
 
@@ -926,7 +941,7 @@ document {
 
 document {
     Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
-	gateHomotopy,--[Parameters,gateHomotopy]
+	gateHomotopy, 
 	},
     Headline => "homotopy system via SLPexpressions",
     Usage => "HS = gateHomotopy(H,X,T)",
@@ -940,7 +955,6 @@ document {
 	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
     "Optional arguments:",
     UL{
-	{TO "Parameters", "-- a row vector of parameter variables"},
 	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}
 	},  
     EXAMPLE lines ///
@@ -954,7 +968,10 @@ HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
     ///,
     Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
 	TT "Parameters, X, T", "."},
-    SeeAlso=>{ --GateHomotopy,GateParameterHomotopy,
-    	specialize}
+    -- SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
     }
-    
+
+document {
+    Key => "DoublePrecision",
+    Headline => "a constant equal to 53 (the number of bits of precision)"
+    }

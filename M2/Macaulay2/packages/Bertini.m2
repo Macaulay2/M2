@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "2.1.2.3", 
-  Date => "April 29, 2017",
+  Date => "May 28, 2017",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -29,6 +29,8 @@ exportMutable{"storeBM2Files"
   }
 
 export {
+  "SetParameterGroup",
+  "bertiniUserHomotopy",  
   "ContinueLoop",
   "bertiniImageMonodromyCollect",
   "ImageCoordinates",
@@ -275,7 +277,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={} 
   then (
-    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
     then (myAVG=gens ring first myPol)
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --%%-- Verbose set greater than 1 will print the variable groups.
@@ -421,16 +423,7 @@ bertiniRefineSols (ZZ, List, List) := o -> (d, F,p) -> (
          ) 
 
 
-bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
-	  Verbose=>false,MPType=>-1,PRECISION=>-1, 
-	  IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	  TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
-	  MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
-	  DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
-	  SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,
-	  SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,
-	  MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,
-	  RegenStartLevel=>-1} )
+bertiniTrackHomotopy = method(TypicalValue => List, Options=>{Verbose=>false}|knownConfigs|{IsProjective=>-1} )
 bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
 --t, path variable
 --H, homotopy
@@ -440,6 +433,72 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
          o3 := o ++ o2;
          bertiniSolve(H,o3)
          )
+
+--This is a type 2 user-defined homotopy
+bertiniUserHomotopy = method(TypicalValue => List, Options=>knownConfigs|{Verbose=>false,
+    	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+    	TopDirectory=>storeBM2Files,
+    	B'Functions=>{},
+	B'Configs=>{},
+	AffVariableGroup=>{},
+	HomVariableGroup=>{},
+	RandomComplex=>{},
+	RandomReal=>{},
+      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
+    	M2Precision=>53
+--	IsProjective=>-1
+	--NonPolynomial=>false
+	} )
+bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
+--%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini. 
+--%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files. 
+--%%%%--To change the default directory, set the TopDirectory option to the directory you would like.
+  myTopDir:=o.TopDirectory;
+--if o.NonPolynomial===false then()
+--%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol with myParams deleted. 
+  myAVG:= o.AffVariableGroup;
+  myHVG:= o.HomVariableGroup;
+  myParams:= for i in SPG list if class i===Option then first i else i;
+  if myAVG==={} and myHVG==={} 
+  then (
+    if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
+    then (myAVG=gens ring first myPol;
+      for i in flatten myParams do myAVG=delete(i,myAVG);
+      myAVG=delete(pathT,myAVG))
+  else error"AffVariableGroup or HomVariableGroup need to be set. ");
+--%%-- We use the bWriteInputFile method to write a Bertini file. 
+  makeB'InputFile(myTopDir,
+    SetParameterGroup=>SPG,
+    B'Polynomials=>myPol,
+    AffVariableGroup=>myAVG,
+    HomVariableGroup=>myHVG,
+    PathVariable=>{pathT},
+--%%--These are extra options the user can specify. For more information refer to their documentation.
+    B'Configs=>({{"UserHomotopy",2}}|o.B'Configs),
+    RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
+    RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
+    B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+    B'Functions=>o.B'Functions--A list of pairs consisting of a name and a polynomial.  	
+    );
+--  print 1;
+    writeStartFile(myTopDir,S1);
+    runBertini(myTopDir,Verbose=>o.Verbose);
+--    print 2;
+--%%%%--Depending on the OutputSyle option, the style of this text file can be main_data or a list of coordinates.
+--%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called allSols below.
+--%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files. 
+    allSols:={};
+    if o.OutputSyle==="OutPoints" 
+    then  allSols=importMainDataFile(myTopDir,M2Precision=>o.M2Precision,NameMainDataFile=>"main_data");
+    if o.OutputSyle==="OutSolutions" 
+    then allSols=importSolutionsFile(myTopDir,NameSolutionsFile=>"raw_solutions",OrderPaths=>true,M2Precision=>o.M2Precision);
+    if o.OutputSyle=!="OutNone"
+    then return allSols)   
+--bertiniUserHomotopy(RingElement, List, List) := o -> (pathT, myPol, S1) -> bertiniUserHomotopy(pathT,{},myPol,S1)
+
+
+
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
@@ -468,7 +527,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
   myHVG:= o.HomVariableGroup;
   if myAVG==={} and myHVG==={} 
   then (
-    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
     then (myAVG=gens ring first myPol;
       for i in myParams do myAVG=delete(i,myAVG))
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
@@ -1282,7 +1341,8 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	      --turn these points into a witness set
     	      else (
 		  ws = witnessSet(ideal(1),N,ptsInWS);
-		  ws.Equations=F
+		  ws.Equations=F;
+		  ws.IsIrreducible=true
 	        );
 
            -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
@@ -1564,7 +1624,7 @@ checkMultiplicity=(listOfPoints)->(
 --the input of makeB'InputFile is a string of the directory where we want to write the files.
 
 
-
+pairTypes={List,Option}
 makeB'InputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
@@ -1581,7 +1641,8 @@ makeB'InputFile = method(TypicalValue => String, Options=>{
 	NamePolynomials=>{}, --A list of names (names are always strings) of the polynomials which we want to find the common zero set of.
 	B'Polynomials=>{},--A list  of polynomials we want to solve.   	
 	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  
-	Verbose=>false
+	Verbose=>false,
+	SetParameterGroup=>{}
 	})
 makeB'InputFile(String) := o ->(IFD)->(    
     IFD=addSlash(IFD);
@@ -1661,6 +1722,18 @@ makeB'InputFile(String) := o ->(IFD)->(
        for j to #thePathVariable-2 do (openedInputFile <<toString (thePathVariable_j)  << ", ");
        openedInputFile << toString(thePathVariable_(-1)) << " ; "<< endl);
      openedInputFile <<endl;     
+--If userdefined homotopy then we write the parameters and in terms of the path variable. 
+     if #o.PathVariable=!=0 then(
+     if #o.SetParameterGroup=!=0 and not member( class((o.SetParameterGroup)_0 ),pairTypes) then error"Parameters should be set in terms of the pathvariable, e.g., x=>t,y=>t^2. ";
+     oneGroupNames:=for i in o.SetParameterGroup list if class i ===List then first i else if class i===Option then first toList i;
+     writeNamedListToB'InputFile("parameter",oneGroupNames,openedInputFile);
+     for onePair in o.SetParameterGroup do (
+       if class onePair===List 
+       then openedInputFile << toString(onePair_0) << " = "<<toString(onePair_1)<< " ; "<<endl << endl;
+       if class onePair===Option 
+       then openedInputFile << toString( (toList onePair)_0) << " = "<<toString( (toList onePair)_1)<< " ; "<<endl << endl;
+ 	    );
+       openedInputFile << endl; );
 --Write the random complex constants 
      if #o.RandomComplex=!=0 then (
        if class(o.RandomComplex_0)=!=List 
@@ -2311,6 +2384,7 @@ writeStartFile = method(TypicalValue=>Nothing,Options=>{
     	StorageFolder=>null	
 	})
 writeStartFile(String,List) := o ->(IFD,listOfListCoords) ->(    
+     if class first listOfListCoords ===Point then listOfListCoords=listOfListCoords/coordinates;
      IFD=addSlash(IFD);
      if o.StorageFolder=!=null 
      then (
@@ -3051,8 +3125,8 @@ makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
 	if class ((o.B'NumberCoefficients)_0)===List then  theCoefs=o.B'NumberCoefficients));          
 ---------- 
     if o.B'NumberCoefficients==={} then theCoefs=for i to numberOfSections-1 list {};
-    print numberOfSections;
-    print theCoefs;
+--    print numberOfSections;
+--    print theCoefs;
     if #theCoefs=!=numberOfSections then error "The number of sets of coefficients of B'NumberCoefficients does not match the number of sections to be made. ";
     if #theHomogenization=!=#multipleVariableGroups then error "B'Homogenization does not match the number of variable groups. ";
     if class o.NameB'Slice===List and #o.NameB'Slice=!=numberOfSections then error"When NameB'Slice is a list, the number of elements should equal the number of sections being made. ";
@@ -3299,6 +3373,11 @@ TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/radicalList.tst.m2")
 ///
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniUserHomotopy.tst.m2")
+///
+
+
 
 ---newtst
 
@@ -3337,35 +3416,35 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
     if fileExists(storeFiles|o.NameStartFile)===false then error "start file does not exist in correct directory.";
     if fileExists(storeFiles|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory.";        
 --
-    print "tt1";
+--    print "tt1";
     makeB'TraceInput(storeFiles,NumberOfPoints,NumberOfCoordinates,NameB'InputFile=>"inputTTjade");
-    print "tt2";
+--    print "tt2";
     runCount:=1;
     if o.UseStartPointsFirst===true then (
-      print "tt3";
+--      print "tt3";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       calculateB'Trace(storeFiles,NameStartFile=>"startPHjade",
 	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
       moveFile(storeFiles|"startPHjade",storeFiles|"start");      
       runCount=runCount+1);
-    print "tt4"; 
+--    print "tt4"; 
     for aParameter in o.ParameterValues do(
       writeParameterFile(storeFiles,{aParameter});
-      print "tt5Loop";
+--      print "tt5Loop";
       runBertini(IFD,NameB'InputFile=>o.NameB'InputFile,Verbose=>o.Verbose);
-      print readFile(storeFiles,"bertini_session.log",10000);
-      print "tt6Loop";
+--      print readFile(storeFiles,"bertini_session.log",10000);
+  --    print "tt6Loop";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
-      print "tt7Loop";
+    --  print "tt7Loop";
       calculateB'Trace(storeFiles,NameStartFile=>"nonsingular_solutions",--need a check to make sure we don't lose solutions
 	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
-      print "tt8Loop";
+      --print "tt8Loop";
       runCount=runCount+1;      
       moveFile(storeFiles|"startPHjade",storeFiles|"start")      
 	);
-    print "tt9";
+--    print "tt9";
     return for i from 1 to runCount-1 list ((importSolutionsFile(storeFiles,NameSolutionsFile=>"trace"|toString i))_0)    
      );
  --##########################################################################--
@@ -3504,12 +3583,12 @@ isSameSolution=(aPoint,bPoint,tolerance)->(
    
 insertInList=(setS,aPoint,theTolerances)->(
     if #setS==0 then (
-	print 0;
+--	print 0;
 	 return {aPoint}) else
     lowerBound:=0;
     upperBound:=#setS-1;
     if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
-	print "A";
+--	print "A";
 	return setS);
     if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
 	print "B";
