@@ -7,6 +7,9 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 1.6.0
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
+# disable test because include file <omp.h> is not found
+CHECKTARGET = .
+
 ## version 2.2.1 works with (only) givaro 4.0.1
 ## version 2.2.1 doesn't yet compile with e dir.
 #VERSION = 2.2.1
