@@ -1,7 +1,24 @@
+///
+restart
+needsPackage "NumericalAlgebraicGeometry"
+///
+
 TEST ///
 R=ZZ[x,y]
 sols = solveSystem {x^2-1,y}
 assert (#sols == 2 and all(sols,s->status s === Regular))
+
+F = {x*(x-1),y}
+sols = solveSystem F
+s = first select(sols,s->status s === Origin)
+assert(norm matrix s < 0.0001) 
+///
+
+TEST /// -- failed before because of CC to QQ conversion
+R = QQ[x,y,z];
+I = minors(2,matrix{gens R, gens R / (v->v^2)});
+J = I + ideal(random(1,R)+1_R); 
+solveSystem J_*
 ///
 
 -- MISC. TESTS
