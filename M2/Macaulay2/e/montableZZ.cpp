@@ -132,12 +132,10 @@ int MonomialTableZZ::find_divisors(int max,
       }
   if (M2_gbTrace == 15 && nmatches >= 2)
     {
-      char s[100000];
-      mpz_get_str(s,10,coeff);
-      fprintf(stderr, "find_term_divisors called with %s[",s);
-      for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
-      fprintf(stderr, "]%d\n", comp);
-      fprintf(stderr, "  %d matches: \n",nmatches);
+      buffer o;
+      o << "find_term_divisors called on ";
+      show_mon_term(o, coeff, exp, comp);
+      o << " #matches=" << nmatches << newline;
       if (result != 0)
         for (int i=0; i<result->size(); i++)
           show_mon_term(stderr, (*result)[i]);
@@ -183,15 +181,14 @@ int MonomialTableZZ::find_term_divisors(int max,
       }
   if (M2_gbTrace == 15 && nmatches >= 2)
     {
-      char s[100000];
-      mpz_get_str(s,10,coeff);
-      fprintf(stderr, "find_term_divisors called with %s[",s);
-      for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
-      fprintf(stderr, "]%d\n", comp);
-      fprintf(stderr, "  %d matches: \n",nmatches);
+      buffer o;
+      o << "find_term_divisors called on ";
+      show_mon_term(o, coeff, exp, comp);
+      o << " #matches=" << nmatches << newline;
       if (result != 0)
         for (int i=0; i<result->size(); i++)
-          show_mon_term(stderr, (*result)[i]);
+          show_mon_term(o, (*result)[i]);
+      o << newline;
     }
   return nmatches;
 }
@@ -318,13 +315,14 @@ int MonomialTableZZ::find_monomial_divisors(int max,
 
   if (M2_gbTrace == 15 && nmatches >= 2)
     {
-      fprintf(stderr, "find_monomial_divisors called with [");
-      for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
-      fprintf(stderr, "]%d\n", comp);
-      fprintf(stderr, "  %d matches: \n",nmatches);
+      buffer o;
+      o << "find_monomial_divisors called on ";
+      show_mon_term(o, nullptr, exp, comp);
+      o << " #matches=" << nmatches << newline;
       if (result != 0)
         for (int i=0; i<result->size(); i++)
-          show_mon_term(stderr, (*result)[i]);
+          show_mon_term(o, (*result)[i]);
+      o << newline;
     }
   return nmatches;
 }
@@ -621,10 +619,32 @@ void MonomialTableZZ::find_strong_generators(int nvars,
 
 void MonomialTableZZ::show_mon_term(FILE *fil, mon_term *t) const
 {
-  mpz_out_str(fil,10,t->_coeff);
-  fprintf(fil, " ");
-  exponents_show(fil,t->_lead,_nvars);
-  fprintf(fil," (%d)\n",t->_val);
+  buffer o;
+  show_mon_term(o, t);
+  fprintf(fil, "%s", o.str());
+}
+
+void MonomialTableZZ::show_mon_term(buffer& o, mon_term *t) const
+{
+  show_mon_term(o, t->_coeff, t->_lead, t->_val);
+}
+
+void MonomialTableZZ::show_mon_term(buffer& o, mpz_ptr coeff, exponents lead, int comp) const
+{
+  if (coeff != nullptr)
+    {
+      char s[100000];
+      mpz_get_str(s,10,coeff);
+      o << s;
+    }
+  if (_nvars == 0)
+    o << "[";
+  else
+    {
+      o << "[" << lead[0];
+      for (int i=1; i<_nvars; i++) o << "," << lead[i];
+    }
+  o << "] (" << comp << ")" << newline;
 }
 
 void MonomialTableZZ::show(FILE *fil) const
