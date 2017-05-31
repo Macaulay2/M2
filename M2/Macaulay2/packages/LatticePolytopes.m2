@@ -230,7 +230,7 @@ toricDiv(Polyhedron) := (P) -> (
     r:=rays normalFan(P);
     (A,b):=ambientHalfspaces(P);
     X:=normalToricVariety(P);
-    Zeros:=toList(rank(wDiv(X)):0);
+    Zeros:=toList(rank(weilDivisorGroup(X)):0);
     D:=toricDivisor(Zeros,X);
     for i to numColumns r - 1 do (
     	for j to numrows(A)-1 do (
