@@ -625,6 +625,7 @@ ring_elem FractionField::eval(const RingMap *map, const ring_elem a, int first_v
     {
       if (not error()) ERROR("division by zero!");
       S->remove(bottom);
+      top = S->from_long(0);
       bottom = S->from_long(1);
     }
   ring_elem result = S->divide(top, bottom);
