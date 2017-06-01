@@ -171,15 +171,7 @@ subRandomInitVals(ReactionNetwork, Ring) := (Rn, FF) -> (
     S := toList(apply(0..length Iv-1, i-> Iv#i=>L#i));
     toList apply(0..length CE-1, i-> sub(CE#i,S))
     )
-subRandomInitVals = method()
-subRandomInitVals(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
-    CE := conservationEquations Rn;
-    L := toList(apply(0..length Rn.InitialValues-1, i-> random(FF)));
-    Iv := toList(apply(0..length Rn.InitialValues-1, i-> 
-		    value(Rn.InitialValues#i)));
-    S := toList(apply(0..length Iv-1, i-> Iv#i=>L#i));
-    toList apply(0..length CE-1, i-> sub(CE#i,S))
-    )
+
 
 subRandomReactionRates = method()
 subRandomReactionRates ReactionNetwork := Rn -> subRandomReactionRates(Rn, QQ);
@@ -191,15 +183,7 @@ subRandomReactionRates(ReactionNetwork, Ring) := (Rn, FF) -> (
     P := toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,Rn.ReactionRing)));
     toList apply(0..length SS-1, i-> sub(SS#i,P))
     )
-subRandomReactionRates = method()
-subRandomReactionRates(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
-    SS := flatten entries steadyStateEquations Rn;
-    K := toList(apply(0..length Rn.ReactionRates-1, i-> random(FF)));
-    Rr := toList(apply(0..length Rn.ReactionRates-1, i-> 
-		    value(Rn.ReactionRates#i)));
-    P := toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,Rn.ReactionRing)));
-    toList apply(0..length SS-1, i-> sub(SS#i,P))
-    )
+
 
 TEST ///
 restart
