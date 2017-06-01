@@ -54,7 +54,15 @@ gbA * gbA::create(const Matrix *m,
       ERROR("cannot compute Groebner basis of ideal over a Laurent polynomial ring, ie. with Inverses=>true");
       return nullptr;
     }
-#endif  
+#endif
+  bool overZZ = origR->coefficient_type() == Ring::COEFF_ZZ;
+  bool isLocal = origR->getMonoid()->numNonTermOrderVariables() > 0;
+  if (overZZ and isLocal)
+    {
+      ERROR("Groebner bases in rings over ZZ with variables less than zero are not yet supported");
+      return nullptr;
+    }
+  
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
   return result;
@@ -86,8 +94,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   _coeff_type = origR->coefficient_type();
   n_fraction_vars = origR->n_fraction_vars();
 
-  M2_arrayint localvars = origR->getMonoid()->getNonTermOrderVariables();
-  is_local_gb = (localvars->len > 0);
+  is_local_gb = (origR->getMonoid()->numNonTermOrderVariables() > 0);
 
   spair_stash = new stash("gbA spairs", sizeof(spair));
   gbelem_stash = new stash("gbA elems", sizeof(gbelem));
@@ -341,6 +348,20 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
     g->gap = 0;
   g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
+  return g;
+}
+
+gbA::gbelem* gbA::gbelem_copy(gbelem* g)
+{
+  gbelem *gnew = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
+
+  gnew->g.f = R->gbvector_copy(g->g.f);
+  gnew->g.fsyz = R->gbvector_copy(g->g.fsyz);
+  gnew->lead = exponents_make();
+  for (int i=0; i<_nvars; i++)
+    gnew->lead[i] = g->lead[i];
+  gnew->deg = g->deg;
+  gnew->minlevel = g->minlevel;
   return g;
 }
 
@@ -809,6 +830,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
               if (M2_gbTrace >= 4)
                 {
                   buffer o;
+                  o << "  creating ";
                   spair_text_out(o, p2);
                   emit_line(o.str());
                 }
@@ -829,6 +851,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
       if (M2_gbTrace >= 4)
         {
           buffer o;
+          o << "  creating ";
           spair_text_out(o, p);
           emit_line(o.str());
         }
@@ -2172,7 +2195,7 @@ void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term* t)
   if (M2_gbTrace == 15)
     {
       buffer o;
-      o << "    retiring " << gbval << " new ";
+      o << "    retiring g" << gbval << " with new ";
       //      o << "    new ";
       gbelem_text_out(o, INTSIZE(gb)-1);
 
@@ -2584,6 +2607,11 @@ Computation /* or null */ *gbA::set_hilbert_function(const RingElement *hf)
   // We may only use the Hilbert function if syzygies are not being collected
   // since otherwise we will miss syzygies
 
+  if (over_ZZ())
+    {
+      ERROR("cannot use Hilbert function for Groebner basis computation over the integers");
+      return nullptr;
+    }
   if (!_collect_syz)
     {
       hf_orig = hf;

@@ -222,6 +222,8 @@ private:
                       gbelem_type minlevel,
                       int deg);
 
+  gbelem* gbelem_copy(gbelem* g); // (deep) copy of g
+
   void gbelem_text_out(buffer &o, int i, int nterms=3) const;
 
   /* spair creation */
