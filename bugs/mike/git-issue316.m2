@@ -22,6 +22,13 @@ I = ideal(8*x^3+6,-22*x^3+8*x*y^2-17*y)
  ggI = ideal gens gb gI;
  assert(numColumns (gens gI) == numColumns(gens ggI)); -- fails
 
+R = ZZ[x, y, MonomialOrder => Lex]
+I = ideal(22*y^3,-22*x^2*y-13*x-2*y,-26*x*y^2-x)
+  gI = ideal gens gb I;
+  assert( ( (gens I)%gI) == 0 );
+(gens I)%gI
+gI
+
 end
 
 -- first example above:
