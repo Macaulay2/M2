@@ -22,6 +22,25 @@
 #include <functional>
 #include <algorithm>
 #include <iostream>
+
+int gbA::get_resolved_gb_index(int i) const
+{
+  if (not over_ZZ()) return i;
+  int prev = i;
+  int next = forwardingZZ[i];
+  while (next != -1) {
+    prev = next;
+    next = forwardingZZ[prev];
+  }
+  if (M2_gbTrace >= 16)
+    {
+      buffer o;
+      o << "resolve(" << i << ") = " << prev << newline;
+      std::cout << o.str() << std::endl;
+    }
+  return prev;
+}
+
 /*************************
  * Initialization ********
  *************************/
@@ -167,6 +186,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
           gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
           gbelem *g = gbelem_ring_make(f);
           gb.push_back(g);
+          forwardingZZ.push_back(-1);
         }
     }
   for (int i=0; i<m->n_cols(); i++)
@@ -1254,6 +1274,7 @@ void gbA::spair_set_lead_spoly(spair *p)
 void gbA::compute_s_pair(spair *p)
 {
   POLY f,g;
+  int i,j;
   if (M2_gbTrace >= 5 && M2_gbTrace != 15)
     {
       buffer o;
@@ -1263,10 +1284,12 @@ void gbA::compute_s_pair(spair *p)
   if (p->type > SPAIR::SPAIR_SKEW) return;
   R->gbvector_remove(p->lead_of_spoly);
   p->lead_of_spoly = 0;
-  f = gb[p->x.pair.i]->g;
+  i = get_resolved_gb_index(p->x.pair.i);
+  f = gb[i]->g;
   if (p->type == SPAIR::SPAIR_SKEW)
     {
-      const int *mon = R->skew_monomial_var(p->x.pair.j);
+      j = get_resolved_gb_index(p->x.pair.j);
+      const int *mon = R->skew_monomial_var(j);
       R->gbvector_mult_by_term(_F,_Fsyz,
                                R->one(), mon,
                                f.f, f.fsyz,
@@ -1274,7 +1297,8 @@ void gbA::compute_s_pair(spair *p)
     }
   else if (p->type == SPAIR::SPAIR_GCD_ZZ)
     {
-      g = gb[p->x.pair.j]->g;
+      j = get_resolved_gb_index(p->x.pair.j);      
+      g = gb[j]->g;
       R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
                                         f.f, f.fsyz,
                                         g.f,g.fsyz,
@@ -1283,7 +1307,8 @@ void gbA::compute_s_pair(spair *p)
     }
   else
     {
-      g = gb[p->x.pair.j]->g;
+      j = get_resolved_gb_index(p->x.pair.j);
+      g = gb[j]->g;
       R->gbvector_cancel_lead_terms(_F, _Fsyz,
                                     f.f, f.fsyz,
                                     g.f,g.fsyz,
@@ -2110,6 +2135,7 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
   minimal_gb_valid = false;
   int me = INTSIZE(gb);
   gb.push_back(g);
+  forwardingZZ.push_back(-1);
   n_gb++;
   int x = g->g.f->comp;
 
@@ -2191,6 +2217,9 @@ void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term* t)
   
   //  tail_remainder_ZZ(g->g,this_degree);
   gb.push_back(g);
+  forwardingZZ.push_back(-1);
+  forwardingZZ[gbval] = INTSIZE(gb)-1;
+  
   lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz(), me); 
   if (M2_gbTrace == 15)
     {
@@ -2238,7 +2267,7 @@ bool gbA::spair_is_retired(spair* p) const
 bool gbA::process_spair(spair *p)
 {
   stats_npairs++;
-  if (spair_is_retired(p))
+  if (false and spair_is_retired(p))
     {
       stats_nretired++;
       spair_delete(p);      
@@ -2406,8 +2435,8 @@ void gbA::do_computation()
               {
                 int old_degree = this_degree;
                 npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
-                if (old_degree < this_degree)
-                  first_in_degree = INTSIZE(gb);
+                //                if (old_degree < this_degree)
+                //                  first_in_degree = INTSIZE(gb);
                 complete_thru_this_degree = this_degree-1;
                 if (npairs == 0)
                   {

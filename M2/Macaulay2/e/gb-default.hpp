@@ -121,7 +121,11 @@ private:
   bool is_local_gb;
 
   VECTOR(gbelem *) gb; // Contains any quotient ring elements
-
+  VECTOR(int) forwardingZZ;  // forwarding[i] is the replaced gb element (-1 = none)
+  // note that forwarding[forwarding[i]] might not be -1 either.
+  // so to use this, loop through and get final value.
+  int get_resolved_gb_index(int i) const;
+  
   ReducedGB *minimal_gb;
   bool minimal_gb_valid;
 
