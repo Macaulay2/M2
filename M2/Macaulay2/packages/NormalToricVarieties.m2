@@ -18,8 +18,8 @@
 newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
-  Version => "1.4",
-  Date => "28 May 2017",
+  Version => "1.5",
+  Date => "31 May 2017",
   Authors => {{
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
@@ -570,7 +570,7 @@ cartierDivisorGroup NormalToricVariety := Module => (cacheValue symbol cartierDi
 		    	    1_ZZ);
 	    	    	coeff * map(charLat / perpTab#tau, charLat / perpTab#sigma, 1))
 	    	    else map(charLat / perpTab#tau, charLat / perpTab#sigma, 0)));
-    	    rawCDiv = ker gluingMap);
+    	    rawCDiv = image LLL gens ker gluingMap); --- try LLL?
     	cDiv = prune rawCDiv;
     	-- we also compute the map to the group of Weil divisors
     	n := # rays X;
@@ -623,6 +623,7 @@ fromCDivToPic NormalToricVariety := Matrix => X -> (
      
 nefGenerators = method()
 nefGenerators NormalToricVariety := List => X -> (
+    if isDegenerate X then error "-- not implemented for degenerate varieties";
     clX := classGroup X;
     if clX == 0 then return matrix{{}};
     if not isFreeModule clX then (
@@ -645,7 +646,7 @@ nefGenerators NormalToricVariety := List => X -> (
 		{coneGens^{rowCounter-1}})
     	    else {0*coneGens^{0}}));
     fromPic := matrix fromPicToCl X;
-    indexOfPic := lcm (minors( rank source fromPic, fromPic^torsionlessCoord))_*;
+    indexOfPic := abs lcm (minors( rank source fromPic, fromPic^torsionlessCoord))_*;
     (indexOfPic * coneGens) // fromPic );
 
 
@@ -1220,7 +1221,7 @@ makeSmooth NormalToricVariety := opts -> X -> (
 
 ------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
---   homology,NormalToricVariety
+--   homology, NormalToricVariety
 --   operational Chow rings
 --   linear series
 --   isSemiprojective
@@ -1237,91 +1238,118 @@ makeSmooth NormalToricVariety := opts -> X -> (
 ------------------------------------------------------------------------------
 beginDocumentation()
     
-document { 
-    Key => NormalToricVarieties,
-    Headline => "normal toric varieties",
-    "A toric variety is an integral scheme such that an algebraic torus forms
-    a Zariski open subscheme and the natural action this torus on itself
-    extends to an action on the entire scheme.  Normal toric varieties
-    correspond to strongly convex rational polyhedral fans.  This makes the
-    theory of normal toric varieties very explicit and computable.",
-    PARA{},     
-    "This ", EM "Macaulay2", " package is designed to manipulate normal toric
-    varieties and related geometric objects.  An introduction to the theory of
-    normal toric varieties can be found in the following textbooks:",  
-    UL { 
-        {"David A. Cox, John B. Little, Hal Schenck, ",
-        HREF("http://www.cs.amherst.edu/~dac/toric.html", 
-	    EM "Toric varieties"), ", Graduate Studies in Mathematics
-         124. American Mathematical Society, Providence RI, 2011.  ISBN:
-         978-0-8218-4817-7"},
-        {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
-         geometry", ", Graduate Texts in Mathematics 168.  Springer-Verlag, New
-         York, 1996.  ISBN: 0-387-94755-8" },
-        {"William Fulton, ", EM "Introduction to toric varieties", ", Annals
-         of Mathematics Studies 131, Princeton University Press, Princeton, NJ,
-         1993. ISBN: 0-691-00049-2" },
-        {"Tadao Oda, ", EM "Convex bodies and algebraic geometry, an
-         introduction to the theory of toric varieties", ", Ergebnisse der
-         Mathematik und ihrer Grenzgebiete (3) 15, Springer-Verlag, Berlin,
-         1988. ISBN: 3-540-17600-4" },
-    },
-    SUBSECTION "Contributors",
-    "The following people have generously contributed code or worked on our
-    code.",
-    UL {
-        {HREF("http://www.math.duke.edu/~psa/","Paul Aspinwall")},
-        {HREF("http://www-users.math.umn.edu/~cberkesc/","Christine Berkesch")},
-        {HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm","René Birkner")},
-        {HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane Maclagan")},
-        {HREF("http://www.math.unl.edu/~aseceleanu2/","Alexandra Seceleanu")},
-        {HREF("http://www.math.cornell.edu/~mike/","Mike Stillman")},    
-    },
-    SUBSECTION "Menu",
-    UL {
-        TO "Making normal toric varieties",
-        TO "Basic invariants and properties of normal toric varieties",
-        TO "Working with divisors and their associated groups",
-        TO "Total coordinate rings and coherent sheaves",
-        TO "Resolution of singularities"}}
+doc ///
+    Key
+        NormalToricVarieties
+    Headline
+        package for working with normal toric varieties
+    Description
+    	Text
+            A toric variety is an integral scheme such that an algebraic torus
+            forms a Zariski open subscheme and the natural action this torus
+            on itself extends to an action on the entire scheme.  Normal toric
+            varieties correspond to strongly convex rational polyhedral fans.
+            This makes the theory of normal toric varieties very explicit and
+            computable.
+    	Text
+            This {\em Macaulay2} package is designed to manipulate normal
+            toric varieties and related geometric objects.  An introduction to
+            the theory of normal toric varieties can be found in the following
+            textbooks:
+    	Text   
+    	    @UL { 
+                {"David A. Cox, John B. Little, Hal Schenck, ",
+	            HREF("http://www.cs.amherst.edu/~dac/toric.html", 
+			EM "Toric varieties"), ", Graduate Studies in
+		    Mathematics 124. American Mathematical Society,
+		    Providence RI, 2011.  ISBN: 978-0-8218-4817-7"},
+                {"Günter Ewald, ", EM "Combinatorial convexity and algebraic
+                    geometry", ", Graduate Texts in Mathematics 168.
+                    Springer-Verlag, New York, 1996.  ISBN: 0-387-94755-8" },
+                {"William Fulton, ", EM "Introduction to toric varieties", ",
+                    Annals of Mathematics Studies 131, Princeton University
+                    Press, Princeton, NJ, 1993. ISBN: 0-691-00049-2" },
+                {"Tadao Oda, ", EM "Convex bodies and algebraic geometry, an
+                    introduction to the theory of toric varieties", ",
+                    Ergebnisse der Mathematik und ihrer Grenzgebiete (3) 15,
+                    Springer-Verlag, Berlin, 1988. ISBN: 3-540-17600-4" },	 
+    	    }@
+	Text
+            @SUBSECTION "Contributors"@
+	Text
+            The following people have generously contributed code or worked on
+            our code.
+    	Text
+	    @UL {
+		{HREF("http://www.math.duke.edu/~psa/","Paul Aspinwall")},
+		{HREF("http://www-users.math.umn.edu/~cberkesc/","Christine
+		    Berkesch")},
+		{HREF("http://page.mi.fu-berlin.de/rbirkner/indexen.htm","René
+		    Birkner")},
+		{HREF("http://www.warwick.ac.uk/staff/D.Maclagan/","Diane
+		    Maclagan")},
+		{HREF("http://www.math.unl.edu/~aseceleanu2/","Alexandra
+		    Seceleanu")},                
+		{HREF("http://www.math.cornell.edu/~mike/","Mike Stillman")},
+            }@
+	Text
+    	    @SUBSECTION "Menu"@
+	Text
+    	    @UL {
+                {TO "Making normal toric varieties"},
+		{TO "Basic invariants and properties of normal toric
+		    varieties"},
+        	{TO "Working with divisors and their associated groups"},
+                {TO "Total coordinate rings and coherent sheaves"},
+                {TO "Resolution of singularities"},
+	    }@
+///	
 
-document { 
-    Key => "Making normal toric varieties",
-    "A normal toric variety corresponds to a strongly convex rational
-    polyhedral fan in affine space.  ", "In this package, the fan associated
-    to a normal ", TEX ///$d$///, "-dimensional toric variety lies in the
-    rational vector space ", TEX ///$\QQ^d$///, " with underlying lattice ",
-    TEX ///$N = \ZZ^d$///, ".  The fan is encoded by the minimal nonzero
-    lattice points on its rays and the set of rays defining the maximal cones
-    (a maximal cone is not properly contained in another cone in the fan).",
-    PARA{},  
-    "The general method for creating a normal toric variety is ", 
-    TO normalToricVariety, ".  However, there are many additional methods for
-     constructing other specific types of normal toric varieties.",
-    SUBSECTION "Menu",
-    UL {
-        TO (normalToricVariety, List, List),
-        TO (normalToricVariety, Matrix),
-        TO NormalToricVariety,
-        TO (isWellDefined, NormalToricVariety),
-        TO (affineSpace, ZZ),
-        TO (projectiveSpace, ZZ),
-        TO (weightedProjectiveSpace, List),
-        TO (hirzebruchSurface, ZZ),
-        TO (kleinschmidt, ZZ, List),
-        TO (symbol **, NormalToricVariety, NormalToricVariety),
-        TO (symbol ^**, NormalToricVariety, ZZ),
-        TO (smoothFanoToricVariety, ZZ, ZZ),
-        TO (normalToricVariety, Fan),
-        TO (normalToricVariety, Polyhedron)
-    },
-    "Several methods for making new normal toric varieties from old ones are
-    listed in the section on resolution of singularities.",
-    SeeAlso =>{
-        "Basic invariants and properties of normal toric varieties",
-        "Working with divisors and their associated groups",
-        "Total coordinate rings and coherent sheaves",
-        "Resolution of singularities"}}
+doc ///
+    Key 
+        "Making normal toric varieties"
+    Description
+        Text
+            A normal toric variety corresponds to a strongly convex rational
+            polyhedral fan in affine space.  In this package, the fan
+            associated to a normal $d$-dimensional toric variety lies in the
+            rational vector space $\QQ^d$ with underlying lattice $N :=
+            \ZZ^d$.  The fan is encoded by the minimal nonzero lattice points
+            on its rays and the set of rays defining the maximal cones (a
+            maximal cone is not properly contained in another cone in the
+            fan).
+    	Text
+    	    The general method for creating a normal toric variety is @TO
+	    normalToricVariety@.  However, there are many additional methods
+	    for constructing other specific types of normal toric varieties.
+    	Text
+    	    @SUBSECTION "Menu"@
+	Text
+    	    @UL {
+                TO (normalToricVariety, List, List),
+        	TO (normalToricVariety, Matrix),
+        	TO NormalToricVariety,
+        	TO (isWellDefined, NormalToricVariety),
+        	TO (affineSpace, ZZ),
+        	TO (projectiveSpace, ZZ),
+        	TO (weightedProjectiveSpace, List),
+        	TO (hirzebruchSurface, ZZ),
+        	TO (kleinschmidt, ZZ, List),
+        	TO (symbol **, NormalToricVariety, NormalToricVariety),
+        	TO (symbol ^**, NormalToricVariety, ZZ),
+        	TO (smoothFanoToricVariety, ZZ, ZZ),
+        	TO (normalToricVariety, Fan),
+        	TO (normalToricVariety, Polyhedron)
+    	    }@
+	Text
+	    Several methods for making new normal toric varieties from old
+            ones are listed in the section on resolution of singularities.
+    SeeAlso
+        "Basic invariants and properties of normal toric varieties"
+        "Working with divisors and their associated groups"
+        "Total coordinate rings and coherent sheaves"
+        "Resolution of singularities"
+///	
 
 doc /// 
   Key
@@ -1543,102 +1571,112 @@ doc ///
         (latticePoints, ToricDivisor)
 ///
 
-document { 
-    Key => {(isWellDefined, NormalToricVariety)},
-    Headline => "whether a toric variety is well-defined",
-    Usage => "isWellDefined X",
-    Inputs => {"X" => NormalToricVariety},
-    Outputs => {{"that is ", TO2(true,"true"), " if the lists of rays and
-	          maximal cones associated to ", TT "X", " determine a
-	          strongly convex rational polyhedral fan" }},
-    "A pair of lists ", TT "(rayList, coneList)", " correspond to a
-    well-defined normal toric variety if the following conditions hold:",  
-    UL {
-        {"the union of the elements of ", TT "coneList", " equals the set of
-         indices of elements of ", TT "rayList", ","},
-        {"no element of ", TT "coneList", " is properly contained in another
-         element of ", TT "coneList", ","},
-        {"the rays indexed by an element of ", TT "coneList", " generate a
-         strongly convex cone,"},
-        {"the rays indexed by an element of ", TT "coneList", " are the unique
-         minimal lattice points for the cone they generate,"},
-        {"the intersection of the cones associated to two elements of ", 
-	 TT "coneList", " is a face of each cone."}
-    },
-    PARA{},
-    "The first examples illustrate that small projective spaces are
-    well-defined.",
-    EXAMPLE lines ///
-        for d from 1 to 6 list isWellDefined projectiveSpace d
-    ///,     	  
-    "The second examples show that a randomly selected Kleinschmidt toric 
-    variety and a weighted projective space are also well-defined.",
-    EXAMPLE lines ///
-        setRandomSeed(currentTime());
-        a = sort apply(3, i -> random(7))
-        isWellDefined kleinschmidt(4,a)
-    ///,
-    EXAMPLE lines ///
-        q = sort apply(5, j -> random(1,9));
-        while not all(subsets(q,#q-1), s -> gcd s === 1) do q = sort apply(5, j -> random(1,9));
-        q
-        isWellDefined weightedProjectiveSpace q
-    ///,
-    "The next eight examples illustrate various ways that two lists can fail
-    to define a normal toric variety.  By making the current debugging level
-    greater than one, one gets some addition information about the nature of
-    the failure.",   
-    EXAMPLE lines ///
-        coneList = max projectiveSpace 2;
-        X1 = normalToricVariety({{-1,-1},{1,0},{0,1},{-1,0}}, coneList);
-        isWellDefined X1
-        debugLevel = 1;
-        isWellDefined X1	  	  
-    ///,
-    EXAMPLE lines ///
-        coneList' = {{0,1},{0,3},{1,2},{2,3},{3}};
-        X2 = normalToricVariety({{-1,0},{0,-1},{1,-1},{0,1}}, coneList');
-        isWellDefined X2
-    ///,
-    EXAMPLE lines ///	  
-        X3 = normalToricVariety({{-1,-1},{1,0},{0,1,1}},coneList);
-        isWellDefined X3
-    ///,
-    EXAMPLE lines ///	  
-        X4 = normalToricVariety({{-1,-1/1},{1,0},{0,1}},coneList);
-        isWellDefined X4
-    ///,
-    EXAMPLE lines ///	  
-        X5 = normalToricVariety({{1,0},{0,1},{-1,0}},{{0,1,2}});
-        isWellDefined X5
-    ///,
-    EXAMPLE lines ///	  
-        X6 = normalToricVariety({{1,0,0},{0,1,0},{0,0,2}},{{0,1,2}});
-        isWellDefined X6
-    ///,
-    EXAMPLE lines ///	  
-        X7 = normalToricVariety({{1,0},{0,1},{1,1}},{{0,1},{1,2}});
-        isWellDefined X7
-    ///,
-    PARA{},
-    "This method also checks that the following aspects of the data structure:",
-    UL {
-	{"the underlying ", TO HashTable, " has the expected keys, namely ",
-	    TT "rays", ", ", TT "max", ", and ", TT "cache", ","},
-	{"the value of the ", TT "rays", " key is a ", TO List, ","},
-	{"each entry in the ", TT "rays", " list is a ", TO List, ","},
-	{"each entry in an entry of the ", TT "rays", " list is an ", TO ZZ, ","},
-	{"each entry in the ", TT "rays", " list as the same number of entries,"},
-	{"the value of the ", TT "max", " key is a ", TO List, ","},	
-	{"each entry in the ", TT "max", " list is a ", TO List, ","},
-	{"each entry in an entry of the ", TT "max", " list is an ", TO ZZ, ","},	
-	{"each entry in an entry of the ", TT "max", " list corresponds to a ray,"},		
-	{"the value of the ", TT "cache", " key is a ", TO CacheTable, "."}
-    },    
-    SeeAlso => {
-        "Making normal toric varieties",
-        (normalToricVariety,List,List),
-	"debugLevel"}}   	
+doc ///
+    Key 
+        (isWellDefined, NormalToricVariety)
+    Headline 
+        whether a toric variety is well-defined
+    Usage
+        isWellDefined X
+    Inputs
+        X:NormalToricVariety
+    Outputs
+        :Boolean
+	    that is @TO true@ if the lists of rays and maximal cones
+	    associated to {\tt X} determine a strongly convex rational
+	    polyhedral fan
+    Description
+        Text
+            A pair {\tt (rayList, coneList)} of lists correspond to a
+            well-defined normal toric variety if the following conditions
+            hold:
+    	Text
+    	    @UL {
+                {"the union of the elements of ", TT "coneList", " equals the
+          	    set of indices of elements of ", TT "rayList", ","},
+                {"no element of ", TT "coneList", " is properly contained in
+         	    another element of ", TT "coneList", ","},
+                {"the rays indexed by an element of ", TT "coneList", "
+         	    generate a strongly convex cone,"},
+                {"the rays indexed by an element of ", TT "coneList", " are
+         	    the unique minimal lattice points for the cone they
+         	    generate,"},
+                {"the intersection of the cones associated to two elements of ", 
+		    TT "coneList", " is a face of each cone."}
+    	    }@
+	Text
+            The first examples illustrate that small projective spaces are
+            well-defined.
+    	Example    
+            assert all(5, d -> isWellDefined projectiveSpace (d+1))
+    	Text
+            The second examples show that a randomly selected Kleinschmidt
+            toric variety and a weighted projective space are also
+            well-defined.
+    	Example    
+            setRandomSeed(currentTime());
+            a = sort apply(3, i -> random(7))
+            assert isWellDefined kleinschmidt(4,a)
+	Example
+            q = sort apply(5, j -> random(1,9));
+            while not all(subsets(q,#q-1), s -> gcd s === 1) do q = sort apply(5, j -> random(1,9));
+            q
+            assert isWellDefined weightedProjectiveSpace q
+    	Text
+            The next eight examples illustrate various ways that two lists can
+            fail to define a normal toric variety.  By making the current
+            debugging level greater than one, one gets some addition
+            information about the nature of the failure.
+    	Example    
+	    X = new MutableHashTable;
+            coneList = max projectiveSpace 2;
+            X#1 = normalToricVariety({{-1,-1},{1,0},{0,1},{-1,0}}, coneList);
+            isWellDefined X#1
+            debugLevel = 1;
+            isWellDefined X#1	  	  
+            coneList' = {{0,1},{0,3},{1,2},{2,3},{3}};
+            X#2 = normalToricVariety({{-1,0},{0,-1},{1,-1},{0,1}}, coneList');
+            isWellDefined X#2
+            X#3 = normalToricVariety({{-1,-1},{1,0},{0,1,1}},coneList);
+            isWellDefined X#3
+            X#4 = normalToricVariety({{-1,-1/1},{1,0},{0,1}},coneList);
+            isWellDefined X#4
+            X#5 = normalToricVariety({{1,0},{0,1},{-1,0}},{{0,1,2}});
+            isWellDefined X#5
+            X#6 = normalToricVariety({{1,0,0},{0,1,0},{0,0,2}},{{0,1,2}});
+            isWellDefined X#6
+            X#7 = normalToricVariety({{1,0},{0,1},{1,1}},{{0,1},{1,2}});
+            isWellDefined X#7
+	    debugLevel = 0;
+	    assert all(keys X, k -> not isWellDefined X#k)
+    	Text
+            This method also checks that the following aspects of the data structure:
+	Text
+    	    @UL {
+	        {"the underlying ", TO HashTable, " has the expected keys,
+	    	    namely ", TT "rays", ", ", TT "max", ", and ", TT "cache",
+	    	    ","},
+       	        {"the value of the ", TT "rays", " key is a ", TO List, ","},
+	        {"each entry in the ", TT "rays", " list is a ", TO List,
+	            ","},
+	        {"each entry in an entry of the ", TT "rays", " list is an ",
+	            TO ZZ, ","},
+                {"each entry in the ", TT "rays", " list as the same number of
+                    entries,"},
+	        {"the value of the ", TT "max", " key is a ", TO List, ","},	
+                {"each entry in the ", TT "max", " list is a ", TO List, ","},
+                {"each entry in an entry of the ", TT "max", " list is an ",
+                    TO ZZ, ","},
+                {"each entry in an entry of the ", TT "max", " list
+                    corresponds to a ray,"},
+                {"the value of the ", TT "cache", " key is a ", TO CacheTable,
+                    "."}
+	    }@
+    SeeAlso
+        "Making normal toric varieties"
+        (normalToricVariety, List, List)
+	"debugLevel"
+///
 
 doc ///
     Key
@@ -1882,7 +1920,7 @@ doc ///
     Key
         (symbol **, NormalToricVariety, NormalToricVariety)
     Headline 
-        Cartesian product of normal toric varieties
+        make the Cartesian product of normal toric varieties
     Usage 
         X ** Y
     Inputs 
@@ -1921,7 +1959,7 @@ doc ///
     Key 
         (symbol ^**,NormalToricVariety,ZZ)
     Headline
-        Cartesian power of normal toric varieties
+        make the Cartesian power of a normal toric variety
     Usage 
         X ^** i
     Inputs
@@ -2081,6 +2119,8 @@ doc ///
             W = smoothFanoToricVariety(4,123);
             rays W
             max W
+	Text
+	    @SUBSECTION "Acknowledgements"@
     	Text
             We thank @HREF("http://homepages.warwick.ac.uk/staff/G.Brown/",
             "Gavin Brown")@ and
@@ -2201,30 +2241,37 @@ doc ///
 -- basic properties and invariants
 ------------------------------------------------------------------------------
 
-document { 
-    Key => "Basic invariants and properties of normal toric varieties",
-    "Having made a ", TO NormalToricVariety, ", one can access its basic
-    invariants or test for some elementary properties by using the following
-    methods:",  
-    SUBSECTION "Menu",
-    UL {
-        TO (rays, NormalToricVariety),
-        TO (max, NormalToricVariety),    
-        TO (expression, NormalToricVariety),    
-    	TO (dim, NormalToricVariety),
-    	TO (orbits, NormalToricVariety, ZZ),
-    	TO (isDegenerate, NormalToricVariety),
-    	TO (isSimplicial, NormalToricVariety),
-    	TO (isSmooth, NormalToricVariety),
-    	TO (isComplete, NormalToricVariety),
-    	TO (isProjective, NormalToricVariety),
-    	TO (isFano, NormalToricVariety),
-    	TO (fan, NormalToricVariety)},
-    SeeAlso =>{
-        "Making normal toric varieties",
-        "Working with divisors and their associated groups",
-        "Total coordinate rings and coherent sheaves",
-        "Resolution of singularities"}}
+doc ///
+    Key 
+        "Basic invariants and properties of normal toric varieties"
+    Description
+        Text
+            Having made a @TO NormalToricVariety@ one can access its basic
+            invariants or test for some elementary properties by using the
+            following methods:
+    	Text
+	    @SUBSECTION "Menu"@
+	Text
+            @UL {
+        	TO (rays, NormalToricVariety),
+        	TO (max, NormalToricVariety),    
+        	TO (expression, NormalToricVariety),    
+    		TO (dim, NormalToricVariety),
+    		TO (orbits, NormalToricVariety, ZZ),
+    		TO (isDegenerate, NormalToricVariety),
+    		TO (isSimplicial, NormalToricVariety),
+    		TO (isSmooth, NormalToricVariety),
+    		TO (isComplete, NormalToricVariety),
+    		TO (isProjective, NormalToricVariety),
+    		TO (isFano, NormalToricVariety),
+    		TO (fan, NormalToricVariety)
+	    }@
+    SeeAlso
+        "Making normal toric varieties"
+        "Working with divisors and their associated groups"
+        "Total coordinate rings and coherent sheaves"
+        "Resolution of singularities"
+///
 
 doc ///
     Key 
@@ -2577,89 +2624,123 @@ doc ///
         (rays, NormalToricVariety)
 ///
 
-document { 
-    Key => {(isSimplicial,NormalToricVariety)},
-    Headline => "whether a toric variety is simplicial",
-    Usage => "isSimplicial X",
-    Inputs => {"X" => NormalToricVariety},
-    Outputs => {Boolean => {"that is ", TO "true", " if the minimal nonzero
-                lattice points on the rays in each maximal cone in the
-                associated fan of form part of a ", TEX ///$\QQ$///, "-basis"}},
-    "A normal toric variety is simplicial if every cone in its fan is
-    simplicial and a cone is simplicial if its minimal generators are linearly
-    independent over ", TEX ///$\QQ$///, ".  In fact, the following conditions
-    on a normal toric variety ", TEX ///$X$///, " are equivalent:",  
-    UL {
-        {TEX ///$X$///, " is simplicial,"},
-        {"every torus-invariant Weil divisor on ", TEX ///$X$///, " has a
-         positive integer multiple that is Cartier,"},
-        {TEX ///$X$///, " is ", TEX ///$\QQ$///, "-Cartier,"},
-        {"the Picard group of ", TEX ///$X$///, " has finite index in the
-         class group of ", TEX ///$X$///, ","},
-        {TEX ///$X$///, " has only finite quotient singularities."}},
-    "Projective spaces, weighted projective spaces, and Hirzebruch surfaces are
-    simplicial.",
-    EXAMPLE lines ///
-        assert isSimplicial projectiveSpace 4
-        assert isSimplicial weightedProjectiveSpace {1,2,3}
-        assert isSimplicial hirzebruchSurface 7
-        U = normalToricVariety({{4,-1},{0,1}},{{0,1}});	
-	assert(isSimplicial U and not isSmooth U)
-    ///,
-    "However, not all normal toric varieties are simplicial.",
-    EXAMPLE lines ///
-        C = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
-        assert not isSimplicial C
-	X = normalToricVariety( id_(ZZ^3) | - id_(ZZ^3));
-        assert not isSimplicial X	
-    ///,
-    SeeAlso => {
-        "Basic invariants and properties of normal toric varieties",
-        (rays, NormalToricVariety), 
-     	(max, NormalToricVariety), 
-    	(isSmooth, NormalToricVariety),
-    	(makeSimplicial, NormalToricVariety) }}     
+doc ///
+    Key
+        (isSimplicial, NormalToricVariety)
+    Headline
+        whether a normal toric variety is simplicial
+    Usage
+        isSimplicial X
+    Inputs
+        X:NormalToricVariety
+    Outputs
+        :Boolean 
+	    that is @TO true@ if the minimal nonzero lattice points on the
+            rays in each maximal cone in the associated fan of form part of a
+            $\QQ$-basis
+    Description
+    	Text		
+            A normal toric variety is simplicial if every cone in its fan is
+            simplicial and a cone is simplicial if its minimal generators are
+            linearly independent over $\QQ$.  In fact, the following
+            conditions on a normal toric variety $X$ are equivalent:
+    	Text
+    	    @UL {
+        	{EM "X", " is simplicial,"},
+        	{"every torus-invariant Weil divisor on ", EM "X",
+         	    " has a positive integer multiple that is Cartier,"},
+        	{"the Picard group of ", EM "X", " has finite index in
+         	    the class group of ", EM "X", ","},
+                {EM "X", " has only finite quotient singularities."}
+	    }@
+	Text	
+            Projective spaces, weighted projective spaces, and Hirzebruch
+    	    surfaces are simplicial.
+    	Example    
+	    PP1 = projectiveSpace 1;
+            assert(isSimplicial PP1 and isProjective PP1)
+	    FF7 = hirzebruchSurface 7;
+            assert(isSimplicial FF7 and isProjective FF7)
+	    AA3 = affineSpace 3;
+	    assert(isSimplicial AA3 and not isComplete AA3 and # max AA3 === 1)	
+	    P12234 = weightedProjectiveSpace {1,2,2,3,4};
+            assert(isSimplicial P12234 and isProjective P12234)
+            U = normalToricVariety({{4,-1},{0,1}},{{0,1}});	
+	    assert(isSimplicial U and not isSmooth U)
+    	Text
+            However, not all normal toric varieties are simplicial.
+    	Example
+	    Q = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
+	    assert(not isSmooth Q and not isSimplicial Q and not isComplete Q)	    
+	    Y = normalToricVariety( id_(ZZ^3) | - id_(ZZ^3));
+	    assert(not isSimplicial Y and isProjective Y)	    
+    SeeAlso
+        "Basic invariants and properties of normal toric varieties"
+        (rays, NormalToricVariety)
+     	(max, NormalToricVariety) 
+    	(isSmooth, NormalToricVariety)
+    	(makeSimplicial, NormalToricVariety)
+///
 
-document { 
-    Key => {(isSmooth,NormalToricVariety)},
-    Headline => "whether a toric variety is smooth",
-    Usage => "isSmooth X",
-    Inputs => {"X" => NormalToricVariety},
-    Outputs => {Boolean => {"that is ", TO "true", " if the minimal nonzero
-                lattice points on the rays in each maximal cone in the
-                associated fan of form part of a ", TEX ///$\ZZ$///, "-basis"}},      
-    "A normal toric variety is smooth if every cone in its fan is smooth and a
-    cone is smooth if its minimal generators are linearly independent over ",
-    TEX ///$\ZZ$///, ".  In fact, the following conditions on a normal toric
-    variety ", TEX ///$X$///, " are equivalent:",  
-    UL {
-        {TEX ///$X$///, " is smooth,"},
-        {"every torus-invariant Weil divisor on ", TEX ///$X$///, " is Cartier,"},
-        {"the Picard group of ", TEX ///$X$///, " equals the class group of ",
-         TEX ///$X$///, ","},
-        {TEX ///$X$///, " has no singularities."}},
-    "Projective spaces and Hirzebruch surfaces are smooth.",
-    EXAMPLE lines ///
-        assert isSmooth projectiveSpace 4
-        assert isSmooth hirzebruchSurface 7
-    ///,
-    "However, not all normal toric varieties are smooth.",  
-    EXAMPLE lines ///
-        assert not isSmooth weightedProjectiveSpace {1,2,3}
-    ///,  
-    EXAMPLE lines ///
-        U = normalToricVariety({{4,-1},{0,1}},{{0,1}});
-    	assert(isSimplicial U and not isSmooth U)
-    ///,
-    EXAMPLE lines ///
-        U' = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
-        assert isSmooth U'
-    ///,
-    SeeAlso => {
-        "Basic invariants and properties of normal toric varieties",    
-        (rays, NormalToricVariety), 
-        (max, NormalToricVariety),
-        (isSimplicial, NormalToricVariety) }}
+doc ///
+    Key 
+        (isSmooth,NormalToricVariety)
+    Headline 
+        whether a normal toric variety is smooth
+    Usage
+        isSmooth X
+    Inputs 
+        X:NormalToricVariety
+    Outputs 
+        :Boolean 
+	    that is @TO true@ if the minimal nonzero lattice points on the
+            rays in each maximal cone in the associated fan of form part of a
+            $\ZZ$-basis
+    Description
+    	Text		
+            A normal toric variety is smooth if every cone in its fan is
+            smooth and a cone is smooth if its minimal generators are linearly
+            independent over $\ZZ$.  In fact, the following conditions on a
+            normal toric variety $X$ are equivalent:
+    	Text
+	    @UL {
+                {EM "X", " is smooth,"},
+                {"every torus-invariant Weil divisor on ", EM "X", " is
+                    Cartier,"},
+                {"the Picard group of ", EM "X", " equals the class group of ",
+		    EM "X", ","},
+                {EM "X", " has no singularities."}
+	    }@
+	Text
+            Many of our favourite normal toric varieties are smooth.
+    	Example
+	    PP1 = projectiveSpace 1;
+            assert(isSmooth PP1 and isProjective PP1)
+	    FF7 = hirzebruchSurface 7;
+            assert(isSmooth FF7 and isProjective FF7)
+	    AA3 = affineSpace 3;
+	    assert(isSmooth AA3 and not isComplete AA3 and # max AA3 === 1)
+	    X = smoothFanoToricVariety(4,120);
+	    assert(isSmooth X and isProjective X and isFano X)
+	    U = normalToricVariety({{4,-1},{0,1}},{{0},{1}});
+	    assert(isSmooth U and not isComplete U)	    
+    	Text
+            However, not all normal toric varieties are smooth.
+    	Example
+	    P12234 = weightedProjectiveSpace {1,2,2,3,4};
+            assert(not isSmooth P12234 and isSimplicial P12234 and isProjective P12234)
+            C = normalToricVariety({{4,-1},{0,1}},{{0,1}});
+    	    assert(not isSmooth C and isSimplicial C and # max C === 1) 
+	    Q = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
+	    assert(not isSmooth Q and not isSimplicial Q and not isComplete Q)
+	    Y = normalToricVariety( id_(ZZ^3) | - id_(ZZ^3));
+	    assert(not isSmooth Y and not isSimplicial Y and isProjective Y)
+    SeeAlso
+        "Basic invariants and properties of normal toric varieties"
+        (rays, NormalToricVariety)
+        (max, NormalToricVariety)
+        (isSimplicial, NormalToricVariety)
+///
 
 doc ///
     Key 
@@ -2708,61 +2789,81 @@ doc ///
         (smoothFanoToricVariety, ZZ, ZZ)
 ///
 
-document {
-    Key => {(isComplete,NormalToricVariety)},
-    Headline => "whether a toric variety is complete",
-    Usage => "isComplete X",
-    Inputs => {"X" => NormalToricVariety},
-    Outputs => {Boolean => {"that is ", TO true, " if the normal toric variety
-                is complete"}},
-    "A normal toric variety is complete if any of the following equivalent
-    conditions hold:",
-    UL {
-	{"the associated complex variety is compact in its classical
-	 topology,"},
-        {"the constant map from the normal toric variety to space consisting
-         of a single point is proper;"},
-       {"every one-parameter subgroup of the torus has a limit in the toric
-        variety;"},
-       {"the union of all the cones in the associated fan equals the entire
-        vector space containing it;"},
-       {"every torus-invariant curve lying in the normal toric variety is
-        projective."}},
-    PARA{},
-    "Affine varieties are not complete.",
-    EXAMPLE lines ///
-      assert not isComplete affineSpace 1
-      assert not isComplete affineSpace 3
-      U = normalToricVariety({{4,-1,0},{0,1,0}},{{0,1}});
-      assert(not isComplete U and isDegenerate U)
-    ///,
-    "Projective varieties are complete.",
-    EXAMPLE lines ///
-        assert isComplete projectiveSpace 1
-        assert isComplete projectiveSpace 3
-        assert isComplete hirzebruchSurface 7
-    ///,
-    "There are also complete non-projective normal toric varieties.",
-    EXAMPLE lines ///
-        X1 = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{0,-1,-1},{-1,0,-1},{-2,-1,0}},{{0,1,2},{0,1,3},{1,3,4},{1,2,4},{2,4,5},{0,2,5},{0,3,5},{3,4,5}});
-        assert(isComplete X1 and not isProjective X1 and not isSmooth X1 and isWellDefined X1)
-    ///,
-    EXAMPLE lines ///
-        X2 = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{0,-1,2},{0,0,-1},{-1,1,-1},{-1,0,-1},{-1,-1,0}},{{0,1,2},{0,2,3},{0,3,4},{0,4,5},{0,1,5},{1,2,7},{2,3,7},{3,4,7},{4,5,6},{4,6,7},{5,6,7},{1,5,7}});    
-        assert(isComplete X2 and not isProjective X2 and isSmooth X2 and isWellDefined X2)
-    ///,
-    EXAMPLE lines ///    
-        X3 = normalToricVariety({{-1,2,0},{0,-1,0},{1,-1,0},{-1,0,-1},{0,0,-1},{0,1,0},{0,0,1},{1,0,-2}},{{0,1,3},{1,2,3},{2,3,4},{3,4,5},{0,3,5},{0,5,6},{0,1,6},{1,2,6},{2,4,7},{4,5,7},{2,6,7},{5,6,7}});    
-        assert(isComplete X3 and not isProjective X3 and isSmooth X3 and isWellDefined X3)
-    ///,
-    "The nonprojective examples are taken from Osamu Fujino and Sam Payne's
-    paper ", HREF("http://projecteuclid.org/euclid.pja/1135791770", "Smooth
-    complete toric threefolds with non nontrivial nef line bundles"), EM "
-    Proc. Japan Acad. Ser. A Math. Sci.", BOLD " 81 ", " (2005), no. 10,
-    174--179.",
-    SeeAlso => {
-        "Basic invariants and properties of normal toric varieties",
-        (isProjective, NormalToricVariety) }}  
+doc ///
+    Key 
+        (isComplete,NormalToricVariety)
+    Headline 
+        whether a toric variety is complete
+    Usage 
+        isComplete X
+    Inputs 
+        X:NormalToricVariety
+    Outputs 
+        :Boolean
+	    that is @TO true@ if the normal toric variety is complete
+    Description
+        Text
+            A normal toric variety is complete if any of the following
+            equivalent conditions hold:
+    	Text    
+    	    @UL {
+	        {"the associated complex variety is compact in its classical
+	 	    topology,"},
+                {"the constant map from the normal toric variety to space
+         	    consisting of a single point is proper,"},
+                {"every one-parameter subgroup of the torus has a limit in the
+        	    toric variety,"},
+       	        {"the union of all the cones in the associated fan equals the
+        	    entire vector space containing it,"},
+    	        {"every torus-invariant curve lying in the normal toric
+        	    variety is projective."}
+	    }@
+	Text
+            Affine varieties are not complete.
+	Example
+	    AA1 = affineSpace 1
+	    assert(not isComplete AA1 and isSmooth AA1 and # max AA1 === 1)
+	    AA3 = affineSpace 3
+	    assert(not isComplete AA3 and isSmooth AA3 and # max AA3 === 1)
+      	    U = normalToricVariety({{4,-1,0},{0,1,0}},{{0,1}});
+            assert(not isComplete U and isDegenerate U and # max U === 1)
+	    Q = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}})
+	    assert(not isComplete Q and not isSmooth Q and # max Q === 1)	    	    
+    	Text
+    	    Projective varieties are complete.
+    	Example
+	    PP1 = projectiveSpace 1;
+            assert(isComplete PP1 and isProjective PP1 and isSmooth PP1)
+	    FF7 = hirzebruchSurface 7;
+            assert(isComplete FF7 and isProjective FF7 and isSmooth FF7 and not isFano FF7)	    
+	    X = smoothFanoToricVariety(4,120);
+            assert(isComplete X and isProjective X and isSmooth X and isFano X)	    	    
+	    P12234 = weightedProjectiveSpace {1,2,2,3,4};
+            assert(isComplete P12234 and isProjective P12234 and not isSmooth P12234 and isSimplicial P12234)
+	    Y = normalToricVariety( id_(ZZ^3) | - id_(ZZ^3));
+	    assert(isComplete Y and isProjective Y and not isSmooth Y and not isSimplicial Y)
+    	Text
+            There are also complete non-projective normal toric varieties.
+    	Example
+            X1 = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{0,-1,-1},{-1,0,-1},{-2,-1,0}},{{0,1,2},{0,1,3},{1,3,4},{1,2,4},{2,4,5},{0,2,5},{0,3,5},{3,4,5}});
+            assert(isComplete X1 and not isProjective X1 and not isSmooth X1 and isWellDefined X1)
+            X2 = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{0,-1,2},{0,0,-1},{-1,1,-1},{-1,0,-1},{-1,-1,0}},{{0,1,2},{0,2,3},{0,3,4},{0,4,5},{0,1,5},{1,2,7},{2,3,7},{3,4,7},{4,5,6},{4,6,7},{5,6,7},{1,5,7}});    
+            assert(isComplete X2 and not isProjective X2 and isSmooth X2 and isWellDefined X2)
+            X3 = normalToricVariety({{-1,2,0},{0,-1,0},{1,-1,0},{-1,0,-1},{0,0,-1},{0,1,0},{0,0,1},{1,0,-2}},{{0,1,3},{1,2,3},{2,3,4},{3,4,5},{0,3,5},{0,5,6},{0,1,6},{1,2,6},{2,4,7},{4,5,7},{2,6,7},{5,6,7}});    
+            assert(isComplete X3 and not isProjective X3 and isSmooth X3 and isWellDefined X3)
+    	Text
+	    @SUBSECTION "Reference"@
+	Text
+            The nonprojective examples are taken from Osamu Fujino and Sam
+            Payne,
+            @HREF("http://projecteuclid.org/euclid.pja/1135791770", "Smooth
+            complete toric threefolds with non nontrivial nef line bundles")@,
+            {\em Proc. Japan Acad. Ser. A Math. Sci.} {\bf 81} (2005), no. 10,
+            174-179.
+    SeeAlso    
+        "Basic invariants and properties of normal toric varieties"
+        (isProjective, NormalToricVariety)
+///	
   
 doc ///
     Key 
@@ -2853,52 +2954,63 @@ doc ///
 -- working with divisors
 ------------------------------------------------------------------------------
    
-document { 
-    Key => "Working with divisors and their associated groups",
-    "The following methods allows one to make and manipulate torus-invariant
-    Weil divisors on a normal toric variety.",  
-    SUBSECTION "Menu",
-    UL {
-    	TO ToricDivisor,	
-        TO (toricDivisor, List, NormalToricVariety),
-    	TO (toricDivisor, NormalToricVariety),
-	TO (toricDivisor, Polyhedron),
-	TO (smallAmpleToricDivisor, ZZ, ZZ),
-    	TO (symbol _, NormalToricVariety, ZZ),
-    	TO (normalToricVariety, ToricDivisor),
-    	TO (expression, ToricDivisor),	
-    	TO (support, ToricDivisor),
-    	TO (entries, ToricDivisor),
-    	TO (symbol +, ToricDivisor, ToricDivisor),
-    	TO (symbol SPACE, OO, ToricDivisor),
-    	TO (isEffective, ToricDivisor),
-    	TO (isCartier, ToricDivisor),    
-    	TO (isQQCartier, ToricDivisor), 
-    	TO (isNef, ToricDivisor),  
-	TO (nefGenerators, NormalToricVariety),     
-    	TO (isAmple, ToricDivisor),
-    	TO (isVeryAmple, ToricDivisor),
-    	TO (vertices, ToricDivisor),
-    	TO (latticePoints, ToricDivisor),
-    	TO (polytope, ToricDivisor)},
-    PARA{},
-    "One can also work with the various groups arising from torus-invariant
-    and the canonical maps between them.",
-    SUBSECTION "Menu",
-    UL {
-    	TO (weilDivisorGroup, NormalToricVariety),
-    	TO (fromWDivToCl, NormalToricVariety),
-    	TO (classGroup, NormalToricVariety),
-    	TO (cartierDivisorGroup, NormalToricVariety),
-    	TO (fromCDivToWDiv, NormalToricVariety),
-    	TO (fromCDivToPic, NormalToricVariety),
-    	TO (picardGroup, NormalToricVariety),
-    	TO (fromPicToCl, NormalToricVariety)},
-    SeeAlso =>{
-        "Making normal toric varieties",
-        "Basic invariants and properties of normal toric varieties",
-        "Total coordinate rings and coherent sheaves",
-        "Resolution of singularities"}}
+   
+doc ///
+    Key
+        "Working with divisors and their associated groups"
+    Description
+        Text
+            The following methods allows one to make and manipulate
+            torus-invariant Weil divisors on a normal toric variety.
+    	Text
+	    @SUBSECTION "Menu"@
+	Text
+            @UL {
+    	        TO ToricDivisor,	
+        	TO (toricDivisor, List, NormalToricVariety),
+    		TO (toricDivisor, NormalToricVariety),
+		TO (toricDivisor, Polyhedron),
+		TO (smallAmpleToricDivisor, ZZ, ZZ),
+    		TO (symbol _, NormalToricVariety, ZZ),
+    		TO (normalToricVariety, ToricDivisor),
+    		TO (expression, ToricDivisor),	
+    		TO (support, ToricDivisor),
+    		TO (entries, ToricDivisor),
+    		TO (symbol +, ToricDivisor, ToricDivisor),
+    		TO (symbol SPACE, OO, ToricDivisor),
+    		TO (isEffective, ToricDivisor),
+    		TO (isCartier, ToricDivisor),    
+    		TO (isQQCartier, ToricDivisor), 
+    		TO (isNef, ToricDivisor),  
+		TO (nefGenerators, NormalToricVariety),     
+    		TO (isAmple, ToricDivisor),
+    		TO (isVeryAmple, ToricDivisor),
+    		TO (vertices, ToricDivisor),
+    		TO (latticePoints, ToricDivisor),
+    		TO (polytope, ToricDivisor)
+	    }@
+	Text
+            One can also work with the various groups arising from
+            torus-invariant and the canonical maps between them.
+    	Text
+	    @SUBSECTION "Menu"@
+	Text
+            @UL {	    
+    		TO (weilDivisorGroup, NormalToricVariety),
+    		TO (fromWDivToCl, NormalToricVariety),
+    		TO (classGroup, NormalToricVariety),
+    		TO (cartierDivisorGroup, NormalToricVariety),
+    		TO (fromCDivToWDiv, NormalToricVariety),
+    		TO (fromCDivToPic, NormalToricVariety),
+    		TO (picardGroup, NormalToricVariety),
+    		TO (fromPicToCl, NormalToricVariety)
+	    }@
+    SeeAlso
+        "Making normal toric varieties"
+        "Basic invariants and properties of normal toric varieties"
+        "Total coordinate rings and coherent sheaves"
+        "Resolution of singularities"
+///
 
 doc ///
     Key
@@ -3063,7 +3175,7 @@ doc ///
         cartierDivisorGroup
         (cartierDivisorGroup, NormalToricVariety)
     Headline 
-        computes the group of torus-invariant Cartier divisors
+        compute the group of torus-invariant Cartier divisors
     Usage 
         cartierDivisorGroup X
     Inputs 
@@ -4044,6 +4156,8 @@ doc ///
 	    assert(# rays X6 === 7)
 	    D6
 	    latticePoints D6	    
+	Text
+	    @SUBSECTION "Acknowledgements"@
     	Text
             We thank @HREF("http://www.maths.ed.ac.uk/~mhering/", "Milena
             Hering")@ for her help creating the database.
@@ -4060,7 +4174,7 @@ doc ///
     	(symbol -, ToricDivisor)
     	(symbol *, ZZ, ToricDivisor)
     Headline 
-        arithmetic of toric divisors
+        perform arithmetic on toric divisors
     Usage 
         D1 + D2
     Inputs 
@@ -4452,7 +4566,7 @@ document {
 
 document {
   Key => {(vertices,ToricDivisor)},
-  Headline => "computes the vertices of the associated polytope",
+  Headline => "compute the vertices of the associated polytope",
   Usage => "vertices D",
   Inputs => {"D" => ToricDivisor},
   Outputs => {Matrix => " whose columns are the vertices of the associated
@@ -4509,7 +4623,7 @@ document {
 
 document {
   Key => {(latticePoints,ToricDivisor)},
-  Headline => "computes the lattice points in the associated polytope",
+  Headline => "compute the lattice points in the associated polytope",
   Usage => "latticePoints D",
   Inputs => {"D" => ToricDivisor},
   Outputs => {Matrix => " whose columns are the lattice points in the 
@@ -5373,7 +5487,7 @@ assert(weilDivisorGroup X == ZZ^3)
 assert(fromWDivToCl X == map(ZZ^1,ZZ^3, matrix{{1,2,3}}))
 assert(classGroup X == ZZ^1)
 assert(cartierDivisorGroup X == ZZ^3)
-assert(fromCDivToPic X == map(ZZ^1,ZZ^3, matrix{{0,1,0}}))
+assert(rank fromCDivToPic X === 1)
 assert(picardGroup X == ZZ^1)
 assert(fromPicToCl X == map(ZZ^1,ZZ^1, {{6}}))
 assert(nefGenerators X == 1)
@@ -5507,7 +5621,6 @@ assert not isComplete X
 assert(weilDivisorGroup X == ZZ^5)
 assert(classGroup X == ZZ^2)
 assert(picardGroup X == ZZ^1)
-assert(nefGenerators X === id_(ZZ^1))
 assert isEffective X_0
 Y = makeSimplicial X;
 assert isWellDefined Y
@@ -5625,6 +5738,7 @@ uninstallPackage "NormalToricVarieties"
 restart
 installPackage "NormalToricVarieties"
 check NormalToricVarieties
+
 
 
 ------------------------------------------------------------------------------
