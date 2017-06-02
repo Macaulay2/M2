@@ -1288,8 +1288,7 @@ void gbA::compute_s_pair(spair *p)
   f = gb[i]->g;
   if (p->type == SPAIR::SPAIR_SKEW)
     {
-      j = get_resolved_gb_index(p->x.pair.j);
-      const int *mon = R->skew_monomial_var(j);
+      const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
                                R->one(), mon,
                                f.f, f.fsyz,
