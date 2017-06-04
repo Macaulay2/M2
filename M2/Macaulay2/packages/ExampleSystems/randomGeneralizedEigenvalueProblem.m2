@@ -46,9 +46,9 @@ doc ///
 
 TEST ///
 F = first randomGeneralizedEigenvalueProblem 5
-assert(
-    first timing (sols = solveSystem F;)
-    < 1
-    )
+-- assert(
+--     first timing (sols = solveSystem F;)
+--     < 1
+--     )
 assert(#sols==5)
 ///
