@@ -34,9 +34,9 @@ doc ///
 
 TEST ///
 F = katsura(10,QQ)
-assert(
-    first timing (sols = solveSystem F;) 
-    < 10
-    )
+-- assert(
+--     first timing (sols = solveSystem F;) 
+--     < 10
+--     )
 assert(#sols==512)
 ///
