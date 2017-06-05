@@ -8,7 +8,7 @@ newPackage(
               {Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},
-        Headline => "SVD of a complex, including nonminimal resolutions over the reals",
+        Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
         DebuggingMode => true
         )
 
@@ -1028,8 +1028,8 @@ doc ///
    Description
     Text
       We compute the singular value decomposition either by the iterated Projections or by the 
-      Laplacian method. In case the input consists of two chainComplexes we use the iterated  Projection method, and identify the stable
-      singular values.
+      Laplacian method. In case the input consists of two chainComplexes we use the iterated  
+      Projection method, and identify the stable singular values.
     Example
       needsPackage "RandomComplexes"
       h={1,3,5,2,1} 
@@ -1053,7 +1053,7 @@ doc ///
     Text
       The optional argument 
    Caveat
-      The algorithm might fail if the conditions numbers of the differential are too bad
+      The algorithm might fail if the condition numbers of the differential are too bad
    SeeAlso
      
 ///
@@ -1110,7 +1110,7 @@ doc ///
       hd === h
       hd1 === h1 
    Caveat
-      The algorithm might fail if the conditions numbers of the differential are too bad
+      The algorithm might fail if the condition numbers of the differential are too bad
    SeeAlso
       SVDComplex
   
