@@ -2432,7 +2432,7 @@ void gbA::do_computation()
 
             if (S->n_in_degree == 0)
               {
-                int old_degree = this_degree;
+                //int old_degree = this_degree;
                 npairs = spair_set_prepare_next_degree(this_degree); // sets this_degree
                 //                if (old_degree < this_degree)
                 //                  first_in_degree = INTSIZE(gb);
