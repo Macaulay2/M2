@@ -795,7 +795,7 @@ AC_SUBST(BUILTLIBS,)
 #    mathicgb need mathic and memtailor
 #    mathic need memtailor
 #    gc needs atomic_ops (and sometimes includes it)
-#    factory needs gftables, flint, ntl and gmp
+#    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
@@ -842,6 +842,7 @@ do eval BUILD_$i=yes
 done
 dnl make some programs optional:
 BUILD_cddplus=no
+BUILD_gftables=no
 
 BUILD_mpir=yes
 BUILD_ALWAYS="mpir $BUILD_ALWAYS"
