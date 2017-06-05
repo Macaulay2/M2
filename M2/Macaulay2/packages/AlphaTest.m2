@@ -6,7 +6,7 @@ newPackage(
 	     {Name => "Kisun Lee", Email => "klee669@gatech.edu"}
 	     },
     	HomePage => "http://people.math.edu/~klee669",
-    	Headline => "Alpha Test",
+    	Headline => "certifying solutions to square polynomial systems (Smale's alpha test)",
 	PackageExports => {"NumericalAlgebraicGeometry"},
     	--DebuggingMode => true		 -- set to true only during development
     	DebuggingMode => false,

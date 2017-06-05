@@ -49,13 +49,3 @@ doc ///
    SeeAlso
      clean
 ///
-
--- Not yet!
-///
-    Text
-      This works over the complexes as well.
-    Example
-      B = random(CC^5, CC^2)
-      QRDecomposition B
-      QRDecomposition(B, ReturnQR=>false)
-///

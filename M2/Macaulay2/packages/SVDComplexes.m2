@@ -8,7 +8,7 @@ newPackage(
               {Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},
-        Headline => "SVD of a complex, includes nonminimal resolutions over the reals",
+        Headline => "SVD of a complex, including nonminimal resolutions over the reals",
         DebuggingMode => true
         )
 

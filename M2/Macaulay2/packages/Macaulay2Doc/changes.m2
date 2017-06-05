@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes, 2.0.0",
+	  TO "changes made for the next release",
+	  TO "changes, 1.9.3",
 	  TO "changes, 1.9.2",
 	  TO "changes, 1.9.1",
 	  TO "changes, 1.9",
@@ -19,13 +20,48 @@ document {
 	  TO "changes, 1.3.1",
 	  TO "changes, 1.3",
 	  TO "changes, 1.2",
-      TO "changes, 1.0 and 1.1",
+      	  TO "changes, 1.0 and 1.1",
 	  TO "list of obsolete functions"
 	  }
      }
 
 document {
-     Key => "changes, 2.0.0",
+     Key => "changes made for the next release",
+     -- UL {
+     -- 	  LI { "major improvements and additions:",
+     -- 	        UL {
+     -- 	            }
+     --        },
+     -- 	  LI { "packages that have been published and certified:",
+     -- 	       UL {
+     -- 	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+     -- 	       	    }
+     -- 	       },
+     -- 	  LI { "new packages:",                       -- got this with git diff version-1.9.2 =distributed-packages 
+     -- 	       UL {
+     -- 	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+     -- 	       } },
+     -- 	  LI { "improved packages:",
+     -- 	       UL {
+     -- 	  	    }
+     -- 	       },     
+     -- 	  LI { "functionality added or improved:",
+     -- 	       UL {
+     -- 	  	   }
+     -- 	       },
+     -- 	  LI { "new constants and operators:",		    -- get this with : git diff version-1.9.2 ../../m2/exports.m2
+     -- 	       UL {
+     -- 	       	    }
+     -- 	       },
+     -- 	  LI { "functionality changed:",
+     -- 	       UL {
+     -- 	  	       }
+     --           }
+     -- 	  }
+     }
+
+document {
+     Key => "changes, 1.9.3",
      UL {
 	  -- LI { "major improvements and additions:",
 	  --       -- UL {
@@ -36,32 +72,71 @@ document {
 	  --      -- 	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
 	  --      -- 	    }
 	  --      },
-      LI { "major improvements and additions:",
-          UL {
-              { TO "Polyhedra::Polyhedra", " has been rewritten by Lars Kastner for improved performance.  Many bugs have been fixed, 
-                  and there are now a large number of tests.
-                  Some changes are not backward compatible.  Some changes include: ",
-                  UL {
-                    LI { TO "Polyhedra::Fan", ", is no longer a collection of Cone objects, but contains a matrix of rays (over ZZ),
-                        and a list of lists of integer indices, indicating the maximal cones.  Well-defined-ness is no longer 
-                        automatically checked.  Use ", TO "Polyhedra::(isWellDefined,Fan)"},
-                    LI { TO "Polyhedra::Polyhedron", ", is now a wrapper for the homogenized cone."},
-                    LI { TO "Polyhedra::PolyhedralComplex", ", is now a wrapper for the homogenized fan."},
-                    LI { TO "Polyhedra::Cone", ", has basically the same functionality, except that not everything is computed ahead of time."},
-                    LI { TO "Polyhedra::faces", ", now returns a list of lists of integer indices.  There are two new functions
-                        for recovering the old behavior: ", TO "Polyhedra::facesAsCones", " (for fans and cones), and  ", TO "Polyhedra::facesAsPolyhedra", 
-                        " for polyhedra and polyhedral complexes." }
-                      },
-                  "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
-                  are implemented as mutable hash tables. In particular ", TO "symbol===", " no longer works on cones.  Instead, use 
-                  a sorted list of e.g. vertices and lineality space.",
-                  PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
-                  However, if possible, change your code to run with the new package."}
-                  }
-          }
-         }
+	  LI { "new packages:",                       -- got this with git diff version-1.9.2 =distributed-packages 
+	       UL {
+	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+	       	    LI { TO "SpectralSequences::SpectralSequences", ", a package by Adam Boocher, Nathan Grieve, Eloisa Grifo, Gregory G. Smith, Thanh Vu, and Thanh Vu for spectral sequences, has been added." },
+	       	    LI { TO "SectionRing::SectionRing", ", a package by Andrew Bydlon for computing the section ring of a Weil Divisor., has been added." },
+	       	    LI { TO "K3Carpets::K3Carpets", ", a package by David Eisenbud, Frank-Olaf Schreyer for K3 double structure on scrolls, has been added." },
+	       	    LI { TO "ChainComplexOperations::ChainComplexOperations", ", a package by David Eisenbud for sym2, wedge2, chi2 of a ChainComplex, has been added." },
+	       	    LI { TO "AlphaTest::AlphaTest", ", a package by Kisun Lee for testing NumericalAlgebraicGeometry, has been added." },
+	       	    LI { TO "PhylogeneticTrees::PhylogeneticTrees", ", a package by Nathaniel Bushek, Ruth Davidson, Elizabeth Gross, Pamela Harris, Robert Krone, Colby Long, AJ Stewart, Robert Walker, and Robert Walker for invariants for group-based phylogenetic models, has been added." },
+	       	    LI { TO "MonodromySolver::MonodromySolver", ", a package by Cvetelina Hill, Anders Nedergaard Jensen, Kisun Lee, Anton Leykin, Jeff Sommars, and Jeff Sommars for solving polynomial systems via monodromy, has been added." },
+	       	    LI { TO "ReactionNetworks::ReactionNetworks", ", a package by Timothy Duff, Kisun Lee, Anton Leykin, and Anton Leykin for reaction networks, has been added." },
+	       	    LI { TO "PackageCitations::PackageCitations", ", a package by Aaron Dall for citation of Macaulay2 packages, has been added." },
+	       	    LI { TO "NumericSolutions::NumericSolutions", ", a package by Corrado Possieri, Antonio Tornambe, and Antonio Tornambe for solving systems of polynomial equalities, has been added." },
+	       	    LI { TO "GradedLieAlgebras::GradedLieAlgebras", ", a package by Clas Löfwall and Samuel Lundqvist for computations in graded Lie algebras, has been added." },
+	       	    LI { TO "InverseSystems::InverseSystems", ", a package by David Eisenbud for equivariant Macaulay inverse systems, has been added." },
+	       	    LI { TO "Pullback::Pullback", ", a package by Drew Ellingson and Karl Schwede for pullback of rings, has been added." },
+	       	    LI { TO "EngineTests::EngineTests", ", a package by Michael E. Stillman and Jakob Kroeker for a test suite for the Macaulay2 engine, has been added." },
+	       	    LI { TO "SVDComplexes::SVDComplexes", ", a package by Frank Schreyer and Mike Stillman for SVD of a complex, including nonminimal resolutions over the reals, has been added." },
+	       	    LI { TO "RandomComplexes::RandomComplexes", ", a package by Frank Schreyer and Mike Stillman for random complexes over fields or the integers, has been added." }
+	       } },
+	  LI { "improved packages:",
+	       UL {
+		    { TO "Polyhedra::Polyhedra", " has been rewritten by Lars Kastner for improved performance.  Many bugs have been fixed, 
+		       	 and there are now a large number of tests.
+		       	 Some changes are not backward compatible.  Some changes include: ",
+		       	 UL {
+			      LI { TO "Polyhedra::Fan", ", is no longer a collection of Cone objects, but contains a matrix of rays (over ZZ),
+			     	   and a list of lists of integer indices, indicating the maximal cones.  Well-defined-ness is no longer 
+			     	   automatically checked.  Use ", TO "Polyhedra::(isWellDefined,Fan)"},
+			 	   LI { TO "Polyhedra::Polyhedron", ", is now a wrapper for the homogenized cone."},
+			 	   LI { TO "Polyhedra::PolyhedralComplex", ", is now a wrapper for the homogenized fan."},
+			 	   LI { TO "Polyhedra::Cone", ", has basically the same functionality, except that not everything is computed ahead of time."},
+			 	   LI { TO "Polyhedra::faces", ", now returns a list of lists of integer indices.  There are two new functions
+			     		for recovering the old behavior: ", TO "Polyhedra::facesAsCones", " (for fans and cones), and  ", TO "Polyhedra::facesAsPolyhedra", 
+			     		" for polyhedra and polyhedral complexes." }
+			   	   },
+		       	      "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
+		       	      are implemented as mutable hash tables. In particular ", TO "symbol===", " no longer works on cones.  Instead, use 
+		       	      a sorted list of e.g. vertices and lineality space.",
+		       	      PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
+		       		   However, if possible, change your code to run with the new package."}
+		       		   }
+	       		      }
+         		 },     
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "The functions ", TO "toDual", " and ", TO "fromDual", " have been improved and moved to the new package ", TO "InverseSystems::InverseSystems",
+			 ": they are now compatible with linear changes of coordinates." }
+	  	   }
+	       },
+	  LI { "new constants and operators:",		    -- get this with : git diff version-1.9.2 ../../m2/exports.m2
+	       UL {
+		    LI { "The function ", TO "QRDecomposition", " has been added." },
+		    LI { "The function ", TO "isFinitePrimeField", " has been added." },
+		    LI { "The function ", TO "isWeylAlgebra", " has been added." }
+	       	    }
+	       },
+	  -- LI { "functionality changed:",
+	  --      UL {
+	  -- 	       }
+          --      }
+    	  -- }
+	  }
      }
- }
+
 
 document {
      Key => "changes, 1.9.2",
@@ -189,7 +264,7 @@ document {
 	  	    LI { TO "NumericalSchubertCalculus::NumericalSchubertCalculus", ", a package by Anton Leykin, Abraham Martin del Campo, and Jan Verschelde, for numerical methods in Schubert Calculus, has been added." },
 	  	    LI { TO "ToricTopology::ToricTopology", ", a package by Alvise Trevisan and Alexander I. Suciu for toric topology, has been added." },
 	  	    LI { TO "Cremona::Cremona", ", a package by Giovanni Staglianò for rational maps between projective varieties, has been added." },
-	  	    LI { TO "Resultants::Resultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been added." },
+	  	    LI { TO "Resultants::Resultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been added (originally called ", TT "MultipolynomialResultants", ")." },
 	  	    LI { TO "VectorFields::VectorFields", ", a package by Brian Pike for vector fields, has been added." },
 	  	    LI { TO "RandomIdeals::RandomIdeals", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
 	  	    LI { TO "Miura::Miura", ", a package by Joe Suzuki for divisor class groups on curves, has been added." }

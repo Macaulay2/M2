@@ -10,7 +10,7 @@ newPackage(
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "Reaction networks",
+    	Headline => "reaction networks",
 	PackageImports => {"Graphs"},
   	DebuggingMode => false,		
   	-- DebuggingMode => true,		 -- set to true only during development

@@ -5,7 +5,7 @@ newPackage(
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org"
 		  }},
-    	Headline => "equivariant Macaulay Inverse Systems",
+    	Headline => "equivariant Macaulay inverse systems",
     	DebuggingMode => false
     	)
 

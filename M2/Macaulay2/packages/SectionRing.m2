@@ -5,7 +5,7 @@ Version => "0.2", Date => "September 21 2016", Authors => {
      HomePage => "http://www.math.utah.edu/~bydlon/"
      }
 }, --this file is in the public domain
-Headline => "A package for computing the section ring of a Weil Divisor.", DebuggingMode => true, Reload=>true)
+Headline => "computing the section ring of a Weil Divisor.", DebuggingMode => true, Reload=>true)
 
 export{
 	"globallyGenerated",

@@ -23,7 +23,7 @@ newPackage (
  "NumericSolutions",
  Version => "1.0",
  Date => "Apr 3, 2017",
- Headline => "A package to solve systems of polynomial equalities",
+ Headline => "solving systems of polynomial equalities",
  Authors => {
   {Name => "Laura Menini", Email => "menini@disp.uniroma2.it"},
   {Name => "Corrado Possieri", Email => "possieri@ing.uniroma2.it"},
