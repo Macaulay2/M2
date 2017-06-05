@@ -149,3 +149,5 @@ GradedLieAlgebras
 InverseSystems
 Pullback
 EngineTests
+SVDComplexes
+RandomComplexes
