@@ -267,8 +267,8 @@ R = CC[x,y]
 f = polySystem {x + y, x^2 - 4}
 sols = solveSystem f
 assert all(sols, p -> certifySolution(f,p))
-p = point{{2.0, -2.0}}
-q = point{{-2, 2.000001}}
+p = point{{2.0_CC, -2.0}}
+q = point{{-2_CC, 2.000001}}
 computeConstants(f,p)
 certifySolution(f,p)
 certifyDistinctSoln(f,p,q)

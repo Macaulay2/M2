@@ -748,6 +748,7 @@ export {
 	"isDirectory",
 	"isField",
 	"isFinite",
+	"isFinitePrimeField",
 	"isFreeModule",
 	"isGlobalSymbol",
 	"isHomogeneous",

@@ -1,6 +1,6 @@
 -- 193 
 R=QQ[x,Inverses=>true,MonomialOrder=>RevLex]
-R/ideal(x-1)
+R/ideal(x-1) -- hangs
 
 rng = ZZ[x,y,z]
 I = ideal(-5*z+4, 6*y-1, 9*z+8)
