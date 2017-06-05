@@ -37,7 +37,7 @@ document {
      -- 	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
      -- 	       	    }
      -- 	       },
-     -- 	  LI { "new packages:",                       -- got this with git diff version-1.9.2 =distributed-packages 
+     -- 	  LI { "new packages:",                       -- got this with git diff version-1.9.2 =distributed-packages; see also the helper code in README
      -- 	       UL {
      -- 	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
      -- 	       } },
@@ -79,7 +79,7 @@ document {
 	       	    LI { TO "SectionRing::SectionRing", ", a package by Andrew Bydlon for computing the section ring of a Weil Divisor., has been added." },
 	       	    LI { TO "K3Carpets::K3Carpets", ", a package by David Eisenbud, Frank-Olaf Schreyer for K3 double structure on scrolls, has been added." },
 	       	    LI { TO "ChainComplexOperations::ChainComplexOperations", ", a package by David Eisenbud for sym2, wedge2, chi2 of a ChainComplex, has been added." },
-	       	    LI { TO "AlphaTest::AlphaTest", ", a package by Kisun Lee for testing NumericalAlgebraicGeometry, has been added." },
+	       	    LI { TO "NumericalCertification::NumericalCertification", ", a package by Kisun Lee for testing NumericalAlgebraicGeometry, has been added." },
 	       	    LI { TO "PhylogeneticTrees::PhylogeneticTrees", ", a package by Nathaniel Bushek, Ruth Davidson, Elizabeth Gross, Pamela Harris, Robert Krone, Colby Long, AJ Stewart, Robert Walker, and Robert Walker for invariants for group-based phylogenetic models, has been added." },
 	       	    LI { TO "MonodromySolver::MonodromySolver", ", a package by Cvetelina Hill, Anders Nedergaard Jensen, Kisun Lee, Anton Leykin, Jeff Sommars, and Jeff Sommars for solving polynomial systems via monodromy, has been added." },
 	       	    LI { TO "ReactionNetworks::ReactionNetworks", ", a package by Timothy Duff, Kisun Lee, Anton Leykin, and Anton Leykin for reaction networks, has been added." },
