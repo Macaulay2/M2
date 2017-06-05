@@ -735,12 +735,18 @@ M2_bool rawQR(const MutableMatrix *A,
 
 const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
 {
-  if (M->get_ring()->get_precision() == 0)
-    {
-      ERROR("expected ring over an RR or CC");
-      return 0;
-    }
-  return M->clean(epsilon);
+  try {
+    if (M->get_ring()->get_precision() == 0)
+      {
+        ERROR("expected ring over an RR or CC");
+        return 0;
+      }
+    return M->clean(epsilon);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 const RingElement /* or null */ *rawRingElementClean(gmp_RR epsilon, const RingElement *f)
 {
@@ -755,13 +761,19 @@ const RingElement /* or null */ *rawRingElementClean(gmp_RR epsilon, const RingE
 MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon, MutableMatrix *M)
 {
 /* modifies M in place */
-  if (M->get_ring()->get_precision() == 0)
-    {
-      ERROR("expected ring over an RR or CC");
-      return 0;
-    }
-  M->clean(epsilon);
-  return M;
+  try {
+    if (M->get_ring()->get_precision() == 0)
+      {
+        ERROR("expected ring over an RR or CC");
+        return 0;
+      }
+    M->clean(epsilon);
+    return M;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
