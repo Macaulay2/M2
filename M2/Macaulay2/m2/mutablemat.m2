@@ -264,19 +264,19 @@ SVD Matrix := o -> A -> (
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
 
-QRDecomposition = method(Options=>{ReturnQR=>true})
-QRDecomposition MutableMatrix := o -> A -> (
+QRDecomposition = method()
+QRDecomposition MutableMatrix := A -> (
      k := ring A;
      if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      Q := mutableMatrix(k,0,0,Dense=>true);
      R := mutableMatrix(k,0,0,Dense=>true);
-     rawQR(raw A, raw Q, raw R, o.ReturnQR);
+     rawQR(raw A, raw Q, raw R, true {* ReturnQR was a bad option name *} );
      (Q,R))
-QRDecomposition Matrix := o -> A -> (
+QRDecomposition Matrix := A -> (
      k := ring A;
      if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      A = mutableMatrix(A,Dense=>true);
-     (Q,R) := QRDecomposition(A,o);
+     (Q,R) := QRDecomposition A;
      (matrix Q,matrix R))
 
 rank MutableMatrix := (M) -> rawLinAlgRank raw M
