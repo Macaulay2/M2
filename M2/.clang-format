@@ -1,3 +1,5 @@
+# see http://releases.llvm.org/3.8.0/tools/clang/docs/ClangFormat.html
+
 ---
 Language:        Cpp
 # BasedOnStyle:  Google
