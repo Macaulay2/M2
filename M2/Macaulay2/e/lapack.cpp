@@ -2607,7 +2607,7 @@ bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
           &work_size,
           &info1);
   work_size = static_cast<int>(workspace_size[0]);
-  std::cout << "work size for QR:  " << work_size << std::endl;
+  // std::cout << "work size for QR:  " << work_size << std::endl;
   double *workspace = new double[work_size];
 
   dgeqrf_(&rows,
@@ -2732,7 +2732,6 @@ bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
           &work_size,
           &info1);
   work_size = static_cast<int>(workspace_size[0]);
-  std::cerr << "work size for QR:  " << work_size << std::endl;
   double *workspace = new double[20*work_size];
 
   zgeqrf_(&rows,
@@ -2743,17 +2742,14 @@ bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
           workspace,
           &work_size,
           &info2);
-  std::cerr << "done computing QR in lapack" << std::endl;
   
   if (info1 < 0 or info2 < 0)
     {
-      std::cerr << "error" << std::endl;
       ERROR("argument passed to zgeqrf had an illegal value");
       ret = false;
     }
   if (info1 > 0 or info2 > 0)
     {
-      std::cerr << "error" << std::endl; 
       ERROR("can this happen?");
       ret = false;
     }
@@ -2762,16 +2758,12 @@ bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
     {
       if (return_QR)
         {
-          std::cerr << "resize Q" << std::endl;
           Q->resize(rows,cols);
-          std::cerr << "resize R" << std::endl;
           R->resize(cols,cols);
-          std::cerr << "about to fill_from_lapack_upper" << std::endl;
           fill_from_lapack_upper(copyA, rows, cols, *R);
           
           // Reset Q, R, with their values.
           int orgqr_work_size = -1;
-          std::cerr << "about to find zungr work size" << std::endl;          
           zungqr_(&rows,
                   &cols,
                   &min,
@@ -2787,9 +2779,7 @@ bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
               delete [] workspace;
               work_size = orgqr_work_size;
               workspace = new double[2*work_size];
-              std::cerr << "work size increased to: " << work_size << std::endl;
             }
-          std::cerr << "work size for qungr:  " << work_size << std::endl; 
           zungqr_(&rows,
                   &cols,
                   &min,
@@ -2799,8 +2789,6 @@ bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
                   workspace,
                   &work_size,
                   &info4);
-          std::cerr << "computed qungr:  " << work_size << std::endl;
-          std::cerr << "computed qungr:  " << work_size << std::endl << std::flush;           
           if (info3 < 0 or info4 < 0)
             {
               ERROR("argument passed to dorgqr or dorgqr had an illegal value");
