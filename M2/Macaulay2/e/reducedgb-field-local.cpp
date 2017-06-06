@@ -561,10 +561,6 @@ void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &d
 {
   if (f == 0) return;
 
-  buffer o;
-  text_out(o);
-  emit(o.str());
-
   T1 = MonomialTable::make(R->n_vars());
   gbvector *zero = 0;
   gbvector head;
