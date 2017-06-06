@@ -1,6 +1,7 @@
 // Copyright 2005, Michael E. Stillman
 
 #include "reducedgb-field-local.hpp"
+#include "monideal.hpp"
 #include "montable.hpp"
 #include "gbweight.hpp"
 #include "polyring.hpp"
@@ -41,32 +42,38 @@ ReducedGB_Field_Local::ReducedGB_Field_Local(GBRing *R0,
     }
 }
 
-#if 0
-// Code perhaps useful in git issues 568-569, May 2017
-template<typename Iter>
-std::vector< std::pair<int, gbvector*> >
-make_degree_position_vector(GBRing* R, Iter begin, Iter end)
-{
-  using PairVector = std::vector< std::pair<int, gbvector*> >;
-  PairVector positions;
-  int count = 0;
-  for (Iter i = begin; i != end, ++i, ++count)
-    if (R->gbvector_is_zero(*i))
-      continue;
-  else {
-    push_back(std::make_pair(M->simple_degree((*i)->monom), count));    
+struct ReducedGB_Field_Local_sorter : public std::binary_function<int,int,bool> {
+  GBRing *R;
+  const FreeModule *F;
+  const VECTOR(POLY) &gb;
+  std::vector<int> degs;
+  ReducedGB_Field_Local_sorter(GBRing *R0,
+                         const FreeModule *F0,
+                         const VECTOR(POLY) &gb0)
+    : R(R0), F(F0), gb(gb0) {
+    auto M = R->get_flattened_monoid();
+    for (size_t i = 0; i < gb0.size(); i++)
+      {
+        gbvector* f = gb0[i].f;
+        degs.push_back(M->simple_degree(f->monom));
+      }
   }
-  return positions;
-}
-                                                                     
-void minimalize_lead_terms_of_gbvectors(const VECTOR(POLY) &polys0,
+  bool operator()(int xx, int yy) {
+    // this is the < operation
+    if (degs[xx] < degs[yy]) return true;
+    if (degs[xx] > degs[yy]) return false;
+    gbvector *x = gb[xx].f;
+    gbvector *y = gb[yy].f;
+    return R->gbvector_compare(F,x,y) == LT;
+  }
+};
+
+void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
                                  bool auto_reduced)
-// I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
   // Next insert minimal elements into T, and polys
 
-  auto pairvec = make_degree_position_vector(R, polys0.begin(), polys0.end());
   VECTOR(int) positions;
   positions.reserve(polys0.size());
 
@@ -75,7 +82,7 @@ void minimalize_lead_terms_of_gbvectors(const VECTOR(POLY) &polys0,
 
   //  displayElements("-- before sort --", R, polys0, [](auto& g) { return g.f; } );
   
-  std::stable_sort(positions.begin(), positions.end(), ReducedGB_Field_sorter(R,F,polys0));
+  std::stable_sort(positions.begin(), positions.end(), ReducedGB_Field_Local_sorter(R,F,polys0));
 
   //  VECTOR(gbvector*) sorted_elements_debug_only;
   //  for (int i=0; i<positions.size(); i++)
@@ -102,7 +109,7 @@ void minimalize_lead_terms_of_gbvectors(const VECTOR(POLY) &polys0,
           h.f = R->gbvector_copy(f);
           h.fsyz = R->gbvector_copy(polys0[*i].fsyz);
 
-          if (auto_reduced)
+          if (false and auto_reduced)
             remainder(h,false,junk); // This auto-reduces h.
 
           R->gbvector_remove_content(h.f,h.fsyz);
@@ -113,9 +120,25 @@ void minimalize_lead_terms_of_gbvectors(const VECTOR(POLY) &polys0,
       else
         R->exponents_delete(e);
     }
-}
-#endif
 
+  for (int i=0; i<polys.size(); i++)
+    {
+      int f_lead_wt;
+      gbvector *f = polys[i].f;
+      int d = wt->gbvector_weight(f,f_lead_wt);
+      int a = d - f_lead_wt;
+
+      divisor_info t;
+      t.g = polys[i];
+      t.size = R->gbvector_n_terms(f);
+      t.alpha = a;
+      gb_elems.push_back(t);
+    }
+
+}
+
+#if 0
+// old code
 void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
                                        bool auto_reduced)
 {
@@ -140,6 +163,7 @@ void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) &polys0,
       // gb_elems.push_back({polys[i], R->gbvector_n_terms(f), a});
     }
 }
+#endif
 
 bool ReducedGB_Field_Local::find_good_divisor(exponents h_exp,
                                               int h_comp,
@@ -455,6 +479,9 @@ void ReducedGB_Field_Local::store_in_table(const POLY &h,
 
 void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
+  buffer o;
+  text_out(o);
+  emit(o.str());
   if (f.f == 0) return;
   T1 = MonomialTable::make(R->n_vars());
   gbvector head;
@@ -533,6 +560,11 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
 void ReducedGB_Field_Local::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   if (f == 0) return;
+
+  buffer o;
+  text_out(o);
+  emit(o.str());
+
   T1 = MonomialTable::make(R->n_vars());
   gbvector *zero = 0;
   gbvector head;
