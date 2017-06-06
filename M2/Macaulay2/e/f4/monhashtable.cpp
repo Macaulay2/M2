@@ -205,7 +205,7 @@ void MonomialHashTable<ValueType>::show() const
               fprintf(stderr, "-- %ld zero elements --\n", nzeros);
               nzeros = 0;
             }
-          fprintf(stderr, "hash %ld monomial ", M->hash_value(m));
+          fprintf(stderr, "hash %d monomial ", M->hash_value(m));
           M->show(m);
           fprintf(stderr, "\n");
         }

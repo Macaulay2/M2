@@ -301,7 +301,7 @@ void res_varpower_monomials::elem_text_out(FILE *fil, res_const_varpower_monomia
       fprintf(fil, "%c", c);
     } else fprintf(fil, "x[%d]",v);
     if (e > 1)
-      fprintf(fil, "%ld", e);
+      fprintf(fil, "%d", e);
     else if (e < 0)
       fprintf(fil, "^(%d)", e);
   }

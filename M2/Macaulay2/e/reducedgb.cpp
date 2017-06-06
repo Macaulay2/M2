@@ -118,6 +118,12 @@ const Matrix /* or null */ *ReducedGB::get_parallel_lead_terms(M2_arrayint w)
 
 void ReducedGB::text_out(buffer &o) const
 {
+  for (unsigned int i=0; i<polys.size(); i++)
+    {
+      o << i << '\t';
+      R->gbvector_text_out(o, F, polys[i].f);
+      o << newline;
+    }
 }
 
 const Matrix /* or null */ *ReducedGB::matrix_remainder(const Matrix *m)
