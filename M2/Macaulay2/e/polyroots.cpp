@@ -58,7 +58,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
       pari_errfile = dev_null;
     }
 #endif
-  allocatemem(0); // passing 0 will double the current stack size.
+  gp_allocatemem(0); // passing 0 will double the current stack size.
 #ifdef NDEBUG
     /*
      * We set pari_errfile back to the default value just in case PARI crashes.

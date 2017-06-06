@@ -6,17 +6,21 @@
 
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
-VERSION = 1.6.0
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# VERSION = 1.6.0
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # trying to upgrade givaro and fflas-ffpack:
-# VERSION = 2.2.2
+VERSION = 2.2.2
 
 # disable test because include file <omp.h> is not found under clang
 CHECKTARGET = .
 
 TARDIR = fflas-ffpack-$(VERSION)
 TARFILE = fflas-ffpack-$(VERSION).tar.gz
+
+# We disable simd here because otherwise, we get compiler error message from clang under Mac OS about
+# always-inlined functions requiring target feature "xsave"; it's an interaction between givaro and fflas-ffpack.
+CONFIGOPTIONS += --disable-simd
 
 LICENSEFILES = COPYING
 PRECONFIGURE = NOCONFIGURE=yes 
