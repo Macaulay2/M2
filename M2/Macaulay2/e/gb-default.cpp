@@ -66,14 +66,11 @@ gbA * gbA::create(const Matrix *m,
       ERROR("ring is not a polynomial ring");
       return nullptr;
     }
-#if 0
-  // This test should be added, commented out in version 1.8, as QuillenSuslin package uses this (suspect) functionality!
   if (origR->getMonoid()->numInvertibleVariables() > 0)
     {
       ERROR("cannot compute Groebner basis of ideal over a Laurent polynomial ring, ie. with Inverses=>true");
       return nullptr;
     }
-#endif
   bool overZZ = origR->coefficient_type() == Ring::COEFF_ZZ;
   bool isLocal = origR->getMonoid()->numNonTermOrderVariables() > 0;
   if (overZZ and isLocal)
