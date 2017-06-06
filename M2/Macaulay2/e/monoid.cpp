@@ -356,14 +356,13 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
-  static char err[] = "monomial overflow";
   overflow_type *t = overflow;
   for (int i = monomial_size_; i != 0; i--)
       switch (*t++) {
-      case OVER:   *result++ = safe::    add  (*m++,*n++,err); break;
-      case OVER1:  *result++ = safe::pos_add  (*m++,*n++,err); break;
-      case OVER2:  *result++ = safe::pos_add_2(*m++,*n++,err); break;
-      case OVER4:  *result++ = safe::pos_add_4(*m++,*n++,err); break;
+      case OVER:   *result++ = safe::    add  (*m++,*n++); break;
+      case OVER1:  *result++ = safe::pos_add  (*m++,*n++); break;
+      case OVER2:  *result++ = safe::pos_add_2(*m++,*n++); break;
+      case OVER4:  *result++ = safe::pos_add_4(*m++,*n++); break;
       default: throw(exc::internal_error("missing case"));
       }
 }

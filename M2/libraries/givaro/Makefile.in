@@ -1,4 +1,4 @@
-# URL = http://ljk.imag.fr/CASYS/LOGICIELS/givaro/Downloads
+# URL = http://givaro.forge.imag.fr/
 
 # our snapshot taken from:
 #  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
@@ -9,14 +9,15 @@
 
 
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+
 VERSION = 3.7.1
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
+# trying to upgrade givaro and fflas-ffpack:
+# VERSION = 4.0.2
+
 # disable the test because it fails to find <bits/stl_pair.h>
 CHECKTARGET = .
-
-## version 4.0.1: works with ffpack 2.2.1, but that doesn't yet compile.
-#VERSION = 4.0.1
 
 #PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 

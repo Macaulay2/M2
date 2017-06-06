@@ -23,8 +23,6 @@ public:
     // result = max(a-b,0)
   static void lcm(int nvars, const int *a, const int *b, int *result);
   static void gcd(int nvars, const int *a, const int *b, int *result);
-  static void syz(int nvars, const int *a, const int *b,
-                  int *a1, int *a2);
   static bool divides(int nvars, const int *a, const int *b);
   static unsigned int mask(int nvars, const int *a);
 
@@ -55,17 +53,17 @@ bool ntuple::is_one(int nvars, int *a)
 
 inline void ntuple::mult(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=nvars; i>0; i--) *result++ = safe::add(*a++,*b++,"monomial overflow");
+  for (int i=nvars; i>0; i--) *result++ = safe::add(*a++,*b++);
 }
 
 inline void ntuple::power(int nvars, const int *a, int n, int *result)
 {
-  for (int i=nvars; i>0; i--) *result++ = safe::mult(*a++, n,"monomial overflow");
+  for (int i=nvars; i>0; i--) *result++ = safe::mult(*a++, n);
 }
 
 inline void ntuple::divide(int nvars, const int *a, const int *b, int *result)
 {
-  for (int i=nvars; i>0; i--) *result++ = safe::sub(*a++,*b++,"monomial overflow");
+  for (int i=nvars; i>0; i--) *result++ = safe::sub(*a++,*b++);
 }
 
 inline
@@ -152,26 +150,6 @@ inline int ntuple::degree(int nvars, const int *a)
      int sum = a[0];
      for (int i=1; i<nvars; i++) sum = safe::add(sum,a[i],"degree overflow");
      return sum;
-}
-
-inline
-void ntuple::syz(int nvars, const int *a, const int *b, int *a1, int *b1)
-{
-     for (int i=0; i<nvars; i++) {
-          if ((a[i] < 0 || b[i] < 0) && !(a[i] < 0 && b[i] < 0)) {
-               a1[i] = -a[i];
-               b1[i] = -b[i];
-               //warning: Mike: does this routine ever get called with negative exponents?
-               if (a1[i] == a[i] && a[i] < 0 || b1[i] == b[i] && b[i] < 0) { // yes, we overflow a bit too often here
-                    throw(exc::overflow_error("monomial overflow"));
-               }
-          }
-          else {
-               int c = a[i] - b[i];
-               if (c >= 0) a1[i] = 0, b1[i] = c;
-               else a1[i] = -c, b1[i] = 0;
-          }
-     }
 }
 
 #endif

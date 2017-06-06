@@ -41,6 +41,7 @@ LDLIBS = @GC_LIBS@
 
 all: run-overflow-test
 run-overflow-test : overflow-test Makefile
+	@ echo "#warning: the following 6 tests are intended to throw uncaught overflow exceptions"
 	./overflow-test throw || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	./overflow-test sub   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	./overflow-test minus || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
@@ -49,7 +50,7 @@ run-overflow-test : overflow-test Makefile
 	./overflow-test add   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	touch $@
 clean :: ; rm -f run-overflow-test
-pi overflow-test : overflow.o overflow-test-b.o ../d/debug.o
+pi overflow-test : overflow.o ../d/debug.o
 clean :: ; rm -f overflow-test
 pi : pi.h
 
