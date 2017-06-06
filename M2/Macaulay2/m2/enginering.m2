@@ -655,7 +655,7 @@ fraction(RingElement,RingElement) := (r,s) -> (
 -----------------------------------------------------------------------------
 
 isUnit(RingElement) := (f) -> (
-    if (options ring f).?Inverses then 
+    if (options ring f).?Inverses and (options ring f).Inverses then 
       size f === 1 and isUnit leadCoefficient f
     else
       1 % ideal f == 0
