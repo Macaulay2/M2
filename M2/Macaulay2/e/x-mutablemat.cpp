@@ -13,8 +13,8 @@
 #include "exceptions.hpp"
 
 #include "matrix.hpp"
-#include "aring-zzp-ffpack.hpp"
 #include "mutablemat.hpp"
+#include "aring-zzp-ffpack.hpp"
 
 #include "finalize.hpp"
 

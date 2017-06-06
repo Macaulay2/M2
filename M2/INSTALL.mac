@@ -12,7 +12,7 @@ brew tap homebrew/versions
 brew tap homebrew/science
 brew update
 brew upgrade; stty -onlcr -echo
-brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost; stty -onlcr -echo
+brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost yasm; stty -onlcr -echo
 brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz; stty -onlcr -echo
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
 make -f Makefile

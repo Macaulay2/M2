@@ -60,6 +60,7 @@ header "
    static int32_t endianness_string[2] = {0x61626364,0};
    #include <readline/readline.h>
    #include <givaro/givinit.h>
+   #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;
    #ifdef HAVE_LINBOX
        #include <linbox/linbox-config.h>
@@ -161,7 +162,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 		   \"not present\"
 	  #endif
 	  "),
-   "givaro version" => Ccode(constcharstar, "givaroMain.Version()"),
+   "givaro version" => Ccode(constcharstar, "stringize(GIVARO_MAJOR_VERSION) \".\" stringize(GIVARO_MINOR_VERSION) \".\" stringize(GIVARO_REVISION_VERSION)" ),
    "fflas_ffpack version" => ffpackVersion(),
    "linbox version" => Ccode(constcharstar,"
 	  #ifdef HAVE_LINBOX

@@ -128,11 +128,11 @@ int main(int argc, char ** argv) {
   GFqDom<int> GF625( 5, 4 ); TestField( GF625 );
   // Zech log finite field with 256 elements
   // and prescribed irreducible polynomial
-  std::vector< GFqDom<int64_t>::Residu_t > Irred(9);
+  std::vector< GFqDom<unsigned long long>::Residu_t > Irred(9);
   Irred[0] = 1; Irred[1] = 1; Irred[2] = 0; Irred[3] = 1;
   Irred[4] = 1; Irred[5] = 0; Irred[6] = 0; Irred[7] = 0;
   Irred[8] = 1;
-  GFqDom<int64_t> F256(2,8, Irred); TestField( F256 );
+  GFqDom<unsigned long long> F256(2,8, Irred); TestField( F256 );
   // Zech log finite field with 3^4 elements
   // Using the Q-adic Transform
   GFqExt<int32_t> GF81( 3, 4 ); TestField( GF81 );

@@ -7,9 +7,12 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include <iostream>
-#include <fflas-ffpack/field/modular-balanced.h>
-#include <fflas-ffpack/field/modular-double.h>
+// #include <fflas-ffpack/field/modular-balanced.h>
+// #include <fflas-ffpack/field/modular-double.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #include <fflas-ffpack/ffpack/ffpack.h>
+#pragma GCC diagnostic pop
 //#include <givaro/givgfq.h>
 
 namespace M2 {
@@ -30,7 +33,7 @@ namespace M2 {
     static const RingID ringID = ring_ZZpFfpack;
     
     //typedef FFPACK::ModularBalanced<double> FieldType;
-    typedef FFPACK::Modular<double> FieldType;
+    typedef Givaro::Modular<double> FieldType;
 
     typedef FieldType::Element ElementType;
     typedef ElementType elem;
@@ -204,11 +207,15 @@ namespace M2 {
     
     static inline double getMaxModulus() 
     {
-      if  (std::is_same<FFPACK::Modular<double> , FieldType>::value)
+#if 1
+      return 0x7fff;            // I have no idea what value would be correct here
+#else
+      if  (std::is_same<Givaro::Modular<double> , FieldType>::value)
       {
 	    return FieldType::getMaxModulus()/2;
       }
       return FieldType::getMaxModulus();
+#endif
     }
   /** @} */
 
