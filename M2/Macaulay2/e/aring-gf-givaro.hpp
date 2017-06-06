@@ -70,7 +70,7 @@ class ARingGFGivaro : public RingInterface
   public:
     static const RingID ringID = ring_GFGivaro;
 
-    typedef Givaro::GFqDom<long>    FieldType;
+    typedef Givaro::GFqDom<int64_t>    FieldType;
     typedef FieldType::Element      ElementType;
     typedef M2::ARingGFGivaro             ring_type ;
   

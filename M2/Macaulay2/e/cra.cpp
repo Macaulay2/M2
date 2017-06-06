@@ -433,6 +433,7 @@ ring_elem ChineseRemainder::ratConversion(const ring_elem ff,
     M->copy(f->monom,result->monom);
     ratConversion(f->coeff.get_mpz(),m,result_coeff);
     bool ok1 = K->from_rational(result_coeff, result->coeff);
+    (void)ok1;
     assert(ok1); // K is supposed to contain (or be) the rationals, so this should not fail.
   }
 

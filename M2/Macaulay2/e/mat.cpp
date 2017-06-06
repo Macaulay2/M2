@@ -137,6 +137,7 @@ bool MutableMatrix::set_values(M2_arrayint rows,
   return true;
 }
 
+#if 0
 engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose)
 {
   // Suppose A is m x n
@@ -180,6 +181,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 
   return result;
 }
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -244,7 +244,7 @@ void cblas_dgemm(const int Order,     // how matrices are stored, by column or r
 // computes ax
 void cblas_dscal(const int n,     // length of vectors
                  const double a,  // scalar alpha
-                 const double* x, // vector x
+                 double* x, // vector x
                  const int incx); // increment of x
 
 
@@ -363,7 +363,7 @@ void cblas_daxpy(const int n,     // length of vectors
 // computes ax
 void cblas_dscal(const int n,     // length of vectors
                  const double a,  // scalar alpha
-                 const double* x, // vector x
+                 double* x, // vector x
                  const int incx); // increment of x
 
 

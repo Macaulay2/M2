@@ -7,6 +7,7 @@
 #pragma GCC diagnostic ignored "-Wconversion"
 #undef ulong
 #define register
+#undef GCC_VERSION
 #include <pari/pari.h>
 #pragma GCC diagnostic pop
 
