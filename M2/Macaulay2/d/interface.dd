@@ -3892,13 +3892,13 @@ export rawLU(e:Expr):Expr := (
 setupfun("rawLU", rawLU);
 
 
-export rawLQUPFactorization(e:Expr):Expr := (
-     -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),
-     when e is m:RawMutableMatrixCell do
-     	  toExpr(
-	       Ccode(RawArrayIntPairOrNull, "rawLQUPFactorization(", m.p, ")"))
-     else WrongArgMutableMatrix(1));
-setupfun("rawLQUPFactorization", rawLQUPFactorization);
+--export rawLQUPFactorization(e:Expr):Expr := (
+--     -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),
+--     when e is m:RawMutableMatrixCell do
+--     	  toExpr(
+--	       Ccode(RawArrayIntPairOrNull, "rawLQUPFactorization(", m.p, ")"))
+--     else WrongArgMutableMatrix(1));
+--setupfun("rawLQUPFactorization", rawLQUPFactorization);
 
 export rawFFLU(e:Expr):Expr := (
      when e is M:RawMutableMatrixCell do toExpr( Ccode(RawArrayIntOrNull, "IM2_FF_LU(", M.p, ")" ) )
