@@ -13,8 +13,6 @@
    -- non-commutative blocks should be added in
 */
 
-static char mom[] = "monomial overflow";
-
 static void mo_block_revlex(struct mo_block *b, int nvars)
 {
   b->typ = MO_REVLEX;
@@ -301,7 +299,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 
           /* divide the wt vector by the degree vector */
           for (j=0; j<result->blocks[i].nvars; j++)
-            safe::div_by(result->blocks[i].weights[j],result->degs[j],mom);;
+            safe::div_by(result->blocks[i].weights[j],result->degs[j]);;
         }
       else if (typ == MO_GREVLEX_WTS || typ == MO_GREVLEX2_WTS || typ == MO_GREVLEX4_WTS)
         {
@@ -338,10 +336,10 @@ static void MO_pack4(int nvars, const int *expon, int *slots)
   int32_t i;
   if (nvars == 0) return;
   while (1) {
-         i  = safe::fits_7(*expon++,mom) << 24; if (--nvars == 0) break;
-         i |= safe::fits_7(*expon++,mom) << 16; if (--nvars == 0) break;
-         i |= safe::fits_7(*expon++,mom) <<  8; if (--nvars == 0) break;
-         i |= safe::fits_7(*expon++,mom) ;      if (--nvars == 0) break;
+         i  = safe::fits_7(*expon++) << 24; if (--nvars == 0) break;
+         i |= safe::fits_7(*expon++) << 16; if (--nvars == 0) break;
+         i |= safe::fits_7(*expon++) <<  8; if (--nvars == 0) break;
+         i |= safe::fits_7(*expon++) ;      if (--nvars == 0) break;
          *slots++ = i;
   }
   *slots++ = i;
@@ -352,8 +350,8 @@ static void MO_pack2(int nvars, const int *expon, int *slots)
   int32_t i;
   if (nvars == 0) return;
   while (1) {
-         i  = safe::fits_15(*expon++,mom) << 16;        if (--nvars == 0) break;
-         i |= safe::fits_15(*expon++,mom)      ;        if (--nvars == 0) break;
+         i  = safe::fits_15(*expon++) << 16;        if (--nvars == 0) break;
+         i |= safe::fits_15(*expon++)      ;        if (--nvars == 0) break;
          *slots++ = i;
   }
   *slots++ = i;
@@ -409,7 +407,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
     case MO_LAURENT_REVLEX:
       nvars = b->nvars;
       for (j=0; j<nvars; j++)
-        *p++ = safe::minus(*e++,mom);
+        *p++ = safe::minus(*e++);
       break;
     case MO_GREVLEX:
       nvars = b->nvars;
@@ -419,7 +417,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
         {
           --p1;
-          *p1 = safe::add(*e++,p1[1],mom);
+          *p1 = safe::add(*e++,p1[1]);
         }
       break;
     case MO_GREVLEX_WTS:
@@ -427,12 +425,12 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
       degs = mo->degs + b->first_exp;
       p += b->nslots;
       p1 = p;
-      *--p1 = safe::mult(*e++,*degs++,mom);
+      *--p1 = safe::mult(*e++,*degs++);
       for (j=1; j<nvars; j++)
         {
           --p1;
-          int tmp = safe::mult(*e++,*degs++,mom);
-          *p1 = safe::add(tmp, p1[1], mom);
+          int tmp = safe::mult(*e++,*degs++);
+          *p1 = safe::add(tmp, p1[1]);
         }
       break;
     case MO_GREVLEX4:
@@ -442,7 +440,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
         {
           --p1;
-          *p1 = safe::add(*e++,p1[1],mom);
+          *p1 = safe::add(*e++,p1[1]);
         }
       MO_pack4(nvars,p1,p);
       p += b->nslots;
@@ -451,12 +449,12 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
       nvars = b->nvars;
       degs = mo->degs + b->first_exp;
       p1 = tmpexp + b->nvars;
-      *--p1 = safe::mult(*e++,*degs++,mom);
+      *--p1 = safe::mult(*e++,*degs++);
       for (j=1; j<nvars; j++)
         {
           --p1;
-          int tmp = safe::mult(*e++,*degs++,mom);
-          *p1 = safe::add(tmp, p1[1], mom);
+          int tmp = safe::mult(*e++,*degs++);
+          *p1 = safe::add(tmp, p1[1]);
         }
       MO_pack4(nvars,p1,p);
       p += b->nslots;
@@ -468,7 +466,7 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
         {
           --p1;
-          *p1 = safe::add(*e++,p1[1],mom);
+          *p1 = safe::add(*e++,p1[1]);
         }
       MO_pack2(nvars,p1,p);
       p += b->nslots;
@@ -477,12 +475,12 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
       nvars = b->nvars;
       degs = mo->degs + b->first_exp;
       p1 = tmpexp + b->nvars;
-      *--p1 = safe::mult(*e++,*degs++,mom);
+      *--p1 = safe::mult(*e++,*degs++);
       for (j=1; j<nvars; j++)
         {
           --p1;
-          int tmp = safe::mult(*e++,*degs++,mom);
-          *p1 = safe::add(tmp, p1[1], mom);
+          int tmp = safe::mult(*e++,*degs++);
+          *p1 = safe::add(tmp, p1[1]);
         }
       MO_pack2(nvars,p1,p);
       p += b->nslots;
@@ -504,8 +502,8 @@ void monomialOrderEncodeFromActualExponents(const MonomialOrder *mo,
            s = 0;
       }
       else {
-           s = safe::mult(b->weights[0],expon[0],mom);
-           for (j=1; j<b->nweights; j++) s = safe::add(s,safe::mult(b->weights[j],expon[j],mom),mom);
+           s = safe::mult(b->weights[0],expon[0]);
+           for (j=1; j<b->nweights; j++) s = safe::add(s,safe::mult(b->weights[j],expon[j]));
       }
       *p++ = s;
       break;
@@ -546,7 +544,7 @@ void monomialOrderDecodeToActualExponents(const MonomialOrder *mo, const_monomia
       p = psums + b->first_slot;
       e = expon + b->first_exp;
       for (j=0; j<nvars; j++)
-        *e++ = safe::minus(*p++,mom);
+        *e++ = safe::minus(*p++);
       break;
     case MO_GREVLEX:
       nvars = b->nvars;

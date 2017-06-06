@@ -40,12 +40,14 @@ tags:: @srcdir@/TAGS
 LDLIBS = @GC_LIBS@
 
 all: run-overflow-test
-run-overflow-test : overflow-test
-	./$^ sub 2>/dev/null || echo test succeeded
-	./$^ minus 2>/dev/null || echo test succeeded
-	./$^ mult 2>/dev/null || echo test succeeded
-	./$^ div 2>/dev/null || echo test succeeded
-	./$^ add 2>/dev/null || echo test succeeded
+run-overflow-test : overflow-test Makefile
+	@ echo "#warning: the following 6 tests are intended to throw uncaught overflow exceptions"
+	./overflow-test throw || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
+	./overflow-test sub   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
+	./overflow-test minus || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
+	./overflow-test mult  || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
+	./overflow-test div   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
+	./overflow-test add   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	touch $@
 clean :: ; rm -f run-overflow-test
 pi overflow-test : overflow.o ../d/debug.o
