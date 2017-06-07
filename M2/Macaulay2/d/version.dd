@@ -74,7 +74,10 @@ header "
    // HAVE_FROBBY is in factory/factoryconf.h
    #ifdef HAVE_FLINT
        #include <M2/gc-include.h>
+       #pragma GCC diagnostic push
+       #pragma GCC diagnostic ignored \"-Wconversion\"
        #include <flint/flint.h>
+       #pragma GCC diagnostic pop
    #endif
    ";
 gcversion():constcharstar := Ccode(returns,"

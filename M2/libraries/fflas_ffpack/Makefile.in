@@ -18,6 +18,8 @@ CHECKTARGET = check TESTS="test-lu test-det test-echelon test-rankprofiles test-
 # always-inlined functions requiring target feature "xsave"; it's an interaction between givaro and fflas-ffpack.
 CONFIGOPTIONS += --disable-simd
 
+CONFIGOPTIONS += --disable-openmp
+
 LICENSEFILES = COPYING
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
 # 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \

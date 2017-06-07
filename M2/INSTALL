@@ -134,7 +134,7 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo
     Install other software:
       Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
         way (untar, configure, make, make install).
@@ -145,8 +145,8 @@ various modern operating systems:
       future version of Macaulay2.  However, one can install newer compilers
       (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
       (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
-	  wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
-	  yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
+	  sudo wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+	  sudo yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
       Then use
 	  . /opt/rh/devtoolset-2/enable
       to update the environment of your currently running shell.  The latter
