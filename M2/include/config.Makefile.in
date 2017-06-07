@@ -216,6 +216,30 @@ export GC_LARGE_ALLOC_WARN_INTERVAL=1
 # status info
 WHY = : remaking $@ because of $?
 
+GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
+GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
+
+FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
+FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
+
+M2_LIBRARIES += $(GIVARO_LIBS)
+M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
+
+M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
+M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
+
+test:
+	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
+	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
+	:
+	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
+	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
+	: "M2_CXXFLAGS           = $(FFLAS_FFPACK_CXXFLAGS)"
+	:
+	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
+	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
+	: "M2_LIBRARIES          = $(FFLAS_FFPACK_LIBS)"
+
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR include/config.Makefile DEPENDS=no "
+# compile-command: "set -x ; make -C $M2BUILDDIR include/config.Makefile DEPENDS=no && make -f $M2BUILDDIR/include/config.Makefile test "
 # End:
