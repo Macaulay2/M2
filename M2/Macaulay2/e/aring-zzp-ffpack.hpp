@@ -7,13 +7,10 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include <iostream>
-// #include <fflas-ffpack/field/modular-balanced.h>
-// #include <fflas-ffpack/field/modular-double.h>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #include <fflas-ffpack/ffpack/ffpack.h>
 #pragma GCC diagnostic pop
-//#include <givaro/givgfq.h>
 
 namespace M2 {
 

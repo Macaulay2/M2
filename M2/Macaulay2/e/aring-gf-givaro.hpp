@@ -46,7 +46,6 @@ namespace M2 {
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
 #include <givaro/gfq.h>
-// #include <givaro/givextension.h>     //multiple definition problem...   solvable by encapsulating (see linbox)? Also solvable with the namespace trick, but do not overuse that...
 #include <math.h>
 #include <givaro/givinteger.h>
 #include <givaro/givintnumtheo.h>
