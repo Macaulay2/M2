@@ -134,7 +134,10 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel
+    Install other software:
+      Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
+        way (untar, configure, make, make install).
     Some debugging aids:
       sudo yum install -y strace
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,

@@ -5,6 +5,8 @@
 # http://linalg.org/
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 2.2.2
+PRECONFIGURE = autoreconf -vif
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = fflas-ffpack-$(VERSION)
 TARFILE = fflas-ffpack-$(VERSION).tar.gz
 
@@ -17,7 +19,6 @@ CHECKTARGET = check TESTS="test-lu test-det test-echelon test-rankprofiles test-
 CONFIGOPTIONS += --disable-simd
 
 LICENSEFILES = COPYING
-PRECONFIGURE = NOCONFIGURE=yes 
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
 # 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
 # 		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.

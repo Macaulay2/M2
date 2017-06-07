@@ -1504,14 +1504,14 @@ else lapack_found=no
      if test $blas_found = no
      then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,
                          blas_found=yes
-			 BLASLIBS=$ac_cv_search_SGEMV_
+			 BLASLIBS=$ac_cv_search_sgemv_
 			 )
           # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
      fi
      if test $lapack_found = no
      then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,
 	  		 lapack_found=yes
-			 LAPACKLIBS=$ac_cv_search_DGETRF_
+			 LAPACKLIBS=$ac_cv_search_dgetrf_
 			 )
      fi
      if test $blas_found = no -o $lapack_found = no
