@@ -42,7 +42,7 @@ distclean::; rm -f Makefile
 
 # how was this test file supposed to work?
 LDLIBS += -lgc -lpthread
-check : tests; ./tests
+#check : tests; ./tests
 tests : tests.o supervisor.o
 	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
