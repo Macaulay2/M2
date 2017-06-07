@@ -40,6 +40,12 @@ clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/system/Makefile
 distclean::; rm -f Makefile
 
+# how was this test file supposed to work?
+LDLIBS += -lgc -lpthread
+check : tests; ./tests
+tests : tests.o supervisor.o
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/system "
 # End:
