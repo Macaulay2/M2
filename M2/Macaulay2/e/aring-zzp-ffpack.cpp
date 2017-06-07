@@ -14,7 +14,7 @@ namespace M2 {
     mDimension            (1),
     mGeneratorComputed    (false)
   {
-    assert( FieldType::getMaxModulus()>=mCharac );
+    assert( FieldType::maxCardinality()>=mCharac );
   }
  
   void ARingZZpFFPACK::elem_text_out
