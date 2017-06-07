@@ -20,7 +20,7 @@ namespace M2 {
       mDimension(extensionDegree_),
       mOriginalRing(0),
       givaroField(FieldType(charact_, extensionDegree_)),
-      givaroRandomIterator(Givaro::GFqDom<unsigned long long>::RandIter(givaroField))
+      givaroRandomIterator(GivaroRandIter(givaroField))
     {
            mCardinality = mCharac;
            for (int j=1; j<mDimension; j++)
@@ -56,7 +56,7 @@ namespace M2 {
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
       givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial) )),
-      givaroRandomIterator( Givaro::GFqDom<unsigned long long>::RandIter(givaroField ))
+      givaroRandomIterator( GivaroRandIter(givaroField ))
     {
            mCardinality = mCharac;
            for (int j=1; j<mDimension; j++)
@@ -84,7 +84,7 @@ namespace M2 {
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
       givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial), ARingGFGivaro::M2arrayToStdVec(charact_, generatorPoly) )),
-      givaroRandomIterator( Givaro::GFqDom<unsigned long long>::RandIter(givaroField ))
+      givaroRandomIterator( GivaroRandIter(givaroField ))
     {
 
       mCardinality = mCharac;
@@ -436,15 +436,24 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     /// @todo possible problem if type UTT is smaller than an int?
     void ARingGFGivaro::set_from_long(ElementType &result, int64_t a) const 
     {
+      // givaroField.init(result, a): returns an element in GF, where
+      // 0 <= a < p^n.  It injects via lexicographic order of p-adic rep:
+      // 0 --> [0,0,0]
+      // 1 --> [1,0,0]
+      // p --> [0,1,0], etc.
       ElementType p = static_cast<ElementType>(mCharac);
-      ElementType a1 = (a >= 0 ? static_cast<ElementType>(a) : static_cast<ElementType>(a + p));
-      a1 = a1 % p;
-      //      a = a % static_cast<long>(mCharac); // strange: if mCharac isn't cast away from unsigned, 
-                                          // then a is coerced to unsigned, and get the wrong answer!
+      ElementType a1 = a;
+      if (a1 < 0 or a1 >= p)
+        {
+          a1 = a1 % p;
+          if (a1 < 0) a1 = a1 + p;
+        }
+      // strange: if mCharac isn't cast away from unsigned, 
+      // then in "a % mCharac" a is coerced to unsigned, and get the wrong answer!
       // e.g:
       //  (-5) % (unsigned long)(5) == 1
       //  (-5) % (long)(5) == 0.  Wow!
-      givaroField.init(result, a);
+      givaroField.init(result, a1);
     }
 
     void ARingGFGivaro::set_from_mpz(ElementType &result, const mpz_ptr a) const 
@@ -578,7 +587,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     }
 
     /// @jakob: document possible overflow and other nasty things
-    void ARingGFGivaro::random(Givaro::GFqDom<unsigned long long>::RandIter &it, ElementType &result) const
+    void ARingGFGivaro::random(GivaroRandIter &it, ElementType &result) const
     {
          givaroField.random( it,result);
       //   std::cerr << " givaroField.cardinality()" << givaroField.cardinality();

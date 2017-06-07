@@ -37,6 +37,9 @@ export {
     "regionComplex",
     "strand",
     "ringData",
+    "beilinsonBundle",
+    "beilinsonBundles",
+    "TateProductData",
     "cornerCohomologyTablesOfUa",
     --the following could all be part of ChainComplexExtras
     "prependZeroMap",
@@ -91,15 +94,16 @@ cohomologyTable( T, -{2,2},{6,6})
 
 
 ringData = method()
-ringData Ring := E ->(
-differentDegrees := unique last degrees vars E;
-varsLists := apply(differentDegrees, deg -> select (gens E, x-> degree x == deg));
-t := #varsLists;
-irrList := apply(varsLists, L -> ideal(L));
-v := varsLists/(L->#L);
-n := apply(v, i-> i-1);
-(t,v,n,varsLists,irrList)
-)
+ringData Ring := E -> if not E.?TateProductData then E.TateProductData = (
+  differentDegrees := unique last degrees vars E;
+  varsLists := apply(differentDegrees, deg -> select (gens E, x-> degree x == deg));
+  t := #varsLists;
+  irrList := apply(varsLists, L -> ideal(L));
+  v := varsLists/(L->#L);
+  n := apply(v, i-> i-1);
+  (t,v,n,varsLists,irrList)
+  ) else E.TateProductData
+
 ringData Module := M -> ringData ring M
 
 ///
@@ -969,6 +973,98 @@ sloppyTateExtension(ChainComplex) := W -> (
     TW2
 
     )
+
+-- Example of beilinson: Code being worked on by MES + FS
+///
+restart
+  needsPackage "TateOnProducts"
+  n={2,1,3,3};
+  (S,E)=setupRings(ZZ/101,n);
+  beilinsonBundle({1,1,0,2},S)
+  
+
+  T1 = (dual res trim (ideal vars E)^2)[1];
+  a=-{2,2};
+  T2=T1**E^{a}[sum a];
+  W=beilinsonWindow T2,cohomologyTable(W,-2*n,2*n)
+  UF = beilinson W
+
+sortedBasis = (i,varsInE) -> (
+     m := mingens (ideal varsInE)^i;
+     p := sortColumns(m,MonomialOrder=>Descending);
+     m_p);
+
+constructBeilinsonBundles = method()
+-- for each set of variables:
+--  for each degree, construct a sorted basis of all such monomials
+-- for each multidegree
+beilinson1=(e,dege,i,S)->(
+     E := ring e;
+     (t,v,n,varsLists,irrList) := ringData E;
+     maps := for ell from 0 to t-1 list (
+         mi := if i < 0 or i >= n#i then map(E^1, E^0, 0)
+           else if i === 0 then id_(E^1)
+           else sortedBasis(i+1,varLists#ell);
+         r := i - dege;
+         mr := if r < 0 or r >= numgens E then map(E^1, E^0, 0)
+           else sortedBasis(r+1,varLists#ell);
+         s := numgens source mr;
+         if i === 0 and r === 0 then
+           substitute(map(E^1,E^1,{{e}}),S)
+         else if i>0 and r === i then substitute(e*id_(E^s),S)
+         else if i > 0 and r === 0 then
+           (vars S) * substitute(contract(diff(e,mi),transpose mr),S)
+         else substitute(contract(diff(e,mi), transpose mr),S)
+         );
+     );
+
+UU = method()
+UU(List,Ring) := (i,S) -> (
+    -- XXX
+     if i < 0 or i >= numgens S then S^0
+     else if i === 0 then S^1
+     else cokernel koszul(i+2,vars S) ** S^{i});
+
+beilinsonBundle = method()
+beilinsonBundle(List, Ring) := (deg,S) -> (
+    (t,v,n,varsLists,irrList) := ringData S;
+    modules := for i from 0 to t-1 list (
+        a := deg#i;
+        if a < 0 or a >= v#i then S^0
+        else if a === 0 then S^1 else
+          cokernel koszul(a+2,matrix{varsLists#i})
+        );
+    result := modules#0;
+    for i from 1 to t-1 do result = result ** modules#i;
+    result ** S^{deg}
+    )
+
+beilinsonBundles = method()
+beilinsonBundles Ring := (S) -> (
+    (t,v,n,varsLists,irrList) := ringData S;
+    hashTable apply(toList(t:0)..n, deg -> deg => beilinsonBundle(deg, S))
+    )
+
+beilinson = method()
+beilinson(Matrix,PolynomialRing) := Matrix => (o,S) -> (
+     coldegs := degrees source o;
+     rowdegs := degrees target o;
+     mats := table(numgens target o, numgens source o,
+              (r,c) -> (
+                   rdeg := first rowdegs#r;
+                   cdeg := first coldegs#c;
+                   overS := beilinson1(o_(r,c),cdeg-rdeg,cdeg,S);
+                   map(UU(rdeg,S),UU(cdeg,S),overS)));
+     if #mats === 0 then matrix(S,{{}})
+     else matrix(mats));
+
+beilinson(ChainComplex, Ring) := (BT, S) -> (
+    -- BT should be a complex over E = exterior algebra
+    -- S should be the corresponding symmetric algebra
+    data := chainComplexData BT;
+    chainComplexFromData{data#0, data#1,data#2/(m -> beilinson(m,S))}
+    )
+///
 
 ----------------------------------------
 -- Examples in the Paper                                   --

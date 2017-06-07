@@ -35,7 +35,6 @@ static int randomVals[nelements] = {
   35340937, 98935118, 77343644, 78522496, 46395773, 35429063, 54767177, 14130046, 2726640, 44257782, 
   31615869, 83095327, 15062803, 92772905, 25189126, 86464567, 43372313, 24240507, 96790882, 99639739};
 
-#if 1
 template<>
 void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R, 
                              int index, 
@@ -71,16 +70,19 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
     // Check what values integers go to
     M2::ARingGFGivaro::ElementType a;
     R.init(a);
-    for (int i=-5; i<R.characteristic(); i++)
+    //    for (int i=-5; i<R.characteristic(); i++)
+    for (int i=-130; i<130; i++)
       {
         R.set_from_long(a, i);
         M2_arrayint coeffs = R.fieldElementToM2Array(a);
-        if (i >= 0) EXPECT_EQ(coeffs->array[0], i);
         EXPECT_EQ(coeffs->len, 3);
+        int imodp = i%5;
+        if (imodp < 0) imodp += 5;
+        EXPECT_EQ(coeffs->array[0], imodp);
         for (int j=1; j<3; j++)
           EXPECT_EQ(coeffs->array[j], 0);
-        std::cout << i << " = ";
-        dintarray(coeffs);
+        //        std::cout << i << " = ";
+        //        dintarray(coeffs);
         std::cout << std::endl;
       }
     R.clear(a);
@@ -127,8 +129,6 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
     M2::ARingGFGivaro R(5,3);
     testFiniteField(R, ntrials);
   }
-
-#endif 
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

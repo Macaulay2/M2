@@ -70,10 +70,10 @@ class ARingGFGivaro : public RingInterface
   public:
     static const RingID ringID = ring_GFGivaro;
 
-    typedef Givaro::GFqDom<unsigned long long>    FieldType;
+    typedef Givaro::GFqDom<int64_t>    FieldType;
     typedef FieldType::Element      ElementType;
     typedef M2::ARingGFGivaro             ring_type ;
-  
+    using GivaroRandIter = FieldType::RandIter;
     typedef ElementType     elem;
 
     typedef  FieldType::Residu_t     UTT; ///< types depends on FieldType definition!
@@ -116,7 +116,7 @@ class ARingGFGivaro : public RingInterface
 
     const FieldType     givaroField;
  
-    mutable  Givaro::GFqDom<unsigned long long>::RandIter     givaroRandomIterator;
+    mutable  GivaroRandIter     givaroRandomIterator;
 
     M2_arrayint     representationToM2Array(UTT representation,  long coeffNum ) const;
 
@@ -256,7 +256,7 @@ class ARingGFGivaro : public RingInterface
             void swap(ElementType &a, ElementType &b) const;
 
 
-    void random(Givaro::GFqDom<unsigned long long>::RandIter &it, ElementType &result) const;
+    void random(GivaroRandIter &it, ElementType &result) const;
             void random(ElementType &result) const;
             
     /** @} */
