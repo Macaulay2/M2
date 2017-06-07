@@ -224,6 +224,10 @@ AC_SUBST(M2_CPPFLAGS,)
 AC_SUBST(M2_CFLAGS,)
 AC_SUBST(M2_CXXFLAGS,)
 
+dnl Fix standards, apply everywhere
+CXXFLAGS="-std=gnu++11 $CXXFLAGS"
+CFLAGS="-std=gnu11 $CFLAGS"
+
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
 
@@ -988,7 +992,7 @@ dnl fi
 if test $BUILD_memtailor = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     CXXFLAGS="$CXXFLAGS"
      AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
      AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
      CXXFLAGS="$SAVE_CXXFLAGS"
@@ -998,7 +1002,7 @@ test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
 if test $BUILD_mathic = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     CXXFLAGS="$CXXFLAGS"
      AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
      AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
      CXXFLAGS="$SAVE_CXXFLAGS"
@@ -1008,7 +1012,7 @@ test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
 if test $BUILD_mathicgb = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     CXXFLAGS="$CXXFLAGS"
      AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
      AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
      CXXFLAGS="$SAVE_CXXFLAGS"

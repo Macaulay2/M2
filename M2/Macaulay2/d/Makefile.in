@@ -152,21 +152,10 @@ ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wno-unused-label
 endif
 
-# # C standards
-# ## CFLAGS += -std=c89
-# # c99 allows declarations and statements to be mingled:
-# CFLAGS += -std=c99
-# CFLAGS += -pedantic-errors
-
-# # C++ standards
-# CXXFLAGS += -std=c++98
-# CXXFLAGS += -pedantic-errors
-
 CXXFLAGS += $(M2_CXXFLAGS)
 
 CFLAGS   += -Wreturn-type -Werror
 CXXFLAGS += -Wreturn-type -Werror
-CXXFLAGS += -std=c++11
 
 python-c.o : | python-exports.h.tmp
 

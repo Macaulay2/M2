@@ -1,9 +1,9 @@
 # -*- makefile-gmake -*-
 DIRECTORY = sl64.production
 
-_CC  := gcc-7.1.0
-_CXX := g++-7.1.0
-_FC  := gfortran-7.1.0
+# _CC  := gcc-7.1.0
+# _CXX := g++-7.1.0
+# _FC  := gfortran-7.1.0
 
 ifeq ($(DEBUG),yes)
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize

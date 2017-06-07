@@ -10,8 +10,7 @@ export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 CPPFLAGS := -I. -I@srcdir@  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include
 
-#CXXFLAGS += -O0 -std=gnu++0x #-coverage
-CXXFLAGS += -std=c++11 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
+CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor -lstdc++ @FCLIBS@
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox

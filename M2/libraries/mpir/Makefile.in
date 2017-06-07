@@ -46,7 +46,6 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 endif
 
-COMPILEFLAGS = 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif
