@@ -162,6 +162,8 @@ endif
 # CXXFLAGS += -std=c++98
 # CXXFLAGS += -pedantic-errors
 
+CXXFLAGS += $(M2_CXXFLAGS)
+
 CFLAGS   += -Wreturn-type -Werror
 CXXFLAGS += -Wreturn-type -Werror
 CXXFLAGS += -std=c++11
