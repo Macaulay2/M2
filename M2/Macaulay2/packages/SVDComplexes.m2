@@ -1,15 +1,17 @@
 newPackage(
         "SVDComplexes",
-        Version => "0.1", 
-        Date => "",
-        Authors => {{Name => "Frank Schreyer", 
-                  Email => "", 
-                  HomePage => ""},
-              {Name => "Mike Stillman", 
-                  Email => "", 
-                  HomePage => ""}},
+        Version => "0.2", 
+        Date => "June 6, 2017",
+        Authors => {
+            {Name => "Frank Schreyer", 
+		        Email => "schreyer@math.uni-sb.de",
+		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+	        {Name => "Mike Stillman", 
+                Email => "mike@math.cornell.edu", 
+                HomePage => "http://www.math.cornell.edu/~mike"}
+            },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export {

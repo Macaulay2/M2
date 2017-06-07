@@ -1,16 +1,18 @@
 newPackage(
         "RandomComplexes",
-        Version => "0.1", 
-        Date => "",
-        Authors => {{Name => "Frank Schreyer", 
-                  Email => "", 
-                  HomePage => ""},
-              {Name => "Mike Stillman", 
-                  Email => "", 
-                  HomePage => ""}},
+        Version => "0.2", 
+        Date => "June 6, 2017",
+        Authors => {
+            {Name => "Frank Schreyer", 
+		        Email => "schreyer@math.uni-sb.de",
+		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+	        {Name => "Mike Stillman", 
+                Email => "mike@math.cornell.edu", 
+                HomePage => "http://www.math.cornell.edu/~mike"}
+            },
         Headline => "random complexes over fields or the integers",
         PackageExports => {"SimplicialComplexes"},
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export {
@@ -19,7 +21,6 @@ export {
     "testTimeForLLLonSyzygies",
     "randomChainComplex",
     "randomSimplicialComplex",
---    "oneMatrix",
     "normalize",
     "WithLLL",
     "zeroMean",
