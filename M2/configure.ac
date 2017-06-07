@@ -819,8 +819,6 @@ AC_SUBST(BUILTLIBS,)
 #    fflas_ffpack needs givaro and lapack
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
-#    fflas_ffpack is provided as an option for experimentation
-#        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
@@ -1262,10 +1260,10 @@ AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 # test for givaro
 if test $BUILD_givaro = no
-then AC_MSG_CHECKING(for givaro library)
+then AC_MSG_CHECKING(for givaro library, at least version 4)
      GIVARO_LIBS=`givaro-config --libs 2>&1`
      dnl warning: a pre-installed givaro library might be compiled and linked against gmp, which could cause a problem if we are building mpir ourselves
-     if test $? = 0
+     if test $? = 0 && test "`givaro-config --decimal-version`" -gt 40000
      then AC_MSG_RESULT(found)
 	  LIBS="$LIBS $GIVARO_LIBS"
           M2_CPPFLAGS="$M2_CPPFLAGS `givaro-config --cflags`"
@@ -1273,13 +1271,16 @@ then AC_MSG_CHECKING(for givaro library)
           BUILD_givaro=yes
      fi
 fi
-test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
+if test $BUILD_givaro = yes
+then BUILTLIBS="-lgivaro $BUILTLIBS"
+     BUILD_fflas_ffpack=yes
+fi
 
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING(for fflas_ffpack library)
      FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
-     if test $? = 0
+     if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
      else AC_MSG_RESULT(not found, will build)
