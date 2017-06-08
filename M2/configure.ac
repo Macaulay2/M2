@@ -1208,7 +1208,7 @@ if test $BUILD_atomic_ops = no
 then AC_MSG_CHECKING(whether package atomic_ops is provided)
      if [ pkg-config --exists atomic_ops ]
      then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops` $CPPFLAGS"
+	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
      else AC_MSG_RESULT([no, will be built from downloaded sources])
           BUILD_atomic_ops=yes
      fi
@@ -1219,7 +1219,7 @@ if test $BUILD_gc = no
 then AC_MSG_CHECKING(whether package bdw-gc is provided)
      if [ pkg-config --exists bdw-gc ]
      then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc` $CPPFLAGS"
+	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
 	  GC_LIBS=`pkg-config --libs-only-l bdw-gc`
 	  LIBS="$GC_LIBS $LIBS"
      else AC_MSG_RESULT([no, will be built from downloaded sources])
@@ -1496,7 +1496,7 @@ else lapack_found=no
 	       blas_found=yes
 	       BLASLIBS=`pkg-config --libs blas`
 	       LIBS="$BLASLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I blas` $CPPFLAGS"
+	       CPPFLAGS="`pkg-config --cflags-only-I blas | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
 	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $BLASLIBS))
 	  else AC_MSG_RESULT(no)
 	  fi
@@ -1508,7 +1508,7 @@ else lapack_found=no
 	       lapack_found=yes
 	       LAPACKLIBS="`pkg-config --libs lapack`"
 	       LIBS="$LAPACKLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I lapack` $CPPFLAGS"
+	       CPPFLAGS="`pkg-config --cflags-only-I lapack | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
 	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $LAPACKLIBS))
 	  else AC_MSG_RESULT(no)
 	  fi
@@ -1589,7 +1589,7 @@ AC_LANG(C)
 AC_MSG_CHECKING(whether package libxml-2.0 is provided)
 if [ pkg-config --exists libxml-2.0 ]
 then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0` $CPPFLAGS"
+     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
 else AC_MSG_ERROR([no, package libxml-2.0 not found, install it])
 fi
 
