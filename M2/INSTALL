@@ -47,7 +47,9 @@ The following command shows the list of release branches:
 
     git branch -a | grep origin/release
 
-The following commands will download the latest changes to the source code:
+The following commands, run from the top level of this source tree (the parent
+of the directory this file is in) will download the latest changes to the
+source code:
 
     git pull
     git submodule update
