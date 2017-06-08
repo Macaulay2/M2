@@ -71,6 +71,8 @@ MORE_OPTIONS = -Wno-cast-qual
 COMPILE.c += $(MORE_OPTIONS)
 COMPILE.cc += $(MORE_OPTIONS)
 
+ntl_interface.o: CXXFLAGS += -Wno-old-style-cast
+
 clean::
 	rm -f *.lo *.o *.rpo LOGFILE
 	$(MAKE) -C f4 $@

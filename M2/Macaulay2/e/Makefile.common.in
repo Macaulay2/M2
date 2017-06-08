@@ -20,48 +20,44 @@ endif
 COMPILE.cpp = $(COMPILE.cc)
 
 %.o : %.cpp
-	$(SHOW) "CXX $*.cpp"
-	$(HIDE) $(COMPILE.cpp) $< $(OUTPUT_OPTION)
-
-%.s : %.cpp
-	$(SHOW) " ** compiling $< to assembly code, making $@"
-	$(HIDE) $(COMPILE.cpp) -S $< $(OUTPUT_OPTION)
-
-%.E : %.cpp
-	$(SHOW) " ** preprocessing $<, making $@"
-	$(HIDE) $(COMPILE.cpp) -E $< $(OUTPUT_OPTION)
+	$(SHOW)"CXX $*.cpp"
+	$(HIDE)$(COMPILE.cpp) $< $(OUTPUT_OPTION)
 
 %.o : %.cc
-	$(SHOW) " ** compiling $<"
-	$(HIDE) $(COMPILE.cc) $< $(OUTPUT_OPTION)
+	$(SHOW)"CXX $*.cc"
+	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
+
+%.s : %.cpp
+	$(SHOW)" ** making $@ from $*.cpp"
+	$(HIDE)$(COMPILE.cpp) -S $< $(OUTPUT_OPTION)
+
+%.E : %.cpp
+	$(SHOW)" ** making $@ from $*.cpp"
+	$(HIDE)$(COMPILE.cpp) -E $< $(OUTPUT_OPTION)
 
 %.s : %.cc
-	$(SHOW) " ** compiling $< to assembly code, making $@"
-	$(HIDE) $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+	$(SHOW)" ** making $@ from $*.cc"
+	$(HIDE)$(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
-%.E : %.cc
-	$(SHOW) " ** preprocessing $<, making $@"
-	$(HIDE) $(COMPILE.cc) -E $< $(OUTPUT_OPTION)
-
-ntl_interface.o: ntl_interface.cpp
-	$(SHOW) " ** compiling $<"
-	$(HIDE) $(COMPILE.cc) $< $(OUTPUT_OPTION) -Wno-old-style-cast
+%-E.cpp : %.cc
+	$(SHOW)" ** preprocessing $<, making $@"
+	$(HIDE)$(COMPILE.cc) -E -dD $< $(OUTPUT_OPTION)
 
 %.o : %.c
-	$(SHOW) " ** compiling $<"
-	$(HIDE) $(COMPILE.c) $< $(OUTPUT_OPTION)
+	$(SHOW)"CC $*.c"
+	$(HIDE)$(COMPILE.c) $< $(OUTPUT_OPTION)
 
 % : %.o
-	$(SHOW) " ** linking $^ to get $@"
-	$(HIDE) $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+	$(SHOW)"LINKING $@"
+	$(HIDE)$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 %.dep: %.cpp
-	$(SHOW) " ** creating $@ from $<"
-	$(HIDE) @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW)" ** creating $@ from $<"
+	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
-	$(SHOW) " ** creating $@ from $<"
-	$(HIDE) @CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW)" ** creating $@ from $<"
+	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "
