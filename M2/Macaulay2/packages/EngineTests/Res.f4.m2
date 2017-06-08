@@ -509,7 +509,8 @@ TEST ///
   betti C
 ///
 
-TEST ///
+{* TEST *} ///
+  -- takes too much memory
   -- might take too long ...
   kk = ZZ/101
   nvars = 13
