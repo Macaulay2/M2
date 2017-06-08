@@ -8,6 +8,8 @@
 #include "gbring.hpp"
 
 #include "aring-zz-gmp.hpp"
+#include <utility>
+
 #if 0
 // #include "gmp.h"
 // #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
@@ -55,16 +57,15 @@ unsigned int RingZZ::computeHashValue(const ring_elem a) const
   return computeHashValue_mpz(a.get_mpz());
 }
 
-bool RingZZ::get_ui(unsigned int &result, mpz_t n)
+std::pair<bool,int> RingZZ::get_si(mpz_t n)
 {
-  result = static_cast<unsigned int>(mpz_get_ui(n));
-  return mpz_fits_ulong_p(n);
-}
-
-bool RingZZ::get_si(int &result, mpz_t n)
-{
-  result = static_cast<int>(mpz_get_si(n));
-  return mpz_fits_slong_p(n);
+  if (not mpz_fits_slong_p(n))
+    return std::make_pair<bool, int>(false, 0);
+  long a = mpz_get_si(n);
+  int b = static_cast<int>(a);
+  if (a == b)
+    return std::make_pair<bool, int>(true, std::move(b));
+  return std::make_pair<bool, int>(false, 0);
 }
 
 unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
@@ -300,13 +301,11 @@ ring_elem RingZZ::power(const ring_elem f, int n) const
 }
 ring_elem RingZZ::power(const ring_elem f, mpz_t n) const
 {
-  mpz_ptr result = new_elem();
-  int n1;
-  if (!get_si(n1, n))
-    { ERROR("exponent too large"); }
+  std::pair<bool,int> n1 = RingZZ::get_si(n);
+  if (n1.first)
+    return power(f, n1.second);
   else
-    mpz_pow_ui(result, f.get_mpz(), n1);
-  return ring_elem(result);
+    throw exc::engine_error("exponent too large");
 }
 
 ring_elem RingZZ::invert(const ring_elem f) const

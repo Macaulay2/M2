@@ -363,32 +363,6 @@ public:
 //  write_poly, write_polys
 //  add, subtract
 
-#if 0
-  mpz_t result;
-  mpz_init(result);
-  mpz_mod_ui(result, n, P);
-  int m = static_cast<int>(mpz_get_si(result));
-  if (m < 0) m += P;
-  //TODO: finish
-
-
-
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-
-  poly h = D->invert(level,g1);
-  if (D->is_zero(h))
-    ERROR("element not invertible");
-  else
-    {
-      poly h1 = D->mult(level, f1, h, true);
-      D->remove(level, h);
-      h = h1;
-    }
-
-  return TOWER_RINGELEM(h);
-#endif
-
 #endif
 
 // Local Variables:

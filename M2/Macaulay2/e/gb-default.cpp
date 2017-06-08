@@ -1743,11 +1743,7 @@ int gbA::find_good_divisor(exponents e,
               j = divisors[i]->_val;
               gap = gb[j]->gap-egap;
               if (gap < 0) gap = 0;
-         } while (!
-                  ( gap < mingap || gap == mingap &&
-                          false
-      )
-    );
+         } while (gap >= mingap); // used to be: (! gap < mingap || gap == mingap && false)
     }
   }
   else {

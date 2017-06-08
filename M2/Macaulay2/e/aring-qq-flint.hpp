@@ -145,15 +145,15 @@ namespace M2 {
     }
     
     void power(ElementType& result, const ElementType& a, long n) const {
-      assert(n >= 0);
       return fmpq_pow_si(&result,&a,n);
     }
     
     void power_mpz(ElementType& result,const  ElementType& a,const mpz_ptr n) const {
-      if (mpz_fits_slong_p(n))
-        fmpq_pow_si(&result,&a,mpz_get_si(n));
+      std::pair<bool,int> n1 = RingZZ::get_si(n);
+      if (n1.first)
+        power(result, a, n1.second);
       else
-        throw exc::engine_error("attempted to take a power of an integer to too large of a power");
+        throw exc::engine_error("exponent too large");
     }
     
     void syzygy(const ElementType& a, const ElementType& b,

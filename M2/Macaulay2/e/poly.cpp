@@ -822,12 +822,12 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
 
   Nterm *f = ff;
 
-  int n1;
   // In this case, the computation may only be formed in two
   // cases: (1) f is a constant, or (2) n is small enough
-  if (RingZZ::get_si(n1,n))
+  std::pair<bool,int> n1 = RingZZ::get_si(n);
+  if (n1.first)
     {
-      result = power(f,n1);
+      result = power(f,n1.second);
     }
   else if (is_unit(f))  // really want a routine 'is_scalar'...
     {
@@ -914,20 +914,22 @@ ring_elem PolyRing::invert(const ring_elem f) const
       return ZERO_RINGELEM;
     }
   if (ft->next == NULL)
-    if (M_->is_one(ft->monom))
-      {
-        Nterm *t = new_term();
-        t->coeff = K_->invert(ft->coeff);
-        M_->one(t->monom);
-        return t;
-      }
-    else if (M_->is_invertible(ft->monom))
-      {
-        Nterm *t = new_term();
-        t->coeff = K_->invert(ft->coeff);
-        M_->power(ft->monom, -1, t->monom);
-        return t;
-      }
+    {
+      if (M_->is_one(ft->monom))
+        {
+          Nterm *t = new_term();
+          t->coeff = K_->invert(ft->coeff);
+          M_->one(t->monom);
+          return t;
+        }
+      else if (M_->is_invertible(ft->monom))
+        {
+          Nterm *t = new_term();
+          t->coeff = K_->invert(ft->coeff);
+          M_->power(ft->monom, -1, t->monom);
+          return t;
+        }
+    }
 
   ERROR("division is not defined in this ring");
   return ZERO_RINGELEM;
