@@ -9,10 +9,14 @@ ResGausserQQHybrid::ResGausserQQHybrid(const Ring* K1,
                                        unsigned long precision1,
                                        size_t p1,
                                        size_t p2)
-  : ResGausser(K1), Kp1(p1), Kp2(p2), mRRing(precision1), mMaxDenominatorSize(1)
+    : ResGausser(K1),
+      Kp1(p1),
+      Kp2(p2),
+      mRRing(precision1),
+      mMaxDenominatorSize(1)
 {
   numAdditions = 0;
-  
+
   init_element(mZero);
   from_long_element(mZero, 0);
 
@@ -47,14 +51,16 @@ void ResGausserQQHybrid::from_long_element(FieldElement& a, long val) const
   Kp2.set_from_long(a.mMod2, val);
   mRRing.set_from_long(a.mLongDouble, val);
   a.mDenominatorSize = 0;
-  a.mAccuracy = 1; // what should this be??
+  a.mAccuracy = 1;  // what should this be??
   if (val != 0)
     a.mIsPresent = true;
   else
     a.mIsPresent = false;
 }
 
-void ResGausserQQHybrid::from_mpq_element(FieldElement& a, mpq_t val, int denomPower) const
+void ResGausserQQHybrid::from_mpq_element(FieldElement& a,
+                                          mpq_t val,
+                                          int denomPower) const
 {
   a.mDouble = mpq_get_d(val);
   Kp1.set_from_mpq(a.mMod1, val);
@@ -65,12 +71,13 @@ void ResGausserQQHybrid::from_mpq_element(FieldElement& a, mpq_t val, int denomP
   a.mIsPresent = true;
 }
 
-void ResGausserQQHybrid::copy_element(FieldElement& result, const FieldElement& a) const
+void ResGausserQQHybrid::copy_element(FieldElement& result,
+                                      const FieldElement& a) const
 {
   result.mDouble = a.mDouble;
   result.mMod1 = a.mMod1;
   result.mMod2 = a.mMod2;
-  mRRing.set(result.mLongDouble,a.mLongDouble);
+  mRRing.set(result.mLongDouble, a.mLongDouble);
   result.mDenominatorSize = a.mDenominatorSize;
   result.mAccuracy = a.mAccuracy;
   result.mIsPresent = a.mIsPresent;
@@ -78,7 +85,7 @@ void ResGausserQQHybrid::copy_element(FieldElement& result, const FieldElement& 
 
 void ResGausserQQHybrid::negate_element(FieldElement& a) const
 {
-  a.mDouble =  -a.mDouble;
+  a.mDouble = -a.mDouble;
   Kp1.negate(a.mMod1, a.mMod1);
   Kp2.negate(a.mMod2, a.mMod2);
   mRRing.negate(a.mLongDouble, a.mLongDouble);
@@ -88,7 +95,8 @@ bool ResGausserQQHybrid::is_zero_element(FieldElement& a) const
 {
   return not a.mIsPresent;
   bool result = (Kp1.is_zero(a.mMod1) and Kp2.is_zero(a.mMod2));
-  //  bool result = (Kp1.is_zero(a.mMod1) and Kp2.is_zero(a.mMod2)) and (fabs(a.mDouble) < 1e-10);
+  //  bool result = (Kp1.is_zero(a.mMod1) and Kp2.is_zero(a.mMod2)) and
+  //  (fabs(a.mDouble) < 1e-10);
   if (result and a.mDouble > 1e-10)
     {
       std::cout << "element is zero: ";
@@ -97,17 +105,17 @@ bool ResGausserQQHybrid::is_zero_element(FieldElement& a) const
   return result;
 }
 
-void ResGausserQQHybrid::subtract_multiple_to_element(FieldElement& result,
-                                                      const FieldElement& a,
-                                                      const FieldElement& b) const
+void ResGausserQQHybrid::subtract_multiple_to_element(
+    FieldElement& result,
+    const FieldElement& a,
+    const FieldElement& b) const
 {
   result.mDouble = result.mDouble - a.mDouble * b.mDouble;
   Kp1.subtract_multiple(result.mMod1, a.mMod1, b.mMod1);
   Kp2.subtract_multiple(result.mMod2, a.mMod2, b.mMod2);
-  mRRing.subtract_multiple(result.mLongDouble, a.mLongDouble, b.mLongDouble);  
+  mRRing.subtract_multiple(result.mLongDouble, a.mLongDouble, b.mLongDouble);
   int newsize = a.mDenominatorSize + b.mDenominatorSize;
-  if (newsize > result.mDenominatorSize)
-    result.mDenominatorSize = newsize;
+  if (newsize > result.mDenominatorSize) result.mDenominatorSize = newsize;
   if (result.mIsPresent) numAdditions++;
   result.mIsPresent = true;
 }
@@ -115,7 +123,9 @@ void ResGausserQQHybrid::subtract_multiple_to_element(FieldElement& result,
 //////////////////////////////////
 // CoefficientVector handling ////
 //////////////////////////////////
-long ResGausserQQHybrid::to_modp_long(CoefficientVector& coeffs, size_t loc) const {
+long ResGausserQQHybrid::to_modp_long(CoefficientVector& coeffs,
+                                      size_t loc) const
+{
   auto& elems = coefficientVector(coeffs);
   return Kp1.coerceToLongInteger(elems[loc].mMod1);
 }
@@ -138,22 +148,24 @@ void ResGausserQQHybrid::pushBackMinusOne(CoefficientVector& coeffs) const
   copy_element(elems.back(), mMinusOne);
 }
 
-void ResGausserQQHybrid::pushBackElement(CoefficientVector& coeffs,
-                                 const CoefficientVector& take_from_here,
-                                 size_t loc) const
+void ResGausserQQHybrid::pushBackElement(
+    CoefficientVector& coeffs,
+    const CoefficientVector& take_from_here,
+    size_t loc) const
 {
-  auto& elems = coefficientVector(coeffs); 
+  auto& elems = coefficientVector(coeffs);
   auto& elems_to_take = coefficientVector(take_from_here);
   FieldElement uninitializedElement;
   elems.emplace_back(uninitializedElement);
   init_element(elems.back());
   copy_element(elems.back(), elems_to_take[loc]);
 }
-void ResGausserQQHybrid::pushBackNegatedElement(CoefficientVector& coeffs,
-                                 const CoefficientVector& take_from_here,
-                                 size_t loc) const
+void ResGausserQQHybrid::pushBackNegatedElement(
+    CoefficientVector& coeffs,
+    const CoefficientVector& take_from_here,
+    size_t loc) const
 {
-  auto& elems = coefficientVector(coeffs); 
+  auto& elems = coefficientVector(coeffs);
   auto& elems_to_take = coefficientVector(take_from_here);
 
   FieldElement uninitializedElement;
@@ -163,11 +175,12 @@ void ResGausserQQHybrid::pushBackNegatedElement(CoefficientVector& coeffs,
   negate_element(elems.back());
 }
 
-CoefficientVector ResGausserQQHybrid::allocateCoefficientVector(ComponentIndex nelems) const
-  // create a row of 0's (over K).
+CoefficientVector ResGausserQQHybrid::allocateCoefficientVector(
+    ComponentIndex nelems) const
+// create a row of 0's (over K).
 {
   auto result = new std::vector<FieldElement>(nelems);
-  for (ComponentIndex i=0; i<nelems; i++)
+  for (ComponentIndex i = 0; i < nelems; i++)
     {
       init_element((*result)[i]);
       copy_element((*result)[i], mZero);
@@ -175,64 +188,64 @@ CoefficientVector ResGausserQQHybrid::allocateCoefficientVector(ComponentIndex n
   return coefficientVector(result);
 }
 CoefficientVector ResGausserQQHybrid::allocateCoefficientVector() const
-  // create a row of 0's (over K).
+// create a row of 0's (over K).
 {
   return coefficientVector(new std::vector<FieldElement>);
 }
 
-void ResGausserQQHybrid::clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
-  // set the elements in the range first..last to 0.
+void ResGausserQQHybrid::clear(CoefficientVector r,
+                               ComponentIndex first,
+                               ComponentIndex last) const
+// set the elements in the range first..last to 0.
 {
   auto& elems = coefficientVector(r);
-  for (ComponentIndex i=first; i<=last; i++)
-    copy_element(elems[i], mZero);
+  for (ComponentIndex i = first; i <= last; i++) copy_element(elems[i], mZero);
 }
 
 void ResGausserQQHybrid::deallocate(CoefficientVector r) const
 {
   auto& elems = coefficientVector(r);
-  for (auto i = elems.begin(); i != elems.end(); ++i)
-    clear_element(*i);
+  for (auto i = elems.begin(); i != elems.end(); ++i) clear_element(*i);
   delete reinterpret_cast<std::vector<FieldElement>*>(r.mValue);
   r.mValue = nullptr;
 }
 
-ComponentIndex ResGausserQQHybrid::nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
-  // returns last+1 in the case when there are no non-zero elements left.
+ComponentIndex ResGausserQQHybrid::nextNonzero(CoefficientVector r,
+                                               ComponentIndex first,
+                                               ComponentIndex last) const
+// returns last+1 in the case when there are no non-zero elements left.
 {
   auto& vec = coefficientVector(r);
   auto elems = vec.data();
   elems += first;
-  for (ComponentIndex i=first; i<=last; ++i, ++elems)
-    if (!is_zero_element(*elems))
-      return i;
-        
-  return last+1;
+  for (ComponentIndex i = first; i <= last; ++i, ++elems)
+    if (!is_zero_element(*elems)) return i;
+
+  return last + 1;
 }
 
 void ResGausserQQHybrid::fillFromSparse(CoefficientVector r,
-                                ComponentIndex len,
-                                CoefficientVector sparse,
-                                ComponentIndex* comps) const
-  // Fills 'r' from 'sparse' (and 'comps')
+                                        ComponentIndex len,
+                                        CoefficientVector sparse,
+                                        ComponentIndex* comps) const
+// Fills 'r' from 'sparse' (and 'comps')
 {
   auto& vec = coefficientVector(r);
   auto elems = vec.data();
   auto& svec = coefficientVector(sparse);
   auto sparseelems = svec.data();
 
-  for (ComponentIndex i=0; i<len; i++)
+  for (ComponentIndex i = 0; i < len; i++)
     copy_element(elems[*comps++], *sparseelems++);
 }
 
 void ResGausserQQHybrid::sparseCancel(CoefficientVector r,
-                              CoefficientVector sparse,
-                              ComponentIndex* comps,
-                              CoefficientVector result_loc
-                              ) const
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
-  // The value of c is appended to result_
+                                      CoefficientVector sparse,
+                                      ComponentIndex* comps,
+                                      CoefficientVector result_loc) const
+// dense += c * sparse, where c is chosen to cancel column comps[0].
+// ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+// The value of c is appended to result_
 {
   // r += a*sparse
   // ASSUMPTIONS:
@@ -261,14 +274,15 @@ void ResGausserQQHybrid::sparseCancel(CoefficientVector r,
   FieldElement a;
   init_element(a);
   copy_element(a, elems[*comps]);
-  if (sparseelems[0].mDouble < 0) // should be minus_one, since it is either 1 or -1.
+  if (sparseelems[0].mDouble <
+      0)  // should be minus_one, since it is either 1 or -1.
     {
       negate_element(a);
     }
-  from_long_element(elems[*comps],0);
+  from_long_element(elems[*comps], 0);
   comps++;
   sparseelems++;
-  for (ComponentIndex i=len-1; i>0; i--)
+  for (ComponentIndex i = len - 1; i > 0; i--)
     {
       FieldElement& sparse = *sparseelems++;
       FieldElement& result = elems[*comps++];
@@ -289,12 +303,11 @@ void ResGausserQQHybrid::sparseCancel(CoefficientVector r,
 }
 
 void ResGausserQQHybrid::sparseCancel(CoefficientVector r,
-                              CoefficientVector sparse,
-                              ComponentIndex* comps
-                              ) const
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
-  // The value of c is not recorded.
+                                      CoefficientVector sparse,
+                                      ComponentIndex* comps) const
+// dense += c * sparse, where c is chosen to cancel column comps[0].
+// ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+// The value of c is not recorded.
 {
   // r += a*sparse
   // ASSUMPTIONS:
@@ -321,11 +334,12 @@ void ResGausserQQHybrid::sparseCancel(CoefficientVector r,
   FieldElement a;
   init_element(a);
   copy_element(a, elems[*comps]);
-  if (sparseelems[0].mDouble < 0) // should be minus_one, since it is either 1 or -1.
+  if (sparseelems[0].mDouble <
+      0)  // should be minus_one, since it is either 1 or -1.
     {
       negate_element(a);
     }
-  for (ComponentIndex i=len; i>0; i--)
+  for (ComponentIndex i = len; i > 0; i--)
     {
       FieldElement& sparse = *sparseelems++;
       FieldElement& result = elems[*comps++];
@@ -338,15 +352,15 @@ std::ostream& ResGausserQQHybrid::out(std::ostream& o, FieldElement& f) const
 {
   buffer buf;
   mRRing.elem_text_out(buf, f.mLongDouble, true, false, false);
-  o << "[" << f.mDouble << ","
-    << Kp1.coerceToLongInteger(f.mMod1) << ","
-    << Kp2.coerceToLongInteger(f.mMod1) << ","
-    << buf.str() << "," 
+  o << "[" << f.mDouble << "," << Kp1.coerceToLongInteger(f.mMod1) << ","
+    << Kp2.coerceToLongInteger(f.mMod1) << "," << buf.str() << ","
     << f.mDenominatorSize << "]";
   return o;
 }
 
-std::ostream& ResGausserQQHybrid::out(std::ostream& o, CoefficientVector r, int loc) const
+std::ostream& ResGausserQQHybrid::out(std::ostream& o,
+                                      CoefficientVector r,
+                                      int loc) const
 {
   if (r.isNull())
     {
@@ -357,12 +371,12 @@ std::ostream& ResGausserQQHybrid::out(std::ostream& o, CoefficientVector r, int 
   out(o, elems[loc]);
   return o;
 }
-std::ostream& ResGausserQQHybrid::debugDisplay(std::ostream& o, CoefficientVector r) const
+std::ostream& ResGausserQQHybrid::debugDisplay(std::ostream& o,
+                                               CoefficientVector r) const
 {
-  if (r.isNull())
-    fprintf(stdout, "vector is null!");
+  if (r.isNull()) fprintf(stdout, "vector is null!");
   auto& elems = coefficientVector(r);
-  for (int j=0; j<elems.size(); ++j)
+  for (int j = 0; j < elems.size(); ++j)
     {
       out(o, r, j);
       o << " ";
@@ -371,16 +385,17 @@ std::ostream& ResGausserQQHybrid::debugDisplay(std::ostream& o, CoefficientVecto
   return o;
 }
 
-std::ostream& ResGausserQQHybrid::debugDisplayRow(std::ostream& o,
-                                   int ncolumns,
-                                   const std::vector<int>& comps,
-                                   CoefficientVector coeffs) const
+std::ostream& ResGausserQQHybrid::debugDisplayRow(
+    std::ostream& o,
+    int ncolumns,
+    const std::vector<int>& comps,
+    CoefficientVector coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
   auto monom = comps.begin();
   auto coeff = elems.begin();
   auto end = elems.end();
-  for (ComponentIndex c=0; c<ncolumns; c++)
+  for (ComponentIndex c = 0; c < ncolumns; c++)
     {
       if (coeff == end or *monom != c)
         o << " .";

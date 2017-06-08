@@ -13,24 +13,31 @@
     @brief The generic Groebner walk algorithm.  Not yet working?
 */
 
-class GBWalker : public GBComputation {
+class GBWalker : public GBComputation
+{
   const GBRing *R;
-  const FreeModule *F; // The free module containing the elements of the GB
-  MarkedGB *G; // This ends up being the answer...
+  const FreeModule *F;  // The free module containing the elements of the GB
+  MarkedGB *G;          // This ends up being the answer...
 
   VECTOR(M2_arrayint) w_history;
 
-  long **monorder1; // array 0..nvars-1 each of array 0..nvars-1
-  long **monorder2; // same
+  long **monorder1;  // array 0..nvars-1 each of array 0..nvars-1
+  long **monorder2;  // same
 
   void initialize();
 
-  GBComputation * make_gb(const Matrix *M) const;
+  GBComputation *make_gb(const Matrix *M) const;
 
   bool compute_next_w();
 
   // local data in the computation (kept because of possible interrupts)
-  enum { STATE_compute_w, STATE_do_gb, STATE_reduce, STATE_autoreduce, STATE_done} state;
+  enum {
+    STATE_compute_w,
+    STATE_do_gb,
+    STATE_reduce,
+    STATE_autoreduce,
+    STATE_done
+  } state;
   M2_arrayint ww;
   const Matrix *inwwG;
   GBComputation *gb_inwwG;
@@ -38,24 +45,19 @@ class GBWalker : public GBComputation {
   const Matrix *H;
   VECTOR(gbvector *) leadterms;
   VECTOR(POLY) polys;
-  MarkedGB *G1; // becomes G eventually
-protected:
+  MarkedGB *G1;  // becomes G eventually
+ protected:
   virtual bool stop_conditions_ok();
 
-  GBWalker(const Matrix *gb_under_order1,
-           const MonomialOrdering *order1);
+  GBWalker(const Matrix *gb_under_order1, const MonomialOrdering *order1);
 
-  GBWalker(MarkedGB *G0,
-           long **order1,
-           long **order2);
+  GBWalker(MarkedGB *G0, long **order1, long **order2);
 
-public:
-  static GBWalker * create(MarkedGB *G0,
-                           long **order1,
-                           long **order2);
+ public:
+  static GBWalker *create(MarkedGB *G0, long **order1, long **order2);
 
-  static GBWalker * create(const Matrix *gb_under_order1,
-                           const MonomialOrdering *order1);
+  static GBWalker *create(const Matrix *gb_under_order1,
+                          const MonomialOrdering *order1);
 
   virtual ~GBWalker();
 
@@ -83,9 +85,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient
-                           );
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 
@@ -100,7 +101,6 @@ public:
   virtual void show() const;
   void show_mem_usage();
 };
-
 
 #endif
 

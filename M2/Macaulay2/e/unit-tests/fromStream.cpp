@@ -7,14 +7,18 @@
 #include "aring-zzp.hpp"
 #include "ZZp.hpp"
 
-template<typename T> 
-std::istream &fromStream(std::istream &i, const T& R, typename T::ElementType &result);
+template <typename T>
+std::istream &fromStream(std::istream &i,
+                         const T &R,
+                         typename T::ElementType &result);
 
-template<typename T> 
-bool fromStream(std::istream &i, const T& R, ring_elem &result);
+template <typename T>
+bool fromStream(std::istream &i, const T &R, ring_elem &result);
 
-template<>
-std::istream &fromStream<M2::ARingZZp>(std::istream &i, const M2::ARingZZp& R, M2::ARingZZp::ElementType &result)
+template <>
+std::istream &fromStream<M2::ARingZZp>(std::istream &i,
+                                       const M2::ARingZZp &R,
+                                       M2::ARingZZp::ElementType &result)
 {
   int a;
   i >> a;
@@ -22,14 +26,12 @@ std::istream &fromStream<M2::ARingZZp>(std::istream &i, const M2::ARingZZp& R, M
   return i;
 }
 
-template<> 
-bool fromStream<Z_mod>(std::istream &i, const Z_mod& R, ring_elem &result)
+template <>
+bool fromStream<Z_mod>(std::istream &i, const Z_mod &R, ring_elem &result)
 {
-  while (isspace(i.peek()))
-    i.get();
-  
-  if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-')
-    return false;
+  while (isspace(i.peek())) i.get();
+
+  if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-') return false;
 
   int a;
   i >> a;
@@ -37,14 +39,12 @@ bool fromStream<Z_mod>(std::istream &i, const Z_mod& R, ring_elem &result)
   return true;
 }
 
-template<> 
-bool fromStream<RingZZ>(std::istream &i, const RingZZ& R, ring_elem &result)
+template <>
+bool fromStream<RingZZ>(std::istream &i, const RingZZ &R, ring_elem &result)
 {
-  while (isspace(i.peek()))
-    i.get();
-  
-  if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-')
-    return false;
+  while (isspace(i.peek())) i.get();
+
+  if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-') return false;
 
   const int original_s_len = 100;
   char original_s[original_s_len];

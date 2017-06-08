@@ -7,10 +7,10 @@
 #include "aring-qq-gmp.hpp"
 
 namespace M2 {
-  class ARingQQFlint;
-  class ARingQQGMP;
+class ARingQQFlint;
+class ARingQQGMP;
 
-  typedef ARingQQGMP ARingQQ;
+typedef ARingQQGMP ARingQQ;
 };
 
 #endif

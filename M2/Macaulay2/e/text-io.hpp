@@ -16,12 +16,13 @@ void bignum_text_out(buffer &o, mpz_t a);
 
 void clear_emit_size();
 void emit_wrapped(const char *s);
-inline void emit_wrapped(int prlevel, const char *s) {
+inline void emit_wrapped(int prlevel, const char *s)
+{
   if (M2_gbTrace >= prlevel) emit_wrapped(s);
 }
 
-void emit(const char *s); // print onto stderr, or cerr.
-void emit_line(const char *s); // print onto stderr, or cerr.
+void emit(const char *s);       // print onto stderr, or cerr.
+void emit_line(const char *s);  // print onto stderr, or cerr.
 #endif
 
 // Local Variables:

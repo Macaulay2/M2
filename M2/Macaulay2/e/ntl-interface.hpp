@@ -12,7 +12,7 @@
 #include <NTL/LLL.h>
 #pragma GCC diagnostic pop
 
-//NTL_USE_NNS
+// NTL_USE_NNS
 
 class MutableMatrix;
 extern NTL::mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols);
@@ -26,8 +26,8 @@ void dntl_matZZ(const NTL::mat_ZZ *A);
 void dntl_ZZ(const NTL::ZZ *f);
 NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M);
 bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long a, long b, int strategy);
-  // U can be NULL.  If it is not, it will be set to the transform matrix
-  // the threshold is a/b.  strategy is explained for rawLLL in engine.h
+// U can be NULL.  If it is not, it will be set to the transform matrix
+// the threshold is a/b.  strategy is explained for rawLLL in engine.h
 #endif
 
 // Local Variables:

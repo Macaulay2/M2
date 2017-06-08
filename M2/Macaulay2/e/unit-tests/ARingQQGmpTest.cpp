@@ -14,18 +14,21 @@
 
 extern gmp_ZZ getRandomInteger();
 
-template<>
-void getElement<M2::ARingQQGMP>(const M2::ARingQQGMP& R, int index, M2::ARingQQGMP::ElementType& result)
+template <>
+void getElement<M2::ARingQQGMP>(const M2::ARingQQGMP& R,
+                                int index,
+                                M2::ARingQQGMP::ElementType& result)
 {
-  if (index < 50) 
-    R.set_from_long(result, index-25);
+  if (index < 50)
+    R.set_from_long(result, index - 25);
   else
     {
       R.random(result);
     }
 }
 
-TEST(ARingQQGMP, create) {
+TEST(ARingQQGMP, create)
+{
   M2::ARingQQGMP R;
 
   M2::ARingQQGMP::ElementType a;
@@ -41,7 +44,8 @@ TEST(ARingQQGMP, create) {
   R.clear(a);
 }
 
-TEST(ARingQQGMP, display) {
+TEST(ARingQQGMP, display)
+{
   M2::ARingQQGMP R;
 
   M2::ARingQQGMP::ElementType a, b;
@@ -52,7 +56,7 @@ TEST(ARingQQGMP, display) {
   R.init(b);
   gen.nextElement(a);
   gen.nextElement(b);
-  R.divide(a,a,b);
+  R.divide(a, a, b);
   R.elem_text_out(o, a, true, false, false);
   EXPECT_TRUE(strcmp(o.str(), "24/23") == 0);
   std::cout << "a = ." << o.str() << "." << std::endl;
@@ -63,7 +67,8 @@ TEST(ARingQQGMP, display) {
   R.clear(a);
 }
 
-TEST(ARingQQGMP, arithmetic) {
+TEST(ARingQQGMP, arithmetic)
+{
   M2::ARingQQGMP R;
 
   testCoercions(R);
@@ -73,10 +78,10 @@ TEST(ARingQQGMP, arithmetic) {
   testMultiply(R, ntrials);
   testDivide(R, ntrials);
   testReciprocal(R, ntrials);
-  //  testPower(R, ntrials);  // this test can't work, as it expects a finite field
+  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
+  //  field
   testAxioms(R, ntrials);
 }
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

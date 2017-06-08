@@ -3,8 +3,6 @@
 #include "spair-heap.hpp"
 
 spair_heap::spair_heap(const Monoid *M)
-  : M_(M),
-    spairCompareObject_(),
-    S_(spairCompareObject_)
+    : M_(M), spairCompareObject_(), S_(spairCompareObject_)
 {
 }
