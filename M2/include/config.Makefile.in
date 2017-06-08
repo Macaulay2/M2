@@ -176,21 +176,29 @@ ifeq "$(NORULES)" ""
 %-exports.h: ;	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 
 %.sig.tmp %.dep: %.d
-	$(SCC1) -dep $(SCCFLAGS) $<
+	$(SHOW)SCC1 -dep $*.d
+	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
 	mv $*.dep.tmp $*.dep
 	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
 %.sig.tmp %.dep: %.dd
-	$(SCC1) -dep $(SCCFLAGS) $<
+	$(SHOW)SCC1 -dep $*.dd
+	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
 	mv $*.dep.tmp $*.dep
 	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
-%-tmp.c  %-exports.h.tmp: %.d
-	$(SCC1) $(SCCFLAGS) $<
+%-tmp.c	 %-exports.h.tmp: %.d
+	$(SHOW)SCC1 $*.d
+	$(HIDE)$(SCC1) $(SCCFLAGS) $<
 	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 %-tmp.cc %-exports.h.tmp: %.dd
-	$(SCC1) $(SCCFLAGS) $<
+	$(SHOW)SCC1 $*.dd
+	$(HIDE)$(SCC1) $(SCCFLAGS) $<
 	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
-%.o: %-tmp.c  %-exports.h;		$(COMPILE.c)  $(DCFLAGS) $< $(OUTPUT_OPTION)
-%.o: %-tmp.cc %-exports.h;		$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
+%.o: %-tmp.c  %-exports.h
+	$(SHOW)CC $*-tmp.c
+	$(HIDE)$(COMPILE.c) $(DCFLAGS) $< $(OUTPUT_OPTION)
+%.o: %-tmp.cc %-exports.h
+	$(SHOW)CXX $*-tmp.cc
+	$(HIDE)$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
 
 # various compiler output files
 .SUFFIXES : .ss .ii .s
@@ -232,7 +240,18 @@ test:
 	:
 	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
 	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
-	: "M2_LIBRARIES          = $(FFLAS_FFPACK_LIBS)"
+	: "M2_LIBRARIES          = $(M2_LIBRARIES)"
+
+SHOW := $(if $(VERBOSE),@true "",@echo "")
+HIDE := $(if $(VERBOSE),,@)
+
+%.o: %.c
+	$(SHOW)CC $*.c
+	$(HIDE)$(COMPILE.c) $< $(OUTPUT_OPTION)
+
+%.o: %.cc
+	$(SHOW)CXX $*.cc
+	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
 # Local Variables:
 # compile-command: "set -x ; make -C $M2BUILDDIR include/config.Makefile DEPENDS=no && make -f $M2BUILDDIR/include/config.Makefile test "

@@ -1619,6 +1619,6 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A)
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e x-mutablemat.o "
 // indent-tabs-mode: nil
 // End:
