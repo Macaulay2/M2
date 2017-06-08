@@ -1,6 +1,7 @@
 // (c) 1995 Michael E. Stillman
 
 #include "monomial.hpp"
+#include "error.h"
 #include "monoid.hpp"
 
 Monomial::Monomial()

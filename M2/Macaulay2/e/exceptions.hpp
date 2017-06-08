@@ -1,8 +1,8 @@
 #ifndef _exceptions_h_
 #define _exceptions_h_
 
-#include <stdexcept>
 #include "newdelete.hpp"
+#include <stdexcept>
 
 namespace exc {
 struct engine_error : public std::runtime_error, public our_new_delete

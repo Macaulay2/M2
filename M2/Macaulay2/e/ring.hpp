@@ -4,6 +4,7 @@
 #define _ring_hh_
 
 #include "hash.hpp"
+#include "error.h"
 #include "ringelem.hpp"
 #include "monoid.hpp"
 #include "aring.hpp"

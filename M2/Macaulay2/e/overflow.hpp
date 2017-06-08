@@ -8,7 +8,7 @@
 // methods for detecting arithmetic overflows
 
 #include "exceptions.hpp"
-#include <assert.h>
+#include <cassert>
 #include <M2/config.h>
 
 #if HAVE_STDINT_H

@@ -69,7 +69,7 @@
     bool FFpackInvert(const DMat<CoeffRing> &mat, DMat<CoeffRing> &inverse)
     {
         typedef typename CoeffRing::ElementType ElementType;
-        ASSERT(mat.n_rows() == mat.n_cols());
+        assert(mat.n_rows() == mat.n_cols());
         ElementType* N = newarray( ElementType, mat.n_rows() * mat.n_cols());    
         mat.copy_elems(mat.n_rows()*mat.n_cols(), N, 1, mat.get_array(), 1); 
     

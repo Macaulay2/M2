@@ -1,14 +1,8 @@
 /*static char rcsid[] = "$Id$";*/
+#include "table.h"
 #include <limits.h>
 #include <stddef.h>
-#include "table.h"
-
-/********************************************************************/
-/*these next lines added by MES, July 2002, to use our gc routines..*/
-/*#include "mem.h"*/
-/*#include "assert.h"*/
 #include <assert.h>
-/********************************************************************/
 
 #define T Table_T
 struct T {

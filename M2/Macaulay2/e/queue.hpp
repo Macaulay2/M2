@@ -2,8 +2,9 @@
 #ifndef _queue_hh_
 #define _queue_hh_
 
-#include "style.hpp"
-//#include <algorithm>
+#include "newdelete.hpp"
+#include <utility>
+#include <cassert>
 const int block_size = 128;
 
 #define QUEUE(T) queue<T>

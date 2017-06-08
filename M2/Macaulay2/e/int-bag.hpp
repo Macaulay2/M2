@@ -2,8 +2,8 @@
 #ifndef _int_bag_hh_
 #define _int_bag_hh_
 
-#include "style.hpp"
-#include "varpower.hpp"
+#include "newdelete.hpp"
+#include "intarray.hpp"
 
 class int_bag : public our_new_delete
 {

@@ -14,10 +14,10 @@
 //
 // Finally, the error flag is cleared upon giving control back to the front end.
 
+#include "error.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "error.h"
 
 #define MAXERROR 200
 static int iserror = 0;

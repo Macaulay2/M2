@@ -299,7 +299,7 @@ void Z_mod::syzygy(const ring_elem a,
                    ring_elem &x,
                    ring_elem &y) const
 {
-  ASSERT(!Z_mod::is_zero(b));
+  assert(!Z_mod::is_zero(b));
   x = Z_mod::from_long(1);
   y = Z_mod::divide(a, b);
   internal_negate_to(y);

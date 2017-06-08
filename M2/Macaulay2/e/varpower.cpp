@@ -1,7 +1,7 @@
 // (c) 1995 Michael E. Stillman
 
 #include "varpower.hpp"
-#include "text-io.hpp"
+#include "error.h"
 #include "overflow.hpp"
 
 #define MAX_VAR 2147483647

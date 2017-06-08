@@ -1,6 +1,10 @@
 #ifndef __montableZZ_h
 #define __montableZZ_h
 
+#include "buffer.hpp"
+#include "newdelete.hpp"
+#include "style.hpp"
+
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -9,8 +13,6 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-#include "newdelete.hpp"
-#include "style.hpp"
 
 /* "Tricks" used in this implementation */
 /*

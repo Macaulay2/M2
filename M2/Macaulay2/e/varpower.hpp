@@ -3,17 +3,13 @@
 #ifndef _varpower_hh_
 #define _varpower_hh_
 
+#include "buffer.hpp"
+#include "engine-includes.hpp"
 #include "intarray.hpp"
-#include "engine.h"
 
 class varpower
 {
   friend class index_varpower;
-#if 0
-//   static int var(int n);
-//   static int exponent(int n);
-//   static int pair(int v, int e);
-#endif
 
   static int degree_of(int n, const int *a);
   static bool is_nonneg(const int *a);

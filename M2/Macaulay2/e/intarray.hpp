@@ -3,6 +3,9 @@
 #define _intarray_hh_
 
 #include "style.hpp"
+#include "buffer.hpp"
+#include "mem.hpp"
+#include <cassert>
 
 const int init_intarray_size = 16;
 

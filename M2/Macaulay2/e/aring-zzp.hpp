@@ -187,7 +187,7 @@ class ARingZZp : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    ASSERT(b != 0);
+    assert(b != 0);
     if (a != 0 && b != 0)
       {
         int c = a - b;

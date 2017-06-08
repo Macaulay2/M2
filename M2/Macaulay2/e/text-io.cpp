@@ -1,13 +1,13 @@
 // (c) 1994 Michael E. Stillman
 
-#include <stdio.h>
-#include <string.h>
 #include "text-io.hpp"
+#include "newdelete.hpp"
+#include <cstdio>
+#include <cstring>
 
 int MAX_LINE_LENGTH = 75;
 int emit_line_len = 0;
 
-int i_text_io() { return 1; }
 void bignum_text_out(buffer &o, mpz_t a)
 {
   char s[1000];

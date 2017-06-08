@@ -184,7 +184,7 @@ class ARingGFM2 : public RingInterface
   void invert(elem &result, elem a) const
   // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
-    ASSERT(a != 0);
+    assert(a != 0);
     result = (a == mGF.one() ? mGF.one() : mGF.orderMinusOne() - a);
   }
 
@@ -233,8 +233,8 @@ class ARingGFM2 : public RingInterface
   void subtract_multiple(elem &result, elem a, elem b) const
   {
     // result -= a*b
-    ASSERT(a != 0);
-    ASSERT(b != 0);
+    assert(a != 0);
+    assert(b != 0);
 
     int ab = a + b;
     if (ab > mGF.minusOne()) ab -= mGF.orderMinusOne();
@@ -255,7 +255,7 @@ class ARingGFM2 : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    ASSERT(b != 0);
+    assert(b != 0);
     if (a != 0)
       {
         int c = a - b;
@@ -305,8 +305,8 @@ class ARingGFM2 : public RingInterface
   // if possible, x is set to 1.
   // no need to consider the case a==0 or b==0.
   {
-    ASSERT(a != 0);
-    ASSERT(b != 0);
+    assert(a != 0);
+    assert(b != 0);
     x = mGF.one();
     divide(y, a, b);
     negate(y, y);
