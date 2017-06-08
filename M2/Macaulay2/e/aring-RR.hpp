@@ -189,10 +189,11 @@ namespace M2 {
 
     void power_mpz(ElementType &result, const ElementType& a, mpz_ptr n) const
     {
-      if(mpz_fits_sint_p(n)) {
-        int m = static_cast<int>(mpz_get_si(n)); 
-        power(result,a,m);
-      } else throw exc::engine_error("expected small integer");
+      std::pair<bool,int> n1 = RingZZ::get_si(n);
+      if (n1.first)
+        power(result, a, n1.second);
+      else
+        throw exc::engine_error("exponent too large");
     }
 
     void swap(ElementType &a, ElementType &b) const

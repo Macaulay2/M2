@@ -416,16 +416,11 @@ namespace M2 {
 
     void power_mpz(ElementType &result, const ElementType& a, mpz_ptr n) const
     {
-      if (mpz_fits_slong_p(n)) 
-        {
-          int n1 = static_cast<int>(mpz_get_si(n));
-          power(result,a,n1);
-        } 
-      else  
-        {
-          ERROR("exponent too large");
-          set_from_long(result, 1);
-        }
+      std::pair<bool,int> n1 = RingZZ::get_si(n);
+      if (n1.first)
+        power(result, a, n1.second);
+      else
+        throw exc::engine_error("exponent too large");
     }
 
     void swap(ElementType &a, ElementType &b) const

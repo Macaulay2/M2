@@ -83,7 +83,7 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
           EXPECT_EQ(coeffs->array[j], 0);
         //        std::cout << i << " = ";
         //        dintarray(coeffs);
-        std::cout << std::endl;
+        //        std::cout << std::endl;
       }
     R.clear(a);
 
