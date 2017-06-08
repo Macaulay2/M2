@@ -225,11 +225,12 @@ void GaussElimComputation::start_computation()
           p->next = NULL;
           reduce(gb_list[row], p); // replaces p
           if (M2_gbTrace >= 3)
-            if (p->f == NULL)
+            if (p->f == NULL) {
               if (p->fsyz == NULL)
                 emit_wrapped("o");
               else
                 emit_wrapped("z");
+            }
             else
               emit_wrapped("r");
           insert(p);
