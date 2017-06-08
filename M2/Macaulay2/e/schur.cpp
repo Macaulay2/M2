@@ -294,17 +294,12 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
 ring_elem SchurRing::power(const ring_elem f, mpz_t n) const
 {
   if (mpz_sgn(n) < 0)
-    {
-      ERROR("element not invertible");
-      return from_long(1);
-    }
-  unsigned int n1;
-  if (!RingZZ::get_ui(n1, n))
-    {
-      ERROR("exponent too large");
-      return from_long(1);
-    }
-  return power(f,n1);
+    throw exc::engine_error("element not invertible");
+  std::pair<bool,int> n1 = RingZZ::get_si(n);
+  if (n1.first)
+    return power(f, n1.second);
+  else
+    throw exc::engine_error("exponent too large");
 }
 
 ring_elem SchurRing::power(const ring_elem f, int n) const
@@ -312,8 +307,7 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
   ring_elem result = from_long(1);
   if (n < 0)
     {
-      ERROR("element not invertible");
-      return result;
+      throw exc::engine_error("element not invertible");
     }
   for (int i=0; i<n; i++)
     {

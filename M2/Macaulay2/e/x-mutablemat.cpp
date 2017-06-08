@@ -1020,7 +1020,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
   M2::ARingZZpFFPACK::ElementType* elemsA = B->get_Mat()->array();
   std::vector< M2::ARingZZpFFPACK::ElementType > charpoly;
 
-  FFPACK::CharPoly(B->get_Mat()->ring().field(), charpoly, A->n_rows(), elemsA, A->n_rows());
+  // FFPACK::CharPoly(B->get_Mat()->ring().field(), charpoly, A->n_rows(), elemsA, A->n_rows());
 
   for (size_t i=0; i<charpoly.size(); i++)
     std::cout << charpoly[i] << " ";
@@ -1055,7 +1055,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A)
   Element * X = new Element[n*(n+1)];
   size_t * P = new size_t[n];
 
-  FFPACK::MinPoly(B->get_Mat()->ring().field(), minpoly, n, elemsA, n, X, n, P);
+  FFPACK::Protected::Hybrid_KGF_LUK_MinPoly(B->get_Mat()->ring().field(), minpoly, n, elemsA, n, X, n, P);
 
   delete[] P;
   delete[] X;

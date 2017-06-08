@@ -8,6 +8,7 @@
 #include "ringelem.hpp"
 #include <iosfwd>
 #include "exceptions.hpp"
+#include "ZZ.hpp"
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
@@ -132,10 +133,11 @@ namespace M2 {
     }
     
     void power_mpz(ElementType& result,const  ElementType& a,const  mpz_ptr n) const {
-      if (mpz_fits_ulong_p(n))
-        fmpz_pow_ui(&result,&a,mpz_get_ui(n));
+      std::pair<bool,int> n1 = RingZZ::get_si(n);
+      if (n1.first)
+        fmpz_pow_ui(&result,&a,n1.second);
       else
-        throw exc::engine_error("attempted to take a power of an integer to too large of a power");
+        throw exc::engine_error("exponent too large");
     }
     
     void syzygy(const ElementType& a, const ElementType& b,

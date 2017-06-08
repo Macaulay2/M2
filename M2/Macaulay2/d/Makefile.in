@@ -147,15 +147,16 @@ CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
 CPPFLAGS += -Wno-fatal-errors
 
-CFLAGS += $(M2_CFLAGS) -Werror
+CFLAGS += $(M2_CFLAGS)
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wno-unused-label
 endif
 
 CXXFLAGS += $(M2_CXXFLAGS)
 
-CFLAGS   += -Wreturn-type -Werror
-CXXFLAGS += -Wreturn-type -Werror
+CFLAGS   += -Wreturn-type
+CXXFLAGS += -Wreturn-type
+CXXFLAGS += -std=c++11
 
 python-c.o : | python-exports.h.tmp
 

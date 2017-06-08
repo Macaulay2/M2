@@ -59,8 +59,7 @@ public:
   virtual void text_out(buffer &o) const;
 
   static unsigned int mod_ui(mpz_t n, unsigned int p);
-  static bool get_ui(unsigned int &result, mpz_t n);
-  static bool get_si(int &result, mpz_t n);
+  static std::pair<bool,int> get_si(mpz_t n);
 
   // If the base ring of a is ZZ:
   // To get a bignum from a RingElement a, use: a.get_value().get_mpz()

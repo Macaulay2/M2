@@ -248,7 +248,7 @@ namespace M2 {
     negate(y,y);
   }
   
-  /// @jakob: document possible overflow and other nasty things
+  /// @jakob document possible overflow and other nasty things
   void ARingZZpFFPACK::random(ElementType &result) const
   {
     mFfpackRandomIterator.random(result);

@@ -1,5 +1,6 @@
 // Copyright 2013 Michael E. Stillman
 #include "RingTest.hpp"
+#include <limits>
 
 static bool maxH_initialized = false;
 static mpz_t maxH;
@@ -56,6 +57,35 @@ TEST(RingZZ, random)
     }
   mpz_clear(maxH);
   mpz_clear(b);
+}
+TEST(RingZZ, get_si) {
+  mpz_t a;
+  mpz_init(a);
+  long minint = std::numeric_limits<int>::min();
+  long maxint = std::numeric_limits<int>::max();
+  long i = minint -5;
+  while (i < maxint + 5)
+    {
+      mpz_set_si(a,i);
+      auto b = RingZZ::get_si(a);
+      //      std::cout << "(min,max)=" << minint << "," << maxint
+      //                << " " << "i=" << i
+      //                << " ok=" << b.first << " result=" << b.second << std::endl;
+      if (i >= minint and i <= maxint)
+        {
+          EXPECT_TRUE(b.first);
+          EXPECT_EQ(b.second, i);
+        }
+      else
+        {
+          EXPECT_FALSE(b.first);
+        }
+      if (i == minint + 5)
+        i = maxint-5;
+      else
+        ++i;
+    }
+  mpz_clear(a);
 }
 TEST(RingZZ, negate)
 {

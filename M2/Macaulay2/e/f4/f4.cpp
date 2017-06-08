@@ -465,7 +465,7 @@ void F4GB::make_matrix()
   */
 
   spair *p;
-  while (p = S->get_next_pair())
+  while ((p = S->get_next_pair()))
     {
       process_s_pair(p);
     }

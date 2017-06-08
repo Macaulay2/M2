@@ -66,14 +66,11 @@ ring_elem SolvableAlgebra::mult_by_term(const ring_elem f,
 
 ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
 {
-  int n1;
-  if (RingZZ::get_si(n1,n))
-    return power(f,n1);
+  std::pair<bool,int> n1 = RingZZ::get_si(n);
+  if (n1.first)
+    return power(f, n1.second);
   else
-    {
-      ERROR("exponent too large");
-      return ZERO_RINGELEM;
-    }
+    throw exc::engine_error("exponent too large");
 }
 
 ring_elem SolvableAlgebra::power(const ring_elem f, int n) const

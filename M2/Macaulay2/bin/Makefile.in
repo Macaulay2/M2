@@ -177,8 +177,10 @@ M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
 else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
-M2_LIBDEPS += ../d/libM2inits2.a				\
-	$(foreach S, @BUILDSUBLIST@, @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
+
+M2_LIBDEPS += ../d/libM2inits2.a $(LIBDEPS_FOR_BUILD)
+M2_LIBRARIES += $(LDLIBS_FOR_BUILD)
+
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else

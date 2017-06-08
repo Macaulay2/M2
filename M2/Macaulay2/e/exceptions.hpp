@@ -8,8 +8,8 @@ namespace exc {
      struct engine_error : public std::runtime_error, public our_new_delete {
           explicit engine_error(const std::string &msg) : std::runtime_error(msg) {}
      };
-     struct overflow_error : public engine_error {
-          explicit overflow_error(const std::string &msg) : engine_error(msg) {}
+     struct overflow_exception : public engine_error {
+          explicit overflow_exception(const std::string &msg) : engine_error(msg) {}
      };
      struct division_by_zero_error : public engine_error {
           explicit division_by_zero_error(const std::string &msg) : engine_error(msg) {}
