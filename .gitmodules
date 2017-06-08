@@ -22,3 +22,6 @@
 [submodule "M2/submodules/googletest"]
 	path = M2/submodules/googletest
 	url = https://github.com/Macaulay2/googletest.git
+[submodule "M2/submodules/fflas-ffpack"]
+	path = M2/submodules/fflas_ffpack
+	url = https://github.com/linbox-team/fflas-ffpack.git
