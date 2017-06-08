@@ -78,8 +78,6 @@ BUILDSUBTARGETS = check all run-configure check
 SUBTARGETS = clean distclean
 GITSUBTARGETS = git-clean git-update git-status git-describe
 
-#all-in-submodules:all-in-libraries
-
 ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
 all-in-mathicgb all-in-mathic:all-in-memtailor
 endif
@@ -165,6 +163,7 @@ $(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
 $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 
 # installation into usr-dist
+all-in-fflas_ffpack: install-in-fflas_ffpack
 all-in-Macaulay2:install-licenses
 
 install-licenses:all-in-submodules
