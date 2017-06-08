@@ -70,7 +70,6 @@ libraries/gftables/Makefile
 libraries/factory/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
-libraries/blas/Makefile
 Macaulay2/Makefile
 Macaulay2/README
 Macaulay2/packages/SCSCP/docinput/Makefile
