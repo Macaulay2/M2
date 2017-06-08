@@ -5,7 +5,7 @@
 #include "engine-includes.hpp"
 
 #if 0
-#include <cmath>    // to get fabs(), gcc 3.0
+#include <cmath>  // to get fabs(), gcc 3.0
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@
 #include <mpfr.h>
 #endif
 
-#define VECTOR(T) std::vector< T, gc_allocator< T > >
+#define VECTOR(T) std::vector<T, gc_allocator<T> >
 #define INTSIZE(a) static_cast<int>((a).size())
 
 #include "error.h"
@@ -35,7 +35,6 @@ const int EXCEPTION = -2;
 #define GEOHEAP_SIZE 15
 
 extern const int heap_size[GEOHEAP_SIZE];
-
 
 #endif
 

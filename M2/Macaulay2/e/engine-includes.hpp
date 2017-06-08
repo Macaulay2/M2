@@ -12,32 +12,32 @@
 #include <mpfr.h>
 
 #if !defined(SAFEC_EXPORTS)
-  #include <engine-exports.h>
+#include <engine-exports.h>
 #endif
 
 #if HAVE_STDINT_H
 #if !defined(__STDC_LIMIT_MACROS)
 #define __STDC_LIMIT_MACROS
 #endif
-  #include <stdint.h>
+#include <stdint.h>
 #elif HAVE_INTTYPES_H
-  #include <inttypes.h>
+#include <inttypes.h>
 #else
-  #error integer type definitions not available
+#error integer type definitions not available
 #endif
 
-#ifndef __cplusplus  /* These are coming from newdelete.hpp, in C++ */
-  #include <M2/gc-include.h>
-  #include "../d/M2mem.h"
-  #include "../d/debug.h"
+#ifndef __cplusplus /* These are coming from newdelete.hpp, in C++ */
+#include <M2/gc-include.h>
+#include "../d/M2mem.h"
+#include "../d/debug.h"
 #endif
 
 #ifndef BASECLASS
 #ifdef __cplusplus
-  #define BASECLASS : public our_new_delete
-  #include "newdelete.hpp"
+#define BASECLASS : public our_new_delete
+#include "newdelete.hpp"
 #else
-  #define BASECLASS
+#define BASECLASS
 #endif
 #endif
 
@@ -54,7 +54,8 @@
 #define IF_DEBUG(X)
 #endif
 
-typedef int32_t deg_t;  // this is the integer type to use for degrees and weights
+typedef int32_t
+    deg_t;  // this is the integer type to use for degrees and weights
 
 #endif
 

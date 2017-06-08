@@ -9,15 +9,26 @@
 
 unsigned int MutableEngineObject::mNextMutableHashValue = 13;
 
-extern void factory_setup_1(); // M2-factory.cpp
+extern void factory_setup_1();  // M2-factory.cpp
 
-//unsigned long mutable_object::next_hash_sequence_number = 1000;
-//long object::next_hash_sequence_number = -7;
+// unsigned long mutable_object::next_hash_sequence_number = 1000;
+// long object::next_hash_sequence_number = -7;
 
-const int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
-                               16384, 65536, 262144, 1048576, 4194304,
-                               16777216, 67108864, 268435456,
-                               1073741824};
+const int heap_size[GEOHEAP_SIZE] = {4,
+                                     16,
+                                     64,
+                                     256,
+                                     1024,
+                                     4096,
+                                     16384,
+                                     65536,
+                                     262144,
+                                     1048576,
+                                     4194304,
+                                     16777216,
+                                     67108864,
+                                     268435456,
+                                     1073741824};
 
 static bool initialized = false;
 
@@ -29,7 +40,7 @@ void IM2_initialize()
 {
   if (initialized) return;
   initialized = true;
-  doubles                  = new doubling_stash;
+  doubles = new doubling_stash;
 
   // This next routine initializes: globalZZ, trivial_monoid, trivial_poly_ring,
   // and makes sure their degree rings are interconnected.
@@ -49,12 +60,7 @@ void IM2_initialize()
  *  clears the error message and returns it.
  */
 
-M2_string IM2_last_error_message()
-{
-  return M2_tostring(error_message());
-}
-
-
+M2_string IM2_last_error_message() { return M2_tostring(error_message()); }
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

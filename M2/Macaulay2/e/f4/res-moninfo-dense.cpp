@@ -5,14 +5,13 @@
 #include <cstdlib>
 
 ResMonoidDense::ResMonoidDense(int nvars0,
-                     const std::vector<int>& var_degrees,
-                     const std::vector<int>& weightvecs,
-                     const MonomialOrderingType moType)
+                               const std::vector<int>& var_degrees,
+                               const std::vector<int>& weightvecs,
+                               const MonomialOrderingType moType)
 {
   nvars = nvars0;
   hashfcn = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[nvars]);
-  for (int i=0; i<nvars; i++)
-    hashfcn[i] = rand();
+  for (int i = 0; i < nvars; i++) hashfcn[i] = rand();
   mask = 0x10000000;
   mVarDegrees = var_degrees;
 
@@ -57,7 +56,7 @@ ResMonoidDense::ResMonoidDense(int nvars0,
         fprintf(stderr, "weight order\n");
     }
 #endif
-  
+
   nslots = 2 + nvars + nweights;
   firstvar = 2 + nweights;
 }
@@ -70,12 +69,11 @@ ResMonoidDense::~ResMonoidDense()
 void ResMonoidDense::show() const
 {
   fprintf(stderr, "monomial info\n");
-  fprintf(stderr, "  nvars  = %d",nvars);
-  fprintf(stderr, "  nslots = %d",nslots);
-  fprintf(stderr, "  mask   = %d",mask);
+  fprintf(stderr, "  nvars  = %d", nvars);
+  fprintf(stderr, "  nslots = %d", nslots);
+  fprintf(stderr, "  mask   = %d", mask);
   fprintf(stderr, "  hash values for each variable\n");
-  for (int i=0; i<nvars; i++)
-    fprintf(stderr, "    %d\n",hashfcn[i]);
+  for (int i = 0; i < nvars; i++) fprintf(stderr, "    %d\n", hashfcn[i]);
   fprintf(stderr, "  #calls hashval = %lu\n", ncalls_hash_value);
   fprintf(stderr, "  #calls compare = %lu\n", ncalls_compare);
   fprintf(stderr, "  #calls mult    = %lu\n", ncalls_mult);
@@ -95,7 +93,7 @@ void ResMonoidDense::show() const
 void ResMonoidDense::show(res_const_packed_monomial m) const
 {
   fprintf(stderr, "[");
-  for (int v=1; v<monomial_size(m); v++)
+  for (int v = 1; v < monomial_size(m); v++)
     {
       if (v > 1) fprintf(stderr, " ");
       fprintf(stderr, "%d", m[v]);
@@ -107,8 +105,8 @@ void ResMonoidDense::showAlpha(res_const_packed_monomial m) const
 {
   component_index comp = get_component(m);
 
-  m += 2 + nweights; // get by: hashcode, component, weightvals
-  for (int i=0; i<nvars; i++)
+  m += 2 + nweights;  // get by: hashcode, component, weightvals
+  for (int i = 0; i < nvars; i++)
     {
       long e = *m++;
       if (e == 0) continue;

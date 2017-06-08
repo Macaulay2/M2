@@ -2,7 +2,6 @@
 #ifndef _polyroots_hpp_
 #define _polyroots_hpp_
 
-
 #include "relem.hpp"
 #include "polyring.hpp"
 #include "aring-CC.hpp"
@@ -20,7 +19,8 @@ typedef M2::ARingCC::complex complex;
 typedef M2::ARingCCC::mpfc_struct mpfc_t[1];
 typedef M2::ARingCCC::mpfc_ptr mpfc_ptr;
 
-engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
+engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
+                                          long prec,
                                           int unique);
 
 #endif

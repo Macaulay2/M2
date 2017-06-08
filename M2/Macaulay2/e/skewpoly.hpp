@@ -13,20 +13,22 @@ class SkewPolynomialRing : public PolyRing
 
   SkewPolynomialRing() {}
   virtual ~SkewPolynomialRing();
-public:
+
+ public:
   static SkewPolynomialRing *create(const Ring *K,
-                             const Monoid *M,
-                             M2_arrayint skewvars);
+                                    const Monoid *M,
+                                    M2_arrayint skewvars);
 
   void text_out(buffer &o) const;
 
-  virtual bool has_gcd() const      { return false; }
+  virtual bool has_gcd() const { return false; }
   virtual bool is_skew_commutative_ring() const { return true; }
   virtual bool is_commutative_ring() const { return false; }
-
-  virtual const SkewPolynomialRing * cast_to_SkewPolynomialRing()  const      { return this; }
-  virtual       SkewPolynomialRing * cast_to_SkewPolynomialRing()             { return this; }
-
+  virtual const SkewPolynomialRing *cast_to_SkewPolynomialRing() const
+  {
+    return this;
+  }
+  virtual SkewPolynomialRing *cast_to_SkewPolynomialRing() { return this; }
   virtual ring_elem power(const ring_elem f, mpz_t n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
@@ -34,10 +36,11 @@ public:
   // this is done by multiplying every monomial of f which has degree
   // d (in the skew commuting variables) by (-1)^(d choose 2).
   ring_elem antipode(const ring_elem f) const;
-protected:
+
+ protected:
   virtual ring_elem mult_by_term(const ring_elem f,
-                                     const ring_elem c,
-                                     const int *m) const;
+                                 const ring_elem c,
+                                 const int *m) const;
 };
 #endif
 

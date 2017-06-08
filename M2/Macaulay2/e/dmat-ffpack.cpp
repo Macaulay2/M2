@@ -449,11 +449,8 @@
         FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
     }
 
-  #endif
 #endif
-
-
-
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -2,7 +2,6 @@
 #include "exceptions.hpp"
 
 static void signal_overflow(char *msg) { throw(exc::overflow_exception(msg)); }
-
 #if 0
 
   const BIN * const overflow_bits;

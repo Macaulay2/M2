@@ -6,10 +6,9 @@
 #include "hash.hpp"
 #include "newdelete.hpp"
 
-enum mon_order_types
-{
+enum mon_order_types {
   MO1_GRLEX = 0,
-  MO1_RLEX = 1,                 // not usable with monoid
+  MO1_RLEX = 1,  // not usable with monoid
   MO1_GLEX = 2,
   MO1_LEX = 3,
   MO1_ELIM = 4,
@@ -21,7 +20,7 @@ enum mon_order_types
 
 class mon_order : public our_new_delete
 {
-protected:
+ protected:
   mon_order_types ty;
   int n;
 
@@ -35,16 +34,18 @@ protected:
 
   mon_order(mon_order_types ty, M2_arrayint degs, M2_arrayint wts);
   void set_weights(const int *exp, int *m) const;
-public:
+
+ public:
   virtual ~mon_order();
 
   static mon_order *trivial();
-  static mon_order *grlex(M2_arrayint degs,M2_arrayint wts);
-  static mon_order *rlex(M2_arrayint degs,M2_arrayint wts);
-  static mon_order *glex(M2_arrayint degs,M2_arrayint wts);
-  static mon_order *lex(M2_arrayint degs,M2_arrayint wts);
-  static mon_order *elim(M2_arrayint degs, unsigned int i,M2_arrayint wts);
-  static mon_order *product(M2_arrayint degs, M2_arrayint blocks,
+  static mon_order *grlex(M2_arrayint degs, M2_arrayint wts);
+  static mon_order *rlex(M2_arrayint degs, M2_arrayint wts);
+  static mon_order *glex(M2_arrayint degs, M2_arrayint wts);
+  static mon_order *lex(M2_arrayint degs, M2_arrayint wts);
+  static mon_order *elim(M2_arrayint degs, unsigned int i, M2_arrayint wts);
+  static mon_order *product(M2_arrayint degs,
+                            M2_arrayint blocks,
                             M2_arrayint wts);
 
   static mon_order *product(const mon_order *m1, const mon_order *m2);
@@ -59,7 +60,6 @@ public:
   virtual void decode(const int *m, int *exp) const;
 
   int n_weights() const { return nweights; }
-
   int degree(int v) const { return degs[v]; }
   mon_order_types type() const { return ty; }
   int n_vars() const { return n; }
@@ -68,7 +68,7 @@ public:
 
 class grlex_mon_order : public mon_order
 {
-public:
+ public:
   grlex_mon_order(M2_arrayint degs, M2_arrayint weights);
   ~grlex_mon_order();
 
@@ -79,7 +79,7 @@ public:
 
 class grlex1_mon_order : public mon_order
 {
-public:
+ public:
   grlex1_mon_order(M2_arrayint degs, M2_arrayint weights);
   ~grlex1_mon_order();
 
@@ -91,9 +91,9 @@ class product_mon_order : public mon_order
 {
   int nblocks;
   int *blocks;
-public:
-  product_mon_order(M2_arrayint degs, M2_arrayint blocks,
-                    M2_arrayint weights);
+
+ public:
+  product_mon_order(M2_arrayint degs, M2_arrayint blocks, M2_arrayint weights);
   ~product_mon_order();
 
   virtual void encode(const int *exp, int *m) const;
@@ -102,8 +102,8 @@ public:
 };
 class elim_mon_order : public mon_order
 {
-  int nelim;                    // Number of variables to eliminate
-public:
+  int nelim;  // Number of variables to eliminate
+ public:
   elim_mon_order(M2_arrayint degs, unsigned int n, M2_arrayint weights);
   ~elim_mon_order();
 
@@ -114,21 +114,19 @@ public:
 
 class IM2_mon_order : public mutable_object
 {
-public:
+ public:
   mon_order *val;
 
   IM2_mon_order() {}
   IM2_mon_order(mon_order *mo) : val(mo) {}
   ~IM2_mon_order() {}
-
-  mon_order * grab_mon_order(); // Note: can only use monomial order once!
+  mon_order *grab_mon_order();  // Note: can only use monomial order once!
 
   int length_of() const { return val->n_vars(); }
-
   void text_out(buffer &o) const
-    {
-      if (val != NULL) val->text_out(o);
-    }
+  {
+    if (val != NULL) val->text_out(o);
+  }
 };
 
 #endif

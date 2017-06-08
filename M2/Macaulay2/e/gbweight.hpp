@@ -19,20 +19,19 @@ class GBWeight : public our_new_delete
   int nvars_;
   GBRing *R_;
 
-  size_t exp_size; // length in bytes of temporary exponent vectors
+  size_t exp_size;  // length in bytes of temporary exponent vectors
   long *Fdegs_;
-public:
+
+ public:
   GBWeight(const FreeModule *F, M2_arrayint wts);
 
   ~GBWeight() {}
-
   M2_arrayint get_weights() const { return wts_; }
-
   // All of these routines expect components in the range 1..N,
   // or, if the component is 0, then it is in the ring, not in the
   // free module F_
 
-  int exponents_weight(const int * exponent_vector, int comp) const;
+  int exponents_weight(const int *exponent_vector, int comp) const;
 
   int gbvector_term_weight(const gbvector *f) const;
 

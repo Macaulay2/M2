@@ -7,19 +7,14 @@
 #include "geovec.hpp"
 
 res_poly::res_poly(PolynomialRing *RR)
-: R(RR), M(R->getMonoid()), K(R->getCoefficientRing())
+    : R(RR), M(R->getMonoid()), K(R->getCoefficientRing())
 {
-  element_size = sizeof(resterm *) + sizeof(res_pair *)
-                     + sizeof(ring_elem)
-                     + sizeof(int) * M->monomial_size();
+  element_size = sizeof(resterm *) + sizeof(res_pair *) + sizeof(ring_elem) +
+                 sizeof(int) * M->monomial_size();
   resterm_stash = new stash("resterm", element_size);
 }
 
-res_poly::~res_poly()
-{
-  delete resterm_stash;
-}
-
+res_poly::~res_poly() { delete resterm_stash; }
 inline int res_poly::compare(const resterm *a, const resterm *b) const
 {
   int cmp = M->compare(a->monom, b->monom);
@@ -37,7 +32,7 @@ resterm *res_poly::new_term() const
   return result;
 }
 resterm *res_poly::new_term(ring_elem c, const int *m, res_pair *x) const
-    // Note: this does NOT copy 'c'
+// Note: this does NOT copy 'c'
 {
   resterm *result = new_term();
   result->coeff = c;
@@ -88,7 +83,9 @@ void res_poly::remove(resterm *&f) const
     }
 }
 
-resterm *res_poly::mult_by_term(const resterm *f, ring_elem c, const int *m) const
+resterm *res_poly::mult_by_term(const resterm *f,
+                                ring_elem c,
+                                const int *m) const
 {
   resterm head;
   resterm *result = &head;
@@ -104,7 +101,9 @@ resterm *res_poly::mult_by_term(const resterm *f, ring_elem c, const int *m) con
   return head.next;
 }
 resterm *res_poly::ring_mult_by_term(const ring_elem f,
-                                     ring_elem c, const int *m, res_pair *x) const
+                                     ring_elem c,
+                                     const int *m,
+                                     res_pair *x) const
 {
   resterm head;
   resterm *result = &head;
@@ -125,88 +124,95 @@ void res_poly::make_monic(resterm *&f) const
   if (f == NULL) return;
   ring_elem c_inv = K->invert(f->coeff);
 
-  for (resterm *tm = f; tm != NULL; tm = tm->next)
-    K->mult_to(tm->coeff, c_inv);
+  for (resterm *tm = f; tm != NULL; tm = tm->next) K->mult_to(tm->coeff, c_inv);
 
   K->remove(c_inv);
 }
 
-
-void res_poly::add_to(resterm * &f, resterm * &g) const
+void res_poly::add_to(resterm *&f, resterm *&g) const
 {
   if (g == NULL) return;
-  if (f == NULL) { f = g; g = NULL; return; }
+  if (f == NULL)
+    {
+      f = g;
+      g = NULL;
+      return;
+    }
   resterm head;
   resterm *result = &head;
-  while (1)
-    switch (compare(f, g))
+  while (1) switch (compare(f, g))
       {
-      case -1:
-        result->next = g;
-        result = result->next;
-        g = g->next;
-        if (g == NULL)
-          {
-            result->next = f;
-            f = head.next;
-            return;
-          }
-        break;
-      case 1:
-        result->next = f;
-        result = result->next;
-        f = f->next;
-        if (f == NULL)
-          {
-            result->next = g;
-            f = head.next;
-            g = NULL;
-            return;
-          }
-        break;
-      case 0:
-        resterm *tmf = f;
-        resterm *tmg = g;
-        f = f->next;
-        g = g->next;
-        K->add_to(tmf->coeff, tmg->coeff);
-        if (K->is_zero(tmf->coeff))
-          resterm_stash->delete_elem(tmf);
-        else
-          {
-            result->next = tmf;
-            result = result->next;
-          }
-        resterm_stash->delete_elem(tmg);
-        if (g == NULL)
-          {
-            result->next = f;
-            f = head.next;
-            return;
-          }
-        if (f == NULL)
-          {
-            result->next = g;
-            f = head.next;
-            g = NULL;
-            return;
-          }
-        break;
+        case -1:
+          result->next = g;
+          result = result->next;
+          g = g->next;
+          if (g == NULL)
+            {
+              result->next = f;
+              f = head.next;
+              return;
+            }
+          break;
+        case 1:
+          result->next = f;
+          result = result->next;
+          f = f->next;
+          if (f == NULL)
+            {
+              result->next = g;
+              f = head.next;
+              g = NULL;
+              return;
+            }
+          break;
+        case 0:
+          resterm *tmf = f;
+          resterm *tmg = g;
+          f = f->next;
+          g = g->next;
+          K->add_to(tmf->coeff, tmg->coeff);
+          if (K->is_zero(tmf->coeff))
+            resterm_stash->delete_elem(tmf);
+          else
+            {
+              result->next = tmf;
+              result = result->next;
+            }
+          resterm_stash->delete_elem(tmg);
+          if (g == NULL)
+            {
+              result->next = f;
+              f = head.next;
+              return;
+            }
+          if (f == NULL)
+            {
+              result->next = g;
+              f = head.next;
+              g = NULL;
+              return;
+            }
+          break;
       }
 }
 
-void res_poly::subtract_multiple_to(resterm *& f, ring_elem c,
-                                    const int *m, const resterm *g) const
-    // f := f - c * m * g
+void res_poly::subtract_multiple_to(resterm *&f,
+                                    ring_elem c,
+                                    const int *m,
+                                    const resterm *g) const
+// f := f - c * m * g
 {
   ring_elem minus_c = K->negate(c);
   resterm *h = mult_by_term(g, minus_c, m);
   add_to(f, h);
   K->remove(minus_c);
 }
-void res_poly::ring_subtract_multiple_to(resterm *& f, ring_elem c,
-                                         const int *m, res_pair *x, const ring_elem g) const
-    // f := f - c * m * g * x, where g is a ring element
+void res_poly::ring_subtract_multiple_to(resterm *&f,
+                                         ring_elem c,
+                                         const int *m,
+                                         res_pair *x,
+                                         const ring_elem g) const
+// f := f - c * m * g * x, where g is a ring element
 {
   ring_elem minus_c = K->negate(c);
   resterm *h = ring_mult_by_term(g, minus_c, m, x);
@@ -217,8 +223,7 @@ void res_poly::ring_subtract_multiple_to(resterm *& f, ring_elem c,
 int res_poly::n_terms(const resterm *f) const
 {
   int result = 0;
-  for ( ; f != NULL; f = f->next)
-    result++;
+  for (; f != NULL; f = f->next) result++;
   return result;
 }
 
@@ -242,27 +247,29 @@ void res_poly::elem_text_out(buffer &o, const resterm *f) const
   for (const resterm *t = f; t != NULL; t = t->next)
     {
       int isone = M->is_one(t->monom);
-      K->elem_text_out(o,t->coeff, p_one, p_parens, p_plus);
-      if (!isone)
-        M->elem_text_out(o, t->monom, p_one);
+      K->elem_text_out(o, t->coeff, p_one, p_parens, p_plus);
+      if (!isone) M->elem_text_out(o, t->monom, p_one);
       o << "<" << t->comp->me << ">";
       p_plus = true;
     }
 }
 
-vec res_poly::to_vector(const resterm *f, const FreeModule *F,
-                            int /*to_minimal*/) const
+vec res_poly::to_vector(const resterm *f,
+                        const FreeModule *F,
+                        int /*to_minimal*/) const
 {
   vecHeap H(F);
   int *mon = M->make_one();
   for (const resterm *tm = f; tm != NULL; tm = tm->next)
     {
-//    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);
-      int x = tm->comp->minimal_me; // MES: Currently used for non-minimal as well...
+      //    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);
+      int x =
+          tm->comp
+              ->minimal_me;  // MES: Currently used for non-minimal as well...
       M->divide(tm->monom, tm->comp->base_monom, mon);
 
       ring_elem a = R->make_flat_term(tm->coeff, mon);
-      vec tmp = R->make_vec(x,a);
+      vec tmp = R->make_vec(x, a);
       H.add(tmp);
     }
   M->remove(mon);
@@ -282,7 +289,7 @@ resterm *res_poly::from_vector(const array<res_pair *> &base, const vec v) const
         result->coeff = t->coeff;
         M->copy(t->monom, result->monom);
         M->mult(result->monom, result->comp->base_monom, result->monom);
-    }
+      }
   result->next = NULL;
   // Now we must sort these
   sort(head.next);
@@ -307,7 +314,7 @@ resterm *res_poly::strip(const resterm *f) const
 }
 
 const resterm *res_poly::component_occurs_in(const res_pair *x,
-                                          const resterm *f) const
+                                             const resterm *f) const
 {
   for (const resterm *tm = f; tm != NULL; tm = tm->next)
     if (tm->comp == x) return tm;
@@ -342,7 +349,6 @@ void res_poly::sort(resterm *&f) const
   add_to(f1, f2);
   f = f1;
 }
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

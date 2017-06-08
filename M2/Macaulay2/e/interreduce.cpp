@@ -4,7 +4,9 @@
 #include "freemod.hpp"
 #include "text-io.hpp"
 
-Interreducer::Interreducer(GBRing *R0, FreeModule *F0, VECTOR(gbvector *) &elems0)
+Interreducer::Interreducer(GBRing *R0,
+                           FreeModule *F0,
+                           VECTOR(gbvector *) & elems0)
 {
 }
 
