@@ -11,9 +11,9 @@
         // assert( typeid(CoeffRing) == typeid(M2::ARingZZpFFPACK) || typeid(CoeffRing) == typeid(M2::ARingGFGivaro ));
         std::cout << "Calling rankGF_or_FFPACK" << std::endl;
         ElementType *N = newarray(ElementType, n_rows() * n_cols() );
-        /// @jakob: replace with memcopy or something fast.
-        /// @jakob: potention problem: (  n_rows()*n_cols() ) - overflow for big matrices 
-        /// @jakob: write a logger ur ose a logger for warnings/messages. Ideal case: if disabled, logger messaging is optimized out by compiler.
+        /// @jakob replace with memcopy or something fast.
+        /// @jakob potention problem: (  n_rows()*n_cols() ) - overflow for big matrices 
+        /// @jakob write a logger ur ose a logger for warnings/messages. Ideal case: if disabled, logger messaging is optimized out by compiler.
         copy_elems( n_rows()*n_cols(), N, 1, get_array(), 1); 
         /// @note 1. matrix data (N) is modified by FFPACK
         /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!

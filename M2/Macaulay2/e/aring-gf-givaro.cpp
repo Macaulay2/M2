@@ -26,7 +26,7 @@ namespace M2 {
            for (int j=1; j<mDimension; j++)
                mCardinality *= mCharac;
       
-            /// @todo: remove debug code
+            /// @todo remove debug code
             /// debug code:
             getModPolynomialCoeffs();
             getGeneratorCoeffs();
@@ -62,7 +62,7 @@ namespace M2 {
            for (int j=1; j<mDimension; j++)
                mCardinality *= mCharac;
 
-            /// @jakob: find out if the irreducible polynomial is checked in givaro.     
+            /// @jakob find out if the irreducible polynomial is checked in givaro.     
             UTT localdegree = M2arrayGetDegree(modPolynomial);
         
             if ( !( modPolynomial->len > 1 && modPolynomial->array[ localdegree ]>0 ))
@@ -99,7 +99,7 @@ namespace M2 {
       }
       std::cerr << std::endl;
 #endif
-            /// @jakob: find out if the irreducible polynomial is checked in givaro.     
+            /// @jakob find out if the irreducible polynomial is checked in givaro.     
             UTT localdegree = M2arrayGetDegree(modPolynomial);
         
             if ( !( modPolynomial->len > 1 && modPolynomial->array[ localdegree ]>0 ))
@@ -515,7 +515,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         givaroField.div(result,a,b);
     }
 
-   /// @jakob: overflow can be occured due to multiplication. use exact mpz for multiply and modulo operation instead!
+   /// @jakob overflow can be occured due to multiplication. use exact mpz for multiply and modulo operation instead!
     void ARingGFGivaro::power(ElementType &result, const ElementType a, const  STT n) const
     {
         if (givaroField.isnzero(a)) 
@@ -586,7 +586,7 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
       negate(y,y);
     }
 
-    /// @jakob: document possible overflow and other nasty things
+    /// @jakob document possible overflow and other nasty things
     void ARingGFGivaro::random(GivaroRandIter &it, ElementType &result) const
     {
          givaroField.random( it,result);

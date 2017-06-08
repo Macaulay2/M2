@@ -136,7 +136,7 @@ const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
 /// @todo ARingGFGivaro uses tables and may consume a huge amount of memory -
 ///        pass therefore a 'MaxMemoryConsumption' parameter and if the value is overstepped by ARingGFGivaro, create polynomial representation?
 /// @todo  the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGFGivaro?
-///@todo: return Macaulay Galois field in some cases.
+///@todo return Macaulay Galois field in some cases.
 
 const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
 {

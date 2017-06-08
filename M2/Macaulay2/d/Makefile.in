@@ -164,8 +164,8 @@ endif
 
 CXXFLAGS += $(M2_CXXFLAGS)
 
-CFLAGS   += -Wreturn-type 
-CXXFLAGS += -Wreturn-type 
+CFLAGS   += -Wreturn-type
+CXXFLAGS += -Wreturn-type
 CXXFLAGS += -std=c++11
 
 python-c.o : | python-exports.h.tmp

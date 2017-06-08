@@ -39,7 +39,7 @@ M2_string IM2_Monoid_to_string(const Monoid *M)
 
 // Many monomial ordering routines are in monordering.c
 // Here are some that use c++ features, so cannot be there.
-// @todo: Make monordering.{h,c} into a c++ class.
+// @todo Make monordering.{h,c} into a c++ class.
 
 static void write_row(std::vector<int>& grading, int nvars, int which, int value)
 {

@@ -23,7 +23,7 @@ namespace M2 {
   class ARingZZpFFPACK : public RingInterface
   {
   public:
-    // @Jakob TODO: extract Signed_Trait from givaro.  Or use c++11.
+    /// @jakob extract Signed_Trait from givaro.  Or use c++11.
     // Questions: why names are UTT, STT?
     // Also: whatever we call them, we want all aring classes to use them.
     // problem: givaro isn't necessarily defined here
@@ -43,7 +43,7 @@ namespace M2 {
     // if no givaro, use this:
     //typedef  int32_t STT; /// attention: depends on UTT; currently manual update
 
-    // @todo: problem, wenn typ von cHarakteristif 
+    // @todo problem, wenn typ von cHarakteristif 
     ARingZZpFFPACK(UTT charac);
 
   public:
@@ -64,7 +64,7 @@ namespace M2 {
 
     const FieldType field() const { return mFfpackField; }
 
-    // @TODO: Jakob: what are the implications of using /// instead of /**.
+    ///@jakob what are the implications of using /// instead of /**.
 
     unsigned int computeHashValue(const elem& a) const 
     { 

@@ -792,8 +792,8 @@ AC_SUBST(BUILTLIBS,)
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 # They reflect dependencies, with prerequisites listed first.
 # In particular, there are the following dependencies:
-#    mathicgb need mathic and memtailor
-#    mathic need memtailor
+#    mathicgb needs mathic and memtailor
+#    mathic needs memtailor
 #    gc needs atomic_ops (and sometimes includes it)
 #    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
@@ -824,8 +824,8 @@ AC_SUBST(BUILTLIBS,)
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
-AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
+AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -834,6 +834,16 @@ BUILD_ALWAYS=""
 for i in $LIBLIST $SUBLIST
 do eval BUILD_$i=no
 done
+
+# Convert package identifiers used here to package names as known by the package.
+# The point is that BUILD_fflas_ffpack is a valid shell identifier, but
+# the name of the package is fflas-ffpack and BUILD_fflas-ffpack is not valid as
+# a shell identifier.  We may need the name of the package, for example, as an
+# argument to pkg-config.
+for i in $LIBLIST
+do eval PKGNAME_$i=$i
+done
+PKGNAME_fflas_ffpack=fflas-ffpack
 
 for i in $PROGLIST
 do eval BUILD_$i=yes

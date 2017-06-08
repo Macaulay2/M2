@@ -224,7 +224,7 @@ void GaussElimComputation::start_computation()
           reduce_list[row] = p->next;
           p->next = NULL;
           reduce(gb_list[row], p); // replaces p
-          if (M2_gbTrace >= 3)
+          if (M2_gbTrace >= 3) {
             if (p->f == NULL) {
               if (p->fsyz == NULL)
                 emit_wrapped("o");
@@ -233,6 +233,8 @@ void GaussElimComputation::start_computation()
             }
             else
               emit_wrapped("r");
+          }
+          else {}
           insert(p);
           n_pairs++;
           if (system_interrupted())

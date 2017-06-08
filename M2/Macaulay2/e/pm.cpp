@@ -1,7 +1,7 @@
 #include "pm.hpp"
 #include "exceptions.hpp"
 
-static void signal_overflow(char *msg) { throw(exc::overflow_error(msg)); }
+static void signal_overflow(char *msg) { throw(exc::overflow_exception(msg)); }
 
 #if 0
 
