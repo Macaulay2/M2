@@ -6,7 +6,7 @@ void CoefficientRingR::elem_text_out(buffer &o,
                                      bool p_plus,
                                      bool p_parens) const
 {
-  return R->elem_text_out(o,a,p_one,p_plus,p_parens);
+  return R->elem_text_out(o, a, p_one, p_plus, p_parens);
 }
 
 // Local Variables:

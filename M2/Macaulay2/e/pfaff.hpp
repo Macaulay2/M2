@@ -19,30 +19,29 @@ class PfaffianComputation : public our_new_delete
   const Ring *R;
   const Matrix *M;
   MatrixConstructor pfaffs;
-        // One row matrix collecting non-zero pfaffians
+  // One row matrix collecting non-zero pfaffians
 
   int p;
   bool done;
-  size_t * row_set;
+  size_t *row_set;
 
   ring_elem calc_pfaff(size_t *r, int p);
-     // Compute the pfaffian of the minor with rows
-     // and columns r[0]..r[p-1]
+  // Compute the pfaffian of the minor with rows
+  // and columns r[0]..r[p-1]
 
   int step();
-        // Compute one more pfaffian of size p.
+  // Compute one more pfaffian of size p.
 
-public:
+ public:
   PfaffianComputation(const Matrix *M, int p);
   ~PfaffianComputation();
 
-  int calc(int nsteps=-1);
+  int calc(int nsteps = -1);
   // Compute nsteps pfaffians.  Only non-negative ones are appended
   // -1 means compute all of them.
 
   Matrix *pfaffians() { return pfaffs.to_matrix(); }
-
-  const Ring * get_ring () const { return R; }
+  const Ring *get_ring() const { return R; }
 };
 
 #endif

@@ -28,11 +28,13 @@ gmp_ZZ getRandomInteger()
   return rawRandomInteger(maxH);
 }
 
-template<>
-void getElement<M2::ARingZZp>(const M2::ARingZZp& R, int index, M2::ARingZZp::ElementType& result)
+template <>
+void getElement<M2::ARingZZp>(const M2::ARingZZp& R,
+                              int index,
+                              M2::ARingZZp::ElementType& result)
 {
-  if (index < 50) 
-    R.set_from_long(result, index-25);
+  if (index < 50)
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -40,12 +42,12 @@ void getElement<M2::ARingZZp>(const M2::ARingZZp& R, int index, M2::ARingZZp::El
     }
 }
 
-template<typename RT>
+template <typename RT>
 void testCoerceToLongInteger(const RT& R)
 {
   long top1 = (R.characteristic() > 10000 ? 10000 : R.characteristic());
-  long bottom2 = (R.characteristic() >  10000 ? R.characteristic()-10000 : 0);
-  for (long i=0; i<top1; i++)
+  long bottom2 = (R.characteristic() > 10000 ? R.characteristic() - 10000 : 0);
+  for (long i = 0; i < top1; i++)
     {
       typename RT::ElementType a;
       R.init(a);
@@ -54,7 +56,7 @@ void testCoerceToLongInteger(const RT& R)
       if (b < 0) b += R.characteristic();
       EXPECT_EQ(b, i);
     }
-  for (long i=bottom2; i < R.characteristic(); i++)
+  for (long i = bottom2; i < R.characteristic(); i++)
     {
       typename RT::ElementType a;
       R.init(a);
@@ -64,8 +66,9 @@ void testCoerceToLongInteger(const RT& R)
       EXPECT_EQ(b, i);
     }
 }
-TEST(RingZZp, create) {
-  const Z_mod *R = Z_mod::create(101);
+TEST(RingZZp, create)
+{
+  const Z_mod* R = Z_mod::create(101);
   EXPECT_FALSE(R == 0);
   buffer o;
   o << "Ring being tested: ";
@@ -73,9 +76,9 @@ TEST(RingZZp, create) {
   fprintf(stdout, "%s\n", o.str());
 }
 
-TEST(ARingZZp, create) {
+TEST(ARingZZp, create)
+{
   M2::ARingZZp R(101);
-
 
   M2::ARingZZp::ElementType a;
   buffer o;
@@ -93,28 +96,31 @@ TEST(ARingZZp, create) {
   R.elem_text_out(o, a, true, true, false);
   std::cout << "generator is " << o.str() << std::endl;
   R.clear(a);
-
 }
 
-TEST(ARingZZp, arithmetic101) {
+TEST(ARingZZp, arithmetic101)
+{
   M2::ARingZZp R(101);
   testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZp, arithmetic32749) {
+TEST(ARingZZp, arithmetic32749)
+{
   M2::ARingZZp R(32749);
   testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZp, arithmetic2) {
+TEST(ARingZZp, arithmetic2)
+{
   M2::ARingZZp R(2);
   testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZp, arithmetic3) {
+TEST(ARingZZp, arithmetic3)
+{
   M2::ARingZZp R(3);
   testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
@@ -128,11 +134,9 @@ TEST(ARingZZp, fromStream)
   R.init(a);
   while (true)
     {
-      while (isspace(i.peek()))
-        i.get();
+      while (isspace(i.peek())) i.get();
 
-      if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-')
-        break;
+      if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-') break;
 
       fromStream(i, R, a);
 
@@ -143,11 +147,13 @@ TEST(ARingZZp, fromStream)
   R.clear(a);
 }
 
-template<>
-void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::ARingZZpFFPACK::ElementType& result)
+template <>
+void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R,
+                                    int index,
+                                    M2::ARingZZpFFPACK::ElementType& result)
 {
-  if (index < 50) 
-    R.set_from_long(result, index-25);
+  if (index < 50)
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -155,13 +161,15 @@ void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::
     }
 }
 
-TEST(ARingZZpFFPACK, create) {
+TEST(ARingZZpFFPACK, create)
+{
   M2::ARingZZpFFPACK R(101);
-  
+
   EXPECT_EQ(ringName(R), "ZZpFPACK(101,1)");
   testSomeMore(R);
 
-  std::cout << "max modulus for ffpack zzp: " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
+  std::cout << "max modulus for ffpack zzp: "
+            << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
 
   M2::ARingZZpFFPACK::ElementType a;
   R.init(a);
@@ -171,28 +179,33 @@ TEST(ARingZZpFFPACK, create) {
   R.clear(a);
 }
 
-TEST(ARingZZpFFPACK, arithmetic101) {
+TEST(ARingZZpFFPACK, arithmetic101)
+{
   M2::ARingZZpFFPACK R(101);
   testFiniteField(R, ntrials);
 }
 
-//TODO: commented out because it appears wrong.  Perhaps p=2 isn't allowed here?
+// TODO: commented out because it appears wrong.  Perhaps p=2 isn't allowed
+// here?
 // strange: does not fail on my thinkpad...
-TEST(ARingZZpFFPACK, arithmetic2) {
+TEST(ARingZZpFFPACK, arithmetic2)
+{
   M2::ARingZZpFFPACK R(2);
-  testFiniteField(R,ntrials);
+  testFiniteField(R, ntrials);
 
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZpFFPACK, arithmetic3) {
+TEST(ARingZZpFFPACK, arithmetic3)
+{
   M2::ARingZZpFFPACK R(3);
   testFiniteField(R, ntrials);
 
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZpFFPACK, arithmetic66000007) {
+TEST(ARingZZpFFPACK, arithmetic66000007)
+{
   M2::ARingZZpFFPACK R(66000007);
 
   testCoerceToLongInteger(R);
@@ -208,10 +221,11 @@ TEST(ARingZZpFFPACK, arithmetic66000007) {
   testAxioms(R, ntrials);
 }
 
-//TODO: commented out because it takes too long:
+// TODO: commented out because it takes too long:
 // Actually: now this characteristic seems too big?!
-TEST(ARingZZpFFPACK, arithmetic67108859) {
-  M2::ARingZZpFFPACK R(67108859);  
+TEST(ARingZZpFFPACK, arithmetic67108859)
+{
+  M2::ARingZZpFFPACK R(67108859);
 
   testCoerceToLongInteger(R);
 
@@ -226,8 +240,9 @@ TEST(ARingZZpFFPACK, arithmetic67108859) {
   testAxioms(R, ntrials);
 }
 
-TEST(ARingZZpFFPACK, arithmetic33500479) {
-  M2::ARingZZpFFPACK R(33500479);  
+TEST(ARingZZpFFPACK, arithmetic33500479)
+{
+  M2::ARingZZpFFPACK R(33500479);
 
   testCoerceToLongInteger(R);
 
@@ -242,7 +257,8 @@ TEST(ARingZZpFFPACK, arithmetic33500479) {
   testAxioms(R, ntrials);
 }
 
-TEST(ARingZZp, read) {
+TEST(ARingZZp, read)
+{
   std::string a = "-42378489327498312749c3";
   std::istringstream i(a);
 
@@ -254,18 +270,20 @@ TEST(ARingZZp, read) {
   reader.read(i, b);
   R.set_from_long(c, 3);
 
-  EXPECT_TRUE(R.is_equal(b,c));
+  EXPECT_TRUE(R.is_equal(b, c));
 }
 
 ////////////////////////////
 // Flint ZZ/p arithmetic ///
 ////////////////////////////
 #include "../aring-zzp-flint.hpp"
-template<>
-void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R, int index, M2::ARingZZpFlint::ElementType& result)
+template <>
+void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R,
+                                   int index,
+                                   M2::ARingZZpFlint::ElementType& result)
 {
-  if (index < 50) 
-    R.set_from_long(result, index-25);
+  if (index < 50)
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -273,9 +291,10 @@ void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R, int index, M2::AR
     }
 }
 
-TEST(ARingZZpFlint, create) {
+TEST(ARingZZpFlint, create)
+{
   M2::ARingZZpFlint R(101);
-  
+
   EXPECT_EQ(ringName(R), "AZZFlint/101");
   testSomeMore(R);
 
@@ -287,25 +306,29 @@ TEST(ARingZZpFlint, create) {
   R.clear(a);
 }
 
-TEST(ARingZZpFlint, arithmetic101) {
+TEST(ARingZZpFlint, arithmetic101)
+{
   M2::ARingZZpFlint R(101);
   testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZpFlint, arithmetic2) {
+TEST(ARingZZpFlint, arithmetic2)
+{
   M2::ARingZZpFlint R(2);
-  testFiniteField(R,ntrials);
+  testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZpFlint, arithmetic3) {
+TEST(ARingZZpFlint, arithmetic3)
+{
   M2::ARingZZpFlint R(3);
   testFiniteField(R, ntrials);
   testCoerceToLongInteger(R);
 }
 
-TEST(ARingZZpFlint, arithmetic66000007) {
+TEST(ARingZZpFlint, arithmetic66000007)
+{
   M2::ARingZZpFlint R(66000007);
 
   testCoerceToLongInteger(R);
@@ -321,8 +344,9 @@ TEST(ARingZZpFlint, arithmetic66000007) {
   testAxioms(R, ntrials);
 }
 
-TEST(ARingZZpFlint, arithmetic67108859) {
-  M2::ARingZZpFlint R(67108859);  
+TEST(ARingZZpFlint, arithmetic67108859)
+{
+  M2::ARingZZpFlint R(67108859);
 
   testCoerceToLongInteger(R);
 
@@ -337,8 +361,9 @@ TEST(ARingZZpFlint, arithmetic67108859) {
   testAxioms(R, ntrials);
 }
 
-TEST(ARingZZpFlint, arithmetic33500479) {
-  M2::ARingZZpFlint R(33500479);  
+TEST(ARingZZpFlint, arithmetic33500479)
+{
+  M2::ARingZZpFlint R(33500479);
 
   testCoerceToLongInteger(R);
 
@@ -353,54 +378,57 @@ TEST(ARingZZpFlint, arithmetic33500479) {
   testAxioms(R, ntrials);
 }
 
-TEST(ARingZZpFlint, arithmetic9223372036854775783) {
+TEST(ARingZZpFlint, arithmetic9223372036854775783)
+{
   // largest prime < 2^63
-  if (sizeof(unsigned long)<=4) 
+  if (sizeof(unsigned long) <= 4)
     std::cout << "seems to be a 32bit machine: skipping the test" << std::endl;
   else
-    {   
-    M2::ARingZZpFlint R(9223372036854775783L);
+    {
+      M2::ARingZZpFlint R(9223372036854775783L);
 
-    testCoerceToLongInteger(R);
+      testCoerceToLongInteger(R);
 
-    testCoercions(R);
-    testNegate(R, ntrials);
-    testAdd(R, ntrials);
-    testSubtract(R, ntrials);
-    testMultiply(R, ntrials);
-    testDivide(R, ntrials);
-    testReciprocal(R, ntrials);
-    //  testPower(R, ntrials);  // this test fails: as it expects the characteristic to fit into an int.
-    testAxioms(R, ntrials);
-  }
+      testCoercions(R);
+      testNegate(R, ntrials);
+      testAdd(R, ntrials);
+      testSubtract(R, ntrials);
+      testMultiply(R, ntrials);
+      testDivide(R, ntrials);
+      testReciprocal(R, ntrials);
+      //  testPower(R, ntrials);  // this test fails: as it expects the
+      //  characteristic to fit into an int.
+      testAxioms(R, ntrials);
+    }
 }
-
 
 // Even though flint handles primes up to 2^64-1, M2 assumes that the
 // characteristic is < 2^63.  If needed, we could change the type of
-// the characteristic to unsigned long, but that would have further complications.
-TEST(ARingZZpFlint, arithmetic18446744073709551557) {
+// the characteristic to unsigned long, but that would have further
+// complications.
+TEST(ARingZZpFlint, arithmetic18446744073709551557)
+{
   // largest prime < 2^64
-  if (sizeof(unsigned long)<=4) 
+  if (sizeof(unsigned long) <= 4)
     std::cout << "seems to be a 32bit machine: skipping the test" << std::endl;
   else
-    {   
-    M2::ARingZZpFlint R(18446744073709551557UL);  
+    {
+      M2::ARingZZpFlint R(18446744073709551557UL);
 
-    //    testCoerceToLongInteger(R); // this fails for charac > 2^63
+      //    testCoerceToLongInteger(R); // this fails for charac > 2^63
 
-    testCoercions(R);
-    testNegate(R, ntrials);
-    testAdd(R, ntrials);
-    testSubtract(R, ntrials);
-    testMultiply(R, ntrials);
-    testDivide(R, ntrials);
-    testReciprocal(R, ntrials);
-    //  testPower(R, ntrials);  // this test fails: as it expects the characteristic to fit into an int.
-    testAxioms(R, ntrials);
-  }
+      testCoercions(R);
+      testNegate(R, ntrials);
+      testAdd(R, ntrials);
+      testSubtract(R, ntrials);
+      testMultiply(R, ntrials);
+      testDivide(R, ntrials);
+      testReciprocal(R, ntrials);
+      //  testPower(R, ntrials);  // this test fails: as it expects the
+      //  characteristic to fit into an int.
+      testAxioms(R, ntrials);
+    }
 }
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

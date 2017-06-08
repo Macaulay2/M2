@@ -12,8 +12,8 @@
 
 M2_bool rawIdealOfPoints(const Ring *R,
                          const MutableMatrix *Pts,
-                         Matrix /* or null */ ** result_GB,
-                         Matrix /* or null */ ** result_std_monoms)
+                         Matrix /* or null */ **result_GB,
+                         Matrix /* or null */ **result_std_monoms)
 {
   // Branch depending on the type of K, the ring of Pts.
   // If Pts is not a DMatrix, make it one.
@@ -32,8 +32,8 @@ M2_bool rawIdealOfPoints(const Ring *R,
   if (KZZp != 0)
     {
       DMat<M2::ARingZZp> *Pts1 = 0;
-      *result_GB = PointsComputation<M2::ARingZZp>::points
-        (P,KZZp,Pts1,*result_std_monoms);
+      *result_GB = PointsComputation<M2::ARingZZp>::points(
+          P, KZZp, Pts1, *result_std_monoms);
       return true;
     }
 
@@ -43,36 +43,36 @@ M2_bool rawIdealOfPoints(const Ring *R,
 
 class monom_int_list
 {
-public:
+ public:
   monom_int_list(const PolynomialRing *R) {}
   ~monom_int_list() {}
-
-  void add(int old, int x, int *vp) { /* TO BE WRITTEN */ }
-  bool remove(int &old, int &x, int * &vp) { /* TO BE WRITTEN */ return false;}
+  void add(int old, int x, int *vp) { /* TO BE WRITTEN */}
+  bool remove(int &old, int &x, int *&vp) { /* TO BE WRITTEN */ return false; }
 };
 
 template <typename CoeffRing>
-Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
-                                             const typename CoeffRing::ring_type *K,
-                                             const DMat<CoeffRing> *Pts,
-                                             Matrix * & result_std_monoms)
+Matrix *PointsComputation<CoeffRing>::points(
+    const PolynomialRing *R,
+    const typename CoeffRing::ring_type *K,
+    const DMat<CoeffRing> *Pts,
+    Matrix *&result_std_monoms)
 {
-  // Declare and initialize our variables
-  // int nvars = R->n_vars();
-  //   int npoints = Pts->n_cols();
+// Declare and initialize our variables
+// int nvars = R->n_vars();
+//   int npoints = Pts->n_cols();
 
-  //   MatrixConstructor gbG(R->make_FreeModule(1), 0);
-  //  DMat<CoeffRing> *P = new DMat<CoeffRing>(K, npoints, npoints+1);
-  //  DMat<CoeffRing> *PLU = new DMat<CoeffRing>(K, npoints, npoints+1);
-  //  MonomialIdeal *inG = new MonomialIdeal(R);
-  //  VECTOR(monomial) stdG;
-  //  monom_int_list monoms_todo(R);
+//   MatrixConstructor gbG(R->make_FreeModule(1), 0);
+//  DMat<CoeffRing> *P = new DMat<CoeffRing>(K, npoints, npoints+1);
+//  DMat<CoeffRing> *PLU = new DMat<CoeffRing>(K, npoints, npoints+1);
+//  MonomialIdeal *inG = new MonomialIdeal(R);
+//  VECTOR(monomial) stdG;
+//  monom_int_list monoms_todo(R);
 
-  //  int next_col = 0;
-  // MES Place the monomials [0,0,vp], ..., [0,nvars-1,vp] onto monom list
-  // MES Make the first column of P, PLU all ones.
+//  int next_col = 0;
+// MES Place the monomials [0,0,vp], ..., [0,nvars-1,vp] onto monom list
+// MES Make the first column of P, PLU all ones.
 
-  // The main loop
+// The main loop
 #if 0
 //   while (monoms_todo.remove(old,x,vp))
 //     {
@@ -92,7 +92,7 @@ Matrix *PointsComputation<CoeffRing>::points(const PolynomialRing *R,
 template class PointsComputation<M2::ARingZZp>;
 
 //#include "coeffrings.hpp"
-//template class PointsComputation<CoefficientRingZZp>;
+// template class PointsComputation<CoefficientRingZZp>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
