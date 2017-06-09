@@ -4,13 +4,6 @@
 #include "engine-includes.hpp"
 #include <stdio.h>
 
-#if 0
-#include <M2/gc-include.h>
-// get declarations of outofmem and getmem
-#include "../d/M2mem.h"
-#include "../d/debug.h"
-#endif
-
 void mpfc_init_set(gmp_CC result, const_gmp_CC a)
 {
   result->re = getmemstructtype(gmp_RR);

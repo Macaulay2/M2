@@ -83,8 +83,10 @@ export RawRingMapCell := {+ p:RawRingMap };
 -- functions
 
 header "
-    #include <../e/error.h>
+    #include <error.h>
     #include <exceptions.hpp>
+    #include <newdelete.hpp>
+    #include <hash.hpp>
     #include <monomial.hpp>
     #include <relem.hpp>
     #include <matrix.hpp>

@@ -3,15 +3,17 @@
 #ifndef _monoid_hpp_
 #define _monoid_hpp_
 
-#include "monordering.h"
-#include "array.hpp"
-#include "newdelete.hpp"
 #include "hash.hpp"
+#include "engine-includes.hpp"
+#include "array.hpp"
+#include "monordering.h"
+#include "newdelete.hpp"
+
 #include "intarray.hpp"
-#include <vector>
 #include "imonorder.hpp"
 
 #include <vector>
+
 class PolynomialRing;
 
 typedef int *exponents;

@@ -2,8 +2,9 @@
 #ifndef _hash_hh_
 #define _hash_hh_
 
-#include <assert.h>
 #include "newdelete.hpp"
+#include <cassert>
+
 
 class EngineObject : public our_new_delete
 {
