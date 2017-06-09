@@ -57,6 +57,7 @@ COMPILE.cpp = $(COMPILE.cc)
 
 %.dep: %.cpp
 	$(SHOW)"MKDEP $*.cpp"
+	$(HIDE)$(MKDIR_P) `dirname "$@"`
 	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
