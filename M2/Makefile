@@ -32,20 +32,21 @@ configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/a
 
 get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
-	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
-	cat usr-build/aclocal-path
-	cat usr-build/aclocal-path2
-	aclocal --print
+	@ for i in m4 autoconf automake libtool; \
+		do echo $$i: ; which $$i ; $$i --version | head -1 ; done
+	@ echo aclocal-path:; cat usr-build/aclocal-path
+	@ echo aclocal-path2:; cat usr-build/aclocal-path2
+	@ echo aclocal_--print:; aclocal --print
 usr-build/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 get-m4:
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.17
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.18
 get-autoconf:get-m4
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
 get-automake:get-autoconf
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.14.1
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.15
 get-libtool:get-automake
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.2
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
 get-pkg: usr-build/share/aclocal/pkg.m4
 usr-build/aclocal-path2:get-automake
 usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
