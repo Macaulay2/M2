@@ -8,7 +8,6 @@
 #include "buffer.hpp"
 #include "varpower.hpp"
 
-
 class Monomial : public EngineObject
 {
   intarray val;

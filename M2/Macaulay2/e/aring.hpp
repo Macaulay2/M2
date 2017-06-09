@@ -53,7 +53,7 @@ enum RingID {
 class RingInterface : public our_new_delete
 {
 };  ///< inherit from this if the class is to be used as a template parameter
-    ///for ConcreteRing
+    /// for ConcreteRing
 
 class DummyRing : public RingInterface
 {

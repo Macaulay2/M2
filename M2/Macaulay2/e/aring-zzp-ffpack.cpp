@@ -90,7 +90,7 @@ void ARingZZpFFPACK::init(ElementType &result) const
   result = 0;
 }
 
-void ARingZZpFFPACK::clear(ElementType &result) const { /* nothing */ }
+void ARingZZpFFPACK::clear(ElementType &result) const { /* nothing */}
 void ARingZZpFFPACK::set_zero(ElementType &result) const
 {
   // assert(0 == mFfpackField.zero);

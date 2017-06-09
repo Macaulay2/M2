@@ -111,8 +111,6 @@ struct our_new_delete
 #endif
 };
 
-
-
 // struct gc_malloc_alloc {
 //   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL)
 //   outofmem2(n); return p; }

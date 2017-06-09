@@ -103,7 +103,7 @@ class ARingGFGivaro : public RingInterface
   UTT mCharac;
   UTT mDimension;    ///< same as extensionDegree
   UTT mCardinality;  ///< number of elements in the field, if less than some
-                     ///bound, otherwise 0.
+                     /// bound, otherwise 0.
 
   const PolynomialRing *mOriginalRing;
   const ring_elem mPrimitiveElement;  // is an element of mOriginalRing

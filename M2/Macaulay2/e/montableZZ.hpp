@@ -13,7 +13,6 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-
 /* "Tricks" used in this implementation */
 /*
  1. exponent vectors: these look like: [e1, ..., en],

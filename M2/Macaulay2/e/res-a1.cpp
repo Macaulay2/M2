@@ -894,7 +894,7 @@ bool res_comp::stop_conditions_ok()
 
 int res_comp::complete_thru_degree() const { return n_degree - 1; }
 //#define DO(CALL) {int result = CALL; if (result != COMP_COMPUTING) return
-//result;}
+// result;}
 #define DO(CALL)                              \
   {                                           \
     enum ComputationStatusCode result = CALL; \

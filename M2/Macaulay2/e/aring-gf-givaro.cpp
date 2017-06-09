@@ -586,7 +586,7 @@ void ARingGFGivaro::power(ElementType &result,
 }
 
 ///@todo ensure that  givaroField.cardinality() fits in a unsigned long,
-///otherwise instead of mpz_fdiv_ui a different function has to be called)
+/// otherwise instead of mpz_fdiv_ui a different function has to be called)
 void ARingGFGivaro::power_mpz(ElementType &result,
                               const ElementType a,
                               const mpz_ptr n) const

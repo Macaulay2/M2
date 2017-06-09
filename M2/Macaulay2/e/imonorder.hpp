@@ -21,7 +21,8 @@
 typedef int *exponents;
 typedef int *monomial;
 
-typedef int32_t deg_t;  // this is the integer type to use for degrees and weights
+typedef int32_t
+    deg_t;  // this is the integer type to use for degrees and weights
 
 typedef const int *const_exponents;
 typedef const int *const_monomial;

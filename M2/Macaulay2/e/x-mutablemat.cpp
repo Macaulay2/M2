@@ -598,7 +598,6 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
   }
 }
 
-
 ////////////////////////////////////////////////
 
 #if 0
@@ -1111,7 +1110,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////
 ////  template < typename FieldType >
 ////  typename FieldType::Element *GFtoFFPackMatrix(const GF *kk, const
-///FieldType &F, const MutableMatrix *M)
+/// FieldType &F, const MutableMatrix *M)
 ////  {
 ////    typedef typename FieldType::Element ElementType;
 ////
@@ -1130,7 +1129,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////
 ////  template < typename FieldType >
 ////  typename FieldType::Element *toFFPackMatrix(const Z_mod *kk, const
-///FieldType &F,const MutableMatrix *M)
+/// FieldType &F,const MutableMatrix *M)
 ////  {
 ////    typedef typename FieldType::Element ElementType;
 ////
@@ -1151,7 +1150,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////  #if 0
 ////
 ////  // This is practice code to see about incorporating givaro types into
-///these functions
+/// these functions
 ////  template < typename M2FieldName > /* M2FieldName is Z_mod, or GF */
 ////  /* Z_mod or GF would have the following types:
 ////       typename Z_mod::FieldType
@@ -1160,9 +1159,9 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////  */
 ////  MutableMatrix *fromFFPackMatrixPractice(const M2FieldName *kk,
 ////                                          const typename
-///M2FieldName::FieldType &F,
+/// M2FieldName::FieldType &F,
 ////                                          typename
-///M2FieldName::FieldType::Element *N,
+/// M2FieldName::FieldType::Element *N,
 ////                                          size_t nrows,
 ////                                          size_t ncols)
 ////  {
@@ -1175,11 +1174,11 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////      for (size_t j = 0; j<ncols; j++)
 ////        {
 ////          unsigned long a;  // unsigned long should be a type:
-///M2FieldName::FieldType::(Residu_t or unsigned long)
+/// M2FieldName::FieldType::(Residu_t or unsigned long)
 ////          F.convert(a, *inN);
 ////          inN++;
 ////          ring_elem b = kk->from_int(a); // MES: this will need to be
-///changed to convert from givaro/ffpack types to M2 types
+/// changed to convert from givaro/ffpack types to M2 types
 ////          M->set_entry(i,j,b);
 ////        }
 ////    return M;
@@ -1324,7 +1323,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////  }
 ////
 ////  MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool
-///right_side)
+/// right_side)
 ////  {
 ////    const Ring *R = M->get_ring();
 ////    const Z_mod *kk = R->cast_to_Z_mod();
@@ -1347,11 +1346,11 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////    size_t nullspace_leading_dim;
 ////    FFPACK::NullSpaceBasis(F,
 ////                           (right_side ? FFLAS::FflasRight :
-///FFLAS::FflasLeft),
+/// FFLAS::FflasLeft),
 ////                           nr, nc, N, nc, nullspace, nullspace_leading_dim,
-///nullspace_dim);
+/// nullspace_dim);
 ////    cerr << "leading dim = " << nullspace_leading_dim << " and dim = " <<
-///nullspace_dim << endl;
+/// nullspace_dim << endl;
 ////    size_t nullspace_nrows = (right_side ? nc : nullspace_dim);
 ////    if (right_side && nullspace_dim != nullspace_leading_dim)
 ////      {
@@ -1363,13 +1362,13 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////      }
 ////
 ////    MutableMatrix *result_nullspace = fromFFPackMatrix(kk, F, nullspace,
-///nullspace_nrows, nullspace_leading_dim);
+/// nullspace_nrows, nullspace_leading_dim);
 ////    delete [] nullspace;
 ////    return result_nullspace;
 ////  }
 ////
 ////  MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A,
-///MutableMatrix *B, M2_bool right_side)
+/// MutableMatrix *B, M2_bool right_side)
 ////  {
 ////    const Ring *R = A->get_ring();
 ////    const Z_mod *kk = R->cast_to_Z_mod();
@@ -1441,7 +1440,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////
 ////    int nullspacedim;
 ////    ElementType * retval = FFPACK::Invert2(F, n, N, n, invN, n,
-///nullspacedim);
+/// nullspacedim);
 ////
 ////    if (retval != invN)
 ////      cerr << "return value from Invert2 is not result matrix" << endl;
@@ -1491,9 +1490,9 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////
 ////    // set tA, tB
 ////    FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans :
-///FFLAS::FflasNoTrans);
+/// FFLAS::FflasNoTrans);
 ////    FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans :
-///FFLAS::FflasNoTrans);
+/// FFLAS::FflasNoTrans);
 ////
 ////    // determine m,n,k
 ////    size_t m = (transposeA ? A->n_cols() : A->n_rows());
@@ -1598,13 +1597,13 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 ////    return 0;
 ////  }
 ////  MutableMatrix /* or null */ * rawFFPackNullSpace(MutableMatrix *M, M2_bool
-///right_side)
+/// right_side)
 ////  {
 ////    ERROR("FFPack not present");
 ////    return 0;
 ////  }
 ////  MutableMatrix /* or null */ * rawFFPackSolve(MutableMatrix *A,
-///MutableMatrix *B, M2_bool right_side)
+/// MutableMatrix *B, M2_bool right_side)
 ////  {
 ////    ERROR("FFPack not present");
 ////    return 0;

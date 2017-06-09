@@ -159,8 +159,8 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
         }
 
       //-- NEED_POLYNOMIAL_REPRESENTATION is not usable(namespace problems) and
-      //is not correct, because the answer depends on the template used for
-      //Givaro::GFqDom.
+      // is not correct, because the answer depends on the template used for
+      // Givaro::GFqDom.
       /*if (Givaro::NEED_POLYNOMIAL_REPRESENTATION(prime,dimension) )
       {
           ERROR("givaro Galois Field: polynomial representation is needed  -

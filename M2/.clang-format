@@ -52,9 +52,9 @@ IncludeCategories:
   - Regex:           '^<.*\.h>'
     Priority:        1
   - Regex:           '^<.*'
-    Priority:        1
+    Priority:        2
   - Regex:           '.*'
-    Priority:        1
+    Priority:        3
 IndentCaseLabels: true
 IndentWidth:     2
 IndentWrappedFunctionNames: false

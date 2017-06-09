@@ -163,7 +163,7 @@ void enter_factory::exit()
 static __mpz_struct toInteger(CanonicalForm h)
 {
   //// we don't have access to int_cf.h and int_int.h from factory, so the
-  ///following commented-out code won't compile; but it might have worked.
+  /// following commented-out code won't compile; but it might have worked.
   //     struct enter_factory foo;
   //     assert(h.inZ());
   //     InternalCF *value = h.getval();

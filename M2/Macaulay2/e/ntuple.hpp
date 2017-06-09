@@ -6,7 +6,7 @@
 #include "buffer.hpp"
 #include "engine-includes.hpp"
 #include "overflow.hpp"
-#include "style.hpp" // for LT, GT, EQ.
+#include "style.hpp"  // for LT, GT, EQ.
 
 typedef int *exponents;
 

@@ -5,7 +5,6 @@
 #include "newdelete.hpp"
 #include <cassert>
 
-
 class EngineObject : public our_new_delete
 {
  private:

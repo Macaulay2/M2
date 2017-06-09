@@ -5,7 +5,7 @@
 #include <cassert>
 #include "newdelete.hpp"
 // for spinLock:
-#include "../system/mutex.h" 
+#include "../system/mutex.h"
 class buffer;
 
 // 2*2^NDOUBLES = Largest stash size.

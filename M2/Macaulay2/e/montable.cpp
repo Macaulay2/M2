@@ -185,7 +185,7 @@ int MonomialTable::find_divisors(int max,
   //*DEBUG*/    else
   //*DEBUG*/      nmasked++;
   //*DEBUG*/  fprintf(stderr, "nviewed %d nmasked %ld max %d nfound %ld\n",
-  //nviewed, nmasked, max, nmatches);
+  // nviewed, nmasked, max, nmatches);
   return nmatches;
 }
 
