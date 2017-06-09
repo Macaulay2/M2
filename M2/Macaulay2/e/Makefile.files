@@ -204,7 +204,6 @@ ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))
 ENGINE_CFILES := $(addsuffix .c,$(C_FILES))
 ENGINE_DDFILES := $(addsuffix .dd,$(DD_FILES))
 ENGINE_DFILES := $(addsuffix .d,$(D_FILES))
-ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(ENGINE_DDFILES) $(ENGINE_DFILES)
 ENGINE_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES) $(D_FILES) $(DD_FILES))
 
 ifeq "$(SHARED)" "yes"

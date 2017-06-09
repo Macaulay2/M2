@@ -9,11 +9,11 @@ PRE.cc   = $(COMPILE.cc) -E
 include @srcdir@/Makefile.files
 include Makefile.common
 CPPFLAGS := -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors
-CXXFLAGS += -Wno-sign-conversion
+CXXFLAGS += -Wno-sign-conversion -ferror-limit=5
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
 
-.PHONY : tags fixspace
+.PHONY : tags
 
 ###################################################################
 ## Targets ##
@@ -22,7 +22,7 @@ DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
 ifneq (@ETAGS@,false)
 all: tags
 endif
-tags:: @srcdir@/TAGS
+TAGS tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 @srcdir@/unit-tests/*.cpp \
@@ -33,7 +33,7 @@ tags:: @srcdir@/TAGS
 # overflows
 LDLIBS = @GC_LIBS@
 
-all: run-overflow-test
+check:: run-overflow-test
 run-overflow-test : overflow-test Makefile
 	@ echo "#warning: the following 6 tests are intended to throw uncaught overflow exceptions"
 	./overflow-test throw || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
@@ -150,17 +150,14 @@ smalldoc fulldoc: HAVE_DOT_SETTING=YES
 tinydoc smalldoc: CALL_GRAPH_SETTING=NO
 fulldoc: CALL_GRAPH_SETTING=YES
 
-# fixing spaces.  Thanks to Bjarke Roune for the 'fixspace' shell script
-# BUT: this cannot be run on Makefile's (that is why we just grab c and c++ source files)
-fixspace:
-	find @srcdir@ . -name "*.hpp" -or -name "*.cpp" -or -name "*.h" -or -name "*.c" |xargs @srcdir@/fixspace;
-
-
 cleandoc: ; rm -rf $(DOXYGEN_OUTPUT_BASEDIR)
 
-check-include-file-compilation: \
-	$(patsubst %.h,%-h.o,complex.h defgroups.h engine.h error.h exptable.h rand.h table.h) \
-	$(HHFILES:.hpp=-hpp.o)
+HPP_FILES := $(shell find @srcdir@ -name \*.hpp | sed -e 's=@srcdir@.==')
+H_FILES   := $(shell find @srcdir@ -name \*.h   | sed -e 's=@srcdir@.==')
+
+check-include-file-compilation: $(HPP_FILES:.hpp=-hpp.o) $(H_FILES:.h=-h.o)
+
+reformat:; cd @srcdir@ && clang-format-3.8 -i $(ENGINE_SRCFILES)
 
 help:
 	@ echo "Macaulay2 @PACKAGE_VERSION@"
