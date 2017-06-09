@@ -7,6 +7,7 @@
 #include "../d/debug.h"
 
 #include <M2/gc-include.h>
+#include <gc/gc_allocator.h>
 
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
@@ -110,7 +111,7 @@ struct our_new_delete
 #endif
 };
 
-#include <gc/gc_allocator.h>
+
 
 // struct gc_malloc_alloc {
 //   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL)
