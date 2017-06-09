@@ -61,7 +61,7 @@ COMPILE.cpp = $(COMPILE.cc)
 	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
-	$(SHOW)" ** creating $@ from $<"
+	$(SHOW)"MKDEP $*.c"
 	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 # Local Variables:
