@@ -356,6 +356,6 @@ void F4GB::show_syz_basis()
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 f4-syz.o "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e f4/f4-syz.o "
 // indent-tabs-mode: nil
 // End:

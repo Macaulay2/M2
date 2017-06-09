@@ -1148,6 +1148,6 @@ void F4GB::show_new_rows_matrix()
 template class MemoryBlock<monomial_word>;
 template class MemoryBlock<pre_spair>;
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4 f4.o "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e f4/f4.o "
 // indent-tabs-mode: nil
 // End:

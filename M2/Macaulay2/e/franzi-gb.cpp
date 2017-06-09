@@ -116,7 +116,7 @@ class FunctionPair
         if (i < 0)
           {  // working with field polynomial, generate x_(-i)
             // g = BRP( 1 << n-(-i) );
-            fieldpolynomial = BRP(1 << n - (-i));
+            fieldpolynomial = BRP(1 << (n - (-i)));
             g = &fieldpolynomial;
           }
         else

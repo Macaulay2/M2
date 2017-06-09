@@ -5,7 +5,8 @@
 
 #include <vector>
 
-#include "../style.hpp"
+#include <mem.hpp>
+#include <style.hpp>
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
