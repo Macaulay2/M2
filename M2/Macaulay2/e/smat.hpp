@@ -1091,7 +1091,7 @@ bool SMat<CoeffRing>::is_zero() const
 template <typename CoeffRing>
 bool SMat<CoeffRing>::is_equal(const SMat &B) const
 {
-  ASSERT(&ring() == &B.ring())
+  assert(&ring() == &B.ring());
   if (B.numRows() != numRows()) return false;
   if (B.numColumns() != numColumns()) return false;
   for (size_t c = 0; c < numColumns(); c++)
@@ -1141,9 +1141,9 @@ template <typename CoeffRing>
 void SMat<CoeffRing>::addInPlace(const SMat<CoeffRing> &B)
 // return this + B.  return NULL of sizes or types do not match.
 {
-  ASSERT(&B.ring() == &ring());
-  ASSERT(B.numRows() == numRows());
-  ASSERT(B.numColumns() == numColumns());
+  assert(&B.ring() == &ring());
+  assert(B.numRows() == numRows());
+  assert(B.numColumns() == numColumns());
 
   for (size_t c = 0; c < numColumns(); c++)
     {
@@ -1157,9 +1157,9 @@ void SMat<CoeffRing>::subtractInPlace(const SMat<CoeffRing> &B)
 // this -= B.
 // assumption:the assert statements below:
 {
-  ASSERT(&B.ring() == &ring());
-  ASSERT(B.numRows() == numRows());
-  ASSERT(B.numColumns() == numColumns());
+  assert(&B.ring() == &ring());
+  assert(B.numRows() == numRows());
+  assert(B.numColumns() == numColumns());
 
   for (size_t c = 0; c < numColumns(); c++)
     {

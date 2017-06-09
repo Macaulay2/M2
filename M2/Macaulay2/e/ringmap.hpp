@@ -53,8 +53,8 @@ class RingMap : public EngineObject
 
   const ring_elem elem(int i) const
   {
-    ASSERT(i >= 0);
-    ASSERT(i < nvars);
+    assert(i >= 0);
+    assert(i < nvars);
     return _elem[i].bigelem;
   }
 

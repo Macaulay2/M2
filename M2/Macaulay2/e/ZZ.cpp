@@ -375,7 +375,7 @@ void RingZZ::syzygy(const ring_elem a,
                     ring_elem &x,
                     ring_elem &y) const
 {
-  ASSERT(!is_zero(b));
+  assert(!is_zero(b));
   // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
   if (RingZZ::is_zero(a))
     {
