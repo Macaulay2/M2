@@ -535,7 +535,7 @@ M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)
   return FF_LUComputation::DO(M);
 }
 
-#include <fplll-interface.h>
+#include <fplll-interface.hpp>
 #include "ntl-interface.hpp"
 
 M2_bool rawLLL(MutableMatrix *M,

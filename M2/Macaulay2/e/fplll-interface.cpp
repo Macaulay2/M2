@@ -1,4 +1,4 @@
-#include "fplll-interface.h"
+#include "fplll-interface.hpp"
 #include "mutablemat.hpp"
 
 #ifdef HAVE_FPLLL

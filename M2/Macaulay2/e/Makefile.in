@@ -158,7 +158,9 @@ fixspace:
 
 cleandoc: ; rm -rf $(DOXYGEN_OUTPUT_BASEDIR)
 
-check-include-file-compilation: $(HHFILES:.hpp=.dummy.o)
+check-include-file-compilation: \
+	$(patsubst %.h,%-h.o,complex.h defgroups.h engine.h error.h exptable.h rand.h table.h) \
+	$(HHFILES:.hpp=-hpp.o)
 
 help:
 	@ echo "Macaulay2 @PACKAGE_VERSION@"

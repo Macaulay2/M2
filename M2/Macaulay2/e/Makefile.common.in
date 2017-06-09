@@ -19,9 +19,13 @@ endif
 
 COMPILE.cpp = $(COMPILE.cc)
 
-%.dummy.o : %.hpp
+%-hpp.o : %.hpp
 	$(SHOW) "CXX $*.hpp"
 	$(HIDE)$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%-h.o : %.h
+	$(SHOW) "CC $*.h"
+	$(HIDE)$(COMPILE.c) $(OUTPUT_OPTION) $<
 
 %.o : %.cpp
 	$(SHOW)"CXX $*.cpp"

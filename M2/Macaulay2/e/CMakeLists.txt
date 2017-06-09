@@ -128,7 +128,7 @@ add_library(engine STATIC
   finalize.hpp
 #  fixspace
   fplll-interface.cpp
-  fplll-interface.h
+  fplll-interface.hpp
   frac.cpp
   frac.hpp
   fractionfreeLU.cpp

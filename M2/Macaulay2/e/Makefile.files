@@ -84,7 +84,7 @@ INTERFACE = \
 	LLL \
 	fractionfreeLU \
 	ntl-interface \
-    fplll-interface \
+        fplll-interface \
 	mat \
 	dmat \
 	coeffrings \
