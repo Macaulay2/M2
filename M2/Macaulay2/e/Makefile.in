@@ -48,7 +48,7 @@ pi overflow-test : overflow.o ../d/debug.o
 clean :: ; rm -f overflow-test
 pi : pi.h
 
-all:; $(MAKE) -C f4
+#all:; $(MAKE) -C f4
 
 ifeq "$(SHARED)" "yes"
 all: @pre_librariesdir@/libengine.so
@@ -73,7 +73,10 @@ COMPILE.cc += $(MORE_OPTIONS)
 
 clean::
 	rm -f *.lo *.o *.rpo LOGFILE
-	$(MAKE) -C f4 $@
+	find . -name \*.o -delete
+	find . -name \*.dep -delete
+	find . -name dep-\*.tmp -delete
+
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
