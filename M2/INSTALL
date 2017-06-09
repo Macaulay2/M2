@@ -52,6 +52,7 @@ of the directory this file is in) will download the latest changes to the
 source code:
 
     git pull
+    git submodule sync
     git submodule update
 
 ---------
