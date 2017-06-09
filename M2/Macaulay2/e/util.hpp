@@ -3,8 +3,8 @@
 #ifndef _util_hpp_
 #define _util_hpp_
 
-#include <vector>
 #include "engine-includes.hpp"
+#include <vector>
 
 void M2_ArrayString_to_stdvector(M2_ArrayString strs,
                                  std::vector<std::string> &result);

@@ -3,10 +3,10 @@
 #ifndef _ZZ_hh_
 #define _ZZ_hh_
 
+#include "error.h"
 #include "ring.hpp"
-#include <stddef.h>
+#include <cstddef>
 #include <gmp.h>
-#include <mpfr.h>
 
 namespace M2 {
 class ARingZZGMP;

@@ -7,14 +7,6 @@
 
 #include <M2/config.h>
 
-#if 0
-#include <stdio.h>
-#include <stddef.h>
-#include <gmp.h>
-#include <mpfr.h>
-#endif
-
-
 #if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>
 #endif
@@ -34,19 +26,6 @@
 #include <M2/gc-include.h>
 #include "../d/M2mem.h"
 #include "../d/debug.h"
-#endif
-
-#ifndef NDEBUG
-#ifdef _cplusplus
-#include <cassert>
-#else
-#endif
-#include <assert.h>
-#define ASSERT(X) assert(X);
-#define IF_DEBUG(X) X
-#else
-#define ASSERT(X)
-#define IF_DEBUG(X)
 #endif
 
 #endif

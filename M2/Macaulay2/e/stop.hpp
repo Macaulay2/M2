@@ -3,6 +3,8 @@
 #ifndef _stop_hpp_
 #define _stop_hpp_
 
+#include "engine-includes.hpp"
+
 struct StopConditions
 {
   bool always_stop;

@@ -584,10 +584,6 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
    and returns false if there is an error.  The return values are placed into
    some of the (already existing) parameters of the routine */
 
-#if 0
-extern engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose);
-#endif
-
 M2_arrayintOrNull rawLU(const MutableMatrix *A,
                         MutableMatrix *L,
                         MutableMatrix *U)
@@ -602,22 +598,6 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
   }
 }
 
-#if 0
-engine_RawArrayIntPairOrNull rawLQUPFactorization(MutableMatrix *A)
-{
-  TRY return rawLQUPFactorizationInPlace(A, false); CATCH
-#if 0
-  try {
-    //    return A->LQUPFactorizationInPlace(A, false);
-    return rawLQUPFactorizationInPlace(A, false);
-  }
-  catch (exc::engine_error e) {
-    ERROR(e.what());
-    return NULL;
-  }
-#endif
-}
-#endif
 
 ////////////////////////////////////////////////
 

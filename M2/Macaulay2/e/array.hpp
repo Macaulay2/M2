@@ -2,7 +2,8 @@
 #ifndef _array_hh_
 #define _array_hh_
 
-#include "style.hpp"
+#include "newdelete.hpp"
+#include "mem.hpp"
 
 template <class T>
 class array;
