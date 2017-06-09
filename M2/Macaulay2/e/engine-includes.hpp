@@ -6,10 +6,6 @@
 #define __engine_includes_hpp__
 
 #include <M2/config.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <gmp.h>
-#include <mpfr.h>
 
 #if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>
@@ -31,31 +27,6 @@
 #include "../d/M2mem.h"
 #include "../d/debug.h"
 #endif
-
-#ifndef BASECLASS
-#ifdef __cplusplus
-#define BASECLASS : public our_new_delete
-#include "newdelete.hpp"
-#else
-#define BASECLASS
-#endif
-#endif
-
-#ifndef NDEBUG
-#ifdef _cplusplus
-#include <cassert>
-#else
-#endif
-#include <assert.h>
-#define ASSERT(X) assert(X);
-#define IF_DEBUG(X) X
-#else
-#define ASSERT(X)
-#define IF_DEBUG(X)
-#endif
-
-typedef int32_t
-    deg_t;  // this is the integer type to use for degrees and weights
 
 #endif
 

@@ -1,7 +1,6 @@
 // Copyright 1997 Michael E. Stillman
 
 #include "ntuple.hpp"
-#include "text-io.hpp"
 
 void ntuple::elem_text_out(buffer &o,
                            unsigned int nvars,

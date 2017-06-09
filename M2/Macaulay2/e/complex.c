@@ -2,6 +2,7 @@
 
 #include "complex.h"
 #include "engine-includes.hpp"
+#include <stdio.h>
 
 #if 0
 #include <M2/gc-include.h>

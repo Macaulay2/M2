@@ -3,8 +3,9 @@
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 
-#include <string>
+#include "newdelete.hpp"
 #include "engine-includes.hpp"
+#include <string>
 
 const int BUFFER_INITIAL_CAPACITY = 100;
 

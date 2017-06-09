@@ -1,14 +1,16 @@
 // Copyright 2010 Michael E. Stillman.
 
-#include "atomic_ops.h"
 #include "finalize.hpp"
-#include <M2/gc-include.h>
+#include "engine-includes.hpp"
 
+#include "atomic_ops.h"
 #include "monideal.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
 #include "schorder.hpp"
 #include "mat.hpp"
+
+#include <M2/gc-include.h>
 
 static volatile AO_t monideals_nfinalized = 0;
 static volatile AO_t monideals_nremoved = 0;

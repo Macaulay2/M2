@@ -1,6 +1,7 @@
 #ifndef __montable_h
 #define __montable_h
 
+#include "mem.hpp"
 #include <vector>
 #include <memory>
 #include <algorithm>

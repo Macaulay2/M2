@@ -1,9 +1,11 @@
-#include "error.h"
 #include "monordering.h"
+
+#include "error.h"
 #include "engine.h"
+#include "../d/M2mem.h"
 #include <stdio.h>
 
-#include "../d/M2mem.h"
+
 
 static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type, int nvars, int *wts)
 {

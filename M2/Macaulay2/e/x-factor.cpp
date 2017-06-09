@@ -15,7 +15,6 @@ CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
 #endif
 #undef INT64
 #undef Matrix
-#undef ASSERT
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"

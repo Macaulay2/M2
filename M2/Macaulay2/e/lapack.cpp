@@ -3165,7 +3165,7 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 // TODO: MES The next 6 lines need to be removed/cleaned up
 #if 0
   const CCC *CCR = A->get_ring()->cast_to_CCC();
-  ASSERT(CCR != 0);
+  assert(CCR != 0);
   unsigned long precision= CCR->get_precision();
 #endif
   unsigned long precision =

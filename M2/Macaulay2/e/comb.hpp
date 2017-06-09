@@ -2,8 +2,7 @@
 #ifndef _comb_hh_
 #define _comb_hh_
 
-#include "style.hpp"
-#include "array.hpp"
+#include <cassert>
 #include <vector>
 #include <iosfwd>
 

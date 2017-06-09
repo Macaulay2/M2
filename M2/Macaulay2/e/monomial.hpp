@@ -3,9 +3,11 @@
 #ifndef _monomial_hh_
 #define _monomial_hh_
 
-#include "engine.h"
-#include "varpower.hpp"
 #include "hash.hpp"
+#include "engine-includes.hpp"
+#include "buffer.hpp"
+#include "varpower.hpp"
+
 
 class Monomial : public EngineObject
 {

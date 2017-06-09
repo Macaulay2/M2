@@ -19,6 +19,11 @@ endif
 
 COMPILE.cpp = $(COMPILE.cc)
 
+%.dummy.o : %.hpp
+	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
 %.o : %.cpp
 	$(SHOW)"CXX $*.cpp"
 	$(HIDE)$(COMPILE.cpp) $< $(OUTPUT_OPTION)
@@ -52,12 +57,12 @@ COMPILE.cpp = $(COMPILE.cc)
 	$(HIDE)$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 %.dep: %.cpp
-	$(SHOW)" ** creating $@ from $<"
-	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW)"MKDEP $*.cpp"
+	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
 	$(SHOW)" ** creating $@ from $<"
-	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "

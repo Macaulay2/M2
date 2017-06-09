@@ -3,10 +3,10 @@
 #ifndef _ntuple_hpp_
 #define _ntuple_hpp_
 
-#include "style.hpp"
-#include "engine.h"
-#include "exceptions.hpp"
+#include "buffer.hpp"
+#include "engine-includes.hpp"
 #include "overflow.hpp"
+#include "style.hpp" // for LT, GT, EQ.
 
 typedef int *exponents;
 

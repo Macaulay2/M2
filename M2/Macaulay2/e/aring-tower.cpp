@@ -21,12 +21,12 @@ ARingTower::ARingTower(const BaseRingType &baseRing,
                        const std::vector<ElementType> &extensions)
     : mBaseRing(baseRing), mVarNames(names), mExtensions()
 {
-  ASSERT(names.size() >= 1);
+  assert(names.size() >= 1);
   mNumVars = static_cast<int>(names.size());
   mStartLevel = mNumVars - 1;
 
   // Now copy all of the extension polynomials
-  ASSERT(extensions.size() <= names.size());
+  assert(extensions.size() <= names.size());
   for (size_t i = 0; i < names.size(); i++)
     {
       if (extensions.size() < i)
@@ -142,7 +142,7 @@ poly ARingTower::copy(int level, const poly f) const
 // TODO: should increase_capacity set the degree??  I don't think so...
 void ARingTower::increase_capacity(int newdeg, poly &f) const
 {
-  ASSERT(f != 0);
+  assert(f != 0);
   if (f->len <= newdeg)
     {
       poly *newelems = newarray(poly, newdeg + 1);
@@ -399,7 +399,7 @@ void ARingTower::mult_by_coeff(int level,
                                poly &f,
                                const BaseCoefficientType &b) const
 {
-  ASSERT(!mBaseRing.is_zero(b));
+  assert(!mBaseRing.is_zero(b));
   if (f == 0) return;
 
   long deg = f->deg;
