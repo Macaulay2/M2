@@ -27,7 +27,11 @@ CONFIGOPTIONS += --enable-gmpcompat --enable-cxx $(MPIR_CONFIGOPTIONS)
 # that uses libgmp, and the pari makefile refuses to make libpari.a, the
 # static library.
 # ifeq (@SHARED@,no)
-# CONFIGOPTIONS += --disable-shared
+
+# or, maybe now?
+
+CONFIGOPTIONS += --disable-shared
+
 # endif
 
 include ../Makefile.library

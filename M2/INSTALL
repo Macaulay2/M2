@@ -106,11 +106,6 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
-    On Ubuntu 14.10 and later, add
-        --enable-build-libraries="pari givaro fflas_ffpack"
-      to the "configure" command line below.  (The version of pari possibly installed there
-      will crash when M2 exits.  The version of givaro that might be installed by Ubuntu
-      might be too recent for us.)
     On all systems, add
         CPPFLAGS=-I/usr/include/cdd
       to the "configure" command line below.  Otherwise the configure script will
@@ -161,13 +156,9 @@ various modern operating systems:
 
     Add
 
-       --enable-build-libraries="givaro"
-
-    to the configure command line, since the givaro installed above has bugs that cause compile time errors.  Add also
-
        --enable-rpm --build=x86_64-suse-gnu
 
-    to make RPM files for distribution to generic hardware.
+    to the configure command line, to make RPM files for distribution to generic hardware.
 
   Arch Linux:
     You may prefer to use the Arch package for Macaulay2 at https://aur.archlinux.org/packages/macaulay2/, but it
@@ -177,10 +168,9 @@ various modern operating systems:
       sudo pacman-key --populate archlinux
       sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip
     We recommend adding
-    	 --enable-build-libraries="pari flint ntl gc givaro factory"
+    	 --enable-build-libraries="flint ntl gc factory"
       to the "configure" command line below in the section on compiling Macaulay2
       Adding "gc" here seems to avoid undiagnosed problems with invalid libgc pointers.
-      Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
     To upgrade the system:
       sudo pacman --sync --refresh --sysupgrade
     Compilation doesn't succeed with gcc 6, so install gcc 5 with
@@ -225,8 +215,6 @@ various modern operating systems:
 	brew update
         brew upgrade
 	brew cleanup
-    Note: the libraries pari and flint are also available from homebrew, but we build them
-      ourselves, and that is automatically arranged by the configure script.
     Now remember to add 
         --enable-build-libraries="readline"
       to the "configure" command line below in the section on compiling Macaulay2.

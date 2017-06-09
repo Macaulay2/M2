@@ -820,7 +820,8 @@ AC_SUBST(BUILTLIBS,)
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
 #    linbox needs fflas_ffpack and givaro
-#    fflas_ffpack needs givaro and lapack
+#    givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
+#    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
@@ -871,6 +872,16 @@ BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
 # frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
 # Another possible problem can arise if mpfr comes dynamically linked to libgmp, but we want
 # to use mpir instead.
+
+BUILD_givaro=yes
+BUILD_ALWAYS="givaro $BUILD_ALWAYS"
+# givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
+
+if [[ $BUILD_mpir = yes ]]
+then AC_MSG_NOTICE([mpir is being built (to replace gmp), so we will build pari])
+     BUILD_pari=yes
+     BUILD_ALWAYS="pari $BUILD_ALWAYS"
+fi
 
 AC_ARG_ENABLE(gfan, AS_HELP_STRING(--disable-gfan,[do not build gfan program]), GFAN=$enableval)
 if test "$GFAN" = no
@@ -1075,12 +1086,6 @@ then AC_MSG_CHECKING(for gmp ostream compatibility)
 	[AC_MSG_RESULT(yes)],
 	[BUILD_mpir=yes
          AC_MSG_RESULT([no, will build mpir])])
-fi
-
-if [[ $BUILD_mpir = yes ]]
-then AC_MSG_NOTICE([mpir is being built, so we will build pari])
-     BUILD_pari=yes
-     BUILD_ALWAYS="pari $BUILD_ALWAYS"
 fi
 
 if test "$PARI" = yes

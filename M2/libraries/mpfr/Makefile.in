@@ -31,9 +31,12 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 endif
 
-ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
-endif
+
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
+
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
 
