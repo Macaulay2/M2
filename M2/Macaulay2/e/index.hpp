@@ -11,7 +11,7 @@ class Index
   const T *collection;
 
  public:
-  Index() : collection(NULL) {}
+  Index() : collection(nullptr) {}
   Index(void *i, const T *c) : ind(i), collection(c) {}
   Index(const Index<T> &i) : ind(i.ind), collection(i.collection) {}
   Index<T> operator++()

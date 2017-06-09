@@ -3,6 +3,9 @@
 #ifndef _respair_hh_
 #define _respair_hh_
 
+#include <newdelete.hpp>
+#include <monideal.hpp>
+
 struct res2term;
 
 // The following are the possible types of res_pairs's

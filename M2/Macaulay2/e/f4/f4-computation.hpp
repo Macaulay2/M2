@@ -6,6 +6,7 @@
 #include "../comp-gb.hpp"
 #include "f4.hpp"
 #include "gausser.hpp"
+#include <polyring.hpp>
 
 class PolynomialRing;
 class FreeModule;
