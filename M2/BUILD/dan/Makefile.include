@@ -52,7 +52,7 @@ rebuild-world1: arch-chk distclean2
 distclean2:
 	@if [ -f "builds.tmp/$(DIRECTORY)/GNUmakefile" ] ; then set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean ; fi
 rebuild-world2:make-configure
-make-configure:; $(MAKE) -C ../.. -o helpful
+make-configure:; $(MAKE) -C ../.. -f Makefile -o helpful
 rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
