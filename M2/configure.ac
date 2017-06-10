@@ -824,12 +824,10 @@ AC_SUBST(BUILTLIBS,)
 #    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
-#    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
-#    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
@@ -889,7 +887,7 @@ then BUILD_gfan=no
 fi
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 
@@ -1602,17 +1600,6 @@ AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
 AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))
 AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linkable))
-
-AC_SUBST(ENABLE_MPACK,no)
-AC_ARG_ENABLE(mpack,
-    [AS_HELP_STRING(--enable-mpack,[enable building the mpack library, linking with it, and compiling the experimental code that uses it])],
-    AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
-    BUILD_mpack=yes
-    BUILD_qd=yes
-    BUILD_mpc=yes
-    ENABLE_MPACK=yes
-    BUILTLIBS="-lmlapack_mpfr -lmblas_mpfr -lmpfrcxx $BUILTLIBS"
-    )
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
