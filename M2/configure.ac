@@ -13,6 +13,8 @@ dnl    - make a git tag of the form version-X.Y.Z
 dnl    	      git tag version-X.Y.Z
 dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
 dnl           git checkout -b release-X.Y.Z
+dnl    - push the new branch to github and track it
+dnl           git push -u origin release-X.Y.Z
 dnl    - on the master branch, if a new branch was made for development,
 dnl      increment the version number again to X.Y.Z.1 in this file and add an
 dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
