@@ -1,4 +1,4 @@
-newPackage ( "License",
+newPackage ( "Licenses",
      Version => "1", 
      Date => "February, 2008",
      Authors => {{Name => "Daniel R. Grayson", 
@@ -16,7 +16,7 @@ needsPackage "Text"
 multidoc ///
 Node
  Key
-   License
+   Licenses
  Description
    Text 
        This package examines the version number of the various packages compiled
