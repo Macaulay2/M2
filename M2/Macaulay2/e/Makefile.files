@@ -11,35 +11,35 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
-  f4/res-varpower-monomial \
-  f4/res-f4-monlookup \
-  f4/res-moninfo-dense \
-  f4/res-moninfo-sparse \
-  f4/res-moninfo \
-  f4/res-poly-ring \
-  f4/res-f4-m2-interface \
-  f4/res-schreyer-frame \
-  f4/res-f4 \
-  f4/res-f4-computation \
-  f4/res-gausser \
-  f4/res-gausser-ZZp \
-  f4/res-gausser-QQ \
-  f4/res-gausser-QQ-hybrid \
-  f4/f4 \
-  f4/f4-syz \
-  f4/f4-mem \
-  f4/f4-monlookup \
-  f4/f4-types \
-  f4/f4-computation \
-  f4/f4-spairs \
-  f4/f4-m2-interface \
-  f4/hilb-fcn \
-  f4/monhashtable \
-  f4/monsort \
-  f4/moninfo \
-  f4/ntuple-monomial \
-  f4/varpower-monomial \
-  f4/gausser \
+	f4/res-varpower-monomial \
+	f4/res-f4-monlookup \
+	f4/res-moninfo-dense \
+	f4/res-moninfo-sparse \
+	f4/res-moninfo \
+	f4/res-poly-ring \
+	f4/res-f4-m2-interface \
+	f4/res-schreyer-frame \
+	f4/res-f4 \
+	f4/res-f4-computation \
+	f4/res-gausser \
+	f4/res-gausser-ZZp \
+	f4/res-gausser-QQ \
+	f4/res-gausser-QQ-hybrid \
+	f4/f4 \
+	f4/f4-syz \
+	f4/f4-mem \
+	f4/f4-monlookup \
+	f4/f4-types \
+	f4/f4-computation \
+	f4/f4-spairs \
+	f4/f4-m2-interface \
+	f4/hilb-fcn \
+	f4/monhashtable \
+	f4/monsort \
+	f4/moninfo \
+	f4/ntuple-monomial \
+	f4/varpower-monomial \
+	f4/gausser \
 	betti \
 	util \
 	GF \
@@ -67,7 +67,6 @@ INTERFACE = \
 	aring \
 	schurSn \
 	schur2 \
-	spair-heap \
 	dpoly \
 	tower \
 	interreduce \
@@ -150,11 +149,6 @@ INTERFACE = \
 	text-io \
 	varpower \
 	weylalg
-
-#	RRR \
-#	CCC \
-	QQ \
-#
 
 COMMANDS2 = \
 	x-monideal \
