@@ -15,7 +15,7 @@ dnl    - make a git branch of the form release-X.Y.Z, if it's for final developm
 dnl           git checkout -b release-X.Y.Z
 dnl    - on the master branch, if a new branch was made for development, increment the version number again
 dnl      to X.Y.Z.1 in this file, setting Z=0 if it was omitted above.  Commit that change and make a tag.
-dnl           git checkout mater
+dnl           git checkout master
 dnl           # change to X.Y.Z.1 in this file, commit
 dnl           git tag version-X.Y.Z.1
 
