@@ -13,6 +13,12 @@ CHECKTARGET = .
 GFTABLEDIR = @pre_packagesdir@/Core/factory/gftables
 INSTALLCMD = $(MKDIR_P) $(GFTABLEDIR) && cp * $(GFTABLEDIR)/.
 
+# this stratagem sets LICENSEFILES to the string consisting of a single space, because each += adds one,
+# and that hushes the warning message "warning: *** no license files to be installed".
+# gftables comes with no license files.
+LICENSEFILES =
+LICENSEFILES +=
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gftables/Makefile
 
