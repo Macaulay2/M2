@@ -74,7 +74,7 @@ rm-libd.a:; rm libd.a
 
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h xml-exports.h
-M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
+M2lib.o M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
 ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
