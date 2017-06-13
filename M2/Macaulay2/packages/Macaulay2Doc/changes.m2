@@ -6,7 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
-	  TO "changes, 1.9.3",
+	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
 	  TO "changes, 1.9.1",
 	  TO "changes, 1.9",
@@ -61,7 +61,7 @@ document {
      }
 
 document {
-     Key => "changes, 1.9.3",
+     Key => "changes, 1.10",
      UL {
 	  -- LI { "major improvements and additions:",
 	  --       -- UL {
