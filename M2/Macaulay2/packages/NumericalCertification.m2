@@ -281,6 +281,16 @@ certifySolution(ff,pp)
 certifyDistinctSoln(ff,pp,qq)
 ///
 
+beginDocumentation ()
+
+multidoc ///
+Node
+ Key
+    NumericalCertification
+ Headline
+     certifying solutions to square polynomial systems (Smale's alpha test)
+///
+
 end
 
 
