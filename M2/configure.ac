@@ -822,6 +822,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
 #    4ti2 needs glpk
 #    gfan needs cddlib
+#    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
 #	it uses a dynamic readline library that can only be provided by fink and probably will not be copied into the install location
 #       it offers no way to provide a directory tree containing a readline library we've compiled
@@ -891,6 +892,10 @@ BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
 BUILD_givaro=yes
 BUILD_ALWAYS="givaro $BUILD_ALWAYS"
 # givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
+
+BUILD_cddlib=yes
+BUILD_ALWAYS="cddlib $BUILD_ALWAYS"
+# cddlib uses gmp, but we replace gmp with mpir (a patched version), so we must always build cddlib
 
 if [[ $BUILD_mpir = yes ]]
 then AC_MSG_NOTICE([mpir is being built (to replace gmp), so we will build pari])
