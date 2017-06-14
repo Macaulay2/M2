@@ -17,5 +17,5 @@ endif
 include Makefile.include
 default: check
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific RPM=yes SIGN=yes "
+# compile-command: "time make -f Makefile.scientific RPM=yes "
 # End:
