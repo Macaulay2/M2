@@ -81,18 +81,9 @@ version.
 Here are commands that will get you a good development environment under
 various modern operating systems:
 
-  Debian:
+  Ubuntu and Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses libmpc-dev yasm
-    On a 32-bit system, add
-        --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
-      to the "configure" command line below.  (The --build option is necessary
-      only to enable distribution of the resulting binaries to users of other
-      hardware.) 
-
-  Ubuntu:
-    Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libatomic-ops-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config libmpc-dev yasm libgivaro-dev fflas-ffpack
+      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -106,12 +97,8 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
-    On all systems, add
-        CPPFLAGS=-I/usr/include/cdd
-      to the "configure" command line below.  Otherwise the configure script will
-      decide to build cddlib from downloaded sources.
-    (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
-    "do-release-upgrade" for a command line interface.)
+    (To upgrade to a new release of the OS, if desired, run "update-manager" if
+    you want a GUI, or run "do-release-upgrade" for a command line interface.)
 
   Raspbian:
     Install packages with:
