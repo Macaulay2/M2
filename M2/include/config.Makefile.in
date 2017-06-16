@@ -223,7 +223,10 @@ endif
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
 # status info
-WHY = : remaking $@ because of $?
+WHY = @ (if [ -f $@ ] ;																	\
+	 then echo "=== remaking $@ in $$(basename $$PWD) because of $?" ; echo === ; ls -l $@ || : ; echo === ; ls -l $? | head -5 ; echo === ;	\
+	 else echo "=== making $@ in $$(basename $$PWD)" ;												\
+	 fi)
 
 GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
 GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)

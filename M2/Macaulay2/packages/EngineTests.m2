@@ -7,8 +7,8 @@ newPackage(
             {Name => "Michael E. Stillman", 
 		        Email => "mike@math.cornell.edu", 
 		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
-	        {Name => "Jakob Kroeker", 
-		        Email => "Jakob Kröker <kroeker@math.uni-hannover.de>", 
+	        {Name => "Jakob Kröker", 
+		        Email => "kroeker@math.uni-hannover.de", 
 		        HomePage => "" }
             },
         Headline => "a test suite for the Macaulay2 engine",

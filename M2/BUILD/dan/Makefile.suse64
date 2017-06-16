@@ -11,13 +11,7 @@
 
 CONFIGOPTIONS += --enable-rpm
 CONFIGOPTIONS += --build=x86_64-suse-gnu
-BUILD += givaro
 CONFIGOPTIONS += --enable-build-libraries="$(BUILD)"
-
-# this helps configure by letting g++ understand the thread_local storage class, used in an ntl include file
-# but we build it anyway
-_CXX = g++ -std=c++11
-
 DIRECTORY = suse64
 include Makefile.include
 default: check
