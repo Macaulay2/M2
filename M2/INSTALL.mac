@@ -8,19 +8,20 @@
 
 set -e
 pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null || xcode-select --install
-brew tap homebrew/versions
 brew tap homebrew/science
+sleep 1
 brew update
+sleep 1
 brew upgrade; stty -onlcr -echo
-brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost yasm; stty -onlcr -echo
-brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz; stty -onlcr -echo
+sleep 1
+brew install bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm; stty -onlcr -echo
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
-make -f Makefile
+gmake -f Makefile
 rm -rf tmp
 mkdir tmp
 cd tmp
 ../configure --enable-download --enable-build-libraries="readline" CC=/usr/bin/gcc CXX=/usr/bin/g++
-make IgnoreExampleErrors=false
+gmake IgnoreExampleErrors=false
 
 # Local Variables:
 # compile-command: "sh -x ./INSTALL.mac "
