@@ -186,7 +186,7 @@ various modern operating systems:
 	brew tap homebrew/homebrew-x11
 	brew update
 	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz
-	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm
+	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm gmake
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
     If you have previously installed homebrew, will be distributing your
@@ -351,6 +351,14 @@ Now continue building the program this way:
         make
         make check                      # optional
         make install
+
+Note: version 3.82 of the "make" program, used above, seems to have a bug that
+results in this error message:
+    CC scclib.c
+    ../../../Macaulay2/d/scclib.c:5:10: fatal error: 'expr-exports.h' file not found
+Under Mac OS X, one encounters that old version of "make", so it is better to
+use a later version instead, such as the "gmake" program, as provided by
+"brew", and installed according to the instructions above.
 
 Remember to add any options specified above, in the section for your particular
 operating system, to the "configure" command line.
