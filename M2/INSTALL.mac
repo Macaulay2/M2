@@ -14,7 +14,7 @@ brew update
 sleep 1
 brew upgrade; stty -onlcr -echo
 sleep 1
-brew install bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm; stty -onlcr -echo
+brew install gmake bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm; stty -onlcr -echo
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
 gmake -f Makefile
 rm -rf tmp
