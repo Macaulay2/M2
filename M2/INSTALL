@@ -97,8 +97,9 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
-    (To upgrade to a new release of the OS, if desired, run "update-manager" if
-    you want a GUI, or run "do-release-upgrade" for a command line interface.)
+    (To upgrade to a new release of Ubuntu, if desired, run "update-manager" if
+    you want a GUI, or run "do-release-upgrade" for a command line interface.
+    For Debian, run "apt-get update ; apt-get dist-upgrade".
 
   Raspbian:
     Install packages with:
