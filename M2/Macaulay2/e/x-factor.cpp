@@ -60,11 +60,11 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P)
   return modeError;
 }
 
-int debugging
-#ifndef NDEBUG
-    = true
-#endif
-    ;
+// int debugging
+// #ifndef NDEBUG
+//     = true
+// #endif
+//     ;
 
 static void init_seeds()
 {
@@ -129,16 +129,16 @@ void enter_factory::enter()
         newcharac = oldcharac;
         break;
     }
-  if (debugging)
-    {
-      if (oldRatlState != newRatlState)
-        printf(newRatlState ? "--setting factory rational mode on\n"
-                            : "--setting factory rational mode off\n");
-      if (oldcharac != newcharac)
-        printf("--changing factory characteristic from %d to %d\n",
-               oldcharac,
-               newcharac);
-    }
+  // if (debugging)
+  //   {
+  //     if (oldRatlState != newRatlState)
+  //       printf(newRatlState ? "--setting factory rational mode on\n"
+  //                           : "--setting factory rational mode off\n");
+  //     if (oldcharac != newcharac)
+  //       printf("--changing factory characteristic from %d to %d\n",
+  //              oldcharac,
+  //              newcharac);
+  //   }
 }
 
 void enter_factory::exit()
@@ -148,16 +148,16 @@ void enter_factory::exit()
   else
     Off(SW_RATIONAL);
   setCharacteristic(oldcharac);
-  if (debugging)
-    {
-      if (oldcharac != newcharac)
-        printf("--changing factory characteristic back from %d to %d\n",
-               newcharac,
-               oldcharac);
-      if (oldRatlState != newRatlState)
-        printf(oldRatlState ? "--setting factory rational mode back on\n"
-                            : "--setting factory rational mode back off\n");
-    }
+  // if (debugging)
+  //   {
+  //     if (oldcharac != newcharac)
+  //       printf("--changing factory characteristic back from %d to %d\n",
+  //              newcharac,
+  //              oldcharac);
+  //     if (oldRatlState != newRatlState)
+  //       printf(oldRatlState ? "--setting factory rational mode back on\n"
+  //                           : "--setting factory rational mode back off\n");
+  //   }
 }
 
 static __mpz_struct toInteger(CanonicalForm h)
