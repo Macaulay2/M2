@@ -30,8 +30,7 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:
 	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
 	  cd builds.tmp/$(DIRECTORY) && $$D/configure $(CONFIGOPTIONS) &&\
 	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
-default: arch-chk all
-default: check-links
+default: arch-chk all check check-links
 distclean: distclean1
 distclean1:
 	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
