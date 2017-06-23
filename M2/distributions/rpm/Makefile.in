@@ -65,7 +65,7 @@ else
 maybe-tidy:
 endif
 check-id:
-	@if ! @FAKEROOT@ ; \
+	@if ! @FAKEROOT@ true ; \
 	 then ( \
 	    echo "=============================================================================" ;\
 	    echo "Warning: 'fakeroot' not installed (at configuration time)." ;\
