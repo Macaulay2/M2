@@ -1,21 +1,21 @@
 # -*- makefile-gmake -*-
 
+default:
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
 .PHONY : $(TARGETS)
 .NOTPARALLEL:
 $(TARGETS): banner
-banner:
-	@echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
+banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
 # include builds.tmp/$(DIRECTORY)/include/configuration
-all: banner make-configure builds.tmp/$(DIRECTORY)/include/configuration
+all: banner make-configure builds.tmp/$(DIRECTORY)/include/configuration announce
 else
 $(warning DIRECTORY variable unset)
 endif
 all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
-validate-html clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
+announce validate-html clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
 everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) ReinstallPackages=true RemakeAllDocumentation=true RerunExamples=true -k all check
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
