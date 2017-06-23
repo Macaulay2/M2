@@ -357,28 +357,6 @@ dnl 	  esac
 dnl      fi
 dnl fi
 
-AC_MSG_CHECKING([whether compiling with $CXX and then linking with $CC works])
-cat >unwindtest-main.cpp <<EOF
-#include "unwindtest-monomials.hpp"
-int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
-EOF
-cat >unwindtest-monomials.hpp <<EOF
-class Monomials { public: Monomials(); };
-EOF
-cat >unwindtest-monomials.cpp <<EOF
-#include "unwindtest-monomials.hpp"
-Monomials::Monomials() {}
-EOF
-if   (  set -x
-	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
-	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
-	$CC $LDFLAGS unwindtest-main.$OBJEXT unwindtest-monomials.$OBJEXT $LIBS -lstdc++ -o unwindtest-main &&
-	test -f unwindtest-main$EXEEXT
-     ) >&AS_MESSAGE_LOG_FD 2>&1
-then AC_MSG_RESULT(yes); rm -f unwindtest-*
-else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file config.log])
-fi
-
 AC_MSG_CHECKING(order of construction implemented by the linker)
     cat >conf_main.cc <<EOF
     #include <stdio.h>
