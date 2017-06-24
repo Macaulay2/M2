@@ -64,7 +64,6 @@ default: all
 
 ifeq ($(PRODUCTION),yes)
    default: check
-   CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY)-production
    CONFIGOPTIONS += --enable-dmg
    ifeq ($(DEBUG),yes)
@@ -75,12 +74,14 @@ ifeq ($(PRODUCTION),yes)
    endif
 endif
 ifeq ($(DEBUG),yes)
+   CONFIGOPTIONS += --enable-common-staging-area
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
    DIRECTORY := $(DIRECTORY)-debug
 endif
 
 ifeq ($(PROFILE),yes)
+   CONFIGOPTIONS += --enable-common-staging-area
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-profile
    DIRECTORY := $(DIRECTORY)-profile

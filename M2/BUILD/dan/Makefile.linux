@@ -5,7 +5,6 @@ DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
 RPM := $(shell if [ -d /var/lib/yum ] ; then echo yes ; else echo no; fi)
 ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
-CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY := $(DIRECTORY).debug
 else
 CONFIGOPTIONS += --enable-tarfile
