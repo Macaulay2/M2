@@ -2,43 +2,46 @@ newPackage(
         "CohomCalg",
         Version => "0.1", 
         Date => "",
-        Authors => {{Name => "", 
+        Authors => {{Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},
-        Headline => "",
-        PackageExports => {"StringTorics"},
+        Headline => "interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety",
+        PackageExports => {"NormalToricVarieties"},
+        Configuration => {
+            "executable" => "",
+            "silent" => "false"
+            },
         DebuggingMode => true
         )
 
 export {
-    "toCohomCalg",
     "cohomCalg",
-    "cohomologyVector",
-    "cohomologyFromLES",
-    "collectLineBundles",
-    "cohomologyOmega1",
-    "removeUnusedVariables",
-    "example0912'3524",
-    "exampleP111122'44",
-    "cohom",
-    "nextBundle",
-    "basicCohomologies",
-    "hodgeDiamond",
-    "nextVar",
-    "hodgeVector"
+    "cohomCalgVector",
+    "Silent"
     }
 
 exportMutable {
     "cohomCalgExecutable"
     }
 
+cohomCalgExecutable = CohomCalg#Options#Configuration#"executable"
+if cohomCalgExecutable == "" then cohomCalgExecutable = prefixDirectory | currentLayout#"programs" | "cohomcalg"
+silent = (
+    if CohomCalg#Options#Configuration#"silent" == "false" then false 
+    else if CohomCalg#Options#Configuration#"silent" == "true"  then true 
+    else error "expected 'silent' configuration value to be \"true\" or \"false\""
+    )
+
 -- The following two defs are used only to help parse output from cohomcalg.
 Symbol * Symbol := (a,b) -> Product{a,b}
 ZZ * Symbol := (a,b) -> Product{a,b}
---cohomCalgExecutable = "~/local/software/cohomCalg-031b/bin/cohomcalg"
---cohomCalgExecutable = "cohomcalg"
 
-cohomCalgExecutable = prefixDirectory | currentLayout#"programs" | "cohomcalg";
+-- The following is a local function, which something similar should be in NormalToricVarieties
+degree ToricDivisor := List => (D) -> (
+    X := variety D; 
+    entries((fromWDivToCl X) * (vector D))
+    )
+
 ---------------------------------------------------------------------
 -- Routines for translating to form of input expected by cohomcalg --
 ---------------------------------------------------------------------
@@ -70,13 +73,19 @@ toCohomCalg List := (L) -> (
 -- It is required that the user has placed the
 -- executable at cohomCalgExecutable, which is usually set to "cohomcalg"
 -- Also, cohomcalg has a limit of 1024 computations at a time
-cohomCalg0 = (X,pneeded) -> (
+cohomCalg0 = (X,pneeded,issilent) -> (
     -- X: NormalToricVariety
     -- pneeded: list of multi-degrees, of size <= 1024
+    -- issilent: Boolean, whether to quiet the output of cohomcalg.
     H := X.cache.CohomCalg;
-    "foo.in" << (toCohomCalg X) | (toCohomCalg pneeded) << close;
-    executable := "!"|cohomCalgExecutable|" --integrated foo.in";
+    filename := temporaryFileName();
+    filename << (toCohomCalg X) | (toCohomCalg pneeded) << close;
+    executable := "!"|cohomCalgExecutable|" --integrated " | filename;
+    if issilent then executable = executable | " 2>/dev/null";
+    if debugLevel >= 1 then << "-- CohomCalg: using temporary file " << filename << endl;
+    if debugLevel >= 2 then << "-- CohomCalg: going to call: " << executable << endl;
     valstr := get executable;
+    if debugLevel >= 5 then << "-- CohomCalg: output = " << net valstr << endl;
     --val := replace("\\*", "**", valstr);
     val := replace("False", "false", valstr);
     val = replace("True", "true", val);
@@ -89,24 +98,67 @@ cohomCalg0 = (X,pneeded) -> (
     for i from 1 to #result-1 do H#(pneeded#(i-1)) = result#i;
     H
     )
-cohomCalg = method()
-cohomCalg(NormalToricVariety, List) := (X, p) -> (
+cohomCalg = method(Options=>{Silent=>null})
+cohomCalg(NormalToricVariety, List) := opts -> (X, p) -> (
+    issilent := if opts.Silent === null then silent else opts.Silent;
     if not X.cache.?CohomCalg then X.cache.CohomCalg = new MutableHashTable;
     H := X.cache.CohomCalg;
+    p = for a in p list (
+        if instance(a,ToricDivisor) 
+        then degree a
+        else if instance(a,List) then a
+        else error "expected lists of degrees and/or toric divisors"
+        );
     pneeded := toList(set p - set keys X.cache.CohomCalg); 
     if #pneeded == 0 then return H;
     p1 := pack(pneeded, 1024);
-    for p0 in p1 do cohomCalg0(X,p0);
+    for p0 in p1 do cohomCalg0(X,p0,issilent);
     X.cache.CohomCalg
     )
 
-cohomologyVector = method()
-cohomologyVector(NormalToricVariety, ToricDivisor) := (Y,D) -> cohomologyVector(Y, degree D)
-cohomologyVector(NormalToricVariety, List) := (Y, D) -> (cohomCalg(Y, {D}); first Y.cache.CohomCalg#D)
+cohomCalgVector = method(Options=>options cohomCalg)
+cohomCalgVector(NormalToricVariety, List) := opts -> (X, p) -> (
+    H := cohomCalg(X, {p}, opts);
+    H#p#0
+    )
+cohomCalgVector ToricDivisor := opts -> (D) -> (
+    X := variety D;
+    deg := degree D;
+    cohomCalgVector(X,deg,opts)
+    )
 
 beginDocumentation()
 
-end
+TEST ///
+  needsPackage "CohomCalg"
+  X = smoothFanoToricVariety(3,2)
+  ans = for i from 0 to # rays X - 1 list cohomCalgVector X_i
+  assert(ans === {{3, 0, 0, 0}, {3, 0, 0, 0}, {3, 0, 0, 0}, {4, 0, 0, 0}, {1, 0, 0, 0}})
+  
+  degrees ring X
+  ans1 = {0,0,1,0}
+  D = X_3-3*X_0  
+  assert(degree D == {1,-3})
+  assert(cohomCalgVector(X, {1,-3}) == ans1)
+  assert(cohomCalgVector D == ans1)
+  assert(ans1 == for i from 0 to dim X list rank HH^i(X, OO D))
+
+  assert(cohomCalgVector(D-D) == {1,0,0,0})
+///
+
+TEST ///
+  needsPackage "CohomCalg"
+  X = smoothFanoToricVariety(3,2)
+  Ds = for i from 0 to # rays X - 1 list X_i
+  allDs = (drop(subsets Ds,1))/sum/(d -> -d);
+  H = cohomCalg(X,allDs)
+  peek H
+  peek cohomCalg(X, {{0,-6}})
+///
+
+
+end--
+
 
 doc ///
 Key
@@ -154,7 +206,9 @@ max X1
 rays X
 for i from 0 to 3 list for j from 0 to dim X list rank HH^j(X, OO(X_i))
 cohomCalg(X, {{1, 3}, {1, 0}, {0, 1}, {-2,4}})
-cohomologyVector(X, {1,3})
+cohomCalgVector(X, {1,3})
+cohomCalgVector(X, {1,-3})
+cohomCalgVector (X_0+X_1-3*X_2)
 
 GLSM = transpose matrix {{1, 3}, {0, 1}, {0, 1}, {0, 1}, {0, 1}, {1, 0}, {0, 1}}
 R = QQ[x_0..x_6]
