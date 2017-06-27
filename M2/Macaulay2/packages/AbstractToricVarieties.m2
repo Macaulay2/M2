@@ -13,6 +13,10 @@ newPackage(
         )
 
 export {    
+    "completeIntersection",
+    "CompleteIntersectionInToric",
+        "Ambient",
+        "CI",
     "liftPicToCDiv", -- these might now be in NormalNoricVarieties?
     "liftClToWDiv"
     }
@@ -101,6 +105,40 @@ export {
       for i from 1 to #lbundles-1 do ans = ans ++ lbundles_i;
       ans
       )
+
+--------------------------------------------------------
+-- Code for complete intersections in toric varieties --
+-- more functionality is in CohomCalg.m2              --
+--------------------------------------------------------
+CompleteIntersectionInToric = new Type of HashTable
+
+completeIntersection = method()
+completeIntersection(NormalToricVariety, List) := (Y,CIeqns) -> (
+    if not all(CIeqns, d -> instance(d, ToricDivisor))
+    then error "expected a list of toric divisors";
+    if not all(CIeqns, d -> variety d === Y)
+    then error "expected a list of toric divisors on the given toric variety";
+    new CompleteIntersectionInToric from {
+        symbol Ambient => Y,
+        symbol CI => CIeqns,
+        symbol cache => new CacheTable
+        }
+    )
+dim CompleteIntersectionInToric := (X) -> dim X.Ambient - #X.CI
+ambient CompleteIntersectionInToric := (X) -> X.Ambient
+
+abstractVariety(CompleteIntersectionInToric, AbstractVariety) := opts -> (X,B) -> (
+    if not X.cache#?(abstractVariety, B) then X.cache#(abstractVariety, B) = (
+        aY := abstractVariety(ambient X, B);
+        -- Question: how best to define F??
+        bundles := X.CI/(d -> OO d);
+        F := bundles#0;
+        for i from 1 to #bundles-1 do F = F ++ bundles#i;
+        aF := abstractSheaf(ambient X, B, F);
+        sectionZeroLocus aF
+        );
+    X.cache#(abstractVariety, B)
+    )
 
 beginDocumentation()
 

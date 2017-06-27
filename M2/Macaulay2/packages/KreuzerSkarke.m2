@@ -13,15 +13,22 @@ newPackage(
         )
 
 export {
-    "getURL",
-    "matrixFromString",
-    "getKreuzerSkarke",
+    "exampleFromKS",
+    "matrixFromString", -- doc
+    "getKreuzerSkarke", -- doc
     "getKreuzerSkarkeDim3",
     "parseKS",
     "parseKSDim3",
     "Access",
     "Expected"
     }
+
+exampleFromKS = method()
+exampleFromKS(ZZ, String) := (which, str) -> (
+    L := parseKS str;
+    eg := L#which;
+    (eg#0, matrixFromString eg#1)
+    )
 
 matrixFromString = method()
 matrixFromString String := (str) -> (
@@ -152,6 +159,67 @@ generateOfflineFiles = () -> (
     generateOffline(6,Limit=>20000,Expected=>17101);    
     )
 
+-- the following line was generated using
+-- getKreuzerSkarke(3, Limit=>10)
+h11'3'limit'10 = ///<head><title>SEARCH RESULTS</title></head>
+<body><pre><b>Search command:</b>
+class.x -di x -He EH3:MVNFL10
+
+<b>Result:</b>
+4 5  M:53 5 N:9 5 H:3,43 [-80]
+   1   0   2   4 -10
+   0   1   3   5  -9
+   0   0   4   0  -4
+   0   0   0   8  -8
+4 5  M:48 5 N:8 5 H:3,45 [-84]
+   1   0   2   4  -8
+   0   1   5   3  -9
+   0   0   6   0  -6
+   0   0   0   6  -6
+4 6  M:48 6 N:8 6 H:3,45 [-84]
+   1   1   0   2   4  -8
+   0   3   0   2   0  -6
+   0   0   1  -1   3  -3
+   0   0   0   0   6  -6
+4 13  M:64 13 N:8 7 H:3,51 [-96]
+   1   0   0   2  -2   0  -1  -1   0   2   2  -3  -3
+   0   1   1   3  -5   2   0   0   2   4   4  -6  -6
+   0   0   4   0  -4   5   4  -1   0   1   0  -4  -5
+   0   0   0   4  -4   1  -1  -1   1   5   5  -5  -5
+4 9  M:66 9 N:8 6 H:3,57 [-108]
+   1   0   0   1  -3   3   3  -3   5
+   0   1   0   0   2  -4  -6   4  -8
+   0   0   1   0   2  -2  -2   0  -4
+   0   0   0   2   0  -4  -6   6  -6
+4 7  M:65 7 N:8 6 H:3,57 [-108]
+   1   0   2   0   0  -2  -2
+   0   1   3   1   1  -3  -3
+   0   0   4   0   4  -6   0
+   0   0   0   4  -4   6  -6
+4 11  M:66 11 N:8 7 H:3,57 [-108]
+   1   1   1   0   2   2  -3   3   3   1  -7
+   0   2   0   0   3   0  -2   2   4   2  -6
+   0   0   2   0   0   3  -2   4   2   2  -6
+   0   0   0   1  -1  -1   2  -2  -2  -2   2
+4 12  M:69 12 N:8 7 H:3,57 [-108]
+   1   0   0   0   3  -3   3  -3  -1  -3   3  -3
+   0   1   0   0   2   0   0  -2  -2  -3   0  -3
+   0   0   1   0  -6   3  -3   6   4   7  -6   3
+   0   0   0   1   2  -2   1  -3  -2  -3   4   1
+4 9  M:66 9 N:8 6 H:3,59 [-112]
+   1   1   0   0   0   0  -2  -2   3
+   0   4   0   0   4   4  -2  -2  -2
+   0   0   1   0   1   0   3  -2  -2
+   0   0   0   1   0   1  -2   3  -2
+4 7  M:77 7 N:9 6 H:3,59 [-112]
+   1   0   2   0  -4  -6  -2
+   0   1   3   1  -3  -5  -1
+   0   0   4   0   0  -4  -4
+   0   0   0   4  -4  -4   4
+Exceeded limit of 10
+</pre></body>
+///
+
 beginDocumentation()
 
 doc ///
@@ -166,6 +234,46 @@ Description
     
     This package also contains a small part of this database for offline use,
     in case one cannot access the database.
+  Text
+    Here we describe a simple use of the package.  The actual
+    investigation of the corresponding polytope or toric variety, or Calabi-Yau
+    hypersurface, is done in other packages.
+    
+    Let's take one example polytope from the database, one whose corresponding Calabi-Yau
+    3-fold has Hodge numbers $h^{1,1}(X) = 23$ and $h^{1,2}(X) = 17$.  We limit the
+    number we obtain to 2.
+  Example
+    str = getKreuzerSkarke(23,17, Limit=>2)
+  Text
+    Now we parse this string, into a list of pairs of Strings.
+  Example
+    L = parseKS str;
+    netList L
+  Text
+    The result consists of lists of two strings.  For each element in the list,
+    the first is a header string, see @TO "Kreuzer-Skarke headers"@.
+    The second is a string that corresponds to a matrix.  
+    
+    Let's consider the last example in this last.  We get that matrix
+    via the utility function @TO "matrixFromString"@.
+  Example
+    eg = last L
+    A = matrixFromString eg_1
+  Text
+    The corresponding relfexive polytope has 5 vertices, the columns of this matrix.
+  Example
+    needsPackage "Polyhedra"
+    P = convexHull A
+    isReflexive P
+    P2 = polar P
+    (numColumns vertices P, numColumns vertices P2)
+    (# latticePoints P, # latticePoints P2)
+  Text
+    or, once one has the data from the Kreuzer-Skare database ('str' above),
+    one can do the following.
+  Example
+    (header, A) = exampleFromKS(1, str)
+    
 ///
 
 doc ///
@@ -271,6 +379,115 @@ Caveat
 SeeAlso
   parseKS
   matrixFromString
+///
+
+doc ///
+   Key
+     "Kreuzer-Skarke headers"
+   Headline
+     information contained in the header line
+   Description
+    Text
+      Each 4D reflexive polytope in the Kreuzer-Skarke database
+      contains summary information about the polytope.
+      Here, we explain this information.
+      
+      We will do this on an example, and see how to
+      obtain this information directly.
+    Example
+      str = getKreuzerSkarke(5,Limit=>1);
+      eg = first parseKS str;
+      A = matrixFromString eg_1
+      header = eg_0      
+    Text
+      This header line is what we wish to explain now.
+      
+      The quick description: 
+    Text
+      @UL {
+        { TEX "'4 10': the first 2 numbers are the number of rows and columns of the matrix $A$" },
+        { TEX "'M:25 10': number of lattice points and the number of vertices of
+          the 4-dimensional lattice polytope $P$
+          which is the convex hull of
+          the columns of the matrix $A$"},
+        { TEX "'N: 10 9' is the number of lattice points and the number of vertices of
+            the polar dual polytope $P^o$ of $P$" },
+        { TEX "'H: 5,20 [-30]' are the Hodge numbers $h^{1,1}(X)$, $h^{1,2}(X)$, and the
+            topological Euler characteristic of $X$, where $X$ is the 
+            Calabi-Yau variety described next"}
+        }@
+    Text
+      Here, $X$ is defined as follows.
+      Consider the Fano toric variety
+      corresponding to the polytope $P$ (or, equivalently) to the fan 
+      determined by the polar dual polytope $P^o$. A fine regular star
+      triangulation of $P^o$ defines a refined fan which corresponds
+      which corresponds to a simplicial toric variety $V$, 
+      such that a generic anti-canonical divisor $X$ is a smooth
+      Calabi-Yau 3-fold hypersurface of $V$.  The final numbers 
+      are about $X$: "H:5,20 [-30]" says that $h^{1,1}(X) = 5$ and
+      $h^{1,2}(X) = 20$.  The topological Euler characteristic of $X$ is the
+      number in square brackets:
+      $2 h^{1,1}(X) - 2 h^{1,2}(X) = 10 - 40 = -30$.
+    Text
+      The first 2 integers are the dimensions of the matrix (4 by 10).
+    Example
+      needsPackage "Polyhedra";
+      P = convexHull A
+    Text
+      $P$ is the convex hull of the columns in the $M = {\bf ZZ}^4$ lattice.
+      $P$ has 10 vertices and 25 lattice points, explaining the part of the line
+      "M:25 10".
+    Example
+      LP = latticePoints P
+      #LP
+      vertices P
+      numColumns vertices P
+    Example
+      P2 = polar P
+      LP2 = latticePoints P2
+      #LP2
+      vertices P2
+      numColumns vertices P2
+   Caveat
+   SeeAlso
+///
+
+doc ///
+   Key
+     parseKS
+     (parseKS,String)
+   Headline
+     parse values from Kreuzer-Skarke database
+   Usage
+     L = parseKS str
+   Inputs
+     str:String
+       result of a call to @TO "getKreuzerSkarke"@
+   Outputs
+     L:List
+       of pairs of strings
+   Description
+    Text
+      The following request results in 5 examples.
+    Example
+      str = getKreuzerSkarke(5, 43, Limit=>5)
+      L = parseKS str;
+      #L
+      netList L
+    Text
+      Let's get the one at index 3 (fourth one on the list, since
+      lists are 0-based)
+    Example
+      eg = L_3;
+      header = eg_0
+      A = matrixFromString eg_1
+    Text 
+      See @TO "Kreuzer-Skarke headers"@
+   SeeAlso
+     matrixFromString
+     getKreuzerSkarke
+     "Kreuzer-Skarke headers"
 ///
 
 TEST ///
@@ -379,67 +596,6 @@ TEST ///
       2  0  0  1  -1 -1 -1 -1 0  0 
       "
   assert(matrixFromString str == answer) 
-///
-
--- the following line was generated using
--- getKreuzerSkarke(3, Limit=>10)
-h11'3'limit'10 = ///<head><title>SEARCH RESULTS</title></head>
-<body><pre><b>Search command:</b>
-class.x -di x -He EH3:MVNFL10
-
-<b>Result:</b>
-4 5  M:53 5 N:9 5 H:3,43 [-80]
-   1   0   2   4 -10
-   0   1   3   5  -9
-   0   0   4   0  -4
-   0   0   0   8  -8
-4 5  M:48 5 N:8 5 H:3,45 [-84]
-   1   0   2   4  -8
-   0   1   5   3  -9
-   0   0   6   0  -6
-   0   0   0   6  -6
-4 6  M:48 6 N:8 6 H:3,45 [-84]
-   1   1   0   2   4  -8
-   0   3   0   2   0  -6
-   0   0   1  -1   3  -3
-   0   0   0   0   6  -6
-4 13  M:64 13 N:8 7 H:3,51 [-96]
-   1   0   0   2  -2   0  -1  -1   0   2   2  -3  -3
-   0   1   1   3  -5   2   0   0   2   4   4  -6  -6
-   0   0   4   0  -4   5   4  -1   0   1   0  -4  -5
-   0   0   0   4  -4   1  -1  -1   1   5   5  -5  -5
-4 9  M:66 9 N:8 6 H:3,57 [-108]
-   1   0   0   1  -3   3   3  -3   5
-   0   1   0   0   2  -4  -6   4  -8
-   0   0   1   0   2  -2  -2   0  -4
-   0   0   0   2   0  -4  -6   6  -6
-4 7  M:65 7 N:8 6 H:3,57 [-108]
-   1   0   2   0   0  -2  -2
-   0   1   3   1   1  -3  -3
-   0   0   4   0   4  -6   0
-   0   0   0   4  -4   6  -6
-4 11  M:66 11 N:8 7 H:3,57 [-108]
-   1   1   1   0   2   2  -3   3   3   1  -7
-   0   2   0   0   3   0  -2   2   4   2  -6
-   0   0   2   0   0   3  -2   4   2   2  -6
-   0   0   0   1  -1  -1   2  -2  -2  -2   2
-4 12  M:69 12 N:8 7 H:3,57 [-108]
-   1   0   0   0   3  -3   3  -3  -1  -3   3  -3
-   0   1   0   0   2   0   0  -2  -2  -3   0  -3
-   0   0   1   0  -6   3  -3   6   4   7  -6   3
-   0   0   0   1   2  -2   1  -3  -2  -3   4   1
-4 9  M:66 9 N:8 6 H:3,59 [-112]
-   1   1   0   0   0   0  -2  -2   3
-   0   4   0   0   4   4  -2  -2  -2
-   0   0   1   0   1   0   3  -2  -2
-   0   0   0   1   0   1  -2   3  -2
-4 7  M:77 7 N:9 6 H:3,59 [-112]
-   1   0   2   0  -4  -6  -2
-   0   1   3   1  -3  -5  -1
-   0   0   4   0   0  -4  -4
-   0   0   0   4  -4  -4   4
-Exceeded limit of 10
-</pre></body>
 ///
 
 TEST ///
