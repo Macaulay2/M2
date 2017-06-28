@@ -1328,7 +1328,7 @@ isSNC(BasicDiv) := o->(D1) -> (
 
 	while ( (j < #toModOutBy) and flag ) do (
 		if (o.IsGraded == false) then (
-			flag = ((d1 - #(nonemptySubsets#j) == dim(R1/toModOutBy#j)) or (dim(R1/toModOutBy#j) == -infinity) );
+			flag = ((d1 - #(nonemptySubsets#j) == dim(R1/toModOutBy#j)) or (dim(R1/toModOutBy#j) < 0) );
 			if (flag == true) then flag = isRegular(toModOutBy#j);
 		)
 		else (	
@@ -1661,7 +1661,7 @@ isRegular(Ideal) := o->J1 -> (
 		if (isSubset(myMax, J1)) then (flag = true) else (flag = (dim singularLocus J1 <= 0));
 	)
 	else ( 
-		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 == -infinity));
+		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 < 0));
 	);
 
 	flag
