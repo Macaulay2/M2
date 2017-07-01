@@ -122,7 +122,7 @@ parseKSDim3 String := (str) -> (
         )
     )
 
-generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"KreuzerSkarke/"})
+generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"ReflexivePolytopesDB/"})
 generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
     contents := getKreuzerSkarke(h11, h12, Limit=>opts.Limit);
     L := parseKS contents;
@@ -530,7 +530,7 @@ TEST ///
 {*
   restart
 *}
-  needsPackage "KreuzerSkarke"
+  needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
       {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
@@ -575,7 +575,7 @@ TEST ///
 {*
   restart
 *}
-  needsPackage "KreuzerSkarke"
+  needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
       {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
@@ -601,7 +601,7 @@ TEST ///
 {*
   restart
 *}
-  needsPackage "KreuzerSkarke"
+  needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
       {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
@@ -635,7 +635,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "KreuzerSkarke"
+  debug needsPackage "ReflexivePolytopesDB"
   -- testing retrieval and parsing for the 4D polytope case, using 
   str = getKreuzerSkarke(3, Limit=>10);
   str1 = getKreuzerSkarke(3, Limit=>10, Access=>"curl");
@@ -648,17 +648,17 @@ TEST ///
 end--
 
 restart
-uninstallPackage "KreuzerSkarke"
+uninstallPackage "ReflexivePolytopesDB"
 restart
-needsPackage "KreuzerSkarke"
-installPackage "KreuzerSkarke"
+needsPackage "ReflexivePolytopesDB"
+installPackage "ReflexivePolytopesDB"
 viewHelp
 
 restart
-check "KreuzerSkarke"
+check "ReflexivePolytopesDB"
 
 restart
-debug needsPackage "KreuzerSkarke"
+debug needsPackage "ReflexivePolytopesDB"
 generateOfflineFiles()
 
 
