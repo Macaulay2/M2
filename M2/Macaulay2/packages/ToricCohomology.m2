@@ -3,10 +3,7 @@ newPackage("ToricCohomology",
     Version => "0.1",
     Date => "June 10, 2009",
     Authors => {
-         {Name => "Alexandra Seceleanu", Email => "asecele2@illinois.edu"}},
-    DebuggingMode => false,
-    AuxiliaryFiles=>false,
-    Configuration => {}
+         {Name => "Alexandra Seceleanu", Email => "asecele2@illinois.edu"}}
     )
 
 export {"picard","toricIdeal","toricVariety","toricHH","irrelevantIdeal"}

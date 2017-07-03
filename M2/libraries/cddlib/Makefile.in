@@ -4,6 +4,10 @@ VERSION = 094g
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 ALLOPTIONS     = SUBDIRS="lib-src lib-src-gmp" gmpdir=/nowhere
 CONFIGOPTIONS  = $(ALLOPTIONS)
+
+# we build mpir as gmp statically, so we can't make a shared library here
+CONFIGOPTIONS += --disable-shared
+
 BUILDOPTIONS   = $(ALLOPTIONS)
 CHECKOPTIONS   = $(ALLOPTIONS)
 INSTALLOPTIONS = $(ALLOPTIONS)

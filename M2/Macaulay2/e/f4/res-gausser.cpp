@@ -5,14 +5,16 @@
 #include "res-gausser-QQ.hpp"
 #include "res-gausser-QQ-hybrid.hpp"
 
-ResGausser *ResGausser::newResGausser(const Ring* K1)
+ResGausser* ResGausser::newResGausser(const Ring* K1)
 {
   if (K1->isFinitePrimeField())
     {
       auto p = K1->characteristic();
       if (p > 32767)
         {
-          ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields with p < 32767");
+          ERROR(
+              "currently, res(...,FastNonminimal=>true) requires finite prime "
+              "fields with p < 32767");
           return nullptr;
         }
       return new ResGausserZZp(K1);
@@ -27,7 +29,9 @@ ResGausser *ResGausser::newResGausser(const Ring* K1)
     {
       return new ResGausserQQ(K1, 32003);
     }
-  ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields or funny QQ");  
+  ERROR(
+      "currently, res(...,FastNonminimal=>true) requires finite prime fields "
+      "or funny QQ");
   return nullptr;
 }
 

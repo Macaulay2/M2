@@ -14,15 +14,13 @@
 
 class sagbi
 {
-public:
+ public:
   static ring_elem subduct(const PolyRing *R,
-                     ring_elem f,
-                     const RingMap *phi,
-                     GBComputation *J);
+                           ring_elem f,
+                           const RingMap *phi,
+                           GBComputation *J);
 
-  static Matrix *subduct(const Matrix *m,
-                         const RingMap *phi,
-                         GBComputation *J);
+  static Matrix *subduct(const Matrix *m, const RingMap *phi, GBComputation *J);
 };
 
 #if 0

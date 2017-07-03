@@ -31,7 +31,7 @@ header "
 export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
 setupfun("engineMemory", engineMemory);
 
-export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"test_catch()"));
+export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"0 != test_catch()"));
 setupfun("testCatch",testCatch);
 
 -- random numbers
@@ -1072,8 +1072,8 @@ setupfun("rawMultiDegree",rawMultiDegree);
 export rawDiscreteLog(e:Expr):Expr := (
      when e
      is x:RawRingElementCell do (
-	  r := Ccode(int, "rawDiscreteLog(",x.p, ")" );
-	  if r == -1 then buildErrorPacket("discrete logarithm cannot be found") else toExpr(r))
+	  r := Ccode(long, "rawDiscreteLog(",x.p, ")" );
+	  if r == long(-1) then buildErrorPacket("discrete logarithm cannot be found") else toExpr(r))
      else WrongArg("a raw ring element"));
 setupfun("rawDiscreteLog",rawDiscreteLog);
 
@@ -2917,7 +2917,7 @@ setupfun("rawMutableMatrixFillRandom",rawMutableMatrixFillRandom);
 export rawLinAlgRank(e:Expr):Expr := (
      when e
      is m:RawMutableMatrixCell
-     do toExpr(Ccode(int, "rawLinAlgRank(", m.p, ")" ))
+     do toExpr(Ccode(long, "rawLinAlgRank(", m.p, ")" ))
      else WrongArgMutableMatrix());
 setupfun("rawLinAlgRank",rawLinAlgRank);
 
@@ -3892,13 +3892,13 @@ export rawLU(e:Expr):Expr := (
 setupfun("rawLU", rawLU);
 
 
-export rawLQUPFactorization(e:Expr):Expr := (
-     -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),
-     when e is m:RawMutableMatrixCell do
-     	  toExpr(
-	       Ccode(RawArrayIntPairOrNull, "rawLQUPFactorization(", m.p, ")"))
-     else WrongArgMutableMatrix(1));
-setupfun("rawLQUPFactorization", rawLQUPFactorization);
+-- export rawLQUPFactorization(e:Expr):Expr := (
+--      -- rawLQUPFactorization(A) returns a pair of list of integers (P, Qt permutations),
+--      when e is m:RawMutableMatrixCell do
+--      	  toExpr(
+-- 	       Ccode(RawArrayIntPairOrNull, "rawLQUPFactorization(", m.p, ")"))
+--      else WrongArgMutableMatrix(1));
+-- setupfun("rawLQUPFactorization", rawLQUPFactorization);
 
 export rawFFLU(e:Expr):Expr := (
      when e is M:RawMutableMatrixCell do toExpr( Ccode(RawArrayIntOrNull, "IM2_FF_LU(", M.p, ")" ) )

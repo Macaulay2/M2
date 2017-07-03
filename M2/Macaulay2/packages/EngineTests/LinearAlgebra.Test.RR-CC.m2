@@ -167,8 +167,12 @@ TEST ///
       (Q,R) := makeQR(m1,m2);
       checkQR(M,Q,R)
       )
+  debug Core
   checkQRs = (M) -> (
-      (m1,m2) := QRDecomposition(M, ReturnQR=>false);
+      k := RR_53;
+      m1 := mutableMatrix(k,0,0,Dense=>true);
+      m2 := mutableMatrix(k,0,0,Dense=>true);
+      rawQR(raw M, raw m1, raw m2, false );
       (Q,R) := QRDecomposition M;
       checkEncodedQR(M,m1,m2);
       checkQR(M,Q,R);

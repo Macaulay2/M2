@@ -91,6 +91,8 @@ ZZp Ideal := opts -> (I) -> (
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
+isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
+
 initializeEngineLinearAlgebra = method()
 initializeEngineLinearAlgebra Ring := (R) -> (
     R#"EngineLinearAlgebra" = true;

@@ -1436,10 +1436,12 @@ doc ///
    [b'PHSequence,Verbose]
    [b'TraceTestImage,Verbose]
    [makeSampleSolutionsFile,Verbose]
+   [bertiniUserHomotopy,Verbose]
   Headline
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
+    bertiniUserHomotopyVerbose(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
@@ -2033,6 +2035,32 @@ doc ///
     [bertiniTrackHomotopy, MaxNumberSteps]
     [bertiniTrackHomotopy, MaxCycleNum]
     [bertiniTrackHomotopy, RegenStartLevel]
+    [bertiniUserHomotopy,CoeffBound]
+    [bertiniUserHomotopy,CondNumThreshold]
+    [bertiniUserHomotopy,DegreeBound]
+    [bertiniUserHomotopy,EndGameNum]
+    [bertiniUserHomotopy,FinalTol]
+    [bertiniUserHomotopy,ImagThreshold]
+    [bertiniUserHomotopy,MaxCycleNum]
+    [bertiniUserHomotopy,MaxNewtonIts]
+    [bertiniUserHomotopy,MaxNorm]
+    [bertiniUserHomotopy,MaxNumberSteps]
+    [bertiniUserHomotopy,MaxStepSize]
+    [bertiniUserHomotopy,MinStepSizeBeforeEG]
+    [bertiniUserHomotopy,MinStepSizeDuringEG]
+    [bertiniUserHomotopy,MPType]
+    [bertiniUserHomotopy,ODEPredictor]
+    [bertiniUserHomotopy,OutputLevel]
+    [bertiniUserHomotopy,PRECISION]
+    [bertiniUserHomotopy,RandomSeed]
+    [bertiniUserHomotopy,RegenStartLevel]
+    [bertiniUserHomotopy,ScreenOut]
+    [bertiniUserHomotopy,SecurityLevel]
+    [bertiniUserHomotopy,SingValZeroTol]
+    [bertiniUserHomotopy,StepsForIncrease]
+    [bertiniUserHomotopy,TrackTolBeforeEG]
+    [bertiniUserHomotopy,TrackTolDuringEG]
+    [bertiniUserHomotopy,UseRegeneration]
     [bertiniZeroDimSolve, MPType]
     [bertiniZeroDimSolve, PRECISION]
     [bertiniZeroDimSolve, ODEPredictor]

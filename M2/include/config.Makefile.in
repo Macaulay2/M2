@@ -66,11 +66,12 @@ BUILTLIBPATH = @abs_top_builddir@/usr-host
 # this will be a symbolic link installed by libraries/gtest/Makefile
 GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
 
-CPPFLAGS :=						\
-	-I@abs_top_srcdir@/include			\
-	-I@abs_top_builddir@/include			\
-	-I$(BUILTLIBPATH)/include			\
-	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src) \
+# Using -isystem instead of -I here will exclude the files found in those directories from the *.dep files created with the -MM option:
+CPPFLAGS :=									\
+	-isystem @abs_top_srcdir@/include					\
+	-isystem @abs_top_builddir@/include					\
+	-isystem $(BUILTLIBPATH)/include					\
+	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
 
 ifeq "@ENABLE_MPACK@" "yes"
@@ -78,14 +79,20 @@ CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
 endif
 
 vpath %.h $(BUILTLIBPATH)/include
+
+# /// @dan move the info about libraries and submodules nearer to the submodules, perhaps in new included makefiles
 LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
+	$(foreach S, memtailor mathic mathicgb, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
 LDFLAGS_FOR_BUILD :=					\
 	-L$(BUILTLIBPATH)/lib				\
-	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
+	$(foreach S, memtailor mathic mathicgb, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS_FOR_BUILD)
+
+LIBDEPS_FOR_BUILD := $(foreach S, memtailor mathic mathicgb, @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
+LDLIBS_FOR_BUILD := $(foreach S, memtailor mathic mathicgb, -l$S)
+
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
@@ -110,12 +117,6 @@ ifneq ($(RELAX),yes)
 # -Winline gives too many warning messages
 
 M2_BOTH = -pipe -Wall -Wno-shadow -Wcast-qual
-
-# use no GNU extensions
-# CXXFLAGS += -std=c++98
-# using -std=c99 is a bad idea, because in ubuntu, this standard causes __USE_POSIX to be undefined, 
-#   hence sigjmp_buf to be undefined, which is needed by gc
-# CFLAGS += -std=c99
 
 ifeq "@__INTEL_COMPILER@" "yes"
 X = -diag-disable 981,869,383,2259,444
@@ -145,6 +146,8 @@ M2_CXXFLAGS += $(M2_BOTH) -Wconversion
 
 M2_CFLAGS += @M2_CFLAGS@
 M2_CXXFLAGS += @M2_CXXFLAGS@
+
+M2_CXXFLAGS += -Wno-error=pragmas
 
 # M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
 ifeq "@__INTEL_COMPILER@" "no"
@@ -180,21 +183,29 @@ ifeq "$(NORULES)" ""
 %-exports.h: ;	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 
 %.sig.tmp %.dep: %.d
-	$(SCC1) -dep $(SCCFLAGS) $<
+	$(SHOW)SCC1 -dep $*.d
+	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
 	mv $*.dep.tmp $*.dep
 	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
 %.sig.tmp %.dep: %.dd
-	$(SCC1) -dep $(SCCFLAGS) $<
+	$(SHOW)SCC1 -dep $*.dd
+	$(HIDE)$(SCC1) -dep $(SCCFLAGS) $<
 	mv $*.dep.tmp $*.dep
 	test -e $*.sig && cmp -s $*.sig.tmp $*.sig || cp $*.sig.tmp $*.sig
-%-tmp.c  %-exports.h.tmp: %.d
-	$(SCC1) $(SCCFLAGS) $<
+%-tmp.c	 %-exports.h.tmp: %.d
+	$(SHOW)SCC1 $*.d
+	$(HIDE)$(SCC1) $(SCCFLAGS) $<
 	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
 %-tmp.cc %-exports.h.tmp: %.dd
-	$(SCC1) $(SCCFLAGS) $<
+	$(SHOW)SCC1 $*.dd
+	$(HIDE)$(SCC1) $(SCCFLAGS) $<
 	test -e $*-exports.h && cmp -s $*-exports.h.tmp $*-exports.h || cp $*-exports.h.tmp $*-exports.h
-%.o: %-tmp.c  %-exports.h;		$(COMPILE.c)  $(DCFLAGS) $< $(OUTPUT_OPTION)
-%.o: %-tmp.cc %-exports.h;		$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
+%.o: %-tmp.c  %-exports.h
+	$(SHOW)CC $*-tmp.c
+	$(HIDE)$(COMPILE.c) $(DCFLAGS) $< $(OUTPUT_OPTION)
+%.o: %-tmp.cc %-exports.h
+	$(SHOW)CXX $*-tmp.cc
+	$(HIDE)$(COMPILE.cc) $(DCFLAGS) $< $(OUTPUT_OPTION)
 
 # various compiler output files
 .SUFFIXES : .ss .ii .s
@@ -212,8 +223,46 @@ endif
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
 # status info
-WHY = : remaking $@ because of $?
+WHY = @ (if [ -f $@ ] ;																	\
+	 then echo "=== remaking $@ in $$(basename $$PWD) because of $?" ; echo === ; ls -l $@ || : ; echo === ; ls -l $? | head -5 ; echo === ;	\
+	 else echo "=== making $@ in $$(basename $$PWD)" ;												\
+	 fi)
+
+GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
+GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
+
+FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
+FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
+
+M2_LIBRARIES += $(GIVARO_LIBS)
+M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
+
+M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
+M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
+
+test:
+	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
+	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
+	:
+	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
+	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
+	: "M2_CXXFLAGS           = $(FFLAS_FFPACK_CXXFLAGS)"
+	:
+	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
+	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
+	: "M2_LIBRARIES          = $(M2_LIBRARIES)"
+
+SHOW := $(if $(VERBOSE),@true "",@echo "")
+HIDE := $(if $(VERBOSE),,@)
+
+%.o: %.c
+	$(SHOW)CC $*.c
+	$(HIDE)$(COMPILE.c) $< $(OUTPUT_OPTION)
+
+%.o: %.cc
+	$(SHOW)CXX $*.cc
+	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR include/config.Makefile DEPENDS=no "
+# compile-command: "set -x ; make -C $M2BUILDDIR include/config.Makefile DEPENDS=no && make -f $M2BUILDDIR/include/config.Makefile test "
 # End:

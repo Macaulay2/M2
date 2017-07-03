@@ -3,14 +3,15 @@
 #ifndef _util_hpp_
 #define _util_hpp_
 
-#include <vector>
 #include "engine-includes.hpp"
+#include <vector>
 
-void M2_ArrayString_to_stdvector(M2_ArrayString strs, std::vector<std::string> &result);
+void M2_ArrayString_to_stdvector(M2_ArrayString strs,
+                                 std::vector<std::string> &result);
 
 std::vector<std::string> M2_ArrayString_to_stdvector(M2_ArrayString strs);
 
-template<typename inttype>
+template <typename inttype>
 M2_arrayint stdvector_to_M2_arrayint(std::vector<inttype> &v)
 {
   M2_arrayint result = M2_makearrayint(static_cast<int>(v.size()));
@@ -19,7 +20,7 @@ M2_arrayint stdvector_to_M2_arrayint(std::vector<inttype> &v)
   return result;
 }
 
-template<typename inttype>
+template <typename inttype>
 std::vector<inttype> M2_arrayint_to_stdvector(M2_arrayint arr)
 {
   std::vector<inttype> result;
@@ -36,4 +37,3 @@ std::vector<inttype> M2_arrayint_to_stdvector(M2_arrayint arr)
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:
-

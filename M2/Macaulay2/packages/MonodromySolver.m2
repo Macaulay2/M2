@@ -12,7 +12,7 @@ newPackage(
 	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
-    	Headline => "Solving polynomial systems via monodromy",
+    	Headline => "solving polynomial systems via monodromy",
 	PackageImports => {"PHCpack","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files

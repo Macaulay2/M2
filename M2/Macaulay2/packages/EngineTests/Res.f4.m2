@@ -475,3 +475,108 @@ TEST ///
   time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
   betti(C1, Minimize=>true)
 ///
+
+
+TEST ///
+  -- this is a small-ish example used to get the logic of matrix building right
+  setRandomSeed 0
+  kk = ZZ/101
+  R = kk[vars(0..3)]
+  I = ideal fromDual random(R^1, R^{-3});
+  C = res(I, FastNonminimal => true)
+  
+  I = ideal(I_*)
+  elapsedTime C1 = res(I, FastNonminimal => true, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing)
+----  assert(betti(C,Minimize=>true) != betti(C1,Minimize=>true)) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
+  betti C1
+  elapsedTime C2 = res(I, FastNonminimal => true)
+  betti C2 == betti C
+  assert(C.dd^2 == 0)
+  assert(isHomogeneous C)
+  C1 = betti res ideal(I_*)
+  assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
+///
+
+TEST ///  
+  kk = ZZ/101
+  nvars = 9
+  R = kk[vars(0..nvars-1)]
+  setRandomSeed 0
+  I = ideal fromDual random(R^1, R^{-3});
+  gbTrace=2
+  elapsedTime C = res(I, FastNonminimal => true)
+  betti(C, Minimize=>true)
+  betti C
+///
+
+{* TEST *} ///
+  -- takes too much memory
+  -- might take too long ...
+  kk = ZZ/101
+  nvars = 13
+  R = kk[vars(0..nvars-1)]
+  setRandomSeed 0
+  I = ideal fromDual random(R^1, R^{-3});
+  gbTrace=2
+  elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP
+///
+
+{* TEST *} ///  
+  -- disabled most recently because it gives the wrong answer
+  -- disabled originally since it is right on the edge of limits, so sometimes fails sometimes succeeds.
+  kk = ZZ/101
+  R = kk[vars(0..10)]
+  setRandomSeed 0
+  I = ideal fromDual random(R^1, R^{-3});
+  elapsedTime C = res(I, FastNonminimal => true)
+  betti'ans = new BettiTally from {
+      (0,{0},0) => 1, 
+      (1,{2},2) => 55, 
+      (2,{3},3) => 320, 
+      (3,{4},4) => 891, 
+      (4,{5},5) => 1408,
+      (5,{6},6) => 1155, 
+      (6,{8},8) => 1155, 
+      (7,{9},9) => 1408, 
+      (8,{10},10) => 891, 
+      (9,{11},11) => 320, 
+      (10,{12},12) => 55, 
+      (11,{14},14) => 1
+      }
+  assert(betti C == betti'ans)
+///
+
+TEST ///
+  n = 6
+  d = 3
+  S = ZZ/101[x_1..x_n]
+  soc = random(S^1, S^{ -d});
+  I = ideal fromDual soc;
+  time B = betti res I
+  C = res I;
+  time F = res(I, FastNonminimal=>true)
+  time B == betti(F, Minimize =>true)
+  assert(betti F != betti C)
+  assert(F =!= C)
+
+  I = ideal I_*;
+  F = res(I, FastNonminimal=>true)
+  assert(B == betti(F, Minimize =>true))
+  C = res I;
+  assert(B == betti C)
+  
+  C1 = res(I, Strategy=>1);
+  C2 = res(I, Strategy=>2);
+  C0 = res(I, Strategy=>0);
+  C4 = res(I, Strategy=>4);
+  assert(C2 === C1)
+  assert(C0 === C1)
+  assert(C4 =!= C1)
+  C1 = res(I, Strategy=>1);
+  C2 = res(I, Strategy=>2);
+  C0 = res(I, Strategy=>0);
+  assert(C2 === C1)
+  assert(C0 === C1)
+  assert(C4 =!= C1)
+  assert(C0 == res I)
+///

@@ -3,8 +3,7 @@
 #include "gbring.hpp"
 #include "polyring.hpp"
 
-GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
-  : F_(F)
+GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0) : F_(F)
 {
   // If wts has length 0 or is NULL:
   // Use the primary degrees, if they are positive.
@@ -13,7 +12,7 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
   // If the wt vector is not part of the degrees, then set
   // use_component_degrees to false.
 
-  const PolynomialRing * A = F->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *A = F->get_ring()->cast_to_PolynomialRing();
   assert(A != 0);
   R_ = A->get_gb_ring();
 
@@ -25,19 +24,18 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
   if (!wts0 || wts0->len != nvars_)
     {
       use_component_degrees_ = true;
-      for (int i=0; i<nvars_; i++)
+      for (int i = 0; i < nvars_; i++)
         {
           int d = M->primary_degree_of_var(i);
           wts_->array[i] = (d > 0 ? d : 1);
-          if (d <= 0)
-            use_component_degrees_ = false;
+          if (d <= 0) use_component_degrees_ = false;
         }
     }
   else
     {
       // Use the provided wt vector
       use_component_degrees_ = false;
-      for (int i=0; i<nvars_; i++)
+      for (int i = 0; i < nvars_; i++)
         {
           int d = wts0->array[i];
           wts_->array[i] = (d > 0 ? d : 1);
@@ -48,10 +46,9 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
 
   if (use_component_degrees_)
     {
-      Fdegs_ = newarray_atomic(long, F->rank()+1);
+      Fdegs_ = newarray_atomic(long, F->rank() + 1);
       Fdegs_[0] = 0;
-      for (int j=0; j<F->rank(); j++)
-        Fdegs_[j+1] = F->primary_degree(j);
+      for (int j = 0; j < F->rank(); j++) Fdegs_[j + 1] = F->primary_degree(j);
     }
   else
     Fdegs_ = 0;
@@ -60,10 +57,8 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
 int GBWeight::exponents_weight(const int *e, int comp) const
 {
   long sum = 0;
-  for (int i=0; i<nvars_; i++)
-    sum += e[i] * wts_->array[i];
-  if (use_component_degrees_ && comp > 0)
-    sum += Fdegs_[comp];
+  for (int i = 0; i < nvars_; i++) sum += e[i] * wts_->array[i];
+  if (use_component_degrees_ && comp > 0) sum += Fdegs_[comp];
   return static_cast<int>(sum);
 }
 
@@ -71,8 +66,8 @@ int GBWeight::gbvector_term_weight(const gbvector *f) const
 {
   if (f == 0) return 0;
   exponents EXP = ALLOCATE_EXPONENTS(exp_size);
-  R_->gbvector_get_lead_exponents(F_,f,EXP);
-  return exponents_weight(EXP,f->comp);
+  R_->gbvector_get_lead_exponents(F_, f, EXP);
+  return exponents_weight(EXP, f->comp);
 }
 
 int GBWeight::gbvector_weight(const gbvector *f, int &initial_term_weight) const
@@ -86,7 +81,7 @@ int GBWeight::gbvector_weight(const gbvector *f, int &initial_term_weight) const
     }
   int deg = gbvector_term_weight(f);
   initial_term_weight = deg;
-  for (const gbvector *t=f->next; t != 0; t = t->next)
+  for (const gbvector *t = f->next; t != 0; t = t->next)
     {
       int tdeg = gbvector_term_weight(t);
       if (tdeg > deg) deg = tdeg;

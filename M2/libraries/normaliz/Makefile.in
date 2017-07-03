@@ -34,7 +34,7 @@ BUILDOPTIONS =  CXX="$(CXX)" \
 		RANLIB="@RANLIB@" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 PROGRAMS = source/normaliz
-STRIPFILES = source/normaliz
+STRIPFILES = source/normaliz Qsource/Qnormaliz
 LICENSEFILES = source/COPYING
 CHECKTARGET = .
 include ../Makefile.library

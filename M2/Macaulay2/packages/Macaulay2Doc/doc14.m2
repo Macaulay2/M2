@@ -888,6 +888,22 @@ Node
   Example
    findHeft ( {{-1,0}, {2,1}}, DegreeRank => 2 )
    findHeft ( {}, DegreeRank => 0 )
+Node
+  Key
+    isFinitePrimeField
+  Headline
+    whether a ring is a finite prime field
+  Usage
+    isFinitePrimeField R
+  Inputs
+    R:Ring
+  Outputs
+    :Boolean
+     whether R is a finite prime field
+  Description
+    Example
+     isFinitePrimeField QQ
+     isFinitePrimeField (ZZ/101)
 ///
 
 -- Local Variables:

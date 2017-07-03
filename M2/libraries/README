@@ -60,4 +60,4 @@ To add a new library:
        may link it our program and distribute the resulting binary under
        GNU GPL 3.
 
-     - a licensing note to ../LICENSING-NOTES
+     - add a licensing note to ../LICENSING-NOTES

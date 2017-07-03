@@ -14,28 +14,29 @@
 
 typedef int FieldElement;
 
-class poly {
+class poly
+{
   friend class ResPolyRing;
   friend class poly_constructor;
   friend class poly_iter;
-public:
+
+ public:
   static long npoly_destructor;
-  int len; // in monomials?  This only determines both sizes below
-           // in the case of fixed length monomials
+  int len;  // in monomials?  This only determines both sizes below
+            // in the case of fixed length monomials
   CoefficientVector coeffs;
   //  std::unique_ptr<FieldElement[]> coeffs;
   std::vector<res_monomial_word> monoms;
   //  std::unique_ptr<res_monomial_word[]> monoms;
 
-public:  
+ public:
   poly() : len(0), coeffs() {}
-
   ~poly()
   {
     if (!coeffs.isNull()) npoly_destructor++;
     //    std::cout << "Calling ~poly()" << std::endl << std::flush;
   }
-  
+
   poly(const poly& other) = default;
   poly(poly&& other) = default;
   poly& operator=(const poly& other) = default;
@@ -44,50 +45,63 @@ public:
 
 class ResPolyRing
 {
-public:
-  ResPolyRing(const ResGausser* G, const ResMonoid* M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
-  ResPolyRing(const ResGausser* G, const ResMonoid* M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
-  
+ public:
+  ResPolyRing(const ResGausser* G, const ResMonoid* M)
+      : mResGausser(G), mMonoid(M), mSkew(nullptr)
+  {
+  }
+  ResPolyRing(const ResGausser* G,
+              const ResMonoid* M,
+              const SkewMultiplication* skewInfo)
+      : mResGausser(G), mMonoid(M), mSkew(skewInfo)
+  {
+  }
+
   const ResGausser& resGausser() const { return *mResGausser; }
   const ResMonoid& monoid() const { return *mMonoid; }
-
   bool isSkewCommutative() const { return mSkew != nullptr; }
   const SkewMultiplication* skewInfo() const { return mSkew; }
+  void memUsage(const poly& f,
+                long& nterms,
+                long& bytes_used,
+                long& bytes_alloc) const;
 
-  void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
-private:
+ private:
   std::unique_ptr<const ResGausser> mResGausser;
   std::unique_ptr<const ResMonoid> mMonoid;
   const SkewMultiplication* mSkew;
 };
 
-class poly_constructor {
-private:
+class poly_constructor
+{
+ private:
   std::vector<res_packed_monomial> monoms;
   CoefficientVector coeffs;
   //  std::vector<FieldElement> coeffs;
   const ResPolyRing& mRing;
-public:
+
+ public:
   static long ncalls;
   static long ncalls_fromarray;
 
-  poly_constructor(const ResPolyRing& R) : mRing(R) { coeffs = R.resGausser().allocateCoefficientVector(); }
+  poly_constructor(const ResPolyRing& R) : mRing(R)
+  {
+    coeffs = R.resGausser().allocateCoefficientVector();
+  }
 
   ~poly_constructor() { mRing.resGausser().deallocate(coeffs); }
-  
   void appendMonicTerm(res_packed_monomial monom)
   {
-    monoms.push_back(monom); // a pointer
+    monoms.push_back(monom);  // a pointer
     mRing.resGausser().pushBackOne(coeffs);
   }
 
   void pushBackTerm(res_packed_monomial monom)
   {
-    monoms.push_back(monom); // a pointer
+    monoms.push_back(monom);  // a pointer
   }
 
   CoefficientVector& coefficientInserter() { return coeffs; }
-  
   void setPoly(poly& result)
   {
     ncalls++;
@@ -97,7 +111,7 @@ public:
 
     // copy monoms: not pointers, actual monoms
     res_monomial_word* monomptr = result.monoms.data();
-    for (int i=0; i<result.len; i++)
+    for (int i = 0; i < result.len; i++)
       {
         mRing.monoid().copy(monoms[i], monomptr);
         monomptr += mRing.monoid().monomial_size(monoms[i]);
@@ -112,46 +126,61 @@ public:
     ncalls_fromarray++;
     result.len = len;
     result.coeffs.swap(coeffs);
-    std::swap(result.monoms,monoms);
+    std::swap(result.monoms, monoms);
   }
 };
 
-class poly_iter {
+class poly_iter
+{
   const ResPolyRing& mRing;
   const poly& elem;
   long coeff_index;
   long monom_index;
-public:
+
+ public:
   friend bool operator==(const poly_iter& a, const poly_iter& b);
   friend bool operator!=(const poly_iter& a, const poly_iter& b);
 
   poly_iter(const ResPolyRing& R, const poly& elem0)
-    : mRing(R),
-      elem(elem0),
-      coeff_index(0),
-      monom_index(0)
-  {}
+      : mRing(R), elem(elem0), coeff_index(0), monom_index(0)
+  {
+  }
 
-  poly_iter(const ResPolyRing& R, const poly& elem0, int) // end
-    : mRing(R),
-      elem(elem0),
-      coeff_index(elem.len),
-      monom_index(0)
-  {}
+  poly_iter(const ResPolyRing& R, const poly& elem0, int)  // end
+      : mRing(R),
+        elem(elem0),
+        coeff_index(elem.len),
+        monom_index(0)
+  {
+  }
 
   int coefficient_index() const { return static_cast<int>(coeff_index); }
   //  int coefficient() const { return elem.coeffs[coeff_index]; }
-  res_const_packed_monomial monomial() const { return elem.monoms.data() + monom_index; }
-  void operator++() { coeff_index++; monom_index += mRing.monoid().monomial_size( elem.monoms.data() + monom_index); }
+  res_const_packed_monomial monomial() const
+  {
+    return elem.monoms.data() + monom_index;
+  }
+  void operator++()
+  {
+    coeff_index++;
+    monom_index +=
+        mRing.monoid().monomial_size(elem.monoms.data() + monom_index);
+  }
 };
 
-inline bool operator==(const poly_iter& a, const poly_iter& b) { return a.coeff_index == b.coeff_index; }
-inline bool operator!=(const poly_iter& a, const poly_iter& b) { return a.coeff_index != b.coeff_index; }
+inline bool operator==(const poly_iter& a, const poly_iter& b)
+{
+  return a.coeff_index == b.coeff_index;
+}
+inline bool operator!=(const poly_iter& a, const poly_iter& b)
+{
+  return a.coeff_index != b.coeff_index;
+}
 
 inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
 {
-  auto end = poly_iter(R, f, 1); // end
-  int i=0;
+  auto end = poly_iter(R, f, 1);  // end
+  int i = 0;
   for (auto it = poly_iter(R, f); it != end; ++it, ++i)
     {
       R.resGausser().out(o, f.coeffs, i);
@@ -160,7 +189,7 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
     }
 }
 
-bool check_poly(const ResPolyRing& R, const poly&f, const ResSchreyerOrder& O);
+bool check_poly(const ResPolyRing& R, const poly& f, const ResSchreyerOrder& O);
 #endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

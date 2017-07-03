@@ -47,9 +47,12 @@ The following command shows the list of release branches:
 
     git branch -a | grep origin/release
 
-The following commands will download the latest changes to the source code:
+The following commands, run from the top level of this source tree (the parent
+of the directory this file is in) will download the latest changes to the
+source code:
 
     git pull
+    git submodule sync
     git submodule update
 
 ---------
@@ -78,18 +81,9 @@ version.
 Here are commands that will get you a good development environment under
 various modern operating systems:
 
-  Debian:
+  Ubuntu and Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses libmpc-dev
-    On a 32-bit system, add
-        --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
-      to the "configure" command line below.  (The --build option is necessary
-      only to enable distribution of the resulting binaries to users of other
-      hardware.) 
-
-  Ubuntu:
-    Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libatomic-ops-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config libmpc-dev
+      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -103,21 +97,13 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
-    On Ubuntu 14.10 and later, add
-        --enable-build-libraries="pari givaro fflas_ffpack"
-      to the "configure" command line below.  (The version of pari possibly installed there
-      will crash when M2 exits.  The version of givaro that might be installed by Ubuntu
-      might be too recent for us.)
-    On all systems, add
-        CPPFLAGS=-I/usr/include/cdd
-      to the "configure" command line below.  Otherwise the configure script will
-      decide to build cddlib from downloaded sources.
-    (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
-    "do-release-upgrade" for a command line interface.)
+    (To upgrade to a new release of Ubuntu, if desired, run "update-manager" if
+    you want a GUI, or run "do-release-upgrade" for a command line interface.
+    For Debian, run "apt-get update ; apt-get dist-upgrade".
 
   Raspbian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -134,16 +120,17 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time
-    Some debugging aids:
-      sudo yum install -y strace
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo
+    Install other software:
+      Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
+        way (untar, configure, make, make install).
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
       Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
       future version of Macaulay2.  However, one can install newer compilers
       (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
       (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
-	  wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
-	  yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
+	  sudo wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+	  sudo yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
       Then use
 	  . /opt/rh/devtoolset-2/enable
       to update the environment of your currently running shell.  The latter
@@ -151,35 +138,24 @@ various modern operating systems:
 
   Suse Linux Leap 42.1:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
 
     Add
 
-       --enable-build-libraries="givaro"
-
-    to the configure command line, since the givaro installed above has bugs that cause compile time errors.  Add also
-
        --enable-rpm --build=x86_64-suse-gnu
 
-    to make RPM files for distribution to generic hardware.
+    to the configure command line, to make RPM files for distribution to generic hardware.
 
   Arch Linux:
-    You may prefer to use the Arch package for Macaulay2 at https://aur.archlinux.org/packages/macaulay2/, but it
-      has been reported in October, 2016, that it no longer works.
-    For compiling it yourself:
+
+    To prepare for compiling it yourself:
+
       sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip
-    We recommend adding
-    	 --enable-build-libraries="pari flint ntl gc givaro factory"
-      to the "configure" command line below in the section on compiling Macaulay2
-      Adding "gc" here seems to avoid undiagnosed problems with invalid libgc pointers.
-      Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest
     To upgrade the system:
+
       sudo pacman --sync --refresh --sysupgrade
-    Compilation doesn't succeed with gcc 6, so install gcc 5 with
-      sudo pacman --sync --needed gcc5
-    and add "CC=gcc-5 CXX=g++-5" to the "configure" command line below.  (We succeeded with gcc 5.4.0.)
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
@@ -205,7 +181,7 @@ various modern operating systems:
 	brew tap homebrew/homebrew-x11
 	brew update
 	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz
-	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk
+	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm gmake
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
     If you have previously installed homebrew, will be distributing your
@@ -219,8 +195,6 @@ various modern operating systems:
 	brew update
         brew upgrade
 	brew cleanup
-    Note: the libraries pari and flint are also available from homebrew, but we build them
-      ourselves, and that is automatically arranged by the configure script.
     Now remember to add 
         --enable-build-libraries="readline"
       to the "configure" command line below in the section on compiling Macaulay2.
@@ -246,7 +220,7 @@ various modern operating systems:
 	libncurses-devel libreadline-devel libstdc++6-devel libtool
 	libxml2-devel make patchutils pkg-config time unzip wget
     You may also want these:
-        ctags emacs-el gdb gvim libxml2-doc openssh psmisc vim xauth xconsole
+        ctags emacs-el gdb gitk gvim libxml2-doc openssh psmisc vim xauth xconsole
         xinit xkill xterm
     After installing xinit, the program "startxwin" can be used to start X Windows.
 
@@ -350,6 +324,9 @@ following:
 Compiling Macaulay2
 -----------------------
 
+It seems now, for a 64 bit build in a virtual machine with no swap space, using
+gcc 7, that 1024MB of RAM is not enough, so try something like 1400MB.
+
 Now the directory to be in is the one containing this file in the source
 distribution -- it is called "M2", and is a subdirectory of the top level
 directory of the source tree.  If you are reading this file on the web, it may
@@ -372,6 +349,14 @@ Now continue building the program this way:
         make
         make check                      # optional
         make install
+
+Note: version 3.82 of the "make" program, used above, seems to have a bug that
+results in this error message:
+    CC scclib.c
+    ../../../Macaulay2/d/scclib.c:5:10: fatal error: 'expr-exports.h' file not found
+Under Mac OS X, one encounters that old version of "make", so it is better to
+use a later version instead, such as the "gmake" program, as provided by
+"brew", and installed according to the instructions above.
 
 Remember to add any options specified above, in the section for your particular
 operating system, to the "configure" command line.

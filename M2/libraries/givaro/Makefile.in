@@ -1,28 +1,27 @@
-# URL = http://ljk.imag.fr/CASYS/LOGICIELS/givaro/Downloads
-
-# our snapshot taken from:
-#  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
-
+# http://givaro.forge.imag.fr/
+# svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
 # see also (for older releases) https://forge.imag.fr/projects/givaro for source code
-
 # see also (for newer releases) https://github.com/linbox-team/givaro/releases
-
-
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 3.7.1
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-## version 4.0.1: works with ffpack 2.2.1, but that doesn't yet compile.
-#VERSION = 4.0.1
+# compilation of givaro needs a little extra memory
+VLIMIT = 800000
+MLIMIT = 800000
 
-#PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
-
+VERSION = 4.0.2
+# disable the test because it fails to find <bits/stl_pair.h>
+# CHECKTARGET = .
 LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
 
 # linking givaro as a shared library is bad, because then under Mac OS X its static constructors
 # get run before ours do, and it calls our "operator new", which calls GC_malloc, before we've
 # had a chance to initialize it.
 CONFIGOPTIONS += --disable-shared
+
+# Disable vectorized instructions: SSE4.1, AVX, AVX2:
+# (this is needed if we wish to distribute binaries to others.  But it might be bad
+# for us if we don't.  So the configure script should have an option for that.)
+CONFIGOPTIONS += --disable-simd
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/givaro/Makefile

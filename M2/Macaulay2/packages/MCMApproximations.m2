@@ -1,7 +1,7 @@
 newPackage(
 "MCMApproximations",
-Version => "1.0",
-Date => "April 3, 2016",
+Version => "1.1",
+Date => "April 3, 2013, revised June 15, 2017",
 Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
@@ -11,7 +11,9 @@ DebuggingMode => false
 
 export {
     "approximation", 
-    "coApproximation",     
+    "coApproximation",
+    "approximationSequence",
+    "coApproximationSequence",
     "Total", -- option for approximation
     "CoDepth", -- option for approximation
 --   "approx", --synonym for approximation
@@ -130,6 +132,7 @@ coApproximation Module := opts -> M -> (
     F0 := target p;
     (phi,psi) := approximation(M, Total => opts.Total,CoDepth => opts.CoDepth);
     M' := source (phi|psi);--the total MCM approximation.
+    if isFreeModule M' then return map(M,M,1);
     q := matrix (phi | psi);
     r := p//q;
     r0 := id_F0//q;
@@ -141,6 +144,12 @@ coApproximation Module := opts -> M -> (
     N := coker(G.dd_0*(r | k));
     map(N,M, G.dd_0*r0)
     )
+coApproximationSequence = M -> (
+    S:=ring M;
+    alpha := coApproximation M;
+    N := coker alpha;
+    beta := inducedMap(N,target alpha);
+    chainComplex {map(S^0,N,0),beta,alpha,map(source alpha,S^0,0)})
 
 approximation = method(Options =>{CoDepth=>-1, Total =>true})
 approximation Module := opts -> M->(
@@ -158,8 +167,19 @@ approximation Module := opts -> M->(
         return (phi, psi));
     MtoN := map(N,M, id_(cover M));
     a := N1.cache.pruningMap;
-    psi = (matrix a)//matrix(MtoN);
+    psi1 := (matrix a)//matrix(MtoN);
+--the following line added 170615
+    psi = map(M, source psi1, psi1);
     (phi, psi)
+    )
+
+approximationSequence = M->(
+    (alpha,beta) := approximation M;
+    S := ring M;
+    tot := (alpha|beta);
+    N := kernel tot;
+    gamma := inducedMap(source tot,N);
+    chainComplex {map(S^0,M,0), tot,gamma,map(N,S^0,0)}
     )
 
 auslanderInvariant = method(Options =>{CoDepth => -1})
@@ -210,7 +230,7 @@ Headline
   Maximal Cohen-Macaulay Approximations and Complete Intersections
 Description
   Text
-   Maximal Cohen-Macaulay approximations were introduced by Auslander and Buchweitz
+   Maximal Cohen-Macaulay approximatiodns were introduced by Auslander and Buchweitz
    [The homological theory of maximal Cohen-Macaulay (MCM) approximations, 
    Colloque en l'honneur de Pierre Samuel (Orsay, 1987)
    Soc. Math. France (N.S.)} No. {\bf 38}, (1989), 5 - 37.] 
@@ -218,24 +238,24 @@ Description
    and can be expressed as follows. Let M be an R-module. 
    
    1) There is a unique
-   maximal Cohen-Macaulay R-module M' and a short exact sequence  
+   maximal Cohen-Macaulay R-module M' and a short exact "approximation sequence"
    0\to N' \to M' \to  M \to 0
    such that N has finite projective dimension; 
    the module M, together with the surjection,
    is the MCM approximation of M.
    
-   2) Dually, there is a unique short exact sequence
+   2) Dually, there is a unique short exact "co-approximation sequence"
    0\to M \to N'' \to M'' \to 0
-   such that N'' has finite projective dimension and M'' is a
-   monomormphism M -> N to a module N of finite projective dimension, with
-   cokernel a maximal Cohen-Macaulay module, the MCM co-approximation.
+   such that N'' has finite projective dimension and M'' is a maximal Cohen-Macaulay module,
+   the MCM co-approximation.
    
-   These sequences are easy to compute.Let
+   These sequences are easy to compute. Let
    d = 1+ depth R - depth M. Write M'_0 for the d-th cosyzygy of the 
-   d-th syzygy module of M, and \alpha: M'\to M. The module M' is called the 
-   essential MCM approximation of M. Note that M' has no free summand 
+   d-th syzygy module of M, and \alpha: M'\to M the induced map. The module M'
+   (or the map (M'\to M) is called the 
+   essential MCM approximation of M. Since d >= 2, the module M' has no free summand.
    Let B_0 be a minimal free module mapping
-   onto M/(image M'_0), and lift the surjection ac to a map
+   onto M/(image M'_0), and lift the surjection to a map
    \beta: B_0 \to M. The map
    (\alpha, \beta): M'_0 \oplus B_0 --> M
    is the MCM approximation, and N is its kernel. 
@@ -252,30 +272,32 @@ Description
    0\to M \to N''\to M'' \to 0.
    
    The routine coApproximation M resurns the map M --> N''.
+   Here is an example of a simple approximation sequence, 
+   exhibited by the betti tables of its 3 middle terms:
+   
+   The Betti table of the module M is at the top, and one sees that it is NOT MCM (the resolution is not periodic
+   at the beginning) and not of finite projective dimension (the length of the given part of
+   of the -- actually infinite -- resolution is already longer than the dimension of the ring.
+   
+   Next comes the betti table of the  MCM module that approximates M (we see that its resolution is
+   periodic from the beginning). 
+
+   Finally we see a module of finite projective dimension (in this case 1).
   Example
-   setRandomSeed 0
-   T = setupRings(3,3)
-   R = T_3
-   M = coker random(R^2, R^{3: -2});
-   (MM,kk,p) = setupModules(T, M);
-   MM_1
-   (a,b) = approximation MM_1 -- MM_1 is M as a module over the ring of codim 1
-   M' = source a;
-   betti res pushForward(p_1_0,M') -- an MCM module
-   F = source b -- free module, thus also MCM
-   N = betti res ker map(MM_1,M'++F,matrix{{a,b}}) --module with pd G <\infty
-SeeAlso
- approximation
- coApproximation
- auslanderInvariant
- setupRings
- setupModules
+   S = ZZ/101[a,b,c]
+   R = S/ideal(a^3+b^3+c^3)
+   M = coker random(R^2, R^{4:-1});
+   Ea = approximationSequence M;
+   netList apply({1,2,3}, i-> betti res Ea_i)
+  Text
+   Here is a similar display for the co-approximation sequence. Here
+   the Betti table of M is at the bottom, the Betti table of the module of finite projecdtive dimension
+   is in the middle, and that of the MCM module is at the top (
+  Example
+   Ec = coApproximationSequence M;
+   netList apply(5, i-> betti res prune Ec_i)   
 ///
 
-///
-   restart
-   loadPackage("MCMApproximations", Reload=>true)
-///
 
 ///
 restart
@@ -302,7 +324,7 @@ doc ///
      R = ZZ/101[x,y,z]
      M0 = R^1/(ideal(x,y,z)*ideal (x,y));
      M1 = coker random(R^{1,2}, R^{0,-1,-2}); -- dim 1
-     M2 = coker random(R^{1,2}, R^{0,-1,-2,-4}); -- dim 0"
+     M2 = coker random(R^{1,2}, R^{0,-1,-2,-4}); -- dim 0
    ///
 
 doc ///
@@ -534,6 +556,62 @@ doc ///
     syzygyModule
     auslanderInvariant
 ///
+
+doc ///
+   Key
+    approximationSequence
+   Headline
+    Short exact sequence of the MCM approximation
+   Usage
+    E = approximationSequence M
+   Inputs
+    M:Module
+   Outputs
+    E:ChainComplex
+   Description
+    Text
+     The approximation sequence of a module M over a Gorenstein ring
+     is the versal short exact sequence
+     $$0\to P \to M' \to M \to 0$$
+     where M' is a maximal Cohen-Macaulay module and P is a module of finite projective
+     dimension, as defined by Auslander and Buchweitz.
+    Example
+     S = ZZ/101[a,b]/ideal(a^3+b^3)
+     R = S/ideal(a*b)
+     M = R^1/(ideal vars R)^2
+     approximationSequence M
+   SeeAlso
+    coApproximationSequence
+///
+doc ///
+   Key
+    coApproximationSequence
+   Headline
+    Short exact sequence of the MCM coapproximation
+   Usage
+    E = coApproximationSequence M
+   Inputs
+    M:Module
+   Outputs
+    E:ChainComplex
+   Description
+    Text
+     The  coapproximation sequence of a module M over a Gorenstein ring
+     is the versal short exact sequence
+     $$0\to M \to P \to M' \to 0$$
+     where M' is a maximal Cohen-Macaulay module and P is a module of finite projective
+     dimension, as defined by Auslander and Buchweitz.
+    Example
+     S = ZZ/101[a,b]/ideal(a^3+b^3)
+     R = S/ideal(a*b)
+     M = R^1/(ideal vars R)^2
+     coApproximationSequence M
+   SeeAlso
+    approximationSequence
+///
+
+
+
 doc ///
    Key
     auslanderInvariant
@@ -684,22 +762,16 @@ doc ///
 ///
 
 -----TESTS
---the following crashes apparently because n is taken unnecessarily large. I reported the bug to mike and dan on April 3
---make into a TEST when fixed.
-///
-   restart
-   loadPackage("MCMApproximations", Reload=>true)
+TEST///
    setRandomSeed 0
    T = setupRings(3,3)
    R = T_3
-   M = coker matrix{{R_0,R_1,R_2},{R_1,R_2,R_0}}
    M = coker random(R^2, R^{3: -2});
    (MM,kk,p) = setupModules(T, M)
-   MM_1
    (a,b) = approximation MM_1 -- MM_1 is M as a module over the ring of codim 1
    M' = source a
-   res pushForward(p_1_0,M') -- an MCM module
-   F = source b -- free module
+   assert(length res pushForward(p_1_0,M') == 1) -- an MCM module
+   assert isFreeModule source b -- free module
 ///
 
 
@@ -805,7 +877,8 @@ assert(isSurjective(phi|psi)===true)
 assert( (prune ker (phi|psi)) === (R')^{{-5},{-5},{-5},{-6},{-6},{-6}} );
 ///
 
-///TEST
+TEST///
+needsPackage "CompleteIntersectionResolutions"
 S = ZZ/101[a,b,c]
 ff = matrix"a3, b3,c3" 
 len = 5
@@ -825,6 +898,15 @@ assert (betti L == betti res M);
 ))
 ///
 
+TEST///
+S = ZZ/101[a,b,c]/ideal(a^3)
+M = module(ideal(a,b,c))
+Ea = approximationSequence M
+Ec = coApproximationSequence M
+assert(isFreeModule prune Ea_3 ===true)
+assert(length res prune Ec_2 == 1)
+///
+
 end--
 restart
 loadPackage("MCMApproximations", Reload=>true)
@@ -835,5 +917,8 @@ installPackage"MCMApproximations"
 check "MCMApproximations"
 viewHelp MCMApproximations
 
-viewHelp approximation
+
+uninstallPackage "CompleteIntersectionResolutions"
 restart
+installPackage "CompleteIntersectionResolutions"
+check "CompleteIntersectionResolutions"

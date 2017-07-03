@@ -2,8 +2,7 @@
 
 #include "res-gausser-ZZp.hpp"
 #include <iostream>
-ResGausserZZp::ResGausserZZp(const Ring* K1)
-  : ResGausser(K1)
+ResGausserZZp::ResGausserZZp(const Ring* K1) : ResGausser(K1)
 {
   int p = static_cast<int>(get_ring()->characteristic());
   auto K2 = Z_mod::create(p);
@@ -13,7 +12,8 @@ ResGausserZZp::ResGausserZZp(const Ring* K1)
 //////////////////////////////////
 // CoefficientVector handling ////
 //////////////////////////////////
-long ResGausserZZp::to_modp_long(CoefficientVector& coeffs, size_t loc) const {
+long ResGausserZZp::to_modp_long(CoefficientVector& coeffs, size_t loc) const
+{
   auto& elems = coefficientVector(coeffs);
   return coeff_to_int(elems[loc]);
 }
@@ -35,45 +35,47 @@ void ResGausserZZp::pushBackMinusOne(CoefficientVector& coeffs) const
   elems.push_back(minus_one);
 }
 void ResGausserZZp::pushBackElement(CoefficientVector& coeffs,
-                                 const CoefficientVector& take_from_here,
-                                 size_t loc) const
+                                    const CoefficientVector& take_from_here,
+                                    size_t loc) const
 {
-  auto& elems = coefficientVector(coeffs); 
+  auto& elems = coefficientVector(coeffs);
   auto& elems_to_take = coefficientVector(take_from_here);
   elems.push_back(elems_to_take[loc]);
 }
-void ResGausserZZp::pushBackNegatedElement(CoefficientVector& coeffs,
-                                 const CoefficientVector& take_from_here,
-                                 size_t loc) const
+void ResGausserZZp::pushBackNegatedElement(
+    CoefficientVector& coeffs,
+    const CoefficientVector& take_from_here,
+    size_t loc) const
 {
-  auto& elems = coefficientVector(coeffs); 
+  auto& elems = coefficientVector(coeffs);
   auto& elems_to_take = coefficientVector(take_from_here);
- 
+
   FieldElement a = elems_to_take[loc];
-  negate(a,a);
+  negate(a, a);
   elems.push_back(a);
 }
 
-CoefficientVector ResGausserZZp::allocateCoefficientVector(ComponentIndex nelems) const
-  // create a row of 0's (over K).
+CoefficientVector ResGausserZZp::allocateCoefficientVector(
+    ComponentIndex nelems) const
+// create a row of 0's (over K).
 {
   auto result = new std::vector<int>(nelems);
-  for (ComponentIndex i=0; i<nelems; i++)
-    Kp->set_zero((*result)[i]);
+  for (ComponentIndex i = 0; i < nelems; i++) Kp->set_zero((*result)[i]);
   return coefficientVector(result);
 }
 CoefficientVector ResGausserZZp::allocateCoefficientVector() const
-  // create a row of 0's (over K).
+// create a row of 0's (over K).
 {
   return coefficientVector(new std::vector<int>);
 }
 
-void ResGausserZZp::clear(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
-  // set the elements in the range first..last to 0.
+void ResGausserZZp::clear(CoefficientVector r,
+                          ComponentIndex first,
+                          ComponentIndex last) const
+// set the elements in the range first..last to 0.
 {
   auto& elems = coefficientVector(r);
-  for (ComponentIndex i=first; i<=last; i++)
-    Kp->set_zero(elems[i]);
+  for (ComponentIndex i = first; i <= last; i++) Kp->set_zero(elems[i]);
 }
 
 void ResGausserZZp::deallocate(CoefficientVector r) const
@@ -82,41 +84,40 @@ void ResGausserZZp::deallocate(CoefficientVector r) const
   r.mValue = nullptr;
 }
 
-ComponentIndex ResGausserZZp::nextNonzero(CoefficientVector r, ComponentIndex first, ComponentIndex last) const
-  // returns last+1 in the case when there are no non-zero elements left.
+ComponentIndex ResGausserZZp::nextNonzero(CoefficientVector r,
+                                          ComponentIndex first,
+                                          ComponentIndex last) const
+// returns last+1 in the case when there are no non-zero elements left.
 {
   auto& vec = coefficientVector(r);
   auto elems = vec.data();
   elems += first;
-  for (ComponentIndex i=first; i<=last; i++)
-    if (!Kp->is_zero(*elems++))
-      return i;
-  return last+1;
+  for (ComponentIndex i = first; i <= last; i++)
+    if (!Kp->is_zero(*elems++)) return i;
+  return last + 1;
 }
 
 void ResGausserZZp::fillFromSparse(CoefficientVector r,
-                                ComponentIndex len,
-                                CoefficientVector sparse,
-                                ComponentIndex* comps) const
-  // Fills 'r' from 'sparse' (and 'comps')
+                                   ComponentIndex len,
+                                   CoefficientVector sparse,
+                                   ComponentIndex* comps) const
+// Fills 'r' from 'sparse' (and 'comps')
 {
   auto& vec = coefficientVector(r);
   auto elems = vec.data();
   auto& svec = coefficientVector(sparse);
   auto sparseelems = svec.data();
 
-  for (ComponentIndex i=0; i<len; i++)
-    elems[*comps++] = *sparseelems++;
+  for (ComponentIndex i = 0; i < len; i++) elems[*comps++] = *sparseelems++;
 }
 
 void ResGausserZZp::sparseCancel(CoefficientVector r,
-                              CoefficientVector sparse,
-                              ComponentIndex* comps,
-                              CoefficientVector result_loc
-                              ) const
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
-  // The value of c is appended to result_
+                                 CoefficientVector sparse,
+                                 ComponentIndex* comps,
+                                 CoefficientVector result_loc) const
+// dense += c * sparse, where c is chosen to cancel column comps[0].
+// ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+// The value of c is appended to result_
 {
   // r += a*sparse
   // ASSUMPTIONS:
@@ -139,28 +140,27 @@ void ResGausserZZp::sparseCancel(CoefficientVector r,
 
   int one;
   set_one(one);
-  
+
   // Basically, over ZZ/p, we are doing: r += a*sparse,
   // where sparse is monic, and a is -r.coeffs[*comps].
 
   n_dense_row_cancel++;
   n_subtract_multiple += len;
   FieldElement a = elems[*comps];
-  if (sparseelems[0] != one) // should be minus_one
+  if (sparseelems[0] != one)  // should be minus_one
     Kp->negate(a, a);
-  for (ComponentIndex i=len; i>0; i--)
+  for (ComponentIndex i = len; i > 0; i--)
     Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
-  Kp->negate(a,a);
+  Kp->negate(a, a);
   result.push_back(a);
 }
 
 void ResGausserZZp::sparseCancel(CoefficientVector r,
-                              CoefficientVector sparse,
-                              ComponentIndex* comps
-                              ) const
-  // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
-  // The value of c is appended to not recorded
+                                 CoefficientVector sparse,
+                                 ComponentIndex* comps) const
+// dense += c * sparse, where c is chosen to cancel column comps[0].
+// ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+// The value of c is appended to not recorded
 {
   // r += a*sparse
   // ASSUMPTIONS:
@@ -181,16 +181,16 @@ void ResGausserZZp::sparseCancel(CoefficientVector r,
 
   int one;
   set_one(one);
-  
+
   // Basically, over ZZ/p, we are doing: r += a*sparse,
   // where sparse is monic, and a is -r.coeffs[*comps].
 
   n_dense_row_cancel++;
   n_subtract_multiple += len;
   FieldElement a = elems[*comps];
-  if (sparseelems[0] != one) // should be minus_one
+  if (sparseelems[0] != one)  // should be minus_one
     Kp->negate(a, a);
-  for (ComponentIndex i=len; i>0; i--)
+  for (ComponentIndex i = len; i > 0; i--)
     Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
 }
 
@@ -200,7 +200,9 @@ std::ostream& ResGausserZZp::out(std::ostream& o, FieldElement& f) const
   return o;
 }
 
-std::ostream& ResGausserZZp::out(std::ostream& o, CoefficientVector r, int loc) const
+std::ostream& ResGausserZZp::out(std::ostream& o,
+                                 CoefficientVector r,
+                                 int loc) const
 {
   if (r.isNull())
     {
@@ -211,12 +213,12 @@ std::ostream& ResGausserZZp::out(std::ostream& o, CoefficientVector r, int loc) 
   out(o, elems[loc]);
   return o;
 }
-std::ostream& ResGausserZZp::debugDisplay(std::ostream& o, CoefficientVector r) const
+std::ostream& ResGausserZZp::debugDisplay(std::ostream& o,
+                                          CoefficientVector r) const
 {
-  if (r.isNull())
-    fprintf(stdout, "vector is null!");
+  if (r.isNull()) fprintf(stdout, "vector is null!");
   auto& elems = coefficientVector(r);
-  for (int j=0; j<elems.size(); ++j)
+  for (int j = 0; j < elems.size(); ++j)
     {
       out(o, r, j);
       o << " ";
@@ -226,15 +228,15 @@ std::ostream& ResGausserZZp::debugDisplay(std::ostream& o, CoefficientVector r) 
 }
 
 std::ostream& ResGausserZZp::debugDisplayRow(std::ostream& o,
-                                   int ncolumns,
-                                   const std::vector<int>& comps,
-                                   CoefficientVector coeffs) const
+                                             int ncolumns,
+                                             const std::vector<int>& comps,
+                                             CoefficientVector coeffs) const
 {
   auto& elems = coefficientVector(coeffs);
   auto monom = comps.begin();
   auto coeff = elems.begin();
   auto end = elems.end();
-  for (ComponentIndex c=0; c<ncolumns; c++)
+  for (ComponentIndex c = 0; c < ncolumns; c++)
     {
       if (coeff == end or *monom != c)
         o << " .";

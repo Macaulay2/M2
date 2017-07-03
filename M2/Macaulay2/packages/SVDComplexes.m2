@@ -1,36 +1,36 @@
 newPackage(
         "SVDComplexes",
-        Version => "0.1", 
-        Date => "",
-        Authors => {{Name => "Frank Schreyer", 
-                  Email => "", 
-                  HomePage => ""},
-              {Name => "Mike Stillman", 
-                  Email => "", 
-                  HomePage => ""}},
-        Headline => "SVD of a complex, includes nonminimal resolutions over the reals",
-        DebuggingMode => true
+        Version => "0.2", 
+        Date => "June 6, 2017",
+        Authors => {
+            {Name => "Frank Schreyer", 
+		        Email => "schreyer@math.uni-sb.de",
+		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+	        {Name => "Mike Stillman", 
+                Email => "mike@math.cornell.edu", 
+                HomePage => "http://www.math.cornell.edu/~mike"}
+            },
+        Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
+        DebuggingMode => false
         )
 
 export {
     -- These functions should be placed into M2 itself.
     "newChainComplexMap",
-    "spots",
     -- Keep the ones below this line
     "laplacians",
     "SVDComplex",
     "SVDHomology",
     "pseudoInverse",
-    "pseudoInverse1",
+    "pseudoInverse1",-- temporarily exported
     "projectToComplex",
     "euclideanDistance",
     "Projection",
     "Laplacian",
----    "Threshold",
     "numericRank",
     "commonEntries",
-    "uniquify",
-    "checkSVDComplex"
+    "checkSVDComplex",
+    "arePseudoInverses"
 }
 
 --------------------------------------------------
@@ -151,33 +151,6 @@ commonEntries(List,List) := opts -> (A,B) -> (
         ) do ();
     return(Ac,Bc)
     )
-
-uniquify = method()
-uniquify(List,List,RR) := (L1, L2, Threshold) -> (
-    -- L1, L2 are lists of floats, sorted in descending order
-    -- returns lists L1', L2' also sorted, with no common entries
-    M1 := {};
-    M2 := {};
-    i := 0;
-    j := 0;
-    while i < #L1 and j < #L2 do (
-        a := L1_i;
-        b := L2_j;
-        << "comparing " << (i,j) << " values: " << (a,b) << endl;
-        if abs(a-b)/(abs(a)+abs(b)) < Threshold then (
-            i = i+1;
-            j = j+1;
-            )
-        else (
-            if a > b then (M1 = append(M1, a); i = i+1)
-            else (M2 = append(M2,b); j = j+1)
-            )
-        );
-    return if i == #L1 then (M1,join(M2,L2_{j..#L2-1}))
-    else if j == #L2 then (join(M1,L1_{i..#L1-1}), M2)
-    else error "damn, our logic is messed up!"
-    )
-
 
 SVDComplex = method(Options => {
         Strategy => Projection, -- other choice: Laplacian,
@@ -653,7 +626,7 @@ checkSVDComplex = (C, Fhs) -> (
     )
 
 pseudoInverse=method(Options=> options SVDComplex)
-pseudoInverse ChainComplex := opts -> C -> (
+pseudoInverse ChainComplex := opts -> C -> ( -- old version, to be removed.
     if not ring C === RR_53 then pseudoInverse1 C else (
     U := last SVDComplex(C,Strategy=>opts.Strategy);
     SigmaComplex := source U;
@@ -669,19 +642,32 @@ pseudoInverse ChainComplex := opts -> C -> (
     Cplus
     ))
 
+pseudoInverse ChainComplex := opts -> C -> (
+    if not ring C === RR_53 then pseudoInverse1 C else (
+    U := last SVDComplex(C,Strategy=>opts.Strategy);
+    SigmaComplex := source U;
+    (loC,hiC) := concentration C;
+    At := for i from loC to hiC list (-i) => transpose SigmaComplex.dd_i;
+    CPlusMats := hashTable for i from loC+1 to hiC list (
+        A := transpose SigmaComplex.dd_i;
+        eA := entries A;
+        sigmaPlus := matrix for r in eA list for a in r list if a == 0 then 0 else 1/a;
+        (-i+1) => U_i * sigmaPlus * transpose U_(i-1)
+        );
+    chainComplex CPlusMats
+    ))
+
 pseudoInverse1=method()
     
-pseudoInverse1(ChainComplex) := C-> (
+pseudoInverse1 ChainComplex := C -> (
     if not isField ring C then error " expected a chain complex defined over a field";
-    a := min C;
-    b := max C;
-    Cplus := new ChainComplex;
-    for i from -b to -a do Cplus_i= C_(-i);
-    for i from -b+1 to -a do Cplus.dd_i = pseudoInverse1( C.dd_(-i+1));
-    Cplus
+    (lo,hi) := concentration C;
+    chainComplex hashTable for i from lo to hi list (-i+1) => pseudoInverse1 C.dd_i
     )
 
 pseudoInverse1(Matrix) := M -> (
+    -- BUG: this sometimes has P1 or P2 == 0, in which case Mplus, P, Q are all 0, and so the assertions fail.
+    -- note for FS: I'll track this down and fix it (MS)
     if not isField ring M then error " expected a matrix defined over a field";
     if M==0 then return transpose M;
     rk := rank M;
@@ -690,25 +676,115 @@ pseudoInverse1(Matrix) := M -> (
     -- now find an rxr non-zero minar 
     -- need to be improved    
     Lm:=subsets(0..m-1,rk);
-    Pm:=Lm_(position(Lm,c->rank M_c==rk));
-    A:= M_Pm;
+    Pm:=Lm_(position(Lm,c->rank M^c==rk));
+    A:= M^Pm;
     Ln:=subsets(0..n-1,rk);
-    Pn:=Ln_(position(Ln,c->rank A^c==rk));
-    B:= transpose M^Pn;
+    Pn:=Ln_(position(Ln,c->rank A_c==rk));
+    B:= (M_Pn);
     inj:=(id_(source M))_Pn;
-    P1:= ((transpose A)*A)^(-1)*transpose A;
-    P2:= B*((transpose B)*B)^(-1)*transpose B;
+    P1:= ((transpose B)*B)^(-1)*transpose B;
+    P2:= transpose A*(A *transpose A)^(-1)* A;
     Mplus:= P2*inj *P1;
     P:= M*Mplus;
     Q:= Mplus*M;
     assert(Mplus*P==Mplus);
     assert(M*Q==M);
     return Mplus)    
-    
+
+arePseudoInverses = method(Options=>{Threshold=>1e-10})
+arePseudoInverses(Matrix,Matrix) := opts -> (A,B) -> (
+    -- see https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse
+    if ring A =!= ring B then error "expected rings over the same field";
+    if not isField ring A and not instance(ring A, InexactField) then error "expected ring to be a field, e.g. ZZ/p, QQ,RR, or CC";
+    if not (isFreeModule source A and isFreeModule source B and isFreeModule target A and isFreeModule target B) then (
+        error "expected matrices between free modules";
+        );
+    if numRows A != numColumns B or numColumns A != numRows B then (
+        if debugLevel > 0 then << "expected matrices of sizes (m,n) and (n,m)" << endl;
+        return false;
+        );
+    diff1 := A*B*A-A;
+    diff2 := B*A*B-B;
+    diff3 := A*B - transpose (A*B);
+    diff4 := B*A - transpose (B*A);    
+    if instance(ring A, InexactField) then (
+        norm1 := norm diff1; -- this 'norm' is infinity norm: max (abs) value of the entries of diff1.
+        norm2 := norm diff2;
+        norm3 := norm diff3;
+        norm4 := norm diff4;
+        eps := opts.Threshold;
+        if norm1 > eps then (
+            if debugLevel > 0 then << "A*B*A != A, abs max value of an entry of difference is " << norm1 << endl;
+            return false;
+            );
+        if norm2 > eps then (
+            if debugLevel > 0 then << "B*A*B != B, abs max value of an entry of difference is " << norm2 << endl;
+            return false;
+            );
+        if norm3 > eps then (
+            if debugLevel > 0 then << "A*B != transpose(A*B), abs max value of an entry of difference is " << norm3 << endl;
+            return false;
+            );
+        if norm4 > eps then (
+            if debugLevel > 0 then << "A*B != transpose(A*B), abs max value of an entry of difference is " << norm4 << endl;
+            return false;
+            );
+        )
+    else (
+        if diff1 != 0 then (
+            if debugLevel > 0 then << "A*B*A != A, difference is " << diff1 << endl;
+            return false;
+            );
+        if diff2 != 0 then (
+            if debugLevel > 0 then << "B*A*B != B, difference is " << diff2 << endl;
+            return false;
+            );
+        if diff3 != 0 then (
+            if debugLevel > 0 then << "A*B != transpose(A*B), difference is " << diff3 << endl;
+            return false;
+            );
+        if diff4 != 0 then (
+            if debugLevel > 0 then << "A*B != transpose(A*B), difference is " << diff4 << endl;
+            return false;
+            );
+        );
+    true
+    )
+
+arePseudoInverses(ChainComplex, ChainComplex) := opts -> (A,B) -> (
+    (loA,hiA) := concentration A;
+    (loB,hiB) := concentration B;
+    if loA != -hiB or loB != -hiA then (
+        if debugLevel > 0 then << "expected chain complexes with dual indices" << endl;
+        return false;
+        );
+    for i from loA+1 to hiA do (
+        if not arePseudoInverses(A.dd_i, B.dd_(-i+1)) then return false; 
+        );
+    true
+    )
+
 TEST ///
 {*
   restart
   needsPackage "SVDComplexes"
+*}
+
+  needsPackage "RandomComplexes"
+  -- Simple boundary cases for psuedoInverse.
+  m = matrix id_(QQ^2)
+  C = chainComplex {m}
+  CRR = chainComplex {m ** RR_53}
+  C3 = C[-3]
+  iC = pseudoInverse C
+  iC3 = pseudoInverse C3
+  icRR = pseudoInverse CRR 
+///
+    
+TEST ///
+{*
+  restart
+  debug needsPackage "SVDComplexes"
 *}
 
   needsPackage "RandomComplexes"
@@ -722,6 +798,7 @@ TEST ///
   Ci1 = pseudoInverse (C[1])
   assert(clean(1e-10,Ci1.dd^2) == 0)
   CQ = CZ**QQ
+  CQi = pseudoInverse CQ
   M=CQ.dd_2 
   pseudoInverse1 M
   isField RR_53
@@ -732,7 +809,74 @@ TEST ///
 
   kk = ZZ/32003  
   CF = CZ ** kk
-  assert(CF.dd^2 == 0) -- doesn't always have to happen...  every now and then, this will be false
+  CFi = pseudoInverse CF
+  assert(CF.dd^2 == 0)
+  assert arePseudoInverses(CF, CFi)
+  
+  assert arePseudoInverses(C.dd_1, Ci.dd_0)
+  assert arePseudoInverses(C.dd_2, Ci.dd_(-1))
+  assert arePseudoInverses(C.dd_3, Ci.dd_(-2))
+  assert arePseudoInverses(C.dd_4, Ci.dd_(-3))
+  assert arePseudoInverses(C.dd_5, Ci.dd_(-4))
+
+  assert arePseudoInverses(CQ.dd_1, CQi.dd_0)
+  assert arePseudoInverses(CQ.dd_2, CQi.dd_(-1))  
+  assert arePseudoInverses(CQ.dd_3, CQi.dd_(-2))
+  assert arePseudoInverses(CQ.dd_4, CQi.dd_(-3))
+  assert arePseudoInverses(CQ.dd_5, CQi.dd_(-4))
+
+  assert arePseudoInverses(CQ, CQi)
+  assert arePseudoInverses(C, Ci)
+///
+
+TEST ///
+  -- pseudo inverses do not exist over finite fields sometimes:
+  kk = ZZ/5
+  M = matrix{{2,1},{1,-2}} ** kk
+  assert (try (pseudoInverse1 M; false) else true)
+  R = kk[a,b,c,d]
+  N = matrix{{a,b},{c,d}}
+  I = ideal(M*N*M - M) + ideal(N*M*N-N) + ideal(M*N - transpose(M*N))
+  assert(I == 1)
+
+  J = ideal(M*N*M - M) + ideal(N*M*N-N)
+  gens gb J
+  decompose J
+  -- Frank's turn
+  needsPackage "RandomComplexes"
+  C=randomChainComplex({2,3},{2},Height=>10,zeroMean=>true)
+  M=C.dd_1
+ 
+  
+  pseudoInverse1 (M**QQ)
+  factor 435112
+  kk=ZZ/137
+  pseudoInverse1 (M**kk)
+break
+  transpose A*A
+  det  ( transpose B*B)  
+  (try (pseudoInverse1 N; false) else true)
+
+ p=23;
+  kk=ZZ/p;
+  elapsedTime tally apply(10*p^2,c->(
+  C=randomChainComplex({3,3},{2},Height=>10,zeroMean=>true);
+  M=C.dd_1;
+  N=M**kk;
+  t=(try (pseudoInverse1 N; true) else false);   
+  a=rank source gens  intersect(ker N,image transpose N);
+  b=rank source gens  intersect(ker transpose N, image N);
+  if not t and a==0 and b==0 then print toString N;
+  (t,a,b))
+  )
+
+M=matrix {{5, 0, 7, 4, -8}, {0, 0, 0, 0, 0}, {8, 2, -8, -8, 1}, {5, -4, 8, -8, -5}}
+Mplus
+P^2==P
+M*Mplus*M,M
+Lm
+Ln
+Pm,Pn
 ///
 
 conjugateComplex=method(Options=>{Height=>10})
@@ -746,19 +890,13 @@ conjugateComplex ChainComplex := opts -> C -> (
 	U_(i-1)*C.dd_i*inverse U_i);
     (chainComplex C')[-minC])
     
--- TODO for free res stuff with Frank:
--- add QR
--- make sure code doesn't crash when doing minimalBetti over QQ...
--- allow choice of ZZ/p?
--- 
-
 beginDocumentation()
 
 doc ///
    Key
      SVDComplexes
    Headline
-     support for computing homology, ranks and SVD complexes, from a chain complex over the real numbers
+     support for computing homology, ranks and SVD complexes, for a chain complex over the real numbers
    Description
     Text
       Some functionality here should be moved elsewhere.
@@ -892,8 +1030,8 @@ doc ///
    Description
     Text
       We compute the singular value decomposition either by the iterated Projections or by the 
-      Laplacian method. In case the input consists of two chainComplexes we use the iterated  Projection method, and identify the stable
-      singular values.
+      Laplacian method. In case the input consists of two chainComplexes we use the iterated  
+      Projection method, and identify the stable singular values.
     Example
       needsPackage "RandomComplexes"
       h={1,3,5,2,1} 
@@ -917,11 +1055,344 @@ doc ///
     Text
       The optional argument 
    Caveat
-      The algorithm might fail if the conditions numbers of the differential are too bad
+      The algorithm might fail if the condition numbers of the differential are too bad
    SeeAlso
      
 ///
 
+doc ///
+   Key
+     SVDHomology
+     (SVDHomology,ChainComplex)
+     (SVDHomology,ChainComplex,ChainComplex)
+   Headline
+     Estimate the homlogy of a chainComplex over RR with the SVD decomposition
+   Usage
+     (h,h1)=SVDHomology C or
+     (h,h1)=SVDHomology(C,C')
+   Inputs
+     C:ChainComplex
+       over RR_{53}
+     C':ChainComplex
+       in a lower precision
+   Outputs
+     h:HashTable
+       the dimensions of the homology groups HH C
+     h1:HashTable
+       information about the singular values 
+   Description
+    Text
+      We compute the singular value decomposition either by the iterated Projections or by the 
+      Laplacian method.
+      In case of the projection method we record in h1 the last two nonzero singular values and first singular value expected to be really zero.
+      
+      In case of the Laplacian method we record in h1 the smallest common Eigenvalues
+      of the neighboring Laplacians, and the first Eigenvalue expected to be zero. 
+      
+      In case the input consists of two chainComplexes we use the iterated  Projection method, and identify the stable
+      singular values.
+    Example
+      needsPackage "RandomComplexes"
+      h={1,3,5,2} 
+      r={4,3,3}
+      elapsedTime C=randomChainComplex(h,r,Height=>5,zeroMean=>true)
+      C.dd^2
+      CR=(C**RR_53)
+      elapsedTime (h,h1)=SVDHomology CR
+      elapsedTime (hL,hL1)=SVDHomology(CR,Strategy=>Laplacian)
+      hL === h
+      (h1#1_1)^2, hL1#1_0, (h1#1_1)^2-hL1#1_0
+      (h1#2_1)^2, hL1#2_0, (h1#2_1)^2-hL1#2_0
+      (h1#3_1)^2, hL1#3_0, (h1#3_1)^2-hL1#3_0
+      -- the squares of the singular values are Eigenvalues of the Laplacians!
+      D=disturb(C,1e-3,Strategy=>Discrete)
+      C.dd_1
+      D.dd_1
+      (hd,hd1)=SVDHomology(CR,D,Threshold=>1e-2)
+      hd === h
+      hd1 === h1 
+   Caveat
+      The algorithm might fail if the condition numbers of the differential are too bad
+   SeeAlso
+      SVDComplex
+  
+///
+
+doc ///
+   Key
+     projectToComplex
+     (projectToComplex,ChainComplex,HashTable)
+   Headline
+     compute a nearby complex with the projection method
+   Usage
+     C = projectToComplex(D,h) or
+   Inputs
+     D:ChainComplex
+       an approximate complex over over RR_{53}
+     h:HashTable
+       the desired homology groups
+   Outputs
+     C:ChainComplex
+       a nearby chainComplex
+   Description
+    Text
+      Using the iterated projection method we compute a nearby chainComplex C with 
+      homology h.
+    Example
+      needsPackage "RandomComplexes"
+      setRandomSeed "a good example";
+      h={2,3,5,2} 
+      r={4,3,3}
+      elapsedTime C=randomChainComplex(h,r,Height=>5,zeroMean=>true)
+      C.dd^2
+      CR=(C**RR_53)
+      h=(SVDHomology CR)_0
+      D=disturb(C,1e-2,Strategy=>Discrete)
+      C.dd_1
+      D.dd_1
+      D.dd^2
+      C'=projectToComplex(D,h)
+      C'.dd^2
+      euclideanDistance(C',D)
+      euclideanDistance(CR,D)
+      euclideanDistance(C',CR)
+      Dd=dual D 
+      Dd[1]
+      hd=(SVDHomology((dual CR)[1]))_0
+      C''=(dual projectToComplex(Dd[1],hd))[1]
+      C''.dd_1,C'.dd_1
+      euclideanDistance(CR,D), euclideanDistance(C'',D), euclideanDistance(C',D)
+   Caveat
+      The algorithm does not produces the closest 
+      nearby complex in the euclidean norm. Instead it is a reminder to developpe
+      such function. 
+   SeeAlso
+      SVDComplex
+///
+
+
+doc ///
+   Key
+     arePseudoInverses
+     (arePseudoInverses,Matrix,Matrix)
+     (arePseudoInverses,ChainComplex,ChainComplex)
+   Headline
+     check the Penrose relations for the pseudo inverse  
+   Usage
+     arePseudoInverses(A,B)
+     arePseudoInverses(C,Cplus)      
+   Inputs
+     A:Matrix
+     B:Matrix
+       or  
+     C:ChainComplex
+     Cplus:ChainComplex
+   Outputs
+      :Boolean
+   Description
+    Text
+      The functions returns true, if the Penrose relations 
+      A*B*A == A, B*A*B == B, A*B==transpose(A*B) and B*A=transpose(B*A)) are satisfied.
+      In case of an inexact field the relation should hold up to a threshold.
+      In case of two chain complexes, these relation should hold for each pair of pseudo inverse differentials.
+    Example
+      needsPackage "RandomComplexes"
+      setRandomSeed "a pretty good example";
+      h={2,2} 
+      r={3}
+      C=randomChainComplex(h,r,Height=>100,zeroMean=>true)
+      C.dd
+      CQ=C**QQ
+      CR=C**RR
+      CRplus = pseudoInverse CR
+      arePseudoInverses(CR,CRplus,Threshold=>1e-10)
+      arePseudoInverses(CR,CRplus,Threshold=>1e-1000)
+      CQplus = pseudoInverse CQ
+      CRplus.dd
+      CQplus.dd
+      (CQplus**RR_53).dd
+      arePseudoInverses(CQ,CQplus)
+      Fp=ZZ/nextPrime 10^3
+      Cp=C**Fp
+      Cpplus=pseudoInverse Cp
+      Cpplus.dd
+      arePseudoInverses(CQ,CQplus)
+      arePseudoInverses(Cp,Cpplus)
+   Caveat
+      Over finite fields our algorithm to compute the pseudo inverse might fail.
+      Hence we need this test to check the assertion.  
+   SeeAlso
+      pseudoInverse
+///
+
+doc ///
+   Key
+     pseudoInverse
+     --(pseudoInverse,Matrix)
+     (pseudoInverse,ChainComplex)
+   Headline
+     compute the pseudoInverse of a chainComplex 
+   Usage
+     Cplus = pseudoInverse C 
+   Inputs
+     C:ChainComplex
+       an approximate complex over an field 
+   
+   Outputs
+     Cplus:ChainComplex
+       the pseudo inverse complex
+   Description
+    Text
+      In case the field is RR we use the SVD normal form to compute the pseudo inverse.
+      In case of QQ we compute the pseudo inverse directly over QQ.
+    Example
+      needsPackage "RandomComplexes"
+      setRandomSeed "a pretty good example";
+      h={2,3,1} 
+      r={2,3}
+      C=randomChainComplex(h,r,Height=>11,zeroMean=>true)
+      C.dd
+      CQ=C**QQ
+      CR=C**RR_53
+      CRplus = pseudoInverse CR
+      CQplus = pseudoInverse CQ
+      CRplus.dd
+      CQplus.dd
+      (CQplus**RR_53).dd
+      CRplus.dd^2
+      CQplus.dd^2
+      Fp=ZZ/nextPrime 10^3
+      Cp=C**Fp
+      Cpplus=pseudoInverse Cp
+      Cpplus.dd
+      arePseudoInverses(CR,CRplus)
+      arePseudoInverses(CQ,CQplus)
+      arePseudoInverses(Cp,Cpplus)
+   Caveat
+      Over finite fields the algorithm can fail if toDo  what happens. 
+   SeeAlso
+      SVDComplex
+///
+
+doc ///
+   Key
+     euclideanDistance     
+     (euclideanDistance,ChainComplex,ChainComplex)
+   Headline
+     compute the euclidean distance of two chain complexes
+   Usage
+     euclideanDistance(C,D) 
+   Inputs
+     C:ChainComplex
+     D:ChainComplex 
+       two chain complexes over RR or QQ   
+   Outputs
+      :RR
+   Description
+    Text
+      Compute the distance in the L^2-norm of two complexes viewed as a
+      sequence of matrices
+    Example
+      needsPackage "RandomComplexes"
+      setRandomSeed "a good example";
+      h={2,3,5,2} 
+      r={4,3,3}
+      elapsedTime C=randomChainComplex(h,r,Height=>5,zeroMean=>true)
+      C.dd^2
+      CR=(C**RR_53)
+      h=(SVDHomology CR)_0
+      D=disturb(C,1e-2,Strategy=>Discrete)
+      C.dd_1
+      D.dd_1
+      D.dd^2
+      C'=projectToComplex(D,h)
+      C'.dd^2
+      euclideanDistance(C',D)
+      euclideanDistance(CR,D)
+      euclideanDistance(C',CR)
+   Caveat
+      
+   SeeAlso
+      projectToComplex
+///
+
+doc ///
+   Key
+     commonEntries     
+     (commonEntries,List,List)
+   Headline
+     lists of position, where the coincide up to threshold
+   Usage
+     (P1,P2)=commonEntries(L1,L2)
+   Inputs
+     L1:List
+     L2:List 
+       descending list of non-negative real numbers  
+   Outputs
+      P1:List
+      P2:List
+   Description
+    Text
+      Determine the positions, where of the non-zero numbers in both lists which coincide up to a threshold.
+      This is needed in the Laplacian method to compute the SVD normal form of a complex
+    Example
+      needsPackage "RandomComplexes"
+      setRandomSeed "a good example";
+      h={2,3,5,3} 
+      r={4,3,5}
+      elapsedTime C=randomChainComplex(h,r,Height=>100,zeroMean=>true)
+      C.dd^2
+      D=disturb(C**RR_53,1e-4)
+      Delta=laplacians D;
+      L0=(SVD Delta#0)_0, L1=(SVD Delta#1)_0,L2=(SVD Delta#2)_0,L3=(SVD Delta#3)_0
+      commonEntries(L0,L1)
+      commonEntries(L1,L2)
+      commonEntries(L2,L3)
+   Caveat
+      
+   SeeAlso
+      laplacians
+      SVDComplex
+///
+
+doc ///
+   Key
+     laplacians     
+     (laplacians,ChainComplex)
+   Headline
+     Compute the laplacians of a chain complex
+   Usage
+     delta=laplacians C
+   Inputs
+     C:ChainComplex
+       defined over RR  
+   Outputs
+      delta:HashTable
+        of the laplacians
+   Description
+    Text
+      For a chain complex over RR defined by matrices A_i=C.dd_i
+      the i-th laplacian is defined by
+      delta#i = transpose(A_i)*A_i+A_{i+1}*transpose A_{i+1}.
+    Example
+      needsPackage "RandomComplexes"
+      setRandomSeed "a good example";
+      h={2,3,5,3} 
+      r={4,3,5}
+      C=randomChainComplex(h,r,Height=>100,zeroMean=>true)
+      C.dd^2
+      D=disturb(C**RR_53,1e-4)
+      delta=laplacians D
+      L0=(SVD delta#0)_0, L1=(SVD delta#1)_0,L2=(SVD delta#2)_0,L3=(SVD delta#3)_0
+      commonEntries(L0,L1)
+      commonEntries(L1,L2)
+      commonEntries(L2,L3)
+   Caveat
+      
+   SeeAlso
+      commonEntries
+      SVDComplex
+///
 
 end--
 
@@ -931,6 +1402,7 @@ restart
 installPackage "SVDComplexes"
 viewHelp "SVDComplexes"
 restart
+loadPackage "SVDComplexes"
 check("SVDComplexes", UserMode=>true)
 restart
 needsPackage "SVDComplexes"
@@ -966,4 +1438,37 @@ SeeAlso
 TEST ///
 -- test code and assertions here
 -- may have as many TEST sections as needed
+///
+
+TEST ///
+      needsPackage "RandomComplexes"
+      setRandomSeed "a pretty good example";
+      h={2,3,1} 
+      r={2,3}
+      C=randomChainComplex(h,r,Height=>11,zeroMean=>true)
+      C.dd
+      CQ=C**QQ
+      CR=C**RR_53
+      CRplus = pseudoInverse CR
+      CQplus = pseudoInverse CQ
+      CRplus.dd
+      CQplus.dd
+      CRplus.dd^2
+      CQplus.dd^2
+      Fp=ZZ/nextPrime 10^3
+      Cp=C**Fp
+      Cpplus=pseudoInverse Cp
+      Cpplus.dd
+      arePseudoInverses(CR,CRplus)
+      arePseudoInverses(CQ,CQplus)
+      arePseudoInverses(Cp,Cpplus)
+      Fp=ZZ/nextPrime 20
+      Cp=C**Fp
+      Cpplus=pseudoInverse Cp
+      M=Cp.dd_2
+      Mplus=pseudoInverse1 M
+      kerPerp=image syz transpose gens ker M
+      intersect(ker M,kerPerp) 
+      imPerp= image syz transpose M
+      intersect(image M,imPerp) 
 ///

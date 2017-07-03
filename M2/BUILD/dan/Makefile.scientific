@@ -1,13 +1,21 @@
 # -*- makefile-gmake -*-
 DIRECTORY = sl64.production
+
+# _CC  := gcc-7.1.0
+# _CXX := g++-7.1.0
+# _FC  := gfortran-7.1.0
+
 ifeq ($(DEBUG),yes)
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
    DIRECTORY := debug
 else
-   CONFIGOPTIONS += --enable-rpm --enable-strip
+   CONFIGOPTIONS += --enable-strip CXXFLAGS="-Wno-error=pragmas -Wno-pragmas"
+ifeq ($(RPM),yes)
+   CONFIGOPTIONS += --enable-rpm
+endif
 endif
 include Makefile.include
 default: check
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific "
+# compile-command: "time make -f Makefile.scientific RPM=yes "
 # End:

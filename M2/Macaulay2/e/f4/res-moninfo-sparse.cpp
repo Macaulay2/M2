@@ -11,9 +11,9 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
                                  const MonomialOrderingType moType)
 {
   mNumVars = nvars;
-  hashfcn = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[mNumVars]);
-  for (int i=0; i<mNumVars; i++)
-    hashfcn[i] = rand();
+  hashfcn =
+      std::unique_ptr<res_monomial_word[]>(new res_monomial_word[mNumVars]);
+  for (int i = 0; i < mNumVars; i++) hashfcn[i] = rand();
   mask = 0x10000000;
   mVarDegrees = var_degrees;
 
@@ -34,19 +34,17 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
   ncalls_quotient_as_vp = 0;
 
   mNumWeights = 0;
-  if (moType == MonomialOrderingType::Lex) // moIsLex(mo)
+  if (moType == MonomialOrderingType::Lex)  // moIsLex(mo)
     {
       //      mCompareFcn = &ResMonoidSparse::compare_lex;
 
-      if (M2_gbTrace >= 1)
-        fprintf(stderr, "lex order\n");
+      if (M2_gbTrace >= 1) fprintf(stderr, "lex order\n");
     }
-  else if (moType == MonomialOrderingType::GRevLex) // moIsGRevLex(mo)
+  else if (moType == MonomialOrderingType::GRevLex)  // moIsGRevLex(mo)
     {
       //      mCompareFcn = &ResMonoidSparse::compare_grevlex;
 
-      if (M2_gbTrace >= 1)
-        fprintf(stderr, "grevlex order\n");
+      if (M2_gbTrace >= 1) fprintf(stderr, "grevlex order\n");
     }
   else
     {
@@ -54,8 +52,7 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
       mNumWeights = static_cast<int>(mWeightVectors.size()) / nvars;
       //      mCompareFcn = &ResMonoidSparse::compare_weightvector;
 
-      if (M2_gbTrace >= 1)
-        fprintf(stderr, "weight order\n");
+      if (M2_gbTrace >= 1) fprintf(stderr, "weight order\n");
     }
 
   nslots = 3 + nvars + mNumWeights;
@@ -63,19 +60,15 @@ ResMonoidSparse::ResMonoidSparse(int nvars,
   mFirstWeight = 3;
 }
 
-ResMonoidSparse::~ResMonoidSparse()
-{
-}
-
+ResMonoidSparse::~ResMonoidSparse() {}
 void ResMonoidSparse::show() const
 {
   fprintf(stderr, "monomial info\n");
-  fprintf(stderr, "  nvars  = %d",mNumVars);
-  fprintf(stderr, "  nslots = %d",nslots);
-  fprintf(stderr, "  mask   = %d",mask);
+  fprintf(stderr, "  nvars  = %d", mNumVars);
+  fprintf(stderr, "  nslots = %d", nslots);
+  fprintf(stderr, "  mask   = %d", mask);
   fprintf(stderr, "  hash values for each variable\n");
-  for (int i=0; i<mNumVars; i++)
-    fprintf(stderr, "    %d\n",hashfcn[i]);
+  for (int i = 0; i < mNumVars; i++) fprintf(stderr, "    %d\n", hashfcn[i]);
   fprintf(stderr, "  #calls hashval = %lu\n", ncalls_hash_value);
   fprintf(stderr, "  #calls compare = %lu\n", ncalls_compare);
   fprintf(stderr, "  #calls grevlex = %lu\n", ncalls_compare_grevlex);
@@ -96,7 +89,7 @@ void ResMonoidSparse::show() const
 void ResMonoidSparse::show(res_const_packed_monomial m) const
 {
   fprintf(stderr, "[");
-  for (int v=1; v<monomial_size(m); v++)
+  for (int v = 1; v < monomial_size(m); v++)
     {
       if (v > 1) fprintf(stderr, " ");
       fprintf(stderr, "%d", m[v]);
@@ -108,7 +101,7 @@ void ResMonoidSparse::showAlpha(res_const_packed_monomial m) const
 {
   component_index comp = get_component(m);
   const int* end = m + *m;
-  for (const int* v = m+mFirstVar; v != end; ++v)
+  for (const int* v = m + mFirstVar; v != end; ++v)
     {
       fprintf(stdout, "%c", 'a' + *v);
     }
@@ -125,7 +118,6 @@ void ResMonoidSparse::dump(std::ostream& o, res_const_packed_monomial mon)
     }
   o << "]";
 }
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
