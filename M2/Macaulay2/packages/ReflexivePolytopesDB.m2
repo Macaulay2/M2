@@ -1,5 +1,5 @@
 newPackage(
-        "KreuzerSkarke",
+        "ReflexivePolytopesDB",
         Version => "0.1", 
         Date => "25 June 2017",
         Authors => {{
@@ -7,7 +7,7 @@ newPackage(
                 Email => "mike@math.cornell.edu", 
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
-        Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes",
+        Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
         AuxiliaryFiles => true,
         DebuggingMode => true
         )
@@ -122,7 +122,7 @@ parseKSDim3 String := (str) -> (
         )
     )
 
-generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"KreuzerSkarke/"})
+generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"ReflexivePolytopesDB/"})
 generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
     contents := getKreuzerSkarke(h11, h12, Limit=>opts.Limit);
     L := parseKS contents;
@@ -224,9 +224,9 @@ beginDocumentation()
 
 doc ///
 Key
-  KreuzerSkarke
+  ReflexivePolytopesDB
 Headline
-  simple access to Kreuzer-Skarke database of reflexive polytopes
+  simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4
 Description
   Text
     This package provides access to the Kreuzer-Skarke database of
@@ -326,6 +326,42 @@ Description
      "
     matrixFromString str
 ///
+
+-- The following should be deleted and/or moved into the documentation node.
+///
+   Key
+     getKreuzerSkarke
+     (getKreuzerSkarke, ZZ)
+     (getKreuzerSkarke, ZZ, ZZ)
+   Headline
+     find reflexive polytopes corresponding to a Calabi-Yau with given Hodge numbers
+   Usage
+     getKreuzerSkarke(h11, h21, Limit=>500)
+     getKreuzerSkarke(h11, Limit=>500)
+   Inputs
+     h11:ZZ
+       The desired picard number of the Calabi-Yau hypersurface
+     h21:ZZ
+       The desired $h^{2,1}(X)$.  If not given, then all are considered.
+   Outputs
+     str:String
+       The output from the web page.  Use @TO "parseKS"@ to make this into
+       something usable from Macaulay2.
+   Description
+    Text
+      As a an example, let's take the 4th example with $h^{11}=3$, $h^{21}=53$.
+    Example
+      str = getKreuzerSkarke(5, 53, Limit=>4)
+      polytopes = parseKS str;
+      #polytopes
+      A = matrixFromString (polytopes_3)_1
+      P = convexHull A
+      P2 = polar P
+   SeeAlso
+     matrixFromString
+     getKreuzerSkarkeDim3
+///
+
 
 doc ///
 Key
@@ -494,7 +530,7 @@ TEST ///
 {*
   restart
 *}
-  needsPackage "KreuzerSkarke"
+  needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
       {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
@@ -539,7 +575,7 @@ TEST ///
 {*
   restart
 *}
-  needsPackage "KreuzerSkarke"
+  needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
       {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
@@ -565,7 +601,7 @@ TEST ///
 {*
   restart
 *}
-  needsPackage "KreuzerSkarke"
+  needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
       {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
@@ -599,7 +635,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "KreuzerSkarke"
+  debug needsPackage "ReflexivePolytopesDB"
   -- testing retrieval and parsing for the 4D polytope case, using 
   str = getKreuzerSkarke(3, Limit=>10);
   str1 = getKreuzerSkarke(3, Limit=>10, Access=>"curl");
@@ -612,17 +648,17 @@ TEST ///
 end--
 
 restart
-uninstallPackage "KreuzerSkarke"
+uninstallPackage "ReflexivePolytopesDB"
 restart
-needsPackage "KreuzerSkarke"
-installPackage "KreuzerSkarke"
+needsPackage "ReflexivePolytopesDB"
+installPackage "ReflexivePolytopesDB"
 viewHelp
 
 restart
-check "KreuzerSkarke"
+check "ReflexivePolytopesDB"
 
 restart
-debug needsPackage "KreuzerSkarke"
+debug needsPackage "ReflexivePolytopesDB"
 generateOfflineFiles()
 
 
