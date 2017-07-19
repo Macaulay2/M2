@@ -18,7 +18,7 @@
 -- waiting to be included in the documentation -- more fixes to come
 ---------------------------------------------------------------------------
 newPackage(
-	"ReesAlgebraZC",
+	"ReesAlgebra",
     	Version => "1.1", 
     	Date => "October 30, 2009",
     	Authors => {{
@@ -31,7 +31,8 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
-    	DebuggingMode => false
+    	DebuggingMode => false,
+	Reload => true
     	)
 
 export{
