@@ -1120,50 +1120,52 @@ doc ///
     monomialCurveIdeal
 ///
 
-
 doc ///
   Key
     isReduction
     (isReduction, Ideal, Ideal)
     (isReduction, Ideal, Ideal, RingElement)
-
   Headline
      is a reduction
   Usage
-     isReduction(I,J)
-     isLinearType(I,J,f)
+     t=isReduction(I,J)
+     t=isReduction(I,J,f)
   Inputs
-     I,J:Ideal
+     I:Ideal
+     J:Ideal
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       an optional element, which is a non-zerodivisor modulo {\tt J} 
+       which is a member of {\tt I}.
   Outputs
-     :Boolean
+     t:Boolean
        true if {\tt J} is a reduction of {\tt I}, false otherwise
   Description
    Text
-     For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
-     of $I$ if there exists a nonnegative integer {\tt n} such that 
-     $JI^{n}=I^{n+1}$.
+    For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
+    of $I$ if there exists a nonnegative integer {\tt n} such that 
+    $JI^{n}=I^{n+1}$.
 
-     This function returns true if $J$ is a reduction of $I$ and returns false
-     if $J$ is not a subideal of $I$ or $J$ is a subideal but not a reduction of $I$.  
+    This function returns true if $J$ is a reduction of $I$ and returns false
+    if $J$ is not a subideal of $I$ or $J$ is a subideal but not a reduction of $I$.  
    Example
-      S = QQ[x,y]
-      I = ideal(x^3,x*y,y^4)
-      J = ideal(x*y, x^3+y^4)
-      isReduction(I,J)
-      isReduction(J,I)
-      isReduction(I,I)
-      g = x+y
-      isReduction(I,J,g)
-      isReduction(J,I,g)
-      isReduction(I,I,g)
+    S = ZZ/5[x,y]
+    I = ideal(x^3,x*y,y^4)
+    J = ideal(x*y, x^3+y^4)
+    isReduction(I,J)
+    isReduction(J,I)
+    isReduction(I,I)
+    g = I_0
+    isReduction(I,J,g)
+    isReduction(J,I,g)
+    isReduction(I,I,g)
 
   SeeAlso
     minimalReduction
     reductionNumber
 ///
-
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
 
 doc ///
   Key
