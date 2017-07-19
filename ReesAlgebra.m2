@@ -31,7 +31,7 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
-    	DebuggingMode => false
+    	DebuggingMode => false,
     	)
 
 export{
@@ -1304,7 +1304,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor such that $M[t^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
+       an optional element, which is a non-zerodivisor in $R$. When $M$ is a module, we require $M[t^{-1}]$ to be a free module. When $M$ is an ideal, we require $f$ in $M$
   Outputs
      :Ideal
   Description
