@@ -11,11 +11,15 @@ newPackage(
 	
 needsPackage"SimpleDoc"
 
-export {"firstFunction"}
+export {"firstFunction","secondFunction"}
 
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> if n == 1 then "Hello World!" else "D’oh!"
 
+secondFunction = method()
+secondFunction Ring := ZZ => R-> dim R
+
+end
 
 beginDocumentation()
 doc ///
@@ -53,4 +57,7 @@ TEST ///
     assert ( firstFunction 2 == "D’oh!" )
 ///
 
-end
+end--
+
+restart
+needsPackage"ZhangchiFirstPackage"
