@@ -37,23 +37,23 @@ frobenius MutableList := ZZ => (generators) -> (
 	  F#aj = a;
    );
    a2 := a1 - 1;
-   lenF = #F;
+   lenF := #F;
    print lenF;
    for k from 1 to a2 do (
       if k >= lenF then F#k = 0;
       if instance(F#k, Nothing) then F#k = 0;
    );
    
-   m = n;
-   j = 2;
+   m := n;
+   j := 2;
    while j <= m do (
-      i = E#j;
+      i := E#j;
 		if instance(C#i, ZZ) then (
 			if C#i == j then (
-				k = 2;
+				k := 2;
 				while k <= D#i do (
-					 val = F#i + generators#(k-1);
-					 val1 = val - val // a1 * a1;
+					 val := F#i + generators#(k-1);
+					 val1 := val - val // a1 * a1;
 					 if not(val1 == 0) and (F#val1 <= 0 or F#val1 > val) then (
 						m = m + 1;
 						D#val1 = k;
@@ -67,7 +67,7 @@ frobenius MutableList := ZZ => (generators) -> (
         );
 	   j = j + 1;
    );
-   result = -1;
+   result := -1;
    for x in F do (
       if instance(x, ZZ) then (
          if x > result then result = x;
