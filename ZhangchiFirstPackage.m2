@@ -50,8 +50,27 @@ doc ///
      Text
        Here we show an example.
      Example
-       firstFunction 1
-       firstFunction 0
+       firstFunction 1 == "Hello Wold!"
+       firstFunction 0 == "D'oh!"
+///
+doc ///
+    Key
+        (secondFunction,Ring)
+    Headline
+        a not so silly second function
+    Usage
+        f = secondFunction R
+    Inputs
+	R:Ring
+    Outputs
+        f:ZZ
+          an interger, the dim of the Ring R
+    Description
+     Text
+       Here we show an example.
+     Example
+       secondFunction ZZ == 1
+       secondFunction ZZ[X] == 2
 ///
 TEST ///
     assert ( firstFunction 2 == "D’oh!" )
@@ -61,3 +80,7 @@ end--
 
 restart
 needsPackage"ZhangchiFirstPackage"
+help ZhangchiFirstPackage
+help "firstFunction(ZZ)"
+help firstFunction
+help "firstFunction(ZZ)"
