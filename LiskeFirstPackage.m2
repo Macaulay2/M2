@@ -1,25 +1,26 @@
 newPackage(
-        "FirstPackage",
+        "LiskeFirstPackage",
         Version => "1.0",
         Date => "February 11, 2004",
-        Authors => {{Name => "Jane Doe",
-                  Email => "doe@math.uiuc.edu",
-                  HomePage => "http://www.math.uiuc.edu/~doe/"}},
+        Authors => {{Name => "Whitney Liske",
+                  Email => "liske.2@nd.edu",
+                  HomePage => "http://www.nd.edu/~wradil"}},
         Headline => "an example Macaulay2 package",
         DebuggingMode => true
         )
 	
 needsPackage"SimpleDoc"
 
-export {firstFunction}
+export {"firstFunction"}
 
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> if n == 1 then "Hello World!" else "D’oh!"
 
+
 beginDocumentation()
 doc ///
     Key
-        FirstPackage
+        LiskeFirstPackage
     Headline
         an example Macaulay2 package
     Description
@@ -47,8 +48,6 @@ doc ///
      Example
        firstFunction 1
        firstFunction 0
-firstFunction
-2
 ///
 TEST ///
     assert ( firstFunction 2 == "D’oh!" )
