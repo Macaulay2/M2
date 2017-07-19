@@ -32,6 +32,7 @@ newPackage(
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
     	DebuggingMode => false,
+	Reload => true
     	)
 
 export{
@@ -1116,51 +1117,6 @@ doc ///
     monomialCurveIdeal
 ///
 
-
-doc ///
-  Key
-    isReduction
-    (isReduction, Ideal, Ideal)
-    (isReduction, Ideal, Ideal, RingElement
-
-  Headline
-     is a reduction
-  Usage
-     isReduction(I,J)
-     isLinearType(I,J,f)
-  Inputs
-     I,J:Ideal
-     f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
-  Outputs
-     :Boolean
-       true if {\tt M} is of linear type, false otherwise
-  Description
-   Text
-     For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
-     of $I$ if there exists a nonnegative integer {\tt n} such that 
-     $JI^{n}=I^{n+1}$.
-
-
-     This routine computes the @TO reesIdeal@ of {\tt M}.  Giving the element {\tt
-     f} computes the @TO reesIdeal@ in a different manner, which is sometimes
-     faster, sometimes slower.  
-   Example
-      S = QQ[x_0..x_4]
-      i = monomialCurveIdeal(S,{2,3,5,6})
-      isLinearType i
-      isLinearType(i, i_0)
-      I = reesIdeal i
-      select(I_*, f -> first degree f > 1)
-   Example
-      S = ZZ/101[x,y,z]
-      for p from 1 to 5 do print isLinearType (ideal vars S)^p
-  SeeAlso
-    reesIdeal
-    monomialCurveIdeal
-///
-
-
 doc ///
   Key
     normalCone
@@ -1349,7 +1305,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor in $R$. When $M$ is a module, we require $M[t^{-1}]$ to be a free module. When $M$ is an ideal, we require $f$ in $M$
+       an optional element, which is a non-zerodivisor such that $M[t^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ideal
   Description
@@ -1984,3 +1940,6 @@ I=specialFiberIdeal i
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
+
+restart
+needsPackage "ReesAlgebraZC"
