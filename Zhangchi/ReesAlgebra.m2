@@ -1305,7 +1305,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor such that $M[t^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
+       an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ideal
   Description
@@ -1318,10 +1318,14 @@ doc ///
      Mathematical Society Lecture Note Series, 336. Cambridge University Press,
      Cambridge, 2006, by Craig Huneke and Irena Swanson.
    Example
-     R=QQ[a,b,c,d,e,f]
-     M=matrix{{a,c,e},{b,d,f}}
-     analyticSpread image M
-     specialFiberIdeal image M
+     R=QQ[a,b,c,d,e,f,g,h]
+     M=matrix{{a,b,c,d},{e,f,g,h}}
+     analyticSpread minors(2,M)
+     specialFiberIdeal minors(2,M)
+     R=QQ[a,b,c,d]
+     M=matrix{{a,b,c,d},{b,c,d,a}}
+     analyticSpread minors(2,M)
+     specialFiberIdeal minors(2,M)
   SeeAlso
      specialFiberIdeal
      reesIdeal
@@ -1524,7 +1528,7 @@ doc ///
     minimalReduction
     whichGm
 ///
-
+b
 doc ///
   Key
     whichGm
