@@ -1832,7 +1832,14 @@ i=minors(2,M)
 j=i+ideal(a,b,c,d)
 assert(sfi==j)
 ///
-
+TEST///
+--For isLinearType
+S = ZZ/101[x,y]
+M = module ideal(x,y)
+E = {true, false, false, false, false}
+assert({true, false, false, false, false} == 
+    for p from 1 to 5 list(isLinearType (ideal vars S)^p))
+///
 end
 
 restart
