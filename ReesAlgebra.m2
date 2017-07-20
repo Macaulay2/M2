@@ -1,3 +1,4 @@
+
 --------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -31,7 +32,8 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
-    	DebuggingMode => false
+    	DebuggingMode => false,
+	Reload => true
     	)
 
 export{
@@ -52,7 +54,8 @@ export{
   "symmetricKernel", 
   "universalEmbedding",
   "whichGm",
-  "Tries"
+  "Tries",
+  "jacobianDual"
   }
 
 -- Comment : The definition of Rees algebra used in this package is 
@@ -144,7 +147,8 @@ reesIdeal(Ideal) := Ideal => o-> (J) -> (
      symmetricKernel(gens J, Variable => fixupw o.Variable)
      )
 
----- needs user-provided non-zerodivisor. 
+---- needs user-provided non-zerodivisor f
+---- in the ideal, or such that the module becomes free on inverting f
 
 reesIdeal (Module, RingElement) := Ideal =>
 reesIdeal (Module, RingElement) := Ideal => o -> (M,a) -> (
@@ -611,7 +615,78 @@ whichGm Ideal := i -> (
  
 ------------------------------------------------------------------
  
- 
+jacobianDual = method()
+jacobianDual Matrix := phi ->(
+    t := numrows phi;
+    T := symbol T;
+    S := ring phi;
+    ST := S[T_0..T_(t-1)];
+    X := vars ring phi;
+    Ts :=  vars ST;
+    jacobianDual(phi,X,Ts)
+    )
+{*
+    X' := promote(X, ST);
+    phi' := promote(phi, ST);
+    symmAlg := vars ST*phi';
+    psi := symmAlg//X';
+    assert(symmAlg == X'*psi);
+    psi)
+*}    
+jacobianDual(Matrix,Matrix, Matrix) := (phi,X,T) -> (
+    --If phi is an m x n matrix over R, then T = matrix{{T_1..T_m}}
+    -- should be a 1 x m over variables over R[T_1..T_m].
+    --ideal X \subset R should contain the entries of the matrix phi.
+    --the routine returns a matrix psi over ring T such that 
+    --T phi = X psi.
+    --Thus psi is a Jacobian dual of phi.
+    ST := ring T;
+    pro := map(ST,ring phi);--,gens ring phi|toList(numcols T:0_ST));
+    if numcols T != numrows phi then error"if phi has m rows then T must have m cols.";
+    XST := X;
+    if ring XST =!= ST then XST = pro X;
+    phiS := phi;
+    if ring phi =!= ST then phiST := pro phi;
+    psi := (T * phiST)//XST;
+    --check that this worked:
+    assert(T*phiST == XST*psi);
+    psi
+    )
+///
+
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+viewHelp reesAlgebra
+
+kk = ZZ/101
+d = 3
+S = kk[x_0..x_(d-1)]
+mlin = transpose vars S
+mquad = random(S^d, S^{-1,-4,d-2:-2})
+Irand = minors(d,mlin|mquad)
+X = vars S
+phi = syz gens Irand;
+psi = jacobianDual phi
+
+
+--ST = kk[x,y,z, T_0..T_3] -- or
+ST = S[T_0..T_3]
+Ts = matrix{{T_0,T_1,T_2,T_3}}
+STS = map(ST,ring psi,toList(x_0..x_(d-1))|toList(T_0..T_3))
+STS = map(ST,ring psi,toList(T_0..T_3)|toList(x_0..x_(d-1)))
+
+STS psi
+psi1 = jacobianDual(phi, X, Ts)
+STS psi - psi1
+
+psi1
+vars S
+vars ST
+vars ring phi
+
+///
+
 beginDocumentation()
 debug SimpleDoc
 
@@ -907,7 +982,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor modulo the ideal or module.  Optional
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
     :Ideal
       defining the Rees algebra of M
@@ -1039,7 +1114,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor modulo the ideal or module.  Optional
+      any non-zero divisor in the ideal, or such that the module becomes free on inverting f
   Outputs
     :Ring
       defining the Rees algebra of M
@@ -1087,7 +1162,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
      :Boolean
        true if {\tt M} is of linear type, false otherwise
@@ -1222,7 +1297,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
      :Ideal
   Description
@@ -1261,7 +1336,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
      :Ring
   Description
@@ -1304,7 +1379,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+      any non-zero divisor in the ideal, or such that the module becomes free on inverting f
   Outputs
      :Ideal
   Description
@@ -1939,3 +2014,9 @@ I=specialFiberIdeal i
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
+
+end--
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+viewHelp reesAlgebra
