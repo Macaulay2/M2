@@ -1938,10 +1938,8 @@ loadPackage "ReesAlgebra"
 S = ZZ/101[x,y]
 M = module ideal(x,y)
 E = {true, false, false, false, false}
-for p from 1 to 5 list(
-M = (ideal vars S)^p;
---print isLinearType M
-assert(isLinearType M == E[p-1]))
+assert({true, false, false, false, false} == 
+    for p from 1 to 5 list(isLinearType (ideal vars S)^p))
 ///
 
 
