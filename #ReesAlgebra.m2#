@@ -1759,18 +1759,12 @@ assert((A==C)==false)
 ///
 
 TEST///
-
-//
 --For isLinearType
-restart
-loadPackage "ReesAlgebra"
 S = ZZ/101[x,y]
 M = module ideal(x,y)
 E = {true, false, false, false, false}
 assert({true, false, false, false, false} == 
     for p from 1 to 5 list(isLinearType (ideal vars S)^p))
-///
-
 ///
 
 
