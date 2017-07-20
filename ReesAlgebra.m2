@@ -32,6 +32,7 @@ newPackage(
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
     	DebuggingMode => false,
+	Reload => true  
     	)
 
 export{
@@ -354,7 +355,7 @@ isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
 ####
 restart
 uninstallPackage "ReesAlgebra"
-installPackage "ReesAlgebra"
+installPackage ("ReesAlgebra", FileName => "~/gitRepos/Workshop-2017-Berkeley/ReesAlgebras/ReesAlgebra.m2")
 
 
 peek loadedFiles
@@ -690,7 +691,7 @@ doc ///
      row matrix of variables that will be generators of the Rees algebra of I
    Outputs
     psi:Matrix
-     the ``Jacobian Dual"; satisfies T*phi = X*psi
+     the `Jacobian Dual' ; satisfies T*phi = X*psi
    Description
     Text
      Let I be an ideal of R and let phi be the presentation matrix of I as a module.
@@ -723,11 +724,11 @@ doc ///
      
      reesIdeal I = ideal(T*phi)+ideal minors(psi).
      
-     Example
-   Caveat
+    Example
+     d=3
+     S = ZZ/101[a_0..a_(d-1)]
    SeeAlso
     reesAlgebra
-    reesAlgebraIdeal
     specialFiberIdeal
 ///
 
