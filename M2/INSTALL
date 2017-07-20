@@ -55,6 +55,10 @@ source code:
     git submodule sync
     git submodule update
 
+On a new repository, replace the last command with
+
+    git submodule update --init --recursive
+
 ---------
 Programs
 ---------
