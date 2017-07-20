@@ -32,7 +32,7 @@ newPackage(
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
     	DebuggingMode => false,
-	Reload => true
+	Reload => true  
     	)
 
 export{
@@ -328,31 +328,34 @@ isReduction=method(TypicalValue=>Boolean, Options=>{Variable=>"w"})
 
 isReduction(Module,Module):= 
 isReduction(Ideal,Ideal):= o->(I,J)->(
-     Sfib:= specialFiber(I, Variable=>fixupw o.Variable);
-     Ifib:=ideal presentation Sfib;
-     kk := coefficientRing Sfib;
-     M := sub(gens J // gens I, kk);
-     M = promote(M, Sfib);
-     L :=(vars Sfib)*M; 
-     0===dim ideal L)
+     if isSubset(J, I) then (
+	     Sfib:= specialFiber(I, Variable=>fixupw o.Variable);
+	     Ifib:=ideal presentation Sfib;
+	     kk := coefficientRing Sfib;
+	     M := sub(gens J // gens I, kk);
+	     M = promote(M, Sfib);
+	     L :=(vars Sfib)*M;
+	     0===dim ideal L)
+     else false)
 
 isReduction(Module,Module,RingElement):= 
 isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
-     Sfib :=specialFiber(I, a, Variable=>fixupw o.Variable); 
-     Ifib:= ideal presentation Sfib;
-     kk := coefficientRing Sfib;
-     M := sub(gens J // gens I, kk);
-     M = promote(M, Sfib);
-     L :=(vars Sfib)*M; 
-     0===dim ideal L)
-
+     if isSubset(J, I) then (
+	     Sfib :=specialFiber(I, a, Variable=>fixupw o.Variable); 
+	     Ifib:= ideal presentation Sfib;
+	     kk := coefficientRing Sfib;
+	     M := sub(gens J // gens I, kk);
+	     M = promote(M, Sfib);
+	     L :=(vars Sfib)*M; 
+	     0===dim ideal L)
+     else false)
 
 
 ///
 ####
 restart
 uninstallPackage "ReesAlgebra"
-installPackage "ReesAlgebra"
+installPackage ("ReesAlgebra", FileName => "~/gitRepos/Workshop-2017-Berkeley/ReesAlgebras/ReesAlgebra.m2")
 
 
 peek loadedFiles
@@ -612,6 +615,123 @@ whichGm Ideal := i -> (
  
 ------------------------------------------------------------------
  
+jacobianDual = method()
+jacobianDual Matrix := phi ->(
+    t := numrows phi;
+    T := symbol T;
+    S := ring phi;
+    ST := S[T_0..T_(t-1)];
+    X := vars ring phi;
+    Ts :=  vars ST;
+    jacobianDual(phi,X,Ts)
+    )
+
+jacobianDual(Matrix,Matrix, Matrix) := (phi,X,T) -> (
+    --If phi is an m x n matrix over R, then T = matrix{{T_1..T_m}}
+    -- should be a 1 x m over variables over R[T_1..T_m].
+    --ideal X \subset R should contain the entries of the matrix phi.
+    --the routine returns a matrix psi over ring T such that 
+    --T phi = X psi.
+    --Thus psi is a Jacobian dual of phi.
+    ST := ring T;
+    toST := map(ST,ring phi);--,gens ring phi|toList(numcols T:0_ST));
+    if numcols T != numrows phi then error"if phi has m rows then T must have m cols.";
+    XST := X;
+    if ring XST =!= ST then XST = toST X;
+    phiS := phi;
+    if ring phi =!= ST then phiST := toST phi;
+    psi := (T * phiST)//XST;
+    --check that this worked:
+    assert(T*phiST == XST*psi);
+    psi
+    )
+///
+
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+--viewHelp reesAlgebra
+
+kk = ZZ/101
+d = 3
+S = kk[x_0..x_(d-1)]
+mlin = transpose vars S
+mquad = random(S^d, S^{-1,-4,d-2:-2})
+Irand = minors(d,mlin|mquad)
+X = vars S
+phi = syz gens Irand;
+psi = jacobianDual phi
+
+
+--ST = kk[x_0..x_(d-1), T_0..T_3] -- or
+ST = S[T_0..T_3]
+Ts = matrix{{T_0,T_1,T_2,T_3}}
+STS = map(ST,ring psi,toList(T_0..T_3)|toList(x_0..x_(d-1)))
+psi1 = jacobianDual(phi, X, Ts)
+(STS psi) - psi1 == 0
+///
+
+beginDocumentation()
+debug SimpleDoc
+
+doc ///
+   Key
+    jacobianDual    
+   Headline
+    computes the ``jacobian dual'', part of a method of finding generators for Rees Algebra ideals
+   Usage
+    psi = jacobianDual phi
+    psi = jacobianDual(phi, X, T)
+   Inputs
+    phi:Matrix
+     presentation matrix of an ideal
+    X:Matrix
+     row matrix generating an ideal that contains the entries of phi
+    T:Matrix
+     row matrix of variables that will be generators of the Rees algebra of I
+   Outputs
+    psi:Matrix
+     the `Jacobian Dual' ; satisfies T*phi = X*psi
+   Description
+    Text
+     Let I be an ideal of R and let phi be the presentation matrix of I as a module.
+     The symmetric algebra of I has the form 
+     Sym_R(I) = R[T_0..T_m]/ideal(T*phi)
+     where the T_i correspond to the generators of I. If X = matrix{{x_1..x_n}},
+     with x_i \in R, and ideal X contains the entries of the matrix phi, then there is 
+     a matrix psi, called the Jacobian Dual of phi with respect to X,
+     defined over R[T_0..T_m] such that T*phi = X*psi (the matrix psi is generally
+     not unique; Macaulay2 computes it using Groebner division with remainer.
+ 
+     The name Jacobian Dual comes from the case where phi is a matrix of linear forms
+     the x_i are the variables of R, and the generators of I are forms, all of the same degree D;
+     in this case Euler's formula sum(df_i/dx_j*xj) = Df can be used to express the
+     entries of psi in terms of the derivatives of the entries of phi, at least when
+     D is nonzero in the coefficient field.  The division with
+     remainder is usually fast, but if this
+     ever becomes a bottleneck it would be possible to test for the degree condition and
+     use Euler's formula.
+     
+     If I is an ideal of grade >=1 and ideal X contains a nonzerodivisor of R
+     (which will be automatic if I has finite projective dimension) then
+     ideal X has grade >= 1 on the Rees algebra. Since ideal(T*phi) is contained in the
+     defining ideal of the Rees algebra, the vector X is annihilated by the matrix
+     psi when regarded over the Rees algebra. If also the number of relations of I
+     is >= the number of generators of I, this implies that the maximal minors of
+     psi annihilate  the x_i as elements of the Rees algebra, and thus that the maximal
+     minors of psi are inside the ideal of the Rees algebra. In very favorable circumstances,
+     one may even have 
+     
+     reesIdeal I = ideal(T*phi)+ideal minors(psi).
+     
+    Example
+     d=3
+     S = ZZ/101[a_0..a_(d-1)]
+   SeeAlso
+    reesAlgebra
+    specialFiberIdeal
+///
+
  
 beginDocumentation()
 debug SimpleDoc
@@ -704,6 +824,7 @@ doc ///
     [specialFiber, Variable]
     [distinguished, Variable]
     [distinguishedAndMult, Variable]
+    [isReduction, Variable]
   Headline
     Choose name for variables in the created ring
   Usage
@@ -716,6 +837,7 @@ doc ///
     specialFiber(...,Variable=>w)    
     distinguished(...,Variable=>w)
     distinguishedAndMult(...,Variable=>w)
+    isReduction(...,Variable=>w)
   Description
     Text
       Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
@@ -750,6 +872,7 @@ doc ///
 doc ///
   Key
     [minimalReduction, Tries]
+    Tries
   Headline
     Set the number of random tries to compute a minimal reduction
   Usage
@@ -1117,48 +1240,50 @@ doc ///
     monomialCurveIdeal
 ///
 
-
 doc ///
   Key
     isReduction
     (isReduction, Ideal, Ideal)
-    (isReduction, Ideal, Ideal, RingElement
-
+    (isReduction, Ideal, Ideal, RingElement)
+    (isReduction, Module, Module)
+    (isReduction, Module, Module, RingElement)
   Headline
      is a reduction
   Usage
-     isReduction(I,J)
-     isLinearType(I,J,f)
+     t=isReduction(I,J)
+     t=isReduction(I,J,f)
   Inputs
-     I,J:Ideal
+     I:Ideal
+     J:Ideal
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       an optional element, which is a non-zerodivisor modulo {\tt J} 
+       which is a member of {\tt I}.
   Outputs
-     :Boolean
-       true if {\tt M} is of linear type, false otherwise
+     t:Boolean
+       true if {\tt J} is a reduction of {\tt I}, false otherwise
   Description
    Text
-     For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
-     of $I$ if there exists a nonnegative integer {\tt n} such that 
-     $JI^{n}=I^{n+1}$.
+    For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
+    of $I$ if there exists a nonnegative integer {\tt n} such that 
+    $JI^{n}=I^{n+1}$.
 
+    This function returns true if $J$ is a reduction of $I$ and returns false
+    if $J$ is not a subideal of $I$ or $J$ is a subideal but not a reduction of $I$.  
+   Example
+    S = ZZ/5[x,y]
+    I = ideal(x^3,x*y,y^4)
+    J = ideal(x*y, x^3+y^4)
+    isReduction(I,J)
+    isReduction(J,I)
+    isReduction(I,I)
+    g = I_0
+    isReduction(I,J,g)
+    isReduction(J,I,g)
+    isReduction(I,I,g)
 
-     This routine computes the @TO reesIdeal@ of {\tt M}.  Giving the element {\tt
-     f} computes the @TO reesIdeal@ in a different manner, which is sometimes
-     faster, sometimes slower.  
-   Example
-      S = QQ[x_0..x_4]
-      i = monomialCurveIdeal(S,{2,3,5,6})
-      isLinearType i
-      isLinearType(i, i_0)
-      I = reesIdeal i
-      select(I_*, f -> first degree f > 1)
-   Example
-      S = ZZ/101[x,y,z]
-      for p from 1 to 5 do print isLinearType (ideal vars S)^p
   SeeAlso
-    reesIdeal
-    monomialCurveIdeal
+    minimalReduction
+    reductionNumber
 ///
 
 
@@ -1737,12 +1862,12 @@ x = symbol x
 --Example 1: a monomial ideal in 4-space.
 S=kk[x_0..x_4]
 i=monomialCurveIdeal(S,{2,3,5,6})
-isLinearType(i,i_0)
-isLinearType i
+assert(isLinearType(i,i_0) == false)
+assert(isLinearType i == false)
 ring i
 use S
-reesAlgebra (i,i_0)
-presentation normalCone (i, i_0)
+-- reesAlgebra (i,i_0)
+-- presentation normalCone (i, i_0)
 presentation associatedGradedRing (i,i_0)
 specialFiberIdeal (i,i_0)
 
@@ -1750,7 +1875,7 @@ specialFiberIdeal (i,i_0)
 restart
 loadPackage "ReesAlgebra"
 kk=ZZ/101
-
+S=kk[x,y]
 m=random(S^3,S^{4:-1})
 i=minors(2,m);
 time I=reesIdeal (i,i_0); -- .04 sec
@@ -1798,11 +1923,13 @@ Research Problem: what's the situation in general?
 
 ///
 --For isLinearType
+restart
+loadPackage "ReesAlgebra"
 S = ZZ/101[x,y]
 M = module ideal(x,y)
-for p from 1 to 5 list(
-M = (ideal vars S)^p;
-print isLinearType M)
+E = {true, false, false, false, false}
+assert({true, false, false, false, false} == 
+    for p from 1 to 5 list(isLinearType (ideal vars S)^p))
 ///
 
 
