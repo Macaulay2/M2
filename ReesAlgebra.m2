@@ -1945,6 +1945,3 @@ I=specialFiberIdeal i
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
-
-restart
-needsPackage "ReesAlgebraZC"
