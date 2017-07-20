@@ -1393,7 +1393,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ideal
   Description
@@ -1408,10 +1408,10 @@ doc ///
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
    Example
-     R=QQ[a,b,c,d,e,f]
-     M=matrix{{a,c,e},{b,d,f}}
-     analyticSpread image M
-     specialFiberIdeal image M
+     R=QQ[a..h]
+     M=matrix{{a,b,c,d},{e,f,g,h}}
+     analyticSpread minors(2,M)
+     specialFiberIdeal minors(2,M)
   SeeAlso
      reesIdeal
 ///
@@ -1432,7 +1432,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ring
   Description
@@ -1450,10 +1450,10 @@ doc ///
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
    Example
-     R=QQ[a,b,c,d,e,f]
-     M=matrix{{a,c,e},{b,d,f}}
-     analyticSpread image M
-     specialFiber image M
+     R=QQ[a..h]
+     M=matrix{{a,b,c,d},{e,f,g,h}}
+     analyticSpread minors(2,M)
+     specialFiber minors(2,M)
   SeeAlso
      reesIdeal
      specialFiberIdeal
@@ -1475,9 +1475,10 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor in $R$. When $M$ is a module, we require $M[t^{-1}]$ to be a free module. When $M$ is an ideal, we require $f$ in $M$
+       an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
-     :Ideal
+     :ZZ
+       the analytic spread of a module or an ideal $M$
   Description
    Text
      The analytic spread of a module is the dimension of its special fiber
@@ -1488,10 +1489,14 @@ doc ///
      Mathematical Society Lecture Note Series, 336. Cambridge University Press,
      Cambridge, 2006, by Craig Huneke and Irena Swanson.
    Example
-     R=QQ[a,b,c,d,e,f]
-     M=matrix{{a,c,e},{b,d,f}}
-     analyticSpread image M
-     specialFiberIdeal image M
+     R=QQ[a..h]
+     M=matrix{{a,b,c,d},{e,f,g,h}}
+     analyticSpread minors(2,M)
+     specialFiberIdeal minors(2,M)
+     R=QQ[a,b,c,d]
+     M=matrix{{a,b,c,d},{b,c,d,a}}
+     analyticSpread minors(2,M)
+     specialFiberIdeal minors(2,M)
   SeeAlso
      specialFiberIdeal
      reesIdeal
@@ -1815,9 +1820,24 @@ M=matrix{{a,c,e},{b,d,f}}
 assert(analyticSpread image M == 3)
 ///
 
+---Testing specialFiberIdeal
+TEST///
+R=ZZ/23[a,b,c,d]
+msq=ideal(a^2, a*b, b^2,a*c,b*c, c^2,a*d, b*d, c*d, d^2)
+sfi=specialFiberIdeal(msq)
+S=ring sfi
+T=ZZ/23[S_0,S_1,S_2,S_3,S_4,S_5,S_6,S_7,S_8,S_9]
+M=matrix{{S_0,S_1,S_3,S_6},{S_1,S_2,S_4,S_7},{S_3,S_4,S_5,S_8},{S_6,S_7,S_8,S_9}}
+i=minors(2,M)
+j=i+ideal(a,b,c,d)
+assert(sfi==j)
+///
+
 end
 
 restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
 loadPackage "ReesAlgebra"
 installPackage(ReesAlgebra, IgnoreExampleErrors=>true)
 
