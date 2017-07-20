@@ -1163,9 +1163,7 @@ doc ///
     minimalReduction
     reductionNumber
 ///
-restart
-uninstallPackage "ReesAlgebra"
-installPackage "ReesAlgebra"
+
 
 doc ///
   Key
