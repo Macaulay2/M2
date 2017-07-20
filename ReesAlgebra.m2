@@ -327,24 +327,27 @@ isReduction=method(TypicalValue=>Boolean, Options=>{Variable=>"w"})
 
 isReduction(Module,Module):= 
 isReduction(Ideal,Ideal):= o->(I,J)->(
-     Sfib:= specialFiber(I, Variable=>fixupw o.Variable);
-     Ifib:=ideal presentation Sfib;
-     kk := coefficientRing Sfib;
-     M := sub(gens J // gens I, kk);
-     M = promote(M, Sfib);
-     L :=(vars Sfib)*M; 
-     0===dim ideal L)
+     if isSubset(J, I) then (
+	     Sfib:= specialFiber(I, Variable=>fixupw o.Variable);
+	     Ifib:=ideal presentation Sfib;
+	     kk := coefficientRing Sfib;
+	     M := sub(gens J // gens I, kk);
+	     M = promote(M, Sfib);
+	     L :=(vars Sfib)*M;
+	     0===dim ideal L)
+     else false)
 
 isReduction(Module,Module,RingElement):= 
 isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
-     Sfib :=specialFiber(I, a, Variable=>fixupw o.Variable); 
-     Ifib:= ideal presentation Sfib;
-     kk := coefficientRing Sfib;
-     M := sub(gens J // gens I, kk);
-     M = promote(M, Sfib);
-     L :=(vars Sfib)*M; 
-     0===dim ideal L)
-
+     if isSubset(J, I) then (
+	     Sfib :=specialFiber(I, a, Variable=>fixupw o.Variable); 
+	     Ifib:= ideal presentation Sfib;
+	     kk := coefficientRing Sfib;
+	     M := sub(gens J // gens I, kk);
+	     M = promote(M, Sfib);
+	     L :=(vars Sfib)*M; 
+	     0===dim ideal L)
+     else false)
 
 
 ///
@@ -703,6 +706,7 @@ doc ///
     [specialFiber, Variable]
     [distinguished, Variable]
     [distinguishedAndMult, Variable]
+    [isReduction, Variable]
   Headline
     Choose name for variables in the created ring
   Usage
@@ -715,6 +719,7 @@ doc ///
     specialFiber(...,Variable=>w)    
     distinguished(...,Variable=>w)
     distinguishedAndMult(...,Variable=>w)
+    isReduction(...,Variable=>w)
   Description
     Text
       Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
@@ -749,6 +754,7 @@ doc ///
 doc ///
   Key
     [minimalReduction, Tries]
+    Tries
   Headline
     Set the number of random tries to compute a minimal reduction
   Usage
@@ -1116,48 +1122,50 @@ doc ///
     monomialCurveIdeal
 ///
 
-
 doc ///
   Key
     isReduction
     (isReduction, Ideal, Ideal)
-    (isReduction, Ideal, Ideal, RingElement
-
+    (isReduction, Ideal, Ideal, RingElement)
+    (isReduction, Module, Module)
+    (isReduction, Module, Module, RingElement)
   Headline
      is a reduction
   Usage
-     isReduction(I,J)
-     isLinearType(I,J,f)
+     t=isReduction(I,J)
+     t=isReduction(I,J,f)
   Inputs
-     I,J:Ideal
+     I:Ideal
+     J:Ideal
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       an optional element, which is a non-zerodivisor modulo {\tt J} 
+       which is a member of {\tt I}.
   Outputs
-     :Boolean
-       true if {\tt M} is of linear type, false otherwise
+     t:Boolean
+       true if {\tt J} is a reduction of {\tt I}, false otherwise
   Description
    Text
-     For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
-     of $I$ if there exists a nonnegative integer {\tt n} such that 
-     $JI^{n}=I^{n+1}$.
+    For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
+    of $I$ if there exists a nonnegative integer {\tt n} such that 
+    $JI^{n}=I^{n+1}$.
 
+    This function returns true if $J$ is a reduction of $I$ and returns false
+    if $J$ is not a subideal of $I$ or $J$ is a subideal but not a reduction of $I$.  
+   Example
+    S = ZZ/5[x,y]
+    I = ideal(x^3,x*y,y^4)
+    J = ideal(x*y, x^3+y^4)
+    isReduction(I,J)
+    isReduction(J,I)
+    isReduction(I,I)
+    g = I_0
+    isReduction(I,J,g)
+    isReduction(J,I,g)
+    isReduction(I,I,g)
 
-     This routine computes the @TO reesIdeal@ of {\tt M}.  Giving the element {\tt
-     f} computes the @TO reesIdeal@ in a different manner, which is sometimes
-     faster, sometimes slower.  
-   Example
-      S = QQ[x_0..x_4]
-      i = monomialCurveIdeal(S,{2,3,5,6})
-      isLinearType i
-      isLinearType(i, i_0)
-      I = reesIdeal i
-      select(I_*, f -> first degree f > 1)
-   Example
-      S = ZZ/101[x,y,z]
-      for p from 1 to 5 do print isLinearType (ideal vars S)^p
   SeeAlso
-    reesIdeal
-    monomialCurveIdeal
+    minimalReduction
+    reductionNumber
 ///
 
 
