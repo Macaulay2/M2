@@ -707,6 +707,7 @@ doc ///
     [specialFiber, Variable]
     [distinguished, Variable]
     [distinguishedAndMult, Variable]
+    [isReduction, Variable]
   Headline
     Choose name for variables in the created ring
   Usage
@@ -719,6 +720,7 @@ doc ///
     specialFiber(...,Variable=>w)    
     distinguished(...,Variable=>w)
     distinguishedAndMult(...,Variable=>w)
+    isReduction(...,Variable=>w)
   Description
     Text
       Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
@@ -753,6 +755,7 @@ doc ///
 doc ///
   Key
     [minimalReduction, Tries]
+    Tries
   Headline
     Set the number of random tries to compute a minimal reduction
   Usage
@@ -1125,6 +1128,8 @@ doc ///
     isReduction
     (isReduction, Ideal, Ideal)
     (isReduction, Ideal, Ideal, RingElement)
+    (isReduction, Module, Module)
+    (isReduction, Module, Module, RingElement)
   Headline
      is a reduction
   Usage
