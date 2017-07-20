@@ -1828,6 +1828,19 @@ j=i+ideal(a,b,c,d)
 assert(sfi==j)
 ///
 
+---Testing minimalReduction, isReduction, reductionNumber
+TEST///
+S = ZZ/5[x,y]
+I = ideal(x^3,x*y,y^4)
+J = ideal(x*y, x^3+y^4)
+assert(isReduction(I,J)==true)
+assert(isReduction(J,I)==false)
+K= minimalReduction I
+assert(reductionNumber(I,J)==1)
+assert(isReduction(I,K)==true)
+assert(reductionNumber(I,K)==1)
+///
+
 end
 
 restart
