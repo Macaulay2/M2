@@ -14,18 +14,21 @@
 
 extern gmp_ZZ getRandomInteger();
 
-template<>
-void getElement<M2::ARingQQFlint>(const M2::ARingQQFlint& R, int index, M2::ARingQQFlint::ElementType& result)
+template <>
+void getElement<M2::ARingQQFlint>(const M2::ARingQQFlint& R,
+                                  int index,
+                                  M2::ARingQQFlint::ElementType& result)
 {
-  if (index < 50) 
-    R.set_from_long(result, index-25);
+  if (index < 50)
+    R.set_from_long(result, index - 25);
   else
     {
       R.random(result);
     }
 }
 
-TEST(ARingQQFlint, create) {
+TEST(ARingQQFlint, create)
+{
   M2::ARingQQFlint R;
 
   M2::ARingQQFlint::ElementType a;
@@ -41,7 +44,8 @@ TEST(ARingQQFlint, create) {
   R.clear(a);
 }
 
-TEST(ARingQQFlint, display) {
+TEST(ARingQQFlint, display)
+{
   M2::ARingQQFlint R;
 
   M2::ARingQQFlint::ElementType a, b;
@@ -52,7 +56,7 @@ TEST(ARingQQFlint, display) {
   R.init(b);
   gen.nextElement(a);
   gen.nextElement(b);
-  R.divide(a,a,b);
+  R.divide(a, a, b);
   R.elem_text_out(o, a, true, false, false);
   EXPECT_TRUE(strcmp(o.str(), "24/23") == 0);
   std::cout << "a = ." << o.str() << "." << std::endl;
@@ -63,7 +67,8 @@ TEST(ARingQQFlint, display) {
   R.clear(a);
 }
 
-TEST(ARingQQFlint, arithmetic) {
+TEST(ARingQQFlint, arithmetic)
+{
   M2::ARingQQFlint R;
 
   testCoercions(R);
@@ -73,7 +78,8 @@ TEST(ARingQQFlint, arithmetic) {
   testMultiply(R, ntrials);
   testDivide(R, ntrials);
   testReciprocal(R, ntrials);
-  //  testPower(R, ntrials);  // this test can't work, as it expects a finite field
+  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
+  //  field
   testAxioms(R, ntrials);
 }
 

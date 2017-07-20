@@ -9,7 +9,7 @@ o1 : List
 
 i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts)
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74748-0/0/start
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-30708-0/0/start
 
 o2 : File
 

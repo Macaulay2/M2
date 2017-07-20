@@ -21,18 +21,15 @@ CPPFLAGS += \
 	-Dregfree=M2_regfree
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
 %.s : %.c
-	@ echo '$(scCMD)' >> LOGFILE
-	: " ** compiling $< to assembly code, making $@"
-	@ $(scCMD)
+	$(SHOW) " ** compiling $< to assembly code, making $@"
+	$(HIDE) $(scCMD)
 EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 %.E : %.c
-	@ echo '$(EcCMD)' >> LOGFILE
-	@ echo " ** preprocessing $<, making $@"
-	@ $(EcCMD)
+	$(SHOW) " ** preprocessing $<, making $@"
+	$(HIDE) $(EcCMD)
 %.dep: %.c
-	@ echo "@CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
-	@ echo " ** creating $@ from $<"
-	@ @CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW) " ** creating $@ from $<"
+	$(HIDE) @CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 @srcdir@/TAGS: $(HFILES) $(CFILES); cd @srcdir@ && @ETAGS@ $(HFILES) $(CFILES)
 DEPENDS = yes

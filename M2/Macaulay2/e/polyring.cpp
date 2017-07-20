@@ -8,16 +8,13 @@
 #include "matrix-con.hpp"
 #include "geopoly.hpp"
 
-PolynomialRing::~PolynomialRing()
-{
-}
-
+PolynomialRing::~PolynomialRing() {}
 void PolynomialRing::setQuotientInfo(QRingInfo *qinfo0)
 {
   qinfo_ = qinfo0;
-  const PolyRing *numerR = getNumeratorRing(); // might be 'this'
+  const PolyRing *numerR = getNumeratorRing();  // might be 'this'
 
-  for (int i=0; i<n_quotients(); i++)
+  for (int i = 0; i < n_quotients(); i++)
     {
       if (!numerR->is_homogeneous(quotient_element(i)))
         {
@@ -29,8 +26,7 @@ void PolynomialRing::setQuotientInfo(QRingInfo *qinfo0)
   overZZ_ = (coeff_type_ == Ring::COEFF_ZZ);
 }
 
-void PolynomialRing::initialize_PolynomialRing(
-                                               const Ring *K,
+void PolynomialRing::initialize_PolynomialRing(const Ring *K,
                                                const Monoid *M,
                                                const PolyRing *numeratorR,
                                                const PolynomialRing *ambientR,
@@ -74,16 +70,16 @@ void PolynomialRing::initialize_PolynomialRing(
         }
     }
 
-  poly_size_ = 0; // The callee needs to set this later
-  gb_ring_ = 0;  // The callee needs to set this later
+  poly_size_ = 0;  // The callee needs to set this later
+  gb_ring_ = 0;    // The callee needs to set this later
 
   // Also: callee should call setIsGraded, and set oneV, minus_oneV, zeroV
 }
 
 PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
-                                                VECTOR(Nterm *) &elems)
-  // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
-  // They should also form a GB.
+                                                VECTOR(Nterm *) & elems)
+// Grabs 'elems'.  Each element of 'elems' should be in the ring R.
+// They should also form a GB.
 {
   // Here are the cases:
   // (1) R is a polynomial ring over a basic field
@@ -97,27 +93,27 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   Ring::CoefficientType coeff_type = R->coefficient_type();
 
   QRingInfo *qrinfo = NULL;
-  switch (coeff_type) {
-  case COEFF_BASIC:
-    qrinfo = new QRingInfo_field_basic(R->getNumeratorRing(),elems);
-    result = new PolyRingQuotient;
-    break;
-  case COEFF_QQ:
-    qrinfo = new QRingInfo_field_QQ(R->getNumeratorRing(),elems);
-    result = new PolyRingQuotient;
-    break;
-  case COEFF_ZZ:
-    QRingInfo_ZZ *qrinfoZZ = new QRingInfo_ZZ(R->getNumeratorRing(),elems);
-    qrinfo = qrinfoZZ;
-    result = new PolyRingQuotient;
-    result->is_ZZ_quotient_ = qrinfoZZ->is_ZZ_quotient();
-    result->ZZ_quotient_value_ = qrinfoZZ->ZZ_quotient_value();
-    break;
-  }
+  switch (coeff_type)
+    {
+      case COEFF_BASIC:
+        qrinfo = new QRingInfo_field_basic(R->getNumeratorRing(), elems);
+        result = new PolyRingQuotient;
+        break;
+      case COEFF_QQ:
+        qrinfo = new QRingInfo_field_QQ(R->getNumeratorRing(), elems);
+        result = new PolyRingQuotient;
+        break;
+      case COEFF_ZZ:
+        QRingInfo_ZZ *qrinfoZZ = new QRingInfo_ZZ(R->getNumeratorRing(), elems);
+        qrinfo = qrinfoZZ;
+        result = new PolyRingQuotient;
+        result->is_ZZ_quotient_ = qrinfoZZ->is_ZZ_quotient();
+        result->ZZ_quotient_value_ = qrinfoZZ->ZZ_quotient_value();
+        break;
+    }
 
-  result->initialize_ring(R->characteristic(),
-                          R->get_degree_ring(),
-                          R->get_heft_vector());
+  result->initialize_ring(
+      R->characteristic(), R->get_degree_ring(), R->get_heft_vector());
 
   result->initialize_PolynomialRing(R->getCoefficients(),
                                     R->getMonoid(),
@@ -126,7 +122,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
                                     R->getDenominatorRing());
 
   result->gb_ring_ = R->get_gb_ring();
-  result->setQuotientInfo(qrinfo); // Also sets graded-ness
+  result->setQuotientInfo(qrinfo);  // Also sets graded-ness
 
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
@@ -145,53 +141,54 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
     }
   VECTOR(Nterm *) elems;
 
-  for (int i=0; i<M->n_cols(); i++)
+  for (int i = 0; i < M->n_cols(); i++)
     {
-      Nterm *f = R->numerator(M->elem(0,i));
+      Nterm *f = R->numerator(M->elem(0, i));
       elems.push_back(f);
     }
 
-  for (int i=0; i<R->n_quotients(); i++)
+  for (int i = 0; i < R->n_quotients(); i++)
     elems.push_back(R->quotient_element(i));
 
-  return create_quotient(R->getAmbientRing(),elems);
+  return create_quotient(R->getAmbientRing(), elems);
 }
 
 PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
                                                 const PolynomialRing *B)
-  // R should be an ambient poly ring
-  // B should have: ambient of B is the logical coeff ring of R
-  //   i.e. R = A[x], B = A/I
-  // return A[x]/I.
+// R should be an ambient poly ring
+// B should have: ambient of B is the logical coeff ring of R
+//   i.e. R = A[x], B = A/I
+// return A[x]/I.
 {
   VECTOR(Nterm *) elems;
 
-  for (int i=0; i<B->n_quotients(); i++)
+  for (int i = 0; i < B->n_quotients(); i++)
     {
       ring_elem f;
       R->promote(B->getNumeratorRing(), B->quotient_element(i), f);
       elems.push_back(f);
     }
-  return create_quotient(R,elems);
+  return create_quotient(R, elems);
 }
 
-Matrix * PolynomialRing::getPresentation() const
+Matrix *PolynomialRing::getPresentation() const
 {
   const PolynomialRing *R = getAmbientRing();
 
   MatrixConstructor mat(R->make_FreeModule(1), 0);
-  for (int i=0; i<n_quotients(); i++)
+  for (int i = 0; i < n_quotients(); i++)
     // NEED: to make this into a fraction, if R has fractions.
     mat.append(R->make_vec(0, quotient_element(i)));
   return mat.to_matrix();
 }
 
-class SumCollectorPolyHeap : public SumCollector {
+class SumCollectorPolyHeap : public SumCollector
+{
   polyheap H;
-public:
+
+ public:
   SumCollectorPolyHeap(const PolynomialRing *R0) : H(R0) {}
   ~SumCollectorPolyHeap() {}
-
   virtual void add(ring_elem f) { H.add(f); }
   virtual ring_elem getValue() { return H.value(); }
 };
@@ -206,17 +203,16 @@ unsigned int PolynomialRing::computeHashValue(const ring_elem a) const
   unsigned int hash = 0;
   unsigned int seed1 = 103;
   unsigned int seed2 = 347654;
-  for (const Nterm* t = a.poly_val; t!=0; t=t->next)
+  for (const Nterm *t = a.poly_val; t != 0; t = t->next)
     {
       unsigned int hash1 = getCoefficientRing()->computeHashValue(t->coeff);
-      unsigned int hash2 = getMonoid()->computeHashValue(t->monom); 
+      unsigned int hash2 = getMonoid()->computeHashValue(t->monom);
       hash += seed1 * hash1 + seed2 * hash2;
       seed1 += 463633;
       seed2 += 7858565;
     }
   return hash;
 }
-
 
 #if 0
 // const RRing *PPolynomialRing::findCoefficientRing(const RRing *A) const

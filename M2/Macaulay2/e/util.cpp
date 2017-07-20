@@ -4,7 +4,8 @@
 #include "util.hpp"
 #include <string>
 
-void M2_ArrayString_to_stdvector(M2_ArrayString strs, std::vector<std::string> &result)
+void M2_ArrayString_to_stdvector(M2_ArrayString strs,
+                                 std::vector<std::string> &result)
 {
   for (size_t i = 0; i < strs->len; i++)
     {
@@ -29,4 +30,3 @@ std::vector<std::string> M2_ArrayString_to_stdvector(M2_ArrayString strs)
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:
-

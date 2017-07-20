@@ -6,6 +6,7 @@
 #include "../comp-gb.hpp"
 #include "f4.hpp"
 #include "gausser.hpp"
+#include <polyring.hpp>
 
 class PolynomialRing;
 class FreeModule;
@@ -18,16 +19,17 @@ class F4Computation : public GBComputation
   //          different possible template instantiations
 
   const PolynomialRing *originalR;
-  const FreeModule *F; // determines whether the monomial order is a
-                       // Schreyer order.
-                       // Also determines degrees of elements in F.
+  const FreeModule *F;  // determines whether the monomial order is a
+                        // Schreyer order.
+                        // Also determines degrees of elements in F.
   const RingType *K;
   const Gausser *KK;
   MonomialInfo *MI;
   F4Mem *Mem;
 
   F4GB *f4;
-public:
+
+ public:
   F4Computation(Gausser *K,
                 F4Mem *Mem,
                 const Matrix *m,
@@ -41,15 +43,12 @@ public:
   virtual ~F4Computation();
 
   virtual void remove_gb() { delete f4; }
-
   enum ComputationStatusCode computation_is_complete();
 
   virtual bool stop_conditions_ok() { return true; }
-
   void start_computation();
 
   virtual const PolynomialRing *get_ring() const { return originalR; }
-
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
 
   virtual const Matrix /* or null */ *get_gb();
@@ -65,9 +64,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient
-                           );
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 
@@ -78,8 +76,7 @@ public:
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
-  virtual void show() const; // debug display
-
+  virtual void show() const;  // debug display
 };
 
 GBComputation *createF4GB(const Matrix *m,

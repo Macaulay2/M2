@@ -3,8 +3,7 @@ H2 = hirzebruchSurface(2)
 fan H2
 assert( (rays H2) === {{1,0},{0,1},{-1,2},{0,-1}} );
 assert( (isFano H2) === false );
-assert( net (D=toricDivisor({3,0,0,-5},H2)) === "3*D  - 5*D
-   0      3"^0 ); -- toExternalString fails
+D=toricDivisor({3,0,0,-5},H2)
 assert( (isCartier D) === true );
 assert( (isAmple D) === false );
 assert( (M = fromWDivToCl H2) === map((ZZ)^2,(ZZ)^4,{{1, -2, 1, 0}, {0, 1, 0, 1}}) );

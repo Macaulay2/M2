@@ -168,7 +168,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
      else (
 	  c := Class(e);
 	  if c == classs then e
-	  else if !ancestor(classs,c) then buildErrorPacket("expected new classs to be a specialization of the old one")
+	  else if !ancestor(classs,c) then buildErrorPacket("expected new class to be a specialization of the old one")
 	  else if Parent(e) != parent then buildErrorPacket("unable to set new parent")
 	  else Expr(SpecialExpr(classs,e))));
 
@@ -214,7 +214,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	  c := Class(e);
 	  if c == classs then e
 	  else if !ancestor(classs,c) 
-	  then buildErrorPacket("expected new classs to be a specialization of the old one")
+	  then buildErrorPacket("expected new class to be a specialization of the old one")
 	  else Expr(SpecialExpr(classs,e))));
 newclassfun(e:Expr):Expr := (
      when e

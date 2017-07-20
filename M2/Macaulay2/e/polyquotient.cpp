@@ -10,10 +10,7 @@
 #include "comp-gb.hpp"
 #include "relem.hpp"
 
-PolyRingQuotient::~PolyRingQuotient()
-{
-}
-
+PolyRingQuotient::~PolyRingQuotient() {}
 #if 0
 // PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
 //                                         VECTOR(Nterm *) &elems)
@@ -99,9 +96,11 @@ void PolyRingQuotient::text_out(buffer &o) const
   o << "Quotient ring of ";
   numerR_->text_out(o);
   o << newline << "quotient elements" << newline;
-  for (int i=0; i<n_quotients(); i++)
+  for (int i = 0; i < n_quotients(); i++)
     {
-      o << "    "; elem_text_out(o, quotient_element(i)); o << newline;
+      o << "    ";
+      elem_text_out(o, quotient_element(i));
+      o << newline;
     }
 }
 
@@ -111,7 +110,9 @@ bool PolyRingQuotient::is_unit(ring_elem a) const
   return !is_zero(b);
 }
 
-bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &result) const
+bool PolyRingQuotient::lift(const Ring *Rg,
+                            const ring_elem f,
+                            ring_elem &result) const
 // f is an element of 'this'.  Rg is the desired ring.
 {
   const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
@@ -120,10 +121,12 @@ bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &resul
       result = f;
       return true;
     }
-  return numerR_->PolyRing::lift(Rg,f,result);
+  return numerR_->PolyRing::lift(Rg, f, result);
 }
 
-bool PolyRingQuotient::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+bool PolyRingQuotient::promote(const Ring *Rf,
+                               const ring_elem f,
+                               ring_elem &result) const
 // f is an element of Rf.  result will be an element in 'this'.
 {
   const PolynomialRing *R1 = Rf->cast_to_PolynomialRing();
@@ -133,17 +136,17 @@ bool PolyRingQuotient::promote(const Ring *Rf, const ring_elem f, ring_elem &res
       normal_form(result);
       return true;
     }
-  return numerR_->PolyRing::promote(Rf,f,result);
+  return numerR_->PolyRing::promote(Rf, f, result);
 }
 
 ring_elem PolyRingQuotient::power(const ring_elem f, mpz_t n) const
 {
-  return Ring::power(f,n);
+  return Ring::power(f, n);
 }
 
 ring_elem PolyRingQuotient::power(const ring_elem f, int n) const
 {
-  return Ring::power(f,n);
+  return Ring::power(f, n);
 }
 
 ring_elem PolyRingQuotient::invert(const ring_elem f) const
@@ -152,51 +155,53 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
     {
       ring_elem g = quotient_element(0);
 
-      RingElement *f1 = RingElement::make_raw(getAmbientRing(),f);
-      RingElement *g1 = RingElement::make_raw(getAmbientRing(),g);
+      RingElement *f1 = RingElement::make_raw(getAmbientRing(), f);
+      RingElement *g1 = RingElement::make_raw(getAmbientRing(), g);
       const RingElement *u1;
       const RingElement *v1;
-      const RingElement *ret = rawExtendedGCDRingElement(f1,g1,&u1,&v1);
-      if (ret == NULL) {
-        // one reason this might return NULL is if the coefficient ring is not ZZ/n, ZZ, or QQ
-        // now what do we do?
-        // we can't return NULL
-        INTERNAL_ERROR("ring element gcd computation failed");
-      }
+      const RingElement *ret = rawExtendedGCDRingElement(f1, g1, &u1, &v1);
+      if (ret == NULL)
+        {
+          // one reason this might return NULL is if the coefficient ring is not
+          // ZZ/n, ZZ, or QQ
+          // now what do we do?
+          // we can't return NULL
+          INTERNAL_ERROR("ring element gcd computation failed");
+        }
       return u1->get_value();
-
     }
-  else if (M_->getNonTermOrderVariables()->len ==  0)
-    return ann(from_long(1),f);
-  else {
-    // An error message is generated higher up
-    return from_long(0);
-  }
+  else if (M_->getNonTermOrderVariables()->len == 0)
+    return ann(from_long(1), f);
+  else
+    {
+      // An error message is generated higher up
+      return from_long(0);
+    }
 }
 
 ring_elem PolyRingQuotient::divide(const ring_elem f, const ring_elem g) const
 {
   ring_elem rem, d;
-  rem = numerR_->remainderAndQuotient(f,g,d);
-  if (is_zero(rem)) return d; // This should be in normal form?
-  return ann(f,g);
+  rem = numerR_->remainderAndQuotient(f, g, d);
+  if (is_zero(rem)) return d;  // This should be in normal form?
+  return ann(f, g);
   //  ring_elem ginv = invert(g);
   //  ring_elem result = mult(f, ginv);
   //  normal_form(result);
   //  return result;
 }
 
-GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
-  // return the GB of g, keep = 0 or 1.
+GBComputation *PolyRingQuotient::make_gb(const ring_elem g) const
+// return the GB of g, keep = 0 or 1.
 {
-  MatrixConstructor mat(make_FreeModule(1),1);
-  mat.set_entry(0,0,g);
-  Matrix *mg = mat.to_matrix(); // {g}
+  MatrixConstructor mat(make_FreeModule(1), 1);
+  mat.set_entry(0, 0, g);
+  Matrix *mg = mat.to_matrix();  // {g}
 
   M2_arrayint weights = M2_makearrayint(n_vars());
-  for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
+  for (int i = 0; i < n_vars(); i++) weights->array[i] = 1;
   GBComputation *G = GBComputation::choose_gb(mg,
-                                              false, // collect syz
+                                              false,  // collect syz
                                               -1,
                                               weights,
                                               false,
@@ -208,7 +213,7 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
   G->set_stop_conditions(false,
                          NULL,
                          -1,
-                         -1, // syzygy limit
+                         -1,  // syzygy limit
                          -1,
                          -1,
                          -1,
@@ -219,21 +224,23 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
   return G;
 }
 
-ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) const
+ring_elem PolyRingQuotient::remainder(const ring_elem f,
+                                      const ring_elem g) const
 {
   if (K_->get_precision() > 0)
     {
-      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      ERROR(
+          "polynomial division not yet implemented for RR or CC coefficients");
       return from_long(0);
     }
-  MatrixConstructor matf(make_FreeModule(1),1);
-  matf.set_entry(0,0,f);
+  MatrixConstructor matf(make_FreeModule(1), 1);
+  matf.set_entry(0, 0, f);
   const Matrix *mf = matf.to_matrix();
 
   GBComputation *G = make_gb(g);
 
   const Matrix *mrem = G->matrix_remainder(mf);
-  ring_elem result = mrem->elem(0,0);
+  ring_elem result = mrem->elem(0, 0);
 
   delete mrem;
   delete mf;
@@ -245,18 +252,19 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
 {
   if (K_->get_precision() > 0)
     {
-      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      ERROR(
+          "polynomial division not yet implemented for RR or CC coefficients");
       return from_long(0);
     }
-  MatrixConstructor matf(make_FreeModule(1),1);
-  matf.set_entry(0,0,f);
+  MatrixConstructor matf(make_FreeModule(1), 1);
+  matf.set_entry(0, 0, f);
   Matrix *mf = matf.to_matrix();
 
   GBComputation *G = make_gb(g);
 
   const Matrix *mrem, *mquot;
   G->matrix_lift(mf, &mrem, &mquot);
-  ring_elem result = mquot->elem(0,0);
+  ring_elem result = mquot->elem(0, 0);
 
   delete mrem;
   delete mquot;
@@ -265,25 +273,27 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
   return result;
 }
 
-ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g,
+ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f,
+                                                 const ring_elem g,
                                                  ring_elem &quot) const
 {
   if (K_->get_precision() > 0)
     {
-      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      ERROR(
+          "polynomial division not yet implemented for RR or CC coefficients");
       quot = from_long(0);
       return from_long(0);
     }
-  MatrixConstructor matf(make_FreeModule(1),1);
-  matf.set_entry(0,0,f);
+  MatrixConstructor matf(make_FreeModule(1), 1);
+  matf.set_entry(0, 0, f);
   Matrix *mf = matf.to_matrix();
 
   GBComputation *G = make_gb(g);
 
   const Matrix *mrem, *mquot;
   G->matrix_lift(mf, &mrem, &mquot);
-  quot = mquot->elem(0,0);
-  ring_elem result = mrem->elem(0,0);
+  quot = mquot->elem(0, 0);
+  ring_elem result = mrem->elem(0, 0);
 
   delete mrem;
   delete mquot;
@@ -292,15 +302,14 @@ ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_e
   return result;
 }
 
-
 ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
-  // return an element h such that h*a is in (b). (Actually: h*a = b)...
+// return an element h such that h*a is in (b). (Actually: h*a = b)...
 // The lift does the following:
 // ma = mquot*b + mrem
 {
-  MatrixConstructor mata(make_FreeModule(1),1);
-  mata.set_entry(0,0,a);
-  Matrix *ma = mata.to_matrix(); // {a}
+  MatrixConstructor mata(make_FreeModule(1), 1);
+  mata.set_entry(0, 0, a);
+  Matrix *ma = mata.to_matrix();  // {a}
 
   GBComputation *G = make_gb(b);
 
@@ -313,32 +322,34 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
       set_non_unit(b);
       return from_long(0);
     }
-  return mquot->elem(0,0);
+  return mquot->elem(0, 0);
 }
 
-
-void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
-                              ring_elem &x, ring_elem &y) const
+void PolyRingQuotient::syzygy(const ring_elem a,
+                              const ring_elem b,
+                              ring_elem &x,
+                              ring_elem &y) const
 {
-  MatrixConstructor mat(make_FreeModule(1),2);
-  mat.set_entry(0,0,a);
-  mat.set_entry(0,1,b);
-  Matrix *m = mat.to_matrix(); // {a,b}
+  MatrixConstructor mat(make_FreeModule(1), 2);
+  mat.set_entry(0, 0, a);
+  mat.set_entry(0, 1, b);
+  Matrix *m = mat.to_matrix();  // {a,b}
   M2_arrayint weights = M2_makearrayint(n_vars());
-  for (int i=0; i<n_vars(); i++) weights->array[i] = 1;
+  for (int i = 0; i < n_vars(); i++) weights->array[i] = 1;
   GBComputation *G = GBComputation::choose_gb(m,
-                                              true, // collect syz
-                                              -1, // keep all rows
+                                              true,  // collect syz
+                                              -1,    // keep all rows
                                               weights,
                                               false,
                                               -1,
-                                              0,0
+                                              0,
+                                              0
                                               /* , max_reduction_count */
                                               );
   G->set_stop_conditions(false,
                          NULL,
                          -1,
-                         1, // syzygy limit
+                         1,  // syzygy limit
                          -1,
                          -1,
                          -1,
@@ -348,11 +359,11 @@ void PolyRingQuotient::syzygy(const ring_elem a, const ring_elem b,
   const Matrix *s = G->get_syzygies();
 
   // Now extract the two pieces of info
-  x = s->elem(0,0);
-  y = s->elem(1,0);
+  x = s->elem(0, 0);
+  y = s->elem(1, 0);
   ring_elem c = preferred_associate(x);
-  ring_elem x1 = mult(c,x);
-  ring_elem y1 = mult(c,y);
+  ring_elem x1 = mult(c, x);
+  ring_elem y1 = mult(c, y);
   x = x1;
   y = y1;
 }
@@ -364,7 +375,9 @@ ring_elem PolyRingQuotient::random() const
   return result;
 }
 
-ring_elem PolyRingQuotient::eval(const RingMap *map, const ring_elem f,int first_var) const
+ring_elem PolyRingQuotient::eval(const RingMap *map,
+                                 const ring_elem f,
+                                 int first_var) const
 {
   return numerR_->PolyRing::eval(map, f, first_var);
 }

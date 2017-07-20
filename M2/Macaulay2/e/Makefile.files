@@ -4,11 +4,42 @@
 ## Source code ###
 ##################
 
+
+
 INTERFACE2 = \
 	interrupted \
 	newdelete \
 
 INTERFACE = \
+	f4/res-varpower-monomial \
+	f4/res-f4-monlookup \
+	f4/res-moninfo-dense \
+	f4/res-moninfo-sparse \
+	f4/res-moninfo \
+	f4/res-poly-ring \
+	f4/res-f4-m2-interface \
+	f4/res-schreyer-frame \
+	f4/res-f4 \
+	f4/res-f4-computation \
+	f4/res-gausser \
+	f4/res-gausser-ZZp \
+	f4/res-gausser-QQ \
+	f4/res-gausser-QQ-hybrid \
+	f4/f4 \
+	f4/f4-syz \
+	f4/f4-mem \
+	f4/f4-monlookup \
+	f4/f4-types \
+	f4/f4-computation \
+	f4/f4-spairs \
+	f4/f4-m2-interface \
+	f4/hilb-fcn \
+	f4/monhashtable \
+	f4/monsort \
+	f4/moninfo \
+	f4/ntuple-monomial \
+	f4/varpower-monomial \
+	f4/gausser \
 	betti \
 	util \
 	GF \
@@ -36,7 +67,6 @@ INTERFACE = \
 	aring \
 	schurSn \
 	schur2 \
-	spair-heap \
 	dpoly \
 	tower \
 	interreduce \
@@ -53,7 +83,7 @@ INTERFACE = \
 	LLL \
 	fractionfreeLU \
 	ntl-interface \
-    fplll-interface \
+        fplll-interface \
 	mat \
 	dmat \
 	coeffrings \
@@ -120,11 +150,6 @@ INTERFACE = \
 	varpower \
 	weylalg
 
-#	RRR \
-#	CCC \
-	QQ \
-#
-
 COMMANDS2 = \
 	x-monideal \
 	x-factor \
@@ -173,7 +198,6 @@ ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))
 ENGINE_CFILES := $(addsuffix .c,$(C_FILES))
 ENGINE_DDFILES := $(addsuffix .dd,$(DD_FILES))
 ENGINE_DFILES := $(addsuffix .d,$(D_FILES))
-ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(ENGINE_DDFILES) $(ENGINE_DFILES)
 ENGINE_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES) $(D_FILES) $(DD_FILES))
 
 ifeq "$(SHARED)" "yes"

@@ -1,9 +1,9 @@
 newPackage(
 "Pullback",
-Version => "1.01",
-Date => "November 17th, 2015",
+Version => "1.02",
+Date => "May 22, 2017",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
-Headline => "Pullback of rings.",
+Headline => "pullback of rings",
 DebuggingMode => false,
 PackageImports => {"PushForward"},
 Reload => false
@@ -402,7 +402,7 @@ document{
 
 document{
   Key => {pullback,(pullback,RingMap,RingMap),[pullback,Verbose]},
-  Headline => "pullback",
+  Headline => "Compute the pullback of a diagram of rings",
   TEX "The pullback functor in the category of rings.  Given ring maps $f : A \\to B$ and $g : C \\to B$, this tries to compute the pullback of $\\{A \\to B \\leftarrow C\\}$ in the category of rings.  It requires that $A \\to B$ is a surjective map of rings (otherwise it will give an error) and it requires that $C \\to B$ is finite (otherwise it will never terminate).  Currently, it requires that the variable names of the rings $A$ and $C$ are distinct and that the variable names of $A$ are variable names of $B$ and those variables get sent to one another.  If the Verbose option is turned on, then certain steps in the process will be specified.",
   Usage => "pullback(f,g)",
   Inputs => { "f","g" },
@@ -439,7 +439,21 @@ document{
   ///
   }
 
-
+document{
+  Key => {internalUseDirectSum,(internalUseDirectSum,Ring,Ring)},
+  Headline => "Compute direct sum of two rings.",
+  TEX "A method which computes the product of two rings in the category of rings.",
+  Usage => "internalUseDirectSum(A,C)",
+  Inputs => { "f","g" },
+  Outputs => {{"The ring A times C"},{"The idempotent (1_A, 0)"}},
+  TEX "This function requires that $A$ and $C$ have the same coefficient field and that the variable names of $A$ and $C$ are distinct.  The variable names of the two rings in the direct sum ring remain the same.  This function was originally going to be internal (hence the name), but may be useful in other cases too.  ",
+  TEX "We compute an example",
+  EXAMPLE lines ///
+  A = QQ[x];
+  C = QQ[y];
+  (internalUseDirectSum(A,C))#0
+  ///,
+}
 
 
 -- **TEST0**  This glues two lines together.  We check that it has two minimal primes, two variables, and the product of the first two variables is zero.
@@ -533,3 +547,4 @@ end
 --***Changelog***---
 
 --1.01, added support for C with no variables.  Improved documentation.  Turned off some printed text when Verbose is turned off.
+--1.02, improved documentation including adding documentation for the product of rings.

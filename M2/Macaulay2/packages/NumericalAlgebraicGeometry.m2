@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.9.2",
-     Date => "Oct 2016",
+     Version => "1.9.3",
+     Date => "May 2017",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -17,7 +17,7 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     -- DebuggingMode => true,
+     --DebuggingMode => true,
      DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -310,19 +310,6 @@ normalize RingElement := f -> (
     promote(a,coefficientRing ring f) * f
     )
 ------------------------------------------------------
-checkCCpolynomials (List,List) := (S,T) -> (
-    n := #T;
-    if #S != n then error "expected same number of polynomials in start and target systems";
-    ST := checkCCpolynomials(S|T);
-    )
-
-toCCpolynomials = method()
-toCCpolynomials (List,ZZ) := (F,prec) -> (
-    checkCCpolynomials F;
-    R := CC_prec(monoid[gens commonRing F]);
-    apply(F,f->sub(f,R)) 
-    )    
-
 load "./NumericalAlgebraicGeometry/extraNAGtypes.m2"
 load "./NumericalAlgebraicGeometry/track.m2"
 load "./NumericalAlgebraicGeometry/refine.m2"
@@ -521,7 +508,7 @@ beginDocumentation()
 load "./NumericalAlgebraicGeometry/doc.m2";
 
 undocumented {
-    Field, "DoublePrecision", 
+    Field, 
     GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
     (endGameCauchy,GateHomotopy,Number,Point),
@@ -534,7 +521,6 @@ undocumented {
 (specialize,GateParameterHomotopy,MutableMatrix),
 [gateHomotopy,Software],
 [trackHomotopy,Software],
-[setDefault,Precision],
 [gateHomotopy,Parameters],
 [gateHomotopy,Strategy],
     }
@@ -549,24 +535,8 @@ TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
 ///
 
--- MISC. TESTS
---------------
-
---assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
---assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
---assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
-
-TEST ///-- random and good initial pairs
-setRandomSeed 0
-T = randomSd {2,3};
-(S,solsS) = goodInitialPair T
-M = track(S,T,solsS,Normalize=>true)
--- RM = refine(T,M,Software=>M2) -- projective refine is nom implemented!!!
-RM = M
-debug NumericalAlgebraicGeometry
-assert areEqual(norm2 matrix first M, 1_CC, Tolerance=>0.001)
-///
-
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/simple-tests.tst.m2")
+load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/border-case-errors.m2")
 end
 
 -- Here place M2 code that you find useful while developing this

@@ -36,4 +36,7 @@
   #define GC_THREADS 1
   #include <gc/gc.h>
 
+  #if defined(__cplusplus)
+    #include <gc/gc_cpp.h>
+  #endif
 #endif

@@ -7,7 +7,7 @@
 
 class F4toM2Interface
 {
-public:
+ public:
   static void poly_set_degrees(const Gausser *KK,
                                const MonomialInfo *MI,
                                const M2_arrayint wts,
@@ -41,7 +41,6 @@ public:
                                             coefficient_matrix *mat,
                                             gb_array &gens,
                                             gb_array &gb);
-
 };
 
 #endif

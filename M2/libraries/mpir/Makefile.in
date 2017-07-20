@@ -1,6 +1,6 @@
 VPATH = @srcdir@
-LICENSEFILES = README COPYING COPYING.LIB
-VERSION = 2.7.2
+LICENSEFILES = README COPYING COPYING.LIB INSTALL
+VERSION = 3.0.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 
@@ -27,7 +27,11 @@ CONFIGOPTIONS += --enable-gmpcompat --enable-cxx $(MPIR_CONFIGOPTIONS)
 # that uses libgmp, and the pari makefile refuses to make libpari.a, the
 # static library.
 # ifeq (@SHARED@,no)
-# CONFIGOPTIONS += --disable-shared
+
+# or, maybe now?
+
+CONFIGOPTIONS += --disable-shared
+
 # endif
 
 include ../Makefile.library
@@ -46,7 +50,6 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 endif
 
-COMPILEFLAGS = 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif

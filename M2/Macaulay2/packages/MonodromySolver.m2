@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.9.2.1", 
-    	Date => "Nov 2016",
+    	Version => "1.9.3", 
+    	Date => "May 2017",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
@@ -12,8 +12,8 @@ newPackage(
 	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
-    	Headline => "Solving polynomial systems via monodromy",
-	PackageImports => {"PHCpack"},
+    	Headline => "solving polynomial systems via monodromy",
+	PackageImports => {"PHCpack","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => false,		
@@ -26,7 +26,7 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "MasterFactor", "gamma1", "gamma2", "Correspondence21", "Family", "MasterNode", "Potential21", "Correspondence12", "homotopyGraph"}
+     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry

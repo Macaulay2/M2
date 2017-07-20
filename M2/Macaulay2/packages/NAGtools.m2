@@ -12,7 +12,6 @@ newPackage select((
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     Configuration =>  {},	
      PackageExports => {"NumericalAlgebraicGeometry", "SLPexpressions"},
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 

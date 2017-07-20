@@ -1,4 +1,10 @@
-Is the sign right?
+QQ[a, b, c, x]
+((a-b))^2 + discriminant((x-a)*(x-b),x)
+((a-b)*(a-c)*(b-c))^2 + discriminant((x-a)*(x-b)*(x-c),x)
+discriminant(x^2+b*x+c, x)
+
+end
+--    Is the sign right?
 
 i10 : QQ[a, b, c, x]
 

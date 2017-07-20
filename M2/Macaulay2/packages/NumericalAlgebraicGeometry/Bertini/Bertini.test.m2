@@ -28,18 +28,20 @@ R = CC[x,y];
 T = {x^2+y^2-1, x*y};
 sols = { {1.0001,0.00001}, { -0.00001,1.0000002} };
 rsols = refine(T, sols, Software=>BERTINI, Bits=>1000)
-assert areEqual(rsols, {{1,0},{0,1}})
+assert areEqual(sortSolutions rsols, {{0,1},{1,0}})
 
 -- numericalVariety
 V = numericalIrreducibleDecomposition ideal T
 assert(dim V == 0 and degree V == 4)
+V = numericalIrreducibleDecomposition ideal (x^6-y^2)
+assert all(components V, W->W.IsIrreducible===true)
 
 -- parameterHomotopy
 R=CC[u1,u2,u3,x,y]
 f1=u1*(y-1)+u2*(y-2)+u3*(y-3)
 f2=(x-11)*(x-12)*(x-13)
-finalParameters0={{1,0,0}}
-finalParameters1={{0,1+2*ii,0}}
+finalParameters0={1,0,0}
+finalParameters1={0,1+2*ii,0}
 sols = parameterHomotopy(
     {f1,f2},
     {u1,u2,u3},-- parameters
@@ -57,4 +59,5 @@ assert isOn(p, NV)
 end
 
 restart
+errorDepth = 2
 load "NumericalAlgebraicGeometry/Bertini/Bertini.test.m2"

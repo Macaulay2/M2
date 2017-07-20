@@ -9,9 +9,9 @@ static mpz_t maxH;
 #include "ZZp.hpp"
 
 template <>
-ring_elem getElement<QQ>(const QQ&  R, int index)
+ring_elem getElement<QQ>(const QQ &R, int index)
 {
-  if (index < 50) return R.from_long(index-25);
+  if (index < 50) return R.from_long(index - 25);
   if (!maxH_initialized)
     {
       maxH_initialized = true;
@@ -19,7 +19,10 @@ ring_elem getElement<QQ>(const QQ&  R, int index)
       mpz_set_str(maxH, "100000000000", 10);
     }
   gmp_QQ a1 = rawRandomQQ(maxH);
-  return R.from_rational(a1);
+  ring_elem result;
+  bool ok = R.from_rational(a1, result);
+  assert(ok);
+  return result;
 }
 ////////////////////////////////////////////////////////
 TEST(RingQQ, create)
@@ -27,8 +30,8 @@ TEST(RingQQ, create)
   const Ring *R = globalQQ;
   EXPECT_TRUE(R != 0);
 
-  EXPECT_TRUE(dynamic_cast< const Z_mod * >(R) == 0);
-  EXPECT_TRUE(dynamic_cast< const QQ * >(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
+  EXPECT_TRUE(dynamic_cast<const QQ *>(R) != 0);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_QQ);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "QQGMP");
@@ -41,35 +44,13 @@ TEST(RingQQ, ones)
   EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
   EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
-TEST(RingQQ, negate)
-{
-  testRingNegate(globalQQ, ntrials);
-}
-TEST(RingQQ, add)
-{
-  testRingAdd(globalQQ, ntrials);
-}
-TEST(RingQQ, subtract)
-{
-  testRingSubtract(globalQQ, ntrials);
-}
-TEST(RingQQ, multDivide)
-{
-  testRingDivide(globalQQ, ntrials);
-}
-TEST(RingQQ, axioms)
-{
-  testRingAxioms(globalQQ, ntrials);
-}
-TEST(RingQQ, power)
-{
-  testRingPower(globalQQ, ntrials);
-}
-TEST(RingQQ, syzygy)
-{
-  testRingSyzygy(globalQQ, ntrials);
-}
-
+TEST(RingQQ, negate) { testRingNegate(globalQQ, ntrials); }
+TEST(RingQQ, add) { testRingAdd(globalQQ, ntrials); }
+TEST(RingQQ, subtract) { testRingSubtract(globalQQ, ntrials); }
+TEST(RingQQ, multDivide) { testRingDivide(globalQQ, ntrials); }
+TEST(RingQQ, axioms) { testRingAxioms(globalQQ, ntrials); }
+TEST(RingQQ, power) { testRingPower(globalQQ, ntrials); }
+TEST(RingQQ, syzygy) { testRingSyzygy(globalQQ, ntrials); }
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
 // indent-tabs-mode: nil

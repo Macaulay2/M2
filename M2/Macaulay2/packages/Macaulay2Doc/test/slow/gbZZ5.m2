@@ -3,8 +3,10 @@
 -- this is a hard example from John Harrison
 -- can we do it without running out of memory?
 
-end -- deferred
--- we'll fix this bug later:
+--end -- deferred
+
+-- we'll fix this bug later: 
+-- MES: I'm reinstating this test, 31 May 2017.  Does this still fail on some machines?  On my MBP, it takes about 440 MB of RAM
 
 -- *** buffer overflow detected ***: /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.production/StagingArea/i486-Linux-Ubuntu-9.04/bin/M2 terminated
 -- ======= Backtrace: =========
@@ -21,7 +23,7 @@ end -- deferred
 -- /home/dan/src/M2-1.3/BUILD/dan/builds.tmp/ubuntu32.production/StagingArea/i486-Linux-Ubuntu-9.04/bin/M2[0x81c4460]
 
 
-  A = ZZ[x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13]
+  A = ZZ[x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13, MonomialSize=>8]
   f0 = ((x3 * x0) - (1))
   f1 = ((x1 * x3) - (((3) * (x5 ^ 2)) + (((2) * (x9 * x5)) + (x10 - (x6 * x4)))))
   f2 = ((x2 * x3) - (-((x5 ^ 3)) + ((x10 * x5) + (((2) * x12) - (x7 * x4)))))
@@ -37,4 +39,4 @@ assert(1 % I == 0)
 gbTrace = 3
 time(h = 1 // (gens I))
 assert((gens I) * h == 1)
-
+end--

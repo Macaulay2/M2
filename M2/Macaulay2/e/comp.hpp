@@ -29,37 +29,41 @@ class GBBComputation;
 class GBBComputation : public MutableEngineObject
 // This is the base type for all Groebner basis and syzygy computations
 {
-protected:
+ protected:
   GBBComputation() {}
-
-public:
+ public:
   virtual ~GBBComputation();
 
-  static GBBComputation *choose_gb(const Matrix *m,
-                                  M2_bool collect_syz,
-                                  int n_rows_to_keep,
-                                  M2_arrayint gb_weights, // null defaults to (1,...,1)
-                                  M2_bool use_max_degree,
-                                  int max_degree,
-                                  int algorithm,
-                                  int strategy,
-                                  int max_reduction_count = 10);
+  static GBBComputation *choose_gb(
+      const Matrix *m,
+      M2_bool collect_syz,
+      int n_rows_to_keep,
+      M2_arrayint gb_weights,  // null defaults to (1,...,1)
+      M2_bool use_max_degree,
+      int max_degree,
+      int algorithm,
+      int strategy,
+      int max_reduction_count = 10);
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs
 
   virtual GBBComputation *set_hilbert_function(const RingElement *h);
-  // The default version returns an error saying that Hilbert functions cannot be used.
+  // The default version returns an error saying that Hilbert functions cannot
+  // be used.
   // NULL is returned if there is an error...?
 
-  virtual ComputationStatusCode compute(const StopConditions &stop,
-                                        long &result_complete_thru_this_degree) = 0;
+  virtual ComputationStatusCode compute(
+      const StopConditions &stop,
+      long &result_complete_thru_this_degree) = 0;
 
   virtual int complete_thru_degree() const = 0;
   // The computation is complete up through this degree.
 
-  virtual GroebnerBasis * get_GroebnerBasis() = 0;
+  virtual GroebnerBasis *get_GroebnerBasis() = 0;
 
-  virtual GroebnerBasis * steal_GroebnerBasis() = 0; // This assumes that the computation is to be destroyed...
+  virtual GroebnerBasis *steal_GroebnerBasis() = 0;  // This assumes that the
+                                                     // computation is to be
+                                                     // destroyed...
 
   virtual const Matrix /* or null */ *get_gb_snapshot() = 0;
 
@@ -70,14 +74,12 @@ public:
   virtual void show() const;
 };
 
-class GroebnerBasis : public MutableEngineObject // mutable, or immutable???
+class GroebnerBasis : public MutableEngineObject  // mutable, or immutable???
 {
-protected:
+ protected:
   GroebnerBasis() {}
-
-public:
-  virtual ~GroebnerBasis() {} // frees all space associated with this GB
-
+ public:
+  virtual ~GroebnerBasis() {}  // frees all space associated with this GB
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
@@ -100,8 +102,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) = 0;
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient) = 0;
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient) = 0;
 
   virtual int contains(const Matrix *m) = 0;
 
@@ -116,9 +118,10 @@ public:
 
 class EngineComputation : public MutableEngineObject
 {
-private:
+ private:
   enum ComputationStatusCode computation_status;
-protected:
+
+ protected:
   StopConditions stop_;
 
   EngineComputation();
@@ -127,7 +130,7 @@ protected:
 
   virtual ~EngineComputation() {}
   // These are finalized objects, so this function is usually bypassed
-public:
+ public:
   void set_stop_conditions(M2_bool always_stop,
                            M2_arrayint degree_limit,
                            int basis_element_limit,
@@ -138,11 +141,10 @@ public:
                            M2_bool just_min_gens,
                            M2_arrayint length_limit);
 
-  virtual void destroy() = 0; // This function will be called when
+  virtual void destroy() = 0;  // This function will be called when
   // the computation is finalized by the garbage collector
 
   enum ComputationStatusCode status() const { return computation_status; }
-
   virtual long complete_thru_degree() const = 0;
   // This is computation specific information.  However, for homogeneous
   // GB's, the GB coincides with the actual GB in degrees <= the returned value.
@@ -153,27 +155,33 @@ public:
   // Do the computation as specified by the stop conditions.
   // This routine should set the status of the computation.
 
-  virtual EngineGBComputation * cast_to_EngineGBComputation() { return 0; }
-
+  virtual EngineGBComputation *cast_to_EngineGBComputation() { return 0; }
   virtual void text_out(buffer &o) const;
 
-  virtual void show() const; // debug display of some computations
+  virtual void show() const;  // debug display of some computations
 };
 
 class EngineGBComputation : public EngineComputation
 {
   GBBComputation *C;
   GroebnerBasis *G;
-  long complete_thru_this_degree; // only valid after computation has been initialized?
-protected:
-  EngineGBComputation(GBBComputation *C0) : C(C0), G(0), complete_thru_this_degree(0) {}
+  long complete_thru_this_degree;  // only valid after computation has been
+                                   // initialized?
+ protected:
+  EngineGBComputation(GBBComputation *C0)
+      : C(C0), G(0), complete_thru_this_degree(0)
+  {
+  }
 
-  EngineGBComputation(GroebnerBasis *G0) : C(0), G(G0), complete_thru_this_degree(0) {}
+  EngineGBComputation(GroebnerBasis *G0)
+      : C(0), G(G0), complete_thru_this_degree(0)
+  {
+  }
 
   virtual ~EngineGBComputation();
-public:
-  EngineGBComputation *cast_to_EngineGBComputation() { return this; }
 
+ public:
+  EngineGBComputation *cast_to_EngineGBComputation() { return this; }
   static EngineGBComputation *create(GBBComputation *C0);
 
   static EngineGBComputation *create(GroebnerBasis *C0);
@@ -194,8 +202,10 @@ public:
 
   virtual void destroy();
 
-  EngineComputation *set_hilbert_function(const RingElement *h) {
-    // The default version returns an error saying that Hilbert functions cannot be used.
+  EngineComputation *set_hilbert_function(const RingElement *h)
+  {
+    // The default version returns an error saying that Hilbert functions cannot
+    // be used.
     if (C == 0 || C->set_hilbert_function(h)) return this;
     return 0;
   }
@@ -205,17 +215,23 @@ public:
   virtual long complete_thru_degree() const;
   // The computation is complete up through this degree.
 
-  // Recall that the status of the computation is maintained by the Computation class,
+  // Recall that the status of the computation is maintained by the Computation
+  // class,
 
-  GroebnerBasis *get_GroebnerBasis() { if (!G && C) G = C->get_GroebnerBasis(); return G; }
+  GroebnerBasis *get_GroebnerBasis()
+  {
+    if (!G && C) G = C->get_GroebnerBasis();
+    return G;
+  }
 };
 
 /// Older -- but current --- code ///
 class Computation : public MutableEngineObject
 {
-private:
+ private:
   enum ComputationStatusCode computation_status;
-protected:
+
+ protected:
   StopConditions stop_;
 
   Computation();
@@ -227,22 +243,21 @@ protected:
   // return false, and use ERROR(...) to provide an error message.
 
   virtual ~Computation();
-public:
-  Computation /* or null */ *
-  set_stop_conditions(M2_bool always_stop,
-                      M2_arrayint degree_limit,
-                      int basis_element_limit,
-                      int syzygy_limit,
-                      int pair_limit,
-                      int codim_limit,
-                      int subring_limit,
-                      M2_bool just_min_gens,
-                      M2_arrayint length_limit);
+
+ public:
+  Computation /* or null */ *set_stop_conditions(M2_bool always_stop,
+                                                 M2_arrayint degree_limit,
+                                                 int basis_element_limit,
+                                                 int syzygy_limit,
+                                                 int pair_limit,
+                                                 int codim_limit,
+                                                 int subring_limit,
+                                                 M2_bool just_min_gens,
+                                                 M2_arrayint length_limit);
   // returns NULL if there is a general problem with one of the stop
   // conditions.
 
   enum ComputationStatusCode status() const { return computation_status; }
-
   virtual int complete_thru_degree() const = 0;
   // This is computation specific information.  However, for homogeneous
   // GB's, the GB coincides with the actual GB in degrees <= the returned value.
@@ -253,12 +268,11 @@ public:
   // Do the computation as specified by the stop conditions.
   // This routine should set the status of the computation.
 
-  virtual GBComputation * cast_to_GBComputation() { return 0; }
-  virtual ResolutionComputation * cast_to_ResolutionComputation() { return 0; }
-
+  virtual GBComputation *cast_to_GBComputation() { return 0; }
+  virtual ResolutionComputation *cast_to_ResolutionComputation() { return 0; }
   virtual void text_out(buffer &o) const;
 
-  virtual void show() const; // debug display of some computations
+  virtual void show() const;  // debug display of some computations
 };
 
 #endif

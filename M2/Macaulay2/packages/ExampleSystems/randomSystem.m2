@@ -33,9 +33,6 @@ doc ///
 
 TEST ///
 F = randomSystem(5,2,CC_53)
-assert(
-    first timing (sols = solveSystem F;)
-    < 1
-    )
+sols = solveSystem F
 assert(#sols==32)
 ///

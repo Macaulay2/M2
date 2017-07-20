@@ -1,5 +1,5 @@
 newPackage( "Divisor",
-Version => "0.1p", Date => "August 6th, 2015", Authors => {
+Version => "0.1sa", Date => "May 23rd, 2017", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
@@ -69,6 +69,7 @@ export{
     	"nonCartierLocus", --has IsGraded option
     	"isSNC", --has IsGraded option
     	"isZeroDivisor",
+    	"isVeryAmple", --assumes graded
     --functions for getting maps to projective space from divisors (graded only)
 	"baseLocus",
 	"mapToProjectiveSpace",  
@@ -1390,6 +1391,18 @@ baseLocus(WDiv) := (D1) -> (
 	M1 := divisorToModule(D1);
 	baseLocus(M1)
 );
+
+isVeryAmple = method(Options => {Verbose=>false});
+needsPackage "RationalMaps";
+
+isVeryAmple(WDiv) := o->(D1) -> (
+    mapFromD1 := mapToProjectiveSpace(D1);
+    if (#(first entries vars source mapFromD1) == 0) then (
+        false)
+    else (
+        isEmbedding(mapFromD1, Verbose=>o.Verbose)
+    )
+);
  	 	
 ----------------------------------------------------------------
 --************************************************************--
@@ -2157,6 +2170,32 @@ doc ///
 
 doc ///
 	 Key
+		isVeryAmple
+		(isVeryAmple, WDiv)
+		[isVeryAmple, Verbose]
+	Headline
+		Checks if a divisor is very ample.
+	Usage
+		b = isVeryAmple( D1, Verbose=>vb )
+	Inputs
+		D1: WDiv
+		vb: Boolean
+	Outputs
+		b: Boolean
+	Description
+	  Text
+	   Returns true if the divisor is very ample, otherwise it returns false.  It works by calling isEmbedding from the RationalMaps package.  If Verbose is set to true, it will print Verbose output from isEmbedding.
+	  Example
+	   R = QQ[x, y, z]/ideal(x^3 + y^3 - z^3);
+	   D = divisor(ideal(x, y-z));
+	   isVeryAmple(D)
+	   isVeryAmple(2*D)
+	   isVeryAmple(3*D)	   
+///
+
+
+doc ///
+	 Key
 		getPrimeDivisors
 		(getPrimeDivisors, BasicDiv)
 	Headline
@@ -2834,7 +2873,7 @@ doc ///
 	 I2: Ideal
 	Description
 	 Text
-	  Returns an ideal isomorphic to Hom(I, R).  If KnownNormal is false (default is true), then the computer will first check whether the ambient ring is normal, if it is not then it will perform a (possibly) slower check that will definitely give the right answer.
+	  Get the double dual (S2 - identification) of an ideal.  If KnownNormal is false (default is true), then the computer will first check whether the ambient ring is normal, if it is not then it will perform a (possibly) slower check that will definitely give the right answer.
 	 Example
 	  R = QQ[x,y,z]/ideal(x^2-y*z)
 	  m = ideal(x,y,z)
@@ -4184,12 +4223,33 @@ D = 0*divisor(x);
 E = zeroDivisor(R);
 assert( (D == E) and (isCartier(D) == true) and (isQCartier(5, D) == 1) and (dim source mapToProjectiveSpace(D) == 1) and (isFreeModule divisorToModule(D) == true) and (isSNC(D) == true) and (D == floorDiv(D)) )
 ///
+
+--checks for very ample divisors #1 (divisors on elliptic curves)
+TEST ///
+R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
+D = divisor(ideal(x, y-z));
+assert( (isVeryAmple(0*D) == false) and (isVeryAmple(1*D) == false) and (isVeryAmple(2*D) == false) and (isVeryAmple(3*D) == true) )
+///
+
+--checks for very ample divisors #2 (divisors on P^1 x P^1)
+TEST ///
+R = QQ[x,y,u,v]/ideal(x*y-u*v);
+D = divisor(ideal(x,u));
+E = divisor(ideal(x, v));
+assert( (isVeryAmple(D) == false) and (isVeryAmple(E) == false) and (isVeryAmple(D+E) == true) )
+///
 end
 
 ---***************************
 ---*******CHANGELOG***********
 ---***************************
---changes 0.1p
+--changes 0.1s
+------Made isVeryAmple not crash if you passed it a divisor with an empty linear system
+
+--changes 0.1s
+------Added the command isVeryAmple
+
+--changes 0.1r
 ------Added the command ramificationDivisor
 
 --changes 0.1o

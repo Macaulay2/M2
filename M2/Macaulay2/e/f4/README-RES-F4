@@ -1,0 +1,95 @@
+TODO: Notes on implementation Feb 2017.
+
+-- Monomial implementation possibles:
+one way:
+    monomials in the ring are placed in a hash table
+    advantages: monomial equality is fast to check
+                space requirement is very small (one uint32 for a monomial, with one uint32 for the component, inside a polynomial.
+    
+    
+a. allow other coefficient rings.  For QQ: allow to use reals, and severl primes, and denominator size?
+b. allow reals as input too?
+
+In order to do that:
+  functions/locations which care about the actual coefficients:
+  createF4Res -- knows original ring, has test for positive characteristic
+    -- calls: newGausser (this could be a dispatch to different rings).
+    -- calls: ResF4toM2Interface::from_M2_vec
+    -- calls: ResF4toM2Interface::to_M2_matrix
+    -- calls: ResF4toM2Interface::to_M2_MutableMatrix (knows original coeff ring) (just to get degree 0 matrix part)
+  
+  res-poly-ring
+    currently: class poly (change name to Polynomial?): contains pointer to FieldElement
+    why? coeffs and monoms are public members of 'poly'?
+    poly_constructor: contains std::vector of FieldElement.
+      appendTerm: refers to a FieldElement.
+      setPoly: doesn't need to know so much about result.coeffs, as it does now.  Could be a function from 
+      setPolyFromArrays: ditto
+      ouch: poly_iter has a function called coefficient(), which returns an int.
+      display_poly: this is debug info in any case, but uses it.coefficient(), FieldElement...
+  res-gausser
+    Should be the only place that handles coefficients?
+  res-f4-m2-interface
+    to_M2_MutableMatrix
+    setDegreeZeroMap: needs to be able to access coefficients
+  res-f4
+    has field: mCoeffs, which refers to FieldElement.
+    uses i.coefficient() to push back coefficient in the row of the big matrix
+      also needs to negate this element.  i.coefficient() only used in 5 places.
+    gauss_reduce:
+      allocate dense row
+      appendTerm
+      dense_row_fill_from_sparse
+
+  res-gausser: need types:
+  CoefficientArray (is fixed in size).  Perhaps 'void*'
+  CoefficientVector (can be added to).    Perhaps 'void*'
+  need
+    insertOne()
+    insertMinusOne()
+    copy(nelems, from, to)
+    but still need an iterator too...
+    to be able to get the length
+    debug output routine for the entire array
+    debug output for the i-th element
+
+
+  to look for:
+    mCoeffs
+    .coefficients()
+    FieldElement
+    
+
+
+    My notes on the algorithm for computing non-minimal free resolutions
+    and betti numbers
+
+Types:
+
+Monomial
+  -- format?
+  -- contains potentially:
+  --   component
+  --   space for divisor info
+  --   hash value
+  --   exponent vector OR var list?
+MonomialArray: an array of monomials
+Coefficient
+  -- format? (for now, as it is over ZZ/p, it is an int or long?
+  -- for QQ or ZZ coeffs, what to do here?
+CoefficientArray
+Polynomial
+  contains 2 arrays: one for monomials and one for coefficients
+
+SchreyerFrameItem -- one array for one homological dimension
+SchreyerFrame -- array of SchreyerFrameItem's
+
+Row
+MonomialHashTable
+MonomialsWithComponents
+
+mReducers
+mSPairs
+mSPairComponents
+mColumns
+mMonomSpace

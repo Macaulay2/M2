@@ -57,17 +57,35 @@ document {
 	  TO "BLAS",
 	  TO "NTL library",
 	  TO "FLINT",
-	  TO "mpack",
 	  TO "givaro",
 	  TO "fflas-ffpack",
+	  -- TO "boost", -- we don't link with boost, but normaliz does
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
 	  TO "normaliz",
 	  TO "nauty",
 	  TO "cdd+",
-	  TO "lrslib"
+	  TO "lrslib",
+	  TO "topcom",
+	  TO "cohomCalg"
      	  }
+     }
+
+document {
+     Key => "cohomCalg",
+     PARA {
+     	  "The program ", TT "cohomCalg", ", by Ralph Blumenhagen, Benjamin Jurke, Thorsten Rahn, and Helmut Roschy,
+	  computes cohomology of line bundles, and is available from ", HREF "http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/", "."
+	  }
+     }
+
+document {
+     Key => "topcom",
+     PARA {
+	  "The program ", TT "topcom", ", by Jörg Rambau, computes triangulations of point configurations and oriented matroids,
+	  and is available from ", HREF "http://www.rambau.wm.uni-bayreuth.de/TOPCOM/", "."
+	  }
      }
 
 document {
@@ -95,14 +113,6 @@ document {
 	  by William Hart, Mike Hansen, Sebastian Pancratz, Fredrik Johansson,
 	  and others, and is available at ", HREF "http://flintlib.org/", ".  It is 
 	  distributed under the terms of the GNU General Public License, version 2 or later."
-	  }
-     }
-
-document {
-     Key => "mpack",
-     PARA {
-	  "The library ", TT "mpack", " is a multiprecision linear algebra package based on lapack and blas,
-	  written by Nakata Maho.  It is available at ", HREF "http://mplapack.sourceforge.net/", "."
 	  }
      }
 

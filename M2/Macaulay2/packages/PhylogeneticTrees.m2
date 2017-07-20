@@ -2,7 +2,7 @@ newPackage(
      "PhylogeneticTrees",
      Version => "1.0",
      Date => "October 12, 2016",
-     Headline => "Compute invariants for group based phylogenetic models",
+     Headline => "invariants for group-based phylogenetic models",
      --HomePage => "",
      Authors => {
 	  {Name => "Hector Banos", Email => "hdbanoscervantes@alaksa.edu"},

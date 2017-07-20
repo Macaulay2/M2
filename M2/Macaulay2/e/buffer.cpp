@@ -1,44 +1,35 @@
 #include "buffer.hpp"
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
 
 void buffer::expand(int newcap)
 {
   int n = 2 * _capacity;
   if (newcap > n) n = newcap;
-  char *newbuf = newarray_atomic(char,n);
+  char *newbuf = newarray_atomic(char, n);
   _capacity = n;
   memcpy(newbuf, _buf, _size);
   deletearray(_buf);
   _buf = newbuf;
 }
 
-M2_string buffer::to_string()
-{
-  return M2_tostringn(_buf, _size);
-}
-
+M2_string buffer::to_string() { return M2_tostringn(_buf, _size); }
 void buffer::put(char c)
 {
-  if (_capacity <= _size+1) expand(1);
+  if (_capacity <= _size + 1) expand(1);
   _buf[_size++] = c;
 }
 
 void buffer::put(const char *s, long len)
- {
-   int len0 = static_cast<int>(len);
-   if (_capacity <= _size + len0 + 1)
-     expand(_size + len0 + 1);
-   memcpy(_buf + _size, s, len0);
-   _size += len0;
-}
-
-void buffer::put(const char *s)
 {
-  put(s, strlen(s));
+  int len0 = static_cast<int>(len);
+  if (_capacity <= _size + len0 + 1) expand(_size + len0 + 1);
+  memcpy(_buf + _size, s, len0);
+  _size += len0;
 }
 
+void buffer::put(const char *s) { put(s, strlen(s)); }
 void buffer::put(int n)
 {
   char s[100];
@@ -101,7 +92,6 @@ void buffer::put(unsigned long n, int width)
   sprintf(s, "%*lu", width, n);
   put(s, strlen(s));
 }
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -6,9 +6,7 @@ newPackage("BinomialEdgeIdeals",
       Email => "windisch@ovgu.de",
       HomePage => "http://www.uni-magdeburg.de/windisch/"}},
    Headline => "Package for computations with  binomial edge ideals",
-   PackageImports => {"Graphs","Binomials"},
-	Configuration => {},
-	Reload=>true
+   PackageImports => {"Graphs","Binomials"}
 	)
 
 export {
