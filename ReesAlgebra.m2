@@ -614,6 +614,123 @@ whichGm Ideal := i -> (
  
 ------------------------------------------------------------------
  
+jacobianDual = method()
+jacobianDual Matrix := phi ->(
+    t := numrows phi;
+    T := symbol T;
+    S := ring phi;
+    ST := S[T_0..T_(t-1)];
+    X := vars ring phi;
+    Ts :=  vars ST;
+    jacobianDual(phi,X,Ts)
+    )
+
+jacobianDual(Matrix,Matrix, Matrix) := (phi,X,T) -> (
+    --If phi is an m x n matrix over R, then T = matrix{{T_1..T_m}}
+    -- should be a 1 x m over variables over R[T_1..T_m].
+    --ideal X \subset R should contain the entries of the matrix phi.
+    --the routine returns a matrix psi over ring T such that 
+    --T phi = X psi.
+    --Thus psi is a Jacobian dual of phi.
+    ST := ring T;
+    toST := map(ST,ring phi);--,gens ring phi|toList(numcols T:0_ST));
+    if numcols T != numrows phi then error"if phi has m rows then T must have m cols.";
+    XST := X;
+    if ring XST =!= ST then XST = toST X;
+    phiS := phi;
+    if ring phi =!= ST then phiST := toST phi;
+    psi := (T * phiST)//XST;
+    --check that this worked:
+    assert(T*phiST == XST*psi);
+    psi
+    )
+///
+
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+--viewHelp reesAlgebra
+
+kk = ZZ/101
+d = 3
+S = kk[x_0..x_(d-1)]
+mlin = transpose vars S
+mquad = random(S^d, S^{-1,-4,d-2:-2})
+Irand = minors(d,mlin|mquad)
+X = vars S
+phi = syz gens Irand;
+psi = jacobianDual phi
+
+
+--ST = kk[x_0..x_(d-1), T_0..T_3] -- or
+ST = S[T_0..T_3]
+Ts = matrix{{T_0,T_1,T_2,T_3}}
+STS = map(ST,ring psi,toList(T_0..T_3)|toList(x_0..x_(d-1)))
+psi1 = jacobianDual(phi, X, Ts)
+(STS psi) - psi1 == 0
+///
+
+beginDocumentation()
+debug SimpleDoc
+
+doc ///
+   Key
+    jacobianDual    
+   Headline
+    computes the ``jacobian dual'', part of a method of finding generators for Rees Algebra ideals
+   Usage
+    psi = jacobianDual phi
+    psi = jacobianDual(phi, X, T)
+   Inputs
+    phi:Matrix
+     presentation matrix of an ideal
+    X:Matrix
+     row matrix generating an ideal that contains the entries of phi
+    T:Matrix
+     row matrix of variables that will be generators of the Rees algebra of I
+   Outputs
+    psi:Matrix
+     the ``Jacobian Dual"; satisfies T*phi = X*psi
+   Description
+    Text
+     Let I be an ideal of R and let phi be the presentation matrix of I as a module.
+     The symmetric algebra of I has the form 
+     Sym_R(I) = R[T_0..T_m]/ideal(T*phi)
+     where the T_i correspond to the generators of I. If X = matrix{{x_1..x_n}},
+     with x_i \in R, and ideal X contains the entries of the matrix phi, then there is 
+     a matrix psi, called the Jacobian Dual of phi with respect to X,
+     defined over R[T_0..T_m] such that T*phi = X*psi (the matrix psi is generally
+     not unique; Macaulay2 computes it using Groebner division with remainer.
+ 
+     The name Jacobian Dual comes from the case where phi is a matrix of linear forms
+     the x_i are the variables of R, and the generators of I are forms, all of the same degree D;
+     in this case Euler's formula sum(df_i/dx_j*xj) = Df can be used to express the
+     entries of psi in terms of the derivatives of the entries of phi, at least when
+     D is nonzero in the coefficient field.  The division with
+     remainder is usually fast, but if this
+     ever becomes a bottleneck it would be possible to test for the degree condition and
+     use Euler's formula.
+     
+     If I is an ideal of grade >=1 and ideal X contains a nonzerodivisor of R
+     (which will be automatic if I has finite projective dimension) then
+     ideal X has grade >= 1 on the Rees algebra. Since ideal(T*phi) is contained in the
+     defining ideal of the Rees algebra, the vector X is annihilated by the matrix
+     psi when regarded over the Rees algebra. If also the number of relations of I
+     is >= the number of generators of I, this implies that the maximal minors of
+     psi annihilate  the x_i as elements of the Rees algebra, and thus that the maximal
+     minors of psi are inside the ideal of the Rees algebra. In very favorable circumstances,
+     one may even have 
+     
+     reesIdeal I = ideal(T*phi)+ideal minors(psi).
+     
+     Example
+   Caveat
+   SeeAlso
+    reesAlgebra
+    reesAlgebraIdeal
+    specialFiberIdeal
+///
+
  
 beginDocumentation()
 debug SimpleDoc
