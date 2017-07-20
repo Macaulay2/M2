@@ -111,7 +111,7 @@ ifeq ($(no-check-$1),)
 	+ ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 endif
 
-install-in-$1:; $(MAKE) -C submodules/$1 install
+install-in-$1:; + $(MAKE) -C submodules/$1 install
 
 # it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
 # has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 
@@ -261,8 +261,8 @@ report-M2-location:
 	:    @pre_bindir@/M2@EXE@
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 validate-html:
-	TMP="/tmp/validate-$$$$"				; \
-	find @pre_prefix@/@tail_htmldir@ -name \*.html          | \
+	@ TMP="/tmp/validate-$$$$"				; \
+	  find @pre_prefix@/@tail_htmldir@ -name \*.html        | \
 	    ( i=0						; \
 	      n=0						; \
 	      while read x					; \
@@ -270,7 +270,7 @@ validate-html:
 		 i=$$(($$i + 1))				; \
 		 if [ -s $$TMP ]				; \
 		 then n=$$(($$n + 1))				; \
-		      echo " *** invalid HTML: $$x"		; \
+		      echo \ "*** invalid HTML: $$x"		; \
 		      cat $$TMP					; \
 		 fi						; \
 	      done						; \

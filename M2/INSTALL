@@ -101,8 +101,9 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
-    (To upgrade to a new release of the OS, if desired, run "update-manager" if
-    you want a GUI, or run "do-release-upgrade" for a command line interface.)
+    (To upgrade to a new release of Ubuntu, if desired, run "update-manager" if
+    you want a GUI, or run "do-release-upgrade" for a command line interface.
+    For Debian, run "apt-get update ; apt-get dist-upgrade".
 
   Raspbian:
     Install packages with:
@@ -155,8 +156,7 @@ various modern operating systems:
 
       sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip gtest
-
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest
     To upgrade the system:
 
       sudo pacman --sync --refresh --sysupgrade
@@ -224,7 +224,7 @@ various modern operating systems:
 	libncurses-devel libreadline-devel libstdc++6-devel libtool
 	libxml2-devel make patchutils pkg-config time unzip wget
     You may also want these:
-        ctags emacs-el gdb gvim libxml2-doc openssh psmisc vim xauth xconsole
+        ctags emacs-el gdb gitk gvim libxml2-doc openssh psmisc vim xauth xconsole
         xinit xkill xterm
     After installing xinit, the program "startxwin" can be used to start X Windows.
 

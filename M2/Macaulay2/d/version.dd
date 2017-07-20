@@ -243,7 +243,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "threads" => USE_THREADS,
    "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
    ))));
 

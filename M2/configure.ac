@@ -27,7 +27,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.10, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.10.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -493,7 +493,6 @@ AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
-dnl AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-threads,[disable thread local storage and thread creation]), USE_THREADS=$enableval)
 AC_SUBST(CC_THREAD_SUPPORT)
 AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
 AC_LANG(C)
@@ -501,9 +500,6 @@ AC_COMPILE_IFELSE(
 	[AC_LANG_SOURCE([__thread int x;])],
      	CC_THREAD_SUPPORT=yes; [AC_MSG_RESULT(yes)],
 	CC_THREAD_SUPPORT=no ; [AC_MSG_RESULT(no)])
-dnl if [[ "$USE_THREADS" = yes ]]
-dnl then AC_DEFINE(USE_THREADS,1,[whether to use thread local storage])
-dnl fi
 
 AC_SUBST(FROBBY,yes)
 AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
@@ -545,7 +541,7 @@ then LDFLAGS="$LDFLAGS -faltivec"
      CXXFLAGS="$CXXFLAGS -faltivec"
 fi
 
-AC_PROG_FC()
+AC_PROG_FC()			dnl check for Fortran compiler presence
 USE_FCLIBS=unspecified
 AC_ARG_ENABLE(fc-lib-ldflags,
     AS_HELP_STRING(--disable-fc-lib-ldflags,[do not use extra libraries for linking with Fortran (the default under Cygwin)]),
@@ -797,8 +793,26 @@ AC_SUBST(BUILTLIBS,)
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
-#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
-#    4ti2 needs glpk
+# 	   We have always built mpfr because we told mpir (which is
+# 	   impersonating gmp) to use libgc for its memory allocation.  But mpfr
+# 	   puts pointers to gmp numbers in thread local variables, unless
+# 	   specially configured, which libgc can't find, so libgc regards them
+# 	   as garbage and ultimately frees them, causing strange errors.  See
+# 	   libraries/mpfr/Makefile.in for more information.  Another possible
+# 	   problem can arise if mpfr comes preinstalled and dynamically linked
+# 	   to libgmp, but we want to use mpir instead.
+#	   We cannot continue to tell gmp to use GC_malloc while mpfr is using it.
+#	   *** Conclusion: we must let gmp use malloc, not GC_malloc.  So what
+#	   do with objects returned by libraries that use gmp, directly or
+# 	   indirectly?  Either deep copy to the GC heap or finalization to free it explicitly?
+    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
+# 	   We have always built mpir, so we can patch the routine
+# 	   mp_set_memory_functions() in it so it does nothing; that prevents
+# 	   libraries such as pari from telling it what memory allocation
+# 	   functions to use.  But we should instead patch pari or work around
+# 	   it, so we can use the gmp library that comes with many linux
+# 	   distributions.
+    4ti2 needs glpk
 #    gfan needs cddlib
 #    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
@@ -853,10 +867,14 @@ BUILD_gftables=no
 
 BUILD_mpir=yes
 BUILD_ALWAYS="mpir $BUILD_ALWAYS"
-# We always build mpir so we can patch the routine mp_set_memory_functions() in it so
-# it does nothing; that prevents libraries such as pari from telling it what memory
-# allocation functions to use.  But we should instead patch pari, so we can use the
-# gmp library that comes with many linux distributions.
+# We always build mpir so we can patch the routine mp_set_memory_functions() in
+# it so it does nothing; that prevents libraries such as pari from telling it
+# what memory allocation functions to use.  But we should instead set
+# RETAIN_PARI_STATE to TRUE here, so we can use the gmp library that comes with
+# many linux distributions.  It will thus not be thread safe.
+
+# When linking with python and running sage, sage will initialize and use the
+# pari library, too.  We should investigte whether it tells pari to retain its state.
 
 BUILD_mpfr=yes
 BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
@@ -934,31 +952,12 @@ fi
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,tinfo ncurses curses,,AC_MSG_ERROR([[libcurses, libncurses, and tinfo not found (containing symbol tgoto)]]))
+AC_SEARCH_LIBS(tgoto,tinfo ncurses curses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
-then AC_MSG_CHECKING([for library containing common symbol _rl_comment_begin and text symbol rl_set_prompt])
-     FOUND=
-     SAVELIBS=$LIBS
-     for lib in "" "-lreadline" "-lreadline -lhistory"
-     do  test "$lib" && LIBS="$lib $LIBS"
-	 AC_LINK_IFELSE(
-	     [AC_LANG_SOURCE([
-	      [ extern int rl_set_prompt(); extern int _rl_comment_begin; int main () { return rl_set_prompt() + _rl_comment_begin; } ]
-	     ])],
-	     FOUND=yes; break;,
-	     LIBS=$SAVELIBS)
-     done
-     if test "$FOUND"
-     then if test "$lib"
-	 then AC_MSG_RESULT([yes, $lib])
-	 else AC_MSG_RESULT([none required])
-	 fi
-     else AC_MSG_RESULT([no, will build readline])
-	 BUILD_readline=yes
-     fi 
+then AC_SEARCH_LIBS(rl_set_prompt,readline,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
@@ -1203,7 +1202,15 @@ then AC_LANG(C)
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-     fi
+	  AC_MSG_CHECKING([whether mpfr library uses thread local variables]) # see notes above
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		  #include <stdio.h>
+		  #include <mpfr.h>
+		  main () { return !mpfr_buildopt_tls_p(); }]])],
+	     [ AC_MSG_RESULT([yes, *** may cause a problem]) ], dnl build mpfr ourselves with tls disabled, as we did before?
+	     [ AC_MSG_RESULT([no, good]) ],
+	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+    fi
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 

@@ -12,6 +12,9 @@
 #include "types.h"
 #include "debug.h"
 
+/* to get IM2_initialize() : */
+#include "engine.h"
+
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #else
@@ -636,6 +639,10 @@ char **argv;
 
      char **x = our_environ; 
      while (*x) envc++, x++;
+
+     GC_INIT();
+     progname = argv[0];
+     IM2_initialize();
 
      system_cpuTime_init();
      call_shared_library();
