@@ -1857,12 +1857,12 @@ x = symbol x
 --Example 1: a monomial ideal in 4-space.
 S=kk[x_0..x_4]
 i=monomialCurveIdeal(S,{2,3,5,6})
-isLinearType(i,i_0)
-isLinearType i
+assert(isLinearType(i,i_0) == false)
+assert(isLinearType i == false)
 ring i
 use S
-reesAlgebra (i,i_0)
-presentation normalCone (i, i_0)
+-- reesAlgebra (i,i_0)
+-- presentation normalCone (i, i_0)
 presentation associatedGradedRing (i,i_0)
 specialFiberIdeal (i,i_0)
 
@@ -1870,7 +1870,7 @@ specialFiberIdeal (i,i_0)
 restart
 loadPackage "ReesAlgebra"
 kk=ZZ/101
-
+S=kk[x,y]
 m=random(S^3,S^{4:-1})
 i=minors(2,m);
 time I=reesIdeal (i,i_0); -- .04 sec
@@ -1918,11 +1918,15 @@ Research Problem: what's the situation in general?
 
 ///
 --For isLinearType
+restart
+loadPackage "ReesAlgebra"
 S = ZZ/101[x,y]
 M = module ideal(x,y)
+E = {true, false, false, false, false}
 for p from 1 to 5 list(
 M = (ideal vars S)^p;
-print isLinearType M)
+--print isLinearType M
+assert(isLinearType M == E[p-1]))
 ///
 
 
