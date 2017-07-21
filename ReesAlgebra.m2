@@ -13,6 +13,7 @@
 --               Amelia Taylor with some assistance from Sorin Popescu. 
 -- UPDATE HISTORY : created 27 October 2006 
 -- 	     	    updated 29 June 2008, and later
+--                  updated 19-21 July 2017
 --
 -- Missing documentation and most examples are now at the end of the file
 -- waiting to be included in the documentation -- more fixes to come
@@ -1541,6 +1542,7 @@ doc ///
      Ein and Lazarsfeld.
 
    Example
+     setRandomSeed 0
      T = ZZ/101[c,d];
      D = 4;
      P = product(D, i -> random(1,T))
@@ -1832,6 +1834,7 @@ i=minors(2,M)
 j=i+ideal(a,b,c,d)
 assert(sfi==j)
 ///
+
 TEST///
 --For isLinearType
 S = ZZ/101[x,y]
@@ -1943,16 +1946,6 @@ primary to the maximal ideal.
 Research Problem: what's the situation in general?
 *}
 
-///
---For isLinearType
-restart
-loadPackage "ReesAlgebra"
-S = ZZ/101[x,y]
-M = module ideal(x,y)
-E = {true, false, false, false, false}
-assert({true, false, false, false, false} == 
-    for p from 1 to 5 list(isLinearType (ideal vars S)^p))
-///
 
 
 ///
@@ -2095,46 +2088,6 @@ J = saturate(SL, ideal(w_1,w_2))
 J2 = saturate(J, ideal(v_1,v_2, v_3))
 
 ///
-
-///
---- Example of non-distinguished components to test distinguished code.
-restart 
-loadPackage "ReesAlgebra"
-T=ZZ/101[c,d]
-D = 4
-P = product(D, i -> random(1,T))
-R = ZZ/101[a,b,c,d]
-I = ideal(a^2, a*b*(substitute(P,R)), b^2)
-ass I -- there is one minimal associated prime (a thick line in PP^3) and D embedded primes (points on the line) 
-primaryDecomposition I
-distinguished(I) -- only the minimal prime is a distinguished component
-K = distinguishedAndMult(I) -- get multiplicity 2 
-///
-
------------
-restart 
-load "randomIdeal.m2"
-loadPackage "ReesAlgebra"
-
-T=ZZ/101[a,b,c,d]
-line=ideal"a,b"
-L={5,5,5,5}
-
---point=(ideal(a,b,c))^2
-point = randomMonomialIdeal(L,T)
-i=intersect(line,point)
-
-for t from 1 to 100 do(
-     L={random(7), random(7), random(7), random(7), random(7)};
-          point = randomMonomialIdeal(L,T);
-     I=specialFiberIdeal point;
-     if length (D= decompose I) > 1 then (
-	  print toString point;
-	  print D;
-	  print)
-     )
-i=ideal(b^2*c^3,a^2,a*c^3,b^5*c,b^4*c)
-I=specialFiberIdeal i
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
