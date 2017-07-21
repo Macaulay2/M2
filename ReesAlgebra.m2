@@ -53,7 +53,8 @@ export{
   "symmetricKernel", 
   "universalEmbedding",
   "whichGm",
-  "Tries"
+  "Tries",
+  "jacobianDual"
   }
 
 -- Comment : The definition of Rees algebra used in this package is 
@@ -703,7 +704,7 @@ doc ///
      defined over R[T_0..T_m] such that T*phi = X*psi (the matrix psi is generally
      not unique; Macaulay2 computes it using Groebner division with remainer.
  
-     The name Jacobian Dual comes from the case where phi is a matrix of linear forms
+     The name Jacobian Dual comes from the case where phi is a matrix of linear forms $f_i$
      the x_i are the variables of R, and the generators of I are forms, all of the same degree D;
      in this case Euler's formula sum(df_i/dx_j*xj) = Df can be used to express the
      entries of psi in terms of the derivatives of the entries of phi, at least when
