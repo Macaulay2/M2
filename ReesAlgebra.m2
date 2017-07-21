@@ -1,3 +1,4 @@
+
 --------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -54,7 +55,8 @@ export{
   "symmetricKernel", 
   "universalEmbedding",
   "whichGm",
-  "Tries"
+  "Tries",
+  "jacobianDual"
   }
 
 -- Comment : The definition of Rees algebra used in this package is 
@@ -146,7 +148,8 @@ reesIdeal(Ideal) := Ideal => o-> (J) -> (
      symmetricKernel(gens J, Variable => fixupw o.Variable)
      )
 
----- needs user-provided non-zerodivisor. 
+---- needs user-provided non-zerodivisor f
+---- in the ideal, or such that the module becomes free on inverting f
 
 reesIdeal (Module, RingElement) := Ideal =>
 reesIdeal (Module, RingElement) := Ideal => o -> (M,a) -> (
@@ -742,10 +745,43 @@ beginDocumentation()
 debug SimpleDoc
 
 doc ///
+   Key
+    jacobianDual    
+   Headline
+    computes the ``jacobian dual'', part of a method of finding generators for Rees Algebras
+   Usage
+    psi = jacobianDual phi
+    psi = jacobianDual(phi, X, T)
+   Inputs
+    phi:Matrix
+     presentation matrix of an ideal
+    X:Matrix
+     row matrix generating an ideal that contains the entries of phi
+    T:Matrix
+     row matrix of variables that will be generators of the Rees algebra
+   Outputs
+    psi:Matrix
+     the ``Jacobian Dual"; satisfies T*phi = X*psi
+   Description
+    Text
+     Let I be an ideal of R and let phi be the presentation matrix of I as a module.
+     The ``Jacobian Dual" is by definition a matrix psi over a ring
+     with variables T corresponding to the generators of I,
+     satisfying T*phi = X*psi, where X is a row matrix of elements of R generating
+     an ideal that contains all the entries of phi.
+     Example
+   Caveat
+   SeeAlso
+    reesAlgebra
+    reesAlgebraIdeal
+    specialFiberIdeal
+///
+
+doc ///
   Key
     ReesAlgebra
   Headline
-    Compute Rees algebra
+    Rees algebra of an ideal or module, and related invariants
   Description
     Text
        The goal of this package is to provide commands to compute the Rees
@@ -1036,7 +1072,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor modulo the ideal or module.  Optional
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
     :Ideal
       defining the Rees algebra of M
@@ -1168,7 +1204,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor modulo the ideal or module.  Optional
+      any non-zero divisor in the ideal, or such that the module becomes free on inverting f
   Outputs
     :Ring
       defining the Rees algebra of M
@@ -1216,7 +1252,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
      :Boolean
        true if {\tt M} is of linear type, false otherwise
@@ -1437,6 +1473,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
+
        an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ring
@@ -2116,3 +2153,9 @@ J2 = saturate(J, ideal(v_1,v_2, v_3))
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
+
+end--
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+viewHelp reesAlgebra
