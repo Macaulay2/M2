@@ -1848,6 +1848,24 @@ assert(isReduction(I,K)==true)
 assert(reductionNumber(I,K)==1)
 ///
 
+--testing multiplicity
+TEST///
+R=ZZ/101[x,y]
+I = ideal(x^3, x^2*y, y^3)
+assert(multiplicity I==9)
+R = ZZ/101[x,y]/ideal(x^3-y^3)
+I = ideal(x^2,y^2)
+assert(multiplicity I==6)
+///
+
+--Testing which Gm
+TEST///
+kk=ZZ/101;
+S=kk[a..c];
+m=ideal vars S
+i=(ideal"a,b")*m+ideal"c3"
+assert(whichGm i==3)
+///
 end
 
 restart
