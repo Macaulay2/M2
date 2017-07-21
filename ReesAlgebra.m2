@@ -1,3 +1,4 @@
+
 --------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -13,6 +14,7 @@
 --               Amelia Taylor with some assistance from Sorin Popescu. 
 -- UPDATE HISTORY : created 27 October 2006 
 -- 	     	    updated 29 June 2008, and later
+--                  updated 19-21 July 2017
 --
 -- Missing documentation and most examples are now at the end of the file
 -- waiting to be included in the documentation -- more fixes to come
@@ -53,7 +55,8 @@ export{
   "symmetricKernel", 
   "universalEmbedding",
   "whichGm",
-  "Tries"
+  "Tries",
+  "jacobianDual"
   }
 
 -- Comment : The definition of Rees algebra used in this package is 
@@ -145,7 +148,8 @@ reesIdeal(Ideal) := Ideal => o-> (J) -> (
      symmetricKernel(gens J, Variable => fixupw o.Variable)
      )
 
----- needs user-provided non-zerodivisor. 
+---- needs user-provided non-zerodivisor f
+---- in the ideal, or such that the module becomes free on inverting f
 
 reesIdeal (Module, RingElement) := Ideal =>
 reesIdeal (Module, RingElement) := Ideal => o -> (M,a) -> (
@@ -696,12 +700,16 @@ doc ///
     Text
      Let I be an ideal of R and let phi be the presentation matrix of I as a module.
      The symmetric algebra of I has the form 
-     Sym_R(I) = R[T_0..T_m]/ideal(T*phi)
+     Sym_S(I) = S[T_0..T_m]/ideal(T*phi)
      where the T_i correspond to the generators of I. If X = matrix{{x_1..x_n}},
      with x_i \in R, and ideal X contains the entries of the matrix phi, then there is 
      a matrix psi, called the Jacobian Dual of phi with respect to X,
      defined over R[T_0..T_m] such that T*phi = X*psi (the matrix psi is generally
      not unique; Macaulay2 computes it using Groebner division with remainer.
+     
+     In the form psi = jacobianDual phi,
+     a new ring ST = S[T_0..T_m] is created, and the vector X is set to the variables
+     of R. The result is returned as a matrix over ST.
  
      The name Jacobian Dual comes from the case where phi is a matrix of linear forms
      the x_i are the variables of R, and the generators of I are forms, all of the same degree D;
@@ -717,7 +725,7 @@ doc ///
      ideal X has grade >= 1 on the Rees algebra. Since ideal(T*phi) is contained in the
      defining ideal of the Rees algebra, the vector X is annihilated by the matrix
      psi when regarded over the Rees algebra. If also the number of relations of I
-     is >= the number of generators of I, this implies that the maximal minors of
+     is >= the number of columns of X, this implies that the maximal minors of
      psi annihilate  the x_i as elements of the Rees algebra, and thus that the maximal
      minors of psi are inside the ideal of the Rees algebra. In very favorable circumstances,
      one may even have 
@@ -737,10 +745,43 @@ beginDocumentation()
 debug SimpleDoc
 
 doc ///
+   Key
+    jacobianDual    
+   Headline
+    computes the ``jacobian dual'', part of a method of finding generators for Rees Algebras
+   Usage
+    psi = jacobianDual phi
+    psi = jacobianDual(phi, X, T)
+   Inputs
+    phi:Matrix
+     presentation matrix of an ideal
+    X:Matrix
+     row matrix generating an ideal that contains the entries of phi
+    T:Matrix
+     row matrix of variables that will be generators of the Rees algebra
+   Outputs
+    psi:Matrix
+     the ``Jacobian Dual"; satisfies T*phi = X*psi
+   Description
+    Text
+     Let I be an ideal of R and let phi be the presentation matrix of I as a module.
+     The ``Jacobian Dual" is by definition a matrix psi over a ring
+     with variables T corresponding to the generators of I,
+     satisfying T*phi = X*psi, where X is a row matrix of elements of R generating
+     an ideal that contains all the entries of phi.
+     Example
+   Caveat
+   SeeAlso
+    reesAlgebra
+    reesAlgebraIdeal
+    specialFiberIdeal
+///
+
+doc ///
   Key
     ReesAlgebra
   Headline
-    Compute Rees algebra
+    Rees algebra of an ideal or module, and related invariants
   Description
     Text
        The goal of this package is to provide commands to compute the Rees
@@ -1031,7 +1072,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor modulo the ideal or module.  Optional
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
     :Ideal
       defining the Rees algebra of M
@@ -1163,7 +1204,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor modulo the ideal or module.  Optional
+      any non-zero divisor in the ideal, or such that the module becomes free on inverting f
   Outputs
     :Ring
       defining the Rees algebra of M
@@ -1211,7 +1252,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
   Outputs
      :Boolean
        true if {\tt M} is of linear type, false otherwise
@@ -1432,6 +1473,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
+
        an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ring
@@ -1541,6 +1583,7 @@ doc ///
      Ein and Lazarsfeld.
 
    Example
+     setRandomSeed 0
      T = ZZ/101[c,d];
      D = 4;
      P = product(D, i -> random(1,T))
@@ -1832,8 +1875,9 @@ i=minors(2,M)
 j=i+ideal(a,b,c,d)
 assert(sfi==j)
 ///
+
 TEST///
---For isLinearType
+--Test for isLinearType
 S = ZZ/101[x,y]
 M = module ideal(x,y)
 E = {true, false, false, false, false}
@@ -1842,6 +1886,26 @@ assert({true, false, false, false, false} ==
 ///
 end
 
+TEST///
+--Test for distinguished
+   Example
+     setRandomSeed 0
+     T = ZZ/101[c,d];
+     D = 4;
+     P = product(D, i -> random(1,T))
+     R = ZZ/101[a,b,c,d]
+     I = ideal(a^2, a*b*(substitute(P,R)), b^2)
+   Text
+     There is one minimal associated prime (a thick line in $P^3$) and $D$
+     embedded primes (points on the line).
+   Example
+     ass I 
+     primaryDecomposition I
+   Text
+     Only the minimal prime is a distinguished component, and it has multiplicity 2.
+   Example
+     distinguished(I)
+///
 restart
 uninstallPackage "ReesAlgebra"
 installPackage "ReesAlgebra"
@@ -1943,16 +2007,6 @@ primary to the maximal ideal.
 Research Problem: what's the situation in general?
 *}
 
-///
---For isLinearType
-restart
-loadPackage "ReesAlgebra"
-S = ZZ/101[x,y]
-M = module ideal(x,y)
-E = {true, false, false, false, false}
-assert({true, false, false, false, false} == 
-    for p from 1 to 5 list(isLinearType (ideal vars S)^p))
-///
 
 
 ///
@@ -2096,46 +2150,12 @@ J2 = saturate(J, ideal(v_1,v_2, v_3))
 
 ///
 
-///
---- Example of non-distinguished components to test distinguished code.
-restart 
-loadPackage "ReesAlgebra"
-T=ZZ/101[c,d]
-D = 4
-P = product(D, i -> random(1,T))
-R = ZZ/101[a,b,c,d]
-I = ideal(a^2, a*b*(substitute(P,R)), b^2)
-ass I -- there is one minimal associated prime (a thick line in PP^3) and D embedded primes (points on the line) 
-primaryDecomposition I
-distinguished(I) -- only the minimal prime is a distinguished component
-K = distinguishedAndMult(I) -- get multiplicity 2 
-///
-
------------
-restart 
-load "randomIdeal.m2"
-loadPackage "ReesAlgebra"
-
-T=ZZ/101[a,b,c,d]
-line=ideal"a,b"
-L={5,5,5,5}
-
---point=(ideal(a,b,c))^2
-point = randomMonomialIdeal(L,T)
-i=intersect(line,point)
-
-for t from 1 to 100 do(
-     L={random(7), random(7), random(7), random(7), random(7)};
-          point = randomMonomialIdeal(L,T);
-     I=specialFiberIdeal point;
-     if length (D= decompose I) > 1 then (
-	  print toString point;
-	  print D;
-	  print)
-     )
-i=ideal(b^2*c^3,a^2,a*c^3,b^5*c,b^4*c)
-I=specialFiberIdeal i
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
 -- End:
+
+end--
+restart
+uninstallPackage "ReesAlgebra"
+installPackage "ReesAlgebra"
+viewHelp reesAlgebra
