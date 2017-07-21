@@ -136,6 +136,7 @@ universalEmbedding(Module) := Matrix => (M) -> (
 --           case the inclusion map is a versal map.
 
 reesIdeal = method(Options => {Variable => "w"})
+reesAlgebraIdeal = reesIdeal
 
 fixupw = w -> if instance(w,String) then getSymbol w else w
 
@@ -677,12 +678,22 @@ psi1 = jacobianDual(phi, X, Ts)
 ///
 
 beginDocumentation()
-debug SimpleDoc
 ///
 uninstallPackage "ReesAlgebra"
 restart
 installPackage  "ReesAlgebra"
 ///
+
+doc ///
+   Key
+    "reesAlgebraIdeal"
+   Headline
+    Synonym for reesIdeal
+   SeeAlso
+    reesIdeal
+///
+
+
 doc ///
    Key
     jacobianDual
