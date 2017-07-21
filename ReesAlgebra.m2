@@ -1881,12 +1881,29 @@ E = {true, false, false, false, false}
 assert({true, false, false, false, false} == 
     for p from 1 to 5 list(isLinearType (ideal vars S)^p))
 ///
+
+TEST///
+--Associated Graded ring and Normal Cone very basic test
+R=ZZ/23[x]
+I=ideal(x)
+A=associatedGradedRing I
+S=ring ideal A
+assert(dim S==2)
+assert(codim A==1)
+N=normalCone I
+s=ring ideal N
+assert(dim s==2)
+assert(codim N==1)
+///
+
 end
 
 restart
+path=prepend("Users/Whitney/Workshop-2017-Berkeley/ReesAlgebras",path)
 uninstallPackage "ReesAlgebra"
 installPackage "ReesAlgebra"
-loadPackage "ReesAlgebra"
+loadPackage( "ReesAlgebra", Reload=>true)
+check "ReesAlgebra"
 installPackage(ReesAlgebra, IgnoreExampleErrors=>true)
 
 end
