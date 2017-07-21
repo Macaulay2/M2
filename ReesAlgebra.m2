@@ -685,7 +685,9 @@ installPackage  "ReesAlgebra"
 ///
 doc ///
    Key
-    jacobianDual    
+    jacobianDual
+    (jacobianDual, Matrix)
+    (jacobianDual, Matrix, Matrix, Matrix)
    Headline
     computes the ``jacobian dual'', part of a method of finding generators for Rees Algebra ideals
    Usage
