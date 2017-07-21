@@ -278,8 +278,8 @@ degree(S^1/I)
 --Special fiber is here defined to be the fiber of the blowup over the
 --subvariety defined by the vars of the original ring. Note that if the
 --original ring is a tower ring, this might not be the fiber over the
---closed point! ***put this into the documentation!*** to get the closed
---fiber, flatten the base ring first. 
+--closed point! ***this part is already in the documentation now*** to 
+--get the closed fiber, flatten the base ring first. 
 
 specialFiberIdeal=method(TypicalValue=>Ideal, Options=>{Variable=>"w"})
 
@@ -1407,6 +1407,11 @@ doc ///
 
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
+     
+     Special fiber is here defined to be the fiber of the blowup over the subvariety
+     defined by the vars of the original ring. Note that if the original ring is a 
+     tower ring, this might not be the fiber over the closed point! To get the closed
+     fiber, flatten the base ring first. 
    Example
      R=QQ[a..h]
      M=matrix{{a,b,c,d},{e,f,g,h}}
@@ -1449,6 +1454,11 @@ doc ///
      
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
+     
+     Special fiber is here defined to be the fiber of the blowup over the subvariety
+     defined by the vars of the original ring. Note that if the original ring is a 
+     tower ring, this might not be the fiber over the closed point! To get the closed
+     fiber, flatten the base ring first.    
    Example
      R=QQ[a..h]
      M=matrix{{a,b,c,d},{e,f,g,h}}
