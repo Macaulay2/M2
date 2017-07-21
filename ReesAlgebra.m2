@@ -1826,6 +1826,13 @@ M=matrix{{S_0,S_1,S_3,S_6},{S_1,S_2,S_4,S_7},{S_3,S_4,S_5,S_8},{S_6,S_7,S_8,S_9}
 i=minors(2,M)
 j=i+ideal(a,b,c,d)
 assert(sfi==j)
+sf=specialFiber(msq)
+isf= ideal sf
+S=ring isf
+T=ZZ/23[S_0,S_1,S_2,S_3,S_4,S_5,S_6,S_7,S_8,S_9]
+M=matrix{{S_0,S_1,S_3,S_6},{S_1,S_2,S_4,S_7},{S_3,S_4,S_5,S_8},{S_6,S_7,S_8,S_9}}
+i=minors(2,M)
+ideal sf ==i
 ///
 
 ---Testing minimalReduction, isReduction, reductionNumber
