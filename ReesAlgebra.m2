@@ -49,6 +49,7 @@ export{
   "reductionNumber",
   "reesIdeal",
   "reesAlgebra",
+  "reesAlgebraIdeal",
   "specialFiberIdeal",
   "specialFiber",
   "symmetricKernel", 
@@ -676,7 +677,11 @@ psi1 = jacobianDual(phi, X, Ts)
 
 beginDocumentation()
 debug SimpleDoc
-
+///
+uninstallPackage "ReesAlgebra"
+restart
+installPackage  "ReesAlgebra"
+///
 doc ///
    Key
     jacobianDual    
