@@ -696,12 +696,16 @@ doc ///
     Text
      Let I be an ideal of R and let phi be the presentation matrix of I as a module.
      The symmetric algebra of I has the form 
-     Sym_R(I) = R[T_0..T_m]/ideal(T*phi)
+     Sym_S(I) = S[T_0..T_m]/ideal(T*phi)
      where the T_i correspond to the generators of I. If X = matrix{{x_1..x_n}},
      with x_i \in R, and ideal X contains the entries of the matrix phi, then there is 
      a matrix psi, called the Jacobian Dual of phi with respect to X,
      defined over R[T_0..T_m] such that T*phi = X*psi (the matrix psi is generally
      not unique; Macaulay2 computes it using Groebner division with remainer.
+     
+     In the form psi = jacobianDual phi,
+     a new ring ST = S[T_0..T_m] is created, and the vector X is set to the variables
+     of R. The result is returned as a matrix over ST.
  
      The name Jacobian Dual comes from the case where phi is a matrix of linear forms
      the x_i are the variables of R, and the generators of I are forms, all of the same degree D;
@@ -717,7 +721,7 @@ doc ///
      ideal X has grade >= 1 on the Rees algebra. Since ideal(T*phi) is contained in the
      defining ideal of the Rees algebra, the vector X is annihilated by the matrix
      psi when regarded over the Rees algebra. If also the number of relations of I
-     is >= the number of generators of I, this implies that the maximal minors of
+     is >= the number of columns of X, this implies that the maximal minors of
      psi annihilate  the x_i as elements of the Rees algebra, and thus that the maximal
      minors of psi are inside the ideal of the Rees algebra. In very favorable circumstances,
      one may even have 
