@@ -32,7 +32,7 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
-    	DebuggingMode => false,
+    	DebuggingMode => true,
 	Reload => true  
     	)
 
@@ -44,6 +44,7 @@ export{
   "isLinearType", 
   "minimalReduction",
   "isReduction",
+  "jacobianDual",
   "multiplicity",
   "normalCone", 
   "reductionNumber",
@@ -616,18 +617,19 @@ whichGm Ideal := i -> (
  
 ------------------------------------------------------------------
  
-jacobianDual = method()
-jacobianDual Matrix := phi ->(
+jacobianDual = method(Options=>{Variable => "w"})
+jacobianDual Matrix := o-> phi ->(
     t := numrows phi;
-    T := symbol T;
+    T := fixupw o.Variable;
     S := ring phi;
-    ST := S[T_0..T_(t-1)];
+    --ST := symmetricAlgebra (S^(t-1), VariableBaseName => fixupw o.Variable);
+    ST:=S[T_0..T_(t-1)];
     X := vars ring phi;
     Ts :=  vars ST;
     jacobianDual(phi,X,Ts)
     )
 
-jacobianDual(Matrix,Matrix, Matrix) := (phi,X,T) -> (
+jacobianDual(Matrix,Matrix, Matrix) := o->  (phi,X,T) -> (
     --If phi is an m x n matrix over R, then T = matrix{{T_1..T_m}}
     -- should be a 1 x m over variables over R[T_1..T_m].
     --ideal X \subset R should contain the entries of the matrix phi.
@@ -826,6 +828,8 @@ doc ///
     [distinguished, Variable]
     [distinguishedAndMult, Variable]
     [isReduction, Variable]
+    [jacobianDual, Variable]
+
   Headline
     Choose name for variables in the created ring
   Usage
@@ -839,6 +843,8 @@ doc ///
     distinguished(...,Variable=>w)
     distinguishedAndMult(...,Variable=>w)
     isReduction(...,Variable=>w)
+    jacobianDual(...,Variable=>w)
+
   Description
     Text
       Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
@@ -1898,7 +1904,7 @@ assert(dim s==2)
 assert(codim N==1)
 ///
 
-end
+
 
 TEST///
 --Test for distinguished
@@ -1915,17 +1921,10 @@ I=ideal(x^2, x*y*u^2+2*x*y*u*v+x*y*v^2,y^2)
 assert(distinguishedAndMult I == {{2, ideal (y, x)}})
 distinguishedAndMult I
 ///
-
-
-restart
-path=prepend("Users/Whitney/Workshop-2017-Berkeley/ReesAlgebras",path)
-uninstallPackage "ReesAlgebra"
-installPackage "ReesAlgebra"
-loadPackage( "ReesAlgebra", Reload=>true)
-check "ReesAlgebra"
-installPackage(ReesAlgebra, IgnoreExampleErrors=>true)
-
 end
+
+
+
 
 
 --NOTE Oct 5
