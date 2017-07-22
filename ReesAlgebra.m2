@@ -33,7 +33,7 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
-    	DebuggingMode => false,
+    	DebuggingMode => true,
 	Reload => true  
     	)
 
@@ -627,28 +627,23 @@ jacobianDual Matrix := phi ->(
     T := symbol T;
     S := ring phi;
     ST := S[T_0..T_(t-1)];
-    X := vars ring phi;
+    X := promote(vars ring phi, ST);
     Ts :=  vars ST;
-    jacobianDual(phi,X,Ts)
+    jacobianDual(promote(phi,ST),X,Ts)
     )
 
 jacobianDual(Matrix,Matrix, Matrix) := (phi,X,T) -> (
-    --If phi is an m x n matrix over R, then T = matrix{{T_1..T_m}}
-    -- should be a 1 x m over variables over R[T_1..T_m].
-    --ideal X \subset R should contain the entries of the matrix phi.
-    --the routine returns a matrix psi over ring T such that 
+    --Suppose that T is a 1 x m matrix of variables in the ring ST = R[T_0..T_(m-1)],
+    --and phi is a matrix over ST that is defined over the subring R.
+    --Suppose also that  X is a 1 x n matrix defined over ST whose
+    --entries generate ideal containing the entries of the matrix phi.
+    --the routine returns a matrix psi over ST such that 
     --T phi = X psi.
-    --Thus psi is a Jacobian dual of phi.
-    ST := ring T;
-    toST := map(ST,ring phi);--,gens ring phi|toList(numcols T:0_ST));
+    --Thus psi is a Jacobian dual of phi with respect to X.
     if numcols T != numrows phi then error"if phi has m rows then T must have m cols.";
-    XST := X;
-    if ring XST =!= ST then XST = toST X;
-    phiS := phi;
-    if ring phi =!= ST then phiST := toST phi;
-    psi := (T * phiST)//XST;
+    psi := (T * phi)//X;
     --check that this worked:
-    assert(T*phiST == XST*psi);
+    assert(T*phi == X*psi);
     psi
     )
 ///
@@ -668,13 +663,14 @@ X = vars S
 phi = syz gens Irand;
 psi = jacobianDual phi
 
-
---ST = kk[x_0..x_(d-1), T_0..T_3] -- or
-ST = S[T_0..T_3]
+T = symbol T;
+ST = kk[x_0..x_(d-1), T_0..T_3] -- or
+STS = map(ST,S,(vars ST)_{0..d-1})
+--ST = S[T_0..T_3]
+X = matrix {apply(d, i->x_i)}
 Ts = matrix{{T_0,T_1,T_2,T_3}}
-STS = map(ST,ring psi,toList(T_0..T_3)|toList(x_0..x_(d-1)))
-psi1 = jacobianDual(phi, X, Ts)
-(STS psi) - psi1 == 0
+phi
+psi1 = jacobianDual(STS phi, X, Ts)
 ///
 
 beginDocumentation()
@@ -684,14 +680,6 @@ restart
 installPackage  "ReesAlgebra"
 ///
 
-doc ///
-   Key
-    "reesAlgebraIdeal"
-   Headline
-    Synonym for reesIdeal
-   SeeAlso
-    reesIdeal
-///
 
 
 doc ///
@@ -727,7 +715,11 @@ doc ///
      
      In the form psi = jacobianDual phi,
      a new ring ST = S[T_0..T_m] is created, and the vector X is set to the variables
-     of R. The result is returned as a matrix over ST.
+     of R. The result is returned as a matrix over ST. Use the form psi = jacobianDual(phi, X,T)
+     if you want to do the computation in a ring you have already computed;
+     in this case, the matrices phi, X, T should all be defined over the ring ST, but
+     the matrix T should be a row of variables of ST, and
+     the matrix phi should have entries in a subring not involving the entries of T.
  
      The name Jacobian Dual comes from the case where phi is a matrix of linear forms
      the x_i are the variables of R, and the generators of I are forms, all of the same degree D;
@@ -753,48 +745,36 @@ doc ///
     Example
      d=3
      S = ZZ/101[a_0..a_(d-1)]
-   SeeAlso
-    reesAlgebra
-    specialFiberIdeal
-///
-
- 
-beginDocumentation()
-debug SimpleDoc
-
-doc ///
-   Key
-    jacobianDual    
-   Headline
-    computes the ``jacobian dual'', part of a method of finding generators for Rees Algebras
-   Usage
-    psi = jacobianDual phi
-    psi = jacobianDual(phi, X, T)
-   Inputs
-    phi:Matrix
-     presentation matrix of an ideal
-    X:Matrix
-     row matrix generating an ideal that contains the entries of phi
-    T:Matrix
-     row matrix of variables that will be generators of the Rees algebra
-   Outputs
-    psi:Matrix
-     the ``Jacobian Dual"; satisfies T*phi = X*psi
-   Description
+     kk = ZZ/101
+     mlin = transpose vars S
+     mquad = random(S^d, S^{-1,-4,d-2:-2})
+     Irand = minors(d,mlin|mquad)
+     X = vars S
+     phi = syz gens Irand;
     Text
-     Let I be an ideal of R and let phi be the presentation matrix of I as a module.
-     The ``Jacobian Dual" is by definition a matrix psi over a ring
-     with variables T corresponding to the generators of I,
-     satisfying T*phi = X*psi, where X is a row matrix of elements of R generating
-     an ideal that contains all the entries of phi.
-     Example
-   Caveat
+     We can use the simple form of the function:
+    Example
+     psi = jacobianDual phi
+    Text
+     The long form gives the same answer over a polynomial ring involving
+     with both sets of variables:
+    Example     
+     ST = kk[T_0..T_3, x_0..x_(d-1)] 
+     X = matrix{toList(x_0..x_(d-1))}
+     Ts = matrix{{T_0,T_1,T_2,T_3}}
+     phi = (map(ST,S,X)) phi
+     psi1 = jacobianDual(phi, X, Ts)
+     f = map(ST, ring psi, vars ST)
+     assert(f psi - psi1 == 0)
    SeeAlso
     reesAlgebra
-    reesAlgebraIdeal
     specialFiberIdeal
 ///
-
+///
+uninstallPackage "ReesAlgebra" 
+restart
+installPackage "ReesAlgebra" 
+///
 doc ///
   Key
     ReesAlgebra
@@ -1072,6 +1052,15 @@ doc ///
       reesIdeal
       reesAlgebra
       symmetricKernel
+///
+
+doc ///
+   Key
+    "reesAlgebraIdeal"
+   Headline
+    Synonym for reesIdeal
+   SeeAlso
+    reesIdeal
 ///
 
 doc ///
@@ -1801,6 +1790,38 @@ doc ///
 ///
 
 TEST///
+--TEST for jacobianDual
+setRandomSeed 0
+     d=2
+     S = ZZ/101[a_0..a_(d-1)]
+     kk = ZZ/101
+     mlin = transpose vars S
+     mquad = random(S^d, S^{-1,-4,d-2:-2})
+     Irand = minors(d,mlin|mquad)
+     X = vars S
+     phi = syz gens Irand;
+     psi = jacobianDual phi
+
+     T = symbol T
+     ST = kk[T_0..T_d, x_0..x_(d-1)] 
+     X = matrix{toList(x_0..x_(d-1))}
+     Ts = matrix{{T_0,T_1..T_d}}
+     phi1 = (map(ST,S,X)) phi
+     psi1 = jacobianDual(phi1, X, Ts)
+     f = map(ST, ring psi, vars ST)
+     assert(f psi - psi1 == 0)
+     m = matrix {{-15*T_1-8*T_2, T_0*x_0^3+14*T_0*x_0*x_1^2-24*T_0*x_1^3+18*T_2},
+      {T_0*x_0^3-16*T_0*x_0^2*x_1+2*T_0*x_0*x_1^2+32*T_0*x_1^3+45*T_1+40*T_2,
+      -11*T_0*x_1^3-11*T_1+43*T_2}}
+     f psi - m
+///
+
+///
+restart
+loadPackage"ReesAlgebra"
+///
+
+TEST///
 --TEST for universalEmbedding
 p=3
 S=ZZ/p[x,y,z]
@@ -2176,4 +2197,6 @@ end--
 restart
 uninstallPackage "ReesAlgebra"
 installPackage "ReesAlgebra"
+check "ReesAlgebra"
+
 viewHelp reesAlgebra
