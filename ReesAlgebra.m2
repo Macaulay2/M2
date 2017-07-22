@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -45,6 +44,7 @@ export{
   "isLinearType", 
   "minimalReduction",
   "isReduction",
+  "jacobianDual",
   "multiplicity",
   "normalCone", 
   "reductionNumber",
@@ -56,8 +56,7 @@ export{
   "symmetricKernel", 
   "universalEmbedding",
   "whichGm",
-  "Tries",
-  "jacobianDual"
+  "Tries"
   }
 
 -- Comment : The definition of Rees algebra used in this package is 
@@ -150,8 +149,7 @@ reesIdeal(Ideal) := Ideal => o-> (J) -> (
      symmetricKernel(gens J, Variable => fixupw o.Variable)
      )
 
----- needs user-provided non-zerodivisor f
----- in the ideal, or such that the module becomes free on inverting f
+---- needs user-provided non-zerodivisor. 
 
 reesIdeal (Module, RingElement) := Ideal =>
 reesIdeal (Module, RingElement) := Ideal => o -> (M,a) -> (
@@ -621,10 +619,10 @@ whichGm Ideal := i -> (
  
 ------------------------------------------------------------------
  
-jacobianDual = method()
-jacobianDual Matrix := phi ->(
+jacobianDual = method(Options=>{Variable => "w"})
+jacobianDual Matrix := o-> phi ->(
     t := numrows phi;
-    T := symbol T;
+    T := fixupw o.Variable;
     S := ring phi;
     ST := S[T_0..T_(t-1)];
     X := promote(vars ring phi, ST);
@@ -632,7 +630,7 @@ jacobianDual Matrix := phi ->(
     jacobianDual(promote(phi,ST),X,Ts)
     )
 
-jacobianDual(Matrix,Matrix, Matrix) := (phi,X,T) -> (
+jacobianDual(Matrix,Matrix, Matrix) := o -> (phi,X,T) -> (
     --Suppose that T is a 1 x m matrix of variables in the ring ST = R[T_0..T_(m-1)],
     --and phi is a matrix over ST that is defined over the subring R.
     --Suppose also that  X is a 1 x n matrix defined over ST whose
@@ -706,7 +704,7 @@ doc ///
     Text
      Let I be an ideal of R and let phi be the presentation matrix of I as a module.
      The symmetric algebra of I has the form 
-     Sym_S(I) = S[T_0..T_m]/ideal(T*phi)
+     Sym_R(I) = R[T_0..T_m]/ideal(T*phi)
      where the T_i correspond to the generators of I. If X = matrix{{x_1..x_n}},
      with x_i \in R, and ideal X contains the entries of the matrix phi, then there is 
      a matrix psi, called the Jacobian Dual of phi with respect to X,
@@ -735,7 +733,7 @@ doc ///
      ideal X has grade >= 1 on the Rees algebra. Since ideal(T*phi) is contained in the
      defining ideal of the Rees algebra, the vector X is annihilated by the matrix
      psi when regarded over the Rees algebra. If also the number of relations of I
-     is >= the number of columns of X, this implies that the maximal minors of
+     is >= the number of generators of I, this implies that the maximal minors of
      psi annihilate  the x_i as elements of the Rees algebra, and thus that the maximal
      minors of psi are inside the ideal of the Rees algebra. In very favorable circumstances,
      one may even have 
@@ -770,16 +768,20 @@ doc ///
     reesAlgebra
     specialFiberIdeal
 ///
+
 ///
 uninstallPackage "ReesAlgebra" 
 restart
 installPackage "ReesAlgebra" 
+check "ReesAlgebra" 
+
 ///
+
 doc ///
   Key
     ReesAlgebra
   Headline
-    Rees algebra of an ideal or module, and related invariants
+    Compute Rees algebra
   Description
     Text
        The goal of this package is to provide commands to compute the Rees
@@ -864,6 +866,8 @@ doc ///
     [distinguished, Variable]
     [distinguishedAndMult, Variable]
     [isReduction, Variable]
+    [jacobianDual, Variable]
+
   Headline
     Choose name for variables in the created ring
   Usage
@@ -877,6 +881,8 @@ doc ///
     distinguished(...,Variable=>w)
     distinguishedAndMult(...,Variable=>w)
     isReduction(...,Variable=>w)
+    jacobianDual(...,Variable=>w)
+
   Description
     Text
       Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
@@ -1079,7 +1085,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
+      any non-zero divisor modulo the ideal or module.  Optional
   Outputs
     :Ideal
       defining the Rees algebra of M
@@ -1211,7 +1217,7 @@ doc ///
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
-      any non-zero divisor in the ideal, or such that the module becomes free on inverting f
+      any non-zero divisor modulo the ideal or module.  Optional
   Outputs
     :Ring
       defining the Rees algebra of M
@@ -1259,7 +1265,7 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-       Optional. Any non-zero divisor in the ideal, or such that the module becomes free on localizing f.
+       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
   Outputs
      :Boolean
        true if {\tt M} is of linear type, false otherwise
@@ -1480,7 +1486,6 @@ doc ///
      M:Module
        or @ofClass Ideal@
      f:RingElement
-
        an optional element, which is a non-zerodivisor such that $M[f^{-1}]$ is a free module when $M$ is a module, an element in $M$ when $M$ is an ideal
   Outputs
      :Ring
@@ -1913,6 +1918,46 @@ M=matrix{{S_0,S_1,S_3,S_6},{S_1,S_2,S_4,S_7},{S_3,S_4,S_5,S_8},{S_6,S_7,S_8,S_9}
 i=minors(2,M)
 j=i+ideal(a,b,c,d)
 assert(sfi==j)
+sf=specialFiber(msq)
+isf= ideal sf
+S=ring isf
+T=ZZ/23[S_0,S_1,S_2,S_3,S_4,S_5,S_6,S_7,S_8,S_9]
+M=matrix{{S_0,S_1,S_3,S_6},{S_1,S_2,S_4,S_7},{S_3,S_4,S_5,S_8},{S_6,S_7,S_8,S_9}}
+i=minors(2,M)
+ideal sf ==i
+///
+
+
+---Testing minimalReduction, isReduction, reductionNumber
+TEST///
+S = ZZ/5[x,y]
+I = ideal(x^3,x*y,y^4)
+J = ideal(x*y, x^3+y^4)
+assert(isReduction(I,J)==true)
+assert(isReduction(J,I)==false)
+K= minimalReduction I
+assert(reductionNumber(I,J)==1)
+assert(isReduction(I,K)==true)
+assert(reductionNumber(I,K)==1)
+///
+
+--testing multiplicity
+TEST///
+R=ZZ/101[x,y]
+I = ideal(x^3, x^2*y, y^3)
+assert(multiplicity I==9)
+R = ZZ/101[x,y]/ideal(x^3-y^3)
+I = ideal(x^2,y^2)
+assert(multiplicity I==6)
+///
+
+--Testing which Gm
+TEST///
+kk=ZZ/101;
+S=kk[a..c];
+m=ideal vars S
+i=(ideal"a,b")*m+ideal"c3"
+assert(whichGm i==3)
 ///
 
 TEST///
@@ -1923,35 +1968,42 @@ E = {true, false, false, false, false}
 assert({true, false, false, false, false} == 
     for p from 1 to 5 list(isLinearType (ideal vars S)^p))
 ///
-end
+
+TEST///
+--Associated Graded ring and Normal Cone very basic test
+R=ZZ/23[x]
+I=ideal(x)
+A=associatedGradedRing I
+S=ring ideal A
+assert(dim S==2)
+assert(codim A==1)
+N=normalCone I
+s=ring ideal N
+assert(dim s==2)
+assert(codim N==1)
+///
+
+
 
 TEST///
 --Test for distinguished
-   Example
-     setRandomSeed 0
-     T = ZZ/101[c,d];
-     D = 4;
-     P = product(D, i -> random(1,T))
-     R = ZZ/101[a,b,c,d]
-     I = ideal(a^2, a*b*(substitute(P,R)), b^2)
-   Text
-     There is one minimal associated prime (a thick line in $P^3$) and $D$
-     embedded primes (points on the line).
-   Example
-     ass I 
-     primaryDecomposition I
-   Text
-     Only the minimal prime is a distinguished component, and it has multiplicity 2.
-   Example
-     distinguished(I)
+R=ZZ/101[x,y,u,v]
+I=ideal(x^2, x*y*u^2+2*x*y*u*v+x*y*v^2,y^2)
+assert(distinguished I === {ideal (y, x)})
 ///
-restart
-uninstallPackage "ReesAlgebra"
-installPackage "ReesAlgebra"
-loadPackage "ReesAlgebra"
-installPackage(ReesAlgebra, IgnoreExampleErrors=>true)
 
+
+TEST///
+--Test for distinguishedAndMult
+R=ZZ/101[x,y,u,v]
+I=ideal(x^2, x*y*u^2+2*x*y*u*v+x*y*v^2,y^2)
+assert(distinguishedAndMult I == {{2, ideal (y, x)}})
+distinguishedAndMult I
+///
 end
+
+
+
 
 
 --NOTE Oct 5
@@ -2189,10 +2241,6 @@ J2 = saturate(J, ideal(v_1,v_2, v_3))
 
 ///
 
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
--- End:
-
 end--
 restart
 uninstallPackage "ReesAlgebra"
@@ -2200,3 +2248,8 @@ installPackage "ReesAlgebra"
 check "ReesAlgebra"
 
 viewHelp reesAlgebra
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=ReesAlgebra RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- End:
+
