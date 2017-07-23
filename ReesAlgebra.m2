@@ -2258,9 +2258,11 @@ J2 = saturate(J, ideal(v_1,v_2, v_3))
 end--
 restart
 uninstallPackage "ReesAlgebra"
-installPackage "ReesAlgebra"
+loadPackage("ReesAlgebra", Reload=>true)
+installPackage("ReesAlgebra", FileName =>"~/git repositories/Workshop-2017-Berkeley/ReesAlgebras/ReesAlgebra.m2")
 check "ReesAlgebra"
 
+viewHelp installPackage
 viewHelp reesAlgebra
 
 -- Local Variables:
