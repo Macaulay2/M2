@@ -14,7 +14,7 @@ assert((try convexHull(R, L) else oops) === oops)
 assert((try convexHull(L, R) else oops) === oops)
 ///
 
--- fan fails with wrong number of rows
+-- fan constructor fails with wrong number of rows
 TEST /// 
 R = matrix {{1,0},{0,1}};
 L = matrix {{}};
@@ -31,12 +31,10 @@ assert((try intersection(R, L) else oops) === oops)
 assert((try intersection(L, R) else oops) === oops)
 ///
 
--- fan constructors
+-- fanFromGfan constructor
 TEST ///
-RAYS = transpose matrix {{1,0,0},{0,1,0}};
-CONES = {{}, {0}, {1}};
-CONES1 = {{0},{1}};
-assert((try fan(RAYS|RAYS, {{}}) else oops) === oops)
-assert((try fan(RAYS, CONES) else oops) === oops)
-assert((try fan(RAYS, CONES1) else oops) =!= oops)
+R = matrix {{1,0},{0,1}};
+L = matrix {{}};
+assert((try fanFromGfan {R, L, {0,1}, 2, 1,1} else oops) === oops)
+assert((try fanFromGfan {L, L, {0,1}, 2, 1,1, {1, 2, 1}} else oops) === oops)
 ///

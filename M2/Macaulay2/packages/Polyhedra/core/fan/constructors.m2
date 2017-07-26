@@ -29,19 +29,12 @@ Fan == Fan := (F1, F2) -> (
 --  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
 fan = method(TypicalValue => Fan)
 fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
-   if (numColumns irays != 0) 
-   and (numColumns linealityGens != 0) 
-   and (numRows irays != numRows linealityGens) then error("Rays and lineality must have same ambient dimension.");
-   irays = makeRaysPrimitive(irays);
-   lineality := makeRaysPrimitive(linealityGens);
-   minRays := unique apply(select(numcols irays, i -> irays_{i} != 0), i -> irays_{i});
-   if not numcols irays == #minRays then error("Input rays are not minimal.");
-   if not checkConesForMaximality(icones) then error("Input cones are not maximal.");
+   if (numRows irays != numRows linealityGens) then error("Rays and lineality must have same ambient dimension.");
+   lineality := makeRaysPrimitive(mingens image linealityGens);
    result := new HashTable from {
-      ambientDimension => numRows irays,
-      rays => irays,
+      inputRays => irays,
       computedLinealityBasis => lineality,
-      generatingObjects => icones
+      inputCones => icones
    };
    fan result
 )
@@ -72,12 +65,16 @@ fanFromGfan List := gfanOutput -> (
 -- 1 lineality -> Matrix
 -- 2 cones -> List<List>
 -- 3 dimension -> ZZ
-
 -- 4 pure -> bool
 -- 5 simplicial -> bool
 -- 6 fVector -> List
-   result := fan(gfanOutput#0, gfanOutput#1, gfanOutput#2);
- --  setProperty(result, ambDim, gfanOutput#4);
+   if #gfanOutput < 7 then error("GFAN data incomplete");
+   R := gfanOutput#0;
+   L := gfanOutput#1;
+   if (numColumns R ==0) and (numColumns L == 0) then error("Empty fan from GFAN");
+   if (numColumns R == 0) then R = map(ZZ^(numRows L), ZZ^0, 0);
+   if (numColumns L == 0) then L = map(ZZ^(numRows R), ZZ^0, 0);
+   result := fan(R, L, gfanOutput#2);
    setProperty(result, computedFVector, gfanOutput#6);
    setProperty(result, pure, gfanOutput#4);
    setProperty(result, simplicial, gfanOutput#5);
@@ -121,11 +118,11 @@ addCone(Fan, Cone) := (F, C) -> (
    linF := linealitySpace F;
    linC := linealitySpace C;
    if image linF != image linC then error("Cannot add cone with different lineality space.");
-   joinedRays := makeRaysUniqueAndPrimitive(rays F | rays C);
+   joinedRays := makeRaysUniqueAndPrimitive(rays F | rays C, linF);
    mc := maxCones F;
-   map := rayCorrespondenceMap(rays F, joinedRays);
+   map := rayCorrespondenceMap(rays F, linF, joinedRays);
    mc = apply(mc, c-> apply(c, e->map#e));
-   map = rayCorrespondenceMap(rays C, joinedRays);
+   map = rayCorrespondenceMap(rays C, linF, joinedRays);
    newCone := toList apply(numColumns rays C, i -> map#i);
    mc = append(mc, newCone);
    result := new HashTable from {
