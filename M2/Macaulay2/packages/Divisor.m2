@@ -1051,8 +1051,8 @@ ramificationDivisor(RingMap) := WeilDivisor => o->( f1 ) ->
 	gradedMod := 0; --this is subtracted from a dimension later, it is set to 1 if IsGraded == true
 	if (o.IsGraded == true) then gradedMod = 1;
 	
-	sourceList := first entries vars R1;
-	targetList := first entries vars S1;
+	sourceList := first entries vars ambient R1;
+	targetList := first entries vars ambient S1;
 	numVars := #(targetList);
 	YYY := local YYY;
 	myMon := monoid[(sourceList|toList(YYY_1..YYY_numVars))];
@@ -1787,7 +1787,7 @@ beginDocumentation();
 document {
     Key => Divisor,
     Headline => "a package for computations with divisors",
-    EM "Divisor", " is a package for working with (Q/R)-Weil divisors on ", EM "normal", " affine and projective varieties (equivalently, on normal rings and graded rings).", 
+    EM "Divisor", " is a package for working with (Q/R)-Weil divisors on ", EM "normal", " affine and projective varieties (equivalently, on commutative, normal and graded rings).", 
     BR{},BR{},
     "The first thing it does is introduce a Type ", TO "WeilDivisor", " which lets the user work with Weil divisors similar to the way one might in algebraic geometry.  We highlight a few important functions below.",
     BR{},BR{},
