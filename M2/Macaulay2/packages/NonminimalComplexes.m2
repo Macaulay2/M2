@@ -25,6 +25,7 @@ export {
 debug Core
 needsPackage "SVDComplexes"
 
+{*
 -- The following shuold be where?
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
@@ -37,6 +38,7 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
+*}
 
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
@@ -204,7 +206,6 @@ toBetti(ZZ, HashTable) := (deg, H) -> (
       new BettiTally from for k in keys H list (k, {deg}, deg) => H#k
       )
 
-{*
 -- How to handle this here??
 SVDBetti = method()
 SVDBetti ChainComplex := (C) -> (
@@ -215,7 +216,6 @@ SVDBetti ChainComplex := (C) -> (
     << "singular values: " << H2 << endl;
     sum for i in keys H list toBetti(i, first H#i)
     )
-*}
 
 beginDocumentation()
 
