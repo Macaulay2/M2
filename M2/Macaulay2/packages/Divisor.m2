@@ -1298,7 +1298,7 @@ isSNC(BasicDivisor) := Boolean => o->(D1) -> (
 
 	while ( (j < #toModOutBy) and flag ) do (
 		if (o.IsGraded == false) then (
-			flag = ((d1 - #(nonemptySubsets#j) == dim(R1/toModOutBy#j)) or (dim(R1/toModOutBy#j) == -infinity) );
+			flag = ((d1 - #(nonemptySubsets#j) == dim(R1/toModOutBy#j)) or (dim(R1/toModOutBy#j) < 0) );
 			if (flag == true) then flag = isSmooth(toModOutBy#j);
 		)
 		else (	
@@ -1766,7 +1766,7 @@ isSmooth(Ideal) := Boolean => o->J1 -> (
 		--(isSubset(myMax, (ideal singularLocus J1)*(ring J1)))
 	)
 	else ( 
-		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 == -infinity));
+		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 < 0));
 	);
 
 	flag
