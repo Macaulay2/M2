@@ -972,6 +972,7 @@ if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 else AC_CHECK_DECLS(rl_catch_signals,,,readline/readline.h)
+     AC_CHECK_DECLS(__rl_comment_begin,,,readline/readline.h)
 fi
 
 dnl We no longer link with gmp.
