@@ -178,4 +178,6 @@ load "./TestIdeals/CompatiblySplitTest.m2"
 
 load "./TestIdeals/testIdealTest.m2"
 
+load "./TestIdeals/FinjectiveTest.m2"
+
 end
