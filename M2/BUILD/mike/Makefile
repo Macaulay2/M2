@@ -8,6 +8,13 @@ always:
 #		--enable-scscp
 
 ################
+## cmake CLion #
+################
+cmake-build: always
+	mkdir -p builds.tmp/cmake-darwin64-clang
+	cd builds.tmp/cmake-darwin64-clang; cmake ../../../..
+
+################
 ## mac os x ####
 ################
 darwin64-gcc6 : always
@@ -57,6 +64,7 @@ darwin64-clang : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download \
+		--enable-dmg \
 		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-clang-3.8 : always

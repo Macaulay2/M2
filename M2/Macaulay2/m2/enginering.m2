@@ -654,7 +654,12 @@ fraction(RingElement,RingElement) := (r,s) -> (
      fraction(r,s))
 -----------------------------------------------------------------------------
 
-isUnit(RingElement) := (f) -> 1 % ideal f == 0
+isUnit(RingElement) := (f) -> (
+    if (options ring f).?Inverses and (options ring f).Inverses then 
+      size f === 1 and isUnit leadCoefficient f
+    else
+      1 % ideal f == 0
+    )
 
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s

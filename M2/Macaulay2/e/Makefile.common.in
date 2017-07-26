@@ -19,60 +19,54 @@ endif
 
 COMPILE.cpp = $(COMPILE.cc)
 
+%-hpp.o : %.hpp
+	$(SHOW) "CXX $*.hpp"
+	$(HIDE)$(COMPILE.cpp) $(OUTPUT_OPTION) $<
+
+%-h.o : %.h
+	$(SHOW) "CC $*.h"
+	$(HIDE)$(COMPILE.c) $(OUTPUT_OPTION) $<
+
 %.o : %.cpp
-	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** compiling $<"
-	@ $(COMPILE.cpp) $(OUTPUT_OPTION) $<
-
-%.s : %.cpp
-	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** compiling $< to assembly code, making $@"
-	@ $(COMPILE.cpp) -S $(OUTPUT_OPTION) $<
-
-%.E : %.cpp
-	@ echo '$(COMPILE.cpp) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** preprocessing $<, making $@"
-	@ $(COMPILE.cpp) -E $(OUTPUT_OPTION) $<
+	$(SHOW)"CXX $*.cpp"
+	$(HIDE)$(COMPILE.cpp) $< $(OUTPUT_OPTION)
 
 %.o : %.cc
-	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** compiling $<"
-	@ $(COMPILE.cc) $(OUTPUT_OPTION) $<
+	$(SHOW)"CXX $*.cc"
+	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
+
+%.s : %.cpp
+	$(SHOW)" ** making $@ from $*.cpp"
+	$(HIDE)$(COMPILE.cpp) -S $< $(OUTPUT_OPTION)
+
+%.E : %.cpp
+	$(SHOW)" ** making $@ from $*.cpp"
+	$(HIDE)$(COMPILE.cpp) -E $< $(OUTPUT_OPTION)
 
 %.s : %.cc
-	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** compiling $< to assembly code, making $@"
-	@ $(COMPILE.cc) -S $(OUTPUT_OPTION) $<
+	$(SHOW)" ** making $@ from $*.cc"
+	$(HIDE)$(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
-%.E : %.cc
-	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** preprocessing $<, making $@"
-	@ $(COMPILE.cc) -E $(OUTPUT_OPTION) $<
-
-ntl_interface.o: ntl_interface.cpp
-	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** compiling $<"
-	@ $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast
+%-E.cpp : %.cc
+	$(SHOW)" ** preprocessing $<, making $@"
+	$(HIDE)$(COMPILE.cc) -E -dD $< $(OUTPUT_OPTION)
 
 %.o : %.c
-	@ echo '$(COMPILE.c) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** compiling $<"
-	@ $(COMPILE.c) $(OUTPUT_OPTION) $<
+	$(SHOW)"CC $*.c"
+	$(HIDE)$(COMPILE.c) $< $(OUTPUT_OPTION)
 
 % : %.o
-	@ echo '$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION) $<' >> LOGFILE
-	@ echo " ** linking $^ to get $@"
-	@ $(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+	$(SHOW)"LINKING $@"
+	$(HIDE)$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 %.dep: %.cpp
-	@ echo "@CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
-	@ echo " ** creating $@ from $<"
-	@       @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW)"MKDEP $*.cpp"
+	$(HIDE)$(MKDIR_P) `dirname "$@"`
+	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
-	@ echo "@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
-	@ echo " ** creating $@ from $<"
-	@       @CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW)"MKDEP $*.c"
+	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "

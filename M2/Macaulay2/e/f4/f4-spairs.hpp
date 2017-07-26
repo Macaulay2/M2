@@ -7,17 +7,16 @@
 #include "moninfo.hpp"
 #include "f4-types.hpp"
 
-
 class F4SPairSet : public our_new_delete
 {
-private:
+ private:
   int determine_next_degree(int &result_number);
 
   spair *make_spair(spair_type type,
                     int deg,
                     int i,
-                    int j); // CAUTION: lcm is allocated correctly, but is
-                            // NOT initialized.  That is the caller's responsibility!!
+                    int j);  // CAUTION: lcm is allocated correctly, but is
+  // NOT initialized.  That is the caller's responsibility!!
 
   bool pair_not_needed(spair *p, gbelem *m);
 
@@ -28,7 +27,7 @@ private:
 
   int construct_pairs(bool remove_disjoints);
 
-public:
+ public:
   F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);
 
   ~F4SPairSet();
@@ -64,13 +63,13 @@ public:
   // spair criteria.
 
  private:
-  MemoryBlock<pre_spair> PS; // passed to constructor routine
-  MemoryBlock<varpower_word> VP; // used for constructing new pairs
+  MemoryBlock<pre_spair> PS;      // passed to constructor routine
+  MemoryBlock<varpower_word> VP;  // used for constructing new pairs
   int max_varpower_size;
 
   const MonomialInfo *M;
   const gb_array &gb;
-  spair *heap; // list of pairs
+  spair *heap;  // list of pairs
   spair *this_set;
   stash *spair_stash;
 

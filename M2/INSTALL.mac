@@ -2,22 +2,28 @@
 # This shell script contains the instructions for building Macaulay2 in the file 'INSTALL'.
 # This version of the script does not take care to avoid vector optimizations that may not run on other machines.
 # The result is provided in the build directory "./tmp".
+
+# Note: it will install software needed for building Macaulay2, so expert users may prefer to
+# perform the various steps manually.
+
 set -e
-: 'remember to install Xcode command line tools with "Software Update" or by running the command "xcode-select --install"'
-brew tap homebrew/versions
+pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null || xcode-select --install
 brew tap homebrew/science
-brew tap homebrew/homebrew-x11
+sleep 1
 brew update
+sleep 1
 brew upgrade; stty -onlcr -echo
-brew install --build-bottle gcc49 pkg-config autoconf automake gnu-tar libtool boost; stty -onlcr -echo
-brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz; stty -onlcr -echo
+sleep 1
+# we need either "|cat" or "; stty -onlcr -echo":
+brew install make bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm |cat
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
-make -f Makefile
+gmake -f Makefile
 rm -rf tmp
 mkdir tmp
 cd tmp
-../configure --enable-download --enable-build-libraries="readline"
-make IgnoreExampleErrors=false
+../configure --enable-download --enable-build-libraries="readline" CC=/usr/bin/gcc CXX=/usr/bin/g++
+gmake IgnoreExampleErrors=false
+
 # Local Variables:
 # compile-command: "sh -x ./INSTALL.mac "
 # End:

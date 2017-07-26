@@ -51,4 +51,11 @@ R = CC[x]
 M = random(R^10,R^10)
 norm M
 apply(flatten entries M, leadCoefficient)
+
+-- from git issue #56
+A = mutableMatrix({{1_RR}}, Dense=>true)
+clean(0.1,A) -- works fine
+A = mutableMatrix({{1_RR}}, Dense=>false)
+assert try (clean(0.1,A);false) else true  -- not yet implemented.
+
 ///

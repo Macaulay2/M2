@@ -20,7 +20,7 @@ PROFILE=no
 unexport PROFILE
 
 DIRECTORY = mac64
-BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
 ifeq ($(GCC4),yes)

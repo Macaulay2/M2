@@ -22,29 +22,27 @@ void displayMat(buffer& o, const Mat& A)
 
   size_t nrows = A.numRows();
   size_t ncols = A.numColumns();
-  buffer *p = new buffer[nrows];
+  buffer* p = new buffer[nrows];
   size_t r;
-  for (size_t c=0; c<ncols; c++)
+  for (size_t c = 0; c < ncols; c++)
     {
       size_t maxcount = 0;
-      for (r=0; r<nrows; r++)
+      for (r = 0; r < nrows; r++)
         {
-          const typename Mat::ElementType& a = A.entry(r,c);
+          const typename Mat::ElementType& a = A.entry(r, c);
           if (!A.ring().is_zero(a))
             A.ring().elem_text_out(p[r], a, true, false, false);
           else
             p[r] << ".";
-          if (p[r].size() > maxcount)
-            maxcount = p[r].size();
+          if (p[r].size() > maxcount) maxcount = p[r].size();
         }
-      for (r=0; r<nrows; r++)
-        for (size_t k=maxcount+1-p[r].size(); k > 0; k--)
-          p[r] << ' ';
+      for (r = 0; r < nrows; r++)
+        for (size_t k = maxcount + 1 - p[r].size(); k > 0; k--) p[r] << ' ';
     }
-  for (r=0; r<nrows; r++)
+  for (r = 0; r < nrows; r++)
     {
       p[r] << '\0';
-      char *s = p[r].str();
+      char* s = p[r].str();
       o << s << newline;
     }
   delete[] p;
@@ -54,23 +52,22 @@ template <typename Mat>
 void displayMat(const Mat& A)
 {
   buffer o;
-  displayMat(o,A);
+  displayMat(o, A);
   emit(o.str());
 }
 
-template<typename Mat>
-static void concatenateMatrices(const Mat& A, const Mat&B, Mat& C)
+template <typename Mat>
+static void concatenateMatrices(const Mat& A, const Mat& B, Mat& C)
 {
   assert(A.numRows() == B.numRows());
   C.resize(A.numRows(), A.numColumns() + B.numColumns());
-  for (long r=0; r<A.numRows(); r++)
-    for (long c=0; c<A.numColumns(); c++)
-      A.ring().set(C.entry(r,c), A.entry(r,c));
-  for (long r=0; r<A.numRows(); r++)
-    for (long c=0; c<B.numColumns(); c++)
-      A.ring().set(C.entry(r,c+A.numColumns()), B.entry(r,c));
+  for (long r = 0; r < A.numRows(); r++)
+    for (long c = 0; c < A.numColumns(); c++)
+      A.ring().set(C.entry(r, c), A.entry(r, c));
+  for (long r = 0; r < A.numRows(); r++)
+    for (long c = 0; c < B.numColumns(); c++)
+      A.ring().set(C.entry(r, c + A.numColumns()), B.entry(r, c));
 }
-
 
 #endif
 

@@ -20,43 +20,52 @@ class res_comp;
 class res_poly;
 
 class res_degree : public our_new_delete
-    // Collection of pairs all of the same degree
+// Collection of pairs all of the same degree
 {
-friend class res_comp;
+  friend class res_comp;
 
-  res_pair     *first;          // list of pairs in this degree, no list head
+  res_pair *first;  // list of pairs in this degree, no list head
 
-  res_pair     *next_new_pair;  // sort_pairs will set this to non-null
-  res_pair     *next_pair;      // set to be first (when?)
-  res_pair     *next_gen;       // this is a separate list of sorted generators
+  res_pair *next_new_pair;  // sort_pairs will set this to non-null
+  res_pair *next_pair;      // set to be first (when?)
+  res_pair *next_gen;       // this is a separate list of sorted generators
 
-  int           is_sorted;      // If set, then the pairs have already been sorted
-  int           npairs;
-  int           nleft;
-  int           nminimal;
-public:
+  int is_sorted;  // If set, then the pairs have already been sorted
+  int npairs;
+  int nleft;
+  int nminimal;
+
+ public:
   res_degree()
-    : first(NULL), next_new_pair(NULL), next_pair(NULL), next_gen(NULL),
-      is_sorted(0), npairs(0), nleft(0), nminimal(0)
-        {}
+      : first(NULL),
+        next_new_pair(NULL),
+        next_pair(NULL),
+        next_gen(NULL),
+        is_sorted(0),
+        npairs(0),
+        nleft(0),
+        nminimal(0)
+  {
+  }
   ~res_degree() {}
 };
 
 class res_level : public our_new_delete
-    // Collection of pairs all at same syzygy level
+// Collection of pairs all at same syzygy level
 {
-friend class res_comp;
+  friend class res_comp;
 
-  array<res_degree *> bin;      // Bins for pairs sorted by (slanted)
-                                // degree. So bin[d] refers to elements
-                                // of degree low_degree + level + d
+  array<res_degree *> bin;  // Bins for pairs sorted by (slanted)
+                            // degree. So bin[d] refers to elements
+                            // of degree low_degree + level + d
   array<res_pair *> elems;
 
   res_pair *compare_num_list;
-  int           npairs;
-  int           nleft;
-  int           nminimal;
-public:
+  int npairs;
+  int nleft;
+  int nminimal;
+
+ public:
   res_level() : compare_num_list(NULL), npairs(0), nleft(0), nminimal(0) {}
 };
 
@@ -72,27 +81,29 @@ class res_comp : public ResolutionComputation
   res_poly *R;
   const Monoid *M;
   const Ring *K;
-  const Matrix *generator_matrix;       // Input matrix of generators, possibly a GB, possibly not
+  const Matrix *generator_matrix;  // Input matrix of generators, possibly a GB,
+                                   // possibly not
   stash *res_pair_stash;
   stash *mi_stash;
 
   // The current state of the computation
-  int n_level;                  // Current level
-  int n_degree;                 // Current (slanted) degree
+  int n_level;   // Current level
+  int n_degree;  // Current (slanted) degree
 
-  array<res_level *> resn;      // The resolution itself
+  array<res_level *> resn;  // The resolution itself
 
   // Degree and length limits, monomial size limit
   array<res_pair *> base_components;
-  array<MonomialIdeal *>  search_mi;    // Used for new generators only...
+  array<MonomialIdeal *> search_mi;  // Used for new generators only...
 
-  int lodegree;                 // Base degree
-  int hidegree;                 // Highest (slanted) degree appearing
-  int length_limit;             // May be downsized during the computation, but never increased.
+  int lodegree;      // Base degree
+  int hidegree;      // Highest (slanted) degree appearing
+  int length_limit;  // May be downsized during the computation, but never
+                     // increased.
 
-  int max_degree;               // This is the largest degree than can be represented
-                                // as a least common multiple.  Any higher degree found
-                                // will cause the computation to exit with COMP_RESIZE
+  int max_degree;  // This is the largest degree than can be represented
+                   // as a least common multiple.  Any higher degree found
+                   // will cause the computation to exit with COMP_RESIZE
 
   // Statistics
   int next_me_number;
@@ -108,9 +119,8 @@ class res_comp : public ResolutionComputation
   int compare_type;
 
   res_pair *elem(int lev, int n) const { return resn[lev]->elems[n]; }
-
   int find_ring_divisor(const int *exp, ring_elem &result) const;
-  int find_divisor(const int *exp, res_pair *& result) const;
+  int find_divisor(const int *exp, res_pair *&result) const;
   res_pair *reduce(resterm *&f, resterm *&fsyz, resterm *&pivot);
   res_pair *reduce_level_one(resterm *&f, resterm *&fsyz, resterm *&pivot);
   void reduce_gen(resterm *&f) const;
@@ -128,13 +138,13 @@ class res_comp : public ResolutionComputation
   int sort_value(res_pair *p, const int *sort_order) const;
   int compare_res_pairs(res_pair *f, res_pair *g) const;
   res_pair *merge_res_pairs(res_pair *f, res_pair *g) const;
-  void sort_res_pairs(res_pair *& p) const;
+  void sort_res_pairs(res_pair *&p) const;
   void sort_gens(res_degree *pairs);
   void sort_pairs(int level, int deg);
 
   int compare_compares(res_pair *f, res_pair *g) const;
   res_pair *merge_compares(res_pair *f, res_pair *g) const;
-  void sort_compares(res_pair *& p) const;
+  void sort_compares(res_pair *&p) const;
   void set_compare_nums(int level, int deg);
 
   int degree(const res_pair *q) const;
@@ -148,22 +158,18 @@ class res_comp : public ResolutionComputation
   res_pair *new_res_pair(int syztype, res_pair *first, res_pair *second);
   void insert_res_pair(int level, res_pair *p);
 
-//////////////////////////////////////////////
-//  Initiating the computation ///////////////
-//////////////////////////////////////////////
-private:
+  //////////////////////////////////////////////
+  //  Initiating the computation ///////////////
+  //////////////////////////////////////////////
+ private:
   void remove_res_pair(res_pair *p);
   void remove_res_degree(res_degree *p);
   void remove_res_level(res_level *lev);
 
-  void initialize(const Matrix *mat,
-                  int LengthLimit,
-                  int strategy);
+  void initialize(const Matrix *mat, int LengthLimit, int strategy);
 
-public:
-  res_comp(const Matrix *m,
-           int LengthLimit,
-           int strategy);
+ public:
+  res_comp(const Matrix *m, int LengthLimit, int strategy);
 
   virtual ~res_comp();
 
@@ -171,9 +177,9 @@ public:
 
   bool stop_conditions_ok();
 
-//////////////////////////////////////////////
-//  Performing the calculation ///////////////
-//////////////////////////////////////////////
+  //////////////////////////////////////////////
+  //  Performing the calculation ///////////////
+  //////////////////////////////////////////////
 
   void skeleton_init(array<res_pair *> &reslevel);
   void skeleton_pairs(res_pair *&result, res_pair *p);
@@ -186,35 +192,39 @@ public:
 
   int complete_thru_degree() const;
 
-//////////////////////////////////////////////
-//  Result matrices of the resolution ////////
-//////////////////////////////////////////////
-private:
-  void reduce_minimal(int x,
-                      resterm *& f,
-                      array<res_pair *> &elems) const;
-public:
+  //////////////////////////////////////////////
+  //  Result matrices of the resolution ////////
+  //////////////////////////////////////////////
+ private:
+  void reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) const;
 
+ public:
   const FreeModule *free_of(int i) const;
   const FreeModule *minimal_free_of(int i) const;
   Matrix *make(int i) const;
   Matrix *make_minimal(int i) const;
 
-  const Matrix /* or null */ *get_matrix(int level) { return make_minimal(level); }
+  const Matrix /* or null */ *get_matrix(int level)
+  {
+    return make_minimal(level);
+  }
 
-  const FreeModule /* or null */ *get_free(int level) { return minimal_free_of(level); }
+  const FreeModule /* or null */ *get_free(int level)
+  {
+    return minimal_free_of(level);
+  }
 
-//////////////////////////////////////////////
-//  Betti routines and numbers associated ////
-//  with the resolution                   ////
-//////////////////////////////////////////////
-// Betti output is a flattened array of  /////
-// length                                /////
-// (high_degree() - low_degree() + 1)    /////
-//    * (max_level() + 1)                /////
-// The first row of the betti display is /////
-// given first, then the second, etc     /////
-//////////////////////////////////////////////
+  //////////////////////////////////////////////
+  //  Betti routines and numbers associated ////
+  //  with the resolution                   ////
+  //////////////////////////////////////////////
+  // Betti output is a flattened array of  /////
+  // length                                /////
+  // (high_degree() - low_degree() + 1)    /////
+  //    * (max_level() + 1)                /////
+  // The first row of the betti display is /////
+  // given first, then the second, etc     /////
+  //////////////////////////////////////////////
 
   int n_pairs(int lev, int d) const;
   int n_left(int lev, int d) const;
@@ -233,9 +243,9 @@ public:
 
   M2_arrayint get_betti(int type) const;
 
-//////////////////////////////////////////////
-//  Debugging ////////////////////////////////
-//////////////////////////////////////////////
+  //////////////////////////////////////////////
+  //  Debugging ////////////////////////////////
+  //////////////////////////////////////////////
 
   void text_out(const res_pair *p) const;
   void stats() const;

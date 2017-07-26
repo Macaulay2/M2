@@ -1,4 +1,8 @@
 -- -*- M2-comint -*- {* hash: 1659406890 *}
+<<<<<<< HEAD
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+=======
+>>>>>>> origin/master
 
 i1 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
 
@@ -9,7 +13,11 @@ i4 : writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters
 i5 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
 
+<<<<<<< HEAD
+o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-7067-0/0/input
+=======
 o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22983-0/0/input
+>>>>>>> origin/master
 
 o5 : File
 
@@ -41,7 +49,11 @@ i7 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
 i9 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
 
+<<<<<<< HEAD
+o9 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-7067-0/0/input
+=======
 o9 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22983-0/0/input
+>>>>>>> origin/master
 
 o9 : File
 
@@ -66,7 +78,11 @@ i11 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
 i13 : makeB'InputFile(storeBM2Files,
           B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
 
+<<<<<<< HEAD
+o13 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-7067-0/0/input
+=======
 o13 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22983-0/0/input
+>>>>>>> origin/master
 
 o13 : File
 

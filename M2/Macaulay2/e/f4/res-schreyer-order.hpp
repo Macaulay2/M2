@@ -6,15 +6,17 @@
 struct ResSchreyerOrder
 {
   std::vector<res_packed_monomial> mTotalMonom;
-  std::vector<long> mTieBreaker;
+  std::vector<component_index> mTieBreaker;
   // keep a memory block for these monomials?  Probably...
 };
 
 // Operations to include:
-//  . create total monomials and tiebreakers (or, just tiebreakers, given total monomials?)
+//  . create total monomials and tiebreakers (or, just tiebreakers, given total
+//  monomials?)
 //  . check that a polynomial is in correct descending order w.r.t. this order
 //  . sort a polynomial into this order
-//  . provide a comparison operator for two monomials (not in total monomial encoding)
+//  . provide a comparison operator for two monomials (not in total monomial
+//  encoding)
 //  . (debug) display data associated to this order
 
 #endif

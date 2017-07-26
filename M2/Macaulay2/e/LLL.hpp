@@ -15,35 +15,36 @@ class LLLoperations
                      ring_elem alphaTop,
                      ring_elem alphaBottom);
 
-  static void REDI(int k, int ell,
-                   MutableMatrix *A,
-                   MutableMatrix *Achange, // if non-NULL, should have same ncols as A
-                   MutableMatrix *lambda);
-  static void SWAPI(int k, int kmax,
-                    MutableMatrix *A,
-                    MutableMatrix *Achange, // if non-NULL, should have same ncols as A
-                    MutableMatrix *lambda);
+  static void REDI(
+      int k,
+      int ell,
+      MutableMatrix *A,
+      MutableMatrix *Achange,  // if non-NULL, should have same ncols as A
+      MutableMatrix *lambda);
+  static void SWAPI(
+      int k,
+      int kmax,
+      MutableMatrix *A,
+      MutableMatrix *Achange,  // if non-NULL, should have same ncols as A
+      MutableMatrix *lambda);
 
   static bool initializeLLL(const MutableMatrix *A,
                             gmp_QQ threshold,
-                            MutableMatrix *& LLLstate);
+                            MutableMatrix *&LLLstate);
   // Returns false if there is an error, and sets gError.
 
   static int doLLL(MutableMatrix *A,
                    MutableMatrix *Achange,
                    MutableMatrix *LLLstate,
-                   int nsteps=-1);
+                   int nsteps = -1);
   // Return values: COMP_DONE, COMP_DONE_STEPS, COMP_INTERRUPTED
-public:
-
+ public:
   ///////////////////////////
   // packaged LLL routines //
   ///////////////////////////
 
   // This routine return false if the computation is interrupted
-  static bool LLL(MutableMatrix *M,
-                  MutableMatrix *U,
-                  gmp_QQ threshold);
+  static bool LLL(MutableMatrix *M, MutableMatrix *U, gmp_QQ threshold);
   // M is replaced with the LLL basis. false is returned if there was an
   // error or an interrupt.
   // U is either NULL, or an m by m matrix over ZZ (m = numrows M), which will

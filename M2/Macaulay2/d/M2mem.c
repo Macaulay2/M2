@@ -6,10 +6,8 @@
 #include "debug.h"
 
 #ifndef NDEBUG
-  #include <M2/config.h>
-  #ifndef USE_THREADS
-    #define __thread
-  #endif
+#include <M2/config.h>
+#define __thread
 static __thread bool in_getmem = FALSE;
 static inline void enter_getmem() {
   #if 0

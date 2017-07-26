@@ -24,7 +24,7 @@ newPackage(
 	},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 debug NumericalAlgebraicGeometry
 export { 

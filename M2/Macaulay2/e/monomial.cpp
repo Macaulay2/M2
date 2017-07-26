@@ -1,6 +1,7 @@
 // (c) 1995 Michael E. Stillman
 
 #include "monomial.hpp"
+#include "error.h"
 #include "monoid.hpp"
 
 Monomial::Monomial()
@@ -9,24 +10,12 @@ Monomial::Monomial()
   // an incorrect state... to be filled in by varpower routines.
 }
 
-Monomial::Monomial(int v, int e)
-{
-  varpower::var(v, e, val);
-}
-
-Monomial::Monomial(const int *vp)
-{
-  varpower::copy(vp, val);
-}
-
-Monomial::Monomial(M2_arrayint m)
-{
-  varpower::from_arrayint(m, val);
-}
-
+Monomial::Monomial(int v, int e) { varpower::var(v, e, val); }
+Monomial::Monomial(const int *vp) { varpower::copy(vp, val); }
+Monomial::Monomial(M2_arrayint m) { varpower::from_arrayint(m, val); }
 Monomial *Monomial::make(int v, int e)
 {
-  Monomial *result = new Monomial(v,e);
+  Monomial *result = new Monomial(v, e);
   if (error()) return 0;
   return result;
 }
@@ -38,8 +27,8 @@ Monomial *Monomial::make(M2_arrayint m)
       ERROR("Monomial expected an even number of elements");
       return 0;
     }
-  for (unsigned int i=2; i<m->len; i+=2)
-    if (m->array[i-2] <= m->array[i])
+  for (unsigned int i = 2; i < m->len; i += 2)
+    if (m->array[i - 2] <= m->array[i])
       {
         ERROR("Monomial expects variables in descending order");
         return 0;
@@ -49,7 +38,7 @@ Monomial *Monomial::make(M2_arrayint m)
   return result;
 }
 
-Monomial *Monomial::make(const int * vp)
+Monomial *Monomial::make(const int *vp)
 {
   Monomial *result = new Monomial(vp);
   if (error()) return 0;
@@ -60,18 +49,14 @@ unsigned int Monomial::computeHashValue() const
 {
   unsigned int hashval = 0;
   const int *vp = val.raw();
-  for (int i=1; i<=*vp; i++)
+  for (int i = 1; i <= *vp; i++)
     {
-      hashval += i*(*++vp);
+      hashval += i * (*++vp);
     }
   return hashval;
 }
 
-bool Monomial::is_one() const
-{
-  return varpower::is_one(ints());
-}
-
+bool Monomial::is_one() const { return varpower::is_one(ints()); }
 bool Monomial::is_equal(const Monomial &b) const
 {
   if (this == &b) return true;
@@ -102,11 +87,7 @@ bool Monomial::divides(const Monoid *M, const Monomial &b) const
   return result;
 }
 
-int Monomial::simple_degree() const
-{
-  return varpower::simple_degree(ints());
-}
-
+int Monomial::simple_degree() const { return varpower::simple_degree(ints()); }
 Monomial *Monomial::lcm(const Monomial &b) const
 {
   Monomial *result = new Monomial;
@@ -125,8 +106,7 @@ void Monomial::monsyz(const Monomial &b, Monomial *&sa, Monomial *&sb) const
 {
   sa = new Monomial;
   sb = new Monomial;
-  varpower::monsyz(ints(), b.ints(),
-                    sa->val, sb->val);
+  varpower::monsyz(ints(), b.ints(), sa->val, sb->val);
 }
 
 Monomial *Monomial::operator*(const Monomial &b) const

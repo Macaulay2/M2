@@ -4,7 +4,7 @@
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://wwwth.mpp.mpg.de/members/bjurke/cohomcalg/
-# http://wwwth.mppmu.mpg.de/members/bjurke/cohomcalg/content/cohomCalg-031b.zip
+HOMEPAGE = http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 031b
 TARFILE = cohomCalg-$(VERSION).zip

@@ -3,7 +3,7 @@ newPackage(
 Version => "1.02",
 Date => "May 22, 2017",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
-Headline => "Pullback of rings.",
+Headline => "pullback of rings",
 DebuggingMode => false,
 PackageImports => {"PushForward"},
 Reload => false

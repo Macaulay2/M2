@@ -5,7 +5,7 @@
 
 class GBList
 {
-public:
+ public:
   GBList(long len);
   ~GBList();
 
@@ -34,13 +34,15 @@ class GBTrace : public newdelete
   //  gb elements are stored starting at 1.
   //  ring elements are negative integers
   //  0 is not used?
-  struct node {
+  struct node
+  {
     long a;
     long b;
     long *reducers;
   };
   queue<long> trace;
-public:
+
+ public:
   GBTrace *create();  // Create an empty trace
   ~GBTrace();
 
@@ -63,14 +65,15 @@ class GBTracer
   GBTrace *T;
 
   bool use_heap;
-  long loc; // The next step to do in the computation
+  long loc;  // The next step to do in the computation
 
   void populate_with_quotient_elements(FreeModule *F);
-public:
-  GBTracer(FreeModule *F, GBTrace *T, gbvector **vecs, bool use_heap=true);
+
+ public:
+  GBTracer(FreeModule *F, GBTrace *T, gbvector **vecs, bool use_heap = true);
   ~GBTracer();
 
-  bool execute(long nsteps=-1); // same, but do <= nsteps
+  bool execute(long nsteps = -1);  // same, but do <= nsteps
 };
 #endif
 

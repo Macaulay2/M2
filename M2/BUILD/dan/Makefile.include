@@ -30,8 +30,7 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:
 	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
 	  cd builds.tmp/$(DIRECTORY) && $$D/configure $(CONFIGOPTIONS) &&\
 	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
-default: arch-chk all
-default: check-links
+default: arch-chk all check check-links
 distclean: distclean1
 distclean1:
 	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
@@ -39,9 +38,6 @@ distclean1:
 	fi
 	-! [ -d builds.tmp/$(DIRECTORY) ] || ! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | head -50 | grep . \
 		|| echo "========== files left after make distclean (first 50) ========" >&2
-	if [ -e builds.tmp/$(DIRECTORY)/. ] ; \
-	then rm -rf builds.tmp/$(DIRECTORY) ; \
-	fi
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 install-info:
@@ -55,7 +51,7 @@ rebuild-world1: arch-chk distclean2
 distclean2:
 	@if [ -f "builds.tmp/$(DIRECTORY)/GNUmakefile" ] ; then set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean ; fi
 rebuild-world2:make-configure
-make-configure:; $(MAKE) -C ../.. -o helpful
+make-configure:; $(MAKE) -C ../.. -f Makefile -o helpful
 rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@

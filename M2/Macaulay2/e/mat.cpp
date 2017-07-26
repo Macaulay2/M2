@@ -30,58 +30,56 @@
 #include "mutablemat.hpp"
 #include "ZZp.hpp"
 
-MutableMatrix* RingZZ::makeMutableMatrix(size_t nrows, 
-                                         size_t ncols, 
+MutableMatrix *RingZZ::makeMutableMatrix(size_t nrows,
+                                         size_t ncols,
                                          bool dense) const
 {
   if (dense)
-    return new MutableMat< DMat<M2::ARingZZGMP> >(this, get_ARing(), nrows, ncols);
+    return new MutableMat<DMat<M2::ARingZZGMP> >(
+        this, get_ARing(), nrows, ncols);
   else
-    return new MutableMat< SMat<M2::ARingZZGMP> >(this, get_ARing(), nrows, ncols);
+    return new MutableMat<SMat<M2::ARingZZGMP> >(
+        this, get_ARing(), nrows, ncols);
 }
 
-MutableMatrix* Z_mod::makeMutableMatrix(size_t nrows, 
-                                        size_t ncols, 
+MutableMatrix *Z_mod::makeMutableMatrix(size_t nrows,
+                                        size_t ncols,
                                         bool dense) const
 {
   if (dense)
-    return new MutableMat< DMat<M2::ARingZZp> >(this, get_ARing(), nrows, ncols);
+    return new MutableMat<DMat<M2::ARingZZp> >(this, get_ARing(), nrows, ncols);
   else
-    return new MutableMat< SMat<M2::ARingZZp> >(this, get_ARing(), nrows, ncols);
+    return new MutableMat<SMat<M2::ARingZZp> >(this, get_ARing(), nrows, ncols);
 }
 
-
-MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
-						size_t nrows, 
-						size_t ncols, 
-						bool dense)
+MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
+                                          size_t nrows,
+                                          size_t ncols,
+                                          bool dense)
 {
   MutableMatrix *result = R->makeMutableMatrix(nrows, ncols, dense);
   if (result != 0) return result;
   // In this case, we just use ring elem arithmetic
   const CoefficientRingR *cR = R->getCoefficientRingR();
   if (dense)
-    return new MutableMat< DMat<CoefficientRingR> >(R, cR, nrows, ncols);
+    return new MutableMat<DMat<CoefficientRingR> >(R, cR, nrows, ncols);
   else
-    return new MutableMat< SMat<CoefficientRingR> >(R, cR, nrows, ncols);
+    return new MutableMat<SMat<CoefficientRingR> >(R, cR, nrows, ncols);
 }
 
 MutableMatrix *MutableMatrix::identity(const Ring *R, size_t nrows, bool dense)
 {
-  MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
-  for (size_t i=0; i<nrows; i++)
-    result->set_entry(i,i,R->from_long(1));
+  MutableMatrix *result = MutableMatrix::zero_matrix(R, nrows, nrows, dense);
+  for (size_t i = 0; i < nrows; i++) result->set_entry(i, i, R->from_long(1));
   return result;
 }
 
 MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
 {
-  MutableMatrix *result = zero_matrix(m->get_ring(),
-                                         m->n_rows(),
-                                         m->n_cols(),
-                                         prefer_dense);
+  MutableMatrix *result =
+      zero_matrix(m->get_ring(), m->n_rows(), m->n_cols(), prefer_dense);
   Matrix::iterator i(m);
-  for (unsigned int c=0; c<m->n_cols(); c++)
+  for (unsigned int c = 0; c < m->n_cols(); c++)
     {
       for (i.set(c); i.valid(); i.next())
         result->set_entry(i.row(), c, i.entry());
@@ -96,25 +94,23 @@ void MutableMatrix::text_out(buffer &o) const
   size_t ncols = n_cols();
   buffer *p = new buffer[nrows];
   size_t r;
-  for (size_t c=0; c<ncols; c++)
+  for (size_t c = 0; c < ncols; c++)
     {
       size_t maxcount = 0;
-      for (r=0; r<nrows; r++)
+      for (r = 0; r < nrows; r++)
         {
           ring_elem f;
-          get_entry(r,c,f);
+          get_entry(r, c, f);
           if (!R->is_zero(f))
             R->elem_text_out(p[r], f);
           else
             p[r] << ".";
-          if (p[r].size() > maxcount)
-            maxcount = p[r].size();
+          if (p[r].size() > maxcount) maxcount = p[r].size();
         }
-      for (r=0; r<nrows; r++)
-        for (size_t k=maxcount+1-p[r].size(); k > 0; k--)
-          p[r] << ' ';
+      for (r = 0; r < nrows; r++)
+        for (size_t k = maxcount + 1 - p[r].size(); k > 0; k--) p[r] << ' ';
     }
-  for (r=0; r<nrows; r++)
+  for (r = 0; r < nrows; r++)
     {
       p[r] << '\0';
       char *s = p[r].str();
@@ -124,19 +120,20 @@ void MutableMatrix::text_out(buffer &o) const
 }
 
 bool MutableMatrix::set_values(M2_arrayint rows,
-                                  M2_arrayint cols,
-                                  engine_RawRingElementArray values)
+                               M2_arrayint cols,
+                               engine_RawRingElementArray values)
 {
-  if (rows->len != cols->len || rows->len != values->len)
-    return false;
-  for (size_t i=0; i<rows->len; i++)
+  if (rows->len != cols->len || rows->len != values->len) return false;
+  for (size_t i = 0; i < rows->len; i++)
     {
-      if (!set_entry(rows->array[i], cols->array[i], values->array[i]->get_value()))
+      if (!set_entry(
+              rows->array[i], cols->array[i], values->array[i]->get_value()))
         return false;
     }
   return true;
 }
 
+#if 0
 engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose)
 {
   // Suppose A is m x n
@@ -180,6 +177,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 
   return result;
 }
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -187,7 +187,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  )
      is x:RawMatrixCell do (
 	  when rhs
-	  is y:RawMatrixCell do toExpr(Ccode(bool, "IM2_Matrix_is_equal(",x.p,",",y.p,")"))
+	  is y:RawMatrixCell do toExpr(Ccode(bool, "1 == IM2_Matrix_is_equal(",x.p,",",y.p,")"))
 	  else False
 	  )
      is x:MysqlConnectionWrapper do (

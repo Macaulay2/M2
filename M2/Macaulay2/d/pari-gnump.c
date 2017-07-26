@@ -132,7 +132,7 @@ void pari_mpfr_init2 (mpfr_ptr f, mpfr_prec_t prec)
    assert (sizeof (long) == sizeof (mp_limb_t));
 
    l = nbits2nlong (mpfr_custom_get_size (prec) * 8);
-   mant = new_chunk (l);
+   mant = (void*) new_chunk (l);
    mpfr_custom_init_set (f, MPFR_NAN_KIND, 0, prec, mant);
 }
 
@@ -154,9 +154,9 @@ static void pari_mpfr_init_set_REAL (mpfr_ptr f, GEN x)
    }
    else {
       long l = realprec (x) - 2;
-      mp_limb_t * rc = new_chunk (l);
+      mp_limb_t * rc = (void *) new_chunk (l);
 
-      xmpn_mirrorcopy (rc, x+2, l);
+      xmpn_mirrorcopy (rc, (mp_limb_t*)x+2, l);
       mpfr_custom_init_set (f, signe (x) * MPFR_REGULAR_KIND,
                            expo (x) + 1, bit_prec (x), rc);
    }
@@ -250,7 +250,8 @@ int mpfr_set_GEN (mpfr_ptr f, GEN x, mpfr_rnd_t rnd)
       case t_FRAC:
          return mpfr_set_FRAC (f, x, rnd);
       default:
-         pari_err_TYPE ("mpfr_set_GEN", x);
+         pari_err_TYPE ("mpfr_set_GEN", x); /* shouldn't return */
+	 return 0;
    }
 }
 
@@ -283,17 +284,19 @@ GEN mpfr_get_GEN (mpfr_srcptr f)
    /* returns f as a t_REAL with the minimal precision required to represent
       it */
 {
-   if (!mpfr_number_p (f))
-      pari_err_OVERFLOW ("mpfr_get_GEN");
+   if (!mpfr_number_p (f)) {
+      pari_err_OVERFLOW ("mpfr_get_GEN"); /* shouldn't return */
+      return 0;
+      }
    else if (mpfr_zero_p (f))
       return real_0_bit (-mpfr_get_prec (f));
    else {
       long l = nbits2nlong (mpfr_get_prec (f));
-      GEN r = cgetr (l + 2);
+      mp_limb_t *r = (void *)cgetr (l + 2);
       xmpn_mirrorcopy (r+2, mpfr_custom_get_significand (f), l);
       setsigne (r, (mpfr_signbit (f) ? -1 : 1));
       setexpo (r, mpfr_get_exp (f) - 1);
-      return r;
+      return (void *)r;
    }
 }
 
@@ -388,3 +391,9 @@ GEN mpc_get_GEN (mpc_srcptr c)
 }
 
 /****************************************************************************/
+
+/*
+ -- Local Variables:
+ -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pari-gnump.o "
+ -- End:
+*/

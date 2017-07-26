@@ -1,3 +1,6 @@
+#include "ringelem.hpp"
+#include "intarray.hpp"
+
 class Matrix;
 class RingElement;
 class FreeModule;
@@ -10,9 +13,6 @@ struct resterm;
 struct res2term;
 class MutableMatrix;
 class MonomialIdeal;
-
-#include "ringelem.hpp"
-#include "intarray.hpp"
 
 void dmatrix(const Matrix *M);
 

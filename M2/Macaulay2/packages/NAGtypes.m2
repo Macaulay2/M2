@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.9.2",
-     Date => "Oct 2016",
+     Version => "1.9.3",
+     Date => "May 2017",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -112,6 +112,17 @@ XXXtoList PolySystem := P -> if P.?PolyMap then flatten entries P.PolyMap else e
 homogenize (PolySystem,Ring,RingElement) := (P,R,h) -> polySystem homogenize(sub(P.PolyMap,R),h)
 isSquare = method()
 isSquare PolySystem := P -> P.NumberOfPolys == P.NumberOfVariables
+
+toCCpolynomials = method()
+toCCpolynomials (List,ZZ) := (F,prec) -> (
+    R := CC_prec(monoid[gens commonRing F]);
+    apply(F,f->sub(f,R)) 
+    )    
+toCCpolynomials (Matrix,InexactField) := (F,C) -> (
+    R := C(monoid[gens ring F]);
+    sub(F,R) 
+    )    
+
 evaluate = method()
 evaluate (PolySystem,Point) := (P,p) -> evaluate(P, matrix p)
 evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
@@ -122,8 +133,11 @@ evaluate (PolySystem,Matrix) := (P,X) -> (
     )    
 evaluate (Matrix,Matrix) := (M,X) ->  (
     C := coefficientRing ring M;
-    if numColumns X == 1 then sub(M,sub(transpose X,C))
-    else if numRows X == 1 then sub(M,sub(X,C))
+    -- work around a sub(CC,QQ) bug!!!
+    if instance(ring X, InexactField) then 
+	M = toCCpolynomials(M,C=ring X);   
+    if numColumns X == 1 then X = transpose X;
+    if numRows X == 1 then sub(M,sub(X,C))
     else error "expected a row or a column vector"
     )
 evaluate (PolySystem,Point) := (P,p) -> evaluate(P,matrix p)
@@ -701,6 +715,11 @@ checkCCpolynomials List := F -> (
 	or coeffR===QQ or coeffR ===ZZ
 	) then error "expected coefficients that can be converted to complex numbers";  
     if any(F, f->ring f =!= R) then error "expected all polynomials in the same ring";
+    )
+checkCCpolynomials (List,List) := (S,T) -> (
+    n := #T;
+    if #S != n then error "expected same number of polynomials in start and target systems";
+    ST := checkCCpolynomials(S|T);
     )
 
 generalEquations = method()

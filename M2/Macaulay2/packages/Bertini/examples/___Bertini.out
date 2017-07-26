@@ -21,7 +21,6 @@ o3 = {x  - 1, y  - 1}
 o3 : List
 
 i4 : solns = bertiniZeroDimSolve(F)
-~/bertini
 
 o4 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 

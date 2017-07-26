@@ -5,7 +5,6 @@ SRCDIR = @srcdir@
 DEPENDS = yes
 include ../Makefile.common
 include @srcdir@/../Makefile.files
-include @srcdir@/../f4/Makefile.files
 include @srcdir@/Makefile.files
 export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
@@ -14,8 +13,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
 
-#CXXFLAGS += -O0 -std=gnu++0x #-coverage
-CXXFLAGS += -std=c++11 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
+CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
@@ -63,7 +61,11 @@ ARingRRRZZpTest :  gtest-include.o  \
     $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
- 
+checkGivaro: GivaroTest
+
+GivaroTest: GivaroTest.o
+	@CC@ $(LDFLAGS) $^ -lgivaro -lgmp -lstdc++ -lgmpxx -o $@
+
 checkRingRRR: ARingRRRTest
 	time ./ARingRRRTest
 
