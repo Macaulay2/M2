@@ -15,7 +15,7 @@
 /* to get IM2_initialize() : */
 #include "engine.h"
 
-#ifdef HAVE_ALLOCA_H
+#if HAVE_ALLOCA_H
 #include <alloca.h>
 #else
 #ifdef __GNUC__
@@ -764,8 +764,11 @@ char **argv;
 
      signal(SIGPIPE,SIG_IGN);
      have_arg_no_int = have_arg(argv,"--int");
+
+#if HAVE_DECL_RL_CATCH_SIGNALS     
      if (have_arg_no_int)
 	  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
+#endif
 
      system_handleInterruptsSetup(TRUE);
      
