@@ -25,7 +25,7 @@ compute#Fan#smooth Fan := F -> (
 
 compute#Fan#computedFVector = method()
 compute#Fan#computedFVector Fan := F -> (
-   reverse apply(dim F + 1, d -> #faces(dim F - d,F))
+   toList apply(1..(dim F), d -> #faces(dim F - d,F))
 )
 
 
