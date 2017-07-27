@@ -1,6 +1,6 @@
 ;;;; put these lines in your .emacs file
 ;; (setq auto-mode-alist (append auto-mode-alist '(("\\.d$" . D-mode))))
-;; (autoload 'D-mode "D-mode.el" "Macaulay 2 editing mode" t)
+;; (autoload 'D-mode "D-mode.el" "Macaulay2 editing mode" t)
 ;;;;
 
 (defvar D-mode-hook nil

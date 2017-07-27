@@ -1,8 +1,8 @@
 ;;; M2.el 
-;;;    - run Macaulay 2 as a command interpreter in an Emacs buffer
-;;;    - provide a major mode used for editing Macaulay 2 source files
+;;;    - run Macaulay2 as a command interpreter in an Emacs buffer
+;;;    - provide a major mode used for editing Macaulay2 source files
 
-;; Macaulay 2 makes no attempt to wrap long output lines, so we provide
+;; Macaulay2 makes no attempt to wrap long output lines, so we provide
 ;; functions that make horizontal scrolling easier.
 
 (require 'font-lock)
@@ -14,14 +14,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun m2-mode() 
-  "Macaulay 2 editing mode, name in lower case"
+  "Macaulay2 editing mode, name in lower case"
   (M2-mode))
 (defun m2-comint-mode() 
-  "Macaulay 2 command interpreter mode, name in lower case"
+  "Macaulay2 command interpreter mode, name in lower case"
   (M2-comint-mode))
 
-(define-derived-mode M2-mode fundamental-mode "Macaulay 2"
-  "Major mode for editing Macaulay 2 source code.
+(define-derived-mode M2-mode fundamental-mode "Macaulay2"
+  "Major mode for editing Macaulay2 source code.
 
 \\{M2-mode-map}"
   ;; (kill-all-local-variables)
@@ -32,8 +32,8 @@
 ;; give up trying to fix this:
 ;; (defcustom ansi-color-for-comint-mode nil "...")
 
-(define-derived-mode M2-comint-mode comint-mode "Macaulay 2 Interaction"
-  "Major mode for interacting with a Macaulay 2 process.
+(define-derived-mode M2-comint-mode comint-mode "Macaulay2 Interaction"
+  "Major mode for interacting with a Macaulay2 process.
 
 \\{M2-comint-mode-map}"
   (M2-common)
@@ -44,7 +44,7 @@
   )
 
 (defun M2-common()
-  "Set up features common to both Macaulay 2 major modes."
+  "Set up features common to both Macaulay2 major modes."
   (set (make-local-variable 'comment-start) "-- ")
   (set (make-local-variable 'comment-end) "")
   (set (make-local-variable 'comment-column) 60)
@@ -125,7 +125,7 @@
 ;;
 
 (defgroup Macaulay2 nil "Editing Macaulay2 code.")
-(defcustom M2-indent-level 4 "Indentation increment in Macaulay 2 mode" :group 'Macaulay2)
+(defcustom M2-indent-level 4 "Indentation increment in Macaulay2 mode" :group 'Macaulay2)
 (defvar M2-exe "M2" "The default Macaulay2 executable name.")
 (defvar M2-shell-exe "/bin/sh" "The default shell executable name.")
 (defcustom M2-command 
@@ -148,8 +148,8 @@
    " "))
 
 (defun M2 (command name)
-  "Run Macaulay 2 in a buffer.  With a prefix argument, the command line given
-to the shell to run Macaulay 2 can be edited in the minibuffer.  With prefix
+  "Run Macaulay2 in a buffer.  With a prefix argument, the command line given
+to the shell to run Macaulay2 can be edited in the minibuffer.  With prefix
 argument \\[universal-argument] \\[universal-argument] the tag from which the buffer name is constructed (by
 prepending and appending asterisks) can be entered in the minibuffer.  The
 command line will always have the appropriate option for the width of the
@@ -177,7 +177,7 @@ current window added to it."
     buffer))
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp "^\\([ \t]*\\(i*[1-9][0-9]* :\\|o*[1-9][0-9]* =\\) \\)?"
-  "Regular expression used to recognize the Macaulay 2 prompt.")
+  "Regular expression used to recognize the Macaulay2 prompt.")
 (defun M2-left-hand-column () (window-hscroll))
 (defun M2-right-hand-column () (+ (window-hscroll) (window-width) -1))
 (defun M2-on-screen () (and (< (M2-left-hand-column) (current-column)) (< (current-column) (M2-right-hand-column))))
@@ -238,7 +238,7 @@ current window added to it."
     )
 
 (defun M2-dynamic-complete-symbol()
-  "Dynamic completion function for Macaulay 2 symbols."
+  "Dynamic completion function for Macaulay2 symbols."
   (interactive)
   (let ((word (comint-word "a-zA-Z")))
     (if word (comint-dynamic-simple-complete word M2-symbols))))
@@ -354,7 +354,7 @@ can be executed with \\[M2-send-to-program]."
 
 (defun M2-send-to-program (send-to-buffer)
      "Send the current line except for a possible prompt, or the region, if the
-mark is active, to Macaulay 2 in its buffer, making its window visible.
+mark is active, to Macaulay2 in its buffer, making its window visible.
 Afterwards, in the case where the mark is not active, move the cursor to
 the next line.  Alternatively, if the point is at a prompt or a blank line
 at the end of the buffer *M2*, get the next line of input from demo buffer
@@ -440,7 +440,7 @@ be sent can be entered, with history."
   (switch-to-buffer M2-demo-buffer))
 
 (defun M2-demo()
-  "Sets up a new frame with a big font for a Macaulay 2 demo."
+  "Sets up a new frame with a big font for a Macaulay2 demo."
   (interactive)
   (let* ((f (prog1
 	      (select-frame 
@@ -518,7 +518,7 @@ be sent can be entered, with history."
 	      )))
 
 (defun M2-newline-and-indent ()
-     "Start a new line and indent it properly for Macaulay 2 code."
+     "Start a new line and indent it properly for Macaulay2 code."
      (interactive)
      (newline)
      (indent-to (this-line-indent-amount))
