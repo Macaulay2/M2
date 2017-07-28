@@ -225,7 +225,7 @@ document {
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
 	  },
      UL {
-	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes" },
+	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes, or number of gigabytes followed by 'G', similarly for 'M', 'K'" },
 	  LI { "GC_MAXIMUM_HEAP_SIZE -- maximum collected heap size" },
 	  LI { "GC_FREE_SPACE_DIVISOR -- if set to a number D, then
                          we try to make sure that we allocate at least N/D bytes between collections, where N is twice the
@@ -246,9 +246,8 @@ document {
 	  "The full list is found in the source code for gc in the file ", TT "doc/README.environment", "."
 	  },
      PARA {
-	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems.
-	  Typically, the only recourse for the user is to increase the memory available to the program."
-	  },
+	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems."
+      },
      UL {
 	  "Insufficient space for initial table allocation",
 	  "No space for lwp data structures",
@@ -257,6 +256,12 @@ document {
 	  "Too many heap sections",
 	  "Too many heap sections: Increase MAXHINCR or MAX_HEAP_SECTS",
 	  "Too many root sets"
+	  },
+     PARA {
+      "You may simply be out of memory, and then the only recourse is to increase the memory available to the program.
+      However, if you don't have enough heap sections,
+      sometimes one can just start Macaulay2 by setting the GC_INITIAL_HEAP_SIZE environment variable 
+      to some larger value with an environment setting prefix on the M2 command line, e.g., ", TT "GC_INITIAL_HEAP_SIZE=20G M2", ".",
 	  },
      SeeAlso => { collectGarbage }
      }
