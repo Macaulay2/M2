@@ -271,7 +271,7 @@ compute#Fan#polytopal Fan := F -> (
          j -> (
             raysL := rays L#j;
             linL := linealitySpace L#j;
-            corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> (raysL_C, linL) => {j}),join)
+            corrList = merge(corrList, hashTable apply(faces(2,L#j), C -> (raysL_C, linL) => {j}),join)
          )
       );
       corrList = pairs corrList;
@@ -316,7 +316,7 @@ compute#Fan#polytopal Fan := F -> (
       if hyperplanesTmp != {} then hyperplanesTmp = matrix hyperplanesTmp
       else hyperplanesTmp = map(ZZ^0,ZZ^m,0);
       -- Find an interior vector in the cone of all positive vectors satisfying the restrictions
-      v := flatten entries interiorVector intersection(id_(ZZ^m),hyperplanesTmp);
+      v := flatten entries interiorVector coneFromHData(id_(ZZ^m),hyperplanesTmp);
       M := {};
       -- If the vector is strictly positive then there is a polytope with 'F' as normalFan
       if all(v, e -> e > 0) then (
