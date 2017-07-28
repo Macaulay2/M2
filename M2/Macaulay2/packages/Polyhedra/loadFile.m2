@@ -76,6 +76,7 @@ load "./tests/core/tests_from_polymake/representation.m2"
 load "./tests/core/tests_from_polymake/hilbert_basis.m2"
 load "./tests/core/tests_from_polymake/lattice_points.m2"
 load "./tests/core/tests_from_polymake/normal_fan.m2"
+load "./tests/core/tests_from_polymake/basic_fans.m2"
 -- Extended:
 load "./tests/extended/polyhedron.m2"
 load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
