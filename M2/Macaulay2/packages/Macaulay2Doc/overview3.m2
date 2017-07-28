@@ -382,7 +382,7 @@ document {
 	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
 	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
 	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
-	  emacs by the keystroke sequence ", TT "CTRL-U f12", ", which offers you a chance to edit the command line."
+	  emacs by the keystroke sequence ", TT "C-u f12", ", which offers you a chance to edit the command line."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
