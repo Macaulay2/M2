@@ -74,28 +74,30 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
    raysC := rays C;
    ldim := rank linealitySpace C;
    result#0 = {toList (0..(getProperty(C, nRays) - 1))};
-   result#(1) = toList getProperty(C, facetsThroughRayData);
-   for i from 0 to d-2-ldim do (
-      oldFaces := result#(1+i);
-      newFaces := unique flatten apply(oldFaces,
-         face -> toList apply(result#(1),
-            facet -> (
-               plop := elements ((set face) * (set facet));
-               sort plop
+   if d>0 then (
+      result#(1) = toList getProperty(C, facetsThroughRayData);
+      for i from 0 to d-2-ldim do (
+         oldFaces := result#(1+i);
+         newFaces := unique flatten apply(oldFaces,
+            face -> toList apply(result#(1),
+               facet -> (
+                  plop := elements ((set face) * (set facet));
+                  sort plop
+               )
             )
-         )
+         );
+         -- << newFaces << endl;
+         newFaces = select(newFaces, 
+            face -> (
+               -- << "Face is: " << face << endl;
+               -- << raysC << endl;
+               -- << raysC_{face} << endl;
+               (rank raysC_(toList face)) + ldim == d-2-i
+            )
+         );
+         -- << "Select ok." << endl;
+         result#(2+i) = newFaces
       );
-      -- << newFaces << endl;
-      newFaces = select(newFaces, 
-         face -> (
-            -- << "Face is: " << face << endl;
-            -- << raysC << endl;
-            -- << raysC_{face} << endl;
-            (rank raysC_(toList face)) + ldim == d-2-i
-         )
-      );
-      -- << "Select ok." << endl;
-      result#(2+i) = newFaces
    );
    hashTable pairs result
 )
@@ -145,7 +147,7 @@ compute#Cone#raysThroughFacets Cone := C -> (
 
 compute#Cone#computedFVector = method()
 compute#Cone#computedFVector Cone := C -> (
-   reverse apply(dim C + 1, d -> #faces(dim C - d,C))
+   toList apply(0..dim C, d -> #faces(dim C - d,C))
 )
 
 
