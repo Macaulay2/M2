@@ -805,14 +805,14 @@ AC_SUBST(BUILTLIBS,)
 #	   *** Conclusion: we must let gmp use malloc, not GC_malloc.  So what
 #	   do with objects returned by libraries that use gmp, directly or
 # 	   indirectly?  Either deep copy to the GC heap or finalization to free it explicitly?
-    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
+#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
 # 	   We have always built mpir, so we can patch the routine
 # 	   mp_set_memory_functions() in it so it does nothing; that prevents
 # 	   libraries such as pari from telling it what memory allocation
 # 	   functions to use.  But we should instead patch pari or work around
 # 	   it, so we can use the gmp library that comes with many linux
 # 	   distributions.
-    4ti2 needs glpk
+#    4ti2 needs glpk
 #    gfan needs cddlib
 #    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
