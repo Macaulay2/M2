@@ -23,17 +23,10 @@ DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-ifeq ($(GCC4),yes)
-_CC  := gcc-4.9.4
-_CXX := g++-4.9.4
-_FC  := gfortran-4.9.4
-DIRECTORY := $(DIRECTORY)-gcc4
-else
-ifeq ($(GCC5),yes)
-_CC  = gcc-5
-_CXX = g++-5
-DIRECTORY := $(DIRECTORY)-gcc5
-else
+# # we have to build our own readline, because the Mac OS X system readline turns on "stty onlcr echo",
+# # even if we put --no-readline on the command line (?)
+# CONFIGOPTIONS += --enable-build-libraries="readline"
+
 ifeq ($(GCC6),yes)
 _CC  = gcc-6
 _CXX = g++-6
@@ -43,14 +36,9 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-# disable some libraries that don't compile with clang:
-# CONFIGOPTIONS += --disable-frobby  --disable-gfan
-CONFIGOPTIONS += --disable-strip
 export CFLAGS += -Wno-unknown-attributes
 else
 $(error compiler not specified)
-endif
-endif
 endif
 endif
 
@@ -74,6 +62,7 @@ ifeq ($(PRODUCTION),yes)
    endif
 endif
 ifeq ($(DEBUG),yes)
+   CONFIGOPTIONS += --disable-strip
    CONFIGOPTIONS += --enable-common-staging-area
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
@@ -90,5 +79,5 @@ endif
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time gmake -w -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=yes GCC5=no GCC6=no GCC4=no "
+# compile-command: "time gmake -w -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no CLANG=yes GCC6=no "
 # End:
