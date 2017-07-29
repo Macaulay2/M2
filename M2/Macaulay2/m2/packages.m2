@@ -106,7 +106,9 @@ newPackage = method(
 	  Configuration => {},
 	  Reload => false,
 	  PackageExports => {},
-	  PackageImports => {}
+	  PackageImports => {},
+          UseCachedExampleOutput => null,
+          OptionalComponentsPresent => true
 	  })
 
 protect Reload
@@ -204,7 +206,10 @@ newPackage(String) := opts -> (title) -> (
 	       opts = merge(opts, new OptionTable from {DebuggingMode => loadOptions.DebuggingMode},last);
 	       );
 	  );
-     if opts.DebuggingMode and not debuggingMode then opts = merge(opts, new OptionTable from {DebuggingMode => false},last);
+     if opts.DebuggingMode and not debuggingMode
+     then opts = merge(opts, new OptionTable from {DebuggingMode => false},last);
+     if opts.UseCachedExampleOutput === null
+     then opts = merge(opts, new OptionTable from {UseCachedExampleOutput => not opts.OptionalComponentsPresent},last);
      newpkg := new Package from nonnull {
           "title" => title,
 	  symbol Options => opts,

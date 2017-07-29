@@ -811,6 +811,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else if (
 			 not opts.RerunExamples 
+			 and pkg.Options.UseCachedExampleOutput
 			 and fileExists outf' 
 			 and gethash outf' === inputhash
 			 )
