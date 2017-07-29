@@ -27,7 +27,7 @@ document {
 
 document {
      Key => "changes made for the next release",
-     -- UL {
+     UL {
      -- 	  LI { "major improvements and additions:",
      -- 	        UL {
      -- 	            }
@@ -45,10 +45,17 @@ document {
      -- 	       UL {
      -- 	  	    }
      -- 	       },     
-     -- 	  LI { "functionality added or improved:",
-     -- 	       UL {
-     -- 	  	   }
-     -- 	       },
+     	  LI { "functionality added or improved:",
+     	       UL {
+		    LI {
+			 "The function ", TO "newPackage", " now takes two new options: 
+			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
+			 and ", TT "UseCachedExampleOutput", " tells whether to use the cached example output files.  This will be useful for packages
+			 that use external programs that are not always present, so they can seize the opportunity to rerun examples when the external
+			 programs are present and give no error when the external programs are absent."
+			 }
+     	  	   }
+     	       },
      -- 	  LI { "new constants and operators:",		    -- get this with : git diff version-1.9.2 ../../m2/exports.m2
      -- 	       UL {
      -- 	       	    }
@@ -57,7 +64,7 @@ document {
      -- 	       UL {
      -- 	  	       }
      --           }
-     -- 	  }
+     	  }
      }
 
 document {
