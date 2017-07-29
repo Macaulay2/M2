@@ -1344,8 +1344,6 @@ document {
 		    TO [check,UserMode],
 		    TO [fillMatrix, Height],
 		    TO [flattenRing,Result],
-		    TO [getPackage,Configuration],
-		    TO [getPackage,UserMode],
 		    TO [hilbertSeries,Reduce],
 		    TO [installPackage,CacheExampleOutput],
 		    TO [installPackage,RunExamples],

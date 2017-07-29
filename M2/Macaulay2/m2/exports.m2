@@ -670,7 +670,6 @@ export {
 	"getGlobalSymbol",
 	"getNetFile",
 	"getNonUnit",
-	"getPackage",
     	"getPrimeWithRootOfUnity",
 	"getSymbol",
 	"getWWW",
