@@ -278,7 +278,9 @@ document {
 	       when ", TO "installPackage", " is called.  After the directory is created, it will necessary for the user also to specify
 	       ", TT "AuxiliaryFiles=>true", "."
 	       },
-     	  OptionalComponentsPresent => Boolean => {"whether all optional external components of the package are present on the system"},
+     	  OptionalComponentsPresent => Boolean => {"whether all optional external components of the package are present on the system.
+	       Unless the user sets this option or ", TT "CacheExampleOutput", " to ", TT "true", ", this option will be initialized to 
+	       ", TT "true", "."},
           UseCachedExampleOutput => Boolean => {"whether ", TO "installPackage", " should copy previously cached example output, if it is present and
 	       corresponds to the current example input for a node, rather than rerunning the examples, which might be important if optional external
 	       software is not present in the system.  This is relevant only when ", TT "CacheExampleOutput", " and ", TT "AuxiliaryFiles", " are set 
