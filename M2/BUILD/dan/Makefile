@@ -8,6 +8,14 @@ DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
 RPM := $(shell if [ -d /var/lib/yum ] ; then echo yes ; else echo no; fi)
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
+BUILDLIBS = 
+
+ifeq ($(MACOSX),yes)
+# mac os x readline has a bug: CTRL-A doesn't go all the way to the beginning of the
+# line after typing r e s o TAB C-a, so we build it ourselves
+BUILDLIBS += readline
+endif
+
 DIRECTORY ?= $(shell hostname)
 
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
@@ -29,6 +37,8 @@ ifeq ($(MACOSX),yes)
 CONFIGOPTIONS += --enable-dmg
 endif
 endif
+
+CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 
 include Makefile.include
 
