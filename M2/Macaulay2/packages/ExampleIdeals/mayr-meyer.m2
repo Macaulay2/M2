@@ -83,7 +83,7 @@ gbTrace=1
 time gens gb I;
 time gens gb(I,Algorithm=>Homogeneous2);
 
-{* -- singular code
+-* -- singular code
 ring r = 101,(S_0, S_1, S_2, S_3, F_0, F_1, F_2, F_3, a_0, a_1, a_2, a_3, b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, d_0, d_1, d_2, d_3, e_0, e_1, e_2, e_3, f_0, f_1, f_2, f_3, g_0, g_1, g_2, g_3, h_0, h_1, h_2, h_3, z), dp;
 ideal i =    -F_0*a_0^2*e_0+S_0*e_0*z^2,
    -F_0*b_0^2*f_0+S_0*f_0*z^2,
@@ -122,8 +122,8 @@ ideal i =    -F_0*a_0^2*e_0+S_0*e_0*z^2,
 rtimer=1;
 timer=1;
 ideal j=groebner(i);
-*}
-{* -- Magma
+*-
+-* -- Magma
 R<S_0, S_1, S_2, S_3, F_0, F_1, F_2, F_3, a_0, a_1, a_2, a_3, b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, d_0, d_1, d_2, d_3, e_0, e_1, e_2, e_3, f_0, f_1, f_2, f_3, g_0, g_1, g_2, g_3, h_0, h_1, h_2, h_3, z> := PolynomialRing(GF(101),41,"grevlex");
 I := ideal<R |  -F_0*a_0^2*e_0+S_0*e_0*z^2,
    -F_0*b_0^2*f_0+S_0*f_0*z^2,
@@ -161,7 +161,7 @@ I := ideal<R |  -F_0*a_0^2*e_0+S_0*e_0*z^2,
    -F_2*c_2*d_3*f_2*h_3+F_2*a_2*f_2*h_3*z>;
 I;   
 time J := GroebnerBasis(I);
-*}
+*-
 
 gbTrace=1
 I = mayr(4,2,ZZ/101);

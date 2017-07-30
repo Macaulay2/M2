@@ -414,7 +414,7 @@ Expression / Holder     := (x,y) -> new Divide from {x,y#0}
 Holder     / Holder     := (x,y) -> new Divide from {x#0,y#0}
 Expression / Thing      := (x,y) -> x / (expression y)
      Thing / Expression := (x,y) -> (expression x) / y
-not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else {* UnaryOperation{symbol not, e} *} error ("negation of an equation with ", toString (#e), " parts")
+not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", toString (#e), " parts")
 -- not Expression := e -> BinaryOperation{symbol not, e}
 Expression and Expression := (e,f) -> BinaryOperation{symbol and,e,f}
 Expression or Expression := (e,f) -> BinaryOperation{symbol or,e,f}

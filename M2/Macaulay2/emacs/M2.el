@@ -103,20 +103,17 @@
  (function
   (lambda (syntax-table)
     (modify-syntax-entry ?\\ "." syntax-table)
-    ;;    (modify-syntax-entry ?-  ". 12" syntax-table) ;; -- comments are now highlighted manually in M2-symbols.el
-    (modify-syntax-entry ?-  "." syntax-table)
-    ;;    (modify-syntax-entry ?\n ">" syntax-table)
-    ;;    (modify-syntax-entry ?\^m ">" syntax-table)
-    (modify-syntax-entry ?{  "(} 1" syntax-table)
+    (modify-syntax-entry ?-  ". 124b" syntax-table)
+    (modify-syntax-entry ?\n "> b" syntax-table)
+    (modify-syntax-entry ?\^m "> b" syntax-table)
     (modify-syntax-entry ?*  ". 23" syntax-table)
-    (modify-syntax-entry ?}  "){ 4" syntax-table)
     (modify-syntax-entry ?_  "." syntax-table)
     (modify-syntax-entry ?+  "." syntax-table)
     (modify-syntax-entry ?=  "." syntax-table)
     (modify-syntax-entry ?%  "." syntax-table)
     (modify-syntax-entry ?<  "." syntax-table)
     (modify-syntax-entry ?>  "." syntax-table)
-    (modify-syntax-entry ?'  "w" syntax-table)
+    (modify-syntax-entry ?'  "_" syntax-table) ; part of a symbol
     (modify-syntax-entry ?&  "." syntax-table)
     (modify-syntax-entry ?|  "." syntax-table)
     ))
@@ -134,11 +131,6 @@
 (defvar M2-history (list M2-command) "The history of recent Macaulay2 command lines.")
 (defvar M2-send-to-buffer-history '("*M2*") "The history of recent Macaulay2 send-to buffers.")
 (defvar M2-tag-history () "The history of recent Macaulay2 command name tags.")
-(defvar M2-el-version "$Revision$  $URL$")
-(defun M2-el-version() 
-  "Display the version of the source file M2.el in the minibuffer."
-  (interactive)
-  (message "M2-el-version: %s" M2-el-version))
 
 (defun M2-add-width-option (command)
   (concat

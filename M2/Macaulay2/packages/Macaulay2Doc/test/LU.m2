@@ -21,20 +21,20 @@ M = random(kk^20, kk^30)
 assert(0 == permutationMatrix P * matrix L * matrix U - matrix M)
 
 -- over a nonprime finite field.  Not available currently!!
-{*
+-*
 kk = GF(8)
 M = random(kk^20, kk^30)
 (P,L,U) = LUdecomposition M
 assert(0 == permutationMatrix P * matrix L * matrix U - matrix M)
-*}
+*-
 
 -- over QQ.  Not available currently!
-{*
+-*
 kk = QQ
 M = random(kk^20, kk^30)
 (P,L,U) = LUdecomposition M
 assert(0 == permutationMatrix P * matrix L * matrix U - matrix M)
-*}
+*-
 
 
 kk = ZZ/32003

@@ -499,14 +499,14 @@ substitute(SimplicialComplex,PolynomialRing):=(C,R)->(
 simplicialComplex((entries sub(C.facets,R)))#0)
 
 
-{*
+-*
 installPackage "SimplicialComplexes"
 R = QQ[a..e]
 D = simplicialComplex monomialIdeal(a*b*c*d*e)
 substitute(D,R)
 F=(faces(1,D,useFaceClass=>true))#0
 isFaceOf(F,D)
-*}
+*-
 
 -------------------------------------------------------------------------
 
@@ -2195,12 +2195,12 @@ doc ///
 
 -------------------------------------------------------------------
 
-{*
+-*
 check ("SimplicialComplexes",UserMode=>false)
 loadPackage "SimplicialComplexes"
 installPackage "SimplicialComplexes"
 installPackage("SimplicialComplexes",RerunExamples=>true,UserMode=>false)
-*}
+*-
 
 -----------------------------------------------------------
 

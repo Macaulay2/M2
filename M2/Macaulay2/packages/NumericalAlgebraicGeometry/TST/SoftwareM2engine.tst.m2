@@ -50,10 +50,10 @@ for predictor in {RungeKutta4,Tangent,Certified} do (
 -- a non-square system
 CC[x,y]
 solveSystem{x^2,y^2,x+y}
-{*
+-*
 QQ[x,y]
 solveSystem{x^2,y^2,x+y}
-*}
+*-
 end
 
 restart

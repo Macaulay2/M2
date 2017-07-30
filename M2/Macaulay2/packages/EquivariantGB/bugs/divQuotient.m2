@@ -1,6 +1,6 @@
-{*
+-*
 this bug is produced by running y10-x0x0x1-PS-false.m2 for... one hour 
-*}
+*-
 restart
 debug needsPackage "EquivariantGB"
 R = buildERing({symbol x, symbol y}, {1,2}, QQ, 5, MonomialOrder=>Lex, Degrees=>{1,2});

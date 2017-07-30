@@ -1,8 +1,8 @@
-{*
+-*
 David Eisenbud <de@msri.org>
 MENGYUAN ZHANG <myzhang@berkeley.edu>,
 Fri, Apr 7, 2017 at 2:56 PM
-*}
+*-
 
 restart
 needsPackage "NumericalAlgebraicGeometry"

@@ -154,7 +154,7 @@ doc ///
         frobeniusPower
 ///
 
-{*
+-*
 -- not exported
 doc ///
     Key
@@ -182,9 +182,9 @@ doc ///
             (2) finding the smallest submodule $V$ of a free module which satisfies $UV\subset V^{[p^e]}$ and image$(A)\subset V$ for given matrices $A$ and $U$. 
 
 ///
-*}
+*-
 
-{*
+-*
 -- not exported
 doc ///
     Key
@@ -199,7 +199,7 @@ doc ///
     Outputs
         :Matrix
 ///
-*}
+*-
 
 doc ///
     Key

@@ -218,12 +218,12 @@ commonEngineRingInitializations = (F) -> (
      if debugLevel > 25 then (
 	  registerFinalizer(F,"ring");
 	  );
-     {*
+     -*
      if debugLevel > 50 then (
 	  registerFinalizer(F#0,"ring 0");
 	  registerFinalizer(F#1,"ring 1");
 	  );
-     *}
+     *-
      )
 
 -----------------------------------------------------------------------------

@@ -176,7 +176,7 @@ TEST ///
  testPromoteLift()
 ///
 
-{*
+-*
 liftit = (r,s) -> (
     if r == 0 then return 0/1;
     r' := r;
@@ -233,5 +233,5 @@ continuedFraction(sqrt(2p100), 100)
 continuedFraction(pi*1.0p100, 10)
 3 + 1/7
 3 + 1/(7 + 1/(15+1/(1+1/(292+1/1))))
-*}
+*-
 

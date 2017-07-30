@@ -451,10 +451,10 @@ SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
 
 
 TEST ///
-{*
+-*
   restart
   needsPackage "SVDComplexes"
-*}
+*-
 needsPackage "RandomComplexes"
 
 h={1,3,5,2,1} 
@@ -537,10 +537,10 @@ euclideanDistance(ChainComplex,ChainComplex) := (A,B) -> (
     )
 
 TEST ///
-{*
+-*
   restart
   needsPackage "SVDComplexes"
-*}
+*-
 
 needsPackage "RandomComplexes"
 
@@ -765,10 +765,10 @@ arePseudoInverses(ChainComplex, ChainComplex) := opts -> (A,B) -> (
     )
 
 TEST ///
-{*
+-*
   restart
   needsPackage "SVDComplexes"
-*}
+*-
 
   needsPackage "RandomComplexes"
   -- Simple boundary cases for psuedoInverse.
@@ -782,10 +782,10 @@ TEST ///
 ///
     
 TEST ///
-{*
+-*
   restart
   debug needsPackage "SVDComplexes"
-*}
+*-
 
   needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
@@ -908,10 +908,10 @@ doc ///
 
 
 TEST ///
-{*
+-*
   restart
   needsPackage "RandomComplexes"
-*}
+*-
   needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
   r={1,3,3,4}

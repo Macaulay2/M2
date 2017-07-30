@@ -26,13 +26,13 @@ load "cyclic.m2"
 polys = parametrizedCyclic 7;
 
 
-{* each case is a quadruple (
+-* each case is a quadruple (
         type of graph, 
       	#nodes,
 	#edges,
 	"edge selection strategy" => "potential" -- "potential" = null if potential is not used
 	)
-*}
+*-
 
 setRandomSeed 0
 

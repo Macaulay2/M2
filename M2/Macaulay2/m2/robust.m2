@@ -78,9 +78,9 @@ scan(flexibleBinaryOperators, op -> (
 			 hush = true;					    -- prevent error message recursion
 			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
 			 line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
-			 {* line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z); *}
+			 -* line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z); *-
 			 hush = false;
-			 error toString stack(line1,commentGuard line2,commentGuard line3{*,commentGuard line4*}))));
+			 error toString stack(line1,commentGuard line2,commentGuard line3 -*,commentGuard line4 *-))));
 	  if not Thing#?(op,Thing,Thing) then (
 	       undocumented' (op,Thing,Thing);
 	       installMethod(op, Thing, Thing, (x,y) -> (
@@ -111,9 +111,9 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      wid = wid - commentGuardWidth - width preX;
 			      hush = true;					    -- prevent error message recursion
 			      line2 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
-			      {* line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z); *}
+			      -* line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z); *-
 			      hush = false;
-			      error toString stack(line1,commentGuard line2{*,commentGuard line3*}))));
+			      error toString stack(line1,commentGuard line2 -*,commentGuard line3 *- ))));
 	       if not Thing#?op then (
 		    undocumented' (op, Thing);
 		    installMethod(op, Thing, (x) -> (

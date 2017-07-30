@@ -16,7 +16,7 @@ multipleModificationA = n -> (
     A
     )
 
-{*
+-*
 gb(J, BasisElementLimit=>1)
 netList flatten entries gbSnapshot J
 gb(J, BasisElementLimit=>2)
@@ -49,9 +49,9 @@ gb(J, BasisElementLimit=>15)
 netList flatten entries gbSnapshot J
 gb(J, BasisElementLimit=>16)
 netList flatten entries gbSnapshot J
-*}
+*-
 
-{*
+-*
 --make a ring that only has conc rates as vars
 Rx = CC[A.ConcentrationRates]
 --create a random linear combination of equations to get a square system
@@ -62,7 +62,7 @@ B = random(CC^9, CC^6)
 M = M'*B
 --compute mixed volume
 computeMixedVolume (flatten entries M)
-*}
+*-
 
 end -------------------------------
 

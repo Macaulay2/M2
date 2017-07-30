@@ -1,7 +1,7 @@
-{*
+-*
 This file walks through a basic implementation of the trace test for verifying root counts. For terminology, please see "Trace Test" by
 Leykin, Rodriguez, Sotille. 
-*}
+*-
 
 restart
 load "./sol-count-smaller-than-bkk-examples/example-CRN.m2"
@@ -61,9 +61,9 @@ tracked = track(Pquadric,Plinear,sols);
 tracked1 = track(Plinear, Plinear1, tracked);
 tracked2 = track(Plinear1, Plinear2, tracked1);
 
-{*linearity of the trace at these test points is equivalent to rank-deficiency of the 11 x 2 matrix constructed below:
+-*linearity of the trace at these test points is equivalent to rank-deficiency of the 11 x 2 matrix constructed below:
 a small singular value may be regarded as evidence that (W0,W1) is a complete witness set 
-*}
+*-
 computeTrace = L -> sum apply(L, t -> matrix t)
 traces = apply({tracked, tracked1, tracked2}, x -> transpose computeTrace x)
 min first SVD ((traces#0-traces#1) | (traces#0-traces#2)) 

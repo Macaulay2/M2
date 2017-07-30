@@ -60,10 +60,14 @@ document {
      -- 	       UL {
      -- 	       	    }
      -- 	       },
-     -- 	  LI { "functionality changed:",
-     -- 	       UL {
-     -- 	  	       }
-     --           }
+     	  LI { "functionality changed:",
+     	       UL {
+     	       	    LI {
+			 "The format for multi-line (un-nested) block comments has been changed from ", TT "{* ... *}", " to ", TT "-* ... *-", " so emacs can colorize 
+			 the comments correctly.  The (deprecated) old style will be recognized by M2 for a while."
+			 }
+     	  	       }
+               }
      	  }
      }
 

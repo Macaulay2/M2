@@ -34,7 +34,7 @@ needsPackage "NumericalAlgebraicGeometry"
 n = 10;
 numTrials = 3;
 polys = (cyclicRoots(n, CC))_*;
-for software in {PHCPACK, BERTINI, M2engine {*, HOM4PS2*}} do (
+for software in {PHCPACK, BERTINI, M2engine -*, HOM4PS2*-} do (
   softwareTime = (elapsedTiming (apply(numTrials, temp -> solveSystem (polys, Software=> software))))#0;
   << software << " time: " << softwareTime/numTrials << endl;
 );

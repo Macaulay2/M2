@@ -40,7 +40,7 @@ f << ///
 	    (max-specpdl-size 1000) ; needed for passing long long lists to regexp-opt
 	  )
        `(
-	 (,"--.*" . font-lock-comment-face)
+	 ; (,"--.*" . font-lock-comment-face)
 ///
 
 

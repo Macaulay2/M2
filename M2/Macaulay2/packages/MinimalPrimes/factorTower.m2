@@ -144,7 +144,7 @@ factorOverTowerWorker (List,RingElement) := opts -> (tower,f) -> (
                     error "Internal error.  Tried to add in zero element to ideal in factorTower.";
                  newFac := makeMonicOverTower(tower,S.cache#"StoSF" G);
                  C := ideal gens gb ideal (IF_* | {newFac});
-                 {*
+                 -*
                  C := time if MONICTOWERTRICK then (
                          newFac := makeMonicOverTower(tower,S.cache#"StoSF" G);
                          ideal gens gb ideal (IF_* | {newFac})
@@ -153,7 +153,7 @@ factorOverTowerWorker (List,RingElement) := opts -> (tower,f) -> (
                          modPGB := modPFracGB(ideal G + L,gens coefficientRing SF / S.cache#"SFtoS");
                          ideal gens gb S.cache#"StoSF" modPGB
                       );
-                 *}
+                 *-
                  if C == 1 then continue;
                  newFactor := {fac#0, first toList (set C_* - set IF_*)};
                  firstFacs = firstFacs * (newFactor#1)^(newFactor#0);

@@ -358,11 +358,11 @@ document {
      geometry and the predecessor of this program."
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "preface",
      }
-*}
+*-
 
 document {
      Key => "prefixPath",
@@ -515,10 +515,10 @@ document {
 	  }
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document { Key => "frequently encountered problems",
      }
-*}
+*-
 
 document {
      Key => "specifying typical values",
@@ -653,11 +653,11 @@ document {
      
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "Resources required",
      }
-*}
+*-
 
 document {
      Key => "debugging",
