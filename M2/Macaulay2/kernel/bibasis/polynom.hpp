@@ -345,7 +345,7 @@ namespace BIBasis
     {
         if (MonomListHead)
         {
-            for (register typename MonomType::Integer i = 0; i < anotherMonom.GetDimIndepend(); ++i)
+            for (typename MonomType::Integer i = 0; i < anotherMonom.GetDimIndepend(); ++i)
             {
                 if (anotherMonom[i])
                 {
@@ -642,7 +642,7 @@ namespace BIBasis
         while ((middle = range >> 1) > 0)
         {
             currentPointer = previousPointer;
-            for (register unsigned long i = 0; i < middle; ++i)
+            for (unsigned long i = 0; i < middle; ++i)
             {
                 currentPointer = &((*currentPointer)->Next);
             }
