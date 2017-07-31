@@ -555,3 +555,32 @@ libtool, etc., try running
 in the top level.  This command will install versions of those tools known to
 work with Macaulay2.
 
+----------------------
+For distributors
+----------------------
+
+There are some things about a new distribution of Macaulay2 that should be
+checked manually.  Install the distribution on your system as the ultimate user
+will and then try:
+
+  - emacs M2 interaction
+
+    Press f12 and verify that Macaulay2 starts.
+
+  - emacs M2 mode
+
+    Visit the file /tmp/foo.m2 and verify that the buffer is in Macaulay2 mode.
+
+  - emacs Macaulay2 info documentation
+
+    Start the emacs Info documentation reader with C-h i and verify that menu
+    items are present in the node "(dir)Top" for the various Macaulay2 packages
+    in a section entitled "Macaulay2 and its packages".
+
+  - readline
+
+    Start M2 in a terminal window and then type the following characters:
+    	  r e s o TAB
+    The partial word should be completed to "resolution".  Then press:
+          C-a
+    Verify that the cursor is now at the beginning of the line.
