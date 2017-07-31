@@ -1,6 +1,12 @@
-# this makefile is the start of a generic makefile that always works
+# This makefile is the start of a generic makefile that always works
 
-# we will distribute the result, so prevent aggressive optimizations based on the current architecture:
+# To set the compilers override these variables.
+# (We don't want to use CC, CXX, and FC, because "make" may set them)
+_CC  =
+_CXX =
+_FC  =
+
+# We may distribute the result, so prevent aggressive optimizations based on the current architecture:
 CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 
 # detect the OS flavor
@@ -25,6 +31,7 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
+SIGN=yes
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-strip
 ifeq ($(DEBIAN),yes)
@@ -40,10 +47,17 @@ endif
 
 CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 
+ifneq ($(VERBOSE),)
+# make FLINT compilation verbose:
+AT=
+QUIET_CC=
+QUIET_CXX=
+QUIET_AR=
+endif
+
 include Makefile.include
 
-# use "gmake" instead of "make", if present, because /usr/bin/make under Mac OS X is old and buggy:
 # Local Variables:
 # mode: makefile-gmake
-# compile-command: "MAKE=$(if [ $(type -t gmake) = file ] ; then echo gmake ; else echo make ; fi) ; set -x ; time $MAKE "
+# compile-command: "time make "
 # End:
