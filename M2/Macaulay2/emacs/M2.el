@@ -102,7 +102,7 @@
 (mapcar
  (function
   (lambda (syntax-table)
-    (modify-syntax-entry ?\\ "." syntax-table)
+    (modify-syntax-entry ?\\ "\\" syntax-table) ; we use \, signifying an escape character, to get "asdf\"asdf" to be correctly colorized
     (modify-syntax-entry ?-  ". 124b" syntax-table)
     (modify-syntax-entry ?\n "> b" syntax-table)
     (modify-syntax-entry ?\^m "> b" syntax-table)
