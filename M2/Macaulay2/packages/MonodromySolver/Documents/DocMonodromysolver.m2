@@ -355,7 +355,7 @@ doc ///
 			    }
 	///
 
-{* ---------- GHOSTS?
+-* ---------- GHOSTS?
 
 	
 doc ///
@@ -370,7 +370,7 @@ doc ///
 		Potential12
 		Potential21
     	///		
-*}
+*-
 doc ///
 	Key
     	    	HomotopyNode
@@ -744,7 +744,7 @@ doc ///
     ///
     
     
-{* doc ///
+-* doc ///
     Key
     	"Example 1"
     Headline
@@ -753,4 +753,4 @@ doc ///
     	Text
 	Example
 
-    /// *}
+    /// *-

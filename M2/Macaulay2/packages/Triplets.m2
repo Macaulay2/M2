@@ -6,8 +6,7 @@ newPackage(
 	Authors => {
 	     {Name => "Gunnar Floystad", Email => "nmagf@uib.no"}
 	      },
-   	Headline => "Triplets of degree sequences, and associated Betti diagrams
-and cohomology tables",
+   	Headline => "Triplets of degree sequences, and associated Betti diagrams and cohomology tables",
    	DebuggingMode => false,
 	Reload => true
    	)

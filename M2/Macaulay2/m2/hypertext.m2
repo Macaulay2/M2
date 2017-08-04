@@ -104,7 +104,7 @@ specials := new HashTable from {
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
-{*
+-*
  spacing between lines and paragraphs:
  observation of browsers reveals:
      nonempty PARA items get at least one blank line above and below
@@ -138,7 +138,7 @@ texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
      One more consideration: info MENUs should not be wrapped, but they can be contained in a DIV, which
      must arrange for the wrapping of strings contained in it.  Also, HypertextParagraphs have already been
      wrapped, so they don't need to be wrapped again.
-*}
+*-
 
 BK := local BK
 SP := local SP

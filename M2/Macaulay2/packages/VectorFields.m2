@@ -1,11 +1,11 @@
 -- -*- coding: utf-8 -*-
-{*
+-*
   Copyright 2016 Brian Pike
 
   You may redistribute this file under the terms of the GNU General Public
   License as published by the Free Software Foundation, either version 2 of
   the License, or any later version.
-*}
+*-
 
 newPackage(
 		"VectorFields",
@@ -19,7 +19,7 @@ newPackage(
 		DebuggingMode => false 
 	)
 
-{*
+-*
 Changelog:
 
 v1.80: April 7, 2016
@@ -88,7 +88,7 @@ Maybe TODO someday:
  - homogeneousVectorFieldDegree(Vector)?
  - triple check all proofs...
  - Display a 'multiplication table' for a Lie algebra of vfs?
-*}
+*-
 
 export {
 	-- utility functions
@@ -258,7 +258,7 @@ isVectorField(Matrix) := (m) -> (
 );
 
 
-{*
+-*
 applyVectorField(Matrix,RingElement) => RingElement
 applyVectorField(Vector,RingElement) => RingElement
 applyVectorField(Matrix or Vector,List of RingElements) => List of RingElements
@@ -271,7 +271,7 @@ applyVectorField(Matrix,Ideal)
 applyVectorField(Vector,Ideal)
 because there's no obvious return type
 
-*}
+*-
 
 mydoc=concatenate(mydoc,///
 Node
@@ -956,9 +956,9 @@ isLieAlgebraInternal := (vfs) -> (
 		isSubset(image bracketFast(vfs,vfs,variables,{combo}), image vfs) );
 );
 
-{*
+-*
 isLieAlgebra(Matrix) := (vfs) -> isLieAlgebraInternal(vfs);
-*}
+*-
 
 -- Note: a calculation shows we only need to check that the brackets of the
 -- generators are in the module

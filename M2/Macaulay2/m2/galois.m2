@@ -213,7 +213,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;
 	--  )
-{*      
+-*      
      else (
 	  -- S' := S;
 	  T := toField(S);
@@ -221,7 +221,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.toField = true;
 	  F.rawGaloisField = false;
 	  );
-*}
+*-
      F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;		    -- notice the primitive element is not in F
      F.isBasic = true;

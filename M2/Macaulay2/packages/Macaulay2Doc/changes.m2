@@ -27,7 +27,7 @@ document {
 
 document {
      Key => "changes made for the next release",
-     -- UL {
+     UL {
      -- 	  LI { "major improvements and additions:",
      -- 	        UL {
      -- 	            }
@@ -45,19 +45,30 @@ document {
      -- 	       UL {
      -- 	  	    }
      -- 	       },     
-     -- 	  LI { "functionality added or improved:",
-     -- 	       UL {
-     -- 	  	   }
-     -- 	       },
+     	  LI { "functionality added or improved:",
+     	       UL {
+		    LI {
+			 "The function ", TO "newPackage", " now takes two new options: 
+			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
+			 and ", TT "UseCachedExampleOutput", " tells whether to use the cached example output files.  This will be useful for packages
+			 that use external programs that are not always present, so they can seize the opportunity to rerun examples when the external
+			 programs are present and give no error when the external programs are absent."
+			 }
+     	  	   }
+     	       },
      -- 	  LI { "new constants and operators:",		    -- get this with : git diff version-1.9.2 ../../m2/exports.m2
      -- 	       UL {
      -- 	       	    }
      -- 	       },
-     -- 	  LI { "functionality changed:",
-     -- 	       UL {
-     -- 	  	       }
-     --           }
-     -- 	  }
+     	  LI { "functionality changed:",
+     	       UL {
+     	       	    LI {
+			 "The format for multi-line (un-nested) block comments has been changed from ", TT "{* ... *}", " to ", TT "-* ... *-", " so emacs can colorize 
+			 the comments correctly.  The (deprecated) old style will be recognized by M2 for a while."
+			 }
+     	  	       }
+               }
+     	  }
      }
 
 document {
@@ -1337,8 +1348,6 @@ document {
 		    TO [check,UserMode],
 		    TO [fillMatrix, Height],
 		    TO [flattenRing,Result],
-		    TO [getPackage,Configuration],
-		    TO [getPackage,UserMode],
 		    TO [hilbertSeries,Reduce],
 		    TO [installPackage,CacheExampleOutput],
 		    TO [installPackage,RunExamples],
@@ -1532,7 +1541,7 @@ document {
 		    LI {
 			 "The emacs commands ", TT "M-x M2", ", bound to ", TT "f12", ", and ", TT "M2-send-to-program", ", 
 			 bound to ", TT "f11", ", have some new capability.  
-     	       	    	 With prefix argument ", TT "C-u C-u", " to ", TT "M2", ", the tag from which the buffer name is constructed (by
+     	       	    	 With prefix argument ", TT "C-u C-u", " to ", TT "M-x M2", ", the tag from which the buffer name is constructed (by
 			 prepending and appending asterisks) can be entered in the minibuffer.
 		         With a prefix argument to ", TT "M2-send-to-program", ", the name of
 			 the buffer to which this and future uses of the command (in this buffer) should

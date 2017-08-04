@@ -16,7 +16,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
-local nullButton; local masterIndexButton; local tocButton; local homeButton; {* local directoryButton; *}
+local nullButton; local masterIndexButton; local tocButton; local homeButton; -* local directoryButton; *-
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
@@ -232,7 +232,7 @@ buttonBar := (tag) -> ButtonTABLE {{
 	  DIV splice {
      	       forward tag, backward tag, next tag, prev tag, up tag,
      	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
-     	       masterIndexButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton
+     	       masterIndexButton, " | ", tocButton, -* " | ", directoryButton, *- " | ", homeButton
 	       }}}
 
 upAncestors := tag -> reverse (
@@ -416,7 +416,7 @@ makeMasterIndex := (keylist,verbose) -> (
      r := HTML {
 	  HEAD splice { TITLE title, defaultCharSet(), links() },
 	  BODY nonnull {
-	       DIV { topNodeButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton },
+	       DIV { topNodeButton, " | ", tocButton, -* " | ", directoryButton, *- " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
@@ -438,7 +438,7 @@ maketableOfContents := (verbose) -> (
      << html HTML {
 	  HEAD splice { TITLE title, defaultCharSet(), links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", masterIndexButton, {* " | ", directoryButton, *} " | ", homeButton },
+	       DIV { topNodeButton, " | ", masterIndexButton, -* " | ", directoryButton, *- " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       toDoc tableOfContents
@@ -482,7 +482,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if ulimit === null then (
 	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
 	  );
-     tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
+     tmpf << "-- -*- M2-comint -*- -* hash: " << inputhash << " *-" << endl << close;
      rundir := temporaryFileName() | "-rundir/";
      cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
@@ -811,6 +811,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else if (
 			 not opts.RerunExamples 
+			 and pkg.Options.UseCachedExampleOutput
 			 and fileExists outf' 
 			 and gethash outf' === inputhash
 			 )
@@ -1018,7 +1019,7 @@ installPackage Package := opts -> pkg -> (
 	       << endl << close));
 
 	  -- make master.html with master index of all the html files
-	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag {* and instance(DocumentTag.Key tag,Symbol) *} ), verbose);
+	  makeMasterIndex(select(nodes,tag -> not isUndocumented tag -* and instance(DocumentTag.Key tag,Symbol) *- ), verbose);
 
 	  -- make table of contents
 	  maketableOfContents verbose;

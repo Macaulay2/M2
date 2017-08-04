@@ -644,12 +644,12 @@ document {
 	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "what to read next??",
      }
-*}
+*-
 
 document {
      Key => "a first Macaulay2 session",

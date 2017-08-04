@@ -177,14 +177,14 @@ document { Key => {"numerical homotopy tracking options",
 	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
 	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
 	[solveSystem,Precision],[solveSystem,ResidualTolerance],
-	{*
+	-*
 	-- trackSegment
 	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
 	[trackSegment,maxCorrSteps], [trackSegment,Normalize], [trackSegment,numberSuccessesBeforeIncrease],
 	[trackSegment,Predictor], [trackSegment,Projectivize], [trackSegment,SingularConditionNumber],
 	[trackSegment,stepIncreaseFactor], [trackSegment,tDegree], [trackSegment,tStep], [trackSegment,tStepMin],
 	[trackSegment,MultistepDegree], [trackSegment,NoOutput]
-	*}
+	*-
 	},
     Headline => "options for core functions of Numerical Algebraic Geometry",
     UL apply({
@@ -898,14 +898,14 @@ document {
     Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
     }
 
-{*
+-*
 document {
     Key => {(trackSegment,PolySystem,Number,Number,List), trackSegment},
     Headline => "track the one-parametric homotopy",
     "Tracks a homotopy on a linear segment in complex plane..",
     Caveat => {"Experimental: implemented only with SLPs at the moment!!!"}
     }
-*}
+*-
 
 document {
     Key => {(solveGenericSystemInTorus,List), solveGenericSystemInTorus, (solveGenericSystemInTorus,PolySystem)},
@@ -924,7 +924,7 @@ document {
     SeeAlso=>{PHCPACK, PHCpack, solveSystem}
     }
 
-{*-------- TEMPLATE ------------------
+-*-------- TEMPLATE ------------------
 document {
     Key => {,},
     Headline => "",
@@ -937,7 +937,7 @@ document {
     Caveat => {"" },
     SeeAlso=>{()}
     }
-*}
+*-
 
 document {
     Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),

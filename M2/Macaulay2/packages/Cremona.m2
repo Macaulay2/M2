@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "3.99", 
-        Date => "June 21, 2017 (first version: April 10, 2016, included with Macaulay2 1.9)",
+	Version => "4.0", 
+        Date => "June 26, 2017 (first version: April 10, 2016, included with Macaulay2 1.9)",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         Configuration => { 
@@ -34,6 +34,7 @@ export{
    "parametrize",
    "specialCremonaTransformation",
    "quadroQuadricCremonaTransformation",
+   "specialQuadraticTransformation",
    "RationalMap",
    "rationalMap"
 };
@@ -44,6 +45,9 @@ certificate:="MathMode: output certified!\n";
 
 blowupstrategy:=(options Cremona).Configuration#"BlowUpStrategy";
 if blowupstrategy =!= "Saturate" and blowupstrategy =!= "Eliminate" then error "expected configuration option BlowUpStrategy to be \"Saturate\" or \"Eliminate\"";
+
+MultihomogeneousRationalMap = new Type of MutableHashTable;
+RationalMap = new Type of MutableHashTable;
 
 ChernSchwartzMacPherson = method(TypicalValue => RingElement, Options => {MathMode => false});
 SegreClass = method(TypicalValue => RingElement, Options => {MathMode => false});
@@ -58,155 +62,150 @@ kernelComponent=method(TypicalValue => Ideal);
 projectiveDegrees=method(TypicalValue => List, Options => {MathMode => false, OnlySublist => infinity});
 toMap=method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap=method(Options => {MathMode => false, CodimBsInv => null});
-
-RationalMap = new Type of MutableHashTable;
-
 parametrize = method(TypicalValue => RationalMap);
 specialCremonaTransformation = method(TypicalValue=>RationalMap);
 quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
+specialQuadraticTransformation = method(TypicalValue=>RationalMap)
 rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
 
-composeRationalMaps(RingMap,RingMap) := (phi,psi) -> (
-   if source phi =!= target psi then error "rational maps not composable: incompatible target and source";
-   linSys:=flatten entries toMatrix (phi*psi);
-   fixComp := try gcd linSys else 1_(target phi);
-   qr:=apply(linSys,g -> quotientRemainder(g,fixComp)); 
-        if # select(qr,g -> last g != 0) > 0 then error "got wrong gcd";
-   eta:=map(target phi,source psi,apply(qr,first));
-   if toMatrix eta == 0 then error("rational maps not composable: their composition would be the zero map");
-   eta
+rationalMap (RingMap) := o -> (phi) -> ( 
+   checkMultihomogeneousRationalMap phi;
+   isStandardMap := degrees ambient target phi == toList((numgens ambient target phi):{1});
+   if (not isStandardMap) and (o.Dominant =!= "notSimplify") then phi = simplifyMap phi;
+   if (o.Dominant =!= null and o.Dominant =!= "notSimplify") then phi = toMap(phi,Dominant=>o.Dominant);
+   if isStandardMap then return new RationalMap from {
+           "map" => phi,
+           "maps" => null,
+           "isDominant" => if o.Dominant === true or o.Dominant === infinity then true else null,
+           "idealImage" => if o.Dominant === true or o.Dominant === infinity then trim ideal(0_(source phi)) else null,
+           "isBirational" => null,
+           "inverseRationalMap" => null,
+           "projectiveDegrees" => {},
+           "degree" => null,
+           "dimAmbientTarget" => numgens ambient target phi -1,
+           "dimTarget" => max(dim target phi -1,-1),
+           "dimAmbientSource" => numgens ambient source phi -1,
+           "dimSource" => max(dim source phi -1,-1),
+           "blowUpIdeal" => null
+      };
+   if not isStandardMap then return new MultihomogeneousRationalMap from {
+           "map" => phi,
+           "maps" => null,
+           "isDominant" => if o.Dominant === true or o.Dominant === infinity then true else null,
+           "idealImage" => if o.Dominant === true or o.Dominant === infinity then trim ideal(0_(source phi)) else null,
+           "isBirational" => null,
+           "projectiveDegrees" => {},
+           "degree" => null,
+           "dimAmbientTarget" => apply(multigens ambient target phi,n -> (#n)-1),
+           "dimTarget" => max(dim target phi - (# heft ambient target phi),-1),
+           "dimAmbientSource" => numgens ambient source phi -1,
+           "dimSource" => max(dim source phi -1,-1),
+           "blowUpIdeal" => null,
+           "baseLocus" => null
+      };
+);
+rationalMap (Matrix) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
+rationalMap (List) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
+rationalMap (Ideal) := o -> (I) -> rationalMap(toMap(I,Dominant=>null),Dominant=>o.Dominant);
+rationalMap (Ideal,ZZ) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
+rationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> rationalMap(toMap(I,d,e,Dominant=>null),Dominant=>o.Dominant);
+rationalMapInt = method(Options => {Dominant => null});
+rationalMapInt (MutableHashTable) := o -> (Phi) -> ( 
+     Psi := Phi * rationalMap(target Phi,ambient target Phi);
+     if Phi#"projectiveDegrees" =!= {} then setKeyValue(Psi,"projectiveDegrees",Phi#"projectiveDegrees"); 
+     if Phi#"degree" =!= null then setKeyValue(Psi,"degree",Phi#"degree"); 
+     if Phi#"idealImage" =!= null then setKeyValue(Psi,"idealImage",trim(lift(image Phi,ambient source Phi#"map") + ideal(source Phi#"map")));   
+     if o.Dominant === true or o.Dominant === infinity then (
+            if Psi#"idealImage" === null then setKeyValue(Psi,"idealImage",trim(lift(image Phi,ambient source Phi#"map") + ideal(source Phi#"map")));
+            setKeyValue(Psi,"map",map(target Psi#"map",(source Psi#"map")/(Psi#"idealImage"),toMatrix Psi#"map"));
+            setKeyValue(Psi,"isDominant",true); 
+     );
+     if class o.Dominant === Ideal then if ring o.Dominant === source Psi#"map" then if ((Psi#"map") o.Dominant == 0 and isHomogeneous o.Dominant) then (
+            setKeyValue(Psi,"map",map(target Psi#"map",(source Psi#"map")/(o.Dominant),toMatrix Psi#"map"));
+     ); 
+     if class o.Dominant === ZZ then (
+            J := image(Psi,o.Dominant);
+            setKeyValue(Psi,"map",map(target Psi#"map",(source Psi#"map")/J,toMatrix Psi#"map"));
+     ); 
+     return Psi;
+);
+rationalMap (RationalMap) := o -> (Phi) -> rationalMapInt(Phi,Dominant=>o.Dominant);
+rationalMap (MultihomogeneousRationalMap) := o -> (Phi) -> rationalMapInt(Phi,Dominant=>o.Dominant);
+
+rationalMap (Ring,Ring,Matrix) := o -> (R,S,F) -> (
+     if not (isPolynomialRing ambient S) then error("the ambient rings must be polynomial rings");
+     phi := map(R,ambient S,F);
+     if not isHomogeneous ideal S then error "got quotient of polynomial ring by a non-homogeneous ideal";
+     if phi(ideal S) != 0 then error "the map is not valid";
+     rationalMap(map(R,S,F),Dominant=>o.Dominant)
 );
 
-degreeOfRationalMap RingMap := o -> (phi) -> (
-   checkRationalMap phi;
-   if (isPolynomialRing target phi) and (not o.MathMode) then (
-          p:=preimage(phi,randomLinearSubspace(target phi,0));   
-          hP:=hilbertPolynomial(inverseImage(phi,p),Projective=>false);
-          if degree hP > {0} then return 0 else return sub(hP,ZZ);
+rationalMap (Ring,Ring,List) := o -> (R,S,L) -> (
+     rationalMap(R,S,matrix{L},Dominant=>o.Dominant)
+);
+
+rationalMap (Ring,Ring) := o -> (R,S) -> (
+    if (numgens ambient R != numgens ambient S) then error "expected ambient rings to have the same dimension";
+    Phi := rationalMap(R,S,vars ambient R,Dominant=>o.Dominant);
+    if (isPolynomialRing R and isPolynomialRing S and class Phi === RationalMap) then (
+         setKeyValue(Phi,"maps",{map Phi});
+         setKeyValue(Phi,"isDominant",true);
+         setKeyValue(Phi,"isBirational",true);
+         setKeyValue(Phi,"projectiveDegrees",toList((numgens R):1));
+         setKeyValue(Phi,"degree",1);
+    );
+    Phi
+);
+
+rationalMap (Ring) := o -> (R) -> rationalMap(R,R,Dominant=>o.Dominant);
+
+simplifyMap = method()
+simplifyMap (RingMap) := (phi) -> ( 
+   I := multisaturate ideal target phi;
+   -- try assert(isSubset(ideal target phi,I) and isHomogeneous I) else error "internal error occurred";
+   if not isSubset(I,ideal target phi) then (
+        R := (ambient target phi)/I;
+        phi = map(R,source phi,sub(toMatrix phi,R));
    );
-     verb:=MathVerb; MathVerb=false; 
-   pr0:=first projectiveDegrees(phi,OnlySublist=>0,MathMode=>o.MathMode);
-     MathVerb=verb;
-   if (pr0 == 0 or pr0 == 1) then (if o.MathMode and MathVerb then <<certificate; return pr0);
-     MathVerb=false; isDom:=isDominant(phi,MathMode=>true); MathVerb=verb;
-   if isDom then (if o.MathMode and MathVerb then <<certificate; return sub(pr0/degree(ideal source phi),ZZ));
-   phi=toMap phi;
-   if isPrime pr0 then (if o.MathMode and MathVerb then <<certificate; if dim kernelComponent(phi,1) > dim target phi then return 1 else return pr0);
-   d0:=sub(pr0/(degree kernel phi),ZZ);  
-   if o.MathMode and MathVerb then <<certificate;
-   d0
+   return composeRationalMaps(map(target phi,target phi,vars ambient target phi),phi);
 );
 
-invertBirMap (RingMap) := o -> (phi) -> (
-   checkRationalMap phi;
-   if not isPolynomialRing target phi then return invertBirMap(phi,null,MathMode=>o.MathMode);
-   a:=ideal source phi;
-   F:=toMatrix phi;
-   G:=matrix{{(numgens target phi):0_(source phi)}}; 
-   try G=invertBirationalMapRS(F,a);
-   if not (min flatten degrees ideal G > 0 and compress G === G) then (
-       verb:=MathVerb; MathVerb=false; isDom:=isDominant(phi,MathMode=>true); MathVerb=verb;
-       if not isDom then error("trying to invert non-dominant map");
-       return invertBirMap(phi,null,MathMode=>o.MathMode);
-   );
-   psi:=map(source phi,target phi,G);
-   if not o.MathMode then return psi;
-   if (isInverseMap(phi,psi) and isInverseMap(psi,phi)) then (if MathVerb then <<certificate; return psi) else (return invertBirMap(phi,null,MathMode=>o.MathMode));
+rationalMapWithoutChecking = method()
+rationalMapWithoutChecking (RingMap) := (phi) -> (
+   new RationalMap from {
+           "map" => phi,
+           "maps" => null,
+           "isDominant" => null,
+           "idealImage" => null,
+           "isBirational" => null,
+           "inverseRationalMap" => null,
+           "projectiveDegrees" => {},
+           "degree" => null,
+           "dimAmbientTarget" => numgens ambient target phi -1,
+           "dimTarget" => max(dim target phi -1,-1),
+           "dimAmbientSource" => numgens ambient source phi -1,
+           "dimSource" => max(dim source phi -1,-1),
+           "blowUpIdeal" => null
+      }
 );
 
-invertBirMap (RingMap,Nothing) := o -> (phi,nothing) -> ( -- undocumented 
-   checkRationalMap phi;
-   psi:=map(source phi,target phi,invertBirationalMapViaParametrization phi);
-   if o.MathMode then (
-        if (isInverseMap(phi,psi) and isInverseMap(psi,phi)) then (if MathVerb then <<certificate) else error("do not able to obtain an inverse rational map");
-   ); 
-   psi
+RationalMap ~ := (Phi) -> (
+   new MultihomogeneousRationalMap from {
+        "map" => Phi#"map",
+        "maps" => Phi#"maps",
+        "isDominant" => Phi#"isDominant",
+        "idealImage" => Phi#"idealImage",
+        "isBirational" => Phi#"isBirational",
+        "projectiveDegrees" => Phi#"projectiveDegrees",
+        "degree" => Phi#"degree",
+        "dimAmbientTarget" => {Phi#"dimAmbientTarget"},
+        "dimTarget" => Phi#"dimTarget",
+        "dimAmbientSource" => Phi#"dimAmbientSource",
+        "dimSource" => Phi#"dimSource",
+        "blowUpIdeal" => Phi#"blowUpIdeal",
+        "baseLocus" => null
+   }
 );
-
-isBirational (RingMap) := o -> (phi) -> (
-   checkRationalMap phi;
-   X:=target phi; Y:=source phi;
-   if dim X != dim Y then (if MathVerb and o.MathMode then <<certificate; return false);
-   if o.MathMode then (
-         verb:=MathVerb; MathVerb=false; isDom:=isDominant(phi,MathMode=>true); MathVerb=verb;
-         if not isDom then (if MathVerb then <<certificate; return false);      
-   );
--- if isPolynomialRing X then return degreeOfRationalMap(phi,MathMode=>o.MathMode) == 1;
-   first projectiveDegrees(phi,OnlySublist=>0,MathMode=>o.MathMode) == degree Y 
-);
-
-isDominant (RingMap) := o -> (phi) -> (
-   checkRationalMap phi;
-      if o.MathMode then return isDominantMath phi;
-   X:=target phi; Y:=source phi;
-   n:=dim X -1; m:=dim Y -1; 
-   if n < m then return false;
-   for i from 1 to n-m do phi=genericRestriction phi;
-   first projectiveDegrees(phi,OnlySublist=>0) != 0
-);
-
-isDominantMath = (phi) -> (
-   -- phi:X--->Y
-   X:=target phi; Y:=source phi;
-   n:=dim X -1; m:=dim Y -1; 
-   PN:=ambient X; PM:=ambient Y;
-   N:=numgens PN -1; M:=numgens PM -1;
-   if n < m then (if MathVerb then <<certificate; return false);
-   -- if there exists Z subset Y (with dim Z = 0) s.t dim phi^(-1)(Z) = n-m, then phi is dominant
-   Z:=ideal(Y) + randomLinearSubspace(PM,M-m);
-   while (-1 + dim(Z) != 0) do Z=ideal(Y) + randomLinearSubspace(PM,M-m);
-   Z=sub(Z,Y);
-   if dim inverseImage(phi,Z,MathMode=>true) -1 == n-m then (if MathVerb then <<certificate; return true);
-   if kernel(phi,SubringLimit=>1) != 0 then (if MathVerb then <<certificate; return false);
-   return isDominantMath(phi);
-);
-
-isInverseMap(RingMap,RingMap) := (phi,psi) -> (
-   checkRationalMap phi;
-   checkRationalMap psi;
-   if (source phi =!= target psi or target phi =!= source psi) then return false; 
-   try phipsi:=toMatrix(phi*psi) else return false;
-   x:=gens target phi; 
-   i:=0; while x_i == 0 do i=i+1;
-   (q,r):=quotientRemainder((flatten entries phipsi)_i,x_i);
-   if r != 0 then return false; 
-   if q == 0 then return false;
-   phipsi - q*(vars target phi) == 0
-);
-
-kernelComponent(RingMap,ZZ) := (phi,d) -> (
-   checkRationalMap0 phi;
-   if d<0 then return ideal source phi;
-   Pn:=ambient target phi; Pm:=ambient source phi;  
-   Phi:=lift(toMatrix phi,Pn); 
-   e:=max degrees ideal Phi; if #e==1 then e=first e;
-   Z:=transpose gens image basis(d*e,ideal target phi); 
-   mm:=if source phi === Pm then transpose gens (ideal vars Pm)^d else transpose lift(gens image basis(d,ideal vars source phi),Pm); 
-   f:=numgens target mm -1; g:=numgens target Z -1;
-   a:=local a; b:=local b; K:=coefficientRing Pm;
-   AB:=K[a_0..a_f,b_0..b_g]; A:=matrix{{a_0..a_f}}; B:=matrix{{b_0..b_g}};
-   x:=local x; y:=local y; Pn':=AB[x_0..x_(numgens Pn-1)]; Pm':=AB[y_0..y_(numgens Pm-1)]; 
-   pol:=(map(Pn',Pm',sub(Phi,vars Pn'))) (A * sub(mm,vars Pm')) - (B * sub(Z,vars Pn')); 
-   eqs:=trim ideal sub(last coefficients pol,AB);
-   trim sub(ideal(submatrix(transpose mingens kernel transpose sub(last coefficients(gens eqs,Monomials=>(vars AB)),K),{0..f})*mm),source phi)
-);
-
-kernel(RingMap,ZZ) := o -> (phi,d) -> kernelComponent(phi,d); 
-
-projectiveDegrees (RingMap) := o -> (phi) -> (
-   checkRationalMap phi;
-   if o.OnlySublist < 0 then return {};
-   k:=dim ideal target phi -1;
-   if o.MathMode then return projectiveDegreesMath(phi,min(k,o.OnlySublist));
-   L:={projDegree(phi,0,k)};
-   for i from 1 to min(k,o.OnlySublist) do (
-      phi=genericRestriction phi;
-      L={projDegree(phi,0,k-i)}|L
-   );
-   L
-);
-
-projectiveDegrees (RingMap,ZZ) := o -> (phi,i) -> (checkRationalMap phi; if o.MathMode===true then error("option MathMode not available for projectiveDegrees(RingMap,ZZ); you can use the option with projectiveDegrees(RingMap)"); k:=dim ideal target phi -1; if i<0 or i>k then error("integer out of range"); projDegree(phi,i,k)); -- undocumented
 
 toMap Matrix := o -> (F)  -> ( 
    if class ring F === FractionField then try F = lift((lcm apply(flatten entries F,denominator))*F,ring numerator (1_(ring F)));
@@ -280,476 +279,20 @@ linearSystemOfHypersurfacesOfGivenDegreeThatAreSingularAlongAGivenSubscheme = (I
    linSys:=transpose sub(sub((coefficients (sub(matrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
    linSys
 ); 
- 
-approximateInverseMap (RingMap,ZZ) := o -> (phi,d) -> (
-    -- input: a birational map phi:X --->Y 
-    -- output: a map Y--->X in some sense related to the inverse of phi
-    checkRationalMap phi;
-    n:=numgens ambient target phi -1;
-    c:=2;
-    if o.CodimBsInv =!= null then (if (try (class o.CodimBsInv === ZZ and o.CodimBsInv >= 2 and o.CodimBsInv <= n+1) else false) then c=o.CodimBsInv else (<<"--warning: option CodimBsInv ignored"<<endl));
-    phiRes:=local phiRes;
-    B:=trim sum for i from 1 to ceiling((n+1)/(c-1)) list (
-         phiRes=phi;
-         for i0 from 1 to c-1 do phiRes=genericRestriction phiRes; 
-         if d<=0 then kernel(phiRes,SubringLimit=>(c-1)) else kernelComponent(phiRes,d)  
-       );
-   if not(numgens B <= n+1 and min flatten degrees B == max flatten degrees B) then (<<"--rerun approximateInverseMap (found "|toString(numgens B)|" generators of degrees "|toString(flatten degrees B)|")\n"; return approximateInverseMap(phi,d,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode));
-   if numgens B < n+1 then B=B+ideal((n+1-numgens(B)) : 0_(ring B));
-   psi:=if isPolynomialRing target phi then map(source phi,target phi,gens B) else toMap(map(source phi,ambient target phi,gens B),Dominant=>ideal(target phi));
-   if o.MathMode then (
-          if isPolynomialRing target phi then (
-                 try psi=composeRationalMaps(psi,toMap((vars target phi)*(last coefficients matrix composeRationalMaps(phi,psi))^(-1)));
-                 if isInverseMap(phi,psi) and isInverseMap(psi,phi) then (if MathVerb then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
-          ) else (
-                 if source psi =!= target phi then error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this map has an incorrect target variety");
-                 if source psi === target phi then if isInverseMap(phi,psi) and isInverseMap(psi,phi) then (if MathVerb then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
-          );
-   );
-   return psi;
+
+toMap (RationalMap) := o -> (Phi) -> (
+    maps Phi; 
+    if o.Dominant === null then return Phi#"map" else return toMap(Phi#"map",Dominant=>o.Dominant);
 );
 
-approximateInverseMap (RingMap) := o -> (phi) -> approximateInverseMap(phi,-1,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode);
-
-invertBirationalMapRS = (F,a)  -> ( 
-   -- Notation as in the paper [Russo, Simis - On Birational Maps and Jacobian Matrices] 
-   -- Computes the inverse map of a birational map via the Russo and Simis's algorithm
-   -- input: 1) row matrix, representing a birational map P^n-->P^m 
-   --        2) ideal, representing the image of the map 
-   -- output: row matrix, representing the inverse map   
-   n:=numgens ring F-1;
-   x:=local x;
-   R:=coefficientRing(ring F)[x_0..x_n];
-   I:=sub(F,vars R);
-   S:=ring a;
-   phi:=syz I;
-   local q;
-   for j to numgens source phi-1 list 
-      if max degrees ideal matrix phi_j == {1} then q=j+1;
-   phi1:=submatrix(phi,{0..q-1});
-   RtensorS:=tensor(R,S);
-   phi1=sub(phi1,RtensorS);
-   Y:=sub(vars S,RtensorS);
-   theta:=transpose submatrix(jacobian ideal(Y*phi1),{0..n},);
-   theta=sub(theta,S);
-   S':=S/a; theta':=sub(theta,S');
-   Z:=kernel theta';
-   basisZ:=mingens Z; 
-      if numgens source basisZ == 0 then error("it has not been possible to determine the inverse rational map");
-   g:=sub(basisZ_0,S);
-   Inv:=transpose matrix(g);
-   Inv 
+toMap (MultihomogeneousRationalMap) := o -> (Phi) -> (
+    maps Phi; 
+    if o.Dominant === null then return Phi#"map" else return toMap(Phi#"map",Dominant=>o.Dominant);
 );
 
-invertBirationalMapViaParametrization = (phi)  -> (
-   Bl := GraphIdeal phi;
-   n := numgens ambient target phi -1;
-   Sub := map(source phi,ring Bl,matrix{{(n+1):0_(source phi)}}|(vars source phi));
-   T:=transpose gens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
-   -- psi:=for i to numgens target T -1 list map(source phi,target phi,submatrix(T,{i},));
-   -- toMatrix first psi
-   submatrix(T,{0},)
-);
+map (RationalMap) := o -> (Phi) -> Phi#"map";
 
-projDegree = (phi,i,dimSubVar) -> (
-   -- Notation as in [Harris J., Algebraic Geometry, A First Course], p. 240.
-   -- phi:X \subset P^n ---> Y \subset P^m, 
-   -- i integer, 0 <= i <= k, k=dim X=dimSubVar.
-   ringX:=target phi;
-   ringY:=source phi;
-   m:=numgens ambient ringY -1;
-   n:=numgens ambient ringX -1;
-   k:=if dimSubVar >=0 then dimSubVar else dim ideal ringX -1;
-   L:=sub(randomLinearSubspace(ambient ringY,m-k+i),ringY);
-   Z:=inverseImage(phi,L); 
-   if dim Z == i+1 then degree Z else 0
-);
-
-projectiveDegreesMath = (phi,oSublist) -> ( 
-   Bl:=GraphIdeal phi;
-   m:=numgens ambient source phi -1;
-   n:=numgens ambient target phi -1;
-   r:=dim target phi -1;
-   mdeg:=multidegree Bl;
-   T:=gens ring mdeg;
-   s:=n+m-r;
-       assert(s == first degree mdeg  and  heft(ring Bl) == {1,1});
-   mons:=for i to r list T_0^(s-m+i) * T_1^(m-i);
-   pdeg:=flatten entries sub(last coefficients(mdeg,Monomials=>mons),ZZ);
-   if MathVerb then <<certificate;
-   pdeg_{(r-oSublist)..r}
-);
--- projectiveDegreesAluffi = (phi) -> (needs "CSM.m2"; if not isPolynomialRing target phi then error("the target of the ring map needs to be a polynomial ring"); last presegre(coefficientRing target phi,target phi,numgens target phi -1,ideal matrix phi));
-
-GraphIdealSat=method(TypicalValue => Ideal);
-GraphIdealSat (RingMap) := (phi) -> (
-   Pn:=ambient target phi;
-   K:=coefficientRing Pn;
-   n:=numgens Pn -1;
-   X:=ideal target phi;
-   B:=ideal toMatrix phi;
-   Pm:=ambient source phi;
-   m:=numgens Pm - 1;
-   Y:=ideal source phi;
-   x:=local x; y:=local y;
-   R:=K[x_0..x_n,y_0..y_m,Degrees=>{(n+1):{1,0},(m+1):{0,1}}];
-   p1:=map(R,Pn,{x_0..x_n});
-   E:=p1 lift(B,Pn);
-   Z:=p1(X) + ideal(matrix{{y_0..y_m}} * p1(lift(syz(gens B),Pn)));
-   --   Z:=p1(X) + minors(2,(gens E)||matrix{{y_0..y_m}});
-   (ii,Tii):=(0,infinity); for i to m do if (B_i != 0 and # terms B_i<Tii) then (ii,Tii)=(i,# terms B_i);
-   saturate(Z,ideal(E_ii))
-);
-
-GraphIdealElim = method(TypicalValue => Ideal);
-GraphIdealElim (RingMap) := (phi) -> (
-   -- see also p. 65 in [Computations in algebraic geometry with Macaulay 2 - Editors: D. Eisenbud, D. Grayson, M. Stillman, and B. Sturmfels]
-   Pn:=ambient target phi;
-   n:=numgens Pn -1;
-   m:=numgens source phi -1;
-   K:=coefficientRing Pn;
-   t:=local t; x:=local x; y:=local y;
-   R':=K[t,x_0..x_n,y_0..y_m,MonomialOrder=>Eliminate 1];
-   pr:=map(R',Pn,{x_0..x_n});
-   F:=ideal pr lift(toMatrix phi,Pn);
-   J':=pr(ideal target phi) + ideal apply(m+1,j->y_j-t*F_j);
-   R:=K[x_0..x_n,y_0..y_m,Degrees=>{(n+1):{1,0},(m+1):{0,1}}];
-   J:=(map(R,R',0|vars R)) ideal selectInSubring(1,gens gb J');
-   trim J
-);
-
-GraphIdeal = if blowupstrategy === "Saturate" then GraphIdealSat else GraphIdealElim;
-                     
-graph (RingMap) := (phi) -> (
-  checkRationalMap phi;
-  R:=(ambient target phi)**(ambient source phi); 
-  R=newRing(R,Degrees=>{(numgens ambient target phi):{1,0},(numgens ambient source phi):{0,1}});
-  bl:=sub(GraphIdeal phi,vars R);
-  Z:=R/bl;
-  p1:=map(Z,target phi,submatrix(vars R,{0..(numgens ambient target phi-1)}));
-  p2:=map(Z,source phi,submatrix'(vars R,{0..(numgens ambient target phi-1)}));
-  (p1,p2)
-);
-
-toMatrix = (phi) -> ( -- phi RingMap
-   submatrix(matrix phi,{0..(numgens source phi -1)})
-);
-
-random1 = (R) -> (
-   K:=coefficientRing R;
-   if class K =!= FractionField then random(1,R) else sum for s to numgens R -1 list (sum for b to abs random(ZZ) list random(b,ring numerator 1_K)) * (gens R)_s
-);
-
-randomLinearSubspace = (R,i) -> (
-   -- input: polynomial ring R, integer i
-   -- output: ideal of a random i-dimensional linear subspace of Proj(R)
-   n:=numgens R -1;
-   if i == n then return ideal R;
-   if i <=-1 then return sub(ideal 1,R);
-   L:=trim ideal for j to n-1-i list random1(R);
-   -- return if dim L - 1 == i then L else randomLinearSubspace(R,i);
-   L
-);
-
-genericRestriction = (phi) -> (
-   -- restriction of a rational map X \subset P^n ---> Y \subset P^m to a general hyperplane section of X 
-   Pn:=ambient target phi;
-   n:=numgens Pn -1;
-   K:=coefficientRing Pn;
-   x:=local x;
-   H:=K[x_0..x_(n-1)];
-   j:=map(H,Pn,random(toList(x_0..x_(n-1))|{random1 H}));
-   j=map(H/j(ideal target phi),target phi,toMatrix j);
-   phi':=j*phi;
-   phi'
-);
-
-inverseImage = method(TypicalValue => Ideal, Options => {MathMode => false});
-inverseImage (RingMap,Ideal) := o -> (phi,J) -> (
-   if source phi =!= ring J then error "expected homogeneous ideal in the coordinate ring of the target variety";
-   B:=ideal toMatrix phi;
-   K:=coefficientRing ring B;
-   if o.MathMode or class K === FractionField then return saturate(phi J,B);
-   F:=ideal sum for i to numgens B -1 list random(K) * B_i;
-   saturate(phi J,F)
-);
-
-SegreClass (Ideal) := o -> (I) -> (
-   if not isHomogeneous I then error "expected a homogeneous ideal";
-   if not ((isPolynomialRing ring I or isQuotientRing ring I) and isPolynomialRing ambient ring I and isHomogeneous ideal ring I) then error("expected ideal in a graded quotient ring or in a polynomial ring");   
-   I = trim I;
-   d1:=max flatten degrees I;
-   phi:=toMap(I,d1);
-   SegreClass(phi,MathMode=>o.MathMode)
-);
-
-SegreClass (RingMap) := o -> (phi) -> (
-   checkRationalMap phi;
-   I:=ideal toMatrix phi;
-   d1:=max flatten degrees I;
-   r:=dim I -1; n:=dim ring I -1;
-   N:=numgens ambient ring I -1;
-      verb:=MathVerb; MathVerb=false; 
-   d:=projectiveDegrees(phi,MathMode=>o.MathMode);
-      MathVerb=verb;
-   H:=local H; R:=ZZ[H]/H^(N+1); h:=first gens R;
-   if o.MathMode and MathVerb then <<certificate;
-   sum(r+1,k->(-1)^(n-k-1)*sum(n-k+1,i->(-1)^i*binomial(n-k,i)*d1^(n-k-i)*d_i)*h^(N-k))
-);
-
-ChernSchwartzMacPherson (Ideal) := o -> (X) -> ( 
-   Pn:=ring X;
-   if not (isPolynomialRing Pn and isHomogeneous X) then error "expected homogeneous ideal in a polynomial ring";
-   n:=numgens Pn -1;
-   H:=local H;
-   R:=ZZ[H]/H^(n+1); 
-   H=first gens R;
-   verb:=MathVerb; MathVerb=false;
-   csm := (I) -> (
-      if numgens I == 1 then (
-           g:=projectiveDegrees(map(Pn,Pn,transpose jacobian I),MathMode=>o.MathMode);
-           return (1+H)^(n+1)-sum(n+1,j->g_j*(-H)^j*(1+H)^(n-j));
-      );
-      I1:=ideal I_0; I2:=ideal submatrix'(gens I,{0});
-      csm(I1) + csm(I2) - csm(I1*I2) 
-   );
-   csmX:=csm trim X;
-   MathVerb=verb;
-   if o.MathMode and MathVerb then <<certificate;
-   csmX
-);
-
-ChernSchwartzMacPherson (RingMap) := o -> (phi) -> (
-  checkRationalMap phi;
-  ChernSchwartzMacPherson(lift(ideal toMatrix phi,ambient target phi),MathMode=>o.MathMode)
-); 
-
-checkRationalMap0 = (phi) -> ( -- phi RingMap
-   if coefficientRing target phi =!= coefficientRing source phi then error "different coefficient rings in source and target are not permitted";
-   if not isField coefficientRing target phi then error("the coefficient ring needs to be a field");
-   if not ((isPolynomialRing source phi or isQuotientRing source phi) and (isPolynomialRing target phi or isQuotientRing target phi) and isPolynomialRing ambient source phi and isPolynomialRing ambient target phi and isHomogeneous ideal source phi and isHomogeneous ideal target phi) then error("source and target of the ring map need to be quotients of polynomial rings by homogeneous ideals");
-   if not (isHomogeneous ideal toMatrix phi) then error("the map needs to be defined by homogeneous polynomials of the same degree");
-   D:=degrees ideal compress toMatrix phi; if #D != 0 then if not (min D == max D) then error("the map needs to be defined by homogeneous polynomials of the same degree");
-);
-
-checkRationalMap = (phi) -> ( -- phi RingMap
-   if not (degrees ambient source phi == toList((numgens ambient source phi):{1})) then error "expected standard grading on source ring map";
-   if not (degrees ambient target phi == toList((numgens ambient target phi):{1})) then error "expected standard grading on target ring map";
-   checkRationalMap0 phi;
-);
-
-checkMultihomogeneousRationalMap = (phi) -> ( -- phi RingMap
-   if not (degrees ambient source phi == toList((numgens ambient source phi):{1})) then error "expected standard grading on source ring map";
-   if not (flatten multigens ambient target phi == gens ambient target phi) then error ("given grading on target ring map is not permitted");
-   checkRationalMap0 phi;
-);
-
-checkLinearSystem0 = (F) -> ( -- F row matrix
-   if not isField coefficientRing ring F then error("the coefficient ring needs to be a field");
-   if not ((isPolynomialRing ring F or isQuotientRing ring F) and isPolynomialRing ambient ring F and isHomogeneous ideal ring F) then error("the base ring must be a quotient of a polynomial ring by a homogeneous ideal");
-   if not (numgens target F == 1) then error("expected a row matrix");
-   if numgens source F == 0 then return;
-   if not (isHomogeneous ideal F) then error("expected homogeneous elements of the same degree");
-   D:=degrees ideal compress F; if #D != 0 then if not (min D == max D) then error("expected homogeneous elements of the same degree");
-);
-
----------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------
----------------------------- RationalMap ----------------------------------------------
----------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------
-
-MultihomogeneousRationalMap = new Type of MutableHashTable;
-
-rationalMap (RingMap) := o -> (phi) -> ( 
-   checkMultihomogeneousRationalMap phi;
-   isStandardMap := degrees ambient target phi == toList((numgens ambient target phi):{1});
-   if (not isStandardMap) and (o.Dominant =!= "notSimplify") then phi = simplifyMap phi;
-   if (o.Dominant =!= null and o.Dominant =!= "notSimplify") then phi = toMap(phi,Dominant=>o.Dominant);
-   if isStandardMap then return new RationalMap from {
-           "map" => phi,
-           "maps" => null,
-           "isDominant" => if o.Dominant === true or o.Dominant === infinity then true else null,
-           "idealImage" => if o.Dominant === true or o.Dominant === infinity then trim ideal(0_(source phi)) else null,
-           "isBirational" => null,
-           "inverseRationalMap" => null,
-           "projectiveDegrees" => {},
-           "degree" => null,
-           "dimAmbientTarget" => numgens ambient target phi -1,
-           "dimTarget" => max(dim target phi -1,-1),
-           "dimAmbientSource" => numgens ambient source phi -1,
-           "dimSource" => max(dim source phi -1,-1)
-      };
-   if not isStandardMap then return new MultihomogeneousRationalMap from {
-           "map" => phi,
-           "maps" => null,
-           "isDominant" => if o.Dominant === true or o.Dominant === infinity then true else null,
-           "idealImage" => if o.Dominant === true or o.Dominant === infinity then trim ideal(0_(source phi)) else null,
-           "isBirational" => null,
-           "projectiveDegrees" => {},
-           "degree" => null,
-           "dimAmbientTarget" => apply(multigens ambient target phi,n -> (#n)-1),
-           "dimTarget" => max(dim target phi - (# heft ambient target phi),-1),
-           "dimAmbientSource" => numgens ambient source phi -1,
-           "dimSource" => max(dim source phi -1,-1),
-           "graph" => null,
-           "baseLocus" => null
-      };
-);
-rationalMap (Matrix) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (List) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal) := o -> (I) -> rationalMap(toMap(I,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal,ZZ) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
-rationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> rationalMap(toMap(I,d,e,Dominant=>null),Dominant=>o.Dominant);
-rationalMapInt = method(Options => {Dominant => null});
-rationalMapInt (MutableHashTable) := o -> (Phi) -> ( 
-     Psi := Phi * rationalMap(target Phi,ambient target Phi);
-     if Phi#"projectiveDegrees" =!= {} then setKeyValue(Psi,"projectiveDegrees",Phi#"projectiveDegrees"); 
-     if Phi#"degree" =!= null then setKeyValue(Psi,"degree",Phi#"degree"); 
-     if Phi#"idealImage" =!= null then setKeyValue(Psi,"idealImage",trim(lift(image Phi,ambient source Phi#"map") + ideal(source Phi#"map")));   
-     if o.Dominant === true or o.Dominant === infinity then (
-            if Psi#"idealImage" === null then setKeyValue(Psi,"idealImage",trim(lift(image Phi,ambient source Phi#"map") + ideal(source Phi#"map")));
-            setKeyValue(Psi,"map",map(target Psi#"map",(source Psi#"map")/(Psi#"idealImage"),toMatrix Psi#"map"));
-            setKeyValue(Psi,"isDominant",true); 
-     );
-     if class o.Dominant === Ideal then if ring o.Dominant === source Psi#"map" then if ((Psi#"map") o.Dominant == 0 and isHomogeneous o.Dominant) then (
-            setKeyValue(Psi,"map",map(target Psi#"map",(source Psi#"map")/(o.Dominant),toMatrix Psi#"map"));
-     ); 
-     if class o.Dominant === ZZ then (
-            J := image(Psi,o.Dominant);
-            setKeyValue(Psi,"map",map(target Psi#"map",(source Psi#"map")/J,toMatrix Psi#"map"));
-     ); 
-     return Psi;
-);
-rationalMap (RationalMap) := o -> (Phi) -> rationalMapInt(Phi,Dominant=>o.Dominant);
-rationalMap (MultihomogeneousRationalMap) := o -> (Phi) -> rationalMapInt(Phi,Dominant=>o.Dominant);
-
-rationalMap (Ring,Ring,Matrix) := o -> (R,S,F) -> (
-     if not (isPolynomialRing ambient S) then error("the ambient rings must be polynomial rings");
-     phi := map(R,ambient S,F);
-     if not isHomogeneous ideal S then error "got quotient of polynomial ring by a non-homogeneous ideal";
-     if phi(ideal S) != 0 then error "the map is not valid";
-     rationalMap(map(R,S,F),Dominant=>o.Dominant)
-);
-
-rationalMap (Ring,Ring,List) := o -> (R,S,L) -> (
-     rationalMap(R,S,matrix{L},Dominant=>o.Dominant)
-);
-
-rationalMap (Ring,Ring) := o -> (R,S) -> (
-    if (numgens ambient R != numgens ambient S) then error "expected ambient rings to have the same dimension";
-    Phi := rationalMap(R,S,vars ambient R,Dominant=>o.Dominant);
-    if (isPolynomialRing R and isPolynomialRing S and class Phi === RationalMap) then (
-         setKeyValue(Phi,"maps",{map Phi});
-         setKeyValue(Phi,"isDominant",true);
-         setKeyValue(Phi,"isBirational",true);
-         setKeyValue(Phi,"projectiveDegrees",toList((numgens R):1));
-         setKeyValue(Phi,"degree",1);
-    );
-    Phi
-);
-
-rationalMap (Ring) := o -> (R) -> rationalMap(R,R,Dominant=>o.Dominant);
-
-simplifyMap = method()
-simplifyMap (RingMap) := (phi) -> ( 
-   I := multisaturate ideal target phi;
-      try assert(isSubset(ideal target phi,I) and isHomogeneous I) else error "internal error occurred";
-   if not isSubset(I,ideal target phi) then (
-        R := (ambient target phi)/I;
-        phi = map(R,source phi,sub(toMatrix phi,R));
-   );
-   return composeRationalMaps(map(target phi,target phi,vars ambient target phi),phi);
-);
-
-multihomogeneousRationalMap = method(TypicalValue => MultihomogeneousRationalMap)
-multihomogeneousRationalMap (RationalMap) := (Phi) -> (
-   new MultihomogeneousRationalMap from {
-        "map" => Phi#"map",
-        "maps" => Phi#"maps",
-        "isDominant" => Phi#"isDominant",
-        "idealImage" => Phi#"idealImage",
-        "isBirational" => Phi#"isBirational",
-        "projectiveDegrees" => Phi#"projectiveDegrees",
-        "degree" => Phi#"degree",
-        "dimAmbientTarget" => {Phi#"dimAmbientTarget"},
-        "dimTarget" => Phi#"dimTarget",
-        "dimAmbientSource" => Phi#"dimAmbientSource",
-        "dimSource" => Phi#"dimSource",
-        "graph" => null,
-        "baseLocus" => null
-   }
-);
-RationalMap ~ := (Phi) -> multihomogeneousRationalMap(Phi); 
-
-setKeyValue = method(TypicalValue => Nothing)
-setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
---  <<("--setting key \""|str|"\", for "|toString(net Phi)|", real modification: "|toString(Phi#str =!= val)|"\n");
-    errorClass := () -> error("tried to set a wrong value on the key \""|str|"\"");
-    errorChange := () -> error("tried to change the value for \""|str|"\" from "|toString(Phi#str)|" to "|toString(val));
-    if str === "map" then (
-         if class val =!= RingMap then errorClass();
-         if target val =!= target Phi#"map" then errorChange();
-         if ambient source val =!= ambient source Phi#"map" then errorChange();
-         if source val =!= source Phi#"map" then (
-             if not (isPolynomialRing source Phi#"map") then errorChange();
-             if Phi#"isDominant" === false then Phi#"isDominant" = null;
-             if Phi#"isBirational" === false then Phi#"isBirational" = null;
-             Phi#"dimSource" = max(dim source val -1,-1);
-             if Phi#"idealImage" =!= null then Phi#"idealImage" = trim sub(Phi#"idealImage",source val);     
-             if Phi#"maps" =!= null then Phi#"maps" = apply(Phi#"maps",psi -> map(target Phi#"map",source val,toMatrix psi));
-         );
-         Phi#str = val;
-         return;
-    );
-    if str === "maps" then (
-         if class val =!= List then errorClass();
-         if Phi#str === null then Phi#str = val else errorChange();
-         return;
-    );
-    if str === "isDominant" then (
-         if class val =!= Boolean then errorClass();
-         if Phi#str === null then (Phi#str = val) else (if Phi#str =!= val then errorChange());
-         if val === true then if Phi#"degree" === 1 then if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);
-         if val === true then if Phi#"idealImage" === null then setKeyValue(Phi,"idealImage",trim ideal(0_(source Phi#"map")));
-         if val === false then if Phi#"isBirational" =!= false then setKeyValue(Phi,"isBirational",false);
-         return;
-    );
-    if str === "idealImage" then (
-         if class val =!= Ideal then errorClass();
-         if ring val =!= source Phi#"map" then errorClass();
-         Phi#str = val;
-         if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",val == 0);
-         return;
-    );
-    if str === "isBirational" then (
-         if class val =!= Boolean then errorClass();
-         if Phi#str === null then (Phi#str = val) else (if Phi#str =!= val then errorChange());
-         if val === true then (if Phi#"degree" =!= 1 then setKeyValue(Phi,"degree",1); if Phi#"isDominant" =!= true then setKeyValue(Phi,"isDominant",true));
-         return;
-    );
-    if str === "inverseRationalMap" then (
-         if class val =!= RationalMap then errorClass();
-         if Phi#str === null then Phi#str = val else errorChange();
-         return;
-    );
-    if str === "projectiveDegrees" then (
-         if class val =!= List then errorClass();
-         if # val =!= 1 + Phi#"dimTarget" then errorClass();
-         if Phi#str === {} then (Phi#str = val) else (if Phi#str =!= val then errorChange());
-         if class Phi =!= RationalMap then return;
-         if Phi#"dimTarget" === Phi#"dimAmbientTarget" then if Phi#"dimSource" === Phi#"dimAmbientSource" then if (Phi#"dimTarget" === Phi#"dimSource" and Phi#"dimTarget" > 0) then (if Phi#"isDominant" =!= (last val > 0) then setKeyValue(Phi,"isDominant",last val > 0); if Phi#"degree" =!= (last val) then setKeyValue(Phi,"degree",last val));
-         if Phi#"inverseRationalMap" =!= null then if (Phi#"inverseRationalMap")#"projectiveDegrees" =!= (reverse val) then setKeyValue(Phi#"inverseRationalMap","projectiveDegrees",reverse val);
-         return;
-    );    
-    if str === "degree" then (
-         if class val =!= ZZ then errorClass();
-         if Phi#str === null then (Phi#str = val) else (if Phi#str =!= val then errorChange());
-         if val === 1 then if Phi#"isDominant" === true then if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);
-         return;
-    );
-    error("key not found");
-);
+map (MultihomogeneousRationalMap) := o -> (Phi) -> Phi#"map";
 
 expression RationalMap := (Phi) -> (
     if Phi#"dimTarget" < 0 or Phi#"dimSource" < 0 then return expression("map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
@@ -773,153 +316,42 @@ net RationalMap := (Phi) -> net expression Phi;
 
 net MultihomogeneousRationalMap := (Phi) -> net expression Phi;
 
-describe RationalMap := (Phi) -> (
-    descr:="rational map defined by forms of degree "|toString(max flatten degrees ideal compress toMatrix Phi#"map")|"\n";
+describeInt = method()
+
+describeInt (MutableHashTable) := (Phi) -> (
+    d := max degrees ideal compress matrix Phi; 
+    isStandardMap := false; if class Phi#"dimAmbientTarget" === ZZ then (d = first d; isStandardMap = true);
+    descr:="rational map defined by "|(if not isStandardMap then "multiforms" else "forms")|" of degree "|toString(d)|"\n";
     descr=descr|"source variety: "|expressionVar(ideal target Phi#"map",Phi#"dimTarget",Phi#"dimAmbientTarget")|"\n";
     descr=descr|"target variety: "|expressionVar(ideal source Phi#"map",Phi#"dimSource",Phi#"dimAmbientSource")|"\n";
-    if Phi#"projectiveDegrees" =!= {} then (
-        projdegs := reverse Phi#"projectiveDegrees"; -- [Harris, Exercise 19.2]
-        descr=descr|"graph: "|toString(Phi#"dimTarget")|"-dimensional variety of degree "|toString(sum(Phi#"dimTarget" + 1,j -> binomial(Phi#"dimTarget",j) * projdegs_j))|" in PP^"|toString(Phi#"dimAmbientTarget")|" x PP^"|toString(Phi#"dimAmbientSource")|" subset PP^"|toString((Phi#"dimAmbientTarget" +1)*(Phi#"dimAmbientSource" +1) - 1)|"\n";
-    );
     if Phi#"isDominant" =!= true and Phi#"idealImage" =!= null then descr=descr|"image: "|expressionVar(lift(Phi#"idealImage",ambient source Phi#"map") + ideal source Phi#"map")|"\n";
     if Phi#"isDominant" =!= null then descr=descr|"dominance: "|toString(Phi#"isDominant")|"\n";
     if Phi#"isBirational" =!= null then (
              descr=descr|"birationality: "|toString(Phi#"isBirational");
-             if Phi#"inverseRationalMap" =!= null then descr=descr|" (the inverse map is known)";
+             if isStandardMap then if Phi#"inverseRationalMap" =!= null then descr=descr|" (the inverse map is known)";
              descr=descr|"\n";
     );
     if Phi#"isBirational" =!= true and Phi#"degree" =!= null then descr=descr|"degree of map: "|toString(Phi#"degree")|"\n";
     if Phi#"projectiveDegrees" =!= {} then descr=descr|"projective degrees: "|toString(Phi#"projectiveDegrees")|"\n";
     if Phi#"maps" =!= null then (
                  descr=descr|"number of minimal representatives: "|toString(# Phi#"maps");
-                 if # Phi#"maps" >1 then descr=descr|", with degrees "|toString(toSequence apply(Phi#"maps",F-> max flatten degrees ideal compress toMatrix F));
+                 if # Phi#"maps" >1 then descr=descr|", with degrees "|toString(toSequence apply(Phi#"maps",F-> max degrees ideal compress toMatrix F));
                  descr=descr|"\n";
-                 B:=ideal Phi; dimB:=max(dim B -1,-1);
+                 B:=ideal Phi; dimB:=max(dim B - (# heft ambient source Phi),-1);
                  descr=descr|"dimension base locus: "|toString(dimB)|"\n";
-                 if dimB>=0 then descr=descr|"degree base locus: "|toString(degree B)|"\n";     
+                 if isStandardMap then if dimB>=0 then descr=descr|"degree base locus: "|toString(degree B)|"\n";     
     );
-    descr=descr|"coefficient ring: "|toExternalString(coefficientRing ambient target Phi#"map");
+    descr=descr|"coefficient ring: "|toString(coefficientRing ambient target Phi#"map");
     net expression descr
 );
 
-describe MultihomogeneousRationalMap := (Phi) -> (
-    d := unique degrees ideal compress matrix Phi; try assert(# d == 1) else error "internal error occurred";
-    descr:="rational map defined by multiforms of degree "|toString(first d)|"\n";
-    descr=descr|"source variety: "|expressionVar(ideal source Phi,Phi#"dimTarget",Phi#"dimAmbientTarget")|"\n";
-    descr=descr|"target variety: "|expressionVar(ideal target Phi,Phi#"dimSource",Phi#"dimAmbientSource")|"\n"; 
-    if Phi#"isDominant" =!= true and Phi#"idealImage" =!= null then descr=descr|"image: "|expressionVar(lift(Phi#"idealImage",ambient source Phi#"map") + ideal source Phi#"map")|"\n";
-    if Phi#"isDominant" =!= null then descr=descr|"dominance: "|toString(Phi#"isDominant")|"\n";
-    if Phi#"isBirational" =!= null then descr=descr|"birationality: "|toString(Phi#"isBirational")|"\n";
-    if Phi#"isBirational" =!= true and Phi#"degree" =!= null then descr=descr|"degree of map: "|toString(Phi#"degree")|"\n";
-    if Phi#"projectiveDegrees" =!= {} then descr=descr|"projective degrees: "|toString(Phi#"projectiveDegrees")|"\n";
-    if Phi#"maps" =!= null then (
-                 descr=descr|"number of minimal representatives: "|toString(# Phi#"maps");
-                 if # Phi#"maps" >1 then descr=descr|", with degrees "|toString(toSequence apply(Phi#"maps",F-> max degrees ideal compress toMatrix F));
-                 descr=descr|"\n";
-    );
-    if Phi#"baseLocus" =!= null then (
-                 B:=Phi#"baseLocus"; dimB:=max(dim B - (# Phi#"dimAmbientTarget"),-1);
-                 descr=descr|"dimension base locus: "|toString(dimB)|"\n";
-    );
-    descr=descr|"coefficient ring: "|toExternalString(coefficientRing ambient source Phi);
-    net expression descr
-);
+describe (RationalMap) := (Phi) -> describeInt Phi;
+
+describe (MultihomogeneousRationalMap) := (Phi) -> describeInt Phi;
 
 toString RationalMap := (Phi) -> "rationalMap("|toExternalString(map Phi)|")";
 
 toString MultihomogeneousRationalMap := (Phi) -> "rationalMap("|toExternalString(map Phi)|")";
-
-expressionVar = method(TypicalValue => String)
-
-expressionVar (ZZ,ZZ) := (Dim,DimAmbient) -> (
-   if DimAmbient < 0 then return "empty scheme";
-   if Dim < 0 then return ("empty subscheme of PP^"| toString(DimAmbient));
-   if Dim === DimAmbient then return ("PP^" | toString(DimAmbient));
-   if Dim === 0 then return ("one-point scheme in PP^"| toString(DimAmbient));
-   if Dim === 1 then return ("curve in PP^"| toString(DimAmbient));
-   if Dim === 2 then return ("surface in PP^"| toString(DimAmbient));
-   if DimAmbient - Dim === 1 then return ("hypersurface in PP^"| toString(DimAmbient));
-   if Dim === 3 then return ("threefold in PP^"| toString(DimAmbient));
-   return(toString(Dim) | "-dimensional subvariety of "| "PP^" | toString(DimAmbient));
-);
-
-expressionVar (ZZ,List) := (Dim,DimAmbient) -> (
-   if # DimAmbient <= 0 or min DimAmbient < 0 then return "empty scheme";
-   str := "PP^"|toString(DimAmbient_0);
-   for i from 1 to #DimAmbient-1 do str = str | " x PP^" | toString(DimAmbient_i);
-   if Dim < 0 then return ("empty subscheme of "| str);
-   if Dim === sum DimAmbient then return str;
-   if Dim === 0 then return ("one-point scheme in "| str);
-   if Dim === 1 then return ("curve in "| str);
-   if Dim === 2 then return ("surface in "| str);
-   if (sum DimAmbient) - Dim === 1 then return ("hypersurface in "| str);
-   if Dim === 3 then return ("threefold in "| str);
-   return(toString(Dim) | "-dimensional subvariety of "| str);
-);
-
-expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducible, linearly normal, etc...
-  I = trim I;  d:=degree I; degs := flatten degrees I; 
-  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1 and (k != 0 or d == 1)) else error "internal error occurred";
-  if k <= 0 or k >= n then return expressionVar(k,n);
-  dimSing := if (unique degs == {1}) or (select(degs,ee->ee>1)=={2}) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=5 and n<=5) or (numgens I == n-k and n<=6) then max(dim(minors(n-k,jacobian I)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
-  singStr:=if dimSing =!= null and dimSing =!= -1 then "singular " else "";
-  cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs);
-  if d == n-k+1 and d > 2 and min degs != 1 then (
-      if dimSing === -1 then (
-           if d == 4 and k == 2 and n == 5 and unique degs == {2} and #degs == 6 then (
-             verb:=MathVerb; MathVerb=false; isD:=isDominant(toMap I,MathMode=>true); MathVerb=verb;
-             if isD then return "Veronese surface in PP^5";
-           );
-           if k==1 then return ("rational normal curve of degree "|toString(d)|" in PP^"|toString(n));
-           if k==2 then return ("smooth rational normal scroll surface of degree "|toString(d)|" in PP^"|toString(n));
-           if k==d then return ("PP^1 x PP^"|toString(k-1)|" in PP^"|toString(n));
-           if k>2 then return "smooth rational normal scroll of dimension "|toString(k)|" and degree "|toString(d)|" in PP^"|toString(n);
-      ) else return(singStr|toString(k)|"-dimensional variety of minimal degree in PP^"|toString(n)|cutOut);
-  );
-  if k == 1 then (
-         g:=genus(I);
-         if d == 1 and g == 0 then return("line in PP^"|(toString n));
-         if d == 2 and g == 0 then if dimSing === -1 then return("irreducible conic curve in PP^"|(toString n)) else return(singStr|"conic curve in PP^"|(toString n));
-         if d == 3 then if dimSing === -1 then return("smooth cubic curve of genus "|toString(g)|" in PP^"|(toString n)|cutOut) else return(singStr|"cubic curve of arithmetic genus "|toString(g)|" in PP^"|(toString n)|cutOut);
-         if dimSing === -1 then return("smooth curve of degree "|toString(d)|" and genus "|toString(g)|" in PP^"|(toString n)|cutOut) else return(singStr|"curve of degree "|toString(d)|" and arithmetic genus "|toString(g)|" in PP^"|(toString n)|cutOut);
-  );
-  if k == 2 then (
-         if d == 1 then return("plane in PP^"|(toString n));
-         if d == 2 then if dimSing === -1 then return("smooth quadric surface in PP^"|(toString n)) else return(singStr|"quadric surface in PP^"|(toString n));
-         if d == 3 then if dimSing === -1 then return("smooth cubic surface in PP^"|(toString n)|cutOut) else return(singStr|"cubic surface in PP^"|(toString n)|cutOut);
-         if dimSing === -1 then return("smooth surface of degree "|toString(d)|" in PP^"|(toString n)|cutOut) else return(singStr|"surface of degree "|toString(d)|" in PP^"|(toString n)|cutOut);
-  );
-  if numgens I == 1 then (
-       assert(dimSing =!= null);
-       if d == 1 then return("hyperplane in PP^"|(toString n));
-       if d == 2 then if dimSing === -1 then return("smooth quadric hypersurface in PP^"|(toString n)) else return("quadric hypersurface of rank "|toString(n-dimSing)|" in PP^"|(toString n));
-       if d == 3 then if dimSing === -1 then return("smooth cubic hypersurface in PP^"|(toString n)) else (if dimSing<k-3 then return("factorial cubic hypersurface in PP^"|(toString n)) else return("singular cubic hypersurface in PP^"|(toString n)));
-       if dimSing === -1 then return("smooth hypersurface of degree "|toString(d)|" in PP^"|(toString n)) else (if dimSing<k-3 then return("factorial hypersurface of degree "|toString(d)|" in PP^"|(toString n)) else return("singular hypersurface of degree "|toString(d)|" in PP^"|(toString n)));
-  );
-  if numgens I == n-k then (
-       if unique degs == {1} then return("linear "|toString(k)|"-dimensional subspace of PP^"|(toString n));
-       if dimSing === -1 then return("smooth complete intersection of type "|toString(toSequence degs)|" in PP^"|(toString n));
-       if dimSing =!= null then if dimSing<k-3 then return("factorial complete intersection of type "|toString(toSequence degs)|" in PP^"|(toString n)); 
-       return(singStr|"complete intersection of type "|toString(toSequence degs)|" in PP^"|(toString n));
-  );
-  if dimSing === -1 then return("smooth "|toString(k)|"-dimensional variety of degree "|toString(d)|" in PP^"|(toString n)|cutOut) else return(singStr|toString(k)|"-dimensional variety of degree "|toString(d)|" in PP^"|(toString n)|cutOut);
-);
-
-expressionVar (Ideal,ZZ,List) := (I,k,n) -> ( 
-  I = trim I;  degs := degrees I; 
-  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I - (#n),-1) and (sum n) + (#n) == numgens ring I) else error "internal error occurred";
-  if k <= 0 or k >= sum n then return expressionVar(k,n);
-  if # degs == 1 then return(expressionVar(k,n)|" defined by a multiform of degree "|toString(first degs));
-  cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs); 
-  return(expressionVar(k,n)|cutOut);
-);
-
-expressionVar (Ideal) := (I) -> (
-   k := max(dim I - (# multigens ring I),-1);
-   n := apply(multigens ring I,g->(#g -1));
-   if #n == 1 then n = first n;
-   expressionVar(I,k,n)
-);
 
 imageInt = method()
 imageInt (MutableHashTable) := (Phi) -> (
@@ -943,21 +375,50 @@ image (MultihomogeneousRationalMap,ZZ) := (Phi,d) -> imageInt(Phi,d);
 
 image (ZZ,MultihomogeneousRationalMap) := (d,Phi) -> imageInt(d,Phi);
 
-map (RationalMap) := o -> (Phi) -> Phi#"map";
+kernel(RingMap,ZZ) := o -> (phi,d) -> kernelComponent(phi,d); 
 
-map MultihomogeneousRationalMap := o -> (Phi) -> Phi#"map";
-
-toMap (RationalMap) := o -> (Phi) -> (
-    maps Phi; 
-    if o.Dominant === null then return Phi#"map" else return toMap(Phi#"map",Dominant=>o.Dominant);
+kernel (RationalMap) := o -> (Phi) -> ( -- undocumented
+   if o.SubringLimit === infinity then return image(Phi) else return kernel(map Phi,SubringLimit=>o.SubringLimit);
 );
 
-toMap (MultihomogeneousRationalMap) := o -> (Phi) -> (
-    maps Phi; 
-    if o.Dominant === null then return Phi#"map" else return toMap(Phi#"map",Dominant=>o.Dominant);
+kernel (MultihomogeneousRationalMap) := o -> (Phi) -> ( -- undocumented
+   if o.SubringLimit === infinity then return image(Phi) else return kernel(map Phi,SubringLimit=>o.SubringLimit);
 );
 
-matrix (RationalMap) := o -> (Phi) -> toMatrix Phi#"map";
+kernel (RationalMap,ZZ) := o -> (Phi,d) -> ( -- undocumented
+   return image(Phi,d);   
+);
+
+kernel (MultihomogeneousRationalMap,ZZ) := o -> (Phi,d) -> ( -- undocumented
+   return image(Phi,d);   
+);
+
+kernel (ZZ,RationalMap) := o -> (d,Phi) -> ( -- undocumented
+   return image(d,Phi);   
+);
+
+kernel (ZZ,MultihomogeneousRationalMap) := o -> (d,Phi) -> ( -- undocumented
+   return image(d,Phi);   
+);
+
+kernelComponent(RingMap,ZZ) := (phi,d) -> (
+   checkRationalMap0 phi;
+   if d<0 then return ideal source phi;
+   Pn:=ambient target phi; Pm:=ambient source phi;  
+   Phi:=lift(toMatrix phi,Pn); 
+   e:=max degrees ideal Phi; if #e==1 then e=first e;
+   Z:=transpose gens image basis(d*e,ideal target phi); 
+   mm:=if source phi === Pm then transpose gens (ideal vars Pm)^d else transpose lift(gens image basis(d,ideal vars source phi),Pm); 
+   f:=numgens target mm -1; g:=numgens target Z -1;
+   a:=local a; b:=local b; K:=coefficientRing Pm;
+   AB:=K[a_0..a_f,b_0..b_g]; A:=matrix{{a_0..a_f}}; B:=matrix{{b_0..b_g}};
+   x:=local x; y:=local y; Pn':=AB[x_0..x_(numgens Pn-1)]; Pm':=AB[y_0..y_(numgens Pm-1)]; 
+   pol:=(map(Pn',Pm',sub(Phi,vars Pn'))) (A * sub(mm,vars Pm')) - (B * sub(Z,vars Pn')); 
+   eqs:=trim ideal sub(last coefficients pol,AB);
+   trim sub(ideal(submatrix(transpose mingens kernel transpose sub(last coefficients(gens eqs,Monomials=>(vars AB)),K),{0..f})*mm),source phi)
+);
+
+matrix (RationalMap) := o -> (Phi) -> toMatrix map Phi;
 
 matrix (MultihomogeneousRationalMap) := o -> (Phi) -> toMatrix map Phi;
 
@@ -1004,7 +465,7 @@ inverseImageStrongInt = method()
 inverseImageStrongInt (MutableHashTable,Ideal) := (Phi,I) -> (
    if (ring I =!= target Phi and ring I === ambient target Phi) then return inverseImageStrongInt(Phi,sub(I,target Phi)); 
    Z := intersect apply(maps Phi,F -> inverseImage(F,I,MathMode=>true));
-   if #(heft ambient ring Z) > 1 then Z = multisaturate Z;
+-- if #(heft ambient ring Z) > 1 then Z = multisaturate Z;
    return Z;
 );
 
@@ -1017,7 +478,7 @@ inverseImageWeakInt = method()
 inverseImageWeakInt (MutableHashTable,Ideal) := (Phi,I) -> (
    if (ring I =!= target Phi and ring I === ambient target Phi) then return inverseImageWeakInt(Phi,sub(I,target Phi)); 
    Z := inverseImage(map Phi,I,MathMode=>false);
-   if #(heft ambient ring Z) > 1 then Z = multisaturate Z;
+-- if #(heft ambient ring Z) > 1 then Z = multisaturate Z;
    return Z;
 );
 
@@ -1025,13 +486,15 @@ RationalMap ^* := (Phi) -> Ideal := (I) -> inverseImageWeakInt(Phi,I);
 
 MultihomogeneousRationalMap ^* := (Phi) -> Ideal := (I) -> inverseImageWeakInt(Phi,I);
 
-RationalMap * RationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
-
-MultihomogeneousRationalMap * MultihomogeneousRationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
-
-MultihomogeneousRationalMap * RationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
-
-RationalMap * MultihomogeneousRationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
+inverseImage = method(TypicalValue => Ideal, Options => {MathMode => false});
+inverseImage (RingMap,Ideal) := o -> (phi,J) -> (
+   if source phi =!= ring J then error "expected homogeneous ideal in the coordinate ring of the target variety";
+   B:=ideal toMatrix phi;
+   K:=coefficientRing ring B;
+   if o.MathMode or class K === FractionField then return saturate(phi J,B);
+   F:=ideal sum for i to numgens B -1 list random(K) * B_i;
+   saturate(phi J,F)
+);
 
 RationalMap ^ ZZ := (Phi,j) -> (
    if j == 0 then (
@@ -1064,10 +527,12 @@ RationalMap ! := (Phi) -> (
 
 MultihomogeneousRationalMap ! := (Phi) -> (  
    verb:=MathVerb; MathVerb=false; 
-     image Phi;
-     isDominant(Phi,MathMode=>true);
      ideal Phi;
-     graph Phi;
+     degrees Phi;
+     degree Phi;
+     isDominant(Phi,MathMode=>true);
+     isBirational(Phi,MathMode=>true);
+     image Phi;
    MathVerb=verb;
      return Phi;
 );
@@ -1160,13 +625,13 @@ compareRationalMapsInt (MutableHashTable,MutableHashTable) := (Phi,Psi) -> (
            if Phi#"maps" =!= null and Psi#"maps" =!= null then (if #(Phi#"maps") =!= #(Psi#"maps") then error("found a contradiction"));
            if Phi#"maps" === null and Psi#"maps" =!= null then setKeyValue(Phi,"maps",Psi#"maps");
            if Phi#"maps" =!= null and Psi#"maps" === null then setKeyValue(Psi,"maps",Phi#"maps");
+           if Phi#"blowUpIdeal" === null and Psi#"blowUpIdeal" =!= null then Phi#"blowUpIdeal" = Psi#"blowUpIdeal";
+           if Phi#"blowUpIdeal" =!= null and Psi#"blowUpIdeal" === null then Psi#"blowUpIdeal" = Phi#"blowUpIdeal";
            if class Phi === RationalMap and class Psi === RationalMap then (
               if Phi#"inverseRationalMap" === null and Psi#"inverseRationalMap" =!= null then Phi#"inverseRationalMap" = Psi#"inverseRationalMap";
               if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" === null then Psi#"inverseRationalMap" = Phi#"inverseRationalMap";
            );
            if class Phi === MultihomogeneousRationalMap and class Psi === MultihomogeneousRationalMap then (
-              if Phi#"graph" === null and Psi#"graph" =!= null then Phi#"graph" = Psi#"graph";
-              if Phi#"graph" =!= null and Psi#"graph" === null then Psi#"graph" = Phi#"graph";
               if Phi#"baseLocus" === null and Psi#"baseLocus" =!= null then Phi#"baseLocus" = Psi#"baseLocus";
               if Phi#"baseLocus" =!= null and Psi#"baseLocus" === null then Psi#"baseLocus" = Phi#"baseLocus";
            );
@@ -1187,50 +652,6 @@ RationalMap == ZZ := (Phi,n) -> (
 
 ZZ == RationalMap := (n,Phi) -> Phi == n;
 
-degreesInt = method()
-
-degreesInt (MutableHashTable) := (Phi) -> (
-   if Phi#"projectiveDegrees" =!= {} then return Phi#"projectiveDegrees";
-   verb:=MathVerb; MathVerb=false; 
-   d:=projectiveDegrees(Phi,MathMode=>true);
-   MathVerb=verb;
-   return d;
-);
-
-degrees (RationalMap) := (Phi) -> degreesInt(Phi);
-
-degrees (MultihomogeneousRationalMap) := (Phi) -> degreesInt(Phi);
-
-multidegree (RationalMap) := (Phi) -> degreesInt(Phi);
-
-multidegree (MultihomogeneousRationalMap) := (Phi) -> degreesInt(Phi);
-
-degreeInt = method()
-
-degreeInt (MutableHashTable) := (Phi) -> (
-   if Phi#"degree" =!= null then return Phi#"degree";
-          verb:=MathVerb; MathVerb=false; 
-   pr0:=first projectiveDegrees(Phi,OnlySublist=>0,MathMode=>true);
-          MathVerb=verb;
-   if Phi#"degree" =!= null then return Phi#"degree";
-   if (pr0 == 0 or pr0 == 1) then (
-           setKeyValue(Phi,"degree",pr0); 
-           return Phi#"degree";
-   );
-   if isPrime pr0 then (
-         f := rationalMap Phi;
-         setKeyValue(Phi,"degree",if dim image(f,1) - 1 > f#"dimTarget" then 1 else pr0);
-         return Phi#"degree";
-   );
-   d := degree (lift(image Phi,ambient target Phi) + ideal target Phi);
-   setKeyValue(Phi,"degree",lift(pr0/d,ZZ));  
-   return Phi#"degree";
-);
-
-degree (RationalMap) := (Phi) -> degreeInt(Phi);
-
-degree (MultihomogeneousRationalMap) := (Phi) -> try return degreeInt(Phi) else error "not implemented yet: option MathMode=>true for degreeOfRationalMap(MultihomogeneousRationalMap)"; 
-
 ideal (RationalMap) := (Phi) -> (
     trim sum apply(maps Phi,F -> ideal toMatrix F)
 );
@@ -1239,24 +660,53 @@ ideal (MultihomogeneousRationalMap) := (Phi) -> (
     return Phi#"baseLocus";
 );
 
-isDominant (RationalMap) := o -> (Phi) -> (
+isDominantInt = method(Options => {MathMode => false})
+
+isDominantInt (MutableHashTable) := o -> (Phi) -> ( 
    if Phi#"isDominant" =!= null then return Phi#"isDominant";
-   isD:=isDominant(Phi#"map",MathMode=>o.MathMode);
-   if o.MathMode == false then return isD;
-   setKeyValue(Phi,"isDominant",isD);
-   return Phi#"isDominant";
+   if o.MathMode == true then (
+       setKeyValue(Phi,"isDominant",isDominantMath(map Phi,Phi#"dimTarget",Phi#"dimSource"));
+       return Phi#"isDominant";
+   );
+   if Phi#"dimTarget" < Phi#"dimSource" then (
+       setKeyValue(Phi,"isDominant",false);
+       return Phi#"isDominant";
+   ); 
+   if class Phi === RationalMap then (
+       phi := Phi#"map";
+       for i from 1 to Phi#"dimTarget" - Phi#"dimSource" do phi = genericRestriction phi;
+       return (first projectiveDegrees(phi,OnlySublist=>0) != 0);
+   );
+   if class Phi === MultihomogeneousRationalMap then (
+       Z := sub((ideal source Phi#"map") + randomLinearSubspace(ambient source Phi#"map",Phi#"dimAmbientSource" - Phi#"dimSource"),source Phi#"map");
+       return (dim inverseImage(Phi#"map",Z,MathMode=>false) - (# heft ambient target Phi#"map") == Phi#"dimTarget" - Phi#"dimSource");
+   );
 );
 
-isDominant (MultihomogeneousRationalMap) := o -> (Phi) -> ( -- to be improvement
-   if Phi#"isDominant" =!= null then return Phi#"isDominant";
-   if Phi#"dimTarget" < Phi#"dimSource" then (
-          setKeyValue(Phi,"isDominant",false);
-          if MathVerb and o.MathMode then <<certificate; 
-          return Phi#"isDominant";
-   ); 
-   setKeyValue(Phi,"isDominant",image Phi == 0); 
-   if o.MathMode and MathVerb then <<certificate;
-   return Phi#"isDominant";
+isDominant (RationalMap) := o -> (Phi) -> isDominantInt(Phi,MathMode=>o.MathMode);
+
+isDominant (MultihomogeneousRationalMap) := o -> (Phi) -> isDominantInt(Phi,MathMode=>o.MathMode);
+
+isDominant (RingMap) := o -> (phi) -> (
+   checkRationalMap phi;
+   isDominant(rationalMapWithoutChecking phi,MathMode=>o.MathMode)
+);
+
+isDominantMath = (phi,n,m) -> (
+   -- phi:X--->Y multihomogeneous map, n = dim X, m = dim Y
+   X := target phi; Y := source phi;
+   R := ambient X;
+   PM := ambient Y;
+   M := numgens PM -1;
+   if n < m then (if MathVerb then <<certificate; return false);
+   -- if there exists Z subset Y (with dim Z = 0) s.t dim phi^(-1)(Z) = n-m, then phi is dominant
+   Z := ideal(Y) + randomLinearSubspace(PM,M-m);
+   while (-1 + dim(Z) != 0) do Z=ideal(Y) + randomLinearSubspace(PM,M-m);
+   Z = sub(Z,Y);
+   if dim inverseImage(phi,Z,MathMode=>true) - (# heft R) == n-m then (if MathVerb then <<certificate; return true);
+   isDom := kernel(phi,SubringLimit=>1) == 0; 
+   if MathVerb then <<certificate;
+   return isDom;
 );
 
 isBirationalInt = method(Options => {MathMode => false});
@@ -1272,7 +722,7 @@ isBirationalInt (MutableHashTable) := o -> (Phi) -> (
          verb:=MathVerb; MathVerb=false; isDom:=isDominant(Phi,MathMode=>true); MathVerb=verb;
          if not isDom then (if MathVerb then <<certificate; setKeyValue(Phi,"isBirational",false); return Phi#"isBirational");      
    );
-   isB:=first projectiveDegrees(Phi,OnlySublist=>0,MathMode=>o.MathMode) == degree source Phi#"map";
+   isB := first projectiveDegrees(Phi,OnlySublist=>0,MathMode=>o.MathMode) == degree ideal target Phi;
    if o.MathMode then (setKeyValue(Phi,"isBirational",isB); return Phi#"isBirational") else return isB;
 );
 
@@ -1280,11 +730,52 @@ isBirational (RationalMap) := o -> (Phi) -> isBirationalInt(Phi,MathMode=>o.Math
 
 isBirational (MultihomogeneousRationalMap) := o -> (Phi) -> isBirationalInt(Phi,MathMode=>o.MathMode);
 
+isBirational (RingMap) := o -> (phi) -> (
+   checkRationalMap phi;
+   isBirational(rationalMapWithoutChecking phi,MathMode=>o.MathMode)
+);
+
+invertBirMapInt = method(Options => {MathMode => false});
+
+invertBirMapInt (RationalMap) := o -> (Phi) -> (
+   if not isPolynomialRing source Phi then return invertBirMapInt(Phi,null,MathMode=>o.MathMode);
+   a := ideal target Phi;
+   F := matrix Phi;
+   G := matrix{{(numgens ambient source Phi):0_(target Phi)}}; 
+   try G = invertBirationalMapRS(F,a);
+   if not (min flatten degrees ideal G > 0 and compress G === G) then (
+       verb:=MathVerb; MathVerb=false; isDom:=isDominant(Phi,MathMode=>true); MathVerb=verb;
+       if not isDom then error("trying to invert non-dominant map");
+       return invertBirMapInt(Phi,null,MathMode=>o.MathMode);
+   );
+   psi := map(target Phi,source Phi,G);
+   if o.MathMode == false then return psi;
+   if (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
+        if MathVerb then <<certificate; return psi;
+   ) else (
+        return invertBirMapInt(Phi,null,MathMode=>o.MathMode);
+   );
+);
+
+invertBirMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
+   Bl := graphIdealInt Phi;
+   n := Phi#"dimAmbientTarget"; 
+   Sub := map(target Phi,ring Bl,matrix{{(n+1):0_(ambient target Phi)}}|(vars ambient target Phi));
+   T := transpose gens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
+   psi := map(target Phi,source Phi,submatrix(T,{0},));
+   if o.MathMode == false then return psi;
+   if (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
+        if MathVerb then <<certificate; return psi;
+   ) else (
+        error "do not able to obtain an inverse rational map";
+   );
+);
+
 invertBirMap (RationalMap) := o -> (Phi) -> (
     if Phi#"inverseRationalMap" =!= null then return Phi#"inverseRationalMap";
-    if Phi#"isBirational" === false then error "expected a birational map";
+    if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     Psi := new RationalMap from {
-            "map" => invertBirMap(Phi#"map",MathMode=>o.MathMode),
+            "map" => invertBirMapInt(Phi,MathMode=>o.MathMode),
             "maps" => null,
             "isDominant" => if o.MathMode then true else null,
             "idealImage" => if o.MathMode then trim ideal(0_(target Phi#"map")) else null,
@@ -1295,7 +786,8 @@ invertBirMap (RationalMap) := o -> (Phi) -> (
             "dimAmbientTarget" => Phi#"dimAmbientSource",
             "dimTarget" => Phi#"dimSource",
             "dimAmbientSource" => Phi#"dimAmbientTarget",
-            "dimSource" => Phi#"dimTarget"
+            "dimSource" => Phi#"dimTarget",
+            "blowUpIdeal" => null
            };
     if o.MathMode == true then (     
          if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);  
@@ -1307,8 +799,48 @@ invertBirMap (RationalMap) := o -> (Phi) -> (
     ) else return Psi;
 );
 
+invertBirMap (RingMap) := o -> (phi) -> (
+   checkRationalMap phi;
+   map invertBirMap(rationalMapWithoutChecking phi,MathMode=>o.MathMode)
+);
+
+invertBirMap (RationalMap,Nothing) := o -> (Phi,nothing) -> ( -- undocumented 
+   return rationalMap invertBirMapInt(Phi,null,MathMode=>o.MathMode);
+);
+
+approximateInverseMap (RingMap,ZZ) := o -> (phi,d) -> (
+    -- input: a birational map phi:X --->Y 
+    -- output: a map Y--->X in some sense related to the inverse of phi
+    checkRationalMap phi;
+    n:=numgens ambient target phi -1;
+    c:=2;
+    if o.CodimBsInv =!= null then (if (try (class o.CodimBsInv === ZZ and o.CodimBsInv >= 2 and o.CodimBsInv <= n+1) else false) then c=o.CodimBsInv else (<<"--warning: option CodimBsInv ignored"<<endl));
+    phiRes:=local phiRes;
+    B:=trim sum for i from 1 to ceiling((n+1)/(c-1)) list (
+         phiRes=phi;
+         for i0 from 1 to c-1 do phiRes=genericRestriction phiRes; 
+         if d<=0 then kernel(phiRes,SubringLimit=>(c-1)) else kernelComponent(phiRes,d)  
+       );
+   if not(numgens B <= n+1 and min flatten degrees B == max flatten degrees B) then (<<"--rerun approximateInverseMap (found "|toString(numgens B)|" generators of degrees "|toString(flatten degrees B)|")\n"; return approximateInverseMap(phi,d,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode));
+   if numgens B < n+1 then B=B+ideal((n+1-numgens(B)) : 0_(ring B));
+   psi:=if isPolynomialRing target phi then map(source phi,target phi,gens B) else toMap(map(source phi,ambient target phi,gens B),Dominant=>ideal(target phi));
+   if o.MathMode then (
+          if isPolynomialRing target phi then (
+                 try psi=composeRationalMaps(psi,toMap((vars target phi)*(last coefficients matrix composeRationalMaps(phi,psi))^(-1)));
+                 if isInverseMap(phi,psi) and isInverseMap(psi,phi) then (if MathVerb then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
+          ) else (
+                 if source psi =!= target phi then error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this map has an incorrect target variety");
+                 if source psi === target phi then if isInverseMap(phi,psi) and isInverseMap(psi,phi) then (if MathVerb then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
+          );
+   );
+   return psi;
+);
+
+approximateInverseMap (RingMap) := o -> (phi) -> approximateInverseMap(phi,-1,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode);
+
 approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
     if Phi#"inverseRationalMap" =!= null then return Phi#"inverseRationalMap";
+    if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
     Psi := rationalMap approximateInverseMap(Phi#"map",d,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode);
          if o.MathMode == false then return Psi;
     setKeyValue(Psi,"isBirational",true);
@@ -1324,17 +856,70 @@ approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
 
 approximateInverseMap (RationalMap) := o -> (Phi) -> approximateInverseMap(Phi,-1,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode);
 
+invertBirationalMapRS = (F,a)  -> ( 
+   -- Notation as in the paper [Russo, Simis - On Birational Maps and Jacobian Matrices] 
+   -- Computes the inverse map of a birational map via the Russo and Simis's algorithm
+   -- input: 1) row matrix, representing a birational map P^n-->P^m 
+   --        2) ideal, representing the image of the map 
+   -- output: row matrix, representing the inverse map   
+   n:=numgens ring F-1;
+   x:=local x;
+   R:=coefficientRing(ring F)[x_0..x_n];
+   I:=sub(F,vars R);
+   S:=ring a;
+   phi:=syz I;
+   local q;
+   for j to numgens source phi-1 list 
+      if max degrees ideal matrix phi_j == {1} then q=j+1;
+   phi1:=submatrix(phi,{0..q-1});
+   RtensorS:=tensor(R,S);
+   phi1=sub(phi1,RtensorS);
+   Y:=sub(vars S,RtensorS);
+   theta:=transpose submatrix(jacobian ideal(Y*phi1),{0..n},);
+   theta=sub(theta,S);
+   S':=S/a; theta':=sub(theta,S');
+   Z:=kernel theta';
+   basisZ:=mingens Z; 
+      if numgens source basisZ == 0 then error("it has not been possible to determine the inverse rational map");
+   g:=sub(basisZ_0,S);
+   Inv:=transpose matrix(g);
+   Inv 
+);
+
 isInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
-   if (source Phi =!= target Psi or target Phi =!= source Psi) then return false;
    if Phi#"inverseRationalMap" =!= null then return (Phi^(-1) == Psi);
    if Psi#"inverseRationalMap" =!= null then return (Phi == Psi^(-1));
-   if (try( Phi * Psi == 1 and Psi * Phi == 1) else false) then(
+   if isInverseMap(map Phi,map Psi) and isInverseMap(map Psi,map Phi) then(
         if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);  
-        setKeyValue(Phi,"inverseRationalMap",Psi);
+        if Phi#"inverseRationalMap" === null then setKeyValue(Phi,"inverseRationalMap",Psi);
         if Psi#"isBirational" =!= true then setKeyValue(Psi,"isBirational",true);  
-        setKeyValue(Psi,"inverseRationalMap",Phi);
+        if Psi#"inverseRationalMap" === null then setKeyValue(Psi,"inverseRationalMap",Phi);
         return true;
    ) else return false;
+);
+
+isInverseMap (RingMap,RingMap) := (phi,psi) -> (
+   checkRationalMap phi;
+   checkRationalMap psi;
+   if (source phi =!= target psi or target phi =!= source psi) then return false; 
+   try phipsi:=toMatrix(phi*psi) else return false;
+   x:=gens target phi; 
+   i:=0; while x_i == 0 do i=i+1;
+   (q,r):=quotientRemainder((flatten entries phipsi)_i,x_i);
+   if r != 0 then return false; 
+   if q == 0 then return false;
+   phipsi - q*(vars target phi) == 0
+);
+
+composeRationalMaps(RingMap,RingMap) := (phi,psi) -> (
+   if source phi =!= target psi then error "rational maps not composable: incompatible target and source";
+   linSys:=flatten entries toMatrix (phi*psi);
+   fixComp := try gcd linSys else 1_(target phi);
+   qr:=apply(linSys,g -> quotientRemainder(g,fixComp)); 
+        if # select(qr,g -> last g != 0) > 0 then error "got wrong gcd";
+   eta:=map(target phi,source psi,apply(qr,first));
+   if toMatrix eta == 0 then error("rational maps not composable: their composition would be the zero map");
+   eta
 );
 
 composeRationalMapsInt = method()
@@ -1359,6 +944,14 @@ composeRationalMaps (MultihomogeneousRationalMap,MultihomogeneousRationalMap) :=
 composeRationalMaps (MultihomogeneousRationalMap,RationalMap) := (Phi,Psi) -> composeRationalMapsInt(Phi,Psi);
 
 composeRationalMaps (RationalMap,MultihomogeneousRationalMap) := (Phi,Psi) -> composeRationalMapsInt(Phi,Psi);
+
+RationalMap * RationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
+
+MultihomogeneousRationalMap * MultihomogeneousRationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
+
+MultihomogeneousRationalMap * RationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
+
+RationalMap * MultihomogeneousRationalMap := (Phi,Psi) -> composeRationalMaps(Phi,Psi);
 
 areEqualMaps = method(TypicalValue => Boolean)
 areEqualMaps (RingMap,RingMap) := (phi,psi) -> (
@@ -1395,7 +988,7 @@ mapsInt (MutableHashTable) := (Phi) -> (
                        setKeyValue(Phi,"maps",{Phi#"map"});
                  ) else (
                        setKeyValue(Phi,"maps",{composeRationalMaps(map(source Phi,source Phi,vars source Phi),map Phi)});
-                       setKeyValue(Phi,"map",first Phi#"maps");
+                       if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
                  );
             ) else (
                  setKeyValue(Phi,"maps",maps Phi#"map");
@@ -1406,94 +999,163 @@ mapsInt (MutableHashTable) := (Phi) -> (
    Phi#"maps"
 );
 
-projectiveDegrees (RationalMap) := o -> (Phi) -> (
-    if o.OnlySublist < 0 then return {};
-    ll:={(Phi#"dimTarget" - min(Phi#"dimTarget",o.OnlySublist)) .. Phi#"dimTarget"};
-    if o.MathMode == false then (if Phi#"projectiveDegrees" === {} then return projectiveDegrees(Phi#"map",MathMode=>false,OnlySublist=>o.OnlySublist) else return (Phi#"projectiveDegrees")_ll);
-    if Phi#"projectiveDegrees" === {} then setKeyValue(Phi,"projectiveDegrees",projectiveDegrees(Phi#"map",MathMode=>true,OnlySublist=>infinity));
-    return (Phi#"projectiveDegrees")_ll;
-);
+projectiveDegreesInt = method(Options => {MathMode => false, OnlySublist => infinity});
 
-projectiveDegrees (RationalMap,ZZ) := o -> (Phi,i) -> projectiveDegrees(map Phi,i,MathMode=>o.MathMode,OnlySublist=>o.OnlySublist); 
-
-projectiveDegrees (MultihomogeneousRationalMap) := o -> (Phi) -> (
+projectiveDegreesInt (MutableHashTable) := o -> (Phi) -> (
    if o.OnlySublist < 0 then return {};
-   ll := {(Phi#"dimTarget" - min(Phi#"dimTarget",o.OnlySublist)) .. Phi#"dimTarget"};
+   n := Phi#"dimAmbientTarget";
+   m := Phi#"dimAmbientSource";
+   r := Phi#"dimTarget";
+   ll := {(r - min(r,o.OnlySublist))..r};
    if Phi#"projectiveDegrees" =!= {} then return (Phi#"projectiveDegrees")_ll;
-   if o.MathMode === true then error "not implemented yet: option MathMode=>true for projectiveDegrees(MultihomogeneousRationalMap)"; 
-   apply(deepSplice ll,j -> projectiveDegrees(Phi,Phi#"dimTarget" - j))
+   if o.MathMode == true then (
+       Bl := graphIdealInt Phi;
+       mdeg := multidegree Bl;
+       d := getMultidegree(mdeg,n,m,r);
+       setKeyValue(Phi,"projectiveDegrees",d);
+       if MathVerb then <<certificate;
+       return d_ll;
+   ) else (
+       phi := Phi#"map";
+       if class Phi === RationalMap then (
+           L := {projDegree(phi,0,r,{})};
+           for i from 1 to min(r,o.OnlySublist) do (
+              phi = genericRestriction phi;
+              L = {projDegree(phi,0,r-i,{})}|L
+           );
+           return L;
+       );
+       if class Phi === MultihomogeneousRationalMap then (
+           return apply(deepSplice ll,j -> projDegree(phi,r-j,r,n));
+       );
+   );
 );
 
-projectiveDegrees (MultihomogeneousRationalMap,ZZ) := o -> (Phi,i) -> ( 
-   if o.MathMode === true then error "not implemented yet: option MathMode=>true for projectiveDegrees(MultihomogeneousRationalMap,ZZ)"; 
-   m := Phi#"dimAmbientSource"; 
-   n := Phi#"dimAmbientTarget";  
-   k := Phi#"dimTarget"; 
-   if i < 0 or i > k then error("integer out of range"); 
-   if #n =!= 2 and i =!= 0 then error "not implemented yet: projective degrees of a rational map with source a subvariety of a product of more than two projective spaces";
-   L := sub(randomLinearSubspace(ambient target Phi,m-k+i),target Phi);
-   Z := Phi^* L; 
-   Z = trim(lift(Z,ambient source Phi) + ideal source Phi);
-   (dimZ,degZ) := DimDegreeSegreEmbedding(Z,n);
-   if dimZ == i then degZ else 0
+projectiveDegrees (RationalMap) := o -> (Phi) -> projectiveDegreesInt(Phi,MathMode=>o.MathMode,OnlySublist=>o.OnlySublist);
+
+projectiveDegrees (MultihomogeneousRationalMap) := o -> (Phi) -> projectiveDegreesInt(Phi,MathMode=>o.MathMode,OnlySublist=>o.OnlySublist);
+
+projectiveDegrees (MutableHashTable,ZZ) := o -> (Phi,i) -> ( -- undocumented
+   if i < 0 or i > Phi#"dimTarget" then error("expected integer between 0 and "|toString(Phi#"dimTarget")); 
+   if Phi#"projectiveDegrees" =!= {} then return (Phi#"projectiveDegrees")_(Phi#"dimTarget" - i);
+   if o.MathMode === true then error "option MathMode=>true not available for projectiveDegrees(RationalMap,ZZ); you can use the option with projectiveDegrees(RationalMap)"; 
+   n := Phi#"dimAmbientTarget"; if class n === ZZ then n = {n};
+   projDegree(Phi#"map",i,Phi#"dimTarget",n)
 );
 
-degreeOfRationalMap (RationalMap) := o -> (Phi) -> (
-   if o.MathMode == false then return degreeOfRationalMap(Phi#"map",MathMode=>false);
-   d:=degree Phi;
-   if MathVerb then <<certificate;
+projectiveDegrees (RingMap) := o -> (phi) -> (
+   checkRationalMap phi;
+   projectiveDegrees(rationalMapWithoutChecking phi,MathMode=>o.MathMode,OnlySublist=>o.OnlySublist)
+);
+
+projectiveDegrees (RingMap,ZZ) := o -> (phi,i) -> (
+   checkRationalMap phi; 
+   projectiveDegrees(rationalMapWithoutChecking phi,i,MathMode=>o.MathMode,OnlySublist=>o.OnlySublist)
+);
+
+degreesInt = method()
+
+degreesInt (MutableHashTable) := (Phi) -> (
+   if Phi#"projectiveDegrees" =!= {} then return Phi#"projectiveDegrees";
+   verb:=MathVerb; MathVerb=false; 
+   d:=projectiveDegrees(Phi,MathMode=>true);
+   MathVerb=verb;
    return d;
 );
 
-degreeOfRationalMap (MultihomogeneousRationalMap) := o -> (Phi) -> (
+degrees (RationalMap) := (Phi) -> degreesInt(Phi);
+
+degrees (MultihomogeneousRationalMap) := (Phi) -> degreesInt(Phi);
+
+multidegree (RationalMap) := (Phi) -> degreesInt(Phi);
+
+multidegree (MultihomogeneousRationalMap) := (Phi) -> degreesInt(Phi);
+
+projDegree = method()
+projDegree (RingMap,ZZ,ZZ,List) := (phi,i,k,n) -> (
+   -- Notation as in [Harris J., Algebraic Geometry, A First Course], p. 240.
+   -- phi: X ---> Y \subset P^m, 
+   -- i integer, 0 <= i <= k, k=dim X, n = {n_1,n_2,...} if X \subset P^n_1 x P^n_2 x ...
+   Y := source phi;
+   m := numgens ambient Y -1;
+   L := sub(randomLinearSubspace(ambient Y,m-k+i),Y);
+   Z := inverseImage(phi,L,MathMode=>false); 
+   if #n <= 1 then (
+      if dim Z == i+1 then return degree Z else return 0;
+   ) else (
+      Z = trim(lift(Z,ambient target phi) + ideal target phi);
+      return getMultidegree(multidegree Z,n);
+   );
+);
+
+degreeOfRationalMapInt = method(Options => {MathMode => false});
+
+degreeOfRationalMapInt (MutableHashTable) := o -> (Phi) -> (
    if Phi#"degree" =!= null then return Phi#"degree";
-   if o.MathMode === true then error "not implemented yet: option MathMode=>true for degreeOfRationalMap(MultihomogeneousRationalMap)"; 
-   pr0 := projectiveDegrees(Phi,0);
-   if (pr0 == 0 or pr0 == 1) then return pr0;
+   if (class Phi === RationalMap and o.MathMode === false and isPolynomialRing source Phi) then (
+        p := Phi randomLinearSubspace(source Phi,0);   
+        hP := hilbertPolynomial(inverseImage(map Phi,p,MathMode=>false),Projective=>false);
+        if degree hP > {0} then return 0 else return sub(hP,ZZ);
+   );
+        verb:=MathVerb; MathVerb=false; 
+   pr0 := first projectiveDegrees(Phi,OnlySublist=>0,MathMode=>o.MathMode);
+        MathVerb=verb;
+   if Phi#"degree" =!= null then (if o.MathMode and MathVerb then <<certificate; return Phi#"degree");
+   if (pr0 == 0 or pr0 == 1) then (
+         if o.MathMode then setKeyValue(Phi,"degree",pr0); 
+         if o.MathMode and MathVerb then <<certificate;
+         return pr0;
+   );
    if isPrime pr0 then (
          f := rationalMap Phi;
-         if dim image(f,1) - 1 > f#"dimTarget" then return 1 else return pr0;
+         val := if dim image(f,1) - 1 > f#"dimTarget" then 1 else pr0;
+         if o.MathMode then setKeyValue(Phi,"degree",val);
+         if o.MathMode and MathVerb then <<certificate;
+         return val;
    );
    d := degree (lift(image Phi,ambient target Phi) + ideal target Phi);
-   try return lift(pr0/d,ZZ) else error "internal error occurred";
+   val1 := lift(pr0/d,ZZ);
+   if o.MathMode then setKeyValue(Phi,"degree",val1);  
+   if o.MathMode and MathVerb then <<certificate;
+   return val1;
 );
 
-kernel (RationalMap) := o -> (Phi) -> ( -- undocumented
-   if o.SubringLimit === infinity then return image(Phi) else return kernel(map Phi,SubringLimit=>o.SubringLimit);
+degreeOfRationalMap (RationalMap) := o -> (Phi) -> degreeOfRationalMapInt(Phi,MathMode=>o.MathMode);
+
+degreeOfRationalMap (MultihomogeneousRationalMap) := o -> (Phi) -> degreeOfRationalMapInt(Phi,MathMode=>o.MathMode);
+
+degreeOfRationalMap (RingMap) := o -> (phi) -> (
+   checkRationalMap phi;
+   degreeOfRationalMap(rationalMapWithoutChecking phi,MathMode=>o.MathMode)
 );
 
-kernel (MultihomogeneousRationalMap) := o -> (Phi) -> ( -- undocumented
-   if o.SubringLimit === infinity then return image(Phi) else return kernel(map Phi,SubringLimit=>o.SubringLimit);
+degreeInt = method()
+
+degreeInt (MutableHashTable) := (Phi) -> (
+   if Phi#"degree" =!= null then return Phi#"degree";
+   verb:=MathVerb; MathVerb=false; 
+   d:=degreeOfRationalMap(Phi,MathMode=>true);
+   MathVerb=verb;
+   return d;
 );
 
-kernel (RationalMap,ZZ) := o -> (Phi,d) -> ( -- undocumented
-   return image(Phi,d);   
-);
+degree (RationalMap) := (Phi) -> degreeInt(Phi);
 
-kernel (MultihomogeneousRationalMap,ZZ) := o -> (Phi,d) -> ( -- undocumented
-   return image(Phi,d);   
-);
-
-kernel (ZZ,RationalMap) := o -> (d,Phi) -> ( -- undocumented
-   return image(d,Phi);   
-);
-
-kernel (ZZ,MultihomogeneousRationalMap) := o -> (d,Phi) -> ( -- undocumented
-   return image(d,Phi);   
-);
+degree (MultihomogeneousRationalMap) := (Phi) -> degreeInt(Phi);
 
 parametrize (Ideal) := (L) -> (
-   if not (isPolynomialRing ring L) then error "expected homogeneous ideal in a polynomial ring";
    K:=coefficientRing ring L; t:=local t; local T;
    if not isField K then error "the coefficient ring needs to be a field";
+   L = trim L;
    if dim L -1 < 0 then (T=K[t]/ideal(t); return rationalMap map(T,ring L,toList((numgens ring L):(first gens T))));
+   if not (isPolynomialRing ring L and isHomogeneous L) then error "expected homogeneous ideal in a polynomial ring";
    if L == 0 then return rationalMap(ring L);
    if unique degrees L == {{1}} then (
        N:=mingens kernel transpose sub(last coefficients(gens L,Monomials=>gens ring L),K);
        T=K[t_0..t_(numgens source N -1)];
        return rationalMap map(T,ring L,(vars T)*transpose(N));
     );
-    if degree L == 2 and codim L == 1 and numgens L == 1 and isHomogeneous L then (
+    if degree L == 2 and numgens L == 1 then (
         try(
             f:=rationalMap((rationalMap sub(gens randomKRationalPoint L,(ring L)/L))^(-1));
             assert(image f == L);
@@ -1527,7 +1189,7 @@ flatten (MultihomogeneousRationalMap) := (Phi) -> (
     Phi * g'
 );
 
-lift (RationalMap) := o -> (Phi) -> lift multihomogeneousRationalMap Phi;
+lift (RationalMap) := o -> (Phi) -> lift Phi~;
 
 lift (MultihomogeneousRationalMap) := o -> (Phi) -> (
    Psi := rationalMap Phi;
@@ -1536,33 +1198,345 @@ lift (MultihomogeneousRationalMap) := o -> (Phi) -> (
    try return rationalMap(F) else error "cannot lift given rational map";
 );
 
-graph (RationalMap) := (Phi) -> graph multihomogeneousRationalMap Phi;
+GraphIdealSat=method(TypicalValue => Ideal);
+GraphIdealSat (RingMap) := (phi) -> (
+   Pn:=ambient target phi;
+   K:=coefficientRing Pn;
+   n:=numgens Pn -1;
+   X:=ideal target phi;
+   B:=ideal toMatrix phi;
+   Pm:=ambient source phi;
+   m:=numgens Pm - 1;
+   Y:=ideal source phi;
+   x:=local x; y:=local y;
+   degs:=apply(degrees Pn,d -> append(d,0)) | toList((m+1):append(toList(#(heft Pn):0),1));
+   R:=K[x_0..x_n,y_0..y_m,Degrees=>degs];
+   p1:=map(R,Pn,{x_0..x_n});
+   E:=p1 lift(B,Pn);
+   Z:=p1(X) + ideal(matrix{{y_0..y_m}} * p1(lift(syz(gens B),Pn)));
+   --   Z:=p1(X) + minors(2,(gens E)||matrix{{y_0..y_m}});
+   (ii,Tii):=(0,infinity); for i to m do if (B_i != 0 and # terms B_i<Tii) then (ii,Tii)=(i,# terms B_i);
+   saturate(Z,ideal(E_ii))
+);
 
-graph (MultihomogeneousRationalMap) := (Phi) -> (
-  if Phi#"graph" =!= null then return Phi#"graph";
-  phi := map Phi;
-  R := (ambient target phi)**(ambient source phi); 
-  degs := apply(degrees ambient target phi,d -> append(d,0)) | toList((numgens ambient source phi):append(toList(#(heft ambient target phi):0),1));
-  R = newRing(R,Degrees=>degs);
-  bl := sub(GraphIdeal phi,vars R);
-     if not isHomogeneous bl then error "internal error occurred";
-  -- bl = multisaturate bl; -- ??
-  Z := R/bl;
+GraphIdealElim = method(TypicalValue => Ideal);
+GraphIdealElim (RingMap) := (phi) -> (
+   -- see also p. 65 in [Computations in algebraic geometry with Macaulay 2 - Editors: D. Eisenbud, D. Grayson, M. Stillman, and B. Sturmfels]
+   Pn:=ambient target phi;
+   n:=numgens Pn -1;
+   m:=numgens ambient source phi -1;
+   K:=coefficientRing Pn;
+   t:=local t; x:=local x; y:=local y;
+   R':=K[t,x_0..x_n,y_0..y_m,MonomialOrder=>Eliminate 1];
+   pr:=map(R',Pn,{x_0..x_n});
+   F:=flatten entries pr lift(toMatrix phi,Pn);
+   J':=pr(ideal target phi) + ideal apply(m+1,j->y_j-t*F_j);
+   degs:=apply(degrees Pn,d -> append(d,0)) | toList((m+1):append(toList(#(heft Pn):0),1));
+   R:=K[x_0..x_n,y_0..y_m,Degrees=>degs];
+   J:=(map(R,R',0|vars R)) ideal selectInSubring(1,gens gb J');
+   trim J
+);
+
+GraphIdeal = if blowupstrategy === "Saturate" then GraphIdealSat else GraphIdealElim;
+                     
+graphIdealInt = method()
+graphIdealInt (MutableHashTable) := (Phi) -> (
+   if Phi#"blowUpIdeal" === null then Phi#"blowUpIdeal" = GraphIdeal map Phi;
+   return Phi#"blowUpIdeal"; 
+);
+
+graphInt = method()
+graphInt (MutableHashTable) := (Phi) -> (
+  bl := graphIdealInt Phi;
+  Z := (ring bl)/bl;
   gg := multigens Z;
-  p2 := rationalMap(map(Z,source phi,last gg),Dominant=>"notSimplify");
+  p2 := rationalMap(map(Z,target Phi,last gg),Dominant=>"notSimplify");
   if Phi#"isDominant" =!= null then setKeyValue(p2,"isDominant",Phi#"isDominant");
   if Phi#"degree" =!= null then setKeyValue(p2,"degree",Phi#"degree");
   if Phi#"isBirational" =!= null then setKeyValue(p2,"isBirational",Phi#"isBirational");
   if #gg == 2 then (
-       p1 := rationalMap(map(Z,target phi,first gg),Dominant=>"notSimplify");
+       p1 := rationalMap(map(Z,source Phi,first gg),Dominant=>"notSimplify");
        setKeyValue(p1,"isDominant",true);
        setKeyValue(p1,"degree",1);
        setKeyValue(p1,"isBirational",true);
-       Phi#"graph" = (p1,p2);
-       return Phi#"graph";
+       return (p1,p2);
   );
-  Phi#"graph" = toSequence append(for i to #gg -2 list rationalMap(gg_i,Dominant=>"notSimplify"),p2);
-  return Phi#"graph";
+  return toSequence append(for i to #gg -2 list rationalMap(gg_i,Dominant=>"notSimplify"),p2);
+);
+
+graph (RationalMap) := (Phi) -> graphInt Phi;
+
+graph (MultihomogeneousRationalMap) := (Phi) -> graphInt Phi;
+
+graph (RingMap) := (phi) -> (
+  checkRationalMap phi;
+  apply(graphInt rationalMapWithoutChecking phi,map)
+);
+
+changeCoefficientRing = method()
+changeCoefficientRing (MutableHashTable,Ring) := (Phi,KK) -> (
+   Pn := ambient source Phi;
+   Pm := ambient target Phi;
+   if not isField KK then error "expected a field";
+   if (char Pn =!= char KK and char Pn =!= 0) then error "characteristic not valid";
+   I := ideal source Phi;
+   J := ideal target Phi;
+   F := lift(matrix Phi,Pn);
+   Pn' := KK[gens Pn,Degrees=>(degrees Pn)];
+   Pm' := KK[gens Pm,Degrees=>(degrees Pm)];
+   I' := sub(I,Pn');
+   J' := sub(J,Pm');
+   F' := sub(F,Pn');
+   try assert(sub(I',Pn) == I and sub(J',Pm) == J and sub(F',Pn) - F == 0) else error "cannot extend coefficient ring";
+   rationalMap(Pn'/I',Pm'/J',F')
+);
+RationalMap ** Ring := (Phi,KK) -> changeCoefficientRing(Phi,KK);
+MultihomogeneousRationalMap ** Ring := (Phi,KK) -> changeCoefficientRing(Phi,KK);
+
+SegreClass (Ideal) := o -> (I) -> (
+   if not isHomogeneous I then error "expected a homogeneous ideal";
+   if not ((isPolynomialRing ring I or isQuotientRing ring I) and isPolynomialRing ambient ring I and isHomogeneous ideal ring I) then error("expected ideal in a graded quotient ring or in a polynomial ring");   
+   I = trim I;
+   degs := unique flatten degrees I;
+   phi := if # degs == 1 then toMap I else toMap(I,max degs);
+   SegreClass(phi,MathMode=>o.MathMode)
+);
+
+SegreClass (RingMap) := o -> (phi) -> (
+   checkRationalMap phi;
+   I:=ideal toMatrix phi;
+   d1:=max flatten degrees I;
+   r:=dim I -1; n:=dim ring I -1;
+   N:=numgens ambient ring I -1;
+      verb:=MathVerb; MathVerb=false; 
+   d:=projectiveDegrees(phi,MathMode=>o.MathMode);
+      MathVerb=verb;
+   H:=local H; R:=ZZ[H]/H^(N+1); h:=first gens R;
+   if o.MathMode and MathVerb then <<certificate;
+   sum(r+1,k->(-1)^(n-k-1)*sum(n-k+1,i->(-1)^i*binomial(n-k,i)*d1^(n-k-i)*d_i)*h^(N-k))
+);
+
+ChernSchwartzMacPherson (Ideal) := o -> (X) -> ( 
+   Pn:=ring X;
+   if not (isPolynomialRing Pn and isHomogeneous X) then error "expected homogeneous ideal in a polynomial ring";
+   n:=numgens Pn -1;
+   H:=local H;
+   R:=ZZ[H]/H^(n+1); 
+   H=first gens R;
+   verb:=MathVerb; MathVerb=false;
+   csm := (I) -> (
+      if numgens I == 1 then (
+           g:=projectiveDegrees(map(Pn,Pn,transpose jacobian I),MathMode=>o.MathMode);
+           return (1+H)^(n+1)-sum(n+1,j->g_j*(-H)^j*(1+H)^(n-j));
+      );
+      I1:=ideal I_0; I2:=ideal submatrix'(gens I,{0});
+      csm(I1) + csm(I2) - csm(I1*I2) 
+   );
+   csmX:=csm trim X;
+   MathVerb=verb;
+   if o.MathMode and MathVerb then <<certificate;
+   csmX
+);
+
+ChernSchwartzMacPherson (RingMap) := o -> (phi) -> (
+  checkRationalMap phi;
+  ChernSchwartzMacPherson(lift(ideal toMatrix phi,ambient target phi),MathMode=>o.MathMode)
+); 
+
+expressionVar = method(TypicalValue => String)
+
+expressionVar (ZZ,ZZ) := (Dim,DimAmbient) -> (
+   if DimAmbient < 0 then return "empty scheme";
+   if Dim < 0 then return ("empty subscheme of PP^"| toString(DimAmbient));
+   if Dim === DimAmbient then return ("PP^" | toString(DimAmbient));
+   if Dim === 0 then return ("one-point scheme in PP^"| toString(DimAmbient));
+   if Dim === 1 then return ("curve in PP^"| toString(DimAmbient));
+   if Dim === 2 then return ("surface in PP^"| toString(DimAmbient));
+   if DimAmbient - Dim === 1 then return ("hypersurface in PP^"| toString(DimAmbient));
+   if Dim === 3 then return ("threefold in PP^"| toString(DimAmbient));
+   return(toString(Dim) | "-dimensional subvariety of "| "PP^" | toString(DimAmbient));
+);
+
+expressionVar (ZZ,List) := (Dim,DimAmbient) -> (
+   if # DimAmbient <= 0 or min DimAmbient < 0 then return "empty scheme";
+   str := "PP^"|toString(DimAmbient_0);
+   for i from 1 to #DimAmbient-1 do str = str | " x PP^" | toString(DimAmbient_i);
+   if Dim < 0 then return ("empty subscheme of "| str);
+   if Dim === sum DimAmbient then return str;
+   if Dim === 0 then return ("one-point scheme in "| str);
+   if Dim === 1 then return ("curve in "| str);
+   if Dim === 2 then return ("surface in "| str);
+   if (sum DimAmbient) - Dim === 1 then return ("hypersurface in "| str);
+   if Dim === 3 then return ("threefold in "| str);
+   return(toString(Dim) | "-dimensional subvariety of "| str);
+);
+
+expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducible, linearly normal, etc...
+  I = trim I;  d:=degree I; degs := flatten degrees I; 
+  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1 and (k != 0 or d == 1)) else error "internal error occurred";
+  if k <= 0 or k >= n then return expressionVar(k,n);
+  dimSing := if (unique degs == {1}) or (select(degs,ee->ee>1)=={2}) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=5 and n<=5) or (numgens I == n-k and n<=6) then max(dim(minors(n-k,jacobian I)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
+  singStr:=if dimSing =!= null and dimSing =!= -1 then "singular " else "";
+  cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs);
+  if d == n-k+1 and d > 2 and min degs != 1 then (
+      if dimSing === -1 then (
+           if d == 4 and k == 2 and n == 5 and unique degs == {2} and #degs == 6 then (
+             verb:=MathVerb; MathVerb=false; isD:=isDominant(toMap I,MathMode=>true); MathVerb=verb;
+             if isD then return "Veronese surface in PP^5";
+           );
+           if k==1 then return ("rational normal curve of degree "|toString(d)|" in PP^"|toString(n));
+           if k==2 then return ("smooth rational normal scroll surface of degree "|toString(d)|" in PP^"|toString(n));
+           if k==d then return ("PP^1 x PP^"|toString(k-1)|" in PP^"|toString(n));
+           if k>2 then return "smooth rational normal scroll of dimension "|toString(k)|" and degree "|toString(d)|" in PP^"|toString(n);
+      ) else return(singStr|toString(k)|"-dimensional variety of minimal degree in PP^"|toString(n)|cutOut);
+  );
+  if k == 1 then (
+         g:=genus(I);
+         if d == 1 and g == 0 then return("line in PP^"|(toString n));
+         if d == 2 and g == 0 then if dimSing === -1 then return("irreducible conic curve in PP^"|(toString n)) else return(singStr|"conic curve in PP^"|(toString n));
+         if d == 3 then if dimSing === -1 then return("smooth cubic curve of genus "|toString(g)|" in PP^"|(toString n)|cutOut) else return(singStr|"cubic curve of arithmetic genus "|toString(g)|" in PP^"|(toString n)|cutOut);
+         if dimSing === -1 then return("smooth curve of degree "|toString(d)|" and genus "|toString(g)|" in PP^"|(toString n)|cutOut) else return(singStr|"curve of degree "|toString(d)|" and arithmetic genus "|toString(g)|" in PP^"|(toString n)|cutOut);
+  );
+  if k == 2 then (
+         if d == 1 then return("plane in PP^"|(toString n));
+         if d == 2 then if dimSing === -1 then return("smooth quadric surface in PP^"|(toString n)) else return(singStr|"quadric surface in PP^"|(toString n));
+         if d == 3 then if dimSing === -1 then return("smooth cubic surface in PP^"|(toString n)|cutOut) else return(singStr|"cubic surface in PP^"|(toString n)|cutOut);
+         if dimSing === -1 then return("smooth surface of degree "|toString(d)|" in PP^"|(toString n)|cutOut) else return(singStr|"surface of degree "|toString(d)|" in PP^"|(toString n)|cutOut);
+  );
+  if numgens I == 1 and dimSing =!= null then (
+       if d == 1 then return("hyperplane in PP^"|(toString n));
+       if d == 2 then if dimSing === -1 then return("smooth quadric hypersurface in PP^"|(toString n)) else return("quadric hypersurface of rank "|toString(n-dimSing)|" in PP^"|(toString n));
+       if d == 3 then if dimSing === -1 then return("smooth cubic hypersurface in PP^"|(toString n)) else (if dimSing<k-3 then return("factorial cubic hypersurface in PP^"|(toString n)) else return("singular cubic hypersurface in PP^"|(toString n)));
+       if dimSing === -1 then return("smooth hypersurface of degree "|toString(d)|" in PP^"|(toString n)) else (if dimSing<k-3 then return("factorial hypersurface of degree "|toString(d)|" in PP^"|(toString n)) else return("singular hypersurface of degree "|toString(d)|" in PP^"|(toString n)));
+  );
+  if numgens I == 1 and dimSing === null then (
+       return(singStr|"hypersurface of degree "|toString(d)|" in PP^"|(toString n));
+  );
+  if numgens I == n-k then (
+       if unique degs == {1} then return("linear "|toString(k)|"-dimensional subspace of PP^"|(toString n));
+       if dimSing === -1 then return("smooth complete intersection of type "|toString(toSequence degs)|" in PP^"|(toString n));
+       if dimSing =!= null then if dimSing<k-3 then return("factorial complete intersection of type "|toString(toSequence degs)|" in PP^"|(toString n)); 
+       return(singStr|"complete intersection of type "|toString(toSequence degs)|" in PP^"|(toString n));
+  );
+  if dimSing === -1 then return("smooth "|toString(k)|"-dimensional variety of degree "|toString(d)|" in PP^"|(toString n)|cutOut) else return(singStr|toString(k)|"-dimensional variety of degree "|toString(d)|" in PP^"|(toString n)|cutOut);
+);
+
+expressionVar (Ideal,ZZ,List) := (I,k,n) -> ( 
+  I = trim I;  degs := degrees I; 
+  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I - (#n),-1) and (sum n) + (#n) == numgens ring I) else error "internal error occurred";
+  if k <= 0 or k >= sum n then return expressionVar(k,n);
+  if # degs == 1 then return(expressionVar(k,n)|" defined by a multiform of degree "|toString(first degs));
+  cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs); 
+  return(expressionVar(k,n)|cutOut);
+);
+
+expressionVar (Ideal) := (I) -> (
+   k := max(dim I - (# multigens ring I),-1);
+   n := apply(multigens ring I,g->(#g -1));
+   if #n == 1 then n = first n;
+   expressionVar(I,k,n)
+);
+
+setKeyValue = method(TypicalValue => Nothing)
+setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
+--  <<("--setting key \""|str|"\", for "|toString(net Phi)|", real modification: "|toString(Phi#str =!= val)|"\n");
+    errorClass := () -> error("tried to set a wrong value on the key \""|str|"\"");
+    errorChange := () -> error("tried to change the value for \""|str|"\" from "|toString(Phi#str)|" to "|toString(val));
+    if str === "map" then (
+         if class val =!= RingMap then errorClass();
+         if target val =!= target Phi#"map" then errorChange();
+         if ambient source val =!= ambient source Phi#"map" then errorChange();
+         if source val =!= source Phi#"map" then (
+             if not (isPolynomialRing source Phi#"map") then errorChange();
+             if Phi#"isDominant" === false then Phi#"isDominant" = null;
+             if Phi#"isBirational" === false then Phi#"isBirational" = null;
+             Phi#"dimSource" = max(dim source val -1,-1);
+             if Phi#"idealImage" =!= null then Phi#"idealImage" = trim sub(Phi#"idealImage",source val);     
+             if Phi#"maps" =!= null then Phi#"maps" = apply(Phi#"maps",psi -> map(target Phi#"map",source val,toMatrix psi));
+         );
+         Phi#str = val;
+         return;
+    );
+    if str === "maps" then (
+         if class val =!= List then errorClass();
+         if Phi#str === null then Phi#str = val else errorChange();
+         return;
+    );
+    if str === "isDominant" then (
+         if class val =!= Boolean then errorClass();
+         if Phi#str === null then (Phi#str = val) else (if Phi#str =!= val then errorChange());
+         if val === true then if Phi#"degree" === 1 then if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);
+         if val === true then if Phi#"idealImage" === null then setKeyValue(Phi,"idealImage",trim ideal(0_(source Phi#"map")));
+         if val === false then if Phi#"isBirational" =!= false then setKeyValue(Phi,"isBirational",false);
+         return;
+    );
+    if str === "idealImage" then (
+         if class val =!= Ideal then errorClass();
+         if ring val =!= source Phi#"map" then errorClass();
+         Phi#str = val;
+         if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",val == 0);
+         return;
+    );
+    if str === "isBirational" then (
+         if class val =!= Boolean then errorClass();
+         if Phi#str === null then (Phi#str = val) else (if Phi#str =!= val then errorChange());
+         if val === true then (if Phi#"degree" =!= 1 then setKeyValue(Phi,"degree",1); if Phi#"isDominant" =!= true then setKeyValue(Phi,"isDominant",true));
+         return;
+    );
+    if str === "inverseRationalMap" then (
+         if class val =!= RationalMap then errorClass();
+         if Phi#str === null then Phi#str = val else errorChange();
+         return;
+    );
+    if str === "projectiveDegrees" then (
+         if class val =!= List then errorClass();
+         if # val =!= 1 + Phi#"dimTarget" then errorClass();
+         if Phi#str === {} then (Phi#str = val) else (if Phi#str =!= val then errorChange());
+         if class Phi =!= RationalMap then return;
+         if Phi#"dimTarget" === Phi#"dimAmbientTarget" then if Phi#"dimSource" === Phi#"dimAmbientSource" then if (Phi#"dimTarget" === Phi#"dimSource" and Phi#"dimTarget" > 0) then (if Phi#"isDominant" =!= (last val > 0) then setKeyValue(Phi,"isDominant",last val > 0); if Phi#"degree" =!= (last val) then setKeyValue(Phi,"degree",last val));
+         if Phi#"inverseRationalMap" =!= null then if (Phi#"inverseRationalMap")#"projectiveDegrees" =!= (reverse val) then setKeyValue(Phi#"inverseRationalMap","projectiveDegrees",reverse val);
+         return;
+    );    
+    if str === "degree" then (
+         if class val =!= ZZ then errorClass();
+         if Phi#str === null then (Phi#str = val) else (if Phi#str =!= val then errorChange());
+         if val === 1 then if Phi#"isDominant" === true then if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);
+         return;
+    );
+    error("key not found");
+);
+
+toMatrix = (phi) -> ( -- phi RingMap
+   submatrix(matrix phi,{0..(numgens source phi -1)})
+);
+
+random1 = (R) -> (
+   K:=coefficientRing R;
+   if class K =!= FractionField then random(1,R) else sum for s to numgens R -1 list (sum for b to abs random(ZZ) list random(b,ring numerator 1_K)) * (gens R)_s
+);
+
+randomLinearSubspace = (R,i) -> (
+   -- input: polynomial ring R, integer i
+   -- output: ideal of a random i-dimensional linear subspace of Proj(R)
+   n:=numgens R -1;
+   if i == n then return ideal R;
+   if i <=-1 then return sub(ideal 1,R);
+   L:=trim ideal for j to n-1-i list random1(R);
+   -- return if dim L - 1 == i then L else randomLinearSubspace(R,i);
+   L
+);
+
+genericRestriction = (phi) -> (
+   -- restriction of a rational map X \subset P^n ---> Y \subset P^m to a general hyperplane section of X 
+   Pn:=ambient target phi;
+   n:=numgens Pn -1;
+   K:=coefficientRing Pn;
+   x:=local x;
+   H:=K[x_0..x_(n-1)];
+   j:=map(H,Pn,random(toList(x_0..x_(n-1))|{random1 H}));
+   j=map(H/j(ideal target phi),target phi,toMatrix j);
+   phi':=j*phi;
+   phi'
 );
 
 multigens = method()
@@ -1581,32 +1555,58 @@ multisaturate (Ideal) := (I) -> (
   return I;
 );
 
-DimDegreeSegreEmbedding = method(); 
-DimDegreeSegreEmbedding (Ideal,List) := (W,li) -> ( -- W multisaturated ideal in P^n1 x P^n2 x ..., li = {n1,n2,...}
-   r := (dim W) - (# li);
-   if r <= -1 then return (-1,0);
-   if (#li =!= 2 and r =!= 0) then error "not implemented yet";
-   mdeg := multidegree W;
-   T := gens ring mdeg;
-         assert((sum li) - r == first degree mdeg and #T == #li and heft(ring W) == toList(#li : 1));
-   if #li == 2 then (
-       mons := matrix{for i to r list T_0^((li_0)-r+i) * T_1^((li_1)-i)};
-       d := reverse flatten entries sub(last coefficients(mdeg,Monomials=>mons),ZZ);
-       return (r,sum(r+1,j -> binomial(r,j) * d_j)); -- [Harris, Exercise 19.2]
-   );
-   if r == 0 then (
-       mon := product apply(#li,i -> T_i^(li_i));
-       d0 := coefficient(mon,mdeg);
-         assert(d0*mon == mdeg and class d0 === ZZ);
-      return (r,d0);
-   );
+getMultidegree = method()
+
+getMultidegree (RingElement,List,ZZ,ZZ) := (mdeg,n,m,r) -> (
+   -- input: mdeg: multidegree of a subvariety of P^(n_1) x ... x P^(n_k) x P^m
+   --        n: {n_1,...,n_k}
+   --        r == (sum n) + m - (first degree mdeg) -- the dimension of the subvariety
+   -- output: multidegree of the same variety as embedded in Seg(P^(n_1) x ... x P^(n_k)) x P^m
+   k := #n;
+   N := product apply(k,i -> n_i+1) -1; 
+   T1 := (gens ring mdeg)_{(0 .. k-1)}; T2 := last gens ring mdeg;
+   mon := (product apply(k,i -> T1_i^(n_i))) * T2^m;
+   -- T := local T; R := ZZ[T_0,T_1];
+   d := local d;
+   for i from 0 to max(0,r-m) -1 do d_i = 0;
+   for i from max(0,r-m) to min(r,N) do d_i = coefficient(mon,mdeg * (sum T1)^i * T2^(r-i));
+   for i from min(r,N) + 1 to r do d_i = 0;
+   -- mdeg' := sum for i from max(0,r-m) to min(r,N) list d_i * T_0^(N-i) * T_1^(m-r+i); <<mdeg'<<endl;
+   reverse for i to r list d_i
 );
 
----------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------
------------------------- end RationalMap ----------------------------------------------
----------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------
+getMultidegree (RingElement,ZZ,ZZ,ZZ) := (mdeg,n,m,r) -> getMultidegree(mdeg,{n},m,r);
+
+getMultidegree (RingElement,List) := (mdeg,n) -> first getMultidegree(mdeg,n,0,(sum n) - (first degree mdeg));
+
+checkRationalMap0 = (phi) -> ( -- phi RingMap
+   if coefficientRing target phi =!= coefficientRing source phi then error "different coefficient rings in source and target are not permitted";
+   if not isField coefficientRing target phi then error("the coefficient ring needs to be a field");
+   if not ((isPolynomialRing source phi or isQuotientRing source phi) and (isPolynomialRing target phi or isQuotientRing target phi) and isPolynomialRing ambient source phi and isPolynomialRing ambient target phi and isHomogeneous ideal source phi and isHomogeneous ideal target phi) then error("source and target of the ring map need to be quotients of polynomial rings by homogeneous ideals");
+   if not (isHomogeneous ideal toMatrix phi) then error("the map needs to be defined by homogeneous polynomials of the same degree");
+   D:=degrees ideal compress toMatrix phi; if #D != 0 then if not (min D == max D) then error("the map needs to be defined by homogeneous polynomials of the same degree");
+);
+
+checkRationalMap = (phi) -> ( -- phi RingMap
+   if not (degrees ambient source phi == toList((numgens ambient source phi):{1})) then error "expected standard grading on source ring map";
+   if not (degrees ambient target phi == toList((numgens ambient target phi):{1})) then error "expected standard grading on target ring map";
+   checkRationalMap0 phi;
+);
+
+checkMultihomogeneousRationalMap = (phi) -> ( -- phi RingMap
+   if not (degrees ambient source phi == toList((numgens ambient source phi):{1})) then error "expected standard grading on source ring map";
+   if not (flatten multigens ambient target phi == gens ambient target phi) then error ("given grading on target ring map is not permitted");
+   checkRationalMap0 phi;
+);
+
+checkLinearSystem0 = (F) -> ( -- F row matrix
+   if not isField coefficientRing ring F then error("the coefficient ring needs to be a field");
+   if not ((isPolynomialRing ring F or isQuotientRing ring F) and isPolynomialRing ambient ring F and isHomogeneous ideal ring F) then error("the base ring must be a quotient of a polynomial ring by a homogeneous ideal");
+   if not (numgens target F == 1) then error("expected a row matrix");
+   if numgens source F == 0 then return;
+   if not (isHomogeneous ideal F) then error("expected homogeneous elements of the same degree");
+   D:=degrees ideal compress F; if #D != 0 then if not (min D == max D) then error("expected homogeneous elements of the same degree");
+);
 
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
@@ -1750,7 +1750,8 @@ specialCremonaTransformation (Ring,ZZ) := (K,a) -> (
         "dimAmbientTarget" => numgens ring F -1,
         "dimTarget" => numgens ring F -1,
         "dimAmbientSource" => numgens ring F -1,
-        "dimSource" => numgens ring F -1
+        "dimSource" => numgens ring F -1,
+        "blowUpIdeal" => null
    }
 );
 
@@ -1872,6 +1873,161 @@ quadroQuadricCremonaTransformation (ZZ,ZZ) := (n,i) -> quadroQuadricCremonaTrans
 
 quadroQuadricCremonaTransformation (ZZ,ZZ,Ring) := (n,i,K) -> quadroQuadricCremonaTransformation(K,n,i);
 
+examplesQuadratic := (K,j) -> (
+   x:=local x; y:=local y; 
+   B:=local B; Z:=local Z; TB:=local TB; D:=local D;
+   P7:=K[x_0..x_7];
+   B_1=(x_4*x_6-x_3*x_7,
+   x_1*x_6-x_0*x_7,
+   x_2*x_4-x_1*x_5,
+   2*x_1*x_4+x_3*x_4-x_5*x_7,
+   x_3^2+2*x_0*x_4-x_5*x_6,
+   x_2*x_3-x_0*x_5,
+   x_1*x_3-x_0*x_4,
+   2*x_1^2+x_0*x_4-x_2*x_7,
+   2*x_0*x_1+x_0*x_3-x_2*x_6);
+   y=symbol y; Z_1=K[y_0..y_8];  Z_1=Z_1/ideal(2*y_1*y_2+y_0*y_5+2*y_6^2-y_4*y_7+y_3*y_8);
+   TB_1="quadro-quadric birational transformation of P^7 into a quadric hypersurface,    dim(B)=3, deg(B)=6, g(B)=1 ";
+   D_1={1, 2, 4, 8, 10, 8, 4, 2};
+   P8:=K[x_0..x_8]; 
+   B_4=(x_0*x_7+x_2*x_7-x_4*x_7-x_5*x_7-x_7^2-x_3*x_8+x_6*x_8-x_7*x_8,
+   x_5*x_6-x_4*x_7-x_5*x_7+x_6*x_8,
+   x_2*x_6-x_1*x_7,
+   x_3*x_5-x_1*x_7-x_5*x_7+x_6*x_7+x_6*x_8,
+   x_2*x_5-x_4*x_5-x_5^2-x_6*x_7-x_1*x_8+x_4*x_8-x_5*x_8,
+   x_0*x_5-x_5*x_7+x_6*x_7+x_6*x_8,
+   x_3*x_4-x_0*x_6-x_1*x_6+x_4*x_6+x_6^2+x_5*x_7,
+   x_2*x_4-x_1*x_5+x_4*x_5+x_5^2+x_6*x_7-x_4*x_8+x_5*x_8,
+   x_0*x_2+x_3*x_7-x_4*x_7-x_5*x_7-x_7^2-x_0*x_8+x_6*x_8-x_7*x_8,
+   x_0*x_1-x_0*x_4+x_3*x_6-x_4*x_6-x_6^2-x_5*x_7);
+   y=symbol y; Z_4=K[y_0..y_9]; Z_4=Z_4/ideal(y_0*y_1^2-y_1*y_2^2-y_0*y_1*y_3+y_2^2*y_3+y_1*y_3^2-y_2*y_3^2-y_0*y_1*y_4+y_1^2*y_4+y_1*y_2*y_5+y_0*y_4*y_5-y_3*y_4*y_5-y_1*y_5^2+y_0*y_1*y_6-y_1^2*y_6-y_0*y_2*y_6+y_1*y_3*y_6+y_1*y_4*y_6+y_1^2*y_7-y_1*y_2*y_7+y_2*y_5*y_7-y_3*y_5*y_7-y_5*y_6*y_7-y_1^2*y_8+y_1*y_2*y_8+y_1*y_5*y_8-y_2*y_5*y_8-y_4*y_6*y_8-y_1*y_7*y_8+y_3*y_7*y_8-y_1^2*y_9-y_2*y_4*y_9+y_3*y_4*y_9+y_1*y_5*y_9-y_2*y_5*y_9+y_0*y_7*y_9-y_1*y_7*y_9+y_1*y_8*y_9);
+   TB_4="quadro-cubic birational transformation of P^8 into a cubic hypersurface,    dim(B)=3, deg(B)=11, g(B)=5 ";
+   D_4={1, 2, 4, 8, 16, 21, 17, 9, 3};
+   B_5=(2107073871295466094024469640453944189760130*x_3^2-842829548518186437609787856181577675904052*x_2*x_4-43050682299967585129821078143910675610*x_3*x_5-14658770374991370253606696980572097801*x_4*x_5+86101364599935170259642156287821351220*x_2*x_6+128451986053783475533521773611642422565*x_3*x_6+10845091919929952023031951529177956265*x_4*x_6+810749497528231209626592650984035*x_6^2-22063253671530649706195315483512773424*x_2*x_7-10845091919929952023031951529177956265*x_3*x_7-162149899505646241925318530196807*x_5*x_7+25201940343514732079882163869277313150827126324971927147530746009673763444102076642470462552156533246093265400583259775972176157718298880*x_2*x_8-56438547237989237432338684216001194940685169283852094592325766001554448413720129845793725185475553588506466550914612477593522900755910160*x_3*x_8+438320485024905487732621558809520042874445891228901607087493562475879623289149144324445347692216574547952792095068869800500391365440*x_5*x_8-2287481224994074209949131266197693795153901595626499405003088672472214770884062576132154167129138055748763987554733096080552282510760*x_6*x_8+290488739365831382704696182165668854606972673003755211679444806189838893930911780113894262394830420962981812504746099996941966033480*x_7*x_8,
+   8428295485181864376097878561815776759040520*x_2*x_3-421414774259093218804893928090788837952026*x_1*x_4-172202729199870340519284312575642702440*x_2*x_5-35593689025984526893406013353076821271*x_4*x_5+43050682299967585129821078143910675610*x_1*x_6+220632536715306497061953154835127734240*x_2*x_6+177968445129922634467030066765384106355*x_3*x_6-73346283301327030096079406117100655115*x_4*x_6+12151659904441599435569033216641535*x_6^2-11031626835765324853097657741756386712*x_1*x_7+73346283301327030096079406117100655115*x_3*x_7-2430331980888319887113806643328307*x_5*x_7+12600970171757366039941081934638656575413563162485963573765373004836881722051038321235231276078266623046632700291629887986088078859149440*x_1*x_8-225754188951956949729354736864004779762740677135408378369303064006217793654880519383174900741902214354025866203658449910374091603023640640*x_2*x_8+1064307758330949250703948777866345655663825837074287146536038965516763010775844177125938196689569551231187945490135254596516867202240*x_5*x_8-2573763042088303731238776564610756526002324607318980388967701381593116133878346420359369593510090323445191875544177175473042513388760*x_6*x_8-1964600164819002705391238115987995897005947393509652649067408555370444001417487517599701872360647933941127412561565722333855868366680*x_7*x_8,
+   21985034862471045824421672069085823277700308876564774348442540098908746072343940*x_1*x_3+19255281783060694498306337891134011581129912662174580916006708762035849266376277000*x_0*x_4-5794570472064891844527327842464424899280589145486969008870203583332128436304693*x_1*x_4-14977175819526395192445914735910051541089632833507258970088591583723996871971962*x_2*x_4+11120622161415045681398455633007506826123174098618763286503142742347102898810215*x_3*x_4-293653231385844051935318949853727968210930572912889169858025437257482485021910*x_4^2-31597410626711491812025568354246870197302891021890628817245356398258820042273940*x_0*x_5-2286644391452105277724584585558672971945373860850594897607494543074507223180*x_2*x_5-1405966909362865007971989176804823161082505137927306902683580585941294348970*x_3*x_5-716224013691660736053228330266805839735383058194671159504190496080608223499*x_4*x_5-69250776080541763202320993482736784063173553041497163343329828298994893440137030*x_0*x_6+571661097863026319431146146389668242986343465212648724401873635768626805795*x_1*x_6+4423437044970606427847382152930278940179341097282847869017782874194561269660*x_2*x_6+2782858634991185961699387116303727734344179132911639568544025227745547078180*x_3*x_6+39120707881013508311490517384670529407470076973702326137009027952866463255*x_4*x_6-53661790217935475662286448991578175646064305248147792122150743071455135*x_6^2+2251341440624804398170778615545247756283801058998816968911528352307365718501310*x_0*x_7-80575161312243820595170189966031630900716541071411703182531085115598628586*x_1*x_7+319304573386847087426701814012120585733094463224686491590770901062997615726*x_2*x_7-39120707881013508311490517384670529407470076973702326137009027952866463255*x_3*x_7+10732358043587095132457289798315635129212861049629558424430148614291027*x_5*x_7-37150843392476207005982397266013505466097459662978485971876462405314630622016207651025927470307360032112220135534469982072145981601455076781387416331424007925382231012188809342560*x_0*x_8-494921949991064134211472175082291589468427099983811566778022877940258654607825161276115233046941586158290816141017459621107772865245660123400300920981714152635061875802276320*x_1*x_8-39085739816627153343756050375570728242722375829280853843632896126514045414551672040569355846517173917116072741960804578361070048199666741889831710334486328772083227486648400*x_4*x_8-17344479020523879259579501313017018406599543528535569089919831890278519599873182476160715224791734270348169574108448385703778759094654792298951577525721716459017167654640*x_5*x_8-96377812103142937363685044304070978183606666342245426727317257657194169997420231747305702176799247987362758226397785810278112540392100052293525382786208643742516550588240*x_6*x_8+8027717921984165193293033610351887693170047415491010461149087051943409050562314684292095482134651973789473560451203175934315569248452316123265597122816511458735001445040*x_7*x_8,
+   29077619423877432097537681038264429818689794*x_0*x_3-594099415739552674791530878385967323418*x_0*x_5-10829169213901154678648680021982129*x_4*x_5+761182251667807414863738384181190683128*x_0*x_6+54145846069505773393243400109910645*x_3*x_6+1148157481181297370006492637750889*x_4*x_6+1300115323569695774922711955075*x_6^2-1148157481181297370006492637750889*x_3*x_7-260023064713939154984542391015*x_5*x_7-778851951884251476566273842180816490181455336117158905374095570821451388109337791871953407559562639521389238402621652190790616030431560208*x_0*x_8+323809336037622664122426117797563297740069761979559937618178499740454893133741282854842282174973340989677648147574773658178493760*x_5*x_8-1484642956573524804851555731805754683025268158813444720345163903381654911698817797597346834812324711822041815023319821271061837800*x_6*x_8+30753710689061414383892752760626629258520128530788101674097751705193766605011141769460983256551663942666145501189813887901874248*x_7*x_8,
+   175880278899768366595373376552686586221602471012518194787540320791269968578751520*x_2^2+19255281783060694498306337891134011581129912662174580916006708762035849266376277000*x_0*x_4-5794570472064891844527327842464424899280589145486969008870203583332128436304693*x_1*x_4-14977175819526395192445914735910051541089632833507258970088591583723996871971962*x_2*x_4+11120622161415045681398455633007506826123174098618763286503142742347102898810215*x_3*x_4-293653231385844051935318949853727968210930572912889169858025437257482485021910*x_4^2-31597410626711491812025568354246870197302891021890628817245356398258820042273940*x_0*x_5+772323612711921244477779931640031808586828667256481553634986577593884591580*x_2*x_5-3262874976945494699926743066037490606867282156759979226692717506309319866960*x_3*x_5-716224013691660736053228330266805839735383058194671159504190496080608223499*x_4*x_5-69250776080541763202320993482736784063173553041497163343329828298994893440137030*x_0*x_6-193080903177980311119444982910007952146707166814120388408746644398471147895*x_1*x_6+5874117300616157723076585123814410872071846849168234145900596035899277754240*x_2*x_6-1043586696090031970637216907508219846679678372369007490941537092294977116170*x_3*x_6+39120707881013508311490517384670529407470076973702326137009027952866463255*x_4*x_6-234550849635922071434755535427651813979992822806159891688148033002375585*x_6^2+2251341440624804398170778615545247756283801058998816968911528352307365718501310*x_0*x_7+32581632663741583838845050413028517083135873217586215374241948835968098984*x_1*x_7+1849882705819334260361343423536899618142637465336945315384995829079207293466*x_2*x_7-39120707881013508311490517384670529407470076973702326137009027952866463255*x_3*x_7+46910169927184414286951107085530362795998564561231978337629606600475117*x_5*x_7-37150843392476207005982397266013505466097459662978485971876462405314630622016207651025927470307360032112220135534469982072145981601455076781387416331424007925382231012188809342560*x_0*x_8-494921949991064134211472175082291589468427099983811566778022877940258654607825161276115233046941586158290816141017459621107772865245660123400300920981714152635061875802276320*x_1*x_8-39085739816627153343756050375570728242722375829280853843632896126514045414551672040569355846517173917116072741960804578361070048199666741889831710334486328772083227486648400*x_4*x_8-17344479020523879259579501313017018406599543528535569089919831890278519599873182476160715224791734270348169574108448385703778759094654792298951577525721716459017167654640*x_5*x_8-96377812103142937363685044304070978183606666342245426727317257657194169997420231747305702176799247987362758226397785810278112540392100052293525382786208643742516550588240*x_6*x_8+8027717921984165193293033610351887693170047415491010461149087051943409050562314684292095482134651973789473560451203175934315569248452316123265597122816511458735001445040*x_7*x_8,
+   527640836699305099786120129658059758664807413037554584362620962373809905736254560*x_1*x_2+404516325112852774513461343547976110764722068645276916051749998164135239501443248000*x_0*x_4-447571305964451675871887284021339705648736639512375602759630853820335539489934737*x_1*x_4-397398307872424384563448954570300760814068735249682152947590990924738992429845974*x_2*x_4+566327030362438930519053219077354049036504187422259139092821358393934462617391055*x_3*x_4-4914024714201580098546172919647119414037380508825115585664069293481914751634920*x_4^2-256197633416163807862391742560324277227104780009413319314370578531178171412498280*x_0*x_5-124504743616325252059685856245025003446180664046081584875575471652900052815540*x_2*x_5-135172336067462151933174115826910398398557142522901871218788914798125903713980*x_3*x_5-59833528256466530425598240222147706611044050031287081349884230607434135113094*x_4*x_5-1375610812747730590254219009721708073039392810843493162938013470020464233319841360*x_0*x_6+31126185904081313014921464061256250861545166011520396218893867913225013203885*x_1*x_6+432918253178076943044195604727250098486378274578183977524468244890124418376440*x_2*x_6+150974152490231330549168284112511335475285931225683846964152593251058115803815*x_3*x_6-50888075385572201263606415432170602637829811279678100592069392728899852664430*x_4*x_6+5535443666292387320050513093099679903607280683313153396411883368304186690*x_6^2+37674189475545447422187325717294582174286583900992552823424531250028013095867720*x_0*x_7-8128679052157631958892368653671465084463199476619011754344520764693630547424*x_1*x_7+59277395516840528631529166799290879031973727572300623914107423914445023904662*x_2*x_7+50888075385572201263606415432170602637829811279678100592069392728899852664430*x_3*x_7-1107088733258477464010102618619935980721456136662630679282376673660837338*x_5*x_7-708189270430106803743733668160018432645128814531445971448959496152448796647748019516145474752383559706901672076868524990826120983599262665609688265986057052739996042985127439006720*x_0*x_8+4235538577596689201938023511467474710649864405111704420494435017580390250403847680020433565383789126211629174230354206470159828288129331517980262146929958023798381337181299680*x_1*x_8-12518668894821330868408240958197947685270907442374889935267972106413611644531524200768263331338157893872085747173079491841231151803178270580824522332860939955235551005044162200*x_4*x_8+995970469355139405072919512110963704027948657332286899584845938058078889135647896616144006308901579909421241371462712830662307141142769372804443211798621465539622238685360*x_5*x_8-2997016699724188590497282598804383897492077061303969933589583153414254932475667163055209388144907890075609859563425119589249987981879012560980437651131223065729591825063440*x_6*x_8-1011171449721990456157128754358132173579689259574535941386866577327792402425746144823199931288955733691398063532035967801060615454374003558676897978587513151076620949491000*x_7*x_8,
+   58155238847754864195075362076528859637379588*x_0*x_2+1011455155874404547498862091659474748269*x_0*x_5-54145846069505773393243400109910645*x_3*x_5-748311342475166689589204655513278982285*x_0*x_6+108291692139011546786486800219821290*x_2*x_6+5740787405906486850032463188754445*x_3*x_6-1193749778317098047473876980980*x_6^2-2296314962362594740012985275501778*x_2*x_7+238749955663419609494775396196*x_5*x_7,
+   1582922510097915299358360388974179275994422239112663753087862887121429717208763680*x_1^2+19612247462935611853761266019306531848779657223262095776877879049499146837342867336000*x_0*x_4-12244896602811330487868613987442538627084380774391140583616333510591232565904379281*x_1*x_4-8439445354610169259518860655245178880082444148576299702277981124088501970476983086*x_2*x_4+19782733804944856029619480695331780323358559089401096312663435303943564522474646595*x_3*x_4-312485547739410094241622730224366899942940228921221782481372577426526918234615080*x_4^2-23150381483477568685132474157478994608622933275575713734490778502552999078074859720*x_0*x_5-5503628205844363455774782485884088499281618691277821800787860422633175238357860*x_2*x_5-4297710750790184029551262742944539498886092777622416502764462751800226347255000*x_3*x_5-1465806306864158949166662858300165451553347916416630095848851203922948418001664*x_4*x_5-72798312616113174365671905134842508480183377326315753884587610628517694592251894640*x_0*x_6+1375907051461090863943695621471022124820404672819455450196965105658293809589465*x_1*x_6+10521356403544295273418932314943774739118586588787349364780072307545470011576640*x_2*x_6+2674749724739205148523394085676179827038881338103578460966320078053386824108425*x_3*x_6-853821965864727665029780723992551337100732651351968637980760605452041501465640*x_4*x_6+43280249953481367996314933852838236898935316278748529965507521128618354840*x_6^2+2395722532668810722519107598386812899562541755062700332357189760270039706465382280*x_0*x_7-96296745098196360715820341452734787067320051677125817962557340197250865853332*x_1*x_7+1861712723832635838923968082329858972291143297591828807311174376624542106359958*x_2*x_7+853821965864727665029780723992551337100732651351968637980760605452041501465640*x_3*x_7-8656049990696273599262986770567647379787063255749705993101504225723670968*x_5*x_7-38610596861223991955363248137861044916114118646308181730739111521831589317670510745264016999984338716953859860936803113148264262874360981761589526557904609253055960140918966416897280*x_0*x_8+71567567946591391780572567638170922185445643606250993025917318204548258046346126188206391485765441012617262096047343290036338275147240515592578601358348314379469073871444661280*x_1*x_8-236585811011388295268377001747009044936188187465623889800613671791077198394671471094449703858376789845376962685189084492609917559395039482907541921397071418705807125266297311800*x_4*x_8+28726932404075652980257067413973032641158927359535834169590160116695624856891986327695684988298844608021084631176349930731480537395022963178651948881773265287770013163217360*x_5*x_8-105067364042721746009581927335917339706909963632148930307571387940717996315430392871588982120367101821867824145643169308542301380214405707668820716444075032346542956284866640*x_6*x_8-17950063365304707388948001872094244298999289941035722501033957973965952161862277109670957094777971720886614486241168920026187058467232910168415614558523494277106517027930040*x_7*x_8,
+   29077619423877432097537681038264429818689794*x_0*x_1+2455964542792932355645014921362300667699*x_0*x_5-216583384278023093572973600439642580*x_2*x_5+5060893547791565076629479022079945202935*x_0*x_6+54145846069505773393243400109910645*x_1*x_6+22963149623625947400129852755017780*x_2*x_6+9908841887272858818084089267645*x_6^2-1148157481181297370006492637750889*x_1*x_7-1981768377454571763616817853529*x_5*x_7,
+   184639204729116281136006268391698654558731384870177107147057222536835608648957635071760*x_0^2-3536347577149983722511891990133820737124535898402020119722851543022149315057654420*x_0*x_4+16668500041389628712471288493892899956828670216319637521684835095344954233292*x_1*x_4-837370331538354425274004896036072678674409166889944131972878276390920048824588*x_2*x_4-134979400718673224778121101284853520061538035063239695299099231605307311077879*x_3*x_4+64174571356677714071888714142776925445458287465249426631582359669698560435003*x_4^2+935407614089039454105537311011796672859963839290279691346314393448582718665042*x_0*x_5-35261290310953711679081548370203986271600329638502215502617717914928237808*x_2*x_5-4961793737738232810448513308860925601482979141747633239876393471560636038*x_3*x_5+287176467025208351962129922237588423031510350811093717450377870024639716*x_4*x_5-134490436881269930942917336454548978107545760910721499786955395271596585722661*x_0*x_6+8815322577738427919770387092550996567900082409625553875654429478732059452*x_1*x_6+7126863296183608244753059813967466934567367175541984859815275838900422956*x_2*x_6+68179996657040081008192234667151992198281565833562314087215536855496909980*x_3*x_6-11382463729722946888625756333013058555257278191734256466255156403797707603*x_4*x_6+3516426783114549039657829920090730796973873161550089755410676044483560*x_6^2-492005047067862474551146808427956428415180203900245604175464757467688963335023*x_0*x_7+139836208964642868807198340187719213419929555397664080996875555211042456*x_1*x_7-27846351596866449107201153711335973725375647035047113069786970482248043424*x_2*x_7+11382463729722946888625756333013058555257278191734256466255156403797707603*x_3*x_7-703285356622909807931565984018146159394774632310017951082135208896712*x_5*x_7-294694634709016055712521777130199377825062245095165110594123251102626375320876421513378497816144382285211801219133484989227029388093671942697673027191075647104646622845202427040*x_0*x_8+4519915369723437218770005122822964788135336668038522858147965954562482441521966314596983296649950335217720352833638845745873419855158238369993536787011379281846611097529344*x_1*x_8+2143796769373929127699885635911465377028426894706507725070224259172800520983140826746024180537258859646658375102267977547267505669087902446991849185338606079287097915084368*x_4*x_8+363460944584970093274549450727472279253925298718286586049772801613136784340111653474063184083587595667179765591980169747710258615774058127784146800440829579719740748800*x_5*x_8-68920314557253836954213476520502332158636414366175345260938263971258077033288097130934744881784910527196699954786221729833409267354291071968669093893529489951421778480*x_6*x_8+88374097429077179756403346156036371929169003871229870425853873490035137414016846542967432717061173951889951585015367758262666636040726942555910827784121277081048704704*x_7*x_8);
+   y=symbol y; Z_5=K[y_0..y_9]; Z_5=Z_5/ideal(y_2*y_3-y_3*y_4+10433917463441497436766853066385334338*y_1*y_6-10433917463441497436766853066385334338*y_0*y_8);
+   TB_5="quadro-quartic birational transformation of P^8 into a quadric hypersurface,    dim(B)=3, deg(B)=11, g(B)=5 ";
+   D_5={1, 2, 4, 8, 16, 21, 17, 8, 2};
+   B_6=(x_4*x_5-x_3*x_6-x_0*x_7+x_2*x_8+x_6*x_8+x_8^2,
+   x_2*x_5-x_1*x_6+x_1*x_7+x_6*x_7+x_0*x_8+x_1*x_8+x_4*x_8+x_5*x_8+x_7*x_8,
+   x_2*x_3-x_1*x_4+x_1*x_7+x_2*x_8+x_4*x_8+2*x_7*x_8,
+   x_0*x_3+x_1*x_3+2*x_0*x_4-x_1*x_4+2*x_3*x_4+x_4^2+x_3*x_5-2*x_3*x_6-x_0*x_7+x_1*x_7-x_3*x_7-x_5*x_7-x_7^2+x_0*x_8+x_1*x_8+2*x_2*x_8+x_4*x_8+x_5*x_8+2*x_6*x_8+2*x_8^2,
+   x_2^2-x_0*x_4-x_1*x_4-x_4^2+2*x_2*x_6-x_3*x_6+x_4*x_6-x_0*x_7+2*x_6*x_7+2*x_2*x_8+x_6*x_8+x_8^2,
+   x_1*x_2+2*x_0*x_4-x_1*x_4+x_3*x_4+x_4^2+2*x_1*x_6-x_3*x_6+x_0*x_7+x_4*x_7+x_1*x_8+x_2*x_8+x_6*x_8+x_8^2,
+   x_0*x_2+x_1*x_4-x_1*x_6+x_4*x_6+x_4*x_8,
+   x_1^2-x_1*x_3+2*x_0*x_4-x_1*x_4+x_2*x_4+x_3*x_4+x_4^2+2*x_1*x_5+2*x_1*x_6-2*x_3*x_6-2*x_4*x_6+x_0*x_7-2*x_1*x_7+x_2*x_7+x_4*x_7-x_6*x_7+2*x_1*x_8-2*x_3*x_8-3*x_4*x_8+2*x_5*x_8-4*x_7*x_8,
+   x_0*x_1+x_1*x_3-x_1*x_5+x_3*x_6+x_0*x_8+2*x_3*x_8+x_4*x_8-x_5*x_8+x_6*x_8+x_7*x_8+x_8^2,
+   x_0^2-x_1*x_3-x_0*x_4+x_1*x_4-x_3*x_4-x_4^2+x_0*x_5+x_1*x_5+x_0*x_6-x_1*x_6+x_2*x_6+x_3*x_6+x_4*x_6-x_5*x_6+2*x_6^2-x_0*x_7-x_4*x_7+x_6*x_7-x_0*x_8-2*x_3*x_8-x_4*x_8+x_5*x_8+x_6*x_8-x_7*x_8-x_8^2);
+   y=symbol y; Z_6=K[y_0..y_9]; Z_6=Z_6/ideal(y_0*y_2-y_0*y_5-y_1*y_5+y_2*y_5+2*y_0*y_6-y_3*y_6+y_5*y_6+y_0*y_7+2*y_0*y_8+y_2*y_8-y_4*y_8+y_2*y_9);
+   TB_6="quadro-quartic birational transformation of P^8 into a quadric hypersurface,    dim(B)=3, deg(B)=12, g(B)=7 ";
+   D_6={1, 2, 4, 8, 16, 20, 16, 8, 2};
+   B_7=(12800405514955877832174084928891046850*x_2*x_4+800661433860824877177208084495827804780*x_3*x_4+2882674550668109534630543495691065988*x_4^2+298865743005402947501654041732147084000*x_0*x_5-57912844583708801098859705656442890300*x_1*x_5-145291755768177462377103609119031060000*x_2*x_5+3883225537284567475909846470867207261000*x_3*x_5+53927306362260584829093572519595515505*x_4*x_5+243714269036477166299764995307240725000*x_5^2+75972932184062756490793091230025154924*x_0*x_6-9112848284706414750577275665342821902*x_1*x_6-47006886372026668894556467439372541000*x_2*x_6-27108858476794925489968914621201882513*x_3*x_6-480445758444684922438423915948510998*x_4*x_6+16555982954807171674533377762015856345*x_5*x_6+80074293074114153739737319324751833*x_6^2+808621536210107736638195267456653532*x_0*x_7-70419007532619904088221007715149186*x_1*x_7-487428538072954332599529990614481450*x_2*x_7-3311196590961434334906675552403171269*x_3*x_7-26691431024704717913245773108250611*x_4*x_7+1093154478643676001612763653328786684255329522099600*x_0*x_8-28697400215941164852189926771162415104573736205200*x_1*x_8+638585921674010278922707550111336320500185366375000*x_2*x_8+29388464541624371701319950302310010839902749906902800*x_3*x_8+133104569005680821663817579422035764160953996471360*x_4*x_8+1694436799907910430670375950952989522623330846699600*x_5*x_8+18284986348301955422560460279884033081759365084786*x_6*x_8-411166897357714914502123406644664208541402899022*x_7*x_8,
+   161285109488444060685393470104027190310*x_1*x_4-1696676465272100696692967160776319141735*x_3*x_4+3839614195481631112997860516414743804*x_4^2-3848762650689913565217705542418470057000*x_0*x_5+1700365812659505809608125232083272059700*x_1*x_5-550056580306938424750139815887159637500*x_2*x_5-17189822537191775832676907158428633081000*x_3*x_5-57171213350001060379222036152270001680*x_4*x_5+430182116614098738376623672011807580000*x_5^2-1112348684736558176345826017238566511372*x_0*x_6+108465556844989247596587540385538733702*x_1*x_6-97193469544923037094184164258484060120*x_2*x_6-1782876969476633226774955122502195767687*x_3*x_6-639935699246938518832976752735790634*x_4*x_6+16141829633672861621698120320416196480*x_5*x_6+106655949874489753138829458789298439*x_6^2-10751745128200928473619482836909940396*x_0*x_7+96849820329286328254634227041535516*x_1*x_7-860364233228197476753247344023615160*x_2*x_7-3228365926734572324339624064083239296*x_3*x_7-35551983291496584379609819596432813*x_4*x_7-7215303624373232521692416198208576975623322399877800*x_0*x_8+7732886985383338112151819571244247209372337786067800*x_1*x_8-1384425371375721220344294233891861060010005825851500*x_2*x_8-160975986618849931878980884736400630525803324424407100*x_3*x_8+146779327461963099144187333251957731993987400815040*x_4*x_8-2944989874706267679571078549578865775717966734227900*x_5*x_8+428992717089393744197226176714909740924563200289987*x_6*x_8+1074820509210403514528623500076702881820310495211*x_7*x_8,
+   645140437953776242741573880416108761240*x_0*x_4-533713632449812196053363179283302245640*x_3*x_4-686072458313670052817435460606509700*x_4^2+2112148787087916737685234353519695010800*x_0*x_5+273245782153691195836310108343187436300*x_1*x_5-196514581036683371032584662204115225000*x_2*x_5-6141278724647171687003125687309812198000*x_3*x_5-23464700922467761215645122565393847005*x_4*x_5+153687932191849337844437511037169640000*x_5^2-440591888561557909105287117665256683556*x_0*x_6+42996460890525681166451846205340111542*x_1*x_6-34723580502326132188079699461187106960*x_2*x_6-635131314739665636521798232612729158607*x_3*x_6+114345409718945008802905910101084950*x_4*x_6+9627410670924469152678128951223299355*x_5*x_6-19057568286490834800484318350180825*x_6^2-7415193720929398706522107159329627388*x_0*x_7+332252662255692269774748723991671706*x_1*x_7-307375864383698675688875022074339280*x_2*x_7-1925482134184893830535625790244659871*x_3*x_7+6352522762163611600161439450060275*x_4*x_7+24148867234643231159846179284753677261784308946723600*x_0*x_8+135400766861798928746132155996212527701046982469200*x_1*x_8-494603249143282490294956537194882908453415644637000*x_2*x_8-58639203174573292551569350848689341503484050009006600*x_3*x_8-25958425099962878974118740356954657740580190977600*x_4*x_8-1167933396227564622094982700478693050340507065204600*x_5*x_8+188634378125099099082709247801320154101322442202146*x_6*x_8+1109892791443813583650735214872251661763347878978*x_7*x_8,
+   14864987049626180708331195401292828600*x_3^2-213031316366808006411804853128961260*x_3*x_4-709991664270736500497089746977220*x_4^2-144919721878859037523399519065520400*x_0*x_5+20969797062647922891990646283852900*x_1*x_5+33048210852971667689396662156455000*x_2*x_5+162623645153901328058564887268586000*x_3*x_5-13597852810707973713646940303903505*x_4*x_5-40670609923019297783957720412420000*x_5^2-33284556662293132362747089976919788*x_0*x_6+3299692504601106841316619009275586*x_1*x_6+8151670009678280907549555432515880*x_2*x_6+836381473931484389357412100561593*x_3*x_6+118331944045122750082848291162870*x_4*x_6-5103141967062293397325881385389345*x_5*x_6-19721990674187125013808048527145*x_6^2-337424267377904195374178795265484*x_0*x_7+25498182793934297408647090628398*x_1*x_7+81341219846038595567915440824840*x_2*x_7+1020628393412458679465176277077869*x_3*x_7+6573996891395708337936016175715*x_4*x_7-414010062987201744708795559051772770361313188400*x_0*x_8+10391108623304587670149511577822785467478703600*x_1*x_8-18341868280114117234781006624310136220114049000*x_2*x_8-7369430383574496937789690143094353587675252399400*x_3*x_8-32499543768235711905942805756617172170514797120*x_4*x_8-438843426237507739051533673986177773261639007800*x_5*x_8-8418910635100776041739608365420623315397054134*x_6*x_8+71023914301251345895865131115084930009899178*x_7*x_8,
+   1024032441196470226573926794311283748000*x_2*x_3+796074142820963751600938934211254504060*x_3*x_4+3229217542418222285834652833258913156*x_4^2+320791179036228962530208638847502940400*x_0*x_5-58230619817219402177763278114262442700*x_1*x_5-135277765695880106180984813968003665000*x_2*x_5+3037510623674721592022852432830954230000*x_3*x_5+59393893594329968558037542354613991425*x_4*x_5+218756150770691353719861210178843320000*x_5^2+79581824046801914928226993163769747012*x_0*x_6-9162851656366626314825997511716903318*x_1*x_6-44412584042562743718559433877945726480*x_2*x_6-52031380856455644229219154130410511825*x_3*x_6-538202923736370380972442138876485526*x_4*x_6+15464248858093758242199120440975397225*x_5*x_6+89700487289395063495407023146080921*x_6^2+837724685633399588250097035258282916*x_0*x_7-70805405692183938965831541101049274*x_1*x_7-437512301541382707439722420357686640*x_2*x_7-3092849771618751648439824088195079445*x_3*x_7-29900162429798354498469007715360307*x_4*x_7+1109204789202287733956536191149705608092872357706000*x_0*x_8-28854866545221305112779344499642482792272547966800*x_1*x_8+131687973032118962984784230197073274506776371003000*x_2*x_8+26212295026202489558492358527427300993646781093559000*x_3*x_8+149389268540787383271164214728770496758620440715840*x_4*x_8+1682034580971776466256282617622439269430825899615400*x_5*x_8+16832548403084340931662272534188129262859606924978*x_6*x_8-453266923124138430038604278180833772461604536526*x_7*x_8,
+   537617031628146868951311567013423967700*x_1*x_3-102479301800151744638797917674187913560*x_3*x_4+528219235706671356262654440650550912*x_4^2+175652694472879865206964206696770538200*x_0*x_5-5730655649214004479223317849389004300*x_1*x_5-8329580887915277678098617074379427500*x_2*x_5+280852541872534117292893170236789571000*x_3*x_5+1525875514227330650113154440441112220*x_4*x_5+15733812680668660790816544020374440000*x_5^2+45418214922507316629996445460499557112*x_0*x_6-4734781651280132949796177133604006675*x_1*x_6-2909746001008866052492644022561262160*x_2*x_6-3354695443238334408865539059099490972*x_3*x_6-88036539284445226043775740108425152*x_4*x_6+393351248209382638285398277014322380*x_5*x_6+14672756547407537673962623351404192*x_6^2+448768891133852393317323266990532216*x_0*x_7-36062607782932481195233803494812275*x_1*x_7-31467625361337321581633088040748880*x_2*x_7-78670249641876527657079655402864476*x_3*x_7-4890918849135845891320874450468064*x_4*x_7+417811823085075531799155568073244191035951994417400*x_0*x_8-9749273171119474892039810249083240010347331584200*x_1*x_8+42171324947093315051949196638491565696256831090500*x_2*x_8-2154965614097126285001981424778234191582715039204700*x_3*x_8+23502444791345023011056248822760395498379726868480*x_4*x_8+25921721248594745156200440005183287252615383078100*x_5*x_8-7253618141811837658288456651072354113593742257961*x_6*x_8-128726150950623002755821984191198396237575166833*x_7*x_8,
+   4300936253025174951610492536107391741600*x_0*x_3-80021382521498282983894115374895439780*x_3*x_4+400493687461244900481922522102224612*x_4^2+336000466253966825631122762201939006800*x_0*x_5-22143617141554838620028648747065427500*x_1*x_5-7025440350116464452762303889413945000*x_2*x_5+195392460735693352871708090636749770000*x_3*x_5+924250214905296272972177414486896185*x_4*x_5+12563603009977851668259576251661060000*x_5^2+33274360176317866752722089379243136108*x_0*x_6-3484398408265695888649687267885105350*x_1*x_6-2343936509993809246971518394161676840*x_2*x_6+226976243755264126830990049293502839*x_3*x_6-66748947910207483413653753683704102*x_4*x_6+548166062565829106512082926785988065*x_5*x_6+11124824651701247235608958947284017*x_6^2+346037059950098112180270750377935244*x_0*x_7-26925486970972409694464663971575050*x_1*x_7-25127206019955703336519152503322120*x_2*x_7-109633212513165821302416585357197613*x_3*x_7-3708274883900415745202986315761339*x_4*x_7+472574329071177747708578234900149586739233158597200*x_0*x_8-10972768613036387809792498934423290239746569410000*x_1*x_8+30728397826629208855957743683410462615208030967000*x_2*x_8-2048660533518956381859963149608345838109831800567400*x_3*x_8+17849004123317614631405484728380412083338612110400*x_4*x_8+9623499222888931393274494907067768945692278577000*x_5*x_8-4909358226749185468080916688144462937477378947622*x_6*x_8-94285638677217533316670914795203601864889123046*x_7*x_8,
+   3413441470654900755246422647704279160000*x_2^2-120583169457810336310059238181280955180020*x_3*x_4-582914909233216880412283986263106714252*x_4^2-63971856528783889389982677705604355526000*x_0*x_5+10654363747631586796486583058053035557700*x_1*x_5+20724613671523407495237511939012308835000*x_2*x_5-474790156332180648207353356663177911402000*x_3*x_5-10027187377269515237877203477049627086595*x_4*x_5-34918328369359924075616520490017821720000*x_5^2-15391351752783746286881343710110700110716*x_0*x_6+1676512371308300594391946805318862122418*x_1*x_6+6442208685353716239173323847392672036080*x_2*x_6+10541431164006385500801308695052769175347*x_3*x_6+97152484872202813402047331043851119042*x_4*x_6-2201947995278517969999183180324479826555*x_5*x_6-16192080812033802233674555173975186507*x_6^2-159693958740496128463282170646159316988*x_0*x_7+12955152287767196021002033031034640574*x_1*x_7+69836656738719848151233040980035643440*x_2*x_7+440389599055703593999836636064895965311*x_3*x_7+5397360270677934077891518391325062169*x_4*x_7-205564433166238076648030220200977585042505480154116400*x_0*x_8+5279528966498189830819608722500706515800930200626800*x_1*x_8-26897198877096704188517952375400659852536627013777000*x_2*x_8-3954676285959720253054010190125852723957077371887776200*x_3*x_8-26960815062304520826361894066654052675006208736117440*x_4*x_8-273070363381542653211076671849835101619599769626809400*x_5*x_8-1592744328812253355842474288209196228421879860253014*x_6*x_8+90182202046316950526985194082773836614393999131178*x_7*x_8,
+   597352257364607632168123963348248853000*x_1*x_2+5922053250435842641076212498776661767180*x_3*x_4+26836789449198987957147882453034031988*x_4^2+1186499943300113574584140802251945696400*x_0*x_5-535807945652754079377250054043538477900*x_1*x_5-1127951313046595570406755845516363140000*x_2*x_5+31417020554990336906779237860104193663000*x_3*x_5+447276756259240422384348975396203072445*x_4*x_5+1903966505679907894477393865248513105000*x_5^2+302296477143972475470133801393234960698*x_0*x_6-44173021225315920502419819508567102596*x_1*x_6-399624832068094076487496010392644809970*x_2*x_6-275010411436186322069586711613674875277*x_3*x_6-4472798241533164659524647075505671998*x_4*x_6+136095580784101010134927445633688193605*x_5*x_6+745466373588860776587441179250945333*x_6^2+3465304567078555853866877583574957114*x_0*x_7-201115457797335974179461854964838328*x_1*x_7-3807933011359815788954787730497026210*x_2*x_7-27219116156820202026985489126737638721*x_3*x_7-248488791196286925529147059750315111*x_4*x_7+5957642954529124767927573203170747013751500393192400*x_0*x_8-164938874606074784511818970370576782340604499021600*x_1*x_8+982627240702203754281692400062174666682044175255000*x_2*x_8+235500328798786090017046478144622274713975416678971200*x_3*x_8+1183763709567461762086820234555770529696559832610880*x_4*x_8+14314535809848877016282839980103228703975282912198800*x_5*x_8+161475964054060427304048127675106303751207220329882*x_6*x_8-3428787388029139388809412875377494561914662020134*x_7*x_8,
+   9557636117833722114689983413571981648000*x_0*x_2+9535470900189780641746927013646757009020*x_3*x_4+41832212322747516670279797829186425732*x_4^2-2380337429900745325372326298827596322800*x_0*x_5-457941721792606006029432703532572443500*x_1*x_5-1816153644835149234252655572852615705000*x_2*x_5+50961490386861798075733533379459169070000*x_3*x_5+725740936366244317344916363469019592065*x_4*x_5+3072035847445856672623868554746995440000*x_5^2+496544656156684888191873019053658459668*x_0*x_6-72059203168672924151112946017833714790*x_1*x_6-631409685506925988400256867461634392160*x_2*x_6-415258608898005084843774581964384430929*x_3*x_6-6972035387124586111713299638197737622*x_4*x_6+214315035100416975660272977516806526185*x_5*x_6+1162005897854097685285549939699622937*x_6^2+7832536399974127505959516010530218324*x_0*x_7-556833320625489240897925678611108970*x_1*x_7-6144071694891713345247737109493990880*x_2*x_7-42863007020083395132054595503361305237*x_3*x_7-387335299284699228428516646566540979*x_4*x_7+7902557573044311749614911090003818293033616165398800*x_0*x_8-226922662154233789097501104703303423465969621154000*x_1*x_8+1625661841316952382929307806536623788574405651323000*x_2*x_8+384104048882601707313066122012419659455142492849077400*x_3*x_8+1923750714937655055436622826152637267447473666203200*x_4*x_8+23246163410199468151688317102434241339006206905905000*x_5*x_8+249133297849139649078726859191424749460500632207922*x_6*x_8-5649195666409366584266913002877458122246111922254*x_7*x_8,
+   80284143389803265763395860674004645843200*x_0^2+5070388770049276795498611645376945104300*x_3*x_4-86887867352059396703670658676784459180*x_4^2+64499476953083903318557181817300882958800*x_0*x_5-4083091018472992364094225218656368395100*x_1*x_5-442231438199235007201424166117964125000*x_2*x_5-6031007898733580448503031813082078506000*x_3*x_5-480852965943848215209434546968156264395*x_4*x_5-135028831126051942638677309443762320000*x_5^2+4251961396218344537740200027472517316804*x_0*x_6-427838843258486183977725105109193526558*x_1*x_6-3139336979507688868811190438505271520*x_2*x_6-538224942364810552896655069452809357253*x_3*x_6+14481311225343232783945109779464076530*x_4*x_6-26614015506214594127755766069821916355*x_5*x_6-2413551870890538797324184963244012755*x_6^2-12081725719967736519985068024763426428*x_0*x_7-1246623165251512677737734913297354994*x_1*x_7+270057662252103885277354618887524640*x_2*x_7+5322803101242918825551153213964383271*x_3*x_7+804517290296846265774728321081337585*x_4*x_7-41173303585647934066018324583948151331482892696551600*x_0*x_8+1000948332684501969583292466812622183229201687791600*x_1*x_8-4406173598360525225634249857319569936388886931769000*x_2*x_8-220519776982399530622728878295897074223788247332603400*x_3*x_8-3485617726817083807342103600838721281792163681348800*x_4*x_8-24383861791572257691526878951022307095216071502679800*x_5*x_8+222753279543856146944218267537329026788315713840954*x_6*x_8+14144865292554645110182368882624702213803750600122*x_7*x_8);
+   y=symbol y; Z_7=K[y_0..y_10]; Z_7=Z_7/ideal(19640985833952*y_0*y_3+1048157482080*y_1*y_3-2376875292120*y_2*y_3+3795978816*y_0*y_4+1326323528*y_1*y_4-3774329958*y_2*y_4-1659428400*y_4^2-41383231104*y_0*y_5-1220933600*y_2*y_5+23929480992*y_4*y_5+38323018440*y_0*y_6+610466800*y_1*y_6-332273760*y_2*y_6+6567706432*y_4*y_6+4492243280*y_6^2+6401588*y_1*y_7-18173365*y_2*y_7+34294853600*y_3*y_7-51189584*y_5*y_7+185667258*y_6*y_7-460914336*y_0*y_8+4944624*y_2*y_8-1483627821504*y_3*y_8+153568752*y_4*y_8-542360352*y_6*y_8+327120570*y_0*y_9-1236156*y_1*y_9+13203743*y_2*y_9-203598899392*y_3*y_9-278500887*y_4*y_9+271180176*y_5*y_9-360202570*y_6*y_9-2072259*y_9^2-79222458*y_0*y_10-69629770840*y_3*y_10+180101285*y_4*y_10+690753*y_7*y_10,82566988982784*y_0*y_1-903440413596672*y_0*y_2-1147317336555477024*y_1*y_3+3380717202222644424*y_2*y_3+355026510724032*y_0*y_4-1689794910619928*y_1*y_4+5019920751953478*y_2*y_4-155201359966800*y_4^2-122116430227693056*y_0*y_5-2691896167223776*y_2*y_5+72051069474554352*y_4*y_5+153945464739980760*y_0*y_6+1345948083611888*y_1*y_6-31076567951520*y_2*y_6-90434138170195792*y_4*y_6+420146037248560*y_6^2+598721320876*y_1*y_7-1699700308355*y_2*y_7+3207494772647200*y_3*y_7-4787608222768*y_5*y_7+17364901638966*y_6*y_7-43107935103072*y_0*y_8-402950310744624*y_2*y_8-4467166307422369824*y_3*y_8+14362824668304*y_4*y_8-9127682053251648*y_6*y_8+30594605550390*y_0*y_9+100737577686156*y_1*y_9+1234906471561*y_2*y_9+2803458283276069552*y_3*y_9-26047352458449*y_4*y_9+4563841026625824*y_5*y_9-33688665764390*y_6*y_9-193812167493*y_9^2-7409438829366*y_0*y_10-6512263577352680*y_3*y_10+16844332882195*y_4*y_10+64604055831*y_7*y_10);
+   TB_7="quadro-cubic birational transformation of P^8 into a complete intersection of two quadrics,    dim(B)=3, deg(B)=10, g(B)=4 ";
+   D_7={1, 2, 4, 8, 16, 22, 20, 12, 4};
+   B_8=(-5*x_0*x_3+x_2*x_4+x_3*x_4+35*x_0*x_5-7*x_2*x_5+x_3*x_5-x_4*x_5-49*x_5^2-5*x_0*x_6+2*x_2*x_6-x_4*x_6+27*x_5*x_6-4*x_6^2+x_4*x_7-7*x_5*x_7+2*x_6*x_7-2*x_4*x_8+14*x_5*x_8-4*x_6*x_8,
+   -x_1*x_2-6*x_1*x_5-5*x_0*x_6+2*x_1*x_6+x_4*x_6+x_5*x_6-5*x_0*x_7-x_1*x_7+2*x_2*x_7+7*x_5*x_7-2*x_6*x_7+2*x_1*x_8-3*x_7*x_8,
+   -25*x_0^2+9*x_0*x_2+10*x_0*x_4-2*x_2*x_4-x_4^2+29*x_0*x_5-x_2*x_5-7*x_4*x_5-13*x_0*x_6+3*x_4*x_6+x_5*x_6-x_0*x_7+2*x_2*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-8*x_0*x_8+2*x_4*x_8-3*x_7*x_8,
+   x_2*x_4+x_3*x_4+x_4^2+7*x_2*x_5-9*x_4*x_5+12*x_5*x_6-4*x_6^2+2*x_3*x_7+2*x_4*x_7-14*x_5*x_7+4*x_6*x_7+x_3*x_8-x_4*x_8-14*x_5*x_8+x_6*x_8,
+   -5*x_0*x_4+x_2*x_4-7*x_2*x_5+8*x_4*x_5-5*x_0*x_6+2*x_2*x_6-x_4*x_6+x_5*x_6-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,
+   x_0*x_4+x_4^2-7*x_1*x_5-8*x_4*x_5+x_0*x_6+x_1*x_6+2*x_4*x_6-x_5*x_6+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,
+   x_2*x_3+x_4^2-8*x_4*x_5+x_4*x_6+6*x_5*x_6-2*x_6^2+x_3*x_7+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,
+   x_1*x_3-7*x_1*x_5+x_1*x_6+x_4*x_6-7*x_5*x_6+2*x_6^2-x_3*x_7,
+   -4*x_0*x_3+x_3*x_4-x_4^2-7*x_0*x_5+8*x_4*x_5+x_0*x_6-x_4*x_6-6*x_5*x_6+2*x_6^2-x_3*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,
+   -5*x_0*x_2+2*x_2^2+x_2*x_4-x_4^2-x_2*x_5+8*x_4*x_5-10*x_0*x_6+2*x_5*x_6+2*x_2*x_7-2*x_4*x_7+14*x_5*x_7-4*x_6*x_7+5*x_0*x_8-3*x_2*x_8-2*x_4*x_8+7*x_5*x_8-2*x_6*x_8-3*x_7*x_8,
+   -5*x_0*x_1+x_1*x_2+x_1*x_4-4*x_0*x_6-x_1*x_6+x_4*x_6+x_0*x_7,
+   x_0*x_2-x_1*x_2+5*x_0*x_4+x_1*x_4-14*x_1*x_5-x_2*x_5-8*x_4*x_5-8*x_0*x_6+2*x_1*x_6+4*x_4*x_6+2*x_2*x_7+4*x_0*x_8+3*x_1*x_8-7*x_5*x_8+2*x_6*x_8-3*x_7*x_8);
+   y=symbol y; Z_8=K[y_0..y_11]; Z_8=Z_8/ideal(y_2*y_4+y_3*y_4+y_4^2+5*y_2*y_5+y_3*y_5+5*y_4*y_5-y_1*y_6-4*y_2*y_6-5*y_5*y_6-4*y_2*y_7-2*y_4*y_7-y_1*y_8+4*y_4*y_8-5*y_5*y_8-4*y_5*y_9+3*y_7*y_9-4*y_8*y_9-y_3*y_10-3*y_6*y_10-5*y_8*y_10-y_4*y_11+4*y_6*y_11+5*y_8*y_11,3*y_1*y_3-y_2*y_3-3*y_3*y_4-y_4^2+2*y_0*y_5-y_3*y_5+y_1*y_6+2*y_2*y_6+3*y_5*y_6-7*y_2*y_7-4*y_4*y_7+7*y_1*y_8-2*y_4*y_8+y_0*y_9-y_4*y_9+2*y_5*y_9+2*y_7*y_9+y_8*y_9-7*y_0*y_10+5*y_3*y_10-3*y_6*y_10-y_0*y_11-2*y_3*y_11-2*y_4*y_11,7*y_0*y_1+y_0*y_4+7*y_1*y_4-y_3*y_4+8*y_0*y_5-y_3*y_5-y_1*y_6+7*y_2*y_6+8*y_5*y_6+y_2*y_7+8*y_4*y_7-y_1*y_8-8*y_4*y_8+7*y_5*y_9-8*y_7*y_9+7*y_8*y_9+y_0*y_10-y_3*y_10+8*y_6*y_10-7*y_0*y_11-7*y_4*y_11-7*y_6*y_11);
+   TB_8="quadro-quadric birational transformation of P^8 into a complete intersection of three quadrics,    dim(B)=3, deg(B)=9, g(B)=3 ";
+   D_8={1, 2, 4, 8, 16, 23, 23, 16, 8};
+   B_9=(x_7^2-x_6*x_8,
+   x_5*x_7-x_4*x_8,
+   x_3*x_7-x_2*x_8,
+   x_1*x_7-x_0*x_8,
+   x_5*x_6-x_4*x_7,
+   x_3*x_6-x_2*x_7,
+   x_1*x_6-x_0*x_7,
+   x_3*x_4-x_2*x_5,
+   x_1*x_4-x_0*x_5,
+   x_3^2+x_0*x_5+x_1*x_5+2*x_2*x_5+x_3*x_5+x_0*x_7+x_6*x_7+x_0*x_8+x_1*x_8+x_6*x_8+x_7*x_8,
+   x_2*x_3+x_0*x_4+2*x_2*x_4+x_0*x_5+x_2*x_5+x_0*x_6+x_6^2+x_0*x_7+x_6*x_7+x_0*x_8+x_6*x_8,
+   x_1*x_2-x_0*x_3);
+   y=symbol y; Z_9=K[y_0..y_11]; Z_9=Z_9/ideal(y_6*y_7-y_5*y_8+y_4*y_11,y_3*y_7-y_2*y_8+y_1*y_11,y_3*y_5-y_2*y_6+y_0*y_11,y_3*y_4-y_1*y_6+y_0*y_8,y_2*y_4-y_1*y_5+y_0*y_7);
+   TB_9="quadro-cubic birational transformation of P^8 into the cone in P^11 over G(1,4),    dim(B)=3, deg(B)=9, g(B)=3 ";
+   D_9={1, 2, 4, 8, 16, 23, 23, 15, 5};
+   B_10=(x_3*x_7-x_2*x_8,
+   x_3*x_6-x_1*x_8,
+   x_2*x_6-x_1*x_7,
+   x_4*x_5-x_1*x_6-x_2*x_7-x_3*x_8,
+   x_3*x_5-x_0*x_8,
+   x_2*x_5-x_0*x_7,
+   x_1*x_5-x_0*x_6,
+   x_0*x_5-x_6^2-x_7^2-x_8^2,
+   x_0*x_3-x_4*x_8,
+   x_0*x_2-x_4*x_7,
+   x_1^2+x_2^2+x_3^2-x_0*x_4,
+   x_0*x_1-x_4*x_6,
+   x_0^2-x_1*x_6-x_2*x_7-x_3*x_8);
+   y=symbol y; Z_10=K[y_0..y_12]; Z_10=Z_10/ideal(y_2*y_8-y_1*y_9+y_0*y_11,y_2*y_4-y_1*y_5+y_0*y_6,y_2*y_3-y_6*y_9+y_5*y_11-y_2*y_12,y_1*y_3-y_6*y_8+y_4*y_11-y_1*y_12,y_0*y_3-y_5*y_8+y_4*y_9-y_0*y_12,y_0^2+y_1^2+y_2^2-y_4*y_8-y_5*y_9+y_7*y_10-y_6*y_11+y_3*y_12);
+   TB_10="quadro-quadric birational transformation of P^8 into a quadric section of the cone in P^12 over G(1,4),    dim(B)=3, deg(B)=8, g(B)=2 ";
+   D_10={1, 2, 4, 8, 16, 24, 26, 20, 10};
+   B_11=(x_7^2-x_6*x_8,
+   x_5*x_7-x_4*x_8,
+   x_4*x_7-x_3*x_8,
+   x_2*x_7-x_1*x_8,
+   x_1*x_7-x_0*x_8,
+   x_5*x_6-x_3*x_8,
+   x_4*x_6-x_3*x_7,
+   x_2*x_6-x_0*x_8,
+   x_1*x_6-x_0*x_7,
+   x_4^2-x_3*x_5,
+   x_2*x_4-x_1*x_5,
+   x_1*x_4-x_0*x_5,
+   x_2*x_3-x_0*x_5,
+   x_1*x_3-x_0*x_4,
+   x_1^2-x_0*x_2);
+   y=symbol y; Z_11=K[y_0..y_14]; Z_11=Z_11/ideal(y_11^2-y_11*y_12+y_10*y_13-y_9*y_14,y_8*y_11-y_8*y_12-y_4*y_13+y_7*y_13-y_6*y_14,y_4*y_11-y_4*y_12+y_3*y_13-y_2*y_14,y_8*y_10-y_7*y_11+y_4*y_12-y_3*y_13+y_5*y_14,y_4*y_10-y_3*y_11+y_1*y_14,y_8*y_9-y_6*y_11-y_2*y_13+y_5*y_13,y_7*y_9-y_6*y_10-y_5*y_11-y_2*y_12+y_5*y_12+y_1*y_13,y_4*y_9-y_2*y_11+y_1*y_13,y_3*y_9-y_2*y_10-y_1*y_11+y_1*y_12,y_4*y_6-y_2*y_8+y_0*y_13,y_4*y_5+y_3*y_6-y_2*y_7-y_1*y_8+y_0*y_12,y_4^2-y_4*y_7+y_3*y_8-y_0*y_14,y_2*y_4+y_3*y_6-y_2*y_7-y_0*y_11+y_0*y_12,y_2*y_3-y_1*y_4-y_3*y_5+y_1*y_7-y_0*y_10,y_2^2-y_2*y_5+y_1*y_6-y_0*y_9);
+   TB_11="quadro-quadric birational transformation of P^8 into G(1,5),    dim(B)=3, deg(B)=6, g(B)=0 ";
+   D_11={1, 2, 4, 8, 16, 26, 32, 28, 14};
+   return (matrix{toList(B_j)},Z_j,D_j,TB_j)
+);
+
+specialQuadraticTransformation (Ring,ZZ) := (K,a) -> (
+   if not isField K then error "expected a field";
+   if a<1 or a>11 then error("expected integer between 1 and 11, see Table 1 of "|"https://arxiv.org/abs/1411.1227");
+   if a == 2 then return specialCremonaTransformation(K,9);
+   if a == 3 then return specialCremonaTransformation(K,10);
+   (F,Z,degs,str) := examplesQuadratic(K,a);
+   Phi := rationalMap(ring F,Z,F);
+   setKeyValue(Phi,"maps",{map Phi});
+   setKeyValue(Phi,"isBirational",true);
+   setKeyValue(Phi,"projectiveDegrees",degs);
+   setKeyValue(Phi,"degree",1);
+   return Phi;
+);
+
+specialQuadraticTransformation (ZZ) := (j) -> specialQuadraticTransformation(QQ,j);
+
+specialQuadraticTransformation (ZZ,Ring) := (j,K) -> specialQuadraticTransformation(K,j);
+
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
 ---------------------------- end Examples ---------------------------------------------
@@ -1898,7 +2054,7 @@ beginDocumentation()
           "time degreeOfRationalMap psi", 
           "time projectiveDegrees psi" 
           }, 
-          PARA{"We repeat the above example using the type ",TO RationalMap, " and using only deterministic methods."},
+          PARA{"We repeat the example using the type ",TO RationalMap, " and using deterministic methods."},
     EXAMPLE {  
           "time phi = rationalMap minors(3,matrix{{t_0..t_4},{t_1..t_5},{t_2..t_6}})",       
           "time phi = rationalMap(phi,Dominant=>2)", 
@@ -1906,11 +2062,15 @@ beginDocumentation()
           "time degrees phi^(-1)", 
           "time degrees phi", 
           "time describe phi",
-          "time describe phi^(-1)"
+          "time describe phi^(-1)",
+          "time (f,g) = graph phi^-1",
+          "time degrees f",
+          "time degree f",
+          "time describe f"
           }, 
           PARA{"A rudimentary version of ",EM"Cremona"," has been already used in an essential way in the paper ",HREF{"http://dx.doi.org/10.1016/j.jsc.2015.11.004","doi:10.1016/j.jsc.2015.11.004"}," (it was originally named ", HREF{"http://goo.gl/eT4rCR","bir.m2"},")."}
           } 
-   undocumented{(invertBirMap,RingMap,Nothing)} 
+   undocumented{(invertBirMap,RationalMap,Nothing)} 
    document { 
     Key => {invertBirMap, (invertBirMap,RingMap)}, 
     Headline => "inverse of a birational map", 
@@ -1960,7 +2120,7 @@ phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
           },
     SeeAlso => {projectiveDegrees} 
           } 
-   undocumented{(projectiveDegrees,RingMap,ZZ)}
+   undocumented{(projectiveDegrees,MutableHashTable,ZZ),(projectiveDegrees,RingMap,ZZ)}
    document { 
     Key => {projectiveDegrees,(projectiveDegrees,RingMap)}, 
     Headline => "projective degrees of a rational map between projective varieties", 
@@ -2034,13 +2194,12 @@ phi = map specialCremonaTransformation(7,ZZ/300007)",
 PARA{"This is equivalent to ",TT "ideal image basis(d,kernel phi)",", but we use a more direct algorithm. We take advantage of the homogeneity and reduce the problem to linear algebra. For small value of ",TT"d", " this method can be very fast, as the following example shows."},
     EXAMPLE { 
           "-- A special birational transformation of P^8 into a complete intersection of three quadrics in P^11
-K=QQ; ringP8=K[x_0..x_8]; ringP11=K[y_0..y_11];",
-          "phi=map(ringP8,ringP11,{-5*x_0*x_3+x_2*x_4+x_3*x_4+35*x_0*x_5-7*x_2*x_5+x_3*x_5-x_4*x_5-49*x_5^2-5*x_0*x_6+2*x_2*x_6-x_4*x_6+27*x_5*x_6-4*x_6^2+x_4*x_7-7*x_5*x_7+2*x_6*x_7-2*x_4*x_8+14*x_5*x_8-4*x_6*x_8,-x_1*x_2-6*x_1*x_5-5*x_0*x_6+2*x_1*x_6+x_4*x_6+x_5*x_6-5*x_0*x_7-x_1*x_7+2*x_2*x_7+7*x_5*x_7-2*x_6*x_7+2*x_1*x_8-3*x_7*x_8,-25*x_0^2+9*x_0*x_2+10*x_0*x_4-2*x_2*x_4-x_4^2+29*x_0*x_5-x_2*x_5-7*x_4*x_5-13*x_0*x_6+3*x_4*x_6+x_5*x_6-x_0*x_7+2*x_2*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-8*x_0*x_8+2*x_4*x_8-3*x_7*x_8,x_2*x_4+x_3*x_4+x_4^2+7*x_2*x_5-9*x_4*x_5+12*x_5*x_6-4*x_6^2+2*x_3*x_7+2*x_4*x_7-14*x_5*x_7+4*x_6*x_7+x_3*x_8-x_4*x_8-14*x_5*x_8+x_6*x_8,-5*x_0*x_4+x_2*x_4-7*x_2*x_5+8*x_4*x_5-5*x_0*x_6+2*x_2*x_6-x_4*x_6+x_5*x_6-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,x_0*x_4+x_4^2-7*x_1*x_5-8*x_4*x_5+x_0*x_6+x_1*x_6+2*x_4*x_6-x_5*x_6+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_2*x_3+x_4^2-8*x_4*x_5+x_4*x_6+6*x_5*x_6-2*x_6^2+x_3*x_7+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_1*x_3-7*x_1*x_5+x_1*x_6+x_4*x_6-7*x_5*x_6+2*x_6^2-x_3*x_7,-4*x_0*x_3+x_3*x_4-x_4^2-7*x_0*x_5+8*x_4*x_5+x_0*x_6-x_4*x_6-6*x_5*x_6+2*x_6^2-x_3*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,-5*x_0*x_2+2*x_2^2+x_2*x_4-x_4^2-x_2*x_5+8*x_4*x_5-10*x_0*x_6+2*x_5*x_6+2*x_2*x_7-2*x_4*x_7+14*x_5*x_7-4*x_6*x_7+5*x_0*x_8-3*x_2*x_8-2*x_4*x_8+7*x_5*x_8-2*x_6*x_8-3*x_7*x_8,-5*x_0*x_1+x_1*x_2+x_1*x_4-4*x_0*x_6-x_1*x_6+x_4*x_6+x_0*x_7,x_0*x_2-x_1*x_2+5*x_0*x_4+x_1*x_4-14*x_1*x_5-x_2*x_5-8*x_4*x_5-8*x_0*x_6+2*x_1*x_6+4*x_4*x_6+2*x_2*x_7+4*x_0*x_8+3*x_1*x_8-7*x_5*x_8+2*x_6*x_8-3*x_7*x_8})",
-          "time kernelComponent(phi,1)",
-          "time kernelComponent(phi,2)",
+phi = toMap map specialQuadraticTransformation 8",
+          "time kernel(phi,1)",
+          "time kernel(phi,2)",
           "-- restriction of phi, phi^(-1)(Q)--->Q, with Q a random quadric of P^11
-Q=random(2,ringP11); phi=map(ringP8/phi(Q),ringP11/Q,matrix phi)",
-          "time kernelComponent(phi,2)"
+Q=random(2,source phi); phi=map((target phi)/phi(Q),(source phi)/Q,matrix phi)",
+          "time kernel(phi,2)"
           },
     SeeAlso => {(kernel,RingMap)} 
           } 
@@ -2229,7 +2388,7 @@ time psi'=approximateInverseMap(phi,CodimBsInv=>4,MathMode=>true)",
           RingMap => {"representing the projection on the second factor ",TEX///$\mathbf{Graph}(\Phi)--->Y$///}
           }, 
     EXAMPLE { 
-          "phi = map(QQ[w,x,y,z],QQ[a,b,c],{-x^2+w*y,-x*y+w*z,-y^2+x*z})", 
+          "phi = map(QQ[x_0..x_3],QQ[y_0..y_2],{-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3})", 
           "graph phi"
           },
     SeeAlso => {graphIdeal}
@@ -2318,6 +2477,14 @@ document {
           Ideal => {"the ideal of the closure of the inverse image of ", TT"V(I)", " via ",TT"phi"}
           },
      PARA{"In most cases this is equivalent to ",TT"phi^*I", ", which is faster but may not take into account other representations of the map."},
+     PARA{"In the example below, we apply the method to check the birationality of a map (deterministically)."},
+    EXAMPLE { 
+          "phi = quadroQuadricCremonaTransformation(5,1); map phi",
+          "K := frac(QQ[vars(0..5)]); phi = phi ** K; p = trim minors(2,(vars K)||(vars source phi))",
+          "q = phi p",
+          "time phi^** q",
+          "oo == p"
+          },
      SeeAlso => {(symbol _*,RationalMap),(target,RationalMap)}
          }
 document { 
@@ -2482,7 +2649,7 @@ document {
           }
          }
 document { 
-    Key => {(projectiveDegrees,RationalMap),(projectiveDegrees,RationalMap,ZZ)}, 
+    Key => {(projectiveDegrees,RationalMap)}, 
     Headline => "projective degrees of a rational map", 
      Usage => "projectiveDegrees Phi", 
      Inputs => { 
@@ -2760,7 +2927,7 @@ document {
     SeeAlso => {toMap}
 }
 
-undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(symbol ~,RationalMap)}
+undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring)}
 
 document { 
     Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
@@ -2778,7 +2945,7 @@ document {
      EXAMPLE {
           "time apply(1..12,i -> describe specialCremonaTransformation(i,ZZ/3331))"
           },
-    SeeAlso => {"quadroQuadricCremonaTransformation"}
+    SeeAlso => {"quadroQuadricCremonaTransformation", "specialQuadraticTransformation"}
          }
 document { 
     Key => {quadroQuadricCremonaTransformation,(quadroQuadricCremonaTransformation,Ring,ZZ,ZZ),(quadroQuadricCremonaTransformation,ZZ,ZZ,Ring),(quadroQuadricCremonaTransformation,ZZ,ZZ)}, 
@@ -2804,16 +2971,35 @@ document {
           "describe quadroQuadricCremonaTransformation(14,1)",
           "describe quadroQuadricCremonaTransformation(26,1)"
           },
-     SeeAlso => {"specialCremonaTransformation"}
+     SeeAlso => {"specialCremonaTransformation", "specialQuadraticTransformation"}
+         }
+document { 
+    Key => {specialQuadraticTransformation,(specialQuadraticTransformation,Ring,ZZ),(specialQuadraticTransformation,ZZ,Ring),(specialQuadraticTransformation,ZZ)}, 
+    Headline => "special quadratic transformations whose base locus has dimension three", 
+     Usage => "specialQuadraticTransformation i  
+               specialQuadraticTransformation(i,K)", 
+     Inputs => {         
+         "i" => ZZ   => {"an integer between 1 and 11"},
+         "K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}
+          }, 
+     Outputs => { 
+          RationalMap => {"an example of special quadratic birational transformation over ",TT"K",", according to the classification given in Table 1 of ",HREF{"https://arxiv.org/abs/1411.1227","arXiv:1411.1227"}}
+          },
+     PARA{"The field ",TT"K"," is required to be large enough."},
+     EXAMPLE {
+          "time specialQuadraticTransformation 4",
+          "time describe oo"
+          },
+    SeeAlso => {"specialCremonaTransformation","quadroQuadricCremonaTransformation"}
          }
 
+
 TEST ///  --- quadro-quadric Cremona transformations 
-    K=ZZ/3331; ringP5=ZZ/33331[x_0..x_5]; ringP8=GF(331^2)[x_0..x_8]; ringP14=QQ[x_0..x_14]; ringP20=(ZZ/3331)[t_0..t_20]; 
+    ringP5=ZZ/33331[x_0..x_5]; ringP8=GF(331^2)[x_0..x_8]; ringP14=QQ[x_0..x_14];
     phi1=toMap trim minors(2,genericSymmetricMatrix(ringP5,3)) 
     phi2=toMap minors(2,genericMatrix(ringP8,3,3)) 
     phi3=toMap pfaffians(4,genericSkewMatrix(ringP14,6)) 
-    use ringP20
-    phi4=map(ringP20,ringP20,{t_10*t_15-t_9*t_16+t_6*t_20,t_10*t_14-t_8*t_16+t_5*t_20,t_9*t_14-t_8*t_15+t_4*t_20,t_6*t_14-t_5*t_15+t_4*t_16,t_11*t_13-t_16*t_17+t_15*t_18-t_14*t_19+t_12*t_20,t_3*t_13-t_10*t_17+t_9*t_18-t_8*t_19+t_7*t_20,t_10*t_12-t_2*t_13-t_7*t_16-t_6*t_18+t_5*t_19,t_9*t_12-t_1*t_13-t_7*t_15-t_6*t_17+t_4*t_19,t_8*t_12-t_0*t_13-t_7*t_14-t_5*t_17+t_4*t_18,t_10*t_11-t_3*t_16+t_2*t_20,t_9*t_11-t_3*t_15+t_1*t_20,t_8*t_11-t_3*t_14+t_0*t_20,t_7*t_11-t_3*t_12+t_2*t_17-t_1*t_18+t_0*t_19,t_6*t_11-t_2*t_15+t_1*t_16,t_5*t_11-t_2*t_14+t_0*t_16,t_4*t_11-t_1*t_14+t_0*t_15,t_6*t_8-t_5*t_9+t_4*t_10,t_3*t_6-t_2*t_9+t_1*t_10,t_3*t_5-t_2*t_8+t_0*t_10,t_3*t_4-t_1*t_8+t_0*t_9,t_2*t_4-t_1*t_5+t_0*t_6})
+    phi4=map quadroQuadricCremonaTransformation(20,1,ZZ/3331)
     time psi1=invertBirMap(phi1)
     time psi2=invertBirMap(phi2,MathMode=>true)
     time psi3=invertBirMap(phi3,MathMode=>false)
@@ -2822,15 +3008,10 @@ TEST ///  --- quadro-quadric Cremona transformations
     time assert (degreeOfRationalMap(phi1,MathMode=>true) == 1 and degreeOfRationalMap phi2 == 1 and degreeOfRationalMap phi3 == 1 and degreeOfRationalMap phi4 == 1)
 ///
 
-TEST /// 
-    ringP5=(ZZ/7)[x_0..x_5];
-    phi=toMap(minors(2,matrix {{x_0, x_1, x_2, x_3, x_4}, {x_1, x_2, x_3, x_4, x_5}}),Dominant=>infinity);
-    time psi=invertBirMap(phi)
-    assert(isInverseMap(phi,psi))
-    phi'=invertBirMap(psi);
-    m={1, 2, 4, 8, 11, 10};
-    time assert(isInverseMap(phi',psi) and isInverseMap(psi,phi'))
-    time assert(projectiveDegrees(psi,MathMode=>true) == reverse {1, 2, 4, 8, 11, 10})
+TEST ///
+for i from 1 to 11 do assert(degrees specialQuadraticTransformation i === projectiveDegrees rationalMap map specialQuadraticTransformation(i,ZZ/33331))
+for i from 1 to 11 do assert isBirational rationalMap map specialQuadraticTransformation(i,ZZ/3331)
+for i from 1 to 11 do assert isDominant rationalMap map specialQuadraticTransformation(i,ZZ/3331)
 ///
     
 TEST /// -- Hankel matrices
@@ -2855,21 +3036,47 @@ TEST /// -- Hankel matrices
 ///    
 
 TEST ///  -- special map P^8 ---> P^11
-    K=ZZ/331; ringP8=K[x_0..x_8]; ringP11=K[y_0..y_11];
-    phi=map(ringP8,ringP11,{-5*x_0*x_3+x_2*x_4+x_3*x_4+35*x_0*x_5-7*x_2*x_5+x_3*x_5-x_4*x_5-49*x_5^2-5*x_0*x_6+2*x_2*x_6-x_4*x_6+27*x_5*x_6-4*x_6^2+x_4*x_7-7*x_5*x_7+2*x_6*x_7-2*x_4*x_8+14*x_5*x_8-4*x_6*x_8,-x_1*x_2-6*x_1*x_5-5*x_0*x_6+2*x_1*x_6+x_4*x_6+x_5*x_6-5*x_0*x_7-x_1*x_7+2*x_2*x_7+7*x_5*x_7-2*x_6*x_7+2*x_1*x_8-3*x_7*x_8,-25*x_0^2+9*x_0*x_2+10*x_0*x_4-2*x_2*x_4-x_4^2+29*x_0*x_5-x_2*x_5-7*x_4*x_5-13*x_0*x_6+3*x_4*x_6+x_5*x_6-x_0*x_7+2*x_2*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-8*x_0*x_8+2*x_4*x_8-3*x_7*x_8,x_2*x_4+x_3*x_4+x_4^2+7*x_2*x_5-9*x_4*x_5+12*x_5*x_6-4*x_6^2+2*x_3*x_7+2*x_4*x_7-14*x_5*x_7+4*x_6*x_7+x_3*x_8-x_4*x_8-14*x_5*x_8+x_6*x_8,-5*x_0*x_4+x_2*x_4-7*x_2*x_5+8*x_4*x_5-5*x_0*x_6+2*x_2*x_6-x_4*x_6+x_5*x_6-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,x_0*x_4+x_4^2-7*x_1*x_5-8*x_4*x_5+x_0*x_6+x_1*x_6+2*x_4*x_6-x_5*x_6+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_2*x_3+x_4^2-8*x_4*x_5+x_4*x_6+6*x_5*x_6-2*x_6^2+x_3*x_7+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_1*x_3-7*x_1*x_5+x_1*x_6+x_4*x_6-7*x_5*x_6+2*x_6^2-x_3*x_7,-4*x_0*x_3+x_3*x_4-x_4^2-7*x_0*x_5+8*x_4*x_5+x_0*x_6-x_4*x_6-6*x_5*x_6+2*x_6^2-x_3*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,-5*x_0*x_2+2*x_2^2+x_2*x_4-x_4^2-x_2*x_5+8*x_4*x_5-10*x_0*x_6+2*x_5*x_6+2*x_2*x_7-2*x_4*x_7+14*x_5*x_7-4*x_6*x_7+5*x_0*x_8-3*x_2*x_8-2*x_4*x_8+7*x_5*x_8-2*x_6*x_8-3*x_7*x_8,-5*x_0*x_1+x_1*x_2+x_1*x_4-4*x_0*x_6-x_1*x_6+x_4*x_6+x_0*x_7,x_0*x_2-x_1*x_2+5*x_0*x_4+x_1*x_4-14*x_1*x_5-x_2*x_5-8*x_4*x_5-8*x_0*x_6+2*x_1*x_6+4*x_4*x_6+2*x_2*x_7+4*x_0*x_8+3*x_1*x_8-7*x_5*x_8+2*x_6*x_8-3*x_7*x_8});
-    Z=ideal(y_2*y_4+y_3*y_4+y_4^2+5*y_2*y_5+y_3*y_5+5*y_4*y_5-y_1*y_6-4*y_2*y_6-5*y_5*y_6-4*y_2*y_7-2*y_4*y_7-y_1*y_8+4*y_4*y_8-5*y_5*y_8-4*y_5*y_9+3*y_7*y_9-4*y_8*y_9-y_3*y_10-3*y_6*y_10-5*y_8*y_10-y_4*y_11+4*y_6*y_11+5*y_8*y_11,3*y_1*y_3-y_2*y_3-3*y_3*y_4-y_4^2+2*y_0*y_5-y_3*y_5+y_1*y_6+2*y_2*y_6+3*y_5*y_6-7*y_2*y_7-4*y_4*y_7+7*y_1*y_8-2*y_4*y_8+y_0*y_9-y_4*y_9+2*y_5*y_9+2*y_7*y_9+y_8*y_9-7*y_0*y_10+5*y_3*y_10-3*y_6*y_10-y_0*y_11-2*y_3*y_11-2*y_4*y_11,7*y_0*y_1+y_0*y_4+7*y_1*y_4-y_3*y_4+8*y_0*y_5-y_3*y_5-y_1*y_6+7*y_2*y_6+8*y_5*y_6+y_2*y_7+8*y_4*y_7-y_1*y_8-8*y_4*y_8+7*y_5*y_9-8*y_7*y_9+7*y_8*y_9+y_0*y_10-y_3*y_10+8*y_6*y_10-7*y_0*y_11-7*y_4*y_11-7*y_6*y_11);
+    Phi = specialQuadraticTransformation(8,ZZ/3331)
+    phi = map rationalMap Phi;
+    Z = ideal target Phi;
     time assert(kernelComponent(phi,2) == Z)
     time assert(projectiveDegrees phi == {1, 2, 4, 8, 16, 23, 23, 16, 8})
     time assert(degreeOfRationalMap phi == 1)
-    H=ideal random(1,ringP11)
-    phi'=map(ringP8/phi(H),ringP8) * phi;
+    H=ideal random(1,source phi)
+    phi'=map((target phi)/phi(H),target phi) * phi;
     time assert ( kernelComponent(phi',1) == H )
-    Q=ideal random(2,ringP11)
-    phi'=map(ringP8/phi(Q),ringP8) * phi;
+    Q=ideal random(2,source phi)
+    phi'=map((target phi)/phi(Q),target phi) * phi;
     time assert ( kernelComponent(phi',2) == Q+Z )
     phi=toMap(phi,Dominant=>Z)
     ideal matrix approximateInverseMap(approximateInverseMap(phi,MathMode=>true)) == ideal matrix phi
 /// 
+
+TEST /// -- a quadric surface bundle in P^2 x P^5
+K := ZZ/3331; P2xP5 := K[t_0..t_2,x_2..x_7,Degrees=>{3:{1,0},6:{0,1}}]; P5 := K[y_0..y_5];
+J = ideal(t_1*x_5-t_2*x_5-t_0*x_7-2*t_1*x_7-2*t_2*x_7,t_2*x_4-t_0*x_6-2*t_1*x_6-2*t_2*x_6,t_2*x_2^2+t_1*x_3^2+t_0*x_5^2+t_1*x_4*x_6+t_0*x_7^2+2*t_1*x_7^2+2*t_2*x_7^2);
+p1 = (rationalMap {t_0,t_1,t_2})|J
+p2 = rationalMap((rationalMap(P2xP5,P5,{x_7,x_6,x_5,x_4,x_3,x_2}))|source(p1),Dominant=>4)
+phi = rationalMap {8*y_2^2*y_3-4*y_1*y_3^2-4*y_3*y_4^2,-16*y_2^3+4*y_1*y_2*y_3+4*y_2*y_4^2+4*y_2*y_5^2,-4*y_2*y_3*y_5,-4*y_2*y_3*y_4,-4*y_2*y_3^2,-4*y_2^2*y_3,-4*y_1*y_2*y_3,-4*y_0*y_2*y_3}
+phi = rationalMap(phi|(target p2),Dominant=>2)
+assert(projectiveDegrees phi == {4, 7, 8, 8, 8})
+assert(isBirational(phi,MathMode=>true))
+assert(degrees phi == {4, 7, 8, 8, 8})
+assert(projectiveDegrees p2 == {36, 25, 16, 9, 4})
+assert(degrees p2 == {36, 25, 16, 9, 4})
+assert(isDominant(p2,MathMode=>true))
+assert(degree p2 == 1)
+assert(projectiveDegrees p1 == {36, 11, 2, 0, 0})
+assert(degrees p1 == {36, 11, 2, 0, 0})
+f = p2 * phi
+assert( projectiveDegrees(f,0) == 8 and projectiveDegrees(f,4) == 36)
+assert(projectiveDegrees(f,MathMode=>true) == {36, 64, 48, 24, 8})
+assert(dim ideal f -2 == 2 and dim ideal matrix f -2 == 3 and # f#"maps" == 3)
+(A,B,C) = graph f
+assert(degrees A == {684, 174, 22, 0, 0} and multidegree B == {684, 222, 64, 16, 4} and projectiveDegrees(C,MathMode=>true) == {684, 288, 104, 32, 8})
+assert(isDominant A and (not isDominant B) and (isDominant C))
+assert(isDominant(A,MathMode=>true) and (not isDominant(B,MathMode=>true)) and isDominant(C,MathMode=>true))
+///
     
 TEST ///
     K=ZZ/761; P4=K[x_0..x_4];
@@ -2894,6 +3101,17 @@ TEST ///
     assert( ideal image basis(2,kernel phi) == Out )
     phi'=toMap(phi,Dominant=>ideal(Out_0,Out_1))
     assert( ideal image basis(2,kernel phi') == kernelComponent(phi',2) )
+///
+
+TEST /// 
+    ringP5=(ZZ/7)[x_0..x_5];
+    phi=toMap(minors(2,matrix {{x_0, x_1, x_2, x_3, x_4}, {x_1, x_2, x_3, x_4, x_5}}),Dominant=>infinity);
+    time psi=invertBirMap(phi)
+    assert(isInverseMap(phi,psi))
+    phi'=invertBirMap(psi);
+    m={1, 2, 4, 8, 11, 10};
+    time assert(isInverseMap(phi',psi) and isInverseMap(psi,phi'))
+    time assert(projectiveDegrees(psi,MathMode=>true) == reverse {1, 2, 4, 8, 11, 10})
 ///
 
 TEST ///

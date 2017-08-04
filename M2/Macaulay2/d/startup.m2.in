@@ -355,12 +355,12 @@ nosetup := false
 noinitfile = false
 interpreter := commandInterpreter
 
-{*
+-*
 getRealPath := fn -> (					    -- use this later if realpath doesn't work
      local s;
      while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
      fn)
-*}
+*-
 
 pathsearch := e -> (
      if not isFixedExecPath e then (
@@ -585,13 +585,13 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 if firstTime then processCommandLineOptions 1
 
 exe = minimizeFilename (
-     {*
+     -*
      -- this can be a reliable way to get the executable in linux
      -- but we don't want to use it because we don't want to chase symbolic links and it does that for us
      processExe := "/proc/self/exe";
      if fileExists processExe and readlink processExe =!= null then readlink processExe
      else 
-     *}
+     *-
      if isAbsolutePath commandLine#0 then commandLine#0 else
      if isStablePath commandLine#0 then concatenate(currentDirectory()|commandLine#0)
      else pathsearch commandLine#0)

@@ -207,12 +207,12 @@ TEST ///
   checkQRs M
 
   -- TODO: QR doesn't yet work for #rows < #cols.  What should it do in this case?
-  {*
+  -*
   M = mutableMatrix(RR_53, 10, 50)
   fillMatrix M
   elapsedTime (Q,R) = QR M;
   checkQRs M
   (m1,m2) = QR(M, ReturnQR=>false)
   (Q1,R1) = makeQR(m1,m2) 
-  *}
+  *-
 ///

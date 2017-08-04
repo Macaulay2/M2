@@ -1,22 +1,22 @@
-{* TODO
+-* TODO
 1) bihomegenize
 2) divide-conquer summation for trace matrix?
 3) more parameters
 4) better abstraction
-*}
+*-
 
 restart
 load "example-CRN.m2"
 
 
 -- toy network example in comments
-{*(p0, x0) = createSeedPair(G,"initial parameters" => "one")
+-*(p0, x0) = createSeedPair(G,"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
     GraphInitFunction=>completeGraphInit,
     NumberOfEdges=>5,
     "new tracking routine"=>false,
     Verbose=>true)
-assert(length V.PartialSols ==4)*}
+assert(length V.PartialSols ==4)*-
 
 setRandomSeed 0
 W = wnt()
@@ -37,9 +37,9 @@ W1 = apply(toList points (first Gr.Vertices).PartialSols, p -> matrix {p0.Coordi
 R = ring Gr.Family
 S = coefficientRing R
 
-{*
+-*
 in T ring, let's have generators for xhyperplane and khyperplanes and also maybe homogenize equations
-*}
+*-
 
 T =  CC[a, apply(numgens R, i -> (symbol WW)_i)][gens S, gens R]
 mSysEqs = apply(flatten entries Gr.Family.PolyMap, i-> sub(i,T))
@@ -84,13 +84,13 @@ Plinear = polySystem transpose (curve|matrix{{targetHyperplane+1}})
 Plinear1 = polySystem transpose (curve|matrix{{targetHyperplane+t1}}) 
 Plinear2 = polySystem transpose (curve|matrix{{targetHyperplane+t2}}) 
 
-{* tests for Pqadric
+-* tests for Pqadric
 min apply(sols, s->norm evaluate(Pquadric,s))
 apply(sols, s->norm evaluate(curve,s))
 apply(sols, s->norm evaluate(matrix{{xhyperplane0}},s))
 apply(sols, s->norm evaluate(matrix{{sub(first flatten entries khyperplanes0',U)}},s))
 apply(sols, s->numericalRank evaluate(jacobian Pquadric,s))
-*}
+*-
 
 tracked = track(Pquadric,Plinear,sols);
 tracked1 = track(Plinear, Plinear1, tracked);
@@ -103,7 +103,7 @@ first SVD ((traces#0-traces#1) | (traces#0-traces#2))
 
 
 
-{*m = 2; n = 4; d = 3;  
+-*m = 2; n = 4; d = 3;  
 C = CC[a_(1,1)..a_(m,n),b_1..b_m]
 R = C[x_1..x_n]
 F = apply(n-m, i->sub(random(d,CC[x_1..x_n]),R)) -- V(F) = intersection of n-m hypersurfaces of degree d
@@ -117,6 +117,6 @@ C = CC[b]
 R = C[x,y,z]
 F = {y-x^2, z-x^3} 
 L = { 2*x + 3*y + 5*z - b }
-G = polySystem(F|L) *}
+G = polySystem(F|L) *-
 end
 

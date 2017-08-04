@@ -293,7 +293,7 @@ sortSolutionsWithWeights (List, List) := (sols,w) -> (
     sols_sortedCols
     ) 
 
-{*
+-*
 sortSolutionsWithWeights = method()
 sortSolutionsWithWeights (List, List) := (sols,w) -> (
     n := #coordinates first sols;
@@ -309,7 +309,7 @@ sortSolutionsWithWeights (List, List) := (sols,w) -> (
     time sortedCols := sortColumns L;
     time sols_sortedCols
     ) 
-*}
+*-
 
 sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6,Weights=>null})
 sortSolutions List := o -> sols -> (
@@ -411,7 +411,7 @@ TEST ///
     assert(A - B == {{{1, 3}}, {{1+ii, 3}}, {{2, 5}}}/point//pointSet)
 ///
 
-{* not exported. obsolete?
+-* not exported. obsolete?
 
 diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)
@@ -426,7 +426,7 @@ diffSolutions (List,List) := o -> (A,B) -> (
      (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
      )
 
-*}
+*-
 
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
 toAffineChart (ZZ,List) := List => (k,x) -> (
@@ -619,7 +619,7 @@ slice W
 assert (dim W == 1 and degree W ==3)
 ///
 
-{**********************************************************************
+-**********************************************************************
 NumericalVariety = {
      0 => list of (irreducible) witness sets
      1 => list of (irreducible) witness sets
@@ -634,7 +634,7 @@ SERVICE FUNCTIONS:
   isReduced
   NumericalVariety union NumericalVariety (binary)
   
-*}
+*-
 NumericalVariety.synonym = "numerical variety"
 ProjectiveNumericalVariety.synonym = "projective numerical variety"
 net NumericalVariety := V -> (
@@ -914,13 +914,13 @@ document {
        coordinates pt
        status pt
      ///,
-     {* condition number is not computed by default anymore !!!
+     -* condition number is not computed by default anymore !!!
      PARA{"For example, one may see the condition number of the Jacobian of the polynomial system, evaluated at this point
       (the smaller the value, the better) as follows."},
      EXAMPLE lines ///
        pt.ConditionNumber
      ///,
-     *}
+     *-
      PARA{"The other keys that may be attached include "}, 
      UL{
 	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
@@ -1208,14 +1208,14 @@ document {
 	 {TT "PolyMap", " of type ", TO Matrix, ", a column matrix over a polynomial ring"},
     	 {TT "Jacobian", " of type ", TO Matrix, ", the jacobian of ", TT "PolyMap"},
 	 },
-{*     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
+-*     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
      UL {
 	 {TT "ContinuationParameter", " -- stores one variable of the ring" },
 	 {TT "SpecializationRing", 
 	     " -- stores the subring generated my all variables except the additional parameter",
 	     " (e.g., used by ", TO specializeContinuationParameter, ")"}
 	 },
-     *}
+     *-
      EXAMPLE lines ///
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
@@ -1339,7 +1339,7 @@ ring T
     SeeAlso => {homogenize,PolySystem}
     }
 
-{*
+-*
 document {
     Key => {"polynomial homotopy", 
 	segmentHomotopy, (segmentHomotopy,PolySystem,PolySystem), 
@@ -1381,7 +1381,7 @@ H' := substituteContinuationParameter(H,1-t)
     ///,    
     SeeAlso => {ContinuationParameter,SpecializationRing}
     }
-*}
+*-
 -- WitnessSet ------------------------------------------------------------------------------
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),

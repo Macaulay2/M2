@@ -321,12 +321,12 @@ document {
        "++"
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "submatrices",
      }
-*}
+*-
 
 document {
      Key => "differentiation",

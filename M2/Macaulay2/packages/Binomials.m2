@@ -690,7 +690,7 @@ binomialMinimalPrimes Ideal := Ideal => o -> I -> (
      ncv := {};
      i := 0;
      j := #Answer;
-     ME :=ideal; {* pc = {}; *} si := ideal; mp := {}; F := null; S:= null;
+     ME :=ideal; -* pc = {}; *- si := ideal; mp := {}; F := null; S:= null;
      for a in Answer do (
 	  i = i+1;
 	  if o#Verbose  then (

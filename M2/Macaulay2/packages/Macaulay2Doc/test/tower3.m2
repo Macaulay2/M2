@@ -1,7 +1,7 @@
 -- Test of the tower ring engine functions
-{*
+-*
 restart
-*}
+*-
 
 debug Core
 

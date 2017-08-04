@@ -5,15 +5,15 @@ restart
 needsPackage "ReactionNetworks"
 needsPackage "NumericalAlgebraicGeometry"
 FF = ZZ/32003
-{*
+-*
 FF = CC_53
-*}
+*-
 
-{*
+-*
 CRN = reactionNetwork "A <--> 2B, A+C<-->D, B+E-->A+C, D-->B+E"
 -- V(I) has two components: principal one of deg=22 
 -- V(J) has two components: principal one of deg=15 
-*}
+*-
 
 CRN = wnt()
 
@@ -29,20 +29,20 @@ I = ideal (CE|SSE)
 Rt = FF[take(gens S, n),t]
 toCurve = map(Rt,S,take(gens Rt,n)|(ccSubList/last)|apply(numgens S - 2*n,i->t-random FF))
 J = toCurve I 
-{* NUMERICAL DECOMPOSITION
+-* NUMERICAL DECOMPOSITION
 J = ideal apply(numgens C - 1, i->sub(random(1,FF[gens C])+1,ring I)) + I;
 R = CC[xxx_1..xxx_(numgens ring J)]
 toR = map(R,ring J, vars R)
 NID = numericalIrreducibleDecomposition(toR J, Software=>BERTINI)
-*}
+*-
 
-{* SYMBOLIC DECOMPOSITION
+-* SYMBOLIC DECOMPOSITION
 decI = decompose I;
 decI / degree
-*}
+*-
 
 gbTrace = 3
-{*
+-*
 degree I
-*}
+*-
 degree J

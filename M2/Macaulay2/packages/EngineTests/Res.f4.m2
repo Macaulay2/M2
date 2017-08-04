@@ -509,7 +509,7 @@ TEST ///
   betti C
 ///
 
-{* TEST *} ///
+-* TEST *- ///
   -- takes too much memory
   -- might take too long ...
   kk = ZZ/101
@@ -521,7 +521,7 @@ TEST ///
   elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP
 ///
 
-{* TEST *} ///  
+-* TEST *- ///  
   -- disabled most recently because it gives the wrong answer
   -- disabled originally since it is right on the edge of limits, so sometimes fails sometimes succeeds.
   kk = ZZ/101

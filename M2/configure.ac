@@ -262,18 +262,22 @@ AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
+dnl always compile with "-g", so we can debug even optimized versions
+if test "$GCC" = yes
+then CFLAGS="$CFLAGS -g3"
+     CXXFLAGS="$CXXFLAGS -g3"
+     LDFLAGS="$LDFLAGS -g3"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g3"
+else CFLAGS="$CFLAGS -g"
+     CXXFLAGS="$CXXFLAGS -g"
+     LDFLAGS="$LDFLAGS -g"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g"
+fi
+
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
 then # It is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint".
      # Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.  This is standard practice.
-     if test "$GCC" = yes
-     then CFLAGS="$CFLAGS -g3"
-	  CXXFLAGS="$CXXFLAGS -g3"
-	  LDFLAGS="$LDFLAGS -g3"
-     else CFLAGS="$CFLAGS -g"
-	  CXXFLAGS="$CXXFLAGS -g"
-	  LDFLAGS="$LDFLAGS -g"
-     fi
      # gc.h obeys the GC_DEBUG flag:
      M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
      CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
@@ -485,7 +489,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
 
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
@@ -590,7 +594,7 @@ AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
 [if [ $? != 0 ] ; then exit 1 ; fi]
 # convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
+AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
 AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)

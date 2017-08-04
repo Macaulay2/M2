@@ -13,11 +13,11 @@ JJ:=ideal apply(0..(m-2), i -> apply((i+1)..(m-1), j -> (II_i*t_j-II_j*t_i)));
 
 assert try time saturate(JJ,II_0,Strategy => Bayer) else true
 
-{* -- it would be nice if this example would run quicker
+-* -- it would be nice if this example would run quicker
 JJ' = first flattenRing JJ
 II0 = sub(II_0, ring JJ')
 time saturate(JJ',II0,Strategy => Bayer)
-*}
+*-
 
 --stdio:10:6:(1):[0]: error: expected argument 2 to be an integer
 --     -- used 4.3 seconds

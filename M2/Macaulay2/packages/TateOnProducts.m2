@@ -181,7 +181,7 @@ lowerCorner(ChainComplex,List) := (F,deg) ->(
      ((F.dd_(-k+1))^L1)_L2
      )
 
-{*
+-*
 corner=method()
 corner(ChainComplex,List) := (F,deg) ->(
      E:=ring F;
@@ -242,7 +242,7 @@ betti m, tally degrees target m, tally degrees source m
 m1= corner(f,-1,{2,0});
 betti m1, tally degrees target m1, tally degrees source m1
 ///
-*}
+*-
 
 
 ---------------------------------------------------------
@@ -782,7 +782,7 @@ isMinimalChainComplex = C -> (
     )
 
 
-{*
+-*
 minimize = method (
     Options => {Check => false}
     )
@@ -821,7 +821,7 @@ minimize ChainComplex := o -> E ->(
     E'.cache.pruningMap = m[-min E];
     E'
     )
-*}
+*-
 isExact=method()
 isExact(ChainComplex):=(C) -> (
    if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
@@ -854,14 +854,14 @@ inWindow(ChainComplex) := W -> (
     L:=flatten apply(toList(nonzeroMin W.. nonzeroMax W),d-> degrees W_d);
     #select(L, D-> not inWindow(D,n))==0)    
 
-{*aboveWindow = method()
+-*aboveWindow = method()
 aboveWindow(List,List) := (D,n) -> #D == #select(#D, i-> D_i>n_i)
 
 gensInWindow = method()
 gensInWindow(Module) := M ->(
     rd = ringData ring M; 
     #D == #select(#D, i->(0<=D_i and D_i<=n_i)))
-*}
+*-
 ///
 n = {3,5,4}
 D = { -1,4,3}
@@ -1272,7 +1272,7 @@ doc ///
 
 
 
-{*
+-*
 doc ///
   Key
     ringData
@@ -1308,7 +1308,7 @@ doc ///
 	varsList
 	irrList       		
 ///
-*}
+*-
 
 doc ///
   Key
@@ -1736,7 +1736,7 @@ doc ///
 --------------------------
 -- subcomplexes         --
 --------------------------
-{*
+-*
 doc ///
   Key
     regionComplex
@@ -1788,7 +1788,7 @@ doc ///
      Example
         (S,E)=setupRings(ZZ/101,{1,2})
 ///
-*}
+*-
 
 doc ///
   Key
@@ -1990,7 +1990,7 @@ doc ///
 	betti cT	
 	cohomologyTable(cT,-{4,4},{3,2})
 ///
-{*     Example
+-*     Example
         (S,E)=setupRings(ZZ/101,{1,2});
 	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>4))
 	isChainComplex T1
@@ -2007,7 +2007,7 @@ doc ///
 	betti cT
 	cohomologyTable(cT,-{4,4},{3,3})
 	cohomologyTable(T,-{4,4},{3,3})	
-*}
+*-
 
 
 -------------------------------------------------

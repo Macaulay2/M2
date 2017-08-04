@@ -197,12 +197,9 @@ various modern operating systems:
 	brew cleanup
     Now remember to add 
         --enable-build-libraries="readline"
-      to the "configure" command line below in the section on compiling Macaulay2.
-    Note: including "readline" in the "--enable-build-libraries" option is
-      necessary because it doesn't seem to be possible to recompile it from
-      source; the binary distribution used by homebrew uses "clang", which will
-      optimize the code in "gc" for your particular CPU.  If you won't be
-      distributing the code to others, it can be omitted.
+      to the "configure" command line below in the section on compiling
+      Macaulay2.  This works around a bug in the library: CTRL-A doesn't go all
+      the way to the beginning of the line after typing r e s o TAB C-a.
     Note: software installed by "fink", if not kept up to date, can interfere
       with the Macaulay2 build process.  To test, for example, whether the
       correct version of "automake" is available, run the shell command
@@ -555,3 +552,32 @@ libtool, etc., try running
 in the top level.  This command will install versions of those tools known to
 work with Macaulay2.
 
+----------------------
+For distributors
+----------------------
+
+There are some things about a new distribution of Macaulay2 that should be
+checked manually.  Install the distribution on your system as the ultimate user
+will and then try:
+
+  - emacs M2 interaction
+
+    Press f12 and verify that Macaulay2 starts.
+
+  - emacs M2 mode
+
+    Visit the file /tmp/foo.m2 and verify that the buffer is in Macaulay2 mode.
+
+  - emacs Macaulay2 info documentation
+
+    Start the emacs Info documentation reader with C-h i and verify that menu
+    items are present in the node "(dir)Top" for the various Macaulay2 packages
+    in a section entitled "Macaulay2 and its packages".
+
+  - readline
+
+    Start M2 in a terminal window and then type the following characters:
+    	  r e s o TAB
+    The partial word should be completed to "resolution".  Then press:
+          C-a
+    Verify that the cursor is now at the beginning of the line.

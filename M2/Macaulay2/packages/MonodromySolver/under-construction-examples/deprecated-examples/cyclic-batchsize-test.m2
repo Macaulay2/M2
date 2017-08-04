@@ -3,13 +3,13 @@ n = 7
 polys = parametrizedCyclic n
 
 
-{* each case is a quadruple (
+-* each case is a quadruple (
         type of graph, 
       	#nodes,
 	#edges,
 	"edge selection strategy" => "potential" -- "potential" = null if potential is not used
 	)
-*}
+*-
 testTriples = {
     (completeGraphInit, 3, 2), 
     (flowerGraphInit, 3, 2)

@@ -1,7 +1,7 @@
 -- test added handling of direct summands to lift and promote
 -- and added handling of lifting and promotion of (free) modules
 
-{*
+-*
 
 generateAssertions ///
 R = QQ[x]
@@ -43,7 +43,7 @@ previous = lift(g,R)
 (source previous).cache.components,(target previous).cache.?components
 ///
 
-*}
+*-
 
      R = QQ[x]
      S = R[y,Join=>false]

@@ -1,8 +1,8 @@
 --=========================================================================--
-{*
+-*
 Copyright 2010 Bart Snapp, Nathaniel Stapleton.
 This file is in the public domain.
-*} 
+*- 
 newPackage(
      "NoetherNormalization",
      Version => "0.9.3", 

@@ -4,6 +4,14 @@ $(error config.Makefile already loaded)
 endif
 CONFIG_MAKEFILE = loaded
 .PHONY: all check initialize clean distclean install always reconfigure big-check
+
+# Note: run our makefiles with GNU make, version 4 or larger.
+#       Version 3.81, provided on Mac OS X, has a bug, but you can
+#	use "homebrew" to install a modern version under the name "gmake"
+ifeq ($(MAKE_VERSION),3.81)
+$(error GNU make version $(MAKE_VERSION) is too old)
+endif
+
 all:
 
 # clear this environment variable so the ambient system doesn't offer advice to

@@ -153,7 +153,7 @@ potentialLowerBound = (e,from1to2) -> (
     max(n1-n2, 0)
     ) 
 
-{*
+-*
 potentialE = (e,from1to2) -> (
     G := e.Graph;
     (head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
@@ -169,7 +169,7 @@ potentialE = (e,from1to2) -> (
     else p=0;
     p
     ) 
-*}
+*-
 
 makeBatchPotential = method()
 makeBatchPotential ZZ := batchSize -> (

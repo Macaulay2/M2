@@ -1,6 +1,6 @@
-{* 
+-* 
   M2 < y10-x0x0x1-PS-false.m2 > y10-x0x0x1-PS-false.out
-*} 
+*- 
 
 needsPackage "EquivariantGB"
 -- QQ[x_0,x_1,...; y_(0,1),y(1,0),...]

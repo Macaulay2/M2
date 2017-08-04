@@ -88,7 +88,7 @@ example(ExampleTable, String) := opts -> (H,x) -> (
      else I)
 
 readExampleFile = method()
-{* -- remove this code
+-* -- remove this code
 readExampleFile(String,Ring) := (filename, coeffring) -> (
      G := separateRegexp("---+", get (ExampleIdeals#"source directory"|filename));
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -107,10 +107,10 @@ readExampleFile(String) := (filename) -> (
 	       s := substring(2,G#i#0); -- remove the first two -- characters
 	       i+1 => s => demark("\n",drop(G#i,1))))
      )
-*}
+*-
 getExampleFile = method()
 
-{* -- remove this code
+-* -- remove this code
 getExampleFile(String,String) := (filename,kkstring) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -121,7 +121,7 @@ getExampleFile(String,String) := (filename,kkstring) -> (
 	       i+1 => s => replace("kk", kkstring, demark("\n",drop(G#i,1)))))
      )
 getExampleFile(String) := (filename) -> getExampleFile(filename,"")
-*}
+*-
 
 -- New code
 getExampleFile(String) := (filename) -> (
@@ -811,7 +811,7 @@ time gens gb(I, MaxReductionCount=>3000);
 print toMagma R; print toMagma I
 runMagmaGB I
 runSingularGB I
-{* -- magma
+-* -- magma
 R<x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8,x_9,x_10,x_11,x_12,x_13,x_14,x_15,x_16,x_17,x_18,x_19,x_20,x_21,x_22,x_23,x_24,x_25,x_26,x_27,x_28,x_29,x_30,x_31,x_32> := PolynomialRing(GF(32003),32,"grevlex");
 I := ideal< R | 
    -x_16*x_28+x_12*x_32,
@@ -844,4 +844,4 @@ I := ideal< R |
    -x_19*x_25+x_17*x_27,
    -x_18*x_19+x_17*x_20+x_20*x_21-x_19*x_22-x_18*x_23-x_22*x_23+x_17*x_24+x_21*x_24+x_20*x_25+x_24*x_25-x_19*x_26-x_23*x_26-x_18*x_27-x_22*x_27-x_26*x_27+x_17*x_28+x_21*x_28+x_25*x_28+x_20*x_29+x_24*x_29+x_28*x_29-x_19*x_30-x_23*x_30-x_27*x_30-x_18*x_31-x_22*x_31-x_26*x_31-x_30*x_31+x_17*x_32+x_21*x_32+x_25*x_32+x_29*x_32>;
 time J := GroebnerBasis(I);
-*}
+*-

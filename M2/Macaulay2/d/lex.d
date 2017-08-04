@@ -262,7 +262,7 @@ skipwhite(file:PosFile):int := (
 		    ) do getc(file);
 	       )
 	  else if c == int('{') && peek(file,1) == int('*') then (
-	       -- block comment: {* ... *}
+	       -- block comment: {* ... *}, deprecated style, not colored by emacs
 	       getc(file); getc(file);
 	       hadnewline := false;
 	       until (
@@ -281,6 +281,30 @@ skipwhite(file:PosFile):int := (
 			 c = peek(file);
 		    	 if c == ERROR || c == EOF then return c; 
 		    	 c == int('}')			    -- {
+		    	 && (
+			      getc(file);
+			      true ) ) )
+	       do getc(file))
+	  else if c == int('-') && peek(file,1) == int('*') then (
+	       -- block comment: -* ... *-
+	       getc(file); getc(file);
+	       hadnewline := false;
+	       until (
+		    c = peek(file);
+		    if c == ERROR || c == EOF then return c;
+		    if c == int('\n') then (
+			 if hadnewline && isatty(file) then (
+			      getc(file);
+			      return ERROR; -- user gets out with an extra NEWLINE
+			      );
+			 hadnewline = true;
+			 )
+		    else hadnewline = false;
+		    c == int('*') && (
+			 getc(file);
+			 c = peek(file);
+		    	 if c == ERROR || c == EOF then return c; 
+		    	 c == int('-')			    -- -
 		    	 && (
 			      getc(file);
 			      true ) ) )

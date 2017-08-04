@@ -898,7 +898,7 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
      	 all'sols = solutionsWithMultiplicity(all'sols|select(sols, s->status s===Regular));
 	 nAttempts = nAttempts - 1;
 	 correctorTolerance = 0.1 * correctorTolerance;
-	 {* -- alternative rerun strategy: piecewise linear path 
+	 -* -- alternative rerun strategy: piecewise linear path 
    	    -- (gets other solutions though... need to sync between undegenerations?) 
      	 t' := exp(2*pi*ii*random RR);
 	 H1 := sub(H,matrix{{t'*t}|drop(gens Rt,1)});
@@ -916,7 +916,7 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
 	     	 ), s->status s === Regular);
      	 all'sols = solutionsWithMultiplicity(all'sols|sols);
 	 nAttempts = nAttempts - 1;
-	 *}
+	 *-
 	 );
      if #all'sols < #S then error "trackHomotopy: singularity encountered";
      if #all'sols > #S then error "trackHomotopy: more solutions found than expected";

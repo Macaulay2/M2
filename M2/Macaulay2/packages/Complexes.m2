@@ -1451,7 +1451,7 @@ tensorAssociativity(Complex,Complex,Complex) := (A,B,C) -> (
 
 isDirectSum Complex := (C) -> C.cache.?components
 
-{* -- Greg + Mike think this is old debugging code.  Are we right?!
+-* -- Greg + Mike think this is old debugging code.  Are we right?!
 basicHom = (C,D) -> (
     R := ring C;
     if ring D =!= R then error "expected complexes over the same ring";
@@ -1500,7 +1500,7 @@ Hom(Complex, Complex) := Complex => (C, D) -> (
                Hom((components C)#i, (components D)#i)
        ));
    )
-*}
+*-
 
 UNTEST ///
 restart
@@ -1570,10 +1570,10 @@ needsPackage "Complexes"
 ///
 
 UNTEST ///
-{*
+-*
 restart
 needsPackage "Complexes"
-*}
+*-
   -- XXXXXX
   R = ZZ/101[a..f]
   A = freeResolution coker matrix{{a,b}}
@@ -1692,14 +1692,14 @@ doc ///
      map
 ///
 
-{* -- The following block of text doesn't validate anymore, and goes right after the last Example above this.
+-* -- The following block of text doesn't validate anymore, and goes right after the last Example above this.
     Text
       @SUBSECTION "Programming Details"@
       The function also checks the data structure for the following:
       @UL {
           {"The keys are exactly ring, concentration, module, differential, cache"},
           }@
-*}
+*-
 doc ///
    Key
      (complex, Module)
@@ -2727,10 +2727,10 @@ doc ///
 
 TEST ///
   -- test creation of complexes 1: via free resolutions
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
   R = ZZ/32003[vars(0..17)]
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
@@ -2774,10 +2774,10 @@ TEST ///
 
 TEST ///
   -- test creation of complexes 2: from modules
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
 
   S = ZZ/101[a..d]
   C0 = complex S^2
@@ -2846,10 +2846,10 @@ TEST ///
 ///
 TEST ///
   -- test creation of complexes 3: via constructors
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
   S = ZZ/101[a..d]
   I = ideal(b^2-a*c, b*c-a*d, c^2-b*d)
   F1 = map(S^1,,matrix{{I_0, I_1, I_2}})

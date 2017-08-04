@@ -42,7 +42,7 @@ testops = (R) -> (
   m2 = matrix columnMult(m, 1, 14);
   assert(m1 == m2);
   --
-  {*
+  -*
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   m1 = matrix columnPermute(m,1,{2,0,1});
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
@@ -54,7 +54,7 @@ testops = (R) -> (
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
   m2 = matrix rowPermute(m,1,{2,0,1});  
   assert(m1 == m2);
-    *}
+    *-
   )
 
 debug Core

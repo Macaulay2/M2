@@ -1010,6 +1010,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix *A)
 // square matrix A
 {
 #if 1
+#if 0
   const Ring *R = A->get_ring();
   typedef DMat<M2::ARingZZpFFPACK> DMatZZp;
   MutableMat<DMatZZp> *B = A->cast_to_MutableMat<DMatZZp>();
@@ -1021,17 +1022,16 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix *A)
   M2::ARingZZpFFPACK::ElementType *elemsA = B->get_Mat()->array();
   std::vector<M2::ARingZZpFFPACK::ElementType> charpoly;
 
-#if 0
   // CharPoly isn't there any more (?)
   FFPACK::CharPoly(B->get_Mat()->ring().field(), charpoly, A->n_rows(),
   elemsA, A->n_rows());
-#else
-  return nullptr;
-#endif
 
   for (size_t i = 0; i < charpoly.size(); i++) std::cout << charpoly[i] << " ";
   std::cout << std::endl;
   return convertRingelemsToArray(R, charpoly);
+#else
+  return nullptr;
+#endif
 #else
   ERROR("not implemented: configure M2 with --enable-ffpack-fflas");
   return 0;
@@ -1043,6 +1043,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 // matrix A
 {
 #if 1
+#if 0
   const Ring *R = A->get_ring();
   typedef DMat<M2::ARingZZpFFPACK> DMatZZp;
   MutableMat<DMatZZp> *B = A->cast_to_MutableMat<DMatZZp>();
@@ -1063,13 +1064,9 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
   Element *X = new Element[n * (n + 1)];
   size_t *P = new size_t[n];
 
-#if 0
   // this is in ffpack 2.3 but not in 2.2, and it might be the wrong name now, was MinPoly before
   FFPACK::Protected::Hybrid_KGF_LUK_MinPoly(
        B->get_Mat()->ring().field(), minpoly, n, elemsA, n, X, n, P);
-#else
-  return nullptr;
-#endif
 
   delete[] P;
   delete[] X;
@@ -1077,6 +1074,9 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
   for (size_t i = 0; i < minpoly.size(); i++) std::cout << minpoly[i] << " ";
   std::cout << std::endl;
   return convertRingelemsToArray(R, minpoly);
+#else
+  return nullptr;
+#endif
 #else
   ERROR("not implemented: configure M2 with --enable-ffpack-fflas");
   return 0;
