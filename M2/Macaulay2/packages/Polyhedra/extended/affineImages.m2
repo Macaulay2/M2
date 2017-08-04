@@ -126,3 +126,21 @@ affinePreimage(Matrix,Cone) := (A,C) -> coneFromVData affinePreimage(A,polyhedro
 --                       {q | q+b in C}
 affinePreimage(Cone,Matrix) := (C,b) -> affinePreimage(polyhedron C,b)
 
+linearTransform = method()
+linearTransform(Fan, Matrix) := (F, A) -> (
+   newRays := rays F;
+   newRays = A * newRays;
+   newLineality := linealitySpace F;
+   check := kernel A;
+   check = newLineality | (gens check);
+   if(rank check != rank newLineality) then << "Warning: Output fan may not be well defined. Check with 'isWellDefined'" << endl;
+   newLineality = A * newLineality;
+   newLineality = mingens image newLineality;
+   goodNewRays := makeRaysUniqueAndPrimitive(newRays, newLineality);
+   result := new HashTable from {
+      rays => newRays,
+      computedLinealityBasis => newLineality,
+      generatingObjects => maxCones F
+   };
+   return fan result
+)

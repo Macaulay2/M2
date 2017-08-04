@@ -32,6 +32,7 @@ export {
    "hyperplanes", 
    "linSpace", 
    "linealitySpace",
+   "linearTransform",
    "polyhedra", 
    "vertices",
    "areCompatible", 

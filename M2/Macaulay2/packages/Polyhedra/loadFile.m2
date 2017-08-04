@@ -82,6 +82,7 @@ load "./tests/extended/polyhedron.m2"
 load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 load "./tests/extended/mixedVolume.m2"
 load "./tests/extended/tests_from_polymake/ehrhart_and_volume.m2"
+load "./tests/extended/linearTransform.m2"
 -- Other:
 load "./tests/legacy_tests_working.m2"
 load "./tests/shouldFail.m2"
