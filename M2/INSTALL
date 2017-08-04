@@ -197,12 +197,9 @@ various modern operating systems:
 	brew cleanup
     Now remember to add 
         --enable-build-libraries="readline"
-      to the "configure" command line below in the section on compiling Macaulay2.
-    Note: including "readline" in the "--enable-build-libraries" option is
-      necessary because it doesn't seem to be possible to recompile it from
-      source; the binary distribution used by homebrew uses "clang", which will
-      optimize the code in "gc" for your particular CPU.  If you won't be
-      distributing the code to others, it can be omitted.
+      to the "configure" command line below in the section on compiling
+      Macaulay2.  This works around a bug in the library: CTRL-A doesn't go all
+      the way to the beginning of the line after typing r e s o TAB C-a.
     Note: software installed by "fink", if not kept up to date, can interfere
       with the Macaulay2 build process.  To test, for example, whether the
       correct version of "automake" is available, run the shell command
