@@ -262,18 +262,22 @@ AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
+dnl always compile with "-g", so we can debug even optimized versions
+if test "$GCC" = yes
+then CFLAGS="$CFLAGS -g3"
+     CXXFLAGS="$CXXFLAGS -g3"
+     LDFLAGS="$LDFLAGS -g3"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g3"
+else CFLAGS="$CFLAGS -g"
+     CXXFLAGS="$CXXFLAGS -g"
+     LDFLAGS="$LDFLAGS -g"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g"
+fi
+
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
 then # It is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint".
      # Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.  This is standard practice.
-     if test "$GCC" = yes
-     then CFLAGS="$CFLAGS -g3"
-	  CXXFLAGS="$CXXFLAGS -g3"
-	  LDFLAGS="$LDFLAGS -g3"
-     else CFLAGS="$CFLAGS -g"
-	  CXXFLAGS="$CXXFLAGS -g"
-	  LDFLAGS="$LDFLAGS -g"
-     fi
      # gc.h obeys the GC_DEBUG flag:
      M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
      CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
