@@ -17,9 +17,7 @@ MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 BUILDLIBS = 
 
 ifeq ($(MACOSX),yes)
-# mac os x readline has a bug: CTRL-A doesn't go all the way to the beginning of the
-# line after typing r e s o TAB C-a, so we build it ourselves
-BUILDLIBS += readline
+OPTLIBS += /usr/local/opt/readline
 endif
 
 DIRECTORY ?= $(shell hostname)
@@ -54,6 +52,10 @@ QUIET_CC=
 QUIET_CXX=
 QUIET_AR=
 endif
+
+$(foreach O, $(OPTLIBS),			\
+	$(eval CPPFLAGS += -I$O/include)	\
+	$(eval LDFLAGS += -L$O/lib))
 
 include Makefile.include
 

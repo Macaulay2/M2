@@ -972,6 +972,21 @@ fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
 fi
+if test $BUILD_readline = no
+then # readline on Mac OS X is stuck at version 4.2, which has this bug:
+     #   CTRL-A doesn't go all the way to the beginning of the
+     #   line after typing r e s o TAB C-a
+     # So we build it ourselves.
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether readline library is new enough (version at least 6)])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+	     #include <stdio.h>
+	     #include <readline/readline.h>
+	     int main () { return ! ( RL_READLINE_VERSION >= 6 * 0x100 ) ; }]])],
+	[ AC_MSG_RESULT([yes]) ],
+	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
+	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
