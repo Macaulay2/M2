@@ -231,14 +231,14 @@ various modern operating systems:
   the directory where you want to install the files; if it's a directory not
   owned by you, prefix the "make install" command below with "sudo".
 
-       wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
-       tar xjf gcc-4.8.2.tar.bz2
-       cd gcc-4.8.2
+       wget ftp://ftp.gnu.org/gnu/gcc/gcc-7.1/gcc-7.1.tar.bz2
+       tar xjf gcc-7.1.tar.bz2
+       cd gcc-7.1
        ./contrib/download_prerequisites
        cd ..
-       mkdir gcc-4.8.2-build
-       cd gcc-4.8.2-build
-       ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++,fortran --disable-multilib
+       mkdir gcc-7.1-build
+       cd gcc-7.1-build
+       ../gcc-7.1/configure --prefix=$HOME/local --program-suffix=-7.1 --enable-languages=c,c++,fortran --disable-multilib
        make
        make install
 
@@ -250,16 +250,16 @@ various modern operating systems:
      command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
-     The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
+     The resulting compiler executables will be named gcc-7.1 and g++-7.1.
      Now put the following lines in your file $HOME/.profile :
 
         export PATH=$HOME/local/bin:$PATH
         export MANPATH=$HOME/local/share/man:$MANPATH
         export INFOPATH=$HOME/local/share/info:$INFOPATH
         export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
-        export CC=gcc-4.8.2
-        export CXX=g++-4.8.2
-        export FC=gfortran-4.8.2
+        export CC=gcc-7.1
+        export CXX=g++-7.1
+        export FC=gfortran-7.1
 
      and then log out and log in again (or source the file into your
      environment and continue in the same process or in daughter processes).
