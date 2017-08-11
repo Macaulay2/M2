@@ -29,7 +29,6 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
-SIGN=yes
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-strip
 ifeq ($(DEBIAN),yes)
@@ -61,5 +60,5 @@ include Makefile.include
 
 # Local Variables:
 # mode: makefile-gmake
-# compile-command: "time make "
+# compile-command: "time make SIGN=no DEBUG=no "
 # End:
