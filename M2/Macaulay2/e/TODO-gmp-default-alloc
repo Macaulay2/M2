@@ -1,0 +1,8 @@
+Branch gmp-default-alloc created 11 Aug 2017, in Ocean Grove.
+
+1. Add in gc cpp code.
+2. Go through each front end object in engine, and add destructor.  Don't do anything, except print that
+    it is being freed.
+3. ringelem: NEVER just copy a pointer.
+    includes ONE, MINUS_ONE, ZERO.
+4. 
