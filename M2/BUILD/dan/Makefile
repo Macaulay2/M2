@@ -11,7 +11,7 @@ CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 
 # detect the OS flavor
 DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
-RPM := $(shell if [ -d /var/lib/yum ] ; then echo yes ; else echo no; fi)
+RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else echo no; fi)
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 BUILDLIBS = 
