@@ -1416,6 +1416,11 @@ AC_ARG_ENABLE(fplll,
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
+if test $BUILD_flint = yes -o $BUILD_ntl = yes -o $BUILD_mpir = yes
+then BUILD_factory=yes
+     BUILD_ALWAYS="factory $BUILD_ALWAYS"
+fi
+
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
