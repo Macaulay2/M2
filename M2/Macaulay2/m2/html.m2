@@ -482,7 +482,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if ulimit === null then (
 	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
 	  );
-     tmpf << "-- -*- M2-comint -*- -* hash: " << inputhash << " *-" << endl << close;
+     tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
      cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
@@ -782,7 +782,7 @@ installPackage Package := opts -> pkg -> (
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  gethash := outf -> (
 	       f := get outf;
-	       m := regex("\\`.*\\{\\*.* hash: *(-?[0-9]+).*\\*\\}",f);
+	       m := regex("\\`.* hash: *(-?[0-9]+)$",f);    -- this regular expression must detect the format used above
 	       if m =!= null then value substring(f,m#1#0,m#1#1));
 	  if verbose then stderr << "--making example result files in " << exampleOutputDir << endl;
 	  hadExampleError = false;
