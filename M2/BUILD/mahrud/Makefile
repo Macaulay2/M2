@@ -18,7 +18,8 @@ rpm-build:
 	  --enable-rpm \
 	  --prefix=/usr \
 	  --enable-download \
-	  --enable-build-libraries="factory pari flint ntl fflas_ffpack memtailor mathic mathicgb";
+	  --enable-build-libraries="factory";
 	make -j4 -C build
 
+#	  --enable-build-libraries="factory pari flint ntl fflas_ffpack memtailor mathic mathicgb";
 #TODO: can we skip building factory? use FTABLESDIR=/usr/share/factory/ 
