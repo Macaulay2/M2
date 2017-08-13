@@ -782,7 +782,7 @@ installPackage Package := opts -> pkg -> (
 	  outfn' := fkey -> exampleDir'|toFilename fkey|".out";
 	  gethash := outf -> (
 	       f := get outf;
-	       m := regex("\\`.* hash: *(-?[0-9]+)$",f);    -- this regular expression must detect the format used above
+	       m := regex("\\`.* hash: *(-?[0-9]+)",f);    -- this regular expression must detect the format used above
 	       if m =!= null then value substring(f,m#1#0,m#1#1));
 	  if verbose then stderr << "--making example result files in " << exampleOutputDir << endl;
 	  hadExampleError = false;
