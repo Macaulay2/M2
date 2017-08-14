@@ -149,6 +149,18 @@ ifeq "@OPTIMIZE@" "yes"
 M2_BOTH += -Wuninitialized
 endif
 
+GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
+GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
+
+FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
+FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
+
+M2_LIBRARIES += $(GIVARO_LIBS)
+M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
+
+M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
+M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
+
 M2_CFLAGS   += $(M2_BOTH)
 M2_CXXFLAGS += $(M2_BOTH)
 
@@ -233,18 +245,6 @@ WHY = @ (if [ -f $@ ] ;																	\
 	 then echo "=== remaking $@ in $$(basename $$PWD) because of $?" ; echo === ; ls -l $@ || : ; echo === ; ls -l $? | head -5 ; echo === ;	\
 	 else echo "=== making $@ in $$(basename $$PWD)" ;												\
 	 fi)
-
-GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
-GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
-
-FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
-FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
-
-M2_LIBRARIES += $(GIVARO_LIBS)
-M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
-
-M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
-M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
 
 test:
 	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
