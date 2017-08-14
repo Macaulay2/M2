@@ -206,6 +206,8 @@ various modern operating systems:
       /sw/bin/automake.  Since homebrew suffices for most purposes, it's
       probably best to just remove fink entirely, with the command
         sudo rm -rf /sw
+    Note: adding "--enable-strip" to the configure script command line may not be a good idea,
+      as stripping the M2 binary seems to cause the program to crash unpredictably.
 
   Cygwin 1.7 under Microsoft Windows:
     Use setup to install these packages:
