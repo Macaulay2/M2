@@ -14,7 +14,7 @@ export {
    "polyhedron",
    "polyhedronFromHData",
    "polyhedronFromInequalities" => "polyhedronFromHData",
-
+   "dualFaceRepresentationMap",
    "facets",
    "Fan", 
    "PolyhedralComplex", 
