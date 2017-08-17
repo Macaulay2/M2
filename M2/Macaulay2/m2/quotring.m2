@@ -275,7 +275,8 @@ dim QuotientRing := (R) -> (
      else if R.?SkewCommutative then notImplemented()
      else (
 	  I := flattenRing(R, Result => Ideal);
-	  dim ring I - codim I
+	  cd := codim I;
+	  if cd === infinity then -1 else dim ring I - codim I
 	  )
      )
 

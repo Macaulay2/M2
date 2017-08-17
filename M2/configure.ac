@@ -489,7 +489,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,no) AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
 
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
@@ -972,6 +972,21 @@ fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
 fi
+if test $BUILD_readline = no
+then # readline on Mac OS X is stuck at version 4.2, which has this bug:
+     #   CTRL-A doesn't go all the way to the beginning of the
+     #   line after typing r e s o TAB C-a
+     # So we build it ourselves.
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether readline library is new enough (version at least 6)])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+	     #include <stdio.h>
+	     #include <readline/readline.h>
+	     int main () { return ! ( RL_READLINE_VERSION >= 6 * 0x100 ) ; }]])],
+	[ AC_MSG_RESULT([yes]) ],
+	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
+	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
@@ -1400,6 +1415,11 @@ AC_ARG_ENABLE(fplll,
     
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
+
+if test $BUILD_flint = yes -o $BUILD_ntl = yes -o $BUILD_mpir = yes
+then BUILD_factory=yes
+     BUILD_ALWAYS="factory $BUILD_ALWAYS"
+fi
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no

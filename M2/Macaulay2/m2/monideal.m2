@@ -39,7 +39,8 @@ addHook(Module, symbol codim, (opts,M) -> break (
 	  n := rank target p;
 	  c := infinity;
 	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p)));
-	  c - codim(R,opts))))
+	  c - codim monomialIdealOfRow(0,matrix{{0_R}}) -- same as c - codim R, except works for iterated rings
+	  )))
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
      if n < 0 then error "expected nonnegative exponent"
