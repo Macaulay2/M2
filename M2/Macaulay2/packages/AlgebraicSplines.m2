@@ -9,31 +9,23 @@
 ------------------------------------------
 ------------------------------------------
 
-if version#"VERSION" <= "1.4" then (
-    needsPackage "FourierMotzkin"
-    )
-
 newPackage select((
     "AlgebraicSplines",
         Version => "0.1.0", 
         Date => "27. May 2015",
         Authors => {
-            {Name => "Mike DiPasquale", Email => "midipasq@gmail.com", HomePage => "http://illinois.edu/~dipasqu1"},
+            {Name => "Michael DiPasquale", Email => "mdipasq@okstate.edu", HomePage => "http://math.okstate.edu/people/mdipasq/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://cs.hood.edu/~whieldon"},
-	    {Name => "Eliana Duarte", Email => "emduart2@illinois.edu", HomePage => "http://illinois.edu/~emduart2"},
+	    {Name => "Eliana Duarte", Email => "emduart2@illinois.edu", HomePage => "https://faculty.math.illinois.edu/~emduart2/"},
 	    {Name => "Daniel Irving Bernstein", Email=> "dibernst@ncsu.edu", HomePage =>"http://www4.ncsu.edu/~dibernst"}
         },
-        Headline => "Package for computing topological boundary maps and piecewise continuous splines on polyhedral complexes.",
+        Headline => "Package for splines on simplicial complexes, polytopal complexes, and graphs",
         Configuration => {},
-        DebuggingMode => true,
-        if version#"VERSION" > "1.4" then PackageExports => {
+        DebuggingMode => false,
+        PackageExports => {
 	    "FourierMotzkin"
 	    }
         ), x -> x =!= null)
-
-if version#"VERSION" <= "1.4" then (
-    needsPackage "FourierMotzkin"
-    )
 
 export {
    "BaseRing",
