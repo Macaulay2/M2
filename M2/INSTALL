@@ -114,9 +114,9 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion libmpc-devel
-    Some debugging aids:
-      sudo debuginfo-install strace
+      sudo dnf -y install autoconf bison boost-devel emacs flex gc-devel gcc-c++ gdbm-devel git glpk-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libtool libxml2-devel ncurses-devel patch readline-devel rpm-build rpm-sign libmpc-devel yasm libmpc-devel time which
+    Some packages perhaps of interest to developers:
+      sudo dnf -y install mpir-devel mpfr-devel pari-devel frobby cddlib-devel givaro-devel gtest-devel emacs kernel-devel libgfortran-static flint-devel gmp-devel debuginfo-install strace libfac-devel factory-devel ntl-devel rpmdevtools
 
   Scientific linux:
     Install packages with: (SL 7.x)
@@ -176,12 +176,10 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-	brew tap homebrew/versions
 	brew tap homebrew/science
-	brew tap homebrew/homebrew-x11
 	brew update
 	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz
-	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm gmake
+	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm make
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
     If you have previously installed homebrew, will be distributing your
@@ -197,12 +195,9 @@ various modern operating systems:
 	brew cleanup
     Now remember to add 
         --enable-build-libraries="readline"
-      to the "configure" command line below in the section on compiling Macaulay2.
-    Note: including "readline" in the "--enable-build-libraries" option is
-      necessary because it doesn't seem to be possible to recompile it from
-      source; the binary distribution used by homebrew uses "clang", which will
-      optimize the code in "gc" for your particular CPU.  If you won't be
-      distributing the code to others, it can be omitted.
+      to the "configure" command line below in the section on compiling
+      Macaulay2.  This works around a bug in the library: CTRL-A doesn't go all
+      the way to the beginning of the line after typing r e s o TAB C-a.
     Note: software installed by "fink", if not kept up to date, can interfere
       with the Macaulay2 build process.  To test, for example, whether the
       correct version of "automake" is available, run the shell command
@@ -211,6 +206,8 @@ various modern operating systems:
       /sw/bin/automake.  Since homebrew suffices for most purposes, it's
       probably best to just remove fink entirely, with the command
         sudo rm -rf /sw
+    Note: adding "--enable-strip" to the configure script command line may not be a good idea,
+      as stripping the M2 binary seems to cause the program to crash unpredictably.
 
   Cygwin 1.7 under Microsoft Windows:
     Use setup to install these packages:
@@ -236,14 +233,14 @@ various modern operating systems:
   the directory where you want to install the files; if it's a directory not
   owned by you, prefix the "make install" command below with "sudo".
 
-       wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
-       tar xjf gcc-4.8.2.tar.bz2
-       cd gcc-4.8.2
+       wget ftp://ftp.gnu.org/gnu/gcc/gcc-7.1/gcc-7.1.tar.bz2
+       tar xjf gcc-7.1.tar.bz2
+       cd gcc-7.1
        ./contrib/download_prerequisites
        cd ..
-       mkdir gcc-4.8.2-build
-       cd gcc-4.8.2-build
-       ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++,fortran --disable-multilib
+       mkdir gcc-7.1-build
+       cd gcc-7.1-build
+       ../gcc-7.1/configure --prefix=$HOME/local --program-suffix=-7.1 --enable-languages=c,c++,fortran --disable-multilib
        make
        make install
 
@@ -255,16 +252,16 @@ various modern operating systems:
      command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
-     The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
+     The resulting compiler executables will be named gcc-7.1 and g++-7.1.
      Now put the following lines in your file $HOME/.profile :
 
         export PATH=$HOME/local/bin:$PATH
         export MANPATH=$HOME/local/share/man:$MANPATH
         export INFOPATH=$HOME/local/share/info:$INFOPATH
         export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
-        export CC=gcc-4.8.2
-        export CXX=g++-4.8.2
-        export FC=gfortran-4.8.2
+        export CC=gcc-7.1
+        export CXX=g++-7.1
+        export FC=gfortran-7.1
 
      and then log out and log in again (or source the file into your
      environment and continue in the same process or in daughter processes).
@@ -555,3 +552,32 @@ libtool, etc., try running
 in the top level.  This command will install versions of those tools known to
 work with Macaulay2.
 
+----------------------
+For distributors
+----------------------
+
+There are some things about a new distribution of Macaulay2 that should be
+checked manually.  Install the distribution on your system as the ultimate user
+will and then try:
+
+  - emacs M2 interaction
+
+    Press f12 and verify that Macaulay2 starts.
+
+  - emacs M2 mode
+
+    Visit the file /tmp/foo.m2 and verify that the buffer is in Macaulay2 mode.
+
+  - emacs Macaulay2 info documentation
+
+    Start the emacs Info documentation reader with C-h i and verify that menu
+    items are present in the node "(dir)Top" for the various Macaulay2 packages
+    in a section entitled "Macaulay2 and its packages".
+
+  - readline
+
+    Start M2 in a terminal window and then type the following characters:
+    	  r e s o TAB
+    The partial word should be completed to "resolution".  Then press:
+          C-a
+    Verify that the cursor is now at the beginning of the line.

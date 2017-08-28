@@ -138,7 +138,7 @@ namespace BIBasis
         }
 
         typename MonomType::Integer firstMultiVar = (**iterator).GetPolynomLm().FirstMultiVar();
-        for (register typename MonomType::Integer var = 0; var < firstMultiVar; ++var)
+        for (typename MonomType::Integer var = 0; var < firstMultiVar; ++var)
         {
             if (!(**iterator).TestNmp(var))
             {

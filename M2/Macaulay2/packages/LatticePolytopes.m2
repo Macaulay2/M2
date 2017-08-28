@@ -1,9 +1,9 @@
 --*- coding: utf-8 -*-
-{*
+-*
    Written by Anders Lundman & Gustav Sædén Ståhl , 2015.
 
    This file is in the public domain.
-   *}
+   *-
 ---------------------------------------------------------------------------
 -- PURPOSE: A package for computations with lattice polytopes 
 -- PROGRAMMERS : Anders Lundman and Gustav Sædén Ståhl 

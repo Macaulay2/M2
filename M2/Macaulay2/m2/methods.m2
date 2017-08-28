@@ -522,7 +522,7 @@ protect QuotientRingHook
 
 CacheFunction = new Type of FunctionClosure
 CacheFunction.synonym = "a cache function"
-net CacheFunction := f -> "{*a cache function*}"
+net CacheFunction := f -> "-*a cache function*-"
 cacheValue = key -> f -> new CacheFunction from (x -> (
      	  c := try x.cache else x.cache = new CacheTable;
      	  if c#?key then (

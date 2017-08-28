@@ -4,6 +4,14 @@ $(error config.Makefile already loaded)
 endif
 CONFIG_MAKEFILE = loaded
 .PHONY: all check initialize clean distclean install always reconfigure big-check
+
+# Note: run our makefiles with GNU make, version 4 or larger.
+#       Version 3.81, provided on Mac OS X, has a bug, but you can
+#	use "homebrew" to install a modern version under the name "gmake"
+ifeq ($(MAKE_VERSION),3.81)
+$(error GNU make version $(MAKE_VERSION) is too old)
+endif
+
 all:
 
 # clear this environment variable so the ambient system doesn't offer advice to
@@ -116,7 +124,7 @@ ifneq ($(RELAX),yes)
 # but sometimes that's bad, e.g., during configure scripts with loosely written test programs
 # -Winline gives too many warning messages
 
-M2_BOTH = -pipe -Wall -Wno-shadow -Wcast-qual
+M2_BOTH = -pipe -Wall -Wno-shadow -Wcast-qual -Wno-sign-conversion -Wno-sign-compare
 
 ifeq "@__INTEL_COMPILER@" "yes"
 X = -diag-disable 981,869,383,2259,444
@@ -141,19 +149,29 @@ ifeq "@OPTIMIZE@" "yes"
 M2_BOTH += -Wuninitialized
 endif
 
-M2_CFLAGS   += $(M2_BOTH) -Wwrite-strings
-M2_CXXFLAGS += $(M2_BOTH) -Wconversion
+GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
+GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
+
+FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
+FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
+
+M2_LIBRARIES += $(GIVARO_LIBS)
+M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
+
+M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
+M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
+
+M2_CFLAGS   += $(M2_BOTH)
+M2_CXXFLAGS += $(M2_BOTH)
 
 M2_CFLAGS += @M2_CFLAGS@
 M2_CXXFLAGS += @M2_CXXFLAGS@
 
 M2_CXXFLAGS += -Wno-error=pragmas
 
-# M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
 ifeq "@__INTEL_COMPILER@" "no"
 M2_CFLAGS   += -Wimplicit-function-declaration
 endif
-
 
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
@@ -228,25 +246,14 @@ WHY = @ (if [ -f $@ ] ;																	\
 	 else echo "=== making $@ in $$(basename $$PWD)" ;												\
 	 fi)
 
-GIVARO_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags givaro)
-GIVARO_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   givaro)
-
-FFLAS_FFPACK_CXXFLAGS += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --cflags fflas-ffpack)
-FFLAS_FFPACK_LIBS     += $(shell PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) pkg-config --libs   fflas-ffpack)
-
-M2_LIBRARIES += $(GIVARO_LIBS)
-M2_LIBRARIES += $(FFLAS_FFPACK_LIBS)
-
-M2_CXXFLAGS += $(GIVARO_CXXFLAGS)
-M2_CXXFLAGS += $(FFLAS_FFPACK_CXXFLAGS)
-
 test:
 	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
 	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
 	:
 	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
 	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
-	: "M2_CXXFLAGS           = $(FFLAS_FFPACK_CXXFLAGS)"
+	: "M2_CXXFLAGS           = $(M2_CXXFLAGS)"
+	: "M2_BOTH               = $(M2_BOTH)"
 	:
 	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
 	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"

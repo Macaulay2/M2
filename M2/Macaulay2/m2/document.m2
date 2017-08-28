@@ -144,14 +144,14 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
      pkg := (
-	  if class nkey === Symbol {* and package nkey =!= Core *} then package nkey
+	  if class nkey === Symbol -* and package nkey =!= Core *- then package nkey
 	  else if opts#Package =!= null then opts#Package 
 	  else packageKey(key, fkey)
 	  );
      if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
      new DocumentTag from {
 	  if instance(nkey,Symbol) then toString nkey else nkey,
-	  fkey, {* pkg *} ,pkgTitle pkg})
+	  fkey, -* pkg *- ,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      if match("^ |  +| $", key)
      then (
@@ -178,7 +178,7 @@ DocumentTag.FormattedKey = method(Dispatch => Thing)
 DocumentTag.FormattedKey DocumentTag := x -> x#1
 DocumentTag.FormattedKey Thing := err
 DocumentTag.Package = method(Dispatch => Thing)
-DocumentTag.Package DocumentTag := x -> {* x#2 *} error "internal error: old code still using package in DocumentTag?"
+DocumentTag.Package DocumentTag := x -> -* x#2 *- error "internal error: old code still using package in DocumentTag?"
 DocumentTag.Package Thing := err
 protect Title
 DocumentTag.Title = method(Dispatch => Thing)
@@ -292,12 +292,12 @@ proKey := "processed documentation"
 fetchProcessedDocumentation := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#proKey;
      if d#?fkey then d#fkey
-     {*
+     -*
      else (
 	  if pkg#?proKeyDB then (
 	       d = pkg#proKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey))
-     *}
+     *-
      )
 
 -----------------------------------------------------------------------------
@@ -745,7 +745,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	       and DocumentTag.Title tag === currentPackage#"title"
 	       then (
 		    stderr << "--warning: tag has no documentation: " << tag << ", key " 
-	       	    << toExternalString {* toExternalString can't work for shadowed symbols without synonyms *} DocumentTag.Key tag 
+	       	    << toExternalString -* toExternalString can't work for shadowed symbols without synonyms *- DocumentTag.Key tag 
 	       	    << endl);
 	       return null;
 	       ));

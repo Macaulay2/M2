@@ -459,7 +459,7 @@ gfanParseGfanType (String, List) := (T, L) -> (
 	)
 )
 
-{*
+-*
 polymakeFanToFan = method()
 
 polymakeFanToFan PolymakeFan := (F) -> (
@@ -487,7 +487,7 @@ polymakeFan (Matrix,Matrix,List) := (rays, lineality, maxcones) ->  (
 	--rawstr := blah;
 	--Not done yet!
 )
-*}
+*-
 
 
 ------------------------------------------
@@ -696,7 +696,7 @@ toPolymakeFormat(PolyhedralObject) := (P) -> (
      concatenate apply(goodkeys, k-> toPolymakeFormat(PolyhedralNameToGfanName#k,P#k)|"\n\n")
      )
 
-{*
+-*
 makeGfanFile = method(TypicalValue => String)
 makeGfanFile(PolyhedralObject,String) := (P, fileName) ->(
      if P#"GfanFileHeader" then fileName << P#"GfanFileHeader" << endl;
@@ -721,7 +721,7 @@ makePolymakeFormat(PolyhedralObject) := (P) ->(
      )
      fileName	  
      )
-*}
+*-
 
 
 --------------------------------------------------------
@@ -2111,7 +2111,7 @@ doc ///
 		MarkedPolynomialList
 ///
 
-{*
+-*
 doc ///
 	Key
 		polymakeConeToCone
@@ -2171,7 +2171,7 @@ doc ///
 		PolymakeFan
 		PolymakeCone
 ///
-*}
+*-
 
 doc ///
 	Key

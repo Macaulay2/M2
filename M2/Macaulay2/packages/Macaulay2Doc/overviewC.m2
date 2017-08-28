@@ -687,7 +687,7 @@ document {
 -- GB nodes -------
 -------------------
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hilbert functions",
@@ -708,7 +708,7 @@ document {
 document {
      Key => "solving systems of polynomial equations",
      }
-*}
+*-
 
 /// 
 Plan for the next node:
@@ -731,30 +731,30 @@ TEST ///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 
-{*
+-*
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
-*}
+*-
      
-{*
+-*
 installHilbertFunction = method()
 installHilbertFunction(Module,RingElement) := (M,hf) -> (
      -- we need to place hf into the degree ring of M.
      hf = substitute(hf,degreesRing M);
      M.cache.poincare = hf;
      )
-*}
+*-
 
-{*
+-*
 installGroebner = method()
 -- DO THIS
-*}
+*-
 
-{*
+-*
 gbRemove = method()
 gbRemove Module := (M) -> remove((generators M).cache, {false,0})
 gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
-*}
+*-
   -- PROBLEM: what about the other GB
   
 R = QQ[a..d,Weights=>{-1,0,0,0},Global=>false]

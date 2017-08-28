@@ -1,24 +1,14 @@
 # @configure_input@
 
-# override this on the make command line, as needed
 DISTRIBUTION = @DISTRIBUTION@
-
-# Here are Rex Dieter's rpms:
-
-# http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/src/Macaulay2-1.1-2.fc10.src.rpm
-# http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-1.1-2.fc10.i386.rpm
-# http://koji.fedoraproject.org/packages/Macaulay2/1.1/2.fc10/i386/Macaulay2-debuginfo-1.1-2.fc10.i386.rpm
-
 include ../../include/config.Makefile
+
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
 TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 
-# Override this if you aren't set up to sign rpm files:
-SIGN = --sign
-#
 # To get set up to sign rpm files as "Macaulay2", add these two lines to ~/.rpmmacros :
 #   %_signature gpg
 #   %_gpg_name  Macaulay2
@@ -28,14 +18,16 @@ SIGN = --sign
 # where Macaulay2-key.txt is the public key file obtained from the web site.
 # For details, see http://fedoranews.org/tchung/gpg/
 #
-# To add a signature to an rpm file that doesn't have one:
-#   rpm --addsign *.rpm
+# To add a signature to an rpm file that doesn't have one, use "rpmsign"
+#
+# To examine permissions and ownership of files in an rpm, use "rpm -qlvp foo.rpm"
+# We do that below after each use of "rpmbuild"
 
 PKG_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).@ARCH@-@OS@-@ISSUE@.rpm
 PKG_COM_RPM = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DISTRIBUTION).common.rpm
 
 ############################## main targets
-all: chk-opts check-id ../../$(PKG_COM_RPM) ../../$(PKG_RPM) maybe-tidy
+all: chk-opts ../../$(PKG_COM_RPM) ../../$(PKG_RPM) maybe-tidy
 
 # targets for testing the rpm files:
 test-rpms: test-signatures test-install test-remove
@@ -64,40 +56,24 @@ maybe-tidy: tidy
 else
 maybe-tidy:
 endif
-check-id:
-	@if ! @FAKEROOT@ ; \
-	 then ( \
-	    echo "=============================================================================" ;\
-	    echo "Warning: 'fakeroot' not installed (at configuration time)." ;\
-	    echo "  It is available at http://ftp.debian.org/debian/pool/main/f/fakeroot/" ;\
-	    echo "=============================================================================" \
-	  ) >&2 ;\
-	 fi
-
-ifeq "@FAKEROOT@" "false"
-FAKEROOT =
-else
-FAKEROOT = @FAKEROOT@
-endif
 
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
+# One reason to copy all the files into a new directory is the the rpmbuild command tends to delete them.
+
 .prepared:
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files@prefix@
-	umask 022 ; $(T) -C @pre_exec_prefix@ . | $(FAKEROOT) @TAR@ xfp - -C files@prefix@
+	umask 022 ; $(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files@prefix@
 
 .prepared-common:
 	rm -rf files-common
 	umask 022 ; $(MKDIR_P) files-common@prefix@
-	umask 022 ; $(T) -C @pre_prefix@ . | $(FAKEROOT) @TAR@ xfp - -C files-common@prefix@
+	umask 022 ; $(T) -C @pre_prefix@ . | @TAR@ xfp - -C files-common@prefix@
 	: warning: fixed layout in use, just trying both common possibilities:
-	@FIND@ \
-		files-common@prefix@/man/man1 \
-		files-common@prefix@/share/man/man1 \
-		-name \*.1 | xargs gzip
+	@FIND@ files-common@prefix@/man/man1 files-common@prefix@/share/man/man1 -name \*.1 | xargs gzip
 	@FIND@ files-common@prefix@ -name \*.info | xargs gzip
 
 Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared 
@@ -109,14 +85,18 @@ Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared
 	sed -e '1,/Requires/d' -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >>$@
 	(cd files && @FIND@ . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
 
-../../$(PKG_RPM) : Macaulay2.spec .prepared; $(FAKEROOT) rpmbuild $(SIGN) --buildroot @abs_builddir@/files -bb Macaulay2.spec
+../../$(PKG_RPM) : Macaulay2.spec .prepared
+	rpmbuild --noclean --buildroot @abs_builddir@/files -bb Macaulay2.spec
+	rpm -qlvp ../../$(PKG_RPM) | head
 
 Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
 	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
 	    -e 's/%PKG_COM_RPM%/$(PKG_COM_RPM)/g' <$< >$@
 	(cd files-common && @FIND@ -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 
-../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; $(FAKEROOT) rpmbuild $(SIGN) --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
+../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common
+	rpmbuild --noclean --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
+	rpm -qlvp ../../$(PKG_COM_RPM) | head
 
 libraries-used: .prepared always
 	for i in files@bindir@/M2@EXE@ files@programsdir@/* ;\

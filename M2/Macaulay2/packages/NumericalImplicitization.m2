@@ -288,7 +288,7 @@ numericalImageDegree'MonodromySolver (List, Ideal, Thing, Point) := PseudoWitnes
 	    NumberOfRepeats=>100, Verbose=>true
 	    );
 	sols := points vertex.PartialSols;
-	{* 
+	-* 
 	-- look at residuals 	
 	polys0 := specializeSystem(vertex.BasePoint,polys);
     	for i from 0 to length sols-1 do (
@@ -296,7 +296,7 @@ numericalImageDegree'MonodromySolver (List, Ideal, Thing, Point) := PseudoWitnes
 	    print x0;
 	    print evaluate(polySystem polys0,x0);
 	    );
-	*}
+	*-
 	traceResult = opts.traceTestThreshold / 2; -- fake success!!!    
 	);
     pointPairs = {};

@@ -544,7 +544,7 @@ doc ///
       as it may not be numerically stable.
 ///
 
-{*
+-*
 doc ///
    Key
       [changeFlags, "one homotopy"]
@@ -567,10 +567,10 @@ doc ///
       When false, it generates polynomial equations using all minors
       of the incidence conditions (and not the efficient way implemented later).
 ///
-*}
+*-
 -------------------
 -- Documentation Pieri Homotopies
-{*
+-*
 doc ///
    Key
       createRandomFlagsForSimpleSchubert
@@ -775,7 +775,7 @@ doc ///
    Caveat
       This assumes that GAP runs when you type in the terminal {\tt gap} and that we already know that the Galois group is the full symmetric group, otherwise it will output {\tt false} after {\tt mx} repetitions.
 ///
-*}
+*-
 end
 
 -- previous functions

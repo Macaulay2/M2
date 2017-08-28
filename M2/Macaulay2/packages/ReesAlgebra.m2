@@ -521,7 +521,7 @@ minimalReduction Ideal := Ideal => o -> i -> (
 --	  if b>1 then print b; 
 	  return J));
 
-     {* << bound *} -- incorrect code commented out
+     -* << bound *- -- incorrect code commented out
      <<" iterations were not enough to randomly find a minimal reduction"; endl;
      error("not random enough")
           )
@@ -1720,7 +1720,7 @@ degrees ring oo
 
 
 
-{* 
+-* 
 A reference we might NOT put in:
 T. Roemer,  "Homological Properties of Bigraded Modules"
 Roemer, Tim(D-ESSN)
@@ -1743,7 +1743,7 @@ only in the case of ideals generated in a single degree and
 primary to the maximal ideal. 
 
 Research Problem: what's the situation in general?
-*}
+*-
 
 ///
 --For isLinearType

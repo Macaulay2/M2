@@ -6,7 +6,7 @@ toABC = (I) -> (
      sub(I, vars S)
      )
 
-{*
+-*
 LIBRARY: f5ex.lib: Examples of ideals for Groebner basis computations.
 
 AUTHOR: Christian Eder, ederc@mathematik.uni-kl.de
@@ -56,7 +56,7 @@ PROCEDURES:
    [W] weispfenning94()               characteristic: 7583   variables: x,y,z,h                                regular? no
         
 
-*}
+*-
 
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------

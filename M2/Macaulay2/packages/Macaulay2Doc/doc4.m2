@@ -734,44 +734,6 @@ document {
      }
 
 document {
-     Key => {(getPackage,String), getPackage, CurrentVersion, 
-	  [getPackage,CurrentVersion], [getPackage,Version], [getPackage,UserMode],Repository,[getPackage,Repository],
-	  [getPackage, DebuggingMode], [getPackage, Configuration]
-	  },
-     Headline => "download a package from the repository",
-     SYNOPSIS (
-	  Usage => ///getPackage pkgname///,
-     	  BaseFunction => getPackage,
-	  Inputs => {
-	       "pkgname" => String => {"the name of a package"},
-	       Version => String => {"the version to download, instead of the most recent version"},
-	       CurrentVersion => String => {"the version currently installed"},
-	       Repository => String => {"the URL of the repository"},
-	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"},
-	       UserMode => {"the user mode to be passed to ", TO "installPackage"},
-	       Configuration => List => {"the list of configuration values to be passed to ", TO "loadPackage"}
-	       },
-	  Outputs => {
-	       },
-	  Consequences => {
-	       {"the most recent version of the package is downloaded from the repository and installed, unless it's not newer
-		    than the version currently installed (according to the value of the CurrentVersion option)"}
-	       }
-	  ),
-     SYNOPSIS (
-	  Usage => ///getPackage()///,
-     	  BaseFunction => getPackage,
-	  Inputs => {
-	       Repository => String => {"the URL of the repository"}
-	       },
-	  Outputs => {
-	       List => "a list of names of available packages from the repository"
-	       }
-	  ),
-     SeeAlso => { installPackage }
-     }
-
-document {
      Key => "handleInterrupts",
      Usage => "handleInterrupts = b",
      Inputs => { "b" => Boolean },

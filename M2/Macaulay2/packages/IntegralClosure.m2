@@ -344,7 +344,7 @@ integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
      --Here is where the fractions are moved back to the orig ring and reduced there;
      --need to put in a strategy option to decide whether to do this.
      
-{*     
+-*     
      G1 := map(target G, R0, matrix G);
      feR := G1 fe;
      HeR := (G1 He);
@@ -367,14 +367,14 @@ integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
 
 <<"fe1= " << fe1  << endl;
 
-{*
+-*
 {*He1 := matrix{
      apply(flatten entries He, 
 	  h->(
 	       fr:=h/fe;
 	       (numerator(fr) % fe) *(fe//denominator fr)))
      };
-*}
+*-
 
        if member(SimplifyFractions, strategies)
        then (He,fe) = (
@@ -402,13 +402,13 @@ integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
      t1 = timing((F0,G0) := ringFromFractions(He,fe,Variable=>varname,Index=>nsteps));
      
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
-{*
+-*
      time (F0,G0) = 
          idealizer(radJ, f, 
 	      Variable => varname, 
 	      Index => nsteps,
 	      Strategy => strategies);
-*}	 
+*-	 
      -- These would be correct, except that we want to clean up the
      -- presentation
      R1temp := target F0;
@@ -515,12 +515,12 @@ idealizer (Ideal, RingElement) := o -> (J, g) ->  (
      (He,fe) := endomorphisms(J,g);
      --<< "vasconcelos  fractions:" << netList prepend(fv,flatten entries Hv) << endl;
      if verbosity >= 5 then << "endomorphism fractions:" << netList prepend(fe,flatten entries He) << endl;
-{*
+-*
      if member("vasconcelos", set o.Strategy) then (
 	  print "Using vasconcelos";
      	  (H,f) := vasconcelos (J,g))
      else (H,f) = endomorphisms (J,g);
-*}     
+*-     
      (H,f) := (He,fe);
 --     idJ := mingens(f*J : J);
      if H == 0 then 

@@ -43,7 +43,7 @@ substitute(ChainComplex,Ring):=(C,newRing)->(
    chainComplex(apply((min C + 1..max C), i -> substitute(C.dd_i, newRing)))
 )
 
-{*
+-*
 chainComplexData = C->(
     minC := min C;
     maxC := max C;
@@ -67,7 +67,7 @@ chainComplexFromData(ZZ, List) := (minC,L) ->(
     C := chainComplex L;
     assert( min C ==0);
     C[-minC])
-*}
+*-
 chainComplexData = C->(
     minC := min C;
     maxC := max C;
@@ -125,7 +125,7 @@ trivialHomologicalTruncation(C1,-3,3)
 ///
 	
     
-{*
+-*
 prependZeroMap= method()
 prependZeroMap ChainComplex := C->(
     L := chainComplexData(C[-1]);
@@ -151,7 +151,7 @@ removeZeroTrailingTerms(ChainComplex) := W -> (
     if mi==ma then (return (chainComplex({map(E^0,W'_0,0),map(W'_0,E^0,0)}))[-mi+1]) else
     (chainComplex apply(toList(1..ma-mi),i->W'.dd_i))[-mi]
     )
-*}
+*-
 
 prependZeroMap= method()
 prependZeroMap ChainComplex := C->(
@@ -253,12 +253,12 @@ isChainComplex(ChainComplex):=(inputComplex)->(
    if (inputComplex.dd^2 == 0) then true else false
 )
 
-{*
+-*
 isChainComplexMap=method()
 isChainComplexMap(ChainComplexMap):=(inputMap)->(
    isChainComplex(cone inputMap)
 )
-*}
+*-
 isChainComplexMap=method()
 isChainComplexMap(ChainComplexMap):=(inputMap)->(
    degs := sort select(keys inputMap, k->class inputMap#k === Matrix);
@@ -864,7 +864,7 @@ document {
 	     }
      }
 
-{*
+-*
 document {
      Key => {isQuism, (isQuism,ChainComplexMap)},
      Headline => "Test to see if the ChainComplexMap is a quasi-isomorphism.",
@@ -888,7 +888,7 @@ document {
 	     "isQuism(F)",
 	     }
      }
-*}
+*-
 doc ///
    Key
     [isQuasiIsomorphism,LengthLimit]
@@ -1453,7 +1453,7 @@ doc ///
 ///
 
 
-{*
+-*
 doc ///
    Key
     chainComplexData
@@ -1505,7 +1505,7 @@ doc ///
    SeeAlso
     chainComplexData
 ///
-*}
+*-
 
 TEST///
 kk= ZZ/101
@@ -1536,7 +1536,7 @@ assert (C == target n)
 assert (isQuasiIsomorphism n)
 ///
 
-{*
+-*
 TEST ///
 S=ZZ[x,y]/ideal(x*y)
 C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
@@ -1545,7 +1545,7 @@ L=chainComplexData C
 C'=chainComplexFromData L
 assert(C'== C)
 ///
-*}
+*-
 
 TEST///
 S = ZZ/32003[a,b]

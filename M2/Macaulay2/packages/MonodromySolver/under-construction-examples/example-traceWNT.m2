@@ -63,13 +63,13 @@ Plinear = polySystem transpose (curve|matrix{{targetHyperplane+1}})
 Plinear1 = polySystem transpose (curve|matrix{{targetHyperplane+t1}}) 
 Plinear2 = polySystem transpose (curve|matrix{{targetHyperplane+t2}}) 
 
-{* tests for Pqadric
+-* tests for Pqadric
 min apply(sols, s->norm evaluate(Pquadric,s))
 apply(sols, s->norm evaluate(curve,s))
 apply(sols, s->norm evaluate(matrix{{xhyperplane0}},s))
 apply(sols, s->norm evaluate(matrix{{sub(first flatten entries khyperplanes0',U)}},s))
 apply(sols, s->numericalRank evaluate(jacobian Pquadric,s))
-*}
+*-
 
 tracked = track(Pquadric,Plinear,sols);
 tracked1 = track(Plinear, Plinear1, tracked);

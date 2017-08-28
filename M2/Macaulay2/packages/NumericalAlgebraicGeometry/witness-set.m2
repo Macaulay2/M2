@@ -124,7 +124,7 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 		     NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software)
 		 --)
 	     ;
-	     success = all(w', p->member(status p, {Regular{*,Singular*}}));
+	     success = all(w', p->member(status p, {Regular-*,Singular*-}));
 	     )
 	 else (
 	     assert all(w, p->p.LiftedSystem===P.LiftedSystem); -- !!!
@@ -134,7 +134,7 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 		     NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software)
 		 --)
 		 ;
-	     if success = all(lifted'w', p->member(status p, {Regular{*,Singular*}})) 
+	     if success = all(lifted'w', p->member(status p, {Regular-*,Singular*-})) 
 	     then w' = apply(lifted'w', p->(
 		     q := new Point from P;
 		     q.System = ES';

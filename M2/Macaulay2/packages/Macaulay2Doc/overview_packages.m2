@@ -44,9 +44,7 @@ document { Key => "packages",
 	  TO installPackage,
 	  TO "loadedPackages",
      "Creating new packages",
-     	  TO "creating a package",
-     "Downloading packages",
-     	  TO "getPackage"
+     	  TO "creating a package"
 	  }
      }
 

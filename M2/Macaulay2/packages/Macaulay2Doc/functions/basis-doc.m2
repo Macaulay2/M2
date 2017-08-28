@@ -199,7 +199,7 @@ doc ///
      cover
 ///
 
-{*
+-*
 doc ///
    Key
      basis
@@ -458,7 +458,7 @@ document { Key => {
 	  )
      }
 
-*}
+*-
 
 TEST ///
  basis (QQ^6)

@@ -57,10 +57,10 @@ T0 = sub(F,s0)
 -- we know one decpomposition at the moment:
 sols0 = {point s0};
 
-{* outsource to an external solver:
+-* outsource to an external solver:
 setDefault(Software=>BERTINI)
 setDefault(Software=>PHCPACK)
-*}
+*-
 
 while #sols0 != 720 do (
     T1 = random(CC^45,CC^1);

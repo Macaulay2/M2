@@ -88,7 +88,7 @@ PHS = gateHomotopy4preimage(F,zs)
 x0 = transpose matrix{toList(m:1_K)}
 y0 = value(F,hashTable(apply(zs,flatten entries x0,(i,j)->(i=>j))|{cache=>new CacheTable}))
 while true do (
-    x1known = transpose matrix{apply(m, i->{*random RR*} 10+0.1*random RR)}; -- unstable for a random value in the box 
+    x1known = transpose matrix{apply(m, i->-*random RR*- 10+0.1*random RR)}; -- unstable for a random value in the box 
     y1 = value(F,hashTable(apply(zs,flatten entries x1known,(i,j)->(i=>j))|{cache=>new CacheTable}));
     HS = specialize(PHS,y0||y1);
     time s = first trackHomotopy(HS, {x0}, Software=>M2);

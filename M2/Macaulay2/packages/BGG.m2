@@ -1369,13 +1369,13 @@ TEST///
   assert(betti L == ans)
 ///
 
-{*
+-*
 --I don't see why the following doesn't work. The output of the left side sure LOOKS like that on the right
 TEST///
 A = ZZ/11[a,b]
 (projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
 ///
-*}
+*-
 
 TEST///
 A = QQ[a,b]

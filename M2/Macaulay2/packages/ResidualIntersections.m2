@@ -58,7 +58,7 @@ genericArtinNagata(ZZ,Ideal) := (s,I) -> (
     --tests whether the generic link is CM
 
 genericResidual = method()
-{*
+-*
 genericResidual(ZZ,Ideal):= (s,I) ->(
     if s>= numgens I then return ideal(1_(ring I));
     sgens := sort gens I;
@@ -66,7 +66,7 @@ genericResidual(ZZ,Ideal):= (s,I) ->(
     n := numcols rgens;
     (ideal (rgens_{n-s..n-1})): I
     )
-*}
+*-
 genericResidual(ZZ,Ideal):= (s,I) ->(
     --computes a generic residual 
     S := ring I;
@@ -111,12 +111,12 @@ L = (genericArtinNagata(4,I))_0
 ---Licci code
 randomLink = method()
 randomLink (ZZ,Ideal) := (c,I) ->(
-{*
+-*
 c:ZZ
  codim of I
 I:Ideal
  homogeneous
-*}
+*-
 if numgens I <= c then return ideal(1_(ring I));
 --sgens := sort gens I;
 --n :=numcols sgens;
@@ -175,7 +175,7 @@ installPackage("RandomIdeals")
      (codim I)*(degree I)
 ///
 
-{*
+-*
 --depth but faster
 depth = method()
 depth(Ideal, Module) := (I,M) ->(
@@ -218,7 +218,7 @@ depth Module := M -> (
     )
 
 depth Ring := R -> depth(R^1)
-*}
+*-
 ///
 restart
 --loadPackage ("Depth", Reload=>true)

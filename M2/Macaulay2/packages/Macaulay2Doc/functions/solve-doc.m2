@@ -119,7 +119,7 @@ doc ///
      clean
 ///
 
-{*
+-*
 document { 
      Key => {
          solve,(solve,Matrix,Matrix),
@@ -194,4 +194,4 @@ document {
     matrices"},
      SeeAlso => {LUdecomposition, SVD, MutableMatrix, norm, random}
      }
-*}
+*-

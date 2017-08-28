@@ -15,7 +15,7 @@
 /* to get IM2_initialize() : */
 #include "engine.h"
 
-#ifdef HAVE_ALLOCA_H
+#if HAVE_ALLOCA_H
 #include <alloca.h>
 #else
 #ifdef __GNUC__
@@ -527,7 +527,6 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 #endif
 
 extern void clean_up();
-extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
 extern bool gotArg(const char *arg, const char ** argv);
@@ -583,7 +582,6 @@ void* interpFunc(void* vargs2)
   int volatile envc = args->envc;
      setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
-     init_readline_variables();
      arginits(argc,(const char **)saveargv);
 
      //     void M2__prepare();
@@ -764,8 +762,11 @@ char **argv;
 
      signal(SIGPIPE,SIG_IGN);
      have_arg_no_int = have_arg(argv,"--int");
+
+#if HAVE_DECL_RL_CATCH_SIGNALS     
      if (have_arg_no_int)
 	  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
+#endif
 
      system_handleInterruptsSetup(TRUE);
      

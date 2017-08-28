@@ -755,7 +755,7 @@ assert (
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
 
-{*
+-*
 --test of affinePoints
 TEST///
 C = affinePoints(M,R);
@@ -773,7 +773,7 @@ assert (
 )
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
-*}
+*-
 
 end--
 uninstallPackage "Points"

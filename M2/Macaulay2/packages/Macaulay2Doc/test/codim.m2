@@ -22,3 +22,6 @@ assert ( infinity == codim (ideal 1_R ))
 f(quotient module ideal x, quotient module ideal(x,y))
 f(quotient module ideal x, quotient module ideal 0_R)
 f(quotient module ideal 1_R, quotient module ideal(x,y))
+
+R2=(R/ideal(x,y))[t];
+assert ( 1 == codim ideal t)

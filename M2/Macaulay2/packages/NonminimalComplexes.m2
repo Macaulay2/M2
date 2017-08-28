@@ -25,6 +25,7 @@ export {
 debug Core
 needsPackage "SVDComplexes"
 
+-*
 -- The following shuold be where?
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
@@ -37,6 +38,7 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
+*-
 
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
@@ -106,10 +108,10 @@ TEST ///
 --  b. allow a single multi-degree
   -- constantStrand, constantStrands
   -- these are from nonminimal free resolutions over QQ
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   
   R = QQ[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
@@ -148,10 +150,10 @@ TEST ///
 ///
 
 TEST ///
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   R = ZZ/32003[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
   C = res(I, FastNonminimal=>true)
@@ -204,7 +206,6 @@ toBetti(ZZ, HashTable) := (deg, H) -> (
       new BettiTally from for k in keys H list (k, {deg}, deg) => H#k
       )
 
-{*
 -- How to handle this here??
 SVDBetti = method()
 SVDBetti ChainComplex := (C) -> (
@@ -215,7 +216,6 @@ SVDBetti ChainComplex := (C) -> (
     << "singular values: " << H2 << endl;
     sum for i in keys H list toBetti(i, first H#i)
     )
-*}
 
 beginDocumentation()
 
@@ -368,7 +368,7 @@ TEST ///
 
 
 end--
-{*
+-*
 Cs2 = (constantStrands(C, RR_1000))#8
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909
@@ -379,7 +379,7 @@ Cs2 = (constantStrands(C, RR_1000))#8
       netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
       netList{(clean(1e-14,CR)).dd_4,(clean(1e-299,CR2)).dd_4}
       netList {(clean(1e-14,CR)).dd_4} == netList{(clean(1e-299,CR2)).dd_4}
-      *}
+      *-
 
 restart
 uninstallPackage "NonminimalComplexes"
@@ -696,13 +696,13 @@ restart
   makeAGR(6,7,50,0)
   
   I = getAGR(6,7,50,0);
-{*  
+-*  
   R = QQ[a..h]
   deg = 6
   nextra = 30
   F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
   elapsedTime I = ideal fromDual matrix{{F}};
-*}
+*-
   
   elapsedTime C = res(I, FastNonminimal=>true)
   betti C

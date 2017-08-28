@@ -478,11 +478,11 @@ sparseMonodromySolve = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false})
 sparseMonodromySolve PolySystem := o ->  PS -> (
-{*    mutableOptions := new MutableHashTable from o;
+-*    mutableOptions := new MutableHashTable from o;
     if mutableOptions.TargetSolutionCount =!= null then
         mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
     if mutableOptions.StoppingCriterion === null then 
-        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;*}
+        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;*-
     polys := flatten entries PS.PolyMap;
     ind := flatten apply(#polys,i-> -- indices for parameters
 	apply(exponents polys#i, t->(i,t))

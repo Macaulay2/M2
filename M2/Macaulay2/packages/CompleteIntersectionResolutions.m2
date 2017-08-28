@@ -76,7 +76,7 @@ newPackage(
 	   "toArray"
 	   }
 
-{*
+-*
 restart
 loadPackage("CompleteIntersectionResolutions", Reload=>true)
 
@@ -100,7 +100,7 @@ loadPackage("CompleteIntersectionResolutions", Reload=>true)
      betti GG
      ring GG
      apply(length GG, i->prune HH_i FF)
-*}
+*-
 
 regularitySequence = method()
 regularitySequence(List, Module) := (R,M) ->(
@@ -424,14 +424,14 @@ oddExtModule Module := opts -> M -> (
 
 makeT = method()
 makeT(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
-     {*
+     -*
      If ff is an c x 1 matrix and
      F is a chain complex
      over R = S/(ideal ff), 
      of codim c this returns a list of the c ci-operators
      F_i \to F_{i-2}
      corresponding to the entries of ff.
-     *}
+     *-
      c := numcols ff;
      degsff := flatten((degrees ff)_1);
      R := ring F;
@@ -455,7 +455,7 @@ makeT(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
 
 splittings = method()
 splittings (Matrix, Matrix) := (a,b) -> (
-     {*
+     -*
      Assuming that (a,b) are the maps of a right exact
      sequence 
               a      b
@@ -470,7 +470,7 @@ splittings (Matrix, Matrix) := (a,b) -> (
      a*sigma+tau*b = 1_B
      sigma*a = 1_A
      b*tau = 1_C
-     *}
+     *-
      if not isFreeModule source b then error("source b not free");
      if not isFreeModule target b then error("target b not free");
      (tau,remtau) := quotientRemainder(id_(target b),b);
@@ -1031,11 +1031,11 @@ makeHomotopiesOnHomology (Matrix, ChainComplex) := (ff,C)->(
 
 exteriorHomologyModule = method()
 exteriorHomologyModule(Matrix,ChainComplex) := (ff, C) ->(
-    {*
+    -*
     Assuming that the elements of the 1xc matrix ff are null-homotopic
     on C, the script returns their direct sum as a module over 
     a new ring, consisting of ring C with c exterior variables adjoined.
-    *}
+    *-
 --Construct the homology of C and the action of the homotopies on it
    (H,h) := makeHomotopiesOnHomology(ff,C);
 --now make a ring "like ring C" but with some exterior variables.
@@ -1228,7 +1228,7 @@ TateResolution(Module,ZZ,ZZ) := (M,low,high) ->(
 TateResolution(Module,ZZ) := (M,b) -> TateResolution(M,b,b)
 TateResolution(Module) := M-> TateResolution(M,-5,5)
 
-{*Old version returned a betti table; now use 
+-*Old version returned a betti table; now use 
 betti TateResolution
 instead.
 
@@ -1237,7 +1237,7 @@ TateResolution0(Module,ZZ,ZZ) := (M,lower,upper) ->(
     d := transpose (res(M, LengthLimit => upper)).dd_upper;
     betti res (coker d, LengthLimit =>upper+lower)
     )
-*}
+*-
 ------------
 --special purpose code
 --
@@ -1641,14 +1641,14 @@ check "CompleteIntersectionResolutions"
 --------------------------------
 
 --<<docTemplate
-{*
+-*
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 viewHelp "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
-*}
+*-
 
 beginDocumentation()
 

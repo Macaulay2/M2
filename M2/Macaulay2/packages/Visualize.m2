@@ -474,7 +474,7 @@ visualize(SimplicialComplex) := {Verbose => false, VisPath => defaultPath, VisTe
     return browserOutput; 
 )
 
-{*
+-*
 --input: A parameterized surface in RR^3
 --output: The surface in the browswer
 --
@@ -501,7 +501,7 @@ visualize(List) := {VisPath => defaultPath, VisTemplate => basePath | "Visualize
     
     return visTemp;
 )
-*}
+*-
 
 -- Input: A string of a path to a directory
 -- Output: Copies the needed files and libraries to path
@@ -1142,7 +1142,7 @@ document {
 
     }        
 
-{*
+-*
 document {
     Key => "Visualizing Graphs",	 
     
@@ -1212,7 +1212,7 @@ document {
 	}
     
     }
-*}
+*-
 
 document {
      Key => visualize,
@@ -1750,7 +1750,7 @@ document {
      }
 
 
-{*
+-*
 document {
      Key => [(visualize,Poset),FixExtremeElements],
      Headline => "an option that brett created",
@@ -1763,7 +1763,7 @@ document {
 	}
      
      }
- *}
+ *-
 
 document {
      Key => [(visualize,Digraph),VisPath],

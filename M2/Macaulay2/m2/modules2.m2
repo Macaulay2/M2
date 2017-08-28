@@ -79,7 +79,7 @@ Ring ** Matrix := Matrix => (R,f) -> (
 poincare Module := (cacheValue symbol poincare) (
      M -> (
 	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
-	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M))
+	  new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M))
 
 recipN = (n,wts,f) -> (
      -- n is a positive integer

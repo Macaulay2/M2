@@ -69,13 +69,13 @@ det jacobian matrix {F}
 setRandomSeed 0
 for x to 100000 do
 (
-{*
+-*
 F = reactionNetwork (CC_53, {(A,random RR),(B,random RR),(C,random RR),(D,random RR),(E,random RR)}, {
 	({(1,A),(1,B)} => {(1,D)},random RR,random RR),
 	({(1,B),(1,C)} => {(1,E)},random RR,random RR),
 	({(1,C)} => {(2,A)},random RR,random RR)
 	});
-*}
+*-
 F = reactionNetwork (CC_53, {(A,1),(B,1)}, {
 	({(1,A),(3,B)} => {(3,A)},random RR,random RR)
 	});
