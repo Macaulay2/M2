@@ -12,6 +12,7 @@ elapsedTime solsB = solveSystem(I_*,Software=>BERTINI)
 
 --TO FIX: need to normalize equations... which new blackbox does _not_ do
 debug NumericalAlgebraicGeometry -- fetch BombieriWeylNormSquared
+debug NAGtypes -- fetch toCCpolynomials
 F = apply(toCCpolynomials(I_*,53), f->f/(sqrt BombieriWeylNormSquared f)) 
 
 elapsedTime sols = solveSystem F 
