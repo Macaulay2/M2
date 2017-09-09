@@ -681,7 +681,7 @@ document { --displayNet
     "outputs the following figure. ",
     BR{},
 
-    PARA IMG {"src" => "share/Macaulay2/Chordal/network.jpg", "alt" => "chordal network"},
+    PARA IMG {"src" => replace ("PKG", "Chordal", currentLayout#"package") | "network.jpg", "alt" => "chordal network"},
     Caveat => {
         "If the function does not work, it might be the case that Graphviz is not installed, or that the package Graphs is not configured. See ",
         TO "installation and configuration"
