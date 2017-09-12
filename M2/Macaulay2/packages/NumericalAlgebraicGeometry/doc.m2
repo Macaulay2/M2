@@ -777,6 +777,30 @@ document {
     Headline => "first-order deflation",
     "Deflate a polynomial system to restore quadratic convergence of Newton's method. 
     The  option ", TT "Variable", " specifies the base name for the augmented variables.",
+    EXAMPLE lines ///
+CC[x,y,z]
+F = polySystem {x^3,y^3,x^2*y,z^2}
+P0 = point matrix{{0.000001, 0.000001*ii,0.000001-0.000001*ii}}
+isFullNumericalRank evaluate(jacobian F,P0)
+r1 = deflate (F,P0)
+P1' = liftPointToDeflation(P0,F,r1) 
+F1 = F.Deflation#r1
+P1 = newton(F1,P1')
+isFullNumericalRank evaluate(jacobian F1,P1)
+r2 = deflate (F1,P1)
+P2' = liftPointToDeflation(P1,F1,r2) 
+F2 = F1.Deflation#r2
+P2 = newton(F2,P2')
+isFullNumericalRank evaluate(jacobian F2,P2)
+P = point {take(coordinates P2, F.NumberOfVariables)}
+assert(residual(F,P) < 1e-50)	
+    ///,
+    Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
+	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
+	" the deflated system DF and a matrix B used to obtain it. ", 
+	" Here B is a random matrix of size n x (r+1), where n is the number of variables 
+	and DF is obtained by appending to F the matrix equation J*B*[L_1,...,L_r,1]^T = 0.
+	The polynomials of DF use the original variables and augmented variables L_1,...,L_r."}},
     Caveat => {"Needs more documentation!!!"},
     SeeAlso=>{PolySystem,newton}
     }

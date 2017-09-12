@@ -32,4 +32,4 @@ Questions:
 	In the context of MWSet (i.e., a problem that comes as a multiprojective problem specialized to a certain collection of affine charts),
 	can we say anything nice about the multidegree? (apart from	the observation that it is bounded by the projective multidegree...
 	that in turn may be bounded by some generalization of the log-concavity statement).
-	
+	* Should we store DeflationSystem and DeflationRandomMatrix(matrices) with a system? or a point?
