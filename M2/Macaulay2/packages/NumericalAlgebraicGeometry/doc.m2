@@ -775,8 +775,29 @@ document {
 	[deflate,Variable]
 	},
     Headline => "first-order deflation",
-    "Deflate a polynomial system to restore quadratic convergence of Newton's method. 
-    The  option ", TT "Variable", " specifies the base name for the augmented variables.",
+    Usage => "r = deflate(F,P); r = deflate(F,r); r = deflate(F,B), ...",
+    Inputs => { "P"=>Point, "F"=>PolySystem, "r"=>ZZ, "B"=>Matrix },
+    Outputs => { "r"=>ZZ=>"the rank used in the (last) deflation"},
+    PARA{
+	"The purpose of deflation is to restore quadratic convergence of Newton's method in a neighborhood of a singular 
+    isolated solution P. This is done by constructing an augemented polynomial system with a solution of strictly lower multiplicity projecting to P."},
+    Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
+	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
+	" the deflated system DF and a matrix B used to obtain it. ", 
+	" Here B is a random matrix of size n x (r+1), where n is the number of variables 
+	and DF is obtained by appending to F the matrix equation J*B*[L_1,...,L_r,1]^T = 0.
+	The polynomials of DF use the original variables and augmented variables L_1,...,L_r."}},
+    PARA{
+	"Apart from ", TT "P", ", ", ofClass Point,", one can pass various things as the second argument."  
+	},
+    UL {
+	{ofClass ZZ, " ", TT "r", " specifies the rank of the Jacobian dF (that may be known to the user)"},
+	{ofClass Matrix, " ", TT "B", " specifies a fixed (r+1)-by-n matrix to use in the deflation construction."},
+	{"a pair of matrices ", TT "(B,M)", " specifies additionally a matrix that is used to ", TO squareUp, "."},
+	{"a list", TT "{(B1,M1),(B2,M2),...}", 
+	    " prompts a chain of successive delations using the provided pairs of matrices."},
+	},
+    "The option ", TT "Variable", " specifies the base name for the augmented variables.",
     EXAMPLE lines ///
 CC[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z^2}
@@ -795,12 +816,6 @@ isFullNumericalRank evaluate(jacobian F2,P2)
 P = point {take(coordinates P2, F.NumberOfVariables)}
 assert(residual(F,P) < 1e-50)	
     ///,
-    Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
-	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
-	" the deflated system DF and a matrix B used to obtain it. ", 
-	" Here B is a random matrix of size n x (r+1), where n is the number of variables 
-	and DF is obtained by appending to F the matrix equation J*B*[L_1,...,L_r,1]^T = 0.
-	The polynomials of DF use the original variables and augmented variables L_1,...,L_r."}},
     Caveat => {"Needs more documentation!!!"},
     SeeAlso=>{PolySystem,newton}
     }
