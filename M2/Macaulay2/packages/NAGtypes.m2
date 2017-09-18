@@ -55,7 +55,7 @@ export {
 -- DEBUG Core ----------------------------------------
 debug Core -- to enable engine routines
 
-load "./NumericalAlgebraicGeometry/abstract-WSet.m2"
+load "./NumericalAlgebraicGeometry/WSet-abstract.m2"
 PolySystem = new Type of MutableHashTable
 Point = new Type of MutableHashTable 
 WitnessSet = new Type of WSet 

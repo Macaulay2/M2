@@ -34,7 +34,7 @@ points = method()
 points WSet := W -> error "not implemented"
 
 -- low-level methods
-isOn = method()
+-- isOn = method()
 -- isOn (Point,WSet) := (P,W) -> error "not implemented"
 
 wSet = method(TypicalValue=>WSet) -- a.k.a. movePoints

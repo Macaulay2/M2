@@ -596,7 +596,9 @@ document {
 	    },
 	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
         EXAMPLE lines ///
+options numericalRank
 numericalRank matrix {{2,1},{0,0.001}}
+numericalRank matrix {{2,1},{0,0.0001}}
      	///,
      	SeeAlso => {SVD}
 	}
