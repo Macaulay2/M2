@@ -55,13 +55,12 @@ export {
 -- DEBUG Core ----------------------------------------
 debug Core -- to enable engine routines
 
+load "./NumericalAlgebraicGeometry/abstract-WSet.m2"
 PolySystem = new Type of MutableHashTable
 Point = new Type of MutableHashTable 
--- ProjectivePoint = new Type of Point -- do we really need this?
-WitnessSet = new Type of MutableHashTable 
+WitnessSet = new Type of WSet 
 ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 
-ProjectiveNumericalVariety = new Type of NumericalVariety
 
 -----------------------------------------------------------------------
 -- POLYSYSTEM = {
@@ -563,8 +562,8 @@ witnessSet (PolySystem,PolySystem,List) := (I,S,P) ->
       IsIrreducible=>null 
       }
 
-points = method() -- strips all info except coordinates, returns a doubly-nested list
-points WitnessSet := W -> apply(W.Points, coordinates)
+-- points = method() -- strips all info except coordinates, returns a doubly-nested list
+points WitnessSet := W -> apply(W.Points, coordinates) -- return Points (not just coordinates)???
 
 equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else 
 if class W.Equations === Ideal then (W.Equations)_* else 
@@ -636,7 +635,6 @@ SERVICE FUNCTIONS:
   
 *-
 NumericalVariety.synonym = "numerical variety"
-ProjectiveNumericalVariety.synonym = "projective numerical variety"
 net NumericalVariety := V -> (
     if hasAnAttribute V then (
 	if hasAttribute(V,PrintNet) then return getAttribute(V,PrintNet);
@@ -652,7 +650,6 @@ net NumericalVariety := V -> (
     out
     )
 globalAssignment NumericalVariety
-globalAssignment ProjectiveNumericalVariety
 
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
 degree NumericalVariety := V -> (
@@ -1455,8 +1452,6 @@ document {
      SeeAlso => {WitnessSet, projectiveWitnessSet}
      }
 
--- !!! something strange is going on with EXAMPLE in this node:
--- stdio:1:1:(3): error: example results terminate prematurely: projectiveWitnessSet
 document {
 	Key => {projectiveWitnessSet,(projectiveWitnessSet,Ideal,Matrix,Matrix,List)},
 	Headline => "construct a ProjectiveWitnessSet",

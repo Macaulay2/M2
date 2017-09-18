@@ -56,7 +56,6 @@ export {
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
      "regeneration", "isSolution", "SquaredUpSystem", "SquareUpMatrix", "squareUp",
-     "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
      }
@@ -183,10 +182,6 @@ setDefault = method(Options => {
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
 getDefault Symbol := (s)->DEFAULT#s
-
-
--- METHOD DECLARATIONS
-isOn = method(Options=>{Tolerance=>null,Software=>null})
 
 -- CONVENTIONS ---------------------------------------
 
