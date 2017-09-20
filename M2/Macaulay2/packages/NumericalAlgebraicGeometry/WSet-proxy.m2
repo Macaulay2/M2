@@ -1,34 +1,67 @@
--- Child class for proxy witness sets
-ProxyWitnessSet = new Type of WitnessSet
--- Any other sub-classes?
--- Children should have extra structure/methods over the parent.
--- ProjectiveWitnessSet?  Multi-affine/projective?
-
--- Here's a constructor for WitnessSet that handles all ambient space types.
--- The slice is replaced by a list of slices, and 'Projective' is an optional flag.
-witnessSet = method(TypicalValue=>WitnessSet, Options=>{Projective=>false})
-witnessSet (Ideal,List,List) := o -> (F,S,P) ->
-  new WitnessSet from {
-      Equations => I, -- should equations be stored as Ideal or PolySystem?
-      Slice => S, -- a list of slice matrices, one for each factor
-      Points => P,
-      Projective => o.Projective,
-      }
-witnessSet (Ideal,Matrix,List) := o -> (F,M,P) -> witnessSet(F,{M},P,Options=>o)
--- etc.
-
 -- proxy witness sets store equations and points in an upstairs space, with a map to a downstairs space.
 -- If R and S are the coordinate rings of the upstairs and downstairs spaces respec, m: R <-- S.
 -- Since m can be rational, should the map be stored as a RingMap or a List/Matrix of expressions?
-proxyWitnessSet = method(TypicalValue=>ProxyWitnessSet, Options=>{Projective=>false})
-proxyWitnessSet (Ideal,List,List,RingMap) := o -> (F,S,P,m) -> (
-    W := witnessSet(F,S,P,Options=>o);
-    W.ProxyMap = m;
-    W
+
+-- An affine proxy witness set:
+--  a WSet 
+--  a rational map 
+ProxyWSet = new Type of WSet
+
+-- User has to construct the upstairs WSet -- this is problem dependent
+proxyWSet = method(TypicalValue=>ProxyWSet)
+proxyWSet (WSet,RationalMap,SlicingVariety) := (W,M,S) ->
+  new ProxyWSet from {
+      "upstairs WSet" => W, 
+      "rational map" => M,
+      "downstairs slice" => S
+      }
+
+net ProxyWSet := pr -> (
+    net "proxyWSet(" | net upWSet pr | ", " | 
+    net map pr | ", " | net slicingVariety pr | ")" 
     )
 
-downstairsPoints = method()
-downstairsPoints ProxyWitnessSet := W -> (
-    M := matrix W.ProxyMap;
-    apply(W.Points, p -> point evaluate(M,p))
+map ProxyWSet := RationalMap => o -> pr -> pr#"rational map" 
+
+upWSet = method()
+upWSet ProxyWSet := pr -> pr#"upstairs WSet"
+
+slicingVariety ProxyWSet := pr -> pr#"downstairs slice" 
+
+-- this returns points "downstairs"
+points ProxyWSet := pr -> (
+    M := pr#"rational map";
+    apply(points upWSet pr, p -> point evaluate(M,p))
     )
+
+pullBack = method()
+pullBack(PolySystem,SlicingVariety) := (M,S) -> (
+    B := ambient S;
+    T := target M.PolyMap;
+    -- isCompatible(T,B);
+    C := coefficientRing ring T;
+    Smap := map S; -- slice = ker(slicingMap)
+    slicingVariety(affineSpace ring M.PolyMap, sub(Smap,transpose M.PolyMap))  
+    )
+
+moveSlicingVariety(ProxyWSet,SlicingVariety) := (pr,S) -> (
+    -- A = source M
+    prS := pullBack(map pr,S);
+    W := moveSlicingVariety(upWSet pr, prS);
+    proxyWSet(W,map pr,S)
+    ) 
+
+TEST ///
+restart 
+debug needsPackage "NAGtypes"
+debug needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y]
+A = affineSpace R 
+S = slicingVariety(A, matrix{{x+y-1}})
+CC[x,y,L]
+w = witnessSet( ideal(y^2+3*y*L,x-y+L), ideal(x+y+1), {point {{-1,0,1_CC}}} )
+pr = proxyWSet(w,polySystem{x,y},S)
+pr' = moveSlicingVariety(pr, randomSlicingVariety(A,1))
+points pr'
+map slicingVariety pr'
+///

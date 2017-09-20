@@ -152,6 +152,9 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
      w'
      )
 
+
+moveSlicingVariety(WitnessSet,SlicingVariety) := (W,S) -> moveSlice(W,flatten entries map S)
+
 moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
 moveSlice (WitnessSet, List) := List => o -> (W,S') -> (
 -- IN:  W = witness set

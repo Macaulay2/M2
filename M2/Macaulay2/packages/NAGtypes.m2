@@ -56,6 +56,7 @@ export {
 debug Core -- to enable engine routines
 
 load "./NumericalAlgebraicGeometry/WSet-abstract.m2"
+
 PolySystem = new Type of MutableHashTable
 Point = new Type of MutableHashTable 
 WitnessSet = new Type of WSet 
@@ -563,7 +564,8 @@ witnessSet (PolySystem,PolySystem,List) := (I,S,P) ->
       }
 
 -- points = method() -- strips all info except coordinates, returns a doubly-nested list
-points WitnessSet := W -> apply(W.Points, coordinates) -- return Points (not just coordinates)???
+-- points WitnessSet := W -> apply(W.Points, coordinates) -- return Points (not just coordinates)???
+points WitnessSet := W -> W.Points
 
 equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else 
 if class W.Equations === Ideal then (W.Equations)_* else 
@@ -829,6 +831,9 @@ assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 ///
 
 
+load "./NumericalAlgebraicGeometry/WSet-ambient.m2"
+load "./NumericalAlgebraicGeometry/WSet-proxy.m2"
+ 
 -- DOCUMENTATION ------------------------------------------------------
 beginDocumentation()
 

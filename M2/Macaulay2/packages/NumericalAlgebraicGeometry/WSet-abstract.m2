@@ -25,7 +25,7 @@ SlicingVariety = new Type of MutableHashTable
 
 -- WSet ------------------------------------
 WSet.synonym = "(abstract) witness set"
-net WSet := W -> error "not implemented"
+net WSet := W -> net "error: net method is not defined for..."
 dim WSet := W -> error "not implemented"
 codim WSet := {} >> o -> W -> error "not implemented"
 ambient WSet := W -> error "not implemented"
@@ -37,20 +37,27 @@ points WSet := W -> error "not implemented"
 -- isOn = method()
 -- isOn (Point,WSet) := (P,W) -> error "not implemented"
 
-wSet = method(TypicalValue=>WSet) -- a.k.a. movePoints
-wSet (WSet, SlicingVariety) := (W,S) -> error "not implemented"
+moveSlicingVariety = method(TypicalValue=>WSet) 
+moveSlicingVariety (WSet, SlicingVariety) := (W,S) -> error "not implemented"
 
 -- Ambient ---------------------------------
 Ambient.synonym = "(abstract) ambient space"
-net Ambient := A -> error "not implemented"
+net Ambient := A -> net "error: net method is not defined for..."
 dim Ambient := A -> error "not implemented"
 
+-- SlicingVariety -------------------(hacked to work with AffineSpace)-----------------
+RationalMap = Thing -- !!!
+SlicingVariety.synonym = "(abstract) slice"
+slicingVariety = method()
+slicingVariety(Ambient,RationalMap) := (A,M) -> new SlicingVariety from {"ambient"=>A, "map"=>M}
+net SlicingVariety := S -> net "slice of codim " | net codim S
+codim SlicingVariety := S -> rank target map S 
+dim SlicingVariety := S -> dim ambient S - codim S  
+ambient SlicingVariety := S -> S#"ambient"
+map SlicingVariety := o -> S -> S#"map"
+
+-- generates a slice in the same class as S
 randomSlicingVariety = method()
 randomSlicingVariety SlicingVariety := S -> error "not implemented"
 
--- SlicingVariety ------------------------------------
-SlicingVariety.synonym = "(abstract) slice"
-net SlicingVariety := S -> error "not implemented"
-codim SlicingVariety := S -> error "not implemented"
-dim SlicingVariety := S -> dim ambient S - codim S  
-ambient SlicingVariety := S -> error "not implemented"
+
