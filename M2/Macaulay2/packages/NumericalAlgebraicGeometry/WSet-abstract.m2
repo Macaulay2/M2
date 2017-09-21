@@ -32,6 +32,8 @@ ambient WSet := W -> error "not implemented"
 degree WSet := W -> error "not implemented"
 points = method()
 points WSet := W -> error "not implemented"
+slicingVariety WSet := W -> error "not implemented"
+polySystem WSet := W -> error "not implemented"
 
 -- low-level methods
 -- isOn = method()
@@ -45,8 +47,21 @@ Ambient.synonym = "(abstract) ambient space"
 net Ambient := A -> net "error: net method is not defined for..."
 dim Ambient := A -> error "not implemented"
 
+-- RationalMap ---------------------------------
+RationalMap = new Type of Matrix
+rationalMap = method()
+rationalMap(Matrix) := M -> new RationalMap from M
+
+matrix(RationalMap) := M -> new Matrix from M
+coordinateProjection = method()
+coordinateProjection(Ambient,Ambient) := (B,A) -> (
+    vs := take(gens ring A, numgens ring B);
+    rationalMap matrix {vs}
+    )
+evaluate(RationalMap, Point) := (M,P) -> point sub(matrix M, matrix P)
+compose(RationalMap, RationalMap) := (M,N) -> rationalMap sub(matrix M, matrix N)
+
 -- SlicingVariety -------------------(hacked to work with AffineSpace)-----------------
-RationalMap = Thing -- !!!
 SlicingVariety.synonym = "(abstract) slice"
 slicingVariety = method()
 slicingVariety(Ambient,RationalMap) := (A,M) -> new SlicingVariety from {"ambient"=>A, "map"=>M}

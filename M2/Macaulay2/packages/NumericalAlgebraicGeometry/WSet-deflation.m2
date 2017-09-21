@@ -1,3 +1,32 @@
+
+
+
+deflate(WSet, Point) := o -> (W,P) -> deflate(W,jacobianRank(polySystem W,P),{P},o)
+deflate(WSet, ZZ) := o -> (W,r) -> deflate(W,r,points W,o)
+deflate(WSet, ZZ, List) := o -> (W,r,pts) ->
+    F := polySystem W;
+    F0 := deflate(F,r);
+    pts0 := apply(pts, P->liftPointToDeflation(P,F,r));
+    S0 := liftSliceToDeflation(slicingVariety W,F,r);
+    W0 := wSet(F0,S0,pts0);
+    M := coordinateProjection(ambient F, ambient F0);
+    proxyWSet(W0,M,slicingVariety W)
+    )
+deflate(ProxyWSet, ZZ) := o -> (W,r) -> deflate(polySystem W,r,o)
+deflate(ProxyWSet, Point) := o -> (W,P) -> (
+    D := deflate(proxyWSet W,P,o);
+    proxyWSet(upWSet D,compose(map W, map D),slicingVariety W)
+    )
+
+deflationSequence = method()
+deflationSequence (WSet,P) 
+
+jacobianRank = method()
+jacobianRank(PolySystem, Point) := (F,P) -> (
+    J := evaluate(jacobian F, P);
+    numericalRank J
+    )
+
 deflatedWSet = method()
 -- IN: 
 -- F, PolySystem 
@@ -10,7 +39,11 @@ deflatedWSet(PolySystem,ZZ,List) := (F,m,pts) -> (
     -- TO DO: make the above robust... precondition, refine when lifting, ???
     --        Is there a way to detect an incorrectly computed numerical rank?
     for wpts in P list (
-	wpts
+	F0 := (first wpts).LiftedSystem;
+	wpts0 := apply(wpts, p->p.LiftedPoint);
+	W0 := wSet(F0,S0,wpts0);
+	M := coordinateProjection(ambient F, ambient F0);
+	proxyWSet(W0,S0,M)
 	-- TO DO: create a ProxyWSet using wpts and the end-of-the-chain LiftedSystem in th chain of deflations
 	-- (this chain should be the same for all wpts) 
 	)

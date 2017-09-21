@@ -15,6 +15,7 @@ proxyWSet (WSet,RationalMap,SlicingVariety) := (W,M,S) ->
       "rational map" => M,
       "downstairs slice" => S
       }
+proxyWSet (WSet) := W -> proxyWSet(W,id,slice W)
 
 net ProxyWSet := pr -> (
     net "proxyWSet(" | net upWSet pr | ", " | 
