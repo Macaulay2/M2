@@ -18,8 +18,8 @@ deflate(ProxyWSet, Point) := o -> (W,P) -> (
     proxyWSet(upWSet D,compose(map W, map D),slicingVariety W)
     )
 
-deflationSequence = method()
-deflationSequence (WSet,P) 
+--deflationSequence = method()
+--deflationSequence (WSet,P) 
 
 jacobianRank = method()
 jacobianRank(PolySystem, Point) := (F,P) -> (
@@ -41,6 +41,7 @@ deflatedWSet(PolySystem,ZZ,List) := (F,m,pts) -> (
     for wpts in P list (
 	F0 := (first wpts).LiftedSystem;
 	wpts0 := apply(wpts, p->p.LiftedPoint);
+	S0 := new SlicingVariety;
 	W0 := wSet(F0,S0,wpts0);
 	M := coordinateProjection(ambient F, ambient F0);
 	proxyWSet(W0,S0,M)
