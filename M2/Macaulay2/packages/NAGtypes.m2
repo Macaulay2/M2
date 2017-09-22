@@ -55,10 +55,9 @@ export {
 -- DEBUG Core ----------------------------------------
 debug Core -- to enable engine routines
 
-load "./NumericalAlgebraicGeometry/WSet-abstract.m2"
-
-PolySystem = new Type of MutableHashTable
 Point = new Type of MutableHashTable 
+load "./NumericalAlgebraicGeometry/WSet-abstract.m2"
+PolySystem = new Type of MutableHashTable
 WitnessSet = new Type of WSet 
 ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 
@@ -123,7 +122,7 @@ toCCpolynomials (Matrix,InexactField) := (F,C) -> (
     sub(F,R) 
     )    
 
-evaluate = method()
+-- evaluate = method()
 evaluate (PolySystem,Point) := (P,p) -> evaluate(P, matrix p)
 evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
 evaluate (PolySystem,Matrix) := (P,X) -> (

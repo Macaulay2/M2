@@ -32,8 +32,8 @@ ambient WSet := W -> error "not implemented"
 degree WSet := W -> error "not implemented"
 points = method()
 points WSet := W -> error "not implemented"
+slicingVariety = method()
 slicingVariety WSet := W -> error "not implemented"
-polySystem WSet := W -> error "not implemented"
 
 -- low-level methods
 -- isOn = method()
@@ -58,12 +58,13 @@ coordinateProjection(Ambient,Ambient) := (B,A) -> (
     vs := take(gens ring A, numgens ring B);
     rationalMap matrix {vs}
     )
+evaluate = method()
 evaluate(RationalMap, Point) := (M,P) -> point sub(matrix M, matrix P)
 compose(RationalMap, RationalMap) := (M,N) -> rationalMap sub(matrix M, matrix N)
 
 -- SlicingVariety -------------------(hacked to work with AffineSpace)-----------------
+-- "map" is hacked as a (1-column) matrix that defines the slice  
 SlicingVariety.synonym = "(abstract) slice"
-slicingVariety = method()
 slicingVariety(Ambient,RationalMap) := (A,M) -> new SlicingVariety from {"ambient"=>A, "map"=>M}
 net SlicingVariety := S -> net "slice of codim " | net codim S
 codim SlicingVariety := S -> rank target map S 
