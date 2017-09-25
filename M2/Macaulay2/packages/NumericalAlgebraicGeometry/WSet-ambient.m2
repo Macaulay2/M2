@@ -1,4 +1,6 @@
 -- Types of Ambient spaces 
+
+-- AFFINE
 AffineSpace = new Type of Ambient
 net AffineSpace := A -> net "A^" | net dim A
 affineSpace = method()
@@ -17,5 +19,27 @@ field AffineSpace := A -> coefficientRing ring A
 randomSlicingVariety(AffineSpace,ZZ) := (A,k) -> ( -- k = codim 
     R := ring A;
     n := dim A;
-    slicingVariety( A, transpose(vars R * random(R^n,R^k) - matrix {toList (k:1_R)}) )
+    slicingVariety( A, rationalMap transpose(vars R * random(R^n,R^k) - matrix {toList (k:1_R)}) )
     )
+
+-- PROJECTIVE
+ProjectiveSpace = new Type of Ambient
+net ProjectiveSpace := A -> net "P^" | net dim A
+projectiveSpace = method()
+projectiveSpace Ring :=  R -> new ProjectiveSpace from { 
+    "coordinate ring"=> R
+    }
+projectiveSpace(Ring,ZZ,Symbol) := (C,n,x) -> projectiveSpace( C[x_0,x_1..x_n] )
+
+ring ProjectiveSpace := A -> A#"coordinate ring"
+
+dim ProjectiveSpace := A -> dim ring A - 1 
+
+field ProjectiveSpace := A -> coefficientRing ring A
+ 
+randomSlicingVariety(ProjectiveSpace,ZZ) := (A,k) -> ( -- k = codim 
+    R := ring A;
+    n := dim A;
+    slicingVariety( A, rationalMap transpose(vars R * random(R^(n+1),R^k)) )
+    )
+

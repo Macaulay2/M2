@@ -39,13 +39,13 @@ points ProxyWSet := pr -> (
     )
 
 pullBack = method()
-pullBack(PolySystem,SlicingVariety) := (M,S) -> (
+pullBack(RationalMap,SlicingVariety) := (M,S) -> (
     B := ambient S;
-    T := target M.PolyMap;
+    T := target matrix M;
     -- isCompatible(T,B);
     C := coefficientRing ring T;
     Smap := map S; -- slice = ker(slicingMap)
-    slicingVariety(affineSpace ring M.PolyMap, sub(Smap,transpose M.PolyMap))  
+    slicingVariety(affineSpace ring Smap, rationalMap sub(Smap,transpose matrix M))  
     )
 
 moveSlicingVariety(ProxyWSet,SlicingVariety) := (pr,S) -> (
@@ -61,10 +61,11 @@ debug needsPackage "NAGtypes"
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]
 A = affineSpace R 
-S = slicingVariety(A, matrix{{x+y-1}})
+S = slicingVariety(A, rationalMap matrix{{x+y-1}})
 CC[x,y,L]
 w = witnessSet( ideal(y^2+3*y*L,x-y+L), ideal(x+y+1), {point {{-1,0,1_CC}}} )
-pr = proxyWSet(w,polySystem{x,y},S)
+pr = proxyWSet(w,rationalMap matrix{{x},{y}},S)
+errorDepth=0
 pr' = moveSlicingVariety(pr, randomSlicingVariety(A,1))
 points pr'
 map slicingVariety pr'

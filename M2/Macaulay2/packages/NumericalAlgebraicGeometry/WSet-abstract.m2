@@ -52,7 +52,7 @@ RationalMap = new Type of Matrix
 rationalMap = method()
 rationalMap(Matrix) := M -> new RationalMap from M
 
-matrix(RationalMap) := M -> new Matrix from M
+matrix(RationalMap) := o -> M -> new Matrix from M
 coordinateProjection = method()
 coordinateProjection(Ambient,Ambient) := (B,A) -> (
     vs := take(gens ring A, numgens ring B);
