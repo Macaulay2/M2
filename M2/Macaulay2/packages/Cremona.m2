@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "4.0", 
-        Date => "August 13, 2017",
+	Version => "4.1", 
+        Date => "August 20, 2017",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true
@@ -209,7 +209,7 @@ toMap Matrix := o -> (F)  -> (
    t:=local t; x:=local x; y:=local y; txy:=baseName first gens ambient ring F; if class txy === IndexedVariable then txy = first txy; txy=toString txy;
    PNl:=(K[t_0..t_N],K[x_0..x_N],K[y_0..y_N]);   
    PN:=PNl_0; if txy === "t" then PN=PNl_1; if txy === "x" then PN=PNl_2;
-   if numgens ambient ring F -1 == N then PN=ambient ring F;
+   if (numgens ambient ring F -1 == N and # heft ambient ring F == 1) then PN=ambient ring F;
    phi:=map(ring F,PN,F);
    if class o.Dominant === ZZ 
    then map(ring F,PN/(kernel(phi,o.Dominant)),F)
@@ -343,7 +343,11 @@ imageInt (MutableHashTable) := (Phi) -> (
    return Phi#"idealImage";
 );
 imageInt (MutableHashTable,ZZ) := (Phi,d) -> (
-   if Phi#"idealImage" === null then return kernel(Phi#"map",d) else return ideal image basis(d,Phi#"idealImage");
+   if Phi#"idealImage" === null then return kernel(Phi#"map",d);
+   J := select(flatten entries gens Phi#"idealImage",g -> degree g <= {d});
+   if #J == 0 then return trim ideal 0_(target Phi);
+   J = ideal J;
+   if unique degrees J == {{d}} then return J else return ideal image basis(d,J);
 );
 
 image (RationalMap) := (Phi) -> imageInt(Phi);
@@ -417,8 +421,9 @@ target (MultihomogeneousRationalMap) := (Phi) -> source Phi#"map";
 directImageInt = method()
 
 directImageInt (MutableHashTable,Ideal) := (Phi,I) -> (
-    if not (ring I === target Phi#"map" and isHomogeneous I) then error "expected homogeneous ideal in the coordinate ring of the source variety";
-    trim preimage(Phi#"map",I)
+    if (ring I =!= source Phi and ring I === ambient source Phi) then return directImageInt(Phi,sub(I,source Phi)); 
+    if not (ring I === source Phi and isHomogeneous I) then error "expected homogeneous ideal in the coordinate ring of the source variety";
+    trim preimage(map Phi,I)
 );
 
 RationalMap SPACE Ideal := (Phi,I) -> directImageInt(Phi,I);
@@ -701,15 +706,16 @@ isBirational (RingMap) := o -> (phi) -> (
 inverseMapInt = method(Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 
 inverseMapInt (RationalMap) := o -> (Phi) -> (
-   if not isPolynomialRing source Phi then return inverseMapInt(Phi,null,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
-   a := ideal target Phi;
-   F := matrix Phi;
-   G := matrix{{(numgens ambient source Phi):0_(target Phi)}}; 
-   try G = invertBirationalMapRS(F,a);
-   if not (min flatten degrees ideal G > 0 and compress G === G) then (
-       if not isDominant(Phi,MathMode=>true,Verbose=>false) then error("trying to invert non-dominant map");
-       return inverseMapInt(Phi,null,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+   if # select((flatten degrees ideal source Phi)|(flatten degrees ideal target Phi)|(flatten degrees ideal matrix Phi),g -> g > 1) == 0 and Phi#"dimTarget" > 0 then (
+       try eta := inverse map Phi else error "linear rational map not invertible";
+       if not o.MathMode then return eta else (
+           if (isInverseMap(Phi#"map",eta) and isInverseMap(eta,Phi#"map")) then (if o.Verbose then <<certificate; return eta;)
+           else error "linear rational map not invertible";
+       );
    );
+   if not(isPolynomialRing source Phi and Phi#"dimTarget" > 0) then return inverseMapInt(Phi,null,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+   G := try invertBirationalMapRS(matrix Phi,ideal target Phi) else matrix{{(numgens ambient source Phi):0_(target Phi)}}; 
+   if not (min flatten degrees ideal G > 0 and compress G === G) then return inverseMapInt(Phi,null,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
    psi := map(target Phi,source Phi,G);
    if not o.MathMode then return psi;
    if (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
@@ -726,7 +732,7 @@ inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
    T := transpose gens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
    psi := map(target Phi,source Phi,submatrix(T,{0},));
    if not o.MathMode then return psi;
-   if (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
+   if (Phi#"isBirational" === true) or (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
         if o.Verbose then <<certificate; return psi;
    ) else (
         error "do not able to obtain an inverse rational map";
@@ -736,6 +742,7 @@ inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
 inverseMap (RationalMap) := o -> (Phi) -> (
     if Phi#"inverseRationalMap" =!= null then (if o.MathMode and o.Verbose then <<certificate; return Phi#"inverseRationalMap");
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
+    if Phi#"isBirational" === null then if Phi#"dimTarget" != Phi#"dimSource" then (setKeyValue(Phi,"isBirational",false); error "expected a birational map";);
     Psi := new RationalMap from {
             "map" => inverseMapInt(Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose),
             "maps" => null,
@@ -832,6 +839,7 @@ approximateInverseMap (RingMap) := o -> (phi) -> approximateInverseMap(phi,-1,Co
 approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
     if Phi#"inverseRationalMap" =!= null then (if o.MathMode and o.Verbose then <<certificate; return Phi#"inverseRationalMap");
     if Phi#"isBirational" === false or Phi#"isDominant" === false then error "expected a birational map";
+    if Phi#"isBirational" === null then if Phi#"dimTarget" != Phi#"dimSource" then (setKeyValue(Phi,"isBirational",false); error "expected a birational map";);
     Psi := rationalMap approximateInverseMap(Phi#"map",d,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode,Verbose=>o.Verbose);
     if (not o.MathMode) then return Psi;
     setKeyValue(Psi,"isBirational",true);
@@ -858,6 +866,7 @@ isInverseMap (RingMap,RingMap) := (phi,psi) -> (
    checkRationalMap psi;
    if (source phi =!= target psi or target phi =!= source psi) then return false; 
    try phipsi:=toMatrix(phi*psi) else return false;
+   if unique apply(flatten entries phipsi,degree) === {{0}} then return (phipsi != 0 and dim(ring phipsi)-1 == 0);
    x:=gens target phi; 
    i:=0; while x_i == 0 do i=i+1;
    (q,r):=quotientRemainder((flatten entries phipsi)_i,x_i);
@@ -878,7 +887,7 @@ forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
      if Phi#"isBirational" =!= true then setKeyValue(Phi,"isBirational",true);  
      if Psi#"isBirational" =!= true then setKeyValue(Psi,"isBirational",true);  
      setKeyValue(Phi,"inverseRationalMap",Psi);
-     setKeyValue(Psi,"inverseRationalMap",Phi);
+     if Psi#"inverseRationalMap" === null then setKeyValue(Psi,"inverseRationalMap",Phi);
 );
 
 compose(RingMap,RingMap) := (phi,psi) -> (
