@@ -1,50 +1,23 @@
--- A first attempt to write code that will take a specification for boiler-plate d-code, and
--- write it for us.
+newPackage(
+        "GenerateD",
+        Version => "0.1", 
+        Date => "3 Oct 2017",
+        Authors => {
+            {Name => "Mike Stillman", 
+                Email => "mike@math.cornell.edu", 
+                HomePage => "http://www.math.cornell.edu/~mike"}
+            },
+        Headline => "helper code for writing boiler-plate code for new engine routines and types",
+        DebuggingMode => true
+        )
 
--- e.g. 
-
-celltype = new HashTable from {
-    "Monomial" => hashTable {
-        DType => "RawMonomialCell",
-        Synonym => "a raw monomial", 
-        Suffix => ".p"
-        },
-    "MonomialOrNull" => hashTable {
-        DType => "RawMonomialOrNull",
-        Synonym => "a raw monomial or null", 
-        Suffix => ".p"
-        },
-    "Ring" => hashTable {
-        DType => "RawRingCell",
-        Synonym => "a raw ring", 
-        Suffix => ".p"
-        },
-    "RingOrNull" => hashTable {
-        DType => "RawRingOrNull",
-        Synonym => "a raw ring or null", 
-        Suffix => ".p"
-        },
-    "RingElement" => hashTable {
-        DType => "RawRingElementCell",
-        Synonym => "a raw ring element", 
-        Suffix => ".p"
-        },
-    "RingElementOrNull" => hashTable {
-        DType => "RawRingElementOrNull",
-        Synonym => "a raw ring element", 
-        Suffix => ".p"
-        },
-    "Matrix" => hashTable {
-        DType => "RawMatrixCell",
-        Synonym => "a raw matrix", 
-        Suffix => ".p"
-        },
-    "MatrixOrNull" => hashTable {
-        DType => "RawMatrixOrNull",
-        Synonym => "a raw matrix or null", 
-        Prefix => "&",
-        Suffix => ""
-        }
+export {
+    "indent",
+    "genTitle",
+    "genNumArgs",
+    "genOneArg",
+    "genArg",
+    "genFunctionCall"    
     }
 
 indentStr = "  ";
@@ -136,6 +109,96 @@ genFunctionCall(String, String, Thing) := (fcnname, returntype, args) -> (
       (genTitle fcnname) (genNumArgs (#args)) L
       )
     )
+
+beginDocumentation()
+
+end--
+
+loadPackage "GenerateD"
+
+
+doc ///
+Key
+  GenerateD
+Headline
+Description
+  Text
+  Example
+Caveat
+SeeAlso
+///
+
+doc ///
+Key
+Headline
+Usage
+Inputs
+Outputs
+Consequences
+Description
+  Text
+  Example
+  Code
+  Pre
+Caveat
+SeeAlso
+///
+
+TEST ///
+-- test code and assertions here
+-- may have as many TEST sections as needed
+///
+
+end--
+-- A first attempt to write code that will take a specification for boiler-plate d-code, and
+-- write it for us.
+
+-- e.g. 
+
+celltype = new HashTable from {
+    "Monomial" => hashTable {
+        DType => "RawMonomialCell",
+        Synonym => "a raw monomial", 
+        Suffix => ".p"
+        },
+    "MonomialOrNull" => hashTable {
+        DType => "RawMonomialOrNull",
+        Synonym => "a raw monomial or null", 
+        Suffix => ".p"
+        },
+    "Ring" => hashTable {
+        DType => "RawRingCell",
+        Synonym => "a raw ring", 
+        Suffix => ".p"
+        },
+    "RingOrNull" => hashTable {
+        DType => "RawRingOrNull",
+        Synonym => "a raw ring or null", 
+        Suffix => ".p"
+        },
+    "RingElement" => hashTable {
+        DType => "RawRingElementCell",
+        Synonym => "a raw ring element", 
+        Suffix => ".p"
+        },
+    "RingElementOrNull" => hashTable {
+        DType => "RawRingElementOrNull",
+        Synonym => "a raw ring element", 
+        Suffix => ".p"
+        },
+    "Matrix" => hashTable {
+        DType => "RawMatrixCell",
+        Synonym => "a raw matrix", 
+        Suffix => ".p"
+        },
+    "MatrixOrNull" => hashTable {
+        DType => "RawMatrixOrNull",
+        Synonym => "a raw matrix or null", 
+        Prefix => "&",
+        Suffix => ""
+        }
+    }
+
 
 parseTemplate = method()
 parseTemplate List := (strs) -> (
