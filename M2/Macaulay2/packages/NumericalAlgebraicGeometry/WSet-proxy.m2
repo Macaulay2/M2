@@ -15,7 +15,7 @@ proxyWSet (WSet,RationalMap,SlicingVariety) := (W,M,S) ->
       "rational map" => M,
       "downstairs slice" => S
       }
-proxyWSet (WSet) := W -> (
+proxyWSet WSet := W -> (
     A := ambient W;
     proxyWSet(W,coordinateProjection(A,A),slice W)
     )

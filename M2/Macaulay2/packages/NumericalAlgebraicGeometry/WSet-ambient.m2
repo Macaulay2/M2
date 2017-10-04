@@ -22,6 +22,10 @@ randomSlicingVariety(AffineSpace,ZZ) := (A,k) -> ( -- k = codim
     slicingVariety( A, rationalMap transpose(vars R * random(R^n,R^k) - matrix {toList (k:1_R)}) )
     )
 
+-- hack!!! for WitnessSet
+slicingVariety WitnessSet := W -> slicingVariety(affineSpace ring W, rationalMap transpose matrix{slice W})
+
+
 -- PROJECTIVE
 ProjectiveSpace = new Type of Ambient
 net ProjectiveSpace := A -> net "P^" | net dim A
