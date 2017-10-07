@@ -133,7 +133,6 @@ document{
     Headline => "Set Quotient Ring given Multiple Defining Equations",
     PARA {"The function setQuotientRing sets the quotient ring QR of PR over an ideal, where the ideal may be given by defining equations.
 	The global variables PR and QR are specified when setting its polynomial ring and quotient ring, respectively."},
-	The variables and equations (the ideal generators) should be specified by setPolynomialRing and in the form of Miura, respectively."},
 	EXAMPLE {"setPolynomialRing(GF 5,{x,y,z},{4,6,5})","setQuotientRing({y^2-x^3-1, z^2-x*y-1})"}
 }
 
@@ -145,7 +144,6 @@ document{
     Headline => "Set Quotient Ring given Ideal",
     PARA {"The function setQuotientRing sets the quotient ring QR of PR over an ideal, where the ideal may be given by defining equations.
 	The global variables PR and QR are specified when setting its polynomial ring and quotient ring, respectively."},
-	The variables and equations (the ideal generators) should be specified by setPolynomialRing and in the form of Miura, respectively."},
 	EXAMPLE {"setPolynomialRing(GF 7,{x,y},{2,3})","setQuotientRing(ideal(y^2-x^3-3*x))"}
 }
 
@@ -190,8 +188,8 @@ document{
     Usage => "K=double(J)",
     Outputs => {ofClass Ideal},
     Headline => "Double Reduced Ideal",
-    PARA {"The function double computes the reduced ideal of J*J given an integral ideal J".
-	double(J) and add(J,J) outputs the same but double(J) is often more useful in practice.},    
+    PARA {"The function double computes the reduced ideal of J*J given an integral ideal J.
+	double(J) and add(J,J) outputs the same but double(J) is often more useful in practice."},    
 	EXAMPLE {"setPolynomialRing({x,y},{2,3}); setQuotientRing(y^2-x^3-7*x); J=ideal(x,y)", "double J", "reduced(J*J)", "add(J,J)"},
 	SeeAlso => {"add", "scalarMultiplication"}
 }
