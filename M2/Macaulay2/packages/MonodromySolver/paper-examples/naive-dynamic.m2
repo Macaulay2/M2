@@ -1,19 +1,6 @@
 needsPackage "MonodromySolver"
 needsPackage "ExampleIdeals"
 
-parametrizedCyclic = n -> (
-	S := gens cyclicRoots(n,CC);
-	R := ring S;
-	polys := flatten entries S;
-	ind := flatten apply(#polys,i-> -- indices for parameters
-		apply(exponents polys#i, t->(i,t))
-		);
-	AR := CC[apply(ind,i->A_i)][gens R];
-	polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
-	sum(exponents polys#i, t->A_(i,t)*AR_(t));
-	polySystem transpose matrix {polysP}
-);
-
 runNaiveDynamicMonodromy = polys -> (
 	(p0,x0) := createSeedPair polySystem polys;
 
@@ -49,6 +36,28 @@ runNaiveDynamicMonodromy = polys -> (
 	);
 
 	<< "#Path tracks: " << PathTrackCount << endl;
+	PathTrackCount
 );
 
-runNaiveDynamicMonodromy parametrizedCyclic 8
+end
+restart
+needs "naive-dynamic.m2"
+needs "cyclic.m2"
+L = for i to 10 list 
+runNaiveDynamicMonodromy parametrizedCyclic 7
+sum L / 10. -- 7976.2
+
+restart
+load "naive-dynamic.m2"
+needs "cyclic.m2"
+elapsedTime runNaiveDynamicMonodromy parametrizedCyclic 10
+
+restart
+load "naive-dynamic.m2"
+needs "cyclic.m2"
+elapsedTime runNaiveDynamicMonodromy parametrizedCyclic 11
+
+restart
+load "naive-dynamic.m2"
+load "large-examples/noon10.m2"
+elapsedTime runNaiveDynamicMonodromy parametrizedNoon 10 
