@@ -1,3 +1,4 @@
+setRandomSeed 0;
 needsPackage "MonodromySolver"
 needsPackage "ExampleIdeals"
 
@@ -15,18 +16,20 @@ runNaiveDynamicMonodromy = polys -> (
 	<< "Mixed volume: " << MV << endl;
 	while length sols < MV do (
 		petalSystem := polySystem specializeSystem (nextP(p0),polys);
-
-		newSols := track(
+		PathTrackCount = PathTrackCount + length sols;
+    	    	sols1 := select(track(
+			targetSystem,
+			petalSystem,
+			points sols,
+			NumericalAlgebraicGeometry$gamma=>random CC), 
+		    s->status s==Regular);
+		PathTrackCount = PathTrackCount + length sols1;	
+		newSols := select(track(
 			petalSystem,
 			targetSystem,
-			track(
-				targetSystem,
-				petalSystem,
-				points sols,
-				NumericalAlgebraicGeometry$gamma=>random CC),
-			NumericalAlgebraicGeometry$gamma=>random CC);
-
-		PathTrackCount = PathTrackCount + #newSols * 2;
+			sols1,
+			NumericalAlgebraicGeometry$gamma=>random CC),
+		    s->status s==Regular);
 		for sol in newSols do (
 			if not member(sol,sols) then (
 				appendPoint(sols,sol);
@@ -34,10 +37,14 @@ runNaiveDynamicMonodromy = polys -> (
 		);
 		<< "#sols: " << length sols << endl;
 	);
-
-	<< "#Path tracks: " << PathTrackCount << endl;
-	PathTrackCount
-);
+    	if length sols > MV then (
+	    print "FAILED!!!";
+	    infinity
+	    ) else (
+	    << "#Path tracks: " << PathTrackCount << endl;
+	    PathTrackCount
+	    )
+)
 
 end
 restart
@@ -45,7 +52,7 @@ needs "naive-dynamic.m2"
 needs "cyclic.m2"
 L = for i to 10 list 
 runNaiveDynamicMonodromy parametrizedCyclic 7
-sum L / 10. -- 7976.2
+sum L / 10. -- 7486
 
 restart
 load "naive-dynamic.m2"
@@ -61,3 +68,5 @@ restart
 load "naive-dynamic.m2"
 load "large-examples/noon10.m2"
 elapsedTime runNaiveDynamicMonodromy parametrizedNoon 10 
+-- #Path tracks: 495692
+     -- 7651.17 seconds elapsed
