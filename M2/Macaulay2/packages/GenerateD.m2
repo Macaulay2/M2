@@ -34,7 +34,12 @@ celltype = new HashTable from {
     "int" => hashTable {
         DType => "ZZCell",
         Synonym => "a small integer", 
-        Suffix => ""
+        Suffix => "",
+        Array => (
+            "isInt",
+            "toInt",
+            "a small integer"
+            )
         },
     "long" => hashTable {
         DType => "ZZCell",
@@ -110,7 +115,13 @@ celltype = new HashTable from {
         DType => "RawMutableComplexCell",
         Synonym => "a raw mutable complex", 
         Suffix => ".p"
+        },
+    "MutableComplexOrNull" => hashTable {
+        DType => "RawMutableComplexOrNull",
+        Synonym => "a raw mutable complex", 
+        Suffix => ".p"
         }
+    
     }
 
 indentStr = "  ";
@@ -179,6 +190,18 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
   )
 
 genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
+{*    
+    if celltype#argtype#?Array then (
+        {
+            (f1, f2, err) := celltype#argtype#Array;
+            "when s."|argnum|" is w"|argname|":ZZcell do (", 
+            "if "|f1|"(w"|argname|") then ("|argname|" := "|f2|"(w"|argname|");",
+            innards,
+            ") else WrongArg("|argnum|",\""|err|")",
+            ") else WrongArgZZ("|argnum|")"
+            }
+        )
+*}    
     if argtype == "int" then (
         {
             "when s."|argnum|" is w"|argname|":ZZcell do (", 
@@ -290,6 +313,17 @@ assert(result == ans1)
 ///
 
 TEST ///
+--restart
+debug needsPackage "GenerateD"
+result = str (genFunctionCall(
+        "rawPruneComplex", 
+        "MutableComplexOrNull", 
+        toSequence{"C"=>"MutableComplex","nsteps"=>"int","flags"=>"int"}
+        ));
+print result
+///
+
+TEST ///
 debug needsPackage "GenerateD"
 result = str (genFunctionCall(
         "rawMatrixRowSwap", 
@@ -323,7 +357,6 @@ assert(result == ans3)
 ///
 
 TEST ///
-restart
 debug needsPackage "GenerateD"
 fcns = {
     (
