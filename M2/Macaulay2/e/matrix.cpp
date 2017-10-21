@@ -914,8 +914,8 @@ Matrix *Matrix::top_coefficients(Matrix *&monoms) const
       ERROR("expected polynomial ring");
       return nullptr;
     }
-  MatrixConstructor result(rows(), nullptr);
-  MatrixConstructor cons_monoms(R->make_FreeModule(1), nullptr);
+  MatrixConstructor result(rows(), 0);
+  MatrixConstructor cons_monoms(R->make_FreeModule(1), 0);
   for (int i = 0; i < n_cols(); i++)
     {
       int var, exp;
@@ -986,7 +986,7 @@ Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
       ERROR("expected polynomial ring");
       return nullptr;
     }
-  MatrixConstructor mat(rows(), nullptr);
+  MatrixConstructor mat(rows(), 0);
   maxdivided = 0;
   for (int i = 0; i < n_cols(); i++)
     {
@@ -1265,7 +1265,7 @@ void Matrix::text_out(buffer &o) const
 
 Matrix *Matrix::compress() const
 {
-  MatrixConstructor result(rows(), nullptr);
+  MatrixConstructor result(rows(), 0);
   for (int i = 0; i < n_cols(); i++)
     if (elem(i) != nullptr) result.append(elem(i), cols()->degree(i));
   return result.to_matrix();
@@ -1356,7 +1356,7 @@ Matrix *Matrix::compress() const
 Matrix *Matrix::remove_scalar_multiples() const
 {
   bool keep;
-  MatrixConstructor result(rows(), nullptr);
+  MatrixConstructor result(rows(), 0);
   for (int i = 0; i < n_cols(); i++)
     {
       vec f = elem(i);
@@ -1382,7 +1382,7 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // If keep_one is true, divide by somewhat less, making the resulting monomial
 // factor squarefree.
 {
-  MatrixConstructor result(rows(), nullptr);
+  MatrixConstructor result(rows(), 0);
   for (int i = 0; i < n_cols(); i++)
     {
       vec f = get_ring()->vec_remove_monomial_factors(elem(i),
@@ -1551,7 +1551,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
     }
 
   // Take all of these monomials and make an array_ out of them
-  MatrixConstructor mat(rows(), nullptr);
+  MatrixConstructor mat(rows(), 0);
   const void **monoms = exponent_table_to_array(E);
   for (int i = 0; i < nvars; i++) exp[i] = 0;
   for (int i = 0; monoms[i] != 0; i += 2)
@@ -1699,7 +1699,7 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
   // Step 2: for each vector column of 'this'
   //     create a column, and put this vector into result.
 
-  MatrixConstructor mat(P->make_FreeModule(nelements), nullptr);
+  MatrixConstructor mat(P->make_FreeModule(nelements), 0);
   for (int i = 0; i < n_cols(); i++)
     mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
 
