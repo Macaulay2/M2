@@ -833,6 +833,7 @@ assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 load "./NumericalAlgebraicGeometry/WSet-ambient.m2"
 load "./NumericalAlgebraicGeometry/WSet-proxy.m2"
 load "./NumericalAlgebraicGeometry/WSet-projective.m2"
+load "./NumericalAlgebraicGeometry/WSet-multiaffine.m2"
  
 -- DOCUMENTATION ------------------------------------------------------
 beginDocumentation()

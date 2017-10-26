@@ -318,6 +318,7 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     else error "not implemented"
     )
 
+{* not used???
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := commonRing T;
@@ -331,6 +332,7 @@ dehomogenizeSystem List := List => T -> (
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
+*}
 
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
@@ -395,6 +397,7 @@ squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix els
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"
+load "./NumericalAlgebraicGeometry/WSet.m2"
 load "./NumericalAlgebraicGeometry/intersection.m2"
 load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
