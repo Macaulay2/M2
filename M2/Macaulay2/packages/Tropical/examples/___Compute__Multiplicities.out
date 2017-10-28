@@ -1,0 +1,38 @@
+-- -*- M2-comint -*- {* hash: -260309947 *}
+--loading configuration for package "FourTiTwo" from file /Users/saralamboglia/Library/Application Support/Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "gfanInterface2" from file /Users/saralamboglia/Library/Application Support/Macaulay2/init-gfanInterface2.m2
+--loading configuration for package "Tropical" from file /Users/saralamboglia/Library/Application Support/Macaulay2/init-Tropical.m2
+-- polymake not present
+
+i1 : QQ[x,y,z];
+
+i2 : I=ideal(x^2-y^2);
+
+o2 : Ideal of QQ[x, y, z]
+
+i3 : isPrime I
+
+o3 = false
+
+i4 : T=tropicalVariety(I,Prime=>false,ComputeMultiplicities=>true);
+
+i5 : rays T
+
+o5 = 0
+
+              3
+o5 : Matrix ZZ  <--- 0
+
+i6 : maxCones T
+
+o6 = {{}}
+
+o6 : List
+
+i7 : multiplicities T
+
+o7 = {2}
+
+o7 : List
+
+i8 : 
