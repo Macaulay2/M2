@@ -5,7 +5,7 @@
 -- -*- coding: utf-8 -*-
 
 newPackage(
-	"gfanInterface2",
+	"gfanInterface",
 	Version => "0.4",
 	Date => "Aug 2012 (updated by Josephine Yu)",
 	Authors => {
@@ -88,15 +88,15 @@ export {
 	"multiplicitiesReorder"
 }
 
-gfanPath = gfanInterface2#Options#Configuration#"path"
+gfanPath = gfanInterface#Options#Configuration#"path"
 if gfanPath == "" then gfanPath = prefixDirectory | currentLayout#"programs"
 
-fig2devPath = gfanInterface2#Options#Configuration#"fig2devpath"
-gfanVerbose = gfanInterface2#Options#Configuration#"verbose"
-gfanKeepFiles = gfanInterface2#Options#Configuration#"keepfiles"
-gfanCachePolyhedralOutput = gfanInterface2#Options#Configuration#"cachePolyhedralOutput"
+fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
+gfanVerbose = gfanInterface#Options#Configuration#"verbose"
+gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
+gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
 --minmax switch disabled
--- gfanTropicalMin = not gfanInterface2#Options#Configuration#"tropicalMax"
+-- gfanTropicalMin = not gfanInterface#Options#Configuration#"tropicalMax"
 
 GfanTypes = {
 	{	"sym" => "AmbientDim",
@@ -1322,7 +1322,7 @@ gfanFanCommonRefinement = method( Options => {
 	}
 )
 
---This has been broken by our changes to gfanInterface2 to make
+--This has been broken by our changes to gfanInterface to make
 --the output be Fans in the new sense.
 gfanFanCommonRefinement (Fan, Fan) := opts -> (F,G) -> (
      fileF := "";
@@ -2540,12 +2540,12 @@ gfanHelp = (functionStr) ->
 
 doc ///
 	Key
-		"gfanInterface2"
+		"gfanInterface"
 	Headline
 		a Macaulay2 interface to gfan
 	Description
 		Text
-			@EM "gfanInterface2"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
+			@EM "gfanInterface"@ is an interface to Anders Jensen's Gfan software (available at @HREF "http://home.imf.au.dk/jensen/software/gfan/gfan.html"@), which is a C++
 			program to compute the Groebner fan (i.e. all the initial ideals) of an ideal.
 
 			The main function in this package is @TO gfan@ which computes all of the Groebner
@@ -2553,12 +2553,12 @@ doc ///
 			that it can handle symmetries in the ideal. If you want the geometric information
 			of this list of Groebner basis, see @TO gfanGroebnerCone@.
 
-			Most of the functions in gfanInterface2 require @TO MarkedPolynomialList@
+			Most of the functions in gfanInterface require @TO MarkedPolynomialList@
 			marked polynomial lists as input.
 			In a marked polynomial list, the leading term of each polynomial is distinguished.
 			New users should read the the guide @TO "Conventions for calling methods with options"@.
 			Since {\tt gfan} is distributed with @EM "Macaulay2"@, one rarely needs to consult
-			the guide for @TO "Installation and Configuration of gfanInterface2"@.
+			the guide for @TO "Installation and Configuration of gfanInterface"@.
 
 			Most of functions in the gfan package are accessible through this interface.
 			If you wish to use one whose interface is not included here send a message to
@@ -2568,34 +2568,34 @@ doc ///
 
 doc ///
 	Key
-		"Installation and Configuration of gfanInterface2"
+		"Installation and Configuration of gfanInterface"
 	Description
 		Text
-			The {\tt gfanInterface2} package makes use of the binary executables from
+			The {\tt gfanInterface} package makes use of the binary executables from
 			Anders Jensen's {\tt gfan} software package. These binary files are distributed
 			with @EM "Macaulay2"@ (since version 1.3) and so, it is not necessary to install {\tt gfan}
 			separately.
 
-			The {\tt gfanInterface2} package contains the configuration option {\tt "path"} which
+			The {\tt gfanInterface} package contains the configuration option {\tt "path"} which
 			allows the user to specify which {\tt gfan} executables are used. When the path unspecified,
 			it defaults to an empty string and the binaries provided by Macaulay 2 are used.
 
 			You can change the path, if needed, while loading the package:
 
 		Example
-			loadPackage("gfanInterface2", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
+			loadPackage("gfanInterface", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
 
 		Text
 			The path to the executables should end in a slash.
 			To set the path permanently, one needs to change
-			{\tt gfanInterface2.m2} either before installing or in the installed copy.
+			{\tt gfanInterface.m2} either before installing or in the installed copy.
 			You will find the path configuration near the top of the file.
 
-			If {\tt gfanInterface2} is already installed and loaded, you can find the path
+			If {\tt gfanInterface} is already installed and loaded, you can find the path
 			of the source file by the following command:
 
 		Example
-			gfanInterface2#"source file"
+			gfanInterface#"source file"
 
 		Text
 			If you want to use {\tt gfan} executables outside of @EM "Macaulay2"@, they can be found with
@@ -2607,10 +2607,10 @@ doc ///
 		Text
 			If you would like to see the input and output files used to communicate with {\tt gfan}
 			you can set the {\tt "keepfiles"} configuration option to {\tt true}. If {\tt "verbose"}
-			is set to {\tt true}, {\tt gfanInterface2} will output the names of the temporary files used.
+			is set to {\tt true}, {\tt gfanInterface} will output the names of the temporary files used.
 
 		Example
-			loadPackage("gfanInterface2", Configuration => { "keepfiles" => true, "verbose" => true}, Reload => true);
+			loadPackage("gfanInterface", Configuration => { "keepfiles" => true, "verbose" => true}, Reload => true);
 			QQ[x,y];
 			gfan {x,y};
 
@@ -2620,7 +2620,7 @@ doc ///
 			as follows:
 
 		Example
-			loadPackage("gfanInterface2", Configuration => { "fig2devpath" => "/directory/to/fig2dev/"}, Reload => true)
+			loadPackage("gfanInterface", Configuration => { "fig2devpath" => "/directory/to/fig2dev/"}, Reload => true)
 
 		Text
 			Again, the path should end in a slash.
@@ -2633,17 +2633,17 @@ doc ///
 		"Conventions for calling methods with options"
 	Description
 		Text
-			In creating {\tt gfanInterface2} the objective has been to mirror
+			In creating {\tt gfanInterface} the objective has been to mirror
 			the {\tt gfan} commands as closely as possible in Macaulay 2.
 			Many commands in {\tt gfan} allow command line options and these
-			reproduced in {\tt gfanInterface2} as optional arguments.
+			reproduced in {\tt gfanInterface} as optional arguments.
 
 			For example, say we want to find the Groebner bases of
 			an ideal with symmetry. From the command line, one would
 			type @TT "gfan _bases --symmetry"@ and then give the ring, ideal and
 			symmetries of the ideal as input.
 
-			In {\tt gfanInterface2} we pass the optional argument {\tt "symmetry"} the
+			In {\tt gfanInterface} we pass the optional argument {\tt "symmetry"} the
 			symmetries and provide the ideal as an argument.
 
 		Example
@@ -2651,7 +2651,7 @@ doc ///
 			gfan(ideal(x^2*y -z, y^2*z - x, z^2*x - y), "symmetry" => {{0,1,2}, {1,2,0}})
 
 		Text
-			For each optional {\tt gfan} argument, the corresponding {\tt gfanInterface2}
+			For each optional {\tt gfan} argument, the corresponding {\tt gfanInterface}
 			argument is obtained by simply removing the dashes.
 
 			Here's another example. If we run {\tt gfanBuchberger} without a weight vector,
@@ -2694,7 +2694,7 @@ doc ///
 			y^2 + x^2 + z^2
 
 		Text
-			In {\tt gfanInterface2}, we represent marked Groebner bases using a list
+			In {\tt gfanInterface}, we represent marked Groebner bases using a list
 			of leading terms and a second list of polynomials. Such a pair of lists
 			is made into a {\tt MarkedPolynomialList} by using the @TO markedPolynomialList@
 			constructor.
@@ -2704,7 +2704,7 @@ doc ///
 			markedPolynomialList {{y^2, x^2}, {x^2 + y^2 + z^2, x^2 + y^2 + z^2}}
 
 		Text
-			Many methods in {\tt gfanInterface2} require {\tt MarkedPolynomialLists} as input
+			Many methods in {\tt gfanInterface} require {\tt MarkedPolynomialLists} as input
 			and produce them as output.
 
 			For example, the method @TO gfanMarkPolynomialSet@ takes a list of polynomials
@@ -4584,14 +4584,14 @@ doc ///
 --this test is obsolete as minmax switch is now disabled
 TEST /// -- by default the convention should be TROPICAL-MIN
 --  QQ[x,y,z];
--- loadPackage("gfanInterface2", Reload=>true, Configuration=>{ "tropicalMax"=> false });  
+-- loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> false });  
 --  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
 --  assert( member({2,-1,-1}, fan1#"Rays"));
 ///
 
 TEST /// -- alternatively TROPICAL-MAX can be specified on loading the package
 --  QQ[x,y,z];
---  loadPackage("gfanInterface2", Reload=>true, Configuration=>{ "tropicalMax"=> true });
+--  loadPackage("gfanInterface", Reload=>true, Configuration=>{ "tropicalMax"=> true });
 --  fan1 = gfanTropicalTraverse gfanTropicalStartingCone ideal(x+y+z);
 -- assert( member({-2,1,1}, fan1#"Rays"));
 ///
@@ -4601,14 +4601,14 @@ end--
 restart
 --path = prepend(".",path)
 uninstallPackage "Polyhedra"
-uninstallPackage "gfanInterface2"
+uninstallPackage "gfanInterface"
 restart
 --path = prepend(".",path)
 installPackage "Polyhedra"
-installPackage "gfanInterface2"
+installPackage "gfanInterface"
 restart
-loadPackage "gfanInterface2"
-check gfanInterface2
+loadPackage "gfanInterface"
+check gfanInterface
 
 -------------------------------------------------------------
 -------------------------------------------------------------
@@ -4616,7 +4616,7 @@ check gfanInterface2
 
 -- Code for extracting options and methods
 
-loadPackage "gfanInterface2"
+loadPackage "gfanInterface"
 
 applyBinary = (L, f) -> (
 	S := null;
@@ -4624,7 +4624,7 @@ applyBinary = (L, f) -> (
 	S
 )
 
-fns = select(gfanInterface2#"exported symbols", k ->
+fns = select(gfanInterface#"exported symbols", k ->
 		substring(0,4,toString k) == "gfan" and class value k === MethodFunctionWithOptions)
 
 apply(fns, f -> f => (value f, options value f))
@@ -4639,19 +4639,19 @@ sort keys opts
 
 
 restart
-installPackage("gfanInterface2")
-uninstallPackage "gfanInterface2"
-installPackage("gfanInterface2", UserMode=>true, DebuggingMode=>true)
-installPackage("gfanInterface2", DebuggingMode=>true, RemakeAllDocumentation => true, RerunExamples => true)
+installPackage("gfanInterface")
+uninstallPackage "gfanInterface"
+installPackage("gfanInterface", UserMode=>true, DebuggingMode=>true)
+installPackage("gfanInterface", DebuggingMode=>true, RemakeAllDocumentation => true, RerunExamples => true)
 
 restart
-loadPackage("gfanInterface2", Configuration => {
+loadPackage("gfanInterface", Configuration => {
 	"path"=>"/usr/local/bin/",
 	"keepfiles" => true,
 	"verbose" => true,
      	"cachePolyhedralOutput" => false
 	})
-debug gfanInterface2
+debug gfanInterface
 
 F = gfanSecondaryFan {{1,0},{1,1}, {1,2}, {1,2}}
 G = gfanSecondaryFan {{1,1},{1,3}, {2,1}, {1,5}}
@@ -4743,14 +4743,14 @@ D = gfanTropicalTraverse(C, "symmetry" => {{0,8,7,6,5,4,3,2,1,14,13,11,12,10,9},
 
 --- examples of resultants and tropical hypersurface reconstruction (for gfan version 0.6)
 restart
-loadPackage("gfanInterface2", FileName =>"/home/gtmath/Documents/math/M2codes/mine/gfanInterface2.m2",
+loadPackage("gfanInterface", FileName =>"/home/gtmath/Documents/math/M2codes/mine/gfanInterface.m2",
     Configuration => {
 --	"path" => "/usr/local/bin/",
 	"path" => "/home/gtmath/Documents/math/software/gfan0.6beta/",
 	"keepfiles" => true,
 	"verbose" => true
 	})
- check "gfanInterface2"
+ check "gfanInterface"
 
 A = {{{0,0},{1,0},{0,1}},{{0,0},{1,0},{2,1}},{{0,0},{0,1},{1,2}}}
 gfanResultantFan (A, "special" => {0,1,1,0,1,1,0,1,1})
