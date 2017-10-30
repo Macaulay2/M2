@@ -22,7 +22,7 @@ newPackage(
 		"tropicalMax" => false
 	},
 	PackageExports => {"Polyhedra"},
-	DebuggingMode => true
+	AuxiliaryFiles => true
 )
 
 export {
