@@ -1,0 +1,46 @@
+-- -*- M2-comint -*- {* hash: 1075867469 *}
+--loading configuration for package "FourTiTwo" from file /home/baer/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "gfanInterface2" from file /home/baer/.Macaulay2/init-gfanInterface2.m2
+--loading configuration for package "Tropical" from file /home/baer/.Macaulay2/init-Tropical.m2
+-- polymake is installed
+
+i1 : QQ[x,y,z];
+
+i2 : I = ideal(x^2+y^2+z^2-1);
+
+o2 : Ideal of QQ[x, y, z]
+
+i3 : T1 = tropicalVariety(I);
+
+i4 : J = ideal(x*y+y*z+x*z+1);
+
+o4 : Ideal of QQ[x, y, z]
+
+i5 : T2 = tropicalVariety(J);
+
+i6 : V = tropicalVariety(I+J);
+
+i7 : W1 =  stableIntersection(T1,T2,Strategy=>"atint");
+polymake: used package atint
+  a-tint is an extension for tropical intersection theory.
+  (C) 2011 - 2015 Simon Hampe, simon.hampe@googlemail.com
+  See also: https://github.com/simonhampe/atint 
+polymake:  WARNING: available properties insufficient to compute 'ORTH_LINEALITY_SPACE'
+polymake: used package cdd
+  cddlib
+  Implementation of the double description method of Motzkin et al.
+  Copyright by Komei Fukuda.
+  http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+
+i8 : W2 =  stableIntersection(T1,T2,Strategy=>"gfan");
+
+i9 : V#"Fan" == W1#"Fan"
+
+o9 = true
+
+i10 : V#"Fan" == W2
+
+o10 = true
+
+i11 : 

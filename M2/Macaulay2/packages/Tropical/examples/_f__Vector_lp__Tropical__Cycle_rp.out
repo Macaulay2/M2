@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- {* hash: 142020468 *}
+--loading configuration for package "FourTiTwo" from file /home/baer/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "gfanInterface2" from file /home/baer/.Macaulay2/init-gfanInterface2.m2
+--loading configuration for package "Tropical" from file /home/baer/.Macaulay2/init-Tropical.m2
+-- polymake is installed
+
+i1 : QQ[x,y,z]
+
+o1 = QQ[x, y, z]
+
+o1 : PolynomialRing
+
+i2 : T=tropicalVariety (ideal(x+3*y+3));
+
+i3 : fVector T
+
+o3 = {1, 3}
+
+o3 : List
+
+i4 : 

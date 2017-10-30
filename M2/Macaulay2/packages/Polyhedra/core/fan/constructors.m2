@@ -71,7 +71,7 @@ fanFromGfan List := gfanOutput -> (
    if #gfanOutput < 7 then error("GFAN data incomplete");
    R := gfanOutput#0;
    L := gfanOutput#1;
-   if (numColumns R ==0) and (numColumns L == 0) then error("Empty fan from GFAN");
+--if (numColumns R ==0) and (numColumns L == 0) then error("Empty fan from GFAN");
    if (numColumns R == 0) then R = map(ZZ^(numRows L), ZZ^0, 0);
    if (numColumns L == 0) then L = map(ZZ^(numRows R), ZZ^0, 0);
    result := fan(R, L, gfanOutput#2);
