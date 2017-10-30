@@ -1351,17 +1351,20 @@ R= stableIntersection(T,T,Strategy=>"gfan")
 assert(dim R == 3)
 assert(maxCones R == {{1, 2}, {0, 2}, {0, 1}})
 
+///
+
+
 if polymakeOkay then (
+TEST///
+
 F1:=fan(matrix{{0,0,0},{1,0,-1},{0,1,-1}},matrix{{1},{1},{1}},{{0,1},{0,2},{1,2}});
 T1:= tropicalCycle(F1,{1,1,1});
-R1:= stableIntersection(T1,T1,Strategy=>"atint")
-R2:= stableIntersection(T1,T1,Strategy=>"gfan")
+R1:= stableIntersection(T1,T1,Strategy=>"atint");
+R2:= stableIntersection(T1,T1,Strategy=>"gfan");
 assert(R1#"Fan" == R2)
 assert(dim R2 == 3)
 assert(maxCones R2 == {{1, 2}, {0, 2}, {0, 1}})
-)
 
-if polymakeOkay then (
 R =QQ[x,y,z,t];
 I=ideal(x+y+z+t); 
 J=ideal(4*x+y-2*z+5*t); 
@@ -1369,9 +1372,7 @@ T1 = stableIntersection(tropicalVariety(I),tropicalVariety(J));
 T2 = tropicalVariety(I+J);
 assert(T1#"Fan" == T2#"Fan")
 assert(T1#"Multiplicities" == T2#"Multiplicities")
-)  
 
-if polymakeOkay then (
 R = QQ[x,y,z];
 I = ideal(x^2+y^2+z^2-1);
 T1 = tropicalVariety(I);
@@ -1383,10 +1384,9 @@ W2 =  stableIntersection(T1,T2,Strategy=>"atint");
 assert(V#"Fan" == W1)
 assert(V#"Fan" == W2#"Fan")
 assert(V#"Multiplicities" == W2#"Multiplicities")
-)
-
 
 ///
+)
 
 -----------------------
 --tropicalVariety
