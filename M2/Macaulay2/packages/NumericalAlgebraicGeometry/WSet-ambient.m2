@@ -79,15 +79,34 @@ variables (ZZ, MultiAffineSpace) := (i,A) -> ( -- coordinates of the i-th piece
 	)
     )
 
-randomSlicingVariety(MultiAffineSpace,List) := (A,K) -> ( -- K = list of codimensions 
-    assert(all(K,k->class k===ZZ and k>=0) and sum K>0);
+-- MULTI-PROJECTIVE
+MultiProjectiveSpace = new Type of Ambient
+net MultiProjectiveSpace := A -> net "P^" | net dim A
+multiProjectiveSpace = method()
+multiProjectiveSpace Ring :=  R -> (
+    assert all(gens R, x->all(degree x, a->a>=0) and max degree x == 1);
+    new MultiProjectiveSpace from { 
+    	"coordinate ring"=> R
+    	}
+    )
+
+multiProjectiveSpace(Ring,List,Symbol) := (C,N,x) -> multiProjectiveSpace( C[
+	splice apply(#N,i->x_(i,0)..x_(i,N#i)), 
+	Degrees=>flatten apply(#N,i->toList(N#i+1:standardWeightVector(i,#N)))
+	] )
+
+ring MultiProjectiveSpace := A -> A#"coordinate ring"
+
+dim MultiProjectiveSpace := A -> (  -- multidimension
+    m := degree product gens ring A;
+    m - toList(#m : 1)
+    )
+field MultiProjectiveSpace := A -> coefficientRing ring A
+
+variables (ZZ, MultiProjectiveSpace) := (i,A) -> ( -- coordinates of the i-th piece
     R := ring A;
-    N := dim A;
-    M := transpose matrix {flatten apply(#N,i->(
-	    n := N#i; 
-	    k := K#i;
-	    if k==0 then {}
-	    else flatten entries(variables(i,A) * random(R^n,R^k) - matrix {toList (k:1_R)})
-	    ))};
-    slicingVariety( A, rationalMap M )
+    basis(
+    	standardWeightVector(i,degreeLength R),
+    	R
+	)
     )

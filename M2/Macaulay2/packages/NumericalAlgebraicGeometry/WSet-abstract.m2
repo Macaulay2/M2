@@ -64,7 +64,7 @@ compose(RationalMap, RationalMap) := (M,N) -> rationalMap sub(matrix M, matrix N
 
 -- SlicingVariety -------------------(hacked to work with AffineSpace)-----------------
 -- "map" is hacked as a (1-column) matrix that defines the slice  
-SlicingVariety.synonym = "(abstract) slice"
+SlicingVariety.synonym = "slice"
 slicingVariety(Ambient,RationalMap) := (A,M) -> new SlicingVariety from {"ambient"=>A, "map"=>M}
 net SlicingVariety := S -> net "slice of codim " | net codim S
 codim SlicingVariety := S -> rank target map S 

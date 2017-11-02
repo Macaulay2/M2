@@ -2,7 +2,7 @@
 -- WSet-*.m2 are loaded by NAGtypes
 -- !!! perhaps merge with witness-set.m2 ???
 
-moveSlicingVariety(MultiAffineWSet,SlicingVariety) := (W,S) -> (
+moveSlicingVariety(MultiAffineWSet,MultiSlicingVariety) := (W,S) -> (
     E := equations W#"equations";
     A := flatten entries map slicingVariety W;
     B := flatten entries map S;
@@ -21,7 +21,7 @@ A = multiAffineSpace(CC_53,{2,2},x)
 use ring A 
 -- multi=homogenized parabola y-z^2=0 where y=x_(0,1) and z=x_(1,1)
 F = polySystem {x_(0,1)*x_(1,2)^2-x_(1,1)^2*x_(0,2),x_(1,2)-1,x_(0,2)-1}
-S = slicingVariety(A, rationalMap matrix{{x_(0,1)-1}})
+S = multiSlicingVariety(A, {rationalMap matrix{{x_(0,1)-1}}, rationalMap map((ring A)^0,(ring A)^1,0)})
 pts = {point{{1,1,1,1}},point{{1,1,-1,1}}}
 W = multiAffineWSet(F,S,pts)
 dim W
