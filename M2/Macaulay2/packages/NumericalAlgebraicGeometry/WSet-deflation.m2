@@ -44,7 +44,7 @@ deflatedWSet(Ideal,Ideal,ZZ,List) := (F,S,m,pts) -> (
     for wpts in P list (
 	F0 := (first wpts).LiftedSystem;
 	wpts0 := apply(wpts, p->p.LiftedPoint);
-	W0 := witnessSet(F,S,wpts0);
+	W0 := witnessSet(ideal F0,S,wpts0);
 	A := affineSpace ring F;
 	--M := coordinateProjection(ambient F, ambient F0);
 	M := rationalMap matrix{take(gens ring F0, numgens ring F)}; 
@@ -65,5 +65,8 @@ Icubic = minors(2,A_{0,1})
 cubic = witnessSet(Icubic,2)
 peek cubic
 errorDepth = 0
-deflatedWSet(I, ideal slice cubic, 2, points cubic)  
+W = first deflatedWSet(I, ideal slice cubic, 2, points cubic)  
+peek W
+W' = W#"upstairs WSet"
+equations W'
 ///
