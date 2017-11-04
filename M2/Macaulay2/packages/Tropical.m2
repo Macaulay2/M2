@@ -1,7 +1,7 @@
 polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version 2>&1") >= "3.0" else false;
 
 --TODO: uncomment examples for isBalanced and stableIntersection in next release of M2
-optArgs = new OptionTable from if (version#"VERSION" > "1.10") then {OptionalComponentsPresent => polymakeOkay} else {}
+optArgs := new OptionTable from if (version#"VERSION" > "1.10") then {OptionalComponentsPresent => polymakeOkay} else {}
 
 newPackage(
     	"Tropical",
@@ -25,7 +25,7 @@ newPackage(
 		"cachePolyhedralOutput" => true,
 		"tropicalMax" => false
 	},
-        PackageExports => {"gfanInterface2","EliminationMatrices","Binomials"},
+    PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
 	DebuggingMode => true,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
