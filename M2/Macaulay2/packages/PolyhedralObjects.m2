@@ -6,7 +6,7 @@
 -- UPDATE HISTORY : August 2012 
 ---------------------------------------------------------------------------
 newPackage("PolyhedralObjects",
-    Headline => "A package with types for Polyhedra2, gfanInterface2, and PolymakeInterface",
+    Headline => "A package with types for Polyhedra2, gfanInterface, and PolymakeInterface",
     Version => ".1",
     Date => "August 5, 2011",
     Authors => {
@@ -92,7 +92,7 @@ doc ///
 			{\tt PolyhedralObject} is the superclass of @TO"Polyhedron"@, @TO"Cone"@, @TO"Fan"@, and @TO "PolydralComplex"@.
 			It stores properties of polyhedral objects.
 
-			If the {\tt PolyhedralObject} is obtained as output of the software Gfan via the gfanInterface2 package, then we store their own string representation ({\tt "GfanFileRawString"}), along with parsed blocks ({\tt "GfanFileRawBlocks"}) and a separated header ({\tt "GfanFileHeader"}).  The name of the Gfan file is stored in {\tt "GfanFileName"}.
+			If the {\tt PolyhedralObject} is obtained as output of the software Gfan via the gfanInterface package, then we store their own string representation ({\tt "GfanFileRawString"}), along with parsed blocks ({\tt "GfanFileRawBlocks"}) and a separated header ({\tt "GfanFileHeader"}).  The name of the Gfan file is stored in {\tt "GfanFileName"}.
 
 		Example
 	SeeAlso
