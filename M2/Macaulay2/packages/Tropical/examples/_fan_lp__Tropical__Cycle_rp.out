@@ -1,8 +1,8 @@
--- -*- M2-comint -*- {* hash: -139759152 *}
---loading configuration for package "FourTiTwo" from file /Users/saralamboglia/Library/Application Support/Macaulay2/init-FourTiTwo.m2
---loading configuration for package "gfanInterface2" from file /Users/saralamboglia/Library/Application Support/Macaulay2/init-gfanInterface2.m2
---loading configuration for package "Tropical" from file /Users/saralamboglia/Library/Application Support/Macaulay2/init-Tropical.m2
--- polymake not present
+-- -*- M2-comint -*- hash: -139759152
+--loading configuration for package "FourTiTwo" from file /Users/dan/Library/Application Support/Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "gfanInterface" from file /Users/dan/Library/Application Support/Macaulay2/init-gfanInterface.m2
+--loading configuration for package "Tropical" from file /Users/dan/Library/Application Support/Macaulay2/init-Tropical.m2
+-- polymake is installed
 
 i1 : QQ[x,y,z]
 
@@ -21,7 +21,7 @@ o3 : Fan
 i4 : peek o3#cache
 
 o4 = CacheTable{computedDimension => 2              }
-                computedFVector => {1, 3}
+                computedFVector => {0, 1, 3}
                 computedLinealityBasis => | 0 |
                                           | 0 |
                                           | 1 |
