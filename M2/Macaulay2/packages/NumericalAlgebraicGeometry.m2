@@ -397,7 +397,7 @@ squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix els
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"
-load "./NumericalAlgebraicGeometry/WSet.m2"
+load "./NumericalAlgebraicGeometry/WSet-NumericalAlgebraicGeometry.m2"
 load "./NumericalAlgebraicGeometry/intersection.m2"
 load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
