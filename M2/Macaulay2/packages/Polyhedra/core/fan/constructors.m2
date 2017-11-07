@@ -68,10 +68,21 @@ fanFromGfan List := gfanOutput -> (
 -- 4 pure -> bool
 -- 5 simplicial -> bool
 -- 6 fVector -> List
-   if #gfanOutput < 7 then error("GFAN data incomplete");
+   numberOfGfanOutputs := 7;
+   if #gfanOutput != numberOfGfanOutputs then
+      error("fanFromGfan was given a list with " | toString(#gfanOutput)
+         | " inputs and " | toString(numberOfGfanOutputs) | " are required.");
    R := gfanOutput#0;
    L := gfanOutput#1;
---if (numColumns R ==0) and (numColumns L == 0) then error("Empty fan from GFAN");
+   
+   -- Perform some basic sanity checks on the fan. If the fan is empty (i.e.
+   -- there are no rays and no lineality space), then all of the other values
+   -- need to agree with that (there cannot be any cones, the dimension must
+   -- be zero, and the f-vector must be empty).
+   if ((numColumns R == 0) and (numColumns L == 0))
+   and ((#(gfanOutput#2) != 0) or (gfanOutput#3 != 0) or (#(gfanOutput#6) != 0))
+   then error("Inconsistent input into fanFromGfan");
+   
    if (numColumns R == 0) then R = map(ZZ^(numRows L), ZZ^0, 0);
    if (numColumns L == 0) then L = map(ZZ^(numRows R), ZZ^0, 0);
    result := fan(R, L, gfanOutput#2);
