@@ -22,6 +22,7 @@ export {
     "assPrimesHeight",
     "bigHeight",
     "containmentProblem",     
+    "frobeniusPower",
     "joinIdeals",    
     "isKonig", 
     "isPacked",
