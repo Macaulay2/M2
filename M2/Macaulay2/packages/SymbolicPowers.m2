@@ -550,12 +550,13 @@ document {
   Key => SymbolicPowers,
   Headline => "A package for computing symbolic powers of ideals",
    
-   "This package gives the ability to compute symbolic powers, and related invarients,
-   of ideals in a polynomial ring or a quotient of a polynomial ring. For example, 
-   in the context of the default behavoir, ", TO "symbolicPower", " assumes the 
-   following definition of the symbolic power of an ideal ", TEX /// I ///, ",", 
-   TEX /// $$I^{(n)} = \cap_{p \in Ass(R/I)}(I^nR_p \cap R ),$$ ///,
-   "as defined by M. Hochster and C. Huneke.",
+   PARA {
+       "This package gives the ability to compute symbolic powers, and related invarients,
+       of ideals in a polynomial ring or a quotient of a polynomial ring. For example, 
+       in the context of the default behavoir, ", TO "symbolicPower", " assumes the 
+       following definition of the symbolic power of an ideal ", TEX /// I ///, ",", 
+       TEX /// $$I^{(n)} = \cap_{p \in Ass(R/I)}(I^nR_p \cap R ),$$ ///,
+       "as defined by M. Hochster and C. Huneke."},
 
    PARA {"Alternatively, as defined in Villarreal, ", TO "symbolicPower", 
        " has the option to restrict to minimal primes versus use all associated 
