@@ -22,7 +22,6 @@ export {
     "assPrimesHeight",
     "bigHeight",
     "containmentProblem",     
-    "frobeniusPower",
     "joinIdeals",    
     "isKonig", 
     "isPacked",
@@ -672,12 +671,16 @@ doc ///
 	      R = ZZ/7[x,y,z]
 	      P = ker map(ZZ/7[t],R,{t^3,t^4,t^5})
 	      J = symbPowerPrimePosChar(P,2)
+	      
 	 Text
 	      The symbolic powers of P do not coincide with its powers.
+	      
 	 Example     
 	      J == P^2
+	      
 	 Text
 	      We can also test it a bit faster, without computing the symbolic powers of $P$.
+	      
 	 Example
 	      isSymbolicEqualOrdinary(P,2)
 
@@ -691,18 +694,24 @@ doc ///
      Description
      	 Text
 	      Given an ideal $I$, we can determine if $I^{(m)} \subseteq I^n$. For example, here is an ideal that fails the containment $I^{(3)} \subseteq I^2$:
+	      
 	 Example     
 	      B = ZZ/101[x,y,z];
 	      I = ideal(x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
 	      isSymbPowerContainedinPower(I,3,2)
+	      
      	 Text
 	      We can also determine the smallest symbolic power contained in a given power.
+	      
      	 Text
 	      In our example, $I^{(4)}$ is the smallest symbolic power contained in $I^2$:
+	      
 	 Example
 	      containmentProblem(I,2)
+	      
      	 Text
 	      We can ask the same question backwards: what is the largest power of I that contains $I^{(4)}$?
+	      
 	 Example
 	      containmentProblem(I,4,InSymbolic => true)     
 ///
@@ -715,15 +724,19 @@ doc ///
      Description
      	 Text
 	      Given ideals I and J in a polynomial ring, we compute their join I*J:  
+	      
 	 Example     
 	      S = QQ[x,y,z];
 	      I = ideal(x^3,x^2*y^2,x*z^3,y^4,y^2*z);
 	      J = joinIdeals(I,I)
+	      
      	 Text
 	      Following Seth Sullivant's "Combinatorial symbolic powers", J. Algebra 319 (2008), no. 1, 115--142, we can compute symbolic powers of prime ideals using join:
+	      
 	 Example     
 	      A = QQ[x,y,z];
 	      symbolicPowerJoin(ideal(x,y),2)  
+	      
        	 Example
 	      f = map(QQ[t],A,{t^3,t^4,t^5})
 	      P = ker f;
@@ -738,12 +751,16 @@ doc ///
      Description
      	 Text
 	      To test containments of symbolic and ordinary powers of ideals defining monomial curves, we can skip the step where we define the ideals.
+	      
      	 Text
 	      For example, if $I$ is the ideal defining the monomial curve defined by $t^3, t^4, t^5$ over $\mathbb{Z}/101$, we can ask whether $I^{(3)} \subseteq I^2$:
+	      
 	 Example     
 	      symbolicContainmentMonomialCurve(ZZ/101,{3,4,5},3,2)
+	      
      	 Text
 	      Or we simply ask for the symbolic powers of these ideals. For example, here is the third of the same ideal:
+	      
 	 Example     
 	      symbolicPowerMonomialCurve(ZZ/101,{3,4,5},3)
 ///
@@ -758,27 +775,36 @@ doc ///
 	      Given a square-free monomial ideal $I$ of codimension $c$, $I$ is Konig if it contains a regular sequence of monomials of length $c$.
      	 
 	      We can test if a given ideal is Konig:
+	      
 	 Example     
 	      R = QQ[x,y,z]
 	      I = ideal(x*y,z*y,x*z)
 	      isKonig(I)
+	      
      	 Text
 	      $I$ is said to have the packing property if any ideal obtained from $I$ by setting any number of variables equal to 0 is Konig.
+	      
 	 Example     
 	      isPacked(I)
+
      	 Text
 	      Given an ideal that is not packed, we can determine which variable substitutions lead to ideals that are not Konig.
+
 	 Example     
 	      noPackedAllSubs(I)
+
      	 Text
 	      We can obtained just one substitution leading to an ideal that is not Konig, or all such substitutions:
+
 	 Example     
 	      R = QQ[a,b,c,d,A,B,C,D]
 	      J = ideal"ABCD,cdAB,abcD,bcABD,abcBD,abcdA,abcAD,abdAC,acdBC,acBCD,abcdC,bcdAC,bcACD,bcdAD,acdBD,adBCD,acABD,bdABC,adABC"
 	      isPacked(J)
 	      noPackedSub(J)
+
      	 Text
 	      These can easily be tested:
+
 	 Example     
 	      L = substitute(J,matrix{{1,0,c,d,A,1,C,D}})
 	      isKonig(L)
@@ -813,6 +839,7 @@ doc ///
 	   then codim $Ext^d(M,R) = d$ and the annihilator of $Ext^d(M,R)$ is contained in $P$
 	   
 	   $\bullet$ If codim $Ext^d(M,R) = d$, then there really is an associated prime of codimension $d$.
+
        Example
            R = QQ[x,y,z,a,b]
      	   J = intersect(ideal(x,y,z),ideal(a,b))
@@ -849,6 +876,7 @@ doc ///
 	   then codim $Ext^d(M,R) = d$ and the annihilator of $Ext^d(M,R)$ is contained in $P$
 	   
 	   $\bullet$ If codim $Ext^d(M,R) = d$, then there really is an associated prime of codimension $d$.	   
+
        Example
            R = QQ[x,y,z,a,b]
      	   J = intersect(ideal(x,y,z),ideal(a,b))
@@ -902,6 +930,7 @@ doc ///
    Description
        Text  
        	   Eliminates embedded components of a given ideal
+
        Example
            R = QQ[x,y,z]
      	   J = intersect(ideal(x^2,y,z^3),ideal(x,z))
@@ -932,6 +961,7 @@ doc ///
    Description
        Text
        	   Given an ideal $I$ and an integer $n$, containementProblem returns the order of the smallest symbolic power of $I$ contained in $I^n$.
+
        Example
 	   B = QQ[x,y,z];
 	   f = map(QQ[t],B,{t^3,t^4,t^5})
@@ -963,6 +993,7 @@ doc ///
            Given a prime ideal $I$ in a polynomial ring over a field of positive characteristic, and an integer $n$, 
 	   this method returns the $n$-th symbolic power of $I$.  To compute $I^{(a)}$, find the largest value $k$ with 
 	   $q = p^k \leq a$. Then $I^{(a)} = (I^{[q]} : I^{a-q+1})$.
+
        Example 
            B = ZZ/7[x,y,z];
 	   f = map(ZZ/7[t],B,{t^3,t^4,t^5})
@@ -982,6 +1013,14 @@ doc ///
        (symbolicPower, Ideal, ZZ)
    Headline
        computes the symbolic power of an ideal.
+   Usage
+       	symbolicPower(I,n)
+   Inputs
+        I:Ideal
+	n:ZZ
+   Outputs
+       :Ideal
+           the n-th symbolic power of I
    Description
        Text
               Given an ideal $I$ and an integer $n$, this method returns the $n$-th symbolic power of $I$. Various algorithms are used, in the following order:     
@@ -995,20 +1034,24 @@ doc ///
 	      4. If $I$ is prime, computes a primary decomposition of $I^n$ and intersects the components with radical $I$.
 	      
 	      5. If all else fails, compares the radicals of a primary decomposition of $I^n$ with the associated primes of $I$, and intersects the components corresponding to minimal primes.
-   Usage
-       	symbolicPower(I,n)
-   Inputs
-        I:Ideal
-	n:ZZ
-   Outputs
-       :Ideal
-           the n-th symbolic power of I
-   Description
+	      
        Example
               B = QQ[x,y,z];
 	      f = map(QQ[t],B,{t^3,t^4,t^5})
 	      I = ker f;
 	      symbolicPower(I,2)
+	      
+       Text
+       	   When computing symbolic powers of a quasi-homogeneous ideal, the method runs faster if the ideal is changed to be homegeneous.
+	   
+       Example
+       	   P = ker map(QQ[t],QQ[x,y,z],{t^3,t^4,t^5})
+	   isHomogeneous P
+	   time symbolicPower(P,4);
+	   Q = ker map(QQ[t],QQ[x,y,z, Degrees => {3,4,5}],{t^3,t^4,t^5})
+	   isHomogeneous Q
+	   time symbolicPower(Q,4);
+
    SeeAlso
       symbPowerPrimePosChar
 ///
@@ -1033,6 +1076,7 @@ doc ///
        Text
            Given a radical ideal I and an integer $n$, this method returns true if and only if $I^n=I^{(n)}$. 
 	   This method circumvents computing the symbolic powers in most cases, by first testing the @TO bigHeight@ of $I^n$
+
        Example
               B = QQ[x,y,z];
 	      f = map(QQ[t],B,{t^3,t^4,t^5})
@@ -1061,6 +1105,7 @@ doc ///
    Description
        Text    
            This method uses Seth Sullivant's results found in "Combinatorial symbolic powers", J. Algebra 319 (2008), no. 1, 115-142.
+
        Example
            S = QQ[x,y,z];
 	   I = ideal(x^3,x^2*y^2,x*z^3,y^4,y^2*z);
@@ -1087,6 +1132,7 @@ doc ///
 	   Computes the $n$-th symbolic power of the prime ideal $P$, using join of ideals.
 	   
 	   This is the algorithm in Seth Sullivant's "Combinatorial symbolic powers", J. Algebra 319 (2008), no. 1, 115-142.
+
        Example 
 	   A = QQ[x,y,z];
 	   symbolicPowerJoin(ideal(x,y),2) 
@@ -1118,6 +1164,7 @@ doc ///
        Text
 	   Tests whether $I^{(m)} \subseteq I^n$, where $I$ is the defining ideal for the monomial curve defined by $t^{a_1}, \ldots, t^{a_n}$. 
 	   If no field is provided, the ideal is defined over $\mathbb{Q}$.
+
        Example 
 	   symbolicContainmentMonomialCurve({3,4,5},3,2) 
      SeeAlso 
@@ -1147,6 +1194,7 @@ doc ///
        Text
 	   Finds the $m$-th symbolic power of $I$, where $I$ is the defining ideal for the monomial curve defined 
 	   by $t^{a_1}, \ldots, t^{a_n}$. If no field is provided, the ideal is defined over $\mathbb{Q}$.
+
        Example 
 	   symbolicPowerMonomialCurve({3,4,5},3) 
      SeeAlso 
@@ -1171,6 +1219,7 @@ doc ///
      Description	  
        Text
 	   Given a monomial ideal $I$, returns all square-free monomials in a minimal generating set of $I$.
+
        Example 
 	   R = QQ[x,y,z];
 	   I = ideal(x*y,y*z,x^2);
@@ -1194,6 +1243,7 @@ doc ///
      Description	  
        Text
 	   Given a monomial ideal $I$, returns all square-free monomials in a minimal generating set of $I^c$ where $c$ is the codimension of $I$.
+
        Example 
 	   R = QQ[x,y,z];
 	   I = ideal(x*y,y*z,x*z);
@@ -1220,6 +1270,7 @@ doc ///
        Text
 	   Given a square-free monomial ideal $I$, determines if the ideal is Konig. 
 	   A square-free monomial ideal $I$ of codimension $c$ is Konig if it contains a regular sequence of monomials of length $c$.
+
        Example 
 	   R = QQ[x,y,z];
 	   I = ideal(x*y,y*z,x*z);
@@ -1244,6 +1295,7 @@ doc ///
        Text
 	   Given a square-free monomial ideal $I$, determines if the ideal is Konig.
 	   A square-free monomial ideal $I$ of codimension $c$ is packed if every ideal obtained from it by replacing any number of variables by 1 or 0 is Konig.
+
        Example 
 	   R = QQ[x,y,z];
 	   I = ideal(x*y,y*z,x*z);
@@ -1269,6 +1321,7 @@ doc ///
        Text
 	   Given an ideal that is not packed, returns a substitution of variables by 0 and/or 1 that produces an ideal that is not Konig.
 	   Determines only one such substitutions, even though others may exist.
+
        Example 
 	   R = QQ[x,y,z];
 	   I = ideal(x*y,y*z,x*z);
@@ -1293,6 +1346,7 @@ doc ///
      Description	  
        Text
 	   Given an ideal that is not packed, returns a list with all substitution of variables by 0 and/or 1 that produces an ideal that is not Konig.
+
        Example 
 	   R = QQ[x,y,z];
 	   I = ideal(x*y,y*z,x*z);
@@ -1318,6 +1372,7 @@ doc ///
      Description	  
        Text
 	   Given an ideal $I$ and an integer $n$, returns the minimal degree of an element in $I^{(n)}$.
+
        Example 
 	   T = QQ[x,y,z];
 	   I = intersect(ideal"x,y",ideal"x,z",ideal"y,z")
@@ -1341,6 +1396,7 @@ doc ///
      Description	  
        Text
 	   Given an ideal $I$ and an integer $n$, finds the maximum of the quotiens $m/k$ that fail $I^{(m)} \subseteq I^k$ with $k \leq n$.
+
        Example 
 	   T = QQ[x,y,z];
 	   I = intersect(ideal"x,y",ideal"x,z",ideal"y,z");
@@ -1365,6 +1421,7 @@ doc ///
 	   Given an ideal $I$ and an integer $n$, returns the larger value between the 
 	   maximum of the quotiens $m/k$ that fail $I^{(m)} \subseteq I^k$ with $k \leq n$ 
 	   and $\frac{\alpha(I)}{waldschmidt(I)}$. 
+
        Example 
 	   T = QQ[x,y,z];
 	   I = intersect(ideal"x,y",ideal"x,z",ideal"y,z");
@@ -1390,6 +1447,7 @@ doc ///
 	   Given an ideal $I$ and an integer $n$, returns the larger value between the 
 	   maximum of the quotiens $m/k$ that fail $I^{(m)} \subseteq I^k$ with $k \leq n$ 
 	   and $\frac{\alpha(I)}{waldschmidt(I)}$. 
+
        Example 
 	   T = QQ[x,y,z];
 	   I = intersect(ideal"x,y",ideal"x,z",ideal"y,z");
@@ -1544,6 +1602,7 @@ doc ///
          Text
        	   Given an ideal I and an integer n, @TO InSymbolic@ is used to ask the following question:
 	   What is the largest power cointained in the symbolic power $I^{(n)}$?
+
          Example
            R = QQ[x,y,z];
 	   J = ideal (x*(y^3-z^3),y*(z^3-x^3),z*(x^3-y^3));
@@ -1575,7 +1634,7 @@ doc ///
         symbolicDefect
         (symbolicDefect, Ideal, ZZ)
    Headline
-         Given an ideal I and integer m, returns the size of a minimal generating set for the m-th symbolic power of I modulo I^m.
+    	computes the symbolic defect of an ideal
    Usage
          symbolicDefect(I,m)
    Inputs
@@ -1585,6 +1644,9 @@ doc ///
           :ZZ
              the size of a minimal generating set of the m-th symbolic power of I modulo I^m.
    Description
+       Text
+       	   Given an ideal $I$ and integer $m$, this method returns the size of a minimal generating set for the $m$-th symbolic power of $I$ modulo $I^m$.
+
        Example
          R = QQ[x,y,z]    
          I = ideal(x*y,x*z,y*z);					      
@@ -1594,13 +1656,17 @@ doc ///
 doc ///
     Key
     	UseMinimalPrimes
+    	[symbolicPower,UseMinimalPrimes]
+    	[isSymbPowerContainedinPower,UseMinimalPrimes]
+    	[symbolicDefect,UseMinimalPrimes]	
+    	[containmentProblem,UseMinimalPrimes]
     Headline	 
     	an option to only use minimal primes to calculate symbolic powers
     Description
     	Text
 	    The default value is false. When defined to be true, the symbolic power is calculated as defined in Villarreal. 
 	    In particular, @TO symbolicPower@ has the option to restrict to minimal primes 
-	    versus use all associated primes with @TO UseMinimalPrimes@. The 
+	    versus use all associated primes with @TO UseMinimalPrimes@. With this option the
 	    symbolic power of an ideal $I$ is defined as 
 	    $$I^{(n)} = \cap_{p \in Min(R/I)}(I^nR_p \cap R ),$$
 	    where $Min(R/I)$, is the set of minimal primes in $I$.
@@ -1615,6 +1681,7 @@ doc ///
 	symbolicPower
 ///
 
+-- tests
 
 TEST ///
    S = QQ[x,y,z];
@@ -1723,11 +1790,11 @@ assert(containmentProblem(I,2)==4)
 ///
 
 --frobeniusPower
-TEST ///
-R=ZZ/3[x,y]
-I=ideal(x*y^2+1,x^2)
-assert(frobeniusPower(I,9)==ideal(x^9*y^(19)+1,x^(18)))
-///
+--TEST ///
+--R=ZZ/3[x,y]
+--I=ideal(x*y^2+1,x^2)
+--assert(frobeniusPower(I,9)==ideal(x^9*y^(19)+1,x^(18)))
+--///
 
 --lowerBoundResurgence
 TEST ///
@@ -1821,9 +1888,10 @@ assert(I==ideal(R_0^2-2*R_0*R_2+R_2^2,R_0*R_2^2-R_2^3-R_0*R_1+R_1*R_2,R_2^4-2*R_
 
 -- symbolicPolyhedron
 TEST ///
+ needsPackage"Polyhedra"
  R = QQ[x,y,z];
  I = ideal(x*y,y*z,x*z);
- -- assert((vertices symbolicPolyhedron I)== matrix{{1,1,0,1/2},{1,0,1,1/2},{0,1,1,1/2}})
+ assert((vertices symbolicPolyhedron I)== matrix{{1,1,0,1/2},{1,0,1,1/2},{0,1,1,1/2}})
 ///
 
 -- waldschmidt
@@ -1896,4 +1964,5 @@ uninstallPackage"SymbolicPowers"
 restart
 installPackage"SymbolicPowers"
 viewHelp"SymbolicPowers"
+check"SymbolicPowers"
 
