@@ -44,16 +44,16 @@ document {
      "Note that ",TO LRcheater," is similar to ", TO changeFlags,
      HR{},
      "For example, the Schubert problem (2,1)^3 in Gr(3,6) with respect to random flags has 2 solutions",
-     EXAMPLE lines ///
-     k = 3;
-     n = 6;
-     SchPblm = {
+     EXAMPLE {
+     "k = 3;",
+     "n = 6;",
+     "SchPblm = {
 	 ({2,1}, random(CC^6,CC^6)),
 	 ({2,1}, random(CC^6,CC^6)),
 	 ({2,1}, random(CC^6,CC^6))
-	 };
-     solveSchubertProblem(SchPblm, k,n)
-     ///,
+	 };",
+     "solveSchubertProblem(SchPblm, k,n)"
+     },
      HR{},
      HEADER4{"References:"},
      UL{
@@ -358,8 +358,8 @@ document{
        "1 = print the progress information and time the main process",
        "2 = besides the information of level 1, it also displays the checkerboard steps"},
    EXAMPLE{
-       "-- The problem of 4 lines w.r.t. random flags",
-       "SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
+       "-- The problem of 4 lines w.r.t. random flags
+       SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
        "setVerboseLevel 0;",
        "S = solveSchubertProblem(SchPblm,2,4)",
        "assert all(S,s->checkIncidenceSolution(s,SchPblm))",
