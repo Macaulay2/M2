@@ -77,7 +77,7 @@ doc ///
       randomSchubertProblemInstance(conditions,k,n)
    Inputs
       conditions:List
-        which is a list of Schubert conditions that are either all partitions or all brackets (see TO "bracket2partition" for details)
+        which is a list of Schubert conditions that are either all partitions or all brackets (see @TO bracket2partition@ for details)
       k:ZZ
       n:ZZ
          $k$ and $n$ define the Grassmannian $Gr(k,n)$
@@ -142,7 +142,7 @@ doc ///
    Description
       Text
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
-	 by a condition $c$ either a partition or a bracket (see TO "partition2bracket" for details) and a flag $F$ 
+	 by a condition $c$ either a partition or a bracket (see  @TO partition2bracket@ for details) and a flag $F$ 
 	 (given as an $n{\times} n$ matrix).
 	 The codimention of the Schubert variety is $|C|$.
 	 A Schubert problem is a list of Schubert varieties, whose codimention
@@ -156,7 +156,6 @@ doc ///
 
 	 This algorithm is described in the paper:
  	 Leykin, Martin del Campo, Sottile, Vakil, Verschelde "Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm".
-
 	 
       Example
          -- Problem (2,1)^3 = 2 in Gr(3,6)
