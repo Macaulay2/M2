@@ -553,11 +553,17 @@ document {
      Usage => "TEX x",
      Inputs => {"x"},
      Outputs => {TEX},
-     TT "TEX s", " includes the string ", TT "s", ", presumably
-     containing TeX commands, in the TeX version of the documentation
-     containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
-     and TeX versions of the documentation, good typesetting can done.  For details on the conversions
-     to HTML that are currently implemented, see ", TO (html, TEX), "."
+     PARA {
+	  TT "TEX s", " includes the string ", TT "s", ", presumably
+	  containing TeX commands, in the TeX version of the documentation
+	  containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
+	  and TeX versions of the documentation, good typesetting can done.  For details on the conversions
+	  to HTML that are currently implemented, see ", TO (html, TEX), "."},
+     PARA {
+	  "This item should be used only within a paragraph created by ", TO "PARA", ", because in the html
+	  code it generates, the first element ends the enclosign paragraph to create the centered math
+	  display."
+	  }
      }
 
 document {
