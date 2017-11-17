@@ -51,6 +51,11 @@ celltype = new HashTable from {
         Synonym => "a small long integer", 
         Suffix => ""
         },
+    "ComputationOrNull" => hashTable {
+        DType => "RawComputationCell",
+        Synonym => "an engine computation",
+        Suffix => ".p"
+        },
     "RingElementArrayOrNull" => hashTable {
         Synonym => "a sequence of raw ring elements",
         Suffix => ""
@@ -381,6 +386,17 @@ fcns = {
         )
     }        
 str between("",for args in fcns list genFunctionCall args)
+///
+
+TEST ///
+restart
+  debug needsPackage "GenerateD"
+  result = str (genFunctionCall(
+        "rawGBForce", 
+        "ComputationOrNull", 
+        ("gens"=>"Matrix", "gb"=>"Matrix", "change"=>"Matrix","syz"=>"Matrix","flags"=>"int")
+        ))
+  print result
 ///
 
 end--
