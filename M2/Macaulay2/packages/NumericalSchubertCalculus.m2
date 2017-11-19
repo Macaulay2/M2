@@ -1,7 +1,7 @@
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "1.9.2.1", 
-    Date => "Oct 2016",
+    Version => "1.11", 
+    Date => "Nov 2017",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
