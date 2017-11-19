@@ -242,7 +242,7 @@ document {
      associated to a package.",
      PARA{},
      "For an example, see ", TO "an example of a package",
-     Caveat => "When creating tests, try to insure that they run relatively quickly.",
+     Caveat => "When creating tests, try to ensure that they run relatively quickly.",
      SeeAlso => { beginDocumentation, assert }
      }
 

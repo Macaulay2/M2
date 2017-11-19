@@ -1,9 +1,0 @@
-# -*- makefile-gmake -*-
-
-DIRECTORY ?= linux64.debug
-CONFIGOPTIONS += --enable-debug
-include Makefile.linux-generic64
-default:check
-# Local Variables:
-# compile-command: "time make -f Makefile.linux-generic64-debug "
-# End:

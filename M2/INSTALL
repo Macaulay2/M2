@@ -114,7 +114,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel emacs flex gc-devel gcc-c++ gdbm-devel git glpk-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libtool libxml2-devel ncurses-devel patch readline-devel rpm-build rpm-sign libmpc-devel yasm libmpc-devel time which
+      sudo dnf -y install autoconf bison boost-devel emacs flex gc-devel gcc-c++ gdbm-devel git glpk-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libtool libxml2-devel ncurses-devel patch readline-devel rpm-build rpm-sign libmpc-devel yasm time which
     Some packages perhaps of interest to developers:
       sudo dnf -y install mpir-devel mpfr-devel pari-devel frobby cddlib-devel givaro-devel gtest-devel emacs kernel-devel libgfortran-static flint-devel gmp-devel debuginfo-install strace libfac-devel factory-devel ntl-devel rpmdevtools
 
@@ -146,7 +146,7 @@ various modern operating systems:
 
     to the configure command line, to make RPM files for distribution to generic hardware.
 
-  Arch Linux:
+  Arch Linux and Manjaro Linux:
 
     To prepare for compiling it yourself:
 

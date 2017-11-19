@@ -1,4 +1,4 @@
-GFAN_VERSION = 0.5
+GFAN_VERSION = 0.6.2
 VERSION = $(GFAN_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)
 # URL = http://home.imf.au.dk/jensen/software/gfan/gfan.html
