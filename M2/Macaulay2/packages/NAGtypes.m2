@@ -358,7 +358,7 @@ beginDocumentation()
 
 load "./NAGtypes/doc-NAGtypes.m2"
 
-undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
+undocumented {BasePoint,origin,(origin,Ring),Gens,Space} --Robert???
 undocumented {
     ParameterHomotopy, 
     Parameters, SpecializedParameterHomotopy, Homotopy,

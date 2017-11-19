@@ -1011,6 +1011,24 @@ HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
 	TT "Parameters, X, T", "."},
     -- SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
     }
+doc ///
+    Key 
+        [gateHomotopy,Software]
+    Headline
+    	specifies where evaluation should be done (M2=top level, M2engine=core)     	
+///
+doc ///
+    Key 
+	[gateHomotopy,Parameters]
+    Headline
+    	specifies parameter names
+///
+doc ///
+    Key 
+	[gateHomotopy,Strategy]
+    Headline
+    	strategy is either to "compress" or not (any other value)
+///    
 
 document {
     Key => "DoublePrecision",

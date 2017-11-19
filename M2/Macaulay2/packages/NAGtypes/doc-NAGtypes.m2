@@ -848,6 +848,8 @@ doc ///
     polySpace
     (polySpace,Matrix)
     (polySpace,PolySpace)
+    Reduced
+    [polySpace,Reduced]
   Headline
     construct a PolySpace
   Usage
@@ -921,3 +923,48 @@ doc ///
       p = point matrix{{1,0}};
       D = dualSpace(M,p)
 ///
+
+doc ///
+  Key
+      WSet
+      (points,WSet)
+      (ambient,WSet)
+      (degree,WSet)
+      (codim,WSet)
+      (dim,WSet)
+      (net,WSet)
+      SlicingVariety
+      (ambient,SlicingVariety)
+      (codim,SlicingVariety)
+      (dim,SlicingVariety)
+      (map,SlicingVariety)
+      (net,SlicingVariety)
+      Ambient
+      (dim,Ambient)
+      (net,Ambient)      
+  Headline
+    (under construction!) new types and methods needed to generalize WitnessSet
+///
+
+
+-* doc template
+doc ///
+  Key
+  Headline
+    *
+  Usage
+    D = function(M,p)
+    D = ...
+  Inputs 
+    M:[Type]
+      [optional decription]
+    p:[Type]
+  Outputs
+    D:[Type]
+  Description
+    Text
+      *
+    Example
+      *
+///
+*-

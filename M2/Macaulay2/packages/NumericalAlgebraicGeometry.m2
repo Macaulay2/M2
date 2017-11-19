@@ -520,10 +520,7 @@ undocumented {
 (evaluateHx,GateHomotopy,Matrix,Number),
 (evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number),
 (specialize,GateParameterHomotopy,MutableMatrix),
-[gateHomotopy,Software],
 [trackHomotopy,Software],
-[gateHomotopy,Parameters],
-[gateHomotopy,Strategy],
     }
 
 TEST ///
