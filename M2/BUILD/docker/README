@@ -1,0 +1,38 @@
+Docker is a software for building, shipping, or running applications on different
+platforms. Each folder contains a Dockerfile which contains a guide to building 
+Macaulay2 on that specific platform, regardless of your current platform.
+
+Use cases:
+ - build an RPM package for an arbitrary version of Fedora Linux from any platform.
+ - run the latest version of Macaulay2 on any OS that runs Docker (including Mac, Windows, etc.).
+ - develop Macaulay2 by running it on different libraries or kernels simultaneously.
+ - run any number of threads of the latest version of Macaulay2 in the cloud efficiently.
+
+Step 1: Build a Macaulay2-in-a-container:
+  Change to the directory for the target platform and run: (as any user)
+    $ make
+
+Step 2: Run Macaulay2-in-a-container:
+  Simply run:
+    $ make run
+  More generally you can use:
+    $ docker run --rm -ti m2-fedora
+
+Optional Step 3: Access files and packages
+  If you wish to access the files and packages in the M2 directory within the container run: (as root)
+    # docker run --rm -ti -v m2-folder:/M2 m2-fedora M2
+  Then on a separate terminal run:
+    # ln -s /var/lib/docker/volumes/m2-folder/_data m2-folder
+    # cd m2-folder
+  Note that changes here are not permanent by default, but Docker can be configured to do so.
+
+Optional Step 4: Connect with Emacs
+  Add this line to the end of your .emacs-Macaulay2 file:
+    (setq M2-exe "docker run --rm -ti m2-fedora")
+  Alternatively, to change this temporarily you can change the shortcut that runs Macaulay2:
+    press  C-u f12
+    replace "M2" in the beginning of the line with:
+      docker run --rm -ti m2-fedora
+
+
+Maintainer: Mahrud Sayrafi <mahrud@berkeley.edu>.

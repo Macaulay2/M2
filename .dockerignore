@@ -1,0 +1,3 @@
+M2/BUILD/*
+!M2/BUILD/tarfiles
+!M2/BUILD/docker
