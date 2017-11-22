@@ -27,7 +27,7 @@ EXAMPLE {
 "time degrees phi", 
 "time describe phi",
 "time describe phi^(-1)",
-"time (f,g) = graph phi^-1",
+"time (f,g) = graph phi^-1; f;",
 "time degrees f",
 "time degree f",
 "time describe f"}, 
@@ -149,12 +149,12 @@ Boolean => {"whether ",TT"Phi"," is dominant"}},
 PARA{"This method is based on the fibre dimension theorem. A more standard way would be to perform the command ", TT "kernel map phi == 0","."},
 EXAMPLE { 
 "P8 = ZZ/101[x_0..x_8];",
-"phi = rationalMap ideal jacobian ideal det matrix{{x_0..x_4},{x_1..x_5},{x_2..x_6},{x_3..x_7},{x_4..x_8}}",
+"phi = rationalMap ideal jacobian ideal det matrix{{x_0..x_4},{x_1..x_5},{x_2..x_6},{x_3..x_7},{x_4..x_8}};",
 "time isDominant(phi,MathMode=>true)",
 "P7 = ZZ/101[x_0..x_7];", 
 "-- hyperelliptic curve of genus 3
 C = ideal(x_4*x_5+23*x_5^2-23*x_0*x_6-18*x_1*x_6+6*x_2*x_6+37*x_3*x_6+23*x_4*x_6-26*x_5*x_6+2*x_6^2-25*x_0*x_7+45*x_1*x_7+30*x_2*x_7-49*x_3*x_7-49*x_4*x_7+50*x_5*x_7,x_3*x_5-24*x_5^2+21*x_0*x_6+x_1*x_6+46*x_3*x_6+27*x_4*x_6+5*x_5*x_6+35*x_6^2+20*x_0*x_7-23*x_1*x_7+8*x_2*x_7-22*x_3*x_7+20*x_4*x_7-15*x_5*x_7,x_2*x_5+47*x_5^2-40*x_0*x_6+37*x_1*x_6-25*x_2*x_6-22*x_3*x_6-8*x_4*x_6+27*x_5*x_6+15*x_6^2-23*x_0*x_7-42*x_1*x_7+27*x_2*x_7+35*x_3*x_7+39*x_4*x_7+24*x_5*x_7,x_1*x_5+15*x_5^2+49*x_0*x_6+8*x_1*x_6-31*x_2*x_6+9*x_3*x_6+38*x_4*x_6-36*x_5*x_6-30*x_6^2-33*x_0*x_7+26*x_1*x_7+32*x_2*x_7+27*x_3*x_7+6*x_4*x_7+36*x_5*x_7,x_0*x_5+30*x_5^2-11*x_0*x_6-38*x_1*x_6+13*x_2*x_6-32*x_3*x_6-30*x_4*x_6+4*x_5*x_6-28*x_6^2-30*x_0*x_7-6*x_1*x_7-45*x_2*x_7+34*x_3*x_7+20*x_4*x_7+48*x_5*x_7,x_3*x_4+46*x_5^2-37*x_0*x_6+27*x_1*x_6+33*x_2*x_6+8*x_3*x_6-32*x_4*x_6+42*x_5*x_6-34*x_6^2-37*x_0*x_7-28*x_1*x_7+10*x_2*x_7-27*x_3*x_7-42*x_4*x_7-8*x_5*x_7,x_2*x_4-25*x_5^2-4*x_0*x_6+2*x_1*x_6-31*x_2*x_6-5*x_3*x_6+16*x_4*x_6-24*x_5*x_6+31*x_6^2-30*x_0*x_7+32*x_1*x_7+12*x_2*x_7-40*x_3*x_7+3*x_4*x_7-28*x_5*x_7,x_0*x_4+15*x_5^2+48*x_0*x_6-50*x_1*x_6+46*x_2*x_6-48*x_3*x_6-23*x_4*x_6-28*x_5*x_6+39*x_6^2+38*x_1*x_7-5*x_3*x_7+5*x_4*x_7-34*x_5*x_7,x_3^2-31*x_5^2+41*x_0*x_6-30*x_1*x_6-4*x_2*x_6+43*x_3*x_6+23*x_4*x_6+7*x_5*x_6+31*x_6^2-19*x_0*x_7+25*x_1*x_7-49*x_2*x_7-16*x_3*x_7-45*x_4*x_7+25*x_5*x_7,x_2*x_3+13*x_5^2-45*x_0*x_6-22*x_1*x_6+33*x_2*x_6-26*x_3*x_6-21*x_4*x_6+34*x_5*x_6-21*x_6^2-47*x_0*x_7-10*x_1*x_7+29*x_2*x_7-46*x_3*x_7-x_4*x_7+20*x_5*x_7,x_1*x_3+22*x_5^2+4*x_0*x_6+3*x_1*x_6+45*x_2*x_6+37*x_3*x_6+17*x_4*x_6+36*x_5*x_6-2*x_6^2-31*x_0*x_7+3*x_1*x_7-12*x_2*x_7+19*x_3*x_7+28*x_4*x_7+30*x_5*x_7,x_0*x_3-47*x_5^2-43*x_0*x_6+6*x_1*x_6-40*x_2*x_6+21*x_3*x_6+26*x_4*x_6-5*x_5*x_6-5*x_6^2+4*x_0*x_7-15*x_1*x_7+18*x_2*x_7-31*x_3*x_7+50*x_4*x_7-46*x_5*x_7,x_2^2+4*x_5^2+31*x_0*x_6+41*x_1*x_6+31*x_2*x_6+28*x_3*x_6+42*x_4*x_6-28*x_5*x_6-4*x_6^2-7*x_0*x_7+15*x_1*x_7-9*x_2*x_7+31*x_3*x_7+3*x_4*x_7+7*x_5*x_7,x_1*x_2-46*x_5^2-6*x_0*x_6-50*x_1*x_6+32*x_2*x_6-10*x_3*x_6+42*x_4*x_6+33*x_5*x_6+18*x_6^2-9*x_0*x_7-20*x_1*x_7+45*x_2*x_7-9*x_3*x_7+10*x_4*x_7-8*x_5*x_7,x_0*x_2-9*x_5^2+34*x_0*x_6-45*x_1*x_6+19*x_2*x_6+24*x_3*x_6+23*x_4*x_6-37*x_5*x_6-44*x_6^2+24*x_0*x_7-33*x_2*x_7+41*x_3*x_7-40*x_4*x_7+4*x_5*x_7,x_1^2+x_1*x_4+x_4^2-28*x_5^2-33*x_0*x_6-17*x_1*x_6+11*x_3*x_6+20*x_4*x_6+25*x_5*x_6-21*x_6^2-22*x_0*x_7+24*x_1*x_7-14*x_2*x_7+5*x_3*x_7-39*x_4*x_7-18*x_5*x_7,x_0*x_1-47*x_5^2-5*x_0*x_6-9*x_1*x_6-45*x_2*x_6+48*x_3*x_6+45*x_4*x_6-29*x_5*x_6+3*x_6^2+29*x_0*x_7+40*x_1*x_7+46*x_2*x_7+27*x_3*x_7-36*x_4*x_7-39*x_5*x_7,x_0^2-31*x_5^2+36*x_0*x_6-30*x_1*x_6-10*x_2*x_6+42*x_3*x_6+9*x_4*x_6+34*x_5*x_6-6*x_6^2+48*x_0*x_7-47*x_1*x_7-19*x_2*x_7+25*x_3*x_7+28*x_4*x_7+34*x_5*x_7);",
-"phi = rationalMap(C,3,2)",
+"phi = rationalMap(C,3,2);",
 "time isDominant(phi,MathMode=>true)"},
 SeeAlso => {isBirational}} 
 
@@ -182,9 +182,7 @@ PARA{"If the source variety is a projective space and if a further technical con
 EXAMPLE { 
 "-- A Cremona transformation of P^20 
 phi = rationalMap map quadroQuadricCremonaTransformation(20,1)", 
-"map phi", 
 "time psi = inverseMap phi",
-"map psi",
 "phi * psi == 1"},
 PARA{"The method also accepts as input a ",TO RingMap," representing a rational map ",TEX///$\Phi$///, " between projective varieties. In this case, the ",TO RingMap," defining ",TEX///$\Phi^{-1}$///," is returned."},
 EXAMPLE { 
@@ -210,7 +208,7 @@ EXAMPLE {
 "phi = inverseMap rationalMap(trim(minors(2,genericMatrix(P8,3,3))+random(2,P8)),Dominant=>true)",
 "time psi = approximateInverseMap phi",
 "phi * psi == 1 and psi * phi == 1",
-"time psi' = approximateInverseMap(phi,CodimBsInv=>5)",
+"time psi' = approximateInverseMap(phi,CodimBsInv=>5);",
 "psi == psi'"}, 
 PARA{"A more complicated example is the following (here ", TO inverseMap," takes a lot of time!)."},
 EXAMPLE { 
@@ -237,14 +235,19 @@ RationalMap => {"the first projection"},
 RationalMap => {"the second projection"}}, 
 EXAMPLE { 
 "(ZZ/190181)[x_0..x_4]; phi = rationalMap(minors(2,matrix{{x_0..x_3},{x_1..x_4}}),Dominant=>true)",
-"time (p1,p2) = graph phi",
-"time p1 * phi == p2 and p2 * phi^-1 == p1",
-"time describe p2",
-"time projectiveDegrees p2"},
+"time (p1,p2) = graph phi;",
+"p1",
+"p2",
+"p1 * phi == p2 and p2 * phi^-1 == p1",
+"describe p2",
+"projectiveDegrees p2"},
 PARA{"When the source of the rational map is a multi-projective variety, the method returns all the projections."},
 EXAMPLE {
-"time graph p2",
-"describe first oo"},
+"time g = graph p2;",
+"g_0;",
+"g_1;",
+"g_2;",
+"describe g_0"},
 SeeAlso => {(graph,RingMap),graphIdeal}}
 
 document { 
@@ -358,8 +361,9 @@ Ideal => {"the ideal of the closure of the inverse image of ", TT"V(I)", " via "
 PARA{"In most cases this is equivalent to ",TT"phi^*I", ", which is faster but may not take into account other representations of the map."},
 PARA{"In the example below, we apply the method to check the birationality of a map (deterministically)."},
 EXAMPLE { 
-"phi = quadroQuadricCremonaTransformation(5,1); map phi",
-"K := frac(QQ[vars(0..5)]); phi = phi ** K; p = trim minors(2,(vars K)||(vars source phi))",
+"phi = quadroQuadricCremonaTransformation(5,1)",
+"K := frac(QQ[vars(0..5)]); phi = phi ** K",
+"p = trim minors(2,(vars K)||(vars source phi))",
 "q = phi p",
 "time phi^** q",
 "oo == p"},
@@ -449,13 +453,13 @@ Outputs => {
 RationalMap => {"the same rational map ",TT"phi"}},
 PARA{"This method (mainly used for tests) applies almost all the deterministic methods that are available."},
 EXAMPLE {
-"QQ[x_0..x_5]; phi = rationalMap {x_4^2-x_3*x_5,x_2*x_4-x_1*x_5,x_2*x_3-x_1*x_4,x_2^2-x_0*x_5,x_1*x_2-x_0*x_4,x_1^2-x_0*x_3}", 
+"QQ[x_0..x_5]; phi = rationalMap {x_4^2-x_3*x_5,x_2*x_4-x_1*x_5,x_2*x_3-x_1*x_4,x_2^2-x_0*x_5,x_1*x_2-x_0*x_4,x_1^2-x_0*x_3};", 
 "describe phi",
-"time phi!",
+"time phi! ;",
 "describe phi",
-"QQ[x_0..x_4]; psi = rationalMap {-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3,-x_1*x_3+x_0*x_4,-x_2*x_3+x_1*x_4,-x_3^2+x_2*x_4}",
+"QQ[x_0..x_4]; psi = rationalMap {-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3,-x_1*x_3+x_0*x_4,-x_2*x_3+x_1*x_4,-x_3^2+x_2*x_4};",
 "describe psi",
-"time psi!",
+"time psi! ;",
 "describe psi"}}
 
 document { 
@@ -480,7 +484,7 @@ Matrix => {"the coefficient matrix of the polynomials defining ",TT"phi"}},
 EXAMPLE {
 "K = QQ; ringP9 = K[x_0..x_9];",
 "M = random(K^10,K^10)",
-"phi = rationalMap ((vars ringP9) * (transpose M))",
+"phi = rationalMap ((vars ringP9) * (transpose M));",
 "M' = coefficients phi",
 "M == M'"}}
 
@@ -493,9 +497,9 @@ RationalMap => "phi"},
 Outputs => { 
 RationalMap => {"a rational map isomorphic to the original map, flattened in the sense that the ideals of source and target contain no linear forms"}},
 EXAMPLE {
-"P5 = QQ[t_0..t_5]; phi = rationalMap(P5/(35*t_1+45*t_2+21*t_3+525*t_4+1365*t_5,1575*t_0*t_2-3250*t_2^2+735*t_0*t_3-1890*t_2*t_3-1666*t_3^2+17150*t_0*t_4-47250*t_2*t_4-22050*t_3*t_4-276850*t_4^2+46550*t_0*t_5-122850*t_2*t_5-57330*t_3*t_5-1433250*t_4*t_5-1864450*t_5^2),P5/(315*t_0+280*t_1+45*t_2+21*t_3+210*t_4+1050*t_5),{-45*t_2-21*t_3-490*t_4-1330*t_5, 45*t_2+21*t_3+525*t_4+1365*t_5, 35*t_2, 35*t_3, 35*t_4, 35*t_5})",
+"P5 = QQ[t_0..t_5]; phi = rationalMap(P5/(35*t_1+45*t_2+21*t_3+525*t_4+1365*t_5,1575*t_0*t_2-3250*t_2^2+735*t_0*t_3-1890*t_2*t_3-1666*t_3^2+17150*t_0*t_4-47250*t_2*t_4-22050*t_3*t_4-276850*t_4^2+46550*t_0*t_5-122850*t_2*t_5-57330*t_3*t_5-1433250*t_4*t_5-1864450*t_5^2),P5/(315*t_0+280*t_1+45*t_2+21*t_3+210*t_4+1050*t_5),{-45*t_2-21*t_3-490*t_4-1330*t_5, 45*t_2+21*t_3+525*t_4+1365*t_5, 35*t_2, 35*t_3, 35*t_4, 35*t_5});",
 "describe phi",
-"psi = flatten phi",
+"psi = flatten phi;",
 "describe psi"}}
 
 document { 
@@ -534,8 +538,7 @@ EXAMPLE {
 "R = QQ[x_0..x_3]; S = QQ[y_0..y_4]; T = QQ[z_0..z_4];", 
 "phi = rationalMap(R,S,{x_0*x_2,x_0*x_3,x_1*x_2,x_1*x_3,x_2*x_3})",
 "psi = rationalMap(S,T,{y_0*y_3,-y_2*y_3,y_1*y_2,y_2*y_4,-y_3*y_4})",
-"eta = phi * psi",
-"map eta",
+"phi * psi",
 "(map phi) * (map psi)"},
 SeeAlso => {(symbol *,RingMap,RingMap)}}
 
@@ -807,9 +810,9 @@ Outputs => {Nothing => {TO null}},
 PARA{"This method allows to inform the system about the image of a given rational map without performing any computation. In particular, this can be used to declare that a rational map is dominant."},
 EXAMPLE { 
 "P6 = QQ[t_0..t_6]; X = minors(3,matrix{{t_0..t_4},{t_1..t_5},{t_2..t_6}});",
-"time Phi = rationalMap(X,Dominant=>2)", 
+"Phi = rationalMap(X,Dominant=>2);", 
 "time forceImage(Phi,ideal 0_(target Phi))", 
-"Phi"},
+"Phi;"},
 Caveat => {"If the declaration is false, nonsensical answers may result."},
 SeeAlso => forceInverseMap}
 
