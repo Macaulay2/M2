@@ -4,6 +4,7 @@
 ------------------------------------------------------
 
 export { 
+    "isOn",
     "sample", 
     "union", -- aka "|"
     "removeRedundantComponents"
@@ -33,6 +34,7 @@ randomSlice (ZZ,ZZ,Ring,Point) := (d,n,C,point) -> (
 randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,CC_53)
 randomSlice (ZZ,ZZ,Point) := (d,n,point) -> randomSlice(d,n,CC_53,point)
 
+isOn = method(Options=>{Tolerance=>null,Software=>null})
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
     if # coordinates p != numgens ring W 
@@ -149,6 +151,9 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 
      w'
      )
+
+
+moveSlicingVariety(WitnessSet,SlicingVariety) := (W,S) -> moveSlice(W,flatten entries map S)
 
 moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
 moveSlice (WitnessSet, List) := List => o -> (W,S') -> (

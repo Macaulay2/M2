@@ -151,7 +151,7 @@ F2 = F1.Deflation#r2
 P2 = newton(F2,P2')
 assert isFullNumericalRank evaluate(jacobian F2,P2)
 P = point {take(coordinates P2, F.NumberOfVariables)}
-assert(residual(F,P) < 1e50)
+assert(residual(F,P) < 1e-50)
 NP2 = newton(F2,P2)
 NNP2 = newton(F2,NP2)
 NP2.ErrorBoundEstimate

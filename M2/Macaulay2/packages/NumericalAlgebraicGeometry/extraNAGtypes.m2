@@ -219,6 +219,32 @@ segmentHomotopy (PolySystem, PolySystem) := o -> (S,T) -> (
     gateHomotopy(o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T, 
 	gateMatrix{getVarGates R}, tt, Strategy=>compress)
     )
+
+segmentHomotopyProjective = method(Options=>{gamma=>1})
+segmentHomotopyProjective (List, List) := o -> (S,T) -> segmentHomotopyProjective(polySystem S, polySystem T, o)
+segmentHomotopyProjective (PolySystem, PolySystem) := o -> (S,T) -> (
+    -- check if S and T are homogeneous!!!
+    R := ring T;
+    if R =!= ring S then error "systems in the same ring expected";  
+    c := symbol c;
+    coeffs := matrix{ apply(numgens R, i->inputGate c_i) };
+    chartHyperPlane := coeffs * transpose matrix {getVarGates R} + matrix{{-1}}; 
+    t := local t;
+    tt := inputGate [t];
+    gateHomotopy((o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T)||chartHyperPlane, 
+	gateMatrix{getVarGates R}, tt, Parameters=>coeffs, Strategy=>compress)
+    )
+
+TEST /// 
+debug needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y,z];
+PH = segmentHomotopyProjective({x^3-z^3,y^2-z^2},{x*y*z, x^2+y^2+z^2},gamma=>1+ii)
+Hz = specialize(PH,transpose matrix{{0,0,1}})
+start = flatten table(3,2,(i,j)->point{{exp(ii*2*pi*i/3),exp(ii*2*pi*j/2),1}})
+sols = trackHomotopy(Hz,start)
+assert (#select(sols, s->status s == Regular) == 4)
+///
+
 -------------------------------------------------------
 -- trackHomotopy tests
 TEST /// 
