@@ -255,6 +255,18 @@ class Matrix : public EngineObject
     int row() { return v->comp; }
     ring_elem entry() { return v->coeff; }
   };
+
+  class column_iterator
+  {
+    const vecterm * v;
+  public:
+    column_iterator(const Matrix *M, int c) : v(M->elem(c)) {}
+    column_iterator(const Matrix *M) : v(nullptr) {}
+
+    column_iterator& operator++() { v = v->next; return *this; }
+    const vecterm* operator *() { return v; }
+    bool operator!=(const column_iterator b) { return v != b.v; }
+  };
 };
 
 #endif
