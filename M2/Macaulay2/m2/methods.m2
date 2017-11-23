@@ -168,6 +168,7 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
+      localRing,
 	  entries, borel, gcdCoefficients, singularLocus, replace,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
