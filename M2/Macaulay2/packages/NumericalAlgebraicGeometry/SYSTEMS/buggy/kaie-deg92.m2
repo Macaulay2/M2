@@ -7,19 +7,14 @@ FF = ZZ/32003
 FF = CC_53
 load "likelihood-ideal-deg92.m2"
 
--*
-needsPackage "NumericalAlgebraicGeometry"
-NAGtrace 1
-numericalIrreducibleDecomposition(I,Software=>BERTINI)
-time degree I
-*-
-
 needsPackage "MonodromySolver"
 MonodromySolver#"exported symbols"
 setRandomSeed 0;
 {CorrectorTolerance,Precision}/getDefault
 setDefault(CorrectorTolerance=>0.1*getDefault CorrectorTolerance)
-setDefault(Precision=>2*getDefault Precision) -- SIGSEGV with higher precision*M2    
-elapsedTime S = sparseMonodromySolve polySystem I;
-#S
+setDefault(Precision=>2*getDefault Precision)
+elapsedTime S = sparseMonodromySolve(polySystem I,Verbose=>true);
+#S -- gets 90
 #select(S,s->status s == Regular)
+P = solveSystem(I_*,Software=>PHCPACK);
+#P -- gets 89-90
