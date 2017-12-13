@@ -33,8 +33,9 @@ class ReducedGB_ZZ : public ReducedGB
   virtual ~ReducedGB_ZZ();
 
   virtual void remove_gb() {}
-  virtual void set_gb(VECTOR(POLY) & polys0);
 
+  virtual void set_gb(VECTOR(POLY) & polys0, bool already_minimized, bool already_sorted, bool auto_reduce);
+  
   virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduced);
   // I have to decide: does this ADD to the existing set?
 

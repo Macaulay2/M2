@@ -30,8 +30,9 @@ class ReducedGB_Field : public ReducedGB
   virtual ~ReducedGB_Field();
 
   virtual void remove_gb() {}
-  virtual void set_gb(VECTOR(POLY) & polys0);
 
+  virtual void set_gb(VECTOR(POLY) & polys0, bool already_minimized, bool already_sorted, bool auto_reduce);
+  
   virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduced);
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);

@@ -938,6 +938,11 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
                                        const gbvector *gsyz,
                                        bool use_denom,
                                        ring_elem &denom)
+// f -=  c m g,
+// fsyz += c m gsyz
+// if use_denom is true:
+//  denom is a ring_elem in the coefficient ring K.
+// 
 {
   int comp;
   ring_elem u, v;

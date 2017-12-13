@@ -18,7 +18,6 @@ MarkedGB::~MarkedGB()
   deletearray(leadterms);
 }
 
-void MarkedGB::set_gb(VECTOR(POLY) & polys0) {}
 struct MarkedGB_sorter : public std::binary_function<int, int, bool>
 {
   GBRing *R;
@@ -42,6 +41,11 @@ MarkedGB::MarkedGB(const PolynomialRing *originalR0,
     : ReducedGB(originalR0->get_gb_ring(), originalR0, F0, Fsyz0), T(0)
 {
   T = MonomialTable::make(R->n_vars());
+}
+
+void MarkedGB::set_gb(VECTOR(POLY) & polys0, bool already_minimized, bool already_sorted, bool auto_reduce)
+{
+  #warning "implement set_gb"
 }
 
 void MarkedGB::add_marked_elems(const VECTOR(gbvector *) & leadterms0,

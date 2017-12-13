@@ -22,7 +22,6 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
     ringtableZZ = originalR->get_quotient_MonomialTableZZ();
 }
 
-void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0) {}
 struct ReducedGB_ZZ_sorter : public std::binary_function<int, int, bool>
 {
   GBRing *R;
@@ -46,6 +45,15 @@ struct ReducedGB_ZZ_sorter : public std::binary_function<int, int, bool>
     return (mpz_cmp(x->coeff.get_mpz(), y->coeff.get_mpz()) < 0);
   }
 };
+
+void ReducedGB_ZZ::set_gb(VECTOR(POLY) & polys0,
+                          bool already_minimized,
+                          bool already_sorted,
+                          bool auto_reduce)
+{
+#warning "write set_gb"
+}
+
 
 void ReducedGB_ZZ::minimalize(const VECTOR(POLY) & polys0, bool auto_reduced)
 // I have to decide: does this ADD to the existing set?

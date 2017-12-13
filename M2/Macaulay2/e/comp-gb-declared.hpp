@@ -20,7 +20,7 @@ class GBDeclared : public GBComputation
   ReducedGB *G;
   const Matrix *trimmed_gens;
   const Matrix *syz;
-
+  int flags;
  protected:
   virtual bool stop_conditions_ok() { return true; }
   // If the stop conditions in _Stop are inappropriate,
@@ -30,8 +30,14 @@ class GBDeclared : public GBComputation
   GBDeclared(const Matrix *m0,
              const Matrix *gb,
              const Matrix *change,
-             const Matrix *syz0);
+             const Matrix *syz0,
+             int flags);
 
+  GBDeclared(const Matrix *m0,
+             const Matrix *gb,
+             const Matrix *change,
+             const Matrix *syz0);
+  
   GBDeclared(const Matrix *leadterms,
              const Matrix *m0,
              const Matrix *gb,
@@ -41,7 +47,8 @@ class GBDeclared : public GBComputation
   static GBComputation *create(const Matrix *m,
                                const Matrix *gb,
                                const Matrix *change,
-                               const Matrix *syz);
+                               const Matrix *syz,
+                               int flags);
   // Possibly returns NULL, if an error message is reported
 
   static GBComputation *create(const Matrix *leadterms,
@@ -103,6 +110,7 @@ class GBDeclared : public GBComputation
   virtual void text_out(buffer &o) const { o << "declared GB"; }
   // This displays statistical information, and depends on the
   // M2_gbTrace value.
+
 };
 
 #endif

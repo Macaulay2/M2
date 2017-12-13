@@ -339,12 +339,14 @@ forceGB = method(
      Options => {
           MinimalMatrix => null,
 	  SyzygyMatrix => null,
-	  ChangeMatrix => null
+	  ChangeMatrix => null,
+          Options => 0 -- a set of flags
 	  }
      )
 
 forceGB Matrix := GroebnerBasis => options -> (f) -> (
      if not isFreeModule source f then error "expected a free module";
+     flags := options.Options;
      minmat := if options.MinimalMatrix === null
                then f
                else options.MinimalMatrix;
@@ -368,7 +370,7 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
      g.ring = ring f;
      g.target = target f;
      g.returnCode = 0;
-     g.RawComputation = rawGBForce(raw minmat, raw f, raw changemat, raw syzmat);
+     g.RawComputation = rawGBForce(raw minmat, raw f, raw changemat, raw syzmat, flags);
      f.cache#type = g;
      g)
 

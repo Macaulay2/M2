@@ -21,7 +21,6 @@ class MutableMatrix;
 class RingElement;
 class RingMap;
 class Computation;
-class EngineComputation;
 // NAG begin
 class SLEvaluator;
 class Homotopy;
@@ -43,7 +42,6 @@ typedef struct Matrix Matrix;
 typedef struct MutableMatrix MutableMatrix;
 typedef struct RingMap RingMap;
 typedef struct Computation Computation;
-typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
 // NAG begin
@@ -60,8 +58,6 @@ typedef struct PointArray PointArray;
   /* we must do this after including system *.h files above */
 # define const
 #endif
-
-typedef EngineComputation EngineComputationOrNull;
 
 #if defined(__cplusplus)
 extern "C" {
@@ -1698,11 +1694,13 @@ enum gbTraceValues
                                  int strategy,
                                  int max_reduction_count); /* drg: connected rawGB */
 
-  Computation /* or null */ *IM2_GB_force(const Matrix *m,
-                                  const Matrix *gb,
-                                  const Matrix *change,
-                                  const Matrix *syz); /* drg: connected rawGBForce */
-
+  Computation /* or null */ *rawGBForce(
+    const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
+    const Matrix *gb,
+    const Matrix *change, /* same number of columns as 'gb', if not 0 */
+    const Matrix *syz,    /* possibly 0 too, otherwise same rows as change */
+    int flags); /* 1: already minimal. 2: already sorted. 4: do not auto-reduce, 8:check whether minimal, sorted */
+  
   Computation /* or null */ *rawMarkedGB(const Matrix *leadterms,
                                  const Matrix *m,
                                  const Matrix *gb,

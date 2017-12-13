@@ -43,8 +43,11 @@ class MarkedGB : public ReducedGB
   virtual void remove_gb() {}
   const FreeModule *get_ambient_FreeModule() const { return F; }
   const GBRing *get_gb_ring() const { return R; }
-  virtual void set_gb(VECTOR(POLY) & polys0);
 
+  virtual void set_gb(VECTOR(POLY) & polys0, bool already_minimized, bool already_sorted, bool auto_reduce);
+
+  virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduce = true) { }
+  
   virtual void add_marked_elems(const VECTOR(gbvector *) & leadterms,
                                 const VECTOR(POLY) & polys0,
                                 bool auto_reduced);

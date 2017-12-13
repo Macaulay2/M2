@@ -66,6 +66,15 @@ struct ReducedGB_Field_Local_sorter
   }
 };
 
+
+void ReducedGB_Field_Local::set_gb(VECTOR(POLY) & polys0,
+                                   bool already_minimized,
+                                   bool already_sorted,
+                                   bool auto_reduce)
+{
+#warning "write set_gb"
+}
+
 void ReducedGB_Field_Local::minimalize(const VECTOR(POLY) & polys0,
                                        bool auto_reduced)
 {

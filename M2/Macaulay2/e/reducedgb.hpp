@@ -94,11 +94,9 @@ class ReducedGB : public GBComputation
   // to be provided by subclasses               //
   ////////////////////////////////////////////////
 
-  virtual void set_gb(VECTOR(POLY) & polys0) = 0;
-
-  virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduce = true)
-  {
-  }
+  virtual void set_gb(VECTOR(POLY) & polys0, bool already_minimized, bool already_sorted, bool auto_reduce) = 0;
+  
+  virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduce = true) = 0;
 
   // I have to decide: does this ADD to the existing set?
 

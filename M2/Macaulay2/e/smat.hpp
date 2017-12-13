@@ -4,9 +4,6 @@
 #define _smat_hpp_
 
 union ring_elem;
-#include "ZZp.hpp"
-
-class MutableMatrix;
 
 template <typename MT>
 class MatElementaryOps;

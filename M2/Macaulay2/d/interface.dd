@@ -3521,26 +3521,29 @@ export rawGBSetHilbertFunction(e:Expr):Expr := (
 setupfun("rawGBSetHilbertFunction", rawGBSetHilbertFunction);
 
 export rawGBForce(e:Expr):Expr := (
-     when e is a:Sequence do 
-     if length(a) == 4 then 
-     when a.0 is m:RawMatrixCell do 
-     when a.1 is gb:RawMatrixCell do 
-     when a.2 is change:RawMatrixCell do 
-     when a.3 is syz:RawMatrixCell do toExpr(
-	  Ccode(RawComputationOrNull, 
-		    "IM2_GB_force(",
-		    m.p,
-		    ",", gb.p,
-		    ",", change.p,
-		    ",", syz.p,
-		    ")" ))
-     else WrongArgMatrix(4)
-     else WrongArgMatrix(3)
-     else WrongArgMatrix(2)
-     else WrongArgMatrix(1)
-     else WrongNumArgs(4)
-     else WrongNumArgs(4));
-setupfun("rawGBForce", rawGBForce);
+  when e is s:Sequence do (
+  if length(s) == 5 then (
+  when s.0 is wgens:RawMatrixCell do (gens := wgens.p;
+  when s.1 is wgb:RawMatrixCell do (gb := wgb.p;
+  when s.2 is wchange:RawMatrixCell do (change := wchange.p;
+  when s.3 is wsyz:RawMatrixCell do (syz := wsyz.p;
+  when s.4 is wflags:ZZcell do (
+  if isInt(wflags) then (flags := toInt(wflags);
+    toExpr(Ccode(RawComputationOrNull,
+      "rawGBForce(",
+        gens, ",", gb, ",", change, ",", syz, ",", flags, 
+      ")"
+    ))
+  ) else WrongArgSmallInteger(4)
+  ) else WrongArgZZ(4)
+  ) else WrongArg(3,"a raw matrix")
+  ) else WrongArg(2,"a raw matrix")
+  ) else WrongArg(1,"a raw matrix")
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(5)
+  ) else WrongNumArgs(5)
+  );
+setupfun("rawGBForce",rawGBForce);
 
 export rawMarkedGB(e:Expr):Expr := (
      when e is a:Sequence do 

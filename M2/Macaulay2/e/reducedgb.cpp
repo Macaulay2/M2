@@ -8,6 +8,31 @@
 #include "reducedgb-field-local.hpp"
 #include "reducedgb-ZZ.hpp"
 
+////////////////////////////////////////////////////////////////
+struct SimpleDegreeSorter : public std::binary_function<int, int, bool>
+{
+  GBRing * mGBRing;
+  const FreeModule *F;
+  const VECTOR(POLY) & gb;
+  SimpleDegreeSorter(GBRing *R0,
+                     const FreeModule *F0,
+                     const VECTOR(POLY) & gb0)
+      : mGBRing(R0), F(F0), gb(gb0)
+  {
+  }
+  GBRing* GBRing() { return mGBRing; }
+  const FreeModule* freeModule() const { return F; }
+  bool operator()(int xx, int yy)
+  {
+    gbvector *x = gb[xx].f;
+    gbvector *y = gb[yy].f;
+    return mGBRing->gbvector_compare(F, x, y) == LT; // don't use this one??
+  }
+};
+
+
+////////////////////////////////////////////////////////////////
+
 ReducedGB *ReducedGB::create(
     const PolynomialRing *originalR0,
     const FreeModule *F0,
@@ -50,6 +75,9 @@ ReducedGB::~ReducedGB()
       R->gbvector_remove(polys[i].fsyz);
     }
 }
+
+
+////////////////// Some functions which should not be here?? //////////////////
 
 const Matrix /* or null */ *ReducedGB::get_gb()
 {
