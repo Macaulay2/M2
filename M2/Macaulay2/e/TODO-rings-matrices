@@ -1,4 +1,14 @@
------------------------------------------
+8 Dec 2017
+      talking: Mike and Mahrud
+
+Ring
+  PolynomialRing
+    FactorRing
+  FractionRing
+  
+
+
+    -----------------------------------------
 14 Nov 2013 
 Items to clean up
 - coeffrings.hpp: remove its use whenever possible
