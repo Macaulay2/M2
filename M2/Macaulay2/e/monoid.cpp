@@ -1,6 +1,7 @@
 // Copyright 1996 Michael E. Stillman
 
 #include <ctype.h>
+#include <iostream>
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "varpower.hpp"
@@ -40,7 +41,11 @@ Monoid::Monoid()
 {
 }
 
-Monoid::~Monoid() {}
+Monoid::~Monoid()
+{
+  // Nothing more to do
+}
+
 Monoid *Monoid::get_trivial_monoid()
 {
   if (trivial_monoid == 0) trivial_monoid = new Monoid;
