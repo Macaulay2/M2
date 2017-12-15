@@ -52,7 +52,7 @@ TEST ///
     assert ( firstFunction 2 == "D'oh!" )
 ///
 
-end
+end--
 
 You can write anything you want down here.  I like to keep examples
 as I’m developing here.  Clean it up before submitting for

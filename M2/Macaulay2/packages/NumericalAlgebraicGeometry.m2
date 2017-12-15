@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.9.3",
-     Date => "May 2017",
+     Version => "1.11",
+     Date => "Nov 2017",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -56,7 +56,6 @@ export {
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
      "regeneration", "isSolution", "SquaredUpSystem", "SquareUpMatrix", "squareUp",
-     "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
      }
@@ -183,10 +182,6 @@ setDefault = method(Options => {
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
 getDefault Symbol := (s)->DEFAULT#s
-
-
--- METHOD DECLARATIONS
-isOn = method(Options=>{Tolerance=>null,Software=>null})
 
 -- CONVENTIONS ---------------------------------------
 
@@ -323,6 +318,7 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     else error "not implemented"
     )
 
+{* not used???
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := commonRing T;
@@ -336,6 +332,7 @@ dehomogenizeSystem List := List => T -> (
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
+*}
 
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
@@ -400,6 +397,7 @@ squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix els
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"
+load "./NumericalAlgebraicGeometry/WSet-NumericalAlgebraicGeometry.m2"
 load "./NumericalAlgebraicGeometry/intersection.m2"
 load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
@@ -407,6 +405,9 @@ load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
 load "./NumericalAlgebraicGeometry/npd.m2"
 load "./NumericalAlgebraicGeometry/polynomial-space.m2"
+
+load "./NumericalAlgebraicGeometry/WSet-deflation.m2"
+
 -- HOM4PS2 part -----------------------------------------------------------
 
 makeHom4psInput = method(TypicalValue=>Sequence)
@@ -519,10 +520,7 @@ undocumented {
 (evaluateHx,GateHomotopy,Matrix,Number),
 (evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number),
 (specialize,GateParameterHomotopy,MutableMatrix),
-[gateHomotopy,Software],
 [trackHomotopy,Software],
-[gateHomotopy,Parameters],
-[gateHomotopy,Strategy],
     }
 
 TEST ///

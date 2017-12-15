@@ -1,123 +1,80 @@
-
--- Possible order of events:
---  (need ways to generate interesting (homo-)morphisms of complexes)
--- for next time (20 Sep 2016): let's do the following:
-    -- TODO: we need to be able to take an element of Hom(C,D) and obtain the
-    --  actual complex homomorphism.
-    --  Also go the other way: from a complex homomorphism, get an element of
-    --   Hom(C,D).
-    --ALSO, add to Mike's todo: find the rescomplex code that Greg+Mike were working on in Banff a number of years ago.
-    -- or maybe see what David wrote too.
---
--- a global TODO:
---   go through all methods, and decide which ones should have a LengthLimit option
---   e.g.: isExact, isQuasiIsomorphism.
---
--- Notes about: what is in current M2, which we have not considered yet:
---   complete C: idea?
---     perhaps: keep Resolution, Complex.  'complete Resolution' makes it a complex (change naming)
---   texMath/tex (of all of the types of here)
---   sum (make one big matrix from a chain complex)
--- Various coercions from RingElement up to a map
--- e.g.:
---  RingElement + ChainComplexMap
---  ZZ + ChainComplexMap
---  same for differences, ==, * (we have this one)
--- RingMap ChainComplex
--- RingMap ChainComplexMap
--- nullhomotopy
--- poincare, poincareN
--- ** Ring
--- homology, cohomology (induced maps given a ComplexMorphism)
--- gradedModule (strip the differential)
--- transpose?
--- regularity
--- tensorAssociativity
--- Module [n] -- promote to a complex...?
--- inducedMap
--- minimalPresentation (same as prune, which we did)
--- eagonNorthcott
--- koszul
--- taylorResolution
--- isMinimalChainComplex?  Maybe have: isFreeComplex
-
--- Methods from ChainComplexExtras:
---  isExact, isQuasiIsomorphism
---  |, || for ComplexHomomrphisms
---  minimize
---  resolutionOfChainComplex
---  cartanEilenbergResolution
--- trivialHomologicalTruncation
--- truncation (4 truncations: naive/smart, either side)
-
--- want to be able to construct natural isomorphisms: (e.g. for A,B,C modules)
---   Hom(A++B,C) --> Hom(A,C), also the inclusion map
--- want to be able to extract Hom(A,C), Hom(B,C)
--- We get this for free if Hom(A++B,C) has components.
--- If A,B,C are complexes, want the same thing
-
-
--- question about ** and Hom:
---   add tensorProduct{F0, F1, F2, ...} ?
---   what if A_i, B_j already have a direct sum structure
---     what are the indices of A ** B ? or A ++ B
--- TODO on Monday, May 2:
---   a. tensorAssociativity, with an option to go to tensorProduct(A,B,C)
---   b. tensorProduct{A,B,C,...}
---   c. tensorCommutativity(A,B)
---  then
---   d. what do we want to have happen in Utah?
---    work on code?
---         on doc?
---    generate examples
---    simplicial complexes
---    spectral sequence code
---      good examples
---    brainstorm for homological algebra examples
-
--- todo: make a new constructor:
-  -- complex ComplexHomomrphism
-  -- which: takes an f : C --> C of degree -1
-  -- and creates a new complex with this as differential
-  -- (assuming f^2 = 0, which will not be implicitly checked).
--- Quotient complexes C/D.
--- truncations
-
--- XXX <-- use this.
--- id
--- main thing to start on next: doc complex homomorphisms
+-----------------------------------------------
+-- NOTE!!!!!  The version in bitbucket is the most up to date
+-- For now, the version in M2.git is a relatively recent version.
+-- Jan 5, 2017: first time Complexes.m2 was added to M2.git
+-----------------------------------------------
+--  todo for next meeting Nov 30 BBBB
+--    first: change the output of minimize, cache the map
+--    can we make resolution of a complex return a minimal one directly, w/o calling minimize?
+--    is there a faster way to implement 'minimize'.
+--    examples:
+--     cotangent complex
+--     Hom(res I, (ring I)^1/I)
+-- 6 Sep 2017 notes
+--  In September: do resolution of a complex, and figure out maps/functoriality/roofs
+--  (e.g. Christensen-Foxby notes).
+--  NEXT STEP: look for: AAAA.
+--  implement construction 3.1.7 (theorem 3.1.6), and the lifting map 3.1.8.
 -- 
-  
--- What do we want to have running by May M2 workshops?
---  demo serious functoriality
---    e.g: the 6 standard morphisms, ext stuff, connecting homomorphisms
---         simplicial complexes with all of this
---    come up with exciting examples for the documentation
---    e.g: mapping cone: minimal free resolutions
---    include topological examples via simplicial complexes
---            comm algebra
---            algebraic geometric
---            D-module examples?
---            exterior algebra examples.
+-- 27 June 2017 notes
+--  res.m2, chaincomplexes.m2
 --  
-
-
---  Need to worry about sign conventions in 'cone'
---    todo: allow options: specify bounds in cone.
-
--- 
--- to make good examples:
---   special complexes: Koszul, Eagon-Northcott, Buchsbaum-Rim
---   SimplicialComplex: over a field or ZZ, or any ring.
---     and maps between them.  This will go into SimplicialComplexes package.
-
--- isChainMap (i.e. commute with differentials, barf)
--- and of course doc
+--  want minimal semi-projective cover of a complex C
+--    a complex which is free, and also comes from a filtration (via cohomological degree).
+--    and maps surjectively to C.
+--    f : FC --> C, which is a surjective quasi-isomorphism.
+--    given C, D complexes, g : C --> D
+--    want Fg : FC --> FD, but also:
+--      morphisms are roof maps: a map C --> D is a ...
+--      this needs to be worked out.
+--    
+--    
+-- for 30 May 2017: discuss priorities for completion this summer.
+--   need good (killer app) examples TODO for:
+--     a. connecting homomorphisms
+--     b. derived category computations
+--       BGG:
+--         L,R functors
+--         M S-module --> T(M) Tate resolution over E (exterior algebra).
+--         Beilinson functor: B(E-module) = U^a
+--     c. (elems of Ext^1 <--> SES <--> connecting homo <--> map of complexes
+--       want this also for Ext^i
+-- 11 April 2017 cleaned up todo list:
+-- 1. Add in functionality present in current ChainComplexes code.
+--     resolution
+--     homology(ComplexMap)
+--     a graded module will be a Complex, whose differential is 0.
+--       add info in the cache
+--       functions to add here (that will work on (some) Complex(es) as well:
+--          ambient
+--          cover
+--          super
+--     substitute
 --
--- (homomorphism, toHomomorphism): (h:C-->D) <--> (R^1 --> Hom(C,D))
--- also need: (R^1 --> Ext^i(P_C, P_D)) <--> (h:P_C-->P_D[i])
--- resolution of a complex
+--     eagonNorthcott
+--     koszul, koszulComplex
+--     taylorResolution
+--     Module Array (can't do this until we replace old code)
+--     status (of a resolution)
+--     nullHomotopy f -- if f is null homotopic, then return such a null homotopy.
+--       -- isHomotopic(f,0), (f,g)
+--       -- nullHomotopy f -- produces one, if it exists.
+--       -- another routine to check if g is a nullhomotopy of f (won't need this)
+--       -- nullhomotopy -- synonym for nullHomotopy?
+--     transpose ComplexMap (modules are free modules, we expect)
+--   texMath/tex (of Complex, ComplexMap?  Current code is not so useful)
 --
+-- 2. Fill in obvious holes (including code from ChainComplexExtras,TateOnProducts)
+--  tensor product along a ring map?
+--  Hom and ** should play well with direct sums
+--  turn HH^* into a functor
+--  connecting homomorphisms
+--  Ext elements to Ext modules (and back)
+--  isMinimalChainComplex?  Maybe have: isFreeComplex
+--  isExact, isQuasiIsomorphism
+--  minimize
+--  resolutionOfChainComplex (same name as resolution)
+--  truncation (4 truncations: naive/smart, either side)
 -- 6 standard homomorphisms
 --   tensor commutativity
 --   tensor associativity
@@ -126,23 +83,41 @@
 --   Tensor evaluation (Hom(C,D)**E --> Hom(C,D**E)).
 --   Hom evaluation: C**Hom(D,E) --> Hom(Hom(C,D),E)
 --
--- Think about what examples we want to be able to generate.
+--   go through all methods, and decide which ones should have a LengthLimit option
+--   e.g.: isExact, isQuasiIsomorphism.
 --
--- This package should be able to handle the case where the complex
--- is a complex of Modules, Complexes, or CoherentSheaves
--- Issues:
---   make sure all routines used for modules are implemented (or could be implemented)
---     for Complexes and coherent sheaves.
---   test for 2 Complexes to be of the same type (and over same ring).
+-- make a new constructor:
+--   complex ComplexMap
+--   which: takes an f : C --> C of degree -1
+--   and creates a new complex with this as differential
+--   (assuming f^2 = 0, which will not be implicitly checked).
+
+-- question about ** and Hom:
+--   add tensorProduct{F0, F1, F2, ...} ?
+--   what if A_i, B_j already have a direct sum structure
+--     what are the indices of A ** B ? or A ++ B
+--   tensorAssociativity, with an option to go to tensorProduct(A,B,C)
+--   tensorProduct{A,B,C,...}
+--   tensorCommutativity(A,B)
+--
+-- 3. Other functionality
+--   Quotient complexes C/D.
+--   cartanEilenbergResolution
+--   complexes of Eagon-Northcott type
+--
+-- 4. This package should be able to handle the case where the complex
+--   is a complex of Modules, Complexes, or CoherentSheaves
+
 newPackage(
         "Complexes",
-        Version => "0.1", 
-        Date => "Jan 4, 2017",
+        Version => "0.3", 
+        Date => "16 November 2017",
     	Authors => {
 	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
         Headline => "Chain complexes",
+        AuxiliaryFiles => false,
         DebuggingMode => true
         )
 
@@ -150,20 +125,21 @@ export {
     "component",
     -- types
     "Complex",
-    "ComplexHomomorphism",
     "ComplexMap",
-    "ComplexMorphism",
     -- functions/methods
+    "canonicalMap",
     "complex",
-    -- options used
-    "Base",
+    "concentration",
+    "cylinder",
     "freeResolution",
     "isComplexMorphism",
-    "hom",
-    "canonicalMap",
-    "cylinder",
+    "isQuasiIsomorphism",
+    "minimize",
+    "resolutionMap",
+    -- options used
+    "Base",
+    "ResolutionMap",
     "UseTarget",
-    "concentration",
     "HomWithComponents"
     }
 
@@ -173,8 +149,10 @@ export {
 << "-- a future date.  The type 'Complex' here will                           --" << endl;
 << "-- be changed to 'ChainComplex'.                                          --"<< endl;
 << "--                                                                        --" << endl;
-<< "-- Purpose: to more fully implement functoriality in homological algebra, --" << endl;
+<< "-- Purpose: to more fully implement functoriality in homological algebra  --" << endl;
 << "-- Primary authors: Greg Smith and Mike Stillman                          --" << endl;
+<< "--                                                                        --" << endl;
+<< "-- For questions, suggestions, comments, bugs, please email either author --" << endl;
 << "----------------------------------------------------------------------------" << endl
 
 unimplemented = str -> error(str|": not yet implemented")
@@ -182,24 +160,23 @@ UNTEST = (str) -> null
 
 -- keys into Complex
 protect modules
-protect differential
 
 Complex = new Type of MutableHashTable --
   -- note: we make this mutable in order to construct the
-  --   differential as a ComplexHomomorphism referring to this Complex
+  --   differential as a ComplexMap referring to this Complex
   -- BUT: after construction, it is should be IMMUTABLE!!
   -- at some point, we might want to allow lazy determination of the modules and maps
   -- but for now, we insist that all modules and maps are explicit.
   -- key:
   --  ring
   --  modules: hash table: ZZ => Module
-  --  differential: ComplexHomomorphism from C --> C, degree -1.
+  --  differential: ComplexMap from C --> C, degree -1.
   --  concentration: (lo:ZZ,hi:ZZ) C_i = 0 for i < lo and i > hi.
   --    not all of the keys modules#i, for lo <= i <= hi need be present.
   --    missing ones are presumed to be the zero module.
   --  cache: a CacheTable
 
-ComplexHomomorphism = new Type of HashTable -- just a collection of maps, no relationship
+ComplexMap = new Type of HashTable
   -- keys:
   --   degree: ZZ
   --   source: Complex over a ring R
@@ -208,15 +185,12 @@ ComplexHomomorphism = new Type of HashTable -- just a collection of maps, no rel
   --    not all of the keys maps#i, for lo <= i <= hi need be present.
   --    missing ones are presumed to be zero maps.
   --   cache: a CacheTable
-
-ComplexMorphism = new Type of ComplexHomomorphism
-  -- no other keys, just the same ones for ComplexHomomorphism.
-  -- degree is 0.
-  -- maps commute with the differentials.
+  --    cache.isCommutative: whether this map commutes with the differentials
+  --      not set until needed.  unset means we have not checked yet, 
+  --          and the user hasn't declared it to be true/false yet.
 
 Complex.synonym = "complex"
-ComplexHomomorphism.synonym = "homomorphism of complexes"
-ComplexMorphism.synonym = "morphism of complexes"
+ComplexMap.synonym = "homomorphism of complexes"
 
 -- net, expression
 -- construction:
@@ -253,38 +227,59 @@ complex HashTable := opts -> maps -> (
            symbol concentration => (first spots - 1, last spots),
            symbol cache => new CacheTable
            };
-    C.differential = hom(C,C,maps,Degree=>-1);
+    C.dd = map(C,C,maps,Degree=>-1);
     C
     )
 complex List := opts -> L -> (
-    -- L is a list of matrices
+    -- L is a list of matrices or a list of modules
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
-    mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
-    complex(mapHash, opts)
+    if all(L, ell -> instance(ell,Matrix)) then (
+        mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
+        return complex(mapHash, opts)
+        );
+    if all(L, ell -> instance(ell,Module)) then (
+        R := ring L#0;
+        if any(L, ell -> ring ell =!= R) then
+            error "expected modules all over the same ring";
+        moduleHash := hashTable for i from 0 to #L-1 list opts.Base + i => L#i;
+        C := new Complex from {
+            symbol ring => R,
+            symbol concentration => (opts.Base, opts.Base + #L - 1),
+            symbol module => moduleHash,
+            symbol cache => new CacheTable
+            };
+        C.dd = map(C,C,0,Degree=>-1);
+        return C;
+        );
+    error "expected a list of matrices or a list of modules";
     )
 complex Module := opts -> (M) -> (
     if not instance(opts.Base, ZZ) then
       error "complex: expected base to be an integer";
     C := new Complex from {
            symbol ring => ring M,
-           symbol concentration =>(opts.Base,opts.Base),
+           symbol concentration => (opts.Base,opts.Base),
            symbol module => hashTable {opts.Base => M},
            symbol cache => new CacheTable
            };
-    C.differential = hom(C,C,0,Degree=>-1);
+    C.dd = map(C,C,0,Degree=>-1);
     C
     )
 complex Ring := opts -> R -> complex(R^1, opts)
 complex Ideal := opts -> I -> complex(module I, opts)
-
+complex ChainComplexMap := opts -> (f) -> (
+    -- f : C --> C, degree -1, then return (C,f) as a complex.
+    -- f : C --> C[-1], return (C,f) as a complex
+    -- complex (0 * dd^C)
+    )
 isWellDefined Complex := C -> (
     k := keys C;
     expectedKeys := set {
         symbol ring, 
         symbol concentration, 
         symbol module, 
-        symbol differential,
+        symbol dd,
         symbol cache
         };
     if set k =!= expectedKeys
@@ -317,9 +312,9 @@ isWellDefined Complex := C -> (
             );
         return false;
         );    
-    if not instance(C.differential, ComplexHomomorphism) then (
+    if not instance(C.dd, ComplexMap) then (
         if debugLevel > 0 then (
-            << "-- expected dd^C to be a ComplexHomomorphism" << endl;
+            << "-- expected dd^C to be a ComplexMap" << endl;
             );
         return false;
         );
@@ -343,13 +338,13 @@ isWellDefined Complex := C -> (
         return false;
         );
     -- check differential
-    if ring C.differential =!= ring C then (
+    if ring C.dd =!= ring C then (
         if debugLevel > 0 then (
             << "-- expected ring of the differential to be the ring of the complex" << endl;
             );
         return false;
         );
-    if degree C.differential =!= -1 then (
+    if degree C.dd =!= -1 then (
         if debugLevel > 0 then (
             << "-- expected degree of the differential to be -1" << endl;
             );
@@ -388,6 +383,89 @@ isWellDefined Complex := C -> (
 
 concentration = method()
 concentration Complex := Sequence => C -> C.concentration
+concentration ComplexMap := Sequence => f -> (
+    C := source f;
+    D := target f;
+    deg := degree f;
+    (loC, hiC) := concentration C;
+    (loD, hiD) := concentration D;
+    lo := max(loC, loD+deg);
+    hi := min(hiC, hiD+deg);
+    if lo > hi then (loC, loC) else (lo, hi)
+    )
+
+max Complex := C -> max concentration C
+min Complex := C -> min concentration C
+
+sum Complex := Module => C -> (
+    (lo,hi) := concentration C;
+    directSum for i from lo to hi list C_i
+    )
+
+sum ComplexMap := Matrix => f -> (
+    -- f : C --> D
+    C := source f;
+    D := target f;
+    (loC, hiC) := concentration C;
+    (loD, hiD) := concentration D;
+    d := degree f;
+    mats := matrix for j from loD to hiD list (
+        for i from loC to hiC list (
+            if j == i+d then f_i 
+            else
+            map(D_j, C_i, 0)
+        ));
+    map(sum D, sum C, mats)
+    )
+    
+{*          
+          
+    directSum 
+    t := sort spots T;
+    s := sort spots S;
+    u := spots f;
+    if #t === 0 and #s === 0 then map(R^0,0)
+    else (
+	    tar := if #t === 0 then R^0 else directSum apply(t,i->T_i);
+	    src := if #s === 0 then R^0 else directSum apply(s,i->S_i);
+	    if #u > 0 and same(apply(u, i -> degree f#i))
+	    then (
+	        deg := degree f#(u#0);
+	        map(tar, src, matrix table(t,s,
+			        (j,i) -> if j == i+d then f_i else map(T_j,S_i,0)), Degree=>deg)
+	        )
+	    else (
+	        map(tar, src, matrix table(t,s,
+		    	    (j,i) -> if j == i+d then f_i else map(T_j,S_i,0))
+                ))))
+*}
+
+-- This belongs in M2 Core!!!
+-- make this into a git issue.
+single = v -> (
+     if not same v 
+     then error "incompatible objects in direct sum";
+     v#0)
+directSum Sequence := args -> (
+    if #args === 0 then error "expected more than 0 arguments";
+    y := youngest args;
+    key := (directSum, args);
+    if y =!= null and y.cache#?key then y.cache#key else (
+        type := single apply(args, class);
+        meth := lookup(symbol directSum, type);
+        if meth === null then error "no method for direct sum";
+        S := meth args;
+        if y =!= null then y.cache#key = S;
+        S))
+///
+  restart
+  S = ZZ/101[a..d]
+  C = res coker vars S
+  D = C ++ C
+  keys C -- (directSum,C,C) this should be in the cache table, not in the mutable hash table itself.
+  keys C.cache
+  -- The proposed code solves this issue.
+///
 
 Complex.directSum = args -> (
     assert(#args > 0);
@@ -424,20 +502,24 @@ trans := (C,v) -> (
 	    v)
     )
 
-Complex _ Array := ComplexMorphism => (C,v) -> (
+Complex _ Array := ComplexMap => (C,v) -> (
     v = trans(C,v);
     D := directSum apply(toList v, j -> C.cache.components#j);
     (lo,hi) := D.concentration;
     maps := hashTable for i from lo to hi list i => C_i_v;
-    map(C,D,maps)
+    result := map(C,D,maps);
+    result.cache.isCommutative = true;
+    result
     )
 
-Complex ^ Array := ComplexMorphism => (C,v) -> (
+Complex ^ Array := ComplexMap => (C,v) -> (
     v = trans(C,v);
     D := directSum apply(toList v, j -> C.cache.components#j);
     (lo,hi) := C.concentration;
     maps := hashTable for i from lo to hi list i => C_i^v;
-    map(D,C,maps)
+    result := map(D,C,maps);
+    result.cache.isCommutative = true;
+    result
     )
 ------------------
 
@@ -485,7 +567,9 @@ ZZ == Complex := (n,C) -> C == n
 Complex#id = (C) -> (
     (lo,hi) := C.concentration;
     maps := hashTable for i from lo to hi list i => id_(C_i);
-    map(C,C,maps)
+    result := map(C,C,maps);
+    result.cache.isCommutative = true;
+    result
     )
 
 -- Does this even make any sense?  Is the version
@@ -506,10 +590,15 @@ net Complex := C -> (
      )
 
 Symbol ^ Complex := (sym, C) -> (
-    if sym === dd then C.differential
+    if sym === dd then C.dd
     else error "expected symbol to be 'dd'"
     )
 Symbol _ Complex := (sym, C) -> sym^C
+
+gradedModule Complex := Complex => C -> (
+    (lo,hi) := concentration C;
+    complex(for i from lo to hi list C_i, Base=>lo)
+    )
 
 freeResolution = method(Options => options resolution)
 freeResolution Ideal :=
@@ -521,7 +610,7 @@ freeResolution Module := opts -> M -> (
     )
 
 isHomogeneous Complex := (C) -> isHomogeneous dd^C
-isHomogeneous ComplexHomomorphism := (f) -> all(values f.map, isHomogeneous)
+isHomogeneous ComplexMap := (f) -> all(values f.map, isHomogeneous)
 
 -- These next two local functions are lifted from previous code in m2/chaincomplexes.m2
 heftfun0 = wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
@@ -539,7 +628,43 @@ betti Complex := opts -> C -> (
         )
     )
 
-prune Complex := opts -> (cacheValue symbol minimalPresentation)(C -> (
+regularity Complex := opts -> C -> regularity betti(C,opts)
+
+poincare Complex := C -> (
+    S := degreesRing ring C;
+    (lo,hi) := concentration C;
+    -- WARNING: older ChainComplex code uncomments the following line
+    -- use S;
+    f := 0_S;
+    for i from lo to hi do (
+        scanPairs(tally degrees C_i, 
+            (d,m) -> f = f + m * (-1)^i * product(# d, j -> S_j^(d_j)));
+        );
+    f
+    )
+
+poincareN Complex := C -> (
+    S := degreesRing ring C;
+    if not S.?poincareN then S.poincareN = (
+        s := getSymbol "S";
+        t := getSymbol "T";
+        ZZ (monoid[s, t_0 .. t_(degreeLength ring C - 1), 
+                Inverses=>true, 
+                MonomialOrder => RevLex, 
+                Global => false])
+        );
+    R := S.poincareN;
+    (lo,hi) := concentration C;
+    f := 0_R;
+    for i from lo to hi do (
+        scanPairs(tally degrees C_i,
+            (d,m) -> f = f + m * R_0^i * product(# d, j -> R_(j+1)^(d_j)))
+        );
+    f
+    )
+
+minimalPresentation Complex := 
+prune Complex := Complex => opts -> (cacheValue symbol minimalPresentation)(C -> (
     -- opts is ignored here
     -- to be cached: in the input C: cache the result D
     --               in the result: cache pruningMap: D --> C
@@ -559,10 +684,11 @@ prune Complex := opts -> (cacheValue symbol minimalPresentation)(C -> (
                  complex maps
                  )
              );
-    -- create the ComplexMorphism: D --> C (which is also an isomorphism)
+    -- create the isomorphism D --> C
     (lo,hi) = D.concentration;
     pruning := hashTable for i from lo to hi list i => (minimalPresentation C_i).cache.pruningMap;
     D.cache.pruningMap = map(C,D,pruning);
+    D.cache.pruningMap.cache.isCommutative = true;
     D
     ))
 
@@ -576,16 +702,14 @@ homology(ZZ, Complex) := opts -> (i,C) -> homology(dd^C_i, dd^C_(i+1))
 cohomology(ZZ,Complex) := opts -> (i,C) -> homology(-i, C)
 
 -----------------------------------
--- ComplexHomomorphism ------------
+-- ComplexMap ------------
 -----------------------------------
-source ComplexHomomorphism := Complex => f -> f.source
-target ComplexHomomorphism := Complex => f -> f.target
-ring ComplexHomomorphism := Complex => f -> ring source f
-degree ComplexHomomorphism := Complex => f -> f.degree
+source ComplexMap := Complex => f -> f.source
+target ComplexMap := Complex => f -> f.target
+ring ComplexMap := Complex => f -> ring source f
+degree ComplexMap := Complex => f -> f.degree
 
-hom = method(Options=>options map)
-
-hom(Complex, Complex, HashTable) := opts -> (tar, src, maps) -> (
+map(Complex, Complex, HashTable) := opts -> (tar, src, maps) -> (
     R := ring tar;
     if ring src =!= R or any(values maps, f -> ring f =!= R) then
         error "expected source, target and maps to be over the same ring";
@@ -605,7 +729,7 @@ hom(Complex, Complex, HashTable) := opts -> (tar, src, maps) -> (
         if target f =!= tar_(k+deg) then
             error ("map with index "|k|" has inconsistent target");
         );
-    new ComplexHomomorphism from {
+    new ComplexMap from {
         symbol source => src,
         symbol target => tar,
         symbol degree => deg,
@@ -613,9 +737,11 @@ hom(Complex, Complex, HashTable) := opts -> (tar, src, maps) -> (
         symbol cache => new CacheTable
         }
     )
-hom(Complex, Complex, List) := opts -> (tar, src, maps) -> (
+map(Complex, Complex, List) := opts -> (tar, src, maps) -> (
     -- case 1: maps is a (single) list of matrices (maps between components of the complex)
-    -- case 2: maps is a double list of ComplexHomomorphism's
+    -- case 2: maps is a double list of ComplexMap's
+    --    in this case, if the maps all commute with differentials, and are diagonal, then
+    --    we could declare the result to be commutative as well. Should we do this?
     --  Can tell, depending on the class of maps#0.
     (lo,hi) := src.concentration;
     if not instance(maps#0, List) then (
@@ -623,14 +749,14 @@ hom(Complex, Complex, List) := opts -> (tar, src, maps) -> (
             h := maps#(i-lo);
             if h == 0 then continue else h
             );
-        return hom(tar,src,mapHash,opts)
+        return map(tar,src,mapHash,opts)
         );
     -- At this point, the first entry of 'maps' is a List.
-    -- Check: it is a table of ComplexHomomorphism
+    -- Check: it is a table of ComplexMap
     R := ring tar;
     if R =!= ring src then error "expected complexes over the same ring";
-    if not isTable maps then error "expected a table of ComplexHomomorphisms";
-    -- check: all entries which are ComplexHomomorphisms have the same homological degree
+    if not isTable maps then error "expected a table of ComplexMaps";
+    -- check: all entries which are ComplexMaps have the same homological degree
     deg := if opts.Degree === null 
            then null
            else if instance(opts.Degree, ZZ) then 
@@ -638,34 +764,70 @@ hom(Complex, Complex, List) := opts -> (tar, src, maps) -> (
            else
              error "expected integer degree";
     degs := unique for f in flatten maps list 
-        if instance(f,ComplexHomomorphism) 
+        if instance(f,ComplexMap) 
             then degree f 
             else continue;
-    if #degs > 1 then error "expected all ComplexHomomorphisms to have the same degree";
-    if deg =!= null and #degs == 1 and degs#0 =!= deg then error "Supplied degree is incompatible with the ComplexHomomorphisms";
+    if #degs > 1 then error "expected all ComplexMaps to have the same degree";
+    if deg =!= null and #degs == 1 and degs#0 =!= deg then error "Supplied degree is incompatible with the ComplexMaps";
     if deg === null then deg = (if #degs == 1 then degs#0 else 0);
     -- At this point, we need to create (block) matrices for each component of the complex.
     mapHash = hashTable for i from lo to hi list i => (
-        newmaps := applyTable(maps, f -> if instance(f,ComplexHomomorphism) then f_i else f);
+        newmaps := applyTable(maps, f -> if instance(f,ComplexMap) then f_i else f);
         h := map(tar_(i+deg), src_i, matrix newmaps);
         if h == 0 then continue else h
         );
-    hom(tar,src,mapHash,opts, Degree=>deg)
+    map(tar,src,mapHash,opts, Degree=>deg)
     )
 
-hom(Complex, Complex, ZZ) := opts -> (tar, src, j) -> (
+map(Complex, Complex, Function) := ComplexMap => opts -> (D,C,f) -> (
+    deg := if opts.Degree === null then 0 else opts.Degree;
+    (loC,hiC) := concentration C;
+    (loD,hiD) := concentration D;
+    maps := hashTable for i from max(loC,loD-deg) to min(hiC,hiD-deg) list (
+        if C_i == 0 or D_(i+deg) == 0 then continue;
+        g := f(i);
+        if g === null or g == 0 then continue;
+        i => g
+        );
+    map(D,C,maps,Degree=>deg)
+    )
+
+map(Complex, Complex, ZZ) := ComplexMap => opts -> (tar, src, j) -> (
     if j != 0 then error "expected integer to be zero";
-    hom(tar,src,hashTable{},opts)
+    result := map(tar,src,hashTable{},opts);
+    result.cache.isCommutative = true;
+    result
     )
 
-hom(Complex, Complex, ComplexHomomorphism) := opts -> (tar, src, f) -> (
+map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     deg := if opts.Degree === null then degree f else opts.Degree;
     H := hashTable for k in keys f.map list k => map(tar_(deg+k), src_k, f.map#k);
-    hom(tar,src,H, Degree=>deg)
+    map(tar,src,H, Degree=>deg)
     )
-hom ComplexMorphism := opts -> f -> new ComplexHomomorphism from f
 
-isWellDefined ComplexHomomorphism := f -> (
+ComplexMap | ComplexMap := ComplexMap => (f,g) -> (
+    if target f =!= target g then error "expected targets to be the same";
+    deg := degree f;
+    if deg =!= degree g then error "expected maps with the same degree";
+    result := map(target f, source f ++ source g, {{f,g}}, Degree=>deg);
+    if f.cache.?isCommutative and g.cache.?isCommutative then (
+      result.cache.isCommutative = f.cache.isCommutative and g.cache.isCommutative;
+      );
+    result
+    )
+
+ComplexMap || ComplexMap := ComplexMap => (f,g) -> (
+    if source f =!= source g then error "expected sources to be the same";
+    deg := degree f;
+    if deg =!= degree g then error "expected maps with the same degree";
+    result := map(target f ++ target g, source f, {{f},{g}}, Degree=>deg);
+    if f.cache.?isCommutative and g.cache.?isCommutative then (
+      result.cache.isCommutative = f.cache.isCommutative and g.cache.isCommutative;
+      );
+    result
+    )
+
+isWellDefined ComplexMap := f -> (
     k := keys f;
     expectedKeys := set {
         symbol source, 
@@ -721,36 +883,39 @@ isWellDefined ComplexHomomorphism := f -> (
             return false;
             );
         );
-    true
-    )
-
-isWellDefined ComplexMorphism := f -> (
-    if not isWellDefined hom f then return false;
-    if f.degree =!= 0 then (
-        if debugLevel > 0 then (
-            << "-- expected degree of a complex morphism to be zero" << endl;
-            );
-        return false;
-        );
-    -- Need to check that f commutes differential
-    (lo,hi) := f.source.concentration;
-    dC := dd^(source f);
-    dD := dd^(target f);
-    for i from lo to hi do (
-        if f_(i-1) * dC_i != dD_i * f_i then (
+    if f.cache.?isCommutative then (
+        deg := degree f;
+        C := f.source;
+        D := f.target;
+        (loC,hiC) := C.concentration;
+        (loD,hiD) := D.concentration;
+        iscommutative := true;
+        for i from loC to hiC do (
+            if i+deg-1 >= loD and i+deg-1 <= hiD then (
+                if not (dd^D_(i+deg) * f_i == f_(i-1) * dd^C_i)
+                then (
+                    iscommutative = false;
+                    if f.cache.isCommutative then (
+                        if debugLevel > 0 then (
+                            << "-- the cache table incorrectly asserts that the maps commute with the differentials " << endl;
+                            << "--   differential at index " << i << " fails this condition" << endl;                
+                            );
+                        return false;
+                        );
+                    )));
+        if iscommutative and not f.cache.isCommutative then (
             if debugLevel > 0 then (
-                << "-- expected morphism to commute with differentials" << endl;
-                << "--   index " << i << " fails this condition" << endl;
+                << "-- the cache table incorrectly asserts that the maps do not commute with the differentials " << endl;
                 );
             return false;
             );
         );
-    true    
-    )    
+    true
+    )
 
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
-net ComplexHomomorphism := f -> (
+net ComplexMap := f -> (
      v := between("",
             for i in sort keys f.map list (
                 horizontalJoin(
@@ -763,16 +928,18 @@ net ComplexHomomorphism := f -> (
      else stack v
      )
 
-ComplexHomomorphism _ ZZ := Matrix => (f,i) -> (
+ComplexMap _ ZZ := Matrix => (f,i) -> (
     if f.map#?i then f.map#i else map((target f)_(i + degree f), (source f)_i, 0))
-ComplexHomomorphism ^ ZZ := ComplexHomomorphism => (f,n) -> (
+ComplexMap ^ ZZ := ComplexMap => (f,n) -> (
     (lo,hi) := (source f).concentration;
     df := degree f;
     if n === -1 then (
         maps := hashTable for i from lo to hi list (i+df) => (
             f_i^(-1)
             );
-        hom(source f, target f, maps, Degree=>-df)
+        result := map(source f, target f, maps, Degree=>-df);
+        if f.cache.?isCommutative then result.cache.isCommutative = f.cache.isCommutative;
+        result
 	    )
     else if n < 0 then (f^-1)^(-n)
     else if n === 0 then id_(source f)
@@ -788,12 +955,13 @@ ComplexHomomorphism ^ ZZ := ComplexHomomorphism => (f,n) -> (
               );
           if s == 0 then continue else s
           );
-      hom(source f, source f, maps, Degree=> n * df)
+      result = map(source f, source f, maps, Degree=> n * df);
+      if f.cache.?isCommutative then result.cache.isCommutative = f.cache.isCommutative;
+      result
       )
   )
-ComplexMorphism ^ ZZ := ComplexMorphism => (f,n) -> map((hom f)^n)
 
-ComplexHomomorphism == ComplexHomomorphism := (f,g) -> (
+ComplexMap == ComplexMap := (f,g) -> (
     if f === g then return true;    
     if source f != source g or target f != target g 
       then return false;
@@ -804,7 +972,7 @@ ComplexHomomorphism == ComplexHomomorphism := (f,g) -> (
         );
     true    
     )
-ComplexHomomorphism == ZZ := (f,n) -> (
+ComplexMap == ZZ := Boolean => (f,n) -> (
     if n === 0 then 
         all(keys f.map, k -> f.map#k == 0)
     else if n === 1 then (
@@ -813,32 +981,44 @@ ComplexHomomorphism == ZZ := (f,n) -> (
         (lo,hi) := (source f).concentration;
         for i from lo to hi do
             if f_i != 1 then return false;
+        f.cache.isCommutative = true;  -- this is the identity, after all!        
         true
         )
     else 
-        error "cannot compare ComplexHomomorphism to integer other than 0 or 1"
+        error "cannot compare ComplexMap to integer other than 0 or 1"
     )
+ZZ == ComplexMap := Boolean => (n,f) -> f == n
 
-RingElement * ComplexHomomorphism := (r,f) -> (
+RingElement * ComplexMap := (r,f) -> (
+    -- remark: if isInCenter(RingElement) is implemented,
+    -- we could use that here to recognize commutativity
+    -- in that case, replace 'isCommutative ring f' with 'isInCenter r'
+    -- and simplify '- ComplexMap' by removing the cache test and assignment.
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
         h := r * f_i;
         if h == 0 then continue else h
         );
-    hom(target f, source f, maps, Degree=>df)
+    result := map(target f, source f, maps, Degree=>df);
+    if f.cache.?isCommutative and f.cache.isCommutative and isCommutative ring f then
+        result.cache.isCommutative = true;
+    result
     )
-RingElement * ComplexMorphism := (r,f) -> map (r * hom f)
 
-Number * ComplexHomomorphism := (r,f) -> (
+Number * ComplexMap := (r,f) -> (
     try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
     r * f
     )
-Number * ComplexMorphism := (r,f) -> map (r * hom f)
 
-- ComplexHomomorphism := (f) -> (-1)*f
+- ComplexMap := (f) -> (
+    result := (-1)*f;
+    if f.cache.?isCommutative and f.cache.isCommutative then
+        result.cache.isCommutative = true;
+    result
+    )
 
-ComplexHomomorphism + ComplexHomomorphism := (f,g) -> (
+ComplexMap + ComplexMap := (f,g) -> (
     df := degree f;
     dg := degree g;
     if source f != source g then error "expected complex homomorphisms with the same source";
@@ -849,13 +1029,31 @@ ComplexHomomorphism + ComplexHomomorphism := (f,g) -> (
         h := f_i + g_i;
         if h == 0 then continue else h
         );
-    hom(target f, source f, maps, Degree=>df)
+    result := map(target f, source f, maps, Degree=>df);
+    if f.cache.?isCommutative and g.cache.?isCommutative 
+      and f.cache.isCommutative and g.cache.isCommutative then
+      result.cache.isCommutative = true;
+    result
     )
-ComplexMorphism + ComplexMorphism := (f,g) -> map((hom f) + (hom g))
+ComplexMap + Number :=
+ComplexMap + RingElement := ComplexMap => (f,r) -> (
+    if r == 0 then f
+    else (
+        if source f != target f
+        then error "expected same source and target"
+        else f + r*id_(target f))
+    )
+Number + ComplexMap :=
+RingElement + ComplexMap := ComplexMap => (r,f) -> f + r
 
-ComplexHomomorphism - ComplexHomomorphism := (f,g) -> f + (-1)*g
+ComplexMap - Number :=
+ComplexMap - RingElement :=
+ComplexMap - ComplexMap := ComplexMap => (f,g) -> f + (-1)*g
 
-ComplexHomomorphism * ComplexHomomorphism := (f,g) -> (
+Number - ComplexMap :=
+RingElement - ComplexMap := ComplexMap => (r,f) -> -f + r
+
+ComplexMap * ComplexMap := (f,g) -> (
     df := degree f;
     dg := degree g;
     (lo,hi) := (source g).concentration;
@@ -863,12 +1061,15 @@ ComplexHomomorphism * ComplexHomomorphism := (f,g) -> (
         h := f_(dg + i) * g_i;
         if h == 0 then continue else h
         );
-    hom(target f, source g, maps, Degree=>df+dg)
+    result := map(target f, source g, maps, Degree=>df+dg);
+    if f.cache.?isCommutative and g.cache.?isCommutative 
+      and f.cache.isCommutative and g.cache.isCommutative then
+      result.cache.isCommutative = true;
+    result
     )
-ComplexMorphism * ComplexMorphism := (f,g) -> map((hom f)*(hom g))
 
-ComplexHomomorphism.directSum = args -> (
-    -- args: sequence of ComplexHomomorphism's
+ComplexMap.directSum = args -> (
+    -- args: sequence of ComplexMap's
     -- args: f_i : C_i --> D_i, having same degree deg
     -- result : sum(C_i) --> sum(D_i)
     R := ring args#0;
@@ -882,61 +1083,73 @@ ComplexHomomorphism.directSum = args -> (
     -- only keep matrices in the homomorphism that are non-zero
     spots := unique flatten(args/(f -> keys f.map));
     maps := hashTable for i in spots list i => directSum(args/(f -> f_i));
-    result := hom(tar,src,maps,Degree=>deg);
+    result := map(tar,src,maps,Degree=>deg);
     result.cache.components = toList args;
+    if all(args, f -> f.cache.?isCommutative and f.cache.isCommutative) then 
+        result.cache.isCommutative = true;
     result
     )
-ComplexMorphism.directSum = args -> map ComplexHomomorphism.directSum args
 
-ComplexHomomorphism ++ ComplexHomomorphism := ComplexHomomorphism => (f,g) -> directSum(f,g)
-directSum ComplexHomomorphism := f -> directSum(1 : f)
-components ComplexHomomorphism := f -> if f.cache.?components then f.cache.components else {f}
-ComplexHomomorphism ^ Array := ComplexHomomorphism => (f,v) -> (target f)^v * f
-ComplexHomomorphism _ Array := ComplexHomomorphism => (f,v) -> f * (source f)_v
+ComplexMap ++ ComplexMap := ComplexMap => (f,g) -> directSum(f,g)
+directSum ComplexMap := f -> directSum(1 : f)
+components ComplexMap := f -> if f.cache.?components then f.cache.components else {f}
+ComplexMap ^ Array := ComplexMap => (f,v) -> (target f)^v * f
+ComplexMap _ Array := ComplexMap => (f,v) -> f * (source f)_v
 
-ComplexHomomorphism Array := ComplexHomomorphism => (f,L) -> (
+ComplexMap Array := ComplexMap => (f,L) -> (
     if #L != 1 or not instance(L#0,ZZ) then error "expected an integer shift";
     maps := hashTable for k in keys f.map list (k - L#0) => f.map#k;
-    hom((target f)[L#0], (source f)[L#0], maps, Degree=> degree f)
+    result := map((target f)[L#0], (source f)[L#0], maps, Degree=> degree f);
+    if f.cache.?isCommutative and f.cache.isCommutative then
+        result.cache.isCommutative = true;
+    result
     )
-ComplexMorphism Array := ComplexMorphism => (f,L) -> map((hom f) L)
----------------------
--- ComplexMorphism --
----------------------
-isComplexMorphism = method(TypicalValue => Boolean)
-isComplexMorphism ComplexHomomorphism := (f) -> (
-    -- check that f has degree 0 and commutes with differentials
-    if degree f =!= 0 then return false;
+
+isCommutative ComplexMap := (cacheValue symbol isCommutative)(f -> (
     C := source f;
     D := target f;
+    deg := degree f;
     (loC,hiC) := C.concentration;
     (loD,hiD) := D.concentration;
     for i from loC to hiC do (
-        if i-1 >= loD and i-1 <= hiD then (
-            if not (dd^D_i * f_i == f_(i-1) * dd^C_i)
-            then return false;
+        if i+deg-1 >= loD and i+deg-1 <= hiD then (
+            if not (dd^D_(i+deg) * f_i == f_(i-1) * dd^C_i)
+            then (
+                if debugLevel > 0 then (
+                    << "block " << (i,i-1) << " fails to commute" << endl;
+                    );
+                return false;
+                )
             )
         );
     true
+    ))
+
+isComplexMorphism = method(TypicalValue => Boolean)
+isComplexMorphism ComplexMap := (f) -> degree f === 0 and isCommutative f
+
+minimalPresentation ComplexMap := 
+prune ComplexMap := ComplexMap => opts -> f -> (
+    map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f_k)
     )
 
-map(Complex, Complex, ComplexMorphism) := 
-map(Complex, Complex, List) :=
-map(Complex,Complex,HashTable) := opts -> (tar, src, maps) -> (
-    new ComplexMorphism from hom(tar, src, maps, opts)
+homology(ZZ,ComplexMap) := Matrix => opts -> (i,f) -> (
+    inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
     )
-map(Complex, Complex, ZZ) := opts -> (tar, src, j) -> (
-    if j === 0 then 
-      return new ComplexMorphism from hom(tar,src,hashTable{},opts);
-    if tar != src then error "expected 0, or source and target to be the same";
-    if j === 1 then 
-      id_tar
-    else
-      j * id_tar
-    )
-map ComplexHomomorphism := opts -> f -> (
-    if degree f =!= 0 then error "expected degree zero homomorphism of complexes";
-    new ComplexMorphism from f
+cohomology(ZZ,ComplexMap) := Matrix => opts -> (i,f) -> homology(-i, f)
+homology ComplexMap := ComplexMap => opts -> (f) -> (
+    C := source f;
+    D := target f;
+    deg := degree f;
+    (loC,hiC) := C.concentration;
+    (loD,hiD) := D.concentration;
+    HC := homology C;
+    HD := homology D;
+    maps := hashTable for i from max(loC,deg+loD) to min(hiC,deg+hiD) list
+        i => inducedMap(HD_(i+deg), HC_i, f_i);
+    result := map(HD, HC, maps, Degree => deg);
+    result.cache.isCommutative = true; -- all differentials are zero
+    result
     )
 
 --------------
@@ -951,7 +1164,6 @@ component(Module,Thing) := (M,k) -> (
 Hom(Complex, Complex) := Complex => (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)
-    -- ZZZ
     Y := youngest(C,D);
     if Y.cache#?(Hom,C,D) then return Y.cache#(Hom,C,D);
     R := ring C;
@@ -990,7 +1202,7 @@ Hom(Module, Complex) := Complex => (M,D) -> Hom(complex M, D)
 Hom(Complex, Module) := Complex => (C,N) -> Hom(C, complex N)
 dual Complex := Complex => {} >> o -> (C) -> Hom(C, (ring C)^1)
 
-Hom(ComplexHomomorphism, ComplexHomomorphism) := ComplexHomomorphism => (f,g) -> (
+Hom(ComplexMap, ComplexMap) := ComplexMap => (f,g) -> (
     df := degree f;
     dg := degree g;
     src := Hom(target f, source g);
@@ -1021,7 +1233,11 @@ Hom(ComplexHomomorphism, ComplexHomomorphism) := ComplexHomomorphism => (f,g) ->
             matrix m
             )
       ));
-    hom(tar, src, maps, Degree=>df+dg)
+    result := map(tar, src, maps, Degree=>df+dg);
+    if f.cache.?isCommutative and f.cache.isCommutative 
+        and g.cache.?isCommutative and g.cache.isCommutative then
+        result.cache.isCommutative = true;
+    result    
     -- f : C1 --> C2, g : D1 --> D2
     -- Hom(f,g) : Hom(C2,D1)_i --> Hom(C1,D2)_(i+df+dg) (indices?)
     -- Hom(C2,D1)_i = sum_j Hom(C2_j, D1_(j+i))
@@ -1030,13 +1246,13 @@ Hom(ComplexHomomorphism, ComplexHomomorphism) := ComplexHomomorphism => (f,g) ->
     -- need to premultiply by f_(j-df), postmult by g_(j+i)
     -- Hom(f_(j-df), g_(j+i))
     )
-Hom(Complex, ComplexHomomorphism) := ComplexHomomorphism => (C,g) -> Hom(id_C, g)
-Hom(ComplexHomomorphism, Complex) := ComplexHomomorphism => (f,D) -> Hom(f, id_D)
-Hom(Module, ComplexHomomorphism) := ComplexHomomorphism => (M,g) -> Hom(complex M, g)
-Hom(ComplexHomomorphism, Module) := ComplexHomomorphism => (f,N) -> Hom(f, complex N)
-Hom(ComplexMorphism, ComplexMorphism) := ComplexMorphism => (f,g) -> map Hom(hom f,hom g)
+Hom(Complex, ComplexMap) := ComplexMap => (C,g) -> Hom(id_C, g)
+Hom(ComplexMap, Complex) := ComplexMap => (f,D) -> Hom(f, id_D)
+Hom(Module, ComplexMap) := ComplexMap => (M,g) -> Hom(complex M, g)
+Hom(ComplexMap, Module) := ComplexMap => (f,N) -> Hom(f, complex N)
+dual ComplexMap := ComplexMap => {} >> o -> f -> Hom(f, (ring f)^1)
 
-homomorphism(ZZ, Matrix, Complex) := ComplexHomomorphism => (i, f, E) -> (
+homomorphism(ZZ, Matrix, Complex) := ComplexMap => (i, f, E) -> (
     -- f: R^1 --> E_i (R is the ring of E and phi)
     -- E: is a Complex, the output of Hom(C,D), C,D complexes.
     -- return the complex homomorphism g : C --> D of degree i.
@@ -1059,9 +1275,9 @@ homomorphism(ZZ, Matrix, Complex) := ComplexHomomorphism => (i, f, E) -> (
     (lo,hi) := concentration C;
     H := hashTable for j from lo to hi list j => 
       homomorphism fixme f^[{j,j+i}];
-    hom(D,C,H, Degree=>i)
+    map(D,C,H, Degree=>i)
     )
-homomorphism ComplexHomomorphism := ComplexHomomorphism => (h) -> (
+homomorphism ComplexMap := ComplexMap => (h) -> (
     -- h should be a homomorphism of complexes from R^1[-i] --> E = Hom(C,D)
     -- returns the corresponding f : C --> D.
     R1 := source h;
@@ -1078,7 +1294,7 @@ homomorphism ComplexHomomorphism := ComplexHomomorphism => (h) -> (
     homomorphism(i, h_i, target h)
     )
 
-homomorphism' ComplexHomomorphism := ComplexHomomorphism => (f) -> (
+homomorphism' ComplexMap := ComplexMap => (f) -> (
     R := ring f;
     C := source f;
     D := target f;
@@ -1087,8 +1303,7 @@ homomorphism' ComplexHomomorphism := ComplexHomomorphism => (f) -> (
     (lo,hi) := concentration C;
     -- want R^1[0] --> H
     g := map(H_d, R^1, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
-    hom(H, complex R, hashTable {0 => g}, Degree=>d)
-    -- ZZZ
+    map(H, complex R, hashTable {0 => g}, Degree=>d)
     )
     
 ----------------------
@@ -1135,7 +1350,42 @@ Complex ** Complex := Complex => (C,D) -> tensor(C,D)
 Module ** Complex := Complex => (M,D) -> (complex M) ** D
 Complex ** Module := Complex => (C,N) -> C ** (complex N)
 
-ComplexHomomorphism ** ComplexHomomorphism := ComplexHomomorphism => (f,g) -> (
+Complex ** Ring := Complex => (C,R) -> (
+    (lo,hi) := concentration C;
+    moduleHash := hashTable for i from lo to hi list i => C_i ** R;
+    if lo === hi then 
+        return complex(moduleHash#lo, Base=>lo);
+    mapHash := hashTable for i from lo+1 to hi list i => 
+        map(moduleHash#(i-1), moduleHash#i, (cover dd^C_i) ** R);
+    complex mapHash
+    )
+
+ComplexMap ** Ring := ComplexMap => (f,R) -> (
+    C := (source f) ** R;
+    D := (target f) ** R;
+    deg := degree f;
+    (lo,hi) := concentration f;
+    maps := hashTable for i from lo to hi list i => map(D_(i+deg), C_i, (cover f_i) ** R);
+    result := map(D, C, maps, Degree => deg);
+    if f.cache.?isCommutative and f.cache.isCommutative then
+        result.cache.isCommutative = true;
+    result
+    )
+
+RingMap Complex := Complex => (phi,C) -> (
+    (lo,hi) := concentration C;
+    moduleHash := hashTable for i from lo to hi list i => phi C_i;
+    if lo === hi then 
+        return complex(moduleHash#lo, Base=>lo);
+    mapHash := hashTable for i from lo+1 to hi list i => 
+        map(moduleHash#(i-1), moduleHash#i, phi dd^C_i);
+    complex mapHash
+    )
+
+RingMap ComplexMap := ComplexMap => (phi,f) ->
+    map(phi target f, phi source f, i -> phi f_i)
+
+ComplexMap ** ComplexMap := ComplexMap => (f,g) -> (
     df := degree f;
     dg := degree g;
     src := (source f) ** (source g);
@@ -1165,19 +1415,24 @@ ComplexHomomorphism ** ComplexHomomorphism := ComplexHomomorphism => (f,g) -> (
             map(tar_(i+df+dg), src_i, matrix m)
             )
         );
-    hom(tar, src, maps, Degree=>df+dg)
+    result := map(tar, src, maps, Degree=>df+dg);
+    if f.cache.?isCommutative and f.cache.isCommutative 
+        and g.cache.?isCommutative and g.cache.isCommutative then
+        result.cache.isCommutative = true;
+    result    
     -- f : C1 --> C2, g : D1 --> D2
     -- f**g : C1**D1 --> C2**D2
     -- (f**g)_i : C1_j ** D1_(i-j) --> C2_(j+df) ** D2_(i-j+dg)
     )
-Complex ** ComplexHomomorphism := ComplexHomomorphism => (C,g) -> id_C ** g
-ComplexHomomorphism ** Complex := ComplexHomomorphism => (f,D) -> f ** id_D
-Module ** ComplexHomomorphism := ComplexHomomorphism => (M,g) -> (complex M) ** g
-ComplexHomomorphism ** Module := ComplexHomomorphism => (f,N) -> f ** (complex N)
-ComplexMorphism ** ComplexMorphism := ComplexMorphism => (f,g) -> map(hom f ** hom g)
+Complex ** ComplexMap := ComplexMap => (C,g) -> id_C ** g
+ComplexMap ** Complex := ComplexMap => (f,D) -> f ** id_D
+Module ** ComplexMap := ComplexMap => (M,g) -> (complex M) ** g
+ComplexMap ** Module := ComplexMap => (f,N) -> f ** (complex N)
 --------------
 -- sign convection: Using Conrad (Grothendieck Duality) sign choice for cone, pg 8 of intro. 
-cone ComplexMorphism := Complex => f -> (
+cone ComplexMap := Complex => f -> (
+    if not isComplexMorphism f then 
+        error "expected a complex morphism";
     B := source f;
     C := target f;
     (loB,hiB) := B.concentration;
@@ -1198,7 +1453,9 @@ cone ComplexMorphism := Complex => f -> (
     )
 
 cylinder = method()
-cylinder ComplexMorphism := Complex => f -> (
+cylinder ComplexMap := Complex => f -> (
+    if not isComplexMorphism f then 
+        error "expected a complex morphism";
     B := source f;
     C := target f;
     (loB,hiB) := B.concentration;
@@ -1218,6 +1475,9 @@ cylinder ComplexMorphism := Complex => f -> (
     result.cache.cylinder = f;
     result
     )
+
+isQuasiIsomorphism = method()
+isQuasiIsomorphism ComplexMap := f -> HH cone f == 0
 
 -- TODO: this function needs to be more completely debugged
 canonicalMap = method(Options => {UseTarget=>null})
@@ -1338,7 +1598,20 @@ canonicalMap(Complex, Complex) := opts -> (E,D) -> (
     error "no canonical map between given complexes";
     )
 
-ker ComplexMorphism := opts -> f -> (
+inducedMap(Complex, Complex) := ComplexMap => opts -> (D,C) -> (
+    -- compute f : C --> D the map induced by the identity matrix.
+    deg := if opts.Degree === null then 0 else opts.Degree;
+    (loC,hiC) := concentration C;
+    (loD,hiD) := concentration D;
+    maps := hashTable for i from max(loC,loD-deg) to min(hiC,hiD-deg) list i => inducedMap(D_(i+deg),C_i);
+    map(D,C,maps,Degree=>deg)
+    )
+
+ker ComplexMap := opts -> f -> (
+    -- TODO: we only need that the map is commutative, but
+    -- then the degrees need to be shifted.
+    if not isComplexMorphism f then 
+        error "expected a complex morphism";
     -- f : B --> C
     -- NOTE: options of ker do not apply here.
     B := source f;
@@ -1352,20 +1625,27 @@ ker ComplexMorphism := opts -> f -> (
     result.cache.kernel = f;
     result
     )
-coker ComplexMorphism := f -> (
+coker ComplexMap := f -> (
     -- f : B --> C
     C := target f;
     (lo,hi) := C.concentration;
-    modules := hashTable for i from lo to hi list i => cokernel f_i;
+    deg := degree f;
+    modules := hashTable for i from lo to hi list i => cokernel f_(i-deg);
     maps := hashTable for i from lo+1 to hi list i => (
            map(modules#(i-1), modules#i, matrix dd^C_i)
         );
     result := complex maps;
+    if not isWellDefined result then
+        error "expected chain map to induce a well-defined differential on the cokernel";
     result.cache.cokernel = f;
     result
     )
-image ComplexMorphism := f -> (
+image ComplexMap := f -> (
     -- f : B --> C
+    -- TODO: we only need that the map is commutative, but
+    -- then the degrees need to be shifted.
+    if not isComplexMorphism f then 
+        error "expected a complex morphism";
     B := source f;
     C := target f;
     (lo,hi) := C.concentration;
@@ -1377,8 +1657,12 @@ image ComplexMorphism := f -> (
     result.cache.image = f;
     result
     )
-coimage ComplexMorphism := f -> (
+coimage ComplexMap := f -> (
     -- f : B --> C
+    -- TODO: we only need that the map is commutative, but
+    -- then the degrees need to be shifted.
+    if not isComplexMorphism f then 
+        error "expected a complex morphism";
     B := source f;
     C := target f;
     (lo,hi) := C.concentration;
@@ -1391,7 +1675,7 @@ coimage ComplexMorphism := f -> (
     result
     )
 
-extend(Complex,Complex,Matrix) := ComplexMorphism => opts -> (D,C,f)-> (
+extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D,C,f)-> (
     -- assumptions:
     -- (a) f : C_lo --> D_lo, where lo is the smallest homological index in C.
     -- (b) C should be a complex of free modules (free objects?)
@@ -1412,6 +1696,7 @@ extend(Complex,Complex,Matrix) := ComplexMorphism => opts -> (D,C,f)-> (
         if not isComplexMorphism result
         then error "map cannot be extended";
         );
+    result.cache.isCommutative = true;
     result
     )
 
@@ -1451,7 +1736,7 @@ tensorAssociativity(Complex,Complex,Complex) := (A,B,C) -> (
 
 isDirectSum Complex := (C) -> C.cache.?components
 
--* -- Greg + Mike think this is old debugging code.  Are we right?!
+{* -- Greg + Mike think this is old debugging code.  Are we right?!
 basicHom = (C,D) -> (
     R := ring C;
     if ring D =!= R then error "expected complexes over the same ring";
@@ -1500,7 +1785,7 @@ Hom(Complex, Complex) := Complex => (C, D) -> (
                Hom((components C)#i, (components D)#i)
        ));
    )
-*-
+*}
 
 UNTEST ///
 restart
@@ -1512,7 +1797,6 @@ needsPackage "Complexes"
   F = Hom(C ++ D, E)
   indices F
   components F
-  -- XXXXX
   F1 = (C++D) ** E
   components F1
   indices F1
@@ -1542,11 +1826,125 @@ needsPackage "Complexes"
   components hom4
 
 ///
+
+-- given C, and ZC, HC, pHC, R^ai --> pHC_i, each i
+-- for each index, we compute a map from complex(R^ai,0 maps) --> C
+lambda0 = method()
+lambda0 Complex := ComplexMap => (C) -> (
+    dC := map(C[-1], C, dd^C, Degree=>0);
+    ZC := ker dC;
+    HC := HH C;
+    pHC := prune HC;
+    f := inducedMap(C, ZC);
+    g := inducedMap(HC, ZC);
+    (lo,hi) := concentration pHC;
+    L0 := complex(for i from lo to hi list cover pHC_i, Base => lo);
+    h := map(pHC, L0, i -> map(pHC_i, L0_i, gens pHC_i));
+    h1 := pHC.cache.pruningMap * h;
+    map(C, L0, i -> f_i * (h1_i // g_i))
+    )
+
+  nextLambda = method()
+  nextLambda ComplexMap := ComplexMap => (lambda) -> (
+    C := target lambda;
+    L0 := source lambda;
+    ZL := ker HH lambda;
+    pZL := prune ZL;
+    (lo,hi) := concentration L0;
+    covers := hashTable for i from lo-1 to hi+1 list i => cover pZL_(i-1);
+    kerGens := hashTable for i from lo to hi+1 list i => (
+        h := map(ZL_(i-1), covers#i, pZL.cache.pruningMap_(i-1) * map(pZL_(i-1),,gens pZL_(i-1)));
+        map(L0_(i-1), ZL_(i-1), gens ZL_(i-1)) * h
+        );
+    maps := hashTable for i from lo+1 to hi+1 list (
+        -- i-th differential of L1: L1_i = L0_i ++ cov2 --> L1_(i-1) = L0_(i-1) ++ cov1
+        cov1 := covers#(i-1);
+        cov2 := covers#i;
+        phi := map(L0_(i-1) ++ cov1, L0_i ++ cov2, matrix {
+                {dd^L0_i,            kerGens#i           }, 
+                {map(cov1, L0_i, 0), map(cov1, cov2, 0) }
+                });
+        if i === hi+1 and phi == 0 then continue else i => phi
+        );
+    L1 := complex maps;
+    -- now, time to create the map L1 --> C
+    (lo,hi) = concentration L1;
+    maps = hashTable for i from lo to hi list i => (
+        m :=  (lambda_(i-1) * kerGens#i) // dd^C_i;
+        map(C_i, L1_i, matrix{{lambda_i, m}})
+        );
+    map(C, L1, maps)
+    )
+
+resolutionMap = method(Options => {Minimize=>true})
+resolutionMap Complex := opts -> (cacheValue symbol ResolutionMap)(C -> (
+    L := lambda0 C;
+    while ker HH L != 0 do L = nextLambda L;
+    L
+    ))
+
+resolution Complex := opts -> C -> source resolutionMap C    
+
+-- AAAA
+
+------------------------------------------------
+-- Minimization of a complex -------------------
+-- adapted from ChainComplexExtras.m2 ----------
+------------------------------------------------
+-- BBBB
+minimize = method ()
+minimize Complex := C -> (
+    (lo,hi) := concentration C;
+    S := ring C;
+    ev0 := map(S, S, for x in gens S list 0_S);
+    g := hashTable for i from lo to hi+1 list i => syz ev0 C.dd_i;
+    rho := hashTable for i from lo to hi+1 list i => (
+        id_(C_i) - g#i * (id_(target g#i)//g#i)
+        );
+    maps := hashTable for i from lo to hi list i => rho#i | C.dd_(i+1)*rho#(i+1);
+    C' := coker map(C, C ++ C[1], maps, Degree=>0);
+    pmC := prune C';
+    map(pmC, C, i -> (pmC_i.cache.pruningMap)^(-1) * inducedMap(C'_i, C_i))
+    )
+
+  -- BBBB: problem currently: in code below, phi is not a complex morphism.
+  --  so the differential in the cokernel isn't (doesn't appear to be) well-defined.
+  --  Let's do this on a simpler example, to see.
+  minimize ChainComplex := E ->(
+    --To simplify the notation consider the complex C = E[min E] that
+    --is shifted so that the first nonzero module is C_0.
+    --The algorithm:
+    --Set dbar = the reduction of the differential d mod the maximal ideal.
+    --choose a complement of ker dbar, and compute the idempotent rho: E -> E.
+    -- the map rho is not a chain complex map, but the image of 
+    --(rho | d*rho): C ++ C[1] --> C is a subcomplex and 
+    --the minimization of  C is the complex C/image(rho|d*rho).
+    --The script returns the ChainComplexMap from the minimization to C.
+    complete E;
+    C:= E[min E]; -- now min C == 0.
+    M := max C;
+    S := ring C;
+    red := map(S,S,toList(numgens S:0_S));
+    --make maps g_i: ker(red C.dd_i) -> C_i
+    g := hashTable for i from 0 to M+1 list {i,syz red C.dd_i};
+    --For each i choose an idempotent rho#i:C_i\to C_i
+    --whose image is the complement
+    --image g#i, Note that rho#0 = 0.
+    rho := hashTable for i from 0 to M+1 list 
+	{i,id_(C_i) - g#i*(id_(target g#i)//g#i)};
+    phi := map(C, C++C[1], i-> rho#i | C.dd_(i+1)*rho#(i+1));
+    minC := coker phi;
+    pmC := prune minC;
+    m := map(pmC, C, i-> (pmC_i.cache.pruningMap)^(-1) * inducedMap(minC_i, C_i));
+    error "debug me";
+    m[-min E]
+    )
+
 beginDocumentation()
 
 undocumented{
     (net, Complex),
-    (net, ComplexHomomorphism),
+    (net, ComplexMap),
     (component,Module,Thing),
     component
     }
@@ -1570,11 +1968,10 @@ needsPackage "Complexes"
 ///
 
 UNTEST ///
--*
+{*
 restart
 needsPackage "Complexes"
-*-
-  -- XXXXXX
+*}
   R = ZZ/101[a..f]
   A = freeResolution coker matrix{{a,b}}
   B = freeResolution monomialCurveIdeal(R,{1,2,3})
@@ -1688,18 +2085,18 @@ doc ///
       isWellDefined C
       (dd^C)^2
    SeeAlso
-     (isWellDefined, ComplexMorphism)
+     (isWellDefined, ComplexMap)
      map
 ///
 
--* -- The following block of text doesn't validate anymore, and goes right after the last Example above this.
+{* -- The following block of text doesn't validate anymore, and goes right after the last Example above this.
     Text
       @SUBSECTION "Programming Details"@
       The function also checks the data structure for the following:
       @UL {
-          {"The keys are exactly ring, concentration, module, differential, cache"},
+          {"The keys are exactly ring, concentration, module, dd, cache"},
           }@
-*-
+*}
 doc ///
    Key
      (complex, Module)
@@ -2242,7 +2639,7 @@ doc ///
      C:Complex
      name:
    Outputs
-     :ComplexMorphism
+     :ComplexMap
        {\tt i} is the canonical inclusion and {\tt p} is
        the canonical projection
    Description
@@ -2629,7 +3026,7 @@ doc ///
 
 doc ///
   Key
-    ComplexHomomorphism
+    ComplexMap
   Headline
     the class of all homomorphisms of complexes
   Description
@@ -2651,11 +3048,11 @@ doc ///
       multiplied by the appropriate identity map.
   SeeAlso
     Complex
-    ComplexMorphism
 ///
 
 
-doc ///
+-- this is deleted, but maybe we want the prose.
+///
   Key
     ComplexMorphism
   Headline
@@ -2681,28 +3078,25 @@ doc ///
       multiplied by the appropriate identity map.
   SeeAlso
     Complex
-    ComplexHomomorphism
+    ComplexMap
 ///
 
 doc ///
   Key
-    (symbol*, ComplexHomomorphism, ComplexHomomorphism)
-    (symbol*, ComplexMorphism, ComplexMorphism)
-    (symbol*, RingElement, ComplexHomomorphism)
-    (symbol*, RingElement, ComplexMorphism)
-    (symbol*, Number, ComplexHomomorphism)
-    (symbol*, Number, ComplexMorphism)
+    (symbol*, ComplexMap, ComplexMap)
+    (symbol*, RingElement, ComplexMap)
+    (symbol*, Number, ComplexMap)
   Headline
     composition of homomorphisms of complexes
   Usage
     f = h * g
   Inputs
-    h:ComplexHomomorphism
+    h:ComplexMap
       if a ring element or integer, then we multiply the ring element
       by the appropriate identity map
-    g:ComplexHomomorphism
+    g:ComplexMap
   Outputs
-    f:ComplexHomomorphism
+    f:ComplexMap
       the composition of $g$ followed by $h$
   Description
     Text
@@ -2711,9 +3105,6 @@ doc ///
       $f_i := h_{d+i} * g_i : C_i \rightarrow E_{i+d+e}$.  In particular,
       the degree of the composition $f$ is the sum of the degrees of
       $g$ and $h$.
-      
-      If $g$ and $h$ are both @ofClass ComplexMorphism@, then the result $f$
-      will also be @ofClass ComplexMorphism@.
     Example
       R = ZZ/101[a..d]
       C = freeResolution coker vars R
@@ -2727,10 +3118,10 @@ doc ///
 
 TEST ///
   -- test creation of complexes 1: via free resolutions
--*
+{*
   restart
   needsPackage "Complexes"
-*-
+*}
   R = ZZ/32003[vars(0..17)]
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
@@ -2774,10 +3165,10 @@ TEST ///
 
 TEST ///
   -- test creation of complexes 2: from modules
--*
+{*
   restart
   needsPackage "Complexes"
-*-
+*}
 
   S = ZZ/101[a..d]
   C0 = complex S^2
@@ -2846,10 +3237,10 @@ TEST ///
 ///
 TEST ///
   -- test creation of complexes 3: via constructors
--*
+{*
   restart
   needsPackage "Complexes"
-*-
+*}
   S = ZZ/101[a..d]
   I = ideal(b^2-a*c, b*c-a*d, c^2-b*d)
   F1 = map(S^1,,matrix{{I_0, I_1, I_2}})
@@ -2863,7 +3254,7 @@ TEST ///
   assert isWellDefined C
   assert(ring C === S)
   assert(concentration C == (0,3))
-  
+
   assert(rank C_2 == 3)
   assert(C^(-1) == C_1)
   assert(C_7 == 0)
@@ -2871,6 +3262,32 @@ TEST ///
   assert(dd^C_2 == F2)
   assert(length C == 3)
 
+  G = gradedModule C
+  assert(isWellDefined G)
+  assert(G.dd == 0)
+  assert(source G.dd == G)
+  assert(target G.dd == G)
+  assert(degree G.dd == -1)
+  assert(concentration G == concentration C)
+  (lo,hi) = concentration C
+  for i from lo to hi do assert(C_i === G_i)
+
+  G = gradedModule(complex S^0)
+  assert(G == 0)
+  assert(isWellDefined G)
+  assert(G.dd == 0)
+  assert(source G.dd == G)
+  assert(target G.dd == G)
+  assert(degree G.dd == -1)
+  assert(concentration G == (0,0))
+
+  C0 = complex({S^1, S^3, S^{-2}}, Base=>4)
+  G = gradedModule C0
+  assert(C0 == G)
+  assert(isWellDefined C0)
+  assert(isWellDefined G)
+  
+  concentration G
   C1 = complex{F1,F2,F3}
   assert isWellDefined C1
   assert(C1 == C)
@@ -2882,6 +3299,47 @@ TEST ///
 
   assert(HH C != 0)
   assert(prune HH_0 C == comodule I)
+///
+
+TEST ///
+{*
+restart
+needsPackage "Complexes"
+*}
+  S = ZZ/101[a..d]
+  C = freeResolution coker matrix{{a,b^2,c^3,d^4}}
+  assert(regularity C == 6)
+  assert(length C == 4)
+  f = poincare C
+  use ring f
+  assert(f == 1-T-T^2+2*T^5-T^8-T^9+T^10)
+  p = poincareN C 
+  use ring p
+  assert(p == 1+S*T_0+S*T_0^2+S*T_0^3+S*T_0^4+S^2*T_0^3+S^2*T_0^4+2*S^2*T_0^5+S^2*T_0^6+
+      S^2*T_0^7+S^3*T_0^6+S^3*T_0^7+S^3*T_0^8+S^3*T_0^9+S^4*T_0^10)
+  D = C[3]
+  assert(poincare D == -f)
+  assert(ring poincareN C === ring p)
+///
+
+TEST ///
+-- test of sum of a Complex, TODO: ComplexMap
+{*
+restart
+needsPackage "Complexes"
+*}
+  S = ZZ/101[a..d]
+  C = freeResolution coker matrix{{a,b^2,c^3,d^4}}
+  F = sum C
+  assert(degrees F == 
+      {{0}, {1}, {2}, {3}, {4}, {3}, {4}, {5}, {5}, {6}, {7}, {6}, {7}, {8}, {9}, {10}}
+      )
+  D = freeResolution coker matrix{{a,b^3,c^3,c*d^4}}
+  f = extend(C,D,id_(S^1))
+  sum f
+  g = map(C[3], D, f, Degree=>-3)
+  assert isWellDefined g
+  sum g
 ///
 
 TEST ///
@@ -2930,7 +3388,7 @@ TEST ///
   (lo,hi) = concentration C
   E = complex for i from lo+1 to hi list 0*dd^C_i
   assert(dd^E == 0)
-  assert(degree hom(C,C,0*dd^C) == -1)
+  assert(degree map(C,C,0*dd^C) == -1)
   assert(C != E)
   assert(E != 0)
   f = id_C
@@ -3179,8 +3637,10 @@ TEST ///
 ///
 
 TEST ///
+{*
 restart
-needsPackage "Complexes"
+*}
+  needsPackage "Complexes"
   -- Hom(C,D) --> f : C --> D
   S = ZZ/101[a..e]
   I = ideal(a*b,c*d,a*e)
@@ -3207,25 +3667,128 @@ needsPackage "Complexes"
   -- (2) TEST homomorphism'
   -- (3) now use this code to check signs for Hom
   h = E_1_{2}
-  g = hom(E, (complex source h)[-1], hashTable {1 => h})
+  g = map(E, (complex source h)[-1], hashTable {1 => h})
   f1 = homomorphism g -- this should give a homomorphism f : C --> D of degree 1
   assert(f1 == f)
 
+  assert(HH f1 == 0)
+  assert isWellDefined HH f1
+  prune HH f1 -- not yet
+  
   E = Hom(C,D)
-  KE = (ker dd^E_0)
-  --g = a**KE_{0} + b**KE_{1} -- this g is not homogeneous
+  -- the next test makes sure that Hom is being cached in the youngest complex (here that is C).
+  homs = select(keys C.cache, x -> first x === Hom)
+  assert(#homs === 1 and homs#0 === (Hom, C, D))
+
+  -- f|g, f||g
+  f = homomorphism(1,E_1_{2},E)
+  g = homomorphism(1,E_1_{3},E)
+  target f === target g
+  source f === source g
+
+  h1 = f || g  
+  assert not h1.cache.?isCommutative
+  assert isWellDefined h1
+  assert not isCommutative h1
+  assert h1.cache.?isCommutative
+  assert not h1.cache.isCommutative
+  assert(source h1 === C)
+  assert(target h1 == D ++ D)
+  h1.cache.isCommutative = true;
+  debugLevel = 1
+  assert not isWellDefined h1
+  debugLevel = 0
+  h1.cache.isCommutative = false; -- set it back to be the correct value
+  
+  h2 = f | g
+  assert isWellDefined h2
+  assert not isCommutative h2
+  assert(target h2 === D)
+  assert(source h2 === C ++ C)
+
+  KE = ker dd^E_0
   g = a^2**KE_{0} + b**KE_{1}
   assert isHomogeneous g
   f = homomorphism(0, g, E)
   assert isWellDefined f
-  f = map f
-  debugLevel = 1
-  assert isWellDefined f
-  assert isHomogeneous f -- ok
-
+  assert isComplexMorphism f
+  assert isCommutative f
+  assert isHomogeneous f
   assert(source f === C)
   assert(target f === D)
+  f.cache.isCommutative = false
+  debugLevel = 1
+  assert not isWellDefined f
+  debugLevel = 0
+  f.cache.isCommutative = true
+  assert isWellDefined HH f
+  assert(HH f != 0)
 
+  -- test map(Complex,Complex,Function)
+  assert(map(target f, source f, i -> f_i)  == f)
+  -- test of prune ComplexMap
+  assert(prune f == f)
+  g = canonicalMap(target f, image f)
+  g' = prune g
+  assert isWellDefined g'
+  source g' == source f
+  assert(target g' == target f)
+
+  f1 = f | f
+  assert isWellDefined f1
+  assert isComplexMorphism f1
+  assert isCommutative f1
+  --assert isHomogeneous f1 -- fails, see github issue #607.
+  assert(source f1 === C ++ C)
+  assert(target f1 === D)
+  degrees source f1_1
+  degrees source f_1
+  degrees target f1_1
+  degrees target f_1
+  degree f_1
+
+  dual target f1 
+  dual source f1
+  Hom(f1, complex ring f1)
+  f2 = Hom(f1, S^1)
+  assert isWellDefined f2
+  isWellDefined HH f2
+
+  H' = Hom(dual D, dual C)
+  f = homomorphism(1,H'_0_{7},H')
+  isCommutative f  
+  assert try (HH f; false) else true
+  KH' = ker dd^H'_0
+  g = homomorphism(0, c**KH'_{0},  H')
+  assert(isWellDefined HH g)
+  assert(HH g != 0)
+
+  -- Test of tensor product with a ring  
+  C
+  R = S/(a*b)
+  CR = C ** R
+  assert isCommutative g
+  assert isWellDefined CR
+  gR = g ** R
+  assert isWellDefined gR
+  assert isCommutative gR
+  
+  -- now do ring maps
+  phi = map(R,S)
+  CR1 = phi C
+  assert(isWellDefined CR1)
+  assert(CR1 == CR)
+  gR1 = phi g 
+  assert isWellDefined gR1
+  assert(gR1 == gR)
+  
+  -- ZZZ, should more tests in
+///
+
+TEST ///
+  -- This doesn't belong in this package, move it to tests elsewhere once the
+  -- github issue has been handled.
+  
   -- Made a github issue of this (15 Nov 2016, #535)
   -- Problem: have === for free modules, where one
   -- has components and one doesn't.
@@ -3239,26 +3802,84 @@ needsPackage "Complexes"
   K = kernel f
   assert(target generators K == M)
   assert(target generators K === M)
-  assert(components target generators K == components M) -- fails
-  
+  --assert(components target generators K == components M) -- fails
   g = K_{0}
   ambient g
   target ambient g === M
   components M
   components target ambient g
-  assert(components M == components target ambient g)
-  
+  --assert(components M == components target ambient g) -- fails
   -- Need/want to cache Hom
   S = ZZ/101[a..d]
   M = module ideal(a,b,c)
   N = S^2
   H = Hom(M,N)
   peek M.cache
-  peek N.cache.cache
+  peek N.cache.cache -- why does N.cache have its own cache table?
+  -----------------------
 ///
 
+TEST ///
+  -- resolution of a complex
+-*  
+  restart
+  needsPackage "Complexes"
+*-  
+  
+  R = ZZ/101[a,b,c,d,e]
+  I = intersect(ideal(a,b),ideal(c,d,e))
+  C = (dual freeResolution I) [-4]
+  f = resolutionMap C
+  assert(target f === C)
+  assert(isWellDefined f)
+  assert(isQuasiIsomorphism f)
+  assert(isComplexMorphism f)
+  assert(coker f == 0)
+  assert(kernel HH f == 0)
+  assert(cokernel HH f == 0)
+  assert(resolution C == source f)
+///
 
-end--
+TEST ///
+  -- resolution of a complex
+-*  
+  restart
+  debug needsPackage "Complexes"
+*-  
+  R = ZZ/101[a,b,c,d,e]
+  I = intersect(ideal(a,b),ideal(c,d,e))
+  C = Hom(freeResolution I, R^1/I)
+
+  elapsedTime f = resolutionMap C;
+  assert(target f === C)
+  assert(isWellDefined f)
+  assert(isQuasiIsomorphism f)
+  assert(isComplexMorphism f)
+  assert(coker f == 0)
+  assert(kernel HH f == 0)
+  assert(cokernel HH f == 0)
+  assert(resolution C == source f)
+
+  D = resolution C
+  prune HH C
+
+  g = minimize D;
+  assert isWellDefined g
+  assert isComplexMorphism g
+
+  -- BBBB -- check minimal-ness.
+
+-*  
+  needsPackage "SVDComplexes"
+  chainComplex Complex := (C) -> (
+      (lo,hi) := concentration C;
+      chainComplex hashTable for i from lo+1 to hi list i => dd^C_i
+      )
+*-
+  
+///
+
+end------------------------------------------------------------
 
 doc ///
   Key
@@ -3274,7 +3895,6 @@ doc ///
 ///
 
 
--- XXX
 restart
 uninstallPackage "Complexes"
 
@@ -3317,10 +3937,6 @@ doc ///
    Caveat
    SeeAlso
 ///
-
-
-end
-
 
 TEST ///
   -- creation of chain complexes
@@ -3407,7 +4023,7 @@ TEST ///
   E = C ++ D
 
   E^[i]
-  -- given f : C --> D, a ComplexHomomorphism
+  -- given f : C --> D, a ComplexMap
   --  want composition of f and D --> D[deg]
   -- want: map((target f)[d], source f, f)
   -- f : C --> C[d], f has degree d.
@@ -3418,14 +4034,14 @@ TEST ///
   --   input: f_i : (source f)_i --> (target f)_(degree f+i)
   --   output: 
   f = id_C
-  dC = hom(C[-1], C, dd^C, Degree=>0)
+  dC = map(C[-1], C, dd^C, Degree=>0)
   C_0
   (C[1])_0 === C_1
 
   f ++ dd^C
   
   m = dd^C_2
-  m1 = hom((target m) ** R^{-1}, source m, m, Degree=>1)
+  m1 = map((target m) ** R^{-1}, source m, m, Degree=>1)
   degree m1
   isHomogeneous m1
 ///
@@ -3447,7 +4063,6 @@ TEST ///
 ///
 
 TEST ///
-  -- XXX
   -- components of a direct sum
   -- functions supporting this:
   --   directSum
@@ -3557,9 +4172,9 @@ TEST //
   C = freeResolution minors(3,matrix{{a,b,c,d},{b,c,d,a},{b,d,a,c}})
   D = freeResolution coker matrix{{a^2, b^2, c^2}}
   f1 = a*id_C
-  f = hom(C[1],C,f1,Degree=>-1)
+  f = map(C[1],C,f1,Degree=>-1)
   g1 = d*id_D
-  g = hom(D[-3],D,g1,Degree=>3)
+  g = map(D[-3],D,g1,Degree=>3)
   h = Hom(f,g)
   -- necessary properties for the signs of Hom(f,g):
   assert(Hom(f,target g) * Hom(target f, g) == h)
@@ -3601,9 +4216,9 @@ TEST //
   C = freeResolution minors(3,matrix{{a,b,c,d},{b,c,d,a},{b,d,a,c}})
   D = freeResolution coker matrix{{a^2, b^2, c^2}}
   f1 = a*id_C
-  f = hom(C[1],C,f1,Degree=>-1)
+  f = map(C[1],C,f1,Degree=>-1)
   g1 = d*id_D
-  g = hom(D[-3],D,g1,Degree=>3)
+  g = map(D[-3],D,g1,Degree=>3)
   h = f**g
 
   assert(id_C ** id_D == C ** id_D)
@@ -3619,7 +4234,7 @@ TEST //
 ///
 
 TEST ///
-  -- of isComplexMorphism
+  -- of isComplexMorphism, isCommutative
   restart
   needsPackage "Complexes"
   R = QQ[a..d]
@@ -3627,16 +4242,17 @@ TEST ///
   D = freeResolution coker matrix{{a^2, b^2, c^2}}
   f1 = a*id_C
   assert isComplexMorphism f1
-  f = hom(C[1],C,f1,Degree=>-1)
+  f = map(C[1],C,f1,Degree=>-1)
   assert not isComplexMorphism f
   g1 = d*id_D
-  g = hom(D[-1],D,g1,Degree=>1)
+  g = map(D[-1],D,g1,Degree=>1)
   h = f**g -- differential anti-commutes with h
+  assert not isCommutative h
   assert not isComplexMorphism h
 ///
 
 TEST ///
--- test: creating ComplexMorphism's
+-- test: creating complex morphism's
   restart
   needsPackage "Complexes"
   R = QQ[a..d]
@@ -3651,6 +4267,38 @@ TEST ///
   assert isComplexMorphism(f1 ** f2)
   assert isComplexMorphism (f1[3])
   assert isComplexMorphism(f1[-1] ** f2)
+///
+
+TEST ///
+  -- note: inducedMap is here only for backward compatibility
+  -- prefer canonicalMap when possible.
+{*
+  restart
+  needsPackage "Complexes"
+*}
+
+  S = ZZ/101[a..d]
+  I = ideal(a^3+b^3+c^3+d^3)
+  J = ideal(a+b,c+d)
+  C = freeResolution comodule I
+  D = freeResolution comodule J
+  g = extend(D,C,map(D_0,C_0,1))
+  assert isComplexMorphism extend(D,C,map(D_0,C_0,1))
+  h = inducedMap(coker g, target g)
+  assert isWellDefined h
+  assert isComplexMorphism h
+  assert(degree h == 0)
+
+  assert(canonicalMap(coker g, target g) == h)
+  i = inducedMap(source g, ker g)
+  assert(canonicalMap(source h, ker h) ==  inducedMap(source h, ker h))
+  
+  -- test dual of a complex map
+  assert(dual dual g == g)
+  assert(isWellDefined dual g)
+  assert(isWellDefined dual h)
+  assert(isWellDefined dual i)
+  assert(dual i == 0)
 ///
 
 TEST ///
@@ -3729,8 +4377,6 @@ TEST ///
 ///
 
 TEST ///
--- test: creating ComplexMorphism's
-
   restart
   needsPackage "Complexes"
 
@@ -3899,11 +4545,11 @@ TEST ///
   dd^C^-2
   Ca = complex(maps, Base=>-3)
   complex(R^1)
-  hom(C,C,0)  
-  hom(C,C,0,Degree=>-1)
+  map(C,C,0)  
+  map(C,C,0,Degree=>-1)
   ring C
   debug Complexes
-  f = C.differential
+  f = C.dd
   f_4
   f_5
   f_0

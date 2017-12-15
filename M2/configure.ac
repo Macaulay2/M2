@@ -489,7 +489,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,no) AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
 
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
@@ -1415,6 +1415,11 @@ AC_ARG_ENABLE(fplll,
     
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
+
+if test $BUILD_flint = yes -o $BUILD_ntl = yes -o $BUILD_mpir = yes
+then BUILD_factory=yes
+     BUILD_ALWAYS="factory $BUILD_ALWAYS"
+fi
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no

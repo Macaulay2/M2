@@ -1,3 +1,6 @@
+dualFaceRepresentationMap Cone := C -> (
+   getProperty(C, facetRayDataConverter)
+)
 
 facesAsCones = method();
 facesAsCones(ZZ, Cone) := (d, C) -> (

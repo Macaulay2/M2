@@ -25,7 +25,7 @@ compute#Fan#smooth Fan := F -> (
 
 compute#Fan#computedFVector = method()
 compute#Fan#computedFVector Fan := F -> (
-   reverse apply(dim F + 1, d -> #faces(dim F - d,F))
+   toList apply(0..(dim F), d -> #faces(dim F - d,F))
 )
 
 
@@ -112,7 +112,8 @@ compute#Fan#rays = method()
 compute#Fan#rays Fan := F -> (
    if hasProperty(F, inputRays) then (
       given := getProperty(F, inputRays);
-      makeRaysUniqueAndPrimitive given
+      LS := getProperty(F, computedLinealityBasis);
+      makeRaysUniqueAndPrimitive(given, LS)
    ) else (
       -- Could also compute this from the honestMaxObjects?
       error("No input rays given.")
@@ -124,6 +125,7 @@ compute#Fan#computedFacesThroughRays = method()
 compute#Fan#computedFacesThroughRays Fan := F -> (
    MC := getProperty(F, honestMaxObjects);
    raysF := rays F;
+   dimF := dim F;
    linealityF := linealitySpace F;
    result := new MutableHashTable;
    for i from 0 to dim F do result#i = {};
@@ -133,13 +135,14 @@ compute#Fan#computedFacesThroughRays Fan := F -> (
       facesC := faces C;
       rc := rayCorrespondenceMap(raysC, linealityF, raysF);
       for i in keys facesC do (
+         codimInF := i + dimF - dimC;
          codimiCones := facesC#i;
          codimiCones = apply(codimiCones,
             c -> (
                sort apply(c, e -> rc#e)
             )
          );
-         result#i = sort unique flatten {result#i, codimiCones};
+         result#codimInF = sort unique flatten {result#codimInF, codimiCones};
       );
    );
    return hashTable pairs result
@@ -156,7 +159,8 @@ compute#Fan#generatingObjects Fan := F -> (
          rc := rayCorrespondenceMap(inputRaysF, linealityF, raysF);
          cones = apply(cones,
             c -> (
-               sort apply(c, e->rc#e)
+               cnew := sort apply(c, e->rc#e);
+               select(cnew, e -> e != -1)
             )
          );
       );

@@ -66,36 +66,64 @@ compute#Cone#nRays Cone := C -> (
    numColumns rays C
 )
 
+getDualFaceIndices := method();
+getDualFaceIndices(Matrix, Matrix, List) := (F, R, facetRep) -> (
+   toList positions(0..(numColumns R - 1), 
+      i -> (
+         ray := R_{i};
+         all(facetRep,
+            j -> (
+               facet := F^{j};
+               eval := (facet * ray)_(0,0);
+               eval == 0
+            )
+         )
+      )
+   )
+)
+
+compute#Cone#facetRayDataConverter = method()
+compute#Cone#facetRayDataConverter Cone := C -> (
+   fcr := new MutableHashTable;
+   raysC := rays C;
+   facetsC := facets C;
+   facesC := faces C;
+   for i in keys facesC do (
+      L := facesC#i;
+      for face in L do (
+         fcr#face = getDualFaceIndices(transpose raysC, transpose facetsC, face);
+      )
+   );
+   fcr
+)
 
 compute#Cone#computedFacesThroughRays = method()
 compute#Cone#computedFacesThroughRays Cone := C -> (
    result := new MutableHashTable;
    d := dim C;
    raysC := rays C;
+   facetsC := facets C;
    ldim := rank linealitySpace C;
-   result#0 = {toList (0..(getProperty(C, nRays) - 1))};
-   result#(1) = toList getProperty(C, facetsThroughRayData);
-   for i from 0 to d-2-ldim do (
-      oldFaces := result#(1+i);
-      newFaces := unique flatten apply(oldFaces,
-         face -> toList apply(result#(1),
-            facet -> (
-               plop := elements ((set face) * (set facet));
-               sort plop
+   allFace := toList (0..(getProperty(C, nRays) - 1));
+   result#0 = {allFace};
+   ftrd := getProperty(C, facetsThroughRayData);
+   if d>0 then (
+      result#(1) = toList ftrd;
+      for i from 0 to d-2-ldim do (
+         oldFaces := result#(1+i);
+         newFaces := unique flatten apply(oldFaces,
+            face -> toList apply(result#(1),
+               facet -> (
+                  newFace := sort elements ((set face) * (set facet));
+                  if (rank raysC_(toList newFace)) + ldim == d-2-i then (
+                     newFace
+                  )
+               )
             )
-         )
+         );
+         newFaces = select(newFaces, nf -> nf =!= null);
+         result#(2+i) = newFaces
       );
-      -- << newFaces << endl;
-      newFaces = select(newFaces, 
-         face -> (
-            -- << "Face is: " << face << endl;
-            -- << raysC << endl;
-            -- << raysC_{face} << endl;
-            (rank raysC_(toList face)) + ldim == d-2-i
-         )
-      );
-      -- << "Select ok." << endl;
-      result#(2+i) = newFaces
    );
    hashTable pairs result
 )
@@ -108,16 +136,7 @@ compute#Cone#facetsThroughRayData Cone := C -> (
    nFacetsC := getProperty(C, nFacets);
    nRaysC := getProperty(C, nRays);
    apply(0..(nFacetsC -1), 
-      i -> (
-         facet := facetsC^{i};
-         positions(0..(nRaysC - 1), 
-            j-> (
-               ray := raysC_{j};
-               eval := (flatten entries (facet * ray))#0;
-               eval == 0
-            )
-         )
-      )
+      i -> getDualFaceIndices(facetsC, raysC, {i})
    )
 )
 
@@ -145,7 +164,7 @@ compute#Cone#raysThroughFacets Cone := C -> (
 
 compute#Cone#computedFVector = method()
 compute#Cone#computedFVector Cone := C -> (
-   reverse apply(dim C + 1, d -> #faces(dim C - d,C))
+   toList apply(0..dim C, d -> #faces(dim C - d,C))
 )
 
 

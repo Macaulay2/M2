@@ -157,14 +157,14 @@ M = matrix{{x_1^2,x_1*x_2^2*x_3,x_1*x_2*x_3^3}}
 ///
 
 
-isPointEmbeddedInCurve = method(Options=>{Regularity=>-1})
+isPointEmbeddedInCurve = method(Options=>{"regularity"=>-1})
 isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
     R := ring I;
     I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     p' := origin(R);
     m := matrix{apply(gens R, v->random(1,R))}; -- matrix for random linear change of coordinates
     I' = (map(R,R,m)) I'; -- I with new coordinates
-    r := o.Regularity;
+    r := o#"regularity";
     if r == -1 then (
 	r1 := localHilbertRegularity(p',I');
 	r2 := dim truncatedDual(p',I',r);

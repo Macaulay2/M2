@@ -22,6 +22,7 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+class MutableComplex;
 // NAG begin
 class SLEvaluator;
 class Homotopy;
@@ -46,6 +47,7 @@ typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
+typedef struct MutableComplex MutableComplex;
 // NAG begin
 typedef struct SLEvaluator SLEvaluator;
 typedef struct Homotopy Homotopy;
@@ -296,7 +298,7 @@ extern "C" {
   const Ring /* or null */ *IM2_Ring_frac(const Ring *R); /* drg: connected rawFractionRing*/
 
   const Ring /* or null */ *IM2_Ring_localization(const Ring *R,
-                                          const Matrix *P); /* drg: connected rawLocalRing */
+                                          Computation *P); /* drg: connected rawLocalRing */
   /* Create the localization of R.
      R should be a COMMUTATIVE ring.  P should be a one row matrix
      whose entries generate a prime ideal of R.
@@ -1505,6 +1507,29 @@ extern "C" {
      and the multipliers tau_i will appear in R.
      MES TODO: be more specific here, once we know the exact format!
   */
+
+  /**************************************************/
+  /**** Mutable Complex routines ********************/
+  /**************************************************/
+
+  M2_string rawMutableComplexToString(const MutableComplex *M);
+
+  unsigned int  rawMutableComplexHash(const MutableComplex *M);
+
+  MutableComplex* rawMutableComplex(const engine_RawMutableMatrixArray M);
+
+  M2_arrayint rawPruneBetti(MutableComplex* C, int n, int f);
+
+  MutableComplex* rawPruneComplex(MutableComplex* C, int n, int f);
+
+  engine_RawMutableMatrixArray rawPruningMorphism(MutableComplex* C, int n, int f);
+
+  /**************************************************/
+  /**** Local Ring routines *************************/
+  /**************************************************/
+
+  Matrix * rawLiftLocalMatrix(const Ring * R, const Matrix *m);
+  M2_bool  rawIsLocalUnit(const RingElement *f);
 
   /**************************************************/
   /**** Monomial ideal routines *********************/

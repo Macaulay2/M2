@@ -186,7 +186,7 @@ document {
      EXAMPLE lines ///
           sub(1/3*a*b, {a=>1, b=>1, c=>1, d=>1})
 	  ///,
-     "By changing one of the values to a rational number, we insure that the result will be rational.",
+     "By changing one of the values to a rational number, we ensure that the result will be rational.",
      EXAMPLE lines ///
           sub(1/3*a*b, {a=>1_QQ, b=>1, c=>1, d=>1})	  
           ///,
