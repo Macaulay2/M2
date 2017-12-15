@@ -1,0 +1,118 @@
+Cleaning engine code to do
+
+
+Overall:
+1. 0 ==> nullptr when referring to a pointer
+2. T* ==> unique_ptr<T> when: owning code
+  Keep all uses of T* and const T* and T& and const T&
+  meaning non-ownership (and potentially non-null).
+3. de-couple support code?
+  place into a util directory
+  BUT: eventually start using c++ lib for such things
+  e.g: 
+  buffer
+  intarray
+  array
+  Index
+4. make subdirectories with code
+  where to put include files?
+5. namespaces? The whole thing should be in an M2 namespace (macaulay2?)
+6. use M2_ASSERT
+7. clean up header file use
+  each source file should include std-inc.hpp?
+8. remove dead code
+9. keep adding in doxygen comments
+10. change linked lists to std::vector or equivalent.
+11. Use mathic monomial structures instead of MonomialIdeal or MonomialTable.
+12. Remove use of stashes
+13. Add more tests to unit-tests
+14. Remove uses of our_new_delete when we can.
+  Probably (hopefully?) only objects going to the front end will use the garbage collector.
+  This can't be quite right, because of mpz and mpq objects, etc.
+  Remove use of array allocation from gc when we can.
+15. Rewrite polynomials to be arrays (or a set of arrays).
+16. res-f4 should be in its own directory
+17. format code
+18. Overall, use std lib when we can, at least try it out.
+19. performance measurements
+20. Use of M2_arrayint change to std::vector ? At least in non interface code.
+21. should loop indices be siz_t or long? Not sure.
+22. logging facility: use mathicgb?  Need to yank it out and put it into mathic?
+23. hell-hole: exponent vectors, monomials, ...: currently all are unadorned pointers.
+24. similarly: ring_elem: union type...
+  Should make it easy and not expensive to take such a value and make a RingElement out of it.
+25. template logic for mutable matrices is a complicated mess.  How can we fix it?
+26. rename fields of structs to be more consistent (e.g. mName).
+27. for unit-tests, we need simple way in c++ to construct rings/matrices/etc.
+
+28. remove use of 'array', 'queue' in favor of std::...
+29. Matrix:
+    would be good to have a BasicMatrix type (sparse matrix?)
+    the degree of a map should be a std::vector?  or, it should at least have a length, array of ints.
+    operations: probably should not be in the class itself?
+Types:
+    Matrix, Ring, ... anything that goes to the front end should be finalized?  Or perhaps copied to garbage collected space.
+    what types are included here?
+    Ring
+    RingElement
+    MonomialOrder
+    Matrix
+    RingMap
+    MutableMatrix
+    several computation types (GB, Resolution, what else?)
+    NAG types
+    FreeModule
+    MonomialIdeal
+
+    RawRing = FinalizedObject<Ring>
+
+    
+class FinalizedObject<Ring>
+
+Also: better GB
+    a. need a ring which handles polynomials as follows:
+    vector or allocated space: 2 arrays:
+        - space for monomials, var length, includes component too
+        - space for coefficients, one per term
+    polynomials are immutable objects? maybe not?
+
+    b. need more modular functions for GB (all polynomials are really vectors of such)
+        - reduce mod a list of polynomials
+        - reduce mod a marked list of polynomials
+        - minimize a set of polynomials
+            i.e. arrange for the lead terms to be a minimal set of generators of lead term ideal
+        - inter-reduce a set of polynomials
+    c. data structures needed:
+        - list of spairs to compute (sorted, as in mgb)
+        - monomial lookup table for divisibility (submodule?)
+        - hashtable to keep monomials that we use (ring or submodule)?
+    d. functions needed:
+        - find minimal set of spairs given new polynomial
+        - remove unneeded ones too?
+    e. IDEA: whatever data structure we use for GB and SYZ, etc:
+        should be modular, and all functions can deal with them
+    f. linear algebra functions for GB?
+        need better 'rank' function, for the matrices arising in free resolutions
+    g. over ZZ: can we use same structure, but just have extra structures for lead monomial
+
+    h. functions to make as well:
+        lift polynomials mod ZZ/p, ZZ/N
+        lift from ZZ to QQ
+        same for mod points
+        same for lifting to frac(kk[x,y,...])
+        Hensel lift routines too??
+
+    i. local rings?
+        what new things need to be done here?
+            order spairs are done
+            reduction algorithm
+            strategy and mechanism for adding in new elements for reduction
+            obtaining syzygies
+            auto-reduction, when possible
+    
+    j. don't forget: handle: skew-commuting case, Weyl, non-commutative,
+        quotient by an ideal
+        ZZ case
+        local case
+        module case
+        

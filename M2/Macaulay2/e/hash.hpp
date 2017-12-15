@@ -1,26 +1,26 @@
-// Copyright 2002  Michael E. Stillman
+// Copyright 2002-2016  Michael E. Stillman
 #ifndef _hash_hh_
 #define _hash_hh_
 
 #include "newdelete.hpp"
 #include <cassert>
+#include <M2/gc-include.h>
 
-class EngineObject : public our_new_delete
+class EngineObject : public gc
 {
  private:
   mutable unsigned int mHashValue;
-  mutable bool mHasHash;
-
  public:
-  EngineObject() : mHashValue(0), mHasHash(false) {}
-  virtual ~EngineObject() {}  // do we need to do anything here?
-  void intern() const {}
+  EngineObject() : mHashValue(0) {}
+
+  virtual ~EngineObject() { /* nothing to do here */ }
+
   unsigned int hash() const
-  {
-    if (not mHasHash)
+  { 
+    if (mHashValue == 0) 
       {
         mHashValue = computeHashValue();
-        mHasHash = true;
+        if (mHashValue == 0) mHashValue = 1;
       }
     return mHashValue;
   }
@@ -29,7 +29,7 @@ class EngineObject : public our_new_delete
   virtual unsigned int computeHashValue() const = 0;
 };
 
-class MutableEngineObject : public our_new_delete
+class MutableEngineObject : public gc_cleanup
 {
  private:
   static unsigned int mNextMutableHashValue;

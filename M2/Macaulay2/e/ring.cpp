@@ -1,5 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
+#include <iostream>
 #include "ring.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
@@ -48,7 +49,11 @@ void Ring::initialize_ring(long P0,
   minus_oneV = ZERO_RINGELEM;
 }
 
-Ring::~Ring() {}
+Ring::~Ring()
+{
+  //TODO: Nothing to do?
+}
+
 FreeModule *Ring::make_FreeModule() const
 {
   return new FreeModule(this, 0, false);

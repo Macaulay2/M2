@@ -18,9 +18,33 @@
 
 #include "memtailor.h"
 #include "mathic.h"
+#include "gc_cpp.h"
+
 memt::BufferPool testBuffer(16);
 
-const QQ *globalQQ;
+class RawRingBase : public gc_cleanup
+{
+public:
+  RawRingBase() { std::cout << "RawRingBase constructor" << std::endl; }
+  virtual ~RawRingBase() { std::cout << "~RawRingBase()" << std::endl; }
+  virtual int value() const { return 0; }
+};
+class RawRing1 : public RawRingBase
+{
+public:
+  RawRing1() { std::cout << "RawRing1 constructor" << std::endl; }
+  virtual ~RawRing1() { std::cout << "~RawRing1()" << std::endl; }
+  virtual int value() const { return 1; }  
+};
+class RawRing2 : public RawRing1
+{
+public:
+  RawRing2() { std::cout << "RawRing2 constructor" << std::endl; }  
+  virtual ~RawRing2() { std::cout << "~RawRing2()" << std::endl; }
+  virtual int value() const { return 2; }  
+};
+
+const QQ* globalQQ;
 
 void initializeRationalRing()
 {
@@ -43,6 +67,10 @@ const Ring * /* or null */ rawARingQQFlint()
 
 const Ring /* or null */ *rawARingZZp(unsigned long p)
 {
+  RawRing2* B = new RawRing2;
+  std::cout << "B value is " << B->value() << std::endl;
+  if (p < 5) delete B;
+  
   if (p <= 1 || p >= 32750)
     {
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
