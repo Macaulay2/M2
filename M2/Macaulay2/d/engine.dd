@@ -40,6 +40,8 @@ export RawPointArrayOrNull := RawPointArray or null;
 -- NAG end
 export RawMutableMatrix := Pointer "struct MutableMatrix *";
 export RawMutableMatrixOrNull := RawMutableMatrix or null;
+export RawMutableComplex := Pointer "struct MutableComplex *";
+export RawMutableComplexOrNull := RawMutableComplex or null;
 export RawMonomialOrderingArray := array(RawMonomialOrdering);
 
 export RawArrayIntPair := { a:RawArrayInt, b:RawArrayInt };
@@ -49,6 +51,8 @@ export RawMatrixPair := { a:RawMatrix, b:RawMatrix };
 export RawMatrixPairOrNull := RawMatrixPair or null;
 export RawMatrixArray := array(RawMatrix);
 export RawMatrixArrayOrNull := array(RawMatrix) or null;
+export RawMutableMatrixArray := array(RawMutableMatrix);
+export RawMutableMatrixArrayOrNull := array(RawMutableMatrix) or null;
 export RawRingElementArray := array(RawRingElement);
 export RawRingElementArrayOrNull := array(RawRingElement) or null;
 export RawArrayPair := { monoms:array(RawMonomial), coeffs:array(RawRingElement) };
@@ -68,6 +72,7 @@ export RawMonomialCell := {+ p:RawMonomial };
 export RawMonomialIdealCell := {+ p:RawMonomialIdeal };
 export RawMonomialOrderingCell := {+ p:RawMonomialOrdering };
 export RawMutableMatrixCell := {+ p:RawMutableMatrix };
+export RawMutableComplexCell := {+ p:RawMutableComplex };
 -- NAG begin
 export RawHomotopyCell := {+ p:RawHomotopy };
 export RawSLEvaluatorCell := {+ p:RawSLEvaluator };

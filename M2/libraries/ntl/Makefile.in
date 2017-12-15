@@ -2,7 +2,7 @@
 LICENSEFILES = doc/copying.txt
 # @configure_input@
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-VERSION = 10.3.0
+VERSION = 10.5.0
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz

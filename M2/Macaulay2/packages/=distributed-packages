@@ -32,6 +32,7 @@ ChainComplexExtras
 Schubert2
 PushForward
 LocalRings
+PruneComplex
 BoijSoederberg
 BGG
 Bruns
@@ -157,3 +158,11 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
+AlgebraicSplines
+TriangularSets
+Chordal
+Tropical
+SymbolicPowers
+Complexes
+GroebnerWalk
+RandomMonomialIdeals

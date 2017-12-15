@@ -175,7 +175,7 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
     --v := K * transpose matrix {toList ((numcols K):1_CC)};  
     w := transpose randomWeights(numcols K);
-    v := K * w + offset;
+    v := K * w - offset;
     c0 := point matrix v;
     -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
     --c0 := first (first components N).Points; 
@@ -184,6 +184,17 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     pre0' := first refine(G0,{pre0});
     (c0,pre0')
     )
+
+TEST ///
+--- seeding bug discovered by Courtney Gibbons
+setRandomSeed 2 
+T = CC[a_1..a_6][x_1,x_2,lambda]
+f_1 = a_1*x_1+a_2*x_2 - x_1*lambda 
+f_2 = a_3*x_1+a_4*x_2 - x_2*lambda
+f_3 = a_5*x_1+a_6*x_2 + 1
+H = {f_1,f_2,f_3}
+assert((last createSeedPair polySystem H).SolutionStatus =!= RefinementFailure)
+///
 
 staticMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,

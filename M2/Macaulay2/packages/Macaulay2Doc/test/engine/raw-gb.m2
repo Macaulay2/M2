@@ -458,7 +458,7 @@ G1 = rawgb mat{{f1,f2}}
 A = rawQuotientRing(R, mat{{f1}})
 m = mat{{rawPromote(A,f2)}}
 G2 = rawgb m
-assert(toString G1 == toString G2) -- this doesn't insure that they are the same...
+assert(toString G1 == toString G2) -- this doesn't ensure that they are the same...
 --------------------------------
 -- Gröbner bases over ZZ/p[i]/(i^2+1)
 needs "raw-util.m2"
