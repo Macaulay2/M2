@@ -1,0 +1,132 @@
+" Author:       David Cook II <dcook@ms.uky.edu>
+" Version:      0.1
+" License:      Public Domain, 2010
+" Description:  This plugin was developed to allow easier access to Macaulay 2 from within VIM.
+" Caveat:       Many constants are hard-coded; to be fixed later.
+
+" Author:       Manoj Kummini <mkummini@cmi.ac.in> 
+" Description:  Modification to run on Apples, with Terminal.app
+" Screen Session name
+"let b:screens = printf("vim-M2-plugin-%s", localtime())
+let b:screens ="vim-M2-plugin"
+" Terminal geometry (WxH+X+Y)
+let b:termgeom="80x25+0-0"
+
+" Add Commands
+command -nargs=0 -complete=shellcmd M2Start :call M2Start()
+command -nargs=0 -complete=shellcmd M2Restart :call M2Restart()
+command -nargs=0 -complete=shellcmd M2Exit :call M2Exit()
+command -nargs=1 -complete=shellcmd M2SendString :call M2SendString(<args>)
+command -nargs=0 -complete=shellcmd M2SendBuffer :call M2SendBuffer()
+command -nargs=0 -range -complete=shellcmd M2Send :call M2Send(<line1>,<line2>)
+    
+" Check for all required executables
+if !executable('screen')
+    call M2Warning("Please install 'screen' to run vim-M2-plugin")
+    sleep 2
+    finish
+elseif !executable('M2')
+    call M2Warning("Please install 'M2' to run vim-M2-plugin")
+    sleep 2
+    finish
+endif
+
+" Output a meaningful warning.
+function! M2Warning(msg)
+    echohl WarningMsg
+    echo a:msg
+    echohl Normal
+endfunction
+
+" Load M2 in a new terminal, named with b:screens
+function! M2Start()
+    let cwd = getcwd() 
+    let cmd = printf("/usr/bin/osascript ~/local/Applications/VimM2.scpt %s %s" , cwd, b:screens)
+    let log = system(cmd)
+    if v:shell_error
+        call M2Warning(log)
+        return
+    endif
+endfunction
+
+" Restart M2
+function! M2Restart()
+    call M2SendString('restart')
+endfunction
+
+" Exit M2
+function! M2Exit()
+    call M2SendString('exit')
+endfunction
+
+" Send a string command to M2
+function! M2SendString(str)
+    " fix single quotes and then carets
+    let sstr = substitute(a:str, "'", "'\\\\''", "g")
+    let sstr = substitute(sstr, '\^', '\\\^', "g")
+    let sstr = substitute(sstr, '\"', '\\\"', "g")
+    " send the command: notice \015 is just newline
+    let cmd = printf("screen -S %s -X eval 'stuff \"%s\015\"'", b:screens, sstr)
+    let log = system(cmd)
+    if v:shell_error
+        call M2Warning(log)
+    endif
+endfunction
+
+" Send the current buffer to M2
+function! M2SendBuffer()
+    call M2Send("1", "$")
+endfunction
+
+" Fancy-schmancy general send
+" Accepts inputs of either string, list<string>, or line1,line2
+" Modified from screen.vim
+function! M2Send(...)
+    " parse inputs
+    if a:0 == 0
+        let lines = getline(".")
+    elseif a:0 == 1
+        let ta1 = type(a:1)
+        if ta1 == 1
+            " strings: break up on newlines
+            let lines = split(a:1, "\n")
+        elseif ta1 == 3
+            " lists: take-as-is
+            let lines = a:1
+        else
+            call M2Warning('vim-M2-plugin: Argument must be a string or a list.')
+            return
+        endif
+    elseif a:0 == 2
+        if type(a:1) <= 1 && type(a:2) <= 1
+            " integers/strings
+            let lines = getline(a:1, a:2)
+            let mode = visualmode(1)
+            if mode != '' && line("'<") == a:1
+                if mode == "v"
+                    let start = col("'<") - 1
+                    let end = col("'>") - 1
+                    " slice in end before start in case the selection is only one line
+                    let lines[-1] = lines[-1][: end]
+                    let lines[0] = lines[0][start :]
+                elseif mode == "\<c-v>"
+                    let start = col("'<")
+                    if col("'>") < start
+                        let start = col("'>")
+                    endif
+                    let start = start - 1
+                    call map(lines, 'v:val[start :]')
+                endif
+            endif
+        else
+            call M2Warning('vim-M2-plugin: Arguments must be a pair of strings/integers.')
+            return
+        endif
+    else
+        call M2Warning('vim-M2-plugin: Invalid number of arguments.')
+    endif
+    " send them on!
+    for lin in lines
+        call M2SendString(lin)
+    endfor
+endfunction

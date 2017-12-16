@@ -25,7 +25,7 @@ newPackage(
 		"cachePolyhedralOutput" => true,
 		"tropicalMax" => false
 	},
-    PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
+        PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
 	DebuggingMode => true,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,

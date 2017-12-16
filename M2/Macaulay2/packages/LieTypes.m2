@@ -490,7 +490,7 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     lift(2*rhs/lhs,ZZ)
 ))
 
-multiplicity(List,LieAlgebraModule) := (w,M) -> (
+multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";

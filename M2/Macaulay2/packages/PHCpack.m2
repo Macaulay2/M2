@@ -483,7 +483,7 @@ witnessSetToFile (WitnessSet,String) := (witset,name) -> (
   s := equations(witset)|slice(witset);
   p := points(witset);
   systemToFile(s,name);
-  pointsToFile(p,R,name,Append=>true);
+  pointsToFile(p/coordinates,R,name,Append=>true);
 )
 
 ----------------------------
@@ -783,7 +783,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
   systemToFile(system,PHCinputFile);
   R := ring first system;
   use R;
-  L := toList(points(w));
+  L := toList(points(w)) / coordinates;
   pointsToFile(L,R,PHCinputFile,Append=>true);
   if o.Verbose then
     stdio << "preparing batch file to " << PHCbatchFile << endl;

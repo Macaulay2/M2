@@ -17,7 +17,116 @@ export {
     "genNumArgs",
     "genOneArg",
     "genArg",
-    "genFunctionCall"    
+    "genFunctionCall",
+    "PossibleEngineError"
+    }
+
+protect DType
+protect Suffix
+protect Synonym
+
+celltype = new HashTable from {
+    "bool" => hashTable {
+        DType => "bool",
+        Synonym => "a small integer", 
+        Suffix => ""
+        },
+    "int" => hashTable {
+        DType => "ZZCell",
+        Synonym => "a small integer", 
+        Suffix => "",
+        Array => (
+            "isInt",
+            "toInt",
+            "a small integer"
+            )
+        },
+    "long" => hashTable {
+        DType => "ZZCell",
+        Synonym => "a small integer", 
+        Suffix => ""
+        },
+    "ulong" => hashTable {
+        DType => "ZZCell",
+        Synonym => "a small long integer", 
+        Suffix => ""
+        },
+    "ComputationOrNull" => hashTable {
+        DType => "RawComputationCell",
+        Synonym => "an engine computation",
+        Suffix => ".p"
+        },
+    "RingElementArrayOrNull" => hashTable {
+        Synonym => "a sequence of raw ring elements",
+        Suffix => ""
+        },
+    "Monomial" => hashTable {
+        DType => "RawMonomialCell",
+        Synonym => "a raw monomial", 
+        Suffix => ".p"
+        },
+    "MonomialOrNull" => hashTable {
+        DType => "RawMonomialOrNull",
+        Synonym => "a raw monomial or null", 
+        Suffix => ".p"
+        },
+    "Monoid" => hashTable {
+        DType => "RawMonoidCell",
+        Synonym => "a raw monoid", 
+        Suffix => ".p"
+        },
+    "MonoidOrNull" => hashTable {
+        DType => "RawMonoidOrNull",
+        Synonym => "a raw monoid or null", 
+        Suffix => ".p"
+        },
+    "Ring" => hashTable {
+        DType => "RawRingCell",
+        Synonym => "a raw ring", 
+        Suffix => ".p"
+        },
+    "RingOrNull" => hashTable {
+        DType => "RawRingOrNull",
+        Synonym => "a raw ring or null", 
+        Suffix => ".p"
+        },
+    "RingElement" => hashTable {
+        DType => "RawRingElementCell",
+        Synonym => "a raw ring element", 
+        Suffix => ".p"
+        },
+    "RingElementOrNull" => hashTable {
+        DType => "RawRingElementOrNull",
+        Synonym => "a raw ring element", 
+        Suffix => ".p"
+        },
+    "Matrix" => hashTable {
+        DType => "RawMatrixCell",
+        Synonym => "a raw matrix", 
+        Suffix => ".p"
+        },
+    "MatrixOrNull" => hashTable {
+        DType => "RawMatrixOrNull",
+        Synonym => "a raw matrix or null", 
+        Prefix => "&",
+        Suffix => ""
+        },
+    "MutableMatrix" => hashTable {
+        DType => "RawMutableMatrixCell",
+        Synonym => "a raw mutable matrix", 
+        Suffix => ".p"
+        },
+    "MutableComplex" => hashTable {
+        DType => "RawMutableComplexCell",
+        Synonym => "a raw mutable complex", 
+        Suffix => ".p"
+        },
+    "MutableComplexOrNull" => hashTable {
+        DType => "RawMutableComplexOrNull",
+        Synonym => "a raw mutable complex", 
+        Suffix => ".p"
+        }
+    
     }
 
 indentStr = "  ";
@@ -25,7 +134,7 @@ genTitle = method()
 genNumArgs = method()
 genOneArg = method()
 genArg = method()
-genFunctionCall = method()
+genFunctionCall = method(Options=>{PossibleEngineError=>false})
 
 indent = method()
 indent String := (str) -> indentStr | str
@@ -70,7 +179,7 @@ genNumArgs ZZ := (N) -> innards -> (
 genOneArg(String,String) := (argtype, argname) -> (innards) -> (
     suffix := celltype#argtype#Suffix;
     {
-      "when e is wrapped"|argname|":"|celltype#argtype#DType|" do ("|argname|" := wrapped"|argname|suffix|";",
+      "when e is w"|argname|":"|celltype#argtype#DType|" do ("|argname|" := w"|argname|suffix|";",
       innards,
       ///) else WrongArg("///|celltype#argtype#Synonym|///")///
       }
@@ -79,18 +188,60 @@ genOneArg(String,String) := (argtype, argname) -> (innards) -> (
 genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
     suffix := celltype#argtype#Suffix;
     {
-      "when s."|argnum|" is wrapped"|argname|":"|celltype#argtype#DType|" do ("|argname|" := wrapped"|argname|suffix|";",
+      "when s."|argnum|" is w"|argname|":"|celltype#argtype#DType|" do ("|argname|" := w"|argname|suffix|";",
       innards,
       ") else WrongArg("|argnum|",\""|celltype#argtype#Synonym|"\")"
       }
   )
-        
-genFunctionCall(String, String, Thing) := (fcnname, returntype, args) -> (
+
+genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
+{*    
+    if celltype#argtype#?Array then (
+        {
+            (f1, f2, err) := celltype#argtype#Array;
+            "when s."|argnum|" is w"|argname|":ZZcell do (", 
+            "if "|f1|"(w"|argname|") then ("|argname|" := "|f2|"(w"|argname|");",
+            innards,
+            ") else WrongArg("|argnum|",\""|err|")",
+            ") else WrongArgZZ("|argnum|")"
+            }
+        )
+*}    
+    if argtype == "int" then (
+        {
+            "when s."|argnum|" is w"|argname|":ZZcell do (", 
+            "if isInt(w"|argname|") then ("|argname|" := toInt(w"|argname|");",
+            innards,
+            ") else WrongArgSmallInteger("|argnum|")",
+            ") else WrongArgZZ("|argnum|")"
+            }
+        )
+    else if argtype == "ulong" then (
+        {
+            "when s."|argnum|" is w"|argname|":ZZcell do (", 
+            "if isULong(w"|argname|") then ("|argname|" := toULong(w"|argname|");",
+            innards,
+            ") else WrongArgSmallInteger("|argnum|")",
+            ") else WrongArgZZ("|argnum|")"
+            }
+        )
+    else (
+        suffix := celltype#argtype#Suffix;
+        {
+            "when s."|argnum|" is w"|argname|":"|celltype#argtype#DType|" do ("|argname|" := w"|argname|suffix|";",
+            innards,
+            ") else WrongArg("|argnum|",\""|celltype#argtype#Synonym|"\")"
+            }
+        )
+  )
+
+genFunctionCall(String, String, Thing) := opts -> (fcnname, returntype, args) -> (
+    toexpr := if opts.PossibleEngineError then "possibleEngineError" else "toExpr";
     if not instance(args,Sequence) then args = 1:args;
     argnames := (toList args)/(x -> x#0);
     cargs := (concatenate between(", \",\", ", argnames)) | ", ";
     innards := {
-        "toExpr(Ccode("|celltype#returntype#DType|",",
+        toexpr|"(Ccode("|celltype#returntype#DType|",",
         indent ///"///|fcnname|///(",///,
         indent indent cargs,
         indent ///")"///,
@@ -112,10 +263,171 @@ genFunctionCall(String, String, Thing) := (fcnname, returntype, args) -> (
 
 beginDocumentation()
 
+ans1 = ///export rawHomogenizeMatrix(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+  when s.2 is wc:RawMatrixCell do (c := wc.p;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawHomogenizeMatrix(",
+        a, ",", b, ",", c, 
+      ")"
+    ))
+  ) else WrongArg(2,"a raw matrix")
+  ) else WrongArg(1,"a raw matrix")
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawHomogenizeMatrix",rawHomogenizeMatrix);
+///
+
+ans2 = ///export rawMatrixRowSwap(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wa:RawMutableMatrixCell do (a := wa.p;
+  when s.1 is wb:ZZcell do (
+  if isInt(wb) then (b := toInt(wb);
+  when s.2 is wc:ZZcell do (
+  if isInt(wc) then (c := toInt(wc);
+    possibleEngineError(Ccode(bool,
+      "rawMatrixRowSwap(",
+        a, ",", b, ",", c, 
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw mutable matrix")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawMatrixRowSwap",rawMatrixRowSwap);
+///
+
+TEST ///
+debug needsPackage "GenerateD"
+result = str (genFunctionCall(
+        "rawHomogenizeMatrix", 
+        "MatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")
+        ))
+assert(result == ans1)
+///
+
+TEST ///
+--restart
+debug needsPackage "GenerateD"
+result = str (genFunctionCall(
+        "rawPruneComplex", 
+        "MutableComplexOrNull", 
+        toSequence{"C"=>"MutableComplex","nsteps"=>"int","flags"=>"int"}
+        ));
+print result
+///
+
+TEST ///
+debug needsPackage "GenerateD"
+result = str (genFunctionCall(
+        "rawMatrixRowSwap", 
+        "bool",
+        ("a"=>"MutableMatrix", "b"=>"int", "c"=>"int"),
+        PossibleEngineError => true
+        ))
+assert(result == ans2)
+///
+
+ans3 = ///export rawARingZZpFlint(e:Expr):Expr := (
+  when e is wa:ZZCell do (a := wa;
+    toExpr(Ccode(RawRingOrNull,
+      "rawARingZZpFlint(",
+        a, 
+      ")"
+    ))
+  ) else WrongArg("a small long integer")
+  );
+setupfun("rawARingZZpFlint",rawARingZZpFlint);
+///
+
+TEST ///
+debug needsPackage "GenerateD"
+result = str (genFunctionCall(
+        "rawARingZZpFlint", 
+        "RingOrNull",
+        toSequence {"a"=>"ulong"}
+        ))
+assert(result == ans3)
+///
+
+TEST ///
+debug needsPackage "GenerateD"
+fcns = {
+    (
+        "rawARingZZpFlint", 
+        "RingOrNull",
+        toSequence {"a"=>"ulong"}
+        ),
+    (
+        "rawCharacteristic",
+        "long",
+        toSequence{"a"=>"Ring"}
+        ),
+    (
+        "rawPolynomialRing",
+        "RingOrNull",
+        ("K"=>"Ring", "M"=>"Monoid")
+        ),
+    (
+        "rawIsDense",
+        "bool",
+        toSequence{"a" => "Matrix"}
+        )
+    }        
+str between("",for args in fcns list genFunctionCall args)
+///
+
+TEST ///
+restart
+  debug needsPackage "GenerateD"
+  result = str (genFunctionCall(
+        "rawGBForce", 
+        "ComputationOrNull", 
+        ("gens"=>"Matrix", "gb"=>"Matrix", "change"=>"Matrix","syz"=>"Matrix","flags"=>"int")
+        ))
+  print result
+///
+
 end--
 
+restart
 loadPackage "GenerateD"
+check oo
 
+///
+name
+  rawARingZZpFlint
+returns
+  RingOrNull
+args
+  p:ulong
+doc
+  returns a basic coefficient ring of characteristic p,
+  where $p$ is a prime number that fits in 63 bits.
+///
+
+        "rawCharacteristic",
+        "long",
+        toSequence{"a"=>"Ring"}
+        ),
+    (
+        "rawPolynomialRing",
+        "RingOrNull",
+        ("K"=>"Ring", "M"=>"Monoid")
+        )
+
+///
 
 doc ///
 Key
@@ -155,49 +467,6 @@ end--
 
 -- e.g. 
 
-celltype = new HashTable from {
-    "Monomial" => hashTable {
-        DType => "RawMonomialCell",
-        Synonym => "a raw monomial", 
-        Suffix => ".p"
-        },
-    "MonomialOrNull" => hashTable {
-        DType => "RawMonomialOrNull",
-        Synonym => "a raw monomial or null", 
-        Suffix => ".p"
-        },
-    "Ring" => hashTable {
-        DType => "RawRingCell",
-        Synonym => "a raw ring", 
-        Suffix => ".p"
-        },
-    "RingOrNull" => hashTable {
-        DType => "RawRingOrNull",
-        Synonym => "a raw ring or null", 
-        Suffix => ".p"
-        },
-    "RingElement" => hashTable {
-        DType => "RawRingElementCell",
-        Synonym => "a raw ring element", 
-        Suffix => ".p"
-        },
-    "RingElementOrNull" => hashTable {
-        DType => "RawRingElementOrNull",
-        Synonym => "a raw ring element", 
-        Suffix => ".p"
-        },
-    "Matrix" => hashTable {
-        DType => "RawMatrixCell",
-        Synonym => "a raw matrix", 
-        Suffix => ".p"
-        },
-    "MatrixOrNull" => hashTable {
-        DType => "RawMatrixOrNull",
-        Synonym => "a raw matrix or null", 
-        Prefix => "&",
-        Suffix => ""
-        }
-    }
 
 
 parseTemplate = method()
@@ -246,20 +515,18 @@ generateType String := opts -> (typename) -> (
 
 --removeType String
 
+
 end--
 restart
-load "generateD.m2"
+debug needsPackage "GenerateD"
 readTemplateFile "templates.txt"
 
 
 (genTitle "foo") "innards"
 str oo
 
-str (genFunctionCall(
-        "rawHomogenizeMatrix", 
-        "MatrixOrNull", 
-        ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")
-        ))
+
+
 str (genFunctionCall(
         "rawRingElementAntipode",
         "RingElementOrNull", 
@@ -271,10 +538,23 @@ str (genFunctionCall(
         ("a"=>"Ring", "b"=>"RingElement", "c" => "Monomial")
         ))
 
+print str (genFunctionCall(
+        "rawPruneComplex", 
+        "MatrixOrNull",
+        ("a"=>"MutableComplex", "b"=>"int")
+        ))
+
+str (genFunctionCall(
+        "rawMatrixRowSwap", 
+        "bool",
+        ("a"=>"MutableMatrix", "b"=>"int", "c"=>"int"),
+        PossibleEngineError => true
+        ))
+
 genFunctionCall hashTable {
     Name => "rawHomogenizeMatrix",
     ReturnValue => "MatrixOrNull",
-    Arguments => list of arguments ("M" => "Matrix")
+    Arguments => {"M" => "Matrix"},
     Doc => String, -- or list of strings
     Code => String -- or list of strings
     }
@@ -292,7 +572,7 @@ rawHomogenizeMatrix
 
   
 str oo
-print (genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
+(genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b"=>"Matrix", "c"=>"Matrix")))
 
     toExpr(Ccode(RawMatrixOrNull,
       "rawHomogenizeMatrix(",
@@ -308,13 +588,6 @@ print (genFunctionCall("rawHomogenizeMatrix", "MatrixOrNull", ("a"=>"Matrix", "b
 
   (genFunctionCall("rawHomogenizeMatrix", MatrixOrNull, (a=>Matrix, b=>int, c=>M2arrayint)))
 
-print ((genTitle "rawSaturate") 
-print ((genTitle "rawZZ") ((genNumArgs 0) "  toExpr(Ccode(RawRing,IM2_Ring_ZZ()))"))
-(genArg(2,"Matrix")) ""
-
-(genTitle "rawSaturate") "innards"
-
-
 
 rawSaturate MonomialIdealOrNull (I,MonomialIdeal) (m,Monomial)
 rawSaturate MonomialIdealOrNull (I,MonomialIdeal) (J,MonomialIdeal)
@@ -322,49 +595,8 @@ rawSaturate MonomialIdealOrNull (I,MonomialIdeal) (J,MonomialIdeal)
 (rawSaturate, (I,MonomialIdeal), (m,Monomial)) => MonomialIdealOrNull
 rawSaturate MonomialIdealOrNull (I,MonomialIdeal) (J,MonomialIdeal)
 
-when e is s:Sequence do
-  if length(s) != N then wrongNumArgs(N) else
-  XXX
-  else wrongNumArgs(N)
-
-
-when s.ARGNUM is p:ZZcell do
-  if isInt(p) then (
-      P := toInt(p);
-      sub(innards, ARG=>P)
-      )
-  else WrongArgSmallInteger(ARGNUM)
-  else WrongArgSmallInteger(ARGNUM)
-
-Begin:
-when s.ARGNUM is pARGNUM:ZZcell do
-  if isInt(pARGNUM) then
-
-Internal:
-  sub(ARG with toInt(pARGNUM))
-
-End:
-  else WrongArgSmallInteger(ARGNUM)
-  else WrongArgSmallInteger(ARGNUM)
-
 -- 
 generate("rawQR", MutableMatrix, MutableMatrix, MutableMatrix, Boolean,
     Returns => PossibleError Boolean)
  -- generate D-functions, and a C header.
  
-
-
-
-genArg(ZZ,String) := (argnum, argtype) -> (innards) -> (
-    argname := "p"|argnum;
-    "when s."|argnum|" is "|argname|":"|celltype#argtype#0|" do\n"|
-    "else WrongArg("|argnum|",\""|celltype#argtype#1|"\")\n"
-    )
-
--- this next one is not written yet.
-genSmallIntArg = method()
-genSmallIntArg ZZ := (argnum) -> (innards) -> (
-    argname := "p"|argnum;
-    "if toInt(s.argnum ) then\n"|innards|"\n"|
-    "else"
-    )

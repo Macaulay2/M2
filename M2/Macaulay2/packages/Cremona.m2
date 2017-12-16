@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "4.1", 
-        Date => "August 20, 2017",
+	Version => "4.2", 
+        Date => "October 26, 2017",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true
@@ -296,9 +296,39 @@ expression MultihomogeneousRationalMap := (Phi) -> (
     return expression((if Phi#"isBirational" === true then "birational " else (if Phi#"isDominant" === true then "dominant rational " else "rational "))| "map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
 );
 
-net RationalMap := (Phi) -> net expression Phi;
+net RationalMap := (Phi) -> nicePrint Phi;
 
-net MultihomogeneousRationalMap := (Phi) -> net expression Phi;
+net MultihomogeneousRationalMap := (Phi) -> nicePrint Phi;
+
+RationalMap#{Standard,AfterPrint} = RationalMap#{Standard,AfterNoPrint} = (Phi) -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
+);
+
+MultihomogeneousRationalMap#{Standard,AfterPrint} = MultihomogeneousRationalMap#{Standard,AfterNoPrint} = (Phi) -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
+);
+
+nicePrint = method(TypicalValue => Net)
+
+nicePrint (List) := (F) -> (
+   E := net("{");
+   if #F > 0 then E = E || stack append(for i to #F-2 list " "|net(F_i)|","," "|net(F_(#F-1)));
+   E||net("}")
+);
+
+nicePrint (Ideal) := (I) -> nicePrint flatten entries gens I;
+
+nicePrint (PolynomialRing) := (R) -> (
+   K := coefficientRing R;
+   mm := apply(multigens R,m -> new Array from m);
+   P := "Proj("|net(K)|net(mm_0)|")";
+   for i from 1 to #mm-1 do P = P|" x Proj("|net(K)|net(mm_i)|")";
+   return P;
+);
+
+nicePrint (QuotientRing) := (R) -> ("subvariety of "|nicePrint(ambient R)|" defined by")||nicePrint(ideal R);
+
+nicePrint (MutableHashTable) := (Phi) -> "-- rational map --"||("source: "|nicePrint(source Phi))||("target: "|nicePrint(target Phi))||"defining forms: "|nicePrint(entries Phi); 
 
 describeInt = method()
 
@@ -1348,7 +1378,8 @@ expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducibl
   I = trim I;  d:=degree I; degs := flatten degrees I; 
   try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1 and (k != 0 or d == 1)) else error "internal error encountered";
   if k <= 0 or k >= n then return expressionVar(k,n);
-  dimSing := if (unique degs == {1}) or (select(degs,ee->ee>1)=={2}) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=5 and n<=5) or (numgens I == n-k and n<=6) then max(dim(minors(n-k,jacobian I)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
+  dimSing := if (select(degs,ee->ee>1)=={2} and n<=9) or (max degs<=2 and n<=5) or (numgens I == 1 and d<=8-n and n<=5) then max(dim(minors(n-k,jacobian I)+I)-1,-1) else null; -- for efficiency, the singular locus is calculated only in special cases
+  if dimSing === null then if (unique degs == {1}) then dimSing = -1;
   singStr:=if dimSing =!= null and dimSing =!= -1 then "singular " else "";
   cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs);
   if d == n-k+1 and d > 2 and min degs != 1 then (
