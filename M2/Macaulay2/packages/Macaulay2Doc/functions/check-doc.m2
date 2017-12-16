@@ -6,7 +6,7 @@ document {
      Key => {check,(check,Package),(check,String),(check,ZZ,Package),(check,ZZ,String),[check,UserMode]},
      Headline => "perform tests of a package",
      PARA {
-     	  "It is important for package authors to provide tests to insure that the package
+     	  "It is important for package authors to provide tests to ensure that the package
      	  is functioning properly.  One provides tests using  ", TO TEST,
      	  " in the ", TO beginDocumentation, " section."
 	  },

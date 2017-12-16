@@ -8,34 +8,34 @@
 typedef void *F4CoefficientArray;
 class F4Mem;
 
-struct dense_row : public our_new_delete {
-  int len; // coeffs is an array 0..len-1
+struct dense_row : public our_new_delete
+{
+  int len;  // coeffs is an array 0..len-1
   F4CoefficientArray coeffs;
 };
 
 class Gausser : public our_new_delete
 {
-  enum {ZZp} typ;
+  enum { ZZp } typ;
   const Ring *K;
 
   CoefficientRingZZp *Kp;
   F4Mem *Mem;
 
   Gausser(const Z_mod *K0, F4Mem *Mem0);
-public:
-  ~Gausser() {}
 
+ public:
+  ~Gausser() {}
   static Gausser *newGausser(const Ring *K, F4Mem *Mem0);
 
-  const Ring * get_ring() const { return K; }
-
-  const CoefficientRingZZp* get_coeff_ring() const { return Kp; }
-
+  const Ring *get_ring() const { return K; }
+  const CoefficientRingZZp *get_coeff_ring() const { return Kp; }
   F4CoefficientArray from_ringelem_array(int len, ring_elem *elems) const;
 
   void to_ringelem_array(int len, F4CoefficientArray, ring_elem *result) const;
 
-  F4CoefficientArray copy_F4CoefficientArray(int len, F4CoefficientArray F) const;
+  F4CoefficientArray copy_F4CoefficientArray(int len,
+                                             F4CoefficientArray F) const;
 
   // leading coefficient
   int lead_coeff(F4CoefficientArray coeffs) const
@@ -86,9 +86,8 @@ public:
                                int first,
                                int last) const;
 
-  void sparse_row_make_monic(int len,
-                             F4CoefficientArray sparse) const;
-  int coeff_to_int(int f) const //anton
+  void sparse_row_make_monic(int len, F4CoefficientArray sparse) const;
+  int coeff_to_int(int f) const  // anton
   {
     return Kp->to_int(f);
   }

@@ -5,14 +5,15 @@
 
 namespace M2 {
 
-  template<> void Reader<ARingZZp>::read(std::istream& i, ElementType& result)
-  {
-    mpz_t a;
-    mpz_init(a);
-    i >> a;
-    mRing.set_from_mpz(result, a);
-    mpz_clear(a);
-  }
+template <>
+void Reader<ARingZZp>::read(std::istream& i, ElementType& result)
+{
+  mpz_t a;
+  mpz_init(a);
+  i >> a;
+  mRing.set_from_mpz(result, a);
+  mpz_clear(a);
+}
 }
 
 // Local Variables:

@@ -4,18 +4,33 @@ dnl appears as a literal value.
 
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
-dnl Things to do when incrementing the version number:
+
+dnl Things to do when incrementing the version number to X.Y.Z :
+dnl    - increment the version number in the AC_INIT macro below
 dnl    - add an entry to distributions/deb/changelog
-dnl Things to do after incrementing the version number and committing:
-dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
+dnl    - commit those two changed files
 dnl    - make a git tag of the form version-X.Y.Z
+dnl    	      git tag version-X.Y.Z
+dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
+dnl           git checkout -b release-X.Y.Z
+dnl    - push the new branch to github and track it
+dnl           git push -u origin release-X.Y.Z
+dnl    - on the master branch, if a new branch was made for development,
+dnl      increment the version number again to X.Y.Z.1 in this file and add an
+dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
+dnl      omitted above.  Commit that change and make a tag.
+dnl           git checkout master
+dnl           # edit two files, as above
+dnl           git tag version-X.Y.Z.1
+
 dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
-AC_INIT(Macaulay2, 1.9.2.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+
+AC_INIT(Macaulay2, 1.10.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
-dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
+dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
 dnl   1.3.1   : a minor update, with changes people might want, stable, suitable for binary distributions or updates to binary distributions on certain architectures
 dnl   1.3.1.1 : a development version, with no binary distributions
 dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
@@ -224,6 +239,10 @@ AC_SUBST(M2_CPPFLAGS,)
 AC_SUBST(M2_CFLAGS,)
 AC_SUBST(M2_CXXFLAGS,)
 
+dnl Fix standards, apply everywhere
+CXXFLAGS="-std=gnu++11 $CXXFLAGS"
+CFLAGS="-std=gnu11 $CFLAGS"
+
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
 
@@ -243,18 +262,22 @@ AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
+dnl always compile with "-g", so we can debug even optimized versions
+if test "$GCC" = yes
+then CFLAGS="$CFLAGS -g3"
+     CXXFLAGS="$CXXFLAGS -g3"
+     LDFLAGS="$LDFLAGS -g3"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g3"
+else CFLAGS="$CFLAGS -g"
+     CXXFLAGS="$CXXFLAGS -g"
+     LDFLAGS="$LDFLAGS -g"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g"
+fi
+
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
 then # It is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint".
      # Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.  This is standard practice.
-     if test "$GCC" = yes
-     then CFLAGS="$CFLAGS -g3"
-	  CXXFLAGS="$CXXFLAGS -g3"
-	  LDFLAGS="$LDFLAGS -g3"
-     else CFLAGS="$CFLAGS -g"
-	  CXXFLAGS="$CXXFLAGS -g"
-	  LDFLAGS="$LDFLAGS -g"
-     fi
      # gc.h obeys the GC_DEBUG flag:
      M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
      CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
@@ -337,28 +360,6 @@ dnl 	    *) CXX="$CXX -m64" ;;
 dnl 	  esac
 dnl      fi
 dnl fi
-
-AC_MSG_CHECKING([whether compiling with $CXX and then linking with $CC works])
-cat >unwindtest-main.cpp <<EOF
-#include "unwindtest-monomials.hpp"
-int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
-EOF
-cat >unwindtest-monomials.hpp <<EOF
-class Monomials { public: Monomials(); };
-EOF
-cat >unwindtest-monomials.cpp <<EOF
-#include "unwindtest-monomials.hpp"
-Monomials::Monomials() {}
-EOF
-if   (  set -x
-	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
-	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
-	$CC $LDFLAGS unwindtest-main.$OBJEXT unwindtest-monomials.$OBJEXT $LIBS -lstdc++ -o unwindtest-main &&
-	test -f unwindtest-main$EXEEXT
-     ) >&AS_MESSAGE_LOG_FD 2>&1
-then AC_MSG_RESULT(yes); rm -f unwindtest-*
-else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file config.log])
-fi
 
 AC_MSG_CHECKING(order of construction implemented by the linker)
     cat >conf_main.cc <<EOF
@@ -488,7 +489,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,no) AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
 
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
@@ -496,7 +497,6 @@ AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
-dnl AC_SUBST(USE_THREADS,yes) AC_ARG_ENABLE(threads, AS_HELP_STRING(--disable-threads,[disable thread local storage and thread creation]), USE_THREADS=$enableval)
 AC_SUBST(CC_THREAD_SUPPORT)
 AC_MSG_CHECKING(whether the C compiler accepts the __thread storage attribute)
 AC_LANG(C)
@@ -504,9 +504,6 @@ AC_COMPILE_IFELSE(
 	[AC_LANG_SOURCE([__thread int x;])],
      	CC_THREAD_SUPPORT=yes; [AC_MSG_RESULT(yes)],
 	CC_THREAD_SUPPORT=no ; [AC_MSG_RESULT(no)])
-dnl if [[ "$USE_THREADS" = yes ]]
-dnl then AC_DEFINE(USE_THREADS,1,[whether to use thread local storage])
-dnl fi
 
 AC_SUBST(FROBBY,yes)
 AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
@@ -548,7 +545,7 @@ then LDFLAGS="$LDFLAGS -faltivec"
      CXXFLAGS="$CXXFLAGS -faltivec"
 fi
 
-AC_PROG_FC()
+AC_PROG_FC()			dnl check for Fortran compiler presence
 USE_FCLIBS=unspecified
 AC_ARG_ENABLE(fc-lib-ldflags,
     AS_HELP_STRING(--disable-fc-lib-ldflags,[do not use extra libraries for linking with Fortran (the default under Cygwin)]),
@@ -597,7 +594,7 @@ AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
 [if [ $? != 0 ] ; then exit 1 ; fi]
 # convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
+AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
 AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
@@ -792,17 +789,36 @@ AC_SUBST(BUILTLIBS,)
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 # They reflect dependencies, with prerequisites listed first.
 # In particular, there are the following dependencies:
-#    mathicgb need mathic and memtailor
-#    mathic need memtailor
+#    mathicgb needs mathic and memtailor
+#    mathic needs memtailor
 #    gc needs atomic_ops (and sometimes includes it)
-#    factory needs gftables, flint, ntl and gmp
+#    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
+# 	   We have always built mpfr because we told mpir (which is
+# 	   impersonating gmp) to use libgc for its memory allocation.  But mpfr
+# 	   puts pointers to gmp numbers in thread local variables, unless
+# 	   specially configured, which libgc can't find, so libgc regards them
+# 	   as garbage and ultimately frees them, causing strange errors.  See
+# 	   libraries/mpfr/Makefile.in for more information.  Another possible
+# 	   problem can arise if mpfr comes preinstalled and dynamically linked
+# 	   to libgmp, but we want to use mpir instead.
+#	   We cannot continue to tell gmp to use GC_malloc while mpfr is using it.
+#	   *** Conclusion: we must let gmp use malloc, not GC_malloc.  So what
+#	   do with objects returned by libraries that use gmp, directly or
+# 	   indirectly?  Either deep copy to the GC heap or finalization to free it explicitly?
 #    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
+# 	   We have always built mpir, so we can patch the routine
+# 	   mp_set_memory_functions() in it so it does nothing; that prevents
+# 	   libraries such as pari from telling it what memory allocation
+# 	   functions to use.  But we should instead patch pari or work around
+# 	   it, so we can use the gmp library that comes with many linux
+# 	   distributions.
 #    4ti2 needs glpk
 #    gfan needs cddlib
+#    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
 #	it uses a dynamic readline library that can only be provided by fink and probably will not be copied into the install location
 #       it offers no way to provide a directory tree containing a readline library we've compiled
@@ -816,18 +832,17 @@ AC_SUBST(BUILTLIBS,)
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
 #    linbox needs fflas_ffpack and givaro
-#    fflas_ffpack needs givaro and lapack
+#    givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
+#    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
-#    fflas_ffpack is provided as an option for experimentation
-#        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
-AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
+AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -837,18 +852,33 @@ for i in $LIBLIST $SUBLIST
 do eval BUILD_$i=no
 done
 
+# Convert package identifiers used here to package names as known by the package.
+# The point is that BUILD_fflas_ffpack is a valid shell identifier, but
+# the name of the package is fflas-ffpack and BUILD_fflas-ffpack is not valid as
+# a shell identifier.  We may need the name of the package, for example, as an
+# argument to pkg-config.
+for i in $LIBLIST
+do eval PKGNAME_$i=$i
+done
+PKGNAME_fflas_ffpack=fflas-ffpack
+
 for i in $PROGLIST
 do eval BUILD_$i=yes
 done
 dnl make some programs optional:
 BUILD_cddplus=no
+BUILD_gftables=no
 
 BUILD_mpir=yes
 BUILD_ALWAYS="mpir $BUILD_ALWAYS"
-# We always build mpir so we can patch the routine mp_set_memory_functions() in it so
-# it does nothing; that prevents libraries such as pari from telling it what memory
-# allocation functions to use.  But we should instead patch pari, so we can use the
-# gmp library that comes with many linux distributions.
+# We always build mpir so we can patch the routine mp_set_memory_functions() in
+# it so it does nothing; that prevents libraries such as pari from telling it
+# what memory allocation functions to use.  But we should instead set
+# RETAIN_PARI_STATE to TRUE here, so we can use the gmp library that comes with
+# many linux distributions.  It will thus not be thread safe.
+
+# When linking with python and running sage, sage will initialize and use the
+# pari library, too.  We should investigte whether it tells pari to retain its state.
 
 BUILD_mpfr=yes
 BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
@@ -858,6 +888,20 @@ BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
 # frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
 # Another possible problem can arise if mpfr comes dynamically linked to libgmp, but we want
 # to use mpir instead.
+
+BUILD_givaro=yes
+BUILD_ALWAYS="givaro $BUILD_ALWAYS"
+# givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
+
+BUILD_cddlib=yes
+BUILD_ALWAYS="cddlib $BUILD_ALWAYS"
+# cddlib uses gmp, but we replace gmp with mpir (a patched version), so we must always build cddlib
+
+if [[ $BUILD_mpir = yes ]]
+then AC_MSG_NOTICE([mpir is being built (to replace gmp), so we will build pari])
+     BUILD_pari=yes
+     BUILD_ALWAYS="pari $BUILD_ALWAYS"
+fi
 
 AC_ARG_ENABLE(gfan, AS_HELP_STRING(--disable-gfan,[do not build gfan program]), GFAN=$enableval)
 if test "$GFAN" = no
@@ -912,31 +956,12 @@ fi
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,tinfo ncurses curses,,AC_MSG_ERROR([[libcurses, libncurses, and tinfo not found (containing symbol tgoto)]]))
+AC_SEARCH_LIBS(tgoto,tinfo ncurses curses,,AC_MSG_ERROR([[not found: library containing symbol tgoto; tried libcurses, libncurses, and libtinfo)]]))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
-then AC_MSG_CHECKING([for library containing common symbol _rl_comment_begin and text symbol rl_set_prompt])
-     FOUND=
-     SAVELIBS=$LIBS
-     for lib in "" "-lreadline" "-lreadline -lhistory"
-     do  test "$lib" && LIBS="$lib $LIBS"
-	 AC_LINK_IFELSE(
-	     [AC_LANG_SOURCE([
-	      [ extern int rl_set_prompt(); extern int _rl_comment_begin; int main () { return rl_set_prompt() + _rl_comment_begin; } ]
-	     ])],
-	     FOUND=yes; break;,
-	     LIBS=$SAVELIBS)
-     done
-     if test "$FOUND"
-     then if test "$lib"
-	 then AC_MSG_RESULT([yes, $lib])
-	 else AC_MSG_RESULT([none required])
-	 fi
-     else AC_MSG_RESULT([no, will build readline])
-	 BUILD_readline=yes
-     fi 
+then AC_SEARCH_LIBS(rl_set_prompt,readline,,BUILD_readline=yes)
 fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
@@ -947,9 +972,26 @@ fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
 fi
+if test $BUILD_readline = no
+then # readline on Mac OS X is stuck at version 4.2, which has this bug:
+     #   CTRL-A doesn't go all the way to the beginning of the
+     #   line after typing r e s o TAB C-a
+     # So we build it ourselves.
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether readline library is new enough (version at least 6)])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+	     #include <stdio.h>
+	     #include <readline/readline.h>
+	     int main () { return ! ( RL_READLINE_VERSION >= 6 * 0x100 ) ; }]])],
+	[ AC_MSG_RESULT([yes]) ],
+	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
+	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+else AC_CHECK_DECLS(rl_catch_signals,,,readline/readline.h)
+     AC_CHECK_DECLS(__rl_comment_begin,,,readline/readline.h)
 fi
 
 dnl We no longer link with gmp.
@@ -989,7 +1031,7 @@ dnl fi
 if test $BUILD_memtailor = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     CXXFLAGS="$CXXFLAGS"
      AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
      AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
      CXXFLAGS="$SAVE_CXXFLAGS"
@@ -999,7 +1041,7 @@ test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
 if test $BUILD_mathic = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     CXXFLAGS="$CXXFLAGS"
      AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
      AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
      CXXFLAGS="$SAVE_CXXFLAGS"
@@ -1009,7 +1051,7 @@ test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
 if test $BUILD_mathicgb = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     CXXFLAGS="$CXXFLAGS"
      AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
      AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
      CXXFLAGS="$SAVE_CXXFLAGS"
@@ -1062,12 +1104,6 @@ then AC_MSG_CHECKING(for gmp ostream compatibility)
 	[AC_MSG_RESULT(yes)],
 	[BUILD_mpir=yes
          AC_MSG_RESULT([no, will build mpir])])
-fi
-
-if [[ $BUILD_mpir = yes ]]
-then AC_MSG_NOTICE([mpir is being built, so we will build pari])
-     BUILD_pari=yes
-     BUILD_ALWAYS="pari $BUILD_ALWAYS"
 fi
 
 if test "$PARI" = yes
@@ -1187,7 +1223,15 @@ then AC_LANG(C)
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-     fi
+	  AC_MSG_CHECKING([whether mpfr library uses thread local variables]) # see notes above
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		  #include <stdio.h>
+		  #include <mpfr.h>
+		  main () { return !mpfr_buildopt_tls_p(); }]])],
+	     [ AC_MSG_RESULT([yes, *** may cause a problem]) ], dnl build mpfr ourselves with tls disabled, as we did before?
+	     [ AC_MSG_RESULT([no, good]) ],
+	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+    fi
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
@@ -1195,7 +1239,7 @@ if test $BUILD_atomic_ops = no
 then AC_MSG_CHECKING(whether package atomic_ops is provided)
      if [ pkg-config --exists atomic_ops ]
      then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops` $CPPFLAGS"
+	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
      else AC_MSG_RESULT([no, will be built from downloaded sources])
           BUILD_atomic_ops=yes
      fi
@@ -1206,7 +1250,7 @@ if test $BUILD_gc = no
 then AC_MSG_CHECKING(whether package bdw-gc is provided)
      if [ pkg-config --exists bdw-gc ]
      then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc` $CPPFLAGS"
+	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
 	  GC_LIBS=`pkg-config --libs-only-l bdw-gc`
 	  LIBS="$GC_LIBS $LIBS"
      else AC_MSG_RESULT([no, will be built from downloaded sources])
@@ -1261,10 +1305,10 @@ AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 # test for givaro
 if test $BUILD_givaro = no
-then AC_MSG_CHECKING(for givaro library)
+then AC_MSG_CHECKING(for givaro library, at least version 4)
      GIVARO_LIBS=`givaro-config --libs 2>&1`
      dnl warning: a pre-installed givaro library might be compiled and linked against gmp, which could cause a problem if we are building mpir ourselves
-     if test $? = 0
+     if test $? = 0 && test "`givaro-config --decimal-version`" -gt 40000
      then AC_MSG_RESULT(found)
 	  LIBS="$LIBS $GIVARO_LIBS"
           M2_CPPFLAGS="$M2_CPPFLAGS `givaro-config --cflags`"
@@ -1272,13 +1316,16 @@ then AC_MSG_CHECKING(for givaro library)
           BUILD_givaro=yes
      fi
 fi
-test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
+if test $BUILD_givaro = yes
+then BUILTLIBS="-lgivaro $BUILTLIBS"
+     BUILD_fflas_ffpack=yes
+fi
 
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING(for fflas_ffpack library)
      FFLAS_FFPACK_CXXFLAGS=`fflas-ffpack-config --cflags 2>&1`
-     if test $? = 0
+     if test $? = 0 && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
      else AC_MSG_RESULT(not found, will build)
@@ -1369,6 +1416,11 @@ AC_ARG_ENABLE(fplll,
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
+if test $BUILD_flint = yes -o $BUILD_ntl = yes -o $BUILD_mpir = yes
+then BUILD_factory=yes
+     BUILD_ALWAYS="factory $BUILD_ALWAYS"
+fi
+
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
@@ -1452,6 +1504,8 @@ then
 	 AC_DEFINE([FACTORY_STREAMIO], [0])])
 fi
 
+AC_SUBST(LINALGLIBS)
+
 # we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
 # one of them to $LIBS, making it impossible to check for the presence of C or
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
@@ -1464,21 +1518,22 @@ then if test $USE_FCLIBS != no
 else lapack_found=no
      blas_found=no
      AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
-     SAVELIBS=$LIBS LIBS="-framework Accelerate $LIBS"
+     LINALGLIBS="-framework Accelerate"
+     SAVELIBS=$LIBS LIBS="$LINALGLIBS $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
-	 [LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
+	 [USE_FCLIBS=no; blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
+	 [LINALGLIBS= LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
      if test $blas_found = no
      then AC_MSG_CHECKING([whether package blas is provided])
 	  if pkg-config --exists blas
 	  then AC_MSG_RESULT(yes)
 	       blas_found=yes
-	       NEWLIBS=`pkg-config --libs blas`
-	       LIBS="$NEWLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I blas` $CPPFLAGS"
-	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $NEWLIBS))
+	       BLASLIBS=`pkg-config --libs blas`
+	       LIBS="$BLASLIBS $LIBS"
+	       CPPFLAGS="`pkg-config --cflags-only-I blas | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $BLASLIBS))
 	  else AC_MSG_RESULT(no)
 	  fi
      fi
@@ -1487,24 +1542,33 @@ else lapack_found=no
 	  if pkg-config --exists lapack
 	  then AC_MSG_RESULT(yes)
 	       lapack_found=yes
-	       NEWLIBS=`pkg-config --libs lapack`
-	       LIBS="$NEWLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I lapack` $CPPFLAGS"
-	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $NEWLIBS))
+	       LAPACKLIBS="`pkg-config --libs lapack`"
+	       LIBS="$LAPACKLIBS $LIBS"
+	       CPPFLAGS="`pkg-config --cflags-only-I lapack | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $LAPACKLIBS))
 	  else AC_MSG_RESULT(no)
 	  fi
      fi
-     LIBS="$FCLIBS $LIBS"; added_fclibs=yes
+     if test $USE_FCLIBS != no
+     then LIBS="$FCLIBS $LIBS"; added_fclibs=yes
+     fi
      if test $blas_found = no
-     then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,blas_found=yes)
+     then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,
+                         blas_found=yes
+			 BLASLIBS=$ac_cv_search_sgemv_
+			 )
           # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
      fi
      if test $lapack_found = no
-     then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,lapack_found=yes)
+     then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,
+	  		 lapack_found=yes
+			 LAPACKLIBS=$ac_cv_search_dgetrf_
+			 )
      fi
      if test $blas_found = no -o $lapack_found = no
      then BUILD_lapack=yes
      fi
+     LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
 fi
 
 if test $BUILD_lapack = yes
@@ -1561,7 +1625,7 @@ AC_LANG(C)
 AC_MSG_CHECKING(whether package libxml-2.0 is provided)
 if [ pkg-config --exists libxml-2.0 ]
 then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0` $CPPFLAGS"
+     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
 else AC_MSG_ERROR([no, package libxml-2.0 not found, install it])
 fi
 
@@ -1793,6 +1857,7 @@ AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
 AC_MSG_NOTICE([link using:])
 dnl the order of this list should agree with that in Macaulay2/bin/Makefile.in
 AC_MSG_NOTICE([     BUILTLIBS          = $BUILTLIBS])
+AC_MSG_NOTICE([     LINALGLIBS         = $LINALGLIBS])
 AC_MSG_NOTICE([     LIBS_STATIC        = $LIBS_STATIC])
 AC_MSG_NOTICE([     LIBS_EITHER        = $LIBS_EITHER])
 AC_MSG_NOTICE([     LIBS_DYNAMIC       = $LIBS_DYNAMIC])

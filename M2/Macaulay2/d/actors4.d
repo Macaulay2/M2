@@ -1044,6 +1044,7 @@ tostringfun(e:Expr):Expr := (
      is x:RawFreeModuleCell do toExpr(Ccode(string, "IM2_FreeModule_to_string(",x.p,")" ))
      is x:RawMatrixCell do toExpr(Ccode(string, "IM2_Matrix_to_string(",x.p,")" ))
      is x:RawMutableMatrixCell do toExpr(Ccode(string, "IM2_MutableMatrix_to_string(",x.p,")" ))
+     is x:RawMutableComplexCell do toExpr(Ccode(string, "rawMutableComplexToString(",x.p,")" ))
      -- NAG stuff begin
      is x:RawHomotopyCell do toExpr(Ccode(string, "rawHomotopyToString(",x.p,")" ))
      is x:RawSLEvaluatorCell do toExpr(Ccode(string, "rawSLEvaluatorToString(",x.p,")" ))

@@ -5,7 +5,6 @@ SRCDIR = @srcdir@
 DEPENDS = yes
 include ../Makefile.common
 include @srcdir@/../Makefile.files
-include @srcdir@/../f4/Makefile.files
 include @srcdir@/Makefile.files
 export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
@@ -14,14 +13,14 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
 
-#CXXFLAGS += -O0 -std=gnu++0x #-coverage
-CXXFLAGS += -std=c++11 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
+CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
-LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor -lstdc++ @FCLIBS@
+# note: on some machines, gcc can't find -lstdc++
+LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor @FCLIBS@
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
 
 # do not link with gtest -- it's supposed to get compiled in via #include:
@@ -40,16 +39,16 @@ fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
 
 $(UNITTEST_TARGET) : gtest-include.o $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
-	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runtests: $(UNITTEST_TARGET)
 	time ./$(UNITTEST_TARGET)
 
 ARingRRRTest :  gtest-include.o ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
-	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
-	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 ARingRRRZZpTest :  gtest-include.o  \
     ARingZZpTest.o  \
@@ -61,9 +60,13 @@ ARingRRRZZpTest :  gtest-include.o  \
     RingRRRTest.o \
     RingCCCTest.o \
     $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
-	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
- 
+checkGivaro: GivaroTest
+
+GivaroTest: GivaroTest.o
+	@CXX@ $(LDFLAGS) $^ -lgivaro -lgmp -lgmpxx -o $@
+
 checkRingRRR: ARingRRRTest
 	time ./ARingRRRTest
 

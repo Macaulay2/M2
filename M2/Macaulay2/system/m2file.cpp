@@ -161,7 +161,7 @@ extern "C"
 	file->waitExclusiveThreadAcquire(1);
 	return file->unsyncState;
       }
-    else if(file->currentThreadMode==2)
+    else // if(file->currentThreadMode==2)
       {
 	//get thread id
 	pthread_t localId = pthread_self();

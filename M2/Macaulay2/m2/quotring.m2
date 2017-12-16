@@ -91,6 +91,8 @@ ZZp Ideal := opts -> (I) -> (
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
+isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
+
 initializeEngineLinearAlgebra = method()
 initializeEngineLinearAlgebra Ring := (R) -> (
     R#"EngineLinearAlgebra" = true;
@@ -273,7 +275,8 @@ dim QuotientRing := (R) -> (
      else if R.?SkewCommutative then notImplemented()
      else (
 	  I := flattenRing(R, Result => Ideal);
-	  dim ring I - codim I
+	  cd := codim I;
+	  if cd === infinity then -1 else dim ring I - codim I
 	  )
      )
 

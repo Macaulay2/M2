@@ -120,3 +120,99 @@ x = solve(A,b)
 A*x-b 
 ///
 
+TEST ///
+  -- QR decompositions
+
+  makeQR = method()
+  makeQR(MutableMatrix, MutableMatrix) := (m1,m2) -> (
+      k := min(numRows m1, numColumns m1); -- same size as original matrix M. 
+      R := mutableMatrix(ring m1, k, numColumns m1);
+      --Q := mutableMatrix(RR_53, numRows m1, k);
+      for i from 0 to numColumns m1-1 do for j from i to numColumns m1 - 1 do R_(i,j) = m1_(i,j)  ;
+      -- make Householder reflections
+      vs := for i from 0 to numColumns m1 - 1 list (
+          m := mutableMatrix(ring m1, 1, numRows m1);
+          m_(0,i) = 1.0;
+          for j from i+1 to numRows m1 - 1 do m_(0,j) = m1_(j,i);
+          m
+          );
+      Hs := for i from 0 to #vs-1 list (
+          mutableIdentity(ring m1, numColumns vs_i) - m2_(0,i) * ((transpose vs_i) * (vs_i)));
+      Q := product Hs;
+      Q = submatrix(Q,,0..k-1);
+      (Q,R)
+      )
+  checkQR = (M,Q,R) -> (
+      -- check the following:
+      -- (a) sizes are as expected
+      -- (b) Q is orthogonal columns
+      -- (c) Q^T * R = M, within some tolerance
+      -- (d) R is upper triangular, or upper trapezoidal? (what does this mean?)
+      assert(ring Q === ring M);
+      assert(ring R === ring M);
+      k := min(numRows Q, numColumns Q);
+      assert(numRows Q == numRows M);
+      assert(numColumns Q == k);
+      assert(numRows R == k);
+      assert(numColumns R == numColumns Q);
+      assert(0 == clean(1e-10, (transpose Q) * M  - R));
+      assert(0 == clean(1e-10, (transpose Q) * Q - mutableIdentity(ring M, numColumns Q)));
+      -- now check that R is upper triangular, or upper trapezoidal?
+      )
+  checkEncodedQR = (M,m1,m2) -> (
+      -- check the following:
+      -- (a) sizes are as expected
+      -- (b) decode m1 to R, m1 and m2 to Q.
+      --     then call checkQR
+      (Q,R) := makeQR(m1,m2);
+      checkQR(M,Q,R)
+      )
+  debug Core
+  checkQRs = (M) -> (
+      k := RR_53;
+      m1 := mutableMatrix(k,0,0,Dense=>true);
+      m2 := mutableMatrix(k,0,0,Dense=>true);
+      rawQR(raw M, raw m1, raw m2, false );
+      (Q,R) := QRDecomposition M;
+      checkEncodedQR(M,m1,m2);
+      checkQR(M,Q,R);
+      (Q1,R1) := makeQR(m1,m2);
+      assert(clean(1e-10, Q-Q1) == 0);
+      assert(clean(1e-10, R-R1) == 0);
+      )
+  -- test: 
+  --   (a) trivial sizes.
+  --   (b) ones with nrows > ncols, columns indep
+  --   (c)           nrows > ncols, cols dependent
+  --   (d) nrows == ncols, nonsing, and singular
+  --   (e) nrows < ncols
+  M = matrix(RR_53, {
+          {1.1, 1.4, 1.8}, 
+          {-1.1, .3, -.2}, 
+          {0.0, 3.7, 8.6}, 
+          {-2.1, 0.0, 5.4}, 
+          {0.0, -0.2, -23}
+          })
+  M = mutableMatrix M
+  checkQRs M
+  
+  M = mutableMatrix(RR_53, 50, 10)
+  fillMatrix M
+  elapsedTime (Q,R) = QRDecomposition M;
+  checkQRs M
+
+  M = mutableMatrix(RR_53, 10, 10)
+  fillMatrix M
+  elapsedTime (Q,R) = QRDecomposition M;
+  checkQRs M
+
+  -- TODO: QR doesn't yet work for #rows < #cols.  What should it do in this case?
+  -*
+  M = mutableMatrix(RR_53, 10, 50)
+  fillMatrix M
+  elapsedTime (Q,R) = QR M;
+  checkQRs M
+  (m1,m2) = QR(M, ReturnQR=>false)
+  (Q1,R1) = makeQR(m1,m2) 
+  *-
+///

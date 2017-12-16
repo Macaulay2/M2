@@ -52,7 +52,7 @@ m1 = mutableMatrix(m, Dense=>true)
 assert(0 == (permutationMatrix P) * (matrix L) * (matrix U) - m )
 
 print "rawFFLU seems to be non-functional? next part commented out"
-{*
+-*
 debug Core
 rawFFLU raw m1
 m1
@@ -76,7 +76,7 @@ m = genericMatrix(R,a,3,3)
 m1 = mutableMatrix m
 rawFFLU raw m1
 m1
-*}
+*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/engine LU.out"

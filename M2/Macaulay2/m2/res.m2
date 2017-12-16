@@ -81,12 +81,18 @@ resolutionInEngine := opts -> (M) -> (
      or (M.cache.resolution.Resolution.Strategy === 4 and opts.Strategy =!= 4)
      or (M.cache.resolution.Resolution.Strategy =!= 4 and opts.Strategy === 4)
      then M.cache.resolution = (
+          if opts.Strategy === 4 and not isFinitePrimeField (coefficientRing R)
+	  then error "fast non-minimal resolutions are implemented only over prime finite fields";
           if flagInhomogeneity then (
 	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
 	       if debugLevel > 0 then stderr << "--res: matrix is homogeneous, good" << endl;
 	       );
 	  g := presentation M;
-	  if not instance(opts.Strategy, ZZ) then error "resolution in engine: expected Strategy option to be an integer";
+	  if not (
+	       instance(opts.Strategy, ZZ)
+	       or
+	       class opts.Strategy === RR		    -- to allow 4.1, experimentally
+	       ) then error "resolution in engine: expected Strategy option to be an integer";
 	  if opts.Strategy === 0 or opts.Strategy === 4 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
@@ -107,7 +113,7 @@ resolutionInEngine := opts -> (M) -> (
 		    maxlevel,				    -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
 		    false,					    -- useMaxSlantedDegree
 		    0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
-		    opts.Strategy,				    -- algorithm
+		    floor opts.Strategy,		    -- algorithm (floor converts the experimental value 4.1 to 4, avoiding error message above)
 		    opts.SortStrategy			    -- strategy (is this the same as opts.SortStrategy?)
 		    )};
 	  W#"RawComputation log" = Bag {log};
@@ -222,7 +228,7 @@ resolution Matrix := ChainComplexMap => options -> (f) -> extend(
 resolution Ideal := ChainComplex => options -> (I) -> resolution(
      if I.cache.?quotient 
      then I.cache.quotient
-     else I.cache.quotient = (ring I)^1/I,
+     else I.cache.quotient = cokernel generators I, -- used to be (ring I)^1/I, but that needs GB recomputation...
      options)
 
 -----------------------------------------------------------------------------

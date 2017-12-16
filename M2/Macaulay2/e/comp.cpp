@@ -49,25 +49,24 @@ EngineComputation::EngineComputation()
   stop_.length_limit = 0;
 }
 
-
-void EngineComputation::text_out(buffer &o) const
-{
-  o << "-- computation --";
-}
-
+void EngineComputation::text_out(buffer &o) const { o << "-- computation --"; }
 void EngineComputation::show() const
 {
   printf("No show method available for this computation type\n");
 }
 
-enum ComputationStatusCode EngineComputation::set_status(enum ComputationStatusCode c)
+enum ComputationStatusCode EngineComputation::set_status(
+    enum ComputationStatusCode c)
 {
-     switch (computation_status) {
-     case COMP_OVERFLOWED:
-          // if (computation_status == COMP_NEED_RESIZE) break;
-          throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
-     default: return computation_status = c;
-     }
+  switch (computation_status)
+    {
+      case COMP_OVERFLOWED:
+        // if (computation_status == COMP_NEED_RESIZE) break;
+        throw(exc::internal_error(
+            "attempted to reset status of a computation that overflowed"));
+      default:
+        return computation_status = c;
+    }
 }
 //////////////////////////////////////////////
 // EngineGBComputation ///////////////////////
@@ -93,11 +92,7 @@ EngineGBComputation *EngineGBComputation::create(GBComputation *G0)
   return E;
 }
 
-EngineGBComputation::~EngineGBComputation()
-{
-  destroy();
-}
-
+EngineGBComputation::~EngineGBComputation() { destroy(); }
 void EngineGBComputation::destroy()
 {
   if (C) delete C;
@@ -107,12 +102,16 @@ void EngineGBComputation::destroy()
 void EngineGBComputation::start_computation()
 {
   if (C == 0) return;
-  if (G) {delete G; G = 0;}
+  if (G)
+    {
+      delete G;
+      G = 0;
+    }
   ComputationStatusCode ret = C->compute(stop_, complete_thru_this_degree);
   if (ret == COMP_DONE)
     {
       G = C->steal_GroebnerBasis();
-      delete C; // Should set C to 0??
+      delete C;  // Should set C to 0??
       C = 0;
     }
   set_status(ret);
@@ -123,19 +122,17 @@ long EngineGBComputation::complete_thru_degree() const
   return complete_thru_this_degree;
 }
 
-
-
 //////////////////////////////////////////////
-Computation /* or null */ *
-Computation::set_stop_conditions(M2_bool always_stop,
-                                 M2_arrayint degree_limit,
-                                 int basis_element_limit,
-                                  int syzygy_limit,
-                                 int pair_limit,
-                                 int codim_limit,
-                                 int subring_limit,
-                                 M2_bool just_min_gens,
-                                 M2_arrayint length_limit)
+Computation /* or null */ *Computation::set_stop_conditions(
+    M2_bool always_stop,
+    M2_arrayint degree_limit,
+    int basis_element_limit,
+    int syzygy_limit,
+    int pair_limit,
+    int codim_limit,
+    int subring_limit,
+    M2_bool just_min_gens,
+    M2_arrayint length_limit)
 {
   stop_.always_stop = always_stop;
   stop_.stop_after_degree = (degree_limit != 0 && degree_limit->len > 0);
@@ -172,15 +169,8 @@ Computation::Computation()
   stop_.length_limit = 0;
 }
 
-Computation::~Computation()
-{
-}
-
-void Computation::text_out(buffer &o) const
-{
-  o << "-- computation --";
-}
-
+Computation::~Computation() {}
+void Computation::text_out(buffer &o) const { o << "-- computation --"; }
 void Computation::show() const
 {
   printf("No show method available for this computation type\n");
@@ -188,12 +178,15 @@ void Computation::show() const
 
 enum ComputationStatusCode Computation::set_status(enum ComputationStatusCode c)
 {
-     switch (computation_status) {
-     case COMP_OVERFLOWED:
-          // if (computation_status == COMP_NEED_RESIZE) break;
-          throw(exc::internal_error("attempted to reset status of a computation that overflowed"));
-     default: return computation_status = c;
-     }
+  switch (computation_status)
+    {
+      case COMP_OVERFLOWED:
+        // if (computation_status == COMP_NEED_RESIZE) break;
+        throw(exc::internal_error(
+            "attempted to reset status of a computation that overflowed"));
+      default:
+        return computation_status = c;
+    }
 }
 
 // Local Variables:

@@ -16,12 +16,12 @@ class tableau
   int dim;
   int maxwt;
   int wt;
-  int *lambda;                  // A partition vector 0..nvars-1
-  int *p;                       // A partition vector 0..nvars-1
-  int *xloc;                    // array 1..|p|-|lambda| of the horizontal location
-                                // of this number in the skew table
-  int *yloc;                    // array 1..|p|-|lambda| of the vertical location
-                                // of this number in the skew table
+  int *lambda;  // A partition vector 0..nvars-1
+  int *p;       // A partition vector 0..nvars-1
+  int *xloc;    // array 1..|p|-|lambda| of the horizontal location
+                // of this number in the skew table
+  int *yloc;    // array 1..|p|-|lambda| of the vertical location
+                // of this number in the skew table
 
   void initialize(int nvars);
   tableau() {}
@@ -35,7 +35,7 @@ class tableau
 
 class SchurRing : public PolyRing
 {
-private:
+ private:
   // These are variables that are used in the recursive routine
   // SM(), which is called from skew_schur().
   tableau _SMtab;
@@ -45,7 +45,7 @@ private:
   Nterm *_SMresult;
 
   void to_partition(const int *m, int *exp) const;
-    // exp[1]..exp[nvars] are set
+  // exp[1]..exp[nvars] are set
   void from_partition(const int *exp, int *m) const;
 
   void bounds(int &lo, int &hi);
@@ -53,34 +53,32 @@ private:
   Nterm *skew_schur(int *lambda, int *p);
   ring_elem mult_monomials(const int *m, const int *n);
 
-protected:
+ protected:
   bool initialize_schur();
   SchurRing() {}
   virtual ~SchurRing() {}
-
-public:
+ public:
   static SchurRing *create(const PolynomialRing *R);
 
   static SchurRing *create(const Ring *A, int n);
 
   static SchurRing *createInfinite(const Ring *A);
 
-
-  virtual const SchurRing * cast_to_SchurRing() const { return this; }
-  virtual       SchurRing * cast_to_SchurRing()       { return this; }
-
+  virtual const SchurRing *cast_to_SchurRing() const { return this; }
+  virtual SchurRing *cast_to_SchurRing() { return this; }
   virtual void text_out(buffer &o) const;
   virtual void elem_text_out(buffer &o,
                              const ring_elem f,
-                             bool p_one=true,
-                             bool p_plus=false,
-                             bool p_parens=false) const;
+                             bool p_one = true,
+                             bool p_plus = false,
+                             bool p_parens = false) const;
 
   void dimension(const int *exp, mpz_t result) const;
   ring_elem dimension(const ring_elem f) const;
 
   virtual ring_elem mult_by_term(const ring_elem f,
-                                  const ring_elem c, const int *m) const;
+                                 const ring_elem c,
+                                 const int *m) const;
 
   ring_elem power(const ring_elem f, mpz_t n) const;
   ring_elem power(const ring_elem f, int n) const;

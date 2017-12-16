@@ -1,6 +1,6 @@
 #############################################################################
 
-VERSION = 3.1.4
+VERSION = 3.1.6
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.xz
 TAROPTIONS = --xz
@@ -31,9 +31,12 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 endif
 
-ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
-endif
+
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
+
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
 

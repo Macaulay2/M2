@@ -150,16 +150,6 @@ export gbTrace := 0;
 export numericalAlgebraicGeometryTrace := 0;
 export notify := false;
 export readonlyfiles := false;				    -- see stdio.d
-export USE_THREADS ::= Ccode(bool,"
-     #ifndef PACKAGE_NAME
-       #error \"M2/config.h not included\"
-     #endif
-     #ifdef USE_THREADS
-       1
-     #else
-       0
-     #endif
-     ");
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d M2.o "

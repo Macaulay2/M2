@@ -3,9 +3,10 @@
 #ifndef _monomial_hh_
 #define _monomial_hh_
 
-#include "engine.h"
-#include "varpower.hpp"
 #include "hash.hpp"
+#include "engine-includes.hpp"
+#include "buffer.hpp"
+#include "varpower.hpp"
 
 #include <vector>
 
@@ -19,12 +20,14 @@ class Monomial : public EngineObject
   Monomial(int v, int e);
   Monomial(const int *vp);
   Monomial(M2_arrayint a);
+
   Monomial(const std::vector<int>& vp);
   
   int * ints() { return val.raw(); }
 protected:
   virtual unsigned int computeHashValue() const;
-public:
+
+ public:
   static Monomial *make(int v, int e);
   static Monomial *make(M2_arrayint m);
   static Monomial *make(const int *vp);
@@ -32,14 +35,14 @@ public:
   // format for this is that of a 'varpower' monomial:
   // [2n+1, v1, e1, v2, e2, ..., vn, en]
   // with each ei != 0.
-  static Monomial* make(const std::vector<int>& monom);
+  static Monomial * make(const std::vector<int>& monom);
   
   const int * ints() const { return val.raw(); }
 
   Monomial *operator*(const Monomial &b) const;
   Monomial *operator/(const Monomial &b) const;
   Monomial *power(int n) const;
-  void monsyz(const Monomial &b, Monomial * &sa, Monomial * &sb) const;
+  void monsyz(const Monomial &b, Monomial *&sa, Monomial *&sb) const;
   Monomial *lcm(const Monomial &b) const;
   Monomial *gcd(const Monomial &b) const;
 
@@ -55,7 +58,6 @@ public:
   void text_out(buffer &o) const { varpower::elem_text_out(o, val.raw()); }
   M2_arrayint to_arrayint() const { return varpower::to_arrayint(val.raw()); }
 };
-
 
 #endif
 

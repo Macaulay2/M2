@@ -1,0 +1,24 @@
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/Ubuntu-17.04-x86_64.production/libraries/pari/tmp/pari-2.7.5/config/DOC_Make.SH pari-2.7.5/config/DOC_Make.SH
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/Ubuntu-17.04-x86_64.production/libraries/pari/tmp/pari-2.7.5/config/DOC_Make.SH	2014-07-30 08:38:47.000000000 -0500
++++ pari-2.7.5/config/DOC_Make.SH	2017-04-17 09:39:03.146901861 -0500
+@@ -12,7 +12,7 @@
+ #  next time configure is run.
+ #
+ SHELL = $make_sh
+-PERL  = $perl
++PERL  = $perl -I.
+ TEX   = tex
+ PDFTEX= pdftex
+ 
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/Ubuntu-17.04-x86_64.production/libraries/pari/tmp/pari-2.7.5/config/Makefile.SH pari-2.7.5/config/Makefile.SH
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/Ubuntu-17.04-x86_64.production/libraries/pari/tmp/pari-2.7.5/config/Makefile.SH	2017-04-17 09:55:45.154766089 -0500
++++ pari-2.7.5/config/Makefile.SH	2014-12-13 14:52:52.000000000 -0600
+@@ -168,7 +168,7 @@
+ TOPDIR="$TOP"
+ 
+ SHELL      = $make_sh
+-PERL       = $perl
++PERL       = $perl -I.
+ BISON      = bison
+ AR         = ar
+ RANLIB     = ranlib

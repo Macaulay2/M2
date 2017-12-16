@@ -10,42 +10,37 @@ class Index
 
   const T *collection;
 
-public:
-  Index() : collection(NULL) {}
+ public:
+  Index() : collection(nullptr) {}
   Index(void *i, const T *c) : ind(i), collection(c) {}
   Index(const Index<T> &i) : ind(i.ind), collection(i.collection) {}
-
   Index<T> operator++()
-    {
-      ind = collection->next(ind);
-      return *this;
-    }
+  {
+    ind = collection->next(ind);
+    return *this;
+  }
 
   Index<T> operator--()
-    {
-      ind = collection->prev(ind);
-      return *this;
-    }
+  {
+    ind = collection->prev(ind);
+    return *this;
+  }
 
   Index<T> operator++(int)
-    {
-      Index<T> tmp = *this;
-      ind = collection->next(ind);
-      return tmp;
-    }
+  {
+    Index<T> tmp = *this;
+    ind = collection->next(ind);
+    return tmp;
+  }
 
   Index<T> operator--(int)
-    {
-      Index<T> tmp = *this;
-      ind = collection->prev(ind);
-      return tmp;
-    }
+  {
+    Index<T> tmp = *this;
+    ind = collection->prev(ind);
+    return tmp;
+  }
 
-  int valid()
-    {
-      return collection->valid(ind);
-    }
-
+  int valid() { return collection->valid(ind); }
   void *val() { return ind; }
 };
 

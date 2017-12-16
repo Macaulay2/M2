@@ -6,7 +6,6 @@ i1 : R = CC[x,y];
 i2 : F = {x^2-1,y^2-1};
 
 i3 : S = bertiniZeroDimSolve F
-~/bertini
 
 o3 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 
@@ -14,19 +13,19 @@ o3 : List
 
 i4 : peek S_0
 
-o4 = Point{AccuracyEst => 3.09883e-16     }
-           AccuracyEstInternal => 0
-           ConditionNumber => 2.80882
+o4 = Point{AccuracyEst => 1.36856e-16        }
+           AccuracyEstInternal => 2.77556e-17
+           ConditionNumber => 2.31837
            Coordinates => {1, 1}
            CycleNumber => 1
            FinalTValue => .0015625
            FunctionResidual => 5.55112e-17
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 3.58271e-17
+           NewtonResidual => 2.25164e-17
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
-           SolutionNumber => 1
+           SolutionNumber => 0
 
 i5 : 

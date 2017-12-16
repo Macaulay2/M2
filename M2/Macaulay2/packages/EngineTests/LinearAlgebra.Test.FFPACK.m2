@@ -45,10 +45,10 @@ TEST ///
   R = ZZpFFPACK(2 );
   testDeterminant R;
   testMult R;
-  {*
+  -*
   testInverse R; -- FAILS
   testRank R;  -- FAILS
-  *}
+  *-
   R = ZZpFFPACK ( 2 );
   testLinearAlgebraSet R;
 

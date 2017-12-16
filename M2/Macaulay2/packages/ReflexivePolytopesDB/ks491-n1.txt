@@ -1,0 +1,13 @@
+<head><title>SEARCH RESULTS</title></head>
+<body><pre><b>Search command:</b>
+class.x -di x -He EH491:MVNFL1000
+
+<b>Result:</b>
+4 5  M:26 5 N:680 5 H:491,11 [960]
+    1    0    0    0  -42
+    0    1    0    0  -28
+    0    0    1    0  -12
+    0    0    0    1   -1
+#NF: 1
+  done (0s)
+</pre></body>

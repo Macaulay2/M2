@@ -14,8 +14,7 @@ void QRingInfo::appendQuotientElement(Nterm *f, gbvector *g)
   quotient_gbvectors.push_back(g);
 }
 
-QRingInfo::QRingInfo(const PolyRing *ambientR)
-  : R(ambientR)
+QRingInfo::QRingInfo(const PolyRing *ambientR) : R(ambientR)
 {
   exp_size = EXPONENT_BYTE_SIZE(R->n_vars());
   monom_size = MONOMIAL_BYTE_SIZE(R->getMonoid()->monomial_size());
@@ -27,14 +26,11 @@ void QRingInfo::destroy(GBRing *GR)
   // WARNING: these need to be deleted only if the gbring is non-NULL.
 
   if (GR == 0) return;
-  for (int i=0; i<quotient_gbvectors.size(); i++)
+  for (int i = 0; i < quotient_gbvectors.size(); i++)
     GR->gbvector_remove(quotient_gbvectors[i]);
 }
 
-QRingInfo::~QRingInfo()
-{
-}
-
+QRingInfo::~QRingInfo() {}
 void QRingInfo_field::destroy(GBRing *GR)
 {
   delete Rideal;
@@ -42,19 +38,17 @@ void QRingInfo_field::destroy(GBRing *GR)
   QRingInfo::destroy(GR);
 }
 
-QRingInfo_field::~QRingInfo_field()
-{
-}
-
+QRingInfo_field::~QRingInfo_field() {}
 QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
-                                 const VECTOR(Nterm *) &quotients)
-  : QRingInfo(ambientR)
+                                 const VECTOR(Nterm *) & quotients)
+    : QRingInfo(ambientR)
 // This constructs the quotient ideal, and sets the MonomialIdeal.
 // A subset of 'quotients' must be a minimal GB, and any non-minimal elements
 // should be writable in terms of previous ones.
 // IE, in constructing (R/I)/J, the GB elements of J (mod I), together with the
 // GB elements of I, form a GB, but the GB elements of I might not be minimal.
-// In this case, 'quotients' should be the list of GB elements of J followed by those
+// In this case, 'quotients' should be the list of GB elements of J followed by
+// those
 // of I.
 //
 // The ideal may be in a tower of polynomial rings, in which case it needs to be
@@ -63,8 +57,8 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
   Rideal = new MonomialIdeal(R);
   ringtable = MonomialTable::make(R->n_vars());
   intarray vp;
-  int *exp = newarray_atomic(int,R->n_vars());
-  for (int i=0; i<quotients.size(); i++)
+  int *exp = newarray_atomic(int, R->n_vars());
+  for (int i = 0; i < quotients.size(); i++)
     {
       // Make a varpower element.  See if it is in Rideal.
       // If not, place it into quotient_elements_.
@@ -84,25 +78,22 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
           R->getMonoid()->to_varpower(f->monom, vp);
           Bag *b = new Bag(index, vp);
           Rideal->insert(b);
-          ringtable->insert(exp, 1, index); // consumes exp
-          exp = newarray_atomic(int,R->n_vars());
+          ringtable->insert(exp, 1, index);  // consumes exp
+          exp = newarray_atomic(int, R->n_vars());
         }
     }
   deletearray(exp);
 }
 
-QRingInfo_field_basic::QRingInfo_field_basic(
-      const PolyRing *ambientR,
-      const VECTOR(Nterm *) &quotients)
-  : QRingInfo_field(ambientR, quotients)
+QRingInfo_field_basic::QRingInfo_field_basic(const PolyRing *ambientR,
+                                             const VECTOR(Nterm *) & quotients)
+    : QRingInfo_field(ambientR, quotients)
 {
 }
 
-QRingInfo_field_basic::~QRingInfo_field_basic()
-{
-}
-
-void QRingInfo_field_basic::reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const
+QRingInfo_field_basic::~QRingInfo_field_basic() {}
+void QRingInfo_field_basic::reduce_lead_term_basic_field(Nterm *&f,
+                                                         const Nterm *g) const
 {
   monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
   const Monoid *M = R->getMonoid();
@@ -119,13 +110,13 @@ void QRingInfo_field_basic::reduce_lead_term_basic_field(Nterm * &f, const Nterm
         R->getCoefficients()->negate_to(c);
     }
   ring_elem g1 = const_cast<Nterm *>(g);
-  g1 = R->mult_by_term(g1,c,MONOM1);
+  g1 = R->mult_by_term(g1, c, MONOM1);
   ring_elem f1 = f;
   R->internal_add_to(f1, g1);
   f = f1;
 }
 
-void QRingInfo_field_basic::normal_form(ring_elem& f) const
+void QRingInfo_field_basic::normal_form(ring_elem &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
@@ -157,7 +148,8 @@ void QRingInfo_field_basic::normal_form(ring_elem& f) const
   f = head.next;
 }
 
-void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
+void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F,
+                                                 gbvector *&f) const
 {
   exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
@@ -173,7 +165,7 @@ void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *
         {
           const gbvector *r = quotient_gbvector(x);
           gbvector *zero = 0;
-          GR->gbvector_reduce_lead_term(F,F,zero,t,zero,r,zero);
+          GR->gbvector_reduce_lead_term(F, F, zero, t, zero, r, zero);
         }
       else
         {
@@ -187,23 +179,19 @@ void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *
 }
 
 QRingInfo_field_QQ::QRingInfo_field_QQ(const PolyRing *ambientR,
-                   const VECTOR(Nterm *) &quotients)
-  : QRingInfo_field(ambientR,quotients)
+                                       const VECTOR(Nterm *) & quotients)
+    : QRingInfo_field(ambientR, quotients)
 {
 }
 
-
-QRingInfo_field_QQ::~QRingInfo_field_QQ()
-{
-}
-
-void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const
+QRingInfo_field_QQ::~QRingInfo_field_QQ() {}
+void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm *&f, const Nterm *g) const
 {
   monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
   const Monoid *M = R->getMonoid();
   M->divide(f->monom, g->monom, MONOM1);
   ring_elem c = globalQQ->QQ::negate(f->coeff);
-  c = globalQQ->QQ::divide(c,g->coeff);
+  c = globalQQ->QQ::divide(c, g->coeff);
   if (R->is_skew_commutative())
     {
       exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
@@ -215,13 +203,13 @@ void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const
         globalQQ->QQ::negate_to(c);
     }
   ring_elem g1 = const_cast<Nterm *>(g);
-  g1 = R->mult_by_term(g1,c,MONOM1);
+  g1 = R->mult_by_term(g1, c, MONOM1);
   ring_elem f1 = f;
   R->internal_add_to(f1, g1);
   f = f1;
 }
 
-void QRingInfo_field_QQ::normal_form(ring_elem& f) const
+void QRingInfo_field_QQ::normal_form(ring_elem &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
@@ -253,7 +241,8 @@ void QRingInfo_field_QQ::normal_form(ring_elem& f) const
   f = head.next;
 }
 
-void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
+void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
+                                              gbvector *&f) const
 {
   exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
@@ -270,7 +259,7 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
         {
           const gbvector *r = quotient_gbvector(x);
           gbvector *zero = 0;
-          GR->gbvector_reduce_lead_term(F,F,head.next,t,zero,r,zero);
+          GR->gbvector_reduce_lead_term(F, F, head.next, t, zero, r, zero);
         }
       else
         {
@@ -283,7 +272,10 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f)
   f = head.next;
 }
 
-void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f, bool use_denom, ring_elem &denom) const
+void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
+                                              gbvector *&f,
+                                              bool use_denom,
+                                              ring_elem &denom) const
 {
   exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
 
@@ -300,7 +292,8 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f,
         {
           const gbvector *r = quotient_gbvector(x);
           gbvector *zero = 0;
-          GR->gbvector_reduce_lead_term(F,F,head.next,t,zero,r,zero,use_denom,denom);
+          GR->gbvector_reduce_lead_term(
+              F, F, head.next, t, zero, r, zero, use_denom, denom);
         }
       else
         {
@@ -319,17 +312,14 @@ void QRingInfo_ZZ::destroy(GBRing *GR)
   QRingInfo::destroy(GR);
 }
 
-QRingInfo_ZZ::~QRingInfo_ZZ()
-{
-}
-
+QRingInfo_ZZ::~QRingInfo_ZZ() {}
 QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
-                           const VECTOR(Nterm *) &quotients)
-  : QRingInfo(ambientR)
+                           const VECTOR(Nterm *) & quotients)
+    : QRingInfo(ambientR)
 {
   ringtableZZ = MonomialTableZZ::make(R->n_vars());
-  int *exp = newarray_atomic(int,R->n_vars());
-  for (int i=0; i<quotients.size(); i++)
+  int *exp = newarray_atomic(int, R->n_vars());
+  for (int i = 0; i < quotients.size(); i++)
     {
       // Make a varpower element.  See if it is in Rideal.
       // If not, place it into quotient_elements.
@@ -345,7 +335,7 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
           ringtableZZ->insert(f->coeff.get_mpz(), exp, 1, index);
           gbvector *g = R->translate_gbvector_from_ringelem(f);
           appendQuotientElement(f, g);
-          exp = newarray_atomic(int,R->n_vars());
+          exp = newarray_atomic(int, R->n_vars());
 
           if (f->next == 0 && R->getMonoid()->is_one(f->monom))
             {
@@ -357,15 +347,15 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
   deletearray(exp);
 }
 
-bool QRingInfo_ZZ::reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const
-  // Never multiplies f by anything.  IE before(f), after(f) are equiv. mod g.
-  // this should ONLY be used if K is globalZZ.
+bool QRingInfo_ZZ::reduce_lead_term_ZZ(Nterm *&f, const Nterm *g) const
+// Never multiplies f by anything.  IE before(f), after(f) are equiv. mod g.
+// this should ONLY be used if K is globalZZ.
 {
   const Monoid *M = R->getMonoid();
   const ring_elem a = f->coeff;
   const ring_elem b = g->coeff;
-  ring_elem u,v,rem;
-  rem = globalZZ->remainderAndQuotient(a,b,v);
+  ring_elem u, v, rem;
+  rem = globalZZ->remainderAndQuotient(a, b, v);
   if (globalZZ->is_zero(v)) return false;
   v = globalZZ->negate(v);
   bool result = globalZZ->is_zero(rem);
@@ -386,12 +376,12 @@ bool QRingInfo_ZZ::reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const
   ring_elem g1 = const_cast<Nterm *>(g);
   g1 = R->mult_by_term(g1, v, MONOM1);
   ring_elem f1 = f;
-  R->internal_add_to(f1,g1);
+  R->internal_add_to(f1, g1);
   f = f1;
   return result;
 }
 
-void QRingInfo_ZZ::normal_form(ring_elem& f) const
+void QRingInfo_ZZ::normal_form(ring_elem &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
@@ -411,8 +401,7 @@ void QRingInfo_ZZ::normal_form(ring_elem& f) const
           // If the lead monomial reduces away, continue,
           //   else tack the monomial onto the result
           Nterm *g = quotient_element(w);
-          if (reduce_lead_term_ZZ(t,g))
-            continue;
+          if (reduce_lead_term_ZZ(t, g)) continue;
         }
       result->next = t;
       t = t->next;
@@ -422,7 +411,7 @@ void QRingInfo_ZZ::normal_form(ring_elem& f) const
   f = head.next;
 }
 
-void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector * &f) const
+void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
@@ -443,7 +432,7 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector * &f) cons
           //   else tack the monomial onto the result
           const gbvector *g = quotient_gbvector(w);
           gbvector *zero = 0;
-          if (GR->gbvector_reduce_lead_term_ZZ(F,F,t,zero,g,zero))
+          if (GR->gbvector_reduce_lead_term_ZZ(F, F, t, zero, g, zero))
             continue;
         }
       result->next = t;

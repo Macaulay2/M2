@@ -22,6 +22,7 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+class MutableComplex;
 // NAG begin
 class SLEvaluator;
 class Homotopy;
@@ -46,6 +47,7 @@ typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
+typedef struct MutableComplex MutableComplex;
 // NAG begin
 typedef struct SLEvaluator SLEvaluator;
 typedef struct Homotopy Homotopy;
@@ -304,7 +306,7 @@ extern "C" {
   const Ring /* or null */ *IM2_Ring_frac(const Ring *R); /* drg: connected rawFractionRing*/
 
   const Ring /* or null */ *IM2_Ring_localization(const Ring *R,
-                                          const Matrix *P); /* drg: connected rawLocalRing */
+                                          Computation *P); /* drg: connected rawLocalRing */
   /* Create the localization of R.
      R should be a COMMUTATIVE ring.  P should be a one row matrix
      whose entries generate a prime ideal of R.
@@ -451,6 +453,9 @@ extern "C" {
      this implements the (anti-)isomorphism of the ring and its opposite ring.
   */
 
+  const Matrix* /* or null */ rawHomogenizeMatrix(const Matrix* a, const Matrix* b, const Matrix* c);
+  /* TEST dummy function!! */
+  
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
             int v,
@@ -1502,7 +1507,37 @@ extern "C" {
   /* Case 1: A is a dense matrix over RR.  Then so are b,x.
      Case 2: A is a dense matrix over CC.  Then so are b,x. */
 
+  M2_bool rawQR(const MutableMatrix* A, /* input m x n matrix */
+                MutableMatrix* Q, /* output m x n orthonormal columns matrix */
+                MutableMatrix* R, /* output R matrix: upper triangular, nonsingular if A has ker A = 0 */
+                M2_bool return_QR); /* if false, the output is instead the lapack encoded Householder transformations */
+  /* if return_QR is false, then Q will contain the encoded Householder reflections
+     and the multipliers tau_i will appear in R.
+     MES TODO: be more specific here, once we know the exact format!
+  */
 
+  /**************************************************/
+  /**** Mutable Complex routines ********************/
+  /**************************************************/
+
+  M2_string rawMutableComplexToString(const MutableComplex *M);
+
+  unsigned int  rawMutableComplexHash(const MutableComplex *M);
+
+  MutableComplex* rawMutableComplex(const engine_RawMutableMatrixArray M);
+
+  M2_arrayint rawPruneBetti(MutableComplex* C, int n, int f);
+
+  MutableComplex* rawPruneComplex(MutableComplex* C, int n, int f);
+
+  engine_RawMutableMatrixArray rawPruningMorphism(MutableComplex* C, int n, int f);
+
+  /**************************************************/
+  /**** Local Ring routines *************************/
+  /**************************************************/
+
+  Matrix * rawLiftLocalMatrix(const Ring * R, const Matrix *m);
+  M2_bool  rawIsLocalUnit(const RingElement *f);
 
   /**************************************************/
   /**** Monomial ideal routines *********************/
@@ -1785,6 +1820,19 @@ enum gbTraceValues
 
   MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *G,int level,int degree);
   /* rawResolutionGetMatrix2 */
+
+  // This might be temporary!
+  MutableMatrix /* or null */ *
+  rawResolutionGetMutableMatrixB(Computation *C,
+                                 const Ring* R, // A polynomial ring with coeffs = RR, or a finite field used in C, same monoid as C's ring.
+                                 int level);
+
+  // This might be temporary!
+  MutableMatrix /* or null */ *
+  rawResolutionGetMutableMatrix2B(Computation *C,
+                           const Ring* KK, // should be RR, or a finite field used in C.
+                           int level,
+                           int degree);
 
   const FreeModule /* or null */ *rawResolutionGetFree(Computation *G, int level);
     /*drg: connected rawResolutionGetFree*/

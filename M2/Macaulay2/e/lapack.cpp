@@ -8,63 +8,67 @@
 // lapack arrays are all arrays of doubles, and are
 // placed in column-major order, as that is what lapack uses.
 // Lapack arrays of complex numbers are done in the same way, except
-// they hace twice the length, and 2 contiguous doubles are used to 
+// they hace twice the length, and 2 contiguous doubles are used to
 // represent a complex value.
 // These arrays are grabbed via newarray_atomic, or newarray_atomic_clear
 // and should be freed via deletearray.
 
 typedef double *LapackDoubles;
 
-double* make_lapack_array(const DMat<M2::ARingRRR>& mat)
+double *make_lapack_array(const DMat<M2::ARingRRR> &mat)
 // changing to RR and column-major order
 {
   size_t len = mat.numRows() * mat.numColumns();
   double *result = newarray_atomic(double, len);
   double *p = result;
-  for (size_t c=0; c<mat.numColumns(); c++) {
-    auto end = mat.columnEnd(c);
-    for (auto a=mat.columnBegin(c); a!=end; ++a)
-      *p++ = mpfr_get_d(&(*a), GMP_RNDN);
-  }
+  for (size_t c = 0; c < mat.numColumns(); c++)
+    {
+      auto end = mat.columnEnd(c);
+      for (auto a = mat.columnBegin(c); a != end; ++a)
+        *p++ = mpfr_get_d(&(*a), GMP_RNDN);
+    }
   return result;
 }
 
-double* make_lapack_array(const DMat<M2::ARingCCC>& mat)
+double *make_lapack_array(const DMat<M2::ARingCCC> &mat)
 // changing to CC and column-major order
 {
   size_t len = mat.numRows() * mat.numColumns();
-  double *result = newarray_atomic(double, 2*len);
+  double *result = newarray_atomic(double, 2 * len);
   double *p = result;
-  for (size_t c=0; c<mat.numColumns(); c++) {
-    auto end = mat.columnEnd(c);
-    for (auto a=mat.columnBegin(c); a!=end; ++a) 
-      {
-        *p++ = mpfr_get_d(&(*a).re, GMP_RNDN);
-        *p++ = mpfr_get_d(&(*a).im, GMP_RNDN);
-      }
-  }
+  for (size_t c = 0; c < mat.numColumns(); c++)
+    {
+      auto end = mat.columnEnd(c);
+      for (auto a = mat.columnBegin(c); a != end; ++a)
+        {
+          *p++ = mpfr_get_d(&(*a).re, GMP_RNDN);
+          *p++ = mpfr_get_d(&(*a).im, GMP_RNDN);
+        }
+    }
   return result;
 }
 
-void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingRRR>& result)
+void fill_from_lapack_array(const double *lapack_array,
+                            DMat<M2::ARingRRR> &result)
 // from RR and column-major order
 {
   const double *p = lapack_array;
-  for (size_t c=0; c<result.numColumns(); c++) 
+  for (size_t c = 0; c < result.numColumns(); c++)
     {
       auto end = result.columnEnd(c);
-      for (auto a=result.columnBegin(c); a!=end; ++a)
+      for (auto a = result.columnBegin(c); a != end; ++a)
         result.ring().set_from_double(*a, *p++);
     }
 }
 
-void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCCC>& result)
+void fill_from_lapack_array(const double *lapack_array,
+                            DMat<M2::ARingCCC> &result)
 {
   const double *p = lapack_array;
-  for (size_t c=0; c<result.numColumns(); c++) 
+  for (size_t c = 0; c < result.numColumns(); c++)
     {
       auto end = result.columnEnd(c);
-      for (auto a=result.columnBegin(c); a!=end; ++a)
+      for (auto a = result.columnBegin(c); a != end; ++a)
         {
           result.ring().real_ring().set_from_double((*a).re, *p++);
           result.ring().real_ring().set_from_double((*a).im, *p++);
@@ -72,9 +76,84 @@ void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCCC>& resu
     }
 }
 
-void fill_lower_and_upper(double* lapack_numbers,  // column-major order
-                          DMat<M2::ARingRRR>& lower,
-                          DMat<M2::ARingRRR>& upper)
+void fill_from_lapack_upper(double *lapack_numbers,  // column-major order
+                            int numrows,
+                            int numcols,
+                            DMat<M2::ARingRR> &upper)
+// original matrix has size nrows x ncols
+// lapack_numbers is an array of this size
+// result: upper: size min(nrows, ncols) x ncols
+//
+// lapack_numbers is in column major form
+// upper is in row major form
+{
+  // At this point, upper should be a zero matrix.
+  assert(MatrixOps::isZero(upper));
+#if 0  
+  for (int i=0; i< numrows * numcols; ++i)
+    std::cout << lapack_numbers[i] << " ";
+  std::cout << std::endl;
+#endif
+  auto U = upper.rowMajorArray();
+
+  for (size_t c = 0; c < upper.numColumns(); c++)
+    {
+      auto U1 = U;
+      for (size_t r = 0; r <= c; r++)
+        {
+          if (r >= upper.numRows()) break;
+          *U1 = lapack_numbers[r];
+          U1 += upper.numColumns();
+        }
+      U++;  // change to next column
+      lapack_numbers += numrows;
+    }
+}
+
+void fill_from_lapack_upper(double *lapack_numbers,  // column-major order
+                            int numrows,
+                            int numcols,
+                            DMat<M2::ARingCC> &upper)
+// original matrix has size nrows x ncols
+// lapack_numbers is an array of this size
+// result: upper: size min(nrows, ncols) x ncols
+//
+// lapack_numbers is in column major form
+// upper is in row major form
+{
+  // At this point, upper should be a zero matrix.
+  std::cout << "entering fill_from_lapack_upper " << std::endl;
+  assert(MatrixOps::isZero(upper));
+#if 0  
+  for (int i=0; i< numrows * numcols; ++i)
+    std::cout << lapack_numbers[i] << " ";
+  std::cout << std::endl;
+#endif
+  auto U = upper.rowMajorArray();
+
+  for (size_t c = 0; c < upper.numColumns(); c++)
+    {
+      std::cout << "doing col " << c << std::endl;
+      auto U1 = U;
+      for (size_t r = 0; r <= c; r++)
+        {
+          std::cout << "doing row " << r << std::endl;
+          if (r >= upper.numRows()) break;
+          double re = lapack_numbers[2 * r];
+          double im = lapack_numbers[2 * r + 1];
+          upper.ring().set_from_doubles(*U1, re, im);
+
+          U1 += upper.numColumns();
+        }
+      U++;  // change to next column
+      lapack_numbers += 2 * numrows;
+    }
+  std::cout << "done!" << std::endl;
+}
+
+void fill_lower_and_upper(double *lapack_numbers,  // column-major order
+                          DMat<M2::ARingRRR> &lower,
+                          DMat<M2::ARingRRR> &upper)
 // original matrix has size nrows x ncols
 // lapack_numbers is an array of this size
 // result: lower: size: nrows x min(nrows, ncols)
@@ -90,35 +169,35 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
 
-  for (size_t c=0; c<upper.numColumns(); c++)
+  for (size_t c = 0; c < upper.numColumns(); c++)
     {
       auto U1 = U;
-      for (size_t r=0; r<=c; r++)
+      for (size_t r = 0; r <= c; r++)
         {
           if (r >= upper.numRows()) break;
           upper.ring().set_from_double(*U1, *lapack_numbers++);
           U1 += upper.numColumns();
         }
-      U++; // change to next column
+      U++;  // change to next column
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
-          L += lower.numColumns(); // pointing to entry right below diagonal
-          auto L1 = L; // will increment by lower.numRows() each loop here
-          for (size_t r=c+1; r<lower.numRows(); r++)
+          lower.ring().set_from_long(*L, 1);  // diagonal entry of L should be 1
+          L += lower.numColumns();  // pointing to entry right below diagonal
+          auto L1 = L;  // will increment by lower.numRows() each loop here
+          for (size_t r = c + 1; r < lower.numRows(); r++)
             {
               lower.ring().set_from_double(*L1, *lapack_numbers++);
-              L1 += lower.numColumns(); // to place next entry.
+              L1 += lower.numColumns();  // to place next entry.
             }
-          L++; // change to next column
+          L++;  // change to next column
         }
     }
 }
 
-void fill_lower_and_upper(double* lapack_numbers,  // column-major order
-                          DMat<M2::ARingCCC>& lower,
-                          DMat<M2::ARingCCC>& upper)
+void fill_lower_and_upper(double *lapack_numbers,  // column-major order
+                          DMat<M2::ARingCCC> &lower,
+                          DMat<M2::ARingCCC> &upper)
 // original matrix has size nrows x ncols
 // lapack_numbers is an array of this size (*2)
 // result: lower: size: nrows x min(nrows, ncols)
@@ -134,10 +213,10 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
 
-  for (size_t c=0; c<upper.numColumns(); c++)
+  for (size_t c = 0; c < upper.numColumns(); c++)
     {
       auto U1 = U;
-      for (size_t r=0; r<=c; r++)
+      for (size_t r = 0; r <= c; r++)
         {
           if (r >= upper.numRows()) break;
           double re = *lapack_numbers++;
@@ -145,21 +224,21 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
           upper.ring().set_from_doubles(*U1, re, im);
           U1 += upper.numColumns();
         }
-      U++; // change to next column
+      U++;  // change to next column
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
-          L += lower.numColumns(); // pointing to entry right below diagonal
-          auto L1 = L; // will increment by lower.numRows() each loop here
-          for (size_t r=c+1; r<lower.numRows(); r++)
+          lower.ring().set_from_long(*L, 1);  // diagonal entry of L should be 1
+          L += lower.numColumns();  // pointing to entry right below diagonal
+          auto L1 = L;  // will increment by lower.numRows() each loop here
+          for (size_t r = c + 1; r < lower.numRows(); r++)
             {
               double re = *lapack_numbers++;
               double im = *lapack_numbers++;
               lower.ring().set_from_doubles(*L1, re, im);
-              L1 += lower.numColumns(); // to place next entry.
+              L1 += lower.numColumns();  // to place next entry.
             }
-          L++; // change to next column
+          L++;  // change to next column
         }
     }
 }
@@ -185,11 +264,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
     printf("]");
 } */
 
-
-
-M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A,
-                              LMatrixRRR *L,
-                              LMatrixRRR *U)
+M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A, LMatrixRRR *L, LMatrixRRR *U)
 {
   int rows = static_cast<int>(A->numRows());
   int cols = static_cast<int>(A->numColumns());
@@ -203,8 +278,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A,
   if (min == 0)
     {
       if (rows > 0)
-        for (int i=0; i<rows; i++)
-          result->array[i] = i;
+        for (int i = 0; i < rows; i++) result->array[i] = i;
       return result;
     }
 
@@ -212,15 +286,14 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A,
 
   LapackDoubles copyA = make_lapack_array(*A);
 
-  dgetrf_(&rows, &cols, copyA,
-          &rows, perm, &info);
+  dgetrf_(&rows, &cols, copyA, &rows, perm, &info);
 
   fill_lower_and_upper(copyA, *L, *U);
 
-  for (int i=0; i<rows; i++) result->array[i] = i;
-  for (int i=0; i<min; i++)
+  for (int i = 0; i < rows; i++) result->array[i] = i;
+  for (int i = 0; i < min; i++)
     {
-      int thisloc = perm[i]-1;
+      int thisloc = perm[i] - 1;
       int tmp = result->array[thisloc];
       result->array[thisloc] = result->array[i];
       result->array[i] = tmp;
@@ -240,7 +313,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A,
 
 bool Lapack::solve(const LMatrixRRR *A, /* read only */
                    const LMatrixRRR *b, /* read only */
-                   LMatrixRRR *x) /* output value */
+                   LMatrixRRR *x)       /* output value */
 {
   int size = static_cast<int>(A->numRows());
   int bsize = static_cast<int>(b->numColumns());
@@ -257,7 +330,8 @@ bool Lapack::solve(const LMatrixRRR *A, /* read only */
   if (b->numRows() != size)
     {
       ERROR("expected matrices to have same number of rows");
-      return false;;
+      return false;
+      ;
     }
 
   if (size == 0)
@@ -270,13 +344,14 @@ bool Lapack::solve(const LMatrixRRR *A, /* read only */
   LapackDoubles copyA = make_lapack_array(*A);
   LapackDoubles copyb = make_lapack_array(*b);
 
-
-
-  dgesv_(&size, &bsize,
+  dgesv_(&size,
+         &bsize,
          copyA,
-         &size, permutation,
-         copyb, // also the result
-         &size, &info);
+         &size,
+         permutation,
+         copyb,  // also the result
+         &size,
+         &info);
 
   // Now set x
   x->resize(size, bsize);
@@ -299,34 +374,42 @@ bool Lapack::solve(const LMatrixRRR *A, /* read only */
 bool Lapack::eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
-  int wsize = 3*size;
+  int wsize = 3 * size;
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *real = newarray_atomic(double,size); // real components of eigvals
-  double *imag = newarray_atomic(double,size); // imaginary components
+  double *real = newarray_atomic(double, size);  // real components of eigvals
+  double *imag = newarray_atomic(double, size);  // imaginary components
 
-  dgeev_(&dont, &dont,
-         &size, copyA, &size,
+  dgeev_(&dont,
+         &dont,
+         &size,
+         copyA,
+         &size,
          real,
          imag,
-         static_cast<double *>(0), &size,  /* left eigenvectors */
-         static_cast<double *>(0), &size,  /* right eigenvectors */
-         workspace, &wsize, &info);
+         static_cast<double *>(0),
+         &size, /* left eigenvectors */
+         static_cast<double *>(0),
+         &size, /* right eigenvectors */
+         workspace,
+         &wsize,
+         &info);
 
   if (info < 0)
     {
@@ -341,8 +424,8 @@ bool Lapack::eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigvals)
   else
     {
       eigvals->resize(size, 1);
-      LMatrixCCC::ElementType* elems = eigvals->rowMajorArray();
-      for (int i = 0; i < size; i++) 
+      LMatrixCCC::ElementType *elems = eigvals->rowMajorArray();
+      for (int i = 0; i < size; i++)
         eigvals->ring().set_from_doubles(elems[i], real[i], imag[i]);
     }
 
@@ -357,39 +440,46 @@ bool Lapack::eigenvectors(const LMatrixRRR *A,
                           LMatrixCCC *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
   char doit = 'V';
-  int wsize = 4*size;
+  int wsize = 4 * size;
 
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *real = newarray_atomic(double,size);  // real components of eigvals
-  double *imag = newarray_atomic(double,size); // imaginary components
-  double *eigen = newarray_atomic(double,size*size); // eigvecs
+  double *real = newarray_atomic(double, size);  // real components of eigvals
+  double *imag = newarray_atomic(double, size);  // imaginary components
+  double *eigen = newarray_atomic(double, size *size);  // eigvecs
 
   dgeev_(&dont, /* left e-vectors */
          &doit, /* right e-vectors */
-         &size, copyA, &size,
+         &size,
+         copyA,
+         &size,
          real,
          imag,
-         static_cast<double *>(0), &size,  /* left eigvecs */
-         eigen, &size,  /* right eigvecs */
-         workspace, &wsize, &info);
+         static_cast<double *>(0),
+         &size, /* left eigvecs */
+         eigen,
+         &size, /* right eigvecs */
+         workspace,
+         &wsize,
+         &info);
 
   if (info < 0)
     {
@@ -407,27 +497,33 @@ bool Lapack::eigenvectors(const LMatrixRRR *A,
       eigvals->resize(size, 1);
       eigvecs->resize(size, size);
       //      LMatrixCCC::ElementType* elems = eigvecs->array();
-      LMatrixCCC::ElementType* elems = eigvals->rowMajorArray();
-      for (int j = 0; j < size; j++) {
-        eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
-        auto end = eigvecs->columnEnd(j);
-        
-          //mpfr_get_d(&(*a), GMP_RNDN);       
-        int loc = j*size;
-        if (imag[j] == 0) {
-          auto a=eigvecs->columnBegin(j);
-          for (int i=0; a!=end; ++a,++i) 
-            eigvecs->ring().set_from_doubles((*a), eigen[loc+i], 0);
-        } else if (imag[j] > 0) {
-          auto a=eigvecs->columnBegin(j);
-          auto b=eigvecs->columnBegin(j+1);
-          for (int i=0; a!=end; ++a,++b,++i)
-          {
-            eigvecs->ring().set_from_doubles(*a, eigen[loc+i], eigen[loc+size+i]);
-            eigvecs->ring().set_from_doubles(*b, eigen[loc+i], -eigen[loc+size+i]);
-          }
+      LMatrixCCC::ElementType *elems = eigvals->rowMajorArray();
+      for (int j = 0; j < size; j++)
+        {
+          eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
+          auto end = eigvecs->columnEnd(j);
+
+          // mpfr_get_d(&(*a), GMP_RNDN);
+          int loc = j * size;
+          if (imag[j] == 0)
+            {
+              auto a = eigvecs->columnBegin(j);
+              for (int i = 0; a != end; ++a, ++i)
+                eigvecs->ring().set_from_doubles((*a), eigen[loc + i], 0);
+            }
+          else if (imag[j] > 0)
+            {
+              auto a = eigvecs->columnBegin(j);
+              auto b = eigvecs->columnBegin(j + 1);
+              for (int i = 0; a != end; ++a, ++b, ++i)
+                {
+                  eigvecs->ring().set_from_doubles(
+                      *a, eigen[loc + i], eigen[loc + size + i]);
+                  eigvecs->ring().set_from_doubles(
+                      *b, eigen[loc + i], -eigen[loc + size + i]);
+                }
+            }
         }
-      }
     }
 
   deletearray(copyA);
@@ -441,32 +537,31 @@ bool Lapack::eigenvectors(const LMatrixRRR *A,
 bool Lapack::eigenvalues_symmetric(const LMatrixRRR *A, LMatrixRRR *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix. */
   int info;
 
-  int wsize = 3*size-1;
+  int wsize = 3 * size - 1;
   double *workspace = newarray_atomic(double, wsize);
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,size);
+  double *evals = newarray_atomic(double, size);
 
-  dsyev_(&dont, &triangle,
-         &size, copyA,
-         &size, evals,
-         workspace, &wsize, &info);
+  dsyev_(
+      &dont, &triangle, &size, copyA, &size, evals, workspace, &wsize, &info);
 
   if (info < 0)
     {
@@ -481,7 +576,7 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRRR *A, LMatrixRRR *eigvals)
   else
     {
       // Copy eigenvalues back to eigvals
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -497,33 +592,32 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRRR *A,
                                     LMatrixRRR *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char doit = 'V';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix */
 
-  int wsize = 3*size-1;
+  int wsize = 3 * size - 1;
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
   double *evecs = make_lapack_array(*A);
   double *evals = newarray_atomic(double, size);
 
-  dsyev_(&doit, &triangle,
-         &size, evecs,
-         &size, evals,
-         workspace, &wsize, &info);
+  dsyev_(
+      &doit, &triangle, &size, evecs, &size, evals, workspace, &wsize, &info);
 
   if (info < 0)
     {
@@ -538,9 +632,9 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRRR *A,
   else
     {
       // Copy results to eigvals, eigvecs
-      eigvecs->resize(size,size);
+      eigvecs->resize(size, size);
       fill_from_lapack_array(evecs, *eigvecs);
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -551,7 +645,10 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRRR *A,
   return ret;
 }
 
-bool Lapack::SVD(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixRRR *VT)
+bool Lapack::SVD(const LMatrixRRR *A,
+                 LMatrixRRR *Sigma,
+                 LMatrixRRR *U,
+                 LMatrixRRR *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -567,21 +664,27 @@ bool Lapack::SVD(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixR
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = (3*min+max >= 5*min) ? 3*min+max : 5*min;
+  int wsize = (3 * min + max >= 5 * min) ? 3 * min + max : 5 * min;
   double *workspace = newarray_atomic(double, wsize);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double, rows*rows);
-  double *vt = newarray_atomic(double, cols*cols);
+  double *u = newarray_atomic(double, rows *rows);
+  double *vt = newarray_atomic(double, cols *cols);
   double *sigma = newarray_atomic(double, min);
 
-
-  dgesvd_(&doit, &doit, &rows, &cols,
-          copyA, &rows,
+  dgesvd_(&doit,
+          &doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize,
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
           &info);
 
   if (info < 0)
@@ -596,9 +699,9 @@ bool Lapack::SVD(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixR
     }
   else
     {
-      U->resize(rows,rows);
-      VT->resize(cols,cols);
-      Sigma->resize(min,1);
+      U->resize(rows, rows);
+      VT->resize(cols, cols);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(u, *U);
       fill_from_lapack_array(vt, *VT);
       fill_from_lapack_array(sigma, *Sigma);
@@ -613,7 +716,10 @@ bool Lapack::SVD(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixR
   return ret;
 }
 
-bool Lapack::SVD_divide_conquer(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixRRR *VT)
+bool Lapack::SVD_divide_conquer(const LMatrixRRR *A,
+                                LMatrixRRR *Sigma,
+                                LMatrixRRR *U,
+                                LMatrixRRR *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -629,22 +735,29 @@ bool Lapack::SVD_divide_conquer(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixR
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 4*min*min + max + 9*min;
-  double *workspace = newarray_atomic(double,wsize);
-  int *iworkspace = newarray_atomic(int, 8*min);
+  int wsize = 4 * min * min + max + 9 * min;
+  double *workspace = newarray_atomic(double, wsize);
+  int *iworkspace = newarray_atomic(int, 8 * min);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double, rows*rows);
-  double *vt = newarray_atomic(double, cols*cols);
+  double *u = newarray_atomic(double, rows *rows);
+  double *vt = newarray_atomic(double, cols *cols);
   double *sigma = newarray_atomic(double, min);
 
-  dgesdd_(&doit, &rows, &cols,
-          copyA, &rows,
+  dgesdd_(&doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize,
-          iworkspace, &info);
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
+          iworkspace,
+          &info);
 
   if (info < 0)
     {
@@ -658,9 +771,9 @@ bool Lapack::SVD_divide_conquer(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixR
     }
   else
     {
-      U->resize(rows,rows);
-      VT->resize(cols,cols);
-      Sigma->resize(min,1);
+      U->resize(rows, rows);
+      VT->resize(cols, cols);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(u, *U);
       fill_from_lapack_array(vt, *VT);
       fill_from_lapack_array(sigma, *Sigma);
@@ -676,7 +789,9 @@ bool Lapack::SVD_divide_conquer(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixR
   return ret;
 }
 
-bool Lapack::least_squares(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x)
+bool Lapack::least_squares(const LMatrixRRR *A,
+                           const LMatrixRRR *b,
+                           LMatrixRRR *x)
 {
   bool ret = true;
   char job = 'N';
@@ -687,16 +802,17 @@ bool Lapack::least_squares(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR 
   int bcols = static_cast<int>(b->numColumns());
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
-  int wsize = min + ((bcols >=  max) ? bcols : max);
+  int wsize = min + ((bcols >= max) ? bcols : max);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
@@ -704,25 +820,35 @@ bool Lapack::least_squares(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR 
   double *copyb = make_lapack_array(*b);
   double *workspace = newarray_atomic(double, wsize);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*cols;
-      for (int i = 0; i < brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = j * cols;
+          for (int i = 0; i < brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  dgels_(&job, &rows, &cols, &bcols,
-         copyA, &rows,
-         copyb, &max,
-         workspace, &wsize,
+  dgels_(&job,
+         &rows,
+         &cols,
+         &bcols,
+         copyA,
+         &rows,
+         copyb,
+         &max,
+         workspace,
+         &wsize,
          &info);
 
   if (info != 0)
@@ -732,20 +858,25 @@ bool Lapack::least_squares(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR 
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        // We conly need the first 'cols' rows of copyb
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            x->ring().set_from_double(*xj, copyb[copyloc++]);
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          // We conly need the first 'cols' rows of copyb
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  x->ring().set_from_double(*xj, copyb[copyloc++]);
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -755,7 +886,9 @@ bool Lapack::least_squares(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR 
   return ret;
 }
 
-bool Lapack::least_squares_deficient(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x)
+bool Lapack::least_squares_deficient(const LMatrixRRR *A,
+                                     const LMatrixRRR *b,
+                                     LMatrixRRR *x)
 {
   bool ret = true;
   int rows = static_cast<int>(A->numRows());
@@ -766,45 +899,57 @@ bool Lapack::least_squares_deficient(const LMatrixRRR *A, const LMatrixRRR *b, L
   int rank, info;
   int min = (rows < cols) ? rows : cols;
   int max = (rows > cols) ? rows : cols;
-  int tempmax = ((2*min >  max) ? 2*min : max);
-  int wsize = 3*min + ((tempmax >  bcols) ? tempmax : bcols);
+  int tempmax = ((2 * min > max) ? 2 * min : max);
+  int wsize = 3 * min + ((tempmax > bcols) ? tempmax : bcols);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
-  double *workspace = newarray_atomic(double,wsize);
-  double *sing = newarray_atomic(double,min);
+  double *workspace = newarray_atomic(double, wsize);
+  double *sing = newarray_atomic(double, min);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*cols;
-      for (int i = 0; i < brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = j * cols;
+          for (int i = 0; i < brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  dgelss_(&rows, &cols, &bcols,
-          copyA, &rows,
-          copyb, &max,
-          sing, &rcond, &rank,
-          workspace, &wsize,
+  dgelss_(&rows,
+          &cols,
+          &bcols,
+          copyA,
+          &rows,
+          copyb,
+          &max,
+          sing,
+          &rcond,
+          &rank,
+          workspace,
+          &wsize,
           &info);
 
   if (info != 0)
@@ -814,19 +959,24 @@ bool Lapack::least_squares_deficient(const LMatrixRRR *A, const LMatrixRRR *b, L
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            x->ring().set_from_double(*xj, copyb[copyloc++]);
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  x->ring().set_from_double(*xj, copyb[copyloc++]);
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -837,9 +987,7 @@ bool Lapack::least_squares_deficient(const LMatrixRRR *A, const LMatrixRRR *b, L
   return ret;
 }
 
-M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A,
-                              LMatrixCCC *L,
-                              LMatrixCCC *U)
+M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A, LMatrixCCC *L, LMatrixCCC *U)
 {
   int rows = static_cast<int>(A->numRows());
   int cols = static_cast<int>(A->numColumns());
@@ -853,18 +1001,15 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A,
   if (min == 0)
     {
       if (rows > 0)
-        for (int i=0; i<rows; i++)
-          result->array[i] = i;
+        for (int i = 0; i < rows; i++) result->array[i] = i;
       return result;
     }
-
 
   int *perm = newarray_atomic(int, min);
 
   double *copyA = make_lapack_array(*A);
 
-  zgetrf_(&rows, &cols, copyA,
-          &rows, perm, &info);
+  zgetrf_(&rows, &cols, copyA, &rows, perm, &info);
 
   if (info < 0)
     {
@@ -876,10 +1021,10 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A,
     {
       fill_lower_and_upper(copyA, *L, *U);
 
-      for (int i=0; i<rows; i++) result->array[i] = i;
-      for (int i=0; i<min; i++)
+      for (int i = 0; i < rows; i++) result->array[i] = i;
+      for (int i = 0; i < min; i++)
         {
-          int thisloc = perm[i]-1;
+          int thisloc = perm[i] - 1;
           int tmp = result->array[thisloc];
           result->array[thisloc] = result->array[i];
           result->array[i] = tmp;
@@ -911,34 +1056,43 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A,
 #ifdef HAVE_MPACK
 /** clears and deletes mpfr array of length len
  */
-void Lapack::delete_mpack_array(__mpfr_struct* a, int len)
+void Lapack::delete_mpack_array(__mpfr_struct *a, int len)
 {
-  for (int i=0; i<len; i++)
-    mpfr_clear(a+i);
+  for (int i = 0; i < len; i++) mpfr_clear(a + i);
   delete a;
 }
 
-void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows)
+void Lapack::fill_from_mpack_array(CCelem *elemarray,
+                                   mpreal *mparray,
+                                   int cols,
+                                   int rows)
 {
-        CCelem *cursor;
-        for (int i=0,k=0; i< cols; i++,k++) {
-                for (int j=0,l=0; j < rows; j++,l++){
-                        cursor=elemarray+(k*rows+l);
-                        mpfr_set(cursor->re,(mparray[i*rows*2+j].getmp())[0],GMP_RNDN);
-                }
+  CCelem *cursor;
+  for (int i = 0, k = 0; i < cols; i++, k++)
+    {
+      for (int j = 0, l = 0; j < rows; j++, l++)
+        {
+          cursor = elemarray + (k * rows + l);
+          mpfr_set(
+              cursor->re, (mparray[i * rows * 2 + j].getmp())[0], GMP_RNDN);
         }
-        for (int i=0, k=0; i< cols; i++,k++) {
-                for (int j=rows,l=0; j <rows*2; j++,l++){
-                        cursor=elemarray+(k*rows+l);
-                        mpfr_set(cursor->im,(mparray[i*rows*2+j].getmp())[0],GMP_RNDN);
-
-                }
+    }
+  for (int i = 0, k = 0; i < cols; i++, k++)
+    {
+      for (int j = rows, l = 0; j < rows * 2; j++, l++)
+        {
+          cursor = elemarray + (k * rows + l);
+          mpfr_set(
+              cursor->im, (mparray[i * rows * 2 + j].getmp())[0], GMP_RNDN);
         }
-        return;
+    }
+  return;
 }
 
-// can't link... it looks like mpcomplex can't be supported by the current version of MPACK
-// void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows)
+// can't link... it looks like mpcomplex can't be supported by the current
+// version of MPACK
+// void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray,
+// int cols, int rows)
 // {
 //      CCelem *c = elemarray;
 //      mpcomplex* mp = mparray;
@@ -953,20 +1107,19 @@ void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols,
 
 bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
 {
-
   bool ret = true;
   int size = static_cast<int>(A->numRows());
   int bsize = static_cast<int>(b->numColumns());
   int info;
 
-  //TODO: MES The next 6 lines need to be removed/cleaned up 
+// TODO: MES The next 6 lines need to be removed/cleaned up
 #if 0
   const CCC *CCR = A->get_ring()->cast_to_CCC();
-  ASSERT(CCR != 0);
+  assert(CCR != 0);
   unsigned long precision= CCR->get_precision();
 #endif
-  unsigned long precision = 53; // Just used below in code that I think is not active.
-
+  unsigned long precision =
+      53;  // Just used below in code that I think is not active.
 
   /* make sure matrix is square */
   if (size != static_cast<int>(A->numColumns()))
@@ -982,138 +1135,141 @@ bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
       return false;
     }
 
-
-
   if (size == 0)
     {
       x->resize(size, bsize);
       return true;
     }
 
-  if (precision > 53) {
-
+  if (precision > 53)
+    {
 #ifndef HAVE_MPACK
-    ERROR("high precision requested, library mpack not available");
-    return false;
+      ERROR("high precision requested, library mpack not available");
+      return false;
 #else
-        mpackint infomp;
-        mpfr_set_default_prec(precision); //has no effect on default_precision in mpack!!!
-        mpreal::set_default_prec(precision);
+      mpackint infomp;
+      mpfr_set_default_prec(
+          precision);  // has no effect on default_precision in mpack!!!
+      mpreal::set_default_prec(precision);
 
-        mpackint *ipiv = new mpackint[size*2];
-        //      mpackint *ipivc = new mpackint[size];
+      mpackint *ipiv = new mpackint[size * 2];
+      //      mpackint *ipivc = new mpackint[size];
 
-        // the sizes of _real_ matrices that rempresent complex A and B
-        int rawA_size = 2*size*size;
-        int rawB_size = 2*bsize;
-        int A_size = 4*size*size;
-        int B_size = size * 2 * bsize;
-        __mpfr_struct *rawA=A->make_mpack_array();
-        __mpfr_struct *rawB=b->make_mpack_array();
+      // the sizes of _real_ matrices that rempresent complex A and B
+      int rawA_size = 2 * size * size;
+      int rawB_size = 2 * bsize;
+      int A_size = 4 * size * size;
+      int B_size = size * 2 * bsize;
+      __mpfr_struct *rawA = A->make_mpack_array();
+      __mpfr_struct *rawB = b->make_mpack_array();
 
+      mpreal *Amp = new mpreal[A_size];
+      mpreal *Bmp = new mpreal[B_size];
 
-        mpreal *Amp = new mpreal[A_size];
-        mpreal *Bmp = new mpreal[B_size];
+      //         mpcomplex *Ac=new mpcomplex[size*size];
+      //         mpcomplex *Bc=new mpcomplex[bsize*size];
 
-//         mpcomplex *Ac=new mpcomplex[size*size];
-//         mpcomplex *Bc=new mpcomplex[bsize*size];
-
-        __mpfr_struct *cursor; // i  is column of mpack matrix, j is row of mpack matrix, k is column of mpfr matrix, l is row of mpfr matrix
-        for (int i=0,k=0; i< A->numColumns(); i++,k++){
-                for (int j=0,l=0; j < A->numColumns(); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= mpreal(cursor);
-                }
-        }
-
-
-        for (int i=size,k=size; i< size*2; i++,k++){
-                for (int j=0,l=0; j < A->numColumns(); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= (-1)*mpreal(cursor);
-                }
-        }
-
-        for (int i=0,k=size; i< A->numColumns(); i++,k++){
-                for (int j=size,l=0; j < (A->numColumns()*2); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= mpreal(cursor);
-                }
-        }
-        for (int i=size,k=0; i< (A->numColumns()*2); i++,k++){
-                for (int j=size,l=0; j < (A->numColumns()*2); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= mpreal(cursor);
-                }
-        }
-
-
-        for (int i=0,k=0; i< bsize; i++,k++) {
-                for (int j=0,l=0; j < size; j++,l++){
-                        cursor=rawB+(k*size+l);
-                        Bmp[i*size*2+j]=mpreal(cursor);
-                }
-        }
-        for (int i=0, k=bsize; i< bsize; i++,k++) {
-                for (int j=size,l=0; j < size*2; j++,l++){
-                        cursor=rawB+(k*size+l);
-                        Bmp[i*size*2+j]=mpreal(cursor);
-                }
-        }
-
-//      //forms the complex matrices
-
-//      for (int i=0; i< A->numColumns(); i++){
-//              for (int j=0; j < A->numColumns(); j++){
-//                      Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);
-//              }
-//      }
-//      for (int i=0; i< bsize; i++){
-//              for (int j=0; j < A->numColumns(); j++){
-//                      Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);
-//              }
-//      }
-
-
-        Rgesv(size*2, bsize, Amp, size*2, ipiv, Bmp, size*2, &infomp);
-        //      Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
-
-        if (infomp > 0)
+      __mpfr_struct *cursor;  // i  is column of mpack matrix, j is row of mpack
+                              // matrix, k is column of mpfr matrix, l is row of
+                              // mpfr matrix
+      for (int i = 0, k = 0; i < A->numColumns(); i++, k++)
+        {
+          for (int j = 0, l = 0; j < A->numColumns(); j++, l++)
             {
-              ERROR("according to zgesv, matrix is singular");
-              ret = false;
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = mpreal(cursor);
             }
-          else if (infomp < 0)
+        }
+
+      for (int i = size, k = size; i < size * 2; i++, k++)
+        {
+          for (int j = 0, l = 0; j < A->numColumns(); j++, l++)
             {
-              ERROR("argument passed to zgesv had an illegal value");
-              ret = false;
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = (-1) * mpreal(cursor);
             }
-          else
+        }
+
+      for (int i = 0, k = size; i < A->numColumns(); i++, k++)
+        {
+          for (int j = size, l = 0; j < (A->numColumns() * 2); j++, l++)
             {
-                x->resize(size,bsize);
-                fill_from_mpack_array(x->array(), Bmp, bsize, size);
-             }
-        delete_mpack_array(rawA, rawA_size);
-        delete_mpack_array (rawB, rawB_size);
-        delete[] (Amp);
-        delete[] (Bmp);
-        delete (ipiv);
-        return ret;
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = mpreal(cursor);
+            }
+        }
+      for (int i = size, k = 0; i < (A->numColumns() * 2); i++, k++)
+        {
+          for (int j = size, l = 0; j < (A->numColumns() * 2); j++, l++)
+            {
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = mpreal(cursor);
+            }
+        }
+
+      for (int i = 0, k = 0; i < bsize; i++, k++)
+        {
+          for (int j = 0, l = 0; j < size; j++, l++)
+            {
+              cursor = rawB + (k * size + l);
+              Bmp[i * size * 2 + j] = mpreal(cursor);
+            }
+        }
+      for (int i = 0, k = bsize; i < bsize; i++, k++)
+        {
+          for (int j = size, l = 0; j < size * 2; j++, l++)
+            {
+              cursor = rawB + (k * size + l);
+              Bmp[i * size * 2 + j] = mpreal(cursor);
+            }
+        }
+
+      //      //forms the complex matrices
+
+      //      for (int i=0; i< A->numColumns(); i++){
+      //              for (int j=0; j < A->numColumns(); j++){
+      //                      Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);
+      //              }
+      //      }
+      //      for (int i=0; i< bsize; i++){
+      //              for (int j=0; j < A->numColumns(); j++){
+      //                      Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);
+      //              }
+      //      }
+
+      Rgesv(size * 2, bsize, Amp, size * 2, ipiv, Bmp, size * 2, &infomp);
+      //      Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
+
+      if (infomp > 0)
+        {
+          ERROR("according to zgesv, matrix is singular");
+          ret = false;
+        }
+      else if (infomp < 0)
+        {
+          ERROR("argument passed to zgesv had an illegal value");
+          ret = false;
+        }
+      else
+        {
+          x->resize(size, bsize);
+          fill_from_mpack_array(x->array(), Bmp, bsize, size);
+        }
+      delete_mpack_array(rawA, rawA_size);
+      delete_mpack_array(rawB, rawB_size);
+      delete[](Amp);
+      delete[](Bmp);
+      delete (ipiv);
+      return ret;
 
 #endif
-        }
-
+    }
 
   int *permutation = newarray_atomic(int, size);
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
 
-
-  zgesv_(&size, &bsize,
-         copyA,
-         &size, permutation,
-         copyb,
-         &size, &info);
+  zgesv_(&size, &bsize, copyA, &size, permutation, copyb, &size, &info);
 
   if (info > 0)
     {
@@ -1127,7 +1283,7 @@ bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
     }
   else
     {
-      x->resize(size,bsize);
+      x->resize(size, bsize);
       fill_from_lapack_array(copyb, *x);
     }
 
@@ -1141,34 +1297,42 @@ bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
 bool Lapack::eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
   int info;
-  int wsize = 4*size;
-  int rsize = 2*size;
+  int wsize = 4 * size;
+  int rsize = 2 * size;
   double *workspace = newarray_atomic(double, wsize);
   double *rwork = newarray_atomic(double, rsize);
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,2*size);
+  double *evals = newarray_atomic(double, 2 * size);
 
-  zgeev_(&dont, &dont,
-         &size, copyA,
-         &size, evals,
-         static_cast<double *>(0), &size,  /* left eigenvectors */
-         static_cast<double *>(0), &size,  /* right eigenvectors */
-         workspace, &wsize, rwork,
+  zgeev_(&dont,
+         &dont,
+         &size,
+         copyA,
+         &size,
+         evals,
+         static_cast<double *>(0),
+         &size, /* left eigenvectors */
+         static_cast<double *>(0),
+         &size, /* right eigenvectors */
+         workspace,
+         &wsize,
+         rwork,
          &info);
 
   if (info < 0)
@@ -1183,7 +1347,7 @@ bool Lapack::eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigvals)
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -1195,40 +1359,50 @@ bool Lapack::eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigvals)
   return ret;
 }
 
-bool Lapack::eigenvectors(const LMatrixCCC *A, LMatrixCCC *eigvals, LMatrixCCC *eigvecs)
+bool Lapack::eigenvectors(const LMatrixCCC *A,
+                          LMatrixCCC *eigvals,
+                          LMatrixCCC *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size !=static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
   char doit = 'V';
-  int wsize = 4*size;
-  int rsize = 2*size;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,rsize);
+  int wsize = 4 * size;
+  int rsize = 2 * size;
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, rsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,2*size);
-  double *evecs = newarray_atomic(double,2*size*size);
+  double *evals = newarray_atomic(double, 2 * size);
+  double *evecs = newarray_atomic(double, 2 * size * size);
 
-  zgeev_(&dont, &doit,
-         &size, copyA,
-         &size, evals,
-         static_cast<double *>(0), &size,  /* left eigvecs */
-         evecs, &size,  /* right eigvecs */
-         workspace, &wsize, rwork,
+  zgeev_(&dont,
+         &doit,
+         &size,
+         copyA,
+         &size,
+         evals,
+         static_cast<double *>(0),
+         &size, /* left eigvecs */
+         evecs,
+         &size, /* right eigvecs */
+         workspace,
+         &wsize,
+         rwork,
          &info);
 
   if (info < 0)
@@ -1243,9 +1417,9 @@ bool Lapack::eigenvectors(const LMatrixCCC *A, LMatrixCCC *eigvals, LMatrixCCC *
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
-      eigvecs->resize(size,size);
+      eigvecs->resize(size, size);
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
@@ -1261,33 +1435,40 @@ bool Lapack::eigenvectors(const LMatrixCCC *A, LMatrixCCC *eigvals, LMatrixCCC *
 bool Lapack::eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix. */
 
-  int wsize = 4*size-2;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,3*size-2);
+  int wsize = 4 * size - 2;
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, 3 * size - 2);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,size);
+  double *evals = newarray_atomic(double, size);
 
-  zheev_(&dont, &triangle,
-         &size, copyA,
-         &size, evals,
-         workspace, &wsize, rwork, &info);
+  zheev_(&dont,
+         &triangle,
+         &size,
+         copyA,
+         &size,
+         evals,
+         workspace,
+         &wsize,
+         rwork,
+         &info);
 
   if (info < 0)
     {
@@ -1301,7 +1482,7 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals)
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -1313,38 +1494,46 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals)
   return ret;
 }
 
-bool Lapack::eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals, LMatrixCCC *eigvecs)
+bool Lapack::eigenvectors_hermitian(const LMatrixCCC *A,
+                                    LMatrixRRR *eigvals,
+                                    LMatrixCCC *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char doit = 'V';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix */
 
-  int wsize = 4*size-2;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,3*size-2);
+  int wsize = 4 * size - 2;
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, 3 * size - 2);
   int info;
 
   double *evecs = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,size);
+  double *evals = newarray_atomic(double, size);
 
-
-  zheev_(&doit, &triangle,
-         &size, evecs,
-         &size, evals,
-         workspace, &wsize, rwork, &info);
+  zheev_(&doit,
+         &triangle,
+         &size,
+         evecs,
+         &size,
+         evals,
+         workspace,
+         &wsize,
+         rwork,
+         &info);
 
   if (info < 0)
     {
@@ -1358,9 +1547,9 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals, LM
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
-      eigvecs->resize(size,size);
+      eigvecs->resize(size, size);
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
@@ -1372,7 +1561,10 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals, LM
   return ret;
 }
 
-bool Lapack::SVD(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixCCC *VT)
+bool Lapack::SVD(const LMatrixCCC *A,
+                 LMatrixRRR *Sigma,
+                 LMatrixCCC *U,
+                 LMatrixCCC *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -1388,22 +1580,30 @@ bool Lapack::SVD(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixC
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 4*min+2*max;
-  double *workspace = newarray_atomic(double,2*wsize);
-  double *rwork = newarray_atomic(double,5*max);
+  int wsize = 4 * min + 2 * max;
+  double *workspace = newarray_atomic(double, 2 * wsize);
+  double *rwork = newarray_atomic(double, 5 * max);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double,2*rows*rows);
-  double *vt = newarray_atomic(double,2*cols*cols);
-  double *sigma = newarray_atomic(double,2*min);
+  double *u = newarray_atomic(double, 2 * rows * rows);
+  double *vt = newarray_atomic(double, 2 * cols * cols);
+  double *sigma = newarray_atomic(double, 2 * min);
 
-  zgesvd_(&doit, &doit, &rows, &cols,
-          copyA, &rows,
+  zgesvd_(&doit,
+          &doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize,
-          rwork, &info);
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
+          rwork,
+          &info);
 
   if (info < 0)
     {
@@ -1417,11 +1617,11 @@ bool Lapack::SVD(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixC
     }
   else
     {
-      U->resize(rows,rows);
+      U->resize(rows, rows);
       fill_from_lapack_array(u, *U);
-      VT->resize(cols,cols);
+      VT->resize(cols, cols);
       fill_from_lapack_array(vt, *VT);
-      Sigma->resize(min,1);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(sigma, *Sigma);
     }
 
@@ -1435,7 +1635,10 @@ bool Lapack::SVD(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixC
   return ret;
 }
 
-bool Lapack::SVD_divide_conquer(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixCCC *VT)
+bool Lapack::SVD_divide_conquer(const LMatrixCCC *A,
+                                LMatrixRRR *Sigma,
+                                LMatrixCCC *U,
+                                LMatrixCCC *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -1451,24 +1654,32 @@ bool Lapack::SVD_divide_conquer(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixC
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 2*min*min + 4*min + 2*max;
+  int wsize = 2 * min * min + 4 * min + 2 * max;
 
   double *workspace = newarray_atomic(double, wsize);
-  int *iworkspace = newarray_atomic(int,8*min);
-  double *rwork = newarray_atomic(double,5*min*min + 7*min);
+  int *iworkspace = newarray_atomic(int, 8 * min);
+  double *rwork = newarray_atomic(double, 5 * min * min + 7 * min);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double,2*rows*rows);
-  double *vt = newarray_atomic(double,2*cols*cols);
-  double *sigma = newarray_atomic(double,2*min);
+  double *u = newarray_atomic(double, 2 * rows * rows);
+  double *vt = newarray_atomic(double, 2 * cols * cols);
+  double *sigma = newarray_atomic(double, 2 * min);
 
-  zgesdd_(&doit, &rows, &cols,
-          copyA, &rows,
+  zgesdd_(&doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize, rwork,
-          iworkspace, &info);
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
+          rwork,
+          iworkspace,
+          &info);
 
   if (info < 0)
     {
@@ -1482,11 +1693,11 @@ bool Lapack::SVD_divide_conquer(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixC
     }
   else
     {
-      U->resize(rows,rows);
+      U->resize(rows, rows);
       fill_from_lapack_array(u, *U);
-      VT->resize(cols,cols);
+      VT->resize(cols, cols);
       fill_from_lapack_array(vt, *VT);
-      Sigma->resize(min,1);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(sigma, *Sigma);
     }
 
@@ -1501,7 +1712,9 @@ bool Lapack::SVD_divide_conquer(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixC
   return ret;
 }
 
-bool Lapack::least_squares(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
+bool Lapack::least_squares(const LMatrixCCC *A,
+                           const LMatrixCCC *b,
+                           LMatrixCCC *x)
 {
   bool ret = true;
   char job = 'N';
@@ -1512,42 +1725,53 @@ bool Lapack::least_squares(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC 
   int bcols = static_cast<int>(b->numColumns());
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
-  int wsize = min + ((bcols >=  max) ? bcols : max);
+  int wsize = min + ((bcols >= max) ? bcols : max);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
-  double *workspace = newarray_atomic(double, 2*wsize);
+  double *workspace = newarray_atomic(double, 2 * wsize);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = 2*j*cols;
-      for (int i = 0; i < 2*brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = 2 * j * cols;
+          for (int i = 0; i < 2 * brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  zgels_(&job, &rows, &cols, &bcols,
-         copyA, &rows,
-         copyb, &max,
-         workspace, &wsize,
+  zgels_(&job,
+         &rows,
+         &cols,
+         &bcols,
+         copyA,
+         &rows,
+         copyb,
+         &max,
+         workspace,
+         &wsize,
          &info);
 
   if (info != 0)
@@ -1557,21 +1781,26 @@ bool Lapack::least_squares(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC 
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = 2*j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            double re = copyb[copyloc++];
-            double im = copyb[copyloc++];
-            x->ring().set_from_doubles(*xj, re, im);
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = 2 * j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  double re = copyb[copyloc++];
+                  double im = copyb[copyloc++];
+                  x->ring().set_from_doubles(*xj, re, im);
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -1581,7 +1810,9 @@ bool Lapack::least_squares(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC 
   return ret;
 }
 
-bool Lapack::least_squares_deficient(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
+bool Lapack::least_squares_deficient(const LMatrixCCC *A,
+                                     const LMatrixCCC *b,
+                                     LMatrixCCC *x)
 {
   bool ret = true;
   int rows = static_cast<int>(A->numRows());
@@ -1592,46 +1823,59 @@ bool Lapack::least_squares_deficient(const LMatrixCCC *A, const LMatrixCCC *b, L
   int rank, info;
   int min = (rows < cols) ? rows : cols;
   int max = (rows > cols) ? rows : cols;
-  int wsize = 2*min + ((bcols >  max) ? bcols : max);
+  int wsize = 2 * min + ((bcols > max) ? bcols : max);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
-  double *workspace = newarray_atomic(double, 2*wsize);
+  double *workspace = newarray_atomic(double, 2 * wsize);
   double *sing = newarray_atomic(double, min);
-  double *rwork = newarray_atomic(double, 5*min);
+  double *rwork = newarray_atomic(double, 5 * min);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = 2*j*cols;
-      for (int i = 0; i < 2*brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = 2 * j * cols;
+          for (int i = 0; i < 2 * brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  zgelss_(&rows, &cols, &bcols,
-          copyA, &rows,
-          copyb, &max,
-          sing, &rcond, &rank,
-          workspace, &wsize,
-          rwork, &info);
+  zgelss_(&rows,
+          &cols,
+          &bcols,
+          copyA,
+          &rows,
+          copyb,
+          &max,
+          sing,
+          &rcond,
+          &rank,
+          workspace,
+          &wsize,
+          rwork,
+          &info);
 
   if (info != 0)
     {
@@ -1640,21 +1884,26 @@ bool Lapack::least_squares_deficient(const LMatrixCCC *A, const LMatrixCCC *b, L
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = 2*j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            double re = copyb[copyloc++];
-            double im = copyb[copyloc++];
-            x->ring().set_from_doubles(*xj, re, im);
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = 2 * j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  double re = copyb[copyloc++];
+                  double im = copyb[copyloc++];
+                  x->ring().set_from_doubles(*xj, re, im);
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -1666,71 +1915,72 @@ bool Lapack::least_squares_deficient(const LMatrixCCC *A, const LMatrixCCC *b, L
   return ret;
 }
 
-//////////////xxx /////////////////////// same for RR/CC ////////////////////////////////////////////////
+//////////////xxx /////////////////////// same for RR/CC
+///////////////////////////////////////////////////
 
-
-double* make_lapack_array(const DMat<M2::ARingRR>& mat)
+double *make_lapack_array(const DMat<M2::ARingRR> &mat)
 // changing to RR and column-major order
 {
   size_t len = mat.numRows() * mat.numColumns();
   double *result = newarray_atomic(double, len);
   double *p = result;
-  for (size_t c=0; c<mat.numColumns(); c++) {
-    auto end = mat.columnEnd(c);
-    for (auto a=mat.columnBegin(c); a!=end; ++a)
-      *p++ = *a;
-  }
+  for (size_t c = 0; c < mat.numColumns(); c++)
+    {
+      auto end = mat.columnEnd(c);
+      for (auto a = mat.columnBegin(c); a != end; ++a) *p++ = *a;
+    }
   return result;
 }
 
-double* make_lapack_array(const DMat<M2::ARingCC>& mat)
+double *make_lapack_array(const DMat<M2::ARingCC> &mat)
 // changing to CC and column-major order
 {
   size_t len = mat.numRows() * mat.numColumns();
-  double *result = newarray_atomic(double, 2*len);
+  double *result = newarray_atomic(double, 2 * len);
   double *p = result;
-  for (size_t c=0; c<mat.numColumns(); c++) {
-    auto end = mat.columnEnd(c);
-    for (auto a=mat.columnBegin(c); a!=end; ++a) 
-      {
-        *p++ = (*a).re;
-        *p++ = (*a).im;
-      }
-  }
+  for (size_t c = 0; c < mat.numColumns(); c++)
+    {
+      auto end = mat.columnEnd(c);
+      for (auto a = mat.columnBegin(c); a != end; ++a)
+        {
+          *p++ = (*a).re;
+          *p++ = (*a).im;
+        }
+    }
   return result;
 }
 
-void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingRR>& result)
+void fill_from_lapack_array(const double *lapack_array,
+                            DMat<M2::ARingRR> &result)
 // from RR and column-major order
 {
   const double *p = lapack_array;
-  for (size_t c=0; c<result.numColumns(); c++) 
+  for (size_t c = 0; c < result.numColumns(); c++)
     {
       auto end = result.columnEnd(c);
-      for (auto a=result.columnBegin(c); a!=end; ++a)
-        *a = *p++;
+      for (auto a = result.columnBegin(c); a != end; ++a) *a = *p++;
     }
 }
 
-void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCC>& result)
+void fill_from_lapack_array(const double *lapack_array,
+                            DMat<M2::ARingCC> &result)
 {
   const double *p = lapack_array;
-  for (size_t c=0; c<result.numColumns(); c++) 
+  for (size_t c = 0; c < result.numColumns(); c++)
     {
       auto end = result.columnEnd(c);
-      for (auto a=result.columnBegin(c); a!=end; ++a)
+      for (auto a = result.columnBegin(c); a != end; ++a)
         {
           double re = *p++;
-          double im = *p++;          
+          double im = *p++;
           result.ring().set_from_doubles(*a, re, im);
         }
     }
 }
 
-
-void fill_lower_and_upper(double* lapack_numbers,  // column-major order
-                          DMat<M2::ARingRR>& lower,
-                          DMat<M2::ARingRR>& upper)
+void fill_lower_and_upper(double *lapack_numbers,  // column-major order
+                          DMat<M2::ARingRR> &lower,
+                          DMat<M2::ARingRR> &upper)
 // original matrix has size nrows x ncols
 // lapack_numbers is an array of this size
 // result: lower: size: nrows x min(nrows, ncols)
@@ -1746,35 +1996,35 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
 
-  for (size_t c=0; c<upper.numColumns(); c++)
+  for (size_t c = 0; c < upper.numColumns(); c++)
     {
       auto U1 = U;
-      for (size_t r=0; r<=c; r++)
+      for (size_t r = 0; r <= c; r++)
         {
           if (r >= upper.numRows()) break;
           *U1 = *lapack_numbers++;
           U1 += upper.numColumns();
         }
-      U++; // change to next column
+      U++;  // change to next column
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
-          L += lower.numColumns(); // pointing to entry right below diagonal
-          auto L1 = L; // will increment by lower.numRows() each loop here
-          for (size_t r=c+1; r<lower.numRows(); r++)
+          lower.ring().set_from_long(*L, 1);  // diagonal entry of L should be 1
+          L += lower.numColumns();  // pointing to entry right below diagonal
+          auto L1 = L;  // will increment by lower.numRows() each loop here
+          for (size_t r = c + 1; r < lower.numRows(); r++)
             {
               *L1 = *lapack_numbers++;
-              L1 += lower.numColumns(); // to place next entry.
+              L1 += lower.numColumns();  // to place next entry.
             }
-          L++; // change to next column
+          L++;  // change to next column
         }
     }
 }
 
-void fill_lower_and_upper(double* lapack_numbers,  // column-major order
-                          DMat<M2::ARingCC>& lower,
-                          DMat<M2::ARingCC>& upper)
+void fill_lower_and_upper(double *lapack_numbers,  // column-major order
+                          DMat<M2::ARingCC> &lower,
+                          DMat<M2::ARingCC> &upper)
 // original matrix has size nrows x ncols
 // lapack_numbers is an array of this size (*2)
 // result: lower: size: nrows x min(nrows, ncols)
@@ -1790,10 +2040,10 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
 
-  for (size_t c=0; c<upper.numColumns(); c++)
+  for (size_t c = 0; c < upper.numColumns(); c++)
     {
       auto U1 = U;
-      for (size_t r=0; r<=c; r++)
+      for (size_t r = 0; r <= c; r++)
         {
           if (r >= upper.numRows()) break;
           double re = *lapack_numbers++;
@@ -1801,21 +2051,21 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
           upper.ring().set_from_doubles(*U1, re, im);
           U1 += upper.numColumns();
         }
-      U++; // change to next column
+      U++;  // change to next column
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
-          L += lower.numColumns(); // pointing to entry right below diagonal
-          auto L1 = L; // will increment by lower.numRows() each loop here
-          for (size_t r=c+1; r<lower.numRows(); r++)
+          lower.ring().set_from_long(*L, 1);  // diagonal entry of L should be 1
+          L += lower.numColumns();  // pointing to entry right below diagonal
+          auto L1 = L;  // will increment by lower.numRows() each loop here
+          for (size_t r = c + 1; r < lower.numRows(); r++)
             {
               double re = *lapack_numbers++;
               double im = *lapack_numbers++;
               lower.ring().set_from_doubles(*L1, re, im);
-              L1 += lower.numColumns(); // to place next entry.
+              L1 += lower.numColumns();  // to place next entry.
             }
-          L++; // change to next column
+          L++;  // change to next column
         }
     }
 }
@@ -1841,11 +2091,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
     printf("]");
 } */
 
-
-
-M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
-                              LMatrixRR *L,
-                              LMatrixRR *U)
+M2_arrayintOrNull Lapack::LU(const LMatrixRR *A, LMatrixRR *L, LMatrixRR *U)
 {
   int rows = static_cast<int>(A->numRows());
   int cols = static_cast<int>(A->numColumns());
@@ -1859,8 +2105,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
   if (min == 0)
     {
       if (rows > 0)
-        for (int i=0; i<rows; i++)
-          result->array[i] = i;
+        for (int i = 0; i < rows; i++) result->array[i] = i;
       return result;
     }
 
@@ -1868,15 +2113,14 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
 
   LapackDoubles copyA = make_lapack_array(*A);
 
-  dgetrf_(&rows, &cols, copyA,
-          &rows, perm, &info);
+  dgetrf_(&rows, &cols, copyA, &rows, perm, &info);
 
   fill_lower_and_upper(copyA, *L, *U);
 
-  for (int i=0; i<rows; i++) result->array[i] = i;
-  for (int i=0; i<min; i++)
+  for (int i = 0; i < rows; i++) result->array[i] = i;
+  for (int i = 0; i < min; i++)
     {
-      int thisloc = perm[i]-1;
+      int thisloc = perm[i] - 1;
       int tmp = result->array[thisloc];
       result->array[thisloc] = result->array[i];
       result->array[i] = tmp;
@@ -1896,7 +2140,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
 
 bool Lapack::solve(const LMatrixRR *A, /* read only */
                    const LMatrixRR *b, /* read only */
-                   LMatrixRR *x) /* output value */
+                   LMatrixRR *x)       /* output value */
 {
   int size = static_cast<int>(A->numRows());
   int bsize = static_cast<int>(b->numColumns());
@@ -1913,7 +2157,8 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
   if (b->numRows() != size)
     {
       ERROR("expected matrices to have same number of rows");
-      return false;;
+      return false;
+      ;
     }
 
   if (size == 0)
@@ -1926,13 +2171,14 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
   LapackDoubles copyA = make_lapack_array(*A);
   LapackDoubles copyb = make_lapack_array(*b);
 
-
-
-  dgesv_(&size, &bsize,
+  dgesv_(&size,
+         &bsize,
          copyA,
-         &size, permutation,
-         copyb, // also the result
-         &size, &info);
+         &size,
+         permutation,
+         copyb,  // also the result
+         &size,
+         &info);
 
   // Now set x
   x->resize(size, bsize);
@@ -1955,34 +2201,42 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
-  int wsize = 3*size;
+  int wsize = 3 * size;
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *real = newarray_atomic(double,size); // real components of eigvals
-  double *imag = newarray_atomic(double,size); // imaginary components
+  double *real = newarray_atomic(double, size);  // real components of eigvals
+  double *imag = newarray_atomic(double, size);  // imaginary components
 
-  dgeev_(&dont, &dont,
-         &size, copyA, &size,
+  dgeev_(&dont,
+         &dont,
+         &size,
+         copyA,
+         &size,
          real,
          imag,
-         static_cast<double *>(0), &size,  /* left eigenvectors */
-         static_cast<double *>(0), &size,  /* right eigenvectors */
-         workspace, &wsize, &info);
+         static_cast<double *>(0),
+         &size, /* left eigenvectors */
+         static_cast<double *>(0),
+         &size, /* right eigenvectors */
+         workspace,
+         &wsize,
+         &info);
 
   if (info < 0)
     {
@@ -1997,8 +2251,8 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   else
     {
       eigvals->resize(size, 1);
-      LMatrixCC::ElementType* elems = eigvals->rowMajorArray();
-      for (int i = 0; i < size; i++) 
+      LMatrixCC::ElementType *elems = eigvals->rowMajorArray();
+      for (int i = 0; i < size; i++)
         eigvals->ring().set_from_doubles(elems[i], real[i], imag[i]);
     }
 
@@ -2013,39 +2267,46 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
                           LMatrixCC *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
   char doit = 'V';
-  int wsize = 4*size;
+  int wsize = 4 * size;
 
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *real = newarray_atomic(double,size);  // real components of eigvals
-  double *imag = newarray_atomic(double,size); // imaginary components
-  double *eigen = newarray_atomic(double,size*size); // eigvecs
+  double *real = newarray_atomic(double, size);  // real components of eigvals
+  double *imag = newarray_atomic(double, size);  // imaginary components
+  double *eigen = newarray_atomic(double, size *size);  // eigvecs
 
   dgeev_(&dont, /* left e-vectors */
          &doit, /* right e-vectors */
-         &size, copyA, &size,
+         &size,
+         copyA,
+         &size,
          real,
          imag,
-         static_cast<double *>(0), &size,  /* left eigvecs */
-         eigen, &size,  /* right eigvecs */
-         workspace, &wsize, &info);
+         static_cast<double *>(0),
+         &size, /* left eigvecs */
+         eigen,
+         &size, /* right eigvecs */
+         workspace,
+         &wsize,
+         &info);
 
   if (info < 0)
     {
@@ -2063,30 +2324,36 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
       eigvals->resize(size, 1);
       eigvecs->resize(size, size);
       //      LMatrixCC::ElementType* elems = eigvecs->array();
-      LMatrixCC::ElementType* elems = eigvals->rowMajorArray();
-      for (int j = 0; j < size; j++) {
-        eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
-        auto end = eigvecs->columnEnd(j);
-        
-          //mpfr_get_d(&(*a), GMP_RNDN);       
-        int loc = j*size;
-        if (imag[j] == 0) {
-          auto a=eigvecs->columnBegin(j);
-          for (int i=0; a!=end; ++a,++i) 
+      LMatrixCC::ElementType *elems = eigvals->rowMajorArray();
+      for (int j = 0; j < size; j++)
+        {
+          eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
+          auto end = eigvecs->columnEnd(j);
+
+          // mpfr_get_d(&(*a), GMP_RNDN);
+          int loc = j * size;
+          if (imag[j] == 0)
             {
-              (*a).re = eigen[loc+i];
-              (*a).im = 0;
+              auto a = eigvecs->columnBegin(j);
+              for (int i = 0; a != end; ++a, ++i)
+                {
+                  (*a).re = eigen[loc + i];
+                  (*a).im = 0;
+                }
             }
-        } else if (imag[j] > 0) {
-          auto a=eigvecs->columnBegin(j);
-          auto b=eigvecs->columnBegin(j+1);
-          for (int i=0; a!=end; ++a,++b,++i)
-          {
-            eigvecs->ring().set_from_doubles(*a, eigen[loc+i], eigen[loc+size+i]);
-            eigvecs->ring().set_from_doubles(*b, eigen[loc+i], -eigen[loc+size+i]);
-          }
+          else if (imag[j] > 0)
+            {
+              auto a = eigvecs->columnBegin(j);
+              auto b = eigvecs->columnBegin(j + 1);
+              for (int i = 0; a != end; ++a, ++b, ++i)
+                {
+                  eigvecs->ring().set_from_doubles(
+                      *a, eigen[loc + i], eigen[loc + size + i]);
+                  eigvecs->ring().set_from_doubles(
+                      *b, eigen[loc + i], -eigen[loc + size + i]);
+                }
+            }
         }
-      }
     }
 
   deletearray(copyA);
@@ -2100,32 +2367,31 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
 bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix. */
   int info;
 
-  int wsize = 3*size-1;
+  int wsize = 3 * size - 1;
   double *workspace = newarray_atomic(double, wsize);
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,size);
+  double *evals = newarray_atomic(double, size);
 
-  dsyev_(&dont, &triangle,
-         &size, copyA,
-         &size, evals,
-         workspace, &wsize, &info);
+  dsyev_(
+      &dont, &triangle, &size, copyA, &size, evals, workspace, &wsize, &info);
 
   if (info < 0)
     {
@@ -2140,7 +2406,7 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
   else
     {
       // Copy eigenvalues back to eigvals
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -2156,33 +2422,32 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
                                     LMatrixRR *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char doit = 'V';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix */
 
-  int wsize = 3*size-1;
+  int wsize = 3 * size - 1;
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
   double *evecs = make_lapack_array(*A);
   double *evals = newarray_atomic(double, size);
 
-  dsyev_(&doit, &triangle,
-         &size, evecs,
-         &size, evals,
-         workspace, &wsize, &info);
+  dsyev_(
+      &doit, &triangle, &size, evecs, &size, evals, workspace, &wsize, &info);
 
   if (info < 0)
     {
@@ -2197,9 +2462,9 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
   else
     {
       // Copy results to eigvals, eigvecs
-      eigvecs->resize(size,size);
+      eigvecs->resize(size, size);
       fill_from_lapack_array(evecs, *eigvecs);
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -2210,7 +2475,10 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
   return ret;
 }
 
-bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
+bool Lapack::SVD(const LMatrixRR *A,
+                 LMatrixRR *Sigma,
+                 LMatrixRR *U,
+                 LMatrixRR *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -2226,21 +2494,27 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = (3*min+max >= 5*min) ? 3*min+max : 5*min;
+  int wsize = (3 * min + max >= 5 * min) ? 3 * min + max : 5 * min;
   double *workspace = newarray_atomic(double, wsize);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double, rows*rows);
-  double *vt = newarray_atomic(double, cols*cols);
+  double *u = newarray_atomic(double, rows *rows);
+  double *vt = newarray_atomic(double, cols *cols);
   double *sigma = newarray_atomic(double, min);
 
-
-  dgesvd_(&doit, &doit, &rows, &cols,
-          copyA, &rows,
+  dgesvd_(&doit,
+          &doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize,
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
           &info);
 
   if (info < 0)
@@ -2255,9 +2529,9 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
     }
   else
     {
-      U->resize(rows,rows);
-      VT->resize(cols,cols);
-      Sigma->resize(min,1);
+      U->resize(rows, rows);
+      VT->resize(cols, cols);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(u, *U);
       fill_from_lapack_array(vt, *VT);
       fill_from_lapack_array(sigma, *Sigma);
@@ -2272,7 +2546,10 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
   return ret;
 }
 
-bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
+bool Lapack::SVD_divide_conquer(const LMatrixRR *A,
+                                LMatrixRR *Sigma,
+                                LMatrixRR *U,
+                                LMatrixRR *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -2288,22 +2565,29 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 4*min*min + max + 9*min;
-  double *workspace = newarray_atomic(double,wsize);
-  int *iworkspace = newarray_atomic(int, 8*min);
+  int wsize = 4 * min * min + max + 9 * min;
+  double *workspace = newarray_atomic(double, wsize);
+  int *iworkspace = newarray_atomic(int, 8 * min);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double, rows*rows);
-  double *vt = newarray_atomic(double, cols*cols);
+  double *u = newarray_atomic(double, rows *rows);
+  double *vt = newarray_atomic(double, cols *cols);
   double *sigma = newarray_atomic(double, min);
 
-  dgesdd_(&doit, &rows, &cols,
-          copyA, &rows,
+  dgesdd_(&doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize,
-          iworkspace, &info);
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
+          iworkspace,
+          &info);
 
   if (info < 0)
     {
@@ -2317,9 +2601,9 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
     }
   else
     {
-      U->resize(rows,rows);
-      VT->resize(cols,cols);
-      Sigma->resize(min,1);
+      U->resize(rows, rows);
+      VT->resize(cols, cols);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(u, *U);
       fill_from_lapack_array(vt, *VT);
       fill_from_lapack_array(sigma, *Sigma);
@@ -2346,16 +2630,17 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
   int bcols = static_cast<int>(b->numColumns());
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
-  int wsize = min + ((bcols >=  max) ? bcols : max);
+  int wsize = min + ((bcols >= max) ? bcols : max);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
@@ -2363,25 +2648,35 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
   double *copyb = make_lapack_array(*b);
   double *workspace = newarray_atomic(double, wsize);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*cols;
-      for (int i = 0; i < brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = j * cols;
+          for (int i = 0; i < brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  dgels_(&job, &rows, &cols, &bcols,
-         copyA, &rows,
-         copyb, &max,
-         workspace, &wsize,
+  dgels_(&job,
+         &rows,
+         &cols,
+         &bcols,
+         copyA,
+         &rows,
+         copyb,
+         &max,
+         workspace,
+         &wsize,
          &info);
 
   if (info != 0)
@@ -2391,20 +2686,25 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        // We conly need the first 'cols' rows of copyb
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            *xj = copyb[copyloc++];
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          // We conly need the first 'cols' rows of copyb
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  *xj = copyb[copyloc++];
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -2414,7 +2714,9 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
   return ret;
 }
 
-bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
+bool Lapack::least_squares_deficient(const LMatrixRR *A,
+                                     const LMatrixRR *b,
+                                     LMatrixRR *x)
 {
   bool ret = true;
   int rows = static_cast<int>(A->numRows());
@@ -2425,45 +2727,57 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   int rank, info;
   int min = (rows < cols) ? rows : cols;
   int max = (rows > cols) ? rows : cols;
-  int tempmax = ((2*min >  max) ? 2*min : max);
-  int wsize = 3*min + ((tempmax >  bcols) ? tempmax : bcols);
+  int tempmax = ((2 * min > max) ? 2 * min : max);
+  int wsize = 3 * min + ((tempmax > bcols) ? tempmax : bcols);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
-  double *workspace = newarray_atomic(double,wsize);
-  double *sing = newarray_atomic(double,min);
+  double *workspace = newarray_atomic(double, wsize);
+  double *sing = newarray_atomic(double, min);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = j*cols;
-      for (int i = 0; i < brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = j * cols;
+          for (int i = 0; i < brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  dgelss_(&rows, &cols, &bcols,
-          copyA, &rows,
-          copyb, &max,
-          sing, &rcond, &rank,
-          workspace, &wsize,
+  dgelss_(&rows,
+          &cols,
+          &bcols,
+          copyA,
+          &rows,
+          copyb,
+          &max,
+          sing,
+          &rcond,
+          &rank,
+          workspace,
+          &wsize,
           &info);
 
   if (info != 0)
@@ -2473,19 +2787,24 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            *xj = copyb[copyloc++];
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  *xj = copyb[copyloc++];
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -2496,9 +2815,229 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   return ret;
 }
 
-M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
-                              LMatrixCC *L,
-                              LMatrixCC *U)
+bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
+{
+  // sizes:
+  //  input: A[m,n]
+  //  output for returnQR==true:
+  //   case m >= n:  Q[m,n], R[n,n]
+  //   case m < n: Q[m,m], R[m,n]
+  //  output for returnQR==false:
+  //   Q[m,n], R[1,min(m,n)]
+  bool ret = true;
+  int rows = static_cast<int>(A->numRows());
+  int cols = static_cast<int>(A->numColumns());
+  int info1 = 0, info2 = 0, info3 = 0, info4 = 0;
+  int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  double *copyA = make_lapack_array(*A);       // delete as well.
+  double *tau = newarray_atomic(double, min);  // make via new.
+  double workspace_size[1];
+  int work_size = -1;
+  // find optimal workspace
+  dgeqrf_(&rows, &cols, copyA, &rows, tau, workspace_size, &work_size, &info1);
+  work_size = static_cast<int>(workspace_size[0]);
+  // std::cout << "work size for QR:  " << work_size << std::endl;
+  double *workspace = new double[work_size];
+
+  dgeqrf_(&rows, &cols, copyA, &rows, tau, workspace, &work_size, &info2);
+
+  if (info1 < 0 or info2 < 0)
+    {
+      ERROR("argument passed to dgeqrf had an illegal value");
+      ret = false;
+    }
+  if (info1 > 0 or info2 > 0)
+    {
+      ERROR("can this happen?");
+      ret = false;
+    }
+
+  if (ret)
+    {
+      if (return_QR)
+        {
+          Q->resize(rows, cols);
+          R->resize(cols, cols);
+          fill_from_lapack_upper(copyA, rows, cols, *R);
+
+          // Reset Q, R, with their values.
+          int orgqr_work_size = -1;
+          dorgqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows,  // lda?
+                  tau,
+                  workspace_size,
+                  &orgqr_work_size,
+                  &info3);
+          orgqr_work_size = static_cast<int>(workspace_size[0]);
+          if (orgqr_work_size > work_size)
+            {
+              delete[] workspace;
+              work_size = orgqr_work_size;
+              workspace = new double[work_size];
+              std::cout << "work size increased to: " << work_size << std::endl;
+            }
+          dorgqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows,  // lda?
+                  tau,
+                  workspace,
+                  &work_size,
+                  &info4);
+          if (info3 < 0 or info4 < 0)
+            {
+              ERROR("argument passed to dorgqr or dorgqr had an illegal value");
+              ret = false;
+            }
+          else if (info3 > 0 or info4 > 0)
+            {
+              ERROR("can this happen?");
+              ret = false;
+            }
+          else
+            {
+              fill_from_lapack_array(copyA, *Q);
+            }
+        }
+      else
+        {
+          // Return the raw values for QR: the "A" matrix encodes R and the
+          // Householders, and tau has the multipliers.
+          Q->resize(rows, cols);
+          R->resize(1, min);
+          fill_from_lapack_array(copyA, *Q);
+          fill_from_lapack_array(tau, *R);
+        }
+    }
+
+  delete[] workspace;
+  deletearray(copyA);
+  deletearray(tau);
+  return ret;
+}
+
+bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
+{
+  // sizes:
+  //  input: A[m,n]
+  //  output for returnQR==true:
+  //   case m >= n:  Q[m,n], R[n,n]
+  //   case m < n: Q[m,m], R[m,n]
+  //  output for returnQR==false:
+  //   Q[m,n], R[1,min(m,n)]
+  bool ret = true;
+  int rows = static_cast<int>(A->numRows());
+  int cols = static_cast<int>(A->numColumns());
+  int info1 = 0, info2 = 0, info3 = 0, info4 = 0;
+  int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    {
+      ERROR("expected a matrix with positive dimensions");
+      return false;
+    }
+
+  double *copyA = make_lapack_array(*A);  // delete as well.
+  double *tau = new double[10 * min];     // make via new.
+  double workspace_size[1];
+  int work_size = -1;
+  // find optimal workspace
+  zgeqrf_(&rows, &cols, copyA, &rows, tau, workspace_size, &work_size, &info1);
+  work_size = static_cast<int>(workspace_size[0]);
+  double *workspace = new double[20 * work_size];
+
+  zgeqrf_(&rows, &cols, copyA, &rows, tau, workspace, &work_size, &info2);
+
+  if (info1 < 0 or info2 < 0)
+    {
+      ERROR("argument passed to zgeqrf had an illegal value");
+      ret = false;
+    }
+  if (info1 > 0 or info2 > 0)
+    {
+      ERROR("can this happen?");
+      ret = false;
+    }
+
+  if (ret)
+    {
+      if (return_QR)
+        {
+          Q->resize(rows, cols);
+          R->resize(cols, cols);
+          fill_from_lapack_upper(copyA, rows, cols, *R);
+
+          // Reset Q, R, with their values.
+          int orgqr_work_size = -1;
+          zungqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows,  // lda?
+                  tau,
+                  workspace_size,
+                  &orgqr_work_size,
+                  &info3);
+          orgqr_work_size = static_cast<int>(workspace_size[0]);
+          if (orgqr_work_size > work_size)
+            {
+              delete[] workspace;
+              work_size = orgqr_work_size;
+              workspace = new double[2 * work_size];
+            }
+          zungqr_(&rows,
+                  &cols,
+                  &min,
+                  copyA,
+                  &rows,  // lda?
+                  tau,
+                  workspace,
+                  &work_size,
+                  &info4);
+          if (info3 < 0 or info4 < 0)
+            {
+              ERROR("argument passed to dorgqr or dorgqr had an illegal value");
+              ret = false;
+            }
+          else if (info3 > 0 or info4 > 0)
+            {
+              ERROR("can this happen?");
+              ret = false;
+            }
+          else
+            {
+              fill_from_lapack_array(copyA, *Q);
+            }
+        }
+      else
+        {
+          // Return the raw values for QR: the "A" matrix encodes R and the
+          // Householders, and tau has the multipliers.
+          Q->resize(rows, cols);
+          R->resize(1, min);
+          fill_from_lapack_array(copyA, *Q);
+          fill_from_lapack_array(tau, *R);
+        }
+    }
+
+  delete[] workspace;
+  delete[] tau;
+  deletearray(copyA);
+  return ret;
+}
+
+M2_arrayintOrNull Lapack::LU(const LMatrixCC *A, LMatrixCC *L, LMatrixCC *U)
 {
   int rows = static_cast<int>(A->numRows());
   int cols = static_cast<int>(A->numColumns());
@@ -2512,18 +3051,15 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
   if (min == 0)
     {
       if (rows > 0)
-        for (int i=0; i<rows; i++)
-          result->array[i] = i;
+        for (int i = 0; i < rows; i++) result->array[i] = i;
       return result;
     }
-
 
   int *perm = newarray_atomic(int, min);
 
   double *copyA = make_lapack_array(*A);
 
-  zgetrf_(&rows, &cols, copyA,
-          &rows, perm, &info);
+  zgetrf_(&rows, &cols, copyA, &rows, perm, &info);
 
   if (info < 0)
     {
@@ -2535,10 +3071,10 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
     {
       fill_lower_and_upper(copyA, *L, *U);
 
-      for (int i=0; i<rows; i++) result->array[i] = i;
-      for (int i=0; i<min; i++)
+      for (int i = 0; i < rows; i++) result->array[i] = i;
+      for (int i = 0; i < min; i++)
         {
-          int thisloc = perm[i]-1;
+          int thisloc = perm[i] - 1;
           int tmp = result->array[thisloc];
           result->array[thisloc] = result->array[i];
           result->array[i] = tmp;
@@ -2570,34 +3106,43 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
 #ifdef HAVE_MPACK
 /** clears and deletes mpfr array of length len
  */
-void Lapack::delete_mpack_array(__mpfr_struct* a, int len)
+void Lapack::delete_mpack_array(__mpfr_struct *a, int len)
 {
-  for (int i=0; i<len; i++)
-    mpfr_clear(a+i);
+  for (int i = 0; i < len; i++) mpfr_clear(a + i);
   delete a;
 }
 
-void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows)
+void Lapack::fill_from_mpack_array(CCelem *elemarray,
+                                   mpreal *mparray,
+                                   int cols,
+                                   int rows)
 {
-        CCelem *cursor;
-        for (int i=0,k=0; i< cols; i++,k++) {
-                for (int j=0,l=0; j < rows; j++,l++){
-                        cursor=elemarray+(k*rows+l);
-                        mpfr_set(cursor->re,(mparray[i*rows*2+j].getmp())[0],GMP_RNDN);
-                }
+  CCelem *cursor;
+  for (int i = 0, k = 0; i < cols; i++, k++)
+    {
+      for (int j = 0, l = 0; j < rows; j++, l++)
+        {
+          cursor = elemarray + (k * rows + l);
+          mpfr_set(
+              cursor->re, (mparray[i * rows * 2 + j].getmp())[0], GMP_RNDN);
         }
-        for (int i=0, k=0; i< cols; i++,k++) {
-                for (int j=rows,l=0; j <rows*2; j++,l++){
-                        cursor=elemarray+(k*rows+l);
-                        mpfr_set(cursor->im,(mparray[i*rows*2+j].getmp())[0],GMP_RNDN);
-
-                }
+    }
+  for (int i = 0, k = 0; i < cols; i++, k++)
+    {
+      for (int j = rows, l = 0; j < rows * 2; j++, l++)
+        {
+          cursor = elemarray + (k * rows + l);
+          mpfr_set(
+              cursor->im, (mparray[i * rows * 2 + j].getmp())[0], GMP_RNDN);
         }
-        return;
+    }
+  return;
 }
 
-// can't link... it looks like mpcomplex can't be supported by the current version of MPACK
-// void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray, int cols, int rows)
+// can't link... it looks like mpcomplex can't be supported by the current
+// version of MPACK
+// void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray,
+// int cols, int rows)
 // {
 //      CCelem *c = elemarray;
 //      mpcomplex* mp = mparray;
@@ -2612,20 +3157,19 @@ void Lapack::fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols,
 
 bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 {
-
   bool ret = true;
   int size = static_cast<int>(A->numRows());
   int bsize = static_cast<int>(b->numColumns());
   int info;
 
-  //TODO: MES The next 6 lines need to be removed/cleaned up 
+// TODO: MES The next 6 lines need to be removed/cleaned up
 #if 0
   const CCC *CCR = A->get_ring()->cast_to_CCC();
-  ASSERT(CCR != 0);
+  assert(CCR != 0);
   unsigned long precision= CCR->get_precision();
 #endif
-  unsigned long precision = 53; // Just used below in code that I think is not active.
-
+  unsigned long precision =
+      53;  // Just used below in code that I think is not active.
 
   /* make sure matrix is square */
   if (size != static_cast<int>(A->numColumns()))
@@ -2641,138 +3185,141 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
       return false;
     }
 
-
-
   if (size == 0)
     {
       x->resize(size, bsize);
       return true;
     }
 
-  if (precision > 53) {
-
+  if (precision > 53)
+    {
 #ifndef HAVE_MPACK
-    ERROR("high precision requested, library mpack not available");
-    return false;
+      ERROR("high precision requested, library mpack not available");
+      return false;
 #else
-        mpackint infomp;
-        mpfr_set_default_prec(precision); //has no effect on default_precision in mpack!!!
-        mpreal::set_default_prec(precision);
+      mpackint infomp;
+      mpfr_set_default_prec(
+          precision);  // has no effect on default_precision in mpack!!!
+      mpreal::set_default_prec(precision);
 
-        mpackint *ipiv = new mpackint[size*2];
-        //      mpackint *ipivc = new mpackint[size];
+      mpackint *ipiv = new mpackint[size * 2];
+      //      mpackint *ipivc = new mpackint[size];
 
-        // the sizes of _real_ matrices that rempresent complex A and B
-        int rawA_size = 2*size*size;
-        int rawB_size = 2*bsize;
-        int A_size = 4*size*size;
-        int B_size = size * 2 * bsize;
-        __mpfr_struct *rawA=A->make_mpack_array();
-        __mpfr_struct *rawB=b->make_mpack_array();
+      // the sizes of _real_ matrices that rempresent complex A and B
+      int rawA_size = 2 * size * size;
+      int rawB_size = 2 * bsize;
+      int A_size = 4 * size * size;
+      int B_size = size * 2 * bsize;
+      __mpfr_struct *rawA = A->make_mpack_array();
+      __mpfr_struct *rawB = b->make_mpack_array();
 
+      mpreal *Amp = new mpreal[A_size];
+      mpreal *Bmp = new mpreal[B_size];
 
-        mpreal *Amp = new mpreal[A_size];
-        mpreal *Bmp = new mpreal[B_size];
+      //         mpcomplex *Ac=new mpcomplex[size*size];
+      //         mpcomplex *Bc=new mpcomplex[bsize*size];
 
-//         mpcomplex *Ac=new mpcomplex[size*size];
-//         mpcomplex *Bc=new mpcomplex[bsize*size];
-
-        __mpfr_struct *cursor; // i  is column of mpack matrix, j is row of mpack matrix, k is column of mpfr matrix, l is row of mpfr matrix
-        for (int i=0,k=0; i< A->numColumns(); i++,k++){
-                for (int j=0,l=0; j < A->numColumns(); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= mpreal(cursor);
-                }
-        }
-
-
-        for (int i=size,k=size; i< size*2; i++,k++){
-                for (int j=0,l=0; j < A->numColumns(); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= (-1)*mpreal(cursor);
-                }
-        }
-
-        for (int i=0,k=size; i< A->numColumns(); i++,k++){
-                for (int j=size,l=0; j < (A->numColumns()*2); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= mpreal(cursor);
-                }
-        }
-        for (int i=size,k=0; i< (A->numColumns()*2); i++,k++){
-                for (int j=size,l=0; j < (A->numColumns()*2); j++, l++){
-                        cursor=rawA+(k*size+l);
-                        Amp[i*2*size+j]= mpreal(cursor);
-                }
-        }
-
-
-        for (int i=0,k=0; i< bsize; i++,k++) {
-                for (int j=0,l=0; j < size; j++,l++){
-                        cursor=rawB+(k*size+l);
-                        Bmp[i*size*2+j]=mpreal(cursor);
-                }
-        }
-        for (int i=0, k=bsize; i< bsize; i++,k++) {
-                for (int j=size,l=0; j < size*2; j++,l++){
-                        cursor=rawB+(k*size+l);
-                        Bmp[i*size*2+j]=mpreal(cursor);
-                }
-        }
-
-//      //forms the complex matrices
-
-//      for (int i=0; i< A->numColumns(); i++){
-//              for (int j=0; j < A->numColumns(); j++){
-//                      Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);
-//              }
-//      }
-//      for (int i=0; i< bsize; i++){
-//              for (int j=0; j < A->numColumns(); j++){
-//                      Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);
-//              }
-//      }
-
-
-        Rgesv(size*2, bsize, Amp, size*2, ipiv, Bmp, size*2, &infomp);
-        //      Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
-
-        if (infomp > 0)
+      __mpfr_struct *cursor;  // i  is column of mpack matrix, j is row of mpack
+                              // matrix, k is column of mpfr matrix, l is row of
+                              // mpfr matrix
+      for (int i = 0, k = 0; i < A->numColumns(); i++, k++)
+        {
+          for (int j = 0, l = 0; j < A->numColumns(); j++, l++)
             {
-              ERROR("according to zgesv, matrix is singular");
-              ret = false;
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = mpreal(cursor);
             }
-          else if (infomp < 0)
+        }
+
+      for (int i = size, k = size; i < size * 2; i++, k++)
+        {
+          for (int j = 0, l = 0; j < A->numColumns(); j++, l++)
             {
-              ERROR("argument passed to zgesv had an illegal value");
-              ret = false;
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = (-1) * mpreal(cursor);
             }
-          else
+        }
+
+      for (int i = 0, k = size; i < A->numColumns(); i++, k++)
+        {
+          for (int j = size, l = 0; j < (A->numColumns() * 2); j++, l++)
             {
-                x->resize(size,bsize);
-                fill_from_mpack_array(x->array(), Bmp, bsize, size);
-             }
-        delete_mpack_array(rawA, rawA_size);
-        delete_mpack_array (rawB, rawB_size);
-        delete[] (Amp);
-        delete[] (Bmp);
-        delete (ipiv);
-        return ret;
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = mpreal(cursor);
+            }
+        }
+      for (int i = size, k = 0; i < (A->numColumns() * 2); i++, k++)
+        {
+          for (int j = size, l = 0; j < (A->numColumns() * 2); j++, l++)
+            {
+              cursor = rawA + (k * size + l);
+              Amp[i * 2 * size + j] = mpreal(cursor);
+            }
+        }
+
+      for (int i = 0, k = 0; i < bsize; i++, k++)
+        {
+          for (int j = 0, l = 0; j < size; j++, l++)
+            {
+              cursor = rawB + (k * size + l);
+              Bmp[i * size * 2 + j] = mpreal(cursor);
+            }
+        }
+      for (int i = 0, k = bsize; i < bsize; i++, k++)
+        {
+          for (int j = size, l = 0; j < size * 2; j++, l++)
+            {
+              cursor = rawB + (k * size + l);
+              Bmp[i * size * 2 + j] = mpreal(cursor);
+            }
+        }
+
+      //      //forms the complex matrices
+
+      //      for (int i=0; i< A->numColumns(); i++){
+      //              for (int j=0; j < A->numColumns(); j++){
+      //                      Ac[i*size+j]=mpcomplex(Amp[i*2*size+j],Amp[i*2*size+j+size]);
+      //              }
+      //      }
+      //      for (int i=0; i< bsize; i++){
+      //              for (int j=0; j < A->numColumns(); j++){
+      //                      Bc[i*size+j]=mpcomplex(Bmp[i*2*size+j],Bmp[i*2*size+j+size]);
+      //              }
+      //      }
+
+      Rgesv(size * 2, bsize, Amp, size * 2, ipiv, Bmp, size * 2, &infomp);
+      //      Cgesv(size, bsize, Ac, size, ipivc, Bc, size, &infomp);
+
+      if (infomp > 0)
+        {
+          ERROR("according to zgesv, matrix is singular");
+          ret = false;
+        }
+      else if (infomp < 0)
+        {
+          ERROR("argument passed to zgesv had an illegal value");
+          ret = false;
+        }
+      else
+        {
+          x->resize(size, bsize);
+          fill_from_mpack_array(x->array(), Bmp, bsize, size);
+        }
+      delete_mpack_array(rawA, rawA_size);
+      delete_mpack_array(rawB, rawB_size);
+      delete[](Amp);
+      delete[](Bmp);
+      delete (ipiv);
+      return ret;
 
 #endif
-        }
-
+    }
 
   int *permutation = newarray_atomic(int, size);
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
 
-
-  zgesv_(&size, &bsize,
-         copyA,
-         &size, permutation,
-         copyb,
-         &size, &info);
+  zgesv_(&size, &bsize, copyA, &size, permutation, copyb, &size, &info);
 
   if (info > 0)
     {
@@ -2786,7 +3333,7 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     }
   else
     {
-      x->resize(size,bsize);
+      x->resize(size, bsize);
       fill_from_lapack_array(copyb, *x);
     }
 
@@ -2800,34 +3347,42 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
   int info;
-  int wsize = 4*size;
-  int rsize = 2*size;
+  int wsize = 4 * size;
+  int rsize = 2 * size;
   double *workspace = newarray_atomic(double, wsize);
   double *rwork = newarray_atomic(double, rsize);
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,2*size);
+  double *evals = newarray_atomic(double, 2 * size);
 
-  zgeev_(&dont, &dont,
-         &size, copyA,
-         &size, evals,
-         static_cast<double *>(0), &size,  /* left eigenvectors */
-         static_cast<double *>(0), &size,  /* right eigenvectors */
-         workspace, &wsize, rwork,
+  zgeev_(&dont,
+         &dont,
+         &size,
+         copyA,
+         &size,
+         evals,
+         static_cast<double *>(0),
+         &size, /* left eigenvectors */
+         static_cast<double *>(0),
+         &size, /* right eigenvectors */
+         workspace,
+         &wsize,
+         rwork,
          &info);
 
   if (info < 0)
@@ -2842,7 +3397,7 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -2854,40 +3409,50 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
   return ret;
 }
 
-bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eigvecs)
+bool Lapack::eigenvectors(const LMatrixCC *A,
+                          LMatrixCC *eigvals,
+                          LMatrixCC *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size !=static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
   char doit = 'V';
-  int wsize = 4*size;
-  int rsize = 2*size;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,rsize);
+  int wsize = 4 * size;
+  int rsize = 2 * size;
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, rsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,2*size);
-  double *evecs = newarray_atomic(double,2*size*size);
+  double *evals = newarray_atomic(double, 2 * size);
+  double *evecs = newarray_atomic(double, 2 * size * size);
 
-  zgeev_(&dont, &doit,
-         &size, copyA,
-         &size, evals,
-         static_cast<double *>(0), &size,  /* left eigvecs */
-         evecs, &size,  /* right eigvecs */
-         workspace, &wsize, rwork,
+  zgeev_(&dont,
+         &doit,
+         &size,
+         copyA,
+         &size,
+         evals,
+         static_cast<double *>(0),
+         &size, /* left eigvecs */
+         evecs,
+         &size, /* right eigvecs */
+         workspace,
+         &wsize,
+         rwork,
          &info);
 
   if (info < 0)
@@ -2902,9 +3467,9 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
-      eigvecs->resize(size,size);
+      eigvecs->resize(size, size);
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
@@ -2920,33 +3485,40 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
 bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
+      eigvals->resize(0, 1);
       return true;
     }
 
   bool ret = true;
   char dont = 'N';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix. */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix. */
 
-  int wsize = 4*size-2;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,3*size-2);
+  int wsize = 4 * size - 2;
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, 3 * size - 2);
   int info;
 
   double *copyA = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,size);
+  double *evals = newarray_atomic(double, size);
 
-  zheev_(&dont, &triangle,
-         &size, copyA,
-         &size, evals,
-         workspace, &wsize, rwork, &info);
+  zheev_(&dont,
+         &triangle,
+         &size,
+         copyA,
+         &size,
+         evals,
+         workspace,
+         &wsize,
+         rwork,
+         &info);
 
   if (info < 0)
     {
@@ -2960,7 +3532,7 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
     }
 
@@ -2972,38 +3544,46 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
   return ret;
 }
 
-bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMatrixCC *eigvecs)
+bool Lapack::eigenvectors_hermitian(const LMatrixCC *A,
+                                    LMatrixRR *eigvals,
+                                    LMatrixCC *eigvecs)
 {
   int size = static_cast<int>(A->numRows());
-  if (size != static_cast<int>(A->numColumns())) {
-    ERROR("expected a square matrix");
-    return false;
-  }
+  if (size != static_cast<int>(A->numColumns()))
+    {
+      ERROR("expected a square matrix");
+      return false;
+    }
 
   if (size == 0)
     {
-      eigvals->resize(0,1);
-      eigvecs->resize(0,0);
+      eigvals->resize(0, 1);
+      eigvecs->resize(0, 0);
       return true;
     }
 
   bool ret = true;
   char doit = 'V';
-  char triangle = 'U';  /* Upper triangular part makes symmetric matrix */
+  char triangle = 'U'; /* Upper triangular part makes symmetric matrix */
 
-  int wsize = 4*size-2;
-  double *workspace = newarray_atomic(double,wsize);
-  double *rwork = newarray_atomic(double,3*size-2);
+  int wsize = 4 * size - 2;
+  double *workspace = newarray_atomic(double, wsize);
+  double *rwork = newarray_atomic(double, 3 * size - 2);
   int info;
 
   double *evecs = make_lapack_array(*A);
-  double *evals = newarray_atomic(double,size);
+  double *evals = newarray_atomic(double, size);
 
-
-  zheev_(&doit, &triangle,
-         &size, evecs,
-         &size, evals,
-         workspace, &wsize, rwork, &info);
+  zheev_(&doit,
+         &triangle,
+         &size,
+         evecs,
+         &size,
+         evals,
+         workspace,
+         &wsize,
+         rwork,
+         &info);
 
   if (info < 0)
     {
@@ -3017,9 +3597,9 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
     }
   else
     {
-      eigvals->resize(size,1);
+      eigvals->resize(size, 1);
       fill_from_lapack_array(evals, *eigvals);
-      eigvecs->resize(size,size);
+      eigvecs->resize(size, size);
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
@@ -3031,7 +3611,10 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
   return ret;
 }
 
-bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
+bool Lapack::SVD(const LMatrixCC *A,
+                 LMatrixRR *Sigma,
+                 LMatrixCC *U,
+                 LMatrixCC *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -3047,22 +3630,30 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 4*min+2*max;
-  double *workspace = newarray_atomic(double,2*wsize);
-  double *rwork = newarray_atomic(double,5*max);
+  int wsize = 4 * min + 2 * max;
+  double *workspace = newarray_atomic(double, 2 * wsize);
+  double *rwork = newarray_atomic(double, 5 * max);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double,2*rows*rows);
-  double *vt = newarray_atomic(double,2*cols*cols);
-  double *sigma = newarray_atomic(double,2*min);
+  double *u = newarray_atomic(double, 2 * rows * rows);
+  double *vt = newarray_atomic(double, 2 * cols * cols);
+  double *sigma = newarray_atomic(double, 2 * min);
 
-  zgesvd_(&doit, &doit, &rows, &cols,
-          copyA, &rows,
+  zgesvd_(&doit,
+          &doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize,
-          rwork, &info);
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
+          rwork,
+          &info);
 
   if (info < 0)
     {
@@ -3076,11 +3667,11 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
     }
   else
     {
-      U->resize(rows,rows);
+      U->resize(rows, rows);
       fill_from_lapack_array(u, *U);
-      VT->resize(cols,cols);
+      VT->resize(cols, cols);
       fill_from_lapack_array(vt, *VT);
-      Sigma->resize(min,1);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(sigma, *Sigma);
     }
 
@@ -3094,7 +3685,10 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
   return ret;
 }
 
-bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *VT)
+bool Lapack::SVD_divide_conquer(const LMatrixCC *A,
+                                LMatrixRR *Sigma,
+                                LMatrixCC *U,
+                                LMatrixCC *VT)
 {
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
@@ -3110,24 +3704,32 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 2*min*min + 4*min + 2*max;
+  int wsize = 2 * min * min + 4 * min + 2 * max;
 
   double *workspace = newarray_atomic(double, wsize);
-  int *iworkspace = newarray_atomic(int,8*min);
-  double *rwork = newarray_atomic(double,5*min*min + 7*min);
+  int *iworkspace = newarray_atomic(int, 8 * min);
+  double *rwork = newarray_atomic(double, 5 * min * min + 7 * min);
 
   double *copyA = make_lapack_array(*A);
-  double *u = newarray_atomic(double,2*rows*rows);
-  double *vt = newarray_atomic(double,2*cols*cols);
-  double *sigma = newarray_atomic(double,2*min);
+  double *u = newarray_atomic(double, 2 * rows * rows);
+  double *vt = newarray_atomic(double, 2 * cols * cols);
+  double *sigma = newarray_atomic(double, 2 * min);
 
-  zgesdd_(&doit, &rows, &cols,
-          copyA, &rows,
+  zgesdd_(&doit,
+          &rows,
+          &cols,
+          copyA,
+          &rows,
           sigma,
-          u, &rows,
-          vt, &cols,
-          workspace, &wsize, rwork,
-          iworkspace, &info);
+          u,
+          &rows,
+          vt,
+          &cols,
+          workspace,
+          &wsize,
+          rwork,
+          iworkspace,
+          &info);
 
   if (info < 0)
     {
@@ -3141,11 +3743,11 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
     }
   else
     {
-      U->resize(rows,rows);
+      U->resize(rows, rows);
       fill_from_lapack_array(u, *U);
-      VT->resize(cols,cols);
+      VT->resize(cols, cols);
       fill_from_lapack_array(vt, *VT);
-      Sigma->resize(min,1);
+      Sigma->resize(min, 1);
       fill_from_lapack_array(sigma, *Sigma);
     }
 
@@ -3171,42 +3773,53 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
   int bcols = static_cast<int>(b->numColumns());
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
-  int wsize = min + ((bcols >=  max) ? bcols : max);
+  int wsize = min + ((bcols >= max) ? bcols : max);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
-  double *workspace = newarray_atomic(double, 2*wsize);
+  double *workspace = newarray_atomic(double, 2 * wsize);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = 2*j*cols;
-      for (int i = 0; i < 2*brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = 2 * j * cols;
+          for (int i = 0; i < 2 * brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  zgels_(&job, &rows, &cols, &bcols,
-         copyA, &rows,
-         copyb, &max,
-         workspace, &wsize,
+  zgels_(&job,
+         &rows,
+         &cols,
+         &bcols,
+         copyA,
+         &rows,
+         copyb,
+         &max,
+         workspace,
+         &wsize,
          &info);
 
   if (info != 0)
@@ -3216,21 +3829,26 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = 2*j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            double re = copyb[copyloc++];
-            double im = copyb[copyloc++];
-            x->ring().set_from_doubles(*xj, re, im);
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = 2 * j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  double re = copyb[copyloc++];
+                  double im = copyb[copyloc++];
+                  x->ring().set_from_doubles(*xj, re, im);
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);
@@ -3240,7 +3858,9 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
   return ret;
 }
 
-bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
+bool Lapack::least_squares_deficient(const LMatrixCC *A,
+                                     const LMatrixCC *b,
+                                     LMatrixCC *x)
 {
   bool ret = true;
   int rows = static_cast<int>(A->numRows());
@@ -3251,46 +3871,59 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
   int rank, info;
   int min = (rows < cols) ? rows : cols;
   int max = (rows > cols) ? rows : cols;
-  int wsize = 2*min + ((bcols >  max) ? bcols : max);
+  int wsize = 2 * min + ((bcols > max) ? bcols : max);
 
-  if (brows != rows) {
-    ERROR("expected compatible right hand side");
-    return false;
-  }
+  if (brows != rows)
+    {
+      ERROR("expected compatible right hand side");
+      return false;
+    }
 
   if (min == 0 || bcols == 0)
     {
-      x->resize(cols,bcols);
+      x->resize(cols, bcols);
       return true;
     }
 
   double *copyA = make_lapack_array(*A);
   double *copyb = make_lapack_array(*b);
-  double *workspace = newarray_atomic(double, 2*wsize);
+  double *workspace = newarray_atomic(double, 2 * wsize);
   double *sing = newarray_atomic(double, min);
-  double *rwork = newarray_atomic(double, 5*min);
+  double *rwork = newarray_atomic(double, 5 * min);
 
-  if (rows < cols) {
-    // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at the bottom
-    double *copyb2 = newarray_atomic_clear(double, 2*cols*bcols);
-    int bloc = 0;
-    int copyloc = 0;
-    for (int j = 0; j < bcols; j++) {
-      copyloc = 2*j*cols;
-      for (int i = 0; i < 2*brows; i++) {
-        copyb2[copyloc++] = copyb[bloc++];
-      }
+  if (rows < cols)
+    {
+      // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
+      // the bottom
+      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      int bloc = 0;
+      int copyloc = 0;
+      for (int j = 0; j < bcols; j++)
+        {
+          copyloc = 2 * j * cols;
+          for (int i = 0; i < 2 * brows; i++)
+            {
+              copyb2[copyloc++] = copyb[bloc++];
+            }
+        }
+      deletearray(copyb);
+      copyb = copyb2;
     }
-    deletearray(copyb);
-    copyb = copyb2;
-  }
 
-  zgelss_(&rows, &cols, &bcols,
-          copyA, &rows,
-          copyb, &max,
-          sing, &rcond, &rank,
-          workspace, &wsize,
-          rwork, &info);
+  zgelss_(&rows,
+          &cols,
+          &bcols,
+          copyA,
+          &rows,
+          copyb,
+          &max,
+          sing,
+          &rcond,
+          &rank,
+          workspace,
+          &wsize,
+          rwork,
+          &info);
 
   if (info != 0)
     {
@@ -3299,21 +3932,26 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
     }
   else
     {
-      x->resize(cols,bcols);
-      if (rows > cols) {
-        int copyloc = 0;
-        for (int j = 0; j < bcols; j++) {
-          auto xj = x->columnBegin(j);
-          copyloc = 2*j*rows;
-          for (int i = 0; i < cols; i++, ++xj) {
-            double re = copyb[copyloc++];
-            double im = copyb[copyloc++];
-            x->ring().set_from_doubles(*xj, re, im);
-          }
+      x->resize(cols, bcols);
+      if (rows > cols)
+        {
+          int copyloc = 0;
+          for (int j = 0; j < bcols; j++)
+            {
+              auto xj = x->columnBegin(j);
+              copyloc = 2 * j * rows;
+              for (int i = 0; i < cols; i++, ++xj)
+                {
+                  double re = copyb[copyloc++];
+                  double im = copyb[copyloc++];
+                  x->ring().set_from_doubles(*xj, re, im);
+                }
+            }
         }
-      } else {
-        fill_from_lapack_array(copyb, *x);
-      }
+      else
+        {
+          fill_from_lapack_array(copyb, *x);
+        }
     }
 
   deletearray(copyA);

@@ -60,6 +60,8 @@ RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
 MutableMatrix * RingElement := (n,f) -> map(ring f, raw n * raw f)
 ZZ * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
 MutableMatrix * ZZ := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
+RR * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * RR := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
 
 MutableMatrix _ Sequence = (M,ij,val) -> (
      val = promote(val,ring M);
@@ -261,6 +263,21 @@ SVD Matrix := o -> A -> (
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
+
+QRDecomposition = method()
+QRDecomposition MutableMatrix := A -> (
+     k := ring A;
+     if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
+     Q := mutableMatrix(k,0,0,Dense=>true);
+     R := mutableMatrix(k,0,0,Dense=>true);
+     rawQR(raw A, raw Q, raw R, true -* ReturnQR was a bad option name *- );
+     (Q,R))
+QRDecomposition Matrix := A -> (
+     k := ring A;
+     if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
+     A = mutableMatrix(A,Dense=>true);
+     (Q,R) := QRDecomposition A;
+     (matrix Q,matrix R))
 
 rank MutableMatrix := (M) -> rawLinAlgRank raw M
 

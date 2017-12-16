@@ -9,7 +9,7 @@
 -- checkpoly, finishmap, monOrder and coreProgram are called 
 -- in the top-level program minimalPresentation.  
 
-{*
+-*
 checkpoly = (f)->(
      -- 1 Argument:  A polynomial.
      -- Return:      A list of the index of the first 
@@ -230,7 +230,7 @@ reduceLinears Ideal := o -> (I) -> (
        );
      (substitute(ideal L,R), M)
      )
-*}
+*-
 
 reductorVariable = (f,excludes,onlyOnes) -> (
      -- inputs:

@@ -218,12 +218,12 @@ commonEngineRingInitializations = (F) -> (
      if debugLevel > 25 then (
 	  registerFinalizer(F,"ring");
 	  );
-     {*
+     -*
      if debugLevel > 50 then (
 	  registerFinalizer(F#0,"ring 0");
 	  registerFinalizer(F#1,"ring 1");
 	  );
-     *}
+     *-
      )
 
 -----------------------------------------------------------------------------
@@ -654,7 +654,12 @@ fraction(RingElement,RingElement) := (r,s) -> (
      fraction(r,s))
 -----------------------------------------------------------------------------
 
-isUnit(RingElement) := (f) -> 1 % ideal f == 0
+isUnit(RingElement) := (f) -> (
+    if (options ring f).?Inverses and (options ring f).Inverses then 
+      size f === 1 and isUnit leadCoefficient f
+    else
+      1 % ideal f == 0
+    )
 
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s

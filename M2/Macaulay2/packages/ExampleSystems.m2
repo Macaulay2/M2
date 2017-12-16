@@ -79,7 +79,7 @@ example(ExampleTable, String) := opts -> (H,x) -> (
      else I)
 
 readExampleFile = method()
-{* -- remove this code
+-* -- remove this code
 readExampleFile(String,Ring) := (filename, coeffring) -> (
      G := separateRegexp("---+", get (ExampleIdeals#"source directory"|filename));
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -98,10 +98,10 @@ readExampleFile(String) := (filename) -> (
 	       s := substring(2,G#i#0); -- remove the first two -- characters
 	       i+1 => s => demark("\n",drop(G#i,1))))
      )
-*}
+*-
 getExampleFile = method()
 
-{* -- remove this code
+-* -- remove this code
 getExampleFile(String,String) := (filename,kkstring) -> (
      G := separateRegexp("---+", get filename);
      G = apply(G, s -> select(lines s, t -> #t > 0));
@@ -112,7 +112,7 @@ getExampleFile(String,String) := (filename,kkstring) -> (
 	       i+1 => s => replace("kk", kkstring, demark("\n",drop(G#i,1)))))
      )
 getExampleFile(String) := (filename) -> getExampleFile(filename,"")
-*}
+*-
 
 -- New code
 getExampleFile(String) := (filename) -> (

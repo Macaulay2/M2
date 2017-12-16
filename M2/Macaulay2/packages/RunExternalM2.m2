@@ -1,11 +1,11 @@
 -- -*- coding: utf-8 -*-
-{*
+-*
   Copyright 2016 Brian Pike
 
   You may redistribute this file under the terms of the GNU General Public
   License as published by the Free Software Foundation, either version 2 of
   the License, or any later version.
-*}
+*-
 newPackage(
 		"RunExternalM2",
 		Version => "0.83",
@@ -19,7 +19,7 @@ newPackage(
 		Configuration => {"isChild"=>false} 
 	)
 
-{*
+-*
 Changelog:
  v0.83:
   o Remove runExternalM2InClone because it is fundamentally unsafe to use
@@ -41,10 +41,10 @@ Known issues:
  o The method used to discover the location of M2 can fail.  If you get an
    error about libgmp from the child M2 process, then try initially
    starting the parent M2 by using its full path.
-*}
+*-
 
 
-{*
+-*
   How RunExternalM2 Works:
   Call:
     runExternalM2("filename.m2","name-of-procedure" (string or symbol), parameters of that procedure)
@@ -69,13 +69,13 @@ Known issues:
       anything after forking, even if only one thread ever runs.
     - run()ing a new M2 process
       Yes, how we actually do it.
-*}
+*-
 
 
-{*
+-*
 TODO:
  - Test on Cygwin?
-*}  
+*-  
 
 
 export {
@@ -333,11 +333,11 @@ Node
 ///);
 
 
-{*
+-*
   These are the options to automatically provide when calling the M2 executable.
   We would use --script (=--stop --no-debug --silent -q ), but we do NOT want
   -q so that our child processes can find installed packages, namely, this package.
-*}
+*-
 M2Options:=" --stop --no-debug --silent ";
 
 

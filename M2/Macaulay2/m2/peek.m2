@@ -80,7 +80,7 @@ seeParsing = args -> (					    -- let's eliminate this in favor of operatorAttri
 	  );
      q := getParsing symbol apply;
      scan(keys set join(values Core.Dictionary, values Core#"private dictionary"), s -> if getParsing s =!= q then t(getParsing s,s));
-     t(getParsing symbol apply, "{*...symbols...*}");
+     t(getParsing symbol apply, "-*...symbols...*-");
      new Table from prepend(
 	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },
  	  sort pairs x / (

@@ -100,10 +100,10 @@ F*G == G*F
 a*a + a*c + a*b + b*c == F*G
 F^3
 F = a+b+c
-{*
+-*
 time F = F^50;
 time(F*F);
-*}
+*-
 
 --------------------------------------
 -- Quotient rings --------------------
@@ -141,9 +141,9 @@ a = rawRingVar(R,0)
 F = a^2+2*a+1
 A = rawTowerQuotientRing(R, 1:F)
 a = rawRingVar(A,0)
-{*
+-*
 rawInverse (a+1) -- error not considered?
-*}
+*-
 
 a^2 
 a^3

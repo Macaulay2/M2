@@ -1,9 +1,11 @@
+# http://www.rambau.wm.uni-bayreuth.de/Software/
 HOMEPAGE = http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
-# URL = http://www.rambau.wm.uni-bayreuth.de/Software/TOPCOM-0.17.8.tar.gz
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 0.17.8
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = TOPCOM-$(VERSION).tar.gz
-LICENSEFILES = COPYING 
+PRECONFIGURE = autoreconf -vif
+LICENSEFILES = COPYING README
 PROGRAMS = src-reg/checkregularity src/points2finetriang
 STRIPFILES = $(PROGRAMS)
 INSTALLCMD = :

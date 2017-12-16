@@ -8,7 +8,7 @@ VPATH = @srcdir@
 # pari maintainers have been known to break URL's, so we copy their software to another server:
 # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.7.5
+VERSION = 2.9.3
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
@@ -32,10 +32,16 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 #		Otherwise you can safely ignore the above warning.
 CHECKTARGET = .
 
-# we build only the shared library, because that's the version that is gmp compatible
+# we build only the shared library, because that's the version that is gmp compatible (??)
+
 INSTALLTARGET += install-include
-BUILDTARGET += lib-dyn
-INSTALLTARGET += install-lib-dyn
+
+# choose the static library to build and install:
+BUILDTARGET += lib-sta
+INSTALLTARGET += install-lib-sta
+# BUILDTARGET += lib-dyn
+# INSTALLTARGET += install-lib-dyn
+
 HOST_OS = @host_os@
 HOST_CPU = @host_cpu@
 ifeq ($(HOST_OS),mingw32)

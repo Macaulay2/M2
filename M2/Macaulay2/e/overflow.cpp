@@ -2,9 +2,11 @@
 #include <string>
 
 namespace safe {
-     void ov(const char *msg) { 
-       const std::string s(msg);
-       throw(exc::overflow_error(s)); }
+void ov(const char *msg)
+{
+  const std::string s(msg);
+  throw(exc::overflow_exception(s));
+}
 }
 
 // Local Variables:

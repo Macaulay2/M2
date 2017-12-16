@@ -624,7 +624,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
 	  if rk < 2 * sum bundleRanks then (
 	       error "expected rank of bundle to be not less than the twice the sum of the bundle ranks";
 	       );
-	  bundleRanks = join(reverse bundleRanks, {rk - 2 * sum bundleRanks {* might be 0 *}}, bundleRanks);
+	  bundleRanks = join(reverse bundleRanks, {rk - 2 * sum bundleRanks -* might be 0 *-}, bundleRanks);
 	  );
      n := #bundleRanks;
      hft := {1};

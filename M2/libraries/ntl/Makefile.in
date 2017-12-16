@@ -1,8 +1,8 @@
 # a library for doing number theory
 LICENSEFILES = doc/copying.txt
 # @configure_input@
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-VERSION = 9.7.0
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 10.5.0
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
@@ -22,23 +22,20 @@ DEB_CXXFLAGS = -O2
 DEB_LDFLAGS =
 endif
 
-CONFIGUREOPTIONS =						\
-	WIZARD=off						\
-	NATIVE=off						\
-	PREFIX=@pre_libm2dir@					\
-	LIBDIR=@pre_librariesdir@				\
-	INCLUDEDIR=@pre_libm2dir@/include			\
-	DOCDIR=@pre_libm2dir@/share/doc				\
-	NTL_GMP_LIP=on NTL_NO_INIT_TRANS=on	\
-	RANLIB="@RANLIB@"					\
-	CXX="@CXX@"						\
-	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"			\
-	CPPFLAGS="$(CPPFLAGS) $(DEB_CPPFLAGS)"			\
-	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"			\
-
-ifeq (@DEBUG@,yes)
-CONFIGUREOPTIONS += WIZARD=off
-endif
+CONFIGUREOPTIONS =							\
+	TUNE=generic							\
+	NATIVE=off							\
+	PREFIX=@pre_libm2dir@						\
+	LIBDIR=@pre_librariesdir@					\
+	INCLUDEDIR=@pre_libm2dir@/include				\
+	DOCDIR=@pre_libm2dir@/share/doc					\
+	NTL_GMP_LIP=on							\
+	NTL_NO_INIT_TRANS=on						\
+	RANLIB="@RANLIB@"						\
+	CXX="@CXX@"							\
+	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"				\
+	CPPFLAGS="$(CPPFLAGS) $(DEB_CPPFLAGS)"				\
+	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"			
 
 BUILDOPTIONS =					\
 	MakeDescCFLAGS=-O0			\
@@ -52,9 +49,9 @@ BUILDOPTIONS =					\
 BUILDOPTIONS += -j1
 
 ifeq (@NTL_WIZARD@,yes)
-BUILDOPTIONS += WIZARD=on
+CONFIGUREOPTIONS += TUNE=auto
 else
-BUILDOPTIONS += WIZARD=off
+CONFIGUREOPTIONS += TUNE=generic
 endif
 
 CHECKOPTIONS =					\

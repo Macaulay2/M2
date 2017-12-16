@@ -5,7 +5,7 @@ export {
     "PointArray"
     }
 
-{*
+-*
 PointArray
 is an array of points (labelled with 0,1,...)
 to which one may append new elements.
@@ -22,7 +22,7 @@ points          -- returns a List of points
 
 !!!The goal is to make searching the array fast, 
 but for now it works only in linear time!!!
-*}
+*-
 
 PointArrayTolerance = 1e-4
 FAST = class rawPointArray === CompiledFunction

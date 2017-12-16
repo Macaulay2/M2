@@ -5,7 +5,7 @@ Version => "0.2", Date => "September 21 2016", Authors => {
      HomePage => "http://www.math.utah.edu/~bydlon/"
      }
 }, --this file is in the public domain
-Headline => "A package for computing the section ring of a Weil Divisor.", DebuggingMode => true, Reload=>true)
+Headline => "computing the section ring of a Weil Divisor")
 
 export{
 	"globallyGenerated",
@@ -25,14 +25,14 @@ dualToIdeal(Ideal) := (I) -> (
 --Produces an ideal module isomorphic to the dual of the given ideal I.
 	R := ring(I);
 	M := module(I);
-	moduleToIdeal(Hom(M,R),IsGraded=>true,ReturnMap=>true)
+	embedAsIdeal(Hom(M,R),IsGraded=>true,ReturnMap=>true)
 );
 
 -----------------------------------------------------------------------
 
 globallyGenerated = method();
 
-globallyGenerated(WDiv) := (D) -> (				
+globallyGenerated(WeilDivisor) := (D) -> (				
 --Finds the smallest positive number (using a binary search) such that O_X(a*D) is globally generated, D ample.
 	a:=1;
 
@@ -63,7 +63,7 @@ globallyGenerated(Ideal) := (I) -> (
 );
 
 globallyGenerated(Module) := (M) -> (
-	globallyGenerated(moduleToDivisor(M))
+	globallyGenerated(divisor(M))
 );
 
 -----------------------------------------------------------------------
@@ -215,7 +215,7 @@ sectionRing(Ideal) := (I) -> (
 	KK:= coefficientRing(R);
 	Z := dualToIdeal(I);
 	Shift := (Z#1)#0;
-	J = {0,reflexifyIdeal((Z#0))};
+	J = {0,reflexify((Z#0))};
 	FF := {0,basis(Shift,J#1)};
 	n := {0,numColumns(FF#1)};
 	F := {0,map(R^(numRows(FF#1)),R^(n#1),FF#1)};
@@ -343,8 +343,8 @@ sectionRing(Ideal) := (I) -> (
 
 -----------------------------------------------------------------------
 
-sectionRing(WDiv) := D -> (
-	sectionRing(divisorToIdeal(D))
+sectionRing(WeilDivisor) := D -> (
+	sectionRing(ideal(D))
 );
 
 -----------------------------------------------------------------------
@@ -361,16 +361,24 @@ convertScalarVect = (newS, L) -> (apply(L, z->sub(z, newS)));
 beginDocumentation();
 
 doc ///
+  Key
+    SectionRing
+  Headline
+    computing the section ring of a Weil Divisor
+///    
+
+doc ///
    	Key
    	 dualToIdeal
    	Headline
-   	 dualToIdeal(I) produces an ideal isomorphic to the dual of I.
+   	  dual ideal
    	Usage
    	 dualToIdeal(I)
    	Inputs
 	 I:Ideal
    	Outputs
    	 :Ideal
+	   the dual of I
         Description
 	 Text
 	  Takes an ideal I as input, dualizes the ideal, and maps it back into the ring, producing Hom_R(I,R) ~ J < R.  Used to produce the global sections H^0(mD), where D is an integral divisor defined by I.
@@ -384,10 +392,10 @@ doc ///
    	 globallyGenerated(D) produces a smallest integer a such that O_X(aD) is globally generated.
    	Usage
 	  globallyGenerated(D)
-   	 , globallyGenerated(I)
-	 , globallyGenerated(M)
+   	  globallyGenerated(I)
+	  globallyGenerated(M)
    	Inputs
-	 D:WDiv
+	 D:WeilDivisor
 	 I:Ideal
 	 M:Module
    	Outputs
@@ -405,7 +413,7 @@ doc ///
    	 isMRegular(F,G,m) tests where F is m-regular with respect to G (globally generated) in the sense of Castelnuovo-Mumford.  Omitting G assumes G=O_X(1).
    	Usage
 	 isMRegular(F,G,m)
-	 , isMRegular(F,m)
+	 isMRegular(F,m)
    	Inputs
 	 F:CoherentSheaf
 	 G:CoherentSheaf
@@ -425,7 +433,7 @@ doc ///
    	 mRegular(F,G) computes the regularity of F with respect to G (globally generated), in the sense of Castelnuovo-Mumford.  Omitting G assumes G=O_X(1).
    	Usage
 	 mRegular(F,G)
-	 , mRegular(F)
+	 mRegular(F)
    	Inputs
 	 F:CoherentSheaf
 	 G:CoherentSheaf
@@ -444,10 +452,10 @@ doc ///
    	 sectionRing(I) produces the section ring of an ample divisor.  If I is an ideal, one can input I to get the section ring of the corresponding divisor.
    	Usage
 	 sectionRing(I)
-	 , sectionRing(D)
+	 sectionRing(D)
    	Inputs
 	 I:Ideal
-	 D:WDiv
+	 D:WeilDivisor
    	Outputs
    	 :Ring
         Description

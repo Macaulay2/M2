@@ -14,13 +14,13 @@ SchPblm = {
 conds = SchPblm/first; k = 2; n = 4;
 (X,P,PS) = parametricSchubertProblem(conds,k,n)
 
-{*
+-*
 S = solveSchubertProblem(SchPblm,2,4)
 assert all(S,s->checkIncidenceSolution(s,SchPblm))
 inverseFlags = SchPblm/last/(F->solve(F,id_(FFF^4)))
 p0 = point{drop(inverseFlags,2)/entries//flatten//flatten}
 s0 = point{select(flatten entries transpose S#0, c->c!=1 and c!=0) / (c->1/c) }
-*}
+*-
 
 needsPackage "NAGtools"
 PH = parametricSegmentHomotopy(PS,X,P)

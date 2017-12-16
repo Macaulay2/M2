@@ -222,6 +222,66 @@ doc ///
    can only contain letters, numbers, underscores, and square brackets.           
 ///;
 
+
+doc ///
+ Key
+   bertiniUserHomotopy
+   (bertiniUserHomotopy, Thing, List, List, List)
+ Headline
+   track a user-defined homotopy
+ Usage
+   S0=bertiniUserHomotopy(t, P, H, S1)
+ Inputs
+   t:RingElement
+     path variable
+   P: List
+     of Options that set the parameters
+   H:List
+     of polynomials that define the homotopy
+   S1:List
+     of solutions to the start system  
+ Outputs
+   S0:List
+     of solutions to the target system
+ Consequences
+  Item
+    Writes the homotopy and start solutions to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with configuration keyword {\tt USERHOMOTOPY}. 
+  Item
+    Stores output of {\tt Bertini} in temporary file
+  Item
+    Parses and outputs the solutions       
+ Description
+   Text
+     This method calls {\tt Bertini} to track a user-defined homotopy.  The
+     user needs to specify the homotopy H, the path variable t, and a list
+     of start solutions S1. In the following example, we solve $x^2-2$ by moving
+     from $x^2-1$ with a linear homotopy. {\tt Bertini} tracks homotopies starting at
+     $t=1$ and ending at $t=0$. Final solutions are of type Point.
+   Example
+     R = CC[x,a,t]; -- include the path variable in the ring     
+     H = { (x^2-1)*a + (x^2-2)*(1-a)};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
+     S1= { sol1, sol2  };--solutions to H when t=1	  
+     S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
+     peek S0_0
+   Example     
+     R=CC[x,y,t,a]; -- include the path variable in the ring     
+     f1=(x^2-y^2);
+     f2=(2*x^2-3*x*y+5*y^2);
+     H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
+     sol1=    point{{1,1}}--{{x,y}} coordinates
+     sol2=    point{{ -1,1}}
+     S1={sol1,sol2}--solutions to H when t=1
+     S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0 
+ Caveat
+   Variables must begin with a letter (lowercase or capital) and
+   can only contain letters, numbers, underscores, and square brackets.           
+///;
+
+
 doc ///
  Key
    bertiniComponentMemberTest
@@ -455,7 +515,7 @@ doc ///
  Headline
    Uses monodromy to find more solutions to a parameterized system of polynomial equations.
  Usage
-   b'PHSequence(s) 
+   b'PHMonodromyCollect(s) 
  Inputs
    s:String
      The directory where the files are stored.
@@ -489,8 +549,76 @@ doc ///
 	 MonodromyStartPoints=>{{1,0}},
       	 NumberOfLoops=>10,NumSolBound=>3,
 	 MonodromyStartParameters=>{1,0}	)
+///;
+
+
+
+
+doc ///
+ Key
+   bertiniImageMonodromyCollect
+   (bertiniImageMonodromyCollect,String)
+ Headline
+   Uses monodromy to find more solutions to a parameterized system of polynomial equations.
+ Usage
+   bertiniImageMonodromyCollect(s) 
+ Inputs
+   s:String
+     The directory where the files are stored.
+ Description
+   Text
+     Given a directory that has a Bertini input file that has ParameterHomotopy set to 2, a start file, for start_parameters,
+     this function uses parameter homotopies to perform a monodromy homotopy.           
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     writeStartFile(storeBM2Files,{{1,0}},NameStartFile=>"startSave");
+     --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
+     writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
+     --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     bertiniImageMonodromyCollect(storeBM2Files,
+	 NameStartFile=>"startSave",
+	 StorageFolder=>"StoreFiles",
+    	 AffVariableGroup=>{x,y},
+      	 NumberOfLoops=>10,NumSolBound=>3,
+	 MonodromyStartParameters=>{1,0}	)
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     bertiniImageMonodromyCollect(storeBM2Files,
+    	 AffVariableGroup=>{x,y},
+	 StorageFolder=>"StoreFiles",
+	 MonodromyStartPoints=>{{1,0}},
+      	 NumberOfLoops=>10,NumSolBound=>3)
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     s1=bertiniImageMonodromyCollect(storeBM2Files,
+	 AffVariableGroup=>{x,y},
+	 MonodromyStartPoints=>{{1,0}},
+      	 MonodromyStartParameters=>{1,0},
+	 NumberOfLoops=>10,NumSolBound=>3,
+      	 MonodromyStartParameters=>{1,0},
+	 ImageCoordinates=>({x}))
+     #s1==1
+     s2=bertiniImageMonodromyCollect(storeBM2Files,
+	 MonodromyStartPoints=>{{1,0}},
+      	 MonodromyStartParameters=>{1,0},
+	 NumberOfLoops=>10,NumSolBound=>3,
+      	 MonodromyStartParameters=>{1,0},
+	 AffVariableGroup=>{x,y},
+	 ImageCoordinates=>{"x^3+x*y^2+y+y^3+x-2"})
+     #s2==1
+
+
       
 ///;
+
+
+
 
 doc ///
  Key
@@ -1308,27 +1436,29 @@ doc ///
    [b'PHSequence,Verbose]
    [b'TraceTestImage,Verbose]
    [makeSampleSolutionsFile,Verbose]
+   [bertiniUserHomotopy,Verbose]
   Headline
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
+    bertiniUserHomotopyVerbose(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
-    bertiniZeroDimSolve(...,Verbose=>Number)
-    bertiniParameterHomotopy(...,Verbose=>Number)
-    makeB'InputFile(...,Verbose=>Number)
-    makeMembershipFile(...,Verbose=>Number)
-    b'PHGaloisGroup(...,Verbose=>Number)
-    b'PHMonodromyCollect(...,Verbose=>Number)
-    importIncidenceMatrix(...,Verbose=>Number)
-    importMainDataFile(...,Verbose=>Number)
-    importSliceFile(...,Verbose=>Number)
-    importSolutionsFile(...,Verbose=>Number)
-    runBertini(...,Verbose=>Number)
+    bertiniZeroDimSolve(...,Verbose=>Boolean)
+    bertiniParameterHomotopy(...,Verbose=>Boolean)
+    makeB'InputFile(...,Verbose=>Boolean)
+    makeMembershipFile(...,Verbose=>Boolean)
+    b'PHGaloisGroup(...,Verbose=>Boolean)
+    b'PHMonodromyCollect(...,Verbose=>Boolean)
+    importIncidenceMatrix(...,Verbose=>Boolean)
+    importMainDataFile(...,Verbose=>Boolean)
+    importSliceFile(...,Verbose=>Boolean)
+    importSolutionsFile(...,Verbose=>Boolean)
+    runBertini(...,Verbose=>Boolean)
   Description
     Text
-       Use {\tt Verbose=>false} or {\tt Verbose=>0}  to silence additional output.
+       Use {\tt Verbose=>false} to silence additional output.
 ///;
 
 doc ///
@@ -1345,6 +1475,20 @@ doc ///
     Text
        Use OutputSyle to change the style of output. 
 ///;
+
+doc ///
+  Key
+   PrintMidStatus
+   [b'PHMonodromyCollect, PrintMidStatus]
+  Headline
+    Print outputs of intermediate computations.
+  Usage
+    b'PHMonodromyCollect(...,PrintMidStatus=>true)
+  Description
+    Text
+       Print outputs of intermediate computations. Set to false to silence.  
+///;
+
 
 
 doc ///
@@ -1891,6 +2035,32 @@ doc ///
     [bertiniTrackHomotopy, MaxNumberSteps]
     [bertiniTrackHomotopy, MaxCycleNum]
     [bertiniTrackHomotopy, RegenStartLevel]
+    [bertiniUserHomotopy,CoeffBound]
+    [bertiniUserHomotopy,CondNumThreshold]
+    [bertiniUserHomotopy,DegreeBound]
+    [bertiniUserHomotopy,EndGameNum]
+    [bertiniUserHomotopy,FinalTol]
+    [bertiniUserHomotopy,ImagThreshold]
+    [bertiniUserHomotopy,MaxCycleNum]
+    [bertiniUserHomotopy,MaxNewtonIts]
+    [bertiniUserHomotopy,MaxNorm]
+    [bertiniUserHomotopy,MaxNumberSteps]
+    [bertiniUserHomotopy,MaxStepSize]
+    [bertiniUserHomotopy,MinStepSizeBeforeEG]
+    [bertiniUserHomotopy,MinStepSizeDuringEG]
+    [bertiniUserHomotopy,MPType]
+    [bertiniUserHomotopy,ODEPredictor]
+    [bertiniUserHomotopy,OutputLevel]
+    [bertiniUserHomotopy,PRECISION]
+    [bertiniUserHomotopy,RandomSeed]
+    [bertiniUserHomotopy,RegenStartLevel]
+    [bertiniUserHomotopy,ScreenOut]
+    [bertiniUserHomotopy,SecurityLevel]
+    [bertiniUserHomotopy,SingValZeroTol]
+    [bertiniUserHomotopy,StepsForIncrease]
+    [bertiniUserHomotopy,TrackTolBeforeEG]
+    [bertiniUserHomotopy,TrackTolDuringEG]
+    [bertiniUserHomotopy,UseRegeneration]
     [bertiniZeroDimSolve, MPType]
     [bertiniZeroDimSolve, PRECISION]
     [bertiniZeroDimSolve, ODEPredictor]
@@ -2161,6 +2331,52 @@ doc ///
    StartPoints
    StartParameters
    SubIntoCC	  
+   storeBM2Files
+   MultiplicityTol
+   SetParameterGroup
+   ReturnPoints
+   GeneralCoordinate
+   OnlyMoveParameters
+   ImageCoordinates
+   ConditionNumTol
+   ContinueLoop
+   EquivalentCoordinates
+   [bertiniImageMonodromyCollect,AffVariableGroup]
+   [bertiniUserHomotopy,AffVariableGroup]
+   [bertiniUserHomotopy,B'Configs]
+   [bertiniImageMonodromyCollect,B'Constants]
+   [bertiniUserHomotopy,B'Constants]
+   [bertiniImageMonodromyCollect,B'Functions]
+   [bertiniUserHomotopy,B'Functions]
+   [bertiniImageMonodromyCollect,ContinueLoop]
+   [bertiniImageMonodromyCollect,EquivalentCoordinates]
+   [bertiniImageMonodromyCollect,GeneralCoordinate]
+   [bertiniImageMonodromyCollect,ImageCoordinates]
+   [bertiniImageMonodromyCollect,M2Precision]
+   [bertiniUserHomotopy,M2Precision]
+   [bertiniImageMonodromyCollect,NameB'InputFile]
+   [bertiniImageMonodromyCollect,NameParameterFile]
+   [bertiniImageMonodromyCollect,NameSolutionsFile]
+   [bertiniImageMonodromyCollect,OnlyMoveParameters]
+   [bertiniUserHomotopy,OutputSyle]
+   [bertiniImageMonodromyCollect,PrintMidStatus]
+   [bertiniUserHomotopy,RandomReal]
+   [bertiniImageMonodromyCollect,ReturnPoints]
+   [makeB'InputFile,SetParameterGroup]
+   [bertiniUserHomotopy,TopDirectory]
+   [bertiniImageMonodromyCollect,B'Exe]
+   [bertiniImageMonodromyCollect,MonodromyStartParameters]
+   [bertiniImageMonodromyCollect,MonodromyStartPoints]
+   [bertiniImageMonodromyCollect,NameStartFile]
+   [bertiniImageMonodromyCollect,NumberOfLoops]
+   [bertiniImageMonodromyCollect,NumSolBound]
+   [bertiniImageMonodromyCollect,SaveData]
+   [bertiniImageMonodromyCollect,SpecifyLoops]
+   [bertiniImageMonodromyCollect,StorageFolder]
+   [bertiniImageMonodromyCollect,Verbose]
+   [bertiniUserHomotopy,HomVariableGroup]
+   [bertiniUserHomotopy,RandomComplex]
+
 
  Headline
    This option or key is for a function that is in active development. 

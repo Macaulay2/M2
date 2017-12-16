@@ -5,9 +5,8 @@ all: supervisor.o m2file.o tests.o
 include ../../include/config.Makefile
 
 %.dep: %.cpp
-	@ echo "@CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
-	@ echo " ** creating $@ from $<"
-	@       @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW) " ** creating $@ from $<"
+	$(HIDE) @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 ifneq ($(DEPENDS),no)
 include supervisor.dep
 include m2file.dep
@@ -17,18 +16,15 @@ CPPFLAGS := -I@srcdir@ -I../d -I@srcdir@/../e $(CPPFLAGS) -I@srcdir@/../d -I@src
 .PHONY: tags
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
 %.s : %.c
-	@ echo '$(scCMD)' >> LOGFILE
-	: " ** compiling $< to assembly code, making $@"
-	@ $(scCMD)
+	$(SHOW) " ** compiling $< to assembly code, making $@"
+	$(HIDE) $(scCMD)
 EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 %.E : %.c
-	@ echo '$(EcCMD)' >> LOGFILE
-	@ echo " ** preprocessing $<, making $@"
-	@ $(EcCMD)
+	$(SHOW) " ** preprocessing $<, making $@"
+	$(HIDE) $(EcCMD)
 %.dep: %.c
-	@ echo "@CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
-	@ echo " ** creating $@ from $<"
-	@ @CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	$(SHOW) " ** creating $@ from $<"
+	$(HIDE) @CC@  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 # @srcdir@/TAGS: $(HFILES) $(CCFILES); cd @srcdir@ && @ETAGS@ $(HFILES) $(CCFILES)
 # DEPENDS = yes
@@ -39,6 +35,12 @@ EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/system/Makefile
 distclean::; rm -f Makefile
+
+# how was this test file supposed to work?
+LDLIBS += -lgc -lpthread
+#check : tests; ./tests
+tests : tests.o supervisor.o
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/system "

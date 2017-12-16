@@ -32,7 +32,6 @@ newPackage("OldToricVectorBundles",
 	 "volume URI" => "http://j-sag.org/Volume2/"
 	 },
     DebuggingMode => false,
-    Configuration => {},
     PackageExports => {"OldPolyhedra"}
     )
 

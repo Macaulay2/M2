@@ -1,0 +1,165 @@
+-- -*- M2-comint -*- {* hash: 1659406890 *}
+<<<<<<< HEAD
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+=======
+>>>>>>> origin/master
+
+i1 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+
+i3 : writeStartFile(storeBM2Files,{{1,0}},NameStartFile=>"startSave");
+
+i4 : writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
+
+i5 : makeB'InputFile(storeBM2Files,
+         B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+
+<<<<<<< HEAD
+o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-7067-0/0/input
+=======
+o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22983-0/0/input
+>>>>>>> origin/master
+
+o5 : File
+
+i6 : bertiniImageMonodromyCollect(storeBM2Files,
+         NameStartFile=>"startSave",
+         StorageFolder=>"StoreFiles",
+         AffVariableGroup=>{x,y},
+         NumberOfLoops=>10,NumSolBound=>3,
+         MonodromyStartParameters=>{1,0}        )
+Starting monodromy loop number: 1.
+Current fiber size: 1
+Starting monodromy loop number: 2.
+Current fiber size: 2
+Starting monodromy loop number: 3.
+Current fiber size: 2
+Starting monodromy loop number: 4.
+Current fiber size: 2
+Starting monodromy loop number: 5.
+Current fiber size: 3
+Number of loops: 5.
+NumSolBound has been reached.
+
+o6 = {{1, 0}, {1, -.5+.866025*ii}, {1, -.5-.866025*ii}}
+
+o6 : List
+
+i7 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+
+i9 : makeB'InputFile(storeBM2Files,
+         B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+
+<<<<<<< HEAD
+o9 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-7067-0/0/input
+=======
+o9 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22983-0/0/input
+>>>>>>> origin/master
+
+o9 : File
+
+i10 : bertiniImageMonodromyCollect(storeBM2Files,
+          AffVariableGroup=>{x,y},
+          StorageFolder=>"StoreFiles",
+          MonodromyStartPoints=>{{1,0}},
+          NumberOfLoops=>10,NumSolBound=>3)
+Starting monodromy loop number: 1.
+Current fiber size: 2
+Starting monodromy loop number: 2.
+Current fiber size: 3
+Number of loops: 2.
+NumSolBound has been reached.
+
+o10 = {{1, 0}, {1, -.5+.866025*ii}, {1, -.5-.866025*ii}}
+
+o10 : List
+
+i11 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+
+i13 : makeB'InputFile(storeBM2Files,
+          B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+
+<<<<<<< HEAD
+o13 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-7067-0/0/input
+=======
+o13 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22983-0/0/input
+>>>>>>> origin/master
+
+o13 : File
+
+i14 : s1=bertiniImageMonodromyCollect(storeBM2Files,
+          AffVariableGroup=>{x,y},
+          MonodromyStartPoints=>{{1,0}},
+          MonodromyStartParameters=>{1,0},
+          NumberOfLoops=>10,NumSolBound=>3,
+          MonodromyStartParameters=>{1,0},
+          ImageCoordinates=>({x}))
+Starting monodromy loop number: 1.
+Current fiber size: 1
+Starting monodromy loop number: 2.
+Current fiber size: 1
+Starting monodromy loop number: 3.
+Current fiber size: 1
+Starting monodromy loop number: 4.
+Current fiber size: 1
+Starting monodromy loop number: 5.
+Current fiber size: 1
+Starting monodromy loop number: 6.
+Current fiber size: 1
+Starting monodromy loop number: 7.
+Current fiber size: 1
+Starting monodromy loop number: 8.
+Current fiber size: 1
+Starting monodromy loop number: 9.
+Current fiber size: 1
+Starting monodromy loop number: 10.
+Current fiber size: 1
+NumberOfLoops has been reached.
+
+o14 = {{1, 0}}
+
+o14 : List
+
+i15 : #s1==1
+
+o15 = true
+
+i16 : s2=bertiniImageMonodromyCollect(storeBM2Files,
+          MonodromyStartPoints=>{{1,0}},
+          MonodromyStartParameters=>{1,0},
+          NumberOfLoops=>10,NumSolBound=>3,
+          MonodromyStartParameters=>{1,0},
+          AffVariableGroup=>{x,y},
+          ImageCoordinates=>{"x^3+x*y^2+y+y^3+x-2"})
+Starting monodromy loop number: 1.
+Current fiber size: 1
+Starting monodromy loop number: 2.
+Current fiber size: 1
+Starting monodromy loop number: 3.
+Current fiber size: 1
+Starting monodromy loop number: 4.
+Current fiber size: 1
+Starting monodromy loop number: 5.
+Current fiber size: 1
+Starting monodromy loop number: 6.
+Current fiber size: 1
+Starting monodromy loop number: 7.
+Current fiber size: 1
+Starting monodromy loop number: 8.
+Current fiber size: 1
+Starting monodromy loop number: 9.
+Current fiber size: 1
+Starting monodromy loop number: 10.
+Current fiber size: 1
+NumberOfLoops has been reached.
+
+o16 = {{1, 0}}
+
+o16 : List
+
+i17 : #s2==1
+
+o17 = true
+
+i18 : 
+      
+      

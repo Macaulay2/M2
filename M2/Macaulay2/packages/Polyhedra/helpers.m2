@@ -129,7 +129,23 @@ computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
 )
 
 makeRaysUniqueAndPrimitive = method()
-makeRaysUniqueAndPrimitive(Matrix) := M -> (
+makeRaysUniqueAndPrimitive(Matrix, Matrix) := (M, LS) -> (
+   M = makeRaysPrimitive M;
+   n := numRows M;
+   if numColumns M == 0 then return M;
+   L := apply(numColumns M, i -> M_i);
+   L = select(L, l -> gcd entries l != 0);
+   if #L != 0 then (
+      result := {};
+      for l in L do (
+         test := position(result, r -> pointInSameDirection(matrix r, matrix l, LS));
+         if class test === Nothing then result = insert(0, l, result);
+      );
+      sort matrix unique result
+   )
+   else map(ZZ^n, ZZ^0, 0)
+)
+makeRaysUniqueAndPrimitive Matrix := M -> (
    M = makeRaysPrimitive M;
    n := numRows M;
    if numColumns M == 0 then return M;
@@ -198,3 +214,24 @@ toZZ List := List => L -> (
    l := lcm d;
    apply(L, e -> (numerator(l*e)))
 )
+
+
+-- Checks cones given by indices for maximality
+checkConesForMaximality = method();
+checkConesForMaximality List := cones -> (
+	all(cones, 
+		cone -> (
+			all(cones,
+				c -> (
+					n := #((set c) * (set cone));
+					if n == #cone then (
+						cone == c
+					) else (
+						true
+					)
+				)
+			)
+		)
+	)
+)
+

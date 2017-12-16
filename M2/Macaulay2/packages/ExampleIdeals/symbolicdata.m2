@@ -11,7 +11,7 @@ J = ideal"136z-136,
   6abz-162a2u+8ayu+10axv+14bx+48aw+16uw,  
   -162a2b+2aby+3axu+4avw+6bw"
 time gb J;
-{* -- Singular
+-* -- Singular
 ring R=32003,(a,b,x,y,z,u,v,w),lp;
 ideal J = 136z-136,  
   -240a+112y+420z-64v,  
@@ -25,7 +25,7 @@ timer=1;
 option(prot);
 std(J);
 groebner(J);  
-*}
+*-
 --------------------------------------
 --Simson3 from Data/INTPS/Homog/Geometry/Simson_3.sd
 kk = frac(ZZ/101[u1,u2,u3,u4])
