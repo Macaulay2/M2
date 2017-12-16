@@ -99,14 +99,18 @@ ring_elem PolynomialAlgebra::from_int(mpz_ptr n) const
   return reinterpret_cast<Nterm*>(result);
 }
 
-ring_elem PolynomialAlgebra::from_rational(mpq_ptr q) const
+bool PolynomialAlgebra::from_rational(mpq_ptr q, ring_elem& result1) const
 {
   auto result = new Poly;
-  result->getCoeffInserter().push_back(mCoefficientRing.from_rational(q));
+  ring_elem cq; // in coeff ring.
+  bool worked = mCoefficientRing.from_rational(q, cq);
+  if (!worked) return false;
+  result->getCoeffInserter().push_back(cq);
   //monoid().make_one(result->getMonomInserter());
   result->getMonomInserter().push_back(2); // length of the monomial data
   result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
-  return reinterpret_cast<Nterm*>(result);
+  result1 = reinterpret_cast<Nterm*>(result);
+  return true;
 }
 
 ring_elem PolynomialAlgebra::var(int v) const

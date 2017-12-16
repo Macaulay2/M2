@@ -64,13 +64,17 @@ ring_elem NCFreeAlgebra::from_int(mpz_ptr n) const
   return reinterpret_cast<Nterm*>(result);
 }
 
-ring_elem NCFreeAlgebra::from_rational(mpq_ptr q) const
+bool NCFreeAlgebra::from_rational(mpq_ptr q, ring_elem& result1) const
 {
   NCPolynomial* result = new NCPolynomial;
-  result->push_backCoeff(mCoefficientRing.from_rational(q));
+  ring_elem cq;
+  bool worked = mCoefficientRing.from_rational(q, cq);
+  if (!worked) return false;
+  result->push_backCoeff(cq);
   result->push_backMonom(2);  // length of the monomial data
   result->push_backMonom(0);  // degree of the monomial.  Will need to change if weights are present.
-  return reinterpret_cast<Nterm*>(result);
+  result1 = reinterpret_cast<Nterm*>(result);
+  return true;
 }
 
 ring_elem NCFreeAlgebra::var(int v) const
