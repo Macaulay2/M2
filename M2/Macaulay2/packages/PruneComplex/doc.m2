@@ -10,13 +10,17 @@ Description
 
     Algorithms in this package are also implemented using C++ in e/mutablecomplex.hpp for speed.
   Example
-    debug needsPackage "PruneComplex";
     R = ZZ/32003[vars(0..17)];
     m1 = genericMatrix(R,a,3,3)
     m2 = genericMatrix(R,j,3,3)
     I = ideal(m1*m2-m2*m1)
-    C = freeRes I
-    elapsedTime D = pruneComplex(C, PruningMaps => true, UnitTest => isScalar)
+    "Here we produce an intentionally nonminimal resolution:";
+    S = (coefficientRing R)(monoid [gens R, local h]);
+    Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
+    Chom = res(Ihom, FastNonminimal=>true);
+    C = (map(R, S, gens R | {1})) Chom
+    "Now we prune the resolution above to get a minimal resolution:";
+    elapsedTime D = pruneComplex(C, PruningMaps => true, UnitTest => isScalar) -- 1.379s
     isCommutative D.cache.pruningMap
     betti D == betti res I
 Caveat
@@ -48,10 +52,14 @@ Description
   Text
     Prune a chain complex {C} into a free resolution by removing unit elements from the differentials.
   Example
-    debug needsPackage "PruneComplex"
     R = ZZ/32003[a..f]
     I = ideal"abc-def,ab2-cd2-c,acd-b3-1"
-    C = (freeRes I)[-10]
+    "Here we produce an intentionally nonminimal resolution:";
+    S = (coefficientRing R)(monoid [gens R, local h]);
+    Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
+    Chom = (res(Ihom, FastNonminimal=>true))[-10];
+    C = (map(R, S, gens R | {1})) Chom
+    "Now we prune the resolution above to get a minimal resolution:";
     D = pruneComplex(C, Strategy => null, UnitTest => isScalar, Direction => "both")
     C.dd
     D.dd
@@ -176,7 +184,6 @@ Outputs
   C: ChainComplex
 Description
   Example
-    debug needsPackage "PruneComplex"
     R = ZZ/32003[vars(0..17)];
     m1 = genericMatrix(R,a,3,3)
     m2 = genericMatrix(R,j,3,3)
