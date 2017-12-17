@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- {* hash: -371089811 *}
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = x^2+y^2+2*z^3
+
+       3  2  2
+o2 = 2z +y +x
+
+o2 : A
+
+i3 : isConstant f
+
+o3 = false
+
+i4 : g = promote(1,A)
+
+o4 = 1
+
+o4 : A
+
+i5 : isConstant g
+
+o5 = true
+
+i6 : 

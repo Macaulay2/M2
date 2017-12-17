@@ -1,0 +1,47 @@
+-- -*- M2-comint -*- {* hash: 1898434637 *}
+
+i1 : R = frac(QQ[a])
+
+o1 = R
+
+o1 : FractionField
+
+i2 : B = skewPolynomialRing(R,a,{x,y,z})
+
+o2 = B
+
+o2 : NCQuotientRing
+
+i3 : M = ncMatrix {{x, y, z}}
+
+o3 = | x  y  z |
+
+o3 : NCMatrix
+
+i4 : sigma = ncMap(B,B,{y,z,x})
+
+o4 = NCRingMap B <--- B
+
+o4 : NCRingMap
+
+i5 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+
+o5 = | x  y  z |
+     |         |
+     | y  z  x |
+     |         |
+     | z  x  y |
+
+o5 : NCMatrix
+
+i6 : a*N
+
+o6 = | ax  ay  az |
+     |            |
+     | ay  az  ax |
+     |            |
+     | az  ax  ay |
+
+o6 : NCMatrix
+
+i7 : 

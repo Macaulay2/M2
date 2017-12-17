@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- {* hash: -865722865 *}
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = 2*x^2+y^2+z^3
+
+      3  2   2
+o2 = z +y +2x
+
+o2 : A
+
+i3 : t = terms f
+
+       2    2   3
+o3 = {y , 2x , z }
+
+o3 : List
+
+i4 : first t
+
+      2
+o4 = y
+
+o4 : A
+
+i5 : 

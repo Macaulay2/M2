@@ -1,0 +1,35 @@
+-- -*- M2-comint -*- {* hash: -981595872 *}
+
+i1 : A = QQ{x,y}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = ncMap(A,A,{x^2,y^2})
+
+o2 = NCRingMap A <--- A
+
+o2 : NCRingMap
+
+i3 : g = ncMap(A,A,{x+y,y})
+
+o3 = NCRingMap A <--- A
+
+o3 : NCRingMap
+
+i4 : gens A/f/g
+
+       2        2   2
+o4 = {y +yx+xy+x , y }
+
+o4 : List
+
+i5 : gens A/g/f
+
+       2  2   2
+o5 = {y +x , y }
+
+o5 : List
+
+i6 : 

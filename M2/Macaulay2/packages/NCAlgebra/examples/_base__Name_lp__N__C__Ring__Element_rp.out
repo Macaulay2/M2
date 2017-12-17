@@ -1,0 +1,28 @@
+-- -*- M2-comint -*- {* hash: -435513168 *}
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : baseName x
+
+o2 = x
+
+o2 : Symbol
+
+i3 : B = QQ{p_1..p_6}
+
+o3 = B
+
+o3 : NCPolynomialRing
+
+i4 : baseName p_1
+
+o4 = p
+      1
+
+o4 : IndexedVariable
+
+i5 : 
