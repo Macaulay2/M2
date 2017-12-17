@@ -1,0 +1,45 @@
+-- -*- M2-comint -*- {* hash: -1111221426 *}
+
+i1 : A = QQ{x,y}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = ncMap(A,A,{x,y})
+
+o2 = NCRingMap A <--- A
+
+o2 : NCRingMap
+
+i3 : g = ncMap(A,A,{y,x})
+
+o3 = NCRingMap A <--- A
+
+o3 : NCRingMap
+
+i4 : h = 3*f + 4*g
+
+o4 = NCRingMap A <--- A
+
+o4 : NCRingMap
+
+i5 : matrix h
+
+o5 = | 4y+3x  3y+4x |
+
+o5 : NCMatrix
+
+i6 : k = h^3
+
+o6 = NCRingMap A <--- A
+
+o6 : NCRingMap
+
+i7 : matrix k
+
+o7 = | 172y+171x  171y+172x |
+
+o7 : NCMatrix
+
+i8 : 

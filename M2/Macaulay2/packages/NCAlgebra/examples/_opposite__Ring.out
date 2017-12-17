@@ -1,0 +1,29 @@
+-- -*- M2-comint -*- {* hash: -1318199081 *}
+
+i1 : R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
+
+o1 = R
+
+o1 : QuotientRing
+
+i2 : A = skewPolynomialRing(R,q,{x,y,z,w})
+
+o2 = A
+
+o2 : NCQuotientRing
+
+i3 : x*y == q*y*x
+
+o3 = true
+
+i4 : Aop = oppositeRing A
+
+o4 = Aop
+
+o4 : NCQuotientRing
+
+i5 : y*x == q*x*y
+
+o5 = true
+
+i6 : 

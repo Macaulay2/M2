@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- {* hash: -1112331503 *}
+
+i1 : A=QQ{x56,x46,x36,x26,x16,x45,x35,x25,x15,x34,x24,x14,x23,x13,x12}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : 

@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- {* hash: -1277604553 *}
+
+i1 : A = QQ{x,y}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : ideal A
+
+o2 = Two-sided ideal {0}
+
+o2 : NCIdeal
+
+i3 : 

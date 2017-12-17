@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- {* hash: -1017629464 *}
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : generators A
+
+o2 = {x, y, z}
+
+o2 : List
+
+i3 : gens A
+
+o3 = {x, y, z}
+
+o3 : List
+
+i4 : 

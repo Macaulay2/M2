@@ -1,0 +1,38 @@
+-- -*- M2-comint -*- {* hash: 1832118703 *}
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = x^2+y^2+z^3
+
+      3  2  2
+o2 = z +y +x
+
+o2 : A
+
+i3 : degree f
+
+o3 = 3
+
+i4 : isHomogeneous f
+
+o4 = false
+
+i5 : setWeights(A,{3,3,2,1})
+
+o5 = A
+
+o5 : NCPolynomialRing
+
+i6 : degree f
+
+o6 = 6
+
+i7 : isHomogeneous f
+
+o7 = true
+
+i8 : 
