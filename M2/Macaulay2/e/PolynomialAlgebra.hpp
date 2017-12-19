@@ -57,6 +57,8 @@ public:
   virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR,
                                               const ring_elem f) const;
 
+  long n_terms(const ring_elem f) const;
+  
   // some internal functions for the above routines
   ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monom) const;
   ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monom) const;

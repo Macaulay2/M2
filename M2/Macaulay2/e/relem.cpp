@@ -6,6 +6,7 @@
 #include "frac.hpp"
 #include "localring.hpp"
 #include "polyring.hpp"
+#include "PolynomialAlgebra.hpp"
 
 #include "aring-glue.hpp"
 
@@ -24,12 +25,18 @@ RingElement *RingElement::make_raw(const Ring *R, ring_elem f)
 int RingElement::n_terms(int nvars) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (is_zero()) return 0;
+  if (P != nullptr)
     {
-      if (is_zero()) return 0;
-      return 1;
+      return P->n_logical_terms(nvars, val);
     }
-  return P->n_logical_terms(nvars, val);
+  auto Q = dynamic_cast<const PolynomialAlgebra *>(R);
+  if (Q != nullptr)
+    {
+      return Q->n_terms(val);
+    }
+  
+  return 1;
 }
 
 RingElement *RingElement::operator-() const

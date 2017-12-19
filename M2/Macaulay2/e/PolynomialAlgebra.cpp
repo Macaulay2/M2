@@ -6,7 +6,6 @@
 #include <string>
 #include <iostream>
 
-
 PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
                                      M2_ArrayString names,
                                      const PolynomialRing* degreeRing)
@@ -65,51 +64,36 @@ int PolynomialAlgebra::index_of_var(const ring_elem a) const
   return m[2];
 }
 
-ring_elem PolynomialAlgebra::from_long(long n) const
-{
-  auto result = new Poly;
-
-  result->getCoeffInserter().push_back(mCoefficientRing.from_long(n));
-  // would eventually like:
-  //monoid().make_one(result->getMonomInserter());
-  result->getMonomInserter().push_back(2); // length of the monomial data
-  result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
-  return reinterpret_cast<Nterm*>(result);
-}
-
 ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
 {
   auto result = new Poly;
-
-  result->getCoeffInserter().push_back(a);
-  // would eventually like:
-  //monoid().make_one(result->getMonomInserter());
-  result->getMonomInserter().push_back(2); // length of the monomial data
-  result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
+  if (not mCoefficientRing.is_zero(a))
+    {
+      result->getCoeffInserter().push_back(a);
+      // would eventually like:
+      //monoid().make_one(result->getMonomInserter());
+      result->getMonomInserter().push_back(2); // length of the monomial data
+      result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
+    }
   return reinterpret_cast<Nterm*>(result);
+}
+
+ring_elem PolynomialAlgebra::from_long(long n) const
+{
+  return from_coefficient(mCoefficientRing.from_long(n));
 }
 
 ring_elem PolynomialAlgebra::from_int(mpz_ptr n) const
 {
-  auto result = new Poly;
-  result->getCoeffInserter().push_back(mCoefficientRing.from_int(n));
-  //monoid().make_one(result->getMonomInserter());
-  result->getMonomInserter().push_back(2); // length of the monomial data
-  result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
-  return reinterpret_cast<Nterm*>(result);
+  return from_coefficient(mCoefficientRing.from_int(n));
 }
 
 bool PolynomialAlgebra::from_rational(mpq_ptr q, ring_elem& result1) const
 {
-  auto result = new Poly;
   ring_elem cq; // in coeff ring.
   bool worked = mCoefficientRing.from_rational(q, cq);
   if (!worked) return false;
-  result->getCoeffInserter().push_back(cq);
-  //monoid().make_one(result->getMonomInserter());
-  result->getMonomInserter().push_back(2); // length of the monomial data
-  result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
-  result1 = reinterpret_cast<Nterm*>(result);
+  result1 = from_coefficient(cq);
   return true;
 }
 
@@ -155,10 +139,15 @@ bool PolynomialAlgebra::is_unit(const ring_elem f1) const
     mCoefficientRing.is_unit(i.coeff());
 }
 
-bool PolynomialAlgebra::is_zero(const ring_elem f1) const
+long PolynomialAlgebra::n_terms(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
-  return (f->numTerms() == 0);
+  return f->numTerms();
+}
+
+bool PolynomialAlgebra::is_zero(const ring_elem f1) const
+{
+  return n_terms(f1) == 0;
 }
 
 bool PolynomialAlgebra::is_equal(const ring_elem f1, const ring_elem g1) const
@@ -468,7 +457,11 @@ ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
       // multiply the coefficients
-      outcoeff.push_back(mCoefficientRing.mult(i.coeff(),c));
+      ring_elem d = mCoefficientRing.mult(i.coeff(),c);
+      if (mCoefficientRing.is_zero(d))
+        continue;
+
+      outcoeff.push_back(d);
 
       // The following should be replaced by
       // monoid().mult(i.monom(), m, outmonom);
@@ -502,8 +495,12 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
   auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
-      // multiply the coefficients
-      outcoeff.push_back(mCoefficientRing.mult(c,i.coeff()));
+      ring_elem d = mCoefficientRing.mult(c, i.coeff());
+      if (mCoefficientRing.is_zero(d))
+        continue;
+
+      outcoeff.push_back(d);
+
       // tack on the monomial pointed to by m to the end of current monomial.
       int lenm = (*m)[0];
       int degm = (*m)[1];

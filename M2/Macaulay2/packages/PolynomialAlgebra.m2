@@ -25,27 +25,34 @@ NCPolynomialRing.synonym = "noncommutative polynomial ring"
 
 new NCPolynomialRing from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
 
+getNameIfAny = (k) -> expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k
+
 -- MES.  do we really need all 5 of these?
 expression NCPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
-     (expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (R.generatorSymbols)
+     (getNameIfAny k) (R.generatorSymbols)
      )
 net NCPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 describe NCPolynomialRing := R -> (
      k := last R.baseRings;
-     net ((expression if hasAttribute(k,ReverseDictionary) 
-             then getAttribute(k,ReverseDictionary) else k) (R.generatorSymbols))
+     net ((getNameIfAny k) R.generatorSymbols)
      )
 toExternalString NCPolynomialRing := R -> (
+    --toString describe R
      k := last R.baseRings;
-     toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (R.generatorSymbols)))
+     toString ((getNameIfAny k) R.generatorSymbols)
+     )
 toString NCPolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else toString expression R)
+    toString expression R
+    -- 
+    -- if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
+    -- else toString expression R
+    )
 
+-- Currently, we are using findSymbols in m2/ofcm.m2 instead of this.
 sequenceToVariableSymbols = args -> (
     variables := splice args;
     v := flatten toList apply(variables, x -> if class x === MutableList then toList x else x);
@@ -56,6 +63,7 @@ sequenceToVariableSymbols = args -> (
        )
     )
 
+-- MES: remove this older code:
 -* getVariableSymbols = method()
 getVariableSymbols List := variables -> (
     genSymbols := sequenceToVariableSymbols variables;
@@ -66,17 +74,19 @@ getVariableSymbols List := variables -> (
     )
 *-
 
--- TODO (11 Jan 2017 MS+FM)
+-- TODO (11 Jan 2017 MS+FM), now (19 Dec 2017 MS+FM)
 --   1. handle multigradings
 --   2. handle different monomial orders
 --     e.g. elimination order.
 --   3. check on: ring map evaluations, promote, lift?
---   4. look at other top level rings
+--   4. look at other top level rings (and do what with them?)
 --   5. net, expression, toString...  DONE
---   6. check on listForm.
---   7. use, ...
+--   6. check on listForm (what is the issue?)
+--   7. use, make it so we can create this ring without assigning the variables to global symbols
 --   8. make sure multiplication is using a heap based approach.
-
+-- TODO for PolynomialAlgebra.hpp,cpp:
+--   - make sure that bringing in a zero element brings in a zero element!
+--   - make monoid routines for the cryptic uses.
 Ring List := (A, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    if not (A.?Engine and A.Engine) then
@@ -135,10 +145,33 @@ degreesRing NCPolynomialRing := PolynomialRing => R -> (
    else error "no degreesRing for this ring"
    )
 
--- toExternalString
--- toString
--- expression
--- net
+isWellDefined NCPolynomialRing := Boolean => R -> (
+    -- an internal check that R is defined properly.
+    isbad := str -> (if debugLevel > 0 then << str; false);
+    if # R.generators =!= numgens R then 
+        return isbad "# R.generators =!= numgens R";
+    if # R.generatorExpressions =!= numgens R then 
+        return isbad "# R.generatorExpressions =!= numgens R";
+    if # R.generatorSymbols =!= numgens R then 
+        return isbad "# R.generatorSymbols =!= numgens R";
+    if not all(R.generators, x -> class x === R) then 
+        return isbad "generators are not all in the ring";
+    if not all(R.generatorExpressions, x -> instance(x,Expression)) then
+        return isbad "generatorExpressions are not all expressions";
+    if not all(R.generatorSymbols, x -> instance(x, Symbol) or instance(x, IndexedVariable)) then
+        return isbad "generatorSymbols are not all symbols or indexed variables";
+    if not instance(expression R, Expression) then
+        return isbad "expression R should be an expression";
+    if not instance(describe R, Net) then
+        return isbad "'describe R' should be a Net";
+    if not instance(net R, Net) then
+        return isbad "'net R' should be a Net";
+    if not instance(toString R, String) then
+        return isbad "'toString R' should be a string";
+    if not instance(toExternalString R, String) then
+        return isbad "'toExternalString R' should be a string";
+    true
+    )
 -- listForm
 beginDocumentation()
 
@@ -168,20 +201,41 @@ TEST ///
   --- generators test
   debug Core -- for generatorSymbols
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
-    assert(# R.generators == numgens R)    
-    assert(# R.generatorExpressions == numgens R)
-    assert(# R.generatorSymbols == numgens R)
-    assert all(R.generators, x -> class x === R)
-    assert all(R.generatorExpressions, x -> class x === Holder)
-    assert all(R.generatorSymbols, x -> class x === Symbol)
+  assert isWellDefined R
     
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
+  assert isWellDefined R
+
+  R = QQ{a,b, x_1..x_3, c, y_1..y_4}
+  assert(numgens R == 10)
+  debugLevel = 1
+  isWellDefined R
+
   R = QQ{{a,b,c},{d,e}}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
   R = QQ{(a,b,c),{d,e}}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
   R = QQ{(a,b,c),(d,e)}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
   R = QQ{b..f}; assert(R.generatorSymbols == splice {vars(1,2,3,4,5)})
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
   R = QQ{x_1..x_100, y_1..y_100}; assert(numgens R == 200)
+  debugLevel = 1
+  isWellDefined R
+///
+
+TEST ///
+  -- toExternalString
+  -- toString
+  -- expression
+  -- net
+  -- describe
+  R = QQ{a,b, x_1..x_3, c, y_1..y_4}
+  isWellDefined R
+  unstack describe R === {"QQ {a, b, x , x , x , c, y , y , y , y }", 
+                            "           1   2   3      1   2   3   4"}
+  assert(net R === "R")
+  assert(net R == net expression R)
+  assert((depth describe R, height describe R, width describe R) == (1,1,40))
+  assert(toString R === "R")
+  assert(toExternalString R === "QQ {a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4}")
 ///
 
 TEST ///
@@ -202,10 +256,12 @@ TEST ///
   R = QQ{a,b,c}
   f = a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1
   g = (a*a*b+a+1)*(a*a*b+a+1)
-    assert(toExternalString(f - g) == "0")
-  f - g
-  {f,g}
-  exprf = expression f
+  assert(toExternalString(f - g) == "0")
+  assert(f == g)
+  assert(f-g == 0)
+  assert(net f == net expression f)
+  assert(toString f === "a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1")
+  assert(toString f === toExternalString f)
 ///
 
 --- question: why is engine code slower for this computation than NCAlgebra?
@@ -230,18 +286,38 @@ TEST ///
   B = A{x,y,z}
   promote(t,B)
   t_B
-  (t*x + t*y)^2 == 0 -- wrong, BUG
-  (x + t*y)^2 == x^2 + t*x*y + t*y*x  -- should be equal, BUG
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  debug Core
+  -- basic arithmetic
+  A = ZZ/101[t]/t^2
+  B = A{x,y,z}
+  f = 0_A * x
+  raw f 
+  
+  f = (t*x + t*y)^2
+  assert(toString raw f == "0")
+  (x + t*y)^2 == x^2 + t*x*y + t*y*x 
+  
+  f = (t*x + t*y)^2
+  f = (t*x + t*y)*(t*x+t*y)
+  assert(size f == 0)
 ///
 
 TEST ///
   R = QQ{b,c,d}
   f = 3*b^2*c*b + 2*b^4
-  assert(size (b+c) == 2) -- WRONG
+  assert(size (b+c) == 2)
   pairs f -- WRONG
   leadTerm f -- fails
   leadCoefficient f -- fails
-  terms f -- fails
+  assert(# terms f == 2)
+  assert(sum terms f == f) -- WRONG (monomial is reversed...)
   assert(degree f == {4}) -- fails
   debug Core
   rawP = rawPairs(raw coefficientRing R, raw f)
@@ -254,6 +330,7 @@ TEST ///
   B = matrix {{b}}
   C = matrix {{c}}
   assert(B*C == matrix {{c*b}})
+  N = mutableMatrix(R,2,3); -- ok
   N = mutableMatrix(R,2,3) -- SIGSEGV
   D = matrix {{b,c}}
   assert(D * transpose D == matrix {{b^2 + c^2}})
