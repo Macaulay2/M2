@@ -25,6 +25,27 @@ NCPolynomialRing.synonym = "noncommutative polynomial ring"
 
 new NCPolynomialRing from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
 
+-- MES.  do we really need all 5 of these?
+expression NCPolynomialRing := R -> (
+     if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
+     k := last R.baseRings;
+     (expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (R.generatorSymbols)
+     )
+net NCPolynomialRing := R -> (
+     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
+     else net expression R)
+describe NCPolynomialRing := R -> (
+     k := last R.baseRings;
+     net ((expression if hasAttribute(k,ReverseDictionary) 
+             then getAttribute(k,ReverseDictionary) else k) (R.generatorSymbols))
+     )
+toExternalString NCPolynomialRing := R -> (
+     k := last R.baseRings;
+     toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (R.generatorSymbols)))
+toString NCPolynomialRing := R -> (
+     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
+     else toString expression R)
+
 sequenceToVariableSymbols = args -> (
     variables := splice args;
     v := flatten toList apply(variables, x -> if class x === MutableList then toList x else x);
@@ -35,7 +56,7 @@ sequenceToVariableSymbols = args -> (
        )
     )
 
-{*getVariableSymbols = method()
+-* getVariableSymbols = method()
 getVariableSymbols List := variables -> (
     genSymbols := sequenceToVariableSymbols variables;
 
@@ -43,7 +64,7 @@ getVariableSymbols List := variables -> (
     --newNCAlgebra(A, v)
     genSymbols
     )
-*}
+*-
 
 -- TODO (11 Jan 2017 MS+FM)
 --   1. handle multigradings
@@ -51,7 +72,7 @@ getVariableSymbols List := variables -> (
 --     e.g. elimination order.
 --   3. check on: ring map evaluations, promote, lift?
 --   4. look at other top level rings
---   5. net, expression, toString...
+--   5. net, expression, toString...  DONE
 --   6. check on listForm.
 --   7. use, ...
 --   8. make sure multiplication is using a heap based approach.
@@ -60,7 +81,8 @@ Ring List := (A, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    if not (A.?Engine and A.Engine) then
        error "expected coefficient ring handled by the engine";
-   varSymbols := sequenceToVariableSymbols toSequence varList;
+   --varSymbols := sequenceToVariableSymbols toSequence varList;
+   varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
    degreelen := 1;
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degreelen);
@@ -68,7 +90,8 @@ Ring List := (A, varList) -> (
        (symbol RawRing) => rawR,
        (symbol generators) => {},
        (symbol generatorSymbols) => varSymbols,
-       (symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
+       --(symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
+       (symbol generatorExpressions) => for v in varSymbols list expression v,
        (symbol degreesRing) => degreesRing degreelen,
        (symbol degreeLength) => degreelen,
        (symbol CoefficientRing) => A,
@@ -138,9 +161,20 @@ SeeAlso
 ///
 
 TEST ///
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
   --- generators test
   debug Core -- for generatorSymbols
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
+    assert(# R.generators == numgens R)    
+    assert(# R.generatorExpressions == numgens R)
+    assert(# R.generatorSymbols == numgens R)
+    assert all(R.generators, x -> class x === R)
+    assert all(R.generatorExpressions, x -> class x === Holder)
+    assert all(R.generatorSymbols, x -> class x === Symbol)
+    
   R = QQ{a,b,c}; assert(R.generatorSymbols == splice {vars(0,1,2)})
   R = QQ{{a,b,c},{d,e}}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
   R = QQ{(a,b,c),{d,e}}; assert(R.generatorSymbols == splice {vars(0,1,2,3,4)})
@@ -196,7 +230,7 @@ TEST ///
   B = A{x,y,z}
   promote(t,B)
   t_B
-  (t*x + t*y)^2 == 0
+  (t*x + t*y)^2 == 0 -- wrong, BUG
   (x + t*y)^2 == x^2 + t*x*y + t*y*x  -- should be equal, BUG
 ///
 
@@ -208,7 +242,7 @@ TEST ///
   leadTerm f -- fails
   leadCoefficient f -- fails
   terms f -- fails
-  assert(degree f == {4})
+  assert(degree f == {4}) -- fails
   debug Core
   rawP = rawPairs(raw coefficientRing R, raw f)
   last rawP / rawSparseListFormMonomial
