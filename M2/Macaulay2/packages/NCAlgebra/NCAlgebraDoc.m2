@@ -36,6 +36,11 @@ doc ///
     Text
       This package is used to define and manipulate noncommutative algebras.  Many of the
       commands contain calls to the existing noncommutative algebra package Bergman.
+      
+      Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
+      found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
+      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+	 
   Subnodes
     "Basic operations on noncommutative algebras"
     "General setup information"
@@ -4109,45 +4114,9 @@ doc ///
 	 add support for other programs which compute Groebner bases, but for
 	 now, users must have Bergman installed.
       Text
-         Bergman is free, open-source software available at
-	 http://servus.math.su.se/bergman/. We suggest users download the "current"
-	 version. You will find that Bergman can be compiled in several ways.
-	 We have found that as of March of 2015, Bergman does not run on the version
-	 of Common Lisp that installs via homebrew on Mac OS X versions 10.9 or newer.
-      	 We give detailed instructions for installing Bergman and having it work
-	 with the NCAlgebra package below in the case of an Ubuntu installation.
-      Text
-         First, install Common Lisp using the command
-      CannedExample
-      	 sudo apt-get install clisp
-      Text
-         Next, download the bergman source and un-tar it.  You'll need M2 to see the source
-	 even after it is built so remember where you left it.  Next, change to the
-	 directory <bergmanRoot>/scripts/clisp/unix.  In this directory is a file called
-	 mkbergman that is basically the makefile for the common lisp build.  From within
-	 that directory, execute the command
-      CannedExample
-         ./mkbergman -auto
-      Text
-      	 The -auto parameter can be left off in place of -i (for interactive) if you would
-	 like to specify non-default answers to some of the build parameters.  When this command
-	 has been completed, the location of the bergman executable will be reported to you.
-      Text
-         Next, add bergman to your path.  This can be achieved, for example, by symlinking the bergman executable to
-	 a directory on your path using the command:
-      CannedExample
-         ln -s <bergmanExecutableLocation> /usr/bin/bergman
-      Text
-      	 Next, you need to set it up so that the environment variable BERGMANPATH is set upon entering a terminal
-	 by editing, for example, your .bashrc file.  It should contain the location of the root of the bergman
-	 source code.  This can be achieved with adding the following line to your .bashrc file (or course, assuming your source code is located
-	 at "~/bergman"):
-      CannedExample
-         export BERGMANPATH="~/bergman"
-      Text
-         There are also two global variables present (MAXDEG and MAXSIZE) in NCAlgebra.m2 which are
-	 tolerance values beyond which Bergman is called for normal form reductions.
-	 See @ TO "Using the Bergman interface" @ for more information.
+         Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
+	 found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
+	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
    SeeAlso
       "Using the Bergman interface"
 ///
