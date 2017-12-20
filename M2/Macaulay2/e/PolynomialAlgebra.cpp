@@ -13,6 +13,10 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
   assert(K != nullptr);
   PolynomialAlgebra* result = new PolynomialAlgebra(K, names);
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
+  result->zeroV = result->from_long(0);
+  result->oneV = result->from_long(1);
+  result->minus_oneV = result->from_long(-1);
+
   return result;
 }
 
@@ -26,10 +30,6 @@ PolynomialAlgebra::PolynomialAlgebra(const Ring* K,
     // used emplace_back here.  C++11 feature which allows constructor arguments to be passed in place,
     // rather than having to create a temporary object to pass to push_back.
     mVariableNames.emplace_back(names->array[i]->array, names->array[i]->len);
-
-  zeroV = from_long(0);
-  oneV = from_long(1);
-  minus_oneV = from_long(-1);
 }
 
 void PolynomialAlgebra::text_out(buffer &o) const

@@ -325,6 +325,22 @@ TEST ///
 ///
 
 TEST ///
+  R = QQ{a,b,c,d}
+  {b*c}
+  e = {{b,c,d,b*c,c*b,b^2,a*c-1}}
+  M = matrix for j from 1 to 10 list for i from 1 to 10 list a*b-i*a-j*b
+  M_(1,1)
+  B = matrix {{b}}
+  C = matrix {{c}}
+  assert(B*C == matrix {{c*b}})
+  N = mutableMatrix(R,2,3); -- ok
+  N = mutableMatrix(R,2,3) -- SIGSEGV
+  D = matrix {{b,c}}
+  assert(D * transpose D == matrix {{b^2 + c^2}})
+  assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}})
+///
+
+TEST ///
   R = QQ{b,c,d}
   M = R^2 -- works
   B = matrix {{b}}
@@ -332,6 +348,8 @@ TEST ///
   assert(B*C == matrix {{c*b}})
   N = mutableMatrix(R,2,3); -- ok
   N = mutableMatrix(R,2,3) -- SIGSEGV
+  N = mutableMatrix(R,100,200);
+  N_(1,1) -- crash
   D = matrix {{b,c}}
   assert(D * transpose D == matrix {{b^2 + c^2}})
   assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}})
