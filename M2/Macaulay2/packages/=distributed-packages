@@ -166,3 +166,5 @@ SymbolicPowers
 Complexes
 GroebnerWalk
 RandomMonomialIdeals
+Matroids
+NumericalImplicitization
