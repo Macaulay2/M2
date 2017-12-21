@@ -23,11 +23,12 @@ struct Monom
   //   5 3 0 2 1 . 4 2 0 1
 {
   Monom(const int* value) : mValue(value) {}
-  const int* operator*() const { return mValue; }
+  //  const int* operator*() const { return mValue; }
+  const int* operator+(int i) const { return mValue+i; }
+  int operator[](int i) const { return mValue[i]; }
 
-  //TODO: move to Monoid class?
-  bool is_one_monomial() const { return (mValue[0] == 2 && mValue[1] == 0); }
-
+  const int* begin() const { return mValue; }
+  const int* end() const { return mValue + *mValue; }
 private:
   const int* mValue; // We are visiting this monomial, we do not own it!
 };
@@ -87,6 +88,9 @@ public:
     // FRANK: Same as above, do we want to make a copy here?
     Monom monom() const { return Monom((&*(this->mMonomIt))); }
 
+    // MES: added 2- Dec 2017:
+    //    std::pair<ring_elem, Monom> operator*() const { return std::make_pair(coeff(), monom()); }
+    
     // (in)equality checks
     bool operator==(const self_type& rhs) const { return (this->mCoeffIt == rhs.mCoeffIt); }
     bool operator!=(const self_type& rhs) const { return (this->mCoeffIt != rhs.mCoeffIt); }

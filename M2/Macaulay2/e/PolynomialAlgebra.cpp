@@ -6,6 +6,145 @@
 #include <string>
 #include <iostream>
 
+
+void NCMonoid::one(MonomialInserter& m) const
+{
+  m.push_back(2);
+  m.push_back(0);
+}
+
+void NCMonoid::var(int v, MonomialInserter& m) const
+{
+  m.push_back(3);
+  m.push_back(1);
+  m.push_back(v);
+}
+
+bool NCMonoid::is_one(const Monom& m) const
+{
+  return m[0] == 2;
+}
+
+int NCMonoid::index_of_variable(const Monom& m) const
+{
+  if (m[0] != 3 or m[1] != 1) return -1;
+  return m[2];
+}
+
+void NCMonoid::copy(const Monom& m, MonomialInserter& result) const
+{
+  for (auto v : m) result.push_back(v);
+  
+  //  for (auto i = m.begin(); i != m.end(); ++i)
+  //    result.push_back(*i);
+  //  std::copy(m.begin(), m.end(), result);
+}
+
+void NCMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result) const
+{
+  result.push_back(m1[0] + m2[0] - 2);
+  result.push_back(m1[1] + m2[1]);
+  for (auto i = m1.begin()+2; i != m1.end(); ++i)
+    result.push_back(*i);
+  for (auto i = m2.begin()+2; i != m2.end(); ++i)
+    result.push_back(*i);
+
+  //  std::copy(std::begin(m1) + 2, std::end(m1), result);
+  //  std::copy(std::begin(m2) + 2, std::end(m1), result);
+}
+
+int NCMonoid::compare(const Monom& m1, const Monom& m2) const
+{
+  if (m1[1] > m2[1]) return GT;
+  if (m1[1] < m2[1]) return LT;
+  // at this stage, they have the same degree, so use lex order
+  for (int j = 2; j < m1[0]; j++)
+    {
+      if (m1[j] > m2[j]) return LT;
+      if (m1[j] < m2[j]) return GT;
+    }
+  // if we are here, the monomials are the same.
+  return EQ;
+}
+
+void NCMonoid::elem_text_out(buffer& o, const Monom& m1, const std::vector<std::string>& variableNames) const
+{
+  auto mon_length = m1[0] - 2;
+  auto mon_ptr = m1 + 2;
+  for (auto j = 0; j < mon_length; j++)
+    {
+      // for now, just output the string.
+      int curvar = mon_ptr[j];
+      int curvarPower = 0;
+      o << variableNames[curvar];
+      while ((j < mon_length) && (mon_ptr[j] == curvar))
+        {
+          j++;
+          curvarPower++;
+        }
+      if (curvarPower > 1) o << "^" << curvarPower;
+      // back j up one since we went too far looking ahead.
+      j--;
+    }
+}
+
+void NCMonoid::getMonomial(Monom monom, std::vector<int>& result) const
+// Input is of the form: [len degree v1 v2 ... vn]
+//                        where len = n + 2
+// The output is of the form, and stored in result.
+// [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+{
+  auto start = result.size();
+  result.push_back(0);
+  auto mon_length = monom[0] - 2;
+  auto mon_ptr = monom + 2;
+  for (auto j = 0; j < mon_length; j++)
+    {
+      int curvar = mon_ptr[j];
+      int curvarPower = 0;
+      result.push_back(curvar);
+      while ((j < mon_length) && (mon_ptr[j] == curvar))
+        {
+          j++;
+          curvarPower++;
+        }
+      result.push_back(curvarPower);
+      // back j up one since we went too far looking ahead.
+      j--;
+    }
+  result[start] = static_cast<int>(result.size() - start);
+}
+
+void NCMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
+  // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
+  // The output is of the form, and stored in result.
+  // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
+  // where len = n+2 and deg = sum of the degrees of the vi 
+{
+  int inputMonomLength = *monom;
+  int monDeg = 0;
+  int startMon = static_cast<int>(result.size());  
+  // make a space for the length
+  result.push_back(0);
+  // make a space for the degree
+  result.push_back(0);
+  for (int j = 1; j < inputMonomLength; j += 2)
+    {
+      auto v = monom[j];
+      int degv = 1;
+      for (int k = 0; k < monom[j+1]; k++)
+        {
+          monDeg += degv;
+          result.push_back(v);
+        }
+    }
+  result[startMon] = static_cast<int>(result.size() - startMon);
+  result[startMon+1] = monDeg;
+}
+
+
+///////////////////////////////////////////
+
 PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
                                      M2_ArrayString names,
                                      const PolynomialRing* degreeRing)
@@ -59,9 +198,7 @@ int PolynomialAlgebra::index_of_var(const ring_elem a) const
   if (f->numTerms() != 1) return -1;
   auto i = f->cbegin();
   if (!mCoefficientRing.is_equal(mCoefficientRing.one(), i.coeff())) return -1;
-  const int* m = *i.monom();
-  if (m[0] != 3 || m[1] != 1) return 0;
-  return m[2];
+  return monoid().index_of_variable(i.monom());
 }
 
 ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
@@ -134,9 +271,7 @@ bool PolynomialAlgebra::is_unit(const ring_elem f1) const
 
   if (f->numTerms() != 1) return false;
   auto i = f->cbegin();
-  return **(i.monom()) == 2 && // obscure way to decide if monomial is one.  Will change TODO.
-    // will change to monoid().is_one(i.monom())
-    mCoefficientRing.is_unit(i.coeff());
+  return monoid().is_one(i.monom()) && mCoefficientRing.is_unit(i.coeff());
 }
 
 long PolynomialAlgebra::n_terms(const ring_elem f1) const
@@ -186,7 +321,7 @@ int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) con
       if (gIt == gEnd) return GT;
       if (mNumVars > 0)
         {
-          cmp = compare_monoms(fIt.monom(),gIt.monom());
+          cmp = monoid().compare(fIt.monom(),gIt.monom());
           if (cmp != 0) return cmp;
         }
       // if we are here, then the monomials are the same and we compare coefficients.
@@ -194,23 +329,6 @@ int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) con
       cmp = mCoefficientRing.compare_elems(fIt.coeff(), fIt.coeff());
       if (cmp != 0) return cmp;
     }
-}
-
-int PolynomialAlgebra::compare_monoms(const Monom m1, const Monom m2) const
-{
-  // here, compare the monomials pointed to by fIt and gIt.
-  // should probably make an NCMonoid class...
-  // first compare degree
-  if ((*m1)[1] > (*m2)[1]) return GT;
-  if ((*m1)[1] < (*m2)[1]) return LT;
-  // at this stage, they have the same degree, so use lex order
-  for (int j = 2; j < **m1; j++)
-    {
-      if ((*m1)[j] > (*m2)[j]) return LT;
-      if ((*m1)[j] < (*m2)[j]) return GT;
-    }
-  // if we are here, the monomials are the same.
-  return EQ;
 }
 
 ring_elem PolynomialAlgebra::copy(const ring_elem f) const
@@ -262,24 +380,16 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
       auto gMon = gIt.monom();
       auto fCoeff = fIt.coeff();
       auto gCoeff = gIt.coeff();
-      switch(compare_monoms(fMon,gMon))
+      switch(monoid().compare(fMon,gMon))
         {
         case LT:
           outcoeff.push_back(gCoeff);
-          // this line:
-          // monoid().copy(outmonom, gMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **gMon; j++)
-            outmonom.push_back((*gMon)[j]);
+          monoid().copy(gMon, outmonom);
           gIt++;
           break;
         case GT:
           outcoeff.push_back(fCoeff);
-          // this line:
-          // monoid().copy(outmonom, fMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **fMon; j++)
-            outmonom.push_back((*fMon)[j]);
+          monoid().copy(fMon, outmonom);
           fIt++;
           break;
         case EQ:
@@ -287,11 +397,7 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
           if (!mCoefficientRing.is_zero(coeffResult))
             {
               outcoeff.push_back(coeffResult);
-              // this line:
-              // monoid().copy(outmonom, gMon)
-              // will replace these 2 lines:
-              for (int j = 0; j < **gMon; j++)
-                outmonom.push_back((*gMon)[j]);
+              monoid().copy(gMon, outmonom);
             }
           fIt++;
           gIt++;
@@ -304,11 +410,7 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
           auto gMon = gIt.monom();
           auto gCoeff = gIt.coeff();
           outcoeff.push_back(gCoeff);
-          // this line:
-          // monoid().copy(outmonom, gMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **gMon; j++)
-            outmonom.push_back((*gMon)[j]);
+          monoid().copy(gMon, outmonom);
         }
     }
   if (gIt == gEnd)
@@ -318,11 +420,7 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
           auto fMon = fIt.monom();
           auto fCoeff = fIt.coeff();
           outcoeff.push_back(fCoeff);
-          // this line:
-          // monoid().copy(outmonom, fMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **fMon; j++)
-            outmonom.push_back((*fMon)[j]);
+          monoid().copy(fMon, outmonom);
         }
     }
   return reinterpret_cast<Nterm*>(result);
@@ -349,24 +447,16 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
       auto gMon = gIt.monom();
       auto fCoeff = fIt.coeff();
       auto gCoeff = gIt.coeff();
-      switch(compare_monoms(fMon,gMon))
+      switch(monoid().compare(fMon,gMon))
         {
         case LT:
           outcoeff.push_back(mCoefficientRing.negate(gCoeff));
-          // this line:
-          // monoid().copy(outmonom, gMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **gMon; j++)
-            outmonom.push_back((*gMon)[j]);
+          monoid().copy(gMon, outmonom);
           gIt++;
           break;
         case GT:
           outcoeff.push_back(fCoeff);
-          // this line:
-          // monoid().copy(outmonom, fMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **fMon; j++)
-            outmonom.push_back((*fMon)[j]);
+          monoid().copy(fMon, outmonom);
           fIt++;
           break;
         case EQ:
@@ -374,11 +464,7 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
           if (!mCoefficientRing.is_zero(coeffResult))
             {
               outcoeff.push_back(coeffResult);
-              // this line:
-              // monoid().copy(outmonom, gMon)
-              // will replace these 2 lines:
-              for (int j = 0; j < **gMon; j++)
-                outmonom.push_back((*gMon)[j]);
+              monoid().copy(gMon, outmonom);
             }
           fIt++;
           gIt++;
@@ -391,11 +477,7 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
           auto gMon = gIt.monom();
           auto gCoeff = gIt.coeff();
           outcoeff.push_back(mCoefficientRing.negate(gCoeff));
-          // this line:
-          // monoid().copy(outmonom, gMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **gMon; j++)
-            outmonom.push_back((*gMon)[j]);
+          monoid().copy(gMon, outmonom);
         }
     }
   if (gIt == gEnd)
@@ -405,11 +487,7 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
           auto fMon = fIt.monom();
           auto fCoeff = fIt.coeff();
           outcoeff.push_back(fCoeff);
-          // this line:
-          // monoid().copy(outmonom, fMon)
-          // will replace these 2 lines:
-          for (int j = 0; j < **fMon; j++)
-            outmonom.push_back((*fMon)[j]);
+          monoid().copy(fMon, outmonom);
         }
     }
   return reinterpret_cast<Nterm*>(result);
@@ -462,25 +540,7 @@ ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
         continue;
 
       outcoeff.push_back(d);
-
-      // The following should be replaced by
-      // monoid().mult(i.monom(), m, outmonom);
-      // tack on the monomial pointed to by m to the end of current monomial.
-      int lenm = (*m)[0];
-      int degm = (*m)[1];
-      const int* curMon = *(i.monom());
-      outmonom.push_back(curMon[0] + lenm - 2);
-      outmonom.push_back(curMon[1] + degm);
-      // copy f's monomial
-      for(auto j = 2; j < curMon[0]; j++)
-        {
-          outmonom.push_back(curMon[j]);
-        }
-      // copy m's monomial
-      for(auto j = 2; j < (*m)[0]; j++)
-        {
-          outmonom.push_back((*m)[j]);
-        }      
+      monoid().mult(i.monom(), m, outmonom);
     }
   return reinterpret_cast<Nterm*>(result);
 }
@@ -500,23 +560,7 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
         continue;
 
       outcoeff.push_back(d);
-
-      // tack on the monomial pointed to by m to the end of current monomial.
-      int lenm = (*m)[0];
-      int degm = (*m)[1];
-      const int* curMon = *(i.monom());
-      outmonom.push_back(curMon[0] + lenm - 2);
-      outmonom.push_back(curMon[1] + degm);
-      // copy m's monomial
-      for(auto j = 2; j < (*m)[0]; j++)
-        {
-          outmonom.push_back((*m)[j]);
-        }      
-      // copy f's monomial
-      for(auto j = 2; j < curMon[0]; j++)
-        {
-          outmonom.push_back(curMon[j]);
-        }
+      monoid().mult(m, i.monom(), outmonom);
     }
   return reinterpret_cast<Nterm*>(result);
 }
@@ -571,63 +615,9 @@ ring_elem PolynomialAlgebra::makeTerm(const ring_elem a, const int* monom) const
   auto result = new Poly;
 
   result->getCoeffInserter().push_back(a);
-  fromMonomial(monom, result->getMonomInserter());
+  monoid().fromMonomial(monom, result->getMonomInserter());
   return reinterpret_cast<Nterm*>(result);
   
-}
-
-void PolynomialAlgebra::getMonomial(const int* monom, std::vector<int>& result) const
-// Input is of the form: [len degree v1 v2 ... vn]
-//                        where len = n + 2
-// The output is of the form, and stored in result.
-// [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
-{
-  auto start = result.size();
-  result.push_back(0);
-  auto mon_length = *monom - 2;
-  auto mon_ptr = monom + 2;
-  for (auto j = 0; j < mon_length; j++)
-    {
-      int curvar = mon_ptr[j];
-      int curvarPower = 0;
-      result.push_back(curvar);
-      while ((j < mon_length) && (mon_ptr[j] == curvar))
-        {
-          j++;
-          curvarPower++;
-        }
-      result.push_back(curvarPower);
-      // back j up one since we went too far looking ahead.
-      j--;
-    }
-  result[start] = static_cast<int>(result.size() - start);
-}
-
-void PolynomialAlgebra::fromMonomial(const int* monom, std::vector<int>& result) const
-  // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
-  // The output is of the form, and stored in result.
-  // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
-  // where len = n+2 and deg = sum of the degrees of the vi 
-{
-  int inputMonomLength = *monom;
-  int monDeg = 0;
-  int startMon = static_cast<int>(result.size());  
-  // make a space for the length
-  result.push_back(0);
-  // make a space for the degree
-  result.push_back(0);
-  for (int j = 1; j < inputMonomLength; j += 2)
-    {
-      auto v = monom[j];
-      int degv = 1;
-      for (int k = 0; k < monom[j+1]; k++)
-        {
-          monDeg += degv;
-          result.push_back(v);
-        }
-    }
-  result[startMon] = static_cast<int>(result.size() - startMon);
-  result[startMon+1] = monDeg;
 }
 
 void PolynomialAlgebra::elem_text_out(buffer &o,
@@ -653,34 +643,14 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
       p_plus = false;
     }
 
-
   for (auto i = f->cbegin(); i != f->cend(); i++)
     {
-      bool is_one = i.monom().is_one_monomial();
+      bool is_one = monoid().is_one(i.monom());
       p_parens = !is_one;
       bool p_one_this = (is_one && needs_parens) || (is_one && p_one);
       mCoefficientRing.elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
       if (!is_one)
-        {
-          // if not the empty monomial, then output the monomial
-          auto mon_length = **(i.monom()) - 2;
-          auto mon_ptr = *(i.monom()) + 2;
-          for (auto j = 0; j < mon_length; j++)
-            {
-              // for now, just output the string.
-              int curvar = mon_ptr[j];
-              int curvarPower = 0;
-              o << mVariableNames[curvar];
-              while ((j < mon_length) && (mon_ptr[j] == curvar))
-                {
-                  j++;
-                  curvarPower++;
-                }
-              if (curvarPower > 1) o << "^" << curvarPower;
-              // back j up one since we went too far looking ahead.
-              j--;
-            }
-        }
+        monoid().elem_text_out(o, i.monom(), mVariableNames);
       p_plus = true;
     }
 
@@ -723,37 +693,36 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
     {
       ring_elem c = mCoefficientRing.copy(i.coeff());
       vp.resize(0);
-      getMonomial(*i.monom(), vp);
+      monoid().getMonomial(i.monom(), vp);
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
       monoms->array[next] = Monomial::make(vp);
     }
   
   return result;
-#if 0    
-  int nvars0 = check_coeff_ring(coeffR, this);
-  if (nvars0 < 0) return 0;
-  int n = n_logical_terms(nvars0,f);
-  monoms->len = n;
-  coeffs->len = n;
+}
 
-  int *exp = newarray_atomic(int, n_vars());
-  intarray resultvp;
-  const Nterm *t = f;
-  for (int next = 0; next < n; next++)
-    {
-      getMonoid()->to_expvector(t->monom, exp);
-      ring_elem c = get_logical_coeff(coeffR, t); // increments t to the next term of f.
-      varpower::from_ntuple(nvars0, exp, resultvp);
-      monoms->array[next] = Monomial::make(resultvp.raw());
-      coeffs->array[next] = RingElement::make_raw(coeffR, c);
-      resultvp.shrink(0);
-
-      assert( monoms->array[next] != NULL );
-      assert( coeffs->array[next] != NULL );
-    }
-  deletearray(exp);
-  return result;
+bool PolynomialAlgebra::is_homogeneous(const ring_elem f) const
+{
+#if 0
+  // MES: being written, Dec 2017
+  auto g = f.mPolyVal;
+  if (g == nullptr or g->numTerms() == 0)
+    return true;
+  ExponentVector e = degree_monoid()->make_one();
+  ExponentVector degf = degree_monoid()->make_one();
+  iter i { f} ;
 #endif
+  return false;
+}
+
+void PolynomialAlgebra::degree(const ring_elem f, int *d) const
+{
+  // MES: being written, Dec 2017
+}
+bool PolynomialAlgebra::multi_degree(const ring_elem f, int *d) const
+{
+  // MES: being written, Dec 2017
+  return false;
 }
 
 // Local Variables:

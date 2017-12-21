@@ -85,8 +85,10 @@ getVariableSymbols List := variables -> (
 --   7. use, make it so we can create this ring without assigning the variables to global symbols
 --   8. make sure multiplication is using a heap based approach.
 -- TODO for PolynomialAlgebra.hpp,cpp:
---   - make sure that bringing in a zero element brings in a zero element!
 --   - make monoid routines for the cryptic uses.
+--   - figure out backInserter, i.e. conform to the standard c++ lib
+--   - add in degree support
+--   - add in e.g. leadMonomial, support.  
 Ring List := (A, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    if not (A.?Engine and A.Engine) then
@@ -333,8 +335,6 @@ TEST ///
   B = matrix {{b}}
   C = matrix {{c}}
   assert(B*C == matrix {{c*b}})
-  N = mutableMatrix(R,2,3); -- ok
-  N = mutableMatrix(R,2,3) -- SIGSEGV
   D = matrix {{b,c}}
   assert(D * transpose D == matrix {{b^2 + c^2}})
   assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}})
@@ -346,13 +346,13 @@ TEST ///
   B = matrix {{b}}
   C = matrix {{c}}
   assert(B*C == matrix {{c*b}})
-  N = mutableMatrix(R,2,3); -- ok
-  N = mutableMatrix(R,2,3) -- SIGSEGV
+  N = mutableMatrix(R,2,3);
+  N = mutableMatrix(R,2,3)
   N = mutableMatrix(R,100,200);
-  N_(1,1) -- crash
+  N_(1,1)
   D = matrix {{b,c}}
-  assert(D * transpose D == matrix {{b^2 + c^2}})
-  assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}})
+  assert(D * transpose D - matrix {{b^2 + c^2}} == 0)
+  assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}}) -- is this test wrong?
 ///
 
 end--
