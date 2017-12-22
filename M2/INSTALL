@@ -155,6 +155,7 @@ various modern operating systems:
       sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest
     To upgrade the system:
 
+      sudo pacman-key --refresh-keys
       sudo pacman --sync --refresh --sysupgrade
 
   Mac OS X:
