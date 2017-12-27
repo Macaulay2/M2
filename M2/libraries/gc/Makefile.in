@@ -1,7 +1,7 @@
 HOMEPAGE = http://www.hboehm.info/gc/
 URL = http://www.hboehm.info/gc/gc_source/
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 7.6.0
+VERSION = 7.6.2
 LICENSEFILES = README.QUICK
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
