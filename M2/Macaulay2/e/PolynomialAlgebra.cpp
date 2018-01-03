@@ -88,36 +88,39 @@ void NCMonoid::elem_text_out(buffer& o, const Monom& m1, const std::vector<std::
     }
 }
 
+// This function should reverse the order of the varpower terms.
+// as the front end reverses the order of terms in a monomial.
 void NCMonoid::getMonomial(Monom monom, std::vector<int>& result) const
 // Input is of the form: [len degree v1 v2 ... vn]
 //                        where len = n + 2
-// The output is of the form, and stored in result.
+// The output is of the following form, and appended to result.
 // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 {
   auto start = result.size();
   result.push_back(0);
   auto mon_length = monom[0] - 2;
   auto mon_ptr = monom + 2;
-  for (auto j = 0; j < mon_length; j++)
+  for (auto j = mon_length-1; j >= 0; --j)
     {
       int curvar = mon_ptr[j];
       int curvarPower = 0;
       result.push_back(curvar);
-      while ((j < mon_length) && (mon_ptr[j] == curvar))
+      while ((j >= 0) && (mon_ptr[j] == curvar))
         {
-          j++;
+          --j;
           curvarPower++;
         }
       result.push_back(curvarPower);
       // back j up one since we went too far looking ahead.
-      j--;
+      j++;
     }
   result[start] = static_cast<int>(result.size() - start);
 }
 
+// This function should reverse the order of the varpower terms
 void NCMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
   // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
-  // The output is of the form, and stored in result.
+  // The output is of the following form, and stored in result.
   // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
   // where len = n+2 and deg = sum of the degrees of the vi 
 {
@@ -128,7 +131,7 @@ void NCMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
   result.push_back(0);
   // make a space for the degree
   result.push_back(0);
-  for (int j = 1; j < inputMonomLength; j += 2)
+  for (int j = inputMonomLength-2; j >= 1; j -= 2)
     {
       auto v = monom[j];
       int degv = 1;
@@ -141,7 +144,6 @@ void NCMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
   result[startMon] = static_cast<int>(result.size() - startMon);
   result[startMon+1] = monDeg;
 }
-
 
 ///////////////////////////////////////////
 
@@ -693,9 +695,9 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
     {
       ring_elem c = mCoefficientRing.copy(i.coeff());
       vp.resize(0);
-      monoid().getMonomial(i.monom(), vp);
+      monoid().getMonomial(i.monom(), vp); // should this instead reverse the monomial?
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
-      monoms->array[next] = Monomial::make(vp);
+      monoms->array[next] = Monomial::make(vp); // reverses the monomial
     }
   
   return result;

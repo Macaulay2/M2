@@ -103,7 +103,7 @@ Ring List := (A, varList) -> (
        (symbol generators) => {},
        (symbol generatorSymbols) => varSymbols,
        --(symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
-       (symbol generatorExpressions) => for v in varSymbols list expression v,
+       (symbol generatorExpressions) => for v in varSymbols list if instance(v,Symbol) then v else expression v,
        (symbol degreesRing) => degreesRing degreelen,
        (symbol degreeLength) => degreelen,
        (symbol CoefficientRing) => A,
@@ -158,7 +158,7 @@ isWellDefined NCPolynomialRing := Boolean => R -> (
         return isbad "# R.generatorSymbols =!= numgens R";
     if not all(R.generators, x -> class x === R) then 
         return isbad "generators are not all in the ring";
-    if not all(R.generatorExpressions, x -> instance(x,Expression)) then
+    if not all(R.generatorExpressions, x -> instance(x,Expression) or instance(x,Symbol)) then
         return isbad "generatorExpressions are not all expressions";
     if not all(R.generatorSymbols, x -> instance(x, Symbol) or instance(x, IndexedVariable)) then
         return isbad "generatorSymbols are not all symbols or indexed variables";
@@ -311,19 +311,22 @@ TEST ///
   assert(size f == 0)
 ///
 
-TEST ///
+TEST /// 
+  -- XXX
   R = QQ{b,c,d}
   f = 3*b^2*c*b + 2*b^4
   assert(size (b+c) == 2)
-  pairs f -- WRONG
+  terms f == {2*b^4, 3*b^2*c*b}
+  assert(# terms f == 2)
+  assert(sum terms f == f)
+///
+
+TEST /// 
+  R = QQ{b,c,d}
+  f = 3*b^2*c*b + 2*b^4
   leadTerm f -- fails
   leadCoefficient f -- fails
-  assert(# terms f == 2)
-  assert(sum terms f == f) -- WRONG (monomial is reversed...)
   assert(degree f == {4}) -- fails
-  debug Core
-  rawP = rawPairs(raw coefficientRing R, raw f)
-  last rawP / rawSparseListFormMonomial
 ///
 
 TEST ///
