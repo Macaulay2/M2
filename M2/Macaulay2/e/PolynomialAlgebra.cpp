@@ -6,7 +6,6 @@
 #include <string>
 #include <iostream>
 
-
 void NCMonoid::one(MonomialInserter& m) const
 {
   m.push_back(2);
@@ -209,10 +208,7 @@ ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
   if (not mCoefficientRing.is_zero(a))
     {
       result->getCoeffInserter().push_back(a);
-      // would eventually like:
-      //monoid().make_one(result->getMonomInserter());
-      result->getMonomInserter().push_back(2); // length of the monomial data
-      result->getMonomInserter().push_back(0); // degree of the monomial.  Will need to change if weights are present.
+      monoid().one(result->getMonomInserter());
     }
   return reinterpret_cast<Nterm*>(result);
 }
@@ -241,10 +237,7 @@ ring_elem PolynomialAlgebra::var(int v) const
   auto result = new Poly;
 
   result->getCoeffInserter().push_back(mCoefficientRing.from_long(1));
-  // monoid().make_variable(result->getMonomInserter(), v)
-  result->getMonomInserter().push_back(3); // length of the monomial data  
-  result->getMonomInserter().push_back(1); // degree of the monomial.  Will need to change if weights are present.
-  result->getMonomInserter().push_back(v); // variable
+  monoid().var(v, result->getMonomInserter());
 
   return reinterpret_cast<Nterm*>(result);
 }
@@ -512,18 +505,6 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
       delete reinterpret_cast<Poly*>(resultW1.mPolyVal);
     }
   return resultW;
-#if 0 // what is this for?
-  const Poly* f = reinterpret_cast<Poly*>(f1.mPolyVal);
-  Poly* zeroPoly = new Poly;
-  ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
-  for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
-    {
-      // this one sums in place, adding to the end.
-      add_to_end(resultSoFar,mult_by_term_left(g1, fIt.coeff(), fIt.monom()));
-    }
-  std::cout << "Number of terms : " << zeroPoly->numTerms() << std::endl;
-  return resultSoFar;
-#endif
 }
 
 ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
