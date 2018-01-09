@@ -264,6 +264,51 @@ TEST ///
   assert(net f == net expression f)
   assert(toString f === "a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1")
   assert(toString f === toExternalString f)
+
+  for i from 0 to 10 list (elapsedTime size (h = g^i));
+  for i from 0 to 8 list (elapsedTime size (h = g^i))
+  g1 = g;
+  for i from 0 to 7 do elapsedTime (h = g1*g; g1 = h; print size h) 
+  
+  g1 = g;  
+  for i from 0 to 7 do elapsedTime (h = g*g1; g1 = h; print size h)   
+  apply(11, i -> print size elapsedTime(h = g^i));
+///
+
+///
+i3 :   g = (a*a*b+a+1)*(a*a*b+a+1)
+
+      2   2     3     2        2     2
+o3 = a b*a b + a b + a b*a + 2a b + a  + 2a + 1
+  
+31
+     -- 0.000237961 seconds elapsed
+127
+     -- 0.000494012 seconds elapsed
+511
+     -- 0.00139882 seconds elapsed
+2047
+     -- 0.00770198 seconds elapsed
+8191
+     -- 0.0549404 seconds elapsed
+32767
+     -- 0.188868 seconds elapsed
+131071
+     -- 0.583566 seconds elapsed
+524287
+     -- 2.66607 seconds elapsed
+///
+
+TEST ///
+  R = QQ{a,b,c,d}
+  g = a+b+c+d
+  elapsedTime for i from 0 to 11 list (elapsedTime size (h = g^i))
+///
+
+TEST ///
+  R = QQ{a,b,c,d,e,f,g}
+  G = a+b+c+d+e+f+g
+  elapsedTime for i from 0 to 8 list (elapsedTime size (H = G^i))
 ///
 
 --- question: why is engine code slower for this computation than NCAlgebra?
