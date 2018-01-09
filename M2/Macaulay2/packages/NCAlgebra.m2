@@ -100,7 +100,7 @@ MAXSIZE = 1000
 -- bergmanPath = "~/bergman"
 
 -- the environment variable BERGMANPATH must be set to the root directory of the bergman source
--- bergmanPath = getenv "BERGMANPATH"
+bergmanPath = getenv "BERGMANPATH"
 
 NCRing = new Type of Ring
 NCQuotientRing = new Type of NCRing
@@ -1414,8 +1414,9 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       -- if we don't want to recompute the GB, we need to tell Bergman that there are no
       -- Spairs to work on for twice the max degree of the gens we send it so it
       -- doesn't try to create any more Spairs.
-      -- fil << "(load \"" << bergmanPath << "/lap/clisp/unix/hseries.fas\")" << endl;
-      fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
+      fil << "(load \"" << bergmanPath << "/lap/clisp/unix/hseries.fas\")" << endl;
+      -- This is trying to get the 'bmload' environment variable to load correctly.
+      -- fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1677,8 +1678,9 @@ writeHSInitFile = (tempInit,
 		   tempPBOutput,
 		   tempHSOutput) -> (
    fil := openOut tempInit;
-   -- fil << "(setf (getenv \"bmload\") \"" << bergmanPath << "/lap/clisp/unix\")" << endl;
-   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
+   fil << "(setf (getenv \"bmload\") \"" << bergmanPath << "/lap/clisp/unix\")" << endl;
+   -- This is trying to get the 'bmload' environment variable to load correctly.
+   -- fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
@@ -3544,8 +3546,7 @@ wallTiming = f -> (
 ------------------------------------------------------------
 
 --- include the documentation
-load (currentFileDirectory | "NCAlgebra/NCAlgebraDoc.m2")
-
+load "./NCAlgebra/NCAlgebraDoc.m2"
 end
 
 ---- installing and loading the package
@@ -3560,6 +3561,5 @@ viewHelp "NCAlgebra"
 loadPackage "UnitTestsNCA"
 check UnitTestsNCA
 
-   R = fourDimSklyanin(QQ,{a,b,c,d})
-   hilbertBergman(R, DegreeLimit => 6)
+
 
