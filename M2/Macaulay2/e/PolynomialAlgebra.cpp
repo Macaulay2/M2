@@ -493,16 +493,31 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
   // TODO: make this a geobucket heap multiply function?
   //
   auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
   auto result = new Poly;
   ring_elem resultW = reinterpret_cast<Nterm*>(result);
 
-  for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
+  if (f->numTerms() <= g->numTerms())
     {
-      ring_elem tmp = mult_by_term_left(g1, fIt.coeff(), fIt.monom());
-      ring_elem resultW1 = add(resultW, tmp);
-      std::swap(resultW1, resultW);
-      delete reinterpret_cast<Poly*>(tmp.mPolyVal);
-      delete reinterpret_cast<Poly*>(resultW1.mPolyVal);
+      for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
+        {
+          ring_elem tmp = mult_by_term_left(g1, fIt.coeff(), fIt.monom());
+          ring_elem resultW1 = add(resultW, tmp);
+          std::swap(resultW1, resultW);
+          delete reinterpret_cast<Poly*>(tmp.mPolyVal);
+          delete reinterpret_cast<Poly*>(resultW1.mPolyVal);
+        }
+    }
+  else
+    {
+      for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
+        {
+          ring_elem tmp = mult_by_term_right(f1, gIt.coeff(), gIt.monom());
+          ring_elem resultW1 = add(resultW, tmp);
+          std::swap(resultW1, resultW);
+          delete reinterpret_cast<Poly*>(tmp.mPolyVal);
+          delete reinterpret_cast<Poly*>(resultW1.mPolyVal);
+        }
     }
   return resultW;
 }
@@ -546,6 +561,35 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
       monoid().mult(m, i.monom(), outmonom);
     }
   return reinterpret_cast<Nterm*>(result);
+}
+
+ring_elem PolynomialAlgebra::power(const ring_elem f1, mpz_t n) const
+{
+  if (mpz_sgn(n) == 0) return from_long(1);
+  if (is_zero(f1)) return from_long(0);
+  if (is_unit(f1))  // really want a routine 'is_scalar'...
+    {
+      ring_elem coeff = reinterpret_cast<Poly*>(f1.mPolyVal)->cbegin().coeff();
+      ring_elem a = mCoefficientRing.power(coeff, n);
+      return from_coefficient(a);
+    }
+  std::pair<bool, int> n1 = RingZZ::get_si(n);
+  if (mpz_sgn(n) > 0 and n1.first)
+    return power(f1, n1.second);
+  ERROR("exponent too large");
+  return from_long(0);
+}
+
+ring_elem PolynomialAlgebra::power(const ring_elem f, int n) const
+{
+  ring_elem result = from_long(1);
+  for (int i=0; i<n; i++)
+    {
+      ring_elem g = mult(f,result);
+      delete reinterpret_cast<Poly*>(result.mPolyVal);
+      result = g;
+    }
+  return result;
 }
 
 ring_elem PolynomialAlgebra::invert(const ring_elem f) const
