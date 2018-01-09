@@ -100,7 +100,7 @@ MAXSIZE = 1000
 -- bergmanPath = "~/bergman"
 
 -- the environment variable BERGMANPATH must be set to the root directory of the bergman source
-bergmanPath = getenv "BERGMANPATH"
+-- bergmanPath = getenv "BERGMANPATH"
 
 NCRing = new Type of Ring
 NCQuotientRing = new Type of NCRing
@@ -1414,7 +1414,8 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       -- if we don't want to recompute the GB, we need to tell Bergman that there are no
       -- Spairs to work on for twice the max degree of the gens we send it so it
       -- doesn't try to create any more Spairs.
-      fil << "(load \"" << bergmanPath << "/lap/clisp/unix/hseries.fas\")" << endl;
+      -- fil << "(load \"" << bergmanPath << "/lap/clisp/unix/hseries.fas\")" << endl;
+      fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1670,13 +1671,14 @@ normalFormBergman (NCRingElement, NCGroebnerBasis) := opts -> (f,ncgb) ->
 
 -- can't be a method.  Too many arguments
 --writeHSInitFile = method()
-writeHSInitFile := (tempInit,
-                    tempInput,
-		    tempGBOutput,
-		    tempPBOutput,
-		    tempHSOutput) -> (
+writeHSInitFile = (tempInit,
+                   tempInput,
+		   tempGBOutput,
+		   tempPBOutput,
+		   tempHSOutput) -> (
    fil := openOut tempInit;
-   fil << "(setf (getenv \"bmload\") \"" << bergmanPath << "/lap/clisp/unix\")" << endl;
+   -- fil << "(setf (getenv \"bmload\") \"" << bergmanPath << "/lap/clisp/unix\")" << endl;
+   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
@@ -3558,4 +3560,6 @@ viewHelp "NCAlgebra"
 loadPackage "UnitTestsNCA"
 check UnitTestsNCA
 
+   R = fourDimSklyanin(QQ,{a,b,c,d})
+   hilbertBergman(R, DegreeLimit => 6)
 
