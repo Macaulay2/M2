@@ -1,0 +1,20 @@
+-- -*- M2-comint -*- {* hash: 561002340 *}
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = x^2+y^2+z^3
+
+      3  2  2
+o2 = z +y +x
+
+o2 : A
+
+i3 : size f
+
+o3 = 3
+
+i4 : 

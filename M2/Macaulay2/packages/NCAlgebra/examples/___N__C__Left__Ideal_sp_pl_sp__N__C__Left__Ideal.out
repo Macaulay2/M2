@@ -1,0 +1,51 @@
+-- -*- M2-comint -*- {* hash: 1805415434 *}
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : p = y*z + z*y - x^2
+
+            2
+o2 = zy+yz-x
+
+o2 : A
+
+i3 : q = x*z + z*x - y^2
+
+         2
+o3 = zx-y +xz
+
+o3 : A
+
+i4 : r = z^2 - x*y - y*x
+
+      2
+o4 = z -yx-xy
+
+o4 : A
+
+i5 : I = ncLeftIdeal{p,q}
+
+                        2      2
+o5 = Left ideal {zy+yz-x , zx-y +xz}
+
+o5 : NCLeftIdeal
+
+i6 : J = ncLeftIdeal r
+
+                  2
+o6 = Left ideal {z -yx-xy}
+
+o6 : NCLeftIdeal
+
+i7 : I + J
+
+                        2      2      2
+o7 = Left ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o7 : NCLeftIdeal
+
+i8 : 
