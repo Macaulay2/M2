@@ -2,7 +2,7 @@
 newPackage(
        "Resultants",
 	Version => "1.2", 
-    	Date => "December 19, 2017",
+    	Date => "January 11, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     	Headline => "Resultants, discriminants, and Chow forms"
 )
@@ -10,6 +10,8 @@ newPackage(
 export{
        "resultant",
        "discriminant",
+       "affineResultant",
+       "affineDiscriminant",
        "genericPolynomials",
        "veronese",
        "macaulayFormula",
@@ -209,7 +211,7 @@ discriminant RingElement := o -> (G) -> (
     d := first degree G;
     a := lift(((d-1)^n - (-1)^n)/d,ZZ);
     resG := resultant(transpose jacobian matrix{{G}},Algorithm=>o.Algorithm);
-    try lift(resG/(d^a),ring resG) else resG
+    try return lift(resG/(d^a),ring resG) else (try (q := first quotientRemainder(resG,d^a); assert(resG == q*d^a); return q) else (<<"--warning: the returned discriminant value is only correct up to a non-zero multiplicative constant"<<endl; return resG;));
 );
 
 genericPolynomials = method(TypicalValue => List);
@@ -258,6 +260,38 @@ macaulayFormula (List) := (s) -> macaulayFormula matrix {s};
 --     standardRes(F,true)
 -- );
 -- sylvesterMatrix (List) := (s) -> sylvesterMatrix matrix {s};
+
+affineResultant = method(TypicalValue => RingElement, Options => {Algorithm => "Poisson"});
+    
+affineResultant (Matrix) := o -> (F) -> (
+    if numgens target F != 1 then error "expected a matrix with one row";
+    if not isPolynomialRing ring F then error "the base ring must be a polynomial ring";
+    n := numgens ring F;
+    if n+1 != numgens source F then error("the number of variables in the ring must be equal to one minus the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
+    K := coefficientRing ring F;
+    x := local x;
+    An := K[x_1..x_n];
+    Pn := K[x_0..x_n];
+    F = sub(sub(F,vars An),Pn);
+    F' := matrix {apply(flatten entries F,f -> sum(terms f,t -> x_0^((first degree f)-(first degree t)) * t))};
+    resultant(F',Algorithm => o.Algorithm)
+);
+
+affineResultant (List) := o -> (s) -> affineResultant(matrix{s},Algorithm=>o.Algorithm);
+
+affineDiscriminant = method(TypicalValue => RingElement, Options => {Algorithm => "Poisson"});
+    
+affineDiscriminant RingElement := o -> (G) -> (
+    if not (isPolynomialRing ring G) then error "expected a polynomial";  
+    n := numgens ring G;
+    K := coefficientRing ring G;
+    x := local x;
+    An := K[x_1..x_n];
+    Pn := K[x_0..x_n];
+    G = sub(sub(G,vars An),Pn);
+    G' := sum(terms G,t -> x_0^((first degree G) - (first degree t)) * t);
+    discriminant(G',Algorithm=>o.Algorithm)
+);
 
 ----------------------------------------------------------------------------------
 ---------------------------- chowForms -------------------------------------------
@@ -679,7 +713,7 @@ document {
     PARA{"This package provides methods to deal with resultants and discriminants of multivariate polynomials, and with higher associated subvarieties of irreducible projective varieties. The main methods are: ", TO "resultant",", ",TO "discriminant",", ", TO "chowForm",", ",TO "dualVariety",", and ",TO "tangentialChowForm",". For the mathematical theory, we refer to the following two books: ", HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"},", by David A. Cox, John Little, Donal O'shea; ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. Other references for the theory of Chow forms are: ", HREF{"https://projecteuclid.org/euclid.dmj/1077305197","The equations defining Chow varieties"}, ", by M. L. Green and I. Morrison; ", HREF{"http://link.springer.com/article/10.1007/BF02567693","Multiplicative properties of projectively dual varieties"},", by J. Weyman and A. Zelevinsky; and the preprint ",HREF{"https://arxiv.org/abs/1607.05932","Coisotropic Hypersurfaces in the Grassmannian"}, ", by K. Kohn."},
 }
 document { 
-    Key => {[resultant,Algorithm],[discriminant,Algorithm]}, 
+    Key => {[resultant,Algorithm],[discriminant,Algorithm],[affineResultant,Algorithm],[affineDiscriminant,Algorithm]}, 
     Usage => "Algorithm => \"Poisson\"/\"Macaulay\"/\"Poisson2\"/\"Macaulay2\"", 
     PARA{"This is an option that determines which algorithm will be used to compute the ",TO resultant,". There are currently four algorithms implemented: "},
     PARA{TT "\"Poisson\""," (default) the resultant is computed, recursively, through the Poisson Formula (see [1, Theorem 3.4]);"},
@@ -745,6 +779,33 @@ document {
     "factor D"
     },
     SeeAlso => {dualVariety,resultant} 
+}
+document { 
+    Key => {affineResultant,(affineResultant,Matrix),(affineResultant,List)}, 
+    Headline => "affine resultant", 
+    Usage => "affineResultant f", 
+    Inputs => { "f" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
+    Outputs => {{"the resultant of the homogenized of ",TEX///$f_0,\ldots,f_n$///," with respect to a new variable"}}, 
+    EXAMPLE { 
+    "ZZ[t,u][y,z]",
+    "f = {3*t*y*z-u*z^2+1, -y+t+3*u-1, u*z^4-t*y^3+t*y*z}",
+    "affineResultant f"
+    },
+    SeeAlso => {resultant,affineDiscriminant} 
+}
+document { 
+    Key => {affineDiscriminant,(affineDiscriminant,RingElement)}, 
+    Headline => "affine discriminant", 
+    Usage => "affineDiscriminant f", 
+    Inputs => { "f" => RingElement => {"a polynomial"}}, 
+    Outputs => {{"the discriminant of the homogenized of ",TT "f"," with respect to a new variable"}}, 
+    EXAMPLE { 
+    "ZZ[a,b,c][x]; f = a*x^2+b*x+c",
+    "affineDiscriminant f",
+    "ZZ[a,b,c,d][x]; f = a*x^3+b*x^2+c*x+d",
+    "affineDiscriminant f",
+    },
+    SeeAlso => {discriminant,affineResultant} 
 }
 document { 
     Key => {genericPolynomials,(genericPolynomials,VisibleList,Ring),(genericPolynomials,List)}, 
