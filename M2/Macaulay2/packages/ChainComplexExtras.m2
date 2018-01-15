@@ -68,12 +68,17 @@ chainComplexFromData(ZZ, List) := (minC,L) ->(
     assert( min C ==0);
     C[-minC])
 *-
+-*
+--the following versions from before 2018 do not take into account the case where
+--C has only one module and no maps.
+
 chainComplexData = C->(
     minC := min C;
     maxC := max C;
     C':=C[minC];
     {minC, maxC, apply(toList(1..maxC-minC), i-> (-1)^minC*(C').dd_i)}
 )
+
 chainComplexFromData = method()
 chainComplexFromData List := L ->(
     --format of L is desired min, desired max, list of 
@@ -81,10 +86,33 @@ chainComplexFromData List := L ->(
     C := chainComplex apply(L_2, d->(-1)^(L_0)*d);
     assert( min C == 0);
     C[-L_0])
+*-
 
+--(change made 180114 -- DE:) 
+--these versions deal with the case where C has 1 module and no maps, min C === max C.
+chainComplexData  = method()
+chainComplexData ChainComplex := C->(
+    minC := min C;
+    maxC := max C;
+    C':=C[minC];
+    cont := if minC === maxC then {C'_0} else 
+         apply(toList(1..maxC-minC), i-> (-1)^minC*(C').dd_i);
+    {minC, maxC, cont}
+)
+
+chainComplexFromData = method()
+chainComplexFromData List := L ->(
+    --format of L is desired min, desired max, and, if min C != max C, then list of 
+    --shifted maps, otherwise the unique module.
+    if L_0===L_1 then C:= L_2_0[0] else
+    C = chainComplex apply(L_2, d->(-1)^(L_0)*d);
+    assert( min C == 0);
+    C[-L_0]
+    )
 
 --the functionality of this form is subsumed by that of the form without the ZZ option!
 chainComplexFromData(ZZ, List) := (minC,L) ->(
+    --here L is a list of maps. Note that this form 
     --minC will become the min of the output complex
     C := chainComplex apply(L, d->(-1)^minC*d);
     assert( min C ==0);
@@ -153,14 +181,27 @@ removeZeroTrailingTerms(ChainComplex) := W -> (
     )
 *-
 
+
+
 prependZeroMap= method()
 prependZeroMap ChainComplex := C->(
     L := chainComplexData(C);
+    if L_0 == L_1 then 
+      return (chainComplexFromData {L_0,L_1,{chainComplex map((ring C)^0, C_(L_0),0)}})[1];
     minC := L_0;
     newd := map((ring C)^0, target L_2_0, 0);
     (chainComplexFromData(minC-1,prepend(newd,L_2)))
     )
-    
+appendZeroMap = method()
+appendZeroMap ChainComplex := C->(
+    L := chainComplexData(C);
+    if L_0 == L_1 then 
+      return chainComplexFromData {L_0,L_1,{chainComplex map(C_(L_0),(ring C)^0, 0)}};
+    minC := L_0;
+    newd := map(source last L_2,(ring C)^0, 0);
+    chainComplexFromData (minC,append(L_2,newd))
+    )    
+-*    
 appendZeroMap= method()
 appendZeroMap ChainComplex := C->(
     L := chainComplexData(C);
@@ -168,7 +209,7 @@ appendZeroMap ChainComplex := C->(
     newd := map(source last L_2,(ring C)^0, 0);
     chainComplexFromData(minC,append(L_2,newd))
     )    
-    
+*-  
 removeZeroTrailingTerms = method()
 removeZeroTrailingTerms(ChainComplex) := W -> (
     E := ring W;
@@ -1506,6 +1547,13 @@ doc ///
     chainComplexData
 ///
 *-
+
+TEST///
+C = QQ^10[-1]
+C' = appendZeroMap C
+C'' = prependZeroMap C'
+assert(C''_0 == 0 and C''_1 == QQ^10 and C''_2 == 0)
+///
 
 TEST///
 kk= ZZ/101
