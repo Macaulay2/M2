@@ -203,6 +203,10 @@ TEST ///
 -*
   restart
   needsPackage "PolynomialAlgebra"
+
+  restart
+  check "PolynomialAlgebra"
+
 *-
   --- generators test
   debug Core -- for generatorSymbols
@@ -268,7 +272,7 @@ TEST ///
   assert(net f == net expression f)
   assert(toString f === "a^2*b*a^2*b+a^3*b+a^2*b*a+2*a^2*b+a^2+2*a+1")
   assert(toString f === toExternalString f)
-
+-*
   for i from 0 to 10 list (elapsedTime size (h = g^i));
   for i from 0 to 8 list (elapsedTime size (h = g^i))
   g1 = g;
@@ -277,6 +281,7 @@ TEST ///
   g1 = g;  
   for i from 0 to 7 do elapsedTime (h = g*g1; g1 = h; print size h)   
   apply(11, i -> print size elapsedTime(h = g^i));
+*-
 ///
 
 ///
@@ -408,6 +413,49 @@ TEST ///
   assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}}) -- is this test wrong?
 ///
 
+TEST ///
+  restart
+  needsPackage "PolynomialAlgebra"
+
+  A = QQ[s,t]
+  R = QQ{b,c,d}
+  F = map(R,A,{b*c,d*c})
+  G = map(A,R,{s,t,s*t})
+  G b -- crash!
+  G 3 -- crash
+  F s
+  F (s*t) -- F is not well-defined, but answer, 
+          -- if we even allow this, should probably be b*c*d*c ?
+          -- but instead it is d*c*b*c.
+  B = QQ[b,c,d]
+  H = map(R,B)
+  H = map(B,R)
+  use R
+  H (b*c) -- crash
+  methods substitute
+  
+  R = QQ{b,c,d}
+  a1 = (3/4)_R
+  lift(a1,QQ) -- ok
+  a2 = 3_R
+  lift(a2,ZZ) -- ok
+  promote(3/4, R)  -- ok
+  
+  A = ZZ/32003[t]/t^2
+  B = A{x,y,z}
+  promote(t_A, B) == t_B
+  promote(3, B)
+  assert(coefficientRing B === A)
+  lift(t_B, A)
+  
+  kk = QQ
+  A = kk[a]
+  B = A[b]
+  C = B{c,d}
+  assert(lift(a_C, B) == a_B)
+  assert(lift(a_C, A) == a_A)
+  assert(try (lift(a_C, kk); false) else true)
+///
 end--
 
 -- The following is the directory of my M2 build.

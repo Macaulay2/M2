@@ -244,8 +244,8 @@ ring_elem PolynomialAlgebra::var(int v) const
 
 bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &result) const
 {
+  std::cout << "called promote NC case" << std::endl;  
   // Currently the only case to handle is R = A --> this, and A is the coefficient ring of this.
-  // XXX
   if (R == & mCoefficientRing)
     {
       result = from_coefficient(f);
@@ -254,9 +254,28 @@ bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &res
   return false;
 }
 
-bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f, ring_elem &result) const
+bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f1, ring_elem &result) const
 {
-  // Currently, until quotient rings are in place, the only lift is from a polynomial ring with this as coefficient ring.
+  // R is the target ring
+  // f1 is an element of 'this'.
+  // set result to be the "lift" of f in the ring R, return true if this is possible.
+  // otherwise return false.
+
+  // case: R is the coefficient ring of 'this'.
+  std::cout << "called lift NC case" << std::endl;
+  if (R == & mCoefficientRing)
+    {
+      auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+      if (f->numTerms() != 1) return false;
+      auto i = f->cbegin();
+      if (monoid().is_one(i.monom()))
+        {
+          result = mCoefficientRing.copy(i.coeff());
+          return true;
+        }
+    }
+  
+  // at this point, we can't lift it.
   return false;
 }
 
