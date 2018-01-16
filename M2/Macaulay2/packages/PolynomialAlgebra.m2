@@ -82,8 +82,12 @@ getVariableSymbols List := variables -> (
 --   4. look at other top level rings (and do what with them?)
 --   5. net, expression, toString...  DONE
 --   6. check on listForm (what is the issue?)
+--       problem #1: 'listForm RingElement' is making monomials into exponent vectors.
+--       problem #2: we need a way of getting an element of R from a noncommutative monomial
+--       issue #3: want a form where the monomials come out as lists of variables.
 --   7. use, make it so we can create this ring without assigning the variables to global symbols
 --   8. make sure multiplication is using a heap based approach.
+--   9. need a good subword lookup table, for reduction wrt a GB.
 -- TODO for PolynomialAlgebra.hpp,cpp:
 --   - make monoid routines for the cryptic uses.
 --   - figure out backInserter, i.e. conform to the standard c++ lib
@@ -372,6 +376,7 @@ TEST ///
   leadTerm f -- fails
   leadCoefficient f -- fails
   assert(degree f == {4}) -- fails
+  someTerms(f,0,2) -- fails
 ///
 
 TEST ///
