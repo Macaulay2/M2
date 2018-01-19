@@ -1005,9 +1005,6 @@ extern "C" {
                                              int var,
                                              M2_arrayint wts); /* drg: connected rawHomogenize*/
 
-  const struct engine_RawMatrixPair_struct /* or null */ *IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars) ;/* TODO */
-
-
   const Matrix /* or null */ * rawCoefficients(M2_arrayint vars,
                                        const Matrix *monoms,
                                        const Matrix *M); /* drg: connected as rawCoefficients*/

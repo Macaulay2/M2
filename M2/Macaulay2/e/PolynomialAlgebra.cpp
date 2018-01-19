@@ -373,18 +373,17 @@ ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
   return reinterpret_cast<Nterm*>(result);
 }
 
-ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
+auto PolynomialAlgebra::addPolys(const Poly& f, const Poly& g) const -> Poly
 {
-  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
-  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
-  auto result = new Poly;
-  auto fIt = f->cbegin();
-  auto gIt = g->cbegin();
-  auto fEnd = f->cend();
-  auto gEnd = g->cend();
+  Poly result;
 
-  auto& outcoeff = result->getCoeffInserter();
-  auto& outmonom = result->getMonomInserter();
+  auto fIt = f.cbegin();
+  auto gIt = g.cbegin();
+  auto fEnd = f.cend();
+  auto gEnd = g.cend();
+
+  auto& outcoeff = result.getCoeffInserter();
+  auto& outmonom = result.getMonomInserter();
   
   // loop over the iterators for f and g, adding the bigger of the two to
   // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
@@ -437,6 +436,15 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
           monoid().copy(fMon, outmonom);
         }
     }
+  return result;
+}
+
+ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
+{
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
+  auto result = new Poly;
+  *result = addPolys(*f,*g);
   return reinterpret_cast<Nterm*>(result);
 }
 
@@ -705,6 +713,10 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
 
 ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem f, int first_var) const
 {
+  // map: R --> S, this = R.
+  // f is an ele ment in R
+  // return an element of S.
+  
   // evaluate a ring map at a ring element.
   // TODO
   return f; // TODO: Bad return value;
@@ -769,6 +781,107 @@ bool PolynomialAlgebra::multi_degree(const ring_elem f, int *d) const
 {
   // MES: being written, Dec 2017
   return false;
+}
+
+// XXX
+class NCPolyHeap
+{
+  using Poly = PolynomialAlgebra::Poly;
+  const PolynomialAlgebra& F;  // Our elements will be vectors in here
+  Poly heap[GEOHEAP_SIZE];
+  int top_of_heap;
+
+ public:
+  NCPolyHeap(const PolynomialAlgebra& F);
+  ~NCPolyHeap();
+
+  void add(const Poly& f);
+  Poly value();  // Returns the linearized value, and resets the NCPolyHeap.
+
+  ring_elem getValue();
+  void add(ring_elem f1);
+  
+  const Poly& debug_list(int i) const
+  {
+    return heap[i];
+  }  // DO NOT USE, except for debugging purposes!
+};
+
+NCPolyHeap::NCPolyHeap(const PolynomialAlgebra& FF)
+  : F(FF), top_of_heap(-1)
+{
+}
+
+NCPolyHeap::~NCPolyHeap()
+{
+  // The user of this class must insure that the heap has been reset.
+  // i.e. call value() routine.
+}
+
+void NCPolyHeap::add(const Poly& p)
+{
+  auto len = p.numTerms();
+  int i = 0;
+  while (len >= heap_size[i]) i++;
+
+  Poly tmp1 = F.addPolys(heap[i], p);
+  std::swap(heap[i], tmp1);
+
+  len = heap[i].numTerms();
+  while (len >= heap_size[i])
+    {
+      i++;
+
+      tmp1 = F.addPolys(heap[i], heap[i-1]);
+      std::swap(heap[i], tmp1);
+                  
+      len = heap[i].numTerms();
+      // TODO!!     heap[i - 1].reset(0); // TODO: want a function which clears this.
+    }
+  if (i > top_of_heap) top_of_heap = i;
+}
+
+auto NCPolyHeap::value() -> Poly
+{
+  Poly result;
+  for (int i = 0; i <= top_of_heap; i++)
+    {
+      if (heap[i].numTerms() == 0)continue;
+      Poly tmp1 = F.addPolys(result, heap[i]);
+      std::swap(result, tmp1);
+      // TODO: add this: heap[i].reset(0); // doesn't exist yet
+    }
+  top_of_heap = -1;
+  return result;
+}
+
+ring_elem NCPolyHeap::getValue()
+{
+  Poly* result = new Poly;
+  *result = value();
+  return reinterpret_cast<Nterm*>(result);
+}
+
+void NCPolyHeap::add(ring_elem f1)
+{
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  add(*f);
+}
+
+class SumCollectorNCPolyHeap : public SumCollector
+{
+  NCPolyHeap H;
+
+ public:
+  SumCollectorNCPolyHeap(const PolynomialAlgebra& R0) : H(R0) {}
+  ~SumCollectorNCPolyHeap() {}
+  virtual void add(ring_elem f) { H.add(f); }
+  virtual ring_elem getValue() { return H.getValue(); }
+};
+
+SumCollector *PolynomialAlgebra::make_SumCollector() const
+{
+  return new SumCollectorNCPolyHeap(*this);
 }
 
 // Local Variables:

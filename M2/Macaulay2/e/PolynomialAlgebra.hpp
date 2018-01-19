@@ -116,7 +116,9 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual bool multi_degree(const ring_elem f, int *d) const;
-  
+
+  virtual SumCollector *make_SumCollector() const;
+
   long n_terms(const ring_elem f) const;
   
   // some internal functions for the above routines
@@ -134,6 +136,8 @@ public:
   ring_elem makeTerm(const ring_elem a, const int* monom) const;
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+
+  Poly addPolys(const Poly& f, const Poly& g) const;
   
 private:
   std::vector<std::string> mVariableNames;

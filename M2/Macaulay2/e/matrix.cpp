@@ -1503,6 +1503,29 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // }
 #endif
 
+Matrix * /* or null */ NCMonomials(Matrix* M)
+{
+  return nullptr;
+
+  // make a hash table for monomials
+  // loop through all elements of the matrix, all terms, and insert the monomials into the hash table (with their column number as key).
+  // create a matrix constructor.
+  // loop through all monomials, create a monomial, insert into the matrix constructor.
+  // return resulting matrix.
+}
+
+Matrix* /* or null */ NCCoefficients(Matrix* M, Matrix* monoms)
+{
+  return nullptr;
+}
+
+#if 0
+std::pair<Matrix*, Matrix*> NCCoefficients(Matrix* M)
+{
+  return nullptr;
+}
+#endif
+
 Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
 // Returns a one row matrix of all of the monomials in the variable subset
 // 'vars'
