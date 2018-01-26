@@ -2,7 +2,7 @@
 newPackage(
        "Resultants",
 	Version => "1.2", 
-    	Date => "January 11, 2018",
+    	Date => "January 26, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     	Headline => "Resultants, discriminants, and Chow forms"
 )
@@ -16,7 +16,7 @@ export{
        "veronese",
        "macaulayFormula",
        "fromPluckerToStiefel",
-       "Grass", 
+       "Grass",
        "dualize",
        "tangentialChowForm", 
        "chowForm",
@@ -42,7 +42,7 @@ resultant (Matrix) := o -> (F) -> (
     if numgens target F != 1 then error "expected a matrix with one row";
     if not isPolynomialRing ring F then error "the base ring must be a polynomial ring";
     n := numgens source F -1;
-    if n+1 != numgens ring F then error("the number of variables in the ring must be equal to the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
+    if n+1 != numgens ring F then error("the number of polynomials must be equal to the number of variables, but got " | toString(numgens source F) | " polynomials and " | toString(numgens ring F) | " variables");
     if o.Algorithm =!= "Poisson" and o.Algorithm =!= "Poisson2" and o.Algorithm =!= "Macaulay" and o.Algorithm =!= "Macaulay2" then error "bad value for option Algorithm; possible values are \"Poisson\", \"Poisson2\", \"Macaulay\", and \"Macaulay2\"";         
     K := coefficientRing ring F;
     x := local x;
@@ -50,7 +50,7 @@ resultant (Matrix) := o -> (F) -> (
     F = sub(F,vars Pn); F' := F;
     d := apply(flatten entries F,ee->first degree ee);
     if not isField K then (K' := frac K; Pn' := K'[x_0..x_n]; F' = sub(F,Pn'));
-    if not isHomogeneous ideal F' then error("the matrix entries need to be homogeneous polynomials");
+    if not isHomogeneous ideal F' then error("expected homogeneous polynomials");
     if o.Algorithm === "Macaulay" then (if (min d > -1 and sum(d) > n) then return MacaulayResultant(F,false) else <<"--warning: ignored option Algorithm=>\"Macaulay\""<<endl);
     if o.Algorithm === "Poisson2" then return interpolateRes(F,"Poisson");
     if o.Algorithm === "Macaulay2" then return interpolateRes(F,"Macaulay");
@@ -215,16 +215,17 @@ discriminant RingElement := o -> (G) -> (
 );
 
 genericPolynomials = method(TypicalValue => List);
-genericPolynomials (VisibleList,Ring) := (d,K) -> (
-   d = toList d;
-   try assert(ring matrix {d} === ZZ) else error "expected list of integers";
-   A := apply(#d,i->K[(vars i)_0..(vars i)_(binomial(#d-1+d_i,d_i)-1)]);
-   R := A_0; for i from 1 to #d-1 do R = R**A_i;
+genericPolynomials (VisibleList,Ring) := (D,K) -> (
+   D = toList D;
+   try assert(ring matrix {D} === ZZ) else error "expected list of integers";
+   local vi;
+   A := apply(#D,i -> (vi = vars i; K[vi_0..vi_(binomial(#D-1+D_i,D_i)-1)]));
+   R := A_0; for i from 1 to #D-1 do R = R**A_i;
    R = K[gens R];
-   x := local x; P := R[x_0..x_(#d-1)];
-   apply(#d,i -> (sub(vars A_i,R) * transpose gens (ideal vars P)^(d_i))_(0,0) )
+   x := local x; P := R[x_0..x_(#D-1)];
+   apply(#D,i -> (sub(vars A_i,R) * transpose gens (ideal vars P)^(D_i))_(0,0) )
 ); 
-genericPolynomials (List) := (d) -> genericPolynomials(d,QQ);
+genericPolynomials (List) := (D) -> genericPolynomials(D,QQ);
 
 interpolate = method(TypicalValue => RingElement)
 interpolate (Matrix,PolynomialRing,ZZ) := (M,R,d) -> (
@@ -267,7 +268,7 @@ affineResultant (Matrix) := o -> (F) -> (
     if numgens target F != 1 then error "expected a matrix with one row";
     if not isPolynomialRing ring F then error "the base ring must be a polynomial ring";
     n := numgens ring F;
-    if n+1 != numgens source F then error("the number of variables in the ring must be equal to one minus the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
+    if n+1 != numgens source F then error("the number of polynomials must be one more than the number of variables, but got " | toString(numgens source F) | " polynomials and " | toString(numgens ring F) | " variables");
     K := coefficientRing ring F;
     x := local x;
     An := K[x_1..x_n];
@@ -302,21 +303,21 @@ GG := local GG;
 Grass = method(TypicalValue => QuotientRing, Options => {Variable => "p"});
 
 Grass (ZZ,ZZ,Ring) := o -> (k,n,KK) -> (
-   pp := getSymbol toString o.Variable;
-   ch := char KK;
-   if (KK =!= QQ and KK =!= ZZ/ch) then (Gr := Grassmannian(k,n,CoefficientRing=>KK,Variable=>pp); return((ring Gr)/Gr));
-   if (class GG_(k,n,ch,pp) === QuotientRing or class GG_(k,n,ch,pp) === PolynomialRing) then return GG_(k,n,ch,pp); 
+   pp := getVariable o.Variable;
+   if not isField KK then error "expected a field";
+   if (class GG_(k,n,KK,pp) === QuotientRing or class GG_(k,n,KK,pp) === PolynomialRing) then return GG_(k,n,KK,pp); 
    J := Grassmannian(k,n,CoefficientRing=>KK,Variable=>pp);
-   GG_(k,n,ch,pp)=(ring J)/J;
-   -- <<"-- created Grassmannian G("<<k<<","<<n<<") over "<<toExternalString(KK)<<" with variable "<<pp<<endl;
-   GG_(k,n,ch,pp)
+   GG_(k,n,KK,pp)=(ring J)/J;
+   -- <<"-- created Grassmannian G("<<k<<","<<n<<") over "<<toString(KK)<<" with variable "<<pp<<endl;
+   GG_(k,n,KK,pp)
 );
 
 Grass (ZZ,ZZ) := o -> (k,n) -> Grass(k,n,QQ,Variable=>o.Variable);
 
 Grass (Ring) := o -> (R) -> ( -- undocumented
    try (k,n,KK,p) := detectGrassmannian R else error "unable to detect Grassmannian ring";
-   "Grassmannian of "|toString(k)|"-dimensional linear subspaces of PP^"|toString(n)|" over "|toString(KK)
+   << "-- Grassmannian of "|toString(k)|"-dimensional linear subspaces of PP^"|toString(n)|" over "|toString(KK) << endl;
+   (k,n)
 );
 
 SS := local SS;
@@ -324,23 +325,22 @@ SS := local SS;
 SegreRing = method(TypicalValue => Sequence, Options => {Variable => "p"});
 
 SegreRing (ZZ,ZZ,Ring) := o -> (k,n,KK) -> (
-   pp := getSymbol toString o.Variable;
-   ch := char KK;
-   if (KK =!= QQ and KK =!= ZZ/ch) then (R0 := KK[pp_(0,0)..pp_(k,n)]; M0 := genericMatrix(R0,n+1,k+1); return(R0,M0));
-   if class SS_(k,n,ch,pp) === Sequence then return SS_(k,n,ch,pp); 
+   pp := getVariable o.Variable;
+   if class SS_(k,n,KK,pp) === Sequence then return SS_(k,n,KK,pp); 
    R := KK[pp_(0,0)..pp_(k,n)]; 
    M := genericMatrix(R,n+1,k+1);
-   SS_(k,n,ch,pp) = (R,M);
-   -- <<"-- created ambient ring of PP^"<<k<<" x PP^"<<n<<" subset PP^"<<(n+1)*(k+1)-1<<" over "<<toExternalString(KK)<<" with variable "<<pp<<endl;
-   SS_(k,n,ch,pp)
+   SS_(k,n,KK,pp) = (R,M);
+   -- <<"-- created ambient ring of PP^"<<k<<" x PP^"<<n<<" subset PP^"<<(n+1)*(k+1)-1<<" over "<<toString(KK)<<" with variable "<<pp<<endl;
+   SS_(k,n,KK,pp)
 );
 
-getVariable = method(TypicalValue => Symbol)
-getVariable (PolynomialRing) := (R) -> (
-    x := baseName first gens R;
-    if class x === IndexedVariable then x = first x;
-    getSymbol toString x
-);
+getVariable = method(TypicalValue => Symbol);
+getVariable (Symbol) := (x) -> x;
+getVariable (String) := (x) -> getSymbol x;
+getVariable (IndexedVariableTable) := (x) -> baseName x;
+getVariable (IndexedVariable) := (x) -> first x;
+getVariable (PolynomialRing) := (R) -> getVariable baseName first gens R;
+getVariable (Thing) := (x) -> error "expected symbol or string";
 
 detectGrassmannian = method(TypicalValue => Sequence);
 detectGrassmannian (PolynomialRing) := (G) -> ( -- thanks to Federico Galetto 
@@ -392,7 +392,7 @@ tangentialChowForm (Ideal,ZZ) := o -> (I,s) -> (
    if not isPolynomialRing ring I then error "expected ideal in a polynomial ring";
    if not isHomogeneous I then error "expected a homogeneous ideal";
    if s<0 then error "expected a nonnegative integer";
-   p := if o.Variable === null then getVariable ring I else getSymbol toString o.Variable;
+   p := if o.Variable === null then getVariable ring I else getVariable o.Variable;
    K := coefficientRing ring I; 
    n := numgens ring I -1;
    d := dim I -1;
@@ -475,7 +475,7 @@ chowForm (RingMap) := o -> (phi) -> ( -- undocumented
    if not isField K then error "the coefficient ring needs to be a field";
    F := submatrix(matrix phi,{0..(numgens source phi -1)});
    if not (isHomogeneous ideal F and # unique degrees ideal F == 1) then error "the map needs to be defined by homogeneous polynomials of the same degree";
-   p := if o.Variable === null then getVariable ambient source phi else getSymbol toString o.Variable;
+   p := if o.Variable === null then getVariable ambient source phi else getVariable o.Variable;
    if (o.AffineChartGrass =!= true or o.AffineChartProj =!= true or o.Duality =!= null) then error "option not available with chowForm(RingMap); you can use it with chowForm(Ideal)"; 
    n := numgens ambient source phi -1;
    r := numgens target phi -1;
@@ -516,7 +516,7 @@ cayleyTrick (Ideal,ZZ) := o -> (I,b) -> (
    if a < 0 then error "integer outside the allowed range";
    n := numgens ring I -1;
    K := coefficientRing ring I;
-   (R,M) := SegreRing(b,n,K,Variable=>(if o.Variable === null then getVariable ring I else o.Variable));
+   (R,M) := SegreRing(b,n,K,Variable=>(if o.Variable === null then getVariable ring I else getVariable o.Variable));
    t := local t; y := local y;
    PbPn := K[y_0..y_b,t_0..t_n];
    s := map(PbPn,R,flatten for i to b list for j to n list y_i*t_j);
@@ -533,7 +533,7 @@ chowEquations = method(TypicalValue => Ideal, Options => {Variable => null});
 chowEquations (RingElement) := o -> (W) -> ( 
    (k,n,KK,x) := detectGrassmannian ambient ring W;
    k = n-k-1;   -- W in G(n-k-1,n), k=dim X 
-   if o.Variable =!= null then x = getSymbol toString o.Variable;
+   if o.Variable =!= null then x = getVariable o.Variable;
    Pn := Grass(0,n,KK,Variable=>x);
    s := local s; 
    R := Pn[s_(0,0)..s_(n-k-2,n)];   
@@ -550,7 +550,7 @@ chowEquations (RingElement,ZZ) := o -> (W,s) -> ( -- undocumented
    (k,n,KK,x) := detectGrassmannian ring W;
    k = k+s;   -- W in G(k-s,n), k=dim X 
    if not (s>=0 and s<=k) then error("wrong integer value for second argument of chowEquations");
-   if o.Variable =!= null then x = getSymbol toString o.Variable;
+   if o.Variable =!= null then x = getVariable o.Variable;
    Pn := Grass(0,n,KK,Variable=>x);
    psi := first projectionMap(ring W,AffineChartGrass=>false);
    Z := psi W;
@@ -566,7 +566,7 @@ conormalVariety (Ideal,Matrix) := o -> (I,D) -> (
    if ring D === ZZ then D = sub(D,coefficientRing ring I);
    if not(numgens target D == numgens source D and numgens target D === numgens ring I and ring D === coefficientRing ring I) then error("expected a square matrix of order "|toString(numgens ring I)|" over "|toString(coefficientRing ring I));
    C := if o.Strategy === "Eliminate" then conormalVarietyElim(I,D) else if o.Strategy === "Saturate" then conormalVarietySat(I,D) else error "bad value for option Strategy; possible values are \"Eliminate\" and \"Saturate\"";
-   R := first SegreRing(1,numgens ring I -1,coefficientRing ring I,Variable=>(if o.Variable === null then getVariable ring I else o.Variable));
+   R := first SegreRing(1,numgens ring I -1,coefficientRing ring I,Variable=>(if o.Variable === null then getVariable ring I else getVariable o.Variable));
    R = newRing(R,Degrees=>{(numgens ring I):{1,0},(numgens ring I):{0,1}});
    sub(C,vars R)
 );
@@ -646,7 +646,7 @@ projectionMap = method(Options => {Variable => null, AffineChartGrass => true});
 
 projectionMap (Ring) := o -> (G) -> (
    (k,n,KK,p) := detectGrassmannian G;
-   if o.Variable =!= null then p = getSymbol toString o.Variable;
+   if o.Variable =!= null then p = getVariable o.Variable;
    (R,M) := SegreRing(k,n,KK,Variable=>p);
    psi := map(R,G,gens minors(k+1,M));
    mnr := o.AffineChartGrass;
@@ -692,9 +692,9 @@ veronese = method(TypicalValue => RingMap, Options => {Variable => null});
 veronese (ZZ,ZZ,Ring) := o -> (n,d,K) -> (
    if n<=0 or d<=0 then error "expected positive integers";
    if not isField K then error "expected a field";
-   (t,x) := (local t,local x);
-   if class o.Variable === Sequence then if # o.Variable == 2 then (t,x) = o.Variable else error "expected a symbol";
-   if o.Variable =!= null and class o.Variable =!= Sequence then (t,x) = (o.Variable,o.Variable);
+   t := "t"; x := "x";
+   if class o.Variable === Sequence then if # o.Variable == 2 then (t = getVariable first o.Variable; x = getVariable last o.Variable) else error "expected a symbol";
+   if o.Variable =!= null and class o.Variable =!= Sequence then (t = getVariable o.Variable; x = t);
    Pn := Grass(0,n,K,Variable=>t);
    PN := Grass(0,binomial(n+d,d)-1,K,Variable=>x);
    F := gens (ideal vars Pn)^d;
@@ -1027,7 +1027,7 @@ document {
                "n" => ZZ ,
                "K" => Ring => {"optional with default value ",TO "QQ",", the coefficient ring to be used"}}, 
     Outputs => {{"the coordinate ring of the Grassmannian variety of all projective ",TEX///$k$///,"-planes in ",TEX///$\mathbb{P}^n$///}},
-    PARA{"This method calls the method ", TO "Grassmannian", ", and ", TT "Grass(k,n,K,Variable=>p)", " can be considered equivalent to ", TT "quotient Grassmannian(k,n,Variable=>p,CoefficientRing=>K)", ". However, over ", TT "QQ", " and ", TT "ZZ/p", ", the method ",TT "Grass", " creates only an instance of ring for any given ", TT "(k,n,K,p)","."}, 
+    PARA{"This method calls the method ", TO "Grassmannian", ", and ", TT "Grass(k,n,K,Variable=>p)", " can be considered equivalent to ", TT "quotient Grassmannian(k,n,Variable=>p,CoefficientRing=>K)", ". However, the method ",TT "Grass", " creates no more than an instance of ring for a given tuple ", TT "(k,n,K,p)","."}, 
     EXAMPLE { 
           "R = Grass(2,4,ZZ/11)",
           "R === Grass(2,4,ZZ/11)"
@@ -1216,21 +1216,17 @@ genericDiscriminant = {Algorithm => "Poisson"} >> o -> (d,n,K) -> (
     F:=first genericPolynomials(prepend(d,toList(n:(-1))),K);
     discriminant(F,Algorithm=>o.Algorithm)
 );
-Veronese = (d,n,K) -> (
-    Gg:=Grass(0,n,K,Variable=>h);
-    kernel map(Gg,Grass(0,binomial(n+d,d)-1,K),gens (ideal vars Gg)^d)
-);
 compareDiscriminants = (d,n,K) -> (
     D1:=genericDiscriminant(d,n,K,Algorithm=>"Poisson");
     D1':=sub(genericDiscriminant(d,n,K,Algorithm=>"Macaulay"),vars ring D1);
-    D2:=sub((dualVariety Veronese(d,n,K))_0,vars ring D1);
+    D2:=sub((dualVariety kernel veronese(n,d,K))_0,vars ring D1);
     ideal(D2) == ideal(D1) and ideal(D1) == ideal(D1')
 );
 assert compareDiscriminants(2,1,QQ) 
-assert compareDiscriminants(3,1,GF 5^5) 
 assert compareDiscriminants(4,1,QQ) 
 assert compareDiscriminants(5,1,ZZ/33331) 
 assert compareDiscriminants(2,2,ZZ/101)
+assert compareDiscriminants(3,1,GF 5^5) 
 /// 
 
 TEST ///
@@ -1278,7 +1274,7 @@ time T2 = discriminant(G,Algorithm=>"Macaulay2");
 time T3 = discriminant G;
 assert(T1 == T2 and T1 == T3)
 );
-pencil(2,2,ZZ)
+pencil(2,2,QQ)
 pencil(4,1,GF(101^3))
 pencil(2,4,ZZ/331)
 pencil(3,2,ZZ/331)
