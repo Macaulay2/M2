@@ -151,6 +151,7 @@ public:
   monomVector & getMonomInserter() { return mMonomials; }
 
   size_t numTerms() const { return mCoefficients.size(); }
+
 private:
   coeffVector & getCoeffInserter() { return mCoefficients; }
   

@@ -515,6 +515,9 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
   return reinterpret_cast<Nterm*>(result);
 }
 
+// MES: Frank, here is the code. Change this 0 to a 1 to use the old, non geo-bucket code
+// for multiplication.
+#if 0
 ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
   // TODO: make this a geobucket heap multiply function?
@@ -548,6 +551,26 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
     }
   return resultW;
 }
+#else
+ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
+{
+  auto f = reinterpret_cast<const Poly*>(f1.mPolyVal);
+  auto g = reinterpret_cast<const Poly*>(g1.mPolyVal);
+  auto H = make_SumCollector();
+  
+  if (f->numTerms() <= g->numTerms())
+    {
+      for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
+        H->add(mult_by_term_left(g1, fIt.coeff(), fIt.monom()));
+    }
+  else
+    {
+      for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
+        H->add(mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
+    }
+  return H->getValue();
+}
+#endif
 
 ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
                                             const ring_elem c, const Monom m) const
@@ -826,7 +849,8 @@ void NCPolyHeap::add(const Poly& p)
 
   Poly tmp1 = F.addPolys(heap[i], p);
   std::swap(heap[i], tmp1);
-
+  F.setZero(tmp1);
+  
   len = heap[i].numTerms();
   while (len >= heap_size[i])
     {
@@ -834,9 +858,10 @@ void NCPolyHeap::add(const Poly& p)
 
       tmp1 = F.addPolys(heap[i], heap[i-1]);
       std::swap(heap[i], tmp1);
-                  
+      F.setZero(tmp1);
+      F.setZero(heap[i-1]);
+      
       len = heap[i].numTerms();
-      // TODO!!     heap[i - 1].reset(0); // TODO: want a function which clears this.
     }
   if (i > top_of_heap) top_of_heap = i;
 }
@@ -846,10 +871,12 @@ auto NCPolyHeap::value() -> Poly
   Poly result;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i].numTerms() == 0)continue;
+      if (heap[i].numTerms() == 0) continue;
+
       Poly tmp1 = F.addPolys(result, heap[i]);
       std::swap(result, tmp1);
-      // TODO: add this: heap[i].reset(0); // doesn't exist yet
+      F.setZero(tmp1);
+      F.setZero(heap[i]);
     }
   top_of_heap = -1;
   return result;

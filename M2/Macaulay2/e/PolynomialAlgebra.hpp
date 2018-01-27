@@ -137,8 +137,17 @@ public:
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 
-  Poly addPolys(const Poly& f, const Poly& g) const;
+  void setZero(Poly& f) const // resets f to zero
+  {
+    for (auto a : f.mCoefficients)
+      mCoefficientRing.remove(a);
+    
+    f.mCoefficients.clear();
+    f.mMonomials.clear();
+  }
   
+  Poly addPolys(const Poly& f, const Poly& g) const;
+
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;

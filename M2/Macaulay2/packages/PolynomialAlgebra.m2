@@ -312,6 +312,70 @@ TEST ///
   R = QQ{a,b,c,d}
   g = a+b+c+d
   elapsedTime for i from 0 to 11 list (elapsedTime size (h = g^i))
+  g3 = g^3
+  g5 = g^5
+  g8 = g^8;
+  assert(g3*g5 == g8)
+///
+
+TEST ///
+  R = QQ{a,b,c,d}
+  g1 = a^2-b*c+c^3
+  g2 = a*b*a+c*d*b+3*a*b*c*d
+  g3 = a*b+b*c+c*d+d*a-1
+  h1 = g1*g2
+  h2 = g2*g3
+  assert((g1*g2)*g3 == g1*(g2*g3))
+  --g1*g2*g3*g2*g1*g3*g1*g3*g2*g1*g2*g1*g2;
+  h1 = g1*g2*g3*g2*g1*g3;
+  h2 = g1*g3*g2*g1*g2*g1; -- *g2;
+
+  --elapsedTime for i from 0 to 11 list (elapsedTime size (h = g^i))
+  g3 = g1^3
+  g5 = g1^5
+  g8 = g1^8;
+  assert(g3*g5 == g8)
+///
+
+TEST ///
+  R = QQ{a,b,c,d}
+  g1 = a^2-b*c+c^3
+  g2 = a*b*a+c*d*b+3*a*b*c*d
+  g3 = a*b+b*c+c*d+d*a-1
+  h1 = g1*g2*g3*g2*g1;
+  h2 = g1*g3*g2*g1*g2;
+  size(h1)
+  size(h2)
+  h3 = elapsedTime(h1*h2); -- memory usage: elapsedTime: 2.59 sec
+  assert(size h3 == 164025)
+///
+
+TEST ///
+  R = QQ{a,b,c,d}
+  g1 = a^2-b*c+c^3
+  g2 = a*b*a+c*d*b+3*a*b*c*d
+  g3 = a*b+b*c+c*d+d*a-1
+  h1 = g1*g2*g3*g2*g1*g2;
+  h2 = g1*g3*g2*g1*g2;
+  size(h1)
+  size(h2)
+  h3 = elapsedTime(h1*h2); -- memory usage: 670 MB elapsedTime: 10.2 sec
+  assert(size h3 == (size h1) * (size h2))
+  assert(size h3 == 492075)
+///
+
+TEST ///
+  R = QQ{a,b,c,d}
+  g1 = a^2-b*c+c^3
+  g2 = a*b*a+c*d*b+3*a*b*c*d
+  g3 = a*b+b*c+c*d+d*a-1
+  h1 = g1*g2*g3*g2*g1*g2;
+  h2 = g1*g3*g2*g1*g2*g1;
+  size(h1)
+  size(h2)
+  h3 = elapsedTime(h1*h2); -- memory usage: 2.4 GB elapsedTime:  90.4 sec
+  assert(size h3 == (size h1) * (size h2))
+  assert(size h3 == 1476225)
 ///
 
 TEST ///
@@ -352,7 +416,7 @@ TEST ///
   debug Core
   -- basic arithmetic
   A = ZZ/101[t]/t^2
-  B = A{x,y,z}
+p  B = A{x,y,z}
   f = 0_A * x
   raw f 
   
