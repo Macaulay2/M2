@@ -168,6 +168,9 @@ various modern operating systems:
       On newer versions, one installs the tools with "Software Update".
       After upgrading the OS, it will be necessary to install it again.  (One symptom of
       forgetting to do this is that /usr/include may be missing.)
+      If you install XCode, you will then need to do
+        xcode-select --install
+	(this command creates /usr/include, and other usual unix directories)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -180,7 +183,7 @@ various modern operating systems:
     Install the programs and libraries needed for building:
 	brew tap homebrew/science
 	brew update
-	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz
+	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget
 	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm make
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
