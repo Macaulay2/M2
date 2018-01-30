@@ -1,6 +1,7 @@
 #include "PolynomialAlgebra.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
+#include "ringmap.hpp"
 
 #include <vector>
 #include <string>
@@ -94,6 +95,35 @@ void NCMonoid::getMonomial(Monom monom, std::vector<int>& result) const
 //                        where len = n + 2
 // The output is of the following form, and appended to result.
 // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+// and the order is that of monom.  that is: a*b is encoded as [5, 0 1, 1 1] (commas are only for clarity)
+{
+  auto start = result.size();
+  result.push_back(0);
+  auto mon_length = monom[0] - 2;
+  auto mon_ptr = monom + 2;
+  for (auto j = 0; j < mon_length; j++)
+    {
+      int curvar = mon_ptr[j];
+      int curvarPower = 0;
+      result.push_back(curvar);
+      while ((j < mon_length) && (mon_ptr[j] == curvar))
+        {
+          j++;
+          curvarPower++;
+        }
+      result.push_back(curvarPower);
+      // back j up one since we went too far looking ahead.
+      --j;
+    }
+  result[start] = static_cast<int>(result.size() - start);
+}
+
+void NCMonoid::getMonomialReversed(Monom monom, std::vector<int>& result) const
+// Input is of the form: [len degree v1 v2 ... vn]
+//                        where len = n + 2
+// The output is of the following form, and appended to result.
+// [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+// and the order is the OPPOSITE of monom.  that is: a*b is encoded as [5, 1 1, 0 1] (commas are only for clarity)
 {
   auto start = result.size();
   result.push_back(0);
@@ -568,7 +598,9 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
       for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
         H->add(mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
     }
-  return H->getValue();
+  auto result = H->getValue();
+  delete H;
+  return result;
 }
 #endif
 
@@ -734,15 +766,35 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
   if (needs_parens) o << ')';
 }
 
-ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem f, int first_var) const
+ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem ff, int first_var) const
 {
   // map: R --> S, this = R.
   // f is an ele ment in R
   // return an element of S.
-  
-  // evaluate a ring map at a ring element.
-  // TODO
-  return f; // TODO: Bad return value;
+
+  auto f = reinterpret_cast<const Poly*>(ff.mPolyVal);
+
+  // plan: do it as in polyring:
+  //  cast f to a Poly
+  //  loop throug the terms of f
+  //    for each term: call map->eval_term, need varpower monomial here.
+  //    add to a heap object
+  // return value of the heap object
+
+  const Ring* target = map->get_ring();
+  SumCollector *H = target->make_SumCollector();
+
+  std::vector<int> vp;
+  for (auto i = f->cbegin(); i != f->cend(); ++i)
+    {
+      vp.clear();
+      monoid().getMonomial(i.monom(), vp);
+      ring_elem g = map->eval_term(getCoefficientRing(), i.coeff(), vp.data(), first_var, n_vars());
+      H->add(g);
+    }
+  ring_elem result = H->getValue();
+  delete H;
+  return result;
 }
 
 engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const ring_elem ff) const
@@ -774,7 +826,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
     {
       ring_elem c = mCoefficientRing.copy(i.coeff());
       vp.resize(0);
-      monoid().getMonomial(i.monom(), vp); // should this instead reverse the monomial?
+      monoid().getMonomialReversed(i.monom(), vp); // should this instead reverse the monomial?
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
       monoms->array[next] = Monomial::make(vp); // reverses the monomial
     }

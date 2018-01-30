@@ -416,7 +416,7 @@ TEST ///
   debug Core
   -- basic arithmetic
   A = ZZ/101[t]/t^2
-p  B = A{x,y,z}
+  B = A{x,y,z}
   f = 0_A * x
   raw f 
   
@@ -485,18 +485,25 @@ TEST ///
   R = QQ{b,c,d}
   F = map(R,A,{b*c,d*c})
   G = map(A,R,{s,t,s*t})
-  G b -- crash!
-  G 3 -- crash
+  assert(G b == s)
+  assert(G 3 == 3)
   F s
-  F (s*t) -- F is not well-defined, but answer, 
-          -- if we even allow this, should probably be b*c*d*c ?
-          -- but instead it is d*c*b*c.
+  assert(F (s*t) == d*c*b*c) -- Do we want t allow this? F is not well-defined
+          
+  F1 = map(R,R,{c,b,d})
+  F1 (b*c*d + b*b*d*c*d*b)
+
+  use R  
+  F2 = map(R,R,{c+b,c,d})  
+  F2(b+c+d)
+  g = 3*b*c + b*c*b -2* b*d*b
+  assert(F2 g == 3 * (b+c)*c + (b+c)*c*(b+c) -2* (b+c)*d*(b+c))
+  
   B = QQ[b,c,d]
-  H = map(R,B)
-  H = map(B,R)
+  H1 = map(R,B)
+  H2 = map(B,R)
   use R
-  H (b*c) -- crash
-  methods substitute
+  H2 (b*c)
   
   R = QQ{b,c,d}
   a1 = (3/4)_R

@@ -48,6 +48,7 @@ public:
   // The output is of the form, and stored in result.
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
   void getMonomial(Monom monom, std::vector<int>& result) const;
+  void getMonomialReversed(Monom monom, std::vector<int>& result) const;
 
   // fromMonomial:
   // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
@@ -72,6 +73,8 @@ public:
   const Ring* getCoefficientRing() const { return &mCoefficientRing; }
   const NCMonoid& monoid() const { return mMonoid; }
 
+  int n_vars() const { return mVariableNames.size(); }
+  
   // these are all the functions from Ring that must exist for PolynomialAlgebra to be instantiated
   virtual int index_of_var(const ring_elem a) const;
   
