@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1542844694 *}
+-- -*- M2-comint -*- hash: -1542844694
 
 i1 : R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
 
@@ -37,7 +37,7 @@ o5 : Matrix ZZ  <--- ZZ
 
 i6 : C = skewPolynomialRing(QQ,promote(N,QQ), {a,b,c,d})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30359-0/0.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30359-0/3.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12565-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12565-0/3.ter ... Complete!
 
 o6 = C
 
