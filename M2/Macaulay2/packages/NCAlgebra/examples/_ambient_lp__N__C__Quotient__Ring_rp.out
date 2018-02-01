@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- hash: 289900105
+
+i1 : B = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z})
+--Calling Bergman for NCGB calculation.
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12172-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12172-0/3.ter ... Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : A = ambient B
+
+o2 = A
+
+o2 : NCPolynomialRing
+
+i3 : 
