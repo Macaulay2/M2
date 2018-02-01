@@ -1,0 +1,29 @@
+-- -*- M2-comint -*- {* hash: -236044926 *}
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : I = ncIdeal{x*z-z*x, y*z, x*y^2-y^2*x, x^3*y-y*x^3}
+
+                                    2    2     3  3
+o2 = Two-sided ideal {-zx+xz, yz, -y x+xy , -yx +x y}
+
+o2 : NCIdeal
+
+i3 : J = quadraticClosure I
+
+o3 = Two-sided ideal {-zx+xz, yz}
+
+o3 : NCIdeal
+
+i4 : J' = homogDual J
+
+                       2           2              2
+o4 = Two-sided ideal {x , yx, xy, y , zy, zx+xz, z }
+
+o4 : NCIdeal
+
+i5 : 

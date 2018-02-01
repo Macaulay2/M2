@@ -1,0 +1,56 @@
+-- -*- M2-comint -*- {* hash: 611435285 *}
+
+i1 : A=QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : w=x^3-y^2
+
+       2  3
+o2 = -y +x
+
+o2 : A
+
+i3 : isHomogeneous w
+
+o3 = false
+
+i4 : setWeights(A, {2,3,1})
+
+o4 = A
+
+o4 : NCPolynomialRing
+
+i5 : isHomogeneous w
+
+o5 = true
+
+i6 : C = QQ{a,b,c}
+
+o6 = C
+
+o6 : NCPolynomialRing
+
+i7 : g = ncMap(C,A,{a^3,b^2,a+b,a-b})
+
+o7 = NCRingMap C <--- A
+
+o7 : NCRingMap
+
+i8 : isHomogeneous g
+
+o8 = false
+
+i9 : setWeights(A,{3,2,1,1})
+
+o9 = A
+
+o9 : NCPolynomialRing
+
+i10 : isHomogeneous g
+
+o10 = true
+
+i11 : 

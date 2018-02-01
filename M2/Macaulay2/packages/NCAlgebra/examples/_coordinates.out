@@ -1,0 +1,86 @@
+-- -*- M2-comint -*- {* hash: 2068384117 *}
+
+i1 : R = QQ[w]/ideal(w^2+w+1)
+
+o1 = R
+
+o1 : QuotientRing
+
+i2 : A = skewPolynomialRing(R,promote(-1,R),{x,y,z})
+
+o2 = A
+
+o2 : NCQuotientRing
+
+i3 : g = ncMap(A,A,{y,z,x})
+
+o3 = NCRingMap A <--- A
+
+o3 : NCRingMap
+
+i4 : gList = {g, g^2, g^3}
+
+o4 = {NCRingMap A <--- A, NCRingMap A <--- A, NCRingMap A <--- A}
+
+o4 : List
+
+i5 : a = sum apply(3,i-> (gList#i)(x^3))
+
+      3  3  3
+o5 = z +y +x
+
+o5 : A
+
+i6 : b = sum apply(3,i-> (gList#i)(x^2*y))
+
+      2    2  2
+o6 = y z+xz +x y
+
+o6 : A
+
+i7 : c = sum apply(3,i-> (gList#i)(x*y^2))
+
+       2   2  2
+o7 = yz +xy +x z
+
+o7 : A
+
+i8 : d = sum apply(3,i-> (gList#i)(x*y*z))
+
+o8 = 3xyz
+
+o8 : A
+
+i9 : p = w^2*z^2*y+x^2*z+(1-w)*y^3
+
+                2           3  2
+o9 = (- w - 1)yz +(- w + 1)y +x z
+
+o9 : A
+
+i10 : g(p)==p
+
+o10 = false
+
+i11 : p' = sum apply(3,i-> (gList#i)(p))
+
+                3     2           3     2    2            3
+o11 = (- w + 1)z +-wyz +(- w + 1)y +-wxy +-wx z+(- w + 1)x
+
+o11 : A
+
+i12 : g(p')==p'
+
+o12 = true
+
+i13 : coordinates(p',Basis=>{a,b,c,d})
+
+o13 = | -w+1 |
+      | 0    |
+      | -w   |
+      | 0    |
+
+              4       1
+o13 : Matrix R  <--- R
+
+i14 : 

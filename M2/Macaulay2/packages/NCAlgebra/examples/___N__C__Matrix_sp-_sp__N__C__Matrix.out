@@ -1,0 +1,51 @@
+-- -*- M2-comint -*- {* hash: -266416536 *}
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : M = ncMatrix {{x, y, z}}
+
+o2 = | x  y  z |
+
+o2 : NCMatrix
+
+i3 : sigma = ncMap(A,A,{y,z,x})
+
+o3 = NCRingMap A <--- A
+
+o3 : NCRingMap
+
+i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+
+o4 = | x  y  z |
+     |         |
+     | y  z  x |
+     |         |
+     | z  x  y |
+
+o4 : NCMatrix
+
+i5 : N' = ncMatrix {{sigma sigma M}, {sigma M}, {M}}
+
+o5 = | z  x  y |
+     |         |
+     | y  z  x |
+     |         |
+     | x  y  z |
+
+o5 : NCMatrix
+
+i6 : N - N'
+
+o6 = | -z+x   y-x   z-y |
+     |                  |
+     |   0     0     0  |
+     |                  |
+     |  z-x  -y+x  -z+y |
+
+o6 : NCMatrix
+
+i7 : 

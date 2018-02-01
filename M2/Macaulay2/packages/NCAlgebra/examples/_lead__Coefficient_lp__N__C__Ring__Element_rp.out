@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- {* hash: 634167762 *}
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = x^2+y^2+z^3
+
+      3  2  2
+o2 = z +y +x
+
+o2 : A
+
+i3 : coeff = leadCoefficient f
+
+o3 = 1
+
+o3 : QQ
+
+i4 : 

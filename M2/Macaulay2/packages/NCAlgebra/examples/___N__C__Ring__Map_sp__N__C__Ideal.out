@@ -1,0 +1,29 @@
+-- -*- M2-comint -*- {* hash: -936231083 *}
+
+i1 : A = QQ{x,y}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : g = ncMap(A,A,{y,x})
+
+o2 = NCRingMap A <--- A
+
+o2 : NCRingMap
+
+i3 : I = ncIdeal {x^2*y+y*x^2}
+
+                        2  2
+o3 = Two-sided ideal {yx +x y}
+
+o3 : NCIdeal
+
+i4 : g I
+
+                       2    2
+o4 = Two-sided ideal {y x+xy }
+
+o4 : NCIdeal
+
+i5 : 
