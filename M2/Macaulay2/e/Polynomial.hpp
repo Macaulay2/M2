@@ -27,12 +27,48 @@ struct Monom
   const int* operator+(int i) const { return mValue+i; }
   int operator[](int i) const { return mValue[i]; }
 
+  int size() const { return *mValue; }
+  
   const int* begin() const { return mValue; }
   const int* end() const { return mValue + *mValue; }
 private:
   const int* mValue; // We are visiting this monomial, we do not own it!
 };
 
+struct ModuleMonom
+// Format for such a monomial:
+// [len value hashval comp deg v1 v2 ... vr]
+// where [len-3 deg v1 v2 ... vr] is a Monom.
+{
+  ModuleMonom(int* value) : mValue(value) {}
+
+  //  const int* operator*() const { return mValue; }
+  const int* operator+(int i) const { return mValue+i; }
+  int operator[](int i) const { return mValue[i]; }
+
+  int size() const { return *mValue; }
+  
+  const int* begin() const { return mValue; }
+  const int* end() const { return mValue + *mValue; }
+  int* begin() { return mValue; }
+  int* end() { return mValue + *mValue; }
+
+private:
+  int* mValue; // We are visiting this monomial, we do not own it!
+};
+
+// result: must be allocated in [begin,end). which must have size a.size() + 3.
+
+inline ModuleMonom monomToModuleMonom(const Monom& a, int comp, int* begin, int* end)
+{
+  assert(end-begin >= a.size() + 3);
+  begin[0] = a.size() + 3;
+  begin[1] = 0; // value
+  begin[2] = 0; // hashval
+  begin[3] = comp;
+  std::copy(a.begin()+1, a.end(), begin+4);
+  return ModuleMonom(begin);
+}
   
 /**
  * \ingroup polynomialrings

@@ -151,6 +151,10 @@ public:
   
   Poly addPolys(const Poly& f, const Poly& g) const;
 
+  const Poly* toPoly(const ring_elem f) const { return reinterpret_cast<const PolynomialAlgebra::Poly*>(f.mPolyVal); }
+
+  ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }
+
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;

@@ -15,8 +15,12 @@
 #include "exptable.h"
 
 #include <vector>
-
+#include <iostream>
 #include "matrix-con.hpp"
+
+#include "monomial-collection.hpp"
+#include "PolynomialAlgebra.hpp"
+
 
 Matrix::Matrix(const FreeModule *rows0,
                const FreeModule *cols0,
@@ -1503,6 +1507,49 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // }
 #endif
 
+//////////////////////////////////////////////
+// PolynomialAlgebra coeff, monoms commands //
+//////////////////////////////////////////////
+
+// Configuration class for the monomial table
+class MonomialSetDefaultConfig
+{
+public:
+  using Key = int*; // [length, comp, degree, v1, v2, ..., vr]
+  using Value = int;
+  using Monom = ::Monom;
+
+  MonomialSetDefaultConfig(int nvars) : mNumVars(nvars) {}
+  
+  std::size_t hash(const Key& e) const
+  {
+    std::cout << "hash" << std::endl;
+    std::size_t result = 0;
+    for (int i=0; i<mNumVars; i++)
+      result = 17*result + e[i];
+    return result;
+  }
+
+  bool keysEqual(const Key& e1, const Key& e2) const
+  {
+    std::cout << "equal" << std::endl;
+    for (int i=0; i<mNumVars; ++i)
+      if (e1[i] != e2[i]) return false;
+    return true;
+  }
+
+  const Value notFoundValue = -1;
+  
+  std::size_t operator() (const Key& e) const { return hash(e); }
+  bool operator() (const Key& e1, const Key& e2) const { return keysEqual(e1,e2); }
+private:
+  int mNumVars;
+};
+
+using NCMonomialSet = MonomialSet<MonomialSetDefaultConfig>;
+
+
+#if 0
 Matrix * /* or null */ NCMonomials(Matrix* M)
 {
   return nullptr;
@@ -1519,13 +1566,114 @@ Matrix* /* or null */ NCCoefficients(Matrix* M, Matrix* monoms)
   return nullptr;
 }
 
-#if 0
 std::pair<Matrix*, Matrix*> NCCoefficients(Matrix* M)
 {
   return nullptr;
 }
 #endif
 
+// monomials: Given a matrix M over a PolynomialAlgebra, return a NCMonomialSet
+// which is a table consisting of all the (module) monomials in M.
+void NCMonomials(NCMonomialSet& H, const Matrix* M)
+{
+  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
+  assert(Q != nullptr); // should not get here unless 'M' is a matrix over a  PolynomialAlgebra
+  
+  for (int c = 0; c < M->n_cols(); c++)
+    {
+      vec v = M->elem(c);
+      for (; v != nullptr; v = v->next)
+        {
+          int comp = v->comp;
+          auto f = Q->toPoly(v->coeff);
+          for (auto i = f->cbegin(); i != f->cend(); ++i)
+            H.insert(i.monom(), comp);
+        }
+    }
+}
+
+void NCMonomials(ModuleMonomialSet& H, const Matrix* M)
+{
+  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
+  if (Q == nullptr) return; 
+  // should not get here unless 'M' is a matrix over a  PolynomialAlgebra
+  
+  for (int c = 0; c < M->n_cols(); c++)
+    {
+      vec v = M->elem(c);
+      for (; v != nullptr; v = v->next)
+        {
+          int comp = v->comp;
+          auto f = Q->toPoly(v->coeff);
+          for (auto i = f->cbegin(); i != f->cend(); ++i)
+            H.insert(i.monom(), comp);
+        }
+    }
+}
+
+Matrix* NCMonomialMatrix(ModuleMonomialSet& H, const FreeModule* target)
+{
+  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(target->get_ring());
+  if (Q == nullptr)
+    {
+      ERROR("expected NC polynomial algebra");
+      return nullptr;
+    }
+  
+  MatrixConstructor mat(target, 0);
+  for (auto i = H.begin(); i != H.end(); ++i)
+    {
+      ModuleMonom& m = ModuleMonom(*i);
+      auto x = H.configuration().moduleMonomComponent(m);
+      ring_elem rf = Q->fromModuleMonom(m); // TODO
+      mat.append(Q->make_vec(x, rf));
+    }
+
+  // Finally, we sort them
+  Matrix *result = mat.to_matrix();
+
+  M2_arrayint perm = result->sort(0, -1);
+  return result->sub_matrix(perm);
+}
+
+Matrix* NCCoefficientMatrix(ModuleMonomialSet& H, Matrix* M)
+{
+  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
+  if (Q == nullptr)
+    {
+      ERROR("expected NC polynomial algebra");
+      return nullptr;
+    }
+
+  // TODO
+}
+
+std::pair<Matrix*, Matrix*> NCCoefficientMatrix(Matrix* M)
+{
+  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(target->get_ring());
+  if (Q == nullptr)
+    {
+      ERROR("expected NC polynomial algebra");
+      return nullptr;
+    }
+
+  ModuleMonomialSet H(ModuleMonomDefaultConfig(Q->n_vars()));
+  NCMonomials(H, M);
+  
+  // now loop through all columns in M, monomials in column:
+  //   find index.
+  //   create coeff
+  // return matrix constructed.
+  return {nullptr, nullptr};
+}
+
+// Method to compute monomials for NC polynomial algebra case.
+//  NCMonomials(M:Matrix) --> HashTable, or a set.
+//  NCMonomialSet --> std::vector of monomials, sorted, with values stored in NCMonomialSet.
+//  monomials(NCMonomialSet) --> Matrix
+//  coeffs(NCMonomialSet, Matrix) --> Matrix of coeffs
+//  
+// 
 Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
 // Returns a one row matrix of all of the monomials in the variable subset
 // 'vars'
@@ -1535,8 +1683,28 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == nullptr)
     {
-      ERROR("expected a matrix over a polynomial ring");
+      const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(get_ring());
+      if (Q == nullptr)
+        {
+          ERROR("expected polynomial ring");
+          return nullptr;
+        }
+      ModuleMonomialSet monom_set {ModuleMonomDefaultConfig(Q->n_vars())};
+      NCMonomials(monom_set, this);
+      PRINT_ELEMENTS(monom_set.set(), "hashtable: ");
+      PRINT_ELEMENTS(monom_set.uniqueMonoms(), "monoms: ");
+      printHashTableState(monom_set.set());
+      monom_set.display(std::cout);
+      ERROR("not implemented yet");
+      //      NCMonomialSet H(Q->n_vars());
+      //      NCMonomials(H, this);
+      //      MonomialAreaTest montest;
+      //      size_t sz = montest.test1();
+      //      std::cout << "sz = " << sz << std::endl;
       return nullptr;
+      
+      //      ERROR("expected a matrix over a polynomial ring");
+      //      return nullptr;
     }
   const Monoid *M = P->getMonoid();
   const Ring *K = P->getCoefficients();
@@ -1677,7 +1845,15 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == nullptr)
     {
-      ERROR("expected polynomial ring");
+      const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(get_ring());
+      if (Q == nullptr)
+        {
+          ERROR("expected polynomial ring");
+          return nullptr;
+        }
+      MonomialAreaTest montest;
+      size_t sz = montest.test1();
+      std::cout << "sz = " << sz << std::endl;
       return nullptr;
     }
   int nvars = P->n_vars();

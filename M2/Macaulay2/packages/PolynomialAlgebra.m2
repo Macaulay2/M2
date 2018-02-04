@@ -338,6 +338,7 @@ TEST ///
 ///
 
 TEST ///
+  needsPackage "PolynomialAlgebra"
   R = QQ{a,b,c,d}
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
@@ -488,7 +489,7 @@ TEST ///
   assert(G b == s)
   assert(G 3 == 3)
   F s
-  assert(F (s*t) == d*c*b*c) -- Do we want t allow this? F is not well-defined
+  assert(F (s*t) == d*c*b*c) -- Do we want to allow this? F is not well-defined. kind of a BUG!!
           
   F1 = map(R,R,{c,b,d})
   F1 (b*c*d + b*b*d*c*d*b)
@@ -527,6 +528,38 @@ TEST ///
   assert(lift(a_C, A) == a_A)
   assert(try (lift(a_C, kk); false) else true)
 ///
+
+TEST ///
+  RingMap @@ RingMap := (f,g) -> (
+      if target g =!= source f then error "Expected composable maps.";
+      map(target f, source g, apply(gens source g, x -> f g x))
+      )
+
+
+
+  R = QQ{b,c,d}
+  F1 = map(R,R,{c,b,d})
+  F2 = map(R,R,{c+b,c,d})  
+  F3 = map(R,R,{b*d-1, c*c-c, b-d})
+  G = F1 @@ F2
+  G2 = F2 @@ F3
+  use R  
+
+  
+  F1 (b*c*d + b*b*d*c*d*b)  
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{a,b,c,d}
+  M = matrix{{a*b*c-2*a*a*b*a}}
+  monomials M
+  coefficients M
+///
+
 end--
 
 -- The following is the directory of my M2 build.
