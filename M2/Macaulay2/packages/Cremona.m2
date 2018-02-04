@@ -1011,7 +1011,7 @@ mapsInt (MutableHashTable) := (Phi) -> (
             ) else (
                  setKeyValue(Phi,"maps",maps Phi#"map");
                  try apply(Phi#"maps",F -> checkMultihomogeneousRationalMap F) else error "internal error encountered";
-                 setKeyValue(Phi,"map",first Phi#"maps");
+                 if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
             );
    );
    Phi#"maps"
