@@ -932,7 +932,7 @@ compose (RingMap,RingMap) := (phi,psi) -> (
    if source phi =!= target psi then error "rational maps not composable: incompatible target and source";
    linSys := flatten entries toMatrix (phi*psi);
    fixComp := try gcd linSys else 1_(target phi);
-   eta := if (max flatten degrees ideal linSys > first degree fixComp) then (
+   eta := if (max degrees ideal linSys > degree fixComp) then (
               qr := apply(linSys,g -> quotientRemainder(g,fixComp)); 
               if # select(qr,g -> last g != 0) > 0 then error "internal error encountered";
               map(target phi,source psi,apply(qr,first))
