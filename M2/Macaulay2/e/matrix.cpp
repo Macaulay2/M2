@@ -1511,67 +1511,6 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // PolynomialAlgebra coeff, monoms commands //
 //////////////////////////////////////////////
 
-// Configuration class for the monomial table
-class MonomialSetDefaultConfig
-{
-public:
-  using Key = int*; // [length, comp, degree, v1, v2, ..., vr]
-  using Value = int;
-  using Monom = ::Monom;
-
-  MonomialSetDefaultConfig(int nvars) : mNumVars(nvars) {}
-  
-  std::size_t hash(const Key& e) const
-  {
-    std::cout << "hash" << std::endl;
-    std::size_t result = 0;
-    for (int i=0; i<mNumVars; i++)
-      result = 17*result + e[i];
-    return result;
-  }
-
-  bool keysEqual(const Key& e1, const Key& e2) const
-  {
-    std::cout << "equal" << std::endl;
-    for (int i=0; i<mNumVars; ++i)
-      if (e1[i] != e2[i]) return false;
-    return true;
-  }
-
-  const Value notFoundValue = -1;
-  
-  std::size_t operator() (const Key& e) const { return hash(e); }
-  bool operator() (const Key& e1, const Key& e2) const { return keysEqual(e1,e2); }
-private:
-  int mNumVars;
-};
-
-//using NCMonomialSet = MonomialSet<MonomialSetDefaultConfig>;
-
-
-#if 0
-Matrix * /* or null */ NCMonomials(Matrix* M)
-{
-  return nullptr;
-
-  // make a hash table for monomials
-  // loop through all elements of the matrix, all terms, and insert the monomials into the hash table (with their column number as key).
-  // create a matrix constructor.
-  // loop through all monomials, create a monomial, insert into the matrix constructor.
-  // return resulting matrix.
-}
-
-Matrix* /* or null */ NCCoefficients(Matrix* M, Matrix* monoms)
-{
-  return nullptr;
-}
-
-std::pair<Matrix*, Matrix*> NCCoefficients(Matrix* M)
-{
-  return nullptr;
-}
-#endif
-
 // NCMonomials: adds the monomials of 'M' to the hash table 'H'.
 void NCMonomials(ModuleMonomialSet& H, const Matrix* M)
 {
@@ -1652,6 +1591,7 @@ Matrix* NCCoefficientMatrix(ModuleMonomialSet& H, const Matrix* M)
   return mat.to_matrix();
 }
 
+// TODO: not done yet!!  Although, it is not yet called either.
 std::pair<Matrix*, Matrix*> NCCoefficientMatrix(const Matrix* M)
 {
   const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
@@ -1663,7 +1603,6 @@ std::pair<Matrix*, Matrix*> NCCoefficientMatrix(const Matrix* M)
 
   ModuleMonomialSet H(ModuleMonomDefaultConfig(Q->n_vars()));
   NCMonomials(H, M);
-  // TODO
   
   // now loop through all columns in M, monomials in column:
   //   find index.

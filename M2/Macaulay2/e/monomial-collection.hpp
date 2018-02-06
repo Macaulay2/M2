@@ -1,5 +1,19 @@
 // Copyright 2018  Michael E. Stillman
 
+// TODO Feb 2018:
+//   rename IntsSet (to e.g. ModuleMonomSet, making it not a template
+//   sort() function: should match Matrix sort.
+//   try to have a function return a ModuleMonomSet.
+//   Monom, ModuleMonom:
+//    try to remove operator[], etc, so the type is pretty much opaque.
+//    add in another type: VarPowerMonom (or call it SparseMonom, SparseModuleMonom)
+//   use these other types from PolynomialAlgebra, commutative version.
+//   improve the hash function.
+//   remove dead code, e.g. starting at #if 0 below.
+//   use this code for coefficients, monomials, even in the commutative variant.
+//   get PolynomialAlgebra.m2 so 'make check' works in a reasonable amount of time.
+//   add in leadCoeff, leadMonomial, leadTerm.  What other poly routines need to be added for PolynomialAlgebra?
+
 #ifndef _monomial_collection_hpp_
 #define _monomial_collection_hpp_
 
