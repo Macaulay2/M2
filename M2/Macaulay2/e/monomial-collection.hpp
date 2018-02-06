@@ -88,63 +88,27 @@ public:
   ModuleMonomDefaultConfig(int nvars) : mNumVars(nvars) {}
   ModuleMonomDefaultConfig(const ModuleMonomDefaultConfig& C) : mNumVars(C.mNumVars) {}
 
-  // ModuleMonom:
-  // m[0]:
-  // m[1]; hash value
-  // m[2]: comnponent
-  // m[3..] monomial itself.
-  std::size_t computeHashValue(const ModuleMonom& m) const
-  {
-    std::cout << "compute hash" << std::endl;
-    std::size_t result = 0;
-    for (int i=2; i<3+m[3]; i++)
-      result = 17*result + m[i];
-    return result;
-  }
-
   std::size_t hash(const ModuleMonom& m) const
   {
-    if (m[1] == 0)
-      m[1] = computeHashValue(m);
-    return m[1];
+    return m.hash();
   }
 
   bool keysEqual(const ModuleMonom& e1, const ModuleMonom& e2) const
   {
-    std::cout << "equal" << std::endl;
-    int top = 3 + e1[3];
-    for (int i=1; i < top; ++i)
+    if (e1[0] != e2[0]) return false;
+    for (int i=2; i < e1[0]; ++i)
       if (e1[i] != e2[i]) return false;
     return true;
   }
 
-  // result must be preallocated with m.size() + 3 ints.
-  void copyToModuleMonom(const Monom& m, int comp, ModuleMonom result)
-  {
-    result[0] = 0;
-    result[2] = comp;
-    std::copy(m.begin(), m.end(), result+3);
-    result[1] = computeHashValue(result); // ignores 0,1 locations.
-  }
-
-  int sizeOfCorrespondingModuleMonom(const Monom& m) const
-  {
-    return m.size() + 3;
-  }
-
-  void setIndex(ModuleMonom& m, int idx) const
-  {
-    m[0] = idx;
-  }
-  
   std::size_t operator() (const ModuleMonom& e) const { return hash(e); }
 
   bool operator() (const ModuleMonom& e1, const ModuleMonom& e2) const { return keysEqual(e1,e2); }
 
   void display(std::ostream& o, const ModuleMonom& m) const
   {
-    o << "val=" << m[0] << " [";
-    for (int i=3; i<3+m[3]; ++i)
+    o << "val=" << m[1] << " [";
+    for (int i=3; i<3+m[0]; ++i)
       o << m[i] << " ";
     o << "comp=" << m[2] << std::endl;
   }
@@ -164,7 +128,6 @@ class IntsSet
 {
 public:
   using Conf = Configuration;
-  using ModuleMonom = typename Conf::ModuleMonom;
   using Set = std::unordered_set<ModuleMonom, Conf, Conf>;
 
   IntsSet(Conf C) : mConf(C), mHash(100, C, C) {}
@@ -172,35 +135,40 @@ public:
   Configuration configuration() const { return mConf; }
   const Set& set() const { return mHash; }
   const std::vector<ModuleMonom>& uniqueMonoms() const { return mElements; }
+  std::size_t size() const { return mElements.size(); }
   
   // insert (m,comp) into the set. Returns true if it is inserted, i.e. it isn't already in the set.
   bool insert(Monom m, int comp)
   {
-    size_t sz = mConf.sizeOfCorrespondingModuleMonom(m);
+    size_t sz = ModuleMonom::sizeOfCorrespondingModuleMonom(m);
     std::pair<int*, int*> mon { mArena.allocArrayNoCon<int>(sz) };
-    mConf.copyToModuleMonom(m, comp, mon.first);
-    auto result = mHash.insert(mon.first);
+    ModuleMonom a = monomToModuleMonom(m, comp, mon);
+    auto result = mHash.insert(a);
     bool new_elem = result.second;
     if (new_elem)
       {
-        mConf.setIndex(mon.first, mElements.size());
-        mElements.push_back(mon.first);
+        a.setIndex(mElements.size());
+        mElements.push_back(a);
       }
     else
       {
-        mArena.freeTop(mon.first);
+        mArena.freeTop(a + 0);
       }
     return new_elem;
   }
 
-  std::pair<bool,int> find(Monom m, int comp)
+  // if (m,comp) is found (and is a monomial with index idx), return {idx, true}
+  // if it is not found, return {-1, false}
+  std::pair<int,bool> find(Monom m, int comp)
   {
-    // 1. allocate space for module monomial
-    // 2. copy monomial,comp over to this
-    // 3. call mHash routine
-    // 4. if found, return (true,ptr found).
-    //    if not: return (false,...)
-    // in either case, before returning, pop arena stack.
+    size_t sz = ModuleMonom::sizeOfCorrespondingModuleMonom(m);
+    std::pair<int*, int*> mon { mArena.allocArrayNoCon<int>(sz) };
+    ModuleMonom a = monomToModuleMonom(m, comp, mon);
+    auto result = mHash.find(a); // returns iterator pointing to value, or mHash.end()
+    bool found = (result != mHash.end());
+    int idx = (found ? result->index() : -1);
+    mArena.freeTop(mon.first);
+    return {idx, found};
   }
 
   // Resorts the monomials, changing their indices
@@ -208,11 +176,8 @@ public:
 
   void display(std::ostream& o) const
   {
-    for (auto i=begin(); i != end(); ++i)
-      {
-        o << "    ";
-        mConf.display(o, *i);
-      }
+    for (auto& m : mElements)
+      o << "    " << m << std::endl;
   }
   
   // hash table
@@ -250,6 +215,7 @@ public:
 };
 
 using ModuleMonomialSet = IntsSet<ModuleMonomDefaultConfig>;
+
 
 #if 0
 

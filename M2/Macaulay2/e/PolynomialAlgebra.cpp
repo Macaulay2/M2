@@ -858,6 +858,20 @@ bool PolynomialAlgebra::multi_degree(const ring_elem f, int *d) const
   return false;
 }
 
+void PolynomialAlgebra::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
+{
+  int comp_unused;
+  f.getCoeffInserter().push_back(getCoefficientRing()->from_long(1));
+  appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
+}
+  
+ring_elem PolynomialAlgebra::fromModuleMonom(const ModuleMonom& m) const
+{
+  auto result = new Poly;
+  appendFromModuleMonom(*result, m);
+  return fromPoly(result);
+}
+
 // XXX
 class NCPolyHeap
 {

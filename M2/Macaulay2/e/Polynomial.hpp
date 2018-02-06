@@ -8,7 +8,7 @@ class buffer;
 class Ring;
 
 #include "ring.hpp"
-
+#include <iostream>
 class PolynomialAlgebra;
 
 struct Monom
@@ -35,16 +35,20 @@ private:
   const int* mValue; // We are visiting this monomial, we do not own it!
 };
 
-struct ModuleMonom
+class ModuleMonom
 // Format for such a monomial:
 // [len value hashval comp deg v1 v2 ... vr]
 // where [len-3 deg v1 v2 ... vr] is a Monom.
 {
-  ModuleMonom(int* value) : mValue(value) {}
+  
+public:
+  ModuleMonom(int* begin) : mValue(begin) {}
 
   //  const int* operator*() const { return mValue; }
   const int* operator+(int i) const { return mValue+i; }
   int operator[](int i) const { return mValue[i]; }
+  int* operator+(int i) { return mValue+i; }
+  int& operator[](int i)  { return mValue[i]; }
 
   int size() const { return *mValue; }
   
@@ -53,23 +57,60 @@ struct ModuleMonom
   int* begin() { return mValue; }
   int* end() { return mValue + *mValue; }
 
+  int component() const { return mValue[3]; }
+  
+  static int sizeOfCorrespondingModuleMonom(const Monom& m)
+  {
+    return m.size() + 3;
+  }
+
+  void setIndex(int idx)
+  {
+    mValue[1] = idx;
+  }
+
+  int index() const { return mValue[1]; }
+  
+  std::size_t hash() const
+  {
+    if (mValue[2] == 0) setHashValue();
+    return mValue[2];
+  }
+private:
+  void setHashValue() const
+  {
+    int result = 0;
+    int* end = mValue + *mValue;
+    for (auto i = mValue+3; i < end; ++i)
+      result = 17*result + *i;
+    const_cast<int*>(mValue)[2] = result;
+  }
 private:
   int* mValue; // We are visiting this monomial, we do not own it!
 };
 
-// result: must be allocated in [begin,end). which must have size a.size() + 3.
+std::ostream& operator<<(std::ostream& o, const ModuleMonom& m);
 
-inline ModuleMonom monomToModuleMonom(const Monom& a, int comp, int* begin, int* end)
+inline ModuleMonom monomToModuleMonom(const Monom& a, int comp, std::pair<int*, int*> allocated_result)
 {
-  assert(end-begin >= a.size() + 3);
-  begin[0] = a.size() + 3;
-  begin[1] = 0; // value
+  assert(allocated_result.second-allocated_result.first >= ModuleMonom::sizeOfCorrespondingModuleMonom(a));
+  auto begin = allocated_result.first;
+  begin[0] = ModuleMonom::sizeOfCorrespondingModuleMonom(a);
+  begin[1] = 0; // index
   begin[2] = 0; // hashval
   begin[3] = comp;
   std::copy(a.begin()+1, a.end(), begin+4);
   return ModuleMonom(begin);
 }
-  
+
+template<typename T>
+void appendModuleMonomToMonom(const ModuleMonom& a, int& comp, T& inserter)
+{
+  inserter.push_back(a.size()-3);
+  for (int i=4; i<a.size(); ++i)
+    inserter.push_back(a[i]);
+}
+
 /**
  * \ingroup polynomialrings
  */

@@ -556,8 +556,40 @@ TEST ///
 *-
   R = QQ{a,b,c,d}
   M = matrix{{a*b*c-2*a*a*b*a}}
+  assert(monomials M == matrix{{a^2*b*a, a*b*c}})
+  coefficients M
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  A = QQ[a..d]
+  M = matrix{{a,b},{c,d}}
+  monomials(M*M*M)
+  R = QQ{a,b,c,d}
+  M = matrix{{a*b+b*a, a*b+c*d, a*a+b*a}}
   monomials M
   coefficients M
+
+  M = matrix{{a,b},{b,d}}
+  M3 = M*M*M
+  M6 = M3 | M3
+  assert(monomials M6 == monomials M3)
+  mons = monomials M6
+  (mon,cf) = coefficients M6
+  assert(mon*cf == M6)
+  assert(mons == monomials mons)
+
+  M = matrix{{a,b},{b,3*d-1}}
+  M3 = M*M*M
+  M6 = M3 | M3
+  assert(monomials M6 == monomials M3)
+  mons = monomials M6
+  (mon,cf) = coefficients M6
+  assert(mon*cf == M6)
+  assert(mons == monomials mons)
 ///
 
 end--

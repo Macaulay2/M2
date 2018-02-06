@@ -155,6 +155,10 @@ public:
 
   ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }
 
+  void appendFromModuleMonom(Poly& f, const ModuleMonom& m) const;
+  
+  ring_elem fromModuleMonom(const ModuleMonom& m) const;
+  
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;
