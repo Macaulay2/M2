@@ -76,6 +76,30 @@ public:
     if (mValue[2] == 0) setHashValue();
     return mValue[2];
   }
+
+  static int compare(const ModuleMonom& m1, const ModuleMonom& m2)
+  {
+    if (m1[2] > m2[2]) return GT;
+    if (m1[2] < m2[2]) return LT;
+    if (m1[3] > m2[3]) return GT;
+    if (m1[3] < m2[3]) return LT;
+    // at this stage, they have the same degree, so use lex order
+    for (int j = 4; j < m1[0]; j++)
+      {
+        if (m1[j] > m2[j]) return LT;
+        if (m1[j] < m2[j]) return GT;
+      }
+    // if we are here, the monomials are the same.
+    return EQ;
+  }
+
+  bool operator==(const ModuleMonom &rhs) const
+  {
+    if (mValue[0] != rhs[0]) return false;
+    for (int i=2; i < mValue[0]; ++i)
+      if (mValue[i] != rhs[i]) return false;
+    return true;
+  }
 private:
   void setHashValue() const
   {

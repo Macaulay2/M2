@@ -13,6 +13,8 @@
 //   use this code for coefficients, monomials, even in the commutative variant.
 //   get PolynomialAlgebra.m2 so 'make check' works in a reasonable amount of time.
 //   add in leadCoeff, leadMonomial, leadTerm.  What other poly routines need to be added for PolynomialAlgebra?
+//   consider looking at: https://github.com/skarupke/flat_hash_map
+//     it is under boost license, it might be (not sure) well-written.
 
 #ifndef _monomial_collection_hpp_
 #define _monomial_collection_hpp_
@@ -21,7 +23,6 @@
 #include "PolynomialAlgebra.hpp"
 
 #include <unordered_set>
-#include <unordered_map>
 #include <iomanip>
 #include <iostream>
 #include <utility>
@@ -94,13 +95,38 @@ void printHashTableState(const T& cont)
 // stores elements of type T*: points to a contiguous list of integers, first one is the length.
 // these are removed, when the hash table is removed.  Hash value is also stored.
 
-class ModuleMonomDefaultConfig
+class ModuleMonomLessThan
+{
+public:
+  bool operator()(const ModuleMonom& a, const ModuleMonom& b) const
+  {
+    auto cmp = ModuleMonom::compare(a,b);
+    return cmp <= EQ;
+  }
+};
+class ModuleMonomHash
+{
+public:
+  std::size_t operator()(const ModuleMonom& m) const
+  {
+    return m.hash();
+  }
+};
+class ModuleMonomEq
+{
+public:
+  bool operator() (const ModuleMonom& a, const ModuleMonom& b) const
+  {
+    return a == b;
+  }
+};
+class ModuleMonomDefaultConfigOrig
 {
 public:
   using ElementType = ModuleMonom;
 
-  ModuleMonomDefaultConfig(int nvars) : mNumVars(nvars) {}
-  ModuleMonomDefaultConfig(const ModuleMonomDefaultConfig& C) : mNumVars(C.mNumVars) {}
+  ModuleMonomDefaultConfigOrig(int nvars) : mNumVars(nvars) {}
+  ModuleMonomDefaultConfigOrig(const ModuleMonomDefaultConfigOrig& C) : mNumVars(C.mNumVars) {}
 
   std::size_t hash(const ModuleMonom& m) const
   {
@@ -130,6 +156,44 @@ private:
   int mNumVars;
 };
 
+class ModuleMonomDefaultConfig
+{
+public:
+  ModuleMonomEq Eq;
+  ModuleMonomHash Hash;
+
+  ModuleMonomDefaultConfig(int nvars) : mNumVars(nvars) {}
+  ModuleMonomDefaultConfig(const ModuleMonomDefaultConfig& C) : mNumVars(C.mNumVars) {}
+#if 0  
+
+  std::size_t hash(const ModuleMonom& m) const
+  {
+    return m.hash();
+  }
+
+  bool keysEqual(const ModuleMonom& e1, const ModuleMonom& e2) const
+  {
+    if (e1[0] != e2[0]) return false;
+    for (int i=2; i < e1[0]; ++i)
+      if (e1[i] != e2[i]) return false;
+    return true;
+  }
+
+  std::size_t operator() (const ModuleMonom& e) const { return hash(e); }
+
+  bool operator() (const ModuleMonom& e1, const ModuleMonom& e2) const { return keysEqual(e1,e2); }
+
+  void display(std::ostream& o, const ModuleMonom& m) const
+  {
+    o << "val=" << m[1] << " [";
+    for (int i=3; i<3+m[0]; ++i)
+      o << m[i] << " ";
+    o << "comp=" << m[2] << std::endl;
+  }
+#endif
+private:
+  int mNumVars;
+};
 
 template<typename Configuration>
 // Configuration must include:
@@ -142,9 +206,10 @@ class IntsSet
 {
 public:
   using Conf = Configuration;
-  using Set = std::unordered_set<ModuleMonom, Conf, Conf>;
+  //using Set = std::unordered_set<ModuleMonom, Conf, Conf>;
+  using Set = std::unordered_set<ModuleMonom, ModuleMonomHash, ModuleMonomEq>;
 
-  IntsSet(Conf C) : mConf(C), mHash(100, C, C) {}
+  IntsSet(Conf C) : mConf(C), mHash(100, C.Hash, C.Eq) {}
 
   Configuration configuration() const { return mConf; }
   const Set& set() const { return mHash; }
@@ -186,12 +251,25 @@ public:
   }
 
   // Resorts the monomials, changing their indices
-  void sort();
+  void sort()
+  {
+    std::sort(mElements.begin(), mElements.end(), ModuleMonomLessThan());
+    for (int i=0; i<mElements.size(); ++i)
+      mElements[i].setIndex(i);
+  }
 
   void display(std::ostream& o) const
   {
+    // TODO: maybe we don't need this function.
     for (auto& m : mElements)
       o << "    " << m << std::endl;
+  }
+
+  void stats(std::ostream& o) const
+  {
+    // TODO:
+    //  display some info about hash table size, collisions.
+    //  display memory usage (TODO: maybe memory usage should be a separate function too).
   }
   
   // hash table
@@ -230,93 +308,6 @@ public:
 
 using ModuleMonomialSet = IntsSet<ModuleMonomDefaultConfig>;
 
-
-#if 0
-
-template<typename Configuration>
-class MonomialSet
-{
-public:
-  using Conf = Configuration;
-  using Monom = typename Conf::Monom;
-  //using Key = typename Conf::Key;
-  //using Value = typename Conf::Value;
-  using Key = int*;
-  using Value = int;
-  using Map = std::unordered_map<Key,
-                                 Value,
-                                 Conf,
-                                 Conf
-                                 >;
-  
-  MonomialSet(Conf C) : mHash(10,C,C) {}
-  //  MonomialSet(MonomialSet&& MS) : mArena(std::move(MS.mArena)), mHash(std::move(MS.mHash)) {}
-
-  size_t size() const { return mHash.size(); }
-
-  std::pair<int*, int*> allocateMonom(size_t max_size, int comp);
-
-  void shrinkLastAllocation(int* new_end);
-
-  // insert: returns the value associated with the given monomial, if it is
-  // already in the structure.  Otherwise 'val' is associated with this monomial, and that is returned.
-  int insert(Monom monomial, int comp)
-  {
-    std::pair<int*, int*> mon { mArena.allocArrayNoCon<int>(monomial.end()-monomial.begin()+1) };
-    mon.first[0] = monomial[0] + 1;
-    mon.first[1] = comp;
-    std::copy(monomial.begin()+1, monomial.end(), mon.first+2);
-    auto result = mHash.insert(std::make_pair<const Key&, Value>(mon.first, static_cast<Value>(mHash.size())));
-    return result.second;
-  }
-
-  std::pair<bool,Value> find(Monom monomial, int comp);
-  
-private:
-  memt::Arena mArena; // memory area for monomials
-  std::unordered_map<int*,int,Conf,Conf> mHash; // will need to put in hash function, compare fcn from Conf.
-
-  // use: mArena.allocArrayNoCon<int>(count) --> std::pair<int*, int*>  (a range of pointers).
-};
-
-class MonomialArea
-{
-public:
-  MonomialArea();
-  ~MonomialArea();
-
-  int* reserve(size_t numInts);
-  void popSomeInts(size_t numInts);
-private:
-  int mLastSize;
-  int* mLastAlloc;
-  memt::Arena mArena;
-};
-
-class MonomialAreaTest
-{
-public:
-  MonomialAreaTest(){}
-
-  size_t test1()
-  {
-    for (int i=1; i<20; i++)
-      {
-        std::pair<int*, int*> mon { mArena.allocArrayNoCon<int>(16) };
-        std::cout << "(" << mon.first << "," << mon.second << ") sz = " << mArena.getMemoryUse() << ", " << mArena.getAllocatedMemoryUse() << std::endl;
-        for (auto j = mon.first; j < mon.second; ++j)
-          *j = 2*i;
-        if (i % 5 == 0)
-          {
-            mArena.freeTop(mon.first + 4);
-          }
-      }
-    return mArena.getMemoryUse();
-  }
-private:
-  memt::Arena mArena;
-};
-#endif
 
 #endif
 
