@@ -1,4 +1,4 @@
-#! /bin/sh -x
+#! /bin/sh -xe
 # This shell script contains the instructions for building Macaulay2 in the file 'INSTALL'.
 # This version of the script does not take care to avoid vector optimizations that may not run on other machines.
 # The result is provided in the build directory "./tmp".
@@ -8,7 +8,6 @@
 
 set -e
 pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null || xcode-select --install
-brew tap homebrew/science
 sleep 1
 brew update
 sleep 1
@@ -25,5 +24,5 @@ cd tmp
 gmake IgnoreExampleErrors=false
 
 # Local Variables:
-# compile-command: "sh -x ./INSTALL.mac "
+# compile-command: "sh -xe ./INSTALL.mac "
 # End:

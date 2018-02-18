@@ -181,7 +181,6 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-	brew tap homebrew/science
 	brew update
 	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget
 	brew install --build-bottle bdw-gc libatomic_ops gdbm cddlib glpk yasm make
