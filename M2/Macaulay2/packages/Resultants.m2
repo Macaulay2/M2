@@ -2,7 +2,7 @@
 newPackage(
        "Resultants",
 	Version => "1.2", 
-    	Date => "January 26, 2018",
+    	Date => "February 4, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     	Headline => "Resultants, discriminants, and Chow forms"
 )
@@ -316,8 +316,8 @@ Grass (ZZ,ZZ) := o -> (k,n) -> Grass(k,n,QQ,Variable=>o.Variable);
 
 Grass (Ring) := o -> (R) -> ( -- undocumented
    try (k,n,KK,p) := detectGrassmannian R else error "unable to detect Grassmannian ring";
-   << "-- Grassmannian of "|toString(k)|"-dimensional linear subspaces of PP^"|toString(n)|" over "|toString(KK) << endl;
-   (k,n)
+   -- << "-- Grassmannian of "|toString(k)|"-dimensional linear subspaces of PP^"|toString(n)|" over "|toString(KK) << endl;
+   (k,n,KK,Variable=>p)
 );
 
 SS := local SS;
@@ -785,7 +785,7 @@ document {
     Headline => "affine resultant", 
     Usage => "affineResultant f", 
     Inputs => { "f" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," polynomials ", TEX///$f_0,\ldots,f_n$///," in ", TEX///$n$///," variables (or a ", TO List," to be interpreted as such a matrix)"}}, 
-    Outputs => {{"the resultant of the homogenized of ",TEX///$f_0,\ldots,f_n$///," with respect to a new variable"}}, 
+    Outputs => {{"the resultant of the polynomials obtained by homogenizing ",TEX///$f_0,\ldots,f_n$///," with respect to a new variable"}}, 
     EXAMPLE { 
     "ZZ[t,u][y,z]",
     "f = {3*t*y*z-u*z^2+1, -y+t+3*u-1, u*z^4-t*y^3+t*y*z}",
@@ -798,7 +798,7 @@ document {
     Headline => "affine discriminant", 
     Usage => "affineDiscriminant f", 
     Inputs => { "f" => RingElement => {"a polynomial"}}, 
-    Outputs => {{"the discriminant of the homogenized of ",TT "f"," with respect to a new variable"}}, 
+    Outputs => {{"the discriminant of the polynomial obtained by homogenizing ",TT "f"," with respect to a new variable"}}, 
     EXAMPLE { 
     "ZZ[a,b,c][x]; f = a*x^2+b*x+c",
     "affineDiscriminant f",
