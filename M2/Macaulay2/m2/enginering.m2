@@ -627,7 +627,7 @@ frac0 = (f,g) -> f/g
 Number / RingElement := frac0 @@ promoteleftexact
 RingElement / Number := frac0 @@ promoterightexact
 InexactNumber / RingElement := frac0 @@ promoteleftinexact
-RingElement / InexactNumber := RingElement / Number := (f,g) -> (1/g) * f
+RingElement / InexactNumber := (f,g) -> (1/g) * f
 RingElement / RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
