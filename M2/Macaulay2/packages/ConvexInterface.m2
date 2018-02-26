@@ -3,7 +3,7 @@ newPackage(
     	Version =>"0.33", 
     	Date =>"December 1, 2010",
     	Authors =>{{Name =>"Janko Boehm", 
-		  Email =>"boehm@math.uni-sb.de", 
+		  Email =>"boehm@mathematik.uni-kl.de", 
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline =>"Interface to Convex",
