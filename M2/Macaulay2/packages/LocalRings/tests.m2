@@ -11,7 +11,7 @@ TEST /// -- test for localRing, res, **, ==
   CJ = res J
   CP = CJ++CJ[-10]
   DJ = CI ** RP
-  DP = pruneComplex(DJ++DJ[-10], PruningMaps=>true)
+  DP = pruneComplex(DJ++DJ[-10], PruningMap=>true)
   f = DP.cache.pruningMap
   assert(DP.dd^2 == 0)
   assert(DP == CP)
@@ -542,7 +542,7 @@ end--
   C = res J
   C1 = pruneComplex C
   C2 = C1 ** RP
-  elapsedTime pruneComplex(C2, UnitTest => isScalar) -- very slow
+  elapsedTime pruneComplex(C2, UnitTest => isScalar, PruningMap => false) -- very slow
 
   IP = ideal(gens I ** RP)
 --  IP = liftUp IP -- uncomment this line to compare speed with the nonlocal case
@@ -561,8 +561,8 @@ end--
   I = ideal jacobian matrix{{F}}
   C = res I
   RP = localRing(R, ideal gens R)
-  elapsedTime C1 = pruneComplex C
-  elapsedTime C2 = pruneComplex(C ** RP) -- how long does this even take?
+  elapsedTime C1 = pruneComplex(C, PruningMap => false)
+  elapsedTime C2 = pruneComplex(C ** RP, PruningMap => false) -- how long does this even take?
   --
   Rloc = (ZZ/32003){a,b,c,d}
   Iloc = sub(I, Rloc)
@@ -577,7 +577,7 @@ end--
 --  path = prepend("~/src/m2/M2-local-rings/M2/Macaulay2/packages/", path) -- Mike
 restart
 needsPackage "LocalRings"
-elapsedTime check LocalRings -- 17 seconds
+elapsedTime check LocalRings -- 15.5 seconds
 
 restart
 uninstallPackage "LocalRings"

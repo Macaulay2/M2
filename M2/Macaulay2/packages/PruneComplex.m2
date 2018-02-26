@@ -41,12 +41,11 @@ export {
 --    "testM2",
 --    "testEngine",
 --  Options:
-    "Direction", "PruningMaps", "UnitTest"
+    "Direction", "PruningMap", "UnitTest"
     }
 
 << "--------------------------------------------------------------------------------------" << endl;
-<< "-- The PruneComplex package is experimental: if the input is not a free resolution, --" << endl;
-<< "-- the map degrees of the resulting chain complex may not be correct,               --" << endl;
+<< "-- The PruneComplex package is experimental.                                        --" << endl;
 << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 << "--------------------------------------------------------------------------------------" << endl;
 
@@ -187,7 +186,7 @@ deleteColumns = (M, cfirst, clast) -> ( rawDeleteColumns(raw M, cfirst, clast); 
 -- Then reduces mComplex#n using the unit in the last row and column
 -- Input: a list of mutable matrices mComplex followed by an iterator n
 -- Output: a list of mutable matrices mComplex of smaller size
-pruneUnit = method(Options => {PruningMaps => false, UnitTest => isUnit})
+pruneUnit = method(Options => {PruningMap => true, UnitTest => isUnit})
 pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph) -> (
     if debugLevel >= 3 then
       <<"   Removing a unit from differential #"<<n<<endl;
@@ -195,7 +194,7 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
     (r,c) := unit;
     R := ring mComplex#n;
     -- Initialize pruning maps if needed
-    if opts.PruningMaps =!= false then (
+    if opts.PruningMap =!= false then (
         if pruningMorph#n     === null then pruningMorph#n     = mutableIdentity(R, numRows mComplex#n);
         if pruningMorph#(n+1) === null then pruningMorph#(n+1) = mutableIdentity(R, numColumns mComplex#n);
         );
@@ -204,14 +203,14 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
     rowSwap(mComplex#n, r, r2);
     if 0 < n then
       columnSwap(mComplex#(n-1), r, r2);
-    if opts.PruningMaps =!= false then
+    if opts.PruningMap =!= false then
       columnSwap(pruningMorph#n, r, r2);
     -- Move to last column
     c2 := numColumns mComplex#n - 1;
     columnSwap(mComplex#n, c, c2);
     if n < #mComplex - 1 then
       rowSwap(mComplex#(n+1), c, c2);
-    if opts.PruningMaps =!= false then
+    if opts.PruningMap =!= false then
       columnSwap(pruningMorph#(n+1), c, c2);
     -- Get the pivot
     inversePivot := if instance(R, LocalRing) then (mComplex#n_(r2, c2))^-1 else (leadCoefficient mComplex#n_(r2, c2))^-1;
@@ -221,7 +220,7 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
         rowAdd(mComplex#n, r, -f * inversePivot, r2);
         if 0 < n then
             columnAdd(mComplex#(n-1), r2, f * inversePivot, r);
-        if opts.PruningMaps =!= false then
+        if opts.PruningMap =!= false then
             columnAdd(pruningMorph#n, r2, f * inversePivot, r);
         );
     -- Clear the row
@@ -230,20 +229,20 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
         columnAdd(mComplex#n, c, -f * inversePivot, c2);
         if n < #mComplex - 1 then
             rowAdd(mComplex#(n+1), c2, f * inversePivot, c);
-        if opts.PruningMaps =!= false then
+        if opts.PruningMap =!= false then
             columnAdd(pruningMorph#(n+1), c, -f * inversePivot, c2);
         );
     -- delete rows/columns
     deleteColumns(mComplex#n, c2, c2);
     if n < #mComplex-1 then
        deleteRows(mComplex#(n+1), c2, c2);
-    if opts.PruningMaps =!= false then
+    if opts.PruningMap =!= false then
         deleteColumns(pruningMorph#(n+1), c2, c2);
 
     deleteRows(mComplex#n, r2, r2);
     if 0 < n then
         deleteColumns(mComplex#(n-1), r2, r2);
-    if opts.PruningMaps =!= false then
+    if opts.PruningMap =!= false then
         deleteColumns(pruningMorph#n, r2, r2);
 
     mComplex
@@ -252,16 +251,16 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
 -- Prunes a single differential by reducing the units in a while loop, starting with the ones in
 -- sparcest row/column. Uses pruneUnit.
 -- TODO: handle the case of twisted complexes and free modules with degrees (both are OK in the engine)
-pruneDiff = method(Options => {PruningMaps => false, UnitTest => isUnit})
+pruneDiff = method(Options => {PruningMap => true, UnitTest => isUnit})
 pruneDiff(ChainComplex, ZZ) := opts -> (C, n) -> (
-    if opts.PruningMaps === true then (
+    if opts.PruningMap === true then (
         (D, pruningMorph) := pruneDiff(toMutableComplex C, n, opts);
         return (toChainComplex D, pruningMorph);
         );
     toChainComplex pruneDiff(toMutableComplex C, n, opts)
     )
 pruneDiff(ChainComplex, ZZ, List) := opts -> (C, n, M) -> (
-    if opts.PruningMaps === true then (
+    if opts.PruningMap === true then (
         (D, pruningMorph) := pruneDiff(toMutableComplex C, n, M, opts);
         return (toChainComplex D, pruningMorph);
         );
@@ -269,7 +268,7 @@ pruneDiff(ChainComplex, ZZ, List) := opts -> (C, n, M) -> (
     )
 pruneDiff(List, ZZ)         := opts -> (mComplex, n) -> (
     pruningMorph := new MutableList;
-    if opts.PruningMaps === true then (
+    if opts.PruningMap === true then (
         for i from 0 to #mComplex - 1 do pruningMorph#i = mutableIdentity(ring mComplex#0, numRows mComplex#i);
         pruningMorph#(#mComplex) = mutableIdentity(ring mComplex#0, numColumns mComplex#(#mComplex - 1));
         );
@@ -286,7 +285,7 @@ pruneDiff(List, ZZ, List)         := opts -> (mComplex, n, pruningMorph) -> (
         ) do pruneUnit(mComplex, n, first unit, pruningMorph, opts);
     if debugLevel >= 2 then
       << "\tDifferential reduced to => " << (numRows M, numColumns M) << endl;
-    if opts.PruningMaps === true then return (mComplex, pruningMorph);
+    if opts.PruningMap === true then return (mComplex, pruningMorph);
     mComplex
     )
 
@@ -297,7 +296,7 @@ pruneComplex = method(
     Options => {
         Strategy => Engine, -- set to null to use the methods above
         Direction => "left",
-        PruningMaps => false,
+        PruningMap => true, -- TODO: grading may be incorrect if this is set to false
         UnitTest => isUnit -- TODO: detect when all units are scalars and choose that
         })
 pruneComplex ChainComplex      := opts ->  C          -> pruneComplex(C, -1, opts)
@@ -305,12 +304,12 @@ pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> (
     m := min C;
     mComplex := toMutableComplex C;
     (D, M) := pruneComplex(mComplex, nsteps, opts);
-    F := if opts.PruningMaps == true
+    F := if opts.PruningMap == true
     then source map(target C.dd_(m+1), , matrix M#0)
     else target matrix D#0;
     D = (toChainComplex(D, F))[-m];
     R := ring D;
-    if opts.PruningMaps == true then
+    if opts.PruningMap == true then
       D.cache.pruningMap = map(C, D, i -> M#(i-m)//matrix);
     D
     )
@@ -320,7 +319,7 @@ pruneComplex(List, ZZ) := opts -> (mComplex, nsteps) -> (
     mComplex = mComplex/mutableMatrix;
     if nsteps == -1 then nsteps = len;
     pruningMorph := new MutableList;
-    if opts.PruningMaps === true then (
+    if opts.PruningMap === true then (
         for i from 0 to #mComplex - 1 do pruningMorph#i = mutableIdentity(ring mComplex#0, numRows mComplex#i);
         pruningMorph#(#mComplex) = mutableIdentity(ring mComplex#0, numColumns mComplex#(#mComplex - 1));
         );
@@ -329,13 +328,13 @@ pruneComplex(List, ZZ) := opts -> (mComplex, nsteps) -> (
       return enginePruneComplex(mComplex, nsteps, opts)
     else if opts.Direction == "left"  then                              -- pruning the left one first
       for i from 0 to nsteps-1 do
-        pruneDiff(mComplex,       i, pruningMorph, PruningMaps => opts.PruningMaps, UnitTest => opts.UnitTest)
+        pruneDiff(mComplex,       i, pruningMorph, PruningMap => opts.PruningMap, UnitTest => opts.UnitTest)
     else if opts.Direction == "right" then                              -- pruning the right one first
       for i from 0 to nsteps-1 do
-        pruneDiff(mComplex, len-i-1, pruningMorph, PruningMaps => opts.PruningMaps, UnitTest => opts.UnitTest)
+        pruneDiff(mComplex, len-i-1, pruningMorph, PruningMap => opts.PruningMap, UnitTest => opts.UnitTest)
     else if opts.Direction == "both"  then                              -- pruning outside-in
       (unique splice for i from 1 to lift((nsteps - nsteps % 2)/2, ZZ) list (i, len-i)) /
-      (n -> pruneDiff(mComplex,   n, pruningMorph, PruningMaps => opts.PruningMaps, UnitTest => opts.UnitTest))
+      (n -> pruneDiff(mComplex,   n, pruningMorph, PruningMap => opts.PruningMap, UnitTest => opts.UnitTest))
     else if opts.Direction == "best"  then                              -- pruning the sparsest unit
       while (
         units := for i from 0 to nsteps - 1 list (
@@ -346,7 +345,7 @@ pruneComplex(List, ZZ) := opts -> (mComplex, nsteps) -> (
         n := minPosition(units/last);
         unit := units#n;
         last unit != infinity
-        ) do pruneUnit(mComplex, n, first unit, pruningMorph, PruningMaps => opts.PruningMaps, UnitTest => opts.UnitTest);
+        ) do pruneUnit(mComplex, n, first unit, pruningMorph, PruningMap => opts.PruningMap, UnitTest => opts.UnitTest);
     (mComplex, pruningMorph)
     )
 
@@ -356,7 +355,7 @@ enginePruneComplex(List, ZZ) := opts -> (C, nsteps) -> (
     R := ring C#0;
     flag := 0;
     -- See e/mutablecomplex.cpp for reference
-    flag = flag | (if opts.PruningMaps           then     1 else 0); -- See `help pruningMap` in M2
+    flag = flag | (if opts.PruningMap            then     1 else 0); -- See `help pruningMap` in M2
     flag = flag | (if false                      then     2 else 0); -- Delete pruned rows and columns
     flag = flag | (if false                      then     4 else 0); -- Only prune -1,+1
     flag = flag | (if opts.UnitTest === isScalar then     8 else 0); -- Only prune constants
@@ -364,7 +363,7 @@ enginePruneComplex(List, ZZ) := opts -> (C, nsteps) -> (
     flag = flag | (if false                      then    32 else 0); -- Pruning for maximal ideal
     flag = flag | (if false                      then    64 else 0); -- Pruning for prime ideal
     flag = flag | (if true                       then  1024 else 0); -- Prune sparsest unit first
-    flag = flag | (if opts.PruningMaps           then  2048 else 0); -- Prune best matrix first
+    flag = flag | (if opts.PruningMap            then  2048 else 0); -- Prune best matrix first
     flag = flag | (if opts.Direction === "right" then 65536 else 0); -- Prune the matrices in reverse order
     -- create the raw chain complex
     if debugLevel >= 2 then << "Using enginePruneComplex." << endl;

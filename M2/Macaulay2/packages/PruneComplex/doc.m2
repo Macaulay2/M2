@@ -14,13 +14,14 @@ Description
     m1 = genericMatrix(R,a,3,3)
     m2 = genericMatrix(R,j,3,3)
     I = ideal(m1*m2-m2*m1)
-    "Here we produce an intentionally nonminimal resolution:";
-    S = (coefficientRing R)(monoid [gens R, local h]);
-    Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
-    Chom = res(Ihom, FastNonminimal=>true);
-    C = (map(R, S, gens R | {1})) Chom
-    "Now we prune the resolution above to get a minimal resolution:";
-    elapsedTime D = pruneComplex(C, PruningMaps => true, UnitTest => isScalar) -- 1.379s
+  Text
+    Here we produce an intentionally nonminimal resolution:
+  Example
+    C = res(I, FastNonminimal=>true)
+  Text
+    Now we prune the resolution above to get a minimal resolution:
+  Example
+    D = pruneComplex(C, UnitTest => isScalar)
     isCommutative D.cache.pruningMap
     betti D == betti res I
 Caveat
@@ -39,6 +40,7 @@ Key
 Headline
   Prunes a chain complex or list of mutable matrices
 Usage
+  D = pruneComplex C
   D = pruneComplex(C, nsteps)
 Inputs
   C: ChainComplex
@@ -54,22 +56,28 @@ Description
   Example
     R = ZZ/32003[a..f]
     I = ideal"abc-def,ab2-cd2-c,acd-b3-1"
-    "Here we produce an intentionally nonminimal resolution:";
+  Text
+    Here we produce an intentionally nonminimal resolution from a non-homogeneous ideal:
+  Example
     S = (coefficientRing R)(monoid [gens R, local h]);
     Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
     Chom = (res(Ihom, FastNonminimal=>true))[-10];
     C = (map(R, S, gens R | {1})) Chom
-    "Now we prune the resolution above to get a minimal resolution:";
-    D = pruneComplex(C, Strategy => null, UnitTest => isScalar, Direction => "both")
+  Text
+    Now we prune the resolution above to get a minimal resolution:
+  Example
+    D = pruneComplex C
     C.dd
     D.dd
 Consequences
   Item
-    If PruningMaps is true, D.cache.pruningMap will be updated to a chain complex map {f: C <-- D}.
+    Unless PruningMap is false, D.cache.pruningMap will be updated to a chain complex map {f: C <-- D}.
 Caveat
   For inhomogeneous input the resulting complex is not guaranteed to be minimal, particularly because
-  minimality is not well-defined in that case. If the input is a general chain complex, rather than a
-  free resolution, the degree of the maps will not be accurate.
+  minimality is not well-defined in that case.
+
+  If PruningMap is false and the input is not the resolution of a graded ideal, the grading of the
+  resulting complex may be incorrect.
 SeeAlso
   pruneDiff
   pruningMap
@@ -93,17 +101,18 @@ Inputs
   n: ZZ
     the index of the differential in C
   M: List
-    if provided, will initialize the list of pruning maps back to the old complex
+    if provided, will initialize the map back to the original complex
 Outputs
   D: ChainComplex
     or the list of modified mutable matrices
   M: List
-    if PruningMaps is true, will contain the pruning maps back to the old complex
+    unless PruningMap is false, will contain the map back to the original complex
 Description
   Text
     Completely prunes the n-th differential of the chain complex C by removing unit elements.
+  Text
+    Computing the syzygy over a local ring using liftUp and pruneDiff:
   Example
-    "Computing the syzygy over a local ring using liftUp and pruneDiff";
     needsPackage "LocalRings";
     R = ZZ/32003[vars(0..5)];
     I = ideal"abc-def,ab2-cd2-c,-b3+acd";
@@ -112,19 +121,27 @@ Description
     RM = localRing(R, M);
     F = C.dd_2;
     FM = F ** RM
-    "This is the process for finding the syzygy of FM:";
+  Text
+    This is the process for finding the syzygy of FM:
+  Example
     f = liftUp FM;
     g = syz f;
     h = syz g;
     C = {g ** RM, h ** RM}/mutableMatrix;
-    "Now we prune the map h, which is the first map from the right:";
+  Text
+    Now we prune the map h, which is the first map from the right:
+  Example
     C = pruneDiff(C, 1)
     g' = C#0;
-    "Scale each row with the common denominator of the corresponding column in FM:";
+  Text
+    Scale each row with the common denominator of the corresponding column in FM:
+  Example
     N = transpose entries FM;
     for i from 0 to numcols FM - 1 do
       rowMult(g', i, N_i/denominator//lcm);
-    "The syzygy of FM is:";
+  Text
+    The syzygy of FM is:
+  Example
     GM = map(source FM, , matrix g')
     kernel FM == image GM
 Caveat
@@ -151,7 +168,7 @@ Inputs
   u: Sequence
     the coordinates of the unit in the differential
   M: List
-    if provided, will initialize the list of pruning maps back to the original complex
+    if provided, will initialize the list of map back to the original complex
 Outputs
   D: List
     a list of modified mutable matrices
@@ -195,7 +212,8 @@ Description
     D' = toChainComplex MC
     assert(betti D == betti D'[-10])
 Caveat
-  Does not keep the information about source of target of maps for general complexes.
+  Since the information about source of target of maps is not available, the grading may be incorrect
+  for general complexes.
 SeeAlso
   toMutableComplex
 ///
@@ -279,15 +297,18 @@ SeeAlso
 
 doc ///
 Key
-  PruningMaps
-  [pruneUnit, PruningMaps]
-  [pruneDiff, PruningMaps]
-  [pruneComplex, PruningMaps]
+  PruningMap
+  [pruneUnit, PruningMap]
+  [pruneDiff, PruningMap]
+  [pruneComplex, PruningMap]
 Headline
   Whether to compute a morphism of complexes
 Description
   Text
-    If true, the pruning maps to the old complex will be stored in C.cache.pruningMap.
+    When true, the pruning map to the original complex will be stored in C.cache.pruningMap.
+Caveat
+  Setting PruningMap to false will improve performance, but in some cases the grading of the
+  resulting object may be incorrect.
 SeeAlso
   pruningMap
   pruneUnit
