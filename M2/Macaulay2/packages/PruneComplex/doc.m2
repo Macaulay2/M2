@@ -52,39 +52,52 @@ Outputs
     or the list of modified mutable matrices
 Description
   Text
-    Prune a chain complex {C} into a free resolution by removing unit elements from the differentials.
+    Prune a chain complex C by removing unit elements from the differentials.
+
+    If C is a free resolution for an R-module M, the output will remain a free resolution of M.
+    In particular, if M is homogeneous or R is a local ring, the output is guaranteed to be a minimal
+    free resolution of M.
   Example
     R = ZZ/32003[a..f]
     I = ideal"abc-def,ab2-cd2-c,acd-b3-1"
   Text
-    Here we produce an intentionally nonminimal resolution from a inhomogeneous ideal:
+    Here we produce an intentionally non-minimal resolution from a inhomogeneous ideal:
   Example
     S = (coefficientRing R)(monoid [gens R, local h]);
     Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
     Chom = (res(Ihom, FastNonminimal=>true))[-10];
     C = (map(R, S, gens R | {1})) Chom
   Text
-    Now we prune the resolution above to prune the resolution:
+    Now we use pruneComplex to prune the resolution above:
   Example
     D = pruneComplex C
     D.dd
   Text
-    Note that in general the resolution is not minimal. In this case, sometimes changing the direction
-    of pruning can lead to different results. To do so, set Strategy => null to avoid using the engine
-    procedures:
+    One way of improving performance is to turn off computation of the pruning map. Note, however, that
+    this may result in incorrect degrees in the graded case:
   Example
-    D1 = pruneComplex(C, Strategy => null, Direction => "both")
+    D1 = pruneComplex(C, PruningMap => false)
     D1.dd
   Text
-    To improve speed for larger resolutions over local rings, one can first start with pruning all
-    scalars from the maps by setting UnitTest => isScalar, then proceed to other units using
-    UnitTest => isUnit.
+    Another method is to use a different pruning strategy. Note that in general there is no well-defined
+    notion of minimality for chain complexes, so different strategies can lead to different results.
+    See the page linked in the optional inputs section above for information on available strategies.
 
-    Another trick is to turn off computation of the pruning map. Note, however, that this may result in
-    incorrect degrees in the graded case:
+    As an example, we can alternate between pruning the lower and higher indices:
   Example
-    D2 = pruneComplex(C, PruningMap => false)
+    D2 = pruneComplex(C, Strategy => null, Direction => "both")
     D2.dd
+  Text
+    For pruning chain complexes over local rings, pruning scalars by setting UnitTest => isScalar and
+    then pruning other units using UnitTest => isUnit can improve speed. For homogeneous chain complexes
+    (that is, when all maps are homogeneous), since all units are scalars, setting UnitTest => isScalar
+    is always faster:
+  Example
+    R = ZZ/32003[vars(0..8)]
+    M = genericMatrix(R,3,3)
+    I = minors(2, M)
+    C = res(I, FastNonminimal=>true)
+    pruneComplex(C, UnitTest => isScalar)
 Consequences
   Item
     Unless PruningMap is false, D.cache.pruningMap will be updated to a chain complex map {f: C <-- D}.
@@ -384,6 +397,12 @@ Description
       null: use the algorithms written using the Macaulay2 language;
 
       Engine: use the algorithms implemented using C++ in the Engine (version 1.11 and up).
+
+    For optional inputs, the Engine algorithms only support PruningMap, "left" or "right" as Direction,
+    and isUnit or isScalar as UnitTest.
+
+    Advanced users can implement their own strategies in packages/PruneComplex.m2 and run pruneComplex
+    using the Strategy => null option.
 SeeAlso
   pruneComplex
 ///

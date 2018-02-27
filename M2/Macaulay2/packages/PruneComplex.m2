@@ -363,7 +363,7 @@ enginePruneComplex(List, ZZ) := opts -> (C, nsteps) -> (
     flag = flag | (if false                      then    32 else 0); -- Pruning for maximal ideal
     flag = flag | (if false                      then    64 else 0); -- Pruning for prime ideal
     flag = flag | (if true                       then  1024 else 0); -- Prune sparsest unit first
-    flag = flag | (if opts.PruningMap            then  2048 else 0); -- Prune best matrix first
+    flag = flag | (if false                      then  2048 else 0); -- Prune best matrix first
     flag = flag | (if opts.Direction === "right" then 65536 else 0); -- Prune the matrices in reverse order
     -- create the raw chain complex
     if debugLevel >= 2 then << "Using enginePruneComplex." << endl;
