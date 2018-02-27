@@ -89,7 +89,7 @@ FM = F ** RM
  C = {mutableMatrix g, mutableMatrix h};
  pruneDiff(C, 1);
  toChainComplex C
-GM = matrix C#0
+GM = map(ambient image g, , matrix C#0)
 assert(image GM == kernel FM)
 
 -- Intersection Theory: Geometric Multiplicity

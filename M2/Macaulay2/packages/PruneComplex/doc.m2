@@ -57,18 +57,34 @@ Description
     R = ZZ/32003[a..f]
     I = ideal"abc-def,ab2-cd2-c,acd-b3-1"
   Text
-    Here we produce an intentionally nonminimal resolution from a non-homogeneous ideal:
+    Here we produce an intentionally nonminimal resolution from a inhomogeneous ideal:
   Example
     S = (coefficientRing R)(monoid [gens R, local h]);
     Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
     Chom = (res(Ihom, FastNonminimal=>true))[-10];
     C = (map(R, S, gens R | {1})) Chom
   Text
-    Now we prune the resolution above to get a minimal resolution:
+    Now we prune the resolution above to prune the resolution:
   Example
     D = pruneComplex C
-    C.dd
     D.dd
+  Text
+    Note that in general the resolution is not minimal. In this case, sometimes changing the direction
+    of pruning can lead to different results. To do so, set Strategy => null to avoid using the engine
+    procedures:
+  Example
+    D1 = pruneComplex(C, Strategy => null, Direction => "both")
+    D1.dd
+  Text
+    To improve speed for larger resolutions over local rings, one can first start with pruning all
+    scalars from the maps by setting UnitTest => isScalar, then proceed to other units using
+    UnitTest => isUnit.
+
+    Another trick is to turn off computation of the pruning map. Note, however, that this may result in
+    incorrect degrees in the graded case:
+  Example
+    D2 = pruneComplex(C, PruningMap => false)
+    D2.dd
 Consequences
   Item
     Unless PruningMap is false, D.cache.pruningMap will be updated to a chain complex map {f: C <-- D}.
@@ -131,7 +147,7 @@ Description
   Text
     Now we prune the map h, which is the first map from the right:
   Example
-    C = pruneDiff(C, 1)
+    C = pruneDiff(C, 1, PruningMap => false)
     g' = C#0;
   Text
     Scale each row with the common denominator of the corresponding column in FM:
@@ -208,7 +224,7 @@ Description
     C = res I;
     D = C[-10]
     MC = toMutableComplex D;
-    elapsedTime MC = first pruneComplex MC; -- 0.001 seconds
+    MC = first pruneComplex MC;
     D' = toChainComplex MC
     assert(betti D == betti D'[-10])
 Caveat
@@ -240,7 +256,7 @@ Description
     RP = localRing(R, ideal"a,b,c");
     D = (C ++ C[-5]) ** RP
     MD = toMutableComplex D
-    elapsedTime pruneComplex MD
+    pruneComplex MD
 Caveat
   The nonzero terms in the chain complex must be in a series, otherwise may not work correctly.
 SeeAlso
