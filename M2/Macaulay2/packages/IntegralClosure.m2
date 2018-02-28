@@ -4,8 +4,7 @@ newPackage(
     	Date => "October 21, 2009",
     	Authors => {
 	     {Name => "Amelia Taylor",
-	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
-   	     Email => "amelia.taylor@coloradocollege.edu"
+   	     Email => "originalbrickhouse@gmail.com"
 	     },
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}

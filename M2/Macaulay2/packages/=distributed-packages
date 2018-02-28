@@ -32,6 +32,7 @@ ChainComplexExtras
 Schubert2
 PushForward
 LocalRings
+PruneComplex
 BoijSoederberg
 BGG
 Bruns
@@ -108,7 +109,7 @@ HighestWeights
 NumericalHilbert
 MinimalPrimes
 Bertini
-CodepthThree
+TorAlgebra
 Permanents
 BinomialEdgeIdeals
 TateOnProducts
@@ -162,3 +163,8 @@ TriangularSets
 Chordal
 Tropical
 SymbolicPowers
+Complexes
+GroebnerWalk
+RandomMonomialIdeals
+Matroids
+NumericalImplicitization

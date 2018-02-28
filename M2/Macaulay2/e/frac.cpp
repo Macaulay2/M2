@@ -27,7 +27,6 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
       R->characteristic(), R->get_degree_ring(), R->get_heft_vector());
 
   R_ = R;
-  _MINUS_ONE = R->from_long(-1);
 
   zeroV = from_long(0);
   oneV = from_long(1);

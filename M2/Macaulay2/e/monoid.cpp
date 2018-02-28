@@ -396,7 +396,7 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 int Monoid::num_parts() const { return monorder_->nblocks; }
 int Monoid::n_slots(int nparts) const
 {
-  if (nparts == 0) return 0;
+  if (nparts == 0 or num_parts() == 0) return 0;
   nparts--;
   if (nparts < 0) return monomial_size();
   if (nparts >= num_parts()) nparts = num_parts() - 1;

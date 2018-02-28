@@ -14,30 +14,36 @@
 -- UPDATE HISTORY : created 27 October 2006 
 -- 	     	    updated 29 June 2008
 --                  updated 19-21 July 2017 (Berkeley M2 Workgroup)
---                  updated October 2017
+--                  updated November 2017
 --
 ---------------------------------------------------------------------------
 newPackage(
 	"ReesAlgebra",
-    	Version => "2.1", 
-    	Date => "October 2017",
+    	Version => "2.2", 
+    	Date => "November 2017",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
 	     {Name => "Amelia Taylor",
-	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
-   	     Email => "amelia.taylor@coloradocollege.edu"},
+   	     Email => "originalbrickhouse@gmail.com"},
              {Name => "Sorin Popescu",
 	      Email => "sorin@math.sunysb.edu"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
-    	Headline => "Rees algebras",
-    	DebuggingMode => false,
-	Reload => true  
-    	)
+    	--DebuggingMode => false,
+	Reload =>true,
+    	Headline => "Rees algebras"
+	)
+-*
+restart
+uninstallPackage "ReesAlgebra"
+restart
+installPackage  "ReesAlgebra"
+viewHelp ReesAlgebra
+check "ReesAlgebra"
+*-
 
 export{
   "analyticSpread", 
-  "associatedGradedRing", 
   "distinguished",
   "intersectInP",
   "isLinearType", 
@@ -48,66 +54,26 @@ export{
   "reductionNumber",
   "reesIdeal",
   "reesAlgebra",
-  "reesAlgebraIdeal",
   "specialFiberIdeal",
   "specialFiber",
   "symmetricKernel", 
-  "universalEmbedding",
+  "versalEmbedding",
   "whichGm",
   "Tries",
   "jacobianDual",
   "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
-  "PlaneCurveSingularities"
+  "PlaneCurveSingularities",
+  --synonyms
+  "associatedGradedRing" => "normalCone",
+  "reesAlgebraIdeal" => "reesIdeal"
   }
 
--- Comment : The definition of Rees algebra used in this package is 
--- R(M) = Sym(M)/(intersection over g of L_g) where the intersection 
--- ranges over all maps from M to free R-modules and L_g is the kernel 
--- of Sym(g) (where Sym(g): Sym(M) -> Sym(R)).
-
--- For computation the key is that R(M) = R(f) where f is any map from 
--- from M to a free module F such that the dual map F^* -> M^* is surjective
--- and R(f) is the image of Sym(f).
-
- 
--- PURPOSE : Compute the rees ring of the image of a 
---           a matrix regarded as over a quotient ring.  
--- INPUT : 'f' a matrix and 'I' and an ideal over a polynomial ring OR 
---         a module over a polynomial or quotient ring. 
--- OUTPUT : an Ideal defining the Rees algebra of the image of f regarded 
---          as a matrix over the ring of I mod I if f is a versal embedding 
---          For the module or if f is not a versal embedding it naively computes 
---          the defining ideal of the Rees algebra and the output may be correct 
---          and it may be nonsense.
--- COMMENT : If I is the zero ideal and f is the generators of an ideal then 
---           the ideal is this is the usual
---           defining ideal of the usual Rees Algebra. Otherwise f 
---           corresponds to the versal embedding as defined in Eisenbud, 
---           Huneke, and Ulrich.  Also the Module version just sets up 
---           the input to use symmetric Kernel on a Module.  See "OUTPUT" 
---           for caution.
 
 symmetricAlgebraIdeal = method(Options =>
-    {Constants => false,         
-                  DegreeLift => null,
-                  DegreeMap => null,
-                  DegreeRank => null,
-                  Degrees => null,
-                  Global => true,
-                  Heft => null,
-                  Inverses => false,
-                  Join => null,
-                  Local => false,
-                  MonomialOrder => {GRevLex, Position => Up},
-                  MonomialSize => 32,
-                  SkewCommutative => {},
-                  VariableBaseName => "w",
-                  Variables => null,
-                  Weights => {},
-                  WeylAlgebra => {}
-})
+    {             VariableBaseName => "w",
+     })
 symmetricAlgebraIdeal Module := Ideal => o -> M -> (
     ideal presentation symmetricAlgebra(M, o))
 symmetricAlgebraIdeal Ideal := Ideal => o -> M -> (
@@ -124,42 +90,13 @@ symmetricKernel(Matrix) := Ideal => o -> (f) -> (
      T := symmetricAlgebra target f;
      trim ker symmetricAlgebra(T,S,f))
 
--- PURPOSE: Computes the universal embedding of the 
---          image of f, or of M or of J over a quotient ring.  
--- INPUT : 'M' a matrix and 'I' an ideal defined over a polynomial ring.
--- OUTPUT : a map that is a versal embedding of the image of M over the 
---          ring of M mod I.  
--- COMMENT : The purpose is to compute a universal embedding to be used in 
---           symmetricKernel in order to compute a Rees Algebra in the most 
---           general case possible at this time as defined in Eisenbud, Huneke 
---           and Ulrich. 
-
-universalEmbedding = method()
-universalEmbedding(Ideal) :=
-universalEmbedding(Module) := Matrix => (M) -> (
+versalEmbedding = method()
+versalEmbedding(Ideal) :=
+versalEmbedding(Module) := Matrix => (M) -> (
      if (class M) === Ideal then M = module M;
      UE := transpose syz transpose presentation M;
      map(target UE, M, UE)
      )
-
--- PURPOSE : Front end for computing the defining ideal of the Rees algebra 
---           of a module, or an ideal defined over a polynomial ring or a 
---           quotient ring.
--- INPUT : 'M' a module OR
---         'J' an ideal 
--- Options : The computation requires additional variables.  The user 
---           can use Variable => to specify the letter used for the 
---           new indexed variable.  The default is the letter w.  The 
---           default algorithm is symmetricKernel, but in the case of 
---           an ideal over a polynomial ring the user might want to use 
---           the algorithm in reesSaturate specified by Strategy => Saturate.
--- OUTPUT : an Ideal defining the Rees algebra of the module M or of the ideal J.
--- COMMENT : Uses proposition 1.3 in Eisenbud, Huneke, Ulrich and computes 
---           the rees algebra of a versal embedding of the 
---           Module regardless of the ring and for an ideal over a quotient ring. 
---           In the case of an ideal over a polynomial ring the process is slightly 
---           streamlined, skipping the unneccessary versal computation as in that 
---           case the inclusion map is a versal map.
 
 fixupw = w -> if instance(w,String) then getSymbol w else w
 
@@ -174,16 +111,15 @@ reesIdeal = method(
 	  Variable => "w"
 	  }
       )
-reesAlgebraIdeal = reesIdeal
 
---the following uses the universal embedding
+--the following uses a versal embedding
 reesIdeal(Module) := Ideal => o -> M -> (
      P := presentation minimalPresentation M;
      UE := transpose syz transpose P;
      symmetricKernel(UE,Variable => fixupw o.Variable)
      )
 
---in the case of ideals we don't need the universal embedding; any embedding in the ring will do.
+--in the case of ideals we don't need a versal embedding; any embedding in the ring will do.
 reesIdeal(Ideal) := Ideal => o-> (J) -> (
      symmetricKernel(mingens J, Variable => fixupw o.Variable)
      )
@@ -200,27 +136,10 @@ reesIdeal(Module,RingElement) := Ideal => o-> (I,I0) ->(
     trim saturate(K',IR))
     )
 
-{*
-reesIdeal (Module, RingElement) := Ideal => o -> (M,a) -> (
-     R := ring M;
-     if R =!= ring a 
-       then error("Expected Module and Element over the same ring");   
-     P := presentation M;
-     S := symmetricAlgebra(target P, VariableBaseName => fixupw o.Variable);
-     I := ideal(vars S * promote(P,S));
-     saturate(I,promote(a,S)))
-*}
 reesIdeal(Ideal, RingElement) := Ideal => o -> (I,a) -> (
      reesIdeal(module trim I, a)
      )
 
-///
-restart
-uninstallPackage "ReesAlgebra"
-restart
-installPackage "ReesAlgebra"
-check "ReesAlgebra"
-///
 reesAlgebra = method (TypicalValue=>Ring,
             Options => {Jacobian => false,
 	  DegreeLimit => {},
@@ -271,14 +190,7 @@ isLinearType(Module, RingElement):= o-> (N,a)->(
      P := promote(presentation M, S);
      J := ideal((vars S) * P);
      ((gens I) % J) == 0)
-///
-restart
-loadPackage("ReesAlgebra",Reload =>true)
-      S = QQ[x_0..x_4]
-      i = monomialCurveIdeal(S,{2,3,5,6})
-      isLinearType i
-      isLinearType(i, i_0)
-///
+
 normalCone = method(TypicalValue => Ring, 
     	    Options => {
 	  DegreeLimit => {},
@@ -293,34 +205,11 @@ normalCone(Ideal) := o -> I -> (
      RI := reesAlgebra(I,o);
      RI/promote(I,RI)
      )
+
 normalCone(Ideal, RingElement) := o -> (I,a) -> (
      RI := reesAlgebra(I,a,o);
      RI/promote(I,RI)     
      )
-     
-associatedGradedRing= method(TypicalValue => Ring,
-	    Options => {
-	  DegreeLimit => {},
-	  BasisElementLimit => infinity,
-	  PairLimit => infinity,
-	  MinimalGenerators => true,
-	  Strategy => null,
-	  Variable => "w"
-	  }
-)
-associatedGradedRing (Ideal) := o -> I -> normalCone(I,o)
-associatedGradedRing (Ideal, RingElement) := o -> (I,a) -> normalCone(I,a,o)
-     
-
--- PURPOSE : Compute the multipicity e_I(M) and e(I) = e_I(R), 
---           the normalized leading coefficient of the corresponding 
---           associated graded ring.  
--- INPUT : 'I' an Ideal, for e(I) or 'I' and 'M' for e_I(M)
--- OUTPUT : the Hilbert-Samuel multiplicity
--- COMMENT : The associated graded ring is computed using the Rees algebra.
--- WARNING : Computing a quotient like R[It]/IR[It] requires a 
---           Groebner basis computation and thus can quickly take all of your
---           memory and time (most likely memory).   
 
 multiplicity = method(
     	    Options => {
@@ -332,6 +221,7 @@ multiplicity = method(
 	  Variable => "w"
 	  }
 )
+
 multiplicity(Ideal) := ZZ => o -> I ->  (
      RI := normalCone (I,o);
      J := ideal RI;
@@ -339,6 +229,7 @@ multiplicity(Ideal) := ZZ => o -> I ->  (
      S1 := newRing(ring J1, Degrees=>{numgens ring J1 : 1});
      degree substitute(J1,S1)
      )
+
 multiplicity(Ideal,RingElement) := ZZ => o -> (I,a) ->  (
      RI := normalCone (I,a,o);
      J := ideal RI;
@@ -347,47 +238,11 @@ multiplicity(Ideal,RingElement) := ZZ => o -> (I,a) ->  (
      degree substitute(J1,S1)
      )
 
---Special fiber is here defined to be the fiber of the blowup over the
---subvariety defined by the vars of the original ring. Note that if the
---original ring is a tower ring, this might not be the fiber over the
---closed point! ***put this into the documentation!*** to get the closed
---fiber, flatten the base ring first. 
 
 isEquigenerated = A -> (
     if isHomogeneous A and 
     all(A_*, a->degree a == degree(A_*_0)) then true else false)
 
-
-///
-restart
-uninstallPackage "ReesAlgebra"
-loadPackage("ReesAlgebra", Reload=>true)
-kk = ZZ/101
-S = kk[x,y,z]
-m = map(S^3, S^{-1,3:-2}, 
-    matrix"
-    x2, y2,z2,yz;
-    y2, x2,y2,z2;
-    z2, xy, x2,y2")
-m = random(S^3, S^{4:-2})
-I = minors(3,m)
-time reesIdeal (I, I_0);
-time reesIdeal (I, I_0, Jacobian =>false);
-
-time specialFiberIdeal I; --fast
---time specialFiberIdeal module I    very slow
-time specialFiberIdeal(I, I_0);
-
-
-m = map(S^3, S^{-1,3:-2}, 
-    matrix"
-    x, y2,z2,0;
-    y, x2,y2,z2;
-    z, 0, x2,y2")
-I = minors(3,m)
-
-
-///
 
 specialFiberIdeal=method(TypicalValue=>Ideal, 
         Options => {
@@ -397,6 +252,7 @@ specialFiberIdeal=method(TypicalValue=>Ideal,
 	  MinimalGenerators => true,
 	  Strategy => null,
 	  Variable => "w",
+	  Jacobian =>false
 	  }
       )
 specialFiberIdeal(Ideal):= o-> I ->(
@@ -408,12 +264,8 @@ specialFiberIdeal (module I, o))
 
 
 specialFiberIdeal(Module):= o->i->(
-    --change
---     Reesi:= reesIdeal(i, Variable=>fixupw o.Variable);
      Reesi:= reesIdeal(i, o);     
---     trim(Reesi + promote(ideal vars ring i, ring Reesi))
      S := ring Reesi;
-     --is the coefficient ring of Reesi automatically flattened? NO
      kk := ultimate(coefficientRing, S);
      T := kk[gens S];
      minimalpres := map(T,S);
@@ -423,24 +275,21 @@ specialFiberIdeal(Module):= o->i->(
 specialFiberIdeal(Ideal, RingElement):= o->(i,i0) ->(
 if isEquigenerated i then return(
     kk := ultimate(coefficientRing, ring i);
-    Z := symbol Z;
-    ker map(ring i, kk[Z_0..Z_(numgens i -1)], gens i));
+    w := symbol w;
+    ker map(ring i, kk[w_0..w_(numgens i -1)], gens i));
 specialFiberIdeal(module i, i0))
 
 specialFiberIdeal(Module,RingElement):= o->(i,a)->(
-    --change
---     Reesi:= reesIdeal(i, a, Variable=>fixupw o.Variable);
      Reesi:= reesIdeal(i, o);     
---     trim(Reesi + promote(ideal vars ring i, ring Reesi))     
      S := ring Reesi;
-     --is the coefficient ring of Reesi automatically flattened? NO
      kk := ultimate(coefficientRing, S);
      T := kk[gens S];
      minimalpres := map(T,S);
      trim minimalpres Reesi
      )
 
----------The following returns a ring with just the new vars.
+
+--The following returns a ring with just the new vars.
 --The order of the generators is supposed to be the same as the order
 --of the given generators of I.
 specialFiber=method(TypicalValue=>Ring, 
@@ -457,26 +306,14 @@ specialFiber=method(TypicalValue=>Ring,
 
 specialFiber(Ideal):= 
 specialFiber(Module):= o->i->(
-     Reesi:= reesIdeal(i, o);     
-     S := ring Reesi;
-     --is the coefficient ring of Reesi automatically flattened? NO
-     kk := ultimate(coefficientRing, S);
-     T := kk[gens S];
-     minimalpres := map(T,S);
-     T/trim(minimalpres Reesi)
+     spIdeal := specialFiberIdeal(i,o);
+     (ring spIdeal)/spIdeal
      )
- 
-specialFiber(Ideal, RingElement):=
-specialFiber(Module,RingElement):= o->(i,a)->(
---changed
---     Reesi:= reesIdeal(i, a, Variable=>fixupw o.Variable);
-     Reesi:= reesIdeal(i, o);     
-     S := ring Reesi;
-     --is the coefficient ring of Reesi automatically flattened? NO
-     kk := ultimate(coefficientRing, S);
-     T := kk[gens S];
-     minimalpres := map(T,S);
-     T/trim (minimalpres Reesi)
+
+specialFiber(Ideal, RingElement):= 
+specialFiber(Module, RingElement):= o->(i,a)->(
+     spIdeal := specialFiberIdeal(i,a,o);
+     (ring spIdeal)/spIdeal
      )
 
 isReduction=method(TypicalValue=>Boolean, 
@@ -490,13 +327,10 @@ isReduction=method(TypicalValue=>Boolean,
 	  }
     )
 
---tests whether the SECOND arg is a reduction of the FIRST arg
-
+--test whether the SECOND arg is a reduction of the FIRST arg
 isReduction(Module,Module):= 
 isReduction(Ideal,Ideal):= o->(I,J)->(
      if isSubset(J, I) then (
---changed
---	     Sfib:= specialFiber(I, Variable=>fixupw o.Variable);
     	     I' := trim I;
 	     Sfib:= specialFiber(I', o);
 	     Ifib:=ideal presentation Sfib;
@@ -510,8 +344,6 @@ isReduction(Ideal,Ideal):= o->(I,J)->(
 isReduction(Module,Module,RingElement):= 
 isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
      if isSubset(J, I) then (
---changed
---	     Sfib :=specialFiber(I, a, Variable=>fixupw o.Variable); 
 	     Sfib :=specialFiber(I, a, o);
 	     Ifib:= ideal presentation Sfib;
 	     kk := coefficientRing Sfib;
@@ -521,18 +353,6 @@ isReduction(Ideal,Ideal,RingElement):= o->(I,J,a)->(
 	     0===dim ideal L)
      else false)
 
-
-
--- PURPOSE : Analytic spread of a module as defined in M2 by a matrix, 
---           a module or ideal over a quotient ring R/I.
--- INPUT : 'M' a module OR
---         'J' an ideal  
--- Options : The ring R can be a quotient ring, or, the user can define 
---           f, M or J over a polynomial ring R and an ideal I can be given 
---           as the option Strategy and the special fiber is then computed 
---           over the quotient ring R/I.
--- OUTPUT : The analytic spread of f/M/or J over over the ring R, or if 
---          the option is given, R/I.
 analyticSpread = method(
            Options => {
 	  DegreeLimit => {},
@@ -560,6 +380,7 @@ distinguished = method(Options => {
 	  Variable => "w"
 	  }
 )
+
 distinguished(RingMap, Ideal) := o -> (f,I) ->(
 --f: S -> R,  I\subset S, J\subset R, f(I)\subset J:
     S := source f;
@@ -622,7 +443,6 @@ intersectInP(Ideal,Ideal) := o->(I,J) ->(
 rand = method()
 rand(Ideal, ZZ, ZZ) := (I,s,d) ->
     --s elements of degree d chosen at random from I
-    --need a version that uses *all* the generators, works with hom, etc
     ideal ((gens I)*random(source gens I, (ring I)^{s:-d}))
 
 rand(Ideal, ZZ) := (I,s) ->(
@@ -654,8 +474,6 @@ minimalReduction = method(
       )
 
 minimalReduction Ideal := Ideal => o -> i -> (
-     --if the following is true, then we can compute the minimal reduction homogeneously
---     h := isEquigenerated i;
      S:=ring i;
      ell := analyticSpread(i,
 	  DegreeLimit => o.DegreeLimit,
@@ -679,57 +497,6 @@ minimalReduction Ideal := Ideal => o -> i -> (
      error("not random enough")
           )
 
-///
-restart
-loadPackage("ReesAlgebra", Reload=>true)
-kk = ZZ/32003
-g = 3;
-m = 2;
-netList apply (4,p -> (
-	n= g+p;
-S = kk[a_0..a_(g-1),x_0..x_(n-1)];
-i = (ideal apply(g, i->a_i))* (ideal apply(n,i->x_i))^m;
-ell = analyticSpread i; --ell = g+n-1
-jbig = ideal apply(g, i->a_i)*(ideal apply(n,i->x_i^m));
-jell = ideal(gens i * random(source gens i, S^{ell:-m-1}));
-rsmall = reductionNumber(i,jbig);
-time (r = reductionNumber(i,jell));
-<<(n,ell,r, rsmall, ceiling(((n)*(m-1)+1)/m)-1)<<endl;
-(n, ell, r,rsmall, ceiling(((n)*(m-1)+1)/m)-1)
-))
---minimum value of (ell,r):(g+n-1), ceiling(n-1)(m-1)/m
---here the estimate of r comes from the non-min reduction
---(a)(x)^[n].
-
---actual values: g = 2, m= 2 starting with n=4 it looks like ceiling(n/m)
---The following gives (ell,r) for n=2..6
---the case n = 6 took 524 seconds.
-     +------+
-o8 = |(3, 1)|
-     +------+
-     |(4, 2)|
-     +------+
-     |(5, 3)|
-     +------+
-     |(6, 3)|
-     +------+
-     |(7, 4)|
-     +------+
---actual values: g = 3, m = 2, n = 3,
-(n, ell, r, rsmall, rsmall theoretical)
-(3, 5, 2, 1, 1)
-     -- used 7.10124 seconds
-(4, 6, 3, 2, 2)
-
-
---could also be 1 more than rsmall.
---the case n = 6 took 524 seconds.
-
---elapsedTime (K = codim(j:i))
---AX = (ideal apply(g, i->a_i))* ideal apply(n,i->x_i^m)
---elapsedTime reductionNumber(i,AX)
-
-///
 
 reductionNumber = method()
 reductionNumber (Ideal,Ideal) := (i,j) -> (
@@ -747,55 +514,6 @@ reductionNumber (Ideal,Ideal) := (i,j) -> (
 	       I = (gens trim (i*ideal I))%j;
      	       rN =rN+1));
      rN)
- 
-{* slightly slower
-reductionNumber (Ideal,Ideal) := (i,j) -> (
-     I:=i; -- will be a power of i
-     M:= ideal vars ring i; -- we're pretending to be in a local ring
-     rN:=0;
-     if isHomogeneous j then (
-     	  while not ((gens I)%j)==0 do (
-	       I = trim (i*I);
-	       j=  trim (i*j);
-     	       rN =rN+1))
-     else(
-     	  while not ((gens I)%(j+M*I))==0 do (
-	       I = trim(i*I);
-	       j= trim(i*j);
-     	       rN =rN+1));
-     rN)
-*}
-
-{* much slower
-reductionNumber (Ideal,Ideal,ZZ) := (i,j,t) -> (
-    --t is any integer, signals a different method
-     d := max flatten (i_*/degree);
-     I := i; -- will be a power of i
-     M := ideal vars ring i; -- we're pretending to be in a local ring
-     rN := 0;
-     J := j;
---      while not (gens I)% gb(gens J,DegreeLimit => (rN)*d) ==0 
-      while not (gens I)% gb(gens J) == 0
-            do (
-       I = trim i*I;
-       J = i*J;
-       rN =rN+1);
-     rN)
-*}
-{*
---The following seems to  be much slower!
-reductionNumber (Ideal, Ideal, String) := (i,j,s) -> (
-     Ifib := specialFiber(I);
-     Pfib := (ring Ifib); -- ambient ring of the fiber
-     n := numgens Pfib;
-     kk := coefficientRing Pfib;
-     M := sub(gens J // gens I, kk);
-     M = promote(M, Pfib);
-     L := (vars Pfib)*M; 
-     regularity (Pfib^1/ideal(leadTerm(Ifib+ideal L)))
-	  )
-*}
-
 
 whichGm = method()
 whichGm Ideal := i -> (
@@ -857,22 +575,23 @@ expectedReesIdeal Module := Ideal => I -> (
     I1 := symmetricAlgebraIdeal I;    
     S1 := ring I1;    
     if numgens I < numgens S then return I1;
---    if (gens I)% vars S != 0 then error "variables of S must generate an ideal containging I";
     X := promote(vars ring I, S1);
     jImat := jacobianDual (presentation I, X, vars S1);
     I2 := minors(numrows jImat,jImat);
     trim(I1+I2)
     )
-///
-loadPackage("ReesAlgebra", Reload=>true)
-///
+
 beginDocumentation()
+
 ///
+restart
 uninstallPackage "ReesAlgebra"
 restart
 installPackage  "ReesAlgebra"
+viewHelp ReesAlgebra
 check "ReesAlgebra"
 ///
+
 
 doc ///
   Key
@@ -911,7 +630,7 @@ doc ///
      was to compute the Rees
      algebra of a module as it is defined in the paper {\em What is the
      Rees algebra of a module?}, by Craig Huneke, David Eisenbud and Bernd
-     Ulrich, Proc. Am. Math. Soc. 131, 701--708, 2002.
+     Ulrich, Proc. Am. Math. Soc. 131, 701-708, 2002.
      It has since expanded to include routines
      for computing many of the invariants of an ideal or module
      defined in terms of Rees algebras.
@@ -924,41 +643,41 @@ doc ///
 
      The Rees algebra of a module M is defined 
      by a certain ideal in the symmetric
-     algebra Sym(M) of M, or, as in this package, 
+     algebra $Sym(M)$ of $M$, or, as in this package, 
      by an ideal in the symmetric algebra of any
-     free module F that maps onto M. 
-     When phi: M \to G is the {\em universal embedding}
-     of M, then, by the definition of Huneke-Eisenbud-Ulrich,
-     the {\em Rees ideal of M} is the kernel of Sym(phi). Thus the
-     Rees Algebra of M is the image of Sym(phi).
+     free module $F$ that maps onto $M$. 
+     When $\phi: M \to G$ is the {\em versal embedding}
+     of $M$, then, by the definition of Huneke-Eisenbud-Ulrich,
+     the {\em Rees ideal of M} is the kernel of $Sym(\phi)$. Thus the
+     Rees Algebra of M is the image of $Sym(\phi)$.
      
      In most cases the kernel of the 
-     Sym(phi) is independent of the embedding phi of
-     M into a free module:
+     $Sym(\phi)$ is the same for any embedding $\phi$ of
+     $M$ into a free module:
      
      {\bf Theorem (Eisenbud-Huneke-Ulrich, Thms 0.2 and 1.4):} Let R be a Noetherian ring
-     and let M be a finitely generated R-module. Let phi: M \to G
-     be the universal embedding of M in a free module, and let
-     psi: M \to G' be any inclusion. If R is torsion-free over ZZ
-     or R is unmixed and generically Gorenstein or M is free locally
-     at each associated prime of R, or G=R, then the image of Sym(phi) and the
-     image of Sym(psi) are naturally isomorphic.
-     
+     and let $M$ be a finitely generated R-module. Let $\phi: M \to G$
+     be a versal map of $M$ to a free module. Assume that $\phi$ is an inclusion, and let
+     $\psi: M \to G'$ be any inclusion. If $R$ is torsion-free over $\ZZ$
+     or $R$ is unmixed and generically Gorenstein, or $M$ is free locally
+     at each associated prime of $R$, or $G=R$, then the kernel of $Sym(\phi)$ and the
+     kernel of $Sym(\psi)$ are equal.
+          
      It follows that in the good cases above the Rees 
      ideal is equal to the saturation
      of the defining ideal of symmetric 
-     algebra of M with respect to any
+     algebra of $M$ with respect to any
      element f of the ground ring such 
-     that M[f^{-1}] is free, or is simply {\em of linear type},
-     meaning that Sym(phi) is a monomorphism. This is the case,
-     for example, when M is an ideal and M[f^{-1}] is generated
+     that $M[f^{-1}]$ is free, or is simply {\em of linear type},
+     meaning that $Sym(\phi)$ is a monomorphism. This is the case,
+     for example, when M is an ideal and $M[f^{-1}]$ is generated
      by a regular sequence.
      This fact often leads to 
      a faster computation than computing the
-     kernel of Sym(phi) directly.
+     kernel of $Sym(\phi)$ directly.
        
      Here is an example of the pathological case of
-     inclusions phi: M \to G and \psi: M \to G' where ker(phi) != ker(psi).
+     inclusions $\phi: M \to G$ and $\psi: M \to G'$ where $ker(\phi) \neq ker(\psi)$.
      In the following, any finite characteristic would work as well.
     Example
      p = 5;
@@ -972,10 +691,10 @@ doc ///
      iota = map(R^1,M,matrix{{z}});
      psi = map(R^2,M,matrix{{x},{y}});
     Text
-     Finally, the universal embedding is M \to R^3,
+     Finally, a versal embedding is M \to R^3,
      sending z to (x,y,z):
     Example
-     phi = universalEmbedding(M);
+     phi = versalEmbedding(M);
     Text
      We now compute the kernels of the three maps
      on symmetric algebras:
@@ -1004,29 +723,13 @@ doc ///
 doc ///
    Key
     symmetricAlgebraIdeal
-    (symmetricAlgebraIdeal, Ideal)    
-    (symmetricAlgebraIdeal, Module)
-    [symmetricAlgebraIdeal,Constants]
-    [symmetricAlgebraIdeal,DegreeLift]
-    [symmetricAlgebraIdeal,DegreeMap]
-    [symmetricAlgebraIdeal,DegreeRank]
-    [symmetricAlgebraIdeal,Degrees]
-    [symmetricAlgebraIdeal,Global]
-    [symmetricAlgebraIdeal,Heft]
-    [symmetricAlgebraIdeal,Inverses]
-    [symmetricAlgebraIdeal,Join]
-    [symmetricAlgebraIdeal,Local]
-    [symmetricAlgebraIdeal,MonomialOrder]
-    [symmetricAlgebraIdeal,MonomialSize]
-    [symmetricAlgebraIdeal,SkewCommutative]
+    (symmetricAlgebraIdeal,Ideal)
+    (symmetricAlgebraIdeal,Module)
     [symmetricAlgebraIdeal,VariableBaseName]
-    [symmetricAlgebraIdeal,Variables]
-    [symmetricAlgebraIdeal,Weights]
-    [symmetricAlgebraIdeal,WeylAlgebra]
    Headline
     Ideal of the symmetric algebra of an ideal or module
    Usage
-    I = symmetricAlgebra J
+    I = symmetricAlgebraIdeal J
    Inputs
     I:Ideal
     I: Module
@@ -1034,11 +737,19 @@ doc ///
     J:Ideal
    Description
     Text
-     Uses the built-in  @TO symmetricAlgebra@, function. For documentation of the options
-     look the documentation of  @TO symmetricAlgebra@.
+     Uses the built-in  function @TO symmetricAlgebra@. The function returns J an ideal in a
+     new ring, with generators corresponding to those of th eideal or module I. The name
+     of the new generators may be set, for example to T, with the form
+     
+     symmetricAlgebraIdeal(J, VariableBaseName =>"T")
    SeeAlso
     reesIdeal
 ///
+
+{*
+viewHelp symmetricAlgebra
+*}
+
 
 doc ///
   Key
@@ -1052,12 +763,12 @@ doc ///
     f:Matrix
   Outputs
     :Ideal
-      defining the Rees ring of {\tt f}
+      the defining ideal of the image of $Sym(f)$
   Description
    Text
      Given a map between free modules $f: F \to G$ this function computes the
      kernel of the induced map of symmetric algebras, $Sym(f): Sym(F) \to
-     Sym(G)$ as an ideal in $Sym(F)$.  When $f$ defines the universal embedding
+     Sym(G)$ as an ideal in $Sym(F)$.  When $f$ defines a versal embedding
      of $Im f$ then by the definition
      of Huneke-Eisenbud-Ulrich) this is equal to the defining ideal of the Rees
      algebra of the module Im f, the Rees ideal of M.
@@ -1077,19 +788,17 @@ doc ///
      J = monomialCurveIdeal(R, {1,2,3})
      symmetricKernel (gens J)
    Text
-     Let {\tt I} be the ideal returned and let {\tt S} be the ring it lives in 
-    (also printed), then {\tt S/I} is isomorphic to 
-    the Rees algebra {\tt R[Jt]}.  We can get the same information
-    above using {\tt reesIdeal(J)}, see @TO reesIdeal@.  {\bf The following is no
-    longer correct!}.  Also 
-    note that {\tt S} is multigraded allowing Macaulay2 to correctly 
-    see that the variables of {\tt R} now live in degree 0 and the new variables 
-    needed to describe {\tt R[Jt]} as a {\tt k}-algebra are in degree 1.
+     Let I be the ideal returned and let S be the ring it lives in 
+    (also printed). The ring S/I is isomorphic to 
+    the Rees algebra R[Jt].  We can get the same information
+    above using {\tt reesIdeal(J)}, see @TO reesIdeal@. Note that the degree length
+    of S is one more than the degree length of R; the old variables
+    now have first degree 0, while the new variables have first degree 1.
    Example
      S = ring oo;
      (monoid S).Options.Degrees
    Text
-     {\tt symmetricKernel} can also be computed over a quotient ring.
+     The function {\tt symmetricKernel} can also be computed over a quotient ring.
    Example
      R = QQ[x,y,z]/ideal(x*y^2-z^9)
      J = ideal(x,y,z)
@@ -1098,13 +807,13 @@ doc ///
      The many ways of working with this function allows the system 
      to compute both the classic Rees algebra of an ideal over a ring 
      (polynomial or quotient) and to compute the the Rees algebra of a 
-     module or ideal using a universal embedding as described in the paper 
+     module or ideal using a versal embedding as described in the paper 
      of Eisenbud, Huneke and Ulrich.  It also allows different ways of 
      setting up the quotient ring.
   SeeAlso
      reesIdeal
      reesAlgebra
-     universalEmbedding
+     versalEmbedding
 ///
 
 
@@ -1112,10 +821,8 @@ doc ///
   Key
     Jacobian  
     [reesAlgebra, Jacobian]    
-    [reesAlgebraIdeal, Jacobian]
-
   Headline
-    choose whether to use the Jacobian dual in the computation.
+    Choose whether to use the Jacobian dual in the computation
   Usage
     reesIdeal(..., Jacobian => true)
   SeeAlso
@@ -1165,26 +872,34 @@ doc ///
 
 doc ///
   Key
-    universalEmbedding
-    (universalEmbedding,Ideal)
-    (universalEmbedding,Module)
+    versalEmbedding
+    (versalEmbedding,Ideal)
+    (versalEmbedding,Module)
   Headline
-    Compute the universal embedding
+    Compute a versal embedding
   Usage
-    u = universalEmbedding M
+    u = versalEmbedding M
   Inputs
     M:Module
       or @ofClass Ideal@
   Outputs
     u:Matrix
-      defining the universal embedding of the {\tt R}-module {\tt M}
-      into a free {\tt R}-module.
+      a matrix that induces a versal embedding of the R-module M
+      into a free R-module.
   Description
    Text
-      Suppose that M has free presentation $F\to G$.  universalEmbedding
-      provides the universal map from the input module M into a free module H
-      over the same ring, written as a map $u:M \to H$, such that any map from
-      $M$ to a free $R$-module, factors uniquely through $u$.  Let $u1$ be the
+      For any module M over a Noetherian ring R there is a map $u: M \to H$
+      that is versal for maps from M to free modules; that is,
+      such that any map from M to a free module factors through u. Such a map
+      may be constructed by choosing a set of s generators for Hom(M,R), and using
+      them as the components of a map $u: M \to H := R^s$.
+      
+      (NOTE: In the paper of  Eisenbud, Huneke and Ulrich
+      cited below, the versal map is described with the 
+      term ``universal'', which is misleading, since the induced map
+      from H is generally not unique.)
+      
+      Suppose that $M$ has a free presentation $F \to G$, and let $u1$ be the
       map $u1: G\to H$ induced by composing $u$ with the surjection $p: G \to
       M$.  By definition, the Rees algebra of $M$ is the image of the induced
       map $Sym(u1): Sym(G)\to Sym(H)$, and thus can be computed with
@@ -1197,7 +912,7 @@ doc ///
       S = ZZ/101[x,y,z];
       FF=res ((ideal vars S)^3);
       M=coker (FF.dd_2)
-      universalEmbedding M
+      versalEmbedding M
    Text
       A more complicated example.
    Example
@@ -1209,16 +924,15 @@ doc ///
       M=matrix{{0,d1_0,m_(0,0),m_(0,1)},	   {0,0,m_(1,0),m_(1,1)},	   {0,0,0,d2_0},	   {0,0,0,0}}
       M=M-(transpose M);
       N= coker(res coker transpose M).dd_2
-      universalEmbedding(N)
+      versalEmbedding(N)
    Text
-
       Here is an example from the paper "What is the Rees Algebra of a
       Module" by David Eisenbud, Craig Huneke and Bernd Ulrich,
-      Proc. Am. Math. Soc. 131, 701--708, 2002.  The example shows that one
+      Proc. Am. Math. Soc. 131, 701-708, 2002.  The example shows that one
       cannot, in general, define the Rees algebra of a module by using *any*
       embedding of that module, even when the module is isomorphic to an ideal;
       this is the reason for using the map provided by the routine
-      universalEmbedding. Note that the same paper shows that such problems do
+      versalEmbedding. Note that the same paper shows that such problems do
       not arise when the ring is torsion-free as a ZZ-module, or when one takes
       the natural embedding of the ideal into the ring.
    Example
@@ -1228,28 +942,28 @@ doc ///
       I = module ideal(z)
    Text
       As a module (or ideal), $Hom(I,R^1)$ is minimally generated by 3 elements,
-      and thus the universal embedding of $I$ into a free module is into $R^3$.
+      and thus a versal embedding of $I$ into a free module is into $R^3$.
    Example
       betti Hom(I,R^1)
-      ui = universalEmbedding I
+      ui = versalEmbedding I
    Text
       it is injective:
    Example
       kernel ui
    Text
-      It is easy to make two other embeddings of $I$ into free modules. First,
-      the natural inclusion of $I$ into $R$ as an ideal is
+      It is easy to make two other embeddings of $I$ into free modules. One is
+      the natural inclusion of $I$ into $R$ as an ideal:
    Example
       inci = map(R^1,I,matrix{{z}})
       kernel inci
    Text
-      and second, the map defined by multiplication by x and y. 
+      Another is the map defined by multiplication by x and y. 
    Example
       gi = map(R^2, I, matrix{{x},{y}})
       kernel gi
    Text
-      We can compose ui, inci and gi with a surjection R--> i to get maps
-      u:R^1 --> R^3, inc: R^1 --> R^1 and g:R^1 --> R^2 having image i
+      We can compose $ui, inci and gi$ with a surjection $R\to i$ to get maps
+      $u:R^1 \to R^3, inc: R^1 \to R^1$ and $g:R^1 \to R^2$ having image $i$.
    Example
       u= map(R^3,R^{-1},ui)
       inc=map(R^1, R^{-1}, matrix{{z}})
@@ -1287,19 +1001,6 @@ doc ///
       symmetricKernel
 ///
 
-doc ///
-   Key
-    "reesAlgebraIdeal"
---    [reesAlgebraIdeal, DegreeLimit]
---    [reesAlgebraIdeal, Strategy]    	  
---    [reesAlgebraIdeal, BasisElementLimit]
---    [reesAlgebraIdeal, PairLimit]
---    [reesAlgebraIdeal, MinimalGenerators]
-   Headline
-    Synonym for reesIdeal
-   SeeAlso
-    reesIdeal
-///
 
 doc ///
   Key
@@ -1308,8 +1009,9 @@ doc ///
     (reesIdeal, Module)
     (reesIdeal,Ideal, RingElement)
     (reesIdeal,Module, RingElement)
+    [reesIdeal,Jacobian]
   Headline
-    compute the defining ideal of the Rees Algebra
+    Compute the defining ideal of the Rees Algebra
   Usage
     reesIdeal M
     reesIdeal(M,f)
@@ -1325,22 +1027,17 @@ doc ///
     Text
       This routine gives the user a choice between two methods for finding the
       defining ideal of the Rees algebra of an ideal or module $M$ over a ring
-      $R$: The call
-
-        {\tt reesIdeal(M)}
-
-      computes the universal embedding $g: M\to G$ and a surjection $f: F\to M$
+      $R$: The command {\tt reesIdeal(M)}
+      computes a versal embedding $g: M\to G$ and a surjection $f: F\to M$
       and returns the result of symmetricKernel(gf). 
       
       When M is an ideal (the usual case) or in characteristic 0, the same
       ideal can be computed by an alternate method that is often faster.
       If the
-      user knows an non-zerodivisor $a\in R$ such that $M[a^{-1}$ is a free
-      module (for example, when M is an ideal, any non-zerodivisor $a \in M$ 
-      then it is often much faster to call
-
+      user knows a non-zerodivisor $a\in{} R$ such that $M[a^{-1}$ is a free
+      module (for example, when M is an ideal, any non-zerodivisor $a \in{} M$ 
+      then it is often much faster to compute
         {\tt reesIdeal(M,a)}
-
       which computes the saturation of the defining ideal of the symmetric algebra
       of M with respect to a. This
       gives the correct answer even under the slightly weaker hypothesis that
@@ -1363,7 +1060,9 @@ doc ///
       transpose gens I1
       transpose gens I2      
    Text
-      {\bf Investigating plane curve singularities} Proj of the Rees algebra of I \subset R
+      {\bf Investigating plane curve singularities:} 
+      
+      Proj of the Rees algebra of I \subset{} R
       is the blowup of I in spec R. Thus the Rees algebra is a basic construction in
       resolution of singularities. Here we work out a simple case:
    Example
@@ -1402,7 +1101,7 @@ doc ///
     (reesAlgebra,Module, RingElement)
     
   Headline
-    compute the defining ideal of the Rees Algebra
+    Compute the defining ideal of the Rees Algebra
   Usage
     reesAlgebra M
     reesAlgebra(M,f)
@@ -1451,7 +1150,7 @@ doc ///
     (isLinearType, Ideal, RingElement)
     
   Headline
-     is a module of linear type
+     Determine whether module has linear type
   Usage
      isLinearType M
      isLinearType(M,f)
@@ -1462,7 +1161,7 @@ doc ///
       any non-zero divisor modulo the ideal or module.  Optional
   Outputs
      :Boolean
-       true if {\tt M} is of linear type, false otherwise
+       true if M is of linear type, false otherwise
   Description
    Text
      A module or ideal $M$ is said to be ``of linear type'' if the natural map
@@ -1470,8 +1169,8 @@ doc ///
      isomorphism. It is known, for example, that any complete intersection
      ideal is of linear type.
 
-     This routine computes the @TO reesIdeal@ of {\tt M}.  Giving the element {\tt
-     f} computes the @TO reesIdeal@ in a different manner, which is sometimes
+     This routine computes the @TO reesIdeal@ of M.  Giving the element f
+     computes the @TO reesIdeal@ in a different manner, which is sometimes
      faster, sometimes slower.  
    Example
       S = QQ[x_0..x_4]
@@ -1497,7 +1196,7 @@ doc ///
     (isReduction, Module, Module, RingElement)
     
   Headline
-     is a reduction
+     Determine whether an ideal is a reduction
   Usage
      t=isReduction(I,J)
      t=isReduction(I,J,f)
@@ -1505,14 +1204,14 @@ doc ///
      I:Ideal
      J:Ideal
      f:RingElement
-       an optional element, which is a non-zerodivisor modulo {\tt M} and the ring of {\tt M}
+       an optional element, which is a non-zerodivisor modulo M and the ring of M
   Outputs
      t:Boolean
-       true if {\tt J} is a reduction of {\tt I}, false otherwise
+       true if J is a reduction of I, false otherwise
   Description
    Text
     For an ideal $I$, a subideal $J$ of $I$ is said to be a {\bf reduction}
-    of $I$ if there exists a nonnegative integer {\tt n} such that 
+    of $I$ if there exists a nonnegative integer n such that 
     $JI^{n}=I^{n+1}$.
 
     This function returns true if $J$ is a reduction of $I$ and returns false
@@ -1542,20 +1241,20 @@ doc ///
     (normalCone, Ideal, RingElement)
     
   Headline
-    the normal cone of a subscheme
+    The normal cone of a subscheme
   Usage
     normalCone I
     normalCone(I,f)
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal I
   Outputs
     :Ring
-      the ring $R[It] \otimes R/I$ of the normal cone of $I$
+      the ring $R[It] \otimes{} R/I$ of the normal cone of $I$
   Description
     Text
-      The normal cone of an ideal $I\subset R$ is the ring $R/I \oplus I/I^2
+      The normal cone of an ideal $I\subset{} R$ is the ring $R/I \oplus{} I/I^2
       \oplus \ldots$, also called the associated graded ring of $R$ with
       respect to $I$.  If $S$ is the Rees algebra of $I$, then this ring is
       isomorphic to $S/IS$, which is how it is computed here.
@@ -1565,32 +1264,6 @@ doc ///
     normalCone
 ///
 
-doc ///
-  Key
-    associatedGradedRing
-    (associatedGradedRing, Ideal)
-    (associatedGradedRing, Ideal, RingElement)
-    
-  Headline
-    the associated graded ring of an ideal
-  Usage
-    associatedGradedRing I
-    associatedGradedRing(I,f)
-  Inputs
-    I:Ideal
-    f:RingElement
-      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
-  Outputs
-    :Ring
-      the associated graded ring $R[It] \otimes R/I$
-  Description
-   Text
-    associatedGradedRing is a synonym for @TO normalCone@.
-  SeeAlso
-    reesAlgebra
-    normalCone
-    "tangentCone"
-///
 
 
 
@@ -1601,20 +1274,20 @@ doc ///
     (multiplicity, Ideal, RingElement)
     
   Headline
-     compute the Hilbert-Samuel multiplicity of an ideal
+     Compute the Hilbert-Samuel multiplicity of an ideal
   Usage
      multiplicity I
      multiplicity(I,f)
   Inputs
     I:Ideal
     f:RingElement
-      optional argument, if given it should be a non-zero divisor in the ideal {\tt I}
+      optional argument, if given it should be a non-zero divisor in the ideal I
   Outputs
     :ZZ
       the normalized leading coefficient of the Hilbert-Samuel polynomial of $I$
   Description
    Text
-     Given an ideal $I\subset R$, ``multiplicity I'' returns the degree of the
+     Given an ideal $I\subset{} R$, ``multiplicity I'' returns the degree of the
      normal cone of $I$.  When $R/I$ has finite length this is the sum of the
      Samuel multiplicities of $I$ at the various localizations of $R$. When $I$
      is generated by a complete intersection, this is the length of the ring
@@ -1625,6 +1298,7 @@ doc ///
      multiplicity I
      degree I
   Caveat
+     The normal cone is computed using the Rees algebra, thus may be slow.
   SeeAlso
 ///
 
@@ -1636,7 +1310,7 @@ doc ///
     (specialFiberIdeal, Module, RingElement)
     (specialFiberIdeal, Ideal, RingElement)
   Headline
-     special fiber of a blowup     
+     Special fiber of a blowup     
   Usage
      specialFiberIdeal M
      specialFiberIdeal(M,f)
@@ -1652,9 +1326,9 @@ doc ///
      Let $M$ be an $R = k[x_1,\ldots,x_n]/J$-module (for example an ideal), and
      let $mm=ideal vars R = (x_1,\ldots,x_n)$, and suppose that $M$ is a
      homomorphic image of the free module $F$. Let $T$ be the Rees algebra of
-     $M$. The call specialFiberIdeal(M) returns the ideal $J\subset Sym(F)$
-     such that $Sym(F)/J \cong T/mm*T$; that is, specialFiberIdeal(M) =
-     reesIdeal(M)+mm*Sym(F).
+     $M$. The call specialFiberIdeal(M) returns the ideal $J\subset{} Sym(F)$
+     such that $Sym(F)/J \cong{} T/mm*T$; that is, $specialFiberIdeal(M) =
+     reesIdeal(M)+mm*Sym(F).$
 
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
@@ -1666,7 +1340,7 @@ doc ///
    Text
      If M is an n x n+1 matrix in n variables, and all generators have the 
      same degree d, with ell = n as expected,
-     then the special fiber is a rational hypersurface of degree D = d^n, and
+     then the special fiber is a rational hypersurface of degree $D := d^n$, and
      the reduction number is D-1.
    Example
      n = 2
@@ -1675,6 +1349,13 @@ doc ///
      M = matrix{{x_1,x_2,0},{0,x_1,x_2}}
      I = minors(n,M)
      specialFiber(I,I_0)  
+  Caveat
+     Special fiber is here defined to be the fiber of the blowup over the
+     subvariety defined by the vars of the original ring. Note that if the
+     original ring is a tower ring, this might not be the fiber over the
+     closed point! To get the closed
+     fiber, flatten the base ring first. 
+
   SeeAlso
      reesIdeal
 ///
@@ -1688,7 +1369,7 @@ doc ///
     (specialFiber, Ideal, RingElement)
     [specialFiber, Jacobian]
   Headline
-     special fiber of a blowup     
+     Special fiber of a blowup     
   Usage
      specialFiber M
      specialFiber(M,f)
@@ -1704,12 +1385,13 @@ doc ///
      Let $M$ be an $R = k[x_1,\ldots,x_n]/J$-module (for example an ideal), and
      let $mm=ideal vars R = (x_1,\ldots,x_n)$, and suppose that $M$ is a
      homomorphic image of the free module $F$ with $m+1$ generators. Let $T$ be the Rees algebra of
-     $M$. The call specialFiber(M) returns the ideal $J\subset k[w_0,\dots,w_m]$
-     such that $k[w_0,\dots,w_m]/J \cong T/mm*T$; that is, specialFiber(M) =
-     reesIdeal(M)+mm*Sym(F). This routine differs from @TO specialFiberIdeal@ in that
+     $M$. The call specialFiber(M) returns the ideal $J\subset{} k[w_0,\dots,w_m]$
+     such that $k[w_0,\dots,w_m]/J \cong{} T/mm*T$; that is, $specialFiber(M) =
+     reesIdeal(M)+mm*Sym(F)$. This routine differs from @TO specialFiberIdeal@ in that
      the ambient ring of the output ideal is $k[w_0,\dots,w_m]$ rather than
-     $R[w_0,\dots,w_m]$. The coefficient ring $k$ used is always the @TO ultimate@
-     @TO coefficientRing@ of $R$.
+     $R[w_0,\dots,w_m]$. 
+     The coefficient ring $k$ used is always the 
+     @TO ultimate@ @TO2 {coefficientRing, "coefficient ring"} @ of $R$.
      
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
@@ -1731,7 +1413,7 @@ doc ///
     (analyticSpread, Module, RingElement)
     (analyticSpread, Ideal, RingElement)
   Headline
-     compute the analytic spread of a module or ideal
+     Compute the analytic spread of a module or ideal
   Usage
      analyticSpread M
      analyticSpread(M,f)
@@ -1773,7 +1455,7 @@ doc ///
     (distinguished, Ideal, Ideal)
     (distinguished, Ideal)    
   Headline
-     compute the distinguished subvarieties of a pullback, intersection or cone
+     Compute the distinguished subvarieties of a pullback, intersection or cone
   Usage
      L = distinguished(f,I)
      L = distinguished(I,J)
@@ -1791,7 +1473,7 @@ doc ///
      gr_I(S) \to gr_(fI)R.
 
      The distinguished primes p_i in S/I are the intersections of the
-     minimal primes P_i over K with S/I \subset gr_IS, that is,
+     minimal primes P_i over K with S/I \subset{} gr_IS, that is,
      the minimal primes of the support in R/I of the normal cone of f(I).
      The multiplicity associated
      with p_i is by definition the the multiplicities of P_i in the primary
@@ -1809,17 +1491,17 @@ doc ///
      
      We allow the special cases
      
-     distinguished(I,J) := distinguished(f,I), with f:S\to S/J the projection
+     {\tt distinguished(I,J) := distinguished(f,I)}, with f:S\to S/J the projection
      
      and
      
-     distinguished(I) := distinguished(f,I), with f:S\to S the identity.
+     {\tt distinguished(I) := distinguished(f,I)}, with f:S\to S the identity.
           
      which computes the distinguished primes in the support of the normal cone gr_IS
      itself.
      An interesting application is given in the paper
 
-     ``A geometric effective Nullstellensatz.''
+     ``A geometric effective Nullstellensatz,''
      Invent. Math. 137 (1999), no. 2, 427--448 by
      Ein and Lazarsfeld.
      
@@ -1844,7 +1526,7 @@ doc ///
     intersectInP
     (intersectInP, Ideal, Ideal)
    Headline
-    compute distinguished varieties for an intersection in A^n or P^n
+    Compute distinguished varieties for an intersection in A^n or P^n
    Usage
     L = intersectInP(I,J)
    Inputs
@@ -1912,7 +1594,7 @@ doc ///
     (minimalReduction, Ideal)
     
   Headline
-    minimal reduction of an ideal
+    Find a minimal reduction of an ideal
   Usage
     J = minimalReduction I
   Inputs
@@ -1922,11 +1604,12 @@ doc ///
       A minimal reduction of I (defined below)
   Description
     Text
-      {\tt minimalReduction} takes an ideal {\tt I} that is homogeneous or inhomogeneous
+      {\tt minimalReduction} takes an ideal I that is homogeneous or inhomogeneous
       (in the latter case the ideal is to be regarded as an ideal in the 
       localization of the polynomial ring at the origin.). It returns an ideal $J$
-      contained in $I$, with a minimal number of generators (= analyticSpread $I$),
-      such that $I$ is integrally dependent on $J$. 
+      contained in $I$, with a minimal number of generators 
+      such that $I$ is integrally dependent on $J$. This minimal number is called
+      the analyticSpread of $I$.
      
       This routine is probabilistic: $J$ is computed as the ideal generated by the
       right number of random linear combinations of the generators of $I$. However, the
@@ -1953,9 +1636,9 @@ doc ///
       minimalReduction i
     Text
       Note that this is inhomogeneous--
-      it's generated by 3=analyticSpread i random linear combinations
+      it is generated by 3 random linear combinations
       of the generators of i.
-      There is apparently no homogeneous ideal with just 3 generators
+      There is no homogeneous ideal with just 3 generators
       on which i is integrally dependent.
     Example
       f = gens i
@@ -1975,7 +1658,7 @@ doc ///
     reductionNumber
     (reductionNumber, Ideal, Ideal)
   Headline
-    reduction number of one ideal with respect to another
+    Reduction number of one ideal with respect to another
   Usage
     k = reductionNumber(I,J)
   Inputs
@@ -1986,18 +1669,18 @@ doc ///
       the reduction number of $I$ (defined below)
   Description
     Text
-      reductionNumber takes a pair of ideals $I,J$, homogeneous or inhomogeneous
-      (in the latter case the ideal is to be regarded as an ideal in the 
+      The function {\tt reductionNumber} takes a pair of ideals $I,J$, homogeneous or inhomogeneous
+      (in the latter case $I$ and $J$ are to be regarded as ideals in the 
       localization of the polynomial ring at the origin.).
-      The ideal $J$ must be a reduction of $I$ (that is, $J\subset I$
+      The ideal $J$ must be a reduction of $I$ (that is, $J\subset{} I$
       and $I$ is integrally dependent on $J$. This condition is checked by
       the function @TO isReduction@. It returns the smallest integer $k$ such that
       $JI^k = I^{k+1}$.
       
-      See the book 
-      Huneke, Craig; Swanson, Irena: Integral closure of ideals, rings, and modules. 
-      London Mathematical Society Lecture Note Series, 336. Cambridge University Press, Cambridge, 2006.
-      for further information.
+      For further informaion, see the book:
+      Huneke, Craig; Swanson, Irena: Integral closure of ideals, rings, and modules, 
+      London Mathematical Society Lecture Note Series, 336. Cambridge University Press, 
+      Cambridge, 2006.
     Example
       setRandomSeed()
       kk = ZZ/32003;
@@ -2026,7 +1709,7 @@ doc ///
     whichGm
     (whichGm, Ideal)
   Headline
-    largest Gm satisfied by an ideal
+    Largest Gm satisfied by an ideal
   Usage
     whichGm I
   Inputs
@@ -2039,7 +1722,7 @@ doc ///
       An ideal $I$ in a ring $S$ is said to satisfy the condition $G_m$ if, for every prime ideal $P$ of
       codimension $0<k<m$, the ideal $I_P$ in $S_P$ can be generated by at most $k$ elements. 
       
-      The call {\tt whichGm I}
+      The command {\tt whichGm I}
       returns the largest $m$ such that $I$ satisfies $G_m$, or infinity if $I$ satisfies $G_m$ 
       for every $m$.
 
@@ -2066,7 +1749,7 @@ doc ///
     (jacobianDual, Matrix)
     (jacobianDual, Matrix, Matrix, Matrix)
    Headline
-    computes the ``jacobian dual'', part of a method of finding generators for Rees Algebra ideals
+    Computes the 'jacobian dual', part of a method of finding generators for Rees Algebra ideals
    Usage
     psi = jacobianDual phi
     psi = jacobianDual(phi, X, T)
@@ -2079,25 +1762,25 @@ doc ///
      row matrix of variables that will be generators of the Rees algebra of I
    Outputs
     psi:Matrix
-     the `Jacobian Dual' ; satisfies T*phi = X*psi
+     the `Jacobian Dual', which satisfies $T*phi = X*psi$
    Description
     Text
      Let I be an ideal of R and let phi be the presentation matrix of I as a module.
      The symmetric algebra of I has the form 
      
-     Sym_R(I) = R[T_0..T_m]/ideal(T*phi)
+     $Sym_R(I) = R[T_0..T_m]/ideal(T*phi)$
      
-     where the T_i correspond to the generators of I. If X = matrix\{\{x_1..x_n\}\},
-     with x_i \in R, and ideal X contains the entries of the matrix phi, then there is 
+     where the T_i correspond to the generators of I. If $X = matrix\{\{x_1..x_n\}\}$,
+     with x_i \in{} R, and ideal X contains the entries of the matrix phi, then there is 
      a matrix psi defined over R[T_0..T_m], called the Jacobian Dual of phi with respect to X,
-     such that T*phi = X*psi. (the matrix psi is generally
+     such that $T*phi = X*psi$. (the matrix psi is generally
      not unique; Macaulay2 computes it using Groebner division with remainder.)
      
-     In the form psi = jacobianDual phi,
-     a new ring ST = S[T_0..T_m] is created, and the vector X is set to the variables
+     In the form {\tt psi = jacobianDual phi},
+     a new ring ST := S[T_0..T_m] is created, and the vector X is set to the variables
      of R. The result is returned as a matrix over ST. 
      To do the computation in a ring previously defined computed, 
-     use the form psi = jacobianDual(phi, X,T);
+     use the form {\tt psi = jacobianDual(phi, X,T)};
      in this case, the matrices phi, X, T should all be defined over the
      same ring ST, 
      the matrix T should be a row of variables of ST, and
@@ -2211,7 +1894,6 @@ doc ///
     [symmetricKernel, Variable]
     [reesIdeal, Variable]
     [reesAlgebra, Variable]
-    [normalCone, Variable]
     [associatedGradedRing, Variable]
     [specialFiberIdeal, Variable]
     [specialFiber, Variable]
@@ -2225,8 +1907,6 @@ doc ///
     symmetricKernel(...,Variable=>w)
     reesIdeal(...,Variable=>w)
     reesAlgebra(...,Variable=>w)
-    normalCone(...,Variable=>w)
-    associatedGradedRing(...,Variable=>w)
     specialFiberIdeal(...,Variable=>w)
     specialFiber(...,Variable=>w)    
     distinguished(...,Variable=>w)
@@ -2235,12 +1915,12 @@ doc ///
 
   Description
     Text
-      Each of these functions creates a new ring of the form R[w_0, \ldots, w_r]
-      or R[w_0, \ldots, w_r]/J, where R is the ring of the input ideal or module
-      (except for @TO specialFiber@, which creates a ring $K[w_0, \ldots, w_r]$, 
+      Each of these functions creates a new ring of the form R[w_0,\ldots, w_r]
+      or R[w_0,\ldots, w_r]/J, where R is the ring of the input ideal or module
+      (except for @TO specialFiber@, which creates a ring $K[w_0,\ldots, w_r]$, 
       where $K$ is the ultimate coefficient ring of the input ideal or module.)
       This option allows the user to change the names of the new variables in this ring.
-      The default variable is {\tt w}.
+      The default variable is w.
     Example
       R = QQ[x,y,z]/ideal(x*y^2-z^9)
       J = ideal(x,y,z)
@@ -2272,7 +1952,6 @@ doc ///
     [isLinearType,Strategy]
     [isReduction, Strategy]    	  
     [normalCone, Strategy]    	  
-    [associatedGradedRing, Strategy]    	  
     [multiplicity, Strategy]    	  
     [specialFiberIdeal, Strategy]    	  
     [specialFiber, Strategy]    	  
@@ -2295,6 +1974,17 @@ doc ///
      defining the symmetric algebra with respect
      to an element in that ideal.
    SeeAlso
+    reesIdeal
+    reesAlgebra
+    isLinearType
+    isReduction
+    normalCone
+    multiplicity
+    specialFiberIdeal
+    specialFiber
+    analyticSpread
+    distinguished
+    minimalReduction
     saturate
 ///
 doc ///
@@ -2306,7 +1996,6 @@ doc ///
     [specialFiber, PairLimit]
     [specialFiberIdeal, PairLimit]
     [multiplicity, PairLimit]
-    [associatedGradedRing, PairLimit]
     [normalCone, PairLimit]
     [isReduction, PairLimit]
     [isLinearType,PairLimit]
@@ -2317,17 +2006,22 @@ doc ///
     reesIdeal(...,PairLimit => X)
    Description
     Text
-     where X is a positive integer, and the saturation process
-     stops after that number of s-pairs is found.
+     Here X is a positive integer. Each of these functions computes the Rees
+     Algebra using a saturation step, and the optional argument causes the saturation
+     process to stop after that number of s-pairs is found.
      This is described in the documentation node for @TO saturate@.
-     
-     The Rees algebra S(M) of a submodule M of a free module (most importantly,
-     an ideal in the ring), is equal to the symmetric algebra Sym_k(M) mod torsion.
-     computing this torsion is the slow link in most of the programs in this
-     package. The fastest way to compute it is usually by saturating the ideal
-     defining the symmetric algebra with respect
-     to an element in that ideal.
    SeeAlso
+    reesIdeal
+    reesAlgebra
+    isLinearType
+    isReduction
+    normalCone
+    multiplicity
+    specialFiberIdeal
+    specialFiber
+    analyticSpread
+    distinguished
+    minimalReduction
     saturate
 ///
 doc ///
@@ -2339,7 +2033,6 @@ doc ///
     [specialFiber, MinimalGenerators]
     [specialFiberIdeal, MinimalGenerators]
     [multiplicity, MinimalGenerators]
-    [associatedGradedRing, MinimalGenerators]
     [normalCone, MinimalGenerators]
     [isReduction, MinimalGenerators]
     [isLinearType,MinimalGenerators]
@@ -2350,16 +2043,23 @@ doc ///
     reesIdeal(...,MinimalGenerators => X)
    Description
     Text
-     where X is boolean -- whether or not to return minimal generators
+     Here X is of type boolean. Each of these functions involves the
+     computation of a Rees algebra, which may involve a saturation step.
+     This optional argument determines whether or not 
+     the output of the saturation step will be forced to have a minmimal generating set.
      This is described in the documentation node for @TO saturate@.
-     
-     The Rees algebra S(M) of a submodule M of a free module (most importantly,
-     an ideal in the ring), is equal to the symmetric algebra Sym_k(M) mod torsion.
-     computing this torsion is the slow link in most of the programs in this
-     package. The fastest way to compute it is usually by saturating the ideal
-     defining the symmetric algebra with respect
-     to an element in that ideal.
    SeeAlso
+    reesIdeal
+    reesAlgebra
+    isLinearType
+    isReduction
+    normalCone
+    multiplicity
+    specialFiberIdeal
+    specialFiber
+    analyticSpread
+    distinguished
+    minimalReduction
     saturate
 ///
 doc ///
@@ -2369,7 +2069,6 @@ doc ///
     [distinguished,BasisElementLimit]
     [analyticSpread, BasisElementLimit]
     [specialFiber, BasisElementLimit]
-    [associatedGradedRing, BasisElementLimit]
     [multiplicity, BasisElementLimit]
     [normalCone, BasisElementLimit]
     [isReduction, BasisElementLimit]
@@ -2382,16 +2081,22 @@ doc ///
     reesIdeal(...,BasisElementLimit => X)
    Description
     Text
-     where X is a non-negative integer. Stop when X Groebner basis elements have been found
+     Here X is a positive integer. Each of these functions computes the Rees
+     Algebra using a saturation step, and the optional argument causes the saturation
+     process to stop after that number of s-pairs is found.
      This is described in the documentation node for @TO saturate@.
-     
-     The Rees algebra S(M) of a submodule M of a free module (most importantly,
-     an ideal in the ring), is equal to the symmetric algebra Sym_k(M) mod torsion.
-     computing this torsion is the slow link in most of the programs in this
-     package. The fastest way to compute it is usually by saturating the ideal
-     defining the symmetric algebra with respect
-     to an element in that ideal.
    SeeAlso
+    reesIdeal
+    reesAlgebra
+    isLinearType
+    isReduction
+    normalCone
+    multiplicity
+    specialFiberIdeal
+    specialFiber
+    analyticSpread
+    distinguished
+    minimalReduction
     saturate
 ///
 doc ///
@@ -2403,27 +2108,34 @@ doc ///
     [specialFiber, DegreeLimit]
     [normalCone, DegreeLimit]
     [multiplicity, DegreeLimit]
-    [associatedGradedRing, DegreeLimit]
     [isReduction, DegreeLimit]
     [isLinearType,DegreeLimit]
     [reesAlgebra,DegreeLimit]
     [specialFiberIdeal, DegreeLimit]
    Headline
-    Bound the degrees considered in the saturation step. Defaults to infinity.
+    Bound the degrees considered in the saturation step. Defaults to infinity
    Usage
     reesIdeal(...,DegreeLimit => X)
    Description
     Text
      where X is a non-negative integer. Stop computation at degree X.
      This is described in the documentation node for @TO saturate@.
-     
-     The Rees algebra S(M) of a submodule M of a free module (most importantly,
-     an ideal in the ring), is equal to the symmetric algebra Sym_k(M) mod torsion.
-     computing this torsion is the slow link in most of the programs in this
-     package. The fastest way to compute it is usually by saturating the ideal
-     defining the symmetric algebra with respect
-     to an element in that ideal.
+     Here X is a positive integer. Each of these functions computes the Rees
+     Algebra using a saturation step, and the optional argument causes the saturation
+     process to stop after that number of s-pairs is found.
+     This is described in the documentation node for @TO saturate@.
    SeeAlso
+    reesIdeal
+    reesAlgebra
+    isLinearType
+    isReduction
+    normalCone
+    multiplicity
+    specialFiberIdeal
+    specialFiber
+    analyticSpread
+    distinguished
+    minimalReduction
     saturate
 ///
 
@@ -2523,12 +2235,12 @@ doc ///
      mm = radical ideal singularLocus cusp
     Text
      The cusp is singular at the maximal ideal (x,y), so we blow that up,
-     and examine the ``total transform', that is, the ideal generated by the 
+     and examine the ``total transform'', that is, the ideal generated by the 
      x^2-y^3 in the Rees algebra. 
     Example
      B = first flattenRing reesAlgebra(mm)
     Text
-     The functions `first flattenRing' serve to make B a quotient of the polynomial
+     Application of {\tt first flattenRing} serves to make B a quotient of the polynomial
      ring T in 4 variables; otherwise it would be a quotient of R[w_0,w_1], which
      Macaulay2 treats as a polynomial ring in 2 variables, and the calculation of
      the singular locus later on would be wrong.
@@ -2540,10 +2252,10 @@ doc ///
      D/codim
     Text
      We see that the reduced preimage consists of two codimension 1 components,
-     the 'exceptional divisor, which is the pullback of the point we blew up, (x,y),
-     and the 'strict transform'.
+     the `exceptional divisor', which is the pullback of the point we blew up, (x,y),
+     and the `strict transform'.
      The two components meet in a double point in the 2 dimensional variety
-     B \subset A^2 \times P^1. We have to saturate with respect to the irrelevant
+     B \subset{} A^2\times P^1. We have to saturate with respect to the irrelevant
      ideal to understand what's going on.
     Example
      irrelB = ideal(B_0,B_1)
@@ -2580,7 +2292,7 @@ doc ///
      sing1 = saturate(jacobianIdeal, irrelB)
 
     Text
-     Next we look at the desingularization of a Tacnode; it will take two blowups.
+     Next we look at the desingularization of a tacnode; it will take two blowups.
     Example
      R = ZZ/32003[x,y]
      tacnode = ideal(x^2-y^4)
@@ -2623,12 +2335,12 @@ doc ///
      time sing2 = ideal singularLocus strictTransform2;
      saturate(sing2, sub(irrelTot, ring sing2))
     Text
-     The answer, ideal 1 shows that the second blowup desingularizes the tacnode.
+     The answer, {\tt ideal 1} shows that the second blowup desingularizes the tacnode.
     Text
      It is not necessary to repeatedly blow up closed points: there is always a 
      single ideal that can be blown up to desingularize 
      (Hartshorne, Algebraic Geometry,Thm II.7.17).
-     In this case, blowing-up (x,y^2) desingularlizes the tacnode x^2-y^4 in a single step.
+     In this case, blowing-up (x,y^2) desingularizes the tacnode x^2-y^4 in a single step.
     Example
      R = ZZ/32003[x,y];
      tacnode = ideal(x^2-y^4);
@@ -2705,12 +2417,12 @@ check "ReesAlgebra"
 ///
 
 TEST///
---TEST for universalEmbedding
+--TEST for versalEmbedding
 p=3
 S=ZZ/p[x,y,z]
 R=S/((ideal(x^p,y^p))+(ideal(x,y,z))^(p+1))
 i=module ideal(z)
-ui=universalEmbedding i
+ui=versalEmbedding i
 assert(kernel ui == ideal(0_R))
 inci=map(R^1,i,matrix{{z}})
 assert(kernel inci == 0)
@@ -2904,3 +2616,211 @@ installPackage "ReesAlgebra"
 check "ReesAlgebra"
 viewHelp ReesAlgebra
 
+----
+
+--minimum value of (ell,r):(g+n-1), ceiling(n-1)(m-1)/m
+--here the estimate of r comes from the non-min reduction
+--(a)(x)^[n].
+
+--actual values: g = 2, m= 2 starting with n=4 it looks like ceiling(n/m)
+--The following gives (ell,r) for n=2..6
+--the case n = 6 took 524 seconds.
+     +------+
+o8 = |(3, 1)|
+     +------+
+     |(4, 2)|
+     +------+
+     |(5, 3)|
+     +------+
+     |(6, 3)|
+     +------+
+     |(7, 4)|
+     +------+
+--actual values: g = 3, m = 2, n = 3,
+(n, ell, r, rsmall, rsmall theoretical)
+(3, 5, 2, 1, 1)
+     -- used 7.10124 seconds
+(4, 6, 3, 2, 2)
+
+
+--could also be 1 more than rsmall.
+--the case n = 6 took 524 seconds.
+
+--elapsedTime (K = codim(j:i))
+--AX = (ideal apply(g, i->a_i))* ideal apply(n,i->x_i^m)
+--elapsedTime reductionNumber(i,AX)
+
+///
+ 
+{* slightly slower
+reductionNumber (Ideal,Ideal) := (i,j) -> (
+     I:=i; -- will be a power of i
+     M:= ideal vars ring i; -- we're pretending to be in a local ring
+     rN:=0;
+     if isHomogeneous j then (
+     	  while not ((gens I)%j)==0 do (
+	       I = trim (i*I);
+	       j=  trim (i*j);
+     	       rN =rN+1))
+     else(
+     	  while not ((gens I)%(j+M*I))==0 do (
+	       I = trim(i*I);
+	       j= trim(i*j);
+     	       rN =rN+1));
+     rN)
+*}
+
+{* much slower
+reductionNumber (Ideal,Ideal,ZZ) := (i,j,t) -> (
+    --t is any integer, signals a different method
+     d := max flatten (i_*/degree);
+     I := i; -- will be a power of i
+     M := ideal vars ring i; -- we're pretending to be in a local ring
+     rN := 0;
+     J := j;
+--      while not (gens I)% gb(gens J,DegreeLimit => (rN)*d) ==0 
+      while not (gens I)% gb(gens J) == 0
+            do (
+       I = trim i*I;
+       J = i*J;
+       rN =rN+1);
+     rN)
+*}
+{*
+--The following seems to  be much slower!
+reductionNumber (Ideal, Ideal, String) := (i,j,s) -> (
+     Ifib := specialFiber(I);
+     Pfib := (ring Ifib); -- ambient ring of the fiber
+     n := numgens Pfib;
+     kk := coefficientRing Pfib;
+     M := sub(gens J // gens I, kk);
+     M = promote(M, Pfib);
+     L := (vars Pfib)*M; 
+     regularity (Pfib^1/ideal(leadTerm(Ifib+ideal L)))
+	  )
+*}
+
+---------------------------
+
+--jetsam
+doc ///
+  Key
+    associatedGradedRing
+    (associatedGradedRing, Ideal)
+    (associatedGradedRing, Ideal, RingElement)
+    
+  Headline
+    The associated graded ring of a ring with respect to powers of an ideal
+  Usage
+    associatedGradedRing I
+    associatedGradedRing(I,f)
+  Inputs
+    I:Ideal
+    f:RingElement
+      optional argument, if given it should be a non-zero divisor in the ideal I
+  Outputs
+    :Ring
+      the associated graded ring $R[It] \otimes R/I$
+  Description
+   Text
+    associatedGradedRing is a synonym for @TO normalCone@.
+  SeeAlso
+    reesAlgebra
+    normalCone
+    "tangentCone"
+///
+
+    normalCone(...,Variable=>w)
+        [normalCone, Variable]
+	
+	
+-----------------
+This 
+
+    doc ///
+       Key
+	symmetricAlgebraIdeal
+	(symmetricAlgebraIdeal, Ideal)    
+	(symmetricAlgebraIdeal, Module)
+	[symmetricAlgebraIdeal,Constants]
+	[symmetricAlgebraIdeal,DegreeLift]
+	[symmetricAlgebraIdeal,DegreeMap]
+	[symmetricAlgebraIdeal,DegreeRank]
+	[symmetricAlgebraIdeal,Degrees]
+	[symmetricAlgebraIdeal,Global]
+	[symmetricAlgebraIdeal,Heft]
+	[symmetricAlgebraIdeal,Inverses]
+	[symmetricAlgebraIdeal,Join]
+	[symmetricAlgebraIdeal,Local]
+	[symmetricAlgebraIdeal,MonomialOrder]
+	[symmetricAlgebraIdeal,MonomialSize]
+	[symmetricAlgebraIdeal,SkewCommutative]
+	[symmetricAlgebraIdeal,VariableBaseName]
+	[symmetricAlgebraIdeal,Variables]
+	[symmetricAlgebraIdeal,Weights]
+	[symmetricAlgebraIdeal,WeylAlgebra]
+       Headline
+	Ideal of the symmetric algebra of an ideal or module
+       Usage
+	I = symmetricAlgebra J
+       Inputs
+	I:Ideal
+	I: Module
+       Outputs
+	J:Ideal
+
+results in
+
+    Synopsis
+
+    Usage:
+	I = symmetricAlgebra J
+    Inputs:
+	I, an ideal
+	I, a module
+    Optional inputs:
+	Constants => ..., -- Ideal of the symmetric algebra of an ideal or module
+	DegreeLift => ..., -- Ideal of the symmetric algebra of an ideal or module
+	DegreeMap => ..., -- Ideal of the symmetric algebra of an ideal or module
+	DegreeRank => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Degrees => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Global => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Heft => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Inverses => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Join => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Local => ..., -- Ideal of the symmetric algebra of an ideal or module
+	MonomialOrder => ..., -- Ideal of the symmetric algebra of an ideal or module
+	MonomialSize => ..., -- Ideal of the symmetric algebra of an ideal or module
+	SkewCommutative => ..., -- Ideal of the symmetric algebra of an ideal or module
+	VariableBaseName => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Variables => ..., -- Ideal of the symmetric algebra of an ideal or module
+	Weights => ..., -- Ideal of the symmetric algebra of an ideal or module
+	WeylAlgebra => ..., -- Ideal of the symmetric algebra of an ideal or module
+    Outputs:
+	J, an ideal
+
+, which looks bad.  By contrast, look at
+
+  https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/Macaulay2Doc/html/_install__Package.html
+
+, which arise from this code:
+
+  https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Macaulay2Doc/functions/installPackage-doc.m2#L7
+
+Perhaps you could do something similar.
+
+	
+==================
+Delete these lines:
+
+    	DebuggingMode => false,
+	Reload => true  
+=================
+Don't put comments into strings:
+
+	///
+	restart
+	loadPackage("ReesAlgebra", Reload=>true)
+
+Use -* ... *- block comment syntax instead.  Also, change the old {* ... *}
+to the new syntax, so emacs will highlight it properly.

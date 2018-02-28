@@ -390,6 +390,7 @@ export Expr := (
      RawMonomialIdealCell or
      RawMonomialOrderingCell or
      RawMutableMatrixCell or
+     RawMutableComplexCell or
      -- NAG begin
      RawHomotopyCell or
      RawSLEvaluatorCell or
