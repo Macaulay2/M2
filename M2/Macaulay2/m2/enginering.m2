@@ -641,12 +641,12 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	  );
      f / g)
 frac0 = (f,g) -> f/g
+
 Number / RingElement := frac0 @@ promoteleftexact
 RingElement / Number := (f,g) -> (1/g) * f
--- we tried making this more uniform, but it broke many examples:
--- RingElement / Number := frac0 @@ promoterightexact
+
 InexactNumber / RingElement := frac0 @@ promoteleftinexact
-RingElement / InexactNumber := frac0 @@ promoterightinexact
+RingElement / InexactNumber := (f,g) -> (1/g) * f
 
 fraction(RingElement,RingElement) := (r,s) -> (
      R := ring r;
