@@ -63,12 +63,15 @@ toMutableComplex ChainComplex := C -> for i from min C to max C list mutableMatr
 -- TODO: make sure the information about source and target modules for general complexes are kept
 toChainComplex = method()
 toChainComplex List          :=  mComplex     -> (
-    if #mComplex == 0 then error "toChainComplex: cannot build a chain complex without a ring.";
+    if #mComplex == 0 then error "toChainComplex: expected at least one differential map.";
     toChainComplex(mComplex, target matrix (mComplex#0))
     )
 toChainComplex(List, Module) := (mComplex, F) -> (
-    chainComplex for M in mComplex list (
-        m := map(F, , matrix M);
+    if #mComplex == 0 then error "toChainComplex: expected at least one differential map.";
+    places := select(0..(length mComplex)-1, i -> mComplex_i != 0);
+    len := if #places === 0 then 0 else max places - min places;
+    chainComplex for i from 0 to len list (
+        m := map(F, , matrix mComplex_i);
         F = source m; m)
     )
 
