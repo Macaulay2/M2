@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "4.2", 
-        Date => "February 4, 2018",
+	Version => "4.2.1", 
+        Date => "March 4, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true
@@ -263,6 +263,7 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,inp3) -> (
    R':=R[x_0..x_d];
    M:=sub(jacobian Basis,R')*sub(transpose matrix{{a_0..a_N}},R') - transpose((gens sub(C,R'))*sub(matrix for i to n list for j to d list b_(i,j),R'));
    f:=map parametrize sub(ideal selectInSubring(1,gens gb sub(trim ideal last coefficients M,R)),K[a_0..a_N]);
+   if dim target f <= 0 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
    PP':=PP[gens target f];
    linSys:=transpose sub(sub((coefficients (sub(matrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
    toMap(linSys,Dominant=>o.Dominant)
@@ -419,6 +420,12 @@ kernelComponent(RingMap,ZZ) := (phi,d) -> (
 );
 
 forceImage (RationalMap,Ideal) := (Phi,I) -> (
+   if Phi#"idealImage" =!= null then error "not permitted to reassign image of rational map";
+   if not(isHomogeneous I and ring I === target Phi) then error "expected homogeneous ideal in the coordinate ring of the target variety";
+   setKeyValue(Phi,"idealImage",trim I);
+);
+
+forceImage (MultihomogeneousRationalMap,Ideal) := (Phi,I) -> (
    if Phi#"idealImage" =!= null then error "not permitted to reassign image of rational map";
    if not(isHomogeneous I and ring I === target Phi) then error "expected homogeneous ideal in the coordinate ring of the target variety";
    setKeyValue(Phi,"idealImage",trim I);
@@ -1167,6 +1174,24 @@ parametrize (QuotientRing) := (R) -> (
 );
 
 parametrize (PolynomialRing) := (R) -> rationalMap R;
+
+parametrizeProductOfProjectiveSpaces = method(TypicalValue => RingMap)
+parametrizeProductOfProjectiveSpaces (PolynomialRing,Symbol) := (R,x) -> (
+   n := apply(multigens R,g -> #g-1);
+   K := coefficientRing R;
+   S := K[x_0..x_(sum n)];
+   x = gens S;
+   v := {toList(1 .. n_0)};
+   for i from 1 to #n-1 do v = append(v,toList((1 + last last v) .. (n_i + last last v)));
+   map(S,R,flatten apply(v,e -> x_(prepend(0,e))))
+);
+
+parametrize (MultihomogeneousRationalMap,Symbol) := (Phi,x) -> (
+   if not isPolynomialRing source Phi then error "not implemented yet";
+   rationalMap((parametrizeProductOfProjectiveSpaces(source Phi,x)) * (map Phi))
+);
+
+parametrize (MultihomogeneousRationalMap) := (Phi) -> parametrize(Phi,getSymbol "x");
 
 flatten (RationalMap) := (Phi) -> (
     Pn := ambient source Phi;
