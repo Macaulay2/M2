@@ -1,5 +1,10 @@
 needsPackage "MonodromySolver"
-needsPackage "ExampleIdeals"
+
+-- copied from ExampleIdeals.m2
+cyclicRoots = (n,kk) -> (
+     R := kk[vars(0..n-1)];
+     ideal apply(1..n-1, d-> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
+       + ideal(product gens R - 1))
 
 parametrizedCyclic = n -> (
 	S := gens cyclicRoots(n,CC);
@@ -14,14 +19,11 @@ parametrizedCyclic = n -> (
 	polySystem transpose matrix {polysP}
 );
 
-
---------------------------------------------------------------
 end 
-
+--------------------------------------------------------------
+-- push F11 starting on the line below
 restart
 load "cyclic.m2"
-
-
 
 polys = parametrizedCyclic 7;
 
@@ -65,24 +67,24 @@ file << "\\begin{array}{|c||" << concatenate(#testTriples:"c|") << "} " << endl;
 for opt in testOptions do (
     file << opt;
     for triple in testTriples do (
-	(init,nnodes,nedges) := triple;
-    	pairs := apply(numSeeds, seed -> (
-		setRandomSeed seed;
-    		(p0,x0) := createSeedPair polySystem polys;
-    		(node,numPaths) := monodromySolve(polys,p0,{x0},
-		    GraphInitFunction=>init,
-		    NumberOfNodes=>nnodes,
-		    NumberOfEdges=>nedges,
-		    SelectEdgeAndDirection=>first opt,
-		    Potential=>last opt,
-		    TargetSolutionCount=>mixedVolume);
-		(length node.PartialSols == mixedVolume, numPaths)
-		));
-    	success := select(pairs,p->first p);
-    	if #success > 0 then
-    	(file << " & " << 100.*#success/#pairs << "%" << ",\\ " << toRR sum(success,p->last p)/#success) else
-    	(file << " & " << 100.*#success/#pairs << "%" << ",\\ - ")
-    	);
+				(init,nnodes,nedges) := triple;
+    		pairs := apply(numSeeds, seed -> (
+		    				setRandomSeed seed;
+    						(p0,x0) := createSeedPair polySystem polys;
+    						(node,numPaths) := monodromySolve(polys,p0,{x0},
+		    						GraphInitFunction=>init,
+		    						NumberOfNodes=>nnodes,
+		    						NumberOfEdges=>nedges,
+		    						SelectEdgeAndDirection=>first opt,
+		    						Potential=>last opt,
+		    						TargetSolutionCount=>mixedVolume);
+								(length node.PartialSols == mixedVolume, numPaths)
+								));
+				success := select(pairs,p->first p);
+    		if #success > 0 then
+    		(file << " & " << 100.*#success/#pairs << "%" << ",\\ " << toRR sum(success,p->last p)/#success) else
+    		(file << " & " << 100.*#success/#pairs << "%" << ",\\ - ")
+    		);
     file << "\\\\" << endl;
     )
 file << "\\end{array}" << endl;
