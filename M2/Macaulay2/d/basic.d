@@ -5,7 +5,7 @@ use expr;
 header "
   #include \"../e/engine.h\"
   #ifdef HAVE_PYTHON
-    #include <python2.5/Python.h>
+    #include <python2.7/Python.h>
   #else
     #define PyObject_Hash(o) 0
   #endif

@@ -15,7 +15,7 @@ declarations "
      #include <mysql/mysql.h>
    #endif
    #ifdef HAVE_PYTHON
-     #include <python2.5/Python.h>
+     #include <python2.7/Python.h>
    #else
      #define PyObject_Str(o) 0
      #define PyString_AS_STRING(o) 0
