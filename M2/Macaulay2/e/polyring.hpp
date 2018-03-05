@@ -20,7 +20,6 @@ class PolyRingFlat;
 class PolyRing;
 class PolyRingSkew;
 class PolyRingWeyl;
-class PolyFrac;
 class PolyRingNC;
 class PolyQuotient;
 
@@ -386,14 +385,6 @@ class PolynomialRing : public Ring
   // denom should be an element of getDenominatorRing() (if non-NULL, otherwise
   // 'denom'
   // is ignored).
-};
-
-/**
- * \ingroup polynomialrings
- */
-class PolyFrac : public PolynomialRing
-// The class of polynomial rings implemented as (numer,denom)
-{
 };
 
 /**

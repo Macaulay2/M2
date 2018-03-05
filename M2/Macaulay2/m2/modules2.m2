@@ -293,16 +293,29 @@ hilbertPolynomial Ring := ProjectiveHilbertPolynomial => options -> (R) -> hilbe
 Ideal * Ring := Ideal => (I,S) -> if ring I === S then I else ideal(I.generators ** S)
 Ring * Ideal := Ideal => (S,I) -> if ring I === S then I else ideal(I.generators ** S)
 
+issub := (f, g) -> (
+    RP := ring f;
+    if ring g =!= RP then error "expected objects of the same ring";
+    if instance(RP, LocalRing) then (
+        for i from 0 to numColumns f - 1 do (
+            LocalRings := needsPackage "LocalRings";
+            liftUp := value LocalRings.Dictionary#"liftUp";
+            L := flatten entries syz(liftUp(f_{i} | g), SyzygyRows => 1);
+            if not any(L, u -> isUnit promote(u, RP)) then return false;
+            );
+        true
+        )
+    else -1 === rawGBContains(raw gb g, raw f)    -- we can do better in the homogeneous case!
+    )
+
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (
      if n === 0
      then I.generators == 0
      else if n === 1
-     then 1_(ring I) % I == 0
+     then issub(matrix {{1_(ring I)}}, generators I)
      else error "attempted to compare ideal to integer not 0 or 1"
      )
-
-issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)	    -- we can do better in the homogeneous case!
 
 ZZ == Module := (n,M) -> M == n
 Module == ZZ := (M,n) -> (
@@ -352,7 +365,7 @@ multidegree Module := M -> (
      A := degreesRing M;
      onem := map(A,A,apply(generators A, t -> 1-t));
      c := codim M;
-     if c === infinity then 0_A else part(c,onem numerator poincare M))
+     if c === infinity then 0_A else part(c,numgens A:1,onem numerator poincare M))
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 

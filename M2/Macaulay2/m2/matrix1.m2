@@ -77,10 +77,9 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  )
      else (
 	  R := ring M;
-	  N' := cover N;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 

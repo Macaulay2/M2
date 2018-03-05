@@ -14,7 +14,6 @@ struct frac_elem
 class FractionField : public Ring
 {
   const PolyRingFlat *R_;  // Base ring.  Assumed to be a domain.
-  ring_elem _MINUS_ONE;    // this is -1 in the ring R.
   bool use_gcd_simplify;   // Use built in gcd only if this is frac(ZZ[xs]) or
                            // frac(ZZ/p[xs])
   // When we (if we) change fractions to be flat, then this

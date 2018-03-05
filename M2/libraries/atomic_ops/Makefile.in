@@ -2,8 +2,7 @@ GITURL = https://github.com/ivmai/libatomic_ops
 HOMEPAGE = $(GITURL)
 URL = http://www.hboehm.info/gc/gc_source
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 7.4.2
-# I made the 7.4.2 tar file from the github repository with autoreconf -vif at the tag libatomic_ops-7_4_2
+VERSION = 7.6.2
 TARFILE = libatomic_ops-$(VERSION).tar.gz
 TARDIR = libatomic_ops-$(VERSION)
 LICENSEFILES = COPYING doc/LICENSING.txt
