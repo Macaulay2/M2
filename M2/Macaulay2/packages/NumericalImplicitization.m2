@@ -1,7 +1,7 @@
 newPackage("NumericalImplicitization",
     Headline => "NumericalImplicitization",
-    Version => "1.0.3",
-    Date => "September 23, 2017",
+    Version => "1.0.4",
+    Date => "December 21, 2017",
     Authors => {
         {Name => "Justin Chen",
 	 Email => "jchen@math.berkeley.edu",
@@ -627,8 +627,9 @@ doc ///
 	    a parametric description of a variety into an intrinsic, or implicit, description. Classically, 
 	    implicitization refers to the procedure of computing the defining equations of a parametrized 
 	    variety, and in theory this is accomplished by finding the kernel of a ring homomorphism, via 
-	    Gröbner bases. In practice however, symbolic Gröbner basis computations are often time-consuming, 
-	    even for medium-scale problems, and do not scale well with respect to the size of the input.
+	    Gr&ouml;bner bases. In practice however, symbolic Gr&ouml;bner basis computations are often 
+            time-consuming, even for medium-scale problems, and do not scale well with respect to the size 
+            of the input.
 
 	    Despite this, one would often like to know basic information about a parametrized variety, even 
 	    when symbolic methods are prohibitively expensive. Examples of 
@@ -737,7 +738,7 @@ doc ///
     	Text
         
 	    Here is how to sample a point from the Grassmannian $Gr(3,5)$ of 
-	    $P^2$'s in $P^4$, under its Plücker embedding.
+	    $P^2$'s in $P^4$, under its Pl&uuml;cker embedding.
             We take maximal minors of a $3 x 5$ matrix, whose row span
             gives a $P^2$ in $P^4$.
             
@@ -776,7 +777,7 @@ doc ///
             dimension is returned. This ensures consistency with @TO dim@.
 
 	    The following computes the affine dimension of the Grassmannian $Gr(3,5)$ 
-            of $P^2$'s in $P^4$, under its Plücker embedding.
+            of $P^2$'s in $P^4$, under its Pl&uuml;cker embedding.
             
         Example
             R = CC[x_(1,1)..x_(3,5)];
@@ -863,7 +864,7 @@ doc ///
             numericalHilbertFunction(F, ideal 0_R, 4)
         Text
         
-            The following computes the number of Plücker quadrics in the 
+            The following computes the number of Pl&uuml;cker quadrics in the 
             defining ideal of the Grassmannian $Gr(3,5)$ of $P^2$'s in $P^4$.
             
         Example
@@ -887,6 +888,7 @@ doc ///
         is too large).
     SeeAlso
     	NumericalInterpolationTable
+        extractImageEquations
 ///
 
 doc ///
@@ -1020,7 +1022,7 @@ doc ///
             transpose gens ker map(QQ[s,t], QQ[y_0..y_3], {s^3,s^2*t,s*t^2,t^3})
         Text
         
-	    We determine the $5$ Plucker quadrics defining the Grassmannian 
+	    We determine the $5$ Pl&uuml;cker quadrics defining the Grassmannian 
             $Gr(3,5)$.
             
         Example
@@ -1092,18 +1094,44 @@ doc ///
             has positive dimensional fibers. In the example below, we verify that 
             the variety of $3 x 3 x 3$ tensors of border rank $<= 4$, i.e. the $4$th secant 
             variety of $P^2 x P^2 x P^2$, has degree $9$. This is a hypersurface, 
-            with defining equation known as Strassen’s invariant,
+            with defining equation known as Strassen's invariant,
             and it is also a defective secant variety (meaning its dimension is less
             than expected). Here, the parametrization has $10$ dimensional fibers.
             
-        Example
-            R = CC[a_(0,0)..a_(3,2), b_(0,0)..b_(3,2), c_(0,0)..c_(3,2)];
-            F = toList apply((0,0,0)..(2,2,2), (i,j,k) -> 
-                a_(0,i)*b_(0,j)*c_(0,k) + 
-                a_(1,i)*b_(1,j)*c_(1,k) + 
-                a_(2,i)*b_(2,j)*c_(2,k) + 
-                a_(3,i)*b_(3,j)*c_(3,k));
-            numericalImageDegree(F, ideal 0_R, repeats => 2)
+        CannedExample
+            i6 : R = CC[a_(0,0)..a_(3,2), b_(0,0)..b_(3,2), c_(0,0)..c_(3,2)];
+            
+            i7 : F = toList apply((0,0,0)..(2,2,2), (i,j,k) ->
+                    a_(0,i)*b_(0,j)*c_(0,k) +
+                    a_(1,i)*b_(1,j)*c_(1,k) +
+                    a_(2,i)*b_(2,j)*c_(2,k) +
+                    a_(3,i)*b_(3,j)*c_(3,k));
+                    
+            i8 : numericalImageDegree(F, ideal 0_R, repeats => 2)
+            Sampling point in source ...
+            Tracking monodromy loops ...
+            Points found: 1
+            Points found: 2
+            Points found: 3
+            Points found: 5
+            Points found: 7
+            Points found: 9
+            Points found: 9
+            Points found: 9
+            Running trace test ...
+            
+            o8 = a pseudo-witness set, indicating
+                the degree of the image is 9
+            
+            o8 : PseudoWitnessSet
+        -- Example
+            -- R = CC[a_(0,0)..a_(3,2), b_(0,0)..b_(3,2), c_(0,0)..c_(3,2)];
+            -- F = toList apply((0,0,0)..(2,2,2), (i,j,k) -> 
+                -- a_(0,i)*b_(0,j)*c_(0,k) + 
+                -- a_(1,i)*b_(1,j)*c_(1,k) + 
+                -- a_(2,i)*b_(2,j)*c_(2,k) + 
+                -- a_(3,i)*b_(3,j)*c_(3,k));
+            -- numericalImageDegree(F, ideal 0_R, repeats => 2)
         Text
         
             Finally, this method has a large number of optional inputs which may be 
@@ -1124,7 +1152,7 @@ doc ///
             The default value is $10$.
             
             Here is an example in which a badly chosen random seed results in a 
-            failed trace test on the first attempt.  In the second attempt, the trace test 
+            failed trace test on the first attempt.  In later attempts, the trace test 
             passes and the degree of the twisted cubic is correctly computed to be $3$.
             
         Example
