@@ -14,7 +14,7 @@ sleep 1
 brew upgrade; stty -onlcr -echo
 sleep 1
 # we need either "|cat" or "; stty -onlcr -echo":
-brew install make bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm |cat
+brew install make bdw-gc libatomic_ops gdbm glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm |cat
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
 gmake -f Makefile
 rm -rf tmp
