@@ -51,7 +51,7 @@ appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if FAST then (
 	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,2*#coordinates b); -- 2*n real coordinates
-	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix b,0) =!= length A 
+	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0) =!= length A 
     	then error "can't append"
 	);
     A#(length A) = b
@@ -64,7 +64,7 @@ member(Point,PointArray) := (b,A) -> position(b,A) =!= null
 position(Point,PointArray) := o -> (b,A) -> 
     if FAST then (
 	if A#"raw" === null then return null;
-	ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose matrix b,0);
+	ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
 	if ret == -1 then null else ret
 	) else position(keys A, k->areEqual(A#k,b,Tolerance => PointArrayTolerance))
     
@@ -93,6 +93,10 @@ TEST ///
     position(b,A)    
     position(c,A)
     A_{1,2}
+    p = point {{1_(CC_100),2}}
+    appendPoint(A,p)        
+    assert member(point{{1,2}},A)        
+
     p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
     A = pointArray {p}
     rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix p,0)

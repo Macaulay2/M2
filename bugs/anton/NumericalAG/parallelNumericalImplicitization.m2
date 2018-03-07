@@ -1,10 +1,10 @@
-restart
 needsPackage "NumericalImplicitization" 
 R = CC[s,t]; F = flatten entries basis(60,R);
 allowableThreads = 4
 W = numericalImageDegree(F, ideal 0_R, maxThreads => 4)
 
 end--------------------------------
+restart
 load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/parallelNumericalImplicitization.m2"
 
 Sampling point in source ...

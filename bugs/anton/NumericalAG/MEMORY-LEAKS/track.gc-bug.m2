@@ -1,3 +1,7 @@
+-- 2017
+-- There may be a memory leak in trackHomotopy. 
+-- Status: we believe there is no leak.
+
 needsPackage "NumericalAlgebraicGeometry"
 load (currentFileDirectory|"PointArray.m2")
 R = CC[x,y,z];
