@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.11",
 	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
 	  TO "changes, 1.9.1",
@@ -27,6 +28,10 @@ document {
 
 document {
      Key => "changes made for the next release",
+     }
+
+document {
+     Key => "changes, 1.11",
      UL {
      -- 	  LI { "major improvements and additions:",
      -- 	        UL {
@@ -59,6 +64,30 @@ document {
      	       } },
      	  LI { "improved packages:",
      	       UL {
+		    LI {
+			 "The package ", TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " includes now the
+			analysis of resolutions over complete intersections,
+			and computations of the special resolutions of modules
+			over complete intersections that were described by
+			Eisenbud and Peeva in various papers."
+			},
+		   LI {
+			"The package ", TO "ReesAlgebra::ReesAlgebra", " has been improved:
+			Corrected and completed the documentation and cleaned
+			up code; added functionality having to do with options
+			for computing saturation (used in the basic routines);
+			added functionality of the 'Jacobian dual' method. Submitted JSAG article explaining the package."
+			},
+		   LI {
+			"The package ", TO "K3Carpets::K3Carpets", " includes now
+			facilities for computing with generalized rational
+			normal scrolls, and using the Schreyer resolution and
+			Schreyer naming of syzygies to determine in which
+			characteristics K3 carpets, which are a special case,
+			have behavior other than that corresponding to Green's
+			conjecture. The computations are used in a forthcoming
+			preprint by Eisenbud and Schreyer."
+			},
      	       	    LI {
 			TO "LocalRings::LocalRings", " has been rewritten by Mahrud Sayrafi and Mike Stillman. Functions from the old version are still available.
 			The new package extends various primary functions to work over local rings with respect to prime ideals.
