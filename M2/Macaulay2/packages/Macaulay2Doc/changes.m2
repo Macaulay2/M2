@@ -46,7 +46,7 @@ document {
 	       	    LI { TO "Complexes::Complexes", ", a package by Gregory G. Smith and Mike Stillman for chain complexes, has been added." },
 	       	    LI { TO "GroebnerWalk::GroebnerWalk", ", a package by Dylan Peifer for computing Groebner bases via the Groebner walk, has been added." },
 	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for a package for computations with matroids, has been added." },
-	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for numerical implicitization, has been added." },
+	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for computing invariants of images of polynomial maps, has been added." },
 	       	    LI { TO "PruneComplex::PruneComplex", ", a package by Mahrud Sayrafi and Mike Stillman for pruning chain complexes over polynomial and local rings, has been added." },
 	       	    LI { TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Despina Stasi, Dane Wilburne, Tanner Zielinski, Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, Genevieve Hummel, and Genevieve Hummel for generating Erdos-Renyi-type random monomial ideals, has been added." },
 	       	    LI { TO "ReflexivePolytopesDB::ReflexivePolytopesDB", ", a package by Mike Stillman for simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4, has been added." },
@@ -73,7 +73,7 @@ document {
 			    'invertBirMap' has been replaced by 'inverseMap'
 			    'kernelComponent(RingMap,ZZ)' has been replaced by 'kernel(RingMap,ZZ)'" },
      	       	    LI {
-			 TO "Resultants::Resultants", " has been update from version 1.0 to 1.2.
+			 TO "Resultants::Resultants", " has been updated from version 1.0 to 1.2.
 			    'CayleyTrick' has been changed and replaced by 'cayleyTrick'
 			    'ChowEquations' has been replaced by 'chowEquations'
 			    'ChowForm' has been replaced by 'chowForm'
@@ -89,9 +89,14 @@ document {
 				of CodepthThree, the new package now also implements the classification scheme
 				(due to Kustin and Miller) for Gorenstein rings of codepth 4. Moreover, the
 				package recognizes complete intersection, Gorenstein, and Golod rings of any
-				codepth via the functions isCI, isGorenstein, and isGolod." }
+				codepth via the functions isCI, isGorenstein, and isGolod." },
+		    LI {
+			 "The package ", TO "Divisor::Divisor", " has numerous changes to core methods to
+			 make them compatible with Macaulay2 standards and conventions (including renaming many methods).
+			 Documentation is also improved throughout.  Additional
+			 functionality has also been added (for example, checking if a divisor is very ample)."
      	  	    }
-     	       },     
+     	       }},     
      	  LI { "functionality added or improved:",
      	       UL {
 		    LI { "The function ", TO "localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
