@@ -80,13 +80,13 @@ document {
 			},
 		   LI {
 			"The package ", TO "K3Carpets::K3Carpets", " includes now
-			facilities for computing with generalized rational
-			normal scrolls, and using the Schreyer resolution and
-			Schreyer naming of syzygies to determine in which
-			characteristics K3 carpets, which are a special case,
-			have behavior other than that corresponding to Green's
-			conjecture. The computations are used in a forthcoming
-			preprint by Eisenbud and Schreyer."
+     	       	    	facilities for computing with K3carpets and their
+     	       	    	generalization, the correspondence scrolls, and using
+     	       	    	the Schreyer resolution and Schreyer naming of syzygies
+     	       	    	to determine in which characteristics they have
+     	       	    	behavior other than that corresponding to Green's
+     	       	    	conjecture. The computations are used in a forthcoming
+     	       	    	preprint by Eisenbud and Schreyer."
 			},
      	       	    LI {
 			TO "LocalRings::LocalRings", " has been rewritten by Mahrud Sayrafi and Mike Stillman. Functions from the old version are still available.
