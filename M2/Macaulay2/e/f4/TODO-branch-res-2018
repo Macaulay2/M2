@@ -1,0 +1,19 @@
+Todo for branch res-2018, created 9 March 2018.
+
+1. Allow FastNonminimal resolutions to assume we have the GB.
+
+2. Allow these to work with multi-gradings, as well as inhomogenoeus.
+
+3. stash the nonminimal res, in a different location. What functions actually use nonminimal resolutions.
+
+4. allow QQ as an actual coefficient ring.  Actually, allow any
+  coefficient ring, as long as we are given a monic Groebner basis for
+  it.
+  
+5. modules are not working correctly: there is a mismatch of monomial orders.  How best to fix this?
+
+6. nonminimal --> minimal resolution.  How best to do this?  e.g. use zig-zag idea of Frank?
+
+7. fix NonminimalComplexes package.
+
+8. schreyerName functionality, in the engine?
