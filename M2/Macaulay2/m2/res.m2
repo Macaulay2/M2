@@ -93,7 +93,7 @@ resolutionInEngine := opts -> (M) -> (
 	       or
 	       class opts.Strategy === RR		    -- to allow 4.1, experimentally
 	       ) then error "resolution in engine: expected Strategy option to be an integer";
-	  if opts.Strategy === 0 or opts.Strategy === 4 then
+	  if opts.Strategy === 0 or opts.Strategy === 4 or opts.Strategy === 4.1 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
