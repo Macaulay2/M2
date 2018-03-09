@@ -223,14 +223,19 @@ doc ///
    Key
      NonminimalComplexes
    Headline
-     support for computing homology, ranks and SVD complexes, from a chain complex over the real numbers
+     support for constant strands of non-minimal resolutions.
    Description
     Text
       Some functionality here should be moved elsewhere.
       
-      Here is an example of the usage.
+      This package also includes support for accessing complexes over the real numbers, for
+      non-minimal resolutions computed over a non-exported ring type which is a
+      hybrid: the Groebner basis is computed over QQ, but the free resolution is available over
+      RR_53, RR_1000, ZZ/32003, and ZZ/1073741909.  In the future, this will be made much more flexible.
    Caveat
-     Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
+      Warning!  This is an experimental package, whose interface will likely change in the future.
+      Use at your own risk!
+     
 ///
 
 doc ///
