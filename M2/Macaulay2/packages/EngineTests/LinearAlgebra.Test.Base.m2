@@ -17,7 +17,7 @@ export { "jordanForm",
     "testHasEngineLinearAlgebra"
     }
 
-
+needs "EngineTests/LinearAlgebra.Test.LU.Base.m2"
 
 debug Core;
 -----------------------------------------------------------------
