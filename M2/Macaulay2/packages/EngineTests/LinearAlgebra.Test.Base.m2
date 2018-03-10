@@ -26,12 +26,6 @@ debug Core;
 maxFLINTPrime = 4294967291		    -- the largest prime less than 2^32
 maxFFPACKPrime = 33554393
 
-needsPackage "FastLinearAlgebra"
-debug FastLinearAlgebra
-
-load "EngineTests/LinearAlgebra.Test.LU.Base.m2"
-
-
 jordanBlock = (R, diag, n) -> (
     m := mutableMatrix(R,n,n);
     for i from 0 to n-1 do m_(i,i) = diag;

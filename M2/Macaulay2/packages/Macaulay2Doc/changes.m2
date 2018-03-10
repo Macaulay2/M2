@@ -49,7 +49,6 @@ document {
 	       	    LI { TO "Chordal::Chordal", ", a package by Diego Cifuentes and Pablo Parrilo for exploiting chordal structure, has been added." },
 	       	    LI { TO "CohomCalg::CohomCalg", ", a package by Mike Stillman for providing an interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety, has been added." },
 	       	    LI { TO "Complexes::Complexes", ", a package by Gregory G. Smith and Mike Stillman for chain complexes, has been added." },
-		    LI { TO "FastLinearAlgebra::FastLinearAlgebra", ", a package by Michael E. Stillman and Jakob Kroeker for fast linear algebra over finite fields, an interface to ffpack, has been added." },
 	       	    LI { TO "GroebnerWalk::GroebnerWalk", ", a package by Dylan Peifer for computing Groebner bases via the Groebner walk, has been added." },
 	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for a package for computations with matroids, has been added." },
 		    LI { TO "NonminimalComplexes::NonminimalComplexes", ", a package by Frank Schreyer and Mike Stillman for obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module, has been added." },
