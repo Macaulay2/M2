@@ -383,6 +383,171 @@ TEST ///
    -- fails, as it doesn't even make it to that code
 ///
 
+TEST ///
+-- Test of computing non-minimal resolutions, modules
+  -- XXX
+-*  
+  restart
+*-  
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+  m = map(R^2,,{{a,b^2},{c,d^2}})
+
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{4,Position=>Up}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{4,Position=>Down}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Down,4}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- WORKS!!
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Up,4}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Down,4}]
+  m = map(R^{1,0},,{{c^2,d^3},{a,b^2}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- doesn't work
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Up,4}]
+  m = map(R^{1,0},,{{c^2,d^3},{a,b^2}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- works!
+
+///
+
+TEST ///
+-- Test of computing non-minimal resolutions
+  -- XXX
+-*  
+  restart
+*-  
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := Boolean => M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := Boolean => I -> hasFastNonminimal comodule I
+
+  nonminimalResolutionComputation = method()
+  nonminimalResolutionComputation Module := RawComputation => (M) -> M.cache.resolutionNonminimal.Resolution.RawComputation
+  nonminimalResolutionComputation Ideal := RawComputation => (I) -> nonminimalResolutionComputation comodule I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  M = comodule I
+  C = res(M, Strategy=>4)
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  D = nonminimalResolutionComputation I
+  getfree = (I,i) -> new Module from (ring I,rawResolutionGetFree(nonminimalResolutionComputation I,i))
+  getfree(I,0)
+  getfree(I,1)
+  getmat = (I,i) -> (
+      D := nonminimalResolutionComputation I;
+      src := getfree(I,i);
+      tar := getfree(I,i-1);
+      map(tar, src, rawResolutionGetMatrix(D,i))
+      )
+  getmat(I,1)
+  getmat(I,2)
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, Strategy=>4)
+  assert hasFastNonminimal I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, FastNonminimal=>true, Strategy=>4)
+  assert hasFastNonminimal I
+  
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, FastNonminimal=>true)
+  assert hasFastNonminimal I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res I
+  assert not hasFastNonminimal I
+  
+  M.cache.resolutionNonminimal.Resolution.RawComputation
+///  
+
+///
+-- Test of computing non-minimal resolutions
+  -- XXX
+  -- Try a non homogeneous ideal:
+  restart
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := I -> hasFastNonminimal comodule I
+    
+  I = ideal"ab-1,c2-c-a"
+  M = comodule I
+  C = res(I, Strategy=>5) -- currently gives an error: cannot use res(...,FastNonminimal=>true) with inhomogeneous input
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  R = kk[a..d,DegreeRank=>4]  
+  degree a
+  I = ideal(a^2, a*b, b^2)
+  C = res(I, Strategy=>4) -- currently gives an error: expected singly graded with positive degrees for the variables
+
+
+  
+  C = res I
+  C.dd
+  peek C.Resolution
+  debug Core
+  C.Resolution.RawComputation
+
+  J = ideal"ab-cd,a3+c3,a2c+b2c"
+  CJ = res(J, FastNonminimal=>true)
+  CJ.dd
+  peek CJ.Resolution
+  debug Core
+  CJ.Resolution.RawComputation
+  
+  -- where are these stashed?
+  MI = comodule I  
+  MI.cache.resolution === C
+
+  MJ = comodule J
+  MJ.cache.resolution === CJ
+
+gbTrace=3
+  minimalBetti J
+  minimalBetti I
+///
 
 end--
 -*

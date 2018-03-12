@@ -54,12 +54,12 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           "algebras");
       return nullptr;
     }
-  if (!groebnerBasisMatrix->is_homogeneous())
-    {
-      ERROR(
-          "cannot use res(...,FastNonminimal=>true) with inhomogeneous input");
-      return nullptr;
-    }
+  //  if (!groebnerBasisMatrix->is_homogeneous())
+  //    {
+  //      ERROR(
+  //          "cannot use res(...,FastNonminimal=>true) with inhomogeneous input");
+  //      return nullptr;
+  //    }
   if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
     {
       ERROR("expected singly graded with positive degrees for the variables");
@@ -167,7 +167,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
         }
     }
   frame.endLevel();
-  //  frame.show(0);
+  // frame.show(0);
   // Remove matrix:
   delete leadterms;
 
@@ -197,9 +197,9 @@ F4ResComputation::~F4ResComputation()
 }
 
 void F4ResComputation::start_computation() { mComp->start_computation(stop_); }
+
 int F4ResComputation::complete_thru_degree() const
 // The computation is complete up through this degree.
-
 {
   throw exc::engine_error("complete_thru_degree not implemented");
 }
