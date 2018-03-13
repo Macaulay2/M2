@@ -10,8 +10,7 @@ newPackage(
         Configuration => {
             "executable" => "",
             "silent" => "false"
-            },
-        DebuggingMode => true
+            }
         )
 
 export {
@@ -156,20 +155,20 @@ TEST ///
   peek cohomCalg(X, {{0,-6}})
 ///
 
-
-end--
-
-
 doc ///
 Key
   CohomCalg
 Headline
+  an interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety
 Description
   Text
-  Example
-Caveat
-SeeAlso
+     This package is experimental.
 ///
+
+
+end--
+
+
 
 doc ///
 Key
