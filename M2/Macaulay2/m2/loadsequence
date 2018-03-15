@@ -40,6 +40,7 @@ modules.m2
 matrix.m2
 matrix1.m2
 mutablemat.m2
+localring.m2
 quotring.m2
 multilin.m2
 flint.m2

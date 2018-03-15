@@ -32,9 +32,9 @@ plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solv
 apply(polysP,p->plugin'c0 p) 
 stop = (n,L)->n>1
 getDefault Software
-{*
+-*
 setDefault(Software=>PHCPACK)
-*}
+*-
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop);
 FFF = QQ[k]/ideal(k^2+1)
 complexToRational((coordinates(sols #0)),FFF)

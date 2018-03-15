@@ -28,7 +28,7 @@ document {
 	     },
 	
 	PARA{}, "For an introduction to polyhedra and cones, we recommend ",
-	HREF("http://www.math.tu-berlin.de/~ziegler/", "Gunter
+	HREF("http://www.mi.fu-berlin.de/math/groups/discgeom/ziegler/", "Gunter
 	M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
 	Texts in Mathematics 152, Springer-Verlag, New York, 1995.",
 	

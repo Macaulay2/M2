@@ -270,7 +270,7 @@ QRDecomposition MutableMatrix := A -> (
      if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      Q := mutableMatrix(k,0,0,Dense=>true);
      R := mutableMatrix(k,0,0,Dense=>true);
-     rawQR(raw A, raw Q, raw R, true {* ReturnQR was a bad option name *} );
+     rawQR(raw A, raw Q, raw R, true -* ReturnQR was a bad option name *- );
      (Q,R))
 QRDecomposition Matrix := A -> (
      k := ring A;

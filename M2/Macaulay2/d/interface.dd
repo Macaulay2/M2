@@ -1,7 +1,7 @@
 --		Copyright 1994-2004 by Daniel R. Grayson
 
 -- this file contains top level routines that call the C++ code in the engine
- 
+
 use engine;
 use common;
 use hashtables;
@@ -753,16 +753,20 @@ export rawSolvableAlgebra(e:Expr):Expr := (
 setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
 
 export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
-     when e is a:Sequence do 
-     if length(a) == 2 then 
-     when a.0 is R:RawRingCell do 
-     when a.1 is P:RawMatrixCell do toExpr(Ccode(RawRingOrNull, "IM2_Ring_localization(", R.p, ",",
- 	       P.p,				    -- 1 by n matrix generating the prime ideal
- 	       ")" ))
-     else WrongArgMatrix(2)
-     else WrongArg(1,"a raw ring")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is R:RawRingCell do (
+  when s.1 is P:RawComputationCell do (			    -- Grobner basis of prime ideal
+    toExpr(Ccode(RawRingOrNull,
+      "IM2_Ring_localization(",
+        R.p, ",", P.p,
+      ")"
+    ))
+  ) else WrongArg(2,"a raw computation")
+  ) else WrongArg(1,"a raw ring")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
 setupfun("rawLocalRing",rawLocalRing);
 
 export rawQuotientRing(e:Expr):Expr := (
@@ -1340,7 +1344,7 @@ export rawLift(e:Expr):Expr := (
 		             R.p,
 		             ",", x.p, ")" );
 	           if success == 0 then nullE else toExpr(m))
-	  else WrongArg(2,"a raw ring element or rae mutable matrix"))
+	  else WrongArg(2,"a raw ring element or raw mutable matrix"))
      is M:RawFreeModuleCell do (				    -- M is the new target free module
 	  when a.1 is f:RawMatrixCell do (
 	       m := Ccode(RawMatrixOrNull, 
@@ -3279,15 +3283,26 @@ export rawNumberOfColumns(e:Expr):Expr := (
 setupfun("rawNumberOfColumns",rawNumberOfColumns);
 
 export rawMatrixRowSwap(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
-     when s.0 is M:RawMutableMatrixCell do
-     when s.1 is i:ZZcell do if !isInt(i) then WrongArgSmallInteger(2) else
-     when s.2 is j:ZZcell do if !isInt(j) then WrongArgSmallInteger(3) else possibleEngineError(
-	  Ccode(bool, "IM2_MutableMatrix_row_swap(", M.p, ",", toInt(i), ",", toInt(j), ")" ))
-     else WrongArgZZ(3)
-     else WrongArgZZ(2)
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(3));
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wrappeda:RawMutableMatrixCell do (a := wrappeda.p;
+  when s.1 is wrappedb:ZZcell do (
+  if isInt(wrappedb) then (b := toInt(wrappedb);
+  when s.2 is wrappedc:ZZcell do (
+  if isInt(wrappedc) then (c := toInt(wrappedc);
+    possibleEngineError(Ccode(bool,
+      "IM2_MutableMatrix_row_swap(",
+        a, ",", b, ",", c, 
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw mutable matrix")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
 setupfun("rawMatrixRowSwap",rawMatrixRowSwap);
 
 export rawMatrixColumnSwap(e:Expr):Expr := (
@@ -4225,6 +4240,113 @@ ConstantII(e:Expr):Expr := (
      else toExpr(toCC(0,1,toULong(prec)))
      else WrongArgZZ(1));
 setupfun("ConstantII",ConstantII);
+
+export rawMutableComplex(e:Expr):Expr := (			    -- returns a mutable chain complex
+     if isSequenceOfMutableMatrices(e) then
+     toExpr(Ccode(RawMutableComplexOrNull,
+	       "rawMutableComplex(",
+	       getSequenceOfMutableMatrices(e),
+	       ")"))
+     else WrongArg(1,"a sequence of raw mutable matrices")
+     );
+setupfun("rawMutableComplex",rawMutableComplex);
+
+export rawPruneComplex(e:Expr):Expr := (			    -- prunes a mutable chain complex
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wC:RawMutableComplexCell do (C := wC.p;
+  when s.1 is wnsteps:ZZcell do (
+  if isInt(wnsteps) then (nsteps := toInt(wnsteps);
+  when s.2 is wflags:ZZcell do (
+  if isInt(wflags) then (flags := toInt(wflags);
+    toExpr(Ccode(RawMutableComplexOrNull,
+      "rawPruneComplex(",
+        C, ",", nsteps, ",", flags,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw mutable complex")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawPruneComplex",rawPruneComplex);
+
+export rawPruneBetti(e:Expr):Expr := (				    -- returns the betti numbers
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wC:RawMutableComplexCell do (C := wC.p;
+  when s.1 is wnsteps:ZZcell do (
+  if isInt(wnsteps) then (nsteps := toInt(wnsteps);
+  when s.2 is wflags:ZZcell do (
+  if isInt(wflags) then (flags := toInt(wflags);
+    toExpr(Ccode(RawArrayIntOrNull,
+      "rawPruneBetti(",
+        C, ",", nsteps, ",", flags,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw mutable complex")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawPruneBetti",rawPruneBetti);
+
+export rawPruningMorphism(e:Expr):Expr := (			    -- returns the pruning maps
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wC:RawMutableComplexCell do (C := wC.p;
+  when s.1 is wnsteps:ZZcell do (
+  if isInt(wnsteps) then (nsteps := toInt(wnsteps);
+  when s.2 is wflags:ZZcell do (
+  if isInt(wflags) then (flags := toInt(wflags);
+    toExpr(Ccode(RawMutableMatrixArrayOrNull,
+      "rawPruningMorphism(",
+        C, ",", nsteps, ",", flags,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw mutable complex")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawPruningMorphism",rawPruningMorphism);
+
+export rawLiftLocalMatrix(e:Expr):Expr := (                         -- clears denominators
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is R:RawRingCell do (
+  when s.1 is m:RawMatrixCell do (
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawLiftLocalMatrix(",
+        R.p, ",", m.p,
+      ")"
+    ))
+  ) else WrongArg(2,"a raw matrix")
+  ) else WrongArg(1,"a raw ring")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawLiftLocalMatrix", rawLiftLocalMatrix);
+
+export rawIsLocalUnit(e:Expr):Expr := (                             -- true for units in local rings
+  when e is f:RawRingElementCell do (
+    toExpr(Ccode(bool,
+      "rawIsLocalUnit(",
+        f.p,
+      ")"
+    ))
+  ) else WrongArg(1,"a raw ring element")
+  );
+setupfun("rawIsLocalUnit",rawIsLocalUnit);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "

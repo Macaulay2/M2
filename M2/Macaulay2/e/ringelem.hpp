@@ -12,6 +12,7 @@ struct Nterm;
 
 typedef Nterm *tpoly;
 class schur_poly;
+struct local_elem;
 
 union ring_elem
 {
@@ -19,6 +20,7 @@ union ring_elem
   Nterm *poly_val;
   schur_poly *schur_poly_val;
   mpfr_ptr mpfr_val;
+  local_elem* local_val;
 
  private:  // move this line up to the top eventually
   mpz_ptr mpz_val;
@@ -29,6 +31,8 @@ union ring_elem
   ring_elem(int a) : int_val(a) {}
   ring_elem(Nterm *a) : poly_val(a) {}
   ring_elem(mpz_ptr a) : mpz_val(a) {}
+  explicit ring_elem(local_elem* a) : local_val(a) {}
+
   operator int() const { return int_val; }
   operator tpoly() const { return poly_val; }
   int get_int() const { return int_val; }

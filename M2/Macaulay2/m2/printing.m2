@@ -46,9 +46,9 @@ truncateOutput InfiniteNumber := maxwidth -> Thing#{Standard,BeforePrint} = iden
 unbag = method()
 unbag Bag := x -> unsequence toSequence x
 net Bag := toString Bag := x -> (
-     if #x===0 then "{*an empty bag*}" 
-     else if #x===1 then "{*a bagged " | synonym class first x | "*}" 
-     else "{*a bagged sequence of length " | toString(#x) | "*}" 
+     if #x===0 then "-*an empty bag*-" 
+     else if #x===1 then "-*a bagged " | synonym class first x | "*-" 
+     else "-*a bagged sequence of length " | toString(#x) | "*-" 
      )
 
 -- Local Variables:

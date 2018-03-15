@@ -27,7 +27,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.10.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.11.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -262,18 +262,22 @@ AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
+dnl always compile with "-g", so we can debug even optimized versions
+if test "$GCC" = yes
+then CFLAGS="$CFLAGS -g3"
+     CXXFLAGS="$CXXFLAGS -g3"
+     LDFLAGS="$LDFLAGS -g3"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g3"
+else CFLAGS="$CFLAGS -g"
+     CXXFLAGS="$CXXFLAGS -g"
+     LDFLAGS="$LDFLAGS -g"
+     LDFLAGS_FOR_BUILD="$LDFLAGS_FOR_BUILD -g"
+fi
+
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
 then # It is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint".
      # Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.  This is standard practice.
-     if test "$GCC" = yes
-     then CFLAGS="$CFLAGS -g3"
-	  CXXFLAGS="$CXXFLAGS -g3"
-	  LDFLAGS="$LDFLAGS -g3"
-     else CFLAGS="$CFLAGS -g"
-	  CXXFLAGS="$CXXFLAGS -g"
-	  LDFLAGS="$LDFLAGS -g"
-     fi
      # gc.h obeys the GC_DEBUG flag:
      M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
      CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
@@ -485,7 +489,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,no) AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
 
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
@@ -530,7 +534,7 @@ AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withva
 test "$MYSQL" = no; USE_MYSQL=$?
 AC_DEFINE_UNQUOTED(USE_MYSQL,$USE_MYSQL,[whether we are linking with the mysql library])
 
-LIBPYTHONORIG=-lpython2.5
+LIBPYTHONORIG=-lpython2.7
 AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
 AC_ARG_WITH(libpython, AS_HELP_STRING(--with-libpython=...,specify the python library ($LIBPYTHON)),LIBPYTHON=$withval)
 
@@ -590,7 +594,7 @@ AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
 [if [ $? != 0 ] ; then exit 1 ; fi]
 # convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
+AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
 AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
@@ -805,14 +809,14 @@ AC_SUBST(BUILTLIBS,)
 #	   *** Conclusion: we must let gmp use malloc, not GC_malloc.  So what
 #	   do with objects returned by libraries that use gmp, directly or
 # 	   indirectly?  Either deep copy to the GC heap or finalization to free it explicitly?
-    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
+#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
 # 	   We have always built mpir, so we can patch the routine
 # 	   mp_set_memory_functions() in it so it does nothing; that prevents
 # 	   libraries such as pari from telling it what memory allocation
 # 	   functions to use.  But we should instead patch pari or work around
 # 	   it, so we can use the gmp library that comes with many linux
 # 	   distributions.
-    4ti2 needs glpk
+#    4ti2 needs glpk
 #    gfan needs cddlib
 #    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
@@ -968,9 +972,26 @@ fi
 if test $BUILD_readline = no
 then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
 fi
+if test $BUILD_readline = no
+then # readline on Mac OS X is stuck at version 4.2, which has this bug:
+     #   CTRL-A doesn't go all the way to the beginning of the
+     #   line after typing r e s o TAB C-a
+     # So we build it ourselves.
+     AC_LANG(C)
+     AC_MSG_CHECKING([whether readline library is new enough (version at least 6)])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+	     #include <stdio.h>
+	     #include <readline/readline.h>
+	     int main () { return ! ( RL_READLINE_VERSION >= 6 * 0x100 ) ; }]])],
+	[ AC_MSG_RESULT([yes]) ],
+	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
+	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+else AC_CHECK_DECLS(rl_catch_signals,,,readline/readline.h)
+     AC_CHECK_DECLS(__rl_comment_begin,,,readline/readline.h)
 fi
 
 dnl We no longer link with gmp.
@@ -1097,10 +1118,10 @@ fi
 if test "$PYTHON" = yes
 then AC_LANG(C)
      if test "$LIBPYTHON" = "$LIBPYTHONORIG"
-     then AC_SEARCH_LIBS(Py_Initialize,python2.5,,AC_MSG_ERROR(libpython2.5 not found))
+     then AC_SEARCH_LIBS(Py_Initialize,python2.7,,AC_MSG_ERROR(libpython2.7 not found))
      else LIBS="$LIBPYTHON $LIBS"
      fi
-     AC_CHECK_HEADER(python2.5/Python.h,,AC_MSG_ERROR(include file python2.5/Python.h not found))
+     AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
 
 if test "$FROBBY" = yes
@@ -1394,6 +1415,11 @@ AC_ARG_ENABLE(fplll,
     
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
+
+if test $BUILD_flint = yes -o $BUILD_ntl = yes -o $BUILD_mpir = yes
+then BUILD_factory=yes
+     BUILD_ALWAYS="factory $BUILD_ALWAYS"
+fi
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no

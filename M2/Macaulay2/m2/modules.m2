@@ -1,12 +1,6 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
-vector = method()
-vector List := v -> (
-     m := matrix apply(v, i -> {i});
-     new target m from {m})
-
------------------------------------------------------------------------------
 -- Matrix
 
 ModuleMap = new Type of HashTable
@@ -68,6 +62,15 @@ promote(Matrix,QQ,CC') := (m,K,L) -> promote( promote(m,RR_(precision L)), L) --
 -----------------------------------------------------------------------------
 -- Vector
 
+vector = method()
+vector Matrix := f -> (
+     if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
+     new target f from {f}
+    )
+vector List := v -> vector matrix apply(v, i -> {i});
+
+-----------------------------------------------------------------------------
+
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
@@ -87,7 +90,8 @@ new Matrix from Vector := (Matrix,v) -> v#0
 new Vector from Matrix := (M,f) -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
      if M === Vector then error "expected a module";
-     new target f from {f})
+     if M =!= target f then error "module must be target of matrix";
+     new M from {f})
 
 Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
 Vector + Vector := (v,w) -> (

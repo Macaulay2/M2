@@ -18,6 +18,7 @@ class Z_mod;
 class GF;
 class Tower;
 class FractionField;
+class LocalRing;
 class PolynomialRing;
 class PolyRing;
 class PolyRingFlat;
@@ -191,6 +192,9 @@ class Ring : public MutableEngineObject
   virtual PolyRingFlat *cast_to_PolyRingFlat() { return 0; }
   virtual const FractionField *cast_to_FractionField() const { return 0; }
   virtual FractionField *cast_to_FractionField() { return 0; }
+  virtual const LocalRing *cast_to_LocalRing() const { return 0; }
+  virtual LocalRing *cast_to_LocalRing() { return 0; }
+
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
   virtual const SchurRing2 *cast_to_SchurRing2() const { return 0; }

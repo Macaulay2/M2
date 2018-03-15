@@ -23,7 +23,7 @@ setRandomSeed 0
 (p0, x0) := createSeedPair(G,x0coords);
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfNodes=>2,NumberOfEdges=>4,Verbose=>true)
 
-{* 
+-* 
 
 -- N=4 -------------------------------------------------
 
@@ -62,13 +62,13 @@ trackedPaths 0
 o7 = (HomotopyNode{...5...}, 447568)                                                                                           
 
 -- N=8 ------------------------------------------------
-*}
+*-
 
 setRandomSeed 1
 (p0, x0) := createSeedPair(G,x0coords);
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfNodes=>4,NumberOfEdges=>1,Verbose=>true)
 
-{*
+-*
 node1: 111616
 node2: 111616
 trackedPaths 0
@@ -76,7 +76,7 @@ trackedPaths 0
     	 
  o9 = (HomotopyNode{...5...}, 671313)
 	 
-*}
+*-
 
 -- regeneration in Bertini 
 specPolys = specializeSystem (p0, polySystem polys);
@@ -85,7 +85,7 @@ describe R
 toR = map(R,ring first specPolys,vars R)
 elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
 
-{*
+-*
 -- N=4 -------------------------------------------------
 
 i12 : elapsedTime NV := numericalIrreducibleDecomposition(ideal (specPolys/toR),Software=>BERTINI)
@@ -109,13 +109,13 @@ core dump by bertini
 
 GNU MP: Cannot allocate memory (size=39959176) 
 
-*}
+*-
 
 -- PHCpack blackbox
 specPolys = specializeSystem (p0, G);
 elapsedTime sols = solveSystem(specPolys,Software=>PHCPACK);
 #sols 
-{*
+-*
 -- N=4 -------------------------------------------------
 
 -- 103.789 seconds elapsed       
@@ -124,4 +124,4 @@ elapsedTime sols = solveSystem(specPolys,Software=>PHCPACK);
 
 -- killed after 1 day
 
-*}
+*-

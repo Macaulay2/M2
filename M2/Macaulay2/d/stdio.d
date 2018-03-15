@@ -696,6 +696,7 @@ export filbuf(o:file):int := (
      while true do (
 	  n := length(o.inbuffer) - o.insize;
 	  if o.readline then (
+	       initReadlineVariables();
 	       flush(stdIO);
 	       if test(interruptedFlag) then return ERROR;
 	       startFileInput(o);

@@ -15,10 +15,10 @@ class MatrixConstructor;
  */
 class Matrix : public EngineObject
 {
-  FreeModule *_rows;
-  FreeModule *_cols;
-  int *_degree_shift;  // An element of the degree monoid
-  array<vec> _entries;
+  FreeModule * mTarget; // _rows;
+  FreeModule * mSource; // _cols;
+  int * mDegreeShift; // _degree_shift;  // An element of the degree monoid
+  VECTOR(vec) mEntries; // array<vec> _entries;
 
   friend class FreeModule;
 
@@ -84,20 +84,20 @@ class Matrix : public EngineObject
   const Ring *get_ring() const { return rows()->get_ring(); }
   const Monoid *degree_monoid() const { return get_ring()->degree_monoid(); }
   /* The following 5 routines will go away, or change name */
-  vec &operator[](int i) { return _entries[i]; }
-  const vec &operator[](int i) const { return _entries[i]; }
+  vec &operator[](int i) { return mEntries[i]; }
+  const vec &operator[](int i) const { return mEntries[i]; }
   ring_elem elem(int i, int j) const;
-  vec &elem(int i) { return _entries[i]; }
-  const vec &elem(int i) const { return _entries[i]; }
+  vec &elem(int i) { return mEntries[i]; }
+  const vec &elem(int i) const { return mEntries[i]; }
   /*****************************************/
 
   /* The non-const versions of these will go away */
-  const FreeModule *rows() const { return _rows; }
-  const FreeModule *cols() const { return _cols; }
+  const FreeModule *rows() const { return mTarget; }
+  const FreeModule *cols() const { return mSource; }
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
   // The degree shift
-  const int *degree_shift() const { return _degree_shift; }
+  const int *degree_shift() const { return mDegreeShift; }
   // to/from monideals
   MonomialIdeal *make_monideal(
       int n,
@@ -254,6 +254,18 @@ class Matrix : public EngineObject
     bool valid() { return v != 0; }
     int row() { return v->comp; }
     ring_elem entry() { return v->coeff; }
+  };
+
+  class column_iterator
+  {
+    const vecterm * v;
+  public:
+    column_iterator(const Matrix *M, int c) : v(M->elem(c)) {}
+    column_iterator(const Matrix *M) : v(nullptr) {}
+
+    column_iterator& operator++() { v = v->next; return *this; }
+    const vecterm* operator *() { return v; }
+    bool operator!=(const column_iterator b) { return v != b.v; }
   };
 };
 

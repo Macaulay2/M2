@@ -1,0 +1,33 @@
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/gfan/tmp/gfan0.6.2/Makefile gfan0.6.2/Makefile
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/gfan/tmp/gfan0.6.2/Makefile	2017-09-28 08:44:12.000000000 -0500
++++ gfan0.6.2/Makefile	2017-10-29 14:26:21.000000000 -0500
+@@ -359,7 +359,7 @@
+ 		app_integerfactorization.o \
+ 		app_tropicalvarietyspan.o \
+ 		app_chowbetti.o \
+-		
++
+ 
+ GFANLIBFILES= 	gfanlib.h \
+ 				gfanlib_polyhedralfan.cpp \
+@@ -385,7 +385,7 @@
+ 				gfanlib_paralleltraverser.h \
+ 				gfanlib_paralleltraverser.cpp \
+ 				gfanlib_tropicalhomotopy.h \
+-	#			gfanlib_tableau.h \   we do not yet support this one
++#				gfanlib_tableau.h \   we do not yet support this one
+ 
+ 
+ EXECS	  = $(MAIN)
+@@ -394,9 +394,9 @@
+ # (compiling with gcc version 4.7.2 and running gfan _tropicaltraverse on a starting cone for Grassmann3_7)
+ # Either this is a bug in the code or in the compiler. The bug disappears by compiling with -fno-guess-branch-probability
+ src/symmetrictraversal.o: src/symmetrictraversal.cpp
+-	$(CXX) $(CFLAGS) -fno-guess-branch-probability  -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
++#	$(CXX) $(CFLAGS) -fno-guess-branch-probability  -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
+ # If compiling with clang, use the line below instead:
+-#	$(CXX) $(CFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
++	$(CXX) $(CFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
+ 
+ # Define suffixes to make the program compile on legolas.imf.au.dk :
+ .SUFFIXES: .o .cpp .c

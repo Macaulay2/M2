@@ -153,7 +153,7 @@ diopter = 1/meter
 radian = meter/meter
 circle = pi radian 2
 sr = steradian = meter^2/meter^2
-arcdeg = deg = {* degree = *} 1/360 * circle
+arcdeg = deg = -* degree = *- 1/360 * circle
 arcmin = arcdeg/60
 arcsec = arcmin/60
 degC = degcelsius = degreeKelvin

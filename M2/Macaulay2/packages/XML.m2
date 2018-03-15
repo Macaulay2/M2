@@ -665,7 +665,7 @@ undocumented {
   (net,XMLnode)
   }
 
-{*
+-*
 generateAssertions ///
 x = parse ////<foo a="hi there">ho there<bar/></foo>////
 #x
@@ -676,7 +676,7 @@ y = x.children#1;
 #y
 y.tag
 ///
-*}
+*-
 
 TEST ///
      x = parse ////<foo a="hi there">ho there<bar/></foo>////

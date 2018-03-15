@@ -168,6 +168,7 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
+      localRing,
 	  entries, borel, gcdCoefficients, singularLocus, replace,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
@@ -522,7 +523,7 @@ protect QuotientRingHook
 
 CacheFunction = new Type of FunctionClosure
 CacheFunction.synonym = "a cache function"
-net CacheFunction := f -> "{*a cache function*}"
+net CacheFunction := f -> "-*a cache function*-"
 cacheValue = key -> f -> new CacheFunction from (x -> (
      	  c := try x.cache else x.cache = new CacheTable;
      	  if c#?key then (

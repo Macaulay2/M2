@@ -33,7 +33,7 @@ exampleFromKS(ZZ, String) := (which, str) -> (
 matrixFromString = method()
 matrixFromString String := (str) -> (
     -- expect input in one of the three forms:
-    {*
+    -*
       (a)
               [ 1 -1 -1  1 -1 -1 -1  1  1  0]
               [ 0  1  0 -1  1  0  0 -1 -1  0]
@@ -46,7 +46,7 @@ matrixFromString String := (str) -> (
                   0   1   1   0  -2   2   3  -1  -4   1  -1
                   0   0   2   0  -2   4   4  -1  -4  -2  -4
                   0   0   0   1   0  -2  -2   2   2   0   2"
-    *}
+    *-
     s0 := replace("\t", " ", str);
     s1 := replace(",", " ", s0);
     s2 := replace("] ", "]\n", s1);
@@ -527,9 +527,9 @@ doc ///
 ///
 
 TEST ///
-{*
+-*
   restart
-*}
+*-
   needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
@@ -572,9 +572,9 @@ TEST ///
 
 
 TEST ///
-{*
+-*
   restart
-*}
+*-
   needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
@@ -598,9 +598,9 @@ TEST ///
 ///
 
 TEST ///
-{*
+-*
   restart
-*}
+*-
   needsPackage "ReflexivePolytopesDB"
   answer = matrix {
       {13, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 

@@ -92,7 +92,7 @@ namespace BIBasis
     const Polynom<MonomType>& BooleanInvolutiveBasis<MonomType>::operator[](int num) const
     {
         typename std::list<Polynom<MonomType>*>::const_iterator it(GBasis.begin());
-        for (register unsigned i = Length()-1-num; i > 0; i--) 
+        for (unsigned i = Length()-1-num; i > 0; i--) 
         {
             ++it;
         }
@@ -158,7 +158,7 @@ namespace BIBasis
         typename MonomType::Integer independ = MonomType::GetDimIndepend();
         
         //construct Polynom for every column in matrix
-        for (register int column = 0; column < matrix->n_cols(); ++column)
+        for (int column = 0; column < matrix->n_cols(); ++column)
         {
             vec polynomVector = matrix->elem(column);
             if (!polynomVector)
@@ -181,7 +181,7 @@ namespace BIBasis
                     throw std::string("BIBasis::BooleanInvolutiveBasis::FillInitialSet(): got NULL istead of new monom.");
                 }
                 
-                for (register typename MonomType::Integer currentVariable = 0; currentVariable < independ; ++currentVariable)
+                for (typename MonomType::Integer currentVariable = 0; currentVariable < independ; ++currentVariable)
                 {
                     if (monomVector[currentVariable])
                     {
@@ -340,7 +340,7 @@ namespace BIBasis
         }
 
         unsigned tmpPolySetSize = static_cast<unsigned int>(tmpPolySet.size());
-        for (register unsigned i = 0; i < tmpPolySetSize; ++i)
+        for (unsigned i = 0; i < tmpPolySetSize; ++i)
         {
             Polynom<MonomType>* currentPolynom = tmpPolySet.front();
             tmpPolySet.pop_front();

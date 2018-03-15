@@ -325,6 +325,7 @@ export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
 export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 -- NAG end
+export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

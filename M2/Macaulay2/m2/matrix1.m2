@@ -77,10 +77,9 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  )
      else (
 	  R := ring M;
-	  N' := cover N;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -528,6 +527,7 @@ Matrix % Ideal := Matrix => ((f,I) ->
 	  S := R/I;
 	  lift(promote(f,S),R))
      ) @@ samering
+Vector % Ideal := (v,I) -> new class v from {v#0%I}
 numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)

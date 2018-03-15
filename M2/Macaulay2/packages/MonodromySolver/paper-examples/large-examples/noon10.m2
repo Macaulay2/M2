@@ -32,7 +32,7 @@ polys = parametrizedNoon 10
 (p0,x0) = createSeedPair polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
-{* -- Anton's office machine:
+-* -- Anton's office machine:
 mixedVolume = 59029
   node1: 59001
   node2: 59001
@@ -40,7 +40,7 @@ trackedPaths 0
      -- 651.542 seconds elapsed
 
 o7 = (HomotopyNode{...5...}, failed)
-*}
+*-
 
 restart ---------------------------------------------------------------------
 load "noon10.m2"
@@ -50,11 +50,11 @@ polys = parametrizedNoon 10
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime (G,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,NumberOfNodes=>2,TargetSolutionCount=>mixedVolume, Verbose=>true)
-{* -- Anton's office machine:
+-* -- Anton's office machine:
      -- 935.657 seconds elapsed
 
 o7 = (HomotopyNode{...5...}, 236051)
-*}
+*-
 
 restart ---PHCpack------------------------------------------------------------------
 load "noon10.m2"

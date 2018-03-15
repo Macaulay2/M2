@@ -4404,7 +4404,7 @@ TEST ///
         set{"2"}})
     -- we should check that the links are correct too.
     -- the following is one possible answer, but it can change.  Why?!
-    {*
+    -*
       assert(G#0 == {{"12132", {{"3", 0}, {"2", 1}}}});
       assert(G#1 == {
               {"2132", {{"232", 1}, {"2", 2}}}, 
@@ -4417,7 +4417,7 @@ TEST ///
               });
       assert(G#3 == {{"12", {{"121", 0}}}, {"21", {{"1", 0}}}, {"23", {{"3", 0}}}})
       assert(G#4 == {{"2", {}}})
-      *}
+      *-
 ///
 
 doc ///

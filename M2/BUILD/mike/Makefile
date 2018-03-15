@@ -119,8 +119,6 @@ darwin64-debug-clang : always
 	mkdir -p builds.tmp/darwin64-debug-clang
 	cd builds.tmp/darwin64-debug-clang; ../../../../configure \
 		CC="clang" CXX="clang++" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include -DENGINE_DEBUG_" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--prefix="`pwd`/installed" \
 		--build=x86_64-apple-darwin \
 		--enable-debug \

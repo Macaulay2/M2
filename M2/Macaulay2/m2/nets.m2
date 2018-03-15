@@ -52,7 +52,7 @@ toString Sequence := s -> (
      else concatenate("(",between(",",toStringn \ s),")")
      )
 net Command := toString Command := toExternalString Command := f -> (
-     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "{*Command*}"
+     if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "-*Command*-"
      )
 
 toExternalString Function := f -> (
@@ -65,14 +65,14 @@ toExternalString Function := f -> (
 net Function := toString Function := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
-     if t === null then "{*Function*}" 
-     else concatenate("{*Function[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*}")
+     if t === null then "-*Function*-" 
+     else concatenate("-*Function[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
      )
 
 net FunctionBody := toString FunctionBody := f -> (
      t := locate f;
-     if t === null then "{*FunctionBody*}" 
-     else concatenate("{*FunctionBody[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*}")
+     if t === null then "-*FunctionBody*-" 
+     else concatenate("-*FunctionBody[", t#0, ":", toString t#1| ":", toString (t#2+1), "-", toString t#3| ":", toString (t#4+1), "]*-")
      )
 
 toExternalString Manipulator := f -> (

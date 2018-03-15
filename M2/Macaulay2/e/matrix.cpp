@@ -23,10 +23,10 @@ Matrix::Matrix(const FreeModule *rows0,
                const int *degree_shift0,
                VECTOR(vec) & entries0)
 {
-  _rows = const_cast<FreeModule *>(rows0);
-  _cols = const_cast<FreeModule *>(cols0);
-  _degree_shift = const_cast<int *>(degree_shift0);
-  for (int i = 0; i < cols0->rank(); i++) _entries.append(entries0[i]);
+  mTarget = const_cast<FreeModule *>(rows0);
+  mSource = const_cast<FreeModule *>(cols0);
+  mDegreeShift = const_cast<int *>(degree_shift0);
+  for (int i = 0; i < cols0->rank(); i++) mEntries.push_back(entries0[i]);
 }
 
 unsigned int Matrix::computeHashValue() const
@@ -55,18 +55,18 @@ const Matrix /* or null */ *Matrix::make(const FreeModule *target,
 
   const Ring *R = target->get_ring();
 
-  if (M != 0)
+  if (M != nullptr)
     for (unsigned int i = 0; i < M->len; i++)
       {
         if (R != M->array[i]->get_ring())
           {
             ERROR("expected vectors in the same ring");
-            return 0;
+            return nullptr;
           }
       }
 
   MatrixConstructor mat(target, ncols);
-  if (M != 0)
+  if (M != nullptr)
     {
       unsigned int next = 0;
       for (int r = 0; r < target->rank(); r++)
@@ -88,23 +88,23 @@ const Matrix /* or null */ *Matrix::make(const FreeModule *target,
   if (source->get_ring() != R)
     {
       ERROR("expected free modules over the same ring");
-      return 0;
+      return nullptr;
     }
   if (R->degree_monoid()->n_vars() != static_cast<int>(deg->len))
     {
       ERROR("expected degree of matrix to have %d entries",
             R->degree_monoid()->n_vars());
-      return 0;
+      return nullptr;
     }
 
-  if (M != 0)
+  if (M != nullptr)
     {
       for (unsigned int i = 0; i < M->len; i++)
         {
           if (R != M->array[i]->get_ring())
             {
               ERROR("expected vectors in the same ring");
-              return 0;
+              return nullptr;
             }
         }
     }
@@ -113,7 +113,7 @@ const Matrix /* or null */ *Matrix::make(const FreeModule *target,
   R->degree_monoid()->from_expvector(deg->array, degshift);
   MatrixConstructor mat(target, source, degshift);
 
-  if (M != 0)
+  if (M != nullptr)
     {
       unsigned int next = 0;
       for (int r = 0; r < target->rank(); r++)
@@ -186,7 +186,7 @@ const Matrix /* or null */ *Matrix::make_sparse(
 {
   MatrixConstructor mat(target, ncols);
   if (!Matrix::make_sparse_vecs(mat, target, ncols, rows, cols, entries))
-    return 0;  // error message has already been sent
+    return nullptr;  // error message has already been sent
   mat.compute_column_degrees();
   return mat.to_matrix();
 }
@@ -209,7 +209,7 @@ const Matrix /* or null */ *Matrix::make_sparse(
   MatrixConstructor mat(target, source, degshift);
   if (!Matrix::make_sparse_vecs(
           mat, target, source->rank(), rows, cols, entries))
-    return 0;  // error message has already been sent
+    return nullptr;  // error message has already been sent
   return mat.to_matrix();
 }
 
@@ -220,12 +220,12 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target,
   if (n_rows() != target->rank() || n_cols() != source->rank())
     {
       ERROR("wrong number of rows or columns");
-      return 0;
+      return nullptr;
     }
   if (deg->len != degree_monoid()->n_vars())
     {
       ERROR("degree for matrix has the wrong length");
-      return 0;
+      return nullptr;
     }
   const Ring *R = get_ring();
   const Ring *Rtarget = target->get_ring();
@@ -233,14 +233,14 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target,
   if (R != Rtarget || Rtarget != Rsource)
     {
       ERROR("expected same ring");
-      return 0;
+      return nullptr;
     }
 
   int *degshift = R->degree_monoid()->make_one();
   R->degree_monoid()->from_expvector(deg->array, degshift);
   MatrixConstructor mat(target, source, degshift);
   for (int i = 0; i < source->rank(); i++)
-    mat.set_column(i, R->copy_vec(_entries[i]));
+    mat.set_column(i, R->copy_vec(mEntries[i]));
   return mat.to_matrix();
 }
 
@@ -249,18 +249,18 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target) const
   if (n_rows() != target->rank())
     {
       ERROR("wrong number of rows");
-      return 0;
+      return nullptr;
     }
   const Ring *R = get_ring();
   if (R != target->get_ring())
     {
       ERROR("expected same ring");
-      return 0;
+      return nullptr;
     }
 
   MatrixConstructor mat(target, n_cols());
   for (int i = 0; i < n_cols(); i++)
-    mat.set_column(i, R->copy_vec(_entries[i]));
+    mat.set_column(i, R->copy_vec(mEntries[i]));
   mat.compute_column_degrees();
   return mat.to_matrix();
 }
@@ -268,10 +268,10 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target) const
 const Matrix /* or null */ *Matrix::make(const MonomialIdeal *mi)
 {
   const PolynomialRing *P = mi->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected a matrix over a polynomial ring");
-      return 0;
+      return nullptr;
     }
   const Monoid *M = P->getMonoid();
   int *mon = M->make_one();
@@ -311,7 +311,7 @@ bool Matrix::is_equal(const Matrix &m) const
 bool Matrix::is_zero() const
 {
   for (int i = 0; i < n_cols(); i++)
-    if (elem(i) != 0) return false;
+    if (elem(i) != nullptr) return false;
   return true;
 }
 
@@ -321,7 +321,7 @@ bool Matrix::is_homogeneous() const
   int *d = degree_monoid()->make_one();
   for (int i = 0; i < n_cols(); i++)
     {
-      if (elem(i) == 0) continue;
+      if (elem(i) == nullptr) continue;
       if (!get_ring()->vec_is_homogeneous(rows(), elem(i)))
         {
           degree_monoid()->remove(d);
@@ -354,7 +354,7 @@ Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
   if (F->get_ring() != G->get_ring())
     {
       ERROR("free modules have different base rings");
-      return 0;
+      return nullptr;
     }
   MatrixConstructor mat(F, G);
   return mat.to_matrix();
@@ -364,7 +364,7 @@ Matrix *Matrix::identity(const FreeModule *F)
 {
   const Ring *R = F->get_ring();
   const ring_elem one = R->from_long(1);
-  MatrixConstructor mat(F, F, 0);
+  MatrixConstructor mat(F, F, nullptr);
   for (int i = 0; i < F->rank(); i++) mat.set_entry(i, i, R->copy(one));
   return mat.to_matrix();
 }
@@ -374,12 +374,12 @@ Matrix *Matrix::operator+(const Matrix &m) const
   if (get_ring() != m.get_ring())
     {
       ERROR("matrices have different base rings");
-      return 0;
+      return nullptr;
     }
   if (rows()->rank() != m.rows()->rank() || cols()->rank() != m.cols()->rank())
     {
       ERROR("matrices have different shapes");
-      return 0;
+      return nullptr;
     }
 
   const Ring *R = get_ring();
@@ -412,12 +412,12 @@ Matrix *Matrix::operator-(const Matrix &m) const
   if (get_ring() != m.get_ring())
     {
       ERROR("matrices have different base rings");
-      return 0;
+      return nullptr;
     }
   if (rows()->rank() != m.rows()->rank() || cols()->rank() != m.cols()->rank())
     {
       ERROR("matrices have different shapes");
-      return 0;
+      return nullptr;
     }
 
   const Ring *R = get_ring();
@@ -452,7 +452,7 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
 {
   const FreeModule *F = rows()->sub_space(r);
   const FreeModule *G = cols()->sub_space(c);
-  if (F == NULL || G == NULL) return 0;
+  if (F == NULL || G == NULL) return nullptr;
 
   int *trans = newarray_atomic(int, n_rows());
   for (int i = 0; i < n_rows(); i++) trans[i] = -1;
@@ -474,7 +474,7 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
 Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint c) const
 {
   const FreeModule *G = cols()->sub_space(c);
-  if (G == NULL) return 0;
+  if (G == NULL) return nullptr;
 
   MatrixConstructor mat(rows(), G, degree_shift());
   for (unsigned int i = 0; i < c->len; i++)
@@ -490,12 +490,12 @@ Matrix /* or null */ *Matrix::reshape(const FreeModule *F,
   if (F->get_ring() != get_ring() || G->get_ring() != get_ring())
     {
       ERROR("reshape: expected same ring");
-      return 0;
+      return nullptr;
     }
   if (n_rows() * n_cols() != F->rank() * G->rank())
     {
       ERROR("reshape: ranks of freemodules incorrect");
-      return 0;
+      return nullptr;
     }
 
   // EFFICIENCY: might be better to sort columns at end?
@@ -519,12 +519,12 @@ Matrix /* or null */ *Matrix::flip(const FreeModule *F, const FreeModule *G)
   if (R != G->get_ring())
     {
       ERROR("flip: expected same ring");
-      return 0;
+      return nullptr;
     }
   const FreeModule *H = F->tensor(G);
   const FreeModule *K = G->tensor(F);
 
-  MatrixConstructor mat(K, H, 0);
+  MatrixConstructor mat(K, H, nullptr);
   int next = 0;
   for (int f = 0; f < F->rank(); f++)
     for (int g = 0; g < G->rank(); g++)
@@ -575,16 +575,16 @@ Matrix *Matrix::concat(const Matrix &m) const
   if (get_ring() != m.get_ring())
     {
       ERROR("concat: different base rings");
-      return 0;
+      return nullptr;
     }
   if (n_rows() != m.n_rows())
     {
       ERROR("concat: matrices have different numbers of rows");
-      return 0;
+      return nullptr;
     }
 
   const FreeModule *G = cols()->direct_sum(m.cols());
-  MatrixConstructor mat(rows(), G, 0);
+  MatrixConstructor mat(rows(), G, nullptr);
   int i;
   int nc = n_cols();
   for (i = 0; i < nc; i++) mat.set_column(i, get_ring()->copy_vec(elem(i)));
@@ -598,7 +598,7 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   if (get_ring() != m->get_ring())
     {
       ERROR("concat: different base rings");
-      return 0;
+      return nullptr;
     }
 
   // direct_sum ignores the degree shift of each summand.
@@ -606,12 +606,12 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   ///  if (EQ == degree_monoid()->compare(degree_shift(), m->degree_shift()))
   ///    deg = degree_shift();
   ///  else
-  ///    deg = 0;
+  ///    deg = nullptr;
 
   const FreeModule *F = rows()->direct_sum(m->rows());
   const FreeModule *G = cols()->direct_sum(m->cols());
 
-  MatrixConstructor mat(F, G, 0);
+  MatrixConstructor mat(F, G, nullptr);
 
   int i;
   int nr = n_rows();
@@ -628,12 +628,12 @@ Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
   if (R != m->get_ring())
     {
       ERROR("matrix mult: different base rings");
-      return 0;
+      return nullptr;
     }
   if (n_cols() != m->n_rows())
     {
       ERROR("matrix mult: matrix sizes don't match");
-      return 0;
+      return nullptr;
     }
 
   int *deg = degree_monoid()->make_new(degree_shift());
@@ -653,7 +653,7 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   if (get_ring() != m->get_ring())
     {
       ERROR("module tensor: different base rings");
-      return 0;
+      return nullptr;
     }
   FreeModule *F = rows()->tensor(m->rows());
   FreeModule *G = rows()->tensor(m->cols());
@@ -661,7 +661,7 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   G->direct_sum_to(G1);
   deleteitem(G1);
 
-  MatrixConstructor mat(F, G, 0);
+  MatrixConstructor mat(F, G, nullptr);
 
   int i, j, next = 0;
 
@@ -688,7 +688,7 @@ Matrix *Matrix::random(
 
   FreeModule *F = R->make_FreeModule(r);
   FreeModule *G = R->make_FreeModule(c);
-  MatrixConstructor mat(F, G, 0);
+  MatrixConstructor mat(F, G, nullptr);
 
   // Loop through all selected elements, flip a 'fraction_non_zero' coin, and if
   // non-zero
@@ -758,15 +758,15 @@ Matrix *Matrix::tensor(const Matrix *m) const
 Matrix *Matrix::diff(const Matrix *m, int use_coef) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected a polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (P != m->get_ring())
     {
       ERROR("matrix diff: different base rings");
-      return 0;
+      return nullptr;
     }
   FreeModule *F1 = rows()->transpose();
   const FreeModule *F = F1->tensor(m->rows());
@@ -872,10 +872,10 @@ Matrix *Matrix::lead_term(int nparts) const
 M2_arrayintOrNull Matrix::support() const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
-  if (R == 0)
+  if (R == nullptr)
     {
       ERROR("expected a polynomial ring");
-      return 0;
+      return nullptr;
     }
   int n = R->n_vars();
   int nsupp = 0;
@@ -883,9 +883,9 @@ M2_arrayintOrNull Matrix::support() const
   int *exp2 = newarray_atomic(int, R->n_vars());
   for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
   for (int j = 0; j < n_cols(); j++)
-    for (vec v = elem(j); v != 0; v = v->next)
+    for (vec v = elem(j); v != nullptr; v = v->next)
       {
-        for (const Nterm *f = v->coeff; f != 0; f = f->next)
+        for (const Nterm *f = v->coeff; f != nullptr; f = f->next)
           {
             R->getMonoid()->to_expvector(f->monom, exp2);
             for (int k = 0; k < n; k++)
@@ -909,7 +909,7 @@ out:
 Matrix *Matrix::top_coefficients(Matrix *&monoms) const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
-  if (R == 0)
+  if (R == nullptr)
     {
       ERROR("expected polynomial ring");
       return nullptr;
@@ -922,7 +922,7 @@ Matrix *Matrix::top_coefficients(Matrix *&monoms) const
       vec u = elem(i);
       vec v = R->vec_top_coefficient(u, var, exp);
       result.append(v);
-      if (v == 0)
+      if (v == nullptr)
         cons_monoms.append(v);
       else
         {
@@ -948,10 +948,10 @@ M2_arrayintOrNull Matrix::elim_vars(int nparts) const
 {
   intarray keep;
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   int nslots = P->getMonoid()->n_slots(nparts);
   for (int i = 0; i < n_cols(); i++)
@@ -965,10 +965,10 @@ M2_arrayintOrNull Matrix::elim_keep(int nparts) const
 {
   intarray keep;
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   int nslots = P->getMonoid()->n_slots(nparts);
   for (int i = 0; i < n_cols(); i++)
@@ -981,10 +981,10 @@ M2_arrayintOrNull Matrix::elim_keep(int nparts) const
 Matrix *Matrix::divide_by_var(int n, int maxd, int &maxdivided) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   MatrixConstructor mat(rows(), 0);
   maxdivided = 0;
@@ -1008,7 +1008,7 @@ Matrix /* or null */ *Matrix::koszul(int p) const
   if (n_rows() != 1)
     {
       ERROR("expected a matrix with one row");
-      return 0;
+      return nullptr;
     }
 
   FreeModule *F = cols()->exterior(p - 1);
@@ -1042,10 +1042,10 @@ Matrix /* or null */ *Matrix::koszul(int p) const
 static MonomialIdeal *makemonideal(const Matrix *A)
 {
   const PolynomialRing *P = A->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   const Monoid *M = P->getMonoid();
   queue<Bag *> new_elems;
@@ -1053,7 +1053,7 @@ static MonomialIdeal *makemonideal(const Matrix *A)
   for (int i = 0; i < A->n_cols(); i++)
     {
       vec v = A->elem(i);
-      if (v == 0) continue;
+      if (v == nullptr) continue;
       Bag *b = new Bag(i);
       M->to_varpower(P->lead_flat_monomial(v->coeff), b->monom());
       new_elems.insert(b);
@@ -1089,17 +1089,17 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   const FreeModule *F = r->cols();
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   const MonomialIdeal *A = makemonideal(r);
 
   const Ring *K = P->getCoefficients();
   const Monoid *M = P->getMonoid();
 
-  MatrixConstructor mat(F, c->cols(), 0);
+  MatrixConstructor mat(F, c->cols(), nullptr);
 
   int nvars = M->n_vars();
   int *skew_list = newarray_atomic(int, nskew);
@@ -1115,7 +1115,7 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   array<Bag *> divisors;
   for (int i = 0; i < ncols; i++)
     {
-      if (c->elem(i) == 0) continue;
+      if (c->elem(i) == nullptr) continue;
       a = P->lead_flat_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
       divisors.shrink(0);
@@ -1149,11 +1149,11 @@ Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
   const FreeModule *F = r->cols();
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
-  if (P == NULL) return 0;
+  if (P == NULL) return nullptr;
   const Ring *K = P->getCoefficients();
   const Monoid *M = P->getMonoid();
 
-  MatrixConstructor mat(F, c->cols(), 0);
+  MatrixConstructor mat(F, c->cols(), nullptr);
 
   int nvars = M->n_vars();
   int nrows = r->n_cols();
@@ -1164,12 +1164,12 @@ Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
   int *result_exp = newarray_atomic(int, nvars);
   for (int i = 0; i < ncols; i++)
     {
-      if (c->elem(i) == 0) continue;
+      if (c->elem(i) == nullptr) continue;
       a = P->lead_flat_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
       for (int j = 0; j < nrows; j++)
         {
-          if (r->elem(j) == 0) continue;
+          if (r->elem(j) == nullptr) continue;
           b = P->lead_flat_monomial(r->elem(j)->coeff);
           M->to_expvector(b, bexp);
           int sign = signdivide(nvars, aexp, bexp, result_exp);
@@ -1197,7 +1197,7 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
   const FreeModule *G = Fp->tensor(Fq);
   const Ring *R = F->get_ring();
 
-  MatrixConstructor mat(Fn, G, 0);
+  MatrixConstructor mat(Fn, G, nullptr);
 
   if (p < 0 || q < 0 || p + q > F->rank()) return mat.to_matrix();
 
@@ -1267,7 +1267,7 @@ Matrix *Matrix::compress() const
 {
   MatrixConstructor result(rows(), 0);
   for (int i = 0; i < n_cols(); i++)
-    if (elem(i) != 0) result.append(elem(i), cols()->degree(i));
+    if (elem(i) != nullptr) result.append(elem(i), cols()->degree(i));
   return result.to_matrix();
 }
 
@@ -1510,10 +1510,10 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
 // order.
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected a matrix over a polynomial ring");
-      return 0;
+      return nullptr;
     }
   const Monoid *M = P->getMonoid();
   const Ring *K = P->getCoefficients();
@@ -1523,7 +1523,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
     if (vars->array[i] < 0 || vars->array[i] >= nvars)
       {
         ERROR("expected a list of indices of indeterminates");
-        return 0;
+        return nullptr;
       }
 
   // Now collect all of the monomials
@@ -1536,9 +1536,9 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   for (int c = 0; c < n_cols(); c++)
     {
       vec v = elem(c);
-      for (; v != 0; v = v->next)
+      for (; v != nullptr; v = v->next)
         {
-          for (Nterm *t = v->coeff; t != 0; t = t->next)
+          for (Nterm *t = v->coeff; t != nullptr; t = t->next)
             {
               int *exp1 = newarray_atomic(int, vars->len + 1);
               M->to_expvector(t->monom, exp);
@@ -1604,9 +1604,9 @@ static vec coeffs_of_vec(exponent_table *E,
 #warning "coeffs_of_vec should maybe be in PolynomialRing"
 #endif
 {
-  if (f == NULL) return 0;
+  if (f == NULL) return nullptr;
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
-  if (P == 0) return 0;
+  if (P == nullptr) return nullptr;
   const Monoid *M = P->getMonoid();
   int *mon = M->make_one();
 
@@ -1615,10 +1615,10 @@ static vec coeffs_of_vec(exponent_table *E,
   int *exp = newarray_atomic(int, nvars);
   int *scratch_exp = newarray_atomic(int, 1 + vars->len);
 
-  vec result = 0;
-  for (vec g = f; g != 0; g = g->next)
+  vec result = nullptr;
+  for (vec g = f; g != nullptr; g = g->next)
     {
-      for (Nterm *h = g->coeff; h != 0; h = h->next)
+      for (Nterm *h = g->coeff; h != nullptr; h = h->next)
         {
           M->to_expvector(h->monom, exp);
           get_part_of_expvector(vars, exp, g->comp, scratch_exp);
@@ -1652,23 +1652,23 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
 
   // Step 0: Do some error checking
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   int nvars = P->n_vars();
   int nelements = monoms->n_cols();
   if (monoms->n_rows() != n_rows())
     {
       ERROR("expected matrices with the same number of rows");
-      return 0;
+      return nullptr;
     }
   for (unsigned int i = 0; i < vars->len; i++)
     if (vars->array[i] < 0 || vars->array[i] >= nvars)
       {
         ERROR("coeffs: expected a set of variable indices");
-        return 0;
+        return nullptr;
       }
 
   // Step 1: Make an exponent_table of all of the monoms.
@@ -1681,10 +1681,10 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
   for (int i = 0; i < nelements; i++)
     {
       vec v = monoms->elem(i);
-      if (v == 0)
+      if (v == nullptr)
         {
           ERROR("expected non-zero column");
-          return 0;
+          return nullptr;
         }
       ring_elem f = v->coeff;
       const int *m = P->lead_flat_monomial(f);
@@ -1711,10 +1711,10 @@ MonomialIdeal *Matrix::make_monideal(
     bool use_only_monomials_with_unit_coeffs) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ &&
                    use_only_monomials_with_unit_coeffs);
@@ -1723,7 +1723,7 @@ MonomialIdeal *Matrix::make_monideal(
   for (int i = 0; i < n_cols(); i++)
     {
       vec v = elem(i);
-      if (v == 0) continue;
+      if (v == nullptr) continue;
       const vecterm *w = P->vec_locate_lead_term(rows(), v);
       if (w->comp != n) continue;
       if (coeffsZZ && !globalZZ->is_unit(P->lead_flat_coeff(w->coeff)))
@@ -1762,11 +1762,11 @@ MonomialIdeal *Matrix::make_monideal(
 int Matrix::dimension1() const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  const Ring *K = (P != 0 ? P->getCoefficientRing() : get_ring());
+  const Ring *K = (P != nullptr ? P->getCoefficientRing() : get_ring());
   bool is_ZZ = K->is_ZZ();
   int base = (is_ZZ ? 1 : 0);
   int result = -1;
-  if (P != 0)
+  if (P != nullptr)
     {
       int n = P->n_vars();
       for (int i = 0; i < n_rows(); i++)
@@ -1788,7 +1788,7 @@ int Matrix::dimension1() const
       for (j = 0; j < n_cols(); j++)
         {
           vec f = elem(j);
-          if (f == 0) continue;
+          if (f == nullptr) continue;
           if (dims[f->comp] == -1) continue;
           if (K->is_unit(f->coeff))
             dims[f->comp] = -1;
@@ -1806,7 +1806,7 @@ const Matrix /* or null */ *Matrix::content() const
 {
   const Ring *R = get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+  const Ring *targetR = (P == nullptr ? R : P->getCoefficients());
 
   const FreeModule *F = targetR->make_FreeModule(1);
   MatrixConstructor mat(F, n_cols());
@@ -1829,7 +1829,7 @@ const Matrix /* or null */ *Matrix::split_off_content(
 {
   const Ring *R = get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const Ring *targetR = (P == 0 ? R : P->getCoefficients());
+  const Ring *targetR = (P == nullptr ? R : P->getCoefficients());
 
   const FreeModule *F = targetR->make_FreeModule(1);
   MatrixConstructor mat_content(F, n_cols());
@@ -1860,7 +1860,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
   if (R->get_precision() == 0)
     {
       ERROR("expected ring over an RR or CC");
-      return 0;
+      return nullptr;
     }
   gmp_RR nm = getmemstructtype(gmp_RR);
   mpfr_init2(nm, mpfr_get_prec(p));
@@ -1869,7 +1869,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
     {
       ERROR("Lp norm only implemented for p = infinity");
       mpfr_clear(nm);
-      return 0;
+      return nullptr;
     }
 
   for (int i = 0; i < n_cols(); i++) R->vec_increase_maxnorm(nm, elem(i));

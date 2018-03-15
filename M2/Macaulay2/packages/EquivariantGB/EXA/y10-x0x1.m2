@@ -8,10 +8,10 @@ elapsedTime egb(F, OutFile => currentFileDirectory|"y10-x0x1.Buchberger.out")
 elapsedTime egb(F, Algorithm => Incremental, OutFile => currentFileDirectory|"y10-x0x1.Incremental.out")
 elapsedTime egb(F, Algorithm => Signature, PrincipalSyzygies=>false, OutFile => currentFileDirectory|"y10-x0x1.Signature-PS-false.out")
 elapsedTime egb(F, Algorithm => Signature, PrincipalSyzygies=>true, OutFile => currentFileDirectory|"y10-x0x1.Signature-PS-true.out")
-{* 
+-* 
   To see the difference in output for Algorithm=>Signature: 
     diff y10-x0x1.Signature-PS-false.out y10-x0x1.Signature-PS-true.out > y10-x0x1.diff
-*} 
+*- 
 end
 
 -- start with a GB

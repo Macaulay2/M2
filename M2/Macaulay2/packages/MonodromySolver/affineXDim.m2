@@ -8,7 +8,7 @@ m=numgens coefficientRing ring polys
 p = point random(CC^1,CC^m)
 specializeSystem(p,polys) -- why is it generating the first three equations?
 
-{*
+-*
 -- heuristic seeding
 seedX = method()
 -- when projection onto xs is D-dimensional
@@ -28,4 +28,4 @@ seedX (polySystem, D) = (polys,D) -> (
     if p.SolutionStatus =!= Regular then return 1;
     else 
 
-*}
+*-

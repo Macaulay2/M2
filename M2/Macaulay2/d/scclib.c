@@ -395,13 +395,17 @@ static char **M2_completion(const char *text, int start, int end) {
 }
 
 
-void init_readline_variables(void) {
+void system_initReadlineVariables(void) {
+  static char readline_name[] = "M2";
+  static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
   extern const char *_rl_comment_begin;
+#if HAVE_DECL___RL_COMMENT_BEGIN
   _rl_comment_begin = "-- ";
-  rl_readline_name = "M2";
+#endif
+  rl_readline_name = readline_name;
   rl_attempted_completion_function = M2_completion;
-  rl_basic_word_break_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
-  using_history();
+  rl_basic_word_break_characters = basic_word_break_characters;
+  using_history();		/* this might also initialize readine, by calling rl_readline, on Mac OS X */
 }
 
 static int read_via_readline(char *buf,int len,char *prompt) {

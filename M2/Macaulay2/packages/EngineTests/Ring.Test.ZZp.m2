@@ -171,10 +171,10 @@ TEST ///
 
 -- this test doesn't work on a machine where "long" is 32 bits
 -- TEST ///
---   {*
+--   -*
 --     restart
 --     loadPackage "EngineTests"
---   *}
+--   *-
 --   debug Core
 --   -- test that around 2^32, flint rings are created correctly, with correct charac.
 --   primes = for i from -10000 to 10000 list if isPrime (2^32+i) then 2^32+i else continue;

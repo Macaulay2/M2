@@ -1,9 +1,9 @@
- {*
+ -*
 Copyright 2010 Amelia Taylor and Augustine O'Keefe.
 You may redistribute this file under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 2 of
 the License, or any later version.
-*}
+*-
 
 -- Copyright 2014: Jack Burkart, David Cook II, Caroline Jansen
 -- You may redistribute this file under the terms of the GNU General Public

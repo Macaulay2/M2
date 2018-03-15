@@ -8,10 +8,10 @@ I = ideal(
     )
 dim I
 degree I
-{*
+-*
 solveSystem(I_*,PostProcess=>false) -- SEG!!!
 solveSystem(I_*,Precision=>infinity,PostProcess=>false) --SEG!!!
-*}
+*-
 
 J = ideal(I_0,I_1)
 degree J

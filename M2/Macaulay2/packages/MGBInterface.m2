@@ -545,16 +545,16 @@ time for e in myexamples do (
      )
 
 -- This next one only works currently if mgb is configured to output .gb files
-  {*
+  -*
     for e in myexamples do (
        << "testing: " << e#0 << endl;
        J = value e#1;
        testMGB J
        )
-  *}
+  *-
 -- The following need the mgb executable to be installed in the 
 -- given place.
-{*
+-*
 for e in myexamples do (
      << "running: " << e#0 << endl;
      J = value e#1;
@@ -565,14 +565,14 @@ for e in myexamples do (
      J = value e#1;
      runMGB(J, "Reducer" => 26)
      )
-*}
+*-
 ///
 
 TEST ///
-{*
+-*
   restart
   loadPackage "MGBInterface"
-*}
+*-
   R = ZZ/101[a..d]
   I = ideal"a2-bc,a3-b3,a4-b4-c4"
   G2 = MGB I
@@ -586,20 +586,20 @@ TEST ///
   assert(g1 == g2)
   assert(g1 == g3)
 
-{*
+-*
   -- run this if you wish to test the mgb executable
   makeExampleFiles("first-eg", I)
   runMGB I
   runMGB(I, "Reducer"=>26)
-*}
+*-
 
 ///
 
 TEST ///
-{*
+-*
   restart
   loadPackage "MGBInterface"
-*}
+*-
   R = ZZ/101[a..d, MonomialOrder=>Eliminate 1]
   I = ideal"a2-bc, ab-cd"
   G2 = MGB I
@@ -616,10 +616,10 @@ TEST ///
 
 TEST ///
   -- rational quartic example
-{*
+-*
   restart
   loadPackage "MGBInterface"
-*}
+*-
   R = ZZ/101[s,t,a..d, MonomialOrder=>Eliminate 2, Degrees=>{1,1,4,4,4,4}]
   I = ideal"s4-a,s3t-b,st3-c,t4-d"
   
@@ -638,11 +638,11 @@ TEST ///
 
 SLOWER ///
   -- benchmarking example, jason210
-{*
+-*
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
-*}
+*-
   J1 = jason210()
   R = ring J1
 
@@ -658,7 +658,7 @@ SLOWER ///
   assert(g1 == g2)
   assert(g1 == g3)
 
-{*
+-*
   -- To create the example file:  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"jason210", "jason210()"}});
@@ -667,15 +667,15 @@ SLOWER ///
   mgb gb jason210
   mgb gb jason210 -reducer 26  -log +all
   mgb gb jason210 -reducer 26 # -log +all
-*}
+*-
 ///
 
 TEST ///
   --isaac97-32003 (from bugs/mike/gbB-refactor-gb/gb-elim-examples.m2)
-{*
+-*
   restart
   loadPackage "MGBInterface"
-*}
+*-
 
   R1 = ZZ/32003[w,x,y,z,MonomialOrder => Lex]
   J1 = ideal"
@@ -724,10 +724,10 @@ TEST ///
 
 SLOWER ///
   --joswig-101 (from gbB-refactor-gb/gb-elim-examples.m2)
-{*
+-*
   restart
   loadPackage "MGBInterface"
-*}
+*-
   R1 = ZZ/101[x4,x3,x2,x1,s,t,MonomialOrder=>Eliminate 4]
   J1 = ideal (
        1 + s^2  * x1 * x3 + s^8 * x2 * x3 + s^19 * x1 * x2 * x4,
@@ -748,11 +748,11 @@ SLOWER ///
 
 SLOWER ///
   -- benchmarking example, hilbertkunz1
-{*
+-*
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
-*}
+*-
   J1 = hilbertkunz1() -- #GB=150 #monoms=454535
 
   time G2 = MGB J1;  -- [mike rMBP; 17 April 2013;  4.9 sec]
@@ -767,7 +767,7 @@ SLOWER ///
   assert(g1 == g2)
   assert(g1 == g3)
 
-{*
+-*
   -- to make the example file  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"hilbertkunz1", "hilbertkunz1()"}});
@@ -777,16 +777,16 @@ SLOWER ///
   mgb gb hilbertkunz1 -reducer 26
   magma <hilbertkunz1.magma [mike rMBP; Magma V2.18-11; 4.3 sec]
   Singular <hilbertkunz1.sing [mike rMBP; Singular 3-1-5; 4.1 sec]
-*}
+*-
 ///
 
 SLOWER ///
   -- benchmarking example, hilbertkunz2
-{*
+-*
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
-*}
+*-
   -- #vars=4, #gens=5,
   J1 = hilbertkunz2() -- #GB=7471 #monoms=
 
@@ -802,7 +802,7 @@ SLOWER ///
   assert(g1 == g2)
   assert(g1 == g3)
 
-{*
+-*
   -- to make the example file  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"hilbertkunz2", "hilbertkunz2()"}});
@@ -812,16 +812,16 @@ SLOWER ///
   time mgb gb hilbertkunz2 -reducer 26 -log F4 -threa 4 # [mike rMBP; 244.2 sec] about 4 GB
   magma <hilbertkunz2.magma [mike rMBP; Magma V2.18-11; 772.629 sec] # Total memory usage: 2416.66MB
   Singular <hilbertkunz2.sing [mike rMBP; Singular 3-1-5; 3786 sec] #monoms=54,976,568
-*}
+*-
 ///
 
 BENCHMARK ///
   -- benchmarking example, hcyclic8
-{*
+-*
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
-*}
+*-
   J1 = (hcyclicn 8)() -- #GB: 3626
 
   -- vars=8, numgens=8, homogeneous.
@@ -841,7 +841,7 @@ BENCHMARK ///
   J2 = trim J1;
   runMGB(J2, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013; 410 sec] #monoms in sig basis: 3,314,052
   runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013; 3.7 sec] #monoms=676,400
-{*
+-*
   -- to make the example file  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"hcyclic8", "(hcyclicn 8)()"}});
@@ -855,16 +855,16 @@ BENCHMARK ///
   time mgb gb hcyclic8-trimmed -reducer 26 -thread 4      # [mike rMBP;                 2.7 sec]
   time magma <hcyclic8-trimmed.magma                      # [mike rMBP; Magma V2.18-11; 2.6 sec]
   time Singular <hcyclic8-trimmed.sing                    # [mike rMBP; Singular 3-1-5; 32.3 sec] #monoms=757,035
-*}
+*-
 ///
 
 BENCHMARK ///
   -- benchmarking example, yang1
-{*
+-*
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
-*}
+*-
   J1 = yang1(); -- #GB: 
 
   -- vars=48, numgens=66, homogeneous.
@@ -883,7 +883,7 @@ BENCHMARK ///
   -- now try runMGB with the signature based algorithm, f4-parallel
   runMGB(J1, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis:
   runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013;  sec] #monoms=
-{*
+-*
   -- to make the example file  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"yang1", "yang1()"}});
@@ -892,16 +892,16 @@ BENCHMARK ///
   time mgb gb yang1 -reducer 26 -thread 4 # [mike rMBP;                  sec]
   magma <yang1.magma                      # [mike rMBP; Magma V2.18-11; 19.4 sec]
   Singular <yang1.sing                    # [mike rMBP; Singular 3-1-5; 45.6 sec] #monoms=54,324
-*}
+*-
 ///
 
 BENCHMARK ///
   -- benchmarking example, cyclic8
-{*
+-*
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
-*}
+*-
   J1 = (cyclicn 8)() -- #GB: 
 
   -- vars=8, numgens=8, inhomogeneous.
@@ -919,7 +919,7 @@ BENCHMARK ///
   J2 = trim J1;
   runMGB(J2, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis: 
   runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013;  sec] #monoms=
-{*
+-*
   -- to make the example file  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"cyclic8", "(cyclicn 8)()"}});
@@ -928,17 +928,17 @@ BENCHMARK ///
   time mgb gb cyclic8 -reducer 26 -thread 4 # [mike rMBP;                  sec]
   magma <cyclic8.magma                      # [mike rMBP; Magma V2.18-11;  sec]
   Singular <cyclic8.sing                    # [mike rMBP; Singular 3-1-5;  sec] #monoms=
-*}
+*-
 ///
 
 BENCHMARK ///
   -- This one is way too easy over grevlex, so do it over Lex
   -- sottile-Y^8Y2 (although the desired one is over QQ)
   -- comes from Sottile's large Schubert problem program
-{*
+-*
   restart
   loadPackage "MGBInterface"
-*}
+*-
 
   R1 = ZZ/32003[x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, MonomialOrder=>Lex];
   J1 = ideal(
@@ -975,7 +975,7 @@ BENCHMARK ///
   J1t = trim J1;
   runMGB(J1t, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis: 
   runMGB(J1, "Reducer"=>26) --       [mike rMBP; 17 April 2013;  sec] #monoms=
-{*
+-*
   -- to make the example file  
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir | "/sottile-Y8Y2-lex", J1)
@@ -984,7 +984,7 @@ BENCHMARK ///
   time mgb gb sottile-Y8Y2-lex -reducer 26 -thread 4 # [mike rMBP;                  sec]
   magma <sottile-Y8Y2-lex.magma                      # [mike rMBP; Magma V2.18-11;  sec]
   Singular <sottile-Y8Y2-lex.sing                    # [mike rMBP; Singular 3-1-5;  sec] #monoms=
-*}
+*-
 ///
 
 

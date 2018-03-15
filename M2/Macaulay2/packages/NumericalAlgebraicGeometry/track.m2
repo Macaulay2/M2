@@ -741,8 +741,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      etHx := 0; 
      etHt := 0;    
     
-     if instance(H,Sequence) {* preSLP,  if o.Software===M2enginePrecookedSLPs 
-	                        then compile preSLPs in the engine *}
+     if instance(H,Sequence) -* preSLP,  if o.Software===M2enginePrecookedSLPs 
+	                        then compile preSLPs in the engine *-
      then ( -- preSLPs (developer only) -------------------------------------------------------
      	 (R,slpH) := H; 
 	 n := numgens R - 1;
@@ -1052,14 +1052,14 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
      if class p === Sequence then ret else first ret
      )
 
-{*
+-*
 trackSegment = method(Options=>track'option'list) -- a better implementation needed!!!
 trackSegment (PolySystem,Number,Number,List) := o -> (H,a,b,pts) -> (
     S := specializeContinuationParameter(H,a);
     T := specializeContinuationParameter(H,b);
     track(S,T,pts,o) 
     )
-*}
+*-
 
 -- The following code added by MES, for debugging purposes
 -- for adaptive homotopy tracking.  This code is not exported or used elsewhere.

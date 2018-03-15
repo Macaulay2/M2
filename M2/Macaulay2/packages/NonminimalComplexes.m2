@@ -25,7 +25,7 @@ export {
 debug Core
 needsPackage "SVDComplexes"
 
-{*
+-*
 -- The following shuold be where?
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
@@ -38,7 +38,7 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
-*}
+*-
 
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
@@ -60,7 +60,7 @@ constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
 
 constantStrand(ChainComplex, ZZ) := (C, deg) -> (
     kk := coefficientRing ring C;
-    if kk === QQ then error "coefficient ring is QQ: need to provide a ring: RR_53, RR_1000, ZZ/1073741891, or ZZ/1073741909, or ZZ";
+    if kk === QQ then error "coefficient ring is QQ: need to provide a ring: RR_53, RR_1000, ZZ/32003, or ZZ/1073741909, or ZZ";
     comp := fastNonminimalComputation C;
     if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
@@ -96,7 +96,7 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
     result := new MutableList;
     for i from 0 to length C - 1 do (
       result#i = matrix map(R, rawResolutionGetMutableMatrixB(rawC, raw R, i+1));
-      << " i=" << i << " matrix = " << netList result#i << endl;
+      --<< " i=" << i << " matrix = " << result#i << endl;
       if i > 0 then result#i = map(source result#(i-1),,result#i);
       );
     chainComplex toList result
@@ -108,14 +108,14 @@ TEST ///
 --  b. allow a single multi-degree
   -- constantStrand, constantStrands
   -- these are from nonminimal free resolutions over QQ
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   
   R = QQ[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(I, FastNonminimal=>true, Strategy=>4.1)
   betti C
   constantStrand(C, RR_53, 4)
   constantStrand(C, RR_53, 5)
@@ -150,10 +150,10 @@ TEST ///
 ///
 
 TEST ///
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   R = ZZ/32003[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
   C = res(I, FastNonminimal=>true)
@@ -223,14 +223,19 @@ doc ///
    Key
      NonminimalComplexes
    Headline
-     support for computing homology, ranks and SVD complexes, from a chain complex over the real numbers
+     support for constant strands of non-minimal resolutions.
    Description
     Text
       Some functionality here should be moved elsewhere.
       
-      Here is an example of the usage.
+      This package also includes support for accessing complexes over the real numbers, for
+      non-minimal resolutions computed over a non-exported ring type which is a
+      hybrid: the Groebner basis is computed over QQ, but the free resolution is available over
+      RR_53, RR_1000, ZZ/32003, and ZZ/1073741909.  In the future, this will be made much more flexible.
    Caveat
-     Currently, this package requires that the Macaulay2 being run is from the res-2107 git branch
+      Warning!  This is an experimental package, whose interface will likely change in the future.
+      Use at your own risk!
+     
 ///
 
 doc ///
@@ -258,9 +263,21 @@ doc ///
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example
-      R = QQ[a..d]
+      kk = ZZ/32003
+      R = kk[a..d]
       I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
       C = res(I, FastNonminimal=>true)
+      betti C
+      C8 = constantStrand(C, kk, 8)
+      C8.dd_4
+      C9 = constantStrand(C, kk, 9)
+      C9.dd_4
+      rank oo
+      constantStrands(C, kk)
+    Example
+      R = QQ[a..d]
+      I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
+      C = res(I, FastNonminimal=>true, Strategy=>4.1)
       betti C
       CR = constantStrand(C, RR_53, 8)
       CR.dd_4
@@ -318,7 +335,7 @@ doc ///
     Example
       R = QQ[a..d]
       I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-      C = res(I, FastNonminimal=>true)
+      C = res(I, FastNonminimal=>true, Strategy=>4.1)
       betti C
       Cs = constantStrands(C, RR_53)
       CR=Cs#8         
@@ -335,7 +352,7 @@ doc ///
 TEST ///
   R = QQ[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(I, FastNonminimal=>true, Strategy=>4.1)
   betti C
   betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
   CR = constantStrand(C, RR_53, 8)
@@ -360,7 +377,7 @@ TEST ///
   kk = QQ
   R = kk[a..d]
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
-  C = res(I, FastNonminimal=>true)
+  C = res(I, FastNonminimal=>true, Strategy=>4.1)
   betti C
   constantStrand(C, RR_53, 8)
    -- fails, as it doesn't even make it to that code
@@ -368,7 +385,7 @@ TEST ///
 
 
 end--
-{*
+-*
 Cs2 = (constantStrands(C, RR_1000))#8
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909
@@ -379,7 +396,7 @@ Cs2 = (constantStrands(C, RR_1000))#8
       netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
       netList{(clean(1e-14,CR)).dd_4,(clean(1e-299,CR2)).dd_4}
       netList {(clean(1e-14,CR)).dd_4} == netList{(clean(1e-299,CR2)).dd_4}
-      *}
+      *-
 
 restart
 uninstallPackage "NonminimalComplexes"
@@ -696,13 +713,13 @@ restart
   makeAGR(6,7,50,0)
   
   I = getAGR(6,7,50,0);
-{*  
+-*  
   R = QQ[a..h]
   deg = 6
   nextra = 30
   F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
   elapsedTime I = ideal fromDual matrix{{F}};
-*}
+*-
   
   elapsedTime C = res(I, FastNonminimal=>true)
   betti C

@@ -25,14 +25,14 @@ dualToIdeal(Ideal) := (I) -> (
 --Produces an ideal module isomorphic to the dual of the given ideal I.
 	R := ring(I);
 	M := module(I);
-	moduleToIdeal(Hom(M,R),IsGraded=>true,ReturnMap=>true)
+	embedAsIdeal(Hom(M,R),IsGraded=>true,ReturnMap=>true)
 );
 
 -----------------------------------------------------------------------
 
 globallyGenerated = method();
 
-globallyGenerated(WDiv) := (D) -> (				
+globallyGenerated(WeilDivisor) := (D) -> (				
 --Finds the smallest positive number (using a binary search) such that O_X(a*D) is globally generated, D ample.
 	a:=1;
 
@@ -63,7 +63,7 @@ globallyGenerated(Ideal) := (I) -> (
 );
 
 globallyGenerated(Module) := (M) -> (
-	globallyGenerated(moduleToDivisor(M))
+	globallyGenerated(divisor(M))
 );
 
 -----------------------------------------------------------------------
@@ -215,7 +215,7 @@ sectionRing(Ideal) := (I) -> (
 	KK:= coefficientRing(R);
 	Z := dualToIdeal(I);
 	Shift := (Z#1)#0;
-	J = {0,reflexifyIdeal((Z#0))};
+	J = {0,reflexify((Z#0))};
 	FF := {0,basis(Shift,J#1)};
 	n := {0,numColumns(FF#1)};
 	F := {0,map(R^(numRows(FF#1)),R^(n#1),FF#1)};
@@ -343,8 +343,8 @@ sectionRing(Ideal) := (I) -> (
 
 -----------------------------------------------------------------------
 
-sectionRing(WDiv) := D -> (
-	sectionRing(divisorToIdeal(D))
+sectionRing(WeilDivisor) := D -> (
+	sectionRing(ideal(D))
 );
 
 -----------------------------------------------------------------------
@@ -395,7 +395,7 @@ doc ///
    	  globallyGenerated(I)
 	  globallyGenerated(M)
    	Inputs
-	 D:WDiv
+	 D:WeilDivisor
 	 I:Ideal
 	 M:Module
    	Outputs
@@ -455,7 +455,7 @@ doc ///
 	 sectionRing(D)
    	Inputs
 	 I:Ideal
-	 D:WDiv
+	 D:WeilDivisor
    	Outputs
    	 :Ring
         Description

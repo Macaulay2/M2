@@ -13,6 +13,7 @@
 #include "schur2.hpp"
 #include "schurSn.hpp"
 #include "frac.hpp"
+#include "localring.hpp"
 #include "weylalg.hpp"
 #include "skewpoly.hpp"
 #include "solvable.hpp"
@@ -238,6 +239,11 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
               "fraction fields over other fraction fields not yet implemented");
           return 0;
         }
+      if (P->getCoefficients()->cast_to_LocalRing() != 0)
+        {
+          ERROR("fraction fields over other local rings not yet implemented");
+          return 0;
+        }
       return FractionField::create(P);
   } catch (exc::engine_error e)
     {
@@ -246,25 +252,28 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
   }
 }
 
-const Ring /* or null */ *IM2_Ring_localization(const Ring *R,
-                                                const Matrix *Prime)
+const Ring /* or null */ *IM2_Ring_localization(const Ring *R, Computation *C)
 {
   try
     {
-      const PolynomialRing *P = R->cast_to_PolynomialRing();
-      if (P == 0)
+      const PolyRing *PR = R->cast_to_PolyRing(); // FIXME should this get a PolyRing or Ring?
+      GBComputation *P = C->cast_to_GBComputation();
+      if (PR == nullptr)
         {
           ERROR("expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
-#if 0
-          //   return P->create_FractionRing(Prime);
-#endif
-/* TODO */
-#ifdef DEVELOPMENT
-#warning "implement IM2_Ring_localization"
-#endif
-      return 0;
+      if (P == nullptr)
+        {
+          ERROR("expected a Grobner basis computation");
+          return nullptr;
+        }
+      if (P->get_ring() != PR)
+        {
+          ERROR("expected matrix to be over the same ring");
+          return nullptr;
+        }
+      return LocalRing::create(PR, P);
   } catch (exc::engine_error e)
     {
       ERROR(e.what());

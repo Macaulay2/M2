@@ -38,9 +38,9 @@ phcF = toRingXphc flatten entries S
 elapsedTime mv =  mixedVolume(phcF,StartSystem => false)
 stop = (n,L)->#L>=mv
 getDefault Software
-{*
+-*
 setDefault(Software=>PHCPACK)
-*}
+*-
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},
     StoppingCriterion=>stop);
 

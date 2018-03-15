@@ -24,6 +24,7 @@ protect inputRays
 protect ambientDimension
 protect computedDimension
 protect computedFacesThroughRays -- Which rays span a face?
+protect facetRayDataConverter
 protect facetsThroughRayData -- Which rays span a facet?
 protect computedFVector
 protect raysThroughFacets -- Which facets intersect in a ray?

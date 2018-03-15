@@ -1,6 +1,9 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
+    "LocalRing",
+    "localRing",
+    "MaximalIdeal",
 	"!",
 	"!=",
 	"#",
@@ -275,6 +278,7 @@ export {
 	"OneExpression",
 	"Option",
 	"OptionTable",
+	"OptionalComponentsPresent",
 	"Options",
 	"Order",
 	"OrderedMonoid",
@@ -391,6 +395,7 @@ export {
 	"UpdateOnly",
 	"UpperTriangular",
 	"Usage",
+	"UseCachedExampleOutput",
 	"UseHilbertFunction",
 	"UseSyzygies",
 	"UserMode",
@@ -668,7 +673,6 @@ export {
 	"getGlobalSymbol",
 	"getNetFile",
 	"getNonUnit",
-	"getPackage",
     	"getPrimeWithRootOfUnity",
 	"getSymbol",
 	"getWWW",

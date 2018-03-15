@@ -333,12 +333,12 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      prec := precision x;
      -- if prec =!= defaultPrecision then
      << " (of precision " << prec << ")";
-     {*
+     -*
      while parent y =!= Thing do (
 	  y = parent y;
 	  << " < " << y;
 	  );
-     *}
+     *-
      << endl;
      )
 

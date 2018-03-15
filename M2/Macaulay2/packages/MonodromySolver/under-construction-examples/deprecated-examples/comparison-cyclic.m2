@@ -1,11 +1,11 @@
 load "../paper-examples/cyclic.m2" 
-{* each case is a quadruple (
+-* each case is a quadruple (
         type of graph, 
       	#nodes,
 	#edges,
 	"edge selection strategy" => "potential" -- "potential" = null if potential is not used
 	)
-*}
+*-
 testTriples = {
     (completeGraphInit, 2, 3), 
     (completeGraphInit, 2, 4), 

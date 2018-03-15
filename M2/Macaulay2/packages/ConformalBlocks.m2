@@ -62,7 +62,7 @@ conformalBlockVectorBundle(LieAlgebra,ZZ,List,ZZ):=(lieAlgebra,l,v,ggenus)-> (
 --declare a new type called SymmetricDivisorM0nbar
 SymmetricDivisorM0nbar = new Type of HashTable;
 
-{*Functions and methods available for the type SymmetricDivisorM0nbar:
+-*Functions and methods available for the type SymmetricDivisorM0nbar:
 --look up n
 --create from list
 --create from polynomial
@@ -79,7 +79,7 @@ SymmetricDivisorM0nbar = new Type of HashTable;
 --E=new SymmetricDivisorM0nbar from {{numberOfPoints,6},{B_2,3},{B_3,5}};
 --F=symmetricDivisorM0nbar(6,{2,3});
 --G=symmetricDivisorM0nbar(6,2*B_2+3*B_3);
-*}
+*-
 
 SymmetricDivisorM0nbar==SymmetricDivisorM0nbar :=(D,E) -> ( 
     pairs(D)==pairs(E)
@@ -361,7 +361,7 @@ psiDivisorM0nbar(ZZ) := (n) -> (g:=0;
 ---------------------------------------------------------
 --------------------------------------------------------- 
 
-{* Conformal block ranks may be computed recursively.  
+-* Conformal block ranks may be computed recursively.  
 First, propagation allows you to drop a weight if it is zero.  Next, factorization
 allows one to reduce the calculation to computing conformal block ranks on M03bar.
 In general, these may be computed using the Kac-Walton algorithm, which is 
@@ -373,7 +373,7 @@ sl_2, any level
 sl_3, any level
 sl_m, level 1
 They are implemented here.
-*}
+*-
 
 sl2threept = (l,L) -> (
     a:=L_0_0;

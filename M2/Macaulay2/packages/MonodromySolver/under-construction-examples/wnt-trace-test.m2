@@ -2,13 +2,13 @@ load "example-CRN.m2"
 setRandomSeed 0
 
 -- toy network example in comments
-{*(p0, x0) = createSeedPair(G,"initial parameters" => "one")
+-*(p0, x0) = createSeedPair(G,"initial parameters" => "one")
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},
     GraphInitFunction=>completeGraphInit,
     NumberOfEdges=>5,
     "new tracking routine"=>false,
     Verbose=>true)
-assert(length V.PartialSols ==4)*}
+assert(length V.PartialSols ==4)*-
 
 W = wnt()
 L = apply(numgens createRing(W,FF), i->random FF)
