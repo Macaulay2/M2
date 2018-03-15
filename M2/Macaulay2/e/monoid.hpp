@@ -204,6 +204,22 @@ class Monoid : public MutableEngineObject
   int simple_degree(const_monomial m) const;  // simply sum of exponents
   void degree_of_varpower(const_varpower vp, monomial result) const;
 
+  template<typename T>
+  void degree_of_expvector(const T* expvector, monomial result) const
+  {
+    degree_monoid()->one(result);
+    monomial mon1 = degree_monoid()->make_one();
+    for (int i=0; i<n_vars(); i++)
+      {
+        if (expvector[i] != 0)
+          {
+            degree_monoid()->power(degree_of_var(i), expvector[i], mon1);
+            degree_monoid()->mult(result, mon1, result);
+          }
+      }
+    degree_monoid()->remove(mon1);
+  }
+
   bool weight_value_exists() const { return first_weights_slot_ >= 0; }
   // True if the first part of the order has a weight vector.
   // MUST be true in order for first_weight_value to not give erroneous value

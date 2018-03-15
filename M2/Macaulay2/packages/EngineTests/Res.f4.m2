@@ -1,16 +1,66 @@
--- FFPACK:
---  copy tarfile to uiuc.
---  d/version.dd: version.
---  d/startup.m2.in: copyright.
---  fix Makefile to point to that file.
---  doc node: linked from "Copyright and license"
---
---  configure script
---  FFPACK enable define.
-
 -- Tests for free resolutions
 
--- Current caveats:
+-- Notes:
+--  Tests are here
+--  Unit tests for f4 free resolution code are in e/unit-tests/ResTest.cpp
+--  packages/NonminimalComplexes: has further routines, doc, and maybe some tests.
+
+-- March 2018 todo list:
+-- 1. Allow multi-gradings
+--   DONE: get the correct free modules.
+--   QUESTION: should we make these Schreyer order free modules?
+--   TODO: 
+--     (a) given a multidegree, level, find the degree zero map at that degree.
+--     (b) find all such multi-degrees
+--     (c) given a frame element, find its multi-degree.
+--     (d) make a table of all of the possible multi-degrees?  How do we turn that into a betti table?
+-- 
+--   how: need to make sure we can return the correct free modules in these cases.
+--   allow: get degree zero matrices for a specific multi-grading
+--          todo list of degree,level includes multi-degrees: maybe?  (heftdeg, multidegree, level).
+-- 2. Allow inhomogeneous input
+-- 3. Allow modules to be input (several related tests below failing)
+--   how: 2,3 are closeely related: need better monomial order support.
+--   TODO:
+--      (a) try using the monomial order in input matrix.
+--      (b) sorting a set of monomials at a specific level:
+--         try the following: for each, write down a monomial in the input free module.
+--                            sort these (positions of these).
+--         given a (lev,index): get a mTotalMonom.  Translate this to a 'monomial' from Monoid.
+--         call M->compare()
+--         given a whole bunch of monomials:
+--           translate to total monoms, make array, sort positions.
+--
+-- 4. Allow the input free module to be a Schreyer order too.
+--   probably very close to (3) too.
+
+-- 5. Allow QQ as coefficients
+-- 6. Allow a GB to be provided (DONE), i.e. without recomputing one, or changing it.
+-- 7. improve 'rank' computations for sparser matrices.
+--
+--  Would like monomial types:
+--   ExponentVector: range?
+--   PackedMonomial (packed from Monoid)
+--   SparseMonomial
+--   DenseMonomial === NTupleMonomial === ExponentVector
+-- none of these have components, or do they?
+-- each monomial could have: component, hash value, weight vector values, actual exponents.
+
+-- need a function:
+--   PackedMonomial(const Monoid * M, monomial m): lightweight, but let's us know what it is.
+--   PackedMonomial(const Monoid * M, Iter begin, Iter end): lightweight, but let's us know what it is.
+--
+--   template<typename Iter>
+--   packedMonomialToNTupleMonomial(const Monoid* M, PackedMonomial m, Iter begin, Iter end)
+--   packedMonomialToNTupleMonomial(const Monoid* M, PackedMonomial m, Iter outputIter)
+--
+-- In any case: we need
+--   packedMonomialToNTupleMonomial(const Monoid* M, monomial m, res_ntuple_monomial outputAlreadyAllocated);
+--   ntupleMonomialToPackedMonomial(const Monoid* M, res_ntuple_monomial m, monomial outputAlreadyAllocated);
+
+
+
+-- Older caveats:
 --   a. REMOVED need to give Weights: first wt vector is the degree vector
 --   b. DONE need to pass in the coker (or ideal) of a groebner basis (in res.m2)
 --   c. REMOVED the elements at level 1 must be inserted in order of monotone increasing component
@@ -170,9 +220,43 @@ TEST ///
   S = ZZ/101[a,b,c,d,Degrees=>{-1,1,2,-5}]  
   assert try (res((ideal gens S)^3, FastNonminimal => true); false) else true;
   
-  -- don't allow multi-gradings  
+  -- allow multi-gradings  
   S = ZZ/101[a,b,c,d,DegreeRank=>4]
-  assert try (res(ideal gens S, FastNonminimal => true); false) else true
+  C = res(ideal gens S, FastNonminimal=>true)
+  assert isHomogeneous C
+  assert(degrees C_0 === {{0, 0, 0, 0}})
+  assert(degrees C_1 === {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}})
+  assert(degrees C_2 === {{1, 1, 0, 0}, {1, 0, 1, 0}, {0, 1, 1, 0}, {1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}})
+///
+
+TEST ///
+   -- another multi-graded ideal
+   R = ZZ/32003[a..d, Degrees=>transpose {{1,2,3,4},{1,0,-1,0}}]
+   basis(degree(a*b*c*d)^2,R)
+   I = ideal for i from 1 to 3 list random(degree((a*b*c*d)^2*c), R)
+   C = res(I, FastNonminimal=>true)
+
+   -- need to implement: find all the degrees where C might be not minimal, 
+   -- for each: compute rank, fill in a betti table.  Note that this Betti table has multigrading.
+   degs = unique join(unique degrees C_1,   unique degrees C_2,   unique degrees C_3)
+   
+   H = hashTable for deg in degs list deg => {
+       positions(degrees C_1, d -> d === deg),
+       positions(degrees C_2, d -> d === deg),
+       positions(degrees C_3, d -> d === deg)
+       }
+   select(keys H, d -> #(H#d)#0 > 0 and #(H#d)#1 > 0)
+   for d in oo list submatrix(C.dd_2, (H#d)#0, (H#d)#1)
+   select(keys H, d -> #(H#d)#1 > 0 and #(H#d)#2 > 0)
+   for d in oo list submatrix(C.dd_3, (H#d)#1, (H#d)#2)
+
+   for deg in keys H list if 
+   submatrix(C.dd_3, oo#{59,-1}#1, oo#{59,-1}#2)
+   C.dd_2
+   assert isHomogeneous C
+   minimalBetti I -- BUG! WRONG: needs to have multi-degrees, not single degrees (even though the main betti numbers are correct)
+   pairs betti res I
+   assert(minimalBetti I === new BettiTally from {((2, {43, -1}, 43), 3), ((3, {63, -1}, 63), 1), ((0, {0, 0}, 0), 1), ((1, {23, -1}, 23), 3)})
 ///
 
 TEST ///
@@ -222,6 +306,12 @@ TEST ///
   C = res(I, FastNonminimal => true)
   assert(betti(C, Minimize=>true) == betti res (ideal I_*))
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
+///
+
+TEST ///
+  R = ZZ/101[a..e]
+  M = coker random(R^2, R^{-1,-1,-1,-1,-1})
+  minimalBetti M
 ///
 
 ///
@@ -353,7 +443,8 @@ TEST ///
   kk = ZZ/101
   R = kk[x_1..x_20]
   I = Grassmannian(2,5,R)
-  gbTrace=2
+  gbTrace=0
+  elapsedTime minimalBetti I
   elapsedTime C = res(I, FastNonminimal => true)
   betti(C, Minimize=>true)
 ///
@@ -362,6 +453,7 @@ TEST ///
   kk = ZZ/101
   R = kk[x_1..x_21]
   I = Grassmannian(1,6,R)
+  elapsedTime minimalBetti I
   elapsedTime C = res(I, FastNonminimal => true)
   betti(C, Minimize=>true)
 ///
@@ -374,7 +466,9 @@ TEST ///
   M = genericMatrix(R,a,2,4)
   I = minors(2,M)
   N = syz gens I
+  minimalBetti coker N
   C = res(coker N, FastNonminimal => true)
+  
   assert(betti(C,Minimize=>true) == betti res coker syz gens I)
   betti C
 ///
@@ -384,6 +478,7 @@ TEST ///
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
+  elapsedTime minimalBetti I
   C = res(I, FastNonminimal => true)
   betti C
   m3 = C.dd_2;
@@ -421,6 +516,7 @@ TEST ///
   P = gens gb syz gens I
 
   -- would be nice to get this one to work!
+  minimalBetti coker P -- FAILS
   time try(C1 = res(coker P, FastNonminimal => true); false) else true -- gives error
 ///
 
@@ -434,6 +530,7 @@ TEST ///
   leadTerm M
   gens gb M
   --P = gens gb syz gens I
+  minimalBetti coker M -- FAILS
   try(betti res(coker M, FastNonminimal => true); false) else true  -- This one gives an error: array is out of order.
 ///
 
@@ -442,6 +539,7 @@ TEST ///
   R = ZZ/101[a..d]
   I = ideal random(R^1, R^{-2,-3,-4})
   P = gens gb syz gens I
+  minimalBetti coker P -- FAILS
   try (betti res(coker P,  FastNonminimal => true); false) else true  -- This one gives an error: array is out of order.
   
   F = source schreyerOrder gens I
@@ -450,10 +548,11 @@ TEST ///
   P1 = map(F,,P)
   isHomogeneous P1
   betti(res(coker P1, FastNonminimal => true), Minimize=>true)
-  res coker P1 -- this one looks wrong if one diesn't do the line before this?
+  res coker P1 -- this one looks wrong if one diesn't do the line before this? (MES: I don't see any issue here 3/2018)
 ///
 
 TEST ///
+  setRandomSeed "10"
   needsPackage "BGG"
   S = ZZ/101[x_0..x_5] -- P^5
   E = ZZ/101[e_0..e_5, SkewCommutative => true]
@@ -461,19 +560,26 @@ TEST ///
   I = ideal F
   M = S^1/I
   m = bgg(2,M,E);
-  time gens gb m;
+  elapsedTime gens gb m;
   gbTrace=0
-  time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
-  betti(C1, Minimize=>true)
+  elapsedTime C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
+  B1 = minimalBetti(coker m, LengthLimit=>7)
+  B2 = betti res(coker m)
+  assert(B1 == B2)
+
   m = bgg(2,M,E);  
-  time C2 = res(coker m, LengthLimit=>6)
-  betti C2
+  elapsedTime C2 = res(coker m, LengthLimit=>6)
+  elapsedTime minimalBetti(coker m, LengthLimit=>6)
+  assert(betti C2 == oo)
   betti(C1, Minimize => true)
 
+  
   m = bgg(3,M,E);
-  time gens gb m;
-  time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
-  betti(C1, Minimize=>true)
+  elapsedTime gens gb m;
+  elapsedTime B1 = minimalBetti(coker m, LengthLimit=>7) -- 1.4 sec
+  elapsedTime B2 = betti res(coker m) -- 27 seconds
+  time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7) -- .65 sec
+  assert(B1 == B2)
 ///
 
 
@@ -486,7 +592,7 @@ TEST ///
   C = res(I, FastNonminimal => true)
   
   I = ideal(I_*)
-  elapsedTime C1 = res(I, FastNonminimal => true, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing)
+  elapsedTime C1 = res(I, FastNonminimal => true, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing) BUG
 ----  assert(betti(C,Minimize=>true) != betti(C1,Minimize=>true)) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
   betti C1
   elapsedTime C2 = res(I, FastNonminimal => true)
@@ -495,6 +601,7 @@ TEST ///
   assert(isHomogeneous C)
   C1 = betti res ideal(I_*)
   assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
+  assert(minimalBetti I == betti C1)
 ///
 
 TEST ///  
@@ -518,7 +625,8 @@ TEST ///
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
-  elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP
+  elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP, 27 sec in 2018.
+  elapsedTime minimalBetti I  -- 75 sec in 2018
 ///
 
 -* TEST *- ///  
@@ -529,6 +637,7 @@ TEST ///
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   elapsedTime C = res(I, FastNonminimal => true)
+  elapsedTime B1 = minimalBetti I
   betti'ans = new BettiTally from {
       (0,{0},0) => 1, 
       (1,{2},2) => 55, 
@@ -543,7 +652,7 @@ TEST ///
       (10,{12},12) => 55, 
       (11,{14},14) => 1
       }
-  assert(betti C == betti'ans)
+  assert(B1 == betti'ans)
 ///
 
 TEST ///

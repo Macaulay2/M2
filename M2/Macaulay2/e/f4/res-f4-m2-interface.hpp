@@ -28,6 +28,11 @@ class ResF4toM2Interface
                                       SchreyerFrame& C,
                                       int lev);
 
+  static FreeModule* to_M2_freemodule(const PolynomialRing* R,
+                                      const FreeModule* F,
+                                      SchreyerFrame& C,
+                                      int lev);
+
   static Matrix* to_M2_matrix(SchreyerFrame& C,
                               int lev,
                               const FreeModule* tar,

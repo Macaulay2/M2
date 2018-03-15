@@ -329,6 +329,48 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   delete[] exp;
   return result;
 }
+
+FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
+                                                 const FreeModule* F,
+                                                 SchreyerFrame& C,
+                                                 int lev)
+// The input F must be the original freemodule of level=0.
+// assumption: lev >= 0.
+{
+  if (lev < 0 or lev > C.maxLevel())
+    {
+      ERROR("expected level in the range %d..%d",1,C.maxLevel());
+      return nullptr;
+    }
+  FreeModule* result = new FreeModule(R, 0, true);
+  const Monoid* M = R->getMonoid();
+  auto& thislevel = C.level(lev);
+  const ResSchreyerOrder& S = C.schreyerOrder(lev);
+  int* exp = new int[M->n_vars()];
+  res_ntuple_monomial exp1 = new res_ntuple_word[M->n_vars()];
+  monomial deg1 = M->degree_monoid()->make_one();
+  for (auto i = 0; i < thislevel.size(); ++i)
+    {
+      component_index comp;
+      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp1, comp);
+      monomial deg = M->degree_monoid()->make_new(F->degree(comp)); // resulting degree of this element
+      M->degree_of_expvector(exp1, deg1);
+      M->degree_monoid()->mult(deg, deg1, deg);
+      // Now grab the Schreyer info
+      // unpack to exponent vector, then repack into monoid element
+      monomial totalmonom = M->make_one();
+      for (int j = 0; j < M->n_vars(); ++j)
+        exp[j] = static_cast<int>(exp1[j]);
+      M->from_expvector(exp, totalmonom);
+      result->append_schreyer(
+          deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
+    }
+  delete[] exp;
+  delete[] exp1;
+  M->degree_monoid()->remove(deg1);
+  return result;
+}
+
 Matrix* ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
                                          int lev,
                                          const FreeModule* tar,

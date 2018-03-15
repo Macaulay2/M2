@@ -278,7 +278,7 @@ resolutionNonminimal = (opts,M) -> (
         error "expected DegreeLimit to be an integer, or a list of integers, or null"
         );
     maxlevel := resolutionLength(R,opts);
-    if not M.cache.?resolutionNonminimal or M.cache.resolutionNonminimal.length < maxlevel
+    if not M.cache.?resolutionNonminimal or M.cache.resolutionNonminimal.Resolution.length < maxlevel
     then M.cache.resolutionNonminimal = (
         if instance(strategy,ZZ) and not isFinitePrimeField (coefficientRing R)
         then error "fast non-minimal resolutions are currently implemented only over prime finite fields";

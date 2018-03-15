@@ -60,11 +60,11 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //          "cannot use res(...,FastNonminimal=>true) with inhomogeneous input");
   //      return nullptr;
   //    }
-  if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
-    {
-      ERROR("expected singly graded with positive degrees for the variables");
-      return nullptr;
-    }
+  //  if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
+  //    {
+  //      ERROR("expected singly graded with positive degrees for the variables");
+  //      return nullptr;
+  //    }
   if (!origR->getMonoid()->primary_degrees_of_vars_positive())
     {
       ERROR("expected the degree of each variable to be positive");
@@ -257,7 +257,7 @@ const FreeModule /* or null */* F4ResComputation::get_free(int lev)
   if (lev < 0 or lev > mComp->maxLevel())
     return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
-  return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, *mComp, lev);
+  return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, mInputGroebnerBasis.rows(), *mComp, lev);
 }
 
 MutableMatrix /* or null */* F4ResComputation::get_mutable_matrix(const Ring* R,
