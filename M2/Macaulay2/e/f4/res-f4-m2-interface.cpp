@@ -201,8 +201,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   emit(o.str());
 #endif
 
-  int* exp = new int[M->n_vars() + 1];
-  res_ntuple_word* lexp = new res_ntuple_word[M->n_vars() + 1];
+  int* exp = new int[M->n_vars()];
 
   CoefficientVector coeffs = R.resGausser().allocateCoefficientVector();
   // all these pointers (or values) are still in the element f.
@@ -219,9 +218,8 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                         // these are integers
 
       M->to_expvector(t->monom, exp);
-      for (int a = 0; a < M->n_vars(); a++) lexp[a] = exp[a];
       R.monoid().from_exponent_vector(
-          lexp,
+          exp,
           t->comp - 1,
           nextmonom);  // gbvector components are shifted up by one
       nextmonom += R.monoid().monomial_size(nextmonom);
@@ -231,7 +229,6 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
   GR->gbvector_remove(f);
   delete[] exp;
-  delete[] lexp;
 }
 
 vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
@@ -251,16 +248,14 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       last[i] = 0;
     }
 
-  int* exp = new int[M->n_vars() + 1];
-  res_ntuple_word* lexp = new res_ntuple_word[M->n_vars() + 1];
+  int* exp = new int[M->n_vars()];
 
   const res_monomial_word* w = f.monoms.data();
   for (int i = 0; i < f.len; i++)
     {
       component_index comp;
-      R.monoid().to_exponent_vector(w, lexp, comp);
+      R.monoid().to_exponent_vector(w, exp, comp);
       w = w + R.monoid().monomial_size(w);
-      for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
       ring_elem a =
           R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
@@ -290,7 +285,6 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
     }
 
   delete[] exp;
-  delete[] lexp;
   return result;
 }
 
@@ -306,7 +300,6 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   const Monoid* M = R->getMonoid();
   auto& thislevel = C.level(lev);
   const ResSchreyerOrder& S = C.schreyerOrder(lev);
-  res_ntuple_word* longexp = new res_ntuple_word[M->n_vars()];
   int* exp = new int[M->n_vars()];
   for (auto i = 0; i < thislevel.size(); ++i)
     {
@@ -318,14 +311,11 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       // unpack to exponent vector, then repack into monoid element
       monomial totalmonom = M->make_one();
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], longexp, comp);
-      for (int j = 0; j < M->n_vars(); ++j)
-        exp[j] = static_cast<int>(longexp[j]);
+      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
       M->from_expvector(exp, totalmonom);
       result->append_schreyer(
           deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
     }
-  delete[] longexp;
   delete[] exp;
   return result;
 }
@@ -347,26 +337,22 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   auto& thislevel = C.level(lev);
   const ResSchreyerOrder& S = C.schreyerOrder(lev);
   int* exp = new int[M->n_vars()];
-  res_ntuple_monomial exp1 = new res_ntuple_word[M->n_vars()];
   monomial deg1 = M->degree_monoid()->make_one();
   for (auto i = 0; i < thislevel.size(); ++i)
     {
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp1, comp);
+      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
       monomial deg = M->degree_monoid()->make_new(F->degree(comp)); // resulting degree of this element
-      M->degree_of_expvector(exp1, deg1);
+      M->degree_of_expvector(exp, deg1);
       M->degree_monoid()->mult(deg, deg1, deg);
       // Now grab the Schreyer info
       // unpack to exponent vector, then repack into monoid element
       monomial totalmonom = M->make_one();
-      for (int j = 0; j < M->n_vars(); ++j)
-        exp[j] = static_cast<int>(exp1[j]);
       M->from_expvector(exp, totalmonom);
       result->append_schreyer(
           deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
     }
   delete[] exp;
-  delete[] exp1;
   M->degree_monoid()->remove(deg1);
   return result;
 }
@@ -425,7 +411,6 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
 
   int* m1 = M->make_one();
   int* exp = new int[M->n_vars() + 1];
-  res_ntuple_word* lexp = new res_ntuple_word[M->n_vars() + 1];
 
   int j = 0;
   for (auto j1 = thislevel.cbegin(); j1 != thislevel.cend(); ++j1, ++j)
@@ -443,10 +428,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
       for (int i = 0; i < f.len; i++)
         {
           component_index comp;
-          C.ring().monoid().to_exponent_vector(w, lexp, comp);
+          C.ring().monoid().to_exponent_vector(w, exp, comp);
           w = w + C.ring().monoid().monomial_size(w);
-          for (int a = 0; a < M->n_vars(); a++)
-            exp[a] = static_cast<int>(lexp[a]);
           M->from_expvector(exp, m1);
           ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
           Nterm* g = RP->make_flat_term(a, m1);
@@ -468,7 +451,6 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
     }
 
   delete[] exp;
-  delete[] lexp;
   deletearray(comps);
   deletearray(last);
   return result;
@@ -579,7 +561,7 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
       auto i = poly_iter(C.ring(), f);
       for (; i != end; ++i)
         {
-          long comp = C.monoid().get_component(i.monomial());
+          auto comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
               long val =
