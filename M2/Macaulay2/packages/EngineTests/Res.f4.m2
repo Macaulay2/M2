@@ -627,7 +627,7 @@ TEST ///
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
-  elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP, 27 sec in 2018.
+  elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP, 11.3 seconds in 2018
   elapsedTime minimalBetti I  -- 75 sec in 2018
 ///
 

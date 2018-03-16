@@ -345,7 +345,7 @@ resolutionNonminimal = (opts,M) -> (
                 W.length = maxlevel;
                 W.DegreeLimit = degreelimit;
                 )));
-    C)
+    break C)
 addHook(Module, symbol resolution, resolutionNonminimal)
 -----------------------------------------------------------------------------
 getpairs := g -> rawGBBetti(raw g,1)

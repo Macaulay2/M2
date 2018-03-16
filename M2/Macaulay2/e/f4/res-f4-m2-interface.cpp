@@ -605,7 +605,8 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   auto timeB = timer();
   double nsecs = seconds(timeB - timeA);
 #endif
-
+  timeComputeRanks += nsecs;
+  
   if (M2_gbTrace >= 2)
     {
       std::cout << "rank (" << slanted_degree << "," << lev << ") = " << rk
