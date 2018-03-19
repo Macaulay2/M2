@@ -632,8 +632,7 @@ TEST ///
 ///
 
 -* TEST *- ///  
-  -- disabled most recently because it gives the wrong answer
-  -- disabled originally since it is right on the edge of limits, so sometimes fails sometimes succeeds.
+  -- disabled since it is right on the edge of limits, so sometimes fails sometimes succeeds.
   kk = ZZ/101
   R = kk[vars(0..10)]
   setRandomSeed 0

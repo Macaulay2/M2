@@ -3,6 +3,7 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
+#include "../monoid.hpp"
 #include "../skew.hpp"
 #include "res-varpower-monomial.hpp"
 #include "res-moninfo.hpp"
@@ -46,19 +47,21 @@ class poly
 class ResPolyRing
 {
  public:
-  ResPolyRing(const ResGausser* G, const ResMonoid* M)
-      : mResGausser(G), mMonoid(M), mSkew(nullptr)
+  ResPolyRing(const ResGausser* G, const ResMonoid* M, const Monoid* origM)
+    : mResGausser(G), mMonoid(M), mOriginalMonoid(origM), mSkew(nullptr)
   {
   }
   ResPolyRing(const ResGausser* G,
               const ResMonoid* M,
+              const Monoid* origM,
               const SkewMultiplication* skewInfo)
-      : mResGausser(G), mMonoid(M), mSkew(skewInfo)
+    : mResGausser(G), mMonoid(M), mOriginalMonoid(origM), mSkew(skewInfo)
   {
   }
 
   const ResGausser& resGausser() const { return *mResGausser; }
   const ResMonoid& monoid() const { return *mMonoid; }
+  const Monoid& originalMonoid() const { return *mOriginalMonoid; }
   bool isSkewCommutative() const { return mSkew != nullptr; }
   const SkewMultiplication* skewInfo() const { return mSkew; }
   void memUsage(const poly& f,
@@ -69,6 +72,7 @@ class ResPolyRing
  private:
   std::unique_ptr<const ResGausser> mResGausser;
   std::unique_ptr<const ResMonoid> mMonoid;
+  const Monoid* mOriginalMonoid;
   const SkewMultiplication* mSkew;
 };
 

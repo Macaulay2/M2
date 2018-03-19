@@ -128,7 +128,7 @@ bool SchreyerFrame::computeFrame()
       if (computeNextLevel() == 0) break;  // increments mCurrentLevel
       //      if (interrupted) return false;
     }
-
+  //  show(-1);
   // Now change the state of the computation
 
   mState = Matrices;
