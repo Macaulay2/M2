@@ -245,88 +245,6 @@ void F4Res::loadRow(Row& r)
     }
 }
 
-class ResColumnsSorter
-{
- public:
-  typedef ResMonoid::value monomial;
-  typedef ComponentIndex value;
-
- private:
-  const ResMonoid& M;
-  const F4Res& mComputation;
-  const std::vector<res_packed_monomial>& cols;
-  int lev;
-  const ResSchreyerOrder& myorder;
-  //  const std::vector<SchreyerFrame::FrameElement>& myframe;
-
-  static long ncmps;
-  static long ncmps0;
-
- public:
-#if 0
-  int compare(value a, value b)
-  {
-    ncmps ++;
-    fprintf(stdout, "ERROR: should not get here\n");
-    //return M.compare_grevlex(cols[a],cols[b]);
-    return 0;
-  }
-#endif
-
-  bool operator()(value a, value b)
-  {
-    ncmps0++;
-    long comp1 = M.get_component(cols[a]);
-    long comp2 = M.get_component(cols[b]);
-#if 0
-    fprintf(stdout, "comp1 = %ld comp2 = %ld\n", comp1, comp2);
-
-    printf("compare_schreyer: ");
-    printf("  m=");
-    M.showAlpha(cols[a]);
-    printf("\n  n=");    
-    M.showAlpha(cols[b]);
-    printf("\n  m0=");    
-    M.showAlpha(myorder.mTotalMonom[comp1]);
-    printf("\n  n0=");    
-    M.showAlpha(myorder.mTotalMonom[comp2]);
-    printf("\n  tiebreakers: %ld %ld\n",  myorder.mTieBreaker[comp1], myorder.mTieBreaker[comp2]);
-#endif
-
-    bool result = (M.compare_schreyer(cols[a],
-                                      cols[b],
-                                      myorder.mTotalMonom[comp1],
-                                      myorder.mTotalMonom[comp2],
-                                      myorder.mTieBreaker[comp1],
-                                      myorder.mTieBreaker[comp2]) == LT);
-#if 0
-    printf("result = %d\n", result);
-#endif
-    return result;
-  }
-
-  ResColumnsSorter(const ResMonoid& M0, const F4Res& comp, int lev0)
-      : M(M0),
-        mComputation(comp),
-        cols(comp.mColumns),
-        lev(lev0),
-        myorder(comp.frame().schreyerOrder(lev0 - 1))
-  {
-    // printf("Creating a ResColumnsSorter with level = %ld, length = %ld\n",
-    // lev, myframe.size());
-  }
-
-  long ncomparisons() const { return ncmps; }
-  long ncomparisons0() const { return ncmps0; }
-  void reset_ncomparisons()
-  {
-    ncmps0 = 0;
-    ncmps = 0;
-  }
-
-  ~ResColumnsSorter() {}
-};
-
 static void applyPermutation(ComponentIndex* permutation,
                              std::vector<ComponentIndex>& entries)
 {
@@ -346,21 +264,10 @@ static void applyPermutation(ComponentIndex* permutation,
     }
 }
 
-long ResColumnsSorter::ncmps = 0;
-long ResColumnsSorter::ncmps0 = 0;
-
 std::vector<int> F4Res::reorderColumns2()
 {
-  //  std::cout << "creating sorter" << std::endl;
-
   ResColumnSorter2 sorter(ring().originalMonoid(), monoid(), frame().schreyerOrder(mThisLevel-2), mColumns);
-
-  //  std::cout << "about to sort" << std::endl;
-
   auto column_order2 = sorter.sort();
-
-  //  std::cout << "done with sort" << std::endl;
-
   return column_order2;
 }
 void F4Res::reorderColumns()
@@ -380,69 +287,21 @@ void F4Res::reorderColumns()
 #endif
   ComponentIndex ncols = static_cast<ComponentIndex>(mColumns.size());
 
-  // sort the columns
-
-  auto timeA = timer();
-
-  //  ComponentIndex* column_order = new ComponentIndex[ncols];
-  std::vector<ComponentIndex> column_order;
   ComponentIndex* ord = new ComponentIndex[ncols];
 
-  ResColumnsSorter C(monoid(), *this, mThisLevel - 1);
-  
-  C.reset_ncomparisons();
-
-  for (ComponentIndex i = 0; i < ncols; i++)
-    {
-      column_order.push_back(i);
-      //  column_order[i] = i;
-    }
-
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
-
-  //  std::stable_sort(column_order, column_order + ncols, C);
-  std::stable_sort(column_order.begin(), column_order.end(), C);
-
+  auto timeA = timer();
+  auto column_order = reorderColumns2();
   auto timeB = timer();
-  double nsec_sort = seconds(timeB - timeA);
-  mFrame.timeSortMatrix += nsec_sort;
-
-  timeA = timer();
-  auto column_order2 = reorderColumns2();
-  timeB = timer();
   double nsec_sort2 = seconds(timeB - timeA);
   mFrame.timeSortMatrix += nsec_sort2;
 
-  //  std::cout << "done with reorderColumns2" << std::endl;
-  
-#if 0
-  std::cout << "column_order: ";
-  for (int i=0; i<ncols; i++)
-    {
-      std::cout << column_order[i] << " ";
-    }
-  std::cout << std::endl << "column_order2: ";
-  for (int i=0; i<ncols; i++)
-    {
-      std::cout << column_order2[i] << " ";
-    }
-  std::cout << std::endl;
-#endif  
-  bool arrays_same = true;
-  for (int i=0; i<ncols; i++)
-    if (column_order[i] != column_order2[i])
-      arrays_same = false;
-  if (!arrays_same)
-    std::cout << "SORT FUNCTIONS DIFFER!!" << std::endl;
-  
-  if (M2_gbTrace >= 2) fprintf(stderr, "%ld, ", C.ncomparisons0());
+  if (M2_gbTrace >= 2)
+    fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
+  //TODO: place #comparisons in  if (M2_gbTrace >= 2) fprintf(stderr, "%ld, ", C.ncomparisons0());
 
   if (M2_gbTrace >= 1)
-    std::cout << " sort time: " << nsec_sort << " 2nd sort time: " << nsec_sort2 << std::endl;
+    std::cout << " sort time: " << nsec_sort2 << std::endl;
 
-  std::swap(column_order, column_order2);
-  
   timeA = timer();
   ////////////////////////////
 
