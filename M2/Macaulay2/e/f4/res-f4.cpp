@@ -3,6 +3,9 @@
 #include "res-f4.hpp"
 #include "res-gausser.hpp"
 #include "res-schreyer-frame.hpp"
+
+#include "res-monomial-sorter.hpp"
+
 #include "monoid.hpp"
 #include "ntuple.hpp"
 #include "memtailor.h"
@@ -346,137 +349,6 @@ static void applyPermutation(ComponentIndex* permutation,
 long ResColumnsSorter::ncmps = 0;
 long ResColumnsSorter::ncmps0 = 0;
 
-class ResColumnSorterObject
-{
-private:
-  const Monoid& mMonoid;
-  const std::vector<int*> mMonoms;
-public:
-  ResColumnSorterObject(const Monoid& M, const std::vector<int*> monoms) : mMonoid(M), mMonoms(monoms) {}
-  
-  bool operator()(int a, int b)
-  {
-    // implements < function.  In fact, a and b should not refer to objects that are == under this order.
-    // should we flag that?
-
-    bool result = false;
-    const int* m = mMonoms[a];
-    const int* n = mMonoms[b];
-    // TODO: make sure this is the order we want!!
-    int cmp = mMonoid.compare(m+2, m[1], n+2, n[1]);
-    if (cmp == LT) result = false;
-    else if (cmp == GT) result = true;
-    else
-      {
-        // compare using tie breaker
-        auto cmptie = m[0] - n[0];
-        result = (cmptie > 0);
-      }
-#if 0    
-    buffer o;
-    o << "comnparing: ";
-    mMonoid.elem_text_out(o, m+2);
-    o << " and ";
-    mMonoid.elem_text_out(o, n+2);
-    o << " result: " << (result ? "true" : "false");
-    emit_line(o.str());
-#endif
-    return result;
-  }
-};
-
-class ResColumnSorter2
-{
-private:
-  const Monoid& mMonoid;
-  const ResMonoid& mResMonoid;
-  const ResSchreyerOrder& mSchreyerOrder;
-  const std::vector<res_packed_monomial>& mColumns;
-
-  memt::Arena mArena;
-  std::vector<int*> mMonoms; // each monom: [tiebreaker, basecomp, followed by totalmon]
-  std::vector<int> mPositions;
-public:
-  ResColumnSorter2(const Monoid& M,
-                   const ResMonoid& resMonoid,
-                   const ResSchreyerOrder& S, // order at level-1 in free res
-                   const std::vector<res_packed_monomial>& columns // at level.
-                   ) :
-    mMonoid(M),
-    mResMonoid(resMonoid),
-    mSchreyerOrder(S),
-    mColumns(columns)
-  {
-  }
-
-  std::vector<int> sort()
-  {
-    std::vector<int> result;
-
-    for (int i=0; i<mColumns.size(); i++)
-      result.push_back(i);
-
-#if 0    
-    std::cout << "sort: creating big array of monomials" << std::endl;
-#endif
-    // now translate all the monomials to the correct kind:
-    for (int i=0; i<mColumns.size(); i++)
-      {
-#if 0
-        std::cout << "  adding in element " << i << " size=" << mMonoid.monomial_size() + 2 << std::endl;
-#endif
-        std::pair<int*, int*> mon = mArena.allocArrayNoCon<int>(mMonoid.monomial_size() + 2);
-
-#if 0        
-        std::cout << " taking res monomial: " << std::flush;
-        mResMonoid.showAlpha(mColumns[i]);
-#endif
-
-        toMonomial(mColumns[i], mon);
-        mMonoms.push_back(mon.first);
-
-#if 0        
-        std::cout << " and creating: " << std::flush;
-        std::cout << "[" << mon.first[0] << " " << mon.first[1] << " ";
-        buffer o;
-        mMonoid.elem_text_out(o,mon.first+2);
-        std::cout << o.str();
-         std::cout << "]" << std::endl;
-#endif         
-      }
-    ResColumnSorterObject C(mMonoid, mMonoms);
-#if 0
-    std::cout << "sort: doing stable_sort" << std::endl;
-#endif    
-    std::stable_sort(result.begin(), result.end(), C);
-#if 0    
-    std::cout << "sort: done with stable_sort" << std::endl;
-#endif    
-    return result;
-  }
-private:
-  void toMonomial(res_packed_monomial mon, std::pair<int*,int*> resultAlreadyAllocateds)
-  {
-    int comp, comp2;
-    int nvars = mMonoid.n_vars();
-    std::pair<int*, int*> exp = mArena.allocArrayNoCon<int>(nvars);
-    std::pair<int*, int*> exp2 = mArena.allocArrayNoCon<int>(nvars);
-    mResMonoid.to_exponent_vector(mon, exp.first, comp);
-#if 0    
-    std::cout << " multiply by total monomial: " << std::flush;
-    mResMonoid.showAlpha(mSchreyerOrder.mTotalMonom[comp]);
-#endif    
-    mResMonoid.to_exponent_vector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
-    ntuple::mult(nvars, exp.first, exp2.first, exp2.first);
-    auto p = resultAlreadyAllocateds.first;
-    *p++ = mSchreyerOrder.mTieBreaker[comp];
-    *p++ = comp2;
-    mMonoid.from_expvector(exp2.first, p);
-    mArena.freeTop(exp2.first); // pop exp, exp2.
-    mArena.freeTop(exp.first); // pop exp, exp2.
-  }
-};
-
 std::vector<int> F4Res::reorderColumns2()
 {
   //  std::cout << "creating sorter" << std::endl;
@@ -512,7 +384,8 @@ void F4Res::reorderColumns()
 
   auto timeA = timer();
 
-  ComponentIndex* column_order = new ComponentIndex[ncols];
+  //  ComponentIndex* column_order = new ComponentIndex[ncols];
+  std::vector<ComponentIndex> column_order;
   ComponentIndex* ord = new ComponentIndex[ncols];
 
   ResColumnsSorter C(monoid(), *this, mThisLevel - 1);
@@ -521,13 +394,15 @@ void F4Res::reorderColumns()
 
   for (ComponentIndex i = 0; i < ncols; i++)
     {
-      column_order[i] = i;
+      column_order.push_back(i);
+      //  column_order[i] = i;
     }
 
   if (M2_gbTrace >= 2)
     fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
 
-  std::stable_sort(column_order, column_order + ncols, C);
+  //  std::stable_sort(column_order, column_order + ncols, C);
+  std::stable_sort(column_order.begin(), column_order.end(), C);
 
   auto timeB = timer();
   double nsec_sort = seconds(timeB - timeA);
@@ -566,6 +441,8 @@ void F4Res::reorderColumns()
   if (M2_gbTrace >= 1)
     std::cout << " sort time: " << nsec_sort << " 2nd sort time: " << nsec_sort2 << std::endl;
 
+  std::swap(column_order, column_order2);
+  
   timeA = timer();
   ////////////////////////////
 
@@ -638,7 +515,7 @@ void F4Res::reorderColumns()
 
   timeB = timer();
   mFrame.timeReorderMatrix += seconds(timeB - timeA);
-  delete[] column_order;
+  //  delete[] column_order;
   delete[] ord;
 }
 

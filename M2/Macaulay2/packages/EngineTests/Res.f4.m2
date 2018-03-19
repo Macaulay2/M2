@@ -204,7 +204,7 @@ TEST ///
   S = ZZ/101[a..d]
   I = ideal(a*b-a-1, b^3-c*d-3)
   time res I
-  assert try(res(ideal(I_*), FastNonminimal => true); false) else true
+  res(ideal(I_*), FastNonminimal => true)
   
   -- don't allow quotient rings
   S = ZZ/101[a..d]
@@ -255,6 +255,7 @@ TEST ///
    pairs betti res I
    -- TODO: get minimalBetti working with multi-gradings.
    -- assert(minimalBetti I === new BettiTally from {((2, {43, -1}, 43), 3), ((3, {63, -1}, 63), 1), ((0, {0, 0}, 0), 1), ((1, {23, -1}, 23), 3)})
+   
 ///
 
 TEST ///
@@ -513,11 +514,10 @@ TEST ///
   elapsedTime C0 = res(ideal I_*, FastNonminimal => true)
   P = gens gb syz gens I
 
-  -- would be nice to get this one to work!
-  -- TODO: get modules working better with FastNonminimal and minimalBdetti.
-  -- minimalBetti coker P -- FAILS
-  -- then remove this one:
-  time try(C1 = res(coker P, FastNonminimal => true); false) else true -- gives error
+  C1 = res(coker P, FastNonminimal => true)
+  B1 = minimalBetti coker P
+  B2 = betti res coker P
+  assert(B1 == B2)
 ///
 
 TEST ///
@@ -530,9 +530,8 @@ TEST ///
   leadTerm M
   gens gb M
   P = gens gb image M
-  -- TODO: get modules working better with FastNonminimal and minimalBdetti.
-  -- C = res(coker P, FastNonminimal => true)
-  try(betti res(coker P, FastNonminimal => true); false) else true  -- This one gives an error: array is out of order.
+  C = res(coker P, FastNonminimal => true)
+  assert(minimalBetti coker P == betti res coker P)
 ///
 
 TEST ///
@@ -542,7 +541,8 @@ TEST ///
   P = gens gb syz gens I
   -- TODO: get this to work, then remove 'try' line after that.
   -- minimalBetti coker P -- FAILS
-  try (betti res(coker P,  FastNonminimal => true); false) else true  -- This one gives an error: array is out of order.
+  betti res(coker P,  FastNonminimal => true)
+  minimalBetti coker P
   
   F = source schreyerOrder gens I
   debug Core
@@ -551,6 +551,7 @@ TEST ///
   isHomogeneous P1
   betti(res(coker P1, FastNonminimal => true), Minimize=>true)
   res coker P1 -- this one looks wrong if one diesn't do the line before this? (MES: I don't see any issue here 3/2018)
+  -- ?? is this a bug??
 ///
 
 TEST ///
@@ -580,7 +581,7 @@ TEST ///
   elapsedTime gens gb m;
   elapsedTime B1 = minimalBetti(coker m, LengthLimit=>7) -- 1.4 sec
   elapsedTime B2 = betti res(coker m) -- 27 seconds
-  time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7) -- .65 sec
+  time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7) -- .65 sec if done without minimalBetti line.
   assert(B1 == B2)
 ///
 
