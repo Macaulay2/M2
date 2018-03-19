@@ -37,13 +37,24 @@ getpkg := memoize(
    -- or
    --	             TO symbol sin
    -- and have them all get recorded the same way
-normalizeDocumentKey := method(Dispatch => Thing)
-normalizeDocumentKey   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
-normalizeDocumentKey    Array := identity
-normalizeDocumentKey   Symbol := identity
-normalizeDocumentKey Sequence := identity
-normalizeDocumentKey  Nothing := key -> symbol null
-normalizeDocumentKey    Thing := key -> (
+normalizeDocumentKey = method(Dispatch => Thing, Options => { Package => null })
+normalizeDocumentKey   String := opts -> key -> (
+     pkg := opts#Package;
+     if pkg =!= null 
+     then (
+     	  assert (class pkg === String);
+	  needsPackage pkg;
+	  pkg = value PackageDictionary#pkg;
+	  if pkg.Dictionary#?key then pkg.Dictionary#key
+	  else error ("symbol ",key," not exported by package ",toString pkg)
+	  )
+     else if isGlobalSymbol key then getGlobalSymbol key else key
+     )
+normalizeDocumentKey    Array := opts -> identity
+normalizeDocumentKey   Symbol := opts -> identity
+normalizeDocumentKey Sequence := opts -> identity
+normalizeDocumentKey  Nothing := opts -> key -> symbol null
+normalizeDocumentKey    Thing := opts -> key -> (
      if hasAttribute(key,ReverseDictionary) then return getAttribute(key,ReverseDictionary);
      error("can't determine symbol whose value is document tag: ",key);
      )
@@ -140,7 +151,7 @@ makeDocumentTag = method(Dispatch => Thing, Options => {
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 mdt := makeDocumentTag Thing := opts -> key -> (
-     nkey := normalizeDocumentKey key;
+     nkey := normalizeDocumentKey (key,opts);
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
      pkg := (
@@ -500,7 +511,7 @@ file := null
 -- getting database records
 -----------------------------------------------------------------------------
 extractBody := x -> if x.?Description then x.Description
-getDoc := key -> fetchAnyRawDocumentation formatDocumentTag key
+getDoc := key -> fetchRawDocumentation makeDocumentTag key
 getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
      s := getDoc key;
      if s =!= null and s#?tag then s#tag)
@@ -750,7 +761,6 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	       return null;
 	       ));
      if d#?Headline then d#Headline
-     else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s) else ""
 -----------------------------------------------------------------------------
@@ -818,9 +828,9 @@ if version#"operating system" === "MicrosoftWindows" then (
      rootURI = "file:///" | rootPath;		   -- e.g.: "file:///C:/cygwin"
      )
 
-makeDocBody := method(Dispatch => Thing)
+makeDocBody = method(Dispatch => Thing)
 makeDocBody Thing := key -> (
-     tag := makeDocumentTag(key,Package=>null);
+     tag := makeDocumentTag key;
      pkg := getpkg DocumentTag.Title tag;
      ptag := getPrimary tag;
      rec := fetchRawDocumentation ptag;
@@ -957,7 +967,13 @@ processInputOutputItems := (key,fn) -> x -> (
 		    TO2{ 
 			 [ if options key =!= null then key else fn, optsymb],
 			 concatenate(toString optsymb," => ...") },
-		    LATER { () -> commentize (headline [fn,optsymb]) }
+		    LATER { () -> commentize (headline (
+				   if options key =!= null and (options key)#?optsymb
+				   then [key,optsymb]
+				   else if options fn =!= null and (options fn)#?optsymb
+				   then [fn,optsymb]
+				   else error (toString optsymb, " is not an option for ", toString key, ", nor for ", toString fn)
+				   )) }
 		    ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
