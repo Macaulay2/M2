@@ -691,3 +691,43 @@ TEST ///
   assert(C4 =!= C1)
   assert(C0 == res I)
 ///
+
+TEST ///
+  -- getting ready to test minimization in multi-gradings.
+  -- 
+  needsPackage "RandomIdeals"
+  kk = ZZ/32003
+  R = kk[vars(0..10)]
+  I = randomMonomialIdeal(splice{20:4}, R)
+  S = kk[vars(0..10), DegreeRank=>11]
+  I = sub(I,S)
+  C = res(I, FastNonminimal=>true)
+
+  Ds = hashTable for i from 1 to length C list i => set keys tally degrees C_i;
+  Es = hashTable for i from 2 to length C list i => toList(Ds#(i-1) * Ds#(i));
+  (pairs Ds)/(x -> #x#1)//sum
+  (pairs Es)/(x -> #x#1)//sum
+
+  elapsedTIme hashTable flatten for i from 2 to length C list (
+      for deg in Es#i list (i,deg) => elapsedTime submatrixByDegrees(C.dd_i, deg, deg)
+      );
+
+  elapsedTIme hashTable flatten for i from 2 to length C list (
+      for deg in Es#i list (i,deg) => (
+          << "doing (i,deg)=" << (i,deg) << numRows(C.dd_i) << "," << numColumns(C.dd_i) << ")" << endl;
+          elapsedTime submatrixByDegrees(C.dd_i, deg, deg)
+          )
+      );
+
+  
+  hashTable for deg in toList(Ds#2 * Ds#3) list deg => submatrixByDegrees(C.dd_4, deg, deg)
+
+  toList(Ds#3 * Ds#4)
+  hashTable for deg in toList(Ds#3 * Ds#4) list deg => submatrixByDegrees(C.dd_5, deg, deg)
+
+  for i from 2 to length C list (
+      hashTable for deg in toList(Ds#(i-2) * Ds#(i-1)) list (i,deg) => submatrixByDegrees(C.dd_i, deg, deg)
+      )
+
+
+///

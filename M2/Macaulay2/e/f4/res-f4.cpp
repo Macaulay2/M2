@@ -264,12 +264,6 @@ static void applyPermutation(ComponentIndex* permutation,
     }
 }
 
-std::vector<int> F4Res::reorderColumns2()
-{
-  ResColumnSorter2 sorter(ring().originalMonoid(), monoid(), frame().schreyerOrder(mThisLevel-2), mColumns);
-  auto column_order2 = sorter.sort();
-  return column_order2;
-}
 void F4Res::reorderColumns()
 {
 // Set up to sort the columns.
@@ -290,15 +284,16 @@ void F4Res::reorderColumns()
   ComponentIndex* ord = new ComponentIndex[ncols];
 
   auto timeA = timer();
-  auto column_order = reorderColumns2();
+  ResMonomialSorter sorter(ring().originalMonoid(), monoid(), frame().schreyerOrder(mThisLevel-2), mColumns);
+  auto column_order = sorter.sort();
   auto timeB = timer();
   double nsec_sort2 = seconds(timeB - timeA);
   mFrame.timeSortMatrix += nsec_sort2;
-
+  auto ncompares = sorter.numComparisons();
+  
   if (M2_gbTrace >= 2)
-    fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
-  //TODO: place #comparisons in  if (M2_gbTrace >= 2) fprintf(stderr, "%ld, ", C.ncomparisons0());
-
+    std::cout << "  #comparisons sorting " << ncols << " columns = " << ncompares << " ";
+  
   if (M2_gbTrace >= 1)
     std::cout << " sort time: " << nsec_sort2 << std::endl;
 
@@ -374,7 +369,6 @@ void F4Res::reorderColumns()
 
   timeB = timer();
   mFrame.timeReorderMatrix += seconds(timeB - timeA);
-  //  delete[] column_order;
   delete[] ord;
 }
 

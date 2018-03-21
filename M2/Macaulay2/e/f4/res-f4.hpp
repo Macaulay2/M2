@@ -58,7 +58,6 @@ class F4Res
                                         int& result_sign_if_skew);
   // if result_sign_if_skew is set to 0, then result is set to -1.
   void loadRow(Row& r);
-  std::vector<int> reorderColumns2();
   void reorderColumns();
   void makeMatrix();
   void gaussReduce();

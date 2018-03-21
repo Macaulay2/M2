@@ -13,19 +13,22 @@
 #include <utility>
 #include <algorithm>
 
-class ResColumnSorterObject
+class MonomialSorterObject
 {
 private:
   const Monoid& mMonoid;
   const std::vector<int*> mMonoms;
+  static long mNumComparisons;
 public:
-  ResColumnSorterObject(const Monoid& M, const std::vector<int*> monoms) : mMonoid(M), mMonoms(monoms) {}
+  MonomialSorterObject(const Monoid& M, const std::vector<int*> monoms) : mMonoid(M), mMonoms(monoms) {}
+
   
   bool operator()(int a, int b)
   {
     // implements < function.  In fact, a and b should not refer to objects that are == under this order.
     // should we flag that?
 
+    mNumComparisons++;
     bool result = false;
     const int* m = mMonoms[a];
     const int* n = mMonoms[b];
@@ -50,9 +53,12 @@ public:
 #endif
     return result;
   }
+
+  void resetNumComparisons() { mNumComparisons = 0; }
+  long numComparisons() const { return mNumComparisons; }
 };
 
-class ResColumnSorter2
+class ResMonomialSorter
 {
 private:
   const Monoid& mMonoid;
@@ -60,11 +66,12 @@ private:
   const ResSchreyerOrder& mSchreyerOrder;
   const std::vector<res_packed_monomial>& mColumns;
 
+  long mNumComparisons;
   memt::Arena mArena;
   std::vector<int*> mMonoms; // each monom: [tiebreaker, basecomp, followed by totalmon]
   std::vector<int> mPositions;
 public:
-  ResColumnSorter2(const Monoid& M,
+  ResMonomialSorter(const Monoid& M,
                    const ResMonoid& resMonoid,
                    const ResSchreyerOrder& S, // order at level-1 in free res
                    const std::vector<res_packed_monomial>& columns // at level.
@@ -72,7 +79,8 @@ public:
     mMonoid(M),
     mResMonoid(resMonoid),
     mSchreyerOrder(S),
-    mColumns(columns)
+    mColumns(columns),
+    mNumComparisons(0)
   {
   }
 
@@ -89,7 +97,7 @@ public:
   bool ordered()
   {
     setMonoms();
-    ResColumnSorterObject C(mMonoid, mMonoms);
+    MonomialSorterObject C(mMonoid, mMonoms);
     for (int i=1; i<mMonoms.size(); i++)
       {
         if (not C(i-1,i)) return false;
@@ -106,12 +114,16 @@ public:
     for (int i=0; i<mColumns.size(); i++)
       result.push_back(i);
 
-    ResColumnSorterObject C(mMonoid, mMonoms);
-
+    MonomialSorterObject C(mMonoid, mMonoms);
+    C.resetNumComparisons();
+    
     std::stable_sort(result.begin(), result.end(), C);
 
+    mNumComparisons = C.numComparisons();
     return result;
   }
+
+  long numComparisons() const { return mNumComparisons; }
 private:
   void toMonomial(res_packed_monomial mon, std::pair<int*,int*> resultAlreadyAllocateds)
   {

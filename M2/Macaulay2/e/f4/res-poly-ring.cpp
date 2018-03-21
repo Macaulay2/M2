@@ -67,7 +67,7 @@ bool check_poly(const ResPolyRing& R,
     {
       monoms.push_back(const_cast<res_packed_monomial>(i.monomial()));
     }
-  ResColumnSorter2 S(R.originalMonoid(), R.monoid(), ord, monoms);
+  ResMonomialSorter S(R.originalMonoid(), R.monoid(), ord, monoms);
   return S.ordered();
 }
 
