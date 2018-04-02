@@ -708,13 +708,13 @@ TEST ///
   (pairs Ds)/(x -> #x#1)//sum
   (pairs Es)/(x -> #x#1)//sum
 
-  elapsedTIme hashTable flatten for i from 2 to length C list (
+  elapsedTime hashTable flatten for i from 2 to length C list (
       for deg in Es#i list (i,deg) => elapsedTime submatrixByDegrees(C.dd_i, deg, deg)
       );
 
-  elapsedTIme hashTable flatten for i from 2 to length C list (
+  elapsedTime hashTable flatten for i from 2 to length C list (
       for deg in Es#i list (i,deg) => (
-          << "doing (i,deg)=" << (i,deg) << numRows(C.dd_i) << "," << numColumns(C.dd_i) << ")" << endl;
+          << "doing (i,deg)=" << (i,deg) << " (" << numRows(C.dd_i) << "," << numColumns(C.dd_i) << ")" << endl;
           elapsedTime submatrixByDegrees(C.dd_i, deg, deg)
           )
       );

@@ -1,16 +1,18 @@
 Todo for branch res-2018, created 9 March 2018.
 
-1. Allow FastNonminimal resolutions to assume we have the GB.
+1. Allow FastNonminimal resolutions to assume we have the GB. DONE
 
 2. Allow these to work with multi-gradings, as well as inhomogenoeus.
+    PARTLY DONE: nonminimal resolution works.
+    TODO: minimal multi-graded betti numbers
 
-3. stash the nonminimal res, in a different location. What functions actually use nonminimal resolutions.
+3. stash the nonminimal res, in a different location. What functions actually use nonminimal resolutions. DONE
 
 4. allow QQ as an actual coefficient ring.  Actually, allow any
   coefficient ring, as long as we are given a monic Groebner basis for
   it.
   
-5. modules are not working correctly: there is a mismatch of monomial orders.  How best to fix this?
+5. modules are not working correctly: there is a mismatch of monomial orders.  How best to fix this? DONE
 
 6. nonminimal --> minimal resolution.  How best to do this?  e.g. use zig-zag idea of Frank?
 
@@ -18,6 +20,82 @@ Todo for branch res-2018, created 9 March 2018.
 
 8. schreyerName functionality, in the engine?
 
+9. sparse rank computation?
+
+10.    Sparse matrices:
+   format: array of rows (or columns), each row:
+    a. std::vector of column positions.
+    b. a CoefficientVector
+   operations:
+    add: easy enough: addInPlace(pos1, coeffs1, pos2, coeff2): changes pos1, coeffs1. 
+    sub: same
+    transpose:
+    nonzeroInRow, nonzeroInColumn
+    submatrix
+    iterators?
+
+    lead_row
+    get_entry
+    set_entry
+    interchange_rows
+    interchange_columns
+
+    mat-arith:
+      is_zero: need to be able to check size of a column (can do directly from position vector)
+      is_equal: need to check equality of two columns (check pos vectors first, then check equality of coeff vectors.
+      scalarMultInPlace: scalar mult(a, coeff vector).  remember that some elements can become zero!
+        how to handle that?
+      negateInPlace
+      addInPlace
+      subtractInPlace
+      transpose:
+        this needs to be done directly by knowledge of ring.
+        loop through all elements, append elements
+
+    mat-elemops:
+      lead_row
+      interchange_rows: need to resort coeff vector according to pos vector?
+      interchange_columns: easy
+      scale_row: need to scale specific element of coeff array
+      scale_column: scale all elems of coeff array
+      divide: similar
+      row_op: pain to write.
+      column_op: basically sort 2 position lists, correspond coeff vectors. combine when positions match.
+      2x2 ops: similar.
+      dot_product
+      row_permute
+      column_permute: don't need to involve base ring.
+      insert_rows: don't need to involve base ring.
+
+   what operations are needed on coeff vectors:
+     permute elements and position vector.
+     mult r-th element by a scalar.
+     mult entire vector by a scalar.
+     add-merge: pos1,coeff1, pos2,coeff2. (pivot-add)
+     remove a range of elements
+     vector of indices, coeff vector --> new coeff vector. (permute, delete, setFromSubmatrix).
+     set entry
+     make monic
+     transpose matrix.
+     concatenate
+    
+    rank
+    determinant
+    inverse
+    rowReducedEchelonForm
+    mult
+    nullSpace
+    solveLinear
+    solveInvertible
+    rankProfile
+    LU
+    addMultipleTo (C += A*B)
+    subtractMultipleTo (C -= A*B)
+
+    mat-util: display, concatenate matrices.
+    
+
+    
 Strategy 4 or 5 or 4.1
   Do NOT require that the module be graded.
   Place somewhere else:

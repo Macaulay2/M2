@@ -143,6 +143,48 @@ private:
   }
 };
 
+class ResMonomialTransformer
+{
+  ResMonomialTransformer(const Monoid& M,
+                         const ResMonoid& resM,
+                         const ResSchreyerOrder& schreyerOrder,
+                         memt::Arena& arena
+                         ) :
+    mArena(arena),
+    mMonoid(M),
+    mResMonoid(resM),
+    mSchreyerOrder(schreyerOrder)
+  {
+    // nothing further to do here
+  }
+                         
+public:
+  // input: res_packed_monomial range
+  // output: (monomial,comp) range: 
+  std::pair<int*, int*> transform(std::pair<int*, int*>& input)
+  {
+    int comp, comp2;
+    int nvars = mMonoid.n_vars();
+    std::pair<int*, int*> result = mArena.allocArrayNoCon<int>(mMonoid.monomial_size() + 2);
+    std::pair<int*, int*> exp = mArena.allocArrayNoCon<int>(nvars);
+    std::pair<int*, int*> exp2 = mArena.allocArrayNoCon<int>(nvars);
+    mResMonoid.to_exponent_vector(mon.first, exp.first, comp);
+    mResMonoid.to_exponent_vector(mSchreyerOrder.mTotalMonom[comp], exp2.first, comp2);
+    ntuple::mult(nvars, exp.first, exp2.first, exp2.first);
+    auto p = resultAlreadyAllocateds.first;
+    *p++ = mSchreyerOrder.mTieBreaker[comp];
+    *p++ = comp2;
+    mMonoid.from_expvector(exp2.first, p);
+    mArena.freeTop(exp2.first); // note: can only pop one at a time from an mt::Arena!
+    mArena.freeTop(exp.first);
+  }
+private:
+  memt::Arena& mArena;
+  const Monoid& mMonoid;
+  const ResMonoid& mResMonoid;
+  const ResSchreyerOrder& mSchreyerOrder;
+};
+
 #endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

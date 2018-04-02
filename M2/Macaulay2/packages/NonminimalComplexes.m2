@@ -19,7 +19,14 @@ export {
     "getNonminimalRes",
     "degreeZeroMatrix",
     "minimizeBetti",
-    "SVDBetti"
+    "SVDBetti",
+    
+    "SparseMatrix",
+    "newSparseMatrix",
+    "sparseMatrix",
+    "Entries",
+    "RowNums",
+    "ColumnNums"
 }
 
 debug Core
@@ -40,6 +47,81 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
     )
 *-
 
+SparseMatrix = new Type of HashTable
+
+numRows SparseMatrix := S -> # S.RowNums
+numColumns SparseMatrix := S -> # S.ColumnNums
+
+net SparseMatrix := (S) -> (
+    netList{
+        {"", netList toList{toList(0..numColumns S - 1), S.ColumnNums}},
+        {
+            netList for r from 0 to numRows S - 1 list {r, S.RowNums#r},
+            netList S.Entries
+        }}
+    )
+
+newSparseMatrix = method()
+newSparseMatrix(List, List, List) := SparseMatrix => (mat, rownums, colnums) -> (
+    new SparseMatrix from {
+        Entries => mat,
+        RowNums => rownums,
+        ColumnNums => colnums
+        }
+    )
+sparseMatrix = method()
+sparseMatrix Matrix := SparseMatrix => (M) -> (
+    e := entries M;
+    mat := for e1 in e list (pos := positions(e1, x -> x != 0); {pos, e1_pos});
+    rownums := for r in mat list #r#0;
+    colnums := new MutableList from (numColumns M : 0);
+    for r from 0 to numRows M - 1 do (
+        for c in mat#r#0 do colnums#c = colnums#c + 1;
+        );
+    newSparseMatrix(mat, rownums, toList colnums)
+    )
+
+removeRows = method()
+removeRows(List,SparseMatrix) := (r,S) -> (
+    -- chores:
+    --  1. remove entry r from RowNums, Entries.
+    --  2. for each column in Entries#r#0: 
+    removeThese := set r;
+    keep := sort toList(set toList(0..numRows S - 1) - removeThese);
+    colnums := new MutableList from S.ColumnNums;
+    for r1 in r do (
+        for c in S.Entries#r#0 do colnums#c = colnums#c - 1;
+        );
+    newSparseMatrix(S.Entries_keep, S.RowNums_keep, toList colnums)
+    )
+
+removeColumn = method()
+removeColumn(ZZ,SparseMatrix) := (c,S) -> (
+    -- remove c from ColNums
+    -- loop over all rows r
+    --   if c is in S.Entries#r#0
+    --     remove c from this list, and corresponding coeff.
+    --     decrement rownums#r.
+    )
+removeZeroOneRows = method()
+removeZeroOneRows SparseMatrix := (S) -> (
+    -- returns (#zero rows, #rows with 1 element)
+    -- removes columns in such rows too.
+    p := positions(toList S.RowNums, x -> x > 0);
+    )
+///
+  restart
+  debug needsPackage "NonminimalComplexes"
+  kk := ZZ/101
+  M = mutableMatrix(kk, 10, 10);
+  fillMatrix(M, Density=>.2)
+  rank M
+  S = sparseMatrix matrix M
+
+  S = removeRows(positions(S.RowNums, x -> x == 0), S)
+  for r in positions(S.RowNums, x -> x == 1) list 
+  M
+///
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
 -----------------------------------------------
