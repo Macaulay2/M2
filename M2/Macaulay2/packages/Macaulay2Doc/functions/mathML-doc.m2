@@ -57,7 +57,7 @@ undocumented {
      (mathML, Sum),
      (mathML, Superscript),
      (mathML, Symbol),
-     (mathML, Tally),
+     (mathML, VirtualTally),
      (mathML, Thing),
      (mathML, Type),
      (mathML, Variety),

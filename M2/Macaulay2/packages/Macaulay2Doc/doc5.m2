@@ -306,7 +306,7 @@ document {
      }
 
 document {
-     Key => (symbol **, Tally, Tally),
+     Key => (symbol **, VirtualTally, VirtualTally),
      Headline => "Cartesian product of tallies",
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA{},
@@ -406,7 +406,7 @@ document {
      TO2((symbol*,Set,Set),"intersection"), ", ",
      TO2((symbol-,Set,Set),"difference"), ", ",
      TO2((symbol**,Set,Set),"Cartesian product"), ", ",
-     TO2((symbol^**,Tally,ZZ),"Cartesian power"), ", and ",
+     TO2((symbol^**,VirtualTally,ZZ),"Cartesian power"), ", and ",
      TO2((isSubset,Set,Set),"subset"),
      " are available. For example,",
      EXAMPLE {
@@ -542,7 +542,7 @@ document {
      }
 
 document {
-     Key => (symbol ^**, Tally, ZZ),
+     Key => (symbol ^**, VirtualTally, ZZ),
      Headline => "Cartesian power of sets and tallies",
      Usage => "B = A^**n",
      Inputs => { "A", "n" },
