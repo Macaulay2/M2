@@ -4,12 +4,12 @@
 
 document { 
      Key => {partition,(partition,Function,VisibleList),
-	  (partition,Function,VisibleList,VisibleList),(partition,Function,Tally)},
+	  (partition,Function,VisibleList,VisibleList),(partition,Function,VirtualTally)},
      Headline => "partition a set or list by values of a function",
      Usage => "partition(f,L)\npartition(f,L,I)",
      Inputs => {
 	  "f" => Function,
-	  "L" => {ofClass VisibleList, ", or ", ofClass Tally}
+	  "L" => {ofClass VisibleList, ", or ", ofClass VirtualTally}
 	  },
      Outputs => {
 	  HashTable => {"whose keys are the possible values of the function ", TT "f", 

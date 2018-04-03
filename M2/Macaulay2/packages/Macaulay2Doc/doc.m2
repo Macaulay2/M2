@@ -1760,7 +1760,7 @@ document {
 	  "A ** A ** A"
 	  },
      "To make this last a set of triples, ", TO splice, " each element together.  
-     Or, use ", TO (symbol^**,Tally,ZZ), ".",
+     Or, use ", TO (symbol^**,VirtualTally,ZZ), ".",
      EXAMPLE {
 	  "(A ** A ** A)/splice",
 	  "A^**3"
