@@ -36,17 +36,20 @@ getpkg := memoize(
    --	             TO sin
    -- or
    --	             TO symbol sin
-   -- and have them all get recorded the same way
+   -- and have them all get recorded the same way.
+   -- But there is a problem with this whole idea -- what about keys in other packages, which can't be 
+   -- loaded now, because they might try to load the package currently being loaded?  Why not just normalize
+   -- to the string form, tacking on the package name, if given a symbol?
 normalizeDocumentKey = method(Dispatch => Thing, Options => { Package => null })
 normalizeDocumentKey   String := opts -> key -> (
      pkg := opts#Package;
      if pkg =!= null 
      then (
-     	  assert (class pkg === String);
-	  needsPackage pkg;
-	  pkg = value PackageDictionary#pkg;
-	  if pkg.Dictionary#?key then pkg.Dictionary#key
-	  else error ("symbol ",key," not exported by package ",toString pkg)
+     	  -- here's where we used to load the package in an attempt to verify the documentation key
+	  if instance(pkg,String)
+	  then if match("::",key) then key else concatenate(pkg,"::",key)
+	  else if not instance(pkg,Package) then error("expected ",toString pkg," to be a package")
+	  else if pkg.Dictionary#?key then pkg.Dictionary#key else key
 	  )
      else if isGlobalSymbol key then getGlobalSymbol key else key
      )
@@ -746,7 +749,7 @@ apropos String := (pattern) -> (
 	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(key,Headline)	    -- old method
+headline Thing := key -> null
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (

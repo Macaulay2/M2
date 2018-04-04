@@ -1151,7 +1151,7 @@ document {
 			 },
 		    LI {
 			 "The package ", TO "IntegralClosure::IntegralClosure", " has been rewritten.  The
-			 ring used as input for ", TO "Integral::integralClosure", " must be a
+			 ring used as input for ", TO "IntegralClosure::integralClosure", " must be a
 			 domain, but the documentation describes how to get around this.  
 			 The function now provides correct output when it finishes, and it can handle much larger input 
 			 than before.  There are some new routines and some new strategies for the computation."
