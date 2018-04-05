@@ -8,39 +8,6 @@
 #include <iomanip>
 #include <algorithm>
 
-MonomialCounter::MonomialCounter(const ResMonoid& M)
-    : mIgnoreMonomials(new ResMonomialsIgnoringComponent(M)),
-      mAllMonomials(mIgnoreMonomials),
-      mNumAllMonomials(0),
-      mNextMonom(nullptr),
-      mMonoid(M)
-{
-  // start out mNextMonom
-  mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());
-}
-void MonomialCounter::accountForMonomial(res_const_packed_monomial mon)
-{
-  // First copy monomial
-  // Then call find_or_insert
-  // If not there, increment number of monomials
-  // If there: intern monomial
-
-  monoid().copy(mon, mNextMonom);
-  res_packed_monomial not_used;
-  if (mAllMonomials.find_or_insert(mNextMonom, not_used))
-    {
-      // true, means that it was already there
-      // nothing needs to be done
-    }
-  else
-    {
-      // false: new monomial
-      mNumAllMonomials++;
-      mMonomSpace.intern(monoid().monomial_size(mNextMonom));
-      mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());
-    }
-}
-
 namespace {
 class PreElementSorter
 {

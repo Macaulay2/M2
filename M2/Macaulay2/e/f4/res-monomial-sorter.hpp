@@ -143,6 +143,7 @@ private:
   }
 };
 
+#if 0
 class ResMonomialTransformer
 {
   ResMonomialTransformer(const Monoid& M,
@@ -184,6 +185,7 @@ private:
   const ResMonoid& mResMonoid;
   const ResSchreyerOrder& mSchreyerOrder;
 };
+#endif
 
 #endif
 // Local Variables:
