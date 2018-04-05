@@ -1575,7 +1575,7 @@ if test $BUILD_lapack = yes
 then if test $added_fclibs != yes
      then LIBS="$FCLIBS $LIBS"
      fi
-     BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
+     LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
      dnl we'll need the fortran compiler to be present to compile lapack
      FORTRANUSED=yes
      if test "$FC" = ""
