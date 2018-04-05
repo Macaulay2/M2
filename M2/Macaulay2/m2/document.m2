@@ -149,6 +149,15 @@ pkgTitle Symbol  := toString
 pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
 
+toPackageStem := key -> (
+     m := regex("[[:space:]]*::[[:space:]]*",key);
+     if m === null then (null,key)
+     else (
+	  (i,n) := m#0;
+	  pkg := substring(0,i,key);
+	  key = substring(i+n,key);
+	  (pkg,key)))
+
 makeDocumentTag = method(Dispatch => Thing, Options => {
 	  Package => null
 	  })
@@ -157,6 +166,8 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey (key,opts);
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
+     local pkg';
+     (pkg',fkey) = toPackageStem fkey;
      pkg := (
 	  if class nkey === Symbol -* and package nkey =!= Core *- then package nkey
 	  else if opts#Package =!= null then opts#Package 
@@ -173,15 +184,16 @@ makeDocumentTag String := opts -> key -> (
 	  -- lines might be wrapped and multiple spaces are reduced to one:
 	  error("expected key to have only single interior spaces:", format key);
 	  );
-     m := regex("[[:space:]]*::[[:space:]]*",key);
-     if m === null then (mdt opts) key
-     else (
-	  (i,n) := m#0;
-	  pkg := substring(0,i,key);
-	  key = substring(i+n,key);
-	  makeDocumentTag(key,opts,Package => pkg)
-	  )
+     local pkg;
+     (pkg,key) = toPackageStem key;
+     if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package 
+     then error ("mismatching packages ",pkg," and ", opts#Package, " specified for key ",key);
+     if pkg === null then pkg = opts#Package;
+     if pkg === null 
+     then (mdt new OptionTable from {Package => pkg}) key
+     else (mdt new OptionTable from {Package => pkg}) key
      )
+
 -- a bit of experimentation...
 DocumentTag.Key = method(Dispatch => Thing)
 DocumentTag.Key DocumentTag := x -> x#0
