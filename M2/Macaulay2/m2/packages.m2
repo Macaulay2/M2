@@ -280,12 +280,12 @@ newPackage(String) := opts -> (title) -> (
      pkgsym <- newpkg;
      loadedPackages = {Core};
      dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
-     if Core#?"base packages" then (
-	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
-	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
-	       )
-	  else scan(reverse Core#"base packages", needsPackage)
-	  );
+     -- if Core#?"base packages" then (
+     -- 	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
+     -- 	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
+     -- 	       )
+     -- 	  else scan(reverse Core#"base packages", needsPackage)
+     -- 	  );
      dictionaryPath = (
 	  if member(newpkg.Dictionary,dictionaryPath)
      	  then join({newpkg#"private dictionary"}, dictionaryPath)
@@ -293,7 +293,7 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-     if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
+     -- if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
      scan(opts.PackageImports, needsPackage);
      scan(opts.PackageExports, needsPackage);
      newpkg.loadDepth = loadDepth;

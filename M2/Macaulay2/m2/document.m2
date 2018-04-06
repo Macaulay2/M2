@@ -24,6 +24,7 @@ getpkg := memoize(
      title -> (
 	  if PackageDictionary#?title then value PackageDictionary#title
 	  else dismiss needsPackage(title,LoadDocumentation=>true)))
+getpkgNoLoad := title -> if PackageDictionary#?title then value PackageDictionary#title
 
 -----------------------------------------------------------------------------
 -- normalizing document keys
@@ -272,6 +273,7 @@ toExternalStringWithText = s -> (
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
+
 fetchRawDocumentation = method()
 fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
@@ -286,6 +288,23 @@ fetchRawDocumentation DocumentTag := tag -> (
      )
 fetchRawDocumentation FinalDocumentTag := tag -> (
      fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
+     )
+
+fetchRawDocumentationNoLoad = method()
+fetchRawDocumentationNoLoad(Nothing,Thing) := (pkg,fkey) -> null
+fetchRawDocumentationNoLoad(Package,String) := (pkg,fkey) -> (		    -- returns null if none
+     d := pkg#rawKey;
+     if d#?fkey then d#fkey
+     else (
+	  if pkg#?rawKeyDB then (
+	       d = pkg#rawKeyDB;
+	       if isOpen d and d#?fkey then valueWithText d#fkey)))
+fetchRawDocumentationNoLoad(String,String) := (pkgtitle,fkey) -> fetchRawDocumentationNoLoad(getpkgNoLoad pkgtitle, fkey)
+fetchRawDocumentationNoLoad DocumentTag := tag -> (
+     fetchRawDocumentationNoLoad(getpkgNoLoad DocumentTag.Title tag, DocumentTag.FormattedKey tag)
+     )
+fetchRawDocumentationNoLoad FinalDocumentTag := tag -> (
+     fetchRawDocumentationNoLoad(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
      )
 
 getPrimary = tag -> (
@@ -527,7 +546,11 @@ file := null
 -----------------------------------------------------------------------------
 extractBody := x -> if x.?Description then x.Description
 getDoc := key -> fetchRawDocumentation makeDocumentTag key
+getDocNoLoad := key -> fetchRawDocumentationNoLoad makeDocumentTag key
 getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
+     s := getDocNoLoad key;
+     if s =!= null and s#?tag then s#tag)
+getOptionNoLoad := (key,tag) -> (				    -- get rid of this, keep the doc from before
      s := getDoc key;
      if s =!= null and s#?tag then s#tag)
 getBody := key -> getOption(key,Description)		    -- get rid of this
@@ -761,7 +784,7 @@ apropos String := (pattern) -> (
 	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
-headline Thing := key -> headline makeDocumentTag key
+headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
