@@ -761,7 +761,7 @@ apropos String := (pattern) -> (
 	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
-headline Thing := key -> null
+headline Thing := key -> headline makeDocumentTag key
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (

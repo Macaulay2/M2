@@ -1190,7 +1190,7 @@ makePackageIndex List := path -> (
      docdirdone := new MutableHashTable;
      fn << html HTML { 
 	  HEAD splice {
-	       TITLE {key, commentize headline key},
+	       TITLE {key},
 	       defaultCharSet(),
 	       links()
 	       },
