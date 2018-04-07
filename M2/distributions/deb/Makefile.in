@@ -19,7 +19,11 @@ endif
 
 ############################## main targets
 
-DEBARCH=$(shell dpkg-architecture -q DEB_TARGET_ARCH)
+DEBARCH=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
+
+ifeq ($(DEBARCH),)
+$(error dpkg-architecture failed)
+endif
 
 PKG_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-common.deb
