@@ -3,7 +3,51 @@
 -- For now, the version in M2.git is a relatively recent version.
 -- Jan 5, 2017: first time Complexes.m2 was added to M2.git
 -----------------------------------------------
---  todo for next meeting Nov 30 BBBB
+-- todo for 1 Mar 2018
+-- notes:
+--   randomComplexMap: we have not done the boundary case yet.
+--   nullHomotopy and friends: use Hom complex in general case, 
+--     eventually compare with the current implementation for source=free complex
+--   isSemifreeComplex: we will need this.
+--   code to generate a basis of all cycles, as maps, also to generate a basis of all boundaries, as maps.
+--   fix cone tests (code before CCCC example)
+--   get back to lifting along a quasi-isomorphism.
+--  we have several bugs:
+--   a. resolutionMap doesn't seem to handle complexes with a single module.
+--   b. we need a *convenient* way to get elements of Z(Hom(C,D))_0
+--     as a morphism.
+--     Greg, take a look at "CCCC" in tests below.
+--   c. test liftMapAlongQuasiIsomorphism, maybe change its name.
+--   d. need a isNullHomotopy function (similar to (b), except we test boundaries, not cycles).
+--     probably use h d + d h = 0
+--     but for constructing non-trivial null homotopies we will use Hom complex.
+--  todo for 19 Jan 2018
+--    1. cache free resolution information (especially if it is a minimal res).
+--       use this info to immediately return self for resolution of a 
+--       (free minimal resolution). (MAYBE)
+--       Can we speed up the computation of homology, mingens, etc?  
+--         (really, this is a core M2 issue).
+--    2. Ext stuff
+--         (a) elem of Ext^1(M,N): get a map FN_1 --> FM_0, map FM[-1] --> FN, ses.
+--         (b) ses from either of these
+--         (c) given a ses, determine these.
+--         (d) do all of this for Ext^d(M,N)
+--         (e) functoriality
+--    3. morphisms in derived category (start here).
+--       Mike's meanderings: f : C --> D, get Ff : FC --> FD
+--       We need to implement the following:
+--        (a): given g : C --> D, find Fg : FC --> FD.
+--        (b): given g : C --> D a quasi-isomorphism, find Fg^-1 : FD --> FC.
+--        (c): given g : C --> D surjective, and E --> D is given, E semi-free.
+--           find the lift: E --> FC. (or E --> C) (this might be the main primitive).
+--       Generate interesting examples of:
+--        (a) quasi-isomorphisms
+--        (b) interesting maps between complexes.
+--        (c) given complexes C,D, return a random complex morphism.
+--            also: return a basis of the set of f : C --> D of degree 0
+--  todo for next meeting Dec 14 BBBB
+--    1. can we make resolution of a complex return a minimal one directly?
+--    2. interface code for PruneComplex.
 --    first: change the output of minimize, cache the map
 --    can we make resolution of a complex return a minimal one directly, w/o calling minimize?
 --    is there a faster way to implement 'minimize'.
@@ -74,7 +118,7 @@
 --  isExact, isQuasiIsomorphism
 --  minimize
 --  resolutionOfChainComplex (same name as resolution)
---  truncation (4 truncations: naive/smart, either side)
+--  truncation (4 truncations: naive/smart, either side) (naive, canonical).
 -- 6 standard homomorphisms
 --   tensor commutativity
 --   tensor associativity
@@ -132,11 +176,23 @@ export {
     "concentration",
     "cylinder",
     "freeResolution",
+    "homotopic",
     "isComplexMorphism",
     "isQuasiIsomorphism",
+    "isNullHomotopyOf",
+    "isSemifreeComplex",
+    "liftMapAlongQuasiIsomorphism",
     "minimize",
+    "nullHomotopic",
+    "nullHomotopy",
+    "naiveTruncation",
+    "randomComplexMap",
     "resolutionMap",
     -- options used
+    "Cycle",
+    "Boundary",
+    "InternalDegree",
+    "homotopy",
     "Base",
     "ResolutionMap",
     "UseTarget",
@@ -155,6 +211,7 @@ export {
 << "-- For questions, suggestions, comments, bugs, please email either author --" << endl;
 << "----------------------------------------------------------------------------" << endl
 
+--load(currentFileDirectory | "Complexes/res.m2")
 unimplemented = str -> error(str|": not yet implemented")
 UNTEST = (str) -> null
 
@@ -892,7 +949,7 @@ isWellDefined ComplexMap := f -> (
         iscommutative := true;
         for i from loC to hiC do (
             if i+deg-1 >= loD and i+deg-1 <= hiD then (
-                if not (dd^D_(i+deg) * f_i == f_(i-1) * dd^C_i)
+                if not (dd^D_(i+deg) * f_i == (-1)^deg * (f_(i-1) * dd^C_i))
                 then (
                     iscommutative = false;
                     if f.cache.isCommutative then (
@@ -1113,7 +1170,7 @@ isCommutative ComplexMap := (cacheValue symbol isCommutative)(f -> (
     (loD,hiD) := D.concentration;
     for i from loC to hiC do (
         if i+deg-1 >= loD and i+deg-1 <= hiD then (
-            if not (dd^D_(i+deg) * f_i == f_(i-1) * dd^C_i)
+            if not (dd^D_(i+deg) * f_i == (-1)^deg * (f_(i-1) * dd^C_i))
             then (
                 if debugLevel > 0 then (
                     << "block " << (i,i-1) << " fails to commute" << endl;
@@ -1127,7 +1184,39 @@ isCommutative ComplexMap := (cacheValue symbol isCommutative)(f -> (
 
 isComplexMorphism = method(TypicalValue => Boolean)
 isComplexMorphism ComplexMap := (f) -> degree f === 0 and isCommutative f
+------------------------
+-- truncations ---------
+------------------------
+naiveTruncation = method()
+naiveTruncation(Complex,Sequence) := Complex => (C,loHi) -> (
+    if #loHi =!= 2 then error "expected a truncation interval";
+    (lo,hi) := loHi;
+    if lo === null then lo = -infinity;
+    if hi === null then hi = infinity;
+    if lo > hi then error "interval of truncation is empty";
+    (loC,hiC) := concentration C;
+    lo = max(lo,loC);
+    hi = min(hi,hiC);
+    if lo === loC and hi === hiC then C
+    else if lo >= hi then complex(C_lo, Base=>lo) -- note: if lo > hi, this is the zero complex.
+    else complex(hashTable for i from lo+1 to hi list i => dd^C_i, Base=>lo)
+    )
+naiveTruncation(Complex,ZZ,ZZ) := 
+naiveTruncation(Complex,ZZ,InfiniteNumber) := 
+naiveTruncation(Complex,InfiniteNumber,ZZ) := 
+naiveTruncation(Complex,ZZ,Nothing) := 
+naiveTruncation(Complex,Nothing,ZZ) := Complex => (C,lo,hi) -> naiveTruncation(C, (lo,hi))
 
+naiveTruncation(ComplexMap,Sequence,Sequence) := ComplexMap => (f, targetLoHi, sourceLoHi) -> (
+    D := naiveTruncation(target f, targetLoHi);
+    C := naiveTruncation(source f, sourceLoHi);
+    map(D,C,i -> f_i)
+    )
+naiveTruncation(ComplexMap,Sequence) := ComplexMap => (f,loHi) -> naiveTruncation(f,loHi,loHi)
+
+------------------------
+-- homology ------------
+------------------------
 minimalPresentation ComplexMap := 
 prune ComplexMap := ComplexMap => opts -> f -> (
     map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f_k)
@@ -1700,6 +1789,93 @@ extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D,C,f)-> (
     result
     )
 
+-- possible todo: allow to choose the homological degree of the map, and the internal degree of the map?
+randomComplexMap = method(Options=>{
+        Degree => 0,
+        InternalDegree => null,
+        Cycle => false,
+        Boundary => false
+        }) -- should this overload 'random'?  Probably.
+randomComplexMap(Complex, Complex) := ComplexMap => o -> (D,C) -> (
+    deg := o.Degree;
+    E := Hom(C,D);
+    S := ring E;
+    ideg := if o.InternalDegree === null then degree 1_S else o.InternalDegree;
+    G := if o.Boundary then image dd^E_(deg-1)
+         else if o.Cycle then ker dd^E_deg
+         else E_deg;
+    B := basis(ideg, G);
+    g := B * random(source B, S^{-ideg});
+    if o.Boundary then (
+        g = map(E_deg, G, gens g)
+        );
+    homomorphism(deg, g, E)
+    )
+-*
+    E := Hom(C,D);
+    KE := ker dd^E_0;
+    B := basis(0, KE);
+    S := ring E;
+    g := B * random(source B, S^1);
+    homomorphism(0, g, E)
+    )  
+*-
+-- CCCC
+
+isNullHomotopyOf = method()
+homotopic = method()
+nullHomotopic = method() -- this function checks whether f is null homotopic
+nullHomotopy = method() -- this function attempts to construct one, might fail
+
+isNullHomotopyOf(ComplexMap, ComplexMap) := (h, f) -> (
+    -- returns true if h is a null homotopy for f : C --> D.
+    -- if debugLevel > 0, then more info as to where it is not, is given
+    C := source f;
+    D := target f;
+    deg := degree h;
+    (lo,hi) := concentration h;
+    if debugLevel == 0 then (
+        for i from lo to hi do (
+            if h_(i-1) * dd^C_i + dd^D_(deg+i) * h_i != f_i then return false;
+            );
+        true
+        )
+    else (
+        result := true;
+        for i from lo to hi do (
+            if h_(i-1) * dd^C_i + dd^D_(deg+i) * h_i != f_i then (
+                << "fails to be a null homotopy at location " << i << endl;
+                result = false;
+                );
+            );
+        result
+        )
+    )
+
+nullHomotopy ComplexMap := (f) -> (
+    -- key assumption: 'source f' is a complex of free modules
+    C := source f;
+    D := target f;
+    deg := degree f + 1;
+    hs := new MutableHashTable;
+    (lo,hi) := concentration f;
+    for i from lo to hi do (
+        if hs#?(i-1) then 
+            hs#i = (f_i - hs#(i-1) * dd^C_i) // (dd^D_(i+deg))
+        else
+            hs#i = f_i // dd^D_(i+deg)
+        );
+    -- result is a ComplexMap h : C --> D, of degree degree(f)+1
+    map(D, C, new HashTable from hs, Degree => deg)
+    )
+
+homotopic(ComplexMap, ComplexMap) := (f,g) -> nullHomotopic(f-g)
+    -- key assumptions: 
+    --  f, g: C --> D
+    --  C is a free complex.
+
+nullHomotopic ComplexMap := f -> isNullHomotopyOf(nullHomotopy f, f)
+
 --------------------------------
 -- Standard maps of complexes --
 --------------------------------
@@ -1736,7 +1912,7 @@ tensorAssociativity(Complex,Complex,Complex) := (A,B,C) -> (
 
 isDirectSum Complex := (C) -> C.cache.?components
 
-{* -- Greg + Mike think this is old debugging code.  Are we right?!
+-* -- Greg + Mike think this is old code that might be useful.  Are we right?!
 basicHom = (C,D) -> (
     R := ring C;
     if ring D =!= R then error "expected complexes over the same ring";
@@ -1785,7 +1961,7 @@ Hom(Complex, Complex) := Complex => (C, D) -> (
                Hom((components C)#i, (components D)#i)
        ));
    )
-*}
+*-
 
 UNTEST ///
 restart
@@ -1827,63 +2003,77 @@ needsPackage "Complexes"
 
 ///
 
--- given C, and ZC, HC, pHC, R^ai --> pHC_i, each i
--- for each index, we compute a map from complex(R^ai,0 maps) --> C
-lambda0 = method()
-lambda0 Complex := ComplexMap => (C) -> (
-    dC := map(C[-1], C, dd^C, Degree=>0);
-    ZC := ker dC;
-    HC := HH C;
-    pHC := prune HC;
-    f := inducedMap(C, ZC);
-    g := inducedMap(HC, ZC);
-    (lo,hi) := concentration pHC;
-    L0 := complex(for i from lo to hi list cover pHC_i, Base => lo);
-    h := map(pHC, L0, i -> map(pHC_i, L0_i, gens pHC_i));
-    h1 := pHC.cache.pruningMap * h;
-    map(C, L0, i -> f_i * (h1_i // g_i))
-    )
-
-  nextLambda = method()
-  nextLambda ComplexMap := ComplexMap => (lambda) -> (
+-- BBBB
+nextLambda = method()
+nextLambda ComplexMap := ComplexMap => (lambda) -> (
     C := target lambda;
     L0 := source lambda;
-    ZL := ker HH lambda;
-    pZL := prune ZL;
     (lo,hi) := concentration L0;
-    covers := hashTable for i from lo-1 to hi+1 list i => cover pZL_(i-1);
-    kerGens := hashTable for i from lo to hi+1 list i => (
-        h := map(ZL_(i-1), covers#i, pZL.cache.pruningMap_(i-1) * map(pZL_(i-1),,gens pZL_(i-1)));
-        map(L0_(i-1), ZL_(i-1), gens ZL_(i-1)) * h
-        );
-    maps := hashTable for i from lo+1 to hi+1 list (
-        -- i-th differential of L1: L1_i = L0_i ++ cov2 --> L1_(i-1) = L0_(i-1) ++ cov1
-        cov1 := covers#(i-1);
-        cov2 := covers#i;
-        phi := map(L0_(i-1) ++ cov1, L0_i ++ cov2, matrix {
-                {dd^L0_i,            kerGens#i           }, 
-                {map(cov1, L0_i, 0), map(cov1, cov2, 0) }
-                });
-        if i === hi+1 and phi == 0 then continue else i => phi
-        );
-    L1 := complex maps;
-    -- now, time to create the map L1 --> C
-    (lo,hi) = concentration L1;
-    maps = hashTable for i from lo to hi list i => (
-        m :=  (lambda_(i-1) * kerGens#i) // dd^C_i;
-        map(C_i, L1_i, matrix{{lambda_i, m}})
-        );
-    map(C, L1, maps)
+    D := cone naiveTruncation(lambda, (hi,hi+2), (hi-1, hi));
+    HC1 := HH_(hi+1) D;
+    pHC1 := prune HC1;
+    if pHC1 == 0 then return null;
+    a1 := inducedMap(pHC1, cover pHC1);
+    a2 := pHC1.cache.pruningMap;
+    g1 := map(D_(hi+1), source gens HC1, gens HC1);
+    g2 := map(HC1, source gens HC1, 1);
+    h := g1 * ((a2 * a1)//g2);
+    L1 := complex(append(for i from lo+1 to hi list dd^L0_i, h^[0]), Base=>lo);
+    map(C,L1,i -> if i === hi+1 then -h^[1] else lambda_i)
     )
 
 resolutionMap = method(Options => {Minimize=>true})
 resolutionMap Complex := opts -> (cacheValue symbol ResolutionMap)(C -> (
-    L := lambda0 C;
-    while ker HH L != 0 do L = nextLambda L;
-    L
+    (lo,hi) := concentration C;
+    f := map(C, complex((ring C)^0, Base=>lo-1), 0);
+    local g;
+    while (
+        g = nextLambda f;
+        g =!= null
+    ) do f = g;
+    -- the following line removes a 0 in the lo-1 spot, which is a byproduct
+    -- of the base case above.
+    naiveTruncation(f,(lo,infinity))
     ))
 
 resolution Complex := opts -> C -> source resolutionMap C    
+
+liftMapAlongQuasiIsomorphism = method()
+liftMapAlongQuasiIsomorphism(ComplexMap, ComplexMap) := (alpha,beta) -> (
+    -- alpha: P --> N, P is semi-free
+    -- beta: M --> N, a quasi-isomorphism
+    -- result: gamma: P --> M a morphism of chain complexes
+    --         h:     P --> N, a homomorphism of degree 1, such that
+    -- alpha - beta.gamma = h dd^P + dd^N h.
+    P := source alpha;
+    N := target alpha;
+    M := source beta;
+    if N =!= target beta then error "expected targets of two maps to be the same complex";
+    (loP, hiP) := concentration P;
+    Cbeta := cone beta;
+    gamma := new MutableHashTable;
+    h := new MutableHashTable;
+    -- start with lo-1
+    gamma#(loP-1) = map(M_(loP-1), P_(loP-1), 0);
+    h#(loP-1) = map(N_loP, P_(loP-1), 0);
+    -- once we have defined: gamma_(i-1) : P_(i-1) --> M_(i-1)
+    -- and h_(i-1) : P_(i-1) --> N_i
+    -- get a map P_i --> M_(i-1) ++ N_i
+    for i from loP to hiP do (
+        delta := map(Cbeta_i, P_i, matrix{{- gamma#(i-1) * dd^P_i},
+                                        {alpha_i - h#(i-1) * dd^P_i}}
+                     );
+        if delta % dd^Cbeta_(i+1) != 0 then << "oops, our logic is wrong!" << endl;
+        eps := delta // dd^Cbeta_(i+1);
+        gamma#i = map(M_i, P_i, eps^[0]);
+        h#i = map(N_(i+1), P_i, eps^[1]);
+        );
+    gamma = hashTable for i from loP to hiP list i => gamma#i;
+    h = hashTable for i from loP to hiP list i => h#i;
+    gamma1 := map(M, P, gamma);
+    gamma1.cache.homotopy = map(N, P, h, Degree => 1);
+    gamma1
+    )
 
 -- AAAA
 
@@ -1891,7 +2081,6 @@ resolution Complex := opts -> C -> source resolutionMap C
 -- Minimization of a complex -------------------
 -- adapted from ChainComplexExtras.m2 ----------
 ------------------------------------------------
--- BBBB
 minimize = method ()
 minimize Complex := C -> (
     (lo,hi) := concentration C;
@@ -1904,10 +2093,14 @@ minimize Complex := C -> (
     maps := hashTable for i from lo to hi list i => rho#i | C.dd_(i+1)*rho#(i+1);
     C' := coker map(C, C ++ C[1], maps, Degree=>0);
     pmC := prune C';
-    map(pmC, C, i -> (pmC_i.cache.pruningMap)^(-1) * inducedMap(C'_i, C_i))
+    -- here is a way to get the inverse of the pruning map.
+    --phiInv := map(pmC, C, i -> (pmC_i.cache.pruningMap)^(-1) * inducedMap(C'_i, C_i));
+    phi := map(C, pmC, i -> map(C_i, pmC_i, pmC_i.cache.pruningMap));
+    pmC.cache.pruningMap = phi;
+    pmC
     )
 
-  -- BBBB: problem currently: in code below, phi is not a complex morphism.
+  -- problem currently: in code below, phi is not a complex morphism.
   --  so the differential in the cokernel isn't (doesn't appear to be) well-defined.
   --  Let's do this on a simpler example, to see.
   minimize ChainComplex := E ->(
@@ -3637,6 +3830,132 @@ TEST ///
 ///
 
 TEST ///
+  -- cone f.  Trivial and strange cases
+  f1 = map(complex ZZ^1, complex ZZ^0, 0)
+  f2 = map(complex ZZ^0, complex ZZ^1, 0)
+  f3 = map(complex ZZ^1, complex(ZZ^0,Base=>-1), 0)
+  f4 = map(complex ZZ^0, complex(ZZ^1,Base=>-1), 0)
+  f5 = map(complex(ZZ^1, Base=>4), complex(ZZ^0,Base=>-3), 0)
+  f6 = map(complex(ZZ^0, Base=>4), complex(ZZ^1,Base=>-3), 0)
+  cone f2
+  --- cone f3 -- fails -- TODO: fix this bug
+  --- cone f4 -- fails in same way -- TODO: fix this bug
+  cone f5 -- lot's of zeros....
+  cone f6 -- lot's of zeros....
+  assert(cone f5 == complex(ZZ^1, Base=>4))
+///
+
+TEST ///
+  -- Greg: CCCC
+  -- how to find a morphism of complexes
+-*
+restart
+*-
+  needsPackage "Complexes"
+  -- Hom(C,D) --> f : C --> D
+  S = ZZ/101[a..e]
+  I = ideal(a*b,c*d,a*e)
+  J = ideal(a*b,c*d)
+  D = freeResolution I
+  C = freeResolution J
+  E = Hom(C,D)
+
+  KE = ker dd^E_0
+  g = a^2**KE_{0} + b**KE_{1}
+  assert isHomogeneous g
+  f = homomorphism(0, g, E)
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isCommutative f
+  assert isHomogeneous f
+  assert(source f === C)
+  assert(target f === D)
+
+  f = randomComplexMap(D,C)
+  assert isWellDefined f
+  assert isHomogeneous f
+  assert(degree f === 0)
+
+  f = randomComplexMap(D,C,Degree=>-2)
+  assert isWellDefined f
+  assert isHomogeneous f
+  assert(degree f === -2)
+
+  f = randomComplexMap(D,C,Degree=>2)
+  assert isWellDefined f
+  assert isHomogeneous f
+  assert(degree f === 2)
+  assert(f == 0)
+
+  f = randomComplexMap(D,C, Cycle=>true)
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isCommutative f
+  assert isHomogeneous f
+
+  f = randomComplexMap(D,C,InternalDegree=>-1)
+  assert isWellDefined f
+  assert isHomogeneous f
+
+  f = randomComplexMap(D,C ** S^{-1})
+  assert isWellDefined f
+  assert isHomogeneous f
+
+  f = randomComplexMap(D, C ** S^{-1}, Cycle=>true)
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isHomogeneous f
+
+  f = randomComplexMap(D, C ** S^{-1}, Cycle=>true, InternalDegree=>1)
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isHomogeneous f
+
+  f = randomComplexMap(D, C, Cycle=>true, InternalDegree=>1)
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isHomogeneous f
+
+  C1 = C ** S^{-1}
+  f = randomComplexMap(D, C1, Cycle=>true, Degree=>-1)
+  assert isWellDefined f
+  assert isCommutative f
+  assert isHomogeneous f
+  degree f
+  f * dd^C1 + dd^D * f
+
+  E = Hom(C ** S^{-1}, D)
+  B = basis(0,ker dd^E_0)
+  mors = for i from 0 to numColumns B-1 list homomorphism(0, B_{i}, E)
+  -- maps which are null-homotopic:
+  bd = basis(0, image dd^E_(-1))
+  bd = image dd^E_1
+  -- I want the map: bd -->E_0, so I can compose: 
+  map(E_0, bd, gens bd)
+  bds = for i from 0 to numgens bd-1 list homomorphism(0, map(E_0, bd, gens bd) * bd_{i}, E)
+  for f in mors do assert(isComplexMorphism f)
+  for f in bds do assert(isComplexMorphism f)
+
+  h = nullHomotopy bds_0
+  isNullHomotopyOf(h, bds_0)
+
+  nullHomotopic bds_0
+
+  for f in bds do (
+      h := nullHomotopy f;
+      assert(f == h * dd^(source h) + dd^(target h) * h)
+      );
+  for f in bds list (
+      h := nullHomotopy f;
+      assert isNullHomotopyOf(h, f)
+      )
+  
+  assert(homomorphism(0, B_{0} + B_{5} + B_{6} + B_{7}, E) == mors_0 + mors_5 + mors_6 + mors_7)
+  
+  prune HH_0(E)
+///
+
+TEST ///
 {*
 restart
 *}
@@ -3841,6 +4160,37 @@ TEST ///
 ///
 
 TEST ///
+  -- naive truncation
+-*  
+  restart
+  needsPackage "Complexes"
+*-  
+  R = ZZ/101[a,b,c,d,e]
+  I = intersect(ideal(a,b),ideal(c,d,e))
+  C = freeResolution I
+  naiveTruncation(C,1,2)
+  naiveTruncation(C,1,6)
+  naiveTruncation(C,-13,2)
+  naiveTruncation(C,-infinity,2)
+  assert try (naiveTruncation(C,4,3); false) else true
+  naiveTruncation(C,4,infinity)
+  assert try (naiveTruncation(C,-infinity,infinity); false) else true -- method doesn't even exist.
+
+  g = naiveTruncation(id_C, (0,2), (1,3))
+  assert isWellDefined g
+  assert not isComplexMorphism g
+  
+  g = naiveTruncation(id_C, (1,3))
+  assert isWellDefined g
+  assert isComplexMorphism g
+
+  g = naiveTruncation(id_C, (0,1), (2,3))
+  assert isWellDefined g
+  assert isComplexMorphism g
+  assert(g == 0)
+///
+
+TEST ///
   -- resolution of a complex
 -*  
   restart
@@ -3863,12 +4213,86 @@ TEST ///
   D = resolution C
   prune HH C
 
-  g = minimize D;
-  assert isWellDefined g
-  assert isComplexMorphism g
+  MD = minimize D;
+  assert(MD == D)
+  assert isWellDefined MD
+  p1 = MD.cache.pruningMap;
+  assert isWellDefined p1
+  assert isComplexMorphism p1
+  assert isQuasiIsomorphism p1
+  
+  assert(dd^MD ** coker vars R == 0)
+  assert(dd^D ** coker vars R == 0)
 
-  -- BBBB -- check minimal-ness.
+  I = ideal"b2-ac,c2-bd,bcd-ad2"
+  C = Hom(freeResolution I, R^1/I)
+  elapsedTime D = resolution C;
+  
+  C1 = complex for i from -2 to 0 list dd^D_i
+  isWellDefined C1
+  dd^C1 ** coker vars ring D == 0
+  D1 = minimize C1
+  p1 = D1.cache.pruningMap;
+  assert isWellDefined p1
+  assert isComplexMorphism p1
+  assert isQuasiIsomorphism p1  
+///
 
+TEST ///  
+-- BBBB 14 Dec 2017 playing 
+-*
+  restart
+  debug needsPackage "Complexes"
+*-
+  R = ZZ/101[a,b,c,d,e]
+  I = intersect(ideal(a,b),ideal(c,d,e))
+  C = Hom(freeResolution I, R^1/I)
+  f = resolutionMap C
+  source f
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isQuasiIsomorphism f  
+
+  R = ZZ/101[a,b,c,d]
+  I = monomialCurveIdeal(R,{1,2,3})
+  C = freeResolution I
+  f = resolutionMap C
+
+  -- the point of this example: the map is not the identity map, due to some
+  -- "strange" choice of signs... 
+  
+  assert(target f === C)
+  source f
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isQuasiIsomorphism f  
+
+  -- a trivial complex
+  debug needsPackage "Complexes"
+  R = ZZ/101[a,b,c,d,e]
+  C = complex {map(R^1, R^1, 1)}
+  f = resolutionMap C
+  source f
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isQuasiIsomorphism f  
+
+-*
+  -- this computation is way too slow.
+  needsPackage "Complexes"
+  R = ZZ/101[vars(0..17)]
+  m1 = genericMatrix(R,a,3,3)
+  m2 = genericMatrix(R,j,3,3)
+  I = ideal(m1*m2-m2*m1)
+  C = freeResolution I
+  f = resolutionMap C -- this is slow.
+*-
+  
+  source f
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isQuasiIsomorphism f  
+  
 -*  
   needsPackage "SVDComplexes"
   chainComplex Complex := (C) -> (
@@ -3876,6 +4300,82 @@ TEST ///
       chainComplex hashTable for i from lo+1 to hi list i => dd^C_i
       )
 *-
+  
+///
+
+
+TEST ///  
+-- BBBB 14 Dec 2017 playing 
+-*
+  restart
+  debug needsPackage "Complexes"
+*-
+  S = ZZ/101[a,b,c,d,e]
+  C = complex {id_(S^1)}
+  f = resolutionMap C
+  source f
+  assert isWellDefined f
+  assert isComplexMorphism f
+  assert isQuasiIsomorphism f  
+
+  R = ZZ/101[a,b,c,d]
+  I = monomialCurveIdeal(R,{1,2,3})
+  C = freeResolution I
+  f = resolutionMap C
+
+  -- the point of this example: the map is not the identity map, due to some
+///
+
+-- the following test tests code that is not yet ready
+UNTEST ///  
+-- AAA 18 Feb 2018 resolutions and lifting maps
+-*
+  restart
+  debug needsPackage "Complexes"
+*-
+  S = ZZ/101[a,b,c,d,e]
+  J = ideal(a*b, b*c*d, a*e, c*e)
+  FJ = freeResolution J
+  N = complex (S^1/J)
+  f = map(N, FJ, hashTable{0=> map(N_0, FJ_0, 1)})
+  isWellDefined f
+  liftMapAlongQuasiIsomorphism(f,f)  
+  beta = resolutionMap f
+
+  
+  I = ideal(a*b, b*c*d, a*e, c*e, b*d*e)
+  FI = freeResolution I
+
+  resolutionMap complex {S^1} -- fails.
+
+  C = Hom(FI, S^1/I)
+  D = Hom(FJ, S^1/J)
+  fC = resolutionMap C
+  assert(dd^(source fC ** coker vars S) == 0)
+
+  red = map(S^1/I, S^1/J, 1)
+  isWellDefined red
+  h = extend(FI, FJ, map(FI_0, FJ_0, 1))
+  C = freeResolution I
+  -- TODO: what is this line supposed to be doing?? f = resolutionMap C
+
+
+  -- AAA
+  -- start with two complexes M, N (better if not free)
+  -- find a morphism M --> N, via Z_0(Hom(M,N))
+  -- compute resolutions FM, FN of M, N.
+  -- lift map FM --> M --> N along FN --> N.
+
+  S = ZZ/101[a,b,c,d,e]
+  I = ideal(a*b, b*c*d, a*e, c*e, b*d*e)
+  J = ideal(a*b, b*c*d, a*e, c*e)
+  FI = freeResolution I
+  FJ = freeResolution J  
+  M = Hom(FI, S^1/I)
+  N = Hom(FJ, S^1/J)
+  HMN = Hom(M,N);
+  KMN = ker dd^HMN_0;
+  map(HMN, complex {source KMN_{2}}, {(generators KMN)_{2}})
   
 ///
 

@@ -1,6 +1,6 @@
 setRandomSeed 0;
 needsPackage "MonodromySolver"
-needsPackage "ExampleIdeals"
+needs "cyclic.m2"
 
 runNaiveDynamicMonodromy = polys -> (
 	(p0,x0) := createSeedPair polySystem polys;
@@ -49,19 +49,16 @@ runNaiveDynamicMonodromy = polys -> (
 end
 restart
 needs "naive-dynamic.m2"
-needs "cyclic.m2"
 L = for i to 10 list 
 runNaiveDynamicMonodromy parametrizedCyclic 7
 sum L / 10. -- 7486
 
 restart
 load "naive-dynamic.m2"
-needs "cyclic.m2"
 elapsedTime runNaiveDynamicMonodromy parametrizedCyclic 10
 
 restart
 load "naive-dynamic.m2"
-needs "cyclic.m2"
 elapsedTime runNaiveDynamicMonodromy parametrizedCyclic 11
 
 restart

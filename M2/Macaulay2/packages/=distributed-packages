@@ -109,7 +109,7 @@ HighestWeights
 NumericalHilbert
 MinimalPrimes
 Bertini
-CodepthThree
+TorAlgebra
 Permanents
 BinomialEdgeIdeals
 TateOnProducts
@@ -166,3 +166,5 @@ SymbolicPowers
 Complexes
 GroebnerWalk
 RandomMonomialIdeals
+Matroids
+NumericalImplicitization

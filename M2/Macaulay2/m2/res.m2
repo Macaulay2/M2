@@ -22,7 +22,7 @@ resolutionByHomogenization := opts -> (M) -> (
      k    := coefficientRing A;
      n    := numgens A;
      X    := local X;
-     N    := monoid [X_0 .. X_n, MonomialOrder => GRevLex];
+     N    := monoid [X_0 .. X_n, MonomialOrder => GRevLex, Join => false];
      A'   := k N;
      toA' := map(A',A,(vars A')_{0 .. n-1});
      p'   := toA' p;
@@ -93,7 +93,7 @@ resolutionInEngine := opts -> (M) -> (
 	       or
 	       class opts.Strategy === RR		    -- to allow 4.1, experimentally
 	       ) then error "resolution in engine: expected Strategy option to be an integer";
-	  if opts.Strategy === 0 or opts.Strategy === 4 then
+	  if opts.Strategy === 0 or opts.Strategy === 4 or opts.Strategy === 4.1 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.

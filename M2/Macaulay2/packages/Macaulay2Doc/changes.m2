@@ -37,16 +37,70 @@ document {
      -- 	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
      -- 	       	    }
      -- 	       },
-     -- 	  LI { "new packages:",                       -- got this with git diff version-1.9.2 =distributed-packages; see also the helper code in README
-     -- 	       UL {
-     -- 	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
-     -- 	       } },
-     -- 	  LI { "improved packages:",
-     -- 	       UL {
-     -- 	  	    }
-     -- 	       },     
+     	  LI { "new packages:",                       -- got this with git diff version-1.10 =distributed-packages; see also the helper code in README
+     	       UL {
+	       	    LI { TO "AbstractToricVarieties::AbstractToricVarieties", ", a package by Mike Stillman for links abstract simplicial (normal) toric varieties to Schubert2, has been added." },
+	       	    LI { TO "AlgebraicSplines::AlgebraicSplines", ", a package by Gwyn Whieldon, Eliana Duarte, Daniel Irving Bernstein, and Daniel Irving Bernstein for splines on simplicial complexes, polytopal complexes, and graphs, has been added." },
+	       	    LI { TO "Chordal::Chordal", ", a package by Diego Cifuentes and Pablo Parrilo for exploiting chordal structure, has been added." },
+	       	    LI { TO "CohomCalg::CohomCalg", ", a package by Mike Stillman for providing an interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety, has been added." },
+	       	    LI { TO "Complexes::Complexes", ", a package by Gregory G. Smith and Mike Stillman for chain complexes, has been added." },
+	       	    LI { TO "GroebnerWalk::GroebnerWalk", ", a package by Dylan Peifer for computing Groebner bases via the Groebner walk, has been added." },
+	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for a package for computations with matroids, has been added." },
+	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for computing invariants of images of polynomial maps, has been added." },
+	       	    LI { TO "PruneComplex::PruneComplex", ", a package by Mahrud Sayrafi and Mike Stillman for pruning chain complexes over polynomial and local rings, has been added." },
+	       	    LI { TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Despina Stasi, Dane Wilburne, Tanner Zielinski, Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, Genevieve Hummel, and Genevieve Hummel for generating Erdos-Renyi-type random monomial ideals, has been added." },
+	       	    LI { TO "ReflexivePolytopesDB::ReflexivePolytopesDB", ", a package by Mike Stillman for simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4, has been added." },
+	       	    LI { TO "SymbolicPowers::SymbolicPowers", ", a package by Eloisa Grifo for calculations involving symbolic powers, has been added." },
+	       	    LI { TO "TestIdeals::TestIdeals", ", a package by Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, Zhibek Kadyrsizova, Mordechai Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira, Emily Witt, and Emily Witt for calculations of singularities in positive characteristic, has been added." },
+	       	    LI { TO "Topcom::Topcom", ", a package by Mike Stillman for providing an interface to a small part of topcom, has been added." },
+	       	    LI { TO "TriangularSets::TriangularSets", ", a package by Diego Cifuentes for triangular decompositions of ideals, has been added." },
+	       	    LI { TO "Tropical::Tropical", ", a package by Kathlen Kohn, Sara Lamboglia, Diane Maclagan, Benjamin Smith, Jeff Sommars, Paolo Tripoli, Magdalena Zajaczkowska, and Magdalena Zajaczkowska for computations in tropical geometry, has been added." },
+     	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+     	       } },
+     	  LI { "improved packages:",
+     	       UL {
+     	       	    LI {
+			TO "LocalRings::LocalRings", " has been rewritten by Mahrud Sayrafi and Mike Stillman. Functions from the old version are still available.
+			The new package extends various primary functions to work over local rings with respect to prime ideals.
+			These functions include syz, res, trim, mingens, minimalPresentation, symbol //, inducedMap, symbol :, saturate, annihilate.
+			The function hilbertSamuelFunction for modules over local rings, optionally given a parameter ideal, has been added." },
+     	       	    LI {
+			 TO "Cremona::Cremona", " has been updated from version 3.9.1 to version 4.2.
+			    The class 'RationalMap' has been improved; in particular, this affects the way how the objects of the class are displayed.
+			    Support has been added for rational maps whose source is a subvariety of a product of projective spaces.
+			    For instance 'graph(RationalMap)' returns a pair of such maps.
+			    'composeRationalMap(rationalMap,RationalMap)' has been replaced by 'rationalMap * RationalMap'
+			    'invertBirMap' has been replaced by 'inverseMap'
+			    'kernelComponent(RingMap,ZZ)' has been replaced by 'kernel(RingMap,ZZ)'" },
+     	       	    LI {
+			 TO "Resultants::Resultants", " has been updated from version 1.0 to 1.2.
+			    'CayleyTrick' has been changed and replaced by 'cayleyTrick'
+			    'ChowEquations' has been replaced by 'chowEquations'
+			    'ChowForm' has been replaced by 'chowForm'
+			    'Discriminant' has been replaced by 'discriminant'
+			    'Dual' has been replaced by 'dualVariety'
+			    'Resultant' has been replaced by 'resultant'
+			    'Xresultant(Ideal)' has been removed: use 'fromPluckerToStiefel dualize ChowForm I' instead
+			    The methods 'affineDiscriminant', 'affineResultant', 'hurwitzForm', 'macaulayFormula' has bees added." 
+			    },
+     	       	    LI {
+				"The package ", TO "TorAlgebra::TorAlgebra", " replaces the package ", TT "CodepthThree", ". 
+				In addition to the functionality
+				of CodepthThree, the new package now also implements the classification scheme
+				(due to Kustin and Miller) for Gorenstein rings of codepth 4. Moreover, the
+				package recognizes complete intersection, Gorenstein, and Golod rings of any
+				codepth via the functions isCI, isGorenstein, and isGolod." },
+		    LI {
+			 "The package ", TO "Divisor::Divisor", " has numerous changes to core methods to
+			 make them compatible with Macaulay2 standards and conventions (including renaming many methods).
+			 Documentation is also improved throughout.  Additional
+			 functionality has also been added (for example, checking if a divisor is very ample)."
+     	  	    }
+     	       }},     
      	  LI { "functionality added or improved:",
      	       UL {
+		    LI { "The function ", TO "localRing", ", for localizing a polynomial ring at a prime ideal, has been added." },
+		    LI { "The function ", TO "length", " now can compute length of Artinian modules over local rings." },
 		    LI {
 			 "The function ", TO "newPackage", " now takes two new options: 
 			 ", TT "OptionalComponentsPresent", " tells whether all optional external components of the package are present on the system,
@@ -498,7 +552,7 @@ document {
 			 for constructing the invariant ring of a finite group, has been published." },
 		    LI { star, " ", TO "MonomialAlgebras::MonomialAlgebras", ", a package by David Eisenbud,
 			 Janko Boehm, and Max Nitsche for decomposing a monomial algebra as a module over a subalgebra, has been published." },
-		    LI { star, " ", TO "CodepthThree::CodepthThree", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been published." }
+		    LI { star, " ", TO "TorAlgebra::TorAlgebra", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been published, under its old name, ", TT "CodepthThree", "." }
 	       	    }
 	       },
 	  LI { "new packages:",
@@ -516,7 +570,7 @@ document {
 		    LI { TO "NumericalHilbert::NumericalHilbert", ", a package by Robert Krone for numerically computing local dual spaces and Hilbert functions, has been added." },		
 		    LI { TO "MinimalPrimes::MinimalPrimes", ", an experimental package by Frank Moore, Mike Stillman and Franziska Hinkelmann for finding the minimal primes of an ideal, has been added." },
 		    LI { TO "Bertini::Bertini", ", a package by Elizabeth Gross, Jose Israel Rodriguez, Dan Bates and Anton Leykin for providing an interface to Bertini, has been added." },
-		    LI { TO "CodepthThree::CodepthThree", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been added." },
+		    LI { TO "TorAlgebra::TorAlgebra", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been added, under its old name, ", TT "CodepthThree", "." },
 		    LI { TO "Permanents::Permanents", ", a package by Tair Akhmejanov for computing the permanents of a matrix, has been added." }
 	  	    }
 	       },

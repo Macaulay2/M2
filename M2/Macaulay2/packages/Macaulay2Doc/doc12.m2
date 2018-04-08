@@ -452,7 +452,7 @@ document {
      SeeAlso => {"product", "plus", "times"}
      }
 document {
-     Key => (sum, Tally),
+     Key => (sum, VirtualTally),
      Headline => "sum of elements",
      TT "sum v", " yields the sum of the elements in the tally ", TT "v", ".",
      PARA{},
@@ -517,7 +517,7 @@ document {
      SeeAlso => "product"
      }
 document {
-     Key => (product, Tally),
+     Key => (product, VirtualTally),
      Headline => "product of elements",
      TT "product v", " yields the product of the elements in the tally ", TT "v", ".",
      PARA{},

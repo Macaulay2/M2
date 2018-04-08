@@ -203,6 +203,7 @@ clean:
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
 recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
+	$(WHY)
 	./config.status --recheck
 	./config.status
 status: @srcdir@/configure

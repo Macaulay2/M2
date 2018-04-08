@@ -21,7 +21,7 @@ testM2 = (I, P) -> (
     if not instance(R, LocalRing) then (
         C := freeRes I;
         assert(C.dd^2 == 0);
-        time D := pruneComplex(C, Strategy => null, Direction => "left", PruningMaps => true);
+        time D := pruneComplex(C, Strategy => null, Direction => "left", PruningMap => true);
         assert(D.dd^2 == 0);
         if isHomogeneous I then assert(betti D == betti res I);
         assert(isCommutative D.cache.pruningMap);
@@ -30,7 +30,7 @@ testM2 = (I, P) -> (
         ) else E = res I;
     RP := ring E;
     assert(E.dd^2 == 0);
-    time F := pruneComplex(E, Strategy => null, Direction => "left", PruningMaps => true);
+    time F := pruneComplex(E, Strategy => null, Direction => "left", PruningMap => true);
     return (
         F.dd^2 == 0 and isMinimal F and
         isCommutative F.cache.pruningMap and
@@ -43,7 +43,7 @@ testEngine = (I, P) -> (
     if not instance(R, LocalRing) then (
         C := freeRes I;
         assert(C.dd^2 == 0);
-        time D := pruneComplex(C, Strategy => Engine, Direction => "left", PruningMaps => true);
+        time D := pruneComplex(C, Strategy => Engine, Direction => "left", PruningMap => true);
         assert(D.dd^2 == 0);
         if isHomogeneous I then assert(betti D == betti res I);
         assert(isCommutative D.cache.pruningMap);
@@ -52,12 +52,24 @@ testEngine = (I, P) -> (
         ) else E = res I;
     RP := ring E;
     assert(E.dd^2 == 0);
-    time F := pruneComplex(E, Strategy => Engine, Direction => "left", PruningMaps => true);
+    time F := pruneComplex(E, Strategy => Engine, Direction => "left", PruningMap => true);
     return (
         F.dd^2 == 0 and isMinimal F and
         isCommutative F.cache.pruningMap and
         isQuasiIsomorphism(F, ideal(gens I ** RP)))
     )
+
+-- Given a homogeneous module, with a non-minimal resolution, the pruned complex should be homogeneous.
+TEST ///
+  R = ZZ/32003[x,y,z]
+  M = coker random(R^{1, 2, -1}, R^{-1, -2, -3, -4})
+  assert isHomogeneous M
+  C = res M
+  assert isHomogeneous C
+  C' = pruneComplex C
+  assert(C'.dd^2 == 0)
+  assert isHomogeneous C'
+///
 
 TEST ///
   debug needsPackage "PruneComplex"
@@ -71,10 +83,10 @@ TEST ///
   C'' = C'[20]
   MC' = toMutableComplex C';
   MC'' = toMutableComplex C'';
-  elapsedTime C1 = pruneComplex(C', Strategy => Engine, PruningMaps => true); -- TODO: consider using sparse matrices
+  elapsedTime C1 = pruneComplex(C', Strategy => Engine, PruningMap => true); -- TODO: consider using sparse matrices
   assert(isCommutative C1.cache.pruningMap);
   assert(betti C[-10] == betti C1)
-  elapsedTime (MC, M) = pruneComplex(MC'', Strategy => null, UnitTest => isScalar, PruningMaps => true); -- FIXME very slow
+  elapsedTime (MC, M) = pruneComplex(MC'', Strategy => null, UnitTest => isScalar, PruningMap => true); -- FIXME very slow
   C2 = toChainComplex MC;
   assert(isCommutative map(C'', C2, i -> M#(i+ min C'' +1)//matrix));
   assert(betti C[10] == betti C2[10])
@@ -160,23 +172,23 @@ TEST ///
       assert(isCommutative D.cache.pruningMap);
       assert(isQuasiIsomorphism(D, I));)
 
-  D = pruneComplex(C, PruningMaps => true, UnitTest => isScalar, Strategy => Engine) -- 1 3 4 2
+  D = pruneComplex(C, PruningMap => true, UnitTest => isScalar, Strategy => Engine) -- 1 3 4 2
   checker(D, I)
 
-  D = pruneComplex(C, PruningMaps => true, UnitTest => isScalar, Strategy => Engine, Direction => "right") -- 1 4 5 2
+  D = pruneComplex(C, PruningMap => true, UnitTest => isScalar, Strategy => Engine, Direction => "right") -- 1 4 5 2
   checker(D, I)
 
-  D = pruneComplex(C, PruningMaps => true, Strategy => null, UnitTest => isScalar, Direction => "right") -- 1 7 9 3
+  D = pruneComplex(C, PruningMap => true, Strategy => null, UnitTest => isScalar, Direction => "right") -- 1 7 9 3
   checker(D, I)
 
   -- FIXME these three strategies return terribly ugly stuff
-  D = pruneComplex(C, PruningMaps => true, Strategy => null, UnitTest => isScalar, Direction => "left") -- 1 6 9 5 1
+  D = pruneComplex(C, PruningMap => true, Strategy => null, UnitTest => isScalar, Direction => "left") -- 1 6 9 5 1
   checker(D, I)
 
-  D = pruneComplex(C, PruningMaps => true, Strategy => null, UnitTest => isScalar, Direction => "both") -- 1 6 11 6
+  D = pruneComplex(C, PruningMap => true, Strategy => null, UnitTest => isScalar, Direction => "both") -- 1 6 11 6
   checker(D, I)
 
-  D = pruneComplex(C, PruningMaps => true, Strategy => null, UnitTest => isScalar, Direction => "best") -- 1 6 9 5 1
+  D = pruneComplex(C, PruningMap => true, Strategy => null, UnitTest => isScalar, Direction => "best") -- 1 6 9 5 1
   checker(D, I)
 ///
 
@@ -279,7 +291,7 @@ TEST ///
   R = ZZ/32003[x,y,z]
   I = ideal"xyz+z5,2x2+y3+z7,3z5+y5"
   C = freeRes I -- 1 15 38 34 10
-  D = pruneComplex(C, PruningMaps => true) -- 1 3 4 2
+  D = pruneComplex(C, PruningMap => true) -- 1 3 4 2
   f = D.cache.pruningMap;
 
   assert(D.dd^2 == 0)
@@ -296,7 +308,7 @@ TEST ///
 
   RP = localRing(R, ideal gens R)
   C' = C ** RP
-  D' = pruneComplex(C', PruningMaps => true) -- 1 3 3 1
+  D' = pruneComplex(C', PruningMap => true) -- 1 3 3 1
   g = D'.cache.pruningMap;
 
   assert(D'.dd^2 == 0)
@@ -338,7 +350,7 @@ randomCombo = (n, d) -> (
 --  path = prepend("~/src/m2/M2-local-rings/M2/Macaulay2/packages/", path) -- Mike
 restart
 needsPackage "PruneComplex"
-elapsedTime check PruneComplex -- 17 sec
+elapsedTime check PruneComplex -- 18 sec
 
 restart
 uninstallPackage "PruneComplex"

@@ -623,11 +623,6 @@ RingElement == RingElement := (f,g) -> (
      f == g
      )
 
-frac0 = (f,g) -> f/g
-Number / RingElement := frac0 @@ promoteleftexact
-RingElement / Number := frac0 @@ promoterightexact
-InexactNumber / RingElement := frac0 @@ promoteleftinexact
-RingElement / InexactNumber := RingElement / Number := (f,g) -> (1/g) * f
 RingElement / RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -645,6 +640,13 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	  else error "expected pair to have a method for '/'"
 	  );
      f / g)
+frac0 = (f,g) -> f/g
+
+Number / RingElement := frac0 @@ promoteleftexact
+RingElement / Number := (f,g) -> (1/g) * f
+
+InexactNumber / RingElement := frac0 @@ promoteleftinexact
+RingElement / InexactNumber := (f,g) -> (1/g) * f
 
 fraction(RingElement,RingElement) := (r,s) -> (
      R := ring r;

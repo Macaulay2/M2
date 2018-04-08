@@ -1662,72 +1662,33 @@ merge(e:Expr):Expr := (
 	  if length(v) != 3 then return WrongNumArgs(3);
 	  g := v.2;
 	  when v.0 is x:HashTable do
-	  if x.Mutable then WrongArg("an immutable hash table") else
-	  when v.1 is y:HashTable do
-	  if y.Mutable then WrongArg("an immutable hash table") else 
-	  if length(x.table) >= length(y.table) then (
-	       z := copy(x);
-	       z.Mutable = true;
-	       z.beingInitialized = true;
-	       foreach bucket in y.table do (
-		    q := bucket;
-		    while q != q.next do (
-			 val := lookup1(z,q.key,q.hash);
-			 if val != notfoundE then (
-			      t := applyEEE(g,val,q.value);
-			      when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(z,q.key);
-			      	   )
+	    when v.1 is y:HashTable do (
+	      if length(x.table) < length(y.table) then ( z:=y; y=x; x=z; );
+	      z:=copy(x);
+	      z.Mutable = true;
+	      z.beingInitialized = true;
+	      foreach bucket in y.table do (
+		  q := bucket;
+		  while q != q.next do (
+		      val := lookup1(z,q.key,q.hash);
+		      if val != notfoundE then (
+			  t := applyEEE(g,val,q.value);
+			  when t is err:Error do (
+			      if err.message != continueMessage then return t else remove(z,q.key);
+			  )
 			      else (
-				   storeInHashTable(z,q.key,q.hash,t);
-				   )
+				  storeInHashTable(z,q.key,q.hash,t);
 			      )
-			 else (
-			      storeInHashTable(z,q.key,q.hash,q.value);
-			      );
-			 q = q.next));
-	       mut := false;
-	       if x.Class == y.Class && x.parent == y.parent then (
-		    z.Class = x.Class;
-		    z.parent = x.parent;
-		    mut = x.Mutable;
-		    )
-	       else (
-		    z.Class = hashTableClass;
-		    z.parent = nothingClass);
-	       Expr(sethash(z,mut)))
-	  else (
-	       z := copy(y);
-	       z.Mutable = true;
-	       z.beingInitialized = true;
-	       foreach bucket in x.table do (
-		    q := bucket;
-		    while q != q.next do (
-			 val := lookup1(z,q.key,q.hash);
-			 if val != notfoundE then (
-			      t := applyEEE(g,q.value,val);
-			      when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(z,q.key);
-			      	   )
-			      else (
-				   storeInHashTable(z,q.key,q.hash,t);
-				   )
-			      )
-			 else (
-			      storeInHashTable(z,q.key,q.hash,q.value);
-			      );
-			 q = q.next));
-	       mut := false;
-	       if x.Class == y.Class && x.parent == y.parent then (
-		    z.Class = x.Class;
-		    z.parent = x.parent;
-		    mut = x.Mutable;
-		    )
-	       else (
-		    z.Class = hashTableClass;
-		    z.parent = nothingClass;
-		    );
-	       Expr(sethash(z,mut)))
+				  )
+		      else (
+			  storeInHashTable(z,q.key,q.hash,q.value);
+		      );
+		      q = q.next));
+	      mut := x.Mutable && y.Mutable;
+	      z.Class = commonAncestor(x.Class,y.Class);
+	      z.parent = nothingClass;
+	      Expr(sethash(z,mut))
+        )
 	  else WrongArg(2,"a hash table")
 	  else WrongArg(1,"a hash table"))
      else WrongNumArgs(3));

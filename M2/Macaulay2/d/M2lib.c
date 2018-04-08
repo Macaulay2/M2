@@ -552,7 +552,7 @@ static void call_shared_library() {
 }
 
 #ifdef HAVE_PYTHON
-#include <python2.5/Python.h>
+#include <python2.7/Python.h>
 #endif
 
 void* testFunc(void* q )

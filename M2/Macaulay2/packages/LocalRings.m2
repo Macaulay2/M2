@@ -110,7 +110,7 @@ localSyzHook Matrix := Matrix => opts -> m -> (
     g := g' ** RP;
     h := h' ** RP;
     C := {g, h};
-    C = first pruneComplex(C, 1, Direction => "right");
+    C = first pruneComplex(C, 1, Direction => "right", PruningMap => false);
     f := C#0;
     -- Dot product with the denominators of lift
     N := transpose entries m;
@@ -138,14 +138,14 @@ localMingensHook Module := Matrix => opts -> M -> (
         g' := syz f';
         g := g' ** RP;
         C := {f, g};
-        C = first pruneComplex(C, 1, Direction => "right");
+        C = first pruneComplex(C, 1, Direction => "right", PruningMap => false);
         return map(F, , matrix C#0);
         );
     if c == 2 then (            --coker
         f = id_F;
         g = relations M;
         C = {f, g};
-        C = first pruneComplex(C, 1, Direction => "right");
+        C = first pruneComplex(C, 1, Direction => "right", PruningMap => false);
         return map(F, , matrix C#0);
         );
     if c == 3 then (            --subquotient
@@ -156,14 +156,14 @@ localMingensHook Module := Matrix => opts -> M -> (
         h' := modulo (f', g');
         h := h' ** RP;
         C = {f, h};
-        C = first pruneComplex(C, 1, Direction => "right");
+        C = first pruneComplex(C, 1, Direction => "right", PruningMap => false);
         return map(F, , matrix C#0);
         );
     )
 
 -- Computes minimalPresentation of modules over local rings
 -- TODO: if presentationComplex exists, skip stuff
-localMinimalPresentationHook = method(Options => options minimalPresentation ++ {PruningMaps => true})
+localMinimalPresentationHook = method(Options => options minimalPresentation ++ {PruningMap => true})
 localMinimalPresentationHook Module := Module => opts -> M -> (
     RP := ring M;
     c := (if M.?generators then 1 else 0) + 2 * (if M.?relations then 1 else 0);
@@ -176,7 +176,7 @@ localMinimalPresentationHook Module := Module => opts -> M -> (
         g := g' ** RP;
         h := h' ** RP;
         (C, P) := ({g, h}, null);
-        (C, P)  = pruneComplex(C, PruningMaps => true);
+        (C, P)  = pruneComplex(C, PruningMap => true);
         phi := map(M, , matrix P#0);
         N := coker map(source phi, , matrix C#0);
         phi = map(M, N, phi);
@@ -190,7 +190,7 @@ localMinimalPresentationHook Module := Module => opts -> M -> (
         g' = syz f';
         g = g' ** RP;
         C = {f, g};
-        (C, P) = pruneComplex(C, PruningMaps => true);
+        (C, P) = pruneComplex(C, PruningMap => true);
         phi = map(M, , matrix P#0);
         N = coker map(source phi, , matrix C#0);
         phi = map(M, N, phi);
@@ -208,7 +208,7 @@ localMinimalPresentationHook Module := Module => opts -> M -> (
         h = h' ** RP;
         e := e' ** RP;
         C = {h, e};
-        (C, P) = pruneComplex(C, PruningMaps => true);
+        (C, P) = pruneComplex(C, PruningMap => true);
         phi = map(M, , matrix P#0);
         N = coker map(source phi, , matrix C#0);
         phi = map(M, N, phi);
@@ -239,7 +239,7 @@ localLengthHook Module := ZZ => opts -> M -> (
         if opts.Strategy === Hilbert
         then n := hilbertSamuelFunction(M, i) -- really should be M/mM, but by Nakayama it's the same
         else (
-            M = localMinimalPresentationHook(M, PruningMaps => false);
+            M = localMinimalPresentationHook(M, PruningMap => false);
             n = numgens M;
             M = m * M;
             n
@@ -265,7 +265,7 @@ hilbertSamuelFunction (Module, ZZ, ZZ)        := List => (M, n0, n1) -> (
     M = m^n0 * M;
     for i from n0 to n1 list (
         if debugLevel >= 1 then << i << endl;
-        N := localMinimalPresentationHook(M, PruningMaps => false);  -- really should be N/mN, but by Nakayama it's the same
+        N := localMinimalPresentationHook(M, PruningMap => false);  -- really should be N/mN, but by Nakayama it's the same
         if i < n1 then M = m * N;
         numgens N
         )
@@ -279,11 +279,11 @@ hilbertSamuelFunction (Ideal, Module, ZZ, ZZ) := List => (q, M, n0, n1) -> (
     if class RP =!= LocalRing then error "expected objects over a local ring";
     if ring q =!= RP          then error "expected objects over the same ring";
     if q == max RP            then return hilbertSamuelFunction(M, n0, n1);
-    M = localMinimalPresentationHook(M, PruningMaps => false);
+    M = localMinimalPresentationHook(M, PruningMap => false);
     M = q^n0 * M;
     for i from n0 to n1 list (
         if debugLevel >= 1 then << i << endl;
-        N := localMinimalPresentationHook(M, PruningMaps => false);  -- really should be N/mN, but by Nakayama it's the same
+        N := localMinimalPresentationHook(M, PruningMap => false);  -- really should be N/mN, but by Nakayama it's the same
         if i < n1 then M = q * N;
         localLengthHook (N/(q * N))
         )
@@ -315,8 +315,8 @@ addHook(Module, symbol resolution, (opts,M) -> (
             C := resolution(M', opts);
             CP := C ** RP;
             CP = if isHomogeneous M'
-              then pruneComplex(CP, UnitTest => isScalar)
-              else pruneComplex CP;
+              then pruneComplex(CP, UnitTest => isScalar, PruningMap => false)
+              else pruneComplex(CP, PruningMap => false);
             break CP)
         ))
 

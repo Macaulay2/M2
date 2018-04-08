@@ -630,7 +630,7 @@ document {
      	  (symbol ?, Symbol, IndexedVariable),
      	  (symbol ?, IndexedVariable, IndexedVariable),
      	  (symbol ?, List, List),
-     	  (symbol ?, Tally, Tally)
+	  (symbol ?, VirtualTally, VirtualTally)
 	  },
      Headline => "comparison operator",
      Usage => "x ? y", 

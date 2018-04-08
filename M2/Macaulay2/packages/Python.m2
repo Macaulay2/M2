@@ -1,8 +1,12 @@
+-* 
+this does not work uless M2 is compiled --with-python
+*-
+
 newPackage "Python"
 
-exportFrom_Core {
+try exportFrom_Core {
      "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType", "initspam"
-     }
+     } then print "-- success: python is present" else error "specify --with-python in `configure` options and recompile M2"
 
 export { "pythonHelp", "context", "rs", "Preprocessor" }
 
@@ -71,8 +75,10 @@ context String := opts -> init -> (
 	  global symbols => symbols
 	  })
 Context String := (c,s) -> c.stmtexpr s
-end
+end --------------------------------------------------------
 
+
+restart
 debugLevel = 1
 debuggingMode = false
 loadPackage "Python"
