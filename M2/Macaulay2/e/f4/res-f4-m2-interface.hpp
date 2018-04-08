@@ -57,6 +57,11 @@ class ResF4toM2Interface
                                  DMat<RingType>& result,
                                  int slanted_degree,
                                  int lev);
+
+  static std::pair<Matrix*,double> setDegreeZeroMap(SchreyerFrame& C,
+                                                    int slanted_degree,
+                                                    int lev);
+
 };
 
 #endif

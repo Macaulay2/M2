@@ -62,6 +62,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
   timeClearMatrix = 0.0;
   timeResetHashTable = 0.0;
   timeComputeRanks = 0.0;
+  timeComputeSparseRanks = 0.0;
 }
 
 // Destruct the frame
@@ -168,9 +169,15 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
   // not need to compute any matrices for these.
 
   for (int deg = mLoSlantedDegree; deg <= top_degree - 1; deg++)
-    for (int lev = 1; lev <= length_limit + 1; lev++) computeRank(deg, lev);
+    for (int lev = 1; lev <= length_limit + 1; lev++)
+      {
+        computeRank(deg, lev);
+      }
 
-  for (int lev = 1; lev <= length_limit; lev++) computeRank(top_degree, lev);
+  for (int lev = 1; lev <= length_limit; lev++)
+    {
+      computeRank(top_degree, lev);
+    }
 
   if (M2_gbTrace >= 1)
     {
@@ -195,6 +202,8 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       std::cout << "total time for reset hash table: " << timeResetHashTable
                 << std::endl;
       std::cout << "total time for computing ranks: " << timeComputeRanks
+                << std::endl;
+      std::cout << "total time for computing sparse ranks: " << timeComputeSparseRanks
                 << std::endl;
     }
 
@@ -239,6 +248,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
       std::cout << "total time for reset hash table: " << timeResetHashTable
                 << std::endl;
       std::cout << "total time for computing ranks: " << timeComputeRanks
+                << std::endl;
+      std::cout << "total time for computing sparse ranks: " << timeComputeSparseRanks
                 << std::endl;
     }
 
