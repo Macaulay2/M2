@@ -46,66 +46,6 @@ class BettiDisplay
   int* mValues;
 };
 
-class MonomialHashAndEq
-{
-public:
-  MonomialHashAndEq(int size) : mSize(size) {}
-
-  // hash function
-  // TODO: do something good here.
-  std::size_t operator()(const int* m) const
-  {
-    return 0;
-  }
-
-  bool operator() (const int* a, const int * b) const
-  {
-    for (int i=0; i<mSize; i++)
-      if (*a++ != *b++) return false;
-    return true;
-  }
-
-private:
-  int mSize;
-};
-
-class MonomialSet
-{
-public:
-  std::pair<const int *, bool> findOrInsert(const int* monom)
-  {
-    auto result = mHash.insert(monom);
-    return std::make_pair(* result.first, result.second);
-  }
-  std::pair<const int*, bool> find(const int* monom) const
-  {
-    auto result = mHash.find(monom); // result is an iteratore
-    bool found = result != mHash.end();
-    if (found)
-      return std::make_pair(* result, true);
-    return std::make_pair(nullptr, false);
-  }
-private:
-  std::unordered_set<const int*, MonomialHashAndEq, MonomialHashAndEq> mHash;
-};
-
-// MonomialMemorySpace:
-//
-class MonomialMemorySpace
-{
-public:
-  MonomialMemorySpace(int size) : mCount(0), mSize(size) {}
-  std::pair<int*,int*> alloc() { mCount++; return mArena.allocArrayNoCon<int>(mSize); }
-  std::pair<int*,int*> alloc(int size) { mCount++; return mArena.allocArrayNoCon<int>(size); }
-  void popLastAlloc(int* m) { mCount--; mArena.freeTop(m); }
-  size_t size() { return mCount; }
-private:
-  size_t mCount;
-  int mSize;
-  memt::Arena mArena;
-};
-//  
-
 class BettiHashAndEq
 {
 public:

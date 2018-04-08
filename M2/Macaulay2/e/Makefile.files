@@ -11,6 +11,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	monomial-sets \
 	mutablecomplex \
 	localring \
 	f4/res-monomial-sorter \

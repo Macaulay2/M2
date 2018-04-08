@@ -51,7 +51,6 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
       mComputer(*this)
-// mAllMonomials(R.monoid())
 {
   mFrame.mLevels.resize(max_level + 1);
   mMaxVPSize = 2 * monoid().n_vars() + 1;

@@ -16,12 +16,49 @@
 #include <algorithm>
 #include "../timing.hpp"
 
+
+#include <thread>
+#include "../../system/supervisor.hpp"
+#include "../../system/supervisorinterface.h"
+static long val[2];
+static void* testFcn1(void* vint)
+{
+  long v = reinterpret_cast<long>(vint);
+  std::cout << "starting fcn1 with v = " << v << std::endl;
+  val[0] = 10;
+  return nullptr;
+}
+static void* testFcn2(void* vint)
+{
+  long v = reinterpret_cast<long>(vint);
+  std::cout << "starting fcn2 with v = " << v << std::endl;
+  val[1] = 20;
+  return nullptr;
+}
+void testTasks()
+{
+  val[0] = 666;
+  val[1] = 666;
+  ThreadTask* t1 = createThreadTask("task 1", testFcn1, reinterpret_cast<void*>(1L), 0, 0, 0);
+  ThreadTask* t2 = createThreadTask("task 1", testFcn2, reinterpret_cast<void*>(2L), 0, 0, 0);
+  pushTask(t1);
+  pushTask(t2);
+  waitOnTask(t2);
+  std::cout << val[0] << " " << val[1] << std::endl;
+}
+
 F4Res::F4Res(SchreyerFrame& res)
     : mFrame(res),
       mRing(res.ring()),
       mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
       mHashTable(mSchreyerRes.get(), 10)
 {
+#if 0
+  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
+  std::cout << "testing thread tasks" << std::endl;
+  testTasks();
+  std::cout << "  done testing thread tasks" << std::endl;
+#endif
 }
 
 F4Res::~F4Res()
@@ -34,10 +71,6 @@ void F4Res::resetMatrix(int lev, int degree)
   mThisLevel = lev;
   mThisDegree = degree;
   mNextReducerToProcess = 0;
-
-  // mNextMonom[-1] is the reducer corresponding to this monomial
-  mNextMonom = mMonomSpace.reserve(1 + monoid().max_monomial_size());
-  mNextMonom++;
 }
 
 void F4Res::clearMatrix()
@@ -45,7 +78,6 @@ void F4Res::clearMatrix()
   mThisLevel = -1;
   mThisDegree = -1;
   mNextReducerToProcess = 0;
-  mNextMonom = nullptr;
 
   auto timeA = timer();
   mHashTable.reset();
@@ -67,7 +99,7 @@ void F4Res::clearMatrix()
   mSPairComponents.clear();
   mColumns.clear();
 
-  mMonomSpace.reset();
+  mMonomSpace2.freeAllAllocs();
 }
 
 /// findDivisor
@@ -128,17 +160,21 @@ ComponentIndex F4Res::processMonomialProduct(res_const_packed_monomial m,
   auto& p = mFrame.level(mThisLevel - 2)[x];
   if (p.mBegin == p.mEnd) return -1;
 
-  monoid().unchecked_mult(m, n, mNextMonom);
-  // the component is wrong, after this operation, as it adds components
-  // So fix that:
-  monoid().set_component(x, mNextMonom);
+  int* thisMonom = mMonomSpace2.allocate(1 + monoid().max_monomial_size());
+  thisMonom++; // so thisMonom[-1] exists, but is not part of the monomial, as far as
+  monoid().unchecked_mult(m, n, thisMonom);
+  monoid().set_component(x, thisMonom);
 
   if (ring().isSkewCommutative())
     {
       result_sign_if_skew = monoid().skew_mult_sign(ring().skewInfo(), m, n);
-      if (result_sign_if_skew == 0) return -1;
+      if (result_sign_if_skew == 0)
+        {
+          mMonomSpace2.popLastAlloc(thisMonom-1); // we did not need this monomial!
+          return -1;
+        }
     }
-  return processCurrentMonomial();
+  return processCurrentMonomial(thisMonom);
 }
 
 // new_m is a monomial that we have just created.  There are several
@@ -153,40 +189,37 @@ ComponentIndex F4Res::processMonomialProduct(res_const_packed_monomial m,
 //       If there is no divisor, return -1.
 //       If there is: create a row, and push onto the mReducers list.
 //    (2A)
-ComponentIndex F4Res::processCurrentMonomial()
+ComponentIndex F4Res::processCurrentMonomial(res_packed_monomial thisMonom)
 {
   res_packed_monomial new_m;  // a pointer to a monomial we are visiting
-  if (mHashTable.find_or_insert(mNextMonom, new_m))
-    return static_cast<ComponentIndex>(
-        new_m[-1]);  // monom exists, don't save monomial space
+  if (mHashTable.find_or_insert(thisMonom, new_m))
+    {
+      // we did not need the monomial. So pop it.
+      mMonomSpace2.popLastAlloc(thisMonom-1);
+      return static_cast<ComponentIndex>(
+                                         new_m[-1]);  // monom exists, don't save monomial space
+    }
 
-  // intern the monomial just inserted into the hash table
-  mMonomSpace.intern(1 + monoid().monomial_size(mNextMonom));
+  // At this point thisMonom has been inserted.  We keep it.
 
-  // leave room for the next monomial.  This might be set below.
-  mNextMonom = mMonomSpace.reserve(1 + monoid().max_monomial_size());
-  mNextMonom++;
-
-  bool has_divisor = findDivisor(new_m, mNextMonom);
+  thisMonom = mMonomSpace2.allocate(1 + monoid().max_monomial_size());
+  thisMonom++; // so thisMonom[-1] exists, but is not part of the monomial, as far as
+  
+  bool has_divisor = findDivisor(new_m, thisMonom);
   if (!has_divisor)
     {
+      mMonomSpace2.popLastAlloc(thisMonom-1);
       new_m[-1] = -1;  // no divisor exists
       return -1;
     }
-
-  mMonomSpace.intern(1 + monoid().monomial_size(mNextMonom));
 
   ComponentIndex thiscol = static_cast<ComponentIndex>(mColumns.size());
   new_m[-1] = thiscol;  // this is a HACK: where we keep the divisor
   mColumns.push_back(new_m);
 
   Row row;
-  row.mLeadTerm = mNextMonom;
+  row.mLeadTerm = thisMonom;
   mReducers.push_back(row);
-
-  // Now we increment mNextMonom, for the next time
-  mNextMonom = mMonomSpace.reserve(1 + monoid().max_monomial_size());
-  mNextMonom++;
 
   return thiscol;
 }
@@ -673,6 +706,7 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 }
 void F4Res::debugOutputReducerMatrix() { debugOutputMatrix(mReducers); }
 void F4Res::debugOutputSPairMatrix() { debugOutputMatrix(mSPairs); }
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
