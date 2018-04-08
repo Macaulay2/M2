@@ -2,7 +2,9 @@
 use hashtables;
 
 newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
-export Tally := newtypeof(hashTableClass);
+export VirtualTally := newtypeof(hashTableClass);
+setupconst("VirtualTally",Expr(VirtualTally));
+export Tally := newtypeof(VirtualTally);
 setupconst("Tally",Expr(Tally));
 export Set := newtypeof(Tally);
 one := Expr(ZZcell(toInteger(1)));
