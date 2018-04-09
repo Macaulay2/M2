@@ -463,7 +463,7 @@ document {
 	  },
      PARA {
 	  "Basic Macaulay2 files are regarded as being associated
-	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
+	  with a special package called ", TT{"Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2Doc", "."
      	  },
      EXAMPLE {
