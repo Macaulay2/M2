@@ -701,184 +701,6 @@ void setDMatFromSparseMatrixGenerator(Gen& G, DMat<RingType>& M)
     }
 }
 
-#if 0
-template<typename Fcn>
-double degreeZeroMapGenerator(SchreyerFrame& C, int slanted_degree, int lev, Fcn& F)
-{
-  if (not(lev > 0 and lev <= C.maxLevel()))
-    {
-      F.setSize(0,0);
-      return 0.0;
-    }
-  assert(lev > 0 and lev <= C.maxLevel());
-  int degree = slanted_degree + lev;
-  auto& thislevel = C.level(lev);
-  int ncols = 0;
-  for (auto p = thislevel.begin(); p != thislevel.end(); ++p)
-    {
-      if (p->mDegree == degree) ncols++;
-    }
-
-  auto& prevlevel = C.level(lev - 1);
-  int* newcomps = new int[prevlevel.size()];
-  int nrows = 0;
-  for (int i = 0; i < prevlevel.size(); i++)
-    if (prevlevel[i].mDegree == degree)
-      newcomps[i] = nrows++;
-    else
-      newcomps[i] = -1;
-
-  F.setSize(nrows,ncols);
-  int col = 0;
-  long nnonzeros = 0;
-  for (auto p = thislevel.begin(); p != thislevel.end(); ++p)
-    {
-      if (p->mDegree != degree) continue;
-      auto& f = p->mSyzygy;
-      auto end = poly_iter(C.ring(), f, 1);
-      auto i = poly_iter(C.ring(), f);
-
-      std::vector<int> components;
-      std::vector<long> coeffs;
-      for (; i != end; ++i)
-        {
-          auto comp = C.monoid().get_component(i.monomial());
-          if (newcomps[comp] >= 0)
-            {
-              components.push_back(newcomps[comp]);
-              long val =
-                  C.gausser().to_modp_long(f.coeffs, i.coefficient_index());
-              coeffs.push_back(val);
-              nnonzeros++;
-            }
-        }
-      F.setColumn(col, components, coeffs);
-      ++col;
-    }
-  double frac_nonzero = (nrows * ncols);
-  frac_nonzero = static_cast<double>(nnonzeros) / frac_nonzero;
-  return frac_nonzero;
-};
-
-template<typename RingType>
-class DMatFromSparseData
-{
-public:
-  DMatFromSparseData(DMat<RingType>& M) : mMat(M) {}
-  
-  void setSize(int nrows, int ncols)
-  {
-    mMat.resize(nrows,ncols);
-  }
-
-  void setColumn(int c, const std::vector<int>& components, const std::vector<long>& coeffs)
-  {
-    for (int i=0; i<components.size(); i++)
-      {
-        mMat.ring().set_from_long(mMat.entry(components[i], c), coeffs[i]);
-      }
-  }
-private:
-  DMat<RingType>& mMat;
-};
-
-class MatrixGenerator : public our_new_delete
-{
-public:
-  MatrixGenerator(const Ring* R) : mRing(*R) {}
-  
-  void setSize(int nrows, int ncols)
-  {
-    MatrixConstructor tmp(mRing.make_FreeModule(nrows),
-                      mRing.make_FreeModule(ncols),
-                      nullptr);
-
-    std::swap(tmp, mMatrixConstructor);
-  }
-
-  void setColumn(int c, const std::vector<int>& components, const std::vector<long>& coeffs)
-  {
-    for (int i=components.size()-1; i>=0; --i)
-      {
-        // std::cout << "setting(" << components[i] << "," << c << ")" << std::endl;
-        mMatrixConstructor.set_entry(components[i], c, mRing.from_long(coeffs[i]));
-      }
-  }
-
-  Matrix* value()
-  {
-    Matrix* result = mMatrixConstructor.to_matrix();
-    return result;
-  }
-private:
-  const Ring& mRing;
-  MatrixConstructor mMatrixConstructor;
-};
-
-// generator: generates sparse columns.
-//   new one each time it is called.
-//   maybe it has an interface:
-//     1. ring, numrows, numcols, numNonzeros
-//     2. next (next column)
-// makeGenerator >> collector >> rank
-
-template <typename RingType>
-double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
-                                            DMat<RingType>& result,
-                                            int slanted_degree,
-                                            int lev)
-{
-  DMatFromSparseData<RingType> generator { result };
-  return degreeZeroMapGenerator(C, slanted_degree, lev, generator);
-}
-
-std::pair<Matrix*,double> ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
-                                                               int slanted_degree,
-                                                               int lev)
-{
-  MatrixGenerator generator { C.ring().resGausser().get_ring() };
-  double frac_nonzero = degreeZeroMapGenerator(C, slanted_degree, lev, generator);
-  return std::make_pair(generator.value(), frac_nonzero);
-}
-
-//#include "../debug.hpp"
-
-int SchreyerFrame::rankUsingSparseMatrix(int slanted_degree, int lev)
-{
-  auto matAndFraction = ResF4toM2Interface::setDegreeZeroMap(*this, slanted_degree, lev);
-  Matrix* M = matAndFraction.first;
-  double frac = matAndFraction.second;
-  //  std::cout << "--- sparse matrix ----" << std::endl;
-  //  dmatrix(M);
-  //  std::cout << "----------------------" << std::endl;
-  auto timeA = timer();
-  GaussElimComputation comp { M, 0, 0 };
-  comp.set_stop_conditions(false, nullptr, -1, -1, -1, -1, -1, false, nullptr);
-  comp.start_computation();
-  //  const Matrix* gbM = comp.get_gb();
-  //  std::cout << "--- gb of matrix ----" << std::endl;
-  //  dmatrix(gbM);
-  //  std::cout << "----------------------" << std::endl;
-  
-  int rk = comp.get_initial(-1)->n_cols();
-  auto timeB = timer();
-  double nsecs = seconds(timeB - timeA);
-
-  timeComputeSparseRanks += nsecs;
-
-  if (M2_gbTrace >= 2)
-    {
-      if (M->n_rows() > 0 and M->n_cols() > 0)
-        std::cout << "sparse rank (" << slanted_degree << "," << lev << ") = " << rk
-                  << " time=" << nsecs << " sec, size= " << M->n_rows() << " x "
-                  << M->n_cols() << " nonzero " << (100 * frac) << " %"
-                  << std::endl;
-    }
-
-  return rk;
-}
-#endif
-
 #include "../debug.hpp"
 
 template<typename Gen>
@@ -946,11 +768,6 @@ int SchreyerFrame::rankUsingDenseMatrix(Gen& D)
 
 int SchreyerFrame::rank(int slanted_degree, int lev)
 {
-  if (M2_gbTrace >= 2)
-    {
-      std::cout << "starting computation of rank(" << slanted_degree << "," << lev << ")" << std::endl;
-    }
-
   DegreeZeroMapGenerator D(*this, slanted_degree, lev);
   long nnonzero = D.numNonzero();
   long nelements = static_cast<long>(D.numRows()) * static_cast<long>(D.numColumns());
@@ -960,100 +777,23 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
 
   if (M2_gbTrace >= 2 and nelements > 0)
     {
-      std::cout << "rank(" << slanted_degree << "," << lev << ") size = " << D.numRows() << " x " << D.numColumns() << " frac non-zero= " << frac_nonzero << std::endl << std::flush;
+      std::cout << "rank(" << slanted_degree << "," << lev << ") size = "
+                << D.numRows() << " x " << D.numColumns()
+                << " frac non-zero= " << frac_nonzero << std::endl << std::flush;
     }
   int rkSparse = -1;
   int rkDense = -1;
-  if (frac_nonzero <= .1)
+  if (frac_nonzero <= .02)
     rkSparse = rankUsingSparseMatrix(D);
   if (frac_nonzero >= .01)
     rkDense = rankUsingDenseMatrix(D);
   if (rkSparse >= 0 and rkDense >= 0 and rkSparse != rkDense)
     {
-      std::cout << "ERROR!! ranks(" << slanted_degree << "," << lev << ") = " << rkSparse << " and " << rkDense << std::endl;
+      std::cout << "ERROR!! ranks(" << slanted_degree << "," << lev << ") = " << rkSparse
+                << " and " << rkDense << std::endl;
     }
 
   return (rkSparse >= 0 ? rkSparse : rkDense);
-  
-#if 0  
-  if (nelements != 0.0)
-    {
-      std::cout << "new gen: " << D.numRows() << " x " << D.numColumns() << " fracn on-zero = " << frac_nonzero << std::endl;
-      const Matrix* sparseM = matrixFromSparseMatrixGenerator(D);
-      std::cout << "---- sparse matrix ----" << std::endl;
-      dmatrix(sparseM);
-      std::cout << "----------------------" << std::endl;
-    }
-#if 1
-  unsigned int charac =
-      static_cast<unsigned int>(gausser().get_ring()->characteristic());
-  M2::ARingZZpFFPACK R(charac);
-  DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
-  setDMatFromSparseMatrixGenerator(D, M);
-
-  //  double frac =
-  //      ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
-  auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
-  std::cout << "---- dense matrix ----" << std::endl;
-  displayMat(M);
-  std::cout << "----------------------" << std::endl;
-  auto timeA = timer();
-  int rk = static_cast<int>(a.rank());
-  auto timeB = timer();
-  double nsecs = seconds(timeB - timeA);
-#else
-  M2::ARingZZpFlint R(gausser().get_ring()->characteristic());
-  DMat<M2::ARingZZpFlint> M(R, 0, 0);
-  double frac =
-      ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
-  auto a = DMatLinAlg<M2::ARingZZpFlint>(M);
-  auto timeA = timer();
-  int rk = static_cast<int>(a.rank());
-  auto timeB = timer();
-  double nsecs = seconds(timeB - timeA);
-#endif
-  timeComputeRanks += nsecs;
-
-  if (M2_gbTrace >= 2)
-    {
-      if (M.numRows() > 0 and M.numColumns() > 0)
-        std::cout << "       rank (" << slanted_degree << "," << lev << ") = " << rk
-                  << " time=" << nsecs << " sec, size= " << M.numRows() << " x "
-                  << M.numColumns() << " nonzero " << (100 * frac_nonzero) << " %"
-                  << std::endl;
-    }
-
-#if 0
-  if (M1.numRows() != M2.numRows() ||
-      (M1.numColumns() != M2.numColumns()) ||
-      rk1 != rk2)
-    {
-      std::cout << "ERROR!!! degree zero computations do not match" << std::endl;
-    }
-
-  if (frac1 != frac2)
-    {
-      std::cout << "frac1=" << frac1 << " frac2=" << frac2 << std::endl;
-    }
-      
-  if (M2_gbTrace >= 2)
-    {
-      std::cout << "rank ("
-                << slanted_degree << ","  << lev << ") = "
-                << rk1
-                << " time(" << nsecs1 << ", " << nsecs2 << ") size= "
-                << M1.numRows() << " x " << M1.numColumns() << " nonzero% " << frac1 << std::endl;
-    }
-#endif
-  int rk2 = rankUsingSparseMatrix(slanted_degree, lev);
-  if (rk != rk2)
-    {
-      std::cout << "ERROR!! ranks(" << slanted_degree << "," << lev << ") = " << rk << " and " << rk2 << std::endl;
-    }
-
-  return rk;
-#endif  
-  
 }
 
 M2_arrayint rawMinimalBetti(Computation* C,

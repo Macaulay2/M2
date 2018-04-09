@@ -615,10 +615,52 @@ TEST ///
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
   elapsedTime C = res(I, FastNonminimal => true)
+  minimalBetti I
   betti(C, Minimize=>true)
   betti C
 ///
 
+TEST ///
+  -- Construction of AGR examples.
+  -- See also AGRExamples.m2 in git repo with Frank.
+  randomForm = method()
+  randomForm(ZZ, Ring) := (d,R) -> (
+    B := basis(d,R);
+    n := numColumns B;
+    kk := coefficientRing R;
+    rands := if kk === QQ then (
+      for i from 0 to n-1 list (round(100 * (-1 + random(2.0))))/100
+      )
+    else for i from 0 to n-1 list random kk;
+    (B * transpose matrix{rands})_(0,0)
+    )
+  AGR = method()
+  AGR(ZZ,ZZ,ZZ,ZZ) := (d,n,s,p) -> (
+    kk := if p == 0 then QQ else ZZ/p;
+    R := kk[vars(0..n)];
+    F := sum(gens R, x -> x^d) + sum(s-(n+1), i -> (randomForm(1,R))^d);
+    --F := sum for i from 1 to s list (randomForm(1, R1))^d;
+    ideal fromDual matrix{{F}}
+    )
+  AGR(ZZ,ZZ,ZZ) := (d,n,p) -> (
+    kk := if p == 0 then QQ else ZZ/p;
+    R := kk[vars(0..n)];
+    F := randomForm(d, R);
+    ideal fromDual matrix{{F}}
+    )
+
+  setRandomSeed 0
+  I = AGR(4,9,8,101);
+  I = AGR(4,9,12,101);
+  I = AGR(4,9,7,101);
+  I = AGR(3,12,15,101);
+  I = AGR(3,11,15,101);
+  R = ring I  
+  elapsedTime C = res(I, FastNonminimal=>true)
+  gbTrace=2
+  elapsedTime minimalBetti I
+
+///
 -* TEST *- ///
   -- takes too much memory
   -- might take too long ...
@@ -630,6 +672,33 @@ TEST ///
   gbTrace=2
   elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP, 11.3 seconds in 2018
   elapsedTime minimalBetti I  -- 75 sec in 2018
+
+  debug needsPackage "NonminimalComplexes"  
+  elapsedTime Cd = constantStrand(C, kk, 8) -- 1.7 sec
+  Mk = Cd.dd_7;
+  M = Mk ** R;
+  elapsedTime M' = transpose M;
+  elapsedTime Mk' = transpose Mk;
+  -- over R:
+  elapsedTime gens gb M; -- >= 140 sec
+  elapsedTime gens gb M'; -- >= 108 sec
+  -- over kk:
+  elapsedTime gens gb Mk; -- >= 104  sec
+  elapsedTime gens gb Mk'; --.01  sec
+
+  debug Core
+  kkp = ZZp(101, Strategy=>"Ffpack") -- use this ring for M1
+  debug Core
+  comp = fastNonminimalComputation C
+  elapsedTime M1 = rawResolutionGetMutableMatrix2B(comp, raw kk, 8, 7);
+  M1 = map(kk,M1);
+  elapsedTime M2 = sub(M1,kkp); -- uugh, very slow. crashed because of memory usage.
+  
+  elapsedTime rank M1
+  (numRows M1, numColumns M1)
+  class M1
+  ring M1
+  
 ///
 
 -* TEST *- ///  
@@ -692,7 +761,114 @@ TEST ///
   assert(C0 == res I)
 ///
 
-TEST ///
+///
+  restart
+  debug needsPackage "NonminimalComplexes"
+  kk = ZZ/101
+  R = kk[vars(0..14)]
+  M = genericMatrix(R,a,3,5)
+  I = minors(2,M)
+  minimalBetti I
+  gbTrace=2
+  --minimalBetti I^2
+  J = I^2;
+  elapsedTime C = res(J, FastNonminimal=>true)
+  elapsedTime minimalBetti J
+  gbTrace=0
+  elapsedTime M = submatrixByDegrees(C.dd_3, {6}, {6});
+  elapsedTime Mk = sub(M,kk);
+  elapsedTime C6 = constantStrand(C, kk, 6)
+  assert(Mk == C6.dd_3)
+  -- over R:
+  elapsedTime gens gb M;
+  elapsedTime M' = transpose M;
+  elapsedTime gens gb M';
+  elapsedTime gens gb (transpose M');
+  time rank M -- very slow...
+  elapsedTime rank Mk -- slow
+  elapsedTime gens gb Mk;
+  elapsedTime Mk' = transpose Mk;
+  elapsedTime rank Mk' -- slow
+  elapsedTime gens gb Mk';
+
+  elapsedTime M = submatrixByDegrees(C.dd_4, {7}, {7});
+  elapsedTime C7 = constantStrand(C, kk, 7)
+  Mk = C7.dd_4;
+  M = Mk ** R;
+  elapsedTime M' = transpose M;
+  elapsedTime Mk' = transpose Mk;
+  -- over R:
+  time rank M -- very slow... (over 200 times slower than 'gens gb M'
+  time rank M' -- very fast.
+  elapsedTime gens gb M; -- faster than "gens gb M'"
+  elapsedTime gens gb M';
+  -- over kk:
+  elapsedTime gens gb Mk;
+  elapsedTime gens gb Mk';
+  time rank Mk -- very slow... 
+  time rank Mk'
+
+  elapsedTime C7 = constantStrand(C, kk, 8) -- 4.02 sec IMPROVED THIS!
+  Mk = C7.dd_5;
+  M = Mk ** R;
+  elapsedTime M' = transpose M;
+  elapsedTime Mk' = transpose Mk;
+  -- over R:
+  time rank M -- very slow... 52 sec
+  time rank M' -- very fast... .295 sec
+  elapsedTime gens gb M; -- faster than "gens gb M'"
+  elapsedTime gens gb M';
+  -- over kk:
+  elapsedTime gens gb Mk;
+  elapsedTime gens gb Mk';
+  time rank Mk -- very slow... 41 sec
+  time rank Mk' -- also slow, since it is being done by dense methods: 53 sec
+
+  elapsedTime C9 = constantStrand(C, kk, 9) -- 4.86 sec
+  Mk = C9.dd_6;
+  M = Mk ** R;
+  elapsedTime M' = transpose M;
+  elapsedTime Mk' = transpose Mk;
+  -- over R:
+  time rank M -- very slow...
+  time rank M' -- very fast... .36 sec
+  elapsedTime gens gb M; -- .32 sec
+  elapsedTime gens gb M'; -- .41 sec
+  -- over kk:
+  elapsedTime gens gb Mk; -- .01 sec
+  elapsedTime gens gb Mk'; -- .01 sec
+
+
+  elapsedTime C10 = constantStrand(C, kk, 10) -- 7.8 sec
+  Mk = C10.dd_7;
+  M = Mk ** R;
+  elapsedTime M' = transpose M;
+  elapsedTime Mk' = transpose Mk;
+  -- over R:
+  elapsedTime gens gb M; -- .23 sec
+  elapsedTime gens gb M'; -- .29 sec
+  -- over kk:
+  elapsedTime gens gb Mk; -- .01  sec
+  elapsedTime gens gb Mk'; --.01  sec
+///
+
+///
+  kk = ZZ/101
+  R = kk[vars(0..15)]
+  M = genericMatrix(R,a,3,4)
+  I = permanents(2,M)
+  elapsedTime C = res(I, FastNonminimal=>true)
+  gbTrace=2
+  minimalBetti I
+
+  J = I^2;
+  gens gb J;  
+  elapsedTime C = res(J, FastNonminimal=>true)
+  gbTrace=2
+  minimalBetti J
+///
+
+///
   -- getting ready to test minimization in multi-gradings.
   -- 
   needsPackage "RandomIdeals"
