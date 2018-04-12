@@ -1662,9 +1662,7 @@ merge(e:Expr):Expr := (
 	  if length(v) != 3 then return WrongNumArgs(3);
 	  g := v.2;
 	  when v.0 is x:HashTable do
-	  if x.Mutable then WrongArg("an immutable hash table") else
 	  when v.1 is y:HashTable do
-	  if y.Mutable then WrongArg("an immutable hash table") else 
 	  if length(x.table) >= length(y.table) then (
 	       z := copy(x);
 	       z.Mutable = true;
@@ -1686,14 +1684,13 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
-	       mut := false;
-	       if x.Class == y.Class && x.parent == y.parent then (
-		    z.Class = x.Class;
+	       mut := x.Mutable && y.Mutable;
+	       if x.parent == y.parent then (
+		    z.Class = commonAncestor(x.Class,y.Class);
 		    z.parent = x.parent;
-		    mut = x.Mutable;
 		    )
 	       else (
-		    z.Class = hashTableClass;
+		    if mut then z.Class = mutableHashTableClass else z.Class = hashTableClass;
 		    z.parent = nothingClass);
 	       Expr(sethash(z,mut)))
 	  else (
@@ -1717,16 +1714,14 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
-	       mut := false;
-	       if x.Class == y.Class && x.parent == y.parent then (
-		    z.Class = x.Class;
+	       mut := x.Mutable && y.Mutable;
+	       if x.parent == y.parent then (
+		    z.Class = commonAncestor(x.Class,y.Class);
 		    z.parent = x.parent;
-		    mut = x.Mutable;
 		    )
 	       else (
-		    z.Class = hashTableClass;
-		    z.parent = nothingClass;
-		    );
+		    if mut then z.Class = mutableHashTableClass else z.Class = hashTableClass;
+		    z.parent = nothingClass);
 	       Expr(sethash(z,mut)))
 	  else WrongArg(2,"a hash table")
 	  else WrongArg(1,"a hash table"))

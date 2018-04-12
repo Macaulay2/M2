@@ -18,7 +18,7 @@ undocumented {
 (toString,IndeterminateNumber),
 (toString,Bag),
 (toString,Manipulator),
-(toString,Tally),
+(toString,VirtualTally),
 (toString,Set),
 (toString,ScriptedFunctor),
 (toString,DocumentTag),
