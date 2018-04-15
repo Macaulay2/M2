@@ -139,7 +139,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
 new DocumentTag from List := (DocumentTag,x) -> (
-     (nkey,fkey,pkg,title) := toSequence x;
+     -- (nkey,fkey,pkg,title) := toSequence x;
      -- if class pkg =!= Package then error("document tag specifies unloaded package: ",toString pkg);
      x)
 -- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
@@ -548,10 +548,10 @@ extractBody := x -> if x.?Description then x.Description
 getDoc := key -> fetchRawDocumentation makeDocumentTag key
 getDocNoLoad := key -> fetchRawDocumentationNoLoad makeDocumentTag key
 getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
-     s := getDocNoLoad key;
+     s := getDoc key;
      if s =!= null and s#?tag then s#tag)
 getOptionNoLoad := (key,tag) -> (				    -- get rid of this, keep the doc from before
-     s := getDoc key;
+     s := getDocNoLoad key;
      if s =!= null and s#?tag then s#tag)
 getBody := key -> getOption(key,Description)		    -- get rid of this
 -----------------------------------------------------------------------------

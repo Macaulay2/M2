@@ -261,6 +261,8 @@ load "EngineTests/GB.Test.Mathic.m2"
 load "EngineTests/Res.f4.m2"
 --check  EngineTests
 
+beginDocumentation()
+
 doc ///
 Key
   EngineTests

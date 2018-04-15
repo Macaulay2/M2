@@ -623,10 +623,11 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
-     if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
-     -- we load the package even if it's already been loaded, because even if it was loaded with
-     -- its documentation the first time, it might have been loaded at a time when the core documentation
-     -- in the "Macaulay2Doc" package was not yet loaded
+     -- if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
+     -- -- we load the package even if it's already been loaded, because even if it was loaded with
+     -- -- its documentation the first time, it might have been loaded at a time when the core documentation
+     -- -- in the "Macaulay2Doc" package was not yet loaded
+     -- ... but we want to build the package Style without loading any other packages
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
      installPackage(pkg, opts);
      )

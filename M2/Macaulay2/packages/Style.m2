@@ -5,6 +5,8 @@ newPackage( "Style",
      Version => "1.0"
      )
 
+beginDocumentation()
+
 document { Key => "Style",
      Headline => "style sheets and images for the documentation",
      "This package is simply a repository for the style sheets and images used by the

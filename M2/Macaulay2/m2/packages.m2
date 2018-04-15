@@ -280,12 +280,12 @@ newPackage(String) := opts -> (title) -> (
      pkgsym <- newpkg;
      loadedPackages = {Core};
      dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
-     -- if Core#?"base packages" then (
-     -- 	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
-     -- 	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
-     -- 	       )
-     -- 	  else scan(reverse Core#"base packages", needsPackage)
-     -- 	  );
+     if Core#?"base packages" then (
+     	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
+     	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
+     	       )
+     	  else scan(reverse Core#"base packages", needsPackage)
+     	  );
      dictionaryPath = (
 	  if member(newpkg.Dictionary,dictionaryPath)
      	  then join({newpkg#"private dictionary"}, dictionaryPath)
