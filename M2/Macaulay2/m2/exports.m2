@@ -583,6 +583,7 @@ export {
 	"dismiss",
 	"divideByVariable",
 	"do",
+	"docSearch",
 	"document",
 	"drop",
 	"dual",

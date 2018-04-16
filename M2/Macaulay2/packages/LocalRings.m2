@@ -50,10 +50,10 @@ export {
     "maxIdeal"
     }
 
-<< "--------------------------------------------------------------------------------------" << endl;
-<< "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
-<< "-- See the documentation and comments in the package to learn more.                 --" << endl;
-<< "--------------------------------------------------------------------------------------" << endl;
+-- << "--------------------------------------------------------------------------------------" << endl;
+-- << "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
+-- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
+-- << "--------------------------------------------------------------------------------------" << endl;
 
 debug Core;
 
