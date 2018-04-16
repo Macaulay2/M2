@@ -252,7 +252,7 @@ local currentHelpTag
 fixup := method(Dispatch => Thing)
 
 valueWithText = s -> (
-     Text := value PackageDictionary#"Text";
+     Text := getpkg "Text";
      if member(Text.Dictionary, dictionaryPath) then value s
      else (
      	  sav := dictionaryPath;
