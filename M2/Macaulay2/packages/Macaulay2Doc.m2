@@ -25,5 +25,5 @@ then error splice (
      toSequence between_", " values Macaulay2Doc#"private dictionary")
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false PACKAGES=Macaulay2Doc"
 -- End:

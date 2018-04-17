@@ -42,11 +42,22 @@ loadPackage = method(
 packageLoadingOptions := new MutableHashTable
 checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
+closePackage = pkg -> (
+     if pkg#?"raw documentation database"
+     then (db -> if isOpen db then close db) pkg#"raw documentation database";
+     )
+
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
      if opts.Reload === true then (
+	  -- << "-- reloading package " << pkgtitle << endl;
+	  -- really close the old one
 	  dismiss pkgtitle;
-	  if PackageDictionary#?pkgtitle then PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
+	  if PackageDictionary#?pkgtitle then (
+	       pkg := PackageDictionary#pkgtitle;
+	       closePackage (value pkg); -- eventually we won't be able to keep all of these open, anyway, since 256 can be our limit on open file descriptors
+	       PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle; -- clear out the value of the symbol
+	       );
 	  );
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
@@ -133,11 +144,6 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
      VALUES
 }
 ///
-
-closePackage = pkg -> (
-     if pkg#?"raw documentation database"
-     then (db -> if isOpen db then close db) pkg#"raw documentation database";
-     )
 
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
 -- they get mixed.  Yes, that's in addition to installing them in directories that

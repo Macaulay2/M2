@@ -1371,20 +1371,15 @@ theAugmentedMenu := S -> (
      )
 
 help Symbol := S -> (
-     checkLoadDocumentation();
-     -- s := value S;
      if package S === Core then checkLoadDocumentation();
-     currentHelpTag = makeDocumentTag(S,Package=>null);
+     currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
-     -- b := smenu documentableMethods s;
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
--- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
-	  -- if instance(value S, Function) then theAugmentedMenu S else theMenu S
 	  };
      currentHelpTag = null;
      ret)

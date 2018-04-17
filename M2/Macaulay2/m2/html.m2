@@ -474,13 +474,13 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      -- we specify --no-readline because the readline library catches SIGINT:
-     args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
+     args := "--notify --silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
      cmdname := commandLine#0;
      -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      if ulimit === null then (
-	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
+	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
 	  );
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";

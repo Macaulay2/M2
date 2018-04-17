@@ -13,6 +13,7 @@ document { Key => "packages provided with Macaulay2",
 	  pkg -> (
 	       local p;
 	       (dictionaryPath,loadedPackages,currentPackage,p) = (dictionaryPath,loadedPackages,currentPackage,
+	            -- temporarily commented out:
 		    -- try 
 		    needsPackage(pkg,DebuggingMode => false)
 		    -- else (
@@ -29,7 +30,7 @@ document { Key => "packages provided with Macaulay2",
 		    }
 	       ))
      }
-
+     
 document { Key => "packages",
      "A package is a body of Macaulay2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay2, 
