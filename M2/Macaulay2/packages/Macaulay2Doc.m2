@@ -1,4 +1,8 @@
 -- -*- coding: utf-8 -*-
+
+-- maybe we can eliminate this package and put all the documentation into the Core package
+-- eventually
+
 newPackage ("Macaulay2Doc",
      InfoDirSection => "Macaulay2 and its packages", 
      AuxiliaryFiles => true,
@@ -13,9 +17,12 @@ newPackage ("Macaulay2Doc",
 if not member("Macaulay2Doc",Core#"base packages") 
 then Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
 
-beginDocumentation()
+scan(pairs Core#"raw documentation", (k,v) -> (
+	  remove(Core#"raw documentation", k);
+	  Macaulay2Doc#"raw documentation"#k = v;
+	  ))
 
-scan(pairs Core#"raw documentation", (k,v) -> Macaulay2Doc#"raw documentation"#k = v)
+beginDocumentation()
 
 load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
 

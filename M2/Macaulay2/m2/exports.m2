@@ -275,6 +275,7 @@ export {
 	"NonAssociativeProduct",
 	"Nothing",
 	"Number",
+	"NumberedVerticalList",
 	"OO",
 	"OneExpression",
 	"Option",

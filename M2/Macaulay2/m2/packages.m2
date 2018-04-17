@@ -254,7 +254,6 @@ newPackage(String) := opts -> (title) -> (
 	  rawdbname := newpkg#"package prefix" | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix;
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
-	       if notify then stderr << "--opened database: " << rawdbname << endl;
 	       newpkg#"raw documentation database" = rawdb;
 	       addEndFunction(() -> if isOpen rawdb then close rawdb))
 	  else (
