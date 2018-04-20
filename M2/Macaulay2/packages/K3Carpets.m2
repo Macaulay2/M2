@@ -1508,9 +1508,10 @@ L=analyzeStrand(F,6)
 tally L
 factor product L
 a=6,b=6
-h=carpetBettiTables(a,b)
-carpetBettiTable(h,7)
-carpetBettiTable(h,5)
+-- this test runs out of memroy on habanero regularly:
+-- h=carpetBettiTables(a,b)
+-- carpetBettiTable(h,7)
+-- carpetBettiTable(h,5)
 ///
 
 TEST ///
