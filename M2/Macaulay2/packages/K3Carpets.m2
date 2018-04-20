@@ -1508,7 +1508,7 @@ L=analyzeStrand(F,6)
 tally L
 factor product L
 a=6,b=6
--- this test runs out of memroy on habanero regularly:
+-- this test runs out of memory on habanero regularly:
 -- h=carpetBettiTables(a,b)
 -- carpetBettiTable(h,7)
 -- carpetBettiTable(h,5)
