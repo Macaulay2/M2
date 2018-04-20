@@ -38,6 +38,10 @@ randomPointsMat
 omegaPoints
 ///
 
+--print warning message, remove when done
+print("\n----------------------------------------------------------------------")
+print("--WARNING: you are using an experimental version of the Points package")
+print("----------------------------------------------------------------------")
 
 affineMakeRingMaps = method (TypicalValue => List)
 affineMakeRingMaps (Matrix, Ring) := List => (M,R) -> (
