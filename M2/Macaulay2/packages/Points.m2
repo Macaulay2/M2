@@ -227,6 +227,8 @@ affinePoints (Matrix,Ring) := (M,R) -> (
 -- This may not be the most efficient strategy. For further ideas,
 -- see Abbott, Kreuzer, Robbiano, Computing zero-dimensional schemes,
 -- J. Symbolic Comput., doi:10.1016/j.jsc.2004.09.001
+-- WARNING: for reduced points (i.e., when mults is a list of 1s)
+-- this performs slightly worse than the original function
 affinePoints (Matrix,List,Ring) := (M,mults,R) -> (
      -- obtain all monomials later used for differentiation
      -- sort in increasing order by degree (then monomial order)
