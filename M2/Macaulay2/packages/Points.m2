@@ -65,6 +65,15 @@ affinePointsByIntersection (Matrix,Ring) := (M,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M, p -> ideal apply(#p, i -> R_i - p#i)))
 
+-- FG: fat points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities, and a polynomial ring R
+-- OUTPUT: gb of the ideal of the fat point scheme
+affinePointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M, mults,
+       (p,m) -> (ideal apply(#p, i -> R_i - p#i))^m))
+
 reduceColumn = (M,Mchange,H,c) -> (
      -- M is a mutable matrix
      -- Mchange is either null, or a matrix with same number of columns as M
