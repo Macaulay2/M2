@@ -789,6 +789,7 @@ document {
 doc ///
    Key
     affineFatPoints
+    (affineFatPoints,Matrix,List,Ring)
    Headline
     produces the ideal and initial ideal from the coordinates of a finite set of fat points
    Usage
@@ -812,16 +813,28 @@ doc ///
     Text
      This function uses a modified Buchberger-Moeller algorithm to
      compute a grobner basis for the ideal of a finite number of
-     fat points in affine space. This algorithm may be faster than
+     fat points in affine space.
+
+    Example
+     R = QQ[x,y]
+     M = transpose matrix{{0,0},{1,1}}
+     mults = {3,2}
+     (Q,inG,G) = affineFatPoints(M,mults,R)
+     monomialIdeal G == inG
+
+    Text
+     This algorithm may be faster than
      computing the intersection of the ideals of each fat point.
+
     Example
      K = ZZ/32003
-     R = K[x_1..x_5]
+     R = K[z_1..z_5]
      M = random(K^5,K^12)
      mults = {1,2,3,1,2,3,1,2,3,1,2,3}
      elapsedTime (Q,inG,G) = affineFatPoints(M,mults,R);
      elapsedTime H = affinePointsByIntersection(M,mults,R);
      G==H
+
    Caveat
     For reduced points, this function may be a bit slower than @TO "affinePoints"@.
    SeeAlso
