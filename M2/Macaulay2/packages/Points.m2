@@ -777,6 +777,53 @@ document {
      SeeAlso => {affinePoints},
      }
 
+---------------------------------------------------------------------
+-- FG: documentation for fat points
+---------------------------------------------------------------------
+
+doc ///
+   Key
+    (affinePoints,Matrix,List,Ring)
+   Headline
+    produces the ideal and initial ideal from the coordinates of a finite set of fat points
+   Usage
+    (Q,inG,G) = affinePoints(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     coordinate ring of the affine space containing the points
+   Outputs
+    Q:List
+     list of standard monomials
+    inG:Ideal
+     initial ideal of the set of fat points
+    G:List
+     list of generators for Grobner basis for ideal of fat points
+   Description
+    Text
+     This function uses a modified Buchberger-Moeller algorithm to
+     compute a grobner basis for the ideal of a finite number of
+     fat points in affine space. This algorithm may be faster than
+     computing the intersection of the ideals of each fat point.
+    Example
+     K = ZZ/32003
+     R = K[x_1..x_5]
+     M = random(K^5,K^12)
+     mults = {1,2,3,1,2,3,1,2,3,1,2,3}
+     elapsedTime (Q,inG,G) = affinePoints(M,mults,R);
+     elapsedTime H = affinePointsByIntersection(M,mults,R);
+     G==H
+   Caveat
+    For reduced points, this function may be a bit slower than the
+    version without multiplicities in the input.
+   SeeAlso
+    (affinePointsByIntersection,Matrix,List,Ring)
+///
+
 TEST///
      M = random(ZZ^3, ZZ^3)
      M = id_(ZZ^3)
@@ -859,6 +906,8 @@ assert (
 )
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
+
+end
 
 -*
 --test of affinePoints
