@@ -214,6 +214,96 @@ affinePoints (Matrix,Ring) := (M,R) -> (
      (Q,inG,G)
      )
 
+-- FG: affine Buchberger-Möller algorithm for fat points
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities, and a polynomial ring R
+-- OUTPUT: a list containing 1) a list of standard monomials (i.e.,
+-- monomials forming a basis of the quotient ring), 2) the initial
+-- ideal, and 3) the ideal of the fat point scheme
+-- NOTE: the idea is to reuse the Buchberger-Möller algorithm for
+-- reduced points, but instead of simply evaluating polynomials at
+-- points, their partial derivatives are also evaluated to ensure
+-- vanishing. By Zariski-Nagata, this is the desired ideal.
+-- This may not be the most efficient strategy. For further ideas,
+-- see Abbott, Kreuzer, Robbiano, Computing zero-dimensional schemes,
+-- J. Symbolic Comput., doi:10.1016/j.jsc.2004.09.001
+affinePoints (Matrix,List,Ring) := (M,mults,R) -> (
+     -- obtain all monomials later used for differentiation
+     -- sort in increasing order by degree (then monomial order)
+     diffops := flatten entries sort basis(0,max mu - 1,R);
+     -- this says how many derivatives to use for each point
+     cutoffs := apply(mu,m -> sum(m, i -> binomial((dim R)-1+i,i)));
+     s := sum cutoffs;
+     -- FG: most of the code below is from the old Points package
+     -- The local data structures:
+     -- (P,PC) is the matrix which contains the elements to be reduced
+     -- Fs is used to evaluate monomials at the points
+     -- H is a hash table used in Gaussian elimination: it contains the
+     --    pivot columns for each row
+     -- L is the sum of monomials which is still to be done
+     -- Lhash is a hashtable: Lhash#monom = i means that only 
+     --    R_i*monom, ..., R_n*monom should be considered
+     -- G is a list of GB elements
+     -- inG is the ideal of initial monomials for the GB
+     K := coefficientRing R;
+     Fs := affineMakeRingMaps(M,R);
+     P := mutableMatrix map(K^s, K^(s+1), 0);
+     PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+     for i from 0 to s-1 do PC_(i,i) = 1_K;
+     H := new MutableHashTable; -- used in the column reduction step
+     Lhash := new MutableHashTable; -- used to determine which monomials come next
+     L := 1_R;
+     Lhash#L = 0; -- start with multiplication by R_0
+     thiscol := 0;
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     Q := {}; -- the list of standard monomials
+     nL := 1;
+     while L != 0 do (
+	  -- First step: get the monomial to consider
+	  L = L % inGB;
+	  monom := someTerms(L,-1,1);
+	  L = L - monom;
+	  -- Now fix up the matrices P, PC
+	  -- FG: old code called another function addNewMonomial
+	  -- FG: I include code here to better evaluate derivatives
+	  partials := apply(diffops, del -> diff(del,monom));
+	  -- FG: evaluate partials at point up to cutoff
+	  c := 0;
+	  for i to #Fs-1 do (
+	      for j to cutoffs_i-1 do (
+		  P_(c+j,thiscol) = Fs#i (partials_j);
+		  );
+	      c = c + cutoffs_i;
+	      );
+	  -- FG: remaining code is the same as for reduced points
+	  columnMult(PC, thiscol, 0_K);
+	  PC_(thiscol,thiscol) = 1_K;
+          isLT := reduceColumn(P,PC,H,thiscol);
+	  if isLT then (
+	       -- we add to G, inG
+	       inG = inG + ideal(monom);
+	       inGB = forceGB gens inG;
+	       g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+	       G = append(G, PC_(thiscol,thiscol) * monom + g);
+	       )
+	  else (
+	       -- we modify L, Lhash, thiscol, and also PC
+	       Q = append(Q, monom);
+	       f := sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+			 newmon := monom * R_i;
+			 Lhash#newmon = i;
+			 newmon));
+	       nL = nL + size(f);
+	       L = L + f;
+	       thiscol = thiscol + 1;
+	       )
+	  );
+--     print("number of monomials considered = "|nL);
+     (Q,inG,G)
+     )
+
 -----------------Homogeneous codes
 
 randomPointsMat = method(Options =>{AllRandom =>false})
