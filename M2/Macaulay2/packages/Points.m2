@@ -230,9 +230,9 @@ affinePoints (Matrix,Ring) := (M,R) -> (
 affinePoints (Matrix,List,Ring) := (M,mults,R) -> (
      -- obtain all monomials later used for differentiation
      -- sort in increasing order by degree (then monomial order)
-     diffops := flatten entries sort basis(0,max mu - 1,R);
+     diffops := flatten entries sort basis(0,max mults - 1,R);
      -- this says how many derivatives to use for each point
-     cutoffs := apply(mu,m -> sum(m, i -> binomial((dim R)-1+i,i)));
+     cutoffs := apply(mults,m -> sum(m, i -> binomial((dim R)-1+i,i)));
      s := sum cutoffs;
      -- FG: most of the code below is from the old Points package
      -- The local data structures:
