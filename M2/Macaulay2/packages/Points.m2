@@ -228,7 +228,7 @@ affinePoints (Matrix,Ring) := (M,R) -> (
 -- a list mults of multiplicities, and a polynomial ring R
 -- OUTPUT: a list containing 1) a list of standard monomials (i.e.,
 -- monomials forming a basis of the quotient ring), 2) the initial
--- ideal, and 3) the ideal of the fat point scheme
+-- ideal, and 3) the gb of the ideal of the fat point scheme
 -- NOTE: the idea is to reuse the Buchberger-Möller algorithm for
 -- reduced points, but instead of simply evaluating polynomials at
 -- points, their partial derivatives are also evaluated to ensure
