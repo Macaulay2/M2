@@ -693,7 +693,7 @@ document {
      Key => {affinePoints, (affinePoints,Matrix,Ring)},
      Headline => "produces the ideal and initial ideal from the coordinates
      of a finite set of points",
-     Usage => "(Q,inG,G) = points(M,R)",
+     Usage => "(Q,inG,G) = affinePoints(M,R)",
      Inputs => {
      	  "M" => Matrix => "in which each column consists of the coordinates of a point",
 	  "R" => PolynomialRing => "coordinate ring of the affine space containing the points",
