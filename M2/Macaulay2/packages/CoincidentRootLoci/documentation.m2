@@ -2,7 +2,7 @@ beginDocumentation()
 document { 
 Key => CoincidentRootLoci, 
 Headline => "A package for computations with coincident root loci",
-PARA{"This package accompanies the preprint by M. C. Brambilla and G. Staglianò - ",EM "Algebraic boundaries among typical ranks for real binary forms",". It provides some tools that can be useful for working with symmetric tensors of dimension 2. Such tensors are bijectively associated with homogeneous polynomials in two variables, which are also called binary forms. One of the main methods is ",TO realrank,", which uses ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to compute the real rank of binary forms defined over ",TEX///$\mathbb{Q}$///,"."},
+PARA{"This package accompanies the preprint by M. C. Brambilla and G. Staglianò - ",EM "On the algebraic boundaries among typical ranks for real binary forms",". It provides some tools that can be useful for working with symmetric tensors of dimension 2. Such tensors are bijectively associated with homogeneous polynomials in two variables, which are also called binary forms. One of the main methods is ",TO realrank,", which uses ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to compute the real rank of binary forms defined over ",TEX///$\mathbb{Q}$///,"."},
 PARA{"This package requires the following packages: ",TO Cremona," (version 4.2.1 or later) and ",TO Resultants," (version 1.2.1 or later)."}}
 document { 
 Key => {CoincidentRootLocus}, 
@@ -310,8 +310,8 @@ Headline => "algebraic boundaries among typical ranks for real binary forms",
 Usage => "realRankBoundary(n,i)",
 Inputs => {"n" => ZZ, "i" => ZZ => {"a typical rank"}},
 Outputs => {{"the irreducible components of the real algebraic boundary that separates real rank ",TEX///$i$///," from the other typical ranks in the real projective space ",TEX///$\mathbb{P}^n=\mathbb{P}(Sym^n(\mathbb{R}^2))$///," of binary forms of degree ",TEX///$n$///}},
-PARA{"Define ",TEX///${\mathcal{R}}_{n,i} = \{F\in Sym^n(\mathbb{R}^2) : realrank(F) = i\}$///,". Then ",TEX///${\mathcal{R}}_{n,i}$///," is a semi-algebraic set and has non-empty interior exactly when ",TEX///$(n+1)/2 \leq i\leq n$///," (in this case we say that ",TEX///$i$///," is a typical rank); see the paper by G. Blekherman - Typical real ranks of binary forms - Found. Comput. Math. 15, 793-798, 2015. The topological boundary ",TEX///$\partial({\mathcal{R}}_{n,i})$///," is the set-theoretic difference of the closure of ",TEX///${\mathcal{R}}_{n,i}$///," minus the interior of the closure of ",TEX///${\mathcal{R}}_{n,i}$///,". In the range ",TEX///$(n+1)/2 \leq i\leq n-1$///,", it is a semi-algebraic set of pure codimension one. The (real) algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,i})$///," is defined as the Zariski closure of the topological boundary ",TEX///$\partial({\mathcal{R}}_{n,i})$///,". This is viewed as a hypersurface in ",TEX///$\mathbb{P}(Sym^n(\mathbb{R}^2))$///," and the method returns its irreducible components over ",TEX///$\mathbb{C}$///,"."},
-PARA{"In the case ",TEX///$i = n$///,", the algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,n})$///," is the discriminant hypersurface; see the paper by P. Comon, G. Ottaviani - On the typical rank of real binary forms - Linear Multilinear Algebra 60, 657-667, 2012."},
+PARA{"Define ",TEX///${\mathcal{R}}_{n,i}$///," as the interior of the set ",TEX///$\{F\in Sym^n(\mathbb{R}^2) : realrank(F) = i\}$///,". Then ",TEX///${\mathcal{R}}_{n,i}$///," is a semi-algebraic set which is non-empty exactly when ",TEX///$(n+1)/2 \leq i\leq n$///," (in this case we say that ",TEX///$i$///," is a typical rank); see the paper by G. Blekherman - Typical real ranks of binary forms - Found. Comput. Math. 15, 793-798, 2015. The topological boundary ",TEX///$\partial({\mathcal{R}}_{n,i})$///," is the set-theoretic difference of the closure of ",TEX///${\mathcal{R}}_{n,i}$///," minus the interior of the closure of ",TEX///${\mathcal{R}}_{n,i}$///,". In the range ",TEX///$(n+1)/2 \leq i\leq n-1$///,", it is a semi-algebraic set of pure codimension one. The (real) algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,i})$///," is defined as the Zariski closure of the topological boundary ",TEX///$\partial({\mathcal{R}}_{n,i})$///,". This is viewed as a hypersurface in ",TEX///$\mathbb{P}(Sym^n(\mathbb{R}^2))$///," and the method returns its irreducible components over ",TEX///$\mathbb{C}$///,"."},
+PARA{"In the case ",TEX///$i = n$///,", the algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,n})$///," is the discriminant hypersurface; see the paper by A. Causa and R. Re - On the maximum rank of a real binary form - Ann. Mat. Pura Appl. 190, 55-59, 2011; see also the paper by P. Comon, G. Ottaviani - On the typical rank of real binary forms - Linear Multilinear Algebra 60, 657-667, 2012."},
 EXAMPLE {"time D77 = realRankBoundary(7,7)","describe D77"},
 PARA{"In the opposite extreme case, ",TEX///$i = ceiling((n+1)/2)$///,", the algebraic boundary ",TEX///$\partial_{alg}({\mathcal{R}}_{n,i})$///," has been described in the paper by H. Lee and B. Sturmfels - Duality of multiple root loci - J. Algebra 446, 499-526, 2016. It is irreducible if ",TEX///$n$///," is odd, and has two irreducible components if ",TEX///$n$///," is even."},  
 EXAMPLE {"time D64 = realRankBoundary(6,4)","describe first D64","describe last D64","time D74 = realRankBoundary(7,4)","describe D74"},
@@ -331,4 +331,14 @@ PARA{"More generally, if ",TEX///$I_1,I_2,\ldots$///," is a sequence of homogene
 EXAMPLE {"I = ideal coincidentRootLocus {4}", "time projectiveJoin(I,I)"},
 SeeAlso => {(dual,CoincidentRootLocus)}}
 undocumented {(projectiveJoin,Thing)}
+undocumented {(symbol +,CoincidentRootLocus, CoincidentRootLocus)}
+document { 
+Key => {(tangentSpace,CoincidentRootLocus,RingElement),tangentSpace},
+Headline => "projective tangent space", 
+Usage => "tangentSpace(X,F)", 
+Inputs => {"X" => CoincidentRootLocus,"F" => RingElement => {"a binary form that belongs to ",TT"X"}},
+Outputs => {Ideal => {"generated by binary forms of the same degree as that of ",TT"F",", which corresponds to the projective tangent space to ",TT"X"," at ",TT"F"}},
+EXAMPLE {"R = QQ[x,y];", "F = x^7+2*x^6*y-x^5*y^2-4*x^4*y^3-x^3*y^4+2*x^2*y^5+x*y^6", "X = coincidentRootLocus(4,2,1)", "tangentSpace(X,F)"},
+SeeAlso => {(member,RingElement,CoincidentRootLocus),(singularLocus,CoincidentRootLocus)}}
+undocumented {(tangentSpace,Ideal, Ideal)}
 
