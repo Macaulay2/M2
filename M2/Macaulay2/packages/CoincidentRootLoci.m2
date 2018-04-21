@@ -4,7 +4,7 @@ if version#"VERSION" < "1.11" then error "this package requires Macaulay2 versio
 newPackage(
        "CoincidentRootLoci",
 	Version => "0.1", 
-        Date => "April 14, 2018",
+        Date => "April 21, 2018",
     	Headline => "A package for computations with coincident root loci",
         Authors => {{Name => "M. C. Brambilla", Email => "brambilla@dipmat.univpm.it"},
                     {Name => "G. Staglianò", Email => "giovannistagliano@gmail.com"}},
@@ -30,7 +30,8 @@ export{"apolar",
        "randomBinaryForm",
        "randomInCoisotropic",
        "generic",
-       "projectiveJoin"
+       "projectiveJoin",
+       "tangentSpace"
 }
 
 load "./CoincidentRootLoci/equationsCRL.m2";
@@ -398,6 +399,33 @@ randomInCoisotropic (CoincidentRootLocus,ZZ) := (X,i) -> (
    if isIdeal J then J else ideal J
 );
 
+CoincidentRootLocus + CoincidentRootLocus := (X,Y) -> ( -- intersection, undocumented
+   if ring X =!= ring Y then error "expected same ring";
+   S := toList((set subsets X) * (set subsets Y));
+   E := S;
+   for A in S do for B in select(subsets A,s -> dim A - dim s > 0) do E = delete(B,E);
+   if #E == 1 then first E else E
+);
+
+tangentSpace = method() -- undocumented
+tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
+   checkBinaryForm F;
+   if first degree F =!= X#"ambient" then error("expected a binary form of degree "|toString(X#"ambient"));
+   if coefficientRing ring F =!= coefficientRing X then error("expected a binary form over "|toString(coefficientRing X));
+   if not member(F,X) then error("expected a binary form belonging to "|toString net X);
+   J := sub(jacobian ideal X,apply(gens ring X,switch1 F,(x,s) -> x => s));
+   sub(switch2 ideal((vars ring X) * J),vars ring F)
+);
+tangentSpace (Ideal,Ideal) := (I,p) -> (
+   if ring p =!= ring I then error "common ring not found";
+   if not isPolynomialRing ring I then error "expected a polynomial ring";
+   if not (isHomogeneous I and isHomogeneous p) then error "expected homogeneous ideals";
+   if not (dim p == 1 and degree p == 1 and unique degrees p == {{1}}) then error "expected second argument to be the ideal of a point";
+   if not isSubset(I,p) then error "expected a point of the variety";
+   subs := apply(gens ring I,flatten entries coefficients parametrize p,(x,s) -> x => s);
+   trim ideal((vars ring I) * sub(jacobian I,subs))
+);
+
 --================================================================
 --=== Real algebraic boundary ====================================
 --================================================================
@@ -407,6 +435,9 @@ realRankBoundary = method(Options => {Variable => VAR})
 realRankBoundary (ZZ,ZZ,Ring) := o -> (n,k,K) -> (
    if not (1 <= k and ceiling((n+1)/2) <= k and k <= n) then return {};
    if k == n then return coincidentRootLocus(toList prepend(2,n-2:1),K,Variable=>o.Variable);
+   if n == 4 and k == 3 then return coincidentRootLocus({2,1,1},K,Variable=>o.Variable);
+   if n == 5 and k == 4 then return {realRankBoundary(5,3,K,Variable=>o.Variable),realRankBoundary(5,5,K,Variable=>o.Variable)};
+   if n == 6 and k == 5 then return append(realRankBoundary(6,4,K,Variable=>o.Variable),realRankBoundary(6,6,K,Variable=>o.Variable));
    if k == ceiling((n+1)/2) then (
        if odd n then (
            return dual coincidentRootLocus(toList prepend(3,k-2:2),K,Variable=>o.Variable);
