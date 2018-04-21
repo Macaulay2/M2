@@ -28,7 +28,11 @@ export {
      "randomPoints",
      "omegaPoints",
      "expectedBetti",
-     "minMaxResolution"
+     "minMaxResolution",
+---------------------------------------------------------------------
+-- FG: methods for fat points
+---------------------------------------------------------------------
+     "affineFatPoints"
      }
 
 ///
@@ -238,7 +242,8 @@ affinePoints (Matrix,Ring) := (M,R) -> (
 -- J. Symbolic Comput., doi:10.1016/j.jsc.2004.09.001
 -- WARNING: for reduced points (i.e., when mults is a list of 1s)
 -- this performs slightly worse than the original function
-affinePoints (Matrix,List,Ring) := (M,mults,R) -> (
+affineFatPoints = method()
+affineFatPoints (Matrix,List,Ring) := (M,mults,R) -> (
      -- obtain all monomials later used for differentiation
      -- sort in increasing order by degree (then monomial order)
      diffops := flatten entries sort basis(0,max mults - 1,R);
@@ -783,11 +788,11 @@ document {
 
 doc ///
    Key
-    (affinePoints,Matrix,List,Ring)
+    affineFatPoints
    Headline
     produces the ideal and initial ideal from the coordinates of a finite set of fat points
    Usage
-    (Q,inG,G) = affinePoints(M,mults,R)
+    (Q,inG,G) = affineFatPoints(M,mults,R)
    Inputs
     M:Matrix
      in which each column consists of the coordinates of a point
@@ -814,12 +819,11 @@ doc ///
      R = K[x_1..x_5]
      M = random(K^5,K^12)
      mults = {1,2,3,1,2,3,1,2,3,1,2,3}
-     elapsedTime (Q,inG,G) = affinePoints(M,mults,R);
+     elapsedTime (Q,inG,G) = affineFatPoints(M,mults,R);
      elapsedTime H = affinePointsByIntersection(M,mults,R);
      G==H
    Caveat
-    For reduced points, this function may be a bit slower than the
-    version without multiplicities in the input.
+    For reduced points, this function may be a bit slower than @TO "affinePoints"@.
    SeeAlso
     (affinePointsByIntersection,Matrix,List,Ring)
 ///
