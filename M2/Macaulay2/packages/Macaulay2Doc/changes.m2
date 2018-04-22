@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.11",
 	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
 	  TO "changes, 1.9.1",
@@ -27,6 +28,10 @@ document {
 
 document {
      Key => "changes made for the next release",
+     }
+
+document {
+     Key => "changes, 1.11",
      UL {
      -- 	  LI { "major improvements and additions:",
      -- 	        UL {
@@ -39,26 +44,51 @@ document {
      -- 	       },
      	  LI { "new packages:",                       -- got this with git diff version-1.10 =distributed-packages; see also the helper code in README
      	       UL {
-	       	    LI { TO "AbstractToricVarieties::AbstractToricVarieties", ", a package by Mike Stillman for links abstract simplicial (normal) toric varieties to Schubert2, has been added." },
+	       	    LI { TO "AbstractToricVarieties::AbstractToricVarieties", ", a package by Mike Stillman for linking abstract simplicial (normal) toric varieties to Schubert2, has been added." },
 	       	    LI { TO "AlgebraicSplines::AlgebraicSplines", ", a package by Gwyn Whieldon, Eliana Duarte, Daniel Irving Bernstein, and Daniel Irving Bernstein for splines on simplicial complexes, polytopal complexes, and graphs, has been added." },
 	       	    LI { TO "Chordal::Chordal", ", a package by Diego Cifuentes and Pablo Parrilo for exploiting chordal structure, has been added." },
 	       	    LI { TO "CohomCalg::CohomCalg", ", a package by Mike Stillman for providing an interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety, has been added." },
 	       	    LI { TO "Complexes::Complexes", ", a package by Gregory G. Smith and Mike Stillman for chain complexes, has been added." },
 	       	    LI { TO "GroebnerWalk::GroebnerWalk", ", a package by Dylan Peifer for computing Groebner bases via the Groebner walk, has been added." },
-	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for a package for computations with matroids, has been added." },
+	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been added." },
+		    LI { TO "NonminimalComplexes::NonminimalComplexes", ", a package by Frank Schreyer and Mike Stillman for obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module, has been added." },
 	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for computing invariants of images of polynomial maps, has been added." },
 	       	    LI { TO "PruneComplex::PruneComplex", ", a package by Mahrud Sayrafi and Mike Stillman for pruning chain complexes over polynomial and local rings, has been added." },
 	       	    LI { TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Despina Stasi, Dane Wilburne, Tanner Zielinski, Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, Genevieve Hummel, and Genevieve Hummel for generating Erdos-Renyi-type random monomial ideals, has been added." },
 	       	    LI { TO "ReflexivePolytopesDB::ReflexivePolytopesDB", ", a package by Mike Stillman for simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4, has been added." },
 	       	    LI { TO "SymbolicPowers::SymbolicPowers", ", a package by Eloisa Grifo for calculations involving symbolic powers, has been added." },
 	       	    LI { TO "TestIdeals::TestIdeals", ", a package by Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, Zhibek Kadyrsizova, Mordechai Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira, Emily Witt, and Emily Witt for calculations of singularities in positive characteristic, has been added." },
-	       	    LI { TO "Topcom::Topcom", ", a package by Mike Stillman for providing an interface to a small part of topcom, has been added." },
-	       	    LI { TO "TriangularSets::TriangularSets", ", a package by Diego Cifuentes for triangular decompositions of ideals, has been added." },
+	       	    LI { TO "Topcom::Topcom", ", a package by Mike Stillman that provides an interface to a small part of topcom, has been added." },
+	       	    LI { TO "TriangularSets::TriangularSets", ", a package by Diego Cifuentes for triangular decomposition of ideals, has been added." },
 	       	    LI { TO "Tropical::Tropical", ", a package by Kathlen Kohn, Sara Lamboglia, Diane Maclagan, Benjamin Smith, Jeff Sommars, Paolo Tripoli, Magdalena Zajaczkowska, and Magdalena Zajaczkowska for computations in tropical geometry, has been added." },
      	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
      	       } },
      	  LI { "improved packages:",
      	       UL {
+		    LI {
+			 "The package ", TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " includes now the
+			analysis of resolutions over complete intersections,
+			and computations of the special resolutions of modules
+			over complete intersections that were described by
+			Eisenbud and Peeva in various papers."
+			},
+		   LI {
+			"The package ", TO "ReesAlgebra::ReesAlgebra", " has been improved:
+			Corrected and completed the documentation and cleaned
+			up code; added functionality having to do with options
+			for computing saturation (used in the basic routines);
+			added functionality of the 'Jacobian dual' method. Submitted JSAG article explaining the package."
+			},
+		   LI {
+			"The package ", TO "K3Carpets::K3Carpets", " includes now
+     	       	    	facilities for computing with K3carpets and their
+     	       	    	generalization, the correspondence scrolls, and using
+     	       	    	the Schreyer resolution and Schreyer naming of syzygies
+     	       	    	to determine in which characteristics they have
+     	       	    	behavior other than that corresponding to Green's
+     	       	    	conjecture. The computations are used in a forthcoming
+     	       	    	preprint by Eisenbud and Schreyer."
+			},
      	       	    LI {
 			TO "LocalRings::LocalRings", " has been rewritten by Mahrud Sayrafi and Mike Stillman. Functions from the old version are still available.
 			The new package extends various primary functions to work over local rings with respect to prime ideals.
@@ -1121,7 +1151,7 @@ document {
 			 },
 		    LI {
 			 "The package ", TO "IntegralClosure::IntegralClosure", " has been rewritten.  The
-			 ring used as input for ", TO "Integral::integralClosure", " must be a
+			 ring used as input for ", TO "IntegralClosure::integralClosure", " must be a
 			 domain, but the documentation describes how to get around this.  
 			 The function now provides correct output when it finishes, and it can handle much larger input 
 			 than before.  There are some new routines and some new strategies for the computation."

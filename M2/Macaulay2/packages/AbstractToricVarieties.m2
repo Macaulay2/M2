@@ -8,8 +8,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "links abstract simplicial (normal) toric varieties to Schubert2",
-        PackageExports => {"NormalToricVarieties", "Schubert2"},
-        DebuggingMode => true
+        PackageExports => {"NormalToricVarieties", "Schubert2"}
         )
 
 export {    
@@ -142,17 +141,17 @@ abstractVariety(CompleteIntersectionInToric, AbstractVariety) := opts -> (X,B) -
 
 beginDocumentation()
 
-end--
 doc ///
 Key
   AbstractToricVarieties
 Headline
+  links abstract simplicial (normal) toric varieties to Schubert2
 Description
   Text
-  Example
-Caveat
-SeeAlso
+     This package is experimental.
 ///
+
+end--
 
 doc ///
 Key

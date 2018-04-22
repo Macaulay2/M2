@@ -15,6 +15,8 @@ dnl    - make a git branch of the form release-X.Y.Z, if it's for final developm
 dnl           git checkout -b release-X.Y.Z
 dnl    - push the new branch to github and track it
 dnl           git push -u origin release-X.Y.Z
+dnl    - push the new tag to github
+dnl           git push --tags origin release-X.Y.Z
 dnl    - on the master branch, if a new branch was made for development,
 dnl      increment the version number again to X.Y.Z.1 in this file and add an
 dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
@@ -1575,7 +1577,7 @@ if test $BUILD_lapack = yes
 then if test $added_fclibs != yes
      then LIBS="$FCLIBS $LIBS"
      fi
-     BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
+     LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
      dnl we'll need the fortran compiler to be present to compile lapack
      FORTRANUSED=yes
      if test "$FC" = ""

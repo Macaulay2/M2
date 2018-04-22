@@ -2,6 +2,7 @@
 
 -- move file to sandbox or to some other place which is reachable by M2 bot not recognized for installing!
 
+error "package CustomEngineTests has been deprecated"
 
 newPackage(
         "CustomEngineTests",

@@ -36,14 +36,28 @@ getpkg := memoize(
    --	             TO sin
    -- or
    --	             TO symbol sin
-   -- and have them all get recorded the same way
-normalizeDocumentKey := method(Dispatch => Thing)
-normalizeDocumentKey   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
-normalizeDocumentKey    Array := identity
-normalizeDocumentKey   Symbol := identity
-normalizeDocumentKey Sequence := identity
-normalizeDocumentKey  Nothing := key -> symbol null
-normalizeDocumentKey    Thing := key -> (
+   -- and have them all get recorded the same way.
+   -- But there is a problem with this whole idea -- what about keys in other packages, which can't be 
+   -- loaded now, because they might try to load the package currently being loaded?  Why not just normalize
+   -- to the string form, tacking on the package name, if given a symbol?
+normalizeDocumentKey = method(Dispatch => Thing, Options => { Package => null })
+normalizeDocumentKey   String := opts -> key -> (
+     pkg := opts#Package;
+     if pkg =!= null 
+     then (
+     	  -- here's where we used to load the package in an attempt to verify the documentation key
+	  if instance(pkg,String)
+	  then if match("::",key) then key else concatenate(pkg,"::",key)
+	  else if not instance(pkg,Package) then error("expected ",toString pkg," to be a package")
+	  else if pkg.Dictionary#?key then pkg.Dictionary#key else key
+	  )
+     else if isGlobalSymbol key then getGlobalSymbol key else key
+     )
+normalizeDocumentKey    Array := opts -> identity
+normalizeDocumentKey   Symbol := opts -> identity
+normalizeDocumentKey Sequence := opts -> identity
+normalizeDocumentKey  Nothing := opts -> key -> symbol null
+normalizeDocumentKey    Thing := opts -> key -> (
      if hasAttribute(key,ReverseDictionary) then return getAttribute(key,ReverseDictionary);
      error("can't determine symbol whose value is document tag: ",key);
      )
@@ -135,14 +149,25 @@ pkgTitle Symbol  := toString
 pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
 
+toPackageStem := key -> (
+     m := regex("[[:space:]]*::[[:space:]]*",key);
+     if m === null then (null,key)
+     else (
+	  (i,n) := m#0;
+	  pkg := substring(0,i,key);
+	  key = substring(i+n,key);
+	  (pkg,key)))
+
 makeDocumentTag = method(Dispatch => Thing, Options => {
 	  Package => null
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 mdt := makeDocumentTag Thing := opts -> key -> (
-     nkey := normalizeDocumentKey key;
+     nkey := normalizeDocumentKey (key,opts);
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
+     local pkg';
+     (pkg',fkey) = toPackageStem fkey;
      pkg := (
 	  if class nkey === Symbol -* and package nkey =!= Core *- then package nkey
 	  else if opts#Package =!= null then opts#Package 
@@ -159,15 +184,16 @@ makeDocumentTag String := opts -> key -> (
 	  -- lines might be wrapped and multiple spaces are reduced to one:
 	  error("expected key to have only single interior spaces:", format key);
 	  );
-     m := regex("[[:space:]]*::[[:space:]]*",key);
-     if m === null then (mdt opts) key
-     else (
-	  (i,n) := m#0;
-	  pkg := substring(0,i,key);
-	  key = substring(i+n,key);
-	  makeDocumentTag(key,opts,Package => pkg)
-	  )
+     local pkg;
+     (pkg,key) = toPackageStem key;
+     if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package 
+     then error ("mismatching packages ",pkg," and ", opts#Package, " specified for key ",key);
+     if pkg === null then pkg = opts#Package;
+     if pkg === null 
+     then (mdt new OptionTable from {Package => pkg}) key
+     else (mdt new OptionTable from {Package => pkg}) key
      )
+
 -- a bit of experimentation...
 DocumentTag.Key = method(Dispatch => Thing)
 DocumentTag.Key DocumentTag := x -> x#0
@@ -500,7 +526,7 @@ file := null
 -- getting database records
 -----------------------------------------------------------------------------
 extractBody := x -> if x.?Description then x.Description
-getDoc := key -> fetchAnyRawDocumentation formatDocumentTag key
+getDoc := key -> fetchRawDocumentation makeDocumentTag key
 getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
      s := getDoc key;
      if s =!= null and s#?tag then s#tag)
@@ -735,7 +761,7 @@ apropos String := (pattern) -> (
 	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(key,Headline)	    -- old method
+headline Thing := key -> null
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
@@ -750,7 +776,6 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	       return null;
 	       ));
      if d#?Headline then d#Headline
-     else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s) else ""
 -----------------------------------------------------------------------------
@@ -818,9 +843,9 @@ if version#"operating system" === "MicrosoftWindows" then (
      rootURI = "file:///" | rootPath;		   -- e.g.: "file:///C:/cygwin"
      )
 
-makeDocBody := method(Dispatch => Thing)
+makeDocBody = method(Dispatch => Thing)
 makeDocBody Thing := key -> (
-     tag := makeDocumentTag(key,Package=>null);
+     tag := makeDocumentTag key;
      pkg := getpkg DocumentTag.Title tag;
      ptag := getPrimary tag;
      rec := fetchRawDocumentation ptag;
@@ -957,7 +982,13 @@ processInputOutputItems := (key,fn) -> x -> (
 		    TO2{ 
 			 [ if options key =!= null then key else fn, optsymb],
 			 concatenate(toString optsymb," => ...") },
-		    LATER { () -> commentize (headline [fn,optsymb]) }
+		    LATER { () -> commentize (headline (
+				   if options key =!= null and (options key)#?optsymb
+				   then [key,optsymb]
+				   else if options fn =!= null and (options fn)#?optsymb
+				   then [fn,optsymb]
+				   else error (toString optsymb, " is not an option for ", toString key, ", nor for ", toString fn)
+				   )) }
 		    ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)

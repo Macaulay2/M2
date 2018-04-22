@@ -152,7 +152,7 @@ various modern operating systems:
 
       sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest wget
 
     To upgrade the system:
 
