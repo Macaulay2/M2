@@ -960,6 +960,22 @@ assert (
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
 
+---------------------------------------------------------------------
+-- FG: tests for fat points
+---------------------------------------------------------------------
+
+TEST///
+     M = id_(ZZ^3)
+     R = QQ[x,y,z]
+     mults = {2,2,2}
+     (Q,inG,G) = affineFatPoints(M,mults,R)
+     assert( G == {x^2+2*x*y+y^2+2*x*z+2*y*z+z^2-2*x-2*y-2*z+1,
+     x*z^2+y*z^2+z^3-x*z-y*z-2*z^2+z, y^2*z+y*z^2-y*z, x*y*z,
+     x*y^2+y^3-y*z^2-x*y-2*y^2+y, z^4-2*z^3+z^2, y*z^3-y*z^2,
+     y^4-2*y^3+y^2})
+///
+
+
 end
 
 -*
