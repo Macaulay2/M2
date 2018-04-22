@@ -32,7 +32,8 @@ export {
 ---------------------------------------------------------------------
 -- FG: methods for fat points
 ---------------------------------------------------------------------
-     "affineFatPoints"
+     "affineFatPoints",
+     "affineFatPointsByIntersection"
      }
 
 ///
@@ -73,7 +74,8 @@ affinePointsByIntersection (Matrix,Ring) := (M,R) -> (
 -- INPUT: a matrix M whose columns are coordinates of points,
 -- a list mults of multiplicities, and a polynomial ring R
 -- OUTPUT: gb of the ideal of the fat point scheme
-affinePointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
+affineFatPointsByIntersection = method(TypicalValue => List)
+affineFatPointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M, mults,
        (p,m) -> (ideal apply(#p, i -> R_i - p#i))^m))
@@ -832,13 +834,47 @@ doc ///
      M = random(K^5,K^12)
      mults = {1,2,3,1,2,3,1,2,3,1,2,3}
      elapsedTime (Q,inG,G) = affineFatPoints(M,mults,R);
-     elapsedTime H = affinePointsByIntersection(M,mults,R);
+     elapsedTime H = affineFatPointsByIntersection(M,mults,R);
      G==H
 
    Caveat
     For reduced points, this function may be a bit slower than @TO "affinePoints"@.
    SeeAlso
-    (affinePointsByIntersection,Matrix,List,Ring)
+    (affineFatPointsByIntersection,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    affineFatPointsByIntersection
+    (affineFatPointsByIntersection,Matrix,List,Ring)
+   Headline
+    computes ideal of fat points by intersecting powers of maximal ideals
+   Usage
+    affineFatPointsByIntersection(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     coordinate ring of the affine space containing the points
+   Outputs
+    :List
+     grobner basis for ideal of a finite set of fat points
+   Description
+    Text
+     This function computes the ideal of a finite set of fat points
+     by intersecting powers of the maximal ideals of each point.
+
+    Example
+     R = QQ[x,y]
+     M = transpose matrix{{0,0},{1,1}}
+     mults = {3,2}
+     affineFatPointsByIntersection(M,mults,R)
+
+   SeeAlso
+    (affineFatPoints,Matrix,List,Ring)
 ///
 
 TEST///
