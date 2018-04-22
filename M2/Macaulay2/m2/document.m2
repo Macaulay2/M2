@@ -662,7 +662,7 @@ fixupTable := new HashTable from {
 	  val = nonempty separate val;
 	  val = apply(val, i -> replace("^[[:space:]]*(.*)[[:space:]]*$","\\1",i));
 	  if #val === 0 then error "Usage: expected content";
-	  DL flatten { "class" => "element", DT "Usage:", DD \ TT \ val } ),
+	  DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } ),
      BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
      Inputs => val -> (
 	  val = fixupList(val,Inputs);
