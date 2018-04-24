@@ -2,7 +2,7 @@ beginDocumentation()
 document { 
 Key => CoincidentRootLoci, 
 Headline => "A package for computations with coincident root loci",
-PARA{"This package accompanies the preprint by M. C. Brambilla and G. Staglianò - ",EM "On the algebraic boundaries among typical ranks for real binary forms",". It provides some tools that can be useful for working with symmetric tensors of dimension 2. Such tensors are bijectively associated with homogeneous polynomials in two variables, which are also called binary forms. One of the main methods is ",TO realrank,", which uses ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to compute the real rank of binary forms defined over ",TEX///$\mathbb{Q}$///,"."},
+PARA{"This package accompanies the preprint by M. C. Brambilla and G. Staglianò - ",HREF{"https://arxiv.org/abs/1804.08309","On the algebraic boundaries among typical ranks for real binary forms"},". It provides some tools that can be useful for working with symmetric tensors of dimension 2. Such tensors are bijectively associated with homogeneous polynomials in two variables, which are also called binary forms. One of the main methods is ",TO realrank,", which uses ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to compute the real rank of binary forms defined over ",TEX///$\mathbb{Q}$///,"."},
 PARA{"This package requires the following packages: ",TO Cremona," (version 4.2.1 or later) and ",TO Resultants," (version 1.2.1 or later)."}}
 document { 
 Key => {CoincidentRootLocus}, 
