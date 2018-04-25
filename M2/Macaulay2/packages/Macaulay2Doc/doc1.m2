@@ -547,6 +547,7 @@ document {
      Before running this routine, it is not possible to determine which
      spots in a chain complex are actually occupied by modules or maps."
      }
+ -*
 document {
  Key => {drop, (drop, BasicList, ZZ), (drop, BasicList, List)},
  Headline => "Drop some elements from a list or sequence.",
@@ -596,7 +597,7 @@ document {
   },
  SeeAlso => {"take", "delete", "lists and sequences"}
 }
--* 
+*-
 doc ///
  Key
   drop
@@ -606,37 +607,33 @@ doc ///
   Drop some elements from a list or sequence.
  Usage
   drop(L, i)
-  drop(L, {j, k})
+  drop(L, {j,k})
  Inputs
   L: BasicList
   i: ZZ
-  {j,k}: List
-   a pair of non-negative integers
+  j: ZZ
+  k: ZZ
  Outputs
-  : BasicList
+  L2: BasicList
    the list or sequence obtained by dropping the first {\tt i} elements of {\tt L},
-   (if {\tt i} positive), or the last {\tt i} elements of {\tt L} (if {\tt i} negative), OR
-  : BasicList
-   the list or sequence obtained by dropping the elements of {\tt L} with indices {\tt j} through {\tt k}
+   (if {\tt i} positive), or the last {\tt i} elements of {\tt L} (if {\tt i} negative), or, if given the
+   pair {\tt j,k}, the list or sequence obtained by dropping the elements of {\tt L} with indices {\tt j} through {\tt k}
  Description
-  Text
-   borelFixedStats takes a list of monomial ideals and returns the percentage of Borel-fixed ideals in the list of monomial ideals as a real number  
   Example
    drop({a,b,c,d,e,f,g}, 3)
    drop({a,b,c,d,e,f,g}, -3)
    drop({a,b,c,d,e,f,g}, {1,3})
    drop({a,b,c,d,e,f,g}, {2,2})    
   Text
-   The pair {\tt {j,k}} must be given with both entries non-negative, and {\tt j <= k}. Otherwise the original list is returned.
+   The pair {\tt \{j,k\}} must be given with both entries non-negative, and $j\le k$. Otherwise the original list is returned.
   Example
    drop({a,b,c,d,e,f,g}, {3,1})
    drop({a,b,c,d,e,f,g}, {4,-1})
  SeeAlso
   take
   delete
-  lists and sequences
+  "lists and sequences"
 ///
-*-
 document {
      Key => {(options, Function),(options, Command),(options, Sequence)},
      Headline => "get optional arguments and default values for a function that accepts them",
