@@ -547,57 +547,6 @@ document {
      Before running this routine, it is not possible to determine which
      spots in a chain complex are actually occupied by modules or maps."
      }
- -*
-document {
- Key => {drop, (drop, BasicList, ZZ), (drop, BasicList, List)},
- Headline => "Drop some elements from a list or sequence.",
- SYNOPSIS (
-          Heading => "drop(BasicList, ZZ)",
-	  Usage => "drop(L, i)",
-	  Inputs => { "L" => BasicList, "i" => ZZ },
-	  Outputs => {"L'" => {"a ", TO "BasicList", ", the list or sequence obtained by dropping the first i elements (if i positive), or the last i elements (if i negative), from L"}},
-	  ),
- SYNOPSIS (
-          Heading => "drop(BasicList, List)",
-	  Usage => "drop(L, {j,k})",
-	  Inputs => { "L" => BasicList, {TT "{j,k}", ", a pair of non-negative integers in a list"}},
-	  Outputs => {"L'" => {"a ", TO "BasicList", ", the list or sequence obtained by dropping the elements of L with indices j through k"}},
-	  ),
- PARA{},
-  "If", TT " i ", "is a positive integer, then",
-  TT " drop(L, i) ", "returns the list obtained by omitting the first",
-  TT " i ", "elements from", TT " L", ".",
- EXAMPLE {
-  "drop({a,b,c,d,e,f,g}, 3)"
-  },
- PARA{},
-  "If", TT " i ", "is a negative integer, then",
-  TT " drop(L, i) ", "returns the list obtained by omitting the last",
-  TT " i ", "elements from", TT " L", ".",
- EXAMPLE {
-  "drop({a,b,c,d,e,f,g}, -3)"
-  },
- PARA{},
-  "If", TT " {j,k} ", "are two positive integers, with", TT " j <= k ", 
-  "then the elements with indices", TT " j ", "through", TT " k ", "are removed.",
- EXAMPLE {
-   "drop({a,b,c,d,e,f,g}, {1,3})",
-   "drop({a,b,c,d,e,f,g}, {2,2})"
-   },
- PARA{},
-  "The pair", TT " {j,k} ", "must be given in order, with both entries non-negative. Otherwise the original list is returned.",
- EXAMPLE {
-   "drop({a,b,c,d,e,f,g}, {3,1})",
-   "drop({a,b,c,d,e,f,g}, {4,-1})"
-   },
- PARA{},
-  TT "L ", "may be a list, sequence or any other ", TO "BasicList", ".",
- EXAMPLE {
-  "drop((a,b,c,d,e,f,g), 3)"
-  },
- SeeAlso => {"take", "delete", "lists and sequences"}
-}
-*-
 doc ///
  Key
   drop
