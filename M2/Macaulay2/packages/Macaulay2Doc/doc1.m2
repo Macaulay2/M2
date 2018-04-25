@@ -596,6 +596,47 @@ document {
   },
  SeeAlso => {"take", "delete", "lists and sequences"}
 }
+-* 
+doc ///
+ Key
+  drop
+  (drop, BasicList, ZZ)
+  (drop, BasicList, List)
+ Headline
+  Drop some elements from a list or sequence.
+ Usage
+  drop(L, i)
+  drop(L, {j, k})
+ Inputs
+  L: BasicList
+  i: ZZ
+  {j,k}: List
+   a pair of non-negative integers
+ Outputs
+  : BasicList
+   the list or sequence obtained by dropping the first {\tt i} elements of {\tt L},
+   (if {\tt i} positive), or the last {\tt i} elements of {\tt L} (if {\tt i} negative), OR
+  : BasicList
+   the list or sequence obtained by dropping the elements of {\tt L} with indices {\tt j} through {\tt k}
+ Description
+  Text
+   borelFixedStats takes a list of monomial ideals and returns the percentage of Borel-fixed ideals in the list of monomial ideals as a real number  
+  Example
+   drop({a,b,c,d,e,f,g}, 3)
+   drop({a,b,c,d,e,f,g}, -3)
+   drop({a,b,c,d,e,f,g}, {1,3})
+   drop({a,b,c,d,e,f,g}, {2,2})    
+  Text
+   The pair {\tt {j,k}} must be given with both entries non-negative, and {\tt j <= k}. Otherwise the original list is returned.
+  Example
+   drop({a,b,c,d,e,f,g}, {3,1})
+   drop({a,b,c,d,e,f,g}, {4,-1})
+ SeeAlso
+  take
+  delete
+  lists and sequences
+///
+*-
 document {
      Key => {(options, Function),(options, Command),(options, Sequence)},
      Headline => "get optional arguments and default values for a function that accepts them",
