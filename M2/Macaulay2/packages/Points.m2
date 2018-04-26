@@ -30,10 +30,11 @@ export {
      "expectedBetti",
      "minMaxResolution",
 ---------------------------------------------------------------------
--- FG: methods for fat points
+-- FG: methods for fat points, and new methods for projective points
 ---------------------------------------------------------------------
      "affineFatPoints",
-     "affineFatPointsByIntersection"
+     "affineFatPointsByIntersection",
+     "projectivePoints"
      }
 
 ///
@@ -321,6 +322,61 @@ affineFatPoints (Matrix,List,Ring) := (M,mults,R) -> (
 --     print("number of monomials considered = "|nL);
      (Q,inG,G)
      )
+
+
+-- FG: Buchberger-Möller for projective points
+projectivePoints = method()
+projectivePoints (Matrix,Ring) := (M,R) -> (
+     K := coefficientRing R;
+     s := numgens source M;
+     Fs := affineMakeRingMaps(M,R);
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     deg := 1;
+     while not stopProjectivePoints(deg,inG,s) do (
+	 L := sum flatten entries basis(deg,R);
+	 L = L % inGB;
+	 P := mutableMatrix map(K^s, K^(s+1), 0);
+	 PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+	 for i from 0 to s-1 do PC_(i,i) = 1_K;
+	 H := new MutableHashTable; -- used in the column reduction step
+	 thiscol := 0;
+	 Q := {}; -- list of standard monomials of current degree
+	 while L != 0 do (
+	      -- First step: get the monomial to consider
+	      monom := someTerms(L,-1,1);
+	      L = L - monom;
+	      -- Now fix up the matrices P, PC
+	      addNewMonomial(P,thiscol,monom,Fs);
+	      columnMult(PC, thiscol, 0_K);
+	      PC_(thiscol,thiscol) = 1_K;
+	      isLT := reduceColumn(P,PC,H,thiscol);
+	      if isLT then (
+		   -- we add to G, inG
+		   inG = inG + ideal(monom);
+		   g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+		   G = append(G, PC_(thiscol,thiscol) * monom + g);
+		   )
+	      else (
+		   -- add to standard monomials
+		   Q = append(Q, monom);
+		   thiscol = thiscol + 1;
+		   )
+	      );
+	  inGB = forceGB gens inG;
+	  -- proceed with next degree
+	  deg = deg + 1;
+	  );
+     (inG,G)
+     )
+
+-- FG: stopping criterion for projective BM
+-- TO DO: implement better stopping criterion from Abbot, Kreuzer, Robbiano
+stopProjectivePoints = (deg,inG,multPts) -> (
+    if zero inG then return false else
+    hilbertFunction(deg,inG) == multPts
+    )
 
 -----------------Homogeneous codes
 
