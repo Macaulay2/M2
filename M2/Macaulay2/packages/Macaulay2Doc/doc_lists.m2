@@ -422,73 +422,105 @@ document {
      SeeAlso => {"BasicList"}
      }
 
-document {
-     Key => {maxPosition,(maxPosition,BasicList)},
-     Usage => "maxPosition x",
-     Headline => "position of largest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the largest element in the list ", TT "x" }
-	  },
-     "If the largest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "maxPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the maximal element is 1, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{
-	  "For elements in a polynomial ring, the order used is the ", TO2("monomial orderings","monomial order"),
-	  " associated with the ring.",
-	  },
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "maxPosition {z^2, s*z, x*y}",
-	  "maxPosition(z^2, s*z, x*y)"	  
-	  },
-     SeeAlso => { minPosition, max, min, sort, position }
-     }
+doc///
+ Key 
+  maxPosition
+  (maxPosition, BasicList)
+ Headline
+  position of the largest element
+ Usage
+  maxPosition L
+ Inputs
+  L:BasicList
+ Outputs
+  i:ZZ
+   the index of the largest element in the list {\tt L}
+ Description
+  Text
+   If the largest element occurs more than once, the index of its first occurrence is used.
+  Example
+   maxPosition {1, 6, 4, 2, 6}
+  Text
+   If {\tt L} contains elements in a polynomial ring, the @TO monomial order@
+   of the ring is used for comparisons.
+  Example
+   R1 = QQ[x, y, z, MonomialOrder => Lex];
+   maxPosition {x*y^2, x*y^2 + z^2, y^4, y*z^5}
+   R2 = QQ[x, y, z, MonomialOrder => GRevLex];
+   maxPosition (x*y^2, x*y^2 + z^2, y^4, y*z^5)
+  Text
+   More generally, the order of the elements is determined using the @TO "?"@ operator.
+ SeeAlso 
+  minPosition
+  max
+  min
+  sort
+  position
+  positions
+  "?"
+///
 
-document {
-     Key => {minPosition,(minPosition,BasicList)},
-     Usage => "minPosition x",
-     Headline => "position of smallest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the smallest element in the list ", TT "x" }
-	  },
-     "If the smallest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "minPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the minimal element is 0, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{},
-     "For elements in a polynomial ring, the order used is the ", 
-     TO2("monomial orderings","monomial order"),
-     " associated with the ring.",
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "minPosition {z^2, s*z, x*y}",
-	  "minPosition(z^2, s*z, x*y)"
-	  },
-     SeeAlso => { maxPosition, max, min, sort, position }
-     }
+doc///
+ Key 
+  minPosition
+  (minPosition, BasicList)
+ Headline
+  position of the smallest element
+ Usage
+  minPosition L
+ Inputs
+  L:BasicList
+ Outputs
+  i:ZZ
+   the index of the smallest element in the list {\tt L}
+ Description
+  Text
+   If the smallest element occurs more than once, the index of its first occurrence is used.
+  Example
+   minPosition {2, 1, 6, 4, 1}
+  Text
+   If {\tt L} contains elements in a polynomial ring, the @TO monomial order@
+   of the ring is used for comparisons.
+  Example
+   R1 = QQ[x, y, z, MonomialOrder => Lex];
+   minPosition {x*y^2, x*y^2 + z^2, y^4, y*z^5}
+   R2 = QQ[x, y, z, MonomialOrder => GRevLex];
+   minPosition (x*y^2, x*y^2 + z^2, y^4, y*z^5)
+  Text
+   More generally, the order of the elements is determined using the @TO "?"@ operator.
+ SeeAlso 
+  maxPosition
+  max
+  min
+  sort
+  position
+  positions
+  "?"
+///
 
-document {
-     Key => {(reverse, BasicList),reverse},
-     Headline => "reverse a list",
-     TT "reverse v", " -- yields a list containing the elements of the 
-     list ", TT "v", " in reverse order.",
-     EXAMPLE "reverse {a,b,c,d}"
-     }
+doc///
+ Key
+  reverse
+  (reverse, BasicList)
+ Headline
+  reverse a list or sequence
+ Usage
+  reverse(L)
+ Inputs
+  L:BasicList
+ Outputs
+  R:BasicList
+   a BasicList containing the elements of {\tt L} in reverse order
+ Description
+  Text
+   The output list will be the same type as the input.
+  Example
+   reverse {5, 7, 2, 8}
+   reverse (5, 7, 2, 8)
+ SeeAlso
+  sort
+  rsort
+///
 
 
 
