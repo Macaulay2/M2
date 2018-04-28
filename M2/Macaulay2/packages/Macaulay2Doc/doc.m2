@@ -297,65 +297,6 @@ document {
  	  }
      }
 
-document {
-     Key => {maxPosition,(maxPosition,BasicList)},
-     Usage => "maxPosition x",
-     Headline => "position of largest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the largest element in the list ", TT "x" }
-	  },
-     "If the largest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "maxPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the maximal element is 1, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{
-	  "For elements in a polynomial ring, the order used is the ", TO2("monomial orderings","monomial order"),
-	  " associated with the ring.",
-	  },
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "maxPosition {z^2, s*z, x*y}",
-	  "maxPosition(z^2, s*z, x*y)"	  
-	  },
-     SeeAlso => { minPosition, max, min, sort, position }
-     }
-
-document {
-     Key => {minPosition,(minPosition,BasicList)},
-     Usage => "minPosition x",
-     Headline => "position of smallest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the smallest element in the list ", TT "x" }
-	  },
-     "If the smallest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "minPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the minimal element is 0, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{},
-     "For elements in a polynomial ring, the order used is the ", 
-     TO2("monomial orderings","monomial order"),
-     " associated with the ring.",
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "minPosition {z^2, s*z, x*y}",
-	  "minPosition(z^2, s*z, x*y)"
-	  },
-     SeeAlso => { maxPosition, max, min, sort, position }
-     }
 
 document {
      Key => keys,
@@ -1250,13 +1191,6 @@ document {
      PARA{"Requests for character positions out of bounds are silently ignored."},
      }
 
-document {
-     Key => {(reverse, BasicList),reverse},
-     Headline => "reverse a list",
-     TT "reverse v", " -- yields a list containing the elements of the 
-     list ", TT "v", " in reverse order.",
-     EXAMPLE "reverse {a,b,c,d}"
-     }
 
 document {
      Key => read,
