@@ -1,47 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document {
-     Key => (accumulate, Function, Thing, VisibleList),
-     TT "accumulate(f,x0,{x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
-     EXAMPLE {
-	  "accumulate(identity, a, {b,c,d,e})",
-	  "accumulate (times, 1, 1 .. 10)"
-	  }
-     }
-
-document {
-     Key => (accumulate, Function, VisibleList),
-     TT "accumulate(f,{x0,x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
-     EXAMPLE {
-	  "accumulate(identity, {a,b,c,d,e})",
-	  "accumulate(plus, 0 .. 10)"
-	  }
-     }
-
-document {
-     Key => (accumulate, VisibleList, Thing, Function),
-     TT "accumulate({xn,...,x1},x0,f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
-     EXAMPLE "accumulate({a,b,c,d}, e, identity)"
-     }
-
-document {
-     Key => (accumulate, VisibleList, Function),
-     TT "accumulate({xn,...,x1,x0},f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
-     EXAMPLE "accumulate({a,b,c,d,e}, identity)"
-     }
-
-document {
-     Key => accumulate,
-     Headline => "apply binary operator repeatedly",
-     SeeAlso => {"fold"}
-     }
-
-TEST ///
-     assert( accumulate(toList,a,{b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
-     assert( accumulate({a,b,c},d,toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
-     assert( accumulate(toList,{a,b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
-     assert( accumulate({a,b,c,d},toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
-///     
 
 document {
      Key => (fold, Function, Thing, VisibleList),
