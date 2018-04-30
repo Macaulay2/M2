@@ -1,42 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-
-document {
-     Key => (fold, Function, Thing, VisibleList),
-     TT "fold(f,x0,{x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     EXAMPLE "fold(identity, a, {b,c,d,e})"
-     }
-document {
-     Key => (fold, Function, VisibleList),
-     TT "fold(f,{x0,x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     EXAMPLE {
-	  "fold(identity, {a,b,c,d,e})",
-	  "fold(plus, {1,2,3,4,5})"
-	  }
-     }
-document {
-     Key => (fold, VisibleList, Thing, Function),
-     TT "fold({xn,...,x1},x0,f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
-     EXAMPLE "fold({a,b,c,d}, e, identity)"
-     }
-document {
-     Key => (fold, VisibleList, Function),
-     TT "fold({xn,...,x1,x0},f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
-     EXAMPLE "fold({a,b,c,d,e}, identity)"
-     }
-document {
-     Key => fold,
-     Headline => "apply binary operator repeatedly",
-     SeeAlso => {"accumulate"}
-     }
-
-TEST ///
-     assert( fold(toList, a, {b,c,d}) === {{{a, b}, c}, d} )
-     assert( fold({a,b,c}, d, toList) === {a, {b, {c, d}}} )
-     assert( fold(toList, {a,b,c,d}) === {{{a, b}, c}, d} )
-     assert( fold({a,b,c,d}, toList) === {a, {b, {c, d}}} )
-///
-
 document {
      Key => demark,
      Headline => "insert a string between elements of a list of strings",
