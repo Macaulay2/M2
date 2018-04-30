@@ -209,26 +209,6 @@ document {
      SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
      }
 
-document {
-     Key => {mingle,(mingle, BasicList)},
-     Headline => "mingle elements of several lists",
-     TT "mingle {v,w,...}", " -- produces a new list from the lists or
-     sequences v,w,... by taking the first element from each, then the second, 
-     and so on.",
-     BR{},
-     TT "mingle (v,w,...)", " -- does the same.",
-     PARA{},
-     "After one of the lists is exhausted, it is silently ignored.",
-     EXAMPLE {
-	  "mingle({1,2,3,4},{a},{F,F,F,F,F,F,F,F,F,F})",
-      	  ///concatenate mingle( {"a","b","c"} , {",",","} )///,
-	  },
-     "It is easy to transpose a nested list (thinking of it as a matrix)
-     using ", TO "mingle", " and ", TO "pack", ".",
-     EXAMPLE {
-      	  "pack(2, mingle {{1,2,3,4},{5,6,7,8}})"
-	  }
-     }
 
 document {
      Key => {SelfInitializingType,
