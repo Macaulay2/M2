@@ -1258,22 +1258,6 @@ document {
      SeeAlso => {ancestor, showStructure}
      }
 
-document {
-     Key => {unique,(unique, List),(unique, Sequence)},
-     Headline => "eliminate duplicates from a list",
-     TT "unique v", " yields the elements of the list ", TT "v", ", without duplicates.",
-     PARA{},
-     EXAMPLE {
-	  "unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
-	  },
-     "The order of elements is maintained.  For something that might be slightly 
-     faster, but doesn't maintain the order of the elements, and may different
-     answers, try making a set and then getting its elements.",
-     EXAMPLE {
-	  "toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
-	  },
-     SeeAlso => {"sort"}
-     }
 
 document {
      Key => Ring,
