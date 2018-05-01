@@ -441,7 +441,7 @@ doc///
   Example
    maxPosition {1, 6, 4, 2, 6}
   Text
-   If {\tt L} contains elements in a polynomial ring, the @TO monomial order@
+   If {\tt L} contains elements in a polynomial ring, the @TO MonomialOrder@
    of the ring is used for comparisons.
   Example
    R1 = QQ[x, y, z, MonomialOrder => Lex];
@@ -479,7 +479,7 @@ doc///
   Example
    minPosition {2, 1, 6, 4, 1}
   Text
-   If {\tt L} contains elements in a polynomial ring, the @TO monomial order@
+   If {\tt L} contains elements in a polynomial ring, the @TO MonomialOrder@
    of the ring is used for comparisons.
   Example
    R1 = QQ[x, y, z, MonomialOrder => Lex];
@@ -519,7 +519,6 @@ doc///
    reverse (5, 7, 2, 8)
  SeeAlso
   sort
-  rsort
 ///
 
 doc///
@@ -532,9 +531,10 @@ doc///
  Usage
   unique(L)
  Inputs
-  L:BasicList
+  L:List
+   or sequence
  Outputs
-  M:BasicList
+  M:List
    the elements of {\tt L} without duplicates
  Description
   Text
@@ -551,13 +551,11 @@ doc///
    To count occurrences of each element, use @TO tally@. To create
    a sorted list, see @TO sort@. For an overview of lists and sequences,
    see @TO"lists and sequences"@.
-  SeeAlso 
-   sort
-   set
-   unique
-   "lists and sequences"
-   tally
-   select
+ SeeAlso 
+  sort
+  set
+  "lists and sequences"
+  tally
 ///
 
 doc///
@@ -599,12 +597,11 @@ doc///
   Example
    concatenate mingle( {"a","b","c"} , {",",","} )
    netList pack(3, mingle( (0..5), apply(6, i -> i^2), apply(6, i -> i^3)))
-  SeeAlso
-   pack
-   sort
-   select
-   apply
-   "lists and sequences"
+ SeeAlso
+  pack
+  sort
+  apply
+  "lists and sequences"
 ///
 
 doc///
@@ -629,10 +626,10 @@ doc///
   M:List
  Description
   Text
-   Suppose $L=\{x0, x1, ..., xn\}$. Then for any binary operator $f$, 
-   {\tt accumulate(f, L)} returns the list $\{f(x0, x1), f(f(x0, x1), x2), ...\}$. 
+   Suppose {\tt L=\{x0, x1, ..., xn\}}. Then for any binary operator {\tt f}, 
+   {\tt accumulate(f, L)} returns the list {\tt \{f(x0, x1), f(f(x0, x1), x2), ...\} }. 
    In other words, the binary operator is applied
-   to the first two elements of {\tt L}$, then to that result along with the next unused element of
+   to the first two elements of {\tt L}, then to that result along with the next unused element of
    {\tt L}, and so forth.
   Example
    accumulate(plus, {0,1,2,3,4,5})
@@ -640,14 +637,14 @@ doc///
    accumulate((i,j) -> i|j|i, {"a","b","c","d","e"})
   Text
    If {\tt accumulate(f, x, L)} is called, the element {\tt x} is used as the first argument of the
-   binary function {\tt f}$. In other words, {\tt accumulate(f, \{x0, x1, \ldots, xn\})} is 
+   binary function {\tt f}. In other words, {\tt accumulate(f, \{x0, x1, \ldots, xn\})} is 
    equivalent to {\tt accumulate(f, x0, \{x1, \ldots, xn\})}.
   Example
    accumulate(plus, 0, {1,2,3,4,5})
    accumulate((x, y) -> x^y, 2, {3,2,1,2})
   Text
    The function {\tt accumulate(\{x_0, x_1, \ldots, x_n\}, f)} returns the
-   list {\tt ..., f(x_{n-2}, f(x_{n-1}, x_n)), f(x_{n-1}, x_n)}. That is, {\tt f} is applied
+   list {\tt \{..., f(x_{n-2}, f(x_{n-1}, x_n)), f(x_{n-1}, x_n) \} }. That is, {\tt f} is applied
    to the last two elements of the list, and the result placed at the end of the output. Then 
    the accumulation proceeds backwards through the list. The optional argument {\tt x} in
    {\tt accumulate(L, x, f)} is used as the second argument in the first evaluation of
@@ -658,15 +655,15 @@ doc///
    accumulate({a,b,c,d}, e, concatenate)  
    accumulate({2,3,2,1}, 2, (x, y) -> x^y)
   Text
-   The difference between @TO fold@ and {\tt accumulate} is that {\tt fold} returns the
+   The difference between {\tt fold} and @TO accumulate@ is that {\tt fold} returns the
    final result of all the nested evaluations of {\tt f}, while {\tt accumulate} lists 
    all the intermediate values as well.
   Example
    fold({2,3,2,1}, 2, (x,y) -> x^y)
-SeeAlso
- apply
- fold
- "lists and sequences"
+ SeeAlso
+  apply
+  fold
+  "lists and sequences"
 ///
 
 TEST ///
@@ -698,10 +695,10 @@ doc///
   M:List
  Description
   Text
-   Suppose $L=\{x0, x1, ..., xn\}$. Then for any binary operator $f$, 
-   {\tt fold(f, L)} computes $f(...f(f(x0, x1), x2), ...)$. 
+   Suppose {\tt L=\{x0, x1, ..., xn\}}. Then for any binary operator {\tt f}, 
+   {\tt fold(f, L)} computes {\tt f(...f(f(x0, x1), x2), ...)}. 
    In other words, the binary operator is applied
-   to the first two elements of {\tt L}$, then to that result along with the next unused element of
+   to the first two elements of {\tt L}, then to that result along with the next unused element of
    {\tt L}, and so forth.
   Example
    fold(plus, {0,1,2,3,4,5})
@@ -709,7 +706,7 @@ doc///
    fold((i,j) -> i|j|i, {"a","b","c","d","e"})
   Text
    If {\tt fold(f, x, L)} is called, the element {\tt x} is used as the first argument of the
-   binary function {\tt f}$. In other words, {\tt fold(f, \{x0, x1, \ldots, xn\})} is 
+   binary function {\tt f}. In other words, {\tt fold(f, \{x0, x1, \ldots, xn\})} is 
    equivalent to {\tt fold(f, x0, \{x1, \ldots, xn\})}.
   Example
    fold(plus, 0, {1,2,3,4,5})
@@ -732,10 +729,10 @@ doc///
    all the intermediate values as well.
   Example
    accumulate({2,3,2,1}, 2, (x, y) -> x^y)
-SeeAlso
- apply
- accumulate
- "lists and sequences"
+ SeeAlso
+  apply
+  accumulate
+  "lists and sequences"
 ///
 
 TEST ///
