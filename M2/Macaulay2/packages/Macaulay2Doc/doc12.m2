@@ -35,24 +35,6 @@ document {
      such as might result from multiplying 0 by infinity.",
      }
 
-document {
-     Key => {max,(max, VisibleList)},
-     Headline => "maximum of elements of a list",
-     TT "max x", " -- yields the maximum of the elements in the list or sequence x."
-     }
-
-document {
-     Key => {min,(min, VisibleList)},
-     Headline => "minimum of elements of a list",
-     TT "min x", " -- yields the minimum of the elements in the list or sequence x."
-     }
-
-TEST ///
-assert(max{4,5,6} === 6)
-assert(min{4,5,6} === 4)
-assert(max(4,5,6) === 6)
-assert(min(4,5,6) === 4)
-///
 
 document {
      Key => {pack,(pack, BasicList, ZZ),(pack, ZZ, BasicList)},
