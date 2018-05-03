@@ -504,9 +504,6 @@ doc///
  Key
   max
   (max, VisibleList)
-  (max, List)
-  (max, Sequence)
-  (max, Array)
  Headline
   yields the maximum element in a list or sequence
  Usage
@@ -583,9 +580,6 @@ doc///
  Key
   min
   (min, VisibleList)
-  (min, List)
-  (min, Sequence)
-  (min, Array)
  Headline
   yields the minimum element in a list or sequence
  Usage
