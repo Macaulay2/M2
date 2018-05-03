@@ -63,20 +63,6 @@ document {
      }
 
 document {
-     Key => {(positions, VisibleList, Function),positions},
-     Headline => "which elements of a list satisfy a condition",
-     Usage => "positions(v,f)",
-     Inputs => { "v", "f" => { "which, when applied to an element of ", TT "v", ", yields ", TO "true", " or ", TO "false", "" }},
-     Outputs => {
-	  List => { "the list of integers ", TT "k", ", in ascending order, such that ", TT "f v#k", " evaluates to ", TO "true" }
-	  },
-     EXAMPLE lines ///
-     positions(100..110,isPrime)
-     ///,
-     SeeAlso => {position,select}
-     }
-
-document {
      Key => delete,
      Headline => "delete elements of a list",
      TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "

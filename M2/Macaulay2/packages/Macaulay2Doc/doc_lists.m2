@@ -858,27 +858,65 @@ doc///
    {\tt position(A, f)} returns the smallest index {\tt i} such that {\tt f(A#i)} 
    is true. If no element satisfies the condition, @TO null@ is returned.
   Example
-   position((10,20,43,105,6), odd)
-   position((10,20,43,105,6), i -> i<0)
+   position((10,20,43,105,6,93), odd)
+   position((10,20,43,105,6,93), i -> i<0)
   Text
    Use {\tt position(A, B, f)} to return the smallest index {\tt i} such that {\tt f(A#i, B#i)}
    is true.
   Example
-   position((10,20,43,105,6),(18,82,12,7,35), (a,b) -> a>b)
+   position((10,20,43,105,6,93),(18,82,12,7,35,92), (a,b) -> a>b)
   Text
    The {\tt Reverse} option will return the largest index instead.
   Example
-   position((10,20,43,105,6),(18,82,12,7,35), (a,b) -> a>b, Reverse => true)
+   position((10,20,43,105,6,93), odd, Reverse => true)  
+   position((10,20,43,105,6,93),(18,82,12,7,35,92), (a,b) -> a>b, Reverse => true)
   Text
    To find all indices of elements satisfying the condition, see @TO positions@. To return the 
    elements, rather than their indices, see @TO select@.
   Example
-   positions((10,20,43,105,6), odd)
-   select((10,20,43,105,6), odd)
+   positions((10,20,43,105,6,93), odd)
+   select((10,20,43,105,6,93), odd)
  SeeAlso
   minPosition
   maxPosition
   positions
+  select
+  take
+  "lists and sequences"
+///
+
+doc///
+ Key
+  positions
+  (positions, VisibleList, Function)
+ Headline
+  which elements of a list satisfy a condition
+ Usage
+  positions(A, f)
+ Inputs
+  A: VisibleList
+  f: Function
+ Outputs
+  p: List
+   the list of indices {\tt i} such that {\tt f(A#i)} is true
+ Description
+  Text
+   The indices are listed in ascending order. If no element satisfies the condition, an empty list is returned.
+  Example
+   positions((10,20,43,105,6,93), odd)
+   positions((10,20,43,105,6,93), i -> i<0)
+   positions(100..110, isPrime)
+  Text
+   To find the first or last index of an element satisfying the condition, see @TO position@. To return the 
+   elements, rather than their indices, see @TO select@.
+  Example
+   position((10,20,43,105,6), odd)  
+   position((10,20,43,105,6), odd, Reverse => true)
+   select((10,20,43,105,6), odd)
+ SeeAlso
+  minPosition
+  maxPosition
+  position
   select
   take
   "lists and sequences"
