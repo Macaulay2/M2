@@ -526,6 +526,70 @@ doc///
   "lists and sequences"
 ///
 
+doc///
+ Key
+  delete
+ Headline
+  delete some elements of a list
+ Usage
+  delete(x, A)
+ Inputs
+  A:
+   list or sequence
+  x:
+   thing
+ Outputs
+  A2:
+    a new list from {\tt A} with every occurrence of {\tt x} removed
+ Description
+  Example
+   delete(c, {a,b,c,d,e,a,b,c,d,e})
+  Text
+   Equality is determined with @TO"==="@, which is quick, but not always
+   intuitive. For instance, in the next example, the first item in the list is
+   {\bf not} removed, because it is an element of {\tt QQ} and will not match
+   an element of {\tt ZZ}.
+  Example
+   delete(1, {2/2, 3/2, 4/2})
+  Text
+   To delete items from a list by index, rather than value, see @TO drop@.
+ SeeAlso
+  drop
+  positions
+  select
+  "lists and sequences"
+///
+
+doc///
+ Key
+  demark
+ Headline
+  insert a string between elements of a list of strings
+ Usage
+  demark(d, L)
+ Inputs
+  d: String
+  L: List
+   of strings
+ Outputs
+  s: String
+   the string obtained by concatenating the elements of {\tt L}, with copies
+   of the string {\tt d} inserted between each pair
+ Description
+  Example
+   demark("+", a..f)
+   demark(" and ", 6:"more")
+  Text
+   To achieve a similar insertion while keeping the output as a list, see @TO mingle@.
+  Example
+   mingle(6: "more", 5: "and")
+ SeeAlso
+  insert
+  join
+  mingle
+  "lists and sequences"
+///
+
 doc ///
  Key
   drop
@@ -650,6 +714,99 @@ doc///
  SeeAlso
   apply
   accumulate
+  "lists and sequences"
+///
+
+doc///
+ Key
+  insert
+  (insert,ZZ,Thing,VisibleList)
+ Headline
+  copy a list, inserting an element
+ Usage
+  insert(i, x, L)
+ Inputs
+  i: ZZ
+  x: Thing
+  L: VisibleList
+ Outputs
+  L2: VisibleList
+   a copy of {\tt L} in which {\tt x} has been inserted into position {\tt i}
+ Description
+  Example
+   L = 0..10
+   insert(4, "hi", L)
+   insert(0, "hi", L)
+   insert(11, "hi", L)
+   insert(-1, "hi", L)
+   apply({-1,-3,-5}, i -> L = insert(i, "hi", L)); L
+ SeeAlso
+  delete
+  mingle
+  switch  
+  "lists and sequences"
+///
+
+doc///
+ Key
+  isSorted
+  (isSorted, VisibleList)
+ Headline
+  whether a list is sorted
+ Usage
+  isSorted L
+ Inputs
+  L: VisibleList
+ Outputs
+   : Boolean
+    whether the elements of {\tt L} are in increasing order
+ Description
+  Example
+   isSorted {1,2,2,3}
+   isSorted {1,2,3,2}
+   R = ZZ/2[x,y,z, MonomialOrder => Lex]; 
+   isSorted (z^3, y^2, x)
+   R = ZZ/2[x,y,z, MonomialOrder => GLex]; 
+   isSorted (z^3, y^2, x)   
+ SeeAlso
+  sort
+  "?"
+  "lists and sequences"
+///
+
+doc///
+ Key
+  join
+ Headline
+  join lists and sequences
+ Usage
+  join(A, B, ...)
+ Inputs
+  A: BasicList
+  B: BasicList
+ Outputs
+  Z: BasicList
+ Description
+  Text
+   {\tt join(A, B, ...)} joins the elements of the lists or sequences
+   {\tt A, B, ...} into a single list or sequence. The inputs may belong
+   to different classes; the class of the result will match the class of
+   the first argument passed to {\tt join}.
+  Example
+   join( {1,2,3}, (4,5,6), (7,8,9) )
+   join( (1,2,3), {4,5,6}, {7}, (8,9,10) )
+  Text
+   The operator @TO"|"@ is a convenient shorthand for joining two
+   inputs of the same class. 
+  Example
+   {1,2,3} | {4,5,6}
+   (1,2,3) | (4,5,6)
+ SeeAlso
+  concatenate
+  demark
+  flatten
+  mingle
+  "List | List"
   "lists and sequences"
 ///
 
@@ -832,6 +989,8 @@ doc///
    concatenate mingle( {"a","b","c"} , {",",","} )
    netList pack(3, mingle( (0..5), apply(6, i -> i^2), apply(6, i -> i^3)))
  SeeAlso
+  insert
+  join
   pack
   sort
   apply
@@ -1113,6 +1272,48 @@ doc///
   unique
   "lists and sequences"
 ///
+
+doc///
+ Key
+  scan
+  (scan, BasicList, Function)
+  (scan, ZZ, Function)
+ Headline
+  apply a function to each element in a list or sequence
+ Usage
+  scan(L, f)
+  scan(n, f)
+ Inputs
+  L: BasicList
+  n: ZZ
+  f: Function
+ Outputs
+  : null
+ Description
+  Text
+   {\tt scan(L, f)} applies the function {\tt f} to each element
+   of the list {\tt L}. The function values are discarded.
+  Example
+   scan({a, 4, "George", 2^100}, print)
+  Text
+   {\tt scan(n, f)} applies the function {\tt f} to each element 
+   of the list 0, 1, ..., n-1
+  Example
+   scan(4, print)
+   v = {a,b,c}; scan(#v, i -> print(i,v#i))
+  Text
+   The keyword @TO break@ can be used to terminate the scan prematurely, 
+   and optionally to specify a return value for the expression. Here we
+   use it to locate the first even number in a list.
+  Example
+   scan({3,5,7,11,44,55,77}, i -> if even i then break i)
+ SeeAlso
+  apply
+  accumulate
+  fold
+  "lists and sequences"
+  "mapping over lists"
+///
    
 doc///
  Key
@@ -1160,6 +1361,35 @@ doc///
  SeeAlso
   partitions
   set
+  "lists and sequences"
+///
+
+doc///
+ Key
+  switch
+  (switch,ZZ,ZZ,VisibleList)
+ Headline
+  copy a list, switching two elements
+ Usage
+  switch(i, j, L)
+ Inputs
+  i: ZZ
+  j: ZZ
+  L: VisibleList
+ Outputs
+  L2:
+   a copy of the list {\tt L}, with the elements in positions {\tt i} and {\tt j} interchanged. 
+ Description
+  Text
+   A negative value of {\tt i} or {\tt j} is taken relative to the end of the list.
+  Example
+   L = 0..10;
+   switch(3, 9, L)
+   switch(0, -1, L)
+   switch(-1, -2, L)
+ SeeAlso
+  insert
+  reverse
   "lists and sequences"
 ///
    
@@ -1239,121 +1469,6 @@ doc///
   tally
   "lists and sequences"
 ///
-
-
-
---------------to be rewritten----------
-document {
-     Key => demark,
-     Headline => "insert a string between elements of a list of strings",
-     TT "demark(s,x)", " -- given a list of strings ", TT "x", " and
-     a string ", TT "s", " provides the string obtained by concatenating
-     the elements of ", TT "x", " with a copy of ", TT "x", " inserted
-     between each successive pair.",
-     PARA{},
-     EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
-     }
-
-document {
-     Key => join,
-     Headline => "join lists",
-     TT "join(u,v,...)", " -- joins the elements of the lists or
-     sequences u, v, ... into a single list.",
-     PARA{},
-     "The class of the result is the same as the class of the first argument.
-     If there is just one argument, and it's mutable, a copy is returned.",
-     EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
-     PARA{},
-     "The operator ", TO (symbol |, List, List), " can be used as a synonym."
-     }
-
-document {
-     Key => delete,
-     Headline => "delete elements of a list",
-     TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
-     from the list ", TT "v", ".",
-     PARA{},
-     "Equality is determined with ", TO "===", ", which is quick.",
-     EXAMPLE {
-	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
-	  },
-     SeeAlso => "member"
-     }
-
-document {
-     Key => scan,
-     Headline => "apply a function to each element",
-     SeeAlso => { "mapping over lists"}
-     }
-
-document {
-     Key => (scan,BasicList,Function),
-     Headline => "apply a function to each element of a list",
-     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ".  The function values are discarded.",
-     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
-     }
-
-document {
-     Key => (scan,ZZ,Function),
-     Headline => "apply a function to 0 .. n-1",
-     TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
-     in the range ", TT "0 .. n-1", " discarding the results.",
-     PARA{},
-     "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
-     EXAMPLE {
-	  "scan(3,print)",
-	  "v = {a,b,c}",
-	  "scan(#v, i -> print(i,v#i))"
-	  }
-     }
-
-document {
-     Key => {(isSorted,VisibleList), isSorted},
-     Headline => "whether a list is sorted",
-     Usage => "isSorted x",
-     Inputs => { "x" },
-     Outputs => { Boolean => {"whether the elements of the list ", TT "x", " are in increasing order"}},
-     SourceCode => (isSorted,VisibleList),
-     EXAMPLE lines ///
-     isSorted {1,2,2,3}
-     isSorted {1,2,3,2}
-     ///
-     }     
-
-document {
-     Key => {(switch,ZZ,ZZ,VisibleList), switch},
-     Headline => "copy a list, switching two elements",
-     Usage => "switch(i,j,x)",
-     Inputs => {"i","j","x"},
-     Outputs => {{"a copy of the list ", TT "x", " in which the elements at positions ", TT "i", " and ", TT "j", " have
-	       been interchanged.  A negative value of ", TT "i", " or ", TT "j", " is taken relative to the end of the list."
-	       }},
-     EXAMPLE lines ///
-     switch(3,9,0..10)
-     switch(0,-1,0..10)
-     ///
-     }
-
-document {
-     Key => {(insert,ZZ,Thing,VisibleList), insert},
-     Headline => "copy a list, inserting an element",
-     Usage => "insert(i,t,x)",
-     Inputs => {"i","t","x"},
-     Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has been inserted
-	       into position ", TT "i", " of the result.  A negative value of ", TT "i", " 
-	       is taken relative to the end of the list."
-	       }},
-     EXAMPLE lines ///
-     insert(4,t,0..10)
-     insert(0,t,0..10)
-     insert(11,t,0..10)
-     insert(-1,t,0..10)
-     ///
-     }
-
---------------------------
-
 
 TEST ///
     --accumulate
