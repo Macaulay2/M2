@@ -421,6 +421,69 @@ document {
 	  },
      SeeAlso => {"BasicList"}
      }
+
+doc///
+ Key
+  accumulate
+  (accumulate, Function, Thing, VisibleList)
+  (accumulate, Function, VisibleList)
+  (accumulate, VisibleList, Thing, Function)
+  (accumulate, VisibleList, Function)
+ Headline
+  apply a binary operator repeatedly
+ Usage
+  accumulate(f, x, L)
+  accumulate(f, L)
+  accumulate(L, x, f)
+  accumulate(L, f)
+ Inputs
+  f:Function
+  x:Thing
+  L:VisibleList
+ Outputs
+  M:List
+ Description
+  Text
+   Suppose {\tt L=\{x0, x1, ..., xn\}}. Then for any binary operator {\tt f}, 
+   {\tt accumulate(f, L)} returns the list {\tt \{f(x0, x1), f(f(x0, x1), x2), ...\} }. 
+   In other words, the binary operator is applied
+   to the first two elements of {\tt L}, then to that result along with the next unused element of
+   {\tt L}, and so forth.
+  Example
+   accumulate(plus, {0,1,2,3,4,5})
+   accumulate(concatenate, {a,b,c,d,e})
+   accumulate((i,j) -> i|j|i, {"a","b","c","d","e"})
+  Text
+   If {\tt accumulate(f, x, L)} is called, the element {\tt x} is used as the first argument of the
+   binary function {\tt f}. In other words, {\tt accumulate(f, \{x0, x1, \ldots, xn\})} is 
+   equivalent to {\tt accumulate(f, x0, \{x1, \ldots, xn\})}.
+  Example
+   accumulate(plus, 0, {1,2,3,4,5})
+   accumulate((x, y) -> x^y, 2, {3,2,1,2})
+  Text
+   The function {\tt accumulate(\{x_0, x_1, \ldots, x_n\}, f)} returns the
+   list {\tt \{..., f(x_{n-2}, f(x_{n-1}, x_n)), f(x_{n-1}, x_n) \} }. That is, {\tt f} is applied
+   to the last two elements of the list, and the result placed at the end of the output. Then 
+   the accumulation proceeds backwards through the list. The optional argument {\tt x} in
+   {\tt accumulate(L, x, f)} is used as the second argument in the first evaluation of
+   {\tt f}. So {\tt accumulate(\{x_0, x_1, \ldots, x_{n-1}\}, x_n, f)} is equivalent
+   to {\tt accumulate(\{x_0, x_1, \ldots, x_n\}, f)}.
+  Example
+   accumulate({a,b,c,d,e}, concatenate)
+   accumulate({a,b,c,d}, e, concatenate)  
+   accumulate({2,3,2,1}, 2, (x, y) -> x^y)
+  Text
+   The difference between {\tt fold} and @TO accumulate@ is that {\tt fold} returns the
+   final result of all the nested evaluations of {\tt f}, while {\tt accumulate} lists 
+   all the intermediate values as well.
+  Example
+   fold({2,3,2,1}, 2, (x,y) -> x^y)
+ SeeAlso
+  apply
+  fold
+  "lists and sequences"
+///
+
 doc ///
  Key
   drop
@@ -461,45 +524,6 @@ doc ///
   "lists and sequences"
 ///
 
-doc ///
- Key
-  take
-  (take, BasicList, ZZ)
-  (take, BasicList, List)
- Headline
-  Take some elements from a list or sequence.
- Usage
-  take(L, i)
-  take(L, {j,k})
- Inputs
-  L: BasicList
-  i: ZZ
-  j: ZZ
-  k: ZZ
- Outputs
-  L2: BasicList
-   the list or sequence containing the first {\tt i} elements of {\tt L},
-   (if {\tt i} positive), or the last {\tt i} elements of {\tt L} (if {\tt i} negative), or, if given the
-   pair {\tt j,k}, the list or sequence containing the elements of {\tt L} with indices {\tt j} through {\tt k}
- Description
-  Example
-   take({a,b,c,d,e,f,g}, 3)
-   take({a,b,c,d,e,f,g}, -3)
-   take({a,b,c,d,e,f,g}, {1,3})
-   take({a,b,c,d,e,f,g}, {2,2})    
-  Text
-   The pair {\tt \{j,k\}} must be given with both entries non-negative, and $j\le k$. Otherwise an empty list is returned.
-  Example
-   take({a,b,c,d,e,f,g}, {3,1})
-   take({a,b,c,d,e,f,g}, {4,-1})
- SeeAlso
-  drop
-  select
-  position
-  positions
-  "lists and sequences"
-///
-
 doc///
  Key
   first
@@ -527,6 +551,68 @@ doc///
 
 doc///
  Key
+  fold
+  (fold, Function, Thing, VisibleList)
+  (fold, Function, VisibleList)
+  (fold, VisibleList, Thing, Function)
+  (fold, VisibleList, Function)
+ Headline
+  apply a binary operator repeatedly
+ Usage
+  fold(f, x, L)
+  fold(f, L)
+  fold(L, x, f)
+  fold(L, f)
+ Inputs
+  f:Function
+  x:Thing
+  L:VisibleList
+ Outputs
+  M:List
+ Description
+  Text
+   Suppose {\tt L=\{x0, x1, ..., xn\}}. Then for any binary operator {\tt f}, 
+   {\tt fold(f, L)} computes {\tt f(...f(f(x0, x1), x2), ...)}. 
+   In other words, the binary operator is applied
+   to the first two elements of {\tt L}, then to that result along with the next unused element of
+   {\tt L}, and so forth.
+  Example
+   fold(plus, {0,1,2,3,4,5})
+   fold(identity, {a,b,c,d,e})
+   fold((i,j) -> i|j|i, {"a","b","c","d","e"})
+  Text
+   If {\tt fold(f, x, L)} is called, the element {\tt x} is used as the first argument of the
+   binary function {\tt f}. In other words, {\tt fold(f, \{x0, x1, \ldots, xn\})} is 
+   equivalent to {\tt fold(f, x0, \{x1, \ldots, xn\})}.
+  Example
+   fold(plus, 0, {1,2,3,4,5})
+   fold((x, y) -> x^y, 2, {3,2,1,2})
+  Text
+   The function {\tt fold(\{x_0, x_1, \ldots, x_n\}, f)} returns 
+   {\tt f...f(f(x_{n-2}, f(x_{n-1}, x_n)))}. That is, {\tt f} is applied
+   to the last two elements of the list first, then the repeated calls to
+   {\tt f} proceed backwards through the list. The optional argument {\tt x} in
+   {\tt fold(L, x, f)} is used as the second argument in the first evaluation of
+   {\tt f}. So {\tt fold(\{x_0, x_1, \ldots, x_{n-1}\}, x_n, f)} is equivalent
+   to {\tt fold(\{x_0, x_1, \ldots, x_n\}, f)}.
+  Example
+   fold({a,b,c,d,e}, identity)
+   fold({a,b,c,d}, e, identity)  
+   fold({2,3,2,1}, 2, (x, y) -> x^y)
+  Text
+   The difference between @TO fold@ and {\tt accumulate} is that {\tt fold} returns the
+   final result of all the nested evaluations of {\tt f}, while {\tt accumulate} lists 
+   all the intermediate values as well.
+  Example
+   accumulate({2,3,2,1}, 2, (x, y) -> x^y)
+ SeeAlso
+  apply
+  accumulate
+  "lists and sequences"
+///
+
+doc///
+ Key
   last
  Headline
   last element of a list
@@ -549,65 +635,6 @@ doc///
   position
   "lists and sequences"
 ///
-
-doc///
- Key
-  position
-  (position, VisibleList, Function)
-  (position, VisibleList, VisibleList, Function)
-  [position, Reverse]
- Headline
-  the first element of a list satisfying a condition
- Usage
-  position(A, f)
-  position(A, B, f)
-  position(A, f, Reverse => true)
- Inputs
-  A: VisibleList
-  B: VisibleList
-  f: Function
- Outputs
-  p: ZZ
-   the first index to satisfy the boolean function {\tt f}
- Description
-  Text
-   {\tt position(A, f)} returns the smallest index {\tt i} such that {\tt f(A#i)} 
-   is true. If no element satisfies the condition, @TO null@ is returned.
-  Example
-   position((10,20,43,105,6), odd)
-   position((10,20,43,105,6), i -> i<0)
-  Text
-   Use {\tt position(A, B, f)} to return the smallest index {\tt i} such that {\tt f(A#i, B#i)}
-   is true.
-  Example
-   position((10,20,43,105,6),(18,82,12,7,35), (a,b) -> a>b)
-  Text
-   The {\tt Reverse} option will return the largest index instead.
-  Example
-   position((10,20,43,105,6),(18,82,12,7,35), (a,b) -> a>b, Reverse => true)
-  Text
-   To find all indices of elements satisfying the condition, see @TO positions@. To return the 
-   elements, rather than their indices, see @TO select@.
-  Example
-   positions((10,20,43,105,6), odd)
-   select((10,20,43,105,6), odd)
- SeeAlso
-  minPosition
-  maxPosition
-  positions
-  select
-  take
-  "lists and sequences"
-///
-
-document { Key => (position, VisibleList, VisibleList, Function),
-     Usage => "position(v,w,f)",
-     Inputs => {"v","w","f"},
-     Outputs => {{"the smallest index ", TT "i", " such that ", TT "f(v#i,w#i)", " is true"}},
-     EXAMPLE lines ///
-     	  position((0,1,2,3,4), (0,0,0,9,9), (i,j)->i<j)
-     ///}
-
 
 doc///
  Key
@@ -724,104 +751,6 @@ doc///
 ///
 
 doc///
- Key 
-  minPosition
-  (minPosition, BasicList)
- Headline
-  position of the smallest element
- Usage
-  minPosition L
- Inputs
-  L:BasicList
- Outputs
-  i:ZZ
-   the index of the smallest element in the list {\tt L}
- Description
-  Text
-   If the smallest element occurs more than once, the index of its first occurrence is used.
-  Example
-   minPosition {2, 1, 6, 4, 1}
-  Text
-   If {\tt L} contains elements in a polynomial ring, the @TO MonomialOrder@
-   of the ring is used for comparisons.
-  Example
-   R1 = QQ[x, y, z, MonomialOrder => Lex];
-   minPosition {x*y^2, x*y^2 + z^2, y^4, y*z^5}
-   R2 = QQ[x, y, z, MonomialOrder => GRevLex];
-   minPosition (x*y^2, x*y^2 + z^2, y^4, y*z^5)
-  Text
-   More generally, the order of the elements is determined using the @TO "?"@ operator.
- SeeAlso 
-  maxPosition
-  max
-  min
-  sort
-  position
-  positions
-  "?"
-///
-
-doc///
- Key
-  reverse
-  (reverse, BasicList)
- Headline
-  reverse a list or sequence
- Usage
-  reverse(L)
- Inputs
-  L:BasicList
- Outputs
-  R:BasicList
-   a BasicList containing the elements of {\tt L} in reverse order
- Description
-  Text
-   The output list will be the same type as the input.
-  Example
-   reverse {5, 7, 2, 8}
-   reverse (5, 7, 2, 8)
- SeeAlso
-  sort
-///
-
-doc///
- Key
-  unique
-  (unique, List)
-  (unique, Sequence)
- Headline
-  eliminate duplicates from a list
- Usage
-  unique(L)
- Inputs
-  L:List
-   or sequence
- Outputs
-  M:List
-   the elements of {\tt L} without duplicates
- Description
-  Text
-   The output list maintains the order of elements in {\tt L}.
-  Example
-   unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
-  Text
-   Another way to list the unique elements of {\tt L} is by creating a
-   set from {\tt L} and then listing its elements. This may be slightly
-   faster than {\tt unique}, but forgets the ordering of {\tt L}.
-  Example
-   toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
-  Text
-   To count occurrences of each element, use @TO tally@. To create
-   a sorted list, see @TO sort@. For an overview of lists and sequences,
-   see @TO"lists and sequences"@.
- SeeAlso 
-  sort
-  set
-  "lists and sequences"
-  tally
-///
-
-doc///
  Key
   mingle
   (mingle, BasicList)
@@ -868,153 +797,211 @@ doc///
 ///
 
 doc///
- Key
-  accumulate
-  (accumulate, Function, Thing, VisibleList)
-  (accumulate, Function, VisibleList)
-  (accumulate, VisibleList, Thing, Function)
-  (accumulate, VisibleList, Function)
+ Key 
+  minPosition
+  (minPosition, BasicList)
  Headline
-  apply a binary operator repeatedly
+  position of the smallest element
  Usage
-  accumulate(f, x, L)
-  accumulate(f, L)
-  accumulate(L, x, f)
-  accumulate(L, f)
+  minPosition L
  Inputs
-  f:Function
-  x:Thing
-  L:VisibleList
+  L:BasicList
  Outputs
-  M:List
+  i:ZZ
+   the index of the smallest element in the list {\tt L}
  Description
   Text
-   Suppose {\tt L=\{x0, x1, ..., xn\}}. Then for any binary operator {\tt f}, 
-   {\tt accumulate(f, L)} returns the list {\tt \{f(x0, x1), f(f(x0, x1), x2), ...\} }. 
-   In other words, the binary operator is applied
-   to the first two elements of {\tt L}, then to that result along with the next unused element of
-   {\tt L}, and so forth.
+   If the smallest element occurs more than once, the index of its first occurrence is used.
   Example
-   accumulate(plus, {0,1,2,3,4,5})
-   accumulate(concatenate, {a,b,c,d,e})
-   accumulate((i,j) -> i|j|i, {"a","b","c","d","e"})
+   minPosition {2, 1, 6, 4, 1}
   Text
-   If {\tt accumulate(f, x, L)} is called, the element {\tt x} is used as the first argument of the
-   binary function {\tt f}. In other words, {\tt accumulate(f, \{x0, x1, \ldots, xn\})} is 
-   equivalent to {\tt accumulate(f, x0, \{x1, \ldots, xn\})}.
+   If {\tt L} contains elements in a polynomial ring, the @TO MonomialOrder@
+   of the ring is used for comparisons.
   Example
-   accumulate(plus, 0, {1,2,3,4,5})
-   accumulate((x, y) -> x^y, 2, {3,2,1,2})
+   R1 = QQ[x, y, z, MonomialOrder => Lex];
+   minPosition {x*y^2, x*y^2 + z^2, y^4, y*z^5}
+   R2 = QQ[x, y, z, MonomialOrder => GRevLex];
+   minPosition (x*y^2, x*y^2 + z^2, y^4, y*z^5)
   Text
-   The function {\tt accumulate(\{x_0, x_1, \ldots, x_n\}, f)} returns the
-   list {\tt \{..., f(x_{n-2}, f(x_{n-1}, x_n)), f(x_{n-1}, x_n) \} }. That is, {\tt f} is applied
-   to the last two elements of the list, and the result placed at the end of the output. Then 
-   the accumulation proceeds backwards through the list. The optional argument {\tt x} in
-   {\tt accumulate(L, x, f)} is used as the second argument in the first evaluation of
-   {\tt f}. So {\tt accumulate(\{x_0, x_1, \ldots, x_{n-1}\}, x_n, f)} is equivalent
-   to {\tt accumulate(\{x_0, x_1, \ldots, x_n\}, f)}.
-  Example
-   accumulate({a,b,c,d,e}, concatenate)
-   accumulate({a,b,c,d}, e, concatenate)  
-   accumulate({2,3,2,1}, 2, (x, y) -> x^y)
+   More generally, the order of the elements is determined using the @TO "?"@ operator.
+ SeeAlso 
+  maxPosition
+  max
+  min
+  sort
+  position
+  positions
+  "?"
+///
+
+doc///
+ Key
+  position
+  (position, VisibleList, Function)
+  (position, VisibleList, VisibleList, Function)
+  [position, Reverse]
+ Headline
+  the first element of a list satisfying a condition
+ Usage
+  position(A, f)
+  position(A, B, f)
+  position(A, f, Reverse => true)
+ Inputs
+  A: VisibleList
+  B: VisibleList
+  f: Function
+ Outputs
+  p: ZZ
+   the first index to satisfy the boolean function {\tt f}
+ Description
   Text
-   The difference between {\tt fold} and @TO accumulate@ is that {\tt fold} returns the
-   final result of all the nested evaluations of {\tt f}, while {\tt accumulate} lists 
-   all the intermediate values as well.
+   {\tt position(A, f)} returns the smallest index {\tt i} such that {\tt f(A#i)} 
+   is true. If no element satisfies the condition, @TO null@ is returned.
   Example
-   fold({2,3,2,1}, 2, (x,y) -> x^y)
+   position((10,20,43,105,6), odd)
+   position((10,20,43,105,6), i -> i<0)
+  Text
+   Use {\tt position(A, B, f)} to return the smallest index {\tt i} such that {\tt f(A#i, B#i)}
+   is true.
+  Example
+   position((10,20,43,105,6),(18,82,12,7,35), (a,b) -> a>b)
+  Text
+   The {\tt Reverse} option will return the largest index instead.
+  Example
+   position((10,20,43,105,6),(18,82,12,7,35), (a,b) -> a>b, Reverse => true)
+  Text
+   To find all indices of elements satisfying the condition, see @TO positions@. To return the 
+   elements, rather than their indices, see @TO select@.
+  Example
+   positions((10,20,43,105,6), odd)
+   select((10,20,43,105,6), odd)
  SeeAlso
-  apply
-  fold
+  minPosition
+  maxPosition
+  positions
+  select
+  take
   "lists and sequences"
 ///
 
 doc///
  Key
-  fold
-  (fold, Function, Thing, VisibleList)
-  (fold, Function, VisibleList)
-  (fold, VisibleList, Thing, Function)
-  (fold, VisibleList, Function)
+  reverse
+  (reverse, BasicList)
  Headline
-  apply a binary operator repeatedly
+  reverse a list or sequence
  Usage
-  fold(f, x, L)
-  fold(f, L)
-  fold(L, x, f)
-  fold(L, f)
+  reverse(L)
  Inputs
-  f:Function
-  x:Thing
-  L:VisibleList
+  L:BasicList
  Outputs
-  M:List
+  R:BasicList
+   a BasicList containing the elements of {\tt L} in reverse order
  Description
   Text
-   Suppose {\tt L=\{x0, x1, ..., xn\}}. Then for any binary operator {\tt f}, 
-   {\tt fold(f, L)} computes {\tt f(...f(f(x0, x1), x2), ...)}. 
-   In other words, the binary operator is applied
-   to the first two elements of {\tt L}, then to that result along with the next unused element of
-   {\tt L}, and so forth.
+   The output list will be the same type as the input.
   Example
-   fold(plus, {0,1,2,3,4,5})
-   fold(identity, {a,b,c,d,e})
-   fold((i,j) -> i|j|i, {"a","b","c","d","e"})
-  Text
-   If {\tt fold(f, x, L)} is called, the element {\tt x} is used as the first argument of the
-   binary function {\tt f}. In other words, {\tt fold(f, \{x0, x1, \ldots, xn\})} is 
-   equivalent to {\tt fold(f, x0, \{x1, \ldots, xn\})}.
-  Example
-   fold(plus, 0, {1,2,3,4,5})
-   fold((x, y) -> x^y, 2, {3,2,1,2})
-  Text
-   The function {\tt fold(\{x_0, x_1, \ldots, x_n\}, f)} returns 
-   {\tt f...f(f(x_{n-2}, f(x_{n-1}, x_n)))}. That is, {\tt f} is applied
-   to the last two elements of the list first, then the repeated calls to
-   {\tt f} proceed backwards through the list. The optional argument {\tt x} in
-   {\tt fold(L, x, f)} is used as the second argument in the first evaluation of
-   {\tt f}. So {\tt fold(\{x_0, x_1, \ldots, x_{n-1}\}, x_n, f)} is equivalent
-   to {\tt fold(\{x_0, x_1, \ldots, x_n\}, f)}.
-  Example
-   fold({a,b,c,d,e}, identity)
-   fold({a,b,c,d}, e, identity)  
-   fold({2,3,2,1}, 2, (x, y) -> x^y)
-  Text
-   The difference between @TO fold@ and {\tt accumulate} is that {\tt fold} returns the
-   final result of all the nested evaluations of {\tt f}, while {\tt accumulate} lists 
-   all the intermediate values as well.
-  Example
-   accumulate({2,3,2,1}, 2, (x, y) -> x^y)
+   reverse {5, 7, 2, 8}
+   reverse (5, 7, 2, 8)
  SeeAlso
-  apply
-  accumulate
+  sort
+///
+
+doc ///
+ Key
+  take
+  (take, BasicList, ZZ)
+  (take, BasicList, List)
+ Headline
+  Take some elements from a list or sequence.
+ Usage
+  take(L, i)
+  take(L, {j,k})
+ Inputs
+  L: BasicList
+  i: ZZ
+  j: ZZ
+  k: ZZ
+ Outputs
+  L2: BasicList
+   the list or sequence containing the first {\tt i} elements of {\tt L},
+   (if {\tt i} positive), or the last {\tt i} elements of {\tt L} (if {\tt i} negative), or, if given the
+   pair {\tt j,k}, the list or sequence containing the elements of {\tt L} with indices {\tt j} through {\tt k}
+ Description
+  Example
+   take({a,b,c,d,e,f,g}, 3)
+   take({a,b,c,d,e,f,g}, -3)
+   take({a,b,c,d,e,f,g}, {1,3})
+   take({a,b,c,d,e,f,g}, {2,2})    
+  Text
+   The pair {\tt \{j,k\}} must be given with both entries non-negative, and $j\le k$. Otherwise an empty list is returned.
+  Example
+   take({a,b,c,d,e,f,g}, {3,1})
+   take({a,b,c,d,e,f,g}, {4,-1})
+ SeeAlso
+  drop
+  select
+  position
+  positions
   "lists and sequences"
 ///
 
+doc///
+ Key
+  unique
+  (unique, List)
+  (unique, Sequence)
+ Headline
+  eliminate duplicates from a list
+ Usage
+  unique(L)
+ Inputs
+  L:List
+   or sequence
+ Outputs
+  M:List
+   the elements of {\tt L} without duplicates
+ Description
+  Text
+   The output list maintains the order of elements in {\tt L}.
+  Example
+   unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
+  Text
+   Another way to list the unique elements of {\tt L} is by creating a
+   set from {\tt L} and then listing its elements. This may be slightly
+   faster than {\tt unique}, but forgets the ordering of {\tt L}.
+  Example
+   toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}
+  Text
+   To count occurrences of each element, use @TO tally@. To create
+   a sorted list, see @TO sort@. For an overview of lists and sequences,
+   see @TO"lists and sequences"@.
+ SeeAlso 
+  sort
+  set
+  "lists and sequences"
+  tally
+///
 
 TEST ///
+    --accumulate
      assert( accumulate(toList,a,{b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
      assert( accumulate({a,b,c},d,toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
      assert( accumulate(toList,{a,b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
      assert( accumulate({a,b,c,d},toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
-///     
-
-TEST ///
+    --fold
      assert( fold(toList, a, {b,c,d}) === {{{a, b}, c}, d} )
      assert( fold({a,b,c}, d, toList) === {a, {b, {c, d}}} )
      assert( fold(toList, {a,b,c,d}) === {{{a, b}, c}, d} )
      assert( fold({a,b,c,d}, toList) === {a, {b, {c, d}}} )
-///
-
-TEST ///
-assert(max{4,5,6} === 6)
-assert(min{4,5,6} === 4)
-assert(max(4,5,6) === 6)
-assert(min(4,5,6) === 4)
-///
-
-TEST ///
-assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
+    --max
+     assert(max{4,5,6} === 6)
+     assert(max(4,5,6) === 6)
+    --min
+     assert(min{4,5,6} === 4)
+     assert(min(4,5,6) === 4)    
+    --position
+     assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 ///
 
 -- Local Variables:
