@@ -484,6 +484,48 @@ doc///
   "lists and sequences"
 ///
 
+doc///
+ Key
+  commonest
+  (commonest, VisibleList)
+  (commonest, Set)
+  (commonest, Tally)
+ Headline
+  the most common elements of a list or tally
+ Usage
+  commonest A
+ Inputs
+  A:VisibleList
+ Outputs
+  L:List
+   a list of the elements of {\tt A} with the most repetitions
+ Description
+  Text
+   If a single element is the most common, a list of length one is the output.
+  Example
+   commonest {a,a,a,a,b,b,b,c,c,d,e}
+  Text
+   In the case of a tie, all commonest elements are returned.
+  Example
+   A = {a,a,a,a,b,b,b,b,c,c,c,c,d,e}; commonest A
+  Text
+   {\tt commonest} works on @TO Tally@s and @TO Set@s as well.
+  Example
+   T = tally A
+   commonest T
+   S = set A
+   commonest S
+  Text
+   (Since every element of a set is unique, it is unclear why one would need {\tt commonest(Set)}.)
+ SeeAlso
+  number
+  same
+  set
+  tally
+  unique
+  "lists and sequences"
+///
+
 doc ///
  Key
   drop
@@ -865,8 +907,10 @@ doc///
  SeeAlso
   all
   any
+  commonest
   position
   positions
+  same
   select
   tally
   "lists and sequences"
@@ -1032,6 +1076,46 @@ doc///
 
 doc///
  Key
+  same
+ Headline
+  whether everything in a list is the same
+ Usage
+  same L
+ Inputs
+  L:
+   a list
+ Outputs
+  b:
+   a Boolean
+ Description
+  Example
+   same {1, 1, 1, 1}
+   same {1, 2, 1, 1}
+  Text
+   The comparison is done with "===", which is quick, but not always intuitive. Here is a 
+   simple example of what can go wrong:
+  Example
+   R = QQ[x,y,z]; 
+   L = {gcd{x,y}, x/x, 1}
+   same L
+  Text
+   We can see the problem by asking {\tt Macaulay2} to display the class of each element of {\tt L}.
+  Example
+   apply(L, class)
+  Text
+   The first {\tt 1} is an element of the ring {\tt R}, the second {\tt 1} is an
+   element of the fraction field of {\tt R}, and the third {\tt 1} is an integer. Thus
+   {\tt Macaulay2} thinks of these three elements as being pairwise unequal.
+ SeeAlso
+  commonest
+  number
+  set
+  unique
+  "lists and sequences"
+///
+   
+doc///
+ Key
   subsets
   (subsets, ZZ)
   (subsets, ZZ, ZZ)
@@ -1149,10 +1233,11 @@ doc///
    a sorted list, see @TO sort@. For an overview of lists and sequences,
    see @TO"lists and sequences"@.
  SeeAlso 
+  same
   sort
   set
-  "lists and sequences"
   tally
+  "lists and sequences"
 ///
 
 
@@ -1222,25 +1307,6 @@ document {
 	  "scan(#v, i -> print(i,v#i))"
 	  }
      }
-
-
-document {
-     Key => same,
-     Headline => "whether everything in a list is the same",
-     TT "same v", " whether every element of the list ", TT "v", " is the same.
-     The comparison is done with ", TO "==", "."
-     }
-
-
-document {
-     Key => {commonest, (commonest, VisibleList), (commonest, Set), (commonest, Tally)},
-     Headline => "the most common elements of a list or tally",
-     Usage => "commonest x",
-     Inputs => { "x" },
-     Outputs => { { "a list of the elements appearing most frequently in ", TT "x" } },
-     EXAMPLE "commonest {a,a,a,a,b,b,b,b,c,c,d}"
-     }
-
 
 document {
      Key => {(isSorted,VisibleList), isSorted},
