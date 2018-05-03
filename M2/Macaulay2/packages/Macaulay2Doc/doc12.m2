@@ -35,20 +35,6 @@ document {
      such as might result from multiplying 0 by infinity.",
      }
 
-
-document {
-     Key => {pack,(pack, BasicList, ZZ),(pack, ZZ, BasicList)},
-     Headline => "pack elements of a list into shorter ones",
-     TT "pack(n,v)", " -- packs the elements of the list or sequence
-     ", TT "v", " into a table ", TT "n", " at a time.",
-     PARA{},
-     "It produces, from a list ", TT "v", ", a list of lists formed 
-     by packing the elements of ", TT "v", " into lists ", TT "n", " 
-     at a time.  The last of the lists produced may have fewer 
-     than ", TT "n", " elements.",
-     EXAMPLE "pack(3,{a,b,c,d,e,f,g,h,i,j,k})",
-     }
-
 document {
      Key => join,
      Headline => "join lists",
