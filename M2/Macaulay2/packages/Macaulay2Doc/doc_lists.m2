@@ -985,6 +985,55 @@ doc///
   sort
 ///
 
+doc///
+ Key
+  subsets
+  (subsets, ZZ)
+  (subsets, ZZ, ZZ)
+  (subsets, List)
+  (subsets, List, ZZ)
+  (subsets, Sequence, ZZ)
+  (subsets, Set)
+  (subsets, Set, ZZ)
+ Headline
+  produce the subsets of a set or list
+ Usage
+  subsets(A)
+  subsets(A, n)
+ Inputs
+  A: List
+   , sequence, set or integer
+  n: ZZ
+   optional input to specify subsets of a particular size
+ Outputs
+  L: List
+   of subsets (of size {\tt n} if given)
+ Description
+  Text
+   If {\tt A} is an integer, {\tt subsets(A)} lists the subsets of {\tt \{0, 1, ..., A-1\}}.
+  Example
+   subsets(3)
+   subsets(5, 3) 
+  Text
+   {\tt A} can be a list, sequence, or set. The elements need not be of the same type.
+  Example
+   subsets({"apple", "banana", {1,2,3}, 7.1}, 3)
+  Text
+   If a list contains repetitions, so will the subsets of that list. 
+   Since a @TO Set@ has no repetitions, neither do its subsets. Also, 
+   the subsets of a set will again be sets (while the subsets of a list are lists).
+  Example
+   subsets({"apple", "apple", "banana"})
+   subsets(set{"apple", "apple", "banana"})
+  Text
+   The subsets of a Sequence are lists, not sequences. Also, a subset size {\bf must} be 
+   specified when calling {\tt subsets} on a sequence.
+ SeeAlso
+  partitions
+  set
+  "lists and sequences"
+///
+   
 doc ///
  Key
   take
@@ -1080,6 +1129,13 @@ TEST ///
      assert(min(4,5,6) === 4)    
     --position
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
+    --subsets
+     assert( subsets(4,2) === {{0,1},{0,2},{1,2},{0,3},{1,3},{2,3}} )
+     assert( subsets({a,b,c,d},2) === {{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}} )
+     assert( 
+      set subsets(set {a,b,c,d},2) === 
+      set apply({{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}},set) )
+
 ///
 
 -- Local Variables:

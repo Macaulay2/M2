@@ -80,69 +80,7 @@ document {
      produce unexpected results silently."
      }
 
-document {
-     Key => subsets,
-     Headline => "produce all the subsets",
-     TT "subsets", " -- a function for computing a list of subsets
-     of a set or list."
-     }
-
-document {
-     Key => (subsets,ZZ,ZZ),
-     Usage => "subsets(n,j)",
-     Inputs => { "n", "j" },
-     Outputs => { {"a list of the subsets of ", TT "{0, ..., n-1}", " that have ", TT "j", " elements; each subset is provided as a list"} },
-     EXAMPLE "subsets(7,3)",
-     "If each of the sets is reversed, then the resulting list is in lexicographic order.",
-     EXAMPLE lines ///
-     	  x = reverse \ subsets(6,3)
-	  sort x === x
-     ///
-     }
-
-document {
-     Key => (subsets,Set,ZZ),
-     TT "subsets(s,j)", " -- yields a list of those subsets of the set ", TT "s", " that have ", TT "j", " elements.",
-     EXAMPLE "subsets(set {a,b,c},2)"
-     }
-
-document {
-     Key => {(subsets,List,ZZ),(subsets, Sequence, ZZ)},
-     TT "subsets(s,j)", " -- yields a list of those subsets of the list ", TT "s", " that have ", TT "j", " elements.",
-     EXAMPLE "subsets({a,b,c},2)"
-     }
-
-document {
-     Key => (subsets,ZZ),
-     Usage => "subsets n",
-     Inputs => { "n" },
-     Outputs => {{"a list of the subsets of the {0,1,...,n-1}"}},
-     EXAMPLE lines ///
-     	  subsets 4
-     ///
-     }
-
-document {
-     Key => {(subsets,List)},
-     TT "subsets s", " -- yields a list of the subsets of the list ", TT "s", ".",
-     PARA{},
-     "The subsets are returned as lists whose elements are in the same order.",
-     EXAMPLE "subsets {1,2,3}"
-     }
-
-document {
-     Key => (subsets,Set),
-     TT "subsets s", " yields a list of the subsets of the set ", TT "s", ".",
-     PARA{},
-     EXAMPLE "subsets set {a,b,c}"
-     }
-
 TEST "
-assert( subsets(4,2) === {{0,1},{0,2},{1,2},{0,3},{1,3},{2,3}} )
-assert( subsets({a,b,c,d},2) === {{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}} )
-assert( 
-     set subsets(set {a,b,c,d},2) === 
-     set apply({{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}},set) )
 assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
 assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
 "
