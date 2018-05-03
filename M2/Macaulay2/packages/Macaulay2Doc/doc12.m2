@@ -76,33 +76,6 @@ document {
      SeeAlso => {position,select}
      }
 
-TEST "
-assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-"
-
-document {
-     Key => [position, Reverse],
-     Headline => "search the list in reverse order",
-     Usage => "position(...,Reverse=>true)",
-     Consequences => {"the search is conducted in the reverse direction, starting at the end"}
-     }
-
-document {
-     Key => {position,(position, VisibleList, Function)},
-     Headline => "find first element of a list satisfying a condition",
-     TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
-     the condition ", TT "f", ", or ", TO "null", " if there is none.",
-     SeeAlso => "positions"
-     }
-
-document { Key => (position, VisibleList, VisibleList, Function),
-     Usage => "position(v,w,f)",
-     Inputs => {"v","w","f"},
-     Outputs => {{"the smallest index ", TT "i", " such that ", TT "f(v#i,w#i)", " is true"}},
-     EXAMPLE lines ///
-     	  position((0,1,2,3,4), (0,0,0,9,9), (i,j)->i<j)
-     ///}
-
 document {
      Key => delete,
      Headline => "delete elements of a list",
