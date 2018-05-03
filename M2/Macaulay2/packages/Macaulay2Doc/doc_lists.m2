@@ -836,6 +836,45 @@ doc///
 
 doc///
  Key
+  number
+ Headline
+  count how many elements of a list satisfy a condition
+ Usage
+  number(A, f)
+ Inputs
+  A:
+   a list or sequence
+  f:
+   a boolean function
+ Outputs
+  c:
+   an integer, the number of elements of {\tt A} that satisfy {\tt f}
+ Description
+  Example
+   number(0..100, isPrime)
+   number(0..100, odd)
+   number(0..100, i -> i==17)
+  Text
+   To find the first or last index of an element satisfying the condition, see @TO position@. 
+   For all indices that match the condition, see @TO positions@. To return the 
+   elements, rather than their indices, see @TO select@. 
+  Example
+   position((10,20,43,105,6), odd)  
+   positions((10,20,43,105,6), odd)
+   select((10,20,43,105,6), odd)
+ SeeAlso
+  all
+  any
+  position
+  positions
+  select
+  tally
+  "lists and sequences"
+///
+
+
+doc///
+ Key
   pack
   (pack, BasicList, ZZ)
   (pack, ZZ, BasicList)
@@ -912,13 +951,16 @@ doc///
    position((10,20,43,105,6,93),(18,82,12,7,35,92), (a,b) -> a>b, Reverse => true)
   Text
    To find all indices of elements satisfying the condition, see @TO positions@. To return the 
-   elements, rather than their indices, see @TO select@.
+   elements, rather than their indices, see @TO select@. The function @TO number@ counts the
+   number of elements satisfying the condition.
   Example
    positions((10,20,43,105,6,93), odd)
    select((10,20,43,105,6,93), odd)
+   number((10,20,43,105,6,93), odd)
  SeeAlso
   minPosition
   maxPosition
+  number
   positions
   select
   take
@@ -948,14 +990,17 @@ doc///
    positions(100..110, isPrime)
   Text
    To find the first or last index of an element satisfying the condition, see @TO position@. To return the 
-   elements, rather than their indices, see @TO select@.
+   elements, rather than their indices, see @TO select@. The function @TO number@ counts the
+   number of elements satisfying the condition.
   Example
    position((10,20,43,105,6), odd)  
    position((10,20,43,105,6), odd, Reverse => true)
    select((10,20,43,105,6), odd)
+   number((10,20,43,105,6), odd)
  SeeAlso
   minPosition
   maxPosition
+  number
   position
   select
   take

@@ -113,15 +113,6 @@ document {
      }
 
 document {
-     Key => number,
-     Headline => "count how many elements of a list satisfy a condition",
-     TT "number(x,f)", " the number of elements ", TT "e", " of the list ", TT "x", " 
-     for which ", TT "f(e)", " is true.",
-     PARA{},
-     SeeAlso => { "positions", "select" }
-     }
-
-document {
      Key => same,
      Headline => "whether everything in a list is the same",
      TT "same v", " whether every element of the list ", TT "v", " is the same.
