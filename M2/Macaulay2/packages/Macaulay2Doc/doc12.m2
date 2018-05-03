@@ -63,22 +63,6 @@ document {
      }
 
 document {
-     Key => first,
-     Headline => "first element of a list",
-     TT "first v", " -- yields the first element of the list v.",
-     PARA{},
-     "See also ", TO "last", "."
-     }
-
-document {
-     Key => last,
-     Headline => "last element of a list",
-     TT "last v", " -- yields the last element of the list v.",
-     PARA{},
-     "See also ", TO "first", "."
-     }
-
-document {
      Key => {(positions, VisibleList, Function),positions},
      Headline => "which elements of a list satisfy a condition",
      Usage => "positions(v,f)",
