@@ -1155,6 +1155,140 @@ doc///
   tally
 ///
 
+
+
+--------------to be rewritten----------
+document {
+     Key => demark,
+     Headline => "insert a string between elements of a list of strings",
+     TT "demark(s,x)", " -- given a list of strings ", TT "x", " and
+     a string ", TT "s", " provides the string obtained by concatenating
+     the elements of ", TT "x", " with a copy of ", TT "x", " inserted
+     between each successive pair.",
+     PARA{},
+     EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
+     }
+
+document {
+     Key => join,
+     Headline => "join lists",
+     TT "join(u,v,...)", " -- joins the elements of the lists or
+     sequences u, v, ... into a single list.",
+     PARA{},
+     "The class of the result is the same as the class of the first argument.
+     If there is just one argument, and it's mutable, a copy is returned.",
+     EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
+     PARA{},
+     "The operator ", TO (symbol |, List, List), " can be used as a synonym."
+     }
+
+document {
+     Key => delete,
+     Headline => "delete elements of a list",
+     TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
+     from the list ", TT "v", ".",
+     PARA{},
+     "Equality is determined with ", TO "===", ", which is quick.",
+     EXAMPLE {
+	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
+	  },
+     SeeAlso => "member"
+     }
+
+document {
+     Key => scan,
+     Headline => "apply a function to each element",
+     SeeAlso => { "mapping over lists"}
+     }
+
+document {
+     Key => (scan,BasicList,Function),
+     Headline => "apply a function to each element of a list",
+     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     list ", TT "v", ".  The function values are discarded.",
+     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
+     }
+
+document {
+     Key => (scan,ZZ,Function),
+     Headline => "apply a function to 0 .. n-1",
+     TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
+     in the range ", TT "0 .. n-1", " discarding the results.",
+     PARA{},
+     "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
+     EXAMPLE {
+	  "scan(3,print)",
+	  "v = {a,b,c}",
+	  "scan(#v, i -> print(i,v#i))"
+	  }
+     }
+
+
+document {
+     Key => same,
+     Headline => "whether everything in a list is the same",
+     TT "same v", " whether every element of the list ", TT "v", " is the same.
+     The comparison is done with ", TO "==", "."
+     }
+
+
+document {
+     Key => {commonest, (commonest, VisibleList), (commonest, Set), (commonest, Tally)},
+     Headline => "the most common elements of a list or tally",
+     Usage => "commonest x",
+     Inputs => { "x" },
+     Outputs => { { "a list of the elements appearing most frequently in ", TT "x" } },
+     EXAMPLE "commonest {a,a,a,a,b,b,b,b,c,c,d}"
+     }
+
+
+document {
+     Key => {(isSorted,VisibleList), isSorted},
+     Headline => "whether a list is sorted",
+     Usage => "isSorted x",
+     Inputs => { "x" },
+     Outputs => { Boolean => {"whether the elements of the list ", TT "x", " are in increasing order"}},
+     SourceCode => (isSorted,VisibleList),
+     EXAMPLE lines ///
+     isSorted {1,2,2,3}
+     isSorted {1,2,3,2}
+     ///
+     }     
+
+document {
+     Key => {(switch,ZZ,ZZ,VisibleList), switch},
+     Headline => "copy a list, switching two elements",
+     Usage => "switch(i,j,x)",
+     Inputs => {"i","j","x"},
+     Outputs => {{"a copy of the list ", TT "x", " in which the elements at positions ", TT "i", " and ", TT "j", " have
+	       been interchanged.  A negative value of ", TT "i", " or ", TT "j", " is taken relative to the end of the list."
+	       }},
+     EXAMPLE lines ///
+     switch(3,9,0..10)
+     switch(0,-1,0..10)
+     ///
+     }
+
+document {
+     Key => {(insert,ZZ,Thing,VisibleList), insert},
+     Headline => "copy a list, inserting an element",
+     Usage => "insert(i,t,x)",
+     Inputs => {"i","t","x"},
+     Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has been inserted
+	       into position ", TT "i", " of the result.  A negative value of ", TT "i", " 
+	       is taken relative to the end of the list."
+	       }},
+     EXAMPLE lines ///
+     insert(4,t,0..10)
+     insert(0,t,0..10)
+     insert(11,t,0..10)
+     insert(-1,t,0..10)
+     ///
+     }
+
+--------------------------
+
+
 TEST ///
     --accumulate
      assert( accumulate(toList,a,{b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )

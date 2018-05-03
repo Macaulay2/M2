@@ -348,15 +348,6 @@ document {
      }
 
 document {
-     Key => {commonest, (commonest, VisibleList), (commonest, Set), (commonest, Tally)},
-     Headline => "the most common elements of a list or tally",
-     Usage => "commonest x",
-     Inputs => { "x" },
-     Outputs => { { "a list of the elements appearing most frequently in ", TT "x" } },
-     EXAMPLE "commonest {a,a,a,a,b,b,b,b,c,c,d}"
-     }
-
-document {
      Key => tally,
      Headline => "tally the elements of a list or sequence",
      TT "tally x", " tallies the frequencies of items in a list or sequence x.",

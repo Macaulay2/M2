@@ -1,17 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 document {
-     Key => demark,
-     Headline => "insert a string between elements of a list of strings",
-     TT "demark(s,x)", " -- given a list of strings ", TT "x", " and
-     a string ", TT "s", " provides the string obtained by concatenating
-     the elements of ", TT "x", " with a copy of ", TT "x", " inserted
-     between each successive pair.",
-     PARA{},
-     EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
-     }
-
-document {
      Key => InfiniteNumber,
      Headline => "the class of all infinite numbers"
      }
@@ -33,32 +22,6 @@ document {
      Headline => "an indeterminate number",
      TT "indeterminate", " -- a representation of an indeterminate number,
      such as might result from multiplying 0 by infinity.",
-     }
-
-document {
-     Key => join,
-     Headline => "join lists",
-     TT "join(u,v,...)", " -- joins the elements of the lists or
-     sequences u, v, ... into a single list.",
-     PARA{},
-     "The class of the result is the same as the class of the first argument.
-     If there is just one argument, and it's mutable, a copy is returned.",
-     EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
-     PARA{},
-     "The operator ", TO (symbol |, List, List), " can be used as a synonym."
-     }
-
-document {
-     Key => delete,
-     Headline => "delete elements of a list",
-     TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
-     from the list ", TT "v", ".",
-     PARA{},
-     "Equality is determined with ", TO "===", ", which is quick.",
-     EXAMPLE {
-	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
-	  },
-     SeeAlso => "member"
      }
 
 TEST "
@@ -110,13 +73,6 @@ document {
      Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
      Outputs => {"the difference of the two vectors"},
      EXAMPLE "{1,2,3} - {1,5,6}"
-     }
-
-document {
-     Key => same,
-     Headline => "whether everything in a list is the same",
-     TT "same v", " whether every element of the list ", TT "v", " is the same.
-     The comparison is done with ", TO "==", "."
      }
 
 document {

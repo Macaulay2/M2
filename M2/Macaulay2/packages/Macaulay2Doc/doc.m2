@@ -335,34 +335,6 @@ document {
      }
 
 document {
-     Key => scan,
-     Headline => "apply a function to each element",
-     SeeAlso => { "mapping over lists"}
-     }
-
-document {
-     Key => (scan,BasicList,Function),
-     Headline => "apply a function to each element of a list",
-     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ".  The function values are discarded.",
-     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
-     }
-
-document {
-     Key => (scan,ZZ,Function),
-     Headline => "apply a function to 0 .. n-1",
-     TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
-     in the range ", TT "0 .. n-1", " discarding the results.",
-     PARA{},
-     "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
-     EXAMPLE {
-	  "scan(3,print)",
-	  "v = {a,b,c}",
-	  "scan(#v, i -> print(i,v#i))"
-	  }
-     }
-
-document {
      Key => scanPairs,
      Headline => "apply a function to pairs in a hash table" }
 
