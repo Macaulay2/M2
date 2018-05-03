@@ -63,31 +63,6 @@ document {
      }
 
 document {
-     Key => (take,BasicList,ZZ),
-     Usage => "take(v,n)",
-     Inputs => { "v", "n" },
-     Outputs => {
-	  {"a list containing the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
-	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
-	  },
-     EXAMPLE { "take({a,b,c,d,e,f},3)", "take({a,b,c,d,e,f},-2)" }
-     }
-
-document {
-     Key => (take,BasicList,List),
-     Usage => "take(v,{m,n})",
-     Inputs => { "v", Nothing => { TT "{m,n}", ", a pair of natural numbers" } },
-     Outputs => { {"a list containing those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
-     EXAMPLE "take({a,b,c,d,e,f},{2,4})"
-     }
-
-document {
-     Key => take,
-     Headline => "take some elements from a list",
-     SeeAlso => "drop"
-     }
-
-document {
      Key => first,
      Headline => "first element of a list",
      TT "first v", " -- yields the first element of the list v.",
