@@ -2,6 +2,7 @@
 #define __eigen_hpp_
 
 #include "dmat.hpp"
+#include "aring-RRR.hpp"
 using LMatrixRRR = DMat<M2::ARingRRR>;
 
 bool SVD(const LMatrixRRR *A,
