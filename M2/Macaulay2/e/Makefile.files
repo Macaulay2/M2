@@ -11,6 +11,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	eigen \
 	mutablecomplex \
 	localring \
 	f4/res-varpower-monomial \
