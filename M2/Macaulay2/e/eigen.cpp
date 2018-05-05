@@ -1,5 +1,8 @@
 #include "eigen.hpp"
 
+#include "mpfr.h"
+#include "mpreal.h"
+
 bool SVD(const LMatrixRRR *A,
          LMatrixRRR *Sigma,
          LMatrixRRR *U,
