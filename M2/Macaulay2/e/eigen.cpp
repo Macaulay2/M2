@@ -1,7 +1,11 @@
+#define mpfr foo
+#include "mpreal.h"
+#undef mpfr
+
 #include "eigen.hpp"
 
 #include "mpfr.h"
-#include "mpreal.h"
+
 
 bool SVD(const LMatrixRRR *A,
          LMatrixRRR *Sigma,
