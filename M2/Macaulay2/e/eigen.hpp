@@ -5,10 +5,12 @@
 #include "aring-RRR.hpp"
 using LMatrixRRR = DMat<M2::ARingRRR>;
 
-bool SVD(const LMatrixRRR *A,
-         LMatrixRRR *Sigma,
-         LMatrixRRR *U,
-         LMatrixRRR *VT);
+namespace EigenM2 {
+  bool SVD(const LMatrixRRR *A,
+           LMatrixRRR *Sigma,
+           LMatrixRRR *U,
+           LMatrixRRR *VT);
+}
 
 #endif
 

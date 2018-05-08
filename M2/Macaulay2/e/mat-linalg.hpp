@@ -50,6 +50,8 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "dmat-lu.hpp"
 #include "dmat-qq-interface-flint.hpp"
 
+#include "eigen.hpp"
+
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
@@ -1133,14 +1135,18 @@ inline bool leastSquares(const DMatRRR& A,
     return Lapack::least_squares_deficient(&A, &B, &X);
 }
 
+
 inline bool SVD(const DMatRRR& A,
                 DMatRRR& Sigma,
                 DMatRRR& U,
                 DMatRRR& Vt,
                 int strategy)
 {
+  return EigenM2::SVD(&A, &Sigma, &U, &Vt);
+#if 0  
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
+#endif  
 }
 
 inline void clean(gmp_RR epsilon, DMatRRR& mat)
