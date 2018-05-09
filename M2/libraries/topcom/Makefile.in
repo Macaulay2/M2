@@ -6,7 +6,7 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = TOPCOM-$(VERSION).tar.gz
 PRECONFIGURE = autoreconf -vif
 LICENSEFILES = COPYING README
-PROGRAMS = src-reg/checkregularity src/points2finetriang
+PROGRAMS = src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
 STRIPFILES = $(PROGRAMS)
 INSTALLCMD = :
 include ../Makefile.library
