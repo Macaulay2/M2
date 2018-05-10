@@ -1208,8 +1208,11 @@ inline bool SVD(const DMatCCC& A,
                 DMatCCC& Vt,
                 int strategy)
 {
+  return EigenM2::SVD(&A, &Sigma, &U, &Vt);
+#if 0
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
+#endif
 }
 
 inline void clean(gmp_RR epsilon, DMatCCC& mat)

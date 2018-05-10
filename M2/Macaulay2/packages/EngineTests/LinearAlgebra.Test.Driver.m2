@@ -10,6 +10,7 @@ load "EngineTests/LinearAlgebra.Test.Givaro.m2"
 
 load "EngineTests/LinearAlgebra.Test.all.m2"
 
+load "EngineTests/LinearAlgebra.Test.eigen.m2"
 
 if hasFFPACK then 
 TEST ///

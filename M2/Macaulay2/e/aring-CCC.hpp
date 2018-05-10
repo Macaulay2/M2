@@ -176,6 +176,12 @@ class ARingCCC : public RingInterface
     mpfr_set_d(&result.im, im, GMP_RNDN);
     return true;
   }
+  bool set_from_complex_mpfr(ElementType& result, mpfr_srcptr re, const mpfr_srcptr im) const
+  {
+    mpfr_set(&result.re, re, GMP_RNDN);
+    mpfr_set(&result.im, im, GMP_RNDN);
+    return true;
+  }
 
   // arithmetic
   void negate(ElementType& result, const ElementType& a) const
