@@ -16,10 +16,11 @@ checkSVD(Matrix) := (M) -> (
 
 TEST ///
   debug needsPackage "EngineTests"
-  for i to 100 do (
+  for i to 1000 do (
   KK = RR_1000;
   M = random(KK^20,KK^10) * random(KK^10,KK^30);
-  checkSVD M;
+  (S,U,Vt) := SVD M;
+  --checkSVD M;
   print i
 )
   KK = CC_100

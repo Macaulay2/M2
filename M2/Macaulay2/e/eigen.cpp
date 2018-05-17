@@ -3,30 +3,43 @@
 #include <Eigen/MPRealSupport>
 #undef mpfr
 
+// This line is here to get def of gmp allocation functions
+#include "../d/M2inits.h"
+
 #include "eigen.hpp"
 #include <Eigen/SVD>
 #include "mpfr.h"
 #include <cstdlib>
+
+// This function is a hack to change allocator for gmp
+// (and therefore mpfr) so that Eigen will not use garb age collected memory
+void
+our_mp_set_memory_functions (void *(*alloc_func) (size_t),
+			 void *(*realloc_func) (void *, size_t, size_t),
+			 void (*free_func) (void *, size_t))
+{
+ if (alloc_func == 0)
+   alloc_func = __gmp_default_allocate;
+ if (realloc_func == 0)
+   realloc_func = __gmp_default_reallocate;
+ if (free_func == 0)
+   free_func = __gmp_default_free;
+ __gmp_allocate_func = alloc_func;
+ __gmp_reallocate_func = realloc_func;
+ __gmp_free_func = free_func;
+}
 
 using Real = foo::mpreal;
 using Complex = std::complex<Real>;
 using MatrixXmp = Eigen::Matrix<Real,Eigen::Dynamic,Eigen::Dynamic>;
 using MatrixXmpCC = Eigen::Matrix<Complex,Eigen::Dynamic,Eigen::Dynamic>;
 
-void test(const MatrixXmp& m)
-{
-  foo::mpreal::set_default_prec(256);
-
-  //  MatrixXmp m = MatrixXmp::Random(30,50);
-  std::cout << "Here is the matrix m:" << std::endl << m << std::endl;
-
-  Eigen::JacobiSVD<MatrixXmp> svd(m, Eigen::ComputeThinU | Eigen::ComputeThinV);
-  std::cout << "Its singular values are:" << std::endl << svd.singularValues() << std::endl;
-  std::cout << "Its left singular vectors are the columns of the thin U matrix:" << std::endl << svd.matrixU() << std::endl;
-  std::cout << "Its right singular vectors are the columns of the thin V matrix:" << std::endl << svd.matrixV() << std::endl;
-}
 
 namespace EigenM2 {
+
+static void freeFunc(void *p, size_t sz)
+  {
+  }
   
 class SetMemoryFunctions {
   void *(*alloc_func_ptr) (size_t);
@@ -44,13 +57,13 @@ public:
   }
   void after() 
   {
-    mp_set_memory_functions((void *(*) (size_t)) malloc,
+    our_mp_set_memory_functions((void *(*) (size_t)) malloc,
                             (void *(*) (void *, size_t, size_t)) realloc,
-                            (void (*)(void *, size_t)) free);
+                            (void (*)(void *, size_t)) freeFunc);
   }
   void before()
   {
-    mp_set_memory_functions(alloc_func_ptr,realloc_func_ptr,free_func_ptr);    
+    our_mp_set_memory_functions(alloc_func_ptr,realloc_func_ptr,free_func_ptr);    
   }
 };
   
@@ -96,17 +109,20 @@ bool SVD(const LMatrixRRR *A,
          LMatrixRRR *VT
          )
 {
+  std::cerr << "Eigen::SVD (real)" << std::endl;
   SetMemoryFunctions smf; // gc off
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
-  std::cout << "Eigen::SVD (real)" << std::endl;
 
   // Create the correct matrices: A, Sigma, U, VT perhaps.
   // call eigen
   // Transform matrices back.
 
+  std::cerr << "  starting Eigen code space..." << std::endl;  
   MatrixXmp AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
+  std::cout << AXmp.cols() << std::endl;
+
   Eigen::JacobiSVD<MatrixXmp> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   auto eigenU = svd.matrixU();
@@ -114,12 +130,14 @@ bool SVD(const LMatrixRRR *A,
   auto eigenSigma = svd.singularValues();
   
   smf.before(); // gc on
+  std::cerr << "  about to fill M2 matrices..." << std::endl ; 
   fill_from_MatrixXmp(eigenU, *U);
   fill_from_MatrixXmp(eigenVT, *VT);
   fill_from_MatrixXmp(eigenSigma, *Sigma);
 
   smf.after(); // gc off
   Real::set_default_prec(old_prec);
+  std::cerr << "  leaving SVD..." << std::endl;
   return true;
   // svd destructed
   // AXmp destructed
