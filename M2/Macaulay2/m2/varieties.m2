@@ -246,7 +246,13 @@ tangentSheaf = method(Options => {Minimize => true})
 cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
 	  R := ring X;
 	  F := presentation R;
-	  om := sheaf(X, homology(vars ring F ** R,jacobian F ** R));
+	  S := ring F;
+	  v := map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)});
+	  assert isHomogeneous v;
+	  d := v ** R;
+	  e := jacobian F ** R;
+     	  assert (d*e == 0);
+	  om := sheaf(X, homology(d,e));
 	  if opts.Minimize then om = minimalPresentation om;
 	  om))
 
