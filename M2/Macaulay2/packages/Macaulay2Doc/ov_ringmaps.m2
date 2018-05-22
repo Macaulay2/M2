@@ -186,10 +186,10 @@ document {
 	       	    "describe R4"
 	       	    },
      	       "The command ", TT "substitute", " works well to move elements 
-     	       from ", TT "R2", " or ", TT "R3", " to ", TT "R4", " substitute 
-     	       works well here. An alternative to substitute is to form the canonical 
-     	       injection of R3 into R4 (the same can be done for the canonical 
-	       	    projection from R2 to R3 above - we do the example here).  ",
+     	       from ", TT "R2", " or ", TT "R3", " to ", TT "R4", ". An alternative to
+	       substitute is to form the canonical injection of R3 into R4 (the same can
+	       be done for the canonical projection from R2 to R3 above - we do the example
+	       here).  ",
 	       -- Mike wanted this: "For more on ring maps, see ", TO "basic, construction source and target of a ring map", ".  ",
      	       "To move elements 
       	       from ", TT "R4", " back to ", TT "R3", " an alternate method must 
@@ -217,7 +217,7 @@ document {
 	       	    "describe R6"
 	       	    },
 	       "Notice that at each stage Macaulay2 only refers back to the last 
-	       ring we defined.  All of the methods above work still here in theory, but 
+	       ring we defined.  All of the methods above still work here in theory, but 
 	       caution is advised.  We give an example below to illustrate.  Also, 
 	       note that many other computations will no longer work, because 
 	       Gröbner basis computations only work 
@@ -266,7 +266,7 @@ document {
      Key => "basic construction, source and target of a ring map",
      
 	  SUBSECTION "constructing a ring map", 
-	       "Use the function ", TO "map", " construct a map 
+	       "Use the function ", TO "map", " to construct a map 
 	       between two rings.  The input, in order, is the 
 	       target, the source, and the images of the 
 	       variables of the source ring.  The images can 
@@ -330,9 +330,9 @@ document {
 	       ,
 	  SUBSECTION "composition of ring maps",  
 	       -- see if you can't do something with galois.
-	       "The function ", TO (symbol*,RingMap,RingMap), "performs a 
+	       "The function ", TO (symbol*,RingMap,RingMap), " performs a 
 	       composition of ring maps.  Evaluation of elements in the source 
-	       of a ring map ", TT "G"," can also be done using", TT "F(G(m))", ".",
+	       of a ring map ", TT "G"," can also be done using ", TT "F(G(m))", ".",
 	       EXAMPLE { 
 		    "T = ZZ/5[x,y];",
 		    "G = map(T,S);",
@@ -348,7 +348,7 @@ document {
      Key => "kernel and image of a ring map",
      "The kernel and image of a ring map can be computed 
      using ", TO "image", " and ", TO "ker", " .  The output 
-     of ", TT "ker", " is an ideal and the output of ", TT "image", "is a 
+     of ", TT "ker", " is an ideal and the output of ", TT "image", " is a 
      ring or quotient ring.",
      EXAMPLE {
 	  "R = QQ[x,y,w]; U = QQ[s,t,u]/ideal(s^2);",

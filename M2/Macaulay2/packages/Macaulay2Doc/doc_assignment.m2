@@ -421,7 +421,7 @@ document {
 	       p
 	  ///,
 	  PARA {
-	       "In this example, we see that the scope of the local variable ", TT "p", " is limited to the body of a ", TO "for", " loop."
+	       "In this example, we see that the scope of the local variable ", TT "j", " is limited to the body of a ", TO "for", " loop."
 	       },
 	  EXAMPLE lines ///
 	       i="a b c";

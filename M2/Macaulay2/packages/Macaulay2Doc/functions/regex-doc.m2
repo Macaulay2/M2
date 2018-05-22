@@ -141,7 +141,7 @@ document {
 	  },
      Caveat => {
 	  "Regular expression matching is done by calls to a C library, where the convention is that 
-	  the end of a string is signalled by a byte containing zero, whereas in Macaulbay 2, strings may contain
+	  the end of a string is signalled by a byte containing zero, whereas in Macaulay2, strings may contain
 	  bytes containing zero.  Hence regular expression parsing and matching ignore any bytes containing zero,
 	  as well as any subsequent bytes, potentially yielding surprising results."
 	  }

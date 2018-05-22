@@ -693,7 +693,7 @@ document {
      Caveat => {"The element ", TT "a/b", " is in the fraction ring,
         while ", TT "a*b^(-1)", " belongs to ", TT "R", ".",
 	PARA{},
-	"Currently, on cannot compute Gröbner bases in this ring."}
+	"Currently, one cannot compute Gröbner bases in this ring."}
      }
 
 document {

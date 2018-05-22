@@ -112,7 +112,7 @@ document {
 	  "lift(a^20, ambient F)",
 	  "apply({20,40,80}, i -> lift(a^i, ambient F))",
 	  },
-     "(for more details on lift, see , ", TO "working with multiple rings", ").",
+     "(for more details on lift, see ", TO "working with multiple rings", ").",
      PARA{},
      "Finite fields can be used as base rings for polynomial rings.",
      EXAMPLE {
@@ -170,7 +170,7 @@ document {
      EXAMPLE "T",
      "The generator of A can be obtained this way:",
      EXAMPLE "A_0",
-     "Use ", TO "substitute", " to see map it to an element of the finite field.",
+     "Use ", TO "substitute", " to map it to an element of the finite field.",
      EXAMPLE "substitute(A_0,k)",
      "Conversely, a given element of the finite field can be transferred back
      to the quotient ring with ", TO "lift", ".",
@@ -366,7 +366,7 @@ document {
      "Notice that the lead monomial is an element of a monoid whose name is
      ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
      EXAMPLE "exponents leadMonomial g",
-     "We can get all of the coefficients at once, assembled a one-rowed matrix,
+     "We can get all of the coefficients at once, assembled in a one-rowed matrix,
      along with a matrix containing the corresponding monomials.",
      EXAMPLE {
 	  "coefficients f",
