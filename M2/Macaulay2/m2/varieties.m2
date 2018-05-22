@@ -247,11 +247,16 @@ tangentSheaf = method(Options => {Minimize => true})
 --      map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)})
 --      )
 
+checkRing := A -> (
+     if not degreeLength A === 1 then error "expected degreeLength of ring to be 1";
+     if not same degrees A then error "expected variables all of the same degree";
+     )
+
 cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
 	  R := ring X;
 	  F := presentation R;
 	  S := ring F;
-	  if not all(degrees S, d -> d === {1}) then error "expected variables all of degree 1";
+	  checkRing S;
 	  d := vars S ** R;
 	  e := jacobian F ** R;
      	  -- assert (d*e == 0);
@@ -282,7 +287,7 @@ singularLocus(ProjectiveVariety) := X -> (
      R := ring X;
      f := presentation R;
      A := ring f;
-     if not all(degrees A, d -> d === {1}) then error "expected variables all of degree 1";
+     checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
 
 singularLocus(AffineVariety) := X -> Spec singularLocus ring X
