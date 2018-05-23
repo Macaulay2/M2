@@ -1,3 +1,13 @@
+///
+restart
+uninstallPackage "SVDComplexes"
+installPackage "SVDComplexes"
+loadPackage("SVDComplexes",Reload=>true)
+check("SVDComplexes", UserMode=>true)
+viewHelp "SVDComplexes"
+///
+
+
 newPackage(
         "SVDComplexes",
         Version => "0.2", 
@@ -450,11 +460,12 @@ SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
     )
 
 
-TEST ///
--*
+///
+{*
+  no assertion
   restart
   needsPackage "SVDComplexes"
-*-
+*}
 needsPackage "RandomComplexes"
 
 h={1,3,5,2,1} 
@@ -537,17 +548,17 @@ euclideanDistance(ChainComplex,ChainComplex) := (A,B) -> (
     )
 
 TEST ///
--*
+{*
   restart
   needsPackage "SVDComplexes"
-*-
+*}
 
 needsPackage "RandomComplexes"
 
 h={1,1,1,1}
 r={2,2,2}
 setRandomSeed 2
-C=randomChainComplex(h,r,Height=>9,WithLLL=>true,zeroMean=>true)
+C=randomChainComplex(h,r,Height=>9,WithLLL=>true,ZeroMean=>true)
 prune HH C
 --signes in dual
 (dual C).dd_0, transpose C.dd_1
@@ -765,10 +776,10 @@ arePseudoInverses(ChainComplex, ChainComplex) := opts -> (A,B) -> (
     )
 
 TEST ///
--*
+{*
   restart
   needsPackage "SVDComplexes"
-*-
+*}
 
   needsPackage "RandomComplexes"
   -- Simple boundary cases for psuedoInverse.
@@ -782,10 +793,10 @@ TEST ///
 ///
     
 TEST ///
--*
+{*
   restart
   debug needsPackage "SVDComplexes"
-*-
+*}
 
   needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
@@ -829,6 +840,7 @@ TEST ///
   assert arePseudoInverses(C, Ci)
 ///
 
+{*
 TEST ///
   -- pseudo inverses do not exist over finite fields sometimes:
   kk = ZZ/5
@@ -844,7 +856,7 @@ TEST ///
   decompose J
   -- Frank's turn
   needsPackage "RandomComplexes"
-  C=randomChainComplex({2,3},{2},Height=>10,zeroMean=>true)
+  C=randomChainComplex({2,3},{2},Height=>10,ZeroMean=>true)
   M=C.dd_1
  
   
@@ -860,7 +872,7 @@ break
  p=23;
   kk=ZZ/p;
   elapsedTime tally apply(10*p^2,c->(
-  C=randomChainComplex({3,3},{2},Height=>10,zeroMean=>true);
+  C=randomChainComplex({3,3},{2},Height=>10,ZeroMean=>true);
   M=C.dd_1;
   N=M**kk;
   t=(try (pseudoInverse1 N; true) else false);   
@@ -878,6 +890,7 @@ Lm
 Ln
 Pm,Pn
 ///
+*}
 
 conjugateComplex=method(Options=>{Height=>10})
 conjugateComplex ChainComplex := opts -> C -> (
@@ -908,10 +921,10 @@ doc ///
 
 
 TEST ///
--*
+{*
   restart
   needsPackage "RandomComplexes"
-*-
+*}
   needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
   r={1,3,3,4}
@@ -935,26 +948,11 @@ TEST ///
   assert(h == for i from 0 to length C list rank HH_i C)
   assert(r == for i from 1 to length C list rank(C.dd_i))
   
-  C = randomChainComplex(h={1,1},r={0})
-  prune HH C
-  assert(C.dd_1 == 0)
-  assert(C.dd^2 == 0)
-  assert(h == for i from 0 to length C list rank HH_i C)
-  assert(r == for i from 1 to length C list rank(C.dd_i))
+
 ///
 
 
-TEST ///
-  debug needsPackage "SVDComplexes"
-  assert(det randomSL 0 == 1)
-  assert(det randomSL 1 == 1)
-  assert(det randomSL 5 == 1)
-  randomSL(10, Height=>100)
-  randomSL(10)
-  assert((flatten entries randomSL(10, Height=>1000))/abs//max < 1000^2)
-  assert((flatten entries randomSL(10, Height=>500))/abs//max < 500^2)
-  assert((flatten entries randomSL(10, Height=>10000))/abs//max < 10000^2)
-///
+
 
 
 doc ///
@@ -971,13 +969,15 @@ doc ///
      rk = numericRank(eps, A)
    Inputs
      A:Matrix
-       a matrix or a mutable matrix over RR_53 or CC_53
+       a matrix or a mutable matrix over RR_{53} or CC_{53}
+     eps: RR
+       a relative threshold for consecutive singular values, if not present then the default value 1e-4 is taken
    Outputs
      rk:ZZ
        an approximation to the rank of the matrix A
    Description
     Text
-      The singular value decomposition (over RR_53, or CC_53) of the matrix A
+      The singular value decomposition (over RR_{53}, or CC_{53}) of the matrix A
       is performed.  If there is a large cutoff in the list of singular values, that
       value separates the zero singular values from the rest, and the number of
       singular values larger than this separating value is called the numeric rank.
@@ -1010,6 +1010,8 @@ doc ///
      SVDComplex
      (SVDComplex,ChainComplex)
      (SVDComplex,ChainComplex,ChainComplex)
+     [SVDComplex,Strategy]
+     [SVDComplex,Threshold]
    Headline
      Compute the SVD decomposition of a chainComplex over RR
    Usage
@@ -1020,6 +1022,10 @@ doc ///
        over RR_{53}
      C':ChainComplex
        in a lower precision
+     Strategy => Symbol 
+       Laplacian or Projection for the method used
+     Threshold => RR
+       the relative threshold used to detect the zero singular values
    Outputs
      h:HashTable
        the dimensions of the homology groups HH C
@@ -1065,8 +1071,10 @@ doc ///
      SVDHomology
      (SVDHomology,ChainComplex)
      (SVDHomology,ChainComplex,ChainComplex)
+     [SVDHomology, Strategy]
+     [SVDHomology,Threshold]
    Headline
-     Estimate the homlogy of a chainComplex over RR with the SVD decomposition
+     Estimate the homology of a chainComplex over RR with the SVD decomposition
    Usage
      (h,h1)=SVDHomology C or
      (h,h1)=SVDHomology(C,C')
@@ -1075,6 +1083,10 @@ doc ///
        over RR_{53}
      C':ChainComplex
        in a lower precision
+     Strategy => Symbol 
+       Laplacian or Projection for the method used
+     Threshold => RR
+       the relative threshold used to detect the zero singular values
    Outputs
      h:HashTable
        the dimensions of the homology groups HH C
@@ -1095,7 +1107,7 @@ doc ///
       needsPackage "RandomComplexes"
       h={1,3,5,2} 
       r={4,3,3}
-      elapsedTime C=randomChainComplex(h,r,Height=>5,zeroMean=>true)
+      elapsedTime C=randomChainComplex(h,r,Height=>5,ZeroMean=>true)
       C.dd^2
       CR=(C**RR_53)
       elapsedTime (h,h1)=SVDHomology CR
@@ -1143,7 +1155,7 @@ doc ///
       setRandomSeed "a good example";
       h={2,3,5,2} 
       r={4,3,3}
-      elapsedTime C=randomChainComplex(h,r,Height=>5,zeroMean=>true)
+      elapsedTime C=randomChainComplex(h,r,Height=>5,ZeroMean=>true)
       C.dd^2
       CR=(C**RR_53)
       h=(SVDHomology CR)_0
@@ -1164,7 +1176,7 @@ doc ///
       euclideanDistance(CR,D), euclideanDistance(C'',D), euclideanDistance(C',D)
    Caveat
       The algorithm does not produces the closest 
-      nearby complex in the euclidean norm. Instead it is a reminder to developpe
+      nearby complex in the euclidean norm. Instead it is a reminder to develope
       such function. 
    SeeAlso
       SVDComplex
@@ -1187,6 +1199,8 @@ doc ///
        or  
      C:ChainComplex
      Cplus:ChainComplex
+     Threshold => RR
+       an absolute error up to which the identities should hold
    Outputs
       :Boolean
    Description
@@ -1200,7 +1214,7 @@ doc ///
       setRandomSeed "a pretty good example";
       h={2,2} 
       r={3}
-      C=randomChainComplex(h,r,Height=>100,zeroMean=>true)
+      C=randomChainComplex(h,r,Height=>100,ZeroMean=>true)
       C.dd
       CQ=C**QQ
       CR=C**RR
@@ -1237,7 +1251,10 @@ doc ///
    Inputs
      C:ChainComplex
        an approximate complex over an field 
-   
+     Strategy => Symbol 
+       Laplacian or Projection for the method used
+     Threshold => RR
+       the relative threshold used to detect the zero singular values
    Outputs
      Cplus:ChainComplex
        the pseudo inverse complex
@@ -1250,7 +1267,7 @@ doc ///
       setRandomSeed "a pretty good example";
       h={2,3,1} 
       r={2,3}
-      C=randomChainComplex(h,r,Height=>11,zeroMean=>true)
+      C=randomChainComplex(h,r,Height=>11,ZeroMean=>true)
       C.dd
       CQ=C**QQ
       CR=C**RR_53
@@ -1261,12 +1278,14 @@ doc ///
       (CQplus**RR_53).dd
       CRplus.dd^2
       CQplus.dd^2
+    Text
+      Pseudo inverses frequently exist also over finite fields.
+    Example        
       Fp=ZZ/nextPrime 10^3
       Cp=C**Fp
       Cpplus=pseudoInverse Cp
       Cpplus.dd
-      arePseudoInverses(CR,CRplus)
-      arePseudoInverses(CQ,CQplus)
+      Cpplus.dd^2
       arePseudoInverses(Cp,Cpplus)
    Caveat
       Over finite fields the algorithm can fail if toDo  what happens. 
@@ -1297,7 +1316,7 @@ doc ///
       setRandomSeed "a good example";
       h={2,3,5,2} 
       r={4,3,3}
-      elapsedTime C=randomChainComplex(h,r,Height=>5,zeroMean=>true)
+      elapsedTime C=randomChainComplex(h,r,Height=>5,ZeroMean=>true)
       C.dd^2
       CR=(C**RR_53)
       h=(SVDHomology CR)_0
@@ -1321,26 +1340,28 @@ doc ///
      commonEntries     
      (commonEntries,List,List)
    Headline
-     lists of position, where the coincide up to threshold
+     lists of positions, where they coincide up to threshold
    Usage
      (P1,P2)=commonEntries(L1,L2)
    Inputs
      L1:List
      L2:List 
-       descending list of non-negative real numbers  
+       descending lists of non-negative real numbers
+     Threshold => RR
+       relative error allowed for equality  
    Outputs
       P1:List
       P2:List
    Description
     Text
-      Determine the positions, where of the non-zero numbers in both lists which coincide up to a threshold.
+      Determine the positions, where the non-zero numbers in both lists which coincide up to a threshold.
       This is needed in the Laplacian method to compute the SVD normal form of a complex
     Example
       needsPackage "RandomComplexes"
       setRandomSeed "a good example";
       h={2,3,5,3} 
       r={4,3,5}
-      elapsedTime C=randomChainComplex(h,r,Height=>100,zeroMean=>true)
+      elapsedTime C=randomChainComplex(h,r,Height=>100,ZeroMean=>true)
       C.dd^2
       D=disturb(C**RR_53,1e-4)
       Delta=laplacians D;
@@ -1360,7 +1381,7 @@ doc ///
      laplacians     
      (laplacians,ChainComplex)
    Headline
-     Compute the laplacians of a chain complex
+     compute the laplacians of a chain complex
    Usage
      delta=laplacians C
    Inputs
@@ -1379,7 +1400,7 @@ doc ///
       setRandomSeed "a good example";
       h={2,3,5,3} 
       r={4,3,5}
-      C=randomChainComplex(h,r,Height=>100,zeroMean=>true)
+      C=randomChainComplex(h,r,Height=>100,ZeroMean=>true)
       C.dd^2
       D=disturb(C**RR_53,1e-4)
       delta=laplacians D
@@ -1394,6 +1415,25 @@ doc ///
       SVDComplex
 ///
 
+doc ///
+   Key
+    Laplacian
+   Headline
+    Option for SVDHomology and SVDComplex
+   Description
+    Text
+     Strategy for the computation of the SVD normal form of a complex
+///
+
+doc ///
+   Key
+    Projection
+   Headline
+    Option for SVDHomology and SVDComplex
+   Description
+    Text
+     Strategy for the computation of the SVD normal form of a complex
+///
 end--
 
 restart
@@ -1445,7 +1485,7 @@ TEST ///
       setRandomSeed "a pretty good example";
       h={2,3,1} 
       r={2,3}
-      C=randomChainComplex(h,r,Height=>11,zeroMean=>true)
+      C=randomChainComplex(h,r,Height=>11,ZeroMean=>true)
       C.dd
       CQ=C**QQ
       CR=C**RR_53
