@@ -1,33 +1,53 @@
+#define malloc my_malloc
+#define free my_free
 #define mpfr foo
 #include "mpreal.h"
 #include <Eigen/MPRealSupport>
 #undef mpfr
-
-// This line is here to get def of gmp allocation functions
-#include "../d/M2inits.h"
-
 #include "eigen.hpp"
 #include <Eigen/SVD>
 #include "mpfr.h"
-#include <cstdlib>
+#undef my_free
+#undef my_malloc
 
-// This function is a hack to change allocator for gmp
-// (and therefore mpfr) so that Eigen will not use garb age collected memory
-void
-our_mp_set_memory_functions (void *(*alloc_func) (size_t),
-			 void *(*realloc_func) (void *, size_t, size_t),
-			 void (*free_func) (void *, size_t))
+#include <gc/gc_allocator.h>
+void* my_malloc( std::size_t size )
 {
- if (alloc_func == 0)
-   alloc_func = __gmp_default_allocate;
- if (realloc_func == 0)
-   realloc_func = __gmp_default_reallocate;
- if (free_func == 0)
-   free_func = __gmp_default_free;
- __gmp_allocate_func = alloc_func;
- __gmp_reallocate_func = realloc_func;
- __gmp_free_func = free_func;
+  return GC_MALLOC_UNCOLLECTABLE(size);
 }
+void free( void* ptr )
+{
+  GC_FREE(ptr);
+}
+
+/***********************
+ * An attempt to overwrite memory management globally
+ * (i.e., without "#define my_free", etc.)
+ * ... failed!!!
+ * Is there a function that I'm missing???
+  
+void* malloc( std::size_t size )
+{
+  std::cout << "-- std::malloc call!!!" << std::endl;
+  return GC_MALLOC_UNCOLLECTABLE(size);
+}
+void* realloc( void* ptr, std::size_t new_size )
+{
+  std::cout << "-- std::realloc call!!!" << std::endl;
+  GC_FREE(ptr);
+  return GC_MALLOC_UNCOLLECTABLE(new_size);
+}
+void* calloc( std::size_t num, std::size_t size )
+{
+  std::cout << "-- std::calloc call!!!" << std::endl;
+  return GC_MALLOC_UNCOLLECTABLE(num*size);
+}
+void free( void* ptr )
+{
+  std::cout << "-- std::free call!!!" << std::endl;
+  GC_FREE(ptr);
+}
+*/
 
 using Real = foo::mpreal;
 using Complex = std::complex<Real>;
@@ -37,36 +57,6 @@ using MatrixXmpCC = Eigen::Matrix<Complex,Eigen::Dynamic,Eigen::Dynamic>;
 
 namespace EigenM2 {
 
-static void freeFunc(void *p, size_t sz)
-  {
-  }
-  
-class SetMemoryFunctions {
-  void *(*alloc_func_ptr) (size_t);
-  void *(*realloc_func_ptr) (void *, size_t, size_t); 
-  void (*free_func_ptr) (void *, size_t);
-public:
-  SetMemoryFunctions()
-  {
-    mp_get_memory_functions(&alloc_func_ptr,&realloc_func_ptr,&free_func_ptr);
-    after();
-  } 
-  ~SetMemoryFunctions()
-  {
-    before();
-  }
-  void after() 
-  {
-    our_mp_set_memory_functions((void *(*) (size_t)) malloc,
-                            (void *(*) (void *, size_t, size_t)) realloc,
-                            (void (*)(void *, size_t)) freeFunc);
-  }
-  void before()
-  {
-    our_mp_set_memory_functions(alloc_func_ptr,realloc_func_ptr,free_func_ptr);    
-  }
-};
-  
 void fill_to_MatrixXmp(const LMatrixRRR& orig, MatrixXmp& result)
 {
   for (int r=0; r<orig.numRows(); r++)
@@ -110,7 +100,6 @@ bool SVD(const LMatrixRRR *A,
          )
 {
   std::cerr << "Eigen::SVD (real)" << std::endl;
-  SetMemoryFunctions smf; // gc off
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
 
@@ -120,6 +109,7 @@ bool SVD(const LMatrixRRR *A,
 
   std::cerr << "  starting Eigen code space..." << std::endl;  
   MatrixXmp AXmp(A->numRows(), A->numColumns());
+    
   fill_to_MatrixXmp(*A, AXmp);
   std::cout << AXmp.cols() << std::endl;
 
@@ -129,19 +119,14 @@ bool SVD(const LMatrixRRR *A,
   auto eigenVT = svd.matrixV().adjoint();
   auto eigenSigma = svd.singularValues();
   
-  smf.before(); // gc on
   std::cerr << "  about to fill M2 matrices..." << std::endl ; 
   fill_from_MatrixXmp(eigenU, *U);
   fill_from_MatrixXmp(eigenVT, *VT);
   fill_from_MatrixXmp(eigenSigma, *Sigma);
 
-  smf.after(); // gc off
   Real::set_default_prec(old_prec);
   std::cerr << "  leaving SVD..." << std::endl;
   return true;
-  // svd destructed
-  // AXmp destructed
-  // smf destructed => gc on
 }
 
 bool SVD(const LMatrixCCC *A,
