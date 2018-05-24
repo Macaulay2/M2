@@ -1,7 +1,7 @@
 newPackage(
 "Pullback",
-Version => "1.02",
-Date => "May 22, 2017",
+Version => "1.03",
+Date => "March 8, 2018",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
 Headline => "pullback of rings",
 DebuggingMode => false,
@@ -120,17 +120,17 @@ pullback(RingMap, RingMap) := o -> (f,g) -> (
     exact := false;
 
     --actual code starts here
-    assert( target f === target g ); 	 -- check that the two maps to C are really to the same ring.
+    if not ( target f === target g ) then error "pullback: Targets of the maps are not the same"; 	 -- check that the two maps to C are really to the same ring.
     names1 := set(apply(first entries vars ambient A, i -> toString(i)));
     names2 := set(apply(first entries vars ambient C, j -> toString(j)));
     names3 := set(apply(first entries vars ambient B, j -> toString(j)));
-    assert (#(names1*names2) == 0 ); -- we verify that no names from A or C intersect.  We want this because it might otherwise cause problems.
-    assert (isSubset(names1, names3)); -- we also verify that every variable name for A is also a variable name for C.  We need this for some substitutions.
+    if not (#(names1*names2) == 0 ) then error "pullback: variables of the source of the maps overlap"; -- we verify that no names from A or C intersect.  We want this because it might otherwise cause problems.
+    if not (isSubset(names1, names3)) then error "pullback: not all variable names in A make sense in C"; -- we also verify that every variable name for A is also a variable name for C.  We need this for some substitutions.
     --We *should* verify that the variables get sent to appropriate variables.  But we don't right now.
     coeff1 := coefficientRing(A);
     coeff2 := coefficientRing(C);
     coeff3 := coefficientRing(B);
-    assert ((coeff1 === coeff2) and (coeff1 === coeff3)); --we verify all coefficient rings are the same.
+    if not ( ((coeff1 === coeff2) and (coeff1 === coeff3))) then error "pullback: not all coefficient rings are the same"; --we verify all coefficient rings are the same.
 
 
     --in order to do our computation, we need A\oplusC to be a finite R-module.  Since C is obviously a finite R-module (it is a quotient of R),
@@ -548,3 +548,5 @@ end
 
 --1.01, added support for C with no variables.  Improved documentation.  Turned off some printed text when Verbose is turned off.
 --1.02, improved documentation including adding documentation for the product of rings.
+--1.03, improved error reporting so that it provides useful information about the problem is
+
