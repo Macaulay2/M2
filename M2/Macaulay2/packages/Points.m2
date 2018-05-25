@@ -374,7 +374,9 @@ projectivePoints (Matrix,Ring) := (M,R) -> (
 -- FG: stopping criterion for projective BM
 -- TO DO: implement better stopping criterion from Abbot, Kreuzer, Robbiano
 stopProjectivePoints = (deg,inG,multPts) -> (
+    -- if the initial ideal is zero, then continue
     if zero inG then return false else
+    -- otherwise stop when multiplicity is attained
     hilbertFunction(deg,inG) == multPts
     )
 
