@@ -1014,8 +1014,8 @@ doc ///
      first exponents lcm I
   SeeAlso
     (dual,MonomialIdeal)
-    (irreducibleDecomposition,MonomialIdeal)
-    (primaryDecomposition,MonomialIdeal)
+    "PrimaryDecomposition::irreducibleDecomposition(MonomialIdeal)"
+    "PrimaryDecomposition::primaryDecomposition(MonomialIdeal)"
 ///
 
 document {

@@ -26,6 +26,16 @@ examples'names = {
 for e in examples'names do 
 needs("./ExampleSystems/"|e|".m2")
 
+beginDocumentation()
+
+multidoc ///
+ Node
+  Key
+   ExampleSystems
+  Headline
+   examples of polynomial systems
+///
+
 end
 
 -- Here place M2 code that you find useful while developing this

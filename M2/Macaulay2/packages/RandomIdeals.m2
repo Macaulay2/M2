@@ -427,6 +427,8 @@ randomToricEdgeIdeal(ZZ,ZZ) := (n, t) -> (
 -- DOCUMENTATION RandomIdeals -- documentation
 ------------------------------------------------------------
 
+beginDocumentation()
+
 doc ///
 Key 
      RandomIdeals

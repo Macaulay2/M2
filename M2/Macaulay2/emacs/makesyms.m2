@@ -7,7 +7,8 @@ okay(String,Keyword) := okay(String,Symbol) := (nam,sym) -> #nam > 1 and isAlpha
 symbols := sort join( 
      apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
      flatten apply(
-     	  join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"}),
+     	  -- join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"})
+	  {},
      	  pkgnam -> (
 	       pkg := needsPackage pkgnam;
 	       select(pairs pkg.Dictionary,okay))))

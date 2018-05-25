@@ -169,13 +169,19 @@ net List := x -> horizontalJoin deepSplice (
      toSequence between(comma,apply(x,netn)),
      "}")
 
-VerticalList = new SelfInitializingType of List
-VerticalList.synonym = "vertical list"
-net VerticalList := x -> if #x === 0 then "{}" else (
-     n := stack apply(x,net);
+embrace = n -> (
      h := height n;
      d := depth n;
      horizontalJoin("{"^(h,d), n, "}"^(h,d)))
+
+VerticalList = new SelfInitializingType of List
+VerticalList.synonym = "vertical list"
+net VerticalList := x -> if #x === 0 then "{}" else embrace stack apply(x,net)
+
+NumberedVerticalList = new SelfInitializingType of VerticalList
+NumberedVerticalList.synonym = "numbered vertical list"
+net NumberedVerticalList := x -> if #x === 0 then "{}" else embrace stack apply(#x,i -> net (i => x#i));
+
 net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),

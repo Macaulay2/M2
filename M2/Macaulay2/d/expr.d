@@ -95,7 +95,7 @@ export completions(s:string):array(string) := (
 	       is null do break
 	       is q:SymbolListCell do (
 		    t := q.word.name;
-		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
+		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then append(v,t);
 		    b = q.next; ));
 	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));

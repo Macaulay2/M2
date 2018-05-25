@@ -42,11 +42,22 @@ loadPackage = method(
 packageLoadingOptions := new MutableHashTable
 checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
+closePackage = pkg -> (
+     if pkg#?"raw documentation database"
+     then (db -> if isOpen db then close db) pkg#"raw documentation database";
+     )
+
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
      if opts.Reload === true then (
+	  -- << "-- reloading package " << pkgtitle << endl;
+	  -- really close the old one
 	  dismiss pkgtitle;
-	  if PackageDictionary#?pkgtitle then PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
+	  if PackageDictionary#?pkgtitle then (
+	       pkg := PackageDictionary#pkgtitle;
+	       closePackage (value pkg); -- eventually we won't be able to keep all of these open, anyway, since 256 can be our limit on open file descriptors
+	       PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle; -- clear out the value of the symbol
+	       );
 	  );
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
@@ -133,11 +144,6 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
      VALUES
 }
 ///
-
-closePackage = pkg -> (
-     if pkg#?"raw documentation database"
-     then (db -> if isOpen db then close db) pkg#"raw documentation database";
-     )
 
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
 -- they get mixed.  Yes, that's in addition to installing them in directories that
@@ -248,7 +254,6 @@ newPackage(String) := opts -> (title) -> (
 	  rawdbname := newpkg#"package prefix" | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix;
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
-	       if notify then stderr << "--opened database: " << rawdbname << endl;
 	       newpkg#"raw documentation database" = rawdb;
 	       addEndFunction(() -> if isOpen rawdb then close rawdb))
 	  else (
@@ -281,11 +286,11 @@ newPackage(String) := opts -> (title) -> (
      loadedPackages = {Core};
      dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
      if Core#?"base packages" then (
-	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
-	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
-	       )
-	  else scan(reverse Core#"base packages", needsPackage)
-	  );
+     	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
+     	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
+     	       )
+     	  else scan(reverse Core#"base packages", needsPackage)
+     	  );
      dictionaryPath = (
 	  if member(newpkg.Dictionary,dictionaryPath)
      	  then join({newpkg#"private dictionary"}, dictionaryPath)
@@ -293,7 +298,7 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-     if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
+     -- if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
      scan(opts.PackageImports, needsPackage);
      scan(opts.PackageExports, needsPackage);
      newpkg.loadDepth = loadDepth;

@@ -24,6 +24,7 @@ getpkg := memoize(
      title -> (
 	  if PackageDictionary#?title then value PackageDictionary#title
 	  else dismiss needsPackage(title,LoadDocumentation=>true)))
+getpkgNoLoad := title -> if PackageDictionary#?title then value PackageDictionary#title
 
 -----------------------------------------------------------------------------
 -- normalizing document keys
@@ -138,7 +139,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
 new DocumentTag from List := (DocumentTag,x) -> (
-     (nkey,fkey,pkg,title) := toSequence x;
+     -- (nkey,fkey,pkg,title) := toSequence x;
      -- if class pkg =!= Package then error("document tag specifies unloaded package: ",toString pkg);
      x)
 -- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
@@ -251,7 +252,7 @@ local currentHelpTag
 fixup := method(Dispatch => Thing)
 
 valueWithText = s -> (
-     Text := value PackageDictionary#"Text";
+     Text := getpkg "Text";
      if member(Text.Dictionary, dictionaryPath) then value s
      else (
      	  sav := dictionaryPath;
@@ -272,6 +273,7 @@ toExternalStringWithText = s -> (
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
+
 fetchRawDocumentation = method()
 fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
@@ -286,6 +288,23 @@ fetchRawDocumentation DocumentTag := tag -> (
      )
 fetchRawDocumentation FinalDocumentTag := tag -> (
      fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
+     )
+
+fetchRawDocumentationNoLoad = method()
+fetchRawDocumentationNoLoad(Nothing,Thing) := (pkg,fkey) -> null
+fetchRawDocumentationNoLoad(Package,String) := (pkg,fkey) -> (		    -- returns null if none
+     d := pkg#rawKey;
+     if d#?fkey then d#fkey
+     else (
+	  if pkg#?rawKeyDB then (
+	       d = pkg#rawKeyDB;
+	       if isOpen d and d#?fkey then valueWithText d#fkey)))
+fetchRawDocumentationNoLoad(String,String) := (pkgtitle,fkey) -> fetchRawDocumentationNoLoad(getpkgNoLoad pkgtitle, fkey)
+fetchRawDocumentationNoLoad DocumentTag := tag -> (
+     fetchRawDocumentationNoLoad(getpkgNoLoad DocumentTag.Title tag, DocumentTag.FormattedKey tag)
+     )
+fetchRawDocumentationNoLoad FinalDocumentTag := tag -> (
+     fetchRawDocumentationNoLoad(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
      )
 
 getPrimary = tag -> (
@@ -527,8 +546,12 @@ file := null
 -----------------------------------------------------------------------------
 extractBody := x -> if x.?Description then x.Description
 getDoc := key -> fetchRawDocumentation makeDocumentTag key
+getDocNoLoad := key -> fetchRawDocumentationNoLoad makeDocumentTag key
 getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
      s := getDoc key;
+     if s =!= null and s#?tag then s#tag)
+getOptionNoLoad := (key,tag) -> (				    -- get rid of this, keep the doc from before
+     s := getDocNoLoad key;
      if s =!= null and s#?tag then s#tag)
 getBody := key -> getOption(key,Description)		    -- get rid of this
 -----------------------------------------------------------------------------
@@ -639,7 +662,7 @@ fixupTable := new HashTable from {
 	  val = nonempty separate val;
 	  val = apply(val, i -> replace("^[[:space:]]*(.*)[[:space:]]*$","\\1",i));
 	  if #val === 0 then error "Usage: expected content";
-	  DL flatten { "class" => "element", DT "Usage:", DD \ TT \ val } ),
+	  DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } ),
      BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
      Inputs => val -> (
 	  val = fixupList(val,Inputs);
@@ -761,7 +784,7 @@ apropos String := (pattern) -> (
 	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
-headline Thing := key -> null
+headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
@@ -1348,20 +1371,15 @@ theAugmentedMenu := S -> (
      )
 
 help Symbol := S -> (
-     checkLoadDocumentation();
-     -- s := value S;
      if package S === Core then checkLoadDocumentation();
-     currentHelpTag = makeDocumentTag(S,Package=>null);
+     currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
-     -- b := smenu documentableMethods s;
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
--- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
-	  -- if instance(value S, Function) then theAugmentedMenu S else theMenu S
 	  };
      currentHelpTag = null;
      ret)

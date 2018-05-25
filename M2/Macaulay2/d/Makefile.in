@@ -86,6 +86,9 @@ endif
 pari-c.o: ../../include/M2/config.h ../../config.status
 endif
 
+# struct is a synonym for public class...:
+equality.o version.o engine.o interface.o: CXXFLAGS += -Wno-mismatched-tags
+
 pari-gnump.o: CFLAGS += -Wno-error
 
 pthread-tmp.c : SCCFLAGS += -noline
@@ -94,9 +97,6 @@ pthread-tmp.c : SCCFLAGS += -noline
 # actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
 
 version.o : ../../include/M2/config.h
-
-# I think struct is a synonym for public class...:
-version.o : CXXFLAGS += -Wno-mismatched-tags
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
