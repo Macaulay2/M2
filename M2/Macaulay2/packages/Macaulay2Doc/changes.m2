@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.11.1",
 	  TO "changes, 1.11",
 	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
@@ -28,6 +29,17 @@ document {
 
 document {
      Key => "changes made for the next release",
+     }
+
+document {
+     Key => "changes, 1.11.1",
+     UL {
+     	  LI { "new packages:",
+     	       UL {
+	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." },
+     		    }
+	       }
+	  }
      }
 
 document {
