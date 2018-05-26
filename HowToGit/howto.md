@@ -73,6 +73,15 @@ the merge you will be able to push.
   automatically adds all changes to known files and creates a new
   commit.
 
+- When you want to push and there are remote changes that don't
+  conflict with your changes, you can use
+
+    git pull --rebase
+
+  to pull those changes and make the history linear with the remote
+  changes coming first and yours on top of them.  This will avoid the
+  merge commit.
+
 - You can pass the commit message on the command line and skip the
   editor pop-up using the `-m` option:
 
@@ -82,4 +91,4 @@ the merge you will be able to push.
   we plan to work on separate branches.  Please see:
   https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell
 
-- Please also refer to the github tutorial: 
+- Please also refer to the github tutorial: https://github.com/Macaulay2/M2/wiki/GitHowTo
