@@ -1195,8 +1195,11 @@ document {
      "Now let's imagine we wish to treat instances of ", TT "X", " as
      vectors, and to negate one by negating its entries.  As it
      happens, no method for this has been installed for basic lists,
-     as we can check with ", TO "lookup", ".",
-     EXAMPLE "lookup(symbol -, X) === null",
+     so trying to negate ", TT "x", " results in an error.",
+     EXAMPLE {
+	 "stopIfError = false;",
+	 "- x",
+	 },
      "We install and test a new method as described in ", TO "installing methods", ".",
      EXAMPLE {
 	  "- X := t -> apply(t,i -> -i);",

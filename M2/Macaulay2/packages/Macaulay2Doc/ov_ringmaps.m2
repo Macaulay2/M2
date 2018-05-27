@@ -176,7 +176,7 @@ document {
      	  SUBSECTION "subtleties of substitute and describe",
      	       "Now we complicate things further by constructing a fraction 
      	       field and then further constructing polynomial rings and 
-     	       quotient rings.  First we see that while ", TT "describe", " helped
+     	       quotient rings.  First we see that while ", TO "describe", " helped
      	       us to see how we defined ", TT "R2", " and ", TT "R3", ", the 
      	       same does not hold when 
      	       a fraction field is constructed.  Note that R3 is a domain.",
@@ -185,7 +185,7 @@ document {
 	       	    "R4 = frac R3;",
 	       	    "describe R4"
 	       	    },
-     	       "The command ", TT "substitute", " works well to move elements 
+     	       "The command ", TO "substitute", " works well to move elements 
      	       from ", TT "R2", " or ", TT "R3", " to ", TT "R4", ". An alternative to
 	       substitute is to form the canonical injection of R3 into R4 (the same can
 	       be done for the canonical projection from R2 to R3 above - we do the example
@@ -195,7 +195,7 @@ document {
       	       from ", TT "R4", " back to ", TT "R3", " an alternate method must 
 	       be used.  Also, 
      	       the method of constructing a map does not work well in the reverse 
-     	       direction for the same reasons ", TT "substitute", " does not.",
+     	       direction for the same reasons ", TO "substitute", " does not.",
      	       EXAMPLE {
 	       	    "use R2;",
 	       	    "f = s^4+1;",

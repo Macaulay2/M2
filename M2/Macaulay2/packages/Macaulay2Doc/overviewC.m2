@@ -129,13 +129,6 @@ document {
      EXAMPLE "k = GF 81",
      "The generator of the field can be obtained as usual.",
      EXAMPLE "k_0",
-     "Notice that the name of the generator is displayed with a ", TT "$", " in it
-     to indicate that it is not accessible by typing.  Of course, you could assign the
-     generator to the symbol of your choice, but it will still print the same way.",
-     EXAMPLE {
-	  "a = k_0",
-      	  "a^20+1",
-	  },
      "You may use ", TO "ambient", " to see the quotient ring the field is made from.",
      EXAMPLE "ambient k",
      "Use ", TO "ideal", " to see the ideal that defined that quotient ring.",
@@ -363,9 +356,11 @@ document {
       	  "leadCoefficient g",
       	  "leadMonomial g",
 	  },
-     "Notice that the lead monomial is an element of a monoid whose name is
-     ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
-     EXAMPLE "exponents leadMonomial g",
+     "The exponents of a monomial or term can be extracted with ", TO "exponents", ".",
+     EXAMPLE {
+	 "exponents leadMonomial g",
+	 "exponents leadTerm g",
+	 },
      "We can get all of the coefficients at once, assembled in a one-rowed matrix,
      along with a matrix containing the corresponding monomials.",
      EXAMPLE {
