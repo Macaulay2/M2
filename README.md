@@ -7,6 +7,7 @@ the Sciences.
 -
 +
 +
+<<<<<<< HEAD
 
 
 
@@ -15,3 +16,12 @@ the Sciences.
 
 
 +
+=======
+    
+    
+ 
+  
+ 
+  
+
+>>>>>>> f66f42a46672a756630ff3a91f01053cee77ee9e
