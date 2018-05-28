@@ -380,6 +380,23 @@ stopProjectivePoints = (deg,inG,multPts) -> (
     hilbertFunction(deg,inG) == multPts
     )
 
+-- FG: remove zero and duplicate points
+removeBadPoints = M -> (
+    -- remove zero columns
+    N := compress M;
+    -- remove columns that define same projective points
+    lastcol := numColumns(N)-1;
+    thiscol := 0;
+    while thiscol < lastcol do (
+	L := toList(thiscol+1..lastcol);
+	dupcols := select(L,i->rank(N_{thiscol,i})<2);
+	N = submatrix'(N,dupcols);
+	lastcol = lastcol - #dupcols;
+	thiscol = thiscol + 1;
+	);
+    return N;
+    )
+
 -----------------Homogeneous codes
 
 randomPointsMat = method(Options =>{AllRandom =>false})
