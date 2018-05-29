@@ -34,7 +34,8 @@ export {
 ---------------------------------------------------------------------
      "affineFatPoints",
      "affineFatPointsByIntersection",
-     "projectivePoints"
+     "projectivePoints",
+     "VerifyPoints"
      }
 
 ///
