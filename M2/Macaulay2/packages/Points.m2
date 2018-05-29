@@ -862,7 +862,7 @@ document {
      }
 
 ---------------------------------------------------------------------
--- FG: documentation for fat points
+-- FG: documentation for fat points and new projective points
 ---------------------------------------------------------------------
 
 doc ///
@@ -952,6 +952,68 @@ doc ///
 
    SeeAlso
     (affineFatPoints,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    projectivePoints
+    (projectivePoints,Matrix,Ring)
+    [projectivePoints,VerifyPoints]
+   Headline
+    produces the ideal and initial ideal from the coordinates of a finite set of projective points
+   Usage
+    (inG,G) = projectivePoints(M,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    R:Ring
+     coordinate ring of the projective space containing the points
+   Outputs
+    inG:Ideal
+     initial ideal of the set of projective points
+    G:List
+     list of generators for Grobner basis for ideal of projective points
+   Description
+    Text
+     This function uses a modified Buchberger-Moeller algorithm to
+     compute a grobner basis for the ideal of a finite number of
+     points in projective space.
+
+    Example
+     R = QQ[x_0..x_2]
+     M = random(ZZ^3,ZZ^5)
+     (inG,G) = projectivePoints(M,R)
+     monomialIdeal G == inG
+
+    Text
+     This algorithm may be faster than
+     computing the intersection of the ideals of each projective point.
+
+    Example
+     K = ZZ/32003
+     R = K[z_0..z_5]
+     M = random(ZZ^6,ZZ^150)
+     elapsedTime (inG,G) = projectivePoints(M,R);
+--     elapsedTime H = affineFatPointsByIntersection(M,R);
+--     G==H
+
+   Caveat
+--    For reduced points, this function may be a bit slower than @TO "affinePoints"@.
+    This function removes zero columns of @TT "M"@ and duplicate columns giving rise to the same projective point (which prevent the algorithm from terminating). The user can bypass this step with the option @TT "VerifyPoints"@.
+   SeeAlso
+--    (affineFatPointsByIntersection,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    VerifyPoints
+   Headline
+    Option to projectivePoints.
+   Description
+    Text
+     Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+   SeeAlso
+    projectivePoints
 ///
 
 TEST///
