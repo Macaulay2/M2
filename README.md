@@ -8,7 +8,7 @@ Current List of Projects:
 
 Project name, project leader
 
-0. NewToM2 (first two days) , Greg Smith
+0. NewToM2 (first two days) , Anton Leykin, Dan Grayson, Greg Smith
 1. Engine , Dylan Peifer djp282@cornell.edu
 2. Numerical AG, Anton Leykin leykin@math.gatech.edu
 3. Tensors , Alessandro Oneto and Emanuele Ventura aless.oneto@gmail.com eventura@math.tamu.edu
@@ -19,7 +19,7 @@ Project name, project leader
 8. Polyhedra , Lars Karstner kastner@math.tu-berlin.de
 9. Sums of Squares , Diego Cifuentes diegcif@gmail.com
 10. Tropical and Normal Toric Varieties , Diane Maclagan  d.maclagan@warwick.ac.uk
-11. Desingularization Trees , Doug Leonarg leonada@auburn.edu
+11. Desingularization Trees , Doug Leonard leonada@auburn.edu
 12. Homological Algebra , 
     
  
