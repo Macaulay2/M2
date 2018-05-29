@@ -4,8 +4,8 @@ This repository will serve as the collaboration area for the Macaulay2 workshop
 in Leipzig, June 04 - 08, 2018, at the Max Planck Institute for Mathematics in
 the Sciences. 
   
+Current List of Projects:
 
- Current List of Projects:
 0. NewToM2 (first two days)
 1. Engine 
 2. Numerical AG 
