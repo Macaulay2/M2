@@ -325,8 +325,9 @@ affineFatPoints (Matrix,List,Ring) := (M,mults,R) -> (
 
 
 -- FG: Buchberger-Möller for projective points
-projectivePoints = method()
-projectivePoints (Matrix,Ring) := (M,R) -> (
+projectivePoints = method(Options => {VerifyPoints => true})
+projectivePoints (Matrix,Ring) := opts -> (M,R) -> (
+    if opts.VerifyPoints then M = removeBadPoints M;
      K := coefficientRing R;
      s := numgens source M;
      Fs := affineMakeRingMaps(M,R);
