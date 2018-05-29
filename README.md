@@ -4,13 +4,6 @@ This repository will serve as the collaboration area for the Macaulay2 workshop
 in Leipzig, June 04 - 08, 2018, at the Max Planck Institute for Mathematics in
 the Sciences. 
   
-
-
-
-
-
-
-
 Current List of Projects:
 
 Project name, project leader
@@ -31,4 +24,3 @@ Project name, project leader
     
  
 
->>>>>>> b41da0f46846296e79e9771ece66614c8ee348a5
