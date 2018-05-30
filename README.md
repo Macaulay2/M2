@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # Workshop-2018-Leipzig
-=======
-# Workshop-2018-Leipzig 
->>>>>>> df34443032344db90feba4311d7b07bbc3fde029
 
 This repository will serve as the collaboration area for the Macaulay2 workshop
 in Leipzig, June 04 - 08, 2018, at the Max Planck Institute for Mathematics in
@@ -24,12 +20,7 @@ Project name, project leader
 9. Sums of Squares , Diego Cifuentes diegcif@gmail.com
 10. Tropical and Normal Toric Varieties , Diane Maclagan  d.maclagan@warwick.ac.uk
 11. Desingularization Trees , Doug Leonard leonada@auburn.edu
-<<<<<<< HEAD
-12. Homological Algebra ,  
-=======
-12. Homological Algebra , 
->>>>>>> 772b4fe33ea1004bd3e3d95aa258028ec1a8d5e9
-    
+12. Homological Algebra ,      
  
 
 
