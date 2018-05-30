@@ -35,7 +35,8 @@ export {
      "affineFatPoints",
      "affineFatPointsByIntersection",
      "projectivePoints",
-     "VerifyPoints"
+     "VerifyPoints",
+     "projectivePointsByIntersection"
      }
 
 ///
@@ -398,6 +399,19 @@ removeBadPoints = M -> (
 	);
     return N;
     )
+
+-- FG: projective points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- and a polynomial ring R
+-- OUTPUT: gb of the ideal of the projective points
+projectivePointsByIntersection = method(TypicalValue => List)
+projectivePointsByIntersection (Matrix,Ring) := (M,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M,
+       p -> (trim minors(2,matrix{gens R,p}))
+       )
+   )
+
 
 -----------------Homogeneous codes
 
@@ -991,17 +1005,16 @@ doc ///
 
     Example
      K = ZZ/32003
-     R = K[z_0..z_5]
-     M = random(ZZ^6,ZZ^150)
+     R = K[z_0..z_6]
+     M = random(ZZ^7,ZZ^150)
      elapsedTime (inG,G) = projectivePoints(M,R);
---     elapsedTime H = affineFatPointsByIntersection(M,R);
---     G==H
+     elapsedTime H = projectivePointsByIntersection(M,R);
+     G==H
 
    Caveat
---    For reduced points, this function may be a bit slower than @TO "affinePoints"@.
     This function removes zero columns of @TT "M"@ and duplicate columns giving rise to the same projective point (which prevent the algorithm from terminating). The user can bypass this step with the option @TT "VerifyPoints"@.
    SeeAlso
---    (affineFatPointsByIntersection,Matrix,List,Ring)
+    (projectivePointsByIntersection,Matrix,Ring)
 ///
 
 doc ///
@@ -1014,6 +1027,48 @@ doc ///
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
    SeeAlso
     projectivePoints
+///
+
+doc ///
+   Key
+    [projectivePoints,VerifyPoints]
+   Headline
+    Option to projectivePoints.
+   Description
+    Text
+     Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+   SeeAlso
+    projectivePoints
+///
+
+doc ///
+   Key
+    projectivePointsByIntersection
+    (projectivePointsByIntersection,Matrix,Ring)
+   Headline
+    computes ideal of projective points by intersecting point ideals
+   Usage
+    projectivePointsByIntersection(M,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    R:Ring
+     coordinate ring of the projective space containing the points
+   Outputs
+    :List
+     grobner basis for ideal of a finite set of projective points
+   Description
+    Text
+     This function computes the ideal of a finite set of projective points
+     by intersecting the ideals of each point.
+
+    Example
+     R = QQ[x,y,z]
+     M = transpose matrix{{1,0,0},{0,1,1}}
+     projectivePointsByIntersection(M,R)
+
+   SeeAlso
+    (projectivePoints,Matrix,Ring)
 ///
 
 TEST///
