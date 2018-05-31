@@ -1,5 +1,4 @@
 ///
-
 restart
 uninstallPackage"TateOnProducts"
 
@@ -121,7 +120,7 @@ coarseMultigradedRegularity Module := o-> M -> (
 cornerComplex=method()
 cornerComplex(ChainComplex,List) := (C,c) -> (d:=c-toList(#c:1);cornerComplex1(C,d))
 
-TEST /// 
+TEST ///
 c={1,2}
 #c
 toList(#c:1)
@@ -149,22 +148,23 @@ cornerComplex1(ChainComplex,List) := (C,c) -> (
 cornerComplex(Module, List, List) := (M,low, high) ->(
     --high, low are lists of length = degreeLength ring M
     (S,E) := (tateData ring M)#Rings;
-    regs := coarseMultigradedRegularity M; --regs
-    hi := apply(#regs, i->max(regs_i, high_i+1)); --hi
-    N := presentation truncate(hi, M)**S^{hi};-- betti N
-    Q := symExt(N,E); --betti Q   
-    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi]
+    regs := coarseMultigradedRegularity M;
+    hi := apply(#regs, i->max(1+regs_i, 1+high_i));
+    N := presentation truncate(hi, M);
+    Q := symExt(N,E);   
+    (res coker Q)[sum hi]
     )
-
-TEST ///  
-   
-   
-loadPackage("TateOnProducts",Reload=>true)
+///
 (S,E) = productOfProjectiveSpaces{1,1}
-C = cornerComplex (S^1,{0,0},{3,3})
-betti C
-betti( C**E^{{3,3}}[6] )
-cohomologyTable (C, {0,0},{3,3})
+td =  (tateData S)
+H = hashTable pairs td
+td.Rings
+td#Rings
+keys td
+pairs(tateData S)
+C = cornerComplex (S^1,{0,0},{0,0})
+cohomologyTable (C, {-3,-3},{3,3})
+M = S^1
 ///
 productOfProjectiveSpaces = method(Options=>
     {CoefficientField=>ZZ/32003,
@@ -200,7 +200,7 @@ productOfProjectiveSpaces ZZ := opt -> n -> (productOfProjectiveSpaces(toList(n:
 restart
 loadPackage ("TateOnProducts", Reload =>true)
 peek loadedFiles
-(P,E) = productOfProjectiveSpaces{2,2}
+P = productOfProjectiveSpaces{2,2}
 M = coker random(P^1, P^{{-1,-2},{-2,-1},{-1,-1}})
 rowdegs = {{0,0}, {-1,1},{-1,-1},{-1,-2},{-2,-2}}
 coldegs = apply(rowdegs, r->{-3,-3}-r)
@@ -216,7 +216,7 @@ netList apply(1+ length G, i-> tally degrees G_i)
 
 regularity G
 
-(P,E) = productOfProjectiveSpaces{5}
+P = productOfProjectiveSpaces{5}
 M = coker random(P^1, P^{-3,-4,-5})
 M = P^1/ideal(P_0^3,P_1^4,P_2^5)
 R = coarseMultigradedRegularity M
