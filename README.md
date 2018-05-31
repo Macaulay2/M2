@@ -20,8 +20,5 @@ Project name, project leader
 9. Sums of Squares , Diego Cifuentes diegcif@gmail.com
 10. Tropical and Normal Toric Varieties , Diane Maclagan  d.maclagan@warwick.ac.uk
 11. Desingularization Trees , Doug Leonard leonada@auburn.edu
-12. Homological Algebra , 
+12. Homological Algebra , David Eisenbud de@msri.org and Frank-Olaf Schreyer schreyer@math.uni-sb.de
 
-   
-   
-  
