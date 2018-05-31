@@ -4,8 +4,8 @@ uninstallPackage"TateOnProducts"
 
 installPackage("TateOnProducts")--,FileName=>schreyer/Dropbox/SVDComplexes/from-git/TateOnProducts.m2)
 loadPackage("TateOnProducts",Reload=>true)
-viewHelp TateOnProducts
-
+viewHelp "TateOnProducts"
+peek loadedFiles
 ///
 newPackage(
 	"TateOnProducts",
@@ -40,6 +40,7 @@ export {
     "upperCorner",
     "beilinsonWindow",
     "tateExtension",
+    "tateResolution",
     "sloppyTateExtension",
     "pushAboveWindow",
     "firstQuadrantComplex",
@@ -56,6 +57,7 @@ export {
     "ContractionData",
     "tateData",
     "ringData",
+    "productOfProjectiveSpaces",
     "contractionData",
     "BundleType",
     "PrunedQuotient", "QuotientBundle", "SubBundle",
@@ -74,7 +76,13 @@ export {
     "resolutionOfChainComplex",
     "chainComplexMap",
     "InitialDegree",
-    "isQuism"
+    "isQuism",
+    "coarseMultigradedRegularity",
+    "Characteristic",
+    "VariableName",
+    "CoefficientField",
+    "CohomologyVariables",
+    "Rings"
     --    Check
     }
 
@@ -90,6 +98,132 @@ protect ChangeBases
 ----------------------------------------------
 -- from graded modules to Tate resolutions  --
 ----------------------------------------------
+coarseMultigradedRegularity = method(Options =>{Strategy =>1})
+coarseMultigradedRegularity ChainComplex := o-> F -> (
+    --we assume F starts in homol degree 0.
+    el := length F;
+    r := degreeLength ring F;
+    D := apply((min F..max F), i-> degrees F_i);
+    --replace with D = hashTable
+    L := flatten apply(length D, i-> apply(D_i, s -> s-toList(r:i)));
+    regs := apply(r, p-> max(apply(L, q-> q_p)));
+    d := regularity F;
+    e := d-sum regs;
+    e' := floor(e/r);
+    f := e-r*e';
+    regs + toList(#regs:e') + (toList(f:1)|toList((#regs-f):0))
+    )
+coarseMultigradedRegularity Module := o-> M -> (
+    if o.Strategy == 1 then F :=res M  else error "further Strategies are not yet defined";
+    coarseMultigradedRegularity F) 
+
+cornerComplex=method()
+cornerComplex(ChainComplex,List) := (C,c) -> (d:=c-toList(#c:1);cornerComplex1(C,d))
+
+TEST ///
+c={1,2}
+#c
+toList(#c:1)
+///
+
+    
+cornerComplex1=method()
+cornerComplex1(ChainComplex,List) := (C,c) -> (
+    -- addded this line to make the function  work for the zero complex
+    if C==0 then return C;
+    --
+    t:= numFactors ring C;
+--    if max C -min C < #t then error " need a complex of length at least t";
+    C':= C[min C+1]; 
+    Cge := firstQuadrantComplex1(C'[-#t+1],c);
+    Cle := lastQuadrantComplex1(C',c);
+--    <<(betti Cge, betti Cle) <<endl;
+    A:=0;B:=0;AB:=0;d:=0;
+    Ccorner:= chainComplex apply(max C- min C - #t-1,e-> (d:=e+#t; A=Cge.dd_(d);B= Cle.dd_(d); AB = cornerMap(C',c,d);
+--	   print((betti A,betti AB,betti B));
+	    (A|AB)||(map(target B, source A,0)|B)));
+    return Ccorner[-min C-1])
+
+
+cornerComplex(Module, List, List) := (M,low, high) ->(
+    --high, low are lists of length = degreeLength ring M
+    (S,E) := (tateData ring M)#Rings;
+    regs := coarseMultigradedRegularity M;
+    hi := apply(#regs, i->max(1+regs_i, 1+high_i));
+    N := presentation truncate(hi, M);
+    Q := symExt(N,E);   
+    (res coker Q)[sum hi]
+    )
+///
+(S,E) = productOfProjectiveSpaces{1,1}
+td =  (tateData S)
+H = hashTable pairs td
+td.Rings
+td#Rings
+keys td
+pairs(tateData S)
+C = cornerComplex (S^1,{0,0},{0,0})
+cohomologyTable (C, {-3,-3},{3,3})
+M = S^1
+///
+productOfProjectiveSpaces = method(Options=>
+    {CoefficientField=>ZZ/32003,
+    Variables=>{getSymbol "x", getSymbol "e"},
+    CohomologyVariables => {getSymbol "h", getSymbol "k"}})
+productOfProjectiveSpaces(List) := opts -> n -> (
+     kk := opts.CoefficientField;
+     x:= opts.Variables#0; -- symbol x;
+     e:= opts.Variables#1; -- symbol e;
+     h := opts.CohomologyVariables#0; -- symbol h
+     k := opts.CohomologyVariables#1; -- symbol k
+     t:= #n;
+     xx:=flatten apply(t,i->apply(n_i+1,j->x_(i,j)));
+     degs:=flatten apply(t,i->apply(n_i+1,k->apply(t,j->if i==j then 1 else 0)));
+     S:=kk[xx,Degrees=>degs];
+     ee:=flatten apply(t,i->apply(n_i+1,j->e_(i,j)));
+     E:=kk[ee,Degrees=>degs,SkewCommutative=>true];
+     cohomRing := ZZ[h,k];
+     tateData := new MutableHashTable;
+     tateData#Rings = (S,E);
+     tateData#cohomRing = cohomRing;
+     tateData#BeilinsonBundles = new MutableHashTable;
+     S.TateData = tateData;
+     E.TateData = tateData;
+     (S,E))
+
+productOfProjectiveSpaces ZZ := opt -> n -> (productOfProjectiveSpaces(toList(n:1)))
+
+
+
+
+///
+restart
+loadPackage ("TateOnProducts", Reload =>true)
+peek loadedFiles
+P = productOfProjectiveSpaces{2,2}
+M = coker random(P^1, P^{{-1,-2},{-2,-1},{-1,-1}})
+rowdegs = {{0,0}, {-1,1},{-1,-1},{-1,-2},{-2,-2}}
+coldegs = apply(rowdegs, r->{-3,-3}-r)
+m1 = random(P^rowdegs, P^coldegs)
+M = coker gens pfaffians(4, m1-transpose m1)
+R = coarseMultigradedRegularity M
+R ={4,4}
+netList apply(1+ length G, i-> tally degrees G_i)
+betti (G =res M)
+R = {} %{1,4} also works.
+betti (G = res truncate(R, M))
+netList apply(1+ length G, i-> tally degrees G_i)
+
+regularity G
+
+P = productOfProjectiveSpaces{5}
+M = coker random(P^1, P^{-3,-4,-5})
+M = P^1/ideal(P_0^3,P_1^4,P_2^5)
+R = coarseMultigradedRegularity M
+minimalBetti truncate(R, M)
+apply(1+ length G, i-> tally degrees G_i)
+///
+
 setupRings=method(Options=>{Variables=>{getSymbol "x", getSymbol "e"}})
 setupRings(Ring,List) := opts -> (kk,n) -> (
      t:= #n;
@@ -171,6 +305,9 @@ ringData S
 v = {2,3}
 E = kk[e_0..e_1, f_0..f_2, Degrees => {v_0:{1,0},v_1:{0,1}}, SkewCommutative => true]
 ringData E
+P = productOfProjectiveSpaces{2,2}
+ringData P
+P_cache
 ///
 
 
@@ -513,33 +650,6 @@ cornerMap(ChainComplex,List,ZZ) := (C,c,d) -> (
     scan(Ms, N-> if source N == E^0 then M=map(target N, source M,0) else M=N*M); 
     return M)
     
-cornerComplex=method()
-cornerComplex(ChainComplex,List) := (C,c) -> (d:=c-toList(#c:1);cornerComplex1(C,d))
-
-TEST ///
-c={1,2}
-#c
-toList(#c:1)
-///
-
-    
-cornerComplex1=method()
-cornerComplex1(ChainComplex,List) := (C,c) -> (
-    -- addded this line to make the function  work for the zero complex
-    if C==0 then return C;
-    --
-    t:= numFactors ring C;
---    if max C -min C < #t then error " need a complex of length at least t";
-    C':= C[min C+1]; 
-    Cge := firstQuadrantComplex1(C'[-#t+1],c);
-    Cle := lastQuadrantComplex1(C',c);
---    <<(betti Cge, betti Cle) <<endl;
-    A:=0;B:=0;AB:=0;d:=0;
-    Ccorner:= chainComplex apply(max C- min C - #t-1,e-> (d:=e+#t; A=Cge.dd_(d);B= Cle.dd_(d); AB = cornerMap(C',c,d);
---	   print((betti A,betti AB,betti B));
-	    (A|AB)||(map(target B, source A,0)|B)));
-    return Ccorner[-min C-1])
-
 
 
 regionComplex=method()
