@@ -35,8 +35,8 @@ export {
     "symExt",
     "numFactors",
     "cohomologyMatrix",
-    "cohomologyTable",
     "cohomologyHashTable",    
+    "cohomologyPolynomialTable",
     "tallyDegrees",
     "truncateInE",
     "lowerCorner",
@@ -398,7 +398,7 @@ n={1,2}
 kk=ZZ/101
 (S,E)=setupRings(kk,n)
 F=dual (res((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>10))
-cohomologyTable(F,-2*n,2*n)
+cohomologyMatrix(F,-2*n,2*n)
 tallyDegrees F
 
 deg={2,1} 
@@ -429,7 +429,7 @@ n={1,1}
 (S,E)=setupRings(ZZ/101,n)
 
 time fB=dual res(coker random(E^7,E^{13:{ -1,0},11:{0,-1}}),LengthLimit=>10);	 	  
-cohomologyTable(fB,-{1,1},{5,5})
+cohomologyMatrix(fB,-{1,1},{5,5})
 deg={3,3}
 m= corner(fB,deg);
 f= res( ker  m,LengthLimit=> 4)[3]
