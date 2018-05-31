@@ -1,12 +1,12 @@
 ///
-
 restart
 uninstallPackage"TateOnProducts"
-
+restart
 installPackage("TateOnProducts")--,FileName=>schreyer/Dropbox/SVDComplexes/from-git/TateOnProducts.m2)
 loadPackage("TateOnProducts",Reload=>true)
 viewHelp "TateOnProducts"
 peek loadedFiles
+check "TateOnProducts"
 ///
 newPackage(
 	"TateOnProducts",
@@ -34,7 +34,9 @@ export {
     "setupRings",
     "symExt",
     "numFactors",
+    "cohomologyMatrix",
     "cohomologyTable",
+    "cohomologyHashTable",    
     "tallyDegrees",
     "truncateInE",
     "lowerCorner",
@@ -83,12 +85,15 @@ export {
     "VariableName",
     "CoefficientField",
     "CohomologyVariables",
-    "Rings"
+    "Rings",
+    "CohomRing",
+    "TateRingData",
+    "TateData"
     --    Check
     }
 
 protect TateData
-protect cohomRing
+protect CohomRing
 protect Rings
 protect TateRingData
 protect BeilinsonBundles
@@ -121,11 +126,6 @@ coarseMultigradedRegularity Module := o-> M -> (
 cornerComplex=method()
 cornerComplex(ChainComplex,List) := (C,c) -> (d:=c-toList(#c:1);cornerComplex1(C,d))
 
-TEST /// 
-c={1,2}
-#c
-toList(#c:1)
-///
 
     
 cornerComplex1=method()
@@ -157,14 +157,12 @@ cornerComplex(Module, List, List) := (M,low, high) ->(
     )
 
 TEST ///  
-   
-   
-loadPackage("TateOnProducts",Reload=>true)
+--loadPackage("TateOnProducts",Reload=>true)
 (S,E) = productOfProjectiveSpaces{1,1}
 C = cornerComplex (S^1,{0,0},{3,3})
 betti C
 betti( C**E^{{3,3}}[6] )
-cohomologyTable (C, {0,0},{3,3})
+cohomologyMatrix (C, {0,0},{3,3})
 ///
 productOfProjectiveSpaces = method(Options=>
     {CoefficientField=>ZZ/32003,
@@ -182,10 +180,10 @@ productOfProjectiveSpaces(List) := opts -> n -> (
      S:=kk[xx,Degrees=>degs];
      ee:=flatten apply(t,i->apply(n_i+1,j->e_(i,j)));
      E:=kk[ee,Degrees=>degs,SkewCommutative=>true];
-     cohomRing := ZZ[h,k];
+     CohomRing := ZZ[h,k];
      tateData := new MutableHashTable;
      tateData#Rings = (S,E);
-     tateData#cohomRing = cohomRing;
+     tateData#CohomRing = CohomRing;
      tateData#BeilinsonBundles = new MutableHashTable;
      S.TateData = tateData;
      E.TateData = tateData;
@@ -249,10 +247,10 @@ setupRings(Ring,List) := opts -> (kk,n) -> (
      S:=kk[xx,Degrees=>degs];
      ee:=flatten apply(t,i->apply(n_i+1,j->e_(i,j)));
      E:=kk[ee,Degrees=>degs,SkewCommutative=>true];
-     cohomRing := ZZ[h,k];
+     CohomRing := ZZ[h,k];
      tateData := new MutableHashTable;
      tateData.Rings = (S,E);
-     tateData.cohomRing = cohomRing;
+     tateData.CohomRing = CohomRing;
      tateData.BeilinsonBundles = new MutableHashTable;
      S.TateData = tateData;
      E.TateData = tateData;
@@ -280,7 +278,7 @@ betti m
 mE=symExt(m,E)
 betti (T= res coker mE)
 tallyDegrees T
-cohomologyTable( T, -{2,2},{6,6})
+cohomologyMatrix( T, -{2,2},{6,6})
 ///
 
 
@@ -409,7 +407,7 @@ tally degrees source m, tally degrees target m
 Fm=(res(coker m,LengthLimit=>10))[sum deg]
 betti Fm
 betti F
-cohomologyTable(Fm,deg-{5,5},deg+{1,1})
+cohomologyMatrix(Fm,deg-{5,5},deg+{1,1})
 ///
 
 corner(ChainComplex,ZZ,List) := (F,k,deg) ->(
@@ -447,10 +445,10 @@ betti m1, tally degrees target m1, tally degrees source m1
 -- numerical information                               --
 ---------------------------------------------------------
 
-cohomologyTable=method()
+cohomologyMatrix=method()
 
 
-cohomologyTable(ChainComplex,List,List) := (F,da,db) -> (
+cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
        --Under the assumption that T is part of a Tate resolution of a sheaf F on a product of
        --two projective space P^{n_1} x P^{n_2}, the function returns a matrix of cohomology polynomials 
        --$$\sum_{i=0}^{|n|} \, dim H^i(\mathbb P^{n_1}\times \mathbb P^{n_2},\mathcal F(c_1,c_2)) * h^i \in \, \mathbb Z[h,k]$$
@@ -480,6 +478,67 @@ cohomologyTable(ChainComplex,List,List) := (F,da,db) -> (
 		 if p<=0 then h^(-p) else k^(p))*(tally degrees F_(d))_({ -i,j}))));  
      C
      )
+cohomologyMatrix(Module, List, List) := (M, low, high) -> (
+    if degreeLength M != 2 then error"this version works only with a product of two projective spaces.";
+    if #low !=2 or #high !=2 then error"expected degree lists of length 2";
+    if not all(#low, i-> low_i<=high_i) then error"low should be less than high";
+    C := cornerComplex(M, low, high);
+    cohomologyMatrix(C, low , high))
+
+
+cohomologyPolynomialTable = method()
+cohomologyPolynomialTable HashTable := H ->(
+    nonzeros := unique ((keys H)/first);
+    low := {min (nonzeros/first), min(nonzeros/last)};
+    high := {max (nonzeros/first), max(nonzeros/last)};    
+    h := getSymbol "h";
+    k := getSymbol "k";
+    coh := ZZ[h,k];
+    p:=0;
+    hashTable apply(nonzeros,c->
+	     (c, sum(select(keys H,cp-> cp_0==c),cp->
+		     (p=cp_1;
+		if p>=0 then (H#cp)*(coh_0)^p else (H#cp)*(coh_1)^(-p)
+		     ))))
+    )
+
+cohomologyHashTable=method()
+
+cohomologyHashTable(ChainComplex,List,List) := (F,low,high) -> (
+       --Under the assumption that T is part of a Tate resolution of a sheaf F on a product of
+       --projective spaces P^{n_1} x ... x P^{n_t}, the function returns a hashTable
+       -- of cohomology polynomials 
+       --$$\sum_{i=0}^{|n|} \, dim H^i(\mathcal F(c_1,..,c_t)) * h^i \in \, \mathbb Z[h,k]$$
+       --for every c= with $low \le c \le high$ in the partial order.
+       --In case T corresponds to an object in the derived category D^b(P^{n_1}x P^{n_2}), then
+       --hypercohomology polynomials are returned, with the convention that k stands for k=h^{ -1}.
+       
+       --If T is not a large enough part of the Tate resolution, such as W below, 
+       --then the function collects only
+       --the contribution of T to the cohomology table of the Tate resolution, according to the formula in
+       --Corollary 0.2 of @ HREF("http://arxiv.org/abs/","Tate Resolutions on Products of Projective Spaces") @.
+        
+     E:= ring F; 
+     deglen := degreeLength E;
+     minF := min F;
+     maxF := max F;
+
+     if #low != deglen or #high != deglen then error"Expected list of length the number of factors of the projective product.";
+     keylist := toList(low..high);
+     hashTable flatten apply(keylist, c->
+	 (sumc := sum c;
+	     apply(toList(minF-sumc..maxF-sumc), p-> 
+		     ({c,p},#select(degrees F_(sumc+p), d->d==c)))))
+     )	 
+
+cohomologyMatrix(Module, List, List) := (M, low, high) -> (
+    if degreeLength M != 2 then error"this version works only with a product of two projective spaces.";
+    if #low !=2 or #high !=2 then error"expected degree lists of length 2";
+    if not all(#low, i-> low_i<=high_i) then error"low should be less than high";
+    C := cornerComplex(M, low, high);
+    cohomologyMatrix(C, low , high))
+    
+    
 
 TEST ///
 n={1,2};kk=ZZ/101;
@@ -487,10 +546,24 @@ n={1,2};kk=ZZ/101;
 	a={1,1}; U=E^{ -a};
 	W=(chainComplex {map(E^0,U,0),map(U,E^0,0)})[1]
 	tallyDegrees W
-	cohomologyTable(W,-{3,3},{3,3})
-        time T=trivialHomologicalTruncation(sloppyTateExtension W,-9,6)
-	cohomologyTable(T,-{3,3},{3,3})
-	cohomologyTable(T,-{2,3},{3,3})	
+	cohomologyMatrix(W,-{3,3},{3,3})
+        time T=trivialHomologicalTruncation(sloppyTateExtension W,0,3)
+	cohomologyMatrix(T,-{3,3},{3,3})
+	cohomologyMatrix(T,-{2,3},{3,3})	
+low = {-3,-3};high = {3,3}
+F = T
+
+///
+
+TEST///
+--
+--loadPackage("TateOnProducts", Reload =>true)
+low = {-2,-2}; high={3,3}
+(S,E) = productOfProjectiveSpaces{1,2}
+C = cornerComplex(S^1,low,high)
+H = cohomologyHashTable(C, low, high)
+--cohomologyMatrix H -- not defined yet.
+cohomologyMatrix(S^1,{-3,-3},{3,3})
 ///
 
 tallyDegrees=method()
@@ -1539,9 +1612,9 @@ debug needsPackage "TateOnProducts"
   contractionFunctor m
 
   T1 = (dual res trim (ideal vars E)^2 [1]);
-  cohomologyTable(T1,-3*n,3*n)
+  cohomologyMatrix(T1,-3*n,3*n)
   T2 = res(coker lowerCorner(T1, {2,2}), LengthLimit=>14)[4]
-  cohomologyTable(T2,-3*n,3*n)
+  cohomologyMatrix(T2,-3*n,3*n)
   contractionWindow T2
   cT = contractionFunctor T2
   cT.dd^2
@@ -1549,7 +1622,7 @@ debug needsPackage "TateOnProducts"
 
   a = {3,3}
   T4 = ((T2 ** E^{a})[sum a])
-  cohomologyTable(oo, -5*n,5*n)
+  cohomologyMatrix(oo, -5*n,5*n)
   contractionWindow T4
   elapsedTime cT4 = contractionFunctor T4;
   cT4
@@ -1637,14 +1710,14 @@ restart
   n={2,1};
   (S,E)=setupRings(ZZ/101,n);
   T1 = (dual res trim (ideal vars E)^2 [1]);
-  cohomologyTable(T1,-3*n,3*n)
+  cohomologyMatrix(T1,-3*n,3*n)
   beilinson removeZeroTrailingTerms beilinsonWindow T1
   beilinson T1
   beilinson(T1, BundleType=>QuotientBundle)
   T2 = res(coker lowerCorner(T1, {2,2}), LengthLimit=>10)[4]
-  cohomologyTable(T2,-3*n,3*n)
+  cohomologyMatrix(T2,-3*n,3*n)
   BW2 = beilinsonWindow T2
-  cohomologyTable(oo, -5*n,5*n)
+  cohomologyMatrix(oo, -5*n,5*n)
   B2 = beilinson T2
   B2 = beilinson(T2, BundleType=>QuotientBundle)
   F2 = (prune HH B2)_0
@@ -1673,7 +1746,7 @@ restart
   -- Now shift another time
   a = {3,3}
   T4 = ((T2 ** E^{a})[sum a])
-  cohomologyTable(oo, -5*n,5*n)
+  cohomologyMatrix(oo, -5*n,5*n)
   BW4 = removeZeroTrailingTerms beilinsonWindow T4
   BW4.dd^2 == 0
   B4 = (beilinson BW4) ** S^{a};
@@ -1689,7 +1762,7 @@ restart
   corner1 = symExt(m1,E);
   betti corner1
   T5 = ((res(coker corner1, LengthLimit => 10)) ** E^{tdeg})[sum tdeg]
-  cohomologyTable(oo, -5*n,5*n)
+  cohomologyMatrix(oo, -5*n,5*n)
   BW5 = removeZeroTrailingTerms beilinsonWindow T5
   betti BW5
   beilinson BW5 
@@ -1710,10 +1783,10 @@ restart
   betti m1
   corner1 = symExt(m1,E);
   T = ((res(coker corner1, LengthLimit => 7)) ** E^{tdeg})[sum tdeg]
-  cohomologyTable(T, -5*n,5*n)
+  cohomologyMatrix(T, -5*n,5*n)
   T1 = T ** E^{{-3,0}}[-3]
   BW = removeZeroTrailingTerms beilinsonWindow T1
-  cohomologyTable(BW, -5*n, 5*n)
+  cohomologyMatrix(BW, -5*n, 5*n)
   assert(BW.dd^2 == 0)
   assert(isHomogeneous BW)
   betti BW
@@ -1970,9 +2043,9 @@ restart
   T1 = (dual res trim (ideal vars E)^2)[1];
   a=-{2,2};
   T2=T1**E^{a}[sum a];
-  W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyTable(W,-2*n,2*n)
+  W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
   T = sloppyTateExtension W
-  cohomologyTable(oo,-3*n,3*n)
+  cohomologyMatrix(oo,-3*n,3*n)
 elapsedTime  beilinsonWindow(T ** E^{{1,1}}[2])
 elapsedTime  beilinsonWindow(T ** E^{{1,1}}[2], 1)
   beilinson1(W.dd_1_(0,0), {1,0}, {1,0}, S)
@@ -2080,13 +2153,13 @@ restart
   n={1,1};
   (S,E)=setupRings(ZZ/101,n);
   T1 = (dual res trim (ideal (e_(0,1)*e_(1,1)))[1]);
-  cohomologyTable(T1,-3*n,3*n)
+  cohomologyMatrix(T1,-3*n,3*n)
   a=-{2,2};
   T2=T1**E^{a}[sum a];
-  cohomologyTable(T2,-3*n,3*n)
-  W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyTable(W,-2*n,2*n)
+  cohomologyMatrix(T2,-3*n,3*n)
+  W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
   T = sloppyTateExtension W 
-  cohomologyTable(T,-3*n,3*n)
+  cohomologyMatrix(T,-3*n,3*n)
   UF = beilinson W
   UF.dd^2
   UF.dd
@@ -2115,10 +2188,10 @@ restart
   T1 = (dual res trim (ideal vars E)^2)[1];
   a=-{2,2};
   T2=T1**E^{a}[sum a];
-  cohomologyTable(T2,-3*n,3*n)
-  W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyTable(W,-2*n,2*n)
+  cohomologyMatrix(T2,-3*n,3*n)
+  W=removeZeroTrailingTerms beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
   T = sloppyTateExtension W 
-  cohomologyTable(T,-3*n,3*n)
+  cohomologyMatrix(T,-3*n,3*n)
   UF = beilinson W
   Hs = prune HH UF;
   ann Hs_0
@@ -2154,11 +2227,11 @@ cornerCohomologyTablesOfUa(List) := n-> (
 	cTa=cornerComplex(aT_2,-aT_0);
 	--cTb=dual cornerComplex(dual aT_2,aT_0-{1,1});
 	cTb1=cornerComplex(aT_2,{1,1})[-1];
-        (cohomologyTable(aT_2,-2*n,2*n),
-        cohomologyTable(cTa,-2*n,2*n),
-        cohomologyTable(aT_1,-2*n,2*n),
-        --cohomologyTable(cTb,-2*n,2*n),
-	cohomologyTable(cTb1,-2*n,2*n),
+        (cohomologyMatrix(aT_2,-2*n,2*n),
+        cohomologyMatrix(cTa,-2*n,2*n),
+        cohomologyMatrix(aT_1,-2*n,2*n),
+        --cohomologyMatrix(cTb,-2*n,2*n),
+	cohomologyMatrix(cTb1,-2*n,2*n),
 --	betti trivialHomologicalTruncation(aT_1,1-sum n,-1+ sum n),
 	betti trivialHomologicalTruncation(cTa,1-sum n,-1+ sum n),
 	betti trivialHomologicalTruncation(cTb1,1-sum n,-1+ sum n)
@@ -2177,11 +2250,11 @@ cornerCohomologyTablesOfUa(List,List) :=(n,a)-> (
 	cTa=cornerComplex(T,-a);
 	--cTb=dual cornerComplex(dual T,a-{1,1});
 	cTb1=cornerComplex(T,{1,1})[-1];
-        {cohomologyTable(T,-2*n,2*n),
-        cohomologyTable(cTa,-2*n,2*n),
-        cohomologyTable(W,-2*n,2*n),
-        --cohomologyTable(cTb,-2*n,2*n),
-	cohomologyTable(cTb1,-2*n,2*n),
+        {cohomologyMatrix(T,-2*n,2*n),
+        cohomologyMatrix(cTa,-2*n,2*n),
+        cohomologyMatrix(W,-2*n,2*n),
+        --cohomologyMatrix(cTb,-2*n,2*n),
+	cohomologyMatrix(cTb1,-2*n,2*n),
 --	betti W,
 	betti trivialHomologicalTruncation(cTa,1-sum n,-1+ sum n),
 	betti trivialHomologicalTruncation(cTb1,1-sum n,-1+ sum n)}
@@ -2229,7 +2302,7 @@ document {
       },
    SUBSECTION "Numerical Information",
    UL{ 
-      TO cohomologyTable,
+      TO cohomologyMatrix,
       TO tallyDegrees
      },
     SUBSECTION "Subcomplexes",
@@ -2407,7 +2480,7 @@ doc ///
      Example
         n={1,2}; kk=ZZ/101; (S,E)=setupRings(kk,n);
         F=dual res((ker transpose vars E)**E^{{ 2,3}},LengthLimit=>4)
-	cohomologyTable(F,-{3,3},{4,4})
+	cohomologyMatrix(F,-{3,3},{4,4})
         betti F
 	tallyDegrees F
         deg={2,1} 
@@ -2415,7 +2488,7 @@ doc ///
         tally degrees target m, tally degrees source m
         Fm=(res(coker m,LengthLimit=>4))[sum deg+1]
         betti Fm
-        cohomologyTable(Fm,-{3,3},{4,4})
+        cohomologyMatrix(Fm,-{3,3},{4,4})
 ///
 
 
@@ -2451,7 +2524,7 @@ doc ///
         tally degrees target m, tally degrees source m
         Fm=(res(coker m,LengthLimit=>7))[sum deg]
         betti Fm
-        cohomologyTable(Fm,-{3,3},{4,4})
+        cohomologyMatrix(Fm,-{3,3},{4,4})
 ///
 
 
@@ -2461,13 +2534,13 @@ doc ///
 ----------------------------
 doc ///
   Key
-    cohomologyTable
-    (cohomologyTable,ChainComplex,List,List)
-    --(cohomologyTable,ChainComplex,List,List,Ring)    
+    cohomologyMatrix
+    (cohomologyMatrix,ChainComplex,List,List)
+    --(cohomologyMatrix,ChainComplex,List,List,Ring)    
   Headline
     compute the the cohomology groups of a (part) of a Tate resolution or sheaf on products of projective spaces 
   Usage
-    H=cohomologyTable(T,a,b)
+    H=cohomologyMatrix(T,a,b)
   Inputs
     T: ChainComplex
        free complex over the exterior algebra 
@@ -2499,10 +2572,10 @@ doc ///
         (S,E)=setupRings(ZZ/101,n);
 	a={1,1}; U=E^{ -a};
 	W=(chainComplex {map(E^0,U,0),map(U,E^0,0)})[1]
-	cohomologyTable(W,-{3,3},{3,3})
+	cohomologyMatrix(W,-{3,3},{3,3})
         time T=sloppyTateExtension W
-	cohomologyTable(T,-{3,3},{3,3})	
-	cohomologyTable(T,-{3,4},{3,3})
+	cohomologyMatrix(T,-{3,3},{3,3})	
+	cohomologyMatrix(T,-{3,4},{3,3})
 ///
 
 
@@ -2887,22 +2960,22 @@ doc ///
         n={1,1};(S,E)=setupRings(ZZ/101,n);
 	T1 = (dual res trim (ideal vars E)^2)[1];
 	a=-{2,2};T2=T1**E^{a}[sum a];
-	W=beilinsonWindow T2,cohomologyTable(W,-2*n,2*n)
+	W=beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
         T=sloppyTateExtension W;
-	cohomologyTable(T,-{3,3},{3,3})
+	cohomologyMatrix(T,-{3,3},{3,3})
 	c={1,0}
 	rT0=regionComplex(T,c,({},{0,1},{})); --a single position
-	cohomologyTable(rT0,-{3,3},{3,3})
+	cohomologyMatrix(rT0,-{3,3},{3,3})
     	rT1=regionComplex(T,c,({0},{1},{})); --a horizontal half line
-	cohomologyTable(rT1,-{3,3},{3,3})
+	cohomologyMatrix(rT1,-{3,3},{3,3})
        	rT2=regionComplex(T,c,({},{0},{})); -- a vertical line
-    	cohomologyTable(rT2,-{3,3},{3,3})
+    	cohomologyMatrix(rT2,-{3,3},{3,3})
 	rT3=regionComplex(T,c,({},{},{1})); -- a upper half plane
-    	cohomologyTable(rT3,-{3,3},{3,3})
+    	cohomologyMatrix(rT3,-{3,3},{3,3})
 	rT4=regionComplex(T,c,({0},{},{1})); --a north east quadrant
-    	cohomologyTable(rT4,-{3,3},{3,3})
+    	cohomologyMatrix(rT4,-{3,3},{3,3})
 	rT5=regionComplex(T,c,({1},{},{0})); --a south west quadrant
-    	cohomologyTable(rT5,-{3,3},{3,3})
+    	cohomologyMatrix(rT5,-{3,3},{3,3})
 ///
 
 
@@ -2935,15 +3008,15 @@ doc ///
         n={1,1};(S,E)=setupRings(ZZ/101,n);
 	T1 = (dual res trim (ideal vars E)^2)[1];
 	a=-{2,2};T2=T1**E^{a}[sum a];
-	W=beilinsonWindow T2,cohomologyTable(W,-2*n,2*n)
+	W=beilinsonWindow T2,cohomologyMatrix(W,-2*n,2*n)
         T=sloppyTateExtension W;
-	cohomologyTable(T,-{3,3},{3,3})
+	cohomologyMatrix(T,-{3,3},{3,3})
 	sT1=strand(T,-{1,1},{1});
-	cohomologyTable(sT1,-{3,3},{3,3})
+	cohomologyMatrix(sT1,-{3,3},{3,3})
 	sT2=strand(T,{1,1},{0});
-	cohomologyTable(sT2,-{3,3},{3,3})
+	cohomologyMatrix(sT2,-{3,3},{3,3})
 	sT3=removeZeroTrailingTerms strand(T,{1,-1},{0,1})
-	cohomologyTable(sT3,-{3,3},{3,3})
+	cohomologyMatrix(sT3,-{3,3},{3,3})
 	
 ///
 
@@ -2972,18 +3045,18 @@ doc ///
         (S,E)=setupRings(ZZ/101,{1,1});T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
         T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
-	cohomologyTable(T,-{4,4},{3,2})
+	cohomologyMatrix(T,-{4,4},{3,2})
     	fqT=firstQuadrantComplex(T,-{2,1});
     	betti fqT	
-	cohomologyTable(fqT,-{4,4},{3,2})
-	cohomologyTable(fqT,-{2,1},-{1,0})
+	cohomologyMatrix(fqT,-{4,4},{3,2})
+	cohomologyMatrix(fqT,-{2,1},-{1,0})
 	lqT=lastQuadrantComplex(T,-{2,1});
     	betti lqT	
-	cohomologyTable(lqT,-{4,4},{3,2})
-	cohomologyTable(lqT,-{3,2},-{2,1})
+	cohomologyMatrix(lqT,-{4,4},{3,2})
+	cohomologyMatrix(lqT,-{3,2},-{2,1})
 	cT=cornerComplex(T,-{2,1});
 	betti cT	
-	cohomologyTable(cT,-{4,4},{3,2})
+	cohomologyMatrix(cT,-{4,4},{3,2})
 ///
 
 doc ///
@@ -3009,18 +3082,18 @@ doc ///
         (S,E)=setupRings(ZZ/101,{1,1});T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
         T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
-	cohomologyTable(T,-{4,4},{3,2})
+	cohomologyMatrix(T,-{4,4},{3,2})
     	fqT=firstQuadrantComplex(T,-{2,1});
     	betti fqT	
-	cohomologyTable(fqT,-{4,4},{3,2})
-	cohomologyTable(fqT,-{2,1},-{1,0})
+	cohomologyMatrix(fqT,-{4,4},{3,2})
+	cohomologyMatrix(fqT,-{2,1},-{1,0})
 	lqT=lastQuadrantComplex(T,-{2,1});
     	betti lqT	
-	cohomologyTable(lqT,-{4,4},{3,2})
-	cohomologyTable(lqT,-{3,2},-{2,1})
+	cohomologyMatrix(lqT,-{4,4},{3,2})
+	cohomologyMatrix(lqT,-{3,2},-{2,1})
 	cT=cornerComplex(T,-{2,1});
 	betti cT	
-	cohomologyTable(cT,-{4,4},{3,2})	
+	cohomologyMatrix(cT,-{4,4},{3,2})	
 ///
 
 doc ///
@@ -3046,26 +3119,26 @@ doc ///
         (S,E)=setupRings(ZZ/101,{1,1});T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
         T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
-	cohomologyTable(T,-{4,4},{3,2})
+	cohomologyMatrix(T,-{4,4},{3,2})
     	fqT=firstQuadrantComplex(T,-{2,1});
     	betti fqT	
-	cohomologyTable(fqT,-{4,4},{3,2})
-	cohomologyTable(fqT,-{2,1},-{1,0})
+	cohomologyMatrix(fqT,-{4,4},{3,2})
+	cohomologyMatrix(fqT,-{2,1},-{1,0})
 	lqT=lastQuadrantComplex(T,-{2,1});
     	betti lqT	
-	cohomologyTable(lqT,-{4,4},{3,2})
-	cohomologyTable(lqT,-{3,2},-{2,1})
+	cohomologyMatrix(lqT,-{4,4},{3,2})
+	cohomologyMatrix(lqT,-{3,2},-{2,1})
 	cT=cornerComplex(T,-{2,1});
 	betti cT	
-	cohomologyTable(cT,-{4,4},{3,2})
+	cohomologyMatrix(cT,-{4,4},{3,2})
 ///
 {*     Example
         (S,E)=setupRings(ZZ/101,{1,2});
 	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>4))
 	isChainComplex T1
 	tallyDegrees T1
-	cohomologyTable(T1,-{10,10},{10,10})
-	cohomologyTable(T1[-3],-{10,10},{10,10})
+	cohomologyMatrix(T1,-{10,10},{10,10})
+	cohomologyMatrix(T1[-3],-{10,10},{10,10})
 	T2=T1++T1**E^{{1,1}}[2]
     	T3=firstQuadrantComplex(T2,-{1,1})
 	d= nonzeroMax T3;
@@ -3074,8 +3147,8 @@ doc ///
 	betti T
         cT=cornerComplex(T,-{1,1})
 	betti cT
-	cohomologyTable(cT,-{4,4},{3,3})
-	cohomologyTable(T,-{4,4},{3,3})	
+	cohomologyMatrix(cT,-{4,4},{3,3})
+	cohomologyMatrix(T,-{4,4},{3,3})	
 *}
 
 
@@ -3105,13 +3178,13 @@ doc ///
         n={1,1};(S,E)=setupRings(ZZ/101,n);
         W=(chainComplex {map(E^0,E^1,0),map(E^1,E^0,0)})[1]
         time T=sloppyTateExtension W;
-        cohomologyTable(T,-{3,3},{3,3})
+        cohomologyMatrix(T,-{3,3},{3,3})
 	W=beilinsonWindow T
-	cohomologyTable(W,-{2,2},{2,2})
+	cohomologyMatrix(W,-{2,2},{2,2})
         a={2,-3}
         W2=removeZeroTrailingTerms beilinsonWindow (T**E^{a}[sum a])
-        cohomologyTable(W2,-{2,2},{2,2})
-        cohomologyTable(sloppyTateExtension W2,-{2,2},{2,2})
+        cohomologyMatrix(W2,-{2,2},{2,2})
+        cohomologyMatrix(sloppyTateExtension W2,-{2,2},{2,2})
 ///
 
 doc ///
@@ -3146,11 +3219,11 @@ doc ///
 	a=-{2,2};
 	T2=T1**E^{a}[sum a];
 	W=beilinsonWindow T2
-	cohomologyTable(W,-2*n,2*n)
+	cohomologyMatrix(W,-2*n,2*n)
         T=sloppyTateExtension W
-	cohomologyTable(T,-3*n,4*n)
-	cohomologyTable(beilinsonWindow T,-n,n)
-	cohomologyTable(T,-5*n,4*n) -- the view including the corner
+	cohomologyMatrix(T,-3*n,4*n)
+	cohomologyMatrix(beilinsonWindow T,-n,n)
+	cohomologyMatrix(T,-5*n,4*n) -- the view including the corner
 ///
 
 doc ///
@@ -3184,14 +3257,14 @@ doc ///
 	a=-{2,2};
 	T2=T1**E^{a}[sum a];
 	W=beilinsonWindow T2
-	cohomologyTable(W,-2*n,2*n)
+	cohomologyMatrix(W,-2*n,2*n)
         T=sloppyTateExtension W;
-	cohomologyTable(T,-5*n,4*n) -- a view with the corner
+	cohomologyMatrix(T,-5*n,4*n) -- a view with the corner
 	puT=trivialHomologicalTruncation(pushAboveWindow W,-1, 6)
-	cohomologyTable(puT,-3*n,{1,1})
+	cohomologyMatrix(puT,-3*n,{1,1})
 	betti W
 	qT=trivialHomologicalTruncation(lastQuadrantComplex(T,{0,0}),-1,6)
-	cohomologyTable(qT,-3*n,{1,1})
+	cohomologyMatrix(qT,-3*n,{1,1})
 	betti puT
 	betti qT
     	betti T	
@@ -3617,7 +3690,7 @@ Ua=E^{ -a}
 W=chainComplex(map(E^0,Ua,0),map(Ua,E^0,0))[1] 
 time T=sloppyTateExtension(W) 
 betti (qT=firstQuadrantComplex(T,{0,0}))
-cohomologyTable(qT,-n,2*n),cohomologyTable(T,-2*n,2*n)
+cohomologyMatrix(qT,-n,2*n),cohomologyMatrix(T,-2*n,2*n)
 -------------
 
 -- viewHelp res seems that a some point either Dan or Mike thought about installing res(ChainComplex)
