@@ -37,7 +37,8 @@ export {
      "projectivePoints",
      "VerifyPoints",
      "projectivePointsByIntersection",
-     "projectiveFatPointsByIntersection"
+     "projectiveFatPointsByIntersection",
+     "projectiveFatPoints"
      }
 
 ///
@@ -483,6 +484,73 @@ removeBadFatPoints = (M,mults) -> (
 	);
     return (N,new List from newmults);
     )
+
+-- FG: Buchberger-Möller for projective fat points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points, a list mults of multiplicities for those points,
+-- and a polynomial ring R
+-- OUTPUT: a list containing 1) the initial ideal,
+-- and 2) the gb of the ideal of the set of fat points
+-- NOTE: for small sets of points this can perform much worse than
+-- simply intersecting. The first example where I saw an advantage
+-- (of 1 sec) was for 30 points in P^5 with multiplicities 1,2,3
+projectiveFatPoints = method(Options => {VerifyPoints => true})
+projectiveFatPoints (Matrix,List,Ring) := opts -> (M,mults,R) -> (
+    if opts.VerifyPoints then (M,mults) = removeBadFatPoints (M,mults);
+     K := coefficientRing R;
+     diffops := flatten entries sort basis(0,max mults - 1,R);
+     -- this says how many derivatives to use for each point
+     cutoffs := apply(mults,m -> sum(m, i -> binomial((dim R)-1+i,i)));
+     s := sum cutoffs;
+     Fs := affineMakeRingMaps(M,R);
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     deg := 1;
+     schemedegree := sum(mults,m -> binomial((dim R)-2+m,m-1));
+     while not stoppingCriterion(deg,inG,schemedegree) do (
+	 L := sum flatten entries basis(deg,R);
+	 L = L % inGB;
+	 P := mutableMatrix map(K^s, K^(s+1), 0);
+	 PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+	 for i from 0 to s-1 do PC_(i,i) = 1_K;
+	 H := new MutableHashTable; -- used in the column reduction step
+	 thiscol := 0;
+	 Q := {}; -- list of standard monomials of current degree
+	 while L != 0 do (
+	      -- First step: get the monomial to consider
+	      monom := someTerms(L,-1,1);
+	      L = L - monom;
+	      partials := apply(diffops, del -> diff(del,monom));
+	      -- FG: evaluate partials at point up to cutoff
+	      c := 0;
+	      for i to #Fs-1 do (
+	      	  for j to cutoffs_i-1 do (
+		      P_(c+j,thiscol) = Fs#i (partials_j);
+		      );
+	      	  c = c + cutoffs_i;
+	      	  );
+	      columnMult(PC, thiscol, 0_K);
+	      PC_(thiscol,thiscol) = 1_K;
+	      isLT := reduceColumn(P,PC,H,thiscol);
+	      if isLT then (
+		   -- we add to G, inG
+		   inG = inG + ideal(monom);
+		   g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+		   G = append(G, PC_(thiscol,thiscol) * monom + g);
+		   )
+	      else (
+		   -- add to standard monomials
+		   Q = append(Q, monom);
+		   thiscol = thiscol + 1;
+		   )
+	      );
+	  inGB = forceGB gens inG;
+	  -- proceed with next degree
+	  deg = deg + 1;
+	  );
+     (inG,G)
+     )
 
 ---------------------------------------------------------------------
 -- FG: end of v3 code
