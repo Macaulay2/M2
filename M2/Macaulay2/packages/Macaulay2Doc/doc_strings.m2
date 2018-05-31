@@ -316,7 +316,7 @@ document {
 	  ),
      PARA{
 	  "The value is a list of the pieces, the number of which is one
-	  more than the number of occurrences of d in s, so that the pieces
+	  more than the number of occurrences of nl in s, so that the pieces
 	  may be reassembled with ", TO "demark", " to get the original string.",
 	  },
      PARA{
