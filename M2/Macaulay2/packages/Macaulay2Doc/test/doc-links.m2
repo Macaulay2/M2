@@ -9,4 +9,4 @@ assert ( match (
 	  html TOH "FirstPackage::FirstPackage"))
 needsPackage "FirstPackage"
 f = FirstPackage#"raw documentation database"
-assert ( keys f === {"FirstPackage","firstFunction","firstFunction(ZZ)"} )
+assert ( set keys f === set {"FirstPackage","firstFunction","firstFunction(ZZ)"} )
