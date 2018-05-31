@@ -156,14 +156,6 @@ cornerComplex(Module, List, List) := (M,low, high) ->(
     (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi]
     )
 
-TEST ///  
---loadPackage("TateOnProducts",Reload=>true)
-(S,E) = productOfProjectiveSpaces{1,1}
-C = cornerComplex (S^1,{0,0},{3,3})
-betti C
-betti( C**E^{{3,3}}[6] )
-cohomologyMatrix (C, {0,0},{3,3})
-///
 productOfProjectiveSpaces = method(Options=>
     {CoefficientField=>ZZ/32003,
     Variables=>{getSymbol "x", getSymbol "e"},
@@ -180,10 +172,10 @@ productOfProjectiveSpaces(List) := opts -> n -> (
      S:=kk[xx,Degrees=>degs];
      ee:=flatten apply(t,i->apply(n_i+1,j->e_(i,j)));
      E:=kk[ee,Degrees=>degs,SkewCommutative=>true];
-     CohomRing := ZZ[h,k];
+     CR := ZZ[h,k];
      tateData := new MutableHashTable;
      tateData#Rings = (S,E);
-     tateData#CohomRing = CohomRing;
+     tateData#CohomRing = CR;
      tateData#BeilinsonBundles = new MutableHashTable;
      S.TateData = tateData;
      E.TateData = tateData;
@@ -191,6 +183,14 @@ productOfProjectiveSpaces(List) := opts -> n -> (
 
 productOfProjectiveSpaces ZZ := opt -> n -> (productOfProjectiveSpaces(toList(n:1)))
 
+TEST ///  
+--loadPackage("TateOnProducts",Reload=>true)
+(S,E) = productOfProjectiveSpaces{1,1}
+C = cornerComplex (S^1,{0,0},{3,3})
+betti C
+betti( C**E^{{3,3}}[6] )
+cohomologyMatrix (C, {0,0},{3,3})
+///
 
 
 
@@ -2296,6 +2296,7 @@ document {
    PARA{},
    SUBSECTION "From graded modules to Tate resolutions",  
    UL{   TO setupRings,
+         TO productOfProjectiveSpaces,
 	 TO symExt,
 	 TO lowerCorner,
 	 TO upperCorner
@@ -2303,6 +2304,8 @@ document {
    SUBSECTION "Numerical Information",
    UL{ 
       TO cohomologyMatrix,
+      TO cohomologyPolynomialTable,
+      TO cohomologyHashTable,
       TO tallyDegrees
      },
     SUBSECTION "Subcomplexes",
@@ -2349,7 +2352,6 @@ document {
 	"Example section:  examples from the paper, jumping lines, 
 	$R pi_* sO_X$ for a resolution of singularities, $Rf_*sF$ for a coherent sheaf
 	$sF$ on $X subset P^{n_1}$ and a morphism $f:X -> P^{n_2}$.",
-	
 	} 
          
    }
@@ -2383,6 +2385,60 @@ doc ///
 	trim (ideal vars S)^2
         trim (ideal vars E)^2	
 ///
+doc ///
+  Key
+    productOfProjectiveSpaces
+    (productOfProjectiveSpaces,List)
+    [productOfProjectiveSpaces,CoefficientField]
+    [productOfProjectiveSpaces, Variables]
+    [productOfProjectiveSpaces, CohomologyVariables]
+    
+  Headline
+    Cox ring of a product of projective spaces and it Koszul dual exterior algebra
+  Usage
+    (S,E)=productOfProjectiveSpaces n
+  Inputs
+    n: List
+       the list \{n_1,...,n_t\} \, of the dimensions of the factors
+  Outputs
+    S: PolynomialRing
+       homogeneous coordinate ring of P^{n_1}x ... x P^{n_t}
+    E: PolynomialRing
+       the corresponding exterior algebra   
+    CoefficientField => Ring
+       ground field of S,E
+    Variables => List
+       list of 2 symbols
+    CohomologyVariables => List
+       list of 2 symbols
+  Description
+     Text
+      The degrees of the variables for the i-th projective space are indexed
+      x_(i,0),..,x_(i,n_i-1), and have degree (0..0,1,0,..0) with a 1 in the i-th place.
+     Example
+        (S,E)=productOfProjectiveSpaces{1,2}
+	vars S
+	vars E
+	(S,E) = productOfProjectiveSpaces({1,1},
+	    Variables =>{getSymbol "u",getSymbol"v"},
+	    CohomologyVariables =>{getSymbol "p",getSymbol "q"},
+	    CoefficientField => QQ)
+	(coefficientRing S) === (coefficientRing E)
+	trim (ideal vars S)^2
+        trim (ideal vars E)^2	
+	S.TateData#CohomRing
+///
+
+doc ///
+   Key
+    CoefficientField
+   Headline
+    Option for productOfProjectiveSpaces
+   Description
+    Text
+     Base field for the two polynomial rings
+///
+
 
 doc ///
   Key
