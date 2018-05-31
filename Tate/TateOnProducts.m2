@@ -11,7 +11,7 @@ check "TateOnProducts"
 newPackage(
 	"TateOnProducts",
     	Version => "0.3", 
-    	Date => "Mai 1, 2018",
+    	Date => "Mai 31, 2018",
     	Authors => { {Name => "Daniel Erman", 
 		  Email => "derman@math.wisc.edu", 
 		  HomePage => "http://www.math.wisc.edu/~derman/"},
@@ -104,7 +104,8 @@ protect ChangeBases
 ----------------------------------------------
 -- from graded modules to Tate resolutions  --
 ----------------------------------------------
-coarseMultigradedRegularity = method(Options =>{Strategy =>1})
+coarseMultigradedRegularity = method(Options =>
+               {Strategy =>"MinimalResolution"})
 coarseMultigradedRegularity ChainComplex := o-> F -> (
     --we assume F starts in homol degree 0.
     el := length F;
@@ -119,9 +120,73 @@ coarseMultigradedRegularity ChainComplex := o-> F -> (
     f := e-r*e';
     regs + toList(#regs:e') + (toList(f:1)|toList((#regs-f):0))
     )
+
 coarseMultigradedRegularity Module := o-> M -> (
-    if o.Strategy == 1 then F :=res M  else error "further Strategies are not yet defined";
-    coarseMultigradedRegularity F) 
+    if o.Strategy == "MinimalResolution" then F :=res M  else
+    if o.Strategy == "FastNonminimal" then (
+    S := ring M;
+    S' := coefficientRing S[gens S];
+    m := presentation M;
+    Tm := target m;
+    Tm':= S'^(degrees Tm/sum);
+    M' := coker map(Tm',,sub(presentation M, S'));
+    assert(isHomogeneous M');
+    F' := res(M', FastNonminimal=>true);
+    F = allGradings(F',Tm, S));
+    coarseMultigradedRegularity F
+    ) 
+
+allGradings=method()
+allGradings (ChainComplex,Module, Ring) := (fJ,F0,Sall) -> (
+    fJall := new ChainComplex;
+    fJall.Ring = Sall;
+    fJall_0 = F0;
+    for i from 1 to length fJ do (
+	m := map(fJall_(i-1),,sub(fJ.dd_i,Sall));
+	fJall_i = source m;
+	fJall.dd_i=m);
+    chainComplex apply(length fJ,i->fJall.dd_(i+1))
+    )
+
+
+doc ///
+   Key
+    coarseMultigradedRegularity
+    (coarseMultigradedRegularity, Module)
+    (coarseMultigradedRegularity, ChainComplex)
+    [coarseMultigradedRegularity, Strategy]
+   Headline
+    A truncation that has linear resolution
+   Usage
+    R = coarseMultigradedRegularity M
+   Inputs
+    M:Module
+     multi-graded module over a multi-graded polynomomial ring
+    M:ChainComplex
+     multi-graded module over a multi-graded polynomomial ring
+    Strategy => String
+   Outputs
+    R:List
+     degree such that truncate(R,M) has linear resolution
+   Description
+    Text
+     Uses a free resolution and takes the maximum degree of a term
+     minus the homological position in each component. Then adjusts
+     so that the sum of the degrees is at least the ordinary
+     regularity.
+    Example
+     (S,E) = productOfProjectiveSpaces{1,1,2}
+     I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
+     R = coarseMultigradedRegularity(S^1/I)
+     N = truncate(R,S^1/I);
+     betti res N
+     netList toList tallyDegrees res N
+   Caveat
+    We haven't yet proven that this is right.
+   SeeAlso
+    productOfProjectiveSpaces
+    tallyDegrees
+///
 
 cornerComplex=method()
 cornerComplex(ChainComplex,List) := (C,c) -> (d:=c-toList(#c:1);cornerComplex1(C,d))
@@ -2389,7 +2454,7 @@ doc ///
   Key
     productOfProjectiveSpaces
     (productOfProjectiveSpaces,List)
-    [productOfProjectiveSpaces,CoefficientField]
+    [productOfProjectiveSpaces, CoefficientField]
     [productOfProjectiveSpaces, Variables]
     [productOfProjectiveSpaces, CohomologyVariables]
     
@@ -2400,17 +2465,17 @@ doc ///
   Inputs
     n: List
        the list \{n_1,...,n_t\} \, of the dimensions of the factors
-  Outputs
-    S: PolynomialRing
-       homogeneous coordinate ring of P^{n_1}x ... x P^{n_t}
-    E: PolynomialRing
-       the corresponding exterior algebra   
     CoefficientField => Ring
        ground field of S,E
     Variables => List
        list of 2 symbols
     CohomologyVariables => List
        list of 2 symbols
+  Outputs
+    S: PolynomialRing
+       homogeneous coordinate ring of P^{n_1}x ... x P^{n_t}
+    E: PolynomialRing
+       the corresponding exterior algebra   
   Description
      Text
       The degrees of the variables for the i-th projective space are indexed
