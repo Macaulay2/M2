@@ -30,7 +30,7 @@ export {
      "expectedBetti",
      "minMaxResolution",
 ---------------------------------------------------------------------
--- FG: methods for fat points, and new methods for projective points
+-- FG: fat points, and new projective points (v3)
 ---------------------------------------------------------------------
      "affineFatPoints",
      "affineFatPointsByIntersection",
@@ -72,16 +72,6 @@ affinePointsByIntersection = method(TypicalValue => List)
 affinePointsByIntersection (Matrix,Ring) := (M,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M, p -> ideal apply(#p, i -> R_i - p#i)))
-
--- FG: fat points by intersection
--- INPUT: a matrix M whose columns are coordinates of points,
--- a list mults of multiplicities, and a polynomial ring R
--- OUTPUT: gb of the ideal of the fat point scheme
-affineFatPointsByIntersection = method(TypicalValue => List)
-affineFatPointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
-     flatten entries gens gb intersect apply (
-       entries transpose M, mults,
-       (p,m) -> (ideal apply(#p, i -> R_i - p#i))^m))
 
 reduceColumn = (M,Mchange,H,c) -> (
      -- M is a mutable matrix
@@ -232,6 +222,20 @@ affinePoints (Matrix,Ring) := (M,R) -> (
      (Q,inG,G)
      )
 
+---------------------------------------------------------------------
+-- FG: fat points, and new projective points (v3)
+---------------------------------------------------------------------
+
+-- FG: fat points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities, and a polynomial ring R
+-- OUTPUT: gb of the ideal of the fat point scheme
+affineFatPointsByIntersection = method(TypicalValue => List)
+affineFatPointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M, mults,
+       (p,m) -> (ideal apply(#p, i -> R_i - p#i))^m))
+
 -- FG: affine Buchberger-Möller algorithm for fat points
 -- INPUT: a matrix M whose columns are coordinates of points,
 -- a list mults of multiplicities, and a polynomial ring R
@@ -255,7 +259,7 @@ affineFatPoints (Matrix,List,Ring) := (M,mults,R) -> (
      -- this says how many derivatives to use for each point
      cutoffs := apply(mults,m -> sum(m, i -> binomial((dim R)-1+i,i)));
      s := sum cutoffs;
-     -- FG: most of the code below is from the old Points package
+     -- FG: most of the code below is from the affinePoints method
      -- The local data structures:
      -- (P,PC) is the matrix which contains the elements to be reduced
      -- Fs is used to evaluate monomials at the points
@@ -327,9 +331,15 @@ affineFatPoints (Matrix,List,Ring) := (M,mults,R) -> (
 
 
 -- FG: Buchberger-Möller for projective points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points, and a polynomial ring R
+-- OUTPUT: a list containing 1) the initial ideal,
+-- and 2) the gb of the ideal of the set of points
 projectivePoints = method(Options => {VerifyPoints => true})
 projectivePoints (Matrix,Ring) := opts -> (M,R) -> (
     if opts.VerifyPoints then M = removeBadPoints M;
+    -- FG: the code is mostly like the affine case
+    -- but now we proceed degree by degree
      K := coefficientRing R;
      s := numgens source M;
      Fs := affineMakeRingMaps(M,R);
@@ -337,7 +347,7 @@ projectivePoints (Matrix,Ring) := opts -> (M,R) -> (
      inG := trim ideal(0_R);
      inGB := forceGB gens inG;
      deg := 1;
-     while not stopProjectivePoints(deg,inG,s) do (
+     while not stoppingCriterion(deg,inG,s) do (
 	 L := sum flatten entries basis(deg,R);
 	 L = L % inGB;
 	 P := mutableMatrix map(K^s, K^(s+1), 0);
@@ -375,8 +385,15 @@ projectivePoints (Matrix,Ring) := opts -> (M,R) -> (
      )
 
 -- FG: stopping criterion for projective BM
+-- INPUT: an integer deg for the current degree,
+-- a monomial ideal inG (initial ideal of the ideal of points as
+-- computed so far), and an integer multPts which is the degree of
+-- the point scheme, i.e., the sum of the degrees of all the points
+-- OUTPUT: true if the Hilbert function of the initial ideal is
+-- equal to the expected degree for the given points (this is when
+-- the BM algorithm should stop)
 -- TO DO: implement better stopping criterion from Abbot, Kreuzer, Robbiano
-stopProjectivePoints = (deg,inG,multPts) -> (
+stoppingCriterion = (deg,inG,multPts) -> (
     -- if the initial ideal is zero, then continue
     if zero inG then return false else
     -- otherwise stop when multiplicity is attained
@@ -384,6 +401,12 @@ stopProjectivePoints = (deg,inG,multPts) -> (
     )
 
 -- FG: remove zero and duplicate points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points
+-- OUTPUT: a matrix obtained from M by removing zero columns and
+-- columns that are not scalar multiples of previous columns
+-- NOTE: if these points are not removed, the projective BM
+-- algorithm above will not terminate!
 removeBadPoints = M -> (
     -- remove zero columns
     N := compress M;
@@ -411,6 +434,10 @@ projectivePointsByIntersection (Matrix,Ring) := (M,R) -> (
        p -> (trim minors(2,matrix{gens R,p}))
        )
    )
+
+---------------------------------------------------------------------
+-- FG: end of v3 code
+---------------------------------------------------------------------
 
 
 -----------------Homogeneous codes
@@ -876,7 +903,7 @@ document {
      }
 
 ---------------------------------------------------------------------
--- FG: documentation for fat points and new projective points
+-- FG: documentation for fat points and new projective points 
 ---------------------------------------------------------------------
 
 doc ///
