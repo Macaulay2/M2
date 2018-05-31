@@ -435,6 +435,41 @@ projectivePointsByIntersection (Matrix,Ring) := (M,R) -> (
        )
    )
 
+-- FG: remove zero and duplicate points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points, and a list mults of multiplicities for those points
+-- OUTPUT: a matrix obtained from M by removing zero columns and
+-- columns that are not scalar multiples of previous columns,
+-- and a list of multiplicities for the points in the new matrix
+-- NOTE: if a point appears more than once with different
+-- multiplicities, the largest multiplicity is retained
+removeBadFatPoints = (M,mults) -> (
+    -- remove zero columns and their multiplicities
+    lastcol := numColumns(M)-1;
+    zeroVec := 0_(target M);
+    nonzerocols := {};
+    for i to lastcol do (
+	if M_i != zeroVec then nonzerocols = append(nonzerocols,i);
+	);
+    N := submatrix(M,nonzerocols);
+    newmults := new MutableList from mults_nonzerocols;
+    -- remove columns that define same projective points
+    lastcol = numColumns(N)-1;
+    thiscol := 0;
+    while thiscol < lastcol do (
+	L := toList(thiscol+1..lastcol);
+	dupcols := select(L,i->rank(N_{thiscol,i})<2);
+	N = submatrix'(N,dupcols);
+	newmults#thiscol = max apply({thiscol}|dupcols,i->newmults#i);
+	for i in reverse dupcols do (
+	    newmults = drop(newmults,{i,i})
+	    );
+	lastcol = lastcol - #dupcols;
+	thiscol = thiscol + 1;
+	);
+    return (N,new List from newmults);
+    )
+
 ---------------------------------------------------------------------
 -- FG: end of v3 code
 ---------------------------------------------------------------------
