@@ -36,7 +36,8 @@ export {
      "affineFatPointsByIntersection",
      "projectivePoints",
      "VerifyPoints",
-     "projectivePointsByIntersection"
+     "projectivePointsByIntersection",
+     "projectiveFatPointsByIntersection"
      }
 
 ///
@@ -432,6 +433,19 @@ projectivePointsByIntersection (Matrix,Ring) := (M,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M,
        p -> (trim minors(2,matrix{gens R,p}))
+       )
+   )
+
+-- FG: projective fat points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities for each point,
+-- and a polynomial ring R
+-- OUTPUT: gb of the ideal of the projective fat point scheme
+projectiveFatPointsByIntersection = method(TypicalValue => List)
+projectiveFatPointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M, mults,
+       (p,m) -> ((trim minors(2,matrix{gens R,p}))^m)
        )
    )
 
@@ -1131,6 +1145,41 @@ doc ///
    SeeAlso
     (projectivePoints,Matrix,Ring)
 ///
+
+doc ///
+   Key
+    projectiveFatPointsByIntersection
+    (projectiveFatPointsByIntersection,Matrix,List,Ring)
+   Headline
+    computes ideal of fat points by intersecting powers of point ideals
+   Usage
+    projectiveFatPointsByIntersection(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     homogeneous coordinate ring of the projective space containing the points
+   Outputs
+    :List
+     grobner basis for ideal of a finite set of fat points
+   Description
+    Text
+     This function computes the ideal of a finite set of fat points
+     by intersecting powers of the ideals of each point.
+
+    Example
+     R = QQ[x,y,z]
+     M = transpose matrix{{1,0,0},{0,1,1}}
+     mults = {3,2}
+     projectiveFatPointsByIntersection(M,mults,R)
+
+   SeeAlso
+--    (projectiveFatPoints,Matrix,List,Ring)
+///
+
 
 TEST///
      M = random(ZZ^3, ZZ^3)
