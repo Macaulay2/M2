@@ -1,4 +1,4 @@
-# Workshop-2018-Leipzig 
+# Workshop-2018-Leipzig
 
 This repository will serve as the collaboration area for the Macaulay2 workshop
 in Leipzig, June 04 - 08, 2018, at the Max Planck Institute for Mathematics in
@@ -21,8 +21,7 @@ Project name, project leader
 10. Tropical and Normal Toric Varieties , Diane Maclagan  d.maclagan@warwick.ac.uk
 11. Desingularization Trees , Doug Leonard leonada@auburn.edu
 12. Homological Algebra , 
-    
- 
 
-
- 
+   
+   
+  
