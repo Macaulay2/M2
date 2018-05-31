@@ -999,7 +999,6 @@ doc ///
    Key
     projectivePoints
     (projectivePoints,Matrix,Ring)
-    [projectivePoints,VerifyPoints]
    Headline
     produces the ideal and initial ideal from the coordinates of a finite set of projective points
    Usage
