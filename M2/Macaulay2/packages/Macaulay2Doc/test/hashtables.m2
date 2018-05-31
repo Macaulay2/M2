@@ -20,6 +20,10 @@ assert( ( - (new VirtualTally from tally {1,2,3,4})) === new VirtualTally from {
 assert( (r = (new VirtualTally from tally {1,1,1,2,4}) - (new VirtualTally from tally {1,2,3,4})) === new VirtualTally from {1 => 2, 3 => -1} )
 assert( (r + new VirtualTally from tally {1,1,4}) === new VirtualTally from {4 => 1, 1 => 4, 3 => -1} )
 
+assert( class(tally{1,2,3}+set{3,4,5}) === Tally )
+assert( mutable( merge(new Type of List, new Type of Ring, first) ) )
+assert( class((new VirtualTally from {1 => -1, 2 => -2, 3 => -3}) + tally {1,2,3}) === VirtualTally )
+
 end
 
 print generateAssertions ///
