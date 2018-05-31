@@ -981,7 +981,7 @@ doc ///
     M:Matrix
      in which each column consists of the projective coordinates of a point
     R:Ring
-     coordinate ring of the projective space containing the points
+     homogeneous coordinate ring of the projective space containing the points
    Outputs
     inG:Ideal
      initial ideal of the set of projective points
@@ -1009,7 +1009,7 @@ doc ///
      M = random(ZZ^7,ZZ^150)
      elapsedTime (inG,G) = projectivePoints(M,R);
      elapsedTime H = projectivePointsByIntersection(M,R);
-     G==H
+     G == H
 
    Caveat
     This function removes zero columns of @TT "M"@ and duplicate columns giving rise to the same projective point (which prevent the algorithm from terminating). The user can bypass this step with the option @TT "VerifyPoints"@.
@@ -1053,7 +1053,7 @@ doc ///
     M:Matrix
      in which each column consists of the projective coordinates of a point
     R:Ring
-     coordinate ring of the projective space containing the points
+     homogeneous coordinate ring of the projective space containing the points
    Outputs
     :List
      grobner basis for ideal of a finite set of projective points
