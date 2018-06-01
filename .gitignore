@@ -1,0 +1,21 @@
+# tex files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+
+# Mac OS X directory files
+Icon
+.DS_Store
