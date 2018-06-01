@@ -229,16 +229,17 @@ liftDeformation(List,List,List,List):= opts->(F,R,G,C)->(
      clist:=coefficients(sub(C_0,B));
      coeff:=(coefficients(sub(obstructions,B),Monomials=>clist_0))_1;
      NG:=-sub(coeff//clist_1,T);     
-     CO:={C_0};
      GO:=G|{NG};
      if opts#Verbose >3 then print "Lifting Relations and Coefficients";
-     lrelco:=((fterms+FO_(n+1)*R_0)+transpose(eterms+CO_0*NG))//(F_0| lowG);
+     lrelco:=((fterms+FO_(n+1)*R_0)+transpose(eterms+C_0*NG))//(F_0| lowG);
      RO:=R|{-lift(lrelco^(toList(0..(numgens target R_0)-1)),T)}; --lift relations
+     CO:=C;
      if n>1 then ( -- correct coefficients
      	 NC:=-transpose lift(lrelco^(toList((numgens target R_0)..(numgens target R_0)+(numgens source lowG)-1)),T);
      	 NCL:=apply(entries (NC*transpose cm),i->apply(i,j->polyToList(j,n)));
      	 CCL:=apply(n,i->matrix apply(NCL,j->apply(j,k->k_i)));
-     	 CO=(CO|{0})+CCL);
+     	 CO=(CO|{0})+CCL;
+	 );
      if opts#Verbose>3 and opts#SanityCheck	   then print "Doing Sanity Check";
      if opts#SanityCheck then if not 
 		(transpose(sum(apply(toList(0..(n+1)),i->FO_i*RO_(n+1-i))))+sum(apply(toList(0..(n-1)),i->CO_i*GO_(n-1-i))))==0 then error "Something is wrong"; 
