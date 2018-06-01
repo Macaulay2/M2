@@ -3,15 +3,15 @@ if version#"VERSION" < "1.11" then error "this package requires Macaulay2 versio
 
 newPackage(
        "CoincidentRootLoci",
-	Version => "0.1", 
-        Date => "April 21, 2018",
+	Version => "0.1.1", 
+        Date => "June 1, 2018",
     	Headline => "A package for computations with coincident root loci",
         Authors => {{Name => "M. C. Brambilla", Email => "brambilla@dipmat.univpm.it"},
                     {Name => "G. Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
-        OptionalComponentsPresent => try get "!$qe/bin/qepcad -h" then true else false,
+        OptionalComponentsPresent => try get "!qepcad -h" then true else false,
         CacheExampleOutput => true,
         Reload => false
 )
@@ -644,7 +644,7 @@ isRealRootedViaQEPCAD (RingElement) := o -> (F) -> (
    S = S | "finish " | newline;
    dir := rootPath | temporaryFileName();
    (dir|"-input") << S << close;
-   C := "$qe/bin/qepcad +N"|toString(first o.QepcadOptions)|" +L"|toString(last o.QepcadOptions)|" < '"|dir|"-input'";
+   C := "qepcad +N"|toString(first o.QepcadOptions)|" +L"|toString(last o.QepcadOptions)|" < '"|dir|"-input'";
    if o.Verbose then << "--running " << C << endl;
    try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occured while executing QEPCAD. Please make sure that it is installed and configured correctly.";
    jj := toList first regex("An equivalent quantifier-free formula:"|newline|newline,Out);
@@ -1037,5 +1037,5 @@ load "./CoincidentRootLoci/documentation.m2"
 load "./CoincidentRootLoci/tests.m2"
 
 welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.Date|")";
-if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
+-- if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
 
