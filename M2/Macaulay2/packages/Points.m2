@@ -1259,7 +1259,7 @@ doc ///
      projectiveFatPointsByIntersection(M,mults,R)
 
    SeeAlso
---    (projectiveFatPoints,Matrix,List,Ring)
+    (projectiveFatPoints,Matrix,List,Ring)
 ///
 
 doc ///
@@ -1387,7 +1387,7 @@ assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
 
 ---------------------------------------------------------------------
--- FG: tests for fat points
+-- FG: tests for projective and fat points (v3)
 ---------------------------------------------------------------------
 
 TEST///
@@ -1399,8 +1399,44 @@ TEST///
      x*z^2+y*z^2+z^3-x*z-y*z-2*z^2+z, y^2*z+y*z^2-y*z, x*y*z,
      x*y^2+y^3-y*z^2-x*y-2*y^2+y, z^4-2*z^3+z^2, y*z^3-y*z^2,
      y^4-2*y^3+y^2})
+     assert(G == affineFatPointsByIntersection(M,mults,R))
 ///
 
+TEST///
+     M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}}
+     R = QQ[x,y,z]
+     (inG,G) = projectivePoints(M,R)
+     assert( G == {x*z-y*z, x*y-y*z, y^2*z-y*z^2})
+     assert(G == projectivePointsByIntersection(M,R))
+///
+
+TEST///
+     M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}}
+     mults = {1,2,3,4}
+     R = QQ[x,y,z]
+     (inG,G) = projectiveFatPoints(M,mults,R)
+     assert( G == {x^4*z-3*x^3*y*z+3*x^2*y^2*z-x*y^3*z-x^3*z^2+3*x^2*y*z^2-3*x
+      *y^2*z^2+y^3*z^2, x^4*y-2*x^3*y^2+x^2*y^3-2*x^3*y*z+4*x^2*y^
+      2*z-2*x*y^3*z+x^2*y*z^2-2*x*y^2*z^2+y^3*z^2,
+      x^3*y*z^2-3*x^2*y^2*z^2+3*x*y^3*z^2-y^4*z^2-x^3*z^3+3*x^2*y*
+      z^3-3*x*y^2*z^3+y^3*z^3,
+      x^3*y^2*z-2*x^2*y^3*z+x*y^4*z-2*x^2*y^2*z^2+4*x*y^3*z^2-2*y^
+      4*z^2-x^3*z^3+4*x^2*y*z^3-5*x*y^2*z^3+2*y^3*z^3,
+      x^3*y^3-x^2*y^4-3*x^2*y^3*z+3*x*y^4*z+3*x*y^3*z^2-3*y^4*z^2-
+      x^3*z^3+4*x^2*y*z^3-6*x*y^2*z^3+3*y^3*z^3,
+      x^2*y^3*z^2-2*x*y^4*z^2+y^5*z^2-2*x^2*y^2*z^3+4*x*y^3*z^3-2*
+      y^4*z^3+x^2*y*z^4-2*x*y^2*z^4+y^3*z^4,
+      x^2*y^4*z-x*y^5*z-3*x*y^4*z^2+3*y^5*z^2-3*x^2*y^2*z^3+9*x*y^
+      3*z^3-6*y^4*z^3+2*x^2*y*z^4-5*x*y^2*z^4+3*y^3*z^4,
+      x^2*y^5-4*x*y^5*z+6*y^5*z^2-4*x^2*y^2*z^3+12*x*y^3*z^3-12*y^
+      4*z^3+3*x^2*y*z^4-8*x*y^2*z^4+6*y^3*z^4,
+      x*y^5*z^2-y^6*z^2-3*x*y^4*z^3+3*y^5*z^3+3*x*y^3*z^4-3*y^4*z^
+      4-x*y^2*z^5+y^3*z^5,
+      x*y^6*z-4*y^6*z^2-6*x*y^4*z^3+12*y^5*z^3+8*x*y^3*z^4-12*y^4*
+      z^4-3*x*y^2*z^5+4*y^3*z^5,
+      y^7*z^2-4*y^6*z^3+6*y^5*z^4-4*y^4*z^5+y^3*z^6})
+     assert(G == projectiveFatPointsByIntersection(M,mults,R))
+///
 
 end
 
