@@ -1187,6 +1187,19 @@ doc ///
 
 doc ///
    Key
+    [projectiveFatPoints,VerifyPoints]
+   Headline
+    Option to projectiveFatPoints.
+   Description
+    Text
+     Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+     For duplicate points, a single instance is retained with the largest multiplicity.
+   SeeAlso
+    projectiveFatPoints
+///
+
+doc ///
+   Key
     projectivePointsByIntersection
     (projectivePointsByIntersection,Matrix,Ring)
    Headline
@@ -1247,6 +1260,46 @@ doc ///
 
    SeeAlso
 --    (projectiveFatPoints,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    projectiveFatPoints
+    (projectiveFatPoints,Matrix,List,Ring)
+   Headline
+    produces the ideal and initial ideal from the coordinates of a finite set of fat points
+   Usage
+    (inG,G) = projectiveFatPoints(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     homogeneous coordinate ring of the projective space containing the points
+   Outputs
+    inG:Ideal
+     initial ideal of the set of fat points
+    G:List
+     list of generators for Grobner basis for ideal of fat points
+   Description
+    Text
+     This function uses a modified Buchberger-Moeller algorithm to
+     compute a grobner basis for the ideal of a finite number of
+     fat points in projective space.
+
+    Example
+     R = QQ[x,y,z]
+     M = transpose matrix{{1,0,0},{0,1,1}}
+     mults = {3,2}
+     (inG,G) = projectiveFatPoints(M,mults,R)
+     monomialIdeal G == inG
+
+   Caveat
+    For small sets of points and/or multiplicities, this method might be slower than @TO "projectiveFatPointsByIntersection"@.
+   SeeAlso
+    (projectiveFatPointsByIntersection,Matrix,List,Ring)
 ///
 
 
