@@ -469,6 +469,7 @@ removeBadFatPoints = (M,mults) -> (
     N := submatrix(M,nonzerocols);
     newmults := new MutableList from mults_nonzerocols;
     -- remove columns that define same projective points
+    -- and their multiplicities
     lastcol = numColumns(N)-1;
     thiscol := 0;
     while thiscol < lastcol do (
@@ -1148,8 +1149,8 @@ doc ///
 
     Example
      K = ZZ/32003
-     R = K[z_0..z_6]
-     M = random(ZZ^7,ZZ^150)
+     R = K[z_0..z_5]
+     M = random(ZZ^6,ZZ^150)
      elapsedTime (inG,G) = projectivePoints(M,R);
      elapsedTime H = projectivePointsByIntersection(M,R);
      G == H
