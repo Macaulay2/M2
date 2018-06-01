@@ -30,10 +30,8 @@ newPackage(
     	)
 
 export {
-    "boxDegrees",
     "setupRings",
     "symExt",
-    "numFactors",
     "cohomologyMatrix",
     "cohomologyHashTable",    
     "cohomologyPolynomialTable",
@@ -43,20 +41,17 @@ export {
     "upperCorner",
     "beilinsonWindow",
     "tateExtension",
-    "tateResolution",
     "sloppyTateExtension",
     "pushAboveWindow",
     "firstQuadrantComplex",
     "lastQuadrantComplex",
     "cornerComplex",
-    "cornerComplex1",
     "regionComplex",
     "strand",
     -- beilinson functor
     "beilinsonContraction",
     "beilinsonBundle",
     "beilinson",
-    "TateProductData",
     "ContractionData",
     "tateData",
     "ringData",
@@ -66,6 +61,15 @@ export {
     "PrunedQuotient", "QuotientBundle", "SubBundle",
     --
     "cornerCohomologyTablesOfUa",
+    "coarseMultigradedRegularity",
+    "Characteristic",
+    "VariableName",
+    "CoefficientField",
+    "CohomologyVariables",
+    "Rings",
+    "CohomRing",
+    "TateRingData",
+    "TateData",
     --the following could all be part of ChainComplexExtras
     "prependZeroMap",
     "appendZeroMap",
@@ -79,16 +83,7 @@ export {
     "resolutionOfChainComplex",
     "chainComplexMap",
     "InitialDegree",
-    "isQuism",
-    "coarseMultigradedRegularity",
-    "Characteristic",
-    "VariableName",
-    "CoefficientField",
-    "CohomologyVariables",
-    "Rings",
-    "CohomRing",
-    "TateRingData",
-    "TateData"
+    "isQuism"
     --    Check
     }
 
@@ -149,49 +144,10 @@ allGradings (ChainComplex,Module, Ring) := (fJ,F0,Sall) -> (
     )
 
 
-doc ///
-   Key
-    coarseMultigradedRegularity
-    (coarseMultigradedRegularity, Module)
-    (coarseMultigradedRegularity, ChainComplex)
-    [coarseMultigradedRegularity, Strategy]
-   Headline
-    A truncation that has linear resolution
-   Usage
-    R = coarseMultigradedRegularity M
-   Inputs
-    M:Module
-     multi-graded module over a multi-graded polynomomial ring
-    M:ChainComplex
-     multi-graded module over a multi-graded polynomomial ring
-    Strategy => String
-   Outputs
-    R:List
-     degree such that truncate(R,M) has linear resolution
-   Description
-    Text
-     Uses a free resolution and takes the maximum degree of a term
-     minus the homological position in each component. Then adjusts
-     so that the sum of the degrees is at least the ordinary
-     regularity.
-    Example
-     (S,E) = productOfProjectiveSpaces{1,1,2}
-     I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
-     R = coarseMultigradedRegularity(S^1/I)
-     N = truncate(R,S^1/I);
-     betti res N
-     netList toList tallyDegrees res N
-   Caveat
-    We haven't yet proven that this is right.
-   SeeAlso
-    productOfProjectiveSpaces
-    tallyDegrees
-///
 
 cornerComplex=method()
-cornerComplex(ChainComplex,List) := (C,c) -> (d:=c-toList(#c:1);cornerComplex1(C,d))
-
-
+cornerComplex(ChainComplex,List) := (C,c) -> 
+       (d:=c-toList(#c:1);cornerComplex1(C,d))
     
 cornerComplex1=method()
 cornerComplex1(ChainComplex,List) := (C,c) -> (
@@ -322,7 +278,9 @@ setupRings(Ring,List) := opts -> (kk,n) -> (
      (S,E)
      )
 tateData = method()
-tateData Ring := (S) -> if not S.?TateData then error "expected ring created with 'setupRings'" else S.TateData
+tateData Ring := (S) -> if not S.?TateData then error "expected ring created with 'setupRings' 
+or 'productOfProjectiveSpaces'" else S.TateData
+
 
 TEST ///
 n={1,2}
@@ -566,45 +524,44 @@ cohomologyPolynomialTable HashTable := H ->(
 		if p>=0 then (H#cp)*(coh_0)^p else (H#cp)*(coh_1)^(-p)
 		     ))))
     )
+cohomologyPolynomialTable(Module, List, List) := (M,low,high) ->
+    cohomologyPolynomialTable cohomologyHashTable(M,low,high)
+cohomologyPolynomialTable(ChainComplex, List, List) := (T,low,high) ->
+    cohomologyPolynomialTable cohomologyHashTable(T,low,high)
 
 cohomologyHashTable=method()
 
 cohomologyHashTable(ChainComplex,List,List) := (F,low,high) -> (
        --Under the assumption that T is part of a Tate resolution of a sheaf F on a product of
        --projective spaces P^{n_1} x ... x P^{n_t}, the function returns a hashTable
-       -- of cohomology polynomials 
-       --$$\sum_{i=0}^{|n|} \, dim H^i(\mathcal F(c_1,..,c_t)) * h^i \in \, \mathbb Z[h,k]$$
-       --for every c= with $low \le c \le high$ in the partial order.
        --In case T corresponds to an object in the derived category D^b(P^{n_1}x P^{n_2}), then
-       --hypercohomology polynomials are returned, with the convention that k stands for k=h^{ -1}.
+       --hypercohomology is returned.
        
        --If T is not a large enough part of the Tate resolution, such as W below, 
        --then the function collects only
        --the contribution of T to the cohomology table of the Tate resolution, according to the formula in
        --Corollary 0.2 of @ HREF("http://arxiv.org/abs/","Tate Resolutions on Products of Projective Spaces") @.
-        
      E:= ring F; 
      deglen := degreeLength E;
      minF := min F;
      maxF := max F;
-
      if #low != deglen or #high != deglen then error"Expected list of length the number of factors of the projective product.";
      keylist := toList(low..high);
-     hashTable flatten apply(keylist, c->
-	 (sumc := sum c;
-	     apply(toList(minF-sumc..maxF-sumc), p-> 
-		     ({c,p},#select(degrees F_(sumc+p), d->d==c)))))
+     hashTable flatten apply(keylist, a ->
+	 (suma := sum a;
+	     apply(toList(minF..maxF), d-> 
+		     ({a,-d-suma},#select(degrees F_d, c->c==-a)))))
      )	 
 
-cohomologyMatrix(Module, List, List) := (M, low, high) -> (
-    if degreeLength M != 2 then error"this version works only with a product of two projective spaces.";
-    if #low !=2 or #high !=2 then error"expected degree lists of length 2";
+cohomologyHashTable(Module, List, List) := (M, low, high) -> (
     if not all(#low, i-> low_i<=high_i) then error"low should be less than high";
     C := cornerComplex(M, low, high);
-    cohomologyMatrix(C, low , high))
+    cohomologyHashTable(C, low , high))
     
     
-
+///
+loadPackage ("TateOnProducts", Reload =>true)
+///
 TEST ///
 n={1,2};kk=ZZ/101;
         (S,E)=setupRings(ZZ/101,n);
@@ -617,6 +574,16 @@ n={1,2};kk=ZZ/101;
 	cohomologyMatrix(T,-{2,3},{3,3})	
 low = {-3,-3};high = {3,3}
 F = T
+
+M = S^1
+low = {-3,-3};high = {3,3}
+F = cornerComplex(M,low,high)
+betti F
+tallyDegrees F
+cohomologyMatrix(M, low,high)
+H = cohomologyHashTable(M, low,high)
+cohomologyPolynomialTable H
+
 
 ///
 
@@ -649,11 +616,6 @@ boxDegrees(Ring) := E -> (
 	  );
      box)
  	    
-TEST ///
-n={1,2,2}
-(S,E)=setupRings(ZZ/101, n);
-boxDegrees E
-///
 
 
 
@@ -2339,6 +2301,7 @@ betti M'
 ------------------------
 beginDocumentation()
 
+
 document { 
   Key => TateOnProducts,
   Headline => "Computation of parts of the Tate resolution on products",
@@ -2422,6 +2385,45 @@ document {
    }
 
 doc ///
+   Key
+    coarseMultigradedRegularity
+    (coarseMultigradedRegularity, Module)
+    (coarseMultigradedRegularity, ChainComplex)
+    [coarseMultigradedRegularity, Strategy]
+   Headline
+    A truncation that has linear resolution
+   Usage
+    R = coarseMultigradedRegularity M
+   Inputs
+    M:Module
+     multi-graded module over a multi-graded polynomomial ring
+    M:ChainComplex
+     multi-graded module over a multi-graded polynomomial ring
+    Strategy => String
+   Outputs
+    R:List
+     degree such that truncate(R,M) has linear resolution
+   Description
+    Text
+     Uses a free resolution and takes the maximum degree of a term
+     minus the homological position in each component. Then adjusts
+     so that the sum of the degrees is at least the ordinary
+     regularity.
+    Example
+     (S,E) = productOfProjectiveSpaces{1,1,2}
+     I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
+     R = coarseMultigradedRegularity(S^1/I)
+     N = truncate(R,S^1/I);
+     betti res N
+     netList toList tallyDegrees res N
+   Caveat
+    We haven't yet proven that this is right.
+   SeeAlso
+    productOfProjectiveSpaces
+    tallyDegrees
+///
+
+doc ///
   Key
     setupRings
     (setupRings,Ring,List)
@@ -2454,6 +2456,7 @@ doc ///
   Key
     productOfProjectiveSpaces
     (productOfProjectiveSpaces,List)
+    (productOfProjectiveSpaces, ZZ)
     [productOfProjectiveSpaces, CoefficientField]
     [productOfProjectiveSpaces, Variables]
     [productOfProjectiveSpaces, CohomologyVariables]
@@ -2461,10 +2464,13 @@ doc ///
   Headline
     Cox ring of a product of projective spaces and it Koszul dual exterior algebra
   Usage
-    (S,E)=productOfProjectiveSpaces n
+    (S,E)=productOfProjectiveSpaces N
+    (S,E)=productOfProjectiveSpaces n    
   Inputs
-    n: List
+    N: List
        the list \{n_1,...,n_t\} \, of the dimensions of the factors
+    n: ZZ
+       Gives n copies of P^1
     CoefficientField => Ring
        ground field of S,E
     Variables => List
@@ -2480,6 +2486,9 @@ doc ///
      Text
       The degrees of the variables for the i-th projective space are indexed
       x_(i,0),..,x_(i,n_i-1), and have degree (0..0,1,0,..0) with a 1 in the i-th place.
+      The script also caches some values in S.TateData and
+      E.TateData, so that S and E can subsequently find eachother
+      and also their cohomology ring.
      Example
         (S,E)=productOfProjectiveSpaces{1,2}
 	vars S
@@ -2491,6 +2500,7 @@ doc ///
 	(coefficientRing S) === (coefficientRing E)
 	trim (ideal vars S)^2
         trim (ideal vars E)^2	
+	peek S.TateData
 	S.TateData#CohomRing
 ///
 
@@ -2506,6 +2516,28 @@ doc ///
 
 
 doc ///
+   Key
+    Rings
+   Headline
+    Option for productOfProjectiveSpaces
+   Description
+    Text
+     Base field for the two polynomial rings
+///
+
+
+doc ///
+   Key
+    CohomologyVariables
+   Headline
+    Option for productOfProjectiveSpaces
+   Description
+    Text
+     names of the variables in cohomRing, the "cohomology ring"
+///
+
+
+doc///
   Key
     symExt
     (symExt,Matrix,Ring)
@@ -2656,47 +2688,227 @@ doc ///
 doc ///
   Key
     cohomologyMatrix
+    (cohomologyMatrix, Module, List, List)
     (cohomologyMatrix,ChainComplex,List,List)
-    --(cohomologyMatrix,ChainComplex,List,List,Ring)    
   Headline
-    compute the the cohomology groups of a (part) of a Tate resolution or sheaf on products of projective spaces 
+    cohomology groups of a sheaf on P^{n_1}xP^{n_2}, or of (part) of a Tate resolution
   Usage
-    H=cohomologyMatrix(T,a,b)
+    H=cohomologyMatrix(M,low,high)    
+    H=cohomologyMatrix(T,low,high)
   Inputs
     T: ChainComplex
        free complex over the exterior algebra 
-    a: List
-    b: List
-       two lists a=(a_1,b_1), b=(b_1,b_2) representing bidegrees
+    M: Module
+       graded module representing a sheaf on a product of projective spaces
+    low: List
+    high: List
+       two lists low=\{a_1,a_2\}, high=\{b_1,b_2\} representing bidegrees
   Outputs
     H: Matrix
-       a (b1-a1)x(b2-a2) matrix of ring elements in $\mathbb Z[h,k]$
+       a (1+b1-a1)x(1+b2-a2) matrix of ring elements in $\mathbb Z[h,k]$
   Description
      Text
-       Under the assumption that T is part of a Tate resolution of a sheaf F on a product of
-       two projective space P^{n_1} x P^{n_2}, the function returns a matrix of cohomology polynomials 
-       $$\sum_{i=0}^{|n|} \, dim H^i(\mathbb P^{n_1}\times \mathbb P^{n_2},\mathcal F(c_1,c_2)) * h^i \in \, \mathbb Z[h,k]$$
-       for every c=(c_1,c_2) with $a_1 \le c_1 \le b_1$ and $a_2 \le c_2 \le b_2$.
-       In case T corresponds to an object in the derived category D^b(P^{n_1}x P^{n_2}), then
+       If M is a bigraded module over a bigraded polynomial ring representing a sheaf F on
+       P^{n_1} x P^{n_2}, the script returns a block of the cohomology table, represented
+       as a table of "cohomology polynomials" in $\mathbb Z[h,k]$ of the form
+       $$\sum_{i=0}^{|n|} \, dim H^i(\mathcal F(c_1,c_2)) * h^i$$
+       in each position \{c_1,c_2\}
+       for $a_1 \le c_1 \le b_1$ and $a_2 \le c_2 \le b_2$.
+       In case M corresponds to an object in the derived category D^b(P^{n_1}x P^{n_2}), then
        hypercohomology polynomials are returned, with the convention that k stands for k=h^{ -1}.
+
+       The polynomial for
+       \{b_1,b_2\} sits in the north-east corner, the one corresponding to (a_1,a_2) in the south-west
+       corner.       
+       
+       In the case of a product of more (or fewer) projective spaces, or if a hash table
+       output is desired, use
+       cohomologyHashTable or cohomologyPolynomialTable instead.
+              
+       The script computes a sufficient part of the Tate resolution for F, and then
+       calls itself in the version for a Tate resolution. More generally,
+       If T is part of a Tate resolution of F
+       the function returns a matrix of cohomology polynomials corresponding to T.
        
        If T is not a large enough part of the Tate resolution, such as W below, 
        then the function collects only
        the contribution of T to the cohomology table of the Tate resolution, according to the formula in
-       Corollary 0.2 of @ HREF("http://arxiv.org/abs/","Tate Resolutions on Products of Projective Spaces") @.
+       Corollary 0.2 of
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
         
-       The polynomial for
-       (b_1,b_2) sits in the north-east corner, the one corresponding to (a_1,a_2) in the south-west
-       corner.       
      Example
-        n={1,2};kk=ZZ/101;
-        (S,E)=setupRings(ZZ/101,n);
-	a={1,1}; U=E^{ -a};
-	W=(chainComplex {map(E^0,U,0),map(U,E^0,0)})[1]
-	cohomologyMatrix(W,-{3,3},{3,3})
-        time T=sloppyTateExtension W
-	cohomologyMatrix(T,-{3,3},{3,3})	
-	cohomologyMatrix(T,-{3,4},{3,3})
+    	(S,E) = productOfProjectiveSpaces{1,2}	
+	M = S^1
+	low = {-3,-3};high={0,0};
+	cohomologyMatrix(M,low,high)
+     Text
+        As a second example, consider
+	the structure sheaf
+	$\mathcal O_E$ of a nonsingular cubic contained in (point)xP^2.
+	The corresponding graded module is
+     Example
+	M = S^1/ideal(x_(0,0), x_(1,0)^3+x_(1,1)^3+x_(1,2)^3)
+	low = {-3,-3};high={0,0};
+	cohomologyMatrix(M,low,high)
+     Text	
+	and the "1+h" in the Northeast (= upper right) corner signifies that
+	that $h^0(\mathcal O_E) = h^1(\mathcal O_E) = 1.$
+///
+
+doc ///
+  Key
+    cohomologyHashTable
+    (cohomologyHashTable,Module,List,List)
+    (cohomologyHashTable,ChainComplex,List,List)
+  Headline
+    cohomology groups of a sheaf on a product of projective spaces, or of (part) of a Tate resolution
+  Usage
+    H=cohomologyHashTable(M,low,high)      
+    H=cohomologyHashTable(T,low,high)
+  Inputs
+    M: Module
+       graded module representing a sheaf on a product of projective spaces
+    T: ChainComplex
+       free complex over the exterior algebra 
+    low: List
+    high: List
+       two lists representing multi-degrees, the range for computation.
+  Outputs
+    H: HashTable
+       values are dimensions of (hyper)cohomology groups
+  Description
+     Text
+       If M is a multi-graded module representing a coherent sheaf F on $P^n := P^{n_0} x .. x P^{n_{t-1}}$, 
+       the script returns a hash table with entries 
+       {a,i} => h^i(F(a))
+       where a is a multi-index, low<=a<=high in the partial order 
+       (thus the value is 0 when i is not in the range 0..sum n.)
+       In case T is a Tate resolution corresponding to an object F in D^b(P^n), then
+       the values returned are the dimensions of the hypercohomology groups of twists of F, and
+       the values can be nonzero in a wider range.
+       
+       In case the number of factors t is 2, the output of @ TO cohomologyMatrix @ is 
+       easier to parse.
+              
+       The script computes a sufficient part of the Tate resolution for F, and then
+       calls itself in the version for a Tate resolution. 
+       
+       If T is not a large enough part of the Tate resolution, such as W below, 
+       then the function collects only
+       the contribution of T to the cohomology table of the Tate resolution, according to the formula in
+       Corollary 0.2 of 
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
+        
+     Example
+    	(S,E) = productOfProjectiveSpaces{1,2}	
+	M = S^1
+	low = {-3,-3};high = {3,3};
+	H = cohomologyHashTable(M, low,high);
+     Text
+        We can print just the entries representing nonzero cohomology
+	groups:
+     Example
+	H' = hashTable(select(pairs H, p-> p_1!=0))
+     Text
+        In the case of two factors (t=2), the same 
+	information can be read conveniently from a matrix
+     Example
+        cohomologyMatrix(M, low, high)
+     Text
+        where the entry in the a= \{a_0,a_1\} place is
+	sum_i h^i(F(a)*h^i \in ZZ[h].
+        In the case of more factors, the same format is available
+	through the command
+     Example
+	cohomologyPolynomialTable H'
+  Caveat
+        In case of hypercohomology, we write k 
+	instead of h^{-1}, and use the cohomology ring
+	ZZ[h,k].
+  SeeAlso
+        productOfProjectiveSpaces
+     	cohomologyMatrix
+        cohomologyPolynomialTable
+	cornerComplex
+///
+
+doc ///
+  Key
+    cohomologyPolynomialTable
+    (cohomologyPolynomialTable,Module,List,List)
+    (cohomologyPolynomialTable,ChainComplex,List,List)
+    (cohomologyPolynomialTable,HashTable)    
+  Headline
+    cohomology groups of a sheaf on a product of projective spaces, or of (part) of a Tate resolution
+  Usage
+    H=cohomologyPolynomialTable H'      
+    H=cohomologyPolynomialTable(M,low,high)      
+    H=cohomologyPolynomialTable(T,low,high)
+  Inputs
+    H': HashTable
+       output of cohomologyHashTable
+    M: Module
+       graded module representing a sheaf on a product of projective spaces
+    T: ChainComplex
+       free complex over the exterior algebra 
+    low: List
+    high: List
+       two lists representing multi-degrees, the range for computation.
+  Outputs
+    H: HashTable
+       values are hypercohomology polynomials
+  Description
+     Text
+       If M is a multi-graded module representing a coherent sheaf F on $P^n := P^{n_0} x .. x P^{n_{t-1}}$, 
+       the script returns a hash table with entries 
+       a => sum_h^i(F(a))*h^i \in ZZ[h,k], 
+       where k represents h^{-1},
+       where a is a multi-index, low<=a<=high in the partial order 
+       (thus the value is 0 when i is not in the range 0..sum n.)
+       In case T is a Tate resolution corresponding to an object F in D^b(P^n), then
+       the values returned are the polyomials of the hypercohomology groups of twists of F, and
+       the values can be nonzero in a wider range.
+       
+       In case the number of factors t is 2, the output of @ TO cohomologyMatrix @ is 
+       easier to parse.
+              
+       The script computes a sufficient part of the Tate resolution for F, and then
+       calls itself in the version for a Tate resolution. 
+       
+       If T is not a large enough part of the Tate resolution, such as W below, 
+       then the function collects only
+       the contribution of T to the cohomology table of the Tate resolution, according to the formula in
+       Corollary 0.2 of 
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
+        
+     Example
+    	(S,E) = productOfProjectiveSpaces{1,2}	
+	M = S^1
+	low = {-3,-3};high = {3,3};
+	H' = cohomologyHashTable(M, low,high);
+	H = cohomologyPolynomialTable H'
+	H = cohomologyPolynomialTable (M, low, high)
+     Text
+        We can print just the entries representing nonzero cohomology
+	groups:
+     Example
+	trimH = hashTable(select(pairs H, p-> p_1!=0))
+     Text
+        In the case of two factors (t=2), the same 
+	information can be read conveniently from a matrix
+     Example
+        cohomologyMatrix(M, low, high)
+     Text
+        where the entry in the a= \{a_0,a_1\} place is
+	sum_i h^i(F(a)*h^i \in ZZ[h].
+  Caveat
+        In case of hypercohomology, we write k 
+	instead of h^{-1}, and use the cohomology ring
+	ZZ[h,k].
+  SeeAlso
+        productOfProjectiveSpaces
+     	cohomologyMatrix
+        cohomologyHashTable
 ///
 
 
@@ -3021,7 +3233,7 @@ doc ///
      : ChainComplex
   Description
      Text
-       Torm the region complex T_c(I,J,K) as defined in section 3 of 
+       Forms the region complex T_c(I,J,K) as defined in section 3 of 
        @  HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @. 
      Example
         (S,E)=setupRings(ZZ/101,{1,2})
@@ -3221,23 +3433,42 @@ doc ///
   Key
     cornerComplex
     (cornerComplex,ChainComplex,List)
+    (cornerComplex,Module,List,List)    
   Headline
     form the corner complex
   Usage
-    cornerComplex(T,c)
+    C = cornerComplex(T,c)
+    C = cornerComplex(M,low,high)
   Inputs
     T: ChainComplex
        a (part of a) Tate resolution on a product of t projective spaces
     c: List
        cohomological degree of upper corner of the  last quadrant complex which is part of the corner complex   
+    M: Module
+       multi-graded module representing a sheaf F
   Outputs
-     : ChainComplex
+    C : ChainComplex
+       The corner complex
   Description
      Text
-       Form the corner complex with corner c of a (part of a) Tate resolution T as defined in
+       The call
+       
+       cornerComplex(M,low,high)
+       
+       forms the corner complex of the sheaf F represented by M,
+       computed in such a way that all the cohomology groups of
+       twists F(a) of F can be computed for low <= a <= high.
+
+       The call
+       
+       cornerComplex(T,c)
+       
+       forms the corner complex with corner c of a (part of a) Tate resolution T as defined in
        @  HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @. 
+       
      Example
-        (S,E)=setupRings(ZZ/101,{1,1});T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
+        (S,E) = productOfProjectiveSpaces{1,1}
+	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
         T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
     	betti T
 	cohomologyMatrix(T,-{4,4},{3,2})
@@ -3351,6 +3582,11 @@ doc ///
   Key
     pushAboveWindow
     (pushAboveWindow,ChainComplex)
+    (pushAboveWindow,List)
+    (pushAboveWindow,Matrix)
+    (pushAboveWindow,Matrix,Matrix)
+    (pushAboveWindow,Matrix,Matrix,Matrix)
+    (pushAboveWindow,Module)
   Headline
     push a projective resolution of the Beilinson complex out of the window
   Usage
@@ -3399,6 +3635,7 @@ doc ///
     (beilinson,Module)
     (beilinson,Matrix)
     (beilinson,ChainComplex)
+    [beilinson,BundleType]
   Headline
     apply the beilinson funcor
   Usage
@@ -3456,6 +3693,8 @@ doc ///
   Key
     beilinsonBundle
     (beilinsonBundle,ZZ,ZZ,Ring)
+    (beilinsonBundle,List,Ring)    
+    [beilinsonBundle,BundleType]
   Headline
     compute a basic Beilinson bundle
   Usage
@@ -3757,6 +3996,37 @@ doc ///
      we substitute 0 for each variable of ring C
 ///
 
+doc ///
+   Key
+    tateData
+    (tateData, Ring)
+   Headline
+    reads TateData from the cache of an appropriate ring
+   Usage
+    T = tateData S
+   Inputs
+    S:Ring
+     such as produced by productOfProjectiveSpaces or setupRings
+   Outputs
+    T: HashTable
+   Description
+    Text
+     The functions
+     productOfProjectiveSpaces and setupRings
+     create two rings and store various data in their cache table,
+     which tateData reads.
+    Example
+     (S,E) = productOfProjectiveSpaces{1,2}
+     T = tateData S
+     peek T
+     T === S.TateData
+     peek E.TateData
+     T === E.TateData
+   SeeAlso
+    productOfProjectiveSpaces
+    setupRings
+    BeilinsonBundles
+///
 
 end--
 
