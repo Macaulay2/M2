@@ -1,13 +1,15 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"Points",
-    	Version => "2.0", 
-    	Date => "29 June 2008, revised by DE June 2016",
+    	Version => "3.0", 
+    	Date => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.uiuc.edu/Macaulay2/"},
      	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
-	     {Name => "David Eisenbud", Email => "de@msri.org"}	     
+	     {Name => "David Eisenbud", Email => "de@msri.org"},
+	     {Name => "Federico Galetto", Email => "galetto.federico@gmail.com", HomePage => "http://math.galetto.org"},
+	     {Name => "Joseph W. Skelton", Email => "jskelton@tulane.edu"}
 	     },
     	Headline => "computing with sets of points",
 	PackageExports => {"LexIdeals"},
@@ -705,7 +707,7 @@ doc ///
    Description
     Text
      The package has routines for points in affine and projective spaces. The affine
-     code, some of which uses the Buchberger-Moeller algorithn to more quickly
+     code, some of which uses the Buchberger-Moeller algorithm to more quickly
      compute the ideals of points in affine space,
      was written by Stillman, Smith and Stromme. The projective code was
      written separately by Eisenbud and Popescu.
@@ -724,6 +726,10 @@ doc ///
      where the first integer denotes the ambient dimension and the second the 
      number of points. Examples are known in every projective space of dimension >=6
      except for P^9.
+     
+     In version 3.0, F. Galetto and J.W. Skelton added code to
+     compute ideals of fat points and projective points using
+     the Buchberger-Moeller algorithm.
 ///
 
 --documentation for the code for points in projective space
