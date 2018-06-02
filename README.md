@@ -16,9 +16,9 @@ Project name, project leader
 5. Matroids , Justin Chen jchen@math.berkeley.edu
 6. Algebraic Stats , Alex Grosdos algrosdoskou@uos.de
 7. Reaction Networks , Alexandru Iosif alexandru.iosif@ovgu.de
-8. Polyhedra , Lars Karstner kastner@math.tu-berlin.de
+8. Polyhedra , Lars Kartner kastner@math.tu-berlin.de
 9. Sums of Squares , Diego Cifuentes diegcif@gmail.com
-10. Tropical and Normal Toric Varieties , Diane Maclagan  d.maclagan@warwick.ac.uk
+10. <a href="https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Tropical-and-Normal-Toric-Varieties">Tropical and Normal Toric Varieties</a> , Diane Maclagan  d dot maclagan at warwick.ac.uk
 11. Desingularization Trees , Doug Leonard leonada@auburn.edu
 12. Homological Algebra , David Eisenbud de@msri.org and Frank-Olaf Schreyer schreyer@math.uni-sb.de
 
