@@ -30,6 +30,7 @@ newPackage(
     	)
 
 export {
+    "multMap",
     "setupRings",
     "symExt",
     "cohomologyMatrix",
@@ -70,6 +71,7 @@ export {
     "CohomRing",
     "TateRingData",
     "TateData",
+    "bgg",
     --the following could all be part of ChainComplexExtras
     "prependZeroMap",
     "appendZeroMap",
@@ -204,14 +206,6 @@ productOfProjectiveSpaces(List) := opts -> n -> (
 
 productOfProjectiveSpaces ZZ := opt -> n -> (productOfProjectiveSpaces(toList(n:1)))
 
-TEST ///  
---loadPackage("TateOnProducts",Reload=>true)
-(S,E) = productOfProjectiveSpaces{1,1}
-C = cornerComplex (S^1,{0,0},{3,3})
-betti C
-betti( C**E^{{3,3}}[6] )
-cohomologyMatrix (C, {0,0},{3,3})
-///
 
 
 
@@ -2295,6 +2289,99 @@ M' = submatrixByDegrees(M, {10,11},{11,11});
 betti M'
 ///
 
+--preliminaries for bgg:
+multMap = method()
+
+-*
+multMap(Module,List,List):= (P,a',a) ->(
+    --produces a map from 
+    --a sum of copies of S^a to a sum of copies of S^a'.
+    --If the grading is changed to the "correct" one for E,
+    --this code will need fixing!
+    if sum a' - sum a != 1 then error"Sums must differ by 1";
+    (S,E) := (tateData ring P)#Rings;
+    pos := positions(gens E, e-> degree e == a'-a);
+    Ba := matrix basis(a,P);
+    Ba' := matrix basis(a',P);
+    map(S^{(numcols Ba'):a'}, S^{(numcols Ba):a},
+	 sum(pos,i-> 
+	     S_i*
+	   (sum(numrows Ba, ell-> 
+		   sub(contract((transpose Ba')_{ell},E_i*Ba^{ell}),S))))
+       )
+)
+*-
+
+multMap(Module,List,List):= (P,a',a) ->(
+    --produces a map from 
+    --a sum of copies of S^a to a sum of copies of S^a'.
+    --If the grading is changed to the "correct" one for E,
+    --this code will need fixing!
+    if sum a' - sum a != 1 then error"Sums must differ by 1";
+    (S,E) := (tateData ring P)#Rings;
+    pos := positions(gens E, e-> degree e == a'-a);
+    ee := apply(gens E, e->map(P,P**E^{degree e},e));
+    Ba := basis(a,P)**E^{a'-a};
+    Ba' :=basis(a',P);
+    map(S^{(numcols Ba'):a'}, S^{(numcols Ba):a},
+	 sum(pos, p->S_p*sub(ee_p*Ba//Ba', S))
+	 )
+       )
+
+///
+
+(S,E) = productOfProjectiveSpaces{1,2}
+P = truncate({1,1},E^1)
+a = {1,2}
+a' = {2,2}
+m = multMap(P,a',a)
+degrees source m
+degrees target m
+betti m
+///
+
+bgg = method()
+bgg Module := P -> (
+    (S,E) := (tateData ring P)#Rings;
+    D := (degrees basis P)_1;
+    Ds := sort apply(D, d->(sum d,d));
+    minP := min(Ds/first);
+    maxP := max(Ds/first);
+    freeModuleDegs := hashTable apply(toList(minP..maxP), i-> 
+	    (-i=>select(Ds,d-> d_0 == i)/last)
+	    );
+    LP := new ChainComplex;
+    LP.ring = S;
+--define the modules as direct sums, with one degree per summand
+    scan(toList(minP..maxP), i->
+	LP#(-i) = directSum apply(unique freeModuleDegs#(-i), d -> 
+	    S^(select(freeModuleDegs#(-i), k-> d ==k))));
+--define the maps
+    tar:=S^0; sour := S^0; utar := {};usour := {}; a:= 0;a':=0;
+    u := L->unique degrees L;
+    scan(toList(min LP+1..max LP), k->(
+	    tar = LP_(k-1);
+	    sour = LP_k;
+	    utar = u tar;
+	    usour = u sour;
+	    LP.dd#k = sum(#utar, i-> 
+		      sum(#usour, j->(
+	              a' = -utar_i;
+	              a = -usour_j;
+                      map(tar,sour,
+    		         tar_[i]*multMap(P,a',a)*(sour^[j])
+		         )
+		     )))
+               )
+	);
+   LP)
+
+
+///
+restart
+loadPackage("TateOnProducts", Reload=>true)
+///
+
 
 --------------------------
 -- Begin of the documentation
@@ -3937,7 +4024,7 @@ doc ///
 document {
      Key => {isQuism, (isQuism,ChainComplexMap)},
      Headline => "Test to see if the ChainComplexMap is a quasiisomorphism.",
-     Usage => "isChainComplexMap(phi)",
+     Usage => "isQuism(phi)",
      Inputs => {
 	  "phi" => {},
      },
@@ -4027,6 +4114,127 @@ doc ///
     setupRings
     BeilinsonBundles
 ///
+
+
+doc ///
+   Key
+    bgg
+   Headline
+    make a linear free complex from an exterior module
+   Usage
+    LP = bgg P
+   Inputs
+    P: Module
+     module over an exterior algebra 
+   Outputs
+    LP:ChainComplex
+     over a symmetric algebra 
+   Description
+    Text
+     Here P is an E-module, and LP is a linear complex of free S-modules,
+     where (S,E) is the Koszul pair corresponding to a 
+     product of projective spaces. 
+     
+     The complex LP is that produced from P by the 
+     Bernstein-Gel'fand-Gel'fand functor called L in
+     our paper
+     @ HREF("http://arxiv.org/abs/","Tate Resolutions on Products of Projective Spaces") @.
+    Example
+     (S,E) = productOfProjectiveSpaces{1,2}
+     P = prune truncate({1,2},E^1)**E^{{1,2}};
+     LP = bgg P
+     netList apply(toList(min LP..max LP), i-> decompose ann HH_i LP)
+     M = prune HH_0 LP
+     betti res M
+     high = {2,2}
+     cohomologyMatrix(M, -high, high)
+--the corner complex code is slightly off:
+     C = cornerComplex(M,-high,high)
+     betti cornerComplex (C,{1,1})
+///
+     productOfProjectiveSpaces{1,2}
+   SeeAlso
+    productOfProjectiveSpaces
+///
+
+-----TESTS-----
+TEST///
+(S,E) = productOfProjectiveSpaces{1,2}
+P = prune truncate({1,2},E^1)
+L = bgg P
+assert( (betti L) === new BettiTally from {(-3,{-1,-2},-3) => 6, (-5,{-2,-3},-5) => 1, (-4,{-2,-2},-4)
+      --------------------------------------------------------------------------------------------------------
+      => 3, (-4,{-1,-3},-4) => 2} );
+assert all(min L +1..max L, i-> L.dd_(i-1)*L.dd_i == 0)
+assert( (prune HH_(-3) L) === cokernel map((S)^{{0,1},{0,1},{0,1}},(S)^1,{{x_(1,0)}, {-x_(1,1)},
+       {-x_(1,2)}}) );
+///
+
+TEST ///  
+(S,E) = productOfProjectiveSpaces{1,1};
+C = cornerComplex (S^1,{0,0},{3,3});
+assert (cohomRing = ZZ[h,k];
+    (sub (cohomologyMatrix (C, {0,0},{3,3}), cohomRing) === 
+	map(cohomRing^4,cohomRing^4,{{4, 8, 12, 16}, {3, 6, 9, 12}, {2, 4, 6, 8}, {1, 2, 3, 4}}))
+///
+
+TEST ///
+(S,E) = productOfProjectiveSpaces{1,2}
+M = S^{{-1,2}}
+high = {3,3}
+C = cornerComplex(M,-high,high)
+betti C
+BW = beilinsonWindow C
+B = beilinson C
+netList toList tallyDegrees B
+cohomologyMatrix(M, -high,high)
+cohomologyMatrix(BW, -high,high)
+netList apply(toList(min B..max B), i-> ann HH_(i) B)
+M' = HH_0 B
+assert(beilinsonWindow cornerComplex(M',-high,high) == BW)
+///
+
+TEST ///
+(S,E) = productOfProjectiveSpaces{1,2}
+M = coker random(S^2, S^{2:{-1,-1}})
+high = {3,3}
+C = cornerComplex(M,-high,high);
+BW = beilinsonWindow C
+betti BW
+B = beilinson C
+tallyDegrees B
+netList toList tallyDegrees B
+cohomologyMatrix(M, -high,high)
+cohomologyMatrix(BW, -high,high)
+netList apply(toList(min B..max B), i-> ann HH_(i) B)
+M' = HH_0 B
+assert isIsomorphic(M',M)
+--note: isomorphic, not equal!
+cohomologyMatrix(M', -high, high)
+beilinsonWindow cornerComplex(M',-high,high)
+assert(beilinsonWindow cornerComplex(M',-high,high) == BW)
+///
+
+TEST ///
+(S,E) = productOfProjectiveSpaces{1,2}
+M = coker random(S^2, S^{2:{-1,-1}})
+high = {3,3}
+C = cornerComplex(M,-high,high);
+B = beilinson C
+assert isIsomorphic(M',M)
+--note: isomorphic, not equal!
+///
+
+TEST ///
+(S,E) = productOfProjectiveSpaces{1,2}
+M = coker random(S^2, S^{2:{-1,-1}})
+high = {3,3}
+C = cornerComplex(M,-high,high);
+B = beilinson C
+assert isIsomorphic(M',M)
+--note: isomorphic, not equal!
+///
+
 
 end--
 
