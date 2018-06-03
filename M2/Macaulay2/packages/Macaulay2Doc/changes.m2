@@ -41,7 +41,7 @@ document {
 	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." }
      		    },
      	       UL {
-	       	    LI { TO "::", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
+	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
      		    }
 	       },
      	  LI { "improved packages:",
