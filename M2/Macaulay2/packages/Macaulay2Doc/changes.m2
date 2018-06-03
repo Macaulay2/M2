@@ -31,8 +31,6 @@ document {
      Key => "changes made for the next release",
      }
 
-I've fixed a longstanding bug in VersalDeformations. 
-
 document {
      Key => "changes, 1.11.1",
      UL {
