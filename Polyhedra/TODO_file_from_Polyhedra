@@ -1,0 +1,46 @@
+vertexEdgeMatrix and vertexFacetMatrix seem not to be needed. Also they print indices in the output matrices?
+
+documentation:
+*  statePolytope is documented wrong. It produces more output.
+
+rays has weird definition
+saveSession in own file?
+polar is now defined via dual of underlyingCone. Will this fail for having linealitySpace?
+
+generate polymake tests for:
+*  hilbertBasis (DONE)
+*  minkowskiSum (this used to ignore the lineality space completely?) (DONE)
+*  normalFan (DONE)
+*  faceFan
+
+Thoughts:
+*  Sanitize input matrices at some point?
+*  There are too many intersection methods.
+*  Completeness of fans is probably very expensive to check at the moment.
+*  What is a better naming scheme for the properties? Should we adapt the
+   polymake scheme?
+
+Packages that use Polyhedra:
+[lars@sunfish packages]$ grep -R "Polyhedra" . | grep needsPackage
+./MonomialAlgebras.m2:needsPackage "Polyhedra"
+./Polyhedra2.m2:needsPackage "PolyhedralObjects"
+./SRdeformations.m2:needsPackage "Polyhedra"
+./LatticePolytopes.m2:needsPackage "Polyhedra"
+./supplanted-packages/Polyhedra.m2:     F << "needsPackage \"Polyhedra\"" << endl;
+./Macaulay2Doc/test/schenck-book-2.m2:needsPackage "Polyhedra"
+
+Packages that should go away:
+*  PolyhedralObjects.m2
+*  Polyhedra2.m2
+*  polymake.m2 or polymakeInterface.m2
+
+Undocumented methods, that have been removed:
+*  newMinkSum: No reference for algorithm given and too long to fix.
+*  dualCayley, dualCayleyFace: Not documented at all, never tested.
+
+Methods without tests
+*  stellarSubdivision
+*  cellDecomposition
+*  faceFan
+*  polarFace
+*  Everything concerning PolyhedralComplex
