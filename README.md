@@ -21,4 +21,4 @@ Project name, project leader
 10. <a href="https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Tropical-and-Normal-Toric-Varieties">Tropical and Normal Toric Varieties</a> , Diane Maclagan  d dot maclagan at warwick.ac.uk
 11. Desingularization Trees , Doug Leonard leonada@auburn.edu
 12. Homological Algebra , David Eisenbud de@msri.org and Frank-Olaf Schreyer schreyer@math.uni-sb.de
-
+  
