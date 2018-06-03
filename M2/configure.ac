@@ -1247,6 +1247,14 @@ then AC_MSG_CHECKING(whether package atomic_ops is provided)
      fi
 fi
 
+BUILD_gc=yes
+BUILD_ALWAYS="gc $BUILD_ALWAYS"
+# We always build gc now, because the homebrew bdw-gc package (at least) builds
+# the library in such a way that running the tests in the package
+# "CoincidentRootLoci" results in several crashes with the message "Too many
+# heap sections: Increase MAXHINCR or MAX_HEAP_SECTS".  Perhaps our use of the
+# configure option "--enable-large-config" is what makes the difference.
+
 AC_SUBST(GC_LIBS)
 if test $BUILD_gc = no
 then AC_MSG_CHECKING(whether package bdw-gc is provided)
