@@ -11,7 +11,7 @@ newPackage(
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
-        OptionalComponentsPresent => try get "!qepcad -h" then true else false,
+        OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
         CacheExampleOutput => true,
         Reload => false
 )
