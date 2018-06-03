@@ -107,7 +107,7 @@ coarseMultigradedRegularity ChainComplex := o-> F -> (
     --replace with D = hashTable
     L := flatten apply(length D, i-> apply(D_i, s -> s-toList(r:i)));
     regs := apply(r, p-> max(apply(L, q-> q_p)));
-    d := regularity F;
+    d := max(regularity F, sum regs);
     e := d-sum regs;
     e' := floor(e/r);
     f := e-r*e';
@@ -2936,7 +2936,7 @@ doc ///
        forms the corner complex of the sheaf F represented by M,
        computed in such a way that all the cohomology groups of
        twists F(a) of F can be computed for low <= a <= high.
-
+       
        The call
        
        cornerComplex(T,c)
@@ -2944,43 +2944,79 @@ doc ///
        forms the corner complex with corner c of a (part of a) Tate resolution T as defined in
        @  HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @. 
        
+       In the following we will produce a corner complex cT with
+       corner at c =\{-2,-1\}. To do this we need a big enough part
+       T of a Tate resolution so that all the strands around
+       the corner are exact. This example corresponds to the
+       Example of Section 4 of our paper referenced above. The Tate resolution
+       in question is that corresponding to a rank 3 natural
+       sheaf on P^1xP^1.
      Example
         (S,E) = productOfProjectiveSpaces{1,1}
+	low = {-4,-4};high = {3,2};
 	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>8))[1];
-        T=trivialHomologicalTruncation(T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7],-5,6);
-    	betti T
-	cohomologyMatrix(T,-{4,4},{3,2})
-    	fqT=firstQuadrantComplex(T,-{2,1});
-    	betti fqT	
-	cohomologyMatrix(fqT,-{4,4},{3,2})
-	cohomologyMatrix(fqT,-{2,1},-{1,0})
-	lqT=lastQuadrantComplex(T,-{2,1});
-    	betti lqT	
-	cohomologyMatrix(lqT,-{4,4},{3,2})
-	cohomologyMatrix(lqT,-{3,2},-{2,1})
-	cT=cornerComplex(T,-{2,1});
+	T2=res(coker upperCorner(T1,{4,3}),LengthLimit=>13)[7];
+     Text
+        Finally, we can define T, 
+	the sufficient part of the Tate resolution:
+     Example
+        T=trivialHomologicalTruncation (T2,-5,6);
+	cohomologyMatrix(T,low,high)	
+     Text
+        Now the corner complex at c:
+     Example
+        c =  -{2,1};
+	cT=cornerComplex(T,c);
 	betti cT	
-	cohomologyMatrix(cT,-{4,4},{3,2})
-///
-{*     Example
-        (S,E) = productOfProjectiveSpaces {1,2};
-	T1= (dual res( trim (ideal vars E)^2,LengthLimit=>4))
-	isChainComplex T1
-	tallyDegrees T1
-	cohomologyMatrix(T1,-{10,10},{10,10})
-	cohomologyMatrix(T1[-3],-{10,10},{10,10})
-	T2=T1++T1**E^{{1,1}}[2]
-    	T3=firstQuadrantComplex(T2,-{1,1})
-	d= nonzeroMax T3;
-	T4=res(coker T3.dd_d,LengthLimit=>13)[-d];
-	T=removeZeroTrailingTerms lastQuadrantComplex(T4,-{3,3})
-	betti T
-        cT=cornerComplex(T,-{1,1})
+	cohomologyMatrix(cT,low,high)
+     Text
+        The corner complex is built from a first quadrant
+	complex fqT and a last quadrant complex lqT
+	connected by the corner map between these complexes.
+     Example
+    	fqT=firstQuadrantComplex(T,c);
+	lqT=lastQuadrantComplex(T,c);
+	cohomologyMatrix(fqT,low,high)
+	cohomologyMatrix(lqT,low,high)
+     	betti fqT
+     	betti lqT	
 	betti cT
-	cohomologyMatrix(cT,-{4,4},{3,3})
-	cohomologyMatrix(T,-{4,4},{3,3})	
-*}
-
+     Text
+        Here the corner map is cT.dd_2
+     Example
+        betti (cT.dd_2)
+     Text
+        In general the corner map is a chain complex map
+	from lqT to fqT spread over several homological degrees.
+-----------------
+     Text
+        Putting the corner in c = \{,\} we get a different 
+	picture:
+     Example
+        c = {-1,-1}
+	cT=cornerComplex(T,c);
+	betti cT	
+	cohomologyMatrix(cT,low,high)
+     Text
+        The corner complex is built from a first quadrant
+	complex fqT and a last quadrant complex lqT
+	connected by the corner map between these complexes.
+     Example
+    	fqT=firstQuadrantComplex(T,c);
+	lqT=lastQuadrantComplex(T,c);
+	cohomologyMatrix(fqT,low,high)
+	cohomologyMatrix(lqT,low,high)
+     	betti fqT
+     	betti lqT	
+	betti cT
+     Text
+        Here the corner map is cT.dd_2
+     Example
+        betti (cT.dd_2)
+     Text
+        In general the corner map is a chain complex map
+	from lqT to fqT spread over several homological degrees.
+///
 
 -------------------------------------------------
 -- Beinson monads, Tate extension              --
@@ -3542,10 +3578,6 @@ doc ///
      betti res M
      high = {2,2}
      cohomologyMatrix(M, -high, high)
---the corner complex code is slightly off:
-     C = cornerComplex(M,-high,high)
-     betti cornerComplex (C,{1,1})
-     productOfProjectiveSpaces{1,2}
    SeeAlso
     productOfProjectiveSpaces
 ///
@@ -4322,6 +4354,68 @@ C=chainComplex({map(M0,M1,matrix{{x^2}}),map(M1,M2,matrix{{y}})})
 isChainComplex C
 isHomogeneous C
 
-	
-	
+--------------
+loadPackage ("TateOnProducts",Reload=>true)
+(S,E) = productOfProjectiveSpaces{2,2}	
+S' = coefficientRing S[gens S]
+loadPackage"randomIdeals"
+ran = L -> substitute(randomMonomialIdeal(L,S'), S)
+
+resMax = method(Options => options coarseMultigradedRegularity)
+resMax ChainComplex := o-> F -> (
+    --we assume F starts in homol degree 0.
+    el := length F;
+    r := degreeLength ring F;
+    D := apply((min F..max F), i-> degrees F_i);
+    --replace with D = hashTable
+    L := flatten apply(length D, i-> apply(D_i, s -> s-toList(r:i)));
+    regs := apply(r, p-> max(apply(L, q-> q_p)));
+    d := max(regularity F, sum regs);
+    e := d-sum regs;
+    e' := floor(e/r);
+    f := e-r*e';
+    (regs, d, regs + toList(#regs:e') + (toList(f:1)|toList((#regs-f):0)))
+    )
+resMax Module := o->M->resMax(res prune M)
+findMins = L->(
+    t = #L_0;
+    P = ZZ/101[vars(0..t-1)];
+    I := ideal apply(L, ell-> product(t, j-> P_j^(ell_j)));
+    apply(flatten entries mingens I, m-> flatten exponents m)
+    )
+
+coarseSet = M ->(
+    (twistreg,d,reg) = resMax M;
+    d' = d-sum twistreg;
+    apply(1+d', i-> {twistreg_0+i,twistreg_1+d'-i}))
+
+coarseSet M
+I = ran{2,3,4,5}
+--interesting example, where the degree for linear res is {1,5}
+I = ideal(x_(0,1)*x_(0,2),x_(0,2)^2*x_(1,1),
+    x_(0,1)*x_(1,0)*x_(1,1)^2,x_(1,0)^4*x_(1,2))
+M = S^1/I
+coarseSet(M)
+resMax M
+LL = toList({0,0}..{6,6})
+L = findMins select(LL,c->(
+	F = res prune truncate(c,S^1/I);
+    	all(toList(min F..max F-1),i-> 
+	    max apply(degrees F_i, d->sum d) == i+sum c
+	    )
+	))
+high = {9,9};low = {0,0}
+cohomologyMatrix(M,low,high)
+cohomologyMatrix(T= cornerComplex(M,low,high), low, high)
+cohomologyMatrix (cornerComplex(T,{1,5}), low, high)
+cohomologyMatrix (cornerComplex(T,{1,4}), low, high)
+cohomologyMatrix (lastQuadrantComplex(T,{1,4}), low, high)
+lq = lastQuadrantComplex(T,{1,4})
+betti oo
+uq = firstQuadrantComplex(T,{1,4})
+betti oo
+ 
+
+
+
 
