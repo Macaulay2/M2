@@ -1,6 +1,7 @@
 needsPackage "FourierMotzkin"
 -- needsPackage "FourTiTwo"
 needsPackage "Normaliz"
+needsPackage "Topcom"
 
 load "./exports.m2"
 load "./symbols.m2"
