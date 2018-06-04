@@ -117,13 +117,19 @@ faceFan Polyhedron := P -> (
    fan(resultRays, resultCones)
 )
 
+cellDecompose = method(TypicalValue => List)
+cellDecompose (Polyhedron,Matrix) := (P,w) -> (
+     << "Warning: this method is deprecated. Please use regularSubdivision instead." << endl;
+regularSubdivision (P,w))
+
+
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
 --   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
 --     	    	       many entries
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
-cellDecompose = method(TypicalValue => List)
-cellDecompose (Polyhedron,Matrix) := (P,w) -> (
+regularSubdivision = method(TypicalValue => List)
+regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
    n := dim P;
    LP := latticePoints P;
    -- Checking for input errors

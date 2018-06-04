@@ -111,6 +111,7 @@ export {
    "stdSimplex",
    "saveSession",
    "regularTriangulation",
-   "barycentricTriangulation"
+   "barycentricTriangulation",
+   "regularSubdivision"
    }
 
