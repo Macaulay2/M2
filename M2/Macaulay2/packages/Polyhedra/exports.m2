@@ -110,6 +110,7 @@ export {
    "statePolytope", 
    "stdSimplex",
    "saveSession",
-   "regularTriangulation"
+   "regularTriangulation",
+   "barycentricTriangulation"
    }
 

@@ -186,6 +186,10 @@ polarFace(Polyhedron, Polyhedron) := (f, P) -> (
 isReflexive = method(TypicalValue => Boolean)
 isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
+triangulate = method()
+triangulate Polyhedron := P -> (
+     << "Warning: this method is deprecated. Please use regularTriangulation or barycentricTriangulation instead." << endl;
+barycentricTriangulation P)
 
 -- PURPOSE : Triangulating a compact Polyhedron
 --   INPUT : 'P',  a Polyhedron
@@ -194,8 +198,8 @@ isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope
 --COMMENTS : The triangulation is build recursively, for each face that is not a simplex it takes 
 --     	     the weighted centre of the face. for each codim 1 face of this face it either takes the 
 --     	     convex hull with the centre if it is a simplex or triangulates this in the same way.
-triangulate = method()
-triangulate Polyhedron := P -> (
+barycentricTriangulation = method()
+barycentricTriangulation Polyhedron := P -> (
      -- Defining the recursive face triangulation
      -- This takes a polytope and computes all facets. For each facet that is not a simplex, it calls itself
      -- again to replace this facet by a triangulation of it. then it has a list of simplices triangulating 
@@ -240,7 +244,7 @@ triangulate Polyhedron := P -> (
      -- Computing the facets of P as lists of their vertices
      (HS,v) := halfspaces P;
      (hyperplanesTmp,w) := hyperplanes P;
-     originalFacets := apply(numRows HS, i -> intersection(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
+     originalFacets := apply(numRows HS, i -> polyhedronFromHData(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
      originalFacets = apply(originalFacets, f -> (
 	       V := vertices f;
 	       (set apply(numColumns V, i -> V_{i}),set {})));
