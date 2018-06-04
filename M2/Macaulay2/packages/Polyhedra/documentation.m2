@@ -3315,9 +3315,9 @@ document {
      }
 
 document {
-     Key => {cellDecompose, (cellDecompose,Polyhedron,Matrix)},
+     Key => {regularSubdivision, (regularSubdivision,Polyhedron,Matrix)},
      Headline => "computes the regular cell decomposition",
-     Usage => " L = cellDecompose(P,w)",
+     Usage => " L = regularSubdivision(P,w)",
      Inputs => {
 	  "P" => Polyhedron => {"compact"},
 	  "w" => Matrix => {"a one row matrix, with an entry for each lattice point of the polyhedron"}
@@ -3334,7 +3334,7 @@ document {
      EXAMPLE {
 	  " P = crossPolytope 3",
 	  " w =  matrix {{1,2,2,2,2,2,1}}",
-	  " L = cellDecompose(P,w)",
+	  " L = regularSubdivision(P,w)",
 	  " apply(L,vertices)"
 	  }
      }
@@ -3551,6 +3551,27 @@ document {
 	  },
      
      PARA{}, "The generators of the three initial ideals are given in the first part of the result."
+     
+     }
+
+document {
+     Key => {simplex, (simplex,ZZ)},
+     Headline =>  "generates the d-dimensional simplex",
+     Usage => " P = simplex d",
+     Inputs => {
+	  "d" => ZZ => {"strictly positive"}
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     PARA{}, "The ",TT "d","-dimensional simplex is the convex hull of the 
+     standard basis in ",TO QQ,"^d." and the origin,
+     
+     EXAMPLE {
+	  " P = simplex 2",
+	  " vertices P"
+	  }
      
      }
 
