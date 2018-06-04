@@ -1,0 +1,7 @@
+git add FILENAME
+
+git commit -m "Insert an explanatory message here"
+
+git pull
+
+git push
