@@ -27,6 +27,8 @@ Once inside you can build M2 according to the [instructions](http://www2.macaula
 ### Add tests for PolyhedraComplex
 ### Triangulations
 What should the datatype of a triangulation be? Refactor the method computing a triangulation.
+
+Add method `regularTriangulation` for a polytope, interfacing TOPCOM. Add deprecation warning to `triangulate`. Replace internal usages of `triangulate` by `regularTriangulation`.
 ### Eliminate deprecation warnings in documentation.
 ### Normaliz interface
 There is a Normaliz package, can we use it to compute Hilbert bases of cones? Especially cones with lineality.
