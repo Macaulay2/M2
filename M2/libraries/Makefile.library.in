@@ -148,6 +148,7 @@ else
 	$(MKDIR_P) $(LICENSE_DIR)
 	set -e ; cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ "$$p" $(LICENSE_DIR)) ; done
 endif
+	$(MKDIR_P) "@pre_exec_prefix@/@tail_librariesdir@"
 	for l in $(LIBRARIESDIR)/lib/*.dylib $(LIBRARIESDIR)/lib/*.so $(LIBRARIESDIR)/lib/*.so.* ;	\
 	do if [ -f "$$l" ] ;										\
 	   then echo "copying $$l to @pre_exec_prefix@/@tail_librariesdir@" ;				\
