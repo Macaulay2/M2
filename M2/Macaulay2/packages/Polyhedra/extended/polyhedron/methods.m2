@@ -117,12 +117,6 @@ faceFan Polyhedron := P -> (
    fan(resultRays, resultCones)
 )
 
-cellDecompose = method(TypicalValue => List)
-cellDecompose (Polyhedron,Matrix) := (P,w) -> (
-     << "Warning: this method is deprecated. Please use regularSubdivision instead." << endl;
-regularSubdivision (P,w))
-
-
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
 --   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
@@ -192,10 +186,6 @@ polarFace(Polyhedron, Polyhedron) := (f, P) -> (
 isReflexive = method(TypicalValue => Boolean)
 isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
-triangulate = method()
-triangulate Polyhedron := P -> (
-     << "Warning: this method is deprecated. Please use regularTriangulation or barycentricTriangulation instead." << endl;
-barycentricTriangulation P)
 
 -- PURPOSE : Triangulating a compact Polyhedron
 --   INPUT : 'P',  a Polyhedron

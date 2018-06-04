@@ -50,6 +50,9 @@ load "./core/globalMethods.m2"
 load "./core/contains.m2"
 load "./core/intersection.m2"
 
+-- Deprecated methods collected in one file
+load "./deprecated.m2"
+
 -------------------------------------------------------------------------------
 -- Extended
 --

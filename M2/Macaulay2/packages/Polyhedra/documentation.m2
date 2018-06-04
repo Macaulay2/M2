@@ -3566,7 +3566,7 @@ document {
 	  },
      
      PARA{}, "The ",TT "d","-dimensional simplex is the convex hull of the 
-     standard basis in ",TO QQ,"^d." and the origin,
+     standard basis in ",TO QQ,"^d. and the origin",
      
      EXAMPLE {
 	  " P = simplex 2",
