@@ -1,0 +1,9 @@
+--for whomever has never used git before (like me)
+
+git add FILENAME
+
+git commit -m "Insert an explanatory message here"
+
+git pull
+
+git push
