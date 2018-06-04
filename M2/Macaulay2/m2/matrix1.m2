@@ -127,7 +127,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	       );
 	  new Matrix from {
 	       symbol target => M,
-	       symbol RawMatrix => m,
+	       symbol RawMatrix => reduce(M,m),
 	       symbol source => if class N === Module then N else new Module from (R, rawSource m),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
@@ -144,7 +144,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	       );
 	  new Matrix from {
 	       symbol target => M,
-	       symbol RawMatrix => h,
+	       symbol RawMatrix => reduce(M,h),
 	       symbol source => if class N === Module then N else new Module from (R, rawSource h),
 	       symbol ring => R,
 	       symbol cache => new CacheTable

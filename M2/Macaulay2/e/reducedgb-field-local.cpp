@@ -478,9 +478,11 @@ void ReducedGB_Field_Local::store_in_table(const POLY &h,
 
 void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
-  buffer o;
-  text_out(o);
-  emit(o.str());
+  if (M2_gbTrace >= 4) {
+      buffer o;
+      text_out(o);
+      emit(o.str());
+    }
   if (f.f == 0) return;
   T1 = MonomialTable::make(R->n_vars());
   gbvector head;

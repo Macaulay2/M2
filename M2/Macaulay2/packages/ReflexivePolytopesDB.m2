@@ -1,7 +1,7 @@
 newPackage(
         "ReflexivePolytopesDB",
-        Version => "0.1", 
-        Date => "25 June 2017",
+        Version => "0.9", 
+        Date => "6 May 2018",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
@@ -13,22 +13,29 @@ newPackage(
         )
 
 export {
-    "exampleFromKS",
     "matrixFromString", -- doc
+    "generateOffline", -- doc
     "getKreuzerSkarke", -- doc
-    "getKreuzerSkarkeDim3",
-    "parseKS",
-    "parseKSDim3",
+    "getKreuzerSkarkeDim3", -- doc
+    "parseKS", -- doc
+    -- Option names
     "Access",
-    "Expected"
+    "Expected",
+    "Vertices",
+    "Facets",
+    "LatticePoints",
+    "DualLatticePoints",
+    "H12"
     }
 
+-*
 exampleFromKS = method()
 exampleFromKS(ZZ, String) := (which, str) -> (
     L := parseKS str;
     eg := L#which;
     (eg#0, matrixFromString eg#1)
     )
+*-
 
 matrixFromString = method()
 matrixFromString String := (str) -> (
@@ -75,15 +82,36 @@ getURL(String, String) := String => (str, access) -> (
     else error "expected Access argument to be \"m2\" (default), \"curl\", or \"wget\""
     )
 
-getKreuzerSkarke = method(Options=>{Limit=>1000, Access=>"m2"})
+getKreuzerSkarke = method(Options=>{
+        Limit=>1000, 
+        Access=>"m2",
+        LatticePoints => null,
+        DualLatticePoints => null,
+        Vertices => null,
+        Facets => null,
+        H12 => null
+        })
+
 getKreuzerSkarke(ZZ,ZZ) := opts -> (h11,h12) -> (
-    --str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?M=&V=&N=&F=&h11="|toString h11|"&h12="|toString h12|"&chi=&L="|toString opts.Limit;
-    str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11|"&h12="|toString h12|"&L="|toString opts.Limit;
-    getURL(str, opts.Access)
+    getKreuzerSkarke(h11, opts, H12=>h12)
     )
-getKreuzerSkarke(ZZ) := opts -> (h11) -> (
-    --str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?M=&V=&N=&F=&h11="|toString h11|"&h12="|toString h12|"&chi=&L="|toString opts.Limit;
-    str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11|"&L="|toString opts.Limit;
+
+getKreuzerSkarke ZZ := opts -> (h11) -> (
+    getopt := (ksStr, m2Key, opts) -> (
+        if opts#m2Key === null then ""
+        else (ksStr | "=" | toString opts#m2Key)
+        );
+    valV := getopt("V", Vertices, opts);
+    valM := getopt("M", LatticePoints, opts);
+    valN := getopt("N", DualLatticePoints, opts);
+    valF := getopt("F", Facets, opts);
+    valH21 := getopt("h12", H12, opts);
+    valL := getopt("L", Limit, opts);
+    str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11;
+    ksopts := {valV, valM, valN, valF, valH21, valL};
+    ksopts = select(ksopts, x -> x =!= "");
+    str = concatenate between("&", prepend(str,ksopts));
+    --str := "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11="|toString h11|"&L="|toString opts.Limit;
     getURL(str, opts.Access)
     )
 
@@ -95,15 +123,18 @@ getKreuzerSkarkeDim3 = () -> (
 
 parseKS = method()
 parseKS String := (str) -> (
-    -- result is a List of strings.
+    -- result is a List of pairs of strings.
     locA := regex("<b>Result:</b>\n", str);
     locB := regex("#NF", str);
     if locB === null then locB = regex("Exceeded", str);
-    if locA === null or locB === null then error "data not in correct Kreuzer-Skarke format";
-    firstloc := locA#0#0 + locA#0#1;
-    lastloc := locB#0#0;
+    --if locA === null or locB === null then error "data not in correct Kreuzer-Skarke format";
+    firstloc := if locA === null then 0 else locA#0#0 + locA#0#1;
+    lastloc := if locB === null then #str else locB#0#0;
+    --firstloc := locA#0#0 + locA#0#1;
+    --lastloc := locB#0#0;
     cys := substring(firstloc, lastloc-firstloc, str);
     cys = lines cys;
+    cys = select(cys, s -> #s > 0);
     starts := positions(cys, s -> s#0 != " ");
     starts = append(starts, #cys);
     for i from 0 to #starts-2 list (
@@ -111,18 +142,7 @@ parseKS String := (str) -> (
         )
     )
 
-parseKSDim3 = method()
-parseKSDim3 String := (str) -> (
-    -- result is a List of strings.
-    cys := lines str;
-    starts := positions(cys, s -> s#0 != " ");
-    starts = append(starts, #cys);
-    for i from 0 to #starts-2 list (
-        cys_(starts#i), demark("\n", cys_{starts#i+1 .. starts#(i+1)-1})
-        )
-    )
-
-generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"ReflexivePolytopesDB/"})
+generateOffline = method(Options=>{Expected=>null, Limit=>1000, Prefix=>"./"})
 generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
     contents := getKreuzerSkarke(h11, h12, Limit=>opts.Limit);
     L := parseKS contents;
@@ -132,6 +152,7 @@ generateOffline(ZZ,ZZ) := opts -> (h11, h12) -> (
     filename := opts.Prefix | "ks"|h11|"+"|h12|"-n"|#L|".txt";
     << "writing file " << filename << endl;
     filename << contents << close;
+    filename
     )
 generateOffline ZZ := opts -> (h11) -> (
     contents := getKreuzerSkarke(h11, Limit=>opts.Limit);
@@ -142,25 +163,12 @@ generateOffline ZZ := opts -> (h11) -> (
     filename := opts.Prefix|"ks"|h11|"-n"|#L|".txt";
     << "writing file " << filename << endl;
     filename << contents << close;
-    )
-
-generateOfflineFiles = () -> (
-    -- generates these files, placing them inside the KreuzerSkarke directory in the current
-    -- directory.  This directory must exist already.
-    -- For each file, we do some sanity checking before writing the file.
-    generateOffline(3,Limit=>250,Expected=>244);
-    generateOffline(4,Limit=>2000,Expected=>1197);
-    generateOffline(5,Limit=>10000,Expected=>4990);
-    generateOffline(11,24,Expected=>200);
-    generateOffline(491,Expected=>1);
-    generateOffline(23,11,Limit=>1000);
-    generateOffline(7,50,Limit=>2000,Expected=>590);
-    -- the following are pretty big files
-    generateOffline(6,Limit=>20000,Expected=>17101);    
+    filename
     )
 
 -- the following line was generated using
 -- getKreuzerSkarke(3, Limit=>10)
+-- and is used for testing
 h11'3'limit'10 = ///<head><title>SEARCH RESULTS</title></head>
 <body><pre><b>Search command:</b>
 class.x -di x -He EH3:MVNFL10
@@ -229,15 +237,30 @@ Headline
   simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4
 Description
   Text
-    This package provides access to the Kreuzer-Skarke database of
-    reflexive polytops of dimension 3 and dimension 4.
+    In each given dimension $d$, it is known that the number of
+    distinct (up to invertible integral change of basis) reflexive
+    polytopes of dimension $d$ is finite in number.  For example, in
+    dimension 1 there is 1, in dimension 2, there are 16 and in
+    dimension 3, there are 4319 distinct refdlexive polytopes.
+
+    In a major work, Max Kreuzer and Harold Skarke found algorithms for
+    computing the set of such polytopes.  They used these algorithms to
+    show that there are 473,800,776 distinct 4-dimensional reflexive
+    polytopes.  The number is sufficiently large that they created
+    a website @HREF "http://hep.itp.tuwien.ac.at/~kreuzer/CY/"@
+    and an interface to access these examples.  See their website for
+    references to the algorithms used.
+        
+    This package, {\tt ReflexivePolytopesDB}, provides access to this database of
+    reflexive polytopes of dimension 3 and dimension 4.
     
     This package also contains a small part of this database for offline use,
     in case one cannot access the database.
   Text
     Here we describe a simple use of the package.  The actual
     investigation of the corresponding polytope or toric variety, or Calabi-Yau
-    hypersurface, is done in other packages.
+    hypersurface, is done in Macaulay2 with the aid of other packages,
+    such as @TO "Polyhedra::Polyhedra"@.
     
     Let's take one example polytope from the database, one whose corresponding Calabi-Yau
     3-fold has Hodge numbers $h^{1,1}(X) = 23$ and $h^{1,2}(X) = 17$.  We limit the
@@ -260,7 +283,7 @@ Description
     eg = last L
     A = matrixFromString eg_1
   Text
-    The corresponding relfexive polytope has 5 vertices, the columns of this matrix.
+    The corresponding reflexive polytope has 5 vertices, the columns of this matrix.
   Example
     needsPackage "Polyhedra"
     P = convexHull A
@@ -268,12 +291,6 @@ Description
     P2 = polar P
     (numColumns vertices P, numColumns vertices P2)
     (# latticePoints P, # latticePoints P2)
-  Text
-    or, once one has the data from the Kreuzer-Skare database ('str' above),
-    one can do the following.
-  Example
-    (header, A) = exampleFromKS(1, str)
-    
 ///
 
 doc ///
@@ -327,94 +344,55 @@ Description
     matrixFromString str
 ///
 
--- The following should be deleted and/or moved into the documentation node.
-///
-   Key
-     getKreuzerSkarke
-     (getKreuzerSkarke, ZZ)
-     (getKreuzerSkarke, ZZ, ZZ)
-   Headline
-     find reflexive polytopes corresponding to a Calabi-Yau with given Hodge numbers
-   Usage
-     getKreuzerSkarke(h11, h21, Limit=>500)
-     getKreuzerSkarke(h11, Limit=>500)
-   Inputs
-     h11:ZZ
-       The desired picard number of the Calabi-Yau hypersurface
-     h21:ZZ
-       The desired $h^{2,1}(X)$.  If not given, then all are considered.
-   Outputs
-     str:String
-       The output from the web page.  Use @TO "parseKS"@ to make this into
-       something usable from Macaulay2.
-   Description
-    Text
-      As a an example, let's take the 4th example with $h^{11}=3$, $h^{21}=53$.
-    Example
-      str = getKreuzerSkarke(5, 53, Limit=>4)
-      polytopes = parseKS str;
-      #polytopes
-      A = matrixFromString (polytopes_3)_1
-      P = convexHull A
-      P2 = polar P
-   SeeAlso
-     matrixFromString
-     getKreuzerSkarkeDim3
-///
-
-
 doc ///
 Key
   getKreuzerSkarke
   (getKreuzerSkarke, ZZ)
   (getKreuzerSkarke, ZZ, ZZ)
 Headline
-  access kreuzer-skarke dim 4 reflexive polytopes database
+  access Kreuzer-Skarke dim 4 reflexive polytopes database
 Usage
   getKreuzerSkarke(h11, Limit=>n)
   getKreuzerSkarke(h11, h12, Limit=>n)
 Inputs
   h11:ZZ
+    The desired Picard number of the Calabi-Yau hypersurface
   h12:ZZ
-  n:ZZ
+    The desired $h^{2,1}(X)$ (where $X$ is the corresponding smooth Calabi-Yau 3-fold.  If not given, then all are considered.
   Limit => ZZ
     The maximum number of examples to retrieve
+  Vertices => ZZ
+    Restrict to those examples with this number of vertices
+  Facets => ZZ
+    Restrict to those examples with this number of facets
+  LatticePoints => ZZ
+    Restrict to those examples with this number of lattice points
+  DualLatticePoints => ZZ
+    Restrict to those examples whose polar dual has this number of lattice points
+  H12 => ZZ
+    Restrict to those examples whose associated Calabi-Yau 3-fold has the given $h^{1,2}(X)$
 Outputs
   :String
+    The output from the web request (including header information).  
+    Use @TO "parseKS"@ to make this into something usable from Macaulay2.
 Description
   Text
+    As a an example, let's take the 4th example with $h^{11}=5$, $h^{21}=53$.
   Example
-    str = getKreuzerSkarke(13, 17, Limit=>10)
-    L = parseKS str
-    #L
-    eg = L_0
-    A = matrixFromString last eg
-    first eg
-    A
+    str = getKreuzerSkarke(5, Limit=>4, H12 => 53)
+    polytopes = parseKS str;
+    #polytopes
+    tope = polytopes_3
+    header = tope_0
+    A = matrixFromString tope_1
   Text
-    The first line gives some information about the example.
-    Let $\Delta$ be the convex hull of the 
-    For example, this line says that the matrix is a 4 by 7 matrix
-  Example
-    first eg
-  Example
-    A = matrixFromString last eg
-  Example
-    needsPackage "Polyhedra"
-    P = convexHull A
-    # latticePoints P
-    numColumns vertices P
-    P2 = polar P
-    # latticePoints P2
-    numColumns vertices P2
-  Text
-    
-  Example
-    getKreuzerSkarke(13, 17)
-Caveat
+    The first line gives some information about the example, see @TO "Kreuzer-Skarke headers"@ for more details.
+    The polytope is the convex hull of the columns of the matrix $A$.
 SeeAlso
   parseKS
   matrixFromString
+  "Kreuzer-Skarke headers"
+  getKreuzerSkarkeDim3
 ///
 
 doc ///
@@ -485,8 +463,62 @@ doc ///
       #LP2
       vertices P2
       numColumns vertices P2
-   Caveat
    SeeAlso
+     getKreuzerSkarke
+///
+
+doc ///
+Key
+  getKreuzerSkarkeDim3
+Headline
+  download Kreuzer-Skarke dim 3 reflexive polytopes database of 4319 examples
+Usage
+  getKreuzerSkarkeDim3()
+Outputs
+  :String
+    The output from the web request (including header information).  
+    Use @TO "parseKS"@ to make this into something usable from Macaulay2.
+Description
+  Text
+    As a an example, let's take the 101th example on this list.
+  Example
+    str = getKreuzerSkarkeDim3();
+    polytopes = parseKS str;
+    #polytopes
+    tope = polytopes_100
+    header = tope_0
+    A = matrixFromString tope_1
+  Text
+    The first line gives some information about the example, see @TO "Kreuzer-Skarke headers"@ for more details.
+    The polytope is the convex hull of the columns of the matrix $A$.
+    
+    One can use the packages @TO "Polyhedra::Polyhedra"@ and @TO "NormalToricVarieties::NormalToricVarieties"@
+    to investigate these polyhedra, and the associated toric varieties.
+  Example
+    needsPackage "Polyhedra"
+    P = convexHull A
+    P2 = polar P
+    # latticePoints P
+    # latticePoints P2
+    # vertices P
+    # vertices P2
+    isReflexive P
+  Example
+    needsPackage "NormalToricVarieties"
+    V0 = normalToricVariety normalFan P
+    dim V0
+    max V0
+    rays V0
+    V = makeSimplicial V0
+    isSimplicial V
+    isProjective V
+    isSmooth V
+    dim V
+SeeAlso
+  getKreuzerSkarke
+  matrixFromString
+  parseKS
+  "Kreuzer-Skarke headers"
 ///
 
 doc ///
@@ -499,7 +531,8 @@ doc ///
      L = parseKS str
    Inputs
      str:String
-       result of a call to @TO "getKreuzerSkarke"@
+       result of a call to @TO "getKreuzerSkarke"@, or
+       a string containing examples generated from the database
    Outputs
      L:List
        of pairs of strings
@@ -518,12 +551,66 @@ doc ///
       eg = L_3;
       header = eg_0
       A = matrixFromString eg_1
+    Text
+      The input string can also be a string containing examples from the Kreuzer-Skarke list.
+      In this case the 'header' line should start in the first character of the line, and
+      the matrix part should be indented. Blank lines are ignored.
+    Example
+      str = "4 5  M:18 5 N:22 5 H:23,17 [12]
+
+        1    0    1    1   -4
+        0    1    0    0   -1
+        0    0    3    0   -3
+        0    0    0    3   -3
+
+        "
+      parseKS str
     Text 
       See @TO "Kreuzer-Skarke headers"@
    SeeAlso
      matrixFromString
      getKreuzerSkarke
      "Kreuzer-Skarke headers"
+///
+
+doc ///
+Key
+  generateOffline
+  (generateOffline,ZZ)
+  (generateOffline,ZZ,ZZ)
+Headline
+  generate tables of reflexive 4d poytopes from Kreuzer-Skarke list
+Usage
+  filename = generateOffline(h11,h12)
+  filename = generateOffline h11
+Inputs
+  h11:ZZ
+    As in getKreuzerSkarke, the desired $h^{1,1}(X)$ of the associated Calabi-Yau 3-fold
+  h12:ZZ
+    As in getKreuzerSkarke, the desired $h^{1,2}(X)$ of the associated Calabi-Yau 3-fold
+  Limit => ZZ
+    Only download at most this many examples
+  Prefix => String
+    The directory to place the resulting file, should end in a slash, or be the empty string
+  Expected => ZZ
+    The expected number of examples.  This is tested, and an error is given if the number
+    is incorrect.
+Outputs
+  filename:String
+    The name of the file to where the examples are written
+Consequences
+  Item
+    A file is written in the directory given by {\tt prefix}. The name is
+    made out of the arguments
+Description
+  Example
+    filename = generateOffline(300, Limit=>1000, Expected=>20, Prefix=>"")
+    polytopes = parseKS get filename
+Caveat
+  This function doesn't take all of the options that getKreuzerSkarke takes,
+  and you cannot choose the file name
+SeeAlso
+  getKreuzerSkarke
 ///
 
 TEST ///
@@ -645,6 +732,25 @@ TEST ///
   assert(str == str2)
 ///
 
+TEST ///
+-- TODO: turn this into asserts.
+  needsPackage "ReflexivePolytopesDB"
+  getKreuzerSkarke(100, Limit=>10)
+  getKreuzerSkarke(100, LatticePoints=>9, Limit=>3)
+  getKreuzerSkarke(100, DualLatticePoints=>129, Limit=>3)
+  getKreuzerSkarke(100, H12=>4, DualLatticePoints=>129, Limit=>3)
+  getKreuzerSkarke(100, H12=>4, Facets=>9, Limit=>3)
+///
+
+TEST ///
+  needsPackage "ReflexivePolytopesDB"
+  str = getKreuzerSkarkeDim3();
+  polytopes3 = parseKS str;
+  assert(#polytopes3 == 4319)
+  polytopes3_10
+  assert(matrixFromString polytopes3_10_1 == id_(ZZ^3) | matrix{{-6},{-4},{-1}})
+///
+
 end--
 
 restart
@@ -657,28 +763,22 @@ viewHelp
 restart
 check "ReflexivePolytopesDB"
 
+-- Use the following lines to generate some offline files
+///
+-*
 restart
-debug needsPackage "ReflexivePolytopesDB"
-generateOfflineFiles()
-
-
-doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-Description
-  Text
-  Example
-  Code
-  Pre
-Caveat
-SeeAlso
+*-
+    needsPackage "ReflexivePolytopesDB"
+    prefix = "./ReflexivePolytopesDB/"
+    generateOffline(3,Limit=>250,Expected=>244,Prefix=>prefix);
+    generateOffline(4,Limit=>2000,Expected=>1197,Prefix=>prefix);
+    generateOffline(5,Limit=>10000,Expected=>4990,Prefix=>prefix);
+    generateOffline(11,24,Expected=>200,Prefix=>prefix);
+    generateOffline(491,Expected=>1,Prefix=>prefix);
+    generateOffline(23,11,Limit=>1000,Prefix=>prefix);
+    generateOffline(7,50,Limit=>2000,Expected=>590,Prefix=>prefix);
+    -- the following are pretty big files
+    generateOffline(6,Limit=>20000,Expected=>17101,Prefix=>prefix);    
 ///
 
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
-///
+-- see also https://arxiv.org/pdf/math/0406485.pdf

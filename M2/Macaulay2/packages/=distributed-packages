@@ -158,6 +158,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
+Seminormalization
 AlgebraicSplines
 TriangularSets
 Chordal
@@ -168,3 +169,5 @@ GroebnerWalk
 RandomMonomialIdeals
 Matroids
 NumericalImplicitization
+NonminimalComplexes
+CoincidentRootLoci

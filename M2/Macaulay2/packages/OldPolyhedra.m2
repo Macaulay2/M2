@@ -1,4 +1,4 @@
-<< "Warning: This package is deprecated. Please consider using Polyhedra.m2 instead." << endl;
+-- Warning: This package is deprecated. Please consider using Polyhedra.m2 instead.
 
 --*- coding: utf-8 -*-
 ---------------------------------------------------------------------------

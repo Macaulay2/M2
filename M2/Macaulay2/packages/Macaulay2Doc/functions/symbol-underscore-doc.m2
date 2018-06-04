@@ -70,7 +70,7 @@ document {
      }
 
 document { 
-     Key => (symbol _, Tally, Thing),
+     Key => (symbol _, VirtualTally, Thing),
      Headline => "get a count from a tally",
      Usage => "t_x",
      Inputs => {

@@ -456,7 +456,7 @@ assert( abs ( E.log P - w ) < 1e-30 )
 
 ///
 
-needsPackage "Text"
+beginDocumentation()
 
 multidoc ///
 Node

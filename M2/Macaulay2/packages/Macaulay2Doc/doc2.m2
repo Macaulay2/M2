@@ -630,7 +630,7 @@ document {
      	  (symbol ?, Symbol, IndexedVariable),
      	  (symbol ?, IndexedVariable, IndexedVariable),
      	  (symbol ?, List, List),
-     	  (symbol ?, Tally, Tally)
+	  (symbol ?, VirtualTally, VirtualTally)
 	  },
      Headline => "comparison operator",
      Usage => "x ? y", 
@@ -1014,8 +1014,8 @@ doc ///
      first exponents lcm I
   SeeAlso
     (dual,MonomialIdeal)
-    (irreducibleDecomposition,MonomialIdeal)
-    (primaryDecomposition,MonomialIdeal)
+    "PrimaryDecomposition::irreducibleDecomposition(MonomialIdeal)"
+    "PrimaryDecomposition::primaryDecomposition(MonomialIdeal)"
 ///
 
 document {

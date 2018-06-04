@@ -15,6 +15,8 @@ dnl    - make a git branch of the form release-X.Y.Z, if it's for final developm
 dnl           git checkout -b release-X.Y.Z
 dnl    - push the new branch to github and track it
 dnl           git push -u origin release-X.Y.Z
+dnl    - push the new tag to github
+dnl           git push --tags origin release-X.Y.Z
 dnl    - on the master branch, if a new branch was made for development,
 dnl      increment the version number again to X.Y.Z.1 in this file and add an
 dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
@@ -27,7 +29,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.11.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.11.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -1245,6 +1247,14 @@ then AC_MSG_CHECKING(whether package atomic_ops is provided)
      fi
 fi
 
+BUILD_gc=yes
+BUILD_ALWAYS="gc $BUILD_ALWAYS"
+# We always build gc now, because the homebrew bdw-gc package (at least) builds
+# the library in such a way that running the tests in the package
+# "CoincidentRootLoci" results in several crashes with the message "Too many
+# heap sections: Increase MAXHINCR or MAX_HEAP_SECTS".  Perhaps our use of the
+# configure option "--enable-large-config" is what makes the difference.
+
 AC_SUBST(GC_LIBS)
 if test $BUILD_gc = no
 then AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -1575,7 +1585,7 @@ if test $BUILD_lapack = yes
 then if test $added_fclibs != yes
      then LIBS="$FCLIBS $LIBS"
      fi
-     BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
+     LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
      dnl we'll need the fortran compiler to be present to compile lapack
      FORTRANUSED=yes
      if test "$FC" = ""

@@ -321,7 +321,18 @@ assert isHomogeneous h
 -- testMatrix()
 
 
-end
+-- test reduction of new matrices, broken through version 1.11
+R = QQ[x]
+I = ideal vars R
+M = I/I^3
+assert (x^2 * id_M == 0)
+f = map(M,M, {{x^2}})
+assert isWellDefined f
+assert (f == 0)
+g = map(M,M, { (0,0) => x^2 } )
+assert (g == 0)
+assert isWellDefined g
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:

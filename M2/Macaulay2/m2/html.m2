@@ -480,7 +480,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      if ulimit === null then (
-	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
+	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
 	  );
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
@@ -623,10 +623,11 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
-     if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
-     -- we load the package even if it's already been loaded, because even if it was loaded with
-     -- its documentation the first time, it might have been loaded at a time when the core documentation
-     -- in the "Macaulay2Doc" package was not yet loaded
+     -- if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
+     -- -- we load the package even if it's already been loaded, because even if it was loaded with
+     -- -- its documentation the first time, it might have been loaded at a time when the core documentation
+     -- -- in the "Macaulay2Doc" package was not yet loaded
+     -- ... but we want to build the package Style without loading any other packages
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
      installPackage(pkg, opts);
      )
@@ -1190,7 +1191,7 @@ makePackageIndex List := path -> (
      docdirdone := new MutableHashTable;
      fn << html HTML { 
 	  HEAD splice {
-	       TITLE {key, commentize headline key},
+	       TITLE {key},
 	       defaultCharSet(),
 	       links()
 	       },

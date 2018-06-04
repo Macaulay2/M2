@@ -223,6 +223,8 @@ setupModules(List,Module) := (R,M)->(
 
 
 -----DOCUMENTATION---Documentation---documentation
+beginDocumentation()
+
 doc ///
 Key
   MCMApproximations

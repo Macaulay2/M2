@@ -24,6 +24,7 @@ getpkg := memoize(
      title -> (
 	  if PackageDictionary#?title then value PackageDictionary#title
 	  else dismiss needsPackage(title,LoadDocumentation=>true)))
+getpkgNoLoad := title -> if PackageDictionary#?title then value PackageDictionary#title
 
 -----------------------------------------------------------------------------
 -- normalizing document keys
@@ -36,14 +37,28 @@ getpkg := memoize(
    --	             TO sin
    -- or
    --	             TO symbol sin
-   -- and have them all get recorded the same way
-normalizeDocumentKey := method(Dispatch => Thing)
-normalizeDocumentKey   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
-normalizeDocumentKey    Array := identity
-normalizeDocumentKey   Symbol := identity
-normalizeDocumentKey Sequence := identity
-normalizeDocumentKey  Nothing := key -> symbol null
-normalizeDocumentKey    Thing := key -> (
+   -- and have them all get recorded the same way.
+   -- But there is a problem with this whole idea -- what about keys in other packages, which can't be 
+   -- loaded now, because they might try to load the package currently being loaded?  Why not just normalize
+   -- to the string form, tacking on the package name, if given a symbol?
+normalizeDocumentKey = method(Dispatch => Thing, Options => { Package => null })
+normalizeDocumentKey   String := opts -> key -> (
+     pkg := opts#Package;
+     if pkg =!= null 
+     then (
+     	  -- here's where we used to load the package in an attempt to verify the documentation key
+	  if instance(pkg,String)
+	  then if match("::",key) then key else concatenate(pkg,"::",key)
+	  else if not instance(pkg,Package) then error("expected ",toString pkg," to be a package")
+	  else if pkg.Dictionary#?key then pkg.Dictionary#key else key
+	  )
+     else if isGlobalSymbol key then getGlobalSymbol key else key
+     )
+normalizeDocumentKey    Array := opts -> identity
+normalizeDocumentKey   Symbol := opts -> identity
+normalizeDocumentKey Sequence := opts -> identity
+normalizeDocumentKey  Nothing := opts -> key -> symbol null
+normalizeDocumentKey    Thing := opts -> key -> (
      if hasAttribute(key,ReverseDictionary) then return getAttribute(key,ReverseDictionary);
      error("can't determine symbol whose value is document tag: ",key);
      )
@@ -124,7 +139,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
 new DocumentTag from List := (DocumentTag,x) -> (
-     (nkey,fkey,pkg,title) := toSequence x;
+     -- (nkey,fkey,pkg,title) := toSequence x;
      -- if class pkg =!= Package then error("document tag specifies unloaded package: ",toString pkg);
      x)
 -- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
@@ -135,14 +150,25 @@ pkgTitle Symbol  := toString
 pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
 
+toPackageStem := key -> (
+     m := regex("[[:space:]]*::[[:space:]]*",key);
+     if m === null then (null,key)
+     else (
+	  (i,n) := m#0;
+	  pkg := substring(0,i,key);
+	  key = substring(i+n,key);
+	  (pkg,key)))
+
 makeDocumentTag = method(Dispatch => Thing, Options => {
 	  Package => null
 	  })
 makeDocumentTag DocumentTag := opts -> tag -> tag
 mdt := makeDocumentTag Thing := opts -> key -> (
-     nkey := normalizeDocumentKey key;
+     nkey := normalizeDocumentKey (key,opts);
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
+     local pkg';
+     (pkg',fkey) = toPackageStem fkey;
      pkg := (
 	  if class nkey === Symbol -* and package nkey =!= Core *- then package nkey
 	  else if opts#Package =!= null then opts#Package 
@@ -159,15 +185,16 @@ makeDocumentTag String := opts -> key -> (
 	  -- lines might be wrapped and multiple spaces are reduced to one:
 	  error("expected key to have only single interior spaces:", format key);
 	  );
-     m := regex("[[:space:]]*::[[:space:]]*",key);
-     if m === null then (mdt opts) key
-     else (
-	  (i,n) := m#0;
-	  pkg := substring(0,i,key);
-	  key = substring(i+n,key);
-	  makeDocumentTag(key,opts,Package => pkg)
-	  )
+     local pkg;
+     (pkg,key) = toPackageStem key;
+     if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package 
+     then error ("mismatching packages ",pkg," and ", opts#Package, " specified for key ",key);
+     if pkg === null then pkg = opts#Package;
+     if pkg === null 
+     then (mdt new OptionTable from {Package => pkg}) key
+     else (mdt new OptionTable from {Package => pkg}) key
      )
+
 -- a bit of experimentation...
 DocumentTag.Key = method(Dispatch => Thing)
 DocumentTag.Key DocumentTag := x -> x#0
@@ -225,7 +252,7 @@ local currentHelpTag
 fixup := method(Dispatch => Thing)
 
 valueWithText = s -> (
-     Text := value PackageDictionary#"Text";
+     Text := getpkg "Text";
      if member(Text.Dictionary, dictionaryPath) then value s
      else (
      	  sav := dictionaryPath;
@@ -246,6 +273,7 @@ toExternalStringWithText = s -> (
 
 rawKey := "raw documentation"
 rawKeyDB := "raw documentation database"
+
 fetchRawDocumentation = method()
 fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
@@ -260,6 +288,23 @@ fetchRawDocumentation DocumentTag := tag -> (
      )
 fetchRawDocumentation FinalDocumentTag := tag -> (
      fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
+     )
+
+fetchRawDocumentationNoLoad = method()
+fetchRawDocumentationNoLoad(Nothing,Thing) := (pkg,fkey) -> null
+fetchRawDocumentationNoLoad(Package,String) := (pkg,fkey) -> (		    -- returns null if none
+     d := pkg#rawKey;
+     if d#?fkey then d#fkey
+     else (
+	  if pkg#?rawKeyDB then (
+	       d = pkg#rawKeyDB;
+	       if isOpen d and d#?fkey then valueWithText d#fkey)))
+fetchRawDocumentationNoLoad(String,String) := (pkgtitle,fkey) -> fetchRawDocumentationNoLoad(getpkgNoLoad pkgtitle, fkey)
+fetchRawDocumentationNoLoad DocumentTag := tag -> (
+     fetchRawDocumentationNoLoad(getpkgNoLoad DocumentTag.Title tag, DocumentTag.FormattedKey tag)
+     )
+fetchRawDocumentationNoLoad FinalDocumentTag := tag -> (
+     fetchRawDocumentationNoLoad(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
      )
 
 getPrimary = tag -> (
@@ -500,9 +545,13 @@ file := null
 -- getting database records
 -----------------------------------------------------------------------------
 extractBody := x -> if x.?Description then x.Description
-getDoc := key -> fetchAnyRawDocumentation formatDocumentTag key
+getDoc := key -> fetchRawDocumentation makeDocumentTag key
+getDocNoLoad := key -> fetchRawDocumentationNoLoad makeDocumentTag key
 getOption := (key,tag) -> (				    -- get rid of this, keep the doc from before
      s := getDoc key;
+     if s =!= null and s#?tag then s#tag)
+getOptionNoLoad := (key,tag) -> (				    -- get rid of this, keep the doc from before
+     s := getDocNoLoad key;
      if s =!= null and s#?tag then s#tag)
 getBody := key -> getOption(key,Description)		    -- get rid of this
 -----------------------------------------------------------------------------
@@ -613,7 +662,7 @@ fixupTable := new HashTable from {
 	  val = nonempty separate val;
 	  val = apply(val, i -> replace("^[[:space:]]*(.*)[[:space:]]*$","\\1",i));
 	  if #val === 0 then error "Usage: expected content";
-	  DL flatten { "class" => "element", DT "Usage:", DD \ TT \ val } ),
+	  DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } ),
      BaseFunction => val -> (if val =!= null and not instance(val,Function) then error "expected BaseFunction option value to be a function"; val),
      Inputs => val -> (
 	  val = fixupList(val,Inputs);
@@ -735,7 +784,7 @@ apropos String := (pattern) -> (
 	  ))
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
-headline Thing := key -> getOption(key,Headline)	    -- old method
+headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
@@ -750,7 +799,6 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	       return null;
 	       ));
      if d#?Headline then d#Headline
-     else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s) else ""
 -----------------------------------------------------------------------------
@@ -818,9 +866,9 @@ if version#"operating system" === "MicrosoftWindows" then (
      rootURI = "file:///" | rootPath;		   -- e.g.: "file:///C:/cygwin"
      )
 
-makeDocBody := method(Dispatch => Thing)
+makeDocBody = method(Dispatch => Thing)
 makeDocBody Thing := key -> (
-     tag := makeDocumentTag(key,Package=>null);
+     tag := makeDocumentTag key;
      pkg := getpkg DocumentTag.Title tag;
      ptag := getPrimary tag;
      rec := fetchRawDocumentation ptag;
@@ -957,7 +1005,13 @@ processInputOutputItems := (key,fn) -> x -> (
 		    TO2{ 
 			 [ if options key =!= null then key else fn, optsymb],
 			 concatenate(toString optsymb," => ...") },
-		    LATER { () -> commentize (headline [fn,optsymb]) }
+		    LATER { () -> commentize (headline (
+				   if options key =!= null and (options key)#?optsymb
+				   then [key,optsymb]
+				   else if options fn =!= null and (options fn)#?optsymb
+				   then [fn,optsymb]
+				   else error (toString optsymb, " is not an option for ", toString key, ", nor for ", toString fn)
+				   )) }
 		    ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
@@ -1317,20 +1371,15 @@ theAugmentedMenu := S -> (
      )
 
 help Symbol := S -> (
-     checkLoadDocumentation();
-     -- s := value S;
      if package S === Core then checkLoadDocumentation();
-     currentHelpTag = makeDocumentTag(S,Package=>null);
+     currentHelpTag = makeDocumentTag S;
      a := smenu apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
-     -- b := smenu documentableMethods s;
      ret := fixup DIV { topheader S, synopsis S, makeDocBody S,
 	  if #a > 0 then DIV1 { SUBSECTION {"Functions with optional argument named ", toExternalString S, " :"}, a},
--- 	  if #b > 0 then DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", toExternalString s, " :"}, b),
           caveat S, seealso S,
      	  documentationValue(S,value S),
 	  sourcecode S, type S, 
 	  theMenu S
-	  -- if instance(value S, Function) then theAugmentedMenu S else theMenu S
 	  };
      currentHelpTag = null;
      ret)
