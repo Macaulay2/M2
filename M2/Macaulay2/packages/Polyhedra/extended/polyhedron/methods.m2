@@ -263,6 +263,7 @@ latticeVolume Polyhedron := P -> getProperty(P, latticeVolume)
 --  OUTPUT : QQ, giving the volume of the polytope
 volume = method(TypicalValue => QQ)
 volume Polyhedron := P -> (
+   if isEmpty P then return 0;
    d := dim P;
    result := latticeVolume P;
    result/(d!)
