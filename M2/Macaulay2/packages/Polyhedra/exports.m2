@@ -109,6 +109,7 @@ export {
    "secondaryPolytope", 
    "statePolytope", 
    "stdSimplex",
+   "simplex",
    "saveSession",
    "regularTriangulation",
    "barycentricTriangulation",
