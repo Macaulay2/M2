@@ -24,8 +24,8 @@ doc ///
 		$\bullet$ @TO "isWeaklyReversible"@
 
 		$\bullet$ @TO "steadyStateEquations"@
-
-    $\bullet$ @TO "conservationEquations"@
+		
+		$\bullet$ @TO "conservationEquations"@
 
 	--	$\bullet$ @TO "injectivityTest"@
 
@@ -364,7 +364,6 @@ doc ///
 
     ///
 
-
 doc ///
     Key
     	modificationOfTwoSubstratesI
@@ -518,6 +517,46 @@ doc ///
 	Example
 	     sub(N, {"S_0" => "A", "X_1" => "B", "X_2" => "C", "S_1" => "D"})
  ///
+
+doc ///
+    Key
+    	negativeLaplacian
+	(negativeLaplacian,ReactionNetwork)
+    Headline
+    	computes the negative of the Laplacian matrix of a Reaction Network       
+    Description
+        Text
+	    Computes the negative of the (unweighted) Laplacian matrix of
+    	    the directed graph associated with a Reaction Network
+    	Example
+	    N = reactionNetwork "A <--> B"
+	    negativeLaplacian N
+	Text
+	    For the one site phsophorylation network:
+	Example
+	    N = oneSiteModificationA()
+	    negativeLaplacian N
+///
+
+doc ///
+    Key
+    	negativeWeightedLaplacian
+	(negativeWeightedLaplacian,ReactionNetwork)
+    Headline
+    	computes the negative of the wighted Laplacian matrix of a Reaction Network       
+    Description
+        Text
+	    Computes the negative of the weighted Laplacian matrix of
+    	    a Reaction Network
+    	Example
+	    N = reactionNetwork "A <--> B"
+	    negativeWeightedLaplacian N
+	Text
+	    For the one site phsophorylation network:
+	Example
+	    N = oneSiteModificationA()
+	    negativeWeightedLaplacian N
+///
 
 doc ///
     Key

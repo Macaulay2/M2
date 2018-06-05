@@ -1,13 +1,19 @@
 ReactionNetworks
 
-This is the collaboration area for the ReactionNetwoks project at the 2018 Macaulay2 workshop in Leipzig.
+This is the collaboration area for the ReactionNetwoks project at the
+2018 Macaulay2 workshop in Leipzig.
 
 Team members
+    
+    Adamer, Michael
+    Iosif, Alexandru (alexandru.iosif@ovgu.de)
+    Nicklasson, Lisa
 
-    Alexandru Iosif (alexandru.iosif@ovgu.de)
+To do:
+-- the function displayComplexes is not working
+-- add missing documetation
+-- add a function which would create a reaction network from a matrix
+-- add function to check the isolation property
 
-Potential projects
-
-    Producing missing documentations
-
-    There seems to be a problem with the function negativeLaplacian. It should be fixed.
+Fixed:
+1. created a function negativeWeightedLaplacian

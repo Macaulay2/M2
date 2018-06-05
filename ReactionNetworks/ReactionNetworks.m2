@@ -51,7 +51,7 @@ export {"reactionNetwork",
     "reactionMatrix",
     "reactantMatrix",
     "negativeLaplacian",
-		"negativeWeightedLaplacian",
+    "negativeWeightedLaplacian",
     "subRandomInitVals",
     "subRandomReactionRates" --, "netComplex", "networkToHRF", "kk"
     }
@@ -669,20 +669,20 @@ negativeLaplacian ReactionNetwork := Rn -> (
     L := laplacianMatrix G;
     -L
     )
---negative weighted Laplacian
-	negativeWeightedLaplacian = method()
-	negativeWeightedLaplacian ReactionNetwork := Rn -> (
-		if Rn.ReactionRing === null then createRing Rn;
-		Indices := edges Rn.ReactionGraph;
-		NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
-		N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
-		A := mutableMatrix (N**transpose N);
-		for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
-		A = matrix A;
-		D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
-		A-D
-		)
 
+--negative weighted Laplacian
+negativeWeightedLaplacian = method()
+negativeWeightedLaplacian ReactionNetwork := Rn -> (
+    if Rn.ReactionRing === null then createRing Rn;
+    Indices := edges Rn.ReactionGraph;
+    NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
+    N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
+    A := mutableMatrix (N**transpose N);
+    for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
+    A = matrix A;
+    D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+    A-D
+    )
 
 --injectivityTest = Rn ->
 
