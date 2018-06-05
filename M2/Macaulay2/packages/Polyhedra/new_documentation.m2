@@ -229,3 +229,77 @@ doc ///
          L = {{0,1},{1,2}}
          PC = polyhedralComplex(M,L)
 ///
+
+doc ///
+   Key
+      coneFromVData
+      (coneFromVData, Matrix)
+      (coneFromVData, Matrix, Matrix)
+   Headline
+      Constructing a polyhedral cone from generators.
+   Usage
+      C = coneFromVData R
+      C = coneFromVData(R, L)
+   Inputs
+      R:Matrix
+         Matrix containing the rays as columns.
+      L:Matrix
+         Matrix containing generators of the lineality space as columns.
+   Outputs
+      C:Cone
+   Description
+      Text
+         Basic constructor for a polyhedral cone, that takes one or two matrices. The cone is then the
+         positive hull of the columns of the first matrix together with the linear subspace spanned by
+         the columns of the second matrix.
+///
+
+doc ///
+   Key
+      coneFromHData
+      (coneFromHData, Matrix)
+      (coneFromHData, Matrix, Matrix)
+   Headline
+      Constructing a polyhedral cone as intersection of halfspaces.
+   Usage
+      C = coneFromHData H
+      C = coneFromHData(H, E)
+   Inputs
+      H:Matrix
+         Matrix containing the halfspaces as rows.
+      E:Matrix
+         Matrix containing equations as rows.
+   Outputs
+      C:Cone
+   Description
+      Text
+         Basic constructor for a cone that takes one or two matrices. The cone consists of all points that
+         evaluate positive with the rows of the first matrix and zero with the rows of the second matrix.
+///
+
+doc ///
+   Key
+      polyhedronFromHData
+      (polyhedronFromHData, Matrix, Matrix)
+      (polyhedronFromHData, Matrix, Matrix, Matrix, Matrix)
+   Headline
+      Construct a polyhedron as intersection of affine halfspaces.
+   Usage
+      P = polyhedronFromHData(H, h)
+      P = polyhedronFromHData(H, h, E, e)
+   Inputs
+      H:Matrix
+         Matrix containing the halfspaces as rows.
+      h:Matrix
+         Column matrix containing the left hand sides of the inequalities in {\tt H}.
+      E:Matrix
+         Matrix containing equations as rows.
+      e:Matrix
+         Column matrix containing the left hand sides of the equations in {\tt E}.
+   Outputs
+      P:Polyhedron
+   Description
+      Text
+         Basic constructor for a polyhedron from inequalities and equations. Produces the polyhedron
+         {\tt Hx>=h, Ex=e}.
+///
