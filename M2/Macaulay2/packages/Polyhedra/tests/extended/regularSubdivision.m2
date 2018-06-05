@@ -1,4 +1,4 @@
--- Test Square Triangualtion
+-- Test Square Triangulation
 TEST ///
 P = convexHull matrix {{1,0,1,0},{1,1,0,0}};
 C1 = matrix {{0,1,0},{0,0,1}}; 
