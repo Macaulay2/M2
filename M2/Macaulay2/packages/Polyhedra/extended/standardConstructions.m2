@@ -231,3 +231,15 @@ stdSimplex ZZ := d -> (
      if d < 0 then error("dimension must not be negative");
      -- Generating the standard basis
      convexHull map(QQ^(d+1),QQ^(d+1),1))
+
+-- PURPOSE : Generating the 'd'-dimensional simplex in QQ^(d), the convex hull of 0 and the unit vectors
+--   INPUT : 'd',  a positive integer
+--  OUTPUT : The 'd'-dimensional simplex as a polyhedron
+simplex = method(TypicalValue => Polyhedron)
+simplex ZZ := d -> (
+     -- Checking for input errors
+     if d < 0 then error("dimension must not be negative");
+     -- Generating the standard basis
+     convexHull (map(QQ^d,QQ^1,0) | map(QQ^(d),QQ^(d),1))
+)
+

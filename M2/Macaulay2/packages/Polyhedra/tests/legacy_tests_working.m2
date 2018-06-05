@@ -466,10 +466,10 @@ assert(q == proximum(p,P))
 ///
 
 -- Test 59
--- Checking triangulate
+-- Checking barycentricTriangulation
 TEST ///
 P = crossPolytope 3;
-L = triangulate P;
+L = barycentricTriangulation P;
 L = apply(L,convexHull);
 L1 = {convexHull{matrix{{1},{0},{0}},matrix{{0},{1},{0}},matrix{{0},{0},{1}},matrix{{0},{0},{0}}},
      convexHull{matrix{{-1},{0},{0}},matrix{{0},{1},{0}},matrix{{0},{0},{1}},matrix{{0},{0},{0}}},

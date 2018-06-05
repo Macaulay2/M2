@@ -2620,9 +2620,9 @@ document {
      }
 
 document {
-     Key => {triangulate, (triangulate,Polyhedron)},
+     Key => {barycentricTriangulation, (barycentricTriangulation,Polyhedron)},
      Headline => "computes a triangulation of a polytope",
-     Usage => " L = triangulate P",
+     Usage => " L = barycentricTriangulation P",
      Inputs => {
 	  "P" => Polyhedron => {", which must be compact"}
 	  },
@@ -2630,7 +2630,7 @@ document {
 	  "L" => List => {" containing the simplices of the triangulation"}
 	  },
      
-     PARA{}, TT "triangulate","  computes the triangulation of the polyhedron ",TT "P",", if it is compact, 
+     PARA{}, TT "barycentricTriangulation","  computes the triangulation of the polyhedron ",TT "P",", if it is compact, 
      i.e. a polytope, recursively. For this, it takes all facets and checks if they are simplices. If so, then 
      it takes the convex hull of these with the weighted centre of the polytope (the sum of the vertices divided 
      by the number of vertices). For those that are not simplices it takes all their facets and does the same 
@@ -2638,7 +2638,7 @@ document {
      
      EXAMPLE {
 	  " P = hypercube 2",
-	  " triangulate P"
+	  " barycentricTriangulation P"
 	  }
      
      }
@@ -3551,6 +3551,27 @@ document {
 	  },
      
      PARA{}, "The generators of the three initial ideals are given in the first part of the result."
+     
+     }
+
+document {
+     Key => {simplex, (simplex,ZZ)},
+     Headline =>  "generates the d-dimensional simplex",
+     Usage => " P = simplex d",
+     Inputs => {
+	  "d" => ZZ => {"strictly positive"}
+	  },
+     Outputs => {
+	  "P" => Polyhedron
+	  },
+     
+     PARA{}, "The ",TT "d","-dimensional simplex is the convex hull of the 
+     standard basis in ",TO QQ,"^d." and the origin,
+     
+     EXAMPLE {
+	  " P = simplex 2",
+	  " vertices P"
+	  }
      
      }
 
