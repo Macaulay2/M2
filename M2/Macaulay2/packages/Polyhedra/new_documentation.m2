@@ -280,3 +280,51 @@ doc ///
          Basic constructor for a polyhedron from inequalities and equations. Produces the polyhedron
          {\tt Hx>=h, Ex=e}.
 ///
+
+
+doc ///
+   Key 
+      regularSubdivision 
+      (regularSubdivision,Polyhedron,Matrix)
+      (regularSubdivision,Matrix,Matrix)
+   Headline 
+      Computes the regular cell decomposition
+   Usage 
+      L = regularSubdivision(P,w)
+      L = regularSubdivision(M,w)
+   Inputs
+      P:Polyhedron
+      w:Matrix 
+         Row matrix containing the weights.
+      M:Matrix 
+         Matrix containing the points. 
+   Outputs
+      L:List
+         List of polyhedra or 
+         List of lists of indices indicated which points form a cell. 
+   Description
+      Text
+         This function computes the regular subdivision of {\tt P} given by the
+         weight vector {\tt w}.      This is computed by placing the i-th
+         lattice point of {\tt P} on height {\tt w}_i in n+1 space, taking the
+         convexHull of these with the ray (0,...,0,1), and projecting the
+         compact faces into n space. Note that the polyhedron must be compact,
+         i.e. a polytope and the length of the weight vector must be the number
+         of lattice points.
+
+         This function can also be used to compute the regular subdivision
+         given a matrix {\tt M} of points and a weight vector {\tt w}. The
+         points are lifted to the weights given by the matrix {\tt w}, and the
+         lower envelope is computed. 
+     
+      Example
+        P = crossPolytope 3
+        w =  matrix {{1,2,2,2,2,2,1}}
+        L = regularSubdivision(P,w)
+        apply(L,vertices)
+
+      Example 
+         M = matrix {{1,0,1,0},{1,1,0,0}}; 
+         w = matrix {{1,0,0,1}};
+         S = regularSubdivision (M,w) 
+///

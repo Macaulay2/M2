@@ -3261,30 +3261,6 @@ document {
      
      }
 
-document {
-     Key => {regularSubdivision, (regularSubdivision,Polyhedron,Matrix)},
-     Headline => "computes the regular cell decomposition",
-     Usage => " L = regularSubdivision(P,w)",
-     Inputs => {
-	  "P" => Polyhedron => {"compact"},
-	  "w" => Matrix => {"a one row matrix, with an entry for each lattice point of the polyhedron"}
-	  },
-     Outputs => {
-	  "L" => List
-	  },
-     
-     PARA{}, "This function computes the regular cell decomposition of ",TT "P"," given by the weight vector ",TT "w",". 
-     This is computed by placing the i-th lattice point of ",TT "P"," on height ",TT "w","_i in n+1 space, taking the 
-     convexHull of these with the ray (0,...,0,1), and projecting the compact faces into n space. Note that the polyhedron 
-     must be compact, i.e. a polytope and the length of the weight vector must be the number of lattice points.",
-     
-     EXAMPLE {
-	  " P = crossPolytope 3",
-	  " w =  matrix {{1,2,2,2,2,2,1}}",
-	  " L = regularSubdivision(P,w)",
-	  " apply(L,vertices)"
-	  }
-     }
 
 document {
      Key => {cyclicPolytope, (cyclicPolytope,ZZ,ZZ)},
