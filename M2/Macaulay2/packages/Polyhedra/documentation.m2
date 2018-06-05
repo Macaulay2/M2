@@ -3315,9 +3315,9 @@ document {
      }
 
 document {
-     Key => {cellDecompose, (cellDecompose,Polyhedron,Matrix)},
-     Headline => "computes the regular cell decomposition",
-     Usage => " L = cellDecompose(P,w)",
+     Key => {regularSubdivision, (regularSubdivision,Polyhedron,Matrix)},
+     Headline => "computes the regular subdivision induced by a vector",
+     Usage => " L = regularSubdivision(P,w)",
      Inputs => {
 	  "P" => Polyhedron => {"compact"},
 	  "w" => Matrix => {"a one row matrix, with an entry for each lattice point of the polyhedron"}
@@ -3326,7 +3326,7 @@ document {
 	  "L" => List
 	  },
      
-     PARA{}, "This function computes the regular cell decomposition of ",TT "P"," given by the weight vector ",TT "w",". 
+     PARA{}, "This function computes the regular subdivision of ",TT "P"," given by the weight vector ",TT "w",". 
      This is computed by placing the i-th lattice point of ",TT "P"," on height ",TT "w","_i in n+1 space, taking the 
      convexHull of these with the ray (0,...,0,1), and projecting the compact faces into n space. Note that the polyhedron 
      must be compact, i.e. a polytope and the length of the weight vector must be the number of lattice points.",
@@ -3334,7 +3334,7 @@ document {
      EXAMPLE {
 	  " P = crossPolytope 3",
 	  " w =  matrix {{1,2,2,2,2,2,1}}",
-	  " L = cellDecompose(P,w)",
+	  " L = regularSubdivision(P,w)",
 	  " apply(L,vertices)"
 	  }
      }
@@ -3509,7 +3509,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "The secondary polytope parametrises the regular cell decompositions of a polytope. See ...
+     PARA{}, "The secondary polytope parametrises the regular subdivisions of a polytope. See ...
      ",TT "to be added",".",
      
      EXAMPLE {
