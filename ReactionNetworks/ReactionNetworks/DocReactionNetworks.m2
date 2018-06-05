@@ -523,19 +523,30 @@ doc ///
     	negativeLaplacian
 	(negativeLaplacian,ReactionNetwork)
     Headline
-    	computes the negative of the Laplacian matrix of a Reaction Network       
+    	Computes the negative of the Laplacian matrix of a Reaction Network.
+    Usage
+    	L = negativeLaplacian N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	L:Matrix
+	  the negative of the unweighted Laplacian matrix of N.
     Description
         Text
 	    Computes the negative of the (unweighted) Laplacian matrix of
-    	    the directed graph associated with a Reaction Network
+    	    the directed graph associated with a Reaction Network.
     	Example
 	    N = reactionNetwork "A <--> B"
-	    negativeLaplacian N
+	    L = negativeLaplacian N
 	Text
-	    For the one site phsophorylation network:
+	    A bigger example:
 	Example
 	    N = oneSiteModificationA()
-	    negativeLaplacian N
+	    L = negativeLaplacian N
+    SeeAlso
+        negativeWeightedLaplacian
+	stoichiometricMatrix
 ///
 
 doc ///
@@ -543,19 +554,130 @@ doc ///
     	negativeWeightedLaplacian
 	(negativeWeightedLaplacian,ReactionNetwork)
     Headline
-    	computes the negative of the wighted Laplacian matrix of a Reaction Network       
+    	Computes the negative of the weighted Laplacian matrix of a Reaction Network.
+    Usage
+    	L = negativeWeightedLaplacian N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	L:Matrix
+	  the negative of the weighted Laplacian matrix of N.
     Description
         Text
 	    Computes the negative of the weighted Laplacian matrix of
-    	    a Reaction Network
+    	    a Reaction Network.
     	Example
 	    N = reactionNetwork "A <--> B"
-	    negativeWeightedLaplacian N
+	    L = negativeWeightedLaplacian N
 	Text
-	    For the one site phsophorylation network:
+	    A bigger example:
 	Example
 	    N = oneSiteModificationA()
-	    negativeWeightedLaplacian N
+	    L = negativeWeightedLaplacian N
+    SeeAlso
+        negativeLaplacian
+	stoichiometricMatrix
+///
+
+doc ///
+    Key
+        stoichiometricMatrix
+	(stoichiometricMatrix,ReactionNetwork)
+    Headline
+    	Computes the stoichiometric matrix of a Reaction Network.
+    Usage
+    	S = stoichiometricMatrix N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	S:Matrix
+	  the stoichiometric matrix of N.
+    Description
+        Text
+	    Computes the stoichiometric matrix of
+    	    a Reaction Network.
+    	Example
+	    N = reactionNetwork "A <--> B"
+	    S = stoichiometricMatrix N
+	Text
+	    A bigger example:
+	Example
+	    N = oneSiteModificationA()
+	    S = stoichiometricMatrix N
+    SeeAlso
+        stoichiometricSubspace
+	stoichSubspaceKer
+	negativeLaplacian
+	negativeWeightedLaplacian
+///
+
+
+doc ///
+    Key
+        stoichiometricSubspace
+	(stoichiometricSubspace,ReactionNetwork)
+    Headline
+    	Computes the stoichiometric space of a Reaction Network.
+    Usage
+    	S = stoichiometricSubspace N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	S:Matrix
+	  whose columns span the stoichiometric space.
+    Description
+        Text
+	    Computes the stoichiometric space of
+    	    a Reaction Network.
+    	Example
+	    N = reactionNetwork "A <--> B"
+	    S = stoichiometricSubspace N
+	Text
+	    A bigger example:
+	Example
+	    N = oneSiteModificationA()
+	    S = stoichiometricSubspace N
+    SeeAlso
+        stoichiometricMatrix
+	stoichSubspaceKer
+///
+
+doc ///
+    Key
+        stoichSubspaceKer
+	(stoichSubspaceKer,ReactionNetwork)
+    Headline
+    	Computes the kernel of the stoichiometric matrix of a Reaction Network.
+    Usage
+    	Z = stoichSubspaceKer N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	Z:Matrix
+	  whose columns span the left kernel of the stoichiometric matrix.
+    Description
+        Text
+	    Computes the left kernel of the stoichiometric matrix of
+    	    a Reaction Network.
+    	Example
+	    N = reactionNetwork "A <--> B"
+	    Z = stoichSubspaceKer N
+	    S = stoichiometricMatrix N
+	    K = ker transpose S
+	Text
+	    A bigger example:
+	Example
+	    N = oneSiteModificationA()
+	    Z = stoichSubspaceKer N
+	    S = stoichiometricMatrix N
+	    K = ker transpose S
+    SeeAlso
+        stoichiometricMatrix
+	stoichiometricSubspace
 ///
 
 doc ///
@@ -598,7 +720,7 @@ doc ///
 	    isDeficient N
 	    W = wnt()
 	    isDeficient W
-    ///
+///
 
 doc ///
     Key

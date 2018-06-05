@@ -10,10 +10,11 @@ Team members
     Nicklasson, Lisa
 
 To do:
--- the function displayComplexes is not working
--- add missing documetation
--- add a function which would create a reaction network from a matrix
--- add function to check the isolation property
+1. the function displayComplexes is not working
+2. add missing documetation
+3. add a function which would create a reaction network from a matrix
+4. add function to check the isolation property
 
 Fixed:
 1. created a function negativeWeightedLaplacian
+2. added some documentation
