@@ -151,8 +151,8 @@ endif
 	for l in $(LIBRARIESDIR)/lib/*.dylib $(LIBRARIESDIR)/lib/*.so $(LIBRARIESDIR)/lib/*.so.* ;	\
 	do if [ -f "$$l" ] ;										\
 	   then echo "copying $$l to @pre_exec_prefix@/@tail_librariesdir@" ;				\
-		$(MKDIR_P) "@pre_exec_prefix@/@tail_librariesdir@"					\
-		cp -a "$$l" "@pre_exec_prefix@/@tail_librariesdir@" ;					\
+		$(MKDIR_P) "@pre_exec_prefix@/@tail_librariesdir@" ;					\
+		@INSTALL_DATA@ "$$l" "@pre_exec_prefix@/@tail_librariesdir@" ;				\
 	   fi												\
 	done
 	touch $@
