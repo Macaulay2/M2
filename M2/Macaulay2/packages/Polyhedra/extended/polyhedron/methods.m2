@@ -126,13 +126,23 @@ regularSubdivision = method(TypicalValue => List)
 regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
    n := dim P;
    LP := latticePoints P;
+   LP = transpose matrix apply(LP, l -> flatten entries l);
    -- Checking for input errors
-   if numColumns w != #LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
-   LP = matrix{LP}||w;
-   P = convexHull(LP,matrix (toList(dim P:{0})|{{1}}));
-   A := map(QQ^n,QQ^n,1) | map(QQ^n,QQ^1,0);
-   flatten apply(facesAsPolyhedra(1,P), f -> if isCompact f then affineImage(A,f) else {})
+   if numColumns w != numColumns LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
+   S := regularSubdivision (LP, w);
+   apply (S, s -> convexHull LP_s)
 )
+
+regularSubdivision (Matrix,Matrix) := (M,w) -> (
+   n := numColumns M;
+   -- Checking for input errors
+   if numColumns w != numColumns M or numRows w != 1 then error("The weight must be a one row matrix with number of points many entries");
+   P := convexHull(M||w,matrix (toList(numRows M:{0})|{{1}}));
+   F := select(faces (1,P), f -> #(f#1) ==0);
+   apply (F, f -> f#0)
+  )
+
+
 
 
 --   INPUT : 'P',  a polyhedron,
