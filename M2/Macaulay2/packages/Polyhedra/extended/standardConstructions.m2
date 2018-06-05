@@ -108,7 +108,7 @@ secondaryPolytope Polyhedron := P -> (
      v := map(QQ^m,QQ^1,0);
      N := matrix{toList(m:1_QQ)} || V;
      w := matrix {{1_QQ}};
-     sum apply(refCells, e -> (e#0/volP) * intersection(Id,v,N,w||e#1)))
+     sum apply(refCells, e -> (e#0/volP) * polyhedronFromHData(Id,v,N,w||e#1)))
      
 
 

@@ -230,29 +230,6 @@ doc ///
          PC = polyhedralComplex(M,L)
 ///
 
-doc ///
-   Key
-      coneFromVData
-      (coneFromVData, Matrix)
-      (coneFromVData, Matrix, Matrix)
-   Headline
-      Constructing a polyhedral cone from generators.
-   Usage
-      C = coneFromVData R
-      C = coneFromVData(R, L)
-   Inputs
-      R:Matrix
-         Matrix containing the rays as columns.
-      L:Matrix
-         Matrix containing generators of the lineality space as columns.
-   Outputs
-      C:Cone
-   Description
-      Text
-         Basic constructor for a polyhedral cone, that takes one or two matrices. The cone is then the
-         positive hull of the columns of the first matrix together with the linear subspace spanned by
-         the columns of the second matrix.
-///
 
 doc ///
    Key

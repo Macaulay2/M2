@@ -43,3 +43,5 @@ intersection Matrix := M -> (
    << "Warning: This method is deprecated. Please consider using coneFromHData instead." << endl;
    coneFromHData M
 )
+
+

@@ -107,6 +107,7 @@ load "./alternatives/normaliz.m2"
 -- Documentation
 --
 beginDocumentation()
+load "./deprecated_documentation.m2"
 load "./documentation.m2"
 load "./new_documentation.m2"
 
