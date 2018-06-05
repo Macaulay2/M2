@@ -113,6 +113,8 @@ export {
    "saveSession",
    "regularTriangulation",
    "barycentricTriangulation",
-   "regularSubdivision"
-   }
+   "regularSubdivision",
+   "minimalNonFaces",
+   "stanleyReisnerRing"
+}
 
