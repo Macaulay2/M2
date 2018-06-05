@@ -17,7 +17,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
 	  N = N || M^pos;
 	  w = w || lift(v^pos,ZZ);
-	  intersection(M,lift(v,ZZ),N,w))
+	  polyhedronFromHData(M,lift(v,ZZ),N,w))
      else emptyPolyhedron ambDim(P))
 
 

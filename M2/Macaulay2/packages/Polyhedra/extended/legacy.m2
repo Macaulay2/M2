@@ -45,7 +45,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
-	  intersection(M,N))
+	  coneFromHData(M,N))
      else emptyPolyhedron ambDim(C))
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
