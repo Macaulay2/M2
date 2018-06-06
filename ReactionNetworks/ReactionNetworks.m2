@@ -126,7 +126,7 @@ X := symbol X;
 
 	if o.Input == "Stoichiometric" then (
 		NumReac := numColumns rs_0;
-		R := QQ[toList(gens(ring rs_1))_(toList(NumReac..((numgens ring rs_1)-1)))];
+		R := QQ[toList(rsort(gens(ring rs_1)))_(toList(NumReac..((numgens ring rs_1)-1)))];
 		-- HStoich := map(R,ring rs_1,(for i from NumReac to length(gens(ring rs_1))-1 list 1)|(gens R));
 		HStoich := map(R,ring rs_1,(for i from 0 to NumReac-1 list 1)|(gens R));
 		temp := transpose(matrix(HStoich(rs_1)));
