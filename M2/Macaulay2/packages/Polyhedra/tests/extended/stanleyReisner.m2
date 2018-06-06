@@ -17,10 +17,9 @@ assert(minimalNonFaces addCone({C1,C2}, fan C0) == {{0,1,2}})
 ///
 
 
----- Test stanleyReisnerRing on the normal fan of a square
---TEST ///
---Phi = normalFan hypercube 2;
---S = stanleyReisnerRing Phi;
---A = QQ[]
---assert(S == A)
---///
+-- Test stanleyReisnerRing on the normal fan of a square
+TEST ///
+Phi = normalFan hypercube 2;
+SR = stanleyReisnerRing Phi;
+assert(toExternalString SR == "monoid[x_0, x_1, x_2, x_3, Degrees => {4:1}, Heft => {1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {4:1}, Position => Up}, DegreeRank => 1]")
+///
