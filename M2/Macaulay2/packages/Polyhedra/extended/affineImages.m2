@@ -86,7 +86,7 @@ affinePreimage(Matrix,Polyhedron,Matrix) := (A,P,b) -> (
      w = w - (N * b);
      M = M * A;
      N = N * A;
-     intersection(M,v,N,w))
+     polyhedronFromHData(M,v,N,w))
 
 
 --   INPUT : '(A,P)',  where 'A' is a ZZ or QQ matrix from some source space to the 

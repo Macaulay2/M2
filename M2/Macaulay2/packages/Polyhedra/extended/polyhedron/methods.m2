@@ -17,7 +17,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
 	  N = N || M^pos;
 	  w = w || lift(v^pos,ZZ);
-	  intersection(M,lift(v,ZZ),N,w))
+	  polyhedronFromHData(M,lift(v,ZZ),N,w))
      else emptyPolyhedron ambDim(P))
 
 
@@ -117,12 +117,6 @@ faceFan Polyhedron := P -> (
    fan(resultRays, resultCones)
 )
 
-cellDecompose = method(TypicalValue => List)
-cellDecompose (Polyhedron,Matrix) := (P,w) -> (
-     << "Warning: this method is deprecated. Please use regularSubdivision instead." << endl;
-regularSubdivision (P,w))
-
-
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
 --   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
@@ -132,13 +126,23 @@ regularSubdivision = method(TypicalValue => List)
 regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
    n := dim P;
    LP := latticePoints P;
+   LP = transpose matrix apply(LP, l -> flatten entries l);
    -- Checking for input errors
-   if numColumns w != #LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
-   LP = matrix{LP}||w;
-   P = convexHull(LP,matrix (toList(dim P:{0})|{{1}}));
-   A := map(QQ^n,QQ^n,1) | map(QQ^n,QQ^1,0);
-   flatten apply(facesAsPolyhedra(1,P), f -> if isCompact f then affineImage(A,f) else {})
+   if numColumns w != numColumns LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
+   S := regularSubdivision (LP, w);
+   apply (S, s -> convexHull LP_s)
 )
+
+regularSubdivision (Matrix,Matrix) := (M,w) -> (
+   n := numColumns M;
+   -- Checking for input errors
+   if numColumns w != numColumns M or numRows w != 1 then error("The weight must be a one row matrix with number of points many entries");
+   P := convexHull(M||w,matrix (toList(numRows M:{0})|{{1}}));
+   F := select(faces (1,P), f -> #(f#1) ==0);
+   apply (F, f -> f#0)
+  )
+
+
 
 
 --   INPUT : 'P',  a polyhedron,
@@ -192,10 +196,6 @@ polarFace(Polyhedron, Polyhedron) := (f, P) -> (
 isReflexive = method(TypicalValue => Boolean)
 isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
-triangulate = method()
-triangulate Polyhedron := P -> (
-     << "Warning: this method is deprecated. Please use regularTriangulation or barycentricTriangulation instead." << endl;
-barycentricTriangulation P)
 
 -- PURPOSE : Triangulating a compact Polyhedron
 --   INPUT : 'P',  a Polyhedron
