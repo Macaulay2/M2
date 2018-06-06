@@ -1,17 +1,13 @@
--- Copyright 2017-2018: Paolo Lella.
--- You may redistribute this file under the terms of the GNU General Public
--- License as published by the Free Software Foundation, either version 2
--- of the License, or any later version.
-   
 newPackage("StronglyStableIdeals",
            Version => "1.1",
-	   Date => "June 23, 2015",
+	   Date => "June 1, 2018",
            Authors => {
 	               {Name => "Davide Alberelli"},
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
-    	   Headline => "A package to study strongly stable ideals related to Hilbert polynomials",
-	   DebuggingMode => false
+	   Headline => "A package to study strongly stable ideals related to Hilbert polynomials",
+	   DebuggingMode => false,
+	   PackageImports => {"gfanInterface"}
 	  )
 
 -- For information see documentation key "StronglyStableIdeals" below.
@@ -279,18 +275,16 @@ isGenSegment MonomialIdeal := J -> (
     if not isBorel J then error "argument 1: expected a strongly stable ideal";
     R := ring J;
     RmodJ := R/J;
-    leadMon := J_*;
-    tails := {};
-    completePolynomials := {};  
-    for m in leadMon do
+    markedTerms := gens R;
+    completePolynomials := for i from 0 to numgens R - 1 list if i != numgens R - 1 then R_i+R_(i+1) else R_i + 1;
+    for m in rsort J_* do
     (
-       outside := flatten entries basis(first degree m,RmodJ);
-       tails = tails | {for t in outside list lift(t,R)};
-       completePolynomials = completePolynomials | {m + sum(tails#-1)};
+       markedTerms = append(markedTerms,m);
+       completePolynomials = append(completePolynomials, m + sum(for t in flatten entries basis(first degree m,RmodJ) list lift(t,R)));
     );
-    W := weightVector(leadMon,completePolynomials);
-    if W === null then return (false,null);
-    if isSegmentWeightVector(W,leadMon,tails) then (true,W) else (false,null) 
+    GC := gfanGroebnerCone markedPolynomialList {markedTerms, completePolynomials};
+    W := flatten entries interiorVector coneFromVData rays GC;
+    if isSegmentWeightVector(W,markedTerms,completePolynomials) then (true,W) else (false,null) 
 ) -- END isGenSegment MonomialIdeal
 
 isGenSegment Ideal := J -> (
@@ -506,12 +500,12 @@ precBorel (RingElement, List) := (m,L) -> (
 
 ---------------------------------
 isSegmentWeightVector = method(TypicalValue=>Boolean)
-isSegmentWeightVector (List, List, List) := (W,Ht,Tails) -> (
-    for i from 0 to #Ht-1 do 
+isSegmentWeightVector (List, List, List) := (W,markedTerms,completePolynomials) -> (
+    for i from 0 to #markedTerms-1 do 
     (
-       for t in Tails#i do 
+       for t in terms (completePolynomials#i - markedTerms#i)  do 
        (
-	   if  dotProduct(W,flatten exponents(Ht#i)) <= dotProduct(W,flatten exponents(t)) then return false;
+	   if  dotProduct(W,flatten exponents(markedTerms#i)) <= dotProduct(W,flatten exponents(t)) then return false;
        );	
     );
     true   
@@ -628,19 +622,19 @@ doc ///
   Key
     StronglyStableIdeals
   Headline
-    Find projective varieties defined by strongly stable ideals with a given Hilbert polynomial
+    Find strongly stable ideals with a given Hilbert polynomial
   Description
     Text
       {\bf Overview:}
       
       Strongly stable ideals are a key tool in commutative algebra and algebraic geometry. These ideals have nice combinatorial properties 
-      that makes them well suited for both theoretical and computational applications. In the case of polynomial rings with coefficients in 
-      a field with characteristic zero, the notion of strongly stable ideals coincides with the notion of Borel-fixed ideals. Ideals of the 
-      latter type are fixed by the action of the Borel subgroup of triangular matrices of the linear group and they correspond to the possible 
-      generic initial ideals by a famous result by Galligo. In the context of Hilbert schemes, Galligo's theorem states that each component and 
-      each interesection of components contains at least a point corresponding to a scheme defined by a Borel-fixed ideal. 
-      Hence, these ideals represent a promising tool for studying Hilbert schemes and to obtain a complete knowledge of their structure.
-      The main feature of the this package is a method to compute the set of all the saturated strongly stable ideals in a polynomial ring 
+      that make them well suited for both theoretical and computational applications. In the case of polynomial rings with coefficients in 
+      a field of characteristic zero, the notion of strongly stable ideals coincides with the notion of Borel-fixed ideals. Borel-fixed ideals 
+      are fixed by the action of the Borel subgroup of triangular matrices and a famous result by Galligo says that generic initial ideals 
+      are of this type. In the context of Hilbert schemes, Galligo's theorem means that each component and each intersection of components
+      contains at least a point corresponding to a scheme defined by a Borel-fixed ideal. Hence, these ideals are distributed throughout the
+      Hilbert schemes and they can be used to understand its local structure.
+      The main feature of the this package is a method to compute the set of all saturated strongly stable ideals in a given polynomial ring 
       with a given Hilbert polynomial. This method has been theoretically introduced in [CLMR11] and improved in [Lel12].
       
       {\bf References:}
@@ -670,7 +664,7 @@ doc ///
           
           @TO stronglyStableIdeals@ -- Compute the saturated strongly stable ideals with a given Hilbert polynomial.
 	  
-	  @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all mononials outside the ideal of the same degree.
+	  @TO isGenSegment@ -- Test whether there exists a term ordering such that each minimal generator of a strongly stable ideal is greater than all mononials of the same degree outside the ideal.
       
 	  @TO isRegSegment@ -- Test whether the truncation of a strongly stable ideal in degree equal to its regularity is a segment. 	                   
 
@@ -723,13 +717,34 @@ doc ///
     : List
   Description
    Text
-      Returns the list of projective Hilbert polynomials of linear spaces summing up to the input polynomial.
-   
+      Returns the list of projective Hilbert polynomials of linear spaces summing up to the input polynomial:
+ 
    Example
      QQ[t];
      hp = projectiveHilbertPolynomial(3*t+4)
      gD = gotzmannDecomposition hp
      sum gD
+  Description
+   Text
+     The decomposition suggests the most degenerate geometric object with the given Hilbert polynomial. 
+
+   Example
+     R = QQ[x,y,z,w];
+     completeIntersection22 = ideal(random(2,R),random(2,R));
+     hp = hilbertPolynomial completeIntersection22  
+     gD = gotzmannDecomposition hp
+  Description
+   Text
+     The degree of {\tt hp} is 1, so it is possible to obtain {\tt hp} as Hilbert polynomial of a
+     scheme in the plane. Gotzmann's decomposition has 4 terms of degree 1 and 2 term of degree 0.
+     This suggests that the generic union of 4 lines and 2 points in a plane should have Hilbert polynomial {\tt hp}:
+ 
+   Example
+     H = random(1,R);
+     fourLines = for i from 1 to 4 list ideal(H,random(1,R));
+     twoPoints = for i from 1 to 2 list ideal(H,random(1,R),random(1,R));         
+     unionLinesPoints = intersect(fourLines|twoPoints);
+     hilbertPolynomial unionLinesPoints == hp
 ///
 
 doc ///
@@ -750,8 +765,8 @@ doc ///
     : List
   Description
    Text
-      Returns the list of projective Hilbert polynomials of linear spaces summing up to the input polynomial.
-   
+      Returns the list of projective Hilbert polynomials of linear spaces summing up to the input polynomial:
+      
    Example
      QQ[t];
      hp = projectiveHilbertPolynomial(3*t+4)
@@ -777,7 +792,7 @@ doc ///
     : ZZ
   Description
    Text
-      Returns the Gotzmann number of the input polynomial, i.e., the length of its Gotzmann decomposition (see @TO gotzmannDecomposition@).
+      Returns the Gotzmann number of the input polynomial, i.e. the length of its Gotzmann decomposition (see @TO gotzmannDecomposition@).
    
    Example
      QQ[t];
@@ -962,7 +977,7 @@ doc ///
    Text
     This option can be used to give an upper bound to the regularity of the strongly stable ideals.
     
-    The default is null (i.e., no bound).
+    The default is null (i.e. no bound).
     
    Example
      QQ[t];
@@ -1024,8 +1039,8 @@ doc ///
     : Sequence
   Description
    Text
-      The first element of the sequence is a boolean value. It tells if the ideal is a segment, i.e., if there exists a term ordering
-      such that every generator of the ideal is greater than every monomial outside the ideal of the same degree.     
+      The first element of the sequence is a boolean value. It tells if the ideal is a segment, i.e. if there exists a term ordering
+      such that every generator of the ideal is strictly greater than every monomial outside the ideal of the same degree.     
       If true, the second element of the sequence contains the list of weights giving the corresponding ordering on the monomials.
    
    Example
