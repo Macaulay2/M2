@@ -3477,27 +3477,6 @@ document {
      }
 
 document {
-     Key => {simplex, (simplex,ZZ)},
-     Headline =>  "generates the d-dimensional simplex",
-     Usage => " P = simplex d",
-     Inputs => {
-	  "d" => ZZ => {"strictly positive"}
-	  },
-     Outputs => {
-	  "P" => Polyhedron
-	  },
-     
-     PARA{}, "The ",TT "d","-dimensional simplex is the convex hull of the 
-     standard basis in ",TO QQ,"^d. and the origin",
-     
-     EXAMPLE {
-	  " P = simplex 2",
-	  " vertices P"
-	  }
-     
-     }
-
-document {
      Key => {stdSimplex, (stdSimplex,ZZ)},
      Headline =>  "generates the d-dimensional standard simplex",
      Usage => " P = stdSimplex d",
