@@ -386,3 +386,28 @@ doc ///
       Example
          T = regularTriangulation hypercube 2
 ///
+
+doc ///
+   Key
+      simplex
+      (simplex, ZZ)
+      (simplex, ZZ, QQ)
+   Headline
+      Produces a full-dimensional simplex
+   Usage
+      S = simplex d
+      S = simplex(d, a)
+   Inputs
+      d:ZZ
+         The dimension
+      a:QQ
+         The dilation factor
+   Outputs
+      S:Polyhedron
+   Description
+      Text
+         Returns the {\tt d}-dimensional simplex that is the convex hull of the origin and the unit vectors in {\tt QQ^d}.
+      Example
+         S = simplex 2
+         S = simplex(2,2)
+///

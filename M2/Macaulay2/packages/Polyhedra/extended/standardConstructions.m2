@@ -237,9 +237,12 @@ stdSimplex ZZ := d -> (
 --  OUTPUT : The 'd'-dimensional simplex as a polyhedron
 simplex = method(TypicalValue => Polyhedron)
 simplex ZZ := d -> (
-     -- Checking for input errors
-     if d < 0 then error("dimension must not be negative");
-     -- Generating the standard basis
-     convexHull (map(QQ^d,QQ^1,0) | map(QQ^(d),QQ^(d),1))
+   simplex(d, 1)
 )
-
+simplex(ZZ, QQ) := (d, a) -> (
+   -- Checking for input errors
+   if d < 0 then error("dimension must not be negative");
+   if a <= 0 then error("dilation factor must be positive");
+   -- Generating the standard basis
+   convexHull (map(QQ^d,QQ^1,0) | map(QQ^(d),QQ^(d),a))
+)
