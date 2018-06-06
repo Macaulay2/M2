@@ -52,7 +52,7 @@ export {"reactionNetwork",
     "reactionMatrix",
     "reactantMatrix",
     "negativeLaplacian",
-    "negativeWeightedLaplacian",
+		"negativeWeightedLaplacian",
     "subRandomInitVals",
     "subRandomReactionRates" --, "netComplex", "networkToHRF", "kk"
     }
@@ -126,7 +126,7 @@ X := symbol X;
 
 	if o.Input == "Stoichiometric" then (
 		NumReac := numColumns rs_0;
-		R := QQ[toList(sort(gens(ring rs_1),MonomialOrder=>GRevLex))_(toList(NumReac..(numgens ring rs_1)-1))];
+		R := QQ[toList(gens(ring rs_1))_(toList(NumReac..((numgens ring rs_1)-1)))];
 		-- HStoich := map(R,ring rs_1,(for i from NumReac to length(gens(ring rs_1))-1 list 1)|(gens R));
 		HStoich := map(R,ring rs_1,(for i from 0 to NumReac-1 list 1)|(gens R));
 		temp := transpose(matrix(HStoich(rs_1)));
@@ -711,20 +711,20 @@ negativeLaplacian ReactionNetwork := Rn -> (
     L := laplacianMatrix G;
     -L
     )
-
 --negative weighted Laplacian
-negativeWeightedLaplacian = method()
-negativeWeightedLaplacian ReactionNetwork := Rn -> (
-    if Rn.ReactionRing === null then createRing Rn;
-    Indices := edges Rn.ReactionGraph;
-    NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
-    N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
-    A := mutableMatrix (N**transpose N);
-    for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
-    A = matrix A;
-    D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
-    A-D
-    )
+	negativeWeightedLaplacian = method()
+	negativeWeightedLaplacian ReactionNetwork := Rn -> (
+		if Rn.ReactionRing === null then createRing Rn;
+		Indices := edges Rn.ReactionGraph;
+		NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
+		N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
+		A := mutableMatrix (N**transpose N);
+		for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
+		A = matrix A;
+		D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+		A-D
+		)
+
 
 --injectivityTest = Rn ->
 
