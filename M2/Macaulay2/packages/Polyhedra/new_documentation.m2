@@ -366,3 +366,23 @@ doc ///
          w = matrix {{1,0,0,1}};
          S = regularSubdivision (M,w) 
 ///
+
+doc ///
+   Key
+      regularTriangulation
+      (regularTriangulation, Polyhedron)
+   Headline
+      Computes a regular triangulation of a given polytope.
+   Usage
+      T = regularTriangulation P
+   Inputs
+      P:Polyhedron
+   Outputs
+      T:List
+   Description
+      Text
+         This method computes a regular triangulation of a polytope using the package {\tt Topcom.m2}. The output is a list of list of indices which vertices of {\tt P} give a simplex in the triangulation.
+
+      Example
+         T = regularTriangulation hypercube 2
+///
