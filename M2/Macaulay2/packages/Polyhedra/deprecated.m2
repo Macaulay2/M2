@@ -1,12 +1,12 @@
 triangulate = method()
 triangulate Polyhedron := P -> (
-     << "Warning: this method is deprecated. Please use regularTriangulation or barycentricTriangulation instead." << endl;
+     << "Warning: This method is deprecated and will be removed in version 1.11 of Polyhedra. Please use regularTriangulation or barycentricTriangulation instead." << endl;
 barycentricTriangulation P)
 
 
 cellDecompose = method(TypicalValue => List)
 cellDecompose (Polyhedron,Matrix) := (P,w) -> (
-     << "Warning: this method is deprecated. Please use regularSubdivision instead." << endl;
+     << "Warning: This method is deprecated and will be removed in version 1.11 of Polyhedra. Please use regularSubdivision instead." << endl;
 regularSubdivision (P,w))
 
 
@@ -14,7 +14,7 @@ regularSubdivision (P,w))
 --     	    	      	  that the polyhedron is given by P={x | Mx<=v and Nx=w} 
 --  OUTPUT : 'P', the polyhedron
 intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
-   << "Warning: This method is deprecated. Please consider using polyhedronFromHData instead." << endl;
+   << "Warning: This method is deprecated and will be removed in version 1.11 of Polyhedra. Please consider using polyhedronFromHData instead." << endl;
    polyhedronFromHData(M,v,N,w)
 )
 
@@ -23,7 +23,7 @@ intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
 --     	    	       or, if 'N' is only a Column vector the Polyhedron {x | Mx<=v} 
 --  OUTPUT : 'P', the Cone or Polyhedron
 intersection(Matrix,Matrix) := (M,N) -> (
-   << "Warning: This method is deprecated. Please consider using ";
+   << "Warning: This method is deprecated and will be removed in version 1.11 of Polyhedra. Please consider using ";
 	-- Checking for input errors
 	if ((numColumns M =!= numColumns N and numColumns N =!= 1) or (numColumns N == 1 and numRows M =!= numRows N)) and N != 0*N then 
 		error("invalid condition vector for half-spaces");
@@ -40,7 +40,7 @@ intersection(Matrix,Matrix) := (M,N) -> (
    
 
 intersection Matrix := M -> (
-   << "Warning: This method is deprecated. Please consider using coneFromHData instead." << endl;
+   << "Warning: This method is deprecated and will be removed in version 1.11 of Polyhedra. Please consider using coneFromHData instead." << endl;
    coneFromHData M
 )
 
