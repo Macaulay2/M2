@@ -124,6 +124,7 @@ faceFan Polyhedron := P -> (
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
 regularSubdivision = method(TypicalValue => List)
 regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
+   if not isCompact P then error("The polyhedron must be compact.");
    n := dim P;
    LP := latticePoints P;
    LP = transpose matrix apply(LP, l -> flatten entries l);
