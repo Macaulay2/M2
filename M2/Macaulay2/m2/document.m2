@@ -20,7 +20,7 @@ checkLoadDocumentation = () -> (
 	  needsPackage "Macaulay2Doc";
 	  ))
 
-getpkg := memoize(
+getpkg := (
      title -> (
 	  if PackageDictionary#?title then value PackageDictionary#title
 	  else dismiss needsPackage(title,LoadDocumentation=>true)))

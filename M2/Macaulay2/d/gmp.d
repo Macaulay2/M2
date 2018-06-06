@@ -757,32 +757,30 @@ export isinf(x:CC):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isn
 export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
 
 export (x:RR) === (y:RR):bool := (			    -- weak equality
-     Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
+     Ccode( void, "mpfr_clear_flags()" );
      0 != Ccode( int, "mpfr_equal_p(",  x, ",",  y, ")" )
      && !flagged0()
      );
 
 export strictequality(x:RR,y:RR):bool := (
-     Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
+     Ccode( void, "mpfr_clear_flags()" );
      0 != Ccode( int, "mpfr_equal_p(",  x, ",",  y, ")" )
      && !flagged0()
      && sign0(x) == sign0(y)
      && precision0(x) == precision0(y)
      );
 
-compare0(x:RR, y:RR) ::= (
-     Ccode( void, "mpfr_clear_flags()" );		    -- do we need this?
-     Ccode( int, "mpfr_cmp(",  x, ",",  y, ")" ));
+compare0(x:RR, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
 export compare(x:RR, y:RR):int := compare0(x,y);	    -- use flagged(), too!
 export (x:RR)  >  (y:RR) : bool := compare0(x,y) >  0 && !flagged0();
 export (x:RR)  <  (y:RR) : bool := compare0(x,y) <  0 && !flagged0();
 export (x:RR)  >= (y:RR) : bool := compare0(x,y) >= 0 && !flagged0();
 export (x:RR)  <= (y:RR) : bool := compare0(x,y) <= 0 && !flagged0();
 
-compare0(x:RR, y:long) ::= Ccode( int, "mpfr_cmp_si(",  x, ",", y, ")" );
-compare0(x:RR, y:int) ::= Ccode( int, "mpfr_cmp_si(",  x, ",(long)", y, ")" );
-export compare(x:RR, y:long):int := Ccode( int, "mpfr_cmp_si(",  x, ",", y, ")" );
-export compare(y:long, x:RR):int := Ccode( int, "-mpfr_cmp_si(",  x, ",", y, ")" );
+compare0(x:RR, y:long) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",", y, "))" );
+compare0(x:RR, y:int ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_si(",  x, ",(long)", y, "))" );
+export compare(x:RR, y:long):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_si(",  x, ",", y, "))" );
+export compare(y:long, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_si(",  x, ",", y, "))" );
 export (x:RR)  >  (y:int) : bool :=  compare0(x,long(y)) >  0 && !flagged0();
 export (x:RR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0 && !flagged0();
 export (x:RR) === (y:int) : bool :=  compare0(x,long(y)) == 0 && !flagged0();
@@ -791,18 +789,18 @@ export (x:RR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
 
 export (x:CC) === (y:int) : bool :=  x.re === y && x.im === 0;
 
-compare0(x:RR, y:double) ::= Ccode( int, "mpfr_cmp_d(",  x, ",", y, ")" );
-export compare(x:RR, y:double):int := Ccode( int, "mpfr_cmp_d(",  x, ",", y, ")" );
-export compare(y:double, x:RR):int := Ccode( int, "-mpfr_cmp_d(",  x, ",", y, ")" );
+compare0(x:RR, y:double) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_d(",  x, ",", y, "))" );
+export compare(x:RR, y:double):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_d(",  x, ",", y, "))" );
+export compare(y:double, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_d(",  x, ",", y, "))" );
 export (x:RR)  >  (y:double) : bool :=  compare0(x,y) >  0 && !flagged0();
 export (x:RR)  >= (y:double) : bool :=  compare0(x,y) >= 0 && !flagged0();
 export (x:RR) === (y:double) : bool :=  compare0(x,y) == 0 && !flagged0();
 export (x:RR)  <  (y:double) : bool :=  compare0(x,y) <  0 && !flagged0();
 export (x:RR)  <= (y:double) : bool :=  compare0(x,y) <= 0 && !flagged0();
 
-compare0(x:RR, y:ZZ) ::= Ccode( int, "mpfr_cmp_z(",  x, ",", y, ")" );
-export compare(x:RR, y:ZZ):int := Ccode( int, "mpfr_cmp_z(",  x, ",", y, ")" );
-export compare(y:ZZ, x:RR):int := Ccode( int, "-mpfr_cmp_z(",  x, ",", y, ")" );
+compare0(x:RR, y:ZZ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_z(",  x, ",", y, "))" );
+export compare(x:RR, y:ZZ):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_z(",  x, ",", y, "))" );
+export compare(y:ZZ, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_z(",  x, ",", y, "))" );
 export (x:RR)  >  (y:ZZ) : bool :=  compare0(x,y) >  0 && !flagged0();
 export (x:RR)  >= (y:ZZ) : bool :=  compare0(x,y) >= 0 && !flagged0();
 export (x:RR) === (y:ZZ) : bool :=  compare0(x,y) == 0 && !flagged0();
@@ -810,9 +808,9 @@ export (y:ZZ) === (x:RR) : bool :=  compare0(x,y) == 0 && !flagged0();
 export (x:RR)  <  (y:ZZ) : bool :=  compare0(x,y) <  0 && !flagged0();
 export (x:RR)  <= (y:ZZ) : bool :=  compare0(x,y) <= 0 && !flagged0();
 
-compare0(x:RR, y:QQ) ::= Ccode( int, "mpfr_cmp_q(",  x, ",", y, ")" );
-export compare(x:RR, y:QQ):int := Ccode( int, "mpfr_cmp_q(",  x, ",", y, ")" );
-export compare(y:QQ, x:RR):int := Ccode( int, "-mpfr_cmp_q(",  x, ",", y, ")" );
+compare0(x:RR, y:QQ) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_q(",  x, ",", y, "))" );
+export compare(x:RR, y:QQ):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_q(",  x, ",", y, "))" );
+export compare(y:QQ, x:RR):int := Ccode( int, "(mpfr_clear_flags(),-mpfr_cmp_q(",  x, ",", y, "))" );
 export (x:RR)  >  (y:QQ) : bool :=  compare0(x,y) >  0 && !flagged0();
 export (x:RR)  >= (y:QQ) : bool :=  compare0(x,y) >= 0 && !flagged0();
 export (x:RR) === (y:QQ) : bool :=  compare0(x,y) == 0 && !flagged0();
