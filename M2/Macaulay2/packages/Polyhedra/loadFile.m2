@@ -90,6 +90,7 @@ load "./tests/extended/mixedVolume.m2"
 load "./tests/extended/tests_from_polymake/ehrhart_and_volume.m2"
 load "./tests/extended/linearTransform.m2"
 load "./tests/extended/regularSubdivision.m2"
+load "./tests/extended/stanleyReisner.m2"
 
 -- Other:
 load "./tests/legacy_tests_working.m2"

@@ -30,6 +30,44 @@ doc ///
 
 doc ///
    Key
+      (minimalNonFaces, Fan)
+   Headline
+      Giving the minimal non-faces of a fan..
+   Usage
+      S = minimalNonFaces Phi
+   Inputs
+      Phi:Fan
+   Outputs
+      S:List
+        List of minimal non-faces of Phi
+   Description
+      Text
+         Returns a List with the indices of the minimal non-faces of a fan.
+      Example
+         S = minimalNonFaces normalFan hypercube 2
+///
+
+doc ///
+   Key
+      (stanleyReisnerRing, Fan)
+   Headline
+      Give the Stanley–Reisner ring of a fan.
+   Usage
+      SR = stanleyReisnerRing Phi
+   Inputs
+      Phi:Fan
+   Outputs
+      SR:Ring
+         The Stanley–Reisner Ring of Phi
+   Description
+      Text
+         Returns the Stanley–Reisner Ring of a fan, whose variables are indexed by the rays.
+      Example
+         SR = stanleyReisnerRing normalFan hypercube 2
+///
+
+doc ///
+   Key
       (faces, PolyhedralObject)
    Headline
       Giving the faces of a polyhedral object.
