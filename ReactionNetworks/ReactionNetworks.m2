@@ -26,6 +26,7 @@ export {"reactionNetwork",
     "Complexes",
     "ReactionRing",
     "NullSymbol",
+		"Input",
     "NullIndex",
     "ReactionGraph",
     "stoichiometricSubspace",
@@ -94,15 +95,56 @@ ReactionNetwork = new Type of MutableHashTable
 -- todo: 1) other types of input (eg. stoichiometry matrix)
 -- 3) check BNF w/ control people, ask about default nullsymbol
 
-reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol => ""})
+reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol => "", Input => "Str"})
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
-    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {},
-	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null,
-	ReactionRates => null, InitialValues => null, ConcentrationRates => null};
+	Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {},
+NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null,
+ReactionRates => null, InitialValues => null, ConcentrationRates => null};
+X := symbol X;
+	if o.Input == "Str" then (
     scan(rs, r -> addReaction(r,Rn));
-    Rn
-    )
+		return Rn;
+		);
+	if o.Input == "Laplacian" then (
+		if class(class rs_0_(0,0))===PolynomialRing then (
+			CLapTemp := matrix flatten apply(for i from 0 to (numRows rs_0)-1 list rs_0_(i,0),exponents);
+			CLapP := for i from 0 to numRows(CLapTemp)-1 list transpose matrix CLapTemp_i;
+			Rn.Complexes = CLapP;
+			)
+		else (
+			CLap := for i from 0 to numColumns(rs_0)-1 list transpose matrix(rs_0_i);
+			Rn.Complexes = CLap;
+			);
+		HLap := map(ZZ,ring rs_1,for i from 1 to length(gens ring rs_1) list 1);
+		L := HLap(-rs_1);
+		A := L - diagonalMatrix(matrix{for i from 0 to numRows(L)-1 list L_(i,i)});
+		Rn.Species = for i from 1 to numColumns(Rn.Complexes_0) list toString(X_i);
+		Rn.ReactionGraph = digraph A;
+		return Rn;
+		);
+
+	if o.Input == "Stoichiometric" then (
+		NumReac := numColumns rs_0;
+		R := QQ[toList(sort(gens(ring rs_1),MonomialOrder=>GRevLex))_(toList(NumReac..(numgens ring rs_1)-1))];
+		-- HStoich := map(R,ring rs_1,(for i from NumReac to length(gens(ring rs_1))-1 list 1)|(gens R));
+		HStoich := map(R,ring rs_1,(for i from 0 to NumReac-1 list 1)|(gens R));
+		temp := transpose(matrix(HStoich(rs_1)));
+		Reactants := apply(apply(for i from 0 to NumReac-1 list temp_i_0,exponents),matrix);
+		Products := for i from 0 to length(Reactants)-1 list (transpose matrix(sub(rs_0_i,ZZ))+ Reactants_i);
+		CStoich := apply(toList(set(Reactants)+set(Products)),matrix);
+		Edges := for i from 0 to length(Reactants)-1 list {position(CStoich,j -> j==Reactants_i),position(CStoich,j -> j==Products_i)};
+		Rn.Species = for i from 1 to (numRows rs_0) list toString(X_i);
+		Rn.Complexes = CStoich;
+		Rn.ReactionGraph = digraph Edges;
+		return Rn;
+		);
+)
+
+reactionNetwork Ideal := String => o -> rs -> (
+		TempNet := coefficients gens rs;
+		reactionNetwork({sub(transpose TempNet_1,ZZ), transpose TempNet_0},Input=>"Stoichiometric")
+		);
 
 TEST ///
 restart
@@ -700,6 +742,7 @@ assert(isWeaklyReversible wnt() == false)
 
 load "ReactionNetworks/motifs-Kisun.m2"
 load "ReactionNetworks/motifs-Cvetelina.m2"
+load "ReactionNetworks/motifs-Michael.m2"
 
 -- end
 
