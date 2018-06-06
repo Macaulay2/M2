@@ -89,8 +89,9 @@ stanleyReisnerRing = method();
 stanleyReisnerRing Fan := Phi -> (
    S := minimalNonFaces Phi;
    x := getSymbol "x";
-   R := QQ[x_0..x_(numColumns rays Phi -1)];    
-   I := ideal for s in S list product apply(s, i -> x_i);
+   R := QQ[x_0..x_(numColumns rays Phi -1)];
+   X := flatten entries vars R;
+   I := ideal for s in S list product apply(s, i -> X#i);
    R / I
    )
 
