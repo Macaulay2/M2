@@ -8,7 +8,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include @srcdir@/Makefile.files
 include Makefile.common
-CPPFLAGS := -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -I/usr/local/include/eigen3 -I/usr/local/include/eigen3/unsupported -Wno-fatal-errors
+CPPFLAGS := -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -I/usr/local/include/eigen3 -I/usr/local/include/eigen3/unsupported -I/nethome/aleykin3/include/eigen-git-mirror -I/nethome/aleykin3/include/eigen-git-mirror/unsupported -Wno-fatal-errors
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
 

@@ -1,3 +1,10 @@
+#include <cstdlib>
+
+namespace std {
+void* my_malloc( std::size_t size );
+void my_free( void* ptr );
+}
+
 #define malloc my_malloc
 #define free my_free
 #define mpfr foo
@@ -7,18 +14,21 @@
 #include "eigen.hpp"
 #include <Eigen/SVD>
 #include "mpfr.h"
-#undef my_free
-#undef my_malloc
+#undef free
+#undef malloc
 
 #include <gc/gc_allocator.h>
+namespace std {
 void* my_malloc( std::size_t size )
 {
   return GC_MALLOC_UNCOLLECTABLE(size);
 }
-void free( void* ptr )
+void my_free( void* ptr )
 {
   GC_FREE(ptr);
 }
+}
+
 
 /***********************
  * An attempt to overwrite memory management globally
