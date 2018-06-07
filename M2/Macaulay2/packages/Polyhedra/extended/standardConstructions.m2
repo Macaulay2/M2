@@ -199,7 +199,7 @@ crossPolytope(ZZ,QQ) := (d,s) -> (
       facets => transpose(-homHalf#0),
       computedHyperplanes => transpose(homHalf#1)
    };
-   C = cone C;
+   C = internalConeConstructor C;
    result := new HashTable from {
       underlyingCone => C
    };

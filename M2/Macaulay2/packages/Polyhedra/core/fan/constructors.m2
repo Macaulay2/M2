@@ -38,7 +38,7 @@ fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
       computedLinealityBasis => lineality,
       inputCones => icones
    };
-   fan result
+   internalFanConstructor result
 )
 
 
@@ -56,7 +56,8 @@ fan(Matrix, Sequence) := (irays, icones) -> (
    fan(irays, toList icones)
 )
 
-fan HashTable := inputProperties -> (
+internalFanConstructor = method()
+internalFanConstructor HashTable := inputProperties -> (
    resultHash := sanitizeFanInput inputProperties;
    constructTypeFromHash(Fan, resultHash)
 )
@@ -144,7 +145,7 @@ addCone(Fan, Cone) := (F, C) -> (
       computedLinealityBasis => linF,
       inputCones => mc
    };
-   fan result
+   internalFanConstructor result
 )
 
 addCone(Cone, Fan) := (C, F) -> addCone(F, C)
