@@ -12,8 +12,8 @@ newPackage(
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "reaction networks",
 	PackageImports => {"Graphs", "Polyhedra"},
-  	--DebuggingMode => false,
-  	DebuggingMode => true,		 -- set to true only during development
+  	DebuggingMode => false,
+  	--DebuggingMode => true,		 -- set to true only during development
 	AuxiliaryFiles => true
     	)
 
