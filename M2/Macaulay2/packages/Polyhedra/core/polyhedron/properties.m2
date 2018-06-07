@@ -116,7 +116,7 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
       result = append(result, equations => pMat);
    );
    resultHash := new HashTable from result;
-   cone resultHash
+   internalConeConstructor resultHash
 )
 
 

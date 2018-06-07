@@ -16,7 +16,7 @@ stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
       )
       else {C}
    );
-   L := flatten apply(getProperty(F, honestMaxObjects), C -> if contains(C,r) then divider(C,r) else {C});
+   L := flatten apply(values getProperty(F, honestMaxObjects), C -> if contains(C,r) then divider(C,r) else {C});
    fan L
 )
 

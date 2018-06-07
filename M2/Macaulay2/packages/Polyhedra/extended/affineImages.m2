@@ -142,5 +142,5 @@ linearTransform(Fan, Matrix) := (F, A) -> (
       computedLinealityBasis => newLineality,
       generatingObjects => maxCones F
    };
-   return fan result
+   internalFanConstructor result
 )
