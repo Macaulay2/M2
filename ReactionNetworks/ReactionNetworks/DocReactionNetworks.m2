@@ -24,7 +24,7 @@ doc ///
 		$\bullet$ @TO "isWeaklyReversible"@
 
 		$\bullet$ @TO "steadyStateEquations"@
-		
+
 		$\bullet$ @TO "conservationEquations"@
 
 	--	$\bullet$ @TO "injectivityTest"@
@@ -129,8 +129,9 @@ doc ///
 doc ///
     Key
     	reactionNetwork
-	(reactionNetwork, String)
-	(reactionNetwork, List)
+	     (reactionNetwork, String)
+	     (reactionNetwork, List)
+       	     (reactionNetwork, Ideal)
     Headline
     	creates a reaction network
     Description
@@ -160,8 +161,44 @@ doc ///
         Text
 	    Or the user may view all stored information about a reaction network:
 	Example
-	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
 	    peek N
+  	Text
+            Create a reaction network from a negative Laplacian matrix (or adjacency matrix) and the complexes.
+        Example
+            L = matrix{{-1,1,0,0,0},{1,-1,0,0,0},{0,0,-1,1,0},{0,0,1,-2,1},{0,0,1,0,-1}}
+            Comp = transpose matrix{{1,0,0,0,0},{0,2,0,0,0},{1,0,1,0,0},{0,0,0,1,0},{0,1,0,0,1}}
+      	    N = reactionNetwork({Comp,L},Input=>"Laplacian")
+      	    peek N
+  	Text
+      	    The input can also be a weighted negative Laplacian matrix (or weighted adjacency matrix) and the complexes.
+  	Example
+      	    R = QQ[k_1..k_6,x_1..x_5]
+      	    A = matrix{{-k_1,k_1,0,0,0},{k_2,-k_2,0,0,0},{0,0,-k_3,k_3,0},{0,0,k_4,-k_4-k_5,k_5},{0,0,k_6,0,-k_6}}
+      	    Comp = transpose matrix{{1,0,0,0,0},{0,2,0,0,0},{1,0,1,0,0},{0,0,0,1,0},{0,1,0,0,1}}
+      	    N = reactionNetwork({Comp,A},Input=>"Laplacian")
+      	    peek N
+  	Text
+      	    Create a reaction network from a stoichiometric matrix and a flux vector.
+	Example
+      	    R = QQ[k_1..k_6,x_1..x_5]
+      	    StoichM = matrix{{-1,1,-1,1,0,1},{2,-2,0,0,1,-1},{0,0,-1,1,0,1},{0,0,1,-1,-1,0},{0,0,0,0,1,-1}}
+      	    FluxV = transpose matrix{{k_1*x_1,k_2*x_2^2,k_3*x_1*x_3,k_4*x_4,k_5*x_4,k_6*x_2*x_5}}
+      	    N = reactionNetwork({StoichM,FluxV},Input=>"Stoichiometric")
+            peek N
+        Text
+            Create a reaction network from a steady state ideal in R =QQ[k_1..k_m,x_1..x_n].
+    	    Note that the ideal needs to be unreduced with generator coming from a mass action dynamical system.
+        Example
+    	    R = QQ[k_1..k_6,x_1..x_5]
+    	    I = ideal(k_2*x_2^2-k_3*x_1*x_3+k_6*x_2*x_5-k_1*x_1+k_4*x_4,
+      	        -2*k_2*x_2^2-k_6*x_2*x_5+2*k_1*x_1+k_5*x_4,
+       	        -k_3*x_1*x_3+k_6*x_2*x_5+k_4*x_4,
+       	        k_3*x_1*x_3-k_4*x_4-k_5*x_4,
+       	        -k_6*x_2*x_5+k_5*x_4)
+    	    N = reactionNetwork I
+    	    peek N
+
     SeeAlso
 	"glue"
 	"steadyStateEquations"
@@ -545,6 +582,38 @@ doc ///
 	    N = oneSiteModificationA()
 	    L = negativeLaplacian N
     SeeAlso
+        negativeWeightedLaplacian
+	stoichiometricMatrix
+///
+
+doc ///
+    Key
+    	negativeUndirectedLaplacian
+	(negativeUndirectedLaplacian,ReactionNetwork)
+    Headline
+    	Computes the negative of the Laplacian matrix of an undirected graph associated with a Reaction Network.
+    Usage
+    	L = negativeUndirectedLaplacian N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	L:Matrix
+	  the negative of the unweighted, undirected Laplacian matrix of N.
+    Description
+        Text
+	    Computes the negative of the (unweighted) Laplacian matrix of
+    	    the undirected graph associated with a Reaction Network.
+    	Example
+	    N = reactionNetwork "A <--> B"
+	    L = negativeUndirectedLaplacian N
+	Text
+	    A bigger example:
+	Example
+	    N = oneSiteModificationA()
+	    L = negativeUndirectedLaplacian N
+    SeeAlso
+        negativeLaplacian
         negativeWeightedLaplacian
 	stoichiometricMatrix
 ///

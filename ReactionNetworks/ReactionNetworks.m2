@@ -52,6 +52,7 @@ export {"reactionNetwork",
     "reactionMatrix",
     "reactantMatrix",
     "negativeLaplacian",
+		"negativeUndirectedLaplacian",
 		"negativeWeightedLaplacian",
     "subRandomInitVals",
     "subRandomReactionRates" --, "netComplex", "networkToHRF", "kk"
@@ -107,18 +108,11 @@ X := symbol X;
 		return Rn;
 		);
 	if o.Input == "Laplacian" then (
-		if class(class rs_0_(0,0))===PolynomialRing then (
-			CLapTemp := matrix flatten apply(for i from 0 to (numRows rs_0)-1 list rs_0_(i,0),exponents);
-			CLapP := for i from 0 to numRows(CLapTemp)-1 list transpose matrix CLapTemp_i;
-			Rn.Complexes = CLapP;
-			)
-		else (
-			CLap := for i from 0 to numColumns(rs_0)-1 list transpose matrix(rs_0_i);
-			Rn.Complexes = CLap;
-			);
+		CLap := for i from 0 to numColumns(rs_0)-1 list transpose matrix(rs_0_i);
 		HLap := map(ZZ,ring rs_1,for i from 1 to length(gens ring rs_1) list 1);
-		L := HLap(-rs_1);
+		L := HLap(rs_1);
 		A := L - diagonalMatrix(matrix{for i from 0 to numRows(L)-1 list L_(i,i)});
+		Rn.Complexes = CLap;
 		Rn.Species = for i from 1 to numColumns(Rn.Complexes_0) list toString(X_i);
 		Rn.ReactionGraph = digraph A;
 		return Rn;
@@ -126,8 +120,7 @@ X := symbol X;
 
 	if o.Input == "Stoichiometric" then (
 		NumReac := numColumns rs_0;
-		R := QQ[toList(gens(ring rs_1))_(toList(NumReac..((numgens ring rs_1)-1)))];
-		-- HStoich := map(R,ring rs_1,(for i from NumReac to length(gens(ring rs_1))-1 list 1)|(gens R));
+		R := QQ[toList(rsort(gens(ring rs_1)))_(toList(NumReac..((numgens ring rs_1)-1)))];
 		HStoich := map(R,ring rs_1,(for i from 0 to NumReac-1 list 1)|(gens R));
 		temp := transpose(matrix(HStoich(rs_1)));
 		Reactants := apply(apply(for i from 0 to NumReac-1 list temp_i_0,exponents),matrix);
@@ -704,9 +697,21 @@ isWeaklyReversible = Rn -> (
     if Q===toList{null} then true else false
     )
 
---negative laplacian
+--negative Laplacian
 negativeLaplacian = method()
 negativeLaplacian ReactionNetwork := Rn -> (
+	Indices := edges Rn.ReactionGraph;
+	N := matrix{for i from 1 to length(Rn.Complexes) list 0_ZZ};
+	A := mutableMatrix (N**transpose N);
+	for i from 0 to length(Indices)-1 do A_(toSequence(Indices_i)) = 1;
+	A = matrix A;
+	D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+	A-D
+	)
+
+--negative undirected laplacian
+negativeUndirectedLaplacian = method()
+negativeUndirectedLaplacian ReactionNetwork := Rn -> (
     G := underlyingGraph Rn.ReactionGraph;
     L := laplacianMatrix G;
     -L
@@ -715,8 +720,8 @@ negativeLaplacian ReactionNetwork := Rn -> (
 	negativeWeightedLaplacian = method()
 	negativeWeightedLaplacian ReactionNetwork := Rn -> (
 		if Rn.ReactionRing === null then createRing Rn;
-		Indices := edges Rn.ReactionGraph;
 		NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
+		Indices := edges Rn.ReactionGraph;
 		N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
 		A := mutableMatrix (N**transpose N);
 		for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);

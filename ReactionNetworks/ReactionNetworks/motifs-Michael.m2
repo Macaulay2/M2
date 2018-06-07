@@ -54,20 +54,17 @@ DiffusionGamma ZZ := m->(
 DistR=method(TypicalValue=>Matrix);
 DistR ZZ:=m->(
   k:= symbol k;
-  kb:= symbol kb;
-  kp:= symbol kp;
-  kbp:= symbol kbp;
-  l:= symbol l;
-  lb:= symbol lb;
   x:= symbol x;
-  S := QQ[k_1..k_m,kp_1..kp_m,kb_1..kb_m,kbp_1..kbp_m,l_1..l_m,lb_1..lb_m, x_1..x_(3*m+3)];
+  -- S := QQ[k_1..k_m,kp_1..kp_m,kb_1..kb_m,kbp_1..kbp_m,l_1..l_m,lb_1..lb_m, x_1..x_(3*m+3)];
+  S := QQ[k_1..k_(6*m), x_1..x_(3*m+3)];
+
 
   R1 := matrix({for i from 1 to m list k_i*x_1*x_(i+2)});
-  R2 := matrix({for i from 1 to m list l_i*x_(i+m+3)});
-  R3 := matrix({for i from 1 to m list kp_i*x_(i+m+3)});
-  R4 := matrix({for i from 1 to m list kb_i*x_2*x_(i+3)});
-  R5 := matrix({for i from 1 to m list lb_i*x_(2*m+3+i)});
-  R6 := matrix({for i from 1 to m list kbp_i*x_(2*m+3+i)});
+  R2 := matrix({for i from 1 to m list k_(m+i)*x_(i+m+3)});
+  R3 := matrix({for i from 1 to m list k_(2*m+i)*x_(i+m+3)});
+  R4 := matrix({for i from 1 to m list k_(3*m+i)*x_2*x_(i+3)});
+  R5 := matrix({for i from 1 to m list k_(4*m+i)*x_(2*m+3+i)});
+  R6 := matrix({for i from 1 to m list k_(5*m+i)*x_(2*m+3+i)});
   R := transpose(R1|R2|R3|R4|R5|R6);
   return R;
   );
@@ -75,11 +72,10 @@ DistR ZZ:=m->(
 ProcR=method(TypicalValue=>Matrix);
 ProcR ZZ:=m->(
   k:= symbol k;
-  l:= symbol l;
   x:= symbol x;
-  S := QQ[k_1..k_(2*m+1),l_1..l_(2*m+1),x_1..x_(2*m+4)];
+  S := QQ[k_1..k_(4*m+2),x_1..x_(2*m+4)];
   R1 := matrix{{k_1*x_1*x_3}}|matrix({for i from 2 to m+1 list k_i*x_(i+3)})|matrix({for i from 1 to m list k_(m+1+i)*x_(i+4)});
-  R2 := matrix({for i from 1 to m list l_i*x_(m+4+i)})|matrix{{l_(m+1)*x_2*x_4}}|matrix({for i from 1 to m list l_(m+1+i)*x_(m+i+4)});
+  R2 := matrix({for i from 1 to m list k_(2*m+1+i)*x_(m+4+i)})|matrix{{k_(3*m+2)*x_2*x_4}}|matrix({for i from 1 to m list k_(3*m+2+i)*x_(m+i+4)});
   R := transpose(R1|R2);
   return R;
   );
@@ -96,11 +92,10 @@ PoreGamma ZZ:=m->(
 PoreR=method(TypicalValue=>Matrix);
 PoreR ZZ := m->(
  k:= symbol k;
- l:= symbol l;
  x:= symbol x;
- S := QQ[k_1..k_(m-1),l_1..l_(m-1),x_1..x_m];
+ S := QQ[k_1..k_(2*m-2),x_1..x_m];
  R1 := matrix({for i from 1 to (m-1) list k_i*x_1*x_i});
- R2 := matrix({for i from 1 to (m-1) list l_i*x_(i+1)});
+ R2 := matrix({for i from 1 to (m-1) list k_(m-1+i)*x_(i+1)});
  R := transpose(R1|R2);
  return R;
  );
@@ -120,11 +115,10 @@ McKGamma ZZ := m->(
 McKR = method(TypicalValue=>Matrix);
 McKR ZZ := m->(
  k:= symbol k;
- l:= symbol l;
  x:= symbol x;
- S := QQ[k_1..k_m,l_1..l_m,x_1..x_(m+2)];
+ S := QQ[k_1..k_(2*m),x_1..x_(m+2)];
  R1 := matrix(k_1*x_1*x_2)|matrix({for i from 2 to m list k_i*x_(i+1)});
- R2 := matrix({for i from 1 to m list l_i*x_(i+2)});
+ R2 := matrix({for i from 1 to m list k_(m+i)*x_(i+2)});
  R := transpose(R1|R2);
  return R;
  );
@@ -140,7 +134,6 @@ SeqGamma ZZ := m->(
 SeqR = method(TypicalValue=>Matrix);
 SeqR ZZ := m->(
   k:= symbol k;
-  l:= symbol l;
   x:= symbol x;
   S := QQ[k_1..k_m,x_1..x_m];
   R := transpose(matrix({for i from 1 to (m-1) list k_i*x_i*x_(i+1)})|matrix(k_m*x_1));
@@ -153,10 +146,10 @@ AutocatR ZZ := m->(
   l := symbol l;
   lb := symbol lb;
   x := symbol x;
-  S := QQ[k_1..k_m,l_1..l_m,lb_1..lb_m,x_1..x_m];
+  S := QQ[k_1..k_(3*m),x_1..x_m];
   R1 := matrix({for i from 1 to m-1 list k_i*x_i*x_(i+1)})|matrix({{k_m*x_m*x_1}});
-  R2:=matrix({for i from 1 to m list l_i});
-  R3 := matrix({for i from 1 to m list lb_i*x_i});
+  R2:=matrix({for i from 1 to m list k_(m+i)});
+  R3 := matrix({for i from 1 to m list k_(2*m+i)*x_i});
   R := transpose(R1|R2|R3);
   return R;
   );
@@ -165,9 +158,8 @@ DiffusionR=method(TypicalValue=>Matrix);
 DiffusionR ZZ := m->(
   x := symbol x;
   d := symbol d;
-  b := symbol b;
-  S:=QQ[d_1..d_(m-1),b_2..b_m,x_1..x_m];
-  R := matrix({for i from 1 to m-1 list d_i*x_i})|matrix({for i from 2 to m list b_i*x_i});
+  S:=QQ[d_1..d_(2*m-2),x_1..x_m];
+  R := matrix({for i from 1 to m-1 list d_i*x_i})|matrix({for i from 1 to m-1 list d_(m-1+i)*x_(i+1)});
   -- R := d*(transpose matrix{toList(x_1..x_(m-1),x_2..x_m)});
   return transpose R;
   );
