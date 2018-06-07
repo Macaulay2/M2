@@ -9,7 +9,7 @@ intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
    result := new HashTable from {
       underlyingCone => C12
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 

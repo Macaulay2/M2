@@ -151,7 +151,7 @@ bipyramid Polyhedron := P -> (
    result := new HashTable from {
       underlyingCone => newC
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
@@ -174,7 +174,7 @@ pyramid Polyhedron := P -> (
    result := new HashTable from {
       underlyingCone => newC
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
@@ -203,7 +203,7 @@ crossPolytope(ZZ,QQ) := (d,s) -> (
    result := new HashTable from {
       underlyingCone => C
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
@@ -228,7 +228,7 @@ emptyPolyhedron ZZ := n -> (
    result := new HashTable from {
       underlyingCone => C
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 );
 	  
 -- PURPOSE : Generating the 'd'-dimensional standard simplex in QQ^(d+1)

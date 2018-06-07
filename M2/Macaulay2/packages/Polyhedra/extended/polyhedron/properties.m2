@@ -72,7 +72,7 @@ compute#Polyhedron#computedPolar Polyhedron := P -> (
    result := new HashTable from {
       underlyingCone => CD
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 
