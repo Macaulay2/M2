@@ -122,7 +122,7 @@ fan Cone := C -> (
    n := numColumns raysC;
    mc := {toList (0..(n-1))};
    result := fan(raysC, linealityC, mc);
-   setProperty(result, honestMaxObjects, {C});
+   setProperty(result, honestMaxObjects, new HashTable from {mc#0 => C});
    result
 )
 
