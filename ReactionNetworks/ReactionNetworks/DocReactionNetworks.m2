@@ -62,6 +62,20 @@ doc ///
 		$\bullet$ @TO "clusterModelCellDeath"@
 
 		$\bullet$ @TO "wnt"@
+		
+		$\bullet$ @TO "nSiteProcessiveModification"@
+		
+		$\bullet$ @TO "nSiteDistributiveModification"@
+		
+		$\bullet$ @TO "nSiteImmuneReaction"@
+		
+		$\bullet$ @TO "nSiteDiffusion"@
+		
+		$\bullet$ @TO "nSitePoreForming"@
+		
+		$\bullet$ @TO "nSiteSequestration"@
+		
+		$\bullet$ @TO "nSiteAutocatalytic"@
 
 	    {\bf Examples}
 
