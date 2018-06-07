@@ -41,6 +41,14 @@ polyhedralComplex(Matrix, List) := (V, mO) -> (
 )
 
 
+polyhedralComplex Fan := F -> (
+   result := new HashTable from {
+      underlyingFan => F
+   };
+   polyhedralComplex result
+)
+
+
 polyhedralComplex Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    result := new HashTable from {
