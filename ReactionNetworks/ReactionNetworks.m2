@@ -11,9 +11,9 @@ newPackage(
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "reaction networks",
-	PackageImports => {"Graphs"},
-  	DebuggingMode => false,
-  	-- DebuggingMode => true,		 -- set to true only during development
+	PackageImports => {"Graphs", "Polyhedra"},
+--  	DebuggingMode => false,
+        DebuggingMode => true,		 -- set to true only during development
 	AuxiliaryFiles => true
     	)
 
@@ -26,12 +26,18 @@ export {"reactionNetwork",
     "Complexes",
     "ReactionRing",
     "NullSymbol",
-		"Input",
+    "Input",
     "NullIndex",
     "ReactionGraph",
     "stoichiometricSubspace",
     "stoichSubspaceKer",
     "createRing",
+    "stoichiometricConeKer",
+    "superDoublingSets",
+    "preClusters",
+    "clusters",
+    "reducedStoichiometricConeKer",
+    "hasIsolation",
  --   "ParameterRing",
     "steadyStateEquations",
     "conservationEquations",
@@ -52,8 +58,8 @@ export {"reactionNetwork",
     "reactionMatrix",
     "reactantMatrix",
     "negativeLaplacian",
-		"negativeUndirectedLaplacian",
-		"negativeWeightedLaplacian",
+    "negativeUndirectedLaplacian",
+    "negativeWeightedLaplacian",
     "subRandomInitVals",
     "subRandomReactionRates" --, "netComplex", "networkToHRF", "kk"
     }
@@ -141,8 +147,6 @@ reactionNetwork Ideal := String => o -> rs -> (
 
 TEST ///
 restart
-needs "ReactionNetworks.m2"
-needsPackage "Graphs"
 NN = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
 NN.Complexes
 NN.NullSymbol
@@ -422,7 +426,7 @@ assert(stoichiometricSubspace CRN ==
 assert(stoichSubspaceKer CRN ==
     mingens image transpose matrix{{2,1,-1,1,0},{-2,-1,2,0,1}})
 ///
-
+    
 concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
 
 --I think this is part of the code that is a problem
@@ -505,8 +509,8 @@ sepEdges = Rn -> (
 	e -> if (first e =!= Rn.NullIndex) and (last e =!= Rn.NullIndex) then seps.FullEdges = append(seps.FullEdges, e)
 	else seps.NullEdges = append(seps.NullEdges,e));
     seps
-	)
-
+    )
+    
 --laplacian needs to be redone
 -- interface can be greatly improved, but this seems to work, and also handles CRNs with NullSymbols
 -*
@@ -643,7 +647,7 @@ displayComplexes = (Rn, FF) -> (
 	    i -> flatten entries((sub(Rn.Complexes#i, R))*(transpose matrix Rn.ConcentrationRates))
 	    ));
     A | B
-	)
+    )
 
 TEST ///
 restart
@@ -696,18 +700,18 @@ isWeaklyReversible = Rn -> (
 	};
     if Q===toList{null} then true else false
     )
-
+    
 --negative Laplacian
 negativeLaplacian = method()
 negativeLaplacian ReactionNetwork := Rn -> (
-	Indices := edges Rn.ReactionGraph;
-	N := matrix{for i from 1 to length(Rn.Complexes) list 0_ZZ};
-	A := mutableMatrix (N**transpose N);
-	for i from 0 to length(Indices)-1 do A_(toSequence(Indices_i)) = 1;
-	A = matrix A;
-	D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
-	A-D
-	)
+    Indices := edges Rn.ReactionGraph;
+    N := matrix{for i from 1 to length(Rn.Complexes) list 0_ZZ};
+    A := mutableMatrix (N**transpose N);
+    for i from 0 to length(Indices)-1 do A_(toSequence(Indices_i)) = 1;
+    A = matrix A;
+    D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+    A-D
+    )
 
 --negative undirected laplacian
 negativeUndirectedLaplacian = method()
@@ -716,19 +720,141 @@ negativeUndirectedLaplacian ReactionNetwork := Rn -> (
     L := laplacianMatrix G;
     -L
     )
+
 --negative weighted Laplacian
-	negativeWeightedLaplacian = method()
-	negativeWeightedLaplacian ReactionNetwork := Rn -> (
-		if Rn.ReactionRing === null then createRing Rn;
-		NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
-		Indices := edges Rn.ReactionGraph;
-		N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
-		A := mutableMatrix (N**transpose N);
-		for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
-		A = matrix A;
-		D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
-		A-D
-		)
+negativeWeightedLaplacian = method()
+negativeWeightedLaplacian ReactionNetwork := Rn -> (
+    if Rn.ReactionRing === null then createRing Rn;
+    NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
+    Indices := edges Rn.ReactionGraph;
+    N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
+    A := mutableMatrix (N**transpose N);
+    for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
+    A = matrix A;
+    D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+    A-D
+    )
+
+--
+--Here we add functions for the isolation property--
+
+
+--here we compute the nonnegative kernel of the stoichiometric matrix
+stoichiometricConeKer = method ()
+stoichiometricConeKer ReactionNetwork := Rn -> (
+    transpose rays stoichiometricMatrix Rn    
+)
+
+TEST ///
+needsPackage "ReactionNetworks"
+needsPackage "Polyhedra"
+assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
+assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
+///
+
+--here we compute the superdoubling sets
+superDoublingSets = method()
+superDoublingSets ReactionNetwork := Rn -> (
+doublingSet := symbol doublingSet;
+superDoublingSets := set{};
+eductMatrix := transpose reactantMatrix Rn;
+for i from 0 to numColumns eductMatrix - 1 do (
+    doublingSet = set{};
+    for j from 0 to numColumns eductMatrix - 1 do(
+	if j != i and eductMatrix_i == eductMatrix_j then(
+	    doublingSet = doublingSet+set{j}
+	);
+    );
+    if doublingSet =!= set{} then (doublingSet = doublingSet + set{i};
+    superDoublingSets = superDoublingSets + set{doublingSet};);
+);
+superDoublingSets
+)
+
+TEST ///
+assert (superDoublingSets reactionNetwork "A <--> B" === set {})
+///
+
+
+--here we compute the preclusters
+preClusters = method()
+preClusters ReactionNetwork := Rn -> (
+Ematrix := stoichiometricConeKer Rn;
+preclusters := set{};
+for sds in (toList superDoublingSets Rn) do(
+    for i from 0 to numRows Ematrix - 1 do(
+	if  set flatten entries (transpose Ematrix^{i}%(transpose Ematrix^(toList sds))) === set{0} then(
+	    sds = sds + set{i};
+	    );        
+	);
+    preclusters = preclusters + set{sds};
+    );
+preclusters
+)
+
+TEST ///
+assert (preClusters reactionNetwork "A <--> B" === set{})
+///
+
+--here we compute the clusters
+clusters = method()
+clusters ReactionNetwork := Rn -> (
+clust := preClusters Rn;
+for pcl1 in (toList clust) do(
+    for pcl2 in (drop(toList clust,1)) do(
+	if (pcl1)*(pcl2)  =!= set{} then(
+	    clust = clust - set{pcl1} - set{pcl2} + set {pcl1+pcl2};
+	    );
+	);
+    );    
+clust
+)
+
+TEST ///
+assert (clusters reactionNetwork "A <--> B" === set{})
+///
+
+--here we compute Ematrixreduced
+reducedStoichiometricConeKer = method ()
+reducedStoichiometricConeKer ReactionNetwork := Rn -> (
+reducedematrix := 0*mutableMatrix{{1..numColumns stoichiometricConeKer Rn}};
+block := mutableMatrix{{}};
+Ematrix := stoichiometricConeKer Rn;
+clust := clusters Rn;
+for cl in toList clust do(
+    block = 0*mutableMatrix{{1..numColumns Ematrix}};
+    for i in toList cl do(
+	block = block + mutableMatrix Ematrix^{i};
+	);
+    reducedematrix = mutableMatrix((matrix reducedematrix)||(matrix block));
+    );
+matrix(reducedematrix^{1..numRows reducedematrix - 1})
+)
+
+TEST ///
+assert (reducedStoichiometricConeKer reactionNetwork "A <--> B" == map(ZZ^0,ZZ^1,0))
+///
+
+-- here we check whether N has the isolation property
+hasIsolation = method ()
+hasIsolation ReactionNetwork := Rn -> (
+if #(clusters Rn) == 0 then return false;
+if #(clusters Rn) == 1 then return true;
+rE := reducedStoichiometricConeKer Rn;
+for i from 0 to numRows rE - 1 do(
+    for j from 0 to numRows rE - 1 do(
+	if (i != j and set apply (flatten entries rE^{i},flatten entries rE^{j},(i,j) -> i*j) =!= set{0})  then return false;
+	);
+    );
+return true
+)
+
+TEST ///
+assert (hasIsolation oneSiteModificationA() == true)
+assert (hasIsolation reactionNetwork "A <--> B, B <--> C, C <--> A" == false)
+///
+
+
 
 
 --injectivityTest = Rn ->
