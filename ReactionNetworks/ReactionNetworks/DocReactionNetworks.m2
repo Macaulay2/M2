@@ -596,6 +596,7 @@ doc ///
 	    N = oneSiteModificationA()
 	    L = negativeLaplacian N
     SeeAlso
+    	negativeUndirectedLaplacian
         negativeWeightedLaplacian
 	stoichiometricMatrix
 ///
@@ -659,6 +660,7 @@ doc ///
 	    N = oneSiteModificationA()
 	    L = negativeWeightedLaplacian N
     SeeAlso
+    	negativeUndirectedLaplacian
         negativeLaplacian
 	stoichiometricMatrix
 ///
@@ -696,6 +698,36 @@ doc ///
 	negativeWeightedLaplacian
 ///
 
+doc ///
+    Key
+        reactantMatrix
+	(reactantMatrix,ReactionNetwork)
+    Headline
+    	Computes the reactants matrix of a Reaction Network.
+    Usage
+    	RM = reactantMatrix N
+    Inputs
+        N:ReactionNetwork
+	  a chemical reaction network.
+    Outputs
+    	RM:Matrix
+	   whose rows encode the educt complexes of N.
+    Description
+    	Example
+	    N = reactionNetwork "A + 2B <--> 3A + 4B"
+	    RM = reactantMatrix N
+	Text
+	    A bigger example:
+	Example
+	    N = oneSiteModificationA()
+	    RM = reactantMatrix N
+    SeeAlso
+    	stoichiometricMatrix
+        stoichiometricSubspace
+	stoichSubspaceKer
+	negativeLaplacian
+	negativeWeightedLaplacian
+///
 
 doc ///
     Key

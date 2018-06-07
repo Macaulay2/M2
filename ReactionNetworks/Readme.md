@@ -7,15 +7,12 @@ Team members
     
     Adamer, Michael
     Iosif, Alexandru (alexandru.iosif@ovgu.de)
-    Nicklasson, Lisa
 
 To do:
 1. the function displayComplexes is not working
 2. add missing documetation
-3. add a function which would create a reaction network from a matrix
-4. add function to check the isolation property
-5. how to add documentation for a function with optional inputs?
 
 Fixed:
-1. created a function negativeWeightedLaplacian
-2. added some documentation
+1. created functions: negativeWeightedLaplacian, negativeUndirectedLaplacian, stoichiometricConeKer, reducedStoichiometricConeKer, preClusters, clusters, superDoublingSets, hasIsolation
+2. added documentation for the new functions
+3. added docuemntation for the functions: stoichiometricMatrix, stoichiometricSubspace, stoichSubspaceKer, negativeLaplacian, reactantMatrix
