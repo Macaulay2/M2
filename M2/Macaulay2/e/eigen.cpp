@@ -1,11 +1,13 @@
 #include <cstdlib>
 
-void* my_malloc( std::size_t size );
-void my_free( void* ptr );
+//void* my_malloc( std::size_t size );
+//void my_free( void* ptr );
 namespace std {
 void* my_malloc( std::size_t size );
 void my_free( void* ptr );
 }
+using std::my_malloc;
+using std::my_free;
 
 #define malloc my_malloc
 #define free my_free
@@ -20,14 +22,14 @@ void my_free( void* ptr );
 #undef malloc
 
 #include <gc/gc_allocator.h>
-void* my_malloc( std::size_t size )
-{
-  return GC_MALLOC_UNCOLLECTABLE(size);
-}
-void my_free( void* ptr )
-{
-  GC_FREE(ptr);
-}
+// void* my_malloc( std::size_t size )
+// {
+//   return GC_MALLOC_UNCOLLECTABLE(size);
+// }
+// void my_free( void* ptr )
+// {
+//   GC_FREE(ptr);
+// }
 namespace std {
 void* my_malloc( std::size_t size )
 {
