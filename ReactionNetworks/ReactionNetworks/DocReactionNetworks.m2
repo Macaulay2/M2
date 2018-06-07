@@ -999,8 +999,8 @@ doc ///
         N:ReactionNetwork
 	  a chemical reaction network.
     Outputs
-    	rE:Boolean
-	  true or false.
+    	Boolean
+	true or false.
     Description
         Text
 	    Checks whether a chemical reaction network has the isolation property.
