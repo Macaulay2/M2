@@ -14,6 +14,7 @@ To do:
 2. add missing documetation
 3. add a function which would create a reaction network from a matrix
 4. add function to check the isolation property
+5. how to add documentation for a function with optional inputs?
 
 Fixed:
 1. created a function negativeWeightedLaplacian
