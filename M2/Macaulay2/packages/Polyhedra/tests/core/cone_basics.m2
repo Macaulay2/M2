@@ -116,3 +116,8 @@ L = {matrix {{1},{0},{0}},matrix {{1},{1},{0}},matrix {{1},{2},{0}},matrix {{1},
 assert(set H === set L)
 ///
 
+-- A simplicial polytope
+TEST ///
+P = convexHull transpose matrix {{0,0},{2,0},{2,3},{-1,4}}
+assert(isSimplicial P)
+///
