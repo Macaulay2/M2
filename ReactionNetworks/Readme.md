@@ -13,6 +13,7 @@ To do:
 2. add missing documetation
 
 Fixed:
-1. created functions: negativeWeightedLaplacian, negativeUndirectedLaplacian, stoichiometricConeKer, reducedStoichiometricConeKer, preClusters, clusters, superDoublingSets, hasIsolation
-2. added documentation for the new functions
-3. added docuemntation for the functions: stoichiometricMatrix, stoichiometricSubspace, stoichSubspaceKer, negativeLaplacian, reactantMatrix
+1. created functions:(fixed) negativeLaplacian, negativeWeightedLaplacian, negativeUndirectedLaplacian, stoichiometricConeKer, reducedStoichiometricConeKer, preClusters, clusters, superDoublingSets, hasIsolation
+2. Added new input methods to ``reactionNetwork''
+3. added documentation for the new and altered  functions
+4. added docuemntation for the functions: stoichiometricMatrix, stoichiometricSubspace, stoichSubspaceKer, negativeLaplacian, reactantMatrix
