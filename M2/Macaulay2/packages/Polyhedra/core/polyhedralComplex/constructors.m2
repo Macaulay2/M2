@@ -20,13 +20,8 @@ polyhedralComplex(Matrix, Matrix, Matrix, List) := (V, R, lineality, mO) -> (
       )
    );
    irays := prependOnes(V) | prependZeros(R);
-   ifanHash := new HashTable from {
-      inputRays => irays, 
-      computedLinealityBasis => prependZeros(lineality),
-      inputCones => mO
-   };
    result := new HashTable from {
-      underlyingFan => fan ifanHash
+      underlyingFan => fan(irays, prependZeros(lineality), mO)
    };
    polyhedralComplex result
 )
