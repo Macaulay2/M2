@@ -1,12 +1,21 @@
 compute#Fan#isWellDefined = method()
 compute#Fan#isWellDefined Fan := F -> (
-   cones := values getProperty(F, honestMaxObjects);
+   cones := getProperty(F, honestMaxObjects);
    n := #cones;
    for i from 0 to n-1 do (
-      Ci := cones#i;
+      ki := (keys cones)#i;
+      Ci := cones#ki;
+      if(#ki != numColumns rays Ci) then(
+         if debugLevel > 0 then << "The cone " << ki << " has redundant rays." << endl;
+         return false;
+      );
       for j from i to n-1 do (
-         Cj := cones#j;
-         if not commonFace(Ci, Cj) then return false
+         kj := (keys cones)#j;
+         Cj := cones#kj;
+         if not commonFace(Ci, Cj) then (
+            if debugLevel > 0 then << "The cones " << ki << " and " << kj << " do not intersect in a common face." << endl;
+            return false
+         )
       )
    );
    return true
