@@ -1108,7 +1108,6 @@ eagonNorthcott Matrix := f -> (
                                     t := first select(toList(0..n-1), l -> vec#l == 1);
                                     (-1)^(s+1)*f_(t,q#0#s)))))};
 		    j=j+1) ;
-     assert isHomogeneous(chainComplex d);
       chainComplex d);
 
 ------ koszul
