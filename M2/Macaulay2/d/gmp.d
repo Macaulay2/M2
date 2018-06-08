@@ -22,6 +22,7 @@ declarations "
 ";
 
 header "#include \"gmp_aux.h\"";
+header "#include \"reallocate.h\"";
 
 export ZZstruct := Type "__mpz_struct";
 export ZZ := Pointer "__mpz_struct *";
@@ -155,10 +156,12 @@ export abs(x:ZZ) : ZZ := (
 	  y)
      else x);
 add(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_add(", x, ",", y, ",", z, ")" );
+mpzReallocateLimbs(z:ZZ) ::= Ccode( void, "mpz_reallocate_limbs(", z, ")" );
 export (x:ZZ) + (y:ZZ) : ZZ := (
      z := GCmalloc(ZZ);
      init(z);
      add(z,x,y);
+     mpzReallocateLimbs(z);
      z);
 add(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_add_ui(", x, ",", y, ",", z, ")" );
 sub(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_sub(", x, ",", y, ",", z, ")" );

@@ -11,6 +11,7 @@
 #include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
+#include "mpfr.h"
 
 /* to get IM2_initialize() : */
 #include "engine.h"
