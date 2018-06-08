@@ -1,13 +1,13 @@
 newPackage(
 	"RelativeCanonicalResolution",
-Version=>"0.2",
-Date=> "Jun 07, 2018",
-Authors=>{{Name => "Christian Bopp",
-		   Email =>"bopp@math.uni-sb.de",
-		   HomePage =>"http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
+Version => "0.2",
+Date => "Jun 07, 2018",
+Authors => {{Name => "Christian Bopp",
+		   Email => "bopp@math.uni-sb.de",
+		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
 		   {Name => "Michael Hoff",
-		   Email =>"hahn@math.uni-sb.de",
-		   HomePage =>"http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}
+		   Email => "hahn@math.uni-sb.de",
+		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}
 						},
 Headline=> "computation of the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
 DebuggingMode=>true
@@ -36,27 +36,19 @@ export{"getFactors",
 
        
        
-
+---------------------------------------------------------------
 ---------------------------------------------------------------
 -- Part 1
--- Help functions
+-- some usefull functions which will be needed to construct
+-- the canonical model, as well as the model on the scroll
 ---------------------------------------------------------------
+---------------------------------------------------------------
+
 
 -- Computation of the g-nodal k-gonal canonical curve such that 
 -- we know the 2x(deg scroll) matrix that defines the scroll, 
 -- as described in Christian Bopp's masters thesis:
 
--*
--- the following function is already implemented in M2
--- computes prime p with p>=n
-nextPrime=method()
-nextPrime(ZZ):=n->(
-      p:=if n%2==0 then n+1 else n;
-      while not isPrime(p) do p=p+2;
-      p)
-      
-undocumented { nextPrime, (nextPrime,ZZ) } 
-*-
 
 -- computes list L1 of linearfactors of a polynomial 
 -- and list L2 of quadric factors of a polynomial and gives back L1,L2
@@ -148,9 +140,9 @@ H0KrD (Sequence,List,ZZ,ZZ) := (PQ,multL,r,k) -> (
 undocumented { H0KrD, (H0KrD,Sequence,List,ZZ,ZZ) }
 
  
---computes dim H^0(PP(E), aH+bR), where E is of balanced type
---Input: twists a,b,  genus g, gonality k
---Output: dim H^0(PP(E), aH+bR)
+-- computes dim H^0(PP(E), aH+bR), where E is of balanced type
+-- Input: twists a,b,  genus g, gonality k
+-- Output: dim H^0(PP(E), aH+bR)
 
 h0ab = method()
 h0ab (ZZ,ZZ,ZZ,ZZ) := (a,b,g,k) -> (
@@ -163,7 +155,7 @@ h0ab (ZZ,ZZ,ZZ,ZZ) := (a,b,g,k) -> (
 undocumented { h0ab, (h0ab,ZZ,ZZ,ZZ,ZZ) }
  
  
---compute a balanced partition (usual n=dim Scroll and m=deg Scroll)
+-- compute a balanced partition (usual n=dim Scroll and m=deg Scroll)
 
 balancedPartition = method()
 balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
@@ -171,10 +163,15 @@ balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
       r := m//n;
       apply(k,i -> r+1)|apply(n-k,i -> r));
  
- ---------------------------------------------------------------
--- Part 2
--- canonical model and relative canonical resolution
+ 
 ---------------------------------------------------------------
+---------------------------------------------------------------
+-- Part 2
+-- construction of g-nodal k-gonal canonical curves as well
+-- as the relative canonical resolution of such curves
+---------------------------------------------------------------
+---------------------------------------------------------------
+  
   
  -- computes a g-nodal k-gonal canonical curve canonical curve such that 
  -- the curve automatically lies on a normalized scroll of balanced type   
@@ -203,9 +200,9 @@ balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
           Q := transpose matrix apply(L,l -> (flatten entries getCoordinates l_1));	
 	  -- multiplieres of the degree k line bundle
 	  multL := apply(g,i -> sub(sub(f_(0,0),transpose(P_{i})),kk)/sub(sub(f_(0,0),transpose(Q_{i})),kk));
-	  --we compute the scroll:n  
+	  -- we compute the scroll:n  
 	  PQ := (P,Q);
-          j=0;
+          j = 0;
           while rank source H0KrD(PQ,multL,j,k) > 0 do(j = j+1);
           eDual := apply(j,i -> rank source H0KrD(PQ,multL,i,k) - rank source H0KrD(PQ,multL,i+1,k));
           e := apply(k-1,i -> #select(eDual,e0->e0 >= i+1)-1);--the type of the scroll  
@@ -265,7 +262,7 @@ resCurveOnScroll (Ideal,ZZ,ZZ) := (Jcan,g,lengthRes) -> (
       part2 := rank source basis({1,1},Rcox)-2*part1;
       k := part1+part2+1;
       f := g-k+1;
-    --computation of the degreeLimit
+    -- computation of the degreeLimit
       e := balancedPartition(k-1,g-k+1);
       degLimit := toList(getCoxDegrees({k,f-2},e));  
       degsH := toList(3..(k-2))|{k};--twists of H
@@ -285,11 +282,11 @@ resCurveOnScroll (Ideal,ZZ) := (Jcan,g) -> (
     part2 := rank source basis({1,1},Rcox)-2*part1;
     k := part1+part2+1;
     f := g-k+1;
-  --computation of the degreeLimit
+  -- computation of the degreeLimit
     e := balancedPartition(k-1,g-k+1);
     degLimit := toList(getCoxDegrees({k,f-2},e));  
-    degsH := toList(3..(k-2))|{k};--twists of H
-    lengthRes := floor((k-4)/2);-- half of the resolution
+    degsH := toList(3..(k-2))|{k}; -- twists of H
+    lengthRes := floor((k-4)/2); -- half of the resolution
     resX := {gens Jcan};
     scan(lengthRes, i -> (
                     M0 := syz(resX_i,DegreeLimit => degLimit);
@@ -300,17 +297,18 @@ resCurveOnScroll (Ideal,ZZ) := (Jcan,g) -> (
     chainComplex resX        
      );
 
-
+---------------------------------------------------------------
 ---------------------------------------------------------------
 -- Part 3
 -- Eagon-Northcott type complexes and iterated mapping cone
+---------------------------------------------------------------
 ---------------------------------------------------------------
 
 -- Given the degree (a_0,a_1) in the Cox ring, 
 -- we compute the degree on the scroll.
 
-getScrollDegrees=method()
-getScrollDegrees(List,List):=(a,e)->(a_0,a_1-e_0*a_0) 
+getScrollDegrees = method()
+getScrollDegrees (List,List) := (a,e) -> (a_0,a_1-e_0*a_0) 
 
 
 -- Given the degree (a,b) on the scroll, 
@@ -343,8 +341,8 @@ eagonNorthcottType (Matrix,ZZ) := (Phi,b) -> (
      R := ring Phi;
      f := rank source Phi;
      g := rank target Phi;
-     B0 := apply(toList(0..b),i -> {i, flatten table(subsets(f,i), compositions(g,b-i), (p,q) -> {p,q})});
-     B1 := apply(toList(b+1..f-g+2),i -> {i, flatten table(subsets(f,g+i-1), compositions(g,i-1-b), (p,q) -> {p,q})});
+     B0 := apply(toList(0..b), i -> {i, flatten table(subsets(f,i), compositions(g,b-i), (p,q) -> {p,q})});
+     B1 := apply(toList(b+1..f-g+2), i -> {i, flatten table(subsets(f,g+i-1), compositions(g,i-1-b), (p,q) -> {p,q})});
      B := hashTable(B0|B1);
      d := {};
      scan(1..b, i -> (
@@ -379,10 +377,10 @@ eagonNorthcottType (Matrix,ZZ) := (Phi,b) -> (
      chainComplex d)
 
 
---lifts a monomial to the Eagon-Nortcott-type resolution
---Input: A=1*1 matrix whose entry is a monomial representing multiplication map between two line bundles on scroll,  
---       e=partition of the scroll.
---Output: induced map between the first modules in the Eagon-Northcott type resolution of these line bundles.
+-- lifts a monomial to the Eagon-Nortcott-type resolution
+-- Input: A=1*1 matrix whose entry is a monomial representing multiplication map between two line bundles on scroll,  
+--  e=partition of the scroll.
+-- Output: induced map between the first modules in the Eagon-Northcott type resolution of these line bundles.
 
 liftMonomToENT = method()
 liftMonomToENT (Matrix,List) := (A,e) -> (	 
@@ -420,10 +418,10 @@ liftMonomToENT (Matrix,List) := (A,e) -> (
 undocumented { liftMonomToENT, (liftMonomToENT,Matrix,List) }
 
 
---lifts a polynomial to the Eagon-Nortcott-type resolution
---Input: A=1*1 matrix whose entry is a polynomial representing multiplication map between two line bundles on scroll,  
+-- lifts a polynomial to the Eagon-Nortcott-type resolution
+-- Input: A=1*1 matrix whose entry is a polynomial representing multiplication map between two line bundles on scroll,  
 --       e=partition of the scroll.
---Output: induced map between the first modules in the Eagon-Northcott type resolution of these line bundles.
+-- Output: induced map between the first modules in the Eagon-Northcott type resolution of these line bundles.
 
 liftPolyToENT = method()
 liftPolyToENT (Matrix,List) := (A,e) -> (
@@ -435,10 +433,10 @@ liftPolyToENT (Matrix,List) := (A,e) -> (
 
 undocumented { liftPolyToENT, (liftPolyToENT,Matrix,List) }
 
---lifts a polynomial to the Eagon-Nortcott-type resolution
---Input: A=matrix representing map between two vector bundles on scroll,  
+-- lifts a polynomial to the Eagon-Nortcott-type resolution
+-- Input: A=matrix representing map between two vector bundles on scroll,  
 --       e=partition of the scroll.
---Output: induced map between the first modules in the Eagon-Northcott type resolution of these vector bundles.
+-- Output: induced map between the first modules in the Eagon-Northcott type resolution of these vector bundles.
 
 liftMatrixToENT = method()
 liftMatrixToENT (Matrix,List) := (A,e) -> (
@@ -450,15 +448,15 @@ matrix apply(rank target A, i ->
        	    )  
  
  
---Input: resX=resolution on the scroll, e=scroll type
---Output: the iterated mapping cone
+-- Input: resX=resolution on the scroll, e=scroll type
+-- Output: the iterated mapping cone
 
 iteratedMC = method()
 iteratedMC (ChainComplex,List) := (resX,e) -> ( 
    k := length(e)+1;
    g := sum(e)+k-1;
    kk := coefficientRing ring resX_0;
- --we use T2 here in order to make sorting easier
+ -- we use T2 here in order to make sorting easier
    z := getSymbol"z";
    T2 := kk[flatten apply(#e,j->apply(e_j+1,i->z_(j,i)))];
    Phi0 := {flatten apply(#e,j->toList(z_(j,0)..z_(j,e_j-1))),
@@ -466,7 +464,7 @@ iteratedMC (ChainComplex,List) := (resX,e) -> (
    Phi := matrix apply(#Phi0,i->
 	              apply(#(Phi0_i),j->Phi0_i_j_T2));	
    lresX := length resX;
- --computation of the ENtype complexes involved in the iterated MC construction
+ -- computation of the ENtype complexes involved in the iterated MC construction
    Clist := {};
    C := apply(lresX+1, i -> (
 	        Clist := {};
@@ -476,9 +474,9 @@ iteratedMC (ChainComplex,List) := (resX,e) -> (
 	                                            ); 
                 (directSum Clist)**T2^{1:-(getScrollDegrees(degs_0,e))_0})
 	                );                        
- --the lift of the first horizontal maps
+ -- the lift of the first horizontal maps
    mapA := apply(lresX, i -> sub(liftMatrixToENT(resX.dd_(i+1),e),T2));		  
- --building the iterate mapping cone:    
+ -- building the iterate mapping cone:    
    Cone := C_(lresX);
    for i from 1 to lresX do (
        Cone = cone (extend(C_(lresX-i),Cone,mapA_(lresX-i)) );
@@ -496,10 +494,13 @@ beginDocumentation()
 document { 
   Key => RelativeCanonicalResolution,
   Headline => "construction of relative canonical resolutions and Eagon-Northcott type complexes",
-  "We construct g-nodal canonical curves with a degree k line bundle, which lie on a normalized scroll and
-   compute the relative canonical resolution. 
-   The construction of these curves is based on the M2-package",  
-   HREF("https://www.math.uni-sb.de/ag/schreyer/index.php/computeralgebra"," kGonalNodalCurves. "),
+  "This package provides functions which construct g-nodal canonical curves with a degree k line bundle, which lie on a normalized scroll.
+   It furthermore contains functions which compute the so-called relative canonical resolution. 
+   The construction of such canonical curves is based on the M2-package",  
+   HREF("https://www.math.uni-sb.de/ag/schreyer/index.php/computeralgebra"," kGonalNodalCurves. "), 
+   "This package can be seen as an upgrade to the ", 
+   HREF("https://www.math.uni-sb.de/ag/schreyer/index.php/computeralgebra"," kGonalNodalCurves "),"-package.",
+   PARA{},
    "We also provide functions to compute (possibly non-minimal) free resolutions of such curves by an iterated 
    mapping cone construction, as described in Schreyer's article", 
    HREF("http://link.springer.com/article/10.1007%2FBF01458587?LI=true"," Syzygies of Canonical Curves and Special Linear Series"),". ",  	 
@@ -613,7 +614,7 @@ doc ///
           the relative canonical resolution       
   Description
      Text
-       Computes the relative canonical resolution, by picking syzygies of correct degree in each step, 
+       Computes the relative canonical resolution by picking syzygies of correct degree in each step 
        until the length limit is reached.  
            
      Example
@@ -724,7 +725,7 @@ doc ///
     iteratedMC
     (iteratedMC,ChainComplex,List) 
   Headline 
-    Computes a (possibly non-minimal) resolution of C in $PP^{g-1}$ starting from the relative canonical resolution of C in $PP(E)$
+    Computes a (possibly non-minimal) resolution of C in PP^{g-1} starting from the relative canonical resolution of C in P(E)
   Usage
     resC=iteratedMC(resX,e)
   Inputs
@@ -773,7 +774,7 @@ doc ///
        the balanced partition     
   Description
      Text
-       Computes a balanced partition of n of length d  
+       Computes a balanced partition of an integer n of length d  
            
      Example
 	(d,n) = (4,7);
@@ -786,7 +787,7 @@ doc ///
     lineBundleFromPointsAndMultipliers
     (lineBundleFromPointsAndMultipliers, List, Matrix, Matrix, ZZ)
   Headline 
-    Computes basis of a line bundle from the $2g$ points $P_i$, $Q_i$ and the multipliers 
+    Computes basis of a line bundle from the 2g points P_i, Q_i and the multipliers 
   Usage
     lineBundleFromPointsAndMultipliers(multL,P,Q,k)
   Inputs
@@ -871,7 +872,7 @@ doc ///
 	    containg the bidegree in the coxring         
   Description
      Text
-       Computes integers a' and b' such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,Rcox).
+       Computes integers a' and b' such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,Rcox), where Rcox is the Cox ring of the scroll $P(E)$.
   SeeAlso
     getScrollDegrees   
 
@@ -895,7 +896,7 @@ doc ///
 	   containing the bidegree on the scroll        
   Description
      Text
-       Computes integers a and b such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,Rcox).
+       Computes integers a and b such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,Rcox), where Rcox is the Cox ring of the scroll $P(E)$.
   SeeAlso
     getCoxDegrees  
 ///
