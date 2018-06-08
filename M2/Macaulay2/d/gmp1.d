@@ -40,7 +40,7 @@ export (x:QQ) ^ (nn:ZZ) : QQ := (
      if n < 0 then (
 	  x = inv(x);
 	  n = -n);
-     newRationalCanonical(numeratorRef(x)^ulong(n), denominatorRef(x)^ulong(n))
+     newQQCanonical(numeratorRef(x)^ulong(n), denominatorRef(x)^ulong(n))
      );
 
 -- printing
