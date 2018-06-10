@@ -1,35 +1,50 @@
--- these functions were already in ReactionNetworks
+installPackage "ReactionNetworks"
+viewHelp ReactionNetworks
+
+-- these functions were already in ReactionNetworks;
 viewHelp stoichiometricMatrix
 viewHelp stoichiometricSubspace
-viewHelp negativeUndirectedLaplacian
-
--- these functions were implemented by us
+viewHelp negativeUndirectedLaplacian --renamed
+viewHelp reactantMatrix
 viewHelp stoichSubspaceKer
-viewHelp stoichiometricConeKer
-viewHelp reducedStoichiometricConeKer
+
 viewHelp negativeLaplacian
 viewHelp negativeWeightedLaplacian 
+viewHelp reactionNetwork --added optional imputs
+
+--ReactionNetworks/motifs-Michael.m2
+viewHelp nSiteProcessiveModification
+viewHelp nSiteDistributiveModification
+viewHelp nSiteImmuneReaction
+viewHelp nSiteSequestration
+viewHelp nSiteDiffusion
+viewHelp nSitePoreForming
+viewHelp nSiteAutocatalytic
+
+-- these functions were implemented by us
+viewHelp stoichiometricConeKer
+viewHelp reducedStoichiometricConeKer
 viewHelp superDoublingSets
 viewHelp preClusters
 viewHelp clusters
 viewHelp hasIsolation
 
 --examples
-N1 = reactionNetwork "A <--> B, B <--> C, C <--> A"
-N2 = oneSiteModificationA()
-N3 = twoSiteModificationG()
 
+N3 = twoSiteModificationG()
 stoichiometricMatrix N3
 stoichiometricConeKer N3
-
-negativeWeightedLaplacian N2
-negativeLaplacian N2
-
-hasIsolation N2
-clusters N2
-
-hasIsolation N3
 clusters N3
+hasIsolation N3
 
+-- N2 = oneSiteModificationA()
+-- stoichiometricMatrix N2
+-- stoichiometricConeKer N2
+-- clusters N2
+-- hasIsolation N2
+
+N1 = reactionNetwork "A <--> B, B <--> C, C <--> A"
+stoichiometricMatrix N1
+stoichiometricConeKer N1
 hasIsolation N1
 clusters N1

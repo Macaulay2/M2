@@ -9,11 +9,11 @@ newPackage(
 	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	     },
-    	HomePage => "http://www.math.uiuc.edu/~doe/",
+--    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
     	Headline => "reaction networks",
 	PackageImports => {"Graphs", "Polyhedra"},
-  	DebuggingMode => false,
-  	--DebuggingMode => true,		 -- set to true only during development
+        DebuggingMode => false,
+--  	DebuggingMode => true,		 -- set to true only during development
 	AuxiliaryFiles => true
     	)
 
@@ -105,45 +105,44 @@ ReactionNetwork = new Type of MutableHashTable
 reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol => "", Input => "Str"})
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
-	Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {},
-NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null,
-ReactionRates => null, InitialValues => null, ConcentrationRates => null};
-X := symbol X;
-	if o.Input == "Str" then (
-    scan(rs, r -> addReaction(r,Rn));
-		return Rn;
-		);
-	if o.Input == "Laplacian" then (
-		CLap := for i from 0 to numColumns(rs_0)-1 list transpose matrix(rs_0_i);
-		HLap := map(ZZ,ring rs_1,for i from 1 to length(gens ring rs_1) list 1);
-		L := HLap(rs_1);
-		A := L - diagonalMatrix(matrix{for i from 0 to numRows(L)-1 list L_(i,i)});
-		Rn.Complexes = CLap;
-		Rn.Species = for i from 1 to numColumns(Rn.Complexes_0) list toString(X_i);
-		Rn.ReactionGraph = digraph A;
-		return Rn;
-		);
-
-	if o.Input == "Stoichiometric" then (
-		NumReac := numColumns rs_0;
-		R := QQ[toList(rsort(gens(ring rs_1)))_(toList(NumReac..((numgens ring rs_1)-1)))];
-		HStoich := map(R,ring rs_1,(for i from 0 to NumReac-1 list 1)|(gens R));
-		temp := transpose(matrix(HStoich(rs_1)));
-		Reactants := apply(apply(for i from 0 to NumReac-1 list temp_i_0,exponents),matrix);
-		Products := for i from 0 to length(Reactants)-1 list (transpose matrix(sub(rs_0_i,ZZ))+ Reactants_i);
-		CStoich := apply(toList(set(Reactants)+set(Products)),matrix);
-		Edges := for i from 0 to length(Reactants)-1 list {position(CStoich,j -> j==Reactants_i),position(CStoich,j -> j==Products_i)};
-		Rn.Species = for i from 1 to (numRows rs_0) list toString(X_i);
-		Rn.Complexes = CStoich;
-		Rn.ReactionGraph = digraph Edges;
-		return Rn;
-		);
-)
+    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {},
+	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null,
+	ReactionRates => null, InitialValues => null, ConcentrationRates => null};
+    X := symbol X;
+    if o.Input == "Str" then (
+    	scan(rs, r -> addReaction(r,Rn));
+	return Rn;
+	);
+    if o.Input == "Laplacian" then (
+	CLap := for i from 0 to numColumns(rs_0)-1 list transpose matrix(rs_0_i);
+	HLap := map(ZZ,ring rs_1,for i from 1 to length(gens ring rs_1) list 1);
+	L := HLap(rs_1);
+	A := L - diagonalMatrix(matrix{for i from 0 to numRows(L)-1 list L_(i,i)});
+	Rn.Complexes = CLap;
+	Rn.Species = for i from 1 to numColumns(Rn.Complexes_0) list toString(X_i);
+	Rn.ReactionGraph = digraph A;
+	return Rn;
+	);
+    if o.Input == "Stoichiometric" then (
+	NumReac := numColumns rs_0;
+	R := QQ[toList(rsort(gens(ring rs_1)))_(toList(NumReac..((numgens ring rs_1)-1)))];
+	HStoich := map(R,ring rs_1,(for i from 0 to NumReac-1 list 1)|(gens R));
+	temp := transpose(matrix(HStoich(rs_1)));
+	Reactants := apply(apply(for i from 0 to NumReac-1 list temp_i_0,exponents),matrix);
+	Products := for i from 0 to length(Reactants)-1 list (transpose matrix(sub(rs_0_i,ZZ))+ Reactants_i);
+	CStoich := apply(toList(set(Reactants)+set(Products)),matrix);
+	Edges := for i from 0 to length(Reactants)-1 list {position(CStoich,j -> j==Reactants_i),position(CStoich,j -> j==Products_i)};
+	Rn.Species = for i from 1 to (numRows rs_0) list toString(X_i);
+	Rn.Complexes = CStoich;
+	Rn.ReactionGraph = digraph Edges;
+	return Rn;
+	);
+    )
 
 reactionNetwork Ideal := String => o -> rs -> (
-		TempNet := coefficients gens rs;
-		reactionNetwork({sub(transpose TempNet_1,ZZ), transpose TempNet_0},Input=>"Stoichiometric")
-		);
+    TempNet := coefficients gens rs;
+    reactionNetwork({sub(transpose TempNet_1,ZZ), transpose TempNet_0},Input=>"Stoichiometric")
+    );
 
 TEST ///
 restart
@@ -176,10 +175,10 @@ N = reactionNetwork({StoichM,FluxV},Input=>"Stoichiometric")
 -- Ideal
 R = QQ[k_1..k_6,x_1..x_5]
 I = ideal(k_2*x_2^2-k_3*x_1*x_3+k_6*x_2*x_5-k_1*x_1+k_4*x_4,
-			-2*k_2*x_2^2-k_6*x_2*x_5+2*k_1*x_1+k_5*x_4,
-			-k_3*x_1*x_3+k_6*x_2*x_5+k_4*x_4,
-			k_3*x_1*x_3-k_4*x_4-k_5*x_4,
-			-k_6*x_2*x_5+k_5*x_4)
+    -2*k_2*x_2^2-k_6*x_2*x_5+2*k_1*x_1+k_5*x_4,
+    -k_3*x_1*x_3+k_6*x_2*x_5+k_4*x_4,
+    k_3*x_1*x_3-k_4*x_4-k_5*x_4,
+    -k_6*x_2*x_5+k_5*x_4)
 N = reactionNetwork I
 ///
 
@@ -245,7 +244,7 @@ subRandomReactionRates(ReactionNetwork, Ring) := (Rn, FF) -> (
     SS := flatten entries steadyStateEquations Rn;
     K := toList(apply(0..length Rn.ReactionRates-1, i-> random(FF)));
     Rr := toList(apply(0..length Rn.ReactionRates-1, i->
-		    value(Rn.ReactionRates#i)));
+	    value(Rn.ReactionRates#i)));
     P := toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,Rn.ReactionRing)));
     toList apply(0..length SS-1, i-> sub(SS#i,P))
     )
@@ -282,10 +281,10 @@ toList apply(0..length SSE-1, i-> sub(SSE#i,P))
 
 addSpecies = method()
 addSpecies(String, ReactionNetwork) := (s,Rn) ->
-    if not member(s,Rn.Species) then (
-	Rn.Species = Rn.Species | {s};
-	Rn.Complexes = apply(Rn.Complexes, c -> c | matrix{{0}})
-	)
+if not member(s,Rn.Species) then (
+    Rn.Species = Rn.Species | {s};
+    Rn.Complexes = apply(Rn.Complexes, c -> c | matrix{{0}})
+    )
 
 addComplex = method()
 addComplex(String, ReactionNetwork) := (c,Rn) -> (
@@ -305,14 +304,14 @@ addComplex(String, ReactionNetwork) := (c,Rn) -> (
 	    	    v_(0,i) = v_(0,i) + a;
 	    	    ));
     	    );
-    v = matrix v;
-    if member(v,Rn.Complexes) then position(Rn.Complexes, v' -> v' == v)
-    else (
-	Rn.Complexes = Rn.Complexes | {v};
-	if not isNonempty then Rn.NullIndex = #Rn.Complexes - 1;
-        #Rn.Complexes - 1
-	)
-    )
+    	v = matrix v;
+    	if member(v,Rn.Complexes) then position(Rn.Complexes, v' -> v' == v)
+    	else (
+	    Rn.Complexes = Rn.Complexes | {v};
+	    if not isNonempty then Rn.NullIndex = #Rn.Complexes - 1;
+            #Rn.Complexes - 1
+	    )
+    	)
 
 addReaction = method()
 addReaction(String, ReactionNetwork) := (r,Rn) -> (
@@ -389,7 +388,7 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
     netComplex(N, last e))
 
 net ReactionNetwork := N -> stack networkToHRF N
-
+    
 -- Matrices
 
 stoichiometricMatrix = method()
@@ -502,8 +501,8 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
     RE := apply(edges N.ReactionGraph, e->(
 	    (i,j) := toSequence e;
 	    (apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
-	     apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c)),
-	     kk#(position(edges N.ReactionGraph,e'->e'==e)))
+	     	apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c)),
+	     	kk#(position(edges N.ReactionGraph,e'->e'==e)))
 	    ));
     l := length RE-1;
     W := for i from 0 to l list positions(first first RE#i,
@@ -536,7 +535,7 @@ sepEdges = Rn -> (
 	e -> if (first e =!= Rn.NullIndex) and (last e =!= Rn.NullIndex) then seps.FullEdges = append(seps.FullEdges, e)
 	else seps.NullEdges = append(seps.NullEdges,e));
     seps
-	)
+    )
 
 --laplacian needs to be redone
 -- interface can be greatly improved, but this seems to work, and also handles CRNs with NullSymbols
@@ -597,8 +596,8 @@ steadyStateEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     RE := apply(edges N.ReactionGraph, e->(
 	    (i,j) := toSequence e;
 	    (apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
-	     apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c)),
-	     kk#(position(edges N.ReactionGraph,e'->e'==e)))
+	     	apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c)),
+	     	kk#(position(edges N.ReactionGraph,e'->e'==e)))
 	    ));
     l := length RE-1;
     W := for i from 0 to l list positions(first first RE#i,
@@ -634,17 +633,17 @@ netList F
 -- Not sure if this is the right way to do this???
 conservationEquations = method()
 conservationEquations ReactionNetwork := N -> (
-        if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
-	conservationEquations(N, coefficientRing N.ReactionRing)
-	)
+    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+    conservationEquations(N, coefficientRing N.ReactionRing)
+    )
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     if N.ReactionRing === null then createRing(N, FF);
     S := stoichSubspaceKer N;
     cc := toList(apply(0..length N.InitialValues-1, i -> value(N.InitialValues#i)));
- --   G := gens coefficientRing N.ReactionRing;
- --   cc := toList apply(
- --	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1),
- --	i -> G#i);
+    --   G := gens coefficientRing N.ReactionRing;
+    --   cc := toList apply(
+    --	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1),
+    --	i -> G#i);
     RING := N.ReactionRing;
     xx := toList(apply(0..length N.ConcentrationRates-1, i -> value(N.ConcentrationRates#i)));
     M := matrix{xx}-matrix{cc};
@@ -655,10 +654,10 @@ conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     if N.ReactionRing === null then createRing(N, FF);
     S := stoichSubspaceKer N;
     cc := toList(apply(0..length N.InitialValues-1, i -> value(N.InitialValues#i)));
- --   G := gens coefficientRing N.ReactionRing;
- --   cc := toList apply(
- --	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1),
- --	i -> G#i);
+    --   G := gens coefficientRing N.ReactionRing;
+    --   cc := toList apply(
+    --	(length N.ReactionRates)..(length N.ReactionRates+length N.InitialValues-1),
+    --	i -> G#i);
     RING := N.ReactionRing;
     xx := toList(apply(0..length N.ConcentrationRates-1, i -> value(N.ConcentrationRates#i)));
     M := matrix{xx}-matrix{cc};
@@ -674,7 +673,7 @@ displayComplexes = (Rn, FF) -> (
 	    i -> flatten entries((sub(Rn.Complexes#i, R))*(transpose matrix Rn.ConcentrationRates))
 	    ));
     A | B
-	)
+    )
 
 TEST ///
 restart
@@ -731,14 +730,14 @@ isWeaklyReversible = Rn -> (
 --negative Laplacian
 negativeLaplacian = method()
 negativeLaplacian ReactionNetwork := Rn -> (
-	Indices := edges Rn.ReactionGraph;
-	N := matrix{for i from 1 to length(Rn.Complexes) list 0_ZZ};
-	A := mutableMatrix (N**transpose N);
-	for i from 0 to length(Indices)-1 do A_(toSequence(Indices_i)) = 1;
-	A = matrix A;
-	D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
-	A-D
-	)
+    Indices := edges Rn.ReactionGraph;
+    N := matrix{for i from 1 to length(Rn.Complexes) list 0_ZZ};
+    A := mutableMatrix (N**transpose N);
+    for i from 0 to length(Indices)-1 do A_(toSequence(Indices_i)) = 1;
+    A = matrix A;
+    D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+    A-D
+    )
 
 --negative undirected laplacian
 negativeUndirectedLaplacian = method()
@@ -748,58 +747,46 @@ negativeUndirectedLaplacian ReactionNetwork := Rn -> (
     -L
     )
 --negative weighted Laplacian
-	negativeWeightedLaplacian = method()
-	negativeWeightedLaplacian ReactionNetwork := Rn -> (
-		if Rn.ReactionRing === null then createRing Rn;
-		NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
-		Indices := edges Rn.ReactionGraph;
-		N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
-		A := mutableMatrix (N**transpose N);
-		for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
-		A = matrix A;
-		D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
-		A-D
-		)
+negativeWeightedLaplacian = method()
+negativeWeightedLaplacian ReactionNetwork := Rn -> (
+    if Rn.ReactionRing === null then createRing Rn;
+    NumVars := numgens Rn.ReactionRing - length(Rn.ReactionRates);
+    Indices := edges Rn.ReactionGraph;
+    N := matrix{for i from 1 to length(Rn.Complexes) list 0_(Rn.ReactionRing)};
+    A := mutableMatrix (N**transpose N);
+    for i from 0 to length(Rn.ReactionRates)-1 do A_(toSequence(Indices_i)) = Rn.ReactionRing_(NumVars+i);
+    A = matrix A;
+    D := diagonalMatrix(A*transpose matrix{for i from 1 to length(Rn.Complexes) list 1});
+    A-D
+    )
 
---Here we add functions for the isolation property--
 
+--Here start functions for the Isolation Property
 
 --here we compute the nonnegative kernel of the stoichiometric matrix
 stoichiometricConeKer = method ()
 stoichiometricConeKer ReactionNetwork := Rn -> (
     transpose rays stoichiometricMatrix Rn    
-)
-
-TEST ///
-needsPackage "ReactionNetworks"
-needsPackage "Polyhedra"
-assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
-assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
-///
+    )
 
 --here we compute the superdoubling sets
 superDoublingSets = method()
 superDoublingSets ReactionNetwork := Rn -> (
-doublingSet := symbol doublingSet;
-superDoublingSets := set{};
-eductMatrix := transpose reactantMatrix Rn;
-for i from 0 to numColumns eductMatrix - 1 do (
-    doublingSet = set{};
-    for j from 0 to numColumns eductMatrix - 1 do(
-	if j != i and eductMatrix_i == eductMatrix_j then(
-	    doublingSet = doublingSet+set{j}
+    doublingSet := symbol doublingSet;
+    superDoublingSets := set{};
+    eductMatrix := transpose reactantMatrix Rn;
+    for i from 0 to numColumns eductMatrix - 1 do (
+    	doublingSet = set{};
+    	for j from 0 to numColumns eductMatrix - 1 do(
+	    if j != i and eductMatrix_i == eductMatrix_j then(
+	    	doublingSet = doublingSet+set{j}
+		);
+    	    );
+    	if doublingSet =!= set{} then (doublingSet = doublingSet + set{i};
+    	    superDoublingSets = superDoublingSets + set{doublingSet};);
 	);
-    );
-    if doublingSet =!= set{} then (doublingSet = doublingSet + set{i};
-    superDoublingSets = superDoublingSets + set{doublingSet};);
-);
-superDoublingSets
-)
-
-TEST ///
-assert (superDoublingSets reactionNetwork "A <--> B" === set {})
-///
-
+    superDoublingSets
+    )
 
 --here we compute the preclusters
 preClusters = method()
@@ -817,69 +804,63 @@ for sds in (toList superDoublingSets Rn) do(
 preclusters
 )
 
-TEST ///
-assert (preClusters reactionNetwork "A <--> B" === set{})
-///
-
 --here we compute the clusters
 clusters = method()
 clusters ReactionNetwork := Rn -> (
-clust := preClusters Rn;
-for pcl1 in (toList clust) do(
-    for pcl2 in (drop(toList clust,1)) do(
-	if (pcl1)*(pcl2)  =!= set{} then(
-	    clust = clust - set{pcl1} - set{pcl2} + set {pcl1+pcl2};
+    clust := preClusters Rn;
+    for pcl1 in (toList clust) do(
+    	for pcl2 in (drop(toList clust,1)) do(
+	    if (pcl1)*(pcl2)  =!= set{} then(
+	    	clust = clust - set{pcl1} - set{pcl2} + set {pcl1+pcl2};
+	    	);
 	    );
-	);
-    );    
-clust
-)
-
-TEST ///
-assert (clusters reactionNetwork "A <--> B" === set{})
-///
+    	);    
+    clust
+    )
 
 --here we compute Ematrixreduced
 reducedStoichiometricConeKer = method ()
 reducedStoichiometricConeKer ReactionNetwork := Rn -> (
-reducedematrix := 0*mutableMatrix{{1..numColumns stoichiometricConeKer Rn}};
-block := mutableMatrix{{}};
-Ematrix := stoichiometricConeKer Rn;
-clust := clusters Rn;
-for cl in toList clust do(
-    block = 0*mutableMatrix{{1..numColumns Ematrix}};
-    for i in toList cl do(
-	block = block + mutableMatrix Ematrix^{i};
-	);
-    reducedematrix = mutableMatrix((matrix reducedematrix)||(matrix block));
-    );
-matrix(reducedematrix^{1..numRows reducedematrix - 1})
-)
-
-TEST ///
-assert (reducedStoichiometricConeKer reactionNetwork "A <--> B" == map(ZZ^0,ZZ^1,0))
-///
+    reducedematrix := 0*mutableMatrix{{1..numColumns stoichiometricConeKer Rn}};
+    block := mutableMatrix{{}};
+    Ematrix := stoichiometricConeKer Rn;
+    clust := clusters Rn;
+    for cl in toList clust do(
+    	block = 0*mutableMatrix{{1..numColumns Ematrix}};
+    	for i in toList cl do(
+	    block = block + mutableMatrix Ematrix^{i};
+	    );
+    	reducedematrix = mutableMatrix((matrix reducedematrix)||(matrix block));
+    	);
+    matrix(reducedematrix^{1..numRows reducedematrix - 1})
+    )
 
 -- here we check whether N has the isolation property
 hasIsolation = method ()
 hasIsolation ReactionNetwork := Rn -> (
-if #(clusters Rn) == 0 then return false;
-if #(clusters Rn) == 1 then return true;
-rE := reducedStoichiometricConeKer Rn;
-for i from 0 to numRows rE - 1 do(
-    for j from 0 to numRows rE - 1 do(
-	if (i != j and set apply (flatten entries rE^{i},flatten entries rE^{j},(i,j) -> i*j) =!= set{0})  then return false;
-	);
-    );
-return true
-)
+    if #(clusters Rn) == 0 then return false;
+    if #(clusters Rn) == 1 then return true;
+    rE := reducedStoichiometricConeKer Rn;
+    for i from 0 to numRows rE - 1 do(
+    	for j from 0 to numRows rE - 1 do(
+	    if (i != j and set apply (flatten entries rE^{i},flatten entries rE^{j},(i,j) -> i*j) =!= set{0})  then return false;
+	    );
+    	);
+    return true
+    )
 
+--tests for the Isolation Property
 TEST ///
+assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
+assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
+assert (superDoublingSets reactionNetwork "A <--> B" === set {})
+assert (preClusters reactionNetwork "A <--> B" === set{})
+assert (clusters reactionNetwork "A <--> B" === set{})
+assert (reducedStoichiometricConeKer reactionNetwork "A <--> B" == map(ZZ^0,ZZ^1,0))
 assert (hasIsolation oneSiteModificationA() == true)
 assert (hasIsolation reactionNetwork "A <--> B, B <--> C, C <--> A" == false)
 ///
-
-
+--Here finish functions for the Isolation Property
 
 
 --injectivityTest = Rn ->
