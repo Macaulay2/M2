@@ -534,22 +534,6 @@ installMethod(installedPackages, o -> () -> NumberedVerticalList (
 	       then p => databaseFilename (currentLayout,prefix,p)
 	       else p
 	       ) else continue)))
-
-searchDoc = method(Options => {SearchBody => false})
-
-searchDoc String := o -> re -> (
-     NumberedVerticalList flatten for p in installedPackages(Core=>true, Database=>true) list (
-     pkg := p#0;
-     dbname := p#1;
-     if not fileExists dbname then continue;
-     db := openDatabase dbname;
-     pkgd := pkg | "::";
-     kys := select(keys db,
-	  if o.SearchBody
-	  then key -> match(re,key) or match(re,db#key)
-	  else key -> match(re,key));
-     close db;
-     apply(kys, key -> pkgd | key)))
      
 uninstallAllPackages = () -> for p in installedPackages() do (
  << "-- uninstalling package " << p << endl;

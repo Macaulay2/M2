@@ -1022,7 +1022,6 @@ export {
 	"scanValues",
 	"schedule",
 	"schreyerOrder",
-	"searchDoc",
 	"searchPath",
 	"SearchBody",
 	"sec",
