@@ -535,19 +535,22 @@ installMethod(installedPackages, o -> () -> NumberedVerticalList (
 	       else p
 	       ) else continue)))
 
-allDocKeys = () -> NumberedVerticalList flatten for p in installedPackages(Core=>true, Database=>true) list (
+searchDoc = method(Options => {SearchBody => false})
+
+searchDoc String := o -> re -> (
+     NumberedVerticalList flatten for p in installedPackages(Core=>true, Database=>true) list (
      pkg := p#0;
      dbname := p#1;
-     if not fileExists dbname then continue else 
-     (
-	  db := openDatabase dbname;
-	  pkgd := pkg | "::";
-	  k := apply(keys db, k -> pkgd | k);
-	  close db;
-	  k))
-
-searchDocKeys = re -> select(allDocKeys(), match_re)
-
+     if not fileExists dbname then continue;
+     db := openDatabase dbname;
+     pkgd := pkg | "::";
+     kys := select(keys db,
+	  if o.SearchBody
+	  then key -> match(re,key) or match(re,db#key)
+	  else key -> match(re,key));
+     close db;
+     apply(kys, key -> pkgd | key)))
+     
 uninstallAllPackages = () -> for p in installedPackages() do (
  << "-- uninstalling package " << p << endl;
  uninstallPackage p
