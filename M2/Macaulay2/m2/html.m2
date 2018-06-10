@@ -769,6 +769,7 @@ installPackage Package := opts -> pkg -> (
 			      )
 			 )));
 	  close rawdocDatabase;
+	  if verbose then stderr << "--closed the database" << endl;
 
 	  -- run tests that are functions
 	  if verbose then stderr << "--running tests that are functions" << endl;
@@ -874,7 +875,7 @@ installPackage Package := opts -> pkg -> (
 
           if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey;
 	  shield (
-	       moveFile(rawdbnametmp,rawdbname);
+	       moveFile(rawdbnametmp,rawdbname,Verbose=>debugLevel>0);
 	       );
 
 	  pkg#rawkey = openDatabase rawdbname;
