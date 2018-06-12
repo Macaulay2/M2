@@ -13,7 +13,7 @@ incompCones List := L -> (
 --   INPUT : '(C,F)',  a cone and a fan
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
 --                 	'F' that are not compatible
-incompCones(Cone,Fan) := (C,F) -> select(apply(getProperty(F, honestMaxObjects), f -> (C,f)), p -> not commonFace p)
+incompCones(Cone,Fan) := (C,F) -> select(apply(values getProperty(F, honestMaxObjects), f -> (C,f)), p -> not commonFace p)
 
 
 --   INPUT : '(F,C)',  a fan and a cone
@@ -21,7 +21,7 @@ incompCones(Cone,Fan) := (C,F) -> select(apply(getProperty(F, honestMaxObjects),
 --                 	'F' that are not compatible
 incompCones(Fan,Cone) := (F,C) -> 
    select(
-      apply(getProperty(F, honestMaxObjects), 
+      apply(values getProperty(F, honestMaxObjects), 
          f -> (f,C)
       ), 
       p -> 
@@ -33,8 +33,8 @@ incompCones(Fan,Cone) := (F,C) ->
 --  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of cones of 'F1' and cones of 
 --                 	'F2' that are not compatible
 incompCones(Fan,Fan) := (F1,F2) -> 
-   flatten apply(getProperty(F1, honestMaxObjects), 
-      C1 -> flatten apply(getProperty(F2, honestMaxObjects),
+   flatten apply(values getProperty(F1, honestMaxObjects), 
+      C1 -> flatten apply(values getProperty(F2, honestMaxObjects),
          C2 -> if not commonFace(C1,C2) then (C1,C2) else {}
       )
    )

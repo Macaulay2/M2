@@ -20,7 +20,7 @@ statePolytope Ideal := I -> (
       lt := apply(L, leadTerm);
       M := matrix flatten apply(#L, i -> apply(exponents L#i, e -> (flatten exponents lt#i)-e));
       -- intersect the span of 'M' with the positive orthant
-      C := intersection(map(source M,source M,1),M);
+      C := coneFromHData(map(source M,source M,1),M);
       -- Check if an interior vector is strictly positive
       v := interiorVector C;
       (all(flatten entries v, e -> e > 0),v)
@@ -34,7 +34,7 @@ statePolytope Ideal := I -> (
       lt = flatten entries lt;
       L := matrix flatten apply(#g, i -> apply(exponents g#i, e -> (flatten exponents lt#i)-e));
       -- intersect the differences
-      intersection L
+      coneFromHData L
    );
    wLeadTerm := (w,I) -> (
       -- Compute the Groebner basis and their leading terms of 'I' with respect to the weight 'w'
@@ -243,7 +243,7 @@ compute#Fan#polytopal Fan := F -> (
       -- Extracting the generating cones, the ambient dimension, the codim 1 
       -- cones (corresponding to the edges of the polytope if it exists)
       i := 0;
-      L := hashTable apply(getProperty(F, honestMaxObjects), l -> (i=i+1; i=>l));
+      L := hashTable apply(values getProperty(F, honestMaxObjects), l -> (i=i+1; i=>l));
       n := ambDim(F);
       edges := cones(n-1,F);
       raysF := rays F;
