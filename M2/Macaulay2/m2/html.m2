@@ -732,11 +732,10 @@ installPackage Package := opts -> pkg -> (
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
 	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
-	  cacheDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagecache");
-	  rawdbname := cacheDir | "rawdocumentation" | databaseSuffix;
+	  rawdbname := databaseFilename(currentLayout,pkg#"package prefix",pkg#"title");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
-	  makeDirectory cacheDir;
+	  makeDirectory databaseDirectory(currentLayout,pkg#"package prefix",pkg#"title");
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -770,6 +769,7 @@ installPackage Package := opts -> pkg -> (
 			      )
 			 )));
 	  close rawdocDatabase;
+	  if verbose then stderr << "--closed the database" << endl;
 
 	  -- run tests that are functions
 	  if verbose then stderr << "--running tests that are functions" << endl;
@@ -875,7 +875,7 @@ installPackage Package := opts -> pkg -> (
 
           if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey;
 	  shield (
-	       moveFile(rawdbnametmp,rawdbname);
+	       moveFile(rawdbnametmp,rawdbname,Verbose=>debugLevel>0);
 	       );
 
 	  pkg#rawkey = openDatabase rawdbname;

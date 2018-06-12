@@ -177,6 +177,7 @@ embrace = n -> (
 VerticalList = new SelfInitializingType of List
 VerticalList.synonym = "vertical list"
 net VerticalList := x -> if #x === 0 then "{}" else embrace stack apply(x,net)
+VerticalList.Wrap = x -> x
 
 NumberedVerticalList = new SelfInitializingType of VerticalList
 NumberedVerticalList.synonym = "numbered vertical list"
