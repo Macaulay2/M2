@@ -249,14 +249,17 @@ if firstTime then (
 			 f := lookup(GlobalAssignHook, class x);
 			 if f =!= null then f(sym,x);
 			 ))));
-     applicationDirectorySuffix = () -> (
-	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
-	  );
+     applicationDirectorySuffix = if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/";
      applicationDirectory = () -> (
-	  getenv "HOME" | "/" |
-	  if instance(applicationDirectorySuffix, Function)
-	  then applicationDirectorySuffix()
-	  else applicationDirectorySuffix
+	  if getenv "HOME" =!= ""
+	  then (
+	       getenv "HOME" | "/" |
+     	       -- we allow the user to change applicationDirectorySuffix to a string or a function
+	       if instance(applicationDirectorySuffix, Function)
+	       then applicationDirectorySuffix()
+	       else applicationDirectorySuffix
+	       )
+	  else error "environment variable HOME not set"
 	  );
 
      dumpdataFile = null;
@@ -310,11 +313,12 @@ base := s -> ( m := regex(".*/",s); if m === null or 0 === #m then s    else sub
 initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir := dir exe | "/";
-     currentLayout = (
+     currentLayout = (					    -- see also currentLayoutTable
 	  if issuffix(Layout#2#"bin","/"|bindir) then Layout#2 else
 	  if issuffix(Layout#1#"bin","/"|bindir) then Layout#1
 	  );
-     prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
+     prefixDirectory = if currentLayout =!= null then realpath substring(bindir,0,#bindir-#currentLayout#"bin");
+     -- we use "realpath" to produce real paths, because Cygwin-style symbolic links are not understood by native Windows applications
      if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
      if readlink exe =!= null then (
 	  exe2 := concatPath(realpath dir exe, readlink exe);
@@ -345,7 +349,6 @@ initcurrentlayout := () -> (
      )
 
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
-encapDirectory = null	   -- encap directory, after installation, if present, e.g., "/usr/local/encap/Macaulay2-0.9.5/"
 
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
@@ -673,24 +676,19 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 		    	 topSrcdir|"Macaulay2/m2/",
 		    	 topSrcdir|"Macaulay2/packages/"
 			 ),
-		    topBuilddir|"Macaulay2/m2/",
-		    topBuilddir|"Macaulay2/packages/"
+		    topBuilddir|"Macaulay2/m2/"
+		    -- topBuilddir|"Macaulay2/packages/"
 		    ),
 	       prefixDirectory | replaceStrings("PKG","Core",currentLayout#"package"),
 	       prefixDirectory | currentLayout#"packages"
 	       )
 	  }
-packagepath = (x -> select(x, i -> i =!= null)) deepSplice {
-	  if prefixDirectory =!= null then (
-	       if topBuilddir =!= null then (
-		    if topSrcdir =!= null then (
-		    	 topSrcdir|"Macaulay2/packages/"
-			 ),
-		    topBuilddir|"Macaulay2/packages/"
-		    ),
-	       prefixDirectory | currentLayout#"packages"
-	       )
-	  }
+
+packagepath = select({
+	  prefixDirectory | currentLayout#"packages",
+	  if topSrcdir =!= null then topSrcdir|"Macaulay2/packages/"
+	  },
+     i -> i =!= null)
 
 if firstTime then normalPrompts()
 

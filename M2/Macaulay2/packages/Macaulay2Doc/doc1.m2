@@ -1,14 +1,14 @@
 -- -*- coding: utf-8 -*-
 scan((
      -- some optional arguments
-	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
+	  FollowLinks,Hilbert,Options,InstallPrefix,Exclude,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
 	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,AbsoluteLinks,RunExamples,SourceRing,
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
 	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,Reload,
-	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
+	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,Local,Binomial,Monomial,DegreeMap,DegreeLift,
 	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
      s -> if s =!= null then document {
 	  Key => s,

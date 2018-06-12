@@ -6,21 +6,21 @@ about = method(Options => {SearchBody => false})	    -- exported
 lastabout = null
 
 about String := o -> re -> lastabout = (
-     NumberedVerticalList flatten for p in installedPackages(Core=>true, Database=>true) list (
+     NumberedVerticalList sort flatten for p in installedPackages(Core=>true, Database=>true) list (
      pkg := p#0;
      dbname := p#1;
      if not fileExists dbname then continue;
      db := openDatabase dbname;
-     pkgd := pkg | "::";
      kys := select(keys db,
 	  if o.SearchBody
 	  then key -> match(re,key) or match(re,db#key)
 	  else key -> match(re,key));
      close db;
+     pkgd := pkg | "::";
      apply(kys, key -> pkgd | key)))
 about Function := 
 about Type := 
-about Symbol := o -> s -> about toString s
+about Symbol := o -> s -> about("\\b" | toString s | "\\b", o)
 
 help#0 ZZ := i -> (
      if lastabout === null then error "no previous 'about' response";

@@ -449,8 +449,8 @@ document {
 	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
 	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
 	  table from names, corresponding to the various types of files, to directory paths.  The
-	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", " or in one
-	  of the directories contained in the list ", TO "prefixPath", ".
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
+	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
 	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
 	  by the name of package whose files will be stored in that directory."
 	  },

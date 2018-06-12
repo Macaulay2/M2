@@ -507,6 +507,7 @@ debug Package := pkg -> (
 	  );
      checkShadow())
 
+
 installedPackages = method(Options => {
 	  Database => false,
 	  Location => false,
@@ -519,12 +520,8 @@ installMethod(installedPackages, o -> () -> NumberedVerticalList (
 	       else { applicationDirectory() | "local/" }
 	       ), isDirectory)
 	  list (
-	       currentLayout := (
-		    if isDirectory (prefix | Layout#1#"packages") and isDirectory (prefix | replace("PKG",".",Layout#1#"packagelib"))
-		    then Layout#1
-		    else if isDirectory (prefix | Layout#2#"packages") and isDirectory (prefix | replace("PKG",".",Layout#2#"packagelib"))
-		    then Layout#2
-		    else continue);
+	       currentLayout := detectCurrentLayout prefix;
+	       if currentLayout === null then continue;
 	       docdir := prefix | currentLayout#"docdir";
 	       if not isDirectory docdir then continue else
 	       for p in readDirectory docdir list if p =!= "." and p =!= ".." and isDirectory (docdir | p) then (

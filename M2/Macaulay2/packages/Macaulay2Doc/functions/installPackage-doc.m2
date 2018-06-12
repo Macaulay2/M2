@@ -13,15 +13,12 @@ document {
 	  [installPackage,CacheExampleOutput],
 	  [installPackage,CheckDocumentation],
 	  [installPackage,DebuggingMode],
-	  [installPackage,Encapsulate],
-	  [installPackage,EncapsulateDirectory],
 	  [installPackage,FileName],
 	  [installPackage,IgnoreExampleErrors],
 	  [installPackage,InstallPrefix],
 	  [installPackage,MakeDocumentation],
 	  [installPackage,MakeInfo],
 	  [installPackage,MakeLinks],
-	  [installPackage,PackagePrefix],
 	  [installPackage,RemakeAllDocumentation],
 	  [installPackage,RerunExamples],
 	  [installPackage,RunExamples],
@@ -55,24 +52,6 @@ document {
 	       enabled, or for installation of the links to the files, in case encapsulation is enabled.  The value of 
 	       this option can be a string or a function of no arguments returning a string.  The default value is the 
 	       subdirectory named ", TT "local", " of the user's ", TO "application directory", "." },
-	  PackagePrefix => { "the installation prefix for installation of the files of the package in case encapsulation is
-	       enabled.  The value of this option can
-	       be a string or a function of no arguments returning a string.  
-	       The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", "." },
-	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory of
-	       the directory specified by the ", TT "PackagePrefix", " option, 
-	       whose name is specified by the ", TT "EncapsulateDirectory", " option.
-	       Encapsulation makes it easy to delete all the files associated with a package
-	       (see ", TO "epkg", ").  On the other hand, encapsulation involves the use of symbolic links, which are of limited
-	       utility in a Cygwin version of Macaulay2, because non-Cygwin programs don't understand them." 
-	       },
-	  EncapsulateDirectory => { "a string that gives the name of the encapsulation subdirectory, terminated with a ", TT "/", ", in the case where
-	        the value of the ", TT "Encapsulate", " option is ", TT "true", ", or a function that accepts a package and returns
-		such a string.  The default function returns a string that has the form
-	       ", TT "PACKAGENAME-VERSION", ", where ", TT "VERSION", " is the version number specified 
-	       by the package as value of the ", TO "Version", " option
-	       provided to ", TO "newPackage", "."
-	       },
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
 	  AbsoluteLinks => Boolean => {
 	       "whether the links made should contain real absolute paths, rather than relative paths.  If set to
@@ -118,8 +97,7 @@ document {
 	  {"run any new or previously failed examples, or all examples, as specified by the ", TO "RemakeAllExamples", " option"},
 	  {"generate the html pages of modified help pages, or all html pages, as specificed by the ", TO "RemakeAllDocumentation", " option"},
 	  {"generate the info pages, or not, as specified by the ", TO "MakeInfo", " option"},
-	  {"install the documentation and package in the location specified by the ", TO "PackagePrefix", " option"},
-	  {"create symbolic links in the location specified by the ", TO "InstallPrefix", " option"},
+	  {"install the documentation and package in the location specified by the ", TO "InstallPrefix", " option"},
 	  {"place a link to this html documentation in the 
 	       file ", TT "index.html", " in the user's ", TO "application directory", "; see ", TO "makePackageIndex"}
 	  },

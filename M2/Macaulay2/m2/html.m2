@@ -21,7 +21,6 @@ local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local 
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
 installationLayout = null
-addStartFunction(() -> installationLayout = currentLayout)
 
 hadExampleError := false
 numExampleErrors := 0;
@@ -47,13 +46,18 @@ topDocumentTag := null
 topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
-buildPrefix := null	   				    -- the root of the relative paths:
 installPrefix := null	  	       	    	      	    -- the value of the option InstallPrefix; search also here for links
+installationLayout = null				    -- the layout of the installPrefix, global for communication to document.m2
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 installDirectory := ""					    -- absolute path to the install directory
 
 runfun := o -> if instance(o, Function) then o() else o
-initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.InstallPrefix | "/")
+initInstallDirectory := o -> (
+     installDirectory = minimizeFilename(runfun o.InstallPrefix | "/");
+     installationLayout = detectCurrentLayout installDirectory;
+     if installationLayout === null
+     then installationLayout = if o.SeparateExec then Layout#2 else Layout#1;
+     )
 
 -----------------------------------------------------------------------------
 -- relative URLs and filenames
@@ -69,20 +73,6 @@ absoluteLinks := false
 --      r)
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
-
-searchPrefixPath = url -> (
-     -- we also search the current InstallPrefix, first
-     -- entries on the prefixPath may have different layouts
-     pth := if buildPrefix === null then prefixPath else prepend(buildPrefix,prefixPath); -- what if buildPrefix has a left-over value from a previous invocation???
-     for i in pth do (
-	  p := i|url;
-	  if fileExists p then (
-	       if debugLevel > 5 then stderr << "--file " << url << " found in " << i << endl;
-	       return p;
-	       )
-	  );
-     if debugLevel > 5 then stderr << "--file " << url << " not found in " << prefixPath << endl;
-     )
 
 toURL := pth -> (
      if isAbsolutePath pth then concatenate(rootURI,
@@ -116,18 +106,12 @@ htmlFilename2 = (tag,layout) -> (
      replace("PKG",pkgtitle,layout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 
 htmlFilename DocumentTag := tag -> (
-     -- this one is used for storing the file, hence "installationLayout"
-     htmlFilename2(tag,installationLayout))
+     -- this one is used for storing the html file
+     htmlFilename2(tag,Layout#installationLayout))
 
--- this was the old thinking:
--- htmlFilename FinalDocumentTag := tag -> (
---      -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
---      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
---      -- the distribution, so common files can be shared among build trees
---      htmlFilename2(tag,currentLayout))
 htmlFilename FinalDocumentTag := tag -> (
      -- this one is used for creating links to the file
-     htmlFilename2(tag,installationLayout))
+     htmlFilename2(tag,Layout#installationLayout))
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -194,15 +178,10 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
-     -- we used to have several!
-     doccss := replace("PKG","Style",installationLayout#"package") | "doc.css";
-     if null === searchPrefixPath doccss
-     then error(
-	  if makingPackageIndex
-	  then "style file not found on prefixPath (install Style package or run 'M2 -q' to avoid making the package index) : "
-	  else "style file not found on prefixPath (install Style package) : ",
-	  doccss);
-     LINK { "href" => toURL doccss, "rel" => "stylesheet", "type" => "text/css" }
+     doccss := prefixDirectory | replace("PKG","Style",currentLayout#"package") | "doc.css";
+     if not fileExists doccss then error ("style file not found (install Style package) : ",doccss);
+     url := toURL doccss;
+     LINK { "href" => url, "rel" => "stylesheet", "type" => "text/css" }
      )
 
 -- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
@@ -410,7 +389,7 @@ capture String := s -> (
 
 makeMasterIndex := (keylist,verbose) -> (
      numAnchorsMade = 0;
-     fn := buildPrefix | htmlDirectory | indexFileName;
+     fn := installPrefix | htmlDirectory | indexFileName;
      title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
@@ -431,7 +410,7 @@ makeMasterIndex := (keylist,verbose) -> (
      )
 
 maketableOfContents := (verbose) -> (
-     fn := buildPrefix | htmlDirectory | tocFileName;
+     fn := installPrefix | htmlDirectory | tocFileName;
      title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
@@ -564,23 +543,14 @@ check String := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => tru
 setupNames := (opts,pkg) -> (
      installPrefix = minimizeFilename(runfun opts.InstallPrefix | "/");
      buildPackage = pkg#"title";
-     buildPrefix = 
-     if opts.Encapsulate then (
-	  minimizeFilename(runfun opts.PackagePrefix | "/") | (
-	       if instance(opts.EncapsulateDirectory,Function) then opts.EncapsulateDirectory pkg
-	       else if instance(opts.EncapsulateDirectory,String) then opts.EncapsulateDirectory
-	       else error "expected EncapsulateDirectory option to be a function or a string"))
-     else installPrefix)
-unsetupNames := () -> buildPrefix = installPrefix = buildPackage = null
+     )
+unsetupNames := () -> installPrefix = installPrefix = buildPackage = null
 
 
 installPackage = method(Options => {
 	  SeparateExec => false,
-	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
 	  UserMode => null,
-	  Encapsulate => false,
-	  EncapsulateDirectory => pkg -> pkg#"title"|"-"|pkg.Options.Version|"/",
 	  IgnoreExampleErrors => false,
 	  FileName => null,
 	  CacheExampleOutput => null,			    -- overrides the value specified by newPackage if true or false
@@ -596,7 +566,6 @@ installPackage = method(Options => {
 	  DebuggingMode => null
 	  })
 uninstallPackage = method(Options => { 
-	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/"
 	  })
 
@@ -610,8 +579,6 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 
 uninstallPackage String := opts -> pkg -> (
      checkPackageName pkg;
-     buildDirectory := minimizeFilename(runfun opts.PackagePrefix | "/");
-     scan(readDirectory buildDirectory, dir -> if match("^" | pkg | "-",dir) then removeFiles (buildDirectory|dir|"/"));
      installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
      apply(findFiles apply({1,2},
 	       i -> apply(flatten {
@@ -638,8 +605,6 @@ dispatcherMethod := m -> m#-1 === Sequence and (
 
 installPackage Package := opts -> pkg -> (
      verbose := opts.Verbose or debugLevel > 0;
-     oldlayout := installationLayout;
-     installationLayout = if opts.SeparateExec then Layout#2 else Layout#1;
 
      use pkg;
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
@@ -657,23 +622,26 @@ installPackage Package := opts -> pkg -> (
      nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
      
      setupNames(opts,pkg);
-     initInstallDirectory opts;
-     
+     initInstallDirectory opts;				    -- initializes installDirectory
+
      if (options pkg).Headline === null then error ("no Headline option provided to newPackage for ",pkg#"title");
      if (options pkg).Headline === ""   then error ("empty string given as Headline option to newPackage for ",pkg#"title");
 
-     if verbose then stderr << "--installing package " << pkg << " in " << buildPrefix << endl;
+     if verbose then stderr << "--installing package " << pkg << " in " << installPrefix << " with layout " << installationLayout << endl;
      
      currentSourceDir := pkg#"source directory";
+
+     if currentSourceDir === installPrefix | Layout#installationLayout#"packages" then error "the package is already installed there, and has been loaded from there";
+
      if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy package source file
-     pkgDirectory := installationLayout#"packages";
-     makeDirectory (buildPrefix|pkgDirectory);
+     pkgDirectory := Layout#installationLayout#"packages";
+     makeDirectory (installPrefix|pkgDirectory);
      bn := buildPackage | ".m2";
      fn := currentSourceDir|bn;
      if not fileExists fn then error("file ", fn, " not found");
-     copyFile(fn, buildPrefix|pkgDirectory|bn, Verbose => debugLevel > 5);
+     copyFile(fn, installPrefix|pkgDirectory|bn, Verbose => debugLevel > 5);
 
      excludes := Exclude => {
 	  "^CVS$", 
@@ -687,15 +655,15 @@ installPackage Package := opts -> pkg -> (
 	  ) else (
      	  
 	  -- copy package source subdirectory
-	  srcDirectory := replace("PKG",pkg#"title",installationLayout#"package");
+	  srcDirectory := replace("PKG",pkg#"title",Layout#installationLayout#"package");
 	  auxiliaryFilesDirectory := realpath currentSourceDir | buildPackage;
 	  if isDirectory auxiliaryFilesDirectory
 	  then (
 	       if not (options pkg).AuxiliaryFiles
 	       then error ("package ",toString pkg," has auxiliary files in \"",auxiliaryFilesDirectory,"\", but newPackage wasn't given AuxiliaryFiles=>true");
 	       if verbose then stderr << "--copying auxiliary source files from " << auxiliaryFilesDirectory << endl;
-	       makeDirectory (buildPrefix|srcDirectory);
-	       copyDirectory(auxiliaryFilesDirectory, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => verbose, excludes);
+	       makeDirectory (installPrefix|srcDirectory);
+	       copyDirectory(auxiliaryFilesDirectory, installPrefix|srcDirectory, UpdateOnly => true, Verbose => verbose, excludes);
 	       )
 	  else (
 	       if (options pkg).AuxiliaryFiles
@@ -704,10 +672,10 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleOutputDir := buildPrefix|replace("PKG",pkg#"title",installationLayout#"packageexampleoutput");
+     exampleOutputDir := installPrefix|replace("PKG",pkg#"title",Layout#installationLayout#"packageexampleoutput");
 
      if opts.MakeDocumentation then (
-	  pkg#"package prefix" = buildPrefix;
+	  pkg#"package prefix" = installPrefix;
 
 	  -- copy package doc subdirectory if we loaded the package from a distribution
      	  -- ... to be implemented, but we seem to be copying the examples already, but only partially
@@ -731,11 +699,11 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
-	  rawdbname := databaseFilename(currentLayout,pkg#"package prefix",pkg#"title");
+	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",Layout#installationLayout#"packagelib");
+	  rawdbname := databaseFilename(Layout#installationLayout,pkg#"package prefix",pkg#"title");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
-	  makeDirectory databaseDirectory(currentLayout,pkg#"package prefix",pkg#"title");
+	  makeDirectory databaseDirectory(Layout#installationLayout,pkg#"package prefix",pkg#"title");
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -923,7 +891,7 @@ installPackage Package := opts -> pkg -> (
 	  if opts.MakeInfo then (
 	       savePW := printWidth;
 	       printWidth = 79;
-	       infodir := buildPrefix|installationLayout#"info";
+	       infodir := installPrefix|Layout#installationLayout#"info";
 	       makeDirectory infodir;
 	       infotitle := pkg#"title";
 	       infobasename := infotitle|".info";
@@ -968,36 +936,36 @@ installPackage Package := opts -> pkg -> (
 	       );
 
 	  -- make html files
-	  htmlDirectory = replace("PKG",pkg#"title",installationLayout#"packagehtml"); -- if installationLayout =!= currentLayout, this may cause problems
+	  htmlDirectory = replace("PKG",pkg#"title",Layout#installationLayout#"packagehtml");
 	  setupButtons();
-	  makeDirectory (buildPrefix|htmlDirectory);
-	  if verbose then stderr << "--making empty html pages in " << buildPrefix|htmlDirectory << endl;
+	  makeDirectory (installPrefix|htmlDirectory);
+	  if verbose then stderr << "--making empty html pages in " << installPrefix|htmlDirectory << endl;
 	  if pkg.Options.Headline =!= null then (
-	       buildPrefix|htmlDirectory|".Headline" << pkg.Options.Headline << close;
+	       installPrefix|htmlDirectory|".Headline" << pkg.Options.Headline << close;
 	       );
 	  if pkg.Options.Certification =!= null then (
-	       buildPrefix|htmlDirectory|".Certification" << toExternalString pkg.Options.Certification << close;
+	       installPrefix|htmlDirectory|".Certification" << toExternalString pkg.Options.Certification << close;
 	       );
 	  scan(nodes, tag -> if not isUndocumented tag then (
 		    fkey := DocumentTag.FormattedKey tag;
-		    fn := buildPrefix | htmlFilename tag;
+		    fn := installPrefix | htmlFilename tag;
 		    if fileExists fn then return;
 		    if isSecondary tag then return;
 		    if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
 		    fn << close));
 	  for n in (topFileName, indexFileName, tocFileName) do (
-	       fn := buildPrefix | replace("PKG",pkg#"title",installationLayout#"packagehtml") | n;
+	       fn := installPrefix | replace("PKG",pkg#"title",Layout#installationLayout#"packagehtml") | n;
 	       if not fileExists fn then (
 		    if debugLevel > 0 then stderr << "--creating empty html page " << fn << endl;
 		    fn << close)
 	       else (
 		    if debugLevel > 0 then stderr << "--html page exists: " << fn << endl;
 		    ));
-	  if verbose then stderr << "--making html pages in " << buildPrefix|htmlDirectory << endl;
+	  if verbose then stderr << "--making html pages in " << installPrefix|htmlDirectory << endl;
      	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
-	       fn := buildPrefix | htmlFilename tag;
+	       fn := installPrefix | htmlFilename tag;
 	       if fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	       if isSecondary tag then return;
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
@@ -1027,57 +995,6 @@ installPackage Package := opts -> pkg -> (
 
      	  );						    -- end if opts.MakeDocumentation
 
-     -- make postinstall and preremove files, if encap
-     if opts.Encapsulate then (
-	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
-	  if verbose then stderr << "--making INSTALL, postinstall, preremove, and encapinfo files in " << buildPrefix << endl;
-     	  fix := s -> (
-	       s = replace("info/", installationLayout#"info", s);
-	       s = replace("bin/", installationLayout#"bin", s);
-	       s);
-	  -- postinstall
-	  f := buildPrefix | "postinstall" 
-	  << ///#! /bin/sh -e/// << endl
-	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
-	  << ///for i in *.info/// << endl
-	  << fix ///do (set -x ; install-info --info-dir="$ENCAP_TARGET/info/" "$i")/// << endl
-	  << ///done/// << endl;
-	  if version#"dumpdata" and pkg#"title" == "Macaulay2Doc" then (
-	       f << endl << fix "(set -x ; \"$ENCAP_TARGET\"/bin/" << version#"M2 name" << " --stop --dumpdata)" << endl;
-	       );
-	  fileMode(octal "755",f);
-	  f << close;
-	  -- preremove
-     	  f = buildPrefix | "preremove"
-	  << ///#! /bin/sh -x/// << endl
-	  << fix ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info/" || exit 0/// << endl
-	  << ///for i in *.info/// << endl
-	  << fix ///do (set -x ; install-info --info-dir="$ENCAP_TARGET/info/" --remove "$i")/// << endl
-	  << ///done/// << endl;
-	  fileMode(octal "755",f);
- 	  f << close;
-	  -- encapinfo
-	  f = buildPrefix | "encapinfo"
-	  << ///encap 2.0/// << endl
-	  << ///contact dan@math.uiuc.edu/// << endl;
-	  removeLastSlash := s -> if s#?0 and s#-1 === "/" then substring(s,0,#s-1) else s;
-	  scan(("packagecache","packagedoc","package","libraries"),
-	       k -> f << "linkdir" << " " << removeLastSlash replace("PKG","*",installationLayout#k) << endl);
-	  fileMode(octal "644",f);
-	  f << close;
-	  );
-
-     -- make symbolic links
-     if opts.Encapsulate and opts.MakeLinks then (
-     	  if verbose then stderr << "--making symbolic links from \"" << installDirectory << "\" to \"" << buildPrefix << "\"" << endl;
-	  scan(unique {installationLayout#"common",installationLayout#"exec"}, d ->
-	       symlinkDirectory(buildPrefix|d, installDirectory,
-		    Verbose => debugLevel > 0, 
-		    Exclude => {
-			 "^encapinfo$", "^postinstall$", "^preremove$", -- configuration files for epkg
-			 "^\\.nfs"				    -- removed open files on NFS mounted file systems
-			 })));
-
      -- all done
      SRC = null;
      if not hadExampleError then (
@@ -1085,13 +1002,12 @@ installPackage Package := opts -> pkg -> (
 	  iname << close;
 	  if verbose then stderr << "--file created: " << iname << endl;
 	  );
-     if verbose then stderr << "--installed package " << pkg << " in " << buildPrefix << endl;
+     if verbose then stderr << "--installed package " << pkg << " in " << installPrefix << endl;
      currentPackage = oldpkg;
      if not noinitfile then (
 	  userMacaulay2Directory();
 	  makePackageIndex();
 	  );
-     installationLayout = oldlayout;
      unsetupNames();
      )
 
@@ -1181,13 +1097,17 @@ makePackageIndex List := path -> (
      absoluteLinks = true;
      key := "Macaulay2";
      star := IMG {
-	  "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png",
+	  "src" => prefixDirectory | replace("PKG","Style",currentLayout#"package") | "GoldStar.png",
 	  "alt" => "a gold star"
 	  };
      htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
-     if debugLevel > 10 then stderr << "--path = " << stack path << endl;
+     if debugLevel > 10 then (
+	  stderr << "--prefixPath = " << stack prefixPath << endl
+	      << "--path = " << stack path << endl
+	      << "--prefixDirectory = " << prefixDirectory << endl;
+	  );
      docdirdone := new MutableHashTable;
      fn << html HTML { 
 	  HEAD splice {
