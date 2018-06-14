@@ -42,11 +42,22 @@ loadPackage = method(
 packageLoadingOptions := new MutableHashTable
 checkPackageName = title -> if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",format title)
 
+closePackage = pkg -> (
+     if pkg#?"raw documentation database"
+     then (db -> if isOpen db then close db) pkg#"raw documentation database";
+     )
+
 loadPackage String := opts -> pkgtitle -> (
      checkPackageName pkgtitle;
      if opts.Reload === true then (
+	  -- << "-- reloading package " << pkgtitle << endl;
+	  -- really close the old one
 	  dismiss pkgtitle;
-	  if PackageDictionary#?pkgtitle then PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle;
+	  if PackageDictionary#?pkgtitle then (
+	       pkg := PackageDictionary#pkgtitle;
+	       closePackage (value pkg); -- eventually we won't be able to keep all of these open, anyway, since 256 can be our limit on open file descriptors
+	       PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle; -- clear out the value of the symbol
+	       );
 	  );
      filename := if opts.FileName === null then pkgtitle | ".m2" else opts.FileName;
      packageLoadingOptions#pkgtitle = opts;
@@ -134,15 +145,13 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
 }
 ///
 
-closePackage = pkg -> (
-     if pkg#?"raw documentation database"
-     then (db -> if isOpen db then close db) pkg#"raw documentation database";
-     )
-
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
 -- they get mixed.  Yes, that's in addition to installing them in directories that
 -- are specified to be suitable for machine dependent data.
 databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
+
+databaseDirectory = (layout,pre,pkg) -> pre | replace("PKG",pkg,layout#"packagecache")
+databaseFilename  = (layout,pre,pkg) -> databaseDirectory(layout,pre,pkg) | "rawdocumentation" | databaseSuffix
 
 newPackage(String) := opts -> (title) -> (
      checkPackageName title;
@@ -245,10 +254,9 @@ newPackage(String) := opts -> (title) -> (
      newpkg#"test number" = 0;
      if newpkg#"package prefix" =!= null then (
 	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
-	  rawdbname := newpkg#"package prefix" | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix;
+	  rawdbname := databaseFilename(currentLayout,newpkg#"package prefix", title);
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
-	       if notify then stderr << "--opened database: " << rawdbname << endl;
 	       newpkg#"raw documentation database" = rawdb;
 	       addEndFunction(() -> if isOpen rawdb then close rawdb))
 	  else (
@@ -260,7 +268,7 @@ newPackage(String) := opts -> (title) -> (
      addStartFunction(() -> 
 	  if not ( newpkg#?"raw documentation database" and isOpen newpkg#"raw documentation database" ) and prefixDirectory =!= null 
 	  then (
-	       dbname := prefixDirectory | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix; -- what if there is more than one prefix directory?
+	       dbname := databaseFilename (currentLayout,prefixDirectory,title); -- what if there is more than one prefix directory?
 	       if fileExists dbname then (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 	       	    if notify then stderr << "--opened database: " << rawdbname << endl;
@@ -281,11 +289,11 @@ newPackage(String) := opts -> (title) -> (
      loadedPackages = {Core};
      dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
      if Core#?"base packages" then (
-	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
-	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
-	       )
-	  else scan(reverse Core#"base packages", needsPackage)
-	  );
+     	  if member(title,Core#"base packages") and title =!= "Macaulay2Doc" then (
+     	       if member("Macaulay2Doc",Core#"base packages") then needsPackage "Macaulay2Doc";
+     	       )
+     	  else scan(reverse Core#"base packages", needsPackage)
+     	  );
      dictionaryPath = (
 	  if member(newpkg.Dictionary,dictionaryPath)
      	  then join({newpkg#"private dictionary"}, dictionaryPath)
@@ -293,7 +301,7 @@ newPackage(String) := opts -> (title) -> (
      setAttribute(newpkg.Dictionary,PrintNames,title | ".Dictionary");
      setAttribute(newpkg#"private dictionary",PrintNames,title | "#\"private dictionary\"");
      debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-     if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
+     -- if title =!= "SimpleDoc" and title =!= "Core" and title =!= "Text" then needsPackage "SimpleDoc";
      scan(opts.PackageImports, needsPackage);
      scan(opts.PackageExports, needsPackage);
      newpkg.loadDepth = loadDepth;
@@ -499,11 +507,34 @@ debug Package := pkg -> (
 	  );
      checkShadow())
 
-installedPackages = () -> (
- docdir := applicationDirectory() | "local/" | Layout#1#"docdir";
- if isDirectory docdir then for p in readDirectory docdir list if p =!= "." and p =!= ".." then p else continue else {}
- )
-
+installedPackages = method(Options => {
+	  ShowDatabase => false,
+	  Location => false,
+	  IncludeCore => false})
+		    
+installMethod(installedPackages, o -> () -> NumberedVerticalList ( 
+	  sort flatten for prefix in select((
+	       if o#IncludeCore 
+	       then prefixPath
+	       else { applicationDirectory() | "local/" }
+	       ), isDirectory)
+	  list (
+	       currentLayout := (
+		    if isDirectory (prefix | Layout#1#"packages") and isDirectory (prefix | replace("PKG",".",Layout#1#"packagelib"))
+		    then Layout#1
+		    else if isDirectory (prefix | Layout#2#"packages") and isDirectory (prefix | replace("PKG",".",Layout#2#"packagelib"))
+		    then Layout#2
+		    else continue);
+	       docdir := prefix | currentLayout#"docdir";
+	       if not isDirectory docdir then continue else
+	       for p in readDirectory docdir list if p =!= "." and p =!= ".." and isDirectory (docdir | p) then (
+	       if o#Location
+	       then p => prefix
+	       else if o#ShowDatabase
+	       then p => databaseFilename (currentLayout,prefix,p)
+	       else p
+	       ) else continue)))
+     
 uninstallAllPackages = () -> for p in installedPackages() do (
  << "-- uninstalling package " << p << endl;
  uninstallPackage p

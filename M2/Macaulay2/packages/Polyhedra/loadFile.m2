@@ -99,6 +99,7 @@ load "./alternatives/normaliz.m2"
 -------------------------------------------------------------------------------
 -- Documentation
 --
+beginDocumentation()
 load "./documentation.m2"
 load "./new_documentation.m2"
 

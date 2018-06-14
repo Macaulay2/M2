@@ -940,11 +940,11 @@ doc ///
                 obtained by evaluating degree d monomials at the sample points"},
 		TEX "\\bf map: the map F, of which the image is under consideration"
                 }
-        Example
-            R = CC[x_(1,1)..x_(3,5)];
-            F = (minors(3, genericMatrix(R, 3, 5)))_*;
-            T = numericalHilbertFunction(F, ideal 0_R, 2, Verbose => false)
-            (T.hilbertFunctionArgument, T.hilbertFunctionValue)
+        -- Example
+        --     R = CC[x_(1,1)..x_(3,5)];
+        --     F = (minors(3, genericMatrix(R, 3, 5)))_*;
+        --     T = numericalHilbertFunction(F, ideal 0_R, 2, Verbose => false)
+        --     (T.hilbertFunctionArgument, T.hilbertFunctionValue)
     SeeAlso
     	numericalHilbertFunction
 ///

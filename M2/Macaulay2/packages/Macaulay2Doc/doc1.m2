@@ -148,7 +148,7 @@ document {
 document {
      Key => lookup,
      Headline => "look up methods",
-     TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
+     TT "lookup(M,A)", " -- provides the unary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
      the parent of ", TT "A", ", and so on.",
      PARA{},

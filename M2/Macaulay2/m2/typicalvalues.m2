@@ -73,7 +73,6 @@ hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
-keys HashTable := List => keys
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
 localDictionaries Pseudocode := List => localDictionaries

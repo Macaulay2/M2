@@ -115,6 +115,7 @@ random RandomObject := randomopts -> Object -> args -> (
 -- for a package that implements the randomObject
 --
 
+needsPackage "SimpleDoc"				    -- to get docTemplate defined
 
 randomObjectTemplate=method()
 randomObjectTemplate(String):=(Object)->(

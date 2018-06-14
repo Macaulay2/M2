@@ -10,3 +10,9 @@ macaulay2 (1.11) stable; urgency=low
 macaulay2 (1.11.0.1) stable; urgency=low
   * release version 1.11
  -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Mar 2017 09:50:25 -0500
+macaulay2 (1.11.1) stable; urgency=low
+  * release version 1.11.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 May 2018 09:50:25 -0500
+macaulay2 (1.11.1.1) stable; urgency=low
+  * release version 1.11.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 May 2018 09:50:25 -0500

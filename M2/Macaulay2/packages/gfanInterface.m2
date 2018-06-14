@@ -281,6 +281,7 @@ gfanParseList String := (S) -> (
 	S = replace("\n", "", S);
 	stack := {};
 	r := regex(///[\{,\}]///, S);
+	if r === null then error "expected gfan to return a list";
 	popstate := false;
 	while #r === 1 do (
 		startpos := first first r;
@@ -1015,13 +1016,13 @@ runGfanCommand = (cmd, opts, data) -> (
 	returnvalue := run ex;
      	if(not returnvalue == 0) then
 	(
---	     << "GFAN returned an error message.\n";
---	     << "COMMAND:" << ex << endl;
---	     << "INPUT:\n";
---	     << get(tmpFile);
---	     << "ERROR:\n";
---	     << get(tmpFile |".err");
-
+	     << "GFAN returned an error message.\n";
+	     << "COMMAND:" << ex << endl;
+	     << "INPUT:\n";
+	     << get(tmpFile);
+	     << "ERROR:\n";
+	     << get(tmpFile |".err");
+     	     error "terminating";
 	     );
 		out := get(tmpFile | ".out");
 	gfanRemoveTemporaryFile tmpFile;

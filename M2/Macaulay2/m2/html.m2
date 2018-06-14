@@ -480,7 +480,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      if ulimit === null then (
-	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
+	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
 	  );
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
@@ -623,10 +623,11 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 installPackage String := opts -> pkg -> (
-     if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
-     -- we load the package even if it's already been loaded, because even if it was loaded with
-     -- its documentation the first time, it might have been loaded at a time when the core documentation
-     -- in the "Macaulay2Doc" package was not yet loaded
+     -- if pkg =!= "Macaulay2Doc" then needsPackage "Macaulay2Doc";  -- load the core documentation
+     -- -- we load the package even if it's already been loaded, because even if it was loaded with
+     -- -- its documentation the first time, it might have been loaded at a time when the core documentation
+     -- -- in the "Macaulay2Doc" package was not yet loaded
+     -- ... but we want to build the package Style without loading any other packages
      pkg = loadPackage(pkg, DebuggingMode => opts.DebuggingMode, LoadDocumentation => opts.MakeDocumentation, FileName => opts.FileName, Reload => true);
      installPackage(pkg, opts);
      )
@@ -731,11 +732,10 @@ installPackage Package := opts -> pkg -> (
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
 	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
-	  cacheDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagecache");
-	  rawdbname := cacheDir | "rawdocumentation" | databaseSuffix;
+	  rawdbname := databaseFilename(currentLayout,pkg#"package prefix",pkg#"title");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
-	  makeDirectory cacheDir;
+	  makeDirectory databaseDirectory(currentLayout,pkg#"package prefix",pkg#"title");
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -769,6 +769,7 @@ installPackage Package := opts -> pkg -> (
 			      )
 			 )));
 	  close rawdocDatabase;
+	  if verbose then stderr << "--closed the database" << endl;
 
 	  -- run tests that are functions
 	  if verbose then stderr << "--running tests that are functions" << endl;
@@ -874,7 +875,7 @@ installPackage Package := opts -> pkg -> (
 
           if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey;
 	  shield (
-	       moveFile(rawdbnametmp,rawdbname);
+	       moveFile(rawdbnametmp,rawdbname,Verbose=>debugLevel>0);
 	       );
 
 	  pkg#rawkey = openDatabase rawdbname;
@@ -1190,7 +1191,7 @@ makePackageIndex List := path -> (
      docdirdone := new MutableHashTable;
      fn << html HTML { 
 	  HEAD splice {
-	       TITLE {key, commentize headline key},
+	       TITLE {key},
 	       defaultCharSet(),
 	       links()
 	       },

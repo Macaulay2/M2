@@ -251,7 +251,7 @@ document {
      Key => installedPackages,
      Usage => "installedPackages()",
      Outputs => { 
-	  List => "a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "." 
+	  List => {"a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "."},
 	  },
      SeeAlso => { installPackage }
      }

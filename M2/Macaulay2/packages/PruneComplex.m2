@@ -44,10 +44,10 @@ export {
     "Direction", "PruningMap", "UnitTest"
     }
 
-<< "--------------------------------------------------------------------------------------" << endl;
-<< "-- The PruneComplex package is experimental.                                        --" << endl;
-<< "-- See the documentation and comments in the package to learn more.                 --" << endl;
-<< "--------------------------------------------------------------------------------------" << endl;
+-- << "--------------------------------------------------------------------------------------" << endl;
+-- << "-- The PruneComplex package is experimental.                                        --" << endl;
+-- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
+-- << "--------------------------------------------------------------------------------------" << endl;
 
 debug Core;
 

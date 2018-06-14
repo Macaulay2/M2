@@ -1,6 +1,7 @@
 ///
 restart
 uninstallPackage"K3Carpets"
+restart
 installPackage"K3Carpets"
 loadPackage("K3Carpets", Reload => true)
 check "K3Carpets"
@@ -8,8 +9,8 @@ viewHelp K3Carpets
 ///
 newPackage(
 	"K3Carpets",
-    	Version => "0.4", 
-    	Date => "March 7, 2018",
+    	Version => "0.5", 
+    	Date => "March 24, 2018",
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org", 
 		  HomePage => "http://www.msri.org/~de"},
@@ -17,7 +18,7 @@ newPackage(
 		  Email => "schreyer@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer"}},
     	Headline => "K3 double structure on scrolls",
-    	DebuggingMode => false,
+    	DebuggingMode => true,
 	PackageExports => {"CompleteIntersectionResolutions", "NonminimalComplexes"},
 	Reload =>true
 	)
@@ -26,6 +27,8 @@ export {
     "schreyerName",
     -- should be moved to an other package, e.g. NonminimalComplexes
     "analyzeStrand",
+    "carpetDet",
+    "resonanceDet",
     "carpet",
     "gorensteinDouble",
     "canonicalCarpet",
@@ -42,8 +45,16 @@ export {
     "schemeInProduct",
     "degenerateK3",
     "degenerateK3BettiTables",
+    "allGradings",
+    "relativeEquations",
+    "coxMatrices",
+    "relativeResolution",
+    "relativeResolutionTwists",
+    "resonanceScroll",
+    "computeBound",
 --symbols
     "FineGrading",
+   
     "Scrolls"    
     }
 
@@ -394,9 +405,63 @@ hankelMatrix(ZZ,ZZ) := (nrows,ncols) -> (
           hankelMatrix(vars S,nrows,ncols)
 	  )
 
+resonanceDet=method()
 
-   
-
+resonanceDet(ZZ) := (a) -> (
+    --a=4,b=4
+      b := a;
+      kk:=ZZ/32003;
+      e := symbol e;
+      x := symbol x;
+      y := symbol y;
+      EZ := ZZ[e_1,e_2,Degrees=>{1,2}];      
+      S := kk[x_0..x_a,y_0..y_b,e_1,e_2,Degrees=>{a+1:1,1..b+1,1,2}];
+      A := matrix apply(2,i->apply(a,j->x_(i+j)));
+      B := matrix apply(2,i->apply(b,j->y_(i+j)));
+      D := (diagonalMatrix({1,-e_1,e_2})_{2,1,0})^{2,1,0};
+      A1 := matrix apply(3,i->apply(a-1,j->x_(i+j)));
+      B1 := matrix apply(3,i->apply(b-1,j->y_(i+j)));
+      J := minors(2,A)+minors(2,B)+ideal (transpose A1*D*B1);
+      --isHomogeneous J;
+      elapsedTime betti (fJ := res(J,LengthLimit=>a));                                             
+      degs := apply(a+1,i->{1,1,0,i})|apply(b+1,j->{j+1,0,1,j})|{{1,0,0,0},{2,0,0,0}};
+      Sall := (coefficientRing S)[x_0..x_a,y_0..y_b,e_1,e_2,Degrees=>degs];
+      Fall := allGradings(fJ,Sall);
+      --verification that the complex is valid over ZZ[e_1,e_2] should be added
+      M := Fall.dd_a; 
+      degsSourceM := degrees source M;      
+      cols := select(rank source M,i->(d:=degsSourceM_i;d_1+d_2==a+1));
+      degsTargetM := degrees target M;      
+      rows := select(rank target M,i->(d:=degsTargetM_i;d_1+d_2==a+1));
+      M=M^rows_cols;
+      degsSourceM = degrees source M;      
+      degsTargetM = degrees target M;  
+      b1 := unique apply(degrees target M,d->{d_1,d_2,d_3});
+      blocks := apply(b1,d-> (
+	      --d=first b1
+	      cols=select(rank source M,i->{degsSourceM_i_1,degsSourceM_i_2,degsSourceM_i_3}==d);
+	      rows=select(rank target M,i->{degsTargetM_i_1,degsTargetM_i_2,degsTargetM_i_3}==d);
+	      M^rows_cols));
+      blocks=apply(blocks,B->(
+	      --B=first blocks
+	      degsTargetE := apply(degrees target B,d->-d_0);      
+     	      degsSourceE := apply(degrees source B,d->-d_0);
+              map(EZ^degsTargetE,EZ^degsSourceE, sub(B,EZ))
+	      )); 
+      print ("number of blocks= ", #blocks );
+      print ("size of the matrices",tally apply(blocks,B->rank source B));
+      dets := apply(blocks,B->(
+	      print betti B;
+	      elapsedTime detB := det B;
+	      print factor detB;
+	      detB));
+      det1:=factor product dets;
+      (factor abs sub(first last det1,ZZ),drop(det1,-1)))      
+///
+a=4,b=4      
+resonanceDet(a,b)
+///
+ 
 correspondenceScroll = method()
 correspondenceScroll (Ideal, List) := (I,scroll) ->(
     --I should be an ideal over a polynomial ring
@@ -418,10 +483,14 @@ correspondenceScroll (Ideal, List) := (I,scroll) ->(
 S := ring I;
 uS := unique (degrees vars S)_1;
 SvarIdeals := apply(#scroll, i-> ideal basis(uS_i, S));
+dims := apply(SvarIdeals, v -> numgens v -1);
 kk := coefficientRing S;
+--print dims;
 --
 y := symbol y;
-var := apply(#scroll, i -> toList(y_(i,0)..y_(i,scroll_i)));
+--var := apply(#scroll, i -> toList(y_(i,0)..y_(i,scroll_i)));
+var := apply(#scroll, i -> toList(y_(i,0)..y_(i,binomial(dims_i+scroll_i, scroll_i)-1)));
+--print var;
 T := kk[flatten var];
 varRings := apply(var, v -> kk[v]);
 TvarIdeals := apply(varRings, vr -> ideal sub(vars vr, T));
@@ -429,7 +498,23 @@ tar := {};
 scan(#scroll, i->tar = tar|((SvarIdeals_i)^(scroll_i))_*);
 return ker map(S/I,T,tar)    
 )
--*
+
+
+///
+restart
+loadPackage("K3Carpets",Reload=>true)
+scroll = {2,2}
+S = productOfProjectiveSpaces{2,2}
+vars S
+I = ideal random(S^1, S^{{-5,-5}})
+m = random(S^5, S^{5:{-1,-1}})
+mm = m-transpose m
+I = pfaffians(4,mm);
+correspondenceScroll(I,scroll);
+minimalBetti oo
+///
+
+{*
 ---possible rewrite for speed, currently imcomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
@@ -442,7 +527,7 @@ Gd := apply(#Ge, i-> (ceiling (Ge_i/scroll_i)*scroll_i));
 L := apply(#G, i-> product(#scroll, j->(SvarIdeals_j)^(Gd_j-Ge_j))*G_i)
 --now need to translate these in terms of the T variables (and add J0)
 )
-*-
+*}
 
 
 
@@ -544,6 +629,197 @@ degenerateK3(ZZ,ZZ,Sequence):= opt -> (a,b,e) -> (
 degenerateK3(ZZ,ZZ,List) := opt -> (a,b,L) -> (e:=(sum L,product L);
     degenerateK3(a,b,e,Characteristic=>opt.Characteristic))
 
+relativeEquations=method()
+relativeEquations(ZZ,ZZ,ZZ) := (a,b,k) -> (
+--    k=3,    (a,b)=(4,4)
+    assert(a>=b);
+    root := 13; p:=null;
+    while (p = first last factor (root^k-1);
+	not (p>=b)) do root=root+1;
+    kk := ZZ/p;
+    e := (1,root+1,root);
+    x := symbol x; y := symbol y;
+    S := kk[x_0..x_a,y_0..y_b];
+    A := matrix apply(2,i->apply(a,j->x_(i+j)));
+    B := matrix apply(2,i->apply(b,j->y_(i+j)));
+    D := (diagonalMatrix({1,-e_1,e_2}))^{2,1,0};
+    A1 := matrix apply(3,i->apply(a-1,j->x_(i+j)));
+    B1 := matrix apply(3,i->apply(b-1,j->y_(i+j)));
+    J := minors(2,A)+minors(2,B)+(C := ideal (transpose A1*D*B1));
+    assert(isHomogeneous J);
+    
+    as:=apply(k,i->#select(a+1,j->(j-i)%k==0)-1);
+    asmax:=max as;
+    bs:=apply(k,i->#select(b+1,j->(j-i)%k==0)-1);
+    bsmax :=max bs;
+    degs:={{0,0,1},{0,0,1}}|apply(as,ai->{1,0,asmax-ai})|apply(bs,bi->{0,1,bsmax-bi});
+    u := symbol u;v := symbol v; s:= symbol s; t:= symbol t;
+    coxRing:=kk[s,t,u_0..u_(k-1),v_0..v_(k-1),Degrees=>degs];
+    phi0 := matrix{
+        apply(a+1,i->(j:=i%k;ai:=as_j;l:=lift((i-j)/k,ZZ);s^(ai-l)*t^l*u_j)) |
+        apply(b+1,i->(j:=i%k;bi:=bs_j;l:=lift((i-j)/k,ZZ);s^(bi-l)*t^l*v_j))
+    };
+    assert(isHomogeneous phi0);
+    phi := map(coxRing,S,phi0);
+    Au := gens sum apply(k,j->saturate(image (phi A)_{j},ideal(s*t)));
+    Bv := gens sum apply(k,j->saturate(image (phi B)_{j},ideal(s*t)));
+    A1u:= gens sum apply(k-1,j->saturate(image(phi A1)_{j},ideal(s*t)));
+    B1v:= gens sum apply(k-1,j->saturate(image(phi B1)_{j},ideal(s*t)));
+    Ccox:=transpose A1u*D*B1v;
+    Jcox := saturate(phi J,ideal(s*t));    
+    m1 := gens Jcox;
+    dm1 := degrees source m1;
+    cols :=select(#dm1,i->dm1_i_0+dm1_i_1==2);
+    Jcox = ideal m1_cols;
+    m2:=gens saturate(ideal Ccox,ideal(s*t));
+    dm2 := degrees source m2;
+    cols =select(#dm2,i->dm2_i_0+dm2_i_1==2);
+    IC := ideal(m2_cols);
+    assert((minors(2,Au)+minors(2,Bv)+IC)== Jcox);
+    Jcox)
+
+coxMatrices=method()
+coxMatrices(ZZ,ZZ,ZZ) := (a,b,k) -> (
+--    k=3,    (a,b)=(4,4)
+    assert(a>=b);
+    root := 13; p:=null;
+    while (p = first last factor (root^k-1);
+	not (p>=b)) do root=root+1;
+    kk := ZZ/p;
+    e := (1,root+1,root);
+    x := symbol x; y := symbol y;
+    S := kk[x_0..x_a,y_0..y_b];
+    A := matrix apply(2,i->apply(a,j->x_(i+j)));
+    B := matrix apply(2,i->apply(b,j->y_(i+j)));
+    D := (diagonalMatrix({1,-e_1,e_2}))^{2,1,0};
+    A1 := matrix apply(3,i->apply(a-1,j->x_(i+j)));
+    B1 := matrix apply(3,i->apply(b-1,j->y_(i+j)));
+    J := minors(2,A)+minors(2,B)+(C := ideal (transpose A1*D*B1));
+    assert(isHomogeneous J);
+    
+    as:=apply(k,i->#select(a+1,j->(j-i)%k==0)-1);
+    asmax:=max as;
+    bs:=apply(k,i->#select(b+1,j->(j-i)%k==0)-1);
+    bsmax :=max bs;
+    degs:={{0,0,1},{0,0,1}}|apply(as,ai->{1,0,asmax-ai})|apply(bs,bi->{0,1,bsmax-bi});
+    u := symbol u;v := symbol v; s:= symbol s; t:= symbol t;
+    coxRing:=kk[s,t,u_0..u_(k-1),v_0..v_(k-1),Degrees=>degs];
+    phi0 := matrix{
+        apply(a+1,i->(j:=i%k;ai:=as_j;l:=lift((i-j)/k,ZZ);s^(ai-l)*t^l*u_j)) |
+        apply(b+1,i->(j:=i%k;bi:=bs_j;l:=lift((i-j)/k,ZZ);s^(bi-l)*t^l*v_j))
+    };
+    assert(isHomogeneous phi0);
+    phi := map(coxRing,S,phi0);
+    Au := gens sum apply(k,j->saturate(image (phi A)_{j},ideal(s*t)));
+    Bv := gens sum apply(k,j->saturate(image (phi B)_{j},ideal(s*t)));
+    A1u:= gens sum apply(k-1,j->saturate(image(phi A1)_{j},ideal(s*t)));
+    B1v:= gens sum apply(k-1,j->saturate(image(phi B1)_{j},ideal(s*t)));
+    (Au,Bv,A1u,B1v)) 
+
+
+relativeResolution=method()
+relativeResolution(ZZ,ZZ,ZZ) := (a,b,k) -> (
+    Jcox := relativeEquations(a,b,k);
+    Lrel := {(gens Jcox)};s1 := null;m1 := null;
+    for i from 3 to 2*k-2 do (
+	s1=syz(last Lrel,DegreeLimit=>{i,i,i});
+	m1=s1_(positions(toList(0..rank source s1-1),j->(degrees source s1)_j_0+(degrees source s1)_j_1==i));
+        Lrel=append(Lrel,m1);
+	);
+    m2 := syz(last Lrel);
+    frel := chainComplex append(Lrel,m2);
+    frel)
+   
+relativeResolutionTwists=method()
+relativeResolutionTwists(ZZ,ZZ,ChainComplex) := (amax,bmax,fcox) -> (
+    relTwists:={{{0,0}}}|apply(length fcox,i->
+	apply(degrees fcox_(i+1),d->{d_0+d_1,d_2-amax*d_0-bmax*d_1}));
+    relTwists
+    )
+
+resonanceScroll = method()
+resonanceScroll(ZZ,ZZ,ZZ) := (a,b,k) -> (
+    assert( a>k and b>k);
+    as:=apply(k,i->#select(a+1,j->(j-i)%k==0)-1);
+    bs:=apply(k,i->#select(b+1,j->(j-i)%k==0)-1);
+    (as,bs))
+
+computeBound=method()
+
+computeBound(ZZ,ZZ,ZZ):= (a,b,k) -> (
+    (as,bs):=resonanceScroll(a,b,k);
+    fcox:=relativeResolution(a,b,k);
+    ma:=as_0;
+    mb:=bs_0;
+    j:=0;relTwists:= null;
+    while (
+	relTwists=relativeResolutionTwists(ma+j,mb+j,fcox);
+	not -relTwists_(2*k-2)_0_1+1 >=
+	2*k-3+max apply(relTwists_(2*k-3),d->-d_1)) do (j=j+1);
+    (a+k*j,b+k*j))
+
+computeBound(ZZ) := k-> (
+    cases := flatten apply(toList(k+1..2*k),a->apply(toList(k+1..a),b->(a,b,k)));
+    min apply(cases,abk->elapsedTime min computeBound(abk)))
+///
+computeBound 3
+computeBound 4
+///
+
+allGradings=method()
+allGradings (ChainComplex,Ring) := (fJ,Sall) -> (
+    fJall := new ChainComplex;
+    fJall.Ring = Sall;
+    fJall_0 = Sall^1;
+    for i from 1 to length fJ do (
+	m := map(fJall_(i-1),,sub(fJ.dd_i,Sall));
+	fJall_i = source m;
+	fJall.dd_i=m);
+    chainComplex apply(length fJ,i->fJall.dd_(i+1))
+    )
+--loadPackage("K3Carpets", Reload => true)
+
+upperTriangular=method(TypicalValue=>Boolean)
+upperTriangular(Matrix) := B -> (
+   if rank target B == 1 then return true;
+   if rank target B == 2 then return B_(1,0)==0;
+   #(keys tally flatten   apply(rank target B,i->apply(i-1,j->B_(i,j)==0)))==1)
+
+carpetDet=method()
+carpetDet(ZZ,ZZ) := (a,b) -> (
+  --a=5,b=a
+	I := carpet(a,b);
+	elapsedTime fI := res(I,FastNonminimal=>true,LengthLimit=>a);
+        S :=ring I;
+	kk := coefficientRing S;
+        degs := apply(a+1,j->{1,0,j})|apply(b+1,j->{0,1,j});
+        Sall := kk[gens S,Degrees=>degs];
+	elapsedTime F:= allGradings(fI,Sall);
+	SZ := ZZ[gens S,Degrees=>degs];
+	FZ:= chainComplex apply(length F,i->sub(F.dd_(i+1),SZ));
+	assert( keys tally apply(length F-1,i->FZ.dd_(i+1)*FZ.dd_(i+2)==0) == {true});    
+        degsM := tally select(degrees F_a,d->d_0+d_1==a+1);
+        blocks := keys degsM;
+	M := FZ.dd_a;
+	degsSource := degrees source M;
+        degsTarget := degrees target M;
+	print ("number Of blocks",#blocks);
+	cols := null; rows := null;B := null;gB:= null;detB:=null;
+        dets := apply(blocks,deg ->(
+--		deg =first blocks
+		cols = select(rank source M,i->degsSource_i==deg);
+		rows = select(rank target M,i->degsTarget_i==deg);
+                B=transpose sub(M^rows_cols,ZZ);
+		elapsedTime gB=gens gb image B;
+                if not (upperTriangular gB) then (
+		    print betti gB;
+	 	    return gB);
+		detB=product(rank B,i->gB_(i,i) );
+		print factor detB;
+		detB)
+	    );
+	product dets)
+
 ///
 restart
 loadPackage("K3Carpets",Reload=>true)
@@ -577,12 +853,12 @@ rationalOnP1n List := L ->(
     scan(n-1, i->tar = tar||random(S^1, S^{2:{-L_i,-L_i}}));
     tar)
 
--*
+{*
 restart
 uninstallPackage "K3Carpets"
 loadPackage ("K3Carpets", Reload =>true)
      I = rationalOnP1n({1,1})
-*-
+*}
 
 
 
@@ -659,9 +935,9 @@ beginDocumentation()
 document { 
   Key => K3Carpets,
   Headline => "The unique Gorenstein double structure on a surface scroll",
-  "Using the method of ",
-   HREF("http://arxiv.org","K3 carpet equations") ,
-  "   There is a unique surjection from the ideal of a 2-dimensional rational normal scroll (other than the cone
+  "This package accompanies our paper ",
+   HREF("http://arxiv.org","Equations and syzygies of K3 carpets and union of scrolls") ,
+  " for experimental exploration.   There is a unique surjection from the ideal of a 2-dimensional rational normal scroll (other than the cone
    over a rational normal curve) onto the canonical module of the scroll 
    and the kernel
    of the this map is the ideal of a scheme that looks numerically like a K3 surface: a K3 carpet.
@@ -669,20 +945,61 @@ document {
    by Francisco Gallego and B.P. Purnaprajna,
    Trans. Amer. Math. Soc. 349 (1997), no. 6, 2477–2492.)",
    PARA{},
+{*   "For $a,b > 1$ he ideal of the carpet and more general a family of degenerate K3 surfaces $X_e(a,b)$ is generated
+   by the 2x2 minors of the matrices
+   $$
+\begin{pmatrix}
+x_0 & x_1 & ... & x_{a-1} \\
+x_1 & x_2 & ... & x_a \\
+\end{pmatrix}
+\qquad
+\begin{pmatrix}
+y_0 & y_1 & ... & y_{b-1} \\
+y_1 & y_2 & ... & y_b \\
+\end{pmatrix}
+$$ 
+and the entries of the $(a-1) \times (b-1)$ matrix 
+$$
+ \begin{pmatrix} 
+ x_0 & x_1 & x_2 \\
+ x_1 & x_2 & x_3 \\
+  : & : & :\cr
+ x_{a-2}&x_{a-1}& x_a \\
+ \end{pmatrix}
+ \begin{pmatrix} 
+ 0& 0 &  e_2 \\
+ 0 & -e_1 & 0 \\
+ 1 & 0 & 0 \\
+ \end{pmatrix} 
+  \begin{pmatrix} 
+ y_0 & y_1 & ... &y_{b-2} \\
+ y_1 & y_2 & ... & y_{b-1} \\
+ y_2 & y_3 & ... & y_{b} \\
+ \end{pmatrix} 
+ $$
+   "*}
    "The carpet lies on the intersection of the cones over two rational normal curves Ca and Cb
-   of degrees a<=b. We write the ideal of Ca as the minors of a 2xa matrix X with entries x_i, i= 0..a,
+   of degrees a>=b. We write the ideal of Ca as the minors of a 2xa matrix X with entries x_i, i= 0..a,
    and similarly for Cb, with  a 2 x b matrix Y with entries y_j. We write Xi for the ith column of X, and
    similarly for Y.
    In the general case, where a,b are both >=2, the additional generators of the ideal of the Carpet are then given by the differences
    det(Xi,Yj)-det(X(i+1),Y(j-1)), or equivalently, by the minors of (Xi+Yj,X(i+1)+Y(j-1),        
-   (In the case a=1=b the ideal is the square of the determinant of X|Y; if a=1, b>1 then for the mixed minors we replace the 1-column matrix
-   by the symmetric quadratic matrix with entries x^2,xy,y^2.",
+   (In the case a=1=b the ideal is the square of the determinant of X|Y; if a>1, b=1 then for the mixed minors we replace the 1-column matrix Y
+   by a symmetric 2x2 matrix with entries y_0^2,y_0y_1,y_1^2 )",
    PARA{},
-   "The hyperplane section of a K3 carpet is a canonical ribbon indexing by genus and clifford index
-   of the hyperplane is done in the routine canonicalCarpet, which calls carpet.
+   "The hyperplane section of a K3 carpet is a canonical ribbon indexed by genus g=a+b+1 and clifford index b.
    ",
-
-
+    PARA{},
+    "The K3 carpets generalize to a family of degenerate K3 surfaces which are unoins of two scrolls,
+    whose hyperplane sections are reducible canonical curves consisting of two rational normal curves of degree
+    g-1 intersecting in g+1 points. The functions in this package explore the syzygies of these surfaces
+    for fields of arbitrary characteristic. Inparticular, the functions in the package allow for g <= 15 a computational proof of the following
+    conjecture.",
+    PARA{},
+     HREF("http://arxiv.org","Conjecture 0.1") ,
+    " A general canonical curve of genus g over a field of characteristic p satisfies Green's conjecture,
+    if p >= (g-1)/2.",
+    
    PARA{},
     SUBSECTION "Constructions",
     UL{
@@ -697,7 +1014,9 @@ document {
 	TO analyzeStrand,
 	TO degenerateK3BettiTables,
 	TO schreyerName, -- should be moved to an other package, e.g. NonminimalComplexes
-        --TO fineGrading,
+        TO allGradings,
+	TO carpetDet,
+	TO resonanceDet,
 	},
     SUBSECTION "Correspondence Scrolls",
     UL{ 
@@ -708,6 +1027,15 @@ document {
         TO smallDiagonal,
 	TO irrelevantIdeal,
 	TO degenerateK3
+	},
+    SUBSECTION "Relative resolutions of X_e(a,b) in case of k resonance",
+    UL{
+	TO resonanceScroll,
+	TO coxMatrices,
+	TO relativeEquations,	
+	TO relativeResolution,
+	TO relativeResolutionTwists,
+	TO computeBound
 	},
     SUBSECTION "Homotopies",
     UL{ 
@@ -723,7 +1051,7 @@ doc ///
     (degenerateK3, ZZ, ZZ, List)    
     [degenerateK3, Characteristic]
    Headline
-    Ideal of a degenerate K3 surface
+    Ideal of a degenerate K3 surface X_e(a,b)
    Usage
     I = degenerateK3(a,b,e)
     I = degenerateK3(a,b,t)    
@@ -735,6 +1063,8 @@ doc ///
      of two integers (e_1,e_2) 
     t:List
      of two integers {t_1,t_2}
+    Characteristic => ZZ 
+     the characteristic of the ground field
    Outputs
     I:Ideal
    Description
@@ -779,8 +1109,17 @@ doc ///
      a1 and a2 should be positive
     m:Matrix
      a 2xn matrix for some n >=a1+a2
+    Characteristic => ZZ 
+     the characteristic of the ground field
+    Scrolls =>  Boolean
+     if true return in addition the matrices defining the sections
+    FineGrading => Boolean
+     if true then I is defined over the ring with ZZ^4-grading
    Outputs
     I:Ideal
+    xmat: Matrix
+    ymat: Matrix
+     the matrices of the sections of the scroll
    Consequences
     Item
      If no matrix m is present then the script creates a type a1,a2 K3-carpet over a new ring. If m is given,
@@ -865,6 +1204,12 @@ doc ///
      desired genus
     cliff:ZZ
      desired clifford index
+    Characteristic => ZZ 
+     the characteristic of the ground field
+    Scrolls =>  Boolean
+     if true return in addition the matrices defining the sections
+    FineGrading => Boolean
+     if true then I is defined over the ring with ZZ^4-grading
    Outputs
     I:Ideal
      ideal of the K3 Carpet of (sectional) genus g, Clifford index cliff
@@ -919,6 +1264,97 @@ doc ///
 
 doc ///
    Key
+    allGradings
+    (allGradings, ChainComplex, Ring)
+   Headline
+    add Grading to a chainComplex
+   Usage
+    Fall = allGradings(F,S)
+   Inputs
+    F:ChainComplex
+     the free resolution of an ideal
+    S:Ring
+     a ring with a finer garding  
+   Outputs
+    Fall:ChainComplex
+      a complex over S, the same as F but now with homogeneous with respect to all gradings of S   
+   Description
+    Text
+     Given a resolution F of an ideal, with carries additional homogenity with respect
+     to the finer graded ring S, we compute the grading.
+    Example
+     a=3,b=3
+     I=carpet(a,b);
+     F = res(I,FastNonminimal=>true,LengthLimit=>2);
+     betti F
+     degs=apply(a+1,i->{1,0,i})|apply(b+1,j->{0,1,j})
+     S=coefficientRing ring I[gens ring I,Degrees=>degs]
+     Fall = allGradings(F,S)
+     netList apply(length Fall+1,i->tally degrees Fall_i)
+///
+
+doc ///
+   Key
+    carpetDet
+    (carpetDet, ZZ, ZZ)
+   Headline
+    compute the determinant of the crucial constant strand of a carpet X(a,b)
+   Usage
+    d = carpetDet(a,b)
+   Inputs
+    a:ZZ
+     the larger value, i.e a>=b
+    b:ZZ
+     the desired clifford index    
+   Outputs
+     d:ZZ
+      the crucial determinant  
+   Description
+    Text
+     We compute  nonminimal resolution F of the carpet of type (a,b) over a finite prime field,
+     Lift this to a resolution over ZZ, introduce the fine grading, grep the various blocks of
+     the crucial map in the a-th strand, compute their determinants and return their product.
+    Example
+     a=4,b=4
+     d=carpetDet(a,b)
+     factor d
+   SeeAlso
+     analyzeStrand
+///
+
+doc ///
+   Key
+    resonanceDet
+    (resonanceDet, ZZ)
+   Headline
+    compute the resonance determinant of the crucial constant strand of a degenerate K3 X_e(a,a)
+   Usage
+    (d1,d2) = resonanceDet(a)
+   Inputs
+    a:ZZ
+   Outputs
+     d1:Product
+      the integer factor
+     d2:Product
+      the resonance factor in ZZ[e_1,e_2] 
+   Description
+    Text
+     We compute the minimal resolution F of degenerate K3 X_e(a,a) over ZZ[e_1,e_2] where deg e_i =i and the variables
+     x_0,..x_a,y_0..y_b have degrees deg x_i=i+1 and deg y_i=1. The equations of X_e(a,b) are homogeneous with respect to this grading.
+     Viewed as a resolution over QQ(e_1,e_2), this resolution is non-minimal and carries further gradings. We
+     decompose the crucial map of the a-th strand into blocks, compute their
+     determinants, and factor the product.
+    Example
+     a=4
+     (d1,d2)=resonanceDet(a)
+   SeeAlso
+     carpetDet
+///
+
+
+
+doc ///
+   Key
     carpetBettiTables
     (carpetBettiTables, ZZ, ZZ)
    Headline
@@ -960,7 +1396,7 @@ doc ///
     degenerateK3BettiTables
     (degenerateK3BettiTables, ZZ, ZZ,Sequence)
    Headline
-    compute the Betti tables of a carpet of given genus and Clifford index over all prime fields 
+    compute the Betti tables of a degenerate K3 over all prime fields 
    Usage
     h = carpetBettiTables(a,b,e)
    Inputs
@@ -977,7 +1413,7 @@ doc ///
     Text
      We compute the equation and nonminimal resolution F of the degeneate K3 of type (a,b,e)
      where $a \ge b$ over a large finite prime field, lift the complex to the integers,
-     which is possible since the coefficients are small. Finally we study the nonminimal
+     which is possible if the coefficients are small. Finally we study the nonminimal
      strands over ZZ by computing the Smith normal form. The resulting data allow us
      to compute the Betti tables for arbitrary primes.
     Example
@@ -987,6 +1423,11 @@ doc ///
      keys h
      elapsedTime T= minimalBetti degenerateK3(a,b,e,Characteristic=>5)
      T-h#5
+    Text
+     Already for fairly small values of (e_1,e_2) the result might be incorrect, because the lift to characteristic zero
+     fails due to high powers of e_1 and e_2 in the non-minimal resolution. It would be easy to alter the program 
+     to catch these mistakes.
+    Example
      e=(-1,5^2)
      h=degenerateK3BettiTables(a,b,e)
      keys h
@@ -994,7 +1435,7 @@ doc ///
      Already for (e_1,e_2) fairly small, the algorithm might give wrong answers
      since the lift to characteristic zero  might be incorrect. A correction is easy to implement as soon
      res(.,FastNonminimal=>true) allows QQ (or ZZ) as coefficient ring. Another possibily
-     would be to use the Chinese remainder for lifting to ZZ
+     would be to use the Chinese remainder for lifting to ZZ.
    SeeAlso
     carpetBettiTable
 ///
@@ -1053,7 +1494,7 @@ doc ///
     (schreyerName,ChainComplex,ZZ)
     (schreyerName,HashTable,ZZ,ZZ)
    Headline
-    get the names of generator of the syzygies in the nonminimal resolution accordimg to Schreyer's convention
+    get the names of generators in the (nonminimal) Schreyer resolution according to Schreyer's convention
    Usage
     L = schreyerName(F,i,n)
     h = schreyerName(F,a)
@@ -1111,6 +1552,10 @@ doc ///
    Inputs
     g:ZZ
     cliff:ZZ
+    Characteristic => ZZ 
+     the characteristic of the ground field
+    FineGrading => Boolean
+     if true then F is defined over the ring with ZZ^4-grading
    Outputs
     F:ChainComplex
      free resolution of the canonical carpet of genus g, clifford index cliff
@@ -1153,6 +1598,8 @@ doc ///
      genus of the carpet
     cliff:ZZ
      Clifford index of the carpet
+    Characteristic => ZZ 
+     the characteristic of the ground field
    Outputs
     L:Net
      netList showing the ranks
@@ -1240,6 +1687,8 @@ doc ///
     kkk:Ring
      ground field to use in the construction
      variable name for R (defaults to "x" if none given)
+    Characteristic => ZZ 
+     the characteristic of the ground field
    Outputs
     R:Ring
      ZZ^n - graded
@@ -1256,7 +1705,7 @@ doc ///
 ///
 
 
--*
+{*
 doc ///
    Key
     rationalOnP1n
@@ -1282,7 +1731,7 @@ doc ///
      S = ring I;
      isHomogeneous I
 ///
-*-
+*}
 
 doc ///
    Key
@@ -1302,8 +1751,9 @@ doc ///
      ideal of the generalized scroll
    Description
     Text
-     Let L = {a_0,..a_(m-1)}, and let P = P^(#L-1+ sum L).
-     Just as the ordinary scroll S(L) is  the union of planes joining rational normal curves C_iof
+     Let L = {a_0,..a_{(m-1)}}, and let P = P^{(#L-1+ sum L)}.
+     Just as the ordinary scroll S(L) is  the union of planes joining rational normal curves C_i
+     of
      degree a_i according to some chosen isomorphism among them (a (1,1,..,1) correspondence), 
      the generalized Scroll is the union of planes joining the points that correspond under
      an arbitrary correspondence, specified by I.
@@ -1499,6 +1949,195 @@ doc ///
     productOfProjectiveSpaces
 ///
 
+doc ///
+   Key
+    relativeEquations
+    (relativeEquations, ZZ,ZZ,ZZ)    
+   Headline
+    compute the relative quadrics 
+   Usage
+    I = relativeEquations(a,b,k)
+   Inputs
+    a:ZZ
+    b:ZZ
+    k:ZZ
+   Outputs
+    I:Ideal
+     multi-graded ideal in the Cox ring
+   Description
+    Text
+      We compute the relative equations of a resonance degenerate K3 in case of k resonance. The first step consists
+      in chooses a prime field which has a k-th root of unity. We then follow section 4 of the paper equations and syzygies of
+      K3 carpets and unions of scrolls.
+    Example
+     I = relativeEquations(4,4,3)
+     betti I
+   SeeAlso
+    coxMatrices
+    resonanceScroll
+    relativeResolution
+///
+
+doc ///
+   Key
+    relativeResolution
+    (relativeResolution, ZZ,ZZ,ZZ)    
+   Headline
+    compute the relative resolution 
+   Usage
+    F = relativeResolution(a,b,k)
+   Inputs
+    a:ZZ
+    b:ZZ
+    k:ZZ
+   Outputs
+    F:ChainComplex
+     multi-graded chainComplex in the Cox ring
+   Description
+    Text
+      We compute the relative resolution of a resonance degenerate K3 in case of k resonance. The first step consists
+      in chooses a prime field which has a k-th root of unity. We then follow section 4 of the paper equations and syzygies of
+      K3 carpets and unions of scrolls.
+    Example
+     F = relativeResolution(5,4,3)
+     betti F
+   SeeAlso
+    relativeResolutionTwists
+    relativeEquations
+    coxMatrices
+///
+
+doc ///
+   Key
+    coxMatrices
+    (coxMatrices, ZZ,ZZ,ZZ)    
+   Headline
+    compute the Cox matrices 
+   Usage
+    (A,B,A1,B1) = coxMatrices(a,b,k)
+   Inputs
+    a:ZZ
+    b:ZZ
+    k:ZZ
+   Outputs
+    A:Matrix
+    B:Matrix
+    A1:Matrix
+    B1:Matrix
+     over the Cox ring
+   Description
+    Text 
+     We compute the Hankel matrices over the Cox ring, which give
+     rize to the relative quadrics of a degenerate K3 X_e(a,b) in case of k resonance
+     within the resonance scroll, see ES2018    
+    Example
+     (A,B,A1,B1)=coxMatrices(6,5,4);
+     A,A1
+     B,B1
+     (A,B,A1,B1)=coxMatrices(7,4,4);
+     A,A1
+     B,B1     
+   SeeAlso
+    relativeEquations
+///
+
+doc ///
+   Key
+    relativeResolutionTwists
+    (relativeResolutionTwists,ZZ,ZZ,ChainComplex)    
+   Headline
+    compute the twists in the relative resolution 
+   Usage
+    L = relativeResolutionTwists(am,bm,F)
+   Inputs
+    am:ZZ
+    bm:ZZ
+    F:ChainComplex
+   Outputs
+    L:List
+     of Lists of multidegrees
+   Description
+    Text 
+     We compute the twists of the relative resolution in the resonance scroll of a degenerate K3 
+     X_e(a,b) in case of k resonance after re-embedding the resonace scroll with |H+jR|
+     for j=am-a_0=bm-b_0 where $\{a_i\}|\{b_j\}$ is the splitting type of the resonance scroll. 
+    Example
+     F = relativeResolution(5,4,3);
+     (as,bs)=resonanceScroll(5,4,3)
+     betti F
+     L = relativeResolutionTwists(as_0,bs_0,F);
+     netList apply(L,c-> tally c)
+     L = relativeResolutionTwists(as_0+2,bs_0+1,F);
+     netList apply(L,c-> tally c)
+   SeeAlso
+    relativeResolution
+    resonanceScroll
+///
+
+doc ///
+   Key
+    resonanceScroll
+    (resonanceScroll,ZZ,ZZ,ZZ)    
+   Headline
+    compute the splitting type of the resonance scroll  
+   Usage
+    (as,bs) = resonanceScroll(a,b,k)
+   Inputs
+    a:ZZ
+    b:ZZ
+     type of the degenerate K3
+    k:ZZ
+     the resonace
+   Outputs
+    as:List
+    bs:List
+     the splitting type of the resonance scroll
+   Description
+    Text 
+      We compute the splitting type of the resonance scroll of a degenerate K3 X_e(a,b) in case of k resonance. 
+    Example
+     (as,bs)=resonanceScroll(6,4,3)
+   SeeAlso
+    relativeEquations
+///
+
+doc ///
+   Key
+    computeBound
+    (computeBound,ZZ,ZZ,ZZ)
+     (computeBound,ZZ)    
+   Headline
+    compute the bound for the good types in case of k resonance    
+   Usage
+    (a,b) = computeBound(a1,b1,k)
+    c = computeBound k
+   Inputs
+    a1:ZZ
+    b1:ZZ
+     type of the degenerate K3
+    k:ZZ
+     the resonance
+   Outputs
+    a:ZZ
+    b:ZZ
+     minimal good type
+    c:ZZ
+     lower bound for good a,b
+   Description
+    Text
+      The iterated mapping over the relative resolution of X_e(a,b) in the resonance scroll 
+      has betti numbers in a range of a general 2k-gonal canonical curve of genus a+b+1, 
+      if a,b are large enough, see ES2018.
+      We compute the minimal type $(a,b) \equiv (a1,b1) \mod  k$ where this becomes true.
+      
+      In the second version c is the minimal value of a,b's for all congruence classes mod k.
+      We conjecture that c=k^2-k. 
+    Example
+     (a,b)=computeBound(6,4,3)
+     computeBound 3
+   SeeAlso
+    relativeEquations
+///
 
 
 TEST ///
@@ -1508,9 +2147,10 @@ L=analyzeStrand(F,6)
 tally L
 factor product L
 a=6,b=6
-h=carpetBettiTables(a,b)
-carpetBettiTable(h,7)
-carpetBettiTable(h,5)
+-- this test runs out of memory on habanero regularly:
+-- h=carpetBettiTables(a,b)
+-- carpetBettiTable(h,7)
+-- carpetBettiTable(h,5)
 ///
 
 TEST ///
@@ -1788,3 +2428,79 @@ degenerateK3BettiTables(ZZ,ZZ,Sequence) := (a,b,e) -> (
 	     p => (T1p:=T1+Ts#p;T1p+((dual T1p)[-length F])(-length F-3))))
      )
 
+-----------
+--hypersurface correspondence scrolls
+restart
+loadPackage("K3Carpets", Reload=>true)
+scroll = {2,2}
+deg = {2,2}
+deg = {7,7}
+
+hypersurfaceCorrespondence = method()
+hypersurfaceCorrespondence (List, List, List) := (proj,embedding,deg) ->(
+P := productOfProjectiveSpaces(proj,symbol X,ZZ/32003);
+f := ideal(random(P^1,P^{-deg}));
+correspondenceScroll(f,embedding)
+)
+
+I = hypersurfaceCorrespondence({2},{3},{5})
+betti res I
+
+
+testbetti = (scroll,deg) ->(
+P := productOfProjectiveSpaces({1,1},symbol X,ZZ/32003);
+f := ideal(random(P^1,P^{-deg}));
+I := correspondenceScroll(f,scroll);
+minimalBetti I
+)
+
+for a from 3 to 6 do(
+    for m from 0 to 4 do
+        (b = 2+m*a;
+	print (a,b,testbetti({a,a},{b,b}))
+	)
+)
+Gorenstein for a,b = 
+2,2
+2,4
+2,6
+2,8 
+
+3,2
+3,5
+3,8
+3,11
+
+4,2
+4,6
+4,10
+
+a,2+m*a
+
+testbetti({2,2},{8,8})
+testbetti({3,3},{5,5})
+testbetti({3,3},{8,8})
+ 
+----
+kk = ZZ/32003
+P = kk[a..f]
+M1 = genericSymmetricMatrix(P,a,3)
+M2 = random(P^4, P^{4:-1})
+
+
+M = mutableMatrix M2
+
+for i from 0 to 2  do 
+    for j from 0 to 2 do 
+	M_(i,j) = M1_(i,j)
+M_(0,3) = 0_P
+M
+for j from 0 to 3 do M_(3,j) = M_(j,3)
+M_(3,3) = 0_P
+
+m = matrix M
+m-transpose m
+I = minors(2,m)
+codim I
+degree I
+m
