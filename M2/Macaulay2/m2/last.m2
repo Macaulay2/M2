@@ -17,8 +17,7 @@ setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
 addStartFunction(
      () -> (
 	  path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
-	  path = unique apply( path, minimizeFilename);
-     	  protect symbol path;
+	  path = unique apply( path, minimizeFilename);	    -- beautify
 	  ))
 
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
