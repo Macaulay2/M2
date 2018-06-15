@@ -13,7 +13,14 @@ setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
 (addStartFunction if member("--no-randomize",commandLine) 
    then (() -> setRandomSeed 0)
    else (() -> setRandomSeed((currentTime() << 16) + processID())))
-addStartFunction(() -> path = unique apply( path, minimizeFilename))
+
+addStartFunction(
+     () -> (
+	  path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
+	  path = unique apply( path, minimizeFilename);
+     	  protect symbol path;
+	  ))
+
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
 
@@ -80,7 +87,6 @@ unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s)
 noinitfile' := noinitfile
 Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
 Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
-path = packagepath
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
      if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);

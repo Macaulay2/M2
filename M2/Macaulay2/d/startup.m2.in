@@ -611,7 +611,7 @@ describePath := () -> (
 	  for d in path do (
 	       stderr << "--    " << d << endl;
 	       );
-	  )
+	  );
      )
 
 loadSetup := () -> (
@@ -683,12 +683,6 @@ path = (x -> select(x, i -> i =!= null)) deepSplice {
 	       prefixDirectory | currentLayout#"packages"
 	       )
 	  }
-
-packagepath = select({
-	  prefixDirectory | currentLayout#"packages",
-	  if topSrcdir =!= null then topSrcdir|"Macaulay2/packages/"
-	  },
-     i -> i =!= null)
 
 if firstTime then normalPrompts()
 

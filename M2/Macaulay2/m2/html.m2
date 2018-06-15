@@ -107,11 +107,11 @@ htmlFilename2 = (tag,layout) -> (
 
 htmlFilename DocumentTag := tag -> (
      -- this one is used for storing the html file
-     htmlFilename2(tag,Layout#installationLayout))
+     htmlFilename2(tag,installationLayout))
 
 htmlFilename FinalDocumentTag := tag -> (
      -- this one is used for creating links to the file
-     htmlFilename2(tag,Layout#installationLayout))
+     htmlFilename2(tag,installationLayout))
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -631,12 +631,12 @@ installPackage Package := opts -> pkg -> (
      
      currentSourceDir := pkg#"source directory";
 
-     if currentSourceDir === installPrefix | Layout#installationLayout#"packages" then error "the package is already installed there, and has been loaded from there";
+     if currentSourceDir === installPrefix | installationLayout#"packages" then error "the package is already installed there, and has been loaded from there";
 
      if verbose then stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy package source file
-     pkgDirectory := Layout#installationLayout#"packages";
+     pkgDirectory := installationLayout#"packages";
      makeDirectory (installPrefix|pkgDirectory);
      bn := buildPackage | ".m2";
      fn := currentSourceDir|bn;
@@ -655,7 +655,7 @@ installPackage Package := opts -> pkg -> (
 	  ) else (
      	  
 	  -- copy package source subdirectory
-	  srcDirectory := replace("PKG",pkg#"title",Layout#installationLayout#"package");
+	  srcDirectory := replace("PKG",pkg#"title",installationLayout#"package");
 	  auxiliaryFilesDirectory := realpath currentSourceDir | buildPackage;
 	  if isDirectory auxiliaryFilesDirectory
 	  then (
@@ -672,7 +672,7 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleOutputDir := installPrefix|replace("PKG",pkg#"title",Layout#installationLayout#"packageexampleoutput");
+     exampleOutputDir := installPrefix|replace("PKG",pkg#"title",installationLayout#"packageexampleoutput");
 
      if opts.MakeDocumentation then (
 	  pkg#"package prefix" = installPrefix;
@@ -699,11 +699,11 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",Layout#installationLayout#"packagelib");
-	  rawdbname := databaseFilename(Layout#installationLayout,pkg#"package prefix",pkg#"title");
+	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
+	  rawdbname := databaseFilename(installationLayout,pkg#"package prefix",pkg#"title");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
-	  makeDirectory databaseDirectory(Layout#installationLayout,pkg#"package prefix",pkg#"title");
+	  makeDirectory databaseDirectory(installationLayout,pkg#"package prefix",pkg#"title");
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -891,7 +891,7 @@ installPackage Package := opts -> pkg -> (
 	  if opts.MakeInfo then (
 	       savePW := printWidth;
 	       printWidth = 79;
-	       infodir := installPrefix|Layout#installationLayout#"info";
+	       infodir := installPrefix|installationLayout#"info";
 	       makeDirectory infodir;
 	       infotitle := pkg#"title";
 	       infobasename := infotitle|".info";
@@ -936,7 +936,7 @@ installPackage Package := opts -> pkg -> (
 	       );
 
 	  -- make html files
-	  htmlDirectory = replace("PKG",pkg#"title",Layout#installationLayout#"packagehtml");
+	  htmlDirectory = replace("PKG",pkg#"title",installationLayout#"packagehtml");
 	  setupButtons();
 	  makeDirectory (installPrefix|htmlDirectory);
 	  if verbose then stderr << "--making empty html pages in " << installPrefix|htmlDirectory << endl;
@@ -954,7 +954,7 @@ installPackage Package := opts -> pkg -> (
 		    if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
 		    fn << close));
 	  for n in (topFileName, indexFileName, tocFileName) do (
-	       fn := installPrefix | replace("PKG",pkg#"title",Layout#installationLayout#"packagehtml") | n;
+	       fn := installPrefix | replace("PKG",pkg#"title",installationLayout#"packagehtml") | n;
 	       if not fileExists fn then (
 		    if debugLevel > 0 then stderr << "--creating empty html page " << fn << endl;
 		    fn << close)

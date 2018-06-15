@@ -232,7 +232,6 @@ document { Key => symbol applicationDirectorySuffix,
 	  applicationDirectorySuffix = "local/Mac2"
 	  applicationDirectory()
      	  ///,	  
-     SourceCode => applicationDirectorySuffix,
      Consequences => { { "the value of the function ", TT "applicationDirectory", " will use the new value of ", TT "applicationDirectorySuffix" }}}
 document { Key => {applicationDirectory, "application directory"},
      Headline => "the path to the user's application directory",

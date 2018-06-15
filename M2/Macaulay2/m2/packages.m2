@@ -1,11 +1,5 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-addStartFunction(
-     () -> (
-	  path = prepend("./",path);
-	  if prefixDirectory =!= null then path = append(path,prefixDirectory|currentLayout#"packages");
-	  ))
-
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "-*package*-"
@@ -522,13 +516,13 @@ installMethod(installedPackages, o -> () -> NumberedVerticalList (
 	  list (
 	       currentLayout := detectCurrentLayout prefix;
 	       if currentLayout === null then continue;
-	       docdir := prefix | currentLayout#"docdir";
+	       docdir := prefix | Layout#currentLayout#"docdir";
 	       if not isDirectory docdir then continue else
 	       for p in readDirectory docdir list if p =!= "." and p =!= ".." and isDirectory (docdir | p) then (
 	       if o#Location
 	       then p => prefix
 	       else if o#Database
-	       then p => databaseFilename (currentLayout,prefix,p)
+	       then p => databaseFilename (Layout#currentLayout,prefix,p)
 	       else p
 	       ) else continue)))
      
