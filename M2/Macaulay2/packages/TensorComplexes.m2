@@ -760,7 +760,7 @@ doc ///
       g = tensorComplex1(f,{0,0});
       transpose g
       betti res coker g
-      betti eagonNorthcott matrix f
+      betti eagonNorthcott matrix entries matrix f
       
     Text
       The following example is taken from the introduction to BEKS.
