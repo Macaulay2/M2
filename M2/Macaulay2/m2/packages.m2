@@ -503,13 +503,13 @@ debug Package := pkg -> (
 
 
 installedPackages = method(Options => {
-	  Database => false,
+	  ShowDatabase => false,
 	  Location => false,
-	  Core => false})
+	  IncludeCore => false})
 		    
 installMethod(installedPackages, o -> () -> NumberedVerticalList ( 
 	  sort flatten for prefix in select((
-	       if o#Core 
+	       if o#IncludeCore 
 	       then prefixPath
 	       else { applicationDirectory() | "local/" }
 	       ), isDirectory)
@@ -521,7 +521,7 @@ installMethod(installedPackages, o -> () -> NumberedVerticalList (
 	       for p in readDirectory docdir list if p =!= "." and p =!= ".." and isDirectory (docdir | p) then (
 	       if o#Location
 	       then p => prefix
-	       else if o#Database
+	       else if o#ShowDatabase
 	       then p => databaseFilename (Layout#currentLayout,prefix,p)
 	       else p
 	       ) else continue)))

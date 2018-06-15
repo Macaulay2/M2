@@ -6,7 +6,7 @@ about = method(Options => {SearchBody => false})	    -- exported
 lastabout = null
 
 about String := o -> re -> lastabout = (
-     NumberedVerticalList sort flatten for p in installedPackages(Core=>true, Database=>true) list (
+     NumberedVerticalList sort flatten for p in installedPackages(IncludeCore=>true, Database=>true) list (
      pkg := p#0;
      dbname := p#1;
      if not fileExists dbname then continue;
