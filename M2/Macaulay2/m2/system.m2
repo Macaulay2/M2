@@ -46,7 +46,12 @@ detectCurrentLayout = prefix -> (
      then addLayout(prefix,2)
      else null)
 
-searchPrefixPath = f -> (				    -- f is a function from layout tables to paths
+searchPrefixPath = f -> (
+     assert instance (f, Function);
+     -- Here f is a function from layout tables to file paths, so we make no assumption about how the paths in one layout table differ from those in the other.
+     -- We search the prefixPath for an entry where the appropriate file path leads to an existing file.
+     -- The idea is that the documentation of a package may result in links to the html documentation pages of any package installed already on the prefixPath.
+     -- This need not be used for the link to the style file doc.css, which ought to be found under the prefixDirectory where the currently running M2 binary was executed.
      f1 := f Layout#1;
      f2 := f Layout#2;
      found := for i in prefixPath do (

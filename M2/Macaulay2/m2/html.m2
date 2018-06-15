@@ -20,7 +20,6 @@ local nullButton; local masterIndexButton; local tocButton; local homeButton; -*
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
-installationLayout = null
 
 hadExampleError := false
 numExampleErrors := 0;
@@ -48,15 +47,16 @@ indexFileName := "master.html"  			    -- file name for master index of topics i
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
 installPrefix := null	  	       	    	      	    -- the value of the option InstallPrefix; search also here for links
 installationLayout = null				    -- the layout of the installPrefix, global for communication to document.m2
+installationLayoutIndex = null				    -- the layout index of the installPrefix, equal to 1 or 2
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 installDirectory := ""					    -- absolute path to the install directory
 
 runfun := o -> if instance(o, Function) then o() else o
 initInstallDirectory := o -> (
      installDirectory = minimizeFilename(runfun o.InstallPrefix | "/");
-     installationLayout = detectCurrentLayout installDirectory;
-     if installationLayout === null
-     then installationLayout = if o.SeparateExec then Layout#2 else Layout#1;
+     installationLayoutIndex = detectCurrentLayout installDirectory;
+     if installationLayoutIndex === null then installationLayoutIndex = if o.SeparateExec then 2 else 1;
+     installationLayout = Layout#installationLayoutIndex;
      )
 
 -----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ toURL := pth -> (
 	       pth))
      else if isAbsoluteURL pth then pth
      else if absoluteLinks then (
-	  p := searchPrefixPath pth;
+	  p := searchPrefixPath pth;			    -- this is wrong now
 	  if p =!= null
 	  then concatenate(rootURI, realpath p)
 	  else (
@@ -178,10 +178,12 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
-     doccss := prefixDirectory | replace("PKG","Style",currentLayout#"package") | "doc.css";
-     if not fileExists doccss then error ("style file not found (install Style package) : ",doccss);
-     url := toURL doccss;
-     LINK { "href" => url, "rel" => "stylesheet", "type" => "text/css" }
+     doccss := prefixDirectory | replace("PKG","Style",currentLayout#"package") | "doc.css"; -- absolute path to our style file
+     LINK { 
+	  "href" => if absoluteLinks then doccss else relativizeFilename(installDirectory | htmlDirectory, doccss),
+	  "rel" => "stylesheet", 
+	  "type" => "text/css" 
+	  }
      )
 
 -- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
@@ -627,7 +629,7 @@ installPackage Package := opts -> pkg -> (
      if (options pkg).Headline === null then error ("no Headline option provided to newPackage for ",pkg#"title");
      if (options pkg).Headline === ""   then error ("empty string given as Headline option to newPackage for ",pkg#"title");
 
-     if verbose then stderr << "--installing package " << pkg << " in " << installPrefix << " with layout " << installationLayout << endl;
+     if verbose then stderr << "--installing package " << pkg << " in " << installPrefix << " with layout " << installationLayoutIndex << endl;
      
      currentSourceDir := pkg#"source directory";
 
