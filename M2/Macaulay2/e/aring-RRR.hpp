@@ -111,7 +111,7 @@ class ARingRRR : public RingInterface
     mpfr_set_si(&result, 1, GMP_RNDN);
   }
 
-  void set_from_mpz(ElementType &result, mpz_ptr a) const
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
     mpfr_set_z(&result, a, GMP_RNDN);
   }

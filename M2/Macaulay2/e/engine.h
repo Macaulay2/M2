@@ -1872,23 +1872,23 @@ enum gbTraceValues
 
   const RingElement * rawRingElementCRA(const RingElement *f,
                                         const RingElement *g,
-                                        mpz_t m,
-                                        mpz_t n);
+                                        mpz_srcptr m,
+                                        mpz_srcptr n);
 
   const Matrix * rawMatrixCRA(const Matrix *f,
                               const Matrix *g,
-                              mpz_t m,
-                              mpz_t n);
+                              mpz_srcptr m,
+                              mpz_srcptr n);
 
   const RingElement * rawRingElementRatConversion(const RingElement *f,
-                                  mpz_t m,
+                                  mpz_srcptr m,
                                   const Ring *RQ);
 
   // f should be an element in the polynomial ring R (over ZZ).
   // RQ should be the same ring as R, but with rational coefficients
 
   const Matrix * rawMatrixRatConversion(const Matrix *f,
-                                        mpz_t m,
+                                        mpz_srcptr m,
                                         const Ring *RQ);
   // f should be a matrix in the polynomial ring R (over ZZ).
   // RQ should be the same ring as R, but with rational coefficients

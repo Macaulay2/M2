@@ -103,7 +103,7 @@ ring_elem Tower::from_long(long n) const
   return TOWER_RINGELEM(f);
 }
 
-ring_elem Tower::from_int(mpz_ptr n) const
+ring_elem Tower::from_int(mpz_srcptr n) const
 {
   poly f;
   D->set_from_int(f, n);

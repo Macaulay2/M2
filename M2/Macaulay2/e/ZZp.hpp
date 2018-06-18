@@ -58,7 +58,7 @@ class Z_mod : public Ring
   virtual unsigned int computeHashValue(const ring_elem a) const;
 
   virtual ring_elem from_long(long n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
 
   virtual bool promote(const Ring *R,

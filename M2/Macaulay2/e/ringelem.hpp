@@ -37,7 +37,7 @@ union ring_elem
   operator tpoly() const { return poly_val; }
   int get_int() const { return int_val; }
   Nterm *get_poly() const { return poly_val; }
-  mpz_ptr get_mpz() const { return mpz_val; }
+  mpz_srcptr get_mpz() const { return mpz_val; }
 };
 
 struct Nterm

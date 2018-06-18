@@ -59,7 +59,7 @@ class PolyRing : public PolyRingFlat
   ring_elem fromCoefficient(ring_elem &coeff) const;
 
   virtual ring_elem from_long(long n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
 
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
