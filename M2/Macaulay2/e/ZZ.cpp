@@ -10,12 +10,6 @@
 #include "aring-zz-gmp.hpp"
 #include <utility>
 
-#if 0
-// #include "gmp.h"
-// #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
-// #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
-#endif
-
 unsigned int computeHashValue_mpz(mpz_srcptr a)
 {
   return static_cast<unsigned int>(mpz_get_si(a));
@@ -24,9 +18,6 @@ unsigned int computeHashValue_mpz(mpz_srcptr a)
 bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
 {
   initialize_ring(0);
-  _elem_size = static_cast<int>(sizeof(mpz_t));
-  _zero_elem = new_elem();
-  mpz_init_set_si(_zero_elem, 0);
 
   zeroV = from_long(0);
   oneV = from_long(1);
@@ -232,29 +223,10 @@ void RingZZ::lower_content(ring_elem &c, ring_elem g) const
   c = ring_elem(result);
 }
 
-#if 0
-void RingZZ::internal_negate_to(ring_elem &f) const
-{
-  mpz_sub(f.get_mpz(), _zero_elem, f.get_mpz());
-}
-
-void RingZZ::internal_add_to(ring_elem &f, ring_elem &g) const
-{
-  mpz_add(f.get_mpz(), f.get_mpz(), g.get_mpz());
-  remove(g);
-}
-
-void RingZZ::internal_subtract_to(ring_elem &f, ring_elem &g) const
-{
-  mpz_sub(f.get_mpz(), f.get_mpz(), g.get_mpz());
-  remove(g);
-}
-#endif
-
 ring_elem RingZZ::negate(const ring_elem f) const
 {
   mpz_ptr result = new_elem();
-  mpz_sub(result, _zero_elem, f.get_mpz());
+  mpz_neg(result, f.get_mpz());
   return ring_elem(result);
 }
 

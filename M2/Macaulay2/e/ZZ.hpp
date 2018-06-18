@@ -30,9 +30,6 @@ class RingZZ : public Ring
 {
   friend class M2::ARingZZGMP;
 
-  int _elem_size;
-  mpz_ptr _zero_elem;
-
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
 
