@@ -336,13 +336,13 @@ class gbA : public GBComputation
 
   int find_good_divisor(exponents e, int x, int degf, int &result_gap);
 
-  int find_good_monomial_divisor_ZZ(mpz_ptr c,
+  int find_good_monomial_divisor_ZZ(mpz_srcptr c,
                                     exponents e,
                                     int x,
                                     int degf,
                                     int &result_gap);
 
-  int find_good_term_divisor_ZZ(mpz_ptr c,
+  int find_good_term_divisor_ZZ(mpz_srcptr c,
                                 exponents e,
                                 int x,
                                 int degf,

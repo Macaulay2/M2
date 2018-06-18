@@ -20,7 +20,7 @@ checkLoadDocumentation = () -> (
 	  needsPackage "Macaulay2Doc";
 	  ))
 
-getpkg := memoize(
+getpkg := (
      title -> (
 	  if PackageDictionary#?title then value PackageDictionary#title
 	  else dismiss needsPackage(title,LoadDocumentation=>true)))
@@ -490,7 +490,7 @@ trimline1 := x -> selectRegexp ( "^[ \t]*(.*)$",1, x)
 addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
 
-fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
+fixup Thing      := z -> error("unrecognizable item ",toString z," of class ",toString class z," encountered while processing documentation node ", toString currentHelpTag)
 fixup List       := z -> fixup toSequence z
 fixup Sequence   := 
 fixup Hypertext  := z -> splice apply(z,fixup)

@@ -40,9 +40,9 @@ ifneq (@ETAGS@,false)
 all: tags
 endif
 tags:: @srcdir@/TAGS
-clean:: ; rm -f *.o *.dep *.s *.E LOGFILE TAGS
+clean:: ; rm -f *.o *.s *.E LOGFILE TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
-distclean::; rm -f Makefile
+distclean::; rm -f Makefile *.dep
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/regex "

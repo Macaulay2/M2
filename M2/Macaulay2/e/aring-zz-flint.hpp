@@ -93,7 +93,7 @@ class ARingZZ : public RingInterface
     fmpz_set_si(&result, a);
   }
 
-  void set_from_mpz(ElementType& result, const mpz_ptr a) const
+void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     // printf("ARingZZ::calling set_from_mpz\n");
     fmpz_set_mpz(&result, a);
