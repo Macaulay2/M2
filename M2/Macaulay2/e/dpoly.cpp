@@ -1486,7 +1486,7 @@ DRing *DRing::create(long p, int nvars0, const_poly *ext0)
   return new DRing(p, nvars0, ext0);
 }
 
-void DRing::set_from_int(poly &result, mpz_ptr r)
+void DRing::set_from_int(poly &result, mpz_srcptr r)
 {
   mpz_t a;
   mpz_init(a);

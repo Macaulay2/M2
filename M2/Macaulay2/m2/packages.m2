@@ -150,6 +150,9 @@ stderr << "--loading configuration for package \"PKG\" from file " << currentFil
 -- are specified to be suitable for machine dependent data.
 databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
 
+databaseDirectory = (layout,pre,pkg) -> pre | replace("PKG",pkg,layout#"packagecache")
+databaseFilename  = (layout,pre,pkg) -> databaseDirectory(layout,pre,pkg) | "rawdocumentation" | databaseSuffix
+
 newPackage(String) := opts -> (title) -> (
      checkPackageName title;
      scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),
@@ -251,7 +254,7 @@ newPackage(String) := opts -> (title) -> (
      newpkg#"test number" = 0;
      if newpkg#"package prefix" =!= null then (
 	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
-	  rawdbname := newpkg#"package prefix" | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix;
+	  rawdbname := databaseFilename(currentLayout,newpkg#"package prefix", title);
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
 	       newpkg#"raw documentation database" = rawdb;
@@ -265,7 +268,7 @@ newPackage(String) := opts -> (title) -> (
      addStartFunction(() -> 
 	  if not ( newpkg#?"raw documentation database" and isOpen newpkg#"raw documentation database" ) and prefixDirectory =!= null 
 	  then (
-	       dbname := prefixDirectory | replace("PKG",title,currentLayout#"packagecache") | "rawdocumentation" | databaseSuffix; -- what if there is more than one prefix directory?
+	       dbname := databaseFilename (currentLayout,prefixDirectory,title); -- what if there is more than one prefix directory?
 	       if fileExists dbname then (
 		    db := newpkg#"raw documentation database" = openDatabase dbname;
 	       	    if notify then stderr << "--opened database: " << rawdbname << endl;
@@ -504,11 +507,34 @@ debug Package := pkg -> (
 	  );
      checkShadow())
 
-installedPackages = () -> (
- docdir := applicationDirectory() | "local/" | Layout#1#"docdir";
- if isDirectory docdir then for p in readDirectory docdir list if p =!= "." and p =!= ".." then p else continue else {}
- )
-
+installedPackages = method(Options => {
+	  ShowDatabase => false,
+	  Location => false,
+	  IncludeCore => false})
+		    
+installMethod(installedPackages, o -> () -> NumberedVerticalList ( 
+	  sort flatten for prefix in select((
+	       if o#IncludeCore 
+	       then prefixPath
+	       else { applicationDirectory() | "local/" }
+	       ), isDirectory)
+	  list (
+	       currentLayout := (
+		    if isDirectory (prefix | Layout#1#"packages") and isDirectory (prefix | replace("PKG",".",Layout#1#"packagelib"))
+		    then Layout#1
+		    else if isDirectory (prefix | Layout#2#"packages") and isDirectory (prefix | replace("PKG",".",Layout#2#"packagelib"))
+		    then Layout#2
+		    else continue);
+	       docdir := prefix | currentLayout#"docdir";
+	       if not isDirectory docdir then continue else
+	       for p in readDirectory docdir list if p =!= "." and p =!= ".." and isDirectory (docdir | p) then (
+	       if o#Location
+	       then p => prefix
+	       else if o#ShowDatabase
+	       then p => databaseFilename (currentLayout,prefix,p)
+	       else p
+	       ) else continue)))
+     
 uninstallAllPackages = () -> for p in installedPackages() do (
  << "-- uninstalling package " << p << endl;
  uninstallPackage p

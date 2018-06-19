@@ -133,7 +133,7 @@ class ARingTower : public RingInterface
 
   // v from 0..n_vars()-1, sets result to 0 if v is out of range
   void set_var(elem &result, int v) const { result = var(mStartLevel, v); }
-  void set_from_mpz(elem &result, mpz_ptr a) const
+  void set_from_mpz(elem &result, mpz_srcptr a) const
   {
     assert(false);
   }  // TODO: write this

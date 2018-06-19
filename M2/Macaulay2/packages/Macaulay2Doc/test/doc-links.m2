@@ -9,4 +9,8 @@ assert ( match (
 	  html TOH "FirstPackage::FirstPackage"))
 needsPackage "FirstPackage"
 f = FirstPackage#"raw documentation database"
-assert ( set keys f === set {"FirstPackage","firstFunction","firstFunction(ZZ)"} )
+nodes = {"FirstPackage","firstFunction","firstFunction(ZZ)"}
+nodes / (n -> f#?n)
+assert( oo === {true,true,true} )
+keys f
+assert ( set keys f === set nodes )

@@ -101,7 +101,7 @@ class ConcreteRing : public Ring
     return result;
   }
 
-  virtual ring_elem from_int(mpz_ptr n) const
+  virtual ring_elem from_int(mpz_srcptr n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling from_int(mpz)\n");
     ring_elem result;
@@ -505,8 +505,8 @@ class QQ : public ConcreteRing<ARingQQ>
 
   ring_elem fraction(ring_elem top, ring_elem bottom) const
   {
-    mpz_ptr numer = top.get_mpz();
-    mpz_ptr denom = bottom.get_mpz();
+    mpz_srcptr numer = top.get_mpz();
+    mpz_srcptr denom = bottom.get_mpz();
     gmp_QQ b = getmemstructtype(gmp_QQ);
     mpq_init(b);
     mpz_set(mpq_numref(b), numer);
