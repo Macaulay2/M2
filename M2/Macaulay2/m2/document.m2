@@ -145,7 +145,7 @@ new DocumentTag from List := (DocumentTag,x) -> (
 -- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
 
 pkgTitle = method()
-pkgTitle Package := pkg -> if pkg === Core then "Macaulay2Doc" else pkg#"title"
+pkgTitle Package := pkg -> if pkg === Core then "Macaulay2Doc" else pkg#"pkgname"
 pkgTitle Symbol  := toString
 pkgTitle String  := identity
 pkgTitle Nothing := x -> ""
@@ -207,19 +207,19 @@ DocumentTag.FormattedKey Thing := err
 DocumentTag.Package = method(Dispatch => Thing)
 DocumentTag.Package DocumentTag := x -> -* x#2 *- error "internal error: old code still using package in DocumentTag?"
 DocumentTag.Package Thing := err
-protect Title
-DocumentTag.Title = method(Dispatch => Thing)
-DocumentTag.Title DocumentTag := x -> x#3
-DocumentTag.Title Thing := err
+protect PackageName
+DocumentTag.PackageName = method(Dispatch => Thing)
+DocumentTag.PackageName DocumentTag := x -> x#3
+DocumentTag.PackageName Thing := err
 DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
 DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
-toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
+toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.PackageName x, " :: ", DocumentTag.FormattedKey x )
 package DocumentTag := DocumentTag.Package
 hasDocumentation = key -> (
      tag := makeDocumentTag(key,Package=>null);
-     if DocumentTag.Title tag === "" then error("key to be documented is exported by no package: ", DocumentTag.FormattedKey tag);
-     pkg := getpkg DocumentTag.Title tag;
+     if DocumentTag.PackageName tag === "" then error("key to be documented is exported by no package: ", DocumentTag.FormattedKey tag);
+     pkg := getpkg DocumentTag.PackageName tag;
      fkey := DocumentTag.FormattedKey tag;
      null =!= fetchRawDocumentation(pkg,fkey))
 -----------------------------------------------------------------------------
@@ -232,12 +232,12 @@ FinalDocumentTag = new Type of BasicList
 FinalDocumentTag.synonym = "final document tag"
 FinalDocumentTag.FormattedKey = method(Dispatch => Thing)
 FinalDocumentTag.FormattedKey FinalDocumentTag := x -> x#0
-FinalDocumentTag.Title = method(Dispatch => Thing)
-FinalDocumentTag.Title FinalDocumentTag := x -> x#1
+FinalDocumentTag.PackageName = method(Dispatch => Thing)
+FinalDocumentTag.PackageName FinalDocumentTag := x -> x#1
 toFinalDocumentTag = method()
-toFinalDocumentTag DocumentTag := x -> new FinalDocumentTag from { DocumentTag.FormattedKey x, DocumentTag.Title x }
+toFinalDocumentTag DocumentTag := x -> new FinalDocumentTag from { DocumentTag.FormattedKey x, DocumentTag.PackageName x }
 FinalDocumentTag ? FinalDocumentTag := (x,y) -> x#0 ? y#0
-net FinalDocumentTag := x -> concatenate ( FinalDocumentTag.Title x, " :: ", FinalDocumentTag.FormattedKey x )
+net FinalDocumentTag := x -> concatenate ( FinalDocumentTag.PackageName x, " :: ", FinalDocumentTag.FormattedKey x )
 toString FinalDocumentTag := x -> error "who wants a string?"
 
 -----------------------------------------------------------------------------
@@ -284,10 +284,10 @@ fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if
 	       if isOpen d and d#?fkey then valueWithText d#fkey)))
 fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> fetchRawDocumentation(getpkg pkgtitle, fkey)
 fetchRawDocumentation DocumentTag := tag -> (
-     fetchRawDocumentation(getpkg DocumentTag.Title tag, DocumentTag.FormattedKey tag)
+     fetchRawDocumentation(getpkg DocumentTag.PackageName tag, DocumentTag.FormattedKey tag)
      )
 fetchRawDocumentation FinalDocumentTag := tag -> (
-     fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
+     fetchRawDocumentation(FinalDocumentTag.PackageName tag, FinalDocumentTag.FormattedKey tag)
      )
 
 fetchRawDocumentationNoLoad = method()
@@ -301,10 +301,10 @@ fetchRawDocumentationNoLoad(Package,String) := (pkg,fkey) -> (		    -- returns n
 	       if isOpen d and d#?fkey then valueWithText d#fkey)))
 fetchRawDocumentationNoLoad(String,String) := (pkgtitle,fkey) -> fetchRawDocumentationNoLoad(getpkgNoLoad pkgtitle, fkey)
 fetchRawDocumentationNoLoad DocumentTag := tag -> (
-     fetchRawDocumentationNoLoad(getpkgNoLoad DocumentTag.Title tag, DocumentTag.FormattedKey tag)
+     fetchRawDocumentationNoLoad(getpkgNoLoad DocumentTag.PackageName tag, DocumentTag.FormattedKey tag)
      )
 fetchRawDocumentationNoLoad FinalDocumentTag := tag -> (
-     fetchRawDocumentationNoLoad(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
+     fetchRawDocumentationNoLoad(FinalDocumentTag.PackageName tag, FinalDocumentTag.FormattedKey tag)
      )
 
 getPrimary = tag -> (
@@ -581,7 +581,7 @@ separateM2output String := r -> (
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | replace("PKG",pkg#"title",currentLayout#"packageexampleoutput") | toFilename fkey | ".out"
+     then pkg#"package prefix" | replace("PKG",pkg#"pkgname",currentLayout#"packageexampleoutput") | toFilename fkey | ".out"
      )
 
 exampleResults := {}
@@ -708,7 +708,7 @@ fixupTable := new HashTable from {
      ExampleFiles => v -> (
 	  if not currentPackage.Options.AuxiliaryFiles then error "ExampleFiles option specified, but AuxiliaryFiles option is not set to 'true'";
 	  if not (instance(v,List) and all(v,fn->instance(fn,String))) then error "expected ExampleFiles option to be a list of strings";
-	  auxiliaryFilesDirectory := currentPackage#"source directory" | currentPackage#"title" | "/";
+	  auxiliaryFilesDirectory := currentPackage#"source directory" | currentPackage#"pkgname" | "/";
 	  v = apply(v, fn -> auxiliaryFilesDirectory | fn);
 	  for fn in v do if not fileExists fn then error ("example data file not found: ", fn);
 	  currentPackage#"example data files"#currentNodeName = v;
@@ -791,7 +791,7 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
 	       if signalDocError tag
-	       and DocumentTag.Title tag === currentPackage#"title"
+	       and DocumentTag.PackageName tag === currentPackage#"pkgname"
 	       then (
 		    stderr << "--warning: tag has no documentation: " << tag << ", key " 
 	       	    << toExternalString -* toExternalString can't work for shadowed symbols without synonyms *- DocumentTag.Key tag 
@@ -869,7 +869,7 @@ if version#"operating system" === "MicrosoftWindows" then (
 makeDocBody = method(Dispatch => Thing)
 makeDocBody Thing := key -> (
      tag := makeDocumentTag key;
-     pkg := getpkg DocumentTag.Title tag;
+     pkg := getpkg DocumentTag.PackageName tag;
      ptag := getPrimary tag;
      rec := fetchRawDocumentation ptag;
      fkey := DocumentTag.FormattedKey ptag;
@@ -1038,8 +1038,8 @@ document List := opts -> args -> (
 	  );
      o.DocumentTag = tag := makeDocumentTag(key,Package=>null);
      verfy := (key,tag) -> (
-     	  if DocumentTag.Title tag =!= currentPackage#"title" 
-	  then error("item to be documented comes from another package: ", DocumentTag.Title tag, " :: ", toString key));
+     	  if DocumentTag.PackageName tag =!= currentPackage#"pkgname" 
+	  then error("item to be documented comes from another package: ", DocumentTag.PackageName tag, " :: ", toString key));
      verfy(key,tag);
      scan(rest, secondary -> (
 	       tag2 := makeDocumentTag(secondary,Package=>null);
@@ -1287,7 +1287,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	  else continue);
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c); -- other things
-     fn := pkg#"title" | ".m2";
+     fn := pkg#"pkgname" | ".m2";
      au := pkg.Options.Authors;
      (
      	  if #au > 0 then DIV1 {
@@ -1333,15 +1333,15 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 		    }
 	       ),
 	  DIV1 { SUBSECTION "Version", "This documentation describes version ", BOLD pkg.Options.Version, " of ",
-	       if pkg#"title" === "Macaulay2Doc" then "Macaulay2" else pkg#"title",
+	       if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname",
 	       "." },
-	  if pkg#"title" =!= "Macaulay2Doc" 
+	  if pkg#"pkgname" =!= "Macaulay2Doc" 
 	  then DIV1 {
 	       SUBSECTION "Source code",
 	       "The source code from which this documentation is derived is in the file ", HREF { installationLayout#"packages" | fn, fn }, ".",
 	       if pkg#?"auxiliary files" then (
 		    "  The auxiliary files accompanying it are in the
-		    directory ", HREF { installationLayout#"packages" | pkg#"title" | "/", pkg#"title" | "/" }, "."
+		    directory ", HREF { installationLayout#"packages" | pkg#"pkgname" | "/", pkg#"pkgname" | "/" }, "."
 		    )
 	       },
 	  if #e > 0 then DIV1 {

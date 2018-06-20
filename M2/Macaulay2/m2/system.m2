@@ -27,7 +27,7 @@ addLayout = (prefix,i) -> (
      assert not currentLayoutTable#?prefix;
      currentLayoutTable#prefix = i;
      if notify or debugLevel == 11 then stderr << "--Layout#" << i << " assigned for directory " << prefix << endl;
-     )
+     i)
 
 layoutToIndex := layout -> if layout === Layout#1 then 1 else if layout === Layout#2 then 2 else error "nonstandard layout detected"
 

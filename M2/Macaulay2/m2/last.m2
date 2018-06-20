@@ -35,7 +35,7 @@ QQ.Wrap = x -> wr("=",x)
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
 mentionQ := p -> not ignoreP#?(toString p)
 
-addStartFunction( 
+addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
@@ -60,6 +60,8 @@ addStartFunction( () -> (
 	       userMacaulay2Directory();
 	       makePackageIndex())))
 
+addStartFunction( () -> tallyInstalledPackages() )
+
 userpath' := userpath = {
 	  applicationDirectory() | "code/",
 	  applicationDirectory() | "local/" | Layout#1#"packages"
@@ -70,7 +72,8 @@ addStartFunction( () -> if not noinitfile then (
 	  apply(reverse findFiles dir,
 	       fn -> if fn =!= dir then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
-		    if readlink fn =!= null and not fileExists fn then removeFile fn
+		    if readlink fn =!= null and not fileExists fn then removeFile fn else
+		    if match("\\.info\\.tmp$",fn) then removeFile fn
 		    ));
 	  ))
 

@@ -1217,6 +1217,7 @@ exportMutable {
 	"gbTrace",
 	"handleInterrupts",
 	"homeDirectory",
+	"htmlDirectory",
 	"interpreterDepth",
 	"lastMatch",
 	"lineNumber",

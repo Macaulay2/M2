@@ -45,16 +45,17 @@ topDocumentTag := null
 topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
-installPrefix := null	  	       	    	      	    -- the value of the option InstallPrefix; search also here for links
+installPrefix := null	  	       	    	      	    -- the installation prefix
+installPrefixAbs := ""					    -- absolute path to the install prefix
 installationLayout = null				    -- the layout of the installPrefix, global for communication to document.m2
 installationLayoutIndex = null				    -- the layout index of the installPrefix, equal to 1 or 2
-htmlDirectory := ""					    -- relative path to the html directory, depends on the package
-installDirectory := ""					    -- absolute path to the install directory
+htmlDirectory = ""					    -- relative path to the html directory, depends on the package
 
 runfun := o -> if instance(o, Function) then o() else o
 initInstallDirectory := o -> (
-     installDirectory = minimizeFilename(runfun o.InstallPrefix | "/");
-     installationLayoutIndex = detectCurrentLayout installDirectory;
+     installPrefix = minimizeFilename(runfun o.InstallPrefix | "/");
+     installPrefixAbs = toAbsolutePath installPrefix;
+     installationLayoutIndex = detectCurrentLayout installPrefixAbs;
      if installationLayoutIndex === null then installationLayoutIndex = if o.SeparateExec then 2 else 1;
      installationLayout = Layout#installationLayoutIndex;
      )
@@ -92,7 +93,7 @@ toURL := pth -> (
 		    pth))
 	  else if isAbsoluteURL pth then pth
 	  else (
-	       r := relativizeFilename(htmlDirectory, pth);
+	       r := if htmlDirectory === null then pth else relativizeFilename(htmlDirectory, pth);
 	       if debugLevel == 121 then (
 		    stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
 		    stderr << "--       pth             = " << pth << endl;
@@ -104,16 +105,18 @@ htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 htmlFilename2 = (tag,layout) -> (
      fkey := (class tag).FormattedKey tag;
-     pkgtitle := (class tag).Title tag;
-     replace("PKG",pkgtitle,layout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+     pkgname := (class tag).PackageName tag;
+     replace("PKG",pkgname,layout#"packagehtml") | if fkey === pkgname then topFileName else toFilename fkey|".html" )
 
 htmlFilename DocumentTag := tag -> (
-     -- this one is used for storing the html file
+     -- this one is used for storing a new html file during package installation
      htmlFilename2(tag,installationLayout))
 
 htmlFilename FinalDocumentTag := tag -> (
-     -- this one is used for creating links to the file
-     htmlFilename2(tag,installationLayout))
+     -- this one is used for creating links to an existing html file
+     pkg := FinalDocumentTag.PackageName tag;
+     info := getPackageInfo pkg;
+     htmlFilename2(tag,Layout#(detectCurrentLayout(info#"prefix"))))
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -178,7 +181,7 @@ forward  := tag -> ( f := FORWARD  tag; ( if f =!= null then HREF { htmlFilename
 backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename b, backwardButton} else backwardButton, " | "))
 
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
-linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
+linkTitleTag := tag -> "pkgname" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
      doccss := replace("PKG","Style",currentLayout#"package") | "doc.css";
      LINK { 
@@ -521,7 +524,7 @@ check = method(Options => {
 	  })
 prep := pkg -> (
      use pkg;
-     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"title", LoadDocumentation => true, Reload => true);
+     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
      hadExampleError = false;
      numExampleErrors = 0;
      pkg)
@@ -546,9 +549,9 @@ check String := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => tru
 
 setupNames := (opts,pkg) -> (
      installPrefix = minimizeFilename(runfun opts.InstallPrefix | "/");
-     buildPackage = pkg#"title";
+     buildPackage = pkg#"pkgname";
      )
-unsetupNames := () -> installPrefix = installPrefix = buildPackage = null
+unsetupNames := () -> installPrefix = installationLayout = buildPackage = null
 
 
 installPackage = method(Options => {
@@ -583,14 +586,15 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 
 uninstallPackage String := opts -> pkg -> (
      checkPackageName pkg;
-     installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
+     installPrefixAbs := minimizeFilename(runfun opts.InstallPrefix | "/");
      apply(findFiles apply({1,2},
 	       i -> apply(flatten {
 	       		 Layout#i#"packages"|pkg|".m2", Layout#i#"info"|pkg|".info",
 			 apply({"package","packagelib","packagedoc"}, f -> replace("PKG", pkg, Layout#i#f))
 	       		 }, 
-	  	    p -> installDirectory|p)),
+	  	    p -> installPrefixAbs|p)),
 	  removeFiles);
+     tallyInstalledPackages();
      )
 
 installPackage String := opts -> pkg -> (
@@ -608,28 +612,29 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
 installPackage Package := opts -> pkg -> (
+     tallyInstalledPackages();
      verbose := opts.Verbose or debugLevel > 0;
 
      use pkg;
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...
 
      if opts.MakeDocumentation and pkg#?"documentation not loaded"
-     then pkg = loadPackage(pkg#"title", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true, FileName => opts.FileName);
+     then pkg = loadPackage(pkg#"pkgname", DebuggingMode => opts.DebuggingMode, LoadDocumentation => true, FileName => opts.FileName);
 
      absoluteLinks = opts.AbsoluteLinks;
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topDocumentTag = makeDocumentTag(pkg#"title", Package => pkg);
+     topDocumentTag = makeDocumentTag(pkg#"pkgname", Package => pkg);
      
      -- here's where we get the list of nodes from the raw documentation
      nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
      
      setupNames(opts,pkg);
-     initInstallDirectory opts;				    -- initializes installDirectory
+     initInstallDirectory opts;				    -- initializes installPrefixAbs
 
-     if (options pkg).Headline === null then error ("no Headline option provided to newPackage for ",pkg#"title");
-     if (options pkg).Headline === ""   then error ("empty string given as Headline option to newPackage for ",pkg#"title");
+     if (options pkg).Headline === null then error ("no Headline option provided to newPackage for ",pkg#"pkgname");
+     if (options pkg).Headline === ""   then error ("empty string given as Headline option to newPackage for ",pkg#"pkgname");
 
      if verbose then stderr << "--installing package " << pkg << " in " << installPrefix << " with layout " << installationLayoutIndex << endl;
      
@@ -659,7 +664,7 @@ installPackage Package := opts -> pkg -> (
 	  ) else (
      	  
 	  -- copy package source subdirectory
-	  srcDirectory := replace("PKG",pkg#"title",installationLayout#"package");
+	  srcDirectory := replace("PKG",pkg#"pkgname",installationLayout#"package");
 	  auxiliaryFilesDirectory := realpath currentSourceDir | buildPackage;
 	  if isDirectory auxiliaryFilesDirectory
 	  then (
@@ -676,7 +681,7 @@ installPackage Package := opts -> pkg -> (
      	  );
 
      -- copy package source subdirectory examples
-     exampleOutputDir := installPrefix|replace("PKG",pkg#"title",installationLayout#"packageexampleoutput");
+     exampleOutputDir := installPrefix|replace("PKG",pkg#"pkgname",installationLayout#"packageexampleoutput");
 
      if opts.MakeDocumentation then (
 	  pkg#"package prefix" = installPrefix;
@@ -703,11 +708,11 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
-	  rawdbname := databaseFilename(installationLayout,pkg#"package prefix",pkg#"title");
+	  libDir := pkg#"package prefix" | replace("PKG",pkg#"pkgname",installationLayout#"packagelib");
+	  rawdbname := databaseFilename(installationLayout,pkg#"package prefix",pkg#"pkgname");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
-	  makeDirectory databaseDirectory(installationLayout,pkg#"package prefix",pkg#"title");
+	  makeDirectory databaseDirectory(installationLayout,pkg#"package prefix",pkg#"pkgname");
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
 	       tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -808,7 +813,7 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
  	  if not opts.IgnoreExampleErrors 
-	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"title");
+	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
 
 	  -- process documentation
 	  rawkey := "raw documentation database";
@@ -867,7 +872,7 @@ installPackage Package := opts -> pkg -> (
 	       seenit = new MutableHashTable;
 	       hadDocumentationWarning = false;
 	       numDocumentationWarnings = 0;
-	       scan((if pkg#"title" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
+	       scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag
 			 then stderr << "--warning: symbol has no documentation: " << tag << endl;
@@ -897,7 +902,7 @@ installPackage Package := opts -> pkg -> (
 	       printWidth = 79;
 	       infodir := installPrefix|installationLayout#"info";
 	       makeDirectory infodir;
-	       infotitle := pkg#"title";
+	       infotitle := pkg#"pkgname";
 	       infobasename := infotitle|".info";
 	       tmpinfobasename := infobasename|".tmp";
 	       infofile := openOut (infodir|tmpinfobasename);
@@ -914,7 +919,7 @@ installPackage Package := opts -> pkg -> (
 	       chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
 	       infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
 	       traverse(unbag pkg#"table of contents", tag -> (
-			 if DocumentTag.Title tag =!= pkg#"title" then (
+			 if DocumentTag.PackageName tag =!= pkg#"pkgname" then (
 			      error("internal error: alien entry in table of contents: ",toString tag);
 			      );
 			 fkey := DocumentTag.FormattedKey tag;
@@ -940,7 +945,7 @@ installPackage Package := opts -> pkg -> (
 	       );
 
 	  -- make html files
-	  htmlDirectory = replace("PKG",pkg#"title",installationLayout#"packagehtml");
+	  htmlDirectory = replace("PKG",pkg#"pkgname",installationLayout#"packagehtml");
 	  setupButtons();
 	  makeDirectory (installPrefix|htmlDirectory);
 	  if verbose then stderr << "--making empty html pages in " << installPrefix|htmlDirectory << endl;
@@ -958,7 +963,7 @@ installPackage Package := opts -> pkg -> (
 		    if debugLevel > 0 then stderr << "--creating empty html page for " << tag << " in " << fn << endl;
 		    fn << close));
 	  for n in (topFileName, indexFileName, tocFileName) do (
-	       fn := installPrefix | replace("PKG",pkg#"title",installationLayout#"packagehtml") | n;
+	       fn := installPrefix | replace("PKG",pkg#"pkgname",installationLayout#"packagehtml") | n;
 	       if not fileExists fn then (
 		    if debugLevel > 0 then stderr << "--creating empty html page " << fn << endl;
 		    fn << close)
@@ -1013,6 +1018,8 @@ installPackage Package := opts -> pkg -> (
 	  makePackageIndex();
 	  );
      unsetupNames();
+     htmlDirectory = null;
+     tallyInstalledPackages();
      )
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
@@ -1095,7 +1102,8 @@ makePackageIndex Sequence := x -> (
      if #x > 0 then error "expected 0 arguments";
      makePackageIndex path    -- this might get too many files (formerly we used packagePath)
      )
-makePackageIndex List := path -> (
+makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the results of tallyInstalledPackages
+     tallyInstalledPackages();
      makingPackageIndex = true;
      initInstallDirectory options installPackage;
      absoluteLinks = true;
@@ -1173,6 +1181,7 @@ makePackageIndex List := path -> (
 	  } << endl
      << close;
      makingPackageIndex = false;
+     htmlDirectory = null;
      )
 
 runnable := fn -> (
