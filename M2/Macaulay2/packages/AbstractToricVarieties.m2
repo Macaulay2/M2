@@ -1,3 +1,8 @@
+-- TODO:
+--   (1) need subToricVariety, and resulting Schubert2 notions: integral, pullback, pushforward, etc.
+--   why not just use sectionZeroLocus?  Because we get more information, including the fan.
+--   and the map can be computed without doing a ideal quotient.
+--   (2) examples, doc, tests.  especially, what is the point of abstractSheaf here?
 newPackage(
         "AbstractToricVarieties",
         Version => "0.1", 
@@ -12,6 +17,8 @@ newPackage(
         )
 
 export {    
+    "abstractPrimeToricDivisor",
+    "intersectionRingIdeal",
     "completeIntersection",
     "CompleteIntersectionInToric",
         "Ambient",
@@ -57,13 +64,42 @@ export {
           )
       )
 
+  intersectionRingIdeal = method(Options => {CoefficientRing=>QQ});
+  intersectionRingIdeal NormalToricVariety := opts -> (X) -> (
+      kk := opts.CoefficientRing;
+      if not isSimplicial X then error "intersection ring for non-simplicial toric varieties not yet implemented";
+      if not X.cache#?(intersectionRingIdeal, kk) then
+        X.cache#(intersectionRingIdeal, kk) = (
+          n := # rays X;
+          t := getSymbol "t";
+          R := kk(monoid [t_0 .. t_(n-1), Join=>false]);
+          -- Problem: the code below won't work well if kk is not well-behaved?
+          B := monomialIdeal apply(max X, 
+      	    L -> product(n, i -> if member(i,L) then 1_R else R_i));
+          M := dual B;
+          L := ideal(vars R * matrix rays X);
+          M + L
+          );
+      X.cache#(intersectionRingIdeal, kk)
+      )
+
+  intersectionRing NormalToricVariety := (X) -> (
+      I := intersectionRingIdeal X;
+      (ring I)/I
+      )
+
+  intersectionRing(NormalToricVariety, Ring) := (X, kk) -> (
+      I := intersectionRingIdeal(X, CoefficientRing=>kk);
+      (ring I)/I
+      )
+
   abstractVariety(NormalToricVariety,AbstractVariety) := opts -> (Y,B) -> (
       if not isSimplicial Y then error "abstract variety for non-simplicial toric varieties not yet implemented";
       if not Y.cache#?(abstractVariety, B) then Y.cache#(abstractVariety,B) = (
           kk := intersectionRing B;
-          IY := intersectionRing Y;
-          amb := kk[gens ambient IY, Join=>false];
-          IY = amb/(sub(ideal IY, vars amb));
+          elapsedTime IY := intersectionRing(Y, kk);
+          --amb := kk[gens ambient IY, Join=>false];
+          --IY = amb/(sub(ideal IY, vars amb));
           aY := abstractVariety(dim Y, IY);
           aY.TangentBundle = abstractSheaf(aY, Rank=>dim Y, ChernClass => product(gens IY, x -> 1+x));
           -- Now we determine the mapping 'integral':
@@ -84,6 +120,45 @@ export {
       Y.cache#(abstractVariety, B)
       )
   abstractVariety NormalToricVariety := opts -> (Y) -> abstractVariety(Y, point)
+
+  -- create an abstract variety which is a codimension one
+  -- toric subvariety of a toric subvariety.
+  -- This is a bit HACKED UP: the reason is that for some examples,
+  -- the computation of the intersection ring of Y is too expensive,
+  -- yet the intersection ring of a codimension one toric subvariety
+  -- of Y is not so bad.
+  abstractPrimeToricDivisor = method(Options => options abstractVariety)
+  abstractPrimeToricDivisor(NormalToricVariety,AbstractVariety,ZZ) := opts -> (Y,B,rho) -> (
+      if not isSimplicial Y then error "abstract variety for non-simplicial toric varieties not yet implemented";
+      if not Y.cache#?(abstractVariety, B, rho) then Y.cache#(abstractVariety, B, rho) = elapsedTime (
+          kk := intersectionRing B;
+          JY := intersectionRingIdeal(Y, CoefficientRing => kk);
+          M := monomialIdeal select(JY_*, f -> size f == 1);
+          L := ideal select(JY_*, f -> size f > 1);
+          JD := (M : (ring JY)_rho) + L;
+          ID := (ring JD)/JD;
+          aD := abstractVariety(dim Y-1, ID);
+          aD.TangentBundle = abstractSheaf(aD, Rank=>dim Y-1, ChernClass => product(gens ID, x -> 1+x));
+          -- Now we determine the mapping 'integral':
+          raysY := transpose matrix rays Y;
+          onecone := select(1, max Y, s -> member(rho,s));
+          assert(#onecone == 1);
+          onecone = first onecone;
+          onecone' := sort toList((set onecone) - (set {rho}));
+          pt := (abs det raysY_onecone) * product(onecone', i -> ID_i);
+          if size pt != 1 then error "cannot define integral: some strange error has occurred";
+          mon := leadMonomial pt;
+          cf := leadCoefficient pt;
+          if not liftable(cf, QQ) then error "cannot create integral function";
+          a := 1 / lift(cf, QQ);
+          integral ID := (f) -> a * coefficient(mon, f);
+          -- a check:
+            --maxD := for sigma in max Y list if member(rho,sigma) then (sigma, sort toList(set sigma - set {rho})) else continue;
+            --assert all(maxD, f -> integral(product(f#1, i -> ID_i)) == 1/(abs(det raysY_(f#0))));
+          aD
+          );
+      Y.cache#(abstractVariety, B, rho)
+      )
 
   abstractSheaf(NormalToricVariety, AbstractVariety, ToricDivisor) := ops -> (Y,B,D) -> (
       aY := abstractVariety(Y,B);

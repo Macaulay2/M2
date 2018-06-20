@@ -30,8 +30,11 @@ export {
     "chirotope",
     "isRegularTriangulation",
     "naiveChirotope",
+    "orientedCircuits",
+    "orientedCocircuits",
     "regularFineTriangulation",
     "regularTriangulationWeights",
+    "allTriangulations",
     "Homogenize"
     }
 
@@ -56,26 +59,38 @@ topcomPoints Matrix := opts -> (A) -> (
     new Array from for a in entries transpose A1 list new Array from a
     )
 
+-- Workhorse function for calling topcom.
+-- command: one of the commands of topcom, with command line arguments included.
+-- inputs: a list of objects that are in the format for topcom to understand.
+-- output: 2 file names, one for the stdout, one for stderr.
+-- If the executable fails, what happens?
+-- debugLevel: set to 0 - 7 for varying verbose output
 callTopcom = method()
-callTopcom(String, Thing) := (command, pointset) -> (
+callTopcom(String, List) := (command, inputs) -> (
     filename := temporaryFileName();
     infile := filename|".in";
     outfile := filename|".out";
     errfile := filename|".err";
     -- now create the output file
     F := openOut(infile);
-    if not instance(pointset,BasicList) then
-      F << pointset << endl
-    else for f in pointset do (
+    for f in inputs do (
         F << f << endl;
     );
     F << close;
     executable := topcompath|command|" <"|infile|" 1>"|outfile|" 2>"|errfile;
-    if debugLevel >= 1 then << "-- " << command << ": using temporary file prefix " << filename << endl;
+    
+    if debugLevel >= 1 then (
+        << "-- calling topcom" << endl;
+        << "-- " << command << ": using temporary file prefix " << filename << endl;
+        );
+    if debugLevel >= 7 then << "-- " << command << ": input = " << net get infile << endl;
     if debugLevel >= 2 then << "-- " << command << ": executing " << executable << endl;
+
     run executable;
-    if debugLevel >= 5 then << "-- " << command << ": output = " << net get outfile << endl;    
+
+    if debugLevel >= 5 then << "-- " << command << ": output = " << net get outfile << endl;
     if debugLevel >= 6 then << "-- " << command << ": stderr = " << net get errfile << endl;    
+
     (outfile, errfile)
     )
 
@@ -85,25 +100,6 @@ isRegularTriangulation(Matrix, List) := opts -> (A, tri) -> (
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
     match("Checked 1 triangulations, 0 non-regular so far", get errfile)
     )
-
--*
-    if match("non-regular",output) then return null;
-    return output;
-    filename := temporaryFileName();
-    infile := filename|".in";
-    outfile := filename|".out";
-    F := infile << topcomPoints(A, opts) << endl;
-    F << "[]" << endl;
-    F << tri << endl << close;
-    executable := topcompath|"checkregularity --checktriang -v <"|infile|" 2>"|outfile|" 1>/dev/null";
-    if debugLevel >= 1 then << "-- isRegularTriangulation: using temporary file prefix " << filename << endl;
-    if debugLevel >= 2 then << "-- isRegularTriangulation: executing " << executable << endl;
-    run(executable);
-    output = get(outfile);
-    if debugLevel >= 5 then << "-- isRegularTriangulation: output = " << net output << endl;
-    match("Checked 1 triangulations, 0 non-regular so far", output)
-    )
-*-
 
 regularTriangulationWeights = method(Options => options isRegularTriangulation)
 regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
@@ -117,78 +113,17 @@ regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
     return if instance(result, Number) then {result} else toList result
     )
 
--*
-    filename := temporaryFileName();
-    infile := filename|".in";
-    outfile1 := filename|"1.out";
-    outfile2 := filename|"2.out";
-    F := infile << topcomPoints(A, opts) << endl;
-    F << "[]" << endl;
-    F << tri << endl << close;
-    executable := topcompath|"checkregularity --heights <"|infile|" 1>"|outfile1|" 2>"|outfile2;
-    if debugLevel >= 1 then << "-- regularTriangulationWeights: using temporary file prefix " << filename << endl;
-    if debugLevel >= 2 then << "-- regularTriangulationWeights: executing " << executable << endl;
-    run(executable);
-    output1 := get outfile1;
-    output2 := get outfile2;
-    if debugLevel >= 5 then << "-- regularTriangulationWeights: output = " << net output1 << endl;
-    if match("non-regular",output1) then return null;
-    result := value first lines output1;
-    return if instance(result, Number) then {result} else toList result
-    --match("Checked 1 triangulations, 0 non-regular so far", output1)
-    )
-*-
-
 regularFineTriangulation = method(Options => options isRegularTriangulation)
 regularFineTriangulation Matrix := opts -> (A) -> (
     (outfile,errfile) := callTopcom("points2finetriang --regular", {topcomPoints(A, opts)});
     value get outfile
     )
--*
-    -- if you want the origin, you should make it a column of A.
-    -- columns should be the points.
-    filename := temporaryFileName();
-    infile := filename|".in";
-    outfile := filename|".out";
-    errfile := filename|".err";
-    -- now create the output file
-    F := infile << topcomPoints(A, opts) << endl;
-    F << endl << close;
-    executable := topcompath|"points2finetriang --regular <"|infile|" 1>"|outfile|" 2>"|errfile;
-    if debugLevel >= 1 then << "-- regularFineTriangulation: using temporary file prefix " << filename << endl;
-    if debugLevel >= 2 then << "-- regularFineTriangulation: executing " << executable << endl;
-    run executable;
-    output := get outfile;
-    if debugLevel >= 5 then << "-- regularFineTriangulation: output = " << net output << endl;    
-    if debugLevel >= 6 then << "-- regularFineTriangulation: stderr = " << net get errfile << endl;    
-    tri := value output;
-    tri
-    )
-*-
 
 chirotope = method(Options => options isRegularTriangulation)
 chirotope Matrix := opts -> A -> (
     (outfile,errfile) := callTopcom("points2chiro", {topcomPoints(A, opts)});
     get outfile
     )
-
--*
-    filename := temporaryFileName();
-    infile := filename|".in";
-    outfile := filename|".out";
-    errfile := filename|".err";
-    F := infile << topcomPoints(A, opts) << endl;
-    F << close;
-    executable := topcompath|"points2chiro <"|infile|" 1>"|outfile|" 2>"|errfile;
-    if debugLevel >= 1 then << "-- chirotope: using temporary file prefix " << filename << endl;
-    if debugLevel >= 2 then << "-- chirotope: executing " << executable << endl;
-    run executable;
-    output := get outfile;
-    if debugLevel >= 5 then << "-- chirotope: output = " << net output << endl;    
-    if debugLevel >= 6 then << "-- chirotope: stderr = " << net get errfile << endl;    
-    output
-    )
-*-
 
 naiveChirotope = method(Options => options chirotope)
 naiveChirotope Matrix := opts -> A -> (
@@ -205,6 +140,36 @@ naiveChirotope Matrix := opts -> A -> (
                 )) | "\n"
         )
     )
+
+orientedCircuits = method(Options => {Homogenize=>true})
+orientedCircuits String := opts -> (chiro) -> (
+    (outfile,errfile) := callTopcom("chiro2circuits", {chiro});
+    s := lines get outfile;
+    -- remove first 2 lines, and last line:
+    s = drop(drop(s, 2), -1);
+    circs := s/(x -> toList value x);
+    -- now sort it all
+    circs/sort//sort
+    )
+orientedCircuits Matrix := opts -> A -> orientedCircuits chirotope(A, opts)
+
+orientedCocircuits = method(Options => {Homogenize=>true})
+orientedCocircuits String := opts -> (chiro) -> (
+    (outfile,errfile) := callTopcom("chiro2cocircuits", {chiro});
+    s := lines get outfile;
+    s = drop(drop(s, 2), -1);
+    s/(x -> toList value x)
+    )
+orientedCocircuits Matrix := opts -> A -> orientedCocircuits chirotope(A, opts)
+
+allTriangulations = method(Options => {RegularOnly => true, Fine => false})
+allTriangulations Matrix := opts -> (A) -> (
+    executable := if opts.Fine then "points2allfinetriangs " else "points2alltriangs ";
+    args := if opts.Regular then "--regular" else "";
+    (outfile, errfile) := callTopcom("executable | args", {topcomPoints(A, opts)});
+    (outfile, errfile)
+    )
+
 beginDocumentation()
 
 doc ///
@@ -297,7 +262,10 @@ TEST ///
   regularTriangulationWeights(A,tri) -- Question: how to test that this is correct
     -- TODO: need a function which takes a point set, weights, and creates the lift (easy)
     --       compute the lower hull of this polytope.
-    
+
+  assert(chirotope A == naiveChirotope A)
+  orientedCircuits A
+  orientedCocircuits A
   A = transpose matrix {{1,0},{0,1}}
   tri = {{0,1}}
   assert isRegularTriangulation(A,tri)
@@ -307,7 +275,6 @@ TEST ///
   tri = {{0}}
   assert isRegularTriangulation(A,tri)
   regularTriangulationWeights(A,tri) == {1}
-  
 ///
 
 ///
@@ -507,12 +474,60 @@ restart
 check "Topcom"
 viewHelp
 
+///
+-- generate examples to use for this package
+-- from reflexive polytopes of dim 4
+  restart
+  needsPackage "StringTorics"
 
-    LP := drop(latticePointList P2, -1);
-    A := transpose matrix LP;
-    tri := regularFineTriangulation A;
-
-
+  str = getKreuzerSkarke(10, Limit=>5)
+  str = getKreuzerSkarke(20, Limit=>5)
+  str = getKreuzerSkarke(30, Limit=>5)
+  polytopes = parseKS str
+  tope = polytopes_4_1
+  A = matrixFromString tope
+  P = convexHull A
+  P2 = polar P
+  LP = drop(latticePointList P2, -1)
+  A1 = transpose matrix LP
+  A2 = transpose matrix latticePointList P2
+  tri = regularFineTriangulation A1
+  tri2 = regularFineTriangulation A2
+  #tri
+  #tri2
+  elapsedTime chiro1 = chirotope A1;
+  elapsedTime chiro2 = chirotope A2;
+  elapsedTime # orientedCircuits chiro1
+  elapsedTime # orientedCircuits chiro2
+  elapsedTime # orientedCocircuits chiro1
+  elapsedTime # orientedCocircuits chiro2
+  (select(orientedCocircuits A2, f -> #f#0 == 0 or #f#1 == 0))/first
+  netList annotatedFaces P2  
+  tri2
+  -- fine:
+  assert(sort unique flatten tri2 == toList (0..14))
+  walls = tri2/(x -> subsets(x, #x-1))//flatten
+  nfacets = tally walls
+  facs = (select((annotatedFaces P2), x -> x_0 == 3))/(x -> x#2)
+  walls = partition(k -> nfacets#k, keys nfacets)
+  for w in walls#1 list (
+      # select(facs, f -> isSubset(w, f))
+      )
+  for w in walls#2 list (
+      # select(facs, f -> isSubset(w, f))
+      )
+  -- check overlaps of elements of tri2:
+  C = orientedCircuits A2;
+  elapsedTime for c in C list (
+      val1 := select(tri2, x -> isSubset(c_0, x));
+      val2 := select(tri2, x -> isSubset(c_1, x));
+      if #val1 > 0 and #val2 > 0 then print (c, val1, val2);
+      (c, #val1, #val2));
+  
+  tri_0
+  
+///
+  
 doc ///
 Key
 Headline
