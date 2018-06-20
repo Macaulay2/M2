@@ -47,7 +47,7 @@ document {
 
 document { -- This node is used as an example in the node: Key
      Key => [resolution,SyzygyLimit],
-     Headline => "stop when this number of syzygies are obtained",
+     Headline => "stop when this number of syzygies is reached",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      stop after a certain number of syzygies have computed.",

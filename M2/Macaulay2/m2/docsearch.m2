@@ -2,7 +2,6 @@
 
 about = method(Options => {SearchBody => false})	    -- exported
 
-
 lastabout = null
 
 about String := o -> re -> lastabout = (

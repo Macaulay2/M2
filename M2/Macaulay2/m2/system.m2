@@ -38,6 +38,9 @@ addLayout(prefixDirectory, layoutToIndex currentLayout)	   -- detected in startu
 addLayout(applicationDirectory()|"local/", 1) -- the user's application directory always uses layout 1
 
 detectCurrentLayout = prefix -> (
+     -- If at least one package is installed under the prefix directory, we can detect the layout.
+     -- If none are installed, then it doesn't matter and we return null.
+     -- In the future we may dispense with layout # 2 and have just one layout, but for now, we put up with the bureaucracy.
      if currentLayoutTable#?prefix 
      then currentLayoutTable#prefix
      else if isDirectory (prefix | Layout#1#"packages") and isDirectory (prefix | replace("PKG",".",Layout#1#"packagelib"))
@@ -52,17 +55,17 @@ searchPrefixPath = f -> (
      -- We search the prefixPath for an entry where the appropriate file path leads to an existing file.
      -- The idea is that the documentation of a package may result in links to the html documentation pages of any package installed already on the prefixPath.
      -- This need not be used for the link to the style file doc.css, which ought to be found under the prefixDirectory where the currently running M2 binary was executed.
-     f1 := f Layout#1;
-     f2 := f Layout#2;
-     found := for i in prefixPath do (
-	  if fileExists (i|f1) then break i|f1;
-	  if fileExists (i|f2) then break i|f2;
+     fl := (,f Layout#1,f Layout#2);
+     found := for pre in prefixPath do (
+	  i := detectCurrentLayout pre;
+	  if i === null then continue;
+	  if fileExists (pre|fl#i) then break pre|fl#i;
 	  );
      if found =!= null then (
 	  if debugLevel > 5 then stderr << "--file found in " << found << endl;
 	  found)
      else (
-     	  if debugLevel > 5 then stderr << "--file not found in " << stack prefixPath << endl;
+     	  if debugLevel > 5 then stderr << "--file not found in prefixPath = " << stack prefixPath << endl;
 	  ))
 
 -- Local Variables:

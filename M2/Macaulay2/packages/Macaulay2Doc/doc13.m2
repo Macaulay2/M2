@@ -224,10 +224,10 @@ document { Key => symbol applicationDirectorySuffix,
      SeeAlso => applicationDirectory,
      PARA {
 	  "The value of ", TT "applicationDirectorySuffix", " may also be a function of no arguments, in which case its value is used as the path.
-	  The initial value of ", TT "applicationDirectorySuffix", " is a function whose value depends on the operating system and its conventions."
+	  The initial value of ", TT "applicationDirectorySuffix", " is a string whose value depends on the operating system and its conventions."
 	  },
      EXAMPLE lines ///
-     	  applicationDirectorySuffix()
+     	  applicationDirectorySuffix
 	  applicationDirectory()
 	  applicationDirectorySuffix = "local/Mac2"
 	  applicationDirectory()

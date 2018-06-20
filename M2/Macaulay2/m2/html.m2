@@ -75,14 +75,8 @@ absoluteLinks := false
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 toURL := pth -> (
-     if isAbsolutePath pth then concatenate(rootURI,
-	  if fileExists pth then realpath pth 
-	  else (
-	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
-	       pth))
-     else if isAbsoluteURL pth then pth
-     else if absoluteLinks then (
-	  p := searchPrefixPath pth;			    -- this is wrong now
+     if instance(pth,Function) then (
+	  p := searchPrefixPath pth;
 	  if p =!= null
 	  then concatenate(rootURI, realpath p)
 	  else (
@@ -90,13 +84,21 @@ toURL := pth -> (
 	       -- relativizeFilename(htmlDirectory, pth)
 	       ))
      else (
-	  r := relativizeFilename(htmlDirectory, pth);
-	  if debugLevel == 121 then (
-	       stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
-	       stderr << "--       pth             = " << pth << endl;
-	       stderr << "--       relative result = " << r << endl;
-	       );
-	  r))
+	  assert instance(pth,String);
+	  if isAbsolutePath pth then concatenate(rootURI,
+	       if fileExists pth then realpath pth 
+	       else (
+		    stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
+		    pth))
+	  else if isAbsoluteURL pth then pth
+	  else (
+	       r := relativizeFilename(htmlDirectory, pth);
+	       if debugLevel == 121 then (
+		    stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
+		    stderr << "--       pth             = " << pth << endl;
+		    stderr << "--       relative result = " << r << endl;
+		    );
+	       r)))
 
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
@@ -178,9 +180,9 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
-     doccss := prefixDirectory | replace("PKG","Style",currentLayout#"package") | "doc.css"; -- absolute path to our style file
+     doccss := replace("PKG","Style",currentLayout#"package") | "doc.css";
      LINK { 
-	  "href" => if absoluteLinks then doccss else relativizeFilename(installDirectory | htmlDirectory, doccss),
+	  "href" => if absoluteLinks then prefixDirectory | doccss else relativizeFilename(htmlDirectory, doccss),
 	  "rel" => "stylesheet", 
 	  "type" => "text/css" 
 	  }

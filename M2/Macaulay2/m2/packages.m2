@@ -486,6 +486,7 @@ beginDocumentation = () -> (
 	  return end;
 	  );
      if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
+     if debugLevel == 999 then error "debug me";
      if currentPackage#"title" != "Text" and  currentPackage#"title" != "SimpleDoc" then (
      	  needsPackage "Text";
      	  needsPackage "SimpleDoc";
@@ -501,6 +502,53 @@ debug Package := pkg -> (
 	  );
      checkShadow())
 
+getDBkeys := dbfn -> (
+     db := openDatabase dbfn;
+     dbkeys := set keys db;
+     close db;
+     dbkeys)
+
+makePkgTable := dbfn -> (
+     new HashTable from {
+	  "doc db file name" => dbfn,
+	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp
+	  "doc keys" => getDBkeys dbfn
+	  })
+
+installedPackagesByPrefix = new MutableHashTable
+
+tallyInstalledPackages = prefixPath -> for prefix in prefixPath do (
+     if not isDirectory prefix then continue;
+     currentLayoutIndex := detectCurrentLayout prefix;
+     if currentLayoutIndex === null then continue;
+     layout := Layout#currentLayoutIndex;
+     docdir := prefix | layout#"docdir";
+     if not isDirectory docdir then continue;
+     -- note: we assume that the packagedoc directory is obtained from the docdir directory by appending the name of the package, as here in Layout#1
+     --   docdir => share/doc/Macaulay2/
+     --   packagedoc => share/doc/Macaulay2/PKG/
+     -- or as here in Layout#2:
+     --   docdir => common/share/doc/Macaulay2/
+     --   packagedoc => common/share/doc/Macaulay2/PKG/
+     docdirtime := fileTime docdir;
+     if not (installedPackagesByPrefix#?prefix and installedPackagesByPrefix#prefix#"docdir time stamp" === docdirtime)
+     then (
+	  -- packages have been added or removed, so do a complete scan
+	  installedPackagesByPrefix#prefix = new HashTable from {
+	       "docdir time stamp" => docdirtime,
+	       "package table" => p := new MutableHashTable};
+	  for pkgname in readDirectory docdir list if pkgname =!= "." and pkgname =!= ".." and isDirectory (docdir | pkgname) then (
+	       dbfn := databaseFilename (layout,prefix,pkgname);
+	       if not fileExists dbfn then continue;	    -- maybe installation was interrupted, so ignore this package
+	       p#pkgname = makePkgTable dbfn;))
+     else (
+	  -- no packages have been added or removed, so scan the packages previously encountered
+	  p = installedPackagesByPrefix#prefix#"package table";
+	  for pkgname in keys p do (
+	       q := p#pkgname;
+	       dbfn := q#"doc db file name";
+	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
+	       p#pkgname = makePkgTable dbfn;)))     
 
 installedPackages = method(Options => {
 	  ShowDatabase => false,
@@ -526,10 +574,15 @@ installMethod(installedPackages, o -> () -> NumberedVerticalList (
 	       else p
 	       ) else continue)))
      
-uninstallAllPackages = () -> for p in installedPackages() do (
- << "-- uninstalling package " << p << endl;
- uninstallPackage p
- )
+uninstallAllPackages = () -> (
+     prefix := applicationDirectory() | "local/";
+     layout := Layout#(detectCurrentLayout prefix);	    -- will always be Layout#1
+     packages := layout#"packages";
+     if not isDirectory packages then return;
+     for p in readDirectory packages do (
+	  if p =!= "." and p =!= ".." then (
+ 	       << "-- uninstalling package " << p << endl;
+ 	       uninstallPackage p)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

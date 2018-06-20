@@ -23,7 +23,7 @@ checkLoadDocumentation = () -> (
 getpkg := (
      title -> (
 	  if PackageDictionary#?title then value PackageDictionary#title
-	  else dismiss needsPackage(title,LoadDocumentation=>true)))
+	  else dismiss needsPackage title))
 getpkgNoLoad := title -> if PackageDictionary#?title then value PackageDictionary#title
 
 -----------------------------------------------------------------------------
