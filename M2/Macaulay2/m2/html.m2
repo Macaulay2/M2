@@ -704,9 +704,11 @@ installPackage Package := opts -> pkg -> (
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
 	  libDir := pkg#"package prefix" | replace("PKG",pkg#"title",installationLayout#"packagelib");
+	  -- provoke a conflict, to preserve this code on the branch about-and-layout
 	  rawdbname := databaseFilename(installationLayout,pkg#"package prefix",pkg#"title");
 	  rawdbnametmp := rawdbname | ".tmp";
 	  if verbose then stderr << "--storing raw documentation in " << rawdbname << endl;
+	  -- provoke a conflict, to preserve this code on the branch about-and-layout
 	  makeDirectory databaseDirectory(installationLayout,pkg#"package prefix",pkg#"title");
 	  if fileExists rawdbnametmp then removeFile rawdbnametmp;
 	  if fileExists rawdbname then (
