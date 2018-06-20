@@ -823,8 +823,8 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
   // Prune down the set of spairs to a 'minimal' set.  For each one, we
   // need to add in a "gcd" combination spair as well.
 
-  VECTOR(mpz_ptr) coeffs;
-  VECTOR(mpz_ptr) coeffs2;
+  VECTOR(mpz_srcptr) coeffs;
+  VECTOR(mpz_srcptr) coeffs2;
   VECTOR(exponents) exps;
   VECTOR(int) comps;
   VECTOR(int) positions;
@@ -1457,7 +1457,7 @@ bool gbA::reduce_ZZ(spair *p)
       int gap, w;
       R->gbvector_get_lead_exponents(_F, p->f(), EXP);
       int x = p->f()->comp;
-      mpz_ptr c = p->f()->coeff.get_mpz();
+      mpz_srcptr c = p->f()->coeff.get_mpz();
 
       w = find_good_term_divisor_ZZ(c, EXP, x, this_degree, gap);
 
@@ -1568,7 +1568,7 @@ bool gbA::reduceit(spair *p)
  * gbasis routines *****
  ***********************/
 
-int gbA::find_good_monomial_divisor_ZZ(mpz_ptr c,
+int gbA::find_good_monomial_divisor_ZZ(mpz_srcptr c,
                                        exponents e,
                                        int x,
                                        int degf,
@@ -1618,7 +1618,7 @@ int gbA::find_good_monomial_divisor_ZZ(mpz_ptr c,
   return result;
 }
 
-int gbA::find_good_term_divisor_ZZ(mpz_ptr c,
+int gbA::find_good_term_divisor_ZZ(mpz_srcptr c,
                                    exponents e,
                                    int x,
                                    int degf,
