@@ -53,6 +53,14 @@ document {
 			 to the algorithm."
 			 }
 		    }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI {
+			 "The option ", TT "AbsoluteLinks", " to ", TO "installPackage", " has been removed.  Better logic
+			 is now used internally, producing relative links only between files installed under the same prefix."
+			 }
+		    }
 	       }
 	  }
      }
@@ -1226,7 +1234,7 @@ document {
 			 complicated polynomials."
 			 },
 		    LI {
-			 "The function ", TO "installPackage", " will now, when the option ", TO "AbsoluteLinks", " is set to ", TO "true", ",
+			 "The function ", TO "installPackage", " will now, when the option ", TT "AbsoluteLinks", " is set to ", TO "true", ",
 			 will now also search the installation prefix where the package is about to be installed for the files that are linked to.
 			 This should resolve the situation where a developer uses the function to modify a package that is already incorporated
 			 into ", EM "Macaulay2", " itself, and (some of) the links in the freshly installed package end up pointing to 

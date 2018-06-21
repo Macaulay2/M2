@@ -8,7 +8,6 @@ document {
      Key => {installPackage,
 	  (installPackage,String),
 	  (installPackage,Package),
-	  [installPackage,AbsoluteLinks],
 	  [installPackage,Verbose],
 	  [installPackage,CacheExampleOutput],
 	  [installPackage,CheckDocumentation],
@@ -53,17 +52,6 @@ document {
 	       this option can be a string or a function of no arguments returning a string.  The default value is the 
 	       subdirectory named ", TT "local", " of the user's ", TO "application directory", "." },
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
-	  AbsoluteLinks => Boolean => {
-	       "whether the links made should contain real absolute paths, rather than relative paths.  If set to
-	       ", TO "true", ", the default value, then the files linked to should already exist, either under the current installation prefix,
-	       or in any of the directory trees listed in ", TO "prefixPath", ".  (The other files to be created as part of the installation of 
-	       the current package will be made to exist (as empty files) in an earlier pass.)
-	       If the option is set to ", TO "false", ", then no absolute links will be made, and all references 
-	       to documentation nodes will point to locations in the same directory tree, even though the corresponding files may 
-	       not be there (yet).  This behaviour is useful only when installing documentation in the main ", EM "Macaulay2", " 
-	       documentation tree (given by ", TO "prefixDirectory", "), or for preparing documentation that will eventually be
-	       installed there."
-	       },
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
      	       is to rebuild only the html pages of the documentation entries that have been changed since the last time
      	       the package was installed.  However, some changes to an entry, such as to its headline, will change the html of other pages
@@ -102,8 +90,7 @@ document {
 	       file ", TT "index.html", " in the user's ", TO "application directory", "; see ", TO "makePackageIndex"}
 	  },
      PARA {
-	  "The current value of ", TO "prefixPath", " is used to determine how to direct documentation hyperlinks,
-	  provided the value of the option ", TO "AbsoluteLinks", " is ", TO "true", ", as it is by default; the link
+	  "The current value of ", TO "prefixPath", " is used to determine how to direct documentation hyperlinks; the link
 	  will be directed to the appropriate file if one is found by searching the trees referred to by ", TO "prefixPath", ".  
 	  Otherwise, all documentation hyperlinks are relative to positions within a single tree of directories, as describe by ", TO "Layout", "."
 	  },
@@ -133,6 +120,11 @@ document {
 	  ", TT (replace("PKG", "PACKAGENAME", Layout#1#"packagelib")|".installed"), " or
 	  ", TT (replace("PKG", "PACKAGENAME", Layout#2#"packagelib")|".installed"), " is created, to signify that installation was completed."
 	  },
+     Caveat => {"Links from html files containing documentation to documentation in another package not yet installed may go
+     	        to the wrong place, because it is assumed that the package not yet installed will be installed under the same prefix.
+		By contrast, if the other package has already been installed under some prefix occurring in the value of ", TO "prefixPath", ",
+		then the correct path will be used.  To get two packages installed under different prefixes which refer to each other's
+		documentation correctly, it may be necessary to install one of them twice." },
      SeeAlso => {"packages", "epkg", "prefixPath", "Layout", installedPackages, uninstallAllPackages}
      }
 

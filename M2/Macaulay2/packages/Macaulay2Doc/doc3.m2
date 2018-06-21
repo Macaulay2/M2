@@ -1213,7 +1213,7 @@ document { Key => (module, Vector),
      ///}
 
 document { Key => {package,(package, Dictionary), (package, Thing),
-	  (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol),
+	  (package, HashTable), (package, Function), (package, Symbol),
 	  (package, Sequence)
 	  },
      Headline => "get containing package",

@@ -547,12 +547,12 @@ installPackage "NumericalAlgebraicGeometry"
 installPackage ("NumericalAlgebraicGeometry",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("NumericalAlgebraicGeometry",RerunExamples=>false, RemakeAllDocumentation=>true)
 
--- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
+-- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true)
 
 -- install docs with no absolute links
 uninstallPackage "Style"
-installPackage("Style", AbsoluteLinks=>false)
-installPackage("NumericalAlgebraicGeometry", AbsoluteLinks=>false)
+installPackage("Style")
+installPackage("NumericalAlgebraicGeometry")
 
 installPackage ("NumericalAlgebraicGeometry", MakeDocumentation=>false)
 check "NumericalAlgebraicGeometry"

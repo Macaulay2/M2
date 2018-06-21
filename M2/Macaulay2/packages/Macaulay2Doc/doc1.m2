@@ -3,7 +3,7 @@ scan((
      -- some optional arguments
 	  FollowLinks,Hilbert,Options,InstallPrefix,Exclude,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,AbsoluteLinks,RunExamples,SourceRing,
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,RunExamples,SourceRing,
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
@@ -237,7 +237,6 @@ undocumented {
      (NewFromMethod, Command, String),
      (NewFromMethod, Command, Function),
      (NewFromMethod, BR, List),
-     (NewFromMethod, DocumentTag, List),
      (NewFromMethod, HR, List),
      (NewFromMethod, HREF, List),
      (NewFromMethod, MarkUpType, List),

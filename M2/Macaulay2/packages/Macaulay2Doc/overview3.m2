@@ -372,7 +372,7 @@ document {
 	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
 	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
 	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
-	  documentation hyperlinks from one package to another, provided the option ", TO "AbsoluteLinks", " is set to ", TO "true", "."
+	  documentation hyperlinks from one package to another."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.

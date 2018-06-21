@@ -4,7 +4,6 @@ assert("x" === toString M_0)
 needsPackage "Text"
 assert( (toString A) === "A" )
 assert( (toString ANCHOR) === "ANCHOR" )
-assert( (toString AbsoluteLinks) === "AbsoluteLinks" )
 assert( (toString Adjacent) === "Adjacent" )
 assert( (toString AffineVariety) === "AffineVariety" )
 assert( (toString AfterEval) === "AfterEval" )

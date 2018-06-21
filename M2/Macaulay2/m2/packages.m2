@@ -256,7 +256,7 @@ newPackage(String) := opts -> (pkgname) -> (
 	  else (
 	       if notify then stderr << "--database not present: " << rawdbname << endl;
 	       );
-	  newpkg#"index.html" = newpkg#"package prefix" | replace("PKG",newpkg#"pkgname",currentLayout#"packagehtml") | "index.html";
+	  newpkg#topFileName = newpkg#"package prefix" | replace("PKG",newpkg#"pkgname",currentLayout#"packagehtml") | topFileName;
 	  )
      else if notify then stderr << "--package prefix null, not opening database for package " << newpkg << endl;
      addStartFunction(() -> 
@@ -486,7 +486,6 @@ beginDocumentation = () -> (
 	  return end;
 	  );
      if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-     if debugLevel == 999 then error "debug me";
      if currentPackage#"pkgname" != "Text" and  currentPackage#"pkgname" != "SimpleDoc" then (
      	  needsPackage "Text";
      	  needsPackage "SimpleDoc";
@@ -501,70 +500,6 @@ debug Package := pkg -> (
 	  dictionaryPath = prepend(d,dictionaryPath);
 	  );
      checkShadow())
-
-getDBkeys := dbfn -> (
-     dbkeys := new MutableHashTable;
-     db := openDatabase dbfn;
-     for key in keys db do dbkeys#key = 1;
-     close db;
-     dbkeys)
-
-makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
-     new HashTable from {
-	  "doc db file name" => dbfn,
-	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp
-	  "doc keys" => getDBkeys dbfn,
-	  "prefix" => prefix,                  -- get the layout index using detectCurrentLayout
-	  "name" => pkgname
-	  })
-
-installedPackagesByPrefix = new MutableHashTable
-
-getPackageInfo = pkgname ->
-     for prefix in prefixPath 
-     do if installedPackagesByPrefix#?prefix 
-        then if installedPackagesByPrefix#prefix#"package table"#?pkgname 
-	     then return installedPackagesByPrefix#prefix#"package table"#pkgname
-
-getPackageInfoList = () -> flatten (
-     for prefix in prefixPath 
-     list if installedPackagesByPrefix#?prefix
-          then for pkgname in keys installedPackagesByPrefix#prefix#"package table"
-	       list installedPackagesByPrefix#prefix#"package table"#pkgname
-	  else {})
-
-tallyInstalledPackages = () -> for prefix in prefixPath do (
-     if not isDirectory prefix then continue;
-     currentLayoutIndex := detectCurrentLayout prefix;
-     if currentLayoutIndex === null then continue;
-     layout := Layout#currentLayoutIndex;
-     docdir := prefix | layout#"docdir";
-     if not isDirectory docdir then continue;
-     -- note: we assume that the packagedoc directory is obtained from the docdir directory by appending the name of the package, as here in Layout#1
-     --   docdir => share/doc/Macaulay2/
-     --   packagedoc => share/doc/Macaulay2/PKG/
-     -- or as here in Layout#2:
-     --   docdir => common/share/doc/Macaulay2/
-     --   packagedoc => common/share/doc/Macaulay2/PKG/
-     docdirtime := fileTime docdir;
-     if not (installedPackagesByPrefix#?prefix and installedPackagesByPrefix#prefix#"docdir time stamp" === docdirtime)
-     then (
-	  -- packages have been added or removed, so do a complete scan
-	  installedPackagesByPrefix#prefix = new HashTable from {
-	       "docdir time stamp" => docdirtime,
-	       "package table" => p := new MutableHashTable};
-	  for pkgname in readDirectory docdir list if pkgname =!= "." and pkgname =!= ".." and isDirectory (docdir | pkgname) then (
-	       dbfn := databaseFilename (layout,prefix,pkgname);
-	       if not fileExists dbfn then continue;	    -- maybe installation was interrupted, so ignore this package
-	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);))
-     else (
-	  -- no packages have been added or removed, so scan the packages previously encountered
-	  p = installedPackagesByPrefix#prefix#"package table";
-	  for pkgname in keys p do (
-	       q := p#pkgname;
-	       dbfn := q#"doc db file name";
-	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
-	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);)))     
 
 installedPackages = () -> (
      prefix := applicationDirectory() | "local/";

@@ -77,7 +77,6 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR := StoR * TtoS;
      RtoT.cache.inverse = TtoR;
      TtoR.cache.inverse = RtoT;
-     --error "debug me iredCharSeries";
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
 factor ZZ := ( f -> opts -> f ) (

@@ -46,7 +46,6 @@ export {
 	"?",
 	"@",
 	"@@",
-	"AbsoluteLinks",
 	"Adjacent",
 	"AffineVariety",
 	"AfterEval",
@@ -1218,6 +1217,8 @@ exportMutable {
 	"handleInterrupts",
 	"homeDirectory",
 	"htmlDirectory",
+	-- "installLayout",				    -- the user should not change this one
+	-- "installPrefix",				    -- the user should not change this one
 	"interpreterDepth",
 	"lastMatch",
 	"lineNumber",

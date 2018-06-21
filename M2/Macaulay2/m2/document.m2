@@ -5,7 +5,7 @@ prefix := set flexiblePrefixOperators
 postfix := set flexiblePostfixOperators
 operator := binary+prefix+postfix
 
-checkLoadDocumentation = () -> (
+checkLoadDocumentation = () -> ( -- this function should be made obsolete, because we should install the Macaulay2Doc package first
      if (
 	  not isGlobalSymbol "Macaulay2Doc"
 	  or
@@ -133,16 +133,10 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 -- We need three bits of information about a document tag:
 --     the original key	    	    e.g., (operator **,Module,Module)
 --     the formatted key            e.g., "Module ** Module"
---     the package                  e.g., Core, or null if there is none
---     the package title            e.g., "Core", or "" if there is none
+--     the package name             e.g., "Core", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
-new DocumentTag from List := (DocumentTag,x) -> (
-     -- (nkey,fkey,pkg,title) := toSequence x;
-     -- if class pkg =!= Package then error("document tag specifies unloaded package: ",toString pkg);
-     x)
--- toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
 
 pkgTitle = method()
 pkgTitle Package := pkg -> if pkg === Core then "Macaulay2Doc" else pkg#"pkgname"
@@ -177,7 +171,7 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      if pkg === null then error("makeDocumentTag: package cannot be determined: ", nkey);
      new DocumentTag from {
 	  if instance(nkey,Symbol) then toString nkey else nkey,
-	  fkey, -* pkg *- ,pkgTitle pkg})
+	  fkey,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      if match("^ |  +| $", key)
      then (
@@ -195,55 +189,31 @@ makeDocumentTag String := opts -> key -> (
      else (mdt new OptionTable from {Package => pkg}) key
      )
 
--- a bit of experimentation...
 DocumentTag.Key = method(Dispatch => Thing)
 DocumentTag.Key DocumentTag := x -> x#0
-err := x -> error "expected a document tag; perhaps the function 'hypertext' has not yet been run on hypertext"
-DocumentTag.Key Thing := err
 protect FormattedKey
 DocumentTag.FormattedKey = method(Dispatch => Thing)
 DocumentTag.FormattedKey DocumentTag := x -> x#1
-DocumentTag.FormattedKey Thing := err
-DocumentTag.Package = method(Dispatch => Thing)
-DocumentTag.Package DocumentTag := x -> -* x#2 *- error "internal error: old code still using package in DocumentTag?"
-DocumentTag.Package Thing := err
 protect PackageName
 DocumentTag.PackageName = method(Dispatch => Thing)
-DocumentTag.PackageName DocumentTag := x -> x#3
-DocumentTag.PackageName Thing := err
+DocumentTag.PackageName DocumentTag := x -> x#2
 DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
 DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
 toString DocumentTag := net DocumentTag := x -> concatenate ( DocumentTag.PackageName x, " :: ", DocumentTag.FormattedKey x )
-package DocumentTag := DocumentTag.Package
 hasDocumentation = key -> (
      tag := makeDocumentTag(key,Package=>null);
      if DocumentTag.PackageName tag === "" then error("key to be documented is exported by no package: ", DocumentTag.FormattedKey tag);
      pkg := getpkg DocumentTag.PackageName tag;
      fkey := DocumentTag.FormattedKey tag;
      null =!= fetchRawDocumentation(pkg,fkey))
------------------------------------------------------------------------------
--- Here we introduce the class FormattedDocumentTag, which contains just the parts of a DocumentTag that are strings
---     the formatted key            e.g., "Module ** Module"
---     the package title            e.g., "Core", or "" if there is none
--- The main point is that toExternalString will work for objects of this type, and thus they can be stored externally
--- as part of the documentation.
-FinalDocumentTag = new Type of BasicList
-FinalDocumentTag.synonym = "final document tag"
-FinalDocumentTag.FormattedKey = method(Dispatch => Thing)
-FinalDocumentTag.FormattedKey FinalDocumentTag := x -> x#0
-FinalDocumentTag.PackageName = method(Dispatch => Thing)
-FinalDocumentTag.PackageName FinalDocumentTag := x -> x#1
-toFinalDocumentTag = method()
-toFinalDocumentTag DocumentTag := x -> new FinalDocumentTag from { DocumentTag.FormattedKey x, DocumentTag.PackageName x }
-FinalDocumentTag ? FinalDocumentTag := (x,y) -> x#0 ? y#0
-net FinalDocumentTag := x -> concatenate ( FinalDocumentTag.PackageName x, " :: ", FinalDocumentTag.FormattedKey x )
-toString FinalDocumentTag := x -> error "who wants a string?"
 
 -----------------------------------------------------------------------------
 formattedKey = method()
 formattedKey DocumentTag := tag -> DocumentTag.FormattedKey tag
-formattedKey FinalDocumentTag := tag -> FinalDocumentTag.FormattedKey tag
+
+packageName = method()
+packageName DocumentTag := tag -> DocumentTag.PackageName tag
 -----------------------------------------------------------------------------
 
 local exampleOutputFilename
@@ -286,9 +256,6 @@ fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> fetchRawDocumentation
 fetchRawDocumentation DocumentTag := tag -> (
      fetchRawDocumentation(getpkg DocumentTag.PackageName tag, DocumentTag.FormattedKey tag)
      )
-fetchRawDocumentation FinalDocumentTag := tag -> (
-     fetchRawDocumentation(FinalDocumentTag.PackageName tag, FinalDocumentTag.FormattedKey tag)
-     )
 
 fetchRawDocumentationNoLoad = method()
 fetchRawDocumentationNoLoad(Nothing,Thing) := (pkg,fkey) -> null
@@ -302,9 +269,6 @@ fetchRawDocumentationNoLoad(Package,String) := (pkg,fkey) -> (		    -- returns n
 fetchRawDocumentationNoLoad(String,String) := (pkgtitle,fkey) -> fetchRawDocumentationNoLoad(getpkgNoLoad pkgtitle, fkey)
 fetchRawDocumentationNoLoad DocumentTag := tag -> (
      fetchRawDocumentationNoLoad(getpkgNoLoad DocumentTag.PackageName tag, DocumentTag.FormattedKey tag)
-     )
-fetchRawDocumentationNoLoad FinalDocumentTag := tag -> (
-     fetchRawDocumentationNoLoad(FinalDocumentTag.PackageName tag, FinalDocumentTag.FormattedKey tag)
      )
 
 getPrimary = tag -> (
@@ -785,17 +749,13 @@ apropos String := (pattern) -> (
 -----------------------------------------------------------------------------
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOptionNoLoad(key,Headline)	    -- old method
-headline FinalDocumentTag := headline DocumentTag := tag -> (
+headline DocumentTag := tag -> (
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
+     	  -- this branch does get used, but why not combine fetchPrimaryRawDocumentation and fetchAnyRawDocumentation?
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       if signalDocError tag
-	       and DocumentTag.PackageName tag === currentPackage#"pkgname"
-	       then (
-		    stderr << "--warning: tag has no documentation: " << tag << ", key " 
-	       	    << toExternalString -* toExternalString can't work for shadowed symbols without synonyms *- DocumentTag.Key tag 
-	       	    << endl);
+	       if signalDocError tag and packageName tag === currentPackage#"pkgname" then stderr << "--warning: tag has no documentation: " << tag << endl;
 	       return null;
 	       ));
      if d#?Headline then d#Headline
@@ -1338,10 +1298,10 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	  if pkg#"pkgname" =!= "Macaulay2Doc" 
 	  then DIV1 {
 	       SUBSECTION "Source code",
-	       "The source code from which this documentation is derived is in the file ", HREF { installationLayout#"packages" | fn, fn }, ".",
+	       "The source code from which this documentation is derived is in the file ", HREF { installLayout#"packages" | fn, fn }, ".",
 	       if pkg#?"auxiliary files" then (
 		    "  The auxiliary files accompanying it are in the
-		    directory ", HREF { installationLayout#"packages" | pkg#"pkgname" | "/", pkg#"pkgname" | "/" }, "."
+		    directory ", HREF { installLayout#"packages" | pkg#"pkgname" | "/", pkg#"pkgname" | "/" }, "."
 		    )
 	       },
 	  if #e > 0 then DIV1 {
