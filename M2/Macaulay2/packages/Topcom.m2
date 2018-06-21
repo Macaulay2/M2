@@ -23,19 +23,29 @@ newPackage(
         Configuration => {
             "path" => ""
             },
+        PackageImports => {"Polyhedra"},
         DebuggingMode => true
         )
 
 export {
+    "allTriangulations",
     "chirotope",
+    "fineStarTriangulation",
+    "flips",
     "isRegularTriangulation",
     "naiveChirotope",
+    "naiveIsTriangulation",
+    "numFlips",
+    "numTriangulations",
     "orientedCircuits",
     "orientedCocircuits",
     "regularFineTriangulation",
+    "regularFineStarTriangulation",
     "regularTriangulationWeights",
-    "allTriangulations",
-    "Homogenize"
+    "ConnectedToRegular",
+    "Homogenize",
+    "RegularOnly",
+    "Fine"
     }
 
 exportMutable {
@@ -162,13 +172,105 @@ orientedCocircuits String := opts -> (chiro) -> (
     )
 orientedCocircuits Matrix := opts -> A -> orientedCocircuits chirotope(A, opts)
 
-allTriangulations = method(Options => {RegularOnly => true, Fine => false})
+allTriangsExecutable = hashTable {
+    -- Fine?, COnnectedToRegular?
+    (true, true) => "points2finetriangs",
+    (true, false) => "points2allfinetriangs",
+    (false, true) => "points2triangs",
+    (false, false) => "points2alltriangs"
+    }
+numTriangsExecutable = hashTable {
+    -- Fine?, COnnectedToRegular?
+    (true, true) => "points2nfinetriangs",
+    (true, false) => "points2nallfinetriangs",
+    (false, true) => "points2ntriangs",
+    (false, false) => "points2nalltriangs"
+    }
+
+allTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
 allTriangulations Matrix := opts -> (A) -> (
-    executable := if opts.Fine then "points2allfinetriangs " else "points2alltriangs ";
-    args := if opts.Regular then "--regular" else "";
-    (outfile, errfile) := callTopcom("executable | args", {topcomPoints(A, opts)});
-    (outfile, errfile)
+    if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
+    executable := allTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
+    args := if opts.RegularOnly then " --regular" else "";
+    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
+    tris := lines get outfile;
+    -- if ConnectToRegular is true, then the output is different, and needs to be parsed.
+    -- in the other case, we can avoid the first 2 lines but they don't do anything either.
+    for t in tris list (
+        t1 := replace(///T\[[0-9]+\]:=\[.*:///, "", t);
+        t2 := replace(///\];///, "", t1);
+        t3 := sort value t2
+        )
     )
+
+numTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
+numTriangulations Matrix := opts -> (A) -> (
+    if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
+    executable := numTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
+    args := if opts.RegularOnly then " --regular" else "";
+    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
+    value get outfile
+    )
+
+numFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
+numFlips(Matrix, List) := opts -> (A, tri) -> (
+    executable := "points2nflips";
+    args := if opts.RegularOnly then " --regular" else "";
+    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
+    (get outfile, get errfile)
+    )
+
+flips = method(Options => {Homogenize=>true, RegularOnly =>true})
+flips(Matrix, List) := opts -> (A, tri) -> (
+    executable := "points2flips";
+    args := if opts.RegularOnly then " --regular" else "";
+    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
+    (get outfile, get errfile)
+    )
+
+fineStarTriangulation = method()
+fineStarTriangulation(Matrix, List) := (A, tri) -> (
+    aA := augment A;
+    H := first halfspaces convexHull aA;
+    myfacets := for e in entries H list (
+        positions(flatten entries(matrix {e} * aA), x -> x == 0)
+        );
+    sort unique flatten for f in tri list for g in myfacets list (
+        a := toList(set g * set f); 
+        if #a < numRows A then 
+        continue 
+        else sort a
+        )
+    -- newtri = for f in newtri list append(f, numColumns A)
+    )
+
+regularFineStarTriangulation = method()
+regularFineStarTriangulation Matrix := (A) -> fineStarTriangulation(A, regularFineTriangulation A)
+
+naiveIsTriangulation = method()
+naiveIsTriangulation(Matrix, List, List) := (A, circuits, tri) -> (
+    aA := augment A;
+    H := first halfspaces convexHull aA;
+    myfacets := for e in entries H list (
+        positions(flatten entries(matrix {e} * aA), x -> x == 0)
+        );
+    -- test 1: each wall should be in a facet of the convex hull, or occur exactly twice.
+    walls := tally flatten for t in tri list subsets(t,#t-1);
+    test1 := for k in keys walls list (
+        if any(myfacets, f -> isSubset(k,f)) then 
+          walls#k == 1
+        else
+          walls#k == 2
+        );
+    if any(test1, x -> not x) then return false;
+    -- test 2: for each oriented circuit Z = (Z+, Z-)
+    test2 := for z in circuits list (
+      # select(tri, t -> isSubset(z_0, t)),
+      # select(tri, t -> isSubset(z_1, t))
+      );
+    all(test2, x -> x#0 == 0 or x#1 == 0)
+    )
+naiveIsTriangulation(Matrix, List) := (A, tri) -> naiveIsTriangulation(A, orientedCircuits A, tri)
 
 beginDocumentation()
 
@@ -253,7 +355,10 @@ TEST ///
          {1,2,3}}
   assert not isRegularTriangulation(A,tri)
   assert(null === regularTriangulationWeights(A,tri))
-  
+  numTriangulations A
+  allTriangulations A  
+  allTriangulations(A, Fine=>true)
+  allTriangulations(A, Fine=>true, RegularOnly=>false)
   A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{7,-2}}
   tri = {{0,1,2}, {1,3,5}, {2,3,4},
          {0,1,5}, {0,2,4}, {3,4,5},
@@ -330,6 +435,119 @@ TEST ///
   ch1 = chirotope A
   ch2 = naiveChirotope A
   assert(ch1 == ch2)
+///
+
+-- This example is a good one, but takes too long to be run automatically
+///
+restart
+  needsPackage "Topcom"  
+  needsPackage "Polyhedra"
+  pts =  {{-1,0,0,-1},{-1,0,1,-1},{-1,0,1,0},{-1,1,0,-1},{-1,1,0,0},{-1,1,1,2},{1,-1,0,-1},{1,0,-1,1},{1,-1,-1,-1},{0,0,0,-1}}
+  A = transpose matrix pts 
+  -- debugLevel = 7
+
+  elapsedTime n1 = numTriangulations(A, Fine=>true, ConnectedToRegular=>true) -- 6.9 sec, 408 of these CORRECT
+  elapsedTime n2 = numTriangulations(A, Fine=>true, ConnectedToRegular=>false) -- 116 sec, 448 of these WRONG
+  elapsedTime n3 = numTriangulations(A, Fine=>false, ConnectedToRegular=>true)  -- 8 sec, 520 of these CORRECT
+  elapsedTime n4 = numTriangulations(A, Fine=>false, ConnectedToRegular=>false) -- 115 sec, 564 of these WRONG
+
+  elapsedTime n5 = numTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false) -- .09 sec, 448 of these
+  elapsedTime n6 = numTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false) -- 115.5 sec, 448 of these
+  elapsedTime n7 = numTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false)  -- .11 sec, 564 of these
+  elapsedTime n8 = numTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false) -- 116 sec, 564 of these
+
+  elapsedTime set1 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true); -- 6.9 sec, 408  CORRECT
+  elapsedTime set2 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false); -- 118 sec, 448 WRONG
+  elapsedTime set3 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true); -- 8.1 sec, 520 CORRECT
+  elapsedTime set4 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false); -- 116 sec.  564 of these. WRONG
+
+  elapsedTime set5 = allTriangulations(A, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- .15 sec, 448 of these
+  elapsedTime set6 = allTriangulations(A, Fine=>true, ConnectedToRegular=>false, RegularOnly=>false); -- 116 sec, 448 of these
+  elapsedTime set7 = allTriangulations(A, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- .22 sec, 564 of these
+  elapsedTime set8 = allTriangulations(A, Fine=>false, ConnectedToRegular=>false, RegularOnly=>false); -- 117 sec, 564 of these
+
+  assert((n1,n2,n3,n4,n5,n6,n7,n8) == (#set1, #set2, #set3, #set4, #set5, #set6, #set7, #set8))
+  fineTris = select(set8, x -> # unique flatten x == numColumns A);
+  regularFineTris = select(fineTris, x -> isRegularTriangulation(A, x));
+  regularTris = select(set8, x -> isRegularTriangulation(A, x));
+
+  assert(#regularFineTris == 408)
+  assert(#fineTris == 448)
+  assert(#regularTris == 520)  
+
+  assert(set set5 === set set6) -- in general, this doesn't need to hold, but it is rare for this to be the case
+  assert(set set7 === set set8) -- same: rare for this to not hold
+  assert(set set4 === set set8) -- this one should not be true?  
+  assert(set select(set7, x -> isRegularTriangulation(A, x)) === set set3)
+  assert(set select(set5, x -> isRegularTriangulation(A, x)) === set set1)
+
+  set5_0
+  for tri in set5 list naiveIsTriangulation(A, tri)
+
+  numFlips(A, set5_0)  
+  flips(A, set5_0)
+  -- now let's see about the naive way of getting regular star triangulations 
+  -- i.e. we add in the origin
+  
+  pts1 =  {{-1,0,0,-1},{-1,0,1,-1},{-1,0,1,0},{-1,1,0,-1},{-1,1,0,0},{-1,1,1,2},{1,-1,0,-1},{1,0,-1,1},{1,-1,-1,-1},{0,0,0,-1},{0,0,0,0}}
+  A1 = transpose matrix pts1
+  --elapsedTime tris1 = allTriangulations(A1, Fine=>true, ConnectedToRegular=>true, RegularOnly=>false); -- 
+  elapsedTime tris1 = allTriangulations(A1, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- 
+  fineTris1 = select(tris1, x -> # unique flatten x == numColumns A1);
+  regTris1 = select(tris1, x -> isRegularTriangulation(A1, x));  
+  fineRegTris1 = select(regTris1, x -> # unique flatten x == numColumns A1);
+  stars1 = select(tris1, x -> all(x, x1 -> member(10, x1))); -- 100 here
+  starsFine1 = select(stars1, x -> # unique flatten x == numColumns A1);
+  RST = select(stars1, x -> isRegularTriangulation(A1,x)); -- 80 here...
+  FSRT = select(starsFine1, x -> isRegularTriangulation(A1,x)); -- 48 here...!
+
+
+  unique for tri in set5 list (
+      tri1 := fineStarTriangulation(A, tri);
+      newtri := for t in tri1 list append(t, 10);
+      newtri
+      );
+  select(oo, tri -> isRegularTriangulation(A1, tri))  
+
+  -- let's test this one for being a triangulation:
+  oA = orientedCircuits A
+  tri = set5_3
+  tally flatten for t in tri list subsets(t,4)
+  for z in oA list (
+      # select(tri, t -> isSubset(z_0, t)),
+      # select(tri, t -> isSubset(z_1, t))
+      )
+  -- todo:
+  -- 1. routine to check that a triangulation is a triangulation
+  -- 2. routine to turn a regular, fine triangulation, into a star (fine, regular) triangulation. How general is this? DONE, I think.
+  -- 3. perform bistellar flips to get new triangulations.
+///
+
+///
+  restart
+  needsPackage "ReflexivePolytopesDB"
+  needsPackage "Topcom"  
+  needsPackage "Polyhedra"
+ str = "4 18  M:53 18 N:11 10 H:6,45 [-78]
+        1   0   0  -2   0   2   1   3  -2   2  -2   2   3  -1   0  -2   0  -1
+        0   1   0   2   0   0   1  -2   1  -2   0   0  -1   0  -2   0  -2  -1
+        0   0   1   1   0  -1  -1  -2   2  -2   0  -2  -2   2  -1   2   1   2
+        0   0   0   0   1  -1  -1   0  -1   1   1  -1  -1  -1   2  -1   0  -1"
+ str = "4 12  M:50 12 N:11 9 H:6,44 [-76]
+        1   1   1  -1  -1   0   2  -3  -2   3  -5   1
+        0   2   0  -2   0   0   1  -3  -2   4  -5   4
+        0   0   2   0  -2   0   2  -3   0   2  -3   0
+        0   0   0   0   0   1  -1   1   1  -2   1  -2"
+ A = matrixFromString last first parseKS str
+ P = convexHull A
+ P2 = polar P
+ A1 = vertices P2
+ LP = matrix{select(latticePoints P2, x -> x != 0)}
+ numTriangulations(LP, Fine => true)
+ allTriangulations(LP, Fine=>true);
+ numTriangulations(LP)
+ allTriangulations(LP);
+
 ///
 
 end----------------------------------------------------
