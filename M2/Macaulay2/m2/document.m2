@@ -752,7 +752,8 @@ headline DocumentTag := tag -> (
      	  -- this branch does get used, but why not combine fetchPrimaryRawDocumentation and fetchAnyRawDocumentation?
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       if signalDocError tag and packageName tag === currentPackage#"pkgname" then stderr << "--warning: tag has no documentation: " << tag << endl;
+	       if signalDocError tag and packageName tag === currentPackage#"pkgname" 
+	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
 	       return null;
 	       ));
      if d#?Headline then d#Headline
