@@ -1026,7 +1026,7 @@ installPackage Package := opts -> pkg -> (
      if verbose then stderr << "--installed package " << pkg << " in " << installPrefix << endl;
      currentPackage = oldpkg;
      if not noinitfile then (
-	  userMacaulay2Directory();
+	  setUpApplicationDirectory();
 	  makePackageIndex();
 	  );
      unsetupNames();
@@ -1095,17 +1095,6 @@ http://www.math.uiuc.edu/Macaulay2/
 Daniel R. Grayson <dan@math.uiuc.edu>,
 Michael R. Stillman <mike@math.cornell.edu>
 ///
-
-userMacaulay2Directory = () -> (
-     dir := applicationDirectory();
-     makeDirectory(dir);
-     makeDirectory(dir|"encap/");
-     makeDirectory(dir|"local/");
-     makeDirectory(dir|"code/");
-     f := (n,c) -> (n = dir|n; if not fileExists n then n << c << close);
-     f("init.m2", sampleInitFile);
-     f("README", readmeFile);
-     )
 
 endswith = (suff,str) -> substring(str,-#suff) == suff
 

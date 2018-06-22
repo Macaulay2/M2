@@ -57,7 +57,7 @@ addStartFunction( () -> (
 	  prefixPath = if prefixDirectory === null then {} else {prefixDirectory};
 	  if not noinitfile and getenv "HOME" =!= "" then (
 	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
-	       userMacaulay2Directory();
+	       setUpApplicationDirectory();
 	       makePackageIndex())))
 
 addStartFunction( () -> tallyInstalledPackages() )
