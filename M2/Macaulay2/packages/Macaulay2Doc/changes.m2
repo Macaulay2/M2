@@ -59,6 +59,10 @@ document {
 		    LI {
 			 "The option ", TT "AbsoluteLinks", " to ", TO "installPackage", " has been removed.  Better logic
 			 is now used internally, producing relative links only between files installed under the same prefix."
+			 },
+		    LI {
+			 "The layout of files into directories used by ", TO "installPackage", " has been simplified, so it may be
+			 a good idea to reinstall any packages you have installed.  See ", TO "Layout", "."
 			 }
 		    }
 	       }

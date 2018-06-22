@@ -171,6 +171,8 @@ $(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
 $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 
 # installation into usr-dist
+## It's annoying that fflas_ffpack will copy the files during installation every time.
+all-in-fflas_ffpack: install-in-fflas_ffpack
 all-in-Macaulay2:install-licenses
 
 install-licenses:all-in-submodules
