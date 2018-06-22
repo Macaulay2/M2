@@ -114,24 +114,41 @@ locatePackageFile = (defaultPrefix,defaultLayoutIndex,pkgname,f) -> (
 
 locatePackageFileRelative = (defaultPrefix,defaultLayoutIndex,pkgname,f,installPrefix,installTail) -> (
      (prefix,tail) := locatePackageFile(defaultPrefix,defaultLayoutIndex,pkgname,f);
-     if prefix == installPrefix then relativizeFilename(installTail,tail) else prefix|tail)
+     if prefix === installPrefix then relativizeFilename(installTail,tail) else prefix|tail)
 
 locateCorePackageFile = (pkgname,f) -> locatePackageFile(prefixDirectory,currentLayout,pkgname,f)
 
 locateCorePackageFileRelative = (pkgname,f,installPrefix,installTail) -> locatePackageFileRelative(prefixDirectory,currentLayout,pkgname,f,installPrefix,installTail)
 
-locateDocumentationNode = fkey -> (			    -- search packages for one with a documentation node under this formatted key
-     for prefix in prefixPath
-     do if installedPackagesByPrefix#?prefix
-     then (
-	  pkgtable := installedPackagesByPrefix#prefix#"package table";
-	  for pkgname in keys pkgtable do (
-	       q := pkgtable#pkgname;
-	       if q#"doc keys"#?fkey then (
-		    layout := Layout#(q#"layout index");
-		    fn := prefix | htmlFilename1(fkey,pkgname,layout);
-		    if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
-		    return fn))))
+locateDocumentationNode = method()
+
+locateDocumentationNode (String,String) := (pkgname,fkey) -> (
+     i := getPackageInfo pkgname;
+     if i === null or not i#"doc keys"#?fkey then return null;
+     layout := Layout#(i#"layout index");
+     fn := i#"prefix" | htmlFilename1(fkey,pkgname,layout);
+     if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
+     fn)
+
+locateDocumentationNode String := fkey -> (			    -- search packages for one with a documentation node under this formatted key, unless it contains "::"
+     r := regex(" *:: *",fkey);
+     if r === null then (
+	  for prefix in prefixPath
+	  do if installedPackagesByPrefix#?prefix
+	  then (
+	       pkgtable := installedPackagesByPrefix#prefix#"package table";
+	       for pkgname in keys pkgtable do (
+		    q := pkgtable#pkgname;
+		    if q#"doc keys"#?fkey then (
+			 layout := Layout#(q#"layout index");
+			 fn := prefix | htmlFilename1(fkey,pkgname,layout);
+			 if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
+			 return fn))))
+     else (
+	  (off,len) := r#0;
+	  pkgname := substring(0,off,fkey);
+	  fkey = substring(off+len,fkey);
+	  locateDocumentationNode(pkgname,fkey)))
 
 getPackageInfoList = () -> flatten (
      for prefix in prefixPath 

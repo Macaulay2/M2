@@ -184,10 +184,7 @@ makeDocumentTag String := opts -> key -> (
      if pkg =!= null and opts#Package =!= null and pkg =!= opts#Package 
      then error ("mismatching packages ",pkg," and ", opts#Package, " specified for key ",key);
      if pkg === null then pkg = opts#Package;
-     if pkg === null 
-     then (mdt new OptionTable from {Package => pkg}) key
-     else (mdt new OptionTable from {Package => pkg}) key
-     )
+     (mdt new OptionTable from {Package => pkg}) key)
 
 DocumentTag.Key = method(Dispatch => Thing)
 DocumentTag.Key DocumentTag := x -> x#0

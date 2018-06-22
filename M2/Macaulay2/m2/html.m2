@@ -198,13 +198,12 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "pkgname" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
-links := tag -> (
-     LINK { 
-	  "href" => locateCorePackageFileRelative("Style", layout -> replace("PKG","Style",layout#"package") | "doc.css", installPrefix, htmlDirectory),
-	  "rel" => "stylesheet", 
-	  "type" => "text/css" 
-	  }
-     )
+
+htmlLinks = () -> LINK { 
+     "href" => locateCorePackageFileRelative("Style", layout -> replace("PKG","Style",layout#"package") | "doc.css", installPrefix, htmlDirectory),
+     "rel" => "stylesheet", 
+     "type" => "text/css" 
+     }
 
 -- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
 -- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
@@ -414,7 +413,7 @@ makeMasterIndex := (keylist,verbose) -> (
      title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
-	  HEAD splice { TITLE title, defaultCharSet(), links() },
+	  HEAD splice { TITLE title, defaultCharSet(), htmlLinks() },
 	  BODY nonnull {
 	       DIV { topNodeButton, " | ", tocButton, -* " | ", directoryButton, *- " | ", homeButton },
 	       HR{},
@@ -436,7 +435,7 @@ maketableOfContents := (verbose) -> (
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
-	  HEAD splice { TITLE title, defaultCharSet(), links() },
+	  HEAD splice { TITLE title, defaultCharSet(), htmlLinks() },
 	  BODY {
 	       DIV { topNodeButton, " | ", masterIndexButton, -* " | ", directoryButton, *- " | ", homeButton },
 	       HR{},
@@ -996,7 +995,7 @@ installPackage Package := opts -> pkg -> (
 		    HEAD splice {
 			 TITLE {fkey, commentize headline fkey}, -- I hope this works...
 			 defaultCharSet(),
-			 links tag
+			 htmlLinks()
 			 },
 		    BODY { 
 			 buttonBar tag,
@@ -1137,7 +1136,7 @@ makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the r
 	  HEAD splice {
 	       TITLE {key},
 	       defaultCharSet(),
-	       links()
+	       htmlLinks()
 	       },
 	  BODY { 
 	       -- buttonBar tag, HR{},
@@ -1246,7 +1245,8 @@ showHtml = show Hypertext := x -> (
      fn << html HTML {
 	  HEAD {
 	       TITLE "Macaulay2 Output",
-	       defaultCharSet()
+	       defaultCharSet(),
+	       htmlLinks()
 	       },
      	  BODY {
 	       x
@@ -1257,22 +1257,25 @@ showHtml = show Hypertext := x -> (
 
 show TEX := x -> showTex x
 
-viewHelp = key -> (
-     -- we have to rewrite this to check for secondary keys.  Or do we?
-     if key === () then (
-	  i := applicationDirectory() | topFileName;
-	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
-	  show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
-	  )
-     else if instance(key,String) then (		    -- assume key is a formatted key
-	  fn := locateDocumentationNode key;
-	  if fn === null then error("documentation not found for key ",key)
-	  else show new URL from {fn})
-     else (
-	  (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
-	  fn = prefix|tail;
-	  if not fileExists fn then error("html file not found: ",fn);
-	  show new URL from {fn}))
+viewHelp = method()
+
+installMethod(viewHelp, () -> (
+     i := applicationDirectory() | topFileName;
+     if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
+     show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
+     ))
+
+viewHelp String := key -> (		    -- assume key is a formatted key
+     fn := locateDocumentationNode key;
+     if fn === null then error("documentation not found for key ",key)
+     else show new URL from {fn})
+
+viewHelp Thing := key -> (
+     (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
+     fn := prefix|tail;
+     if not fileExists fn then error("html file not found: ",fn);
+     show new URL from {fn})
+
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (

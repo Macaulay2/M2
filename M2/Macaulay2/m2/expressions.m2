@@ -1081,14 +1081,12 @@ texMath MatrixExpression := m -> (
 	  ))
 
 ctr := 0
-showTex = method(
-     Options => {
-	  Format => "dvi", -- or "pdf", not implemented yet
-	  }
-     )
+showTex = method()
 
-showTex Thing := o -> x -> (
-     f := temporaryFileName();
+showTex Thing := x -> (
+     dir := temporaryFileName();
+     makeDirectory dir;
+     f := dir | "/show";
      f | ".tex"
      << ///\documentclass{article}
 \usepackage{amsmath}
@@ -1100,9 +1098,10 @@ showTex Thing := o -> x -> (
 \end{document}
 ///
      << close;
-     if 0 === chkrun("cd /tmp; latex " | f)
-     then chkrun("(xdvi "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
-     else error ("latex failed on input file " | f | ".tex")
+     if 0 =!= chkrun("set -x ; cd "|dir|"; latex " | f)
+     then error ("latex failed on input file "|f|".tex");
+     if 0 =!= chkrun("(xdvi "|f|".dvi && rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
+     then error ("xdvi failed on input file "|f|".tex");
      )
 
 -----------------------------------------------------------------------------
