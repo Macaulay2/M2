@@ -196,7 +196,6 @@ export {
 	"Ideal",
 	"IgnoreExampleErrors",
 	"ImmutableType",
-	"IncludeCore",
 	"IndeterminateNumber",
 	"IndexedVariable",
 	"IndexedVariableTable",
@@ -231,7 +230,6 @@ export {
 	"Local",
 	"LocalDictionary",
 	"LocalRing",
-	"Location",
 	"LongPolynomial",
 	"LowerBound",
 	"MakeDocumentation",
@@ -345,7 +343,6 @@ export {
 	"Sequence",
 	"Set",
 	"SheafOfRings",
-	"ShowDatabase",
 	"SizeLimit",
 	"SkewCommutative",
 	"Sort",
@@ -1216,9 +1213,6 @@ exportMutable {
 	"gbTrace",
 	"handleInterrupts",
 	"homeDirectory",
-	"htmlDirectory",
-	-- "installLayout",				    -- the user should not change this one
-	-- "installPrefix",				    -- the user should not change this one
 	"interpreterDepth",
 	"lastMatch",
 	"lineNumber",

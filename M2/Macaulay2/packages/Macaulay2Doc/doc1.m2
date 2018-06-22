@@ -65,7 +65,9 @@ document {
 	  (TT "help methods symbol **", " -- displays help messages about the methods usable with the operator ", TT "**"),
 	  (TT "help methods (res, X)", " -- displays help messages about the methods usable with the function ", TT "res", " and a thing of class ", TT "X"),
 	  (TT "help methods (symbol **, X)", " -- displays help messages about the methods usable with the operator ", TT "**", " and a thing of class ", TT "X"),
-	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y")
+	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y"),
+	  (TT "help about X", " -- displays documentation nodes from all installed packages whose keys contain ", TT "X", "."),
+	  (TT "help about(X,SearchBody=>true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
 	  },
      "The ", TT "help", " command is used to display online documentation.  Use ", TO viewHelp, " to display the corresponding
      documentation in your web browser.",
@@ -80,7 +82,7 @@ document {
 	  TT "help \"Gröbner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
-     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples, "reading the documentation"}
+     SeeAlso => {viewHelp, about, infoHelp, apropos, code, examples, "reading the documentation"}
      }
 document {
      Key => viewHelp,

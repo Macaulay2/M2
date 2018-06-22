@@ -54,6 +54,18 @@ document {
 			 }
 		    }
 	       },
+	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	       UL {
+		    LI {
+			 "The function ", TO "about", " has been added.  It allows one to search the documentation.
+			 For example, the command ", TT "help about X", " will display all the documentation about ", TT "X", "."
+			 },
+		    LI {
+			 "The class ", TO "NumberedVerticalList", " has been added.  It's a new type of vertical list
+			 that is printed vertically, with numbered entries."
+			 },
+		    }
+	       },
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI {
