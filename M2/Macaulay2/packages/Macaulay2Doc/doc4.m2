@@ -578,33 +578,6 @@ document {
      }
 
 document {
-     Key => (toList, BasicList),
-     Headline => "list of elements",
-     TT "toList x", " -- provides a list of elements in the basic list ", TT "x", ".",
-     PARA{},
-     "This is a good way to convert a list of some other type to a list of type
-     ", TO "List", ".",
-     EXAMPLE {
-	  "toList [a,b,c]"
-	  } 
-     }
-
-document {
-     Key => (toList, Set),
-     Headline => "list of elements",
-     TT "toList x", " -- provides a list of element in the set ", TT "x", ".",
-     EXAMPLE {
-	  "x = set {a,b,c}",
-	  "toList x"
-	  }
-     }
-
-document {
-     Key => toList,
-     Headline => "list of elements"
-     }
-
-document {
      Key => {profile,(profile, Function),(profile, String, Function)},
      Headline => "profile a function",
      TT "f = profile f", " -- replace a global function ", TT "f", " by a profiled version.",
