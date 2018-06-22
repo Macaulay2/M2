@@ -96,7 +96,7 @@ toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
      -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
      if prefix === installPrefix			    -- note: installPrefix might be null, if we aren't installing a package
      then relativizeFilename(htmlDirectory,tail) 
-     else (error "debug me"; prefix|tail))
+     else prefix|tail)
 
 htmlFilename1 = (fkey,pkgname,layout) -> (
      basefilename := if fkey === pkgname then topFileName else toFilename fkey|".xhtml";
