@@ -208,13 +208,13 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 	  -- well, sometimes it takes less than a second to uninstall a package, so be careful about that case
 	  p = installedPackagesByPrefix#prefix#"package table";
 	  for pkgname in keys p do (
-	       if not isDirectory (docdir | pkgname) then (
+	       q := p#pkgname;
+	       dbfn := q#"doc db file name";
+	       if not (isDirectory (docdir | pkgname) and fileExists dbfn) then (
+		    -- it must have been removed in less than a second; this can happen if you remove two packages, because it rescans each time
 		    remove(p,pkgname);
 		    continue;
 		    );
-	       q := p#pkgname;
-	       dbfn := q#"doc db file name";
-	       assert fileExists dbfn;
 	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);)))     
 
