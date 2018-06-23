@@ -1293,13 +1293,26 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	  DIV1 { SUBSECTION "Version", "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 	       if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname",
 	       "." },
-	  if pkg#"pkgname" =!= "Macaulay2Doc" 
+	  if pkg#"pkgname" =!= "Macaulay2Doc"
 	  then DIV1 {
 	       SUBSECTION "Source code",
-	       "The source code from which this documentation is derived is in the file ", HREF { installLayout#"packages" | fn, fn }, ".",
+	       "The source code from which this documentation is derived is in the file ", 
+	       HREF {
+		    if installLayout =!= null
+		    then installLayout#"packages" | fn
+		    else pkg#"source file",
+		    fn },
+	       ".",
 	       if pkg#?"auxiliary files" then (
 		    "  The auxiliary files accompanying it are in the
-		    directory ", HREF { installLayout#"packages" | pkg#"pkgname" | "/", pkg#"pkgname" | "/" }, "."
+		    directory ", 
+		    HREF { 
+			 if installLayout =!= null
+			 then installLayout#"packages" | pkg#"pkgname" | "/"
+			 else pkg#"auxiliary files",
+			 pkg#"pkgname" | "/" 
+			 },
+		    "."
 		    )
 	       },
 	  if #e > 0 then DIV1 {

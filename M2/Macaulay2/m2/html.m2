@@ -128,6 +128,7 @@ htmlFilename DocumentTag := tag -> (
 	       layout = Layout#(pkginfo#"layout index");
 	       prefix = pkginfo#"prefix";
 	       ));
+     if layout === null then error ("package ",pkgname," is not installed on the prefixPath");
      tail := replace("PKG",pkgname,layout#"packagehtml") | basefilename;
      assert isAbsolutePath prefix;
      (prefix,tail)					    -- this pair will be processed by toURL(String,String)

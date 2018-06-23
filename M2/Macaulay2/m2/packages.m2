@@ -48,8 +48,8 @@ loadPackage String := opts -> pkgtitle -> (
 	  -- really close the old one
 	  dismiss pkgtitle;
 	  if PackageDictionary#?pkgtitle then (
-	       pkg := PackageDictionary#pkgtitle;
-	       closePackage (value pkg); -- eventually we won't be able to keep all of these open, anyway, since 256 can be our limit on open file descriptors
+	       pkg := value PackageDictionary#pkgtitle;
+	       if instance(pkg,Package) then closePackage pkg; -- eventually we won't be able to keep all of these open, anyway, since 256 can be our limit on open file descriptors
 	       PackageDictionary#pkgtitle <- PackageDictionary#pkgtitle; -- clear out the value of the symbol
 	       );
 	  );
