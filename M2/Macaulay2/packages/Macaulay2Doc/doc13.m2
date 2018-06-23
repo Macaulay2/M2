@@ -848,10 +848,11 @@ document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
 	  To see the documentation corresponding to just one or some of the keys, help ", TO "help", " an integer or a list of integers
 	  to be used for indexing into the list returned by the most recent application of ", TO "about", "."
 	  },
-     EXAMPLE lines ///
-     about resolution
-     help 5
-     ///,
+     ---- this example won't work until after Macaulay2Doc is installed.
+     -- EXAMPLE lines ///
+     -- about resolution
+     -- help 5
+     -- ///,
      SeeAlso => { help, apropos }
      }
 
