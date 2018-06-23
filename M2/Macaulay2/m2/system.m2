@@ -200,7 +200,7 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 	  for pkgname in keys p do (
 	       q := p#pkgname;
 	       dbfn := q#"doc db file name";
-	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
+	       if fileExists dbfn and q#"doc db file time" === fileTime dbfn then continue; -- not changed
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);)))     
 
 -- Local Variables:

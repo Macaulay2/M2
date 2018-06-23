@@ -94,7 +94,8 @@ toURL String := pth -> (				    -- phase this one out eventually
 
 toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
      -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
-     if prefix === installPrefix			    -- note: installPrefix might be null, if we aren't installing a package
+     if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
+     and htmlDirectory =!= null
      then relativizeFilename(htmlDirectory,tail) 
      else prefix|tail)
 

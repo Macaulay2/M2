@@ -386,7 +386,11 @@ info IMG := net IMG := tex IMG  := x -> (
      if o#"alt" === null then error ("IMG item is missing alt attribute");
      o#"alt")
 
-info HREF := net HREF := x -> net last x
+info HREF := net HREF := x -> (
+     if match ("^mailto:",x#0)
+     then x#1
+     else x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
+     )
 
 scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
 
