@@ -510,7 +510,7 @@ installedPackages = () -> (
      
 uninstallAllPackages = () -> for p in installedPackages() do (
      << "-- uninstalling package " << p << endl;
-     uninstallPackage p
+     uninstallPackage p;
      )
 
 -- Local Variables:
