@@ -669,7 +669,56 @@ gbTrace=3
 ///
 
 end--
-{*
+-*
+///
+  -- test for computing ranks of matrices concurrently
+  restart 
+  allowableThreads = 10
+  kk = ZZ/101
+  sizes = for i from 1 to 5 list (1000*i, 1000*i)
+  mats = for i from 0 to 30 list (
+      fillMatrix mutableMatrix(kk,sizes#(i % 5)#0, sizes#(i % 5)#1)
+      );
+  fcn = (i) -> () -> (
+      << "[" << i << "]" << endl;
+      t := elapsedTiming rank mats#i;
+      << "time for rank #" << i << " = " << t#0 << endl;
+      t#1
+      )      
+  donetask = createTask(()->(<< "all computations are done!" << endl; "done!"))
+  tsks = for i from 0 to 30 list createTask (fcn i)
+  for i from 0 to 30 do addDependencyTask(donetask, tsks#i)
+  elapsedTime(schedule donetask; tsks/schedule; while not isReady donetask do sleep 1;)
+  tsks/taskResult
+  elapsedTime for i from 0 to 30 list (fcn i)()
+
+  m1 = mutableMatrix(kk,5000,5000); fillMatrix m1;
+  m2 = mutableMatrix(kk,4000,5000); fillMatrix m2;
+  m3 = mutableMatrix(kk,3000,3000); fillMatrix m3;
+
+  -- our goal: do these simultaneously
+  f1 = () -> (<< "[f1]" << endl; t := elapsedTiming rank m1; << "time for rank m1: " << t#0 << endl; t#1)
+  f2 = () -> (<< "[f2]" << endl; t := elapsedTiming rank m2; << "time for rank m2: " << t#0 << endl; t#1)
+  f3 = () -> (<< "[f3]" << endl; t := elapsedTiming rank m3; << "time for rank m3: " << t#0 << endl; t#1)
+  t4 = createTask(()->(<< "all computations are done!" << endl; "done!"))
+  t1 = createTask f1
+  t2 = createTask f2
+  t3 = createTask f3
+
+  addDependencyTask(t4, t1)
+  addDependencyTask(t4, t2)
+  addDependencyTask(t4, t3)
+  elapsedTime({t1,t2,t3,t4}/schedule; while not isReady t4 do sleep 1)
+  taskResult t4
+  {t1,t2,t3}/taskResult
+  schedule t4
+  schedule t1
+schedule t2
+schedule t3
+schedule t4
+///
+-*
+
 Cs2 = (constantStrands(C, RR_1000))#8
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909

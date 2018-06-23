@@ -575,7 +575,8 @@ TEST ///
   elapsedTime minimalBetti(coker m, LengthLimit=>6)
   assert(betti C2 == oo)
   betti(C1, Minimize => true)
-
+  elapsedTime res(coker m, FastNonminimal=>true, LengthLimit=>7)
+  betti oo
   
   m = bgg(3,M,E);
   elapsedTime gens gb m;

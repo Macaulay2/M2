@@ -6,6 +6,39 @@ Todo for branch res-2018, created 9 March 2018.
     PARTLY DONE: nonminimal resolution works.
     TODO: minimal multi-graded betti numbers
 
+    How best to do this?
+
+    plan:
+      . have a unique set of degrees in the resolution: a MonomialCollection, or something like that.
+      . change all betti displays to be multi-graded.
+      . degree ptr --> heft degree function, is essential.
+      .
+      . replace mDegree with a "const int *" degree pointer.  Call it something good.
+        requires changes in: show, getBounds (remove this?).
+        need a way of collecting what needs to be done, ordering it.
+        setBettiDisplays
+        getBettiFrame
+        insertBasic
+          and calls to it from computeIdealQuotient (need to compute new degree, and uniquify it).
+        resetMatrix
+    functions which currently deal with degrees.  Note that construction of syzygies doesn't need to go down to multidegrees.
+      OR: does it?? It might make the matrices constructed much smaller, and therefore easier to compute.
+      minimalBettiNumbers
+      inseetBasic
+      insertLevelZero
+      insertLevelOne
+      getBounds
+      computeSyzygies
+      computeRanks: needs to change.  Needs a way to get all degrees at this (heft,level).
+      fillInSyzygies: change slanted_degree to a UniquifiedDegree.
+      computeRank: change slanted_degree to a UniquifiedDegree.
+
+    smaller changes to do first:
+      . change use of MemoryBlock to memtailor.
+      . add in MemoryCollection: collection of degrees. 
+    
+    
+    
 3. stash the nonminimal res, in a different location. What functions actually use nonminimal resolutions. DONE
 
 4. allow QQ as an actual coefficient ring.  Actually, allow any
@@ -170,4 +203,27 @@ res-moninfo-dense:
   Change to allow weight vector(s)
   do we really need the hash values in the monomials?  Not sure...
   write several versions of compare_schreyer: one which includes revlex, and weight vectors.
-  
+
+-- res_comp (res-a1):
+
+each level: vector of res_term's.  Way to sort them.
+each (level,degree); need a way to go through all of these, and to sort them.
+each element includes:
+    monomial lookup table (for which monomials?)
+    (level, degree)
+    leadterm
+    syzygy itself.
+    indicator if this is a minimal syzygy element. (SYZ_MINIMAL, SYZ_NOT_MINIMAL, SYZ_NOT_NEEDED, SYZ_NOT_COMPUTED)
+reduce syzygy:
+
+
+Actually: assume we already have a sorted Schreyer frame.
+  only thing: which is the better sort order: first by degrere, or by block?
+  by degree makes sense, but then we need to know which monomials go with which element.
+  There seems to be much in res_pair that is not needed?
+    next?  not needed if we keep this as a vector?
+    next_compare? used to compute Schreyer order compare #'s.
+    mi2 -- not used!!
+    next_mi -- not used!
+    second?  do we really need this??  Probably not.
+    me: do we need this ever? it is really an index in.
