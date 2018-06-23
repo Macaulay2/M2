@@ -1213,7 +1213,7 @@ document { Key => (module, Vector),
      ///}
 
 document { Key => {package,(package, Dictionary), (package, Thing),
-	  (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol),
+	  (package, HashTable), (package, Function), (package, Symbol),
 	  (package, Sequence)
 	  },
      Headline => "get containing package",
@@ -1816,12 +1816,6 @@ document { Key => toUpper,
      EXAMPLE lines ///
      	  toUpper "A b C d E f"
      ///}
-
-document { Key => "encapDirectory",
-     Headline => "encapsulated installation directory",
-     "This variable contains the path to the encapsulation directory tree where the files of Macaulay2 are located.",
-     SeeAlso => { "prefixDirectory" }
-     }
 
 document { Key => "synonym",
      Headline => "synonym for members of a class",

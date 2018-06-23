@@ -2015,8 +2015,8 @@ doc ///
 -------------------------------------------------
 doc ///
   Key
-    beilinsonWindow
     (beilinsonWindow,ChainComplex)
+    beilinsonWindow
   Headline
     extract the subquotient complex which contributes to the Beilinson window
   Usage

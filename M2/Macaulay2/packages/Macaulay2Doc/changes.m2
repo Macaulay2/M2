@@ -40,6 +40,19 @@ document {
      		    },
      	       UL {
 	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
+     		    },
+     	       UL {
+	       	    LI TEX { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." }
+     		    },
+     	       UL {
+	       	    LI TEX { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." }
+     		    },
+     	       UL {
+	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." }
+     		    },
+     	       UL {
+	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles 
+	               on the space of symmetric forms\", has been added." }
      		    }
 	       },
      	  LI { "improved packages:",
@@ -51,6 +64,35 @@ document {
 			 lowest order terms of the obstruction equations. This has been remedied by
 			 actually calculating the tangent cone, and making appropriate adjustments
 			 to the algorithm."
+			 }
+		    }
+	       },
+	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	       UL {
+		    LI {
+			 "The function ", TO "about", " has been added.  It allows one to search the documentation of all the
+			 packages that have been installed, optionally searching the contents, in addition to the keys.
+			 For example, the command ", TT "help about X", " will display all the documentation about ", TT "X", "."
+			 },
+		    LI {
+			 "The class ", TO "NumberedVerticalList", " has been added.  It's a new type of vertical list (see ", TO "VerticalList", ")
+			 that is also printed vertically, but with numbered entries, for ease of referring to them."
+			 },
+		    }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI {
+			 "The option ", TT "AbsoluteLinks", " to ", TO "installPackage", " has been removed.  Better logic
+			 is now used internally, producing relative links only between files installed under the same prefix."
+			 },
+		    LI {
+			 "The layout of files into directories used by ", TO "installPackage", " has been simplified, so it may be
+			 a good idea to reinstall any packages you have installed.  See ", TO "Layout", "."
+			 },
+		    LI {
+			 "Each directory listed in ", TO "prefixPath", " now has its own layout, which is detected at runtime.
+			 See ", TO "Layout", "."
 			 }
 		    }
 	       }
@@ -1226,7 +1268,7 @@ document {
 			 complicated polynomials."
 			 },
 		    LI {
-			 "The function ", TO "installPackage", " will now, when the option ", TO "AbsoluteLinks", " is set to ", TO "true", ",
+			 "The function ", TO "installPackage", " will now, when the option ", TT "AbsoluteLinks", " is set to ", TO "true", ",
 			 will now also search the installation prefix where the package is about to be installed for the files that are linked to.
 			 This should resolve the situation where a developer uses the function to modify a package that is already incorporated
 			 into ", EM "Macaulay2", " itself, and (some of) the links in the freshly installed package end up pointing to 

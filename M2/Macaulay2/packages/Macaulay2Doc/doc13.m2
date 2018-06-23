@@ -224,15 +224,14 @@ document { Key => symbol applicationDirectorySuffix,
      SeeAlso => applicationDirectory,
      PARA {
 	  "The value of ", TT "applicationDirectorySuffix", " may also be a function of no arguments, in which case its value is used as the path.
-	  The initial value of ", TT "applicationDirectorySuffix", " is a function whose value depends on the operating system and its conventions."
+	  The initial value of ", TT "applicationDirectorySuffix", " is a string whose value depends on the operating system and its conventions."
 	  },
      EXAMPLE lines ///
-     	  applicationDirectorySuffix()
+     	  applicationDirectorySuffix
 	  applicationDirectory()
 	  applicationDirectorySuffix = "local/Mac2"
 	  applicationDirectory()
      	  ///,	  
-     SourceCode => applicationDirectorySuffix,
      Consequences => { { "the value of the function ", TT "applicationDirectory", " will use the new value of ", TT "applicationDirectorySuffix" }}}
 document { Key => {applicationDirectory, "application directory"},
      Headline => "the path to the user's application directory",
@@ -251,7 +250,7 @@ document {
      Key => installedPackages,
      Usage => "installedPackages()",
      Outputs => { 
-	  List => {"a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "."},
+	  List => {{"a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "."}},
 	  },
      SeeAlso => { installPackage }
      }
@@ -465,20 +464,40 @@ document { Key => VerticalList,
      Usage => "VerticalList x",
      Inputs => { "x" => List },
      Outputs => { VerticalList },
-     "Many operations on lists apply to vertical lists, since it is a ", TO VisibleList, ".  The
-     main difference is the way that it is displayed.",
+     "All operations on lists apply to vertical lists, since they inherit from the type ", TO VisibleList, ".  The
+     only difference is the way that a vertical list is displayed vertically.",
      EXAMPLE lines ///
      	 a .. e
 	 v = VerticalList oo
      	 v_1
 	 length v
 	 ///,
-     "It is easy to get a normal list back for those operations 
-     which do not apply to vertical lists:",
+     "One may get a normal list back from a vertical list as follows.",
      EXAMPLE lines ///
      	 toList v
-         ///
-    }
+         ///,
+     SeeAlso => { NumberedVerticalList }
+     }
+
+document { Key => NumberedVerticalList,
+     Headline => "a type of visible self-initializing list that prints vertically",
+     Usage => "NumberedVerticalList x",
+     Inputs => { "x" => List },
+     Outputs => { NumberedVerticalList },
+     "All operations on lists apply to numbered vertical lists, since they inherit from the type ", TO VisibleList, ".  The
+     only difference is the way that a numbered vertical list is displayed vertically, with index numbers labelling the entries.",
+     EXAMPLE lines ///
+     	 a .. e
+	 v = NumberedVerticalList oo
+     	 v_1
+	 length v
+	 ///,
+     "One may get a normal list back from a vertical list as follows.",
+     EXAMPLE lines ///
+     	 toList v
+         ///,
+     SeeAlso => { VerticalList }
+     }
 
 document { Key => ForestNode,
      Headline => "a type of basic list used to represent a forest, i.e., a list of rooted trees",
@@ -813,6 +832,28 @@ document { Key => "documentation keys",
 	  makeDocumentTag ((symbol _, symbol =), Symbol, Thing)
      	  makeDocumentTag (Tor,ZZ,Module,Module)
      ///
+     }
+
+document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
+     Usage => "about s",
+     Inputs => { 
+	  "s" => { ofClass { String, Function, Symbol, Type } },
+	  SearchBody => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
+	  },
+     Outputs => {
+	  NumberedVerticalList => { "a list of documentation node keys containing ", TT "s", ".  If ", TT "s", " is not a string, then it must
+	       appear as a complete word." }},
+     PARA {
+	  "The documentation corresponding to the keys can be displayed by applying the function ", TO "help", " to the resulting list.
+	  To see the documentation corresponding to just one or some of the keys, help ", TO "help", " an integer or a list of integers
+	  to be used for indexing into the list returned by the most recent application of ", TO "about", "."
+	  },
+     ---- this example won't work until after Macaulay2Doc is installed.
+     -- EXAMPLE lines ///
+     -- about resolution
+     -- help 5
+     -- ///,
+     SeeAlso => { help, apropos }
      }
 
 -- Local Variables:

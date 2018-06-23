@@ -24,7 +24,6 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
-	AbsoluteLinks => false, 				\
 	UserMode => false, 					\
 	Verbose => $(Verbose),					\
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\",		\
@@ -93,8 +92,8 @@ endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
 # make packages Style and Macaulay2Doc get installed before the others:
-$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
