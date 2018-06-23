@@ -1,16 +1,14 @@
 newPackage(
 	"RandomCurvesOverVerySmallFiniteFields",
-Version => "0.3",
-Date => "March 20, 2018",
-Authors => {{Name => "Christian Bopp",
-		   Email =>"bopp@math.uni-sb.de",
-		   HomePage =>"http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
-		   {Name => "Frank-Olaf Schreyer",
-		   Email =>"schreyer@math.uni-sb.de",
-		   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}	       
-						},
-Headline=> "computation of general canonical curves of genus <= 15 over fields with small characteristic",
-DebuggingMode => true
+	Version => "0.3",
+	Date => "March 20, 2018",
+	Authors => {{Name => "Christian Bopp",
+			   Email =>"bopp@math.uni-sb.de",
+			   HomePage =>"http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
+		    {Name => "Frank-Olaf Schreyer",
+			   Email =>"schreyer@math.uni-sb.de",
+			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
+	Headline=> "computation of general canonical curves of genus <= 15 over fields with small characteristic"
 	)
     
 export{"isSmoothCurve",
@@ -36,7 +34,7 @@ export{"isSmoothCurve",
 
 
 -- 14.09.2015
--- the aim ist to provide functions which compute canonical curves over fields with very small characteristic
+-- the aim is to provide functions which compute canonical curves over fields with very small characteristic
 -- at the moment we are only interested in the odd genus cases
 -- for g<=10 we use a construction via plane models
 -- for g=11,13 we use a construction via space model

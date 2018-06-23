@@ -5,8 +5,7 @@ newPackage("StronglyStableIdeals",
 	               {Name => "Davide Alberelli"},
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
-	   Headline => "A package to study strongly stable ideals related to Hilbert polynomials",
-	   DebuggingMode => false,
+	   Headline => "studying strongly stable ideals related to Hilbert polynomials",
 	   PackageImports => {"gfanInterface"}
 	  )
 

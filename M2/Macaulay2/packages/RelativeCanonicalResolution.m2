@@ -1,16 +1,14 @@
 newPackage(
 	"RelativeCanonicalResolution",
-Version => "0.2",
-Date => "Jun 07, 2018",
-Authors => {{Name => "Christian Bopp",
-		   Email => "bopp@math.uni-sb.de",
-		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
-		   {Name => "Michael Hoff",
-		   Email => "hahn@math.uni-sb.de",
-		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}
-						},
-Headline=> "computation of the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
-DebuggingMode=>true
+	Version => "0.2",
+	Date => "Jun 07, 2018",
+	Authors => {{Name => "Christian Bopp",
+			   Email => "bopp@math.uni-sb.de",
+			   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
+			   {Name => "Michael Hoff",
+			   Email => "hahn@math.uni-sb.de",
+			   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}},
+	Headline=> "computation of the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k"
 	)
    
 export{"getFactors", 

@@ -40,6 +40,19 @@ document {
      		    },
      	       UL {
 	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
+     		    },
+     	       UL {
+	       	    LI TEX { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." }
+     		    },
+     	       UL {
+	       	    LI TEX { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." }
+     		    },
+     	       UL {
+	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." }
+     		    },
+     	       UL {
+	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles 
+	               on the space of symmetric forms\", has been added." }
      		    }
 	       },
      	  LI { "improved packages:",
@@ -57,12 +70,13 @@ document {
 	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
 	       UL {
 		    LI {
-			 "The function ", TO "about", " has been added.  It allows one to search the documentation.
+			 "The function ", TO "about", " has been added.  It allows one to search the documentation of all the
+			 packages that have been installed, optionally searching the contents, in addition to the keys.
 			 For example, the command ", TT "help about X", " will display all the documentation about ", TT "X", "."
 			 },
 		    LI {
-			 "The class ", TO "NumberedVerticalList", " has been added.  It's a new type of vertical list
-			 that is printed vertically, with numbered entries."
+			 "The class ", TO "NumberedVerticalList", " has been added.  It's a new type of vertical list (see ", TO "VerticalList", ")
+			 that is also printed vertically, but with numbered entries, for ease of referring to them."
 			 },
 		    }
 	       },
@@ -75,6 +89,10 @@ document {
 		    LI {
 			 "The layout of files into directories used by ", TO "installPackage", " has been simplified, so it may be
 			 a good idea to reinstall any packages you have installed.  See ", TO "Layout", "."
+			 },
+		    LI {
+			 "Each directory listed in ", TO "prefixPath", " now has its own layout, which is detected at runtime.
+			 See ", TO "Layout", "."
 			 }
 		    }
 	       }
