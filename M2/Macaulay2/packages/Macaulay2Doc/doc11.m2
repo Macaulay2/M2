@@ -345,18 +345,6 @@ document {
      }
 
 document {
-     Key => isTable,
-     Headline => "whether something is a rectangular list of lists",
-     PARA{},
-     "Warning: it is intrinsically impossible to represent a ", TT "0", " 
-     by ", TT "k", " matrix as a list of lists.",
-     EXAMPLE {
-	  "isTable {{1,2,3},{4,5}}",
-	  "isTable {{1,2,3},{4,5,6}}",
-	  }
-     }
-
-document {
      Key => Monoid,
      Headline => "the class of all monoids",
      "A monoid is a set with a multiplicative operation on

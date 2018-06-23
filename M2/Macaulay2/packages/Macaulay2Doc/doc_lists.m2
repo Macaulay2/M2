@@ -1684,7 +1684,6 @@ doc///
   "lists and sequences"
 ///
 
-
 doc///
  Key
   unique
