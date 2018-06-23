@@ -1933,7 +1933,7 @@ makeMembershipFile(String) := o ->(IFD)->(
 --the number of variables in this input file equals the number of points times the number of coordinates.
 makeB'TraceInput = method(TypicalValue => Nothing, Options=>{
 	NameB'InputFile=>"inputTT",  --This option allows us to change the name of the input file that we will prodcue. (This imput file is super simple).
-	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
+	B'Configs=>{} --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
 	})
 makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,NumberOfCoordinates)->(    
     theVars:= for aSol  to NumberOfPoints-1 list for aCoordinate to NumberOfCoordinates-1 list ("jadeTT"|aSol|"v"|aCoordinate);
@@ -3093,7 +3093,7 @@ makeB'Slice = method(TypicalValue=>Nothing,Options=>{
 	B'NumberCoefficients=>{},
 	B'Homogenization=>{},
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
-	NameB'Slice=>null,
+	NameB'Slice=>null
 	 })
 makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
 --      

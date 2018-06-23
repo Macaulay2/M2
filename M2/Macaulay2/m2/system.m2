@@ -100,6 +100,8 @@ makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
 
 installedPackagesByPrefix = new MutableHashTable
 
+allPackages = () -> unique sort flatten for prefix in keys installedPackagesByPrefix list keys installedPackagesByPrefix#prefix#"package table"
+
 getPackageInfo = pkgname ->				    -- returns null if the package is not installed
      for prefix in prefixPath 
      do if installedPackagesByPrefix#?prefix 
