@@ -147,7 +147,7 @@ databaseSuffix = "-" | version#"endianness" | "-" | version#"pointer size" | ".d
 databaseDirectory = (layout,pre,pkg) -> pre | replace("PKG",pkg,layout#"packagecache")
 databaseFilename  = (layout,pre,pkg) -> databaseDirectory(layout,pre,pkg) | "rawdocumentation" | databaseSuffix
 
-newPackage(String) := opts -> (pkgname) -> (
+newPackage String := opts -> (pkgname) -> (
      checkPackageName pkgname;
      scan({(Version,String),(AuxiliaryFiles,Boolean),(DebuggingMode,Boolean),(InfoDirSection,String),
 	       (PackageImports,List),(PackageExports,List),(Authors,List),(Configuration,List)},
@@ -215,6 +215,18 @@ newPackage(String) := opts -> (pkgname) -> (
      then opts = merge(opts, new OptionTable from {OptionalComponentsPresent => opts.CacheExampleOutput =!= true },last);
      if opts.UseCachedExampleOutput === null
      then opts = merge(opts, new OptionTable from {UseCachedExampleOutput => not opts.OptionalComponentsPresent},last);
+     packagePrefix := (
+	  -- Try to detect whether we are loading the package from an installed version.
+	  -- A better test would be to see if the raw documentation database is there...
+	  m := regex("(/|^)" | Layout#2#"packages" | "$", currentFileDirectory);
+	  if m#?1 
+	  then substring(currentFileDirectory,0,m#1#0 + m#1#1)
+	  else (
+	       m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
+	       if m#?1
+	       then substring(currentFileDirectory,0,m#1#0 + m#1#1)
+	       else prefixDirectory -- this can be useful when running from the source tree, but this is a kludge
+	       ));
      newpkg := new Package from nonnull {
           "pkgname" => pkgname,
 	  symbol Options => opts,
@@ -238,17 +250,13 @@ newPackage(String) := opts -> (pkgname) -> (
 	  if opts.AuxiliaryFiles then "auxiliary files" => toAbsolutePath currentFileDirectory | pkgname | "/",
 	  "source file" => toAbsolutePath currentFileName,
 	  "undocumented keys" => new MutableHashTable,
-	  "package prefix" => (
-	       m := regex("(/|^)" | currentLayout#"packages" | "$", currentFileDirectory);
-	       if m#?1 
-	       then substring(currentFileDirectory,0,m#1#0 + m#1#1)
-	       else prefixDirectory
-	       ),
+	  if packagePrefix =!= null then ("package prefix" => packagePrefix)
 	  };
      newpkg#"test number" = 0;
-     if newpkg#"package prefix" =!= null then (
+     if newpkg#?"package prefix" then (
 	  -- these assignments might be premature, for any package that is loaded before dumpdata, as the "package prefix" might change:
-	  rawdbname := databaseFilename(currentLayout,newpkg#"package prefix", pkgname);
+	  l := detectCurrentLayout newpkg#"package prefix";
+	  rawdbname := databaseFilename(Layout#l,newpkg#"package prefix", pkgname);
 	  if fileExists rawdbname then (
 	       rawdb := openDatabase rawdbname;
 	       newpkg#"raw documentation database" = rawdb;
