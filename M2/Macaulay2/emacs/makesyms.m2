@@ -24,7 +24,7 @@ f2 := openOut "M2-symbols"
 
 f << "(defvar M2-symbols '(" << endl
 
-scan( select (symbols, (nam,sym) -> isAlpha nam), (nam,sym) -> (
+scan( select (symbols, (nam,sym) -> isAlphaNumeric nam), (nam,sym) -> (
 	  f << "    " << format nam << endl;
 	  f2 << nam << endl;
 	  ))
