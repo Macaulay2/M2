@@ -34,7 +34,7 @@ export {
 debug Core
 needsPackage "SVDComplexes"
 
-{*
+-*
 -- The following shuold be where?
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
@@ -47,7 +47,7 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
-*}
+*-
 
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
@@ -116,10 +116,10 @@ TEST ///
 --  b. allow a single multi-degree
   -- constantStrand, constantStrands
   -- these are from nonminimal free resolutions over QQ
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   
   R = QQ[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
@@ -147,7 +147,7 @@ TEST ///
       => 14, (3,{8},8) => 52, (3,{9},9) => 45, (3,{10},10) => 4, (4,{8},8) => 4, (4,{9},9) => 35, (4,{10},10) =>
       52, (4,{11},11) => 14, (4,{12},12) => 4, (5,{10},10) => 9, (5,{11},11) => 29, (5,{12},12) => 10, (5,{13},13)
       => 3, (5,{14},14) => 1, (6,{12},12) => 6, (6,{13},13) => 3, (6,{14},14) => 1}
-  {*
+  -*
   assert(betti'ans ==betti (C1 = getNonminimalRes(C, R1)))
   assert(betti'ans == betti (C2 = getNonminimalRes(C, R2)))
   assert(betti'ans == betti (C3 = getNonminimalRes(C, R3)))
@@ -156,14 +156,14 @@ TEST ///
   assert(C2.dd^2 == 0)
   assert(C3.dd^2 == 0)
   assert(C4.dd^2 == 0)
-  *}
+  *-
 ///
 
 TEST ///
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   R = ZZ/32003[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
   C = res(ideal gens gb I, Strategy=>4.1)
@@ -422,7 +422,7 @@ TEST ///
 
 
 end--
-{*
+-*
 Cs2 = (constantStrands(C, RR_1000))#8
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909
@@ -433,7 +433,7 @@ Cs2 = (constantStrands(C, RR_1000))#8
       netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
       netList{(clean(1e-14,CR)).dd_4,(clean(1e-299,CR2)).dd_4}
       netList {(clean(1e-14,CR)).dd_4} == netList{(clean(1e-299,CR2)).dd_4}
-      *}
+      *-
 
 restart
 uninstallPackage "NonminimalComplexes"
@@ -750,13 +750,13 @@ restart
   makeAGR(6,7,50,0)
   
   I = getAGR(6,7,50,0);
-{*  
+-*  
   R = QQ[a..h]
   deg = 6
   nextra = 30
   F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
   elapsedTime I = ideal fromDual matrix{{F}};
-*}
+*-
   
   elapsedTime C = res(I, FastNonminimal=>true)
   betti C

@@ -10,8 +10,8 @@ viewHelp "SVDComplexes"
 
 newPackage(
         "SVDComplexes",
-        Version => "0.2", 
-        Date => "June 6, 2017",
+        Version => "0.3", 
+        Date => "May 23, 2018",
         Authors => {
             {Name => "Frank Schreyer", 
 		        Email => "schreyer@math.uni-sb.de",
@@ -461,11 +461,11 @@ SVDHomology(ChainComplex,ChainComplex) := opts -> (C,C') -> (
 
 
 ///
-{*
+-*
   no assertion
   restart
   needsPackage "SVDComplexes"
-*}
+*-
 needsPackage "RandomComplexes"
 
 h={1,3,5,2,1} 
@@ -548,10 +548,10 @@ euclideanDistance(ChainComplex,ChainComplex) := (A,B) -> (
     )
 
 TEST ///
-{*
+-*
   restart
   needsPackage "SVDComplexes"
-*}
+*-
 
 needsPackage "RandomComplexes"
 
@@ -776,10 +776,10 @@ arePseudoInverses(ChainComplex, ChainComplex) := opts -> (A,B) -> (
     )
 
 TEST ///
-{*
+-*
   restart
   needsPackage "SVDComplexes"
-*}
+*-
 
   needsPackage "RandomComplexes"
   -- Simple boundary cases for psuedoInverse.
@@ -793,10 +793,10 @@ TEST ///
 ///
     
 TEST ///
-{*
+-*
   restart
   debug needsPackage "SVDComplexes"
-*}
+*-
 
   needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
@@ -840,7 +840,7 @@ TEST ///
   assert arePseudoInverses(C, Ci)
 ///
 
-{*
+-*
 TEST ///
   -- pseudo inverses do not exist over finite fields sometimes:
   kk = ZZ/5
@@ -890,7 +890,7 @@ Lm
 Ln
 Pm,Pn
 ///
-*}
+*-
 
 conjugateComplex=method(Options=>{Height=>10})
 conjugateComplex ChainComplex := opts -> C -> (
@@ -912,19 +912,51 @@ doc ///
      support for computing homology, ranks and SVD complexes, for a chain complex over the real numbers
    Description
     Text
-      Some functionality here should be moved elsewhere.
+      This package implements the algorithms in the paper "Singular value decomposition of complexes", by D. Brake, J. Hauenstein, F. Schreyer, A. Sommese, and M. Stillman, 
+      @HREF "https://arxiv.org/abs/1804.09838"@.
+
+      Singular value decompositions of matrices are extremely useful in practice.  In particular, an SVD can often reveal the rank (numeric rank) of a matrix.  
       
-      Here is an example of the usage.
+      In the above paper, we extend the notion of singular value decomposition from matrices over the reals or complexes to a complex of matrices over the reals or complexes.
+      
+      For some applications,
+      one obtains a complex over the (approximate) reals, and one would like to know what the ranks of the matrices are, and therefore the ranks of the homology groups.
+      One way to do this would be to compute the SVD of each matrix separately, often revealing the desired ranks.  This is less than satisfactory however, as it ignores the fact
+      that this sequence is an approximation of a complex, i.e. each two consecutive matrices multiply to zero.
+      
+      In this package, and the referenced paper, we give 2 algorithms for computing the SVD of a complex, and the resulting putative ranks of the matrices or ranks of the 
+      homology groups.  
+
+      Here is an example of the usage.  We construct a random chain complex whose homology modules have ranks 1, 4, 6, 5, and 1:
+    Example
+      needsPackage "RandomComplexes"
+      h = {1,4,6,5,1} 
+      r = {1,3,3,4}
+      C = randomChainComplex(h,r)
+      CQ = C ** QQ
+      prune HH CQ
+      CR = C ** RR_53
+      (h,U) = SVDComplex CR
+    Text
+      {\tt U} is a map from the SVD complex of C, to C.  h is a HashTable whose values are the (putative) ranks of the homology groups.
+      Note that the entries of the matrices of this complex are the singular values, but they are not on the main diagonal.
+    Example
+      source U
+      (source U).dd
    Caveat
+     The algorithms in this package work well in many cases, but it would be nice if a numeric analyst would improve the algorithms!
+   SeeAlso
+     SVDComplex
+     SVDHomology
 ///
 
 
 
 TEST ///
-{*
+-*
   restart
   needsPackage "RandomComplexes"
-*}
+*-
   needsPackage "RandomComplexes"
   h={1,4,6,5,1} 
   r={1,3,3,4}
@@ -1288,8 +1320,9 @@ doc ///
       Cpplus.dd^2
       arePseudoInverses(Cp,Cpplus)
    Caveat
-      Over finite fields the algorithm can fail if toDo  what happens. 
+      Over finite fields the algorithm can fail.
    SeeAlso
+      arePseudoInverses
       SVDComplex
 ///
 

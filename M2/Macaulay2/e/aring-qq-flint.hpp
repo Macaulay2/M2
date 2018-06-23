@@ -103,7 +103,7 @@ class ARingQQFlint : public RingInterface
     fmpq_set_si(&result, a, 1);
   }
 
-  void set_from_mpz(ElementType& result, const mpz_ptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     // printf("ARingQQFlint::calling set_from_mpz\n");
     fmpz_set_mpz(fmpq_numref(&result), a);

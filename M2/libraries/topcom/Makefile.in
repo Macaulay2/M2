@@ -6,7 +6,10 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = TOPCOM-$(VERSION).tar.gz
 PRECONFIGURE = autoreconf -vif
 LICENSEFILES = COPYING README
-PROGRAMS = src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
+PROGRAMS = src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits \
+	src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs \
+	src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips \
+	src/points2triangs src/points2volume
 STRIPFILES = $(PROGRAMS)
 INSTALLCMD = :
 include ../Makefile.library

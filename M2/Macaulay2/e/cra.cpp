@@ -3,16 +3,14 @@
 #include "matrix.hpp"
 #include "poly.hpp"
 
-void ChineseRemainder::CRA0(mpz_t a,
-                            mpz_t b,
-                            mpz_t um,
-                            mpz_t vn,
-                            mpz_t mn,
+void ChineseRemainder::CRA0(mpz_srcptr a,
+                            mpz_srcptr b,
+                            mpz_srcptr um,
+                            mpz_srcptr vn,
+                            mpz_srcptr mn,
                             mpz_t result)
 {
   mpz_t mn_half;
-  mpz_t zerompz;
-  mpz_init_set_si(zerompz, 0);
   mpz_init(mn_half);
   mpz_mul(result, um, b);
   mpz_addmul(result, vn, a);
@@ -23,10 +21,11 @@ void ChineseRemainder::CRA0(mpz_t a,
     {
       mpz_sub(result, result, mn);
     }
+  mpz_clear(mn_half);
 }
 
-bool ChineseRemainder::computeMultipliers(mpz_t m,
-                                          mpz_t n,
+bool ChineseRemainder::computeMultipliers(mpz_srcptr m,
+                                          mpz_srcptr n,
                                           mpz_t result_um,
                                           mpz_t result_vn,
                                           mpz_t result_mn)
@@ -45,9 +44,9 @@ bool ChineseRemainder::computeMultipliers(mpz_t m,
 ring_elem ChineseRemainder::CRA(const PolyRing *R,
                                 ring_elem ff,
                                 ring_elem gg,
-                                mpz_t um,
-                                mpz_t vn,
-                                mpz_t mn)
+                                mpz_srcptr um,
+                                mpz_srcptr vn,
+                                mpz_srcptr mn)
 {
   mpz_t result_coeff;
   mpz_t mn_half;
@@ -152,8 +151,8 @@ ring_elem ChineseRemainder::CRA(const PolyRing *R,
 ring_elem ChineseRemainder::CRA(const PolyRing *R,
                                 ring_elem ff,
                                 ring_elem gg,
-                                mpz_t m,
-                                mpz_t n)
+                                mpz_srcptr m,
+                                mpz_srcptr n)
 {
   // compute the multipliers
   mpz_t um, vn, mn;
@@ -172,9 +171,9 @@ ring_elem ChineseRemainder::CRA(const PolyRing *R,
 vec ChineseRemainder::CRA(const PolyRing *R,
                           vec f,
                           vec g,
-                          mpz_t um,
-                          mpz_t vn,
-                          mpz_t mn)
+                          mpz_srcptr um,
+                          mpz_srcptr vn,
+                          mpz_srcptr mn)
 {
   vecterm head;
   vec result = &head;
@@ -242,9 +241,9 @@ vec ChineseRemainder::CRA(const PolyRing *R,
 
 Matrix *ChineseRemainder::CRA(const Matrix *f,
                               const Matrix *g,
-                              mpz_t um,
-                              mpz_t vn,
-                              mpz_t mn)
+                              mpz_srcptr um,
+                              mpz_srcptr vn,
+                              mpz_srcptr mn)
 {
   if (f->get_ring() != g->get_ring())
     {
@@ -289,8 +288,8 @@ Matrix *ChineseRemainder::CRA(const Matrix *f,
 
 const RingElement *rawRingElementCRA(const RingElement *f,
                                      const RingElement *g,
-                                     mpz_t m,
-                                     mpz_t n)
+                                     mpz_srcptr m,
+                                     mpz_srcptr n)
 {
   // Assumption: f and g are either in ZZ, or in a polynomial ring whose coeff
   // ring is ZZ.  The output is a ring element in the same ring.
@@ -334,7 +333,7 @@ const RingElement *rawRingElementCRA(const RingElement *f,
   return 0;
 }
 
-const Matrix *rawMatrixCRA(const Matrix *f, const Matrix *g, mpz_t m, mpz_t n)
+const Matrix *rawMatrixCRA(const Matrix *f, const Matrix *g, mpz_srcptr m, mpz_srcptr n)
 {
   // Error handling:
   if (f->get_ring() != g->get_ring())
@@ -367,14 +366,14 @@ const Matrix *rawMatrixCRA(const Matrix *f, const Matrix *g, mpz_t m, mpz_t n)
   return result;
 }
 
-void showint(mpz_t a)
+void showint(mpz_srcptr a)
 {
   char s[1000];
   mpz_get_str(s, 10, a);
   fprintf(stderr, " %s ", s);
 }
 
-bool ChineseRemainder::ratConversion(mpz_t c, mpz_t m, mpq_t result)
+bool ChineseRemainder::ratConversion(mpz_srcptr c, mpz_srcptr m, mpq_t result)
 {
   mpz_t a1, a2, u1, u2, q, h, mhalf, u2sqr, a2sqr;
   bool retVal = true;
@@ -434,7 +433,7 @@ bool ChineseRemainder::ratConversion(mpz_t c, mpz_t m, mpq_t result)
 }
 
 ring_elem ChineseRemainder::ratConversion(const ring_elem ff,
-                                          mpz_t m,
+                                          mpz_srcptr m,
                                           const PolyRing *RQ)
 {
   mpq_t result_coeff;
@@ -464,7 +463,7 @@ ring_elem ChineseRemainder::ratConversion(const ring_elem ff,
   return head.next;
 }
 
-vec ChineseRemainder::ratConversion(vec f, mpz_t m, const PolyRing *RQ)
+vec ChineseRemainder::ratConversion(vec f, mpz_srcptr m, const PolyRing *RQ)
 {
   vecterm head;
   vec result = &head;
@@ -482,7 +481,7 @@ vec ChineseRemainder::ratConversion(vec f, mpz_t m, const PolyRing *RQ)
 }
 
 const RingElement *rawRingElementRatConversion(const RingElement *f,
-                                               mpz_t m,
+                                               mpz_srcptr m,
                                                const Ring *RQ)
 {
   const Ring *Rf = f->get_ring();
@@ -522,7 +521,7 @@ const RingElement *rawRingElementRatConversion(const RingElement *f,
 // f should be an element in the polynomial ring R (over ZZ).
 // RQ should be the same ring as R, but with rational coefficients
 
-const Matrix *rawMatrixRatConversion(const Matrix *f, mpz_t m, const Ring *RQ)
+const Matrix *rawMatrixRatConversion(const Matrix *f, mpz_srcptr m, const Ring *RQ)
 {
   const PolyRing *R = f->get_ring()->cast_to_PolyRing();
   const PolyRing *PQ = RQ->cast_to_PolyRing();

@@ -1280,7 +1280,8 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
           return 0;
         }
       ring_elem result = S->dimension(f->get_value());
-      return result.get_mpz();
+#warning "const cast from mpz_srcptr to mpz_ptr"
+      return const_cast<mpz_ptr>(result.get_mpz());
   } catch (exc::engine_error e)
     {
       ERROR(e.what());
