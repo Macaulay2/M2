@@ -387,9 +387,11 @@ info IMG := net IMG := tex IMG  := x -> (
      o#"alt")
 
 info HREF := net HREF := x -> (
-     if match ("^mailto:",x#0)
-     then x#1
-     else x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
+     if #x === 1
+     then x#0
+     else if match ("^mailto:",x#0)
+     then toString x#1
+     else toString x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
      )
 
 scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
