@@ -93,6 +93,11 @@ document {
 		    LI {
 			 "Each directory listed in ", TO "prefixPath", " now has its own layout, which is detected at runtime.
 			 See ", TO "Layout", "."
+			 },
+		    LI {
+			 "New types ", TO "MethodFunctionSingle", " and ", TO "MethodFunctionBinary", " were introduced to serve as classes of
+			 method functions with a single argument, such as ", TO "code", ", and of associative method functions based on methods
+			 with two arguments, such as ", TO "gcd", ", from other compiled functions."
 			 }
 		    }
 	       }

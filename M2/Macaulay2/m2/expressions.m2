@@ -53,15 +53,15 @@ expression = method(Dispatch => Thing, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
 
-value' = method(Dispatch => Thing)
-value' Sequence := x -> apply(x,value')
-value' Thing := identity
+expressionValue = method(Dispatch => Thing)
+expressionValue Sequence := x -> apply(x,expressionValue)
+expressionValue Thing := identity
 
 -- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
 -- but without it, we have no way to recover a polynomial from its expression, without introducing Holder2 or something like it
-value' Symbol := value
+expressionValue Symbol := value
 
-value Expression := value'
+value Expression := expressionValue
 
 --Holder2 = new WrapperType of Expression			    -- Holder{ printable form, value form }
 --Holder2.synonym = "holder"
@@ -137,7 +137,7 @@ Minus = new WrapperType of Expression		  -- unary minus
 Minus.synonym = "minus expression"
 
 Minus#operator = "-"
-value' Minus := v -> minus apply(toSequence v,value')
+expressionValue Minus := v -> minus apply(toSequence v,expressionValue)
 toString'(Function, Minus) := (fmt,v) -> (
      term := v#0;
      if precedence term > precedence v or class term === Product
@@ -148,8 +148,8 @@ toString'(Function, Minus) := (fmt,v) -> (
 Equation = new HeaderType of AssociativeExpression
 Equation.synonym = "equation expression"
 Equation#operator = "=="
-value' Equation := (v) -> (
-     v = apply(toSequence v,value');
+expressionValue Equation := (v) -> (
+     v = apply(toSequence v,expressionValue);
      if # v === 2
      then v#0 == v#1
      else if # v <= 1
@@ -189,7 +189,7 @@ Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
 toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
-value' Parenthesize := first
+expressionValue Parenthesize := first
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
@@ -197,7 +197,7 @@ Sum.synonym = "sum expression"
 Sum#unit = ZERO
 Sum#EmptyName = "0"
 Sum#operator = "+"
-value' Sum := v -> plus apply(toSequence v,value')
+expressionValue Sum := v -> plus apply(toSequence v,expressionValue)
 
 toString'(Function, Sum) := (fmt,v) -> (
      n := # v;
@@ -222,7 +222,7 @@ Product.synonym = "product expression"
 Product#unit = ONE
 Product#EmptyName = "1"
 Product#operator = "*"
-value' Product := v -> times apply(toSequence v,value')
+expressionValue Product := v -> times apply(toSequence v,expressionValue)
 
 toString'(Function, Product) := (fmt,v) -> (
      n := # v;
@@ -246,7 +246,7 @@ NonAssociativeProduct.synonym = "nonassociative product expression"
 NonAssociativeProduct#unit = ONE
 NonAssociativeProduct#EmptyName = "1"
 NonAssociativeProduct#operator = "**"
-value' NonAssociativeProduct := v -> times apply(toSequence v,value')
+expressionValue NonAssociativeProduct := v -> times apply(toSequence v,expressionValue)
 
 toString'(Function, NonAssociativeProduct) := (fmt,v) -> (
      n := # v;
@@ -278,24 +278,24 @@ toString'(Function, NonAssociativeProduct) := (fmt,v) -> (
 Divide = new HeaderType of Expression
 Divide.synonym = "divide expression"
 Divide#operator = "/"
-value' Divide := (x) -> (value' x#0) / (value' x#1)
+expressionValue Divide := (x) -> (expressionValue x#0) / (expressionValue x#1)
 numerator Divide := x -> x#0
 denominator Divide := x -> x#1
 
 Power = new HeaderType of Expression
 Power.synonym = "power expression"
 Power#operator = "^"
-value' Power := (x) -> (value' x#0) ^ (value' x#1)
+expressionValue Power := (x) -> (expressionValue x#0) ^ (expressionValue x#1)
 
 Subscript = new HeaderType of Expression
 Subscript.synonym = "subscript expression"
 Subscript#operator = "_"
-value' Subscript := (x) -> (value' x#0)_(value' x#1)
+expressionValue Subscript := (x) -> (expressionValue x#0)_(expressionValue x#1)
 
 Superscript = new HeaderType of Expression
 Superscript.synonym = "superscript expression"
 Superscript#operator = "^"
-value' Superscript := (x) -> (value' x#0)^(value' x#1)
+expressionValue Superscript := (x) -> (expressionValue x#0)^(expressionValue x#1)
 
 toString'(Function, Subscript) := toString'(Function, Superscript) := (fmt,v) -> (
      x := fmt v#0;
@@ -326,7 +326,7 @@ toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
 -----------------------------------------------------------------------------
 Adjacent = new HeaderType of Expression
 Adjacent.synonym = "adjacent expression"
-value' Adjacent := x -> (value' x#0) (value' x#1)
+expressionValue Adjacent := x -> (expressionValue x#0) (expressionValue x#1)
 -----------------------------------------------------------------------------
 prepend0 := (e,x) -> prepend(e#0, x)
 append0 := (x,e) -> append(x, e#0)
@@ -479,15 +479,15 @@ Thing          ..< Expression     :=
 Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
 
 -----------------------------------------------------------------------------
---value' Holder2 := x -> x#1
---value' Holder := x -> x#1
-value' Holder := x -> x#0
-value' OneExpression := v -> 1
-value' ZeroExpression := v -> 0
+--expressionValue Holder2 := x -> x#1
+--expressionValue Holder := x -> x#1
+expressionValue Holder := x -> x#0
+expressionValue OneExpression := v -> 1
+expressionValue ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
 SparseVectorExpression = new HeaderType of Expression
 SparseVectorExpression.synonym = "sparse vector expression"
-value' SparseVectorExpression := x -> notImplemented()
+expressionValue SparseVectorExpression := x -> notImplemented()
 toString'(Function, SparseVectorExpression) := (fmt,v) -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
@@ -499,7 +499,7 @@ toString'(Function, SparseVectorExpression) := (fmt,v) -> (
 SparseMonomialVectorExpression = new HeaderType of Expression
 SparseMonomialVectorExpression.synonym = "sparse monomial vector expression"
 -- in these, the basis vectors are treated as variables for printing purposes
-value' SparseMonomialVectorExpression := x -> notImplemented()
+expressionValue SparseMonomialVectorExpression := x -> notImplemented()
 toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
      sum(v#1,(i,m,a) -> 
 	  expression a * 
@@ -509,7 +509,7 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-value' MatrixExpression := x -> matrix applyTable(toList x,value')
+expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      "MatrixExpression {",		  -- ????
      between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
@@ -517,7 +517,7 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
 Table.synonym = "table expression"
-value' Table := x -> applyTable(toList x,value')
+expressionValue Table := x -> applyTable(toList x,expressionValue)
 toString'(Function, Table) := (fmt,m) -> concatenate(
      "Table {",
      between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
@@ -564,8 +564,8 @@ binaryOperatorFunctions := new HashTable from {
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
-value' BinaryOperation := (m) -> (
-     if binaryOperatorFunctions#?(m#0) then binaryOperatorFunctions#(m#0) (value' m#1,value' m#2) else m
+expressionValue BinaryOperation := (m) -> (
+     if binaryOperatorFunctions#?(m#0) then binaryOperatorFunctions#(m#0) (expressionValue m#1,expressionValue m#2) else m
      )
 net BinaryOperation := m -> (
      x := net m#1;
@@ -584,7 +584,7 @@ toString'(Function, BinaryOperation) := (fmt,m) -> (
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
 FunctionApplication.synonym = "function application expression"
-value' FunctionApplication := (m) -> (value' m#0) (value' m#1)
+expressionValue FunctionApplication := (m) -> (expressionValue m#0) (expressionValue m#1)
 toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fmt,m) -> (
      p := precedence m;
      fun := m#0;

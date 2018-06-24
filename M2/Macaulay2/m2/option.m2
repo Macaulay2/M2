@@ -17,8 +17,8 @@ installMethod(symbol >>, OptionTable, Function, Function =>
   )
 
 codeHelper#(functionBody(new OptionTable from {} >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f"),
-     ("-- option table opts:", value (first localDictionaries g)#"opts")
+     ("-- function f:", value' (first localDictionaries g)#"f"),
+     ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
 installMethod(symbol >>, List, Function, Function =>
@@ -26,8 +26,8 @@ installMethod(symbol >>, List, Function, Function =>
      )
 
 codeHelper#(functionBody({} >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f"),
-     ("-- option table opts:", value (first localDictionaries g)#"opts")
+     ("-- function f:", value' (first localDictionaries g)#"f"),
+     ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
 installMethod(symbol >>, Boolean, Function, Function => 
@@ -39,7 +39,7 @@ installMethod(symbol >>, Boolean, Function, Function =>
   )
 
 codeHelper#(functionBody(true >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f")
+     ("-- function f:", value' (first localDictionaries g)#"f")
      }
 
 installMethod(symbol ++, OptionTable, OptionTable, OptionTable =>

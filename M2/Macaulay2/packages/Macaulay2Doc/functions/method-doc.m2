@@ -23,7 +23,7 @@ document {
 	       }
 	  },
      Outputs => {
-	  "f" => "a new method function"
+	  "f" => { "a new method function, ", ofClass{MethodFunction, MethodFunctionSingle, MethodFunctionBinary, MethodFunctionWithOptions}}
 	  },
      SPAN {
 	  "The code above creates a method function that takes up to four
@@ -125,5 +125,5 @@ document {
 	  s()
 	  s(Slope => 4)
      ///,
-     SeeAlso => {"methods", "specifying typical values" }
+     SeeAlso => {"methods", "specifying typical values", method, MethodFunction, MethodFunctionSingle, MethodFunctionBinary, MethodFunctionWithOptions }
      }

@@ -242,6 +242,8 @@ export {
 	"MaximalIdeal",
 	"MaximalRank",
 	"MethodFunction",
+	"MethodFunctionBinary",
+	"MethodFunctionSingle",
 	"MethodFunctionWithOptions",
 	"MinimalGenerators",
 	"MinimalMatrix",

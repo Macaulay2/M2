@@ -525,7 +525,7 @@ value(e:Expr):Expr := (
 	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
-setupfun("value",value).Protected = false;
+setupfun("value'",value);
 
 tmpbuf := new string len 100 do provide ' ' ;
 

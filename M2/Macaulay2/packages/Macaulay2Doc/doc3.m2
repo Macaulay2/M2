@@ -506,6 +506,25 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
+
+document{
+     Headline => "a type of method function",
+     Key => MethodFunctionBinary,
+     PARA {
+	  "The type of all method functions created with the option ", TO "Binary", " set to ", TO "true", ", such as ", TO "gcd", "."
+	  },
+     SeeAlso => { "method" }
+     }
+
+document{
+     Headline => "a type of method function",
+     Key => MethodFunctionSingle,
+     PARA {
+	  "The type of all method functions created with the option ", TO "Dispatch", " set to ", TO "Thing", ", such as ", TO "code", "."
+	  },
+     SeeAlso => { "method" }
+     }
+
 document { Key => MethodFunction,
      Headline => "a type of method function", "Functions of this type are created by ", TO "method", "." }
 document { Key => MethodFunctionWithOptions,

@@ -784,6 +784,7 @@ document { Key => {(unbag, Bag), unbag},
      ///
      }
 document { Key => {undocumented,(undocumented, Thing), (undocumented, List)},
+     Headline => "declare that something need not be documented",
      Usage => "undocumented key",
      Inputs => { "key" => { "a documentation key, or a list of keys" }},
      Consequences => { { "the documentation key(s) are designated as keys not needing documentation, thus avoiding warning messages when a package is installed" }},
@@ -835,14 +836,17 @@ document { Key => "documentation keys",
      }
 
 document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
+     Headline => "search the documentation",
      Usage => "about s",
      Inputs => { 
 	  "s" => { ofClass { String, Function, Symbol, Type } },
 	  SearchBody => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
 	  },
      Outputs => {
-	  NumberedVerticalList => { "a list of documentation node keys containing ", TT "s", ".  If ", TT "s", " is not a string, then it must
-	       appear as a complete word." }},
+	  NumberedVerticalList => { "a list of documentation node keys matching the regular expression in the string ", TT "s", ", if ", TT "s", " is a string.
+	       Otherwise the search matches against the name of ", TT "s", " as a complete word." 
+	       }
+	  },
      PARA {
 	  "The documentation corresponding to the keys can be displayed by applying the function ", TO "help", " to the resulting list.
 	  To see the documentation corresponding to just one or some of the keys, help ", TO "help", " an integer or a list of integers
