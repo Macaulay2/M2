@@ -857,6 +857,9 @@ document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
      -- about resolution
      -- help 5
      -- ///,
+     Caveat => { "Since ", TT "s", " is taken as a regular expression, parentheses
+	  serve for grouping subexpressions, rather than matching themselves."
+	  },
      SeeAlso => { help, apropos }
      }
 
