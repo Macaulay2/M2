@@ -100,6 +100,19 @@ document {
 			 with two arguments, such as ", TO "gcd", ", from other compiled functions."
 			 }
 		    }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.11.1%22+is%3Aclosed","closed 1.11.1 issues"}, ",
+			 for the issues and pull requests incorporated into 1.11.1."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.11.1","1.11.1 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.11.1."
+			 }
+		    }
 	       }
 	  }
      }
