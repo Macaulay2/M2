@@ -91,7 +91,7 @@ getDBkeys := dbfn -> (
 makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
      new HashTable from {
 	  "doc db file name" => dbfn,
-	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp
+	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp (unless the package takes less than a second to install, which is unlikely)
 	  "doc keys" => getDBkeys dbfn,
 	  "prefix" => prefix,
      	  "layout index" => layoutIndex,
@@ -171,12 +171,21 @@ getPackageInfoList = () -> flatten (
 	  else {})
 
 tallyInstalledPackages = () -> for prefix in prefixPath do (
-     if not isDirectory prefix then continue;
+     if not isDirectory prefix then (
+	  remove(installedPackagesByPrefix,prefix);
+	  continue;
+	  );
      currentLayoutIndex := detectCurrentLayout prefix;
-     if currentLayoutIndex === null then continue;
+     if currentLayoutIndex === null then (
+	  remove(installedPackagesByPrefix,prefix);
+	  continue;
+	  );
      layout := Layout#currentLayoutIndex;
      docdir := prefix | layout#"docdir";
-     if not isDirectory docdir then continue;
+     if not isDirectory docdir then (
+	  remove(installedPackagesByPrefix,prefix);
+	  continue;
+	  );
      -- note: we assume that the packagedoc directory is obtained from the docdir directory by appending the name of the package, as here in Layout#1
      --   docdir => share/doc/Macaulay2/
      --   packagedoc => share/doc/Macaulay2/PKG/
@@ -190,17 +199,23 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 	  installedPackagesByPrefix#prefix = new HashTable from {
 	       "docdir time stamp" => docdirtime,
 	       "package table" => p := new MutableHashTable};
-	  for pkgname in readDirectory docdir list if pkgname =!= "." and pkgname =!= ".." and isDirectory (docdir | pkgname) then (
+	  for pkgname in readDirectory docdir do if pkgname =!= "." and pkgname =!= ".." and isDirectory (docdir | pkgname) then (
 	       dbfn := databaseFilename (layout,prefix,pkgname);
 	       if not fileExists dbfn then continue;	    -- maybe installation was interrupted, so ignore this package
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);))
      else (
 	  -- no packages have been added or removed, so scan the packages previously encountered
+	  -- well, sometimes it takes less than a second to uninstall a package, so be careful about that case
 	  p = installedPackagesByPrefix#prefix#"package table";
 	  for pkgname in keys p do (
 	       q := p#pkgname;
 	       dbfn := q#"doc db file name";
-	       if fileExists dbfn and q#"doc db file time" === fileTime dbfn then continue; -- not changed
+	       if not (isDirectory (docdir | pkgname) and fileExists dbfn) then (
+		    -- it must have been removed in less than a second; this can happen if you remove two packages, because it rescans each time
+		    remove(p,pkgname);
+		    continue;
+		    );
+	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);)))     
 
 -- Local Variables:
