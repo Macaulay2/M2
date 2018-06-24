@@ -5,21 +5,37 @@ about = method(Options => {SearchBody => false})	    -- exported
 lastabout = null
 
 about String := o -> re -> lastabout = (
-     NumberedVerticalList sort flatten for p in getPackageInfoList() list (
-	  pkgname := p#"name";
-	  dbname := p#"doc db file name";
-	  dbkeys := keys p#"doc keys";
-	  local kys;
-	  if o.SearchBody then (
-	       db := openDatabase dbname;
-	       kys = select(dbkeys, key -> match(re,key) or match(re,db#key));
-	       close db;
+     packagesSeen := new MutableHashTable;
+     matchfun := db -> (
+	  if db === null
+	  then (key -> match(re,key))	    -- not quite right, because the body might assert that the key is undocumented.  We need a quicker way to identify undocumented keys.
+	  else if instance(db,Database) 
+	  then (key -> (match(re,key) or match(re,db#key))
+	       and not match(///"undocumented" => true///,db#key) -- not quite right, because this string might occur in the raw documentation as part of the description.  Unlikely, though.
 	       )
-	  else (
-	       kys = select(dbkeys, key -> match(re,key))
-	       );
-	  x := pkgname | "::";
-	  apply(kys, key -> x | key)))
+	  else if instance(db,HashTable)
+	  then (key -> not db#key#?"undocumented" and (match(re,key) or db#key.?Description and match(re,toString db#key.Description))));
+     NumberedVerticalList sort join(
+	  flatten for p in loadedPackages list (
+	       pkgname := p#"pkgname";
+	       x := pkgname | "::";
+	       if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
+	       kys := join (
+		    if p#?"raw documentation database" 
+		    then select(keys p#"raw documentation database", matchfun if o.SearchBody then p#"raw documentation database")
+		    else {},
+		    select(keys p#"raw documentation", matchfun if o.SearchBody then p#"raw documentation"));
+	       apply(kys, key -> x | key)),
+	  flatten for p in getPackageInfoList() list (
+	       pkgname := p#"name";
+	       x := pkgname | "::";
+	       if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
+	       dbname := p#"doc db file name";
+	       dbkeys := keys p#"doc keys";
+	       if o.SearchBody then db := openDatabase dbname;
+	       kys := select(dbkeys, matchfun db);
+	       if o.SearchBody then close db;
+	       apply(kys, key -> x | key))))
 about Function := 
 about Type := 
 about Symbol := o -> s -> about("\\b" | toString s | "\\b", o)
