@@ -81,7 +81,7 @@ searchPrefixPath = f -> (
      	  if debugLevel > 5 then stderr << "--file not found in prefixPath = " << stack prefixPath << endl;
 	  ))
 
-getDBkeys := dbfn -> (
+getDBkeys = dbfn -> (
      dbkeys := new MutableHashTable;
      db := openDatabase dbfn;
      for key in keys db do dbkeys#key = 1;
