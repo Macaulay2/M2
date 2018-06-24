@@ -163,7 +163,8 @@ document {
           TO "MonomialOrder",
       "Developers' corner",
 	  TO "obtaining the monomial order of a ring"
-	  }
+	  },
+     SeeAlso => { "QthPower::weightGrevlex", "QthPower::grevlexWeight" }
      }
 
 document {
@@ -833,7 +834,7 @@ document {
 	  x<1
 	  y<1
      ///,
-     SeeAlso => {"monomial orderings"}}
+     SeeAlso => {"monomial orderings","QthPower::weightGrevlex", "QthPower::grevlexWeight"}}
 
 
 
