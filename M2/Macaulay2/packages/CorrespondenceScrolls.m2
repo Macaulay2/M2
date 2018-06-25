@@ -1,4 +1,4 @@
-///
+-*
 restart
 uninstallPackage"CorrespondenceScrolls"
 restart
@@ -6,7 +6,7 @@ installPackage"CorrespondenceScrolls"
 loadPackage("CorrespondenceScrolls", Reload => true)
 check "CorrespondenceScrolls"
 viewHelp CorrespondenceScrolls
-///
+*-
 
 newPackage(
 	"CorrespondenceScrolls",
@@ -19,11 +19,9 @@ newPackage(
 		  Email => "schreyer@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer"},
 	          {Name =>"Alessio Sammartano",
-		   Email => "",
+		   -- Email => "",
 		   HomePage => ""}},
-    	Headline => "CorrespondenceScrolls",
-    	DebuggingMode => true,
-	Reload =>true
+    	Headline => "CorrespondenceScrolls"
 	)
 
 export {    
@@ -122,7 +120,7 @@ carpet List := o-> L ->(
 	CoefficientField => o.CoefficientField);
     Delta := smallDiagonal P;
     correspondenceScroll(Delta^2,L))
-///
+-*
 restart
 loadPackage("CorrespondenceScrolls",Reload=>true)
 carpet({1,3})
@@ -137,9 +135,9 @@ mm = m-transpose m
 I = pfaffians(4,mm);
 correspondenceScroll(I,scroll);
 minimalBetti oo
-///
+*-
 
-{*
+-*
 ---possible rewrite for speed, currently imcomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
@@ -152,7 +150,7 @@ Gd := apply(#Ge, i-> (ceiling (Ge_i/scroll_i)*scroll_i));
 L := apply(#G, i-> product(#scroll, j->(SvarIdeals_j)^(Gd_j-Ge_j))*G_i)
 --now need to translate these in terms of the T variables (and add J0)
 )
-*}
+*-
 
 
 
@@ -166,7 +164,7 @@ productOfProjectiveSpaces(List) := o -> L -> (
     kkk[varlist, Degrees =>degs])
 productOfProjectiveSpaces ZZ := opt -> n -> (productOfProjectiveSpaces(toList(n:1),CoefficientField=>opt.CoefficientField))
 
-///
+-*
 restart
 loadPackage("CorrespondenceScrolls", Reload=>true)
 L={2,3}
@@ -181,7 +179,7 @@ n=2
 S=productOfProjectiveSpaces n
 S=productOfProjectiveSpaces (n, VariableName => "y")
 vars S
-///
+*-
 
 pp = productOfProjectiveSpaces
 
@@ -226,7 +224,8 @@ schemeInProduct(Ideal, List) := o-> (I,Maps) ->(
 	         VariableName => o.VariableName);
     schemeInProduct(I,Maps,PP)
 )
- ///
+
+-*
  restart
  loadPackage("CorrespondenceScrolls", Reload=>true)
  S = ZZ/101[a,b]
@@ -235,7 +234,8 @@ schemeInProduct(Ideal, List) := o-> (I,Maps) ->(
  f1 = matrix"a,b"
  maps = {f0,f1}
  schemeInProduct(I, maps, Y) 
-///
+ *-
+
 smallDiagonal = method()
 smallDiagonal ZZ  := n ->(
     --returns the ring of (P^1)^n, and in it the ideal of the small diagonal
@@ -360,7 +360,7 @@ doc ///
 ///
 
 
-{*
+-*
 doc ///
    Key
     rationalOnP1n
@@ -386,7 +386,7 @@ doc ///
      S = ring I;
      isHomogeneous I
 ///
-*}
+*-
 
 doc ///
    Key
