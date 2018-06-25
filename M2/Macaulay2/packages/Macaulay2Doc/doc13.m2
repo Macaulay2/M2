@@ -853,7 +853,8 @@ document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ), (about,Fun
 	  to be used as indices in the list returned by the most recent application of ", TO "about", "."
 	  },
      PARA {
-	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", "."
+	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", ".
+	  The first search will take a few seconds while it reads all the documentation keys into memory."
 	  },
      ---- this example won't work until after Macaulay2Doc is installed.
      -- EXAMPLE lines ///
