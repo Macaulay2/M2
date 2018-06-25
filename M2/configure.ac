@@ -470,7 +470,7 @@ AC_CHECK_DECLS([herror],,,[
 	#include <stdio.h>
 	#include <errno.h>
 	])
-AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
+AC_CHECK_DECLS([__environ,_environ,environ],,,[#include <unistd.h>])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
@@ -992,8 +992,14 @@ fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
-else AC_CHECK_DECLS(rl_catch_signals,,,readline/readline.h)
-     AC_CHECK_DECLS(__rl_comment_begin,,,readline/readline.h)
+else AC_CHECK_DECLS(rl_catch_signals,,,[
+	#include <stdio.h>
+	#include <readline/readline.h>
+	])
+     AC_CHECK_DECLS(__rl_comment_begin,,,[
+	#include <stdio.h>
+	#include <readline/readline.h>
+	])
 fi
 
 dnl We no longer link with gmp.
