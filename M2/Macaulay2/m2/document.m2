@@ -321,11 +321,12 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 packageKey0 = method(Dispatch => Thing)
 packageKey0 Thing := key -> currentPackage
+packageKey0 Sequence := key -> currentPackage		    -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
+-- packageKey0 Sequence := 				    -- this might be the right way to do it
 packageKey0 Array := key -> (
      n := youngest apply(toSequence key, package);
      assert( n =!= null );
      n )
-packageKey0 Sequence := key -> currentPackage
 packageKey = method()
 packageKey(Array,String) := (key,fkey) -> packageKey0 key
 packageKey(Thing,String) := (key,fkey) -> (
@@ -753,7 +754,10 @@ headline DocumentTag := tag -> (
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
 	       if signalDocError tag and packageName tag === currentPackage#"pkgname" 
-	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
+	       then (
+		    dtag := DocumentTag.Key tag;
+		    stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString dtag << ", package " << package dtag << endl;
+		    );
 	       return null;
 	       ));
      if d#?Headline then d#Headline

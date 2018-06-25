@@ -887,13 +887,13 @@ installPackage Package := opts -> pkg -> (
 	       scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag
-			 then stderr << "--warning: symbol has no documentation: " << tag << endl;
+			 then stderr << "--warning: symbol has no documentation: " << tag << ", package " << packageName tag << endl;
 			 f := value s;
 			 if instance(f, Function) then (
 			      scan(methods f, m -> if isDocumentableMethod m then (
 					tag := makeDocumentTag m;
 					if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-					then stderr << "--warning: method has no documentation: " << tag << ", key: " << toString DocumentTag.Key tag << endl;
+					then stderr << "--warning: method has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << ", package " << packageName tag << endl;
 					));
 			      ))));
 
