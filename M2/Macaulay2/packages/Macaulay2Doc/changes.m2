@@ -53,7 +53,10 @@ document {
      	       UL {
 	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles 
 	               on the space of symmetric forms\", has been added." }
-     		    }
+     		    },
+	       UL {
+		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." }
+		    }
 	       },
      	  LI { "improved packages:",
      	       UL {
