@@ -419,7 +419,6 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
 	  w := gettoken1(file,sawNewline);
 	  if w.word != NewlineW then return w;
 	  if obeylines then return w;
-	  if int(w.column) == 0 && isatty(file) then return errorToken; -- user gets out with an extra NEWLINE
 	  sawNewline = true;
 	  ));
 
