@@ -8,39 +8,6 @@
 #include <iomanip>
 #include <algorithm>
 
-MonomialCounter::MonomialCounter(const ResMonoid& M)
-    : mIgnoreMonomials(new ResMonomialsIgnoringComponent(M)),
-      mAllMonomials(mIgnoreMonomials),
-      mNumAllMonomials(0),
-      mNextMonom(nullptr),
-      mMonoid(M)
-{
-  // start out mNextMonom
-  mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());
-}
-void MonomialCounter::accountForMonomial(res_const_packed_monomial mon)
-{
-  // First copy monomial
-  // Then call find_or_insert
-  // If not there, increment number of monomials
-  // If there: intern monomial
-
-  monoid().copy(mon, mNextMonom);
-  res_packed_monomial not_used;
-  if (mAllMonomials.find_or_insert(mNextMonom, not_used))
-    {
-      // true, means that it was already there
-      // nothing needs to be done
-    }
-  else
-    {
-      // false: new monomial
-      mNumAllMonomials++;
-      mMonomSpace.intern(monoid().monomial_size(mNextMonom));
-      mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());
-    }
-}
-
 namespace {
 class PreElementSorter
 {
@@ -84,7 +51,6 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
       mComputer(*this)
-// mAllMonomials(R.monoid())
 {
   mFrame.mLevels.resize(max_level + 1);
   mMaxVPSize = 2 * monoid().n_vars() + 1;
@@ -96,6 +62,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
   timeClearMatrix = 0.0;
   timeResetHashTable = 0.0;
   timeComputeRanks = 0.0;
+  timeComputeSparseRanks = 0.0;
 }
 
 // Destruct the frame
@@ -128,7 +95,7 @@ bool SchreyerFrame::computeFrame()
       if (computeNextLevel() == 0) break;  // increments mCurrentLevel
       //      if (interrupted) return false;
     }
-
+  //  show(-1);
   // Now change the state of the computation
 
   mState = Matrices;
@@ -202,9 +169,15 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
   // not need to compute any matrices for these.
 
   for (int deg = mLoSlantedDegree; deg <= top_degree - 1; deg++)
-    for (int lev = 1; lev <= length_limit + 1; lev++) computeRank(deg, lev);
+    for (int lev = 1; lev <= length_limit + 1; lev++)
+      {
+        computeRank(deg, lev);
+      }
 
-  for (int lev = 1; lev <= length_limit; lev++) computeRank(top_degree, lev);
+  for (int lev = 1; lev <= length_limit; lev++)
+    {
+      computeRank(top_degree, lev);
+    }
 
   if (M2_gbTrace >= 1)
     {
@@ -229,6 +202,8 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       std::cout << "total time for reset hash table: " << timeResetHashTable
                 << std::endl;
       std::cout << "total time for computing ranks: " << timeComputeRanks
+                << std::endl;
+      std::cout << "total time for computing sparse ranks: " << timeComputeSparseRanks
                 << std::endl;
     }
 
@@ -273,6 +248,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
       std::cout << "total time for reset hash table: " << timeResetHashTable
                 << std::endl;
       std::cout << "total time for computing ranks: " << timeComputeRanks
+                << std::endl;
+      std::cout << "total time for computing sparse ranks: " << timeComputeSparseRanks
                 << std::endl;
     }
 

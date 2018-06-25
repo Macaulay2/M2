@@ -54,17 +54,17 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           "algebras");
       return nullptr;
     }
-  if (!groebnerBasisMatrix->is_homogeneous())
-    {
-      ERROR(
-          "cannot use res(...,FastNonminimal=>true) with inhomogeneous input");
-      return nullptr;
-    }
-  if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
-    {
-      ERROR("expected singly graded with positive degrees for the variables");
-      return nullptr;
-    }
+  //  if (!groebnerBasisMatrix->is_homogeneous())
+  //    {
+  //      ERROR(
+  //          "cannot use res(...,FastNonminimal=>true) with inhomogeneous input");
+  //      return nullptr;
+  //    }
+  //  if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
+  //    {
+  //      ERROR("expected singly graded with positive degrees for the variables");
+  //      return nullptr;
+  //    }
   if (!origR->getMonoid()->primary_degrees_of_vars_positive())
     {
       ERROR("expected the degree of each variable to be positive");
@@ -97,11 +97,11 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
-      R = new ResPolyRing(KK, MI, &(origR->getSkewInfo()));
+      R = new ResPolyRing(KK, MI, origR->getMonoid(), &(origR->getSkewInfo()));
     }
   else
     {
-      R = new ResPolyRing(KK, MI);
+      R = new ResPolyRing(KK, MI, origR->getMonoid());
     }
   auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level);
 
@@ -167,7 +167,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
         }
     }
   frame.endLevel();
-  //  frame.show(0);
+  // frame.show(0);
   // Remove matrix:
   delete leadterms;
 
@@ -197,9 +197,9 @@ F4ResComputation::~F4ResComputation()
 }
 
 void F4ResComputation::start_computation() { mComp->start_computation(stop_); }
+
 int F4ResComputation::complete_thru_degree() const
 // The computation is complete up through this degree.
-
 {
   throw exc::engine_error("complete_thru_degree not implemented");
 }
@@ -257,7 +257,7 @@ const FreeModule /* or null */* F4ResComputation::get_free(int lev)
   if (lev < 0 or lev > mComp->maxLevel())
     return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
-  return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, *mComp, lev);
+  return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, mInputGroebnerBasis.rows(), *mComp, lev);
 }
 
 MutableMatrix /* or null */* F4ResComputation::get_mutable_matrix(const Ring* R,

@@ -5,6 +5,11 @@
 
 #include "buffer.hpp"
 
+#include "memtailor.h"
+#include <unordered_set>
+#include <unordered_map>
+#include <utility>
+
 class BettiDisplay
 {
  public:
@@ -41,6 +46,47 @@ class BettiDisplay
   int* mValues;
 };
 
+class BettiHashAndEq
+{
+public:
+  using value = std::pair<const int*, int>;
+
+  // hash function
+  std::size_t operator()(value m) const
+  {
+    return reinterpret_cast<std::size_t>(const_cast<int*>(m.first)) + 13*m.second;
+  }
+
+  // equality function
+  bool operator() (value a, value b) const
+  {
+    return a == b;
+  }
+
+private:
+  int mSize;
+};
+
+class MultigradedBettiDisplay
+{
+public:
+  using monomial = const int *;
+  MultigradedBettiDisplay(int degree_size) :
+    mSize(degree_size),
+    mHash(100,
+          BettiHashAndEq(),
+          BettiHashAndEq()
+          )
+  {
+  }
+
+  int insert(monomial deg, int lev); // adds one to the value here, or sets value to be 1.
+  int value(monomial deg, int lev); // returns the current value (0 if not present).
+  std::vector<int> flatten() const; // flattens the data into format: {value, level, deg (inline), ...}
+private:
+  int mSize; // size of a monomial
+  std::unordered_map<std::pair<monomial,int>, int, BettiHashAndEq, BettiHashAndEq> mHash;
+};
 #endif
 
 // Local Variables:

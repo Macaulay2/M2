@@ -94,6 +94,18 @@ document {
 			 "Each directory listed in ", TO "prefixPath", " now has its own layout, which is detected at runtime.
 			 See ", TO "Layout", "."
 			 },
+            LI {
+                "Functionality for fast nonminimal free resolutions, ", TO "FastNonminimal", " has a number of bug fixes and
+                improvements: (1) it now works for input modules, not just ideals (there was a monomial order mismatch which
+                    would often cause it to fail), (2) multi-graded and inhomogeneous ideals/modules are allowed, 
+                (3) this function works over the exterior algebra as well (it has always done so, but that was not
+                    always realized), (4) it is possible to have M2 use an already created Groebner basis, instead of recomputing
+                one.  Use Strategy=>5 in the ", TO "resolution", " command, to tell the command that the 
+                provided ideal has generators which already form a Groebner basis, not necessarily a reduced
+                Groebner basis, or a quotient module, whose presentation matrix forms a Groebner basis.  
+                If the input is not, then this function can give incorrect answers or fail.  See ",
+                TO "FastNonminimal", " for details and examples."
+                },
 		    LI {
 			 "New types ", TO "MethodFunctionSingle", " and ", TO "MethodFunctionBinary", " were introduced to serve as classes of
 			 method functions with a single argument, such as ", TO "code", ", and of associative method functions based on methods
