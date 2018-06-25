@@ -4,7 +4,7 @@
 
 document {
      -- this is the old version
-     Key => cohomology,
+     Key => {cohomology,[cohomology,Degree]},
      Headline => "general cohomology functor",
      TT "cohomology", " -- a method name available for computing expressions
      of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",

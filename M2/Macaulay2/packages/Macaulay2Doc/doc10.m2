@@ -417,7 +417,7 @@ document {
 }
 
 document {
-    Key => {(roots, RingElement), roots },
+    Key => {(roots, RingElement), roots, [(roots,RingElement),Unique], [(roots,RingElement),Precision] },
     Headline => "compute the roots of a polynomial",
     Usage => "roots p",
     Inputs => {
