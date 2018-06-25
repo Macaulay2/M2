@@ -835,7 +835,7 @@ document { Key => "documentation keys",
      ///
      }
 
-document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
+document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ), (about,Function), (about,String), (about,Symbol), (about,Type)},
      Headline => "search the documentation",
      Usage => "about s",
      Inputs => { 
@@ -848,9 +848,9 @@ document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
 	       }
 	  },
      PARA {
-	  "The documentation corresponding to the keys can be displayed by applying the function ", TO "help", " to the resulting list.
-	  To see the documentation corresponding to just one or some of the keys, help ", TO "help", " an integer or a list of integers
-	  to be used for indexing into the list returned by the most recent application of ", TO "about", "."
+	  "The documentation corresponding to the keys in the list returned can be displayed by applying the function ", TO "help", " to it.
+	  To see the documentation corresponding to just one or some of the keys, give ", TO "help", " an integer or a list of integers
+	  to be used as indices in the list returned by the most recent application of ", TO "about", "."
 	  },
      PARA {
 	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", "."

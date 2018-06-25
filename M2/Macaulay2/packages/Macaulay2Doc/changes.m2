@@ -97,23 +97,33 @@ document {
 			 "Each directory listed in ", TO "prefixPath", " now has its own layout, which is detected at runtime.
 			 See ", TO "Layout", "."
 			 },
-            LI {
-                "Functionality for fast nonminimal free resolutions, ", TO "FastNonminimal", " has a number of bug fixes and
-                improvements: (1) it now works for input modules, not just ideals (there was a monomial order mismatch which
-                    would often cause it to fail), (2) multi-graded and inhomogeneous ideals/modules are allowed, 
-                (3) this function works over the exterior algebra as well (it has always done so, but that was not
-                    always realized), (4) it is possible to have M2 use an already created Groebner basis, instead of recomputing
-                one.  Use Strategy=>5 in the ", TO "resolution", " command, to tell the command that the 
-                provided ideal has generators which already form a Groebner basis, not necessarily a reduced
-                Groebner basis, or a quotient module, whose presentation matrix forms a Groebner basis.  
-                If the input is not, then this function can give incorrect answers or fail.  See ",
-                TO "FastNonminimal", " for details and examples."
-                },
+		    LI {
+			 "Functionality for fast nonminimal free resolutions, ", TO "FastNonminimal", " has a number of bug fixes and
+			 improvements: (1) it now works for input modules, not just ideals (there was a monomial order mismatch which
+			     would often cause it to fail), (2) multi-graded and inhomogeneous ideals/modules are allowed, 
+			 (3) this function works over the exterior algebra as well (it has always done so, but that was not
+			     always realized), (4) it is possible to have M2 use an already created Groebner basis, instead of recomputing
+			 one.  Use Strategy=>5 in the ", TO "resolution", " command, to tell the command that the 
+			 provided ideal has generators which already form a Groebner basis, not necessarily a reduced
+			 Groebner basis, or a quotient module, whose presentation matrix forms a Groebner basis.  
+			 If the input is not, then this function can give incorrect answers or fail.  See ",
+			 TO "FastNonminimal", " for details and examples."
+			 },
 		    LI {
 			 "New types ", TO "MethodFunctionSingle", " and ", TO "MethodFunctionBinary", " were introduced to serve as classes of
 			 method functions with a single argument, such as ", TO "code", ", and of associative method functions based on methods
 			 with two arguments, such as ", TO "gcd", ", from other compiled functions."
-			 }
+			 },
+		    LI {
+			 "We have removed the feature where typing an extra empty line ends multiline 
+			 input in a terminal window or emacs buffer.
+			 This will make it easier to feed input from a file into the interpreter with
+			 F-11 and encounter the same behavior, since in files we have permit empty lines.
+			 This change was requested at our Leipzig workshop, with Q2 at ",
+			 HREF {"https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&amp;A-Thursday",
+			       "https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&A-Thursday"},
+			 " being the question that prompted the discussion."
+			 }		    
 		    }
 	       },
 	  LI {
@@ -252,7 +262,7 @@ document {
 			 "The format for multi-line (un-nested) block comments has been changed from ", TT "{* ... *}", " to ", TT "-* ... *-", " so emacs can colorize 
 			 the comments correctly.  The (deprecated) old style will be recognized by M2 for a while."
 			 }
-     	  	       }
+		    }
                }
      	  }
      }
@@ -1925,3 +1935,7 @@ document {
      working as expected).
      ///
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=false RemakeAllDocumentation=false IgnoreExampleErrors=false"
+-- End:
