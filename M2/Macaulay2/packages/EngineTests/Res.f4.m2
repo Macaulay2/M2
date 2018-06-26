@@ -657,6 +657,11 @@ TEST ///
   I = AGR(3,12,15,101);
   I = AGR(3,11,15,101);
   R = ring I  
+
+  -- this test takes too much memory.
+  stderr << "--EngineTests/Res.f4.m2: *** Warning: bypassing a test that takes too much memory." << endl;
+  exit 0
+
   elapsedTime C = res(I, FastNonminimal=>true)
   gbTrace=2
   elapsedTime minimalBetti I
