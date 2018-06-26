@@ -995,6 +995,7 @@ document List := opts -> args -> (
      rest := {};
      if class key === List then (
 	  key = nonnull key;
+     	  if not all(values tally key, i -> i == 1) then error ("documentation key(s) mentioned twice: ", concatenate \\ between_", " \\ toString \ first \ select(pairs tally key, (k,n) -> n > 1));
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
