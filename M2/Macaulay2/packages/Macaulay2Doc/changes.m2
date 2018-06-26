@@ -34,6 +34,19 @@ document {
 document {
      Key => "changes, 1.11.1",
      UL {
+	  LI { "changes that might require user action:",
+	       UL {
+		    LI {
+			 "The browsable documentation pages are now files with names of the form ", TT "*.xhtml", ", whereas
+			 formerly they were of the form ", TT "*.html", ", in order to more accurately describe the content.
+			 You may notice the files are handled differently by ", TO "viewHelp", ", which, under MAC OS X,
+			 so you may have to set the default handler.
+			 To do that, use the Finder to open the directory ", TT "/Applications/Macaulay2-1.11.1/share/doc/Macaulay2/SimpleDoc/html/", "
+			 that the file ", TT "_doc.xhtml", ", say, is in, right click on the file, select ", TT "Get info", " from the menu,
+			 set the application to your favorite browser, and then push ", TT "Change all...", "to change it for all *.xhtml files."
+			 }
+		    }
+	       },
      	  LI { "new packages:",
      	       UL {
 	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." }
@@ -132,15 +145,6 @@ document {
 			 HREF {"https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&amp;A-Thursday",
 			       "https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&A-Thursday"},
 			 " being the question that prompted the discussion."
-			 },
-		    LI {
-			 "The browsable documentation pages are now files with names of the form ", TT "*.xhtml", ", whereas
-			 formerly they were of the form ", TT "*.html", ", in order to more accurately describe the content.
-			 You may notice the files are handled differently by ", TO "viewHelp", ", which, under MAC OS X,
-			 so you may have to set the default handler.
-			 To do that, use the Finder to open the directory ", TT "/Applications/Macaulay2-1.11.1/share/doc/Macaulay2/SimpleDoc/html/", "
-			 that the file ", TT "_doc.xhtml", ", say, is in, right click on the file, select ", TT "Get info", " from the menu,
-			 set the application to your favorite browser, and then push ", TT "Change all...", "to change it for all *.xhtml files."
 			 }
 		    }
 	       },
