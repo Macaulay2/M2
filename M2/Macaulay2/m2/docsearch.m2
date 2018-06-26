@@ -31,7 +31,7 @@ about String := o -> re -> lastabout = (
 	       x := pkgname | "::";
 	       if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
 	       dbname := p#"doc db file name";
-	       dbkeys := keys p#"doc keys";
+	       dbkeys := keys fetchDocKeys p;
 	       if o.SearchBody then db := openDatabase dbname;
 	       kys := select(dbkeys, matchfun db);
 	       if o.SearchBody then close db;

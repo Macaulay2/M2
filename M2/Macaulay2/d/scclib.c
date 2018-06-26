@@ -396,10 +396,6 @@ static char **M2_completion(const char *text, int start, int end) {
 void system_initReadlineVariables(void) {
   static char readline_name[] = "M2";
   static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
-  extern const char *_rl_comment_begin;
-#if HAVE_DECL___RL_COMMENT_BEGIN
-  _rl_comment_begin = "-- ";
-#endif
   rl_readline_name = readline_name;
   rl_attempted_completion_function = M2_completion;
   rl_basic_word_break_characters = basic_word_break_characters;
