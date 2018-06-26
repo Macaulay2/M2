@@ -989,17 +989,15 @@ then # readline on Mac OS X is stuck at version 4.2, which has this bug:
 	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
 	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 fi
+if test $BUILD_readline = no
+then AC_CHECK_DECL(rl_catch_signals,,BUILD_readline=yes,[
+	#include <stdio.h>
+	#include <readline/readline.h>
+	])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
-else AC_CHECK_DECLS(rl_catch_signals,,,[
-	#include <stdio.h>
-	#include <readline/readline.h>
-	])
-     AC_CHECK_DECLS(__rl_comment_begin,,,[
-	#include <stdio.h>
-	#include <readline/readline.h>
-	])
 fi
 
 dnl We no longer link with gmp.

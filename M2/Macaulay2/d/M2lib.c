@@ -758,11 +758,8 @@ char **argv;
 
      signal(SIGPIPE,SIG_IGN);
 
-#if HAVE_DECL_RL_CATCH_SIGNALS     
+     /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
      rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
-#else
-     #error what do we do?
-#endif
 
      system_handleInterruptsSetup(TRUE);
      
