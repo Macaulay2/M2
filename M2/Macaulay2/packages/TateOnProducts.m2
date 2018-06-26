@@ -2205,8 +2205,62 @@ prune HH^1 RpiM
 prune HH^2 RpiM
 ///
 
-composedFunctions = method()
-composedFunctions(ZZ) := n -> (
+
+directImageComplex(Ideal,Module,Matrix) := (I,M,phi) -> (
+    -- Input: I, the ideal of a projective scheme X in P^n,
+    --        M, a module representing a coherent sheaf on X
+    --        phi, a kxm matrix representing a rational map or morphism
+    --             f: X -> P^m
+    R := ring I;
+    if I != saturate I then error "expected a saturated ideal I for Proj(R/I)";
+    J := annihilator M;  
+    if J+I != J then error "expected a module representing a sheaf on X=Proj(R/I)";
+    if minors(2,phi)+I != I then error" expected phi to define a rational map on X=Proj(R/I)";
+    m := rank source phi-1 ;
+    n := numgens R-1  ;
+    kk :=coefficientRing R;
+    (S,E) := productOfProjectiveSpaces({n,m},CoefficientField=>kk);    
+    p1 := map(S,R,(vars S)_{0..n});
+    gI := gens I; 
+    dgI := apply(degrees source gI,d->{-d_0,0});   
+    I1 := ideal map(S^1,S^dgI,p1(gI));    
+    gM := presentation M;    
+    dtgM := apply(degrees target gM,d->{-d_0,0});   
+    dsgM := apply(degrees source gM,d->{-d_0,0});   
+    gM1 := map(S^dtgM,S^dsgM,p1(gM));    
+    dtphi :=  apply(degrees target phi,d->{-d_0,0});   
+    dsphi :=  apply(degrees source phi,d->{-d_0,0});    
+    phi1 := map(S^dtphi,S^dsphi,p1(phi));    
+    y := (vars S)_{n+1..n+m+1};    
+    graph := trim(minors(2,y||phi1)+I1);
+    Mgraph := coker(gens graph**id_(target gM1)|gM1);
+    RphiM := directImageComplex(Mgraph,{1});
+    RphiM)
+    
+///
+kk=ZZ/101    
+R=kk[x_0..x_4]
+m=matrix {{ x_0,x_1,x_3},{x_1,x_2,x_4}}
+I=minors(2,m)
+dim I, degree I, genera I
+M=symmetricPower(4,coker m)**R^{0} 
+betti res M
+phi= transpose m
+RphiM = directImageComplex(I,M,phi)
+betti RphiM
+T= ring RphiM
+netList apply(toList(min RphiM.. max RphiM),i-> {-i, saturate annihilator HH^(-i) RphiM,betti res HH^(-i) RphiM})
+R0=prune HH^0 RphiM
+dim R0, degree R0
+betti syz transpose presentation HH^0 RphiM
+HH^(-1) RphiM == 0
+dim R0
+///
+
+
+
+--composedFunctions = method()
+composedFunctions = () -> (
     print "
       n={1,1}, v=n+{1,1}
       high=3*n, low=-high
@@ -2224,7 +2278,7 @@ composedFunctions(ZZ) := n -> (
       cohomologyMatrix(T,low,high)
      --Text 
      -- T is the part of the Tate resolution, which is complete in the range low to high.
-     -- (In a wider range some terms are missing or incorrekt)  
+     -- (In a wider range some terms are missing or are incorrect)  
      --Example
       cohomologyMatrix(T,2*low,2*high)
      --Text 
@@ -2370,12 +2424,11 @@ composedFunctions(ZZ) := n -> (
 
 
 
-
 ///
 restart
 loadPackage("TateOnProducts",Reload=>true)
 debug TateOnProducts
-composedFunctions(1)
+composedFunctions()
 n={1,1}
 high=3*n, low=-high
 (S,E)=productOfProjectiveSpaces n
@@ -2539,13 +2592,7 @@ document {
        TO strand,
        TO firstQuadrantComplex,
        TO lastQuadrantComplex
-      },
-    SUBSECTION "Missing pieces",
-    UL{	"various composition of functions",
-	"Example section:  examples from the paper, jumping lines",
-	"$Rf_*sF$ for a coherent sheaf
-	$sF$ on $X subset P^{n_1}$ and a morphism $f:X -> P^{n_2}$."
-	}
+      }
    }
 doc ///
    Key
@@ -2579,13 +2626,10 @@ doc ///
 doc ///
    Key
     composedFunctions
-    (composedFunctions, ZZ)
    Headline
     composed functions
    Usage
-    cmds=composedFunctions(1) 
-   Inputs
-    n: ZZ
+    cmds=composedFunctions() 
    Outputs
     cmds: String
      the commands used in the testing/illustration of composed functions
@@ -2610,7 +2654,7 @@ doc ///
       cohomologyMatrix(T,low,high)
      Text 
       T is the part of the Tate resolution, which is complete in the range low to high.
-      (In a wider range some terms are missing or incorrekt)  
+      (In a wider range some terms are missing or are incorrect)  
      Example
       cohomologyMatrix(T,2*low,2*high)
      Text 
@@ -2725,7 +2769,7 @@ doc ///
       comT=cohomologyMatrix(T,low,high)
       assert(sub(comT',vars ring comT)==comT)
      Text
-      Finally we illustate how shifting the Beilinson window works.
+      Finally we illustrate how shifting the Beilinson window works.
      Example
       cohomologyMatrix(T,low,high)
       cohomologyMatrix(beilinsonWindow T,low, high)
@@ -4323,25 +4367,37 @@ doc ///
   Key
     directImageComplex
     (directImageComplex,Module,List)
+    (directImageComplex,Ideal,Module,Matrix)
   Headline
     compute the direct image complex 
   Usage
-    RpiM=directImageComplex(M,I)
+    RpiM = directImageComplex(M,I)
+    RphiN = directImageComplex(J,N,phi)
   Inputs
     M: Module
-       representing a sheaf F on product of projective spaces
+       representing a sheaf F on a product of projective spaces
     I: List
       corresponding to the factors to which pi projects
+    J: Ideal
+      the saturated ideal of a projective scheme X in some P^n
+    N: Module
+      representing a sheaf on X
+    phi: Matrix
+      a kx(m+1) matrix of homogeneous polynomials on P^n
+      which define a morphism or rational map phi:X -> P^m,
+      i.e. the 2x2 minors of phi vanish on X.      
   Outputs
     RpiM: ChainComplex
        a chain complex of modules over a symmetric algebra
+    RphiN: ChainComplex
+       a chain complex of modules over the coordinate ring of P^m
   Description
      Text
        Let M represent a coherent sheaf F on a product P=P^{n_0}x..xP^{n_{t-1}} 
        of t projective space. 
        
-       Let $pi: P -> P^I= X_{i \in I} P^{n_i}$ denote the projection on 
-       to some factors. We compute a chain complex of S_I modules whose
+       Let $pi: P -> P^I= X_{i \in I} P^{n_i}$ denote the projection onto some factors. 
+       We compute a chain complex of S_I modules whose
        sheafication is $Rpi_* F$. 
        
        The algorithm is based on the properties of strands,
@@ -4349,6 +4405,17 @@ doc ///
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @.
        Note that the resulting complex is a chain complex instead of a cochain complex,
        so that for example HH^1 RpiM is the module representing $R^1 pi_* F$
+       
+             In the second version we start with a projective scheme X =Proj(R/J) defined by J in some 
+       P^n= Proj R with R \cong K[x_0..x_n] a polynomial ring,
+       an  R-module N of representing a sheaf on X, and a matrix phi of homogeneous
+       forms who's rows define a morphism phi: X -> P^m. In particular
+       the 2x2 minors of phi vanish on X, and phi defines a morphism if and only if
+       the entries of phi have no common zero in X.
+       The algorithm passes to the graph of phi in P^n x P^m, and calls the first version
+       of this function.
+       
+       Here is an example of the first kind.
      Example
        t=2
        n={1,2}
@@ -4375,6 +4442,45 @@ doc ///
        cohomologyMatrix(M,-3*n,3*n)
        T=tateResolution(M,-2*n,2*n);
        cohomologyMatrix(strand(T,{0,0},J),-2*n,2*n)
+     Text
+       As an example of the second version, we consider the ruled cubic surface scroll
+       X subset P^4 defined by the 2x2 minors of the matrix
+       $$ m= matrix \{ \{x_0,x_1,x_3\},\{x_1,x_2,x_4\} \},$$
+       and the morphism f: X -> P^1 onto the base.
+       f is defined by ratio of the two rows of m, hence by the 3x2 matrix phi=m^t.
+       
+       As a module N we take a symmetric power of the cokernel m, twisted by R^{\{d\}}.
+     Example
+       kk=ZZ/101    
+       R=kk[x_0..x_4]
+       m=matrix {{ x_0,x_1,x_3},{x_1,x_2,x_4}}
+       J=minors(2,m)
+       dim J, degree J
+       s=2,d=-2
+       N=symmetricPower(s,coker m)**R^{d}; 
+       betti res N
+       annihilator N == J
+       phi= transpose m
+       RphiN = directImageComplex(J,N,phi)
+       T= ring RphiN
+       HH^1 RphiN
+     Text
+       Now a different symmetric power and a different twist.
+     Example
+       s=3,d=1
+       N=symmetricPower(s,coker m)**R^{d};
+       RphiN = directImageComplex(J,N,phi)
+       T=ring RphiN
+       netList apply(toList(min RphiN.. max RphiN),i-> 
+	   {-i, saturate annihilator HH^(-i) RphiN,betti res HH^(-i) RphiN})
+       R0=prune HH^0 RphiN
+       dim R0, degree R0
+       betti (sR0Dual = syz transpose presentation R0)
+       saturate annihilator coker transpose sR0Dual
+       dual source sR0Dual       
+     Text
+       We conclude that the sheaf represented by R0 is O(5)+O(4) on P^1, which is correct
+       because N represents phi^*O(1) and phi_* O_X(H) = O(2)+O(1). 
   Caveat
      Note that the resulting complex is a chain complex instead of a cochain complex,
      so that for example HH^i RpiM = HH_{-i} RpiM.
