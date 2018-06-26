@@ -127,7 +127,7 @@ document {
 		    LI {
 			 "The browsable documentation pages are now files with names of the form ", TT "*.xhtml", ", whereas
 			 formerly they were of the form ", TT "*.html", ", because that extension more accurately describes the content.
-			 You may notices the files are handled slightly differently by ", TO "viewHelp", ", which, under MAC OS X,
+			 You may notice the files are handled slightly differently by ", TO "viewHelp", ", which, under MAC OS X,
 			 uses the default handler for such files, so you may have to set the default handler to your favorite browser."
 			 }
 		    }
