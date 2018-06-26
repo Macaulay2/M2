@@ -42,10 +42,10 @@ document {
 	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
      		    },
      	       UL {
-	       	    LI TEX { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." }
+	       	    LI { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." }
      		    },
      	       UL {
-	       	    LI TEX { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." }
+	       	    LI { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", TEX ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." }
      		    },
      	       UL {
 	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." }
@@ -123,7 +123,13 @@ document {
 			 HREF {"https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&amp;A-Thursday",
 			       "https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&A-Thursday"},
 			 " being the question that prompted the discussion."
-			 }		    
+			 },
+		    LI {
+			 "The browsable documentation pages are now files with names of the form ", TT "*.xhtml", ", whereas
+			 formerly they were of the form ", TT "*.html", ", because that extension more accurately describes the content.
+			 You may notices the files are handled slightly differently by ", TO "viewHelp", ", which, under MAC OS X,
+			 uses the default handler for such files, so you may have to set the default handler to your favorite browser."
+			 }
 		    }
 	       },
 	  LI {
