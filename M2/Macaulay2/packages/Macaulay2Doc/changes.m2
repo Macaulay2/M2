@@ -67,7 +67,16 @@ document {
 			 lowest order terms of the obstruction equations. This has been remedied by
 			 actually calculating the tangent cone, and making appropriate adjustments
 			 to the algorithm."
+			 },
+		    LI {
+			 "The package ", TO "TateOnProducts::TateOnProducts", " has been improved.  The
+			 package implements the method of Tate resolutions, for computing cohomology of sheaves
+			 on products of projective spaces, and also the pushforward complex of a sheaf under a
+			 map from a variety to a projective space. Tate resolutions on single projective spaces
+			 were treated in the package ", TO "BGG::BGG", ", but the case of a product of projective spaces is
+			 much more subtle, since no term of the full Tate resolution is finitely generated."
 			 }
+
 		    }
 	       },
 	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
