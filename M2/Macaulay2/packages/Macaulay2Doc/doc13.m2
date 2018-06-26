@@ -835,12 +835,12 @@ document { Key => "documentation keys",
      ///
      }
 
-document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ), (about,Function), (about,String), (about,Symbol), (about,Type)},
+document { Key => {about, [about, Body], Body, (help,ZZ), (about,Function), (about,String), (about,Symbol), (about,Type)},
      Headline => "search the documentation",
      Usage => "about s",
      Inputs => { 
 	  "s" => { ofClass { String, Function, Symbol, Type } },
-	  SearchBody => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
+	  Body => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
 	  },
      Outputs => {
 	  NumberedVerticalList => { "a list of documentation node keys matching the regular expression in the string ", TT "s", ", if ", TT "s", " is a string.

@@ -43,7 +43,9 @@ document {
      	  SPAN (///help "reading the documentation"///, ///  -- ///),
      	  SPAN (///help "getting started"///, ///            -- ///),
      	  SPAN (///help "a first Macaulay2 session"///, ///  -- ///),
-     	  SPAN (///help x///, ///                            -- display the documentation for ///, TT ///x///),
+     	  SPAN (///help x///, ///                            -- show documentation for ///, TT ///x///),
+     	  SPAN (///help about x///, ///                      -- show documentation about ///, TT ///x///),
+     	  SPAN (///help about (x,Body=>true)///, ///         -- show documentation mentioning ///, TT ///x///),
      	  SPAN (///? f///, ///                               -- display brief documentation for a function ///, TT ///f///),
 	  SPAN (///printWidth = 80///, ///                   -- set print width to 80 characters///),
      	  SPAN (///viewHelp///, ///                          -- view documentation in a browser///),
@@ -67,7 +69,7 @@ document {
 	  (TT "help methods (symbol **, X)", " -- displays help messages about the methods usable with the operator ", TT "**", " and a thing of class ", TT "X"),
 	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y"),
 	  (TT "help about X", " -- displays documentation nodes from all installed packages whose keys contain ", TT "X", "."),
-	  (TT "help about(X,SearchBody=>true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
+	  (TT "help about(X,Body=>true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
 	  },
      "The ", TT "help", " command is used to display online documentation.  Use ", TO viewHelp, " to display the corresponding
      documentation in your web browser.",

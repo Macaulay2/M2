@@ -126,9 +126,12 @@ document {
 			 },
 		    LI {
 			 "The browsable documentation pages are now files with names of the form ", TT "*.xhtml", ", whereas
-			 formerly they were of the form ", TT "*.html", ", because that extension more accurately describes the content.
-			 You may notice the files are handled slightly differently by ", TO "viewHelp", ", which, under MAC OS X,
-			 uses the default handler for such files, so you may have to set the default handler to your favorite browser."
+			 formerly they were of the form ", TT "*.html", ", in order to more accurately describe the content.
+			 You may notice the files are handled differently by ", TO "viewHelp", ", which, under MAC OS X,
+			 so you may have to set the default handler.
+			 To do that, use the Finder to open the directory ", TT "/Applications/Macaulay2-1.11.1/share/doc/Macaulay2/SimpleDoc/html/", "
+			 that the file ", TT "_doc.xhtml", ", say, is in, right click on the file, select ", TT "Get info", " from the menu,
+			 set the application to your favorite browser, and then push ", TT "Change all...", "to change it for all *.xhtml files."
 			 }
 		    }
 	       },

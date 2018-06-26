@@ -1,6 +1,6 @@
 -- about - a function for searching through all documentation in all installed packages on the prefixPath
 
-about = method(Options => {SearchBody => false})	    -- exported
+about = method(Options => {Body => false})	    -- exported
 
 lastabout = null
 
@@ -22,9 +22,9 @@ about String := o -> re -> lastabout = (
 	       if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
 	       kys := join (
 		    if p#?"raw documentation database" 
-		    then select(keys p#"raw documentation database", matchfun if o.SearchBody then p#"raw documentation database")
+		    then select(keys p#"raw documentation database", matchfun if o.Body then p#"raw documentation database")
 		    else {},
-		    select(keys p#"raw documentation", matchfun if o.SearchBody then p#"raw documentation"));
+		    select(keys p#"raw documentation", matchfun if o.Body then p#"raw documentation"));
 	       apply(kys, key -> x | key)),
 	  flatten for p in getPackageInfoList() list (
 	       pkgname := p#"name";
@@ -32,9 +32,9 @@ about String := o -> re -> lastabout = (
 	       if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
 	       dbname := p#"doc db file name";
 	       dbkeys := keys fetchDocKeys p;
-	       if o.SearchBody then db := openDatabase dbname;
+	       if o.Body then db := openDatabase dbname;
 	       kys := select(dbkeys, matchfun db);
-	       if o.SearchBody then close db;
+	       if o.Body then close db;
 	       apply(kys, key -> x | key))))
 about Function := 
 about Type := 
