@@ -6,7 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
-	  TO "changes, 1.11.1",
+	  TO "changes, 1.12",
 	  TO "changes, 1.11",
 	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
@@ -32,7 +32,7 @@ document {
      }
 
 document {
-     Key => "changes, 1.11.1",
+     Key => "changes, 1.12",
      UL {
 	  LI { "changes that might require user action:",
 	       UL {
@@ -41,9 +41,9 @@ document {
 			 formerly they were of the form ", TT "*.html", ", in order to more accurately describe the content.
 			 You may notice that these files are handled differently by ", TO "viewHelp", " under MAC OS X, 
 			 so you may have to set the system's default handler for them.
-			 To do that, use the Finder to open the directory ", TT "/Applications/Macaulay2-1.11.1/share/doc/Macaulay2/SimpleDoc/html/", "
+			 To do that, use the Finder to open the directory ", TT "/Applications/Macaulay2-1.12/share/doc/Macaulay2/SimpleDoc/html/", "
 			 that the file ", TT "_doc.xhtml", ", say, is in, right click on the file, select ", TT "Get info", " from the menu,
-			 set the application to your favorite browser, and then push ", TT "Change all...", "to change it for all *.xhtml files."
+			 set the application to your favorite browser, and then push ", TT "Change all...", " to change it for all *.xhtml files."
 			 }
 		    }
 	       },
@@ -152,12 +152,12 @@ document {
 	       "commits, issues, and pull requests on github",
 	       UL {
 		    LI {
-			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.11.1%22+is%3Aclosed","closed 1.11.1 issues"}, ",
-			 for the issues and pull requests incorporated into 1.11.1."
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.12%22+is%3Aclosed","closed 1.12 issues"}, ",
+			 for the issues and pull requests incorporated into 1.12."
 			 },
 		    LI {
-			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.11.1","1.11.1 commits"}, " for complete information
-			 about all changes to the code incorporated into 1.11.1."
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.12","1.12 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.12."
 			 }
 		    }
 	       }
