@@ -297,65 +297,6 @@ document {
  	  }
      }
 
-document {
-     Key => {maxPosition,(maxPosition,BasicList)},
-     Usage => "maxPosition x",
-     Headline => "position of largest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the largest element in the list ", TT "x" }
-	  },
-     "If the largest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "maxPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the maximal element is 1, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{
-	  "For elements in a polynomial ring, the order used is the ", TO2("monomial orderings","monomial order"),
-	  " associated with the ring.",
-	  },
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "maxPosition {z^2, s*z, x*y}",
-	  "maxPosition(z^2, s*z, x*y)"	  
-	  },
-     SeeAlso => { minPosition, max, min, sort, position }
-     }
-
-document {
-     Key => {minPosition,(minPosition,BasicList)},
-     Usage => "minPosition x",
-     Headline => "position of smallest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the smallest element in the list ", TT "x" }
-	  },
-     "If the smallest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "minPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the minimal element is 0, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{},
-     "For elements in a polynomial ring, the order used is the ", 
-     TO2("monomial orderings","monomial order"),
-     " associated with the ring.",
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "minPosition {z^2, s*z, x*y}",
-	  "minPosition(z^2, s*z, x*y)"
-	  },
-     SeeAlso => { maxPosition, max, min, sort, position }
-     }
 
 document {
      Key => keys,
@@ -390,34 +331,6 @@ document {
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2}",
 	  "values x",
-	  }
-     }
-
-document {
-     Key => scan,
-     Headline => "apply a function to each element",
-     SeeAlso => { "mapping over lists"}
-     }
-
-document {
-     Key => (scan,BasicList,Function),
-     Headline => "apply a function to each element of a list",
-     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ".  The function values are discarded.",
-     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
-     }
-
-document {
-     Key => (scan,ZZ,Function),
-     Headline => "apply a function to 0 .. n-1",
-     TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
-     in the range ", TT "0 .. n-1", " discarding the results.",
-     PARA{},
-     "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
-     EXAMPLE {
-	  "scan(3,print)",
-	  "v = {a,b,c}",
-	  "scan(#v, i -> print(i,v#i))"
 	  }
      }
 
@@ -1229,33 +1142,6 @@ document {
      "This operator is used for exponentiation, making free modules and sheaves, 
      for shifting complexes left or right, for projection maps involving direct sums, 
      and for making nets.",
-     }
-
-document {
-     Key => {substring,(substring, String, ZZ),(substring, ZZ, String),(substring, ZZ, ZZ, String),
-	  (substring, String, ZZ, ZZ),(substring, Sequence, String)},
-     Headline => "extract part of a string",
-     SYNOPSIS (
-	  Usage => "substring(i,n,s)\nsubstring(s,i,n)\nsubstring((i,n),s)",
-	  Inputs => { "i" => ZZ, "n" => ZZ, "s" => String },
-	  Outputs => {{ "the substring of the string ", TT "s", " starting at position ", TT "i", " with length ", TT "n" }}
-	  ),
-     SYNOPSIS (
-	  Usage => "substring(i,s)\nsubstring(s,i)",
-	  Inputs => { "i" => ZZ, "s" => String },
-	  Outputs => {{ "the substring of the string ", TT "s", " starting at position ", TT "i", " and continuing to the end of the string" }}
-	  ),
-     PARA{"Positions are numbered starting at 0."},
-     PARA{"If the starting position ", TT "i", " is negative, it means to start at a position obtained by counting backward from the end of the string."},
-     PARA{"Requests for character positions out of bounds are silently ignored."},
-     }
-
-document {
-     Key => {(reverse, BasicList),reverse},
-     Headline => "reverse a list",
-     TT "reverse v", " -- yields a list containing the elements of the 
-     list ", TT "v", " in reverse order.",
-     EXAMPLE "reverse {a,b,c,d}"
      }
 
 document {

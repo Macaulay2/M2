@@ -48,6 +48,7 @@ load "./threads.m2"
 
 load "./doc_lists.m2"
 load "./doc_strings.m2"
+load "./doc_tables.m2"
 load "./operators/dotdot.m2"
 load "./functions.m2"
 load "./variables.m2"

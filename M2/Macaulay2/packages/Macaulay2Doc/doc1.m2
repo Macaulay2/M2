@@ -551,29 +551,6 @@ document {
      spots in a chain complex are actually occupied by modules or maps."
      }
 document {
-     Key => (drop, BasicList, List),
-     Usage => "drop(v,{m,n})",
-     Inputs => { "v", Nothing => { TT "{m,n}", ", a pair of natural numbers" } },
-     Outputs => { { "the list obtained by omitting those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
-     SeeAlso => {(take, BasicList, List)},
-     EXAMPLE "drop({a,b,c,d,e},{2,4})"
-     }
-document {
-     Key => (drop, BasicList, ZZ),
-     Usage => "w = drop(v,n)",
-     Inputs => {
-	  "v",
-	  "n"
-	  },
-     Outputs => {
-	  {"the list obtained by omitting the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
-	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
-	  },
-     EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)" }
-     }
-document { Key => drop,
-     Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
-document {
      Key => {(options, Function),(options, Command),(options, Sequence)},
      Headline => "get optional arguments and default values for a function that accepts them",
      Usage => "options f",
