@@ -1318,7 +1318,7 @@ gfanDoesIdealContain (List, List) := opts -> (I,J) -> (
 
 gfanFanCommonRefinement = method( Options => {
 	"i1" => null, -- these are set inside the method
-	"i2" => null, -- these are set inside the method
+	"i2" => null  -- these are set inside the method
 	}
 )
 
@@ -1363,7 +1363,7 @@ gfanFanCommonRefinement (Fan, Fan) := opts -> (F,G) -> (
 
 gfanStableIntersection = method( Options=> {
 	"i1" => null, -- these are set inside the method
-	"i2" => null, -- these are set inside the method
+	"i2" => null  -- these are set inside the method
 	}
 )
     
@@ -1428,7 +1428,7 @@ gfanFanLink (Fan, List) := opts -> (F,V) -> (
 
 gfanFanProduct = method( Options => {
 	"i1" => null, -- these are set inside the method
-	"i2" => null, -- these are set inside the method
+	"i2" => null  -- these are set inside the method
 	}
 )
 
@@ -1962,7 +1962,7 @@ gfanPolynomialSetUnion (List, MarkedPolynomialList) := opts -> (L,M) -> (
 
 gfanRender = method( Options => {
 	"L" => false,
-	"shiftVariables" => 0,
+	"shiftVariables" => 0
 	}
 )
 
@@ -2318,8 +2318,8 @@ gfanTropicalLifting := opts -> () -> (
 
 gfanTropicalLinearSpace = method( Options => {
 	"trees" => false,
-	"n" => null;
-	"d" => null;
+	"n" => null,
+	"d" => null
 	}
 )
 

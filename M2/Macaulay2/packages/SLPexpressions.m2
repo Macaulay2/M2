@@ -901,12 +901,12 @@ installPackage "SLPexpressions"
 installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
 
--- (old way) installPackage("SLPexpressions", SeparateExec=>true, AbsoluteLinks=>false)
+-- (old way) installPackage("SLPexpressions", SeparateExec=>true)
 
 -- install docs with no absolute links
 uninstallPackage "Style"
-installPackage("Style", AbsoluteLinks=>false)
-installPackage("SLPexpressions", AbsoluteLinks=>false)
+installPackage("Style")
+installPackage("SLPexpressions")
 
 installPackage ("SLPexpressions", MakeDocumentation=>false)
 check "SLPexpressions"

@@ -5,13 +5,11 @@
 undocumented {(showTex, Thing)}
 
 document { 
-     Key => {showTex,
-	  [showTex, Format]},
+     Key => showTex,
      Headline => "convert to TeX and display on screen",
      Usage => "showTex x",
      Inputs => {
-	  "x" => "any Macaulay2 object",
-	  Format => "currently an unused option"
+	  "x" => "any Macaulay2 object"
 	  },
      Consequences => {
      	  {TT "showTex x", " converts ", TT "x", 

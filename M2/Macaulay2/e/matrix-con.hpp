@@ -4,12 +4,17 @@
 #include <vector>
 #include "engine.h"
 #include "ring.hpp"
+#include <utility>
+
+class MatrixGenerator;
 
 /**
  * \ingroup matrices
  */
 class MatrixConstructor
 {
+  friend class MatrixConstructor;
+  
   const Ring *R;
   VECTOR(vec) entries;
   const FreeModule *rows;
@@ -48,6 +53,8 @@ class MatrixConstructor
   void set_matrix_degree(const int *deg);
 
   Matrix *to_matrix();
+
+  void debugDisplay() const;
 };
 
 #endif

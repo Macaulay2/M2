@@ -1,10 +1,9 @@
 document { 
-     Key => { (uninstallPackage,String), uninstallPackage, [uninstallPackage,PackagePrefix], [uninstallPackage,InstallPrefix]},
+     Key => { (uninstallPackage,String), uninstallPackage, [uninstallPackage,InstallPrefix]},
      Headline => "uninstall a package",
      Usage => "uninstallPackage PACKAGENAME",
      Inputs => {
 	  "PACKAGENAME",
-	  PackagePrefix => { "see the description of this option for ", TO "installPackage" },
           InstallPrefix => { "see the description of this option for ", TO "installPackage" }
 	  },
      Consequences => {

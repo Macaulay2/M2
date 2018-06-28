@@ -6,6 +6,8 @@
 #include "matrix-con.hpp"
 #include "newdelete.hpp"
 #include "interrupted.hpp"
+
+#include <iostream>
 extern RingZZ *globalZZ;
 
 int GaussElimComputation::complete_thru_degree() const
@@ -263,7 +265,7 @@ void GaussElimComputation::start_computation()
       if (gb_list[r] == 0) continue;
       reduce(gb_list[r]->f, gb_list[r]->fsyz, true);
     }
-  if (M2_gbTrace >= 1)
+  if (M2_gbTrace >= 10)
     {
       buffer o;
       text_out(o);

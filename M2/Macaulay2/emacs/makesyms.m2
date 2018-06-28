@@ -4,11 +4,10 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$",s)
 
 okay := method()
 okay(String,Keyword) := okay(String,Symbol) := (nam,sym) -> #nam > 1 and isAlphaNumeric nam
-symbols := sort join( 
+symbols := unique sort join( 
      apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
      flatten apply(
-     	  -- join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"})
-	  {},
+     	  join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"}),
      	  pkgnam -> (
 	       pkg := needsPackage pkgnam;
 	       select(pairs pkg.Dictionary,okay))))
@@ -24,7 +23,7 @@ f2 := openOut "M2-symbols"
 
 f << "(defvar M2-symbols '(" << endl
 
-scan( select (symbols, (nam,sym) -> isAlpha nam), (nam,sym) -> (
+scan( select (symbols, (nam,sym) -> isAlphaNumeric nam), (nam,sym) -> (
 	  f << "    " << format nam << endl;
 	  f2 << nam << endl;
 	  ))
@@ -78,5 +77,5 @@ f << "(provide 'M2-symbols)" << endl
 f << close
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "
 -- End:

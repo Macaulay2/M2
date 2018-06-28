@@ -4,7 +4,7 @@
 
 IndexedVariable = new Type of BasicList
 IndexedVariable.synonym = "indexed variable"
-value' IndexedVariable := value				    -- do we really want this?
+expressionValue IndexedVariable := value				    -- do we really want this?
 IndexedVariableTable = new Type of MutableHashTable
 IndexedVariableTable.synonym = "indexed variable table"
 protect symbol$						    -- not exported, to avoid interference with the user

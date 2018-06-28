@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "4.2.1", 
-        Date => "March 4, 2018",
+	Version => "4.2.2", 
+        Date => "May 21, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true
@@ -265,7 +265,7 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,inp3) -> (
    f:=map parametrize sub(ideal selectInSubring(1,gens gb sub(trim ideal last coefficients M,R)),K[a_0..a_N]);
    if dim target f <= 0 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
    PP':=PP[gens target f];
-   linSys:=transpose sub(sub((coefficients (sub(matrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
+   linSys:=transpose sub(sub((coefficients (sub(toMatrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
    toMap(linSys,Dominant=>o.Dominant)
 );
 
