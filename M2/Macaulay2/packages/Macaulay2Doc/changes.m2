@@ -69,6 +69,9 @@ document {
      		    },
 	       UL {
 		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." }
+		    },
+	       UL {
+		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementating data types for noncommutative algebras, has been added." }
 		    }
 	       },
      	  LI { "improved packages:",
