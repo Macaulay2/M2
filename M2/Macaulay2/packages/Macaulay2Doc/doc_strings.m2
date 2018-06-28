@@ -2,6 +2,7 @@
 
 document {
      Key => "strings and nets",
+     Headline => "an overview of strings and nets in Macaulay2",
      "In this section we discuss strings and nets.  Strings are sequences of
      characters intended to be printed, and are encountered in almost every programming language.  Nets
      are two-dimensional arrays of characters intended to be printed, and constitute a natural generalization
@@ -361,6 +362,7 @@ doc ///
   format
   separateRegexp
   "strings and nets"
+  "regular expressions"
 ///
 
 doc ///
@@ -388,9 +390,7 @@ doc ///
     {\tt n}th parenthesized expression in {\tt x} as the separator
  Description
   Text
-   There are plenty of excellent web resources for getting started with regular
-   expressions, so we omit an introduction to regexp, and jump
-   straight to illustrating the usage of {\tt separateRegexp}.
+   For an introduction to regular expressions, see @TO "regular expressions"@.
    
    Example 1: use commas, periods, and semicolons as separators.
   Example
@@ -427,6 +427,7 @@ doc ///
   separate
   substring
   "strings and nets"
+  "regular expressions"
 ///
 
 doc ///
@@ -486,6 +487,7 @@ doc ///
   separate
   separateRegexp
   "strings and nets"
+  "regular expressions"
 ///
 
 
