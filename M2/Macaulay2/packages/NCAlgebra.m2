@@ -13,6 +13,7 @@ newPackage("NCAlgebra",
 	   HomePage => "http://people.hamilton.edu/cgibbons/index.html",
 	   Email => "crgibbon@hamilton.edu"}},
      AuxiliaryFiles => true,
+     CacheExampleOutput => true,
      OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 
