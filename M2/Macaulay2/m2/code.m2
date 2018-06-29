@@ -40,7 +40,7 @@ indent := n -> "| "^(height n, depth n) | n
 
 codeFunction := (f,depth) -> (
      if depth <= limit then (
-	  if locate f === null then concatenate("function '", toString f, "': source code not available")
+	  if locate f === null then concatenate("function ", toString f, ": source code not available")
 	  else stack(
 	       syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	       getSourceLines locate f,
@@ -63,6 +63,9 @@ code Sequence := s -> (
 code Function := f -> codeFunction(f,0)
 code List := v -> stack between_"---------------------------------" apply(v,code)
 code Command := cmd -> code cmd#0
+
+previousMethodsFound := null
+code ZZ := i -> code previousMethodsFound#i
 
 EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
 editMethod := method(Dispatch => Thing)
@@ -95,7 +98,7 @@ editMethod Sequence := args -> (
 edit = Command editMethod
 
 -----------------------------------------------------------------------------
-methods = method(Dispatch => Thing, TypicalValue => VerticalList)
+methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
 methods Command := c -> methods c#0
 methods Type := F -> (
      seen := new MutableHashTable;
@@ -120,7 +123,7 @@ methods Type := F -> (
 			      else if class key === Sequence and member(F,key)
 			      then found#key = true)))));
      -- sort -- too slow
-     new VerticalList from sortByName keys found)
+     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
 methods Sequence := F -> (
      seen := new MutableHashTable;
@@ -136,7 +139,7 @@ methods Sequence := F -> (
 			      and class key === Sequence and tallyF <= tally key
 			      then found#key = true)))));
      -- sort -- too slow
-     new VerticalList from sortByName keys found)
+     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
 methods Thing := F -> (
      if F === HH then return join(methods homology, methods cohomology);
@@ -159,7 +162,7 @@ methods Thing := F -> (
 				   )
 			      then found#key = true)))));
      -- sort -- too slow
-     new VerticalList from sortByName keys found)
+     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
 debuggerUsageMessage = ///--debugger activation depth control:
     errorDepth=3   	-- activate at positions in user code (default)

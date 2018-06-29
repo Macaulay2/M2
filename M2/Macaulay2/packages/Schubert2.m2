@@ -229,7 +229,7 @@ abstractSheaf = method(
 	  Name => null,
 	  ChernClass => null,
 	  ChernCharacter => null,
-	  Rank => null,
+	  Rank => null
 	  })
 abstractSheaf AbstractVariety := opts -> X -> (
      local ch; local rk;

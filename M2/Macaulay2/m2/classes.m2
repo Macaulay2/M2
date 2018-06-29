@@ -59,14 +59,14 @@ codeHelper = new MutableHashTable
 
 Function @@ Function := Function => (f,g) -> x -> f g x
 codeHelper#(functionBody(identity @@ identity)) = h -> { 
-     ("-- function f:", value (first localDictionaries h)#"f"),
-     ("-- function g:", value (first localDictionaries h)#"g")
+     ("-- function f:", value' (first localDictionaries h)#"f"),
+     ("-- function g:", value' (first localDictionaries h)#"g")
      }
 
 Function _ Thing := Function => (f,x) -> y -> f splice (x,y)
 codeHelper#(functionBody(identity _ null)) = h -> { 
-     ("-- function f:", value (first localDictionaries h)#"f"),
-     ("-- value of x:", value (first localDictionaries h)#"x")
+     ("-- function f:", value' (first localDictionaries h)#"f"),
+     ("-- value of x:", value' (first localDictionaries h)#"x")
      }
 
 -----------------------------------------------------------------------------

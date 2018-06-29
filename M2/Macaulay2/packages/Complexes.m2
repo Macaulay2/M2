@@ -2129,7 +2129,6 @@ minimize Complex := C -> (
     minC := coker phi;
     pmC := prune minC;
     m := map(pmC, C, i-> (pmC_i.cache.pruningMap)^(-1) * inducedMap(minC_i, C_i));
-    error "debug me";
     m[-min E]
     )
 

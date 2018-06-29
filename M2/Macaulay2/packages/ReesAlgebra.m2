@@ -72,7 +72,7 @@ export{
 
 
 symmetricAlgebraIdeal = method(Options =>
-    {             VariableBaseName => "w",
+    {             VariableBaseName => "w"
      })
 symmetricAlgebraIdeal Module := Ideal => o -> M -> (
     ideal presentation symmetricAlgebra(M, o))

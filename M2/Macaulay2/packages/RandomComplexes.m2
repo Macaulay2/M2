@@ -1,6 +1,7 @@
 ///
 restart
 uninstallPackage "RandomComplexes"
+restart
 installPackage "RandomComplexes"
 check("RandomComplexes", UserMode=>true)
 loadPackage("RandomComplexes", Reload=>true)
@@ -81,14 +82,26 @@ disturb(ChainComplex,RR) := opts -> (C,epsilon) -> (
 	c := rank C_(i-1);
 	d := rank C_i;
 	e := maximalEntry C.dd_i;
-	entry:=null;
+	entry := null;
 	if opts.Strategy == symbol Discrete then
-	matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
+	  matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
 		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(2)-1)))))
 	else if opts.Strategy == symbol Continuous then
-	matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
+	  matrix apply(numrows C.dd_i,k->apply(numcols C.dd_i,l -> (
 		    entry=C.dd_i_(k,l)*(1+epsilon*(2*random(RR)-1)))))
 --	C.dd_i +e*epsilon*(2*random(RR^c,RR^d)-oneMatrix(c,d))
+    ))
+disturb(ChainComplex,RR) := ChainComplex => opts -> (C,epsilon) -> (   
+    if ring C =!= ZZ and ring C =!= QQ and not instance(ring C, RealField) then
+      error "expected a chain complex over ZZ, QQ, or RR";
+    chainComplex for i from 1 to length C list (
+	c := rank C_(i-1);
+	d := rank C_i;
+        elems := entries C.dd_i;
+	if opts.Strategy == symbol Discrete then
+          matrix applyTable(elems, a -> a * (1+epsilon*(2*random(2)-1)))
+	else if opts.Strategy == symbol Continuous then
+          matrix applyTable(elems, a -> a * (1+epsilon*(2*random(RR)-1)))
     ))
 
 testTimeForLLLonSyzygies=method(Options=>{Height=>11})
@@ -196,15 +209,20 @@ TEST ///
   netList apply(Cs,A->(A, apply(length A+1,i-> rank HH_i A)) )
 ///
     
-normalize=method()
+normalize = method()
 normalize ChainComplex := C-> (
-    minC:= min C;
-    maxC:= max C;
-    D := if ring C === ZZ then C**QQ else C;  
-    C':=for i from minC+1 to maxC list (
-	m:=max(flatten entries D.dd_i/abs);
-   	1/m*D.dd_i);
-    return chainComplex C'[-minC]) 
+    minC := min C;
+    maxC := max C;
+    D := if ring C === ZZ then C**QQ else C;
+    C' := for i from minC+1 to maxC list (
+        -- for some reason, if D.dd_i is 0, then this returns the 0 matrix:
+	    m := max(flatten entries D.dd_i/abs);
+   	    (1/m) * D.dd_i
+        );
+    -- this next line is not correct: it might negate some differentials.
+    -- if the complex has minC odd...
+    chainComplex C'[-minC]
+    )
  
 beginDocumentation()
 
@@ -212,20 +230,19 @@ doc ///
    Key
      RandomComplexes
    Headline
-     support for creating randomly complexes over the integers 
+     support for creating random complexes over the integers 
    Description
     Text
-      We implement two methods to create a random  ChainComplex over the integers.
-      The first method builds the complex from products of randomly choosen matrices of desired rank.
+      We implement two methods to create a random @TO "ChainComplex"@ over the integers.
+      The first method (@TO randomChainComplex@) builds the complex from products of randomly choosen matrices of desired rank.
       The limitation of this method to produce large complexes over the integers with
       moderate Height is the use of the LLL algorithm to improve the presentation of
       syzygy matrices.
-      The second method uses Stanley-Reisner rings from randomly choosen monomial ideals.
-      
-      Some functionality here should be moved elsewhere.
-      
+
+      The second method (@TO "randomSimplicialComplex"@) uses Stanley-Reisner rings from randomly choosen monomial ideals.
    Caveat
-     
+      Some functionality here should be moved elsewhere, e.g. 
+        @TO "disturb"@, @TO "histogram"@, @TO "maximalEntry"@, and @TO "normalize"@.
 ///
  
 
@@ -235,6 +252,7 @@ doc ///
      (randomChainComplex,List,List)
      [randomChainComplex, Height]
      [randomChainComplex, WithLLL]
+     [randomChainComplex, ZeroMean]
    Headline
      random chain complex over the integers with prescribed ranks of the homology group and ranks of the matrices
    Usage
@@ -280,7 +298,7 @@ doc ///
      This returns a chain complex over the integers.  Notice that if one gives h to be a list of zeros, then
      that doesn't mean that the complex is exact, just that the ranks are as expected.
    SeeAlso
-     "SVDComplexes"
+     "SVDComplexes::SVDComplexes"
 ///
 
 doc ///
@@ -305,10 +323,10 @@ doc ///
      
     Example
       setRandomSeed "nice example 2";
-      C=randomSimplicialComplex(7,20)
+      C = randomSimplicialComplex(7,20)
       prune HH C
    SeeAlso
-     "SVDComplexes"
+     "SVDComplexes::SVDComplexes"
 ///
 
 doc ///
@@ -340,16 +358,17 @@ doc ///
    Key
      maximalEntry
      (maximalEntry,ChainComplex)
+     (maximalEntry,Matrix)
    Headline
-     maximal absolute value of the entries of the matrices 
+     maximal absolute value of the entries of the matrix or matrices 
    Usage
      m = maximalEntries C
    Inputs
      C:ChainComplex
-       over RR or QQ
+       or a @TO "Matrix"@, over ZZ, QQ, or RR
    Outputs
      m:List
-       of the maximal absolut values of the entries in matrices defining the differential
+       of the maximal absolute values of the entries in matrices defining the differential
    Description
     Text
        For each matrix we compute the of maximal absolute value of the entries
@@ -456,7 +475,7 @@ doc ///
        the time to compute the LLL basis of B
    Description
     Text
-       We randomly choose an $r \times n$ matrix A over ZZ with entries up to the given Height,
+       We randomly choose an $r \times\ n$ matrix A over ZZ with entries up to the given Height,
        and take the time to compute B=ker A and an LLL basis of B.
     Example
       setRandomSeed "nice example 2";
@@ -497,10 +516,95 @@ doc ///
     Value for the Strategy in disturb
    Description
     Text
-     If Strategy=>Continues then we disturb the complex by floating point numbers
-     other wise by discrete values.
+     If Strategy=>Continuous then we disturb the complex by floating point numbers
+     otherwise by discrete values.
    SeeAlso
      disturb
+///
+
+TEST ///
+-* 
+  restart
+  needsPackage "RandomComplexes"
+*-
+  rks = {4,5,6}
+  C = randomChainComplex({2,2,2,2},rks)
+  assert(C.dd^2 == 0)
+  for i from 0 to 3 do assert(rank prune HH_i C == 2)
+  assert(rks == for i from 1 to 3 list rank C.dd_i)
+///
+
+TEST ///
+-* 
+  restart
+  needsPackage "RandomComplexes"
+*-
+  rks = {2,2,2}
+  C = randomChainComplex({1,1,1,1},rks)
+  assert(C.dd^2 == 0)
+  for i from 0 to 3 do assert(rank prune HH_i C == 1)
+  assert(rks == for i from 1 to 3 list rank C.dd_i)
+///
+
+TEST ///
+-* 
+  restart
+  needsPackage "RandomComplexes"
+*-
+  hr = {5,5,5,5}
+  rks = {2,2,2}
+  C = randomChainComplex(hr,rks)
+  assert(C.dd^2 == 0)
+  hr == for i from 0 to #hr-1 list rank prune HH_i C
+  assert(rks == for i from 1 to #rks list rank C.dd_i)
+///
+
+TEST ///
+-* 
+  restart
+  needsPackage "RandomComplexes"
+*-
+  hr = {5,5,5,5}
+  rks = {20,20,20}
+
+  C = randomChainComplex(hr,rks)
+  assert(C.dd^2 == 0)
+  -- hr == for i from 0 to #hr-1 list rank prune HH_i C -- ouch, this needs improvement!!
+  assert(rks == for i from 1 to #rks list rank C.dd_i)
+///
+
+TEST ///
+  -- XXX
+-* 
+  restart
+  needsPackage "RandomComplexes"
+*-
+  setRandomSeed "nice example 2";
+  C = randomChainComplex({1,1,1},{2,2})
+  C.dd
+  B=normalize C
+  B.dd
+
+  CR = C ** RR
+  BR = normalize CR
+  BR.dd
+  
+  D = chainComplex{map(RR^1, RR^3, 0), map(RR^3, RR^1, {{1.0},{3.0},{5.0}})}
+  D.dd^2
+  normalize D
+  D.dd
+///
+
+TEST ///
+  -- test of disturb
+-* 
+  restart
+  needsPackage "RandomComplexes"
+*-
+  setRandomSeed "nice example";
+  C = randomChainComplex({1,1,1},{2,2})
+  C.dd
+  disturb(C,.000001)
 ///
 	    
 end--
@@ -898,10 +1002,8 @@ tex U#0
 tex U#1
 tex U#2
 tex U#3
-
-
-
 ///
+
 /// -- for David
 restart
 needsPackage "AGRExamples"
@@ -994,13 +1096,13 @@ data=apply(Cs,CR->(
     {c,	apply(4,i->h#i),t2,t3}
     ));
 netList data    
-{*
+-*
 ${{{7, 21, 28, 14}, {2, 3, 2, 1}, .00211, .011}, {{8, 27, 35, 17}, {3, 6,
      4, 2}, .00225, .0182}, {{9, 33, 42, 20}, {4, 9, 6, 3}, .00254, .0294},
      {{10, 39, 49, 23}, {5, 12, 8, 4}, .00291, .0647}, {{11, 45, 56, 26}, {6,
      15, 10, 5}, .00355, .109}, {{12, 51, 63, 29}, {7, 18, 12, 6}, .00442,
      .115}}$
-*}
+*-
 ///
 TEST///
 restart
@@ -1026,7 +1128,7 @@ netList data
 
  
 tex data 
-{*
+-*
 o9 = ${{13, 25, {13, 78, 284, 695, 1193, 1443, 1179, 570, 117}, {1, 0, 0, 0, 0,
      0, 0, 6, 0}, 31.5}, {11, 29, {11, 53, 147, 255, 276, 169, 47}, {1, 0, 0,
      0, 0, 2, 0}, .0647}, {12, 24, {12, 65, 210, 450, 668, 685, 453, 156}, {1,
@@ -1034,6 +1136,6 @@ o9 = ${{13, 25, {13, 78, 284, 695, 1193, 1443, 1179, 570, 117}, {1, 0, 0, 0, 0,
      {1, 0, 0, 0, 0, 0, 0}, .0869}, {12, 32, {12, 66, 218, 475, 701, 680, 382,
      89}, {1, 0, 0, 0, 0, 0, 6, 0}, 1.46}, {14, 26, {14, 91, 364, 999, 1982,
      2909, 3156, 2447, 1234, 327}, {1, 0, 0, 0, 0, 0, 0, 0, 3, 0}, 504}}$
-*}
+*-
 ///
 viewHelp "RandomComplexes"

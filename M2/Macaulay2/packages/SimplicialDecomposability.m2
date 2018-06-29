@@ -6,7 +6,7 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-newPackage select((
+newPackage (
    "SimplicialDecomposability",
    Version => "1.0.6",
    Date => "20. June 2011",
@@ -29,7 +29,7 @@ newPackage select((
 	"volume URI" => "http://www.j-sag.org/volume2.html"
 	},
     PackageExports => {"SimplicialComplexes"}
-), x -> x =!= null)
+    )
 
 -------------------
 -- Exports

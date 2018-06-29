@@ -2,12 +2,17 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 STOP = --stop
-ARGS = -q --silent $(STOP) -e errorDepth=0
+ARGS = -q --silent $(STOP)
 MADEFILES = M2-symbols.el M2-emacs-hlp.txt M2-emacs.m2
 SRCFILES = M2-mode.el M2.el M2-README
 clean::; rm -f $(MADEFILES) M2-symbols @pre_emacsdir@/M2*
-M2-symbols M2-symbols.el : makesyms.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+M2-symbols M2-symbols.el : makesyms.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2 
+	@ $(WHY)
 	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/makesyms.m2 -e 'exit 0'
+	@if ! test `wc -l <M2-symbols` -gt 1400 ;					\
+	then echo "expected more than `wc -l <M2-symbols` lines in M2-symbols" >&2 ;	\
+	     false ;									\
+	fi
 M2-emacs-hlp.txt: makehlp.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/makehlp.m2 -e 'exit 0'
 M2-emacs.m2: makem2.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2

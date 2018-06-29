@@ -18,9 +18,8 @@ BUILDLIBS =
 DIRSUFF =
 
 #############################################################################
-# Examples:
-#
-#    time make SIGN=no DEBUG=no CC=gcc-7 CXX=g++-7 FC=gfortran-7 
+# Example:
+#    time make SIGN=no DEBUG=no CC=gcc-8 CXX=g++-8 FC=gfortran-8 DIRSUFF=-gcc8
 #############################################################################
 
 # We may distribute the result, so prevent aggressive optimizations based on the current architecture:

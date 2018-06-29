@@ -1,6 +1,7 @@
 /* Copyright 2015, Michael E. Stillman */
 
 #include "res-poly-ring.hpp"
+#include "res-monomial-sorter.hpp"
 
 long poly::npoly_destructor = 0;
 long poly_constructor::ncalls = 0;
@@ -19,6 +20,7 @@ void ResPolyRing::memUsage(const poly& f,
   bytes_alloc += sz;
 }
 
+#if 0
 bool check_poly(const ResPolyRing& R,
                 const poly& f,
                 const ResSchreyerOrder& ord)
@@ -53,6 +55,22 @@ bool check_poly(const ResPolyRing& R,
     }
   return true;
 }
+#endif
+
+bool check_poly(const ResPolyRing& R,
+                const poly& f,
+                const ResSchreyerOrder& ord)
+{
+  std::vector<int*> monoms;
+  auto end = poly_iter(R,f,1);
+  for (auto i=poly_iter(R,f); i != end; ++i)
+    {
+      monoms.push_back(const_cast<res_packed_monomial>(i.monomial()));
+    }
+  ResMonomialSorter S(R.originalMonoid(), R.monoid(), ord, monoms);
+  return S.ordered();
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

@@ -88,10 +88,10 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
 radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
 quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
-MonomialIdeal : MonomialIdeal := MonomialIdeal => quotient
+MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> quotient(I,J)
 
 quotient(MonomialIdeal, RingElement) := opts -> (I,f) -> I : monomialIdeal terms f
-MonomialIdeal : RingElement := MonomialIdeal => quotient
+MonomialIdeal : RingElement := MonomialIdeal => (I,r) -> quotient(I,r)
 
 saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
 

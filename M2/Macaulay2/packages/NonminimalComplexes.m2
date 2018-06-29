@@ -28,13 +28,20 @@ export {
     "getNonminimalRes",
     "degreeZeroMatrix",
     "minimizeBetti",
-    "SVDBetti"
+    "SVDBetti",
+    
+    "SparseMatrix",
+    "newSparseMatrix",
+    "sparseMatrix",
+    "Entries",
+    "RowNums",
+    "ColumnNums"
 }
 
 debug Core
 needsPackage "SVDComplexes"
 
-{*
+-*
 -- The following shuold be where?
 newChainComplexMap = method()
 newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
@@ -47,8 +54,83 @@ newChainComplexMap(ChainComplex, ChainComplex, HashTable) := (tar,src,maps) -> (
      scan(goodspots, i -> f#i = if maps#?i then maps#i else map(tar_i, src_i, 0));
      f
     )
-*}
+*-
 
+SparseMatrix = new Type of HashTable
+
+numRows SparseMatrix := S -> # S.RowNums
+numColumns SparseMatrix := S -> # S.ColumnNums
+
+net SparseMatrix := (S) -> (
+    netList{
+        {"", netList toList{toList(0..numColumns S - 1), S.ColumnNums}},
+        {
+            netList for r from 0 to numRows S - 1 list {r, S.RowNums#r},
+            netList S.Entries
+        }}
+    )
+
+newSparseMatrix = method()
+newSparseMatrix(List, List, List) := SparseMatrix => (mat, rownums, colnums) -> (
+    new SparseMatrix from {
+        Entries => mat,
+        RowNums => rownums,
+        ColumnNums => colnums
+        }
+    )
+sparseMatrix = method()
+sparseMatrix Matrix := SparseMatrix => (M) -> (
+    e := entries M;
+    mat := for e1 in e list (pos := positions(e1, x -> x != 0); {pos, e1_pos});
+    rownums := for r in mat list #r#0;
+    colnums := new MutableList from (numColumns M : 0);
+    for r from 0 to numRows M - 1 do (
+        for c in mat#r#0 do colnums#c = colnums#c + 1;
+        );
+    newSparseMatrix(mat, rownums, toList colnums)
+    )
+
+removeRows = method()
+removeRows(List,SparseMatrix) := (r,S) -> (
+    -- chores:
+    --  1. remove entry r from RowNums, Entries.
+    --  2. for each column in Entries#r#0: 
+    removeThese := set r;
+    keep := sort toList(set toList(0..numRows S - 1) - removeThese);
+    colnums := new MutableList from S.ColumnNums;
+    for r1 in r do (
+        for c in S.Entries#r#0 do colnums#c = colnums#c - 1;
+        );
+    newSparseMatrix(S.Entries_keep, S.RowNums_keep, toList colnums)
+    )
+
+removeColumn = method()
+removeColumn(ZZ,SparseMatrix) := (c,S) -> (
+    -- remove c from ColNums
+    -- loop over all rows r
+    --   if c is in S.Entries#r#0
+    --     remove c from this list, and corresponding coeff.
+    --     decrement rownums#r.
+    )
+removeZeroOneRows = method()
+removeZeroOneRows SparseMatrix := (S) -> (
+    -- returns (#zero rows, #rows with 1 element)
+    -- removes columns in such rows too.
+    p := positions(toList S.RowNums, x -> x > 0);
+    )
+///
+  restart
+  debug needsPackage "NonminimalComplexes"
+  kk := ZZ/101
+  M = mutableMatrix(kk, 10, 10);
+  fillMatrix(M, Density=>.2)
+  rank M
+  S = sparseMatrix matrix M
+
+  S = removeRows(positions(S.RowNums, x -> x == 0), S)
+  for r in positions(S.RowNums, x -> x == 1) list 
+  M
+///
 -----------------------------------------------
 -- Code for nonminimal resolutions over QQ ----
 -----------------------------------------------
@@ -116,10 +198,10 @@ TEST ///
 --  b. allow a single multi-degree
   -- constantStrand, constantStrands
   -- these are from nonminimal free resolutions over QQ
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   
   R = QQ[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
@@ -147,7 +229,7 @@ TEST ///
       => 14, (3,{8},8) => 52, (3,{9},9) => 45, (3,{10},10) => 4, (4,{8},8) => 4, (4,{9},9) => 35, (4,{10},10) =>
       52, (4,{11},11) => 14, (4,{12},12) => 4, (5,{10},10) => 9, (5,{11},11) => 29, (5,{12},12) => 10, (5,{13},13)
       => 3, (5,{14},14) => 1, (6,{12},12) => 6, (6,{13},13) => 3, (6,{14},14) => 1}
-  {*
+  -*
   assert(betti'ans ==betti (C1 = getNonminimalRes(C, R1)))
   assert(betti'ans == betti (C2 = getNonminimalRes(C, R2)))
   assert(betti'ans == betti (C3 = getNonminimalRes(C, R3)))
@@ -156,14 +238,14 @@ TEST ///
   assert(C2.dd^2 == 0)
   assert(C3.dd^2 == 0)
   assert(C4.dd^2 == 0)
-  *}
+  *-
 ///
 
 TEST ///
-{*  
+-*  
   restart
   needsPackage "NonminimalComplexes"
-*}
+*-
   R = ZZ/32003[a..e]
   I = ideal(a^3, b^3, c^3, d^3, e^3, (a+b+c+d+e)^3)
   C = res(ideal gens gb I, Strategy=>4.1)
@@ -420,9 +502,224 @@ TEST ///
    -- fails, as it doesn't even make it to that code
 ///
 
+TEST ///
+-- Test of computing non-minimal resolutions, modules
+  -- XXX
+-*  
+  restart
+*-  
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+  m = map(R^2,,{{a,b^2},{c,d^2}})
+
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{4,Position=>Up}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{4,Position=>Down}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Down,4}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- WORKS!!
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Up,4}]
+  m = map(R^{0,1},,{{a,b^2},{c^2,d^3}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- non-compatible monomial order...
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Down,4}]
+  m = map(R^{1,0},,{{c^2,d^3},{a,b^2}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- doesn't work
+
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d, MonomialOrder=>{Position=>Up,4}]
+  m = map(R^{1,0},,{{c^2,d^3},{a,b^2}})
+  M = coker m
+  res(M, FastNonminimal=>true) -- works!
+
+///
+
+TEST ///
+-- Test of computing non-minimal resolutions
+  -- XXX
+-*  
+  restart
+*-  
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := Boolean => M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := Boolean => I -> hasFastNonminimal comodule I
+
+  nonminimalResolutionComputation = method()
+  nonminimalResolutionComputation Module := RawComputation => (M) -> M.cache.resolutionNonminimal.Resolution.RawComputation
+  nonminimalResolutionComputation Ideal := RawComputation => (I) -> nonminimalResolutionComputation comodule I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  M = comodule I
+  C = res(M, Strategy=>4)
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  D = nonminimalResolutionComputation I
+  getfree = (I,i) -> new Module from (ring I,rawResolutionGetFree(nonminimalResolutionComputation I,i))
+  getfree(I,0)
+  getfree(I,1)
+  getmat = (I,i) -> (
+      D := nonminimalResolutionComputation I;
+      src := getfree(I,i);
+      tar := getfree(I,i-1);
+      map(tar, src, rawResolutionGetMatrix(D,i))
+      )
+  getmat(I,1)
+  getmat(I,2)
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, Strategy=>4)
+  assert hasFastNonminimal I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, FastNonminimal=>true, Strategy=>4)
+  assert hasFastNonminimal I
+  
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res(I, FastNonminimal=>true)
+  assert hasFastNonminimal I
+
+  I = ideal"ab-cd,a3+c3,a2c+b2c"
+  C = res I
+  assert not hasFastNonminimal I
+  
+  M.cache.resolutionNonminimal.Resolution.RawComputation
+///  
+
+///
+-- Test of computing non-minimal resolutions
+  -- XXX
+  -- Try a non homogeneous ideal:
+  restart
+  debug Core -- for the key resolutionNonminimal
+  kk = ZZ/32003
+  R = kk[a..d]
+
+  hasFastNonminimal = method()
+  hasFastNonminimal Module := M -> M.cache.?resolutionNonminimal
+  hasFastNonminimal Ideal := I -> hasFastNonminimal comodule I
+    
+  I = ideal"ab-1,c2-c-a"
+  M = comodule I
+  C = res(I, Strategy=>5) -- currently gives an error: cannot use res(...,FastNonminimal=>true) with inhomogeneous input
+  assert hasFastNonminimal M
+  assert hasFastNonminimal I
+
+  R = kk[a..d,DegreeRank=>4]  
+  degree a
+  I = ideal(a^2, a*b, b^2)
+  C = res(I, Strategy=>4) -- currently gives an error: expected singly graded with positive degrees for the variables
+
+
+  
+  C = res I
+  C.dd
+  peek C.Resolution
+  debug Core
+  C.Resolution.RawComputation
+
+  J = ideal"ab-cd,a3+c3,a2c+b2c"
+  CJ = res(J, FastNonminimal=>true)
+  CJ.dd
+  peek CJ.Resolution
+  debug Core
+  CJ.Resolution.RawComputation
+  
+  -- where are these stashed?
+  MI = comodule I  
+  MI.cache.resolution === C
+
+  MJ = comodule J
+  MJ.cache.resolution === CJ
+
+gbTrace=3
+  minimalBetti J
+  minimalBetti I
+///
 
 end--
-{*
+
+-*
+///
+  -- test for computing ranks of matrices concurrently
+  restart 
+  allowableThreads = 10
+  kk = ZZ/101
+  sizes = for i from 1 to 5 list (1000*i, 1000*i)
+  mats = for i from 0 to 30 list (
+      fillMatrix mutableMatrix(kk,sizes#(i % 5)#0, sizes#(i % 5)#1)
+      );
+  fcn = (i) -> () -> (
+      << "[" << i << "]" << endl;
+      t := elapsedTiming rank mats#i;
+      << "time for rank #" << i << " = " << t#0 << endl;
+      t#1
+      )      
+  donetask = createTask(()->(<< "all computations are done!" << endl; "done!"))
+  tsks = for i from 0 to 30 list createTask (fcn i)
+  for i from 0 to 30 do addDependencyTask(donetask, tsks#i)
+  elapsedTime(schedule donetask; tsks/schedule; while not isReady donetask do sleep 1;)
+  tsks/taskResult
+  elapsedTime for i from 0 to 30 list (fcn i)()
+
+  m1 = mutableMatrix(kk,5000,5000); fillMatrix m1;
+  m2 = mutableMatrix(kk,4000,5000); fillMatrix m2;
+  m3 = mutableMatrix(kk,3000,3000); fillMatrix m3;
+
+  -- our goal: do these simultaneously
+  f1 = () -> (<< "[f1]" << endl; t := elapsedTiming rank m1; << "time for rank m1: " << t#0 << endl; t#1)
+  f2 = () -> (<< "[f2]" << endl; t := elapsedTiming rank m2; << "time for rank m2: " << t#0 << endl; t#1)
+  f3 = () -> (<< "[f3]" << endl; t := elapsedTiming rank m3; << "time for rank m3: " << t#0 << endl; t#1)
+  t4 = createTask(()->(<< "all computations are done!" << endl; "done!"))
+  t1 = createTask f1
+  t2 = createTask f2
+  t3 = createTask f3
+
+  addDependencyTask(t4, t1)
+  addDependencyTask(t4, t2)
+  addDependencyTask(t4, t3)
+  elapsedTime({t1,t2,t3,t4}/schedule; while not isReady t4 do sleep 1)
+  taskResult t4
+  {t1,t2,t3}/taskResult
+  schedule t4
+  schedule t1
+schedule t2
+schedule t3
+schedule t4
+///
+-*
+
 Cs2 = (constantStrands(C, RR_1000))#8
       kk1 = ZZ/32003
       kk2 = ZZ/1073741909
@@ -433,7 +730,7 @@ Cs2 = (constantStrands(C, RR_1000))#8
       netList {{CR.dd_4, CR2.dd_4}, {Cp1.dd_4, Cp2.dd_4}}
       netList{(clean(1e-14,CR)).dd_4,(clean(1e-299,CR2)).dd_4}
       netList {(clean(1e-14,CR)).dd_4} == netList{(clean(1e-299,CR2)).dd_4}
-      *}
+      *-
 
 restart
 uninstallPackage "NonminimalComplexes"
@@ -750,13 +1047,13 @@ restart
   makeAGR(6,7,50,0)
   
   I = getAGR(6,7,50,0);
-{*  
+-*  
   R = QQ[a..h]
   deg = 6
   nextra = 30
   F = sum(gens R, x -> x^deg) + sum(nextra, i -> (randomForm(1,R))^deg);
   elapsedTime I = ideal fromDual matrix{{F}};
-*}
+*-
   
   elapsedTime C = res(I, FastNonminimal=>true)
   betti C
