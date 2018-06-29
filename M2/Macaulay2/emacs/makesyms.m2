@@ -35,6 +35,9 @@ f << "  " << format ///A list of the symbols available in Macaulay2, for use wit
 f << "  )" << endl
 
 f << ///
+
+(defun M2-symbols-el ())	; use this function with C-h f to discover which instance of this file got loaded
+
 (defvar M2-mode-font-lock-keywords 
      (let (
 	    (max-specpdl-size 1000) ; needed for passing long long lists to regexp-opt
