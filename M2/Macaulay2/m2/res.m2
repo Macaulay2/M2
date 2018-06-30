@@ -264,7 +264,6 @@ resolutionNonminimal = (opts,M) -> (
     R := ring M;
     if not instance(R, PolynomialRing) then return null;
     if not(isCommutative R or isSkewCommutative R) then return null;
-    << "using resolutionNonminimal" << endl;
     strategy := if opts.Strategy === null then 4 else if instance(opts.Strategy,Number) then opts.Strategy
       else error "expected Strategy option to be one of: 4, 5, 4.1, 5.1";
     local C; -- the resulting complex.
