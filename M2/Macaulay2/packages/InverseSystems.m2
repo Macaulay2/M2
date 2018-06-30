@@ -19,7 +19,8 @@ export {"inverseSystem",
 	--option names (symbols):
 	"DividedPowers",
 	"toDual", 
-	"fromDual"
+	"fromDual",
+	"Gorenstein"
 	}
 ///
 restart
@@ -165,6 +166,10 @@ Headline
  Macaulay's Inverse Systems
 Description
  Text
+  Inverse systems are often used to construct artinian Gorenstein
+  ideals and modules. For a brief introduction to that application,
+  see @TO Gorenstein@. Here we give a general introduction.
+  
   The graded Hopf algebra dual of the symmetric algebra
   $S := k[x_1,\dots,x_n]$ is the divided power algebra
   $D$. The dual basis to the monomial basis of $S$
@@ -388,6 +393,66 @@ SeeAlso
  toDividedPowers
 ///
 
+doc///
+Key
+ Gorenstein
+Headline
+ Constructing Gorenstein Rings and Modules
+Description
+ Text
+  Each artinian graded (or local) Gorenstein ring is the inverse system of a unique
+  element of D, and inverse systems are often used to construct such examples.
+  (Higher-dimensional Gorenstein rings also correspond to special inverse systems,
+  though these are not finitely generated submodules of D. See
+  "The structure of the inverse system of Gorenstein k-algebras"
+  by Joan Elias and Maria Evelina Rossi, Adv. Math. (2017) 306-327,
+  for a recent treatment with computational intent.)
+  
+  For example,
+  studying artinian Gorenstein rings of codimension 4,
+  one might consider those corresponding to the sum of n d-th powers of linear
+  forms. For example with n= 4,5 and d=3:
+ Example
+  S = ZZ/101[a,b,c,d]
+  nPowers = (S, n,d) ->sum(apply(n, j->(random(1,S))^d))
+  minimalBetti inverseSystem nPowers(S,4,3)
+  minimalBetti inverseSystem nPowers (S,5,3)
+ Text
+  One can also construct self-dual modules with more generators by taking the 
+  inverseSystem of a submodule that is isomorphic to its dual, for example
+  the image of a symmetric or skew-symmetric matrix:
+ Example
+  Msymm = matrix"0,a,b;a,0,c;b,c,0"
+  Mskew = matrix"0,a,b;-a,0,c;-b,-c,0"
+  minimalBetti coker gens inverseSystem Msymm
+  minimalBetti coker gens inverseSystem Mskew  
+ Text
+  For an interesting series of examples, consider the d-th Hessian matrices
+  obtained by taking the d-th mixed partials of a form of some degree e>2d. The ranks
+  of such matrices are connected to the Lefschetz properties of the corresponding
+  artinian Gorenstein rings, as explained in "The Lefschetz properties",
+  Springer Lecture Notes in Math. 2080, by 
+  T. Harima, 
+  T. Maeno, 
+  H. Morita,
+  Y. Numata,
+  A. Wachi  and 
+  J. Watanabe.
+ Example
+  Hessian = (d,f) ->(
+      S = ring f;
+      B = basis(d,S);
+      diff(transpose B, diff(B,f))
+      )
+  S = ZZ/101[x_1..x_4]
+  f = nPowers (S,6,4)
+  minimalBetti coker gens inverseSystem f
+  minimalBetti coker gens inverseSystem Hessian(1, f)
+  minimalBetti coker gens inverseSystem Hessian(2, f)
+SeeAlso
+ inverseSystem
+///
+
 doc ///
 Key
  inverseSystem
@@ -397,9 +462,8 @@ Key
  (inverseSystem, ZZ, Ideal)
  (inverseSystem, ZZ, Matrix) 
  [inverseSystem, DividedPowers] 
- 
 Headline
- Inverse systems with equivariance. Can replace fromDual and toDual
+ Inverse systems with equivariance
 Usage
  I1 = inverseSystem M
  M1 = inverseSystem I
@@ -416,6 +480,10 @@ Outputs
  M1:Matrix
 Description
  Text
+  Inverse systems are often used to construct artinian Gorenstein
+  ideals and modules. For that application
+  see @TO Gorenstein@.
+ 
   Let S = k[x_1..x_n] be a standard graded polyomial ring,
   and let D be its dual, the divided power algebra,
   regarded as an S-module.  Let M be an rxm matrix of polynomials,
