@@ -514,7 +514,7 @@ correspondenceScroll(I,scroll);
 minimalBetti oo
 ///
 
-{*
+-*
 ---possible rewrite for speed, currently imcomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
@@ -527,7 +527,7 @@ Gd := apply(#Ge, i-> (ceiling (Ge_i/scroll_i)*scroll_i));
 L := apply(#G, i-> product(#scroll, j->(SvarIdeals_j)^(Gd_j-Ge_j))*G_i)
 --now need to translate these in terms of the T variables (and add J0)
 )
-*}
+*-
 
 
 
@@ -853,12 +853,12 @@ rationalOnP1n List := L ->(
     scan(n-1, i->tar = tar||random(S^1, S^{2:{-L_i,-L_i}}));
     tar)
 
-{*
+-*
 restart
 uninstallPackage "K3Carpets"
 loadPackage ("K3Carpets", Reload =>true)
      I = rationalOnP1n({1,1})
-*}
+*-
 
 
 
@@ -945,7 +945,7 @@ document {
    by Francisco Gallego and B.P. Purnaprajna,
    Trans. Amer. Math. Soc. 349 (1997), no. 6, 2477–2492.)",
    PARA{},
-{*   "For $a,b > 1$ he ideal of the carpet and more general a family of degenerate K3 surfaces $X_e(a,b)$ is generated
+-*   "For $a,b > 1$ he ideal of the carpet and more general a family of degenerate K3 surfaces $X_e(a,b)$ is generated
    by the 2x2 minors of the matrices
    $$
 \begin{pmatrix}
@@ -977,7 +977,7 @@ $$
  y_2 & y_3 & ... & y_{b} \\
  \end{pmatrix} 
  $$
-   "*}
+   "*-
    "The carpet lies on the intersection of the cones over two rational normal curves Ca and Cb
    of degrees a>=b. We write the ideal of Ca as the minors of a 2xa matrix X with entries x_i, i= 0..a,
    and similarly for Cb, with  a 2 x b matrix Y with entries y_j. We write Xi for the ith column of X, and
@@ -1135,10 +1135,10 @@ doc ///
      two matrices from m:
      X:the 2 x a matrix that is the first a cols of m;
      Y:the 2 x b matrix that is the nex b cols of m--that is, cols a1..a1+a2-1 of m;
-     Let Ix, Iy be the ideals of 2 x 2 minors of X and Y. If a,b\geq 2,the routine returns
+     Let Ix, Iy be the ideals of 2 x 2 minors of X and Y. If $a,b\geq 2$,the routine returns
      Ix+Iy+Imixed, where Imixed
      consists of the quadrics "outside minor - inside minor", that is,
-     det(X_{\{i\}},Y_{\{j+1\}})-det(X_{\{i+1\}}|Y_{\{j\}}),
+     $det(X_{\{i\}},Y_{\{j+1\}})-det(X_{\{i+1\}}|Y_{\{j\}})$,
      for each pair of (i,i+1), (j,j+1) in the ranges a1 and a2.
      
      If m is usual ideal of the scroll of type (a,b), then carpet(a,b,m) produces the same ideal
@@ -1147,26 +1147,26 @@ doc ///
      The ideal I to be constructed is the ideal of the unique (numerically) K3 scheme that is a double
      structure on the scroll S(a1,a2).
      
-     When a,b > 1, the carpet ideal I is the sum Ix+Iy plus
+     When a,b > 1, the carpet ideal I is the sum $Ix+Iy$ plus
      the ideal Imixed 
      
-     When a = b = 1, I is the square of the det of X|Y.
+     When a = b = 1, I is the square of the determinant of X|Y.
 
      When a = 1, b>1 (or symmetrically), I is defined as in the case a,b>1, after replacing
-
+     $$
      X = \begin{pmatrix}
      x_0\\
      x_1
      \end{pmatrix}
-     
+     $$
      by the 2 x 2 matrix
-     
+     $$
      \begin{pmatrix}
      x_0^2, x_0*x_1\\
      x_0*x_1, x_1^2
      \end{pmatrix}.
-
-     and changing a to 2.
+     $$
+     and changing $a$ to 2.
     Example
      betti res carpet(2,5)
      S = ZZ/101[a..j]
@@ -1705,7 +1705,7 @@ doc ///
 ///
 
 
-{*
+-*
 doc ///
    Key
     rationalOnP1n
@@ -1731,7 +1731,7 @@ doc ///
      S = ring I;
      isHomogeneous I
 ///
-*}
+*-
 
 doc ///
    Key
