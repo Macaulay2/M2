@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+# this script was obtained from https://github.com/ysangkok/w3c-validator-runner
+
 import random
 import io
 import sys
