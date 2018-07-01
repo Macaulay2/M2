@@ -11,6 +11,7 @@ TLIMIT = 400
 
 
 INSTALLCMD = $(MKDIR_P) $(BUILTLIBPATH)/include && rm -rf $(BUILTLIBPATH)/include/gtest && ln -s ../../libraries/gtest/$(BUILDDIR) $(BUILTLIBPATH)/include/gtest
+CHECKTARGET = .
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gtest/Makefile
