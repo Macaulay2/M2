@@ -1178,7 +1178,7 @@ doc ///
     Text
      
    Caveat
-    We require a1,a2 >=1. If a1>a2 then the blocks are reversed, so that the smaller block always comes first.
+    We require $a1,a2 \ge 1$. If $a1>a2$ then the blocks are reversed, so that the smaller block always comes first.
     The script generalizeScroll is a more general tool that can do the same things.   
    SeeAlso
     canonicalCarpet
