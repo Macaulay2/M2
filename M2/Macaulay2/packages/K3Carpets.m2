@@ -1108,13 +1108,13 @@ doc ///
     a2:ZZ
      a1 and a2 should be positive
     m:Matrix
-     a 2xn matrix for some n >=a1+a2
+     a 2xn matrix for some $n \ge{} a1+a2$
     Characteristic => ZZ 
      the characteristic of the ground field
     Scrolls =>  Boolean
      if true return in addition the matrices defining the sections
     FineGrading => Boolean
-     if true then I is defined over the ring with ZZ^4-grading
+     if true then I is defined over the ring with $\ZZ^4$-grading
    Outputs
     I:Ideal
     xmat: Matrix
@@ -1125,7 +1125,7 @@ doc ///
      If no matrix m is present then the script creates a type a1,a2 K3-carpet over a new ring. If m is given,
      then an ideal made from certain minors and sums of minors of m is produced.
      The characteristic is given by the option, defaulting to 32003.
-     If the option FineGrading is set to true, then the ideal is returned with the natural ZZ^4 grading
+     If the option FineGrading is set to true, then the ideal is returned with the natural $\ZZ^4$ grading
      (the default is FineGrading => false). This last may not work unless the matrix is of scroll type (or
      not given!) If Scrolls=>true, then a sequence of three items is returned, the second
      and third being the smaller and larger scroll matrices.
@@ -1209,7 +1209,7 @@ doc ///
     Scrolls =>  Boolean
      if true return in addition the matrices defining the sections
     FineGrading => Boolean
-     if true then I is defined over the ring with ZZ^4-grading
+     if true then I is defined over the ring with $\ZZ^4$-grading
    Outputs
     I:Ideal
      ideal of the K3 Carpet of (sectional) genus g, Clifford index cliff
@@ -1217,7 +1217,7 @@ doc ///
     Text
      This is just a re-indexing of the carpet script:
      canonicalCarpet(g,cliff) = carpet(g-cliff-1, cliff).
-     Here the natural choices for cliff are 1 \leq cliff \leq (g-1)//2.
+     Here the natural choices for cliff are $1 \leq{} cliff \leq{} (g-1)//2$.
    SeeAlso
     carpet
 ///
@@ -1555,7 +1555,7 @@ doc ///
     Characteristic => ZZ 
      the characteristic of the ground field
     FineGrading => Boolean
-     if true then F is defined over the ring with ZZ^4-grading
+     if true then F is defined over the ring with $\ZZ^4$-grading
    Outputs
     F:ChainComplex
      free resolution of the canonical carpet of genus g, clifford index cliff
@@ -1564,7 +1564,7 @@ doc ///
    Description
     Text
      By default the option FineGrading is set to false. With FineGrading=>true
-     the script returns the ZZ^4-graded resolution, and the function h returns the homotopies
+     the script returns the $\ZZ^4$-graded resolution, and the function h returns the homotopies
      one graded component at a time as a HashTable. 
      
      Note that the homotopies are 0
@@ -1622,7 +1622,7 @@ doc ///
    Description
     Text
      The default is FineGrading => false. If the option FineGrading=>true is given, then the 
-     ideal returned has the natural ZZ^4 grading, where x_i has degree \{1,0,i,a-i\}\ and 
+     ideal returned has the natural $\ZZ^4$ grading, where x_i has degree \{1,0,i,a-i\}\ and 
      y_i has degree \{0,1,i,b-i\}. 
      (Note that after the call carpet(a1,a2) we have a = min(a1,a2), b = max(a1,a2).)
 ///
