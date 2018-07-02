@@ -1153,18 +1153,18 @@ doc ///
      When a = b = 1, I is the square of the determinant of X|Y.
 
      When a = 1, b>1 (or symmetrically), I is defined as in the case a,b>1, after replacing
-     $$ X = \begin{pmatrix} 
+     $ X = \begin{pmatrix} 
                 x_0 \\ 
 		x_1 
 	    \end{pmatrix}
-     $$
+     $
 
      by the 2 x 2 matrix
-     $$ \begin{pmatrix} 
+     $ \begin{pmatrix} 
             x_0^2    &  x_0*x_1 \\
 	    x_0*x_1  &  x_1^2
 	\end{pmatrix}
-     $$
+     $
      and changing $a$ to 2.
 
     Example
