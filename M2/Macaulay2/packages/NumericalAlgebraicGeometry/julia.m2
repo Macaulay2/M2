@@ -1,6 +1,3 @@
--*
-export{"JuliaProcess", "solveJulia", "restartJulia"}
-*-
 
 -------------------
 ---GLOBAL VARIABLES
@@ -10,6 +7,7 @@ juliaBinary="/home/tim/julia-d55cadc350/bin/julia"
 JuliaProcess=openInOut("!" |juliaBinary)
 noProcessError="JuliaProcess not currently open"
 
+--protect JuliaProcess
 
 ---------------------
 --- PACKAGE IMPORTS
@@ -87,17 +85,21 @@ solveJulia PolySystem := o -> P -> (
     JuliaProcess<<"show(IOContext(STDOUT, :compact=>false),[s.solution for s in sols])\n";
     finished = "done!!!x";
     JuliaProcess<<"print(\"" | finished |"\")\n";
-    out="";
+    out:="";
+    cur:="";
     while not match(finished,out) do (
 	JuliaProcess<<flush;
-    	out = out | read JuliaProcess;	
+	cur = read JuliaProcess;
+    	out = out | cur;	
 	);
-    m:=regex("Paths tracked(.|\n)*x",out);
+    endIndex:=first first regex("Array.*",out)
+    parseSolutions substring(out,0,endIndex)
+-*    m:=regex("Paths tracked(.|\n)*x",out);
     n:=substring(first m, out);
     solutionString:=replace(finished, "",substring(last regex("Array.*",n),n));
     outputString:=replace("Array","",substring(first regex("Paths tracked:(.|\n)*Array",n),n));
     print outputString;
-    parseSolutions solutionString
+    parseSolutions solutionString*-
     )
 
 
@@ -110,6 +112,11 @@ results(sols)
 *-
 
 end
+
+path=append(path,currentDirectory())
+
+
+
 
 close JuliaProcess
 restart
