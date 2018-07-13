@@ -257,37 +257,6 @@ document {
      ///
      }
 
-document {
-     Key => hash,
-     Headline => "hash code of an object",
-     Usage => "hash x",
-     Inputs => { "x" => Thing },
-     Outputs => { ZZ => { "the hash code of ", TT "x" } },
-     PARA{
-	  "The hash code of ", TT "x", " is an integer produced in a deterministic way
-	  from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
-	  See ", TO "hashing", " for a discussion of the requirements that
-	  the hash codes used here are designed to satisfy."
-	  },
-     PARA {
-	  "Hash codes may change from one version of Macaulay2 to the next, but changes to the hash codes
-	  of the basic types will be avoided, if possible.  That includes lists, sequences, strings, hash 
-	  tables, options, Boolean values, and numbers."
-	  }
-     }
-
-document {
-     Key => {remove,(remove, HashTable, Thing)},
-     Headline => "remove an entry from a hash table",
-     TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
-     under the key ", TT "k", ".",
-     PARA{},
-     EXAMPLE {
-	  "x = new MutableHashTable from {a => 1, b => 2}",
-	  "remove(x,a)",
-	  "x"
-	  }
-     }
 
 document {
      Key => Boolean,
@@ -388,24 +357,6 @@ document {
      is encountered, nothing is printed.",
      PARA{},
      EXAMPLE ///printString(stdio, (a,10,"b",20,c))///
-     }
-
-document {
-     Key => {mutable,(mutable, Thing)},
-     Headline => "whether something may be modified",
-     TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
-     PARA{},
-     "If ", TT "x", " is a hash table, list, dictionary, or database, then it is mutable if its contents
-     can be destructively altered.",
-     PARA{},
-     "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
-     it. (See ", TO "protect", ".)",
-     PARA{},
-     "If ", TT "x", " is anything else, then it isn't mutable.",
-     PARA{},
-     "The (changeable) contents of a mutable hash table or list do not participate in strong comparison
-     with ", TO "===", " or in ", TO "hashing", ".",
-     SeeAlso => {"MutableList", "MutableHashTable"}
      }
 
 document {
