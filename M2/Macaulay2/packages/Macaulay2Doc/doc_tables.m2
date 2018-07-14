@@ -187,6 +187,47 @@ doc///
 
 doc ///
  Key
+  mutable
+  (mutable, Thing)
+ Heaadline
+  whether something may be modified
+ Usage
+  mutable x
+ Inputs
+  x:Thing
+ Outputs
+  :Boolean
+   whether {\tt x} is mutable
+ Description
+  Text
+   If {\tt x} is a hash table, list, dictionary, or database, then 
+   it is mutable if its contents can be destructively altered.
+   
+   If {\tt x} is a symbol, then it's mutable if a value can be 
+   assigned to it; i.e., if it is not @TO protect@ed.
+   
+   If {\tt x} is anything else, {\tt mutable x} will return {\bf false}.
+  Example
+   T = new MutableList from (a, b, c)
+   mutable T
+   V = new List from (a, b, c)
+   mutable V
+   mutable join(T, V)
+   mutable a
+   mutable "a"  
+ Caveat
+  The (changeable) contents of a mutable hash table or list 
+  do not participate in strong comparison with @TO "==="@
+  or in @TO "hashing"@.
+ SeeAlso
+  MutableHashTable
+  MutableList
+  "hash tables"
+  "lists and sequences"
+///
+
+doc ///
+ Key
   pairs
   (pairs, HashTable)
   (pairs, Dictionary)
@@ -236,6 +277,49 @@ doc ///
   values
   "#"
   "#?"
+///
+
+doc ///
+ Key
+  remove
+  (remove, HashTable, Thing)
+ Headline
+  remove an entry from a mutable hash table
+ Usage
+  remove(T, k)
+ Inputs
+  T:HashTable
+  k:
+   key
+ Outputs
+  :Nothing
+ Description
+  Text
+   {\tt remove(T, k)} removes the entry of {\tt T} stored under
+   the key {\tt k}.
+  Example
+   T = new MutableHashTable from {a => 1, b => 2, c => 3}; peek T
+   remove(T, a)
+   peek T
+  Text
+   If {\tt T} is not a mutable hash table, an error is thrown.
+   One way to remove an entry from an immutable hash table is
+   with the function @TO applyPairs@:
+  Example
+   T = new HashTable from {a => 1, b => 2, c => 3}
+   T = applyPairs(T, (k, v) -> if k =!= a then (k, v))
+  Text
+   The {\tt remove} command does not return any output.
+ SeeAlso
+  applyKeys
+  applyPairs
+  applyValues
+  delete
+  drop
+  keys
+  mutable
+  scanKeys
+  "hash tables"
 ///
 
 doc ///
@@ -363,90 +447,157 @@ doc ///
   "#?"
 ///
 
+doc ///
+ Key
+  symbol #
+ Headline
+  length or access to elements
+ Description
+  Text
+   {\tt #} is used as both a unary and a binary operator.
+   
+   As a unary operator: 
+   {\tt #x} returns the length or cardinality of a list, 
+   set, hash table, or string {\tt x}. 
 
-document {
-     Key => symbol #,
-     Headline => "length, or access to elements",
-     "The precedence of ", TT "#", " when used as a binary operator is high,
-     as high as ", TT ".", ", but the precedence when used as a unary operator
-     is lower, as low as adjacency or function application.",
-     SeeAlso =>{ "#?" }
-     }
-document {
-     Key => (symbol #, BasicList),
-     Headline => "length",
-     TT "#x", " -- provides the length of a list.",
-     }
-document {
-     Key => (symbol #, HashTable),
-     Headline => "length",
-     TT "#x", " -- provides the number of key-value pairs recorded
-     in a hash table.",
-     }
-document {
-     Key => (symbol #, Set),
-     Headline => "cardinality",
-     TT "#x", " -- provides the number of elements in the set ", TT "x", "."
-     }
-document {
-     Key => (symbol #, String),
-     Headline => "length",
-     TT "#x", " -- provides the length of a string.",
-     }
-document {
-     Key => (symbol #, HashTable, Thing),
-     Headline => "get value from hash table",
-     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
-     ", TT "x", ".",
-     PARA{},
-     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable.",
-     EXAMPLE {
-	  "x = new MutableHashTable",
-	  "x#i = p",
-	  "x#i",
-	  },
-     SeeAlso => {(symbol #?, HashTable, Thing), "hashing"}
-     }
-document {
-     Key => (symbol #, Database, String),
-     Headline => "get value from database",
-     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the database
-     ", TT "x", ".",
-     SeeAlso => {(symbol #?, Database, String)}
-     }
-document {
-     Key => (symbol #, String, ZZ),
-     Headline => "get character from string",
-     TT "x#i", " -- provides the ", TT "i", "-th character of the string ", TT "x", ",
-     as a string of length 1, if there is one.",
-     PARA{},
-     "If ", TT "i", " is out of range, a string of length 0 is returned.
-     If  ", TT "i", " is negative, then the ", TT "i", "-th character
-     from the end is provided.",
-     SeeAlso => {(symbol #?, String, ZZ)}
-     }
-document {
-     Key => (symbol #, BasicList, ZZ),
-     Headline => "get element from list",
-     Usage => "x#i",
-     Inputs => { "x", "i" },
-     Outputs => { { "the ", TT "i", "-th element of the list ", TT "x" }},
-     SeeAlso => {(symbol _, VisibleList, ZZ)},
-     PARA{
-     	  "The entries of the list are numbered starting with 0.  If  ", TT "i", " 
-          is negative, then the ", TT "i", "-th entry counting from the end is provided.
-          If ", TT "i", " is out of range, an error is signaled." },
-     PARA{
-	  "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is
-          mutable, i.e., an instance of the class ", TO "MutableList", "." },
-     EXAMPLE lines ///
-          x = a .. z
-	  x#12
-	  y = new MutableList from x
-	  y#12 = foo
-	  toSequence y
-     ///
-     }
+   As a binary operator: 
+   {\tt x#i} returns the {\tt i}th element of a list, hash table, 
+   database, or string {\tt x}.
+  Example
+   L = {23, 42, 107, 2, 50};
+   #L
+   L#2
+ Caveat
+  The precedence of {\tt #} when used as a binary operator is high,
+  as high as @TO "."@, but when used as a unary operator the
+  precedence is much lower.
+ SeeAlso
+  "#?"
+  (symbol #, BasicList)
+  (symbol #, HashTable)
+  (symbol #, Set)
+  (symbol #, String)
+  (symbol #, BasicList, ZZ)
+  (symbol #, Database, String)
+  (symbol #, HashTable, Thing)
+  (symbol #, String, ZZ)
+  "hash tables"
+  "lists and sequences"
+///
+
+doc ///
+ Key
+  (symbol #, BasicList)
+  (symbol #, HashTable)
+  (symbol #, Set)
+  (symbol #, String)
+ Headline
+  length or cardinality
+ Usage
+  #x
+ Inputs
+  x:BasicList
+   HashTable, Set, or String
+ Outputs
+  :ZZ
+   the length of {\tt x}
+ Description
+  Text
+   If {\tt x} is a list, {\tt #x} is the number of elements in {\tt x}.
+  Example
+   L = {1, 2, 3, 2, 1};
+   #L
+  Text
+   If {\tt x} is a set, {\tt #x} is the cardinality of {\tt x}.
+  Example
+   S = new Set from L 
+   #S
+  Text
+   If {\tt x} is a hash table, {\tt #x} is the number of 
+   key-value pairs stored in {\tt x}.
+  Example
+   T = new HashTable from {a => 1, b => 2}
+   #T
+  Text
+   If {\tt x} is a string, {\tt #x} is the number of characters in {\tt x}.
+  Example
+   s = "a perfectly adequate example of a string";
+   #s
+ SeeAlso
+  symbol #
+  symbol #?
+  (symbol #, BasicList, ZZ)
+  (symbol #, Database, String)
+  (symbol #, HashTable, Thing)
+  (symbol #, String, ZZ)
+  keys
+  pairs
+  values
+  "hash tables"
+  "lists and sequences"
+///
+
+doc///
+ Key
+  (symbol #, BasicList, ZZ)
+  (symbol #, Database, String)
+  (symbol #, HashTable, Thing)
+  (symbol #, String, ZZ)
+ Headline
+  get value from list, hash table, database, or string
+ Usage
+  x#i
+ Inputs
+  x:
+   a list, hash table, or string
+  i:
+   an index or key
+ Description
+  Text
+   If {\tt x} is a list, {\tt x#i} returns the {\tt i}th element of {\tt x}.
+   The entries of the list are numbered starting with 0. If {\tt i}
+   is negative, then the entries are numbered ending with -1. If {\tt i}
+   is out of range, an error is signaled.
+  Example
+   L = {a, b, c, b, a};
+   L#2
+   L#-2
+  Text
+   If {\tt x} is a hash table or database, {\tt x#i} provides the
+   value associated with the key {\tt i}.
+  Example
+   T = new HashTable from {a => 103, b => 89.4, c => 92};
+   T#a
+   T#b
+  Text
+   If {\tt x} is a string, {\tt x#i} provides the {\tt i}th character of {\tt x},
+   if there is one. Negative indices are counted backward from the end, as with
+   lists. If {\tt i} is out of range, an error is thrown.
+  Example
+   s = "a perfectly adequate example of a string";
+   s#2
+   s#-2
+   s#50
+  Text
+   Assignment to {\tt x#i} can change {\tt x} if {\tt x} is mutable.
+  Example
+   V = new MutableHashTable from T;
+   V#a = 5;
+   V#d = 22.3;
+   peek V
+ SeeAlso
+  symbol #
+  symbol #?
+  (symbol #, BasicList)
+  (symbol #, HashTable)
+  (symbol #, Set)
+  (symbol #, String)
+  (symbol _, VisibleList, ZZ)
+  "hashing"
+  "hash tables"
+  "lists and sequences"
+///
+
 document {
      Key => (symbol #?, HashTable, Thing),
      Headline => "check for value in hash table",
@@ -532,36 +683,5 @@ document {
 	  of the basic types will be avoided, if possible.  That includes lists, sequences, strings, hash 
 	  tables, options, Boolean values, and numbers."
 	  }
-     }
-
-document {
-     Key => {remove,(remove, HashTable, Thing)},
-     Headline => "remove an entry from a hash table",
-     TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
-     under the key ", TT "k", ".",
-     PARA{},
-     EXAMPLE {
-	  "x = new MutableHashTable from {a => 1, b => 2}",
-	  "remove(x,a)",
-	  "x"
-	  }
-     }
-
-document {
-     Key => {mutable,(mutable, Thing)},
-     Headline => "whether something may be modified",
-     TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
-     PARA{},
-     "If ", TT "x", " is a hash table, list, dictionary, or database, then it is mutable if its contents
-     can be destructively altered.",
-     PARA{},
-     "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
-     it. (See ", TO "protect", ".)",
-     PARA{},
-     "If ", TT "x", " is anything else, then it isn't mutable.",
-     PARA{},
-     "The (changeable) contents of a mutable hash table or list do not participate in strong comparison
-     with ", TO "===", " or in ", TO "hashing", ".",
-     SeeAlso => {"MutableList", "MutableHashTable"}
      }
 
