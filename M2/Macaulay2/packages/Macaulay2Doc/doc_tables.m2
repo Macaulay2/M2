@@ -135,7 +135,7 @@ doc///
    set of key-value pairs.  The keys and values can be anything.
    The access functions below accept a key and return the
    corresponding value.  For details of the mechanism
-   underlying this, see @TO hashing@.
+   underlying this, see @TO "hashing"@.
    
    One important feature of hash tables that when the keys
    are consecutive integers starting at 0, the keys are scanned
@@ -144,17 +144,12 @@ doc///
    There is a subclass of HashTable called @TO MutableHashTable@
    which consists of those hash tables whose entries can be changed.
    
-   Access functions:
-     @UL {
- 	  TO "#",
- 	  TO "."
- 	  }@
-    
-    Query functions:
-     @UL {
- 	  TO "#?",
- 	  TO ".?"
- 	  }@
+   This node is currently in progress!!!
+ SeeAlso
+  "#"
+  "."
+  "#?"
+  ".?"
 ///
 
 
@@ -189,7 +184,7 @@ doc ///
  Key
   mutable
   (mutable, Thing)
- Heaadline
+ Headline
   whether something may be modified
  Usage
   mutable x
@@ -374,7 +369,6 @@ doc ///
    {\tt t#k}.
   Example
    t = hashTable {{1,8},{2,20},{3,4},{4,20}}
-   applyPairs(t, (k,v) -> k+v)
    scanPairs(t, (k,v) -> print (k+v))
    scanPairs(t, (k,v) -> if v==20 then print k)   
  Caveat
@@ -474,13 +468,7 @@ doc ///
  SeeAlso
   "#?"
   (symbol #, BasicList)
-  (symbol #, HashTable)
-  (symbol #, Set)
-  (symbol #, String)
   (symbol #, BasicList, ZZ)
-  (symbol #, Database, String)
-  (symbol #, HashTable, Thing)
-  (symbol #, String, ZZ)
   "hash tables"
   "lists and sequences"
 ///
@@ -527,9 +515,6 @@ doc ///
   symbol #
   symbol #?
   (symbol #, BasicList, ZZ)
-  (symbol #, Database, String)
-  (symbol #, HashTable, Thing)
-  (symbol #, String, ZZ)
   keys
   pairs
   values
@@ -577,7 +562,6 @@ doc///
    s = "a perfectly adequate example of a string";
    s#2
    s#-2
-   s#50
   Text
    Assignment to {\tt x#i} can change {\tt x} if {\tt x} is mutable.
   Example
@@ -589,56 +573,64 @@ doc///
   symbol #
   symbol #?
   (symbol #, BasicList)
-  (symbol #, HashTable)
-  (symbol #, Set)
-  (symbol #, String)
   (symbol _, VisibleList, ZZ)
-  "hashing"
   "hash tables"
   "lists and sequences"
 ///
 
-document {
-     Key => (symbol #?, HashTable, Thing),
-     Headline => "check for value in hash table",
-     TT "x#?i", " -- tells whether there is a value associated to the
-     key ", TT "i", " stored in the hash table ", TT "x", ".",
-     SeeAlso => {(symbol #, HashTable, Thing), "hashing"}
-     }
-document {
-     Key => (symbol #?, Database, String),
-     Headline => "check for value in database",
-     TT "x#?i", " -- tells whether there is a value associated to the string
-     ", TT "i", " in the database ", TT "x", ".",
-     SeeAlso => {(symbol #, Database, String)}
-     }
-document {
-     Key => (symbol #?, String, ZZ),
-     Headline => "check for character in string",
-     TT "x#?i", " -- tells whether there is an ", TT "i", "-th character in
-     the string ", TT "x", ".",
-     EXAMPLE {
-	  ///"asdf" #? 2///,
-	  ///"asdf" #? 22///
-	  },
-     SeeAlso => {(symbol #, String, ZZ)}
-     }
-document {
-     Key => (symbol #?, BasicList, ZZ),
-     Headline => "check for element in list",
-     TT "x#?i", " --  tells whether there is an ", TT "i", "-th element in
-     the list ", TT "x", ".",
-     EXAMPLE {
-	  ///{a,b,c} #? 2///,
-	  ///{a,b,c} #? 22///
-	  },
-     SeeAlso => {(symbol #, BasicList, ZZ)}
-     }
-document {
-     Key => symbol #?,
-     Headline => "check for presence of elements",
-     SeeAlso =>{ "#" }
-     }
+doc///
+ Key
+  symbol #?
+  (symbol #?, BasicList, ZZ)
+  (symbol #?, Database, String)
+  (symbol #?, HashTable, Thing)
+  (symbol #?, String, ZZ)
+ Headline
+  check existence of value in a list, hash table, database, or string
+ Usage
+  x#?i
+ Inputs
+  x:
+   a list, hash table, or string
+  i:
+   an index or key
+ Outputs
+  :Boolean
+   whether or not {\tt x} contains an element with index or key {\tt i}
+ Description
+  Text
+   If {\tt x} is a list, {\tt x#?i} tells whether there is
+   an {\tt i}th element of {\tt x}.
+   The entries of the list are numbered starting with 0. If {\tt i}
+   is negative, then the entries are numbered ending with -1. 
+  Example
+   L = {a, b, c, b, a};
+   L#?2
+   L#?12
+  Text
+   If {\tt x} is a hash table or database, {\tt x#?i} tells
+   whether there is a value associated with the key {\tt i}.
+  Example
+   T = new HashTable from {a => 103, b => 89.4, c => 92};
+   T#?a
+   T#?A
+  Text
+   If {\tt x} is a string, {\tt x#?i} tells if {\tt x} has an
+   {\tt i}th character.
+  Example
+   s = "a perfectly adequate example of a string";
+   s#?2
+   s#?52
+  Text
+   {\tt #?} can be very useful in avoiding errors from attempting
+   to access nonexistent elements of lists or hash tables. 
+ SeeAlso
+  symbol #
+  (symbol #, BasicList)
+  (symbol _, VisibleList, ZZ)
+  "hash tables"
+  "lists and sequences"
+///
 
 document {
      Key => ".",
