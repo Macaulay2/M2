@@ -144,7 +144,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void set_from_mpz(ElementType &result, mpz_srcptr a) const;
 
-  bool set_from_mpq(ElementType &result, const mpq_ptr a) const;
+  bool set_from_mpq(ElementType &result, const mpq_srcptr a) const;
 
   bool set_from_BigReal(ElementType &result, gmp_RR a) const { return false; }
   ElementType computeGenerator() const;

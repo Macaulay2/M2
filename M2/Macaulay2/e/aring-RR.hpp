@@ -96,7 +96,7 @@ class ARingRR : public RingInterface
     result = mpz_get_d(a);
   }
 
-  bool set_from_mpq(ElementType &result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType &result, const mpq_srcptr a) const
   {
     result = mpq_get_d(a);
     return true;

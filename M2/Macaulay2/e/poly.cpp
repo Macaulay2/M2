@@ -2292,7 +2292,7 @@ void PolyRing::determine_common_denominator_QQ(ring_elem f,
 
   for (Nterm *t = f; t != 0; t = t->next)
     {
-      mpq_ptr a = MPQ_VAL(t->coeff);
+      mpq_srcptr a = MPQ_VAL(t->coeff);
       mpz_lcm(denom_so_far, denom_so_far, mpq_denref(a));
     }
 }
@@ -2394,7 +2394,7 @@ gbvector *PolyRing::translate_gbvector_from_vec_QQ(
       for (Nterm *t = w->coeff; t != 0; t = t->next)
         {
           // make a gbvector node.
-          mpq_ptr b = MPQ_VAL(t->coeff);
+          mpq_srcptr b = MPQ_VAL(t->coeff);
           mpz_mul(a, result_denominator.get_mpz(), mpq_numref(b));
           mpz_divexact(a, a, mpq_denref(b));
           gbvector *g = GR->gbvector_term(

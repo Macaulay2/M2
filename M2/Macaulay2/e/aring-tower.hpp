@@ -138,7 +138,7 @@ class ARingTower : public RingInterface
     assert(false);
   }  // TODO: write this
 
-  bool set_from_mpq(elem &result, mpq_ptr a) const
+  bool set_from_mpq(elem &result, mpq_srcptr a) const
   {
     assert(false);
     return false;

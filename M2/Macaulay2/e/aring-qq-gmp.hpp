@@ -109,7 +109,7 @@ class ARingQQGMP : public RingInterface
     return false;
   }
 
-  bool set_from_mpq(ElementType& result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, const mpq_srcptr a) const
   {
     mpq_set(&result, a);
     return true;

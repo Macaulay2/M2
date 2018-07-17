@@ -512,9 +512,7 @@ class QQ : public ConcreteRing<ARingQQ>
     mpz_set(mpq_numref(b), numer);
     mpz_set(mpq_denref(b), denom);
     mpq_canonicalize(b);
-    ring_elem result;
-    result.poly_val = reinterpret_cast<Nterm *>(b);
-    return result;
+    return ring_elem(b);
   }
 
   ring_elem numerator(ring_elem q) const
@@ -529,15 +527,15 @@ class QQ : public ConcreteRing<ARingQQ>
 
   ring_elem preferred_associate(ring_elem f) const
   {
-    gmp_QQ a = MPQ_VAL(f);
+    mpq_srcptr a = MPQ_VAL(f);
     if (mpq_sgn(a) >= 0) return from_long(1);
     return from_long(-1);
   }
 
   bool lower_associate_divisor(ring_elem &f, const ring_elem g) const
   {
-    gmp_QQ a = MPQ_VAL(f);
-    gmp_QQ b = MPQ_VAL(g);
+    mpq_srcptr a = MPQ_VAL(f);
+    mpq_srcptr b = MPQ_VAL(g);
     int sa = mpq_sgn(a);
     int sb = mpq_sgn(b);
     int s = (sa == 0 ? sb : sa);
@@ -559,8 +557,8 @@ class QQ : public ConcreteRing<ARingQQ>
         c = g;
         return;
       }
-    gmp_QQ a = MPQ_VAL(c);
-    gmp_QQ b = MPQ_VAL(g);
+    mpq_srcptr a = MPQ_VAL(c);
+    mpq_srcptr b = MPQ_VAL(g);
     int sa = mpq_sgn(a);
     gmp_QQ result = getmemstructtype(gmp_QQ);
     mpq_init(result);

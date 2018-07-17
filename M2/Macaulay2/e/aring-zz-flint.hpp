@@ -99,7 +99,7 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
     fmpz_set_mpz(&result, a);
   }
 
-  bool set_from_mpq(ElementType& result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, const mpq_srcptr a) const
   {
     if (mpz_cmp_si(mpq_denref(a), 1) == 0)
       {

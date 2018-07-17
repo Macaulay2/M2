@@ -99,7 +99,7 @@ class ARingZZpFlint : public RingInterface
     result = mpz_fdiv_ui(a, mCharac);
   }
 
-  bool set_from_mpq(ElementType &result, mpq_ptr a) const
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
     ElementType n, d;
     set_from_mpz(n, mpq_numref(a));

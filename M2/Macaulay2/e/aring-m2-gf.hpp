@@ -163,7 +163,7 @@ class ARingGFM2 : public RingInterface
     result = mGF.fromZZTable(b);
   }
 
-  bool set_from_mpq(elem &result, mpq_ptr a) const
+  bool set_from_mpq(elem &result, mpq_srcptr a) const
   {
     elem n, d;
     set_from_mpz(n, mpq_numref(a));

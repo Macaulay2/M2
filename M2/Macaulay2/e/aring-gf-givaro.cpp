@@ -482,7 +482,7 @@ void ARingGFGivaro::set_from_mpz(ElementType &result, mpz_srcptr a) const
   givaroField.init(result, b);
 }
 
-bool ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_ptr a) const
+bool ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_srcptr a) const
 {
   ElementType n, d;
   set_from_mpz(n, mpq_numref(a));

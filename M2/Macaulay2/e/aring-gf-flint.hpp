@@ -129,7 +129,7 @@ class ARingGFFlint : public RingInterface
     set_from_long(result, b);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     ElementType n, d;
     init(n);

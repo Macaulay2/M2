@@ -114,7 +114,7 @@ class ARingZZp : public RingInterface
     result = log_table[b];
   }
 
-  bool set_from_mpq(elem &result, mpq_ptr a) const
+  bool set_from_mpq(elem &result, mpq_srcptr a) const
   {
     ElementType n, d;
     set_from_mpz(n, mpq_numref(a));

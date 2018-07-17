@@ -145,7 +145,7 @@ class ARingCCC : public RingInterface
     mpfr_set_si(&result.im, 0, GMP_RNDN);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     mpfr_set_q(&result.re, a, GMP_RNDN);
     mpfr_set_si(&result.im, 0, GMP_RNDN);

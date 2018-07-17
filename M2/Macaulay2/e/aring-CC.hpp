@@ -131,7 +131,7 @@ class ARingCC : public RingInterface
     result.im = 0.0;
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     result.re = mpq_get_d(a);
     result.im = 0.0;

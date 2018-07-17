@@ -110,7 +110,7 @@ class ARingQQFlint : public RingInterface
     fmpz_one(fmpq_denref(&result));
   }
 
-  bool set_from_mpq(ElementType& result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, const mpq_srcptr a) const
   {
     fmpq_set_mpq(&result, a);
     return true;

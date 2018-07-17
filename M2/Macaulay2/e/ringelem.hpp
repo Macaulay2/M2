@@ -21,7 +21,8 @@ union ring_elem
   schur_poly *schur_poly_val;
   mpfr_ptr mpfr_val;
   local_elem* local_val;
-
+  mpq_srcptr mpq_val;
+  
  private:  // move this line up to the top eventually
   mpz_ptr mpz_val;
 
@@ -31,6 +32,7 @@ union ring_elem
   ring_elem(int a) : int_val(a) {}
   ring_elem(Nterm *a) : poly_val(a) {}
   ring_elem(mpz_ptr a) : mpz_val(a) {}
+  explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
 
   operator int() const { return int_val; }
@@ -38,6 +40,7 @@ union ring_elem
   int get_int() const { return int_val; }
   Nterm *get_poly() const { return poly_val; }
   mpz_srcptr get_mpz() const { return mpz_val; }
+  mpq_srcptr get_mpq() const { return mpq_val; }
 };
 
 struct Nterm
@@ -55,8 +58,8 @@ struct vecterm : public our_new_delete
   ring_elem coeff;
 };
 
-#define MPQ_VAL(f) (reinterpret_cast<gmp_QQ>((f).poly_val))
-#define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+#define MPQ_VAL(f) ((f).mpq_val)
+#define MPQ_RINGELEM(a) (ring_elem(a))
 
 #define CCELEM_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
 #define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
