@@ -114,7 +114,7 @@ void ARingZZpFFPACK::set_from_mpz(ElementType &result, mpz_srcptr a) const
   mFfpackField.init(result, b);
 }
 
-bool ARingZZpFFPACK::set_from_mpq(ElementType &result, const mpq_srcptr a) const
+bool ARingZZpFFPACK::set_from_mpq(ElementType &result, mpq_srcptr a) const
 {
   ElementType n, d;
   set_from_mpz(n, mpq_numref(a));

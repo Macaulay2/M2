@@ -59,7 +59,6 @@ struct vecterm : public our_new_delete
 };
 
 #define MPQ_VAL(f) ((f).mpq_val)
-#define MPQ_RINGELEM(a) (ring_elem(a))
 
 #define CCELEM_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
 #define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))

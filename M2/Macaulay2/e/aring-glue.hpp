@@ -545,7 +545,7 @@ class QQ : public ConcreteRing<ARingQQ>
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
     mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
     if (s != mpq_sgn(result)) mpq_neg(result, result);
-    f = MPQ_RINGELEM(result);
+    f = ring_elem(result);
     return true;  // the answer could become lower, if a newer g has a larger
                   // denom
   }
@@ -566,7 +566,7 @@ class QQ : public ConcreteRing<ARingQQ>
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
     mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
     if (sa != mpq_sgn(result)) mpq_neg(result, result);
-    c = MPQ_RINGELEM(result);
+    c = ring_elem(result);
   }
 };
 

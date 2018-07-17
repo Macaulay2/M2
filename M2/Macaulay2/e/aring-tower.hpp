@@ -295,7 +295,7 @@ class ARingTower : public RingInterface
     
     void set_from_int(ElementType &result, mpz_ptr r);
     
-    bool set_from_rational(ElementType &result, mpq_srcptr r);
+    bool set_from_mpq(ElementType &result, mpq_srcptr r);
     
     void set_random(ElementType &result) { result = mRing.random(mStartLevel); }
     
