@@ -110,7 +110,7 @@ ring_elem Tower::from_int(mpz_srcptr n) const
   return TOWER_RINGELEM(f);
 }
 
-bool Tower::from_rational(mpq_ptr q, ring_elem &result) const
+bool Tower::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   poly f;
   if (not D->set_from_rational(f, q)) return false;

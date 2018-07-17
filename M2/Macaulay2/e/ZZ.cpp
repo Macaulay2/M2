@@ -114,7 +114,7 @@ ring_elem RingZZ::from_int(mpz_srcptr n) const
   return ring_elem(result);
 }
 
-bool RingZZ::from_rational(mpq_ptr q, ring_elem &result) const
+bool RingZZ::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   bool ok = mpz_cmp_si(mpq_denref(q), 1) == 0;
   if (not ok) return false;

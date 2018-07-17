@@ -280,7 +280,7 @@ ring_elem SchurRing2::from_int(mpz_srcptr n) const
   ring_elem a = coefficientRing->from_int(n);
   return from_coeff(a);
 }
-bool SchurRing2::from_rational(mpq_ptr q, ring_elem &result) const
+bool SchurRing2::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   ring_elem a;
   bool ok = coefficientRing->from_rational(q, a);

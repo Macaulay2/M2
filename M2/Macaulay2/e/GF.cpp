@@ -235,7 +235,7 @@ ring_elem GF::from_int(mpz_srcptr n) const
   return ring_elem(m);
 }
 
-bool GF::from_rational(mpq_ptr q, ring_elem &result) const
+bool GF::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   // a will be an element of ZZ/p
   ring_elem a;

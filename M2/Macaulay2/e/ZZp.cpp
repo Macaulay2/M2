@@ -150,7 +150,7 @@ ring_elem Z_mod::from_int(mpz_srcptr n) const
   return ring_elem(m);
 }
 
-bool Z_mod::from_rational(mpq_ptr q, ring_elem &result) const
+bool Z_mod::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   ring_elem a = Z_mod::from_int(mpq_numref(q));
   ring_elem b = Z_mod::from_int(mpq_denref(q));

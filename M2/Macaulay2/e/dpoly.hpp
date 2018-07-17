@@ -316,7 +316,7 @@ class DRing : public our_new_delete
 
   void set_from_int(poly &result, mpz_srcptr r);  // written
 
-  bool set_from_rational(poly &result, mpq_ptr r);  // written
+  bool set_from_rational(poly &result, mpq_srcptr r);  // written
 
   void set_random(poly &result) { result = D.random(level); }
   void elem_text_out(buffer &o,

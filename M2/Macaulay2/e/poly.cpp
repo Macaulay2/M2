@@ -187,7 +187,7 @@ ring_elem PolyRing::from_int(mpz_srcptr n) const
   return result;
 }
 
-bool PolyRing::from_rational(mpq_ptr q, ring_elem &result) const
+bool PolyRing::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   ring_elem a;
   bool ok = K_->from_rational(q, a);

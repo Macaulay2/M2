@@ -278,7 +278,7 @@ class Ring : public MutableEngineObject
 
   // from_rational: if the rational q cannot be placed into this ring, false is
   // returned, and result is not touched.
-  virtual bool from_rational(const mpq_ptr q, ring_elem &result) const = 0;
+  virtual bool from_rational(const mpq_srcptr q, ring_elem &result) const = 0;
 
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;

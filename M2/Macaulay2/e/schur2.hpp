@@ -159,7 +159,7 @@ class SchurRing2 : public Ring
 
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
 
   virtual bool promote(const Ring *R,
                        const ring_elem f,

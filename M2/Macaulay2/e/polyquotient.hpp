@@ -47,7 +47,7 @@ class PolyRingQuotient : public PolyRingFlat
     normal_form(result);
     return result;
   }
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const
   {
     bool ok = numerR_->from_rational(q, result);
     if (not ok) return false;

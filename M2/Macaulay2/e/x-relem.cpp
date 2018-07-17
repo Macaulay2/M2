@@ -522,7 +522,7 @@ const RingElement *IM2_RingElement_from_Integer(const Ring *R, gmp_ZZ d)
   return RingElement::make_raw(R, R->from_int(d));
 }
 
-const RingElement *IM2_RingElement_from_rational(const Ring *R, gmp_QQ r)
+const RingElement *IM2_RingElement_from_rational(const Ring *R, mpq_srcptr r)
 {
   ring_elem result;
   bool ok = R->from_rational(r, result);

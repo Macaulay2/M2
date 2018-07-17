@@ -1497,7 +1497,7 @@ void DRing::set_from_int(poly &result, mpz_srcptr r)
   result = D.from_long(level, c);
 }
 
-bool DRing::set_from_rational(poly &result, mpq_ptr r)
+bool DRing::set_from_rational(poly &result, mpq_srcptr r)
 {
   // returns false if r doesn't lift
   mpz_t a;

@@ -261,7 +261,7 @@ ring_elem FractionField::from_int(mpz_srcptr n) const
   return FRAC_RINGELEM(f);
 }
 
-bool FractionField::from_rational(mpq_ptr n, ring_elem &result) const
+bool FractionField::from_rational(mpq_srcptr n, ring_elem &result) const
 {
   frac_elem *f = new_frac_elem();
   f->numer = R_->from_int(mpq_numref(n));

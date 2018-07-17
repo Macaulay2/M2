@@ -112,7 +112,7 @@ class ConcreteRing : public Ring
     R->clear(a);
     return result;
   }
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const
   {
     ElementType a;
     R->init(a);

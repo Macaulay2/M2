@@ -63,7 +63,7 @@ class LocalRing : public Ring
                        const ring_elem f,
                        ring_elem &result) const;
 
-  virtual bool from_rational(mpq_ptr n, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr n, ring_elem &result) const;
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
   virtual ring_elem var(int v) const;

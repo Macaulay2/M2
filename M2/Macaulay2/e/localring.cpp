@@ -311,7 +311,7 @@ bool LocalRing::promote(const Ring *Rf,
   return false;
 }
 
-bool LocalRing::from_rational(mpq_ptr n, ring_elem &result) const
+bool LocalRing::from_rational(mpq_srcptr n, ring_elem &result) const
 {
   local_elem *f = new_local_elem();
   f->numer = mRing->from_int(mpq_numref(n));

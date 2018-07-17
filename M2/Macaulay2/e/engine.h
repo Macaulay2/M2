@@ -371,7 +371,7 @@ extern "C" {
                                                   gmp_ZZ d);  /* drg: connected rawFromNumber*/
 
   const RingElement /* or null */ *IM2_RingElement_from_rational(const Ring *R,
-                                                         gmp_QQ r); /* rawFromNumber*/
+                                                         mpq_srcptr r); /* rawFromNumber*/
 
   gmp_ZZ /* or null */ IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
