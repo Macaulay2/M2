@@ -8,8 +8,14 @@
 #include <mpfr.h>
 #include "newdelete.hpp"
 
-struct Nterm;
+using ZZ = mpz_srcptr;
+using ZZmutable = mpz_ptr;
+using QQ = mpq_srcptr;
+using QQmutable = mpq_ptr;
+using RRRelement = mpfr_srcptr;
+using RRRmutable = mpfr_ptr;
 
+struct Nterm;
 typedef Nterm *tpoly;
 class schur_poly;
 struct local_elem;
@@ -19,12 +25,12 @@ union ring_elem
   int int_val;
   Nterm *poly_val;
   schur_poly *schur_poly_val;
-  mpfr_ptr mpfr_val;
   local_elem* local_val;
-  mpq_srcptr mpq_val;
   
  private:  // move this line up to the top eventually
-  mpz_ptr mpz_val;
+  QQ mpq_val;
+  ZZ mpz_val;
+  mpfr_srcptr mpfr_val;
 
  public:
   ring_elem() : poly_val(0) {}
@@ -39,8 +45,11 @@ union ring_elem
   operator tpoly() const { return poly_val; }
   int get_int() const { return int_val; }
   Nterm *get_poly() const { return poly_val; }
+
   mpz_srcptr get_mpz() const { return mpz_val; }
   mpq_srcptr get_mpq() const { return mpq_val; }
+  mpfr_srcptr get_mpfr() const { return mpfr_val; }
+  const local_elem* get_local_elem() const { return local_val; }
 };
 
 struct Nterm
@@ -58,7 +67,7 @@ struct vecterm : public our_new_delete
   ring_elem coeff;
 };
 
-#define MPQ_VAL(f) ((f).mpq_val)
+#define MPQ_VAL(f) ((f).get_mpq())
 
 #define CCELEM_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
 #define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))

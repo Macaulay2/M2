@@ -197,7 +197,7 @@ class ARingQQGMP : public RingInterface
 
   void power_mpz(ElementType& result,
                  const ElementType& a,
-                 const mpz_ptr n) const
+                 mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)

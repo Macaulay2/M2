@@ -20,15 +20,15 @@
 #include "mathic.h"
 memt::BufferPool testBuffer(16);
 
-const QQ *globalQQ;
+const RingQQ *globalQQ;
 
 void initializeRationalRing()
 {
   M2::ARingQQ *A = new M2::ARingQQ();
-  globalQQ = QQ::create(A);
+  globalQQ = RingQQ::create(A);
 }
 
-const QQ *rawARingQQ() { return globalQQ; }
+const RingQQ *rawARingQQ() { return globalQQ; }
 const Ring * /* or null */ rawARingZZFlint()
 {
   M2::ARingZZ *A = new M2::ARingZZ();

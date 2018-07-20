@@ -579,10 +579,10 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
   if (!a->get_ring()->is_QQ())
     {
       ERROR("expected an element of QQ");
-      return 0;
+      return nullptr;
     }
-  void *f = a->get_value().poly_val;
-  return static_cast<gmp_QQ>(f);
+#warning "once gmp_QQ changes to const, remove this cast"
+  return const_cast<gmp_QQ>(a->get_value().get_mpq());
 }
 
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
@@ -614,9 +614,10 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
         if (!a->get_ring()->is_RRR())
           {
             ERROR("expected an element of RRR");
-            return 0;
+            return nullptr;
           }
-        return a->get_value().mpfr_val;
+        #warning "once gmp_RR changes to const, remove this cast"
+        return const_cast<gmp_RRorNull>(a->get_value().get_mpfr());
     }
 }
 

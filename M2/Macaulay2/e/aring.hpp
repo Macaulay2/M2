@@ -152,7 +152,7 @@ class DummyRing : public RingInterface
   void power(elem &result, const elem a, const int n) const {};
   ;
 
-  void power_mpz(elem &result, const elem a, const mpz_ptr n) const {};
+  void power_mpz(elem &result, const elem a, mpz_srcptr n) const {};
   ;
 
   void syzygy(const ElementType a,

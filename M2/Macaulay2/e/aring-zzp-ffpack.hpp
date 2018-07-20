@@ -183,7 +183,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void power_mpz(ElementType &result,
                  const ElementType a,
-                 const mpz_ptr n) const;
+                 mpz_srcptr n) const;
 
   void syzygy(const ElementType a,
               const ElementType b,

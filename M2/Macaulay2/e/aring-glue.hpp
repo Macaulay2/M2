@@ -483,16 +483,16 @@ class ConcreteRing : public Ring
 
 };  // class ConcreteRing<RingType>
 
-class QQ : public ConcreteRing<ARingQQ>
+class RingQQ : public ConcreteRing<ARingQQ>
 {
  public:
-  QQ(const ARingQQ *R0) : ConcreteRing<ARingQQ>(R0) {}
-  virtual ~QQ() {}
+  RingQQ(const ARingQQ *R0) : ConcreteRing<ARingQQ>(R0) {}
+  virtual ~RingQQ() {}
   bool is_QQ() const { return true; }
   CoefficientType coefficient_type() const { return COEFF_QQ; }
-  static QQ *create(const ARingQQ *R0)
+  static RingQQ *create(const ARingQQ *R0)
   {
-    QQ *result = new QQ(R0);
+    RingQQ *result = new RingQQ(R0);
     result->initialize_ring(R0->characteristic());
     result->declare_field();
 
@@ -1423,9 +1423,9 @@ inline long ConcreteRing<ARingZZpFlint>::discreteLog(const ring_elem &a1) const
 };  // namespace M2
 
 #include "aring-qq.hpp"
-typedef M2::QQ QQ;
+typedef M2::RingQQ RingQQ;
 extern void initializeRationalRing();
-extern const QQ *globalQQ;
+extern const RingQQ *globalQQ;
 #endif
 
 // Local Variables:

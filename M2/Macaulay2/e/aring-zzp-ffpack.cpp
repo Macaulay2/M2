@@ -222,7 +222,7 @@ void ARingZZpFFPACK::power(ElementType &result,
 /// otherwise instead of mpz_fdiv_ui a different function has to be called)
 void ARingZZpFFPACK::power_mpz(ElementType &result,
                                const ElementType a,
-                               const mpz_ptr n) const
+                               mpz_srcptr n) const
 {
   STT n1 = static_cast<STT>(mpz_fdiv_ui(n, mFfpackField.cardinality() - 1));
   power(result, a, n1);

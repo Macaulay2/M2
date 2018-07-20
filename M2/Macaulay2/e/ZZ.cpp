@@ -41,7 +41,7 @@ unsigned int RingZZ::computeHashValue(const ring_elem a) const
   return computeHashValue_mpz(a.get_mpz());
 }
 
-std::pair<bool, int> RingZZ::get_si(mpz_t n)
+std::pair<bool, int> RingZZ::get_si(mpz_srcptr n)
 {
   if (not mpz_fits_slong_p(n)) return std::make_pair<bool, int>(false, 0);
   long a = mpz_get_si(n);
@@ -50,7 +50,7 @@ std::pair<bool, int> RingZZ::get_si(mpz_t n)
   return std::make_pair<bool, int>(false, 0);
 }
 
-unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
+unsigned int RingZZ::mod_ui(mpz_srcptr n, unsigned int p)
 {
   mpz_t ans;
   mpz_init(ans);
