@@ -51,7 +51,7 @@ htmlDirectory = ""					    -- relative path to the html directory, depends on th
 
 runfun := o -> if instance(o, Function) then o() else o
 initInstallDirectory := o -> (
-     installPrefix = toAbsolutePath(runfun o.InstallPrefix);
+     installPrefix = realpath toAbsolutePath(runfun o.InstallPrefix);
      if not match("/$",installPrefix) then installPrefix = installPrefix | "/";
      installLayoutIndex = detectCurrentLayout installPrefix;
      if installLayoutIndex === null then installLayoutIndex = if o.SeparateExec then 2 else 1;
