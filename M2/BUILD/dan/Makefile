@@ -43,15 +43,19 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
-CONFIGOPTIONS += --enable-tarfile
+CONFIGOPTIONS += --enable-strip
 ifeq ($(DEBIAN),yes)
 CONFIGOPTIONS += --enable-deb
-endif
+else
 ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
-endif
+else
 ifeq ($(MACOSX),yes)
 CONFIGOPTIONS += --enable-dmg
+else
+CONFIGOPTIONS += --enable-tarfile
+endif
+endif
 endif
 endif
 
