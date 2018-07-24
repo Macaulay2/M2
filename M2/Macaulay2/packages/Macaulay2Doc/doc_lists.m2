@@ -1244,11 +1244,12 @@ doc///
    concatenate mingle( {"a","b","c"} , {",",","} )
    netList pack(3, mingle( (0..5), apply(6, i -> i^2), apply(6, i -> i^3)))
  SeeAlso
+  apply
   insert
   join
   pack
   sort
-  apply
+  sublists
   "lists and sequences"
 ///
 
@@ -1366,6 +1367,7 @@ doc///
  SeeAlso
   mingle
   sort
+  sublists
   take
   "lists and sequences"
 ///
@@ -1613,8 +1615,10 @@ doc///
    The subsets of a Sequence are lists, not sequences. Also, a subset size {\bf must} be 
    specified when calling {\tt subsets} on a sequence.
  SeeAlso
-  partitions
+  partition
   set
+  sublists
+  substring
   "lists and sequences"
 ///
 
