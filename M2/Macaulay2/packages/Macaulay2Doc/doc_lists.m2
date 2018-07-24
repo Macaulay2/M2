@@ -439,18 +439,21 @@ doc///
   join
   last
   mingle
+  number
   pack
   position
   positions
   prepend
   reverse
   rsort
+  same
   (scan,BasicList,Function)
   select
   sort
   switch
   table
   take
+  uniform
   unique
   sequence
   toList
@@ -812,7 +815,7 @@ doc ///
   (drop, BasicList, ZZ)
   (drop, BasicList, List)
  Headline
-  Drop some elements from a list or sequence.
+  drop some elements from a list or sequence.
  Usage
   drop(L, i)
   drop(L, {j,k})
@@ -1516,16 +1519,21 @@ doc///
    same L
   Text
    We can see the problem by asking {\tt Macaulay2} to display the class of each element of {\tt L}.
+   (Or use the function @TO uniform@, which returns whether or not the elements of a list
+       are all of the same class.)
   Example
    apply(L, class)
+   uniform L
   Text
    The first {\tt 1} is an element of the ring {\tt R}, the second {\tt 1} is an
    element of the fraction field of {\tt R}, and the third {\tt 1} is an integer. Thus
-   {\tt Macaulay2} thinks of these three elements as being pairwise unequal.
+   {\tt Macaulay2} thinks of these three elements as being pairwise unequal, with respect
+   to the operator "===".
  SeeAlso
   commonest
   number
   set
+  uniform
   unique
   "lists and sequences"
 ///
@@ -1762,6 +1770,7 @@ doc///
   sort
   set
   tally
+  uniform
   "lists and sequences"
 ///
 
