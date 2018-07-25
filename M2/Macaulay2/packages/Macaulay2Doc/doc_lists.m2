@@ -430,6 +430,7 @@ doc///
   append
   (apply,BasicList,Function)
   between
+  deepSplice
   delete
   drop
   first
@@ -450,6 +451,7 @@ doc///
   (scan,BasicList,Function)
   select
   sort
+  splice
   switch
   table
   take
@@ -579,9 +581,6 @@ document {
      SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists and sequences"}
      }
 
-
-
-
 document {
      Key => {toSequence,(toSequence, BasicList)},
      Headline => "convert to sequence",
@@ -592,36 +591,6 @@ document {
      EXAMPLE {
 	  "toSequence {1,2,3}"
 	  },
-     }
-
-undocumented (deepSplice,BasicList)
-document {
-     Key => deepSplice,
-     Headline => "remove subsequences",
-     TT "deepSplice v", " -- yields a new list v where any members of v 
-     which are sequences are replaced by their elements, and so on.",
-     PARA{},
-     "Works also for sequences, and leaves other expressions unchanged.
-     Copying the list v is always done when v is mutable.",
-     EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
-     SeeAlso => "splice"
-     }
-
-document {
-     Key => {splice,(splice, BasicList)},
-     Headline => "remove subsequences",
-     TT "splice v", " -- yields a new list v where any members of v that are sequences
-     are replaced by their elements.",
-     PARA{},
-     "Works also for sequences, and leaves other expressions unchanged.
-     Copying the list v is always done when v is mutable.
-     Certain functions always splice their arguments or their argument
-     lists for the sake of convenience.",
-     EXAMPLE {
-	  "splice ((a,b),c,(d,(e,f)))",
-      	  "splice [(a,b),c,(d,(e,f))]",
-	  },
-     SeeAlso => "deepSplice"
      }
 
 document {
