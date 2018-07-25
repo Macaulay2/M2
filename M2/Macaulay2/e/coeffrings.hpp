@@ -131,12 +131,12 @@ class CoefficientRingZZp : public our_new_delete
 
   void to_ring_elem(ring_elem &result, const elem a) const
   {
-    result.int_val = a;
+    result = ring_elem(a);
   }
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
-    result = a.int_val;
+    result = a.get_int();
   }
 
   void swap(elem &a, elem &b) const

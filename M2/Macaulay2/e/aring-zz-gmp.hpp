@@ -215,13 +215,12 @@ class ARingZZGMP : public RingInterface
     mpz_ptr b = getmemstructtype(mpz_ptr);
     mpz_init(b);
     mpz_set(b, &a);
-    result.poly_val = reinterpret_cast<Nterm*>(b);
+    result = ring_elem(b);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    ElementType* t =
-        reinterpret_cast<ElementType*>(const_cast<Nterm*>(a.poly_val));
+    const ElementType* t = a.get_mpz();
     mpz_set(&result, t);
   }
 

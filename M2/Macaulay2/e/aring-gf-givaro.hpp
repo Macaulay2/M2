@@ -165,12 +165,12 @@ class ARingGFGivaro : public RingInterface
   @{ */
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    result.int_val = static_cast<int>(a);
+    result = ring_elem(static_cast<int>(a));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = a.int_val;
+    result = a.get_int();
   }
   /** @} */
 

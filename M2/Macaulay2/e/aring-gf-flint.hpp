@@ -75,12 +75,12 @@ class ARingGFFlint : public RingInterface
   {
     // we only use this data type for GF's smaller than 32 bits, since
     // this class creates lookup tables that are way too big otherwise.
-    result.int_val = static_cast<int>(a.value);
+    result = ring_elem(static_cast<int>(a.value));
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    result.value = a.int_val;
+    result.value = a.get_int();
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }

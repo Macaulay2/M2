@@ -702,8 +702,7 @@ void ARingGFGivaro::eval(const RingMap *map,
                          int first_var,
                          ring_elem &result) const
 {
-  ring_elem a(reinterpret_cast<Nterm *>(f));
-  result = map->get_ring()->power(map->elem(first_var), a);
+  result = map->get_ring()->power(map->elem(first_var), f);
 }
 };
 

@@ -77,21 +77,21 @@ class ARingZZp : public RingInterface
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
     if (a == 0)
-      result.int_val = p1;
+      result = ring_elem(p1);
     else if (a == p1)
-      result.int_val = 0;
+      result = ring_elem(0);
     else
-      result.int_val = a;
+      result = ring_elem(a);
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    if (a.int_val == 0)
+    if (a.get_int() == 0)
       result = p1;
-    else if (a.int_val == p1)
+    else if (a.get_int() == p1)
       result = 0;
     else
-      result = a.int_val;
+      result = a.get_int();
   }
 
   // 'init', 'init_set' functions

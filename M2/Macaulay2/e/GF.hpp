@@ -52,7 +52,7 @@ class GF : public Ring
   int discrete_log(ring_elem a) const;
 
   // The following are all the routines required by 'ring'
-  unsigned int computeHashValue(const ring_elem a) const { return a.int_val; }
+  unsigned int computeHashValue(const ring_elem a) const { return a.get_int(); }
   virtual void text_out(buffer &o) const;
 
   virtual ring_elem from_long(long n) const;
@@ -72,10 +72,12 @@ class GF : public Ring
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
 
-  void internal_negate_to(ring_elem &f) const;
-  void internal_add_to(ring_elem &f, ring_elem &g) const;
-  void internal_subtract_to(ring_elem &f, ring_elem &g) const;
+private:  
+  int internal_negate(int f) const;
+  int internal_add(int f, int g) const;
+  int internal_subtract(int f, int g) const;
 
+public:  
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;

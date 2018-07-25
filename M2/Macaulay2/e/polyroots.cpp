@@ -98,15 +98,13 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
         ZZ_GMP:
           for (Nterm *t = p->get_value(); t != NULL; t = t->next)
             {
-              gel(q, 2 + abs(*(t->monom))) = mpz_get_GEN(
-                  reinterpret_cast<const mpz_ptr>(t->coeff.poly_val));
+              gel(q, 2 + abs(*(t->monom))) = mpz_get_GEN(t->coeff.get_mpz());
             }
           break;
         case M2::ring_QQ:
           for (Nterm *t = p->get_value(); t != NULL; t = t->next)
             {
-              gel(q, 2 + abs(*(t->monom))) = mpq_get_GEN(
-                  reinterpret_cast<const mpq_ptr>(t->coeff.poly_val));
+              gel(q, 2 + abs(*(t->monom))) = mpq_get_GEN(t->coeff.get_mpq());
             }
           break;
         case M2::ring_RR:

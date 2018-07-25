@@ -22,30 +22,32 @@ struct local_elem;
 
 union ring_elem
 {
-  int int_val;
   Nterm *poly_val;
   schur_poly *schur_poly_val;
   local_elem* local_val;
   
  private:  // move this line up to the top eventually
+  int int_val;
+  double double_val;
   QQ mpq_val;
   ZZ mpz_val;
   mpfr_srcptr mpfr_val;
-
  public:
-  ring_elem() : poly_val(0) {}
+  ring_elem() : poly_val(nullptr) {}
   // explicit ring_elem(int a) : int_val(a) {} // really want this version...
   ring_elem(int a) : int_val(a) {}
   ring_elem(Nterm *a) : poly_val(a) {}
   ring_elem(mpz_ptr a) : mpz_val(a) {}
+  explicit ring_elem(double a) : double_val(a) {}
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
 
-  operator int() const { return int_val; }
+  //  operator int() const { return int_val; }
   operator tpoly() const { return poly_val; }
-  int get_int() const { return int_val; }
   Nterm *get_poly() const { return poly_val; }
 
+  int get_int() const { return int_val; }
+  double get_double() const { return double_val; }
   mpz_srcptr get_mpz() const { return mpz_val; }
   mpq_srcptr get_mpq() const { return mpq_val; }
   mpfr_srcptr get_mpfr() const { return mpfr_val; }

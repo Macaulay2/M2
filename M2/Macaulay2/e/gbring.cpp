@@ -626,8 +626,11 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
           gbvector *tmg = g;
           f = f->next;
           g = g->next;
-          zzp->add(tmf->coeff.int_val, tmf->coeff.int_val, tmg->coeff.int_val);
-          if (zzp->is_zero(tmf->coeff.int_val))
+          CoefficientRingZZp::elem result_coeff;
+          zzp->init(result_coeff);
+          zzp->add(result_coeff, tmf->coeff.get_int(), tmg->coeff.get_int());
+          tmf->coeff = ring_elem(result_coeff);
+          if (zzp->is_zero(tmf->coeff.get_int()))
             {
               gbvector_remove_term(tmf);
             }

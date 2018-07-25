@@ -557,8 +557,8 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
   const Ring *R = a->get_ring();
   if (R->is_ZZ())
     {
-      void *f = a->get_value().poly_val;
-      return static_cast<gmp_ZZ>(f);
+      #warning "remove const_cast once gmp_ZZ is const"
+      return const_cast<gmp_ZZ>(a->get_value().get_mpz());
     }
   if (R->isFinitePrimeField())
     {

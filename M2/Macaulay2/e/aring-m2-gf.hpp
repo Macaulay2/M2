@@ -124,12 +124,12 @@ class ARingGFM2 : public RingInterface
 
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    result.int_val = a;
+    result = ring_elem(a);
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = a.int_val;
+    result = a.get_int();
   }
 
   bool is_unit(ElementType f) const { return f != 0; }
