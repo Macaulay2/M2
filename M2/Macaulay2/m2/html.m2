@@ -42,8 +42,8 @@ signalDocError = tag -> (				    -- also called from document.m2, temporarily
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
-indexFileName = "master.xhtml"  			    -- file name for master index of topics in a package
-tocFileName = "toc.xhtml"       			    -- file name for the table of contents of a package
+indexFileName = "master.html"  			    	    -- file name for master index of topics in a package
+tocFileName = "toc.html"       			    	    -- file name for the table of contents of a package
 installPrefix = null	  	       	    	      	    -- the installation prefix
 installLayout = null		     	       	    	    -- the layout of the installPrefix, global for communication to document.m2
 installLayoutIndex = null				    -- the layout index of the installPrefix, equal to 1 or 2
@@ -100,7 +100,7 @@ toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
      else prefix|tail)
 
 htmlFilename1 = (fkey,pkgname,layout) -> (
-     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".xhtml";
+     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
      replace("PKG",pkgname,layout#"packagehtml") | basefilename)
 
 htmlFilename2 = (tag,layout) -> (
@@ -112,7 +112,7 @@ htmlFilename = method(Dispatch => Thing)
 htmlFilename DocumentTag := tag -> (
      pkgname := packageName tag;
      fkey := formattedKey tag;
-     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".xhtml";
+     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
      if currentPackage#"pkgname" === pkgname
      then (
 	  layout := installLayout;
@@ -1232,7 +1232,7 @@ fix := fn -> (
      if debugLevel > 0 then stderr << "--fixed URL: " << r << endl;
      r)
 showHtml = show Hypertext := x -> (
-     fn := temporaryFileName() | ".xhtml";
+     fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {
 	       TITLE "Macaulay2 Output",
