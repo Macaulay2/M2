@@ -589,8 +589,6 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
   const Ring *R = a->get_ring();
   gmp_RR result;
-  void *b;
-  double *c;
   const M2::ConcreteRing<M2::ARingRRR> *R1;
 
   switch (R->ringID())
@@ -598,26 +596,18 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
       case M2::ring_RR:
         result = getmemstructtype(gmp_RR);
         mpfr_init2(result, 53);
-        b = static_cast<void *>(a->get_value().poly_val);
-        c = static_cast<double *>(b);
-        mpfr_set_d(result, *c, GMP_RNDN);
+        mpfr_set_d(result, a->get_value().get_double(), GMP_RNDN);
         return result;
       case M2::ring_RRR:
         R1 =
             dynamic_cast<const M2::ConcreteRing<M2::ARingRRR> *>(a->get_ring());
         result = getmemstructtype(gmp_RR);
         mpfr_init2(result, R1->get_precision());
-        b = a->get_value().poly_val;
-        mpfr_set(result, static_cast<gmp_RR>(b), GMP_RNDN);
+        mpfr_set(result, a->get_value().get_mpfr(), GMP_RNDN);
         return result;
       default:
-        if (!a->get_ring()->is_RRR())
-          {
-            ERROR("expected an element of RRR");
-            return nullptr;
-          }
-        #warning "once gmp_RR changes to const, remove this cast"
-        return const_cast<gmp_RRorNull>(a->get_value().get_mpfr());
+        ERROR("expected an element of RRR");
+        return nullptr;
     }
 }
 

@@ -119,7 +119,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
             for (Nterm *t = p->get_value(); t != NULL; t = t->next)
               {
                 gel(q, 2 + abs(*(t->monom))) =
-                    dbltor(*reinterpret_cast<double *>(t->coeff.poly_val));
+                  dbltor(t->coeff.get_double());
               }
           }
           pari_ENDCATCH break;

@@ -63,14 +63,12 @@ class ARingRR : public RingInterface
   // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    double *res = newitem(double);
-    *res = a;
-    result.poly_val = reinterpret_cast<Nterm *>(res);
+    result = ring_elem(a);
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = *reinterpret_cast<double *>(a.poly_val);
+    result = a.get_double();
   }
 
   // 'init', 'init_set' functions

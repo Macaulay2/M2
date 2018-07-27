@@ -65,7 +65,8 @@ std::pair<bool, long> RingZZ::coerceToLongInteger(ring_elem a) const
                                mpz_get_si(a.get_mpz()));
 }
 
-ring_elem RingZZ::random() const { return rawRandomInteger(0); }
+ring_elem RingZZ::random() const { return ring_elem(rawRandomInteger(0)); }
+
 void RingZZ::elem_text_out(buffer &o,
                            const ring_elem ap,
                            bool p_one,
