@@ -10,7 +10,7 @@ newPackage(
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
-    	Headline => "reaction networks",
+    	Headline => "Reaction networks",
 	PackageImports => {"Graphs"},
   	DebuggingMode => false,		
   	-- DebuggingMode => true,		 -- set to true only during development
@@ -172,6 +172,7 @@ subRandomInitVals(ReactionNetwork, Ring) := (Rn, FF) -> (
     toList apply(0..length CE-1, i-> sub(CE#i,S))
     )
 
+
 subRandomReactionRates = method()
 subRandomReactionRates ReactionNetwork := Rn -> subRandomReactionRates(Rn, QQ);
 subRandomReactionRates(ReactionNetwork, Ring) := (Rn, FF) -> (
@@ -182,6 +183,7 @@ subRandomReactionRates(ReactionNetwork, Ring) := (Rn, FF) -> (
     P := toList(apply(0..length Rr-1, i-> Rr#i=>sub(K#i,Rn.ReactionRing)));
     toList apply(0..length SS-1, i-> sub(SS#i,P))
     )
+
 
 TEST ///
 restart
@@ -473,7 +475,7 @@ sepEdges = Rn -> (
 
 --laplacian needs to be redone
 -- interface can be greatly improved, but this seems to work, and also handles CRNs with NullSymbols
--*
+{*
 laplacian = (Rn, FF) -> (
     -- step 1) build parameter ring
     n := #Rn.Complexes;
@@ -513,7 +515,7 @@ laplacian = (Rn, FF) -> (
     L = substitute(matrix L, R);
     mons*L*Y
     )
-*-
+*}
 
 --why are initial values showing up here????? 
 --cc_{species} show up in place of xx_{species}, have not been able to resolve why
@@ -599,14 +601,16 @@ conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     St	  
     )
 
---currently not working
-displayComplexes = (Rn, FF) -> (
-    R := createRing(Rn, FF);
-    A := sub(transpose matrix{toList(0..#Rn.Complexes-1)}, R);
-    B := matrix(apply(toList(0..#Rn.Complexes-1),
-	    i -> flatten entries((sub(Rn.Complexes#i, R))*(transpose matrix Rn.ConcentrationRates))
+
+displayComplexes = method()
+displayComplexes ReactionNetwork := N -> (
+    R := createRing N;
+    A := sub(transpose matrix{toList(0..#N.Complexes-1)}, R);
+    B := matrix{toList(apply(0..length N.ConcentrationRates-1, i -> value(N.ConcentrationRates#i)))};
+    C := matrix(apply(toList(0..#N.Complexes-1),
+	    i -> flatten entries((sub(N.Complexes#i, R))*(transpose B))
 	    ));
-    A | B
+    A | C
 	) 
 
 TEST ///
