@@ -416,41 +416,6 @@ document {
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 document {
-     Key => {leadCoefficient,(leadCoefficient, RingElement)},
-     Headline => "the leading coefficient",
-     TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
-     or vector ", TT "f", ".",
-     PARA{},
-     SeeAlso => {"leadTerm", "leadMonomial", "leadComponent"}
-     }
-document {
-     Key => {leadComponent,(leadComponent, Matrix),(leadComponent, Vector)},
-     Headline => "the leading component of a vector or matrix",
-     TT "leadComponent f", " -- return the leading component of the vector f,
-     i.e., the integer i so that f_i is the first nonzero component of f.",
-     PARA{},
-     SeeAlso => {"leadTerm", "leadCoefficient", "leadMonomial"}
-     }
-document {
-     Key => {leadMonomial,(leadMonomial, RingElement)},
-     Headline => "the leading monomial",
-     TT "leadMonomial f", " -- return the leading monomial of the polynomial
-     or vector f, as a ring element.  (Warning: in version 0.9.2, a
-     monoid element was returned.)",
-     PARA{},
-     SeeAlso => {"leadTerm", "leadCoefficient", "leadCoefficient"}
-     }
-document {
-     Key => {image,(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
-     Headline => "image of a map",
-     TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
-     PARA{},
-     "The result will be a submodule of the target of h",
-     PARA{},
-     "If h is a ring element, it is interpreted as a one by one matrix."
-     }
-
-document {
      Key => GlobalAssignHook,
      Headline => "hook for assignment to global variables",
      Usage => "X.GlobalAssignHook = f",
