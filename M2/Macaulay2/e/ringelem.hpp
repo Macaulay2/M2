@@ -40,6 +40,7 @@ union ring_elem
   explicit ring_elem(mpz_ptr a) : mpz_val(a) {}
   explicit ring_elem(double a) : double_val(a) {}
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
+  explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
   explicit ring_elem(schur_poly* a) : schur_poly_val(a) {}
 

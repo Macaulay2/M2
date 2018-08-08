@@ -1,0 +1,71 @@
+Plan #1:
+    D Langauge: where is the doc for it? (ans: in c/README)
+    have types:
+      gmpZZ = mpz_ptr_GC
+    also:
+      gmpZZmutable = mpz_struct_t * (i.e. not const).  Question: is this GC allocated? Ans: NO.
+    in e/gmp-functions.hpp, .cpp file too
+
+    mpz_to_GC(mpz_srcptr) --> gmpZZ (which is an mpz_srcptr, but totally allocated with GC_MALLOC).
+    void mpz_from_GC(mpz_ptr, gmpZZ) -- copy gmpZZ limbs to malloc memory into the mpz_ptr.
+      same as mpz_init_set(mpz_ptr, gmpZZ)
+
+    d:
+        do not change to gmp allocation functions
+
+    gmp.d:
+      for each operation that creates a new gmpZZ:
+        mpz_t tmp;
+        mpz_init(tmp);
+        /* operation, e.g. mpz_add(tmp, a, b) */
+        result = mpz_to_GC(tmp);
+        mpz_clear(tmp);
+        return result;
+      or:
+        mpz_t tmp;
+        mpz_init(tmp);
+        /* operation, e.g. mpz_add(tmp, a, b) */
+        return mpz_move_to_GC(tmp) -- this function does the allocation, and copy, and clears tmp at the end.
+    e dir: aring-zz-gmp.hpp, cpp:
+      have to do similar.  Need to deal with potential aliasing.
+    e dir: ZZ.hpp, cpp:
+      why are there two such ZZ files?
+
+    Next: do the same for mpq.
+
+    Next: do similar for mpfr.
+    
+    The plan:
+
+  1. Make it so that we can link with gmp/mpir, flint, mpfr, without modification.
+    This just means that when we use mpz fcns, etc that we then copy the results into gc memory, OR
+      that we will have that space freed by usual new/delete methods in c++.
+  2. Possibly allow the engine to be gc free, except for objects going to the front end.
+    This would require what?
+    - ring_elem changes?
+    - RingElement changes?
+    - PolynomialRing class changes
+      includes: functions which work on terms, not on ring_elem's.
+      and then wrapper functions for the ring functions needed.
+      
+      the real problem: ring_elem's are treated as garbage collected, and pointers are freely copied.
+      how to solve this?
+        one, zeroV, minusoneV: need to not return already constructed elements
+        quotient elements: ? these are being used as is.
+        poly functions: don't lose ring_elem constants, or have 2 that are the same.
+        
+      RawRingElement:
+        This is a front end notion.  
+        Option 1: creating one copies data to GC storage.
+        Option 2: we finalize all such objects.
+        
+      one proposal:
+        RingElement: low cost engine object.
+        RawRingElement: front end object: copied memory (in mpz, mpq, mpfr, poly cases, and any other which requires mem allocs).
+          need: mpzToGCobject, ringelemToGC, polyToGC, ...
+        preferably: a RawRingElement can behave like a const RingElement type too...
+        
+        
+notes:
+  lower_content, lower_associate_divisor: modify a ring_elem in place.  Bad!
+          

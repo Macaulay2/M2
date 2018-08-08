@@ -22,7 +22,7 @@ declarations "
 ";
 
 header "#include \"gmp_aux.h\"";
-header "#include \"reallocate.h\"";
+header "#include <gmp-util.h>";
 
 export ZZstruct := Type "__mpz_struct";
 export ZZ := Pointer "__mpz_struct *";
