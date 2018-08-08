@@ -24,6 +24,7 @@ inline gmp_ZZ moveToZZ (mpz_ptr _z)
   _z->_mp_d = _p;
   _z->_mp_size = _s;
   _z->_mp_alloc = _as;
+  return _z;
 }
 
 inline gmp_ZZ mpzToZZ(mpz_srcptr z)

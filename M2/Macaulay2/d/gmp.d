@@ -25,13 +25,15 @@ header "#include \"gmp_aux.h\"";
 header "#include <gmp-util.h>";
 
 export ZZstruct := Type "__mpz_struct";
-export ZZ := Pointer "__mpz_struct *";
+export ZZmutable := Pointer "mpz_ptr";
+export ZZ := Pointer "mpz_srcptr";
 export ZZorNull := ZZ or null;
 export ZZcell := {+v:ZZ};
 export ZZpair := {a:ZZ,b:ZZ};
 export ZZpairOrNull := ZZpair or null;
 export QQstruct := Type "__mpq_struct";
-export QQ := Pointer "__mpq_struct *";
+export QQmutable := Pointer "mpq_ptr";
+export QQ := Pointer "mpq_srcptr";
 export QQorNull := QQ or null;
 export QQcell := {+v:QQ};
 export RRstruct := Type "__mpfr_struct";
@@ -91,24 +93,35 @@ export hash(x:ZZ):int := (
 
 getstr(str:charstarOrNull, base:int, x:ZZ) ::= Ccode(charstarOrNull, "mpz_get_str(", str, ",", base, ",", x, ")" );
 
-init(x:ZZ) ::= Ccode( ZZ, "(mpz_init(",  x, "),",x,")" );
-export newZZ():ZZ := init(GCmalloc(ZZ));
+init(x:ZZmutable) ::= Ccode( ZZmutable, "(mpz_init(",  x, "),",x,")" );
 
-set(x:ZZ, y:ZZ) ::= Ccode( ZZ, "(mpz_set(",	  x, ",",  y, "),",x,")" );
+newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
 
-export copy(i:ZZ):ZZ := set(init(GCmalloc(ZZ)),i);
+mpzReallocateLimbs(z:ZZmutable) ::= Ccode( void, "mpz_reallocate_limbs(", z, ")" );
 
-set(x:ZZ, n:int) ::= Ccode( ZZ, "(mpz_set_si(",  x, ",", "(long)", n, "),",x,")" );
-set(x:ZZ, n:ulong) ::= Ccode( ZZ, "(mpz_set_ui(",  x, ",", n, "),",x,")" );
-set(x:ZZ, n:long) ::= Ccode( ZZ, "(mpz_set_si(",  x, ",", n, "),",x,")" );
+moveToZZ(y:ZZmutable) ::= (
+    mpzReallocateLimbs(y); 
+    Ccode(ZZ,y)
+    );
+
+set(x:ZZmutable, y:ZZ) ::= Ccode( ZZmutable, "(mpz_set(", x, ",",  y, "),",x,")" );
+
+export copy(y:ZZ):ZZ := (
+    x := newZZmutable();
+    set(x,y);
+    moveToZZ(x)
+    );
+    
+set(x:ZZmutable, n:int) ::= Ccode( ZZmutable, "(mpz_set_si(",  x, ",", "(long)", n, "),",x,")" );
+set(x:ZZmutable, n:ulong) ::= Ccode( ZZmutable, "(mpz_set_ui(",  x, ",", n, "),",x,")" );
+set(x:ZZmutable, n:long) ::= Ccode( ZZmutable, "(mpz_set_si(",  x, ",", n, "),",x,")" );
 
 negsmall := -100;
 possmall := 300;
 smallints := new array(ZZ) len possmall - negsmall + 1 do for i from negsmall to possmall do (
-     x := GCmalloc(ZZ);
-     init(x);
+     x := newZZmutable();
      set(x,i);
-     provide x
+     provide moveToZZ(x)
      );
 
 isSmall(x:ZZ):bool := isInt(x) && (
@@ -118,10 +131,10 @@ isSmall(x:ZZ):bool := isInt(x) && (
 export toInteger(i:int):ZZ := (
      if i >= negsmall && i <= possmall then smallints.(i-negsmall)
      else (
-	  x := GCmalloc(ZZ);
-	  init(x);
-	  set(x,i);
-	  x));
+	 x := newZZmutable();
+	 set(x,i);
+	 moveToZZ(x))
+     );
 
 export toInteger(i:ushort):ZZ := toInteger(int(i));
 
@@ -129,47 +142,46 @@ export toInteger(i:ulong):ZZ := (
      if i <= ulong(possmall)
      then smallints.(int(i)-negsmall)
      else (
-	  x := GCmalloc(ZZ);
-	  init(x);
-	  set(x,i);
-	  x));
+	 x := newZZmutable();
+	 set(x,i);
+	 moveToZZ(x))
+     );
 export toInteger(i:long):ZZ := (
      if i >= long(negsmall) && i <= long(possmall)
      then smallints.(int(i)-negsmall)
      else (
-	  x := GCmalloc(ZZ);
-	  init(x);
-	  set(x,i);
-	  x));
-neg(x:ZZ, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
+	 x := newZZmutable();
+	 set(x,i);
+	 moveToZZ(x))
+     );    
+neg(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
 export - (x:ZZ) : ZZ := (
-     y := GCmalloc(ZZ);
-     init(y);
+     y := newZZmutable();
      neg(y,x);
-     y);
-abs(x:ZZ, y:ZZ) ::= Ccode( void, "mpz_abs(", x, ",", y, ")" );
+     moveToZZ(y)
+     );
+abs(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_abs(", x, ",", y, ")" );
 export abs(x:ZZ) : ZZ := (
-     if isNegative0(x) then (
-	  y := GCmalloc(ZZ);
-	  init(y);
-	  abs(y,x);
-	  y)
-     else x);
-add(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_add(", x, ",", y, ",", z, ")" );
-mpzReallocateLimbs(z:ZZ) ::= Ccode( void, "mpz_reallocate_limbs(", z, ")" );
+    if isNegative0(x) then (
+	y := newZZmutable();
+	abs(y,x);
+	moveToZZ(y)
+	)
+    else x
+    );
+add(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_add(", x, ",", y, ",", z, ")" );
 export (x:ZZ) + (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      add(z,x,y);
-     mpzReallocateLimbs(z);
-     z);
-add(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_add_ui(", x, ",", y, ",", z, ")" );
-sub(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_sub(", x, ",", y, ",", z, ")" );
+     moveToZZ(z)
+     );
+add(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_add_ui(", x, ",", y, ",", z, ")" );
+sub(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_sub(", x, ",", y, ",", z, ")" );
 export (x:ZZ) - (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      sub(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 compare(x:ZZ, y:ZZ) ::= Ccode( int, "mpz_cmp(", x, ",", y, ")" );
 export (x:ZZ) === (y:ZZ) : bool := compare(x,y) == 0;
 export (x:ZZ)  >  (y:ZZ) : bool := compare(x,y) >  0;
@@ -188,54 +200,55 @@ export (x:int) > (y:ZZ) : bool := y < x;
 export (x:int) <= (y:ZZ) : bool := y >= x;
 export (x:int) >= (y:ZZ) : bool := y <= x;
 export (x:int) === (y:ZZ) : bool := y === x;
-sub(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_sub_ui(", x, ",", y, ",", z, ")" );
-mul(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_mul(", x, ",", y, ",", z, ")" );
+sub(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_sub_ui(", x, ",", y, ",", z, ")" );
+mul(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_mul(", x, ",", y, ",", z, ")" );
 export (x:ZZ) * (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      mul(z,x,y);
-     z);
-mul(x:ZZ, y:ZZ, z:int) ::= Ccode( void, "mpz_mul_si(", x, ",", y, ",", z, ")" );
-mul(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_ui(", x, ",", y, ",", z, ")" );
-pow(x:ZZ, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", n, ")" );
+     moveToZZ(z)
+     );
+mul(x:ZZmutable, y:ZZ, z:int) ::= Ccode( void, "mpz_mul_si(", x, ",", y, ",", z, ")" );
+mul(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_ui(", x, ",", y, ",", z, ")" );
+pow(x:ZZmutable, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", n, ")" );
 export (x:ZZ) ^ (n:ulong) : ZZ := (
-     y := newZZ();
+     y := newZZmutable();
      pow(y,x,n);
-     y);
+     moveToZZ(y)
+     );
 
 
-cdiv(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_q(", x, ",", y, ",", z, ")" );
-fdiv(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_q(", x, ",", y, ",", z, ")" );
+cdiv(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_q(", x, ",", y, ",", z, ")" );
+fdiv(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_q(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) // (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      if isPositive0(y) then fdiv(z,x,y) else cdiv(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
 divexact(x:ZZ, y:ZZ):ZZ := (
      if y === 1 then return x;
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      Ccode( void, "mpz_divexact(", z, ",", x, ",", y, ")" );
-     z);
+     moveToZZ(z)
+     );
 
-fmod(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_r(", x, ",", y, ",", z, ")" );
-cmod(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_r(", x, ",", y, ",", z, ")" );
+fmod(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_fdiv_r(", x, ",", y, ",", z, ")" );
+cmod(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_cdiv_r(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) % (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      if isPositive0(y) then fmod(z,x,y) else cmod(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
-fdiv(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_fdiv_q_ui(", x, ",", y, ",", z, ")" );
+fdiv(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_fdiv_q_ui(", x, ",", y, ",", z, ")" );
 
 export (x:ZZ) // (y:ulong) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      fdiv(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
 export (x:ZZ) // (y:ushort) : ZZ := x // ulong(y);
 
@@ -243,29 +256,29 @@ fmod(y:ZZ, z:ulong) ::= Ccode( ulong, "mpz_fdiv_ui(", y, ",", z, ")" );
 
 export (x:ZZ) % (y:ulong) : ulong := fmod(x,y);
 export (x:ZZ) % (y:ushort) : ushort := ushort(x % ulong(y));
-gcd(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_gcd(", x, ",", y, ",", z, ")" );
+gcd(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_gcd(", x, ",", y, ",", z, ")" );
 
 export gcd(x:ZZ,y:ZZ):ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      gcd(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
-mul_2exp(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_2exp(", x, ",", y, ",", z, ")" );
+mul_2exp(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_mul_2exp(", x, ",", y, ",", z, ")" );
 
 leftshift(x:ZZ,n:ulong):ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      mul_2exp(z,x,n);
-     z);
+     moveToZZ(z)
+     );
 
-tdiv_q_2exp(x:ZZ, y:ZZ, z:ulong) ::= Ccode( void, "mpz_tdiv_q_2exp(", x, ",", y, ",", z, ")" );
+tdiv_q_2exp(x:ZZmutable, y:ZZ, z:ulong) ::= Ccode( void, "mpz_tdiv_q_2exp(", x, ",", y, ",", z, ")" );
 
 rightshift(x:ZZ,n:ulong):ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      tdiv_q_2exp(z,x,n);
-     z);
+     moveToZZ(z)
+     );
 
 export (x:ZZ) << (n:int) : ZZ := (
      if n == 0 then x else if n > 0 then leftshift(x,ulong(n)) else rightshift(x,ulong(-n))
@@ -274,26 +287,26 @@ export (x:ZZ) >> (n:int) : ZZ := (
      if n == 0 then x else if n > 0 then rightshift(x,ulong(n)) else leftshift(x,ulong(-n))
      );     
 
-and(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_and(", x, ",", y, ",", z, ")" );
+and(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_and(", x, ",", y, ",", z, ")" );
 export (x:ZZ) & (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      and(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
-ior(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_ior(", x, ",", y, ",", z, ")" );
+ior(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_ior(", x, ",", y, ",", z, ")" );
 export (x:ZZ) | (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      ior(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
-xor(x:ZZ, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_xor(", x, ",", y, ",", z, ")" );
+xor(x:ZZmutable, y:ZZ, z:ZZ) ::= Ccode( void, "mpz_xor(", x, ",", y, ",", z, ")" );
 export (x:ZZ) ^^ (y:ZZ) : ZZ := (
-     z := GCmalloc(ZZ);
-     init(z);
+     z := newZZmutable();
      xor(z,x,y);
-     z);
+     moveToZZ(z)
+     );
 
 base := 10;
 toCstring(x:ZZ) ::= getstr(charstarOrNull(null()), base, x);
@@ -390,25 +403,33 @@ bigint := 2147483647.; -- 2^31-1
 
 
 export numerator(x:QQ):ZZ := (
-     z := newZZ();
+     z := newZZmutable();
      Ccode( void, "mpq_get_num(", z, ",", x, ")" );
-     z);
+     moveToZZ(z)
+     );
 
 export denominator(x:QQ):ZZ := (
-     z := newZZ();
+     z := newZZmutable();
      Ccode( void,
 	  "mpq_get_den(",
 	       z, ",", 
 	       x,
 	  ")" 
      );
-     z);
+     moveToZZ(z)
+     );
 
 export numeratorRef  (x:QQ) ::= Ccode( ZZ,
-     "(gmp_ZZ) mpq_numref(",  x, ")"
+     "(mpz_srcptr) mpq_numref(",  x, ")"
      );
 export denominatorRef(x:QQ) ::= Ccode( ZZ, 
-     "(gmp_ZZ) mpq_denref(",  x, ")"
+     "(mpz_srcptr) mpq_denref(",  x, ")"
+     );
+export numeratorRef  (x:QQmutable) ::= Ccode( ZZmutable,
+     "(mpz_ptr) mpq_numref(",  x, ")"
+     );
+export denominatorRef(x:QQmutable) ::= Ccode( ZZmutable, 
+     "(mpz_ptr) mpq_denref(",  x, ")"
      );
 
 export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
@@ -416,20 +437,23 @@ export hash(x:QQ):int := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn(",x,")");
 export isNegative(x:QQ):bool := isNegative0(x);
 
-init(x:QQ) ::= Ccode( void, "mpq_init(",  x, ")" );
+init(x:QQmutable) ::= Ccode( QQmutable, "(mpq_init(",  x, "),",x,")" );
 
-newQQ():QQ := (
-     x := GCmalloc(QQ);
-     init(x);
-     x);
+newQQmutable():QQmutable :=  init(GCmalloc(QQmutable));
+
+moveToQQ(y:QQmutable) ::= (
+    mpzReallocateLimbs(numeratorRef(y)); 
+    mpzReallocateLimbs(denominatorRef(y)); 
+    Ccode(QQ,y)
+    );
 
 export newQQ(i:ZZ,j:ZZ):QQ := (
-     x := GCmalloc(QQ);
-     init(x);
+     x := newQQmutable();
      set(  numeratorRef(x),i);
      set(denominatorRef(x),j);
      Ccode(void, "mpq_canonicalize(",x,")");
-     x);
+     moveToQQ(x)
+     );
 
 export newQQCanonical(i:ZZ,j:ZZ):QQ := ( -- assume gcd(i,j)=1, j>0, and j==1 if i==0
      x := GCmalloc(QQ);
