@@ -90,7 +90,7 @@ class ARingCCC : public RingInterface
     mpfc_ptr res = getmemstructtype(mpfc_ptr);
     init(*res);
     set(*res, a);
-    result = MPF_RINGELEM(res);
+    result = ring_elem(res);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
