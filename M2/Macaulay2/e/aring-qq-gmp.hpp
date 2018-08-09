@@ -244,7 +244,7 @@ class ARingQQGMP : public RingInterface
 
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    gmp_QQ b = getmemstructtype(gmp_QQ);
+    mpq_ptr b = getmemstructtype(mpq_ptr);
     mpq_init(b);
     mpq_set(b, &a);
     result.poly_val = reinterpret_cast<Nterm*>(b);
@@ -254,7 +254,7 @@ class ARingQQGMP : public RingInterface
   {
     // Currently, until QQ becomes a ConcreteRing, elements of QQ are gmp_QQ
     // (aka mpq_t)
-    gmp_QQ t = reinterpret_cast<gmp_QQ>(const_cast<Nterm*>(a.poly_val));
+    mpq_ptr t = reinterpret_cast<mpq_ptr>(const_cast<Nterm*>(a.poly_val));
     mpq_set(&result, t);
   }
 

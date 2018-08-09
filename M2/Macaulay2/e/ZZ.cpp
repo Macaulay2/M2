@@ -197,7 +197,7 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   // This sets f to either 0, 1 or -1.
   // if f is 0, do f=sign(g), else f=sign(f)
   // return whether f is zero
-  gmp_ZZ result = RingZZ::new_elem();
+  mpz_ptr result = RingZZ::new_elem();
   mpz_srcptr a = f.get_mpz();
   mpz_srcptr b = g.get_mpz();
   int sa = mpz_sgn(a);
@@ -217,7 +217,7 @@ void RingZZ::lower_content(ring_elem &c, ring_elem g) const
       c = g;
       return;
     }
-  gmp_ZZ result = RingZZ::new_elem();
+  mpz_ptr result = RingZZ::new_elem();
   mpz_srcptr a = c.get_mpz();
   mpz_srcptr b = g.get_mpz();
   mpz_gcd(result, a, b);

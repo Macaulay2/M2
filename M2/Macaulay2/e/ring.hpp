@@ -339,7 +339,7 @@ class Ring : public MutableEngineObject
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const = 0;
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
   // These two power routines can be used for n >= 0.
 

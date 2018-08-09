@@ -507,7 +507,7 @@ class RingQQ : public ConcreteRing<ARingQQ>
   {
     mpz_srcptr numer = top.get_mpz();
     mpz_srcptr denom = bottom.get_mpz();
-    gmp_QQ b = getmemstructtype(gmp_QQ);
+    mpq_ptr b = getmemstructtype(mpq_ptr);
     mpq_init(b);
     mpz_set(mpq_numref(b), numer);
     mpz_set(mpq_denref(b), denom);
@@ -539,7 +539,7 @@ class RingQQ : public ConcreteRing<ARingQQ>
     int sa = mpq_sgn(a);
     int sb = mpq_sgn(b);
     int s = (sa == 0 ? sb : sa);
-    gmp_QQ result = getmemstructtype(gmp_QQ);
+    mpq_ptr result = getmemstructtype(mpq_ptr);
     mpq_init(result);
 
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
@@ -560,7 +560,7 @@ class RingQQ : public ConcreteRing<ARingQQ>
     mpq_srcptr a = MPQ_VAL(c);
     mpq_srcptr b = MPQ_VAL(g);
     int sa = mpq_sgn(a);
-    gmp_QQ result = getmemstructtype(gmp_QQ);
+    mpq_ptr result = getmemstructtype(mpq_ptr);
     mpq_init(result);
 
     mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));

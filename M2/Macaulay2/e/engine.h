@@ -623,7 +623,7 @@ extern "C" {
      This then translates F, returning the translated poly in the ring newRing.
   */
 
-  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, const RingElement *g);  /* connected */
+  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_srcptr n, const RingElement *g);  /* connected */
   /* Currently only valid for tower rings */
 
   /**************************************************/

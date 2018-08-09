@@ -95,11 +95,11 @@ getstr(str:charstarOrNull, base:int, x:ZZ) ::= Ccode(charstarOrNull, "mpz_get_st
 
 init(x:ZZmutable) ::= Ccode( ZZmutable, "(mpz_init(",  x, "),",x,")" );
 
-newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
+export newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
 
 mpzReallocateLimbs(z:ZZmutable) ::= Ccode( void, "mpz_reallocate_limbs(", z, ")" );
 
-moveToZZ(y:ZZmutable) ::= (
+export moveToZZ(y:ZZmutable):ZZ := (
     mpzReallocateLimbs(y); 
     Ccode(ZZ,y)
     );
@@ -439,7 +439,7 @@ export isNegative(x:QQ):bool := isNegative0(x);
 
 init(x:QQmutable) ::= Ccode( QQmutable, "(mpq_init(",  x, "),",x,")" );
 
-newQQmutable():QQmutable :=  init(GCmalloc(QQmutable));
+export newQQmutable():QQmutable :=  init(GCmalloc(QQmutable));
 
 moveToQQ(y:QQmutable) ::= (
     mpzReallocateLimbs(numeratorRef(y)); 
@@ -456,33 +456,36 @@ export newQQ(i:ZZ,j:ZZ):QQ := (
      );
 
 export newQQCanonical(i:ZZ,j:ZZ):QQ := ( -- assume gcd(i,j)=1, j>0, and j==1 if i==0
-     x := GCmalloc(QQ);
-     init(x);
+     x := newQQmutable();
      set(  numeratorRef(x),i);
      set(denominatorRef(x),j);
-     x);
+     moveToQQ(x)
+     );
 
 export toRational(n:int):QQ := (
-     x := newQQ();
+     x := newQQmutable();
      Ccode( void, "mpq_set_si(",  x, ",(long)", n, ",(long)1)" );
-     x);
+     moveToQQ(x)
+     );
 
 export toRational(n:ulong):QQ := (
-     x := newQQ();
+     x := newQQmutable();
      Ccode( void, "mpq_set_ui(",  x, ",(unsigned long)", n, ",(unsigned long)1)" );
-     x);
+     moveToQQ(x)
+     );
 
 -- integers and rationals
      
 export toRational(x:ZZ):QQ := (
-     z := newQQ();
+     z := newQQmutable();
      Ccode(void, "mpq_set_z(", z, ",", x, ")");
-     z);
+     moveToQQ(z)
+     );
 
 export floor(x:QQ):ZZ := numeratorRef(x)//denominatorRef(x);
 
 export (x:QQ) + (y:QQ) : QQ := (
-     z := newQQ();
+     z := newQQmutable();
      Ccode( void,
           "mpq_add(",
 	       z, ",", 
@@ -490,32 +493,35 @@ export (x:QQ) + (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     z);
+     moveToQQ(z)
+     );
 
 export - (y:QQ) : QQ := (
-     z := newQQ();
+     z := newQQmutable();
      Ccode( void,
 	  "mpq_neg(",
 	       z, ",", 
 	       y,
 	  ")" 
      );
-     z);
+     moveToQQ(z)
+     );
 
 export abs(x:QQ) : QQ := if isNegative0(x) then -x else x;
 
 export inv(y:QQ) : QQ := (			    -- reciprocal
-     z := newQQ();
+     z := newQQmutable();
      Ccode( void,
 	  "mpq_inv(",
 	       z, ",", 
 	       y,
 	  ")" 
      );
-     z);
+     moveToQQ(z)
+     );
 
 export (x:QQ) - (y:QQ) : QQ := (
-     z := newQQ();
+     z := newQQmutable();
      Ccode( void,
           "mpq_sub(",
 	       z, ",", 
@@ -523,10 +529,11 @@ export (x:QQ) - (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     z);
+     moveToQQ(z)
+     );
 
 export (x:QQ) * (y:QQ) : QQ := (
-     z := newQQ();
+     z := newQQmutable();
      Ccode( void,
           "mpq_mul(",
 	       z, ",", 
@@ -534,10 +541,11 @@ export (x:QQ) * (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     z);
+     moveToQQ(z)
+     );
 
 export (x:QQ) / (y:QQ) : QQ := (
-     z := newQQ();
+     z := newQQmutable();
      Ccode( void,
           "mpq_div(",
 	       z, ",", 
@@ -545,7 +553,8 @@ export (x:QQ) / (y:QQ) : QQ := (
 	       y,
 	  ")" 
      );
-     z);
+     moveToQQ(z)
+     );
 
 export (x:QQ) === (y:QQ) : bool := (
      Ccode( bool,
@@ -1108,21 +1117,24 @@ export (x:RR) ^ (y:RR) : RR := (
 
 export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
-     y := newZZ();
+     y := newZZmutable();
      Ccode( void, "mpfr_get_z(", y, ",", x, ", GMP_RNDD)" );
-     y);
+     moveToZZ(y)
+     );
 
 export ceil(x:RR) : ZZ := (
      if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
-     y := newZZ();
+     y := newZZmutable();
      Ccode( void, "mpfr_get_z(", y, ",", x, ", GMP_RNDU)" );
-     y);
+     moveToZZ(y)
+     );
 
 export round(x:RR) : ZZ := (
      if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
-     y := newZZ();
+     y := newZZmutable();
      Ccode( void, "mpfr_get_z(", y, ",", x, ", GMP_RNDN)" );
-     y);
+     moveToZZ(y)
+     );
 
 export (x:RR) << (n:long) : RR := (
      if n == long(0) then return x;
@@ -1369,9 +1381,10 @@ export coth(x:RR):RR := (
      Ccode( void, "mpfr_coth(", z, ",", x, ", GMP_RNDN)" );
      z);
 export factorial(x:ulong):ZZ := (
-     z := newZZ();
+     z := newZZmutable();
      Ccode( void, "mpz_fac_ui(", z, ",", x, ")" );
-     z);
+     moveToZZ(z)
+     );
 export log1p(x:RR):RR := (
      z := newRR(precision0(x));
      Ccode( void, "mpfr_log1p(", z, ",", x, ", GMP_RNDN)" );

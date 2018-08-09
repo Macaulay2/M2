@@ -98,7 +98,7 @@ ring_elem Ring::var(int v) const
   return zeroV;
 }
 
-ring_elem Ring::power(const ring_elem gg, mpz_t m) const
+ring_elem Ring::power(const ring_elem gg, mpz_srcptr m) const
 {
   ring_elem ff = gg;
   int cmp = mpz_sgn(m);

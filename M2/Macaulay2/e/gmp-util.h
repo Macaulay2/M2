@@ -30,7 +30,7 @@ inline gmp_ZZ moveToZZ (mpz_ptr _z)
 inline gmp_ZZ mpzToZZ(mpz_srcptr z)
 {
   // create a gmp_ZZ on the GC heap, copy limb space of z to gmp_ZZ in GC heap
-  gmp_ZZ result = getmemstructtype(mpz_ptr);
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   int s = z->_mp_size;
   int as = (s>0) ? s : -s;
   mp_limb_t *p = GC_MALLOC(as*sizeof(mp_limb_t));

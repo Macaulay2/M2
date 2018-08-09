@@ -35,7 +35,7 @@ class RingElement : public EngineObject
   RingElement *operator-(const RingElement &b) const;
   RingElement *operator*(const RingElement &b) const;
   RingElement *operator*(int n) const;
-  RingElement *power(mpz_t n) const;
+  RingElement *power(mpz_srcptr n) const;
   RingElement *power(int n) const;
 
   RingElement *operator/(const RingElement &b) const;

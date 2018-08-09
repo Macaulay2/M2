@@ -37,7 +37,7 @@ union ring_elem
   // explicit ring_elem(int a) : int_val(a) {} // really want this version...
   ring_elem(int a) : int_val(a) {}
   ring_elem(Nterm *a) : poly_val(a) {}
-  explicit ring_elem(mpz_ptr a) : mpz_val(a) {}
+  explicit ring_elem(mpz_srcptr a) : mpz_val(a) {}
   explicit ring_elem(double a) : double_val(a) {}
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
