@@ -375,7 +375,7 @@ int Tower::extension_degree(int firstvar) const
 }
 
 ring_elem Tower::power_mod(const ring_elem f,
-                           mpz_t n,
+                           mpz_srcptr n,
                            const ring_elem g) const  // f^n mod g
 {
   poly f1 = TOWER_VAL(f);

@@ -156,7 +156,7 @@ class ARingZZpFlint : public RingInterface
     result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
   }
 
-  void power_mpz(ElementType &result, ElementType a, mpz_ptr n) const
+  void power_mpz(ElementType &result, ElementType a, mpz_srcptr n) const
   {
     unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
     result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);

@@ -332,7 +332,7 @@ class ARingCC : public RingInterface
     clear(curr_pow);
   }
 
-  void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
+  void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)

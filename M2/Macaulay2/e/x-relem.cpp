@@ -562,12 +562,13 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
     }
   if (R->isFinitePrimeField())
     {
-      gmp_ZZ result = newitem(__mpz_struct);
+      mpz_ptr result = newitem(__mpz_struct);
 
       std::pair<bool, long> res = R->coerceToLongInteger(a->get_value());
       assert(res.first);
 
       mpz_init_set_si(result, static_cast<int>(res.second));
+      #warning "change limbs to GC space"
       return result;
     }
   ERROR("Expected ZZ or ZZ/p as base ring");
@@ -833,8 +834,8 @@ gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, const RingElement *a)
       gmp_ZZpair p = new gmp_ZZpair_struct;
       p->a = newitem(__mpz_struct);
       p->b = newitem(__mpz_struct);
-      mpz_init_set_si(p->a, static_cast<long>(lo));
-      mpz_init_set_si(p->b, static_cast<long>(hi));
+      mpz_init_set_si(const_cast<mpz_ptr>(p->a), static_cast<long>(lo));
+      mpz_init_set_si(const_cast<mpz_ptr>(p->b), static_cast<long>(hi));
       return p;
   } catch (exc::engine_error e)
     {
@@ -1379,7 +1380,7 @@ const RingElement /* or null */ *rawLowerP(const RingElement *f)
 }
 
 const RingElement /* or null */ *rawPowerMod(const RingElement *f,
-                                             mpz_ptr n,
+                                             mpz_srcptr n,
                                              const RingElement *g)
 {
   const Tower *R = f->get_ring()->cast_to_Tower();

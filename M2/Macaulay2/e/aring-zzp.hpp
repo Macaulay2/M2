@@ -209,7 +209,7 @@ class ARingZZp : public RingInterface
       result = 0;
   }
 
-  void power_mpz(elem &result, elem a, mpz_ptr n) const
+  void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
     int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
     power(result, a, n1);

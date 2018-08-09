@@ -53,7 +53,7 @@ int32_t rawRandomInt(int32_t max)
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
 /* if height is the null pointer, use the default height */
 {
-  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_ptr result = getmemstructtype(gmp_ZZ);
   mpz_init(result);
   if (maxN == 0)
     mpz_urandomm(result, state, maxHeight);

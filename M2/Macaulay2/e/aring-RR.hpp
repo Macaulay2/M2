@@ -176,7 +176,7 @@ class ARingRR : public RingInterface
     result = pow(a, n);
   }
 
-  void power_mpz(ElementType &result, const ElementType &a, mpz_ptr n) const
+  void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)

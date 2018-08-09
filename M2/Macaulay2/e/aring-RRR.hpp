@@ -197,7 +197,7 @@ class ARingRRR : public RingInterface
     mpfr_pow_si(&result, &a, n, GMP_RNDN);
   }
 
-  void power_mpz(ElementType &result, const ElementType &a, mpz_ptr n) const
+  void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
     mpfr_pow_z(&result, &a, n, GMP_RNDN);
   }

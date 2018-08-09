@@ -347,7 +347,7 @@ class ConcreteRing : public Ring
     return result;
   }
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
     ElementType a, b;

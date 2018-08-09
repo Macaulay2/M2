@@ -805,7 +805,7 @@ ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
   return H.value();
 }
 
-ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
+ring_elem PolyRing::power(const ring_elem f0, mpz_srcptr n) const
 {
   ring_elem ff, result;
   bool isinverted = false;
@@ -813,27 +813,29 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
   if (mpz_sgn(n) == 0) return from_long(1);
   if (is_zero(f0)) return ZERO_RINGELEM;
 
+  mpz_t abs_n;
+  mpz_init(abs_n);
+  mpz_abs(abs_n, n);
   if (mpz_sgn(n) > 0)
     ff = f0;
   else
     {
       isinverted = true;
       ff = invert(f0);
-      mpz_neg(n, n);
     }
 
   Nterm *f = ff;
 
   // In this case, the computation may only be formed in two
   // cases: (1) f is a constant, or (2) n is small enough
-  std::pair<bool, int> n1 = RingZZ::get_si(n);
+  std::pair<bool, int> n1 = RingZZ::get_si(abs_n);
   if (n1.first)
     {
       result = power(f, n1.second);
     }
   else if (is_unit(f))  // really want a routine 'is_scalar'...
     {
-      ring_elem a = K_->power(f->coeff, n);
+      ring_elem a = K_->power(f->coeff, abs_n);
       result = make_flat_term(a, f->monom);
     }
   else
@@ -842,7 +844,7 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
       result = ZERO_RINGELEM;
     }
 
-  if (isinverted) mpz_neg(n, n);
+  mpz_clear(abs_n);
   return result;
 }
 

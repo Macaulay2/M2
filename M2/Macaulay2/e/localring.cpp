@@ -571,7 +571,7 @@ ring_elem LocalRing::power(const ring_elem a, int n) const
     }
   return ring_elem(make_elem(top, bottom));
 }
-ring_elem LocalRing::power(const ring_elem a, mpz_t n) const
+ring_elem LocalRing::power(const ring_elem a, mpz_srcptr n) const
 {
   const local_elem *f = a.get_local_elem();
   ring_elem top, bottom;
@@ -584,18 +584,21 @@ ring_elem LocalRing::power(const ring_elem a, mpz_t n) const
     }
   else
     {
-      mpz_neg(n, n);
+      mpz_t negative_n;
+      mpz_init(negative_n);
+      mpz_neg(negative_n, n);
       if (is_unit(a))
         {
-          top = mRing->power(f->denom, n);
-          bottom = mRing->power(f->numer, n);
+          top = mRing->power(f->denom, negative_n);
+          bottom = mRing->power(f->numer, negative_n);
         }
       else
         {
           ERROR("attempt to divide by non-unit");
+          mpz_clear(negative_n);
           return zero();
         }
-      mpz_neg(n, n);
+      mpz_clear(negative_n);
 
       if (mRing->is_zero(bottom)) return set_non_unit_frac(f->numer);
     }

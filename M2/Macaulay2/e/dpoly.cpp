@@ -1362,7 +1362,7 @@ poly DPoly::diff(int level, int whichvar, const poly f)
   return diff_n(level, whichvar, f);
 }
 
-poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
+poly DPoly::power_mod(int level, const poly f, mpz_srcptr m, const poly g)
 // f^m mod g
 {
   // We assume that m > 0. THIS IS NOT CHECKED!!

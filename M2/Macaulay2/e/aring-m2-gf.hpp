@@ -279,7 +279,7 @@ class ARingGFM2 : public RingInterface
       result = 0;
   }
 
-  void power_mpz(elem &result, elem a, mpz_ptr n) const
+  void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
     long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
     power(result, a, n1);

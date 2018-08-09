@@ -387,7 +387,7 @@ ring_elem GF::power(const ring_elem f, int n) const
   if (m <= 0) m += Q1_;
   return ring_elem(m);
 }
-ring_elem GF::power(const ring_elem f, mpz_t n) const
+ring_elem GF::power(const ring_elem f, mpz_srcptr n) const
 {
   if (f.get_int() == _ZERO) return ring_elem(_ZERO);
   int exp = RingZZ::mod_ui(n, Q1_);

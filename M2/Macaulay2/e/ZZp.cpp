@@ -252,7 +252,7 @@ ring_elem Z_mod::power(const ring_elem f, int n) const
   if (m < 0) m += _P1;
   return ring_elem(m);
 }
-ring_elem Z_mod::power(const ring_elem f, mpz_t n) const
+ring_elem Z_mod::power(const ring_elem f, mpz_srcptr n) const
 {
   if (f.get_int() == _ZERO) return ring_elem(_ZERO);
   int n1 = RingZZ::mod_ui(n, _P1);

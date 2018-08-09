@@ -157,7 +157,7 @@ class PolyRingQuotient : public PolyRingFlat
     return result;
   }
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
 
   virtual ring_elem power(const ring_elem f, int n) const;
 

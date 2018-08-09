@@ -703,9 +703,10 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
 
 gmp_ZZ to_gmp_ZZ(int a)  // helper fn!!!
 {
-  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   mpz_set_si(result, a);
+  #warning "Does this need to switch to GC limbs?"
   return result;
 }
 

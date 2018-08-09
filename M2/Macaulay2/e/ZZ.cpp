@@ -258,7 +258,7 @@ ring_elem RingZZ::power(const ring_elem f, int n) const
   mpz_pow_ui(result, f.get_mpz(), n);
   return ring_elem(result);
 }
-ring_elem RingZZ::power(const ring_elem f, mpz_t n) const
+ring_elem RingZZ::power(const ring_elem f, mpz_srcptr n) const
 {
   std::pair<bool, int> n1 = RingZZ::get_si(n);
   if (n1.first)

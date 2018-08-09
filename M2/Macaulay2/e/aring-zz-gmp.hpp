@@ -15,7 +15,7 @@ namespace M2 {
 /**
    @ingroup rings
 
-   @brief wrapper for the flint fmpz_t integer representation
+   @brief wrapper for the mpz_struct integer representation
 */
 
 class ARingZZGMP : public RingInterface
