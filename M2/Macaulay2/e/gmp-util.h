@@ -41,4 +41,15 @@ inline gmp_ZZ mpzToZZ(mpz_srcptr z)
   return result;
 }
 
+inline void mpfr_reallocate_limbs (mpfr_ptr _z)
+{ 
+  int _s = _z->_mp_prec; ??????
+  int _as = (_s>0)?_s:-_s;
+  mp_limb_t *_p = GC_MALLOC(_as*sizeof(mp_limb_t));
+  memcpy(_p,_z->_mp_d,_as*sizeof(mp_limb_t));
+  mpz_clear(_z);
+  _z->_mp_d = _p;
+  _z->_mp_size = _s;
+  _z->_mp_alloc = _as;
+}
 

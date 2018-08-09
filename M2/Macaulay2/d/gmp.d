@@ -24,22 +24,24 @@ declarations "
 header "#include \"gmp_aux.h\"";
 header "#include <gmp-util.h>";
 
-export ZZstruct := Type "__mpz_struct";
+-- export ZZstruct := Type "__mpz_struct";
 export ZZmutable := Pointer "mpz_ptr";
 export ZZ := Pointer "mpz_srcptr";
 export ZZorNull := ZZ or null;
 export ZZcell := {+v:ZZ};
 export ZZpair := {a:ZZ,b:ZZ};
 export ZZpairOrNull := ZZpair or null;
-export QQstruct := Type "__mpq_struct";
+-- export QQstruct := Type "__mpq_struct";
 export QQmutable := Pointer "mpq_ptr";
 export QQ := Pointer "mpq_srcptr";
 export QQorNull := QQ or null;
 export QQcell := {+v:QQ};
-export RRstruct := Type "__mpfr_struct";
-export RR := Pointer "__mpfr_struct *";
+-- export RRstruct := Type "__mpfr_struct";
+export RRmutable := Pointer "mpfr_ptr";
+export RR := Pointer "mpfr_srcptr";
 export RRorNull := RR or null;
 export RRcell := {+v:RR};
+export CCmutable := { re:RRmutable, im:RRmutable };
 export CC := { re:RR, im:RR };
 export CCorNull := CC or null;
 export CCcell := {+v:CC};

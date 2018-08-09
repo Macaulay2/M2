@@ -392,8 +392,8 @@ class ARingCC : public RingInterface
   gmp_CC toBigComplex(const ElementType& a) const
   {
     gmp_CC result = getmemstructtype(gmp_CC);
-    result->re = getmemstructtype(gmp_RR);
-    result->im = getmemstructtype(gmp_RR);
+    result->re = getmemstructtype(mpfr_ptr);
+    result->im = getmemstructtype(mpfr_ptr);
     mpfr_init2(result->re, get_precision());
     mpfr_init2(result->im, get_precision());
     mpfr_set_d(result->re, a.re, GMP_RNDN);

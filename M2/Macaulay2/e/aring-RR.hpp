@@ -236,7 +236,7 @@ class ARingRR : public RingInterface
     if (mpfr_cmp_d(epsilon, fabs(a)) > 0) set_zero(a);
   }
 
-  void increase_norm(gmp_RR &norm, const ElementType &a) const
+  void increase_norm(mpfr_ptr norm, const ElementType &a) const
   {
     double d = fabs(a);
     if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, GMP_RNDN);
