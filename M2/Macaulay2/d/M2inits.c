@@ -57,6 +57,8 @@ void *realloc_function (void *s, size_t old, size_t new) {
 
 int M2inits_firsttime = 1;
 void enterM2(void) {
+  // We comment out all of this function.
+#if 0  
   /* this function is called initially, and also again after we call a third party library that sets gmp's memory allocation routines */
   if (M2inits_firsttime) {
     M2inits_firsttime = 0;
@@ -82,6 +84,7 @@ void enterM2(void) {
      );
 #endif
   assert(__gmp_allocate_func == (void *(*) (size_t))getmem_atomic); /* check that __gmp_allocate_func did what we thought */
+#endif  
 }
 
 void check_M2init() {

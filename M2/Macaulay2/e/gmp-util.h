@@ -1,6 +1,11 @@
 #include <gmp.h>
+#include <mpfr.h>
 #include <gc/gc.h>
 #include "../d/M2mem.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 inline void mpz_reallocate_limbs (mpz_ptr _z)
 { 
@@ -42,14 +47,21 @@ inline gmp_ZZ mpzToZZ(mpz_srcptr z)
 }
 
 inline void mpfr_reallocate_limbs (mpfr_ptr _z)
-{ 
-  int _s = _z->_mp_prec; ??????
-  int _as = (_s>0)?_s:-_s;
-  mp_limb_t *_p = GC_MALLOC(_as*sizeof(mp_limb_t));
-  memcpy(_p,_z->_mp_d,_as*sizeof(mp_limb_t));
-  mpz_clear(_z);
-  _z->_mp_d = _p;
-  _z->_mp_size = _s;
-  _z->_mp_alloc = _as;
+{
+#if 0  
+  struct __mpfr_struct tmp;
+  tmp = *_z;
+  mp_limb_t *p = GC_MALLOC(tmp._mpfr_prec * sizeof(mp_limb_t));
+  memcpy(p, _z->_mpfr_d, tmp._mpfr_prec * sizeof(mp_limb_t));
+  mpfr_clear(_z);
+  _z->_mpfr_prec = tmp._mpfr_prec;
+  _z->_mpfr_sign = tmp._mpfr_sign;
+  _z->_mpfr_exp = tmp._mpfr_exp;
+  _z->_mpfr_d = p;
+#endif  
 }
 
+#if defined(__cplusplus)
+}
+#endif
+  
