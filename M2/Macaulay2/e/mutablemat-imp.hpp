@@ -297,7 +297,7 @@ gmp_RRorNull MutableMat<T>::norm() const
   if (get_ring()->get_precision() == 0)
     throw exc::engine_error("expected a matrix over RR or CC");
 
-  gmp_RR nm = getmemstructtype(gmp_RR);
+  gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, get_ring()->get_precision());
   mpfr_set_si(nm, 0, GMP_RNDN);
 

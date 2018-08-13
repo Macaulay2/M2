@@ -4227,9 +4227,9 @@ setupfun("pi0",pi0);
 
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
-	  z := newRR(toULong(prec));
+	  z := newRRmutable(toULong(prec));
 	  Ccode( void, "mpfr_const_euler(", z, ", GMP_RNDN)" );
-	  toExpr(z))
+	  toExpr(moveToRR(z)))
      else WrongArgZZ(1));
 setupfun("mpfrConstantEuler",mpfrConstantEuler);
 
