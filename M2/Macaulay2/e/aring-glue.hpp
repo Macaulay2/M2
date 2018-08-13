@@ -476,7 +476,7 @@ class ConcreteRing : public Ring
 
   // TODO: look again at the next two when ring_elem is phased out
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
 
   virtual unsigned long get_precision()
       const;  // if the ring is not over RRR/CCC returns 0
@@ -1090,7 +1090,7 @@ ring_elem ConcreteRing<RingType>::zeroize_tiny(gmp_RR epsilon,
 }
 
 template <typename RingType>
-void ConcreteRing<RingType>::increase_maxnorm(gmp_RR norm,
+void ConcreteRing<RingType>::increase_maxnorm(gmp_RRmutable norm,
                                               const ring_elem f) const
 {
   // do nothing by default
@@ -1153,7 +1153,7 @@ inline ring_elem ConcreteRing<ARingCCC>::zeroize_tiny(gmp_RR epsilon,
 }
 
 template <>
-inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
   ARingRR::ElementType a;
@@ -1168,7 +1168,7 @@ inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RR norm,
 }
 
 template <>
-inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
   const ARingRR &realR = R->real_ring();
@@ -1184,7 +1184,7 @@ inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RR norm,
 }
 
 template <>
-inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   ARingRRR::ElementType a;
@@ -1199,7 +1199,7 @@ inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm,
 }
 
 template <>
-inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RR norm,
+inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   const ARingRRR &realR = R->real_ring();

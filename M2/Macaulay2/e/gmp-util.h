@@ -1,6 +1,5 @@
 #include <gmp.h>
 #include <mpfr.h>
-#include <gc/gc.h>
 #include "../d/M2mem.h"
 
 #if defined(__cplusplus)
@@ -11,7 +10,7 @@ inline void mpz_reallocate_limbs (mpz_ptr _z)
 { 
   int _s = _z->_mp_size;
   int _as = (_s>0)?_s:-_s;
-  mp_limb_t *_p = GC_MALLOC(_as*sizeof(mp_limb_t));
+  mp_limb_t *_p = (mp_limb_t*) GC_MALLOC(_as*sizeof(mp_limb_t));
   memcpy(_p,_z->_mp_d,_as*sizeof(mp_limb_t));
   mpz_clear(_z);
   _z->_mp_d = _p;
@@ -19,6 +18,7 @@ inline void mpz_reallocate_limbs (mpz_ptr _z)
   _z->_mp_alloc = _as;
 }
 
+/*
 inline gmp_ZZ moveToZZ (mpz_ptr _z)
 { 
   int _s = _z->_mp_size;
@@ -45,22 +45,34 @@ inline gmp_ZZ mpzToZZ(mpz_srcptr z)
   result->_mp_alloc = as;
   return result;
 }
-
+*/
+   
 inline void mpfr_reallocate_limbs (mpfr_ptr _z)
 {
-#if 0  
-  struct __mpfr_struct tmp;
+  __mpfr_struct tmp;
   tmp = *_z;
-  mp_limb_t *p = GC_MALLOC(tmp._mpfr_prec * sizeof(mp_limb_t));
+  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(tmp._mpfr_prec * sizeof(mp_limb_t));
   memcpy(p, _z->_mpfr_d, tmp._mpfr_prec * sizeof(mp_limb_t));
   mpfr_clear(_z);
   _z->_mpfr_prec = tmp._mpfr_prec;
   _z->_mpfr_sign = tmp._mpfr_sign;
   _z->_mpfr_exp = tmp._mpfr_exp;
   _z->_mpfr_d = p;
-#endif  
 }
 
+inline gmp_RR moveTo_gmpRR (gmp_RRmutable _z)
+{
+  mpfr_reallocate_limbs(_z);
+  return _z;
+}
+
+inline gmp_CC moveTo_gmpCC (gmp_CCmutable _z)
+{
+  mpfr_reallocate_limbs(_z->re);
+  mpfr_reallocate_limbs(_z->im);
+  return (gmp_CC) _z;
+}
+  
 #if defined(__cplusplus)
 }
 #endif

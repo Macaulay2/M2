@@ -503,14 +503,14 @@ class ARingCCC : public RingInterface
 
   gmp_CC toBigComplex(const ElementType& a) const
   {
-    gmp_CC result = getmemstructtype(gmp_CC);
-    result->re = getmemstructtype(gmp_RR);
-    result->im = getmemstructtype(gmp_RR);
+    gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
+    result->re = getmemstructtype(gmp_RRmutable);
+    result->im = getmemstructtype(gmp_RRmutable);
     mpfr_init2(result->re, get_precision());
     mpfr_init2(result->im, get_precision());
     mpfr_set(result->re, &a.re, GMP_RNDN);
     mpfr_set(result->im, &a.im, GMP_RNDN);
-    return result;
+    return moveTo_gmpCC(result);
   }
 
   bool set_from_RRR(ElementType& result, const ARingRRR::ElementType& a) const
@@ -553,7 +553,7 @@ class ARingCCC : public RingInterface
     mRRR.zeroize_tiny(epsilon, a.re);
     mRRR.zeroize_tiny(epsilon, a.im);
   }
-  void increase_norm(gmp_RR& norm, const ElementType& a) const
+  void increase_norm(gmp_RRmutable norm, const ElementType& a) const
   {
     ARingRRR::ElementType n;
     mRRR.init(n);

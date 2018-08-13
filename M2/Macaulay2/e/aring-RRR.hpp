@@ -247,7 +247,7 @@ class ARingRRR : public RingInterface
   {
     if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
-  void increase_norm(gmp_RR &norm, const ElementType &a) const
+  void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
     if (mpfr_cmpabs(&a, norm) > 0)
       {

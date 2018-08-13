@@ -398,7 +398,7 @@ class ARingCC : public RingInterface
     mpfr_init2(result->im, get_precision());
     mpfr_set_d(result->re, a.re, GMP_RNDN);
     mpfr_set_d(result->im, a.im, GMP_RNDN);
-    return result;
+    return moveTo_gmpCC(result);
   }
 
   void set_from_doubles(ElementType& result, double re, double im) const
@@ -413,7 +413,7 @@ class ARingCC : public RingInterface
     if (mpfr_cmp_d(epsilon, fabs(a.im)) > 0) a.im = 0.0;
   }
 
-  void increase_norm(gmp_RR& norm, const ElementType& a) const
+  void increase_norm(gmp_RRmutable norm, const ElementType& a) const
   {
     double d;
     abs(d, a);

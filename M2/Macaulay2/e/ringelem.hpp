@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
+#include <engine-exports.h>
+#include "gmp-util.h"
 #include "newdelete.hpp"
 
 using ZZ = mpz_srcptr;
