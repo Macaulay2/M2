@@ -293,7 +293,7 @@ class complexAP
 {
  public:  //!!!
   // private:
-  gmp_CC_struct value;
+  gmp_CCmutable_struct value;
 
  public:
   void init() { mpfc_init(&value, 53); }
@@ -301,7 +301,7 @@ class complexAP
   // complexAP(double);
   complexAP(double, double);
   complexAP(double);
-  complexAP(const complexAP&);
+  complexAP(complexAP&);
   complexAP(const complex&);
   complexAP(gmp_CC_struct*);
   ~complexAP() { mpfc_clear(&value); }
@@ -340,9 +340,9 @@ inline complexAP::complexAP(double re, double im)
 }
 
 //                                 COPY CONSTRUCTOR
-inline complexAP::complexAP(const complexAP& c)
+inline complexAP::complexAP(complexAP& c)
 {
-  mpfc_init_set(&value, (gmp_CC_struct*)&c.value);
+  mpfc_init_set(&value, &c.value);
 }
 
 inline complexAP::complexAP(const complex& c)
@@ -351,7 +351,7 @@ inline complexAP::complexAP(const complex& c)
   *this = complexAP(c.getreal(), c.getimaginary());
 }
 
-inline complexAP::complexAP(gmp_CC_struct* mpfrCC)
+inline complexAP::complexAP(gmp_CCmutable mpfrCC)
 {
   mpfc_init_set(&value, mpfrCC);
 }
