@@ -17,12 +17,8 @@
 #include "poly.hpp"
 #include "relem.hpp"
 
-// complex and complexAP
-
-void complexAP::print() { printf("(%lf,%lf) ", getreal(), getimaginary()); }
 // Straight Line Program classes
 
-#ifdef SLPdouble
 // functions of the wrapper !!!
 StraightLineProgram /* or null */* StraightLineProgram::make(const PolyRing* R,
                                                              ring_elem e)
@@ -53,7 +49,6 @@ Matrix* StraightLineProgram::evaluate(const Matrix* vals)
 {
   return SLP<ComplexField>::evaluate(vals);
 }
-#endif
 
 #ifdef SLPmpfr
 
