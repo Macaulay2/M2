@@ -372,7 +372,7 @@ ring_elem Ring::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   return f;
 }
 
-void Ring::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+void Ring::increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const
 // If any real number appearing in f has larger absolute value than norm,
 // replace norm.
 {

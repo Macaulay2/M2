@@ -1316,7 +1316,7 @@ ring_elem PolyRing::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   result->next = NULL;
   return head.next;
 }
-void PolyRing::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+void PolyRing::increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const
 {
   for (Nterm *a = f; a != NULL; a = a->next)
     K_->increase_maxnorm(norm, a->coeff);

@@ -771,14 +771,14 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon,
   }
 }
 
-static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
+static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
 {
   if (R->get_precision() == 0)
     {
       ERROR("expected ring over an RR or CC");
       return 0;
     }
-  gmp_RR norm = getmemstructtype(gmp_RR);
+  gmp_RRmutable norm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(norm, mpfr_get_prec(p));
   mpfr_ui_div(norm, 1, p, GMP_RNDN);
   if (!mpfr_zero_p(norm))
@@ -793,10 +793,10 @@ static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
 gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M) { return M->norm(p); }
 gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 {
-  gmp_RR norm = get_norm_start(p, f->get_ring());
+  gmp_RRmutable norm = get_norm_start(p, f->get_ring());
   if (!norm) return 0;  // error already given.
   f->get_ring()->increase_maxnorm(norm, f->get_value());
-  return norm;
+  return moveTo_gmpRR(norm);
 }
 
 gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)

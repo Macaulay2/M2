@@ -1862,7 +1862,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
       ERROR("expected ring over an RR or CC");
       return nullptr;
     }
-  gmp_RR nm = getmemstructtype(gmp_RR);
+  gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, mpfr_get_prec(p));
   mpfr_ui_div(nm, 1, p, GMP_RNDN);
   if (!mpfr_zero_p(nm))
@@ -1874,7 +1874,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
 
   for (int i = 0; i < n_cols(); i++) R->vec_increase_maxnorm(nm, elem(i));
 
-  return nm;
+  return moveTo_gmpRR(nm);
 }
 
 // Local Variables:

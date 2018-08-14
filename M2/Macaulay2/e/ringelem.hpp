@@ -6,9 +6,11 @@
 #include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
+#if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>
-#include "gmp-util.h"
+#endif
 #include "newdelete.hpp"
+#include "gmp-util.h"
 
 using ZZ = mpz_srcptr;
 using ZZmutable = mpz_ptr;

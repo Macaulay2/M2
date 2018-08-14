@@ -427,13 +427,13 @@ class Ring : public MutableEngineObject
       const;  // if the ring is not over RRR or CCC, returns 0.
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
   // Default is to return f itself.
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm,
   // replace norm.
   // Default for rings not over RRR or CCC is to do nothing.
   vec vec_zeroize_tiny(gmp_RR epsilon, const vec f) const;
   // Default is to return f itself.
-  void vec_increase_maxnorm(gmp_RR norm, const vec f) const;
+  void vec_increase_maxnorm(gmp_RRmutable norm, const vec f) const;
   // If any real number appearing in f has larger absolute value than norm,
   // replace norm.
   // Default for rings not over RRR or CCC is to do nothing.

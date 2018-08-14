@@ -60,18 +60,32 @@ inline void mpfr_reallocate_limbs (mpfr_ptr _z)
   _z->_mpfr_d = p;
 }
 
-inline gmp_RR moveTo_gmpRR (gmp_RRmutable _z)
-{
-  mpfr_reallocate_limbs(_z);
-  return _z;
-}
+  typedef struct {
+    mpfr_srcptr re;
+    mpfr_srcptr im;
+  } CC_struct;
 
-inline gmp_CC moveTo_gmpCC (gmp_CCmutable _z)
-{
-  mpfr_reallocate_limbs(_z->re);
-  mpfr_reallocate_limbs(_z->im);
-  return (gmp_CC) _z;
-}
+  typedef struct {
+    mpfr_ptr re;
+    mpfr_ptr im;
+  } CCmutable_struct;
+
+  //  typedef CCmutable_struct* gmp_CCmutable;
+  //  typedef CC_struct* gmp_CC;
+
+  inline mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
+  {
+    mpfr_reallocate_limbs(_z);
+    return _z;
+  }
+  
+  inline gmp_CC moveTo_gmpCC (gmp_CCmutable _z)
+  {
+    CCmutable_struct* a = (CCmutable_struct*) _z;
+    mpfr_reallocate_limbs(a->re);
+    mpfr_reallocate_limbs(a->im);
+    return (gmp_CC) a;
+  }
   
 #if defined(__cplusplus)
 }

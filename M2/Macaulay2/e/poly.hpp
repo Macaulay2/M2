@@ -219,7 +219,7 @@ class PolyRing : public PolyRingFlat
   // RRR and CCC support //
   /////////////////////////
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm,
   // replace norm.
 
