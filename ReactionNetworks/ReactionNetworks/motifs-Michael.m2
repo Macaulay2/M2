@@ -126,7 +126,7 @@ McKR ZZ := m->(
 SeqGamma = method(TypicalValue=>Matrix);
 SeqGamma ZZ := m->(
   G1 := submatrix(TriDiag(m,{-1,0,-1}),{0..m-2});
-  G2 := -matrix(ZZ^m_0)+(m*matrix(ZZ^m_(m-1)));
+  G2 := -matrix(ZZ^m_0)+(matrix(ZZ^m_(m-1)));
   G := G1|G2;
   return G;
   );
