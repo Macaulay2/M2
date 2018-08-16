@@ -952,8 +952,15 @@ void res_comp::start_computation()
           DO(reductions(n_level, n_degree));
         }
     }
+  if (M2_gbTrace >= 6)
+    {
+      buffer o;
+      text_out(o);
+      emit(o.str());
+    }
   set_status(COMP_DONE);
 }
+
 enum ComputationStatusCode res_comp::gens(int deg)
 {
   if (M2_gbTrace >= 5)

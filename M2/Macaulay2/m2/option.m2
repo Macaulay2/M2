@@ -2,6 +2,13 @@
 
 OptionTable.synonym = "option table"
 
+new OptionTable from List := (OptionTable,opts) -> (
+     scan(opts, opt -> (
+	       if opt === null then error "null entry encountered in option list";
+	       if not (instance(opt#0,Symbol) or instance(opt#0,String) or instance(opt#0,Type))
+	       then error ("option name ",toString opt#0," should be a symbol, a string, or a type")));
+     hashTable opts)
+
 installMethod(symbol >>, OptionTable, Function, Function => 
   (opts,f) -> args -> (
        -- Common code for functions created with >> to process options and arguments.
@@ -10,8 +17,8 @@ installMethod(symbol >>, OptionTable, Function, Function =>
   )
 
 codeHelper#(functionBody(new OptionTable from {} >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f"),
-     ("-- option table opts:", value (first localDictionaries g)#"opts")
+     ("-- function f:", value' (first localDictionaries g)#"f"),
+     ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
 installMethod(symbol >>, List, Function, Function =>
@@ -19,8 +26,8 @@ installMethod(symbol >>, List, Function, Function =>
      )
 
 codeHelper#(functionBody({} >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f"),
-     ("-- option table opts:", value (first localDictionaries g)#"opts")
+     ("-- function f:", value' (first localDictionaries g)#"f"),
+     ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
 installMethod(symbol >>, Boolean, Function, Function => 
@@ -32,7 +39,7 @@ installMethod(symbol >>, Boolean, Function, Function =>
   )
 
 codeHelper#(functionBody(true >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f")
+     ("-- function f:", value' (first localDictionaries g)#"f")
      }
 
 installMethod(symbol ++, OptionTable, OptionTable, OptionTable =>

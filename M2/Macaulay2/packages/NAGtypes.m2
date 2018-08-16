@@ -386,8 +386,8 @@ installPackage ("NAGtypes",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("NAGtypes",RerunExamples=>false, RemakeAllDocumentation=>true)
 -- install docs with no absolute links
 uninstallPackage "Style"
-installPackage("Style", AbsoluteLinks=>false)
-installPackage("NAGtypes", AbsoluteLinks=>false)
+installPackage("Style")
+installPackage("NAGtypes")
 
 installPackage ("NAGtypes", MakeDocumentation=>false)
 check "NAGtypes"

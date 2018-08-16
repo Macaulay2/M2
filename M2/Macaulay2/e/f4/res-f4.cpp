@@ -4,10 +4,48 @@
 #include "res-gausser.hpp"
 #include "res-schreyer-frame.hpp"
 
+#include "res-monomial-sorter.hpp"
+
+#include "monoid.hpp"
+#include "ntuple.hpp"
+#include "memtailor.h"
+#include "text-io.hpp"
+
 #include <iostream>
 #include <ctime>
 #include <algorithm>
 #include "../timing.hpp"
+
+
+#include <thread>
+#include "../../system/supervisor.hpp"
+#include "../../system/supervisorinterface.h"
+static long val[2];
+static void* testFcn1(void* vint)
+{
+  long v = reinterpret_cast<long>(vint);
+  std::cout << "starting fcn1 with v = " << v << std::endl;
+  val[0] = 10;
+  return nullptr;
+}
+static void* testFcn2(void* vint)
+{
+  long v = reinterpret_cast<long>(vint);
+  std::cout << "starting fcn2 with v = " << v << std::endl;
+  val[1] = 20;
+  return nullptr;
+}
+void testTasks()
+{
+  val[0] = 666;
+  val[1] = 666;
+  ThreadTask* t1 = createThreadTask("task 1", testFcn1, reinterpret_cast<void*>(1L), 0, 0, 0);
+  ThreadTask* t2 = createThreadTask("task 1", testFcn2, reinterpret_cast<void*>(2L), 0, 0, 0);
+  pushTask(t1);
+  pushTask(t2);
+  waitOnTask(t2);
+  std::cout << val[0] << " " << val[1] << std::endl;
+}
 
 F4Res::F4Res(SchreyerFrame& res)
     : mFrame(res),
@@ -15,6 +53,12 @@ F4Res::F4Res(SchreyerFrame& res)
       mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
       mHashTable(mSchreyerRes.get(), 10)
 {
+#if 0
+  std::cout << "hardware threads: " << std::thread::hardware_concurrency() << std::endl;
+  std::cout << "testing thread tasks" << std::endl;
+  testTasks();
+  std::cout << "  done testing thread tasks" << std::endl;
+#endif
 }
 
 F4Res::~F4Res()
@@ -27,10 +71,6 @@ void F4Res::resetMatrix(int lev, int degree)
   mThisLevel = lev;
   mThisDegree = degree;
   mNextReducerToProcess = 0;
-
-  // mNextMonom[-1] is the reducer corresponding to this monomial
-  mNextMonom = mMonomSpace.reserve(1 + monoid().max_monomial_size());
-  mNextMonom++;
 }
 
 void F4Res::clearMatrix()
@@ -38,7 +78,6 @@ void F4Res::clearMatrix()
   mThisLevel = -1;
   mThisDegree = -1;
   mNextReducerToProcess = 0;
-  mNextMonom = nullptr;
 
   auto timeA = timer();
   mHashTable.reset();
@@ -60,7 +99,7 @@ void F4Res::clearMatrix()
   mSPairComponents.clear();
   mColumns.clear();
 
-  mMonomSpace.reset();
+  mMonomSpace2.freeAllAllocs();
 }
 
 /// findDivisor
@@ -121,17 +160,21 @@ ComponentIndex F4Res::processMonomialProduct(res_const_packed_monomial m,
   auto& p = mFrame.level(mThisLevel - 2)[x];
   if (p.mBegin == p.mEnd) return -1;
 
-  monoid().unchecked_mult(m, n, mNextMonom);
-  // the component is wrong, after this operation, as it adds components
-  // So fix that:
-  monoid().set_component(x, mNextMonom);
+  int* thisMonom = mMonomSpace2.allocate(1 + monoid().max_monomial_size());
+  thisMonom++; // so thisMonom[-1] exists, but is not part of the monomial, as far as
+  monoid().unchecked_mult(m, n, thisMonom);
+  monoid().set_component(x, thisMonom);
 
   if (ring().isSkewCommutative())
     {
       result_sign_if_skew = monoid().skew_mult_sign(ring().skewInfo(), m, n);
-      if (result_sign_if_skew == 0) return -1;
+      if (result_sign_if_skew == 0)
+        {
+          mMonomSpace2.popLastAlloc(thisMonom-1); // we did not need this monomial!
+          return -1;
+        }
     }
-  return processCurrentMonomial();
+  return processCurrentMonomial(thisMonom);
 }
 
 // new_m is a monomial that we have just created.  There are several
@@ -146,40 +189,37 @@ ComponentIndex F4Res::processMonomialProduct(res_const_packed_monomial m,
 //       If there is no divisor, return -1.
 //       If there is: create a row, and push onto the mReducers list.
 //    (2A)
-ComponentIndex F4Res::processCurrentMonomial()
+ComponentIndex F4Res::processCurrentMonomial(res_packed_monomial thisMonom)
 {
   res_packed_monomial new_m;  // a pointer to a monomial we are visiting
-  if (mHashTable.find_or_insert(mNextMonom, new_m))
-    return static_cast<ComponentIndex>(
-        new_m[-1]);  // monom exists, don't save monomial space
+  if (mHashTable.find_or_insert(thisMonom, new_m))
+    {
+      // we did not need the monomial. So pop it.
+      mMonomSpace2.popLastAlloc(thisMonom-1);
+      return static_cast<ComponentIndex>(
+                                         new_m[-1]);  // monom exists, don't save monomial space
+    }
 
-  // intern the monomial just inserted into the hash table
-  mMonomSpace.intern(1 + monoid().monomial_size(mNextMonom));
+  // At this point thisMonom has been inserted.  We keep it.
 
-  // leave room for the next monomial.  This might be set below.
-  mNextMonom = mMonomSpace.reserve(1 + monoid().max_monomial_size());
-  mNextMonom++;
-
-  bool has_divisor = findDivisor(new_m, mNextMonom);
+  thisMonom = mMonomSpace2.allocate(1 + monoid().max_monomial_size());
+  thisMonom++; // so thisMonom[-1] exists, but is not part of the monomial, as far as
+  
+  bool has_divisor = findDivisor(new_m, thisMonom);
   if (!has_divisor)
     {
+      mMonomSpace2.popLastAlloc(thisMonom-1);
       new_m[-1] = -1;  // no divisor exists
       return -1;
     }
-
-  mMonomSpace.intern(1 + monoid().monomial_size(mNextMonom));
 
   ComponentIndex thiscol = static_cast<ComponentIndex>(mColumns.size());
   new_m[-1] = thiscol;  // this is a HACK: where we keep the divisor
   mColumns.push_back(new_m);
 
   Row row;
-  row.mLeadTerm = mNextMonom;
+  row.mLeadTerm = thisMonom;
   mReducers.push_back(row);
-
-  // Now we increment mNextMonom, for the next time
-  mNextMonom = mMonomSpace.reserve(1 + monoid().max_monomial_size());
-  mNextMonom++;
 
   return thiscol;
 }
@@ -238,88 +278,6 @@ void F4Res::loadRow(Row& r)
     }
 }
 
-class ResColumnsSorter
-{
- public:
-  typedef ResMonoid::value monomial;
-  typedef ComponentIndex value;
-
- private:
-  const ResMonoid& M;
-  const F4Res& mComputation;
-  const std::vector<res_packed_monomial>& cols;
-  int lev;
-  const ResSchreyerOrder& myorder;
-  //  const std::vector<SchreyerFrame::FrameElement>& myframe;
-
-  static long ncmps;
-  static long ncmps0;
-
- public:
-#if 0
-  int compare(value a, value b)
-  {
-    ncmps ++;
-    fprintf(stdout, "ERROR: should not get here\n");
-    //return M.compare_grevlex(cols[a],cols[b]);
-    return 0;
-  }
-#endif
-
-  bool operator()(value a, value b)
-  {
-    ncmps0++;
-    long comp1 = M.get_component(cols[a]);
-    long comp2 = M.get_component(cols[b]);
-#if 0
-    fprintf(stdout, "comp1 = %ld comp2 = %ld\n", comp1, comp2);
-
-    printf("compare_schreyer: ");
-    printf("  m=");
-    M.showAlpha(cols[a]);
-    printf("\n  n=");    
-    M.showAlpha(cols[b]);
-    printf("\n  m0=");    
-    M.showAlpha(myorder.mTotalMonom[comp1]);
-    printf("\n  n0=");    
-    M.showAlpha(myorder.mTotalMonom[comp2]);
-    printf("\n  tiebreakers: %ld %ld\n",  myorder.mTieBreaker[comp1], myorder.mTieBreaker[comp2]);
-#endif
-
-    bool result = (M.compare_schreyer(cols[a],
-                                      cols[b],
-                                      myorder.mTotalMonom[comp1],
-                                      myorder.mTotalMonom[comp2],
-                                      myorder.mTieBreaker[comp1],
-                                      myorder.mTieBreaker[comp2]) == LT);
-#if 0
-    printf("result = %d\n", result);
-#endif
-    return result;
-  }
-
-  ResColumnsSorter(const ResMonoid& M0, const F4Res& comp, int lev0)
-      : M(M0),
-        mComputation(comp),
-        cols(comp.mColumns),
-        lev(lev0),
-        myorder(comp.frame().schreyerOrder(lev0 - 1))
-  {
-    // printf("Creating a ResColumnsSorter with level = %ld, length = %ld\n",
-    // lev, myframe.size());
-  }
-
-  long ncomparisons() const { return ncmps; }
-  long ncomparisons0() const { return ncmps0; }
-  void reset_ncomparisons()
-  {
-    ncmps0 = 0;
-    ncmps = 0;
-  }
-
-  ~ResColumnsSorter() {}
-};
-
 static void applyPermutation(ComponentIndex* permutation,
                              std::vector<ComponentIndex>& entries)
 {
@@ -339,9 +297,6 @@ static void applyPermutation(ComponentIndex* permutation,
     }
 }
 
-long ResColumnsSorter::ncmps = 0;
-long ResColumnsSorter::ncmps0 = 0;
-
 void F4Res::reorderColumns()
 {
 // Set up to sort the columns.
@@ -359,33 +314,21 @@ void F4Res::reorderColumns()
 #endif
   ComponentIndex ncols = static_cast<ComponentIndex>(mColumns.size());
 
-  // sort the columns
+  ComponentIndex* ord = new ComponentIndex[ncols];
 
   auto timeA = timer();
-
-  ComponentIndex* column_order = new ComponentIndex[ncols];
-  ComponentIndex* ord = new ComponentIndex[ncols];
-  ResColumnsSorter C(monoid(), *this, mThisLevel - 1);
-
-  C.reset_ncomparisons();
-
-  for (ComponentIndex i = 0; i < ncols; i++)
-    {
-      column_order[i] = i;
-    }
-
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, "  ncomparisons sorting %d columns = ", ncols);
-
-  std::stable_sort(column_order, column_order + ncols, C);
-
+  ResMonomialSorter sorter(ring().originalMonoid(), monoid(), frame().schreyerOrder(mThisLevel-2), mColumns);
+  auto column_order = sorter.sort();
   auto timeB = timer();
-  mFrame.timeSortMatrix += seconds(timeB - timeA);
-
-  if (M2_gbTrace >= 2) fprintf(stderr, "%ld, ", C.ncomparisons0());
-
+  double nsec_sort2 = seconds(timeB - timeA);
+  mFrame.timeSortMatrix += nsec_sort2;
+  auto ncompares = sorter.numComparisons();
+  
   if (M2_gbTrace >= 2)
-    std::cout << " sort time: " << seconds(timeB - timeA) << std::endl;
+    std::cout << "  #comparisons sorting " << ncols << " columns = " << ncompares << " ";
+  
+  if (M2_gbTrace >= 1)
+    std::cout << " sort time: " << nsec_sort2 << std::endl;
 
   timeA = timer();
   ////////////////////////////
@@ -459,7 +402,6 @@ void F4Res::reorderColumns()
 
   timeB = timer();
   mFrame.timeReorderMatrix += seconds(timeB - timeA);
-  delete[] column_order;
   delete[] ord;
 }
 
@@ -764,6 +706,7 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 }
 void F4Res::debugOutputReducerMatrix() { debugOutputMatrix(mReducers); }
 void F4Res::debugOutputSPairMatrix() { debugOutputMatrix(mSPairs); }
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

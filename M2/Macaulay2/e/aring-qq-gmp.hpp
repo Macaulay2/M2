@@ -93,7 +93,7 @@ class ARingQQGMP : public RingInterface
     mpq_set_si(&result, a, 1);
   }
 
-  void set_from_mpz(ElementType& result, const mpz_ptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     mpz_set(mpq_numref(&result), a);
     mpz_set_ui(mpq_denref(&result), 1);

@@ -16,7 +16,7 @@ pushOptions := new OptionTable from {
 	  UseHilbertFunction => true,  -- if possible
 	  StopBeforeComputation => false,
 	  DegreeLimit => {},
-	  PairLimit => infinity,
+	  PairLimit => infinity
 	  -- unused options:
 	  -- Strategy => NonLinear,            -- use the best choice
 	  -- BasisElementLimit => infinity,  -- number of generators of GB in the subring

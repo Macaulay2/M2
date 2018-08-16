@@ -205,7 +205,7 @@ class ARingGFGivaro : public RingInterface
 
   void set_from_long(elem &result, int64_t a) const;
 
-  void set_from_mpz(elem &result, const mpz_ptr a) const;
+  void set_from_mpz(elem &result, mpz_srcptr a) const;
 
   bool set_from_mpq(elem &result, const mpq_ptr a) const;
 

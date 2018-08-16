@@ -75,7 +75,7 @@ texStore = hashTable {
 --  (3) does not contain a colon
 hasGoodHeadline = method (TypicalValue => Boolean)
 hasGoodHeadline Package := P -> (
-    T := P#"title";
+    T := P#"pkgname";
     H := P#Options#Headline;
     -- check for a colon in the headline
     if regex(":", H) =!= null then return false else
@@ -146,7 +146,7 @@ headlineToTex Package := P -> (
 -- the cite method
 iCite = method (TypicalValue => String)
 iCite Package := P -> (
-    T := P#"title"; -- package title
+    T := P#"pkgname"; -- package title
     V := concatenate("Version~", P#Options#Version); -- package version
     isInternalPackage := member(T, separate (" ", version#"packages"));
     isInternalSource := P#"source directory" === prefixDirectory | currentLayout#"packages";

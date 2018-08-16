@@ -1,5 +1,8 @@
 #include "matrix-con.hpp"
 #include "matrix.hpp"
+#include "debug.hpp"
+
+#include <iostream>
 
 MatrixConstructor::MatrixConstructor()
     : R(0), rows(0), cols(0), cols_frozen(false), deg(0)
@@ -93,6 +96,14 @@ Matrix *MatrixConstructor::to_matrix()
   //  if (!will_be_mutable && !cols->is_frozen)
   //    cols->freeze(hashval);
   return new Matrix(rows, cols, deg, entries);
+}
+
+void MatrixConstructor::debugDisplay() const
+{
+  std::cout << "MatrixConstructor: ring = " << R << std::endl;
+  std::cout << "MatrixConstructor: rows = " << rows << std::endl;
+  std::cout << "MatrixConstructor: cols = " << cols << std::endl;
+  std::cout << "Matrixconstructor: #entries = " << entries.size() << std::endl;
 }
 
 // Local Variables:

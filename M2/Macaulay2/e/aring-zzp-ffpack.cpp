@@ -108,7 +108,7 @@ void ARingZZpFFPACK::set_from_long(ElementType &result, long a) const
   mFfpackField.init(result, a);
 }
 
-void ARingZZpFFPACK::set_from_mpz(ElementType &result, const mpz_ptr a) const
+void ARingZZpFFPACK::set_from_mpz(ElementType &result, mpz_srcptr a) const
 {
   unsigned long b = static_cast<UTT>(mpz_fdiv_ui(a, mCharac));
   mFfpackField.init(result, b);

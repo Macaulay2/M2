@@ -66,7 +66,7 @@ document {
      PARA{},
      "Remark: any subscripts that are sequences will have their elements spliced into the rest of the list.",
      EXAMPLE "{a,b,c,d,e}_{2..4}",
-     SeeAlso => {"ranges and repetitions", (symbol _, VisibleList, ZZ)}
+     SeeAlso => {"lists and sequences", (symbol _, VisibleList, ZZ)}
      }
 
 document { 

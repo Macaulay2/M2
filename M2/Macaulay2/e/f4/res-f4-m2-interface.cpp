@@ -13,6 +13,7 @@
 #include "../aring-zzp-ffpack.hpp"
 #include "../dmat.hpp"
 #include "../mat-linalg.hpp"
+#include "../gauss.hpp"
 
 #include "../timing.hpp"
 
@@ -201,8 +202,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   emit(o.str());
 #endif
 
-  int* exp = new int[M->n_vars() + 1];
-  res_ntuple_word* lexp = new res_ntuple_word[M->n_vars() + 1];
+  int* exp = new int[M->n_vars()];
 
   CoefficientVector coeffs = R.resGausser().allocateCoefficientVector();
   // all these pointers (or values) are still in the element f.
@@ -219,9 +219,8 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                         // these are integers
 
       M->to_expvector(t->monom, exp);
-      for (int a = 0; a < M->n_vars(); a++) lexp[a] = exp[a];
       R.monoid().from_exponent_vector(
-          lexp,
+          exp,
           t->comp - 1,
           nextmonom);  // gbvector components are shifted up by one
       nextmonom += R.monoid().monomial_size(nextmonom);
@@ -231,7 +230,6 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
   GR->gbvector_remove(f);
   delete[] exp;
-  delete[] lexp;
 }
 
 vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
@@ -251,16 +249,14 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       last[i] = 0;
     }
 
-  int* exp = new int[M->n_vars() + 1];
-  res_ntuple_word* lexp = new res_ntuple_word[M->n_vars() + 1];
+  int* exp = new int[M->n_vars()];
 
   const res_monomial_word* w = f.monoms.data();
   for (int i = 0; i < f.len; i++)
     {
       component_index comp;
-      R.monoid().to_exponent_vector(w, lexp, comp);
+      R.monoid().to_exponent_vector(w, exp, comp);
       w = w + R.monoid().monomial_size(w);
-      for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
       ring_elem a =
           R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
@@ -290,7 +286,6 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
     }
 
   delete[] exp;
-  delete[] lexp;
   return result;
 }
 
@@ -306,7 +301,6 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   const Monoid* M = R->getMonoid();
   auto& thislevel = C.level(lev);
   const ResSchreyerOrder& S = C.schreyerOrder(lev);
-  res_ntuple_word* longexp = new res_ntuple_word[M->n_vars()];
   int* exp = new int[M->n_vars()];
   for (auto i = 0; i < thislevel.size(); ++i)
     {
@@ -318,17 +312,52 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       // unpack to exponent vector, then repack into monoid element
       monomial totalmonom = M->make_one();
       component_index comp;
-      C.monoid().to_exponent_vector(S.mTotalMonom[i], longexp, comp);
-      for (int j = 0; j < M->n_vars(); ++j)
-        exp[j] = static_cast<int>(longexp[j]);
+      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
       M->from_expvector(exp, totalmonom);
       result->append_schreyer(
           deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
     }
-  delete[] longexp;
   delete[] exp;
   return result;
 }
+
+FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
+                                                 const FreeModule* F,
+                                                 SchreyerFrame& C,
+                                                 int lev)
+// The input F must be the original freemodule of level=0.
+// assumption: lev >= 0.
+{
+  if (lev < 0 or lev > C.maxLevel())
+    {
+      ERROR("expected level in the range %d..%d",1,C.maxLevel());
+      return nullptr;
+    }
+  FreeModule* result = new FreeModule(R, 0, true);
+  const Monoid* M = R->getMonoid();
+  auto& thislevel = C.level(lev);
+  const ResSchreyerOrder& S = C.schreyerOrder(lev);
+  int* exp = new int[M->n_vars()];
+  monomial deg1 = M->degree_monoid()->make_one();
+  for (auto i = 0; i < thislevel.size(); ++i)
+    {
+      component_index comp;
+      C.monoid().to_exponent_vector(S.mTotalMonom[i], exp, comp);
+      monomial deg = M->degree_monoid()->make_new(F->degree(comp)); // resulting degree of this element
+      M->degree_of_expvector(exp, deg1);
+      M->degree_monoid()->mult(deg, deg1, deg);
+      // Now grab the Schreyer info
+      // unpack to exponent vector, then repack into monoid element
+      monomial totalmonom = M->make_one();
+      M->from_expvector(exp, totalmonom);
+      result->append_schreyer(
+          deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
+    }
+  delete[] exp;
+  M->degree_monoid()->remove(deg1);
+  return result;
+}
+
 Matrix* ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
                                          int lev,
                                          const FreeModule* tar,
@@ -383,7 +412,6 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
 
   int* m1 = M->make_one();
   int* exp = new int[M->n_vars() + 1];
-  res_ntuple_word* lexp = new res_ntuple_word[M->n_vars() + 1];
 
   int j = 0;
   for (auto j1 = thislevel.cbegin(); j1 != thislevel.cend(); ++j1, ++j)
@@ -401,10 +429,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
       for (int i = 0; i < f.len; i++)
         {
           component_index comp;
-          C.ring().monoid().to_exponent_vector(w, lexp, comp);
+          C.ring().monoid().to_exponent_vector(w, exp, comp);
           w = w + C.ring().monoid().monomial_size(w);
-          for (int a = 0; a < M->n_vars(); a++)
-            exp[a] = static_cast<int>(lexp[a]);
           M->from_expvector(exp, m1);
           ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
           Nterm* g = RP->make_flat_term(a, m1);
@@ -426,7 +452,6 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
     }
 
   delete[] exp;
-  delete[] lexp;
   deletearray(comps);
   deletearray(last);
   return result;
@@ -488,131 +513,287 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
   return result;
 }
 
-template <typename RingType>
-double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
-                                            DMat<RingType>& result,
-                                            int slanted_degree,
-                                            int lev)
-// 'result' should be previously initialized, but will be resized.
-// return value: -1 means (slanted_degree, lev) is out of range, and the zero
-// matrix was returned.
-//   otherwise: the fraction of non-zero elements is returned.
+// One way to organize this:
+// Create an iterator, such that: i->components() is a std::vector of sorted indices
+// and i->coefficients() is a std::vector of ring_elem's.
+// or: take a function as input, that knows how to consume this info.
+//
+
+class DegreeZeroMapGenerator
 {
-  // As above, get the size of the matrix, and 'newcols'
-  // Now we loop through the elements of degree 'slanted_degree + lev' at level
-  // 'lev'
-  const RingType& R = result.ring();
-  if (not(lev > 0 and lev <= C.maxLevel()))
+public:
+  DegreeZeroMapGenerator(SchreyerFrame& C, int slanted_degree, int lev)
+    : mSchreyerFrame(C),
+      mThisLevel(C.level(lev)),
+      mDegree(slanted_degree+lev),
+      mLevel(lev),
+      mNumRows(0),
+      mNumColumns(0)
+  {
+    if (lev <= 0 or lev > C.maxLevel())
+      {
+        return;
+      }
+    int degree = slanted_degree + lev;
+    for (auto p = mThisLevel.begin(); p != mThisLevel.end(); ++p)
+      {
+        if (p->mDegree == degree) mNumColumns++;
+      }
+
+    auto& prevlevel = C.level(lev - 1);
+    mComponentTranslation.resize(prevlevel.size());
+    for (int i = 0; i < prevlevel.size(); i++)
+      {
+        if (prevlevel[i].mDegree == mDegree)
+          mComponentTranslation[i] = mNumRows++;
+        else
+          mComponentTranslation[i] = -1;
+      }
+  }
+
+  const Ring* ring() const { return mSchreyerFrame.gausser().get_ring(); }
+
+  int numRows() const { return mNumRows; }
+
+  int numColumns() const { return mNumColumns; }
+
+  long numNonzero() const
+  {
+    long nnonzeros = 0;
+    auto& thislevel = mSchreyerFrame.level(mLevel);
+    for (auto p = thislevel.begin(); p != thislevel.end(); ++p)
+      {
+        if (p->mDegree != mDegree) continue;
+        auto& f = p->mSyzygy;
+        auto end = poly_iter(mSchreyerFrame.ring(), f, 1);
+        auto i = poly_iter(mSchreyerFrame.ring(), f);
+
+        for (; i != end; ++i)
+          {
+            auto comp = mSchreyerFrame.monoid().get_component(i.monomial());
+            if (mComponentTranslation[comp] >= 0)
+              nnonzeros++;
+          }
+      }
+    return nnonzeros;
+  }
+
+  class iterator
+  {
+  public:
+    iterator(DegreeZeroMapGenerator& D)
+      : mGenerator(D),
+        mColumn(-1),
+        mNumColumns(D.numColumns()),
+        mIter(D.mThisLevel.begin()),
+        mEnd(D.mThisLevel.end())
     {
-      result.resize(0, 0);
-      return -1;
+      increment();
     }
-  assert(lev > 0 and lev <= C.maxLevel());
-  int degree = slanted_degree + lev;
-  auto& thislevel = C.level(lev);
-  int ncols = 0;
-  for (auto p = thislevel.begin(); p != thislevel.end(); ++p)
+
+    iterator(DegreeZeroMapGenerator& D, int) : mGenerator(D), mColumn(D.numColumns()) {}
+
+    bool operator==(const iterator& sentinel)
     {
-      if (p->mDegree == degree) ncols++;
+      // Do we need to check that these refer to the same object?
+      return mColumn == sentinel.mColumn;
     }
 
-  auto& prevlevel = C.level(lev - 1);
-  int* newcomps = new int[prevlevel.size()];
-  int nrows = 0;
-  for (int i = 0; i < prevlevel.size(); i++)
-    if (prevlevel[i].mDegree == degree)
-      newcomps[i] = nrows++;
-    else
-      newcomps[i] = -1;
-
-  result.resize(nrows, ncols);
-
-  int col = 0;
-  long nnonzeros = 0;
-  for (auto p = thislevel.begin(); p != thislevel.end(); ++p)
+    bool operator!=(const iterator& sentinel)
     {
-      if (p->mDegree != degree) continue;
-      auto& f = p->mSyzygy;
-      auto end = poly_iter(C.ring(), f, 1);
-      auto i = poly_iter(C.ring(), f);
+      // Do we need to check that these refer to the same object?
+      return mColumn != sentinel.mColumn;
+    }
+    
+    iterator& operator++()
+    {
+      increment();
+      return *this;
+    }
+
+    int column() const { return mColumn; }
+    
+    const std::vector<int>& components() const { return mComponents; }
+
+    const std::vector<long>& coefficients() const { return mCoefficients; }
+
+  private:    
+    void increment()
+    {
+      ++mColumn;
+      mComponents.clear();
+      mCoefficients.clear();
+      if (mColumn == mNumColumns) return;
+      for (; mIter != mEnd; ++mIter)
+        {
+          if (mIter->mDegree == mGenerator.mDegree) break;
+        }
+      auto& f = mIter->mSyzygy;
+      auto end = poly_iter(mGenerator.mSchreyerFrame.ring(), f, 1);
+      auto i = poly_iter(mGenerator.mSchreyerFrame.ring(), f);
+
       for (; i != end; ++i)
         {
-          long comp = C.monoid().get_component(i.monomial());
-          if (newcomps[comp] >= 0)
+          auto comp = mGenerator.mSchreyerFrame.monoid().get_component(i.monomial());
+          auto new_comp = mGenerator.mComponentTranslation[comp];
+          if (new_comp >= 0)
             {
+              mComponents.push_back(new_comp);
               long val =
-                  C.gausser().to_modp_long(f.coeffs, i.coefficient_index());
-              R.set_from_long(result.entry(newcomps[comp], col), val);
-              nnonzeros++;
+                mGenerator.mSchreyerFrame.gausser().to_modp_long(f.coeffs, i.coefficient_index());
+              mCoefficients.push_back(val);
             }
         }
-      ++col;
+      ++mIter;
     }
-  double frac_nonzero = (nrows * ncols);
-  frac_nonzero = static_cast<double>(nnonzeros) / frac_nonzero;
+  private:
+    using Iter = std::vector<SchreyerFrameTypes::FrameElement>::iterator;
+    DegreeZeroMapGenerator& mGenerator;
+    int mColumn;
+    int mNumColumns;
+    Iter mIter;
+    Iter mEnd;
+    std::vector<int> mComponents;
+    std::vector<long> mCoefficients;
+  };
 
-  delete[] newcomps;
+  friend class DegreeZeroMapGenerator::iterator;
+  
+  iterator begin() { return iterator(*this); }
+  iterator end() { return iterator(*this, 1); }
+  
+private:
+  SchreyerFrame& mSchreyerFrame;
+  std::vector<SchreyerFrameTypes::FrameElement>& mThisLevel;
+  int mDegree;
+  int mLevel;
+  int mNumRows;
+  int mNumColumns;
+  std::vector<int> mComponentTranslation; // indices of the rows. -1 means not present.
+};
 
-  return frac_nonzero;
+template<typename Gen>
+Matrix* matrixFromSparseMatrixGenerator(Gen& G)
+{
+  const Ring* R = G.ring();
+  MatrixConstructor M(R->make_FreeModule(G.numRows()), R->make_FreeModule(G.numColumns()), nullptr);
+  for (auto i = G.begin(); i != G.end(); ++i)
+    {
+      for (int j=i.components().size()-1; j>=0; --j)
+      {
+        M.set_entry(i.components()[j], i.column(), R->from_long(i.coefficients()[j]));
+      }
+    }
+  return M.to_matrix();
 }
 
-int SchreyerFrame::rank(int slanted_degree, int lev)
+template<typename RingType, typename Gen>
+void setDMatFromSparseMatrixGenerator(Gen& G, DMat<RingType>& M)
 {
-#if 1
+  M.resize(G.numRows(), G.numColumns());
+
+  for (auto i = G.begin(); i != G.end(); ++i)
+    {
+      for (int j=0; j<i.components().size(); ++j)
+      {
+        M.ring().set_from_long(M.entry(i.components()[j], i.column()), i.coefficients()[j]);
+      }
+    }
+}
+
+#include "../debug.hpp"
+
+template<typename Gen>
+int SchreyerFrame::rankUsingSparseMatrix(Gen& D)
+{
+  const Matrix* M = matrixFromSparseMatrixGenerator(D);
+  //  std::cout << "--- sparse matrix ----" << std::endl;
+  //  dmatrix(M);
+  //  std::cout << "----------------------" << std::endl;
+  auto timeA = timer();
+  GaussElimComputation comp { M, 0, 0 };
+  comp.set_stop_conditions(false, nullptr, -1, -1, -1, -1, -1, false, nullptr);
+  comp.start_computation();
+  //  const Matrix* gbM = comp.get_gb();
+  //  std::cout << "--- gb of matrix ----" << std::endl;
+  //  dmatrix(gbM);
+  //  std::cout << "----------------------" << std::endl;
+  
+  int rk = comp.get_initial(-1)->n_cols();
+  auto timeB = timer();
+  double nsecs = seconds(timeB - timeA);
+
+  timeComputeSparseRanks += nsecs;
+
+  if (M2_gbTrace >= 2)
+    {
+      if (M->n_rows() > 0 and M->n_cols() > 0)
+        std::cout << "  sparse rank = " << rk
+                  << " time = " << nsecs << " sec"
+                  << std::endl;
+    }
+
+  return rk;
+}
+
+template<typename Gen>
+int SchreyerFrame::rankUsingDenseMatrix(Gen& D)
+{
   unsigned int charac =
       static_cast<unsigned int>(gausser().get_ring()->characteristic());
   M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
-  double frac =
-      ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
+  setDMatFromSparseMatrixGenerator(D, M);
   auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
+  //  std::cout << "---- dense matrix ----" << std::endl;
+  //  displayMat(M);
+  //  std::cout << "----------------------" << std::endl;
   auto timeA = timer();
   int rk = static_cast<int>(a.rank());
   auto timeB = timer();
   double nsecs = seconds(timeB - timeA);
-#else
-  M2::ARingZZpFlint R(gausser().get_ring()->characteristic());
-  DMat<M2::ARingZZpFlint> M(R, 0, 0);
-  double frac =
-      ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
-  auto a = DMatLinAlg<M2::ARingZZpFlint>(M);
-  auto timeA = timer();
-  int rk = static_cast<int>(a.rank());
-  auto timeB = timer();
-  double nsecs = seconds(timeB - timeA);
-#endif
+
+  timeComputeRanks += nsecs;
 
   if (M2_gbTrace >= 2)
     {
-      std::cout << "rank (" << slanted_degree << "," << lev << ") = " << rk
-                << " time=" << nsecs << " sec, size= " << M.numRows() << " x "
-                << M.numColumns() << " nonzero " << (100 * frac) << " %"
-                << std::endl;
+      if (M.numRows() > 0 and M.numColumns() > 0)
+        std::cout << "   dense rank = " << rk
+                  << " time = " << nsecs << " sec"
+                  << std::endl;
     }
 
-#if 0
-  if (M1.numRows() != M2.numRows() ||
-      (M1.numColumns() != M2.numColumns()) ||
-      rk1 != rk2)
-    {
-      std::cout << "ERROR!!! degree zero computations do not match" << std::endl;
-    }
-
-  if (frac1 != frac2)
-    {
-      std::cout << "frac1=" << frac1 << " frac2=" << frac2 << std::endl;
-    }
-      
-  if (M2_gbTrace >= 2)
-    {
-      std::cout << "rank ("
-                << slanted_degree << ","  << lev << ") = "
-                << rk1
-                << " time(" << nsecs1 << ", " << nsecs2 << ") size= "
-                << M1.numRows() << " x " << M1.numColumns() << " nonzero% " << frac1 << std::endl;
-    }
-#endif
   return rk;
+}
+
+int SchreyerFrame::rank(int slanted_degree, int lev)
+{
+  DegreeZeroMapGenerator D(*this, slanted_degree, lev);
+  long nnonzero = D.numNonzero();
+  long nelements = static_cast<long>(D.numRows()) * static_cast<long>(D.numColumns());
+  double nnonzeroD = static_cast<double>(nnonzero);
+  double nelementsD = static_cast<double>(nelements);
+  double frac_nonzero = (nelements > 0 ? nnonzeroD/nelementsD : 1.0);
+
+  if (M2_gbTrace >= 2 and nelements > 0)
+    {
+      std::cout << "rank(" << slanted_degree << "," << lev << ") size = "
+                << D.numRows() << " x " << D.numColumns()
+                << " frac non-zero= " << frac_nonzero << std::endl << std::flush;
+    }
+  int rkSparse = -1;
+  int rkDense = -1;
+  if (frac_nonzero <= .02)
+    rkSparse = rankUsingSparseMatrix(D);
+  if (frac_nonzero >= .01)
+    rkDense = rankUsingDenseMatrix(D);
+  if (rkSparse >= 0 and rkDense >= 0 and rkSparse != rkDense)
+    {
+      std::cout << "ERROR!! ranks(" << slanted_degree << "," << lev << ") = " << rkSparse
+                << " and " << rkDense << std::endl;
+    }
+
+  return (rkSparse >= 0 ? rkSparse : rkDense);
 }
 
 M2_arrayint rawMinimalBetti(Computation* C,
