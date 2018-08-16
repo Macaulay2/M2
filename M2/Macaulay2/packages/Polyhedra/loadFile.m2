@@ -102,8 +102,8 @@ load "./tests/isWellDefined.m2"
 -------------------------------------------------------------------------------
 -- Interfaces to other software
 --
-load "./alternatives/fourierMotzkinAlternatives.m2"
-load "./alternatives/normaliz.m2"
+load "./interfaces/fourierMotzkinAlternatives.m2"
+load "./interfaces/normaliz.m2"
 
 -------------------------------------------------------------------------------
 -- Documentation
