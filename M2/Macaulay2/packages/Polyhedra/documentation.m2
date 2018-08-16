@@ -32,8 +32,17 @@ document {
 	M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
 	Texts in Mathematics 152, Springer-Verlag, New York, 1995.",
 	
-	PARA{}, "The author would like to thank ",HREF("http://people.cs.uchicago.edu/~nilten/", "Nathan Ilten")," 
-	for contributing several functions to the package."
+	PARA{}, "The authors would like to thank ",
+   UL {
+         {HREF("https://faculty.math.illinois.edu/~dan/", "Daniel R. Grayson")},
+         {HREF("http://people.cs.uchicago.edu/~nilten/", "Nathan Ilten")},
+         {HREF("http://page.math.tu-berlin.de/~panizzut/", "Marta Panizzut")},
+         {HREF("http://www.mast.queensu.ca/~ggsmith/", "Gregory G. Smith")},
+         {HREF("http://astaal.be/", "Andrew P. Staal")},
+         {HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman")},
+         {HREF("http://www.mi.fu-berlin.de/math/groups/ag-algebra/members/mitarbeiter/Winz.html", "Anna-Lena Winz")}
+      },
+   "for code contributions, bug reports, helpful discussions and overall help with designing this package."
 	
 	}
    
