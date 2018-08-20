@@ -50,49 +50,6 @@ Matrix* StraightLineProgram::evaluate(const Matrix* vals)
   return SLP<ComplexField>::evaluate(vals);
 }
 
-#ifdef SLPmpfr
-
-// Same, but AP
-StraightLineProgram /* or null */* StraightLineProgram::make(const PolyRing* R,
-                                                             ring_elem e)
-{
-  StraightLineProgram* ret = static_cast<StraightLineProgram*>(
-      SLP<ComplexFieldArbitraryPrecision>::make(R, e));
-  return ret;
-}
-StraightLineProgram /* or null */* StraightLineProgram::make(
-    const Matrix* consts,
-    M2_arrayint program)
-{
-  StraightLineProgram* ret = static_cast<StraightLineProgram*>(
-      SLP<ComplexFieldArbitraryPrecision>::make(consts, program));
-  return ret;
-}
-void StraightLineProgram::text_out(buffer& o) const
-{
-  SLP<ComplexFieldArbitraryPrecision>::text_out(o);
-}
-void StraightLineProgram::evaluate(int n, const complex* values, complex* out)
-{
-  complexAP outAP[num_out()];
-  complexAP valuesAP[n];
-  for (int i = 0; i < n; i++) valuesAP[i] = complexAP(values[i]);
-  SLP<ComplexFieldArbitraryPrecision>::evaluate(n, valuesAP, outAP);
-  for (int i = 0; i < num_out(); i++) out[i] = outAP[i].to_complex();
-}
-void StraightLineProgram::evaluate(int n,
-                                   const element_type* values,
-                                   element_type* out)
-{
-  SLP<ComplexFieldArbitraryPrecision>::evaluate(n, values, out);
-}
-
-Matrix* StraightLineProgram::evaluate(const Matrix* vals)
-{
-  return SLP<ComplexFieldArbitraryPrecision>::evaluate(vals);
-}
-#endif
-
 template <class Field>
 SLP<Field>::SLP()
 {
@@ -103,7 +60,6 @@ SLP<Field>::SLP()
   nodes = NULL;
 }
 
-#ifdef SLPdouble
 template <class Field>
 SLP<Field>::~SLP()
 {
@@ -114,20 +70,6 @@ SLP<Field>::~SLP()
       dlclose(handle);
     }
 }
-#endif
-
-#ifdef SLPmpfr
-template <class Field>
-SLP<Field>::~SLP()
-{
-  delete[] nodes;
-  if (handle != NULL)
-    {
-      printf("closing library\n");
-      dlclose(handle);
-    }
-}
-#endif
 
 template <class Field>
 int SLP<Field>::num_slps = 0;
@@ -208,21 +150,11 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
   return res;
 }
 
-#ifdef SLPdouble
 template <class Field>
 void SLP<Field>::make_nodes(element_type*& a, int size)
 {
   a = newarray_atomic(complex, size);
 }
-#endif
-
-#ifdef SLPmpfr
-template <class Field>
-void SLP<Field>::make_nodes(element_type*& a, int size)
-{
-  a = new element_type[size];
-}
-#endif
 
 template <class Field>
 SLP<Field> /* or null */* SLP<Field>::copy()
@@ -1711,7 +1643,6 @@ const Matrix /* or null */* rawRefinePT(PathTracker* PT,
   return PT->refine(sols, tolerance, max_corr_steps_refine);
 }
 
-#ifdef SLPdouble
 int PathTracker::track(const Matrix* start_sols)
 {
   double the_smallest_number = 1e-13;
@@ -2049,7 +1980,6 @@ int PathTracker::track(const Matrix* start_sols)
 
   return n_sols;
 }
-#endif
 
 Matrix /* or null */* PathTracker::refine(const Matrix* sols,
                                           gmp_RR tolerance,

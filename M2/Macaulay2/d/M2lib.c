@@ -752,11 +752,6 @@ char **argv;
 	  }
 #endif
 
-     if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
-          FATAL("possible memory leak, gmp allocator not set up properly");
-	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
-     }
-
      signal(SIGPIPE,SIG_IGN);
 
      /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */

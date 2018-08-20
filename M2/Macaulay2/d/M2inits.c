@@ -88,12 +88,10 @@ void enterM2(void) {
 }
 
 void check_M2init() {
-     /* Here we provide a way to check, periodically, that no code has overridden our setting. */
-     if (!(__gmp_allocate_func == (void *(*) (size_t))getmem_atomic)) {
-	  fprintf(stderr,"__gmp_allocate_func reset somehow\n");
-	  abort();
-	  }
-     }
+  /* Here we provide a way to check, periodically, that no code has overridden our setting. */
+  // obsolete:
+  // was checking if !(__gmp_allocate_func == (void *(*) (size_t))getmem_atomic)) {
+}
 
 void M2inits(void) {
   static int done = 0;
