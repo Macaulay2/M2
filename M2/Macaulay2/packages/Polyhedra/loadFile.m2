@@ -67,7 +67,6 @@ load "./extended/incompare.m2"
 load "./extended/affineImages.m2"
 load "./extended/legacy.m2"
 load "./extended/not_refactored.m2"
-load "./extended/triangulations.m2"
 
 -------------------------------------------------------------------------------
 -- Tests

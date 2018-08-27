@@ -115,11 +115,6 @@ export {
    "barycentricTriangulation",
    "regularSubdivision",
    "minimalNonFaces",
-   "stanleyReisnerRing",
-
--- Topcom
-   "fineStarTriangulation",
-   "naiveIsTriangulation",
-   "regularFineStarTriangulation"
+   "stanleyReisnerRing"
 }
 
