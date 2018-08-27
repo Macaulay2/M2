@@ -7,13 +7,15 @@ newPackage(
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
 	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
-	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	     --since 2018:	     	     
+	     {Name => "Alexandru Iosif", Email => "alexandru.iosif@ovgu.de"}	     	     
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
     	Headline => "reaction networks",
 	PackageImports => {"Graphs", "Polyhedra"},
         DebuggingMode => false,
---  	DebuggingMode => true,		 -- set to true only during development
+  	DebuggingMode => true,		 -- set to true only during development
 	AuxiliaryFiles => true
     	)
 
@@ -33,11 +35,10 @@ export {"reactionNetwork",
     "stoichSubspaceKer",
     "createRing",
     "stoichiometricConeKer",
-    "superDoublingSets",
-    "preClusters",
-    "clusters",
-    "reducedStoichiometricConeKer",
-    "hasIsolation",
+--    "superDoublingSets",
+--    "preClusters",
+--    "usters",
+--    "hasIsolation",
  --   "ParameterRing",
     "steadyStateEquations",
     "conservationEquations",
@@ -769,106 +770,25 @@ stoichiometricConeKer ReactionNetwork := Rn -> (
     transpose rays stoichiometricMatrix Rn    
     )
 
---here we compute the superdoubling sets
-superDoublingSets = method()
-superDoublingSets ReactionNetwork := Rn -> (
-    doublingSet := symbol doublingSet;
-    superDoublingSets := set{};
-    eductMatrix := transpose reactantMatrix Rn;
-    for i from 0 to numColumns eductMatrix - 1 do (
-    	doublingSet = set{};
-    	for j from 0 to numColumns eductMatrix - 1 do(
-	    if j != i and eductMatrix_i == eductMatrix_j then(
-	    	doublingSet = doublingSet+set{j}
-		);
-    	    );
-    	if doublingSet =!= set{} then (doublingSet = doublingSet + set{i};
-    	    superDoublingSets = superDoublingSets + set{doublingSet};);
-	);
-    superDoublingSets
-    )
-
---here we compute the preclusters
-preClusters = method()
-preClusters ReactionNetwork := Rn -> (
-Ematrix := stoichiometricConeKer Rn;
-preclusters := set{};
-for sds in (toList superDoublingSets Rn) do(
-    for i from 0 to numRows Ematrix - 1 do(
-	if  set flatten entries (transpose Ematrix^{i}%(transpose Ematrix^(toList sds))) === set{0} then(
-	    sds = sds + set{i};
-	    );        
-	);
-    preclusters = preclusters + set{sds};
-    );
-preclusters
-)
-
---here we compute the clusters
-clusters = method()
-clusters ReactionNetwork := Rn -> (
-    clust := preClusters Rn;
-    for pcl1 in (toList clust) do(
-    	for pcl2 in (drop(toList clust,1)) do(
-	    if (pcl1)*(pcl2)  =!= set{} then(
-	    	clust = clust - set{pcl1} - set{pcl2} + set {pcl1+pcl2};
-	    	);
-	    );
-    	);    
-    clust
-    )
-
---here we compute Ematrixreduced
-reducedStoichiometricConeKer = method ()
-reducedStoichiometricConeKer ReactionNetwork := Rn -> (
-    reducedematrix := 0*mutableMatrix{{1..numColumns stoichiometricConeKer Rn}};
-    block := mutableMatrix{{}};
-    Ematrix := stoichiometricConeKer Rn;
-    clust := clusters Rn;
-    for cl in toList clust do(
-    	block = 0*mutableMatrix{{1..numColumns Ematrix}};
-    	for i in toList cl do(
-	    block = block + mutableMatrix Ematrix^{i};
-	    );
-    	reducedematrix = mutableMatrix((matrix reducedematrix)||(matrix block));
-    	);
-    matrix(reducedematrix^{1..numRows reducedematrix - 1})
-    )
 
 -- here we check whether N has the isolation property
-hasIsolation = method ()
-hasIsolation ReactionNetwork := Rn -> (
-    if #(clusters Rn) == 0 then return false;
-    if #(clusters Rn) == 1 then return true;
-    rE := reducedStoichiometricConeKer Rn;
-    for i from 0 to numRows rE - 1 do(
-    	for j from 0 to numRows rE - 1 do(
-	    if (i != j and set apply (flatten entries rE^{i},flatten entries rE^{j},(i,j) -> i*j) =!= set{0})  then return false;
-	    );
-    	);
-    return true
-    )
+-- hasIsolation = method ()
+-- hasIsolation ReactionNetwork := Rn -> (
+--     )
 
 --tests for the Isolation Property
 TEST ///
 assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
 assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
-assert (superDoublingSets reactionNetwork "A <--> B" === set {})
-assert (preClusters reactionNetwork "A <--> B" === set{})
-assert (clusters reactionNetwork "A <--> B" === set{})
-assert (reducedStoichiometricConeKer reactionNetwork "A <--> B" == map(ZZ^0,ZZ^1,0))
-assert (hasIsolation oneSiteModificationA() == true)
-assert (hasIsolation reactionNetwork "A <--> B, B <--> C, C <--> A" == false)
+--assert (hasIsolation oneSiteModificationA() == true)
+--assert (hasIsolation twoSiteModificationA() == true)
 ///
---Here finish functions for the Isolation Property
 
 
 --injectivityTest = Rn ->
 
 TEST ///
 restart
-needsPackage "ReactionNetworks"
-needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 negativeLaplacian N
 negativeWeightedLaplacian N
@@ -918,11 +838,6 @@ installPackage "ReactionNetworks"
 installPackage("ReactionNetworks", RemakeAllDocumentation=>true)
 check "ReactionNetworks"
 peek ReactionNetworks
---help "OnesiteModificationA"
---viewHelp "OnesiteModificationA"
---examples "OnesiteModificationA"
-viewHelp ReactionNetworks
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
