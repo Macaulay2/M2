@@ -305,7 +305,6 @@ topcomIsTriangulation(Matrix, List) := (Vin, T) -> (
    --    );
    -- );
    (outfile, errfile) := callTopcom("points2nflips --checktriang -v", {topcomPoints(V, Homogenize=>false), [], T });
-   << get errfile << endl;
    not match("not valid", get errfile)
 )
 
@@ -484,9 +483,9 @@ T3 = {{0,1,2,3}}
 assert(not naiveIsTriangulation(V, T1))
 assert(not naiveIsTriangulation(V, T2))
 assert(not naiveIsTriangulation(V, T3))
--- assert(not topcomIsTriangulation(V, T1))
--- assert(not topcomIsTriangulation(V, T2))
--- assert(not topcomIsTriangulation(V, T3))
+assert(not topcomIsTriangulation(V, T1))
+assert(not topcomIsTriangulation(V, T2))
+assert(not topcomIsTriangulation(V, T3))
 ///
 
 -- This example is a good one, but takes too long to be run automatically
