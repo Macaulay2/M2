@@ -42,7 +42,7 @@ document {
          {HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman")},
          {HREF("http://www.mi.fu-berlin.de/math/groups/ag-algebra/members/mitarbeiter/Winz.html", "Anna-Lena Winz")}
       },
-   "for code contributions, bug reports, helpful discussions and overall help with designing this package."
+   "for code contributions, bug reports, and helpful discussions concerning this package."
 	
 	}
    

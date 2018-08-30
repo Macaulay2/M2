@@ -278,11 +278,9 @@ naiveIsTriangulation(Matrix, List) := (A, tri) -> naiveIsTriangulation(A, orient
 
 topcomIsTriangulation = method();
 topcomIsTriangulation(Matrix, List) := (Vin, T) -> (
-   -- Topcom does not check:
-   -- - whether the triangulation actually covers the convex hull of the given
-   --   points
-   -- - whether the sets in T actually form simplices
-   -- So we do it manually:
+   -- Topcom does not check whether the sets in T actually form simplices. In
+   -- that case it throws an error instead of giving an answer.  -- So we do it
+   -- manually:
    V := promote(augment Vin, QQ);
    d := numRows V;
    if not all(T, t-> #t == d) then (
@@ -294,16 +292,6 @@ topcomIsTriangulation(Matrix, List) := (Vin, T) -> (
       << "Index sets do not correspond to full-dimensional simplices" << endl;
       return false;
    );
-   
-   -- -- It seems that Topcom can deal with the following.
-   -- simplexFacets := apply(simplices, s->inverse s);
-   -- for i from 0 to (numColumns V)-1 do (
-   --    pt := V_i;
-   --    if(position(simplexFacets, sf -> all(entries(sf * pt), e-> e>=0)) === null) then (
-   --       << "Point " << Vin_i << " is not contained in any simplex." << endl;
-   --       return false;
-   --    );
-   -- );
    (outfile, errfile) := callTopcom("points2nflips --checktriang -v", {topcomPoints(V, Homogenize=>false), [], T });
    not match("not valid", get errfile)
 )
