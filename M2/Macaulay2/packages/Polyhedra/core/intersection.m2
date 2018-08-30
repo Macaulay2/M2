@@ -1,43 +1,3 @@
-warned := new MutableHashTable
-warning := name -> if not warned#?name then (
-     warned#name = true;
-     stderr << "Warning: This method is deprecated. Please consider using " << name << " instead." << endl;
-     )
-
---   INPUT : '(M,v,N,w)',  where all four are matrices (although v and w are only vectors), such
---     	    	      	  that the polyhedron is given by P={x | Mx<=v and Nx=w} 
---  OUTPUT : 'P', the polyhedron
-intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
-   warning "polyhedronFromHData";
-   polyhedronFromHData(M,v,N,w)
-)
-
-
---   INPUT : '(M,N)',  two matrices where either 'P' is the Cone {x | Mx<=0, Nx=0} if 'M' and 'N' have the same source space 
---     	    	       or, if 'N' is only a Column vector the Polyhedron {x | Mx<=v} 
---  OUTPUT : 'P', the Cone or Polyhedron
-  intersection(Matrix,Matrix) := (M,N) -> (
-     -- Checking for input errors
-     if ((numColumns M =!= numColumns N and numColumns N =!= 1) or (numColumns N == 1 and numRows M =!= numRows N)) and N != 0*N 
-     then error("invalid condition vector for half-spaces");
-     -- Decide whether 'M,N' gives the Cone C={p | M*p >= 0, N*p = 0}
-     if numColumns M == numColumns N and numColumns N != 1 then (
-	  warning "coneFromHData";
-	  coneFromHData(M,N)
-	  -- or the Polyhedron P={p | M*p >= N != 0}
-	  )
-     else (	
-	  warning "polyhedronFromHData";
-	  polyhedronFromHData(M, N)
-	  )
-     )
-
-intersection Matrix := M -> (
-   warning "coneFromHData";
-   coneFromHData M
-)
-
-
 --   INPUT : '(P1,P2)',  two polyhedra 
 --  OUTPUT : 'P', the polyhedron that is the intersection of both
 intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
@@ -49,11 +9,8 @@ intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
    result := new HashTable from {
       underlyingCone => C12
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
-
-
-
 
 
 --   INPUT : '(C1,C2)',  two Cones
@@ -65,7 +22,6 @@ intersection(Cone,Cone) := (C1,C2) -> (
 	N := hyperplanes C1 || hyperplanes C2;
 	coneFromHData(M,N)
 )
-   
    
    
 --   INPUT : '(C,P)',  a Cone and a Polyhedron

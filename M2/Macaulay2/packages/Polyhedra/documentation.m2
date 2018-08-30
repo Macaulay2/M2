@@ -32,8 +32,17 @@ document {
 	M. Ziegler's"), " ", EM "Lectures on Polytopes", ", Graduate
 	Texts in Mathematics 152, Springer-Verlag, New York, 1995.",
 	
-	PARA{}, "The author would like to thank ",HREF("http://people.cs.uchicago.edu/~nilten/", "Nathan Ilten")," 
-	for contributing several functions to the package."
+	PARA{}, "The authors would like to thank ",
+   UL {
+         {HREF("https://faculty.math.illinois.edu/~dan/", "Daniel R. Grayson")},
+         {HREF("http://people.cs.uchicago.edu/~nilten/", "Nathan Ilten")},
+         {HREF("http://page.math.tu-berlin.de/~panizzut/", "Marta Panizzut")},
+         {HREF("http://www.mast.queensu.ca/~ggsmith/", "Gregory G. Smith")},
+         {HREF("http://astaal.be/", "Andrew P. Staal")},
+         {HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman")},
+         {HREF("http://www.mi.fu-berlin.de/math/groups/ag-algebra/members/mitarbeiter/Winz.html", "Anna-Lena Winz")}
+      },
+   "for code contributions, bug reports, and helpful discussions concerning this package."
 	
 	}
    
@@ -91,7 +100,7 @@ document {
 	  " hyperplanes P1"
 	  },
      
-     PARA{}, "On the other hand we can construct a polyhedron as the ",TO intersection," of affine 
+     PARA{}, "On the other hand we can construct a polyhedron as the intersection of affine 
      half-spaces and affine hyperplanes.",
      
      EXAMPLE {
@@ -99,7 +108,7 @@ document {
 	  " v = matrix {{1},{1},{1},{1}}",
 	  " hyperplanesTmp = matrix {{1,1,1}}",
 	  " w = matrix {{3}}",
-	  " P2 = intersection(HS,v,hyperplanesTmp,w)"
+	  " P2 = polyhedronFromHData(HS,v,hyperplanesTmp,w)"
 	  },
      
      PARA{}, "This is a triangle in 3-space with the following vertices.",
@@ -111,7 +120,7 @@ document {
      PARA{}, "If we don't intersect with the hyperplane we get a full dimensional polyhedron.",
      
      EXAMPLE {
-	  " P3 = intersection(HS,v)",
+	  " P3 = polyhedronFromHData(HS,v)",
 	  " vertices P3",
 	  " linealitySpace P3"
 	  },
@@ -272,12 +281,12 @@ document {
 	  },
      
      PARA{}, "Note that the rays are given modulo the lineality space. On the other hand we can 
-     construct cones as the ",TO intersection," of linear half-spaces and hyperplanes.",
+     construct cones as the intersection of linear half-spaces and hyperplanes.",
      
      EXAMPLE {
 	  " HS = transpose R1",
 	  " hyperplanesTmp = matrix {{1,1,1}}",
-	  " C2 = intersection(HS,hyperplanesTmp)"
+	  " C2 = coneFromHData(HS,hyperplanesTmp)"
 	  },
      
      PARA{}, "This is a two dimensional cone in 3-space with the following rays:",
@@ -289,7 +298,7 @@ document {
      PARA{}, "If we don't intersect with the hyperplane we get a full dimensional cone.",
      
      EXAMPLE {
-	  " C3 = intersection HS",
+	  " C3 = coneFromHData HS",
 	  " rays C3",
 	  " linealitySpace C3"
 	  },
@@ -319,7 +328,7 @@ document {
 	  " linealitySpace C6"
 	  },
 
-     PARA{}, "Furthermore, both functions (",TO intersection," and ",TO coneFromVData,") can 
+     PARA{}, "Furthermore, both functions (",TO coneFromHData," and ",TO coneFromVData,") can 
      be applied to a list containing any number of cones and matrices defining 
      rays and lineality space or linear half-spaces and hyperplanes. These must be in the 
      same ambient space. For example:",
@@ -583,7 +592,7 @@ document {
      generated for the output. The data defining a Polyhedron is extracted 
      by the functions included in this package. A Polyhedron can be constructed as 
      the convex hull (",TO convexHull,") of a set of points and a set of rays or as the 
-     intersection (",TO intersection,") of a set of affine half-spaces and affine hyperplanes.",
+     intersection (",TO polyhedronFromHData,") of a set of affine half-spaces and affine hyperplanes.",
      
      PARA{}, "For example, consider the square and the square with an emerging ray 
      for the convex hull:",
@@ -601,7 +610,7 @@ document {
      EXAMPLE {
 	  " HS = transpose V",
 	  " v = R || R",
-	  " P = intersection(HS,v)",
+	  " P = polyhedronFromHData(HS,v)",
 	  " vertices P"
 	  },
      
@@ -611,7 +620,7 @@ document {
 	  " HS = HS | matrix {{0},{0},{0},{0}}",
 	  " hyperplanesTmp = matrix {{0,0,1}}",
 	  " w = matrix {{1}}",
-	  " P = intersection(HS,v,hyperplanesTmp,w)",
+	  " P = polyhedronFromHData(HS,v,hyperplanesTmp,w)",
 	  " vertices P"
 	  },
      
@@ -639,7 +648,7 @@ document {
      directly, because this is just a virtual hash table generated for the output. The data 
      describing a Cone is extracted by the functions included in this package. A Cone 
      can be constructed as the positive hull (",TO coneFromVData,")of a set of rays or as the intersection 
-     (",TO intersection,") of a set of linear half-spaces and linear hyperplanes.",
+     (",TO coneFromHData,") of a set of linear half-spaces and linear hyperplanes.",
      
      PARA{}, "As examples for the positive hull consider the following cones:",
      
@@ -657,10 +666,10 @@ document {
      
      EXAMPLE {
 	  " HS = transpose R",
-	  " C = intersection HS",
+	  " C = coneFromHData HS",
 	  " rays C",
 	  " hyperplanesTmp = transpose LS",
-	  " C = intersection(HS,hyperplanesTmp)",
+	  " C = coneFromHData(HS,hyperplanesTmp)",
 	  " rays C"
 	  },
      
@@ -905,17 +914,13 @@ document {
      }
 
 document {
-     Key => {intersection, (intersection,Cone,Cone), (intersection,List), (intersection,Matrix), 
-	  (intersection,Matrix,Matrix), (intersection,Matrix,Matrix,Matrix,Matrix), (intersection,Polyhedron,Polyhedron),
+     Key => {intersection, (intersection,Cone,Cone), (intersection,List), 
+	  (intersection,Polyhedron,Polyhedron),
 	  (intersection,Cone,Polyhedron), (intersection,Polyhedron,Cone)},
-     Headline => "computes the intersection of half-spaces, hyperplanes, cones, and polyhedra",
-     Usage => " P = intersection L \nC = intersection M \nC = intersection(M,N) \nP = intersection(M,v) \nP = intersection(M,v,N,w) \nC = intersection(C1,C2) \nP = intersection(P1,P2)",
+     Headline => "computes the intersection of cones, and polyhedra",
+     Usage => " P = intersection L\nC = intersection(C1,C2) \nP = intersection(P1,P2)",
      Inputs => {
 	  "L" => List => {"containing any of the inputs below"},
-	  "M" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
-	  "N" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
-	  "v" => Matrix => {"with only one column and entries in ", TO ZZ," or ", TO QQ},
-	  "w" => Matrix => {"with only one column and entries in ", TO ZZ," or ", TO QQ},
 	  "C1" => Cone,
 	  "C2" => Cone,
 	  "P1" => Polyhedron,
@@ -926,17 +931,6 @@ document {
 	  "C" => Cone
 	  },
      
-     PARA{}, "When inserting any of the combination of matrices into ", 
-     TT "intersection", ", it considers the given matrices as defining 
-     inequalities and equalities. Thus, it either computes the polyhedron ",
-     TT "P = {p | M*p <= v and N*p = w }"," or the cone ",TT "C = {p | M*p >= 0 and N*p=0}",". Therefore, ", TT "M", " and ",
-     TT "N", " must have the same number of columns, which will be the 
-     dimension of the ambient space, and ", TT "M", " and ", TT "v", " as 
-     well as ", TT "N", " and ", TT "w", " must have the same number of 
-     rows respectively. If ", TT "N", " and ", TT "w", " are omitted then 
-     the polyhedron is just given by the inequalities. If ", TT "v", " 
-     and ", TT "w", " are omitted then they are considered to be 0 so 
-     that the intersection is a cone and thus the output is of class Cone.",
      
      PARA{}, "If two polyhedra or two cones are inserted, then the 
      intersection of both arguments is computed if both arguments lie in 
@@ -946,53 +940,15 @@ document {
      PARA{}, "If ", TT "intersection", " is called for a list ", TT "L", ", 
      then the list may contain a combination of the following in any order.",
      UL {
-	  {"Inequalities, given by a sequence ", TT "(M,v)", " of matrices 
-	    over ", TO ZZ, " or ", TO QQ, " determining inequalities as above"},
-	  {"Equalities, given by a list ", TT "{N,w}", " of matrices 
-	    over ", TO ZZ, " or ", TO QQ, " determining equalities as above"},
 	  {TO Cone},
 	  {TO Polyhedron}
 	},
    
-     PARA{}, "Then ", TT "intersection", " computes the intersection of all 
-     inserted objects, if they are in the same ambient space, i.e. all matrices 
-     must have the same number of rows, which must equal the ambient dimension 
-     of all cones and polyhedra.",
-     
-     PARA{}, "The first use of ",TT "intersection"," is to construct a cone:",
      
      EXAMPLE {
-	  " M = matrix {{1,2,3},{2,3,1},{3,1,2}}",
-	  " C = intersection M"
-	  },
-     
-     PARA{}, "This is the cone of all points that are positive on the rows of the 
-     matrix ",TT "M",". If we add another row to this matrix and enter a condition 
-     vector we get a polyhedron:",
-     
-     EXAMPLE {
-	  " M = M || matrix {{-1,-1,-1}}",
-	  " v = matrix {{1},{2},{3},{4}}",
-	  " P = intersection(M,v)"
-	  },
-     
-     PARA{}, " This polyhedron, a tetrahedron, consists of all points ",TT "p"," such 
-     that ",TT "M*p <= v",". If add a another pair of matrices, these conditions are 
-     evaluated as equalities. Thus we get a polyhedron which is not of full dimension. 
-     It is an intersection with an affine hyperplane.",
-     
-     EXAMPLE {
-	  " N = matrix {{1,2,0}}",
-	  " w = matrix {{2}}",
-	  " Q = intersection (M,v,N,w)"
-	  },
-     
-     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
-     
-     EXAMPLE {
-	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",
-	  " C1 = intersection(C,HC)",
-	  " Q1 = intersection(P,HC)"
+     " C = hypercube 2",
+     " S = simplex 2",
+     " CS = intersection(C,S)"
 	  }     
 
      }
@@ -1401,9 +1357,9 @@ document {
      EXAMPLE {
 	  " M = matrix {{1,1,1},{0,1,0},{-1,1,-1},{-1,-1,-1},{0,-1,0},{1,-1,1}};",
 	  " v = matrix {{2},{1},{2},{2},{1},{2}};",
-	  " P = intersection(M,v)",
+	  " P = polyhedronFromHData(M,v)",
 	  " linealitySpace P",
-	  " C = dualCone intersection M",
+	  " C = dualCone coneFromHData M",
 	  " linealitySpace C"
 	  }
      
@@ -1449,7 +1405,7 @@ document {
      as the columns of the Matrix ", TT "V",".",
      
      EXAMPLE {
-	  " P = intersection(matrix{{1,-1},{0,-1},{-1,-1},{0,1}}, matrix{{0},{-1},{0},{1}})",
+	  " P = polyhedronFromHData(matrix{{1,-1},{0,-1},{-1,-1},{0,1}}, matrix{{0},{-1},{0},{1}})",
 	  " vertices P",
 	  " PC = skeleton(2,polyhedralComplex hypercube 3)",
 	  " vertices PC"
@@ -1603,7 +1559,7 @@ document {
      rays and lineality space matrices are 0.",
      
      EXAMPLE {
-	  " P = intersection(matrix{{1,1,1},{0,1,0},{-1,-1,-1},{-1,-1,-1},{0,-1,0},{1,-1,1}},matrix{{2},{1},{2},{2},{1},{2}})",
+	  " P = polyhedronFromHData(matrix{{1,1,1},{0,1,0},{-1,-1,-1},{-1,-1,-1},{0,-1,0},{1,-1,1}},matrix{{2},{1},{2},{2},{1},{2}})",
 	  " isCompact P"
 	  }
      
@@ -1661,7 +1617,7 @@ document {
      PARA{}, "The polyhedron is empty if the dimension is -1.",
      
      EXAMPLE {
-	  " P = intersection(matrix{{1,0},{0,1},{-1,-1}},matrix{{-1},{1},{-1}})",
+	  " P = polyhedronFromHData(matrix{{1,0},{0,1},{-1,-1}},matrix{{-1},{1},{-1}})",
 	  " isEmpty P"
 	  }
      
@@ -1713,9 +1669,9 @@ document {
      simply checks if it is compact and all vertices are lattice points.",
 
      EXAMPLE {
-	  " P = intersection(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{1},{1},{1},{1}})",
+	  " P = polyhedronFromHData(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{1},{1},{1},{1}})",
 	  " isLatticePolytope P",
-	  " P = intersection(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{4},{6},{3},{6}})",
+	  " P = polyhedronFromHData(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{4},{6},{3},{6}})",
 	  " isLatticePolytope P"
 	    }
 
@@ -1759,7 +1715,7 @@ document {
      Cones is pointed. This is equivalent to all Cones being pointed.",
      
      EXAMPLE {
-	  " C = intersection(matrix{{1,1,-1},{-1,-1,-1}})",
+	  " C = coneFromHData(matrix{{1,1,-1},{-1,-1,-1}})",
 	  " isPointed C",
 	  " C = intersection{C, coneFromHData(matrix{{1,-1,-1}})}",
 	  " isPointed C"
@@ -2612,7 +2568,7 @@ document {
      ambient space of ",TT "P",".",
      
      EXAMPLE {
-	  " P = intersection(matrix{{-1,0},{1,0},{0,-1},{-1,-1},{1,-1}},matrix{{2},{2},{-1},{0},{0}}) ",
+	  " P = polyhedronFromHData(matrix{{-1,0},{1,0},{0,-1},{-1,-1},{1,-1}},matrix{{2},{2},{-1},{0},{0}}) ",
 	  " C = tailCone P",
 	  " rays C"
 	  }
@@ -2620,9 +2576,9 @@ document {
      }
 
 document {
-     Key => {triangulate, (triangulate,Polyhedron)},
+     Key => {barycentricTriangulation, (barycentricTriangulation,Polyhedron)},
      Headline => "computes a triangulation of a polytope",
-     Usage => " L = triangulate P",
+     Usage => " L = barycentricTriangulation P",
      Inputs => {
 	  "P" => Polyhedron => {", which must be compact"}
 	  },
@@ -2630,7 +2586,7 @@ document {
 	  "L" => List => {" containing the simplices of the triangulation"}
 	  },
      
-     PARA{}, TT "triangulate","  computes the triangulation of the polyhedron ",TT "P",", if it is compact, 
+     PARA{}, TT "barycentricTriangulation","  computes the triangulation of the polyhedron ",TT "P",", if it is compact, 
      i.e. a polytope, recursively. For this, it takes all facets and checks if they are simplices. If so, then 
      it takes the convex hull of these with the weighted centre of the polytope (the sum of the vertices divided 
      by the number of vertices). For those that are not simplices it takes all their facets and does the same 
@@ -2638,7 +2594,7 @@ document {
      
      EXAMPLE {
 	  " P = hypercube 2",
-	  " triangulate P"
+	  " barycentricTriangulation P"
 	  }
      
      }
@@ -3315,31 +3271,6 @@ document {
      }
 
 document {
-     Key => {cellDecompose, (cellDecompose,Polyhedron,Matrix)},
-     Headline => "computes the regular cell decomposition",
-     Usage => " L = cellDecompose(P,w)",
-     Inputs => {
-	  "P" => Polyhedron => {"compact"},
-	  "w" => Matrix => {"a one row matrix, with an entry for each lattice point of the polyhedron"}
-	  },
-     Outputs => {
-	  "L" => List
-	  },
-     
-     PARA{}, "This function computes the regular cell decomposition of ",TT "P"," given by the weight vector ",TT "w",". 
-     This is computed by placing the i-th lattice point of ",TT "P"," on height ",TT "w","_i in n+1 space, taking the 
-     convexHull of these with the ray (0,...,0,1), and projecting the compact faces into n space. Note that the polyhedron 
-     must be compact, i.e. a polytope and the length of the weight vector must be the number of lattice points.",
-     
-     EXAMPLE {
-	  " P = crossPolytope 3",
-	  " w =  matrix {{1,2,2,2,2,2,1}}",
-	  " L = cellDecompose(P,w)",
-	  " apply(L,vertices)"
-	  }
-     }
-
-document {
      Key => {cyclicPolytope, (cyclicPolytope,ZZ,ZZ)},
      Headline => "computes the d dimensional cyclic polytope with n vertices",
      Usage => " P = cyclicPolytope(d,n)",
@@ -3509,7 +3440,7 @@ document {
 	  "Q" => Polyhedron
 	  },
      
-     PARA{}, "The secondary polytope parametrises the regular cell decompositions of a polytope. See ...
+     PARA{}, "The secondary polytope parametrises the regular subdivisions of a polytope. See ...
      ",TT "to be added",".",
      
      EXAMPLE {
