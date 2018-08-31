@@ -707,6 +707,7 @@ gmp_ZZ to_gmp_ZZ(int a)  // helper fn!!!
   mpz_init(result);
   mpz_set_si(result, a);
   #warning "Does this need to switch to GC limbs?"
+  mpz_reallocate_limbs(result);
   return result;
 }
 

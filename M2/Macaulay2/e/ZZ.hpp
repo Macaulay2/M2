@@ -31,7 +31,6 @@ class RingZZ : public Ring
   friend class M2::ARingZZGMP;
 
   mpz_ptr new_elem() const;
-  void remove_elem(mpz_ptr f) const;
 
   M2::ARingZZGMP *coeffR;
 
@@ -49,11 +48,10 @@ class RingZZ : public Ring
 
   RingZZ *cast_to_RingZZ() { return this; }
   const RingZZ *cast_to_RingZZ() const { return this; }
-  M2::ARingZZGMP *get_CoeffRing() const { return coeffR; }
   M2::ARingZZGMP *get_ARing() const
   {
     return coeffR;
-  }  // TODO: MES: change to ARing type once implemented.
+  }
 
   virtual MutableMatrix *makeMutableMatrix(size_t nrows,
                                            size_t ncols,

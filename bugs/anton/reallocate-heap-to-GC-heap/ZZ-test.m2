@@ -11,7 +11,16 @@ g = () -> (
 	f();	
 	)    
     )
+
+C = mutableMatrix{{2^10000}}
+h = () -> (
+    B := C+C;
+    a := B_(0,0);
+    )
+
 end
 
 restart
 load "../../../bugs/anton/reallocate-heap-to-GC-heap/ZZ-test.m2"
+g()
+while true do h()

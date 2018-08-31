@@ -7,6 +7,8 @@
 #include "hash.hpp"
 #include "relem.hpp"
 
+#include <iostream>
+
 class buffer;
 class RingElement;
 class Ring;
