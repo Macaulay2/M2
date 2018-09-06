@@ -330,6 +330,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	  );
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+     if R.?numallvars then F.numallvars=R.numallvars;
      F)
 
 -- methods for all ring elements
