@@ -8,8 +8,9 @@ newPackage(
 	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
 	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
-	     --since 2018:	     	     
-	     {Name => "Alexandru Iosif", Email => "alexandru.iosif@ovgu.de"}	     	     
+	     --since 2018:
+	     {Name => "Alexandru Iosif", Email => "alexandru.iosif@ovgu.de"},
+			 {Name => "Michael Adamer", Email => "adamer@maths.ox.ac.uk"}
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
     	Headline => "reaction networks",
@@ -389,7 +390,7 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
     netComplex(N, last e))
 
 net ReactionNetwork := N -> stack networkToHRF N
-    
+
 -- Matrices
 
 stoichiometricMatrix = method()
@@ -767,9 +768,77 @@ negativeWeightedLaplacian ReactionNetwork := Rn -> (
 --here we compute the nonnegative kernel of the stoichiometric matrix
 stoichiometricConeKer = method ()
 stoichiometricConeKer ReactionNetwork := Rn -> (
-    transpose rays stoichiometricMatrix Rn    
+    transpose rays stoichiometricMatrix Rn
     )
 
+<<<<<<< HEAD
+=======
+--here we compute the superdoubling sets
+superDoublingSets = method()
+superDoublingSets ReactionNetwork := Rn -> (
+    doublingSet := symbol doublingSet;
+    superDoublingSets := set{};
+    eductMatrix := transpose reactantMatrix Rn;
+    for i from 0 to numColumns eductMatrix - 1 do (
+    	doublingSet = set{};
+    	for j from 0 to numColumns eductMatrix - 1 do(
+	    if j != i and eductMatrix_i == eductMatrix_j then(
+	    	doublingSet = doublingSet+set{j}
+		);
+    	    );
+    	if doublingSet =!= set{} then (doublingSet = doublingSet + set{i};
+    	    superDoublingSets = superDoublingSets + set{doublingSet};);
+	);
+    superDoublingSets
+    )
+
+--here we compute the preclusters
+preClusters = method()
+preClusters ReactionNetwork := Rn -> (
+Ematrix := stoichiometricConeKer Rn;
+preclusters := set{};
+for sds in (toList superDoublingSets Rn) do(
+    for i from 0 to numRows Ematrix - 1 do(
+	if  set flatten entries (transpose Ematrix^{i}%(transpose Ematrix^(toList sds))) === set{0} then(
+	    sds = sds + set{i};
+	    );
+	);
+    preclusters = preclusters + set{sds};
+    );
+preclusters
+)
+
+--here we compute the clusters
+clusters = method()
+clusters ReactionNetwork := Rn -> (
+    clust := preClusters Rn;
+    for pcl1 in (toList clust) do(
+    	for pcl2 in (drop(toList clust,1)) do(
+	    if (pcl1)*(pcl2)  =!= set{} then(
+	    	clust = clust - set{pcl1} - set{pcl2} + set {pcl1+pcl2};
+	    	);
+	    );
+    	);
+    clust
+    )
+
+--here we compute Ematrixreduced
+reducedStoichiometricConeKer = method ()
+reducedStoichiometricConeKer ReactionNetwork := Rn -> (
+    reducedematrix := 0*mutableMatrix{{1..numColumns stoichiometricConeKer Rn}};
+    block := mutableMatrix{{}};
+    Ematrix := stoichiometricConeKer Rn;
+    clust := clusters Rn;
+    for cl in toList clust do(
+    	block = 0*mutableMatrix{{1..numColumns Ematrix}};
+    	for i in toList cl do(
+	    block = block + mutableMatrix Ematrix^{i};
+	    );
+    	reducedematrix = mutableMatrix((matrix reducedematrix)||(matrix block));
+    	);
+    matrix(reducedematrix^{1..numRows reducedematrix - 1})
+    )
+>>>>>>> added my name (Michael)
 
 -- here we check whether N has the isolation property
 -- hasIsolation = method ()
