@@ -1,0 +1,71 @@
+-- -*- M2-comint -*- hash: -1348549995
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : R = QQ[x,y,z];
+
+i2 : h = matrix {{x^2+y^2+y, y-z^2}};
+
+             1       2
+o2 : Matrix R  <--- R
+
+i3 : (sol,mult) = sosInIdeal (h, 2, Solver=>"CSDP");
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3363-0/3.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3363-0/4
+Status: SDP solved, primal-dual feasible
+Start rational rounding
+
+i4 : sosPoly sol
+
+o4 = coeffs:
+      63  63  63
+     {--, --, --}
+       4   4   4
+     gens:
+     {x, y, z}
+
+o4 : SOSPoly
+
+i5 : h * mult == sosPoly sol
+
+o5 = true
+
+i6 : S = R/ideal h;
+
+i7 : sol = sosInIdeal (S, 2, Solver=>"CSDP");
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3363-0/7.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3363-0/8
+Status: SDP solved, primal-dual feasible
+Zero solution obtained. Trying again.
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3363-0/11.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3363-0/12
+Status: SDP solved, primal infeasible
+Start rational rounding
+
+i8 : sosPoly sol
+
+o8 = coeffs:
+      7  7  7
+     {-, -, -}
+      4  4  4
+     gens:
+     {x, y, z}
+
+o8 : SOSPoly
+
+i9 : sosPoly sol
+
+o9 = coeffs:
+      7  7  7
+     {-, -, -}
+      4  4  4
+     gens:
+     {x, y, z}
+
+o9 : SOSPoly
+
+i10 : 

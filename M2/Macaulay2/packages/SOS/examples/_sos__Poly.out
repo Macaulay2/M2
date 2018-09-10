@@ -1,0 +1,55 @@
+-- -*- M2-comint -*- hash: -426498298
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: csdp executable was not found.
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : R = QQ[x,y];
+
+i2 : f = 2*x^4+5*y^4-2*x^2*y^2+2*x^3*y;
+
+i3 : sosPoly solveSOS f
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+o3 = coeffs:
+         12   923
+     {5, --, ----}
+          5  1500
+     gens:
+        11 2    2   5 2         2
+     {- --x  + y , --x  + x*y, x }
+        25         12
+
+o3 : SOSPoly
+
+i4 : Q = matrix(QQ,{{1,1,1},{1,1,1},{1,1,1}});
+
+              3        3
+o4 : Matrix QQ  <--- QQ
+
+i5 : mon = matrix{{1},{x},{y}};
+
+             3       1
+o5 : Matrix R  <--- R
+
+i6 : sosPoly(mon,Q)
+
+o6 = coeffs:
+     {1}
+     gens:
+     {x + y + 1}
+
+o6 : SOSPoly
+
+i7 : s = sosPoly(R, {x+1,y}, {2,3} )
+
+o7 = coeffs:
+     {2, 3}
+     gens:
+     {x + 1, y}
+
+o7 : SOSPoly
+
+i8 : 

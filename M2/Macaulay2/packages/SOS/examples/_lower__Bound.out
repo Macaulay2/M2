@@ -1,0 +1,93 @@
+-- -*- M2-comint -*- hash: -1809142886
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : R=QQ[x];
+
+i2 : f = (x-1)^2 + (x+3)^2;
+
+i3 : (bound,sol) = lowerBound(f);
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/3.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/4
+Status: SDP solved, primal-dual feasible
+Start rational rounding
+
+i4 : bound
+
+o4 = 8
+
+o4 : QQ
+
+i5 : f - bound == sosPoly sol
+
+o5 = true
+
+i6 : R = QQ[x,y]/ideal(x^2 - x, y^2 - y);
+
+i7 : f = x - y;
+
+i8 : (bound,sol) = lowerBound(f,2);
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/7.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/8
+Status: SDP solved, primal-dual feasible
+Start rational rounding
+
+i9 : bound
+
+o9 = -1
+
+o9 : QQ
+
+i10 : f - bound == sosPoly sol
+
+o10 = true
+
+i11 : R = QQ[x,y];
+
+i12 : f = x - y;
+
+i13 : h = matrix{{x^2 - x, y^2 - y}};
+
+              1       2
+o13 : Matrix R  <--- R
+
+i14 : (bound,sol,mult) = lowerBound (f, h, 2);
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/11.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/12
+Status: SDP solved, primal-dual feasible
+Start rational rounding
+
+i15 : bound
+
+o15 = -1
+
+o15 : QQ
+
+i16 : f - bound + h*mult == sosPoly sol
+
+o16 = true
+
+i17 : R = QQ[x];
+
+i18 : f = (x^2-x)/(x^2+1);
+
+i19 : (bound,sol) = lowerBound (f, Solver=>"CSDP");
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/15.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-4108-0/16
+Status: SDP solved, primal-dual feasible
+Start rational rounding
+
+i20 : (bound, recoverSolution sol)
+
+         1
+o20 = (- -, {x => .353553})
+         4
+
+o20 : Sequence
+
+i21 : 

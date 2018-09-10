@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: 334277978
+--loading configuration for package "FourTiTwo" from file /Users/tom/Library/Application Support/Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+
+i1 : R = QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : 

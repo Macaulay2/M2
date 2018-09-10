@@ -1,0 +1,41 @@
+-- -*- M2-comint -*- hash: -1247386880
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : f = library("Scheiderer", QQ[x,y,z])
+
+      4      3    4     2          2      2 2      3      3    4
+o1 = x  + x*y  + y  - 3x y*z - 4x*y z + 2x z  + x*z  + y*z  + z
+
+o1 : QQ[x, y, z]
+
+i2 : sol = solveSOS (f, Solver=>"CSDP");
+Executing CSDP
+Input file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3350-0/3.dat-s
+Output file: /var/folders/pw/hdzdhzlx503bn3thvdtw6f7w0000gn/T/M2-3350-0/4
+Status: SDP solved, primal-dual feasible
+Start rational rounding
+rounding failed, returning real solution
+
+i3 : sosPoly sol
+
+o3 = coeffs:
+     {3.30453e-9, 5.71257e-9, .612611, .889189, 1.85689, 3.9924}
+     gens:
+             2                         2                                     2          2                          2                                       2            2                        2                                    2            2                       2                                     2          2                       2                                    2            2                        2                                     2
+     {.34757x  - .0338186x*y + .768917y  + .336255x*z - .203874y*z + .363573z , .318117x  + .679504x*y - .00674086y  + .148907x*z + .644086y*z - .00319973z , - .489503x  + .515357x*y - .174266y  + .126103x*z - .33001y*z + .582766z , - .389147x  + .18471x*y + .191406y  + .590213x*z - .140294y*z - .640139z , .622038x  + .195424x*y - .44107y  + .199983x*z - .564971y*z - .14543z , .00407923x  - .446351x*y - .383632y  + .678611x*z + .309527y*z + .311867z }
+
+o3 : SOSPoly
+
+i4 : clean (0.001, sosPoly sol)
+
+o4 = coeffs:
+     {.612611, .889189, 1.85689, 3.9924}
+     gens:
+                2                        2                                    2            2                       2                                     2          2                       2                                    2            2                        2                                     2
+     {- .489503x  + .515357x*y - .174266y  + .126103x*z - .33001y*z + .582766z , - .389147x  + .18471x*y + .191406y  + .590213x*z - .140294y*z - .640139z , .622038x  + .195424x*y - .44107y  + .199983x*z - .564971y*z - .14543z , .00407923x  - .446351x*y - .383632y  + .678611x*z + .309527y*z + .311867z }
+
+o4 : SOSPoly
+
+i5 : 

@@ -1,0 +1,99 @@
+-- -*- M2-comint -*- hash: -1076817507
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: csdp executable was not found.
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : R = QQ[x,y]/ideal(x^2 + y^2 - 1);
+
+i2 : f = 10-x^2-y;
+
+i3 : mon = matrix {{1}, {x}, {y}};
+
+             3       1
+o3 : Matrix R  <--- R
+
+i4 : solveSOS (f, mon)
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+     +--------------+--------------------+
+o4 = | MomentMatrix |        null        |
+     +--------------+--------------------+
+     |  GramMatrix  | 3x3 matrix over QQ |
+     +--------------+--------------------+
+     |   Monomials  |  3x1 matrix over R |
+     +--------------+--------------------+
+
+o4 : SDPResult
+
+i5 : solveSOS (f, 2)
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+     +--------------+--------------------+
+o5 = | MomentMatrix |        null        |
+     +--------------+--------------------+
+     |  GramMatrix  | 3x3 matrix over QQ |
+     +--------------+--------------------+
+     |   Monomials  |  3x1 matrix over R |
+     +--------------+--------------------+
+
+o5 : SDPResult
+
+i6 : S = R[t];
+
+i7 : solveSOS(f-t,-t,mon,RoundTol=>12)
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+     +--------------+--------------------+
+o7 = | MomentMatrix |        null        |
+     +--------------+--------------------+
+     |  GramMatrix  | 3x3 matrix over QQ |
+     +--------------+--------------------+
+     |   Monomials  |  3x1 matrix over R |
+     +--------------+--------------------+
+     |  Parameters  | 1x1 matrix over QQ |
+     +--------------+--------------------+
+
+o7 : SDPResult
+
+i8 : R = QQ[x,y]/ideal(x^2 + y^2 - 1);
+
+i9 : f = 10-x^2-y;
+
+i10 : mon = matrix {{1}, {x}, {y}};
+
+              3       1
+o10 : Matrix R  <--- R
+
+i11 : s = solveSOS (f, mon, RoundTol=>infinity);
+Running M2 Solver
+Status: SDP solved, dual feasible
+
+i12 : ring sosPoly s
+
+o12 = RR  [x, y]
+        53
+
+o12 : PolynomialRing
+
+i13 : R' = ring sosPoly s;
+
+i14 : S = R'/(sub (ideal (x^2 + y^2 - 1), R'))
+-- warning: experimental computation over inexact field begun
+--          results not reliable (one warning given per session)
+
+o14 = S
+
+o14 : QuotientRing
+
+i15 : sub (f, S) == sub (sosPoly s, S)
+
+o15 = false
+
+i16 : 

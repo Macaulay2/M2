@@ -1,0 +1,58 @@
+-- -*- M2-comint -*- hash: -324212902
+--loading configuration for package "FourTiTwo" from file /Users/tom/Library/Application Support/Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: sdpa executable was not found.
+
+i1 : A = matrix(QQ, {{1,2,3,4},{2,5,6,7},{3,6,8,9},{4,7,9,10}})
+
+o1 = | 1 2 3 4  |
+     | 2 5 6 7  |
+     | 3 6 8 9  |
+     | 4 7 9 10 |
+
+              4        4
+o1 : Matrix QQ  <--- QQ
+
+i2 : v = smat2vec A
+
+o2 = | 1  |
+     | 2  |
+     | 3  |
+     | 4  |
+     | 5  |
+     | 6  |
+     | 7  |
+     | 8  |
+     | 9  |
+     | 10 |
+
+              10        1
+o2 : Matrix QQ   <--- QQ
+
+i3 : vec2smat v
+
+o3 = | 1 2 3 4  |
+     | 2 5 6 7  |
+     | 3 6 8 9  |
+     | 4 7 9 10 |
+
+              4        4
+o3 : Matrix QQ  <--- QQ
+
+i4 : smat2vec(A,Scaling=>2)
+
+o4 = | 1  |
+     | 4  |
+     | 6  |
+     | 8  |
+     | 5  |
+     | 12 |
+     | 14 |
+     | 8  |
+     | 18 |
+     | 10 |
+
+              10        1
+o4 : Matrix QQ   <--- QQ
+
+i5 : 

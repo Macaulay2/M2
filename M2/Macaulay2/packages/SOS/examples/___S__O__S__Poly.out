@@ -1,0 +1,118 @@
+-- -*- M2-comint -*- hash: 918217026
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: csdp executable was not found.
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : R = QQ[x,y];
+
+i2 : f = 2*x^4+5*y^4-2*x^2*y^2+2*x^3*y;
+
+i3 : sol = solveSOS f;
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+i4 : sosPoly sol
+
+o4 = coeffs:
+         12   923
+     {5, --, ----}
+          5  1500
+     gens:
+        11 2    2   5 2         2
+     {- --x  + y , --x  + x*y, x }
+        25         12
+
+o4 : SOSPoly
+
+i5 : R = QQ[x,y];
+
+i6 : s = sosPoly(R, {x+1,y}, {2,3} )
+
+o6 = coeffs:
+     {2, 3}
+     gens:
+     {x + 1, y}
+
+o6 : SOSPoly
+
+i7 : peek s
+
+o7 = SOSPoly{coefficients => {2, 3}  }
+             generators => {x + 1, y}
+             ring => R
+
+i8 : gens s
+
+o8 = {x + 1, y}
+
+o8 : List
+
+i9 : ring s
+
+o9 = R
+
+o9 : PolynomialRing
+
+i10 : coefficients s
+
+o10 = {2, 3}
+
+o10 : List
+
+i11 : length s
+
+o11 = 2
+
+i12 : 2 * s
+
+o12 = coeffs:
+      {4, 6}
+      gens:
+      {x + 1, y}
+
+o12 : SOSPoly
+
+i13 : s + s
+
+o13 = coeffs:
+      {2, 3, 2, 3}
+      gens:
+      {x + 1, y, x + 1, y}
+
+o13 : SOSPoly
+
+i14 : s * s
+
+o14 = coeffs:
+      {4, 6, 6, 9}
+      gens:
+        2                              2
+      {x  + 2x + 1, x*y + y, x*y + y, y }
+
+o14 : SOSPoly
+
+i15 : s == s
+
+o15 = true
+
+i16 : sumSOS s
+
+        2     2
+o16 = 2x  + 3y  + 4x + 2
+
+o16 : R
+
+i17 : S = QQ[x,y,z];
+
+i18 : sub (s, S)
+
+o18 = coeffs:
+      {2, 3}
+      gens:
+      {x + 1, y}
+
+o18 : SOSPoly
+
+i19 : 

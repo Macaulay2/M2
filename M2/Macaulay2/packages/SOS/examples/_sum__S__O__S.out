@@ -1,0 +1,31 @@
+-- -*- M2-comint -*- hash: -1051672832
+--loading configuration for package "FourTiTwo" from file /Users/tom/Library/Application Support/Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: sdpa executable was not found.
+
+i1 : R = QQ[x,y];
+
+i2 : sumSOS( {x+1,y}, {2,3}  )
+
+       2     2
+o2 = 2x  + 3y  + 4x + 2
+
+o2 : R
+
+i3 : s = sosPoly(R, {x+1,y}, {2,3} )
+
+o3 = coeffs:
+     {2, 3}
+     gens:
+     {x + 1, y}
+
+o3 : SOSPoly
+
+i4 : sumSOS( s )
+
+       2     2
+o4 = 2x  + 3y  + 4x + 2
+
+o4 : R
+
+i5 : 

@@ -1,0 +1,47 @@
+-- -*- M2-comint -*- hash: 1367648280
+--loading configuration for package "SOS" from file /Users/tom/Library/Application Support/Macaulay2/init-SOS.m2
+Warning: csdp executable was not found.
+Warning: sdpa executable was not found.
+Warning: mosek executable was not found.
+
+i1 : R = QQ[x,z];
+
+i2 : f = x^4+x^2+z^6-3*x^2*z^2;
+
+i3 : (bound,sol) = lowerBound (f,RoundTol=>4);
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+i4 : bound
+
+        3
+o4 = - --
+       16
+
+o4 : QQ
+
+i5 : (bound,sol) = lowerBound (f,RoundTol=>12);
+Running M2 Solver
+Status: SDP solved, dual feasible
+Start rational rounding
+
+i6 : bound
+
+        729
+o6 = - ----
+       4096
+
+o6 : QQ
+
+i7 : (bound,sol) = lowerBound (f,RoundTol=>infinity);
+Running M2 Solver
+Status: SDP solved, dual feasible
+
+i8 : bound
+
+o8 = -.177978892003352
+
+o8 : RR (of precision 53)
+
+i9 : 
