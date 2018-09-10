@@ -23,7 +23,7 @@ newPackage(
         Configuration => {
             "path" => ""
             },
-        PackageImports => {"Polyhedra"},
+        PackageImports => {"FourierMotzkin"},
         DebuggingMode => true
         )
 
@@ -45,7 +45,8 @@ export {
     "ConnectedToRegular",
     "Homogenize",
     "RegularOnly",
-    "Fine"
+    "Fine",
+    "topcomIsTriangulation"
     }
 
 exportMutable {
@@ -231,7 +232,8 @@ flips(Matrix, List) := opts -> (A, tri) -> (
 fineStarTriangulation = method()
 fineStarTriangulation(Matrix, List) := (A, tri) -> (
     aA := augment A;
-    H := first halfspaces convexHull aA;
+    -- H := first halfspaces convexHull aA;
+    H := transpose(-(first fourierMotzkin aA));
     myfacets := for e in entries H list (
         positions(flatten entries(matrix {e} * aA), x -> x == 0)
         );
@@ -250,7 +252,8 @@ regularFineStarTriangulation Matrix := (A) -> fineStarTriangulation(A, regularFi
 naiveIsTriangulation = method()
 naiveIsTriangulation(Matrix, List, List) := (A, circuits, tri) -> (
     aA := augment A;
-    H := first halfspaces convexHull aA;
+    -- H := first halfspaces convexHull aA;
+    H := transpose(-(first fourierMotzkin aA));
     myfacets := for e in entries H list (
         positions(flatten entries(matrix {e} * aA), x -> x == 0)
         );
@@ -271,6 +274,28 @@ naiveIsTriangulation(Matrix, List, List) := (A, circuits, tri) -> (
     all(test2, x -> x#0 == 0 or x#1 == 0)
     )
 naiveIsTriangulation(Matrix, List) := (A, tri) -> naiveIsTriangulation(A, orientedCircuits A, tri)
+
+
+topcomIsTriangulation = method();
+topcomIsTriangulation(Matrix, List) := (Vin, T) -> (
+   -- Topcom does not check whether the sets in T actually form simplices. In
+   -- that case it throws an error instead of giving an answer.  -- So we do it
+   -- manually:
+   V := promote(augment Vin, QQ);
+   d := numRows V;
+   if not all(T, t-> #t == d) then (
+      << "Index sets do not correspond to full-dimensional simplices" << endl;
+      return false;
+   );
+   simplices := apply(T, t -> V_t);
+   if not all(simplices, s->d==rank s) then (
+      << "Index sets do not correspond to full-dimensional simplices" << endl;
+      return false;
+   );
+   (outfile, errfile) := callTopcom("points2nflips --checktriang -v", {topcomPoints(V, Homogenize=>false), [], T });
+   not match("not valid", get errfile)
+)
+
 
 beginDocumentation()
 
@@ -435,6 +460,20 @@ TEST ///
   ch1 = chirotope A
   ch2 = naiveChirotope A
   assert(ch1 == ch2)
+///
+
+TEST ///
+-- Bad triangulations of the square
+V = transpose matrix {{0,0},{1,0},{0,1},{1,1}}
+T1 = {{0,1,2}}
+T2 = {{0,1,2},{0,1,3}}
+T3 = {{0,1,2,3}}
+assert(not naiveIsTriangulation(V, T1))
+assert(not naiveIsTriangulation(V, T2))
+assert(not naiveIsTriangulation(V, T3))
+assert(not topcomIsTriangulation(V, T1))
+assert(not topcomIsTriangulation(V, T2))
+assert(not topcomIsTriangulation(V, T3))
 ///
 
 -- This example is a good one, but takes too long to be run automatically
@@ -677,8 +716,6 @@ TEST ///
   assert not isRegularTriangulation(A,tri)
 
 ///
-
-
 
 
 end--

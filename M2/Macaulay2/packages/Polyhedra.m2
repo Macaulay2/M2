@@ -8,7 +8,7 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.9",
+    Version => "1.10",
     Date => "August 21, 2014",
     AuxiliaryFiles => true,
     Certification => {
@@ -60,5 +60,4 @@ newPackage("Polyhedra",
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --
 ---------------------------------------------------------------------------
-
 load "./Polyhedra/loadFile.m2"

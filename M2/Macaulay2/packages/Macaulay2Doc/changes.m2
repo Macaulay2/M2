@@ -6,7 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
-	  TO "changes, 1.11.1",
+	  TO "changes, 1.12",
 	  TO "changes, 1.11",
 	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
@@ -32,45 +32,32 @@ document {
      }
 
 document {
-     Key => "changes, 1.11.1",
+     Key => "changes, 1.12",
      UL {
-	  LI { "changes that might require user action:",
-	       UL {
-		    LI {
-			 "The browsable documentation pages are now files with names of the form ", TT "*.xhtml", ", whereas
-			 formerly they were of the form ", TT "*.html", ", in order to more accurately describe the content.
-			 You may notice that these files are handled differently by ", TO "viewHelp", " under MAC OS X, 
-			 so you may have to set the system's default handler for them.
-			 To do that, use the Finder to open the directory ", TT "/Applications/Macaulay2-1.11.1/share/doc/Macaulay2/SimpleDoc/html/", "
-			 that the file ", TT "_doc.xhtml", ", say, is in, right click on the file, select ", TT "Get info", " from the menu,
-			 set the application to your favorite browser, and then push ", TT "Change all...", "to change it for all *.xhtml files."
-			 }
-		    }
-	       },
      	  LI { "new packages:",
      	       UL {
-	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", TEX ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles 
-	               on the space of symmetric forms\", has been added." }
-     		    },
-	       UL {
-		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." }
+	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." },
+	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." },
+	       	    LI { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." },
+	       	    LI { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", TEX ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." },
+	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." },
+	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles on the space of symmetric forms\", has been added." },
+		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." },
+		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementating data types for noncommutative algebras, has been added." },
+		    LI { TO "SpaceCurves::SpaceCurves", ", a package by Frank Schreyer, Mike Stillman, and Mengyuan Zhang, for generation of space curves, has been added." },
+     	       	    LI { TO "ExteriorIdeals::ExteriorIdeals", ", a package by Marilena Crupi and Luca Amata for manipulating monomial ideals over exterior algebras, has been added." }
 		    }
 	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "Resultants::Resultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been published." },
+		    LI { star, " ", TO "SpaceCurves::SpaceCurves", ", a package by Frank Schreyer, Mike Stillman, and Mengyuan Zhang, for generation of space curves, has been published." },
+     	       	    LI { star, " ", TO "ReesAlgebra::ReesAlgebra", ", a package by David Eisenbud, Amelia Taylor, and Sorin Popescu for computations with Rees algebras, has been published." },
+     	       	    LI { star, " ", TO "Cremona::Cremona", ", a package by Giovanni Staglianò for computations for rational maps between projective varieties, has been published." },
+     	       	    LI { star, " ", TO "ExteriorIdeals::ExteriorIdeals", ", a package by Marilena Crupi and Luca Amata for manipulating monomial ideals over exterior algebras, has been published." }
+     	       	    }
+     	       },
      	  LI { "improved packages:",
      	       UL {
 		    LI {
@@ -89,10 +76,9 @@ document {
 			 were treated in the package ", TO "BGG::BGG", ", but the case of a product of projective spaces is
 			 much more subtle, since no term of the full Tate resolution is finitely generated."
 			 }
-
 		    }
 	       },
-	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	  LI { "functionality added or improved:",
 	       UL {
 		    LI {
 			 "The function ", TO "about", " has been added.  It allows one to search the documentation of all the
@@ -103,10 +89,6 @@ document {
 			 "The class ", TO "NumberedVerticalList", " has been added.  It's a new type of vertical list (see ", TO "VerticalList", ")
 			 that is also printed vertically, but with numbered entries, for ease of referring to them."
 			 },
-		    }
-	       },
-	  LI { "functionality added or improved:",
-	       UL {
 		    LI {
 			 "The option ", TT "AbsoluteLinks", " to ", TO "installPackage", " has been removed.  Better logic
 			 is now used internally, producing relative links only between files installed under the same prefix."
@@ -152,12 +134,12 @@ document {
 	       "commits, issues, and pull requests on github",
 	       UL {
 		    LI {
-			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.11.1%22+is%3Aclosed","closed 1.11.1 issues"}, ",
-			 for the issues and pull requests incorporated into 1.11.1."
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.12%22+is%3Aclosed","closed 1.12 issues"}, ",
+			 for the issues and pull requests incorporated into 1.12."
 			 },
 		    LI {
-			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.11.1","1.11.1 commits"}, " for complete information
-			 about all changes to the code incorporated into 1.11.1."
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.12","1.12 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.12."
 			 }
 		    }
 	       }
