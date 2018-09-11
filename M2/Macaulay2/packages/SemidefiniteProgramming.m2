@@ -14,7 +14,7 @@ newPackage(
       HomePage => "http://www.mit.edu/~parrilo/"}
     },
     Headline => "Semidefinite Programming Package",
-    Configuration => {"CSDPexec"=>"csdp","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
+    Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
 --  DebuggingMode => true,
     PackageImports => {"SimpleDoc"},
@@ -85,6 +85,8 @@ changeSolver = (solver, execpath) -> (
     )
 
 csdpexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"CSDPexec"
+if csdpexec === null then csdpexec = prefixDirectory | currentLayout#"programs" | "csdp"
+
 mosekexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"MOSEKexec"
 sdpaexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"SDPAexec"
 defaultSolver = chooseDefaultSolver(csdpexec,mosekexec,sdpaexec)
