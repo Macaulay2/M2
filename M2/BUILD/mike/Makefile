@@ -17,6 +17,19 @@ cmake-build: always
 ################
 ## mac os x ####
 ################
+darwin64-gcc8 : always
+	mkdir -p builds.tmp/darwin64-gcc8
+	cd builds.tmp/darwin64-gcc8; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="mpir flint pari ntl"
+
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
 	cd builds.tmp/darwin64-gcc6; ../../../../configure \
