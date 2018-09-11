@@ -1053,58 +1053,6 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A, LMatrixCCC *L, LMatrixCCC *U)
   return result;
 }
 
-#ifdef HAVE_MPACK
-/** clears and deletes mpfr array of length len
- */
-void Lapack::delete_mpack_array(__mpfr_struct *a, int len)
-{
-  for (int i = 0; i < len; i++) mpfr_clear(a + i);
-  delete a;
-}
-
-void Lapack::fill_from_mpack_array(CCelem *elemarray,
-                                   mpreal *mparray,
-                                   int cols,
-                                   int rows)
-{
-  CCelem *cursor;
-  for (int i = 0, k = 0; i < cols; i++, k++)
-    {
-      for (int j = 0, l = 0; j < rows; j++, l++)
-        {
-          cursor = elemarray + (k * rows + l);
-          mpfr_set(
-              cursor->re, (mparray[i * rows * 2 + j].getmp())[0], GMP_RNDN);
-        }
-    }
-  for (int i = 0, k = 0; i < cols; i++, k++)
-    {
-      for (int j = rows, l = 0; j < rows * 2; j++, l++)
-        {
-          cursor = elemarray + (k * rows + l);
-          mpfr_set(
-              cursor->im, (mparray[i * rows * 2 + j].getmp())[0], GMP_RNDN);
-        }
-    }
-  return;
-}
-
-// can't link... it looks like mpcomplex can't be supported by the current
-// version of MPACK
-// void Lapack::fill_from_mpack_array2(CCelem *elemarray, mpcomplex *mparray,
-// int cols, int rows)
-// {
-//      CCelem *c = elemarray;
-//      mpcomplex* mp = mparray;
-//      for (int i=0; i<cols*rows; i++,c++,mp++) {
-//        *c->re = *(mp->real().getmp()[0]);
-//        *c->im = *(mp->imag().getmp()[0]);
-//      }
-//      return;
-// }
-
-#endif
-
 bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
 {
   bool ret = true;

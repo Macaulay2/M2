@@ -802,23 +802,6 @@ gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 {
   return M->norm();
-#if 0
-  gmp_RR nm = get_norm_start(p, M->get_ring());
-  iterator *i = M->begin();
-  for (int c=0; c<n_cols(); c++)
-    {
-      for (i->set(c); i->valid(); i->next())
-        {
-          ring_elem a;
-          i->copy_ring_elem(a);
-          R->increase_maxnorm(nm, a);
-        }
-    }
-  delete i;
-  return nm;
-#else
-  return NULL;
-#endif
 }
 
 //////////////////////////////////

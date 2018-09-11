@@ -100,7 +100,7 @@ gmp_RR rawRandomRR(unsigned long precision)
   gmp_RR result = getmemstructtype(gmp_RR);
   mpfr_init2(result, precision);
   mpfr_urandomb(result, state);
-  return result;
+  return moveTo_gmpRR(result);
 }
 
 void rawRandomMpfr(mpfr_t result, unsigned long precision)

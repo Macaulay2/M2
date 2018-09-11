@@ -18,6 +18,13 @@ using QQ = mpq_srcptr;
 using QQmutable = mpq_ptr;
 using RRRelement = mpfr_srcptr;
 using RRRmutable = mpfr_ptr;
+struct mpfc_struct
+{
+  RRRelement re;
+  RRRelement im;
+};
+using CCCelement = mpfc_struct const *;
+using CCCmutable = mpfc_struct *;
 
 struct Nterm;
 typedef Nterm *tpoly;

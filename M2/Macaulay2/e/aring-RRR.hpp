@@ -68,7 +68,7 @@ class ARingRRR : public RingInterface
     mpfr_ptr res = getmemstructtype(mpfr_ptr);
     mpfr_init2(res, mPrecision);
     mpfr_set(res, &a, GMP_RNDN);
-    result = ring_elem(res);
+    result = ring_elem(moveTo_gmpRR(res));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const

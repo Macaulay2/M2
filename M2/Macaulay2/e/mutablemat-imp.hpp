@@ -302,7 +302,7 @@ gmp_RRorNull MutableMat<T>::norm() const
   mpfr_set_si(nm, 0, GMP_RNDN);
 
   MatrixOps::increase_norm(nm, mat);
-  return nm;
+  return moveTo_gmpRR(nm);
 }
 
 #endif
