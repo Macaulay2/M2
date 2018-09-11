@@ -10,13 +10,13 @@ newPackage(
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     --since 2018:
 	     {Name => "Alexandru Iosif", Email => "alexandru.iosif@ovgu.de"},
-			 {Name => "Michael Adamer", Email => "adamer@maths.ox.ac.uk"}
+	     {Name => "Michael Adamer", Email => "adamer@maths.ox.ac.uk"}
 	     },
 --    	HomePage => "http://www.math.uiuc.edu/~doe/", --page not working
-    	Headline => "reaction networks",
+        Headline => "reaction networks",
 	PackageImports => {"Graphs", "Polyhedra"},
         DebuggingMode => false,
-  	DebuggingMode => true,		 -- set to true only during development
+--  	DebuggingMode => true,		 -- set to true only during development
 	AuxiliaryFiles => true
     	)
 
@@ -29,17 +29,13 @@ export {"reactionNetwork",
     "Complexes",
     "ReactionRing",
     "NullSymbol",
-		"Input",
+    "Input",
     "NullIndex",
     "ReactionGraph",
     "stoichiometricSubspace",
     "stoichSubspaceKer",
     "createRing",
     "stoichiometricConeKer",
---    "superDoublingSets",
---    "preClusters",
---    "usters",
---    "hasIsolation",
  --   "ParameterRing",
     "steadyStateEquations",
     "conservationEquations",
@@ -60,8 +56,8 @@ export {"reactionNetwork",
     "reactionMatrix",
     "reactantMatrix",
     "negativeLaplacian",
-		"negativeUndirectedLaplacian",
-		"negativeWeightedLaplacian",
+    "negativeUndirectedLaplacian",
+    "negativeWeightedLaplacian",
     "subRandomInitVals",
     "subRandomReactionRates" --, "netComplex", "networkToHRF", "kk"
     }
@@ -78,7 +74,6 @@ stripCoef = (s) -> (
     while regex("[0-9]", s#i) =!= null do i = i+1;
     substring(i,length(s),s)
     )
-
 
 -- returns coefficient component of a summand
 specProportion = (s) -> (
@@ -97,8 +92,7 @@ repairReaction = (r, nsym) -> (
     rr
     )
 
--- todo: add functionality for different delimiters
-
+-- todo: add functionality for different 
 ReactionNetwork = new Type of MutableHashTable
 
 -- todo: 1) other types of input (eg. stoichiometry matrix)
@@ -280,7 +274,6 @@ SSE = flatten entries steadyStateEquations M
 toList apply(0..length SSE-1, i-> sub(SSE#i,P))
 ///
 
-
 addSpecies = method()
 addSpecies(String, ReactionNetwork) := (s,Rn) ->
 if not member(s,Rn.Species) then (
@@ -330,7 +323,6 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     else error "String not in expected format";
     )
 
-
 netComplex = (Rn,c) -> (
     C := flatten entries Rn.Complexes#c;
     l := apply(#Rn.Species, i -> if C#i == 0 then ""
@@ -353,7 +345,6 @@ glue (ReactionNetwork,ReactionNetwork) := (N1, N2) -> (
 glue (List, ReactionNetwork) := (L, N) -> glue(reactionNetwork(L, NullSymbol => N.NullSymbol), N)
 glue (ReactionNetwork, List) := (N, L) -> glue(N, reactionNetwork(L, NullSymbol => N.NullSymbol))
 
-
 TEST ///
 restart
 needsPackage "ReactionNetworks"
@@ -365,15 +356,12 @@ N2 = reactionNetwork("2B --> 0, B+C --> 2A, C <-- 0", NullSymbol => "0")
 glue(N1, N2)
 ///
 
-
-
 -- L is a list of options of the form "A" => "B"
 sub(ReactionNetwork, List) := (N, L) -> (
     T := new HashTable from L;
     N.Species = for s in N.Species list (if T#?s then T#s else s);
     N
     )
-
 
 TEST ///
 restart
@@ -383,8 +371,6 @@ sub(NM, {"A" => "Y"})
 N = oneSiteModificationA()
 sub(N, {"S_0" => "A"})
 ///
-
-
 
 networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "-->" |
     netComplex(N, last e))
@@ -469,7 +455,6 @@ termOut = (a,inp,out,N,R) -> if member(a,out/first) then (
     last out#p * product(inp,b->(xx_(first b,N,R))^(last b))
     ) else 0
 
-
 --maybe useful to fix steadyStateEquations
 -- W = for i from 0 to length R-1 list positions(first first R#i, (a,b) -> b=!=0)
 -- Z=for i from 0 to #R-1 list (R#i)#1
@@ -529,7 +514,6 @@ createRing N
 steadyStateEquations N
 ///
 
-
 -- helper function for laplacian: partitions ReactionGraph edges according to those which dont contain a null complex
 sepEdges = Rn -> (
     seps := new MutableHashTable from {NullEdges => {}, FullEdges => {}};
@@ -586,7 +570,6 @@ laplacian = (Rn, FF) -> (
 --why are initial values showing up here?????
 --cc_{species} show up in place of xx_{species}, have not been able to resolve why
 
-
 steadyStateEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     kk := toList(apply(0..length N.ReactionRates-1, i -> value(N.ReactionRates#i)));
@@ -628,7 +611,6 @@ conservationEquations CRN
 matrix{F}
 netList F
 ///
-
 
 -- Need to allow for parameters, either random or input by user, to translate the
 -- stoichiometric subspace
@@ -692,7 +674,6 @@ I = ideal CE
 J = ideal SSE
 I+J
 ///
-
 
 --New functions to be created
 isDeficient = Rn -> (
@@ -762,97 +743,16 @@ negativeWeightedLaplacian ReactionNetwork := Rn -> (
     A-D
     )
 
-
---Here start functions for the Isolation Property
-
 --here we compute the nonnegative kernel of the stoichiometric matrix
 stoichiometricConeKer = method ()
 stoichiometricConeKer ReactionNetwork := Rn -> (
     transpose rays stoichiometricMatrix Rn
     )
 
-<<<<<<< HEAD
-=======
---here we compute the superdoubling sets
-superDoublingSets = method()
-superDoublingSets ReactionNetwork := Rn -> (
-    doublingSet := symbol doublingSet;
-    superDoublingSets := set{};
-    eductMatrix := transpose reactantMatrix Rn;
-    for i from 0 to numColumns eductMatrix - 1 do (
-    	doublingSet = set{};
-    	for j from 0 to numColumns eductMatrix - 1 do(
-	    if j != i and eductMatrix_i == eductMatrix_j then(
-	    	doublingSet = doublingSet+set{j}
-		);
-    	    );
-    	if doublingSet =!= set{} then (doublingSet = doublingSet + set{i};
-    	    superDoublingSets = superDoublingSets + set{doublingSet};);
-	);
-    superDoublingSets
-    )
-
---here we compute the preclusters
-preClusters = method()
-preClusters ReactionNetwork := Rn -> (
-Ematrix := stoichiometricConeKer Rn;
-preclusters := set{};
-for sds in (toList superDoublingSets Rn) do(
-    for i from 0 to numRows Ematrix - 1 do(
-	if  set flatten entries (transpose Ematrix^{i}%(transpose Ematrix^(toList sds))) === set{0} then(
-	    sds = sds + set{i};
-	    );
-	);
-    preclusters = preclusters + set{sds};
-    );
-preclusters
-)
-
---here we compute the clusters
-clusters = method()
-clusters ReactionNetwork := Rn -> (
-    clust := preClusters Rn;
-    for pcl1 in (toList clust) do(
-    	for pcl2 in (drop(toList clust,1)) do(
-	    if (pcl1)*(pcl2)  =!= set{} then(
-	    	clust = clust - set{pcl1} - set{pcl2} + set {pcl1+pcl2};
-	    	);
-	    );
-    	);
-    clust
-    )
-
---here we compute Ematrixreduced
-reducedStoichiometricConeKer = method ()
-reducedStoichiometricConeKer ReactionNetwork := Rn -> (
-    reducedematrix := 0*mutableMatrix{{1..numColumns stoichiometricConeKer Rn}};
-    block := mutableMatrix{{}};
-    Ematrix := stoichiometricConeKer Rn;
-    clust := clusters Rn;
-    for cl in toList clust do(
-    	block = 0*mutableMatrix{{1..numColumns Ematrix}};
-    	for i in toList cl do(
-	    block = block + mutableMatrix Ematrix^{i};
-	    );
-    	reducedematrix = mutableMatrix((matrix reducedematrix)||(matrix block));
-    	);
-    matrix(reducedematrix^{1..numRows reducedematrix - 1})
-    )
->>>>>>> added my name (Michael)
-
--- here we check whether N has the isolation property
--- hasIsolation = method ()
--- hasIsolation ReactionNetwork := Rn -> (
---     )
-
---tests for the Isolation Property
 TEST ///
 assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
 assert (stoichiometricConeKer reactionNetwork "A <--> B" == matrix {{1}, {1}})
---assert (hasIsolation oneSiteModificationA() == true)
---assert (hasIsolation twoSiteModificationA() == true)
 ///
-
 
 --injectivityTest = Rn ->
 
@@ -865,7 +765,6 @@ negativeUndirectedLaplacian N
 assert(isWeaklyReversible N == true)
 assert(isWeaklyReversible wnt() == false)
 ///
-
 
 load "ReactionNetworks/motifs-Kisun.m2"
 load "ReactionNetworks/motifs-Cvetelina.m2"
