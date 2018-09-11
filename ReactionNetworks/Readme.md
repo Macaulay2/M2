@@ -9,7 +9,7 @@ Team members
     Iosif, Alexandru (alexandru.iosif@ovgu.de)
 
 Thing that we did:
-1. functions: negativeLaplacian, negativeWeightedLaplacian, negativeUndirectedLaplacian, stoichiometricConeKer, reducedStoichiometricConeKer, preClusters, clusters, superDoublingSets, hasIsolation
+1. functions: negativeLaplacian, negativeWeightedLaplacian, negativeUndirectedLaplacian, stoichiometricConeKer, 
 2. Added new inputs to ``reactionNetwork''
 3. added some documentation
 4. added new motifs
