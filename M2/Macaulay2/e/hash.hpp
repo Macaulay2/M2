@@ -38,6 +38,7 @@ class MutableEngineObject : public gc_cleanup
 
  public:
   MutableEngineObject() : mHashValue(mNextMutableHashValue++) {}
+  virtual ~MutableEngineObject() { /* nothing to do here */ }
   unsigned int hash() const { return mHashValue; }
 };
 

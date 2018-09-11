@@ -1,6 +1,6 @@
 I = Grassmannian(1,6, CoefficientRing => ZZ/101);
 S = ring I
-gbTrace=10
+--gbTrace=10
 elapsedTime C = res(I, FastNonminimal => true)
 
 S = ZZ/101[a..d]

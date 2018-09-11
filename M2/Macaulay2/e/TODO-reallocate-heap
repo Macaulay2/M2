@@ -1,4 +1,30 @@
-Plan #1:
+22 Aug 2018:
+  Todo to get code not leaking ZZ, QQ, RRR's
+  make tests for these.
+  try to make tests that exhibit crashing behavior too
+  make sure all gmp_ZZ, gmp_RR, gmp_QQ returned to the front end, are in gc land.
+  lower_associate_divisor: change interface, DON'T change a ring_elem...
+  lower_content: change interface.
+  make sure all elements in ring_elem are in gc land.
+    make sure all ring_elem's are reachable from gc land.
+      (this is probably OK, except possibly for recent changes to ZZ, ...)
+  dmat: these contain values from aring-zz, ..., and sometimes also ring_elem's.
+    so: make MutableMatrix both a gc allocated type (which it is now), and finalize it.
+  smat: probably the same
+    in any case this is an important, but different project.
+  ZZ.cpp: 
+    returned ring_elem's need to have limbs in gc land.
+  aring-zz, aring-qq, aring-RRR
+    make sure transfer to and from ring_elem is copy only.
+    Need to deal with potential aliasing? I think not, with the MutableMatrix being on malloc side of the barrier.
+  aring-zz-flint: we might be able to use this, if we wish.
+  the interface for ring_elem's might need to be changed in the aring* functions:
+  where are aring-... types used?  dmat, smat, but what about in RingElement?
+    audit for leaks, aliasing (e.g. in aring-zz, add(a,b,c), calling mpz_add: either all of a,b,c are in malloc land to start, or ALL need to be converted to malloc land
+        problem: if b and c are in gc land, and a == b, then mpz_add will possibly do a realloc, with disastrous results.
+
+previous notes:
+    Plan #1:
     D Langauge: where is the doc for it? (ans: in c/README)
     have types:
       gmpZZ = mpz_ptr_GC
@@ -68,4 +94,4 @@ Plan #1:
         
 notes:
   lower_content, lower_associate_divisor: modify a ring_elem in place.  Bad!
-          
+    they should return their results.
