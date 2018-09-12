@@ -6,10 +6,6 @@
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "dmat.hpp"
-#ifdef HAVE_MPACK
-#include <mpack/mblas_mpfr.h>
-#include <mpack/mlapack_mpfr.h>
-#endif
 #include <mpfr.h>
 
 /* Lapack routines */
