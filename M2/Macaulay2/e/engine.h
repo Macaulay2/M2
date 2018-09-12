@@ -2036,6 +2036,7 @@ enum gbTraceValues
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
+  // NAG begin
   Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH);
   SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
   SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator* H, const MutableMatrix *parameters);

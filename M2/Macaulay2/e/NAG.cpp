@@ -807,16 +807,6 @@ Matrix* SLP<Field>::evaluate(const Matrix* values)
 
   switch (program->array[4])
     {
-      /* obsolete !!!
-    case slpPREDICTOR:
-      out = nodes+num_consts+num_inputs;
-      predictor();
-      break;
-    case slpCORRECTOR:
-      out = nodes+num_consts+num_inputs;
-      corrector();
-      break;
-      */
       case slpCOMPILED:
         // evaluation via dynamically linked function
         // input: nodes (shifted by number of consts)
@@ -885,26 +875,19 @@ Matrix* SLP<Field>::evaluate(const Matrix* values)
             for (int j = 0; j < cols_out; j++, c++)
               {
                 // printf("%lf %lf \n", c->getreal(), c->getimaginary());
-
-                // mpfr_set_d(re, c->getreal(), GMP_RNDN);
-                // mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
-                // ring_elem e = from_BigReals(R,re,im);
                 ring_elem e = from_doubles(R, c->getreal(), c->getimaginary());
 
                 mat.set_entry(i, j, e);
               }
         }
         break;
-      default:  // interptretation
+      default:  // interpretation
         for (i = 0; i < rows_out; i++)
           for (int j = 0; j < cols_out; j++)
             {
               element_type c =
                   nodes[program->array[i * cols_out + j + out_entries_shift]];
 
-              // mpfr_set_d(re, c.getreal(), GMP_RNDN);
-              // mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
-              // ring_elem e = from_BigReals(R,re,im);
               ring_elem e = from_doubles(R, c.getreal(), c.getimaginary());
 
               mat.set_entry(i, j, e);

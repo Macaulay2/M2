@@ -112,18 +112,7 @@ inline ring_elem from_doubles(const CCC* C, double re, double im)
   C->ring().clear(a);
   return result;
 }
-/*
-inline ring_elem from_BigReals(const CCC* C, gmp_RR re, gmp_RR im)
-{
-  CCC::ElementType a;
-  C->ring().init(a);
-  C->ring().set_from_BigReals(a,re,im);
-  ring_elem result;
-  C->ring().to_ring_elem(result,a);
-  C->ring().clear(a);
-  return result;
-}
-*/
+
 inline gmp_CC toBigComplex(const CCC* C, ring_elem a)
 {
   CCC::ElementType b;
