@@ -15,6 +15,25 @@ static mpz_t maxHeight;
 static gmp_randstate_t state;
 static int32_t RandomSeed = MASK;
 
+void mpfr_reallocate_limbs (mpfr_ptr _z)
+{
+  __mpfr_struct tmp;
+  tmp = *_z;
+  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(tmp._mpfr_prec * sizeof(mp_limb_t));
+  memcpy(p, _z->_mpfr_d, tmp._mpfr_prec * sizeof(mp_limb_t));
+  mpfr_clear(_z);
+  _z->_mpfr_prec = tmp._mpfr_prec;
+  _z->_mpfr_sign = tmp._mpfr_sign;
+  _z->_mpfr_exp = tmp._mpfr_exp;
+  _z->_mpfr_d = p;
+}
+
+mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
+{
+  mpfr_reallocate_limbs(_z);
+  return _z;
+}
+
 void rawRandomInitialize()
 {
   RandomSeed = MASK;

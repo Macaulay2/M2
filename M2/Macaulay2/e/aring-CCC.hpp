@@ -26,13 +26,7 @@ class ARingCCC : public RingInterface
  public:
   static const RingID ringID = ring_CCC;
 
-  struct mpfc_struct
-  {
-    __mpfr_struct re;
-    __mpfr_struct im;
-  };
-  typedef mpfc_struct* mpfc_ptr;
-  typedef mpfc_struct elem;  // ??? staighten this out!!!
+  typedef cc_struct elem;  // ??? staighten this out!!!
   typedef elem ElementType;
   typedef ARingRRR RealRingType;
   typedef RealRingType::ElementType RealElementType;
@@ -81,21 +75,20 @@ class ARingCCC : public RingInterface
   ////////////////////////////
   // to/from ringelem ////////
   ////////////////////////////
-  // These simply repackage the element as either a ringelem or an
-  // 'ElementType'.
-  // No reinitialization is done.
-  // Do not take the same element and store it as two different ring_elem's!!
+  #warning "CCC to/from ring_elem need to be audited and changed"
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    mpfc_ptr res = getmemstructtype(mpfc_ptr);
+    cc_ptr res = getmemstructtype(cc_ptr);
     init(*res);
     set(*res, a);
-    result = MPF_RINGELEM(res);
+    mpfr_reallocate_limbs(&res->re);
+    mpfr_reallocate_limbs(&res->im);
+    result = ring_elem(res);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    set(result, *reinterpret_cast<mpfc_ptr>(a.poly_val));
+    set(result, *a.get_cc());
   }
 
   // 'init', 'init_set' functions

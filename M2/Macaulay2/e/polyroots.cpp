@@ -146,8 +146,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
         case M2::ring_RRR:
           for (Nterm *t = p->get_value(); t != NULL; t = t->next)
             {
-              gel(q, 2 + abs(*(t->monom))) = mpfr_get_GEN(
-                  reinterpret_cast<const mpfr_ptr>(t->coeff.poly_val));
+              gel(q, 2 + abs(*(t->monom))) = mpfr_get_GEN(t->coeff.get_mpfr());
             }
           break;
         case M2::ring_CCC:

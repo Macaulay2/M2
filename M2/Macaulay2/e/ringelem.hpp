@@ -18,13 +18,16 @@ using QQ = mpq_srcptr;
 using QQmutable = mpq_ptr;
 using RRRelement = mpfr_srcptr;
 using RRRmutable = mpfr_ptr;
-struct mpfc_struct
+
+// The following is the data type used for complex numbers in aring-CCC
+// Perhaps we should have it be 
+typedef struct 
 {
-  RRRelement re;
-  RRRelement im;
-};
-using CCCelement = mpfc_struct const *;
-using CCCmutable = mpfc_struct *;
+  __mpfr_struct re;
+  __mpfr_struct im;
+} cc_struct;
+using cc_ptr = cc_struct *;
+using cc_srcptr = cc_struct const *;
 
 struct Nterm;
 typedef Nterm *tpoly;
@@ -43,6 +46,7 @@ union ring_elem
   QQ mpq_val;
   ZZ mpz_val;
   mpfr_srcptr mpfr_val;
+  cc_srcptr cc_val;
  public:
   ring_elem() : poly_val(nullptr) {}
   // explicit ring_elem(int a) : int_val(a) {} // really want this version...
@@ -52,6 +56,7 @@ union ring_elem
   explicit ring_elem(double a) : double_val(a) {}
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
+  explicit ring_elem(cc_srcptr a) : cc_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
   explicit ring_elem(schur_poly* a) : schur_poly_val(a) {}
 
@@ -64,6 +69,7 @@ union ring_elem
   mpz_srcptr get_mpz() const { return mpz_val; }
   mpq_srcptr get_mpq() const { return mpq_val; }
   mpfr_srcptr get_mpfr() const { return mpfr_val; }
+  cc_srcptr get_cc() const { return cc_val; }
   const local_elem* get_local_elem() const { return local_val; }
   const schur_poly* get_schur_poly() const { return schur_poly_val; }
 };
@@ -85,20 +91,11 @@ struct vecterm : public our_new_delete
 
 #define MPQ_VAL(f) ((f).get_mpq())
 
-#define CCELEM_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
-#define CC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-#define CC_IM(f) ((CCELEM_VAL(f))->im)
-#define CC_RE(f) ((CCELEM_VAL(f))->re)
-#define CC_NORM(f) (sqrt(CC_RE(f) * CC_RE(f) + CC_IM(f) * CC_IM(f)))
+// these should only be used as temporary const.  Do not store results!
+#define BIGCC_IM(f) (&(f).get_cc()->im)
+#define BIGCC_RE(f) (&(f).get_cc()->re) 
 
-#define MPF_VAL(f) (reinterpret_cast<mpfr_ptr>((f).poly_val))
-#define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-
-#define BIGCC_VAL(f) (reinterpret_cast<gmp_CC>((f).poly_val))
-#define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
-#define BIGCC_RE(f) (BIGCC_VAL(f)->re)  // returns actual value, not copy
-#define BIGCC_IM(f) (BIGCC_VAL(f)->im)
-
+// TODO: these need to be replaced... no casting, need new slot in ring_elem union type
 #define TOWER_VAL(f) (reinterpret_cast<poly>((f).poly_val))
 #define TOWER_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
