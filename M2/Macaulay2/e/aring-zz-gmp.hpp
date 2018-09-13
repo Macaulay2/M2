@@ -215,6 +215,7 @@ class ARingZZGMP : public RingInterface
     mpz_ptr b = getmemstructtype(mpz_ptr);
     mpz_init(b);
     mpz_set(b, &a);
+    mpz_reallocate_limbs(b);
     result = ring_elem(b);
   }
 

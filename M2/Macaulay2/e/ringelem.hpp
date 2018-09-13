@@ -42,6 +42,7 @@ union ring_elem
   const schur_poly *schur_poly_val;
   const local_elem* local_val;
   int int_val;
+  long long_val;
   double double_val;
   QQ mpq_val;
   ZZ mpz_val;
@@ -53,6 +54,7 @@ union ring_elem
   ring_elem(int a) : int_val(a) {}
   ring_elem(Nterm *a) : poly_val(a) {}
   explicit ring_elem(mpz_srcptr a) : mpz_val(a) {}
+  explicit ring_elem(long a) : long_val(a) {}
   explicit ring_elem(double a) : double_val(a) {}
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
@@ -65,6 +67,7 @@ union ring_elem
   Nterm *get_poly() const { return poly_val; }
 
   int get_int() const { return int_val; }
+  long get_long() const { return long_val; }
   double get_double() const { return double_val; }
   mpz_srcptr get_mpz() const { return mpz_val; }
   mpq_srcptr get_mpq() const { return mpq_val; }

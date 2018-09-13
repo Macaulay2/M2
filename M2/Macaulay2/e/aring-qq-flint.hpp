@@ -226,15 +226,14 @@ class ARingQQFlint : public RingInterface
     mpq_ptr b = getmemstructtype(mpq_ptr);
     mpq_init(b);
     fmpq_get_mpq(b, &a);
-    result.poly_val = reinterpret_cast<Nterm*>(b);
+    mpz_reallocate_limbs(mpq_numref(b));
+    mpz_reallocate_limbs(mpq_denref(b));
+    result = ring_elem(b);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    // Currently, until QQ becomes a ConcreteRing, elements of QQ are gmp_QQ
-    // (aka mpq_t)
-    mpq_ptr t = reinterpret_cast<mpq_ptr>(const_cast<Nterm*>(a.poly_val));
-    fmpq_set_mpq(&result, t);
+    fmpq_set_mpq(&result, a.get_mpq());
   }
 
   /** @} */

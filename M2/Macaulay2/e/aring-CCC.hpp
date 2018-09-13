@@ -75,7 +75,6 @@ class ARingCCC : public RingInterface
   ////////////////////////////
   // to/from ringelem ////////
   ////////////////////////////
-  #warning "CCC to/from ring_elem need to be audited and changed"
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
     cc_ptr res = getmemstructtype(cc_ptr);

@@ -214,14 +214,12 @@ class ARingZZpFlint : public RingInterface
   // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    ElementType b = a;
-    result.poly_val = reinterpret_cast<Nterm *>(b);
+    result = ring_elem(static_cast<long>(a));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    ElementType b = reinterpret_cast<ElementType>(a.poly_val);
-    result = b;
+    result = static_cast<mp_limb_t>(a.get_long());
   }
 
  private:
