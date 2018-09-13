@@ -208,12 +208,10 @@ class ARingZZpFlint : public RingInterface
   ////////////////////////////
   // to/from ringelem ////////
   ////////////////////////////
-  // These simply repackage the element as either a ringelem or an
-  // 'ElementType'.
-  // No reinitialization is done.
-  // Do not take the same element and store it as two different ring_elem's!!
+  
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
+    assert(sizeof(mp_limb_t) <= sizeof(long));
     result = ring_elem(static_cast<long>(a));
   }
 

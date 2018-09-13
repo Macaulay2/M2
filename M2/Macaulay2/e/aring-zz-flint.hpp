@@ -220,15 +220,16 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
 
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    fmpz b;
-    fmpz_init_set(&b, &a);
-    result.poly_val = reinterpret_cast<Nterm*>(b);
+    mpz_ptr b = getmemstructtype(mpz_ptr);
+    mpz_init(b);
+    fmpz_get_mpz(b, &a);
+    mpz_reallocate_limbs(b);
+    result = ring_elem(b);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    fmpz t = reinterpret_cast<fmpz>(const_cast<Nterm*>(a.poly_val));
-    fmpz_set(&result, &t);
+    fmpz_set_mpz(&result, a.get_mpz());
   }
 
   /** @} */

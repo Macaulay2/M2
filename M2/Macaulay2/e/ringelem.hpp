@@ -29,6 +29,14 @@ typedef struct
 using cc_ptr = cc_struct *;
 using cc_srcptr = cc_struct const *;
 
+typedef struct
+{
+  double re;
+  double im;
+} cc_doubles_struct;
+using cc_doubles_srcptr = cc_doubles_struct const *;
+using cc_doubles_ptr = cc_doubles_struct *;
+
 struct Nterm;
 typedef Nterm *tpoly;
 class schur_poly;
@@ -47,6 +55,7 @@ union ring_elem
   QQ mpq_val;
   ZZ mpz_val;
   mpfr_srcptr mpfr_val;
+  cc_doubles_srcptr cc_doubles_val;
   cc_srcptr cc_val;
  public:
   ring_elem() : poly_val(nullptr) {}
@@ -59,6 +68,7 @@ union ring_elem
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
   explicit ring_elem(cc_srcptr a) : cc_val(a) {}
+  explicit ring_elem(cc_doubles_srcptr a) : cc_doubles_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
   explicit ring_elem(schur_poly* a) : schur_poly_val(a) {}
 
@@ -73,6 +83,7 @@ union ring_elem
   mpq_srcptr get_mpq() const { return mpq_val; }
   mpfr_srcptr get_mpfr() const { return mpfr_val; }
   cc_srcptr get_cc() const { return cc_val; }
+  cc_doubles_srcptr get_cc_doubles() const { return cc_doubles_val; }
   const local_elem* get_local_elem() const { return local_val; }
   const schur_poly* get_schur_poly() const { return schur_poly_val; }
 };
