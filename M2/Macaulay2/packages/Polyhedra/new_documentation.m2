@@ -30,6 +30,44 @@ doc ///
 
 doc ///
    Key
+      (minimalNonFaces, Fan)
+   Headline
+      Giving the minimal non-faces of a fan..
+   Usage
+      S = minimalNonFaces Phi
+   Inputs
+      Phi:Fan
+   Outputs
+      S:List
+        List of minimal non-faces of Phi
+   Description
+      Text
+         Returns a List with the indices of the minimal non-faces of a fan.
+      Example
+         S = minimalNonFaces normalFan hypercube 2
+///
+
+doc ///
+   Key
+      (stanleyReisnerRing, Fan)
+   Headline
+      Give the Stanley–Reisner ring of a fan.
+   Usage
+      SR = stanleyReisnerRing Phi
+   Inputs
+      Phi:Fan
+   Outputs
+      SR:Ring
+         The Stanley–Reisner Ring of Phi
+   Description
+      Text
+         Returns the Stanley–Reisner Ring of a fan, whose variables are indexed by the rays.
+      Example
+         SR = stanleyReisnerRing normalFan hypercube 2
+///
+
+doc ///
+   Key
       (faces, PolyhedralObject)
    Headline
       Giving the faces of a polyhedral object.
@@ -228,4 +266,148 @@ doc ///
          M = matrix {{0,1,2}}
          L = {{0,1},{1,2}}
          PC = polyhedralComplex(M,L)
+///
+
+
+doc ///
+   Key
+      coneFromHData
+      (coneFromHData, Matrix)
+      (coneFromHData, Matrix, Matrix)
+   Headline
+      Constructing a polyhedral cone as intersection of halfspaces.
+   Usage
+      C = coneFromHData H
+      C = coneFromHData(H, E)
+   Inputs
+      H:Matrix
+         Matrix containing the halfspaces as rows.
+      E:Matrix
+         Matrix containing equations as rows.
+   Outputs
+      C:Cone
+   Description
+      Text
+         Basic constructor for a cone that takes one or two matrices. The cone consists of all points that
+         evaluate positive with the rows of the first matrix and zero with the rows of the second matrix.
+///
+
+doc ///
+   Key
+      polyhedronFromHData
+      (polyhedronFromHData, Matrix, Matrix)
+      (polyhedronFromHData, Matrix, Matrix, Matrix, Matrix)
+   Headline
+      Construct a polyhedron as intersection of affine halfspaces.
+   Usage
+      P = polyhedronFromHData(H, h)
+      P = polyhedronFromHData(H, h, E, e)
+   Inputs
+      H:Matrix
+         Matrix containing the halfspaces as rows.
+      h:Matrix
+         Column matrix containing the left hand sides of the inequalities in {\tt H}.
+      E:Matrix
+         Matrix containing equations as rows.
+      e:Matrix
+         Column matrix containing the left hand sides of the equations in {\tt E}.
+   Outputs
+      P:Polyhedron
+   Description
+      Text
+         Basic constructor for a polyhedron from inequalities and equations. Produces the polyhedron
+         {\tt Hx>=h, Ex=e}.
+///
+
+
+doc ///
+   Key 
+      regularSubdivision 
+      (regularSubdivision,Polyhedron,Matrix)
+      (regularSubdivision,Matrix,Matrix)
+   Headline 
+      Computes the regular cell decomposition
+   Usage 
+      L = regularSubdivision(P,w)
+      L = regularSubdivision(M,w)
+   Inputs
+      P:Polyhedron
+      w:Matrix 
+         Row matrix containing the weights.
+      M:Matrix 
+         Matrix containing the points. 
+   Outputs
+      L:List
+         List of polyhedra or 
+         List of lists of indices indicated which points form a cell. 
+   Description
+      Text
+         This function computes the regular subdivision of {\tt P} given by the
+         weight vector {\tt w}.      This is computed by placing the i-th
+         lattice point of {\tt P} on height {\tt w}_i in n+1 space, taking the
+         convexHull of these with the ray (0,...,0,1), and projecting the
+         compact faces into n space. Note that the polyhedron must be compact,
+         i.e. a polytope and the length of the weight vector must be the number
+         of lattice points.
+
+         This function can also be used to compute the regular subdivision
+         given a matrix {\tt M} of points and a weight vector {\tt w}. The
+         points are lifted to the weights given by the matrix {\tt w}, and the
+         lower envelope is computed. 
+     
+      Example
+        P = crossPolytope 3
+        w =  matrix {{1,2,2,2,2,2,1}}
+        L = regularSubdivision(P,w)
+        apply(L,vertices)
+
+      Example 
+         M = matrix {{1,0,1,0},{1,1,0,0}}; 
+         w = matrix {{1,0,0,1}};
+         S = regularSubdivision (M,w) 
+///
+
+doc ///
+   Key
+      regularTriangulation
+      (regularTriangulation, Polyhedron)
+   Headline
+      Computes a regular triangulation of a given polytope.
+   Usage
+      T = regularTriangulation P
+   Inputs
+      P:Polyhedron
+   Outputs
+      T:List
+   Description
+      Text
+         This method computes a regular triangulation of a polytope using the package {\tt Topcom.m2}. The output is a list of list of indices which vertices of {\tt P} give a simplex in the triangulation.
+
+      Example
+         T = regularTriangulation hypercube 2
+///
+
+doc ///
+   Key
+      simplex
+      (simplex, ZZ)
+      (simplex, ZZ, QQ)
+   Headline
+      Produces a full-dimensional simplex
+   Usage
+      S = simplex d
+      S = simplex(d, a)
+   Inputs
+      d:ZZ
+         The dimension
+      a:QQ
+         The dilation factor
+   Outputs
+      S:Polyhedron
+   Description
+      Text
+         Returns the {\tt d}-dimensional simplex that is the convex hull of the origin and the unit vectors in {\tt QQ^d}.
+      Example
+         S = simplex 2
+         S = simplex(2,2)
 ///

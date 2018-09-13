@@ -38,10 +38,14 @@ protocols := {
      ("http://" , (host,port,url,body) -> getpost(host, url, body, (
 		    "$" | host | ":" | (if port =!= null then port else "http")
 		    ))),
-     ("https://", (host,port,url,body) -> getpost(host, url, body, (
+     ("https://", (host,port,url,body) -> (
+	       cmd := (
 	       	    "!openssl s_client -quiet -verify 1 -CApath ~/.w3/certs/" |
 	       	    " -host " | host | " -port " | (if port =!= null then port else "443")
-	       	    )))
+		    | " 2>/dev/null"
+	       	    );
+	       if debugLevel > 0 then << "cmd: " << cmd << endl;
+	       getpost(host, url, body, cmd)))
      }
 
 getWWW String := url -> getWWW(url,)

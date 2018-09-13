@@ -400,10 +400,6 @@ static void interrupt_handler(int sig) {
 			 _Exit(interruptExit);
 			 }
 		    interrupts_setInterruptFlag();
-		    # if 0
-		    /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
-		    if (reading_from_readline) rl_free_line_state();
-		    #endif
 		    if (interrupt_jump_set) 
 			 #ifdef HAVE_SIGLONGJMP
 			 siglongjmp(interrupt_jump,1);
@@ -761,12 +757,9 @@ char **argv;
      }
 
      signal(SIGPIPE,SIG_IGN);
-     have_arg_no_int = have_arg(argv,"--int");
 
-#if HAVE_DECL_RL_CATCH_SIGNALS     
-     if (have_arg_no_int)
-	  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
-#endif
+     /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
+     rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
 
      system_handleInterruptsSetup(TRUE);
      

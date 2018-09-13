@@ -148,7 +148,26 @@ else
 	$(MKDIR_P) $(LICENSE_DIR)
 	set -e ; cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ "$$p" $(LICENSE_DIR)) ; done
 endif
+	for l in $(LIBRARIESDIR)/lib/*.dylib $(LIBRARIESDIR)/lib/*.so $(LIBRARIESDIR)/lib/*.so.* ;	\
+	do if [ -f "$$l" ] ;										\
+	   then echo "copying $$l to @pre_exec_prefix@/@tail_librariesdir@" ;				\
+		$(MKDIR_P) "@pre_exec_prefix@/@tail_librariesdir@" ;					\
+		@INSTALL_DATA@ "$$l" "@pre_exec_prefix@/@tail_librariesdir@" ;				\
+	   fi												\
+	done
 	touch $@
+## Here's why we copy the libraries above.
+# Macaulay2 includes many third party "libraries", such as gdbm, mpir, mpfr, and
+# factory.  Some of these create shared library files (with names such as
+# libgdbm.so.4.0.0), and we are ready to link with them, but then we have to
+# distribute them along with the executable file M2-binary.  On the other hand,
+# if the library makes a static library file, with a name like libgdb.a, then we
+# don't have to distribute that.  So now as the last step after building and
+# installing a library, we copy the shared library files from the "usr-host"
+# directory tree in the build directory to the Macaulay2 part of the "usr-dist"
+# directory tree in the build directory.  In that location, they will be found
+# when running M2 or its thrid party programs, and they will be
+# distributed along with Macaulay2.
 
 .compiled-$(VERSION)   : .configured-$(VERSION)
 	$(WHY)

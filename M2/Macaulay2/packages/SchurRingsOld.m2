@@ -2,7 +2,7 @@
 --		Copyright 1996-2002,2004 by Daniel R. Grayson
 
 newPackage(
-	"SchurRings",
+	"SchurRingsOld",
     	Version => "0.2", 
     	Date => "May 23, 2007",
     	Authors => {

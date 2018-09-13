@@ -372,7 +372,7 @@ document {
 	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
 	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
 	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
-	  documentation hyperlinks from one package to another, provided the option ", TO "AbsoluteLinks", " is set to ", TO "true", "."
+	  documentation hyperlinks from one package to another."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
@@ -449,8 +449,8 @@ document {
 	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
 	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
 	  table from names, corresponding to the various types of files, to directory paths.  The
-	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", " or in one
-	  of the directories contained in the list ", TO "prefixPath", ".
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
+	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
 	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
 	  by the name of package whose files will be stored in that directory."
 	  },

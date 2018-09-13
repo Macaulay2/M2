@@ -142,7 +142,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void set_from_long(ElementType &result, long a) const;
 
-  void set_from_mpz(ElementType &result, const mpz_ptr a) const;
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const;
 
   bool set_from_mpq(ElementType &result, const mpq_ptr a) const;
 

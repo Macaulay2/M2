@@ -2627,7 +2627,7 @@ void init_chk(){
      setchkfun(break_K,chkbreak);
      setchkfun(new_K,chknewarray);
      setchkfun(use_K,chk_use);
-     setchkfun(malloc_K,chkmalloc);
+     setchkfun(GCmalloc_K,chkmalloc);
      setchkfun(Pointer_K,chkpointer);
      setchkfun(atomicPointer_K,chkatomicpointer);
      setchkfun(Type_K,chkrawtype);

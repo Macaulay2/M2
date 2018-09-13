@@ -329,7 +329,7 @@ ring_elem LocalRing::from_long(long n) const
   return ring_elem(f);
 }
 
-ring_elem LocalRing::from_int(mpz_ptr n) const
+ring_elem LocalRing::from_int(mpz_srcptr n) const
 {
   local_elem *f = new_local_elem();
   f->numer = mRing->from_int(n);

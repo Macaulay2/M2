@@ -149,6 +149,8 @@ compiler := (
 	    #endif
 	    ")));
 
+header "#include \"distributed-packages.h\"";
+
 setupconst("version", Expr(toHashTable(Sequence(
    "VERSION" => Ccode(constcharstar,"M2_version()"),
    "architecture" => Ccode(constcharstar,"ARCH"),
@@ -240,7 +242,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
    "endianness" => Ccode(constcharstar,"(char *)endianness_string"),
    "pointer size" => Ccode(int,"sizeof(void *)"),
-   "packages" => Ccode(constcharstar,"PACKAGES"),
+   "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
    "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")

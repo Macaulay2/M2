@@ -254,9 +254,9 @@ document {
 	  [newPackage,Certification], [newPackage,Reload], [newPackage,UseCachedExampleOutput], [newPackage, OptionalComponentsPresent]
 	  }, 
      Headline => "package item: start a new package",
-     Usage => "newPackage ( title )",
+     Usage => "newPackage ( pkgname )",
      Inputs => {
-	  "title" => "the name of the new package",
+	  "pkgname" => "the name of the new package",
 	  Version => String => {"the version number of the package.  A version number less than 1.0 indicates that the package is under
 	       development, and the user interface may change."},
 	  Date => String => "the date of this version of the package",

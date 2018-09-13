@@ -344,11 +344,11 @@ infoTagConvert = method()
 tagConvert := n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n
 infoTagConvert String := tagConvert
 infoTagConvert DocumentTag := tag -> (
-     pkgname := DocumentTag.Title tag;
+     pkgname := DocumentTag.PackageName tag;
      fkey := DocumentTag.FormattedKey tag;
      if pkgname === fkey then fkey = "Top";
      fkey = tagConvert fkey;
-     if pkgname =!= currentPackage#"title" then fkey = concatenate("(",pkgname,")",fkey);
+     if pkgname =!= currentPackage#"pkgname" then fkey = concatenate("(",pkgname,")",fkey);
      fkey)
 infoLinkConvert := s -> replace(":","_colon_",s)
 info TO  := x -> (
@@ -386,7 +386,13 @@ info IMG := net IMG := tex IMG  := x -> (
      if o#"alt" === null then error ("IMG item is missing alt attribute");
      o#"alt")
 
-info HREF := net HREF := x -> net last x
+info HREF := net HREF := x -> (
+     if #x === 1
+     then x#0
+     else if match ("^mailto:",x#0)
+     then toString x#1
+     else toString x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
+     )
 
 scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
 

@@ -128,7 +128,7 @@ document {
      SUBSECTION "from modules to ideals",
        "For any submodule of the rank one free 
        module ", TT "R", " we can obtain an ideal of the generators 
-       using the function ", TT "ideal", ".",
+       using the function ", TO "ideal", ".",
        EXAMPLE {
 	    "A = matrix{{x*y-z,z^3}};",
 	    "M = image A",

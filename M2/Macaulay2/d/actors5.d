@@ -712,13 +712,17 @@ method1c(e:Expr,env:Sequence):Expr := (
      else WrongArg("a class")
      );
 newmethod1(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else (
 	  f := s.0;
 	  output := s.1;
-	  env := Sequence(nullE,f);
-	  cfc := Expr(CompiledFunctionClosure(if output == True then method1c else method1,nextHash(),env));
-	  env.0 = cfc;
-	  cfc)
+	  when s.2 is typ:HashTable do (
+	       env := Sequence(nullE,f);
+	       cfc := Expr(CompiledFunctionClosure(if output == True then method1c else method1,nextHash(),env));
+	       if typ != compiledFunctionClosureClass then cfc = SpecialExpr(typ,cfc);
+	       env.0 = cfc;
+	       cfc)
+	  else WrongArg(3,"a type of CompiledFunctionClosure")
+	  )
      else WrongNumArgs(2));
 setupfun("newmethod1",newmethod1);
 

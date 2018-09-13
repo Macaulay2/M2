@@ -70,7 +70,7 @@ getProperty(PolyhedralObject, Thing) := (PO, property) -> (
 setProperty = method()
 setProperty(PolyhedralObject, Thing, Thing) := (PO, property, value) -> (
    if not hasProperty(PO, property) then PO.cache#property = value
-   else << "Warning: Property " << property << " already assigned." << endl
+   else if debugLevel > 3 then << "Warning: Property " << property << " already assigned." << endl
 )
 
 hasProperty = method()

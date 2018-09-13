@@ -1,12 +1,26 @@
 
 newPackage(
        "Cremona",
-	Version => "4.2.1", 
-        Date => "March 4, 2018",
+	Version => "4.2.2", 
+        Date => "May 21, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
-        AuxiliaryFiles => true
-)
+        AuxiliaryFiles => true,
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "A Macaulay2 package for computations with rational maps",
+	     "acceptance date" => "11 June 2018",
+	     "published article URI" => "https://msp.org/jsag/2018/8-1/p06.xhtml",
+	     "published article DOI" => "10.2140/jsag.2018.8.61",
+	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x06-Cremona.zip",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Cremona.m2",
+	     "release at publication" => "2e87a29e4b5b68af1bd8917a9c76d4008ff9fc5b",	    -- git commit number in hex
+	     "version at publication" => "4.2.2",
+	     "volume number" => "8",
+	     "volume URI" => "https://msp.org/jsag/2018/8-1/"
+	     }
+	)
 
 export{
    "ChernSchwartzMacPherson",
@@ -265,7 +279,7 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,inp3) -> (
    f:=map parametrize sub(ideal selectInSubring(1,gens gb sub(trim ideal last coefficients M,R)),K[a_0..a_N]);
    if dim target f <= 0 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
    PP':=PP[gens target f];
-   linSys:=transpose sub(sub((coefficients (sub(matrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
+   linSys:=transpose sub(sub((coefficients (sub(toMatrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
    toMap(linSys,Dominant=>o.Dominant)
 );
 

@@ -45,7 +45,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
-	  intersection(M,N))
+	  coneFromHData(M,N))
      else emptyPolyhedron ambDim(C))
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
@@ -71,7 +71,7 @@ refineCones = L -> (
    F := ccRefinement M;
    -- Collect for each cone of the ccRef the intersection of all original cones, that contain
    -- the interior of that cone
-   fan apply(getProperty(F, honestMaxObjects), 
+   fan apply(values getProperty(F, honestMaxObjects), 
       C -> (
          v := interiorVector(C);
          intersection select(L, c -> contains(c,v))

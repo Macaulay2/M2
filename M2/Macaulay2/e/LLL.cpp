@@ -10,8 +10,8 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
   // Assumed: num, den are elements of ZZ.
-  mpz_ptr a = num.get_mpz();
-  mpz_ptr b = den.get_mpz();
+  mpz_srcptr a = num.get_mpz();
+  mpz_srcptr b = den.get_mpz();
   if (mpz_sgn(a) < 0) return false;
   if (mpz_sgn(b) < 0) return false;
   if (mpz_cmp(a, b) > 0) return false;  // return false if a>b.
@@ -115,8 +115,8 @@ void LLLoperations::REDI(int k,
   ring_elem Dl, mkl, q;
   if (!lambda->get_entry(ell, k, mkl)) return;
   lambda->get_entry(ell, ell, Dl);
-  mpz_ptr a = mkl.get_mpz();
-  mpz_ptr b = Dl.get_mpz();  // b = D#ell
+  mpz_srcptr a = mkl.get_mpz();
+  mpz_srcptr b = Dl.get_mpz();  // b = D#ell
   mpz_t c, d;
   mpz_init(c);
   mpz_init(d);
