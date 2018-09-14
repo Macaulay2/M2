@@ -23,13 +23,11 @@ for i to 1000000 do (
     -- assert (abs(last flatten entries outM - 37/3) < 2^(-999))
     ) 
 
-for i to 1000000 do (
-    entries outM -- this leaks
-    ) 
-
 restart
+R = RR_53 -- OK
+R = RR_1000 -- OK
 R = CC_1000 -- OK
-R = ZZ -- leaks
+R = ZZ -- OK
 outM = mutableMatrix{{7_R}}; 
 debug Core
 for i to 100000000 do (
