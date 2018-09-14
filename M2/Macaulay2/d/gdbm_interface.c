@@ -29,7 +29,7 @@ int system_dbmopen(M2_string filename, M2_bool mutable) {
      int flags = mutable ? GDBM_WRCREAT : GDBM_READER;
      int mode = 0666;
      char *FileName = M2_tocharstar(filename);
-     GDBM_FILE f = gdbm_open(FileName, 0, flags, mode, NULL);
+     GDBM_FILE f = gdbm_open(FileName, 4096, flags, mode, NULL);
      freemem(FileName);
      if (f == NULL) return ERROR;
      if (numfiles == 0) {

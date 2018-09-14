@@ -43,15 +43,22 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
-CONFIGOPTIONS += --enable-tarfile
+ifneq ($(MACOSX),yes)
+# under Mac OS X, stripping the M2 binary seems to cause the program to crash on some examples, repeatedly
+CONFIGOPTIONS += --enable-strip
+endif
 ifeq ($(DEBIAN),yes)
 CONFIGOPTIONS += --enable-deb
-endif
+else
 ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
-endif
+else
 ifeq ($(MACOSX),yes)
 CONFIGOPTIONS += --enable-dmg
+else
+CONFIGOPTIONS += --enable-tarfile
+endif
+endif
 endif
 endif
 

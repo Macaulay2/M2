@@ -4,10 +4,10 @@
 include ../../include/config.Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
-ALL_PACKAGES = @PACKAGES@
+ALL_PACKAGES = $(shell cat @srcdir@/=distributed-packages)
 
 # this one can be overridden by the user:
-PACKAGES = @PACKAGES@
+PACKAGES = $(ALL_PACKAGES)
 
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests

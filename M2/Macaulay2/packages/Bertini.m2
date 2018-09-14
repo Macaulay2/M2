@@ -2147,7 +2147,7 @@ importMainDataFile(String) := o->(aString)->(
       theLine0:=separate(" ",allInfo_0);      
       aNewPoint.SolutionNumber=value (theLine0_1);
       if o.Verbose then print theLine0;
-      aNewPoint.PathNumber=value replace(")","",(theLine0_4));
+      aNewPoint.PathNumber=value replace(")|#","",(theLine0_4));
       --Estimated condition number
       theLine1:=separate(":",allInfo_1);
       aNewPoint.ConditionNumber=valueBM2(theLine1_1);

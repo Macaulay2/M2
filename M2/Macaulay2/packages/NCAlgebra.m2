@@ -13,7 +13,8 @@ newPackage("NCAlgebra",
 	   HomePage => "http://people.hamilton.edu/cgibbons/index.html",
 	   Email => "crgibbon@hamilton.edu"}},
      AuxiliaryFiles => true,
-     CacheExampleOutput =>true
+     CacheExampleOutput => true,
+     OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 
 export { "NCRing", "NCQuotientRing", "NCPolynomialRing",
@@ -1999,10 +2000,8 @@ newBasis(ZZ,NCRing) := NCMatrix => opts -> (n,B) -> (
       ncMatrix(B,{},{})
 )
 
-{*
-TEST ///
-restart
-debug needsPackage "NCAlgebra"
+if bergmanPresent then TEST ///
+debug NCAlgebra						   -- to get "newBasis"
 A = QQ{a,b,c,d}
 setWeights(A,{1,1,2,3})
 time b1 = flatten entries basis(8,A);
@@ -2012,7 +2011,6 @@ setWeights(B,{1,1,2,3})
 time b1 = flatten entries basis(15,B);
 time b2 = flatten entries newBasis(15,B);
 ///
-*}
 
 leftMultiplicationMap = method()
 leftMultiplicationMap(NCRingElement,ZZ) := (f,n) -> (
@@ -2053,10 +2051,7 @@ leftMultiplicationMap(NCRingElement,List,List) := (f,fromBasis,toBasis) -> (
    )
 )
 
-{*
-TEST ///
-restart
-needsPackage "NCAlgebra"
+if bergmanPresent then TEST ///
 A = QQ{a,b}
 I = ncIdeal {a*a*a,a*a*b,a*b*a,a*b*b,b*a*a,b*a*b,b*b*a,b*b*b}
 B = A/I
@@ -2068,7 +2063,6 @@ leftMultiplicationMap(a,-1,0)
 leftMultiplicationMap(a,-1,0)
 leftMultiplicationMap(a,-1,0)
 ///
-*}
 
 rightMultiplicationMap = method()
 rightMultiplicationMap(NCRingElement,ZZ) := (f,n) -> (

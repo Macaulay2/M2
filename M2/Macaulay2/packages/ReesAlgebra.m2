@@ -29,9 +29,23 @@ newPackage(
              {Name => "Sorin Popescu",
 	      Email => "sorin@math.sunysb.edu"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
-    	--DebuggingMode => false,
+    	DebuggingMode => false,
 	Reload =>true,
-    	Headline => "Rees algebras"
+    	Headline => "Rees algebras",
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "The ReesAlgebra package in Macaulay2",
+	     "acceptance date" => "21 May 2018",
+	     "published article URI" => "https://msp.org/jsag/2018/8-1/p05.xhtml",
+	     "published article DOI" => "10.2140/jsag.2018.8.49",
+	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x05-ReesAlgebra.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ReesAlgebra.m2",
+	     "release at publication" => "0ccfca1d3d08d13ed0da78435b2106209fcee1b1",	    -- git commit number in hex
+	     "version at publication" => "2.2",
+	     "volume number" => "8",
+	     "volume URI" => "https://msp.org/jsag/2018/8-1/"
+	     }
 	)
 -*
 restart
@@ -962,7 +976,7 @@ doc ///
       gi = map(R^2, I, matrix{{x},{y}})
       kernel gi
    Text
-      We can compose $ui, inci and gi$ with a surjection $R\to i$ to get maps
+      We can compose $ui, inci$ and $gi$ with a surjection $R\to i$ to get maps
       $u:R^1 \to R^3, inc: R^1 \to R^1$ and $g:R^1 \to R^2$ having image $i$.
    Example
       u= map(R^3,R^{-1},ui)
@@ -2618,209 +2632,3 @@ viewHelp ReesAlgebra
 
 ----
 
---minimum value of (ell,r):(g+n-1), ceiling(n-1)(m-1)/m
---here the estimate of r comes from the non-min reduction
---(a)(x)^[n].
-
---actual values: g = 2, m= 2 starting with n=4 it looks like ceiling(n/m)
---The following gives (ell,r) for n=2..6
---the case n = 6 took 524 seconds.
-     +------+
-o8 = |(3, 1)|
-     +------+
-     |(4, 2)|
-     +------+
-     |(5, 3)|
-     +------+
-     |(6, 3)|
-     +------+
-     |(7, 4)|
-     +------+
---actual values: g = 3, m = 2, n = 3,
-(n, ell, r, rsmall, rsmall theoretical)
-(3, 5, 2, 1, 1)
-     -- used 7.10124 seconds
-(4, 6, 3, 2, 2)
-
-
---could also be 1 more than rsmall.
---the case n = 6 took 524 seconds.
-
---elapsedTime (K = codim(j:i))
---AX = (ideal apply(g, i->a_i))* ideal apply(n,i->x_i^m)
---elapsedTime reductionNumber(i,AX)
-
-///
- 
-{* slightly slower
-reductionNumber (Ideal,Ideal) := (i,j) -> (
-     I:=i; -- will be a power of i
-     M:= ideal vars ring i; -- we're pretending to be in a local ring
-     rN:=0;
-     if isHomogeneous j then (
-     	  while not ((gens I)%j)==0 do (
-	       I = trim (i*I);
-	       j=  trim (i*j);
-     	       rN =rN+1))
-     else(
-     	  while not ((gens I)%(j+M*I))==0 do (
-	       I = trim(i*I);
-	       j= trim(i*j);
-     	       rN =rN+1));
-     rN)
-*}
-
-{* much slower
-reductionNumber (Ideal,Ideal,ZZ) := (i,j,t) -> (
-    --t is any integer, signals a different method
-     d := max flatten (i_*/degree);
-     I := i; -- will be a power of i
-     M := ideal vars ring i; -- we're pretending to be in a local ring
-     rN := 0;
-     J := j;
---      while not (gens I)% gb(gens J,DegreeLimit => (rN)*d) ==0 
-      while not (gens I)% gb(gens J) == 0
-            do (
-       I = trim i*I;
-       J = i*J;
-       rN =rN+1);
-     rN)
-*}
-{*
---The following seems to  be much slower!
-reductionNumber (Ideal, Ideal, String) := (i,j,s) -> (
-     Ifib := specialFiber(I);
-     Pfib := (ring Ifib); -- ambient ring of the fiber
-     n := numgens Pfib;
-     kk := coefficientRing Pfib;
-     M := sub(gens J // gens I, kk);
-     M = promote(M, Pfib);
-     L := (vars Pfib)*M; 
-     regularity (Pfib^1/ideal(leadTerm(Ifib+ideal L)))
-	  )
-*}
-
----------------------------
-
---jetsam
-doc ///
-  Key
-    associatedGradedRing
-    (associatedGradedRing, Ideal)
-    (associatedGradedRing, Ideal, RingElement)
-    
-  Headline
-    The associated graded ring of a ring with respect to powers of an ideal
-  Usage
-    associatedGradedRing I
-    associatedGradedRing(I,f)
-  Inputs
-    I:Ideal
-    f:RingElement
-      optional argument, if given it should be a non-zero divisor in the ideal I
-  Outputs
-    :Ring
-      the associated graded ring $R[It] \otimes R/I$
-  Description
-   Text
-    associatedGradedRing is a synonym for @TO normalCone@.
-  SeeAlso
-    reesAlgebra
-    normalCone
-    "tangentCone"
-///
-
-    normalCone(...,Variable=>w)
-        [normalCone, Variable]
-	
-	
------------------
-This 
-
-    doc ///
-       Key
-	symmetricAlgebraIdeal
-	(symmetricAlgebraIdeal, Ideal)    
-	(symmetricAlgebraIdeal, Module)
-	[symmetricAlgebraIdeal,Constants]
-	[symmetricAlgebraIdeal,DegreeLift]
-	[symmetricAlgebraIdeal,DegreeMap]
-	[symmetricAlgebraIdeal,DegreeRank]
-	[symmetricAlgebraIdeal,Degrees]
-	[symmetricAlgebraIdeal,Global]
-	[symmetricAlgebraIdeal,Heft]
-	[symmetricAlgebraIdeal,Inverses]
-	[symmetricAlgebraIdeal,Join]
-	[symmetricAlgebraIdeal,Local]
-	[symmetricAlgebraIdeal,MonomialOrder]
-	[symmetricAlgebraIdeal,MonomialSize]
-	[symmetricAlgebraIdeal,SkewCommutative]
-	[symmetricAlgebraIdeal,VariableBaseName]
-	[symmetricAlgebraIdeal,Variables]
-	[symmetricAlgebraIdeal,Weights]
-	[symmetricAlgebraIdeal,WeylAlgebra]
-       Headline
-	Ideal of the symmetric algebra of an ideal or module
-       Usage
-	I = symmetricAlgebra J
-       Inputs
-	I:Ideal
-	I: Module
-       Outputs
-	J:Ideal
-
-results in
-
-    Synopsis
-
-    Usage:
-	I = symmetricAlgebra J
-    Inputs:
-	I, an ideal
-	I, a module
-    Optional inputs:
-	Constants => ..., -- Ideal of the symmetric algebra of an ideal or module
-	DegreeLift => ..., -- Ideal of the symmetric algebra of an ideal or module
-	DegreeMap => ..., -- Ideal of the symmetric algebra of an ideal or module
-	DegreeRank => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Degrees => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Global => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Heft => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Inverses => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Join => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Local => ..., -- Ideal of the symmetric algebra of an ideal or module
-	MonomialOrder => ..., -- Ideal of the symmetric algebra of an ideal or module
-	MonomialSize => ..., -- Ideal of the symmetric algebra of an ideal or module
-	SkewCommutative => ..., -- Ideal of the symmetric algebra of an ideal or module
-	VariableBaseName => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Variables => ..., -- Ideal of the symmetric algebra of an ideal or module
-	Weights => ..., -- Ideal of the symmetric algebra of an ideal or module
-	WeylAlgebra => ..., -- Ideal of the symmetric algebra of an ideal or module
-    Outputs:
-	J, an ideal
-
-, which looks bad.  By contrast, look at
-
-  https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/Macaulay2Doc/html/_install__Package.html
-
-, which arise from this code:
-
-  https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Macaulay2Doc/functions/installPackage-doc.m2#L7
-
-Perhaps you could do something similar.
-
-	
-==================
-Delete these lines:
-
-    	DebuggingMode => false,
-	Reload => true  
-=================
-Don't put comments into strings:
-
-	///
-	restart
-	loadPackage("ReesAlgebra", Reload=>true)
-
-Use -* ... *- block comment syntax instead.  Also, change the old {* ... *}
-to the new syntax, so emacs will highlight it properly.
