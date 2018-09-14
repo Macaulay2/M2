@@ -5,16 +5,16 @@ document {
     TT "SOS", " is a package to solve sum-of-squares (SOS) problems. ",
     "The main tool behind this package is ",
     TO2{"SemidefiniteProgramming", "semidefinite programming"}, " (SDP). ",
-    "See ", TO "Solver", " for a discussion of the required SDP solvers. ",
 
     HEADER4 "Introduction",
     "Writing a polynomial as a sum-of-squares proves its nonnegativity for all arguments,
     but not all nonnegative polynomials are sum-of-squares.
     While nonnegativity of a polynomial is hard to check, there are efficient methods to find
-    sums-of-squares decompositions and this package makes some of them available in Macaulay2.  
+    sums-of-squares decompositions and this package makes some of them available in Macaulay2.
     These methods rely on semidefinite-programming solvers from
-    mathematical optimization.  While there is a built in solver in the package, 
-    it is highly recommended to configure an external ", TO Solver, ".",
+    mathematical optimization.  The semidefinite programming package in Macaulay2
+    ships with the CSDP solver so that everything is set up.  Check ",
+    TO Solver, " for how to configure different solvers.",
 
     HEADER4 "Usage examples",
     "The most basic application is to (try to) decompose a polynomial as a sum-of-squares using the function ", TO "solveSOS",
@@ -213,7 +213,7 @@ doc /// --cleanSOS
     Headline
         Remove terms with very small coefficients from a sum-of-squares.
     Usage
-        clean (tol, s) 
+        clean (tol, s)
     Inputs
 	  tol:RR
 	    the tolerance for the coefficients.
@@ -373,7 +373,7 @@ doc /// --solveSOS
         sosPoly sol
         sol#Parameters
       Text
-        It is possible to solve SOS problems with several parameters.  
+        It is possible to solve SOS problems with several parameters.
         In the following example we increase two of the coefficients of the Robinson polynomial until it becomes SOS
       Example
         R = QQ[x,y,z][s,t]
@@ -511,10 +511,10 @@ doc /// --sosdecTernary
         {\bf References:}
         {\it Products of positive forms, linear matrix inequalities, and Hilbert 17th problem for ternary forms}, E. de Klerk, and D.V. Pasechnik, European J. Oper. Res. (2004), pp. 39-45.
     Caveat
-        $\bullet$ 
+        $\bullet$
         This implementation only works with the @TO2 {Solver,"solvers"}@ "CSDP" and "MOSEK".
 
-        $\bullet$ 
+        $\bullet$
         Due to the iterative nature of the algorithm, it could happen that some of the the output SOS polynomials are rational while some are real.
 ///
 
@@ -918,4 +918,19 @@ doc /// --TraceObj
       Code
       Pre
     SeeAlso
+///
+
+
+doc /// -- the Solver option is documented in the semidefinite programming documentation
+    Key
+      [solveSOS,Solver]
+      [sosdecTernary,Solver]
+      [sosInIdeal,Solver]
+      [lowerBound,Solver]
+    Headline
+      picking a semidefinite programming solver
+    Description
+      Text
+        Macaulay2 has a powerful solver already configured.  If necessary you can use this variable to
+        change the SDP solver used in the background.  See @TO Solver@ for details.
 ///

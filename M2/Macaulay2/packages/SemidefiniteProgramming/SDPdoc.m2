@@ -107,7 +107,7 @@ doc /// --PSDdecomposition
       Text
         Given a positive semidefinite matrix $A$, this method factorizes it in the form $P' A P = L D L'$,
         where $P$ is a permutation matrix,
-        $L$ is nonsingular, 
+        $L$ is nonsingular,
         $D$ is diagonal.
         If $A$ is a real matrix, this factorization is obtained from its eigenvalue decomposition.
         For rational matrices we use the LDL decomposition [Golub-vanLoan'89].
@@ -232,10 +232,10 @@ document { --Solver
         [solveSDP,Solver],
         },
     Headline => "picking a semidefinite programming solver",
-    "Many important computations in this package rely on an efficient SDP solver. ",
-    "There is a very rudimentary implementation of such a solver in the Macaulay2 language. ",
+    "This package interfaces semidefinite programming solvers in Macaulay2. ",
+    "There is also a rudimentary implementation of such a solver in the Macaulay2 language. ",
     "It is called the M2 solver but for most applications it will be insufficient. ",
-    "For this reason it is almost mandatory to install another solver. ",
+    "For this reason Macaulay2 also ships the CSDP solver. ",
     "The package supports the following solvers: ",
     UL{
       {"\"M2\"", " -- a simple dual interior point method implemented in Macaulay2"},
@@ -243,16 +243,17 @@ document { --Solver
        {"\"SDPA\"", " -- this is an open source solver, available at ", TT "http://sdpa.sourceforge.net/" },
        {"\"MOSEK\"", " -- this is a commercial solver, free for academic use, available at ", TT "https://www.mosek.com/" },
       },
-    "Before any serious computation the user should install CSDP, SDPA or MOSEK. ",
+    "The CSDP solver is shipped with Macaulay2 and configured as the default solver. ",
     "In our experience CSDP and MOSEK give the best results. ",
-    "An easy way to make a solver available to Macaulay2  is to add the executable to the PATH environment variable. ",
-    "Another way is to explicitly specify the location of the executable when loading the package:",
+    "An easy way to make an additional solver available to Macaulay2 is to add the executable to the PATH environment variable. ",
+    "Another way is to explicitly specify the location of the executable in the package configuration:",
     EXAMPLE lines ///
        needsPackage ("SemidefiniteProgramming", Configuration=>{"CSDPexec"=>"/some/path/csdp"});
        needsPackage ("SemidefiniteProgramming", Configuration=>{"SDPAexec"=>"/some/path/sdpa"});
        needsPackage ("SemidefiniteProgramming", Configuration=>{"MOSEKexec"=>"/some/path/mosek"});
     ///,
-    "The method ", TO "checkSolver", " can be used to check if a solver works.",
+    "A third method is to use the function ", TO changeSolver, ". ",
+    "After configuring, the method ", TO "checkSolver", " can be used to check if a solver works.",
     BR{},
     BR{},
 
@@ -269,3 +270,62 @@ document { --Solver
         applicationDirectory()
     ///,
     }
+
+
+doc ///
+    Key
+      changeSolver
+    Headline
+      change the SDP solver
+    Usage
+      changeSolver (solver, path)
+    Inputs
+        Solver:String
+	  the name of the solver to configure: CSDP, MOSEK, or SDPA
+	path:String
+	  the full path to the executable of the solver
+    Description
+      Text
+        The path can be specified as an absolute or relative path of the executable and must include the name of the executable.        
+      Example
+        changeSolver ("CSDP", "/path/to/csdp")
+    Caveat
+      The function does not check if the specified executable exists or is functional.  To find out try @TO checkSolveSDP@.
+    SeeAlso
+      Solver
+///
+
+doc ///
+    Key
+      checkSolveSDP
+    Headline
+      check an SDP solver
+    Usage
+      checkSolveSDP (solver, applyTest)
+    Inputs
+        Solver:String
+	  the name of the solver to configure: CSDP, MOSEK, M2, or SDPA
+	applyTest:Function
+	  A boolean function that specifies for each integer i if the ith test should be run.
+    Description
+      Text
+        Use this function to run some basic checks with an SDP solver
+      Example
+        checkSolveSDP ("CSDP", i->true)
+    Caveat
+    SeeAlso
+      Solver
+///
+
+doc ///
+    Key
+      "mosekexec"
+      "csdpexec"
+      "sdpaexec"
+    Headline
+      Locations of executables
+    Description
+      Text
+        The package uses these mutable variables to store the paths of the executables.
+	They can be edited by the user.  The prefered way to do this is @TO changeSolver@, though.
+///
