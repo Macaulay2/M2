@@ -55,3 +55,11 @@ assert(numRows linealitySpace FG == 2)
 assert(ambDim FG == 2)
 assert(F == FG)
 ///
+
+-- isWellDefined should fail for redundant rays and bad intersections
+TEST ///
+M = transpose matrix {{1,0},{1,1},{1,-1}}
+assert(not isWellDefined fan(M, {{0,1,2}}))
+M = transpose matrix {{1,0},{1,1},{1,-1},{0,1}}
+assert(not isWellDefined fan(M, {{1,2},{0,3}}))
+///

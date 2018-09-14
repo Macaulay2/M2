@@ -17,7 +17,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
 	  N = N || M^pos;
 	  w = w || lift(v^pos,ZZ);
-	  intersection(M,lift(v,ZZ),N,w))
+	  polyhedronFromHData(M,lift(v,ZZ),N,w))
      else emptyPolyhedron ambDim(P))
 
 
@@ -122,17 +122,28 @@ faceFan Polyhedron := P -> (
 --   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
 --     	    	       many entries
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
-cellDecompose = method(TypicalValue => List)
-cellDecompose (Polyhedron,Matrix) := (P,w) -> (
+regularSubdivision = method(TypicalValue => List)
+regularSubdivision (Polyhedron,Matrix) := (P,w) -> (
+   if not isCompact P then error("The polyhedron must be compact.");
    n := dim P;
    LP := latticePoints P;
+   LP = transpose matrix apply(LP, l -> flatten entries l);
    -- Checking for input errors
-   if numColumns w != #LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
-   LP = matrix{LP}||w;
-   P = convexHull(LP,matrix (toList(dim P:{0})|{{1}}));
-   A := map(QQ^n,QQ^n,1) | map(QQ^n,QQ^1,0);
-   flatten apply(facesAsPolyhedra(1,P), f -> if isCompact f then affineImage(A,f) else {})
+   if numColumns w != numColumns LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
+   S := regularSubdivision (LP, w);
+   apply (S, s -> convexHull LP_s)
 )
+
+regularSubdivision (Matrix,Matrix) := (M,w) -> (
+   n := numColumns M;
+   -- Checking for input errors
+   if numColumns w != numColumns M or numRows w != 1 then error("The weight must be a one row matrix with number of points many entries");
+   P := convexHull(M||w,matrix (toList(numRows M:{0})|{{1}}));
+   F := select(faces (1,P), f -> #(f#1) ==0);
+   apply (F, f -> f#0)
+  )
+
+
 
 
 --   INPUT : 'P',  a polyhedron,
@@ -194,8 +205,8 @@ isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope
 --COMMENTS : The triangulation is build recursively, for each face that is not a simplex it takes 
 --     	     the weighted centre of the face. for each codim 1 face of this face it either takes the 
 --     	     convex hull with the centre if it is a simplex or triangulates this in the same way.
-triangulate = method()
-triangulate Polyhedron := P -> (
+barycentricTriangulation = method()
+barycentricTriangulation Polyhedron := P -> (
      -- Defining the recursive face triangulation
      -- This takes a polytope and computes all facets. For each facet that is not a simplex, it calls itself
      -- again to replace this facet by a triangulation of it. then it has a list of simplices triangulating 
@@ -240,7 +251,7 @@ triangulate Polyhedron := P -> (
      -- Computing the facets of P as lists of their vertices
      (HS,v) := halfspaces P;
      (hyperplanesTmp,w) := hyperplanes P;
-     originalFacets := apply(numRows HS, i -> intersection(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
+     originalFacets := apply(numRows HS, i -> polyhedronFromHData(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
      originalFacets = apply(originalFacets, f -> (
 	       V := vertices f;
 	       (set apply(numColumns V, i -> V_{i}),set {})));
@@ -263,6 +274,7 @@ latticeVolume Polyhedron := P -> getProperty(P, latticeVolume)
 --  OUTPUT : QQ, giving the volume of the polytope
 volume = method(TypicalValue => QQ)
 volume Polyhedron := P -> (
+   if isEmpty P then return 0;
    d := dim P;
    result := latticeVolume P;
    result/(d!)

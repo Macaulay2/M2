@@ -88,7 +88,7 @@ computedLP = sort matrix {latticePoints P};
 assert(desiredLP == computedLP);
 ///
 
--- Test intersection/2-B.poly
+-- Test polyhedronFromHData/2-B.poly
 -- Checking latticePoints
 TEST ///
 verticesP = matrix {{-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1},{-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1},{-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,1,1,1,1},{-1,-1,-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,1,1}};

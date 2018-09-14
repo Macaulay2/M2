@@ -18,7 +18,7 @@ directProduct (Polyhedron,Polyhedron) := (P,Q) -> (
      --                                         |0  Nq|            |wq|
      N := Np ++ Nq;
      w := wp || wq;
-     intersection(M,v,N,w))
+     polyhedronFromHData(M,v,N,w))
 
 
 --   INPUT : '(C1,C2)',  two cones
@@ -35,7 +35,7 @@ directProduct (Cone,Cone) := (C1,C2) -> (
      -- Constructing the new hyperplanes matrix |Np 0 |
      --                                         |0  Nq|
      N := Np ++ Nq;
-     intersection(M,N))
+     coneFromHData(M,N))
 
 
 --   INPUT : '(C,P)',  a cone and a polyhedron
