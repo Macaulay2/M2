@@ -1,7 +1,7 @@
 newPackage(
     "SOS",
     Version => "2.0",
-    Date => "August 22, 2018",
+    Date => "September 2018",
     Authors => {
      {Name => "Diego Cifuentes",
       Email => "diegcif@mit.edu",
@@ -19,8 +19,6 @@ newPackage(
     },
     Headline => "Sum-of-Squares Package",
     AuxiliaryFiles => true,
-    UseCachedExampleOutput => true,
-    CacheExampleOutput => false,
 --  DebuggingMode => true,
     PackageImports => {"SimpleDoc","FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"}
