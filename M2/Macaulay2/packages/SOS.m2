@@ -870,8 +870,10 @@ informAboutTests = t -> (
     print("Test Results: " | testsString t);
     )
 
--- In the following methods the argument applyTest 
--- allows to specify which tests should be performed
+-- In the following methods the argument applyTest is a boolean
+-- function that for i should return whether the i-th test should be
+-- run.
+
 
 --checkSolveSOS
 checkSolveSOS = (solver,applyTest) -> (
@@ -1313,4 +1315,20 @@ TEST /// --lowerBound
     tests := set{0,1,2,4,5,6};
     results := checkLowerBound("M2",i->member(i,tests))
     assert all(results,t->t=!=false);
+///
+
+--12
+-- Run all checks with CSDP
+TEST ///
+    debug needsPackage "SOS"
+    results := checkLowerBound("CSDP", i->true);
+    assert (unique results == {true});
+    results = checkSolveSOS("CSDP", i->true);
+    assert (unique results == {true});
+    results = checkSosInIdeal("CSDP", i->true);
+    assert (unique results == {true});
+    results = checkSolveSDP("CSDP", i->true);
+    assert (unique results == {true});
+    results = checkSosdecTernary("CSDP", i->true);
+    assert (unique results == {true});
 ///
