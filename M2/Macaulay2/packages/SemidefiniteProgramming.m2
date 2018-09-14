@@ -1,7 +1,7 @@
 newPackage(
     "SemidefiniteProgramming",
     Version => "0.1",
-    Date => "September 7, 2018",
+    Date => "September 2018",
     Authors => {
      {Name => "Diego Cifuentes",
       Email => "diegcif@mit.edu",
