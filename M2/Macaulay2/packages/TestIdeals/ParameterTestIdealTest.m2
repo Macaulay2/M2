@@ -16,7 +16,7 @@ time tau=testModule(R/I);
 assert((tau#1)==Omega);
 assert((tau#2)== x_1^3*x_2*x_3+x_1^3*x_2*x_4+x_1^2*x_3*x_4*x_5+x_1*x_2*x_3*x_4*x_5+x_1*x_2*x_4^2*x_5+x_2^2*x_4^2*x_5+x_3*x_4^2*x_5^2+x_4^3*x_5^2); 
 assert(substitute( (tau#0):(tau#1),R)==ideal(x_1, x_2, x_3+x_4));
-time assert(isFrational(R/I)==false);
+time assert(isFRational(R/I)==false);
 
 
 
@@ -32,7 +32,7 @@ R=ZZ/pp[X_1..X_3];
 I=ideal(X_1^3+X_2^3+X_3^3);
 tau=testModule(R/I);
 time assert(substitute( tau#0,R)==ideal(X_1, X_2, X_3));
-time assert(isFrational(R/I)==false);
+time assert(isFRational(R/I)==false);
 
 
 ///
@@ -43,12 +43,12 @@ TEST /// --an easy veronese
     g = map(T, S, {x^3, x^2*y, x*y^2, y^3});
     R = S/(ker g);
     assert( isCohenMacaulay(R) );
-    assert( isFrational(R) );
+    assert( isFRational(R) );
 ///
 
 TEST /// --test for weird user inputs
     R = ZZ/11[];
-    assert(isFrational(R));
+    assert(isFRational(R));
 ///
 
 TEST /// --an old F-rational but not F-regular Hochster-Huneke example "Tight closure of parameter ideals and splitting in module-Finite extensions"
@@ -56,6 +56,6 @@ TEST /// --an old F-rational but not F-regular Hochster-Huneke example "Tight cl
     S = ZZ/7[a,b,c,d,e];
     g = map(T, S, {x, y^3, y^2*z, y*z^2, z^3});
     R = S/(ker g);
-    assert(isFrational(R));
-    assert(not isFregular(R));
+    assert(isFRational(R));
+    assert(not isFRegular(R));
 ///
