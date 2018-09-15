@@ -28,6 +28,25 @@ void mpfr_reallocate_limbs (mpfr_ptr _z)
   _z->_mpfr_d = p;
 }
 
+inline void mpz_reallocate_limbs (mpz_ptr _z)
+{ 
+  int _s = _z->_mp_size;
+  int _as = (_s>0)?_s:-_s;
+  mp_limb_t *_p = (mp_limb_t*) GC_MALLOC(_as*sizeof(mp_limb_t));
+  memcpy(_p,_z->_mp_d,_as*sizeof(mp_limb_t));
+  mpz_clear(_z);
+  _z->_mp_d = _p;
+  _z->_mp_size = _s;
+  _z->_mp_alloc = _as;
+}
+
+  inline gmp_QQ moveTo_gmpQQ (mpq_ptr z)
+  {
+    mpz_reallocate_limbs(mpq_numref(z));
+    mpz_reallocate_limbs(mpq_denref(z));
+    return z;
+  }
+
 mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
 {
   mpfr_reallocate_limbs(_z);
@@ -72,7 +91,7 @@ int32_t rawRandomInt(int32_t max)
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
 /* if height is the null pointer, use the default height */
 {
-  mpz_ptr result = getmemstructtype(gmp_ZZ);
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   if (maxN == 0)
     mpz_urandomm(result, state, maxHeight);
@@ -82,6 +101,7 @@ gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
     }
   else
     mpz_urandomm(result, state, maxN);
+  mpz_reallocate_limbs(result);
   return result;
 }
 
@@ -89,7 +109,7 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
 /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */
 {
-  gmp_QQ result = getmemstructtype(gmp_QQ);
+  mpq_ptr result = getmemstructtype(mpq_ptr);
   mpq_init(result);
   if (height == 0) height = maxHeight;
   mpz_urandomm(mpq_numref(result), state, height);
@@ -97,7 +117,7 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
   mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
   mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
   mpq_canonicalize(result);
-  return result;
+  return moveTo_gmpQQ(result);
 }
 
 void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)

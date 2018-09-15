@@ -18,6 +18,13 @@ inline void mpz_reallocate_limbs (mpz_ptr _z)
   _z->_mp_alloc = _as;
 }
 
+  inline gmp_QQ moveTo_gmpQQ (mpq_ptr z)
+  {
+    mpz_reallocate_limbs(mpq_numref(z));
+    mpz_reallocate_limbs(mpq_denref(z));
+    return z;
+  }
+
 /*
 inline gmp_ZZ moveToZZ (mpz_ptr _z)
 { 

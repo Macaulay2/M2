@@ -557,8 +557,9 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
   const Ring *R = a->get_ring();
   if (R->is_ZZ())
     {
-      #warning "remove const_cast once gmp_ZZ is const"
-      return const_cast<gmp_ZZ>(a->get_value().get_mpz());
+      // Note: RingElement ZZ elements are on the "gc" side of the memory barrier, and
+      // are read only.  Therefore we can just return the same value.
+      return a->get_value().get_mpz();
     }
   if (R->isFinitePrimeField())
     {
@@ -568,7 +569,7 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
       assert(res.first);
 
       mpz_init_set_si(result, static_cast<int>(res.second));
-      #warning "change limbs to GC space"
+      mpz_reallocate_limbs(result);
       return result;
     }
   ERROR("Expected ZZ or ZZ/p as base ring");
@@ -582,8 +583,7 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
       ERROR("expected an element of QQ");
       return nullptr;
     }
-#warning "once gmp_QQ changes to const, remove this cast"
-  return const_cast<gmp_QQ>(a->get_value().get_mpq());
+  return a->get_value().get_mpq();
 }
 
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
@@ -1272,8 +1272,7 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
           return 0;
         }
       ring_elem result = S->dimension(f->get_value());
-#warning "const cast from mpz_srcptr to mpz_ptr"
-      return const_cast<mpz_ptr>(result.get_mpz());
+      return result.get_mpz();
   } catch (exc::engine_error e)
     {
       ERROR(e.what());
