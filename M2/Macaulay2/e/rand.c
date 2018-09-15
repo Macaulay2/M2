@@ -40,17 +40,25 @@ inline void mpz_reallocate_limbs (mpz_ptr _z)
   _z->_mp_alloc = _as;
 }
 
-  inline gmp_QQ moveTo_gmpQQ (mpq_ptr z)
-  {
-    mpz_reallocate_limbs(mpq_numref(z));
-    mpz_reallocate_limbs(mpq_denref(z));
-    return z;
-  }
+inline gmp_QQ moveTo_gmpQQ (mpq_ptr z)
+{
+  mpz_reallocate_limbs(mpq_numref(z));
+  mpz_reallocate_limbs(mpq_denref(z));
+  return z;
+}
 
 mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
 {
   mpfr_reallocate_limbs(_z);
   return _z;
+}
+
+inline gmp_CC moveTo_gmpCC (cc_ptr _z)
+{
+  CCmutable_struct* a = (CCmutable_struct*) _z;
+  mpfr_reallocate_limbs(a->re);
+  mpfr_reallocate_limbs(a->im);
+  return (gmp_CC) a;
 }
 
 void rawRandomInitialize()
@@ -136,7 +144,7 @@ gmp_RR rawRandomRR(unsigned long precision)
 /* returns a uniformly distributed random real with the given precision, in
  * range [0.0,1.0] */
 {
-  gmp_RR result = getmemstructtype(gmp_RR);
+  mpfr_ptr result = getmemstructtype(mpfr_ptr);
   mpfr_init2(result, precision);
   mpfr_urandomb(result, state);
   return moveTo_gmpRR(result);
@@ -154,10 +162,12 @@ gmp_CC rawRandomCC(unsigned long precision)
 /* returns a uniformly distributed random complex in the box [0.0,0.0],
  * [1.0,1.0] */
 {
-  gmp_CC result = getmemstructtype(gmp_CC);
-  result->re = rawRandomRR(precision);
-  result->im = rawRandomRR(precision);
-  return result;
+  cc_ptr result = getmemstructtype(cc_ptr);
+  mpfr_init2(& result->re, precision);
+  mpfr_init2(& result->im, precision);
+  rawRandomMpfr(& result->re, precision);
+  rawRandomMpfr(& result->im, precision);
+  return moveTo_gmpCC(result);
 }
 
 // Local Variables:
