@@ -2,6 +2,7 @@
 
 #include "rand.h"
 #include "../d/M2mem.h"
+#include "ringelem.hpp"
 
 #define INITIALMAXINT 10
 
@@ -14,52 +15,6 @@
 static mpz_t maxHeight;
 static gmp_randstate_t state;
 static int32_t RandomSeed = MASK;
-
-void mpfr_reallocate_limbs (mpfr_ptr _z)
-{
-  __mpfr_struct tmp;
-  tmp = *_z;
-  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(tmp._mpfr_prec * sizeof(mp_limb_t));
-  memcpy(p, _z->_mpfr_d, tmp._mpfr_prec * sizeof(mp_limb_t));
-  mpfr_clear(_z);
-  _z->_mpfr_prec = tmp._mpfr_prec;
-  _z->_mpfr_sign = tmp._mpfr_sign;
-  _z->_mpfr_exp = tmp._mpfr_exp;
-  _z->_mpfr_d = p;
-}
-
-inline void mpz_reallocate_limbs (mpz_ptr _z)
-{ 
-  int _s = _z->_mp_size;
-  int _as = (_s>0)?_s:-_s;
-  mp_limb_t *_p = (mp_limb_t*) GC_MALLOC(_as*sizeof(mp_limb_t));
-  memcpy(_p,_z->_mp_d,_as*sizeof(mp_limb_t));
-  mpz_clear(_z);
-  _z->_mp_d = _p;
-  _z->_mp_size = _s;
-  _z->_mp_alloc = _as;
-}
-
-inline gmp_QQ moveTo_gmpQQ (mpq_ptr z)
-{
-  mpz_reallocate_limbs(mpq_numref(z));
-  mpz_reallocate_limbs(mpq_denref(z));
-  return z;
-}
-
-mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
-{
-  mpfr_reallocate_limbs(_z);
-  return _z;
-}
-
-inline gmp_CC moveTo_gmpCC (cc_ptr _z)
-{
-  CCmutable_struct* a = (CCmutable_struct*) _z;
-  mpfr_reallocate_limbs(a->re);
-  mpfr_reallocate_limbs(a->im);
-  return (gmp_CC) a;
-}
 
 void rawRandomInitialize()
 {
@@ -162,12 +117,10 @@ gmp_CC rawRandomCC(unsigned long precision)
 /* returns a uniformly distributed random complex in the box [0.0,0.0],
  * [1.0,1.0] */
 {
-  cc_ptr result = getmemstructtype(cc_ptr);
-  mpfr_init2(& result->re, precision);
-  mpfr_init2(& result->im, precision);
-  rawRandomMpfr(& result->re, precision);
-  rawRandomMpfr(& result->im, precision);
-  return moveTo_gmpCC(result);
+  gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
+  result->re = const_cast<gmp_RRmutable>(rawRandomRR(precision));
+  result->im = const_cast<gmp_RRmutable>(rawRandomRR(precision));
+  return reinterpret_cast<gmp_CC>(result);
 }
 
 // Local Variables:

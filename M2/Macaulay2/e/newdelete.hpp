@@ -17,6 +17,7 @@
 // this replaces all uses of the construction "new T":
 #define newitem(T) reinterpret_cast<T *>(getmem(sizeof(T)))
 #define newitem_clear(T) reinterpret_cast<T *>(getmem_clear(sizeof(T)))
+#define newitem_uncollectable(T) reinterpret_cast<T *>(getmem_clear(sizeof(T)))
 // this replaces all uses of the construction "delete [] x",
 // except it doesn't delete the individual elements for you, if they happen to
 // be pointers
