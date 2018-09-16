@@ -1,6 +1,7 @@
 #include "newdelete.hpp"
 #include <new>
 
+#include <iostream>
 /* Here we redefine operator new and delete, so 3rd party libraries using them
    that also call gmp, which in turn calls libgc, will
    not have libgc regard their gmp integers as garbage and collect them */
@@ -9,6 +10,7 @@
 /* The static inline versions are defined in newdelete.hpp */
 void* operator new(size_t size)
 {
+  std::cout << "calling new on size " << size << std::endl;
   TRAPCHK_SIZE(size);
   void* p = GC_MALLOC_UNCOLLECTABLE(size);
   if (p == NULL) outofmem2(size);
@@ -17,6 +19,7 @@ void* operator new(size_t size)
 }
 void* operator new[](size_t size)
 {
+  std::cout << "calling new[] on size " << size << std::endl;
   TRAPCHK_SIZE(size);
   void* p = GC_MALLOC_UNCOLLECTABLE(size);
   if (p == NULL) outofmem2(size);
@@ -25,6 +28,7 @@ void* operator new[](size_t size)
 }
 void* operator new(size_t size, const std::nothrow_t& t) noexcept
 {
+  std::cout << "calling new nothrow on size " << size << std::endl;
   TRAPCHK_SIZE(size);
   void* p = GC_MALLOC_UNCOLLECTABLE(size);
   if (p == NULL) outofmem2(size);
@@ -33,6 +37,7 @@ void* operator new(size_t size, const std::nothrow_t& t) noexcept
 }
 void* operator new[](size_t size, const std::nothrow_t& t) noexcept
 {
+  std::cout << "calling new[] nothrow on size " << size << std::endl;
   TRAPCHK_SIZE(size);
   void* p = GC_MALLOC_UNCOLLECTABLE(size);
   if (p == NULL) outofmem2(size);

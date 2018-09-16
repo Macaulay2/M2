@@ -5,7 +5,13 @@
 #include "text-io.hpp"
 #include "matrix-con.hpp"
 
+#include <iostream>
+
 extern RingZZ *globalZZ;
+
+static long nallocs_hm_elem = 0;
+static long highwater_hm_elem = 0;
+static long nfree_hm_elem = 0;
 
 int HermiteComputation::complete_thru_degree() const
 // The computation is complete up through this degree.
@@ -17,6 +23,7 @@ int HermiteComputation::complete_thru_degree() const
 hm_elem *HermiteComputation::new_gen(int i)
 {
   hm_elem *result = new hm_elem;
+  nallocs_hm_elem++;
   mpz_init(result->lead);
   if ((*gens)[i] == NULL)
     {
@@ -40,7 +47,8 @@ void HermiteComputation::insert(hm_elem *p)
     {
       if (p->fsyz != NULL && collect_syz) syz_list.push_back(p->fsyz);
       mpz_clear(p->lead);
-      deleteitem(p);
+      delete p;
+      nfree_hm_elem++;
     }
   else
     {
@@ -74,26 +82,45 @@ HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
 
 void HermiteComputation::remove_hm_elem(hm_elem *&p)
 {
+  std::cout << "removing hm_elem " << p << " in hermite comp" << std::endl;
   mpz_clear(p->lead);
   globalZZ->remove_vec(p->f);
   globalZZ->remove_vec(p->fsyz);
-  deleteitem(p);
+  delete p;
+  nfree_hm_elem++;
   p = NULL;
+  std::cout << "  done removing hm_elem in hermite comp" << std::endl;
 }
 
 HermiteComputation::~HermiteComputation()
 {
-  for (int i = 0; i < initial.size(); i++)
+  // I am pretty sure the logic is as follows here (MES):
+  // the GB_list contains all of the remaining hm_elems's
+  // the 'next' field for these is the GB_list list.
+  // the initial[i] list first contains all elements input that
+  //   have i as their lead term.
+  // but after computing this component, initial[i] is first set to nullptr,
+  //   then to the lone GB element with this component.
+  //   AND this element is on the GB_list.
+  // Upshot: to remove all of the hn_elem's: 2 choices:
+  //   (1) just delete elems on GB_list, and not on initials lists.
+  //   (2) just delete the first element on each element list.
+  //   
+  //   
+  std::cout << "~HermiteComputation:" << std::endl;
+  std::cout << "  (nallocs,nfree) = " << "(" << nallocs_hm_elem << ", " << nfree_hm_elem << ")" << std::endl;
+  nallocs_hm_elem = 0;
+  nfree_hm_elem = 0;
+  for (auto& x : initial)
     {
-      // remove the hm_elem list
-      hm_elem *p = initial[i];
-      while (p != NULL)
-        {
-          hm_elem *tmp = p;
-          p = p->next;
-          remove_hm_elem(tmp);
-        }
+      for (auto p = x; p != nullptr; p = p->next)
+        std::cout << p << " ";
+      std::cout << std::endl;
     }
+  std::cout << "GB: " << std::endl;
+  for (auto p = GB_list; p != nullptr; p = p->next)
+    std::cout << p << " ";
+  std::cout << std::endl;
 
   // Now remove the Groebner basis
 
