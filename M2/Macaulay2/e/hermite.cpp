@@ -5,8 +5,6 @@
 #include "text-io.hpp"
 #include "matrix-con.hpp"
 
-#include <iostream>
-
 extern RingZZ *globalZZ;
 
 static long nallocs_hm_elem = 0;
@@ -82,14 +80,11 @@ HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
 
 void HermiteComputation::remove_hm_elem(hm_elem *&p)
 {
-  std::cout << "removing hm_elem " << p << " in hermite comp" << std::endl;
   mpz_clear(p->lead);
   globalZZ->remove_vec(p->f);
   globalZZ->remove_vec(p->fsyz);
   delete p;
-  nfree_hm_elem++;
   p = NULL;
-  std::cout << "  done removing hm_elem in hermite comp" << std::endl;
 }
 
 HermiteComputation::~HermiteComputation()
@@ -107,22 +102,8 @@ HermiteComputation::~HermiteComputation()
   //   (2) just delete the first element on each element list.
   //   
   //   
-  std::cout << "~HermiteComputation:" << std::endl;
-  std::cout << "  (nallocs,nfree) = " << "(" << nallocs_hm_elem << ", " << nfree_hm_elem << ")" << std::endl;
-  nallocs_hm_elem = 0;
-  nfree_hm_elem = 0;
-  for (auto& x : initial)
-    {
-      for (auto p = x; p != nullptr; p = p->next)
-        std::cout << p << " ";
-      std::cout << std::endl;
-    }
-  std::cout << "GB: " << std::endl;
-  for (auto p = GB_list; p != nullptr; p = p->next)
-    std::cout << p << " ";
-  std::cout << std::endl;
 
-  // Now remove the Groebner basis
+  // Remove the Groebner basis:
 
   while (GB_list != NULL)
     {
