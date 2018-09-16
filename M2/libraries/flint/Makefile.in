@@ -15,7 +15,8 @@ CFLAGS += -O0 -fno-unroll-loops
 endif
 CFLAGS += -std=c90 -pedantic-errors
 # the flint configure script does not accept CPPFLAGS
-CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls \
+# CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls
+CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure --with-blas --disable-tls \
 			--prefix='$(PREFIX)' --disable-shared CC='$(CC)' \
 			CFLAGS='$(CFLAGS) $(CPPFLAGS)' \
 			--with-gmp=$(LIBRARIESDIR) \
