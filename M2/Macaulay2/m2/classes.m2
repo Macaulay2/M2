@@ -30,7 +30,6 @@ Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"
 -- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
 ZZ.synonym = "integer"
-ZZ.tex = ///$\mathbb Z$///
 ZZ.texMath = ///{\mathbb Z}///
 QQ.synonym = "rational number"
 QQ.texMath = ///{\mathbb Q}///

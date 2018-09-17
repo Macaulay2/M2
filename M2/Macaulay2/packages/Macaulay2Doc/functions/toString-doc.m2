@@ -7,9 +7,7 @@ undocumented {
 (toString,Array),
 (toString,Package),
 (toString,Resolution),
-(toString,PolynomialRing),
 (toString,Command),
-(toString,QuotientRing),
 (toString,Matrix),
 (toString,GeneralOrderedMonoid),
 (toString,MutableMatrix),
@@ -40,11 +38,13 @@ undocumented {
 (toString,Function),
 (toString,Symbol),
 (toString,Hypertext),
-(toString,FractionField),
 (toString,Net),
 (toString,String),
 (toString,QQ),
-(toString,Dictionary)
+(toString,Dictionary),
+(toString,CoherentSheaf),
+(toString,MapExpression),
+(toString,Variety)
 }
 
 document { 

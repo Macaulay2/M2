@@ -3,6 +3,7 @@
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 net Package := toString Package := p -> if p#?"pkgname" then p#"pkgname" else "-*package*-"
+texMath Package := x -> texMath toString x
 loadedPackages = {}
 options Package := p -> p.Options
 

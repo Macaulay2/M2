@@ -1,5 +1,8 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+union := (x,y) -> keys(set x + set y)
+intersection := (x,y) -> keys(set x * set y)
+
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
 toString Resolution := C -> toString raw C
@@ -40,10 +43,6 @@ ChainComplex _ ZZ = (C,i,M) -> C#i = M
 
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
-spots  = C -> select(keys C, i -> class i === ZZ)
-union        := (x,y) -> keys(set x + set y)
-intersection := (x,y) -> keys(set x * set y)
-
 length ChainComplex := (C) -> (
      s := select(spots complete C, i -> C_i != 0);
      if #s === 0 then 0 else max s - min s
@@ -68,16 +67,24 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
+texMathShort := m -> (
+    if m == 0 then return "0";
+    x := entries m;
+    texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
+    x = if #x>10 then ( t:= texRow first x; {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last x } ) else texRow\x;
+    concatenate(
+	"\\begin{pmatrix}" | newline,
+	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
+	"\\end{pmatrix}"
+	      )
+    )
+
 texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
-     if # s === 0 then "0"
-     else (
-	  a := s#0;
-	  b := s#-1;
-	  horizontalJoin between(" \\leftarrow ", apply(a .. b,i -> texMath C_i))))
-
-tex ChainComplex := C -> "$" | texMath C | "$"
+     if # s === 0 then "0" else
+     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+      )
 
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of GradedModuleMap
@@ -133,6 +140,7 @@ net ChainComplexMap := f -> (
 	  );
      if # v === 0 then "0"
      else stack v)
+
 ring ChainComplexMap := (f) -> ring source f
 
 ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
@@ -699,7 +707,6 @@ texMath BettiTally := v -> (
 	  apply(v, row -> (between("&", apply(row,x->if not match("^[0-9]*$",x) then ("\\text{",x,"}") else x)), "\\\\")),
 	  "\\end{matrix}\n",
 	  ))
-tex BettiTally := v -> concatenate("$", texMath v, "$")
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )

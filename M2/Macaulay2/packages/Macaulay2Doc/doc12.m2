@@ -297,48 +297,11 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {
-     (symbol SPACE,Expression,Thing), (symbol SPACE,Thing,Expression),
-     (symbol SPACE,Holder,Holder),
-     (symbol *,Expression,Thing), (symbol *,Thing,Expression),
-     (symbol **,Expression,Thing), (symbol **,Thing,Expression),
-     (symbol +,Expression,Thing), (symbol +,Thing,Expression),
-     (symbol -,Expression,Thing), (symbol -,Thing,Expression),
-     (symbol /,Expression,Thing), (symbol /,Thing,Expression),
-     (symbol ==,Expression,Thing), (symbol ==,Thing,Expression),
-     (symbol ^,Thing,Expression),
-     (symbol _,Expression,Thing), 
-     (symbol _,Thing,Expression),
-     (symbol :,Expression,Expression),
-     (symbol :,Expression,Holder),
-     (symbol :,Expression,Thing),
-     (symbol :,Holder,Expression),
-     (symbol :,Holder,Holder),
-     (symbol :,Thing,Expression),
-     (symbol ..,Expression,Expression),
-     (symbol ..,Expression,Holder),
-     (symbol ..,Expression,Thing),
-     (symbol ..,Holder,Expression),
-     (symbol ..,Holder,Holder),
-     (symbol ..,Thing,Expression)
-     }
-
 undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
 
 document {
-     Key => {Expression,
-	  (symbol SPACE,Expression,Expression),
-	  (symbol *,Expression,Expression),
-	  (symbol **,Expression,Expression),
-	  (symbol +,Expression,Expression),
-	  (symbol -,Expression),
-	  (symbol -,Expression,Expression),
-	  (symbol /,Expression,Expression),
-	  (symbol ==,Expression,Expression),
-	  (symbol ^,Expression,Expression),
-	  (symbol _,Expression,Expression),
-          (value,Expression)
-	  },
+     Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
+	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
      as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in
@@ -415,6 +378,33 @@ document {
      PARA{},
      EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
      SeeAlso => {"Table"}
+     }
+
+document {
+     Key => VectorExpression,
+     Headline => "the class of all vector expressions",
+     TT "VectorExpression", " is a type of ", TO "Expression", " representing
+     a vector.",
+     PARA{},
+     EXAMPLE ///VectorExpression {a,b,c}///,
+     SeeAlso => {"MatrixExpression"}
+     }
+
+document {
+     Key => MatrixDegreeExpression,
+     Headline => "the class of all matrix-with-degree expressions",
+     TT "MatrixDegreeExpression", " is a type of ", TO "Expression", " representing
+     a matrix with specified degrees of generators.",
+     PARA{},
+     SeeAlso => {"MatrixExpression"}
+     }
+
+document {
+     Key => SheafExpression,
+     Headline => "the class of sheaf expressions",
+     TT "SheafExpression", " is a type of ", TO "Expression", " representing
+     the sheaf associated to a given ring or module.",
+     PARA{},
      }
 
 document {
