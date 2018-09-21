@@ -375,7 +375,7 @@ document {
      }
 
 undocumented { 
-     (tex,BettiTally),(texMath,BettiTally),
+     (texMath,BettiTally),
      (toExternalString,RingElement), (toExternalString,RingMap),
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),
