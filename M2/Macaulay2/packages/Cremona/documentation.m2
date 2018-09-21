@@ -178,7 +178,7 @@ Inputs => {
 "phi" => RationalMap => {"a birational map"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", TT "Parametrization", ". Note that if the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
+PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/Parametrization/html","Parametrization"}, ". Note that in this case, the analogous method ",HREF{"http://www2.macaulay2.com/Macaulay2/share/doc/Macaulay2/RationalMaps/html/_inverse__Of__Map.html","inverseOfMap"}," in the package ",HREF{"http://www2.macaulay2.com/Macaulay2/share/doc/Macaulay2/RationalMaps/html/index.html","RationalMaps"}," generally turns out to be faster."},
 EXAMPLE { 
 "-- A Cremona transformation of P^20 
 phi = rationalMap map quadroQuadricCremonaTransformation(20,1)", 
@@ -190,6 +190,7 @@ EXAMPLE {
 phi = map quadroQuadricCremonaTransformation(26,1)",
 "time psi = inverseMap phi", 
 "isInverseMap(phi,psi)"},
+Caveat => {"If the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
 SeeAlso => {approximateInverseMap}}
 
 document { 

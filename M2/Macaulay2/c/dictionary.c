@@ -10,7 +10,7 @@ static node hash_buckets[7313];
 char *Csymbols[] = {
      "NULL", "stdout", "stdin", "stderr", "flush", "select", 
      "min", "max", "abort",
-     "abs", "times", "erase", "frame", "index",
+     "abs", "times", "erase", "frame", "index", "mutable",
      "auto", "break", "case", "const", "continue", "default",
      "register", "signed", "sizeof", "static","struct","switch","typedef",
      "do", "double", "else", "enum", "extern", "float", "for", "goto", "if", "mkdir", "stat",

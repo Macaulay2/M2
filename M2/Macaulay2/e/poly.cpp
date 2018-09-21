@@ -174,7 +174,7 @@ ring_elem PolyRing::from_long(long n) const
   M_->one(result->monom);
   return result;
 }
-ring_elem PolyRing::from_int(mpz_t n) const
+ring_elem PolyRing::from_int(mpz_srcptr n) const
 {
   ring_elem a = K_->from_int(n);
   if (K_->is_zero(a))

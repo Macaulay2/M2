@@ -4,7 +4,21 @@ newPackage(
 	Version => "1.2.1", 
     	Date => "March 4, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
-    	Headline => "Resultants, discriminants, and Chow forms"
+    	Headline => "Resultants, discriminants, and Chow forms",
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "A package for computations with classical resultants",
+	     "acceptance date" => "18 May 2018",
+	     "published article URI" => "https://msp.org/jsag/2018/8-1/p03.xhtml",
+	     "published article DOI" => "10.2140/jsag.2018.8.21",
+	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x03-Resultants.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Resultants.m2",
+	     "release at publication" => "61c93a6aaf9d6bf0dd11440339145703ce3d824b",	    -- git commit number in hex
+	     "version at publication" => "1.2.1",
+	     "volume number" => "8",
+	     "volume URI" => "https://msp.org/jsag/2018/8-1/"
+	     }
 )
 
 export{

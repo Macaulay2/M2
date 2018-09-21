@@ -465,7 +465,7 @@ document {
 	  "target F == R^1",
 	  "matrix F"
 	  },
-     "Macaulay2 also does not check that the homomorphism is well-defined
+     "Macaulay2 also does not check that the homomorphism is well defined
      (i.e. the relations of the source map into the relations of the target).
      Use ", TO isWellDefined, " to check.  This generally requires a Gröbner
      basis computation (which is performed automatically, if it is required
@@ -499,7 +499,7 @@ document {
 	  "target G == M and source G == M",
 	  "inc * G == F"
 	  },
-     "Let's make sure that this map ", TT "G", " is welldefined.",
+     "Let's make sure that this map ", TT "G", " is well defined.",
      EXAMPLE {
 	  "isWellDefined G",
 	  "isIsomorphism G",
@@ -631,7 +631,7 @@ document {
 	  },
      "The last number in the list of genera is the degree minus one.  The second to last
      number is the genus of the generic linear section curve, ..., and the first
-     number is the arithmetic genus",
+     number is the arithmetic genus.",
      SUBSECTION "the Hilbert series",
      "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
      TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 

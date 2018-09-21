@@ -29,7 +29,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.11.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.12.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -470,7 +470,7 @@ AC_CHECK_DECLS([herror],,,[
 	#include <stdio.h>
 	#include <errno.h>
 	])
-AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
+AC_CHECK_DECLS([__environ,_environ,environ],,,[#include <unistd.h>])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
@@ -989,11 +989,15 @@ then # readline on Mac OS X is stuck at version 4.2, which has this bug:
 	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
 	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 fi
+if test $BUILD_readline = no
+then AC_CHECK_DECL(rl_catch_signals,,BUILD_readline=yes,[
+	#include <stdio.h>
+	#include <readline/readline.h>
+	])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
-else AC_CHECK_DECLS(rl_catch_signals,,,readline/readline.h)
-     AC_CHECK_DECLS(__rl_comment_begin,,,readline/readline.h)
 fi
 
 dnl We no longer link with gmp.
@@ -1246,6 +1250,14 @@ then AC_MSG_CHECKING(whether package atomic_ops is provided)
           BUILD_atomic_ops=yes
      fi
 fi
+
+BUILD_gc=yes
+BUILD_ALWAYS="gc $BUILD_ALWAYS"
+# We always build gc now, because the homebrew bdw-gc package (at least) builds
+# the library in such a way that running the tests in the package
+# "CoincidentRootLoci" results in several crashes with the message "Too many
+# heap sections: Increase MAXHINCR or MAX_HEAP_SECTS".  Perhaps our use of the
+# configure option "--enable-large-config" is what makes the difference.
 
 AC_SUBST(GC_LIBS)
 if test $BUILD_gc = no
@@ -2045,26 +2057,26 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 # There is a hidden dependency: see M2/distributions/dmg/Makefile.in and adjust the number "../"s if the basic layout here is changed.
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
-AC_SUBST(libm2dir,$libdir/Macaulay2/$MACHINE)
+AC_SUBST(libm2dir,$libdir/Macaulay2)
 AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
 AC_SUBST(librariesdir,$libm2dir/lib)
-AC_SUBST(programsdir,$libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
 AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
-AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2/$MACHINE)
+AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
 AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
-AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
 AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
-AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2/$MACHINE)
+AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
 AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
-AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/$MACHINE)
+AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)
 AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/cache)
 

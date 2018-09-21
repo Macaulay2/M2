@@ -157,7 +157,7 @@ class ARingGFM2 : public RingInterface
   }
 
   void set_var(elem &result, int v) const { result = 1; }
-  void set_from_mpz(elem &result, mpz_ptr a) const
+  void set_from_mpz(elem &result, mpz_srcptr a) const
   {
     int b = static_cast<int>(mpz_fdiv_ui(a, characteristic()));
     result = mGF.fromZZTable(b);

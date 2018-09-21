@@ -37,7 +37,8 @@
 
 \\{M2-comint-mode-map}"
   (M2-common)
-  (setq comint-prompt-regexp M2-comint-prompt-regexp)
+  (setq comint-prompt-regexp M2-comint-prompt-regexp
+	comint-use-prompt-regexp t)
   (set (make-local-variable 'comint-dynamic-complete-functions) '( M2-dynamic-complete-symbol comint-dynamic-complete-filename))
   ;; give up trying to fix this:
   ;; (set (make-local-variable 'ansi-color-for-comint-mode-on) nil)

@@ -1,14 +1,14 @@
 -- -*- coding: utf-8 -*-
 scan((
      -- some optional arguments
-	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
+	  FollowLinks,Hilbert,Options,InstallPrefix,Exclude,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,AbsoluteLinks,RunExamples,SourceRing,
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,RunExamples,SourceRing,
 	  Inverses,WeylAlgebra,Degrees,MonomialSize,CheckDocumentation,IgnoreExampleErrors,MakeDocumentation,MakeInfo,MakeLinks,
 	  RemakeAllDocumentation,RerunExamples,UserMode,Generic,DegreeRank,Heft,Limit,SizeLimit,StopWithMinimalGenerators,
 	  StopBeforeComputation,DegreeLimit,BasisElementLimit,SyzygyLimit,PairLimit,CodimensionLimit,Strategy,Syzygies,
 	  ChangeMatrix,SyzygyRows,MinimalMatrix,SyzygyMatrix,Certification,Reload,
-	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,EncapsulateDirectory,Local,Binomial,Monomial,DegreeMap,DegreeLift,
+	  KeepZeroes,Heading,ClosestFit,Density,Height,UpperTriangular,Local,Binomial,Monomial,DegreeMap,DegreeLift,
 	  Join,CacheExampleOutput,Reduce,Result,SeparateExec),
      s -> if s =!= null then document {
 	  Key => s,
@@ -43,7 +43,9 @@ document {
      	  SPAN (///help "reading the documentation"///, ///  -- ///),
      	  SPAN (///help "getting started"///, ///            -- ///),
      	  SPAN (///help "a first Macaulay2 session"///, ///  -- ///),
-     	  SPAN (///help x///, ///                            -- display the documentation for ///, TT ///x///),
+     	  SPAN (///help x///, ///                            -- show documentation for ///, TT ///x///),
+     	  SPAN (///help about x///, ///                      -- show documentation about ///, TT ///x///),
+     	  SPAN (///help about (x,Body=>true)///, ///         -- show documentation mentioning ///, TT ///x///),
      	  SPAN (///? f///, ///                               -- display brief documentation for a function ///, TT ///f///),
 	  SPAN (///printWidth = 80///, ///                   -- set print width to 80 characters///),
      	  SPAN (///viewHelp///, ///                          -- view documentation in a browser///),
@@ -65,7 +67,9 @@ document {
 	  (TT "help methods symbol **", " -- displays help messages about the methods usable with the operator ", TT "**"),
 	  (TT "help methods (res, X)", " -- displays help messages about the methods usable with the function ", TT "res", " and a thing of class ", TT "X"),
 	  (TT "help methods (symbol **, X)", " -- displays help messages about the methods usable with the operator ", TT "**", " and a thing of class ", TT "X"),
-	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y")
+	  (TT "help methods (X, Y)", " -- displays help messages about the methods usable with a thing of class ", TT "X", " and a thing of class ", TT "Y"),
+	  (TT "help about X", " -- displays documentation nodes from all installed packages whose keys contain ", TT "X", "."),
+	  (TT "help about(X,Body=>true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
 	  },
      "The ", TT "help", " command is used to display online documentation.  Use ", TO viewHelp, " to display the corresponding
      documentation in your web browser.",
@@ -80,7 +84,7 @@ document {
 	  TT "help \"Gröbner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
-     SeeAlso => {viewHelp, infoHelp,  apropos, code, examples, "reading the documentation"}
+     SeeAlso => {viewHelp, about, infoHelp, apropos, code, examples, "reading the documentation"}
      }
 document {
      Key => viewHelp,
@@ -148,7 +152,7 @@ document {
 document {
      Key => lookup,
      Headline => "look up methods",
-     TT "lookup(M,A)", " -- provides the binary method named ", TT "M", " for class ", TT "A", ".
+     TT "lookup(M,A)", " -- provides the unary method named ", TT "M", " for class ", TT "A", ".
      The first place to look is ", TT "A#M", ".  The search proceeds with
      the parent of ", TT "A", ", and so on.",
      PARA{},
@@ -237,7 +241,6 @@ undocumented {
      (NewFromMethod, Command, String),
      (NewFromMethod, Command, Function),
      (NewFromMethod, BR, List),
-     (NewFromMethod, DocumentTag, List),
      (NewFromMethod, HR, List),
      (NewFromMethod, HREF, List),
      (NewFromMethod, MarkUpType, List),
@@ -547,29 +550,6 @@ document {
      Before running this routine, it is not possible to determine which
      spots in a chain complex are actually occupied by modules or maps."
      }
-document {
-     Key => (drop, BasicList, List),
-     Usage => "drop(v,{m,n})",
-     Inputs => { "v", Nothing => { TT "{m,n}", ", a pair of natural numbers" } },
-     Outputs => { { "the list obtained by omitting those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
-     SeeAlso => {(take, BasicList, List)},
-     EXAMPLE "drop({a,b,c,d,e},{2,4})"
-     }
-document {
-     Key => (drop, BasicList, ZZ),
-     Usage => "w = drop(v,n)",
-     Inputs => {
-	  "v",
-	  "n"
-	  },
-     Outputs => {
-	  {"the list obtained by omitting the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
-	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
-	  },
-     EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)" }
-     }
-document { Key => drop,
-     Headline => "drop some elements from a list or sequence", SeeAlso => "take" }
 document {
      Key => {(options, Function),(options, Command),(options, Sequence)},
      Headline => "get optional arguments and default values for a function that accepts them",

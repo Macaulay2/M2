@@ -1106,7 +1106,7 @@ euler CoherentSheaf := F -> (
 -- last coordinate) form a polyhedral complex and the regular subdivision is
 -- the image of this complex.  For a generic weight vector, this subdivision
 -- will be a triangulation.
-regularSubdivision = method(TypicalValue => NormalToricVariety)
+-- regularSubdivision = method(TypicalValue => NormalToricVariety)
 regularSubdivision (NormalToricVariety, List, List) := (X,s,w) -> (
     coneList := max X;
     rayList := rays X;

@@ -46,7 +46,8 @@ export {
   "IsHomogeneous"}
 
 
-if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n"
+-- Don't print anything when package is loaded:
+-- if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n"
 
 
 ------------------------------------------------------------------------------

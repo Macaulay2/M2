@@ -293,7 +293,7 @@ void showmpint(gmp_ZZ p)
   mpz_out_str(stdout, 10, p);
   std::cout << std::endl;
 }
-void showmpz(mpz_t p)
+void showmpz(mpz_srcptr p)
 {
   mpz_out_str(stdout, 10, p);
   std::cout << std::endl;
@@ -302,7 +302,7 @@ void showmpz(mpz_t p)
 
 static struct enter_factory foo2;
 
-static CanonicalForm convertToFactory(const mpz_ptr p)
+static CanonicalForm convertToFactory(mpz_srcptr p)
 {
   struct enter_factory foo;
   int size = p->_mp_size;

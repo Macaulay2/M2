@@ -1548,7 +1548,7 @@ map(e:Expr,f:Expr):Expr := (
 	  )
 --     is obj:HashTable do (
 --	  if obj.Mutable then return WrongArg("an immutable hash table");
---	  if ancestor(obj.Class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
+--	  if ancestor(obj.Class,VirtualTally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
 	  c := map(b.v,f);
 	  when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c

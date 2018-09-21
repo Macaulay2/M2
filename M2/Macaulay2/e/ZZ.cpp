@@ -10,13 +10,7 @@
 #include "aring-zz-gmp.hpp"
 #include <utility>
 
-#if 0
-// #include "gmp.h"
-// #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
-// #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
-#endif
-
-unsigned int computeHashValue_mpz(mpz_ptr a)
+unsigned int computeHashValue_mpz(mpz_srcptr a)
 {
   return static_cast<unsigned int>(mpz_get_si(a));
 }
@@ -24,9 +18,6 @@ unsigned int computeHashValue_mpz(mpz_ptr a)
 bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
 {
   initialize_ring(0);
-  _elem_size = static_cast<int>(sizeof(mpz_t));
-  _zero_elem = new_elem();
-  mpz_init_set_si(_zero_elem, 0);
 
   zeroV = from_long(0);
   oneV = from_long(1);
@@ -81,7 +72,7 @@ void RingZZ::elem_text_out(buffer &o,
                            bool p_plus,
                            bool p_parens) const
 {
-  mpz_ptr a = ap.get_mpz();
+  mpz_srcptr a = ap.get_mpz();
 
   char s[1000];
   char *str;
@@ -115,7 +106,7 @@ ring_elem RingZZ::from_long(long n) const
   return ring_elem(result);
 }
 
-ring_elem RingZZ::from_int(mpz_ptr n) const
+ring_elem RingZZ::from_int(mpz_srcptr n) const
 {
   mpz_ptr result = new_elem();
   mpz_set(result, n);
@@ -143,27 +134,27 @@ bool RingZZ::lift(const Ring *, const ring_elem, ring_elem &) const
 
 bool RingZZ::is_unit(const ring_elem f) const
 {
-  mpz_ptr a = f.get_mpz();
+  mpz_srcptr a = f.get_mpz();
   return (mask_mpz_cmp_si(a, 1) == 0 || mask_mpz_cmp_si(a, -1) == 0);
 }
 
 bool RingZZ::is_zero(const ring_elem f) const
 {
-  mpz_ptr a = f.get_mpz();
+  mpz_srcptr a = f.get_mpz();
   return mpz_sgn(a) == 0;
 }
 
 bool RingZZ::is_equal(const ring_elem f, const ring_elem g) const
 {
-  mpz_ptr a = f.get_mpz();
-  mpz_ptr b = g.get_mpz();
+  mpz_srcptr a = f.get_mpz();
+  mpz_srcptr b = g.get_mpz();
 
   return mpz_cmp(a, b) == 0;
 }
 int RingZZ::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  mpz_ptr a = f.get_mpz();
-  mpz_ptr b = g.get_mpz();
+  mpz_srcptr a = f.get_mpz();
+  mpz_srcptr b = g.get_mpz();
   int cmp = mpz_cmp(a, b);
   if (cmp > 0) return 1;
   if (cmp == 0) return 0;
@@ -171,13 +162,13 @@ int RingZZ::compare_elems(const ring_elem f, const ring_elem g) const
 }
 int RingZZ::is_positive(const ring_elem f) const
 {
-  mpz_ptr a = f.get_mpz();
+  mpz_srcptr a = f.get_mpz();
   return mpz_sgn(a) > 0;
 }
 
 ring_elem RingZZ::copy(const ring_elem f) const
 {
-  mpz_ptr a = f.get_mpz();
+  mpz_srcptr a = f.get_mpz();
 
   mpz_ptr result = new_elem();
   mpz_set(result, a);
@@ -195,7 +186,7 @@ void RingZZ::remove(ring_elem &f) const
 
 ring_elem RingZZ::preferred_associate(ring_elem f) const
 {
-  mpz_ptr a = f.get_mpz();
+  mpz_srcptr a = f.get_mpz();
   if (mpz_sgn(a) >= 0) return from_long(1);
   return from_long(-1);
 }
@@ -206,8 +197,8 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   // if f is 0, do f=sign(g), else f=sign(f)
   // return whether f is zero
   gmp_ZZ result = RingZZ::new_elem();
-  mpz_ptr a = f.get_mpz();
-  mpz_ptr b = g.get_mpz();
+  mpz_srcptr a = f.get_mpz();
+  mpz_srcptr b = g.get_mpz();
   int sa = mpz_sgn(a);
   int sb = mpz_sgn(b);
   int s = (sa == 0 ? sb : sa);
@@ -226,33 +217,16 @@ void RingZZ::lower_content(ring_elem &c, ring_elem g) const
       return;
     }
   gmp_ZZ result = RingZZ::new_elem();
-  mpz_ptr a = c.get_mpz();
-  mpz_ptr b = g.get_mpz();
+  mpz_srcptr a = c.get_mpz();
+  mpz_srcptr b = g.get_mpz();
   mpz_gcd(result, a, b);
   c = ring_elem(result);
-}
-
-void RingZZ::internal_negate_to(ring_elem &f) const
-{
-  mpz_sub(f.get_mpz(), _zero_elem, f.get_mpz());
-}
-
-void RingZZ::internal_add_to(ring_elem &f, ring_elem &g) const
-{
-  mpz_add(f.get_mpz(), f.get_mpz(), g.get_mpz());
-  remove(g);
-}
-
-void RingZZ::internal_subtract_to(ring_elem &f, ring_elem &g) const
-{
-  mpz_sub(f.get_mpz(), f.get_mpz(), g.get_mpz());
-  remove(g);
 }
 
 ring_elem RingZZ::negate(const ring_elem f) const
 {
   mpz_ptr result = new_elem();
-  mpz_sub(result, _zero_elem, f.get_mpz());
+  mpz_neg(result, f.get_mpz());
   return ring_elem(result);
 }
 
@@ -383,7 +357,7 @@ void RingZZ::syzygy(const ring_elem a,
       y = RingZZ::from_long(0);
       return;
     }
-  mpz_ptr bb = b.get_mpz();
+  mpz_srcptr bb = b.get_mpz();
   if (mpz_cmp_ui(bb, 1) == 0)
     {
       x = RingZZ::from_long(1);
@@ -401,9 +375,9 @@ void RingZZ::syzygy(const ring_elem a,
   x = RingZZ::divide(b, g);
   RingZZ::remove(g);
   if (mpz_sgn(x.get_mpz()) > 0)
-    RingZZ::internal_negate_to(y);
+    y = RingZZ::negate(y);
   else
-    RingZZ::internal_negate_to(x);
+    x = RingZZ::negate(x);
 }
 
 ring_elem RingZZ::eval(const RingMap *map, const ring_elem f, int) const

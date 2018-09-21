@@ -171,15 +171,15 @@ document {
      Key => { (symbol /,VisibleList,Function),
 	  (symbol /,List,Function),
 	  (symbol \,Function,VisibleList),
-	  (symbol \,Function,Tally),
+	  (symbol \,Function,VirtualTally),
 	  (symbol \,SelfInitializingType,VisibleList),
 	  (symbol \,Command,VisibleList),
 	  (symbol \,RingMap,List),
-	  (symbol \,Command,Tally),
+	  (symbol \,Command,VirtualTally),
 	  (symbol /,VisibleList,SelfInitializingType),
 	  (symbol /,List,Command),
-	  (symbol /,Tally,Command),
-	  (symbol /,Tally,Function),
+	  (symbol /,VirtualTally,Command),
+	  (symbol /,VirtualTally,Function),
 	  (symbol /,List,RingMap),
 	  (symbol /,VisibleList,Command)
 	  },
@@ -504,6 +504,25 @@ document {
 	  LI { TO "Postfix", " -- it's a postfix unary operator" }
 	  },
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
+     }
+
+
+document{
+     Headline => "a type of method function",
+     Key => MethodFunctionBinary,
+     PARA {
+	  "The type of all method functions created with the option ", TO "Binary", " set to ", TO "true", ", such as ", TO "gcd", "."
+	  },
+     SeeAlso => { "method" }
+     }
+
+document{
+     Headline => "a type of method function",
+     Key => MethodFunctionSingle,
+     PARA {
+	  "The type of all method functions created with the option ", TO "Dispatch", " set to ", TO "Thing", ", such as ", TO "code", "."
+	  },
+     SeeAlso => { "method" }
      }
 
 document { Key => MethodFunction,
@@ -1213,7 +1232,7 @@ document { Key => (module, Vector),
      ///}
 
 document { Key => {package,(package, Dictionary), (package, Thing),
-	  (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol),
+	  (package, HashTable), (package, Function), (package, Symbol),
 	  (package, Sequence)
 	  },
      Headline => "get containing package",
@@ -1816,12 +1835,6 @@ document { Key => toUpper,
      EXAMPLE lines ///
      	  toUpper "A b C d E f"
      ///}
-
-document { Key => "encapDirectory",
-     Headline => "encapsulated installation directory",
-     "This variable contains the path to the encapsulation directory tree where the files of Macaulay2 are located.",
-     SeeAlso => { "prefixDirectory" }
-     }
 
 document { Key => "synonym",
      Headline => "synonym for members of a class",

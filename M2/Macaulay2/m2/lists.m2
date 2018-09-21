@@ -3,6 +3,7 @@
 List#"major documentation node" = true
 
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
+Option ? Option := (s,t) -> toSequence s ? toSequence t
 
 VisibleList _ ZZ := (s,i) -> s#i
 String _ ZZ := String => (s,i) -> s#i

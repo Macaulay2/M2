@@ -14,11 +14,11 @@ class ARingZZGMP;
 
 // The following lines are here only to remove complaints about old style casts
 // from gmp
-extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i)
+extern "C" inline int mask_mpz_cmp_si(mpz_srcptr x, long int i)
 {
   return mpz_cmp_si(x, i);
 }
-extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j)
+extern "C" inline int mask_mpq_cmp_si(mpq_srcptr x, long int i, long int j)
 {
   return mpq_cmp_si(x, i, j);
 }
@@ -29,9 +29,6 @@ extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j)
 class RingZZ : public Ring
 {
   friend class M2::ARingZZGMP;
-
-  int _elem_size;
-  mpz_ptr _zero_elem;
 
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
@@ -79,7 +76,7 @@ class RingZZ : public Ring
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
   virtual ring_elem from_long(long n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
   virtual bool promote(const Ring *R,
                        const ring_elem f,
@@ -102,10 +99,12 @@ class RingZZ : public Ring
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
 
+#if 0  
   void internal_negate_to(ring_elem &f) const;
   void internal_add_to(ring_elem &f, ring_elem &g) const;
   void internal_subtract_to(ring_elem &f, ring_elem &g) const;
-
+#endif
+  
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
@@ -147,7 +146,7 @@ class RingZZ : public Ring
                          int first_var) const;
 };
 
-unsigned int computeHashValue_mpz(mpz_ptr a);
+unsigned int computeHashValue_mpz(mpz_srcptr a);
 #endif
 
 // Local Variables:

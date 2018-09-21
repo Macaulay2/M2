@@ -217,6 +217,7 @@ viewHelp higherCIOperators
 viewHelp complexity
 *-
 
+beginDocumentation()
 
 doc ///
    Key 

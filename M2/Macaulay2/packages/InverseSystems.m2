@@ -1,10 +1,13 @@
 newPackage(
 	"InverseSystems",
-    	Version => "1.0", 
-    	Date => "May 7, 2017",
+    	Version => "1.1", 
+    	Date => "June 27, 2018",
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org"
-		  }},
+		  },
+	            {Name => "Mats Boij",
+		     Email => "boij@kth.se"}
+			},
     	Headline => "equivariant Macaulay inverse systems",
     	DebuggingMode => false
     	)
@@ -14,16 +17,18 @@ export {"inverseSystem",
         "fromDividedPowers",
 	"isStandardGradedPolynomialRing",
 	--option names (symbols):
-	"PowerBound",
 	"DividedPowers",
 	"toDual", 
-	"fromDual"
+	"fromDual",
+	"Gorenstein"
 	}
 ///
 restart
 uninstallPackage "InverseSystems"
 installPackage "InverseSystems"
 check "InverseSystems"
+viewHelp InverseSystems
+loadPackage("InverseSystems", Reload=>true)
 ///
 isStandardGradedPolynomialRing = method()
 isStandardGradedPolynomialRing Ring := R ->(
@@ -64,31 +69,25 @@ fromDividedPowers Matrix := M -> (
     map(target M, source M, (i,j) -> fromDividedPowers (M_j_i))
 )
 
---fromDual takes a matrix or ring element and returns an ideal.
-fromDual = method(Options=>{DividedPowers => true, PowerBound => 0})						  
+--fromDual takes a matrix or ring element and returns an ideal or submodule.
+
+fromDual = method(Options=>{DividedPowers => true})						  
 
 fromDual Matrix := o -> M -> (
-     	  if not isStandardGradedPolynomialRing ring M then 
- 	     error"Requires base ring to be a standard graded polynomial ring over a field";
-    	  if numgens target M > 1 then error"Input matrix has too many rows.";
+          R := ring M;
+	  if not isPolynomialRing R then error"fromDual requires a polynomial ring";
 	  M' := compress M;
- 	  --handle the case when the input was 0:
+ 	  --handle the case when the input was 0
  	  if numgens source M' == 0 then return matrix{{1_(ring M)}};
-	  dtar :=  (degrees target M)_0_0;	  
-	  R := ring M;
-	  v := gens R;
 	  if o.DividedPowers === false then M' = toDividedPowers M';
-	  dmax := o.PowerBound;
-	  if dmax == 0 then
-    	  dmax = (max apply (flatten entries M', f->(degree (f))))_0;
-          g := matrix{{product powers(dmax, v)}};
-          I1 := ideal contract(transpose M', g);
-	  I := (ideal powers(dmax+1, v) : I1);
-	  if isHomogeneous I then I = trim I;
-	  gens I
-	  )	  
+	  g := lcm first entries compress flatten monomials M';
+	  M'' := contract(transpose M', transpose matrix{{g}});
+    	  e := first exponents g;
+	  I := ideal apply(numgens R,i->R_i^(e_i+1));
+	  A := sub(syz(R/I**M''),R);
+	  A|(gens I)**target A
+	  )
 fromDual RingElement := o -> f -> fromDual(matrix{{f}}, DividedPowers=> o.DividedPowers)
-
 
 powers = (d,v) ->
    -- v a list of ring elements; d a natural number. Returns the list of powers.
@@ -108,41 +107,52 @@ containsDthPowers Ideal := I->(
     d
    ) 
 
+
 toDual = method(Options => {DividedPowers => true})
-toDual (ZZ,Ideal) := o -> (d,I) -> (
-         -- assumes that I is an ideal in a polynomial ring
-	 -- returns a matrix representing the annihilator of I in the dual of ring I, accurate up to dual degree d.
-         S := ring I;
-    	  if not isStandardGradedPolynomialRing S then 
-	     error"Base ring should be a standard graded polynomial ring over a field";
-         g := product powers(d,gens S);
-	 box :=ideal powers(d+1,gens S);
-         m := compress contract(gens(box : I) % box, matrix{{g}});
-	 if o.DividedPowers === false then m = fromDividedPowers m;    
-    	 m
+toDual (ZZ,Matrix) := Matrix => o-> (d,f) -> (
+    --given a submodule of a free module S^n, represented by a matrix f,
+    --returns the annihilator, represented as the matrix of a map to D^n,
+    --valid up to degree d in each variable
+    S := ring f;
+    g := matrix{{product powers(d,gens S)}};
+    I := ideal powers(d+1,gens S);
+    R := S/I;
+    f1 := syz transpose sub(f,R);
+    m := compress contract(sub(f1,S),g);
+    if o.DividedPowers === false then m = fromDividedPowers m;    
+    m
     )
---the following is added to imitate the (illogical) behavior of the old toDual
-toDual (ZZ, Matrix) := o->(d,M) -> toDual(d, ideal M)
+toDual(ZZ,Ideal) := Matrix => o->(d,I) -> toDual(d,gens I)
 
 
-inverseSystem = method(Options => {DividedPowers => false, PowerBound => 0})
-inverseSystem Ideal := o-> I -> (
-    d := o.PowerBound; -- this is potentially less than the regularity. Is this ok??
-    if d===0 then
-     if 0==dim I then d = 1+containsDthPowers I
-     else return "ideal not zero-dimensional; needs explicit option PowerBound.  
-     Re-run as 
-     inverseSystem(I, PowerBound => D)
-     for appropriate D.";
-    toDual(d,I,DividedPowers => o.DividedPowers)
-    )
+
+toDualTrunc = method(Options => {DividedPowers => true})
+toDualTrunc (ZZ,Matrix) := Matrix => o-> (d,f) -> 
+    toDual(d,f | ((target f) ** gens power(ideal vars ring f,d)), 
+	DividedPowers => o.DividedPowers)
+
+inverseSystem = method(Options => {DividedPowers => false})
+inverseSystem (ZZ,Matrix) := o-> (d,M) -> 
+    toDual(d,M,DividedPowers => o.DividedPowers)
+
+inverseSystem (ZZ,Ideal) := o-> (d,I) -> inverseSystem(d,gens I, 
+                                         DividedPowers => o.DividedPowers)
 
 inverseSystem Matrix := o-> M -> (
-    ideal fromDual(M, DividedPowers => o.DividedPowers)
+    A := fromDual(M, DividedPowers => o.DividedPowers);
+    --A is a matrix; want a submodule or ideal
+    B := image A;
+    if rank target A == 1 then B = ideal B;
+    if isHomogeneous B then trim B else B
     )
-
+inverseSystem Ideal := o-> I -> 
+                   inverseSystem(gens I, DividedPowers => o.DividedPowers)
+		   
 inverseSystem RingElement := o-> M -> (
-    ideal fromDual(M, DividedPowers => o.DividedPowers)
+    A := fromDual(M, DividedPowers => o.DividedPowers);
+    --A is a matrix; want a submodule or ideal
+    B := ideal A;
+    if isHomogeneous B then trim B else B
     )
 
 
@@ -156,12 +166,15 @@ Headline
  Macaulay's Inverse Systems
 Description
  Text
+  Inverse systems are often used to construct artinian Gorenstein
+  ideals and modules. For a brief introduction to that application,
+  see @TO Gorenstein@. Here we give a general introduction.
+  
   The graded Hopf algebra dual of the symmetric algebra
   $S := k[x_1,\dots,x_n]$ is the divided power algebra
   $D$. The dual basis to the monomial basis of $S$
-  is the basis consisting of monomials
-  $x_1^{(m_1)} \dots x_n^{(m_n)}$ and multiplication
-  (for example). In characteristic zero,
+  is the basis consisting of monomials of the form
+  $x_1^{(m_1)} \dots x_n^{(m_n)}$. In characteristic zero,
   $S$ and $D$ are isomorphic as algebras, with 
   isomorphism sending 
   $x_i^{a}$ to $a!x_i^{(a)}$.
@@ -171,32 +184,31 @@ Description
 
   $x_1^{(1)}*x_1^{(1)} = 2*x_1^{(2)}$.
 
-  In finite characteristic $D$ and $S$ are not isomorphic; $D$ is not even
-  a finitely
-  generated algebra. 
+  In positive characteristic $D$ and $S$ are not isomorphic; $D$ is not even
+  a finitely generated algebra. 
   
   We will be interested
   also in the local versions, where we take power series
   in the divided powers. This is the ordinary linear dual of $S$.
   We denote it by
-  $D'$. When regarded as an $S$-module $D'$ is
-  thus the injective hull of the simple module
+  $D'$. As an $S$-module, $D'$ is
+  the injective hull of the simple module
   $S/(x_1,\dots,x_n)$.  
   
   Since $D$ is the graded dual of $S$, it may also be regarded as an
-  $S$-module as such, any element of $D$ is annihilated by a power
+  $S$-module. Any element of $D$ is annihilated by a power
   of $mm = (x_1,\dots,x_n)$, so the action of $S$ on 
-  $D$ or $D'$ factors through
-  the localization $S'$ of $S$ at $mm$.
+  $D$ or $D'$ extends to an action of the power series ring
+  k[[x_1,\dots,x_n]].
   
-  The inverse system of an $S'$-submodule M of $D'$ is
+  F. S. Macaulay defined the inverse system of an $S'$-submodule M of $D'$ to be
   the annihilator I of M in $S'$ (or in $S$).  If $M$ is finitely
   generated then it is annihilated by some power of $mm$,
   and thus I is 0-dimensional.
   
   Inversely, the (local) inverse system of an ideal in $S$
   or $S'$ is
-  by definition the submodule of $D'$ it annihilates.
+  by definition the submodule of $D'$ that it annihilates.
   
   In the 1880's these ideas were used by Max Noether, in the
   local version, as a substitute for primary decomposition in the 
@@ -207,7 +219,7 @@ Description
   such that one could do residuation in $S'/I$ -- 
   that is, $S'/I$ is Gorenstein.
   Though the global version
-  has also been studied (see Emsalem [****]), we will only
+  has also been studied, we will only
   be concerned with the local version. 
   
   Any 
@@ -223,7 +235,8 @@ Description
 
   %%%%%%%%%%%%%%%%%%%%%%%%  
 
-  Going from a submodule of D to an ideal of $S$: 
+  Going from a submodule of D to an ideal of S 
+  (or from a submodule of D^r to a submodule of S^r:
   
   Because D and D' are not finitely generated S-modules
   Macaulay2 cannot deal with them directly.
@@ -232,6 +245,9 @@ Description
   by a row matrix, of
   ordinary polynomials, whose entries are thought of as
   generators of M. 
+  
+  More generally, we represent a finitely generated submodule of $D^r$
+  as an $r$-rowed matrix M of ordinary polynomials.
   
   In the default behavior
   of the script
@@ -246,12 +262,12 @@ Description
   way unless the characteristic is greater than the highest
   degree to which a variable appears. 
   
-  To make $x^a$ represent $x^(a)$,
-  for example in small characteristics use
+  To make $x^a$ represent $x^{(a)}$,
+  for example in small characteristics, use
   
   inverseSystem(Matrix, DividedPowers=>true)
   
-  (which was the default behavior of the old script
+  (which was and remains the default behavior of the script
   "fromDual"). 
 
   The reason for the default choice is that the
@@ -259,29 +275,25 @@ Description
   it is reasonable to expect that the operations
   defined by inverseSystem should be equivariant. This is
   the case for the default setting, but with
-  DividedPowers=>true it is not the case:
-  for example, 
+  DividedPowers=>true it is not the case.
+  For example, 
  Example
   S = QQ[x,y]
   J = inverseSystem x^2
-  I = inverseSystem(x^2, DividedPowers=>true)
-  I == J
-  betti res I
  Text
-  is equivalent to the ideal
+  differs only by a linear change of coordinates from the ideal
  Example
   J' = inverseSystem (x+y)^2
  Text
-  but very different from the ideal
+  But is has very different properties than the ideal
  Example
-  I' = inverseSystem(matrix{{(x+y)^2}}, DividedPowers=>true)  
-  betti res I'
+  J'' = inverseSystem(matrix{{(x+y)^2}}, DividedPowers=>true)  
+  betti res J''
  Text
- 
-  Indeed, in the default behavior inverseSystem is equivariant in a precise sense:
+  With the default behavior (DividedPowers=>false),
+  inverseSystem is equivariant in a precise sense:
   If G is an $n\times n$ invertible scalar matrix, then G defines an automorphism 
-  g: S\to S by change of variables. Also g also acts on 1 x m matrices M, componentwise, and,
-  with the default behavior of inverseSystem (that is, DividedPowers=>false) we have
+  g: S\to S by change of variables. Also g also acts on 1 x m matrices M, componentwise and
   (transpose g)^{-1} (inverseSystem M) = inverseSystem(g M), as illustrated below:
  Example
   kk = QQ
@@ -304,91 +316,184 @@ Description
   Equivalently,
  Example
   h(inverseSystem M) == inverseSystem g(M)
-		
  Text  
   There is a similar equivariance for the dual action of inverseSystem on ideals.
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
-  Going from an ideal of S to a submodule of D:
+  Going from an ideal of S to a submodule of D, 
+  or from a submodule of S^r to a submodule of D^r.
   
   If $I$ is an ideal of $S$, homogeneous or not,
-  we regard $I$ as an ideal of $S'$. If $S'/I$ is of
-  finite length then
+  we regard $I$ as an ideal of $S'$, and similarly with 
+  submodules of S^n. In either case we allow the function
+  to accept either a submodule or its matrix of generators
+  (a matrix with target S^n, possibly with generators in 
+  different degrees.
   
-  M = inverseSystem I
-  M1 = inverseSystem(I, DividedPowers => true)
+  If I is an ideal or a submodule, then
+  M = inverseSystem(d, I)
+  M1 = inverseSystem(d, I, DividedPowers => true)
   
   both return 1 x m matrices whose entries are
   the minimal generators of
-  the annihilator of $I$ in $D'$. In the matrix $M$
+  the annihilator of $I$ in $D'$, correct up to degree d. 
+  In the matrix $M$
   a term $x^a$
   is to be interpreted as 
-  $a! x^(a)$, while in the matrix $M1$ it is interpreted
-  as $x^(a)$. Of course the first computation is only
+  $a! x^{(a)}$, while in the matrix $M1$ it is interpreted
+  as $x^{(a)}$. Of course the first computation is only
   valid if all the powers of variables appearing in the generators
   of $I$ are < char k.
   
-  On the other hand, if $S/I$ is not of finite length, then the
-  optional argument PowerBound is mandatory, and
- 
-  M = inverseSystem(I, PowerBound => d)
-  M1 = inverseSystem(I, DividedPowers => true, PowerBound => d)
-
-  will compute as above but with results valid only up to degree d.
-  
-  To represent finitely generated S-submodule of $D'$
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+  The functor
+  inverseSystem ( -- ) and 
+  inverseSystem (d ,-- )
+  are inverse contravariant isomorphisms between the categories of
+  bounded length submodules of D^r and bounded co-length submodules of S^r
+  (the bound depends on d in an obvious way.)
+ Example
+  S = ZZ/101[a,b,c]
+  M = random(S^{0,1}, S^{-1,-1,-2,-2})
+  d = 6
+  N = inverseSystem(d, M)
+  image M == inverseSystem N
+ Text
+  but with a smaller value of d this would not work:
+ Example
+  d = 5
+  N = inverseSystem(d, M)
+  image M != inverseSystem N
+ Text 
+  There is at present no direct way to compare
+  inverseSystem(d, inverseSystem M) and M, since the matrices repreenting these submodules
+  are really representing sets of generators in D^r. However, we can
+  check equality of containment by applying inverseSystem again:
+ Example
+  M = random(S^{0,1}, S^{-1,-1,-2,-2})
+  inverseSystem(inverseSystem(d,gens inverseSystem M)) == inverseSystem M
+ Text
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  Method: To represent finitely generated S-submodule of $D'$ 
   as an S-module we use the map of modules
-  D'-> S/(x_1^d,\dots, x_n^d) sending $x^{(a)}$ to 
-  contract(x^a, product(n, j-> x_i^{d-1})), 
-  which we treat as being defined only when the variables
-  in $x^{(a)}$ appear only with powers < d.
-  
+  S/(x_1^d,\dots, x_n^d) -> D' sending $x^a$ to 
+  contract(x^a, product(n, j-> x_i^{d-1})), and its inverse,
+  which is of course defined only on divided monomials of 
+  small degree.  
 Caveat
  The translations used involve multiplying or dividing by scalars; if the polynoimials
- involved have maximum degree n, then n! must be invertible for the translation to make sense.
+ involved have maximum degree n, then n! must be invertible for theUsing the tool of translation to make sense.
 SeeAlso
  inverseSystem
  fromDual
  toDual
- PowerBound
  DividedPowers
  fromDividedPowers
  toDividedPowers
 ///
 
+doc///
+Key
+ Gorenstein
+Headline
+ Constructing Gorenstein Rings and Modules
+Description
+ Text
+  Each artinian graded (or local) Gorenstein ring is the inverse system of a unique
+  element of D, and inverse systems are often used to construct such examples.
+  (Higher-dimensional Gorenstein rings also correspond to special inverse systems,
+  though these are not finitely generated submodules of D. See
+  "The structure of the inverse system of Gorenstein k-algebras"
+  by Joan Elias and Maria Evelina Rossi, Adv. Math. (2017) 306-327,
+  for a recent treatment with computational intent.)
+  
+  For example,
+  studying artinian Gorenstein rings of codimension 4,
+  one might consider those corresponding to the sum of n d-th powers of linear
+  forms. For example with n= 4,5 and d=3:
+ Example
+  S = ZZ/101[a,b,c,d]
+  nPowers = (S, n,d) ->sum(apply(n, j->(random(1,S))^d))
+  minimalBetti inverseSystem nPowers(S,4,3)
+  minimalBetti inverseSystem nPowers (S,5,3)
+ Text
+  One can also construct self-dual modules with more generators by taking the 
+  inverseSystem of a submodule that is isomorphic to its dual, for example
+  the image of a symmetric or skew-symmetric matrix:
+ Example
+  Msymm = matrix"0,a,b;a,0,c;b,c,0"
+  Mskew = matrix"0,a,b;-a,0,c;-b,-c,0"
+  minimalBetti coker gens inverseSystem Msymm
+  minimalBetti coker gens inverseSystem Mskew  
+ Text
+  For an interesting series of examples, consider the d-th Hessian matrices
+  obtained by taking the d-th mixed partials of a form of some degree e>2d. The ranks
+  of such matrices are connected to the Lefschetz properties of the corresponding
+  artinian Gorenstein rings, as explained in "The Lefschetz properties",
+  Springer Lecture Notes in Math. 2080, by 
+  T. Harima, 
+  T. Maeno, 
+  H. Morita,
+  Y. Numata,
+  A. Wachi  and 
+  J. Watanabe.
+ Example
+  Hessian = (d,f) ->(
+      S = ring f;
+      B = basis(d,S);
+      diff(transpose B, diff(B,f))
+      )
+  S = ZZ/101[x_1..x_4]
+  f = nPowers (S,6,4)
+  minimalBetti coker gens inverseSystem f
+  minimalBetti coker gens inverseSystem Hessian(1, f)
+  minimalBetti coker gens inverseSystem Hessian(2, f)
+SeeAlso
+ inverseSystem
+///
+
 doc ///
 Key
  inverseSystem
- (inverseSystem, Ideal)
  (inverseSystem, Matrix)
+ (inverseSystem, Ideal) 
  (inverseSystem, RingElement) 
- [inverseSystem,DividedPowers] 
- [inverseSystem,PowerBound]  
+ (inverseSystem, ZZ, Ideal)
+ (inverseSystem, ZZ, Matrix) 
+ [inverseSystem, DividedPowers] 
 Headline
- Inverse systems with equivariance. Can replace fromDual and toDual
+ Inverse systems with equivariance
 Usage
  I1 = inverseSystem M
  M1 = inverseSystem I
 Inputs
  M:Matrix
+  if r rows, then represents a submodule of D'^r
  M:RingElement
  I:Ideal
 Outputs
  I1:Ideal
+  if r=1
+ I1:Module
+  submodule of S^r
  M1:Matrix
 Description
  Text
+  Inverse systems are often used to construct artinian Gorenstein
+  ideals and modules. For that application
+  see @TO Gorenstein@.
+ 
   Let S = k[x_1..x_n] be a standard graded polyomial ring,
   and let D be its dual, the divided power algebra,
-  regarded as an S-module.  Let M be a 1xm matrix of polynomials,
+  regarded as an S-module.  Let M be an rxm matrix of polynomials,
   and let I be an ideal of S. 
   
-  From a submodule of D to an ideal of S:
+  From a submodule of D^r to a submodule of S^r (or to an ideal, if r=1):
   
-  We think of the entries of M as generators of an  S-submodule MM of D,
+  We think of the columns of M as generators of an  S-submodule MM of D^r,
   and 
-  inverseSystem M returns the annihilator in S of MM.
+  inverseSystem M returns the annihilator of MM in S^r = Hom_{graded}(D^r,k).
   In the default behavior
   a monomial $x^a$ in an entry of the matrix M is taken to represent
   $a!x^(a) \in D'$, where,
@@ -421,14 +526,6 @@ Description
   valid if all the powers of variables appearing in the generators
   of $I$ are < char k.
   
-  On the other hand, if $S/I$ is not of finite length, then the
-  optional argument PowerBound is mandatory, and
- 
-  M = inverseSystem(I, PowerBound => d)
-  M1 = inverseSystem(I, DividedPowers => false, PowerBound => d)
-
-  will compute as above but with results valid only up to degree d.
-  
   To make these computations it is necessary to represent some sufficiently
   large finitely generated S-submodule of $D$ (this will automatically be
   an $S'$-submodule. To do this we use the map of modules
@@ -452,7 +549,6 @@ Description
  Example
   kk = ZZ/101
   S = kk[a..d]
-
   f1 = matrix"a2b2+c2d2"; -- gives 1,4,6,4,1
   f2 = matrix"a2b2+b2c2+c2d2"; --gives 1,4,7,4,1;
   f3 = matrix"a2b2+b2c2+c2d2+c2a2"; -- gives 1,4,8,4,1
@@ -477,7 +573,6 @@ Caveat
  "fromDual"). 
 SeeAlso
  DividedPowers
- PowerBound
  fromDividedPowers
  toDividedPowers
  fromDual
@@ -488,17 +583,6 @@ SeeAlso
 doc ///
    Key
     DividedPowers
-   Headline
-    Option for inverseSystem
-   Description
-    Text
-   Caveat
-   SeeAlso
-    inverseSystem
-///
-doc ///
-   Key
-    PowerBound
    Headline
     Option for inverseSystem
    Description
@@ -577,7 +661,7 @@ doc ///
      interpreted as list of generators of inverse system to I
    Description
     Text
-     If I is an ideal, then toDual(d,I) = inverseSystem(I, PowerBound =>d). 
+     If I is an ideal, then toDual(d,I) = inverseSystem(d, I). 
      See the documentation of
      InverseSystems for the basic theory and of inverseSystem for the function.
      
@@ -594,7 +678,6 @@ doc ///
     fromDual
     (fromDual, RingElement)
     (fromDual, Matrix)
-    [fromDual,PowerBound]
     [fromDual,DividedPowers]
    Headline
     Ideal from inverse system
@@ -602,11 +685,10 @@ doc ///
     M  = fromDual f
    Inputs
     f:Matrix
-     with one row
     f:RingElement
    Outputs
     M:Matrix
-     interpreted as the generators of an ideal
+     whose image is the inverse system
    Description
     Text
      The matrix (or ring element) f is interpreted as an element of the linear dual of
@@ -620,8 +702,8 @@ doc ///
      to the general linear group, acting by change of basis. This not a bug, but
      follows because fromDual
      uses the divided power basis. If equivariant behavior is desired, use
-     the option DividedPowers=>false, which is the default behavior of 
-     inverseSystem:
+     the option DividedPowers=>false (which is the default behavior of 
+     inverseSystem):
     Example
      S = ZZ/101[x,y]
      f1 = x^2
@@ -629,7 +711,10 @@ doc ///
      betti res ideal fromDual f1
      betti res ideal fromDual f2
      betti res (I = ideal fromDual(f2, DividedPowers => false))
-     I == inverseSystem f2
+     I == inverseSystem (f2, DividedPowers => false)
+     inverseSystem (f2, DividedPowers => true)
+     ideal fromDual(f2, DividedPowers => false)
+     ideal fromDual(f2, DividedPowers => true)
    Caveat
     The Base ring of the input must be a standard graded polynomial ring over a field.
 
@@ -663,7 +748,7 @@ d= 3
 f = product(3,i->S_i^(d-1))
 I = ideal apply(3, i->S_i^d)
 assert(I == inverseSystem f)
-assert (I == inverseSystem inverseSystem I)
+assert (I == inverseSystem inverseSystem(3, I))
 ///
 
 TEST///
@@ -715,16 +800,24 @@ g = b^3
 h = GG matrix{{f,g}}
 I = ideal h
 --the equality for ideals:
-assert(I ==  inverseSystem inverseSystem(I,PowerBound =>4))
-assert(I ==  inverseSystem(inverseSystem(I, PowerBound=>4, DividedPowers=>true), 
+assert(I ==  inverseSystem inverseSystem(3, I))
+assert(I ==  inverseSystem(inverseSystem(4, I, DividedPowers=>true), 
 			   DividedPowers =>true
 			  )
        )
 --The equality for matrices 
 --since we can't directly compare submodules of the injective hull, we compare them by taking their annihilators:
-assert(inverseSystem h == inverseSystem inverseSystem(inverseSystem h, PowerBound=>4))
-assert(inverseSystem h == inverseSystem(inverseSystem(inverseSystem h, PowerBound=>4, DividedPowers=>true), 
-	                                DividedPowers=>true))
+assert(inverseSystem h == inverseSystem inverseSystem(4,inverseSystem h))
+
+assert(
+    inverseSystem(h,DividedPowers=>true)
+    == 
+    inverseSystem(
+	inverseSystem(4,
+	    inverseSystem(h, DividedPowers=>true),
+	              DividedPowers=>true),DividedPowers =>true)
+	      )
+
 ///
 
 --inverseSystem is equivariant on matricses
@@ -740,13 +833,13 @@ testmap = map(S,S,(vars S)*g)
 testmap' = map(S,S,(vars S)*(dual g)^-1)
 
 f = matrix{{a,b^3}}
-assert(testmap' inverseSystem f == 
-       inverseSystem (testmap f)
+
+f = random(S^1, S^{-2,-2,-3});
+assert(inverseSystem testmap' inverseSystem(5,f) == 
+       inverseSystem inverseSystem(5, (testmap f))
 		)
-f = random(S^1, S^{-2,-2,-3})
-assert(testmap' inverseSystem f == 
-       inverseSystem (testmap f)
-		)
+
+
 ///
 
 --inverseSystem is equivariant on 0-dimensional ideals 
@@ -761,19 +854,20 @@ testmap = map(S,S,(vars S)*g)
 testmap' = map(S,S,(vars S)*(dual g)^-1)
 
 f = random(S^1, S^{-2,-2,-3});
-assert(inverseSystem testmap' inverseSystem f == 
-       inverseSystem inverseSystem (testmap f)
+assert(inverseSystem testmap' inverseSystem(5,f) == 
+       inverseSystem inverseSystem(5, (testmap f))
 		)
+
 f = ideal(a,b^3)+(ideal vars S)^4;
-assert( inverseSystem testmap'  inverseSystem (f, PowerBound => 4) == 
-       inverseSystem inverseSystem (testmap f, PowerBound => 4)
+assert( inverseSystem testmap'  inverseSystem (4,f) == 
+       inverseSystem inverseSystem (4, testmap f)
 		)
 
 mm=ideal vars S
 f = ideal(a,b^3)
 f = ideal random(S^1, S^{-2,-3});
-assert(mm^5+inverseSystem testmap'  inverseSystem (f, PowerBound => 4) == 
-       mm^5+inverseSystem inverseSystem (testmap f, PowerBound => 4)
+assert(mm^5+inverseSystem testmap'  inverseSystem (4,f) == 
+       mm^5+inverseSystem inverseSystem (4, testmap f)
 		)
 ///
 
@@ -789,44 +883,74 @@ assert(hilbertSeries ideal leadTerm gens gb I1===hilbertSeries ideal leadTerm ge
 
 S = QQ[x,y]
 I = ideal"x3,xy+y4+y5"+(ideal vars S)^7
-M' = inverseSystem I
+
+M' = inverseSystem(7, I)
 assert(I ==inverseSystem M')
 
-M'' = inverseSystem(I,DividedPowers => true)
+M'' = inverseSystem(7,I,DividedPowers => true)
 assert(I ==inverseSystem (M'',DividedPowers => true))
 
 assert(M'!= M'')
 ---
 S = QQ[x,y]
 I = ideal"x3,xy+y4+y5"+(ideal vars S)^7
-M' = inverseSystem I
+
+M' = inverseSystem(7, I)
 assert(I ==inverseSystem M')
 
-M'' = inverseSystem(I, DividedPowers => true)
+M'' = inverseSystem(7,I, DividedPowers => true)
 assert(I ==inverseSystem (M'',DividedPowers => true))
 
 assert(M'!= M'')
 ///
+TEST///
+kk = ZZ/32003
+S = kk[a,b,c]
+f = matrix"a3+b3+c3"
+assert(fromDual f == fromDual toDual(10,fromDual f))
+f = f++f
+assert(fromDual f == fromDual toDual(10,fromDual f))
+f = random(S^{1,2,3},S^{0,-1,-2})
+assert(fromDual f == fromDual toDual(10,fromDual f))
+///
 
-     -- a test from the old documentation
-     TEST ///
+
+     
+TEST ///
+setRandomSeed 0
+          R = ZZ/32003[x_1..x_3];
+	  g = random(R^1, R^{-4})
+	  f = fromDual g
+	  F = res ideal f
+	  assert(apply(4, i->rank F_i) == {1,7,7,1})
+          ///
+TEST ///
+    R = ZZ/101[a..d]
+    f = matrix{{a^3 + b^3 + c^3 + d^3 + (a+b+c)^3}}
+    fdual = fromDual f
+    assert(f == toDual(4, fdual))
+///
+
+TEST///
      	  R = ZZ/32003[a..e];
 	  f = matrix{{a^2, b^2, c^2, d^2, e^3, a*d-e^2}}
+	  betti res coker f
 	  g = toDual(1,f)
-	  ideal fromDual g == ideal f
+	  assert((ideal fromDual g == ideal f) ==false)
 	  g = toDual(2,f)
-	  ideal fromDual g == ideal f
+	  assert((ideal fromDual g == ideal f) ==true)
 	  g = toDual(3,f)
-	  ideal fromDual g == ideal f
+	  assert((ideal fromDual g == ideal f) ==true)	  
 	  ///
 
 TEST ///
+--a case where the ideal is not 0-dimensional
  R = QQ[a,b,c]
  f= matrix"a-b,c"
- toDual(1,f)
- toDual(2,f)
- toDual(3,f)
+toDual(2,f) == matrix {{a^2+a*b+b^2}}
 ///
+
+end--
 
 document {
      Key => "inverse systems",
@@ -875,24 +999,8 @@ document {
 	 ///,
      SeeAlso => {toDual, fromDual}
      },
-     
-     -- a test from the old documentation
-     TEST ///
-          R = ZZ/32003[x_1..x_3];
-	  g = random(R^1, R^{-4})
-	  f = fromDual g
-	  res ideal f
-	  betti oo
-          ///
 
-TEST ///
-    R = ZZ/101[a..d]
-    f = matrix{{a^3 + b^3 + c^3 + d^3 + (a+b+c)^3}}
-    fdual = fromDual f
-    assert(f - toDual(4, fdual) == 0)
-///
 
-end--
 restart
 loadPackage("InverseSystems", Reload =>true)
 uninstallPackage("InverseSystems")
@@ -911,3 +1019,81 @@ betti res inverseSystem cubic(6,5)
 
 g= 9
 netList apply(toList(g-2..2*g-4), j-> betti res inverseSystem cubic(g,j))
+
+
+-------code from Mats
+modFromDual Matrix := Matrix => (F) -> (
+    S := ring F;
+    d := max for m in first entries compress flatten monomials F list sum first exponents m;
+    L := matrix {{1_S}}; 
+    for i from 1 to d+1 do L = L | gens power(ideal vars S,i); 
+    pM := (L ** id_(target F)) * syz sub(contract((transpose L) * L,transpose F),vars S-vars S);
+    presentation prune trim coker pM
+    )
+
+newToDual (ZZ,Matrix) := Matrix => (d,f) -> (
+    S := ring f;
+    g := product apply(generators S, v -> v^d);
+    I := ideal for i to -1 + numgens S list S_i^(d+1);
+    R := S / I;
+    transpose contract(
+	transpose mingens image (sub(gens ker sub(transpose f,R),S)),
+	map(S^{degree g},S^1,matrix{{g}})))
+
+newToDualTrunc (ZZ,Matrix) := Matrix => (d,f) -> (
+    newToDual (d,f | ((target f) ** gens power(ideal vars ring f,d)))
+    )
+
+doc ///
+   Key 
+      newFromDual
+   Headline 
+      computes the submodule annihilating an inverse system
+   Usage 
+      N = newFromDual(F)
+   Inputs
+      F:Matrix 
+         F is a matrix where the columns are the generators of an inverse system in   
+	 the inverse system of a free module. 
+   Outputs
+      N:Matrix
+         N is a presentation matrix for the module that has F as its inverse system.
+   Description
+      Text
+         
+      Example 
+         F = matrix(QQ[x,y,z],{{x^4,y^4},{z^4,x^2*y^2}})
+         N = newFromDual(F)
+      Text 
+         The command {\tt newFromDual} extends the command {\tt fromDual} so that it also 
+         works for modules.
+///
+
+doc ///
+   Key 
+      newToDual
+   Headline 
+      computes the inverse system of a given module
+   Usage 
+      F = newFromDual(d,N)
+   Inputs
+      d:ZZ
+      N:Matrix 
+         d is an integer specifying a particular degree for the truncation of the inverse
+	 system to be computed. (Needed since it is in general not finitely generated)
+	 N is a presentation matrix for a module over a polynomial ring. 
+   Outputs
+      F:Matrix
+         The columns of F are generators of the intersection of the inverse 
+	 system of the module presented by N with the inverse system generated by a the 
+	 d:th power of the product of the variables. 
+   Description
+      Text
+         
+      Example 
+         N = matrix(QQ[x,y,z],{{x^4,y^4},{z^4,x^2*y^2}})
+         F = newToDual(5,N)
+      Text 
+         The command {\tt newToDual} extends the command {\tt toDual} so that it also 
+         works for modules.
+///

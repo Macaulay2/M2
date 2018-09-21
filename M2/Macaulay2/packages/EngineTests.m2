@@ -261,17 +261,6 @@ load "EngineTests/GB.Test.Mathic.m2"
 load "EngineTests/Res.f4.m2"
 --check  EngineTests
 
-doc ///
-Key
-  EngineTests
-Headline
-  a test suite for the Macaulay2 engine
-Description
-  Text
-Caveat
-SeeAlso
-///
-
 ///
 testFracRaw = () -> (
      debug Core;
@@ -483,8 +472,17 @@ assert(L2 == L3)
 
 ///
 
+beginDocumentation()
 
-
-end
+doc ///
+Key
+  EngineTests
+Headline
+  a test suite for the Macaulay2 engine
+Description
+  Text
+Caveat
+SeeAlso
+///
 
 

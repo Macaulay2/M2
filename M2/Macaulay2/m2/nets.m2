@@ -119,9 +119,6 @@ toExternalString Sequence := s -> (
      if # s === 1 then concatenate("1:(",toExternalString s#0,")")
      else concatenate("(",mid s,")"))
 -----------------------------------------------------------------------------
-describe = method()
-describe Thing := net
-
 net Manipulator := toString
 net Thing := toString
 -----------------------------------------------------------------------------
@@ -129,7 +126,6 @@ net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
-net Option := z -> net z#0 | " => " | net z#1
 
 Net == String := (n,s) -> (				    -- should install in engine
      height n === 1 and depth n === 0 and width n === length s and n#0 === s
@@ -169,13 +165,20 @@ net List := x -> horizontalJoin deepSplice (
      toSequence between(comma,apply(x,netn)),
      "}")
 
-VerticalList = new SelfInitializingType of List
-VerticalList.synonym = "vertical list"
-net VerticalList := x -> if #x === 0 then "{}" else (
-     n := stack apply(x,net);
+embrace = n -> (
      h := height n;
      d := depth n;
      horizontalJoin("{"^(h,d), n, "}"^(h,d)))
+
+VerticalList = new SelfInitializingType of List
+VerticalList.synonym = "vertical list"
+net VerticalList := x -> if #x === 0 then "{}" else embrace stack apply(x,net)
+VerticalList.Wrap = x -> x
+
+NumberedVerticalList = new SelfInitializingType of VerticalList
+NumberedVerticalList.synonym = "numbered vertical list"
+net NumberedVerticalList := x -> if #x === 0 then "{}" else embrace stack apply(#x,i -> net (i => x#i));
+
 net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),
@@ -191,11 +194,11 @@ net MutableList := x -> (
      else horizontalJoin ( net class x, "{}")
      )
 net HashTable := x -> (
-     horizontalJoin flatten ( 
+     horizontalJoin flatten (
      	  net class x,
 	  "{", 
 	  -- the first line prints the parts vertically, second: horizontally
- 	  stack (horizontalJoin \ sort apply(pairs x,(k,v) -> (net k, " => ", net v))),
+ 	  stack (horizontalJoin \ apply(sortByName pairs x,(k,v) -> (net k, " => ", net v))),
 	  -- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
 	  "}" 
      	  ))
@@ -214,16 +217,6 @@ net Type := X -> (
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
-
-texMath Net := n -> concatenate (
-     ///{\arraycolsep=0pt
-\begin{matrix}
-///,
-     between(///\\
-///, unstack n / characters / (i -> apply(i,c -> (///\tt ///,c))) / (s -> between("&",s))),
-     ///
-\end{matrix}}
-///)
 
 -----------------------------------------------------------------------------
 

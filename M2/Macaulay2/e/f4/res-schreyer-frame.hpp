@@ -44,25 +44,6 @@ typedef int ComponentIndex;  // index into f4 matrices over kk.  These tend to
 
 typedef int FieldElement;
 
-class MonomialCounter
-{
- public:
-  void accountForMonomial(res_const_packed_monomial mon);
-  long count() const { return mNumAllMonomials; }
-  MonomialCounter(const ResMonoid& M);
-  ~MonomialCounter() { delete mIgnoreMonomials; }
-  const ResMonoid& monoid() const { return mMonoid; }
- private:
-  const ResMonomialsIgnoringComponent* mIgnoreMonomials;  //
-  MonomialHashTable<ResMonomialsIgnoringComponent>
-      mAllMonomials;  // all monomials in the ring which appear in the mSyzygy's
-  long mNumAllMonomials;  // total number of monomials
-  MemoryBlock<res_monomial_word> mMonomSpace;
-  res_packed_monomial mNextMonom;
-
-  const ResMonoid& mMonoid;
-};
-
 namespace SchreyerFrameTypes {
 struct FrameElement
 {
@@ -151,7 +132,15 @@ class SchreyerFrame
   void setBettiDisplays();
   int rank(int slanted_degree, int lev);  // rank of the degree 'degree' map of
                                           // scalars level 'lev' to 'lev-1'.
+  //  int rankUsingSparseMatrix(int slanted_degree, int lev);
 
+  template<typename Gen>
+  int rankUsingSparseMatrix(Gen& D);
+
+  template<typename Gen>
+  int rankUsingDenseMatrix(Gen& D);
+  
+  
   bool computeFrame();  // returns true if the whole frame is created.  false if
                         // interrupted.
 
@@ -221,6 +210,10 @@ class SchreyerFrame
   MemoryBlock<res_monomial_word>
       mMonomialSpace;  // We keep all of the monomials here, in order
 
+  // This class contains, and allows one to uniquify, all degrees appearing
+  // It contains: memt::Arena, and unordered_set. WORKING ON
+  //  MonomialCollection mDegrees;
+  
   // Betti tables: set after the frame has been constructed.
   BettiDisplay mBettiNonminimal;
   BettiDisplay mBettiMinimal;
@@ -262,6 +255,7 @@ class SchreyerFrame
   double timeClearMatrix;
   double timeResetHashTable;
   double timeComputeRanks;
+  double timeComputeSparseRanks;
 };
 
 #endif

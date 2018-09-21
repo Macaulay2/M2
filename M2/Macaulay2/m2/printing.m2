@@ -50,7 +50,12 @@ net Bag := toString Bag := x -> (
      else if #x===1 then "-*a bagged " | synonym class first x | "*-" 
      else "-*a bagged sequence of length " | toString(#x) | "*-" 
      )
-
+texMath Bag := x -> concatenate(
+    texMath class x,
+     "\\{",
+     if #x>0 then toString(#x) | "\\text{ items}",
+     "\\}"
+     )
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

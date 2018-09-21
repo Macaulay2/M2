@@ -538,7 +538,7 @@ assert(not isStrictlyIncreasing L)
 --third element: the result of subtracting it.
 decompose1= B->(
      L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     if not isStrictlyIncreasing L then error "not in the simplex of pure Betti diagrams";
 --     C:=pureBettiDiagram L;
      C:=makePureBettiDiagram L;     
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
@@ -548,7 +548,7 @@ decompose1= B->(
 --  input: BettiTally
 decompose2 = B -> (
      L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     if not isStrictlyIncreasing L then error "not in the simplex of pure Betti diagrams";
      C:=makePureBettiDiagram( L,TableEntries=>RealizationModules);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
@@ -557,7 +557,7 @@ decompose2 = B -> (
 --  input: BettiTally
 decompose3 = B -> (    
      L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     if not isStrictlyIncreasing L then error "not in the simplex of pure Betti diagrams";
      C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))

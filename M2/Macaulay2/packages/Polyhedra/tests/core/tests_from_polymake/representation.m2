@@ -9,7 +9,7 @@ ineqlhsPd = matrix {{0,-1},{-1,0},{0,1},{1,0}};
 ineqrhsPd = matrix {{0},{0},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -39,7 +39,7 @@ ineqlhsPd = matrix {{0,0}};
 ineqrhsPd = matrix {{1}};
 eqlhsPd = matrix {{-1,0},{0,-1}};
 eqrhsPd = matrix {{-3},{-4}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -69,7 +69,7 @@ ineqlhsPd = matrix {{0,0,-1,0},{-1,0,0,0},{0,-1,0,0},{1,1,-1,-1},{0,0,0,-1},{0,1
 ineqrhsPd = matrix {{0},{0},{0},{1},{0},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^4, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -99,7 +99,7 @@ ineqlhsPd = matrix {{0,0,-1,0,0},{-1,0,0,0,0},{0,-1,0,0,0},{1,1,-1,-1,0},{0,0,0,
 ineqrhsPd = matrix {{0},{0},{0},{1},{0},{1},{1},{1}};
 eqlhsPd = matrix {{0,0,-1,-1,-1}};
 eqrhsPd = matrix {{-1}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -129,7 +129,7 @@ ineqlhsPd = matrix {{-1,0,-3,-2,-2},{0,-1,-4,-4,-4},{1,0,2,2,2},{0,1,3,4,4},{0,0
 ineqrhsPd = matrix {{-3},{-4},{3},{4},{0},{0},{1}};
 eqlhsPd = map(QQ^0, QQ^5, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -159,7 +159,7 @@ ineqlhsPd = matrix {{1,1},{-1,0},{0,-1}};
 ineqrhsPd = matrix {{1},{0},{0}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -189,7 +189,7 @@ ineqlhsPd = matrix {{-1,0,-3,-2,0},{0,-1,-4,-4,0},{1,0,2,2,0},{0,1,3,4,0},{0,0,0
 ineqrhsPd = matrix {{-3},{-4},{3},{4},{0},{1}};
 eqlhsPd = matrix {{0,0,-1,-1,-1}};
 eqrhsPd = matrix {{-1}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -219,7 +219,7 @@ ineqlhsPd = matrix {{0,0}};
 ineqrhsPd = matrix {{1}};
 eqlhsPd = matrix {{-1,0},{0,-1}};
 eqrhsPd = matrix {{-1},{0}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -249,7 +249,7 @@ ineqlhsPd = matrix {{0,-1,0,0},{0,0,1,0},{-1,0,0,0},{-1,-1,-1,0},{0,1,0,0},{0,0,
 ineqrhsPd = matrix {{0},{1},{0},{-1},{1},{0},{2},{1}};
 eqlhsPd = matrix {{-1,-1,-1,-1}};
 eqrhsPd = matrix {{-2}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -279,7 +279,7 @@ ineqlhsPd = matrix {{1,1,-1,-1},{1,0,-1,-1},{1,-1,1,-1},{1,-1,0,-1},{1,-1,-1,1},
 ineqrhsPd = matrix {{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^4, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -309,7 +309,7 @@ ineqlhsPd = matrix {{1,1,-1,-1,-1},{1,-1,1,-1,-1},{1,-1,-1,1,-1},{1,-1,-1,-1,-1}
 ineqrhsPd = matrix {{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^5, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -339,7 +339,7 @@ ineqlhsPd = matrix {{1,1,1,-1,-1,-1},{1,1,-1,1,-1,-1},{1,1,-1,-1,1,-1},{1,1,-1,-
 ineqrhsPd = matrix {{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^6, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -369,7 +369,7 @@ ineqlhsPd = matrix {{1,-1,-1},{-1,-1,1},{-1,1,-1},{-1,1,1},{1,-1,1},{1,1,-1}};
 ineqrhsPd = matrix {{1},{1},{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^3, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -399,7 +399,7 @@ ineqlhsPd = matrix {{0,0,0,0,0,1,0},{-1,0,0,0,0,0,0},{-1,-1,0,0,-1,-1,0},{0,-1,0
 ineqrhsPd = matrix {{1},{0},{-2},{0},{1},{1},{-1},{1},{0},{0},{3}};
 eqlhsPd = matrix {{-1,-1,-1,-1,-1,-1,-1}};
 eqrhsPd = matrix {{-3}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -429,7 +429,7 @@ ineqlhsPd = matrix {{0,0,-1,0,0,0,0},{0,0,0,1,0,0,0},{0,0,0,0,0,1,0},{0,-1,0,0,0
 ineqrhsPd = matrix {{0},{1},{1},{0},{0},{-2},{1},{0},{1},{0},{0},{3},{1},{1}};
 eqlhsPd = matrix {{-1,-1,-1,-1,-1,-1,-1}};
 eqrhsPd = matrix {{-3}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -459,7 +459,7 @@ ineqlhsPd = matrix {{0,0,0,0,0,1,0},{0,0,0,0,-1,0,0},{0,0,0,1,0,0,0},{-1,0,0,0,0
 ineqrhsPd = matrix {{1},{0},{1},{0},{-2},{1},{0},{1},{0},{1},{-1},{1},{0},{3},{0},{2}};
 eqlhsPd = matrix {{-1,-1,-1,-1,-1,-1,-1}};
 eqrhsPd = matrix {{-3}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -489,7 +489,7 @@ ineqlhsPd = matrix {{11,1},{0,-1},{-11,1}};
 ineqrhsPd = matrix {{11},{0},{0}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -519,7 +519,7 @@ ineqlhsPd = matrix {{-1,1,1,-1},{-1,1,1,1},{-1,1,-1,-1},{-1,1,-1,1},{-1,-1,-1,-1
 ineqrhsPd = matrix {{1},{2},{0},{1},{-1},{0},{1},{0},{1},{0},{2},{1},{2},{1},{3},{2}};
 eqlhsPd = map(QQ^0, QQ^4, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -549,7 +549,7 @@ ineqlhsPd = matrix {{0,0,-1},{0,-1,0},{-1,0,0},{1,0,0},{0,1,0},{0,0,1}};
 ineqrhsPd = matrix {{0},{0},{0},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^3, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -579,7 +579,7 @@ ineqlhsPd = matrix {{0,-1},{-1,0},{1,0},{0,1}};
 ineqrhsPd = matrix {{0},{0},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -609,7 +609,7 @@ ineqlhsPd = matrix {{0,-1},{-10,1},{10,1}};
 ineqrhsPd = matrix {{0},{0},{10}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -639,7 +639,7 @@ ineqlhsPd = matrix {{0,-1,-1,-1},{-1,0,-1,-1},{-1,-1,0,-1},{-1,-1,-1,0},{1,0,-1,
 ineqrhsPd = matrix {{-1},{-1},{-1},{-1},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{1},{2},{2},{2},{2}};
 eqlhsPd = map(QQ^0, QQ^4, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -669,7 +669,7 @@ ineqlhsPd = matrix {{-1,-1},{-1,1},{1,1},{1,-1}};
 ineqrhsPd = matrix {{0},{1},{2},{1}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -699,7 +699,7 @@ ineqlhsPd = matrix {{-1,0,0},{1,0,0},{0,-1,0},{0,1,0},{0,0,-1},{0,0,1}};
 ineqrhsPd = matrix {{0},{1},{0},{1},{0},{1}};
 eqlhsPd = map(QQ^0, QQ^3, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -729,7 +729,7 @@ ineqlhsPd = matrix {{-1,0,0,0},{1,0,0,0},{0,-1,0,0},{0,1,0,0},{0,0,-1,0},{0,0,1,
 ineqrhsPd = matrix {{1},{1},{1},{1},{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^4, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -759,7 +759,7 @@ ineqlhsPd = matrix {{-1,0,0},{1,0,0},{0,-1,0},{0,1,0},{0,0,-1},{0,0,1}};
 ineqrhsPd = matrix {{1},{1},{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^3, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -789,7 +789,7 @@ ineqlhsPd = matrix {{0,0}};
 ineqrhsPd = matrix {{1}};
 eqlhsPd = matrix {{-1,-1},{1/2,-1/2}};
 eqrhsPd = matrix {{0},{1}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -819,7 +819,7 @@ ineqlhsPd = map(QQ^1, QQ^0, 0);
 ineqrhsPd = matrix {{1}};
 eqlhsPd = map(QQ^0, QQ^0, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -849,7 +849,7 @@ ineqlhsPd = matrix {{0,0}};
 ineqrhsPd = matrix {{1}};
 eqlhsPd = matrix {{-1,0}};
 eqrhsPd = matrix {{-1}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -878,7 +878,7 @@ ineqlhsPd = matrix {{0,-1},{-1,0},{-4,2},{0,1},{2,1},{1,0}};
 ineqrhsPd = matrix {{0},{0},{1},{5/2},{11/2},{5/2}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -908,7 +908,7 @@ ineqlhsPd = matrix {{1,-2},{-4,-1},{-1,2},{1,1},{2,-1}};
 ineqrhsPd = matrix {{3},{3},{3},{2},{3}};
 eqlhsPd = map(QQ^0, QQ^2, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -938,7 +938,7 @@ ineqlhsPd = matrix {{0,0}};
 ineqrhsPd = matrix {{1}};
 eqlhsPd = matrix {{-1,0},{0,-1}};
 eqrhsPd = matrix {{-1},{-1}};
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)
@@ -968,7 +968,7 @@ ineqlhsPd = matrix {{0,0,-1},{-1,0,0},{0,-1,0},{0,0,0}};
 ineqrhsPd = matrix {{1},{1},{1},{1}};
 eqlhsPd = map(QQ^0, QQ^3, 0);
 eqrhsPd = map(QQ^0, QQ^1, 0);
-Pd = intersection(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
+Pd = polyhedronFromHData(ineqlhsPd, ineqrhsPd, eqlhsPd, eqrhsPd);
 assert(Pd == P)
 assert(isEmpty Pd === isEmpty P)
 assert(isCompact Pd === isCompact P)

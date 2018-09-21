@@ -125,7 +125,7 @@ class ARingCC : public RingInterface
   }
 
   void set_var(ElementType& result, int v) const { set_from_long(result, 1); }
-  void set_from_mpz(ElementType& result, mpz_ptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     result.re = mpz_get_d(a);
     result.im = 0.0;

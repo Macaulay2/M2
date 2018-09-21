@@ -1,41 +1,41 @@
 -- Copyright 1994 by Daniel R. Grayson
 
-Set.synonym = "set"
+VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
+Set.synonym = "set"
 
 elements = method()
 elements Set := x -> keys x
-elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
+elements VirtualTally := x -> splice apply(pairs x, (k,v) -> v:k)
 
-toString Tally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
+toString VirtualTally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
 
-net Tally := t -> peek t
+net VirtualTally := t -> peek t
 
-Tally _ Thing := (a,b) -> if a#?b then a#b else 0
+VirtualTally _ Thing := (a,b) -> if a#?b then a#b else 0
 
-Tally ** Tally := Tally => (x,y) -> combine(x,y,identity,times,)
+VirtualTally ** VirtualTally := VirtualTally => (x,y) -> combine(x,y,identity,times,)
 
-Tally ^** ZZ := Tally => (x,n) -> (
+VirtualTally ^** ZZ := VirtualTally => (x,n) -> (
      if n < 0 then error "expected non-negative integer";
-     if n == 0 then return if class x === Set then set {()} else tally {()},
+     if n == 0 then return new class x from {()};
      if n == 1 then return applyKeys(x,i -> 1:i);
      y := x ** x;
-     scan(n-2, i -> y = combine(y,x,append,times,));
+     scan(n-2, i -> y = y ** x);
      y)
 
 continueIfZero = n -> if n == 0 then continue else n
 continueIfNonPositive = n -> if n <= 0 then continue else n
 
-Tally + Tally := Tally => (x,y) -> merge(x,y,plus)
-Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0)
-
-VirtualTally = new Type of Tally
-VirtualTally.synonym = "virtual tally"
 - VirtualTally := y -> applyValues(y,minus)
 VirtualTally + VirtualTally := VirtualTally => (x,y) -> merge(x,y,continueIfZero @@ plus)
 VirtualTally - VirtualTally := VirtualTally => (x,y) -> x + -y
 
-Tally ? Tally := (x,y) -> (
+- Tally := x -> new class x from {};
+Tally + Tally := Tally => (x,y) -> merge(x,y,plus) -- no need to check for zero
+Tally - Tally := Tally => (x,y) -> select(merge(x,applyValues(y,minus),plus),i -> i > 0) -- sadly, can't use continueIfNonPositive
+
+VirtualTally ? VirtualTally := (x,y) -> (
      w := values ((new VirtualTally from x) - (new VirtualTally from y));
      if #w === 0 then symbol ==
      else if all(w,i -> i>0) then symbol >
@@ -44,23 +44,16 @@ Tally ? Tally := (x,y) -> (
 
 zeroTally = tally{}
 toTally := i -> if i === 0 then zeroTally else error "comparison of a tally with a nonzero integer"
-Tally == ZZ := (x,i) -> x === toTally i
-ZZ == Tally := (i,x) -> toTally i === x
-Tally ? ZZ := (x,i) -> x ? toTally i
-ZZ ? Tally := (i,x) -> toTally i ? x
+VirtualTally == ZZ := (x,i) -> x === toTally i
+ZZ == VirtualTally := (i,x) -> toTally i === x
+VirtualTally ? ZZ := (x,i) -> x ? toTally i
+ZZ ? VirtualTally := (i,x) -> toTally i ? x
      
-sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
-product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)
+sum(VirtualTally) := (w) -> sum(pairs w, (k,v) -> v * k)
+product(VirtualTally) := (w) -> product(pairs w, (k,v) -> k^v)
 
 new Set from List := Set => (X,x) -> set x
 
-net Set := x -> "set " | net sort (net \ keys x)
-toString Set := x -> (
-     -- unpleasant hack
-     if class x === Set
-     then "set " | toString sort (toString \ keys x)
-     else "new " | toString class x | " from " | toString sort (toString \ keys x)
-     )
 Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := Set => (x,y) -> combine(x,y,identity,(i,j)->i,)
@@ -100,17 +93,17 @@ isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 
 member(Thing,Set) := Boolean => (a,s) -> s#?a
 
-Tally / Command  := 
-Tally / Function := Tally => (x,f) -> applyKeys(x,f,plus)
+VirtualTally / Command  :=
+VirtualTally / Function := VirtualTally => (x,f) -> applyKeys(x,f,plus)
 
-Command  \ Tally := 
-Function \ Tally := Tally => (f,x) -> applyKeys(x,f,plus)
+Command  \ VirtualTally :=
+Function \ VirtualTally := VirtualTally => (f,x) -> applyKeys(x,f,plus)
 
-Set / Command  := 
-Set / Function := Tally => (x,f) -> applyKeys(x,f,(i,j)->1)
+Set / Command  :=
+Set / Function := Set => (x,f) -> applyKeys(x,f,(i,j)->1)
 
-Command  \ Set := 
-Function \ Set := Tally => (f,x) -> applyKeys(x,f,(i,j)->1)
+Command  \ Set :=
+Function \ Set := Set => (f,x) -> applyKeys(x,f,(i,j)->1)
 
 
 permutations = method()
@@ -118,8 +111,8 @@ permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
 
 partition = method()
-partition(Function,Tally) := (f,s) -> partition(f,s,{})
-partition(Function,Tally,VisibleList) := (f,s,i) -> (
+partition(Function,VirtualTally) := (f,s) -> partition(f,s,{})
+partition(Function,VirtualTally,VisibleList) := (f,s,i) -> (
      p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scanPairs(s, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
      applyValues(new HashTable from p, px -> new class s from px))

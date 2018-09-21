@@ -139,7 +139,7 @@ class ARingCCC : public RingInterface
   }
 
   void set_var(ElementType& result, int v) const { set_from_long(result, 1); }
-  void set_from_mpz(ElementType& result, mpz_ptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     mpfr_set_z(&result.re, a, GMP_RNDN);
     mpfr_set_si(&result.im, 0, GMP_RNDN);

@@ -102,7 +102,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       	    store(interruptedFlag, false);
 		    determineExceptionFlag();
 		    promptWanted = true;
-		    issuePrompt = true;
+		    if !file.posFile.file.readline then issuePrompt = true; -- I'm not sure why this works, but it does!  Assigning always leads to an extra prompt when readline is being used in a terminal window.
 		    )
 	       else (
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
@@ -525,7 +525,7 @@ value(e:Expr):Expr := (
 	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
-setupfun("value",value).Protected = false;
+setupfun("value'",value);
 
 tmpbuf := new string len 100 do provide ' ' ;
 

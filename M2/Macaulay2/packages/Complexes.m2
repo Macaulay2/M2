@@ -199,17 +199,17 @@ export {
     "HomWithComponents"
     }
 
-<< "----------------------------------------------------------------------------" << endl
-<< "-- Experimental package                                                   --" << endl;
-<< "-- This package will replace ChainComplexes at                            --" << endl;
-<< "-- a future date.  The type 'Complex' here will                           --" << endl;
-<< "-- be changed to 'ChainComplex'.                                          --"<< endl;
-<< "--                                                                        --" << endl;
-<< "-- Purpose: to more fully implement functoriality in homological algebra  --" << endl;
-<< "-- Primary authors: Greg Smith and Mike Stillman                          --" << endl;
-<< "--                                                                        --" << endl;
-<< "-- For questions, suggestions, comments, bugs, please email either author --" << endl;
-<< "----------------------------------------------------------------------------" << endl
+-- << "----------------------------------------------------------------------------" << endl
+-- << "-- Experimental package                                                   --" << endl;
+-- << "-- This package will replace ChainComplexes at                            --" << endl;
+-- << "-- a future date.  The type 'Complex' here will                           --" << endl;
+-- << "-- be changed to 'ChainComplex'.                                          --"<< endl;
+-- << "--                                                                        --" << endl;
+-- << "-- Purpose: to more fully implement functoriality in homological algebra  --" << endl;
+-- << "-- Primary authors: Greg Smith and Mike Stillman                          --" << endl;
+-- << "--                                                                        --" << endl;
+-- << "-- For questions, suggestions, comments, bugs, please email either author --" << endl;
+-- << "----------------------------------------------------------------------------" << endl
 
 --load(currentFileDirectory | "Complexes/res.m2")
 unimplemented = str -> error(str|": not yet implemented")
@@ -2129,7 +2129,6 @@ minimize Complex := C -> (
     minC := coker phi;
     pmC := prune minC;
     m := map(pmC, C, i-> (pmC_i.cache.pruningMap)^(-1) * inducedMap(minC_i, C_i));
-    error "debug me";
     m[-min E]
     )
 

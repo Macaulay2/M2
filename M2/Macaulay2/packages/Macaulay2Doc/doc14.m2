@@ -801,6 +801,7 @@ doc ///
      (groebnerBasis,Ideal)
      (groebnerBasis,Module)
      (groebnerBasis,Matrix)
+     [groebnerBasis,Strategy]
    Headline
      Gröbner basis, as a matrix
    Usage

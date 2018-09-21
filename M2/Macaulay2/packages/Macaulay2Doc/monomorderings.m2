@@ -163,7 +163,8 @@ document {
           TO "MonomialOrder",
       "Developers' corner",
 	  TO "obtaining the monomial order of a ring"
-	  }
+	  },
+     SeeAlso => { "QthPower::weightGrevlex", "QthPower::grevlexWeight" }
      }
 
 document {
@@ -693,7 +694,7 @@ document {
      Caveat => {"The element ", TT "a/b", " is in the fraction ring,
         while ", TT "a*b^(-1)", " belongs to ", TT "R", ".",
 	PARA{},
-	"Currently, on cannot compute Gröbner bases in this ring."}
+	"Currently, one cannot compute Gröbner bases in this ring."}
      }
 
 document {
@@ -833,7 +834,7 @@ document {
 	  x<1
 	  y<1
      ///,
-     SeeAlso => {"monomial orderings"}}
+     SeeAlso => {"monomial orderings","QthPower::weightGrevlex", "QthPower::grevlexWeight"}}
 
 
 

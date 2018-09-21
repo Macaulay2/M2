@@ -158,6 +158,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
+Seminormalization
 AlgebraicSplines
 TriangularSets
 Chordal
@@ -169,3 +170,14 @@ RandomMonomialIdeals
 Matroids
 NumericalImplicitization
 NonminimalComplexes
+CoincidentRootLoci
+RelativeCanonicalResolution
+RandomCurvesOverVerySmallFiniteFields
+StronglyStableIdeals
+SLnEquivariantMatrices
+CorrespondenceScrolls
+NCAlgebra
+SpaceCurves
+ExteriorIdeals
+ToricInvariants
+SegreClasses

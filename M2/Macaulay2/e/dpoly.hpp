@@ -314,7 +314,7 @@ class DRing : public our_new_delete
     result = D.from_long(level, r);
   }
 
-  void set_from_int(poly &result, mpz_ptr r);  // written
+  void set_from_int(poly &result, mpz_srcptr r);  // written
 
   bool set_from_rational(poly &result, mpq_ptr r);  // written
 
