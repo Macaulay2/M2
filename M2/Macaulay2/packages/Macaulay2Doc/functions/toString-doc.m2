@@ -43,7 +43,6 @@ undocumented {
 (toString,QQ),
 (toString,Dictionary),
 (toString,CoherentSheaf),
-(toString,MapExpression),
 (toString,Variety)
 }
 

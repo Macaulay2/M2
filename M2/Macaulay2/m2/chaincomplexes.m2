@@ -99,8 +99,6 @@ complete ChainComplexMap := f -> (
 source ChainComplexMap := f -> f.source
 target ChainComplexMap := f -> f.target
 
-lineOnTop := (s) -> concatenate(width s : "-") || s
-
 sum ChainComplex := Module => C -> (complete C; directSum apply(sort spots C, i -> C_i))
 sum ChainComplexMap := Matrix => f -> (
      complete f;
@@ -132,9 +130,7 @@ net ChainComplexMap := f -> (
      v := between("",
 	  apply(sort intersection(spots f.source, spots f.target / (i -> i - f.degree)),
 	       i -> horizontalJoin (
-		    net (i+f.degree), " : ", net target f_i, " <--",
-		    lineOnTop net f_i,
-		    "-- ", net source f_i, " : ", net i
+		    net (i+f.degree), " : ", net MapExpression { target f_i, source f_i, f_i }, " : ", net i
 		    )
 	       )
 	  );

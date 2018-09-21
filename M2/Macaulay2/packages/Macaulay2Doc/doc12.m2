@@ -284,6 +284,14 @@ document {
      }
 
 document {
+     Key => Describe,
+     Headline => "the class of the output of describe",
+     PARA{},
+     "This is a type of ", TO "Holder", " that contains the ",
+     TO "Expression", " produced by the method ", TO "Describe","."
+     }
+
+document {
      Key => ZeroExpression,
      Headline => "the class of all zero expressions",
      TT "ZeroExpression", " a type of ", TO "Expression", " of which
@@ -381,6 +389,21 @@ document {
      }
 
 document {
+     Key => MatrixDegreeExpression,
+     Headline => "the class of all matrix expressions with prescribed degrees",
+     TT "MatrixDegreeExpression", " is a type of ", TO "Expression", " representing
+     a matrix with specified degrees of sources and targets, i.e., a general map between
+     free modules.",
+     PARA{},
+     EXAMPLE {
+	 ///R=QQ[x,y];///,
+         ///MatrixDegreeExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),{{-2},{-3}},{{0},{0}}}///,
+	 ///value oo///,
+	 },
+     SeeAlso => {"MatrixExpression"}
+     }
+
+document {
      Key => VectorExpression,
      Headline => "the class of all vector expressions",
      TT "VectorExpression", " is a type of ", TO "Expression", " representing
@@ -391,20 +414,20 @@ document {
      }
 
 document {
-     Key => MatrixDegreeExpression,
-     Headline => "the class of all matrix-with-degree expressions",
-     TT "MatrixDegreeExpression", " is a type of ", TO "Expression", " representing
-     a matrix with specified degrees of generators.",
-     PARA{},
-     SeeAlso => {"MatrixExpression"}
-     }
-
-document {
      Key => SheafExpression,
      Headline => "the class of sheaf expressions",
      TT "SheafExpression", " is a type of ", TO "Expression", " representing
      the sheaf associated to a given ring or module.",
      PARA{},
+     }
+
+document {
+     Key => MapExpression,
+     Headline => "the class of map expressions",
+     TT "MapExpression", " is a type of ", TO "Expression", " representing
+     a map.",
+     PARA{},
+     EXAMPLE ///MapExpression {a,b,c}///,
      }
 
 document {

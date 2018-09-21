@@ -55,7 +55,7 @@ expression Expression := identity
 Expression#operator = ""
 
 expressionValue = method(Dispatch => Thing)
-expressionValue BasicList := x -> apply(x,expressionValue)
+expressionValue VisibleList := x -> apply(x,expressionValue)
 expressionValue Thing := identity
 
 -- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
@@ -73,7 +73,7 @@ Holder.synonym = "holder"
 Describe = new WrapperType of Holder
 Describe.synonym = "description"
 describe = method()
-describe Thing := x -> Describe unhold expression x
+describe Thing := x -> new Describe from { unhold expression x }
 Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
@@ -524,16 +524,16 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 MatrixDegreeExpression = new HeaderType of Expression
-MatrixDegreeExpression.synonym = "matrix degree expression"
+MatrixDegreeExpression.synonym = "matrix with degrees expression"
 expressionValue MatrixDegreeExpression := x -> (
-    m := expressionValue x#0;
+    m := expressionValue MatrixExpression x#0;
     R := ring m;
     n := degreeLength R;
     if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
     then map(R^(-x#1),R^(-x#2),entries m)
     else m
     )
-toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
+toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,MatrixExpression x#0)
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -928,7 +928,6 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
     if #a =!= 1 then a|"^"|b else a|b
     )
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
-toCompactString Subscript := x -> toCompactString x#0 | "_" | toCompactString x#1
 
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
@@ -943,7 +942,7 @@ html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else horizontalJoin(stack( x#1 / toString ), " ", net x#0)
+    else horizontalJoin(stack( x#1 / toString ), " ", net MatrixExpression x#0)
     )
 
 net VectorExpression := x -> (
@@ -1184,7 +1183,7 @@ texMath MatrixExpression := m -> (
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
-texMath MatrixDegreeExpression := x -> texMath x#0 -- degrees not displayed atm
+texMath MatrixDegreeExpression := x -> texMath MatrixExpression x#0 -- degrees not displayed atm
 
 texMath VectorExpression := v -> (
      concatenate(
@@ -1316,9 +1315,12 @@ moduleZERO = new ZeroExpression from { 0, Module }
 
 -- little used at the moment. note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;
-toString MapExpression := x-> toString(x#0) | " <--- " | toString(x#1)
-net MapExpression := x-> net(x#0) | " <--- " | net(x#1)
-texMath MapExpression := x -> texMath(x#0) | "\\," | (if (#x>2) then "\\xleftarrow{"|texMath(x#2)|"}" else "\\longleftarrow ") | "\\," | texMath(x#1)
+toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { map, toSequence x })
+lineOnTop := (s) -> concatenate(width s : "-") || s
+net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
+		    lineOnTop net x#2,
+		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
@@ -1326,15 +1328,6 @@ expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := x -> texMath expression x
--*
--- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
--- plus creates all kinds of complications with subclasses
-expression HashTable := x -> (
-         if hasAttribute(x,ReverseDictionary) then return expression getAttribute(x,ReverseDictionary);
-	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
-	 )
-expressionValue HashTable := x -> applyPairs(x, (k,v) -> (expressionValue k, expressionValue v))
-*-
 
 -- some texMath that got stranded
 texMath BasicList := s -> concatenate(

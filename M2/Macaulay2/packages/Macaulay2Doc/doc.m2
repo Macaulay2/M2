@@ -84,6 +84,14 @@ document {
      }
 
 document {
+     Key => WebApp,
+     Headline => "the web app top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods, in connection with
+     the use of the (currently developed) web app with (Ka)TeX output as front end.",
+     SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
