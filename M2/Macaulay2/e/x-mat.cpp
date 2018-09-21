@@ -703,9 +703,10 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
 
 gmp_ZZ to_gmp_ZZ(int a)  // helper fn!!!
 {
-  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   mpz_set_si(result, a);
+  mpz_reallocate_limbs(result);
   return result;
 }
 
@@ -727,21 +728,6 @@ M2_bool rawHomotopyTrack(Homotopy *H,
                          gmp_RR infinity_threshold,
                          M2_bool checkPrecision)
 {
-  /*
-  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
-  if (inp!=nullptr) { // check precision!!!
-    std::cout << "-- precisions:" << std::endl;
-    auto& m = inp->getMat();
-    for(int i=0; i<m.numRows(); i++)
-      for(int j=0; j<m.numColumns(); j++) {
-        auto& e = m.entry(i,j);
-        auto p_re = mpfr_get_prec(&m.ring().realPartReference(e));
-        auto p_im = mpfr_get_prec(&m.ring().imaginaryPartReference(e));
-        std::cout << "(" << p_re << "," << p_im << ") ";
-      }
-    std::cout << std::endl;
-  }
-  */
   return H->track(inputs,
                   outputs,
                   output_extras,

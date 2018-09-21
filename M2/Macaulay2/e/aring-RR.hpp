@@ -63,14 +63,12 @@ class ARingRR : public RingInterface
   // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    double *res = newitem(double);
-    *res = a;
-    result.poly_val = reinterpret_cast<Nterm *>(res);
+    result = ring_elem(a);
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = *reinterpret_cast<double *>(a.poly_val);
+    result = a.get_double();
   }
 
   // 'init', 'init_set' functions
@@ -96,7 +94,7 @@ class ARingRR : public RingInterface
     result = mpz_get_d(a);
   }
 
-  bool set_from_mpq(ElementType &result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
     result = mpq_get_d(a);
     return true;
@@ -178,7 +176,7 @@ class ARingRR : public RingInterface
     result = pow(a, n);
   }
 
-  void power_mpz(ElementType &result, const ElementType &a, mpz_ptr n) const
+  void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
@@ -238,7 +236,7 @@ class ARingRR : public RingInterface
     if (mpfr_cmp_d(epsilon, fabs(a)) > 0) set_zero(a);
   }
 
-  void increase_norm(gmp_RR &norm, const ElementType &a) const
+  void increase_norm(mpfr_ptr norm, const ElementType &a) const
   {
     double d = fabs(a);
     if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, GMP_RNDN);

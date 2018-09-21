@@ -371,7 +371,7 @@ extern "C" {
                                                   gmp_ZZ d);  /* drg: connected rawFromNumber*/
 
   const RingElement /* or null */ *IM2_RingElement_from_rational(const Ring *R,
-                                                         gmp_QQ r); /* rawFromNumber*/
+                                                         mpq_srcptr r); /* rawFromNumber*/
 
   gmp_ZZ /* or null */ IM2_RingElement_to_Integer(const RingElement *a); /* drg: connected rawToInteger*/
     /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
@@ -623,7 +623,7 @@ extern "C" {
      This then translates F, returning the translated poly in the ring newRing.
   */
 
-  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, const RingElement *g);  /* connected */
+  const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_srcptr n, const RingElement *g);  /* connected */
   /* Currently only valid for tower rings */
 
   /**************************************************/
@@ -2036,6 +2036,7 @@ enum gbTraceValues
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
+  // NAG begin
   Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH);
   SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
   SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator* H, const MutableMatrix *parameters);

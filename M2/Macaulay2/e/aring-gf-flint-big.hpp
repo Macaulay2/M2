@@ -134,7 +134,7 @@ class ARingGFFlintBig : public RingInterface
     set_from_long(result, b);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     ElementType n, d;
     init(n);
@@ -233,7 +233,7 @@ class ARingGFFlintBig : public RingInterface
       fq_nmod_pow_ui(&result, &a, n, mContext);
   }
 
-  void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
+  void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
     if (is_zero(a))
       {
@@ -241,20 +241,22 @@ class ARingGFFlintBig : public RingInterface
         return;
       }
     bool neg = false;
+    mpz_t abs_n;
+    mpz_init(abs_n);
+    mpz_abs(abs_n, n);
     if (mpz_sgn(n) < 0)
       {
         neg = true;
-        mpz_neg(n, n);
         invert(result, a);
       }
     else
       copy(result, a);
 
     fmpz_t fn;
-    fmpz_init_set_readonly(fn, n);
+    fmpz_init_set_readonly(fn, abs_n);
     fq_nmod_pow(&result, &result, fn, mContext);
     fmpz_clear_readonly(fn);
-    if (neg) mpz_neg(n, n);
+    mpz_clear(abs_n);
   }
 
   void swap(ElementType& a, ElementType& b) const

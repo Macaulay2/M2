@@ -2,6 +2,7 @@
 
 #include "rand.h"
 #include "../d/M2mem.h"
+#include "ringelem.hpp"
 
 #define INITIALMAXINT 10
 
@@ -53,7 +54,7 @@ int32_t rawRandomInt(int32_t max)
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
 /* if height is the null pointer, use the default height */
 {
-  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   if (maxN == 0)
     mpz_urandomm(result, state, maxHeight);
@@ -63,6 +64,7 @@ gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
     }
   else
     mpz_urandomm(result, state, maxN);
+  mpz_reallocate_limbs(result);
   return result;
 }
 
@@ -70,7 +72,7 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
 /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */
 {
-  gmp_QQ result = getmemstructtype(gmp_QQ);
+  mpq_ptr result = getmemstructtype(mpq_ptr);
   mpq_init(result);
   if (height == 0) height = maxHeight;
   mpz_urandomm(mpq_numref(result), state, height);
@@ -78,7 +80,7 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
   mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
   mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
   mpq_canonicalize(result);
-  return result;
+  return moveTo_gmpQQ(result);
 }
 
 void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
@@ -97,10 +99,10 @@ gmp_RR rawRandomRR(unsigned long precision)
 /* returns a uniformly distributed random real with the given precision, in
  * range [0.0,1.0] */
 {
-  gmp_RR result = getmemstructtype(gmp_RR);
+  mpfr_ptr result = getmemstructtype(mpfr_ptr);
   mpfr_init2(result, precision);
   mpfr_urandomb(result, state);
-  return result;
+  return moveTo_gmpRR(result);
 }
 
 void rawRandomMpfr(mpfr_t result, unsigned long precision)
@@ -115,10 +117,10 @@ gmp_CC rawRandomCC(unsigned long precision)
 /* returns a uniformly distributed random complex in the box [0.0,0.0],
  * [1.0,1.0] */
 {
-  gmp_CC result = getmemstructtype(gmp_CC);
-  result->re = rawRandomRR(precision);
-  result->im = rawRandomRR(precision);
-  return result;
+  gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
+  result->re = const_cast<gmp_RRmutable>(rawRandomRR(precision));
+  result->im = const_cast<gmp_RRmutable>(rawRandomRR(precision));
+  return reinterpret_cast<gmp_CC>(result);
 }
 
 // Local Variables:

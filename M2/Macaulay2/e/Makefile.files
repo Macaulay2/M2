@@ -161,6 +161,7 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
+	rand \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -187,7 +188,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex rand
+C_FILES = error table exptable monordering complex
 
 D_FILES = 
 DD_FILES = #test

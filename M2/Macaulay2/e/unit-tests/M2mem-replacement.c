@@ -4,6 +4,8 @@
 
 #include "M2mem-replacement.h"
 
+struct FUNCTION_CELL * thread_prepare_list = 0;
+
 /* trapchk: taken from d/debug.h *************************************/
 
 void *trapaddr = (void *)1;

@@ -7,6 +7,8 @@
 #include "hash.hpp"
 #include "relem.hpp"
 
+#include <iostream>
+
 class buffer;
 class RingElement;
 class Ring;
@@ -23,7 +25,11 @@ class MutableMatrix : public MutableEngineObject
  protected:
   MutableMatrix() {}
  public:
-  virtual ~MutableMatrix() {}
+  virtual ~MutableMatrix()
+  {
+    //std::cout << "deleting a MutableMatrix" << std::endl;
+  }
+
 #if 0
   // MESXXX
   class iterator : public our_new_delete

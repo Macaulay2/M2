@@ -11,6 +11,7 @@
 #include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
+#include "mpfr.h"
 
 /* to get IM2_initialize() : */
 #include "engine.h"
@@ -750,11 +751,6 @@ char **argv;
                }
 	  }
 #endif
-
-     if (__gmp_allocate_func != (void *(*) (size_t))getmem_atomic) {
-          FATAL("possible memory leak, gmp allocator not set up properly");
-	  fprintf(stderr,"--internal warning: possible memory leak, gmp allocator not set up properly, resetting\n");
-     }
 
      signal(SIGPIPE,SIG_IGN);
 
