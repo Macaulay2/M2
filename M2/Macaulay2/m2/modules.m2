@@ -74,12 +74,13 @@ vector List := v -> vector matrix apply(v, i -> {i});
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net super v#0
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
+expression Vector := v -> VectorExpression flatten entries super v#0
+net Vector := v -> net expression v
 toExternalString Vector :=
-toString Vector := v -> concatenate ( "vector ", toString entries super v )
-texMath Vector := v -> texMath super v#0
+toString Vector := v -> toString expression v
+texMath Vector := v -> texMath expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
@@ -200,67 +201,33 @@ numgens Module := M -> (
      else M.numgens
      )
 
-toString Module := M -> (
-     if M.?relations then (
-	  if M.?generators
-	  then "subquotient(" | toString M.generators | "," | toString M.relations | ")"
-	  else "cokernel " | toString M.relations
-	  )
-     else (
-	  if M.?generators
-	  then "image " | toString M.generators
-	  else (
-	       if numgens M === 0
-	       then "0"
-	       else toString expression M
-	       )
-	  )
-     )
-
-toExternalString Module := M -> (
-     if M.?relations then (
-	  if M.?generators
-	  then "subquotient(" | toExternalString M.generators | "," | toExternalString M.relations | ")"
-	  else "cokernel " | toExternalString M.relations
-	  )
-     else (
-	  if M.?generators
-	  then "image " | toExternalString M.generators
-	  else (
-	       if all(degrees M, deg -> all(deg, zero)) 
-	       then "(" | toString ring M | ")^" | numgens M
-	       else "(" | toString ring M | ")^" | toExternalString (- degrees M)
-	       )
-	  )
-     )
-
 expression Module := M -> (
-     if M.?relations 
+     if M.?relations
      then if M.?generators
-     then new FunctionApplication from { subquotient, (expression M.generators, expression M.relations) }
-     else new FunctionApplication from { cokernel, expression M.relations }
+     then (expression subquotient) (expression (M.generators, M.relations))
+     else (expression cokernel) (expression M.relations)
      else if M.?generators
-     then new FunctionApplication from { image, expression M.generators }
-     else if numgens M === 0 then 0
-     else new Power from {expression ring M, numgens M}
-     )
-
--- net Module := M -> net expression M
-
-net Module := M -> (
-     -- we want compactMatrixForm to govern the matrix here, also.
-     if M.?relations 
-     then if M.?generators
-     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
-     else net new FunctionApplication from { cokernel, net M.relations }
-     else if M.?generators
-     then net new FunctionApplication from { image, net M.generators }
-     else if numgens M === 0 then "0"
+     then (expression image) (expression M.generators)
      else (
-	  R := ring M;
-	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
-	  )
+	 n := numgens M;
+	 new Superscript from {unhold expression ring M, if n =!= 0 then expression n else moduleZERO }
      )
+ )
+toString Module := M -> toString expression M
+net Module := M -> net expression M
+texMath Module := M -> texMath expression M
+
+describe Module := M -> Describe (
+     if M.?relations
+     then if M.?generators
+     then (expression subquotient) (unhold describe M.generators, unhold describe M.relations)
+     else (expression cokernel) (describe M.relations)
+     else if M.?generators
+     then (expression image) (describe M.generators)
+     else new Superscript from {unhold expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
+	 else expression(-degrees M)}
+     )
+toExternalString Module := M -> toString describe M
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

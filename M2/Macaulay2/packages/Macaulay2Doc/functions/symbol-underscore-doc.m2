@@ -13,7 +13,6 @@ undocumented {
      (symbol _, RingElement, MonoidElement),
      (symbol _, PolynomialRing, List),
      (symbol _, RingElement, RingElement), --coeff of monomials in polynomial -- deprecate or obsolete
-     (symbol _, Holder, Holder),
      (symbol _, Ring, Symbol), -- maybe should be deprecated?
      (symbol _, Ring, IndexedVariable) -- this should be deprecated?
      }
