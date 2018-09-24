@@ -1,4 +1,3 @@
-restart
 needs "test-mem-leaks.m2"
 getRSS()
 
@@ -13,14 +12,38 @@ getRSS()
 
 f = () -> (SVD M;)
 g = () -> (random(KK^20, KK^10);)
+g' = prec ->( 
+    M := mutableMatrix(RR_(first prec),20,10);
+    fillMatrix(M);
+    )
 h = () -> (mutableMatrix M;)
 i = () -> (A*B;)
 j = () -> (Am*Bm;)
 k = () -> (matrix Mm;) -- doesn't appear to leak
 
-testF(1000, f)
-testF(1000, f) -- no leak
-testF(100000, g) -- leaks like a sieve, maybe about 29k per call...
+end
+restart
+needs "eigen-leaks.m2"
+
+testF(1,f)
+testF(100, f)
+-- Anton's MacBook Pro
+-- elapsed time = 21.1636
+-- leaks 39321.6 bytes, takes 211.636 ms. (per call)
+testF(100, f)
+testF(100, f)
+testF(100, f)
+testF(100, f)
+-- Anton's MacBook Pro
+-- elapsed time = 20.7562
+-- leaks 0 bytes, takes 207.562 ms. (per call)
+
+testF(1000, g) 
+
+testF(1000, g'_1000)
+testF(1000, g'_100) 
+testF(10000, g'_53) 
+
 testF(10000, h) -- 
 testF(10000, h) -- 
 testF(10000, h) -- 

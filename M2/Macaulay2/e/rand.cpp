@@ -105,14 +105,6 @@ gmp_RR rawRandomRR(unsigned long precision)
   return moveTo_gmpRR(result);
 }
 
-void rawRandomMpfr(mpfr_t result, unsigned long precision)
-/* returns a uniformly distributed random real with the given precision, in
- * range [0.0,1.0] */
-{
-  mpfr_init2(result, precision);
-  mpfr_urandomb(result, state);
-}
-
 gmp_CC rawRandomCC(unsigned long precision)
 /* returns a uniformly distributed random complex in the box [0.0,0.0],
  * [1.0,1.0] */
@@ -123,7 +115,26 @@ gmp_CC rawRandomCC(unsigned long precision)
   return reinterpret_cast<gmp_CC>(result);
 }
 
+void randomMpfr(mpfr_t result)
+/* returns a uniformly distributed random real with the given precision, in
+ * range [0.0,1.0] 
+ * (result is assumed to be initialized) */
+{
+  mpfr_urandomb(result, state);
+}
+
+double randomDouble()
+{
+  mpfr_t val;
+  mpfr_init2(val, 53);
+  randomMpfr(val);
+  double result = mpfr_get_d(val, GMP_RNDN);
+  mpfr_clear(val);
+  return result;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:
+

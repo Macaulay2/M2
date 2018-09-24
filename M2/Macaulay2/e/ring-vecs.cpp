@@ -14,9 +14,6 @@
 vec Ring::new_vec() const { return new vecterm; }
 void Ring::remove_vec_node(vec n) const
 {
-  // Should we just let them go, or free them?
-  // fprintf(stdout,"free vec term %x\n", n);
-
   deleteitem(n);
 }
 

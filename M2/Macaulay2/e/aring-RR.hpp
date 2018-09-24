@@ -212,11 +212,7 @@ class ARingRR : public RingInterface
 
   void random(ElementType &result) const  // redo?
   {
-    mpfr_t val;
-    mpfr_init2(val, 53);
-    rawRandomMpfr(val, 53);
-    result = mpfr_get_d(val, GMP_RNDN);
-    mpfr_clear(val);
+    result = randomDouble();
   }
 
   void eval(const RingMap *map,

@@ -480,8 +480,8 @@ class ARingCCC : public RingInterface
 
   void random(ElementType& result) const  // redo?
   {
-    rawRandomMpfr(&result.re, get_precision());
-    rawRandomMpfr(&result.im, get_precision());
+    randomMpfr(&result.re);
+    randomMpfr(&result.im);
   }
 
   void eval(const RingMap* map,

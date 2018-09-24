@@ -228,7 +228,7 @@ class ARingRRR : public RingInterface
 
   void random(ElementType &result) const  // redo?
   {
-    rawRandomMpfr(&result, mPrecision);
+    randomMpfr(&result);
   }
 
   void eval(const RingMap *map,
