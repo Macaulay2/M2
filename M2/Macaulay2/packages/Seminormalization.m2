@@ -98,7 +98,8 @@ seminormalizationRecursive(Ring, ZZ):=o->(inputRing, inputInteger)->(
 
 
       FUNCTION INFORMATION
-      Return value 1: The seminormalized ring
+      Return value 1: The seminormalized ringnml;/
+      
       Return value 2: The map from the input ring to the seminormalized ring
       Return value 3: The map from the seminormalization to the normalization
       Input value 1: An input ring to be seminormalized
@@ -225,7 +226,7 @@ seminormalizationRecursive(Ring, ZZ):=o->(inputRing, inputInteger)->(
     RVarsInRSN := apply(RVarsInRN, yz -> findElementMappingToTarget(RSNtoRN, yz));
 
 	  SNmap := map(temp#0, inputRing, RVarsInRSN);
-    {temp#0, SNmap, RSNtoRN} --this returns the seminormalization, the seminormalization map, and finally the map from the seminormalization to the normalization
+    {temp#0, SNmap, (normalizedInputRingRenamed#2)*(RSNtoRN)} --this returns the seminormalization, the seminormalization map, and finally the map from the seminormalization to the normalization
 )
 
 --*****************************************
@@ -531,7 +532,7 @@ betterNormalizationMap(Ring):=o->(R1) -> (
     );
     quotientDomainList := apply(minPrimeList, qq -> (flattenRing(S1/qq))#0);  --form the quotients by each
     mapR1ToQuotientList := apply(quotientDomainList, R1q -> map(R1q, R1) ); --record the map from our ring to each quotient
-    apply(quotientDomainList, R1q -> integralClosure(R1q, Variable=>o.Variable));
+    apply(quotientDomainList, R1q -> integralClosure(R1q, Variable=>o.Variable, Strategy=>o.Strategy));
     normalizationMapList := apply(quotientDomainList, R1q -> icMap(R1q)); --normalize each quotient (recording the map)
     normalizedRingList := apply(normalizationMapList, fi -> target fi); --list those normalized rings
     normalizedRing := ringProduct(normalizedRingList); --take the product of said normalizations
