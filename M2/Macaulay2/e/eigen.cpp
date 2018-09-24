@@ -1,5 +1,6 @@
 #include <cstdlib>
 
+#if 0
 //void* my_malloc( std::size_t size );
 //void my_free( void* ptr );
 namespace std {
@@ -11,6 +12,8 @@ using std::my_free;
 
 #define malloc my_malloc
 #define free my_free
+#endif
+
 #define mpfr foo
 #include "mpreal.h"
 #include <Eigen/MPRealSupport>
@@ -18,6 +21,8 @@ using std::my_free;
 #include "eigen.hpp"
 #include <Eigen/SVD>
 #include "mpfr.h"
+
+#if 0
 #undef free
 #undef malloc
 
@@ -40,7 +45,7 @@ void my_free( void* ptr )
   GC_FREE(ptr);
 }
 }
-
+#endif
 
 /***********************
  * An attempt to overwrite memory management globally
@@ -121,7 +126,6 @@ bool SVD(const LMatrixRRR *A,
          LMatrixRRR *VT
          )
 {
-  std::cerr << "Eigen::SVD (real)" << std::endl;
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
 
@@ -129,25 +133,21 @@ bool SVD(const LMatrixRRR *A,
   // call eigen
   // Transform matrices back.
 
-  std::cerr << "  starting Eigen code space..." << std::endl;  
   MatrixXmp AXmp(A->numRows(), A->numColumns());
     
   fill_to_MatrixXmp(*A, AXmp);
-  std::cout << AXmp.cols() << std::endl;
 
   Eigen::JacobiSVD<MatrixXmp> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  auto eigenU = svd.matrixU();
-  auto eigenVT = svd.matrixV().adjoint();
-  auto eigenSigma = svd.singularValues();
+  auto& eigenU = svd.matrixU();
+  auto& eigenVT = svd.matrixV().adjoint();
+  auto& eigenSigma = svd.singularValues();
   
-  std::cerr << "  about to fill M2 matrices..." << std::endl ; 
   fill_from_MatrixXmp(eigenU, *U);
   fill_from_MatrixXmp(eigenVT, *VT);
   fill_from_MatrixXmp(eigenSigma, *Sigma);
 
   Real::set_default_prec(old_prec);
-  std::cerr << "  leaving SVD..." << std::endl;
   return true;
 }
 
