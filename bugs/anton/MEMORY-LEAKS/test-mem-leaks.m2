@@ -4,6 +4,7 @@ getRSS = () -> (
     )
 
 testF = (n,f) -> (
+    setRandomSeed "a";
     collectGarbage();
     before := getRSS();
     t := first elapsedTiming for i to n do (
