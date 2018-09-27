@@ -30,7 +30,7 @@ class EngineObject : public our_new_delete
   virtual unsigned int computeHashValue() const = 0;
 };
 
-class MutableEngineObject : public gc_cleanup
+class MutableEngineObject : public our_gc_cleanup
 {
  private:
   static unsigned int mNextMutableHashValue;

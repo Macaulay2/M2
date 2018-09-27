@@ -67,18 +67,23 @@ testF(1000, f)
   -- (mike MBP): elapsed time = 132.194
   -- (mike MBP): leaks 1318.91 bytes, takes 132.194 ms. (per call)
 
+-- g': doesn't leak, but is extremely slow, compared to 1.12.
 restart
 needs "eigen-leaks.m2"
 testF(10, g'_1000)
 testF(10000, g'_1000)
   -- (Mike MBP) elapsed time = 17.1255
   -- (Mike MBP) leaks 101.581 bytes, takes 1.71255 ms. (per call)
+  -- (Mike MBP battery) elapsed time = 1.35208
+  -- (Mike MBP battery) leaks 24.1664 bytes, takes .135208 ms. (per call)
+
 testF(10000, g'_100) 
   -- (Mike MBP) elapsed time = 3.34028
   -- (Mike MBP) leaks 80.6912 bytes, takes .334028 ms. (per call)
 testF(10000, g'_53) 
   -- (Mike MBP) elapsed time = .362827
   -- (Mike MBP) leaks 20.48 bytes, takes .0362827 ms. (per call)
+testF(1000000, g'_1000)
 
 restart
 needs "eigen-leaks.m2"

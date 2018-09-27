@@ -96,6 +96,7 @@ struct our_new_delete
     TRAPCHK(obj);
   }
 
+  
 #if !defined(__GNUC__) || defined(__INTEL_COMPILER)
 // see Scott Meyers, Effective C++, item 14!  This avoids something really bad
 // in the c++ standard.
@@ -110,6 +111,29 @@ struct our_new_delete
 #endif
 #endif
 };
+
+
+class our_gc_cleanup: virtual public gc
+{
+public:
+  our_gc_cleanup();
+  virtual ~our_gc_cleanup()
+  {
+    GC_REGISTER_FINALIZER_IGNORE_SELF(this, 0, 0, 0, 0);
+  }
+};
+
+static inline void cleanup(void* obj, void* displ)
+{
+  ((our_gc_cleanup*) ((char*) obj))->~our_gc_cleanup();
+}
+
+inline our_gc_cleanup::our_gc_cleanup()
+{
+  void* this_ptr = (void*)this;
+  GC_REGISTER_FINALIZER_IGNORE_SELF(this_ptr, (GC_finalization_proc) cleanup,
+                                    0, 0, 0);
+}
 
 // struct gc_malloc_alloc {
 //   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL)
