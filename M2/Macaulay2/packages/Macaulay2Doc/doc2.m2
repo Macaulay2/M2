@@ -1132,33 +1132,6 @@ document {
      SeeAlso => { "merge" }
      }
 
-document {
-     Key => {(merge, HashTable, HashTable, Function),merge},
-     Headline => "merge hash tables",
-     Usage => "z = merge(x,y,g)",
-     Inputs => { "x", "y",
-	  "g" => {"a function of two variables to be used to combine a value of ", TT "x", " with a value of ", TT "y", " when the 
-	       corresponding keys coincide." } },
-     Outputs => {
-	  "z" => { "a new hash table whose keys are the keys occurring in ", TT "x", "
-	       or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
-	       ", TT "g(x#k,y#k)", " is used instead, unless ", TT "g", " evaluated ", TO "continue", ", in which
-	       case the key ", TT "k", " does not appear in the result." } },
-     "If ", TT "x", " and ", TT "y", " have the same class and have the same parent, then so will ", TT "z", ".",
-     PARA {
-	  "This function is useful for multiplying monomials or adding polynomials.  We illustrate that with
-	  a simple-minded implmentation of the free abelian group on the set of strings, representing an element as a type of hash table
-	  that associates coefficients to strings."
-	  },
-     EXAMPLE lines ///
-     	  Free = new Type of HashTable
-     	  p = new Free from { "x" => 2, "y" => 3, "cat" => 5 }
-	  q = new Free from { "x" => 100, "y" => 200, "dog" => 7 }
-	  Free + Free := (p,q) -> merge(p,q,plus);
-	  p+q
-     ///,
-     SeeAlso => {"combine"}
-     }
 
 document {
      Key => combine,

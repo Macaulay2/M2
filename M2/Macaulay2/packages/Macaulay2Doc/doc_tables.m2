@@ -1,3 +1,5 @@
+--authors: Dan Grayson, Lily Silverstein
+
 doc///
  Key
   table
