@@ -47,6 +47,11 @@ export {"absValue",
     "IntervalOptionList"}
 exportMutable {}
 
+
+beginDocumentation()
+end
+
+
 -- in: a rational number a, precision parameter epsilon
 -- out: a rational q(a) with q(a) >= sqrt(a) and |q(a) - sqrt(a) | <= epsilon
 -- potentially of use in computing gamma parameter
@@ -465,12 +470,13 @@ identityIntMat(ZZ) := n -> (
 
 
 invmat = method()
-invmat(List, IntervalOptionList) := (p, o) -> (
-    mm := polySystem transpose matrix{p};
+invmat(PolySystem, IntervalOptionList) := (p, o) -> (
+    eqsOfp := equations p
+    mm := polySystem transpose matrix{eqsOfp};
     m := mm#PolyMap;
-    nv := numgens ring p#0;
-    ng := numgens coefficientRing(ring p#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring p#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
+    nv := numgens ring eqsOfp#0;
+    ng := numgens coefficientRing(ring eqsOfp#0);
+    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
     e := entries j;
     n := length e; 
     -- plug in intervals into the jacobian entries   
@@ -482,12 +488,13 @@ invmat(List, IntervalOptionList) := (p, o) -> (
 -- function to construct the Krawczyk operator
 -- inputs are list of polynomials in system and n-box of intervals
 krawczykOper = method()
-krawczykOper(List, IntervalOptionList) := (p, o) -> (
-    mm := polySystem transpose matrix{p};
+krawczykOper(PolySystem, IntervalOptionList) := (p, o) -> (
+    eqsOfp := equations p
+    mm := polySystem transpose matrix{eqsOfp};
     m := mm#PolyMap;
-    nv := numgens ring p#0;
-    ng := numgens coefficientRing(ring p#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring p#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
+    nv := numgens ring eqsOfp#0;
+    ng := numgens coefficientRing(ring eqsOfp#0);
+    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
     e := entries j;
     n := length e; 
     -- plug in intervals into the jacobian entries   
@@ -504,7 +511,7 @@ krawczykOper(List, IntervalOptionList) := (p, o) -> (
     lengthofmat := length(yintmatrix*ijm);
     identitysubstractMatrix := identityIntMat(lengthofmat)-yintmatrix*ijm;
     -- substitute y values into system
-    eval := matrix apply(p, k -> {sub(k,oll)});
+    eval := matrix apply(eqsOfp, k -> {sub(k,oll)});
     -- multiplying Y matrix and f(y)
     entofmat := entries( ( (transpose matrix {take(y,lengthofmat)})-(my*eval)));
     -- computing Krawczyk operator
@@ -514,12 +521,13 @@ krawczykOper(List, IntervalOptionList) := (p, o) -> (
 
 -- in order to use Krawczyk method, that is the method for isolating solution of system of equations, we use approximate inverse matrix 'Y' as input
 -- it shows us the Krawczyk operator to determine whether the solution is contained in the n-box
-krawczykOper(List, IntervalOptionList, Matrix) := (p, o, Y) -> (
-    mm := polySystem transpose matrix{p};
+krawczykOper(PolySystem, IntervalOptionList, Matrix) := (p, o, Y) -> (
+    eqsOfp := equations p
+    mm := polySystem transpose matrix{eqsOfp};
     m := mm#PolyMap;
-    nv := numgens ring p#0;
-    ng := numgens coefficientRing(ring p#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring p#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
+    nv := numgens ring eqsOfp#0;
+    ng := numgens coefficientRing(ring eqsOfp#0);
+    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
     e := entries j;
     n := length e; 
     -- plug in intervals into the jacobian entries   
@@ -536,7 +544,7 @@ krawczykOper(List, IntervalOptionList, Matrix) := (p, o, Y) -> (
     lengthofmat := length(yintmatrix*ijm);
     identitysubstractMatrix := identityIntMat(lengthofmat)-yintmatrix*ijm;
     -- substitute y values into system
-    eval := matrix apply(p, k -> {sub(k,oll)});
+    eval := matrix apply(eqsOfp, k -> {sub(k,oll)});
     -- multiplying Y matrix and f(y)
     entofmat := entries( ( (transpose matrix {take(y,lengthofmat)})-(my*eval)));
     -- computing Krawczyk operator
@@ -553,31 +561,16 @@ assert all(sols, p -> certifySolution(f,p))
 p = point{{2.0, -2.0}}
 q = point{{-2, 2.000001}}
 computeConstants(f,p)
-certifySolution(f,p)
-certifyDistinctSoln(f,p,q)
-FFF = QQ[j]/ideal(j^2+1)
-R'=FFF[x,y]
-ff = complexToRational(f,FFF)
-certifySolution(ff,p)
-certifyDistinctSoln(ff,p,q)
 ///
 
 end
 
 
 
-restart
-needsPackage "AlphaTest"
-FF = QQ[i]/ideal(i^2 + 1)
-R = FF[x,y]
-p1 = point matrix{{2,4+i}}
-norm(2,p1)
-absValue(2)
-absValue(4+i)
 
 
 restart
-check "AlphaTest"
+check "NumericalCertification"
 uninstallAllPackages()
-installPackage "AlphaTest"
-viewHelp AlphaTest
+installPackage "NumericalCertification"
+viewHelp NumericalCertification

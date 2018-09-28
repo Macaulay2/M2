@@ -10,7 +10,7 @@ doc ///
 		    	This package provides two different types of root certification for the square polynomial system.
 		      	The first is Smale's alpha theory and the second is Krawczyk method via interval arithmetic.
 			Both methods are based on Newton's method and they all describe the specific region containing a unique root of the system.
-			This package follows the algorithms of alpha theory introduced in @HREF("https://arxiv.org/abs/1011.1091","\alphaCertified: certifying solutions to polynomial systems\" (2012)")@.
+			This package follows the algorithms of alpha theory introduced in @HREF("https://arxiv.org/abs/1011.1091","\"alphaCertified: certifying solutions to polynomial systems\" (2012)")@.
 		Text
 		    	{\bf Ceritification Methods:}
 			
@@ -22,7 +22,7 @@ doc ///
 			
 		            The following example shows how to certify the roots of solutions for the square polynomial system.
 			    This example is suggested in @HREF("https://www3.nd.edu/~jhauenst/preprints/hlPolyExp.pdf", 
-				"\Certifying solutions to square systems of polynomial-exponential equations\",(2017)")@
+				"\"Certifying solutions to square systems of polynomial-exponential equations\" (2017)")@
 			    
 			    
 			    $\bullet$ alpha theory    
@@ -48,7 +48,7 @@ doc ///
 		    	    $\bullet$ Krawczyk method
 		Example
 		    R = QQ[x1,x2,y1,y2]
-		    f = {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1}
+		    f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2, x1^2 + y1^2 -1, x2^2 + y2^2 -1}
 		    I1 = interval(.94,.96)
 		    I2 = interval(.31,.33)
 		    I3 = interval(-.31,-.29)
