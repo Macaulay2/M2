@@ -16,9 +16,35 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"absValue", "pointNorm", "polyNorm", "polySysNorm", "complexToRational", "rationalToComplex", "computeConstants", "certifySolution", "certifyDistinctSoln", "frobeniusNormSq", "Interval", "interval", "invmat",
-    "StringOption", "stringOption", "mInterval", "intervalNorm", "intervalVectorNorm", "intervalMatrix", "IntervalMatrix", "wInterval", "intervalMatrixNorm"
-    ,"absInterval", "intervalIntersection", "intervalUnion", "krawczykOper", "identityIntMat", "intervalOptionList", "IntervalOptionList"}
+export {"absValue", 
+    "pointNorm", 
+    "polyNorm", 
+    "polySysNorm", 
+    "complexToRational", 
+    "rationalToComplex", 
+    "computeConstants", 
+    "certifySolution", 
+    "certifyDistinctSoln", 
+    "frobeniusNormSq", 
+    "Interval", 
+    "interval", 
+    "invmat",
+    "StringOption", 
+    "stringOption", 
+    "mInterval", 
+    "intervalNorm", 
+    "intervalVectorNorm", 
+    "intervalMatrix", 
+    "IntervalMatrix", 
+    "wInterval", 
+    "intervalMatrixNorm"
+    ,"absInterval", 
+    "intervalIntersection", 
+    "intervalUnion", 
+    "krawczykOper", 
+    "identityIntMat", 
+    "intervalOptionList", 
+    "IntervalOptionList"}
 exportMutable {}
 
 -- in: a rational number a, precision parameter epsilon
