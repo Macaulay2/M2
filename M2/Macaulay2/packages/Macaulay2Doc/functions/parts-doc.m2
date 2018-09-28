@@ -37,10 +37,14 @@ doc///
    part(2, f)
    part(0, 1, f)
  SeeAlso
+  degree
   monomials
   part
+  select
   terms
   someTerms
+  "graded and multigraded polynomial rings"
+  "manipulating polynomials"
 ///
   
 
