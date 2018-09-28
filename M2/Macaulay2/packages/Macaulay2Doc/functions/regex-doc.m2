@@ -4,6 +4,7 @@
 
 document { 
      Key => {regex,(regex,String,ZZ,String),(regex,String,ZZ,ZZ,String),(regex,String,String)},
+     Headline => "define and evaluate a regular expression",
      Usage => "z = regex(p,n,r,s)\nz = regex(p,n,s)",
      Inputs => {
 	  "p" => "a regular expression describing a pattern",
@@ -47,11 +48,23 @@ document {
      substring(m#0,s)
      m = regex("a.*$",4,-10,s)
      ///,
-     SeeAlso => {"regular expressions", "match", "replace", (substring,Sequence,String)}
+     SeeAlso => {"regular expressions", 
+	 "match", 
+	 "replace", 
+	 "substring",
+	 (select, String, String),
+	 (select, String, String, String),
+	 "separateRegexp",
+ 	 "about",
+	 "backupFileRegexp",
+	 "findFiles",
+	 "pretty"
+	  }
      }
 
 document {
      Key => "regular expressions",
+     Headline => "syntax for regular expressions inside Macaulay2",
      PARA {
 	  "A regular expression is a string that specifies a pattern that describes a
 	  set of matching subject strings.  Regular expressions are constructed
@@ -137,7 +150,15 @@ document {
 	  TO "regex",
 	  TO "replace",
 	  TO (select, String, String),
-	  TO (select, String, String, String)
+	  TO (select, String, String, String),
+	  TO "separateRegexp"
+	  },
+      PARA{
+	  "In addition to the functions mentioned below, regular expressions appear in ",
+	  TO "about", ", ",
+	  TO "backupFileRegexp", ", ",
+	  TO "findFiles", ", and ",
+	  TO "pretty", ".",
 	  },
      Caveat => {
 	  "Regular expression matching is done by calls to a C library, where the convention is that 
