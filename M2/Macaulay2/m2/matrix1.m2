@@ -402,26 +402,6 @@ Matrix#{Standard,AfterNoPrint} = f -> (
 
 -- precedence Matrix := x -> precedence symbol x
 
-compactMatrixForm = true
-
-net Matrix := f -> (
-     if f == 0 
-     then "0"
-     else (
-	  m := (
-	       if compactMatrixForm then (
-	       	    stack toSequence apply(lines toString f.RawMatrix, x -> concatenate("| ",x,"|"))
-	       	    )
-     	       else net expression f
-	       );
-	  if compactMatrixForm and degreeLength ring target f > 0 -- and isHomogeneous f
-	  then (
-	       d := degrees cover target f;
-	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
-	       );
-	  m)
-     )
-
 image Matrix := Module => f -> (
      if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
      )
@@ -440,10 +420,11 @@ Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
-expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
+expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
+texMath Ideal := (I) -> texMath expression I
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

@@ -14,6 +14,7 @@ IndeterminateNumber.synonym = "indeterminate number"
 indeterminate = new IndeterminateNumber from {}
 setAttribute(indeterminate,ReverseDictionary,symbol indeterminate)
 toString IndeterminateNumber := net IndeterminateNumber := x -> "indeterminate"
+texMath IndeterminateNumber := x -> texMath toString x
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#0 ? y#0
 InfiniteNumber + InfiniteNumber := (x,y) -> if x === y then x else indeterminate

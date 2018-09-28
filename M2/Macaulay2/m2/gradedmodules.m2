@@ -4,10 +4,13 @@ GradedModule = new Type of MutableHashTable
 GradedModule.synonym = "graded module"
 ring GradedModule := (M) -> M.ring
 
-spots := C -> select(keys C, i -> class i === ZZ)
+spots  = C -> select(keys C, i -> class i === ZZ)
+union := (x,y) -> keys(set x + set y)
+intersection := (x,y) -> keys(set x * set y)
+
 min GradedModule := C -> min spots complete C
 max GradedModule := C -> max spots complete C
-union := (x,y) -> keys(set x + set y)
+
 GradedModule == GradedModule := (C,D) -> (
      ring C === ring D
      and
@@ -34,6 +37,15 @@ net GradedModule := C -> (
 	       VerticalSpace => 1);
 	  printWidth = savePW;
 	  res))
+  
+texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+
+texMath GradedModule := C -> (
+     s := sort spots C;
+     if # s === 0 then "0"
+     else demark("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
+      )
+
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
@@ -43,7 +55,7 @@ GradedModuleMap.synonym = "graded module map"
 source GradedModuleMap := GradedModule => f -> f.source
 target GradedModuleMap := GradedModule => f -> f.target
 ring GradedModuleMap := (f) -> ring source f
-net GradedModuleMap := f -> (
+net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are essentially identical...
      d := f.degree;
      v := between("",
 	  apply( sort toList (
@@ -59,6 +71,14 @@ net GradedModuleMap := f -> (
 	  );
      if # v === 0 then "0"
      else stack v)
+
+texMath GradedModuleMap := f -> (
+     d := f.degree;
+     s := sort intersection(spots f.source, spots f.target / (i -> i - d));
+     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i})
+)
+
+
 GradedModuleMap _ ZZ := Matrix => (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)
      )
