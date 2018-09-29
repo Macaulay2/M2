@@ -1,6 +1,6 @@
 newPackage(
 	"NumericalCertification",
-    	Version => "0.5", 
+    	Version => "1.0", 
     	Date => "July, 2016",
     	Authors => {
 	     {Name => "Kisun Lee", Email => "klee669@gatech.edu"}
@@ -16,16 +16,12 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"absValue", 
-    "pointNorm", 
+export {"pointNorm", 
     "polyNorm", 
     "polySysNorm", 
-    "complexToRational", 
-    "rationalToComplex", 
     "computeConstants", 
     "certifySolution", 
     "certifyDistinctSoln", 
-    "frobeniusNormSq", 
     "Interval", 
     "interval", 
     "invmat",
@@ -33,55 +29,25 @@ export {"absValue",
     "stringOption", 
     "mInterval", 
     "intervalNorm", 
-    "intervalVectorNorm", 
     "intervalMatrix", 
     "IntervalMatrix", 
     "wInterval", 
-    "intervalMatrixNorm"
-    ,"absInterval", 
-    "intervalIntersection", 
-    "intervalUnion", 
     "krawczykOper", 
+    "InvertibleMatrix",
+    "krawczykMethod",
     "identityIntMat", 
     "intervalOptionList", 
     "IntervalOptionList"}
 exportMutable {}
 
 
-beginDocumentation()
-end
+Interval = new Type of List
+StringOption = new Type of Option
+IntervalMatrix = new Type of List
+IntervalOptionList = new Type of List
 
-
--- in: a rational number a, precision parameter epsilon
--- out: a rational q(a) with q(a) >= sqrt(a) and |q(a) - sqrt(a) | <= epsilon
--- potentially of use in computing gamma parameter
-sqrtUpper = method()
-sqrtUpper (QQ, QQ) := (a, epsilon) -> (
-    p := (1+a)/2;
-    while abs(p^2 - a) >= epsilon * (p + min(a,1)) do (
-	p = p - (p^2-a)/(p+a)
-	);
-    p
-    )
-sqrtUpper (ZZ, QQ) := (a, epsilon) -> (
-    p := (1+a)/2;
-    while abs(p^2 - a) >= epsilon * (p + min(a,1))  do (
-	p = p - (p^2-a)/(p+a)
-	);
-    p
-    )
-
-absValue = method()
-absValue ZZ := abs
-absValue QQ := abs
-absValue RR := abs
-absValue CC := abs
-absValue(RingElement) := r -> (
-    R := ring(r);
-    LT := leadTerm(sub(r,R));
-    VV := (leadCoefficient(LT))^2 + (sub(r,R)-LT)^2;
-    sqrt(sub(VV,RR))
-    )
+-- the following net function changes design of intervals in M2 output
+net Interval := i -> net "[" | net first i | ", " | net last i | "]" 
 
 
 
@@ -91,14 +57,19 @@ pointNorm(Point) := x -> (
     N := sqrt(1+((norm(2,x))^2))
     )
 
+
 polyNorm = method()
+polyNorm(Number) := r -> (
+    abs(r)
+    )
 polyNorm(RingElement) := r -> (
     L := listForm r;
     sqrt(sum(L,a->(
 	(e,c) := a;
-	((absValue c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
  	)))
     )
+
 
 polySysNorm = method()
 polySysNorm(PolySystem) := f -> (
@@ -106,17 +77,6 @@ polySysNorm(PolySystem) := f -> (
     listOfpolyNorms := apply( listOfEq, i -> (polyNorm(i))^2);
     N := sqrt(sum listOfpolyNorms)
     )
-
-frobeniusNormSq = method()
-frobeniusNormSq(Matrix) := r -> (
-    a := flatten entries r;
-    sum apply(a, s -> (absValue(s))^2)
-    )
-
-
-
-
-
 
 
 computeConstants = method()
@@ -140,12 +100,6 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
     )
 
 
-
-
-
-
-
-
 certifySolution = method()
 certifySolution(PolySystem, Point) := (f, x) -> (
     Consts := computeConstants(f,x);
@@ -161,6 +115,7 @@ certifySolution(PolySystem, Point) := (f, x) -> (
 	false
 	)
     )
+
 
 certifyDistinctSoln = method()
 certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
@@ -185,18 +140,12 @@ certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
     )
 
 
-
-Interval = new Type of List
-StringOption = new Type of Option
-IntervalMatrix = new Type of List
-IntervalOptionList = new Type of List
-
-
 -- In order to use the options of interval, we need to change options into new Type of Option 'StringOption'
 stringOption = method(TypicalValue => StringOption)
 stringOption(Option) := o -> new StringOption from (
     o
     )
+
 
 -- List the StringOptions and change it into new Type IntervalOptionList
 intervalOptionList = method(TypicalValue => IntervalOptionList)
@@ -205,9 +154,6 @@ intervalOptionList(List) := l -> new IntervalOptionList from (
     ll
     )
 
-
--- the following net function changes design of intervals in M2 output
-net Interval := i -> net "[" | net first i | ", " | net last i | "]" 
 
 -- Function to define intervals
 interval = method(TypicalValue => Interval)
@@ -219,14 +165,10 @@ interval (Number, Number) := (a, b) -> new Interval from (
     int' = toList int
     )
     )
-
-
 -- If interval function takes only one input, the it makes an interval with width 0
 interval (Number) := a -> new Interval from (
     interval (a,a)
     )
-
-
 -- interval function for polynomial entries
 interval (Number, RingElement) := (a, b) -> new Interval from (
     a' := sub(a, ring b);
@@ -242,7 +184,6 @@ interval (RingElement, RingElement) := (f,g) -> new Interval from (
 interval (RingElement, Interval) := (f, i) -> new Interval from (
     f toString (*) i
     )
-
 -- if interval function takes Interval, then it just shows its input again. It will be needed when we do the computation between number and interval such as interval(a+I).
 interval(Interval) := i -> new Interval from (
     i
@@ -262,6 +203,8 @@ Interval + Interval := (i1,i2) -> (
     b' := d+c;
     interval(a',b')
     )
+
+
 Interval - Interval := (i1,i2) -> (
         if (class i1#0 === RingElement or class i1#1 === RingElement or i2#0 === RingElement or i2#1 === RingElement) 
     then (i1 - i2)
@@ -274,6 +217,7 @@ Interval - Interval := (i1,i2) -> (
     b' := c-b;
     interval(a',b')
     )
+
 
 Interval * Interval := (i1,i2) -> (
         if (class i1#0 === RingElement or class i1#1 === RingElement or i2#0 === RingElement or i2#1 === RingElement) 
@@ -300,6 +244,7 @@ Interval * RingElement := (i1, a) -> (
     interval(a,a) * i1
     )
 
+
 Interval ^ Number := (i,a) -> (
     if a == 0 then interval(1,1) 
     else if a == 1 then i  
@@ -307,11 +252,13 @@ Interval ^ Number := (i,a) -> (
     (flatten join{{interval(1,1),i},l})#a
     )
 
+
 Number ^ Interval := (a, i) -> (
     b := i#0;
     c := i#1;
     interval(a^b,a^c)
     )
+
 
 Interval/Interval := (i1,i2) -> (
     if (i2#0 < 0 and 0 < i2#1) then print "division is impossible"
@@ -372,14 +319,6 @@ sub(RingElement, IntervalOptionList) := (f, l) -> (
     )
 
 
-
--- absolute value for an interval means the maximum absolute value of elements in interval
-absInterval = method()
-absInterval(Interval) := i -> (
-    max{abs(i#0),abs(i#1)}
-    )
-
-
 -- width of an interval
 wInterval = method()
 wInterval(Interval) := i -> (
@@ -401,34 +340,11 @@ mInterval(List) := l -> (
     )
 
 
--- interval intersection when inputs are disjoint, it gives the zero interval
-intervalIntersection = method()
-intervalIntersection(Interval, Interval) := (i,j) -> (
-    if (j#1 < i#0 or i#1 < j#0) then interval(0,0) 
-    else interval(max{i#0, j#0}, min{i#1, j#1})
-    )
-
-
--- interval union
-intervalUnion = method()
-intervalUnion(Interval, Interval) := (i,j) -> (
-    interval(min{i#0, j#0}, max{i#1, j#1})
-    )
-
-
 -- interval norm shows us the maximum element in an interval
 intervalNorm = method()
 intervalNorm(Interval) := i -> (
     l := max i;
     l
-    )
-
-
--- The norm for interval vector implies the maximum interval norm for each interval entry in the vector 
-intervalVectorNorm = method()
-intervalVectorNorm(List) := l -> (
-    iv := max(apply(l, k -> intervalNorm(k)));
-    iv
     )
 
 
@@ -439,6 +355,7 @@ intervalMatrix(List) := l -> new IntervalMatrix from (
     l
     )
 
+
 -- interval matrix multiplication
 IntervalMatrix * IntervalMatrix := (l, n) -> (
     numrow := length l;
@@ -447,17 +364,6 @@ IntervalMatrix * IntervalMatrix := (l, n) -> (
     mat :=  apply(apply(l, i -> (k := 0; while k < numc list ( j := 0; while j < numcol list ((i#k)*((n#k)#j)) do j = j+1)  do k=k+1)), b -> sum b);
     intervalMatrix mat
     )
-
-
--- intervalMatrixNorm computes the norm of interval matrix, an interval extension of the maximum row sum norm
-intervalMatrixNorm = method()
-intervalMatrixNorm(IntervalMatrix) := i -> (
-    numrow := length(i);
-    numcol := length(i#0);
-    listOfAbs := (l := 0; while l < numcol list sum((apply(i, j -> (k := 0; while k < numrow list absInterval(j#k) do k = k+1)))#l) do l = l+1);
-    max listOfAbs
-    )
-
 
 
 -- the function constructs an nxn interval identity matrix
@@ -471,7 +377,7 @@ identityIntMat(ZZ) := n -> (
 
 invmat = method()
 invmat(PolySystem, IntervalOptionList) := (p, o) -> (
-    eqsOfp := equations p
+    eqsOfp := equations p;
     mm := polySystem transpose matrix{eqsOfp};
     m := mm#PolyMap;
     nv := numgens ring eqsOfp#0;
@@ -485,11 +391,13 @@ invmat(PolySystem, IntervalOptionList) := (p, o) -> (
     inverse mf
     )
 
+
 -- function to construct the Krawczyk operator
 -- inputs are list of polynomials in system and n-box of intervals
-krawczykOper = method()
-krawczykOper(PolySystem, IntervalOptionList) := (p, o) -> (
-    eqsOfp := equations p
+krawczykOper = method(Options=>{
+	InvertibleMatrix => null})
+krawczykOper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
+    eqsOfp := equations polySys;
     mm := polySystem transpose matrix{eqsOfp};
     m := mm#PolyMap;
     nv := numgens ring eqsOfp#0;
@@ -498,16 +406,21 @@ krawczykOper(PolySystem, IntervalOptionList) := (p, o) -> (
     e := entries j;
     n := length e; 
     -- plug in intervals into the jacobian entries   
-    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,o)));
+    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,option)));
     mf := matrix applyTable(ijm, i -> mInterval i);
-    -- midpoints of o
-    y := toList apply(o, i ->  mInterval(value((i)#1)) );
-    oll := toList apply(0.. length(o)-1, k -> value((o#k)#0) => y#k);
+    -- midpoints of intervals in option
+    y := toList apply(option, i ->  mInterval(value((i)#1)) );
+    oll := toList apply(0.. length(option)-1, k -> value((option#k)#0) => y#k);
     -- START constructing the (box containing the) inverse 
-    my := inverse mf;
+    if o.InvertibleMatrix =!= null then (
+	my := o.InvertibleMatrix
+	)
+    else (
+	my = invmat(polySys,option)
+	);
     yintmatrix := intervalMatrix applyTable(entries my, a -> interval(a,a));
-    -- centering o at the origin
-    z := intervalMatrix apply(o, i -> {interval(-wInterval(value((i)#1)/2),wInterval(value((i)#1))/2)} );
+    -- centering intervals in option at the origin
+    z := intervalMatrix apply(option, i -> {interval(-wInterval(value((i)#1)/2),wInterval(value((i)#1))/2)} );
     lengthofmat := length(yintmatrix*ijm);
     identitysubstractMatrix := identityIntMat(lengthofmat)-yintmatrix*ijm;
     -- substitute y values into system
@@ -519,37 +432,18 @@ krawczykOper(PolySystem, IntervalOptionList) := (p, o) -> (
     )
 
 
--- in order to use Krawczyk method, that is the method for isolating solution of system of equations, we use approximate inverse matrix 'Y' as input
--- it shows us the Krawczyk operator to determine whether the solution is contained in the n-box
-krawczykOper(PolySystem, IntervalOptionList, Matrix) := (p, o, Y) -> (
-    eqsOfp := equations p
-    mm := polySystem transpose matrix{eqsOfp};
-    m := mm#PolyMap;
-    nv := numgens ring eqsOfp#0;
-    ng := numgens coefficientRing(ring eqsOfp#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
-    e := entries j;
-    n := length e; 
-    -- plug in intervals into the jacobian entries   
-    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,o))); 
-    mf := matrix applyTable(ijm, i -> mInterval i);
-    -- midpoints of o
-    y := toList apply(o, i ->  mInterval(value((i)#1)) );
-    oll := toList apply(0.. length(o)-1, k -> value((o#k)#0) => y#k);
-    -- START constructing the (box containing the) inverse 
-    my := Y;
-    yintmatrix := intervalMatrix applyTable(entries my, a -> interval(a,a));
-    -- centering o at the origin
-    z := intervalMatrix apply(o, i -> {interval(-wInterval(value((i)#1)/2),wInterval(value((i)#1))/2)} );
-    lengthofmat := length(yintmatrix*ijm);
-    identitysubstractMatrix := identityIntMat(lengthofmat)-yintmatrix*ijm;
-    -- substitute y values into system
-    eval := matrix apply(eqsOfp, k -> {sub(k,oll)});
-    -- multiplying Y matrix and f(y)
-    entofmat := entries( ( (transpose matrix {take(y,lengthofmat)})-(my*eval)));
-    -- computing Krawczyk operator
-    (intervalMatrix apply(entofmat, i ->  {interval((i#0),(i#0))}))+(identitysubstractMatrix*z)
-    )
+krawczykMethod = method(Options=>{
+	InvertibleMatrix => null})
+krawczykMethod(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
+    kOperator := krawczykOper(polySys, option);
+    intervalList := (apply(option, k -> value(k#1)));
+    k := 0;
+    for i from 0 to (length(option) - 1) do if (kOperator#i#0#0 < intervalList#i#0 or kOperator#i#0#1 > intervalList#i#1) then  break k = 1;
+    if k === 0 then print "given interval contains a unique solution"
+    else print "given interval does not contain a unique solution"
+    ) 
+
+
 
 
 
@@ -563,6 +457,11 @@ q = point{{-2, 2.000001}}
 computeConstants(f,p)
 ///
 
+
+
+
+beginDocumentation()
+load ("./NumericalCertification/Documents/DocNumericalCertification.m2")
 end
 
 
@@ -572,5 +471,10 @@ end
 restart
 check "NumericalCertification"
 uninstallAllPackages()
+installPackage "NumericalCertification"
+viewHelp NumericalCertification
+
+
+restart
 installPackage "NumericalCertification"
 viewHelp NumericalCertification
