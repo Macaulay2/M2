@@ -603,6 +603,21 @@ Description
    
    We also implement the Jacobian dual criterion in the multi-graded setting.
       
+      
+    {\bf Overlap with other packages:} {\bf -}  The package @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Cremona/html/", "Cremona") @ performs several computations related to rational and birational maps between irreducible projective varieties.
+    Among other things, it can compute the degree of a rational map, test birationality and find the inverse of a birational map. 
+    There is a deterministic implementation and a fast probabilistic implementation.
+      
+    {\bf -} The package @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/RationalMaps/html/index.html", "RationalMaps") @ computes several things related to rational maps between projective varieties.
+    Among other things, it can detect birationality and compute the inverse of a rational map.
+    It contains an implementation of the remarkable Jacobian dual criterion.
+    
+    {\bf -} The present implementation of this package can only handle rational maps where the source is a multiprojective space. 
+    On the other hand, the packages @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Cremona/html/", "Cremona") @ and @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/RationalMaps/html/index.html", "RationalMaps") @  can handle general irreducible projective varieties.
+        
+    {\bf Acknowledgements:} The author is grateful to the organizers of the Macaulay2 workshop in Leipzig.
+    The author is grateful to Laurent Busé for his support on the preparation of this package.
+   	    	    	    	    	     
 ///
 
 
