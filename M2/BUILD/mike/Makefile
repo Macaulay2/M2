@@ -145,30 +145,37 @@ darwin64-profile-clang : always
 linux-opt64 : always
 	mkdir -p builds.tmp/opt64
 	cd builds.tmp/opt64; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download
+
+#		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-debug64 : always
 	mkdir -p builds.tmp/debug64
 	cd builds.tmp/debug64; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
+		--enable-memdebug \
 		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download
+
+#		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64
 	cd builds.tmp/profile64; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-profile \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download
+
+#--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-opt64-gcc6 : always
 	mkdir -p builds.tmp/opt64-gcc6

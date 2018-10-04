@@ -58,8 +58,9 @@ inline void mpfr_reallocate_limbs (mpfr_ptr _z)
 {
   __mpfr_struct tmp;
   tmp = *_z;
-  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(tmp._mpfr_prec * sizeof(mp_limb_t));
-  memcpy(p, _z->_mpfr_d, tmp._mpfr_prec * sizeof(mp_limb_t));
+  int limb_size = (_z->_mpfr_prec - 1) / GMP_NUMB_BITS + 1;
+  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(limb_size * sizeof(mp_limb_t));
+  memcpy(p, _z->_mpfr_d, limb_size * sizeof(mp_limb_t));
   mpfr_clear(_z);
   _z->_mpfr_prec = tmp._mpfr_prec;
   _z->_mpfr_sign = tmp._mpfr_sign;

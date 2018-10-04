@@ -4,6 +4,10 @@ getRSS()
 KK = RR_1000;
 A = random(KK^20,KK^10);
 B = random(KK^10,KK^30);
+Am = mutableMatrix A
+KK = RR_1000;
+A = random(KK^20,KK^10);
+B = random(KK^10,KK^30);
 Am = mutableMatrix A;
 Bm = mutableMatrix B;
 M = A * B;
