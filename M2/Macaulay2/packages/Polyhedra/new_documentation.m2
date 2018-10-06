@@ -150,6 +150,7 @@ doc ///
    Key
       facesAsCones
       (facesAsCones,ZZ,Cone)
+      (facesAsCones,ZZ,Fan)
    Headline
       Returns the faces of a cone as actual cones.
    Usage
@@ -168,7 +169,15 @@ doc ///
          instead.
 
       Example
-         facesAsCones(1, posOrthant 2)
+         L = facesAsCones(1, posOrthant 2)
+         rays L#0
+         rays L#1
+
+      Example
+         F = normalFan hypercube 2
+         L = facesAsCones(1, F)
+         rays L#0
+
 ///
 
 doc ///
@@ -177,6 +186,7 @@ doc ///
       (isWellDefined,Fan)
       (isWellDefined,Polyhedron)
       (isWellDefined,PolyhedralComplex)
+      (isWellDefined,PolyhedralObject)
    Headline
       Checks whether a polyhedral object is well-defined.
    Usage
@@ -204,8 +214,8 @@ doc ///
 
 doc ///
    Key
-      (fan,Matrix,List)
       (fan,Matrix,Matrix,List)
+      (fan,Matrix,List)
       (fan,Matrix,Sequence)
       (fan,Matrix,Matrix,Sequence)
    Headline
@@ -240,6 +250,7 @@ doc ///
 doc ///
    Key
       (polyhedralComplex,Matrix,Matrix,Matrix,List)
+      (polyhedralComplex,Matrix,Matrix,List)
       (polyhedralComplex,Matrix,List)
    Headline
       Constructing a polyhedral complex.
@@ -249,9 +260,9 @@ doc ///
       V:Matrix
          Matrix containing the vertices as columns
       R:Matrix
-         Matrix containing rays as columns.
+         Matrix containing rays as columns (optional)
       N:Matrix
-         Matrix containing generators of the lineality space as columns
+         Matrix containing generators of the lineality space as columns (optional)
       L:List
          List contiaining lists with indices of the vertices of the maximal cells.
    Outputs
@@ -260,7 +271,10 @@ doc ///
       Text
          Basic constructor for polyhedral complices that takes a matrix containing the
          vertices of the polyhedral complex and a list of lists with the indices of the
-         vertices and rays in the maximal cells. Optionally one may provide a lineality space.
+         vertices and rays in the maximal cells. Both the rays and the lineality space
+         are optional arguments. If two matrices are provided, then the second matrix
+         is considered to contain rays. To input a lineality space, one must provide
+         three matrices.
          
          This constructor does not check well-definedness, see {\tt isWellDefined}.
 
@@ -268,6 +282,16 @@ doc ///
          M = matrix {{0,1,2}}
          L = {{0,1},{1,2}}
          PC = polyhedralComplex(M,L)
+      
+      Example
+         C = hypercube 2
+         F = faces(1,C)
+         V = vertices C
+         L = linealitySpace C
+         PC = polyhedralComplex(V,L,F)
+         vertices PC
+         maxPolyhedra PC
+         dim PC
 ///
 
 
@@ -367,6 +391,7 @@ doc ///
       simplex
       (simplex, ZZ)
       (simplex, ZZ, QQ)
+      (simplex, ZZ, ZZ)
    Headline
       Produces a full-dimensional simplex
    Usage
@@ -462,12 +487,12 @@ doc ///
       (hypercube,ZZ,ZZ,QQ)
       (hypercube,ZZ,ZZ,ZZ)
    Headline 
-      returns the d-dimensional hypercube
+      Returns the d-dimensional hypercube
    Usage
       P = hypercube d
       P = hypercube(d, s)
       P = hypercube(d, a, b)
-   Inputs => {
+   Inputs
       d: ZZ
          the dimension, a strictly positive integer
       s: QQ
@@ -492,3 +517,157 @@ doc ///
          P = hypercube(3,0,1)
          vertices P
 ///
+
+doc ///
+   Key
+      (cone, Polyhedron)
+   Headline
+      Take the cone over a polyhedron
+   Usage
+      C = cone P
+   Inputs
+      P: Polyhedron
+   Outputs
+      C: Cone
+   Description
+      Text
+         The polyhedron is embedded at height one, then the cone is taken over it.
+
+      Example
+         P = hypercube 2
+         vertices P
+         C = cone P
+         rays C
+///
+
+doc ///
+   Key
+      polyhedron
+      (polyhedron, Cone)
+   Headline
+      Turn a cone into a polyhedron
+   Usage
+      P = polyhedron C
+   Inputs
+      C: Cone
+   Outputs
+      P: Polyhedron
+   Description
+      Text
+         Every cone is naturally a polyhedron with a single vertex, the origin, and the rays originating from the origin. This method converts a cone into a polyhedron.
+
+      Example
+         C = posOrthant 2
+         rays C
+         P = polyhedron C
+         vertices P
+         rays P
+///
+
+doc ///
+   Key
+      nVertices
+      (nVertices, Polyhedron)
+   Headline
+      Returns the number of vertices of a polyhedron
+   Usage
+      n = nVertices P
+   Inputs
+      P: Polyhedron
+   Outputs
+      n: ZZ
+   Description
+      Text
+         Returns the number of vertices of a polyhedron
+
+      Example
+         C = hypercube 2
+         nVertices C
+///
+
+doc ///
+   Key
+      isFullDimensional
+      (isFullDimensional, PolyhedralObject)
+   Headline
+      Determine whether a polyhedral object is full-dimensional
+   Usage
+      b = isFullDimensional PO
+   Inputs
+      PO: PolyhedralObject
+   Outputs
+      b: Boolean
+   Description
+      Text
+         Checks whether the dimension of the polyhedral object is equal to its ambient dimension.
+
+      Example
+         C = hypercube 2
+         dim C
+         ambDim C
+         isFullDimensional C
+
+      Example
+         F = normalFan hypercube 2
+         dim F
+         ambDim F
+         isFullDimensional F
+
+      Example
+         S = stdSimplex 2
+         vertices S
+         dim S
+         ambDim S
+         isFullDimensional S
+///
+
+doc ///
+   Key
+      (fan, PolyhedralComplex)
+   Headline
+      Take the fan over a polyhedral complex
+   Usage
+      F = fan PC
+   Inputs
+      PC: PolyhedralComplex
+   Outputs
+      F:Fan
+   Description
+      Text
+         The polyhedral complex is embedded at height one and the fan is taken over it.
+      Example
+         C = hypercube 2
+         F = faces(1,C)
+         V = vertices C
+         L = linealitySpace C
+         PC = polyhedralComplex(V,L,F)
+         vertices PC
+         maxPolyhedra PC
+         dim PC
+///
+
+doc ///
+   Key
+      (polyhedralComplex, Fan)
+   Headline
+      Turn a fan into a polyhedral complex
+   Usage
+      PC = polyhedralComplex F
+   Inputs
+      F: Fan
+   Outputs
+      PC: PolyhedralComplex
+   Description
+      Text
+         Every fan is naturally a polyhedral complex, since every cone is naturally a polyhedron. This method converts a fan into a polyhedral complex.
+
+      Example
+         F = normalFan hypercube 2
+         rays F
+         maxCones F
+         PC = polyhedralComplex F
+         vertices PC
+         rays PC
+         maxPolyhedra PC
+///
+

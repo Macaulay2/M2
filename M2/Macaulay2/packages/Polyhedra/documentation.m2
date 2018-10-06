@@ -749,12 +749,13 @@ document {
 
 document {
      Key => {convexHull, (convexHull,Matrix), (convexHull,Matrix,Matrix), 
-	  (convexHull,Polyhedron,Polyhedron), (convexHull,List)},
+	  (convexHull,Polyhedron,Polyhedron), (convexHull,List), (convexHull,Matrix,Matrix,Matrix)},
      Headline => "computing the convex hull of points, rays and polyhedra",
-     Usage => " P = convexHull M \nP = convexHull(M,N) \nP = convexHull(P1,P2) \nP = convexHull L",
+     Usage => " P = convexHull M \nP = convexHull(M,N) \nP = convexHull(P1,P2) \nP = convexHull L \nP = convexHull(M,N,W)",
      Inputs => {
 	  "M" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
 	  "N" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
+	  "W" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
 	  "P1" => Polyhedron,
 	  "P2" => Polyhedron,
 	  "L" => List
@@ -778,9 +779,11 @@ document {
      of the following in any order.",
      
      UL {
-	  {"Vertices, given by a matrix ", TT "M", " over ", TO ZZ, " 
+	  {"Points, given by a matrix ", TT "M", " over ", TO ZZ, " 
 	       or ", TO QQ},
-	  {"Vertices and rays, given by a sequence ", TT "(V,R)", "of two 
+	  {"Points and ray generators, given by a sequence ", TT "(V,R)", "of two 
+	       matrices over ", TO ZZ, " or ", TO QQ},
+	  {"Points, ray generators and lineality generators, given by a sequence ", TT "(M,N,W)", "of three 
 	       matrices over ", TO ZZ, " or ", TO QQ},
 	  {TO Cone},
 	  {TO Polyhedron}
