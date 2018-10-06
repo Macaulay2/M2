@@ -411,3 +411,47 @@ doc ///
          S = simplex 2
          S = simplex(2,2)
 ///
+
+doc ///
+   Key
+      polyhedronFromHData
+      (polyhedronFromHData, Matrix, Matrix)
+      (polyhedronFromHData, Matrix, Matrix, Matrix, Matrix)
+   Headline
+      Constructing a polyhedron from its H-representation, i.e. inequalities and equations
+   Usage
+      P = polyhedronFromHData(I, v)
+      P = polyhedronFromHData(I, v, E, w)
+   Inputs
+      I: Matrix
+         The inequalities
+      v: Matrix
+         The right hand side of the inequalities
+      E: Matrix
+         The equations
+      w: Matrix
+         The right hand side of the equations
+   Outputs
+      P: Polyhedron
+   Description
+      Text
+         Constructs a polyhedron from inequalities and equations. Uses the
+         negative halfspace defined by the equations, the normal vectors of
+         every inequality point outside the polyhedron.
+
+         The polyhedron is defined by
+            $$\{x\in\mathbb{R}\ |\ I * x\le v,\ E * x=w\}$$
+
+      Example
+         S = simplex 2
+         facets S
+         SCopy = polyhedronFromHData facets S
+         assert(vertices S == vertices SCopy)
+
+      Example
+         S = stdSimplex 2
+         facets S
+         hyperplanes S
+         SCopy = polyhedronFromHData(join(facets S, hyperplanes S))
+         assert(vertices S == vertices SCopy)
+///
