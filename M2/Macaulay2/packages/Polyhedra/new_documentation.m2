@@ -204,8 +204,10 @@ doc ///
 
 doc ///
    Key
-      (fan,Matrix,Matrix,List)
       (fan,Matrix,List)
+      (fan,Matrix,Matrix,List)
+      (fan,Matrix,Sequence)
+      (fan,Matrix,Matrix,Sequence)
    Headline
       Constructing a fan.
    Usage
@@ -290,33 +292,6 @@ doc ///
       Text
          Basic constructor for a cone that takes one or two matrices. The cone consists of all points that
          evaluate positive with the rows of the first matrix and zero with the rows of the second matrix.
-///
-
-doc ///
-   Key
-      polyhedronFromHData
-      (polyhedronFromHData, Matrix, Matrix)
-      (polyhedronFromHData, Matrix, Matrix, Matrix, Matrix)
-   Headline
-      Construct a polyhedron as intersection of affine halfspaces.
-   Usage
-      P = polyhedronFromHData(H, h)
-      P = polyhedronFromHData(H, h, E, e)
-   Inputs
-      H:Matrix
-         Matrix containing the halfspaces as rows.
-      h:Matrix
-         Column matrix containing the left hand sides of the inequalities in {\tt H}.
-      E:Matrix
-         Matrix containing equations as rows.
-      e:Matrix
-         Column matrix containing the left hand sides of the equations in {\tt E}.
-   Outputs
-      P:Polyhedron
-   Description
-      Text
-         Basic constructor for a polyhedron from inequalities and equations. Produces the polyhedron
-         {\tt Hx>=h, Ex=e}.
 ///
 
 
@@ -454,4 +429,66 @@ doc ///
          hyperplanes S
          SCopy = polyhedronFromHData(join(facets S, hyperplanes S))
          assert(vertices S == vertices SCopy)
+///
+
+doc ///
+   Key
+      fanFromGfan
+      (fanFromGfan, List)
+   Headline
+      Construct a fan from output data of {\tt Gfan}
+   Usage
+      F = fanFromGfan L
+   Inputs
+      L: List
+   Outputs
+      F: Fan
+   Description
+      Text
+         Method used by the package
+         @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Tropical/html/", "Tropical.m2") @ to construct a fan from {\tt Gfan} output.
+         Gfan produces more data than just rays and maximal cones and this constructor will save that data to avoid recomputation.
+///
+
+
+doc ///
+   Key 
+      hypercube
+      (hypercube,ZZ)
+      (hypercube,ZZ,QQ)
+      (hypercube,ZZ,ZZ)
+      (hypercube,ZZ,QQ,QQ)
+      (hypercube,ZZ,QQ,ZZ)
+      (hypercube,ZZ,ZZ,QQ)
+      (hypercube,ZZ,ZZ,ZZ)
+   Headline 
+      returns the d-dimensional hypercube
+   Usage
+      P = hypercube d
+      P = hypercube(d, s)
+      P = hypercube(d, a, b)
+   Inputs => {
+      d: ZZ
+         the dimension, a strictly positive integer
+      s: QQ
+         a positive rational scaling factor
+      a: QQ
+      b: QQ
+   Outputs
+      P: Polyhedron
+   Description
+      Text
+         Produces the {\tt d}-dimensional hypercube $[-1,1]^d$. If provided with a scaling factor $s$, the hypercube $[-s,s]^d$ is returned. Alternatively one can specify the edge directly as $[a,b]$, then the hypercube $[a,b]^d$ is returned
+
+      Example
+         P = hypercube 3
+         vertices P
+      
+      Example
+         P = hypercube(3,2)
+         vertices P
+
+      Example
+         P = hypercube(3,0,1)
+         vertices P
 ///

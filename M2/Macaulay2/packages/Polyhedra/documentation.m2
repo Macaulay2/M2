@@ -3358,28 +3358,6 @@ document {
      
      }
 
-document {
-     Key => {hypercube, (hypercube,ZZ), (hypercube,ZZ,QQ), (hypercube,ZZ,ZZ)},
-     Headline => "computes the d-dimensional hypercube with edge length 2*s",
-     Usage => " P = hypercube(d,s)",
-     Inputs => {
-	  "d" => ZZ => {", strictly positive"},
-	  "s" => {TO ZZ," or ",TO QQ,", positive (optional)"}
-	  },
-     Outputs => {
-	  "P" => Polyhedron
-	  },
-     
-     PARA{}, "The ",TT "d","-dimensional ",TT "hypercube"," with edge length 2*",TT "s"," is 
-     the convex hull of all points in ",TT "{+/- s}^d"," in ",TO QQ,"^d. If ",TT "s"," is omitted 
-     it is set to 1.",
-     
-     EXAMPLE {
-	  " P = hypercube 3",
-	  " vertices P"
-	  }
-     
-     }
 
 document {
      Key => {newtonPolytope, (newtonPolytope,RingElement)},
