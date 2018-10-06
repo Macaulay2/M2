@@ -5,11 +5,12 @@ globalAssignment PolyhedralComplex
 compute#PolyhedralComplex = new MutableHashTable;
 
 
-polyhedralComplex = method()
-polyhedralComplex HashTable := inputProperties -> (
+internalPolyhedralComplexConstructor = method()
+internalPolyhedralComplexConstructor HashTable := inputProperties -> (
    constructTypeFromHash(PolyhedralComplex, inputProperties)
 )
 
+polyhedralComplex = method()
 
 polyhedralComplex(Matrix, Matrix, Matrix, List) := (V, R, lineality, mO) -> (
    if not all(mO, m -> #m == 2) then error("Expected pairs of lists.");
@@ -23,7 +24,7 @@ polyhedralComplex(Matrix, Matrix, Matrix, List) := (V, R, lineality, mO) -> (
    result := new HashTable from {
       underlyingFan => fan(irays, prependZeros(lineality), mO)
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
 
@@ -40,7 +41,7 @@ polyhedralComplex Fan := F -> (
    result := new HashTable from {
       underlyingFan => F
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
 
@@ -49,7 +50,7 @@ polyhedralComplex Polyhedron := P -> (
    result := new HashTable from {
       underlyingFan => fan C
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
 
@@ -71,7 +72,7 @@ addPolyhedron(Polyhedron,PolyhedralComplex) := (P, PC) -> (
    result := new HashTable from {
       underlyingFan => addCone(F, C)
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
 
