@@ -27,6 +27,13 @@ polyhedralComplex(Matrix, Matrix, Matrix, List) := (V, R, lineality, mO) -> (
    internalPolyhedralComplexConstructor result
 )
 
+polyhedralComplex(Matrix, Matrix, List) := (V, R, mO) -> (
+   if not all(mO, m-> all(m, e->instance(e, List))) then (
+      mO = apply(mO, m -> {m, {}})
+   );
+   RL := map(QQ^(numRows V), QQ^0, 0);
+   polyhedralComplex(V, R, RL, mO)
+)
 
 polyhedralComplex(Matrix, List) := (V, mO) -> (
    if not all(mO, m-> all(m, e->instance(e, List))) then (
@@ -38,10 +45,11 @@ polyhedralComplex(Matrix, List) := (V, mO) -> (
 
 
 polyhedralComplex Fan := F -> (
-   result := new HashTable from {
-      underlyingFan => F
-   };
-   internalPolyhedralComplexConstructor result
+   n := ambDim F;
+   vertex := map(ZZ^n, ZZ^1, 0);
+   mO := maxCones F;
+   mO = apply(mO, m -> {{0},m});
+   polyhedralComplex(vertex, rays F, linealitySpace F, mO)
 )
 
 
