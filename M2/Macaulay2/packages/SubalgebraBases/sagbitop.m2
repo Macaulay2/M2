@@ -175,10 +175,7 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  nR := numgens R;
 	  nG := numgens source G;
      	  if MOflag == 5 then (
-	       b := symbol b;
-	       a := symbol a;
-	       RS = (coefficientRing R)[b_1..b_nG, 
-	       	    a_1..a_nR,
+	       RS = (coefficientRing R)[Variables=>nG+nR,--b_1..b_nG,a_1..a_nR,
 	       	    Degrees=>join(degrees source G, degrees source vars R),
 	       	    MonomialOrder => RevLex];
 	       RtoRS = map(RS,R,(vars RS)_{nG..nG+nR-1});
@@ -193,8 +190,7 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	       newOrder := if MOflag == 0 or MOflag == 3 then Eliminate nR
 	       else if MOflag == 4 then append(M.Options.MonomialOrder,nG)
 	       else M.Options.MonomialOrder;
-	       RS = (coefficientRing R)[symbol a_1.. symbol a_nR, 
-	       	    symbol b_1.. symbol b_nG,
+	       RS = (coefficientRing R)[Variables=>nG+nR,--a_1..a_nR,b_1..b_nG,
 	       	    Degrees=>join(degrees source vars R, degrees source G),
 	       	    MonomialOrder => newOrder];
 	       RtoRS = map(RS,R,(vars RS)_{0..nR-1});
@@ -251,10 +247,10 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  nloops = nloops+1;
 	  if printlevel > 0 then 
 	    << "--- degree " << d << " ----" << endl;
-	  time gbJquo = gb(Jquo, DegreeLimit=>d);
+	  gbJquo = gb(Jquo, DegreeLimit=>d);
 	  mtemp := gens gbJquo;
 	  spairs := submatrixByDegrees(split2(mtemp,RStoS mtemp),d);
-	  << "spairs = " << transpose spairs << endl;
+	  if printlevel > 1 then << "spairs = " << transpose spairs << endl;
 	  spairs = compress Gmap(spairs);
 	  if Pending#d != {} then (
 	       if MOflag == 3 then (newgens = matrix{Pending#d})
@@ -264,7 +260,7 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  if numgens source spairs > 0 then (
 	       if MOflag == 3 then (
 		    newguys = subductquo(spairs, Gmap, Jquo, I, d))
-	       else (newguys = time autosubductionquo(spairs));
+	       else (newguys = autosubductionquo(spairs));
 	       stopcriteria := numgens source newguys)
 	  else stopcriteria = 0;
           if stopcriteria > 0 then (
