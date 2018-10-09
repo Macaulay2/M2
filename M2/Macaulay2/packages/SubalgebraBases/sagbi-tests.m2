@@ -1,12 +1,14 @@
 invariantsSn = (n) -> (
     -- ring of invariants of S_n
-    R = ZZ/101[x_0 .. x_(n-1)]; 
+    x := getSymbol "x";
+    R := ZZ/101[x_0 .. x_(n-1)]; 
     map(R^1, n, (j,i) -> sum apply(toList(x_0 .. x_(n-1)), x->x^(i+1))))
 
 genericminors = (minorsize,rowsize,colsize) -> (
     -- k by k minors of a generic m by n matrix
     matdim := rowsize * colsize - 1;
-    R = ZZ/101[x_0 .. x_matdim];
+    x := getSymbol "x";
+    R := ZZ/101[x_0 .. x_matdim];
     gens minors(minorsize,genericMatrix(R,x_0,rowsize,colsize)))
 
 --------------------------------------------

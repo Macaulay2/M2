@@ -16,6 +16,7 @@ export {"subalgebraBasis", "sagbi" => "subalgebraBasis", "PrintLevel"}
 load "SubalgebraBases/sagbi-common.m2"
 load "SubalgebraBases/sagbitop.m2"
 load "SubalgebraBases/sagbieng.m2"
+load "SubalgebraBases/sagbi-tests.m2"
 
 beginDocumentation()
 document { 
@@ -35,8 +36,6 @@ document {
               },
      	 "This routine computes a sagbi basis degree by degree,
      	 for a graded or nongraded subalgebra.",
-	 EXAMPLE lines ///
-     	 ///,
 	 Caveat => "M should be a matrix over a polynomial ring over a field,
      	 and NOT a quotient ring.",
      PARA{},
@@ -46,7 +45,7 @@ document {
      (eds. Kaltofen and Watt), MIT, Cambridge, June 1989.///,
      PARA{},
      TEX ///Robbiano, L., Sweedler, M. (1990). Subalgebra bases,
-     in W.~Bruns, A.~Simis (eds.): {\sl Commutative Algebra},
+     in W.~Bruns, A.~Simis (eds.): {\it Commutative Algebra},
      Springer Lecture Notes in Mathematics {\bf 1430}, pp.~61--87.///,
      PARA{},
      TEX ///F. Ollivier, Canonical Bases: Relations with Standard bases, finiteness
@@ -58,5 +57,13 @@ document {
      Series 8, Amer Math Soc, Providence, 1996///
 	}
 
-load "SubalgebraBases/sagbi-tests.m2"
 
+end--
+
+uninstallPackage "SubalgebraBases"
+restart
+installPackage "SubalgebraBases"
+
+load "SubalgebraBases/sagbi-tests.m2"
+needsPackage "SubalgebraBases"
+check "SubalgebraBases"
