@@ -69,6 +69,7 @@ SLP<Field>::~SLP()
       printf("closing library\n");
       dlclose(handle);
     }
+  std::cerr << "[~SLP called]" << std::endl;
 }
 
 template <class Field>

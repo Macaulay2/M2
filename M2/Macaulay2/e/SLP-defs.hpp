@@ -29,7 +29,7 @@ class SLProgram : public MutableEngineObject
   int inputCounter;  // this is the count; the position numbering is -1, -2, ...
  public:
   SLProgram();
-  virtual ~SLProgram() {}
+  virtual ~SLProgram();
   // GATE_POSITION addCopy(GATE_POSITION p);
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
