@@ -12,6 +12,14 @@ genericminors = (minorsize,rowsize,colsize) -> (
     gens minors(minorsize,genericMatrix(R,x_0,rowsize,colsize)))
 
 --------------------------------------------
+-- test top-level and engine strategies on trivial example
+TEST ///
+R=QQ[x,y,MonomialOrder=>Lex]
+M=matrix{{x+y,x*y,x*y^2}}
+assert(subalgebraBasis(M,Limit=>3)==M)
+assert(subalgebraBasis(M,Limit=>3,Strategy=>Engine)==M)
+///
+
 TEST ///
 -- simple inhomog example
 kk = ZZ/101
