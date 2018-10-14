@@ -363,6 +363,17 @@ appendToSLProgram (RawSLProgram, DivideGate) := (slp, g) ->
 	scan(g.Inputs, a->appendToSLProgram (slp,a));
 	g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
 	)
+removeSLPfromCache = method()
+removeSLPfromCache (RawSLProgram, InputGate) := (slp, g) -> 
+    if g.cache#?slp then remove(g.cache,slp) 
+removeSLPfromCache (RawSLProgram, SumGate) := 
+removeSLPfromCache (RawSLProgram, ProductGate) := 
+removeSLPfromCache (RawSLProgram, DetGate) := 
+removeSLPfromCache (RawSLProgram, DivideGate) := (slp, g) -> 
+    if g.cache#?slp then (
+	remove(g.cache,slp); 
+	scan(g.Inputs, a->removeSLPfromCache(slp,a));
+	)
 TEST /// 
 needsPackage "SLPexpressions"
 debug SLPexpressions
@@ -642,12 +653,15 @@ Evaluator = new Type of MutableHashTable
 makeEvaluator = method()
 makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
     consts := constants M;
+    slp := makeSLProgram(I,M);
     E := new Evaluator from {
-    	"rawSLP"=>makeSLProgram(I,M),
+    	"rawSLP"=>slp
     	};
-    E#"constant positions" = positionsOfInputGates(consts,E#"rawSLP");
-    E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
+    E#"constant positions" = positionsOfInputGates(consts,slp);
+    E#"input positions" = positionsOfInputGates(flatten entries I,slp);
     E#"constants" = matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
+    scan(flatten entries M, g->removeSLPfromCache(slp,g));
+    scan(flatten entries I, g->removeSLPfromCache(slp,g));
     E
     )
 
