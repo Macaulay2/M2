@@ -1,7 +1,9 @@
 needs "test-mem-leaks.m2"
 debug needsPackage "NumericalAlgebraicGeometry"
 debug SLPexpressions
+debug Core
 
+errorDepth = 0
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
 eps = 1/10^20
@@ -12,8 +14,14 @@ M = H#"X" | matrix{{H#"T"}};
 I = H#"H";
 
 
+TESTrawSLProgram = () -> (
+    rawSLProgram(1);
+    )
+
 TESTmakeSLProgram = () -> (
-    makeSLProgram(I,M);
+    slp := makeSLProgram(I,M);
+    scan(flatten entries M, g->removeSLPfromCache(slp,g));    
+    scan(flatten entries I, g->removeSLPfromCache(slp,g));    
     )
 
 TESTmakeEvaluator = () -> (
@@ -48,9 +56,19 @@ end--
 
 restart
 needs "NAG-leaks.m2"
-errorDepth = 0
 
-testF(1000,TESTmakeSLProgram)
-testF(10000,TESTmakeEvaluator)
-testF(100,TESTsegmentHomotopy)
+testF(1000000,TESTrawSLProgram) 
+-- does not leak
+
+testF(100000,TESTmakeSLProgram) 
+-- does not leak
+
+testF(100000,TESTmakeEvaluator)
+-- elapsed time = 19.4445
+-- leaks 6.06208 bytes, takes .194445 ms. (per call)
+
+testF(1000,TESTsegmentHomotopy)
+-- elapsed time = 115.311
+-- leaks 26861.6 bytes, takes 115.311 ms. (per call)
+
 testF(1000,TESTsolve)

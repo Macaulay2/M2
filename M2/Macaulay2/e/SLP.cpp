@@ -5,13 +5,13 @@
 // SLProgram
 SLProgram::SLProgram()
 {
-  std::cerr << "in SLProgram::SLProgram" << std::endl;
+  // std::cerr << "in SLProgram::SLProgram" << std::endl;
   inputCounter = 0;
 }
 
 SLProgram::~SLProgram()
 {
-  std::cerr << "~SLProgram" << std::endl;
+  // std::cerr << "~SLProgram" << std::endl;
 }
 
 SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a)
