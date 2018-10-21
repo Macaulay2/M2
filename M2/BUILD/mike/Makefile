@@ -21,14 +21,55 @@ darwin64-gcc8 : always
 	mkdir -p builds.tmp/darwin64-gcc8
 	cd builds.tmp/darwin64-gcc8; ../../../../configure \
 		CC=gcc-8 CXX=g++-8 \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+darwin64-gcc8-alternate : always
+	mkdir -p builds.tmp/darwin64-gcc8-alternate
+	cd builds.tmp/darwin64-gcc8-alternate; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+#		--enable-dmg \
+#		CPPFLAGS="-I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/opt/readline/lib" \
+#		--enable-build-libraries="mpir flint pari ntl"
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
+
+darwin64-clang6 : always
+	mkdir -p builds.tmp/darwin64-clang6
+	cd builds.tmp/darwin64-clang6; ../../../../configure \
+		CC=/usr/local/Cellar/llvm/6.0.1/bin/clang \
+	    CXX=/usr/local/Cellar/llvm/6.0.1/bin/clang++ \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+#		--enable-build-libraries="mpir flint pari ntl"
+#		--enable-dmg \
+
+darwin64-clang : always
+	mkdir -p builds.tmp/darwin64-clang
+	cd builds.tmp/darwin64-clang; ../../../../configure \
+		CC="clang -m64" CXX="clang++ -m64" \
 		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
 		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-dmg \
 		--enable-download \
+		--enable-dmg \
 		--enable-build-libraries="mpir flint pari ntl"
+
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
