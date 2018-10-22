@@ -746,7 +746,7 @@ AC_MSG_CHECKING(whether OpenMP is supported by the compiler)
 AC_LANG(C++)
 AC_PROG_CXX
 AC_OPENMP
-if test ! "$OPENMP_CXXFLAGS"
+if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
 
