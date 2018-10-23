@@ -547,6 +547,18 @@ document {
      ///
      }
 
+document {
+     Key => (symbol -, Vector),
+     Headline => "negation of a Vector",
+     TT "-v", " -- the negation of ", TT "v",
+     PARA{},
+     EXAMPLE lines ///
+       v = vector {2,3,5,7}
+	   - v
+     ///
+}   
+
+
 multidoc ///
 Node
      Key

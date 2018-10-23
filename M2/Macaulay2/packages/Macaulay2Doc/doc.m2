@@ -1387,6 +1387,25 @@ document {
      SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
      }
 
+
+document {
+     Key => (symbol ||, Vector, Vector),
+     Headline => "join Vectors ",
+     Usage => "v || w",
+	Inputs => {"v", "w"},
+	Outputs => {
+		Vector => {"obtained from vectors v and w by concatenating the columns."}
+                   },
+     EXAMPLE lines ///
+	      R = (ZZ[x,y,z])^3;
+      	  v = vector {1,x,x*y,x*z,x*y*z}
+      	  w = vector {z*x,z^2,3}
+      	  v || w
+	  ///,
+     PARA{},
+     SeeAlso => {(symbol ||, Matrix, Matrix)}
+     }
+
 document {
      Key => {(symbol===,Thing,Thing), symbol ===},
      Headline => "strict equality",
