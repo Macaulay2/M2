@@ -42,11 +42,41 @@ darwin64-gcc8-alternate : always
 #		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
 #		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
 
+#rewrite this: don't change the compiler this way?
+darwin64-latestclang : always
+	mkdir -p builds.tmp/darwin64-latestclang
+	cd builds.tmp/darwin64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang -fopenmp -I/usr/local/opt/llvm/include" \
+	    CXX="/usr/local/opt/llvm/bin/clang++ -fopenmp -I/usr/local/opt/llvm/include" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib" \
+		LDLIBS="-fopenmp -lomp" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 darwin64-clang6 : always
 	mkdir -p builds.tmp/darwin64-clang6
 	cd builds.tmp/darwin64-clang6; ../../../../configure \
-		CC=/usr/local/Cellar/llvm/6.0.1/bin/clang \
-	    CXX=/usr/local/Cellar/llvm/6.0.1/bin/clang++ \
+		CC="/usr/local/opt/llvm/bin/clang" \
+	    CXX="/usr/local/opt/llvm/bin/clang++" \
+		OPENMP_CXXFLAGS="-I/usr/local/opt/llvm/include -fopenmp" \
+		OPENMP_LDFLAGS="-L/usr/local/opt/llvm/lib -fopenmp -lomp" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+# currently fails (21 Oct 2018), since we aren't detecting openmp support in the compiler.
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		CC=clang \
+	    CXX=clang++ \
+		OPENMP_CPPFLAGS="-I/usr/local/opt/libomp/include" \
+		OPENMP_CXXFLAGS="-Xpreprocessor -fopenmp" \
+		OPEN_LDFLAGS="-L/usr/local/opt/libomp/lib" \
+		OPEN_LDLIBS="-Xpreprocessor -fopenmp -lomp" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

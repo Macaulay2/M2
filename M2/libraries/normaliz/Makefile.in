@@ -12,13 +12,11 @@ CONFIGOPTIONS += --disable-shared
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
 # I have filed a bug report, Bug ID# 8338749:
-ifeq ((@OPENMP_CXXFLAGS@),"")
-  OPENMP = no
-  CXXFLAGS0 = -Wno-unknown-pragmas -DNO_OPENMP
-else
-  OPENMP = yes
-  CXXFLAGS0 = @OPENMP_CXXFLAGS@
-endif
+# the configure script insures that we have OpenMP now...
+
+CXXFLAGS0 = $(OPENMP_CXXFLAGS)
+LDFLAGS += $(OPENMP_LDFLAGS)
+
 
 # -static doesn't work in Mac OS X, so override variables from normaliz's Makefile.configuration:
 # former value:
