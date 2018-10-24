@@ -741,6 +741,28 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 	# 1 "foo" 1 3 4
 	template <class T> struct A { };])],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
+dnl Check for openmp and fail if it cannot be found.
+dnl This is required for building csdp.
+AC_MSG_CHECKING(whether OpenMP is supported by the compiler)
+if test ! "$OPENMP_LDFLAGS"
+then 
+  AC_LANG(C++)
+  AC_PROG_CXX
+  AC_OPENMP
+  if test "$ac_cv_prog_cxx_openmp" = unsupported
+  then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
+  AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
+  AC_SUBST(OPENMP_LDFLAGS,"")
+  fi
+else
+  AC_MSG_NOTICE([Assuming that OpenMP works, as OPENMP_LDFLAGS is set])
+  ac_cv_prog_cxx_openmp='none needed'
+  AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
+  AC_SUBST(OPENMP_LDFLAGS,"$OPENMP_LDFLAGS")
+fi
+
+dnl AC_SUBST(AM_CXXFLAGS,"$OPENMP_CXXFLAGS")
+
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
 dnl AC_SUBST(SYNC_MACROS,)
