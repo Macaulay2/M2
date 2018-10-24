@@ -27,7 +27,6 @@ class MutableMatrix : public MutableEngineObject
  public:
   virtual ~MutableMatrix()
   {
-    std::cout << "deleting a MutableMatrix" << std::endl;
   }
 
 #if 0

@@ -1,3 +1,14 @@
+TO DO
+24 Oct 2018:
+  Check for slow downs vs. 1.12
+    bugs/anton/MEMORY-LEAKS/eigen-leaks.m2 (
+    					  k takes twice longer than before
+					  i 
+    					  )
+    
+  Check NumericalAG integrity
+  Fix geals in bugs/anton/MEMORY-LEAKS/gb-leaks.m2 
+
 22 Aug 2018:
   Todo to get code not leaking ZZ, QQ, RRR's
   make tests for these.
