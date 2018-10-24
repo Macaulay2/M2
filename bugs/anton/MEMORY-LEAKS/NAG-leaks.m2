@@ -10,9 +10,11 @@ eps = 1/10^20
 T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 (S,solsS) = totalDegreeStartSystem T
 H = segmentHomotopy(S,T,gamma=>1+pi*ii);
+polyS = polySystem S;
+polyT = polySystem T;
 M = H#"X" | matrix{{H#"T"}};
 I = H#"H";
-
+gammaValue = random CC
 
 TESTrawSLProgram = () -> (
     rawSLProgram(1);
@@ -28,12 +30,18 @@ TESTmakeEvaluator = () -> (
     makeEvaluator(I,M);
     )
 
-TESTsolve = () -> (
-    solveSystem T;
+TESTgateMatrix = () -> (
+    t := local t;
+    tt := inputGate [t];
+    gammaValue*(1-tt)*gateMatrix polyS + tt*gateMatrix polyT;
     )
 
 TESTsegmentHomotopy = () -> (
     segmentHomotopy(S,T,gamma=>1+pi*ii);
+    )
+
+TESTsolve = () -> (
+    solveSystem T;
     )
 
 TESTtrackHomotopy = () -> (
@@ -67,8 +75,14 @@ testF(100000,TESTmakeEvaluator)
 -- elapsed time = 19.4445
 -- leaks 6.06208 bytes, takes .194445 ms. (per call)
 
-testF(1000,TESTsegmentHomotopy)
--- elapsed time = 115.311
--- leaks 26861.6 bytes, takes 115.311 ms. (per call)
+testF(1000000,TESTgateMatrix)
+-- elapsed time = 29.2733
+leaks 0 bytes, takes .0292733 ms. (per call)
 
-testF(1000,TESTsolve)
+testF(10000,TESTsegmentHomotopy)
+-- elapsed time = 52.4079
+-- leaks 4.096 bytes, takes 5.24079 ms. (per call)
+
+testF(10000,TESTsolve)
+-- elapsed time = 84.1909
+-- leaks 7161.45 bytes, takes 8.41909 ms. (per call)

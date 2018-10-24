@@ -87,6 +87,7 @@ concatenateNets List := L -> (
 Gate = new Type of HashTable
 GateMatrix = new Type of List
 
+-*
 gateCatalog = new MutableHashTable -- records all gates
 gateCatalogCount = new MutableHashTable -- count for each gate
 add2GC := g -> if gateCatalog#?g then (
@@ -96,8 +97,10 @@ add2GC := g -> if gateCatalog#?g then (
     gateCatalogCount#g= 1;
     gateCatalog#g = g
     ) 
-
 getGateCatalogCount = () -> gateCatalogCount  
+*-
+
+add2GC := identity
 
 InputGate = new Type of Gate -- "abstract" unit of input  
 inputGate = method()
@@ -210,39 +213,39 @@ value (ProductGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else
 value (DetGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
 value (DivideGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
 
-support InputGate := g -> if isConstant g then {} else g
-support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
-support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
-support DivideGate := memoize (g -> g.Inputs/support//flatten//unique)
-support DetGate := memoize (g -> g.Inputs//flatten/support//flatten//unique)
-support List := memoize (L -> L/support//flatten//unique)
-support GateMatrix := memoize (M -> support flatten entries M)
+support InputGate := (g -> if isConstant g then {} else g)
+support SumGate :=  (g -> g.Inputs/support//flatten//unique)
+support ProductGate :=  (g -> g.Inputs/support//flatten//unique)
+support DivideGate :=  (g -> g.Inputs/support//flatten//unique)
+support DetGate :=  (g -> g.Inputs//flatten/support//flatten//unique)
+support List :=  (L -> L/support//flatten//unique)
+support GateMatrix :=  (M -> support flatten entries M)
 
 constants = method()
-constants InputGate := g -> if isConstant g then g else {}
-constants SumGate := memoize (g -> g.Inputs/constants//flatten//unique)
-constants ProductGate := memoize (g -> g.Inputs/constants//flatten//unique)
-constants DivideGate := memoize (g -> g.Inputs/constants//flatten//unique)
-constants DetGate := memoize (g -> g.Inputs//flatten/constants//flatten//unique)
-constants List := memoize (L -> L/constants//flatten//unique)
-constants GateMatrix := memoize (M -> constants flatten entries M)
+constants InputGate := (g -> if isConstant g then g else {})
+constants SumGate :=  (g -> g.Inputs/constants//flatten//unique)
+constants ProductGate :=  (g -> g.Inputs/constants//flatten//unique)
+constants DivideGate :=  (g -> g.Inputs/constants//flatten//unique)
+constants DetGate :=  (g -> g.Inputs//flatten/constants//flatten//unique)
+constants List :=  (L -> L/constants//flatten//unique)
+constants GateMatrix :=  (M -> constants flatten entries M)
 
-depth InputGate := g -> 0
-depth SumGate := memoize (g -> g.Inputs//depth + 1)
-depth ProductGate := memoize (g -> g.Inputs//depth + 1)
-depth DivideGate := memoize (g -> g.Inputs//depth + 1)
-depth DetGate := memoize (g -> g.Inputs//flatten//depth + 1)
-depth GateMatrix := memoize (M -> depth flatten entries M)
-depth List := memoize (L -> L/depth//max)
+depth InputGate :=  (g -> 0)
+depth SumGate :=  (g -> g.Inputs//depth + 1)
+depth ProductGate :=  (g -> g.Inputs//depth + 1)
+depth DivideGate :=  (g -> g.Inputs//depth + 1)
+depth DetGate :=  (g -> g.Inputs//flatten//depth + 1)
+depth GateMatrix :=  (M -> depth flatten entries M)
+depth List :=  (L -> L/depth//max)
 
 flattenGates = method()
-flattenGates InputGate := g -> {}
-flattenGates SumGate := memoize (g -> g.Inputs//unique)
-flattenGates ProductGate := memoize (g -> g.Inputs//unique)
-flattenGates DivideGate := memoize (g -> g.Inputs//unique)
-flattenGates DetGate := memoize (g -> g.Inputs//flatten//unique)
-flattenGates GateMatrix := memoize (M -> flattenGates flatten entries M)
-flattenGates List := memoize (L -> L/flattenGates//flatten//unique)
+flattenGates InputGate :=  (g -> {})
+flattenGates SumGate :=  (g -> g.Inputs//unique)
+flattenGates ProductGate :=  (g -> g.Inputs//unique)
+flattenGates DivideGate :=  (g -> g.Inputs//unique)
+flattenGates DetGate :=  (g -> g.Inputs//flatten//unique)
+flattenGates GateMatrix :=  (M -> flattenGates flatten entries M)
+flattenGates List :=  (L -> L/flattenGates//flatten//unique)
 
 
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
@@ -264,25 +267,25 @@ diff (InputGate, DivideGate) := (x,g) -> (
     )
 
 subSanityCheck = method()
-subSanityCheck Option := memoize (ab -> (
+subSanityCheck Option :=  (ab -> (
     if not instance(first ab, InputGate) then error "only an InputGate can be substituted";
     if not instance(last ab, Gate) then error "can substitute with a Gate only";
     ))
-sub (InputGate, Option) := memoize((g,ab) -> (
+sub (InputGate, Option) := ((g,ab) -> (
     subSanityCheck ab;
     (a,b) := toSequence ab; 
     if a===g then b else g 
     ))
-sub (SumGate, Option) := memoize((g,ab) -> (
+sub (SumGate, Option) := ((g,ab) -> (
     subSanityCheck ab;
     sumGate apply(g.Inputs, i->sub(i,ab))
     ))
-sub (ProductGate, Option) := memoize((g,ab) -> (
+sub (ProductGate, Option) := ((g,ab) -> (
     subSanityCheck ab;
     productGate apply(g.Inputs, i->sub(i,ab))
     ))
-sub (DetGate, Option) := memoize((g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab)))
-sub (DivideGate, Option) := memoize((g,ab) -> (
+sub (DetGate, Option) := ((g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab)))
+sub (DivideGate, Option) := ((g,ab) -> (
     subSanityCheck ab;
     (x,y) := toSequence apply(g.Inputs, i->sub(i,ab));
     x/y
@@ -478,7 +481,7 @@ value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
 sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
 sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> matrix applyTable(M,g->sub(g,A,B))
 
-support GateMatrix := memoize (M -> flatten entries M/support//flatten//unique)
+support GateMatrix :=  (M -> flatten entries M/support//flatten//unique)
 
 joinHorizontal = method()
 joinHorizontal List := L->(
