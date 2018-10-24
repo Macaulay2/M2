@@ -26,15 +26,6 @@ darwin64-gcc8 : always
 		--disable-strip \
 		--enable-download
 
-darwin64-gcc8-alternate : always
-	mkdir -p builds.tmp/darwin64-gcc8-alternate
-	cd builds.tmp/darwin64-gcc8-alternate; ../../../../configure \
-		CC=gcc-8 CXX=g++-8 \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download
-
 #		--enable-dmg \
 #		CPPFLAGS="-I/usr/local/opt/readline/include" \
 #		LDFLAGS="-L/usr/local/opt/readline/lib" \
@@ -46,10 +37,8 @@ darwin64-gcc8-alternate : always
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
 	cd builds.tmp/darwin64-latestclang; ../../../../configure \
-		CC="/usr/local/opt/llvm/bin/clang -fopenmp -I/usr/local/opt/llvm/include" \
-	    CXX="/usr/local/opt/llvm/bin/clang++ -fopenmp -I/usr/local/opt/llvm/include" \
-		LDFLAGS="-L/usr/local/opt/llvm/lib" \
-		LDLIBS="-fopenmp -lomp" \
+		OPENMP_CXXFLAGS="-I/usr/local/opt/llvm/include -fopenmp" \
+		OPENMP_LDFLAGS="-L/usr/local/opt/llvm/lib -fopenmp -lomp" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
@@ -71,12 +60,8 @@ darwin64-clang6 : always
 darwin64-appleclang : always
 	mkdir -p builds.tmp/darwin64-appleclang
 	cd builds.tmp/darwin64-appleclang; ../../../../configure \
-		CC=clang \
-	    CXX=clang++ \
-		OPENMP_CPPFLAGS="-I/usr/local/opt/libomp/include" \
-		OPENMP_CXXFLAGS="-Xpreprocessor -fopenmp" \
-		OPEN_LDFLAGS="-L/usr/local/opt/libomp/lib" \
-		OPEN_LDLIBS="-Xpreprocessor -fopenmp -lomp" \
+		OPENMP_CXXFLAGS="-I/usr/local/opt/libomp/include -Xpreprocessor -fopenmp" \
+		OPENMP_LDFLAGS="-L/usr/local/opt/libomp/lib -lomp" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

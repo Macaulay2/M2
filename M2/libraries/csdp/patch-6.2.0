@@ -1,7 +1,12 @@
-diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/Makefile csdp-6.2.0/Makefile
---- /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/Makefile	2017-07-17 20:34:04.000000000 -0400
-+++ csdp-6.2.0/Makefile	2018-09-11 13:45:51.000000000 -0400
-@@ -15,23 +15,24 @@
+diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/Makefile csdp-6.2.0/Makefile
+--- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/Makefile	2017-07-17 20:34:04.000000000 -0400
++++ csdp-6.2.0/Makefile	2018-10-23 21:24:40.000000000 -0400
+@@ -11,27 +11,28 @@
+ #
+ # CFLAGS settings for 64 bit Linux/unix systems.
+ #
+-export CFLAGS=-m64 -march=native -mtune=native -Ofast -fopenmp -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
++export CFLAGS += -m64 -march=native -mtune=native -Ofast -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
  #
  # LIBS settings for 64 bit Linux/unix systems.
  #
@@ -49,9 +54,9 @@ diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-m
  
  
  
-diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/example/Makefile csdp-6.2.0/example/Makefile
---- /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/example/Makefile	2017-07-17 19:47:30.000000000 -0400
-+++ csdp-6.2.0/example/Makefile	2018-09-09 22:05:09.000000000 -0400
+diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/example/Makefile csdp-6.2.0/example/Makefile
+--- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/example/Makefile	2017-07-17 19:47:30.000000000 -0400
++++ csdp-6.2.0/example/Makefile	2018-10-23 20:53:22.000000000 -0400
 @@ -6,7 +6,7 @@
  # This builds the example code.
  #
@@ -61,18 +66,13 @@ diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-m
  #
  # To clean up the directory.
  #
-diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/solver/Makefile csdp-6.2.0/solver/Makefile
---- /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/solver/Makefile	2017-07-17 19:47:30.000000000 -0400
-+++ csdp-6.2.0/solver/Makefile	2018-09-09 21:38:39.000000000 -0400
-@@ -1,8 +1,15 @@
+diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/solver/Makefile csdp-6.2.0/solver/Makefile
+--- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/solver/Makefile	2017-07-17 19:47:30.000000000 -0400
++++ csdp-6.2.0/solver/Makefile	2018-10-23 21:29:29.000000000 -0400
+@@ -1,8 +1,10 @@
  #
  #  This builds the stand alone solver.
  #
-+$(info CC is $(CC))
-+$(info CFLAGS is $(CFLAGS))
-+$(info LDFLAGS is $(LDFLAGS))
-+$(info LDLIBS is $(LDLIBS))
-+$(info LIBS is $(LIBS))
 +
  csdp: csdp.o 
 -	$(CC) $(CFLAGS) csdp.o $(LIBS) -o csdp
@@ -81,9 +81,9 @@ diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-m
  #
  # To clean out the directory:
  #
-diff -ur /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/theta/Makefile csdp-6.2.0/theta/Makefile
---- /Users/mike/src/M2-master/M2/BUILD/dan/builds.tmp/as-mth-indigo.local-master/libraries/csdp/tmp/csdp-6.2.0/theta/Makefile	2017-07-17 19:47:30.000000000 -0400
-+++ csdp-6.2.0/theta/Makefile	2018-09-09 22:04:34.000000000 -0400
+diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/theta/Makefile csdp-6.2.0/theta/Makefile
+--- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/csdp-6.2.0/theta/Makefile	2017-07-17 19:47:30.000000000 -0400
++++ csdp-6.2.0/theta/Makefile	2018-10-23 20:53:22.000000000 -0400
 @@ -6,23 +6,23 @@
  # This builds the theta number code. 
  #
