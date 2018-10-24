@@ -55,6 +55,7 @@ m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
 m4_include(config/relpaths.m4)
 m4_include(config/gtest.m4)
+m4_include(config/openmp.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
