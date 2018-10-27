@@ -198,22 +198,6 @@ document {
      }
 
 document {
-     Key => {horizontalJoin,(horizontalJoin, BasicList)},
-     Headline => "join nets or strings horizontally",
-     TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
-     them horizontally.  The baselines in each of the nets are aligned
-     appropriately.",
-     PARA{},
-     "Nested sequences among the arguments are first spliced together.",
-     PARA{},
-     "If there are no arguments, then the net returned has zero height and
-     zero depth.  This might be unexpected.",
-     PARA{},
-     "Null arguments are allowed and ignored.",
-     SeeAlso => {"Net", (symbol |, String, String)}
-     }
-
-document {
      Key => {stack,(stack, BasicList)},
      Headline => "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
