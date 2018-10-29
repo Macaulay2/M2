@@ -17,7 +17,7 @@ newPackage(
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => false,		
-  	-- DebuggingMode => true,		 -- set to true only during development
+  	--DebuggingMode => true,		 -- set to true only during development
   	CacheExampleOutput => true
     	)
 
@@ -38,7 +38,7 @@ needs "./MonodromySolver/solveViaMonodromy.m2"
 
 
 beginDocumentation()
-load "MonodromySolver/Documents/DocMonodromysolver.m2"
+needs "./MonodromySolver/Documents/DocMonodromysolver.m2"
 end
 
 restart
