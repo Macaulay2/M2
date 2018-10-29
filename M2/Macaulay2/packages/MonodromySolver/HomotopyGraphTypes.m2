@@ -12,7 +12,9 @@ export {
     "HomotopyEdge",
     "HomotopyNode",
     "getTrackTime",
-    "saturateEdges"}
+    "saturateEdges",
+    "Failures",
+    "tMin"}
     
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
@@ -105,6 +107,7 @@ homotopyGraph PolySystem := o -> PF -> (
     G := homotopyGraph();
     G.Family = PF;
     G.Potential = o.Potential;
+    G.Failures = 0;
     G
     )
 
@@ -220,9 +223,9 @@ getTrackTime HomotopyGraph := G -> G#"track time"
 -- 2) specializeSystem method which converts parametric coefficients to a list of polynomials (inputs to track),
 -- 3) positions method defined for pointset object
 -- Output: 
-trackEdge = method()
-trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> trackEdge(e,from1to2,infinity)
-trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
+trackEdge = method(Options=>{tMin=>null, Verbose=>false})
+trackEdge (HomotopyEdge, Boolean) := o-> (e, from1to2) -> trackEdge(e,from1to2,infinity)
+trackEdge (HomotopyEdge, Boolean, Thing) := o -> (e, from1to2, batchSize) -> (
     G := e.Graph;
     homotopy := null;
     if from1to2 then (
@@ -245,7 +248,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	    if USEtrackHomotopy then trackHomotopy(homotopy,startSolutions)  
 	    else track(polySystem (gammaHead * head.SpecializedSystem), 
 	    	polySystem(gammaTail * tail.SpecializedSystem), 
-	    	startSolutions)
+	    	startSolutions,tStepMin=>o.tMin)
 	    );
 	t := first t'sols;
 	sols := last t'sols;
@@ -258,8 +261,9 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	    a := untrackedInds#i;
 	    s := newSols#i;
 	    if status s =!= Regular then (
-		<< "failure: status = " << status s << endl;
-		correspondence#a = null; -- record failure
+		if o.Verbose then << "failure: status = " << status s << endl;
+		G.Failures = G.Failures + 1;
+		correspondence#a = null; -- record tracking failure, not a correspondence
 	      	)
 	    else ( 
 	    	if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
@@ -271,7 +275,8 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 		    );
 	    	if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 	    	then (
-		    print "failure: correspondence conflict";
+		    if o.Verbose then print "failure: correspondence conflict";
+		    G.Failures = G.Failures + 1;
 		    correspondence#a = null -- record failure 
 		    )
 		)
