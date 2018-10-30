@@ -218,6 +218,13 @@ various modern operating systems:
         sudo rm -rf /sw
     Note: adding "--enable-strip" to the configure script command line may not be a good idea,
       as stripping the M2 binary seems to cause the program to crash unpredictably.
+    Note: starting with Mac OS X 10.14 (Mojave) the "binutils" package of
+      homebrew includes versions of the programs 'ar' and 'ranlib' that are not
+      compatible with the native (clang) Mac OS X compilers, so either remove
+      or unlink the package, add "AR=/usr/bin/ar RANLIB=/usr/bin/ranlib" as
+      options to the 'configure' command line, or arrange for /usr/local/bin to
+      occur later in the value of the environment variable PATH than /usr/bin
+      does.
 
   Cygwin 1.7 under Microsoft Windows:
     Use setup to install these packages:
