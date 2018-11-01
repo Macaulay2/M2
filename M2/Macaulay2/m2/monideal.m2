@@ -167,10 +167,7 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 -- this code below here is by Greg Smith (and partially Mike Stillman)
 -----------------------------------------------------------------------------
 
-expression MonomialIdeal := (I) -> (
-     if numgens I === 0 then hold "0" 
-     else new FunctionApplication from { monomialIdeal, expression unsequence toSequence first( entries generators I) }
-     )
+expression MonomialIdeal := (I) -> (expression monomialIdeal) unsequence apply(toSequence first entries generators I, expression)
 
 MonomialIdeal#{Standard,AfterPrint} = MonomialIdeal#{Standard,AfterNoPrint} = (I) -> (
      << endl;				  

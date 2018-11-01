@@ -84,6 +84,14 @@ document {
      }
 
 document {
+     Key => WebApp,
+     Headline => "the web app top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods, in connection with
+     the use of the (currently developed) web app with (Ka)TeX output as front end.",
+     SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
@@ -363,13 +371,18 @@ document {
 	  (describe, PolynomialRing),
 	  (describe, QuotientRing),
 	  (describe, FractionField),
+	  (describe, Thing),
+	  (describe, AffineVariety),
+	  (describe, CoherentSheaf),
 	  (describe, GaloisField),
 	  (describe, GeneralOrderedMonoid),
-	  (describe, Variety),
-	  (describe, Thing)
+	  (describe, Matrix),
+	  (describe, Module),
+	  (describe, ProjectiveVariety),
+	  (describe, RingMap)
 	  },
      Headline => "real description",
-     TT "describe x", " -- returns ", ofClass Net, " containing the 
+     TT "describe x", " -- returns ", ofClass Expression, " containing the 
      real description of ", TT "x", ", bypassing the feature that causes
      certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.  For polynomial rings, it also displays the options used at creation.",
@@ -608,12 +621,6 @@ undocumented {
 (symbol SPACE, Command, Thing),
 (symbol SPACE, Manipulator, Nothing),
 (symbol SPACE, WrapperType, Thing),
-(symbol SPACE, Expression, Expression),
-(symbol SPACE, Expression, Holder),
-(symbol SPACE, Holder, Expression),
-(symbol SPACE, Expression, Thing),
-(symbol SPACE, Thing, Expression),
-(symbol SPACE, Holder, Holder),
 (symbol SPACE, HeaderType, List),
 (symbol SPACE, HeaderType, Sequence),
 (symbol SPACE, MarkUpType, Net),
@@ -665,10 +672,8 @@ undocumented {
      (symbol *, RingElement, Number),
     (symbol*,  Expression, Product),
     (symbol*,  Product, Expression),
-    (symbol*,  Holder, Expression),
     (symbol*,  Minus, Expression),
     (symbol*,  Product, Holder),
-    (symbol*,  Holder, Holder),
     (symbol*,  ZeroExpression, Expression),
     (symbol*,  Minus, Minus),
     (symbol*,  ZZ, InfiniteNumber),
@@ -683,7 +688,6 @@ undocumented {
     (symbol*,  ZeroExpression, Holder),
     (symbol*,  Holder, ZeroExpression),
     (symbol*,  Holder, OneExpression),
-    (symbol*,  Expression, Holder),
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
     (symbol*,  Expression, Minus),
@@ -972,9 +976,7 @@ undocumented {
      (symbol /, InfiniteNumber, QQ),
      (symbol /, InfiniteNumber, RR),
      (symbol /, EngineRing, Ideal),
-     (symbol /, Expression, Holder),
      (symbol /, Expression, OneExpression),
-     (symbol /, Holder, Holder),
      (symbol /, List, SelfInitializingType)
      }
 
@@ -1116,12 +1118,9 @@ undocumented {
      (symbol ^, ZeroExpression, Holder),
      (symbol ^, Holder, ZeroExpression),
      (symbol ^, Holder, OneExpression),
-     (symbol ^, Holder, Holder),
      (symbol ^, Expression, ZeroExpression),
      (symbol ^, ZeroExpression, Expression),
      (symbol ^, Expression, OneExpression),
-     (symbol ^, Expression, Holder),
-     (symbol ^, Holder, Expression),
      (symbol ^, ZeroExpression, ZeroExpression),
      (symbol ^, InfiniteNumber, ZZ),
      (symbol ^, InfiniteNumber, QQ),
@@ -1457,7 +1456,6 @@ document {
 	  (symbol==, Ideal, MonomialIdeal),
 	  (symbol==, GradedModuleMap, ZZ),
 	  (symbol==, InfiniteNumber, InfiniteNumber),
-	  (symbol==, Holder, Holder),
 	  (symbol==, Equation, Expression),
 	  (symbol==, ZZ, Ring),
 	  (symbol==, ZZ, QQ),
@@ -1591,10 +1589,8 @@ document {
 
 undocumented {
     (symbol**, OneExpression, Holder),
-    (symbol**, Holder, Expression),
     (symbol**, QuotientRing, PolynomialRing),
     (symbol**, Expression, NonAssociativeProduct),
-    (symbol**, Holder, Holder),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -1605,7 +1601,6 @@ undocumented {
     (symbol **,Thing,InexactFieldFamily),
     (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, Holder, OneExpression),
-    (symbol**, Expression, Holder),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
     (symbol**, NonAssociativeProduct, Expression),

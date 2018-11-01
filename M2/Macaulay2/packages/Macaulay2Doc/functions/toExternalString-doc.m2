@@ -39,7 +39,9 @@ undocumented {
     (toExternalString, Keyword),
     (toExternalString, PolynomialRing),
     (toExternalString, Net),
-    (toExternalString, String)
+    (toExternalString, String),
+    (toExternalString,FractionField),
+    (toExternalString,Variety)
     }     
 
 document { 

@@ -30,6 +30,7 @@ SHELL = /bin/sh
 CC = @CC@
 CXX = @CXX@
 FC = @FC@
+AR = @AR@
 CFLAGS = @CFLAGS@
 CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
