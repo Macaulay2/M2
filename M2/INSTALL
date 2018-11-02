@@ -174,7 +174,7 @@ various modern operating systems:
       Starting with Mac OS X version 10.14 (Mojave), /usr/include needs to be created with
         this command:
 	  sudo installer -pkg macOS_SDK_headers_for_macOS_10.14.pkg -target /
-	The pkg file is found in the directory
+	The package file in the above command is found in the directory
 	  /Library/Developer/CommandLineTools/Packages
 	, so look there to see what the correct name is in later versions of Mac OS X.
     Optionally install a good version of emacs, such as the one available from 
