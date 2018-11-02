@@ -41,8 +41,7 @@ darwin64-latestclang : always
 		CC="/usr/local/opt/llvm/bin/clang" \
 	        CXX="/usr/local/opt/llvm/bin/clang++" \
                 LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-		OPENMP_CXXFLAGS="-I/usr/local/opt/llvm/include -fopenmp" \
-		OPENMP_LDFLAGS="-fopenmp -lomp" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
@@ -51,10 +50,10 @@ darwin64-latestclang : always
 darwin64-clang6 : always
 	mkdir -p builds.tmp/darwin64-clang6
 	cd builds.tmp/darwin64-clang6; ../../../../configure \
-		CC="/usr/local/opt/llvm/bin/clang" \
-		CXX="/usr/local/opt/llvm/bin/clang++" \
-		OPENMP_CXXFLAGS="-I/usr/local/opt/llvm/include -fopenmp" \
-		OPENMP_LDFLAGS="-L/usr/local/opt/llvm/lib -fopenmp -lomp" \
+		CC="/usr/local/opt/llvm/bin/clang-6" \
+		CXX="/usr/local/opt/llvm/bin/clang++-6" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
@@ -64,8 +63,6 @@ darwin64-clang6 : always
 darwin64-appleclang : always
 	mkdir -p builds.tmp/darwin64-appleclang
 	cd builds.tmp/darwin64-appleclang; ../../../../configure \
-		OPENMP_CXXFLAGS="-I/usr/local/opt/libomp/include -Xpreprocessor -fopenmp" \
-		OPENMP_LDFLAGS="-L/usr/local/opt/libomp/lib -lomp" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
