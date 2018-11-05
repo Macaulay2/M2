@@ -683,7 +683,7 @@ EXAMPLE {
 SeeAlso => {(symbol |,RationalMap,Ideal)}}
 
 document { 
-Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,ZZ,ZZ),(rationalMap,Ring),(rationalMap,Ring,Ring),(rationalMap,RationalMap),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List)}, 
+Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,List),(rationalMap,Ideal,ZZ,ZZ),(rationalMap,Ring),(rationalMap,Ring,Ring),(rationalMap,RationalMap),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List)}, 
 Headline => "makes a rational map", 
 Usage => "rationalMap phi 
 rationalMap F", 
@@ -707,7 +707,7 @@ EXAMPLE {
 SeeAlso => {toMap}}
 
 document { 
-Key => {toMap,(toMap,Matrix),(toMap,Ideal),(toMap,Ideal,ZZ),(toMap,Ideal,ZZ,ZZ),(toMap,List),(toMap,RingMap)}, 
+Key => {toMap,(toMap,Matrix),(toMap,Ideal),(toMap,Ideal,ZZ),(toMap,Ideal,List),(toMap,Ideal,ZZ,ZZ),(toMap,List),(toMap,RingMap)}, 
 Headline => "rational map defined by a linear system", 
 Usage => "toMap(\"linear system\")", 
 Inputs => { 
@@ -725,7 +725,7 @@ PARA{"If the input is a pair consisting of a homogeneous ideal ",TEX///$I$///, "
 EXAMPLE { 
 "I=kernel phi",
 "toMap(I,2)"}, 
-PARA{"This is identical to ", TT "toMap(I,v,1)", ", while the output of ", TT "toMap(I,v,2)", " will be the map defined by the linear system of hypersurfaces of degree ",TEX///$v$///, " which are singular along the projective subscheme defined by ",TEX///$I$///,"."},
+PARA{"This is identical to ", TT "toMap(I,v,1)", ", while the output of ", TT "toMap(I,v,e)", " will be the map defined by the linear system of hypersurfaces of degree ",TEX///$v$///, " having points of multiplicity ",TEX///$e$///," along the projective subscheme defined by ",TEX///$I$///,"."},
 EXAMPLE { 
 "toMap(I,2,1)", 
 "toMap(I,2,2)", 
