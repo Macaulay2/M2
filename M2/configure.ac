@@ -1898,7 +1898,7 @@ AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 
-function subset {
+subset() {
     # whether the words of $1 are among the words of $2
     y=" $2 "
     for i in $1
