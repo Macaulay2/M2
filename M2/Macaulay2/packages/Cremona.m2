@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "4.2.2", 
-        Date => "May 21, 2018",
+	Version => "4.2.3", 
+        Date => "November 4, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true,
@@ -119,6 +119,7 @@ rationalMap (Matrix) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant
 rationalMap (List) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (Ideal) := o -> (I) -> rationalMap(toMap(I,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (Ideal,ZZ) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
+rationalMap (Ideal,List) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> rationalMap(toMap(I,d,e,Dominant=>null),Dominant=>o.Dominant);
 rationalMapInt = method(Options => {Dominant => null});
 rationalMapInt (MutableHashTable) := o -> (Phi) -> ( 
@@ -249,37 +250,57 @@ toMap RingMap := o -> (phi)  -> (
    return phi;
 );
 
-toMap (Ideal,ZZ) := o -> (I,v) -> (
+toMap (Ideal,List) := o -> (I,v) -> (
    if not isHomogeneous I then error("the ideal must be homogeneous");
    linSys:=gens image basis(v,I);
    toMap(linSys,Dominant=>o.Dominant)
 );
 
-toMap (Ideal,ZZ,ZZ) := o -> (I,v,inp3) -> (
-   if not isHomogeneous I then error("the ideal must be homogeneous");
-   if not isPolynomialRing ring I then error("expected ideal in a polynomial ring");
-   if inp3!=1 and inp3!=2 then error("expected 1 or 2 as third argument");
-   if inp3==1 then return toMap(I,v,Dominant=>o.Dominant);
-   -- linear system of hypersurfaces of degree v that are singular along V(I) subset PP^d
-   K:=coefficientRing ring I; 
-   d:=numgens ring I -1;
-   x:=local x;
-   PP:=K[x_0..x_d];
-   I=saturate I;
-   C:=ideal image basis(v-1,sub(I,vars PP));
-   n:=numgens C -1;
-   if n==-1 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
-   Basis:=gens image basis(v,sub(I,vars PP));
-   N:=numgens source Basis -1;
-   if N==-1 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
-   a:=local a; b:=local b;
-   R:=K[b_(0,0)..b_(n,d), a_0..a_N, MonomialOrder=>Eliminate ((d+1)*(n+1))];
-   R':=R[x_0..x_d];
-   M:=sub(jacobian Basis,R')*sub(transpose matrix{{a_0..a_N}},R') - transpose((gens sub(C,R'))*sub(matrix for i to n list for j to d list b_(i,j),R'));
-   f:=map parametrize sub(ideal selectInSubring(1,gens gb sub(trim ideal last coefficients M,R)),K[a_0..a_N]);
+toMap (Ideal,ZZ) := o -> (I,v) -> toMap(I,{v},Dominant=>o.Dominant);
+
+toMap (Ideal,ZZ,ZZ) := o -> (I,v,jj) -> (
+   -- Assume I a homogeneous saturated ideal
+   -- Return the linear system of hypersurfaces of degree v with points of multiplicity jj along V(I) subset PP^d
+   if not isPolynomialRing ring I then error "expected ideal in a polynomial ring";
+   if # heft ring I =!= 1 then error "expected standard grading";
+   if not isHomogeneous I then error "the ideal must be homogeneous";
+   if not isField coefficientRing ring I then error "the coefficient ring needs to be a field";
+   if jj <= 0 then error "expected a positive integer";
+   homComp := method();
+   -- homComp (ZZ,Ideal) := (d,I) -> (
+   --   vv := ideal vars ring I;
+   --   D := flatten degrees I;
+   --   if d < min D then return ideal ring I;
+   --   trim sum for i from min D to min(d,max D) list (vv^(d - i) * ideal select(I_*,g -> degree g == {i}))
+   -- );
+   homComp (ZZ,Ideal) := (d,I) -> ideal image basis(d,I);
+   Jac := method();
+   Jac (Matrix,ZZ) := (F,d) -> (
+      mm := flatten entries gens (ideal vars ring F)^d;
+      transpose matrix{apply(mm,t -> diff(t,transpose F))}
+   );
+   if jj == 1 then return toMap(gens homComp(v,I),Dominant=>o.Dominant);
+   K := coefficientRing ring I; 
+   d := numgens ring I -1;
+   x := local x;
+   PP := K[x_0..x_d];
+   C := homComp(v-jj+1,sub(I,vars PP));
+   n := numgens C -1;
+   if n == -1 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
+   bs := gens homComp(v,sub(I,vars PP));
+   N := numgens source bs -1;
+   if N == -1 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
+   a := local a; b := local b;
+   de := binomial(d+jj-1,jj-1) -1;
+   R := K[b_(0,0)..b_(n,de), a_0..a_N, MonomialOrder=>Eliminate ((de+1)*(n+1))];
+   R' := R[x_0..x_d];
+   M := sub(Jac(bs,jj-1),R')*sub(transpose matrix{{a_0..a_N}},R') - transpose((gens sub(C,R'))*sub(matrix for i to n list for j to de list b_(i,j),R'));
+   sys := sub(trim ideal last coefficients M,R);
+   sols := sub(ideal selectInSubring(1,gens gb sys),K[a_0..a_N]);
+   f := map parametrize sols;
    if dim target f <= 0 then return toMap(sub(matrix{{}},ring I),Dominant=>o.Dominant);
-   PP':=PP[gens target f];
-   linSys:=transpose sub(sub((coefficients (sub(toMatrix f,PP') * transpose sub(Basis,PP'))_(0,0))_1,PP),vars ring I);
+   PP' := PP[gens target f];
+   linSys := transpose sub(sub((coefficients (sub(matrix f,PP') * transpose sub(bs,PP'))_(0,0))_1,PP),vars ring I);
    toMap(linSys,Dominant=>o.Dominant)
 );
 
@@ -765,6 +786,7 @@ isBirational (RingMap) := o -> (phi) -> (
 inverseMapInt = method(Options => {MathMode => false, BlowUpStrategy => "Eliminate", Verbose => true});
 
 inverseMapInt (RationalMap) := o -> (Phi) -> (
+   if Phi#"dimTarget" != Phi#"dimSource" then error "expected a birational map";
    if # select((flatten degrees ideal source Phi)|(flatten degrees ideal target Phi)|(flatten degrees ideal matrix Phi),g -> g > 1) == 0 then (
        try eta := inverse map Phi else error "linear rational map not invertible";
        if not o.MathMode then return eta else (
@@ -777,7 +799,7 @@ inverseMapInt (RationalMap) := o -> (Phi) -> (
    if not (min flatten degrees ideal G > 0 and compress G === G) then return inverseMapInt(Phi,null,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
    psi := map(target Phi,source Phi,G);
    if not o.MathMode then return psi;
-   if (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
+   if isInverseMap(Phi#"map",psi) then (
         if o.Verbose then <<certificate; return psi;
    ) else (
         return inverseMapInt(Phi,null,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
@@ -785,13 +807,14 @@ inverseMapInt (RationalMap) := o -> (Phi) -> (
 );
 
 inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
+   if Phi#"dimTarget" != Phi#"dimSource" then error "expected a birational map";
    Bl := graphIdealInt(Phi,BlowUpStrategy=>o.BlowUpStrategy);
    n := Phi#"dimAmbientTarget"; 
    Sub := map(target Phi,ring Bl,matrix{{(n+1):0_(ambient target Phi)}}|(vars ambient target Phi));
    T := transpose gens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
    psi := map(target Phi,source Phi,submatrix(T,{0},));
    if not o.MathMode then return psi;
-   if (isInverseMap(Phi#"map",psi) and isInverseMap(psi,Phi#"map")) then (
+   if (if n - Phi#"dimTarget" <= Phi#"dimAmbientSource" - Phi#"dimSource" then isInverseMap(map Phi,psi) else isInverseMap(psi,map Phi)) then (
         if o.Verbose then <<certificate; return psi;
    ) else (
         error "not able to obtain an inverse rational map";
@@ -867,6 +890,7 @@ approximateInverseMap (RingMap,ZZ) := o -> (phi,d) -> (
     -- input: a birational map phi:X --->Y 
     -- output: a map Y--->X in some sense related to the inverse of phi
     checkRationalMap phi;
+    if dim target phi != dim source phi then error "expected a birational map";
     n:=numgens ambient target phi -1;
     c:=2;
     if o.CodimBsInv =!= null then (if (try (class o.CodimBsInv === ZZ and o.CodimBsInv >= 2 and o.CodimBsInv <= n+1) else false) then c=o.CodimBsInv else (<<"--warning: option CodimBsInv ignored"<<endl));
@@ -884,10 +908,10 @@ approximateInverseMap (RingMap,ZZ) := o -> (phi,d) -> (
    if o.MathMode then (
           if isPolynomialRing target phi then (
                  try psi=compose(psi,toMap((vars target phi)*(last coefficients matrix compose(phi,psi))^(-1)));
-                 if isInverseMap(phi,psi) and isInverseMap(psi,phi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
+                 if isInverseMap(phi,psi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
           ) else (
                  if source psi =!= target phi then error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this map has an incorrect target variety")
-                 else if isInverseMap(phi,psi) and isInverseMap(psi,phi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
+                 else if isInverseMap(phi,psi) then (if o.Verbose then <<certificate; return psi) else error("MathMode: approximateInverseMap returned "|toExternalString(psi)|" but this is not the inverse map");
           );
    );
    return psi;
@@ -915,9 +939,12 @@ approximateInverseMap (RationalMap,ZZ) := o -> (Phi,d) -> (
 approximateInverseMap (RationalMap) := o -> (Phi) -> approximateInverseMap(Phi,-1,CodimBsInv=>o.CodimBsInv,MathMode=>o.MathMode,Verbose=>o.Verbose);
 
 isInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
-   if Phi#"inverseRationalMap" =!= null then return (Phi^(-1) == Psi);
-   if Psi#"inverseRationalMap" =!= null then return (Phi == Psi^(-1));
-   if isInverseMap(map Phi,map Psi) and isInverseMap(map Psi,map Phi) then(forceInverseMap(Phi,Psi); return true;) else return false;
+   if Phi#"inverseRationalMap" =!= null and Psi#"inverseRationalMap" =!= null then if Phi^(-1) === Psi and Psi^(-1) === Phi then return true;
+   if Phi#"dimTarget" != Psi#"dimTarget" then return false;
+   T := if Phi#"dimAmbientTarget" - Phi#"dimTarget" <= Psi#"dimAmbientTarget" - Psi#"dimTarget" then isInverseMap(map Phi,map Psi) else isInverseMap(map Psi,map Phi);
+   if not T then return false;
+   if Phi#"inverseRationalMap" === null and Psi#"inverseRationalMap" === null then forceInverseMap(Phi,Psi); 
+   return true;
 );
 
 isInverseMap (RingMap,RingMap) := (phi,psi) -> (
@@ -1122,6 +1149,10 @@ degreeOfRationalMapInt (MutableHashTable) := o -> (Phi) -> (
         p := Phi randomLinearSubspace(source Phi,0);   
         hP := hilbertPolynomial(inverseImage(map Phi,p,MathMode=>false),Projective=>false);
         if degree hP > {0} then return 0 else return sub(hP,ZZ);
+   );
+   if (class Phi === MultihomogeneousRationalMap and (not o.MathMode) and isPolynomialRing source Phi) then (
+        z := local z; 
+        return degreeOfRationalMapInt(parametrize(Phi,z),MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
    );
    pr0 := first projectiveDegrees(Phi,NumDegrees=>0,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>false);
    if Phi#"degree" =!= null then (if o.MathMode and o.Verbose then <<certificate; return Phi#"degree");
@@ -1639,13 +1670,13 @@ getMultidegree (RingElement,List) := (mdeg,n) -> first getMultidegree(mdeg,n,0,(
 
 point (Ideal) := (I) -> (  -- see also: code(randomKRationalPoint,Ideal)
    R := ring I;
-   if char R == 0 then error "expected a finite ground field";
    if not (isPolynomialRing R and isHomogeneous I) then error "expected a homogeneous ideal in a polynomial ring";
    if degrees R =!= toList((numgens R):{1}) then error "expected a standard graded ring";
    c := codim I; 
    if c >= numgens R -1 then error "expected a positive dimensional scheme";
    local p;
-   if c == 0 then p = randomLinearSubspace(R,0);
+   if c == 0 then (p = randomLinearSubspace(R,0); if dim p == 1 then return p else error "failed to find rational points");
+   if char R == 0 then error "expected a finite ground field";
    if c == 1 then (
        L := {}; local par;
        while #L == 0 do (par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
