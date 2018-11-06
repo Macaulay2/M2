@@ -334,11 +334,11 @@ assert( length V.PartialSols == count );
 	AugmentNumberOfRepeats=>10);
 assert( length V.PartialSols == count );
 
--- test for sparseSolver which sometimes fails: 3 iterations is to reduce failure probability, but might slow tests down
-S = QQ[x,y]
-P = polySystem {x+y, x+1-y^2}
-sols = sparseMonodromySolve(P,NumberOfEdges=>20, NumberOfRepeats => 30)
-assert (#sols == 2) 
+-- test for sparseSolver which sometimes fails: many repeats is there to reduce failure probability, but might slow tests down
+S = CC[x,y]
+P = polySystem {(x-ii)^2+y^2-1, x+1-y^2}
+sols = sparseMonodromySolve(P, NumberOfEdges=>10, NumberOfRepeats=>20)
+assert (#sols == 4) 
 assert all(sols,s->norm evaluate(P,s) < 0.0001)
 ///
 

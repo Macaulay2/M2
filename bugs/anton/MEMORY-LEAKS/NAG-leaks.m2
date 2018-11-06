@@ -60,6 +60,14 @@ peek sols
 *- 
 )
 
+needsPackage "MonodromySolver"
+p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
+q = point {{1.79463+.302691*ii, 2.49917+.526336*ii, -.379269+1.29466*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
+
+TESTpointArray = () -> (
+    pointArray {p,q};
+    )
+
 end--
 
 restart
@@ -86,3 +94,7 @@ testF(10000,TESTsegmentHomotopy)
 testF(10000,TESTsolve)
 -- elapsed time = 84.1909
 -- leaks 7161.45 bytes, takes 8.41909 ms. (per call)
+
+testF(100000,TESTpointArray)
+-- elapsed time = 79.8302
+-- leaks 874.619 bytes, takes .798302 ms. (per call)
