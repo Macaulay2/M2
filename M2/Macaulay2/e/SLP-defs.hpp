@@ -141,9 +141,10 @@ class SLEvaluatorConcrete : public SLEvaluator
   typename std::vector<ElementType>::iterator vIt;  // values
 };
 
-class Homotopy
+class Homotopy : public MutableEngineObject
 {
  public:
+  virtual ~Homotopy() {}
   virtual bool track(const MutableMatrix* inputs,
                      MutableMatrix* outputs,
                      MutableMatrix* output_extras,

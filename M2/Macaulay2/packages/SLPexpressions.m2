@@ -87,6 +87,7 @@ concatenateNets List := L -> (
 Gate = new Type of HashTable
 GateMatrix = new Type of List
 
+
 gateCatalog = new MutableHashTable -- records all gates
 gateCatalogCount = new MutableHashTable -- count for each gate
 add2GC := g -> if gateCatalog#?g then (
@@ -368,12 +369,18 @@ removeSLPfromCache (RawSLProgram, InputGate) := (slp, g) ->
     if g.cache#?slp then remove(g.cache,slp) 
 removeSLPfromCache (RawSLProgram, SumGate) := 
 removeSLPfromCache (RawSLProgram, ProductGate) := 
-removeSLPfromCache (RawSLProgram, DetGate) := 
 removeSLPfromCache (RawSLProgram, DivideGate) := (slp, g) -> 
     if g.cache#?slp then (
 	remove(g.cache,slp); 
 	scan(g.Inputs, a->removeSLPfromCache(slp,a));
 	)
+removeSLPfromCache (RawSLProgram, DetGate) := (slp,g) -> (
+    if g.cache#?slp then (
+	remove(g.cache,slp); 
+	scan(flatten g.Inputs, a->removeSLPfromCache(slp,a));
+	)    
+    )
+
 TEST /// 
 needsPackage "SLPexpressions"
 debug SLPexpressions

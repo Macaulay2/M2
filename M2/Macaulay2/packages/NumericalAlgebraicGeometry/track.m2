@@ -50,6 +50,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --      solsS = list of solutions to S
 -- OUT: solsT = list of target solutions corresponding to solsS
 track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
+     if #solsS == 0 then return solsS;    
      o = fillInDefaultOptions o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := T.NumberOfPolys; 
