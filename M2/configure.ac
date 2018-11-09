@@ -55,6 +55,7 @@ m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
 m4_include(config/relpaths.m4)
 m4_include(config/gtest.m4)
+m4_include(config/openmp.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -741,6 +742,17 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 	# 1 "foo" 1 3 4
 	template <class T> struct A { };])],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
+dnl Check for openmp and fail if it cannot be found.
+dnl This is required for building csdp and good for normaliz
+AC_MSG_CHECKING(whether OpenMP is supported by the compiler)
+AC_LANG(C++)
+AC_PROG_CXX
+AC_OPENMP
+if test "$ac_cv_prog_cxx_openmp" = unsupported
+   then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
+fi
+AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
+
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
 dnl AC_SUBST(SYNC_MACROS,)
@@ -843,7 +855,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 
@@ -911,8 +923,13 @@ if test "$GFAN" = no
 then BUILD_gfan=no
 fi
 
+AC_ARG_ENABLE(csdp, AS_HELP_STRING(--disable-csdp,[do not build csdp program]), CSDP=$enableval)
+if test "$CSDP" = no
+then BUILD_csdp=no
+fi
+
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 

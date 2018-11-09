@@ -17,6 +17,76 @@ cmake-build: always
 ################
 ## mac os x ####
 ################
+darwin64-gcc8 : always
+	mkdir -p builds.tmp/darwin64-gcc8
+	cd builds.tmp/darwin64-gcc8; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+#		--enable-dmg \
+#		CPPFLAGS="-I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/opt/readline/lib" \
+#		--enable-build-libraries="mpir flint pari ntl"
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
+
+#rewrite this: don't change the compiler this way?
+# Thomas Kahle: I rewrote this to use brew's clang latest
+darwin64-latestclang : always
+	mkdir -p builds.tmp/darwin64-latestclang
+	cd builds.tmp/darwin64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+	        CXX="/usr/local/opt/llvm/bin/clang++" \
+                LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+darwin64-clang6 : always
+	mkdir -p builds.tmp/darwin64-clang6
+	cd builds.tmp/darwin64-clang6; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang-6" \
+		CXX="/usr/local/opt/llvm/bin/clang++-6" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+# currently fails (21 Oct 2018), since we aren't detecting openmp support in the compiler.
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+#		--enable-build-libraries="mpir flint pari ntl"
+#		--enable-dmg \
+
+darwin64-clang : always
+	mkdir -p builds.tmp/darwin64-clang
+	cd builds.tmp/darwin64-clang; ../../../../configure \
+		CC="clang -m64" CXX="clang++ -m64" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-dmg \
+		--enable-build-libraries="mpir flint pari ntl"
+
+
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
 	cd builds.tmp/darwin64-gcc6; ../../../../configure \
