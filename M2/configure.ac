@@ -752,7 +752,6 @@ if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
 AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
-AC_SUBST(OPENMP_LDFLAGS,"")
 
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
