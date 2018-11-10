@@ -1,4 +1,5 @@
 CSDP_VERSION = 6.2.0
+LIBNAME = Csdp
 VERSION = $(CSDP_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(CSDP_VERSION)
 URL = http://www.coin-or.org/download/source/Csdp
