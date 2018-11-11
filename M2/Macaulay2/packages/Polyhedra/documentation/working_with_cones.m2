@@ -1,0 +1,168 @@
+doc ///
+   Key
+      "Working with cones"
+   Headline
+      Working with cones
+   Description
+      Text
+         We start with a cone in 2-space which is the positive hull (@TO
+         coneFromVData@) of a given set of rays.
+
+      Example
+         R = matrix {{1,1,2},{2,1,1}}
+         C = coneFromVData R
+         ambDim C
+
+      Text
+         This gives an overview of the characteristics of the cone. If we want
+         to know more details, we can ask for them.
+
+      Example
+         rays C
+
+      Text
+         Using @TO rays@ we see that (1,1) is not an extremal ray of the cone.
+
+      Example
+         HS = facets C
+
+      Text
+         The function @TO facets@ gives the defining linear half-spaces, i.e.
+         {\tt C} is given by all {\tt p} in the defining linear hyperplanes
+         that satisfy {\tt HS*p >= 0}. But in this case there are none, so the
+         polyhedron is of full dimension. Furthermore, we can construct the
+         positive hull of a set of rays and a linear subspace.
+
+      Example
+         R1 = R || matrix {{0,0,0}}
+         LS = matrix {{1},{1},{1}}
+         C1 = coneFromVData(R1,LS)
+         rays C1
+
+      Text
+         Note that the rays are given modulo the lineality space. On the other
+         hand we can construct cones as the intersection of linear half-spaces
+         and hyperplanes.
+
+      Example
+         HS = transpose R1
+         hyperplanesTmp = matrix {{1,1,1}}
+         C2 = coneFromHData(HS,hyperplanesTmp)
+
+      Text
+         This is a two dimensional cone in 3-space with the following rays:
+
+      Example
+         rays C2
+
+      Text
+         If we don't intersect with the hyperplane we get a full dimensional
+         cone.
+
+      Example
+         C3 = coneFromHData HS
+         rays C3
+         linealitySpace C3
+
+      Text
+         Again, the rays are given modulo the lineality space. Also, one can
+         use given cones, for example the positive orthant (@TO posOrthant@):
+
+      Example
+         C4 = posOrthant 3
+         rays C4
+
+      Text
+         Now that we can construct cones, we can turn to the functions that can
+         be applied to cones. First of all, we can apply the @TO intersection@
+         function also to a pair of cones in the same ambient space:
+
+      Example
+         C5 = intersection(C1,C2)
+         rays C5
+
+      Text
+         On the other hand, we can take their positive hull by using @TO
+         coneFromVData@:
+
+      Example
+         C6 = coneFromVData(C1,C2)
+         rays C6
+         linealitySpace C6
+
+      Text
+         Furthermore, both functions (@TO coneFromHData@ and @TO
+         coneFromVData@) can be applied to a list containing any number of
+         cones and matrices defining rays and lineality space or linear
+         half-spaces and hyperplanes. These must be in the same ambient space.
+         For example:
+
+      Example
+         R2 = matrix {{2,-1},{-1,2},{-1,-1}}
+         C7 = coneFromVData {R2,C3,C4}
+         rays C7
+         linealitySpace C7
+
+      Text
+         Since they are all cones their positive hull is the same as their
+         Minkowski sum, so in fact:
+
+      Example
+         C6 == C1 + C2
+
+      Text
+         But we can take the Minkowski sum of a cone and a polyhedron. For
+         this, both objects must lie in the same ambient space and the
+         resulting object is then a polyhedron:
+
+      Example
+         P = crossPolytope 3
+         P1 = C6 + P
+         (vertices P1,rays P1)
+
+      Text
+         Furthermore, we can take the direct product (@TO directProduct@) of
+         two cones.
+
+      Example
+         C8 = C * C1
+         rays C8
+         linealitySpace C8
+
+      Text
+         The result is in QQ^5.
+
+      Example
+         ambDim C8
+
+      Text
+         To find out more about this cone use for example @TO fVector@:
+
+      Example
+         fVector C8
+
+      Text
+         This function gives the number of faces of each dimension, so it has 1
+         vertex, the origin, 1 line, 4 two dimensional faces and so on. We can
+         access the faces of a certain codimension via @TO faces@:
+
+      Example
+         L = faces(1,C8)
+         raysC8 = rays C8
+         apply(L, l -> raysC8_l)
+
+      Text
+         We can also check if the cone is smooth:
+
+      Example
+         isSmooth C8
+
+      Text
+         Finally, there is also a function to compute the dual cone, i.e.  the
+         set of all points in the dual space that are positive on the cone.
+
+      Example
+         C9 = dualCone C8
+         rays C9
+///
+
