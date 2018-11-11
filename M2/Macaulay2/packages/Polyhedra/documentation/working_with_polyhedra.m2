@@ -32,8 +32,10 @@ doc ///
 
       Text
          This gives the defining affine half-spaces, i.e. {\tt P} is given by
-         all {\tt p} such that {\tt HS*p =< v} and that lie in the defining
-         affine hyperplanes. To get the hyperplanes we use:
+         all {\tt p} such that {\tt HS*p <= v} and that lie in the defining
+         affine hyperplanes. The rows of the matrix {\tt HS} are the outer
+         normals of the polyhedron {\tt P}. To get the defining hyperplanes we
+         use:
 
       Example
          hyperplanes P

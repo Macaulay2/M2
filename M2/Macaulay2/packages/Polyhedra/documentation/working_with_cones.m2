@@ -26,12 +26,15 @@ doc ///
 
       Example
          HS = facets C
+         hyperplanes C
+         isFullDimensional C
 
       Text
          The function @TO facets@ gives the defining linear half-spaces, the
          {\tt H}-representation, i.e.  {\tt C} is given by all {\tt p} in the
-         defining linear hyperplanes that satisfy {\tt HS*p >= 0}. But in this
-         case there are none, so the polyhedron is of full dimension.
+         defining linear hyperplanes that satisfy {\tt HS*p >= 0}. In this case
+         there are no hyperplanes, so the cone is of full dimension. The
+         rows of the matrix {\tt HS} are the inner normals of the cone.
          Furthermore, we can construct the positive hull of a set of rays and a
          linear subspace.
 
