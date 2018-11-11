@@ -1,12 +1,13 @@
 doc ///
    Key
       "Working with cones"
-   Headline
-      Working with cones
    Description
       Text
-         We start with a cone in 2-space which is the positive hull (@TO
-         coneFromVData@) of a given set of rays.
+         Every cone can be described via generating rays or via inequalities.
+         The description via rays (or vertices for polyhedra) is often referred
+         to as the {\tt V}-presentation. The description via inequalities is
+         called the {\tt H}-description. To create a cone in 2-space which
+         is the positive hull of a given set of rays use @TO coneFromVData@:
 
       Example
          R = matrix {{1,1,2},{2,1,1}}
@@ -14,24 +15,25 @@ doc ///
          ambDim C
 
       Text
-         This gives an overview of the characteristics of the cone. If we want
-         to know more details, we can ask for them.
+         After creating the cone, one can use @TO rays@ to ask for its minimal
+         rays.
 
       Example
          rays C
 
       Text
-         Using @TO rays@ we see that (1,1) is not an extremal ray of the cone.
+         We see that (1,1) is not an extremal ray of the cone.
 
       Example
          HS = facets C
 
       Text
-         The function @TO facets@ gives the defining linear half-spaces, i.e.
-         {\tt C} is given by all {\tt p} in the defining linear hyperplanes
-         that satisfy {\tt HS*p >= 0}. But in this case there are none, so the
-         polyhedron is of full dimension. Furthermore, we can construct the
-         positive hull of a set of rays and a linear subspace.
+         The function @TO facets@ gives the defining linear half-spaces, the
+         {\tt H}-representation, i.e.  {\tt C} is given by all {\tt p} in the
+         defining linear hyperplanes that satisfy {\tt HS*p >= 0}. But in this
+         case there are none, so the polyhedron is of full dimension.
+         Furthermore, we can construct the positive hull of a set of rays and a
+         linear subspace.
 
       Example
          R1 = R || matrix {{0,0,0}}
@@ -42,12 +44,15 @@ doc ///
       Text
          Note that the rays are given modulo the lineality space. On the other
          hand we can construct cones as the intersection of linear half-spaces
-         and hyperplanes.
+         and hyperplanes. The first argument of @TO coneFromHData@ takes the
+         inequalities defining the cone, while the second takes equations.
 
       Example
          HS = transpose R1
-         hyperplanesTmp = matrix {{1,1,1}}
-         C2 = coneFromHData(HS,hyperplanesTmp)
+         equations = matrix {{1,1,1}}
+         C2 = coneFromHData(HS,equations)
+         dim C2
+         ambDim C2
 
       Text
          This is a two dimensional cone in 3-space with the following rays:
@@ -63,6 +68,7 @@ doc ///
          C3 = coneFromHData HS
          rays C3
          linealitySpace C3
+         isFullDimensional C3
 
       Text
          Again, the rays are given modulo the lineality space. Also, one can
@@ -80,6 +86,7 @@ doc ///
       Example
          C5 = intersection(C1,C2)
          rays C5
+         dim C5
 
       Text
          On the other hand, we can take their positive hull by using @TO
@@ -104,14 +111,14 @@ doc ///
          linealitySpace C7
 
       Text
-         Since they are all cones their positive hull is the same as their
+         Taking the positive hull of several cones is the same as taking their
          Minkowski sum, so in fact:
 
       Example
          C6 == C1 + C2
 
       Text
-         But we can take the Minkowski sum of a cone and a polyhedron. For
+         We can also take the Minkowski sum of a cone and a polyhedron. For
          this, both objects must lie in the same ambient space and the
          resulting object is then a polyhedron:
 
@@ -128,9 +135,10 @@ doc ///
          C8 = C * C1
          rays C8
          linealitySpace C8
+         ambDim C8
 
       Text
-         The result is in QQ^5.
+         The result is contained in ${\mathbb Q}^5$.
 
       Example
          ambDim C8
@@ -144,7 +152,10 @@ doc ///
       Text
          This function gives the number of faces of each dimension, so it has 1
          vertex, the origin, 1 line, 4 two dimensional faces and so on. We can
-         access the faces of a certain codimension via @TO faces@:
+         access the faces of a certain codimension via @TO faces@. The output
+         of @TO faces@ is a list of list of indices that indicate which rays
+         form a face. The following shows how to get the corresponding rays of
+         the faces.
 
       Example
          L = faces(1,C8)

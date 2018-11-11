@@ -1,20 +1,24 @@
 doc ///
    Key 
       "Working with polyhedra"
-   Headline
-      Working with polyhedra
    Description
       Text
-         We start with a polyhedron in 2-space which is the @TO convexHull@ of
-         a given set of points.
+         Just like cones, polyhedra have two descriptions. One description as
+         the convex hull of finitely many points (and optionally rays and
+         lineality), the {\tt V}-description. Another description as the
+         intersection of finitely many half-spaces, the {\tt H}-description.
+         Using the method @TO convexHull@ we can create a polyhedron in 2-space
+         which is the @TO convexHull@ of a given set of points.
 
       Example 
          V = matrix {{0,2,-2,0},{-1,1,1,1}}
          P = convexHull V
 
       Text
-         This gives an overview of the characteristics of the polyhedron. If we
-         want to know more details, we can ask for them.
+         @TO Polyhedra@ uses the principle of lazy evaluation: Properties of
+         the combinatorial objects are only computed on demand and then they
+         are stored with the object. For example we can ask for the vertices of
+         {\tt P} using @TO vertices@:
 
       Example
          vertices P
@@ -25,7 +29,6 @@ doc ///
 
       Example
          (HS,v) = facets P
-
 
       Text
          This gives the defining affine half-spaces, i.e. {\tt P} is given by
@@ -41,11 +44,26 @@ doc ///
          dimension zero.
 
       Example
+         isFullDimensional P
+         ambDim P
+         dim P
          rays P
          linealitySpace P
 
       Text
-         Furthermore, we can construct the convex hull of a set of points and a
+         Internally, polyhedra are realized as cones, by embedding the
+         polyhedron at height one and then taking the positive hull. To get at
+         this cone, use @TO cone@. The height is the first coordinate of the
+         rays of the cone, comparing the matrices of @TO rays@ and @TO
+         vertices@ for the example one can see the correspondence:
+
+      Example
+         C = cone P
+         rays C
+         vertices P
+
+      Text
+         We can also construct the convex hull of a set of points and a
          set of rays.
 
       Example
@@ -58,24 +76,28 @@ doc ///
          This polyhedron is not compact anymore and also not of full dimension.
 
       Example
+         isCompact P1
+         isFullDimensional P1
          rays P1
          hyperplanes P1
 
       Text
          On the other hand we can construct a polyhedron as the intersection of
-         affine half-spaces and affine hyperplanes.
+         affine half-spaces and affine hyperplanes, given via inequalities and
+         equations:
 
       Example
-         HS = transpose (V || matrix {{-1,2,0,1}})
+         inequalities = transpose (V || matrix {{-1,2,0,1}})
          v = matrix {{1},{1},{1},{1}}
-         hyperplanesTmp = matrix {{1,1,1}}
+         equations = matrix {{1,1,1}}
          w = matrix {{3}}
-         P2 = polyhedronFromHData(HS,v,hyperplanesTmp,w)
+         P2 = polyhedronFromHData(inequalities,v,equations,w)
 
       Text
          This is a triangle in 3-space with the following vertices.
 
       Example
+         isFullDimensional P2
          vertices P2
 
       Text
@@ -83,9 +105,10 @@ doc ///
          polyhedron.
 
       Example
-         P3 = polyhedronFromHData(HS,v)
+         P3 = polyhedronFromHData(inequalities,v)
          vertices P3
          linealitySpace P3
+         isFullDimensional P3
 
       Text
          Note that the vertices are given modulo the lineality space. Besides
