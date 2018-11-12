@@ -138,6 +138,9 @@ then if test -f /usr/bin/sw_vers
      elif test -f /usr/lib/os-release
      then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
           ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
+     elif test -f /bin/freebsd-version
+     then ISSUE_FLAVOR=FreeBSD
+          ISSUE_RELEASE=`freebsd-version`
      elif test -f /etc/system-release
      then ISSUE_FLAVOR=[`</etc/system-release head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
           ISSUE_RELEASE=[`</etc/system-release head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
