@@ -5,8 +5,8 @@ doc ///
       Text
          Just like cones, polyhedra have two descriptions. One description as
          the convex hull of finitely many points (and optionally rays and
-         lineality), the {\tt V}-description. Another description as the
-         intersection of finitely many half-spaces, the {\tt H}-description.
+         lineality), the V-representation. Another description as the
+         intersection of finitely many half-spaces, the H-representation.
          Using the method @TO convexHull@ we can create a polyhedron in 2-space
          which is the @TO convexHull@ of a given set of points.
 

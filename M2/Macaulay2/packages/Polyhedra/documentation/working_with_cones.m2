@@ -5,8 +5,8 @@ doc ///
       Text
          Every cone can be described via generating rays or via inequalities.
          The description via rays (or vertices for polyhedra) is often referred
-         to as the {\tt V}-presentation. The description via inequalities is
-         called the {\tt H}-description. To create a cone in 2-space which
+         to as the V-representation. The description via inequalities is
+         called the H-representation. To create a cone in 2-space which
          is the positive hull of a given set of rays use @TO coneFromVData@:
 
       Example
@@ -31,7 +31,7 @@ doc ///
 
       Text
          The function @TO facets@ gives the defining linear half-spaces, the
-         {\tt H}-representation, i.e.  {\tt C} is given by all {\tt p} in the
+         H-representation, i.e.  {\tt C} is given by all {\tt p} in the
          defining linear hyperplanes that satisfy {\tt HS*p >= 0}. In this case
          there are no hyperplanes, so the cone is of full dimension. The
          rows of the matrix {\tt HS} are the inner normals of the cone.
