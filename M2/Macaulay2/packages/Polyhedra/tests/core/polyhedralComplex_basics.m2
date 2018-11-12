@@ -6,3 +6,12 @@ assert(not isPure P)
 assert(dim P == 2)
 assert(isSimplicial P)
 ///
+
+TEST ///
+F = normalFan hypercube 2
+PC = polyhedralComplex F
+assert(dim PC == 2)
+assert(ambDim PC == 2)
+assert(isFullDimensional PC)
+///
+
