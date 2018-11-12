@@ -137,9 +137,9 @@ doc ///
       fP:List
    Description
       Text
-         While {\tt faces} returns a list of lists of indices for the vertices that make
+         While @TO faces@ returns a list of lists of indices for the vertices that make
          up the codimension {\tt n} faces, this gives a list of actual polyhedra. It
-         is just a small wrapper around {\tt faces}. Whenever possible, use {\tt faces}
+         is just a small wrapper around @TO faces@. Whenever possible, use @TO faces@
          instead.
 
       Example
@@ -163,9 +163,9 @@ doc ///
       fC:List
    Description
       Text
-         While {\tt faces} returns a list of lists of indices for the rays that make
+         While @TO faces@ returns a list of lists of indices for the rays that make
          up the codimension {\tt n} faces, this gives a list of actual cones. It
-         is just a small wrapper around {\tt faces}. Whenever possible, use {\tt faces}
+         is just a small wrapper around @TO faces@. Whenever possible, use @TO faces@
          instead.
 
       Example
@@ -237,7 +237,7 @@ doc ///
          a list of lists with the indices of the rays in the maximal cones. Optionally
          one may provide a lineality space.
 
-         This constructor does not check well-definedness, see {\tt isWellDefined}.
+         This constructor does not check well-definedness, see @TO isWellDefined@.
 
       Example
          M = matrix{{1,0},{0,1}}
@@ -276,7 +276,7 @@ doc ///
          is considered to contain rays. To input a lineality space, one must provide
          three matrices.
          
-         This constructor does not check well-definedness, see {\tt isWellDefined}.
+         This constructor does not check well-definedness, see @TO isWellDefined@.
 
       Example
          M = matrix {{0,1,2}}
