@@ -41,12 +41,6 @@ compute#Cone#pointed Cone := C -> (
 )
 
 
-compute#Cone#fullDimensional = method()
-compute#Cone#fullDimensional Cone := C -> (
-   dim C == ambDim C
-)
- 
-
 compute#Cone#smooth = method()
 compute#Cone#smooth Cone := C -> (
    R := lift(transpose rays C,ZZ);

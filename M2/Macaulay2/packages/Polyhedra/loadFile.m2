@@ -109,9 +109,12 @@ load "./interfaces/normaliz.m2"
 -- Documentation
 --
 beginDocumentation()
-load "./deprecated_documentation.m2"
-load "./documentation.m2"
-load "./new_documentation.m2"
+load "./documentation/intro.m2"
+load "./documentation/working_with_polyhedra.m2"
+load "./documentation/working_with_cones.m2"
+load "./documentation/deprecated_documentation.m2"
+load "./documentation/old_documentation.m2"
+load "./documentation/documentation.m2"
 
 end
 

@@ -9,7 +9,7 @@
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
     Version => "1.10",
-    Date => "August 21, 2014",
+    Date => "November 12, 2018",
     AuxiliaryFiles => true,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -18,8 +18,8 @@ newPackage("Polyhedra",
 	 "acceptance date" => "2009-09-07",
 	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
 	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
-	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
- 	 "release at publication" => 9344,
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Polyhedra.m2",
+ 	 "release at publication" => "c065ec7651789907627333018dc7d675968639e4", -- git commit number in hex
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
 	 "volume URI" => "http://j-sag.org/Volume1/"
