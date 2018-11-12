@@ -1,3 +1,13 @@
+-- TODO:
+--  1. this should work under quotient rings, exterior algebras, 
+--  2. this should be fast for singly graded cases
+--  3. make sure doc for the internal routine is correct: 
+--      calls basis with an obscure undocumented option.
+--      and the result is wrong for multi-gradings
+--      and the doc for truncate is incorrect.
+--  4. heft vector: we are doing WAY TOO MUCH work here.
+--     heft vector doesn't need to be inside the cone.
+--     perhaps start with simplicial part of the cone
 newPackage(
         "Truncations",
         Version => "0.1", 
@@ -19,7 +29,6 @@ newPackage(
 export {
     "trunc"
     }
-
 
 trunc = method()
 trunc(List,Module) := (D,M)->(
@@ -50,12 +59,14 @@ trunc(List,Module) := (D,M)->(
 
     --now construct the truncation, using the ring map over and over    
     if class D_0 =!= List then (
-    L := gens M;
-    dM := (degrees (gens M))_1;
-    M1 := apply(#dM, i-> 
+        L := gens M;
+        dM := (degrees (gens M))_1;
+        M1 := apply(#dM, i-> 
 	    trunc(positivePart(D-dM_i),phi1)*image(L_{i}));
-    trim sum M1) else
-    trim sum(D, d->trunc(d,M))
+        trim sum M1
+        )
+    else
+        trim sum(D, d->trunc(d,M))
     )
 
 positivePart = method()
@@ -80,6 +91,7 @@ trunc0(List, Module) := (D,M) ->(
     trim sum(D, d->trunc0(d,M))
     )
 
+-- The following routine should use integer point polyhedral code, as in normaliz?
 trunc(List,RingMap) := (d,phi) ->(
     --for the moment we need T to be of the special form greated in trunc(List, Ring):
     --namely, variable t_(i,j) etc.
@@ -88,13 +100,13 @@ trunc(List,RingMap) := (d,phi) ->(
     n := numgens R;
     dl := degreeLength R;
     T := target phi;
-    --should have n*dl variables t_(i,j), 0<=i<=n-1, and 0<=j<=dl-1 -- that is,
+    -- should have n*dl variables t_(i,j), 0<=i<=n-1, and 0<=j<=dl-1 -- that is,
     -- one for each pair (variable, degree component).
-    --now find the ideal in T of elements of degree >= d.
---    Td := product(dl,j->(ideal(apply(n,i->t_(i,j))))^(d_j));
-      Td := product(dl,j->(ideal(apply(n,i->T_(i+n*j))))^(d_j));
-    --the desired ideal is a kernel
-    ker(map(T/Td,T)*phi)
+    -- now find the ideal in T of elements of degree >= d.
+    -- Td := product(dl,j->(ideal(apply(n,i->t_(i,j))))^(d_j));
+    Td := product(dl,j->(ideal(apply(n,i->T_(i+n*j))))^(d_j));
+    -- the desired ideal is a kernel
+    ker(map(T/Td,T)*phi)  -- TODO: this is a monomial map, use normaliz. or oerhaps make kernel faster.
     )
 
 trunc(List, Ring) := (d,R) ->(
@@ -202,3 +214,88 @@ TEST ///
 end--
 restart
 loadPackage "Truncations"
+
+-- test of normaliz, to see if it does what we need here:
+restart
+needsPackage "Normaliz"
+needsPackage "NormalToricVarieties"
+
+V = smoothFanoToricVariety(3,5)
+rays V
+max V
+S = ring V
+A = transpose matrix degrees S
+C = posHull A
+C2 = dualCone C
+rays C2
+
+-- how to create Ax >= b, x >= 0?
+-----------------------------------------------------------------------
+---- notes taken by MS and DE in October 2018 for to do for this package
+-----------------------------------------------------------------------
+restart
+load "trunc.m2"
+R = ZZ/101[a..d, Degrees=>{3,5,7,9}]
+trunc({15}, R)
+
+E = ZZ/101[e_0..e_10, SkewCommutative => true]
+trunc0({10}, E^1)
+trunc0({11}, E^1)
+trunc({3}, E)
+
+gens gb oo
+
+U = E ** T
+
+-------
+in trunc(List,Module):
+  make the ring U directly, not T.
+  instead of phi1, make the ideal we had in trunc(List,Ring).
+  
+1. change all multi-degrees to be positive. (utility routine)
+2. handle quotient rings and modules over them
+3. handle exterior algebra
+4. trunc creates a ring, which should perhaps be skew commutative.
+6. incorporate trunc-new into this package Truncation.
+
+What we really want, is generators for the semigroup
+{x in ZZ^n(>=0), Ax >= b}
+
+-- mike doodling about fixing basis command in engine:
+Matrix::basis
+  KBasis::k_basis(7 arguments)
+
+  
+How best to find
+  {x in ZZ^n(>=0), Ax = b}
+  
+  x in ZZ^n
+  A is d x n.
+  b is in ZZ^d.
+  
+  Find lattice points in Ax=b, x >= 0.
+  
+  if possible, Let A1 = Q^-1 * A * P (or A_perm) = (I | C), C is d x (n-d).
+  then create a polytope in (n-d) space, then extend each monomial to ZZ^n.
+  
+-- given a matrix A, d x n whose columns are the degrees of the variables (in ZZ^d),
+-- find, if possible a minor with det +-1.  If none, how to handle this?
+
+
+-- notes 10 Nov 2018, DE, MS
+want to solve systems of linear equalities and inequalities in ZZ^n
+
+specifically:
+  A be the degree matrix (d x n, n = #vars)
+  
+  truncate(R, D), D in ZZ^d.
+  solve Ax >= D, (might include x >= 0)
+
+  truncate(M, D), M = module.
+    take each generator degree E, take Ax >= D-E, then mult each gen
+    in degree E by these monomials.
+
+
+
+  
+  
