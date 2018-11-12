@@ -1154,6 +1154,7 @@ fi
 # frobby depends on gmp; we build mpir and use it to replace gmp; therefore we must build frobby and
 # not try to link with one we find.  See https://github.com/Macaulay2/M2/issues/654
 BUILD_frobby=yes
+BUILD_ALWAYS="frobby $BUILD_ALWAYS"
 
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
