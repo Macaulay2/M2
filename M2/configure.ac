@@ -138,6 +138,9 @@ then if test -f /usr/bin/sw_vers
      elif test -f /usr/lib/os-release
      then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
           ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
+     elif test -f /bin/freebsd-version
+     then ISSUE_FLAVOR=FreeBSD
+          ISSUE_RELEASE=`freebsd-version`
      elif test -f /etc/system-release
      then ISSUE_FLAVOR=[`</etc/system-release head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
           ISSUE_RELEASE=[`</etc/system-release head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
@@ -1151,6 +1154,7 @@ fi
 # frobby depends on gmp; we build mpir and use it to replace gmp; therefore we must build frobby and
 # not try to link with one we find.  See https://github.com/Macaulay2/M2/issues/654
 BUILD_frobby=yes
+BUILD_ALWAYS="frobby $BUILD_ALWAYS"
 
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no

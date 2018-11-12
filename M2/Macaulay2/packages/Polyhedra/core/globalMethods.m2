@@ -15,7 +15,7 @@ isSimplicial PolyhedralObject := X -> getProperty(X, simplicial)
 
 
 isFullDimensional = method(TypicalValue => Boolean)
-isFullDimensional PolyhedralObject := X -> getProperty(X, fullDimensional)
+isFullDimensional PolyhedralObject := X -> ambDim X == dim X
 
 
 -- PURPOSE : Giving the rays
