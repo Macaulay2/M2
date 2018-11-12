@@ -83,7 +83,7 @@ various modern operating systems:
 
   Ubuntu and Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev
+      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -167,10 +167,16 @@ various modern operating systems:
       	 xcode-select --install
       On newer versions, one installs the tools with "Software Update".
       After upgrading the OS, it will be necessary to install it again.  (One symptom of
-      forgetting to do this is that /usr/include may be missing.)
+        forgetting to do this is that /usr/include may be missing.)
       If you install XCode, you will then need to do
         xcode-select --install
 	(this command creates /usr/include, and other usual unix directories)
+      Starting with Mac OS X version 10.14 (Mojave), /usr/include needs to be created with
+        this command:
+	  sudo installer -pkg macOS_SDK_headers_for_macOS_10.14.pkg -target /
+	The package file in the above command is found in the directory
+	  /Library/Developer/CommandLineTools/Packages
+	, so look there to see what the correct name is in later versions of Mac OS X.
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -182,10 +188,11 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update
-	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget
+	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget libomp
 	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk yasm make
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
+      
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
       --build-bottle when installing packages, then use the command
@@ -212,6 +219,13 @@ various modern operating systems:
         sudo rm -rf /sw
     Note: adding "--enable-strip" to the configure script command line may not be a good idea,
       as stripping the M2 binary seems to cause the program to crash unpredictably.
+    Note: starting with Mac OS X 10.14 (Mojave) the "binutils" package of
+      homebrew includes versions of the programs 'ar' and 'ranlib' that are not
+      compatible with the native (clang) Mac OS X compilers, so either remove
+      or unlink the package, add "AR=/usr/bin/ar RANLIB=/usr/bin/ranlib" as
+      options to the 'configure' command line, or arrange for /usr/local/bin to
+      occur later in the value of the environment variable PATH than /usr/bin
+      does.
 
   Cygwin 1.7 under Microsoft Windows:
     Use setup to install these packages:
@@ -237,14 +251,14 @@ various modern operating systems:
   the directory where you want to install the files; if it's a directory not
   owned by you, prefix the "make install" command below with "sudo".
 
-       wget ftp://ftp.gnu.org/gnu/gcc/gcc-7.1/gcc-7.1.tar.bz2
-       tar xjf gcc-7.1.tar.bz2
-       cd gcc-7.1
+       wget ftp://ftp.gnu.org/gnu/gcc/gcc-7.1.0/gcc-7.1.0.tar.bz2
+       tar xjf gcc-7.1.0.tar.bz2
+       cd gcc-7.1.0
        ./contrib/download_prerequisites
        cd ..
-       mkdir gcc-7.1-build
-       cd gcc-7.1-build
-       ../gcc-7.1/configure --prefix=$HOME/local --program-suffix=-7.1 --enable-languages=c,c++,fortran --disable-multilib
+       mkdir gcc-7.1.0-build
+       cd gcc-7.1.0-build
+       ../gcc-7.1.0/configure --prefix=$HOME/local --program-suffix=-7.1.0 --enable-languages=c,c++,fortran --disable-multilib
        make
        make install
 
@@ -256,16 +270,16 @@ various modern operating systems:
      command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
-     The resulting compiler executables will be named gcc-7.1 and g++-7.1.
+     The resulting compiler executables will be named gcc-7.1.0 and g++-7.1.0.
      Now put the following lines in your file $HOME/.profile :
 
         export PATH=$HOME/local/bin:$PATH
         export MANPATH=$HOME/local/share/man:$MANPATH
         export INFOPATH=$HOME/local/share/info:$INFOPATH
         export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
-        export CC=gcc-7.1
-        export CXX=g++-7.1
-        export FC=gfortran-7.1
+        export CC=gcc-7.1.0
+        export CXX=g++-7.1.0
+        export FC=gfortran-7.1.0
 
      and then log out and log in again (or source the file into your
      environment and continue in the same process or in daughter processes).
