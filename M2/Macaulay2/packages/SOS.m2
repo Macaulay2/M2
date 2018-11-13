@@ -20,7 +20,7 @@ newPackage(
     Headline => "Sum-of-Squares Package",
     AuxiliaryFiles => true,
     DebuggingMode => true,
-    PackageImports => {"SimpleDoc","FourierMotzkin","SemidefiniteProgramming"},
+    PackageImports => {"SimpleDoc","FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"}
 )
 
