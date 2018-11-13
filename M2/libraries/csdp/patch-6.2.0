@@ -6,12 +6,12 @@ diff -ur Csdp-6.2.0-orig/Makefile Csdp-6.2.0/Makefile
  # CFLAGS settings for 64 bit Linux/unix systems.
  #
 -export CFLAGS=-m64 -march=native -mtune=native -Ofast -fopenmp -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
-+export CFLAGS += -march=native -mtune=native -Ofast -ansi -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
++export CFLAGS += -ansi -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
  #
  # LIBS settings for 64 bit Linux/unix systems.
  #
 -export LIBS=-static -L../lib -lsdp -llapack -lblas -lm
-+export LIBS= -L../lib -lsdp -llapack -lblas -lm
++export LIBS=-L../lib -lsdp -llapack -lblas -lm
 +
  #
  #
