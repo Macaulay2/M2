@@ -83,7 +83,7 @@ doc /// --coefficients field
         When calling such a solver, even if the input was a polynomial with rational coefficients, the result is numerical.  
         The package makes some effort to round and return a rational result, but this can fail, independent of whether a rational SOS decomposition exists or not.
         In this case of failure, a real result is returned.
-        The following example of Scheiderer is SOS, but does not admit any rational SOS decomposition.  Consequently the package must return a real solution:,
+        The following example of Scheiderer is SOS, but does not admit any rational SOS decomposition.  Consequently the package must return a real solution:
       Example
         f = library("Scheiderer", QQ[x,y,z])
         sol = solveSOS (f, Solver=>"CSDP");
@@ -126,7 +126,7 @@ doc /// --SOSPoly
       Text
         A polynomial $f\in K[x]$ is a sum-of-squares (SOS) if it can be written as
         $$f = \sum_i d_i g_i^2,$$
-        where the $g_i$ are polynomials in $K[x]$ and the $d_i$ are weights in $K$.
+        where the $g_i$ are polynomials in $K[x]$ and the $d_i$ are positive weights in $K$.
         This data type stores SOS polynomials in terms of the summands.
         The type is a hash table consisting of the polynomials to be
         squared and summed (the 'generators'), corresponding coefficients,
@@ -165,9 +165,9 @@ doc /// --SOSPoly
       Example
         sumSOS s
       Text
-        @TO SOSPoly@ supports the @TO substitute@ command.  This
-        cannot be used to change the coefficient field, though.  See @TO "Coefficients"@ for some
-	of the limitations.
+        @TO SOSPoly@ supports the @TO substitute@ command.  
+        This cannot be used to change the coefficient field, though.  
+        See @TO "coefficients field"@ for some of the limitations.
       Example
         S = QQ[x,y,z];
         sub (s, S)
@@ -182,7 +182,6 @@ doc /// -- SDPResult
        (net, SDPResult)
        GramMatrix
        MomentMatrix
-       Parameters
     Headline
        result of an SDP computation
     Description
@@ -194,7 +193,7 @@ doc /// -- SDPResult
         sol = solveSOS (f, -t, RoundTol=>12)
         peek sol
       Text
-        The fields can be extracted with the operator "#"
+        The fields can be extracted with the operator @TO "#"@
       Example
         sol#GramMatrix
       Text

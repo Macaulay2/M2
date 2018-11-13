@@ -1,15 +1,90 @@
 
-document {
-    Key => SemidefiniteProgramming,
-    Headline => "A package for solving semidefinite programs",
-    "This is a package for solving semidefinite programming (SDP) problems. ",
-    "The main method of this package is ", TO "solveSDP", ". ",
-    "See ", TO "Solver", " for a discussion of the available SDP solvers. ",
-    }
+doc /// --SemidefiniteProgramming
+    Key
+        SemidefiniteProgramming
+    Headline
+        A package for solving semidefinite programs
+    Description
+      Text
+        This is a package for solving semidefinite programming (SDP) problems.
+
+        Given symmetric matrices $C, A_i$ and a vector $b$, the primal SDP problem is
+
+        $$min_{X} \, C \bullet X \,\,\, s.t. \,\,\, A_i \bullet X = b_i \, and \, X \geq 0$$
+
+        and the dual SDP problem is
+
+        $$max_{y,Z} \, \sum_i b_i y_i \,\,\, s.t. \,\,\, Z = C - \sum_i y_i A_i \, and \, Z \geq 0$$
+
+        We can construct a semidefinite program using the method @TO sdp@, as follows:
+      Example
+        P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}})
+      Text
+        The semidefinite program can be solved numerically using the method @TO optimize@:
+      Example
+        (X,y,Z) = optimize P;
+        (X,y)
+      Text
+        See @TO Solver@ for a discussion of the available SDP solvers.
+        The method @TO2 {(refine,SDP,Sequence),"refine"}@ can be used to improve the precision of the solution.
+
+        In small cases it is possible to solve the SDP symbolically, by forming the ideal of @TO2 {criticalIdeal,"critical equations"}@.
+      Example
+        (I,X,y,Z) = criticalIdeal P;
+        radical I
+      Code
+      Pre
+    SeeAlso
+///
 
 --###################################
 -- Methods
 --###################################
+
+doc /// --sdp
+    Key
+        SDP
+        sdp
+        (sdp,Matrix,Sequence,Matrix)
+        (sdp,Matrix,Matrix,Matrix)
+        (ring,SDP)
+    Headline
+        construct a semidefinite program
+    Usage
+        P = sdp(C,A,b)
+    Inputs
+        C:Matrix
+          a symmetric $n\times n$ matrix
+        A:Sequence
+          consisting of $m$ symmetric $n\times n$ matrices
+        b:Matrix
+          a $m\times 1$ matrix
+    Outputs
+        P:SDP
+          a semidefinite programming problem
+    Consequences
+    Description
+      Text
+        A semidefinite program (SDP) is defined by a some symmetric matrices $C, A_i$ and a vector $b$.
+        The SDP has a primal and a dual problem.
+        The primal problem is
+
+        $$min_{X} \, C \bullet X \,\,\, s.t. \,\,\, A_i \bullet X = b_i \, and \, X \geq 0$$
+
+        and the dual problem is
+
+        $$max_{y,Z} \, \sum_i b_i y_i \,\,\, s.t. \,\,\, Z = C - \sum_i y_i A_i \, and \, Z \geq 0$$
+
+        The type @TO SDP@ stores semidefinite programs.
+        The constructor of the type is the method @TO sdp@.
+      Example
+        P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}})
+      Text
+        Semidefinite programs can be solved numerically using the method @TO optimize@, and in small cases also symbolically with the method @TO criticalIdeal@.
+      Code
+      Pre
+    SeeAlso
+///
 
 doc /// --roundPSDmatrix
     Key
@@ -125,52 +200,38 @@ doc /// --PSDdecomposition
     SeeAlso
 ///
 
-doc /// --solveSDP
+doc /// --optimize
     Key
-        solveSDP
-        (solveSDP,Matrix,Matrix,Matrix)
-        (solveSDP,Matrix,Matrix,Matrix,Matrix)
-        (solveSDP,Matrix,Sequence,Matrix)
-        (solveSDP,Matrix,Sequence,Matrix,Matrix)
+        optimize
+        (optimize,SDP)
+        (optimize,SDP,Matrix)
     Headline
         solve a semidefinite program
     Usage
-        (X,y,Q) = solveSDP(C,A,b)
-        (X,y,Q) = solveSDP(C,A,b,y0)
+        (X,y,Z) = optimize P
+        (X,y,Z) = optimize(P,y0)
     Inputs
-        C:Matrix
-          a symmetric $n\times n$ matrix
-        A:Sequence
-          consisting of $m$ symmetric $n\times n$ matrices
+        P:SDP
+          a semidefinite programming problem
         y0:Matrix
-          a dual feasible $m\times 1$ matrix (optional)
+          a dual strictly feasible matrix (optional)
     Outputs
         X:
           an $n\times n$ matrix, primal variable (not available if Solver=>"M2")
         y:
           an $m\times 1$ matrix, dual variable
-        Q:
+        Z:
           an $n\times n$ matrix, dual variable
     Consequences
     Description
       Text
-        This method solves a primal/dual pair of semidefinite programs.
-        Given symmetric matrices $C, A_i$ and a vector $b$, the primal problem is
-
-        $$min_{X} \, C \bullet X \,\,\, s.t. \,\,\, A_i \bullet X = b_i \, and \, X \geq 0$$
-
-        and the dual problem is
-
-        $$max_{y,Q} \, \sum_i b_i y_i \,\,\, s.t. \,\,\, Q = C - \sum_i y_i A_i \, and \, Q \geq 0$$
-
-        The default algorithm is a dual interior point method implemented in M2. 
-        A strictly feasible initial point $y_0$ may be provided by the user.
-        Alternatively, there is an interface to the @TO2 {[solveSDP,Solver],"solvers"}@ CSDP, SDPA and MOSEK.
+        This method a semidefinite programming problem.
+        There is an interface to the @TO2 {[optimize,Solver],"solvers"}@ CSDP, SDPA and MOSEK.
+        The default solver is CSDP, which is preinstalled with Macaulay2.
+        Alternatively, there is rudimentary dual interior point method implemented entirely in Macaulay2 language.
       Example
-        C = matrix {{1,0},{0,2}};
-        A = matrix {{0,1},{1,0}};
-        b = matrix {{-1}};
-        (X,y,Q) = solveSDP(C,A,b);
+        P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}});
+        (X,y,Z) = optimize P;
         y
       Text
         {\bf References:}
@@ -182,6 +243,85 @@ doc /// --solveSDP
 
         $\bullet$ The "M2" solver might fail if the dual problem is not strictly feasible.
     SeeAlso
+        (refine,SDP,Sequence)
+///
+
+doc /// --criticalIdeal
+    Key
+        criticalIdeal
+        (criticalIdeal,SDP,ZZ)
+        (criticalIdeal,SDP)
+    Headline
+        ideal of critical equations of a semidefinite program
+    Usage
+        (I,X,y,Z) = criticalIdeal(P)
+        (I,X,y,Z) = criticalIdeal(P,rk)
+    Inputs
+        P:SDP
+          a semidefinite programming problem
+        rk:ZZ
+          the rank of the primal matrix (optional)
+    Outputs
+        I:Ideal
+          of critical equations
+        X:
+          an $n\times n$ matrix, primal variable
+        y:
+          an $m\times 1$ matrix, dual variable
+        Z:
+          an $n\times n$ matrix, dual variable
+    Consequences
+    Description
+      Text
+        This method computes the ideal of critical equations of an SDP.
+        This ideal can be used to solve the SDP symbolically.
+      Example
+        A = (-matrix{{0,1,0},{1,0,0},{0,0,1}}, matrix{{0,0,1},{0,0,0},{1,0,0}}, -matrix{{0,0,0},{0,0,1},{0,1,0}});
+        (C, b) = (matrix{{1/1,0,3},{0,5,0},{3,0,9}}, matrix{{-1},{-1},{-1}});
+        P = sdp(C,A,b);
+        (I,X,y,Z) = criticalIdeal P;
+        degree I
+      Text
+        We can restrict the rank of the primal matrix X.
+      Example
+        rk = 1;
+        (J,X,y,Z) = criticalIdeal(P, rk);
+        degree J
+      Code
+      Pre
+    SeeAlso
+///
+
+doc /// --refine
+    Key
+        (refine,SDP,Sequence)
+    Headline
+        refine an SDP solution
+    Usage
+        (X1,y1) = refine(P,(X0,y0))
+    Inputs
+        P:SDP
+          a semidefinite programming problem
+        X0y0:
+          primal and dual solutions
+    Outputs
+        X1y1:
+          refined primal and dual solutions
+    Consequences
+    Description
+      Text
+        This function uses Newton's method to improve the precision of an optimal primal/dual pair.
+        The refined solution has relative error bounded by min(@TO ErrorTolerance@,2(-@TO Bits@)). 
+        The number of iterations made is at most @TO Iterations@.
+      Example
+        P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}});
+        (X0,y0) = (matrix{{.71, -.5}, {-.5, .35}}, matrix{{-1.41}})
+        (X1,y1) = refine(P,(X0,y0))
+      Code
+      Pre
+    SeeAlso
+        refine
+        criticalIdeal
 ///
 
 --###################################
@@ -218,7 +358,7 @@ doc /// --project2linspace
 --###################################
 doc /// -- Verbose
      Key
-        [solveSDP,Verbose]
+        [optimize,Verbose]
      Headline
         non-essential but informative output
      Description
@@ -229,7 +369,7 @@ doc /// -- Verbose
 document { --Solver
     Key => {
         Solver,
-        [solveSDP,Solver],
+        [optimize,Solver],
         },
     Headline => "picking a semidefinite programming solver",
     "This package interfaces semidefinite programming solvers in Macaulay2. ",
@@ -253,7 +393,7 @@ document { --Solver
        needsPackage ("SemidefiniteProgramming", Configuration=>{"MOSEKexec"=>"/some/path/mosek"});
     ///,
     "A third method is to use the function ", TO changeSolver, ". ",
-    "After configuring, the method ", TO "checkSolver", " can be used to check if a solver works.",
+    "After configuring, the method ", TO "checkOptimize", " can be used to check if a solver works.",
     BR{},
     BR{},
 
@@ -290,28 +430,29 @@ doc ///
       Example
         changeSolver ("CSDP", "/path/to/csdp")
     Caveat
-      The function does not check if the specified executable exists or is functional.  To find out try @TO checkSolveSDP@.
+      The function does not check if the specified executable exists or is functional.  To find out try @TO checkOptimize@.
     SeeAlso
       Solver
 ///
 
 doc ///
     Key
-      checkSolveSDP
+      checkOptimize
     Headline
       check an SDP solver
     Usage
-      checkSolveSDP (solver, applyTest)
+      checkOptimize (solver)
     Inputs
-        Solver:String
-	  the name of the solver to configure: CSDP, MOSEK, M2, or SDPA
-	applyTest:Function
-	  A boolean function that specifies for each integer i if the ith test should be run.
+      solver:String
+	    the name of the solver to configure: CSDP, MOSEK, M2, or SDPA
+    Outputs
+      :List
+        indicating whether the solver passed each of the tests
     Description
       Text
         Use this function to run some basic checks with an SDP solver
       Example
-        checkSolveSDP ("CSDP", i->true)
+        checkOptimize ("CSDP")
     Caveat
     SeeAlso
       Solver
