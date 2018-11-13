@@ -1,12 +1,12 @@
-diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/Makefile Csdp-6.2.0/Makefile
---- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/Makefile	2017-07-18 02:34:04.000000000 +0200
-+++ Csdp-6.2.0/Makefile	2018-11-11 13:23:12.000000000 +0100
+diff -ur Csdp-6.2.0-orig/Makefile Csdp-6.2.0/Makefile
+--- Csdp-6.2.0-orig/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/Makefile	2018-11-12 18:58:04.000000000 -0500
 @@ -11,49 +11,50 @@
  #
  # CFLAGS settings for 64 bit Linux/unix systems.
  #
 -export CFLAGS=-m64 -march=native -mtune=native -Ofast -fopenmp -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
-+export CFLAGS += -m64 -march=native -mtune=native -Ofast -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
++export CFLAGS += -march=native -mtune=native -Ofast -ansi -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
  #
  # LIBS settings for 64 bit Linux/unix systems.
  #
@@ -33,7 +33,7 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/librari
  
  unitTest:
 -	cd test; make all
-+	$MAKE) -C test all
++	$(MAKE) -C test all
  
  #
 -# Install the executables in /usr/local/bin.
@@ -70,9 +70,9 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/librari
  
  
  
-diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/Csdp-6.2.0/example/Makefile Csdp-6.2.0/example/Makefile
---- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/Csdp-6.2.0/example/Makefile	2017-07-17 19:47:30.000000000 -0400
-+++ Csdp-6.2.0/example/Makefile	2018-10-23 20:53:22.000000000 -0400
+diff -ur Csdp-6.2.0-orig/example/Makefile Csdp-6.2.0/example/Makefile
+--- Csdp-6.2.0-orig/example/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/example/Makefile	2018-11-12 14:40:20.000000000 -0500
 @@ -6,7 +6,7 @@
  # This builds the example code.
  #
@@ -82,9 +82,9 @@ diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-applecl
  #
  # To clean up the directory.
  #
-diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/Csdp-6.2.0/solver/Makefile Csdp-6.2.0/solver/Makefile
---- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/Csdp-6.2.0/solver/Makefile	2017-07-17 19:47:30.000000000 -0400
-+++ Csdp-6.2.0/solver/Makefile	2018-10-23 21:29:29.000000000 -0400
+diff -ur Csdp-6.2.0-orig/solver/Makefile Csdp-6.2.0/solver/Makefile
+--- Csdp-6.2.0-orig/solver/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/solver/Makefile	2018-11-12 14:40:20.000000000 -0500
 @@ -1,8 +1,10 @@
  #
  #  This builds the stand alone solver.
@@ -97,9 +97,9 @@ diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-applecl
  #
  # To clean out the directory:
  #
-diff -ur /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/Csdp-6.2.0/theta/Makefile Csdp-6.2.0/theta/Makefile
---- /Users/mike/src/M2-tom111-sos/M2/BUILD/mike/builds.tmp/darwin64-appleclang/libraries/csdp/tmp/Csdp-6.2.0/theta/Makefile	2017-07-17 19:47:30.000000000 -0400
-+++ Csdp-6.2.0/theta/Makefile	2018-10-23 20:53:22.000000000 -0400
+diff -ur Csdp-6.2.0-orig/theta/Makefile Csdp-6.2.0/theta/Makefile
+--- Csdp-6.2.0-orig/theta/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/theta/Makefile	2018-11-12 14:40:20.000000000 -0500
 @@ -6,23 +6,23 @@
  # This builds the theta number code. 
  #
