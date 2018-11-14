@@ -7,24 +7,6 @@ document {
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
      }
 
-document {
-     Key => {(parts,RingElement),parts},
-     Headline => "display a polynomial degree by degree",
-     Usage => "parts f",
-     Inputs => {
-	  "f"
-	  },
-     Outputs => {
-	  Expression => {"an expression with the terms of ", TT "f", " of the each degree parenthesized, in increasing order"}
-	  },
-     EXAMPLE lines ///
-     	  R = QQ[x,y];
-	  f = (x+y+1)^2
-     	  parts f
-	  ///,
-     SeeAlso => { Parenthesize }
-     }
-
 undocumented {
 	  (degree, MonomialIdeal),
 	  (degree, CoherentSheaf),
@@ -219,7 +201,7 @@ document {
      Usage => "degree f",
      Inputs => {
 	  "f" => {"a ", TO2(RingElement, "ring element"), 
-	       "or ", TO2(Vector, "vector")}
+	       " or ", TO2(Vector, "vector")}
 	  },
      Outputs => {
 	  List => {"the degree or multidegree of ", TT "f"}

@@ -55,11 +55,12 @@ m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
 m4_include(config/relpaths.m4)
 m4_include(config/gtest.m4)
+m4_include(config/openmp.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR
+for x in CC FC CXX AR CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR
 do eval v=\$$x
    test "$v" && echo "   $x = $v"
 done
@@ -137,6 +138,9 @@ then if test -f /usr/bin/sw_vers
      elif test -f /usr/lib/os-release
      then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
           ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
+     elif test -f /bin/freebsd-version
+     then ISSUE_FLAVOR=FreeBSD
+          ISSUE_RELEASE=`freebsd-version`
      elif test -f /etc/system-release
      then ISSUE_FLAVOR=[`</etc/system-release head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
           ISSUE_RELEASE=[`</etc/system-release head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
@@ -408,9 +412,10 @@ EOF
 	then lib conf_test2.$OBJEXT
 	     lib conf_test4.$OBJEXT
 	     $CXX conf_main.cc conf_test1.$OBJEXT conf_test2.lib conf_test3.$OBJEXT conf_test4.lib -o conf_main
-	else ar ru libconf_test2.a conf_test2.$OBJEXT
+	else rm -f libconf_test2.a libconf_test4.a
+	     $AR rc libconf_test2.a conf_test2.$OBJEXT
 	     $RANLIB libconf_test2.a
-	     ar ru libconf_test4.a conf_test4.$OBJEXT
+	     $AR rc libconf_test4.a conf_test4.$OBJEXT
 	     $RANLIB libconf_test4.a
 	     $CXX conf_main.cc -L. conf_test1.$OBJEXT -lconf_test2 conf_test3.$OBJEXT -lconf_test4 -o conf_main
 	fi
@@ -740,6 +745,17 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 	# 1 "foo" 1 3 4
 	template <class T> struct A { };])],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
+dnl Check for openmp and fail if it cannot be found.
+dnl This is required for building csdp and good for normaliz
+AC_MSG_CHECKING(whether OpenMP is supported by the compiler)
+AC_LANG(C++)
+AC_PROG_CXX
+AC_OPENMP
+if test "$ac_cv_prog_cxx_openmp" = unsupported
+   then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
+fi
+AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
+
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
 dnl AC_SUBST(SYNC_MACROS,)
@@ -842,7 +858,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
 #    pari uses gmp, so if we build gmp, we should build pari
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables topcom cohomcalg")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 
@@ -910,8 +926,13 @@ if test "$GFAN" = no
 then BUILD_gfan=no
 fi
 
+AC_ARG_ENABLE(csdp, AS_HELP_STRING(--disable-csdp,[do not build csdp program]), CSDP=$enableval)
+if test "$CSDP" = no
+then BUILD_csdp=no
+fi
+
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 
@@ -1129,6 +1150,11 @@ then AC_LANG(C)
      fi
      AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
+
+# frobby depends on gmp; we build mpir and use it to replace gmp; therefore we must build frobby and
+# not try to link with one we find.  See https://github.com/Macaulay2/M2/issues/654
+BUILD_frobby=yes
+BUILD_ALWAYS="frobby $BUILD_ALWAYS"
 
 if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
@@ -1884,6 +1910,8 @@ AC_MSG_NOTICE([using CFLAGS            = $CFLAGS])
 AC_MSG_NOTICE([using CXX               = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS          = $CXXFLAGS])
 AC_MSG_NOTICE([using FC                = $FC])
+AC_MSG_NOTICE([using AR                = $AR])
+AC_MSG_NOTICE([using RANLIB            = $RANLIB])
 AC_MSG_NOTICE([using LDFLAGS           = $LDFLAGS])
 AC_MSG_NOTICE([using CC_FOR_BUILD      = $CC_FOR_BUILD])
 AC_MSG_NOTICE([using LDFLAGS_FOR_BUILD = $LDFLAGS_FOR_BUILD])
@@ -1895,7 +1923,7 @@ AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 
-function subset {
+subset() {
     # whether the words of $1 are among the words of $2
     y=" $2 "
     for i in $1

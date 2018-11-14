@@ -167,10 +167,16 @@ various modern operating systems:
       	 xcode-select --install
       On newer versions, one installs the tools with "Software Update".
       After upgrading the OS, it will be necessary to install it again.  (One symptom of
-      forgetting to do this is that /usr/include may be missing.)
+        forgetting to do this is that /usr/include may be missing.)
       If you install XCode, you will then need to do
         xcode-select --install
 	(this command creates /usr/include, and other usual unix directories)
+      Starting with Mac OS X version 10.14 (Mojave), /usr/include needs to be created with
+        this command:
+	  sudo installer -pkg macOS_SDK_headers_for_macOS_10.14.pkg -target /
+	The package file in the above command is found in the directory
+	  /Library/Developer/CommandLineTools/Packages
+	, so look there to see what the correct name is in later versions of Mac OS X.
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -182,10 +188,11 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update
-	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget
+	brew install --build-bottle pkg-config autoconf automake gnu-tar libtool boost libmpc xz wget libomp
 	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk yasm make
       You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
       binaries to other people with CPU's that may not have the same capabilities as yours.
+      
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
       --build-bottle when installing packages, then use the command
@@ -212,6 +219,13 @@ various modern operating systems:
         sudo rm -rf /sw
     Note: adding "--enable-strip" to the configure script command line may not be a good idea,
       as stripping the M2 binary seems to cause the program to crash unpredictably.
+    Note: starting with Mac OS X 10.14 (Mojave) the "binutils" package of
+      homebrew includes versions of the programs 'ar' and 'ranlib' that are not
+      compatible with the native (clang) Mac OS X compilers, so either remove
+      or unlink the package, add "AR=/usr/bin/ar RANLIB=/usr/bin/ranlib" as
+      options to the 'configure' command line, or arrange for /usr/local/bin to
+      occur later in the value of the environment variable PATH than /usr/bin
+      does.
 
   Cygwin 1.7 under Microsoft Windows:
     Use setup to install these packages:
