@@ -19,7 +19,6 @@ export {
     "AugmentNumberOfRepeats",
     "AugmentEdgeCount",
     "AugmentNodeCount",
-    "randomWeights",
     "EdgesSaturated",
     "sparseMonodromySolve",
     "solveFamily"}
@@ -33,10 +32,7 @@ random Type := o -> R -> (
     else (old'random'Type o) R
     ) 
 
--- random complex vector
-randomWeights = method()
-randomWeights ZZ := n -> matrix(CC, {apply(n,i->random CC)})
-
+-- this function never uses node1!
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
     for i from 1 to nnodes-1 do (
@@ -172,14 +168,10 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     A = sub(A, coefficientRing coefficientRing ring G);
     K := numericalKernel(transpose A, 1e-6);
     offset := solve(transpose A,transpose b,ClosestFit=>true);
-    -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
-    --v := K * transpose matrix {toList ((numcols K):1_CC)};  
-    w := transpose randomWeights(numcols K);
+    w := random(CC^(numcols K),CC^1);
     v := K * w - offset;
     c0 := point matrix v;
-    -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
-    --c0 := first (first components N).Points; 
-    pre0 := point{apply(SubList, i -> i#1)};
+    pre0 := point{L};
     G0 := specializeSystem(c0,G);
     pre0' := first refine(G0,{pre0});
     (c0,pre0')
@@ -195,6 +187,60 @@ f_3 = a_5*x_1+a_6*x_2 + 1
 H = {f_1,f_2,f_3}
 assert((last createSeedPair polySystem H).SolutionStatus =!= RefinementFailure)
 ///
+
+
+seedTest = method(Options=>{ResidualTolerance => 1e-4,
+	                    Threshold => 1e-4, Verbose=>true})
+			    --UsedVarsOnly=>false})
+seedTest (PolySystem, Point, Point):= o -> (P, p0, x0) -> (
+    passed := new MutableHashTable from {};
+    R := ring P;
+    (m, n) := (#p0.Coordinates, P.NumberOfVariables);
+    assert((m == numgens coefficientRing R) and (n == numgens R));
+    -*
+    -- should we display warnings regarding "unused parameters/variables"?    
+    supports := unique flatten apply(equations P, p -> support p);
+    variableSupport := set select(supports, x -> index x < n);
+    parameterSupport := set select(supports, x -> index x >= n);
+    if o.UsedVarsOnly then (m, n) = (#parameterSupport, #variableSupport);
+    if (#variableSupport < n) then (
+	<< "WARNING: there are unused variables " << endl;
+	--<< "they are " << ((set gens R)-(set variableSupport)) << endl;
+	);
+    if (#parameterSupport < m) then << "WARNING: there are unused parameters " << endl;
+    *-
+    Pflat := sub(P,first flattenRing R);
+    xflat := point{x0.Coordinates|p0.Coordinates};
+    if (norm evaluate(Pflat,xflat) > o.ResidualTolerance) then (
+	passed.RESIDUAL = false;
+	if o.Verbose then << "RESIDUAL fails" << endl;
+	)
+    else (
+	passed.RESIDUAL = true;
+	J := evaluate(jacobian Pflat,xflat);
+    	codimFp := numericalRank(J_(toList(0..n-1)), Threshold => o.Threshold);
+    	m' := m+n-numericalRank(J, Threshold => o.Threshold);
+	n' := numericalRank(J_(toList(n..n+m-1)), Threshold => o.Threshold);
+	if (n>codimFp) then (
+    	    passed.ZDIM = false;
+	    if o.Verbose then << "ZDIM fails: local dimension = " << n-codimFp << " in ambient space of dim " << n << endl;
+	    )
+    	else (
+	    passed.ZDIM = true;
+	    if (m>m') then (
+	    	passed.PDOM = false;
+	    	if o.Verbose then << "PDOM fails: projection has dimension " << m' << endl;
+	    	) else passed.PDOM = true;
+	    if (n>n') then (
+	    	passed.XDOM = false;
+	    	if o.Verbose then << "XDOM fails: projection has dimension " << n' << endl;
+	    	) else passed.XDOM = true;
+	);
+    );
+    if fold(values passed,(a,b)->a and b) then print("All tests pass");
+    passed
+    )
+
 
 staticMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
