@@ -212,7 +212,7 @@ liftDeformation(List,List,List,List):= opts->(F,R,G,C)->(
      if n<1 then error "Need order at least one";
      -- find lowest order terms of obstruction equations
      if opts#Verbose >3 then print "Calculating tangent cone for obstructions";    
-     if d>0 then (lowG,cm):=lowestOrder(G,F,C,n)
+     if d>0 then (lowG,cm):=lowestOrder(G,F,C,n+1)
      else lowG=map(target F_0,source C_0,0); --unobstructed case
      T:=ring F_0;
      A:=T/ideal (F_0|lowG); --setup a common ring
