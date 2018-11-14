@@ -353,22 +353,6 @@ document { Key => (conjugate,Partition),
      	  partitions 4
 	  conjugate \ oo
      ///}
-document { Key => partitions,
-     Headline => "list the partitions of an integer" }
-document { Key => (partitions, ZZ, ZZ),
-     Usage => "partitions(n,k)",
-     Inputs => { "n", "k" },
-     Outputs => {{"a list of the partitions of the integer ", TT "n", " as a sum of terms each of which does not exceed ", TT "k"}},
-     PARA { "Each partition is a basic list of type ", TO "Partition", "." },
-     SeeAlso => {Partition, (partitions, ZZ)},
-     EXAMPLE "partitions(4,2)"}
-document { Key => (partitions, ZZ),
-     Usage => "partitions n",
-     Inputs => { "n" },
-     Outputs => {{"a list of the partitions of the integer ", TT "n"}},
-     PARA { "Each partition is a basic list of type ", TO "Partition", "." },
-     SeeAlso => {Partition,(partitions, ZZ, ZZ)},
-     EXAMPLE "partitions 4"}
 document { Key => UpdateOnly,
      Headline => "only copies of newer files should replace files" }
 document { Key => [copyDirectory, UpdateOnly],
