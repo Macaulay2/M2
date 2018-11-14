@@ -766,11 +766,12 @@ document {
 document {
      Key => "combinatorial functions",
      UL {
-	  TO "random",
 	  TO "binomial",
+	  TO "compositions",
+	  TO "partitions",
+	  TO "random",
 	  TO "subsets",
-	  TO "tally",
-	  TO "partitions"
+	  TO "tally"
 	  }
      }
 

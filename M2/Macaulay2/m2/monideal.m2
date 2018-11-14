@@ -320,6 +320,21 @@ monomialSubideal Ideal := (I) -> (
      monomialIdeal substitute(J, R)
      )
 
+
+polarize = method(Options => {VariableBaseName => "z"});
+polarize (MonomialIdeal) := o -> I -> (
+    n := #(generators ring I);
+    u := apply(#(first entries mingens I), i -> first exponents I_i);
+    Ilcm := max \ transpose u;
+    z := getSymbol(o.VariableBaseName);
+    Z := flatten apply(n, i -> apply(Ilcm#i, j -> z_{i,j}));
+    R := QQ(monoid[Z]);
+    G := generators R;
+    p := apply(n, i -> sum((Ilcm)_{0..i-1}));
+    monomialIdeal apply(u, e -> product apply(n, i -> product(toList(0..e#i-1), j -> G#(p#i+j))))
+    )
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
