@@ -2,7 +2,7 @@
 newPackage(
        "Cremona",
 	Version => "4.2.3", 
-        Date => "November 4, 2018",
+        Date => "November 15, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true,
@@ -256,7 +256,11 @@ toMap (Ideal,List) := o -> (I,v) -> (
    toMap(linSys,Dominant=>o.Dominant)
 );
 
-toMap (Ideal,ZZ) := o -> (I,v) -> toMap(I,{v},Dominant=>o.Dominant);
+toMap (Ideal,ZZ) := o -> (I,v) -> (
+   J := ideal select(I_*,g -> degree g <= {v});
+   if numgens J == 0 then J = sub(J,ring I);
+   toMap(J,{v},Dominant=>o.Dominant)
+)
 
 toMap (Ideal,ZZ,ZZ) := o -> (I,v,jj) -> (
    -- Assume I a homogeneous saturated ideal
@@ -267,12 +271,6 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,jj) -> (
    if not isField coefficientRing ring I then error "the coefficient ring needs to be a field";
    if jj <= 0 then error "expected a positive integer";
    homComp := method();
-   -- homComp (ZZ,Ideal) := (d,I) -> (
-   --   vv := ideal vars ring I;
-   --   D := flatten degrees I;
-   --   if d < min D then return ideal ring I;
-   --   trim sum for i from min D to min(d,max D) list (vv^(d - i) * ideal select(I_*,g -> degree g == {i}))
-   -- );
    homComp (ZZ,Ideal) := (d,I) -> ideal image basis(d,I);
    Jac := method();
    Jac (Matrix,ZZ) := (F,d) -> (
@@ -583,6 +581,48 @@ MultihomogeneousRationalMap ! := (Phi) -> (
      isBirational(Phi,MathMode=>true,Verbose=>false);
      image Phi;
      return Phi;
+);
+
+RationalMap (*) := (Phi) -> (
+     if Phi#"projectiveDegrees" === {} then setKeyValue(Phi,"projectiveDegrees",projectiveDegrees Phi);
+     if Phi#"degree" === null then setKeyValue(Phi,"degree",degreeOfRationalMap Phi);
+     if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",isDominant Phi);
+     if Phi#"isBirational" === null then setKeyValue(Phi,"isBirational",isBirational Phi);
+     if Phi#"idealImage" === null and isPolynomialRing target Phi and degree Phi != 0 then forceImage(Phi,approximateImage(Phi,Verbose=>false));
+     return Phi;
+);
+
+approximateImage = method(TypicalValue => Ideal, Options => {Verbose => true}); -- not exported yet
+approximateImage (RationalMap) := o -> (Phi) -> ( 
+    -- Experimental method to compute the image of a rational map
+    -- The output represents a scheme containing the image and having the same dimension and degree.
+    if Phi#"idealImage" =!= null then return Phi#"idealImage";
+    if not isPolynomialRing target Phi then error "not implemented yet: approximateImage of a rational map with target different from a projective space";
+    n := Phi#"dimTarget";
+    d0 := degreeOfRationalMap Phi;
+    if d0 == 0 then error "not implemented yet: approximateImage of a rational map of degree 0";
+    pr0 := first projectiveDegrees(Phi,NumDegrees=>0);
+    d := lift(pr0/d0,ZZ);
+    local I;
+    for i from 1 to 3 do (
+        if o.Verbose then <<"-- calculating kernel(...,"<<i<<")..."<<endl;
+        I = image(i,Phi); 
+        if I != 0 then break;
+    );
+    if dim I -1 == n and degree I == d then return I;
+    u := unique flatten degrees I;
+    if u === {1} or u === {2} then (
+        u = first u;
+        if o.Verbose then <<"-- calculating saturate kernel(...,"<<u+1<<")..."<<endl;
+        I = saturate image(u+1,Phi); 
+    ); 
+    local f;
+    while dim I -1 != n or degree I != d do (
+        f = map(source Phi,(target Phi)/I,matrix Phi);
+        if o.Verbose then <<"-- searching for another generator..."<<endl;
+        I = trim(I + lift(kernel(f,SubringLimit=>1),target Phi));
+    );
+    return I;
 );
 
 restrictionMapInt = method()
@@ -1167,6 +1207,11 @@ degreeOfRationalMapInt (MutableHashTable) := o -> (Phi) -> (
          if o.MathMode then setKeyValue(Phi,"degree",val);
          if o.MathMode and o.Verbose then <<certificate;
          return val;
+   );
+   if (class Phi === RationalMap and (not o.MathMode) and Phi#"dimAmbientTarget" - Phi#"dimTarget" == 1 and char coefficientRing Phi > 0 and coefficientRing Phi === ZZ/(char coefficientRing Phi)) then (
+        q := Phi (point source Phi);   
+        F := trim lift(inverseImage(map Phi,q,MathMode=>false),ambient source Phi);
+        if dim F -1 > 0 then return 0 else return degree F;
    );
    d := degree (lift(image Phi,ambient target Phi) + ideal target Phi);
    val1 := lift(pr0/d,ZZ);
