@@ -467,10 +467,17 @@ EXAMPLE {
 "describe phi",
 "time phi! ;",
 "describe phi",
-"QQ[x_0..x_4]; psi = rationalMap {-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3,-x_1*x_3+x_0*x_4,-x_2*x_3+x_1*x_4,-x_3^2+x_2*x_4};",
-"describe psi",
-"time psi! ;",
-"describe psi"}}
+"QQ[x_0..x_4]; phi = rationalMap {-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3,-x_1*x_3+x_0*x_4,-x_2*x_3+x_1*x_4,-x_3^2+x_2*x_4};",
+"describe phi",
+"time phi! ;",
+"describe phi"},
+PARA{"The command ",TT"phi(*)"," does more or less the same thing but it uses probabilistic methods and treats them as deterministic (the user should never use this)."},
+EXAMPLE {
+"phi = rationalMap rationalMap map specialQuadraticTransformation(8,ZZ/33331);",
+"describe phi",
+"time phi(*) ;",
+"describe phi"}
+}
 
 document { 
 Key => {(degrees,RationalMap),(multidegree,RationalMap)}, 
@@ -731,7 +738,7 @@ EXAMPLE {
 "toMap(I,2,2)", 
 "toMap(I,3,2)"},} 
 
-undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring)}
+undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring),(symbol (*),RationalMap)}
 
 document { 
 Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
