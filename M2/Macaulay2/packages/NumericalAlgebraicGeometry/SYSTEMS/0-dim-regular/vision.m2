@@ -11,9 +11,9 @@ P2 = for i to n-1 list transpose B#i * E * C#i
 I = ideal P1 + ideal P2
 -- numericalIrreducibleDecomposition I -- takes too long
 R1 = F[drop(gens R,1)]
-{* bug???
+-* bug???
 matrix{{1}}|vars R1
-*}
+*-
 RtoR1 = map(R1,R,matrix{{1_F}}|vars R1)
 PS = polySystem RtoR1 I
 

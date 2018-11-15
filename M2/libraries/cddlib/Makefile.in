@@ -1,9 +1,12 @@
-VERSION = 094g
-# http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
-# URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd
+VERSION = 094h
+# https://www.inf.ethz.ch/personal/fukudak/cdd_home/
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 ALLOPTIONS     = SUBDIRS="lib-src lib-src-gmp" gmpdir=/nowhere
-CONFIGOPTIONS  = $(ALLOPTIONS)
+CONFIGOPTIONS  = $(ALLOPTIONS) --includedir="$(LIBRARIESDIR)/include/cdd"
+
+# we build mpir as gmp statically, so we can't make a shared library here
+CONFIGOPTIONS += --disable-shared
+
 BUILDOPTIONS   = $(ALLOPTIONS)
 CHECKOPTIONS   = $(ALLOPTIONS)
 INSTALLOPTIONS = $(ALLOPTIONS)

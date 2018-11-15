@@ -23,6 +23,10 @@ handle SIGXCPU nostop noprint
 set unwindonsignal on
 set env GC_NPROCS 1
 set env GC_MARKERS 1
+
+# fix "During startup program terminated with signal ?, Unknown signal." under Mac OS X:
+set startup-with-shell off
+
 # source .gdb-run-it
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

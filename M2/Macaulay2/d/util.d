@@ -170,6 +170,23 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
      is a:RawMatrixCell do RawMatrixArray(a.p)
      else RawMatrixArray());
 
+export isSequenceOfMutableMatrices(e:Expr) : bool := (
+     when e is s:Sequence do (
+	  foreach i in s do when i is RawMutableMatrixCell do nothing else return false;
+	  true)
+     is RawMutableMatrixCell do true
+     else false);
+export getSequenceOfMutableMatrices(e:Expr) : RawMutableMatrixArray := (
+     when e
+     is s:Sequence do (
+	  new RawMutableMatrixArray len length(s) do (
+	       foreach i in s do
+	       when i
+	       is a:RawMutableMatrixCell do provide a.p
+	       else anywhereAbort("internal error : getSequenceOfMutableMatrices")))
+     is a:RawMutableMatrixCell do RawMutableMatrixArray(a.p)
+     else RawMutableMatrixArray());
+
 -----------------------------------------------------------------------------
 -- helper routines for checking and converting return values
 
@@ -200,6 +217,7 @@ export toExpr(x:RawMonomial):Expr := Expr(RawMonomialCell(x));
 export toExpr(x:RawMonomialIdeal):Expr := Expr(RawMonomialIdealCell(x));
 export toExpr(x:RawMonomialOrdering):Expr := Expr(RawMonomialOrderingCell(x));
 export toExpr(x:RawMutableMatrix):Expr := Expr(RawMutableMatrixCell(x));
+export toExpr(x:RawMutableComplex):Expr := Expr(RawMutableComplexCell(x));
 -- NAG begin
 export toExpr(x:RawHomotopy):Expr := Expr(RawHomotopyCell(x));
 export toExpr(x:RawSLEvaluator):Expr := Expr(RawSLEvaluatorCell(x));
@@ -230,6 +248,7 @@ export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr
 export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(RawFreeModuleCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(RawMatrixCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(RawMutableMatrixCell(r)) is null do engineErrorMessage();
+export toExpr(x:RawMutableComplexOrNull):Expr := when x is r:RawMutableComplex do Expr(RawMutableComplexCell(r)) is null do engineErrorMessage();
 -- NAG begin
 export toExpr(x:RawHomotopyOrNull):Expr := when x is r:RawHomotopy do Expr(RawHomotopyCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawSLEvaluatorOrNull):Expr := when x is r:RawSLEvaluator do Expr(RawSLEvaluatorCell(r)) is null do engineErrorMessage();
@@ -245,6 +264,8 @@ export toExpr(x:CCorNull):Expr := when x is i:CC do Expr(CCcell(i)) is null do e
 export toExpr(x:RawMatrixPairOrNull):Expr := when x is p:RawMatrixPair do seq(Expr(RawMatrixCell(p.a)),Expr(RawMatrixCell(p.b))) is null do engineErrorMessage();
 export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(RawMatrixCell(m)) ) );
 export toExpr(x:RawMatrixArrayOrNull):Expr := when x is r:RawMatrixArray do toExpr(r) is null do engineErrorMessage();
+export toExpr(x:RawMutableMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(RawMutableMatrixCell(m)) ) );
+export toExpr(x:RawMutableMatrixArrayOrNull):Expr := when x is r:RawMutableMatrixArray do toExpr(r) is null do engineErrorMessage();
 export toExpr(x:array(string)):Expr := Expr( list( new Sequence len length(x) do foreach s in x do provide Expr(stringCell(s)) ) );
 export toExpr(x:RawComputationOrNull):Expr := when x is r:RawComputation do Expr(RawComputationCell(r)) is null do engineErrorMessage();
 export toExpr(x:RawArrayPairOrNull):Expr := (

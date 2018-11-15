@@ -538,7 +538,7 @@ assert(not isStrictlyIncreasing L)
 --third element: the result of subtracting it.
 decompose1= B->(
      L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     if not isStrictlyIncreasing L then error "not in the simplex of pure Betti diagrams";
 --     C:=pureBettiDiagram L;
      C:=makePureBettiDiagram L;     
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
@@ -548,7 +548,7 @@ decompose1= B->(
 --  input: BettiTally
 decompose2 = B -> (
      L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     if not isStrictlyIncreasing L then error "not in the simplex of pure Betti diagrams";
      C:=makePureBettiDiagram( L,TableEntries=>RealizationModules);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
@@ -557,7 +557,7 @@ decompose2 = B -> (
 --  input: BettiTally
 decompose3 = B -> (    
      L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     if not isStrictlyIncreasing L then error "not in the simplex of pure Betti diagrams";
      C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
@@ -859,7 +859,7 @@ assert(C===D)
 ---------------------------------------------
 
 pureCohomologyTable = method(TypicalValue => CohomologyTally)
-{*
+-*
 pureCohomologyTable(List, ZZ, ZZ, Symbol) := (zeros, lo, hi, old) -> (
      R := QQ (monoid [z]);
      hp = product(zeros, a -> (R_0 - a));
@@ -873,7 +873,7 @@ pureCohomologyTable(List, ZZ, ZZ, Symbol) := (zeros, lo, hi, old) -> (
 	  d := i+w;
 	  (n+i-w, {i},i) => lift(v,ZZ)
 	  ));
-*}
+*-
 pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
      z := local z;
      R := QQ (monoid [z]);
@@ -981,7 +981,7 @@ rangeMatrices(List,ZZ,ZZ):=(e,lowestDegree,highestDegree)->(
 		    )
 	       )
 
-{*
+-*
 peskineSzpiro=(r,n)->apply(n+r+1,k->matrix apply(r+1,i->apply(n+1,j->
 --returns (redundant) list of n+r+1 Peskine-Szpiro relations in hilb function form
 --(the Hilb fcn values from *** to ***) Note: the P-S eqns in this sense are
@@ -1032,7 +1032,7 @@ upperEquation F
 --for the degree sequence d is nonzero. But this fact follows from the vanishing of
 --the lower equation at such sequences.
 ///
-*}
+*-
 
 middleComplex=(d,e)->(
      n:=#d-1;
@@ -1128,9 +1128,9 @@ dotProduct(Matrix, ZZ, BettiTally):=(A,lowest, B)->(
      sum(keys B, k-> (B#k)*(A_(last k-first k-lowest, first k)))
      )
 
-{* -- A newer version, but perhaps with less warnings
+-* -- A newer version, but perhaps with less warnings
 dotProduct(Matrix, ZZ, BettiTally) := (A,lowest, B) -> dotProduct(mat2betti(A,lowest),B)
-*}
+*-
 
 dotProduct(Matrix, BettiTally) := (A,B) -> dotProduct(A,0,B)
 
@@ -1163,7 +1163,7 @@ assert(dotProduct(A2, mat2betti B2) == 2)
 ///
 
 
-{* supportFunctional is NOT functional yet *}
+-* supportFunctional is NOT functional yet *-
 supportFunctional=method()
 
 supportFunctional(ChainComplex, ChainComplex):=(E,F)->(

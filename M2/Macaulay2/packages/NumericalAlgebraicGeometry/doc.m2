@@ -87,13 +87,15 @@ document {
 	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], 
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], 
 	     [refine, SingularConditionNumber],  [track,SingularConditionNumber],
+	     [setDefault,Precision],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...), v = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" (meaning Attempts = ", toString DEFAULT.Attempts, "). The maximal number of attempts (e.g., to make a random regular homotopy)."},
 		  SingularConditionNumber => {" (meaning SingularConditionNumber = ", toString DEFAULT.SingularConditionNumber, "). Matrix is considered to be singular 
-		       if its condition number is greater than this value."}
+		      if its condition number is greater than this value."},
+		  Precision =>{" (meaning bits of precision)"}		      	   
 		  },
 	Outputs => {
 	     {TT "setDefault", " returns ", TO null, "."}, 
@@ -175,14 +177,14 @@ document { Key => {"numerical homotopy tracking options",
 	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
 	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
 	[solveSystem,Precision],[solveSystem,ResidualTolerance],
-	{*
+	-*
 	-- trackSegment
 	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
 	[trackSegment,maxCorrSteps], [trackSegment,Normalize], [trackSegment,numberSuccessesBeforeIncrease],
 	[trackSegment,Predictor], [trackSegment,Projectivize], [trackSegment,SingularConditionNumber],
 	[trackSegment,stepIncreaseFactor], [trackSegment,tDegree], [trackSegment,tStep], [trackSegment,tStepMin],
 	[trackSegment,MultistepDegree], [trackSegment,NoOutput]
-	*}
+	*-
 	},
     Headline => "options for core functions of Numerical Algebraic Geometry",
     UL apply({
@@ -594,7 +596,9 @@ document {
 	    },
 	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
         EXAMPLE lines ///
+options numericalRank
 numericalRank matrix {{2,1},{0,0.001}}
+numericalRank matrix {{2,1},{0,0.0001}}
      	///,
      	SeeAlso => {SVD}
 	}
@@ -773,8 +777,47 @@ document {
 	[deflate,Variable]
 	},
     Headline => "first-order deflation",
-    "Deflate a polynomial system to restore quadratic convergence of Newton's method. 
-    The  option ", TT "Variable", " specifies the base name for the augmented variables.",
+    Usage => "r = deflate(F,P); r = deflate(F,r); r = deflate(F,B), ...",
+    Inputs => { "P"=>Point, "F"=>PolySystem, "r"=>ZZ, "B"=>Matrix },
+    Outputs => { "r"=>ZZ=>"the rank used in the (last) deflation"},
+    PARA{
+	"The purpose of deflation is to restore quadratic convergence of Newton's method in a neighborhood of a singular 
+    isolated solution P. This is done by constructing an augemented polynomial system with a solution of strictly lower multiplicity projecting to P."},
+    Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
+	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
+	" the deflated system DF and a matrix B used to obtain it. ", 
+	" Here B is a random matrix of size n x (r+1), where n is the number of variables 
+	and DF is obtained by appending to F the matrix equation J*B*[L_1,...,L_r,1]^T = 0.
+	The polynomials of DF use the original variables and augmented variables L_1,...,L_r."}},
+    PARA{
+	"Apart from ", TT "P", ", ", ofClass Point,", one can pass various things as the second argument."  
+	},
+    UL {
+	{ofClass ZZ, " ", TT "r", " specifies the rank of the Jacobian dF (that may be known to the user)"},
+	{ofClass Matrix, " ", TT "B", " specifies a fixed (r+1)-by-n matrix to use in the deflation construction."},
+	{"a pair of matrices ", TT "(B,M)", " specifies additionally a matrix that is used to ", TO squareUp, "."},
+	{"a list", TT "{(B1,M1),(B2,M2),...}", 
+	    " prompts a chain of successive delations using the provided pairs of matrices."},
+	},
+    "The option ", TT "Variable", " specifies the base name for the augmented variables.",
+    EXAMPLE lines ///
+CC[x,y,z]
+F = polySystem {x^3,y^3,x^2*y,z^2}
+P0 = point matrix{{0.000001, 0.000001*ii,0.000001-0.000001*ii}}
+isFullNumericalRank evaluate(jacobian F,P0)
+r1 = deflate (F,P0)
+P1' = liftPointToDeflation(P0,F,r1) 
+F1 = F.Deflation#r1
+P1 = newton(F1,P1')
+isFullNumericalRank evaluate(jacobian F1,P1)
+r2 = deflate (F1,P1)
+P2' = liftPointToDeflation(P1,F1,r2) 
+F2 = F1.Deflation#r2
+P2 = newton(F2,P2')
+isFullNumericalRank evaluate(jacobian F2,P2)
+P = point {take(coordinates P2, F.NumberOfVariables)}
+assert(residual(F,P) < 1e-50)	
+    ///,
     Caveat => {"Needs more documentation!!!"},
     SeeAlso=>{PolySystem,newton}
     }
@@ -879,18 +922,31 @@ document {
 document {
     Key => {(parameterHomotopy,List,List,List),parameterHomotopy},
     Headline => "solve a parametric system of equations",
+       Usage => "sols = parameterHomotopy(F,varsP,valuesP)",
+    Inputs => { 
+	"F" => {" contains the polynomials in the system"},
+	"varsP" => {" names of the parameters"},
+	"valuesP" => {" contains (possibly several sets of) values of the parameters"}  
+	},
+    Outputs => { "sols"=>" lists of lists of solutions for each set of the parameters" },
     "Solves a parameteric polynomial system for several values of parameters.", 
+    EXAMPLE lines ///
+    R = CC[u1,u2,u3,x,y]
+    f1 = u1*(y-1)+u2*(y-2)+u3*(y-3)
+    f2 = (x-11)*(x-12)*(x-13)
+    try parameterHomotopy({f1,f2},{u1,u2,u3},{{1,0,0},{0,1+2*ii,0}}, Software=>BERTINI) else "need to install Bertini to run these lines"
+///,
     Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
     }
 
-{*
+-*
 document {
     Key => {(trackSegment,PolySystem,Number,Number,List), trackSegment},
     Headline => "track the one-parametric homotopy",
     "Tracks a homotopy on a linear segment in complex plane..",
     Caveat => {"Experimental: implemented only with SLPs at the moment!!!"}
     }
-*}
+*-
 
 document {
     Key => {(solveGenericSystemInTorus,List), solveGenericSystemInTorus, (solveGenericSystemInTorus,PolySystem)},
@@ -909,7 +965,7 @@ document {
     SeeAlso=>{PHCPACK, PHCpack, solveSystem}
     }
 
-{*-------- TEMPLATE ------------------
+-*-------- TEMPLATE ------------------
 document {
     Key => {,},
     Headline => "",
@@ -922,11 +978,11 @@ document {
     Caveat => {"" },
     SeeAlso=>{()}
     }
-*}
+*-
 
 document {
     Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
-	gateHomotopy,--[Parameters,gateHomotopy]
+	gateHomotopy, 
 	},
     Headline => "homotopy system via SLPexpressions",
     Usage => "HS = gateHomotopy(H,X,T)",
@@ -940,7 +996,6 @@ document {
 	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
     "Optional arguments:",
     UL{
-	{TO "Parameters", "-- a row vector of parameter variables"},
 	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}
 	},  
     EXAMPLE lines ///
@@ -954,7 +1009,28 @@ HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
     ///,
     Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
 	TT "Parameters, X, T", "."},
-    SeeAlso=>{ --GateHomotopy,GateParameterHomotopy,
-    	specialize}
+    -- SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
     }
-    
+doc ///
+    Key 
+        [gateHomotopy,Software]
+    Headline
+    	specifies where evaluation should be done (M2=top level, M2engine=core)     	
+///
+doc ///
+    Key 
+	[gateHomotopy,Parameters]
+    Headline
+    	specifies parameter names
+///
+doc ///
+    Key 
+	[gateHomotopy,Strategy]
+    Headline
+    	strategy is either to "compress" or not (any other value)
+///    
+
+document {
+    Key => "DoublePrecision",
+    Headline => "a constant equal to 53 (the number of bits of precision)"
+    }

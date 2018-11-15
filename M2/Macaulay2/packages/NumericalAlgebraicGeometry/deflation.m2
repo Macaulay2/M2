@@ -151,7 +151,7 @@ F2 = F1.Deflation#r2
 P2 = newton(F2,P2')
 assert isFullNumericalRank evaluate(jacobian F2,P2)
 P = point {take(coordinates P2, F.NumberOfVariables)}
-assert(residual(F,P) < 1e50)
+assert(residual(F,P) < 1e-50)
 NP2 = newton(F2,P2)
 NNP2 = newton(F2,NP2)
 NP2.ErrorBoundEstimate
@@ -199,7 +199,7 @@ F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
 P = point sub(matrix{{0.000001, 0.000001*ii,1.000001-0.000001*ii}},C)
 deflateInPlace(P,F)
 assert(P.DeflationSequence == {0,1})
-assert(10{*a not too large constant*}*P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
+assert(10-*a not too large constant*-*P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
 ///
 
 partitionViaDeflationSequence = method()

@@ -8,8 +8,8 @@ Cone == Cone := (C1,C2) -> (
    contains(C1, C2) and contains(C2, C1)
 )
 
-
-cone HashTable := inputProperties -> (
+internalConeConstructor = method()
+internalConeConstructor HashTable := inputProperties -> (
    resultHash := sanitizeConeInput inputProperties;
    constructTypeFromHash(Cone, resultHash)
 )
@@ -48,7 +48,7 @@ coneFromMinimalVData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
          rays => iRays,
          computedLinealityBasis => linealityGenerators
      };
-     cone result
+     internalConeConstructor result
 )
 
 
@@ -60,7 +60,7 @@ coneFromMinimalHData(Matrix, Matrix) := (ineq, eq) -> (
       facets => ineq,
       computedHyperplanes => eq
    };
-   cone result
+   internalConeConstructor result
 )
 
 
@@ -81,7 +81,7 @@ coneFromVData(Matrix,Matrix) := (Mrays,LS) -> (
       inputRays => Mrays,
       inputLinealityGenerators => LS
    };
-   cone result
+   internalConeConstructor result
 )
 
 --   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
@@ -98,7 +98,7 @@ coneFromHData(Matrix, Matrix) := (ineq, eq) -> (
       inequalities => ineq,
       equations => eq
    };
-   return cone result
+   return internalConeConstructor result
 
 )
 

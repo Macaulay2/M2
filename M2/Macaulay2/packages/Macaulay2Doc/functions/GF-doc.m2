@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {GF,[GF, Variable],[GF, PrimitiveElement],[GF, SizeLimit],(GF,ZZ,ZZ),(GF,ZZ),(GF,Ring)},
+     Key => {GF,[GF, Variable],[GF, PrimitiveElement],[GF, SizeLimit],(GF,ZZ,ZZ),(GF,ZZ),(GF,Ring),[GF,Strategy]},
      Headline => "make a finite field",
      SYNOPSIS (
 	  BaseFunction => GF,

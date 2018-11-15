@@ -20,7 +20,7 @@ S = transpose matrix{
 	    C#i#j*M#((monomials polys#i)_(0,j))
 	    ))
     }
-{*
+-*
 F = transpose matrix{flatten C}
 PH = gateHomotopy4preimage(F,S,X|flatten C,flatten C)
 x0 = apply(X,x->1)
@@ -31,7 +31,7 @@ c0 = point{
 	    )) 
     }
 pre0 = point{x0|coordinates c0}
-*}
+*-
 PH = parametricSegmentHomotopy(S,X,flatten C)
 x0 = apply(X,x->1)
 c0 = point{ 

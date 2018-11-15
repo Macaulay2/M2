@@ -10,8 +10,8 @@ Polyhedron == Polyhedron := (P1,P2) -> (
 )
 
 
-polyhedron = method()
-polyhedron HashTable := inputProperties -> (
+internalPolyhedronConstructor = method()
+internalPolyhedronConstructor HashTable := inputProperties -> (
    result := for key in keys inputProperties list(
       value := inputProperties#key;
       if instance(value,Sequence) then (
@@ -57,7 +57,7 @@ convexHull(Matrix, Matrix, Matrix) := (Mvert, Mrays, Mlineality) -> (
       inputRays => Mrays,
       inputLinealityGenerators => Mlineality
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
 convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
@@ -85,7 +85,7 @@ convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
       ambientDimension => ambDim P1,
       underlyingCone => coneFromVData(C1, C2)
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
    
 --   INPUT : 'L',   a list of Cones, Polyhedra, vertices given by M, 
@@ -102,9 +102,11 @@ convexHull List := L -> (
    result := new HashTable from {
       underlyingCone => underLyingResult
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )
 
+
+polyhedron = method()
 polyhedron Cone := C -> (
    n := ambDim C;
    rayData := getSufficientRayData C;
@@ -138,5 +140,5 @@ polyhedronFromHData(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
       inequalities => (M,v),
       equations => (N,w)
    };
-   polyhedron result
+   internalPolyhedronConstructor result
 )

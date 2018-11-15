@@ -461,96 +461,6 @@ document {
      }
 
 document {
-     Key => "mapping over lists",
-     Headline => "apply a function to each element of a list",
-     "In programming, loops that operate on consecutive elements of a
-     list are common, so we offer various ways to apply functions to
-     each of the elements of a list, along with various ways to treat the
-     returned values.",
-     PARA{},
-     "The most basic operation is provided by ", TO "scan", ", which applies
-     a function consecutively to each element of a list, discarding the
-     values returned.",
-     EXAMPLE "scan({a,b,c}, print)",
-     "The keyword ", TO "break", " can be used to terminate the scan
-     prematurely, and optionally to specify a return value for the
-     expression.  Here we use it to locate the first even number in
-     a list.",
-     EXAMPLE {
-	  "scan({3,5,7,11,44,55,77}, i -> if even i then break i)"
-	  },
-     "The function ", TO "apply", " is similar to ", TO "scan", " but
-     will produce a list containing the values returned.",
-     EXAMPLE "apply({1,2,3,4}, i -> i^2)",
-     "This operation is so common that we offer two shorthand notations for
-     it, one with the function on the right and one with the function on
-     the left.",
-     EXAMPLE {
-	  ///{1,2,3,4} / (i -> i^2)///,
-	  ///(i -> i^2) \ {1,2,3,4}///,
-	  },
-     "The associativity of these operators during parsing is set up so the 
-     following code works as one would wish.",
-     EXAMPLE {
-	  ///{1,2,3,4} / (i -> i^2) / (j -> 1000*j)///,
-	  ///(j -> 1000*j) \ (i -> i^2) \ {1,2,3,4}///,
-	  ///(j -> 1000*j) @@ (i -> i^2) \ {1,2,3,4}///,
-	  },
-     "The function ", TO "apply", " can also be used with two lists of the same
-     length, in which case it will apply the function consecutively to
-     corresponding elements of the two lists.",
-     EXAMPLE {
-	  "apply({1,2,3}, {7,8,9}, (i,j) -> 1000*i+j)"
-	  },
-     "The function ", TO "table", " can be used to create a table (doubly
-     nested list) from two lists and a function of two arguments.  It applies
-     the function consecutively to each element from the first list paired
-     with each element from the second list, so the total number of evaluations
-     of the function is the product of the lengths of the two lists.",
-     EXAMPLE {
-	  "table({1,2,3},{7,8},(i,j) -> 1000*i+j)"
-	  },
-     "The function ", TO "applyTable", " can be used to apply a function to 
-     each element of table.",
-     EXAMPLE {
-	  "applyTable( {{1,2,3},{4,5}}, i -> i^2)"
-	  },
-     "We may use ", TO "select", " to select those elements from a list
-     that satisfy some condition.  In the next example, we use the function
-     ", TO "even", " to select the even numbers from a list.",
-     EXAMPLE "select({1,2,3,4,5,6,7,8,9,10}, even)",
-     "An optional first argument to ", TO "select", " allows us to specify the
-     maximum number of elements selected.",
-     EXAMPLE "select(2,{1,2,3,4,5,6,7,8,9,10}, even)",
-     "We may use ", TO "any", " to tell whether there is at least one element of 
-     a list satisfying a condition, and ", TO "all", " to tell whether all 
-     elements satisfy it.",
-     EXAMPLE {
-	  "any({1,2,3,4,5,6,7,8,9,10}, even)",
-	  "all({1,2,3,4,5,6,7,8,9,10}, even)",
-	  },
-     "We can use ", TO "position", " to tell us the position of the first element
-     in a list satisfying a condition.",
-     EXAMPLE {
-	  "position({1,3,5,7,8,9,11,13,15,16},even)",
-	  },
-     "The functions ", TO "fold", " and ", TO "accumulate", " provide various
-     ways to apply a function of two arguments to the elements of a list.  One
-     of the arguments is the next element from the list, and the other argument
-     is the value returned by the previous application of the function.  As an
-     example, suppose we want to convert the list ", TT "{7,3,5,4,2}", " of digits
-     into the corresponding number ", TT "73542", ".  The formula
-     ", TT "(((7*10+3)*10+5)*10+4)+2", " is a fast way to do it that doesn't
-     involve computing high powers of 10 separately.  We can do this with
-     ", TO "fold", " and the following code.",
-     EXAMPLE {
-	  "fold((i,j) -> i*10+j, {7,3,5,4,2})",
-	  },
-     "It is possible to give an additional argument to ", TO "fold", " so
-     that lists of length 0 can be handled correctly."
-     }
-
-document {
      Key => "mapping over hash tables",
      Headline => "apply a function to each element of a hash table",
      "Each entry in a hash table consists of a key and a value.  We provide
@@ -1195,8 +1105,11 @@ document {
      "Now let's imagine we wish to treat instances of ", TT "X", " as
      vectors, and to negate one by negating its entries.  As it
      happens, no method for this has been installed for basic lists,
-     as we can check with ", TO "lookup", ".",
-     EXAMPLE "lookup(symbol -, X) === null",
+     so trying to negate ", TT "x", " results in an error.",
+     EXAMPLE {
+	 "stopIfError = false;",
+	 "- x",
+	 },
      "We install and test a new method as described in ", TO "installing methods", ".",
      EXAMPLE {
 	  "- X := t -> apply(t,i -> -i);",

@@ -23,14 +23,13 @@
 
 newPackage(
 	"Binomials",
-	Version => "1.2",
-	Date => "April 2015",
+	Version => "1.2.1",
+	Date => "January 2018",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "Specialized routines for binomial ideals",
-	Configuration => { },
 	PackageImports => {"FourTiTwo", "Cyclotomic"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -630,6 +629,11 @@ binomialIsPrime Ideal := Ideal => o -> I -> (
      	  if cv === false  then return false)
      else cv = o#CellVariables;
      
+     -- Check if non-cellular variables are all contained:
+     R := ring I;
+     ncv := toList(set (gens R) - cv); -- nilpotent variables x \notin E
+     if not isSubset(promote(ideal ncv, R), I) then return false;
+
      -- Test if the partial character saturated:
      pc := partialCharacter (I, CellVariables=>cv);
      if image Lsat pc#"L" != image pc#"L" then return false;
@@ -691,7 +695,7 @@ binomialMinimalPrimes Ideal := Ideal => o -> I -> (
      ncv := {};
      i := 0;
      j := #Answer;
-     ME :=ideal; {* pc = {}; *} si := ideal; mp := {}; F := null; S:= null;
+     ME :=ideal; -* pc = {}; *- si := ideal; mp := {}; F := null; S:= null;
      for a in Answer do (
 	  i = i+1;
 	  if o#Verbose  then (
@@ -1975,6 +1979,13 @@ I3 = ideal (x^3)
 for L in permutations {I1,I2,I3} do (
     assert (#(extractInclusionMinimalIdeals L) == 1);
     )
+///
+
+TEST ///
+R = QQ[x,y]
+assert(binomialIsPrime ideal x^2 == false)
+assert(binomialIsPrime ideal (x^2-y^2) == false)
+assert(binomialIsPrime ideal (x-y) == true)
 ///
 
 end

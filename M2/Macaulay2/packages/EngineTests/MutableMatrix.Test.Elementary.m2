@@ -234,7 +234,6 @@ testops5 = (R) -> (
      assert(submatrix(m, {3,2,1}) == mutableMatrix(submatrix(matrix m, {3,2,1}), Dense=>false));
      )
 
-<< "warning: not testing transpose of sparse mutable matrices yet" << endl;
 testTranspose = (R) -> (
     --M := mutableMatrix(R, 3, 5);
     M := mutableMatrix(R, 3, 5, Dense=>true);

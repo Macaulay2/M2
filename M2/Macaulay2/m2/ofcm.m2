@@ -36,7 +36,7 @@ degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 rle = method(Dispatch => Thing)
-rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
+rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then rle y#0 else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
@@ -56,10 +56,10 @@ monoidDefaults = (
 	  SkewCommutative => {},
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
-     	  Heft => null {* find one *},
+     	  Heft => null -* find one *-,
 	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
-	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
-      	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
+	  Join => null -* true *-,			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
+      	  DegreeMap => null -* identity *-,		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
      	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
 	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
 	  }
@@ -79,16 +79,13 @@ monoidParts = (M) -> (
 expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
-expression GeneralOrderedMonoid := M -> new Parenthesize from { new FunctionApplication from {monoid, expressionMonoid M} }
+expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { (expression monoid) expressionMonoid M }
+describe GeneralOrderedMonoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
 
-toExternalString GeneralOrderedMonoid := M -> toString expression M
-toString GeneralOrderedMonoid := M -> (
-     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
-     toExternalString M)
-net GeneralOrderedMonoid := M -> (
-     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
-     net expression M)
-describe GeneralOrderedMonoid := M -> net expression M
+toExternalString GeneralOrderedMonoid := toString @@ describe
+toString GeneralOrderedMonoid := toString @@ expression
+net GeneralOrderedMonoid := net @@ expression
+texMath GeneralOrderedMonoid := x -> texMath expression x
 
 degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
 degreesMonoid PolynomialRing := R -> (
@@ -262,7 +259,7 @@ makeit1 := (opts) -> (
 	  then processTrm trms#0
 	  else new Product from apply(trms, processTrm));
      expression M := x -> (
-	  processTrms rawSparseListFormMonomial x.RawMonomial
+	  hold processTrms rawSparseListFormMonomial x.RawMonomial -- hold needed if single variable
 	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
 	  );
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
@@ -292,6 +289,7 @@ makeit1 := (opts) -> (
      remove(opts, VariableBaseName);
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
+     texMath M := x -> texMath expression x;
      if numvars == 0 and not madeTrivialMonoid then (
 	  madeTrivialMonoid = true;
 	  M.RawMonoid = rawMonoid();
@@ -300,7 +298,7 @@ makeit1 := (opts) -> (
      	  M.degreesRing = (
 	       if opts.Heft =!= null 
 	       then degreesRing opts.Heft 
-	       else degreesRing degrk {* shouldn't really be needed *} 
+	       else degreesRing degrk -* shouldn't really be needed *-
 	       );
      	  M.degreesMonoid = monoid M.degreesRing;
 	  M.RawMonoid = rawMonoid(
@@ -563,7 +561,7 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       		 else x -> error "degree lift function not provided (DegreeLift option)")
 		    else lm);
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
-	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
+	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft -* a hint *-;
 	       )
 	  else error "tensor: expected Join option to be true, false, or null")
      else (

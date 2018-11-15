@@ -40,6 +40,7 @@ modules.m2
 matrix.m2
 matrix1.m2
 mutablemat.m2
+localring.m2
 quotring.m2
 multilin.m2
 flint.m2
@@ -75,9 +76,11 @@ hypertext.m2
 texhtml.m2
 html.m2
 varieties.m2
+webapp.m2
 mathml.m2
 texmacs.m2
 pretty.m2
+docsearch.m2
 undoc.m2
 obsolete.m2
 exports.m2

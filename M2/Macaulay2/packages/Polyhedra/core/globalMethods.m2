@@ -15,7 +15,7 @@ isSimplicial PolyhedralObject := X -> getProperty(X, simplicial)
 
 
 isFullDimensional = method(TypicalValue => Boolean)
-isFullDimensional PolyhedralObject := X -> getProperty(X, fullDimensional)
+isFullDimensional PolyhedralObject := X -> ambDim X == dim X
 
 
 -- PURPOSE : Giving the rays
@@ -92,6 +92,8 @@ nVertices = method(TypicalValue => ZZ)
 minFace = method()
 maxFace = method()
 
+-- Translate faces given via ray indices to representation via facet indices
+dualFaceRepresentationMap = method();
 
 -- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 
 inInterior = method(TypicalValue => Boolean)

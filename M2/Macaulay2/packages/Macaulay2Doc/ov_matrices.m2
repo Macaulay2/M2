@@ -80,7 +80,7 @@ document {
 	    "random(R^3,R^4)"
 	    },
        "Over a polynomial ring, this will select elements in the base 
-       ring or field. TO obtain a matrix of (say) linear polynomials, use",
+       ring or field. To obtain a matrix of (say) linear polynomials, use",
        EXAMPLE {
 	    "T = R[x,y];",
 	    "random(T^3,T^{4:-1})"
@@ -119,7 +119,7 @@ document {
        ring, x is the variable you want to start with and n is the 
        size of the matrix.",
        EXAMPLE { 
-	    "genericSymmetricMatrix(S,u,3)"
+	    "genericSkewMatrix(S,u,3)"
 	    }     
      }
 
@@ -321,12 +321,12 @@ document {
        "++"
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "submatrices",
      }
-*}
+*-
 
 document {
      Key => "differentiation",

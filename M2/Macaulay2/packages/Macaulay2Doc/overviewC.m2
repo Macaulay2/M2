@@ -112,7 +112,7 @@ document {
 	  "lift(a^20, ambient F)",
 	  "apply({20,40,80}, i -> lift(a^i, ambient F))",
 	  },
-     "(for more details on lift, see , ", TO "working with multiple rings", ").",
+     "(for more details on lift, see ", TO "working with multiple rings", ").",
      PARA{},
      "Finite fields can be used as base rings for polynomial rings.",
      EXAMPLE {
@@ -129,13 +129,6 @@ document {
      EXAMPLE "k = GF 81",
      "The generator of the field can be obtained as usual.",
      EXAMPLE "k_0",
-     "Notice that the name of the generator is displayed with a ", TT "$", " in it
-     to indicate that it is not accessible by typing.  Of course, you could assign the
-     generator to the symbol of your choice, but it will still print the same way.",
-     EXAMPLE {
-	  "a = k_0",
-      	  "a^20+1",
-	  },
      "You may use ", TO "ambient", " to see the quotient ring the field is made from.",
      EXAMPLE "ambient k",
      "Use ", TO "ideal", " to see the ideal that defined that quotient ring.",
@@ -170,7 +163,7 @@ document {
      EXAMPLE "T",
      "The generator of A can be obtained this way:",
      EXAMPLE "A_0",
-     "Use ", TO "substitute", " to see map it to an element of the finite field.",
+     "Use ", TO "substitute", " to map it to an element of the finite field.",
      EXAMPLE "substitute(A_0,k)",
      "Conversely, a given element of the finite field can be transferred back
      to the quotient ring with ", TO "lift", ".",
@@ -363,10 +356,12 @@ document {
       	  "leadCoefficient g",
       	  "leadMonomial g",
 	  },
-     "Notice that the lead monomial is an element of a monoid whose name is
-     ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
-     EXAMPLE "exponents leadMonomial g",
-     "We can get all of the coefficients at once, assembled a one-rowed matrix,
+     "The exponents of a monomial or term can be extracted with ", TO "exponents", ".",
+     EXAMPLE {
+	 "exponents leadMonomial g",
+	 "exponents leadTerm g",
+	 },
+     "We can get all of the coefficients at once, assembled in a one-rowed matrix,
      along with a matrix containing the corresponding monomials.",
      EXAMPLE {
 	  "coefficients f",
@@ -687,7 +682,7 @@ document {
 -- GB nodes -------
 -------------------
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hilbert functions",
@@ -708,7 +703,7 @@ document {
 document {
      Key => "solving systems of polynomial equations",
      }
-*}
+*-
 
 /// 
 Plan for the next node:
@@ -731,30 +726,30 @@ TEST ///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 
-{*
+-*
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
-*}
+*-
      
-{*
+-*
 installHilbertFunction = method()
 installHilbertFunction(Module,RingElement) := (M,hf) -> (
      -- we need to place hf into the degree ring of M.
      hf = substitute(hf,degreesRing M);
      M.cache.poincare = hf;
      )
-*}
+*-
 
-{*
+-*
 installGroebner = method()
 -- DO THIS
-*}
+*-
 
-{*
+-*
 gbRemove = method()
 gbRemove Module := (M) -> remove((generators M).cache, {false,0})
 gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
-*}
+*-
   -- PROBLEM: what about the other GB
   
 R = QQ[a..d,Weights=>{-1,0,0,0},Global=>false]

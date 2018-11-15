@@ -13,14 +13,15 @@ document { Key => "packages provided with Macaulay2",
 	  pkg -> (
 	       local p;
 	       (dictionaryPath,loadedPackages,currentPackage,p) = (dictionaryPath,loadedPackages,currentPackage,
-		    try 
+	            -- temporarily commented out:
+		    -- try 
 		    needsPackage(pkg,DebuggingMode => false)
-		    else (
-			 stderr << "--warning: *** package " << pkg << " failed to load while generating list of packages provided with Macaulay2" << endl;
-			 if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)
-			 then value PackageDictionary#pkg
-			 else first ( newPackage pkg, endPackage pkg ) -- just fake it
-			 )
+		    -- else (
+		    -- 	 stderr << "--warning: *** package " << pkg << " failed to load while generating list of packages provided with Macaulay2" << endl;
+		    -- 	 if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)
+		    -- 	 then value PackageDictionary#pkg
+		    -- 	 else first ( newPackage pkg, endPackage pkg ) -- just fake it
+		    -- 	 )
 		    );
 	       LI {
 		    if (options p).Certification =!= null then (star," "),
@@ -29,7 +30,7 @@ document { Key => "packages provided with Macaulay2",
 		    }
 	       ))
      }
-
+     
 document { Key => "packages",
      "A package is a body of Macaulay2 source code devoted to a 
      particular topic.  Many packages are distributed with Macaulay2, 
@@ -44,9 +45,7 @@ document { Key => "packages",
 	  TO installPackage,
 	  TO "loadedPackages",
      "Creating new packages",
-     	  TO "creating a package",
-     "Downloading packages",
-     	  TO "getPackage"
+     	  TO "creating a package"
 	  }
      }
 

@@ -10,10 +10,10 @@ newPackage(
     	DebuggingMode => false
     	)
 
-{* The notation used here comes from my paper
+-* The notation used here comes from my paper
    The arithogeometric mean, Archiv der Mathematik, volume 52, 1989, pages 507-512,
    scanned versions available here: http://www.math.uiuc.edu/~dan/cv.html#agm
-*}
+*-
 
 export { 
      "EllipticCurve", 
@@ -238,14 +238,14 @@ ellset = (b,c) -> (
 			 w = numeric_prec'' 1;
 			 if quadnorm eqn' > quadnorm eqn then (
 			      (v,v') = quadsolve eqn';
-			      {*
+			      -*
 			      -- ux2+2uxR-uxS-vy+x2R+xRS
 			      num1 = (v) -> - (-v*y*z+w*(x^2*R+x*z*R*S));
 			      den1 = (v) -> x^2+x*z*(2*R-S);
 			      -- uyx+2uyR-uyS-vx2-4vxR+2vxS-vS2+yxR+yRS
 			      num2 = (v) -> - (-v*x^2-4*v*x*R*z+2*v*x*S*z-v*S^2*z^2+w*(y*x*R+y*R*S*z)); -- this one can become tiny if we use it alone
 			      den2 = (v) -> y*x+2*y*R*z-y*S*z;
-			      *}
+			      *-
 			      -- uv+uyd-uy+vxd-vx+vSd+yRd-yR (d==1/2)
 			      num3 = (v) -> - (-v*x/2+v*S/2*z-w*y*R/2)*w;
 			      den3 = (v) -> v*z-w*y/2;
@@ -266,14 +266,14 @@ ellset = (b,c) -> (
 			      else (
 			      	   if abs u' > abs u then (u,v) = (u',v');
 				   );
-			      {*
+			      -*
 			      -- vy-ux2-2uxR+uxS-x2R-xRS
 			      num1 = - (-u*x^2-2*u*x*z*R+u*x*z*S-w*(x^2*R+x*z*R*S));
 			      den1 = () -> y*z;
 			      -- vu+vxd-vx+vSd+uyd-uy+yRd-yR (d==1/2)
 			      num2 = - ((-u-w*R)*y/2*w);
 			      den2 = () -> u*z+w*(-x+S*z)/2;
-			      *}
+			      *-
 			      -- vx2+4vxR-2vxS+vS2-uyx-2uyR+uyS-yxR-yRS
 			      num3 = - (-u*y*x-2*u*y*R*z+u*y*S*z-w*y*x*R-w*y*R*S*z);
 			      den3 = () -> x^2+4*x*R*z-2*x*S*z+S^2*z^2;
@@ -286,7 +286,7 @@ ellset = (b,c) -> (
      scan(prs, pr -> E#(pr#0) = pr#1);
      E)
 
-{*
+-*
 
 eqns = () -> (
      -- run this function to generate the equations need to create the formulas in this algorithm
@@ -309,7 +309,7 @@ eqns = () -> (
      eqns0 (v,u);
      )     
 
-*}
+*-
 
 TEST ///
 defaultPrecision = 200;
@@ -376,13 +376,14 @@ assert( D.periodCoordinates D.log D {4,-18,1} === {1./4,0.} );
 assert( D.periodCoordinates D.log D {-8,12,1} === {1./8,-1./2} );
 assert( D.Period === .14796779277944782115809725438385065984346499071284989007712207p200e1 )
 assert( D.Period' === toCC(.0p200,-.99348185850601324739329990214047552905027815853831220628647471p200) )
- {* actually, the paper has the complex conjugate of this period ... *}
+ -* actually, the paper has the complex conjugate of this period ... *-
 ///
 
 TEST ///
 defaultPrecision = 2000;
 D = new EllipticCurve from {49/4,16};
-assert( D.log D {4,-18,1} === .36991948194861955289524313595962664960866247678212472519280517711147252106050773788561648590076490501530693046833342157958394618521919564010528994124220080346432218452209356596402438592542481509288551083454520862983924665767390255283306531273974266369599782089674379930950117992432630475867532094677817541346775132258749997575180276140635560096880489359110132094907125889960474705999991693520051782426376858122502435487789180572161826981069764302437583354714571023989856728723371278912399769093858699957284325209191376923558703760523643472581244850282004300109746297354134800300510513509935534967578260651640863571044289561307686736012242633887411501593767514380509940928590948236051405877736p2000 );
+result = D.log D {4,-18,1}
+assert( result === .36991948194861955289524313595962664960866247678212472519280517711147252106050773788561648590076490501530693046833342157958394618521919564010528994124220080346432218452209356596402438592542481509288551083454520862983924665767390255283306531273974266369599782089674379930950117992432630475867532094677817541346775132258749997575180276140635560096880489359110132094907125889960474705999991693520051782426376858122502435487789180572161826981069764302437583354714571023989856728723371278912399769093858699957284325209191376923558703760523643472581244850282004300109746297354134800300510513509935534967578260651640863571044289561307686736012242633887411501593767514380509940928590948236051405877736p2000 );
 scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
 	       assert( distance(D.exp ( .2p2000 ), D.exp ( .2p2000 + i * D.Period' + j * D.Period )) < 1p20e-500 );
 	       )));
@@ -455,7 +456,7 @@ assert( abs ( E.log P - w ) < 1e-30 )
 
 ///
 
-needsPackage "Text"
+beginDocumentation()
 
 multidoc ///
 Node

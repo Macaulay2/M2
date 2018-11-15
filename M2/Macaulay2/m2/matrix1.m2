@@ -77,10 +77,9 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  )
      else (
 	  R := ring M;
-	  N' := cover N;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -128,7 +127,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	       );
 	  new Matrix from {
 	       symbol target => M,
-	       symbol RawMatrix => m,
+	       symbol RawMatrix => reduce(M,m),
 	       symbol source => if class N === Module then N else new Module from (R, rawSource m),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
@@ -145,7 +144,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	       );
 	  new Matrix from {
 	       symbol target => M,
-	       symbol RawMatrix => h,
+	       symbol RawMatrix => reduce(M,h),
 	       symbol source => if class N === Module then N else new Module from (R, rawSource h),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
@@ -403,26 +402,6 @@ Matrix#{Standard,AfterNoPrint} = f -> (
 
 -- precedence Matrix := x -> precedence symbol x
 
-compactMatrixForm = true
-
-net Matrix := f -> (
-     if f == 0 
-     then "0"
-     else (
-	  m := (
-	       if compactMatrixForm then (
-	       	    stack toSequence apply(lines toString f.RawMatrix, x -> concatenate("| ",x,"|"))
-	       	    )
-     	       else net expression f
-	       );
-	  if compactMatrixForm and degreeLength ring target f > 0 -- and isHomogeneous f
-	  then (
-	       d := degrees cover target f;
-	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
-	       );
-	  m)
-     )
-
 image Matrix := Module => f -> (
      if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
      )
@@ -441,10 +420,11 @@ Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
-expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
+expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
+texMath Ideal := (I) -> texMath expression I
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
@@ -528,6 +508,7 @@ Matrix % Ideal := Matrix => ((f,I) ->
 	  S := R/I;
 	  lift(promote(f,S),R))
      ) @@ samering
+Vector % Ideal := (v,I) -> new class v from {v#0%I}
 numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)

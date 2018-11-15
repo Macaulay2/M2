@@ -57,17 +57,35 @@ document {
 	  TO "BLAS",
 	  TO "NTL library",
 	  TO "FLINT",
-	  TO "mpack",
 	  TO "givaro",
 	  TO "fflas-ffpack",
+	  -- TO "boost", -- we don't link with boost, but normaliz does
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
 	  TO "normaliz",
 	  TO "nauty",
 	  TO "cdd+",
-	  TO "lrslib"
+	  TO "lrslib",
+	  TO "topcom",
+	  TO "cohomCalg"
      	  }
+     }
+
+document {
+     Key => "cohomCalg",
+     PARA {
+     	  "The program ", TT "cohomCalg", ", by Ralph Blumenhagen, Benjamin Jurke, Thorsten Rahn, and Helmut Roschy,
+	  computes cohomology of line bundles, and is available from ", HREF "http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/", "."
+	  }
+     }
+
+document {
+     Key => "topcom",
+     PARA {
+	  "The program ", TT "topcom", ", by Jörg Rambau, computes triangulations of point configurations and oriented matroids,
+	  and is available from ", HREF "http://www.rambau.wm.uni-bayreuth.de/TOPCOM/", "."
+	  }
      }
 
 document {
@@ -95,14 +113,6 @@ document {
 	  by William Hart, Mike Hansen, Sebastian Pancratz, Fredrik Johansson,
 	  and others, and is available at ", HREF "http://flintlib.org/", ".  It is 
 	  distributed under the terms of the GNU General Public License, version 2 or later."
-	  }
-     }
-
-document {
-     Key => "mpack",
-     PARA {
-	  "The library ", TT "mpack", " is a multiprecision linear algebra package based on lapack and blas,
-	  written by Nakata Maho.  It is available at ", HREF "http://mplapack.sourceforge.net/", "."
 	  }
      }
 
@@ -215,7 +225,7 @@ document {
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
 	  },
      UL {
-	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes" },
+	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes, or number of gigabytes followed by 'G', similarly for 'M', 'K'" },
 	  LI { "GC_MAXIMUM_HEAP_SIZE -- maximum collected heap size" },
 	  LI { "GC_FREE_SPACE_DIVISOR -- if set to a number D, then
                          we try to make sure that we allocate at least N/D bytes between collections, where N is twice the
@@ -236,9 +246,8 @@ document {
 	  "The full list is found in the source code for gc in the file ", TT "doc/README.environment", "."
 	  },
      PARA {
-	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems.
-	  Typically, the only recourse for the user is to increase the memory available to the program."
-	  },
+	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems."
+      },
      UL {
 	  "Insufficient space for initial table allocation",
 	  "No space for lwp data structures",
@@ -247,6 +256,12 @@ document {
 	  "Too many heap sections",
 	  "Too many heap sections: Increase MAXHINCR or MAX_HEAP_SECTS",
 	  "Too many root sets"
+	  },
+     PARA {
+      "You may simply be out of memory, and then the only recourse is to increase the memory available to the program.
+      However, if you don't have enough heap sections,
+      sometimes one can just start Macaulay2 by setting the GC_INITIAL_HEAP_SIZE environment variable 
+      to some larger value with an environment setting prefix on the M2 command line, e.g., ", TT "GC_INITIAL_HEAP_SIZE=20G M2", ".",
 	  },
      SeeAlso => { collectGarbage }
      }
@@ -343,11 +358,11 @@ document {
      geometry and the predecessor of this program."
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "preface",
      }
-*}
+*-
 
 document {
      Key => "prefixPath",
@@ -357,7 +372,7 @@ document {
 	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
 	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
 	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
-	  documentation hyperlinks from one package to another, provided the option ", TO "AbsoluteLinks", " is set to ", TO "true", "."
+	  documentation hyperlinks from one package to another."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
@@ -372,7 +387,7 @@ document {
 	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
 	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
 	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
-	  emacs by the keystroke sequence ", TT "CTRL-U f12", ", which offers you a chance to edit the command line."
+	  emacs by the keystroke sequence ", TT "C-u f12", ", which offers you a chance to edit the command line."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
@@ -434,8 +449,8 @@ document {
 	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
 	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
 	  table from names, corresponding to the various types of files, to directory paths.  The
-	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", " or in one
-	  of the directories contained in the list ", TO "prefixPath", ".
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
+	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
 	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
 	  by the name of package whose files will be stored in that directory."
 	  },
@@ -448,7 +463,7 @@ document {
 	  },
      PARA {
 	  "Basic Macaulay2 files are regarded as being associated
-	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
+	  with a special package called ", TT{"Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2Doc", "."
      	  },
      EXAMPLE {
@@ -500,10 +515,10 @@ document {
 	  }
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document { Key => "frequently encountered problems",
      }
-*}
+*-
 
 document {
      Key => "specifying typical values",
@@ -638,11 +653,11 @@ document {
      
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "Resources required",
      }
-*}
+*-
 
 document {
      Key => "debugging",
@@ -751,11 +766,12 @@ document {
 document {
      Key => "combinatorial functions",
      UL {
-	  TO "random",
 	  TO "binomial",
+	  TO "compositions",
+	  TO "partitions",
+	  TO "random",
 	  TO "subsets",
-	  TO "tally",
-	  TO "partitions"
+	  TO "tally"
 	  }
      }
 

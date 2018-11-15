@@ -26,12 +26,16 @@ dbmreorganize(e:Expr):Expr := (
 setupfun("reorganize",dbmreorganize);
 dbmopenin(e:Expr):Expr := (
      when e
-     is a:stringCell do dbmopenin(a.v)
+     is a:stringCell do (
+	  if notify then stderr << "--opening database " << a.v << endl;
+	  dbmopenin(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
 dbmopenout(e:Expr):Expr := (
      when e
-     is a:stringCell do dbmopenout(a.v)
+     is a:stringCell do (
+	  if notify then stderr << "--opening database for output " << a.v << endl;
+	  dbmopenout(a.v))
      else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
 
@@ -42,6 +46,10 @@ keys(e:Expr):Expr := (
      is o:HashTable do keys(o)
      else WrongArg("a hash table, database, or dictionary"));
 setupfun("keys",keys);
+-- # typical value: keys, Dictionary, List
+-- # typical value: keys, Database, List
+-- # typical value: keys, HashTable, List
+
 toList(e:Expr):Expr := (
      when e
      is o:HashTable do if ancestor(o.Class,Set) then keys(o) else WrongArg("list, sequence, or set")
@@ -168,7 +176,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
      else (
 	  c := Class(e);
 	  if c == classs then e
-	  else if !ancestor(classs,c) then buildErrorPacket("expected new classs to be a specialization of the old one")
+	  else if !ancestor(classs,c) then buildErrorPacket("expected new class to be a specialization of the old one")
 	  else if Parent(e) != parent then buildErrorPacket("unable to set new parent")
 	  else Expr(SpecialExpr(classs,e))));
 
@@ -214,7 +222,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	  c := Class(e);
 	  if c == classs then e
 	  else if !ancestor(classs,c) 
-	  then buildErrorPacket("expected new classs to be a specialization of the old one")
+	  then buildErrorPacket("expected new class to be a specialization of the old one")
 	  else Expr(SpecialExpr(classs,e))));
 newclassfun(e:Expr):Expr := (
      when e
@@ -475,7 +483,9 @@ close(g:Expr):Expr := (
 	       );
 	  g)
      is f:file do when close(f) is m:errmsg do buildErrorPacket(m.message) else g
-     is x:Database do dbmclose(x)
+     is x:Database do (
+	  if notify then stderr << "--closing database " << x.filename << endl;
+	  dbmclose(x))
      else buildErrorPacket("expected a file or database"));
 setupfun("close",close).Protected = false;
 closeIn(g:Expr):Expr := (

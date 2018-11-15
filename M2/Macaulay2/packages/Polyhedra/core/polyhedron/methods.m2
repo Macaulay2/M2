@@ -122,3 +122,15 @@ nVertices Polyhedron := P -> getProperty(P, nVertices)
 cone (Polyhedron) := P->(
    getProperty(P,underlyingCone)
 )
+
+dualFaceRepresentationMap Polyhedron := P -> (
+   if not isCompact P then error("Only works for bounded polyhedra for now.");
+   C := getProperty(P, underlyingCone);
+   getProperty(C, facetRayDataConverter)
+)
+
+regularTriangulation = method()
+regularTriangulation Polyhedron := P -> (
+   if not isCompact P then error("Triangulation can only be produced for polytopes (i.e. compact polyhedra).");
+   regularFineTriangulation vertices P
+)

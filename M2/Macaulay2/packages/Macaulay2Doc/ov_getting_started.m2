@@ -579,9 +579,10 @@ document {
      	  "},
      "The following functions for available for accessing the documentation.",
      UL {
-	  TOH "apropos",
 	  TOH "examples",
 	  TOH "help", 
+	  TOH "about",
+	  TOH "apropos",
 	  TOH "viewHelp",
 	  TOH "infoHelp"
 	  },
@@ -623,6 +624,13 @@ document {
 	  in Macaulay2 which contain the string 'deal', use"
      	  },
      EXAMPLE ///apropos "deal"///,
+     PARA {
+	  "To find all documentation nodes whose contain a given string, use ", TO "about", "."
+	  },
+     EXAMPLE lines ///
+     about resolution
+     help 
+     ///,
      PARA {"The documentation for most functions comes with example code.  You can 
 	  obtain the text of this example code using ", TO examples, "."
 	  },
@@ -644,12 +652,12 @@ document {
 	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "what to read next??",
      }
-*}
+*-
 
 document {
      Key => "a first Macaulay2 session",

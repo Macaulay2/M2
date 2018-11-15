@@ -1,13 +1,15 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"Points",
-    	Version => "2.0", 
-    	Date => "29 June 2008, revised by DE June 2016",
+    	Version => "3.0", 
+    	Date => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.uiuc.edu/Macaulay2/"},
      	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
-	     {Name => "David Eisenbud", Email => "de@msri.org"}	     
+	     {Name => "David Eisenbud", Email => "de@msri.org"},
+	     {Name => "Federico Galetto", Email => "galetto.federico@gmail.com", HomePage => "http://math.galetto.org"},
+	     {Name => "Joseph W. Skelton", Email => "jskelton@tulane.edu"}
 	     },
     	Headline => "computing with sets of points",
 	PackageExports => {"LexIdeals"},
@@ -28,7 +30,17 @@ export {
      "randomPoints",
      "omegaPoints",
      "expectedBetti",
-     "minMaxResolution"
+     "minMaxResolution",
+---------------------------------------------------------------------
+-- FG: fat points, and new projective points (v3)
+---------------------------------------------------------------------
+     "affineFatPoints",
+     "affineFatPointsByIntersection",
+     "projectivePoints",
+     "VerifyPoints",
+     "projectivePointsByIntersection",
+     "projectiveFatPointsByIntersection",
+     "projectiveFatPoints"
      }
 
 ///
@@ -37,7 +49,6 @@ loadPackage("Points", Reload=>true)
 randomPointsMat
 omegaPoints
 ///
-
 
 affineMakeRingMaps = method (TypicalValue => List)
 affineMakeRingMaps (Matrix, Ring) := List => (M,R) -> (
@@ -210,6 +221,340 @@ affinePoints (Matrix,Ring) := (M,R) -> (
      (Q,inG,G)
      )
 
+---------------------------------------------------------------------
+-- FG: fat points, and new projective points (v3)
+---------------------------------------------------------------------
+
+-- FG: fat points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities, and a polynomial ring R
+-- OUTPUT: gb of the ideal of the fat point scheme
+affineFatPointsByIntersection = method(TypicalValue => List)
+affineFatPointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M, mults,
+       (p,m) -> (ideal apply(#p, i -> R_i - p#i))^m))
+
+-- FG: affine Buchberger-Möller algorithm for fat points
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities, and a polynomial ring R
+-- OUTPUT: a list containing 1) a list of standard monomials (i.e.,
+-- monomials forming a basis of the quotient ring), 2) the initial
+-- ideal, and 3) the gb of the ideal of the fat point scheme
+-- NOTE: the idea is to reuse the Buchberger-Möller algorithm for
+-- reduced points, but instead of simply evaluating polynomials at
+-- points, their partial derivatives are also evaluated to ensure
+-- vanishing. By Zariski-Nagata, this is the desired ideal.
+-- This may not be the most efficient strategy. For further ideas,
+-- see Abbott, Kreuzer, Robbiano, Computing zero-dimensional schemes,
+-- J. Symbolic Comput., doi:10.1016/j.jsc.2004.09.001
+-- WARNING: for reduced points (i.e., when mults is a list of 1s)
+-- this performs slightly worse than the original function
+affineFatPoints = method()
+affineFatPoints (Matrix,List,Ring) := (M,mults,R) -> (
+     -- obtain all monomials later used for differentiation
+     -- sort in increasing order by degree (then monomial order)
+     diffops := flatten entries sort basis(0,max mults - 1,R);
+     -- this says how many derivatives to use for each point
+     cutoffs := apply(mults,m -> sum(m, i -> binomial((dim R)-1+i,i)));
+     s := sum cutoffs;
+     -- FG: most of the code below is from the affinePoints method
+     -- The local data structures:
+     -- (P,PC) is the matrix which contains the elements to be reduced
+     -- Fs is used to evaluate monomials at the points
+     -- H is a hash table used in Gaussian elimination: it contains the
+     --    pivot columns for each row
+     -- L is the sum of monomials which is still to be done
+     -- Lhash is a hashtable: Lhash#monom = i means that only 
+     --    R_i*monom, ..., R_n*monom should be considered
+     -- G is a list of GB elements
+     -- inG is the ideal of initial monomials for the GB
+     K := coefficientRing R;
+     Fs := affineMakeRingMaps(M,R);
+     P := mutableMatrix map(K^s, K^(s+1), 0);
+     PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+     for i from 0 to s-1 do PC_(i,i) = 1_K;
+     H := new MutableHashTable; -- used in the column reduction step
+     Lhash := new MutableHashTable; -- used to determine which monomials come next
+     L := 1_R;
+     Lhash#L = 0; -- start with multiplication by R_0
+     thiscol := 0;
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     Q := {}; -- the list of standard monomials
+     nL := 1;
+     while L != 0 do (
+	  -- First step: get the monomial to consider
+	  L = L % inGB;
+	  monom := someTerms(L,-1,1);
+	  L = L - monom;
+	  -- Now fix up the matrices P, PC
+	  -- FG: old code called another function addNewMonomial
+	  -- FG: I include code here to better evaluate derivatives
+	  partials := apply(diffops, del -> diff(del,monom));
+	  -- FG: evaluate partials at point up to cutoff
+	  c := 0;
+	  for i to #Fs-1 do (
+	      for j to cutoffs_i-1 do (
+		  P_(c+j,thiscol) = Fs#i (partials_j);
+		  );
+	      c = c + cutoffs_i;
+	      );
+	  -- FG: remaining code is the same as for reduced points
+	  columnMult(PC, thiscol, 0_K);
+	  PC_(thiscol,thiscol) = 1_K;
+          isLT := reduceColumn(P,PC,H,thiscol);
+	  if isLT then (
+	       -- we add to G, inG
+	       inG = inG + ideal(monom);
+	       inGB = forceGB gens inG;
+	       g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+	       G = append(G, PC_(thiscol,thiscol) * monom + g);
+	       )
+	  else (
+	       -- we modify L, Lhash, thiscol, and also PC
+	       Q = append(Q, monom);
+	       f := sum apply(toList(Lhash#monom .. numgens R - 1), i -> (
+			 newmon := monom * R_i;
+			 Lhash#newmon = i;
+			 newmon));
+	       nL = nL + size(f);
+	       L = L + f;
+	       thiscol = thiscol + 1;
+	       )
+	  );
+--     print("number of monomials considered = "|nL);
+     (Q,inG,G)
+     )
+
+
+-- FG: Buchberger-Möller for projective points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points, and a polynomial ring R
+-- OUTPUT: a list containing 1) the initial ideal,
+-- and 2) the gb of the ideal of the set of points
+projectivePoints = method(Options => {VerifyPoints => true})
+projectivePoints (Matrix,Ring) := opts -> (M,R) -> (
+    if opts.VerifyPoints then M = removeBadPoints M;
+    -- FG: the code is mostly like the affine case
+    -- but now we proceed degree by degree
+     K := coefficientRing R;
+     s := numgens source M;
+     Fs := affineMakeRingMaps(M,R);
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     deg := 1;
+     while not stoppingCriterion(deg,inG,s) do (
+	 L := sum flatten entries basis(deg,R);
+	 L = L % inGB;
+	 P := mutableMatrix map(K^s, K^(s+1), 0);
+	 PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+	 for i from 0 to s-1 do PC_(i,i) = 1_K;
+	 H := new MutableHashTable; -- used in the column reduction step
+	 thiscol := 0;
+	 Q := {}; -- list of standard monomials of current degree
+	 while L != 0 do (
+	      -- First step: get the monomial to consider
+	      monom := someTerms(L,-1,1);
+	      L = L - monom;
+	      -- Now fix up the matrices P, PC
+	      addNewMonomial(P,thiscol,monom,Fs);
+	      columnMult(PC, thiscol, 0_K);
+	      PC_(thiscol,thiscol) = 1_K;
+	      isLT := reduceColumn(P,PC,H,thiscol);
+	      if isLT then (
+		   -- we add to G, inG
+		   inG = inG + ideal(monom);
+		   g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+		   G = append(G, PC_(thiscol,thiscol) * monom + g);
+		   )
+	      else (
+		   -- add to standard monomials
+		   Q = append(Q, monom);
+		   thiscol = thiscol + 1;
+		   )
+	      );
+	  inGB = forceGB gens inG;
+	  -- proceed with next degree
+	  deg = deg + 1;
+	  );
+     (inG,G)
+     )
+
+-- FG: stopping criterion for projective BM
+-- INPUT: an integer deg for the current degree,
+-- a monomial ideal inG (initial ideal of the ideal of points as
+-- computed so far), and an integer multPts which is the degree of
+-- the point scheme, i.e., the sum of the degrees of all the points
+-- OUTPUT: true if the Hilbert function of the initial ideal is
+-- equal to the expected degree for the given points (this is when
+-- the BM algorithm should stop)
+-- TO DO: implement better stopping criterion from Abbot, Kreuzer, Robbiano
+stoppingCriterion = (deg,inG,multPts) -> (
+    -- if the initial ideal is zero, then continue
+    if zero inG then return false else
+    -- otherwise stop when multiplicity is attained
+    hilbertFunction(deg,inG) == multPts
+    )
+
+-- FG: remove zero and duplicate points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points
+-- OUTPUT: a matrix obtained from M by removing zero columns and
+-- columns that are not scalar multiples of previous columns
+-- NOTE: if these points are not removed, the projective BM
+-- algorithm above will not terminate!
+removeBadPoints = M -> (
+    -- remove zero columns
+    N := compress M;
+    -- remove columns that define same projective points
+    lastcol := numColumns(N)-1;
+    thiscol := 0;
+    while thiscol < lastcol do (
+	L := toList(thiscol+1..lastcol);
+	dupcols := select(L,i->rank(N_{thiscol,i})<2);
+	N = submatrix'(N,dupcols);
+	lastcol = lastcol - #dupcols;
+	thiscol = thiscol + 1;
+	);
+    return N;
+    )
+
+-- FG: projective points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- and a polynomial ring R
+-- OUTPUT: gb of the ideal of the projective points
+projectivePointsByIntersection = method(TypicalValue => List)
+projectivePointsByIntersection (Matrix,Ring) := (M,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M,
+       p -> (trim minors(2,matrix{gens R,p}))
+       )
+   )
+
+-- FG: projective fat points by intersection
+-- INPUT: a matrix M whose columns are coordinates of points,
+-- a list mults of multiplicities for each point,
+-- and a polynomial ring R
+-- OUTPUT: gb of the ideal of the projective fat point scheme
+projectiveFatPointsByIntersection = method(TypicalValue => List)
+projectiveFatPointsByIntersection (Matrix,List,Ring) := (M,mults,R) -> (
+     flatten entries gens gb intersect apply (
+       entries transpose M, mults,
+       (p,m) -> ((trim minors(2,matrix{gens R,p}))^m)
+       )
+   )
+
+-- FG: remove zero and duplicate points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points, and a list mults of multiplicities for those points
+-- OUTPUT: a matrix obtained from M by removing zero columns and
+-- columns that are not scalar multiples of previous columns,
+-- and a list of multiplicities for the points in the new matrix
+-- NOTE: if a point appears more than once with different
+-- multiplicities, the largest multiplicity is retained
+removeBadFatPoints = (M,mults) -> (
+    -- remove zero columns and their multiplicities
+    lastcol := numColumns(M)-1;
+    zeroVec := 0_(target M);
+    nonzerocols := {};
+    for i to lastcol do (
+	if M_i != zeroVec then nonzerocols = append(nonzerocols,i);
+	);
+    N := submatrix(M,nonzerocols);
+    newmults := new MutableList from mults_nonzerocols;
+    -- remove columns that define same projective points
+    -- and their multiplicities
+    lastcol = numColumns(N)-1;
+    thiscol := 0;
+    while thiscol < lastcol do (
+	L := toList(thiscol+1..lastcol);
+	dupcols := select(L,i->rank(N_{thiscol,i})<2);
+	N = submatrix'(N,dupcols);
+	newmults#thiscol = max apply({thiscol}|dupcols,i->newmults#i);
+	for i in reverse dupcols do (
+	    newmults = drop(newmults,{i,i})
+	    );
+	lastcol = lastcol - #dupcols;
+	thiscol = thiscol + 1;
+	);
+    return (N,new List from newmults);
+    )
+
+-- FG: Buchberger-Möller for projective fat points
+-- INPUT: a matrix M whose columns are projective coordinates of
+-- points, a list mults of multiplicities for those points,
+-- and a polynomial ring R
+-- OUTPUT: a list containing 1) the initial ideal,
+-- and 2) the gb of the ideal of the set of fat points
+-- NOTE: for small sets of points this can perform much worse than
+-- simply intersecting. The first example where I saw an advantage
+-- (of 1 sec) was for 30 points in P^5 with multiplicities 1,2,3
+projectiveFatPoints = method(Options => {VerifyPoints => true})
+projectiveFatPoints (Matrix,List,Ring) := opts -> (M,mults,R) -> (
+    if opts.VerifyPoints then (M,mults) = removeBadFatPoints (M,mults);
+     K := coefficientRing R;
+     diffops := flatten entries sort basis(0,max mults - 1,R);
+     -- this says how many derivatives to use for each point
+     cutoffs := apply(mults,m -> sum(m, i -> binomial((dim R)-1+i,i)));
+     s := sum cutoffs;
+     Fs := affineMakeRingMaps(M,R);
+     G := {};
+     inG := trim ideal(0_R);
+     inGB := forceGB gens inG;
+     deg := 1;
+     schemedegree := sum(mults,m -> binomial((dim R)-2+m,m-1));
+     while not stoppingCriterion(deg,inG,schemedegree) do (
+	 L := sum flatten entries basis(deg,R);
+	 L = L % inGB;
+	 P := mutableMatrix map(K^s, K^(s+1), 0);
+	 PC := mutableMatrix map(K^(s+1), K^(s+1), 0);
+	 for i from 0 to s-1 do PC_(i,i) = 1_K;
+	 H := new MutableHashTable; -- used in the column reduction step
+	 thiscol := 0;
+	 Q := {}; -- list of standard monomials of current degree
+	 while L != 0 do (
+	      -- First step: get the monomial to consider
+	      monom := someTerms(L,-1,1);
+	      L = L - monom;
+	      partials := apply(diffops, del -> diff(del,monom));
+	      -- FG: evaluate partials at point up to cutoff
+	      c := 0;
+	      for i to #Fs-1 do (
+	      	  for j to cutoffs_i-1 do (
+		      P_(c+j,thiscol) = Fs#i (partials_j);
+		      );
+	      	  c = c + cutoffs_i;
+	      	  );
+	      columnMult(PC, thiscol, 0_K);
+	      PC_(thiscol,thiscol) = 1_K;
+	      isLT := reduceColumn(P,PC,H,thiscol);
+	      if isLT then (
+		   -- we add to G, inG
+		   inG = inG + ideal(monom);
+		   g := sum apply(toList(0..thiscol-1), i -> PC_(i,thiscol) * Q_i);
+		   G = append(G, PC_(thiscol,thiscol) * monom + g);
+		   )
+	      else (
+		   -- add to standard monomials
+		   Q = append(Q, monom);
+		   thiscol = thiscol + 1;
+		   )
+	      );
+	  inGB = forceGB gens inG;
+	  -- proceed with next degree
+	  deg = deg + 1;
+	  );
+     (inG,G)
+     )
+
+---------------------------------------------------------------------
+-- FG: end of v3 code
+---------------------------------------------------------------------
+
+
 -----------------Homogeneous codes
 
 randomPointsMat = method(Options =>{AllRandom =>false})
@@ -357,7 +702,7 @@ doc ///
    Description
     Text
      The package has routines for points in affine and projective spaces. The affine
-     code, some of which uses the Buchberger-Moeller algorithn to more quickly
+     code, some of which uses the Buchberger-Moeller algorithm to more quickly
      compute the ideals of points in affine space,
      was written by Stillman, Smith and Stromme. The projective code was
      written separately by Eisenbud and Popescu.
@@ -376,6 +721,10 @@ doc ///
      where the first integer denotes the ambient dimension and the second the 
      number of points. Examples are known in every projective space of dimension >=6
      except for P^9.
+     
+     In version 3.0, F. Galetto and J.W. Skelton added code to
+     compute ideals of fat points and projective points using
+     the Buchberger-Moeller algorithm.
 ///
 
 --documentation for the code for points in projective space
@@ -588,7 +937,7 @@ document {
      Key => {affinePoints, (affinePoints,Matrix,Ring)},
      Headline => "produces the ideal and initial ideal from the coordinates
      of a finite set of points",
-     Usage => "(Q,inG,G) = points(M,R)",
+     Usage => "(Q,inG,G) = affinePoints(M,R)",
      Inputs => {
      	  "M" => Matrix => "in which each column consists of the coordinates of a point",
 	  "R" => PolynomialRing => "coordinate ring of the affine space containing the points",
@@ -671,6 +1020,289 @@ document {
      ///,
      SeeAlso => {affinePoints},
      }
+
+---------------------------------------------------------------------
+-- FG: documentation for fat points and new projective points 
+---------------------------------------------------------------------
+
+doc ///
+   Key
+    affineFatPoints
+    (affineFatPoints,Matrix,List,Ring)
+   Headline
+    produces the ideal and initial ideal from the coordinates of a finite set of fat points
+   Usage
+    (Q,inG,G) = affineFatPoints(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     coordinate ring of the affine space containing the points
+   Outputs
+    Q:List
+     list of standard monomials
+    inG:Ideal
+     initial ideal of the set of fat points
+    G:List
+     list of generators for Grobner basis for ideal of fat points
+   Description
+    Text
+     This function uses a modified Buchberger-Moeller algorithm to
+     compute a grobner basis for the ideal of a finite number of
+     fat points in affine space.
+
+    Example
+     R = QQ[x,y]
+     M = transpose matrix{{0,0},{1,1}}
+     mults = {3,2}
+     (Q,inG,G) = affineFatPoints(M,mults,R)
+     monomialIdeal G == inG
+
+    Text
+     This algorithm may be faster than
+     computing the intersection of the ideals of each fat point.
+
+    Example
+     K = ZZ/32003
+     R = K[z_1..z_5]
+     M = random(K^5,K^12)
+     mults = {1,2,3,1,2,3,1,2,3,1,2,3}
+     elapsedTime (Q,inG,G) = affineFatPoints(M,mults,R);
+     elapsedTime H = affineFatPointsByIntersection(M,mults,R);
+     G==H
+
+   Caveat
+    For reduced points, this function may be a bit slower than @TO "affinePoints"@.
+   SeeAlso
+    (affineFatPointsByIntersection,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    affineFatPointsByIntersection
+    (affineFatPointsByIntersection,Matrix,List,Ring)
+   Headline
+    computes ideal of fat points by intersecting powers of maximal ideals
+   Usage
+    affineFatPointsByIntersection(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     coordinate ring of the affine space containing the points
+   Outputs
+    :List
+     grobner basis for ideal of a finite set of fat points
+   Description
+    Text
+     This function computes the ideal of a finite set of fat points
+     by intersecting powers of the maximal ideals of each point.
+
+    Example
+     R = QQ[x,y]
+     M = transpose matrix{{0,0},{1,1}}
+     mults = {3,2}
+     affineFatPointsByIntersection(M,mults,R)
+
+   SeeAlso
+    (affineFatPoints,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    projectivePoints
+    (projectivePoints,Matrix,Ring)
+   Headline
+    produces the ideal and initial ideal from the coordinates of a finite set of projective points
+   Usage
+    (inG,G) = projectivePoints(M,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    R:Ring
+     homogeneous coordinate ring of the projective space containing the points
+   Outputs
+    inG:Ideal
+     initial ideal of the set of projective points
+    G:List
+     list of generators for Grobner basis for ideal of projective points
+   Description
+    Text
+     This function uses a modified Buchberger-Moeller algorithm to
+     compute a grobner basis for the ideal of a finite number of
+     points in projective space.
+
+    Example
+     R = QQ[x_0..x_2]
+     M = random(ZZ^3,ZZ^5)
+     (inG,G) = projectivePoints(M,R)
+     monomialIdeal G == inG
+
+    Text
+     This algorithm may be faster than
+     computing the intersection of the ideals of each projective point.
+
+    Example
+     K = ZZ/32003
+     R = K[z_0..z_5]
+     M = random(ZZ^6,ZZ^150)
+     elapsedTime (inG,G) = projectivePoints(M,R);
+     elapsedTime H = projectivePointsByIntersection(M,R);
+     G == H
+
+   Caveat
+    This function removes zero columns of @TT "M"@ and duplicate columns giving rise to the same projective point (which prevent the algorithm from terminating). The user can bypass this step with the option @TT "VerifyPoints"@.
+   SeeAlso
+    (projectivePointsByIntersection,Matrix,Ring)
+///
+
+doc ///
+   Key
+    VerifyPoints
+   Headline
+    Option to projectivePoints.
+   Description
+    Text
+     Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+   SeeAlso
+    projectivePoints
+///
+
+doc ///
+   Key
+    [projectivePoints,VerifyPoints]
+   Headline
+    Option to projectivePoints.
+   Description
+    Text
+     Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+   SeeAlso
+    projectivePoints
+///
+
+doc ///
+   Key
+    [projectiveFatPoints,VerifyPoints]
+   Headline
+    Option to projectiveFatPoints.
+   Description
+    Text
+     Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+     For duplicate points, a single instance is retained with the largest multiplicity.
+   SeeAlso
+    projectiveFatPoints
+///
+
+doc ///
+   Key
+    projectivePointsByIntersection
+    (projectivePointsByIntersection,Matrix,Ring)
+   Headline
+    computes ideal of projective points by intersecting point ideals
+   Usage
+    projectivePointsByIntersection(M,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    R:Ring
+     homogeneous coordinate ring of the projective space containing the points
+   Outputs
+    :List
+     grobner basis for ideal of a finite set of projective points
+   Description
+    Text
+     This function computes the ideal of a finite set of projective points
+     by intersecting the ideals of each point.
+
+    Example
+     R = QQ[x,y,z]
+     M = transpose matrix{{1,0,0},{0,1,1}}
+     projectivePointsByIntersection(M,R)
+
+   SeeAlso
+    (projectivePoints,Matrix,Ring)
+///
+
+doc ///
+   Key
+    projectiveFatPointsByIntersection
+    (projectiveFatPointsByIntersection,Matrix,List,Ring)
+   Headline
+    computes ideal of fat points by intersecting powers of point ideals
+   Usage
+    projectiveFatPointsByIntersection(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     homogeneous coordinate ring of the projective space containing the points
+   Outputs
+    :List
+     grobner basis for ideal of a finite set of fat points
+   Description
+    Text
+     This function computes the ideal of a finite set of fat points
+     by intersecting powers of the ideals of each point.
+
+    Example
+     R = QQ[x,y,z]
+     M = transpose matrix{{1,0,0},{0,1,1}}
+     mults = {3,2}
+     projectiveFatPointsByIntersection(M,mults,R)
+
+   SeeAlso
+    (projectiveFatPoints,Matrix,List,Ring)
+///
+
+doc ///
+   Key
+    projectiveFatPoints
+    (projectiveFatPoints,Matrix,List,Ring)
+   Headline
+    produces the ideal and initial ideal from the coordinates of a finite set of fat points
+   Usage
+    (inG,G) = projectiveFatPoints(M,mults,R)
+   Inputs
+    M:Matrix
+     in which each column consists of the projective coordinates of a point
+    mults:List
+     in which each element determines the multiplicity of the
+     corresponding point
+    R:Ring
+     homogeneous coordinate ring of the projective space containing the points
+   Outputs
+    inG:Ideal
+     initial ideal of the set of fat points
+    G:List
+     list of generators for Grobner basis for ideal of fat points
+   Description
+    Text
+     This function uses a modified Buchberger-Moeller algorithm to
+     compute a grobner basis for the ideal of a finite number of
+     fat points in projective space.
+
+    Example
+     R = QQ[x,y,z]
+     M = transpose matrix{{1,0,0},{0,1,1}}
+     mults = {3,2}
+     (inG,G) = projectiveFatPoints(M,mults,R)
+     monomialIdeal G == inG
+
+   Caveat
+    For small sets of points and/or multiplicities, this method might be slower than @TO "projectiveFatPointsByIntersection"@.
+   SeeAlso
+    (projectiveFatPointsByIntersection,Matrix,List,Ring)
+///
+
 
 TEST///
      M = random(ZZ^3, ZZ^3)
@@ -755,7 +1387,61 @@ assert (
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
 
-{*
+---------------------------------------------------------------------
+-- FG: tests for projective and fat points (v3)
+---------------------------------------------------------------------
+
+TEST///
+     M = id_(ZZ^3)
+     R = QQ[x,y,z]
+     mults = {2,2,2}
+     (Q,inG,G) = affineFatPoints(M,mults,R)
+     assert( G == {x^2+2*x*y+y^2+2*x*z+2*y*z+z^2-2*x-2*y-2*z+1,
+     x*z^2+y*z^2+z^3-x*z-y*z-2*z^2+z, y^2*z+y*z^2-y*z, x*y*z,
+     x*y^2+y^3-y*z^2-x*y-2*y^2+y, z^4-2*z^3+z^2, y*z^3-y*z^2,
+     y^4-2*y^3+y^2})
+     assert(G == affineFatPointsByIntersection(M,mults,R))
+///
+
+TEST///
+     M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}}
+     R = QQ[x,y,z]
+     (inG,G) = projectivePoints(M,R)
+     assert( G == {x*z-y*z, x*y-y*z, y^2*z-y*z^2})
+     assert(G == projectivePointsByIntersection(M,R))
+///
+
+TEST///
+     M = matrix {{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, 1}}
+     mults = {1,2,3,4}
+     R = QQ[x,y,z]
+     (inG,G) = projectiveFatPoints(M,mults,R)
+     assert( G == {x^4*z-3*x^3*y*z+3*x^2*y^2*z-x*y^3*z-x^3*z^2+3*x^2*y*z^2-3*x
+      *y^2*z^2+y^3*z^2, x^4*y-2*x^3*y^2+x^2*y^3-2*x^3*y*z+4*x^2*y^
+      2*z-2*x*y^3*z+x^2*y*z^2-2*x*y^2*z^2+y^3*z^2,
+      x^3*y*z^2-3*x^2*y^2*z^2+3*x*y^3*z^2-y^4*z^2-x^3*z^3+3*x^2*y*
+      z^3-3*x*y^2*z^3+y^3*z^3,
+      x^3*y^2*z-2*x^2*y^3*z+x*y^4*z-2*x^2*y^2*z^2+4*x*y^3*z^2-2*y^
+      4*z^2-x^3*z^3+4*x^2*y*z^3-5*x*y^2*z^3+2*y^3*z^3,
+      x^3*y^3-x^2*y^4-3*x^2*y^3*z+3*x*y^4*z+3*x*y^3*z^2-3*y^4*z^2-
+      x^3*z^3+4*x^2*y*z^3-6*x*y^2*z^3+3*y^3*z^3,
+      x^2*y^3*z^2-2*x*y^4*z^2+y^5*z^2-2*x^2*y^2*z^3+4*x*y^3*z^3-2*
+      y^4*z^3+x^2*y*z^4-2*x*y^2*z^4+y^3*z^4,
+      x^2*y^4*z-x*y^5*z-3*x*y^4*z^2+3*y^5*z^2-3*x^2*y^2*z^3+9*x*y^
+      3*z^3-6*y^4*z^3+2*x^2*y*z^4-5*x*y^2*z^4+3*y^3*z^4,
+      x^2*y^5-4*x*y^5*z+6*y^5*z^2-4*x^2*y^2*z^3+12*x*y^3*z^3-12*y^
+      4*z^3+3*x^2*y*z^4-8*x*y^2*z^4+6*y^3*z^4,
+      x*y^5*z^2-y^6*z^2-3*x*y^4*z^3+3*y^5*z^3+3*x*y^3*z^4-3*y^4*z^
+      4-x*y^2*z^5+y^3*z^5,
+      x*y^6*z-4*y^6*z^2-6*x*y^4*z^3+12*y^5*z^3+8*x*y^3*z^4-12*y^4*
+      z^4-3*x*y^2*z^5+4*y^3*z^5,
+      y^7*z^2-4*y^6*z^3+6*y^5*z^4-4*y^4*z^5+y^3*z^6})
+     assert(G == projectiveFatPointsByIntersection(M,mults,R))
+///
+
+end
+
+-*
 --test of affinePoints
 TEST///
 C = affinePoints(M,R);
@@ -773,7 +1459,7 @@ assert (
 )
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
 ///
-*}
+*-
 
 end--
 uninstallPackage "Points"

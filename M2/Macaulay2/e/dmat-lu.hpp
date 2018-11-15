@@ -10,7 +10,8 @@
 
 #include "dmat-lu-inplace.hpp"
 
-template <class RingType> class DMatLinAlg;
+template <class RingType>
+class DMatLinAlg;
 
 #include "dmat-lu-zzp-ffpack.hpp"
 #include "dmat-lu-zzp-flint.hpp"
@@ -21,62 +22,61 @@ typedef DMat<M2::ARingGFFlintBig> DMatGFFlintBig;
 template <class RingType>
 class DMatLinAlg
 {
-public:
+ public:
   typedef typename RingType::ElementType ElementType;
   typedef DMat<RingType> Mat;
 
-private:
+ private:
   DMatLUinPlace<RingType> mLUObject;
 
-public:
+ public:
   /// Copies A into mLU and initializes all fields
   DMatLinAlg(const Mat& A);
 
   /// Input: B, a matrix, the right hand side of AX=B
   /// Output: X, a matrix, solution to the above
   ///         returns false iff inconsistent
-  bool solve(const Mat& B, Mat& X); 
+  bool solve(const Mat& B, Mat& X);
 
   /// Input: B, a matrix, the right hand side of AX=B
   ///        A, a square matrix (presumed to be invertible)
   /// Output: X, a matrix, solution to the above, if A is invertible
   ///         returns false iff A is not invertible
-  bool solveInvertible(const Mat& B, Mat& X); 
+  bool solveInvertible(const Mat& B, Mat& X);
 
   /// Output: X, a matrix, the inverse of A
   ///         returns false iff A is (near)singular
-  bool inverse(Mat& X); 
+  bool inverse(Mat& X);
 
   /// Output: result, the determinant of A
-  void determinant(ElementType& result); 
+  void determinant(ElementType& result);
 
   /// Output: P = mPerm,
   ///         L,U; the corresponding parts mLU
-  ///         returns false iff there is an error 
-  bool matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U); 
+  ///         returns false iff there is an error
+  bool matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U);
 
   /// Output: X, a matrix, columns form a basis of Ax=0
   ///         returns dim of nullspace
-  size_t kernel(Mat& X); 
+  size_t kernel(Mat& X);
 
   /// Output: returns the approximate rank of A (-1 if fails)
-  size_t rank(); 
+  size_t rank();
 
-  /// Output: profile, a vector of size equal to rank(A) 
-  ///                  containing the numbers of the columns 
+  /// Output: profile, a vector of size equal to rank(A)
+  ///                  containing the numbers of the columns
   ///                  where the rank increases
-  void columnRankProfile(std::vector<size_t>& profile); 
+  void columnRankProfile(std::vector<size_t>& profile);
 
-private:
+ private:
   // Private functions below this line
   const RingType& ring() const { return mLUObject.ring(); }
-
   void setUpperLower(const Mat& LU, Mat& lower, Mat& upper);
 
   void debug_out()
   {
     buffer o;
-    displayMat(o,mLUObject.LU());
+    displayMat(o, mLUObject.LU());
     std::cout << o.str() << std::endl;
   }
 
@@ -84,7 +84,7 @@ private:
   {
     buffer o;
     o << "[ ";
-    for (size_t i=0; i<len; i++)
+    for (size_t i = 0; i < len; i++)
       {
         ring().elem_text_out(o, x[i], true, false);
         o << " ";
@@ -95,8 +95,7 @@ private:
 };
 
 template <class RingType>
-DMatLinAlg<RingType>::DMatLinAlg(const Mat& A)
-  : mLUObject(A)
+DMatLinAlg<RingType>::DMatLinAlg(const Mat& A) : mLUObject(A)
 {
 }
 
@@ -245,17 +244,16 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
   assert(MatrixOps::isZero(lower));
   assert(MatrixOps::isZero(upper));
 
-  for (size_t c=0; c<LU.numColumns(); c++)
+  for (size_t c = 0; c < LU.numColumns(); c++)
     {
-      if (c < min)
-        ring().set_from_long(lower.entry(c,c), 1);
-      for (size_t r=0; r<LU.numRows(); r++)
+      if (c < min) ring().set_from_long(lower.entry(c, c), 1);
+      for (size_t r = 0; r < LU.numRows(); r++)
         {
           if (r <= c)
-            ring().set(upper.entry(r,c), LU.entry(r,c));
+            ring().set(upper.entry(r, c), LU.entry(r, c));
           else if (c < lower.numRows())
             {
-              ring().set(lower.entry(r,c), LU.entry(r,c));
+              ring().set(lower.entry(r, c), LU.entry(r, c));
             }
         }
     }
@@ -266,7 +264,7 @@ bool DMatLinAlg<RingType>::matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
 {
   const Mat& LU = mLUObject.LUinPlace();
 
-  setUpperLower(LU, L,U);
+  setUpperLower(LU, L, U);
   P = mLUObject.permutation();
   return mLUObject.signOfPermutation();
 }
@@ -279,12 +277,12 @@ void DMatLinAlg<RingType>::determinant(ElementType& result)
   // This is just the product of the diagonal entries of mLU.
   assert(LU.numRows() == LU.numColumns());
 
-  if (mLUObject.signOfPermutation()) 
+  if (mLUObject.signOfPermutation())
     ring().set_from_long(result, 1);
   else
     ring().set_from_long(result, -1);
-  for (size_t i=0; i<LU.numRows(); i++)
-    ring().mult(result, result, LU.entry(i,i));
+  for (size_t i = 0; i < LU.numRows(); i++)
+    ring().mult(result, result, LU.entry(i, i));
 }
 
 template <class RingType>
@@ -306,9 +304,9 @@ size_t DMatLinAlg<RingType>::rank()
 template <class RingType>
 bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 {
-  //printf("in dmat-lu: solve\n");
+  // printf("in dmat-lu: solve\n");
   const Mat& LU = mLUObject.LUinPlace();
-  //printf("in dmat-lu: after LU solve\n");
+  // printf("in dmat-lu: after LU solve\n");
 
   // For each column of B, we solve it separately.
 
@@ -325,7 +323,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   //  y is a vector 0..r-1
   //  x is a vector 0..n-1
 
-  //printf("entering DMatLinAlg::solve\n");
+  // printf("entering DMatLinAlg::solve\n");
   const std::vector<size_t>& pivotColumns = mLUObject.pivotColumns();
   const std::vector<size_t>& perm = mLUObject.permutation();
   size_t rk = pivotColumns.size();
@@ -338,12 +336,9 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   ElementType* y = newarray(ElementType, rk);
   ElementType* x = newarray(ElementType, LU.numColumns());
 
-  for (size_t i=0; i<LU.numRows(); i++)
-    ring().init(b[i]);
-  for (size_t i=0; i<rk; i++)
-    ring().init(y[i]);
-  for (size_t i=0; i<LU.numColumns(); i++)
-    ring().init(x[i]);
+  for (size_t i = 0; i < LU.numRows(); i++) ring().init(b[i]);
+  for (size_t i = 0; i < rk; i++) ring().init(y[i]);
+  for (size_t i = 0; i < LU.numColumns(); i++) ring().init(x[i]);
 
   X.resize(LU.numColumns(), B.numColumns());
 
@@ -351,23 +346,22 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
     {
       // Step 0: erase x (b will be set below, y is also set when needed).
 
-      for (size_t i=0; i<LU.numColumns(); i++)
-        ring().set_zero(x[i]);
+      for (size_t i = 0; i < LU.numColumns(); i++) ring().set_zero(x[i]);
 
       // Step 1: set b to be the permuted i-th column of B.
-      for (size_t r = 0; r<B.numRows(); r++)
-        ring().set(b[r], B.entry(perm[r],col));
+      for (size_t r = 0; r < B.numRows(); r++)
+        ring().set(b[r], B.entry(perm[r], col));
 
       /// printf("b:\n");
       /// debug_out_list(b, LU.numRows());
 
       // Step 2: Solve Ly=b
-      for (size_t i=0; i<rk; i++)
+      for (size_t i = 0; i < rk; i++)
         {
           ring().set(y[i], b[i]);
-          for (size_t j=0; j<i; j++)
+          for (size_t j = 0; j < i; j++)
             {
-              ring().mult(tmp, LU.entry(i,j), y[j]);
+              ring().mult(tmp, LU.entry(i, j), y[j]);
               ring().subtract(y[i], y[i], tmp);
             }
         }
@@ -376,12 +370,12 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       /// debug_out_list(y, rk);
 
       // Step 2B: see if the solution is consistent
-      for (size_t i=rk; i<LU.numRows(); i++)
+      for (size_t i = rk; i < LU.numRows(); i++)
         {
           ring().set(tmp, b[i]);
-          for (size_t j=0; j<rk; j++)
+          for (size_t j = 0; j < rk; j++)
             {
-              ring().mult(tmp2, LU.entry(i,j), y[j]);
+              ring().mult(tmp2, LU.entry(i, j), y[j]);
               ring().subtract(tmp, tmp, tmp2);
             }
           if (!ring().is_zero(tmp))
@@ -392,7 +386,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
               deletearray(x);
               ring().clear(tmp);
               ring().clear(tmp2);
-              //printf("returning false\n");
+              // printf("returning false\n");
               return false;
             }
         }
@@ -401,15 +395,15 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 
       // Step 3: Solve Ux=y
       // and place x back into X as col-th column
-      for (long i=rk-1; i>=0; --i)
+      for (long i = rk - 1; i >= 0; --i)
         {
           ring().set(x[i], y[i]);
-          for (size_t j=i+1; j<=rk-1; j++)
+          for (size_t j = i + 1; j <= rk - 1; j++)
             {
-              ring().mult(tmp, LU.entry(i,pivotColumns[j]), x[j]);
+              ring().mult(tmp, LU.entry(i, pivotColumns[j]), x[j]);
               ring().subtract(x[i], x[i], tmp);
             }
-          ring().divide(x[i], x[i], LU.entry(i,pivotColumns[i]));
+          ring().divide(x[i], x[i], LU.entry(i, pivotColumns[i]));
           ring().set(X.entry(pivotColumns[i], col), x[i]);
 
           /// buffer o;
@@ -420,7 +414,6 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
       /// printf("x:\n");
       /// debug_out_list(x, LU.numColumns());
 
-
       /// buffer o;
       /// printf("after col=%ld\n", col);
       /// displayMat(o, X);
@@ -429,16 +422,13 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   ring().clear(tmp);
   ring().clear(tmp2);
 
-  for (size_t i=0; i<LU.numRows(); i++)
-    ring().clear(b[i]);
-  for (size_t i=0; i<rk; i++)
-    ring().clear(y[i]);
-  for (size_t i=0; i<LU.numColumns(); i++)
-    ring().clear(x[i]);
+  for (size_t i = 0; i < LU.numRows(); i++) ring().clear(b[i]);
+  for (size_t i = 0; i < rk; i++) ring().clear(y[i]);
+  for (size_t i = 0; i < LU.numColumns(); i++) ring().clear(x[i]);
   deletearray(b);
   deletearray(y);
   deletearray(x);
-  return true; // The system seems to have been consistent
+  return true;  // The system seems to have been consistent
 }
 
 #if 0
@@ -456,13 +446,16 @@ bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
 #endif
 
 template <class Mat>
-void permuteRows(const Mat& B, const std::vector<size_t> permutation, Mat& result)
+void permuteRows(const Mat& B,
+                 const std::vector<size_t> permutation,
+                 Mat& result)
 {
   // Better would be if the Mat type allows easy swapping of rows...
-  result.resize(B.numRows(), B.numColumns()); // leaves B alone if correct size already...
-  for (long r=0; r<B.numRows(); r++)
-    for (long c=0; c<B.numColumns(); c++)
-      B.ring().set(result.entry(r,c), B.entry(permutation[r], c));
+  result.resize(B.numRows(),
+                B.numColumns());  // leaves B alone if correct size already...
+  for (long r = 0; r < B.numRows(); r++)
+    for (long c = 0; c < B.numColumns(); c++)
+      B.ring().set(result.entry(r, c), B.entry(permutation[r], c));
 }
 
 template <class Mat>
@@ -470,16 +463,28 @@ void solveLowerTriangular(const Mat& LU, const Mat& B, Mat& X)
 {
 }
 
-template<>
-inline void solveLowerTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU, const DMatGFFlintBig& B, DMatGFFlintBig& X)
+template <>
+inline void solveLowerTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU,
+                                                 const DMatGFFlintBig& B,
+                                                 DMatGFFlintBig& X)
 {
-  fq_nmod_mat_solve_tril(X.fq_nmod_mat(), LU.fq_nmod_mat(), B.fq_nmod_mat(), 1, LU.ring().flintContext());
+  fq_nmod_mat_solve_tril(X.fq_nmod_mat(),
+                         LU.fq_nmod_mat(),
+                         B.fq_nmod_mat(),
+                         1,
+                         LU.ring().flintContext());
 }
 
-template<>
-inline void solveLowerTriangular<DMatGFFlint>(const DMatGFFlint& LU, const DMatGFFlint& B, DMatGFFlint& X)
+template <>
+inline void solveLowerTriangular<DMatGFFlint>(const DMatGFFlint& LU,
+                                              const DMatGFFlint& B,
+                                              DMatGFFlint& X)
 {
-  fq_zech_mat_solve_tril(X.fq_zech_mat(), LU.fq_zech_mat(), B.fq_zech_mat(), 1, LU.ring().flintContext());
+  fq_zech_mat_solve_tril(X.fq_zech_mat(),
+                         LU.fq_zech_mat(),
+                         B.fq_zech_mat(),
+                         1,
+                         LU.ring().flintContext());
 }
 
 template <class Mat>
@@ -487,29 +492,42 @@ void solveUpperTriangular(const Mat& LU, const Mat& B, Mat& X)
 {
 }
 
-template<>
-inline void solveUpperTriangular<DMatGFFlint>(const DMatGFFlint& LU, const DMatGFFlint& B, DMatGFFlint& X)
+template <>
+inline void solveUpperTriangular<DMatGFFlint>(const DMatGFFlint& LU,
+                                              const DMatGFFlint& B,
+                                              DMatGFFlint& X)
 {
-  fq_zech_mat_solve_triu(X.fq_zech_mat(), LU.fq_zech_mat(), B.fq_zech_mat(), 0, LU.ring().flintContext());
+  fq_zech_mat_solve_triu(X.fq_zech_mat(),
+                         LU.fq_zech_mat(),
+                         B.fq_zech_mat(),
+                         0,
+                         LU.ring().flintContext());
 }
-template<>
-inline void solveUpperTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU, const DMatGFFlintBig& B, DMatGFFlintBig& X)
+template <>
+inline void solveUpperTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU,
+                                                 const DMatGFFlintBig& B,
+                                                 DMatGFFlintBig& X)
 {
-  fq_nmod_mat_solve_triu(X.fq_nmod_mat(), LU.fq_nmod_mat(), B.fq_nmod_mat(), 0, LU.ring().flintContext());
+  fq_nmod_mat_solve_triu(X.fq_nmod_mat(),
+                         LU.fq_nmod_mat(),
+                         B.fq_nmod_mat(),
+                         0,
+                         LU.ring().flintContext());
 }
 
 template <class RingType>
 bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
 {
-  //printf("in dmat-lu solveInvertible\n");
-  // possible TODO: incorporate a faster method if we know matrix is invertible...
+  // printf("in dmat-lu solveInvertible\n");
+  // possible TODO: incorporate a faster method if we know matrix is
+  // invertible...
   assert(mLUObject.numRows() == mLUObject.numColumns());
   assert(mLUObject.numRows() == B.numRows());
 
   X.resize(mLUObject.numColumns(), B.numColumns());
   mLUObject.LUinPlace();
   if (rank() < mLUObject.numRows()) return false;
-  solve(B,X);
+  solve(B, X);
   return true;
 #if 0
   // The following code doesn't really seem to be any faster than the naive code we have
@@ -535,8 +553,8 @@ bool DMatLinAlg<RingType>::inverse(Mat& X)
   // printf("in DMatLinAlg<RingType>::inverse\n");
 
   Mat id(ring(), LU.numRows(), LU.numRows());
-  for (size_t i=0; i<LU.numRows(); i++)
-    ring().set_from_long(id.entry(i,i), 1);
+  for (size_t i = 0; i < LU.numRows(); i++)
+    ring().set_from_long(id.entry(i, i), 1);
 
   solve(id, X);
   return true;
@@ -558,7 +576,8 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
 
   size_t col = 0;
   size_t nextpivotidx = 0;
-  size_t nextpivotcol = (pivotColumns.size()>0 ? pivotColumns[0] : LU.numColumns());
+  size_t nextpivotcol =
+      (pivotColumns.size() > 0 ? pivotColumns[0] : LU.numColumns());
   size_t colX = 0;
   while (colX < X.numColumns())
     {
@@ -566,23 +585,28 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
         {
           col++;
           nextpivotidx++;
-          nextpivotcol = (nextpivotidx < pivotColumns.size() ? pivotColumns[nextpivotidx] : LU.numColumns());
+          nextpivotcol =
+              (nextpivotidx < pivotColumns.size() ? pivotColumns[nextpivotidx]
+                                                  : LU.numColumns());
           continue;
         }
       // At this point, we are ready to create a column of X.
-      ring().set_from_long(X.entry(col,colX), -1);
-      // Now we loop through and set the elements in the rows of X = pivot columns.
-      for (long p = nextpivotidx-1; p >= 0; p--)
+      ring().set_from_long(X.entry(col, colX), -1);
+      // Now we loop through and set the elements in the rows of X = pivot
+      // columns.
+      for (long p = nextpivotidx - 1; p >= 0; p--)
         {
           // set X.entry(pivotColumns[p], colX)
           ring().set(tmp, LU.entry(p, col));
-          for (size_t i=nextpivotidx-1; i>=p+1; i--)
+          for (size_t i = nextpivotidx - 1; i >= p + 1; i--)
             {
-              ring().mult(tmp2, LU.entry(p,pivotColumns[i]), X.entry(pivotColumns[i],colX));
+              ring().mult(tmp2,
+                          LU.entry(p, pivotColumns[i]),
+                          X.entry(pivotColumns[i], colX));
               ring().subtract(tmp, tmp, tmp2);
             }
           ring().divide(tmp, tmp, LU.entry(p, pivotColumns[p]));
-          ring().set(X.entry(pivotColumns[p],colX), tmp);
+          ring().set(X.entry(pivotColumns[p], colX), tmp);
         }
       colX++;
       col++;
@@ -592,8 +616,6 @@ size_t DMatLinAlg<RingType>::kernel(Mat& X)
   ring().clear(tmp2);
   return X.numColumns();
 }
-
-
 
 #endif
 

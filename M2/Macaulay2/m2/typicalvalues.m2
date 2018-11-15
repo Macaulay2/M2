@@ -3,7 +3,6 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
-typicalValues#method = MethodFunction
 typicalValues#class = Type
 typicalValues#parent = Type
 typicalValues#(symbol timing) = Time
@@ -73,7 +72,6 @@ hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
-keys HashTable := List => keys
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
 localDictionaries Pseudocode := List => localDictionaries
@@ -158,24 +156,24 @@ chk := (type,key) -> if type#?key then (
      error("method already installed: ",toString type," # ",toString key))
 
 
-typval3f{*(Function,Type,Type)*} := (f,X,Z) -> (
+typval3f-*(Function,Type,Type)*- := (f,X,Z) -> (
      msg := toString f | "(" | toString X | ") => " | toString Z;
      chk(X, f);
      f(X) := Z => x -> (error("dummy method called: ", msg);)
      )
-typval4f{*(Function,Type,Type,Type)*} := (f,X,Y,Z) -> (
+typval4f-*(Function,Type,Type,Type)*- := (f,X,Y,Z) -> (
      chk(youngest (X,Y), (f,X,Y));
      f(X,Y) := Z => x -> (dummy x;)
      )
-typval5f{*(Function,Type,Type,Type,Type)*} := (f,X,Y,Z,W) -> (
+typval5f-*(Function,Type,Type,Type,Type)*- := (f,X,Y,Z,W) -> (
      chk(youngest (X,Y,Z), (f,X,Y,Z));
      f(X,Y,Z) := W => x -> (dummy x;)
      )
-typval3k{*(Keyword,Type,Type)*} := (f,X,Z) -> (
+typval3k-*(Keyword,Type,Type)*- := (f,X,Z) -> (
      chk(X, (f,X));
      installMethod(f, X, Z => x -> (dummy x;))
      )
-typval4k{*(Keyword,Type,Type,Type)*} := (f,X,Y,Z) -> (
+typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      chk(youngest(X,Y), (f,X,Y));
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )

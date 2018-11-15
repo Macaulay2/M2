@@ -178,13 +178,13 @@ document {
      PARA {
 	  "This method is not implemented yet."
 	  }
-{* temporarily disabled
+-* temporarily disabled
      EXAMPLE {
 	  "V = Proj(QQ[x,y])",
 	  "s = hilbertSeries V",
 	  "numerator s"
 	  }
-*}
+*-
      }
 document { 
      Key => [hilbertSeries, Order],

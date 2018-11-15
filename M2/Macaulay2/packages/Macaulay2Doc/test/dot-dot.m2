@@ -1,6 +1,6 @@
 R = QQ[b,c,  e,f]
 S = QQ[  c,d,  f]
-{*
+-*
 (print; print generateAssertions ///
 a..a
 a..b
@@ -59,7 +59,7 @@ f..<f
 f..<g
 g..<g
 ///)
-*}
+*-
 
 assert( (a..b) === (a,symbol b) )
 assert( (a..c) === (a,symbol b,symbol c) )
@@ -119,11 +119,11 @@ assert( (g..<g) === () )
 
 T = QQ[x_1,y,x_2,z,x_3]
 U = QQ[x_1,y,x_2,z,x_3]
-{*
+-*
 print generateAssertions ///
 T_0 .. T_4
 U_0 .. U_4
 ///
-*}
+*-
 assert( (T_0 .. T_4) === (new IndexedVariable from {symbol x,1},new IndexedVariable from {symbol x,2},new IndexedVariable from {symbol x,3}) )
 assert( (U_0 .. U_4) === (x_1,x_2,x_3) )

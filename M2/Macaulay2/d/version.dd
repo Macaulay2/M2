@@ -15,7 +15,7 @@ declarations "
      #include <mysql/mysql.h>
    #endif
    #ifdef HAVE_PYTHON
-     #include <python2.5/Python.h>
+     #include <python2.7/Python.h>
    #else
      #define PyObject_Str(o) 0
      #define PyString_AS_STRING(o) 0
@@ -24,6 +24,7 @@ declarations "
    ";
 
 header "
+   #include <M2/config.h>
    #include <atomic_ops.h>
    #include <mpfr.h>
    #include <memtailor.h>
@@ -31,9 +32,6 @@ header "
    #include <mathicgb.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
-   #define Matrix FactoryMatrix
-   #include <factory/factory.h>
-   #undef Matrix
    extern char timestamp[];
    #undef ASSERT
    #ifdef HAVE_FROBBY
@@ -55,18 +53,31 @@ header "
    extern unsigned int GC_version; /* in libgc.a */
    #include <gmp.h>
    #include <NTL/version.h>
-   #include <factory/factoryconf.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
    #include <readline/readline.h>
    #include <givaro/givinit.h>
+   #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;
+
+   // we want to get PACKAGE_VERSION from factory/factoryconf.h and then get it again from M2/config.h
+   const char * M2_version () { return PACKAGE_VERSION; }
+   #undef PACKAGE_VERSION
+   #include <factory/factoryconf.h>
+   const char * factory_version () { return PACKAGE_VERSION; }
+   extern const char factoryVersion[]; /* extracted from factory's factory.h */
+
+   // HAVE_LINBOX is in factory/factoryconf.h
    #ifdef HAVE_LINBOX
        #include <linbox/linbox-config.h>
    #endif
+   // HAVE_FROBBY is in factory/factoryconf.h
    #ifdef HAVE_FLINT
        #include <M2/gc-include.h>
+       #pragma GCC diagnostic push
+       #pragma GCC diagnostic ignored \"-Wconversion\"
        #include <flint/flint.h>
+       #pragma GCC diagnostic pop
    #endif
    ";
 gcversion():constcharstar := Ccode(returns,"
@@ -93,11 +104,15 @@ atomicopsversion():constcharstar := Ccode(returns,"
 header "#include <fflas-ffpack/fflas-ffpack-config.h>";
 ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
 
+header "#include <fflas-ffpack/fflas-ffpack-config.h>";
+
 factoryversion():constcharstar := Ccode(returns,"
-     extern const char factoryVersion[]; /* extracted from factory's factory.h */
-     char const * p = strrchr(factoryVersion,' ');
-     return p ? p+1 : factoryVersion;
+     return factory_version();
+     // the following way used to work, but now it gives 4.0.1 instead of 4.1.0:
+     //   char const * p = strrchr(factoryVersion,' ');
+     //   return p ? p+1 : factoryVersion;
      ");
+
 readlineversion():constcharstar := Ccode(returns,"
      static char buf[8];
      sprintf(buf, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
@@ -134,8 +149,10 @@ compiler := (
 	    #endif
 	    ")));
 
+header "#include \"distributed-packages.h\"";
+
 setupconst("version", Expr(toHashTable(Sequence(
-   "VERSION" => Ccode(constcharstar,"PACKAGE_VERSION"),
+   "VERSION" => Ccode(constcharstar,"M2_version()"),
    "architecture" => Ccode(constcharstar,"ARCH"),
    "issue" => Ccode(constcharstar,"ISSUE"),
    "machine" => Ccode(constcharstar,"MACHINE"),
@@ -161,7 +178,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 		   \"not present\"
 	  #endif
 	  "),
-   "givaro version" => Ccode(constcharstar, "givaroMain.Version()"),
+   "givaro version" => Ccode(constcharstar, "stringize(GIVARO_MAJOR_VERSION) \".\" stringize(GIVARO_MINOR_VERSION) \".\" stringize(GIVARO_REVISION_VERSION)" ),
    "fflas_ffpack version" => ffpackVersion(),
    "linbox version" => Ccode(constcharstar,"
 	  #ifdef HAVE_LINBOX
@@ -225,10 +242,9 @@ setupconst("version", Expr(toHashTable(Sequence(
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
    "endianness" => Ccode(constcharstar,"(char *)endianness_string"),
    "pointer size" => Ccode(int,"sizeof(void *)"),
-   "packages" => Ccode(constcharstar,"PACKAGES"),
+   "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "threads" => USE_THREADS,
    "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
    ))));
 

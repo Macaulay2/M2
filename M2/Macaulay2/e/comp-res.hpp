@@ -15,20 +15,24 @@ class buffer;
 class ResolutionComputation : public Computation
 // This is the base type for all resolution computations
 {
-protected:
+ protected:
   ResolutionComputation();
 
   virtual bool stop_conditions_ok() = 0;
   // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
-public:
+ public:
   // These three routines should be moved to a utility class
   static void betti_init(int lo, int hi, int len, int *&bettis);
   static M2_arrayint betti_make(int lo, int hi, int len, int *bettis);
   static void betti_display(buffer &o, M2_arrayint a);
-public:
-  virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;}
+
+ public:
+  virtual ResolutionComputation *cast_to_ResolutionComputation()
+  {
+    return this;
+  }
 
   virtual ~ResolutionComputation();
 
@@ -38,13 +42,13 @@ public:
                                            M2_bool use_max_slanted_degree,
                                            int max_slanted_degree,
                                            int algorithm,
-                                           int strategy
-                                           );
+                                           int strategy);
   // Values for algorithm and strategy are documented in engine.h
 
   virtual void start_computation() = 0;
 
-  //  virtual ComputationStatusCode compute(const StopConditions &stop_, long &complete_thru_this_degree);
+  //  virtual ComputationStatusCode compute(const StopConditions &stop_, long
+  //  &complete_thru_this_degree);
   virtual int complete_thru_degree() const = 0;
   // The computation is complete up through this slanted degree.
 
@@ -68,11 +72,9 @@ public:
   virtual void text_out(buffer &o) const = 0;
   // This displays statistical information, and depends on the
   // M2_gbTrace value.
-
 };
 
 void intern_res(ResolutionComputation *G);
-
 
 #endif
 

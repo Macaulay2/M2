@@ -27,7 +27,9 @@ GBComputation *createF4GB(const Matrix *m,
   Gausser *KK = Gausser::newGausser(K, Mem);
   if (KK == 0)
     {
-      ERROR("cannot use Algorithm => LinearAlgebra with this type of coefficient ring");
+      ERROR(
+          "cannot use Algorithm => LinearAlgebra with this type of coefficient "
+          "ring");
       return NULL;
     }
 
@@ -44,8 +46,7 @@ GBComputation *createF4GB(const Matrix *m,
   return G;
 }
 
-F4Computation::F4Computation(
-                             Gausser *K0,
+F4Computation::F4Computation(Gausser *K0,
                              F4Mem *Mem0,
                              const Matrix *m,
                              M2_bool collect_syz,
@@ -59,7 +60,8 @@ F4Computation::F4Computation(
   KK = K0;
   originalR = m->get_ring()->cast_to_PolynomialRing();
   F = m->rows();
-  MI = new MonomialInfo(originalR->n_vars(), originalR->getMonoid()->getMonomialOrdering());
+  MI = new MonomialInfo(originalR->n_vars(),
+                        originalR->getMonoid()->getMonomialOrdering());
   Mem = Mem0;
 
   f4 = new F4GB(KK,
@@ -73,26 +75,18 @@ F4Computation::F4Computation(
                 use_max_degree,
                 max_degree);
 
-  F4toM2Interface::from_M2_matrix(KK,MI,m,gb_weights,f4->get_generators());
-  f4->new_generators(0, m->n_cols()-1);
+  F4toM2Interface::from_M2_matrix(KK, MI, m, gb_weights, f4->get_generators());
+  f4->new_generators(0, m->n_cols() - 1);
 }
 
-F4Computation::~F4Computation()
-{
-  delete Mem;
-}
-
+F4Computation::~F4Computation() { delete Mem; }
 /*************************
  ** Top level interface **
  *************************/
 
-void F4Computation::start_computation()
-{
-  f4->start_computation(stop_);
-}
-
-Computation /* or null */ *
-F4Computation::set_hilbert_function(const RingElement *hf)
+void F4Computation::start_computation() { f4->start_computation(stop_); }
+Computation /* or null */ *F4Computation::set_hilbert_function(
+    const RingElement *hf)
 {
   f4->set_hilbert_function(hf);
   return this;
@@ -101,10 +95,10 @@ F4Computation::set_hilbert_function(const RingElement *hf)
 const Matrix /* or null */ *F4Computation::get_gb()
 {
   const gb_array &gb = f4->get_gb();
-  MatrixConstructor result(F,0);
-  for (int i=0; i<gb.size(); i++)
+  MatrixConstructor result(F, 0);
+  for (int i = 0; i < gb.size(); i++)
     {
-      vec v = F4toM2Interface::to_M2_vec(KK,MI,gb[i]->f, F);
+      vec v = F4toM2Interface::to_M2_vec(KK, MI, gb[i]->f, F);
       result.append(v);
     }
   return result.to_matrix();
@@ -124,30 +118,18 @@ const Matrix /* or null */ *F4Computation::get_mingens()
   return 0;
 }
 
-const Matrix /* or null */ *F4Computation::get_change()
-{
-  return 0;
-}
-
-const Matrix /* or null */ *F4Computation::get_syzygies()
-{
-  return 0;
-}
-
-const Matrix /* or null */ *F4Computation::get_initial(int nparts)
-{
-  return 0;
-}
-
+const Matrix /* or null */ *F4Computation::get_change() { return 0; }
+const Matrix /* or null */ *F4Computation::get_syzygies() { return 0; }
+const Matrix /* or null */ *F4Computation::get_initial(int nparts) { return 0; }
 const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
   return 0;
 }
 
-M2_bool F4Computation::matrix_lift(const Matrix *m,
-                 const Matrix /* or null */ **result_remainder,
-                 const Matrix /* or null */ **result_quotient
-                 )
+M2_bool F4Computation::matrix_lift(
+    const Matrix *m,
+    const Matrix /* or null */ **result_remainder,
+    const Matrix /* or null */ **result_quotient)
 {
   *result_remainder = 0;
   *result_quotient = 0;
@@ -156,33 +138,33 @@ M2_bool F4Computation::matrix_lift(const Matrix *m,
 }
 
 int F4Computation::contains(const Matrix *m)
-  // Return -1 if every column of 'm' reduces to zero.
-  // Otherwise return the index of the first column that
-  // does not reduce to zero.
+// Return -1 if every column of 'm' reduces to zero.
+// Otherwise return the index of the first column that
+// does not reduce to zero.
 {
   return 0;
 }
 
 int F4Computation::complete_thru_degree() const
-  // The computation is complete up through this degree.
+// The computation is complete up through this degree.
 {
   return 0;
 }
 
 void F4Computation::text_out(buffer &o) const
-  /* This displays statistical information, and depends on the
-     M2_gbTrace value */
+/* This displays statistical information, and depends on the
+   M2_gbTrace value */
 {
 }
 
-void F4Computation::show() const // debug display
+void F4Computation::show() const  // debug display
 {
   buffer o;
   stash::stats(o);
   emit(o.str());
 
   Mem->show();
-  //f4->show();
+  // f4->show();
 }
 
 // Local Variables:

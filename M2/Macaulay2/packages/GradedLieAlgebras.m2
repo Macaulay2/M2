@@ -20,8 +20,7 @@ newPackage(
 	      },
 	AuxiliaryFiles => true,
         DebuggingMode => false,
-	Headline => "GradedLieAlgebras - a package for doing computations in graded Lie algebras",
-	Configuration => { }
+	Headline => "computations in graded Lie algebras"
    	)
  
 export {

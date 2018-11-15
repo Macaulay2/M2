@@ -14,12 +14,13 @@ export {
    "polyhedron",
    "polyhedronFromHData",
    "polyhedronFromInequalities" => "polyhedronFromHData",
-
+   "dualFaceRepresentationMap",
    "facets",
    "Fan", 
    "PolyhedralComplex", 
    "intersection", 
    "fan", 
+   "fanFromGfan",
    "addCone", 
    "polyhedralComplex", 
    "addPolyhedron", 
@@ -31,6 +32,7 @@ export {
    "hyperplanes", 
    "linSpace", 
    "linealitySpace",
+   "linearTransform",
    "polyhedra", 
    "vertices",
    "areCompatible", 
@@ -107,5 +109,12 @@ export {
    "secondaryPolytope", 
    "statePolytope", 
    "stdSimplex",
-   "saveSession"}
+   "simplex",
+   "saveSession",
+   "regularTriangulation",
+   "barycentricTriangulation",
+   "regularSubdivision",
+   "minimalNonFaces",
+   "stanleyReisnerRing"
+}
 

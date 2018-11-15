@@ -32,11 +32,11 @@ trueKoszul Matrix := ff -> (
     chainComplex mapList
     )
 
-{*syzygyModule = method()
+-*syzygyModule = method()
 syzygyModule (ZZ, Module) := (d,M)->(
     F:= res(M, LengthLimit => d+1);
     coker F.dd_(d+1))
-*}
+*-
 ciOperatorResolution=method()
 ciOperatorResolution(ChainComplex, ChainComplex) := (A,L) ->(
     u :=higherCIOperators(A,L);
@@ -115,7 +115,7 @@ scan(toList(2..min(length A, length L+1)), n->(
 ));
 hashTable pairs u)
 
-{*scan(toList(2..min(length A, length L+1)), n->(
+-*scan(toList(2..min(length A, length L+1)), n->(
 	scan(toList(n..length A), p->(
 		u#{n,p,0} = 
 		-sum(toList(1..n-1), i -> (
@@ -123,7 +123,7 @@ hashTable pairs u)
 		scan(toList(1..length L - n + 1), q->(
 		    u#{n,p,q} = 
 		    (A_(p-n)**mu#{n-1,q})*(u#{n,p,0}**L_q)))
-*}
+*-
 
 
 
@@ -206,7 +206,7 @@ assert(
 -- <<docTemplate
 
 
-{*
+-*
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 uninstallPackage "CompleteIntersectionResolutions"
@@ -215,8 +215,9 @@ check "CompleteIntersectionResolutions"
 viewHelp CompleteIntersectionResolutions
 viewHelp higherCIOperators
 viewHelp complexity
-*}
+*-
 
+beginDocumentation()
 
 doc ///
    Key 
@@ -418,7 +419,7 @@ doc ///
     higherCIOperators
 ///
 
-{*
+-*
 doc ///
    Key
     syzygyModule
@@ -434,7 +435,7 @@ doc ///
    Outputs
     M:Module
 ///
-*}
+*-
 doc ///
    Key
     HigherCIOperators

@@ -10,8 +10,6 @@
 
 #include "../system/supervisorinterface.h"
 
-int reading_from_readline = FALSE;
-
 extern void stack_trace();
 
 void
@@ -395,13 +393,13 @@ static char **M2_completion(const char *text, int start, int end) {
 }
 
 
-void init_readline_variables(void) {
-  extern const char *_rl_comment_begin;
-  _rl_comment_begin = "-- ";
-  rl_readline_name = "M2";
+void system_initReadlineVariables(void) {
+  static char readline_name[] = "M2";
+  static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
+  rl_readline_name = readline_name;
   rl_attempted_completion_function = M2_completion;
-  rl_basic_word_break_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
-  using_history();
+  rl_basic_word_break_characters = basic_word_break_characters;
+  using_history();		/* this might also initialize readine, by calling rl_readline, on Mac OS X */
 }
 
 static int read_via_readline(char *buf,int len,char *prompt) {
@@ -411,9 +409,16 @@ static int read_via_readline(char *buf,int len,char *prompt) {
   int r;			/* number of chars to return this time */
   if (len == 0) return 0;
   if (p == NULL) {
-    reading_from_readline = TRUE; /* for the interrupt handler */
+    interrupt_jump_set = TRUE; /* for the interrupt handler */
+    if (sigsetjmp(interrupt_jump,TRUE)) { /* long jump occurred */
+	 fprintf(stderr,"^C\n");
+	 interrupt_jump_set = FALSE;
+	 rl_cleanup_after_signal();
+	 rl_free_line_state();
+	 return ERROR;
+	 }
     p = readline(prompt);
-    reading_from_readline = FALSE;
+    interrupt_jump_set = FALSE;
     if (p == NULL) return 0;	/* EOF */
     i = 0;
     plen = strlen(p);

@@ -14,16 +14,17 @@ class SchreyerOrder : public our_new_delete
 {
   const Monoid *M;
 
-  intarray _order; // Each 'entry' is an array of ints of length _nslots:
-                   // compare_num, followed by the (encoded) monomial.
+  intarray _order;  // Each 'entry' is an array of ints of length _nslots:
+                    // compare_num, followed by the (encoded) monomial.
   int _nslots;
   int _rank;
 
-  SchreyerOrder(const Monoid *m) : M(m), _nslots(m->monomial_size() + 1), _rank(0) {}
+  SchreyerOrder(const Monoid *m)
+      : M(m), _nslots(m->monomial_size() + 1), _rank(0)
+  {
+  }
   ~SchreyerOrder() { abort(); }
-
-public:
-
+ public:
   static SchreyerOrder *create(const Monoid *m);
   static SchreyerOrder *create(const Matrix *m);
   static SchreyerOrder *create(const GBMatrix *m);
@@ -32,9 +33,8 @@ public:
 
   int rank() const { return _rank; }
   int compare_num(int i) const { return _order[i * _nslots]; }
-  const int *base_monom(int i) const { return _order.raw() + i*_nslots + 1; }
+  const int *base_monom(int i) const { return _order.raw() + i * _nslots + 1; }
   const Monoid *getMonoid() const { return M; }
-
   bool is_equal(const SchreyerOrder *G) const;
   SchreyerOrder *copy() const;
   SchreyerOrder *sub_space(int n) const;

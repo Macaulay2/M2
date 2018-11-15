@@ -65,12 +65,12 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
 	    t := symbol t;
 	    Rt := CC(monoid [gens ring F, t]);
 	    t = last gens Rt;
-	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint - t*coordinates n2.BasePoint))) FF;   		
+	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint + t*coordinates n2.BasePoint))) FF;   		
 	    F21 := sub(F12,t=>1-t);   		
 	    XT := getVarGates Rt;
 	    X := gateMatrix{drop(XT,-1)};
 	    T := last XT; 
-	    print "-- setting up gateHomotopy for an edge...";
+	    -- "-- setting up gateHomotopy for an edge...";
 	    E#"homotopy12" = gateHomotopy(gateMatrix polySystem F12, X, T, Strategy=>compress);
 	    E#"homotopy21" = gateHomotopy(gateMatrix polySystem F21, X, T, Strategy=>compress);
 	    )
@@ -153,7 +153,7 @@ potentialLowerBound = (e,from1to2) -> (
     max(n1-n2, 0)
     ) 
 
-{*
+-*
 potentialE = (e,from1to2) -> (
     G := e.Graph;
     (head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
@@ -169,7 +169,7 @@ potentialE = (e,from1to2) -> (
     else p=0;
     p
     ) 
-*}
+*-
 
 makeBatchPotential = method()
 makeBatchPotential ZZ := batchSize -> (

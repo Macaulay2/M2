@@ -10,4 +10,4 @@ stdio:13:1:(3): error: unknown engine error
 A = mutableMatrix({{1_RR}}, Dense=>true)
 clean(0.1,A) -- works fine
 A = mutableMatrix({{1_RR}}, Dense=>false)
-clean(0.1,A) -- crashes: not implemented.
+assert try (clean(0.1,A);false) else true  -- not yet implemented.

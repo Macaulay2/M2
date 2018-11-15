@@ -242,7 +242,7 @@ document {
      associated to a package.",
      PARA{},
      "For an example, see ", TO "an example of a package",
-     Caveat => "When creating tests, try to insure that they run relatively quickly.",
+     Caveat => "When creating tests, try to ensure that they run relatively quickly.",
      SeeAlso => { beginDocumentation, assert }
      }
 
@@ -251,12 +251,12 @@ document {
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
 	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput],
 	  [newPackage,PackageExports], PackageExports, [newPackage,PackageImports], PackageImports,
-	  [newPackage,Certification], [newPackage,Reload]
+	  [newPackage,Certification], [newPackage,Reload], [newPackage,UseCachedExampleOutput], [newPackage, OptionalComponentsPresent]
 	  }, 
      Headline => "package item: start a new package",
-     Usage => "newPackage ( title )",
+     Usage => "newPackage ( pkgname )",
      Inputs => {
-	  "title" => "the name of the new package",
+	  "pkgname" => "the name of the new package",
 	  Version => String => {"the version number of the package.  A version number less than 1.0 indicates that the package is under
 	       development, and the user interface may change."},
 	  Date => String => "the date of this version of the package",
@@ -278,6 +278,13 @@ document {
 	       when ", TO "installPackage", " is called.  After the directory is created, it will necessary for the user also to specify
 	       ", TT "AuxiliaryFiles=>true", "."
 	       },
+     	  OptionalComponentsPresent => Boolean => {"whether all optional external components of the package are present on the system.
+	       Unless the user sets this option or ", TT "CacheExampleOutput", " to ", TT "true", ", this option will be initialized to 
+	       ", TT "true", "."},
+          UseCachedExampleOutput => Boolean => {"whether ", TO "installPackage", " should copy previously cached example output, if it is present and
+	       corresponds to the current example input for a node, rather than rerunning the examples, which might be important if optional external
+	       software is not present in the system.  This is relevant only when ", TT "CacheExampleOutput", " and ", TT "AuxiliaryFiles", " are set 
+	       to ", TT "true", ".  Unless set by the user, it is set to the negation of the value of ", TT "OptionalComponentsPresent", "."},
 	  Certification => List => {
 	       "the certification block inserted by the maintainers of ", EM "Macaulay2", " after the package has been accepted for publication by a 
 	       journal, such as The Journal of Software for Algebra and Geometry: ", EM "Macaulay2", ".  Authors should

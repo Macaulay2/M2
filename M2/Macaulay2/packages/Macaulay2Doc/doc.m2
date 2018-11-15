@@ -84,6 +84,14 @@ document {
      }
 
 document {
+     Key => WebApp,
+     Headline => "the web app top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods, in connection with
+     the use of the (currently developed) web app with (Ka)TeX output as front end.",
+     SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
@@ -266,178 +274,6 @@ document {
 	  }
      }
 
-document {
-     Key => HashTable,
-     Headline => "the class of all hash tables",
-     PARA {
-	  "A hash table consists of: a class type, a parent type, and a
-	  set of key-value pairs.  The keys and values can be anything.
-	  The access functions below accept a key and return the
-	  corresponding value.  For details of the mechanism
-	  underlying this, see ", TO "hashing", "."
-	  },
-     PARA{
-	  "One important feature of hash tables that when the keys
-	  are consecutive integers starting at 0, the keys are scanned
-	  in the natural order."
-	  },
-     PARA{
-     	  "There is a subclass of HashTable called ", TO "MutableHashTable", "
-     	  which consists of those hash tables whose entries can be changed."
-	  },
-     PARA "Access functions:",
-     UL {
- 	  TO "#",
- 	  TO "."
- 	  },
-     PARA "Query functions:",
-     UL {
- 	  TO "#?",
- 	  TO ".?"
- 	  }
-     }
-
-document {
-     Key => {maxPosition,(maxPosition,BasicList)},
-     Usage => "maxPosition x",
-     Headline => "position of largest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the largest element in the list ", TT "x" }
-	  },
-     "If the largest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "maxPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the maximal element is 1, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{
-	  "For elements in a polynomial ring, the order used is the ", TO2("monomial orderings","monomial order"),
-	  " associated with the ring.",
-	  },
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "maxPosition {z^2, s*z, x*y}",
-	  "maxPosition(z^2, s*z, x*y)"	  
-	  },
-     SeeAlso => { minPosition, max, min, sort, position }
-     }
-
-document {
-     Key => {minPosition,(minPosition,BasicList)},
-     Usage => "minPosition x",
-     Headline => "position of smallest element",
-     Inputs => {
-	  "x" => BasicList
-	  },
-     Outputs => {
-	  { "the position of the smallest element in the list ", TT "x" }
-	  },
-     "If the smallest element occurs more than once, then the first occurrence
-     is used.  If ", TT "x", " has length 0 an error results.",
-     EXAMPLE {
-	  "minPosition {1,6,4,2}"
-	  },
-     "Notice that the position of the minimal element is 0, as indexing in
-     Macaulay2 always starts at 0.",
-     PARA{},
-     "For elements in a polynomial ring, the order used is the ", 
-     TO2("monomial orderings","monomial order"),
-     " associated with the ring.",
-     EXAMPLE {
-	  "R = QQ[r,s,x,y,z];",
-	  "z^2 + x*y + s*z",
-	  "minPosition {z^2, s*z, x*y}",
-	  "minPosition(z^2, s*z, x*y)"
-	  },
-     SeeAlso => { maxPosition, max, min, sort, position }
-     }
-
-document {
-     Key => keys,
-     Headline => "keys used in a hash table" }
-document {
-     Key => (keys,HashTable),
-     Usage => "keys t",
-     Inputs => {
-	  "t"
-	  },
-     Outputs => {
-	  {"a list of the keys occurring in the hash table ", TT "t"}
-	  },
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2}",
-	  "keys x",
-	  }
-     }
-
-document {
-     Key => values,
-     Headline => "values in a hash table" }
-document {
-     Key => (values,HashTable),
-     Usage => "values t",
-     Inputs => {
-	  "t"
-	  },
-     Outputs => {
-	  {"a list of the values occurring in the hash table ", TT "t", "."}
-	  },
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2}",
-	  "values x",
-	  }
-     }
-
-document {
-     Key => scan,
-     Headline => "apply a function to each element",
-     SeeAlso => { "mapping over lists"}
-     }
-
-document {
-     Key => (scan,BasicList,Function),
-     Headline => "apply a function to each element of a list",
-     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ".  The function values are discarded.",
-     EXAMPLE "scan({a,4,\"George\",2^100}, print)"
-     }
-
-document {
-     Key => (scan,ZZ,Function),
-     Headline => "apply a function to 0 .. n-1",
-     TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
-     in the range ", TT "0 .. n-1", " discarding the results.",
-     PARA{},
-     "This is equivalent to ", TT "scan(0 .. n-1, f)", ".",
-     EXAMPLE {
-	  "scan(3,print)",
-	  "v = {a,b,c}",
-	  "scan(#v, i -> print(i,v#i))"
-	  }
-     }
-
-document {
-     Key => scanPairs,
-     Headline => "apply a function to pairs in a hash table" }
-
-document {
-     Key => (scanPairs,HashTable,Function),
-     Headline => "apply a function to pairs in a hash table",
-     TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
-     pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
-     table ", TT "x", " and ", TT "v", " is the corresponding 
-     value ", TT "x#k", ".",
-     PARA{},
-     "This function requires an immutable hash table.  To scan the pairs in
-     a mutable hash table, use ", TT "scan(pairs x, f)", ".",
-     PARA{},
-     SeeAlso => "scan"
-     }
 
 --document { find,
 --     TT "find(x,f)", " -- applies the function ", TT "f", " to each element
@@ -450,13 +286,18 @@ document {
 	  (describe, PolynomialRing),
 	  (describe, QuotientRing),
 	  (describe, FractionField),
+	  (describe, Thing),
+	  (describe, AffineVariety),
+	  (describe, CoherentSheaf),
 	  (describe, GaloisField),
 	  (describe, GeneralOrderedMonoid),
-	  (describe, Variety),
-	  (describe, Thing)
+	  (describe, Matrix),
+	  (describe, Module),
+	  (describe, ProjectiveVariety),
+	  (describe, RingMap)
 	  },
      Headline => "real description",
-     TT "describe x", " -- returns ", ofClass Net, " containing the 
+     TT "describe x", " -- returns ", ofClass Expression, " containing the 
      real description of ", TT "x", ", bypassing the feature that causes
      certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.  For polynomial rings, it also displays the options used at creation.",
@@ -695,12 +536,6 @@ undocumented {
 (symbol SPACE, Command, Thing),
 (symbol SPACE, Manipulator, Nothing),
 (symbol SPACE, WrapperType, Thing),
-(symbol SPACE, Expression, Expression),
-(symbol SPACE, Expression, Holder),
-(symbol SPACE, Holder, Expression),
-(symbol SPACE, Expression, Thing),
-(symbol SPACE, Thing, Expression),
-(symbol SPACE, Holder, Holder),
 (symbol SPACE, HeaderType, List),
 (symbol SPACE, HeaderType, Sequence),
 (symbol SPACE, MarkUpType, Net),
@@ -752,10 +587,8 @@ undocumented {
      (symbol *, RingElement, Number),
     (symbol*,  Expression, Product),
     (symbol*,  Product, Expression),
-    (symbol*,  Holder, Expression),
     (symbol*,  Minus, Expression),
     (symbol*,  Product, Holder),
-    (symbol*,  Holder, Holder),
     (symbol*,  ZeroExpression, Expression),
     (symbol*,  Minus, Minus),
     (symbol*,  ZZ, InfiniteNumber),
@@ -770,7 +603,6 @@ undocumented {
     (symbol*,  ZeroExpression, Holder),
     (symbol*,  Holder, ZeroExpression),
     (symbol*,  Holder, OneExpression),
-    (symbol*,  Expression, Holder),
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
     (symbol*,  Expression, Minus),
@@ -1059,9 +891,7 @@ undocumented {
      (symbol /, InfiniteNumber, QQ),
      (symbol /, InfiniteNumber, RR),
      (symbol /, EngineRing, Ideal),
-     (symbol /, Expression, Holder),
      (symbol /, Expression, OneExpression),
-     (symbol /, Holder, Holder),
      (symbol /, List, SelfInitializingType)
      }
 
@@ -1203,12 +1033,9 @@ undocumented {
      (symbol ^, ZeroExpression, Holder),
      (symbol ^, Holder, ZeroExpression),
      (symbol ^, Holder, OneExpression),
-     (symbol ^, Holder, Holder),
      (symbol ^, Expression, ZeroExpression),
      (symbol ^, ZeroExpression, Expression),
      (symbol ^, Expression, OneExpression),
-     (symbol ^, Expression, Holder),
-     (symbol ^, Holder, Expression),
      (symbol ^, ZeroExpression, ZeroExpression),
      (symbol ^, InfiniteNumber, ZZ),
      (symbol ^, InfiniteNumber, QQ),
@@ -1229,33 +1056,6 @@ document {
      "This operator is used for exponentiation, making free modules and sheaves, 
      for shifting complexes left or right, for projection maps involving direct sums, 
      and for making nets.",
-     }
-
-document {
-     Key => {substring,(substring, String, ZZ),(substring, ZZ, String),(substring, ZZ, ZZ, String),
-	  (substring, String, ZZ, ZZ),(substring, Sequence, String)},
-     Headline => "extract part of a string",
-     SYNOPSIS (
-	  Usage => "substring(i,n,s)\nsubstring(s,i,n)\nsubstring((i,n),s)",
-	  Inputs => { "i" => ZZ, "n" => ZZ, "s" => String },
-	  Outputs => {{ "the substring of the string ", TT "s", " starting at position ", TT "i", " with length ", TT "n" }}
-	  ),
-     SYNOPSIS (
-	  Usage => "substring(i,s)\nsubstring(s,i)",
-	  Inputs => { "i" => ZZ, "s" => String },
-	  Outputs => {{ "the substring of the string ", TT "s", " starting at position ", TT "i", " and continuing to the end of the string" }}
-	  ),
-     PARA{"Positions are numbered starting at 0."},
-     PARA{"If the starting position ", TT "i", " is negative, it means to start at a position obtained by counting backward from the end of the string."},
-     PARA{"Requests for character positions out of bounds are silently ignored."},
-     }
-
-document {
-     Key => {(reverse, BasicList),reverse},
-     Headline => "reverse a list",
-     TT "reverse v", " -- yields a list containing the elements of the 
-     list ", TT "v", " in reverse order.",
-     EXAMPLE "reverse {a,b,c,d}"
      }
 
 document {
@@ -1571,7 +1371,6 @@ document {
 	  (symbol==, Ideal, MonomialIdeal),
 	  (symbol==, GradedModuleMap, ZZ),
 	  (symbol==, InfiniteNumber, InfiniteNumber),
-	  (symbol==, Holder, Holder),
 	  (symbol==, Equation, Expression),
 	  (symbol==, ZZ, Ring),
 	  (symbol==, ZZ, QQ),
@@ -1705,10 +1504,8 @@ document {
 
 undocumented {
     (symbol**, OneExpression, Holder),
-    (symbol**, Holder, Expression),
     (symbol**, QuotientRing, PolynomialRing),
     (symbol**, Expression, NonAssociativeProduct),
-    (symbol**, Holder, Holder),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -1719,7 +1516,6 @@ undocumented {
     (symbol **,Thing,InexactFieldFamily),
     (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, Holder, OneExpression),
-    (symbol**, Expression, Holder),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
     (symbol**, NonAssociativeProduct, Expression),
@@ -1760,7 +1556,7 @@ document {
 	  "A ** A ** A"
 	  },
      "To make this last a set of triples, ", TO splice, " each element together.  
-     Or, use ", TO (symbol^**,Tally,ZZ), ".",
+     Or, use ", TO (symbol^**,VirtualTally,ZZ), ".",
      EXAMPLE {
 	  "(A ** A ** A)/splice",
 	  "A^**3"

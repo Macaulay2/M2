@@ -53,7 +53,7 @@ assert( image ftrimmed == image f )
 
 end
 
-{*
+-*
     u123$ ./Macaulay2-0.9.96/bin/M2 --no-loaddata -q ~/src/M2/Macaulay2/packages/Macaulay2Doc/test/tensor.m2 -e 'exit 0'
     Macaulay 2, version 0.9.96
     with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
@@ -63,7 +63,7 @@ end
     Macaulay 2, version 0.9.97
     with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, TangentCone
     rank source f = 13
-*}
+*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test tensor.out"

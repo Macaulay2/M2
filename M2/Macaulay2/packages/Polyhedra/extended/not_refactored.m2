@@ -20,7 +20,7 @@ statePolytope Ideal := I -> (
       lt := apply(L, leadTerm);
       M := matrix flatten apply(#L, i -> apply(exponents L#i, e -> (flatten exponents lt#i)-e));
       -- intersect the span of 'M' with the positive orthant
-      C := intersection(map(source M,source M,1),M);
+      C := coneFromHData(map(source M,source M,1),M);
       -- Check if an interior vector is strictly positive
       v := interiorVector C;
       (all(flatten entries v, e -> e > 0),v)
@@ -34,7 +34,7 @@ statePolytope Ideal := I -> (
       lt = flatten entries lt;
       L := matrix flatten apply(#g, i -> apply(exponents g#i, e -> (flatten exponents lt#i)-e));
       -- intersect the differences
-      intersection L
+      coneFromHData L
    );
    wLeadTerm := (w,I) -> (
       -- Compute the Groebner basis and their leading terms of 'I' with respect to the weight 'w'
@@ -243,7 +243,7 @@ compute#Fan#polytopal Fan := F -> (
       -- Extracting the generating cones, the ambient dimension, the codim 1 
       -- cones (corresponding to the edges of the polytope if it exists)
       i := 0;
-      L := hashTable apply(getProperty(F, honestMaxObjects), l -> (i=i+1; i=>l));
+      L := hashTable apply(values getProperty(F, honestMaxObjects), l -> (i=i+1; i=>l));
       n := ambDim(F);
       edges := cones(n-1,F);
       raysF := rays F;
@@ -271,7 +271,7 @@ compute#Fan#polytopal Fan := F -> (
          j -> (
             raysL := rays L#j;
             linL := linealitySpace L#j;
-            corrList = merge(corrList,hashTable apply(faces(2,L#j), C -> (raysL_C, linL) => {j}),join)
+            corrList = merge(corrList, hashTable apply(faces(2,L#j), C -> (raysL_C, linL) => {j}),join)
          )
       );
       corrList = pairs corrList;
@@ -316,7 +316,7 @@ compute#Fan#polytopal Fan := F -> (
       if hyperplanesTmp != {} then hyperplanesTmp = matrix hyperplanesTmp
       else hyperplanesTmp = map(ZZ^0,ZZ^m,0);
       -- Find an interior vector in the cone of all positive vectors satisfying the restrictions
-      v := flatten entries interiorVector intersection(id_(ZZ^m),hyperplanesTmp);
+      v := flatten entries interiorVector coneFromHData(id_(ZZ^m),hyperplanesTmp);
       M := {};
       -- If the vector is strictly positive then there is a polytope with 'F' as normalFan
       if all(v, e -> e > 0) then (
@@ -485,7 +485,7 @@ minkSummandCone Polyhedron := P -> (
           dP := dim P;
           (HS,v) := halfspaces P;
           (hyperplanesTmp,w) := hyperplanes P;
-	  F := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
+	  F := apply(numRows HS, i -> polyhedronFromHData(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
 	  F = apply(F, f -> (
 		    V := vertices f;
 		    R := rays f;
@@ -559,7 +559,7 @@ minkSummandCone Polyhedron := P -> (
 	       -- Otherwise we can compute the Minkowski summand cone
 	       else (
 		    Id := map(source condmatrix,source condmatrix,1);
-		    C := intersection(Id,condmatrix);
+		    C := coneFromHData(Id,condmatrix);
 		    R := rays C;
 		    TC := map(ZZ^(ambDim(P)),ZZ^1,0) | rays(P) | linSpace(P) | -(linSpace(P));
 		    v = (vertices P)_{0};
@@ -596,5 +596,5 @@ minkSummandCone Polyhedron := P -> (
 		     onevec := matrix toList(numRows R: {1_QQ});
 		     negId := map(source R,source R,-1);
 		     zerovec :=  map(source R,ZZ^1,0);
-		     Q := intersection(negId,zerovec,R,onevec);
+		     Q := polyhedronFromHData(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))

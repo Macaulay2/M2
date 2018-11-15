@@ -32,7 +32,7 @@ export {
     }
 
 
-{*
+-*
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- Summary, Version 0.1, August 2012
@@ -76,7 +76,7 @@ Many of these functions are copied over from early versions of Swinarski's Confo
 
 Changes from version 0.1 to 0.2 inncorporate minor revisions requested by the JSAG referee.  
 Also, Bourbaki allows types B_2, C_2, D_3, so these have been added in version 0.2 as well.
-*}
+*-
 
 
 
@@ -105,7 +105,7 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     if type=="G" and m!=2 then error "The rank for type G must be 2.";                    
     new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,"isSimple"=>true}
     )
-{*simpleLieAlgebra(IndexedVariable) := (v) -> (
+-*simpleLieAlgebra(IndexedVariable) := (v) -> (
     if #v > 2 or not member(v#0,{symbol sl, symbol so, symbol sp}) or not instance(v#1,ZZ) then error "Input not understood; enter sl_k, sp_k, or so_k, or use the syntax simpleLieAlgebra(\"A\",1) instead";
     k:=v#1;
     if v#0 == symbol sl and k >= 2 then return simpleLieAlgebra("A",k-1);
@@ -113,7 +113,7 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     if v#0 == symbol sp and even(k) and k >= 4 then return simpleLieAlgebra("C",lift(k/2,ZZ));
     if v#0 == symbol so and even(k) and k >= 8 then return simpleLieAlgebra("D",lift(k/2,ZZ));
     )
-*}
+*-
     
 dualCoxeterNumber = method(
     TypicalValue => ZZ
@@ -227,7 +227,7 @@ irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
     )
 
 
-{*-----------------------------------------------------------------------------------------------
+-*-----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- Private functions for LieAlgebraModule
 -----------------------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ implementations because I want the Cartan matrix over QQ (so I can invert it) an
 (theta,theta) = 2, where theta is the highest root.  This is a popular convention in the conformal blocks literature that is not used in WeylGroups. 
 
 To avoid shadowing, I have named my function cartanMatrixQQ
-*}
+*-
 
 cartanMatrixQQ = memoize((type, m) ->( M:={};
 	  i:=0;
@@ -490,7 +490,7 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     lift(2*rhs/lhs,ZZ)
 ))
 
-multiplicity(List,LieAlgebraModule) := (w,M) -> (
+multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";

@@ -13,7 +13,7 @@ class RingElement;
 
 class HilbertController
 {
-public:
+ public:
   HilbertController(const FreeModule *F0, const RingElement *hf);
   ~HilbertController();
 
@@ -30,20 +30,23 @@ public:
   // add in a new monomial
   // returns true if no more GB elements expected in this degree
 
-private:
+ private:
   bool recomputeHilbertFunction();
   Matrix *make_lead_term_matrix();
-private:
+
+ private:
   const PolynomialRing *R;
   const FreeModule *F;
   MatrixConstructor *leadterms;
 
-  bool hilb_new_elems;  // True if any new elements since HF was last computed
-  int hilb_n_in_degree; // The number of new elements that we expect to find
+  bool hilb_new_elems;   // True if any new elements since HF was last computed
+  int hilb_n_in_degree;  // The number of new elements that we expect to find
                          // in the current degree.
 
-  const RingElement *hf_orig;   // The Hilbert function that we are given at the beginning
-  RingElement *hf_diff;         // The difference between hf_orig and the computed hilb fcn
+  const RingElement
+      *hf_orig;  // The Hilbert function that we are given at the beginning
+  RingElement
+      *hf_diff;  // The difference between hf_orig and the computed hilb fcn
 
   VECTOR(vec) elems;
 };

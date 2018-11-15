@@ -465,7 +465,7 @@ document {
 	  "target F == R^1",
 	  "matrix F"
 	  },
-     "Macaulay2 also does not check that the homomorphism is well-defined
+     "Macaulay2 also does not check that the homomorphism is well defined
      (i.e. the relations of the source map into the relations of the target).
      Use ", TO isWellDefined, " to check.  This generally requires a Gröbner
      basis computation (which is performed automatically, if it is required
@@ -482,12 +482,12 @@ document {
      TO (symbol//,Matrix,Matrix), ".
      In order to do this, we need the inclusion map of ", TT "M", 
      " into ", TT "R^1", ".",
-     {*
+     -*
      -- Mike wanted this: 
      "  We explain these canonical maps
      more thoroughly in ", TO "canonical maps between modules", ", 
      but for now we just write down the inclusion map.",
-     *}
+     *-
      EXAMPLE {
 	  "inc = inducedMap(R^1, M)"
 	  },
@@ -499,7 +499,7 @@ document {
 	  "target G == M and source G == M",
 	  "inc * G == F"
 	  },
-     "Let's make sure that this map ", TT "G", " is welldefined.",
+     "Let's make sure that this map ", TT "G", " is well defined.",
      EXAMPLE {
 	  "isWellDefined G",
 	  "isIsomorphism G",
@@ -518,13 +518,13 @@ document {
 	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "canonical maps between modules",
      Headline => "empty"
      }
-*}
+*-
 
 document {
      -- old??
@@ -554,7 +554,7 @@ document {
 --	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "direct sums of modules",
@@ -562,17 +562,17 @@ document {
      "
      "
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "tensor products of modules",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hom modules and homomorphisms",
@@ -591,16 +591,16 @@ target f
      syz transpose matrix f
      ///
 }
-*}
+*-
 
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "annihilators and submodule quotients",
      Headline => "empty",
      }
-*}
+*-
 
 document {
      Key => "Hilbert functions and free resolutions",
@@ -631,7 +631,7 @@ document {
 	  },
      "The last number in the list of genera is the degree minus one.  The second to last
      number is the genus of the generic linear section curve, ..., and the first
-     number is the arithmetic genus",
+     number is the arithmetic genus.",
      SUBSECTION "the Hilbert series",
      "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
      TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 
@@ -675,45 +675,45 @@ document {
      of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "degrees of elements and free modules",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "degree and multiplicity of a module",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hilbert functions and polynomials",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "homogenization",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "truncation and homogeneous components of a graded module",
      Headline => "empty",
      }
-*}
+*-
 
 document {
      Key => "exterior power of a module",
@@ -739,45 +739,45 @@ document {
 	SeeAlso => "exterior power of a matrix"
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Fitting ideals",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "adjoints of maps",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Ext and Tor",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "local cohomology",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "is a module Cohen-Macaulay?",
      Headline => "empty",
      }
-*}
+*-
 
 -- one link (in this file) to this node
 document {
@@ -841,11 +841,11 @@ document {
      }
 
 -- no links to this node
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "kernel, cokernel and image of a map of modules",
      }
-*}
+*-
 
 -- no links to this node
 document {
@@ -861,7 +861,7 @@ document {
      "Include here: generators, relations."
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 
 -- no links to this node
 document {
@@ -883,5 +883,5 @@ document {
 document {
      Key => "Hom module",
      }
-*}
+*-
 

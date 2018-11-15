@@ -28,14 +28,14 @@ end --------------------------------------------------------------------------
 restart
 load "tensor-binary-8ic-three-4powers-decompositions.m2"
 
-{* outsource to an external solver:
+-* outsource to an external solver:
 setDefault(Software=>BERTINI)
 setDefault(Software=>PHCPACK)
-*}
+*-
 
 setDefault(tStepMin=>1e-10,CorrectorTolerance=>1e-8,InfinityThreshold=>1e9,SingularConditionNumber=>1e15)
 stop = false; n = #sols0;
-while not stop {* 6*76=456 *} do (
+while not stop -* 6*76=456 *- do (
     T1 = sub(F,random1(1,9));
     T2 = sub(F,random1(1,9));
 --    T1 = random(CC^9,CC^1);

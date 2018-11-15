@@ -3,10 +3,19 @@ compute#Fan#isWellDefined Fan := F -> (
    cones := getProperty(F, honestMaxObjects);
    n := #cones;
    for i from 0 to n-1 do (
-      Ci := cones#i;
+      ki := (keys cones)#i;
+      Ci := cones#ki;
+      if(#ki != numColumns rays Ci) then(
+         if debugLevel > 0 then << "The cone " << ki << " has redundant rays." << endl;
+         return false;
+      );
       for j from i to n-1 do (
-         Cj := cones#j;
-         if not commonFace(Ci, Cj) then return false
+         kj := (keys cones)#j;
+         Cj := cones#kj;
+         if not commonFace(Ci, Cj) then (
+            if debugLevel > 0 then << "The cones " << ki << " and " << kj << " do not intersect in a common face." << endl;
+            return false
+         )
       )
    );
    return true
@@ -25,14 +34,14 @@ compute#Fan#smooth Fan := F -> (
 
 compute#Fan#computedFVector = method()
 compute#Fan#computedFVector Fan := F -> (
-   reverse apply(dim F + 1, d -> #faces(dim F - d,F))
+   toList apply(0..(dim F), d -> #faces(dim F - d,F))
 )
 
 
 compute#Fan#simplicial = method()
 compute#Fan#simplicial Fan := F -> (
    if hasProperty(F, honestMaxObjects) then (
-      mc := getProperty(F, honestMaxObjects);
+      mc := values getProperty(F, honestMaxObjects);
       return all(mc, cone -> isSimplicial cone)
    );
    R := rays F;
@@ -51,7 +60,7 @@ compute#Fan#pure = method()
 compute#Fan#pure Fan := F -> (
    d := dim F;
    if hasProperty(F, honestMaxObjects) then (
-      mc := getProperty(F, honestMaxObjects);
+      mc := values getProperty(F, honestMaxObjects);
       return all(mc, cone -> (dim cone) == d)
    );
    R := rays F;
@@ -76,7 +85,7 @@ compute#Fan#honestMaxObjects Fan := F -> (
    R := rays F;
    MC := maxCones F;
    L := linealitySpace F;
-   apply(MC, m -> coneFromVData(R_m, L))
+   new HashTable from apply(MC, m -> m=>coneFromVData(R_m, L))
 )
 
 compute#Fan#computedComplete = method()
@@ -88,7 +97,7 @@ compute#Fan#computedComplete Fan := F -> (
       summand2 := select(Y, y -> position(X, x->y==x) === null); 
       flatten {summand1, summand2}
    );
-   MC := getProperty(F, honestMaxObjects);
+   MC := values getProperty(F, honestMaxObjects);
    Lfaces := {};
    CFsave := {};
    scan(MC, 
@@ -112,7 +121,8 @@ compute#Fan#rays = method()
 compute#Fan#rays Fan := F -> (
    if hasProperty(F, inputRays) then (
       given := getProperty(F, inputRays);
-      makeRaysUniqueAndPrimitive given
+      LS := getProperty(F, computedLinealityBasis);
+      makeRaysUniqueAndPrimitive(given, LS)
    ) else (
       -- Could also compute this from the honestMaxObjects?
       error("No input rays given.")
@@ -122,8 +132,9 @@ compute#Fan#rays Fan := F -> (
 
 compute#Fan#computedFacesThroughRays = method()
 compute#Fan#computedFacesThroughRays Fan := F -> (
-   MC := getProperty(F, honestMaxObjects);
+   MC := values getProperty(F, honestMaxObjects);
    raysF := rays F;
+   dimF := dim F;
    linealityF := linealitySpace F;
    result := new MutableHashTable;
    for i from 0 to dim F do result#i = {};
@@ -133,13 +144,14 @@ compute#Fan#computedFacesThroughRays Fan := F -> (
       facesC := faces C;
       rc := rayCorrespondenceMap(raysC, linealityF, raysF);
       for i in keys facesC do (
+         codimInF := i + dimF - dimC;
          codimiCones := facesC#i;
          codimiCones = apply(codimiCones,
             c -> (
                sort apply(c, e -> rc#e)
             )
          );
-         result#i = sort unique flatten {result#i, codimiCones};
+         result#codimInF = sort unique flatten {result#codimInF, codimiCones};
       );
    );
    return hashTable pairs result
@@ -156,7 +168,8 @@ compute#Fan#generatingObjects Fan := F -> (
          rc := rayCorrespondenceMap(inputRaysF, linealityF, raysF);
          cones = apply(cones,
             c -> (
-               sort apply(c, e->rc#e)
+               cnew := sort apply(c, e->rc#e);
+               select(cnew, e -> e != -1)
             )
          );
       );
@@ -210,6 +223,6 @@ compute#Fan#ambientDimension Fan := F -> (
 
 compute#Fan#pointed = method()
 compute#Fan#pointed Fan := F -> (
-   all(getProperty(F, honestMaxObjects), C -> isPointed C)
+   all(values getProperty(F, honestMaxObjects), C -> isPointed C)
 )
 

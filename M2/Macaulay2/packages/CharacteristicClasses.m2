@@ -1553,10 +1553,10 @@ output = (segreList,ambientDim,hyperplaneClass) -> (
      return  sum(0..dimension, i -> segreList_i * (outputRing_0)^(ambientDim - dimension + i))
      )
 
-{*
+-*
 MyGb is a wrapper function for the M2 groebner basis command which 
 uses the fastest avalible GB algorithm depending on the users system and on the feild over which they are working
-*}
+*-
 
 MyGb =(I,stdgy)->(
     gbI:=0;
@@ -2486,10 +2486,10 @@ TEST ///
 ///
 
 TEST ///
-{*
+-*
    restart
    needsPackage "CharacteristicClasses"
-*}
+*-
    R = ZZ/32749[x_0..x_4];
    I = ideal(random(1,R),random(1,R),x_0^2*x_3-x_4*x_1*x_0);
    A=ChowRing(R);
@@ -2499,10 +2499,10 @@ TEST ///
 ///
 
 TEST ///
-{*
+-*
    restart
    needsPackage "CharacteristicClasses"
-*}
+*-
     n=4;
     kk=ZZ/32749;
     R=kk[x_0..x_n];
@@ -2519,11 +2519,11 @@ TEST ///
 ///
 
 TEST ///
-{*
+-*
    restart
    needsPackage "CharacteristicClasses"
    installPackage "CharacteristicClasses"
-*}
+*-
     R=MultiProjCoordRing({2,2});
     A=ChowRing(R);
     I=ideal(random({1,1},R),R_0*R_3^2-R_1*R_4*R_3);

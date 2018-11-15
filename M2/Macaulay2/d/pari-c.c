@@ -156,7 +156,7 @@ mpz_mat *pari_factorint(mpz_t x, long flags) {
         pari_errfile = dev_null;
       }
 #endif
-      allocatemem(0); // passing 0 will double the current stack size.
+      paristack_resize(0); // passing 0 will double the current stack size.
 #ifdef NDEBUG
       /*
        * We set pari_errfile back to the default value just in case PARI crashes.
@@ -198,7 +198,7 @@ int pari_isprime(mpz_t x) {
         pari_errfile = dev_null;
       }
 #endif
-      allocatemem(0); // passing 0 will double the current stack size.
+      paristack_resize(0); // passing 0 will double the current stack size.
 #ifdef NDEBUG
       /*
        * We set pari_errfile back to the default value just in case PARI crashes.
@@ -240,7 +240,7 @@ int pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
         pari_errfile = dev_null;
       }
 #endif
-      allocatemem(0); // passing 0 will double the current stack size.
+      paristack_resize(0); // passing 0 will double the current stack size.
 #ifdef NDEBUG
       /*
        * We set pari_errfile back to the default value just in case PARI crashes.
@@ -268,7 +268,7 @@ int pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
 
 */
 
-#define pari_examine(x) do { fputs(" " #x ": ", stdout); voir(x,-1); } while (0)
+#define pari_examine(x) do { fputs(" " #x ": ", stdout); dbgGEN(x,-1); } while (0)
 #define pari_display(x) do { fputs(" " #x ": ", stdout); output(x); } while (0)
 #define abs(x) ((x)<0?-(x):(x))
 

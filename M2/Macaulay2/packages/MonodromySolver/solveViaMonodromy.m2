@@ -7,7 +7,6 @@ export {
     "flowerGraphInit",
     "flowerGraphAugment",
     "dynamicFlowerSolve",
---    "ExtraNodeCount",
     "RandomPointFunction",
     "NumberOfEdges",
     "NumberOfNodes",
@@ -21,27 +20,22 @@ export {
     "AugmentEdgeCount",
     "AugmentNodeCount",
     "randomWeights",
-    "EdgesSaturated"}
-
--- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
---     point0, (as above)
---     s0, (as above)
+    "EdgesSaturated",
+    "sparseMonodromySolve",
+    "solveFamily"}
 
 -- change the behavior of random CC (pick uniformly in a unit disk)
 old'random'Type = lookup(random,Type)
 random Type := o -> R -> (
     if class R === ComplexField then (
 	exp(2 * pi * random RR * ii)
-	-- old code for Box-Mueller transform
-	--us := apply(2, i -> random RR);
-	--us = {sqrt(-2* log first us), 2*pi* last us};
-	--first us * cos last us + ii * first us * sin last us
 	) 
     else (old'random'Type o) R
     ) 
 
 -- random complex vector
-randomWeights = n -> matrix(CC, {apply(n,i->random CC)})
+randomWeights = method()
+randomWeights ZZ := n -> matrix(CC, {apply(n,i->random CC)})
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
@@ -181,7 +175,7 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
     --v := K * transpose matrix {toList ((numcols K):1_CC)};  
     w := transpose randomWeights(numcols K);
-    v := K * w + offset;
+    v := K * w - offset;
     c0 := point matrix v;
     -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
     --c0 := first (first components N).Points; 
@@ -190,6 +184,17 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     pre0' := first refine(G0,{pre0});
     (c0,pre0')
     )
+
+TEST ///
+--- seeding bug discovered by Courtney Gibbons
+setRandomSeed 2 
+T = CC[a_1..a_6][x_1,x_2,lambda]
+f_1 = a_1*x_1+a_2*x_2 - x_1*lambda 
+f_2 = a_3*x_1+a_4*x_2 - x_2*lambda
+f_3 = a_5*x_1+a_6*x_2 + 1
+H = {f_1,f_2,f_3}
+assert((last createSeedPair polySystem H).SolutionStatus =!= RefinementFailure)
+///
 
 staticMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
@@ -229,103 +234,112 @@ staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 )
 
 TEST ///
-for exampleIndex from 1 to 2 do (
-	if exampleIndex == 1 then (
-		R1 = CC[a,b,c,d][A,B];
-		polys = polySystem {A*a+B*b,A*B*c+d};
-		(p0,x0) = createSeedPair polys;
-		count = 2;
-	) else if exampleIndex == 2 then (
-		--Cyclic-4
-		R2 = CC[a,b,c,d,e,f,g,h,i,j,k,l,m,n][A,B,C,D];
-		polys = polySystem {
-			a*A+b*B+c*C+d*D,
-			e*A*B+f*B*C+g*C*D+h*D*A,
-			i*A*B*C+j*B*C*D+k*C*D*A+l*D*A*B,
-			m*A*B*C*D-n*1};
-		(p0,x0) = createSeedPair polys;
-		count = 16;
-	);
-    	-- Blackbox
-	(V,npaths) = monodromySolve polys;
-		assert( length V.PartialSols <= count );
-	-- Can provide no options
-	(V,npaths) = monodromySolve(polys,p0,{x0});
-		assert( length V.PartialSols <= count );
-	    
-	--Can provide TargetSolutionCount (mixed volume)
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		TargetSolutionCount=>count);
-		assert( length V.PartialSols <= count );
+setRandomSeed 0
+R = CC[a,b,c,d,e,f,g,h][A,B,C];
+polys = polySystem {
+	a*A+b*B+c*C,
+	d*A*B+e*B*C+f*C*A,
+	g*A*B*C-h*1};
+(p0,x0) = createSeedPair polys;
+count = 6;
 
-	--Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
-	--must also provide a Potential function.
-	(V,npaths) = monodromySolve(polys,p0,{x0},
+--The first set of tests may not find all solutions, as there is no
+--target root count.
+
+(V,npaths) = monodromySolve polys;
+assert( length V.PartialSols == count );
+
+-- Can provide no options
+(V,npaths) = monodromySolve(polys,p0,{x0});
+assert( length V.PartialSols == count );
+
+setRandomSeed 0
+--NumberOfNodes, NumberOfEdges, NumberOfRepeats
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfNodes=>2,
+	NumberOfEdges=>5,
+	NumberOfRepeats=>11);
+assert( length V.PartialSols == count );
+
+--Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
+--must also provide a Potential function.
+(V,npaths) = monodromySolve(polys,p0,{x0},
+		NumberOfEdges=>5,
 		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
-		assert( length V.PartialSols <= count );
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
-		TargetSolutionCount=>count,
-		Potential=>potentialE);
-		assert( length V.PartialSols <= count );
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		SelectEdgeAndDirection=>selectBestEdgeAndDirection,
-		Potential=>potentialLowerBound);
-		assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
-	--Two different GraphInitFunctions
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		GraphInitFunction=>flowerGraphInit);
-		assert( length V.PartialSols <= count );
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		GraphInitFunction=>completeGraphInit);
-		assert( length V.PartialSols <= count );
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfEdges=>5,	
+	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+	Potential=>potentialLowerBound);
+assert( length V.PartialSols == count );
 
-	--BatchSize changes the number of paths tracked at once.
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		BatchSize=>1);
-		assert( length V.PartialSols <= count );
-	
-	--NumberOfNodes, NumberOfEdges, NumberOfRepeats
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		NumberOfNodes=>2,
-		NumberOfEdges=>3,
-		NumberOfRepeats=>10);
-		assert( length V.PartialSols <= count );
+--Two different GraphInitFunctions. Also, BatchSize can be set,
+--which will change the number of paths tracked simultaneously.
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	GraphInitFunction=>flowerGraphInit,
+	NumberOfEdges=>5);
+assert( length V.PartialSols == count );
 
-	--"new tracking routine" is a boolean
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		"new tracking routine"=>true);
-		assert( length V.PartialSols <= count );
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		"new tracking routine"=>false);
-		assert( length V.PartialSols <= count );
-	
-	--Verbose is a boolean
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		Verbose=>true);
-		assert( length V.PartialSols <= count );
-	(V,npaths) = monodromySolve(polys,p0,{x0},
+setRandomSeed 0
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfEdges=>5,
+	GraphInitFunction=>completeGraphInit,
+	BatchSize=>1);
+assert( length V.PartialSols == count );
+
+--NumberOfEdges=>1 (no randomization)
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfNodes=>10,
+	NumberOfEdges=>1);
+assert( length V.PartialSols == count );
+
+--The next two tests test booleans: "new tracking routine" (defaults to true)
+--and Verbose (defaults to false). We test that both the defaults work
+--and that non-default values work.
+(V,npaths) = monodromySolve(polys,p0,{x0},
+		NumberOfEdges=>5,
+		"new tracking routine"=>false,
 		Verbose=>false);
-		assert( length V.PartialSols <= count );
+assert( length V.PartialSols == count );
 
-	--Set dynamic options. Need to provide an AugmentGraphFunction and
-	--the AugmentEdgeCount and/or AugmentNodeCount should be greater than 0 if
-	--any augmenting is going to happen. AugmentNumberOfRepeats can be used to
-	--keep it from running indefinitely.
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		GraphInitFunction=>completeGraphInit,
-		AugmentGraphFunction=>completeGraphAugment,
-		AugmentNodeCount=>1,
-		AugmentNumberOfRepeats=>10);
-		assert( length V.PartialSols == count );
-	(V,npaths) = monodromySolve(polys,p0,{x0},
-		GraphInitFunction=>flowerGraphInit,
-		AugmentGraphFunction=>flowerGraphAugment,
-		AugmentEdgeCount=>1,
-		AugmentNumberOfRepeats=>10);
-		assert( length V.PartialSols == count );
-);
+--The next three tests use strict equality, as they ought to always succeed.
+--Can provide TargetSolutionCount
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+	Potential=>potentialE,
+	NumberOfNodes=>3,
+	NumberOfEdges=>3,
+	TargetSolutionCount=>count);
+assert( length V.PartialSols == count );
+
+--Set dynamic options. Need to provide an AugmentGraphFunction and
+--the AugmentEdgeCount and/or AugmentNodeCount should be greater than 0 if
+--any augmenting is going to happen. AugmentNumberOfRepeats can be used to
+--keep it from running indefinitely.
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+	Potential=>potentialE,
+	GraphInitFunction=>completeGraphInit,
+	AugmentGraphFunction=>completeGraphAugment,
+	AugmentNodeCount=>1,
+	AugmentNumberOfRepeats=>10);
+assert( length V.PartialSols == count );
+(V,npaths) = monodromySolve(polys,p0,{x0},
+	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
+	Potential=>potentialE,
+	GraphInitFunction=>flowerGraphInit,
+	AugmentGraphFunction=>flowerGraphAugment,
+	AugmentEdgeCount=>1,
+	AugmentNumberOfRepeats=>10);
+assert( length V.PartialSols == count );
+
+-- test for sparseSolver which sometimes fails: 3 iterations is to reduce failure probability, but might slow tests down
+S = QQ[x,y]
+P = polySystem {x+y, x+1-y^2}
+sols = sparseMonodromySolve(P,NumberOfEdges=>20, NumberOfRepeats => 30)
+assert (#sols == 2) 
+assert all(sols,s->norm evaluate(P,s) < 0.0001)
 ///
 
 monodromySolve = method(Options=>{
@@ -340,7 +354,7 @@ monodromySolve = method(Options=>{
 	BatchSize => infinity,
 	Potential => null,
 	NumberOfNodes => 2,
-	NumberOfEdges => 3,
+	NumberOfEdges => 4,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
@@ -393,7 +407,6 @@ dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
 		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
 	mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
 	staticOptions := trimDynamicOptions(mutableOptions);
-
 	(node1,npaths) := staticMonodromySolve(PS,point0,s0,staticOptions);
 	HG := node1.Graph;
 	success := class(npaths) === ZZ;
@@ -460,6 +473,77 @@ coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	if o.EdgesSaturated then saturateEdges HG;
 	(lastNode, npaths)
 )
+
+-- 
+sparseMonodromySolve = method(Options=>{
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
+	GraphInitFunction => completeGraphInit,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
+	BatchSize => infinity,
+	Potential => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 4,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false,
+	EdgesSaturated => false})
+sparseMonodromySolve PolySystem := o ->  PS -> (
+-*    mutableOptions := new MutableHashTable from o;
+    if mutableOptions.TargetSolutionCount =!= null then
+        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+    if mutableOptions.StoppingCriterion === null then 
+        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;*-
+    polys := flatten entries PS.PolyMap;
+    ind := flatten apply(#polys,i-> -- indices for parameters
+	apply(exponents polys#i, t->(i,t))
+	);
+    R := PS.PolyMap.ring;
+    W := symbol W;
+    AR := CC[apply(ind,i->W_i)][gens R];
+    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
+    sum(exponents polys#i, t->W_(i,t)*AR_(t));
+    genericPS := polySystem transpose matrix {polysP};
+    (sys,sols):=solveFamily(genericPS,o);--new OptionTable from (new HashTable from mutableOptions));
+    track(polySystem sys,PS,sols)
+)
+
+-- IN: parametric Polysystem OUT: a sequence (random system, its solutions)
+solveFamily = method(Options=>{
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
+	GraphInitFunction => completeGraphInit,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
+	BatchSize => infinity,
+	Potential => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 4,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false,
+	EdgesSaturated => false})
+solveFamily PolySystem := o -> PS -> (
+    (point0,s0) := createSeedPair PS;
+    solveFamily(PS, point0, {s0},o)
+    )
+solveFamily (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+    mutableOptions := new MutableHashTable from o;
+    if mutableOptions.TargetSolutionCount =!= null then
+        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+    if mutableOptions.StoppingCriterion === null then 
+        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
+    N := first monodromySolve(PS,point0,s0,new OptionTable from (new HashTable from mutableOptions));
+    (N.SpecializedSystem, points N.PartialSols)
+    )
+
 
 end
 

@@ -3,7 +3,7 @@ newPackage(
     	Version =>"0.33", 
     	Date =>"December 1, 2010",
     	Authors =>{{Name =>"Janko Boehm", 
-		  Email =>"boehm@math.uni-sb.de", 
+		  Email =>"boehm@mathematik.uni-kl.de", 
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline =>"Interface to Convex",
@@ -91,11 +91,11 @@ Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
 {matrix Lfc#0,Lfc#1}
 )
 
-{*
+-*
     L= {{0,1,1,0,0},{0,1,0,1,0},{0,1,0,0,0},{1,0,0,0,1},{1,0,-1,-1,-1},{1,0,0,0,0}};
     L=apply(L,vector)
     C=hull L
-*}
+*-
 
 mPosHullFacesAndDuals=method(Options=>{toFile=>null})
 mPosHullFacesAndDuals(List):=opts->(L)->(
@@ -168,10 +168,10 @@ for j from 0 to #L-1 do (
 if rat==true then return(apply(L1,j->apply(j,jj->sub(jj,QQ))));
 apply(L1,j->apply(j,jj->sub(jj,ZZ))))
 
-{*
+-*
 L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}};
 P=mConvexHullFaces(L)
-*}
+*-
 
 
 
@@ -203,10 +203,10 @@ Lfc:=callMaple(L1,pathconvex,mapleprogram,store=>opts.toFile);
 {matrix cutCone Lfc#0,matrix cutCone Lfc#1,Lfc#2}
 )
 
-{*
+-*
 L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}};
 P=mConvexHullFacesAndDuals(L)
-*}
+*-
 
 
 readConvexHullFaces=method()
@@ -334,15 +334,15 @@ returnvalue:=latticePoints(placeholder1);
 Lfc:=callMaple(L1,pathconvex,mapleprogram);
 apply(Lfc,j->vector j))
 
-{*
+-*
 L={vector {3,-1,-1},vector {-1,3,-1},vector {-1,-1,3},vector {-1,-1,-1}};
 P=mLatticePoints(L)
-*}
+*-
 
 
 
 
-{*
+-*
 Copyright (C) [2009] [Janko Boehm]
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -350,7 +350,7 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
+*-
 
 
 
@@ -814,6 +814,6 @@ doc ///
 ///
 
 
-{*
+-*
 installPackage("ConvexInterface",RerunExamples=>true);
-*}
+*-

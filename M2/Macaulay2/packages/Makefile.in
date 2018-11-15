@@ -4,10 +4,10 @@
 include ../../include/config.Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
-ALL_PACKAGES = @PACKAGES@
+ALL_PACKAGES = $(shell cat @srcdir@/=distributed-packages)
 
 # this one can be overridden by the user:
-PACKAGES = @PACKAGES@
+PACKAGES = $(ALL_PACKAGES)
 
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
@@ -24,7 +24,6 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
-	AbsoluteLinks => false, 				\
 	UserMode => false, 					\
 	Verbose => $(Verbose),					\
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\",		\
@@ -66,6 +65,7 @@ unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 @pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
 	: installing package $1
+	$$(WHY)
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
@@ -77,7 +77,7 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
 	ls -l $1-temporary
 	rm -rf $1-temporary
-	- install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info
+	install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
@@ -92,8 +92,8 @@ endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
 # make packages Style and Macaulay2Doc get installed before the others:
-$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info

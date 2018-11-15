@@ -7,12 +7,11 @@ newPackage(
             {Name => "Michael E. Stillman", 
 		        Email => "mike@math.cornell.edu", 
 		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
-	        {Name => "Jakob Kroeker", 
-		        Email => "Jakob Kröker <kroeker@math.uni-hannover.de>", 
+	        {Name => "Jakob Kröker", 
+		        Email => "kroeker@math.uni-hannover.de", 
 		        HomePage => "" }
             },
         Headline => "a test suite for the Macaulay2 engine",
-	    PackageExports => {"FastLinearAlgebra"},
         DebuggingMode => true, 
         AuxiliaryFiles=> true
         )
@@ -262,21 +261,6 @@ load "EngineTests/GB.Test.Mathic.m2"
 load "EngineTests/Res.f4.m2"
 --check  EngineTests
 
-
-
-beginDocumentation()
-
-doc ///
-Key
-  EngineTests
-Headline
-  a test suite for the Macaulay2 engine
-Description
-  Text
-Caveat
-SeeAlso
-///
-
 ///
 testFracRaw = () -> (
      debug Core;
@@ -488,8 +472,17 @@ assert(L2 == L3)
 
 ///
 
+beginDocumentation()
 
-
-end
+doc ///
+Key
+  EngineTests
+Headline
+  a test suite for the Macaulay2 engine
+Description
+  Text
+Caveat
+SeeAlso
+///
 
 

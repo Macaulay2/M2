@@ -62,6 +62,7 @@ libraries/givaro/Makefile
 libraries/fplll/Makefile
 libraries/polymake/Makefile
 libraries/normaliz/Makefile
+libraries/csdp/Makefile
 libraries/pari/Makefile
 libraries/readline/Makefile
 libraries/ntl/Makefile
@@ -70,7 +71,6 @@ libraries/gftables/Makefile
 libraries/factory/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
-libraries/blas/Makefile
 Macaulay2/Makefile
 Macaulay2/README
 Macaulay2/packages/SCSCP/docinput/Makefile
@@ -86,9 +86,7 @@ Macaulay2/bin/M2
 Macaulay2/e-includes/Makefile
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common
-Macaulay2/e/f4/Makefile
 Macaulay2/e/unit-tests/Makefile
-Macaulay2/e/free-resolutions/Makefile
 Macaulay2/emacs/M2-init.el
 Macaulay2/emacs/Makefile
 Macaulay2/html-check-links/Makefile

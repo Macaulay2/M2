@@ -1,0 +1,128 @@
+-- -*- M2-comint -*- hash: -487926035
+
+i1 : QQ[x,y];
+
+i2 : I=ideal(x+y+1);
+
+o2 : Ideal of QQ[x, y]
+
+i3 : T=tropicalVariety(I);
+
+i4 : rays(T)
+
+o4 = | 1 -1 0 |
+     | 0 -1 1 |
+
+              2        3
+o4 : Matrix ZZ  <--- ZZ
+
+i5 : maxCones(T)
+
+o5 = {{1}, {0}, {2}}
+
+o5 : List
+
+i6 : linealitySpace T
+
+o6 = 0
+
+              2
+o6 : Matrix ZZ  <--- 0
+
+i7 : fVector fan T
+
+o7 = {1, 3}
+
+o7 : List
+
+i8 : multiplicities(T)
+
+o8 = {1, 1, 1}
+
+o8 : List
+
+i9 : QQ[x,y,z,w];
+
+i10 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
+
+o10 : Ideal of QQ[x, y, z, w]
+
+i11 : T= tropicalVariety(I,Prime=>false);
+
+i12 : rays(T)
+
+o12 = | 1  3  1  -1 1  -1 -1 -1 |
+      | 1  -1 1  3  -1 1  -1 -1 |
+      | 1  -1 -1 -1 1  1  3  -1 |
+      | -3 -1 -1 -1 -1 -1 -1 3  |
+
+               4        8
+o12 : Matrix ZZ  <--- ZZ
+
+i13 : maxCones(T)
+
+o13 = {{0}, {1, 2}, {1, 4}, {1, 7}, {2, 3}, {4, 6}, {3, 5}, {3, 7}, {5, 6},
+      -----------------------------------------------------------------------
+      {6, 7}}
+
+o13 : List
+
+i14 : multiplicities(T)
+
+o14 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+o14 : List
+
+i15 : linealitySpace T
+
+o15 = | 1 |
+      | 1 |
+      | 1 |
+      | 1 |
+
+               4        1
+o15 : Matrix ZZ  <--- ZZ
+
+i16 : QQ[x,y,z,w];
+
+i17 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
+
+o17 : Ideal of QQ[x, y, z, w]
+
+i18 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
+
+i19 : rays(T)
+
+o19 = | -4 4 0 0 4 4 |
+      | -4 0 4 0 8 0 |
+      | -4 0 0 4 0 8 |
+      | -3 1 1 1 3 3 |
+
+               4        6
+o19 : Matrix ZZ  <--- ZZ
+
+i20 : maxCones(T)
+
+o20 = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {2, 3}, {1, 4}, {1, 5}, {2,
+      -----------------------------------------------------------------------
+      4}, {3, 5}, {4, 5}}
+
+o20 : List
+
+i21 : linealitySpace T
+
+o21 = | 0 |
+      | 0 |
+      | 0 |
+      | 1 |
+
+               4        1
+o21 : Matrix ZZ  <--- ZZ
+
+i22 : multiplicities(T)
+
+o22 = {{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}
+
+o22 : List
+
+i23 : 

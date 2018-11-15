@@ -60,7 +60,7 @@ t = tally degrees target presentation E
 
 assert ( t === u )
 
-{*
+-*
 
 the answer changed between these two versions:
 
@@ -70,7 +70,7 @@ u123$ ls -l ~/local.Linux/encap/Macaulay2-0.9.95/bin/M2
 u123$ ls -l ~/local.Linux/encap/Macaulay2-0.9.94/bin/M2
 -rwxr-xr-x 1 dan academic 5028988 2006-10-24 10:33 /home/25/dan/local.Linux/encap/Macaulay2-0.9.94/bin/M2
 
-*}
+*-
 
 
 -- errorDepth = 0

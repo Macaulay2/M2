@@ -599,7 +599,7 @@ endlfun(o:file):int := (
 
 maybeprompt(o:file):void := (
      o.bol = false;
-     if o.promptq then stdIO << o.prompt();
+     if o.promptq then stdIO << o.prompt(); -- does this ever really happen?  Experiments show not.  Some logic might be wrong.
      );
 
 octal(c:char):string := (
@@ -696,17 +696,12 @@ export filbuf(o:file):int := (
      while true do (
 	  n := length(o.inbuffer) - o.insize;
 	  if o.readline then (
+	       initReadlineVariables();
 	       flush(stdIO);
 	       if test(interruptedFlag) then return ERROR;
 	       startFileInput(o);
 	       r = readline(o.inbuffer,n,o.insize,o.prompt());
 	       endFileInput(o);
-	       if test(interruptedFlag) then (
-		    -- ignore interrupt flags set by our handler during calls to readline
-		    -- because readline uses interrupts for its own purposes
-		    store(interruptedFlag, false);
-		    determineExceptionFlag();
-		    );
 	       )
 	  else (
 	       if o.bol then maybeprompt(o);

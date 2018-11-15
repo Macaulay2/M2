@@ -102,10 +102,8 @@ Node
       See the example below for the format of {\tt s}
   Consequences
    Item
-    Documentation is created and stored so that after 
-    @TO installPackage@ or @TO getPackage@ is used, 
-    the corresponding documentation is
-    available via @TO help@ and @TO viewHelp@
+    Documentation is created and stored so that after @TO installPackage@ is used, 
+    the corresponding documentation is available via @TO help@ and @TO viewHelp@
   Description
    Text
     The string {\tt s} contains text describing the documentation to be

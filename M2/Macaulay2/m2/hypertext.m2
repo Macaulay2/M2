@@ -80,31 +80,16 @@ info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
 tex String := texLiteral
-texMath String := s -> (
-     if #s === 1 then s
-     else concatenate("\\text{", texLiteral s, "}")
-     )
+
 info String := identity
 
-texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
-texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
-texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
-
--- texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
--- tex HashTable := x -> (
---      if x.?tex then x.tex 
---      else if x.?texMath then concatenate("$",x.texMath,"$")
---      else tex expression x
---      )
 -- html HashTable := x -> html expression x
 
 specials := new HashTable from {
      symbol ii => "&ii;"
      }
 
-texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
-
-{*
+-*
  spacing between lines and paragraphs:
  observation of browsers reveals:
      nonempty PARA items get at least one blank line above and below
@@ -138,7 +123,7 @@ texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
      One more consideration: info MENUs should not be wrapped, but they can be contained in a DIV, which
      must arrange for the wrapping of strings contained in it.  Also, HypertextParagraphs have already been
      wrapped, so they don't need to be wrapped again.
-*}
+*-
 
 BK := local BK
 SP := local SP
@@ -202,7 +187,7 @@ truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else s
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
      ///
-\matrix{
+\begin{matrix}
 ///,
      apply(x,
 	  row -> (
@@ -211,7 +196,7 @@ texMath TABLE := x -> concatenate (
 ///
 	       )
 	  ),
-     ///}
+     ///\end{matrix}
 ///
      )
 
@@ -239,7 +224,9 @@ verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBA
 
 maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
 
-tex TT := texMath TT := verbatim
+tex TT := verbatim
+texMath TT := x -> concatenate apply(x,texMath) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
+
 tex CODE :=
 tex PRE := x -> concatenate ( VERBATIM,
      ///\penalty-200
@@ -344,11 +331,11 @@ infoTagConvert = method()
 tagConvert := n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n
 infoTagConvert String := tagConvert
 infoTagConvert DocumentTag := tag -> (
-     pkgname := DocumentTag.Title tag;
+     pkgname := DocumentTag.PackageName tag;
      fkey := DocumentTag.FormattedKey tag;
      if pkgname === fkey then fkey = "Top";
      fkey = tagConvert fkey;
-     if pkgname =!= currentPackage#"title" then fkey = concatenate("(",pkgname,")",fkey);
+     if pkgname =!= currentPackage#"pkgname" then fkey = concatenate("(",pkgname,")",fkey);
      fkey)
 infoLinkConvert := s -> replace(":","_colon_",s)
 info TO  := x -> (
@@ -386,7 +373,13 @@ info IMG := net IMG := tex IMG  := x -> (
      if o#"alt" === null then error ("IMG item is missing alt attribute");
      o#"alt")
 
-info HREF := net HREF := x -> net last x
+info HREF := net HREF := x -> (
+     if #x === 1
+     then x#0
+     else if match ("^mailto:",x#0)
+     then toString x#1
+     else toString x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
+     )
 
 scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
 

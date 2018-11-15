@@ -4,7 +4,7 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$",s)
 
 okay := method()
 okay(String,Keyword) := okay(String,Symbol) := (nam,sym) -> #nam > 1 and isAlphaNumeric nam
-symbols := sort join( 
+symbols := unique sort join( 
      apply(join(separate(" ",version#"packages"),{"Core"}), pkgnam -> (pkgnam,symbol Core)),
      flatten apply(
      	  join(Core#"pre-installed packages", {"Core","Text","Parsing","SimpleDoc"}),
@@ -23,7 +23,7 @@ f2 := openOut "M2-symbols"
 
 f << "(defvar M2-symbols '(" << endl
 
-scan( select (symbols, (nam,sym) -> isAlpha nam), (nam,sym) -> (
+scan( select (symbols, (nam,sym) -> isAlphaNumeric nam), (nam,sym) -> (
 	  f << "    " << format nam << endl;
 	  f2 << nam << endl;
 	  ))
@@ -35,12 +35,15 @@ f << "  " << format ///A list of the symbols available in Macaulay2, for use wit
 f << "  )" << endl
 
 f << ///
+
+(defun M2-symbols-el ())	; use this function with C-h f to discover which instance of this file got loaded
+
 (defvar M2-mode-font-lock-keywords 
      (let (
 	    (max-specpdl-size 1000) ; needed for passing long long lists to regexp-opt
 	  )
        `(
-	 (,"--.*" . font-lock-comment-face)
+	 ; (,"--.*" . font-lock-comment-face)
 ///
 
 
@@ -66,8 +69,7 @@ add( ",font-lock-constant-face", first \ select(symbols, (nam,sym) -> (
 	       and not isKeyword sym
 	       and (sym === symbol null or value sym =!= null)
 	       and isAlpha nam)))
--- f << "         (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl
--- f << "         (" << format "\"[^\"]*\"" << " . (0 font-lock-string-face t))"
+f << "         (" << format "///\\(/?/?[^/]\\|\\(//\\)*////[^/]\\)*\\(//\\)*///"  << " . (0 font-lock-string-face t))" << endl
 f << ")))" << endl << endl
 
 f << "(if (fboundp 'font-lock-add-keywords)
@@ -78,5 +80,5 @@ f << "(provide 'M2-symbols)" << endl
 f << close
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "
 -- End:

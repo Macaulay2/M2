@@ -9,16 +9,17 @@
 #include <mpfr.h>
 
 #include "aring-zz-flint.hpp"
-
 #include "ARingTest.hpp"
 
 extern gmp_ZZ getRandomInteger();
 
-template<>
-void getElement<M2::ARingZZ>(const M2::ARingZZ& R, int index, M2::ARingZZ::ElementType& result)
+template <>
+void getElement<M2::ARingZZ>(const M2::ARingZZ& R,
+                             int index,
+                             M2::ARingZZ::ElementType& result)
 {
-  if (index < 50) 
-    R.set_from_long(result, index-25);
+  if (index < 50)
+    R.set_from_long(result, index - 25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -26,7 +27,8 @@ void getElement<M2::ARingZZ>(const M2::ARingZZ& R, int index, M2::ARingZZ::Eleme
     }
 }
 
-TEST(ARingZZ, create) {
+TEST(ARingZZ, create)
+{
   M2::ARingZZ R;
 
   M2::ARingZZ::ElementType a;
@@ -42,7 +44,8 @@ TEST(ARingZZ, create) {
   R.clear(a);
 }
 
-TEST(ARingZZ, arithmetic) {
+TEST(ARingZZ, arithmetic)
+{
   M2::ARingZZ R;
 
   testCoercions(R);
@@ -51,8 +54,10 @@ TEST(ARingZZ, arithmetic) {
   testSubtract(R, ntrials);
   testMultiply(R, ntrials);
   testDivide(R, ntrials);
-  //  testReciprocal(R, ntrials); // this test is not applicable, as this is not a field
-  //  testPower(R, ntrials);  // this test can't work, as it expects a finite field
+  //  testReciprocal(R, ntrials); // this test is not applicable, as this is not
+  //  a field
+  //  testPower(R, ntrials);  // this test can't work, as it expects a finite
+  //  field
   testAxioms(R, ntrials);
 }
 

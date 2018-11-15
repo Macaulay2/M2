@@ -222,6 +222,66 @@ doc ///
    can only contain letters, numbers, underscores, and square brackets.           
 ///;
 
+
+doc ///
+ Key
+   bertiniUserHomotopy
+   (bertiniUserHomotopy, Thing, List, List, List)
+ Headline
+   track a user-defined homotopy
+ Usage
+   S0=bertiniUserHomotopy(t, P, H, S1)
+ Inputs
+   t:RingElement
+     path variable
+   P: List
+     of Options that set the parameters
+   H:List
+     of polynomials that define the homotopy
+   S1:List
+     of solutions to the start system  
+ Outputs
+   S0:List
+     of solutions to the target system
+ Consequences
+  Item
+    Writes the homotopy and start solutions to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with configuration keyword {\tt USERHOMOTOPY}. 
+  Item
+    Stores output of {\tt Bertini} in temporary file
+  Item
+    Parses and outputs the solutions       
+ Description
+   Text
+     This method calls {\tt Bertini} to track a user-defined homotopy.  The
+     user needs to specify the homotopy H, the path variable t, and a list
+     of start solutions S1. In the following example, we solve $x^2-2$ by moving
+     from $x^2-1$ with a linear homotopy. {\tt Bertini} tracks homotopies starting at
+     $t=1$ and ending at $t=0$. Final solutions are of type Point.
+   Example
+     R = CC[x,a,t]; -- include the path variable in the ring     
+     H = { (x^2-1)*a + (x^2-2)*(1-a)};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
+     S1= { sol1, sol2  };--solutions to H when t=1	  
+     S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
+     peek S0_0
+   Example     
+     R=CC[x,y,t,a]; -- include the path variable in the ring     
+     f1=(x^2-y^2);
+     f2=(2*x^2-3*x*y+5*y^2);
+     H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
+     sol1=    point{{1,1}}--{{x,y}} coordinates
+     sol2=    point{{ -1,1}}
+     S1={sol1,sol2}--solutions to H when t=1
+     S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0 
+ Caveat
+   Variables must begin with a letter (lowercase or capital) and
+   can only contain letters, numbers, underscores, and square brackets.           
+///;
+
+
 doc ///
  Key
    bertiniComponentMemberTest
@@ -1376,10 +1436,12 @@ doc ///
    [b'PHSequence,Verbose]
    [b'TraceTestImage,Verbose]
    [makeSampleSolutionsFile,Verbose]
+   [bertiniUserHomotopy,Verbose]
   Headline
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
+    bertiniUserHomotopyVerbose(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
@@ -1973,6 +2035,32 @@ doc ///
     [bertiniTrackHomotopy, MaxNumberSteps]
     [bertiniTrackHomotopy, MaxCycleNum]
     [bertiniTrackHomotopy, RegenStartLevel]
+    [bertiniUserHomotopy,CoeffBound]
+    [bertiniUserHomotopy,CondNumThreshold]
+    [bertiniUserHomotopy,DegreeBound]
+    [bertiniUserHomotopy,EndGameNum]
+    [bertiniUserHomotopy,FinalTol]
+    [bertiniUserHomotopy,ImagThreshold]
+    [bertiniUserHomotopy,MaxCycleNum]
+    [bertiniUserHomotopy,MaxNewtonIts]
+    [bertiniUserHomotopy,MaxNorm]
+    [bertiniUserHomotopy,MaxNumberSteps]
+    [bertiniUserHomotopy,MaxStepSize]
+    [bertiniUserHomotopy,MinStepSizeBeforeEG]
+    [bertiniUserHomotopy,MinStepSizeDuringEG]
+    [bertiniUserHomotopy,MPType]
+    [bertiniUserHomotopy,ODEPredictor]
+    [bertiniUserHomotopy,OutputLevel]
+    [bertiniUserHomotopy,PRECISION]
+    [bertiniUserHomotopy,RandomSeed]
+    [bertiniUserHomotopy,RegenStartLevel]
+    [bertiniUserHomotopy,ScreenOut]
+    [bertiniUserHomotopy,SecurityLevel]
+    [bertiniUserHomotopy,SingValZeroTol]
+    [bertiniUserHomotopy,StepsForIncrease]
+    [bertiniUserHomotopy,TrackTolBeforeEG]
+    [bertiniUserHomotopy,TrackTolDuringEG]
+    [bertiniUserHomotopy,UseRegeneration]
     [bertiniZeroDimSolve, MPType]
     [bertiniZeroDimSolve, PRECISION]
     [bertiniZeroDimSolve, ODEPredictor]
@@ -2243,6 +2331,52 @@ doc ///
    StartPoints
    StartParameters
    SubIntoCC	  
+   storeBM2Files
+   MultiplicityTol
+   SetParameterGroup
+   ReturnPoints
+   GeneralCoordinate
+   OnlyMoveParameters
+   ImageCoordinates
+   ConditionNumTol
+   ContinueLoop
+   EquivalentCoordinates
+   [bertiniImageMonodromyCollect,AffVariableGroup]
+   [bertiniUserHomotopy,AffVariableGroup]
+   [bertiniUserHomotopy,B'Configs]
+   [bertiniImageMonodromyCollect,B'Constants]
+   [bertiniUserHomotopy,B'Constants]
+   [bertiniImageMonodromyCollect,B'Functions]
+   [bertiniUserHomotopy,B'Functions]
+   [bertiniImageMonodromyCollect,ContinueLoop]
+   [bertiniImageMonodromyCollect,EquivalentCoordinates]
+   [bertiniImageMonodromyCollect,GeneralCoordinate]
+   [bertiniImageMonodromyCollect,ImageCoordinates]
+   [bertiniImageMonodromyCollect,M2Precision]
+   [bertiniUserHomotopy,M2Precision]
+   [bertiniImageMonodromyCollect,NameB'InputFile]
+   [bertiniImageMonodromyCollect,NameParameterFile]
+   [bertiniImageMonodromyCollect,NameSolutionsFile]
+   [bertiniImageMonodromyCollect,OnlyMoveParameters]
+   [bertiniUserHomotopy,OutputSyle]
+   [bertiniImageMonodromyCollect,PrintMidStatus]
+   [bertiniUserHomotopy,RandomReal]
+   [bertiniImageMonodromyCollect,ReturnPoints]
+   [makeB'InputFile,SetParameterGroup]
+   [bertiniUserHomotopy,TopDirectory]
+   [bertiniImageMonodromyCollect,B'Exe]
+   [bertiniImageMonodromyCollect,MonodromyStartParameters]
+   [bertiniImageMonodromyCollect,MonodromyStartPoints]
+   [bertiniImageMonodromyCollect,NameStartFile]
+   [bertiniImageMonodromyCollect,NumberOfLoops]
+   [bertiniImageMonodromyCollect,NumSolBound]
+   [bertiniImageMonodromyCollect,SaveData]
+   [bertiniImageMonodromyCollect,SpecifyLoops]
+   [bertiniImageMonodromyCollect,StorageFolder]
+   [bertiniImageMonodromyCollect,Verbose]
+   [bertiniUserHomotopy,HomVariableGroup]
+   [bertiniUserHomotopy,RandomComplex]
+
 
  Headline
    This option or key is for a function that is in active development. 

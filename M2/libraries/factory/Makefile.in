@@ -4,8 +4,8 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 4.1.0
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 4.1.1
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 BUILDTARGET = all ftmpl_inst.o
@@ -63,6 +63,7 @@ BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)' AM_DEFAULT_VERBOSITY=1
 # but mpfr 2.4.2 still uses them, try removing them with 2.4.3:
 CPPFLAGS += -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q
 CFLAGS += -Wimplicit -Werror
+CXXFLAGS += -Wno-deprecated-register
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 # HINT:

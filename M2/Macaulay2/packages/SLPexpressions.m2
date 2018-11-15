@@ -3,11 +3,11 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.9.2",
-     Date => "Oct 2016",
+     Version => "1.9.3",
+     Date => "May 2017",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
-     AuxiliaryFiles => false,
+     AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
@@ -36,7 +36,7 @@ export {
 exportMutable {
     }
 debug Core 
-{* Expressions in M2 
+-* Expressions in M2 
    *** should have this as a Gate 
    ??? maybe?
                             Expression : Adjacent
@@ -75,7 +75,7 @@ TO DO:
 -- evaluator in the engine
 -- sub(Gate,{Gate=>Gate,...,}) 
 
-*}
+*-
 
 concatenateNets = method()
 concatenateNets List := L -> (
@@ -148,7 +148,7 @@ productGate List := L -> add2GC(
     )
 Gate ^ ZZ := (g,n) -> if n == 0 then oneGate else 
     if n > 0 then productGate toList(n:g) else -- inefficient!!!
-    {*(n < 0)*}   oneGate / productGate toList(n:g) 
+    -*(n < 0)*-   oneGate / productGate toList(n:g) 
 
 - Gate := g -> minusOneGate*g
 Gate - Gate := (a,b) -> a+(-b)
@@ -182,7 +182,7 @@ Gate - QQ := (a,b) -> a - inputGate b
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
 detGate = method()
-detGate List := L {*doubly nested list*} -> add2GC(
+detGate List := L -*doubly nested list*- -> add2GC(
     n := #L;
     if not all(L, a->instance(a,List) and #a==n and all(a,b->instance(b,Gate)))
     then error "expected a square matrix (a doubly nested list) of gates";
@@ -686,7 +686,7 @@ assert(clean_0.001(out - mutableMatrix {{3.6+4.8*ii, 1.56+4*ii, 1.66667+.833333*
 ///
 
 beginDocumentation()
-{* run
+-* run
 
 restart
 installPackage "SLPexpressions"
@@ -706,7 +706,7 @@ document {
     Caveat => {"" },
     SeeAlso=>{()}
     }
-*}
+*-
 
 document {
     Key => {SLPexpressions},
@@ -901,12 +901,12 @@ installPackage "SLPexpressions"
 installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
 
--- (old way) installPackage("SLPexpressions", SeparateExec=>true, AbsoluteLinks=>false)
+-- (old way) installPackage("SLPexpressions", SeparateExec=>true)
 
 -- install docs with no absolute links
 uninstallPackage "Style"
-installPackage("Style", AbsoluteLinks=>false)
-installPackage("SLPexpressions", AbsoluteLinks=>false)
+installPackage("Style")
+installPackage("SLPexpressions")
 
 installPackage ("SLPexpressions", MakeDocumentation=>false)
 check "SLPexpressions"

@@ -89,7 +89,7 @@ doc ///
       A ring or ideal may also be provided instead of a module.  Partial multi-degrees may also be given, see below
       for the usage and meaning.
       
-      if $M$ is a matrix, then the matrix between the corresponding 
+      If $M$ is a matrix, then the matrix between the corresponding 
       bases of the source and target of $M$ is returned.  This feature should be considered experimental.
 
       The following examples show the varied uses of this function.
@@ -199,7 +199,7 @@ doc ///
      cover
 ///
 
-{*
+-*
 doc ///
    Key
      basis
@@ -458,7 +458,7 @@ document { Key => {
 	  )
      }
 
-*}
+*-
 
 TEST ///
  basis (QQ^6)

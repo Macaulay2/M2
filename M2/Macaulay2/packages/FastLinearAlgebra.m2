@@ -1,4 +1,7 @@
 -- -*- coding: utf-8 -*-
+
+error "the FastLinearAlgebra package has been deprecated"
+
 newPackage(
 	"FastLinearAlgebra",
 	AuxiliaryFiles => true,

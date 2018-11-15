@@ -12,12 +12,12 @@ configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
 	rm -f M2
-	echo 'exec @pre_bindir@/M2 "$$@"' >M2
+	(echo '#! /bin/sh'; echo 'exec @pre_bindir@/M2 "$$@"') >M2
 	chmod a+x M2
 define package
 all install-$1: all-$1
 install: install-$1
-install-$1 all-$1:; $(MAKE) -C Macaulay2/packages $@
+install-$1 all-$1:; $(MAKE) -C Macaulay2/packages $$@
 endef
 $(foreach i, $(PACKAGES), $(eval $(call package,$i)))
 
@@ -58,22 +58,25 @@ endif
 copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
 copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
 copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
-submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
 
-# Note: we don't use the "install" target of submodules, even though we did so
-# for libraries.  The problem with "install" targets is that they *always* copy
-# their files, which is annoying.  Moreover, our submodules don't even come
-# with "uninstall" targets, typically.  include/config.Makefile.in for lines
-# that add the locations of the the include files and libraries to CPPFLAGS and
-# LDFLAGS.
-BUILDSUBTARGETS = check all run-configure
+# the Makefile is the target used to run "configure" in the submodule:
+submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes --without-tbb
+submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
+submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
+submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
+
+# Note: we don't necessarily use the "install" target of submodules, even
+# though we did so for libraries.  The problem with "install" targets is that
+# they *always* copy their files, which is annoying.  Moreover, our submodules
+# don't even come with "uninstall" targets, typically.
+# include/config.Makefile.in for lines that add the locations of the the
+# include files and libraries to CPPFLAGS and LDFLAGS.
+BUILDSUBTARGETS = check all run-configure check
 
 # Even for submodules not scheduled to be built, we might as well arrange
 # for these targets to fire also for them when doing them for all submodules:
 SUBTARGETS = clean distclean
 GITSUBTARGETS = git-clean git-update git-status git-describe
-
-#all-in-submodules:all-in-libraries
 
 ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
 all-in-mathicgb all-in-mathic:all-in-memtailor
@@ -92,6 +95,9 @@ define build-submodule-rules
 $(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 endef
 
+# disable these ffpack checks, because they fail, and they're compile time only:
+no-check-fflas_ffpack = 1
+
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
@@ -99,12 +105,20 @@ all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
 copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
 build-in-$1:; + $(MAKE) -C submodules/$1 all
-check-in-$1: run-configure-in-$1; + ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+
+check-in-$1: run-configure-in-$1
+ifeq ($(no-check-$1),)
+	+ ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+endif
+
+install-in-$1:; + $(MAKE) -C submodules/$1 install
 
 # it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
 # has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 
 # are no longer there:
-$(foreach c,clean distclean,$(eval $c-in-$1:; + if [ -f submodules/$1/Makefile ]; then $(MAKE) submodules/$1/Makefile && $(MAKE) -C submodules/$1 $c; fi))
+$(foreach c, clean distclean,
+    $(eval $c-in-$1:; + if [ -f submodules/$1/Makefile ]; then $(MAKE) submodules/$1/Makefile && $(MAKE) -C submodules/$1 $c; fi)
+    $(eval $c: $c-in-$1))
 
 git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
 git-status-in-$1:; cd @srcdir@/submodules/$1 && git status
@@ -116,28 +130,28 @@ unconfigure-in-submodules: unconfigure-in-$1
 unconfigure-in-$1:; rm -f submodules/$1/Makefile
 submodules/$1/Makefile:@srcdir@/submodules/$1/configure @srcdir@/submodules/$1/Makefile.in
 	$(MKDIR_P) submodules/$1
-	$(call cdw,submodules/$1) &&							\
+	@ $(call cdw,submodules/$1) &&							\
 	 @abs_srcdir@/submodules/$1/configure						\
 		--prefix=$(BUILTLIBPATH)						\
-		--with-gtest=yes							\
-		PKG_CONFIG_PATH="$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)"	\
+		PKG_CONFIG_PATH="$$(BUILTLIBPATH)/lib/pkgconfig:$$(PKG_CONFIG_PATH)"	\
 		GTEST_PATH=@GTEST_PATH@							\
 		AR=@AR@									\
 		AS=@AS@									\
 		DLLTOOL=@DLLTOOL@							\
 		OBJDUMP=@OBJDUMP@							\
 		STRIP=@STRIP@								\
-		CXXFLAGS="$(CXXFLAGS)"							\
-		CFLAGS="$(CFLAGS)"							\
-		FFLAGS="$(FCFLAGS)"							\
-		FCFLAGS="$(FCFLAGS)"							\
-		TARGET_ARCH=$(TARGET_ARCH)						\
-		CPPFLAGS="$(CPPFLAGS)"							\
-		CC="$(CC)"								\
-		CXX="$(CXX)"								\
-		LDFLAGS="$(LDFLAGS)"							\
-		LOADLIBES="$(LOADLIBES)"						\
-		LDLIBS="$(LDLIBS)"							\
+		CXXFLAGS="$$(CXXFLAGS)"							\
+		CFLAGS="$$(CFLAGS)"							\
+		FFLAGS="$$(FCFLAGS)"							\
+		FCFLAGS="$$(FCFLAGS)"							\
+		TARGET_ARCH=$$(TARGET_ARCH)						\
+		CPPFLAGS="$$(CPPFLAGS)"							\
+		CC="$$(CC)"								\
+		CXX="$$(CXX)"								\
+		LDFLAGS="$$(LDFLAGS)"							\
+		LOADLIBES="$$(LOADLIBES)"						\
+		LDLIBS="$$(LDLIBS)"							\
+		LIBS="$$(LIBS)"								\
 		$$(SUBMODULE_CONFIGOPTIONS)
 @srcdir@/submodules/$1/configure.ac:
 ifeq (@DOWNLOAD@,yes)
@@ -153,13 +167,16 @@ else
 	@ false
 endif
 @srcdir@/submodules/$1/configure @srcdir@/submodules/$1/Makefile.in: @srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am
-	cd @srcdir@/submodules/$1 && ./autogen.sh
+	cd @srcdir@/submodules/$1 && NOCONFIGURE=1 ./autogen.sh
 endef
 $(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
 $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 
 # installation into usr-dist
+## It's annoying that fflas_ffpack will copy the files during installation every time.
+all-in-fflas_ffpack: install-in-fflas_ffpack
 all-in-Macaulay2:install-licenses
+
 install-licenses:all-in-submodules
 	: installing library and submodule licenses in @pre_licensesdir@
 	if [ -d $(BUILTLIBPATH)/licenses/. ] ; \
@@ -189,6 +206,7 @@ clean:
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
 recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
+	$(WHY)
 	./config.status --recheck
 	./config.status
 status: @srcdir@/configure
@@ -240,33 +258,45 @@ unconfigure-libs:; $(MAKE) -C libraries unconfigure
 remove-deps:; find . -name \*.dep -delete
 find-conflicts:; grep -r -nH --exclude-dir BUILD -e '^<<<<<<< ' @srcdir@ || true
 log-archive:; find . -name config.log |xargs tar xzf config-logs.tgz
+shell:; PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) bash
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
 	: Macaulay2 executable location:
 	:    @pre_bindir@/M2@EXE@
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
-validate-html:
-	TMP="/tmp/validate-$$$$"				; \
-	find @pre_prefix@/@tail_htmldir@ -name \*.html          | \
-	    ( i=0						; \
-	      n=0						; \
-	      while read x					; \
-	      do validator-runner.py "$$x" > $$TMP		; \
-		 i=$$(($$i + 1))				; \
-		 if [ -s $$TMP ]				; \
-		 then n=$$(($$n + 1))				; \
-		      echo " *** invalid HTML: $$x"		; \
-		      cat $$TMP					; \
-		 fi						; \
-	      done						; \
-	      echo "$$i HTML files checked; $$n invalid"	; \
+
+VALIDATOR_PATH = /usr/lib/cgi-bin/w3c-markup-validator/check
+w3c-markup-validator-is-installed: $(VALIDATOR_PATH)
+validate-html: w3c-markup-validator-is-installed
+	@ echo "-- validating all html and xhtml files in @pre_prefix@/@tail_htmldir@"
+	@ TMP="/tmp/validate-$$$$"				;		\
+	  find @pre_prefix@/@tail_htmldir@ -name \*.html -o -name \*.xhtml |	\
+	    ( i=0						;		\
+	      n=0						;		\
+	      while read x					;		\
+	      do @srcdir@/util/validator-runner.py "$$x" > $$TMP		;		\
+		 i=$$(($$i + 1))				;		\
+		 if [ -s $$TMP ]				;		\
+		 then n=$$(($$n + 1))				;		\
+		      echo \ "*** invalid HTML: $$x"		;		\
+		      cat $$TMP					;		\
+		 fi						;		\
+	      done						;		\
+	      echo "$$i HTML files checked; $$n invalid"	;		\
 	      [ $$n = 0 ] ) >&2
+announce:
+	@ echo "================================================================="
+	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
+	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
+	@ echo "================================================================="
+
 help:
 	@ echo "Macaulay2 version @PACKAGE_VERSION@"
 	@ echo ""
 	@ echo "make files configured with:"
-	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@ STATIC=@STATIC@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
 	@ echo ""
 	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
@@ -283,6 +313,19 @@ help:
 	@ echo "  clean             remove all generated files except configured files"
 	@ echo "  distclean         remove all generated files"
 	@ echo "  help              show this help"
+	@ echo ""
+	@ echo "targets for all submodules:"
+	@ echo "  all-in-submodules"
+	@ echo "  build-in-submodules"
+	@ echo "  check-in-submodules"
+	@ echo "  clean-in-submodules"
+	@ echo "  install-in-submodules"
+	@ echo ""
+	@ echo "targets for a submodule FOO:"
+	@ echo "  all-in-FOO"
+	@ echo "  build-in-FOO"
+	@ echo "  check-in-FOO"
+	@ echo "  clean-in-FOO"
 	@ echo ""
 	@ echo "configuration display:"
 	@ echo "  status                    show options used with 'configure'"
