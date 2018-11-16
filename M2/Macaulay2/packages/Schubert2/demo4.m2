@@ -50,12 +50,12 @@ A = symmetricPower_5 Q - symmetricPower_3 Q ** OO(-z)
 integral chern A
 -- intersection rings with parameters:
 pt = base symbol n
-X = projectiveSpace_1 pt
+X = abstractProjectiveSpace_1 pt
 chi OO_X(1)
 chi OO_X(2)
 chi OO_X(3)
 chi OO_X(n)
-X = projectiveSpace_2 pt
+X = abstractProjectiveSpace_2 pt
 chi OO_X(n)
 tangentBundle X
 todd X
@@ -66,7 +66,7 @@ ch F
 chi F
 F^**4
 -- The Horrocks-Mumford bundle:
-X = projectiveSpace_4 pt
+X = abstractProjectiveSpace_4 pt
 A = intersectionRing X
 cotangentBundle X
 exteriorPower_2 oo
@@ -83,7 +83,7 @@ chern A
 B
 chern B
 chern(A*B)
-X = projectiveSpace(3,S,VariableName => H)
+X = abstractProjectiveSpace(3,S,VariableName => H)
 intersectionRing X
 f = X/S
 -- check the projection formula:
@@ -153,9 +153,9 @@ chi OO(D) - chi OO_X
 chi OO_D
 p_a = D -> 1 - chi OO_D;
 p_a D
-Y = projectiveSpace_2 base n
+Y = abstractProjectiveSpace_2 base n
 factor p_a (n*h)
-Z = projectiveSpace_1( use projectiveSpace_1 base(m,n), VariableName => k)
+Z = abstractProjectiveSpace_1( use abstractProjectiveSpace_1 base(m,n), VariableName => k)
 factor p_a (m*h + n*k)
 -- Riemann-Roch without denominators
 -- We display some of the universal polynomials described in Lemma 15.3 of Fulton's book, Intersection Theory.
@@ -173,7 +173,7 @@ for d from 1 to 3 do for e from 1 to 4 do << endl << "d=" << d << " e=" << e << 
  -- Hilbert polynomial and Todd class of projective 3-space
    -- > proj(3,h,all): factor(chi(o(n*h)));
    -- 			     1/6 (n + 3) (n + 2) (n + 1)
-   Ph = projectiveSpace_3 base symbol n; factor chi OO(n*h)
+   Ph = abstractProjectiveSpace_3 base symbol n; factor chi OO(n*h)
    -- > Ph[toddclass_];
    -- 					      2  2    3  3
    -- 			    1 + 2 h t + 11/6 h  t  + h  t
@@ -235,7 +235,7 @@ for d from 1 to 3 do for e from 1 to 4 do << endl << "d=" << d << " e=" << e << 
    --                            4        3    23   2
    --                      1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
    --                                          12
-   P5 = projectiveSpace(5,base n,VariableName=>H); chi(OO(n*H)-OO((n-2)*H))
+   P5 = abstractProjectiveSpace(5,base n,VariableName=>H); chi(OO(n*H)-OO((n-2)*H))
  -- Lines on a quintic threefold
    -- # Lines on a quintic threefold.  This is the top Chern class of the 
    -- # 5th symmetric power of the universal quotient bundle on the Grassmannian
@@ -286,7 +286,7 @@ for d from 1 to 3 do for e from 1 to 4 do << endl << "d=" << d << " e=" << e << 
    integral (2*d_1 + e)^8
  -- Euler characteristic of Horrocks-Mumford bundle
    -- > proj(4,h,tang):            # need tangentbundle for chi
-   X = projectiveSpace(4,base n,VariableName => h)
+   X = abstractProjectiveSpace(4,base n,VariableName => h)
    -- > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
    F = abstractSheaf(X, Rank => 2, ChernClass => 1 + 5*h + 10*h^2)
    -- > chi(F&*o(n*h));            # computes chi of its twists

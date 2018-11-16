@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+	  TO "changes made for the next release (1.13)",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
 	  TO "changes, 1.10",
@@ -28,8 +28,28 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release (1.13)",
+     UL {
+         LI {"breaking changes:",
+             UL {
+                 LI { "the Schubert2 functions ", TT "projectiveSpace", 
+                     " and ", TT "projectiveSpace'", 
+                     "have been renamed ", TO "abstractProjectiveSpace", "  and ",
+                     TO "abstractProjectiveSpace'", ".  The reason is that there
+                     were name conflicts with the NormalToricVarieties package."
+                     },
+                 LI { "the Schubert2 functions ", TT "PP", " and ", TT "PP'",
+                     " have been removed.  Use ", TO "abstractProjectiveSpace", " and ",
+                     TO "abstractProjectiveSpace'", " instead. Since ", TT "PP",
+                     " is no longer protected, you can always do ", 
+                     TT "PP = abstractProjectiveSpace", 
+                     " and then e.g. ", TT "X = PP 4", "."
+                     }
+                 }
+             }
+         }
      }
+     
 
 document {
      Key => "changes, 1.12",
