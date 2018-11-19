@@ -419,6 +419,8 @@ homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      wts := apply(generators(R, CoefficientRing=>ZZ), x -> first degree x);
      homogenize(f,n,wts))
 
+homogenize(RingElement, RingElement) := lookup(homogenize,Matrix,RingElement)
+
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M
      else subquotient(
@@ -432,11 +434,6 @@ homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      else subquotient(
 	  if M.?generators then homogenize(M.generators,z,wts),
 	  if M.?relations then homogenize(M.relations,z,wts)))
-
-homogenize(RingElement, RingElement) := RingElement => (f,n) -> (
-     wts := (transpose (monoid ring f).Options.Degrees)#0;
-     homogenize(f,n,wts)
-     )
 
 homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
      p := homogenize(f#0,v,wts);
