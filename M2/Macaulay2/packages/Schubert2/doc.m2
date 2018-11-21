@@ -1592,7 +1592,7 @@ Node
     the intersection ring of $X$
   Description
    Example
-    intersectionRing PP'^3
+    intersectionRing abstractProjectiveSpace' 3
    Text
     The variables may not have been assigned their values in the intersection ring yet:
    Example
@@ -1603,6 +1603,7 @@ Node
     use ooo
     H_(1,1), H_(1,2), H_(1,3)
   SeeAlso
+   abstractProjectiveSpace'
    IntersectionRing
 --------
 Node
@@ -2199,7 +2200,7 @@ Node
    the abstract sheaf $O_D$, defined as $1 - O(-D)$
  Description
   Example
-   X = PP'^4
+   X = abstractProjectiveSpace' 4
    h
    F = OO_h
    chern F
@@ -2220,7 +2221,7 @@ Node
     $X$
  Description
   Example
-   X = PP'^4
+   X = abstractProjectiveSpace' 4
    h
    variety h
 --------
@@ -2301,7 +2302,7 @@ Node
     the dual of {\tt F}
   Description
    Example
-    X = PP'^1
+    X = abstractProjectiveSpace' 1
     dual OO_X(-1)
     chi oo
 --------
@@ -2442,7 +2443,7 @@ Node
    (symbol ^*,AbstractVarietyMap)
   Description
    Example
-    X = PP'^4
+    X = abstractProjectiveSpace' 4
     f = X.StructureMap
     OO_X(1)
     f_* oo

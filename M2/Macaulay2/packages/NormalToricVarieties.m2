@@ -5827,7 +5827,7 @@ doc ///
 	    intersectionRing tPP2
 	    intersectionRing abstractVariety (tPP2, base())
 	    intersectionRing abstractVariety (tPP2, base(a))
-	    PP2 = projectiveSpace 2
+	    PP2 = abstractProjectiveSpace 2
 	    intersectionRing PP2
 	    minimalPresentation intersectionRing PP2
 	    minimalPresentation intersectionRing tPP2
