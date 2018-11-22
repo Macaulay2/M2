@@ -413,13 +413,12 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, i, wts)))
 
+homogenize(RingElement, RingElement) :=
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      R := ring f;
      if degreeLength R =!= 1 then error "homogenization requires degrees of length 1";
      wts := apply(generators(R, CoefficientRing=>ZZ), x -> first degree x);
      homogenize(f,n,wts))
-
-homogenize(RingElement, RingElement) := lookup(homogenize,Matrix,RingElement)
 
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M
