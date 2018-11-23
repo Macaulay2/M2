@@ -692,7 +692,6 @@ iderlie(MapLie,List) := (f,y)->(
 -- Lie multiplication and 
 -- linear operations on LieElement
 -----------------------------------
-
 -- the following operations  ++ * / @  produce 
 -- LieElement objects which are non-normalized
 
