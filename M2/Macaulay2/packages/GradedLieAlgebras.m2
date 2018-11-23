@@ -12,7 +12,7 @@
 newPackage(
 	"GradedLieAlgebras",
 	Version => "2.0",
-	Date => "May 2018",
+	Date => "Nov 2018",
 	Authors => {{		  Name => "Clas Löfwall",
 		  Email => "clas.lofwall@gmail.com"},
 	      {		  Name => "Samuel Lundqvist",
