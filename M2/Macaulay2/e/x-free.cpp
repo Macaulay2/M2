@@ -26,7 +26,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
           return 0;
         }
       return R->make_FreeModule(rank);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -59,7 +59,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
           F->append(deg);
         }
       return F;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -71,7 +71,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
   try
     {
       return FreeModule::make_schreyer(m);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -119,7 +119,7 @@ const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
   try
     {
       return F->tensor(G);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -131,7 +131,7 @@ const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
   try
     {
       return F->transpose();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -143,7 +143,7 @@ const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F)
   try
     {
       return F->symm(n);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -155,7 +155,7 @@ const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F)
   try
     {
       return F->exterior(n);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -168,7 +168,7 @@ const FreeModule *IM2_FreeModule_submodule(const FreeModule *F,
   try
     {
       return F->sub_space(selection);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -182,7 +182,7 @@ M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule *F,
   try
     {
       return F->select_by_degrees(lo, hi);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
