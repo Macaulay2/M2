@@ -808,7 +808,7 @@ M2_arrayint rawMinimalBetti(Computation* C,
                                 length_limit);  // Computes it if needed
       ERROR("expected resolution computed via res(...,FastNonminimal=>true)");
       return nullptr;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return nullptr;

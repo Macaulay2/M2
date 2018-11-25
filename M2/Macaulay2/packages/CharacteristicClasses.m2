@@ -2463,7 +2463,7 @@ doc ///
 	       The option CheckSmooth is only used by the commands @TO CSM@ and only when computing the CSM class of a toric variety. It is set to true by default. When true it will check if the toric variety is smooth before proceeding, if it is this will speed up computation; however checking for smoothness does take some time.
 	  Example
 	       needsPackage "NormalToricVarieties"
-               U = projectiveSpace 7
+               U = toricProjectiveSpace 7
 	       time CSM U
                time CSM(U,CheckSmooth=>false)
 	       

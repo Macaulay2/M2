@@ -9,6 +9,8 @@
 #include <iostream>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
+// The following line, which would be useful, doesn't quiet g++-8 about pragma omp...
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #pragma GCC diagnostic ignored "-Wconversion"
 #include <fflas-ffpack/ffpack/ffpack.h>
