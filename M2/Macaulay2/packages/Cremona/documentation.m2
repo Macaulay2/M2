@@ -738,7 +738,7 @@ EXAMPLE {
 "toMap(I,2,2)", 
 "toMap(I,3,2)"},} 
 
-undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring),(symbol (*),RationalMap)}
+undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring),(symbol (*),RationalMap),(rationalMap,PolynomialRing,List)}
 
 document { 
 Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
@@ -867,4 +867,58 @@ PARA{"More properly, this method accepts and returns objects of the class ",TT"M
 EXAMPLE {
 "phi = first graph quadroQuadricCremonaTransformation(3,1)",
 "segre phi"}}
+
+document { 
+Key => {abstractRationalMap,(abstractRationalMap,PolynomialRing,PolynomialRing,FunctionClosure,ZZ),(abstractRationalMap,PolynomialRing,PolynomialRing,FunctionClosure),(abstractRationalMap,RationalMap)}, 
+Headline => "make an abstract rational map", 
+Usage => "abstractRationalMap(R,S,f,d) 
+          abstractRationalMap(R,S,f)",
+Inputs => { 
+PolynomialRing => "R" => {"the coordinate ring of the source of the map"},
+PolynomialRing => "S" => {"the coordinate ring of the target of the map"},
+FunctionClosure => "f" => {"the abstract definition of the map"},
+ZZ => "d" => {"(optional) an integer close to the degree of the forms defining the map"}}, 
+Outputs => { 
+RationalMap => {"the abstract rational map from ",TT"Proj(R)"," to ",TT"Proj(S)"," defined by f"}}, 
+PARA{"The main ingredient behind this method is the interpolation of multivariate polynomials. We illustrate this feature with some examples."},
+EXAMPLE {
+"f = a -> {-a_1^3*max(sin(a_2),1)+a_0*a_1*a_2*ceiling((log(1 + abs a_0))^0),-a_1^2*a_2+a_0*a_1*a_3,-a_1*a_2^2+a_1^2*a_3,-a_1^2*a_3+a_0*a_1*a_4,-a_1*a_2*a_3+a_1^2*a_4,-a_1*a_3^2+a_1*a_2*a_4}",
+"P4 := QQ[t_0..t_4]",
+"P5 := QQ[u_0..u_5]",
+"time psi = abstractRationalMap(P4,P5,f)"},
+PARA{"Now we compute first the degree of the forms defining the abstract map ",TT"psi"," and then the corresponding concrete rational map."},
+EXAMPLE {
+"time projectiveDegrees(psi,3)",
+"time rationalMap psi"},
+PARA{"As a second example, we apply the method to compute the inverse of a Cremona transformation."},
+EXAMPLE {
+"phi = rationalMap map specialCremonaTransformation(3,ZZ/10000019);",
+"phi' = abstractRationalMap phi",
+"psi' = inverseMap phi'",
+"psi = rationalMap psi';",
+"assert(isInverseMap(phi,psi))"},
+PARA{"We now consider a more interesting application. Recall that a closed subvariety ",TEX///$X\subset\mathbb{P}^n$///," is called a subvariety with one apparent double point if a general point in ",TEX///$\mathbb{P}^n$///," lies on a unique secant of ",TEX///$X$///,". A subvariety ",TEX///$X\subset\mathbb{P}^n$///," with an apparent double point defines a Cremona involution of ",TEX///$\mathbb{P}^n$///,": for a general point ",TEX///$x\in\mathbb{P}^n$///," we find a unique secant of ",TEX///$X$///," intersecting ",TEX///$X$///," at two points ",TEX///$(a,b)$///,", and then define the unique ",TEX///$T(x)$///," such that the pair ",TEX///$\{x,T(x)\}$///," is harmonically conjugate to ",TEX///$\{a,b\}$///,". For more details, see Lecture 4 in ",HREF{"http://www.math.lsa.umich.edu/~idolga/cremonalect.pdf","Lectures on Cremona transformations, by I. Dolgachev"},". This abstract construction is implemented in the package: if ",TT"I"," is the ideal of one apparent double point variety ",TEX///$X\subset\mathbb{P}^n$///,", then the command ",TT"abstractRationalMap(I,\"OADP\")"," returns the abstract rational map above defined. For instance, we can take ",TEX///$X$///," to be the twisted cubic curve in ",TEX///$\mathbb{P}^3$///,"."},
+EXAMPLE {
+"ZZ/65521[x_0..x_3]; I = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}})", 
+"time T = abstractRationalMap(I,\"OADP\")"},
+PARA{"The degree of the forms defining the abstract map ",TT"T"," can be obtained by the following command:"},
+EXAMPLE {
+"time projectiveDegrees(T,2)"},
+PARA{"We verify that the composition of ",TT"T"," with itself is defined by linear forms:"},
+EXAMPLE {
+"time T2 = T * T",
+"time projectiveDegrees(T2,2)"},
+PARA{"We verify that the composition of ",TT"T"," with itself leaves a random point fixed:"},
+EXAMPLE {
+"p = apply(3,i->random(ZZ/65521))|{1}",
+"q = T p",
+"T q"},
+PARA{"We now compute the concrete rational map corresponding to ",TT"T",":"},
+EXAMPLE {
+"time f = rationalMap T",
+"describe f!"},
+Caveat => {"This is under development yet."}
+}
+undocumented{(abstractRationalMap,Ideal,String)}
+
 
