@@ -2,7 +2,7 @@
 newPackage(
        "Cremona",
 	Version => "4.2.3", 
-        Date => "November 15, 2018",
+        Date => "November 25, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true,
@@ -49,7 +49,8 @@ export{
    "forceInverseMap",
    "forceImage",
    "point",
-   "segre"
+   "segre",
+   "abstractRationalMap"
 };
 
 certificate := "MathMode: output certified!\n";
@@ -78,6 +79,7 @@ forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
 point = method(TypicalValue => Ideal);
 segre = method(TypicalValue => RationalMap);
+abstractRationalMap = method();
 
 rationalMap (RingMap) := o -> (phi) -> ( 
    checkMultihomogeneousRationalMap phi;
@@ -121,6 +123,13 @@ rationalMap (Ideal) := o -> (I) -> rationalMap(toMap(I,Dominant=>null),Dominant=
 rationalMap (Ideal,ZZ) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (Ideal,List) := o -> (I,d) -> rationalMap(toMap(I,d,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (Ideal,ZZ,ZZ) := o -> (I,d,e) -> rationalMap(toMap(I,d,e,Dominant=>null),Dominant=>o.Dominant);
+rationalMap (PolynomialRing,List) := o -> (R,L) -> ( -- undocumented
+   try assert(ring matrix{L} === ZZ) else error "expected a list of integers";
+   J := if unique L_{1..#L-1} === {0} or L_{1..#L-1} === {}
+        then ideal vars R 
+        else saturate intersect flatten for i from 1 to #L-1 list for j from 1 to L_i list (point R)^i;
+   rationalMap(J,L_0,Dominant=>o.Dominant)
+);
 rationalMapInt = method(Options => {Dominant => null});
 rationalMapInt (MutableHashTable) := o -> (Phi) -> ( 
      Psi := Phi * rationalMap(target Phi,ambient target Phi);
@@ -1872,6 +1881,243 @@ specialQuadraticTransformation (ZZ,Ring) := (j,K) -> specialQuadraticTransformat
 ---------------------------- end Examples ---------------------------------------------
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
+
+AbstractRationalMap = new Type of MutableHashTable;
+VerbosityAbstractRationalMap = false;
+
+abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure) := (Pn,Pm,f) -> ( 
+   K := coefficientRing Pn;
+   if K =!= coefficientRing Pm then error "different coefficient rings in source and target are not permitted";
+   if not isField K then error "the coefficient ring needs to be a field";
+   if numgens Pn <= 1 or numgens Pm <= 1 then error "expected polynomial rings with at least 2 variables";
+   if not (degrees Pn == toList((numgens Pn):{1}) and degrees Pm == toList((numgens Pm):{1})) then error "expected standard grading";
+   try (
+         p := for i to numgens Pn -1 list random K;
+         q := f p;
+         assert(class q === List and #q == numgens Pm and ring matrix{q} === K);
+   ) else error("unable to interpret the input FunctionClosure as a rational map from PP^"|toString(numgens Pn -1)|" to PP^"|toString(numgens Pm -1)|" over "|toString(K)|"; expected a function that takes a list of "|toString(numgens Pn)|" elements of "|toString(K)|" and returns a list of "|toString(numgens Pm)|" elements of "|toString(K)|", e.g.: x -> "|toString((for i to min(numgens Pn,numgens Pm)-1 list "x_"|toString(i)|"^2")|toList(numgens(Pm)-min(numgens Pn,numgens Pm):0)));
+   new AbstractRationalMap from {
+        "source" => Pn,
+        "target" => Pm,
+        "function" => f,
+        "verbose" => VerbosityAbstractRationalMap,
+        "degForms" => null,
+        "rationalMap" => null
+   }
+);
+
+abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure,ZZ) := (Pn,Pm,f,d) -> ( 
+   Phi := abstractRationalMap(Pn,Pm,f);
+   degForms(Phi,d);
+   Phi
+);
+
+abstractRationalMap (RationalMap) := (Phi) -> (
+   if not (isPolynomialRing source Phi and isPolynomialRing target Phi) then error "expected a rational map between projective spaces";
+   F := matrix Phi;
+   x := gens source Phi;
+   f := p -> flatten entries sub(F,apply(#x,i -> x_i => p_i));
+   Psi := abstractRationalMap(source Phi,target Phi,f);
+   Psi#"rationalMap" = Phi;
+   Psi#"degForms" = projectiveDegrees(Phi,Phi#"dimTarget" - 1);
+   Psi
+);
+
+expression AbstractRationalMap := (Phi) -> expression("rational map from PP^"|toString(numgens source Phi -1)|" to PP^"|toString(numgens target Phi -1));
+
+net AbstractRationalMap := (Phi) -> (
+   s := "-- rational map --"||("source: "|nicePrint(source Phi))||("target: "|nicePrint(target Phi));
+   if Phi#"degForms" =!= null then s=s||"defining forms: given by a function (degree = "|toString(Phi#"degForms")|")" else s=s||"defining forms: given by a function"; 
+   net(s)
+);
+
+AbstractRationalMap#{Standard,AfterPrint} = AbstractRationalMap#{Standard,AfterNoPrint} = (Phi) -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
+);
+
+source AbstractRationalMap := (Phi) -> Phi#"source";
+
+target AbstractRationalMap := (Phi) -> Phi#"target";
+
+coefficientRing AbstractRationalMap := (Phi) -> coefficientRing source Phi;
+
+compose (AbstractRationalMap,AbstractRationalMap) := (Phi,Psi) -> (
+   if target Phi =!= source Psi then error "rational maps not composable: incompatible target and source";
+   Eta := new AbstractRationalMap from {
+            "source" => source Phi,
+            "target" => target Psi,
+            "function" => (Psi#"function") @@ (Phi#"function"),
+            "verbose" => Phi#"verbose" or Psi#"verbose",
+            "degForms" => null,
+            "rationalMap" => null
+          };
+   -- if Phi#"rationalMap" =!= null and Psi#"rationalMap" =!= null then (
+   --     Eta#"rationalMap" = compose(Phi#"rationalMap",Psi#"rationalMap");
+   --     Eta#"degForms" = max flatten degrees ideal compress matrix Eta#"rationalMap";
+   -- );
+   Eta
+);
+
+AbstractRationalMap * AbstractRationalMap := (Phi,Psi) -> compose(Phi,Psi); 
+
+rationalMap (AbstractRationalMap) := o -> (Phi) -> (
+   d := degForms Phi;
+   if Phi#"rationalMap" =!= null then return Phi#"rationalMap";
+   Pn := source Phi;
+   Pm := target Phi;
+   f := Phi#"function";
+   K := coefficientRing Phi;
+   n := numgens Pn -1;
+   m := numgens Pm -1;
+   err := 10;
+   N := ceiling((m+1) * binomial(n+d,d) / m) + err;
+   if Phi#"verbose" then <<"-- picking "<<N<<" random points on PP^"<<n<<endl;
+   B := matrix apply(N,i -> prepend(1_K,flatten entries random(K^1,K^n)));
+   if Phi#"verbose" then <<"-- calculating the images of the "<<N<<" points in PP^"<<m<<endl;
+   try (
+      V := matrix apply(entries B,b -> f b);
+      assert(m+1 == numColumns V);
+      assert(ring V === K);
+   ) else error "something went wrong while applying the FunctionClosure";
+   a := local a;
+   R := K[flatten for i to m list toList(a_(i,0)..a_(i,binomial(n+d,d)-1))];
+   x := local x;
+   PP := R[x_0..x_n];
+   F := matrix{for i to m list (matrix{toList(a_(i,0)..a_(i,binomial(n+d,d)-1))} * transpose gens (ideal vars PP)^d)_(0,0)};
+   M := apply(N,i -> sub(F,apply(n+1,j -> x_j => B_(i,j))) || submatrix(V,{i},));
+   eqs := sum(M,m -> trim minors(2,m));
+   if Phi#"verbose" then <<"-- obtained "<<numgens eqs<<" linear equations with "<<toString((m+1) * binomial(n+d,d))<<" unknowns over "<<toString(K)<<endl;
+   eqs = trim eqs;
+   if Phi#"verbose" then <<"-- number of independent equations: "<<numgens eqs<<endl;
+   if numgens eqs >= (m+1) * binomial(n+d,d) then error "interpolation failed: too many independent equations";
+   W := transpose sub(last coefficients(gens eqs,Monomials=>vars R),K);
+   S := entries transpose mingens kernel W;
+   if Phi#"verbose" then <<"-- number of independent solutions: "<<#S<<endl;
+   if #S == 0 then error "something went wrong while calculating forms";
+   S0 := first S;
+   g := gens R;
+   PP = K[x_0..x_n];
+   G := sub(sub(sub(F,apply(#g,i -> g_i => S0_i)),PP),vars Pn);
+   phi := rationalMap(Pn,Pm,G);
+   if #S > 1 then maps phi;
+   Phi#"degForms" = max flatten degrees ideal compress matrix phi;
+   Phi#"rationalMap" = phi
+);
+
+degForms = method()
+
+degForms (AbstractRationalMap,ZZ) := (Phi,jj) -> (
+   if Phi#"degForms" =!= null then return Phi#"degForms";
+   Phi' := if numgens source Phi == 2 
+           then new AbstractRationalMap from {
+                  "source" => Phi#"source",
+                  "target" => Phi#"target",
+                  "function" => Phi#"function",
+                  "verbose" => Phi#"verbose",
+                  "degForms" => Phi#"degForms",
+                  "rationalMap" => Phi#"rationalMap"}
+           else (abstractRationalMap parametrize randomLinearSubspace(source Phi,1)) * Phi;
+   assert(numgens source Phi' == 2);
+   MAXd := infinity;
+   gap := 2;
+   d := jj - gap;   
+   c := true;
+   local psi;
+   while c and d <= infinity do (
+      d = d + gap;
+      if Phi#"verbose" then <<"-- searching degree of forms: trying "<<d<<endl; 
+      try (
+         Phi'#"degForms" = d;
+         psi = rationalMap Phi';
+         c = false;
+      );
+   );
+   if c then error "unable to find degree of defining forms";
+   if numgens source Phi == 2 then Phi#"rationalMap" = psi;
+   Phi#"degForms" = max flatten degrees ideal compress matrix psi
+);
+
+degForms (AbstractRationalMap) := (Phi) -> degForms(Phi,1);
+
+projectiveDegrees (AbstractRationalMap,ZZ) := o -> (Phi,i) -> (
+   if o.MathMode then error "the option MathMode is not available for projectiveDegrees(AbstractRationalMap,ZZ)";
+   n := numgens source Phi -1;
+   if i < 0 or i > n then error("expected integer between 0 and "|toString(n)); 
+   if i == n then return 1;
+   if i == n-1 then return degForms Phi;
+   if Phi#"rationalMap" =!= null then return projectiveDegrees(Phi#"rationalMap",i);
+   error "not implemented yet: i-th projective degree of an abstract rational map from PP^n with i < n-1";
+);
+
+inverseMap (AbstractRationalMap) := o -> (Phi) -> (
+   if o.MathMode then error "the option MathMode is not available with inverseMap(AbstractRationalMap)";
+   phi := rationalMap Phi;
+   if not isBirational phi then error "expected a birational map";
+   if phi#"inverseRationalMap" =!= null then return abstractRationalMap(phi#"inverseRationalMap");
+   f := a -> flatten entries coefficients parametrize(phi^* trim minors(2,(vars target phi)||matrix{a}));
+   abstractRationalMap(target Phi,source Phi,f)
+);
+
+AbstractRationalMap SPACE List := (Phi,q) -> (
+   try assert(#q == numgens source Phi and (ring matrix{q} === coefficientRing Phi or ring matrix{q} === ZZ)) else error("expected a coordinate point on Proj("|toString(source Phi)|")");
+   (Phi#"function") q
+);
+
+AbstractRationalMap SPACE Sequence := (Phi,q) -> (
+   toSequence (Phi#"function") toList q
+);
+
+harmonicallyConjugate = method()
+harmonicallyConjugate (RingElement,RingElement) := (Q,L) -> (
+   -- input: Q,L a quadratic and a linear form on P^1
+   -- output: L', s.t. L*L' is harmonically conjugate to Q
+   if not (ring Q === ring L) then error "expected same ring";
+   if not isPolynomialRing ring Q then error "expected a polynomial ring";
+   if not (degree Q === {2} and degree L === {1} and numgens ring Q === 2) then error "expected a quadratic and a linear form on P^1";
+   K := coefficientRing ring Q;
+   t := gens ring Q;
+   q := flatten entries sub(last coefficients(Q,Monomials=>gens (ideal t)^2),K);
+   (alpha,beta,gamma) := (q_0,q_1/2,q_2);
+   l := flatten entries sub(last coefficients(L,Monomials=>gens ideal t),K);
+   p := (l_1,-l_0);
+   (gamma*p_1+beta*p_0)*t_1+(beta*p_1+alpha*p_0)*t_0
+);
+
+secantLine = method()
+secantLine (List,Ideal) := (x,I) -> (
+   try assert(#x == numgens ring I and matrix{x} != 0) else error("expected coordinate list of a point of PP^"|toString(numgens ring I -1));
+   PN := ring I;
+   N := numgens PN -1;
+   K := coefficientRing PN;
+   s := local s; t := local t; u := local u; v := local v; 
+   R := K[u,v,s_0..s_N,t_0..t_N,MonomialOrder=>Eliminate (N+3)];
+   S := (map(R,PN,{s_0..s_N})) I;
+   T := (map(R,PN,{t_0..t_N})) I;
+   Inc := ideal(sub(matrix{x},R) - u *  matrix{{s_0..s_N}} - v *  matrix{{t_0..t_N}}) + S + T;
+   z := local z;
+   R = K[u,v,t_0..t_N,z_0..z_N,MonomialOrder=>Eliminate (N+3)];
+   Inc = sub(ideal selectInSubring(1,gens gb Inc),R) + ideal(u * sub(matrix{x},R) + v * matrix{{t_0..t_N}} - matrix{{z_0..z_N}});
+   R = K[z_0..z_N];
+   J := sub(ideal selectInSubring(1,gens gb Inc),R);
+   trim (map(PN,R,vars PN)) J
+);
+
+abstractRationalMap (Ideal,String) := (X,str) -> (
+   if str =!= "OADP" then error("currently the second argument must be the string: \"OADP\"");
+   if not isPolynomialRing ring X then error "expected ideal in a polynomial ring";
+   if not isHomogeneous X then error "expected a homogeneous ideal";
+   if not isField coefficientRing ring X then error "the coefficient ring needs to be a field";
+   f := p -> (
+         L := secantLine(p,X);
+         f := parametrize L;
+         assert(numgens source f == 2);
+         ab := f^*(L+X);
+         x := f^*(trim minors(2,(vars ring X)||matrix{p}));
+         Tx := f ideal harmonicallyConjugate(ab_0,x_0);
+         flatten entries coefficients parametrize Tx
+       ); 
+   abstractRationalMap(ring X,ring X,f)
+);
 
 load "./Cremona/documentation.m2"
 
