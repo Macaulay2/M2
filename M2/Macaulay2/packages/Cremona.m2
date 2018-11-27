@@ -2,7 +2,7 @@
 newPackage(
        "Cremona",
 	Version => "4.2.3", 
-        Date => "November 25, 2018",
+        Date => "November 27, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true,
@@ -1883,9 +1883,9 @@ specialQuadraticTransformation (ZZ,Ring) := (j,K) -> specialQuadraticTransformat
 ---------------------------------------------------------------------------------------
 
 AbstractRationalMap = new Type of MutableHashTable;
-VerbosityAbstractRationalMap = false;
+VerbAbsRatMap = false;
 
-abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure) := (Pn,Pm,f) -> ( 
+abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure,ZZ) := (Pn,Pm,f,d) -> ( 
    K := coefficientRing Pn;
    if K =!= coefficientRing Pm then error "different coefficient rings in source and target are not permitted";
    if not isField K then error "the coefficient ring needs to be a field";
@@ -1900,17 +1900,14 @@ abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure) := (Pn,Pm,f)
         "source" => Pn,
         "target" => Pm,
         "function" => f,
-        "verbose" => VerbosityAbstractRationalMap,
+        "verbose" => VerbAbsRatMap,
         "degForms" => null,
-        "rationalMap" => null
+        "rationalMap" => null,
+        "hintDegForms" => d
    }
 );
 
-abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure,ZZ) := (Pn,Pm,f,d) -> ( 
-   Phi := abstractRationalMap(Pn,Pm,f);
-   degForms(Phi,d);
-   Phi
-);
+abstractRationalMap (PolynomialRing,PolynomialRing,FunctionClosure) := (Pn,Pm,f) -> abstractRationalMap(Pn,Pm,f,1);
 
 abstractRationalMap (RationalMap) := (Phi) -> (
    if not (isPolynomialRing source Phi and isPolynomialRing target Phi) then error "expected a rational map between projective spaces";
@@ -1920,6 +1917,7 @@ abstractRationalMap (RationalMap) := (Phi) -> (
    Psi := abstractRationalMap(source Phi,target Phi,f);
    Psi#"rationalMap" = Phi;
    Psi#"degForms" = projectiveDegrees(Phi,Phi#"dimTarget" - 1);
+   Psi#"hintDegForms" = Psi#"degForms";
    Psi
 );
 
@@ -1943,19 +1941,15 @@ coefficientRing AbstractRationalMap := (Phi) -> coefficientRing source Phi;
 
 compose (AbstractRationalMap,AbstractRationalMap) := (Phi,Psi) -> (
    if target Phi =!= source Psi then error "rational maps not composable: incompatible target and source";
-   Eta := new AbstractRationalMap from {
-            "source" => source Phi,
-            "target" => target Psi,
-            "function" => (Psi#"function") @@ (Phi#"function"),
-            "verbose" => Phi#"verbose" or Psi#"verbose",
-            "degForms" => null,
-            "rationalMap" => null
-          };
-   -- if Phi#"rationalMap" =!= null and Psi#"rationalMap" =!= null then (
-   --     Eta#"rationalMap" = compose(Phi#"rationalMap",Psi#"rationalMap");
-   --     Eta#"degForms" = max flatten degrees ideal compress matrix Eta#"rationalMap";
-   -- );
-   Eta
+   new AbstractRationalMap from {
+        "source" => source Phi,
+        "target" => target Psi,
+        "function" => (Psi#"function") @@ (Phi#"function"),
+        "verbose" => Phi#"verbose" or Psi#"verbose",
+        "degForms" => null,
+        "rationalMap" => null,
+        "hintDegForms" => (if Phi#"degForms" =!= null then Phi#"degForms" else Phi#"hintDegForms") * (if Psi#"degForms" =!= null then Psi#"degForms" else Psi#"hintDegForms")
+   }
 );
 
 AbstractRationalMap * AbstractRationalMap := (Phi,Psi) -> compose(Phi,Psi); 
@@ -2006,7 +2000,7 @@ rationalMap (AbstractRationalMap) := o -> (Phi) -> (
 
 degForms = method()
 
-degForms (AbstractRationalMap,ZZ) := (Phi,jj) -> (
+degForms (AbstractRationalMap) := (Phi) -> (
    if Phi#"degForms" =!= null then return Phi#"degForms";
    Phi' := if numgens source Phi == 2 
            then new AbstractRationalMap from {
@@ -2015,15 +2009,16 @@ degForms (AbstractRationalMap,ZZ) := (Phi,jj) -> (
                   "function" => Phi#"function",
                   "verbose" => Phi#"verbose",
                   "degForms" => Phi#"degForms",
-                  "rationalMap" => Phi#"rationalMap"}
+                  "rationalMap" => Phi#"rationalMap",
+                  "hintDegForms" => Phi#"hintDegForms"}
            else (abstractRationalMap parametrize randomLinearSubspace(source Phi,1)) * Phi;
    assert(numgens source Phi' == 2);
    MAXd := infinity;
    gap := 2;
-   d := jj - gap;   
+   d := (Phi#"hintDegForms") - gap;   
    c := true;
    local psi;
-   while c and d <= infinity do (
+   while c and d <= MAXd do (
       d = d + gap;
       if Phi#"verbose" then <<"-- searching degree of forms: trying "<<d<<endl; 
       try (
@@ -2036,8 +2031,6 @@ degForms (AbstractRationalMap,ZZ) := (Phi,jj) -> (
    if numgens source Phi == 2 then Phi#"rationalMap" = psi;
    Phi#"degForms" = max flatten degrees ideal compress matrix psi
 );
-
-degForms (AbstractRationalMap) := (Phi) -> degForms(Phi,1);
 
 projectiveDegrees (AbstractRationalMap,ZZ) := o -> (Phi,i) -> (
    if o.MathMode then error "the option MathMode is not available for projectiveDegrees(AbstractRationalMap,ZZ)";
@@ -2055,7 +2048,7 @@ inverseMap (AbstractRationalMap) := o -> (Phi) -> (
    if not isBirational phi then error "expected a birational map";
    if phi#"inverseRationalMap" =!= null then return abstractRationalMap(phi#"inverseRationalMap");
    f := a -> flatten entries coefficients parametrize(phi^* trim minors(2,(vars target phi)||matrix{a}));
-   abstractRationalMap(target Phi,source Phi,f)
+   abstractRationalMap(target Phi,source Phi,f,if phi#"projectiveDegrees" =!= {} then projectiveDegrees(phi,1) else 1)
 );
 
 AbstractRationalMap SPACE List := (Phi,q) -> (
