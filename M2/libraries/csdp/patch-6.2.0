@@ -1,0 +1,130 @@
+diff -ur Csdp-6.2.0-orig/Makefile Csdp-6.2.0/Makefile
+--- Csdp-6.2.0-orig/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/Makefile	2018-11-12 18:58:04.000000000 -0500
+@@ -11,49 +11,50 @@
+ #
+ # CFLAGS settings for 64 bit Linux/unix systems.
+ #
+-export CFLAGS=-m64 -march=native -mtune=native -Ofast -fopenmp -ansi -Wall -DBIT64 -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
++export CFLAGS += -ansi -Wall -DUSEOPENMP -DSETNUMTHREADS -DUSESIGTERM -DUSEGETTIME -I../include
+ #
+ # LIBS settings for 64 bit Linux/unix systems.
+ #
+-export LIBS=-static -L../lib -lsdp -llapack -lblas -lm
++export LIBS=-L../lib -lsdp -llapack -lblas -lm
++
+ #
+ #
+ # On most systems, this should handle everything.
+ #
+ all:
+-	cd lib; make libsdp.a
+-	cd solver; make csdp
+-	cd theta; make all
+-	cd example; make all
++	$(MAKE) -C lib libsdp.a
++	$(MAKE) -C solver csdp
++	$(MAKE) -C theta all
++	$(MAKE) -C example all
+ 
+ #
+ # Perform a unitTest
+ #
+ 
+ unitTest:
+-	cd test; make all
++	$(MAKE) -C test all
+ 
+ #
+-# Install the executables in /usr/local/bin.
++# Install the executables in $(prefix)/bin.
+ #
+ 
+ install:
+-	cp -f solver/csdp /usr/local/bin
+-	cp -f theta/theta /usr/local/bin
+-	cp -f theta/graphtoprob /usr/local/bin
+-	cp -f theta/complement /usr/local/bin
+-	cp -f theta/rand_graph /usr/local/bin
++	cp -f solver/csdp $(prefix)/bin
++	cp -f theta/theta $(prefix)/bin
++	cp -f theta/graphtoprob $(prefix)/bin
++	cp -f theta/complement $(prefix)/bin
++	cp -f theta/rand_graph $(prefix)/bin
+ 
+ #
+ # Clean out all of the directories.
+ # 
+ 
+ clean:
+-	cd lib; make clean
+-	cd solver; make clean
+-	cd theta; make clean
+-	cd test; make clean
+-	cd example; make clean
++	$(MAKE) -C lib clean
++	$(MAKE) -C solver clean
++	$(MAKE) -C theta clean
++	$(MAKE) -C test clean
++	$(MAKE) -C example clean
+ 
+ 
+ 
+diff -ur Csdp-6.2.0-orig/example/Makefile Csdp-6.2.0/example/Makefile
+--- Csdp-6.2.0-orig/example/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/example/Makefile	2018-11-12 14:40:20.000000000 -0500
+@@ -6,7 +6,7 @@
+ # This builds the example code.
+ #
+ example: example.o 
+-	$(CC) $(CFLAGS) example.o $(LIBS) -o example
++	$(CC) $(CFLAGS) example.o $(LDFLAGS) $(LIBS) -o example
+ #
+ # To clean up the directory.
+ #
+diff -ur Csdp-6.2.0-orig/solver/Makefile Csdp-6.2.0/solver/Makefile
+--- Csdp-6.2.0-orig/solver/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/solver/Makefile	2018-11-12 14:40:20.000000000 -0500
+@@ -1,8 +1,10 @@
+ #
+ #  This builds the stand alone solver.
+ #
++
+ csdp: csdp.o 
+-	$(CC) $(CFLAGS) csdp.o $(LIBS) -o csdp
++	$(CC) $(CFLAGS) csdp.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o csdp
++
+ #
+ # To clean out the directory:
+ #
+diff -ur Csdp-6.2.0-orig/theta/Makefile Csdp-6.2.0/theta/Makefile
+--- Csdp-6.2.0-orig/theta/Makefile	2017-07-25 14:44:57.000000000 -0400
++++ Csdp-6.2.0/theta/Makefile	2018-11-12 14:40:20.000000000 -0500
+@@ -6,23 +6,23 @@
+ # This builds the theta number code. 
+ #
+ theta: theta.o 
+-	$(CC) $(CFLAGS) theta.o $(LIBS) -o theta
++	$(CC) $(CFLAGS) theta.o $(LDFLAGS) $(LIBS) -o theta
+ #
+ # Complement computes the complement of a graph.
+ #
+ complement: complement.o 
+-	$(CC) $(CFLAGS) complement.o $(LIBS) -o complement
++	$(CC) $(CFLAGS) complement.o $(LDFLAGS) $(LIBS) -o complement
+ #
+ # rand_graph generates a random graph.  
+ #
+ rand_graph: rand_graph.o
+-	$(CC) $(CFLAGS) rand_graph.o $(LIBS) -o rand_graph
++	$(CC) $(CFLAGS) rand_graph.o $(LDFLAGS) $(LIBS) -o rand_graph
+ #
+ # graphtoprob converts a file in the graph format to an SDP problem in our
+ # SDP format.
+ #
+ graphtoprob: graphtoprob.o 
+-	$(CC) $(CFLAGS) graphtoprob.o $(LIBS) -o graphtoprob
++	$(CC) $(CFLAGS) graphtoprob.o $(LDFLAGS) $(LIBS) -o graphtoprob
+ #
+ # To clean up the directory.
+ #

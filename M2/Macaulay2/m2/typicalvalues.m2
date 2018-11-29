@@ -3,7 +3,6 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
-typicalValues#method = MethodFunction
 typicalValues#class = Type
 typicalValues#parent = Type
 typicalValues#(symbol timing) = Time
@@ -73,7 +72,6 @@ hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
-keys HashTable := List => keys
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
 localDictionaries Pseudocode := List => localDictionaries

@@ -148,7 +148,7 @@ assert( 12&5 === 4 )
 
 -- test value
 
-assert( value "3" === 3 )
+assert( value' "3" === 3 )
 
 -- test if
 if true then okay else assert false

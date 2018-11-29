@@ -18,6 +18,7 @@ class Z_mod;
 class GF;
 class Tower;
 class FractionField;
+class LocalRing;
 class PolynomialRing;
 class PolyRing;
 class PolyRingFlat;
@@ -191,6 +192,9 @@ class Ring : public MutableEngineObject
   virtual PolyRingFlat *cast_to_PolyRingFlat() { return 0; }
   virtual const FractionField *cast_to_FractionField() const { return 0; }
   virtual FractionField *cast_to_FractionField() { return 0; }
+  virtual const LocalRing *cast_to_LocalRing() const { return 0; }
+  virtual LocalRing *cast_to_LocalRing() { return 0; }
+
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
   virtual const SchurRing2 *cast_to_SchurRing2() const { return 0; }
@@ -270,7 +274,7 @@ class Ring : public MutableEngineObject
   ring_elem minus_one() const { return minus_oneV; }
   ring_elem zero() const { return zeroV; }
   virtual ring_elem from_long(long n) const = 0;
-  virtual ring_elem from_int(mpz_ptr n) const = 0;
+  virtual ring_elem from_int(mpz_srcptr n) const = 0;
 
   // from_rational: if the rational q cannot be placed into this ring, false is
   // returned, and result is not touched.

@@ -169,7 +169,12 @@ STYLE      = withOptions_{"type"} new MarkUpTypeWithOptions of Hypertext
 HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
 new HREF from List := (HREF,x) -> (
      if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
-     if class x#0 =!= String then error "HREF expected URL to be a string";
+     y := x#0;
+     if not (
+	  instance(y,String) 
+	  or
+	  instance(y,Sequence) and #y===2 and instance(y#0,String) and instance(y#1,String))
+     then error "HREF expected URL to be a string or a pair of strings";
      x)
 
 ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of Hypertext

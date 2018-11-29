@@ -62,7 +62,7 @@ find-M2:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download $(CONFIGOPTIONS)
 # we avoid CC, CXX, and FC here, because gnu "make" sets default values for them, which we don't want to use:
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" FC="$(FC)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
+CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" FC="$(FC)" AR="$(AR)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)

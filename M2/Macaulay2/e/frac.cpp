@@ -27,7 +27,6 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
       R->characteristic(), R->get_degree_ring(), R->get_heft_vector());
 
   R_ = R;
-  _MINUS_ONE = R->from_long(-1);
 
   zeroV = from_long(0);
   oneV = from_long(1);
@@ -254,7 +253,7 @@ ring_elem FractionField::from_long(long n) const
   return FRAC_RINGELEM(f);
 }
 
-ring_elem FractionField::from_int(mpz_ptr n) const
+ring_elem FractionField::from_int(mpz_srcptr n) const
 {
   frac_elem *f = new_frac_elem();
   f->numer = R_->from_int(n);

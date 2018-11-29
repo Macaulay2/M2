@@ -4,12 +4,18 @@ Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
 Variety.GlobalAssignHook = globalAssignFunction
 Variety.GlobalReleaseHook = globalReleaseFunction
-describe Variety := X -> net expression X
 AffineVariety = new Type of Variety
 AffineVariety.synonym = "affine variety"
 ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
 ring Variety := X -> X.ring
+toString Variety := toString @@ expression
+toExternalString Variety := toString @@ describe
+net Variety := net @@ expression
+texMath Variety := x -> texMath expression x
+expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
+describe AffineVariety := (X) -> Describe (expression Spec) (expression X.ring)
+describe ProjectiveVariety := (X) -> Describe (expression Proj) (expression X.ring)
 
 char AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> (
@@ -21,9 +27,6 @@ ambient     AffineVariety := X -> Spec ambient ring X
 ideal Variety := X -> ideal ring X
 Spec = method()
 
-net Variety := (X) -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else net expression X
-
-expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      new AffineVariety from {
      	  symbol ring => R,
@@ -31,7 +34,7 @@ Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      	  }
      )
 Proj = method()
-expression ProjectiveVariety := (X) -> new FunctionApplication from { Proj, ring X }
+
 Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
      if not isHomogeneous R then error "expected a homogeneous ring";
      new ProjectiveVariety from {
@@ -44,8 +47,9 @@ sheaf = method()
 
 SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
-expression SheafOfRings := O -> new Subscript from { OO, O.variety }
-net SheafOfRings := O -> net expression O
+expression SheafOfRings := O -> Subscript { OO, expression O.variety }
+net SheafOfRings := net @@ expression
+texMath SheafOfRings := x -> texMath expression x
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
 sheaf(Variety,Ring) := SheafOfRings => (X,R) -> (
      if ring X =!= R then error "expected the variety of the ring";
@@ -54,32 +58,32 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module }
-
--- net CoherentSheaf := (F) -> net expression F
+describe CoherentSheaf := F -> (expression sheaf) (describe F.module)
 
 runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
      apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
 
-net CoherentSheaf := F -> (
+expression CoherentSheaf := F -> (
      M := module F;
-     if M.?relations 
-     then if M.?generators
-     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
-     else net new FunctionApplication from { cokernel, net M.relations }
-     else if M.?generators
-     then net new FunctionApplication from { image, net M.generators }
-     else if numgens M === 0 then "0"
+     if M.?relations or M.?generators or numgens M === 0 then SheafExpression expression M
      else (
-	  X := variety F;
-	  horizontalJoin between(" ++ ",
-	       apply(runLengthEncoding (- degrees F),
-		    (n,d) -> (
-			 net new Superscript from {net OO_X, n},
-			 if all(d, zero) then "" else 
-			 if #d === 1 then ("(", toString first d, ")")
-			 else toString toSequence d)))))
+	    X := variety F;
+	    rle := runLengthEncoding (- degrees F);
+	    expr := null;
+	    scan(rle,
+		(n,d) -> (
+		    s := new Superscript from {expression OO_X, expression n};
+		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize d#0 else toSequence d};
+		    if expr === null then expr = s else expr = expr ++ s;
+		    ));
+	    expr
+	    )
+	)
+
+net CoherentSheaf := (F) -> net expression F
+texMath CoherentSheaf := (F) -> texMath expression F
+toString CoherentSheaf := (F) -> toString expression F
 
 CoherentSheaf#{Standard,AfterPrint} = F -> (
      X := variety F;
@@ -193,6 +197,7 @@ SumOfTwists = new Type of BasicList
 CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
 SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
 net SumOfTwists := S -> net S#0 | if S#1#0 === neginfinity then "(*)" else "(>=" | net S#1#0 | ")"
+texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
 
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
      F := S#0;
@@ -226,6 +231,7 @@ OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
      argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
      }
+OO.texMath = ///{\mathcal O}///
 installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
 sheaf Variety := X -> sheaf_X ring X
 
@@ -243,10 +249,24 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> sheaf m
 cotangentSheaf = method(Options => {Minimize => true})
 tangentSheaf = method(Options => {Minimize => true})
 
+-- weightedVars = S -> (
+--      map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)})
+--      )
+
+checkRing := A -> (
+     if not degreeLength A === 1 then error "expected degreeLength of ring to be 1";
+     if not same degrees A then error "expected variables all of the same degree";
+     )
+
 cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
 	  R := ring X;
 	  F := presentation R;
-	  om := sheaf(X, homology(vars ring F ** R,jacobian F ** R));
+	  S := ring F;
+	  checkRing S;
+	  d := vars S ** R;
+	  e := jacobian F ** R;
+     	  -- assert (d*e == 0);
+	  om := sheaf(X, homology(d,e));
 	  if opts.Minimize then om = minimalPresentation om;
 	  om))
 
@@ -273,6 +293,7 @@ singularLocus(ProjectiveVariety) := X -> (
      R := ring X;
      f := presentation R;
      A := ring f;
+     checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
 
 singularLocus(AffineVariety) := X -> Spec singularLocus ring X

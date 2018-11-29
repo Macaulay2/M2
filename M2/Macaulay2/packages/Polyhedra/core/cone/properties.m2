@@ -19,14 +19,14 @@ compute#Cone#isWellDefined Cone := C -> (
    );
    if hasProperties(C, {inequalities, equations}) then (
       hasEnoughProperties = true;
-      C3 := intersection(getProperty(C, inequalities), getProperty(C, equations));
+      C3 := coneFromHData(getProperty(C, inequalities), getProperty(C, equations));
       if not testDim == dim C3 then return false;
       if not testAmbientDim == ambDim C3 then return false;
       if not (C3 == C) then return false
    );
    if hasProperties(C, {facets, computedHyperplanes}) then (
       hasEnoughProperties = true;
-      C4 := intersection(facets C, hyperplanes C);
+      C4 := coneFromHData(facets C, hyperplanes C);
       if not testDim == dim C4 then return false;
       if not testAmbientDim == ambDim C4 then return false;
       if not (C4 == C) then return false
@@ -40,12 +40,6 @@ compute#Cone#pointed Cone := C -> (
    rank linealitySpace C == 0
 )
 
-
-compute#Cone#fullDimensional = method()
-compute#Cone#fullDimensional Cone := C -> (
-   dim C == ambDim C
-)
- 
 
 compute#Cone#smooth = method()
 compute#Cone#smooth Cone := C -> (

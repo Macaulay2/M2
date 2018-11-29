@@ -1,7 +1,8 @@
 HOMEPAGE = http://www.hboehm.info/gc/
 URL = http://www.hboehm.info/gc/gc_source/
+GITURL = https://github.com/ivmai/bdwgc/
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 7.4.2
+VERSION = 7.6.2
 LICENSEFILES = README.QUICK
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 

@@ -1,0 +1,21 @@
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/normaliz/tmp/normaliz-3.6.3/configure.ac normaliz-3.6.3/configure.ac
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/normaliz/tmp/normaliz-3.6.3/configure.ac	2018-08-21 15:15:23.000000000 +0200
++++ normaliz-3.6.3/configure.ac	2018-11-01 08:54:39.000000000 +0100
+@@ -217,7 +217,7 @@
+     [:],
+     [enable_flint=check])
+ AS_IF([test "x$enable_flint" != xno],
+-    [FLINT_LIBS="-lflint -lmpfr"
++    [FLINT_LIBS="-lflint -lmpfr -lgc"
+      LIBS_SAVED="$LIBS"
+      LIBS="$LIBS $FLINT_LIBS"
+      AC_CHECK_LIB(flint,dummy_fn_to_prevent_ISOC_warning,[have_flint=yes],[have_flint=no])
+@@ -250,7 +250,7 @@
+     [enable_enfnormaliz=check])
+ AS_IF([test "x$enable_enfnormaliz" != xno],
+     [AC_MSG_CHECKING([whether e-antic headers and library are available])
+-     E_ANTIC_LIBS="-lnfemb -larb -lantic -lflint -lgmpxx -lgmp"
++     E_ANTIC_LIBS="-lnfemb -larb -lantic -lflint -lgmpxx -lgmp -lgc"
+      LIBS_SAVED="$LIBS"
+      LIBS="$LIBS $E_ANTIC_LIBS"
+      AC_LINK_IFELSE(

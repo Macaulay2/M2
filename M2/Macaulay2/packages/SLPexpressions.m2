@@ -7,7 +7,7 @@ newPackage select((
      Date => "May 2017",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
-     AuxiliaryFiles => false,
+     AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
@@ -901,12 +901,12 @@ installPackage "SLPexpressions"
 installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
 
--- (old way) installPackage("SLPexpressions", SeparateExec=>true, AbsoluteLinks=>false)
+-- (old way) installPackage("SLPexpressions", SeparateExec=>true)
 
 -- install docs with no absolute links
 uninstallPackage "Style"
-installPackage("Style", AbsoluteLinks=>false)
-installPackage("SLPexpressions", AbsoluteLinks=>false)
+installPackage("Style")
+installPackage("SLPexpressions")
 
 installPackage ("SLPexpressions", MakeDocumentation=>false)
 check "SLPexpressions"

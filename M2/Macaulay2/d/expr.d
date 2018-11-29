@@ -95,7 +95,7 @@ export completions(s:string):array(string) := (
 	       is null do break
 	       is q:SymbolListCell do (
 		    t := q.word.name;
-		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
+		    if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then append(v,t);
 		    b = q.next; ));
 	  d != d.outerDictionary) do d = d.outerDictionary;
      extract(v));
@@ -325,6 +325,7 @@ export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
 export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 -- NAG end
+export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

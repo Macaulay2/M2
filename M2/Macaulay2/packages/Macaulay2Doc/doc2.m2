@@ -630,7 +630,7 @@ document {
      	  (symbol ?, Symbol, IndexedVariable),
      	  (symbol ?, IndexedVariable, IndexedVariable),
      	  (symbol ?, List, List),
-     	  (symbol ?, Tally, Tally)
+	  (symbol ?, VirtualTally, VirtualTally)
 	  },
      Headline => "comparison operator",
      Usage => "x ? y", 
@@ -1014,8 +1014,8 @@ doc ///
      first exponents lcm I
   SeeAlso
     (dual,MonomialIdeal)
-    (irreducibleDecomposition,MonomialIdeal)
-    (primaryDecomposition,MonomialIdeal)
+    "PrimaryDecomposition::irreducibleDecomposition(MonomialIdeal)"
+    "PrimaryDecomposition::primaryDecomposition(MonomialIdeal)"
 ///
 
 document {
@@ -1132,33 +1132,6 @@ document {
      SeeAlso => { "merge" }
      }
 
-document {
-     Key => {(merge, HashTable, HashTable, Function),merge},
-     Headline => "merge hash tables",
-     Usage => "z = merge(x,y,g)",
-     Inputs => { "x", "y",
-	  "g" => {"a function of two variables to be used to combine a value of ", TT "x", " with a value of ", TT "y", " when the 
-	       corresponding keys coincide." } },
-     Outputs => {
-	  "z" => { "a new hash table whose keys are the keys occurring in ", TT "x", "
-	       or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
-	       ", TT "g(x#k,y#k)", " is used instead, unless ", TT "g", " evaluated ", TO "continue", ", in which
-	       case the key ", TT "k", " does not appear in the result." } },
-     "If ", TT "x", " and ", TT "y", " have the same class and have the same parent, then so will ", TT "z", ".",
-     PARA {
-	  "This function is useful for multiplying monomials or adding polynomials.  We illustrate that with
-	  a simple-minded implmentation of the free abelian group on the set of strings, representing an element as a type of hash table
-	  that associates coefficients to strings."
-	  },
-     EXAMPLE lines ///
-     	  Free = new Type of HashTable
-     	  p = new Free from { "x" => 2, "y" => 3, "cat" => 5 }
-	  q = new Free from { "x" => 100, "y" => 200, "dog" => 7 }
-	  Free + Free := (p,q) -> merge(p,q,plus);
-	  p+q
-     ///,
-     SeeAlso => {"combine"}
-     }
 
 document {
      Key => combine,
@@ -1258,22 +1231,6 @@ document {
      SeeAlso => {ancestor, showStructure}
      }
 
-document {
-     Key => {unique,(unique, List),(unique, Sequence)},
-     Headline => "eliminate duplicates from a list",
-     TT "unique v", " yields the elements of the list ", TT "v", ", without duplicates.",
-     PARA{},
-     EXAMPLE {
-	  "unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
-	  },
-     "The order of elements is maintained.  For something that might be slightly 
-     faster, but doesn't maintain the order of the elements, and may different
-     answers, try making a set and then getting its elements.",
-     EXAMPLE {
-	  "toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
-	  },
-     SeeAlso => {"sort"}
-     }
 
 document {
      Key => Ring,

@@ -553,11 +553,17 @@ document {
      Usage => "TEX x",
      Inputs => {"x"},
      Outputs => {TEX},
-     TT "TEX s", " includes the string ", TT "s", ", presumably
-     containing TeX commands, in the TeX version of the documentation
-     containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
-     and TeX versions of the documentation, good typesetting can done.  For details on the conversions
-     to HTML that are currently implemented, see ", TO (html, TEX), "."
+     PARA {
+	  TT "TEX s", " includes the string ", TT "s", ", presumably
+	  containing TeX commands, in the TeX version of the documentation
+	  containing this ", TO "hypertext", " item.  The main benefit of this is that in the HTML
+	  and TeX versions of the documentation, good typesetting can done.  For details on the conversions
+	  to HTML that are currently implemented, see ", TO (html, TEX), "."},
+     PARA {
+	  "This item should be used only within a paragraph created by ", TO "PARA", ", because in the html
+	  code it generates, the first element ends the enclosign paragraph to create the centered math
+	  display."
+	  }
      }
 
 document {
@@ -635,15 +641,16 @@ document {
 document {
      Key => HREF,
      Headline => "hypertext link",
-	Usage => "HREF{u,p}",
+	Usage => "HREF{u,p}\nHREF{u}",
 	Inputs => {
 		"u" => {"a url"},
 		"p" => {"a phrase"}
 		},
 	Outputs => {HREF => {}},
-     TT "HREF{u,p}", " encloses the phrase ", TT "p", " in a hypertext HREF link
-     pointing to the url ", TT "u", ".",
-     PARA{},
+     PARA {
+	  TT "HREF{u,p}", " encloses the phrase ", TT "p", " in a hypertext HREF link
+     	  pointing to the URL ", TT "u", ".  If ", TT "p", " is omitted, then ", TT "u", " is used as the phrase and as the URL."
+	  },
      SeeAlso => "hypertext"
      }
 

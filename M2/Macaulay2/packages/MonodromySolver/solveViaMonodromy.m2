@@ -175,7 +175,7 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     -- K's columns are a basis for the kernel i indexes the 'most likely true positive'
     --v := K * transpose matrix {toList ((numcols K):1_CC)};  
     w := transpose randomWeights(numcols K);
-    v := K * w + offset;
+    v := K * w - offset;
     c0 := point matrix v;
     -- N := numericalIrreducibleDecomposition ideal M; -- REPLACE this with linear algebra (using numericalKernel)
     --c0 := first (first components N).Points; 
@@ -184,6 +184,17 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     pre0' := first refine(G0,{pre0});
     (c0,pre0')
     )
+
+TEST ///
+--- seeding bug discovered by Courtney Gibbons
+setRandomSeed 2 
+T = CC[a_1..a_6][x_1,x_2,lambda]
+f_1 = a_1*x_1+a_2*x_2 - x_1*lambda 
+f_2 = a_3*x_1+a_4*x_2 - x_2*lambda
+f_3 = a_5*x_1+a_6*x_2 + 1
+H = {f_1,f_2,f_3}
+assert((last createSeedPair polySystem H).SolutionStatus =!= RefinementFailure)
+///
 
 staticMonodromySolve = method(Options=>{
 	TargetSolutionCount => null,
@@ -246,17 +257,19 @@ setRandomSeed 0
 --NumberOfNodes, NumberOfEdges, NumberOfRepeats
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	NumberOfNodes=>2,
-	NumberOfEdges=>4,
+	NumberOfEdges=>5,
 	NumberOfRepeats=>11);
 assert( length V.PartialSols == count );
 
 --Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 --must also provide a Potential function.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-	SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
-	assert( length V.PartialSols == count );
+		NumberOfEdges=>5,
+		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
+assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfEdges=>5,	
 	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
 	Potential=>potentialLowerBound);
 assert( length V.PartialSols == count );
@@ -270,6 +283,7 @@ assert( length V.PartialSols == count );
 
 setRandomSeed 0
 (V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfEdges=>5,
 	GraphInitFunction=>completeGraphInit,
 	BatchSize=>1);
 assert( length V.PartialSols == count );
@@ -284,8 +298,9 @@ assert( length V.PartialSols == count );
 --and Verbose (defaults to false). We test that both the defaults work
 --and that non-default values work.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-	"new tracking routine"=>false,
-	Verbose=>false);
+		NumberOfEdges=>5,
+		"new tracking routine"=>false,
+		Verbose=>false);
 assert( length V.PartialSols == count );
 
 --The next three tests use strict equality, as they ought to always succeed.
@@ -321,8 +336,8 @@ assert( length V.PartialSols == count );
 
 -- test for sparseSolver which sometimes fails: 3 iterations is to reduce failure probability, but might slow tests down
 S = QQ[x,y]
-P = polySystem {x+y, 2*x+1-2*y^2}
-sols = sparseMonodromySolve P
+P = polySystem {x+y, x+1-y^2}
+sols = sparseMonodromySolve(P,NumberOfEdges=>20, NumberOfRepeats => 30)
 assert (#sols == 2) 
 assert all(sols,s->norm evaluate(P,s) < 0.0001)
 ///

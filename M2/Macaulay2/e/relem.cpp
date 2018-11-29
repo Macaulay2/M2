@@ -4,6 +4,7 @@
 #include "monoid.hpp"
 #include "monomial.hpp"
 #include "frac.hpp"
+#include "localring.hpp"
 #include "polyring.hpp"
 
 #include "aring-glue.hpp"
@@ -367,12 +368,14 @@ RingElement *RingElement::numerator() const
 {
   if (R == globalQQ) return new RingElement(globalZZ, globalQQ->numerator(val));
   const FractionField *K = R->cast_to_FractionField();
-  if (K == NULL)
-    {
-      ERROR("fraction field required");
-      return 0;
-    }
-  return new RingElement(K->get_ring(), K->numerator(val));
+  if (K != nullptr)
+    return new RingElement(K->get_ring(), K->numerator(val));
+
+  const LocalRing *L = R->cast_to_LocalRing();
+  if (L != nullptr)
+    return new RingElement(L->get_ring(), L->numerator(val));
+  ERROR("fraction field or local ring required");
+  return nullptr;
 }
 
 RingElement *RingElement::denominator() const
@@ -380,12 +383,13 @@ RingElement *RingElement::denominator() const
   if (R == globalQQ)
     return new RingElement(globalZZ, globalQQ->denominator(val));
   const FractionField *K = R->cast_to_FractionField();
-  if (K == NULL)
-    {
-      ERROR("fraction field required");
-      return 0;
-    }
-  return new RingElement(K->get_ring(), K->denominator(val));
+  if (K != nullptr)
+    return new RingElement(K->get_ring(), K->denominator(val));
+  const LocalRing *L = R->cast_to_LocalRing();
+  if (L != nullptr)
+    return new RingElement(L->get_ring(), L->denominator(val));
+  ERROR("fraction field or local rings required");
+  return nullptr;
 }
 
 RingElement *RingElement::fraction(const Ring *K,
@@ -395,12 +399,27 @@ RingElement *RingElement::fraction(const Ring *K,
     return new RingElement(globalQQ,
                            globalQQ->fraction(val, bottom->get_value()));
   const FractionField *K1 = K->cast_to_FractionField();
-  if (K1 == NULL || K1->get_ring() != R)
+  if (K1 != nullptr)
     {
-      ERROR("fraction field required");
-      return 0;
+      if (K1->get_ring() != R)
+        {
+          ERROR("fraction field required");
+          return nullptr;
+        }
+      return new RingElement(K1, K1->fraction(val, bottom->get_value()));
     }
-  return new RingElement(K1, K1->fraction(val, bottom->get_value()));
+  const LocalRing *L1 = K->cast_to_LocalRing();
+  if (L1 != nullptr)
+    {
+      if (L1->get_ring() != R)
+        {
+          ERROR("local ring required");
+          return nullptr;
+        }
+      return new RingElement(L1, L1->fraction(val, bottom->get_value()));
+    }
+  ERROR("fraction field or local ring required");
+  return nullptr;
 }
 
 bool RingElement::getSmallIntegerCoefficients(

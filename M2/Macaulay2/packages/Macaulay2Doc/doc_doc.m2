@@ -3,7 +3,7 @@
 -- throughout the documentation of the documentation
 -- examples are referred to in the code. 
 -- Each time such a reference was made, a comment
--- was added to the referenced code to insure that 
+-- was added to the referenced code to ensure that 
 -- if changes are made there, the author will know to
 -- change the documentation of the documentation to meet
 -- the changes.

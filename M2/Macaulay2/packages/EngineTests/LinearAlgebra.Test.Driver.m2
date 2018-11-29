@@ -1,14 +1,13 @@
 -- -*- coding: utf-8 -*-
 
+load "./LinearAlgebra.Test.Base.m2"
+load "./LinearAlgebra.Test.FFPACK.m2"
+load "./LinearAlgebra.Test.FLINT.m2"
+load "./LinearAlgebra.Test.ZZp.m2"
+load "./LinearAlgebra.Test.EngineGF.m2"
+load "./LinearAlgebra.Test.Givaro.m2"
 
-load "EngineTests/LinearAlgebra.Test.Base.m2"
-load "EngineTests/LinearAlgebra.Test.FFPACK.m2"
-load "EngineTests/LinearAlgebra.Test.FLINT.m2"
-load "EngineTests/LinearAlgebra.Test.ZZp.m2"
-load "EngineTests/LinearAlgebra.Test.EngineGF.m2"
-load "EngineTests/LinearAlgebra.Test.Givaro.m2"
-
-load "EngineTests/LinearAlgebra.Test.all.m2"
+load "./LinearAlgebra.Test.all.m2"
 
 
 if hasFFPACK then 

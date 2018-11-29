@@ -596,7 +596,9 @@ document {
 	    },
 	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
         EXAMPLE lines ///
+options numericalRank
 numericalRank matrix {{2,1},{0,0.001}}
+numericalRank matrix {{2,1},{0,0.0001}}
      	///,
      	SeeAlso => {SVD}
 	}
@@ -775,8 +777,47 @@ document {
 	[deflate,Variable]
 	},
     Headline => "first-order deflation",
-    "Deflate a polynomial system to restore quadratic convergence of Newton's method. 
-    The  option ", TT "Variable", " specifies the base name for the augmented variables.",
+    Usage => "r = deflate(F,P); r = deflate(F,r); r = deflate(F,B), ...",
+    Inputs => { "P"=>Point, "F"=>PolySystem, "r"=>ZZ, "B"=>Matrix },
+    Outputs => { "r"=>ZZ=>"the rank used in the (last) deflation"},
+    PARA{
+	"The purpose of deflation is to restore quadratic convergence of Newton's method in a neighborhood of a singular 
+    isolated solution P. This is done by constructing an augemented polynomial system with a solution of strictly lower multiplicity projecting to P."},
+    Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
+	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
+	" the deflated system DF and a matrix B used to obtain it. ", 
+	" Here B is a random matrix of size n x (r+1), where n is the number of variables 
+	and DF is obtained by appending to F the matrix equation J*B*[L_1,...,L_r,1]^T = 0.
+	The polynomials of DF use the original variables and augmented variables L_1,...,L_r."}},
+    PARA{
+	"Apart from ", TT "P", ", ", ofClass Point,", one can pass various things as the second argument."  
+	},
+    UL {
+	{ofClass ZZ, " ", TT "r", " specifies the rank of the Jacobian dF (that may be known to the user)"},
+	{ofClass Matrix, " ", TT "B", " specifies a fixed (r+1)-by-n matrix to use in the deflation construction."},
+	{"a pair of matrices ", TT "(B,M)", " specifies additionally a matrix that is used to ", TO squareUp, "."},
+	{"a list", TT "{(B1,M1),(B2,M2),...}", 
+	    " prompts a chain of successive delations using the provided pairs of matrices."},
+	},
+    "The option ", TT "Variable", " specifies the base name for the augmented variables.",
+    EXAMPLE lines ///
+CC[x,y,z]
+F = polySystem {x^3,y^3,x^2*y,z^2}
+P0 = point matrix{{0.000001, 0.000001*ii,0.000001-0.000001*ii}}
+isFullNumericalRank evaluate(jacobian F,P0)
+r1 = deflate (F,P0)
+P1' = liftPointToDeflation(P0,F,r1) 
+F1 = F.Deflation#r1
+P1 = newton(F1,P1')
+isFullNumericalRank evaluate(jacobian F1,P1)
+r2 = deflate (F1,P1)
+P2' = liftPointToDeflation(P1,F1,r2) 
+F2 = F1.Deflation#r2
+P2 = newton(F2,P2')
+isFullNumericalRank evaluate(jacobian F2,P2)
+P = point {take(coordinates P2, F.NumberOfVariables)}
+assert(residual(F,P) < 1e-50)	
+    ///,
     Caveat => {"Needs more documentation!!!"},
     SeeAlso=>{PolySystem,newton}
     }
@@ -970,6 +1011,24 @@ HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
 	TT "Parameters, X, T", "."},
     -- SeeAlso=>{GateHomotopy,GateParameterHomotopy,specialize}
     }
+doc ///
+    Key 
+        [gateHomotopy,Software]
+    Headline
+    	specifies where evaluation should be done (M2=top level, M2engine=core)     	
+///
+doc ///
+    Key 
+	[gateHomotopy,Parameters]
+    Headline
+    	specifies parameter names
+///
+doc ///
+    Key 
+	[gateHomotopy,Strategy]
+    Headline
+    	strategy is either to "compress" or not (any other value)
+///    
 
 document {
     Key => "DoublePrecision",

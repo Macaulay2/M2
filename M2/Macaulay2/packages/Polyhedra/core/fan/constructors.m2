@@ -29,6 +29,8 @@ Fan == Fan := (F1, F2) -> (
 --  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
 fan = method(TypicalValue => Fan)
 fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
+   n := max flatten icones;
+   if numColumns irays < n then error("The number of indices exceeds the number of vectors");
    if (numRows irays != numRows linealityGens) then error("Rays and lineality must have same ambient dimension.");
    lineality := makeRaysPrimitive(mingens image linealityGens);
    result := new HashTable from {
@@ -36,7 +38,7 @@ fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
       computedLinealityBasis => lineality,
       inputCones => icones
    };
-   fan result
+   internalFanConstructor result
 )
 
 
@@ -54,7 +56,8 @@ fan(Matrix, Sequence) := (irays, icones) -> (
    fan(irays, toList icones)
 )
 
-fan HashTable := inputProperties -> (
+internalFanConstructor = method()
+internalFanConstructor HashTable := inputProperties -> (
    resultHash := sanitizeFanInput inputProperties;
    constructTypeFromHash(Fan, resultHash)
 )
@@ -68,10 +71,21 @@ fanFromGfan List := gfanOutput -> (
 -- 4 pure -> bool
 -- 5 simplicial -> bool
 -- 6 fVector -> List
-   if #gfanOutput < 7 then error("GFAN data incomplete");
+   numberOfGfanOutputs := 7;
+   if #gfanOutput != numberOfGfanOutputs then
+      error("fanFromGfan was given a list with " | toString(#gfanOutput)
+         | " inputs and " | toString(numberOfGfanOutputs) | " are required.");
    R := gfanOutput#0;
    L := gfanOutput#1;
-   if (numColumns R ==0) and (numColumns L == 0) then error("Empty fan from GFAN");
+   
+   -- Perform some basic sanity checks on the fan. If the fan is empty (i.e.
+   -- there are no rays and no lineality space), then all of the other values
+   -- need to agree with that (there cannot be any cones, the dimension must
+   -- be zero, and the f-vector must be empty).
+   if ((numColumns R == 0) and (numColumns L == 0))
+   and ((#(gfanOutput#2) != 0) or (gfanOutput#3 != 0) or (#(gfanOutput#6) != 0))
+   then error("Inconsistent input into fanFromGfan");
+   
    if (numColumns R == 0) then R = map(ZZ^(numRows L), ZZ^0, 0);
    if (numColumns L == 0) then L = map(ZZ^(numRows R), ZZ^0, 0);
    result := fan(R, L, gfanOutput#2);
@@ -108,7 +122,7 @@ fan Cone := C -> (
    n := numColumns raysC;
    mc := {toList (0..(n-1))};
    result := fan(raysC, linealityC, mc);
-   setProperty(result, honestMaxObjects, {C});
+   setProperty(result, honestMaxObjects, new HashTable from {mc#0 => C});
    result
 )
 
@@ -131,7 +145,7 @@ addCone(Fan, Cone) := (F, C) -> (
       computedLinealityBasis => linF,
       inputCones => mc
    };
-   fan result
+   internalFanConstructor result
 )
 
 addCone(Cone, Fan) := (C, F) -> addCone(F, C)

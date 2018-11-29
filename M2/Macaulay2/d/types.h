@@ -156,7 +156,6 @@ extern char *progname;
   extern jmp_buf interrupt_jump;
  #endif
 extern bool interrupt_jump_set;
-extern int reading_from_readline;
 
 /*
 // Local Variables:
