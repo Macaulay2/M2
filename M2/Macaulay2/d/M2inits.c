@@ -57,34 +57,6 @@ void *realloc_function (void *s, size_t old, size_t new) {
 
 int M2inits_firsttime = 1;
 void enterM2(void) {
-  // We comment out all of this function.
-#if 0  
-  /* this function is called initially, and also again after we call a third party library that sets gmp's memory allocation routines */
-  if (M2inits_firsttime) {
-    M2inits_firsttime = 0;
-    if (__gmp_allocate_func != __gmp_default_allocate) {
-      fprintf(stderr,"internal error: gmp memory allocation functions already set to non-default value\n");
-      exit(1);
-    }
-    initializeGMP_Cwrapper(); /* this calls factory's initializeGMP() in factory/initgmp.cc, which will call __gmp_set_memory_functions just once */
-  }
-#if 1
-  /* Instead of calling __gmp_set_memory_functions we set the values ourselves.  That way we can
-     patch mpir so the function __gmp_set_memory_functions does nothing, leaving us in control, even though
-     pari calls it, for example. */
-  __gmp_allocate_func = (void *(*) (size_t)) getmem_atomic;
-  __gmp_reallocate_func = (void *(*) (void *, size_t, size_t)) getmoremem_atomic;
-  __gmp_free_func = freememlen;
-#else
-  __gmp_set_memory_functions ( /* tell gmp to use gc for memory allocation, with our error messages */
-				/* this function is located in mpir-1.2.1/mp_set_fns.c */
-     (void *(*) (size_t)) getmem_atomic,
-     (void *(*) (void *, size_t, size_t)) getmoremem_atomic,
-     freememlen
-     );
-#endif
-  assert(__gmp_allocate_func == (void *(*) (size_t))getmem_atomic); /* check that __gmp_allocate_func did what we thought */
-#endif  
 }
 
 void check_M2init() {

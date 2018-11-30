@@ -17,6 +17,91 @@ cmake-build: always
 ################
 ## mac os x ####
 ################
+darwin64-gcc8 : always
+	mkdir -p builds.tmp/darwin64-gcc8
+	cd builds.tmp/darwin64-gcc8; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+#		--enable-dmg \
+#		CPPFLAGS="-I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/opt/readline/lib" \
+#		--enable-build-libraries="mpir flint pari ntl"
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
+
+darwin64-latestclang : always
+	mkdir -p builds.tmp/darwin64-latestclang
+	cd builds.tmp/darwin64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+debug64-latestclang : always
+	mkdir -p builds.tmp/debug64-latestclang
+	cd builds.tmp/debug64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--enable-debug \
+		--disable-optimize \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+darwin64-clang6 : always
+	mkdir -p builds.tmp/darwin64-clang6
+	cd builds.tmp/darwin64-clang6; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		OPENMP_CXXFLAGS="-I/usr/local/opt/llvm/include -fopenmp" \
+		OPENMP_LDFLAGS="-L/usr/local/opt/llvm/lib -fopenmp -lomp" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+# currently fails (21 Oct 2018), since we aren't detecting openmp support in the compiler.
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		OPENMP_CXXFLAGS="-I/usr/local/opt/libomp/include -Xpreprocessor -fopenmp" \
+		OPENMP_LDFLAGS="-L/usr/local/opt/libomp/lib -lomp" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+#		--enable-build-libraries="mpir flint pari ntl"
+#		--enable-dmg \
+
+darwin64-clang : always
+	mkdir -p builds.tmp/darwin64-clang
+	cd builds.tmp/darwin64-clang; ../../../../configure \
+		CC="clang -m64" CXX="clang++ -m64" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-dmg \
+		--enable-build-libraries="mpir flint pari ntl"
+
+
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
 	cd builds.tmp/darwin64-gcc6; ../../../../configure \
@@ -145,37 +230,30 @@ darwin64-profile-clang : always
 linux-opt64 : always
 	mkdir -p builds.tmp/opt64
 	cd builds.tmp/opt64; ../../../../configure \
-		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-download
-
-#		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-debug64 : always
 	mkdir -p builds.tmp/debug64
 	cd builds.tmp/debug64; ../../../../configure \
-		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
-		--enable-memdebug \
 		--disable-optimize \
-		--enable-download
-
-#		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64
 	cd builds.tmp/profile64; ../../../../configure \
-		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-profile \
-		--enable-download
-
-#--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-opt64-gcc6 : always
 	mkdir -p builds.tmp/opt64-gcc6

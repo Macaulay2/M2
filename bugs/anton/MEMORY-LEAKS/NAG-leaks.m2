@@ -60,6 +60,9 @@ peek sols
 *- 
 )
 
+TESTmutableMatrix = () -> (
+    mutableMatrix(RR, 3, 5);
+    )
 needsPackage "MonodromySolver"
 debug Core
 p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
@@ -75,6 +78,7 @@ end--
 
 restart
 needs "NAG-leaks.m2"
+testF(100000, TESTmutableMatrix)
 
 testF(1000000,TESTrawSLProgram) 
 -- does not leak

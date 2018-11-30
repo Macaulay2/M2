@@ -49,3 +49,24 @@ f = () -> (gb (ideal I_*);)
 getRSS()
 testF(10000,f) -- .59 ms per call, 5.9 sec total
 testF(100000,f) -- .59 ms per call, no leak, 59.3 sec total
+
+-- gb benchmark:
+R = QQ[a..f]
+setRandomSeed "a"
+I = ideal random(R^1, R^{-2,-3,-4,-5});
+elapsedTime gens gb I; -- eigen branch: 6.32 sec, 1.12: 5.0 sec
+
+R = QQ[a..f]
+setRandomSeed "a"
+I = ideal random(R^1, R^{-3,-3,-4,-5});
+elapsedTime gens gb I; -- eigen branch:  32.0 sec, 1.12: 29.6 sec
+
+R = ZZ[a..f]
+setRandomSeed "a"
+I = ideal random(R^1, R^{-2,-3,-3,-4});
+elapsedTime gens gb I; -- eigen branch:  sec, 1.12:  sec
+
+R = QQ[a..f]
+setRandomSeed "a"
+I = ideal random(R^1, R^{-3,-3,-4,-5});
+elapsedTime gens gb I; -- eigen branch:  32.0 sec, 1.12: 29.6 sec
