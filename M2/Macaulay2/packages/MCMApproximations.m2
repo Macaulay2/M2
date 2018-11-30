@@ -1,7 +1,7 @@
 newPackage(
 "MCMApproximations",
 Version => "1.1",
-Date => "April 3, 2013, revised June 15, 2017",
+Date => "April 3, 2013, revised August 21, 2017",
 Authors => {{Name => "David Eisenbud",
 Email => "de@msri.org",
 HomePage => "http://www.msri.org/~de"}},
@@ -94,25 +94,28 @@ profondeur Ring := R -> profondeur R^1
 approximatione = method(Options =>{CoDepth => -1})
 approximatione(ZZ,Module) := opts -> (n,M) ->(
     --returns the map to M from the
-    --dual of the n-th syz of the n-th syzy of M
-    --n = dim ring M - depth M +1 -- this just slows things down!
-    --if n' were 1 or 2 we would not in general get minimal presentations
+    --dual of the n-th syz of the n-th syzy of Mp = prune M
+    --if n' were 1 or 2 then, without introducing Mp 
+    --the source M' of the map returned might not be homogeneous.
     if n == 0 then n = 1;
-    F := res(M, LengthLimit =>n);
-    if F.dd_n==0 then return map(M,(ring M)^0,0);
+    Mp := prune M;
+    p := Mp.cache.pruningMap; -- the iso Mp -->M
+    if isFreeModule Mp then return p;
+    F := res(Mp, LengthLimit =>n);
+    if F.dd_n == 0 then return map(M,(ring M)^0,0); -- in this case the n-th syz is 0
     G := res(coker transpose F.dd_n, LengthLimit =>n);
     F' := chainComplex reverse apply(n, j-> transpose F.dd_(j+1));
     phi := extend(G, F', id_(G_0));
-    M' := prune coker transpose G.dd_n;
-      map(M, M', transpose (matrix(M'.cache.pruningMap)^(-1) * phi_n))  
-)
+    M' := coker transpose G.dd_n;
+    map(M, M',(matrix p)*transpose phi_n)
+    )
 
 approximatione Module := opts -> M ->(
     --returns the map from the essential MCM approximation
-    n := 1+dim ring M;
+    n := max(3,1+dim ring M); -- if n were 1 or 2 we might get nonminimal presentations
     if opts.CoDepth == 0 then n = 1;
     if opts.CoDepth > 0 then n = opts.CoDepth;
-    approximatione(n, M)
+    approximatione(n, M)-- correctly gives 0 if M has finite pd (necessarily < 1+dim ring M)
     )
 
 coSyzygyChain = method()
@@ -871,9 +874,10 @@ use S
 R' = S/ideal"a3,b3"
 M = coker vars R
 (phi,psi) = approximation(pushForward(map(R,R'),ker syz presentation M))
-assert( (prune source phi) === cokernel map((R')^{{-4},{-4},{-4},{-4},{-4},{-4},{-3}},(R')^{{-5},{-5},{-5},{-5},{-5},{-5},{-6},{-6},{-6}},
-	      {{c,-b, 0, 0, 0, 0, a^2, 0, 0}, {0, 0, b, 0, -c, 0, 0, a^2, 0}, {a, 0, 0, 0, 0, -b, 0, 0, 0}, 
-		  {0, a, 0, 0,0, -c, 0, -b^2, 0}, {0, 0, a, c, 0, 0, 0, 0, b^2}, {0, 0, 0, b, a, 0, 0, 0, 0}, {0, 0, 0, 0, b^2, a^2, 0, 0, 0}}) )
+
+assert(presentation source phi == map(R'^{6:-4,-3},,matrix {{0, 0, -b^2, 0, 0, 0, -c, 0, a}, {0, a^2, 0, -c, 0, 0, 0, 0, -b}, {0, 0, a^2, 0, -c, 0, 0, -b, 0}, 
+	{0, 0, 0, a, 0, 0, b, 0, 0}, {0, 0, 0, 0, -a, b, 0, 0, 0}, {-b^2, 0, 0, 0, 0, c, 0, a, 0}, {0, 0, 0, 0, b^2, 0, a^2, 0, 0}}
+))
 assert( (prune source psi) === (R')^{{-4},{-4},{-4}} )
 assert(isSurjective(phi|psi)===true)
 assert( (prune ker (phi|psi)) === (R')^{{-5},{-5},{-5},{-6},{-6},{-6}} );
@@ -888,23 +892,17 @@ cod = numcols ff
 I = ideal ff
 R = S/I
 q = map(R,S)
-M = coker vars R
-M0 = coker vars R
-M0= coker random(R^2, R^{4:-1})
-M = pushForward(q,syzygyModule(3,M0))
-layeredResolution(ff,pushForward(q,M0))
-scan(2, s->(
-M= pushForward(q,syzygyModule(s+3,M0));
-L = (layeredResolution(ff, M))_0;
-assert (betti L == betti res M);
-))
+M0= coker random(R^2, R^{4:-1});
+M = pushForward(q,syzygyModule(4,M0));
+L = (layeredResolution(ff,M))_0;
+assert(betti L == betti res M)
 ///
 
 TEST///
 S = ZZ/101[a,b,c]/ideal(a^3)
-M = module(ideal(a,b,c))
-Ea = approximationSequence M
-Ec = coApproximationSequence M
+M = module(ideal(a,b,c));
+Ea = approximationSequence M;
+Ec = coApproximationSequence M;
 assert(isFreeModule prune Ea_3 ===true)
 assert(length res prune Ec_2 == 1)
 ///
@@ -924,3 +922,5 @@ uninstallPackage "CompleteIntersectionResolutions"
 restart
 installPackage "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
+
+approximation(MR')

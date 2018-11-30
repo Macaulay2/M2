@@ -12,7 +12,7 @@ M2_string IM2_RingMap_to_string(const RingMap *F)
     {
       F->text_out(o);
       return o.to_string();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       o << "[unprintable ringmap]";
       return o.to_string();
@@ -34,7 +34,7 @@ const RingElement /* or null */ *IM2_RingMap_eval_ringelem(const RingMap *F,
   try
     {
       return F->eval(a);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -53,7 +53,7 @@ const Matrix /* or null */ *IM2_RingMap_eval_matrix(const RingMap *F,
   try
     {
       return F->eval(newTarget, M);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -68,7 +68,7 @@ MutableMatrix /* or null */ *rawRingMapEvalMutableMatrix(const RingMap *F,
       return MutableMatrix::zero_matrix(
           F->get_ring(), M->n_rows(), M->n_cols(), M->is_dense());
       // TODO: now map it!
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

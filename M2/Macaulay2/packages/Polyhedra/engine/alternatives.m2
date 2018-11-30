@@ -1,9 +1,9 @@
 -- Methods for installing alternative interfaces provided in the alternatives folder.
 
-export{
-   "loadAlternative",
-   "dropAlternatives"
-}
+-- export{
+--    "loadAlternative",
+--    "dropAlternatives"
+-- }
 
 
 loadAlternative = method()

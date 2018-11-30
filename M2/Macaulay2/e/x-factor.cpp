@@ -720,7 +720,7 @@ void rawFactorBase(const RingElement *g,
         }
       algebraicElement_M2 = NULL;
       if (error()) *result_factors = NULL, *result_powers = NULL;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return;
@@ -798,7 +798,7 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
       M2_arrayint result = M2_makearrayint(N);
       for (i = 0; i < N; i++) result->array[i] = u[i];
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -864,7 +864,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
         }
 
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

@@ -1,8 +1,6 @@
 --- status: DRAFT
 --- author(s): MES
---- notes: 
-
-undocumented {(isHomogeneous,EngineRing)}
+--- notes: some changes Sept 2018 LS
 
 document { 
      Key => {isHomogeneous,
@@ -14,7 +12,8 @@ document {
 	  (isHomogeneous,ChainComplex),
 	  (isHomogeneous,RingMap),
 	  (isHomogeneous,Vector),
-	  (isHomogeneous,Ideal)},
+	  (isHomogeneous,Ideal),
+	  (isHomogeneous,EngineRing)},
      Headline => "whether something is homogeneous (graded)",
      Usage => "isHomogeneous x",
      Inputs => {
@@ -33,11 +32,12 @@ document {
 	  },
      EXAMPLE {
 	  "isHomogeneous(ZZ)",
-	  "isHomogeneous(ZZ[x])",
-	  "isHomogeneous(ZZ[x]/(x^3-x-3))"
+	  "isHomogeneous(ZZ[x,y])",
+	  "isHomogeneous(ZZ[x,y]/(x^3-x^2*y+3*y^3))",
+	  "isHomogeneous(ZZ[x,y]/(x^3-y-3))"
 	  },
      PARA{},
-     "Quotients of multigraded rings are homogeneous, if the ideal is also multigraded.",
+     "Quotients of multigraded rings are homogeneous, if the ideal is homogeneous.",
      EXAMPLE {
           "R = QQ[a,b,c,Degrees=>{{1,1},{1,0},{0,1}}];",
 	  "I = ideal(a-b*c);",
@@ -46,7 +46,7 @@ document {
 	  "isHomogeneous(R/(a-b))"
 	  },
      PARA{},
-     "Polyomial rings over polynomial rings are multigraded.",
+     "Polynomial rings over polynomial rings are multigraded.",
      EXAMPLE lines ///
 	  A = QQ[a]
 	  B = A[x]
@@ -55,8 +55,7 @@ document {
      	  isHomogeneous B
      ///,
      PARA{},
-     "A matrix is homogeneous if each entry is homogeneous of such a degree
-     so that the matrix has a well-defined degree.",
+     "A matrix is homogeneous if each entry is homogeneous of such a degree that the matrix has a well-defined degree.",
      EXAMPLE {
 	  "S = QQ[a,b];",
 	  "F = S^{-1,2}",
@@ -74,14 +73,16 @@ document {
      	  "isHomogeneous((a+1)*M)"
 	  },
      PARA{},
-    "Note that no implicit simplification is done.",
+    "Note that no implicit simplification is done. Consider the following cautionary example.",
      EXAMPLE {
 	 "R = QQ[x]",
 	 "isHomogeneous ideal(x+x^2, x^2)"
 	 },
      Caveat => {"No computation on the generators and relations is performed.
 	 For example, if inhomogeneous generators of a homogeneous ideal are given, then the return value is ", TO false, "."},
-     SeeAlso => {degree, "graded and multigraded polynomial rings"}
+     PARA{},
+     {"For developers: ", TT "isHomogeneous ", "also has a method for ", TO "EngineRing", "s."},
+     SeeAlso => {degree, degrees, homogenize, "graded and multigraded polynomial rings", "graded modules", prune}
      }
 
 TEST ///

@@ -33,5 +33,5 @@ document {
 	  I = ideal"ab,ade,ac3,d4,b3,adf,f4,e10"
 	  partition(f -> first degree f, flatten entries gens I)
      	  ///,
-     SeeAlso => {tally, partitions}
+     SeeAlso => {tally, partitions, sublists}
      }

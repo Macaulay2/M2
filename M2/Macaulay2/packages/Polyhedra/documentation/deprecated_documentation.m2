@@ -15,9 +15,10 @@ doc ///
 
 doc ///
    Key
+      (intersection, Matrix, Matrix)
       (intersection, Matrix, Matrix, Matrix, Matrix)
    Headline
-      Deprecated variant of {\tt polyhedronFromHData}
+      Deprecated variants of {\tt polyhedronFromHData} and {\tt coneFromHData}
 ///
 
 doc ///

@@ -13,8 +13,6 @@ class MatrixGenerator;
  */
 class MatrixConstructor
 {
-  friend class MatrixConstructor;
-  
   const Ring *R;
   VECTOR(vec) entries;
   const FreeModule *rows;

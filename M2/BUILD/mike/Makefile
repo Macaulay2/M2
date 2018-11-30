@@ -17,6 +17,7 @@ cmake-build: always
 ################
 ## mac os x ####
 ################
+
 darwin64-gcc8 : always
 	mkdir -p builds.tmp/darwin64-gcc8
 	cd builds.tmp/darwin64-gcc8; ../../../../configure \
@@ -25,13 +26,6 @@ darwin64-gcc8 : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
-
-#		--enable-dmg \
-#		CPPFLAGS="-I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/opt/readline/lib" \
-#		--enable-build-libraries="mpir flint pari ntl"
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
 
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
@@ -60,19 +54,6 @@ debug64-latestclang : always
 		--disable-strip \
 		--enable-download
 
-darwin64-clang6 : always
-	mkdir -p builds.tmp/darwin64-clang6
-	cd builds.tmp/darwin64-clang6; ../../../../configure \
-		CC="/usr/local/opt/llvm/bin/clang" \
-		CXX="/usr/local/opt/llvm/bin/clang++" \
-		OPENMP_CXXFLAGS="-I/usr/local/opt/llvm/include -fopenmp" \
-		OPENMP_LDFLAGS="-L/usr/local/opt/llvm/lib -fopenmp -lomp" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download
-
-# currently fails (21 Oct 2018), since we aren't detecting openmp support in the compiler.
 darwin64-appleclang : always
 	mkdir -p builds.tmp/darwin64-appleclang
 	cd builds.tmp/darwin64-appleclang; ../../../../configure \
@@ -83,25 +64,7 @@ darwin64-appleclang : always
 		--disable-strip \
 		--enable-download
 
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-#		--enable-build-libraries="mpir flint pari ntl"
-#		--enable-dmg \
-
-darwin64-clang : always
-	mkdir -p builds.tmp/darwin64-clang
-	cd builds.tmp/darwin64-clang; ../../../../configure \
-		CC="clang -m64" CXX="clang++ -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-dmg \
-		--enable-build-libraries="mpir flint pari ntl"
-
-
+## below this is older code (for darwin stuff)
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
 	cd builds.tmp/darwin64-gcc6; ../../../../configure \

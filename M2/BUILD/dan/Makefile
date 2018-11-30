@@ -7,6 +7,7 @@
 CC  =
 CXX =
 FC  =
+AR  = 
 
 # configure script options:
 OPTIONS =
@@ -82,7 +83,7 @@ $(foreach O, $(OPTLIBS),			\
 include Makefile.include
 
 test :
-	: $(FC) $(CC) $(CXX)
+	: $(FC) $(CC) $(CXX) $(AR)
 
 # Local Variables:
 # mode: makefile-gmake
