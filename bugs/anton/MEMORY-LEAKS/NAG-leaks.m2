@@ -67,11 +67,11 @@ needsPackage "MonodromySolver"
 debug Core
 p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
 q = point {{1.79463+.302691*ii, 2.49917+.526336*ii, -.379269+1.29466*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
-mp = raw mutableMatrix matrix p;
+mp = raw transpose mutableMatrix matrix p;
 
 TESTpointArray = () -> (
     PA := rawPointArray(1e-4,2*#coordinates p);
-    rawPointArrayLookupOrAppend(PA,mp,0);
+    --rawPointArrayLookupOrAppend(PA,mp,0);
     )
 
 end--
@@ -105,3 +105,5 @@ testF(10000,TESTsolve)
 testF(100000,TESTpointArray)
 -- elapsed time = 79.8302
 -- leaks 874.619 bytes, takes .798302 ms. (per call)
+
+0x111e08f00
