@@ -664,8 +664,6 @@ makeMultiples = (h, D, homog) -> (
     -- h is a list of polynomials
     -- multiplies each hi with monomials up to degree D
     if #h==0 then return ({},{});
-    if D < max\\first\degree\h then
-        error "increase degree bound";
     R := ring h#0;
     -- compute monomials
     mon := for i to #h-1 list (
@@ -929,7 +927,7 @@ checkSolveSOS = (solver) -> (
         R = QQ[x,y];
         S := R/ideal(x^2 + y^2 - 1);
         f = sub(10-x^2-y,S);
-        (mon,Q,X,tval) = readSdpResult solveSOS (f, 2, TraceObj=>true);
+        (mon,Q,X,tval) = readSdpResult solveSOS (f, 2, TraceObj=>true, Solver=>solver);
         isGram(f,mon,Q) and rank Q == 2
         );
 
@@ -1024,7 +1022,7 @@ checkSosInIdeal = (solver) -> (
         cmp(h,s,mult)
         );
 
-    t3:= ( --similar to test 2
+    t3:= ( --similar to test2
         R = RR[x,y,z];
         h = matrix {{x-y, x+z}};
         (sol,mult) = sosInIdeal (h,6, Solver=>solver);
@@ -1032,14 +1030,27 @@ checkSosInIdeal = (solver) -> (
         cmp(h,s,mult)
         );
 
-    -----------------QUOTIENT1-----------------
     t4:= (
+        R = QQ[x,y];
+        h = matrix {{y^2+y, x*y, -x^2*y-x^2-y-1}};
+        (sol,mult) = sosInIdeal(h,2, Solver=>solver);
+        (sol#GramMatrix===null)
+        );
+
+    -----------------QUOTIENT1-----------------
+    t5:= (
         R = QQ[x,y,z]/ideal {x^2+y^2+y, y-z^2};
         s = sosPoly sosInIdeal (R,2,Solver=>solver);
-        s=!=null and sumSOS s==0
+        (s=!=null and ideal gens s == ideal(x_R,y,z))
+        );
+
+    t6:= ( --similar to test4
+        R = QQ[x,y]/ideal {y^2+y, x*y, -x^2*y-x^2-y-1};
+        s = sosPoly sosInIdeal(R,2, Solver=>solver);
+        (s=!=null and ideal gens s == ideal(x_R,y+1))
         );
     
-    return {t0,t1,t2,t3,t4};
+    return {t0,t1,t2,t3,t4,t5,t6};
     )
 
 

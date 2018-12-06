@@ -47,11 +47,13 @@ doc /// --sdp
         sdp
         (sdp,Matrix,Sequence,Matrix)
         (sdp,Matrix,Matrix,Matrix)
+        (sdp,List,Matrix,RingElement)
         (ring,SDP)
     Headline
         construct a semidefinite program
     Usage
         P = sdp(C,A,b)
+        P = sdp(var,M,objFun)
     Inputs
         C:Matrix
           a symmetric $n\times n$ matrix
@@ -59,6 +61,12 @@ doc /// --sdp
           consisting of $m$ symmetric $n\times n$ matrices
         b:Matrix
           a $m\times 1$ matrix
+        var:List
+          of variables
+        M:Matrix
+          constraint matrix with affine-linear entries
+        objFun:RingElement
+          linear function to be minimized
     Outputs
         P:SDP
           a semidefinite programming problem
@@ -74,11 +82,20 @@ doc /// --sdp
         and the dual problem is
 
         $$max_{y,Z} \, \sum_i b_i y_i \,\,\, s.t. \,\,\, Z = C - \sum_i y_i A_i \, and \, Z \geq 0$$
-
+      Text
         The type @TO SDP@ stores semidefinite programs.
-        The constructor of the type is the method @TO sdp@.
+        There are two ways to construct an SDP.
+        The first option is to provide the matrices $C,A_i,b$.
       Example
         P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}})
+      Text
+        The second option is to provide a matrix $M(v)$, with affine entries, and a linear function $f(v)$.
+        This constructs an SDP in dual form: minimize $f(v)$ subject to $M(v)\geq 0$.
+      Example
+        R = QQ[u,v,w];
+        M = matrix {{1,u,3-v},{u,5,w},{3-v,w,9+u}}
+        objFun = u+v+w;
+        P = sdp({u,v,w}, M, objFun);
       Text
         Semidefinite programs can be solved numerically using the method @TO optimize@, and in small cases also symbolically with the method @TO criticalIdeal@.
       Code
@@ -225,7 +242,7 @@ doc /// --optimize
     Consequences
     Description
       Text
-        This method a semidefinite programming problem.
+        This method solves a semidefinite programming problem.
         There is an interface to the @TO2 {[optimize,Solver],"solvers"}@ CSDP, SDPA and MOSEK.
         The default solver is CSDP, which is preinstalled with Macaulay2.
         Alternatively, there is rudimentary dual interior point method implemented entirely in Macaulay2 language.
@@ -239,9 +256,8 @@ doc /// --optimize
       Code
       Pre
     Caveat
-        $\bullet$ The "M2" solver does not return the primal solution.
-
-        $\bullet$ The "M2" solver might fail if the dual problem is not strictly feasible.
+        The "M2" solver might fail if the dual problem is not strictly feasible.
+        It also does not return the primal solution.
     SeeAlso
         (refine,SDP,Sequence)
 ///
