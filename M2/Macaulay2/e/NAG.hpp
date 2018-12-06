@@ -35,7 +35,9 @@ class PointArray : public MutableEngineObject
       }
     for (int i = 0; i < n; i++) mWeights[i] /= s;
   }
-  virtual ~PointArray() {}
+  virtual ~PointArray() {
+    std::cerr << "entering ~PointArray()" << std::endl;
+  }
   int lookup_or_append(const RealVector& a)
   {
     Weight w = weight(a);

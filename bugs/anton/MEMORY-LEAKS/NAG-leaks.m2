@@ -71,7 +71,7 @@ mp = raw transpose mutableMatrix matrix p;
 
 TESTpointArray = () -> (
     PA := rawPointArray(1e-4,2*#coordinates p);
-    --rawPointArrayLookupOrAppend(PA,mp,0);
+    rawPointArrayLookupOrAppend(PA,mp,0);
     )
 
 end--

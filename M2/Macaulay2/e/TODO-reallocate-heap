@@ -6,6 +6,7 @@ TO DO
     4. make sure configure scripts can use built in mpir, flint.
     5. speed of e.g. gb over QQ or ZZ.
     6. make sure: all tests and example run correctly.  On multiple machines.
+    7. gmp.d has warning message: remove those.
 24 Oct 2018:
   Check for slow downs vs. 1.12
     bugs/anton/MEMORY-LEAKS/eigen-leaks.m2 (
