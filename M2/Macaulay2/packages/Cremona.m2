@@ -2,7 +2,7 @@
 newPackage(
        "Cremona",
 	Version => "4.2.3", 
-        Date => "November 27, 2018",
+        Date => "December 17, 2018",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true,
@@ -50,7 +50,8 @@ export{
    "forceImage",
    "point",
    "segre",
-   "abstractRationalMap"
+   "abstractRationalMap",
+   "specialCubicTransformation"
 };
 
 certificate := "MathMode: output certified!\n";
@@ -74,6 +75,7 @@ parametrize = method(TypicalValue => RationalMap);
 specialCremonaTransformation = method(TypicalValue=>RationalMap);
 quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
 specialQuadraticTransformation = method(TypicalValue=>RationalMap);
+specialCubicTransformation = method(TypicalValue=>RationalMap);
 rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
 forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
@@ -1875,6 +1877,31 @@ specialQuadraticTransformation (Ring,ZZ) := (K,a) -> (
 specialQuadraticTransformation (ZZ) := (j) -> specialQuadraticTransformation(QQ,j);
 
 specialQuadraticTransformation (ZZ,Ring) := (j,K) -> specialQuadraticTransformation(K,j);
+
+specialCubicTransformation (Ring,ZZ) := (K,a) -> (
+   if not isField K then error "expected a field";
+   if a<1 or a>9 then error("expected integer between 1 and 9, see Table 1 of the paper: Special cubic birational transformations of P6");
+   if a == 1 then return specialCremonaTransformation(K,1);
+   if a == 2 then (
+       cre3 := specialCremonaTransformation(K,3);
+       x := gens source cre3;
+       return (rationalMap((parametrize(ideal(x_0-x_1+x_2))) * cre3,Dominant=>2))!;
+   );
+   if a == 3 then return specialCremonaTransformation(K,3);
+   if a == 4 then return specialCremonaTransformation(K,11);
+   if a == 5 then return specialCremonaTransformation(K,12);
+   (F,Z,degs,str) := examplesCubic(K,a-5);
+   Phi := rationalMap map(ring F,Z,F);
+   setKeyValue(Phi,"maps",{map Phi});
+   setKeyValue(Phi,"isBirational",true);
+   setKeyValue(Phi,"projectiveDegrees",degs);
+   setKeyValue(Phi,"degree",1);
+   return Phi;
+);
+
+specialCubicTransformation (ZZ) := (j) -> specialCubicTransformation(QQ,j);
+
+specialCubicTransformation (ZZ,Ring) := (j,K) -> specialCubicTransformation(K,j);
 
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
