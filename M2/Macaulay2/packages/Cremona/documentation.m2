@@ -753,7 +753,7 @@ RationalMap => {"an example of special Cremona transformation over ",TT"K",", ac
 PARA{"A Cremona transformation is said to be special if the base locus scheme is smooth and irreducible. To ensure this condition, the field ",TT"K"," must be large enough but no check is made."},
 EXAMPLE {
 "time apply(1..12,i -> describe specialCremonaTransformation(i,ZZ/3331))"},
-SeeAlso => {"quadroQuadricCremonaTransformation", "specialQuadraticTransformation"}}
+SeeAlso => {"quadroQuadricCremonaTransformation", "specialQuadraticTransformation","specialCubicTransformation"}}
 
 document { 
 Key => {quadroQuadricCremonaTransformation,(quadroQuadricCremonaTransformation,Ring,ZZ,ZZ),(quadroQuadricCremonaTransformation,ZZ,ZZ,Ring),(quadroQuadricCremonaTransformation,ZZ,ZZ)}, 
@@ -775,7 +775,7 @@ EXAMPLE {
 "describe quadroQuadricCremonaTransformation(8,1)",
 "describe quadroQuadricCremonaTransformation(14,1)",
 "describe quadroQuadricCremonaTransformation(26,1)"},
-SeeAlso => {"specialCremonaTransformation", "specialQuadraticTransformation"}}
+SeeAlso => {"specialCremonaTransformation", "specialQuadraticTransformation","specialCubicTransformation"}}
 
 document { 
 Key => {specialQuadraticTransformation,(specialQuadraticTransformation,Ring,ZZ),(specialQuadraticTransformation,ZZ,Ring),(specialQuadraticTransformation,ZZ)}, 
@@ -791,7 +791,23 @@ PARA{"The field ",TT"K"," is required to be large enough."},
 EXAMPLE {
 "time specialQuadraticTransformation 4",
 "time describe oo"},
-SeeAlso => {"specialCremonaTransformation","quadroQuadricCremonaTransformation"}}
+SeeAlso => {"specialCremonaTransformation","specialCubicTransformation","quadroQuadricCremonaTransformation"}}
+
+document { 
+Key => {specialCubicTransformation,(specialCubicTransformation,Ring,ZZ),(specialCubicTransformation,ZZ,Ring),(specialCubicTransformation,ZZ)}, 
+Headline => "special cubic transformations whose base locus has dimension at most three", 
+Usage => "specialCubicTransformation i 
+specialCubicTransformation(i,K)", 
+Inputs => { 
+"i" => ZZ => {"an integer between 1 and 9"},
+"K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
+Outputs => { 
+RationalMap => {"an example of special cubic birational transformation over ",TT"K",", according to the classification given in Table 1 of the paper: ",EM "Special cubic birational transformations of P^6"}},
+PARA{"The field ",TT"K"," is required to be large enough."},
+EXAMPLE {
+"time specialCubicTransformation 9",
+"time describe oo"},
+SeeAlso => {"specialCremonaTransformation","specialQuadraticTransformation","quadroQuadricCremonaTransformation"}}
 
 document { 
 Key => {[inverseMap,Verbose], [projectiveDegrees,Verbose],[degreeOfRationalMap,Verbose],[approximateInverseMap,Verbose],[isDominant,Verbose],[isBirational,Verbose],[SegreClass,Verbose],[ChernSchwartzMacPherson,Verbose],[EulerCharacteristic,Verbose]}, 
