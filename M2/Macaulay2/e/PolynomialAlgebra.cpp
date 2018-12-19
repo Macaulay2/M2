@@ -248,12 +248,12 @@ ring_elem PolynomialAlgebra::from_long(long n) const
   return from_coefficient(mCoefficientRing.from_long(n));
 }
 
-ring_elem PolynomialAlgebra::from_int(mpz_ptr n) const
+ring_elem PolynomialAlgebra::from_int(mpz_srcptr n) const
 {
   return from_coefficient(mCoefficientRing.from_int(n));
 }
 
-bool PolynomialAlgebra::from_rational(mpq_ptr q, ring_elem& result1) const
+bool PolynomialAlgebra::from_rational(const mpq_ptr q, ring_elem& result1) const
 {
   ring_elem cq; // in coeff ring.
   bool worked = mCoefficientRing.from_rational(q, cq);

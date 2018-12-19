@@ -55,7 +55,7 @@ ring_elem NCFreeAlgebra::from_long(long n) const
   return reinterpret_cast<Nterm*>(result);
 }
 
-ring_elem NCFreeAlgebra::from_int(mpz_ptr n) const
+ring_elem NCFreeAlgebra::from_int(mpz_srcptr n) const
 {
   NCPolynomial* result = new NCPolynomial;
   result->push_backCoeff(mCoefficientRing.from_int(n));

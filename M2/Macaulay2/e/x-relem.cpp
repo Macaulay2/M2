@@ -227,7 +227,7 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }
-  catch (exc::engine_error e) {
+  catch (exc::engine_error& e) {
     ERROR(e.what());
     return NULL;
   }
@@ -256,7 +256,7 @@ const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }
-  catch (exc::engine_error e) {
+  catch (exc::engine_error& e) {
     ERROR(e.what());
     return NULL;
   }

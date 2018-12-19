@@ -75,6 +75,16 @@ export { "NCRing", "NCQuotientRing", "NCPolynomialRing",
 	 "NCChainComplex"
 }
 
+exportMutable {
+    "bergmanPath"
+    }
+
+bergmanPath = getenv "BERGMANPATH"
+if bergmanPath == "" then error(
+    "You must install bergman, and then set the environment variable BERGMANPATH "|
+    "to point to the root of the downloaded bergman software you have"
+    )
+
 --- symbols in hash tables of exported types
 protect generatorSymbols
 protect weights

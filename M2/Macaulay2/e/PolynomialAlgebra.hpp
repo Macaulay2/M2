@@ -17,6 +17,8 @@ class NCMonoid
   //  4. exponent vector (only used for commutative case)
   //  5. Monomial format.
 public:
+  NCMonoid() {}
+
   using MonomialInserter = std::vector<int>;
 
   void one(MonomialInserter& m) const;
@@ -82,7 +84,7 @@ public:
   virtual unsigned int computeHashValue(const ring_elem a) const;
   virtual ring_elem from_coefficient(const ring_elem a) const;
   virtual ring_elem from_long(long n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual bool from_rational(const mpq_ptr q, ring_elem &result) const;
 
   virtual ring_elem var(int v) const;

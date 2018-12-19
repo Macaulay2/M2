@@ -74,7 +74,7 @@ getVariableSymbols List := variables -> (
     )
 *-
 
--- TODO (11 Jan 2017 MS+FM), now (19 Dec 2017 MS+FM)
+-- TODO (11 Jan 2017 MS+FM), now (19 Dec 2017 MS+FM), and again Dec 2018...!
 --   1. handle multigradings
 --   2. handle different monomial orders
 --     e.g. elimination order.
@@ -593,9 +593,6 @@ TEST ///
 ///
 
 end--
-
--- The following is the directory of my M2 build.
-workingDir = ~/Macaulay2/M2-frank/M2/BUILD/frank/builds.tmp/darwin64-clang/M2
 
 restart
 needsPackage "PolynomialAlgebra"

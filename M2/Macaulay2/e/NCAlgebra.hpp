@@ -213,7 +213,7 @@ public:
   virtual void text_out(buffer &o) const;
   virtual unsigned int computeHashValue(const ring_elem a) const;
   virtual ring_elem from_long(long n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual bool from_rational(const mpq_ptr q, ring_elem &result) const;
   virtual ring_elem var(int v) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;

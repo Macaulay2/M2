@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <iostream>
 #include <utility>
+#include <algorithm>
 
 template<typename T1, typename T2>
 std::ostream& operator << (std::ostream& o, const std::pair<T1,T2>& p)
