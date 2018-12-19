@@ -13,8 +13,8 @@ newPackage("NCAlgebra",
 	   HomePage => "http://people.hamilton.edu/cgibbons/index.html",
 	   Email => "crgibbon@hamilton.edu"}},
      AuxiliaryFiles => true,
-     DebuggingMode => true,
-     CacheExampleOutput =>true
+     CacheExampleOutput => true,
+     OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 
 export { "NCRing", "NCQuotientRing", "NCPolynomialRing",
@@ -95,12 +95,6 @@ protect CumulativeBasis
 
 MAXDEG = 40
 MAXSIZE = 1000
-
--- This manner of locating the bergman source code is deprecated.
--- bergmanPath = "~/bergman"
-
--- the environment variable BERGMANPATH must be set to the root directory of the bergman source
-bergmanPath = getenv "BERGMANPATH"
 
 NCRing = new Type of Ring
 NCQuotientRing = new Type of NCRing
@@ -1417,6 +1411,8 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       fil << "(load \"" << bergmanPath << "/lap/clisp/unix/hseries.fas\")" << endl;
       -- This is trying to get the 'bmload' environment variable to load correctly.
       -- fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
+      -- or is it this:?
+      -- (from master) fil << "(load (mkbmpathexpand \"$bmload/lap/clisp/unix/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1681,6 +1677,8 @@ writeHSInitFile = (tempInit,
    fil << "(setf (getenv \"bmload\") \"" << bergmanPath << "/lap/clisp/unix\")" << endl;
    -- This is trying to get the 'bmload' environment variable to load correctly.
    -- fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
+   -- or this:
+   -- fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload/lap/clisp/unix\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
@@ -2010,10 +2008,8 @@ newBasis(ZZ,NCRing) := NCMatrix => opts -> (n,B) -> (
       ncMatrix(B,{},{})
 )
 
-{*
-TEST ///
-restart
-debug needsPackage "NCAlgebra"
+if bergmanPresent then TEST ///
+debug NCAlgebra						   -- to get "newBasis"
 A = QQ{a,b,c,d}
 setWeights(A,{1,1,2,3})
 time b1 = flatten entries basis(8,A);
@@ -2023,7 +2019,6 @@ setWeights(B,{1,1,2,3})
 time b1 = flatten entries basis(15,B);
 time b2 = flatten entries newBasis(15,B);
 ///
-*}
 
 leftMultiplicationMap = method()
 leftMultiplicationMap(NCRingElement,ZZ) := (f,n) -> (
@@ -2064,10 +2059,7 @@ leftMultiplicationMap(NCRingElement,List,List) := (f,fromBasis,toBasis) -> (
    )
 )
 
-{*
-TEST ///
-restart
-needsPackage "NCAlgebra"
+if bergmanPresent then TEST ///
 A = QQ{a,b}
 I = ncIdeal {a*a*a,a*a*b,a*b*a,a*b*b,b*a*a,b*a*b,b*b*a,b*b*b}
 B = A/I
@@ -2079,7 +2071,6 @@ leftMultiplicationMap(a,-1,0)
 leftMultiplicationMap(a,-1,0)
 leftMultiplicationMap(a,-1,0)
 ///
-*}
 
 rightMultiplicationMap = method()
 rightMultiplicationMap(NCRingElement,ZZ) := (f,n) -> (
@@ -3547,7 +3538,8 @@ wallTiming = f -> (
 
 --- include the documentation
 load "./NCAlgebra/NCAlgebraDoc.m2"
-end
+
+end--
 
 ---- installing and loading the package
 restart

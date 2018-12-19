@@ -4,7 +4,7 @@ newPackage(
     	Version => "0.6", 
     	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
     	Headline => "Adjoint ideals of plane curves and related computations",
     	DebuggingMode => false,

@@ -100,7 +100,7 @@ Matrix *Matrix::pfaffians(int p) const
       ERROR("pfaffian computations over RR or CC not yet implemented");
       return 0;
     }
-  PfaffianComputation d = PfaffianComputation(this, p);
+  PfaffianComputation d {this, p};
   d.calc();
   return d.pfaffians();
 }

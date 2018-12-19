@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 32498360 *}
+-- -*- M2-comint -*- hash: 32498360
 
 i1 : A = QQ{x,y,z}
 
@@ -43,7 +43,7 @@ o5 : NCMatrix
 
 i6 : B = A/ncIdeal{y*z + z*y - x^2, x*z + z*x - y^2, z^2 - x*y - y*x}
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-29999-0/0.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-29999-0/3.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12291-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12291-0/3.ter ... Complete!
 
 o6 = B
 

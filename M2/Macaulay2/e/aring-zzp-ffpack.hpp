@@ -9,6 +9,8 @@
 #include <iostream>
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
+// The following line, which would be useful, doesn't quiet g++-8 about pragma omp...
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #pragma GCC diagnostic ignored "-Wconversion"
 #include <fflas-ffpack/ffpack/ffpack.h>
@@ -142,7 +144,7 @@ class ARingZZpFFPACK : public RingInterface
 
   void set_from_long(ElementType &result, long a) const;
 
-  void set_from_mpz(ElementType &result, const mpz_ptr a) const;
+  void set_from_mpz(ElementType &result, mpz_srcptr a) const;
 
   bool set_from_mpq(ElementType &result, const mpq_ptr a) const;
 

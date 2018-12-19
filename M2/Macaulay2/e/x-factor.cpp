@@ -293,7 +293,7 @@ void showmpint(gmp_ZZ p)
   mpz_out_str(stdout, 10, p);
   std::cout << std::endl;
 }
-void showmpz(mpz_t p)
+void showmpz(mpz_srcptr p)
 {
   mpz_out_str(stdout, 10, p);
   std::cout << std::endl;
@@ -302,7 +302,7 @@ void showmpz(mpz_t p)
 
 static struct enter_factory foo2;
 
-static CanonicalForm convertToFactory(const mpz_ptr p)
+static CanonicalForm convertToFactory(mpz_srcptr p)
 {
   struct enter_factory foo;
   int size = p->_mp_size;
@@ -720,7 +720,7 @@ void rawFactorBase(const RingElement *g,
         }
       algebraicElement_M2 = NULL;
       if (error()) *result_factors = NULL, *result_powers = NULL;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return;
@@ -798,7 +798,7 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
       M2_arrayint result = M2_makearrayint(N);
       for (i = 0; i < N; i++) result->array[i] = u[i];
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -864,7 +864,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
         }
 
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

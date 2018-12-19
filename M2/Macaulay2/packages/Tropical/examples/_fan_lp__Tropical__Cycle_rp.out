@@ -1,8 +1,4 @@
 -- -*- M2-comint -*- hash: -139759152
---loading configuration for package "FourTiTwo" from file /Users/dan/Library/Application Support/Macaulay2/init-FourTiTwo.m2
---loading configuration for package "gfanInterface" from file /Users/dan/Library/Application Support/Macaulay2/init-gfanInterface.m2
---loading configuration for package "Tropical" from file /Users/dan/Library/Application Support/Macaulay2/init-Tropical.m2
--- polymake is installed
 
 i1 : QQ[x,y,z]
 

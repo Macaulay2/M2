@@ -5,11 +5,12 @@ globalAssignment PolyhedralComplex
 compute#PolyhedralComplex = new MutableHashTable;
 
 
-polyhedralComplex = method()
-polyhedralComplex HashTable := inputProperties -> (
+internalPolyhedralComplexConstructor = method()
+internalPolyhedralComplexConstructor HashTable := inputProperties -> (
    constructTypeFromHash(PolyhedralComplex, inputProperties)
 )
 
+polyhedralComplex = method()
 
 polyhedralComplex(Matrix, Matrix, Matrix, List) := (V, R, lineality, mO) -> (
    if not all(mO, m -> #m == 2) then error("Expected pairs of lists.");
@@ -20,17 +21,19 @@ polyhedralComplex(Matrix, Matrix, Matrix, List) := (V, R, lineality, mO) -> (
       )
    );
    irays := prependOnes(V) | prependZeros(R);
-   ifanHash := new HashTable from {
-      inputRays => irays, 
-      computedLinealityBasis => prependZeros(lineality),
-      inputCones => mO
-   };
    result := new HashTable from {
-      underlyingFan => fan ifanHash
+      underlyingFan => fan(irays, prependZeros(lineality), mO)
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
+polyhedralComplex(Matrix, Matrix, List) := (V, R, mO) -> (
+   if not all(mO, m-> all(m, e->instance(e, List))) then (
+      mO = apply(mO, m -> {m, {}})
+   );
+   RL := map(QQ^(numRows V), QQ^0, 0);
+   polyhedralComplex(V, R, RL, mO)
+)
 
 polyhedralComplex(Matrix, List) := (V, mO) -> (
    if not all(mO, m-> all(m, e->instance(e, List))) then (
@@ -41,12 +44,21 @@ polyhedralComplex(Matrix, List) := (V, mO) -> (
 )
 
 
+polyhedralComplex Fan := F -> (
+   n := ambDim F;
+   vertex := map(ZZ^n, ZZ^1, 0);
+   mO := maxCones F;
+   mO = apply(mO, m -> {{0},m});
+   polyhedralComplex(vertex, rays F, linealitySpace F, mO)
+)
+
+
 polyhedralComplex Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    result := new HashTable from {
       underlyingFan => fan C
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
 
@@ -68,7 +80,7 @@ addPolyhedron(Polyhedron,PolyhedralComplex) := (P, PC) -> (
    result := new HashTable from {
       underlyingFan => addCone(F, C)
    };
-   polyhedralComplex result
+   internalPolyhedralComplexConstructor result
 )
 
 

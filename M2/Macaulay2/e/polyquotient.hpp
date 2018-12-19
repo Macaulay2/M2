@@ -41,7 +41,7 @@ class PolyRingQuotient : public PolyRingFlat
     normal_form(result);
     return result;
   }
-  virtual ring_elem from_int(mpz_ptr n) const
+  virtual ring_elem from_int(mpz_srcptr n) const
   {
     ring_elem result = numerR_->from_int(n);
     normal_form(result);

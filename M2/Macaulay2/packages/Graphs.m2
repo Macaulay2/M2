@@ -26,8 +26,8 @@ the License, or any later version.
 
 newPackage select((
     "Graphs",
-        Version => "0.3.1",
-        Date => "07. August 2014",
+        Version => "0.3.2",
+        Date => "18. October 2018",
         Authors => {
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
@@ -44,7 +44,7 @@ newPackage select((
         PackageExports => {
             "SimplicialComplexes"
             },
-        DebuggingMode => true,
+        DebuggingMode => false,
         ), x -> x =!= null)
 
 -- Load configurations
@@ -277,6 +277,7 @@ digraph (List, List) := Digraph => opts -> (V, L) -> (
     digraph(V, A)
     )
 digraph (List, Matrix) := Digraph => opts -> (V, A) -> (
+    if ( sort unique join( {0,1}, flatten entries A) != {0,1} ) then error "The given matrix is not an adjacency matrix.";
     if #V != numrows A or numrows A != numcols A then error "The given vertex set and matrix are incompatible.";
     V' := if instance(opts.Singletons, List) then opts.Singletons - set V else {};
     A' := matrix {{A, map(ZZ^(#V), ZZ^(#V'), 0)}, {map(ZZ^(#V'), ZZ^(#V), 0), 0}};
@@ -309,6 +310,7 @@ graph List := Graph => opts -> L -> (
     )
 graph HashTable := Graph => opts -> g -> graph(unique join(keys g, flatten (toList \ values g)), flatten apply(keys g, v -> apply(toList g#v, u -> {v, u})), Singletons => opts.Singletons, EntryMode => "edges")
 graph (List, Matrix) := Graph => opts -> (V,A) -> (
+    if ( sort unique join( {0,1}, flatten entries A) != {0,1} ) then error "The given matrix is not an adjacency matrix.";
     if #V != numrows A or numrows A != numcols A then error "The given vertex set and matrix are incompatible.";
     V' := if instance(opts.Singletons, List) then opts.Singletons - set V else {};
     A' := matrix {{A, map(ZZ^(#V), ZZ^(#V'), 0)}, {map(ZZ^(#V'), ZZ^(#V), 0), 0}};

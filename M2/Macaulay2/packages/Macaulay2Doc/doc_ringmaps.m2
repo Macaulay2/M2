@@ -182,14 +182,6 @@ document {
      	  use ring F;
      	  sub(F, {a=>1, b=>3, c=> 1, d=>13})
           ///,
-     "This can have strange results, if the values are all integers, but fractions are present.",
-     EXAMPLE lines ///
-          sub(1/3*a*b, {a=>1, b=>1, c=>1, d=>1})
-	  ///,
-     "By changing one of the values to a rational number, we ensure that the result will be rational.",
-     EXAMPLE lines ///
-          sub(1/3*a*b, {a=>1_QQ, b=>1, c=>1, d=>1})	  
-          ///,
      "If ", TT "f", " is an ideal or a submodule of a free module over ", TT "R", ", then substitution amounts to substitution
      in the matrix of generators of ", TT "f", ".  This is
      not the same as tensor product!",

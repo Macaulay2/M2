@@ -1183,9 +1183,9 @@ document {
         {TO "isBirational", " gives a probabilisitc answer to the question of whether a map between varieties is birational.  Furthermore, if the
 	     source is projective space, then ", TO "degreeOfRationalMap", " with ", TT   "MathMode=>true", " can give a deterministic answer. 
 	      In some cases, the speed of the latter  is comparable with ", TO "isBirationalMap", " with ", TT   "AssumeDominant=>true." },
-        {TO "invertBirMap", " gives a  fast computation of the inverse of a birational map if the source is projective space ", EM " and ",
+        {TO "inverseMap", " gives a  fast computation of the inverse of a birational map if the source is projective space ", EM " and ",
 	     "the map has maximal linear rank.   In some cases, even if the map has maximal linear rank, our function ", TO "inverseOfMap",
-	       " appears to be competitive however.  If you pass invertBirMap a map not from projective space, then it calls a modified version ",
+	       " appears to be competitive however.  If you pass inverseMap a map not from projective space, then it calls a modified version ",
 	      TO "invertBirationalMap", " copied from ", TO "Parametrization", "."},
     },
 }
@@ -1976,7 +1976,7 @@ doc ///
         Text
             Notice the last two checks are just verifying that the composition g*h agrees with the identity.
     Caveat
-        Only works for irreducible varieties right now.  Also see the function invertBirMap in the package Cremona, which for certain types of maps from projective space is sometimes faster.  Additionally, also compare with the function invertBirationalMap of the package Parametrization.        
+        Only works for irreducible varieties right now.  Also see the function inverseMap in the package Cremona, which for certain types of maps from projective space is sometimes faster.  Additionally, also compare with the function invertBirationalMap of the package Parametrization.
 ///
 --***************************************************************
 
@@ -2020,7 +2020,7 @@ doc ///
             
         
     Caveat
-        Only works for irreducible varieties right now.  Also see the function invertBirMap in the package Cremona, which for certain types of maps from projective space is sometimes faster.  Additionally, also compare with the function invertBirationalMap of the package Parametrization.        
+        Only works for irreducible varieties right now.  Also see the function inverseMap in the package Cremona, which for certain types of maps from projective space is sometimes faster.  Additionally, also compare with the function invertBirationalMap of the package Parametrization.
 ///
 
 

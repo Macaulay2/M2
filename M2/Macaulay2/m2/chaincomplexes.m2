@@ -1,5 +1,8 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+union := (x,y) -> keys(set x + set y)
+intersection := (x,y) -> keys(set x * set y)
+
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
 toString Resolution := C -> toString raw C
@@ -40,10 +43,6 @@ ChainComplex _ ZZ = (C,i,M) -> C#i = M
 
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
-spots  = C -> select(keys C, i -> class i === ZZ)
-union        := (x,y) -> keys(set x + set y)
-intersection := (x,y) -> keys(set x * set y)
-
 length ChainComplex := (C) -> (
      s := select(spots complete C, i -> C_i != 0);
      if #s === 0 then 0 else max s - min s
@@ -68,16 +67,24 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
+texMathShort := m -> (
+    if m == 0 then return "0";
+    x := entries m;
+    texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
+    x = if #x>10 then ( t:= texRow first x; {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last x } ) else texRow\x;
+    concatenate(
+	"\\begin{pmatrix}" | newline,
+	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
+	"\\end{pmatrix}"
+	      )
+    )
+
 texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
-     if # s === 0 then "0"
-     else (
-	  a := s#0;
-	  b := s#-1;
-	  horizontalJoin between(" \\leftarrow ", apply(a .. b,i -> texMath C_i))))
-
-tex ChainComplex := C -> "$" | texMath C | "$"
+     if # s === 0 then "0" else
+     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+      )
 
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of GradedModuleMap
@@ -91,8 +98,6 @@ complete ChainComplexMap := f -> (
 
 source ChainComplexMap := f -> f.source
 target ChainComplexMap := f -> f.target
-
-lineOnTop := (s) -> concatenate(width s : "-") || s
 
 sum ChainComplex := Module => C -> (complete C; directSum apply(sort spots C, i -> C_i))
 sum ChainComplexMap := Matrix => f -> (
@@ -125,14 +130,13 @@ net ChainComplexMap := f -> (
      v := between("",
 	  apply(sort intersection(spots f.source, spots f.target / (i -> i - f.degree)),
 	       i -> horizontalJoin (
-		    net (i+f.degree), " : ", net target f_i, " <--",
-		    lineOnTop net f_i,
-		    "-- ", net source f_i, " : ", net i
+		    net (i+f.degree), " : ", net MapExpression { target f_i, source f_i, f_i }, " : ", net i
 		    )
 	       )
 	  );
      if # v === 0 then "0"
      else stack v)
+
 ring ChainComplexMap := (f) -> ring source f
 
 ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
@@ -699,7 +703,6 @@ texMath BettiTally := v -> (
 	  apply(v, row -> (between("&", apply(row,x->if not match("^[0-9]*$",x) then ("\\text{",x,"}") else x)), "\\\\")),
 	  "\\end{matrix}\n",
 	  ))
-tex BettiTally := v -> concatenate("$", texMath v, "$")
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
@@ -1084,26 +1087,31 @@ eagonNorthcott = method(TypicalValue => ChainComplex)
 eagonNorthcott Matrix := f -> (
      -- code is by GREG SMITH, but is experimental, and 
      -- should be replaced by engine code
+     -- Modified by ELIANA DUARTE to fix the grading for matrices 
+     -- with entries of arbitrary degrees.
+     if not isHomogeneous f then error "Matrix not homogeneous.";
      R := ring f;
      m := rank source f;
      n := rank target f;
      B := hashTable apply(toList(1..m-n+2), 
      	  i -> {i, flatten table(subsets(m,n+i-1), compositions(n,i-1), 
 	       	    (p,q) -> {p,q})});
-     d1 := map(R^1, R^{#B#1:-n}, matrix {apply(B#1, r -> determinant f_(r#0))});
-     d := {d1} | apply(toList(2..m-n+2), i -> (
-	       map(R^{#B#(i-1):-n-i+2}, R^{#B#i:-n-i+1}, 
-	       matrix_R table(B#(i-1), B#i, 
-		    (p,q) -> if not isSubset(p#0,q#0) then 0_R
-		    else (
-			 vec := q#1 - p#1;
-			 if any(vec, e -> e < 0 or e > 1) then 0_R 
-			 else (
-			      s := first select(toList(0..#q#0-1), 
-				   l -> not member(q#0#l, p#0));
-      	       		      t := first select(toList(0..n-1), l -> vec#l == 1);
-	       		      (-1)^(s+1)*f_(t,q#0#s)))))));
-     chainComplex d);
+     d1 := map(R^1,, {apply(B#1, r -> determinant f_(r#0))});
+     nextDegrees := toSequence(-flatten degrees source d1);
+     d := {d1};
+     j:=2; while j<m-n+3 do(
+	             d=d|{map(source d_(j-2),, table(B#(j-1), B#j, 
+                          (p,q) -> if not isSubset(p#0,q#0) then 0_R
+                          else (
+                               vec := q#1 - p#1;
+                               if any(vec, e -> e < 0 or e > 1) then 0_R 
+                               else (
+                                    s := first select(toList(0..#q#0-1), 
+                                         l -> not member(q#0#l, p#0));
+                                    t := first select(toList(0..n-1), l -> vec#l == 1);
+                                    (-1)^(s+1)*f_(t,q#0#s)))))};
+		    j=j+1) ;
+      chainComplex d);
 
 ------ koszul
 

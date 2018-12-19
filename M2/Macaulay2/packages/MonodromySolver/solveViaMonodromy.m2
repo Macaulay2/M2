@@ -257,17 +257,19 @@ setRandomSeed 0
 --NumberOfNodes, NumberOfEdges, NumberOfRepeats
 (V,npaths) = monodromySolve(polys,p0,{x0},
 	NumberOfNodes=>2,
-	NumberOfEdges=>4,
+	NumberOfEdges=>5,
 	NumberOfRepeats=>11);
 assert( length V.PartialSols == count );
 
 --Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 --must also provide a Potential function.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-	SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
-	assert( length V.PartialSols == count );
+		NumberOfEdges=>5,
+		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
+assert( length V.PartialSols == count );
 
 (V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfEdges=>5,	
 	SelectEdgeAndDirection=>selectBestEdgeAndDirection,
 	Potential=>potentialLowerBound);
 assert( length V.PartialSols == count );
@@ -281,6 +283,7 @@ assert( length V.PartialSols == count );
 
 setRandomSeed 0
 (V,npaths) = monodromySolve(polys,p0,{x0},
+	NumberOfEdges=>5,
 	GraphInitFunction=>completeGraphInit,
 	BatchSize=>1);
 assert( length V.PartialSols == count );
@@ -295,8 +298,9 @@ assert( length V.PartialSols == count );
 --and Verbose (defaults to false). We test that both the defaults work
 --and that non-default values work.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-	"new tracking routine"=>false,
-	Verbose=>false);
+		NumberOfEdges=>5,
+		"new tracking routine"=>false,
+		Verbose=>false);
 assert( length V.PartialSols == count );
 
 --The next three tests use strict equality, as they ought to always succeed.
@@ -332,8 +336,8 @@ assert( length V.PartialSols == count );
 
 -- test for sparseSolver which sometimes fails: 3 iterations is to reduce failure probability, but might slow tests down
 S = QQ[x,y]
-P = polySystem {x+y, 2*x+1-2*y^2}
-sols = sparseMonodromySolve P
+P = polySystem {x+y, x+1-y^2}
+sols = sparseMonodromySolve(P,NumberOfEdges=>20, NumberOfRepeats => 30)
 assert (#sols == 2) 
 assert all(sols,s->norm evaluate(P,s) < 0.0001)
 ///

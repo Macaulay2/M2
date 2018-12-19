@@ -345,18 +345,6 @@ document {
      }
 
 document {
-     Key => isTable,
-     Headline => "whether something is a rectangular list of lists",
-     PARA{},
-     "Warning: it is intrinsically impossible to represent a ", TT "0", " 
-     by ", TT "k", " matrix as a list of lists.",
-     EXAMPLE {
-	  "isTable {{1,2,3},{4,5}}",
-	  "isTable {{1,2,3},{4,5,6}}",
-	  }
-     }
-
-document {
      Key => Monoid,
      Headline => "the class of all monoids",
      "A monoid is a set with a multiplicative operation on
@@ -387,56 +375,12 @@ document {
      }
 
 undocumented { 
-     (tex,BettiTally),(texMath,BettiTally),
+     (texMath,BettiTally),
      (toExternalString,RingElement), (toExternalString,RingMap),
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),
      ((symbol SPACE, symbol =), Function, Thing),
      ((symbol _*, symbol =), RingFamily) 
-     }
-
-document {
-     Key => {(isSorted,VisibleList), isSorted},
-     Headline => "whether a list is sorted",
-     Usage => "isSorted x",
-     Inputs => { "x" },
-     Outputs => { Boolean => {"whether the elements of the list ", TT "x", " are in increasing order"}},
-     SourceCode => (isSorted,VisibleList),
-     EXAMPLE lines ///
-     isSorted {1,2,2,3}
-     isSorted {1,2,3,2}
-     ///
-     }     
-
-document {
-     Key => {(switch,ZZ,ZZ,VisibleList), switch},
-     Headline => "copy a list, switching two elements",
-     Usage => "switch(i,j,x)",
-     Inputs => {"i","j","x"},
-     Outputs => {{"a copy of the list ", TT "x", " in which the elements at positions ", TT "i", " and ", TT "j", " have
-	       been interchanged.  A negative value of ", TT "i", " or ", TT "j", " is taken relative to the end of the list."
-	       }},
-     EXAMPLE lines ///
-     switch(3,9,0..10)
-     switch(0,-1,0..10)
-     ///
-     }
-
-document {
-     Key => {(insert,ZZ,Thing,VisibleList), insert},
-     Headline => "copy a list, inserting an element",
-     Usage => "insert(i,t,x)",
-     Inputs => {"i","t","x"},
-     Outputs => {{"a copy of the list ", TT "x", " in which ", TT "t", " has been inserted
-	       into position ", TT "i", " of the result.  A negative value of ", TT "i", " 
-	       is taken relative to the end of the list."
-	       }},
-     EXAMPLE lines ///
-     insert(4,t,0..10)
-     insert(0,t,0..10)
-     insert(11,t,0..10)
-     insert(-1,t,0..10)
-     ///
      }
 
 document {

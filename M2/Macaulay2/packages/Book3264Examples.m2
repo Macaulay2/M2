@@ -593,13 +593,13 @@ doc ///
       O1 = dual(S)
       chern O1
     Text
-      Now, Schubert2 also comes with a built-in function @TO projectiveSpace@ for making projective
-      spaces.  Using {/tt projectiveSpace} to build $\mathbb{P}^n$ is nice, because the resulting
+      Now, Schubert2 also comes with a built-in function @TO abstractProjectiveSpace@ for making projective
+      spaces.  Using {/tt abstractProjectiveSpace} to build $\mathbb{P}^n$ is nice, because the resulting
       Chow ring is presented as a truncated polynomial ring in one variable, rather than as a ring
       with $n+1$ generators.  {\bf But, be careful}: this built-in actually produces the projective
       space of 1-{\em quotients}.  For example:
     Example
-      P3' = projectiveSpace 3
+      P3' = abstractProjectiveSpace 3
       (S',Q') = P3'.Bundles
       chern S'
       chern Q' -- Q' is O(1) on P3'

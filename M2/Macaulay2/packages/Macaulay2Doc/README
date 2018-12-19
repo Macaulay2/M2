@@ -1,6 +1,6 @@
 some helper code:
 
-x = {"SpectralSequences","SectionRing","K3Carpets","ChainComplexOperations","AlphaTest","PhylogeneticTrees","MonodromySolver","ReactionNetworks","PackageCitations","NumericSolutions","GradedLieAlgebras","InverseSystems","Pullback","EngineTests","SVDComplexes","RandomComplexes"}
+x = {"PruneComplex", "CohomCalg", "Topcom", "ReflexivePolytopesDB", "AbstractToricVarieties", "TestIdeals", "AlgebraicSplines", "TriangularSets", "Chordal", "Tropical", "SymbolicPowers", "Complexes", "GroebnerWalk", "RandomMonomialIdeals", "Matroids", "NumericalImplicitization"}
 y = for i in x list needsPackage i
 getName = x -> (new OptionTable from x).Name
 commaAnd = x -> concatenate (

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -393276621 *}
+-- -*- M2-comint -*- hash: -393276621
 
 i1 : A = QQ{x,y}
 
@@ -8,7 +8,7 @@ o1 : NCPolynomialRing
 
 i2 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/0.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/3.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/3.ter ... Complete!
 
 o2 = B
 
@@ -16,9 +16,9 @@ o2 : NCQuotientRing
 
 i3 : C = qTensorProduct(A,B,-1_QQ)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/5.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/8.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/8.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/10.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/13.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/13.ter ... Complete!
 
 o3 = C
 
@@ -32,9 +32,9 @@ o4 : NCIdeal
 
 i5 : D = A ** B
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/15.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/18.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/15.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/18.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/20.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30012-0/23.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/20.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12303-0/23.ter ... Complete!
 
 o5 = D
 

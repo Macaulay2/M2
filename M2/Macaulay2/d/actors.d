@@ -546,7 +546,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    then oneE
 		    else minusoneE)
 	       else if isZero(x.v) then buildErrorPacket("division by zero")
-	       else toExpr(newRationalCanonical(toInteger(1),x.v^-y.v)))
+	       else toExpr(newQQCanonical(toInteger(1),x.v^-y.v)))
 	  is y:QQcell do (
 	       d := denominator(y.v);
 	       if d === 1 then toExpr(x.v^numerator(y.v))

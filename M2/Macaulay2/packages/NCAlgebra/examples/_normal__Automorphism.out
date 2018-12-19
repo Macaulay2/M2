@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1883275319 *}
+-- -*- M2-comint -*- hash: -1883275319
 
 i1 : A = QQ{a,b,c}
 
@@ -14,7 +14,7 @@ o2 : NCIdeal
 
 i3 : B = A/I
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30277-0/0.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30277-0/3.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/3.ter ... Complete!
 
 o3 = B
 
@@ -32,7 +32,7 @@ o5 = true
 
 i6 : C = oreExtension(B,sigma,w)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30277-0/5.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30277-0/8.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/8.ter ... Complete!
 
 o6 = C
 

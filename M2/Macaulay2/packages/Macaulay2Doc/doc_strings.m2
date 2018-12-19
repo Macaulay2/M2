@@ -2,6 +2,7 @@
 
 document {
      Key => "strings and nets",
+     Headline => "an overview of strings and nets in Macaulay2",
      "In this section we discuss strings and nets.  Strings are sequences of
      characters intended to be printed, and are encountered in almost every programming language.  Nets
      are two-dimensional arrays of characters intended to be printed, and constitute a natural generalization
@@ -197,22 +198,6 @@ document {
      }
 
 document {
-     Key => {horizontalJoin,(horizontalJoin, BasicList)},
-     Headline => "join nets or strings horizontally",
-     TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
-     them horizontally.  The baselines in each of the nets are aligned
-     appropriately.",
-     PARA{},
-     "Nested sequences among the arguments are first spliced together.",
-     PARA{},
-     "If there are no arguments, then the net returned has zero height and
-     zero depth.  This might be unexpected.",
-     PARA{},
-     "Null arguments are allowed and ignored.",
-     SeeAlso => {"Net", (symbol |, String, String)}
-     }
-
-document {
      Key => {stack,(stack, BasicList)},
      Headline => "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
@@ -289,50 +274,6 @@ document {
      Usage => "n = length s",
      Inputs => { "s" },
      Outputs => { "n" => { "the length of the string ", TT "s" } }
-     }
-
-document {
-     Key => {separate,(separate, String),(separate, String, String)},
-     Headline => "split a string into pieces",
-
-     SYNOPSIS (
-	  Usage => "separate s",
-	  Inputs => {
-	       "s" => String
-	       },
-	  Outputs => {
-	       {"an array of strings obtained from the string ", TT "s", " by breaking it into lines"}
-	       }
-	  ),
-     SYNOPSIS (
-	  Usage => "separate(nl,s)",
-	  Inputs => {
-	       "s" => String,
-	       "nl" => String => {", of length 1 or 2"}
-	       },
-	  Outputs => {
-	       {"an array of strings obtained from the string ", TT "s", " by breaking it at the characters specified by the string ", TT "nl" }
-	       }
-	  ),
-     PARA{
-	  "The value is a list of the pieces, the number of which is one
-	  more than the number of occurrences of d in s, so that the pieces
-	  may be reassembled with ", TO "demark", " to get the original string.",
-	  },
-     PARA{
-	  "An exception to what was just said is that the form ", TT "separate s", " is designed to break lines correctly
-	  when the file follows either the Unix or MS-DOS convention.  In
-	  other words, it will break a line at \"\\r\\n\" or \"\\n\", and thus reassembly
-	  with ", TO "demark", " may not give the original string.",
-	  },
-     EXAMPLE {
-	  ///separate( ".", "a.b.c.d" )///,
-	  ///peek oo///,
-	  ///demark("=",ooo)///,
-	  ///separate( "a\nb\nc\n" )///,
-	  ///peek oo///
-	  },
-     SeeAlso => {"lines", "demark"}
      }
 
 document {

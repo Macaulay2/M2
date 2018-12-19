@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 944428704 *}
+-- -*- M2-comint -*- hash: 944428704
 
 i1 : A = QQ{x,y,z,w}
 

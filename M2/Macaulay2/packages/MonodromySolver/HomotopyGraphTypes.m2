@@ -70,7 +70,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
 	    XT := getVarGates Rt;
 	    X := gateMatrix{drop(XT,-1)};
 	    T := last XT; 
-	    print "-- setting up gateHomotopy for an edge...";
+	    -- "-- setting up gateHomotopy for an edge...";
 	    E#"homotopy12" = gateHomotopy(gateMatrix polySystem F12, X, T, Strategy=>compress);
 	    E#"homotopy21" = gateHomotopy(gateMatrix polySystem F21, X, T, Strategy=>compress);
 	    )

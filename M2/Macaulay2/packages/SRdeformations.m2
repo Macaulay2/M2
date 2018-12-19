@@ -4,7 +4,7 @@ newPackage(
     	Version => "0.51", 
     	Date => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline => "Deformations of Stanley-Reisner rings and related computations",

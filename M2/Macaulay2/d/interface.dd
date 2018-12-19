@@ -21,7 +21,7 @@ header "
        throw (std::runtime_error(\"test\")); 
        }
   int test_catch() {
-       try { test_catch0(); } catch (std::runtime_error x) { return 1; }
+       try { test_catch0(); } catch (const std::runtime_error& x) { return 1; }
        return 0;
        }
   
@@ -66,7 +66,7 @@ setupfun("rawRandomCC",rawRandomCC);
 
 rawVarMonomial(v:int,e:int):RawMonomialOrNull := Ccode(returns,"
      try { return Monomial::make(v,e); }
-     catch (exc::engine_error m) { ERROR(m.what()); return NULL; }");
+     catch (const exc::engine_error& m) { ERROR(m.what()); return NULL; }");
 export rawVarMonomial(a:Expr):Expr := (
      when a
      is v:ZZcell do 
@@ -103,7 +103,7 @@ setupfun("rawSparseListFormMonomial",rawSparseListFormMonomial);
 
 -- rawMakeMonomial(m:array(int)):RawMonomialOrNull := Ccode(returns,"
 --      try { return Monomial::make(m); }
---      catch (exc::engine_error e) { ERROR(e.what()); return NULL; }
+--      catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; }
 --      "
 --      -- /* Takes an array of the form [n, v1, e1, v2, e2, ..., vn, en]
 --      --    and returns the monomial v1^e1*v2^e2*...vn^en.
@@ -121,7 +121,7 @@ export rawMakeMonomial(e:Expr):Expr := (
 	       ret := RawMonomialOrNull(null());
 	       Ccode(void, "
      	       	    try { ",ret," = Monomial::make(",getReverseSequenceOfPairsOfSmallIntegers(l.v),"); }
-     		    catch (exc::engine_error e) { ERROR(e.what()); }");
+     		    catch (const exc::engine_error& e) { ERROR(e.what()); }");
 	       toExpr(ret)))
      else WrongArg("a list of pairs of integers"));
 setupfun("rawMakeMonomial",rawMakeMonomial);
@@ -142,7 +142,7 @@ installMethod(Expr(EqualEqualS), rawMonomialClass,ZZClass, Expr(CompiledFunction
 
 rawCompareMonomial(M:RawMonoid,a:RawMonomial,b:RawMonomial):int := Ccode(returns,"
      try { return a->compare(M,*b); }
-     catch (exc::engine_error e) { ERROR(e.what()); return -2; }
+     catch (const exc::engine_error& e) { ERROR(e.what()); return -2; }
      ");
 export rawCompareMonomial(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
@@ -162,7 +162,7 @@ setupfun("rawCompareMonomial",rawCompareMonomial);
 
 rawMonomialDivides(M:RawMonoid,a:RawMonomial,b:RawMonomial):int := Ccode(returns,"
      try { return a->divides(M,*b); }
-     catch (exc::engine_error e) { ERROR(e.what()); return -2; } "
+     catch (const exc::engine_error& e) { ERROR(e.what()); return -2; } "
      -- returns 1 if in the monoid M, there is a monomial c such that a*c === b, 0 if not, -2 if exception occurred
      );
 export rawMonomialDivides(e:Expr):Expr := (
@@ -180,7 +180,7 @@ setupfun("rawMonomialDivides",rawMonomialDivides);
 
 rawMonomialDivide(M:RawMonoid,a:RawMonomial,b:RawMonomial):RawMonomialOrNull := Ccode(returns,"
      try { if (a->divides(M,*b)) return (*a)/(*b); else return NULL; }
-     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
+     catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; } "
      -- returns a/b if b divides a in the monoid M, and null otherwise
      );
 export rawMonomialDivide(e:Expr):Expr := (
@@ -275,7 +275,7 @@ setupfun("rawLCM",rawLCM);
 
 rawSaturateMonomial(a:RawMonomial,b:RawMonomial):RawMonomialOrNull := Ccode(returns, "
      try { return a->erase(*b); }
-     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
+     catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; } "
      -- return the monomial whose i th exponent is ai if bi is 0, 0 if bi != 0
      );
 export rawSaturate(e:Expr):Expr := (
@@ -300,7 +300,7 @@ rawSyzygy(a:RawMonomial,b:RawMonomial):RawMonomialPairOrNull := Ccode(returns,"
 	   result->a = aa;
 	   result->b = bb;
 	   return result; }
-     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } ");
+     catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; } ");
 export rawSyzygy(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
@@ -313,7 +313,7 @@ setupfun("rawSyzygy",rawSyzygy);
 
 rawColonMonomial(a:RawMonomial,b:RawMonomial):RawMonomialOrNull := Ccode(returns, "
      try { return (*a) / (*b); }
-     catch (exc::engine_error e) { ERROR(e.what()); return NULL; }
+     catch (const exc::engine_error& e) { ERROR(e.what()); return NULL; }
      "
      -- returns the monomial whose i th exponent is max(ai-bi,0)
      );

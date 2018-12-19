@@ -1,5 +1,21 @@
 needsPackage "MonodromySolver"
-needsPackage "ExampleIdeals"
+
+-- copied from ExampleIdeals.m2
+katsura = (n,kk) -> (
+     -- This is written to match the Singular version, which seems to differ
+     -- from the POSSO version
+     n = n-1;
+     R := kk[vars(0..n)];
+     L := gens R;
+     u := (i) -> (
+	  if i < 0 then i = -i;
+	  if i <= n then L_i else 0_R);
+     f1 := -1 + sum for i from -n to n list u i;
+     I := ideal prepend(f1,
+	  apply(0..n-1, i -> (
+	       - u i + sum(-n..n, j -> (u j) * (u (i-j)))
+	       )))
+     )
 
 parametrizedKatsura = n -> (
 	S := gens katsura(n,CC);
@@ -15,7 +31,7 @@ parametrizedKatsura = n -> (
 );
 
 
-numSeeds = 500;
+numSeeds = 20;
 
 for n from 5 to 10 do (
 	setRandomSeed 0;
@@ -42,6 +58,7 @@ for n from 5 to 10 do (
   for triple in testTriples do (
 		(init,nnodes,nedges) := triple;
   	pairs := apply(numSeeds, seed -> (
+			print("n"=>n, "seed"=>seed);
 			setRandomSeed seed;
 			(p0,x0) := createSeedPair polySystem polys;
 			(node,numPaths) := monodromySolve(polys,p0,{x0},

@@ -1,8 +1,8 @@
--- -*- M2-comint -*- {* hash: -1794147570 *}
+-- -*- M2-comint -*- hash: -1794147570
 
 i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/0.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/3.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/3.ter ... Complete!
 
 o1 = B
 
@@ -30,7 +30,7 @@ o4 : NCIdeal
 
 i5 : B' = A/J -- Factor of sklyanin
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/5.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/8.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/8.ter ... Complete!
 
 o5 = B'
 
@@ -50,17 +50,17 @@ o7 : NCRingMap
 
 i8 : M = BprimeToB rightKernelBergman rightKernelBergman k  -- second syzygy of k over B
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/10.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/13.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/13.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/14.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/17.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/14.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/17.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/18.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/21.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/18.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/21.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/22.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/25.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/22.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/25.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/26.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/29.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/26.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/29.ter ... Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/30.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/33.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/30.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/33.ter ... Complete!
 
      |               2           |
 o8 = | -z    yz    -y    -yx-2xy |
@@ -95,7 +95,7 @@ i10 : assignDegrees(gId,{2,2,2,3},{5,5,5,6});
 
 i11 : M' = gId // M
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/34.init -on-error exit --silent > /var/folders/hb/yy6pwl7d1qqf1w7mwkyxb4gm0000gn/T/M2-30321-0/37.ter ... Complete!
+--running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/34.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/37.ter ... Complete!
 
       |              2           3 |
 o11 = | -2yx   0  -2y +2xz  yxz+x  |

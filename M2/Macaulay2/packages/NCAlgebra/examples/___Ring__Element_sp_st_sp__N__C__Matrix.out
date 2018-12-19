@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 1898434637 *}
+-- -*- M2-comint -*- hash: 1898434637
 
 i1 : R = frac(QQ[a])
 

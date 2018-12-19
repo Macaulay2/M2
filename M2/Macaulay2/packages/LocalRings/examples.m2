@@ -89,7 +89,7 @@ FM = F ** RM
  C = {mutableMatrix g, mutableMatrix h};
  pruneDiff(C, 1);
  toChainComplex C
-GM = matrix C#0
+GM = map(ambient image g, , matrix C#0)
 assert(image GM == kernel FM)
 
 -- Intersection Theory: Geometric Multiplicity
@@ -267,7 +267,7 @@ E' = pruneComplex(D', UnitTest => isUnit)
 restart
 needsPackage "LocalRings"
 R = ZZ/32003[x,y,z,w]
--- Rational quartic, see Eisenbyd Ex. 12.4
+-- Rational quartic, see Eisenbud Ex. 12.4
 I = monomialCurveIdeal(R, {1, 3, 4})
 RM = localRing(R, ideal gens R)
 
@@ -410,10 +410,10 @@ h = syz g
 i = syz h
 j = syz i
 C = {mutableMatrix g, mutableMatrix h, mutableMatrix i, mutableMatrix j}
-(C1, P1) = pruneDiff(C, 0, PruningMaps => true)
-(C2, P2) = pruneDiff(C, 1, PruningMaps => P1)
-(C3, P3) = pruneDiff(C, 2, PruningMaps => P2)
-(C4, P4) = pruneDiff(C, 3, PruningMaps => P3)
+(C1, P1) = pruneDiff(C, 0, PruningMap => true)
+(C2, P2) = pruneDiff(C, 1, PruningMap => P1)
+(C3, P3) = pruneDiff(C, 2, PruningMap => P2)
+(C4, P4) = pruneDiff(C, 3, PruningMap => P3)
 C' = chainComplex for M in C4 list  map(S^(numrows M), S^(numcols M), matrix M)
 C'.dd
 
@@ -426,10 +426,10 @@ hp = syz gp
 ip = syz hp
 jp = syz ip
 CP = {mutableMatrix gp, mutableMatrix hp, mutableMatrix ip, mutableMatrix jp}
-(C1, P1) = pruneDiff(CP, 0, PruningMaps => true)
-(C2, P2) = pruneDiff(CP, 1, PruningMaps => P1)
-(C3, P3) = pruneDiff(CP, 2, PruningMaps => P2)
-(C4, P4) = pruneDiff(CP, 3, PruningMaps => P3)
+(C1, P1) = pruneDiff(CP, 0, PruningMap => true)
+(C2, P2) = pruneDiff(CP, 1, PruningMap => P1)
+(C3, P3) = pruneDiff(CP, 2, PruningMap => P2)
+(C4, P4) = pruneDiff(CP, 3, PruningMap => P3)
 CP' = chainComplex for M in C4 list  map(SP^(numrows M), SP^(numcols M), matrix M)
 CP'.dd
 

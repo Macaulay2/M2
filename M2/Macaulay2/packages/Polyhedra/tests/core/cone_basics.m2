@@ -33,7 +33,7 @@ assert(not isSmooth C)
 -- Test 6
 -- Checking intersections that give cones
 TEST ///
-C = intersection matrix {{1,2},{2,1}};
+C = coneFromHData matrix {{1,2},{2,1}};
 R1 = rays C;
 R1 = set apply(numColumns R1, i -> R1_{i});
 R2 = set {matrix{{2},{-1}},matrix{{-1},{2}}};
@@ -52,8 +52,8 @@ assert(numColumns rays C == 2)
 -- Test 12
 -- Checking dualCone
 TEST ///
-C1 = intersection matrix {{0,1,2,3},{1,2,3,0},{2,3,0,1}};
-C2 = intersection matrix {{7,-5,1,1},{0,1,4,-3},{0,9,-6,1},{0,-3,2,9},{-7,5,-1,-1}};
+C1 = coneFromHData matrix {{0,1,2,3},{1,2,3,0},{2,3,0,1}};
+C2 = coneFromHData matrix {{7,-5,1,1},{0,1,4,-3},{0,9,-6,1},{0,-3,2,9},{-7,5,-1,-1}};
 C3 = dualCone C1;
 assert(C3 == C2)
 ///
@@ -116,3 +116,8 @@ L = {matrix {{1},{0},{0}},matrix {{1},{1},{0}},matrix {{1},{2},{0}},matrix {{1},
 assert(set H === set L)
 ///
 
+-- A simplicial polytope
+TEST ///
+P = convexHull transpose matrix {{0,0},{2,0},{2,3},{-1,4}}
+assert(isSimplicial P)
+///

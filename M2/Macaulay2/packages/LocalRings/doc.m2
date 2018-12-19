@@ -19,7 +19,9 @@ Description
     If you need specific methods that do not work, please inform Mahrud Sayrafi.
   Example
     R = ZZ/32003[a..d];
-    "rational quartic curve in P^3:";
+  Text
+    Rational quartic curve in P^3:
+  Example
     I = monomialCurveIdeal(R,{1,3,4})
     C = res I
     M = ideal"a,b,c,d"; "maximal ideal at the origin";
@@ -27,12 +29,15 @@ Description
     RM = localRing(R, M);
     D = C ** RM;
     E = pruneComplex D
-    "That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin";
-    "Therefore the curve is not Cohen-Macaulay";
+  Text
+    That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin
+    Therefore the curve is not Cohen-Macaulay
+  Example
     RP = localRing(R, P);
     D' = C ** RP;
     E' = pruneComplex D'
-    "However, the curve is Cohen-Macaulay at the prime ideal P (and in fact any other prime ideal)";
+  Text
+    However, the curve is Cohen-Macaulay at the prime ideal P (and in fact any other prime ideal)
 Caveat
   Currently limited to localization at prime ideals rather than any multiplicatively closed set.
   Quotients of local rings are not implemented yet. Moreover, certain functions (such as symbol%,
@@ -70,9 +75,10 @@ Description
     For matrices (hence most other objects as well), clearing denominators is performed columnwise.
 
     In conjunction with pruneComplex, liftUp is used to implement many of the elementary operations
-    over local rings such as syz (see the example below).
+    over local rings such as syz.
+
+    Here is an example of computing the syzygy over a local ring using liftUp and pruneComplex:
   Example
-    "Computing the syzygy over a local ring using liftUp and pruneComplex";
     R = ZZ/32003[vars(0..5)];
     I = ideal"abc-def,ab2-cd2-c,-b3+acd";
     C = res I;
@@ -80,19 +86,27 @@ Description
     RM = localRing(R, M);
     F = C.dd_2;
     FM = F ** RM
-    "This is the process for finding the syzygy of FM:";
+  Text
+    This is the process for finding the syzygy of FM:
+  Example
     f = liftUp FM;
     g = syz f;
     h = syz g;
     C = {g ** RM, h ** RM};
-    "Now we prune the map h, which is the first map from the right:";
+  Text
+    Now we prune the map h, which is the first map from the right:
+  Example
     C = first pruneComplex(C, 1, Direction => "right");
     g' = C#0;
-    "Scale each row with the common denominator of the corresponding column in FM:";
+  Text
+    Scale each row with the common denominator of the corresponding column in FM:
+  Example
     N = transpose entries FM;
     for i from 0 to numcols FM - 1 do
       rowMult(g', i, N_i/denominator//lcm);
-    "The syzygy of FM is:";
+  Text
+    The syzygy of FM is:
+  Example
     GM = map(source FM, , matrix g')
     kernel FM == image GM
 Caveat
@@ -143,8 +157,9 @@ Description
      On the other hand, if computing at range (n, n+m) is slow, try breaking up the range.
 
     To learn more read Eisenbud, Commutative Algebra, Chapter 12.
+
+    Here is an example from Computations in Algebraic Geometry with Macaulay2, pp. 61:
   Example
-    "Example from Computations in Algebraic Geometry with Macaulay2, pp. 61:";
     R = QQ[x,y,z];
     RP = localRing(R, ideal gens R);
     I = ideal"x5+y3+z3,x3+y5+z3,x3+y3+z5"
@@ -153,7 +168,9 @@ Description
     elapsedTime hilbertSamuelFunction(M, 0, 6) -- 0.55 seconds
     oo//sum
 
-    "An example of using a parameter ideal:";
+  Text
+    An example of using a parameter ideal:
+  Example
     R = ZZ/32003[x,y];
     RP = localRing(R, ideal gens R);
     N = RP^1

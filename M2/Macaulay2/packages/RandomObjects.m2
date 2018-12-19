@@ -31,7 +31,9 @@ export {
 		 -- a link to the docu-site of our "Certify"
      "RandomObject",
      "Attempts",
-     "Certification",
+     -- We can't export Certification, because it conflicts with an optional argument to newPackage, so prevents some
+     -- other packages from being loaded after this one.
+     -- "Certification",
      "Construction",
      "randomObjectTemplate"}
 
@@ -115,6 +117,7 @@ random RandomObject := randomopts -> Object -> args -> (
 -- for a package that implements the randomObject
 --
 
+needsPackage "SimpleDoc"				    -- to get docTemplate defined
 
 randomObjectTemplate=method()
 randomObjectTemplate(String):=(Object)->(
@@ -304,16 +307,17 @@ doc ///
    :Thing
 ///
 
-doc ///
-  Key
-   Certification
-  Headline
-   key of randomObject that contains the Certification function
-  Usage
-   randomObject.Certification(args)
-  Outputs
-   :Boolean
-///
+-- doc ///
+--   Key
+--    Certification
+--   Headline
+--    key of randomObject that contains the Certification function
+--   Usage
+--    randomObject.Certification(args)
+--   Outputs
+--    :Boolean
+-- ///
+
 end
 
 restart;

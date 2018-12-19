@@ -6,6 +6,7 @@
 #include "res-memblock.hpp"
 #include "monhashtable.hpp"
 #include "res-poly-ring.hpp"
+#include "../monomial-sets.hpp"
 #include <assert.h>
 
 class SchreyerFrame;
@@ -52,7 +53,7 @@ class F4Res
                    int degree);  // remember to clearMatrix before calling this.
   void clearMatrix();
   bool findDivisor(res_const_packed_monomial m, res_packed_monomial result);
-  ComponentIndex processCurrentMonomial();  // process mNextMonomial
+  ComponentIndex processCurrentMonomial(res_packed_monomial thisMonom);  // subroutine of processMonomialProduct
   ComponentIndex processMonomialProduct(res_const_packed_monomial m,
                                         res_const_packed_monomial n,
                                         int& result_sign_if_skew);
@@ -80,7 +81,7 @@ class F4Res
   int mThisLevel;
   int mThisDegree;
   long mNextReducerToProcess;
-  res_packed_monomial mNextMonom;
+  //  res_packed_monomial mNextMonom;
 
   std::unique_ptr<const ResMonomialsWithComponent>
       mSchreyerRes;  // Support structure for mHashTable
@@ -98,9 +99,10 @@ class F4Res
   std::vector<long> mSPairComponents;  // index into mFrame.level(mThisLevel)
   std::vector<res_packed_monomial>
       mColumns;  // all the monomials at level lev-2 we need to consider
-  MemoryBlock<res_monomial_word> mMonomSpace;  // for monomials stored in this
+  //  MemoryBlock<res_monomial_word> mMonomSpace;  // for monomials stored in this
                                                // (lev,degree) in mColumns and
                                                // the lead terms in Row.
+  MonomialMemorySpace mMonomSpace2;
 };
 
 #endif

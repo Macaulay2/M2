@@ -123,7 +123,7 @@ class ARingGFFlint : public RingInterface
     // printf("variable is %lu\n", result.value);
   }
 
-  void set_from_mpz(ElementType& result, mpz_ptr a) const
+  void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     int b = static_cast<int>(mpz_fdiv_ui(a, characteristic()));
     set_from_long(result, b);

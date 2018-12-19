@@ -2879,5 +2879,5 @@ THE END
 restart
 loadPackage "Dmodules"
 uninstallPackage "Dmodules"
-installPackage("Dmodules", SeparateExec=>true, AbsoluteLinks=>false, RerunExamples=>true)
+installPackage("Dmodules", SeparateExec=>true, RerunExamples=>true)
 check Dmodules

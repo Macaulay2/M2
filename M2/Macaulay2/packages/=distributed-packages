@@ -109,7 +109,7 @@ HighestWeights
 NumericalHilbert
 MinimalPrimes
 Bertini
-CodepthThree
+TorAlgebra
 Permanents
 BinomialEdgeIdeals
 TateOnProducts
@@ -158,6 +158,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
+Seminormalization
 AlgebraicSplines
 TriangularSets
 Chordal
@@ -166,3 +167,19 @@ SymbolicPowers
 Complexes
 GroebnerWalk
 RandomMonomialIdeals
+Matroids
+NumericalImplicitization
+NonminimalComplexes
+CoincidentRootLoci
+RelativeCanonicalResolution
+RandomCurvesOverVerySmallFiniteFields
+StronglyStableIdeals
+SLnEquivariantMatrices
+CorrespondenceScrolls
+NCAlgebra
+SpaceCurves
+ExteriorIdeals
+ToricInvariants
+SegreClasses
+SemidefiniteProgramming
+SOS

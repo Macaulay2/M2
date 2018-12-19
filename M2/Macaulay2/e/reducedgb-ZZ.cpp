@@ -118,8 +118,8 @@ enum ReducedGB_ZZ::divisor_type ReducedGB_ZZ::find_divisor(exponents exp,
       return DIVISOR_RING;
     }
   // r >= 0, w >= 0
-  mpz_ptr rc = originalR->quotient_gbvector(r)->coeff.get_mpz();
-  mpz_ptr wc = polys[w].f->coeff.get_mpz();
+  mpz_srcptr rc = originalR->quotient_gbvector(r)->coeff.get_mpz();
+  mpz_srcptr wc = polys[w].f->coeff.get_mpz();
   if (mpz_cmpabs(rc, wc) > 0)
     {
       result_loc = w;

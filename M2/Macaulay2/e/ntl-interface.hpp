@@ -16,11 +16,11 @@
 
 class MutableMatrix;
 extern NTL::mat_ZZ *makeNTLMatrixZZ(int nrows, int ncols);
-void mat_ZZ_set_entry(NTL::mat_ZZ *A, long i, long j, mpz_t a);
+void mat_ZZ_set_entry(NTL::mat_ZZ *A, long i, long j, mpz_srcptr a);
 void mat_ZZ_get_entry(const NTL::mat_ZZ *A, long i, long j, mpz_t result);
 
 extern void ntl_ZZ_to_mpz(mpz_t result, const NTL::ZZ &a);
-extern NTL::ZZ ntl_ZZ_from_mpz(mpz_t a);
+extern NTL::ZZ ntl_ZZ_from_mpz(mpz_srcptr a);
 
 void dntl_matZZ(const NTL::mat_ZZ *A);
 void dntl_ZZ(const NTL::ZZ *f);

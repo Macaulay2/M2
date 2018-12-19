@@ -10,7 +10,7 @@ newPackage(
 	Date => "Aug 2012 (updated by Josephine Yu)",
 	Authors => {
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
-		{Name => "Andrew Hoefel", Email => "andrew.hoefel@mathstat.dal.ca", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"}
+		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"}
 		},
 	Headline => "Interface to Anders Jensen's Gfan software",
 	Configuration => {
@@ -281,6 +281,7 @@ gfanParseList String := (S) -> (
 	S = replace("\n", "", S);
 	stack := {};
 	r := regex(///[\{,\}]///, S);
+	if r === null then error "expected gfan to return a list";
 	popstate := false;
 	while #r === 1 do (
 		startpos := first first r;
@@ -1015,13 +1016,13 @@ runGfanCommand = (cmd, opts, data) -> (
 	returnvalue := run ex;
      	if(not returnvalue == 0) then
 	(
---	     << "GFAN returned an error message.\n";
---	     << "COMMAND:" << ex << endl;
---	     << "INPUT:\n";
---	     << get(tmpFile);
---	     << "ERROR:\n";
---	     << get(tmpFile |".err");
-
+	     << "GFAN returned an error message.\n";
+	     << "COMMAND:" << ex << endl;
+	     << "INPUT:\n";
+	     << get(tmpFile);
+	     << "ERROR:\n";
+	     << get(tmpFile |".err");
+     	     error "terminating";
 	     );
 		out := get(tmpFile | ".out");
 	gfanRemoveTemporaryFile tmpFile;
@@ -1317,7 +1318,7 @@ gfanDoesIdealContain (List, List) := opts -> (I,J) -> (
 
 gfanFanCommonRefinement = method( Options => {
 	"i1" => null, -- these are set inside the method
-	"i2" => null, -- these are set inside the method
+	"i2" => null  -- these are set inside the method
 	}
 )
 
@@ -1362,7 +1363,7 @@ gfanFanCommonRefinement (Fan, Fan) := opts -> (F,G) -> (
 
 gfanStableIntersection = method( Options=> {
 	"i1" => null, -- these are set inside the method
-	"i2" => null, -- these are set inside the method
+	"i2" => null  -- these are set inside the method
 	}
 )
     
@@ -1427,7 +1428,7 @@ gfanFanLink (Fan, List) := opts -> (F,V) -> (
 
 gfanFanProduct = method( Options => {
 	"i1" => null, -- these are set inside the method
-	"i2" => null, -- these are set inside the method
+	"i2" => null  -- these are set inside the method
 	}
 )
 
@@ -1961,7 +1962,7 @@ gfanPolynomialSetUnion (List, MarkedPolynomialList) := opts -> (L,M) -> (
 
 gfanRender = method( Options => {
 	"L" => false,
-	"shiftVariables" => 0,
+	"shiftVariables" => 0
 	}
 )
 
@@ -2317,8 +2318,8 @@ gfanTropicalLifting := opts -> () -> (
 
 gfanTropicalLinearSpace = method( Options => {
 	"trees" => false,
-	"n" => null;
-	"d" => null;
+	"n" => null,
+	"d" => null
 	}
 )
 

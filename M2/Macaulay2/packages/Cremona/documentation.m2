@@ -178,7 +178,7 @@ Inputs => {
 "phi" => RationalMap => {"a birational map"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", TT "Parametrization", ". Note that if the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
+PARA{"If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", HREF{"http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html","invertBirationalMap"}, " in the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.11/share/doc/Macaulay2/Parametrization/html","Parametrization"}, ". Note that in this case, the analogous method ",HREF{"http://www2.macaulay2.com/Macaulay2/share/doc/Macaulay2/RationalMaps/html/_inverse__Of__Map.html","inverseOfMap"}," in the package ",HREF{"http://www2.macaulay2.com/Macaulay2/share/doc/Macaulay2/RationalMaps/html/index.html","RationalMaps"}," generally turns out to be faster."},
 EXAMPLE { 
 "-- A Cremona transformation of P^20 
 phi = rationalMap map quadroQuadricCremonaTransformation(20,1)", 
@@ -190,6 +190,7 @@ EXAMPLE {
 phi = map quadroQuadricCremonaTransformation(26,1)",
 "time psi = inverseMap phi", 
 "isInverseMap(phi,psi)"},
+Caveat => {"If the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
 SeeAlso => {approximateInverseMap}}
 
 document { 
@@ -434,6 +435,15 @@ PARA{"This is equivalent to ",TT "target map phi","."},
 SeeAlso => {(target,RationalMap)}}
 
 document { 
+Key => {(coefficientRing,RationalMap)}, 
+Headline => "coefficient ring of a rational map", 
+Usage => "coefficientRing phi", 
+Inputs => { 
+RationalMap => "phi"}, 
+Outputs => { 
+Ring => {"the coefficient ring of ",TT"phi"}}}
+
+document { 
 Key => {(degree,RationalMap)}, 
 Headline => "degree of a rational map", 
 Usage => "degree phi", 
@@ -585,7 +595,7 @@ PARA{"This computation is done through the kernel of a ring map representing the
 SeeAlso => {(kernel,RingMap,ZZ),(kernel,RingMap)}}
 
 document { 
-Key => {parametrize,(parametrize,Ideal),(parametrize,QuotientRing)}, 
+Key => {parametrize,(parametrize,Ideal),(parametrize,QuotientRing),(parametrize,PolynomialRing)}, 
 Headline => "parametrization of linear varieties and hyperquadrics", 
 Usage => "parametrize I", 
 Inputs => { 
@@ -593,9 +603,12 @@ Inputs => {
 Outputs => { 
 RationalMap => {"a birational map ",TT"phi"," such that ",TT"I == image phi"}},
 EXAMPLE {
-"ringP9 = QQ[x_0..x_9]; I = ideal apply(4,j->random(1,ringP9))",
-"time phi = parametrize I",
-"I == image phi"}}
+"P9 := ZZ/10000019[x_0..x_9]",
+ "L = trim ideal(random(1,P9),random(1,P9),random(1,P9),random(1,P9))",
+"time parametrize L",
+"Q = trim ideal(random(2,P9),random(1,P9),random(1,P9))",
+"time parametrize Q"
+}}
 
 document { 
 Key => {(map,RationalMap)}, 
@@ -815,4 +828,36 @@ EXAMPLE {
 "Phi;"},
 Caveat => {"If the declaration is false, nonsensical answers may result."},
 SeeAlso => forceInverseMap}
+
+undocumented {(point,Ideal)}
+document { 
+Key => {point,(point,QuotientRing),(point,PolynomialRing)}, 
+Headline => "pick a random rational point on a projective variety", 
+Usage => "point R", 
+Inputs => { 
+Ring => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subset\mathbb{P}^n$///," over a finite ground field"}}, 
+Outputs => { 
+Ideal => {"an ideal in ",TT "R"," defining a point on ",TEX///$X$///}}, 
+PARA{"This method is a variant of the ",TO randomKRationalPoint," method. Here we apply it to check the birationality of a map."},
+EXAMPLE { 
+"f = inverseMap specialQuadraticTransformation(9,ZZ/33331);",
+"time p = point source f",
+"time p == f^* f p"},
+SeeAlso => {randomKRationalPoint}}
+
+undocumented {(segre,Ideal,Ideal)}
+document { 
+Key => {segre,(segre,RationalMap),(segre,QuotientRing),(segre,PolynomialRing)}, 
+Headline => "Segre embedding", 
+Usage => "segre phi 
+segre R", 
+Inputs => { 
+"phi" => RationalMap => {"with source a closed subvariety ",TEX///$X\subset\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///," of a product of projective spaces"}, 
+"R" => QuotientRing => {"or a ",TO PolynomialRing,", the coordinate ring of the subvariety ",TEX///$X\subset\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///}}, 
+Outputs => { 
+RationalMap => {"the restriction to ",TEX///$X$///," of the Segre embedding of ",TEX///$\mathbb{P}^{n_1}\times\mathbb{P}^{n_2}\times\cdots\times\mathbb{P}^{n_k}$///,", where the linear span of the image is identified with a projective space"}},
+PARA{"More properly, this method accepts and returns objects of the class ",TT"MultihomogeneousRationalMap","."},
+EXAMPLE {
+"phi = first graph quadroQuadricCremonaTransformation(3,1)",
+"segre phi"}}
 

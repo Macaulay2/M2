@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 807089615 *}
+-- -*- M2-comint -*- hash: 807089615
 
 i1 : Q = QQ[a,b,c,d]
 
