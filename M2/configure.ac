@@ -1316,6 +1316,13 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
+if test $BUILD_mpc = no
+then AC_LANG(C)
+     AC_SEARCH_LIBS(mpc_set,mpc,,BUILD_mpc=yes)
+     AC_CHECK_HEADER(mpc.h,,BUILD_mpc=yes)
+fi
+test $BUILD_mpc = yes && BUILTLIBS="-lmpc $BUILTLIBS"
+
 dnl mpir and mpfr are always built, so flint should also always be built:
 BUILD_ALWAYS="flint $BUILD_ALWAYS"
 if test $BUILD_mpir = yes -o $BUILD_mpfr = yes
@@ -1680,7 +1687,6 @@ AC_ARG_ENABLE(mpack,
     AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
     BUILD_mpack=yes
     BUILD_qd=yes
-    BUILD_mpc=yes
     ENABLE_MPACK=yes
     BUILTLIBS="-lmlapack_mpfr -lmblas_mpfr -lmpfrcxx $BUILTLIBS"
     )
