@@ -79,3 +79,24 @@ TEST /// --test for weird input
     assert(testIdeal(1/2, sub(0, R), FrobeniusRootStrategy=>MonomialBasis) == ideal(sub(0, R)));    
 ///
 
+TEST /// --test the isFRegular function, including in the non-Q-Gorenstein case
+    R = ZZ/7[x,y,z]/ideal(x^3+y^3+z^3);
+    assert( isFRegular(R) == false);
+    assert( isFRegular(R, QGorensteinIndex => infinity) == false);
+    assert( isFRegular(R, QGorensteinIndex => infinity, MaxCartierIndex=>20) == false);
+    S = ZZ/7[x,y,z, u,v,w];
+    I = minors(2, matrix{{x,y,z},{u,v,w}});
+    T = S/I;
+    assert( isFRegular(T, QGorensteinIndex => infinity, MaxCartierIndex=>30) == true);  
+    A = ZZ/11[x,y,z]/ideal(x^2-y^3+z^5);
+    assert(isFRegular(A) == true);
+///
+
+TEST /// --test the isFRegular function for non-Q-Gorenstein pairs (or at least when we forget the Gorenstein property)
+    R = ZZ/7[x,y];
+    f = y^2-x^3;
+    assert(isFRegular(5/6, f) == false);
+    assert(isFRegular(5/6, f, QGorensteinIndex=>infinity) == false);
+    assert(isFRegular(5/6, f, QGorensteinIndex=>infinity, DepthOfSearch=> 10) == false);
+    assert(isFRegular(5/6-1/100, f, QGorensteinIndex=>infinity, DepthOfSearch=> 10) == true);
+///
