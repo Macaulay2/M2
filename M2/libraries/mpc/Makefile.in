@@ -1,8 +1,9 @@
 VPATH = @srcdir@
 HOMEPAGE = http://www.multiprecision.org/
-VERSION = 0.8.2
-URL = http://www.multiprecision.org/mpc/download
-# this is libmpc-dev in ubuntu
+# obtained from https://ftp.gnu.org/gnu/mpc/
+VERSION = 1.1.0
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+LICENSEFILES = README
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
