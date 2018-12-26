@@ -218,9 +218,20 @@ then AC_MSG_CHECKING(whether $STRIP accepts the remove-section option)
 fi
 
 AC_MSG_CHECKING(whether $MAKE is GNU make)
-if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
+if "$MAKE" --version | head -1 | grep GNU >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR($MAKE: GNU make is required)
+else AC_MSG_RESULT(no)
+     AC_MSG_ERROR($MAKE: GNU make is required)
+fi
+
+AC_MSG_CHECKING(whether GNU make is recent enough)
+dnl Note: run our makefiles with GNU make, version 4 or larger.
+dnl       Version 3.81, provided on Mac OS X, has a bug, but you can
+dnl	  use "homebrew" to install a modern version under the name "gmake"
+if "$MAKE" --version | head -1 | grep "GNU Make 3.81" >/dev/null 2>&1
+then AC_MSG_RESULT(no)
+     AC_MSG_ERROR([$MAKE: GNU make 3.81 found, too old; install a more recent version])
+else AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(whether $TAR is GNU tar)
