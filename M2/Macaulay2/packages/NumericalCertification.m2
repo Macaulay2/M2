@@ -6,7 +6,7 @@ newPackage(
 	     {Name => "Kisun Lee", Email => "klee669@gatech.edu"}
 	     },
     	HomePage => "http://people.math.gatech.edu/~klee669",
-    	Headline => "Numercial Certification",
+    	Headline => "numerical certification",
 	PackageExports => {"NumericalAlgebraicGeometry"},
     	--DebuggingMode => true		 -- set to true only during development
     	DebuggingMode => false,
@@ -582,7 +582,7 @@ intervalMatrixNorm(krawczykUniqueness(f,o))
 
 
 beginDocumentation()
-load ("./NumericalCertification/Documents/DocNumericalCertification.m2")
+load ("./NumericalCertification/doc.m2")
 end
 
 
