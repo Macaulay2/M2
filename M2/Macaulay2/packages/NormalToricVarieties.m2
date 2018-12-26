@@ -6028,15 +6028,15 @@ doc ///
 	    ideal A1
 	    minimalPresentation A1
 	    for i to dim X list hilbertFunction (i, A1)	    	  
-	Text
-	    We end with a slightly larger example.
-	Example
-	    Y = smoothFanoToricVariety(6,100);
-	    A2 = intersectionRing Y;
-	    assert (# rays Y === numgens A2)	    
-            ideal A2
-	    minimalPresentation A2
-	    for i to dim Y list hilbertFunction (i, A2)
+	-- Text
+	--     We end with a slightly larger example.
+	-- Example
+	--     Y = smoothFanoToricVariety(6,100);
+	--     A2 = intersectionRing Y;
+	--     assert (# rays Y === numgens A2)	    
+        --     ideal A2
+	--     minimalPresentation A2
+	--     for i to dim Y list hilbertFunction (i, A2)
     SeeAlso
         "Total coordinate rings and coherent sheaves"    
 	(abstractVariety, NormalToricVariety)        	    
