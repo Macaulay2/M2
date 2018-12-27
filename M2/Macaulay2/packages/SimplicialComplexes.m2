@@ -43,7 +43,7 @@ export {"SimplicialComplex",
      "isFaceOf",
      "skeleton",
      "Flag",
-     "hVector",
+     "hVector'", -- we name it hVector' to prevent a conflict with SimplicialDecomposability; there must be a better solution
      "algebraicShifting",
      "Multigrading",
      "star",
@@ -341,9 +341,9 @@ fVector SimplicialComplex := opts -> D -> (
      else new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
      )
      )
--- Imported hVector (present in SimplicialDecomposability) with the Flag option
-hVector = method(TypicalValue => List, Options => {Flag => false})
-hVector SimplicialComplex := opts -> D -> (
+-- Imported hVector' (present in SimplicialDecomposability) with the Flag option
+hVector' = method(TypicalValue => List, Options => {Flag => false})
+hVector' SimplicialComplex := opts -> D -> (
      I := ideal D;
      if not opts.Flag then (
          S := newRing(ring D, Degrees => {#(gens ring D):1});
@@ -379,7 +379,7 @@ hVector SimplicialComplex := opts -> D -> (
      )
      )
 
--- Check if the grading on the ring defines a proper (dim(D)+1)-coloring on D. Used by fVector and hVector. Not exported.
+-- Check if the grading on the ring defines a proper (dim(D)+1)-coloring on D. Used by fVector and hVector'. Not exported.
 
 isBalanced = (D) -> (
      d := dim D +1;
@@ -1481,16 +1481,16 @@ document {
      chapter Monomial Ideals, in Computations in
      Algebraic Geometry with Macaulay2, Springer 2001.",
      SeeAlso => {SimplicialComplexes,
-      faces, hVector}
+      faces, hVector'}
      }
 
 --These are documented in the above node.
 undocumented { "Flag" }
 
 document {
-     Key => {hVector,(hVector,SimplicialComplex),[hVector,Flag]},
+     Key => {hVector',(hVector',SimplicialComplex),[hVector',Flag]},
      Headline => "the h-vector of a simplicial complex",
-     Usage => "h = hVector D",
+     Usage => "h = hVector' D",
      Inputs => {
      "D" => SimplicialComplex,
      Flag => Boolean => "the flag h-vector if the simplicial complex is
@@ -1505,14 +1505,14 @@ document {
      EXAMPLE {
      "R = ZZ[a..e];",
      "simplex = simplicialComplex{a*b*c*d*e}",
-     "h = hVector simplex",
+     "h = hVector' simplex",
      },
      "A filled triangle with two edges attached to two vertices shows
      that the h-vector can have negative entries.",
      EXAMPLE {
      "R = ZZ[x_1..x_5];",
      "delta = simplicialComplex{x_1*x_2*x_3,x_2*x_4,x_3*x_5}",
-     "hVector delta",
+     "hVector' delta",
      },
      "The last example above can be considered in a ", TT "Z^3", "-graded
       ring. Then we can compute its flag h-vector.",
@@ -1520,7 +1520,7 @@ document {
      "grading = {{1,0,0},{1,0,0},{1,0,0},{0,1,0},{0,0,1}};",
      "R = ZZ[x_1,x_2,x_3,y,z, Degrees => grading];",
      "gamma = simplicialComplex{x_1*y*z,x_2*y,x_3*z}",
-     "hVector(gamma, Flag => true)",
+     "hVector'(gamma, Flag => true)",
      },
      Caveat => {
      "The option ", TT "Flag", " checks if the multigrading corresponds to a properly d-coloring of "
@@ -1528,7 +1528,7 @@ document {
      is an empty HashTable."
      },
      SeeAlso => {SimplicialComplexes,
-     faces, hVector}
+     faces, hVector'}
      }
 
 
@@ -1692,8 +1692,8 @@ I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4
 D = simplicialComplex(I)
 assert( (fVector(D))#2 == 32)
 assert( (fVector(D, Flag => true))#{1,1,0,0} == 4)
-assert( (hVector(D))#2 == 6)
-assert( (hVector(D, Flag => true))#{1,1,0,1} == 1)
+assert( (hVector'(D))#2 == 6)
+assert( (hVector'(D, Flag => true))#{1,1,0,1} == 1)
 ///
 
 ------------------------------------------------
@@ -1709,8 +1709,8 @@ T = ring J
 assert((fVector(S1 * S2))#1 == (fVector(S1))#1 + (fVector(S1))#0*(fVector(S2))#0)
 assert(star(J, x*y*z) == J)
 assert(#(flatten entries facets(star(J, a))) == 1)
-assert((hVector(J))#2 == (hVector(J))#3)
-assert((hVector(J))#0 == (hVector(J))#1)
+assert((hVector'(J))#2 == (hVector'(J))#3)
+assert((hVector'(J))#0 == (hVector'(J))#1)
 ///
 --------------------------------------------------
 -- Real Projective plane
@@ -1755,8 +1755,8 @@ I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4
 cross = simplicialComplex(I)
 assert( (fVector(cross))#2 == 32)
 assert( (fVector(cross, Flag => true))#{1,1,0,0} == 4)
-assert( (hVector(cross))#2 == 6)
-assert( (hVector(cross, Flag => true))#{1,1,0,1} == 1)
+assert( (hVector'(cross))#2 == 6)
+assert( (hVector'(cross, Flag => true))#{1,1,0,1} == 1)
 assert(dim skeleton(2,cross) == 2)
 assert((fVector(skeleton(2,cross)))#1 == (fVector(cross))#1)
 multishifted = algebraicShifting(cross, Multigrading => true)
@@ -1788,7 +1788,7 @@ S = QQ[x_1..x_7]
 I = monomialIdeal(x_2*x_3*x_4*x_5,x_3*x_4*x_5*x_6,x_1*x_6,x_1*x_7,x_2*x_7)
 st73 = simplicialComplex I
 shifted = algebraicShifting (st73)
-assert( (hVector(st73))#3 == (hVector(shifted))#3)
+assert( (hVector'(st73))#3 == (hVector'(shifted))#3)
 assert(prune homology st73 == prune homology shifted)
 assert(not member(x_1*x_2*x_3*x_4, flatten entries facets(shifted)))
 ///
@@ -1803,9 +1803,9 @@ stD = star(D, d)
 assert(star(D, d) == simplicialComplex({d*e*f,b*c*d}))
 T = QQ[v]
 conev = stD * simplicialComplex({v})
-assert( (hVector(stD))#0 == (hVector(conev))#0 )
-assert( (hVector(stD))#1 == (hVector(conev))#1 )
-assert( (hVector(stD))#2 == (hVector(conev))#2 )
+assert( (hVector'(stD))#0 == (hVector'(conev))#0 )
+assert( (hVector'(stD))#1 == (hVector'(conev))#1 )
+assert( (hVector'(stD))#2 == (hVector'(conev))#2 )
 ///
 
 
