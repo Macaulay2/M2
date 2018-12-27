@@ -1687,7 +1687,7 @@ document {
 ----------------------------------------------
 
 TEST ///
-S = QQ[x_{1,1}..x_{2,4}, Degrees= > {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}]
+S = QQ[x_{1,1}..x_{2,4}, Degrees => {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}]
 I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4})
 D = simplicialComplex(I)
 assert( (fVector(D))#2 == 32)
@@ -1760,9 +1760,9 @@ assert( (hVector(cross, Flag => true))#{1,1,0,1} == 1)
 assert(dim skeleton(2,cross) == 2)
 assert((fVector(skeleton(2,cross)))#1 == (fVector(cross))#1)
 multishifted = algebraicShifting(cross, Multigrading => true)
-stdshifted = algebraicShifted(cross)
+stdshifted = algebraicShifting(cross)
 assert( cross == multishifted)
-assert( cross == stdshifted)
+assert( cross != stdshifted)
 ///
 ------------------------------------------------------------------------
 -- Cartwright-Sturmfels ideals associated to graphs and linear spaces --
