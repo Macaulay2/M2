@@ -348,8 +348,6 @@ bumpPrecedence();
      special("global",unaryglobal,precSpace,prec);
      special("threadVariable",unarythread,precSpace,prec);
      special("local",unarylocal,precSpace,prec);
-bumpPrecedence();
-     special("{*",errorunary,prec,prec); -- we add this to the syntax so we can signal an error if we encounter any use of the deprecated block comment syntax {* ... *}
 -----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
 export GlobalAssignE := Expr(GlobalAssignS);
