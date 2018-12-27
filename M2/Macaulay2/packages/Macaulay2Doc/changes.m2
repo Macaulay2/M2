@@ -30,7 +30,7 @@ document {
 document {
      Key => "changes made for the next release (1.13)",
      UL {
-     	 LI { "functionality changed:",
+     	 LI { "functionality changed in a way that could break code:",
              UL {
                  LI { "the Schubert2 functions ", TT "projectiveSpace", 
                      " and ", TT "projectiveSpace'", 
@@ -48,7 +48,17 @@ document {
 		 LI { "The deprecated old-style block comment syntax has been disabled.  Now
 		       one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." }
                  }
-             }
+             },
+	LI { "improved packages:",
+	     UL {
+		  LI { 
+		       TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " now has a full
+		       implementation of the Eisenbud-Shamash resolution, and
+		       using ", TO "MCMApproximations::MCMApproximations", ", now can compute the layered
+		       resolution of any Cohen-Macaulay module, not just a high syzygy."
+		       }
+		  }
+	     }
          }
      }
 
