@@ -121,9 +121,7 @@ readlineversion():constcharstar := Ccode(returns,"
      ");
 
 gdbmversion():constcharstar := Ccode(returns,"
-     static char buf[8];
-     sprintf(buf, \"%d.%d.%d\", gdbm_version_number[0], gdbm_version_number[1], gdbm_version_number[2]);
-     return buf;
+     return gdbm_version;
      ");
 
 ic := Ccode(int, "
