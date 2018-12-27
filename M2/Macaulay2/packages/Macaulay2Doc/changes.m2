@@ -30,7 +30,7 @@ document {
 document {
      Key => "changes made for the next release (1.13)",
      UL {
-         LI {"breaking changes:",
+     	 LI { "functionality changed:",
              UL {
                  LI { "the Schubert2 functions ", TT "projectiveSpace", 
                      " and ", TT "projectiveSpace'", 
@@ -44,12 +44,13 @@ document {
                      " is no longer protected, you can always do ", 
                      TT "PP = abstractProjectiveSpace", 
                      " and then e.g. ", TT "X = PP 4", "."
-                     }
+                     },
+		 LI { "The deprecated old-style block comment syntax has been disabled.  Now
+		       one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." }
                  }
              }
          }
      }
-     
 
 document {
      Key => "changes, 1.12",

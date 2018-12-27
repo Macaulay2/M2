@@ -475,7 +475,7 @@ sum ComplexMap := Matrix => f -> (
     map(sum D, sum C, mats)
     )
     
-{*          
+-*          
           
     directSum 
     t := sort spots T;
@@ -495,7 +495,7 @@ sum ComplexMap := Matrix => f -> (
 	        map(tar, src, matrix table(t,s,
 		    	    (j,i) -> if j == i+d then f_i else map(T_j,S_i,0))
                 ))))
-*}
+*-
 
 -- This belongs in M2 Core!!!
 -- make this into a git issue.
@@ -2160,10 +2160,10 @@ needsPackage "Complexes"
 ///
 
 UNTEST ///
-{*
+-*
 restart
 needsPackage "Complexes"
-*}
+*-
   R = ZZ/101[a..f]
   A = freeResolution coker matrix{{a,b}}
   B = freeResolution monomialCurveIdeal(R,{1,2,3})
@@ -2281,14 +2281,14 @@ doc ///
      map
 ///
 
-{* -- The following block of text doesn't validate anymore, and goes right after the last Example above this.
+-* -- The following block of text doesn't validate anymore, and goes right after the last Example above this.
     Text
       @SUBSECTION "Programming Details"@
       The function also checks the data structure for the following:
       @UL {
           {"The keys are exactly ring, concentration, module, dd, cache"},
           }@
-*}
+*-
 doc ///
    Key
      (complex, Module)
@@ -3310,10 +3310,10 @@ doc ///
 
 TEST ///
   -- test creation of complexes 1: via free resolutions
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
   R = ZZ/32003[vars(0..17)]
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
@@ -3357,10 +3357,10 @@ TEST ///
 
 TEST ///
   -- test creation of complexes 2: from modules
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
 
   S = ZZ/101[a..d]
   C0 = complex S^2
@@ -3429,10 +3429,10 @@ TEST ///
 ///
 TEST ///
   -- test creation of complexes 3: via constructors
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
   S = ZZ/101[a..d]
   I = ideal(b^2-a*c, b*c-a*d, c^2-b*d)
   F1 = map(S^1,,matrix{{I_0, I_1, I_2}})
@@ -3494,10 +3494,10 @@ TEST ///
 ///
 
 TEST ///
-{*
+-*
 restart
 needsPackage "Complexes"
-*}
+*-
   S = ZZ/101[a..d]
   C = freeResolution coker matrix{{a,b^2,c^3,d^4}}
   assert(regularity C == 6)
@@ -3516,10 +3516,10 @@ needsPackage "Complexes"
 
 TEST ///
 -- test of sum of a Complex, TODO: ComplexMap
-{*
+-*
 restart
 needsPackage "Complexes"
-*}
+*-
   S = ZZ/101[a..d]
   C = freeResolution coker matrix{{a,b^2,c^3,d^4}}
   F = sum C
@@ -3955,9 +3955,9 @@ restart
 ///
 
 TEST ///
-{*
+-*
 restart
-*}
+*-
   needsPackage "Complexes"
   -- Hom(C,D) --> f : C --> D
   S = ZZ/101[a..e]
@@ -4771,10 +4771,10 @@ TEST ///
 TEST ///
   -- note: inducedMap is here only for backward compatibility
   -- prefer canonicalMap when possible.
-{*
+-*
   restart
   needsPackage "Complexes"
-*}
+*-
 
   S = ZZ/101[a..d]
   I = ideal(a^3+b^3+c^3+d^3)

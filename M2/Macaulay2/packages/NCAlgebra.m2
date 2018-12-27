@@ -1154,7 +1154,7 @@ sparseCoeffs List := opts -> L -> (
 	coeffs = coeffs | newCoeffs;);
      ); 
   map(R^m , R^l, coeffs)
-{*  d := if all(L, m -> m == 0) then 0 else L#(position(L,m->m!=0));
+-*  d := if all(L, m -> m == 0) then 0 else L#(position(L,m->m!=0));
   if not all(L, m-> (isHomogeneous(m) and (m == 0 or (degree m)==(degree d)))) then 
 	error "Expected homogeneous elements of the same degree.";
   B := (L#0).ring;
@@ -1182,7 +1182,7 @@ sparseCoeffs List := opts -> L -> (
        
 	coeffs = coeffs | newCoeffs;);
      ); 
-   map(R^m , R^l, coeffs)*}
+   map(R^m , R^l, coeffs)*-
 )
 
 monomials NCRingElement := opts -> f -> (

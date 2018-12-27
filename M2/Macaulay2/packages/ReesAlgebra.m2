@@ -760,10 +760,7 @@ doc ///
     reesIdeal
 ///
 
-{*
-viewHelp symmetricAlgebra
-*}
-
+-- viewHelp symmetricAlgebra
 
 doc ///
   Key
