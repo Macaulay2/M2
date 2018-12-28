@@ -2,7 +2,7 @@ VPATH = @srcdir@
 HOMEPAGE = http://www.multiprecision.org/
 # obtained from https://ftp.gnu.org/gnu/mpc/
 VERSION = 1.1.0
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 LICENSEFILES = README
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

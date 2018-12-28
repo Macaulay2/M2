@@ -9,7 +9,7 @@ TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 PRECONFIGURE = autoconf
 
 # URL = http://www.mpir.org
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # increase the limit, because two of the tests run by mpir's "make check" will
