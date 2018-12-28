@@ -71,8 +71,8 @@ GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
 CPPFLAGS :=									\
 	-I@abs_top_srcdir@/include						\
 	-I@abs_top_builddir@/include						\
-	-isystem $(BUILTLIBPATH)/include					\
-	-isystem $(BUILTLIBPATH)/include/cdd					\
+	-I$(BUILTLIBPATH)/include						\
+	-I$(BUILTLIBPATH)/include/cdd						\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
 ifeq "@ENABLE_MPACK@" "yes"
