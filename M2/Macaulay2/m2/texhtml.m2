@@ -112,6 +112,9 @@ html TEX := str -> (
      f(///\\NN\> *///,///&#x2115;///);			    -- these unicode characters are experimental
      f(///\\QQ\> *///,///&#x211A;///);			    -- on at least some machines they are represented by bitmaps, not by truetype fonts!
      f(///\\RR\> *///,///&#x211D;///);
+     f(///\\R\> *///,///&#x211D;///);			   -- used by arxiv.org
+     f(///\\C\> *///,///&#x2102;///);			   -- used by arxiv.org
+     f(///\\CC\> *///,///&#x2102;///);
      f(///\\ZZ\> *///,///&#x2124;///);
      f(///\\PP\> *///,///&#x2119;///);
      f(///\\Delta\> *///,///&Delta;///);
