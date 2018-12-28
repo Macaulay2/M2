@@ -28,17 +28,23 @@ newPackage(
         )
 
 export {
+    "truncation",
+    -- to be made local:
     "trunc",
     "truncationPolyhedron",
     "basisPolyhedron",
     "Exterior"
     }
 
+truncation = method()
+
 truncationPolyhedron = method(Options=>{Exterior => false})
 truncationPolyhedron(Matrix, List) := Polyhedron => opts -> (A, b) -> (
     truncationPolyhedron(A, transpose matrix{b}, opts)
     )
 truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
+    -- assumption: A is m x n. b is m x 1.
+    -- returns the polyhedron {Ax >= b, x >=0}
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
     I := id_(source A);
@@ -58,6 +64,8 @@ basisPolyhedron(Matrix,List) := (A,b) -> (
     basisPolyhedron(A, transpose matrix{b})
     )
 basisPolyhedron(Matrix,Matrix) := (A,b) -> (
+    -- assumption: A is m x n. b is m x 1.
+    -- returns the polyhedron {Ax = b, x >=0}
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
     I := id_(source A);
@@ -198,10 +206,64 @@ TEST ///
 *-
 ///
 
--- truncate the graded ring A in degrees >= d.
--- stash the result.
-truncate(List, Ring) := Module => (d, R) -> (
-    if not R#?(symbol truncate, d) then R#(symbol truncate, d) = (
+checkOrMakeDegreeList = method()
+checkOrMakeDegreeList(ZZ, ZZ) := (d,degrank) -> (
+    if degrank =!= 1 then
+        error("expected degree to be of length "|degrank) ;
+    {{d}}
+    )
+checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
+    if #L === 0 then error "expected non empty list of degrees";
+    if all(L, d -> instance(d, ZZ)) then (
+        if #L =!= degrank then error("expected a degree of length "|degrank);
+        {L}
+        )
+    else (
+        -- all elements of L should be a list of list of integers,
+        -- all the same length, and L will be returned.
+        if any(L, deg -> not instance(deg, BasicList) 
+                         or not all(deg, d -> instance(d,ZZ)) 
+                         or #deg =!= degrank)
+          then error("expected a list of lists of integers, each of length "|degrank);
+        L
+        )
+    )
+
+canUseTruncation = method()
+canUseTruncation Ring := Boolean => R -> (
+    A := ultimate(ambient,R);
+    isAffineRing A 
+    or
+    isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
+    or
+    isPolynomialRing A and ZZ === coefficientRing A
+    or
+    ZZ === A
+    )
+
+TEST ///
+-*
+  restart
+*-
+  debug needsPackage "Truncations"
+  assert(checkOrMakeDegreeList(3, 1) == {{3}})
+  assert(checkOrMakeDegreeList({3}, 1) == {{3}})
+  assert try checkOrMakeDegreeList(3, 2) else true 
+  assert(checkOrMakeDegreeList({1,2}, 2) === {{1,2}})
+  assert try checkOrMakeDegreeList({1,2,3}, 2) else true
+  assert(checkOrMakeDegreeList({{1,0},{3,-5}}, 2) === {{1,0},{3,-5}})
+  assert try checkOrMakeDegreeList({{1,0},{3,-5},{3,4,5}}, 2) else true
+  assert try checkOrMakeDegreeList({{1,0},{3,-5},3}, 2) else true
+///
+
+truncationMonomials = method()
+truncationMonomials(List, Ring) := (d, R) -> (
+    -- expected: R is a polynomial ring.
+    if not all(d, d1 -> instance(d1,ZZ)) then
+        error "expected degree to be a list of integers";
+    if #d =!= degreeLength R then 
+        error ("expected degree to be of length"|degreeLength R);
+    if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
       -- TODO: check that d is a degree for the ring R
       A := transpose matrix degrees R;
       P := truncationPolyhedron(A,transpose matrix{d});
@@ -211,27 +273,87 @@ truncate(List, Ring) := Module => (d, R) -> (
       conegens := rsort for h in H list if h#0 === 0 then R_(drop(h,1)) else continue;
       print matrix {conegens};
       gens := for h in H list if h#0 === 1 then R_(drop(h,1)) else continue;
-      image matrix {gens}
+      gens
       );
-    R#(symbol truncate, d)
+    R#(symbol truncation, d)
     )
 
-truncate(List, Module) := Module => (d, F) -> (
-    if isFreeModule F then (
-        image map(F,,directSum for a in degrees F list gens truncate(d-a,ring F))
+truncationMonomials(List, Ring) := (degs, R) -> (
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    -- expected: R is a polynomial ring.
+    if #degs > 1 then
+        return sum for d in degs list truncationMonomials(d, R);
+    d := degs#0;
+    if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
+      -- TODO: check that d is a degree for the ring R
+      A := transpose matrix degrees R;
+      P := truncationPolyhedron(A,transpose matrix{d});
+      C := cone P;
+      H := hilbertBasis C;
+      H = for h in H list flatten entries h;
+      conegens := rsort for h in H list if h#0 === 0 then R_(drop(h,1)) else continue;
+      print matrix {conegens};
+      gens := for h in H list if h#0 === 1 then R_(drop(h,1)) else continue;
+      monomialIdeal gens
+      );
+    R#(symbol truncation, d)
+    )
+
+TEST ///
+-* 
+  restart
+*-
+  debug needsPackage "Truncations"
+  S = ZZ/101[a,b,c, Degrees =>{5,6,7}]
+  truncationMonomials({10}, S)
+  truncationMonomials({{9},{11}}, S)
+  
+  -- TODO MES: add more tests in for this.
+  -- In particular, check:
+  --   exterior algebra
+  --   quotient rings (reduce monomial ideal by the lead terms)?
+///
+
+-- truncate the graded ring A in degrees >= d, for d in degs
+truncation(List, Ring) := Module => (degs, R) -> (
+    if not canUseTruncation R then error "cannot use truncation with this ring type";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    image gens truncationMonomials(degs,R)
+    )
+
+truncation(List, Module) := Module => (degs, M) -> (
+    R := ring M;
+    if not canUseTruncation R then error "cannot use truncation with this ring type";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    if isFreeModule M then (
+        image map(M,,directSum for a in degrees M list 
+            gens truncationMonomials(for d in degs list(d-a),R))
         )
-    else
-        error "not yet implemented"
+    else (
+        -- TODO MES: this isn't correct: use subquotient handling.
+        f := presentation M;
+        map(M,,truncation(degs, f))
+        )
     )
 
-truncate(List, Matrix) := (d, phi) -> (
+truncation(List, Matrix) := Matrix => (degs, phi) -> (
     -- this is the case when source and target of phi are free modules...
-    F := truncate(d, source phi);
-    G := truncate(d, target phi);
+    R := ring phi;
+    if not canUseTruncation R then error "cannot use truncation with this ring type";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    F := truncation(degs, source phi);
+    G := truncation(degs, target phi);
     f := gens F;
     g := gens G;
     (phi * f) // g
     )
+
+truncation(List, Ideal) := (degs, I) -> error "not yet implemented"
+
+truncation(ZZ, Ring) :=
+truncation(ZZ, Module) :=
+truncation(ZZ, Ideal) :=
+  (d, R) -> truncation({d}, R)
 
 TEST ///
 -*
@@ -241,10 +363,10 @@ TEST ///
   S = ZZ/101[a,b, Degrees =>{{0,1},{1,0}}]
   M = S^{-{5,2}, -{2,3}}
   D = {4,3}
-  assert(truncate(D,S) == image matrix{{a^3*b^4}})
--- needs to be written
---  E = {{4,3},{3,4}}
---  truncate(E,S)
+  assert(truncation(D,S) == image matrix{{a^3*b^4}})
+
+  E = {{4,3},{3,4}}
+  assert(truncation(E,S) == image matrix{{a^3*b^4, a^4*b^3}})
 
 -*
   trunc0(D,S^1)
@@ -260,13 +382,13 @@ TEST ///
   debug needsPackage "Truncations" 
 *-
   S = ZZ/101[a,b,c,d,e,Degrees=>{3,4,5,6,7}]
-  sort gens truncate({8},S) == sort gens trunc({8},S^1)
-  truncate({8},S^{-4})
-  truncate({8},S^{3})
-  truncate({8},S^{-4,-5,-3})
-  truncate(8,S^{-4,-5,-3})
+  sort gens truncation({8},S) == sort gens trunc({8},S^1)
+  truncation({8},S^{-4})
+  truncation({8},S^{3})
+  truncation({8},S^{-4,-5,-3})
+  truncation(8,S^{-4,-5,-3})
   phi = random(S^{-1,-2,-3}, S^{-1,-2,-3,-4,-8})
-  psi = truncate({8}, phi)
+  psi = truncation({8}, phi)
   assert(isHomogeneous psi)
   -- How best to test this??
 ///
@@ -275,11 +397,11 @@ TEST ///
 TEST ///
 -*
   restart
-  debug needsPackage "Truncations" 
 *-
+  debug needsPackage "Truncations" 
   S = ZZ/101[a,b,c,d,e, Degrees=>{3:{1,0},2:{0,1}}]
-  assert(sort gens truncate({1,2},S) == sort gens trunc({1,2},S^1))
-  assert(sort gens truncate({1,2},S) == sort gens trunc0({1,2},S^1))
+  assert(sort gens truncation({1,2},S) == sort gens trunc({1,2},S^1))
+  assert(sort gens truncation({1,2},S) == sort gens trunc0({1,2},S^1))
 ///
 
 TEST ///
@@ -293,7 +415,7 @@ TEST ///
   max V
   S = ring V
   A = transpose matrix degrees S
-  truncate({1,1,1}, S)
+  truncation({1,1,1}, S)
   basis({1,1,1},S)
   C = posHull A
 C2 = dualCone C
@@ -353,43 +475,157 @@ TEST ///
 
 
 beginDocumentation()
-end--
 
 doc ///
-Key
-  Truncation
-Headline
-Description
-  Text
-  Example
-Caveat
-SeeAlso
+  Key
+    Truncations
+  Headline
+    "truncations of graded ring, ideals and modules"
+  Description
+    Text
+      This package provides for the truncation of a graded ring, or a graded
+      module or ideal over a graded ring.
+    
+      If $R$ is a graded ring, and $M$ is a graded module, and $D$ is a (finite)
+      set of degrees, then the truncation {\tt truncation(D, M)} is
+      \[M_{\ge D} = XXX \]
+  Caveat
+    Not yet reimplemented for all ring cases
+  SeeAlso
+    truncation
+    truncate
+    basis
 ///
 
 doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-Description
-  Text
-  Example
-  Code
-  Pre
-Caveat
-SeeAlso
+  Key
+    truncation
+    (truncation,ZZ,Module)
+    (truncation,List,Module)
+    (truncation,ZZ,Ideal)
+    (truncation,List,Ideal)
+  Headline
+    truncation of the graded ring, ideal or module at a specified degree or set of degrees
+  Usage
+    truncation(i,M)
+  Inputs
+    i:ZZ
+      or a single multi-degree or a list of multi-degrees
+    M:Module
+      or a ring or an ideal
+  Outputs
+    :Module
+      or ideal, the submodule of M consisting of all elements of degree $\ge i$
+  Description
+    Text
+    Example
+      R = ZZ/101[a..c];
+      truncation(2,R^1)
+      truncation(2,R^1 ++ R^{-3})
+      truncation(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))
+      truncation(2,ideal(a,b*c,c^7))
+    Text
+      The base may be ZZ, or another polynomial ring.  In this case, the generators may not
+      be minimal, but they do generate.
+    Example
+      A = ZZ[x,y,z];
+      truncation(2,ideal(3*x,5*y,15))
+      trim oo
+      truncation(2,comodule ideal(3*x,5*y,15))
+    Text
+      If  {\tt i} is a multi-degree, then the result is the submodule generated by all elements
+      of degree exactly {\tt i}, together with all generators of {\tt M} whose first degree is 
+      higher than the first degree of {\tt i}.
+      The following includes the generator of degree {8,20}.
+    Example
+      S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
+      truncation({7,24}, S^1 ++ S^{{-8,-20}})
+    Text
+      The coefficient ring may also be a polynomial ring.  In this example, the coefficient variables
+      also have degree one.  The given generators will generate the truncation over the coefficient ring.
+    Example
+      B = R[x,y,z, Join=>false]
+      degree x
+      degree B_3
+      truncation(2, B^1)
+      truncation(4, ideal(b^2*y,x^3))
+    Text
+      If the coefficient variables have degree 0:
+    Example
+      A1 = ZZ/101[a,b,c,Degrees=>{3:{}}]
+      degree a
+      B1 = A1[x,y]
+      truncation(2,B1^1)
+      truncation(2, ideal(a^3*x, b*y^2))
+  Caveat
+  SeeAlso
+    basis
+    comodule
 ///
 
 TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
+A = ZZ/101[a..d, Degrees => {1,2,3,4}]
+assert(truncation(2, A^1) == image matrix {{a^2, a*b, a*c, a*d, b, c, d}})
+assert(truncation(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
+///
+
+TEST ///
+A = ZZ/101[a..d, Degrees => {4:0}]
+assert(truncation(2, A^1) == image matrix{{1_A}})
+///
+
+TEST ///
+A = ZZ/101[a..d]
+truncation(2, ideal"a-1,b3+c")
+///
+
+TEST ///
+A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
+basis({3}, A^1)
+
+
+A = ZZ/101[a..d, Degrees=>{2:{2,1},2:{1,0}}]
+basis({3}, A^1)
+
+
+A = ZZ/101[a..d, Degrees=>{2:{2,1,0},2:{1,0,0}}]
+basis({3,1}, A^1)
+///
+
+TEST ///
+R=(ZZ/101)[x_0,x_1,y_0,y_1,y_2,Degrees=>{2:{1,1,0},3:{1,0,1}}];
+I=ideal random(R^1,R^{6:{-6,-2,-4},4:{-6,-3,-3}});
+J = truncation({4,2,2},I);
+assert(J == I)
+///
+
+TEST ///
+-- Singly generated case
+R = QQ[a..d]
+I = ideal(b*c-a*d,b^2-a*c,d^10)
+assert(truncation(2,I) == I)
+assert(truncation(3,I) == intersect((ideal vars R)^3, I))
+
+R = QQ[a..d,Degrees=>{3,4,7,9}]
+I = ideal(a^3,b^4,c^6)
+assert(truncation(12,I) == ideal(a^4,a^3*b,a^3*c,a^3*d,b^4,c^6))
+
+R = ZZ[a,b,c]
+I = ideal(15*a,21*b,19*c)
+trim truncation(2,I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2)
 ///
 
 end--
 restart
+uninstallPackage "Truncations"
+restart
 loadPackage "Truncations"
+restart
+installPackage "Truncations"
+
+debug needsPackage "Truncations"
+-- XXX
+
 
 -- how to create Ax >= b, x >= 0?
 -----------------------------------------------------------------------
@@ -613,3 +849,25 @@ basis({3,2,1},S)
 P = polyhedronFromHData(-id_(QQ^6), -map(QQ^6, QQ^1, 0), A, transpose matrix {{20,5,10}});
 LP = elapsedTime latticePoints P; -- slower than one below:
 elapsedTime basis({20,5,10}, S);
+
+
+doc ///
+Key
+Headline
+Usage
+Inputs
+Outputs
+Consequences
+Description
+  Text
+  Example
+  Code
+  Pre
+Caveat
+SeeAlso
+///
+
+TEST ///
+-- test code and assertions here
+-- may have as many TEST sections as needed
+///
