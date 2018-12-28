@@ -43,7 +43,6 @@ export {"SimplicialComplex",
      "isFaceOf",
      "skeleton",
      "Flag",
-     "hVector'", -- we name it hVector' to prevent a conflict with SimplicialDecomposability; there must be a better solution
      "algebraicShifting",
      "Multigrading",
      "star",
@@ -341,45 +340,8 @@ fVector SimplicialComplex := opts -> D -> (
      else new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
      )
      )
--- Imported hVector' (present in SimplicialDecomposability) with the Flag option
-hVector' = method(TypicalValue => List, Options => {Flag => false})
-hVector' SimplicialComplex := opts -> D -> (
-     I := ideal D;
-     if not opts.Flag then (
-         S := newRing(ring D, Degrees => {#(gens ring D):1});
-         maptoS := map(S, ring D);
-         I = maptoS(I);
-     );
-     N := poincare cokernel generators I;
-     if opts.Flag then (
-     if not isBalanced(D) then (
-         stderr << "-- the grading does not correspond to a proper d-coloring." << endl;
-         return new HashTable from {}
-     );
-         R := newRing(ring N, Degrees => apply(gens ring N, g -> apply(gens ring N, f -> if index(f) == index(g) then 1 else 0)));
-         maptoR := map(R, ring N);
-         N = maptoR(N);
-     );
-     if N == 0 then (
-         new HashTable from {-1 => 0}
-     )
-     else (
-         d := dim D + 1;
-         apply(gens ring N, t -> while 0 == substitute(N, t => 1) do N = N // (1-t));
-         supp := apply(flatten entries monomials(N), m -> degree m);
-         allsubsets := apply(subsets(#(gens ring N)), s -> apply(toList(0..#(gens ring N)-1), l -> if member(l,s) then 1 else 0));
-         flagh := L -> coefficient((flatten entries monomials part(L, N))#0, part(L, N));
-     flagf := M -> sum(supp, m -> if all(m,M, (i,j) -> j >= i) then flagh(m) else 0);
-     h := j -> sum(supp, s -> if sum(s)==j then flagh(s) else 0);
-     f := j -> sum(0..j+1, i -> binomial(d-i, d-j-1)*h(i));
-     if opts.Flag then (
-         new HashTable from apply(supp, j -> j => flagh(j))
-     )
-     else new HashTable from apply(toList(0..d), j -> j => h(j))
-     )
-     )
 
--- Check if the grading on the ring defines a proper (dim(D)+1)-coloring on D. Used by fVector and hVector'. Not exported.
+-- Check if the grading on the ring defines a proper (dim(D)+1)-coloring on D. Used by fVector. Not exported.
 
 isBalanced = (D) -> (
      d := dim D +1;
@@ -390,6 +352,10 @@ isBalanced = (D) -> (
      apply(flatten entries faces(1,D), f -> if max(degree f) > 1 then m = false);
      return m;
      );
+
+
+
+
 
 -- helper functions for algebraicShifting. Not exported.
 shiftMonomial = (m) -> (
@@ -1481,55 +1447,11 @@ document {
      chapter Monomial Ideals, in Computations in
      Algebraic Geometry with Macaulay2, Springer 2001.",
      SeeAlso => {SimplicialComplexes,
-      faces, hVector'}
+      faces}
      }
 
 --These are documented in the above node.
 undocumented { "Flag" }
-
-document {
-     Key => {hVector',(hVector',SimplicialComplex),[hVector',Flag]},
-     Headline => "the h-vector of a simplicial complex",
-     Usage => "h = hVector' D",
-     Inputs => {
-     "D" => SimplicialComplex,
-     Flag => Boolean => "the flag h-vector if the simplicial complex is
-     properly defined over a multigraded ring."
-     },
-     Outputs => {
-     "h" => {"such that ", TT "h#i",
-     " is the ", TT "i-", "th entry of the h-vector of ", TT "D",
-     " for an integer ", TT "0 <= i <= dim D+1", " or a squarefree degree ", TT "i", "."}
-     },
-     "The h-vector of the 4-simplex.",
-     EXAMPLE {
-     "R = ZZ[a..e];",
-     "simplex = simplicialComplex{a*b*c*d*e}",
-     "h = hVector' simplex",
-     },
-     "A filled triangle with two edges attached to two vertices shows
-     that the h-vector can have negative entries.",
-     EXAMPLE {
-     "R = ZZ[x_1..x_5];",
-     "delta = simplicialComplex{x_1*x_2*x_3,x_2*x_4,x_3*x_5}",
-     "hVector' delta",
-     },
-     "The last example above can be considered in a ", TT "Z^3", "-graded
-      ring. Then we can compute its flag h-vector.",
-     EXAMPLE {
-     "grading = {{1,0,0},{1,0,0},{1,0,0},{0,1,0},{0,0,1}};",
-     "R = ZZ[x_1,x_2,x_3,y,z, Degrees => grading];",
-     "gamma = simplicialComplex{x_1*y*z,x_2*y,x_3*z}",
-     "hVector'(gamma, Flag => true)",
-     },
-     Caveat => {
-     "The option ", TT "Flag", " checks if the multigrading corresponds to a properly d-coloring of "
-     , TT "D", ", where d is the dimension of ", TT "D", " plus one. If it is not the case the output
-     is an empty HashTable."
-     },
-     SeeAlso => {SimplicialComplexes,
-     faces, hVector'}
-     }
 
 
 document {
@@ -1692,8 +1614,6 @@ I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4
 D = simplicialComplex(I)
 assert( (fVector(D))#2 == 32)
 assert( (fVector(D, Flag => true))#{1,1,0,0} == 4)
-assert( (hVector'(D))#2 == 6)
-assert( (hVector'(D, Flag => true))#{1,1,0,1} == 1)
 ///
 
 ------------------------------------------------
@@ -1709,8 +1629,6 @@ T = ring J
 assert((fVector(S1 * S2))#1 == (fVector(S1))#1 + (fVector(S1))#0*(fVector(S2))#0)
 assert(star(J, x*y*z) == J)
 assert(#(flatten entries facets(star(J, a))) == 1)
-assert((hVector'(J))#2 == (hVector'(J))#3)
-assert((hVector'(J))#0 == (hVector'(J))#1)
 ///
 --------------------------------------------------
 -- Real Projective plane
@@ -1755,8 +1673,6 @@ I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4
 cross = simplicialComplex(I)
 assert( (fVector(cross))#2 == 32)
 assert( (fVector(cross, Flag => true))#{1,1,0,0} == 4)
-assert( (hVector'(cross))#2 == 6)
-assert( (hVector'(cross, Flag => true))#{1,1,0,1} == 1)
 assert(dim skeleton(2,cross) == 2)
 assert((fVector(skeleton(2,cross)))#1 == (fVector(cross))#1)
 multishifted = algebraicShifting(cross, Multigrading => true)
@@ -1788,7 +1704,7 @@ S = QQ[x_1..x_7]
 I = monomialIdeal(x_2*x_3*x_4*x_5,x_3*x_4*x_5*x_6,x_1*x_6,x_1*x_7,x_2*x_7)
 st73 = simplicialComplex I
 shifted = algebraicShifting (st73)
-assert( (hVector'(st73))#3 == (hVector'(shifted))#3)
+assert( (fVector(st73))#3 == (fVector(shifted))#3)
 assert(prune homology st73 == prune homology shifted)
 assert(not member(x_1*x_2*x_3*x_4, flatten entries facets(shifted)))
 ///
@@ -1803,9 +1719,9 @@ stD = star(D, d)
 assert(star(D, d) == simplicialComplex({d*e*f,b*c*d}))
 T = QQ[v]
 conev = stD * simplicialComplex({v})
-assert( (hVector'(stD))#0 == (hVector'(conev))#0 )
-assert( (hVector'(stD))#1 == (hVector'(conev))#1 )
-assert( (hVector'(stD))#2 == (hVector'(conev))#2 )
+assert( (fVector(conev))#0 == 6 )
+assert( (fVector(conev))#1 == 11 )
+assert( (fVector(conev))#2 == 8 )
 ///
 
 
