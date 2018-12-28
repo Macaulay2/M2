@@ -353,10 +353,6 @@ isBalanced = (D) -> (
      return m;
      );
 
-
-
-
-
 -- helper functions for algebraicShifting. Not exported.
 shiftMonomial = (m) -> (
     variables := flatten entries vars ring m;
