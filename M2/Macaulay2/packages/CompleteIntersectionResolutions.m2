@@ -83,8 +83,6 @@ newPackage(
 
   	   "Optimism" -- optional arg for highSyzygy etc	   
 	   }
-print "file in the research directory"
-
 
 regularitySequence = method()
 regularitySequence(List, Module) := (R,M) ->(
