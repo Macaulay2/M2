@@ -19,7 +19,7 @@ endif
 
 ############################## main targets
 
-DEBARCH=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEBARCH=$(shell dpkg-architecture -qDEB_BUILD_ARCH || echo none)
 
 ifeq ($(DEBARCH),)
 $(error dpkg-architecture failed)

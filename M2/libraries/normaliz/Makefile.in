@@ -6,7 +6,7 @@ VERSION2 = 3.6
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # these authors sometimes change the file without changing the name, so we copy it to our own site:
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 FIXTARCMD = :
 
 PRECONFIGURE = autoreconf -vif
