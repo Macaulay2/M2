@@ -876,7 +876,7 @@ export {
 	"monomials",
 	"moveFile",
 	"multidegree",
-	"multigradedBetti",
+	"multigraded",
 	"mutable",
 	"mutableIdentity",
 	"mutableMatrix",

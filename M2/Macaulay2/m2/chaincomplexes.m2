@@ -800,17 +800,18 @@ betti GradedModule := opts -> C -> (
 
 -----------------------------------------------------------------------------
 MultigradedBettiTally = new Type of BettiTally
+MultigradedBettiTally.synonym = "Multigraded Betti tally"
 
 -- Helper function for pretty-printing the hash table
 rawMultigradedBettiTally = B -> (
     if keys B == {} then return 0;
-    N := max apply(pairs B, (key, n) -> ((i,h,d) := key; length d));
+    N := max apply(pairs B, (key, n) -> ((i,d,h) := key; length d));
     R := ZZ[vars(0..N-1)];
     H := new MutableHashTable;
     (rows, cols) := ({}, {});
     scan(pairs B,
         (key, n) -> (
-	    (i,h,d) := key;
+	    (i,d,h) := key;
 	    key = (h, i);
 	    (rows, cols) = (append(rows, h), append(cols, i));
 	    if compactMatrixForm then (
@@ -841,28 +842,10 @@ rawMultigradedBettiTally = B -> (
 
 net MultigradedBettiTally := B -> netList(rawMultigradedBettiTally B, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 
--- Computes the multigraded Betti table of an object in a multigraded ring.
+-- Converts a BettiTally into a MultigradedBettiTally, which supports better pretty-printing
 -- Note: to compactify the pretty-printed output, set compactMatrixForm to false.
--- TODO: incorporate Minimize and Weights options
-multigradedBetti = method(
-    TypicalValue => MultigradedBettiTally,
-    Options => options betti
-    )
-multigradedBetti MultigradedBettiTally := opts -> B -> (
-  if opts.Weights === null then B
-  else (
-    heftFn := heftfun0 opts.Weights;
-    applyKeys(B, (i,h,d) -> (i, heftFn d, d))))
-multigradedBetti Matrix := opts -> f -> multigradedBetti(chainComplex f, opts)
-multigradedBetti GroebnerBasis := opts -> G -> multigradedBetti(generators G, opts)
-multigradedBetti Ideal := opts -> I -> multigradedBetti(generators I, opts)
-multigradedBetti Module := opts -> M -> multigradedBetti(presentation M, opts)
-multigradedBetti GradedModule := opts -> C -> (
-  complete C;
-  heftFn := heftfun(opts.Weights, heft C);
-  new MultigradedBettiTally from flatten apply(
-    select(pairs C, (i,F) -> class i === ZZ),
-    (i,F) -> apply(pairs tally degrees F, (d,n) -> (i, heftFn d, d) => n)))
+multigraded = method(TypicalValue => MultigradedBettiTally)
+multigraded BettiTally := bt -> new MultigradedBettiTally from bt
 
 -----------------------------------------------------------------------------
 -- some extra betti tally routines by David Eisenbud and Mike :
