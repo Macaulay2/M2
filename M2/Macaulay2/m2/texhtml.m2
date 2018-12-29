@@ -16,8 +16,10 @@ html TEX := str -> (
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
-     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///);
-     f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
+     while match("\\$.*\\$", str) do (
+     	  f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///);
+     	  f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
+	  );
      if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
      f(///\\\{///,///\lbrace ///);
      f(///\\\}///,///\rbrace ///);
