@@ -23,7 +23,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"}
             },
         Headline => "truncation of a module",
-        PackageExports => {"Polyhedra"},
+        PackageImports => {"Polyhedra"},
         DebuggingMode => true
         )
 
@@ -190,6 +190,7 @@ trunc(List, Ring) := (d,R) ->(
     )
 
 TEST ///
+  debug needsPackage "Truncations"
   S = ZZ/101[a,b, Degrees =>{{0,1},{1,0}}]
   M = S^{-{5,2}, -{2,3}}
   D = {4,3}
@@ -291,10 +292,14 @@ truncationMonomials(List, Ring) := (degs, R) -> (
       C := cone P;
       H := hilbertBasis C;
       H = for h in H list flatten entries h;
-      conegens := rsort for h in H list if h#0 === 0 then R_(drop(h,1)) else continue;
-      print matrix {conegens};
-      gens := for h in H list if h#0 === 1 then R_(drop(h,1)) else continue;
-      monomialIdeal gens
+      J := monomialIdeal leadTerm ideal R;
+      ambR := ring J;
+      --conegens := rsort for h in H list if h#0 === 0 then A_(drop(h,1)) else continue;
+      --print matrix {conegens};
+      mongens := for h in H list if h#0 === 1 then ambR_(drop(h,1)) else continue;
+      result := gens monomialIdeal (matrix(ambR, {mongens}) % J);
+      if R =!= ambR then result = result ** R;
+      ideal result
       );
     R#(symbol truncation, d)
     )
@@ -318,7 +323,7 @@ TEST ///
 truncation(List, Ring) := Module => (degs, R) -> (
     if not canUseTruncation R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    image gens truncationMonomials(degs,R)
+    ideal gens truncationMonomials(degs,R)
     )
 
 truncation(List, Module) := Module => (degs, M) -> (
@@ -330,9 +335,9 @@ truncation(List, Module) := Module => (degs, M) -> (
             gens truncationMonomials(for d in degs list(d-a),R))
         )
     else (
-        -- TODO MES: this isn't correct: use subquotient handling.
-        f := presentation M;
-        map(M,,truncation(degs, f))
+        p := presentation M;
+        phi := map(M,,gens truncation(degs, target p));
+        image phi
         )
     )
 
@@ -345,15 +350,76 @@ truncation(List, Matrix) := Matrix => (degs, phi) -> (
     G := truncation(degs, target phi);
     f := gens F;
     g := gens G;
-    (phi * f) // g
+    map(G,F,(phi * f) // g)
     )
 
-truncation(List, Ideal) := (degs, I) -> error "not yet implemented"
+truncation(List, Ideal) := (degs, I) -> ideal truncation(degs, module I)
 
 truncation(ZZ, Ring) :=
 truncation(ZZ, Module) :=
 truncation(ZZ, Ideal) :=
+truncation(ZZ, Matrix) :=
   (d, R) -> truncation({d}, R)
+
+TEST ///
+  -- test of truncations in singly graded poly ring case
+-*
+  -- XXX
+  restart
+*-
+  needsPackage "Truncations"
+  
+  S = ZZ/101[a..d]
+  I = monomialCurveIdeal(S, {1,3,4})
+  assert(truncation(2, S) == (ideal vars S)^2)
+  assert(truncation(2, S^1) == image gens (ideal vars S)^2)
+  elapsedTime truncation(25, S^1);
+  elapsedTime truncate(25, S^1); -- (700 times faster)
+  -- getting the map from truncation(d,F) --> F
+  F = S^{-1} ++ S^{2}
+  truncF = truncation(2, F)
+  truncF2 = image map(F, truncF, gens truncF)
+  truncF === truncF2
+
+  -- test truncation of an ideal
+  -- this assumes (tests) that truncation of an ideal is minimally generated.
+  truncation(4, I) == truncate(4, I)
+  truncI = trim((ideal vars S)^2 * I_0 + (ideal vars S) * ideal(I_1, I_2, I_3))
+  assert(truncation(4, I) == truncI)
+  ----assert(numgens truncation(4, I) == 18) -- WRONG without trim.
+  
+  -- test of truncation of modules
+  -- 1. coker module
+  M = Ext^2(comodule I, S)
+  assert not M.?generators
+  assert(truncation(-3, M) == M)
+  assert(truncation(-4, M) == M)
+  truncM = truncation(-2, M)
+  assert(truncM == ideal(a,b,c,d) * M)
+  -- 2. image module
+  -- 3. subquotient module
+  C = res I  
+  E = trim((ker transpose C.dd_3)/(image transpose C.dd_2))
+  truncation(-3, E) == E
+  truncation(-4, E) == E
+  truncE = truncation(-2, E)
+  assert(truncE == ideal(a,b,c,d) * E)
+  presentation truncM
+  presentation truncE
+  
+  -- check functoriality:
+  assert(0 == truncation(3, C.dd_1) * truncation(3, C.dd_2))
+  assert(0 == truncation(3, C.dd_2) * truncation(3, C.dd_3))
+
+  -- how to get the map: truncM == truncation(-2,M) --> M ??
+  phi = map(M, truncM, gens truncM)
+  assert(image phi == truncM)
+
+  F = truncation(-2, target presentation M)
+  G = truncation(-2, source presentation M)
+  assert(F == target truncation(-2, presentation M))
+  assert(G == source truncation(-2, presentation M))
+///
 
 TEST ///
 -*
@@ -364,14 +430,20 @@ TEST ///
   M = S^{-{5,2}, -{2,3}}
   D = {4,3}
   assert(truncation(D,S) == image matrix{{a^3*b^4}})
+  assert(truncation(D,S) == truncation({D},S))
 
   E = {{4,3},{3,4}}
   assert(truncation(E,S) == image matrix{{a^3*b^4, a^4*b^3}})
 
+  truncation(D, M)
+  truncate(D,M) -- different: is this incorrect? check, but answer is YES!
+  
 -*
   trunc0(D,S^1)
+
   trunc0(D,M)
   trunc(D,M)
+
   trunc0(E,M)
 *-
 ///
@@ -428,6 +500,7 @@ TEST ///
   restart  
   needsPackage "Truncations"
 *-
+  needsPackage "Polyhedra"
   A = matrix {{1,2,3,7,8}}
   b = matrix {{6}}
   P = truncationPolyhedron(A,b)
@@ -461,16 +534,76 @@ TEST ///
 
 
 TEST ///
-  kk = ZZ/101
-  R = kk[a,b,c,Degrees =>{2:{3,4},{7,5}}]
+  -- test the following:
+  --  gradings:
+  --    standard grading
+  --    ZZ^1 grading
+  --    ZZ^r grading
+  --  rings:
+  --    polynomial ring
+  --    exterior algebra
+  --    quotient of a poly ring
+  --    quotient of an exterior algebra
+  --    Weyl algebra (?? probably not: what does this mean)
+  --  coeff rings:
+  --    a basic field
+  --    a poly ring
+  --    a quotient of a polynomial ring
+  --  truncations:
+  --    truncation(D, S)
+  --    truncation(D, S^1)
+  --    truncation(D, ideal)
+  --    truncation(D, graded free module)
+  --    truncation(D, coker module)
+  --    truncation(D, image module)
+  --    truncation(D, subquotient module)
+  --    truncation(D, Matrix)
+///
+
+
+TEST ///
+-*
+  restart
+*-
+  debug needsPackage "Truncations"
+  -- XXX
   d = {5,6}
   D = {d,reverse d}
 
+  kk = ZZ/101
+  R = kk[a,b,c,Degrees =>{2:{3,4},{7,5}}]
+  truncation({5,6},R)
+  truncation({6,5},R)
+
+  J1 = truncation(D, R)
+  J1 = truncation(D, R^1)
+  truncation(D, ideal(a,b,c))
+
+  A = R/(a^2-b^2, c^3)
+  truncation(D, A)
+truncation(d, R)
+  M = module ideal(a,b,c)
+  truncation(d, ideal(a,b,c))
+  truncation(D, ideal(a,b,c))
+  p = presentation M
+  
+  truncation(D, presentation M)
+  truncation(D, source presentation M)
+  truncation(D, target presentation M)
+  
+
+  trunc({5,6},R)
+  trunc({5,6},R^1)
+  trunc0({5,6},R^1)
+
+  trunc({6,5},R)
+  
   elapsedTime J = trunc(d,R)
   M = R^1
   J = trunc(d,R^1)
   J_*/degree
   K = trunc(D,R^1)
+
 ///
 
 
@@ -488,7 +621,12 @@ doc ///
     
       If $R$ is a graded ring, and $M$ is a graded module, and $D$ is a (finite)
       set of degrees, then the truncation {\tt truncation(D, M)} is
-      \[M_{\ge D} = XXX \]
+      $$M_{\ge D} = \oplus_{m} M_m,$$
+      where the sum is over all degree vectors $m \in \ZZ^r$, which are
+      component-wise greater than at least one element $d \in D$.
+      
+      This package handles the multi-graded case correctly, and the
+      @TO "truncation"@ function is functorial.
   Caveat
     Not yet reimplemented for all ring cases
   SeeAlso
@@ -571,7 +709,7 @@ assert(truncation(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
 
 TEST ///
 A = ZZ/101[a..d, Degrees => {4:0}]
-assert(truncation(2, A^1) == image matrix{{1_A}})
+assert(truncation(2, A^1) == image matrix{{0_A}})
 ///
 
 TEST ///
@@ -603,6 +741,8 @@ TEST ///
 -- Singly generated case
 R = QQ[a..d]
 I = ideal(b*c-a*d,b^2-a*c,d^10)
+truncation(2,I)
+truncate(2,I)
 assert(truncation(2,I) == I)
 assert(truncation(3,I) == intersect((ideal vars R)^3, I))
 
@@ -622,7 +762,7 @@ restart
 loadPackage "Truncations"
 restart
 installPackage "Truncations"
-
+check "Truncations"
 debug needsPackage "Truncations"
 -- XXX
 
