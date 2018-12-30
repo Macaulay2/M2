@@ -13,7 +13,7 @@ BUILDOPTIONS = CC="$(CC) $(OPENMP_CXXFLAGS)" CXX="$(CXX) $(OPENMP_CXXFLAGS)" LDF
 
 LICENSEFILES = LICENSE
 PROGRAMS = solver/csdp
-STRIPFILES = $(PROGRAMS)
+STRIPFILES = $(PROGRAMS) theta/complement theta/graphtoprob theta/rand_graph theta/theta
 
 #$(info BUILDOPTIONS is $(BUILDOPTIONS))
 
