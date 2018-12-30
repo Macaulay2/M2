@@ -405,7 +405,7 @@ truncation(List, Module) := Module => (degs, M) -> (
     else (
         p := presentation M;
         phi := map(M,,gens truncation(degs, target p));
-        image phi
+        trim image phi
         )
     )
 
