@@ -1,17 +1,24 @@
 -- TODO:
---  1. this should work under quotient rings, exterior algebras, 
---  2. this should be fast for singly graded cases
---  3. make sure doc for the internal routine is correct: 
+--  1. truncationPolyhedron: use SkewCommuting info. DONE
+--  2. doc truncationImplemented DONE
+--  3. figure out what is the story with poly ring over poly ring, with variables in 
+--     the coefficient ring having non-zero degrees
+--     (e.g. with Join=>true, false).
+--  4. for singly graded (or standard graded?) use original code from, engine:
+--     it seems quite a bit faster.
+--  5. make sure doc for the internal routine is correct: 
 --      calls basis with an obscure undocumented option.
 --      and the result is wrong for multi-gradings
 --      and the doc for truncate is incorrect.
---  4. heft vector: we are doing WAY TOO MUCH work here.
+--  6. This is not need here, I think:
+--     heft vector: we are doing WAY TOO MUCH work here.
 --     heft vector doesn't need to be inside the cone.
 --     perhaps start with simplicial part of the cone
+
 newPackage(
         "Truncations",
-        Version => "0.1", 
-        Date => "12 Oct 2018",
+        Version => "0.5", 
+        Date => "30 Dec 2018",
         Authors => {
             {
                 Name => "David Eisenbud", 
@@ -29,50 +36,23 @@ newPackage(
 
 export {
     "truncation",
-    -- to be made local:
-    "trunc",
-    "truncationPolyhedron",
-    "basisPolyhedron",
-    "Exterior"
+    "truncationImplemented"
     }
 
-truncation = method()
+protect Exterior
 
-truncationPolyhedron = method(Options=>{Exterior => false})
-truncationPolyhedron(Matrix, List) := Polyhedron => opts -> (A, b) -> (
-    truncationPolyhedron(A, transpose matrix{b}, opts)
-    )
-truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
-    -- assumption: A is m x n. b is m x 1.
-    -- returns the polyhedron {Ax >= b, x >=0}
-    if ring A === ZZ then A = A ** QQ;
-    if ring A =!= QQ then error "expected matrix over ZZ or QQ";
-    I := id_(source A);
-    z := map(source A, QQ^1, 0);
-    if opts.Exterior then (
-        -- also need to add in the conditions that each variable is <= 1.
-        -- x <= 1
-        ones := matrix toList((numcols A) : {1_QQ});
-        polyhedronFromHData(-(A || I) || I, -(b || z) || ones)
-        )
-    else 
-        polyhedronFromHData(-(A || I), -(b || z))
-    )
+---------------------------
+-- DE's test code ---------
+---------------------------
+--    "trunc",
+--    "truncationPolyhedron",
+--    "basisPolyhedron",
+--    "Exterior"
+-- Note: trunc, trunc0 are DE's oriignal code to supplant the 'truncate' command,
+-- which was computing the truncation incorrectly in multi-graded situations.
+-- actually: the definition of truncation being used was not the best possible.
 
-basisPolyhedron = method()
-basisPolyhedron(Matrix,List) := (A,b) -> (
-    basisPolyhedron(A, transpose matrix{b})
-    )
-basisPolyhedron(Matrix,Matrix) := (A,b) -> (
-    -- assumption: A is m x n. b is m x 1.
-    -- returns the polyhedron {Ax = b, x >=0}
-    if ring A === ZZ then A = A ** QQ;
-    if ring A =!= QQ then error "expected matrix over ZZ or QQ";
-    I := id_(source A);
-    z := map(source A, QQ^1, 0);
-    polyhedronFromHData(-I, -z, A, b)
-    )
-
+-- trunc: unused now.  To be removed.
 trunc = method()
 trunc(List,Module) := (D,M)->(
     --D can be a list of integers, of length = degreeLength ring M,
@@ -115,6 +95,7 @@ trunc(List,Module) := (D,M)->(
 positivePart = method()
 positivePart List := L -> apply(L, ell-> max(ell,0))
 
+-- trunc0: unused now.  To be removed.
 trunc0 = method()
 trunc0(List, Module) := (D,M) ->(
     --A fix for the basic truncate command in the case of a module on multi-projective space.
@@ -134,7 +115,7 @@ trunc0(List, Module) := (D,M) ->(
     trim sum(D, d->trunc0(d,M))
     )
 
--- The following routine should use integer point polyhedral code, as in normaliz?
+-- trunc: unused.  To be removed.
 trunc(List,RingMap) := (d,phi) ->(
     --for the moment we need T to be of the special form greated in trunc(List, Ring):
     --namely, variable t_(i,j) etc.
@@ -152,6 +133,7 @@ trunc(List,RingMap) := (d,phi) ->(
     ker(map(T/Td,T)*phi)  -- TODO: this is a monomial map, use normaliz. or oerhaps make kernel faster.
     )
 
+-- trunc: unused.  To be removed.
 trunc(List, Ring) := (d,R) ->(
     --produce the ideal in R of all monomials of degree >=D
     --requires that all the components of the degrees of R are all >=0.
@@ -190,6 +172,8 @@ trunc(List, Ring) := (d,R) ->(
     )
 
 TEST ///
+  -- the debug is needed, as trunc is not exported.
+  -- once 'trunc' is removed, remove this code too.
   debug needsPackage "Truncations"
   S = ZZ/101[a,b, Degrees =>{{0,1},{1,0}}]
   M = S^{-{5,2}, -{2,3}}
@@ -207,6 +191,83 @@ TEST ///
 *-
 ///
 
+------------------------------------------------------------
+-- new code that uses Polyhedra to compute lattice points --
+------------------------------------------------------------
+truncation = method()
+
+truncationPolyhedron = method(Options=>{Exterior => {}})
+  -- Exterior should be a list of variable indices which are skew commutative.
+  -- i.e. have max degeree 1.
+truncationPolyhedron(Matrix, List) := Polyhedron => opts -> (A, b) -> (
+    truncationPolyhedron(A, transpose matrix{b}, opts)
+    )
+truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
+    -- assumption: A is m x n. b is m x 1.
+    -- returns the polyhedron {Ax >= b, x >=0}
+    if ring A === ZZ then A = A ** QQ;
+    if ring A =!= QQ then error "expected matrix over ZZ or QQ";
+    I := id_(source A);
+    z := map(source A, QQ^1, 0);
+    hdataLHS := -(A || I);
+    hdataRHS := -(b || z);
+    if #opts.Exterior > 0 then (
+        -- also need to add in the conditions that each variable in the list is <= 1.
+        ones := matrix toList(#opts.Exterior : {1_QQ});
+        hdataLHS = hdataLHS || (I ^ (opts.Exterior));
+        hdataRHS = hdataRHS || ones;
+        --polyhedronFromHData(-(A || I) || I, -(b || z) || ones)
+        );
+    polyhedronFromHData(hdataLHS, hdataRHS)
+    )
+
+-- basisPolyhedron: this function is not used here.  It can be used for a
+-- perhaps better implementation of 'basis'.
+-- BUT: it should have exterior variables added too...
+basisPolyhedron = method()
+basisPolyhedron(Matrix,List) := (A,b) -> (
+    basisPolyhedron(A, transpose matrix{b})
+    )
+basisPolyhedron(Matrix,Matrix) := (A,b) -> (
+    -- assumption: A is m x n. b is m x 1.
+    -- returns the polyhedron {Ax = b, x >=0}
+    if ring A === ZZ then A = A ** QQ;
+    if ring A =!= QQ then error "expected matrix over ZZ or QQ";
+    I := id_(source A);
+    z := map(source A, QQ^1, 0);
+    polyhedronFromHData(-I, -z, A, b)
+    )
+
+TEST ///
+-*
+  restart
+*-  
+  needsPackage "Truncations"
+  E = ZZ/101[a..f, SkewCommutative=>{0,2,4}, Degrees=> {2:{3,1},2:{4,-2},2:{1,3}}]
+  elapsedTime truncation({7,1},E)
+
+  A = transpose matrix degrees E  
+  debug needsPackage "Truncations"  
+  elapsedTime numgens truncationMonomials({7,1},E) == 28
+  truncate({7,1},E^1) -- this is totally not correct with the new def of truncation.
+  
+  P = truncationPolyhedron(A,{7,1},Exterior => (options E).SkewCommutative)
+  P1 = truncationPolyhedron(A,{7,1})  
+
+  debug needsPackage "Polyhedra"
+  elapsedTime halfspaces P
+  elapsedTime # hilbertBasis cone P == 1321
+  elapsedTime # hilbertBasis cone P1 == 1851
+///
+
+-- checkOrMakeDegreeList: takes a degree, and degree rank:ZZ.
+-- output: a list of lists of degrees, all of the correct length (degree rank).
+--  if it cannot translate the degree(s), an error is issued.
+-- in the following list: n represents an integer, and d represents a list of integers.
+-- n --> {{n}}  (if degree rank is 1)
+-- {n0,...,ns} --> {{n0,...,ns}} (if the length is degree rank).
+-- {d0,...,ds} --> {d0,...,ds} (no change, assuming length of each di is the degree rank).
+-- an error is provided in any other case.
 checkOrMakeDegreeList = method()
 checkOrMakeDegreeList(ZZ, ZZ) := (d,degrank) -> (
     if degrank =!= 1 then
@@ -230,8 +291,9 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
         )
     )
 
-canUseTruncation = method()
-canUseTruncation Ring := Boolean => R -> (
+-- whether truncation is implemented for this ring type.
+truncationImplemented = method()
+truncationImplemented Ring := Boolean => R -> (
     A := ultimate(ambient,R);
     isAffineRing A 
     or
@@ -257,28 +319,28 @@ TEST ///
   assert try checkOrMakeDegreeList({{1,0},{3,-5},3}, 2) else true
 ///
 
-truncationMonomials = method()
-truncationMonomials(List, Ring) := (d, R) -> (
-    -- expected: R is a polynomial ring.
-    if not all(d, d1 -> instance(d1,ZZ)) then
-        error "expected degree to be a list of integers";
-    if #d =!= degreeLength R then 
-        error ("expected degree to be of length"|degreeLength R);
-    if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
-      -- TODO: check that d is a degree for the ring R
-      A := transpose matrix degrees R;
-      P := truncationPolyhedron(A,transpose matrix{d});
-      C := cone P;
-      H := hilbertBasis C;
-      H = for h in H list flatten entries h;
-      conegens := rsort for h in H list if h#0 === 0 then R_(drop(h,1)) else continue;
-      print matrix {conegens};
-      gens := for h in H list if h#0 === 1 then R_(drop(h,1)) else continue;
-      gens
-      );
-    R#(symbol truncation, d)
-    )
+TEST ///
+  -- of truncationImplemented
+-*
+  restart
+*-
+  debug needsPackage "Truncations"
+  R1 = ZZ[a,b,c]
+  R2 = R1/(3*a,5*b)
+  R3 = R2[s,t] -- current 'truncate' cannot handle this kind of ring.
+  R4 = QQ[x,y,z]
+  truncationImplemented R1
+  truncationImplemented R2
+  truncationImplemented R3 -- false??
+  truncationImplemented R4
+  
+  E1 = ZZ[a,b,c,SkewCommutative=>true]
+  E2 = E1/(a*b)
+  E3 = ZZ[d,e,f,SkewCommutative=>{0,2}]
+  assert((options E3).SkewCommutative == {0,2})
+///
 
+truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     -- expected: R is a polynomial ring.
@@ -288,16 +350,16 @@ truncationMonomials(List, Ring) := (degs, R) -> (
     if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
       -- TODO: check that d is a degree for the ring R
       A := transpose matrix degrees R;
-      P := truncationPolyhedron(A,transpose matrix{d});
+      P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R).SkewCommutative);
       C := cone P;
       H := hilbertBasis C;
       H = for h in H list flatten entries h;
-      J := monomialIdeal leadTerm ideal R;
+      J := ideal leadTerm ideal R;
       ambR := ring J;
       --conegens := rsort for h in H list if h#0 === 0 then A_(drop(h,1)) else continue;
       --print matrix {conegens};
       mongens := for h in H list if h#0 === 1 then ambR_(drop(h,1)) else continue;
-      result := gens monomialIdeal (matrix(ambR, {mongens}) % J);
+      result := mingens ideal (matrix(ambR, {mongens}) % J);
       if R =!= ambR then result = result ** R;
       ideal result
       );
@@ -311,24 +373,30 @@ TEST ///
   debug needsPackage "Truncations"
   S = ZZ/101[a,b,c, Degrees =>{5,6,7}]
   truncationMonomials({10}, S)
-  truncationMonomials({{9},{11}}, S)
-  
-  -- TODO MES: add more tests in for this.
-  -- In particular, check:
-  --   exterior algebra
-  --   quotient rings (reduce monomial ideal by the lead terms)?
+  assert(truncationMonomials({{9},{11}}, S) == truncationMonomials({9},S))
+
+  E = ZZ/101[a, b, c, SkewCommutative=>true]
+  truncationMonomials({2}, E)
+
+  E = ZZ/101[a,b,c, SkewCommutative=>{0,1}]
+  truncationMonomials({2}, E) -- FAILS: needs a monomial ideal
+
+  use S
+  assert(truncationMonomials({12},S) == ideal"a3,a2b,b2,ac,bc,c2")
+  R = S/(a*c-2*b^2)  
+  assert(truncationMonomials({12},R) == ideal"a3,a2b,ac,bc,c2")
 ///
 
 -- truncate the graded ring A in degrees >= d, for d in degs
 truncation(List, Ring) := Module => (degs, R) -> (
-    if not canUseTruncation R then error "cannot use truncation with this ring type";
+    if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     ideal gens truncationMonomials(degs,R)
     )
 
 truncation(List, Module) := Module => (degs, M) -> (
     R := ring M;
-    if not canUseTruncation R then error "cannot use truncation with this ring type";
+    if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if isFreeModule M then (
         image map(M,,directSum for a in degrees M list 
@@ -337,14 +405,14 @@ truncation(List, Module) := Module => (degs, M) -> (
     else (
         p := presentation M;
         phi := map(M,,gens truncation(degs, target p));
-        image phi
+        trim image phi
         )
     )
 
 truncation(List, Matrix) := Matrix => (degs, phi) -> (
     -- this is the case when source and target of phi are free modules...
     R := ring phi;
-    if not canUseTruncation R then error "cannot use truncation with this ring type";
+    if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     F := truncation(degs, source phi);
     G := truncation(degs, target phi);
@@ -454,7 +522,13 @@ TEST ///
   debug needsPackage "Truncations" 
 *-
   S = ZZ/101[a,b,c,d,e,Degrees=>{3,4,5,6,7}]
-  sort gens truncation({8},S) == sort gens trunc({8},S^1)
+
+  assert(
+      sort gens truncation({8},S) 
+      == 
+      sort gens ideal(a*c,b^2,a*d,b*c,a^3,a*e,b*d,c^2,a^2*b,b*e,c*d,c*e,d^2,d*e,e^2)
+      )
+
   truncation({8},S^{-4})
   truncation({8},S^{3})
   truncation({8},S^{-4,-5,-3})
@@ -462,6 +536,9 @@ TEST ///
   phi = random(S^{-1,-2,-3}, S^{-1,-2,-3,-4,-8})
   psi = truncation({8}, phi)
   assert(isHomogeneous psi)
+  
+  debug needsPackage "Truncations"   
+  assert(sort gens truncation({8},S) == sort gens trunc({8},S^1))
   -- How best to test this??
 ///
 
@@ -495,45 +572,6 @@ rays C2
 ///
 
 TEST ///
-  -- example 2.  A simple one in one dimension
--* 
-  restart  
-  needsPackage "Truncations"
-*-
-  needsPackage "Polyhedra"
-  A = matrix {{1,2,3,7,8}}
-  b = matrix {{6}}
-  P = truncationPolyhedron(A,b)
-  -- how to use this?
-  
-  C = cone P -- this is the cone with P at height 1.
-  rays C -- TODO: check this
-  facets C -- TODO: check this
-  hilbertBasis C
-  -- It has two kinds of elements in the Hilbert basis, those at height 
-  -- zero, and those at height one in the polyhedron
-  R = select(hilbertBasis C, h -> h_(0,0) == 0)
-  M = select(hilbertBasis C, h -> h_(0,0) == 1)
-  -- Cut off first coordinate
-  R = apply(R, r->r^{1..(numRows r-1)})
-  M = apply(M, m->m^{1..(numRows m-1)})
-  
-  Q = basisPolyhedron(A,b)
-  isCompact Q -- true
-  latticePoints Q
-  latticePoints P
-  
-  PE = truncationPolyhedron(A,b,Exterior=>true)
-  cone PE
-  hilbertBasis oo
-  for h in oo list flatten entries h
-  select(oo, h -> h#0 == 1)
-  matrix oo
-  vertices PE -- I think this works in the exterior case...
-///  
-
-
-TEST ///
   -- test the following:
   --  gradings:
   --    standard grading
@@ -560,7 +598,6 @@ TEST ///
   --    truncation(D, Matrix)
 ///
 
-
 TEST ///
 -*
   restart
@@ -581,7 +618,7 @@ TEST ///
 
   A = R/(a^2-b^2, c^3)
   truncation(D, A)
-truncation(d, R)
+  truncation(d, R)
   M = module ideal(a,b,c)
   truncation(d, ideal(a,b,c))
   truncation(D, ideal(a,b,c))
@@ -605,7 +642,6 @@ truncation(d, R)
   K = trunc(D,R^1)
 
 ///
-
 
 beginDocumentation()
 
@@ -637,6 +673,68 @@ doc ///
 
 doc ///
   Key
+    truncationImplemented
+    (truncationImplemented, Ring)
+  Headline
+    whether truncations in the given ring make sense and have been implemented
+  Usage
+    truncationImplemented R
+  Inputs
+    R:Ring
+  Outputs
+    :Boolean
+      whether truncations make sense and can be computed for modules over the ring $R$
+  Description
+    Text
+      This function is mostly of use by the package itself, but is sometimes
+      useful for programming purposes, so we export this function.
+
+      Currently, truncations of modules can be computed in (commutative or skew commutative) polynomial rings,
+      (over a field or the integers),
+      quotients thereof, and sometimes in towers of polynomial rings.
+      Truncations in the Weyl algebra can be computed via the D-modules package,
+      but cannot be constructed using @TO "truncation"@.
+    Text
+      Truncations can be attempted for polynomial rings:
+    Example
+      assert truncationImplemented(ZZ/101[a..d])      
+      assert truncationImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}])
+      assert truncationImplemented(ZZ/101[a..d, Degrees => {2:{3,1},2:{-4,2}}])
+      
+      assert truncationImplemented(QQ[a..d, SkewCommutative=>true])
+      assert truncationImplemented(QQ[a..d, SkewCommutative=>{0,3}])
+
+      assert truncationImplemented(ZZ[a..d])      
+      assert truncationImplemented(ZZ[a..d, Degrees => {1,1,-1,-1}])
+      assert truncationImplemented(ZZ[a..d, Degrees => {2:{3,1},2:{-4,2}}])
+      
+      assert truncationImplemented(ZZ[a..d, SkewCommutative=>true])
+      assert truncationImplemented(ZZ[a..d, SkewCommutative=>{0,3}])
+    Text
+      Truncations also work for quotients by homogeneous ideals:
+    Example
+      assert truncationImplemented(ZZ/101[a..d]/(a*d-b*c))
+      assert truncationImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}]/(a*d-b*c))
+      assert truncationImplemented(ZZ/101[a..d, Degrees => {2:{3,1},2:{-4,2}}]/(a*d-b*c))
+      
+      assert truncationImplemented(QQ[a..d, SkewCommutative=>true]/(a*d-b*c))
+      assert truncationImplemented(QQ[a..d, SkewCommutative=>{0,3}]/(a*d-b*c))
+
+      assert truncationImplemented(ZZ[a..d]/(3*a*d-b*c))
+      assert truncationImplemented(ZZ[a..d, Degrees => {1,1,-1,-1}]/(a*d-b*c))
+      assert truncationImplemented(ZZ[a..d, Degrees => {2:{3,1},2:{-4,2}}]/(a*d-b*c))
+      
+      assert truncationImplemented(ZZ[a..d, SkewCommutative=>true]/(a*d-b*c))
+      assert truncationImplemented(ZZ[a..d, SkewCommutative=>{0,3}]/(a*d-b*c))
+  Caveat
+    just because this function returns true, doesn't mean that the truncation
+    is finitely generated, and will return...
+  SeeAlso
+    truncation
+///
+
+doc ///
+  Key
     truncation
     (truncation,ZZ,Module)
     (truncation,List,Module)
@@ -645,9 +743,9 @@ doc ///
   Headline
     truncation of the graded ring, ideal or module at a specified degree or set of degrees
   Usage
-    truncation(i,M)
+    truncation(d,M)
   Inputs
-    i:ZZ
+    d:ZZ
       or a single multi-degree or a list of multi-degrees
     M:Module
       or a ring or an ideal
@@ -672,12 +770,30 @@ doc ///
       truncation(2,comodule ideal(3*x,5*y,15))
     Text
       If  {\tt i} is a multi-degree, then the result is the submodule generated by all elements
-      of degree exactly {\tt i}, together with all generators of {\tt M} whose first degree is 
-      higher than the first degree of {\tt i}.
-      The following includes the generator of degree {8,20}.
+      of degree (component-wise) greater than or equal to $i$.  
+
+      The following example includes the 10 generators needed to
+      obtain all graded elements whose degrees which are component-wise 
+      at least $\{7,24\}$.
     Example
       S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
-      truncation({7,24}, S^1 ++ S^{{-8,-20}})
+      trunc = truncation({7,24}, S^1 ++ S^{{-8,-20}})
+      degrees trunc      
+    Text
+      If  {\tt i} is a list of multi-degrees, then the result is the 
+      submodule generated by all elements
+      of degree (component-wise) greater than or equal to at least one degree in $i$.  
+
+      The following example includes the generators needed to
+      obtain all graded elements whose degrees which are component-wise 
+      at least $\{3,0\}$ or at least $\{3,0\}$.  Notice that the result is
+      not minimally generated.  We use @TO "trim"@ to obtain a module which is minimally
+      generated.
+    Example
+      S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
+      trunc = truncation({{3,0},{0,1}}, S^1 ++ S^{{-8,-20}})
+      trunc = trim trunc
+      degrees trunc
     Text
       The coefficient ring may also be a polynomial ring.  In this example, the coefficient variables
       also have degree one.  The given generators will generate the truncation over the coefficient ring.
@@ -693,9 +809,13 @@ doc ///
       A1 = ZZ/101[a,b,c,Degrees=>{3:{}}]
       degree a
       B1 = A1[x,y]
+      degrees B1
       truncation(2,B1^1)
       truncation(2, ideal(a^3*x, b*y^2))
   Caveat
+    The behavior of this function has changed as of Macaulay2 version 1.13.  Before,
+    it used a less useful notion of truncation, involving the heft vector,
+    and was often not what one wanted in the multi-graded case.
   SeeAlso
     basis
     comodule
