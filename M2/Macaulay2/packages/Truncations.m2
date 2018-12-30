@@ -294,7 +294,8 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
 -- whether truncation is implemented for this ring type.
 truncationImplemented = method()
 truncationImplemented Ring := Boolean => R -> (
-    A := ultimate(ambient,R);
+    (R1, phi1) := flattenRing R;
+    A := ambient R1;
     isAffineRing A 
     or
     isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
@@ -331,36 +332,41 @@ TEST ///
   R4 = QQ[x,y,z]
   truncationImplemented R1
   truncationImplemented R2
-  truncationImplemented R3 -- false??
+  truncationImplemented R3
   truncationImplemented R4
   
   E1 = ZZ[a,b,c,SkewCommutative=>true]
   E2 = E1/(a*b)
   E3 = ZZ[d,e,f,SkewCommutative=>{0,2}]
   assert((options E3).SkewCommutative == {0,2})
+  truncationImplemented E1
+  truncationImplemented E2
+  truncationImplemented E3
+  truncationImplemented (E1[x,y])
+  truncationImplemented (E1[x,y,SkewCommutative=>true])
 ///
 
 truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    -- expected: R is a polynomial ring.
     if #degs > 1 then
         return sum for d in degs list truncationMonomials(d, R);
     d := degs#0;
     if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
-      -- TODO: check that d is a degree for the ring R
-      A := transpose matrix degrees R;
-      P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R).SkewCommutative);
+      (R1, phi1) := flattenRing R;
+      A := transpose matrix degrees R1;
+      P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R1).SkewCommutative);
       C := cone P;
       H := hilbertBasis C;
       H = for h in H list flatten entries h;
-      J := ideal leadTerm ideal R;
+      J := ideal leadTerm ideal R1;
       ambR := ring J;
-      --conegens := rsort for h in H list if h#0 === 0 then A_(drop(h,1)) else continue;
+      --conegens := rsort for h in H list if h#0 === 0 then ambR_(drop(h,1)) else continue;
       --print matrix {conegens};
       mongens := for h in H list if h#0 === 1 then ambR_(drop(h,1)) else continue;
       result := mingens ideal (matrix(ambR, {mongens}) % J);
-      if R =!= ambR then result = result ** R;
+      if R1 =!= ambR then result = result ** R1;
+      if R =!= R1 then result = phi1^-1 result;
       ideal result
       );
     R#(symbol truncation, d)
@@ -894,7 +900,11 @@ debug needsPackage "Truncations"
 restart
 load "trunc.m2"
 R = ZZ/101[a..d, Degrees=>{3,5,7,9}]
+truncate({15}, R^1)
+debug needsPackage "Truncations"
+truncation(15, R)
 trunc({15}, R)
+trunc({15}, R^1)
 
 E = ZZ/101[e_0..e_10, SkewCommutative => true]
 trunc0({10}, E^1)
