@@ -119,7 +119,7 @@ doc ///
       Notice that {\tt phi} is a matrix whose source is a free module, and whose target is the ideal.  @TO super@ is
       used to get the actual elements of $I$.
 
-      {\bf Basis ina specific multi-degree}
+      {\bf Basis in a specific multi-degree}
             
       If a multidegree is given, then a range cannot be given.
       In this example, the dimension over QQ of this multigraded piece of R is 2.

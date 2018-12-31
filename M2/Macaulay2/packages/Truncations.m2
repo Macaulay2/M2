@@ -18,12 +18,12 @@ newPackage(
         )
 
 export {
-    "truncation"
+    "truncate"
     }
 
 protect Exterior
 
-truncation = method()
+truncate = method()
 
 truncationPolyhedron = method(Options=>{Exterior => {}})
   -- Exterior should be a list of variable indices which are skew commutative.
@@ -73,7 +73,7 @@ TEST ///
 *-  
   needsPackage "Truncations"
   E = ZZ/101[a..f, SkewCommutative=>{0,2,4}, Degrees=> {2:{3,1},2:{4,-2},2:{1,3}}]
-  elapsedTime truncation({7,1},E)
+  elapsedTime truncate({7,1},E)
 
   A = transpose matrix degrees E  
   debug needsPackage "Truncations"  
@@ -120,8 +120,8 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
     )
 
 -- whether truncation is implemented for this ring type.
-truncationImplemented = method()
-truncationImplemented Ring := Boolean => R -> (
+truncateImplemented = method()
+truncateImplemented Ring := Boolean => R -> (
     (R1, phi1) := flattenRing R;
     A := ambient R1;
     isAffineRing A 
@@ -149,7 +149,7 @@ TEST ///
 ///
 
 TEST ///
-  -- of truncationImplemented
+  -- of truncateImplemented
 -*
   restart
 *-
@@ -158,20 +158,20 @@ TEST ///
   R2 = R1/(3*a,5*b)
   R3 = R2[s,t]
   R4 = QQ[x,y,z]
-  truncationImplemented R1
-  truncationImplemented R2
-  truncationImplemented R3
-  truncationImplemented R4
+  truncateImplemented R1
+  truncateImplemented R2
+  truncateImplemented R3
+  truncateImplemented R4
   
   E1 = ZZ[a,b,c,SkewCommutative=>true]
   E2 = E1/(a*b)
   E3 = ZZ[d,e,f,SkewCommutative=>{0,2}]
   assert((options E3).SkewCommutative == {0,2})
-  truncationImplemented E1
-  truncationImplemented E2
-  truncationImplemented E3
-  truncationImplemented (E1[x,y])
-  truncationImplemented (E1[x,y,SkewCommutative=>true])
+  truncateImplemented E1
+  truncateImplemented E2
+  truncateImplemented E3
+  truncateImplemented (E1[x,y])
+  truncateImplemented (E1[x,y,SkewCommutative=>true])
 ///
 
 truncationMonomials = method()
@@ -180,7 +180,7 @@ truncationMonomials(List, Ring) := (degs, R) -> (
     if #degs > 1 then
         return trim sum for d in degs list truncationMonomials(d, R);
     d := degs#0;
-    if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
+    if not R#?(symbol truncate, d) then R#(symbol truncate, d) = (
       (R1, phi1) := flattenRing R;
       A := transpose matrix degrees R1;
       P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R1).SkewCommutative);
@@ -197,7 +197,7 @@ truncationMonomials(List, Ring) := (degs, R) -> (
       if R =!= R1 then result = phi1^-1 result;
       ideal result
       );
-    R#(symbol truncation, d)
+    R#(symbol truncate, d)
     )
 
 TEST ///
@@ -256,8 +256,8 @@ truncation1 = (deg, M) -> (
     )
 
 -- truncate the graded ring A in degrees >= d, for d in degs
-truncation(List, Ring) := Module => (degs, R) -> (
-    if not truncationImplemented R then error "cannot use truncation with this ring type";
+truncate(List, Ring) := Module => (degs, R) -> (
+    if not truncateImplemented R then error "cannot use truncate with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
         ideal truncation1(min degs, R^1)
@@ -265,9 +265,9 @@ truncation(List, Ring) := Module => (degs, R) -> (
         ideal gens truncationMonomials(degs,R)
     )
 
-truncation(List, Module) := Module => (degs, M) -> (
+truncate(List, Module) := Module => (degs, M) -> (
     R := ring M;
-    if not truncationImplemented R then error "cannot use truncation with this ring type";
+    if not truncateImplemented R then error "cannot use truncate with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
         truncation1(min degs, M)
@@ -277,30 +277,30 @@ truncation(List, Module) := Module => (degs, M) -> (
         )
     else (
         p := presentation M;
-        phi := map(M,,gens truncation(degs, target p));
+        phi := map(M,,gens truncate(degs, target p));
         trim image phi
         )
     )
 
-truncation(List, Matrix) := Matrix => (degs, phi) -> (
+truncate(List, Matrix) := Matrix => (degs, phi) -> (
     -- this is the case when source and target of phi are free modules...
     R := ring phi;
-    if not truncationImplemented R then error "cannot use truncation with this ring type";
+    if not truncateImplemented R then error "cannot use truncate with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    F := truncation(degs, source phi);
-    G := truncation(degs, target phi);
+    F := truncate(degs, source phi);
+    G := truncate(degs, target phi);
     f := gens F;
     g := gens G;
     map(G,F,(phi * f) // g)
     )
 
-truncation(List, Ideal) := (degs, I) -> ideal truncation(degs, module I)
+truncate(List, Ideal) := (degs, I) -> ideal truncate(degs, module I)
 
-truncation(ZZ, Ring) :=
-truncation(ZZ, Module) :=
-truncation(ZZ, Ideal) :=
-truncation(ZZ, Matrix) :=
-  (d, R) -> truncation({d}, R)
+truncate(ZZ, Ring) :=
+truncate(ZZ, Module) :=
+truncate(ZZ, Ideal) :=
+truncate(ZZ, Matrix) :=
+  (d, R) -> truncate({d}, R)
 
 TEST ///
   -- test of truncations in singly graded poly ring case
@@ -311,52 +311,52 @@ TEST ///
   
   S = ZZ/101[a..d]
   I = monomialCurveIdeal(S, {1,3,4})
-  assert(truncation(2, S) == (ideal vars S)^2)
-  assert(truncation(2, S^1) == image gens (ideal vars S)^2)
-  elapsedTime truncation(25, S^1);
-  -- getting the map from truncation(d,F) --> F
+  assert(truncate(2, S) == (ideal vars S)^2)
+  assert(truncate(2, S^1) == image gens (ideal vars S)^2)
+  elapsedTime truncate(25, S^1);
+  -- getting the map from truncate(d,F) --> F
   F = S^{-1} ++ S^{2}
-  truncF = truncation(2, F)
+  truncF = truncate(2, F)
   truncF2 = image map(F, truncF, gens truncF)
   truncF === truncF2
 
   -- test truncation of an ideal
   -- this assumes (tests) that truncation of an ideal is minimally generated.
   truncI = trim((ideal vars S)^2 * I_0 + (ideal vars S) * ideal(I_1, I_2, I_3))
-  assert(truncation(4, I) == truncI)
-  assert(numgens truncation(4, I) == 18)
+  assert(truncate(4, I) == truncI)
+  assert(numgens truncate(4, I) == 18)
   
   -- test of truncation of modules
   -- 1. coker module
   M = Ext^2(comodule I, S)
   assert not M.?generators
-  assert(truncation(-3, M) == M)
-  assert(truncation(-4, M) == M)
-  truncM = truncation(-2, M)
+  assert(truncate(-3, M) == M)
+  assert(truncate(-4, M) == M)
+  truncM = truncate(-2, M)
   assert(truncM == ideal(a,b,c,d) * M)
   -- 2. image module
   -- 3. subquotient module
   C = res I  
   E = trim((ker transpose C.dd_3)/(image transpose C.dd_2))
-  truncation(-3, E) == E
-  truncation(-4, E) == E
-  truncE = truncation(-2, E)
+  truncate(-3, E) == E
+  truncate(-4, E) == E
+  truncE = truncate(-2, E)
   assert(truncE == ideal(a,b,c,d) * E)
   presentation truncM
   presentation truncE
   
   -- check functoriality:
-  assert(0 == truncation(3, C.dd_1) * truncation(3, C.dd_2))
-  assert(0 == truncation(3, C.dd_2) * truncation(3, C.dd_3))
+  assert(0 == truncate(3, C.dd_1) * truncate(3, C.dd_2))
+  assert(0 == truncate(3, C.dd_2) * truncate(3, C.dd_3))
 
-  -- how to get the map: truncM == truncation(-2,M) --> M ??
+  -- how to get the map: truncM == truncate(-2,M) --> M ??
   phi = map(M, truncM, gens truncM)
   assert(image phi == truncM)
 
-  F = truncation(-2, target presentation M)
-  G = truncation(-2, source presentation M)
-  assert(F == target truncation(-2, presentation M))
-  assert(G == source truncation(-2, presentation M))
+  F = truncate(-2, target presentation M)
+  G = truncate(-2, source presentation M)
+  assert(F == target truncate(-2, presentation M))
+  assert(G == source truncate(-2, presentation M))
 ///
 
 TEST ///
@@ -367,13 +367,13 @@ TEST ///
   S = ZZ/101[a,b, Degrees =>{{0,1},{1,0}}]
   M = S^{-{5,2}, -{2,3}}
   D = {4,3}
-  assert(truncation(D,S) == image matrix{{a^3*b^4}})
-  assert(truncation(D,S) == truncation({D},S))
+  assert(truncate(D,S) == image matrix{{a^3*b^4}})
+  assert(truncate(D,S) == truncate({D},S))
 
   E = {{4,3},{3,4}}
-  assert(truncation(E,S) == image matrix{{a^3*b^4, a^4*b^3}})
+  assert(truncate(E,S) == image matrix{{a^3*b^4, a^4*b^3}})
 
-  assert(truncation(D, M) == image map(M,, matrix {{a, 0}, {0, b^2}}))
+  assert(truncate(D, M) == image map(M,, matrix {{a, 0}, {0, b^2}}))
 ///
 
 TEST ///
@@ -384,17 +384,17 @@ TEST ///
   S = ZZ/101[a,b,c,d,e,Degrees=>{3,4,5,6,7}]
 
   assert(
-      sort gens truncation({8},S) 
+      sort gens truncate({8},S) 
       == 
       sort gens ideal(a*c,b^2,a*d,b*c,a^3,a*e,b*d,c^2,a^2*b,b*e,c*d,c*e,d^2,d*e,e^2)
       )
 
-  truncation({8},S^{-4})
-  truncation({8},S^{3})
-  truncation({8},S^{-4,-5,-3})
-  truncation(8,S^{-4,-5,-3})
+  truncate({8},S^{-4})
+  truncate({8},S^{3})
+  truncate({8},S^{-4,-5,-3})
+  truncate(8,S^{-4,-5,-3})
   phi = random(S^{-1,-2,-3}, S^{-1,-2,-3,-4,-8})
-  psi = truncation({8}, phi)
+  psi = truncate({8}, phi)
   assert(isHomogeneous psi)
 ///
 
@@ -405,7 +405,7 @@ TEST ///
   needsPackage "Truncations"
 *-
   S = ZZ/101[a,b,c,d,e, Degrees=>{3:{1,0},2:{0,1}}]
-  assert(sort gens truncation({1,2},S) == matrix {{c*e^2, b*e^2, a*e^2, c*d*e, b*d*e, a*d*e, c*d^2, b*d^2, a*d^2}})
+  assert(sort gens truncate({1,2},S) == matrix {{c*e^2, b*e^2, a*e^2, c*d*e, b*d*e, a*d*e, c*d^2, b*d^2, a*d^2}})
 ///
 
 TEST ///
@@ -419,7 +419,7 @@ TEST ///
   max V
   S = ring V
   A = transpose matrix degrees S
-  truncation({1,1,1}, S)
+  truncate({1,1,1}, S)
   basis({1,1,1},S)
   C = posHull A
   C2 = dualCone C
@@ -443,14 +443,14 @@ TEST ///
   --    a poly ring
   --    a quotient of a polynomial ring
   --  truncations:
-  --    truncation(D, S)
-  --    truncation(D, S^1)
-  --    truncation(D, ideal)
-  --    truncation(D, graded free module)
-  --    truncation(D, coker module)
-  --    truncation(D, image module)
-  --    truncation(D, subquotient module)
-  --    truncation(D, Matrix)
+  --    truncate(D, S)
+  --    truncate(D, S^1)
+  --    truncate(D, ideal)
+  --    truncate(D, graded free module)
+  --    truncate(D, coker module)
+  --    truncate(D, image module)
+  --    truncate(D, subquotient module)
+  --    truncate(D, Matrix)
 ///
 
 TEST ///
@@ -463,24 +463,24 @@ TEST ///
 
   kk = ZZ/101
   R = kk[a,b,c,Degrees =>{2:{3,4},{7,5}}]
-  truncation({5,6},R)
-  truncation({6,5},R)
+  truncate({5,6},R)
+  truncate({6,5},R)
 
-  J1 = truncation(D, R)
-  J1 = truncation(D, R^1)
-  truncation(D, ideal(a,b,c))
+  J1 = truncate(D, R)
+  J1 = truncate(D, R^1)
+  truncate(D, ideal(a,b,c))
 
   A = R/(a^2-b^2, c^3)
-  truncation(D, A)
-  truncation(d, R)
+  truncate(D, A)
+  truncate(d, R)
   M = module ideal(a,b,c)
-  truncation(d, ideal(a,b,c))
-  truncation(D, ideal(a,b,c))
+  truncate(d, ideal(a,b,c))
+  truncate(D, ideal(a,b,c))
   p = presentation M
   
-  truncation(D, presentation M)
-  truncation(D, source presentation M)
-  truncation(D, target presentation M)
+  truncate(D, presentation M)
+  truncate(D, source presentation M)
+  truncate(D, target presentation M)
 ///
 
 beginDocumentation()
@@ -498,67 +498,67 @@ doc ///
       of the truncations.
     
       If $R$ is a $\ZZ^r$-graded ring, and $M$ is a graded module, and $D$ is a (finite)
-      set of degrees in $\ZZ^r$, then the truncation {\tt truncation(D, M)} is
+      set of degrees in $\ZZ^r$, then the truncation {\tt truncate(D, M)} is
       $$M_{\ge D} = \oplus_{m} M_m,$$
       where the sum is over all $m \in \ZZ^r$, which are
       component-wise greater than at least one element $d \in D$.
       
       This package handles the multi-graded case correctly, and the
-      @TO "truncation"@ function is functorial.
+      @TO "truncate"@ function is functorial.
   Caveat
     The behavior of @TO "truncate"@ has changed in version Macaulay2 1.13.  This is a 
     (potentially) breaking change, although there were a number of bugs in the previous
     code.
   SeeAlso
-    truncation
+    truncate
     basis
 ///
 
 
 TEST ///
   debug needsPackage "Truncations"
-  assert truncationImplemented(ZZ/101[a..d])      
-  assert truncationImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}])
-  assert truncationImplemented(ZZ/101[a..d, Degrees => {2:{3,1},2:{-4,2}}])
+  assert truncateImplemented(ZZ/101[a..d])      
+  assert truncateImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}])
+  assert truncateImplemented(ZZ/101[a..d, Degrees => {2:{3,1},2:{-4,2}}])
       
-  assert truncationImplemented(QQ[a..d, SkewCommutative=>true])
-  assert truncationImplemented(QQ[a..d, SkewCommutative=>{0,3}])
+  assert truncateImplemented(QQ[a..d, SkewCommutative=>true])
+  assert truncateImplemented(QQ[a..d, SkewCommutative=>{0,3}])
    
-  assert truncationImplemented(ZZ[a..d])      
-  assert truncationImplemented(ZZ[a..d, Degrees => {1,1,-1,-1}])
-  assert truncationImplemented(ZZ[a..d, Degrees => {2:{3,1},2:{-4,2}}])
+  assert truncateImplemented(ZZ[a..d])      
+  assert truncateImplemented(ZZ[a..d, Degrees => {1,1,-1,-1}])
+  assert truncateImplemented(ZZ[a..d, Degrees => {2:{3,1},2:{-4,2}}])
       
-  assert truncationImplemented(ZZ[a..d, SkewCommutative=>true])
-  assert truncationImplemented(ZZ[a..d, SkewCommutative=>{0,3}])
+  assert truncateImplemented(ZZ[a..d, SkewCommutative=>true])
+  assert truncateImplemented(ZZ[a..d, SkewCommutative=>{0,3}])
 
-  assert truncationImplemented(ZZ/101[a..d]/(a*d-b*c))
-  assert truncationImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}]/(a*d-b*c))
-  assert truncationImplemented(ZZ/101[a..d, Degrees => {2:{3,1},2:{-4,2}}]/(a*d-b*c))
+  assert truncateImplemented(ZZ/101[a..d]/(a*d-b*c))
+  assert truncateImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}]/(a*d-b*c))
+  assert truncateImplemented(ZZ/101[a..d, Degrees => {2:{3,1},2:{-4,2}}]/(a*d-b*c))
       
-  assert truncationImplemented(QQ[a..d, SkewCommutative=>true]/(a*d-b*c))
-  assert truncationImplemented(QQ[a..d, SkewCommutative=>{0,3}]/(a*d-b*c))
+  assert truncateImplemented(QQ[a..d, SkewCommutative=>true]/(a*d-b*c))
+  assert truncateImplemented(QQ[a..d, SkewCommutative=>{0,3}]/(a*d-b*c))
 
-  assert truncationImplemented(ZZ[a..d]/(3*a*d-b*c))
-  assert truncationImplemented(ZZ[a..d, Degrees => {1,1,-1,-1}]/(a*d-b*c))
-  assert truncationImplemented(ZZ[a..d, Degrees => {2:{3,1},2:{-4,2}}]/(a*d-b*c))
+  assert truncateImplemented(ZZ[a..d]/(3*a*d-b*c))
+  assert truncateImplemented(ZZ[a..d, Degrees => {1,1,-1,-1}]/(a*d-b*c))
+  assert truncateImplemented(ZZ[a..d, Degrees => {2:{3,1},2:{-4,2}}]/(a*d-b*c))
       
-  assert truncationImplemented(ZZ[a..d, SkewCommutative=>true]/(a*d-b*c))
-  assert truncationImplemented(ZZ[a..d, SkewCommutative=>{0,3}]/(a*d-b*c))
+  assert truncateImplemented(ZZ[a..d, SkewCommutative=>true]/(a*d-b*c))
+  assert truncateImplemented(ZZ[a..d, SkewCommutative=>{0,3}]/(a*d-b*c))
 ///
 
 doc ///
   Key
-    truncation
-    (truncation,ZZ,Module)
-    (truncation,List,Module)
-    (truncation,ZZ,Ideal)
-    (truncation,List,Ideal)
-    (truncation,ZZ,Ring)
-    (truncation,List,Ring)
+    truncate
+    (truncate,ZZ,Module)
+    (truncate,List,Module)
+    (truncate,ZZ,Ideal)
+    (truncate,List,Ideal)
+    (truncate,ZZ,Ring)
+    (truncate,List,Ring)
   Headline
     truncation of the graded ring, ideal or module at a specified degree or set of degrees
   Usage
-    truncation(d,M)
+    truncate(d,M)
   Inputs
     d:ZZ
       or a single multi-degree or a list of multi-degrees
@@ -574,23 +574,23 @@ doc ///
       truncation is minimally generated (assuming that $M$ is graded).
     Example
       R = ZZ/101[a..c];
-      truncation(2, R)
-      truncation(2,R^1)
-      truncation(2,R^1 ++ R^{-3})
-      truncation(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))
-      truncation(2,ideal(a,b*c,c^7))
+      truncate(2, R)
+      truncate(2,R^1)
+      truncate(2,R^1 ++ R^{-3})
+      truncate(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))
+      truncate(2,ideal(a,b*c,c^7))
       M = coker matrix"a,b,c;c,b,a"
-      truncation(2, M)
-      M/(truncation(2,M))
+      truncate(2, M)
+      M/(truncate(2,M))
       for i from 0 to 5 list hilbertFunction(i,oo)
     Text
       The base may be ZZ, or another polynomial ring.  In this case, the generators may not
       be minimal, but they do generate.
     Example
       A = ZZ[x,y,z];
-      truncation(2,ideal(3*x,5*y,15))
+      truncate(2,ideal(3*x,5*y,15))
       trim oo
-      truncation(2,comodule ideal(3*x,5*y,15))
+      truncate(2,comodule ideal(3*x,5*y,15))
     Text
       If {\tt i} is a multi-degree, then the result is the submodule
       generated by all elements of degree (component-wise) greater
@@ -601,7 +601,7 @@ doc ///
       at least $\{7,24\}$.
     Example
       S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
-      trunc = truncation({7,24}, S^1 ++ S^{{-8,-20}})
+      trunc = truncate({7,24}, S^1 ++ S^{{-8,-20}})
       degrees trunc      
     Text
       If  {\tt i} is a list of multi-degrees, then the result is the 
@@ -614,7 +614,7 @@ doc ///
       also minimally generated.
     Example
       S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
-      trunc = truncation({{3,0},{0,1}}, S^1 ++ S^{{-8,-20}})
+      trunc = truncate({{3,0},{0,1}}, S^1 ++ S^{{-8,-20}})
       degrees trunc
     Text
       The coefficient ring may also be a polynomial ring.  In this
@@ -625,8 +625,8 @@ doc ///
       B = R[x,y,z, Join=>false]
       degree x
       degree B_3
-      truncation(2, B^1)
-      truncation(4, ideal(b^2*y,x^3))
+      truncate(2, B^1)
+      truncate(4, ideal(b^2*y,x^3))
     Text
       If the coefficient variables have degree 0:
     Example
@@ -634,8 +634,8 @@ doc ///
       degree a
       B1 = A1[x,y]
       degrees B1
-      truncation(2,B1^1)
-      truncation(2, ideal(a^3*x, b*y^2))
+      truncate(2,B1^1)
+      truncate(2, ideal(a^3*x, b*y^2))
   Caveat
     The behavior of this function has changed as of Macaulay2 version 1.13.  Before,
     it used a less useful notion of truncation, involving the heft vector,
@@ -652,12 +652,12 @@ doc ///
 
 doc ///
   Key
-    (truncation, List, Matrix)
-    (truncation, ZZ, Matrix)
+    (truncate, List, Matrix)
+    (truncate, ZZ, Matrix)
   Headline
     truncation of a matrix
   Usage
-    truncation(degs, f)
+    truncate(degs, f)
   Inputs
     degs:List
       a list of lists of integers (list of degrees), or a list of integers (a single degree),
@@ -673,10 +673,10 @@ doc ///
     Example
       R = ZZ/101[a..d, Degrees=>{{1,3},{1,0},{-1,3},{1,2}}]
       C = res coker vars R
-      g1 = truncation({1,1},C.dd_1)
-      g2 = truncation({1,1},C.dd_2)
-      g3 = truncation({1,1},C.dd_3)
-      g4 = truncation({1,1},C.dd_4)
+      g1 = truncate({1,1},C.dd_1)
+      g2 = truncate({1,1},C.dd_2)
+      g3 = truncate({1,1},C.dd_3)
+      g4 = truncate({1,1},C.dd_4)
       assert(g1 * g2 == 0)
       assert(g2 * g3 == 0)
       assert(g3 * g4 == 0)
@@ -687,24 +687,24 @@ doc ///
       assert(ker g2 == image g3)
       assert(ker g3 == image g4)
   SeeAlso
-    (truncation, List, Module)
+    (truncate, List, Module)
 ///
 
 TEST ///
   A = ZZ/101[a..d, Degrees => {1,2,3,4}]
-  assert(truncation(2, A^1) == image matrix {{a^2, a*b, a*c, a*d, b, c, d}})
-  assert(truncation(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
+  assert(truncate(2, A^1) == image matrix {{a^2, a*b, a*c, a*d, b, c, d}})
+  assert(truncate(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
 ///
 
 TEST ///
   A = ZZ/101[a..d, Degrees => {4:0}]
-  assert(truncation(2, A^1) == image matrix{{0_A}})
+  assert(truncate(2, A^1) == image matrix{{0_A}})
 ///
 
 TEST ///
   R = ZZ/101[x_0,x_1,y_0,y_1,y_2,Degrees=>{2:{1,1,0},3:{1,0,1}}];
   I = ideal random(R^1,R^{6:{-6,-2,-4},4:{-6,-3,-3}});
-  J = truncation({6,2,3},I);
+  J = truncate({6,2,3},I);
   assert(J == I)
 ///
 
@@ -712,17 +712,17 @@ TEST ///
   -- Singly generated case
   R = QQ[a..d]
   I = ideal(b*c-a*d,b^2-a*c,d^10)
-  truncation(2,I)
-  assert(truncation(2,I) == I)
-  assert(truncation(3,I) == intersect((ideal vars R)^3, I))
+  truncate(2,I)
+  assert(truncate(2,I) == I)
+  assert(truncate(3,I) == intersect((ideal vars R)^3, I))
 
   R = QQ[a..d,Degrees=>{3,4,7,9}]
   I = ideal(a^3,b^4,c^6)
-  assert(truncation(12,I) == ideal(a^4,a^3*b,a^3*c,a^3*d,b^4,c^6))
+  assert(truncate(12,I) == ideal(a^4,a^3*b,a^3*c,a^3*d,b^4,c^6))
 
   R = ZZ[a,b,c]
   I = ideal(15*a,21*b,19*c)
-  trim truncation(2,I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2)
+  trim truncate(2,I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2)
 ///
 
 end--
