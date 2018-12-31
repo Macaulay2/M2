@@ -3,22 +3,18 @@
 --  2. doc truncationImplemented DONE
 --  3. figure out what is the story with poly ring over poly ring, with variables in 
 --     the coefficient ring having non-zero degrees
---     (e.g. with Join=>true, false).
+--     (e.g. with Join=>true, false). DONE
 --  4. for singly graded (or standard graded?) use original code from, engine:
---     it seems quite a bit faster.
+--     it seems quite a bit faster. DONE
 --  5. make sure doc for the internal routine is correct: 
 --      calls basis with an obscure undocumented option.
 --      and the result is wrong for multi-gradings
---      and the doc for truncate is incorrect.
---  6. This is not need here, I think:
---     heft vector: we are doing WAY TOO MUCH work here.
---     heft vector doesn't need to be inside the cone.
---     perhaps start with simplicial part of the cone
+--      and the doc for truncate is incorrect. DONE
 
 newPackage(
         "Truncations",
-        Version => "0.5", 
-        Date => "30 Dec 2018",
+        Version => "0.7", 
+        Date => "31 Dec 2018",
         Authors => {
             {
                 Name => "David Eisenbud", 
@@ -48,7 +44,7 @@ protect Exterior
 --    "truncationPolyhedron",
 --    "basisPolyhedron",
 --    "Exterior"
--- Note: trunc, trunc0 are DE's oriignal code to supplant the 'truncate' command,
+-- Note: trunc, trunc0 are DE's original code to supplant the 'truncate' command,
 -- which was computing the truncation incorrectly in multi-graded situations.
 -- actually: the definition of truncation being used was not the best possible.
 
@@ -350,7 +346,7 @@ truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if #degs > 1 then
-        return sum for d in degs list truncationMonomials(d, R);
+        return trim sum for d in degs list truncationMonomials(d, R);
     d := degs#0;
     if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
       (R1, phi1) := flattenRing R;
@@ -393,7 +389,7 @@ restart
   assert(truncationMonomials({12},R) == ideal"a3,a2b,ac,bc,c2")
 ///
 
-truncation1 = (deg, M) -> (
+truncation0 = (deg, M) -> (
     -- WARNING: only valid for degree length = 1.
     -- deg: a List of integers
     -- M: Module
@@ -404,6 +400,28 @@ truncation1 = (deg, M) -> (
         else image b)
     else image basis(deg,deg,M,Truncate=>true)
     )    
+
+truncation1 = (deg, M) -> (
+    -- WARNING: only valid for degree length = 1.
+    -- deg: a List of integers
+    -- M: Module
+    -- returns a submodule of M
+    R := ring M;
+    (R1, phi1) := flattenRing R;
+    if R1 === R then 
+        truncation0(deg, M)
+    else (
+        gensM1 := if not M.?generators then null else phi1 M.generators;
+        relnsM1 := if not M.?relations then null else phi1 M.relations;
+        M1 := if gensM1 === null and relnsM1 === null then phi1 M
+              else subquotient(gensM1, relnsM1);
+        result1 := truncation0(deg, M1);
+        gensM := if not M1.?generators then null else phi1^-1 M1.generators;
+        relnsM := if not M1.?relations then null else phi1^-1 M1.relations;
+        if gensM === null and relnsM === null then phi1^-1 M1
+              else subquotient(gensM, relnsM)
+        )
+    )
 
 -- truncate the graded ring A in degrees >= d, for d in degs
 truncation(List, Ring) := Module => (degs, R) -> (
@@ -685,18 +703,22 @@ doc ///
   Description
     Text
       This package provides for the truncation of a graded ring, or a graded
-      module or ideal over a graded ring.
+      module or ideal over a graded ring.  Truncation is functorial: it can be applied
+      to matrices as well, and the truncation of a composition of maps is the composition
+      of the truncations.
     
-      If $R$ is a graded ring, and $M$ is a graded module, and $D$ is a (finite)
-      set of degrees, then the truncation {\tt truncation(D, M)} is
+      If $R$ is a $\ZZ^r$-graded ring, and $M$ is a graded module, and $D$ is a (finite)
+      set of degrees in $\ZZ^r$, then the truncation {\tt truncation(D, M)} is
       $$M_{\ge D} = \oplus_{m} M_m,$$
-      where the sum is over all degree vectors $m \in \ZZ^r$, which are
+      where the sum is over all $m \in \ZZ^r$, which are
       component-wise greater than at least one element $d \in D$.
       
       This package handles the multi-graded case correctly, and the
       @TO "truncation"@ function is functorial.
   Caveat
-    Not yet reimplemented for all ring cases
+    The behavior of @TO "truncate"@ has changed in version Macaulay2 1.13.  This is a 
+    (potentially) breaking change, although there were a number of bugs in the previous
+    code.
   SeeAlso
     truncation
     truncate
@@ -772,6 +794,8 @@ doc ///
     (truncation,List,Module)
     (truncation,ZZ,Ideal)
     (truncation,List,Ideal)
+    (truncation,ZZ,Ring)
+    (truncation,List,Ring)
   Headline
     truncation of the graded ring, ideal or module at a specified degree or set of degrees
   Usage
@@ -786,12 +810,20 @@ doc ///
       or ideal, the submodule of M consisting of all elements of degree $\ge i$
   Description
     Text
+      The truncation to degree $d$ in the singly graded case of a module (or ring or ideal) is
+      generated by all homogeneous elements of degree at least $d$ in $M$.  The resulting
+      truncation is minimally generated (assuming that $M$ is graded).
     Example
       R = ZZ/101[a..c];
+      truncation(2, R)
       truncation(2,R^1)
       truncation(2,R^1 ++ R^{-3})
       truncation(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))
       truncation(2,ideal(a,b*c,c^7))
+      M = coker matrix"a,b,c;c,b,a"
+      truncation(2, M)
+      M/(truncation(2,M))
+      for i from 0 to 5 list hilbertFunction(i,oo)
     Text
       The base may be ZZ, or another polynomial ring.  In this case, the generators may not
       be minimal, but they do generate.
@@ -801,11 +833,12 @@ doc ///
       trim oo
       truncation(2,comodule ideal(3*x,5*y,15))
     Text
-      If  {\tt i} is a multi-degree, then the result is the submodule generated by all elements
-      of degree (component-wise) greater than or equal to $i$.  
+      If {\tt i} is a multi-degree, then the result is the submodule
+      generated by all elements of degree (component-wise) greater
+      than or equal to $i$.
 
       The following example includes the 10 generators needed to
-      obtain all graded elements whose degrees which are component-wise 
+      obtain all graded elements whose degrees are component-wise 
       at least $\{7,24\}$.
     Example
       S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
@@ -816,19 +849,19 @@ doc ///
       submodule generated by all elements
       of degree (component-wise) greater than or equal to at least one degree in $i$.  
 
-      The following example includes the generators needed to
-      obtain all graded elements whose degrees which are component-wise 
-      at least $\{3,0\}$ or at least $\{3,0\}$.  Notice that the result is
-      not minimally generated.  We use @TO "trim"@ to obtain a module which is minimally
-      generated.
+      The following example includes the generators needed to obtain
+      all graded elements whose degrees which are component-wise at
+      least $\{3,0\}$ or at least $\{0,1\}$.  The resulting module is
+      also minimally generated.
     Example
       S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];
       trunc = truncation({{3,0},{0,1}}, S^1 ++ S^{{-8,-20}})
-      trunc = trim trunc
       degrees trunc
     Text
-      The coefficient ring may also be a polynomial ring.  In this example, the coefficient variables
-      also have degree one.  The given generators will generate the truncation over the coefficient ring.
+      The coefficient ring may also be a polynomial ring.  In this
+      example, the coefficient variables also have degree one.  The
+      given generators will generate the truncation over the
+      coefficient ring.
     Example
       B = R[x,y,z, Join=>false]
       degree x
@@ -847,67 +880,94 @@ doc ///
   Caveat
     The behavior of this function has changed as of Macaulay2 version 1.13.  Before,
     it used a less useful notion of truncation, involving the heft vector,
-    and was often not what one wanted in the multi-graded case.
+    and was often not what one wanted in the multi-graded case.  Additionally,
+    in the tower ring case, when the coefficient ring had variables of nonzero degree, 
+    sometimes incorrect answers resulted.
+    
+    Also, the function expects a graded module, ring, or ideal, but this is not checked, and
+    some answer is returned.
   SeeAlso
     basis
     comodule
 ///
 
-TEST ///
-A = ZZ/101[a..d, Degrees => {1,2,3,4}]
-assert(truncation(2, A^1) == image matrix {{a^2, a*b, a*c, a*d, b, c, d}})
-assert(truncation(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
+doc ///
+  Key
+    (truncation, List, Matrix)
+    (truncation, ZZ, Matrix)
+  Headline
+    truncation of a matrix
+  Usage
+    truncation(degs, f)
+  Inputs
+    degs:List
+      a list of lists of integers (list of degrees), or a list of integers (a single degree),
+      or an integer (a singly graded degree)
+    f:Matrix
+      a graded map between graded modules (not necessarily free modules)
+  Outputs
+    :Matrix
+  Description
+    Text
+      This function truncates the source and target of $f$, and returns the induced map
+      between them.
+    Example
+      R = ZZ/101[a..d, Degrees=>{{1,3},{1,0},{-1,3},{1,2}}]
+      C = res coker vars R
+      g1 = truncation({1,1},C.dd_1)
+      g2 = truncation({1,1},C.dd_2)
+      g3 = truncation({1,1},C.dd_3)
+      g4 = truncation({1,1},C.dd_4)
+      assert(g1 * g2 == 0)
+      assert(g2 * g3 == 0)
+      assert(g3 * g4 == 0)
+    Text
+      This functor is exact.
+    Example
+      assert(ker g1 == image g2)
+      assert(ker g2 == image g3)
+      assert(ker g3 == image g4)
+  SeeAlso
+    (truncation, List, Module)
 ///
 
 TEST ///
-A = ZZ/101[a..d, Degrees => {4:0}]
-assert(truncation(2, A^1) == image matrix{{0_A}})
+  A = ZZ/101[a..d, Degrees => {1,2,3,4}]
+  assert(truncation(2, A^1) == image matrix {{a^2, a*b, a*c, a*d, b, c, d}})
+  assert(truncation(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
 ///
 
 TEST ///
-A = ZZ/101[a..d]
-truncation(2, ideal"a-1,b3+c")
+  A = ZZ/101[a..d, Degrees => {4:0}]
+  assert(truncation(2, A^1) == image matrix{{0_A}})
 ///
 
 TEST ///
-A = ZZ/101[a..d, Degrees=>{2:{1,2},2:{0,1}}]
-basis({3}, A^1)
-
-
-A = ZZ/101[a..d, Degrees=>{2:{2,1},2:{1,0}}]
-basis({3}, A^1)
-
-
-A = ZZ/101[a..d, Degrees=>{2:{2,1,0},2:{1,0,0}}]
-basis({3,1}, A^1)
+  R = ZZ/101[x_0,x_1,y_0,y_1,y_2,Degrees=>{2:{1,1,0},3:{1,0,1}}];
+  I = ideal random(R^1,R^{6:{-6,-2,-4},4:{-6,-3,-3}});
+  J = truncation({6,2,3},I);
+  assert(J == I)
 ///
 
 TEST ///
-R=(ZZ/101)[x_0,x_1,y_0,y_1,y_2,Degrees=>{2:{1,1,0},3:{1,0,1}}];
-I=ideal random(R^1,R^{6:{-6,-2,-4},4:{-6,-3,-3}});
-J = truncation({4,2,2},I);
-assert(J == I)
-///
+  -- Singly generated case
+  R = QQ[a..d]
+  I = ideal(b*c-a*d,b^2-a*c,d^10)
+  truncation(2,I)
+  assert(truncation(2,I) == I)
+  assert(truncation(3,I) == intersect((ideal vars R)^3, I))
 
-TEST ///
--- Singly generated case
-R = QQ[a..d]
-I = ideal(b*c-a*d,b^2-a*c,d^10)
-truncation(2,I)
-truncate(2,I)
-assert(truncation(2,I) == I)
-assert(truncation(3,I) == intersect((ideal vars R)^3, I))
+  R = QQ[a..d,Degrees=>{3,4,7,9}]
+  I = ideal(a^3,b^4,c^6)
+  assert(truncation(12,I) == ideal(a^4,a^3*b,a^3*c,a^3*d,b^4,c^6))
 
-R = QQ[a..d,Degrees=>{3,4,7,9}]
-I = ideal(a^3,b^4,c^6)
-assert(truncation(12,I) == ideal(a^4,a^3*b,a^3*c,a^3*d,b^4,c^6))
-
-R = ZZ[a,b,c]
-I = ideal(15*a,21*b,19*c)
-trim truncation(2,I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2)
+  R = ZZ[a,b,c]
+  I = ideal(15*a,21*b,19*c)
+  trim truncation(2,I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2)
 ///
 
 end--
+
 restart
 uninstallPackage "Truncations"
 restart
