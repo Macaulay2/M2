@@ -429,7 +429,7 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
         }
 
   if (vars->len == 0) {
-    ERROR("basis: computation requires at least one variable of nonzero degree");
+    ERROR("basis: computation requires at least one variable of nonzero heft");
     return 0;
   }
 
