@@ -374,7 +374,7 @@ truncationMonomials(List, Ring) := (degs, R) -> (
 
 TEST ///
 -* 
-  restart
+restart
 *-
   debug needsPackage "Truncations"
   S = ZZ/101[a,b,c, Degrees =>{5,6,7}]
@@ -393,18 +393,35 @@ TEST ///
   assert(truncationMonomials({12},R) == ideal"a3,a2b,ac,bc,c2")
 ///
 
+truncation1 = (deg, M) -> (
+    -- WARNING: only valid for degree length = 1.
+    -- deg: a List of integers
+    -- M: Module
+    -- returns a submodule of M
+    trim if M.?generators then (
+        b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
+        if M.?relations then subquotient(b, M.relations)
+        else image b)
+    else image basis(deg,deg,M,Truncate=>true)
+    )    
+
 -- truncate the graded ring A in degrees >= d, for d in degs
 truncation(List, Ring) := Module => (degs, R) -> (
     if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    ideal gens truncationMonomials(degs,R)
+    if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
+        ideal truncation1(min degs, R^1)
+    else 
+        ideal gens truncationMonomials(degs,R)
     )
 
 truncation(List, Module) := Module => (degs, M) -> (
     R := ring M;
     if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if isFreeModule M then (
+    if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
+        truncation1(min degs, M)
+    else if isFreeModule M then (
         image map(M,,directSum for a in degrees M list 
             gens truncationMonomials(for d in degs list(d-a),R))
         )
@@ -434,6 +451,15 @@ truncation(ZZ, Module) :=
 truncation(ZZ, Ideal) :=
 truncation(ZZ, Matrix) :=
   (d, R) -> truncation({d}, R)
+
+-- now we switch the 'truncate' command methods to use these
+truncate(List, Module) := (degs, M) -> truncation(degs, M)
+truncate(List, Ideal) := (degs, I) -> truncation(degs, I)
+truncate(List, Ring) := (degs, R) -> truncation(degs, R)
+
+truncate(ZZ, Module) := (deg, M) -> truncation({deg}, M)
+truncate(ZZ, Ideal) := (deg, I) -> truncation({deg}, I)
+truncate(ZZ, Ring) := (deg, R) -> truncation({deg}, R)
 
 TEST ///
   -- test of truncations in singly graded poly ring case
