@@ -97,9 +97,13 @@ waterMark = serialNumber symbol waterMark      -- used by Serialization package
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
 
 if not member("--no-preload",commandLine) then (
-     scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
-	  needsPackage);
+     if notify then stderr << "--loading preloaded packages" << endl;
      Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages");
+     scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
+     	  pkg -> (
+	       if notify then stderr << "--about to preload package " << pkg << endl;
+	       needsPackage pkg;
+	       ));
      )
 
 if not noinitfile' then path = join(userpath',path)
