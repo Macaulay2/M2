@@ -599,8 +599,8 @@ TEST ///
   truncation({1,1,1}, S)
   basis({1,1,1},S)
   C = posHull A
-C2 = dualCone C
-rays C2
+  C2 = dualCone C
+  rays C2
 ///
 
 TEST ///
@@ -912,258 +912,21 @@ restart
 uninstallPackage "Truncations"
 restart
 loadPackage "Truncations"
+debug needsPackage "Truncations"
 restart
 installPackage "Truncations"
 check "Truncations"
-debug needsPackage "Truncations"
--- XXX
-
-
--- how to create Ax >= b, x >= 0?
------------------------------------------------------------------------
----- notes taken by MS and DE in October 2018 for to do for this package
------------------------------------------------------------------------
-restart
-load "trunc.m2"
-R = ZZ/101[a..d, Degrees=>{3,5,7,9}]
-truncate({15}, R^1)
-debug needsPackage "Truncations"
-truncation(15, R)
-trunc({15}, R)
-trunc({15}, R^1)
-
-E = ZZ/101[e_0..e_10, SkewCommutative => true]
-trunc0({10}, E^1)
-trunc0({11}, E^1)
-trunc({3}, E)
-
-gens gb oo
-
-U = E ** T
-
--------
-in trunc(List,Module):
-  make the ring U directly, not T.
-  instead of phi1, make the ideal we had in trunc(List,Ring).
-  
-1. change all multi-degrees to be positive. (utility routine)
-2. handle quotient rings and modules over them
-3. handle exterior algebra
-4. trunc creates a ring, which should perhaps be skew commutative.
-6. incorporate trunc-new into this package Truncation.
-
-What we really want, is generators for the semigroup
-{x in ZZ^n(>=0), Ax >= b}
-
--- mike doodling about fixing basis command in engine:
-Matrix::basis
-  KBasis::k_basis(7 arguments)
-
-  
-How best to find
-  {x in ZZ^n(>=0), Ax = b}
-  
-  x in ZZ^n
-  A is d x n.
-  b is in ZZ^d.
-  
-  Find lattice points in Ax=b, x >= 0.
-  
-  if possible, Let A1 = Q^-1 * A * P (or A_perm) = (I | C), C is d x (n-d).
-  then create a polytope in (n-d) space, then extend each monomial to ZZ^n.
-  
--- given a matrix A, d x n whose columns are the degrees of the variables (in ZZ^d),
--- find, if possible a minor with det +-1.  If none, how to handle this?
-
-
--- notes 10 Nov 2018, DE, MS
-want to solve systems of linear equalities and inequalities in ZZ^n
-
-specifically:
-  A be the degree matrix (d x n, n = #vars)
-  
-  truncate(R, D), D in ZZ^d.
-  solve Ax >= D, (might include x >= 0)
-
-  truncate(M, D), M = module.
-    take each generator degree E, take Ax >= D-E, then mult each gen
-    in degree E by these monomials.
-
-
--------------------------------------
--- From an email of Lars Kastner, 10 Nov 2018, in response to a question
--- I (MES) asked him: How to compute generators for the semigroup
---  Ax >= b, x >= 0.
--- Also, find all of the lattice points of Ax=b, x >= 0.
-  
-Take A={{1,1}} and b={{1/2}}. This gives in your description the two-
-dimensional positive orthant without some part of its apex. So the
-origin is missing from the lattice points. Then in M2 you can:
-
-loadPackage "Polyhedra"
-A = matrix {{1,1}}
-b = matrix {{1/2}}
--- The second kind of inequalities, i.e. x>=0
-I = matrix map(QQ^2,QQ^2,1)
-z = matrix map(QQ^2, QQ^1, 0)
--- Polyhedra uses outer normals for polyhedra, so we have to change the
--- sign. This creates Ax>=b, x>=0/
-P = polyhedronFromHData (-(A||I), -(b||z))
--- Consider the cone with the polyhedron at height one
-C = cone P
-facets C
-hilbertBasis C
--- It has two kinds of elements in the Hilbert basis, those at height 
--- zero, and those at height one in the polyhedron
-R = select(hilbertBasis C, h -> h_(0,0) == 0)
-M = select(hilbertBasis C, h -> h_(0,0) == 1)
--- Cut off first coordinate
-R = apply(R, r->r^{1..(numRows r-1)})
-M = apply(M, m->m^{1..(numRows m-1)})
-
-Now any lattice point of P is a sum of exactly one element of M and an
-arbitrary positive linear combination of elements of R.
-
-Explanation:
-C contains all points (h, x) such that -hb+Ax>=0 and -hz+Ix>=0 (+
-h>=0). The lattice points you want are those with h=1. You get those by
-taking one element of the Hilbert basis with h=1, and adding
-arbitrarily many Hilbert basis elements with h=0.
-
-
-2. Another example:
-Pick A={{1,1}} and b={{1}} (almost as above).
-
-Package "Polyhedra"
-A = matrix {{1,1}}
-b = matrix {{1}}
-I = matrix map(QQ^2,QQ^2,1)
-z = matrix map(QQ^2, QQ^1, 0)
--- Create polyhedron x>=0, Ax=b
--- This time, A and b describe equations:
-P = polyhedronFromHData (-I, -z, A, b)
-latticePoints P
-
-Caveat: Ax=b, x>=0 might have infinite solutions anyway. You can check
-with 'isCompact P'. Last example:
-
-loadPackage "Polyhedra"
-A = matrix {{1,0}}
-b = matrix {{1}}
-I = matrix map(QQ^2,QQ^2,1)
-z = matrix map(QQ^2, QQ^1, 0)
--- Create polyhedron x>=0, Ax=b
-P = polyhedronFromHData (-I, -z, A, b)
--- This time, P is not compact
-isCompact P
-C = cone P
--- inequalities of points in C (note that cones use inner normals)
-facets C
--- equations of points in C
-hyperplanes C
-M = select(hilbertBasis C, h -> h_(0,0) == 1)
-M = apply(M, m->m^{1..(numRows m-1)})
-R = select(hilbertBasis C, h -> h_(0,0) == 0)
-R = apply(R, r->r^{1..(numRows r-1)})
-
-Now every lattice point of P is the sum of exactly one element of M and
-an arbitrary positive integral sum of elements of R.
-
-Explanation:
-In this case, C contains all points (h, x) such that hb-Ax=0 and
--hz+Ix>=0 (+ h>=0). Then the argument should be as above.
-
-
-------------------
--- MES examples --
-------------------
-restart  
-needsPackage "Truncations"
--- test of normaliz, to see if it does what we need here:
-needsPackage "NormalToricVarieties"
-
-TEST ///
-  -- example 1.  A simple one, from Lars' email.
--* 
-  restart  
-  needsPackage "Truncations"
-*-
-  A = matrix {{1,1}}
-  b = matrix {{1/2}}
-  P = truncationPolyhedron(A,b)
-  -- how to use this?
-  
-  C = cone P -- this is the cone with P at height 1.
-  rays C -- TODO: check this
-  facets C -- TODO: check this
-  hilbertBasis C
-  -- It has two kinds of elements in the Hilbert basis, those at height 
-  -- zero, and those at height one in the polyhedron
-  R = select(hilbertBasis C, h -> h_(0,0) == 0)
-  M = select(hilbertBasis C, h -> h_(0,0) == 1)
-  -- Cut off first coordinate
-  R = apply(R, r->r^{1..(numRows r-1)})
-  M = apply(M, m->m^{1..(numRows m-1)})
-///  
-
-
-V = smoothFanoToricVariety(3,5)
-rays V
-max V
-S = ring V
-A = transpose matrix degrees S
-C = posHull A
-C2 = dualCone C
-rays C2
-
--- Consider degree (3,2,1)
-b = transpose matrix{{3,2,1}}
--(A || id_(QQ^6)), - (b || map(QQ^6, QQ^1, 0))
-P = polyhedronFromHData (-(A || id_(QQ^6)), - (b || map(QQ^6, QQ^1, 0)))
-vertices P
-isCompact P
-C = cone P
-rays C
-facets C
-hilbertBasis C
--- It has two kinds of elements in the Hilbert basis, those at height 
--- zero, and those at height one in the polyhedron
-R = select(hilbertBasis C, h -> h_(0,0) == 0)
-M = select(hilbertBasis C, h -> h_(0,0) == 1)
--- Cut off first coordinate
-R = apply(R, r->r^{1..(numRows r-1)})
-M = apply(M, m->m^{1..(numRows m-1)})
-
--- now try Ax = b, x >= 0
-I = id_(QQ^6)
-z = map(QQ^6, QQ^1, 0)
-P = polyhedronFromHData (-I, -z, A, b)
-latticePoints P
-isCompact P
-S = ZZ/101[a..f, Degrees=>entries transpose A]
-basis({3,2,1},S)
-P = polyhedronFromHData(-id_(QQ^6), -map(QQ^6, QQ^1, 0), A, transpose matrix {{20,5,10}});
-LP = elapsedTime latticePoints P; -- slower than one below:
-elapsedTime basis({20,5,10}, S);
-
 
 doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-Description
-  Text
-  Example
-  Code
-  Pre
-Caveat
-SeeAlso
+  Key
+  Headline
+  Usage
+  Inputs
+  Outputs
+  Description
+    Text
+    Example
+  Caveat
+  SeeAlso
 ///
 
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
-///
