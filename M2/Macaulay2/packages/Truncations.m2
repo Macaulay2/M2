@@ -294,7 +294,8 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
 -- whether truncation is implemented for this ring type.
 truncationImplemented = method()
 truncationImplemented Ring := Boolean => R -> (
-    A := ultimate(ambient,R);
+    (R1, phi1) := flattenRing R;
+    A := ambient R1;
     isAffineRing A 
     or
     isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
@@ -331,36 +332,41 @@ TEST ///
   R4 = QQ[x,y,z]
   truncationImplemented R1
   truncationImplemented R2
-  truncationImplemented R3 -- false??
+  truncationImplemented R3
   truncationImplemented R4
   
   E1 = ZZ[a,b,c,SkewCommutative=>true]
   E2 = E1/(a*b)
   E3 = ZZ[d,e,f,SkewCommutative=>{0,2}]
   assert((options E3).SkewCommutative == {0,2})
+  truncationImplemented E1
+  truncationImplemented E2
+  truncationImplemented E3
+  truncationImplemented (E1[x,y])
+  truncationImplemented (E1[x,y,SkewCommutative=>true])
 ///
 
 truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    -- expected: R is a polynomial ring.
     if #degs > 1 then
         return sum for d in degs list truncationMonomials(d, R);
     d := degs#0;
     if not R#?(symbol truncation, d) then R#(symbol truncation, d) = (
-      -- TODO: check that d is a degree for the ring R
-      A := transpose matrix degrees R;
-      P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R).SkewCommutative);
+      (R1, phi1) := flattenRing R;
+      A := transpose matrix degrees R1;
+      P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R1).SkewCommutative);
       C := cone P;
       H := hilbertBasis C;
       H = for h in H list flatten entries h;
-      J := ideal leadTerm ideal R;
+      J := ideal leadTerm ideal R1;
       ambR := ring J;
-      --conegens := rsort for h in H list if h#0 === 0 then A_(drop(h,1)) else continue;
+      --conegens := rsort for h in H list if h#0 === 0 then ambR_(drop(h,1)) else continue;
       --print matrix {conegens};
       mongens := for h in H list if h#0 === 1 then ambR_(drop(h,1)) else continue;
       result := mingens ideal (matrix(ambR, {mongens}) % J);
-      if R =!= ambR then result = result ** R;
+      if R1 =!= ambR then result = result ** R1;
+      if R =!= R1 then result = phi1^-1 result;
       ideal result
       );
     R#(symbol truncation, d)
@@ -368,7 +374,7 @@ truncationMonomials(List, Ring) := (degs, R) -> (
 
 TEST ///
 -* 
-  restart
+restart
 *-
   debug needsPackage "Truncations"
   S = ZZ/101[a,b,c, Degrees =>{5,6,7}]
@@ -387,18 +393,35 @@ TEST ///
   assert(truncationMonomials({12},R) == ideal"a3,a2b,ac,bc,c2")
 ///
 
+truncation1 = (deg, M) -> (
+    -- WARNING: only valid for degree length = 1.
+    -- deg: a List of integers
+    -- M: Module
+    -- returns a submodule of M
+    trim if M.?generators then (
+        b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
+        if M.?relations then subquotient(b, M.relations)
+        else image b)
+    else image basis(deg,deg,M,Truncate=>true)
+    )    
+
 -- truncate the graded ring A in degrees >= d, for d in degs
 truncation(List, Ring) := Module => (degs, R) -> (
     if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    ideal gens truncationMonomials(degs,R)
+    if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
+        ideal truncation1(min degs, R^1)
+    else 
+        ideal gens truncationMonomials(degs,R)
     )
 
 truncation(List, Module) := Module => (degs, M) -> (
     R := ring M;
     if not truncationImplemented R then error "cannot use truncation with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if isFreeModule M then (
+    if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
+        truncation1(min degs, M)
+    else if isFreeModule M then (
         image map(M,,directSum for a in degrees M list 
             gens truncationMonomials(for d in degs list(d-a),R))
         )
@@ -428,6 +451,15 @@ truncation(ZZ, Module) :=
 truncation(ZZ, Ideal) :=
 truncation(ZZ, Matrix) :=
   (d, R) -> truncation({d}, R)
+
+-- now we switch the 'truncate' command methods to use these
+truncate(List, Module) := (degs, M) -> truncation(degs, M)
+truncate(List, Ideal) := (degs, I) -> truncation(degs, I)
+truncate(List, Ring) := (degs, R) -> truncation(degs, R)
+
+truncate(ZZ, Module) := (deg, M) -> truncation({deg}, M)
+truncate(ZZ, Ideal) := (deg, I) -> truncation({deg}, I)
+truncate(ZZ, Ring) := (deg, R) -> truncation({deg}, R)
 
 TEST ///
   -- test of truncations in singly graded poly ring case
@@ -567,8 +599,8 @@ TEST ///
   truncation({1,1,1}, S)
   basis({1,1,1},S)
   C = posHull A
-C2 = dualCone C
-rays C2
+  C2 = dualCone C
+  rays C2
 ///
 
 TEST ///
@@ -880,254 +912,21 @@ restart
 uninstallPackage "Truncations"
 restart
 loadPackage "Truncations"
+debug needsPackage "Truncations"
 restart
 installPackage "Truncations"
 check "Truncations"
-debug needsPackage "Truncations"
--- XXX
-
-
--- how to create Ax >= b, x >= 0?
------------------------------------------------------------------------
----- notes taken by MS and DE in October 2018 for to do for this package
------------------------------------------------------------------------
-restart
-load "trunc.m2"
-R = ZZ/101[a..d, Degrees=>{3,5,7,9}]
-trunc({15}, R)
-
-E = ZZ/101[e_0..e_10, SkewCommutative => true]
-trunc0({10}, E^1)
-trunc0({11}, E^1)
-trunc({3}, E)
-
-gens gb oo
-
-U = E ** T
-
--------
-in trunc(List,Module):
-  make the ring U directly, not T.
-  instead of phi1, make the ideal we had in trunc(List,Ring).
-  
-1. change all multi-degrees to be positive. (utility routine)
-2. handle quotient rings and modules over them
-3. handle exterior algebra
-4. trunc creates a ring, which should perhaps be skew commutative.
-6. incorporate trunc-new into this package Truncation.
-
-What we really want, is generators for the semigroup
-{x in ZZ^n(>=0), Ax >= b}
-
--- mike doodling about fixing basis command in engine:
-Matrix::basis
-  KBasis::k_basis(7 arguments)
-
-  
-How best to find
-  {x in ZZ^n(>=0), Ax = b}
-  
-  x in ZZ^n
-  A is d x n.
-  b is in ZZ^d.
-  
-  Find lattice points in Ax=b, x >= 0.
-  
-  if possible, Let A1 = Q^-1 * A * P (or A_perm) = (I | C), C is d x (n-d).
-  then create a polytope in (n-d) space, then extend each monomial to ZZ^n.
-  
--- given a matrix A, d x n whose columns are the degrees of the variables (in ZZ^d),
--- find, if possible a minor with det +-1.  If none, how to handle this?
-
-
--- notes 10 Nov 2018, DE, MS
-want to solve systems of linear equalities and inequalities in ZZ^n
-
-specifically:
-  A be the degree matrix (d x n, n = #vars)
-  
-  truncate(R, D), D in ZZ^d.
-  solve Ax >= D, (might include x >= 0)
-
-  truncate(M, D), M = module.
-    take each generator degree E, take Ax >= D-E, then mult each gen
-    in degree E by these monomials.
-
-
--------------------------------------
--- From an email of Lars Kastner, 10 Nov 2018, in response to a question
--- I (MES) asked him: How to compute generators for the semigroup
---  Ax >= b, x >= 0.
--- Also, find all of the lattice points of Ax=b, x >= 0.
-  
-Take A={{1,1}} and b={{1/2}}. This gives in your description the two-
-dimensional positive orthant without some part of its apex. So the
-origin is missing from the lattice points. Then in M2 you can:
-
-loadPackage "Polyhedra"
-A = matrix {{1,1}}
-b = matrix {{1/2}}
--- The second kind of inequalities, i.e. x>=0
-I = matrix map(QQ^2,QQ^2,1)
-z = matrix map(QQ^2, QQ^1, 0)
--- Polyhedra uses outer normals for polyhedra, so we have to change the
--- sign. This creates Ax>=b, x>=0/
-P = polyhedronFromHData (-(A||I), -(b||z))
--- Consider the cone with the polyhedron at height one
-C = cone P
-facets C
-hilbertBasis C
--- It has two kinds of elements in the Hilbert basis, those at height 
--- zero, and those at height one in the polyhedron
-R = select(hilbertBasis C, h -> h_(0,0) == 0)
-M = select(hilbertBasis C, h -> h_(0,0) == 1)
--- Cut off first coordinate
-R = apply(R, r->r^{1..(numRows r-1)})
-M = apply(M, m->m^{1..(numRows m-1)})
-
-Now any lattice point of P is a sum of exactly one element of M and an
-arbitrary positive linear combination of elements of R.
-
-Explanation:
-C contains all points (h, x) such that -hb+Ax>=0 and -hz+Ix>=0 (+
-h>=0). The lattice points you want are those with h=1. You get those by
-taking one element of the Hilbert basis with h=1, and adding
-arbitrarily many Hilbert basis elements with h=0.
-
-
-2. Another example:
-Pick A={{1,1}} and b={{1}} (almost as above).
-
-Package "Polyhedra"
-A = matrix {{1,1}}
-b = matrix {{1}}
-I = matrix map(QQ^2,QQ^2,1)
-z = matrix map(QQ^2, QQ^1, 0)
--- Create polyhedron x>=0, Ax=b
--- This time, A and b describe equations:
-P = polyhedronFromHData (-I, -z, A, b)
-latticePoints P
-
-Caveat: Ax=b, x>=0 might have infinite solutions anyway. You can check
-with 'isCompact P'. Last example:
-
-loadPackage "Polyhedra"
-A = matrix {{1,0}}
-b = matrix {{1}}
-I = matrix map(QQ^2,QQ^2,1)
-z = matrix map(QQ^2, QQ^1, 0)
--- Create polyhedron x>=0, Ax=b
-P = polyhedronFromHData (-I, -z, A, b)
--- This time, P is not compact
-isCompact P
-C = cone P
--- inequalities of points in C (note that cones use inner normals)
-facets C
--- equations of points in C
-hyperplanes C
-M = select(hilbertBasis C, h -> h_(0,0) == 1)
-M = apply(M, m->m^{1..(numRows m-1)})
-R = select(hilbertBasis C, h -> h_(0,0) == 0)
-R = apply(R, r->r^{1..(numRows r-1)})
-
-Now every lattice point of P is the sum of exactly one element of M and
-an arbitrary positive integral sum of elements of R.
-
-Explanation:
-In this case, C contains all points (h, x) such that hb-Ax=0 and
--hz+Ix>=0 (+ h>=0). Then the argument should be as above.
-
-
-------------------
--- MES examples --
-------------------
-restart  
-needsPackage "Truncations"
--- test of normaliz, to see if it does what we need here:
-needsPackage "NormalToricVarieties"
-
-TEST ///
-  -- example 1.  A simple one, from Lars' email.
--* 
-  restart  
-  needsPackage "Truncations"
-*-
-  A = matrix {{1,1}}
-  b = matrix {{1/2}}
-  P = truncationPolyhedron(A,b)
-  -- how to use this?
-  
-  C = cone P -- this is the cone with P at height 1.
-  rays C -- TODO: check this
-  facets C -- TODO: check this
-  hilbertBasis C
-  -- It has two kinds of elements in the Hilbert basis, those at height 
-  -- zero, and those at height one in the polyhedron
-  R = select(hilbertBasis C, h -> h_(0,0) == 0)
-  M = select(hilbertBasis C, h -> h_(0,0) == 1)
-  -- Cut off first coordinate
-  R = apply(R, r->r^{1..(numRows r-1)})
-  M = apply(M, m->m^{1..(numRows m-1)})
-///  
-
-
-V = smoothFanoToricVariety(3,5)
-rays V
-max V
-S = ring V
-A = transpose matrix degrees S
-C = posHull A
-C2 = dualCone C
-rays C2
-
--- Consider degree (3,2,1)
-b = transpose matrix{{3,2,1}}
--(A || id_(QQ^6)), - (b || map(QQ^6, QQ^1, 0))
-P = polyhedronFromHData (-(A || id_(QQ^6)), - (b || map(QQ^6, QQ^1, 0)))
-vertices P
-isCompact P
-C = cone P
-rays C
-facets C
-hilbertBasis C
--- It has two kinds of elements in the Hilbert basis, those at height 
--- zero, and those at height one in the polyhedron
-R = select(hilbertBasis C, h -> h_(0,0) == 0)
-M = select(hilbertBasis C, h -> h_(0,0) == 1)
--- Cut off first coordinate
-R = apply(R, r->r^{1..(numRows r-1)})
-M = apply(M, m->m^{1..(numRows m-1)})
-
--- now try Ax = b, x >= 0
-I = id_(QQ^6)
-z = map(QQ^6, QQ^1, 0)
-P = polyhedronFromHData (-I, -z, A, b)
-latticePoints P
-isCompact P
-S = ZZ/101[a..f, Degrees=>entries transpose A]
-basis({3,2,1},S)
-P = polyhedronFromHData(-id_(QQ^6), -map(QQ^6, QQ^1, 0), A, transpose matrix {{20,5,10}});
-LP = elapsedTime latticePoints P; -- slower than one below:
-elapsedTime basis({20,5,10}, S);
-
 
 doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-Description
-  Text
-  Example
-  Code
-  Pre
-Caveat
-SeeAlso
+  Key
+  Headline
+  Usage
+  Inputs
+  Outputs
+  Description
+    Text
+    Example
+  Caveat
+  SeeAlso
 ///
 
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
-///
