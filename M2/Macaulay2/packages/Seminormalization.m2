@@ -11,7 +11,7 @@ newPackage( "Seminormalization",
 	  }
      },
      Headline => "a package for computing seminormalization of rings",
-     PackageImports => {"IntegralClosure"},
+     PackageImports => {"IntegralClosure", "PushForward", "Pullback" },
      AuxiliaryFiles=>false
      )
 
@@ -35,9 +35,6 @@ exportMutable{
 }
 
 --*************************************************
-
-needsPackage "PushForward";
-needsPackage "Pullback";
 
 isSeminormal = method()
 

@@ -119,8 +119,6 @@ export {
 	"isHHolonomic"
 };
 
-needsPackage "SimpleDoc";
-
 mydoc:="";
 
 mydoc=concatenate(mydoc,///

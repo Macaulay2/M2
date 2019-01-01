@@ -7,10 +7,9 @@ newPackage (
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     PackageImports => {"XML"},
      Version => "1.0"
      )
-
-needsPackage "XML"
 
 -- we should remove the dependence of this on the unix "date" command!
 

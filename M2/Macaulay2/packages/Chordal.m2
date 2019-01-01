@@ -13,7 +13,6 @@ newPackage(
     },
     Headline => "A package that exploits chordal structure",
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"Graphs","TriangularSets"}
 )
 

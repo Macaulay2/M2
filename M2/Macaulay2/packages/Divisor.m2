@@ -5,7 +5,7 @@ newPackage( "Divisor",
      	  { Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com" }
 	  }, --this file is in the public domain
      Headline => "a package for working with Weil divisors",
-     PackageImports => {"IntegralClosure"}
+     PackageImports => {"IntegralClosure","RationalMaps"}
      )
 export{
     --objects
@@ -1527,7 +1527,6 @@ baseLocus(WeilDivisor) := Ideal => (D1) -> (
 );
 
 isVeryAmple = method(Options => {Verbose=>false});
-needsPackage "RationalMaps";
 
 isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (    
     if (D1#cache#?isVeryAmple == true) then (

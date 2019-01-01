@@ -11,8 +11,6 @@ newPackage("StronglyStableIdeals",
 
 -- For information see documentation key "StronglyStableIdeals" below.
 
-needsPackage("gfanInterface");
-
 export {
       -- methods
       "isHilbertPolynomial",

@@ -6,6 +6,8 @@ randomSystem (ZZ,ZZ,Ring) := (n,d,kk) -> (
      apply(n, i->sum(toList(1..d),j->random(j,R)) - 1)
      )
 
+beginDocumentation()
+
 doc ///
     Key
     	randomSystem

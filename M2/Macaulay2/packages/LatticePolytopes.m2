@@ -49,8 +49,6 @@ export{
     "epsilonBounds",
     "iskCayleykEdges"
        }
-needsPackage "Polyhedra"
-needsPackage "NormalToricVarieties"
 
 -- PURPOSE : Create the Cayley sum of polytopes
 cayley = method(TypicalValue => Polyhedron)
