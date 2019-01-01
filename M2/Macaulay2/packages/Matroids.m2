@@ -289,7 +289,7 @@ flats Matroid := List => M -> (
 latticeOfFlats = method()
 latticeOfFlats Matroid := Poset => M -> poset(flats M/toList, (a, b) -> isSubset(a, b))
 
-fVector Matroid := HashTable => M -> hashTable pairs tally(flats M/rank_M)
+fVector Matroid := HashTable => opts -> M -> hashTable pairs tally(flats M/rank_M)
 
 dual Matroid := Matroid => {} >> opts -> M -> (
 	if not M.cache.?dual then (
