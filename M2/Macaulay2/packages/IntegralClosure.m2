@@ -10,13 +10,12 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "Integral Closure",
-
+     	PackageImports => { "PrimaryDecomposition", "ReesAlgebra" },
     	DebuggingMode => false,
 	AuxiliaryFiles => true
     	)
 --
 
-needsPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
    
 export{
@@ -61,8 +60,6 @@ export{
      "RadicalBuiltin" -- true: use 'intersect decompose' to get radical, other wise use 'rad' in PrimaryDecomposition package
 
 verbosity = 0
-
-needsPackage "ReesAlgebra"
 
 --- Should Singh/Swanson be an option to integralClosure or its own
 --- program.  Right now it is well documented on its own.  I'm not

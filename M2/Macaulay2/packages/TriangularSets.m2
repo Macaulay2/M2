@@ -10,7 +10,7 @@ newPackage(
     },
     Headline => "A package for triangular decompositions of ideals",
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc","Binomials","MapleInterface","Elimination"},
+    PackageImports => {"Binomials","MapleInterface","Elimination"},
     PackageExports => {}
 )
 

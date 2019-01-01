@@ -34,9 +34,6 @@ export{"distinctPlanePoints",
        "imageUnderRationalMap"
        }
 
-
-needsPackage "RandomObjects"
-
 undocumented {
      constructNodalPlaneCurve,
      certifyNodalPlaneCurve,

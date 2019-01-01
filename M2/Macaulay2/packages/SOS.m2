@@ -17,9 +17,9 @@ newPackage(
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"},
      {Name => "Special thanks: Ilir Dema, Nidhi Kaihnsa, Anton Leykin"}
     },
-    Headline => "Sum-of-Squares Package",
+    Headline => "sums of squares",
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc","FourierMotzkin"},
+    PackageImports => {"FourierMotzkin"},
     PackageExports => {"SemidefiniteProgramming"}
 )
 

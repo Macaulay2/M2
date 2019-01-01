@@ -1,11 +1,15 @@
+--this file is in the public domain
+
 newPackage( "SectionRing",
-Version => "0.2", Date => "September 21 2016", Authors => {
-     {Name=> "Andrew Bydlon",
-     Email=> "thelongdivider@gmail.com",
-     HomePage => "http://www.math.utah.edu/~bydlon/"
-     }
-}, --this file is in the public domain
-Headline => "computing the section ring of a Weil Divisor")
+     Version => "0.2", Date => "September 21 2016", Authors => {
+     	  {Name=> "Andrew Bydlon",
+     	       Email=> "thelongdivider@gmail.com",
+     	       HomePage => "http://www.math.utah.edu/~bydlon/"
+     	       }
+	  },
+     PackageImports => {"Divisor"},
+     Headline => "computing the section ring of a Weil Divisor"
+     )
 
 export{
 	"globallyGenerated",
@@ -15,7 +19,6 @@ export{
 	"isVectScalar",
 	"convertScalarVect"
 }
-needsPackage "Divisor"
 
 -----------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 newPackage(
     "MultiGradedRationalMap",
-    Headline => "Degree and birationality of multi-graded rational maps",
+    Headline => "degree and birationality of multi-graded rational maps",
     Authors => {{ Name => "Yairon Cid Ruiz", 
 		  Email => "ycid@ub.edu", 
 		  HomePage => "http://www.ub.edu/arcades/ycid.html"}},

@@ -1,4 +1,3 @@
-needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "2.1.2.3", 
@@ -19,7 +18,8 @@ newPackage(
   }, 
   Headline => "Interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
- -- DebuggingMode => true,
+  -- DebuggingMode => true,
+  PackageExports => {"NAGtypes"},
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 ) 
@@ -216,8 +216,6 @@ export {
   protect StartSolutions
   protect FailedPath
   protect AllowStrings
-       
-needsPackage "NAGtypes"
 
 --##########################################################################--
 -- GLOBAL VARIABLES 
@@ -226,7 +224,6 @@ needsPackage "NAGtypes"
 DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
 
-needsPackage "SimpleDoc"
      storeBM2Files = temporaryFileName()
      makeDirectory storeBM2Files
 -- Bertini interface for M2

@@ -1155,8 +1155,6 @@ sourceInversionFactor(RingMap):=o->(f)->(
 --****************************************************--
 --*****************Documentation**********************--
 --****************************************************--
-needsPackage "Parametrization";
-needsPackage "Cremona";
 
 beginDocumentation();
 
