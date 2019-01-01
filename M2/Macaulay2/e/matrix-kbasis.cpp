@@ -428,11 +428,6 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
           return 0;
         }
 
-  if (vars->len == 0) {
-    ERROR("basis: computation requires at least one variable of nonzero heft");
-    return 0;
-  }
-
   KBasis KB(bottom, lo, hi, heft, vars, do_truncation, limit);
 
   // If either a low degree, or high degree is given, then we require a positive
