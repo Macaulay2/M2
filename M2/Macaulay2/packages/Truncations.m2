@@ -509,9 +509,9 @@ doc ///
       
       This package handles the multi-graded case correctly, at least for the case
       of non-negative degree vectors for the variables, and the
-      @TO "truncate"@ function is functorial.
+      @TO "truncate"@ function is functorial (see @TO (truncate, List, Matrix)@).
   Caveat
-    The behavior of @To "truncate"@ has changed as of Macaulay2
+    The behavior of @TO "truncate"@ has changed as of Macaulay2
     version 1.13.  This is a (potentially) breakiong change.  Before,
     it used a less useful notion of truncation, involving the heft
     vector, and was often not what one wanted in the multi-graded

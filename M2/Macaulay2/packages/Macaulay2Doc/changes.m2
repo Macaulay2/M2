@@ -45,6 +45,11 @@ document {
                      TT "PP = abstractProjectiveSpace", 
                      " and then e.g. ", TT "X = PP 4", "."
                      },
+                 LI {"a new package ", TO "Truncations", " has been added as a preloaded package.
+                     It implements a better notion of truncation of a module, in the
+                     case when the grading is a multi-grading.  Some bugs in the old function
+                     have been fixed.  The function ", TO "truncate", " has also been made functorial."
+                     },
 		 LI { "The deprecated old-style block comment syntax has been disabled.  Now
 		       one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." }
                  }
