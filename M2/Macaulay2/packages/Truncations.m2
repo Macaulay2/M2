@@ -647,7 +647,7 @@ doc ///
       truncate(2, ideal(a^3*x, b*y^2))
   Caveat
     The behavior of this function has changed as of Macaulay2
-    version 1.13.  This is a (potentially) breakiong change.  Before,
+    version 1.13.  This is a (potentially) breaking change.  Before,
     it used a less useful notion of truncation, involving the heft
     vector, and was often not what one wanted in the multi-graded
     case.  Additionally, in the tower ring case, when the coefficient
