@@ -21,8 +21,7 @@ newPackage("LatticePolytopes",
 	    HomePage => "http://www.math.kth.se/~gss",
 	    Email => "gss@math.kth.se"}
       	},
-    PackageExports => {"Polyhedra","NormalToricVarieties"},
-    DebuggingMode => true
+    PackageExports => {"Polyhedra","NormalToricVarieties"}
     )
 
 export{

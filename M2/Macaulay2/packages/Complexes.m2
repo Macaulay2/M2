@@ -161,8 +161,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
         Headline => "Chain complexes",
-        AuxiliaryFiles => false,
-        DebuggingMode => true
+        AuxiliaryFiles => false
         )
 
 export {

@@ -76,8 +76,6 @@ Authors => {
      }
 },
 Headline => "A package for calculations of singularities in positive characteristic",
-DebuggingMode => true,
-Reload => true,
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"}
 )

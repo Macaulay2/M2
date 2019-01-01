@@ -6,6 +6,7 @@ newPackage(
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
+	      PackageImports => {"Truncations"},
 	      PackageExports => {"MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2
 --in the version of August 21,2018	      
@@ -83,8 +84,6 @@ newPackage(
 
   	   "Optimism" -- optional arg for highSyzygy etc	   
 	   }
-print "file in the research directory"
-
 
 regularitySequence = method()
 regularitySequence(List, Module) := (R,M) ->(

@@ -11,6 +11,7 @@ newPackage(
 		  Email => "christine.e.jost@gmail.com"}},
     	Headline => "Computes CSM classes, Segre classes and the Euler Char. for some Subschemes of Smooth Complete Toric Varieties",
     	DebuggingMode => false,
+	PackageImports => { "Elimination", "PrimaryDecomposition" },
 	Configuration => { "pathToBertini" => ""},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

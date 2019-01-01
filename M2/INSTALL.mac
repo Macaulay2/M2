@@ -9,13 +9,14 @@
 set -e
 pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null || xcode-select --install
 sleep 1
-brew update
+brew update |cat
 sleep 1
-brew upgrade; stty -onlcr -echo
+brew upgrade |cat
 sleep 1
-# we need either "|cat" or "; stty -onlcr -echo":
-brew install make bdw-gc libatomic_ops gdbm glpk libmpc xz pkg-config autoconf automake gnu-tar libtool boost yasm |cat
-git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
+brew install pkg-config autoconf automake gnu-tar libtool wget yasm make |cat
+sleep 1
+brew install bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz |cat
+git describe --dirty --long --always --abbrev=40 --all
 gmake -f Makefile
 rm -rf tmp
 mkdir tmp

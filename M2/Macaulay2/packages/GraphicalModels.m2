@@ -24,6 +24,7 @@ newPackage(
 	  -- HomePage=>""}      
 	  },
      Headline => "A package for discrete and Gaussian graphical models",
+     PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
 	  "journal URI" => "http://j-sag.org/",

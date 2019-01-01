@@ -7,7 +7,7 @@ newPackage(
 		  HomePage => "http://martin-helmer.com/"}},
     	Headline => "Computes ED degrees, polar degress, degree and codimension of the dual, and Chern-Mather classes of toric varieites X_A from the polytope conv(A) or from its Gale dual",
     	DebuggingMode => false,
-	Reload => true
+	PackageImports => {"LLLBases"}
     	);
 
 needsPackage "Polyhedra"

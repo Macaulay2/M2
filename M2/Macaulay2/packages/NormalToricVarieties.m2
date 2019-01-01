@@ -26,7 +26,7 @@ newPackage(
       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
   Headline => "a package for working with normal toric varieties",
   PackageExports => {"Polyhedra", "Schubert2"},
-  PackageImports => {"FourierMotzkin","Normaliz"},
+  PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
   DebuggingMode => false
   )
 

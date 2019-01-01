@@ -13,8 +13,8 @@ newPackage select((
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions"},
-     PackageImports => {"PHCpack","Bertini"},
+     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions","LLLBases"},
+     PackageImports => {"PHCpack","Bertini","Truncations"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      --DebuggingMode => true,

@@ -1142,7 +1142,6 @@ export {
 	"transpose",
 	"trim",
 	"true",
-	"truncate",
 	"truncateOutput",
 	"try",
 	"tutorial",

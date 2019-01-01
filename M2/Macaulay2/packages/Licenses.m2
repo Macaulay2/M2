@@ -4,8 +4,7 @@ newPackage ( "Licenses",
      Authors => {{Name => "Daniel R. Grayson", 
 	       Email => "danielrichardgrayson@gmail.com", 
 	       HomePage => "http://dangrayson.com/"}},
-     Headline => "licensing of Macaulay2",
-     DebuggingMode => true
+     Headline => "licensing of Macaulay2"
      )
 
 export "checkLicense"

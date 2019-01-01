@@ -12,8 +12,7 @@ newPackage(
      Authors => {{Name => "Charley Crissman",
 	       Email => "charleyc@math.berkeley.edu",
 	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
-     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris",
-     DebuggingMode => true
+     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris"
      )
 
 export {"grassmannian", "placeholderSchubertCycle", "diagrams", "placeholderToSchubertBasis"}

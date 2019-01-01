@@ -8,8 +8,7 @@ newPackage("Matroids",
 		HomePage => "https://math.berkeley.edu/~jchen"}},
 	Headline => "a package for computations with matroids",
 	HomePage => "https://github.com/jchen419/Matroids-M2",
-	PackageExports => {"Graphs", "Posets"},
-	DebuggingMode => false
+	PackageExports => {"Graphs", "Posets"}
 )
 export {
 	"Matroid",

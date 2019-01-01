@@ -7,8 +7,7 @@ newPackage(
                 Email => "mike@math.cornell.edu", 
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
-        Headline => "helper code for writing boiler-plate code for new engine routines and types",
-        DebuggingMode => true
+        Headline => "helper code for writing boiler-plate code for new engine routines and types"
         )
 
 export {

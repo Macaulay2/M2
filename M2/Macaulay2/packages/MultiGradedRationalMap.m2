@@ -8,7 +8,7 @@ newPackage(
     Date => "2018",
     DebuggingMode => false,
     Configuration => {},
-    Reload => true
+    PackageImports => {"ReesAlgebra"}
 )
 
 export { 

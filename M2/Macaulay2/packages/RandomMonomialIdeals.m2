@@ -48,8 +48,7 @@ newPackage(
 	    }
 	},
     	Headline => "A package for generating Erdos-Renyi-type random monomial ideals",
-    	DebuggingMode => false,
-	Reload => true
+    	DebuggingMode => false
     	)
 needsPackage "Depth";
 needsPackage "BoijSoederberg";

@@ -6,7 +6,8 @@ newPackage("Markov",
 	  },
      DebuggingMode => false,
      Headline => "Markov ideals, arising from Bayesian networks in statistics",
-     Version => "1.2"
+     Version => "1.2",
+     PackageImports => {"Elimination"}
      )
 
 ------------------------------------------
