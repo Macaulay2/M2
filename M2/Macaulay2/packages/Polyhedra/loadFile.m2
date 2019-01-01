@@ -37,10 +37,10 @@ load "./core/globalMethods.m2"
    load "./core/cone/methods.m2"
    -- Fan
    load "./core/fan/constructors.m2"
-   load "./core/fan/methods.m2"
+   load "./core/polyhedron/constructors.m2"
+   load "./core/fan/methods.m2"			       -- relies on Polyhedron
    load "./core/fan/properties.m2"
    -- Polyhedron (relies on cone)
-   load "./core/polyhedron/constructors.m2"
    load "./core/polyhedron/properties.m2"
    load "./core/polyhedron/methods.m2"	   -- relies on Fan
    -- PolyhedralComplex (relies on Fan)
