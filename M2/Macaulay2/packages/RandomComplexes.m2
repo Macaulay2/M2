@@ -21,7 +21,7 @@ newPackage(
                     },
         Headline => "random complexes over fields or the integers",
         PackageExports => {"SimplicialComplexes"},
-        DebuggingMode => true
+	PackageImports => {"LLLBases"}
         )
 
 export {

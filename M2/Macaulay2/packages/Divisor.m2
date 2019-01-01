@@ -1,14 +1,12 @@
 newPackage( "Divisor",
-Version => "0.3", Date => "May 30th, 2018", Authors => {
-     {Name => "Karl Schwede",
-     Email=> "kschwede@gmail.com",
-     HomePage=> "http://www.math.utah.edu/~schwede"
-     },
-     {Name=> "Zhaoning Yang",
-     Email=> "zyy5054@gmail.com"
-     }
-}, --this file is in the public domain
-Headline => "a package for working with Weil divisors")
+     Version => "0.3", Date => "May 30th, 2018", 
+     Authors => {
+     	  { Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede" },
+     	  { Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com" }
+	  }, --this file is in the public domain
+     Headline => "a package for working with Weil divisors",
+     PackageImports => {"IntegralClosure"}
+     )
 export{
     --objects
 	"BasicDivisor",

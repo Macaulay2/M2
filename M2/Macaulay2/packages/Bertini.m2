@@ -20,7 +20,6 @@ newPackage(
   Headline => "Interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
  -- DebuggingMode => true,
-  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 ) 

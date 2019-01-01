@@ -16,8 +16,7 @@ newPackage("Polyhedra2",
      	  {Name => "Qingchun Ren"},
 	  {Name => "Josephine Yu"}
      },
-    Configuration => {"DefaultUsePolymake"=>false},
-    DebuggingMode => true
+    Configuration => {"DefaultUsePolymake"=>false}
     )
 
 ---------------------------------------------------------------------------

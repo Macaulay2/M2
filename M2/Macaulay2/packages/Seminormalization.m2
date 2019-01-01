@@ -1,20 +1,19 @@
 newPackage( "Seminormalization",
-Version => "0.2",
-Date => "December 21st, 2018",
-Authors => {
-     {Name => "Karl Schwede",
-     Email => "schwede@math.utah.edu",
-     HomePage => "http://math.utah.edu/~schwede/"
+     Version => "0.2",
+     Date => "December 21st, 2018",
+     Authors => {
+	  {Name => "Karl Schwede",
+	  Email => "schwede@math.utah.edu",
+	  HomePage => "http://math.utah.edu/~schwede/"
+	  },
+	  {Name => "Bernard Serbinowski",
+	  Email => "bserbinowski@gmail.com"
+	  }
      },
-     {Name => "Bernard Serbinowski",
-     Email => "bserbinowski@gmail.com"
-     }
-},
-Headline => "a package for computing seminormalization of rings",
-DebuggingMode => true,
-Reload => true,
-AuxiliaryFiles=>false
-)
+     Headline => "a package for computing seminormalization of rings",
+     PackageImports => {"IntegralClosure"},
+     AuxiliaryFiles=>false
+     )
 
 export{
     "seminormalize",

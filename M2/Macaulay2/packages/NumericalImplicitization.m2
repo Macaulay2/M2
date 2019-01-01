@@ -10,10 +10,8 @@ newPackage("NumericalImplicitization",
 	 Email => "jkileel@princeton.edu",
 	 HomePage => "http://www.math.berkeley.edu/~jkileel"}
         },
-    PackageImports => {},
-    PackageExports => {"NumericalAlgebraicGeometry"},
-    Reload => true,
-    DebuggingMode => true
+    PackageImports => {"LLLBases"},
+    PackageExports => {"NumericalAlgebraicGeometry"}
     )
     export {
         "numericalSourceSample",

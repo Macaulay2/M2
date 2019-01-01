@@ -23,8 +23,7 @@ newPackage(
         Configuration => {
             "path" => ""
             },
-        PackageImports => {"FourierMotzkin"},
-        DebuggingMode => true
+        PackageImports => {"FourierMotzkin"}
         )
 
 export {

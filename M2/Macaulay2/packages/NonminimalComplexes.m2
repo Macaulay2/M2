@@ -17,8 +17,7 @@ newPackage(
 		   Email => "mike@math.cornell.edu", 
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
-        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module",
-        DebuggingMode => true
+        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
 export {

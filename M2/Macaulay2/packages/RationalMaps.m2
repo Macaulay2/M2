@@ -15,7 +15,7 @@ Version => "0.21", Date => "August 22nd, 2016", Authors => {
      {Name => "C.J. Bott",
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
-Headline => "A package for working with rational maps.", DebuggingMode => true, Reload=>true)
+Headline => "A package for working with rational maps.")
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",

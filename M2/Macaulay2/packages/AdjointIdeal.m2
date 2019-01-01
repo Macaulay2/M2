@@ -9,6 +9,7 @@ newPackage(
     	Headline => "Adjoint ideals of plane curves and related computations",
     	DebuggingMode => false,
 	CacheExampleOutput => true,
+	PackageImports => {"IntegralClosure"},
 	AuxiliaryFiles => true
     	)
 

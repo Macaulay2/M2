@@ -11,8 +11,7 @@ newPackage(
 	            {Name => "Qingchun Ren", 
 		    Email => "qingchun.ren@gmail.com", 
 		    HomePage => "http://math.berkeley.edu/~qingchun/"}},
-    	Headline => "a package for interfacing with polymake",
-    	DebuggingMode => true
+    	Headline => "a package for interfacing with polymake"
     	)
 
 export {

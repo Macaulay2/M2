@@ -11,6 +11,7 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth canonical curves up to genus 14",
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
         )
 

@@ -17,6 +17,7 @@ newPackage(
                    },
     	Headline => "Construction of random plane curves",
 	PackageExports => {"RandomObjects"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
         )
 

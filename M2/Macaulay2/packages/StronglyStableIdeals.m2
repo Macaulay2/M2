@@ -6,7 +6,7 @@ newPackage("StronglyStableIdeals",
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
 	   Headline => "studying strongly stable ideals related to Hilbert polynomials",
-	   PackageImports => {"gfanInterface"}
+	   PackageImports => {"gfanInterface","Truncations"}
 	  )
 
 -- For information see documentation key "StronglyStableIdeals" below.

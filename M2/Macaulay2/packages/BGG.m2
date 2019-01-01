@@ -12,6 +12,7 @@ newPackage(
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	PackageExports => {"BoijSoederberg"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
     	)
 
