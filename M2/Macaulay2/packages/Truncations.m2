@@ -13,8 +13,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"}
             },
         Headline => "truncation of a module",
-        PackageImports => {"Polyhedra"},
-        DebuggingMode => true
+        PackageImports => {"Polyhedra"}
         )
 
 export {
