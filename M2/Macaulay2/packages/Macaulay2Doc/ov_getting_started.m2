@@ -587,7 +587,7 @@ document {
 	  TOH "infoHelp"
 	  },
      PARA {"While in Macaulay2, type ", 
-	  TT"help", 
+	  TT "help", 
 	  " to get a summary of the most useful ways of obtaining
 	  help on a topic or function.
 	  Type",
@@ -595,21 +595,16 @@ document {
 	  " to start the web browser (if necessary) and to point it at
 	  the page index.html in your .Macaulay2 directory.
 	  For help on a specific topic, e.g., the jacobian function, use ",
-	  TT"viewHelp jacobian",
+	  TT "viewHelp jacobian",
           " or ",
-	  TT///viewHelp "jacobian"///,
+	  TT ///viewHelp "jacobian"///,
 	  " or if you want the documentation for jacobian of an Ideal, use ",
 	  TT ///viewHelp (jacobian,Ideal)///
      	  },
      PARA {"Using 'help' instead of 'viewHelp' results in the help text appearing 
-	  in your Macaulay2 session. " 
+	  in your Macaulay2 session.  A useful tip: in emacs, if you place your cursor on one of the resulting 
+	  output lines that starts with a '*', and press return, then you will get help on that topic."
 	  },
-     EXAMPLE ///help "jacobian"///,
-     PARA {
-	  "A useful tip: in emacs, if you place your cursor on one of the lines that starts with a '*',
-	  and press return, then you will get help on that topic."
-	  },
-     EXAMPLE ///* "jacobian(Ideal)"///,
      PARA {
 	  "Reading the info form of the documentation in emacs is perhaps better than using ", TO "infoHelp", ",
 	  because the preferred way of running Macaulay2 is also in emacs. If you do so, we
@@ -627,20 +622,10 @@ document {
      PARA {
 	  "To find all documentation nodes whose contain a given string, use ", TO "about", "."
 	  },
-     EXAMPLE lines ///
-     about resolution
-     help 
-     ///,
      PARA {"The documentation for most functions comes with example code.  You can 
 	  obtain the text of this example code using ", TO examples, "."
-	  },
-     EXAMPLE ///examples "jacobian(Ideal)"///,
-     PARA {
-	  "which returns it as a string. To place these on their own lines, print the string."
-	  },
-     EXAMPLE ///print examples "jacobian(Ideal)"///
+	  }
      }
-
 
 document {
      Key => "getting help or reporting bugs",

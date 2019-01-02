@@ -361,9 +361,7 @@ document {
      Key => "using functions",
      "There are many functions in Macaulay2 that do various things.  You can
      get a brief indication of what a function does by typing a ", TT "?", " before
-     its name.",
-     EXAMPLE "?sin",
-     "In this case, we see that the function ", TO "sin", " takes a single argument
+     its name.  In this case, one would see that the function ", TO "sin", " takes a single argument
      ", TT "x", ".  We apply a function to its argument by typing them in adjacent
      positions.  It is possible but not necessary to place parentheses around
      the argument.",
