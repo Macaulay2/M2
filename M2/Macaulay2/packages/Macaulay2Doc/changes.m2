@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release (1.13)",
+	  TO "changes made for the next release (1.14)",
+	  TO "changes, 1.13",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
 	  TO "changes, 1.10",
@@ -28,28 +29,52 @@ document {
      }
 
 document {
-     Key => "changes made for the next release (1.13)",
-     UL {
-         LI {"breaking changes:",
-             UL {
-                 LI { "the Schubert2 functions ", TT "projectiveSpace", 
-                     " and ", TT "projectiveSpace'", 
-                     "have been renamed ", TO "abstractProjectiveSpace", "  and ",
-                     TO "abstractProjectiveSpace'", ".  The reason is that there
-                     were name conflicts with the NormalToricVarieties package."
-                     },
-                 LI { "the Schubert2 functions ", TT "PP", " and ", TT "PP'",
-                     " have been removed.  Use ", TO "abstractProjectiveSpace", " and ",
-                     TO "abstractProjectiveSpace'", " instead. Since ", TT "PP",
-                     " is no longer protected, you can always do ", 
-                     TT "PP = abstractProjectiveSpace", 
-                     " and then e.g. ", TT "X = PP 4", "."
-                     }
-                 }
-             }
-         }
+     Key => "changes made for the next release (1.14)",
      }
-     
+
+document {
+     Key => "changes, 1.13",
+     UL {
+     	  LI { "functionality changed in a way that could break code:",
+               UL {
+		    LI { "Various packages have been preloaded for convenience when starting Macaulay2, but now they are no longer visible by
+			 default inside the source code of a package.  Developers of packages should add the names of the needed preloaded packages
+			 to the value of the ", TO "PackageImports", " or ", TO "PackageExports", " option, to ensure that needed definitions are visible."
+			 },
+                    LI { "the Schubert2 functions ", TT "projectiveSpace", " and ", TT "projectiveSpace'", "have been renamed ", TO "abstractProjectiveSpace", "  and ",
+                     	 TO "abstractProjectiveSpace'", ".  The reason is that there were name conflicts with the NormalToricVarieties package."
+                     	 },
+                    LI { "the Schubert2 functions ", TT "PP", " and ", TT "PP'", " have been removed.  Use ", TO "abstractProjectiveSpace", " and ",
+                     	 TO "abstractProjectiveSpace'", " instead. Since ", TT "PP", " is no longer protected, you can always do ", TT "PP = abstractProjectiveSpace", 
+                     	 " and then e.g. ", TT "X = PP 4", "."
+                     	 },
+                    LI {"a new package ", TO "Truncations", " has been added as a preloaded package.  It implements a better notion of truncation of a module, in the
+                     	 case when the grading is a multi-grading.  Some bugs in the old function have been fixed.  The function ", TO "truncate", " has also been made functorial."
+                     	 },
+		    LI { "The deprecated old-style block comment syntax has been disabled.  Now one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." }
+                    }
+               },
+     	  LI { "new packages:",
+     	       UL {
+	       	    LI { TO "Truncations::Truncations", ", a package by David Eisenbud and Mike Stillman for truncating modules, has been added." },
+	       	    LI { TO "FThresholds::FThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, Zhibek Kadyrsizova, Moty Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira and Emily Witt for calculation of F-thresholds, has been added." },
+	       	    LI { TO "ToricInvariants::ToricInvariants", ", a package by Martin Helmer for computing Euclidean distance degrees, polar degrees, degree and codimension of the dual, and Chern-Mather classes of toric varieties, has been added." },
+	       	    LI { TO "SegreClasses::SegreClasses", ", a package by Martin Helmer and Corey Harris for testing containment of varieties and computing algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, has been added." },
+	       	    LI { TO "SemidefiniteProgramming::SemidefiniteProgramming", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo, and Helfried Peyrl for semidefinite programming, has been added." },
+	       	    LI { TO "SOS::SOS", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo, and Helfried Peyrl for , has been added." },
+	       	    LI { TO "MultiGradedRationalMap::MultiGradedRationalMap", ", a package by Yairon Cid Ruiz for computing the degree and birationality of multi-graded rational maps, has been added." }
+		    }
+	       },
+	  LI { "improved packages:",
+	       UL {
+		    LI { 
+		       	 TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " now has a full implementation of the Eisenbud-Shamash resolution, and
+		       	 using ", TO "MCMApproximations::MCMApproximations", ", now can compute the layered resolution of any Cohen-Macaulay module, not just a high syzygy."
+		       	 }
+		    }
+	       }
+          }
+     }
 
 document {
      Key => "changes, 1.12",
@@ -1109,7 +1134,7 @@ document {
 			 between the images of the bases of the source and target."
 			 },
 		    LI {
-			 "The functions ", TO basis, ", and ", TO truncate, " now allow partial multi-degrees to be given.
+			 "The functions ", TO basis, ", and ", TO "Truncations::truncate", " now allow partial multi-degrees to be given.
 			 The result is a basis or generating set over the subring generated by variables whose initial
 			 degrees are zero."
 			 },

@@ -6,6 +6,7 @@ newPackage(
 	    {Name => "Eloisa Grifo", Email => "eloisa.grifo@virginia.edu", HomePage => "http://people.virginia.edu/~er2eq/"}
 	    },
 	Headline => "Calculations involving symbolic powers",
+	PackageImports => {"PrimaryDecomposition", "Polyhedra", "Depth" },
 	DebuggingMode => false
         )
 
@@ -43,11 +44,6 @@ export {
     "symbolicPolyhedron", 
     "waldschmidt"
     }
-
-
-needsPackage "Polyhedra";
-needsPackage "Depth";
-
 
 ---------------------------------------------------------------
 ---------------------------------------------------------------

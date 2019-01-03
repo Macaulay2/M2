@@ -10,13 +10,11 @@ newPackage(
     	DebuggingMode => false,
         Configuration =>{"ConvexPath"=>""},
 	CacheExampleOutput => true,
+     	PackageImports => { "MapleInterface" },
 	AuxiliaryFiles => true
         )
 
 -- For information see documentation key "ConvexInterface" below.
-
-
-needsPackage "MapleInterface"
 
 export({"mConvexHullFaces","mConvexHullFacesAndDuals","mHomology","FinitelyGeneratedAbelianGroup","toFile","readConvexHullFaces","mLatticePoints","mPosHullFaces","mPosHullFacesAndDuals","readPosHullFaces","callConvex","mIsSubcone"})
 

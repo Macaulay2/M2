@@ -48,11 +48,9 @@ newPackage(
 	    }
 	},
     	Headline => "A package for generating Erdos-Renyi-type random monomial ideals",
-    	DebuggingMode => false,
-	Reload => true
+     	PackageImports => { "Depth", "BoijSoederberg", "Serialization" },
+    	DebuggingMode => false
     	)
-needsPackage "Depth";
-needsPackage "BoijSoederberg";
 
 export {
     "randomMonomialSets",
@@ -83,9 +81,6 @@ export {
     "statistics",
     "Mean", "StdDev", "Histogram"
 }
-
-
-needsPackage "Serialization"
 
 --***************************************--
 --  Exported methods 	     	     	 --

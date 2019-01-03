@@ -1,5 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+isHomogeneous Number := x -> true
 ring Number := class
 degree Number := i -> {}
 conjugate Number := identity

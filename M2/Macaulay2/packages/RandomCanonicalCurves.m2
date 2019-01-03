@@ -1,4 +1,3 @@
-needsPackage"RandomObjects"
 newPackage(
 	"RandomCanonicalCurves",
     	Version => "0.6",
@@ -11,6 +10,8 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth canonical curves up to genus 14",
+     	PackageImports => {"Truncations","RandomSpaceCurves","RandomPlaneCurves","RandomGenus14Curves"},
+     	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )
 
@@ -25,12 +26,6 @@ undocumented {
      randomCanonicalModelOfSpaceCurve,
      randomCanonicalCurve,
      certifyCanonicalCurve}
-
-needsPackage"RandomObjects"
-needsPackage"RandomSpaceCurves"
-needsPackage"RandomPlaneCurves"
-needsPackage"RandomGenus14Curves"
-
 
 randomCanonicalModelOfPlaneCurve = method(Options => {Certify => false})
 

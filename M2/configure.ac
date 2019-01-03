@@ -29,7 +29,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.12.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.13, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -218,9 +218,20 @@ then AC_MSG_CHECKING(whether $STRIP accepts the remove-section option)
 fi
 
 AC_MSG_CHECKING(whether $MAKE is GNU make)
-if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
+if "$MAKE" --version | head -1 | grep GNU >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR($MAKE: GNU make is required)
+else AC_MSG_RESULT(no)
+     AC_MSG_ERROR($MAKE: GNU make is required)
+fi
+
+AC_MSG_CHECKING(whether GNU make is recent enough)
+dnl Note: run our makefiles with GNU make, version 4 or larger.
+dnl       Version 3.81, provided on Mac OS X, has a bug, but you can
+dnl	  use "homebrew" to install a modern version under the name "gmake"
+if "$MAKE" --version | head -1 | grep "GNU Make 3.81" >/dev/null 2>&1
+then AC_MSG_RESULT(no)
+     AC_MSG_ERROR([$MAKE: GNU make 3.81 found, too old; install a more recent version])
+else AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(whether $TAR is GNU tar)
@@ -746,7 +757,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 	template <class T> struct A { };])],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
 dnl Check for openmp and fail if it cannot be found.
-dnl This is required for building csdp and good for normaliz
+dnl This is required for building the library csdp and good for building the library normaliz
 AC_MSG_CHECKING(whether OpenMP is supported by the compiler)
 AC_LANG(C++)
 AC_PROG_CXX
@@ -754,7 +765,16 @@ AC_OPENMP
 if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
+TMP=$OPENMP_CXXFLAGS
+OPENMP_CXXFLAGS=
+for i in $TMP
+do case $i in
+   -l*) OPENMP_LIBS="$OPENMP_LIBS $i" ;;
+     *) OPENMP_CXXFLAGS="$OPENMP_CXXFLAGS $i" ;;
+   esac
+done
 AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
+AC_SUBST(OPENMP_LIBS,"$OPENMP_LIBS")
 
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
@@ -1316,6 +1336,13 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
+if test $BUILD_mpc = no
+then AC_LANG(C)
+     AC_SEARCH_LIBS(mpc_set,mpc,,BUILD_mpc=yes)
+     AC_CHECK_HEADER(mpc.h,,BUILD_mpc=yes)
+fi
+test $BUILD_mpc = yes && BUILTLIBS="-lmpc $BUILTLIBS"
+
 dnl mpir and mpfr are always built, so flint should also always be built:
 BUILD_ALWAYS="flint $BUILD_ALWAYS"
 if test $BUILD_mpir = yes -o $BUILD_mpfr = yes
@@ -1680,7 +1707,6 @@ AC_ARG_ENABLE(mpack,
     AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
     BUILD_mpack=yes
     BUILD_qd=yes
-    BUILD_mpc=yes
     ENABLE_MPACK=yes
     BUILTLIBS="-lmlapack_mpfr -lmblas_mpfr -lmpfrcxx $BUILTLIBS"
     )

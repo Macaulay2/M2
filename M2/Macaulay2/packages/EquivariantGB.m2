@@ -13,7 +13,6 @@ newPackage(
      AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true,
      AuxiliaryFiles => true
      )
 

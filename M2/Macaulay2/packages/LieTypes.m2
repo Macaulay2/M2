@@ -7,7 +7,8 @@ newPackage(
     Headline => "Common types for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
-	  }
+	  },
+    PackageImports => {"ReesAlgebra"}
     )
 
 export {

@@ -63,7 +63,7 @@ document {
      "Graded modules:",
      UL {
 	  TO basis,
-	  TO truncate,
+	  TO "Truncations::truncate",
 	  TO (degree, Module),
 	  TO (genera, Module),
 	  TO (hilbertSeries, Module),

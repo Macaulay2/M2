@@ -18,9 +18,8 @@ newPackage(
 		  Email => "schreyer@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer"}},
     	Headline => "K3 double structure on scrolls",
-    	DebuggingMode => true,
 	PackageExports => {"CompleteIntersectionResolutions", "NonminimalComplexes"},
-	Reload =>true
+	PackageImports => {"Elimination"}
 	)
 
 export {

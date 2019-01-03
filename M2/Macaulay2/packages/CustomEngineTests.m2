@@ -18,8 +18,7 @@ newPackage(
 		        HomePage => "" }
             },
         Headline => "a sandbox test suite for the Macaulay2 engine ",
-	    PackageExports => {"FastLinearAlgebra"},
-        DebuggingMode => true
+	PackageExports => {"FastLinearAlgebra"}
         )
 
 

@@ -21,7 +21,8 @@ newPackage(
 	          {Name =>"Alessio Sammartano",
 		   -- Email => "",
 		   HomePage => ""}},
-    	Headline => "CorrespondenceScrolls"
+    	Headline => "CorrespondenceScrolls",
+	PackageImports => { "Elimination" }
 	)
 
 export {    

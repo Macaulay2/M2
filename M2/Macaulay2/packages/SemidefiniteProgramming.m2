@@ -16,11 +16,9 @@ newPackage(
       Email => "peyrl@control.ee.ethz.ch",
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
-    Headline => "Semidefinite Programming Package",
+    Headline => "semidefinite programming",
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
-    DebuggingMode => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"NumericalAlgebraicGeometry"}
 )
 
@@ -69,13 +67,15 @@ chooseDefaultSolver = execs -> (
     solvers := {"CSDP", "MOSEK", "SDPA"}; --sorted by preference
     found := for i to #solvers-1 list
         if execs#i=!=null then solvers#i else continue;
-    print if #found>0 then "Solvers configured: "|demark(", ",found)
-        else "Warning: No external solver was found.";
+    -- Packages should load silently:
+    -- print if #found>0 then "Solvers configured: "|demark(", ",found)
+    --     else "Warning: No external solver was found.";
     found = append(found,"M2");
     defaultSolver = ((options SemidefiniteProgramming).Configuration)#"DefaultSolver";
     if not member(defaultSolver,found) then
         defaultSolver = first found;
-    print("Default solver: " | defaultSolver);
+    -- Packages should load silently:
+    -- print("Default solver: " | defaultSolver);
     return defaultSolver;
     )
 

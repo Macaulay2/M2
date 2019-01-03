@@ -10,7 +10,7 @@ TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
 # URL = http://www.broune.com/frobby
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\

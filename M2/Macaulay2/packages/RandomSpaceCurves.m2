@@ -1,5 +1,3 @@
-needsPackage"RandomObjects"
-
 newPackage(
 	"RandomSpaceCurves",
     	Version => "0.5",
@@ -18,6 +16,7 @@ newPackage(
 		 HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "Construction of random smooth space curves",
+     	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )
 
@@ -34,8 +33,6 @@ export{"randomSpaceCurve",
      "certifyRandomSpaceCurve",
      "spaceCurve"
      }
-
-needsPackage"RandomObjects"
 
 ------------------------------------
 -- Hilbert Function and Numerator --
