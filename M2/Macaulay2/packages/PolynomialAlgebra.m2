@@ -535,8 +535,6 @@ TEST ///
       map(target f, source g, apply(gens source g, x -> f g x))
       )
 
-
-
   R = QQ{b,c,d}
   F1 = map(R,R,{c,b,d})
   F2 = map(R,R,{c+b,c,d})  
@@ -545,8 +543,9 @@ TEST ///
   G2 = F2 @@ F3
   use R  
 
-  
   F1 (b*c*d + b*b*d*c*d*b)  
+  F2 (b*c*d + b*b*d*c*d*b)  
+  F3 (b*c*d + b*b*d*c*d*b)  
 ///
 
 TEST ///
@@ -611,14 +610,31 @@ check PolynomialAlgebra
 -- calls rawPairs, which calls IM2_RingElement_list_form in engine
 -- each ring has its own "list_form(coeff ring, ring_elem)"
 
--- TODO: 1/13/17 MS+FM
--- 1. isEqual
--- 2. mutable matrices
--- 3. promote/lift
--- 4. pairs and rawPairs, etc
--- 5. leadTerm/Coefficient/Monomial
--- 6. terms
--- 7. degrees/weights of variables
+-- TODO: 1/3/19 MS+FM (DONE means: make sure there are tests for it!!)
+-- 1. isEqual DONE
+-- 2. mutable matrices DONE
+-- 3. promote/lift DONE
+-- 4. rawPairs, etc (rawPairs: DONE)
+-- 5. leadTerm/Coefficient/Monomial (NOT DONE)
+-- 6. terms DONE
+-- 7. degrees/weights of variables (NOT DONE)
+-- 8. listForm (Not correct for NC case): use rawSparseListFormMonomial.
+-- 9. check on ring map evaluation.
+-- eventually: 
+--  a. want ring of square matrices over a ring.
+--  b. Endomorphism ring and/or Ext algebra.
+--  c. Skew poly rings
+--  d. path algebra?
+-- not written:
+--   is_homogeneous
+--   degree
+--   multi_degree
+-- order of events:
+--  a. fix the little stuff above.
+--   a1. then get existing bergman interface to work with this code.
+--  b. understand bergman GB/res algorithms/tricks.
+--  c. implement GB and res
+--  d. add in these other non-commutative rings.
 
 doc ///
 Key
