@@ -488,7 +488,7 @@ doc ///
   Key
     Truncations
   Headline
-    "truncations of graded ring, ideals and modules"
+    truncations of graded ring, ideals and modules
   Description
     Text
       This package provides for the truncation of a graded ring, or a graded

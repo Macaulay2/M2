@@ -41,8 +41,8 @@ document {
 		    LI { "Various packages have been preloaded for convenience when starting Macaulay2, but now they are no longer visible by
 			 default inside the source code of a package.  Developers of packages should add the names of the needed preloaded packages
 			 to the value of the ", TO "PackageImports", " or ", TO "PackageExports", " option, to ensure that needed definitions are visible." },
-                    LI { "the Schubert2 functions ", TT "projectiveSpace", " and ", TT "projectiveSpace'", "have been renamed ", TO "abstractProjectiveSpace", "  and ",
-                     	 TO "abstractProjectiveSpace'", ".  The reason is that there were name conflicts with the NormalToricVarieties package.  
+                    LI { "the Schubert2 functions ", TT "projectiveSpace", " and ", TT "projectiveSpace'", "have been renamed ", TO "Schubert2::abstractProjectiveSpace", "  and ",
+                     	 TO "Schubert2::abstractProjectiveSpace'", ".  The reason is that there were name conflicts with the ", TO "NormalToricVarieties::NormalToricVarieties", " package.  
 			 Since ", TT "PP", " is no longer protected, you may put ", TT "PP = abstractProjectiveSpace", 
                      	 " in your init file and then use something like ", TT "X = PP 4", ", although ", TT "PP^4", " will no longer work." },
 		    LI { "The deprecated old-style block comment syntax has been disabled.  Now one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." } } },
