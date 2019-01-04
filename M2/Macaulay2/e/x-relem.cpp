@@ -207,10 +207,10 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
 }
 
 const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
-                                               M2_ArrayString names,
-                                               const Ring* degreeRing)
+                                                   M2_ArrayString names,
+                                                   const Ring* degreeRing,
+                                                   M2_arrayint degrees)
 {
-  // MIKE: Can we remove this now?
   try {
     if (coefficientRing == nullptr)
       {
@@ -223,7 +223,10 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
         ERROR("expected polynomial ring");
         return nullptr;
       }
-    const PolynomialAlgebra* result = PolynomialAlgebra::create(coefficientRing, names, P);
+    const PolynomialAlgebra* result = PolynomialAlgebra::create(coefficientRing,
+                                                                M2_ArrayString_to_stdvector(names),
+                                                                P,
+                                                                M2_arrayint_to_stdvector<int>(degrees));
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }
@@ -235,31 +238,10 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
 
 const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
                                                M2_ArrayString names,
-                                               const Ring* degreeRing)
+                                               const Ring* degreeRing,
+                                               M2_arrayint degrees)
 {
-  return rawRingPolynomialAlgebra(coefficientRing, names, degreeRing);
-  // TODO: don't need two of these functions.  For now, switching to the one we are currently
-  // writing. (16 Feb 2016 Mike+Frank).
-  try {
-    if (coefficientRing == nullptr)
-      {
-        ERROR("internal error: expected non-null Ring!");
-        return nullptr;
-      }
-    const PolynomialRing *P = degreeRing->cast_to_PolynomialRing();
-    if (P == nullptr)
-      {
-        ERROR("expected polynomial ring");
-        return nullptr;
-      }
-    const NCFreeAlgebra* result = NCFreeAlgebra::create(coefficientRing, names, P);
-    //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
-    return result;
-  }
-  catch (exc::engine_error& e) {
-    ERROR(e.what());
-    return NULL;
-  }
+  return rawRingPolynomialAlgebra(coefficientRing, names, degreeRing, degrees);
 }
 
 const Ring /* or null */ *IM2_Ring_frac(const Ring *R)

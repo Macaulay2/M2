@@ -1,6 +1,7 @@
 #ifndef _polynomial_algebra_hpp_
 #define _polynomial_algebra_hpp_
 
+#include "polyring.hpp"
 #include "Polynomial.hpp"
 
 struct CoefficientRingTypeExample
@@ -16,9 +17,29 @@ class NCMonoid
   //  3. (NCMonoid, pointer into a region of int's)
   //  4. exponent vector (only used for commutative case)
   //  5. Monomial format.
+private:
+  const std::vector<std::string> mVariableNames;
+  const PolynomialRing* mDegreeRing;
+  const std::vector<int> mDegrees;
 public:
-  NCMonoid() {}
+  NCMonoid(
+           const std::vector<std::string>& variableNames,
+           const PolynomialRing* degreeRing,
+           const std::vector<int>& degrees)
+    : mVariableNames(variableNames),
+      mDegreeRing(degreeRing),
+      mDegrees(degrees)
+  {
+  }
 
+  // Informational
+  const std::vector<std::string>& variableNames() const { return mVariableNames; }
+  const std::vector<int>& flattenedDegrees() const { return mDegrees; }
+  unsigned int numVars() const { return static_cast<unsigned int>(mVariableNames.size()); }
+  const PolynomialRing* degreeRing() const { return mDegreeRing; }
+  const Monoid* degreeMonoid() const { return mDegreeRing->getMonoid(); }
+
+  // Monomial operations
   using MonomialInserter = std::vector<int>;
 
   void one(MonomialInserter& m) const;
@@ -36,11 +57,10 @@ public:
 
   void var(int v, MonomialInserter& result) const;
 
+  //void multi_degree(degsOfVars, int* already_allocated_degree_vector) const;
+  
   // display (to a buffer, and to a ostream)
-  void elem_text_out(buffer& o,
-                     const Monom& m1,
-                     const std::vector<std::string>& variableNames
-                     ) const;
+  void elem_text_out(buffer& o, const Monom& m1) const;
 
   // transfer to Monomial, from Monomial
 
@@ -63,19 +83,21 @@ public:
 
 class PolynomialAlgebra : public Ring
 {
-  PolynomialAlgebra(const Ring* K,
-                M2_ArrayString names);
+  PolynomialAlgebra(const Ring* K, const NCMonoid* M);
 public:
   using Poly = Polynomial<CoefficientRingTypeExample>;
-  
+
   static PolynomialAlgebra* create(const Ring* K,
-                               M2_ArrayString names,
-                               const PolynomialRing* degreeRing);
+                                   const std::vector<std::string>& names,
+                                   const PolynomialRing* degreeRing,
+                                   const std::vector<int>& degrees
+                                   );
 
   const Ring* getCoefficientRing() const { return &mCoefficientRing; }
   const NCMonoid& monoid() const { return mMonoid; }
 
-  int n_vars() const { return mVariableNames.size(); }
+  int numVars() const { return monoid().numVars(); }
+  int n_vars() const { return numVars(); }
   
   // these are all the functions from Ring that must exist for PolynomialAlgebra to be instantiated
   virtual int index_of_var(const ring_elem a) const;
@@ -162,10 +184,8 @@ public:
   ring_elem fromModuleMonom(const ModuleMonom& m) const;
   
 private:
-  std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;
   const NCMonoid mMonoid;
-  unsigned int mNumVars;
 };
 
 #endif

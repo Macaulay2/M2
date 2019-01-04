@@ -754,15 +754,19 @@ setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
 
 export rawNCFreeAlgebra(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 4 then 
      when a.0 is R:RawRingCell do
      when a.2 is degR:RawRingCell do
-     if isSequenceOfStrings(a.1) then (
+     if isSequenceOfStrings(a.1) then 
+     if isSequenceOfSmallIntegers(a.3) then (
 	     names := getSequenceOfStrings(a.1);
          toExpr(Ccode(RawRingOrNull, "rawRingNCFreeAlgebra(", R.p, ",",
  	       names, ",",
-           degR.p,
- 	       ")" )))
+           degR.p, ",",
+           getSequenceOfSmallIntegers(a.3),
+ 	       ")" ))
+         )
+     else WrongArg(4,"a sequence of small integers")
      else WrongArg(2,"a sequence of strings to be used as names")
      else WrongArg(3,"a raw ring")
      else WrongArg(1,"a raw ring")

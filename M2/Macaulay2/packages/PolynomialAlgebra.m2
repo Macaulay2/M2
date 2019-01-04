@@ -101,7 +101,8 @@ Ring List := (A, varList) -> (
    varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
    degreelen := 1;
-   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degreelen);
+   degs := toList(#varList:1);
+   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degreelen, degs);
    R := new NCPolynomialRing from {
        (symbol RawRing) => rawR,
        (symbol generators) => {},
@@ -635,7 +636,9 @@ check PolynomialAlgebra
 --  b. understand bergman GB/res algorithms/tricks.
 --  c. implement GB and res
 --  d. add in these other non-commutative rings.
-
+-- Eventually: make a front end type: NCMonoid, or FreeMonoid, ...
+--   have PolynomialAlgebra::create use that, instead of create one.
+-- Get torsion in a monoid to work.
 doc ///
 Key
 Headline

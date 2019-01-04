@@ -67,7 +67,7 @@ int NCMonoid::compare(const Monom& m1, const Monom& m2) const
   return EQ;
 }
 
-void NCMonoid::elem_text_out(buffer& o, const Monom& m1, const std::vector<std::string>& variableNames) const
+void NCMonoid::elem_text_out(buffer& o, const Monom& m1) const
 {
   auto mon_length = m1[0] - 2;
   auto mon_ptr = m1 + 2;
@@ -76,7 +76,7 @@ void NCMonoid::elem_text_out(buffer& o, const Monom& m1, const std::vector<std::
       // for now, just output the string.
       int curvar = mon_ptr[j];
       int curvarPower = 0;
-      o << variableNames[curvar];
+      o << mVariableNames[curvar];
       while ((j < mon_length) && (mon_ptr[j] == curvar))
         {
           j++;
@@ -177,11 +177,14 @@ void NCMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
 ///////////////////////////////////////////
 
 PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
-                                     M2_ArrayString names,
-                                     const PolynomialRing* degreeRing)
+                                             const std::vector<std::string>& names,
+                                             const PolynomialRing* degreeRing,
+                                             const std::vector<int>& degrees
+                                             )
 {
   assert(K != nullptr);
-  PolynomialAlgebra* result = new PolynomialAlgebra(K, names);
+  NCMonoid *M = new NCMonoid(names, degreeRing, degrees);
+  PolynomialAlgebra* result = new PolynomialAlgebra(K, M);
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
@@ -191,25 +194,21 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
 }
 
 PolynomialAlgebra::PolynomialAlgebra(const Ring* K,
-                             M2_ArrayString names)
+                                     const NCMonoid* M
+                                     )
   : mCoefficientRing(*K),
-    mNumVars(names->len)
+    mMonoid(*M)
 {
-  
-  for (auto i=0; i<names->len; i++)
-    // used emplace_back here.  C++11 feature which allows constructor arguments to be passed in place,
-    // rather than having to create a temporary object to pass to push_back.
-    mVariableNames.emplace_back(names->array[i]->array, names->array[i]->len);
 }
 
 void PolynomialAlgebra::text_out(buffer &o) const
 {
   mCoefficientRing.text_out(o);
   o << "{";
-  for (int i=0; i<mVariableNames.size(); i++)
+  for (int i = 0; i < monoid().variableNames().size(); i++)
     {
       if (i > 0) o << ",";
-      o << mVariableNames[i];
+      o << monoid().variableNames()[i];
     }
   o << "}";
 }
@@ -363,7 +362,8 @@ int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) con
           return LT;
         }
       if (gIt == gEnd) return GT;
-      if (mNumVars > 0)
+      // TODO: can we remove the following block?  Make sure monoid can handle zero variables...
+      if (numVars() > 0)
         {
           cmp = monoid().compare(fIt.monom(),gIt.monom());
           if (cmp != 0) return cmp;
@@ -759,7 +759,7 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
       bool p_one_this = (is_one && needs_parens) || (is_one && p_one);
       mCoefficientRing.elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
       if (!is_one)
-        monoid().elem_text_out(o, i.monom(), mVariableNames);
+        monoid().elem_text_out(o, i.monom());
       p_plus = true;
     }
 
