@@ -71,12 +71,12 @@ document {
 	  (TT "help about X", " -- displays documentation nodes from all installed packages whose keys contain ", TT "X", "."),
 	  (TT "help about(X,Body=>true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
 	  },
-     "The ", TT "help", " command is used to display online documentation.  Use ", TO viewHelp, " to display the corresponding
+     "The ", TT "help", " command is used to display online documentation, as in the following suggestions.  Use ", TO viewHelp, " to display the corresponding
      documentation in your web browser.",
-     EXAMPLE {
-	  "help",
-	  "help ideal",
-	  "help (ideal,List)"
+     UL {
+	  TT "help",
+	  TT "help ideal",
+	  TT "help (ideal,List)"
 	  },
      "Some other potential help topics:",
      UL {
