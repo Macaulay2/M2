@@ -139,12 +139,12 @@ htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
      if o#"alt" === null then error ("IMG item is missing alt attribute");
-     concatenate("<img src=", format toURL o#"src", " alt=", format o#"alt", "/>"))
+     concatenate("<img src=", htmlLiteral toURL o#"src", " alt=", format o#"alt", "/>"))
 
 html HREF := x -> (
      r := html last x;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
+     concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
 

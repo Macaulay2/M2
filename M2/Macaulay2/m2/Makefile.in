@@ -122,8 +122,9 @@ gdb: .gdb-directories .gdbinit .gdb-files
 	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 clean::; rm -f .gdb-directories
-.gdb-directories: ../../libraries/*
-	echo 'echo -- loading .gdb-directories\n' >$@
+.gdb-directories: ../../libraries/* Makefile
+	echo '# -*- sh -*-' >$@
+	/bin/echo 'echo -- loading .gdb-directories\n' >>$@
 	for i in \
 		../../libraries/*/build/*/. \
 		../../libraries/ntl/build/*/src/. \
@@ -134,12 +135,15 @@ clean::; rm -f .gdb-directories
 	   then echo directory $$i >>$@ ;\
 	   fi ;\
 	done
+	/bin/echo 'echo -- loaded .gdb-directories\n' >>$@
 .gdbinit.$(USER):; touch $@
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
-	echo 'echo -- loading .gdb-files\n' >$@
+	echo '# -*- sh -*-' >$@
+	/bin/echo 'echo -- loading .gdb-files\n' >>$@
 	echo 'set environment LD_LIBRARY_PATH $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)' >>$@
 	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
+	/bin/echo 'echo -- loaded .gdb-files\n' >>$@
 clean::; rm -f .gdb-files
 profile: gmon.out; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
