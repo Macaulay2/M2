@@ -147,7 +147,28 @@ public:
   virtual SumCollector *make_SumCollector() const;
 
   long n_terms(const ring_elem f) const;
+
+  // lead coefficient, monomials and terms.
+  ring_elem lead_coefficient(const Ring* coeffRing, const Poly* f) const;
+  ring_elem lead_coefficient(const Ring* coeffRing, const ring_elem f) const
+  {
+    return lead_coefficient(coeffRing, reinterpret_cast<const Poly*>(f.get_Poly()));
+  }
+
+  #if 0
+  // lead_monomial: returns an allocated Monomial meant for the front end of M2.
+  const int* lead_monomial(const Poly* f) const;
+  const int* lead_monomial(const ring_elem f) const { return lead_monomial reinterpret_cast<const Poly*>((f.get_Poly())); }
+  #endif
   
+  // lead terms, or get contiguous terms
+  Poly* get_terms(const Poly* f, int lo, int hi) const;
+  ring_elem get_terms(const ring_elem f, int lo, int hi) const
+  {
+    const Poly* result = get_terms(reinterpret_cast<const Poly*>(f.get_Poly()), lo, hi);
+    return ring_elem(reinterpret_cast<const ::Poly*>(result));
+  }
+
   // some internal functions for the above routines
   ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monom) const;
   ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monom) const;

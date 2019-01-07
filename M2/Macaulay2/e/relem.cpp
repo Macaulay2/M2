@@ -139,33 +139,47 @@ RingElement *RingElement::random(const Ring *R)
   return new RingElement(R, R->random());
 }
 
-void RingElement::text_out(buffer &o) const { R->elem_text_out(o, val); }
+void RingElement::text_out(buffer &o) const
+{
+  R->elem_text_out(o, val);
+}
+
 RingElement /* or null */ *RingElement::get_terms(int nvars,
                                                   int lo,
                                                   int hi) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P != nullptr)
     {
-      ERROR("expected polynomial ring");
-      return 0;
+      return new RingElement(P, P->get_terms(nvars, val, lo, hi));
     }
-  return new RingElement(P, P->get_terms(nvars, val, lo, hi));
+  const PolynomialAlgebra* A = dynamic_cast<const PolynomialAlgebra*>(R);
+  if (A != nullptr)
+    {
+      return new RingElement(A, A->get_terms(val, lo, hi));
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 RingElement /* or null */ *RingElement::lead_coeff(const Ring *coeffR) const
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
   if (is_zero())
     {
       return new RingElement(coeffR, coeffR->zero());
     }
-  return new RingElement(coeffR, P->lead_logical_coeff(coeffR, val));
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != nullptr)
+    {
+      return new RingElement(coeffR, P->lead_logical_coeff(coeffR, val));
+    }
+  const PolynomialAlgebra* A = dynamic_cast<const PolynomialAlgebra*>(R);
+  if (A != nullptr)
+    {
+      return new RingElement(coeffR, A->lead_coefficient(coeffR, val));
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 RingElement /* or null */ *RingElement::get_coeff(const Ring *coeffR,

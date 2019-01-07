@@ -22,10 +22,10 @@ union ring_elem
   schur_poly *schur_poly_val;
   mpfr_ptr mpfr_val;
   local_elem* local_val;
-  Poly *mPolyVal;
+  const Poly *mPolyVal;
  private:                       // move this line up to the top eventually
   mpz_ptr  mpz_val;
-
+  
  public:
   ring_elem() : poly_val(0) {}
   // explicit ring_elem(int a) : int_val(a) {} // really want this version...
@@ -33,12 +33,14 @@ union ring_elem
   ring_elem(Nterm *a) : poly_val(a) {}
   ring_elem(mpz_ptr a) : mpz_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
+  explicit ring_elem(const Poly* a) : mPolyVal(a) {}
 
   operator int() const { return int_val; }
   operator tpoly() const { return poly_val; }
   int get_int() const { return int_val; }
   Nterm *get_poly() const { return poly_val; }
   mpz_srcptr get_mpz() const { return mpz_val; }
+  const Poly* get_Poly() const { return mPolyVal; }
 };
 
 struct Nterm

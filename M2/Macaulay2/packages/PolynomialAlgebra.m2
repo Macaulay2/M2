@@ -444,10 +444,31 @@ TEST ///
 TEST /// 
   R = QQ{b,c,d}
   f = 3*b^2*c*b + 2*b^4
-  leadTerm f -- fails
-  leadCoefficient f -- fails
+
+  assert(leadTerm f == 2*b^4)
+  assert(leadCoefficient f == 2)
   assert(degree f == {4}) -- fails
-  someTerms(f,0,2) -- fails
+  assert(someTerms(f,0,2) == f)
+  leadMonomial f -- fails
+  
+  g = b*c*b-b
+  assert not isHomogeneous g
+  assert isHomogeneous f
+  
+  A = QQ[a]
+  B = A{b,c,d}
+  f = 3*(a^2-a-1)*b^2*c*b + 2*(a^3-a-1)*b^4
+  g = (a+2*b+3*c)^3
+  assert(leadCoefficient f == 2*(a^3-a-1))
+  assert(leadTerm f == 2*(a^3-a-1)*b^4)
+  assert(someTerms(g,2,3) == 12*b*c*b + 18*b*c^2 + 12*c*b^2)
+  assert(size g == 15)
+
+  A = frac(QQ[a])
+  B = A{b,c,d}
+  f = 3/(a^2-a-1)*b^2*c*b + 2/(a^3-a-1)*b^4
+  assert(leadCoefficient f == 2/(a^3-a-1))
+  assert(leadTerm f == 2/(a^3-a-1)*b^4)
 ///
 
 TEST ///
