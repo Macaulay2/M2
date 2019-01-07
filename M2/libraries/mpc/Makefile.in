@@ -4,9 +4,18 @@ HOMEPAGE = http://www.multiprecision.org/
 VERSION = 1.1.0
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 LICENSEFILES = README
-ifeq (@SHARED@,no)
+
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
 CONFIGOPTIONS += --disable-shared
-endif
+# We disable shared libraries because of this error while building under Debian 9:
+# /bin/bash ../libtool  --tag=CC   --mode=link gcc  -std=gnu11 -g3 -O2  -version-info 4:0:1 -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/memtailor/.libs  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathic/.libs  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathicgb/.libs -g3 -o libmpc.la -rpath /home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib abs.lo acos.lo acosh.lo add.lo add_fr.lo add_si.lo add_ui.lo arg.lo asin.lo asinh.lo atan.lo atanh.lo clear.lo cmp.lo cmp_abs.lo cmp_si_si.lo conj.lo cos.lo cosh.lo div_2si.lo div_2ui.lo div.lo div_fr.lo div_ui.lo exp.lo fma.lo fr_div.lo fr_sub.lo get_prec2.lo get_prec.lo get_version.lo get_x.lo imag.lo init2.lo init3.lo inp_str.lo log.lo log10.lo mem.lo mul_2si.lo mul_2ui.lo mul.lo mul_fr.lo mul_i.lo mul_si.lo mul_ui.lo neg.lo norm.lo out_str.lo pow.lo pow_fr.lo pow_ld.lo pow_d.lo pow_si.lo pow_ui.lo pow_z.lo proj.lo real.lo rootofunity.lo urandom.lo set.lo set_prec.lo set_str.lo set_x.lo set_x_x.lo sin.lo sin_cos.lo sinh.lo sqr.lo sqrt.lo strtoc.lo sub.lo sub_fr.lo sub_ui.lo swap.lo tan.lo tanh.lo uceil_log2.lo ui_div.lo ui_ui_sub.lo  -lmpfr -lmpfr -lgmp -lm 
+# libtool: link: gcc -shared  -fPIC -DPIC  .libs/abs.o .libs/acos.o .libs/acosh.o .libs/add.o .libs/add_fr.o .libs/add_si.o .libs/add_ui.o .libs/arg.o .libs/asin.o .libs/asinh.o .libs/atan.o .libs/atanh.o .libs/clear.o .libs/cmp.o .libs/cmp_abs.o .libs/cmp_si_si.o .libs/conj.o .libs/cos.o .libs/cosh.o .libs/div_2si.o .libs/div_2ui.o .libs/div.o .libs/div_fr.o .libs/div_ui.o .libs/exp.o .libs/fma.o .libs/fr_div.o .libs/fr_sub.o .libs/get_prec2.o .libs/get_prec.o .libs/get_version.o .libs/get_x.o .libs/imag.o .libs/init2.o .libs/init3.o .libs/inp_str.o .libs/log.o .libs/log10.o .libs/mem.o .libs/mul_2si.o .libs/mul_2ui.o .libs/mul.o .libs/mul_fr.o .libs/mul_i.o .libs/mul_si.o .libs/mul_ui.o .libs/neg.o .libs/norm.o .libs/out_str.o .libs/pow.o .libs/pow_fr.o .libs/pow_ld.o .libs/pow_d.o .libs/pow_si.o .libs/pow_ui.o .libs/pow_z.o .libs/proj.o .libs/real.o .libs/rootofunity.o .libs/urandom.o .libs/set.o .libs/set_prec.o .libs/set_str.o .libs/set_x.o .libs/set_x_x.o .libs/sin.o .libs/sin_cos.o .libs/sinh.o .libs/sqr.o .libs/sqrt.o .libs/strtoc.o .libs/sub.o .libs/sub_fr.o .libs/sub_ui.o .libs/swap.o .libs/tan.o .libs/tanh.o .libs/uceil_log2.o .libs/ui_div.o .libs/ui_ui_sub.o   -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/memtailor/.libs -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathic/.libs -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathicgb/.libs -lmpfr -lgmp -lm  -g3 -O2 -g3   -Wl,-soname -Wl,libmpc.so.3 -o .libs/libmpc.so.3.1.0
+# /usr/bin/ld: /home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib/libmpfr.a(div.o): relocation R_X86_64_PC32 against symbol `__gmpfr_emax' can not be used when making a shared object; recompile with -fPIC
+# /usr/bin/ld: final link failed: Bad value
+# collect2: error: ld returned 1 exit status
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpc/Makefile
 # Local Variables:
