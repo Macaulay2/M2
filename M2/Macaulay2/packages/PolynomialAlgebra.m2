@@ -93,24 +93,27 @@ getVariableSymbols List := variables -> (
 --   - figure out backInserter, i.e. conform to the standard c++ lib
 --   - add in degree support
 --   - add in e.g. leadMonomial, support.  
-Ring List := (A, varList) -> (
+Ring List := (A, args) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
+   opts := new OptionTable from {Degrees=>null, DegreeRank=>null};
+   (opts,args) = override(opts,toSequence args);
+   varList := args;
    if not (A.?Engine and A.Engine) then
        error "expected coefficient ring handled by the engine";
    --varSymbols := sequenceToVariableSymbols toSequence varList;
    varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
-   degreelen := 1;
-   degs := toList(#varList:1);
-   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degreelen, degs);
+   (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
+   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs);
    R := new NCPolynomialRing from {
        (symbol RawRing) => rawR,
        (symbol generators) => {},
        (symbol generatorSymbols) => varSymbols,
        --(symbol generatorExpressions) => hashTable apply(#varList, i -> (i,expression varList#i)),
        (symbol generatorExpressions) => for v in varSymbols list if instance(v,Symbol) then v else expression v,
-       (symbol degreesRing) => degreesRing degreelen,
-       (symbol degreeLength) => degreelen,
+       (symbol degreesRing) => degreesRing degrk,
+       (symbol degreeLength) => degrk,
+       (symbol degrees) => degs,
        (symbol CoefficientRing) => A,
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)

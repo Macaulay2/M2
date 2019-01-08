@@ -19,7 +19,7 @@ NCMonoid::NCMonoid(
   auto ndegrees = degreeMonoid().n_vars();
   assert(nvars * ndegrees == mDegrees.size());
   
-  for (const int* i = mDegrees.data(); i != mDegrees.data() + nvars; i += ndegrees)
+  for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)
     {
       int* deg = degreeMonoid().make_one();
       degreeMonoid().from_expvector(i, deg);
