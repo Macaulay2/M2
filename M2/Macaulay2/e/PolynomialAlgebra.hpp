@@ -4,6 +4,8 @@
 #include "polyring.hpp"
 #include "Polynomial.hpp"
 
+using ExponentVector = int*;
+
 struct CoefficientRingTypeExample
 {
   typedef ring_elem ElementType;
@@ -21,23 +23,19 @@ private:
   const std::vector<std::string> mVariableNames;
   const PolynomialRing* mDegreeRing;
   const std::vector<int> mDegrees;
+  VECTOR(const int*) mDegreeOfVar;
 public:
   NCMonoid(
            const std::vector<std::string>& variableNames,
            const PolynomialRing* degreeRing,
-           const std::vector<int>& degrees)
-    : mVariableNames(variableNames),
-      mDegreeRing(degreeRing),
-      mDegrees(degrees)
-  {
-  }
+           const std::vector<int>& degrees);
 
   // Informational
   const std::vector<std::string>& variableNames() const { return mVariableNames; }
   const std::vector<int>& flattenedDegrees() const { return mDegrees; }
   unsigned int numVars() const { return static_cast<unsigned int>(mVariableNames.size()); }
   const PolynomialRing* degreeRing() const { return mDegreeRing; }
-  const Monoid* degreeMonoid() const { return mDegreeRing->getMonoid(); }
+  const Monoid& degreeMonoid() const { return * mDegreeRing->getMonoid(); }
 
   // Monomial operations
   using MonomialInserter = std::vector<int>;
@@ -57,7 +55,10 @@ public:
 
   void var(int v, MonomialInserter& result) const;
 
-  //void multi_degree(degsOfVars, int* already_allocated_degree_vector) const;
+  // Determine the multidegree of the monomial m. Result is placed into
+  // already_allocated_degree_vector which should have been allocated with
+  // e.g. degreeMonoid().make_one()
+  void multi_degree(const Monom& m, int* already_allocated_degree_vector) const;
   
   // display (to a buffer, and to a ostream)
   void elem_text_out(buffer& o, const Monom& m1) const;
@@ -83,6 +84,10 @@ public:
 
 class PolynomialAlgebra : public Ring
 {
+private:
+  const Ring& mCoefficientRing;
+  const NCMonoid mMonoid;
+
   PolynomialAlgebra(const Ring* K, const NCMonoid* M);
 public:
   using Poly = Polynomial<CoefficientRingTypeExample>;
@@ -95,7 +100,8 @@ public:
 
   const Ring* getCoefficientRing() const { return &mCoefficientRing; }
   const NCMonoid& monoid() const { return mMonoid; }
-
+  const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
+  
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
   
@@ -148,6 +154,12 @@ public:
 
   long n_terms(const ring_elem f) const;
 
+  bool is_homogeneous(const Poly* f) const;
+
+  // returns true if f is homogeneous, and sets already_allocated_degree_vector
+  // to be the LCM of the exponent vectors of the degrees of all terms in f.
+  virtual bool multi_degree(const Poly* f, int *already_allocated_degree_vector) const;
+  
   // lead coefficient, monomials and terms.
   ring_elem lead_coefficient(const Ring* coeffRing, const Poly* f) const;
   ring_elem lead_coefficient(const Ring* coeffRing, const ring_elem f) const
@@ -203,10 +215,6 @@ public:
   void appendFromModuleMonom(Poly& f, const ModuleMonom& m) const;
   
   ring_elem fromModuleMonom(const ModuleMonom& m) const;
-  
-private:
-  const Ring& mCoefficientRing;
-  const NCMonoid mMonoid;
 };
 
 #endif

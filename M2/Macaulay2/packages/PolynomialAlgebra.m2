@@ -442,18 +442,23 @@ TEST ///
 ///
 
 TEST /// 
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
   R = QQ{b,c,d}
-  f = 3*b^2*c*b + 2*b^4
+  assert instance(R, NCPolynomialRing)
 
+  f = 3*b^2*c*b + 2*b^4
   assert(leadTerm f == 2*b^4)
   assert(leadCoefficient f == 2)
-  assert(degree f == {4}) -- fails
+  assert(degree f == {4})
   assert(someTerms(f,0,2) == f)
-  leadMonomial f -- fails
+  assert(leadMonomial f == b^4) -- fails
+  assert(isHomogeneous f)
   
   g = b*c*b-b
   assert not isHomogeneous g
-  assert isHomogeneous f
   
   A = QQ[a]
   B = A{b,c,d}

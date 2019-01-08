@@ -7,6 +7,26 @@
 #include <string>
 #include <iostream>
 
+NCMonoid::NCMonoid(
+          const std::vector<std::string>& variableNames,
+          const PolynomialRing* degreeRing,
+          const std::vector<int>& degrees)
+  : mVariableNames(variableNames),
+    mDegreeRing(degreeRing),
+    mDegrees(degrees)
+{
+  auto nvars = numVars();
+  auto ndegrees = degreeMonoid().n_vars();
+  assert(nvars * ndegrees == mDegrees.size());
+  
+  for (const int* i = mDegrees.data(); i != mDegrees.data() + nvars; i += ndegrees)
+    {
+      int* deg = degreeMonoid().make_one();
+      degreeMonoid().from_expvector(i, deg);
+      mDegreeOfVar.push_back(deg);
+    }
+}
+
 void NCMonoid::one(MonomialInserter& m) const
 {
   m.push_back(2);
@@ -67,6 +87,19 @@ int NCMonoid::compare(const Monom& m1, const Monom& m2) const
   return EQ;
 }
 
+void NCMonoid::multi_degree(const Monom& m, int* already_allocated_degree_vector) const
+{
+  int* result = already_allocated_degree_vector; // just to use a smaller name...
+  degreeMonoid().one(result); // reset value
+
+  auto mon_length = m[0] - 2;
+  auto mon_ptr = m + 2;
+  for (auto j = 0; j < mon_length; j++)
+    {
+      degreeMonoid().mult(result, mDegreeOfVar[mon_ptr[j]], result);
+    }
+}
+    
 void NCMonoid::elem_text_out(buffer& o, const Monom& m1) const
 {
   auto mon_length = m1[0] - 2;
@@ -860,28 +893,63 @@ PolynomialAlgebra::Poly* PolynomialAlgebra::get_terms(const Poly* f, int lo, int
   return result;
 }
 
-bool PolynomialAlgebra::is_homogeneous(const ring_elem f) const
+bool PolynomialAlgebra::is_homogeneous(const ring_elem g) const
 {
-#if 0
-  // MES: being written, Dec 2017
-  auto g = f.get_Poly();
-  if (g == nullptr or g->numTerms() == 0)
-    return true;
-  ExponentVector e = degree_monoid()->make_one();
-  ExponentVector degf = degree_monoid()->make_one();
-  iter i { f} ;
-#endif
-  return false;
+  const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());
+  return is_homogeneous(f);
+}
+
+bool PolynomialAlgebra::is_homogeneous(const Poly* f) const
+{
+  bool result = true;
+  if (f == nullptr or f->numTerms() <= 1) return true;
+  ExponentVector e = degreeMonoid().make_one();
+  ExponentVector degf = degreeMonoid().make_one();
+  auto i = f->cbegin();
+  auto end = f->cend();
+  monoid().multi_degree(i.monom(), degf); // sets degf.
+  for (++i; i != end; ++i)
+    {
+        monoid().multi_degree(i.monom(), e);
+        if (not degreeMonoid().is_equal(e, degf))
+          {
+            result = false;
+            break;
+          }
+    }
+  degreeMonoid().remove(e);
+  degreeMonoid().remove(degf);
+  return result;
 }
 
 void PolynomialAlgebra::degree(const ring_elem f, int *d) const
 {
-  // MES: being written, Dec 2017
+  multi_degree(f, d);
 }
-bool PolynomialAlgebra::multi_degree(const ring_elem f, int *d) const
+
+bool PolynomialAlgebra::multi_degree(const ring_elem g, int *d) const
 {
-  // MES: being written, Dec 2017
-  return false;
+  const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());
+  return multi_degree(f, d);
+}
+
+bool PolynomialAlgebra::multi_degree(const Poly* f, int *result) const
+{
+  bool ishomog = true;
+  auto i = f->cbegin();
+  monoid().multi_degree(i.monom(), result);
+  ExponentVector e = degreeMonoid().make_one();
+  for (++i; i != f->cend(); ++i)
+    {
+      monoid().multi_degree(i.monom(), e);
+      if (not degreeMonoid().is_equal(result, e))
+        {
+          ishomog = false;
+          degreeMonoid().lcm(result, e, result);
+        }
+    }
+  degreeMonoid().remove(e);
+  return ishomog;
 }
 
 void PolynomialAlgebra::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
