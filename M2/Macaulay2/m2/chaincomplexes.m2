@@ -800,7 +800,8 @@ betti GradedModule := opts -> C -> (
 
 -----------------------------------------------------------------------------
 MultigradedBettiTally = new Type of BettiTally
-MultigradedBettiTally.synonym = "Multigraded Betti tally"
+MultigradedBettiTally.synonym = "multigraded Betti tally"
+MultigradedBettiTally List := (B,l) -> applyKeys(B, (i,d,h) -> (i,d-l,h))
 
 -- Helper function for pretty-printing the hash table
 rawMultigradedBettiTally = B -> (
