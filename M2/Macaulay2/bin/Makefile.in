@@ -2,7 +2,21 @@
 
 # @configure_input@
 VPATH = @srcdir@
+
+ifeq (@OS@,Darwin)
+ENABLE_STRIP = no
+# Under Mac OS X stripping the file M2-binary saves 2MB (when built without -g) but leads to several reproducible bugs under Mac OS X, such as this one:
+#  i2 : R = QQ[x,y,z];
+#  i3 : gcd(x^2*y,x*y^3^6)
+#  -- SIGSEGV
+#  -- stack trace, pid 8637:
+#  level 0 -- return addr: 0x0x1002bba71 -- frame: 0x0x700005134f30
+#  level 1 -- return addr: 0x0x7fff5c17eb3d -- frame: 0x0x700005134f50
+#  level 2 -- return addr: 0x0x1 -- frame: 0x0x700005134f60
+else
 ENABLE_STRIP = @ENABLE_STRIP@
+endif
+
 NORULES = yes
 include ../../include/config.Makefile
 include ../d/Makefile.files
