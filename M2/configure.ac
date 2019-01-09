@@ -835,6 +835,7 @@ AC_SUBST(BUILTLIBS,)
 #    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
+#    mpc needs mpfr
 #    mpfr needs gmp
 # 	   We have always built mpfr because we told mpir (which is
 # 	   impersonating gmp) to use libgc for its memory allocation.  But mpfr
