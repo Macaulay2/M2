@@ -375,7 +375,7 @@ document {
      }
 
 undocumented { 
-     (tex,BettiTally),(texMath,BettiTally),
+     (texMath,BettiTally),
      (toExternalString,RingElement), (toExternalString,RingMap),
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),
@@ -546,6 +546,18 @@ document {
      y_x
      ///
      }
+
+document {
+     Key => (symbol -, Vector),
+     Headline => "negation of a Vector",
+     TT "-v", " -- the negation of ", TT "v",
+     PARA{},
+     EXAMPLE lines ///
+       v = vector {2,3,5,7}
+	   - v
+     ///
+}   
+
 
 multidoc ///
 Node

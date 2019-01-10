@@ -27,12 +27,10 @@ document {
 document {
      Key => "Copyright and license",
      PARA {
-	  "Macaulay2, its object code and source code, and its documentation,
-	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
-	  you to use it either:
+	  "Macaulay2, its object code, source code, and documentation,
+	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
 	  under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation, and as
-	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program;
-	  or:
+	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program, or
 	  under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation, and as
 	  contained in the file ", TO "COPYING-GPL-3", " accompanying the program."
 	  },
@@ -64,6 +62,7 @@ document {
 	  TO "4ti2",
 	  TO "gfan",
 	  TO "normaliz",
+	  TO "csdp",
 	  TO "nauty",
 	  TO "cdd+",
 	  TO "lrslib",
@@ -89,9 +88,18 @@ document {
      }
 
 document {
+     Key => "csdp",
+     PARA {
+	  "The program ", TT "csdp", ", by Brian Borchers, solves semidefinite programming problems
+	  and is available from ", HREF "http://www.coin-or.org/download/source/Csdp", "."
+	  }
+     }
+
+document {
      Key => "givaro",
      PARA {
-	  "The library ", TT "givaro", " is a library required for ", TO "fflas-ffpack", " available from ", HREF "https://github.com/linbox-team/givaro", "."
+	  "The library ", TT "givaro", " is a library for arithmetic and algebraic computations, is required for ", TO "fflas-ffpack", ", 
+	  and is available from ", HREF "https://github.com/linbox-team/givaro", "."
 	  }
      }
 
@@ -99,7 +107,7 @@ document {
      Key => "fflas-ffpack",
      PARA {
 	  "The library ", TT "fflas-ffpack", " is a library
-	  for dense and some sparse linear algebra over a finite field or the ring of integers
+	  for dense and sparse linear algebra over a finite field or the ring of integers,
  	  available from ", HREF "https://github.com/linbox-team/fflas-ffpack", "."
 	  }
      }
@@ -111,8 +119,7 @@ document {
 	  library for computations in number theory, consisting mainly of routines for
 	  integer and polynomial arithmetic and linear algebra.  It was written
 	  by William Hart, Mike Hansen, Sebastian Pancratz, Fredrik Johansson,
-	  and others, and is available at ", HREF "http://flintlib.org/", ".  It is 
-	  distributed under the terms of the GNU General Public License, version 2 or later."
+	  and others, and is available at ", HREF "http://flintlib.org/", "."
 	  }
      }
 
@@ -121,8 +128,7 @@ document {
      PARA {
      	  "The program ", TT "lrslib", ", written by David Avis,
 	  provides the reverse search algorithm for  vertex enumeration and convex hull problems.
-	  It is available at ", HREF "http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html", ",
-	  under the terms of the GNU General Public License, version 2."
+	  It is available at ", HREF "http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html", "."
 	  }
      }
 
@@ -133,8 +139,7 @@ document {
 	  is a C++ implementation of the double description 
 	  method of Motzkin, et al., for generating all vertices
 	  and extreme rays of a general convex polyhedron in $\\RR^d$ given by a system 
-	  of linear inequalities.  It is available at ", HREF "http://www.ifor.math.ethz.ch/~fukuda/cdd_home/", ",
-	  under the terms of the GNU General Public License, version 2."
+	  of linear inequalities.  It is available at ", HREF "http://www.ifor.math.ethz.ch/~fukuda/cdd_home/", "."
 	  }
      }
 
@@ -163,8 +168,7 @@ document {
      	  "The program ", TT "normaliz", ", written by Winfried Bruns, Bogdan Ichim, and Christof Soeger,
 	  provides computations in affine monoids, vector configurations, lattice polytopes, 
      	  and rational cones.  It is available at ", HREF "http://www.mathematik.uni-osnabrueck.de/normaliz/", ".  The package
-     	  ", TO "Normaliz::Normaliz", " is an interface to it.  It is licensed under the terms of
-	  the GNU General Public License, version 3."
+     	  ", TO "Normaliz::Normaliz", " is an interface to it."
 	  }
      }
 
@@ -282,8 +286,7 @@ document {
 	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
 	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
 	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), ".
-	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING-GPL-2", "."
+	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 	  }
      }
 
@@ -293,8 +296,7 @@ document {
 	  "Starting with version 1.2, Macaulay2 incorporates ", TT "frobby", ", a free library of routines for computing
 	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ", a method used internally
 	       by many routines), written
-	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
-	  It is distributed under the terms of the GNU General Public License, version 2 (or later), see ", TO "COPYING-GPL-2", "."
+	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", "."
 	  }
      }
 
@@ -304,9 +306,7 @@ document {
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
-     that provides for factorization of polynomials.  It is distributed under the
-     terms of the GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ")
-	  or version 3 (see ", TO "COPYING-GPL-3", ")) and is available at 
+     that provides for factorization of polynomials.  It is available at 
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
@@ -323,8 +323,7 @@ document {
 document {
      Key => "MPIR",
      "The MPIR library, version ", version#"mpir version", " provides
-     routines for arbitrary precision integer and floating point arithmetic,
-     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
+     routines for arbitrary precision integer and floating point arithmetic.
      It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
      with it (or with GMP), examine the variable ", TO "version", "."
      }
@@ -332,16 +331,13 @@ document {
 document {
      Key => "4ti2",
      "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
-     problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
-     It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
+     problems on linear spaces.  It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
      }
 
 document {
      Key => "GNU MP",
      "The GNU MP library (GMP) provides
-     routines for arbitrary precision integer and floating point arithmetic,
-     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 3,
-     and also under the GNU General Public License (GPL), version 2.
+     routines for arbitrary precision integer and floating point arithmetic.
      It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
      with it (or with MPIR), examine the variable ", TO "version", "."
      }
@@ -766,11 +762,12 @@ document {
 document {
      Key => "combinatorial functions",
      UL {
-	  TO "random",
 	  TO "binomial",
+	  TO "compositions",
+	  TO "partitions",
+	  TO "random",
 	  TO "subsets",
-	  TO "tally",
-	  TO "partitions"
+	  TO "tally"
 	  }
      }
 

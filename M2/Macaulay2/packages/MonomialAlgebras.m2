@@ -1,5 +1,3 @@
-needsPackage "Polyhedra"
-
 newPackage(
 	"MonomialAlgebras",
     	Version => "2.3", 
@@ -24,6 +22,7 @@ newPackage(
 	     "volume URI" => "http://j-sag.org/Volume5/"
 	     },
 	CacheExampleOutput => false,
+     	PackageExports => { "Polyhedra" },
 	AuxiliaryFiles => false,
     	DebuggingMode => false,
         --PackageExports => {"Polyhedra","FourTiTwo"},
@@ -55,10 +54,8 @@ export {"monomialAlgebra", "MonomialAlgebra", "binomialIdeal", "affineAlgebra","
 
 if version#"VERSION" < "1.4" then error "This package was written for Macaulay2 Version 1.4 or higher.";
 
+-- this is problematic, because the "configuration" mechanism is intended for the end user:
 needsPackage("FourTiTwo",Configuration=>{"keep files" => false})
-needsPackage "Polyhedra"
-
-
 
 --------------------------------------------------------------------------
 MonomialAlgebra = new Type of MutableHashTable

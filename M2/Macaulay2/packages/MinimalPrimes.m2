@@ -15,8 +15,7 @@ newPackage(
             {Name => "Franziska Hinkelmann"}
             },
         AuxiliaryFiles=>true,
-        --PackageImports => {"MGBInterface"},
-        DebuggingMode => true
+        PackageImports => {"Elimination", "IntegralClosure"}
         )
 
 -- << "warning!  This package is experimental.  The interface will change, and although" << endl;

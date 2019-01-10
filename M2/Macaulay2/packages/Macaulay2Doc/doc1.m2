@@ -71,12 +71,12 @@ document {
 	  (TT "help about X", " -- displays documentation nodes from all installed packages whose keys contain ", TT "X", "."),
 	  (TT "help about(X,Body=>true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
 	  },
-     "The ", TT "help", " command is used to display online documentation.  Use ", TO viewHelp, " to display the corresponding
+     "The ", TT "help", " command is used to display online documentation, as in the following suggestions.  Use ", TO viewHelp, " to display the corresponding
      documentation in your web browser.",
-     EXAMPLE {
-	  "help",
-	  "help ideal",
-	  "help (ideal,List)"
+     UL {
+	  TT "help",
+	  TT "help ideal",
+	  TT "help (ideal,List)"
 	  },
      "Some other potential help topics:",
      UL {
@@ -416,87 +416,6 @@ document {
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 document {
-     Key => {leadCoefficient,(leadCoefficient, RingElement)},
-     Headline => "the leading coefficient",
-     TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
-     or vector ", TT "f", ".",
-     PARA{},
-     SeeAlso => {"leadTerm", "leadMonomial", "leadComponent"}
-     }
-document {
-     Key => {leadComponent,(leadComponent, Matrix),(leadComponent, Vector)},
-     Headline => "the leading component of a vector or matrix",
-     TT "leadComponent f", " -- return the leading component of the vector f,
-     i.e., the integer i so that f_i is the first nonzero component of f.",
-     PARA{},
-     SeeAlso => {"leadTerm", "leadCoefficient", "leadMonomial"}
-     }
-document {
-     Key => {leadMonomial,(leadMonomial, RingElement)},
-     Headline => "the leading monomial",
-     TT "leadMonomial f", " -- return the leading monomial of the polynomial
-     or vector f, as a ring element.  (Warning: in version 0.9.2, a
-     monoid element was returned.)",
-     PARA{},
-     SeeAlso => {"leadTerm", "leadCoefficient", "leadCoefficient"}
-     }
-document {
-     Key => {flatten,(flatten, VisibleList)},
-     Headline => "flatten a list by unnesting lists",
-     TT "flatten m", " -- produces a new list from ", TT "m", " by
-     effectively removing the braces surrounding the elements
-     of any elements of ", TT "m", " that happen to be lists.  Also works
-     for matrices.",
-     PARA{},
-     EXAMPLE "flatten {{2,3,4},{{5}},6}"
-     }
-document {
-     Key => (flatten,Matrix),
-     Headline => "puts the columns of a matrix into a single row",
-	Usage => "g = flatten f",
-	Inputs => {
-		"f" => {"a ", TT "m", " by ", TT "n", " matrix."}
-		},
-	Outputs => {
-		"g" => { "a ", TT "1", " by ", TT "m*n", " matrix."}
-		},
-     TT "flatten f", " produces a new matrix from ", TT "f", " by placing the entries of the columns of ", TT "f", " all in a single row, one after the other.",
-     EXAMPLE {
-		"R = ZZ/101[x,y,z];",
-		"f = matrix {{2, x},{y^2, 23},{z, z^3}}",
-		"flatten f"
-		},
-	"Note that this is the matrix given by unnesting the list that was used to enter the matrix.",
-     }
-document {
-     Key => {image,(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
-     Headline => "image of a map",
-     TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
-     PARA{},
-     "The result will be a submodule of the target of h",
-     PARA{},
-     "If h is a ring element, it is interpreted as a one by one matrix."
-     }
-
-document {
-     Key => {scanKeys,(scanKeys, Database, Function),(scanKeys, HashTable, Function)},
-     Headline => "apply a function to each key in a hash table or database",
-     TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the
-     hash table or database ", TT "x", ".",
-     PARA{},
-     "This function requires an immutable hash table.  To scan the keys in
-     a mutable hash table, use ", TT "scan(keys x, f)", "."
-     }
-document {
-     Key => {scanValues,(scanValues, HashTable, Function)},
-     Headline => "apply a function to each value in a hash table",
-     TT "scanValues(x,f)", " -- apply the function ", TT "f", " to each value
-     appearing in the hash table ", TT "x", ".",
-     PARA{},
-     "This function requires an immutable hash table.  To scan the values in
-     a mutable hash table, use ", TT "scan(values x, f)", "."
-     }
-document {
      Key => GlobalAssignHook,
      Headline => "hook for assignment to global variables",
      Usage => "X.GlobalAssignHook = f",
@@ -584,157 +503,6 @@ document {
 document {
      Key => options,
      Headline => "get options" }
-
-document {
-     Key => symbol #,
-     Headline => "length, or access to elements",
-     "The precedence of ", TT "#", " when used as a binary operator is high,
-     as high as ", TT ".", ", but the precedence when used as a unary operator
-     is lower, as low as adjacency or function application.",
-     SeeAlso =>{ "#?" }
-     }
-document {
-     Key => (symbol #, BasicList),
-     Headline => "length",
-     TT "#x", " -- provides the length of a list.",
-     }
-document {
-     Key => (symbol #, HashTable),
-     Headline => "length",
-     TT "#x", " -- provides the number of key-value pairs recorded
-     in a hash table.",
-     }
-document {
-     Key => (symbol #, Set),
-     Headline => "cardinality",
-     TT "#x", " -- provides the number of elements in the set ", TT "x", "."
-     }
-document {
-     Key => (symbol #, String),
-     Headline => "length",
-     TT "#x", " -- provides the length of a string.",
-     }
-document {
-     Key => (symbol #, HashTable, Thing),
-     Headline => "get value from hash table",
-     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
-     ", TT "x", ".",
-     PARA{},
-     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable.",
-     EXAMPLE {
-	  "x = new MutableHashTable",
-	  "x#i = p",
-	  "x#i",
-	  },
-     SeeAlso => {(symbol #?, HashTable, Thing), "hashing"}
-     }
-document {
-     Key => (symbol #, Database, String),
-     Headline => "get value from database",
-     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the database
-     ", TT "x", ".",
-     SeeAlso => {(symbol #?, Database, String)}
-     }
-document {
-     Key => (symbol #, String, ZZ),
-     Headline => "get character from string",
-     TT "x#i", " -- provides the ", TT "i", "-th character of the string ", TT "x", ",
-     as a string of length 1, if there is one.",
-     PARA{},
-     "If ", TT "i", " is out of range, a string of length 0 is returned.
-     If  ", TT "i", " is negative, then the ", TT "i", "-th character
-     from the end is provided.",
-     SeeAlso => {(symbol #?, String, ZZ)}
-     }
-document {
-     Key => (symbol #, BasicList, ZZ),
-     Headline => "get element from list",
-     Usage => "x#i",
-     Inputs => { "x", "i" },
-     Outputs => { { "the ", TT "i", "-th element of the list ", TT "x" }},
-     SeeAlso => {(symbol _, VisibleList, ZZ)},
-     PARA{
-     	  "The entries of the list are numbered starting with 0.  If  ", TT "i", " 
-          is negative, then the ", TT "i", "-th entry counting from the end is provided.
-          If ", TT "i", " is out of range, an error is signaled." },
-     PARA{
-	  "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is
-          mutable, i.e., an instance of the class ", TO "MutableList", "." },
-     EXAMPLE lines ///
-          x = a .. z
-	  x#12
-	  y = new MutableList from x
-	  y#12 = foo
-	  toSequence y
-     ///
-     }
-document {
-     Key => (symbol #?, HashTable, Thing),
-     Headline => "check for value in hash table",
-     TT "x#?i", " -- tells whether there is a value associated to the
-     key ", TT "i", " stored in the hash table ", TT "x", ".",
-     SeeAlso => {(symbol #, HashTable, Thing), "hashing"}
-     }
-document {
-     Key => (symbol #?, Database, String),
-     Headline => "check for value in database",
-     TT "x#?i", " -- tells whether there is a value associated to the string
-     ", TT "i", " in the database ", TT "x", ".",
-     SeeAlso => {(symbol #, Database, String)}
-     }
-document {
-     Key => (symbol #?, String, ZZ),
-     Headline => "check for character in string",
-     TT "x#?i", " -- tells whether there is an ", TT "i", "-th character in
-     the string ", TT "x", ".",
-     EXAMPLE {
-	  ///"asdf" #? 2///,
-	  ///"asdf" #? 22///
-	  },
-     SeeAlso => {(symbol #, String, ZZ)}
-     }
-document {
-     Key => (symbol #?, BasicList, ZZ),
-     Headline => "check for element in list",
-     TT "x#?i", " --  tells whether there is an ", TT "i", "-th element in
-     the list ", TT "x", ".",
-     EXAMPLE {
-	  ///{a,b,c} #? 2///,
-	  ///{a,b,c} #? 22///
-	  },
-     SeeAlso => {(symbol #, BasicList, ZZ)}
-     }
-document {
-     Key => symbol #?,
-     Headline => "check for presence of elements",
-     SeeAlso =>{ "#" }
-     }
-
-document {
-     Key => ".",
-     Headline => "access to elements whose key is a symbol",
-     TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
-     a global symbol and provide the value stored in the hash table ", TT "x", " 
-     under the key ", TT "k", ".",
-     PARA{},
-     "May also be used in an assignment.",
-     PARA{},
-     EXAMPLE {
-	  "x = new MutableHashTable;",
-      	  "x.k = 444",
-      	  "x.k",
-      	  "peek x",
-	  },
-     SeeAlso => {"#", ".?", "global"}
-     }
-document {
-     Key => ".?",
-     Headline => "check for presence of elements whose key is a symbol",
-     TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
-     available with ", TT "x.k", ".",
-     PARA{},
-     SeeAlso =>{ ".", "#?" }
-     }
 
 undocumented {(autoload, Function, String)}
 document {

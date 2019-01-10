@@ -10,15 +10,14 @@ mtable := x -> concatenate(
      "</mtable>", newline )
 mtableML := x -> mtable applyTable(x,mathML)
 mtableMLcol := x -> mtableML apply(x, row -> {row})
-tab := new HashTable from {
-     -- see texmacs-1.0.6.12/share/Macaulay2/Core/m2/texhtml.m2
-     -- symbol NN => "<mi>\u2115</mi>",
-     -- symbol PP => "<mi>\u2119</mi>",
-     symbol ZZ => "<mi>\u2124</mi>",
-     symbol RR => "<mi>\u211d</mi>",
-     symbol QQ => "<mi>\u211a</mi>",
-     symbol CC => "<mi>\u2102</mi>"
-     }
+-- see texmacs-1.0.6.12/share/Macaulay2/Core/m2/texhtml.m2
+-- NN.mathmL = "<mi>\u2115</mi>";
+-- PP.mathML = "<mi>\u2119</mi>";
+ZZ.mathML = "<mi>\u2124</mi>";
+RR.mathML = "<mi>\u211d</mi>";
+QQ.mathML = "<mi>\u211a</mi>";
+CC.mathML = "<mi>\u2102</mi>";
+
 mathML Net := x -> mtableMLcol unstack x
 mathML String := x -> (
      if match("\n",x) 
@@ -26,7 +25,7 @@ mathML String := x -> (
      else concatenate("<mtext>",replace(" ", "&nbsp;", htmlLiteral x),"</mtext>")
      )
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
-mathML Symbol := x -> if tab#?x then tab#x else concatenate("<mi>",toString x,"</mi>")
+mathML Symbol := x -> concatenate("<mi>",toString x,"</mi>")
 mathML InfiniteNumber := i -> if i === infinity then "<mrow><mi>&infin;</mi></mrow>" else "<mo>-</mo><mi>&infin;</mi>"
 mathML Array := s -> concatenate ( "<mrow><mo>[</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>]</mo></mrow>" )
 mathML Set := x -> mrow (mathML "set", mathML keys x)
@@ -142,10 +141,10 @@ mathML ChainComplex := C -> (
      else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 mathML Type :=
-mathML ImmutableType := R -> mathML expression R
+mathML ImmutableType := R -> if R.?mathML then R.mathML else mathML expression R
 mathML VirtualTally :=
-mathML HashTable := s -> concatenate( "<mrow>",mathML class s,leftbrace, mtable sort apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
-mathML MutableHashTable := x -> (
+mathML HashTable := s -> if s.?mathML then s.mathML else concatenate( "<mrow>",mathML class s,leftbrace, mtable sort apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
+mathML MutableHashTable := x -> if x.?mathML then x.mathML else (
      if hasAttribute(x,ReverseDictionary) then mathML getAttribute(x,ReverseDictionary)
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
 mathML BettiTally := v -> mtableML rawBettiTally v

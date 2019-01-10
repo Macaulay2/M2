@@ -163,7 +163,10 @@ method = methodDefaults >> opts -> args -> (
        	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
 	       )
 	  );
-     if opts.TypicalValue =!= Thing then typicalValues#methodFunction = opts.TypicalValue;
+     if opts.TypicalValue =!= Thing then (
+	  if not instance(opts.TypicalValue,Type) then error("expected typical value ", toString opts.TypicalValue, " to be a type");
+	  typicalValues#methodFunction = opts.TypicalValue;
+	  );
      methodFunction)
 
 setupMethods := (args, symbols) -> (
@@ -563,6 +566,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 html = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
+htmlWithTex = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
 
 -- method options

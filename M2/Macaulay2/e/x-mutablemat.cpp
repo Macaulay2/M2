@@ -480,7 +480,7 @@ MutableMatrix /* or null */ *rawMutableMatrixTranspose(MutableMatrix *M)
   try
     {
       return internMutableMatrix(M->transpose());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -591,7 +591,7 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
   try
     {
       return A->LU(L, U);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -625,7 +625,7 @@ M2_bool rawSolve(MutableMatrix *A,
       }
     return A->solve(b,x);
   }
-  catch (exc::engine_error e) {
+  catch (const exc::engine_error& e) {
     ERROR(e.what());
     return false;
   }
@@ -639,7 +639,7 @@ M2_bool rawEigenvalues(MutableMatrix *A,
   try
     {
       return A->eigenvalues(eigenvalues, is_symm_or_hermitian);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -654,7 +654,7 @@ M2_bool rawEigenvectors(MutableMatrix *A,
   try
     {
       return A->eigenvectors(eigenvalues, eigenvectors, is_symm_or_hermitian);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -670,7 +670,7 @@ M2_bool rawSVD(MutableMatrix *A,
   try
     {
       return A->SVD(Sigma, U, VT, use_divide_and_conquer);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -698,7 +698,7 @@ M2_bool rawLeastSquares(MutableMatrix *A,
           return false;
         }
       return A->least_squares(b, x, assume_full_rank);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -713,7 +713,7 @@ M2_bool rawQR(const MutableMatrix *A,
   try
     {
       return A->QR(Q, R, return_QR);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -734,7 +734,7 @@ const Matrix /* or null */ *rawMatrixClean(gmp_RR epsilon, const Matrix *M)
           return 0;
         }
       return M->clean(epsilon);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return nullptr;
@@ -764,7 +764,7 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon,
         }
       M->clean(epsilon);
       return M;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return nullptr;
@@ -830,7 +830,7 @@ long rawLinAlgRank(MutableMatrix *M)
   try
     {
       return M->rank();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return -1;
@@ -842,7 +842,7 @@ const RingElement *rawLinAlgDeterminant(MutableMatrix *A)
   try
     {
       return A->determinant();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -854,7 +854,7 @@ MutableMatrix *rawLinAlgInverse(MutableMatrix *A)
   try
     {
       return internMutableMatrix(A->invert());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -866,7 +866,7 @@ MutableMatrix *rawLinAlgRREF(MutableMatrix *A)
   try
     {
       return internMutableMatrix(A->rowReducedEchelonForm());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -878,7 +878,7 @@ M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix *A, M2_bool row_profile)
   try
     {
       return A->rankProfile(row_profile);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -890,7 +890,7 @@ MutableMatrix *rawLinAlgNullSpace(MutableMatrix *A)
   try
     {
       return internMutableMatrix(A->nullSpace());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -913,7 +913,7 @@ MutableMatrix *rawLinAlgSolve(const MutableMatrix *A,
         {
           return NULL;
         }
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       *success = 0;
       ERROR(e.what());
@@ -937,7 +937,7 @@ MutableMatrix *rawLinAlgSolveInvertible(const MutableMatrix *A,
         {
           return NULL;
         }
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       *success = 0;
       ERROR(e.what());
@@ -953,7 +953,7 @@ M2_bool rawLinAlgAddMult(MutableMatrix *C,
     {
       C->addMultipleTo(A, B);
       return true;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -968,7 +968,7 @@ M2_bool rawLinAlgSubMult(MutableMatrix *C,
     {
       C->subtractMultipleTo(A, B);
       return true;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return false;
@@ -984,7 +984,7 @@ MutableMatrix * /* or null */ rawLinAlgMult(const MutableMatrix *A,
   try
     {
       return internMutableMatrix(A->mult(B));
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

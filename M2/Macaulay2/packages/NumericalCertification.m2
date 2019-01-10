@@ -1,12 +1,12 @@
 newPackage(
 	"NumericalCertification",
     	Version => "1.0", 
-    	Date => "July, 2016",
+    	Date => "October, 2018",
     	Authors => {
 	     {Name => "Kisun Lee", Email => "klee669@gatech.edu"}
 	     },
     	HomePage => "http://people.math.gatech.edu/~klee669",
-    	Headline => "Numercial Certification",
+    	Headline => "numerical certification",
 	PackageExports => {"NumericalAlgebraicGeometry"},
     	--DebuggingMode => true		 -- set to true only during development
     	DebuggingMode => false,
@@ -19,9 +19,12 @@ newPackage(
 export {"pointNorm", 
     "polyNorm", 
     "polySysNorm", 
+    "newtonOper",
     "computeConstants", 
     "certifySolution", 
     "certifyDistinctSoln", 
+    "certifyRealSoln",
+    "certifyCount",
     "Interval", 
     "interval", 
     "invmat",
@@ -32,9 +35,12 @@ export {"pointNorm",
     "intervalMatrix", 
     "IntervalMatrix", 
     "wInterval", 
+    "krawczykUniqueness",
+    "intervalMatrixNorm",
     "krawczykOper", 
     "InvertibleMatrix",
     "krawczykMethod",
+    "krawczykMethodOptions",
     "identityIntMat", 
     "intervalOptionList", 
     "IntervalOptionList"}
@@ -79,6 +85,20 @@ polySysNorm(PolySystem) := f -> (
     )
 
 
+newtonOper = method()
+newtonOper(PolySystem, Point) := (f, x) -> (
+    jacOfPoly := jacobian f;
+    evalJac := evaluate(jacOfPoly, x);
+    if det evalJac == 0 then ( x )
+    else (
+    inverseOfJac := inverse(evalJac);
+    evalSys := evaluate(f, x);
+    point {transpose (matrix x) - inverseOfJac * evalSys}
+    )
+    )
+    
+
+
 computeConstants = method()
 computeConstants(PolySystem, Point) := (ff, xx) -> (
     R := ring ff;
@@ -101,19 +121,16 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
 
 
 certifySolution = method()
-certifySolution(PolySystem, Point) := (f, x) -> (
-    Consts := computeConstants(f,x);
-    if Consts #0<(13-3*sqrt(17))/4 then (
-	 print "The point is an approximate solution to the system";
-	 << "The value of alpha is " << (Consts)#0 << endl;
-	 << "The value of beta is " << (Consts)#1 << endl;
-	 << "The value of gamma is " << (Consts)#2 << endl;
-	 true
-	 )
-    else (
-	print "The point is not an approximate solution to the system";
-	false
-	)
+certifySolution(PolySystem, List) := (f, X) -> (
+    Y := {};
+    C := {};
+    F := {};
+    consts := 0;
+    for i from 0 to (length(X) - 1) do if (evaluate(f,X#i) == 0) then ( Y = append(Y, X#i); C = append(C, (0,0,0)); )
+	else if det(evaluate(jacobian f, X#i)) =!= 0 then (  consts = computeConstants(f,X#i);
+	    if consts#0 <(13-3*sqrt(17))/4 then (
+		 Y = append(Y, X#i); C = append(C,consts); ));
+    (Y,C)
     )
 
 
@@ -122,22 +139,54 @@ certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
     Consts1 := computeConstants(f,x1);
     Consts2 := computeConstants(f,x2);
     if Consts1 #0 >= (13-3*sqrt(17))/4 then (
-	print "The first point is not an approximate solution to the system";
 	false
 	)
     else if Consts2 #0 >= ((13-3*sqrt(17))/4) then (
-	print "The second point is not an approximate solution to the system";
 	false
 	)
     else if norm(2,point{(coordinates x1)-(coordinates x2)}) > 2*(Consts1)#1 + (Consts2)#1 then (
-	print "Associated solutions are distinct";
 	true
 	)
     else if (Consts1)#0 < 0.03 and norm(2,point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and norm(2,point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then (
-	print "Associated solutions are not distinct";
 	false
 	)
+    else (
+      	false
+	)
     )
+
+
+certifyRealSoln = method()
+certifyRealSoln(PolySystem, Point) := (f, x) -> (
+    (a, b, c) := computeConstants(f,x);
+    coordinate := coordinates x;
+    imagPart := apply(coordinate, c -> imaginaryPart(c));
+    normOfimagPart := norm(2,point{imagPart});
+    if normOfimagPart > 2*b then false
+    else if a < 0.03 and normOfimagPart < 1/(20*c) then true
+    else (
+    false
+    )
+    )
+
+certifyCount = method()
+certifyCount(PolySystem, List) := (f, X) -> (
+    (Y, C) := certifySolution(f,X);
+    S := new MutableList from Y;
+    for i from 0 to length(Y) - 1 do S#i = true;
+    for i from 0 to length(Y) - 2 do for j from i+1 to length(Y) - 1 do if (
+	S#i == true and S#j == true
+	)
+    then (
+	S#j = certifyDistinctSoln(f,Y#i, Y#j);
+	);
+    D := {};
+    for i from 0 to length(Y) - 1 do if S#i == true then D = append(D, Y#i);
+    R := {};
+    if coefficientRing ring f =!= CC then for i from 0 to length(D) - 1 do if certifyRealSoln(f,D#i) == true then R = append(R,D#i);
+    new HashTable from {"certifiedSolutions" => Y, "constants" => C, "certifiedDistinct" =>D, "certifiedReal" => R}
+    )
+
 
 
 -- In order to use the options of interval, we need to change options into new Type of Option 'StringOption'
@@ -366,6 +415,17 @@ IntervalMatrix * IntervalMatrix := (l, n) -> (
     )
 
 
+-- intervalMatrixNorm computes the norm of interval matrix, an interval extension of the maximum row sum norm
+intervalMatrixNorm = method()
+intervalMatrixNorm(IntervalMatrix) := i -> (
+    numrow := length(i);
+    numcol := length(i#0);
+    listOfAbs := (l := 0; while l < numcol list sum((apply(i, j -> (k := 0; while k < numrow list abs((j#k)#1) do k = k+1)))#l) do l = l+1);
+    max listOfAbs
+    )
+
+
+
 -- the function constructs an nxn interval identity matrix
 -- will be used in order to compute Krawczyk operator
 identityIntMat = method()
@@ -390,6 +450,42 @@ invmat(PolySystem, IntervalOptionList) := (p, o) -> (
     mf := matrix applyTable(ijm, i -> mInterval i);
     inverse mf
     )
+
+
+
+
+krawczykUniqueness = method(Options=>{
+	InvertibleMatrix => null})
+krawczykUniqueness(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
+    eqsOfp := equations polySys;
+    mm := polySystem transpose matrix{eqsOfp};
+    m := mm#PolyMap;
+    nv := numgens ring eqsOfp#0;
+    ng := numgens coefficientRing(ring eqsOfp#0);
+    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
+    e := entries j;
+    n := length e; 
+    -- plug in intervals into the jacobian entries   
+    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,option)));
+    mf := matrix applyTable(ijm, i -> mInterval i);
+    -- midpoints of intervals in option
+    y := toList apply(option, i ->  mInterval(value((i)#1)) );
+    oll := toList apply(0.. length(option)-1, k -> value((option#k)#0) => y#k);
+    -- START constructing the (box containing the) inverse 
+    if o.InvertibleMatrix =!= null then (
+	my := o.InvertibleMatrix
+	)
+    else (
+	my = invmat(polySys,option)
+	);
+    yintmatrix := intervalMatrix applyTable(entries my, a -> interval(a,a));
+    -- centering intervals in option at the origin
+    z := intervalMatrix apply(option, i -> {interval(-wInterval(value((i)#1)/2),wInterval(value((i)#1))/2)} );
+    lengthofmat := length(yintmatrix*ijm);
+    identityIntMat(lengthofmat)-yintmatrix*ijm
+    )
+
+
 
 
 -- function to construct the Krawczyk operator
@@ -435,33 +531,58 @@ krawczykOper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
 krawczykMethod = method(Options=>{
 	InvertibleMatrix => null})
 krawczykMethod(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
-    kOperator := krawczykOper(polySys, option);
+    if o.InvertibleMatrix =!= null then (
+    	kOperator := krawczykOper(polySys, option, InvertibleMatrix => o.InvertibleMatrix);
+	)
+    else (
+    	kOperator = krawczykOper(polySys, option);
+	);
     intervalList := (apply(option, k -> value(k#1)));
     k := 0;
     for i from 0 to (length(option) - 1) do if (kOperator#i#0#0 < intervalList#i#0 or kOperator#i#0#1 > intervalList#i#1) then  break k = 1;
-    if k === 0 then print "given interval contains a unique solution"
-    else print "given interval does not contain a unique solution"
-    ) 
+    if k === 0 then ( if o.InvertibleMatrix =!= null then (
+	    if intervalMatrixNorm(krawczykUniqueness(polySys, option, InvertibleMatrix => o. InvertibleMatrix)) < 1 then (
+			true
+    	    	    	)
+	    else (
+		print "Uniqueness fail";
+		false
+		)
+	    )
+	    else if intervalMatrixNorm(krawczykUniqueness(polySys, option)) < 1 then (
+		    	print "given interval contains a unique solution"; 
+			true
+    	    	    	)
+	    else (
+		print "Uniqueness fail";
+		false
+		)
+    	    )		    
+    else (
+	false
+	)
+    )
 
 
 
 
 
 TEST ///
-R = CC[x,y]
-f = polySystem {x + y, x^2 - 4}
-sols = solveSystem f
-assert all(sols, p -> certifySolution(f,p))
-p = point{{2.0, -2.0}}
-q = point{{-2, 2.000001}}
-computeConstants(f,p)
+R = QQ[x1,x2,y1,y2]
+f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1}
+I1 = interval(.90,.96)
+I2 = interval(.31,.33)
+I3 = interval(-.33,-.27)
+I4 = interval(.9,1)
+o = intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")}
+intervalMatrixNorm(krawczykUniqueness(f,o))
 ///
 
 
 
 
 beginDocumentation()
-load ("./NumericalCertification/Documents/DocNumericalCertification.m2")
+load ("./NumericalCertification/doc.m2")
 end
 
 

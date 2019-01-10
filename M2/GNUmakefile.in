@@ -12,7 +12,7 @@ configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
 	rm -f M2
-	echo 'exec @pre_bindir@/M2 "$$@"' >M2
+	(echo '#! /bin/sh'; echo 'exec @pre_bindir@/M2 "$$@"') >M2
 	chmod a+x M2
 define package
 all install-$1: all-$1

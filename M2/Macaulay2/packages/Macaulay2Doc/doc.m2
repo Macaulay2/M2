@@ -84,6 +84,14 @@ document {
      }
 
 document {
+     Key => WebApp,
+     Headline => "the web app top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods, in connection with
+     the use of the (currently developed) web app with (Ka)TeX output as front end.",
+     SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
@@ -266,91 +274,6 @@ document {
 	  }
      }
 
-document {
-     Key => HashTable,
-     Headline => "the class of all hash tables",
-     PARA {
-	  "A hash table consists of: a class type, a parent type, and a
-	  set of key-value pairs.  The keys and values can be anything.
-	  The access functions below accept a key and return the
-	  corresponding value.  For details of the mechanism
-	  underlying this, see ", TO "hashing", "."
-	  },
-     PARA{
-	  "One important feature of hash tables that when the keys
-	  are consecutive integers starting at 0, the keys are scanned
-	  in the natural order."
-	  },
-     PARA{
-     	  "There is a subclass of HashTable called ", TO "MutableHashTable", "
-     	  which consists of those hash tables whose entries can be changed."
-	  },
-     PARA "Access functions:",
-     UL {
- 	  TO "#",
- 	  TO "."
- 	  },
-     PARA "Query functions:",
-     UL {
- 	  TO "#?",
- 	  TO ".?"
- 	  }
-     }
-
-
-document {
-     Key => keys,
-     Headline => "keys used in a hash table" }
-document {
-     Key => (keys,HashTable),
-     Usage => "keys t",
-     Inputs => {
-	  "t"
-	  },
-     Outputs => {
-	  {"a list of the keys occurring in the hash table ", TT "t"}
-	  },
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2}",
-	  "keys x",
-	  }
-     }
-
-document {
-     Key => values,
-     Headline => "values in a hash table" }
-document {
-     Key => (values,HashTable),
-     Usage => "values t",
-     Inputs => {
-	  "t"
-	  },
-     Outputs => {
-	  {"a list of the values occurring in the hash table ", TT "t", "."}
-	  },
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2}",
-	  "values x",
-	  }
-     }
-
-document {
-     Key => scanPairs,
-     Headline => "apply a function to pairs in a hash table" }
-
-document {
-     Key => (scanPairs,HashTable,Function),
-     Headline => "apply a function to pairs in a hash table",
-     TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
-     pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
-     table ", TT "x", " and ", TT "v", " is the corresponding 
-     value ", TT "x#k", ".",
-     PARA{},
-     "This function requires an immutable hash table.  To scan the pairs in
-     a mutable hash table, use ", TT "scan(pairs x, f)", ".",
-     PARA{},
-     SeeAlso => "scan"
-     }
 
 --document { find,
 --     TT "find(x,f)", " -- applies the function ", TT "f", " to each element
@@ -363,13 +286,18 @@ document {
 	  (describe, PolynomialRing),
 	  (describe, QuotientRing),
 	  (describe, FractionField),
+	  (describe, Thing),
+	  (describe, AffineVariety),
+	  (describe, CoherentSheaf),
 	  (describe, GaloisField),
 	  (describe, GeneralOrderedMonoid),
-	  (describe, Variety),
-	  (describe, Thing)
+	  (describe, Matrix),
+	  (describe, Module),
+	  (describe, ProjectiveVariety),
+	  (describe, RingMap)
 	  },
      Headline => "real description",
-     TT "describe x", " -- returns ", ofClass Net, " containing the 
+     TT "describe x", " -- returns ", ofClass Expression, " containing the 
      real description of ", TT "x", ", bypassing the feature that causes
      certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.  For polynomial rings, it also displays the options used at creation.",
@@ -608,12 +536,6 @@ undocumented {
 (symbol SPACE, Command, Thing),
 (symbol SPACE, Manipulator, Nothing),
 (symbol SPACE, WrapperType, Thing),
-(symbol SPACE, Expression, Expression),
-(symbol SPACE, Expression, Holder),
-(symbol SPACE, Holder, Expression),
-(symbol SPACE, Expression, Thing),
-(symbol SPACE, Thing, Expression),
-(symbol SPACE, Holder, Holder),
 (symbol SPACE, HeaderType, List),
 (symbol SPACE, HeaderType, Sequence),
 (symbol SPACE, MarkUpType, Net),
@@ -665,10 +587,8 @@ undocumented {
      (symbol *, RingElement, Number),
     (symbol*,  Expression, Product),
     (symbol*,  Product, Expression),
-    (symbol*,  Holder, Expression),
     (symbol*,  Minus, Expression),
     (symbol*,  Product, Holder),
-    (symbol*,  Holder, Holder),
     (symbol*,  ZeroExpression, Expression),
     (symbol*,  Minus, Minus),
     (symbol*,  ZZ, InfiniteNumber),
@@ -683,7 +603,6 @@ undocumented {
     (symbol*,  ZeroExpression, Holder),
     (symbol*,  Holder, ZeroExpression),
     (symbol*,  Holder, OneExpression),
-    (symbol*,  Expression, Holder),
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
     (symbol*,  Expression, Minus),
@@ -972,9 +891,7 @@ undocumented {
      (symbol /, InfiniteNumber, QQ),
      (symbol /, InfiniteNumber, RR),
      (symbol /, EngineRing, Ideal),
-     (symbol /, Expression, Holder),
      (symbol /, Expression, OneExpression),
-     (symbol /, Holder, Holder),
      (symbol /, List, SelfInitializingType)
      }
 
@@ -1116,12 +1033,9 @@ undocumented {
      (symbol ^, ZeroExpression, Holder),
      (symbol ^, Holder, ZeroExpression),
      (symbol ^, Holder, OneExpression),
-     (symbol ^, Holder, Holder),
      (symbol ^, Expression, ZeroExpression),
      (symbol ^, ZeroExpression, Expression),
      (symbol ^, Expression, OneExpression),
-     (symbol ^, Expression, Holder),
-     (symbol ^, Holder, Expression),
      (symbol ^, ZeroExpression, ZeroExpression),
      (symbol ^, InfiniteNumber, ZZ),
      (symbol ^, InfiniteNumber, QQ),
@@ -1387,6 +1301,25 @@ document {
      SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
      }
 
+
+document {
+     Key => (symbol ||, Vector, Vector),
+     Headline => "join Vectors ",
+     Usage => "v || w",
+	Inputs => {"v", "w"},
+	Outputs => {
+		Vector => {"obtained from vectors v and w by concatenating the columns."}
+                   },
+     EXAMPLE lines ///
+	      R = (ZZ[x,y,z])^3;
+      	  v = vector {1,x,x*y,x*z,x*y*z}
+      	  w = vector {z*x,z^2,3}
+      	  v || w
+	  ///,
+     PARA{},
+     SeeAlso => {(symbol ||, Matrix, Matrix)}
+     }
+
 document {
      Key => {(symbol===,Thing,Thing), symbol ===},
      Headline => "strict equality",
@@ -1457,7 +1390,6 @@ document {
 	  (symbol==, Ideal, MonomialIdeal),
 	  (symbol==, GradedModuleMap, ZZ),
 	  (symbol==, InfiniteNumber, InfiniteNumber),
-	  (symbol==, Holder, Holder),
 	  (symbol==, Equation, Expression),
 	  (symbol==, ZZ, Ring),
 	  (symbol==, ZZ, QQ),
@@ -1591,10 +1523,8 @@ document {
 
 undocumented {
     (symbol**, OneExpression, Holder),
-    (symbol**, Holder, Expression),
     (symbol**, QuotientRing, PolynomialRing),
     (symbol**, Expression, NonAssociativeProduct),
-    (symbol**, Holder, Holder),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -1605,7 +1535,6 @@ undocumented {
     (symbol **,Thing,InexactFieldFamily),
     (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, Holder, OneExpression),
-    (symbol**, Expression, Holder),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
     (symbol**, NonAssociativeProduct, Expression),

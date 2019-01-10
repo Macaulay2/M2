@@ -12,7 +12,7 @@ newPackage(
 		    Email => "qingchun.ren@gmail.com", 
 		    HomePage => "http://math.berkeley.edu/~qingchun/"}},
     	Headline => "a package for interfacing with polymake",
-    	DebuggingMode => true
+	PackageImports => {"PolyhedralObjects"}
     	)
 
 export {
@@ -24,13 +24,9 @@ export {
      parseAllAvailableProperties
      }
 
-
 ---------------------------------------------------------------------------
 -- Code
 ---------------------------------------------------------------------------
-
-needsPackage "SimpleDoc"
-needsPackage "PolyhedralObjects"
 
 runPolymakePrefix = "polymake"
 

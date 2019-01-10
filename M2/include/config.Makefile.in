@@ -30,12 +30,14 @@ SHELL = /bin/sh
 CC = @CC@
 CXX = @CXX@
 FC = @FC@
+AR = @AR@
 CFLAGS = @CFLAGS@
 CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
 LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
+OPENMP_CXXFLAGS = @OPENMP_CXXFLAGS@
 
 # here we set the variables that "configure" uses
 # this is the only way to add libraries to the linking done by "gdbm", since it doesn't use LDLIBS or LOADLIBES
@@ -62,27 +64,17 @@ pre_exec_prefix = @pre_exec_prefix@
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 abs_top_srcdir = @abs_top_srcdir@
 
-
 INSTALL = @INSTALL@
-
-# we can't use -isystem instead of -I for our library include files, because then they might be supplanted
-# by older include files in a directory specified by the user with CPPFLAGS=-I/foo/bar, causing
-# version skew (gcc preprocessor searches -I directories first, then -isystem directories)
-
 BUILTLIBPATH = @abs_top_builddir@/usr-host
-
-# this will be a symbolic link installed by libraries/gtest/Makefile
+# this will be a symbolic link installed by libraries/gtest/Makefile:
 GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
-
-# Using -isystem instead of -I here will exclude the files found in those directories from the *.dep files created with the -MM option:
 CPPFLAGS :=									\
-	-isystem @abs_top_srcdir@/include					\
-	-isystem @abs_top_builddir@/include					\
-	-isystem $(BUILTLIBPATH)/include					\
-	-isystem $(BUILTLIBPATH)/include/cdd					\
+	-I@abs_top_srcdir@/include						\
+	-I@abs_top_builddir@/include						\
+	-I$(BUILTLIBPATH)/include						\
+	-I$(BUILTLIBPATH)/include/cdd						\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
-
 ifeq "@ENABLE_MPACK@" "yes"
 CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
 endif
@@ -242,11 +234,10 @@ endif
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
 # status info
-WHY = @ (if [ -f $@ ] ;												\
-	 then echo "=================================================================" ;			\
-	      echo "--- remaking $@ in $$(basename $$PWD) because of $?" ; ls -l $@ || : ; ls -l $? | head -5 ;	\
-	      echo "=================================================================" ;			\
-	 else echo "=== making $@ in $$(basename $$PWD)" ;							\
+WHY = @ (if [ -f $@ ] ;						\
+	 then echo "=== remaking $@ in $$(basename $$PWD) :" ;	\
+	      ls -l $@ | sed 's/^/===   /' || : ;		\
+	      ls -l $? | sed 's/^/===   /' ;			\
 	 fi)
 
 test:

@@ -63,7 +63,7 @@ uninstall-package-$1:
 all-$1: @pre_libm2dir@/$1/.installed
 unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
-@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
+@pre_libm2dir@/$1/.installed : $1.m2 $$(shell if [ -d @srcdir@/$1 ] ; then find @srcdir@/$1 -type f ; fi) | info-dir
 	: installing package $1
 	$$(WHY)
 	$(MKDIR_P) $1-temporary

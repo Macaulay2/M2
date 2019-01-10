@@ -2,10 +2,10 @@ TEST /// --Fedder's original F-injective not F-pure, deformation examples
     S = ZZ/2[x,y,z,u,v];
     I =  minors(2, matrix {{x^2, z, v}, {u, z, y^2}});
     J = I + ideal(x,y);
-    assert(isFinjective(S/I));
-    assert(isFinjective(S/J));
-    assert(isFpure(S/J));
-    assert(not isFpure(S/I));
+    assert(isFInjective(S/I));
+    assert(isFInjective(S/J));
+    assert(isFPure(S/J));
+    assert(not isFPure(S/I));
 ///
 
 TEST /// --cone over P1 times supersingular elliptic curve (non CM)
@@ -13,7 +13,7 @@ TEST /// --cone over P1 times supersingular elliptic curve (non CM)
     EP1 = ZZ/3[x,y,z,s,t]/ideal(x^3+y^2*z-x*z^2); --supersingular elliptic curve
     f = map(EP1, S, {x*s, y*s, z*s, x*t, y*t, z*t});
     R = S/(ker f);
-    assert(not isFinjective(R));
+    assert(not isFInjective(R));
 ///
 
 TEST /// --cone over P1 times ordinary elliptic curve (non CM)
@@ -21,7 +21,7 @@ TEST /// --cone over P1 times ordinary elliptic curve (non CM)
     EP1 = ZZ/3[x,y,z,s,t]/ideal(y^2*z-x^3+x*y*z); --ordinary elliptic curve
     f = map(EP1, S, {x*s, y*s, z*s, x*t, y*t, z*t});
     R = S/(ker f);
-    assert( isFinjective(R) );
+    assert( isFInjective(R) );
 ///
 
 TEST /// --HSLGModule cone over ordinary elliptic curve
@@ -32,8 +32,8 @@ TEST /// --HSLGModule cone over ordinary elliptic curve
 
 TEST /// --the isLocal option
     R = ZZ/5[x,y,z]/ideal((x-2)^3 + y^3 + z^3); --supersingular
-    assert( isFinjective(R, IsLocal=>true) );
-    assert( not isFinjective(R) );
+    assert( isFInjective(R, IsLocal=>true) );
+    assert( not isFInjective(R) );
 ///
 
 TEST /// --HSLGModule cone over supersingular elliptic curve
@@ -48,16 +48,16 @@ TEST /// --HSLGModule cone over supersingular elliptic curve
     assert((HSLmod#0 == HSLmod#1));
 ///
 
-TEST /// --isFinjective of a ring with no variables
+TEST /// --isFInjective of a ring with no variables
     R = ZZ/17[];
-    assert(isFinjective(R));
+    assert(isFInjective(R));
 ///
 
 TEST /// --checking brute force F-injective vs canonicalStrategy
     R = ZZ/3[x,y,z]/ideal(y^2*z-x^3+x*y*z); --ordinary
-    assert(isFinjective(R));
-    assert(isFinjective(R, CanonicalStrategy=>null));
+    assert(isFInjective(R));
+    assert(isFInjective(R, CanonicalStrategy=>null));
     S = ZZ/3[x,y,z]/ideal(x^3+y^2*z-x*z^2); --supersingular
-    assert(not isFinjective(S));
-    assert(not isFinjective(S, CanonicalStrategy=>null));
+    assert(not isFInjective(S));
+    assert(not isFInjective(S, CanonicalStrategy=>null));
 ///
