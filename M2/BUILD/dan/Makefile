@@ -45,8 +45,7 @@ CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
 ifneq ($(MACOSX),yes)
-# Under Mac OS X, stripping the M2 binary seems to cause the program to crash on some examples, repeatedly.
-# One of those examples is uses the lapack library ...
+# under Mac OS X, stripping the M2 binary seems to cause the program to crash on some examples, repeatedly
 CONFIGOPTIONS += --enable-strip
 endif
 ifeq ($(DEBIAN),yes)
