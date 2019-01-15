@@ -87,5 +87,5 @@ test :
 
 # Local Variables:
 # mode: makefile-gmake
-# compile-command: "time make SIGN=no DEBUG=no "
+# compile-command: "time gmake SIGN=no DEBUG=no "
 # End:
