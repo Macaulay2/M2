@@ -11,6 +11,9 @@
 #include "gb-walk.hpp"
 #include "relem.hpp"
 
+#include "PolynomialAlgebra.hpp"
+#include "NCGroebner.hpp"
+
 #include "poly.hpp"
 #include <sstream>
 #include <iostream>
@@ -1186,6 +1189,25 @@ const Matrix *rawMGB(
       return NULL;
   }
 }
+
+/////////////////////////////////////////////
+// Noncommutative Groebner bases (2-sided) //
+/////////////////////////////////////////////
+
+const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
+{
+  NCGroebner G(input);
+  G.compute(maxdeg);
+  return G.currentValue();
+}
+
+const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducers)
+{
+  ERROR("not implemented yet");
+  return nullptr;
+}
+
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

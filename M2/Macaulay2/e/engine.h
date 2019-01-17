@@ -1796,7 +1796,25 @@ enum gbTraceValues
   int IM2_GB_contains(Computation *G,
                       const Matrix *m); /* drg: connected rawGBContains */
 
+  /*******************************************
+   * Noncommutative Groebner bases ***********
+   *******************************************/
 
+  /* Returns a 2-sided GB of the 2-sided ideal from the one-row matrix 'input' computed up to and including
+     degree 'maxdeg'. 
+     Assumptions:
+       1. input is a one row matrix, whose entries are the generators of a 2-sided ideal.
+       2. The grading is singly graded (restriction to be removed).
+       3. If the computation is interrupted, we return the elements we have constructed so far.
+       4. use gbTrace as usual to get verbose messages during computation.
+     Not done yet:
+       multi-gradings, writing GB elements in terms of original generators.
+       We will need a new function
+  */
+  const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg);
+
+  const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducers);
+  
   /*******************************************
    * Computation routines for Resolutions ****
    *******************************************/

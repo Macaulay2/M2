@@ -398,6 +398,24 @@ restart
   print result
 ///
 
+TEST ///
+  debug needsPackage "GenerateD"
+  result = str (genFunctionCall(
+        "rawNCGroebnerBasisTwoSided", 
+        "MatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"int")
+        ))
+
+  result2 = str (genFunctionCall(
+        "rawNCReductionTwoSided", 
+        "MatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"Matrix")
+        ))
+
+  print result
+  print result2
+///
+
 end--
 
 restart
@@ -599,3 +617,5 @@ generate("rawQR", MutableMatrix, MutableMatrix, MutableMatrix, Boolean,
     Returns => PossibleError Boolean)
  -- generate D-functions, and a C header.
  
+generate("rawNCGroebnerTwoSided", Matrix, ,
+    Returns => PossibleError Boolean)

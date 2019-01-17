@@ -11,6 +11,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	NCGroebner \
 	monomial-collection \
 	Polynomial \
 	PolynomialAlgebra \

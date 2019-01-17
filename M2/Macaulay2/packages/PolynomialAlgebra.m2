@@ -621,6 +621,17 @@ TEST ///
   assert(mons == monomials mons)
 ///
 
+TEST ///
+  -- noncommutative Groebner basis test
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{a..d}
+  I = ideal(a*b*a-a*c*b)
+  debug Core
+  map(R, rawNCGroebnerBasisTwoSided(raw gens I, 387))
+///
 end--
 
 restart

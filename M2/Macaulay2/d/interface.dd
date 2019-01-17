@@ -3905,6 +3905,41 @@ export rawGBBetti(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
 
+export rawNCGroebnerBasisTwoSided(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:ZZcell do (
+  if isInt(wb) then (b := toInt(wb);
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawNCGroebnerBasisTwoSided(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawNCGroebnerBasisTwoSided",rawNCGroebnerBasisTwoSided);
+
+export rawNCReductionTwoSided(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawNCReductionTwoSided(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a raw matrix")
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawNCReductionTwoSided",rawNCReductionTwoSided);
 -----------------------------------------------------------------------------
 -- LU
 -----------------------------------------------------------------------------
