@@ -1210,10 +1210,11 @@ const std::vector<const PolynomialAlgebra::Poly*> matrixToVector(const Polynomia
 const Matrix* vectorToMatrix(const PolynomialAlgebra* A, const std::vector<const PolynomialAlgebra::Poly*>& elems)
 {
   MatrixConstructor mat(A->make_FreeModule(1), elems.size());
-  //  for (auto i = elems.begin(); i != elems.end(); ++i)
-  //    {
-  //      
-  //    }
+  for (auto i = 0; i < elems.size(); ++i)
+    {
+      ring_elem a = const_cast<Nterm*>(reinterpret_cast<const Nterm*>(elems[i]));
+      mat.set_entry(0, i, a);
+    }
   return mat.to_matrix();
 }
 
@@ -1221,7 +1222,7 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
 {
   const Ring* R = input->get_ring();
   const PolynomialAlgebra* A = R->cast_to_PolynomialAlgebra();
-  if (A != nullptr and input->n_rows() != 1)
+  if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
       NCGroebner G(elems);
