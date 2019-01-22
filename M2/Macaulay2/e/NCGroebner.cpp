@@ -4,9 +4,9 @@ void NCGroebner::compute(int maxdeg)
 {
 }
 
-const Matrix* NCGroebner::currentValue()
+const NCGroebner::ConstPolyList* NCGroebner::currentValue()
 {
-  return mInput;
+  return &mInput;
 }
 
 

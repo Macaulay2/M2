@@ -6,10 +6,15 @@
 class NCGroebner
 {
 private:
-  const Matrix* mInput;
+  using Poly = PolynomialAlgebra::Poly;
+  using PolyList = std::vector<Poly*>;
+  using ConstPolyList = std::vector<const Poly*>;
+
+  const PolynomialAlgebra* mRing;
+  const ConstPolyList mInput;
   int mTopComputedDegree;
 public:
-  NCGroebner(const Matrix* input)
+  NCGroebner(const ConstPolyList& input)
     : mInput(input),
       mTopComputedDegree(-1)
   {
@@ -17,8 +22,7 @@ public:
   
   void compute(int maxdeg);
 
-  const Matrix* currentValue();
-
+  const ConstPolyList* currentValue();
 };
 
 #endif

@@ -146,7 +146,7 @@ inline int ntuple::weight(int nvars, const int *a, M2_arrayint wt)
 
 inline int ntuple::weight(int nvars, const int *a, const std::vector<int>& wt)
 {
-  int top = wt->size();
+  int top = wt.size();
   if (nvars < top) top = nvars;
   if (top == 0) return 0;
   int sum = safe::mult(a[0], wt[0]);

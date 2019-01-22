@@ -4,6 +4,14 @@
 #include "ntuple.hpp"
 #include "interrupted.hpp"
 
+extern Matrix* ncBasis(const Matrix *leadTerms,
+                         M2_arrayint lo_degree,
+                         M2_arrayint hi_degree,
+                         M2_arrayint heft,
+                         M2_arrayint vars,
+                         bool do_truncation,
+                         int limit);
+
 class KBasis
 {
   // A class for construction of
@@ -459,8 +467,36 @@ const Matrix *Matrix::basis(M2_arrayint lo_degree,
                             bool do_truncation,
                             int limit) const
 {
-  return KBasis::k_basis(
-      this, lo_degree, hi_degree, heft, vars, do_truncation, limit);
+  // Check values of the arguments here?
+  // if PolynomialRing:
+  // if PolynomialAlgebra:
+  // if other: return what?  I think the result might currently not be correct !?
+  const Ring* R = get_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != nullptr)
+    {
+      return KBasis::k_basis(
+                             this,
+                             lo_degree,
+                             hi_degree,
+                             heft,
+                             vars,
+                             do_truncation,
+                             limit);
+    }
+  const PolynomialAlgebra* A = R->cast_to_PolynomialAlgebra();
+  if (A != nullptr)
+    {
+      return ncBasis(this,
+                     lo_degree,
+                     hi_degree,
+                     heft,
+                     vars,
+                     do_truncation,
+                     limit);
+    }
+  ERROR("expected polynomial ring or noncommutative algebra");
+  return nullptr;
 }
 
 // Local Variables:

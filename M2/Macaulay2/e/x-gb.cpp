@@ -1194,11 +1194,43 @@ const Matrix *rawMGB(
 // Noncommutative Groebner bases (2-sided) //
 /////////////////////////////////////////////
 
+const std::vector<const PolynomialAlgebra::Poly*> matrixToVector(const PolynomialAlgebra* A, const Matrix* input)
+{
+  std::vector<const PolynomialAlgebra::Poly*> result;
+  result.reserve(input->n_cols());
+  for (int i=0; i<input->n_cols(); i++)
+    {
+      ring_elem a = input->elem(0,i);
+      auto f = reinterpret_cast<const PolynomialAlgebra::Poly*>(a.get_Poly());
+      result.push_back(f);
+    }
+  return result;
+}
+
+const Matrix* vectorToMatrix(const PolynomialAlgebra* A, const std::vector<const PolynomialAlgebra::Poly*>& elems)
+{
+  MatrixConstructor mat(A->make_FreeModule(1), elems.size());
+  //  for (auto i = elems.begin(); i != elems.end(); ++i)
+  //    {
+  //      
+  //    }
+  return mat.to_matrix();
+}
+
 const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
 {
-  NCGroebner G(input);
-  G.compute(maxdeg);
-  return G.currentValue();
+  const Ring* R = input->get_ring();
+  const PolynomialAlgebra* A = R->cast_to_PolynomialAlgebra();
+  if (A != nullptr and input->n_rows() != 1)
+    {
+      auto elems = matrixToVector(A, input);
+      NCGroebner G(elems);
+      G.compute(maxdeg);
+      auto result = G.currentValue();
+      return vectorToMatrix(A, * result);
+    }
+  ERROR("expected a one row matrix over a noncommutative algebra");
+  return nullptr;
 }
 
 const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducers)
