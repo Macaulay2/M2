@@ -2,7 +2,7 @@
 # svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
 # see also (for older releases) https://forge.imag.fr/projects/givaro for source code
 # see also (for newer releases) https://github.com/linbox-team/givaro/releases
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 # compilation of givaro needs a little extra memory
 VLIMIT = 800000

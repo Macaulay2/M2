@@ -26,7 +26,7 @@ newPackage(
       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
   Headline => "a package for working with normal toric varieties",
   PackageExports => {"Polyhedra", "Schubert2"},
-  PackageImports => {"FourierMotzkin","Normaliz"},
+  PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
   DebuggingMode => false
   )
 
@@ -5827,7 +5827,7 @@ doc ///
 	    intersectionRing tPP2
 	    intersectionRing abstractVariety (tPP2, base())
 	    intersectionRing abstractVariety (tPP2, base(a))
-	    PP2 = projectiveSpace 2
+	    PP2 = toricProjectiveSpace 2
 	    intersectionRing PP2
 	    minimalPresentation intersectionRing PP2
 	    minimalPresentation intersectionRing tPP2
@@ -6028,15 +6028,15 @@ doc ///
 	    ideal A1
 	    minimalPresentation A1
 	    for i to dim X list hilbertFunction (i, A1)	    	  
-	Text
-	    We end with a slightly larger example.
-	Example
-	    Y = smoothFanoToricVariety(6,100);
-	    A2 = intersectionRing Y;
-	    assert (# rays Y === numgens A2)	    
-            ideal A2
-	    minimalPresentation A2
-	    for i to dim Y list hilbertFunction (i, A2)
+	-- Text
+	--     We end with a slightly larger example.
+	-- Example
+	--     Y = smoothFanoToricVariety(6,100);
+	--     A2 = intersectionRing Y;
+	--     assert (# rays Y === numgens A2)	    
+        --     ideal A2
+	--     minimalPresentation A2
+	--     for i to dim Y list hilbertFunction (i, A2)
     SeeAlso
         "Total coordinate rings and coherent sheaves"    
 	(abstractVariety, NormalToricVariety)        	    

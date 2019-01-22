@@ -7,6 +7,7 @@ newPackage(
                   HomePage => "http://www.msri.org/~de/"}},
         Headline => "Higer CI operators",
         DebuggingMode => false,
+     	PackageImports => { "CompleteIntersectionResolutions" },
 	PackageExports =>{"MCMApproximations"}
         )
 
@@ -18,7 +19,6 @@ export {"exteriorMultiplication",
 	"trueKoszul"
        }
 --notify = true
-needsPackage "CompleteIntersectionResolutions"
 
 trueKoszul=method()
 trueKoszul Matrix := ff -> (

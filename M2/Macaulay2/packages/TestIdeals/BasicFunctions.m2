@@ -2,17 +2,17 @@
 --*************************************************
 --*************************************************
 --*************************************************
---This file is used for doing basic computations 
+--This file is used for doing basic computations
 --i.e. things using only lists, numbers, etc.
 -- that support other functions in the Fsing
---package.  
+--package.
 --*************************************************
 --*************************************************
 --*************************************************
 --*************************************************
 
 --*************************************************
---Basic Manipulations with Numbers 
+--Basic Manipulations with Numbers
 --*************************************************
 --===================================================================================
 
@@ -30,14 +30,14 @@ fracPart = x -> x - floor(x)
 --Computes floor(log_b x), correcting problems due to rounding.
 floorLog = method( TypicalValue => ZZ )
 
-floorLog ( ZZ, ZZ ) := ZZ => ( b, x ) -> 
+floorLog ( ZZ, ZZ ) := ZZ => ( b, x ) ->
 (
     if b <= 1 then error "floorLog: expected the first argument to be greater than 1";
     if x <= 0 then error "floorLog: expected the second argument to be positive";
     if x < b then return 0;
     flog := floor( log_b x );
     while b^flog <= x do flog = flog + 1;
-    flog - 1       
+    flog - 1
 )
 
 --===================================================================================
@@ -61,7 +61,7 @@ multiplicativeOrder( ZZ, ZZ ) := ZZ => ( a, b ) ->
         i = i + 1;
     );
     error "Something went wrong, multiplicativeOrder failed to find the multiplicative order";
-)     
+)
 
 --===================================================================================
 
@@ -71,23 +71,24 @@ decomposeFraction = method( TypicalValue => List, Options => { NoZeroC => false 
 -- {a,b,c}, where t = a/(p^b*(p^c-1))
 -- if c = 0, then this means that t = a/p^b
 --alternately, if NoZeroC => true, then we will always write t = a/p^b(p^c - 1)
---even if it means increasing a. 
-decomposeFraction( ZZ, QQ ) := List => o -> ( p, t ) -> 
+--even if it means increasing a.
+decomposeFraction( ZZ, Number ) := List => o -> ( p, t ) ->
 (
+    t = t/1;
     if not isPrime( p ) then error "decomposeFraction: first argument must be a prime number.";
     a := numerator t; -- finding a is easy, for now
     den := denominator(t);
     b := 1;
     while den % p^b == 0 do b = b+1;
-    b = b-1; 
+    b = b-1;
     temp := denominator( t*p^b );
     local c;
-    if (temp == 1) then c = 0 else 
+    if (temp == 1) then c = 0 else
     (
-        c = multiplicativeOrder( p, temp );  
+        c = multiplicativeOrder( p, temp );
         a = lift( a*(p^c-1)/temp, ZZ ); -- fix a
     );
-    if o.NoZeroC and c == 0 then 
+    if o.NoZeroC and c == 0 then
     (
         a = a*(p-1);
         c = 1;
@@ -95,7 +96,7 @@ decomposeFraction( ZZ, QQ ) := List => o -> ( p, t ) ->
     {a,b,c}
 )
 
-decomposeFraction( ZZ, ZZ ) := List => o -> (p, t) -> decomposeFraction(p, t/1, o)
+--decomposeFraction( ZZ, ZZ ) := List => o -> (p, t) -> decomposeFraction(p, t/1, o)
 
 
 --===================================================================================
@@ -109,13 +110,13 @@ decomposeFraction( ZZ, ZZ ) := List => o -> (p, t) -> decomposeFraction(p, t/1, 
 adicDigit = method( )
 
 --Gives the e-th digit of the non-terminating base p expansion of x in [0,1].
-adicDigit ( ZZ, ZZ, QQ ) := ZZ => ( p, e, x ) -> 
-( 
+adicDigit ( ZZ, ZZ, QQ ) := ZZ => ( p, e, x ) ->
+(
     if p <= 1 then error "adicDigit: Expected first argument to be greater than 1";
     if e <= 0 then error "adicDigit: Expected second argument to be positive";
     if x < 0 or x > 1 then error "adicDigit: Expected last argument in [0,1]";
     if x == 0 then return 0;
-    ( adicTruncation(p, e, x) - adicTruncation(p, e-1, x) ) * p^e
+    lift( ( adicTruncation(p, e, x) - adicTruncation(p, e-1, x) ) * p^e, ZZ )
 )
 
 adicDigit ( ZZ, ZZ, ZZ ) := ZZ => ( p, e, x ) -> adicDigit( p, e, x/1 )
@@ -125,7 +126,7 @@ adicDigit ( ZZ, ZZ, List ) := ZZ => ( p, e, u ) -> apply( u, x -> adicDigit( p, 
 
 --===================================================================================
 
-adicExpansion = method( ); 
+adicExpansion = method( );
 
 --Computes the terminating base p expansion of a positive integer.
 --Gives expansion in reverse... so from left to right it gives
@@ -135,7 +136,7 @@ adicExpansion( ZZ, ZZ ) := List => ( p, N ) ->
 (
     if p <= 1 then error "adicExpansion: Expected first argument to be greater than 1";
     if N < 0 then error "adicExpansion: Expected second argument to be nonnegative";
-    if N < p then { N } else prepend( N % p, adicExpansion( p, N // p ) ) 
+    if N < p then { N } else prepend( N % p, adicExpansion( p, N // p ) )
     -- would this be faster if it were tail-recursive? we could do this w/ a helper function.
 )
 
@@ -143,7 +144,7 @@ adicExpansion( ZZ, ZZ ) := List => ( p, N ) ->
 adicExpansion( ZZ, ZZ, ZZ ) := List => ( p, e, x ) -> adicExpansion( p, e, x/1 )
 
 --Creates a list of the first e digits of the non-terminating base p expansion of x in [0,1].
-adicExpansion( ZZ, ZZ, QQ ) := List => ( p, e, x ) -> 
+adicExpansion( ZZ, ZZ, QQ ) := List => ( p, e, x ) ->
 (
     if p <= 1 then error "adicExpansion: Expected first argument to be greater than 1";
     if x < 0 or x > 1 then error "adicExpansion: Expected x in [0,1]";
@@ -154,28 +155,28 @@ adicExpansion( ZZ, ZZ, QQ ) := List => ( p, e, x ) ->
 
 adicTruncation = method( )
 
---Gives the e-th truncation of the non-terminating base p expansion of a rational 
+--Gives the e-th truncation of the non-terminating base p expansion of a rational
 -- number, unless that number is zero.
 
-adicTruncation ( ZZ, ZZ, QQ ) := QQ => ( p, e, x ) -> 
+adicTruncation ( ZZ, ZZ, QQ ) := QQ => ( p, e, x ) ->
 (
     if p <= 1 then error "adicTruncation: Expected first argument to be greater than 1";
     if e < 0 then error "adicTruncation: Expected second argument to be nonnegative";
     if x < 0 then error "adicTruncation: Expected third argument to be nonnegative (or a list of nonegative numbers)";
-    if x == 0 then 0 else ( ceiling( p^e*x ) - 1 ) / p^e    	
+    if x == 0 then 0 else ( ceiling( p^e*x ) - 1 ) / p^e
 )
 
 adicTruncation( ZZ, ZZ, ZZ ) := List => ( p, e, x ) -> adicTruncation( p, e, x/1 )
 
 --truncation threads over lists.
-adicTruncation ( ZZ, ZZ, List ) := List => ( p, e, u ) -> 
+adicTruncation ( ZZ, ZZ, List ) := List => ( p, e, u ) ->
     apply( u, x -> adicTruncation( p, e, x ) )
 
 --===================================================================================
 
---- write n=a*p^e+a_{e-1} p^{e-1} + \dots + a_0 where 0\leq a_j <p 
+--- write n=a*p^e+a_{e-1} p^{e-1} + \dots + a_0 where 0\leq a_j <p
 --- DS: so it's just like doing adicExpansion but giving up after p^e and just returning whatever number's left
---- DS: this could be merged with adicExpansion. Should it be? 
+--- DS: this could be merged with adicExpansion. Should it be?
 --- note: I changed the calling order here should change to be consistent with adicExpansion
 --- The change I made was switching the order of the first two arguments
 baseP1 = ( p, n, e ) ->
@@ -183,7 +184,7 @@ baseP1 = ( p, n, e ) ->
     a:=n//(p^e);
     answer:=1:a; -- this generates the list (a)
     m:=n-a*(p^e);
-    f:=e-1; 
+    f:=e-1;
     while (f>=0) do
     (
         d:=m//(p^f);
@@ -192,19 +193,19 @@ baseP1 = ( p, n, e ) ->
         f=f-1;
     );
     answer
-)	
+)
 
 --===================================================================================
 
 --*************************************************
---Tests for various types of polynomials   
+--Tests for various types of polynomials
 --*************************************************
 --===================================================================================
 
 --isPolynomial(F) checks if F is a polynomial
 isPolynomial = method( TypicalValue => Boolean )
 
-isPolynomial (RingElement) := Boolean => F -> isPolynomialRing( ring F ) 
+isPolynomial (RingElement) := Boolean => F -> isPolynomialRing( ring F )
 
 --===================================================================================
 
@@ -222,7 +223,7 @@ isPolynomialOverFiniteField = method( TypicalValue => Boolean )
 
 isPolynomialOverFiniteField (RingElement) := Boolean => F ->
     isPolynomialOverPosCharField( F ) and  (coefficientRing ring F)#?order
-    
+
 --===================================================================================
 
 
@@ -233,7 +234,7 @@ isPolynomialOverPrimeField (RingElement) := Boolean => F ->
     isPolynomial( F ) and  (coefficientRing ring F) === ZZ/(char ring F)
 
 -- use isFinitePrimeField
-    
+
 --===================================================================================
 
 
@@ -252,10 +253,9 @@ maxIdeal ( PolynomialRing ) := MonomialIdeal => R -> monomialIdeal R_*
 
 maxIdeal ( QuotientRing ) := MonomialIdeal => R -> ideal R_*
 
--- not used
---maxIdeal ( RingElement ) := Ideal => f -> maxIdeal ring f
+--Not used
+--maxIdeal ( RingElement ) := Ideal => f -> maxIdeal (ring f)
 
 maxIdeal ( Ideal ) := MonomialIdeal => I -> maxIdeal ring I
 
 --===================================================================================
-

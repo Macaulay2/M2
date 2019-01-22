@@ -327,25 +327,8 @@ ascendIdeal(ZZ, BasicList, BasicList, Ideal) := o->(ek, akList,  hkList, Jk) -> 
 )
 --		
 
---MKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMK
--- minimalCompatible is a method which is implemented as:
--- (1) the finding of the smallest ideal J which satisfies uJ\subset J^{[p^e]} 
----    containg a given ideal for a given ring element u,
--- (2) the finding of the smallest submodule V of a free module which satisfies UV\subset V^{[p^e]} 
---     containg a given submodule for a given matrix U.
---minimalCompatible = method();
---minimalCompatible(Ideal,RingElement,ZZ) :=  (Jk, hk, ek) -> ascendIdeal (Jk, hk, ek)
---minimalCompatible(Ideal,RingElement,ZZ,ZZ) :=  (Jk, hk, ak, ek) -> ascendIdeal(Jk, hk, ak, ek)
---minimalCompatible(Matrix,Matrix,ZZ) := (A,U,e) -> Mstar (A,U,e)
-minimalCompatible = method(Options => {FrobeniusRootStrategy => Substitution});
-minimalCompatible(ZZ,RingElement,Ideal) :=  o->(ek, hk, Jk) -> ascendIdeal (ek, hk, Jk, FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
-minimalCompatible(ZZ,ZZ,RingElement,Ideal) :=  o->( ak, ek,hk,Jk) -> ascendIdeal (ak, ek,hk,Jk,FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
-minimalCompatible(ZZ,Matrix,Matrix) := o->(e,A,U) -> Mstar (e,A,U);
 
---MKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMK
-
-
-
+--MKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMK
 -----------------------------------------------------------------------------
 --- Extend the Frobenius p^e th roots and star operations to submodules of
 --- free modules (over polynomial rings with *prime* coeeficient field)
@@ -450,14 +433,28 @@ mEthRoot = (e,A) ->(
 	mingens( image answer )
 )	
 
+
+
+--MKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMK
+-- given n by n matrix U and submodule A of a free module R^n,
+-- ascendModule finds the smallest submodule V of R^n containing A and which satisfies U^(1+p+...+p^(e-1)) V\subset V^{[p^e]} 
+-- This is analogous to ascendIdeal, only for submodules of free modules.
+ascendModule = method();
+
+ascendModule(ZZ,Matrix,Matrix) := (e,A,U) -> (
+Mstar (e,A,U)
+)
+
+
+--MKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMKMK
+
 --- Mstar is the implementaion of the star closure operation desribed in 
---- M Katzman's "Parameter test ideals of Cohen Macaulay rings" 
+--- M Katzman and W. Zhang's "Annihilators of Artinian modules compatible with a Frobenius map" 
 --- Input:
----    ideals I and element u of the same polynomial ring R OVER A PRIME FIELD.
 ---    a positive integer e
----    a prime p which is the characteristic of R
+---    n by n matrix U and submodule A of a free module R^n OVER A PRIME FIELD.
 --- Output:
----    the smallest ideal J of R containing I with the property that u^(1+p+...+p^(e-1)) J is in J^{[p^e]}
+---    the smallest submodule V of R^n containing A and which satisfies U^(1+p+...+p^(e-1)) V\subset V^{[p^e]} 
 Mstar = (e,A,U) ->(
 	local answer;
 	R:=ring(A); p:=char R;
@@ -473,7 +470,7 @@ Mstar = (e,A,U) ->(
 		while (flag) do
 		{
 			flag=false;
-			A1:=mEthRoot(e, mingens image ((U^Ne)*lastA));
+			A1:=matrix entries mEthRoot(e, mingens image ((U^Ne)*lastA));
 			A1=A1 | lastA;
 			t1:=compress ((A1))%((lastA));
 			if (t1!=0) then 

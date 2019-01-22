@@ -17,6 +17,7 @@ newPackage(
                    },
     	Headline => "Construction of random plane curves",
 	PackageExports => {"RandomObjects"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
         )
 
@@ -32,9 +33,6 @@ export{"distinctPlanePoints",
        "completeLinearSystemOnNodalPlaneCurve",
        "imageUnderRationalMap"
        }
-
-
-needsPackage "RandomObjects"
 
 undocumented {
      constructNodalPlaneCurve,

@@ -9,6 +9,7 @@ newPackage(
     	Headline => "Adjoint ideals of plane curves and related computations",
     	DebuggingMode => false,
 	CacheExampleOutput => true,
+	PackageImports => {"IntegralClosure","MapleInterface"},
 	AuxiliaryFiles => true
     	)
 
@@ -23,8 +24,6 @@ export {"extractLeftLower"}
 export {"forwardSubstitution"}
 export {"backwardSubstitution"}
 export {"traceMatrix"}
-
-needsPackage "MapleInterface"
 
 -- numerator of a row matrix
 matnum=(ibmm)->(

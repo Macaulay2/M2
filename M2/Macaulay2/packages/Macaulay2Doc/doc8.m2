@@ -331,9 +331,9 @@ document {
      Headline => "factor a map through another",
      Usage => "f//g\ng\\\\f",
      Inputs => {
-	  "f" => {"between free modules F --> H, or ",
+	  "f" => {"between modules F --> H, or ",
 	     ofClass RingElement},
-	  "g" => {"between free module G --> H, ",
+	  "g" => {"between modules G --> H, ",
 	       ofClass RingElement, ", ", 
 	       ofClass MonomialIdeal, ", or ",
 	       ofClass GroebnerBasis}

@@ -44,7 +44,7 @@ get-m4:
 get-autoconf:get-m4
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
 get-automake:get-autoconf
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.15
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16
 get-libtool:get-automake
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.6
 get-pkg: usr-build/share/aclocal/pkg.m4

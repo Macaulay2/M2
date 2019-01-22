@@ -1,17 +1,26 @@
 --*************************************************
 --*************************************************
 --This is the revised (and cleaned up) version
---of the PosChar package, which has been under 
---continuous development since the Wake Forest 
+--of the TestIdeals.m2 package, which has been under
+--continuous development since the Wake Forest
 --Macaulay2 workshop of August 2012.
---Only well documented and working functions are 
---migrated to this package.
+--TestIdeals.m2 and FThresholds.m2 broke off from
+--the original package, called PosChar.m2
 --*************************************************
 --*************************************************
 
+--version history
+--0.2 first public version
+--0.2a added AssumeDomain options to isFRegular and isFRational
+--1.0 first complete version
+--protect QGorensteinIndex;
+--protect MaxCartierIndex;
+--protect DepthOfSearch;
+--protect FrobeniusPowerStrategy;
+
 newPackage( "TestIdeals",
-Version => "0.2", 
-Date => "July 25th, 2017", 
+Version => "1.0",
+Date => "8/17/2018, 2018",
 Authors => {
      {Name => "Erin Bela",
      Email => "ebela@nd.edu"
@@ -54,7 +63,8 @@ Authors => {
      HomePage => "http://math.utah.edu/~schwede/"
      },
      {Name => "Dan Smolkin",
-     Email => "smolkin@math.utah.edu"
+     Email => "smolkin@math.utah.edu",
+     HomePage => "http://cohenmacaulay.life"
      },
      {Name => "Pedro Teixeira",
      Email => "pteixeir@knox.edu",
@@ -65,38 +75,38 @@ Authors => {
      HomePage => "https://witt.faculty.ku.edu"
      }
 },
-Headline => "A package for calculations of singularities in positive characteristic", 
-DebuggingMode => true, 
-Reload => true,
-AuxiliaryFiles=>true
+Headline => "A package for calculations of singularities in positive characteristic",
+AuxiliaryFiles=>true,
+PackageExports=>{"Depth"}
 )
 
 export{
---BasicFunctions (BasicFunctions.m2) 
-    "adicExpansion",    
-    "adicDigit", 	   
+--BasicFunctions (BasicFunctions.m2)
+    "adicExpansion",
+    "adicDigit",
     "adicTruncation",
     "decomposeFraction",
     "floorLog",
     "multiplicativeOrder",
     "NoZeroC", --option to force certain behavior from a function
-        
+
 --ethRootFunctions (EthRoots.m2)
-    "ascendIdeal", --Karl (still needs more tests / documentation)
+    "ascendIdeal",
+    "ascendModule",
     "AscentCount",
-    "FrobeniusRootStrategy",  
-    "frobeniusRoot",  
-    "MonomialBasis",	
+    "FrobeniusRootStrategy",
+    "frobeniusRoot",
+    "MonomialBasis",
     "Substitution",
-    
+
 --Frobenius Powers (frobeniusPowers.m2)
     "fastExponentiation",
     "frobenius",
     "frobeniusPower",
     "FrobeniusPowerStrategy",
-    "Naive", 
-    "Safe", 
-    
+    "Naive",
+    "Safe",
+
 -- parameterTestIdeal.m2
     "AssumeCM", --an option for function, if true, then the function will do less work.
     "AssumeReduced", --an option telling functions to assume a ring is reduced.
@@ -105,15 +115,14 @@ export{
     "canonicalIdeal", --Karl (still needs more tests / documentation), this is based on Moty's old code.
     "frobeniusTraceOnCanonicalModule", --Karl (this is Moty's find u function, but it returns a list if Macaulay2 doesn't identify 1 element).
     "isCohenMacaulay", --Karl (added recently, if anyone has ideas to improve this...)
-    "isFrational", --Karl (added recently).
-    "IsLocal", --an option for isCohenMacaulay, isFrational, etc.
+    "isFRational", --Karl (added recently).
+    "IsLocal", --an option for isCohenMacaulay, isFRational, etc.
     "testModule", --Karl (this subsumes a bunch of older functions)
-    "MTries",
     "parameterTestIdeal",
-    
+
 -- Finjective.m2
     "HSLGModule", --produces the non-F-injective module, ie the submodule of the canonical module
-    "isFinjective",
+    "isFInjective",
     "CanonicalStrategy", --how to check F-injectivity on the canonical module (Ext or Katzman)
     "Katzman", --an option for CanonicalStrategy
 
@@ -123,10 +132,10 @@ export{
     "MaxCartierIndex", --the cartier index limfindAllCompatibleIdealsit in the test ideal method
     "testIdeal", --Karl (the new version)
     "QGorensteinIndex", --if you already know the Q-Gorenstein index, you can pass it
-    "isFregular",
-    "isFpure",
-    "compatibleIdeals" ---MK	   
-
+    "DepthOfSearch",
+    "isFRegular",
+    "isFPure",
+    "compatibleIdeals" ---MK
 }
 
 

@@ -9,18 +9,11 @@ newPackage(
                   },
     	Headline => "Deformations of Stanley-Reisner rings and related computations",
     	DebuggingMode => false,
+     	PackageImports => { "ConvexInterface", "OldPolyhedra" },
         Configuration => {"UseConvex"=>false}
         )
 
 -- For information see documentation key "SRdeformations" below.
-
-
---if ((options SRdeformations).Configuration)#"UseConvex"==true then (
-  needsPackage "ConvexInterface"
---);
-needsPackage "OldPolyhedra"
-
-
 
 -*
 Before using "ConvexInterface" via giving the option 

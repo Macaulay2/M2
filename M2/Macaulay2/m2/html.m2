@@ -139,12 +139,12 @@ htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
      if o#"alt" === null then error ("IMG item is missing alt attribute");
-     concatenate("<img src=", format toURL o#"src", " alt=", format o#"alt", "/>"))
+     concatenate("<img src=\"", htmlLiteral toURL o#"src", "\" alt=", format o#"alt", "/>"))
 
 html HREF := x -> (
      r := html last x;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
+     concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
 
@@ -451,7 +451,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := null
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
@@ -476,16 +476,14 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      -- we specify --no-readline because the readline library catches SIGINT:
      args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
+     env := "GC_MAXIMUM_HEAP_SIZE=400M ";
      cmdname := commandLine#0;
      -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
-     if ulimit === null then (
-	  ulimit = utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
-	  );
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
-     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
+     cmd := ulimit | "cd " | rundir | "; " | env | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
      makeDirectory rundir;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);

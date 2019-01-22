@@ -8,7 +8,8 @@ newPackage(
 		    {Name => "Frank-Olaf Schreyer",
 			   Email =>"schreyer@math.uni-sb.de",
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
-	Headline=> "computation of general canonical curves of genus <= 15 over fields with small characteristic"
+	Headline=> "computation of general canonical curves of genus <= 15 over fields with small characteristic",
+	PackageImports => {"Elimination","Truncations"}
 	)
     
 export{"isSmoothCurve",

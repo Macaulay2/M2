@@ -7,7 +7,7 @@ TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 # URL = http://shoup.net/ntl
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
 
 ifeq (@DEBUG@,yes)

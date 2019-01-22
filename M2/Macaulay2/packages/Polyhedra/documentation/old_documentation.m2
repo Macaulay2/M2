@@ -2497,40 +2497,40 @@ document {
      
      }
 
-document {
-     Key => {(polyhedron,Cone)},
-     Headline => "converts a cone to class Polyhedron",
-     Usage => " P = polyhedron C",
-     Inputs => {
-	  "C" => Cone
-	  },
-     Outputs => {
-	  "P" => Polyhedron
-	  },
+-- document {
+--      Key => {(polyhedron,Cone)},
+--      Headline => "converts a cone to class Polyhedron",
+--      Usage => " P = polyhedron C",
+--      Inputs => {
+-- 	  "C" => Cone
+-- 	  },
+--      Outputs => {
+-- 	  "P" => Polyhedron
+-- 	  },
      
-     PARA{}, "Every ",TO Cone," is in particular a ",TO Polyhedron,". ",TT "polyhedron"," 
-     converts the cone into the same cone but of class ",TO Polyhedron,".",
+--      PARA{}, "Every ",TO Cone," is in particular a ",TO Polyhedron,". ",TT "polyhedron"," 
+--      converts the cone into the same cone but of class ",TO Polyhedron,".",
      
-     PARA{}, "Consider the positive orthant in ",TO QQ,"^3:",
+--      PARA{}, "Consider the positive orthant in ",TO QQ,"^3:",
      
-     EXAMPLE {
-	  " C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}}"
-	  },
+--      EXAMPLE {
+-- 	  " C = coneFromVData matrix {{1,0,0},{0,1,0},{0,0,1}}"
+-- 	  },
      
-     PARA{}, "If we want to consider the positive orthant not as cone but as a polyhedron we 
-     apply ",TT "polyhedron",":",
+--      PARA{}, "If we want to consider the positive orthant not as cone but as a polyhedron we 
+--      apply ",TT "polyhedron",":",
      
-     EXAMPLE {
-	  " P = polyhedron C"
-	  },
+--      EXAMPLE {
+-- 	  " P = polyhedron C"
+-- 	  },
      
-     PARA{}, "Although, they are the same geometric object but of different classes, Polyhedra 
-     considers them not as equal:",
+--      PARA{}, "Although, they are the same geometric object but of different classes, Polyhedra 
+--      considers them not as equal:",
      
-     EXAMPLE {
-	  " P === C"
-	  }
-     }
+--      EXAMPLE {
+-- 	  " P === C"
+-- 	  }
+--      }
 
 document {
      Key => directProduct,

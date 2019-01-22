@@ -206,17 +206,17 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 --     	    "a unary postfix operator"
 
 bumpPrecedence();
-     wordEOF = nleftword("{*end of file*}");
+     wordEOF = nleftword("-*end of file*-");
      makeKeyword(wordEOF);
 bumpPrecedence();
-     wordEOC = nleftword("{*end of cell*}");
+     wordEOC = nleftword("-*end of cell*-");
      makeKeyword(wordEOC);
 bumpPrecedence();
      precRightParen := prec;
 bumpPrecedence();
      export SemicolonW := nright(";");
      export SemicolonS := makeKeyword(SemicolonW);
-     NewlineW = nleftword("{*newline*}");
+     NewlineW = nleftword("-*newline*-");
 bumpPrecedence();
      export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(CommaW);
 bumpPrecedence();

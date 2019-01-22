@@ -1473,7 +1473,7 @@ locate(e:Code):void := (
      is v:whileListDoCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); locate(v.doClause); )
      );
 locate0():void := (
-     locatedCode.filename = "{*unknown file name*}";
+     locatedCode.filename = "-*unknown file name*-";
      locatedCode.minline = 1000000;
      locatedCode.maxline = 0;
      );
