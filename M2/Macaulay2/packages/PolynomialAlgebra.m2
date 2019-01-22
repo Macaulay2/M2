@@ -631,6 +631,7 @@ TEST ///
   I = ideal(a*b*a-a*c*b)
   debug Core
   map(R, rawNCGroebnerBasisTwoSided(raw gens I, 387))
+  map(R, rawNCReductionTwoSided(raw gens I, raw gens I))
 ///
 end--
 

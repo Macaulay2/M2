@@ -1194,7 +1194,8 @@ const Matrix *rawMGB(
 // Noncommutative Groebner bases (2-sided) //
 /////////////////////////////////////////////
 
-const std::vector<const PolynomialAlgebra::Poly*> matrixToVector(const PolynomialAlgebra* A, const Matrix* input)
+const std::vector<const PolynomialAlgebra::Poly*> matrixToVector(const PolynomialAlgebra* A,
+                                                                 const Matrix* input)
 {
   std::vector<const PolynomialAlgebra::Poly*> result;
   result.reserve(input->n_cols());
@@ -1207,7 +1208,8 @@ const std::vector<const PolynomialAlgebra::Poly*> matrixToVector(const Polynomia
   return result;
 }
 
-const Matrix* vectorToMatrix(const PolynomialAlgebra* A, const std::vector<const PolynomialAlgebra::Poly*>& elems)
+const Matrix* vectorToMatrix(const PolynomialAlgebra* A,
+                             const std::vector<const PolynomialAlgebra::Poly*>& elems)
 {
   MatrixConstructor mat(A->make_FreeModule(1), elems.size());
   for (auto i = 0; i < elems.size(); ++i)
@@ -1225,7 +1227,7 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
   if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
-      NCGroebner G(elems);
+      NCGroebner G(A, elems);
       G.compute(maxdeg);
       auto result = G.currentValue();
       return vectorToMatrix(A, * result);
@@ -1234,9 +1236,23 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
   return nullptr;
 }
 
-const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducers)
+const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducerMatrix)
 {
-  ERROR("not implemented yet");
+  const Ring* R = toBeReduced->get_ring();
+  if (R != reducerMatrix->get_ring())
+    {
+      ERROR("expected matrices to be over the same ring");
+      return nullptr;
+    }
+  const PolynomialAlgebra* A = R->cast_to_PolynomialAlgebra();
+  if (A != nullptr and toBeReduced->n_rows() == 1 and reducerMatrix->n_rows() == 1)
+    {
+      auto reducees = matrixToVector(A, toBeReduced);
+      auto reducers = matrixToVector(A, reducerMatrix);
+      auto result = NCGroebner::twoSidedReduction(A, reducees, reducers);
+      return vectorToMatrix(A, result);
+    }
+  ERROR("expected one row matriices over a noncommutative algebra");
   return nullptr;
 }
 
