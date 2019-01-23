@@ -1,5 +1,42 @@
 things to do manually before release
 
+        See whether the documentation looks okay.  Do this both without and with
+	installing a fresh copy of FirstPackage and restarting.  Make sure the example
+	output is there.
+
+		i1 : loadPackage "FirstPackage"
+
+		o1 = FirstPackage
+
+		o1 : Package
+
+		i2 : help firstFunction
+
+		o2 = firstFunction
+		     *************
+
+		     Description
+		     ===========
+
+		     Here we show an example.
+
+		     +--------------------+
+		     |i1 : firstFunction 1|
+		     |                    |
+		     |o1 = Hello World!   |
+		     +--------------------+
+		     |i2 : firstFunction 0|
+		     |                    |
+		     |o2 = D'oh!          |
+		     +--------------------+
+
+		     Ways to use firstFunction :
+		     ===========================
+
+		       * "firstFunction(ZZ)" -- a silly first function
+
+		o2 : DIV
+
         see whether C-c works in emacs and in a terminal, both for M2 and its subjobs:
 
 		i1 : while true do 1
