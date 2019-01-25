@@ -162,4 +162,19 @@ h = abstractRationalMap(D,"OADP")
 assert(5 == projectiveDegrees(h,4))
 ///
 
+TEST /// -- bug fixed in inverseMap (25/01/2019)
+   x := local x; P2 := (ZZ/65521)[x_0..x_2];
+   f = rationalMap(P2,{6,1,7});
+   S = image f;
+   p = for i to 2 list random(ZZ/65521);
+   J = sub(transpose jacobian matrix f,{x_0=>p_0,x_1=>p_1,x_2=>p_2});
+   T = image rationalMap(P2,target f,transpose(J*(transpose vars P2)));
+   h = (rationalMap T)|S;
+   assert isDominant(h,MathMode=>true)
+   assert(degreeOfRationalMap h == 2)
+   assert(try inverseMap h else true)
+   assert(try inverseMap(h,MathMode=>true) else true)
+   assert(degree h == 2)
+///
+
 
