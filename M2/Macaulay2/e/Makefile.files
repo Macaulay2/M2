@@ -11,6 +11,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	NCAlgebras/WordTable \
 	NCGroebner \
 	monomial-collection \
 	Polynomial \
