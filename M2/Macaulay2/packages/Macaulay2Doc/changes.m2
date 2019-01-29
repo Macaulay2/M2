@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release (1.14)",
+	  TO "changes made for the next release",
 	  TO "changes, 1.13",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
@@ -29,8 +29,19 @@ document {
      }
 
 document {
-     Key => "changes made for the next release (1.14)",
-     "None yet."
+     Key => "changes made for the next release",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "A bug related to determining the correct layout of a source directory prevented the function ", TO "help", " from
+			 finding the example output and merging it into the help message.  This has been fixed." 
+			 },
+		    LI { "A change to the way expressions interact with the reverse dictionary prevented normal toric varieties assigned
+			 to global variables from being printed out as the name of the variable."
+			 }
+		    }
+	       }
+	  }
      }
 
 document {
