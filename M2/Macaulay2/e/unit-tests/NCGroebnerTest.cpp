@@ -3,15 +3,76 @@
 
 #include "NCAlgebras/WordTable.hpp"
 
+std::vector<int> monom1 {2, 0, 1};  // cab
+std::vector<int> monom2 {2, 2};  // cc
+std::vector<int> monom3 {1, 0, 1, 0};  // baba
+std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
+
 TEST(WordTable, create)
 {
   WordTable W;
 
-  std::vector<int> monom1 {0, 1, 0};  //aba.
-  std::string monom2 {"aba"}; // variables are a,b,...
+  EXPECT_EQ(monom1.size(), 3);
+  EXPECT_EQ(monom2.size(), 2);
 
-  EXPECT_TRUE(monom1.size() == 3);
-  EXPECT_TRUE(monom2.size() == 3);
+  W.insert(ConstMonomial(monom1));
+  W.insert(ConstMonomial(monom2));
+  W.insert(ConstMonomial(monom3));
+
+  EXPECT_EQ(W.monomialCount(), 3);
+}        
+
+TEST(WordTable, insert)
+{
+  WordTable W;
+
+  EXPECT_EQ(monom1.size(), 3);
+  EXPECT_EQ(monom2.size(), 2);
+
+  W.insert(ConstMonomial(monom1));
+  W.insert(ConstMonomial(monom2));
+  W.insert(ConstMonomial(monom3));
+
+  std::vector<std::pair<int,int>> matches;
+  W.subwords(ConstMonomial(word), matches);
+
+  EXPECT_EQ(matches.size(), 3);
+  EXPECT_EQ(matches[0], std::make_pair(0, 0));
+  EXPECT_EQ(matches[1], std::make_pair(1, 3));
+  EXPECT_EQ(matches[2], std::make_pair(2, 5));
+}        
+
+TEST(WordTable, subwords)
+{
+  std::vector<int> monom1 {1, 0, 1, 2};  // babc
+  std::vector<int> monom2 {1, 0, 2, 2};  // bacc
+  std::vector<int> monom3 {1, 0, 1, 0};  // baba
+  std::vector<int> monom4 {1, 0};  // ba
+  std::vector<int> word {1, 0, 1, 0, 2, 2, 1, 0, 1, 2};
+
+  WordTable W;
+
+  EXPECT_EQ(monom1.size(), 4);
+  EXPECT_EQ(monom2.size(), 4);
+  EXPECT_EQ(monom3.size(), 4);
+  EXPECT_EQ(monom4.size(), 2);
+  EXPECT_EQ(word.size(), 10);
+  
+  W.insert(ConstMonomial(monom1));
+  W.insert(ConstMonomial(monom2));
+  W.insert(ConstMonomial(monom3));
+  W.insert(ConstMonomial(monom4));
+
+  std::vector<std::pair<int,int>> matches;
+  W.subwords(ConstMonomial(word), matches);
+
+  EXPECT_EQ(matches.size(), 6);
+  EXPECT_EQ(matches[0], std::make_pair(0, 6));
+  EXPECT_EQ(matches[1], std::make_pair(1, 2));
+  EXPECT_EQ(matches[2], std::make_pair(2, 0));
+  EXPECT_EQ(matches[3], std::make_pair(3, 0));
+  EXPECT_EQ(matches[4], std::make_pair(3, 2));
+  EXPECT_EQ(matches[5], std::make_pair(3, 6));
 }        
 
 // Local Variables:
