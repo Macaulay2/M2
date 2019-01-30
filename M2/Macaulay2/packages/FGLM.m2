@@ -46,11 +46,25 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G, R) -> (
 
     )
 
-variableMatrices = method()
-variableMatrices(GroebnerBasis) := List => (G) -> (
+multiplicationMatrices = method()
+multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     -- G = a GroebnerBasis
     -- returns the matrices giving multiplication by variables in R/I
-    
+
+    R := ring G;
+    I := ideal gens G;
+    B := basis (R/I);
+
+    mons := first entries B;
+    mats := {};
+
+    for x in gens R do (
+	F := first entries (x * B);
+	M := transpose matrix for f in F list for m in mons list f_m;
+	mats = append(mats, M);
+    );
+
+    mats
     )
 
 -------------------------------------------------------------------------------
@@ -66,3 +80,27 @@ TEST ///
 ///
 
 end
+
+
+restart
+debug needsPackage "FGLM"
+R1 = QQ[x,y,z]
+I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
+G1 = gb I1
+B1 = basis (R1/I1)
+
+
+restart
+debug needsPackage "FGLM"
+R1 = QQ[x,y,z]
+I1 = ideal(x^2 + 2*y^2 - y - 2*z, x^2 - 8*y^2 + 10*z - 1, x^2 - 7*y*z)
+G1 = gb I1
+B1 = basis (R1/I1)
+
+
+restart
+debug needsPackage "FGLM"
+R1 = QQ[x,y,z]
+I1 = ideal(x^2 + y^2 + z^2 - 2*x, x^3 - y*z - x, x - y + 2*z)
+G1 = gb I1
+B1 = basis (R1/I1)
