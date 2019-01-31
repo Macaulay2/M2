@@ -2,15 +2,16 @@ newPackage(
         "FGLM",
         Version => "1.0.0",
         Date => "January 29, 2019",
-        Authors => {{Name => "Dylan Peifer",
-                     Email => "djp282@cornell.edu",
-                     HomePage => "https://www.math.cornell.edu/~djp282"}},
+        Authors => {
+	    { Name => "Dylan Peifer", Email => "djp282@cornell.edu", HomePage => "https://www.math.cornell.edu/~djp282" },
+	    { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud" }
+	    },
         Headline => "Compute Groebner bases via the FGLM algorithm",
         DebuggingMode => true
         )
 
 -*
-Copyright (C) 2019 Dylan Peifer
+Copyright (C) 2019 Dylan Peifer and Mahrud Sayrafi
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,6 +32,11 @@ export {"fglm"}
 -------------------------------------------------------------------------------
 --- top level functions
 -------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+-- See Section 2.4.4 of Thibaut Verron's thesis for details:
+-- https://thibautverron.github.io/doc/2016-these.pdf
+---------------------------------------------------------------------------
 fglm = method()
 fglm(Ideal, Ring) := GroebnerBasis => (I, R) -> (
     -- I = an ideal
@@ -50,22 +56,25 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 
     B1 := basis (R1/I1);
     M := multiplicationMatrices G1;
-    n := length M;
     m := numcols M#0;
+    n := #gens R2 - 1;
 
+    -- elements in the grobner basis
     G2 := {};
+    -- elements in the staircase
     B2 := {1_R2};
     
+    -- normal form translation table
     V := new MutableHashTable from {
 	 B2#0 => transpose matrix { {1_(coefficientRing R1)} | toList ((m-1):0) } 
 	 };
 
+    -- list of elements between the staircase and grobner basis generators
     -- TODO: use a heap
     -- TODO: use a hash table
-    S := new List from for i from 0 to #gens R2 - 1 list (R2_i * 1_R2, i, 1_R2);
+    S := new List from for i to n list (R2_i * 1_R2, i, 1_R2);
     
     while #S > 0 do (
-	print "hi";
 	(elt, i, mu) := min S;
 	v := M#i * V#mu;
 	
@@ -76,13 +85,13 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	    G2 = append(G2, g);
     	    S = select(S, s -> s#0 % elt != 0);
 	    ) else (
-	    B2 = append(B2, mu);
-	    S = S | for j from 0 to #gens R2 - 1 list (R2_j * mu, j, mu);
+	    B2 = append(B2, elt);
+	    S = S | for j to n list (R2_j * elt, j, elt);
 	    S = select(S, s -> all(B2, b -> b != s#0)); -- TODO: think more about this
-	    V#mu = v;
+	    V#elt = v;
 	    );
 	);
-    forceGB(matrix G2)
+    forceGB(matrix {G2})
     )
 
 multiplicationMatrices = method()
@@ -114,36 +123,54 @@ beginDocumentation()
 -------------------------------------------------------------------------------
 --- tests
 -------------------------------------------------------------------------------
-TEST ///
+test = (I1, MO2) -> (
+    R1 := ring I1;
+    R2 := (coefficientRing R1)(monoid ([gens R1], MonomialOrder => MO2));
+    elapsedTime G2 := gb(sub(I1, R2));
+    elapsedTime G2' := fglm(I1, R2);
+    assert(gens G2 == gens G2')
+    )
 
+TEST ///
+  debug needsPackage "FGLM"
+  R1 = QQ[x,y,z]
+  I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
+  test(I1, Lex)
+///
+
+TEST ///
+  debug needsPackage "FGLM"
+  R1 = QQ[x,y,z]
+  I1 = ideal(x^2 + 2*y^2 - y - 2*z, x^2 - 8*y^2 + 10*z - 1, x^2 - 7*y*z)
+  test(I1, Lex)
+///
+
+TEST ///
+  debug needsPackage "FGLM"
+  R1 = QQ[x,y,z]
+  I1 = ideal(x^2 + y^2 + z^2 - 2*x, x^3 - y*z - x, x - y + 2*z)
+  test(I1, Lex)
+///
+
+TEST ///
+  debug needsPackage "FGLM"
+  R1 = QQ[x,y,z]
+  I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
+  test(I1, Lex)
+///
+
+TEST ///
+  
 ///
 
 end
 
+restart
+needsPackage "FGLM"
+elapsedTime check FGLM -- 4.17 seconds
 
 restart
-debug needsPackage "FGLM"
-R1 = QQ[x,y,z]
-I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
-G1 = gb I1
-B1 = basis (R1/I1)
-
-M = multiplicationMatrices G1
-
-fglm(I1, QQ[x,y,z, MonomialOrder => Lex])
-fglm(G1, QQ[x,y,z, MonomialOrder => Lex])
-
+uninstallPackage "FGLM"
 restart
-debug needsPackage "FGLM"
-R1 = QQ[x,y,z]
-I1 = ideal(x^2 + 2*y^2 - y - 2*z, x^2 - 8*y^2 + 10*z - 1, x^2 - 7*y*z)
-G1 = gb I1
-B1 = basis (R1/I1)
-
-
-restart
-debug needsPackage "FGLM"
-R1 = QQ[x,y,z]
-I1 = ideal(x^2 + y^2 + z^2 - 2*x, x^3 - y*z - x, x - y + 2*z)
-G1 = gb I1
-B1 = basis (R1/I1)
+installPackage "FGLM"
+viewHelp "FGLM"
