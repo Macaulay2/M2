@@ -363,6 +363,10 @@ concatCols = mats -> (
      -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
      -- if not same targets then error "expected matrices in the same row to have equal targets";
+     if all(mats, isHomogeneous) then (
+        S := ring mats#0;
+        d := degree mats#0;
+        sources = for i from 0 to #sources-1 list (sources#i)**(S^(d-degree mats#i)));
      ggConcatCols(targets#0, Module.directSum sources, mats))
 
 concatRows = mats -> (
