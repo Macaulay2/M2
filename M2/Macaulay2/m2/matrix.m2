@@ -16,10 +16,10 @@ degreeCheck = (d,R) -> (				    -- assume d =!= null
 
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      R := ring tar;
-     if raw cover src =!= source f
+     if opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
+     or raw cover src =!= source f
      or raw cover tar =!= target f
-     or opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
-     then f = rawMatrixRemake2(raw cover tar, raw cover src, if deg =!= null then deg else rawMultiDegree f, f, 0);
+     then (f = rawMatrixRemake2(raw cover tar, raw cover src, if deg =!= null then deg else rawMultiDegree f, f, 0));
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,
@@ -235,7 +235,7 @@ isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
 ggConcatCols := (tar,src,mats) -> (
-     map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
+     map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => degree mats#0)
      )
 
 ggConcatRows := (tar,src,mats) -> (
