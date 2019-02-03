@@ -19,7 +19,7 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      if opts.Degree =!= null and rawMultiDegree f =!= (deg := degreeCheck(opts.Degree,R))
      or raw cover src =!= source f
      or raw cover tar =!= target f
-     then (f = rawMatrixRemake2(raw cover tar, raw cover src, if deg =!= null then deg else rawMultiDegree f, f, 0));
+     then f = rawMatrixRemake2(raw cover tar, raw cover src, if deg =!= null then deg else rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,
