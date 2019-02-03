@@ -34,7 +34,7 @@ export {"fglm"}
 -------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------
--- See Section 2.4.4 of Thibaut Verron's thesis for details:
+-- See Section 2.4.4, Algorithm 2.5 of Thibaut Verron's thesis for details:
 -- https://thibautverron.github.io/doc/2016-these.pdf
 ---------------------------------------------------------------------------
 fglm = method()
@@ -91,6 +91,39 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     forceGB(matrix {G2})
     )
 
+---------------------------------------------------------------------------
+-- See Section 2.4.4, Algorithm 2.4 of Thibaut Verron's thesis for details:
+-- https://thibautverron.github.io/doc/2016-these.pdf
+-- Applies more "tricks"
+---------------------------------------------------------------------------
+multiplicationMatrices' = method()
+multiplicationMatrices'(GroebnerBasis) := List => (G) -> (
+    -- G = a GroebnerBasis
+    -- returns the matrices giving multiplication by variables in R/I
+
+    R := ring G;
+    I := ideal gens G;
+    B := first entries sub(basis (R/I), R); -- TODO: find a way to avoid recomputing GB
+    N := new MutableHashTable from for b in B list b => b;
+    F := flatten for x in gens R list flatten apply(B, b -> if not N#?(x * b) then x * b else {});
+    F = sort F;
+
+    for mu in F do (
+	i := position(first entries leadTerm G, g -> mu == leadMonomial g);
+	if i =!= null then (
+	    g := (gens G)_i_0;
+	    N#mu = mu - g // leadCoefficient g; -- Verron has typo in line 9
+	    ) else (
+	    j := position(F, mu' -> mu % mu' == 0 and any(gens R, x -> mu == x * mu'));
+	    mu' := F#j;
+	    (gs, cs) := coefficients N#mu';
+	    N#mu = sum apply(first entries gs, first entries transpose cs, (g, c) -> N#(g * mu // mu') * c);
+	    );
+	);
+
+    for x in gens R list lift(last coefficients(matrix{apply(x * B, elt -> N#elt)}, Monomials => B), coefficientRing R)
+    )
+
 multiplicationMatrices = method()
 multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     -- G = a GroebnerBasis
@@ -100,18 +133,17 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     I := ideal gens G;
     B := basis (R/I); -- TODO: find a way to avoid recomputing GB
 
-    mons := first entries B;
-    mats := {};
-
-    for x in gens R do (
-	F := first entries (x * B);
-	M := transpose matrix for f in F list for m in mons list f_m;
-	mats = append(mats, M);
-    );
-
-    mats
+    for x in gens R list lift(last coefficients(x * B, Monomials => B), coefficientRing R)
     )
 
+-------------------------------------------------------------------------------
+--- documentation
+-------------------------------------------------------------------------------
+beginDocumentation()
+
+-------------------------------------------------------------------------------
+--- tests
+-------------------------------------------------------------------------------
 cyclic = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
 cyclic(ZZ) := Ideal => opts -> (n) -> (
     R := (opts.CoefficientRing)[vars(0..n-1), MonomialOrder => opts.MonomialOrder];
@@ -142,25 +174,18 @@ katsura(ZZ) := Ideal => opts -> (n) -> (
     ideal F
     )
 
--------------------------------------------------------------------------------
---- documentation
--------------------------------------------------------------------------------
-beginDocumentation()
-
--------------------------------------------------------------------------------
---- tests
--------------------------------------------------------------------------------
 test = (I1, MO2) -> (
     R1 := ring I1;
     R2 := (coefficientRing R1)(monoid ([gens R1], MonomialOrder => MO2));
-    elapsedTime G2 := gb(sub(I1, R2));
+    G2 := gb(sub(I1, R2));
     elapsedTime G2' := fglm(I1, R2);
     assert(gens G2 == gens G2')
     )
 
 TEST ///
+restart
   debug needsPackage "FGLM"
-  R1 = QQ[x,y,z]
+  R1 = ZZ/101[x,y,z]
   I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
   test(I1, Lex)
 ///
@@ -206,8 +231,7 @@ viewHelp "FGLM"
 -- gb: 0.310213
 -- fglm: 4.19424
 restart
-needsPackage "FGLM"
-load "examples.m2"
+debug needsPackage "FGLM"
 I = cyclic(6, MonomialOrder=>Lex)
 G1 = elapsedTime gb I
 I = cyclic(6)
@@ -219,8 +243,7 @@ G2 = elapsedTime fglm(I, R)
 -- gb: 0.116438
 -- fglm: 0.238552
 restart
-needsPackage "FGLM"
-load "examples.m2"
+debug needsPackage "FGLM"
 I = katsura(6, MonomialOrder=>Lex)
 G1 = elapsedTime gb I
 I = katsura(6)
@@ -232,8 +255,7 @@ G2 = elapsedTime fglm(I, R)
 -- gb:
 -- fglm:
 restart
-needsPackage "FGLM"
-load "examples.m2"
+debug needsPackage "FGLM"
 I = cyclic(7, MonomialOrder=>Lex)
 G1 = elapsedTime gb I
 I = cyclic(7)
@@ -245,21 +267,20 @@ G2 = elapsedTime fglm(I, R)
 -- gb: 6.82678
 -- fglm: 1.252
 restart
-needsPackage "FGLM"
-load "examples.m2"
+debug needsPackage "FGLM"
 I = katsura(7, MonomialOrder=>Lex)
 G1 = elapsedTime gb I
 I = katsura(7)
 R = newRing(ring I, MonomialOrder=>Lex)
+multiplicationMatrices = profile multiplicationMatrices
 G2 = elapsedTime fglm(I, R)
-
+profileSummary
 
 -- katsura-8
 -- gb: 
 -- fglm: 
 restart
-needsPackage "FGLM"
-load "examples.m2"
+debug needsPackage "FGLM"
 I = katsura(8, MonomialOrder=>Lex)
 G1 = elapsedTime gb I
 I = katsura(8)
