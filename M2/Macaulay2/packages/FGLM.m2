@@ -112,6 +112,36 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     mats
     )
 
+cyclic = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
+cyclic(ZZ) := Ideal => opts -> (n) -> (
+    R := (opts.CoefficientRing)[vars(0..n-1), MonomialOrder => opts.MonomialOrder];
+    F := toList apply(1..n-1, d -> sum(0..n-1, i -> product(d, k -> R_((i+k)%n))))
+         | {product gens R - 1};
+    ideal F
+    )
+
+hcyclic = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
+hcyclic(ZZ) := Ideal => opts -> (n) -> (
+    R := (opts.CoefficientRing)[vars(0..n), MonomialOrder => opts.MonomialOrder];
+    F := toList apply(1..n-1, d -> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
+         | {product(n, i -> R_i) - R_n^n};
+    ideal F
+    )
+
+katsura = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
+katsura(ZZ) := Ideal => opts -> (n) -> (
+    n = n-1;
+    R := (opts.CoefficientRing)[vars(0..n), MonomialOrder => opts.MonomialOrder];
+    L := gens R;
+    u := i -> (
+	 if i < 0 then i = -i;
+	 if i <= n then L_i else 0_R
+	 );
+    f1 := -1 + sum for i from -n to n list u i;
+    F := toList prepend(f1, apply(0..n-1, i -> - u i + sum(-n..n, j -> (u j) * (u (i-j)))));
+    ideal F
+    )
+
 -------------------------------------------------------------------------------
 --- documentation
 -------------------------------------------------------------------------------
@@ -171,3 +201,130 @@ uninstallPackage "FGLM"
 restart
 installPackage "FGLM"
 viewHelp "FGLM"
+
+-- cyclic-6
+-- gb: 0.310213
+-- fglm: 4.19424
+restart
+needsPackage "FGLM"
+load "examples.m2"
+I = cyclic(6, MonomialOrder=>Lex)
+G1 = elapsedTime gb I
+I = cyclic(6)
+R = newRing(ring I, MonomialOrder=>Lex)
+G2 = elapsedTime fglm(I, R)
+
+
+-- katsura-6
+-- gb: 0.116438
+-- fglm: 0.238552
+restart
+needsPackage "FGLM"
+load "examples.m2"
+I = katsura(6, MonomialOrder=>Lex)
+G1 = elapsedTime gb I
+I = katsura(6)
+R = newRing(ring I, MonomialOrder=>Lex)
+G2 = elapsedTime fglm(I, R)
+
+
+-- cyclic-7
+-- gb:
+-- fglm:
+restart
+needsPackage "FGLM"
+load "examples.m2"
+I = cyclic(7, MonomialOrder=>Lex)
+G1 = elapsedTime gb I
+I = cyclic(7)
+R = newRing(ring I, MonomialOrder=>Lex)
+G2 = elapsedTime fglm(I, R)
+
+
+-- katsura-7
+-- gb: 6.82678
+-- fglm: 1.252
+restart
+needsPackage "FGLM"
+load "examples.m2"
+I = katsura(7, MonomialOrder=>Lex)
+G1 = elapsedTime gb I
+I = katsura(7)
+R = newRing(ring I, MonomialOrder=>Lex)
+G2 = elapsedTime fglm(I, R)
+
+
+-- katsura-8
+-- gb: 
+-- fglm: 
+restart
+needsPackage "FGLM"
+load "examples.m2"
+I = katsura(8, MonomialOrder=>Lex)
+G1 = elapsedTime gb I
+I = katsura(8)
+R = newRing(ring I, MonomialOrder=>Lex)
+G2 = elapsedTime fglm(I, R)
+
+
+-- reimer-5
+-- gb: 8.50152
+-- fglm: 5.63204
+restart
+needsPackage "FGLM"
+kk = ZZ/32003
+R1 = kk[x,y,z,t,u, MonomialOrder=>Lex]
+I1 = ideal(2*x^2 - 2*y^2 + 2*z^2 - 2*t^2 + 2*u^2 - 1,
+           2*x^3 - 2*y^3 + 2*z^3 - 2*t^3 + 2*u^3 - 1,
+           2*x^4 - 2*y^4 + 2*z^4 - 2*t^4 + 2*u^4 - 1,
+           2*x^5 - 2*y^5 + 2*z^5 - 2*t^5 + 2*u^5 - 1,
+           2*x^6 - 2*y^6 + 2*z^6 - 2*t^6 + 2*u^6 - 1)
+G1 = elapsedTime gb I1
+R2 = kk[x,y,z,t,u]
+I2 = sub(I1, R2)
+G2 = elapsedTime fglm(I2, R1)
+
+
+-- virasoro
+-- gb: 8.94464
+-- fglm: 63.5117
+restart
+needsPackage "FGLM"
+kk = ZZ/32003
+R1 = kk[x1,x2,x3,x4,x5,x6,x7,x8, MonomialOrder=>Lex]
+I1 = ideal(8*x1^2 + 8*x1*x2 + 8*x1*x3 + 2*x1*x4 + 2*x1*x5 + 2*x1*x6 + 2*x1*x7 - x1 - 8* x2*x3 - 2*x4*x7 - 2*x5*x6,
+           8*x1*x2 - 8*x1*x3 + 8*x2^2 + 8*x2*x3 + 2*x2*x4 + 2*x2*x5 + 2*x2*x6 + 2*x2* x7 - x2 - 2*x4*x6 - 2*x5*x7,
+	   -8*x1*x2 + 8*x1*x3 + 8*x2*x3 + 8*x3^2 + 2*x3*x4 + 2*x3*x5 + 2*x3*x6 + 2* x3*x7 - x3 - 2*x4*x5 - 2*x6*x7,
+	   2*x1*x4 - 2*x1*x7 + 2*x2*x4 - 2*x2*x6 + 2*x3*x4 - 2*x3*x5 + 8*x4^2 + 8*x4* x5 + 2*x4*x6 + 2*x4*x7 + 6*x4*x8 - x4 - 6*x5*x8,
+	   2*x1*x5 - 2*x1*x6 + 2*x2*x5 - 2*x2*x7 - 2*x3*x4 + 2*x3*x5 + 8*x4*x5 - 6*x4* x8 + 8*x5^2 + 2*x5*x6 + 2*x5*x7 + 6*x5*x8 - x5,
+	   -2*x1*x5 + 2*x1*x6 - 2*x2*x4 + 2*x2*x6 + 2*x3*x6 - 2*x3*x7 + 2*x4*x6 + 2* x5*x6 + 8*x6^2 + 8*x6*x7 + 6*x6*x8 - x6 - 6*x7*x8,
+	   -2*x1*x4 + 2*x1*x7 - 2*x2*x5 + 2*x2*x7 - 2*x3*x6 + 2*x3*x7 + 2*x4*x7 + 2* x5*x7 + 8*x6*x7 - 6*x6*x8 + 8*x7^2 + 6*x7*x8 - x7,
+	   -6*x4*x5 + 6*x4*x8 + 6*x5*x8 - 6*x6*x7 + 6*x6*x8 + 6*x7*x8 + 8*x8^2 - x8)
+G1 = elapsedTime gb I1
+R2 = kk[x1,x2,x3,x4,x5,x6,x7,x8]
+I2 = sub(I1, R2)
+G2 = elapsedTime fglm(I2, R1)
+
+
+-- chemkin
+-- gb: 
+-- fglm: 
+restart
+needsPackage "FGLM"
+kk = ZZ/32003
+R1 = kk[w,x3,x4,y2,y3,y4,y5,z2,z3,z4,z5, MonomialOrder=>Lex]
+I1 = ideal(-4*w*y2 + 9*y2^2 + z2,
+           x3^2 + y3^2 + z3^2 - 1,
+           x4^2 + y4^2 + z4^2 - 1,
+           9*y5^2 + 9*z5^2 - 8,
+           -6*w*x3*y2 + 3*x3 + 3*y2*y3 + 3*z2*z3 - 1,
+           3*x3*x4 + 3*y3*y4 + 3*z3*z4 - 1,
+           x4 + 3*y4*y5 + 3*z4*z5 - 1,
+           -6*w + 3*x3 + 3*x4 + 8,
+           9*y2 + 9*y3 + 9*y4 + 9*y5 + 8,
+           z2 + z3 + z4 + z5,
+           w^2 - 2)
+G1 = elapsedTime gb I1
+R2 = kk[x1,x2,x3,x4,x5,x6,x7,x8]
+I2 = sub(I1, R2)
+G2 = elapsedTime fglm(I2, R1)
