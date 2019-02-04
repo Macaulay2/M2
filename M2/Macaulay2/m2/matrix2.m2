@@ -320,7 +320,7 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
 RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
 Matrix      \\ RingElement := (f,r) -> r // f
 
-Number // Matrix := (r,f) -> promote(r,ring f) // f
+Number // Matrix := (r,f) -> matrix{{promote(r,ring f)}} // f
 Matrix \\ Number := (f,r) -> r // f
 
 Matrix      // RingElement := (f,r) -> f // (r * id_(target f))
