@@ -301,6 +301,9 @@ suffixTreeSubwordsWorker (SuffixTree,SuffixTreeNode, List, List) := (tree,cLocus
 suffixTreeSubwordsStepC = method()
 suffixTreeSubwordsStepC (SuffixTreeNode, List, List) := (x,beta,s) -> (
    --- Step C in algorithm SEARCH in Amir et.al.
+   
+   --- if there is no beta, then begin search at x (no need to traverse the path beta)
+   if beta == {} then return suffixTreeSubwordsStepD(x,drop(s,#(x.label)));
    betaHat := beta;
    (f,pre) := findMatch(x,betaHat);
    while #(f.arcLabel) < #betaHat do (
@@ -433,6 +436,7 @@ suffixTreeInsert(tree, {b,a,b,a,3})
 restart
 debug needsPackage "SuffixTreePackage"
 --- gens of lead term ideal of generic Sklyanin algebra out to degree 12 (as lists of symbols)
+--- I tried putting all this on one line but the parser doesn't like it.
 mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}, {Y, X, Y, X, X},
         {Y, X, Y, X, Y}, {Y, X, Y, X, Z}, {Y, X, X, Y, X, X}, {Y, X, X, Y, X, Z}, {Y, X, X, Y, Y, Y},
 	{Y, X, X, X, Y, X, Y}, {Y, X, X, X, Y, Y, Y}, {Y, X, X, Y, X, Y, X}, {Y, X, X, Y, X, Y, Z},
@@ -452,10 +456,14 @@ mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}
 checkOverlaps rightOverlaps
 leftOverlaps = suffixTreeLeftOverlaps(tree, {symbol Y, symbol Y, symbol X});
 checkOverlaps leftOverlaps
+assert(#leftOverlaps == 23)
 superwords = suffixTreeSuperwords(tree, {symbol Y, symbol Y});
 checkDivisions superwords
+assert(#superwords == 16)
+--- not finding all of them
 subwords = suffixTreeSubwords(tree, {symbol Z, symbol Z, symbol X, symbol Y, symbol Y, symbol X, symbol Y, symbol X, symbol Y, symbol Y});
 checkDivisions subwords
+assert(#subwords == 5)
 firstSubword = suffixTreeFirstSubword(tree, {symbol Z, symbol Z, symbol X, symbol Y, symbol Y, symbol X, symbol Y, symbol X, symbol Y, symbol Y});
 first firstSubword == first subwords
 
