@@ -54,16 +54,15 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     m := numcols M#0;
     n := #gens R2;
 
-    -- TODO: test against mutable lists
     -- elements in the grobner basis
-    G2 := {};
+    G2 := new MutableHashTable from {}; -- leading term => gb element
     -- elements in the staircase
-    B2 := {1_R2};
+    B2 := new MutableHashTable from {1_R2 => true};
 
     -- normal form translation table
     -- Note: we want dense mutable matrices
     V := new MutableHashTable from {
-	 B2#0 => transpose matrix { {1_(coefficientRing R1)} | toList ((m-1):0) } 
+	 1_R2 => transpose matrix { {1_(coefficientRing R1)} | toList ((m-1):0) }
 	 };
 
     -- list of elements between the staircase and grobner basis generators
@@ -71,30 +70,29 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     S := new MutableHashTable from for i to n - 1 list R2_i * 1_R2 => (i, 1_R2);
 
     while #S > 0 do (
+	-- TODO: use O(1) min for fun and profit
 	(elt, vals) := min pairs S;
 	remove(S, elt);
+	if any(keys G2, lt -> elt % lt == 0) then continue;
 	(i, mu) := vals;
 	v := M#i * V#mu;
 
-	-- About 70% of time is spent on these two lines:
-	VS := matrix { for s in B2 list V#s };
+	-- FIXME: About 70% of time is spent on these three lines:
+	VS := matrix { for s in keys B2 list V#s };
 	if v % VS == 0 then (
---	if rank(VS | v) == numcols VS then ( -- not much faster
 	    lambda := solve(VS, v);
 	    -- TODO: don't remake a matrix every time
-	    g := elt - matrix {B2} * lambda;
-	    G2 = append(G2, g);
-	    -- TODO: try to simplify this
-	    apply(pairs S, (k, v) -> if k % elt == 0 then remove(S, k));
+	    g := elt - matrix {keys B2} * lambda;
+	    G2#elt = g;
 	    ) else (
-	    V#elt = v;
 	    -- TODO: add elt to VS and row reduce here
-	    B2 = append(B2, elt);
+	    V#elt = v;
+	    B2#elt = true;
 	    -- Add the product of elt and generatros of R2 to S
-	    for j to n - 1 do if position(B2, b -> b == R2_j * elt) === null then S#(R2_j * elt) = (j, elt);
+	    for j to n - 1 do if not B2#?(R2_j * elt) then S#(R2_j * elt) = (j, elt);
 	    );
 	);
-    forceGB(matrix {G2})
+    forceGB(matrix {values G2})
     )
 
 ---------------------------------------------------------------------------
@@ -193,7 +191,6 @@ test = (I1, MO2) -> (
     )
 
 TEST ///
-restart
   debug needsPackage "FGLM"
   R1 = ZZ/101[x,y,z]
   I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
@@ -229,7 +226,7 @@ end
 
 restart
 needsPackage "FGLM"
-elapsedTime check FGLM -- ~2.7 seconds
+elapsedTime check FGLM -- ~1.9 seconds
 
 restart
 uninstallPackage "FGLM"
