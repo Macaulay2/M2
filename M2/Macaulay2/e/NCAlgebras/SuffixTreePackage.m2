@@ -153,8 +153,8 @@ suffixTreeStepD (SuffixTreeNode, List, Boolean) := (y,s,isFullPattern) -> (
    -- drop the letters from s along the path traversed from y to newy
    s = drop(s,#(newy.label) - #(y.label));
    y = newy;
-   if y === f then (
-      -- in this case, there is no common prefix of a label of the child of f and s
+   if f === nullTreeNode then (
+      -- in this case, there is no common prefix of a label of any child of y and s
       -- so just create a leaf immediately.
       v := suffixTreeNode(y,s,isFullPattern);
       return if y.label != {} and #(v.arcLabel) == 1 then (y,{y},v) else (y,{},v);      
@@ -189,14 +189,14 @@ contractedLocus = method(Options => {IncrementLeafCount => false})
 contractedLocus (SuffixTreeNode, List) := opts -> (y,s) -> (
    --- s is a suffix not yet in the table.  This function finds 
    --- the locus of the longest prefix of s whose locus exists.
-   --- The search starts at y, and moves down the tree.  The return
-   --- value is the contracted locus, f which is either a child
-   --- of y sharing a prefix pre with s - y.label, or f is y if no such child
-   --- exists.
+   --- The search starts at y, and moves down the tree according to the
+   --- string s.  The return value is the contracted locus (also called y),
+   --- and a node f which is either a child of y sharing a prefix pre with s - y.label,
+   --- or f is nullTreeNode if no such child exists.
    c := if opts#IncrementLeafCount then 1 else 0;
    y.patternLeafCount = y.patternLeafCount + c;
    (f,pre) := findMatch(y,s);
-   while f =!= y and pre == f.arcLabel do (
+   while f =!= nullTreeNode and pre == f.arcLabel do (
       y = f;
       s = drop(s,#pre);
       y.patternLeafCount = y.patternLeafCount + c;
@@ -210,7 +210,10 @@ extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
    --- For this function to work, there must be a path starting from x with
    --- beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)
    --- This function finds the locus of the shortest word that has beta as a prefix.
-   --- it returns this locus, together with the prefix that needs to be split.
+   --- it returns this locus, together with the prefix that needs to be split (if necessary)
+   
+   --- if beta is empty, then simply return (x,beta) since x is the extended locus
+   if beta == {} then return (x,beta);
    betaHat := beta;
    (f,pre) := findMatch(x,betaHat);
    while #(f.arcLabel) < #betaHat do (
@@ -229,7 +232,7 @@ findMatch (SuffixTreeNode, List) := (y,s) -> (
   -- return y if no match is found, i.e. the empty prefix is the only shared prefix with any
   -- children of y
   --- TODO: Refactor this so that if no match is found, nullTreeNode is returned as f.
-  f := y;
+  f := nullTreeNode;
   pre := {};
   for kv in pairs (y.children) list (
      (key,val) := kv;
@@ -269,7 +272,7 @@ patternLeavesWorker SuffixTreeNode := v -> (
 allLeaves = method()
 allLeaves SuffixTreeNode := v -> (
    --- This function returns all leaves of v
-   if #v.children == 0 then return {v};
+   if #v.children == 0 then return {(v.label,v.label)};
    apply(flatten allLeavesWorker v, x -> (v.label,x.label))
 )
 
@@ -329,43 +332,18 @@ suffixTreeSubwordsWorker (SuffixTree,SuffixTreeNode, List, List) := (tree,cLocus
 suffixTreeSubwordsStepC = method()
 suffixTreeSubwordsStepC (SuffixTreeNode, List, List) := (x,beta,s) -> (
    --- Step C in algorithm SEARCH in Amir et.al.
-   
    --- if there is no beta, then begin search at x (no need to traverse the path beta)
    if beta == {} then return suffixTreeSubwordsStepD(x,drop(s,#(x.label)));
-   betaHat := beta;
-   (f,pre) := findMatch(x,betaHat);
-   while #(f.arcLabel) < #betaHat do (
-      x = f;
-      betaHat = drop(betaHat,#(f.arcLabel));
-      (f,pre) = findMatch(x,betaHat);
-   );
+   (f,betaHat) := extendedLocus(x,beta);
    if #(f.arcLabel) == #betaHat then suffixTreeSubwordsStepD(f,drop(s,#(f.label))) else (x,betaHat,false)
 )
 
 suffixTreeSubwordsStepD = method()
 suffixTreeSubwordsStepD (SuffixTreeNode, List) := (y, s) -> (
    --- Step D in algorithm SEARCH in Amir et.al.
-   local v;
-   initialS := s;
-   (f,pre) := findMatch(y,s);
-   if f === y then (
-      -- in this case, there is no common prefix of a label of the child of f and s
-      -- here, f is the cLocus of s and we return beta, the 'leftovers'
-      return (f,pre,false);
-   );
-   while pre == f.arcLabel do (
-      y = f;
-      s = drop(s,#pre);
-      (f,pre) = findMatch(y,s);
-      if f === y then (
-         -- in this case, there is no common prefix of a label of the child of f and s
-         -- here, f is the cLocus of s and beta is the 'leftovers'
-	 return (f,pre,false);
-      );
-   );
-   -- this is the case when alpha is nonempty.  This occurs when there is an arc whose
-   -- prefix matches s.  Report whether f corresponds to a full pattern.
-   (y,pre,f.isFullPattern)
+   (newy,f,pre) := contractedLocus(y,s);
+   if f === nullTreeNode then return (newy,pre,false)
+   else return (newy,pre,f.isFullPattern)
 )
 
 suffixTreeSuperwords = method()
@@ -374,46 +352,34 @@ suffixTreeSuperwords (SuffixTree, List) := (tree, s) -> (
    --- s as a prefix.  This is equivalent to finding all words in the
    --- dictionary that have s as a factor.
    --- The return value is a list of pairs of integers (word, position, s)
-   y := tree.root;
-   (f,pre) := findMatch(y,s);
    initialS := s;
-   if f === y then (
-      -- in this case, there is no common prefix with s of a label of the child of the root
-      -- so there are no superwords
+   (y,f,pre) := contractedLocus(tree.root,s);
+   if (y.label | pre) =!= s then (
+      --- no suffix of any word in the dictionary has s as a prefix
       return {};
-   );
-   while pre == f.arcLabel do (
-      --- in this case, the prefix found matches the arc label, so we move down
-      --- the tree
-      y = f;
-      s = drop(s,#pre);
-      --- after we move down add all children of y that are suffix leaves to leftOverlaps
-      --- as long as y is not the root
-      (f,pre) = findMatch(y,s);
-   );
-   --- once here, we simply return all suffix leaves of f, suitably processed
-   apply(allLeaves f, pl -> 
-       (initialS,#(tree.wordList#(last (pl#1))) - #(pl#1) + 1,tree.wordList#(last (pl#1))))
-       
+   )
+   else if f === nullTreeNode then (
+      --- y is the locus of s.  Process all leaves of y
+      return apply(allLeaves y, pl -> 
+                   (initialS,#(tree.wordList#(last (pl#1))) - #(pl#1) + 1,tree.wordList#(last (pl#1))));
+   )
+   else if #(f.label) == #s + 1 and isZZ(last f.label) then (
+      --- f is the extended locus of s.  If the label of f is {s,#} then process f
+      return {(initialS,#(tree.wordList#(last f.label)) - #(f.label) + 1, tree.wordList#(last f.label))};
+   )
+   else return {};  --- otherwise return {}
 )
 
 suffixTreeLeftOverlaps = method()
 suffixTreeLeftOverlaps (SuffixTree, List) := (tree, s) -> (
-   --- This function finds all proper prefixes of s that is also
-   --- a suffix in the tree.
+   --- This function finds all proper prefixes of s that are also
+   --- suffixes in the tree.
    --- The return value is a list of pairs of integers (word, position,s)
-   --- Must be called before s is inserted into the dictionary, since we do not allow
-   --- a word to left overlap with itself (we use right overlaps for that)
    y := tree.root;
    initialS := s;
    leftOverlaps := {};
    (f,pre) := findMatch(y,s);
-   if f === y then (
-      -- in this case, there is no common prefix of a label of the child of the root
-      -- so there are no left overlaps
-      return leftOverlaps;
-   );
-   while pre == f.arcLabel do (
+   while f =!= nullTreeNode and pre == f.arcLabel do (
       --- in this case, the prefix found matches the arc label, so we move down
       --- the tree
       y = f;
@@ -485,6 +451,9 @@ checkOverlaps rightOverlaps
 leftOverlaps = suffixTreeLeftOverlaps(tree, {symbol Y, symbol Y, symbol X});
 checkOverlaps leftOverlaps
 assert(#leftOverlaps == 23)
+superwords = suffixTreeSuperwords(tree, {symbol Y, symbol Y,symbol X});
+checkDivisions superwords
+assert(#superwords == 1)
 superwords = suffixTreeSuperwords(tree, {symbol Y, symbol Y});
 checkDivisions superwords
 assert(#superwords == 16)
@@ -501,6 +470,6 @@ kk = ZZ/32003
 A = threeDimSklyanin(ZZ/32003,{random kk,random kk, random kk},{X,Y,Z})
 I = ideal A
 J = ncIdeal gens I
-Jgb = ncGroebnerBasis(J, DegreeLimit => 12)  -- this takes a bit of time (in bergman)
+Jgb = ncGroebnerBasis(J, DegreeLimit => 5)  -- this takes a bit of time (in bergman)
 mons = apply(gens Jgb, f -> (first first pairs (leadMonomial f).terms).monList)
 mons = sortUsing(mons, length)
