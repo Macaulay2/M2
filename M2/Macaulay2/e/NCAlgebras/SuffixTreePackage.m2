@@ -23,6 +23,7 @@ protect suffixLink
 protect children
 protect root
 protect wordList
+protect IncrementLeafCount
 
 SuffixTree = new Type of MutableHashTable
 SuffixTreeNode = new Type of MutableHashTable
@@ -89,7 +90,6 @@ suffixTreeInsert (SuffixTree, List) := (tree, w) -> (
       if roRoot != {} then (
 	 tempRos := apply(patternLeaves(first roRoot), pl -> (last newLocus.label,pl#0,pl#1));
 	 tempRos = apply(tempRos, ro -> (tree.wordList#(ro#0),#(tree.wordList#(ro#0)) - #(ro#1),tree.wordList#(ro#2)));
-	 assert(checkOverlaps tempRos);
 	 rightOverlaps = rightOverlaps | tempRos;
       );
       if v =!= tree.root and #s == 2 then v.suffixLink = tree.root;
@@ -120,34 +120,27 @@ suffixTreeInsertWorker (SuffixTree,SuffixTreeNode, List, Boolean) :=  (tree, v, 
 )
 
 --suffixTreeStepC = method()
+--- too many arguments to be a method
 suffixTreeStepC = (v,x,beta,s,isFullPattern) -> (
    --- Carries out step C in the algorithm.  This amounts to computing (and building,
    --- if necessary) the suffix link of v.  This function can call the Step D code
    --- as well (see the algorithm in the paper by Amir, et.al.)
-   c := if isFullPattern then 1 else 0;
-   betaHat := beta;
-   origx := x;
-   (f,pre) := findMatch(x,betaHat);
-   while #(f.arcLabel) < #betaHat do (
-      x = f;
-      betaHat = drop(betaHat,#(f.arcLabel));
-      (f,pre) = findMatch(x,betaHat);
-   );
+   (f,betaHat) := extendedLocus(x,beta);
    if #(f.arcLabel) == #betaHat then (
+      --- in this case, f is in fact the locus of beta
       v.suffixLink = f;
-      assert(drop(v.label,1) == f.label);
       return suffixTreeStepD(f,drop(s,#(f.label)),isFullPattern);
    );
-   p := f.parent;
-   d := suffixTreeNode(p,betaHat,false);
-   d.patternLeafCount = f.patternLeafCount + c + (if f.isFullPattern then 1 else 0);
-   remove(p.children,f.arcLabel);
-   f.arcLabel = drop(f.arcLabel,#betaHat);
-   d.children#(f.arcLabel) = f;
-   f.parent = d;
+   --- in this case, f is the extended locus of beta.  We need to 
+   --- split the arc from f to its parent and insert a node d and a child
+   --- w which will be the locus of beta
+   d := splitArc(f,betaHat);
+   --- set the patternLeafCount of d, and increase if necessary (if s and/or f are pattern leaves)
+   d.patternLeafCount = f.patternLeafCount + (if isFullPattern then 1 else 0) + (if f.isFullPattern then 1 else 0);
+   --- add in the locus of s
    w := suffixTreeNode(d,drop(s,#(d.label)),isFullPattern);
+   --- set the suffix link of v to d
    v.suffixLink = d;
-   assert(drop(v.label,1) == d.label);
    if #(w.label) == 1 then (d,{f},w) else (d,{},w)
 )
 
@@ -155,43 +148,77 @@ suffixTreeStepD = method()
 suffixTreeStepD (SuffixTreeNode, List, Boolean) := (y,s,isFullPattern) -> (
    --- Carries out step D in the algorithm.  This amounts to constructing
    --- the locus of the head of s (which is not yet known before calling this function).
-   local v;
-   origS := s;
-   origY := y;
-   c := if isFullPattern then 1 else 0;
-   y.patternLeafCount = y.patternLeafCount + c;
-   (f,pre) := findMatch(y,s);
-   if f === y then (
+   --- find the contracted locus of s, starting from the node y
+   (newy,f,pre) := contractedLocus(y,s,IncrementLeafCount => isFullPattern);
+   -- drop the letters from s along the path traversed from y to newy
+   s = drop(s,#(newy.label) - #(y.label));
+   y = newy;
+   if y === f then (
       -- in this case, there is no common prefix of a label of the child of f and s
       -- so just create a leaf immediately.
-      v = suffixTreeNode(y,s,isFullPattern);
-      return if y.label != {} and #(v.arcLabel) == 1 then (y,{y},v) else (y,{},v);
+      v := suffixTreeNode(y,s,isFullPattern);
+      return if y.label != {} and #(v.arcLabel) == 1 then (y,{y},v) else (y,{},v);      
    );
-   while pre == f.arcLabel do (
+   --- in this case, f is the extended locus of s.  We need to split the arc from y to f   
+   p := splitArc(f,pre);
+   --- update the patternLeafCount of p if necessary
+   p.patternLeafCount = f.patternLeafCount + (if isFullPattern then 1 else 0) + (if f.isFullPattern then 1 else 0);
+   --- drop common prefix
+   s = drop(s,#pre);
+   --- create new leaf under p for s
+   w := suffixTreeNode(p,s,isFullPattern);
+   --- return overlap and head information
+   if #s == 1 then (p,{p},w) else (p,{},w)
+)
+
+splitArc = method()
+splitArc (SuffixTreeNode, List) := (f,betaHat) -> (
+   --- Here, betaHat is the prefix of f.arcLabel.  We split the arc from
+   --- f to its parent by inserting a new internal node with arc label betaHat,
+   --- making sure to set the parent of f to this new node.
+   p := f.parent;
+   d := suffixTreeNode(p,betaHat,false);
+   remove(p.children,f.arcLabel);
+   f.arcLabel = drop(f.arcLabel,#betaHat);
+   d.children#(f.arcLabel) = f;
+   f.parent = d;
+   d   
+)
+
+contractedLocus = method(Options => {IncrementLeafCount => false})
+contractedLocus (SuffixTreeNode, List) := opts -> (y,s) -> (
+   --- s is a suffix not yet in the table.  This function finds 
+   --- the locus of the longest prefix of s whose locus exists.
+   --- The search starts at y, and moves down the tree.  The return
+   --- value is the contracted locus, f which is either a child
+   --- of y sharing a prefix pre with s - y.label, or f is y if no such child
+   --- exists.
+   c := if opts#IncrementLeafCount then 1 else 0;
+   y.patternLeafCount = y.patternLeafCount + c;
+   (f,pre) := findMatch(y,s);
+   while f =!= y and pre == f.arcLabel do (
       y = f;
       s = drop(s,#pre);
       y.patternLeafCount = y.patternLeafCount + c;
       (f,pre) = findMatch(y,s);
-      if f === y then (
-         -- in this case, there is no common prefix of a label of the child of f and s
-      	 -- so just create a leaf immediately.
-      	 v = suffixTreeNode(y,s,isFullPattern);
-         return if y.label != {} and #(v.arcLabel) == 1 then (y,{y},v) else (y,{},v);
-      );
    );
-   -- this is the case when alpha is nonempty.  Here, we must add an internal node
-   -- as well as a leaf
-   p := suffixTreeNode(y,pre,false);
-   p.patternLeafCount = f.patternLeafCount + c + (if f.isFullPattern then 1 else 0);
-   s = drop(s,#pre);
-   v = suffixTreeNode(p,s,isFullPattern);
-   -- take out f as a child of y with old label, and put it back in with new label
-   remove(y.children,f.arcLabel);
-   f.arcLabel = drop(f.arcLabel, #pre);
-   (p.children)#(f.arcLabel) = f;
-   -- don't forget to change the parent of f!
-   f.parent = p;
-   return if #s == 1 then (p,{p},v) else (p,{},v);
+   (y,f,pre)
+)
+
+extendedLocus = method()
+extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
+   --- For this function to work, there must be a path starting from x with
+   --- beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)
+   --- This function finds the locus of the shortest word that has beta as a prefix.
+   --- it returns this locus, together with the prefix that needs to be split.
+   betaHat := beta;
+   (f,pre) := findMatch(x,betaHat);
+   while #(f.arcLabel) < #betaHat do (
+      x = f;
+      betaHat = drop(betaHat,#(f.arcLabel));
+      (f,pre) = findMatch(x,betaHat);
+   );
+   (f,betaHat)
 )
 
 findMatch = method()
@@ -201,6 +228,7 @@ findMatch (SuffixTreeNode, List) := (y,s) -> (
   -- OUTPUT  : Node f, list pre 
   -- return y if no match is found, i.e. the empty prefix is the only shared prefix with any
   -- children of y
+  --- TODO: Refactor this so that if no match is found, nullTreeNode is returned as f.
   f := y;
   pre := {};
   for kv in pairs (y.children) list (
@@ -452,7 +480,7 @@ mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}
 	{Y, X, X, X, X, X, X, Y, X, X, Y, X}, {Y, X, X, X, X, X, X, Y, X, X, Y, Y}, {Y, X, X, X, X, X, X, Y, X, X, Y, Z}}
 --- check that the code did not generate spurious right overlaps/superwords/subwords
 (tree, rightOverlaps) = suffixTree mons;
-#rightOverlaps
+assert(#rightOverlaps == 596)
 checkOverlaps rightOverlaps
 leftOverlaps = suffixTreeLeftOverlaps(tree, {symbol Y, symbol Y, symbol X});
 checkOverlaps leftOverlaps
@@ -460,12 +488,11 @@ assert(#leftOverlaps == 23)
 superwords = suffixTreeSuperwords(tree, {symbol Y, symbol Y});
 checkDivisions superwords
 assert(#superwords == 16)
---- not finding all of them
 subwords = suffixTreeSubwords(tree, {symbol Z, symbol Z, symbol X, symbol Y, symbol Y, symbol X, symbol Y, symbol X, symbol Y, symbol Y});
 checkDivisions subwords
 assert(#subwords == 5)
 firstSubword = suffixTreeFirstSubword(tree, {symbol Z, symbol Z, symbol X, symbol Y, symbol Y, symbol X, symbol Y, symbol X, symbol Y, symbol Y});
-first firstSubword == first subwords
+assert(first firstSubword == first subwords)
 
 --- code to generate the above example
 restart
