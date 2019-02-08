@@ -417,6 +417,7 @@ export {
 	"VirtualTally",
 	"VisibleList",
 	"WebApp",
+	"Jupyter",
 	"Weights",
 	"WeylAlgebra",
 	"Wikipedia",
