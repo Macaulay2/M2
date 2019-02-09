@@ -224,9 +224,11 @@ TEST ///
 
 end
 
+
 restart
 needsPackage "FGLM"
 elapsedTime check FGLM -- ~1.9 seconds
+
 
 restart
 uninstallPackage "FGLM"
@@ -234,9 +236,10 @@ restart
 installPackage "FGLM"
 viewHelp "FGLM"
 
--- cyclic-6
--- gb: 0.310213
--- fglm: 4.19424
+
+-- cyclic6
+-- gb: 0.28067
+-- fglm: 1.53377
 restart
 debug needsPackage "FGLM"
 I = cyclic(6, MonomialOrder=>Lex)
@@ -246,21 +249,9 @@ R = newRing(ring I, MonomialOrder=>Lex)
 G2 = elapsedTime fglm(I, R)
 
 
--- katsura-6
--- gb: 0.116438
--- fglm: 0.238552
-restart
-debug needsPackage "FGLM"
-I = katsura(6, MonomialOrder=>Lex)
-G1 = elapsedTime gb I
-I = katsura(6)
-R = newRing(ring I, MonomialOrder=>Lex)
-G2 = elapsedTime fglm(I, R)
-
-
--- cyclic-7
--- gb:
--- fglm:
+-- cyclic7
+-- gb: 1354.44
+-- fglm: 353.367
 restart
 debug needsPackage "FGLM"
 I = cyclic(7, MonomialOrder=>Lex)
@@ -270,22 +261,33 @@ R = newRing(ring I, MonomialOrder=>Lex)
 G2 = elapsedTime fglm(I, R)
 
 
--- katsura-7
--- gb: 6.82678
--- fglm: 1.252
+-- katsura6
+-- gb: 0.123865
+-- fglm: 0.115399
+restart
+debug needsPackage "FGLM"
+I = katsura(6, MonomialOrder=>Lex)
+G1 = elapsedTime gb I
+I = katsura(6)
+R = newRing(ring I, MonomialOrder=>Lex)
+G2 = elapsedTime fglm(I, R)
+
+
+-- katsura7
+-- gb: 6.78653
+-- fglm: 0.779608
 restart
 debug needsPackage "FGLM"
 I = katsura(7, MonomialOrder=>Lex)
 G1 = elapsedTime gb I
 I = katsura(7)
 R = newRing(ring I, MonomialOrder=>Lex)
-multiplicationMatrices = profile multiplicationMatrices
 G2 = elapsedTime fglm(I, R)
-profileSummary
 
--- katsura-8
--- gb: 
--- fglm: 
+
+-- katsura8
+-- gb: 2305.46
+-- fglm: 8.23514
 restart
 debug needsPackage "FGLM"
 I = katsura(8, MonomialOrder=>Lex)
@@ -295,9 +297,9 @@ R = newRing(ring I, MonomialOrder=>Lex)
 G2 = elapsedTime fglm(I, R)
 
 
--- reimer-5
--- gb: 8.50152
--- fglm: 5.63204
+-- reimer5
+-- gb: 8.3658
+-- fglm: 3.79775
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
@@ -314,8 +316,8 @@ G2 = elapsedTime fglm(I2, R1)
 
 
 -- virasoro
--- gb: 8.94464
--- fglm: 63.5117
+-- gb: 8.91079
+-- fglm: 52.1752
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
@@ -334,10 +336,9 @@ I2 = sub(I1, R2);
 G2 = elapsedTime fglm(I2, R1);
 
 
-
 -- chemkin
--- gb: 
--- fglm: 
+-- gb: 5916.76
+-- fglm: 4.46076
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
@@ -354,6 +355,6 @@ I1 = ideal(-4*w*y2 + 9*y2^2 + z2,
            z2 + z3 + z4 + z5,
            w^2 - 2)
 G1 = elapsedTime gb I1
-R2 = kk[x1,x2,x3,x4,x5,x6,x7,x8]
+R2 = kk[w,x3,x4,y2,y3,y4,y5,z2,z3,z4,z5]
 I2 = sub(I1, R2)
 G2 = elapsedTime fglm(I2, R1)
