@@ -91,8 +91,8 @@ unsigned int SchurRing2::computeHashValue(const ring_elem a) const
 {
 //  assuming a normal form: distinct monomials in the linear order introduced by compare_partitions()
 
-  const auto& coeffs = a.schur_poly_val->coeffs;
-  const auto& monoms = a.schur_poly_val->monoms;
+  const auto& coeffs = a.get_schur_poly()->coeffs;
+  const auto& monoms = a.get_schur_poly()->monoms;
 
   size_t seed = 95864398;  // using previous M2's constant hash value
 
@@ -359,10 +359,10 @@ int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 //  assuming the monomials are sorted in the linear order on the partitions
 //  see SchurRing2::compare_partitions
 
-  auto f_it = f.schur_poly_val->begin(),
-       f_end = f.schur_poly_val->end();
-  auto g_it = g.schur_poly_val->begin(),
-       g_end = g.schur_poly_val->end();
+  auto f_it = f.get_schur_poly()->begin(),
+    f_end = f.get_schur_poly()->end();
+  auto g_it = g.get_schur_poly()->begin(),
+    g_end = g.get_schur_poly()->end();
 
   for(; f_it!=f_end && g_it!=g_end; ++f_it, ++g_it) {
     auto cmp = compare_partitions(f_it.getMonomial(), g_it.getMonomial());
