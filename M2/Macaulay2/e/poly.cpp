@@ -917,7 +917,7 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
   {
     long p=characteristic(), pk=1;
     ring_elem result = from_long(1);
-    ring_elem gg = copy(ff), temp;
+    ring_elem gg = copy(ff), temp; // no need to copy, just the correct number of terms
 
     while(n)
     {
