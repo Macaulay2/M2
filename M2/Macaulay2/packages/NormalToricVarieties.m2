@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 ------------------------------------------------------------------------------
--- Copyright 2009--2018 Gregory G. Smith
+-- Copyright 2009--2019 Gregory G. Smith
 --
 -- This program is free software: you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by the Free
@@ -18,15 +18,15 @@
 newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
-  Version => "1.7",
-  Date => "05 October 2018",
+  Version => "1.8",
+  Date => "22 January 2019",
   Authors => {{
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
   Headline => "a package for working with normal toric varieties",
   PackageExports => {"Polyhedra", "Schubert2"},
-  PackageImports => {"FourierMotzkin","Normaliz"},
+  PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
   DebuggingMode => false
   )
 
@@ -77,6 +77,7 @@ protect rawHHOO
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 KK := QQ  -- global base ring
+debug Core --- kludge to access "hasAttribute" and getAttribute
 
 ------------------------------------------------------------------------------
 -- Constructing normal toric varieties
@@ -85,9 +86,9 @@ NormalToricVariety = new Type of Variety
 NormalToricVariety.synonym = "normal toric variety"
 NormalToricVariety.GlobalAssignHook = globalAssignFunction
 NormalToricVariety.GlobalReleaseHook = globalReleaseFunction
-expression NormalToricVariety := X -> new FunctionApplication from { 
-    normalToricVariety, Adjacent {"(", Adjacent{rays X, 
-      	    Adjacent {",", Adjacent{max X, ")"}}}}}
+expression NormalToricVariety := X -> if hasAttribute (X, ReverseDictionary) 
+    then expression getAttribute (X, ReverseDictionary) else 
+    new FunctionApplication from {normalToricVariety, (rays X, max X)}
 
 normalToricVariety = method (TypicalValue => NormalToricVariety, 
     Options => {
@@ -435,14 +436,20 @@ normalToricVariety Fan := opts -> F -> (
     	WeilToClass     => opts.WeilToClass 
 	)
     );
-
+------------------------------------------------------------------------------
 -- this function interfaces with the Polyhedra package
-normalToricVariety Polyhedron := opts -> (
-    cacheValue symbol variety) (
-    P -> (
-	normalToricVariety(normalFan P,
-    	    CoefficientRing => opts.CoefficientRing,
-	    Variable        => opts.Variable,	    
+normalToricVariety Polyhedron := opts -> (cacheValue symbol variety) (P -> (
+	Q := P;
+	if not isFullDimensional Q then (
+	    d := dim Q;
+	    C := cone Q;
+	    -- restrict to the linear subspace spanned by the polytope
+	    H := transpose facets C % transpose hyperplanes C;
+	    Q = polyhedronFromHData (transpose H^{1..d}, transpose H^{0});
+	    );
+	normalToricVariety(normalFan Q,
+	    CoefficientRing => opts.CoefficientRing,
+	    Variable        => opts.Variable,       
 	    WeilToClass     => opts.WeilToClass
 	    ) 
 	)
@@ -791,7 +798,6 @@ nefGenerators NormalToricVariety := Matrix => X -> (
 ------------------------------------------------------------------------------
 ToricDivisor = new Type of HashTable
 ToricDivisor.synonym = "toric divisor"
-debug Core --- kludge to access "hasAttribute" and getAttribute
 
 expression ToricDivisor := Expression => D -> (
    X := variety D;
@@ -2196,8 +2202,65 @@ doc ///
 ///   
 
 doc ///
+    Key
+        "projective space"
+    Headline 
+        various methods for constructing projective space
+    Description
+        Text
+	    There are several different methods for creating projective
+	    $n$-space in {\it Macaulay2}.   
+    	Text
+	    To generate projective space as a @TO ProjectiveVariety@,
+	    we use the Proj-construction.
+	Example
+	    X0 = Proj (QQ[x_0..x_3])
+	    assert (3 === dim X0)
+	    ring X0
+	    hilbertPolynomial(X0, Projective => false)
+	    for d to 10 list rank HH^0 (OO_X0(d))
+    	Text
+	    To work with projective space as a @TO NormalToricVariety@,
+	    we simply use the method @TO toricProjectiveSpace@.
+	Example
+	    X1 = toricProjectiveSpace 3
+	    assert (3 === dim X1)
+	    rays X1
+	    max X1
+	    ring X1
+	    intersectionRing X1
+	    hilbertPolynomial (X1)
+	    for d to 10 list rank HH^0 (X1, OO_X1(d)) 
+	    assert (X0 =!= X1)
+    	Text
+	    To manipulate projective space as an @TO AbstractVariety@,
+	    we employ the method @TO abstractProjectiveSpace@.
+	Example
+	    X2 = abstractProjectiveSpace (3, base(symbol i))
+	    assert (3 === dim X2)
+    	    intersectionRing X2
+	    chi (OO_X2(i))
+	    assert (X2 =!= X0)
+	    assert (X2 =!= X1)	    	    
+	Text	    
+	    If you prefer a shorter name for your favourite method of
+	    constructing projective space, then make one.
+	Example
+	    projectiveSpace = n -> Proj (QQ[x_0..x_n]);
+	    projectiveSpace 2
+	Example	    
+	    PP = toricProjectiveSpace;	    
+	    PP 2
+    SeeAlso
+        "Making normal toric varieties"
+        (Proj, Ring)
+        toricProjectiveSpace
+        abstractProjectiveSpace	
+///
+
+doc ///
     Key 
-        (toricProjectiveSpace,ZZ)
+        (toricProjectiveSpace, ZZ)
 	toricProjectiveSpace
         [toricProjectiveSpace,CoefficientRing]
         [toricProjectiveSpace,Variable]
@@ -2683,17 +2746,34 @@ doc ///
             fan is inner normal fan to the polyhedron.
        	Example
             P = convexHull (id_(ZZ^3) | -id_(ZZ^3));
+	    fVector P
 	    vertices P
             X = normalToricVariety P;
             rays X
             max X
+	    picardGroup X
+	Text
+	    When the polyhedron is not full-dimensional, restricting to the
+	    smallest linear subspace that contains the polyhedron guarantees
+	    that normal fan is strongly convex.
+	Example
+	    P = convexHull transpose matrix unique permutations {1,1,0,0};
+	    assert not isFullDimensional P
+	    fVector P
+	    X = normalToricVariety P;
+	    assert (dim P === dim X)
+	    rays X
+	    max X
+	    assert (8 === #rays X)
+    	    assert (6 === #max X)
+	    picardGroup X
     	Text
             The recommended method for creating a @TO NormalToricVariety@ from
             a polytope is @TO (normalToricVariety,Matrix)@.  In fact, this
             package avoids using objects from the @TO "Polyhedra::Polyhedra"@
             whenever possible.  Here is a trivial example, namely projective
-            2-space, illustrating the substantial increase in time resulting
-            from the use of a @TO "Polyhedra::Polyhedra"@ polyhedron.
+            2-space, illustrating the increase in time resulting from the use
+            of a @TO "Polyhedra::Polyhedra"@ polyhedron.	    
 	Example
     	    vertMatrix = matrix {{0,1,0},{0,0,1}}
             X1 = time normalToricVariety convexHull (vertMatrix);
@@ -6029,14 +6109,14 @@ doc ///
 	    minimalPresentation A1
 	    for i to dim X list hilbertFunction (i, A1)	    	  
 	Text
-	    We end with a slightly larger example.
+            We end with a slightly larger example.
 	Example
-	    Y = smoothFanoToricVariety(6,100);
+	    Y = time smoothFanoToricVariety(5,100);
 	    A2 = intersectionRing Y;
 	    assert (# rays Y === numgens A2)	    
             ideal A2
 	    minimalPresentation A2
-	    for i to dim Y list hilbertFunction (i, A2)
+	    for i to dim Y list time hilbertFunction (i, A2)
     SeeAlso
         "Total coordinate rings and coherent sheaves"    
 	(abstractVariety, NormalToricVariety)        	    
@@ -7153,7 +7233,7 @@ assert isSimplicial Z
 assert not isProjective Z
 ///
 
--- text 13
+-- test 13
 TEST ///
 -- examples provided by Mike Stillman to illustrate an earlier bug in
 -- 'cartierDivisorGroup'
@@ -7172,7 +7252,27 @@ assert all (entries transpose ( (fromCDivToWDiv X) * (nefGenerators X // fromCDi
     coeffs -> isNef toricDivisor (coeffs, X))
 ///
 
-end     
+
+-- test 14
+TEST ///
+-- first example provided by Chris Eur to illustrate an earlier bug in
+-- 'normalToricVariety'
+P = convexHull transpose matrix unique permutations {1,1,0,0};
+X = normalToricVariety P;
+assert isWellDefined X
+assert (8 === #rays X)
+assert (dim P === dim X)
+assert (1 === rank picardGroup X)
+Q = convexHull ((transpose matrix unique permutations {1,1,0,0}) || matrix {toList{6:1}});
+Y = normalToricVariety Q;
+assert isWellDefined Y
+assert (dim Q === dim Y)
+assert (1 === rank picardGroup Y)
+assert (rays X == rays Y)
+assert (max X == max X)
+///
+
+end---------------------------------------------------------------------------     
 
 ------------------------------------------------------------------------------
 -- SCRATCH SPACE

@@ -13,6 +13,7 @@ newPackage("EliminationMatrices",
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
    Headline => "Package for computing resultants",
+   PackageImports => { "Elimination" },
    DebuggingMode => false
    )
 

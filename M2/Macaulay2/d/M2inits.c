@@ -21,7 +21,7 @@
 /* to get IM2_initialize() : */
 #include "engine.h"
 
-char *progname;
+const char *progname;
 void arginits(int argc, char **argv) { progname = argv[0]; }
 
 static void init_gc(void) {

@@ -132,3 +132,49 @@ TEST ///
     assert isInverseMap(phi,inverseMap phi)
 ///
 
+TEST ///
+  phi = rationalMap map specialCremonaTransformation(3,ZZ/33331);
+  phi' = abstractRationalMap phi;
+  psi' = inverseMap phi'
+  psi = rationalMap psi';
+  assert isInverseMap(phi,psi)
+  Phi' = abstractRationalMap(source phi',target phi',q -> phi' q)
+  assert(phi == rationalMap Phi')
+///
+
+TEST ///
+K = ZZ/33331;
+-- twisted cubic curve
+P3 = K[x_0..x_3];
+C = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}); 
+f = abstractRationalMap(C,"OADP")
+assert(3 == projectiveDegrees(f,2))
+B = ideal rationalMap f;
+assert(B:C == C)
+-- Scroll surface S(2,2)
+P5 = K[x_0..x_5];
+S = minors(2,matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}}); 
+g = abstractRationalMap(S,"OADP")
+assert(3 == projectiveDegrees(g,4))
+-- quintic del Pezzo surface
+D = ideal(x_2*x_4-x_1*x_5,x_0*x_4-x_1*x_5-x_3*x_5+x_4*x_5,x_2*x_3-x_0*x_5,x_1*x_3-x_1*x_5-x_3*x_5+x_4*x_5,x_0*x_1-x_1*x_2-x_0*x_5+x_1*x_5);
+h = abstractRationalMap(D,"OADP")
+assert(5 == projectiveDegrees(h,4))
+///
+
+TEST /// -- bug fixed in inverseMap (25/01/2019)
+   x := local x; P2 := (ZZ/65521)[x_0..x_2];
+   f = rationalMap(P2,{6,1,7});
+   S = image f;
+   p = for i to 2 list random(ZZ/65521);
+   J = sub(transpose jacobian matrix f,{x_0=>p_0,x_1=>p_1,x_2=>p_2});
+   T = image rationalMap(P2,target f,transpose(J*(transpose vars P2)));
+   h = (rationalMap T)|S;
+   assert isDominant(h,MathMode=>true)
+   assert(degreeOfRationalMap h == 2)
+   assert(try inverseMap h else true)
+   assert(try inverseMap(h,MathMode=>true) else true)
+   assert(degree h == 2)
+///
+
+

@@ -1,6 +1,6 @@
 HOMEPAGE = http://flintlib.org
 #URL = http://flintlib.org
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 2.5.2
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes

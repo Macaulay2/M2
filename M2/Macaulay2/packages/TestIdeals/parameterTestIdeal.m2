@@ -10,7 +10,7 @@
 --it returns the lift of the canonical module to the ambient ring
 --needsPackage "Divisor";
 
-canonicalIdeal = method(Options=>{MTries=>10});
+canonicalIdeal = method(Options=>{Attempts=>10});
 
 canonicalIdeal(Ring) := o->(R1) -> (
     S1 := ambient R1;
@@ -24,9 +24,9 @@ canonicalIdeal(Ring) := o->(R1) -> (
 	    	degList = apply(varList, q -> (degree(q))#0); )
     	else (
 	    	degList = apply(varList, q -> (degree(q))); );
-    );	    	
+    );
 	M1 := (Ext^(dS - dR)(S1^1/I1, S1^{-(sum degList)}))**R1;
-	embedAsIdeal(M1, MTries=>o.MTries)
+	embedAsIdeal(M1, Attempts=>o.Attempts)
 );
 
 
@@ -37,7 +37,7 @@ finduOfIdeal = method();
 finduOfIdeal(Ideal, Ideal) := (defIdeal, canIdeal) -> (
 	Ip := frobenius( defIdeal );
 	tempIdeal := intersect( (frobenius( canIdeal )) : canIdeal, Ip : defIdeal );
-	
+
 	M1 := compress ((gens tempIdeal)%(gens Ip));
 	first first entries M1
 );
@@ -46,24 +46,24 @@ finduOfIdeal(Ideal, Ideal) := (defIdeal, canIdeal) -> (
 --*****Karl rewrote this *****
 --****************************************************
 
---this function finds the generators of the intersection of 
+--this function finds the generators of the intersection of
 --J^{[p]} : J and I^{[p]} : I where I is the defining ideal and J is the canonical
 --ideal lifted to the ambient ring (in a maximal way).
 frobeniusTraceOnCanonicalModule = (defIdeal, canIdeal) -> (
 	Ip := frobenius( defIdeal );
 	tempIdeal := intersect( (frobenius( canIdeal )) : canIdeal, Ip : defIdeal );
-	
+
 	M1 := compress ((gens tempIdeal)%(gens Ip));
 	first entries M1
 )
 
-testModule = method(Options => {FrobeniusRootStrategy => Substitution, AssumeDomain=>false}); --a rewritten function to construct the (parameter) test (sub)module of a given ring.  
-                       --it returns two ideals and an element.  
+testModule = method(Options => {FrobeniusRootStrategy => Substitution, AssumeDomain=>false}); --a rewritten function to construct the (parameter) test (sub)module of a given ring.
+                       --it returns two ideals and an element.
                        --The first ideal is an ideal isomorphic to the test module and the
                        --and the second is an ideal isomorphic to the canonical module, in which the parameter
                        --resides.  The locus where these two ideals differ (plus the non-CM locus) is the
                        --locus where the ring does not have rational singularities.
-                       --the final element is the element of the ambient polynomial ring which is used to 
+                       --the final element is the element of the ambient polynomial ring which is used to
                        --induce the canonical trace map
                        --This function can also compute \tau(omega, f^t) (again as a submodule of omega).
                        --
@@ -78,7 +78,7 @@ testModule(Ring, Ideal) := o->(R1, canIdeal) -> (
 	I1 := ideal R1;
     J1 := sub(canIdeal, S1);
     C1 := testElement(R1, AssumeDomain=>o.AssumeDomain);
-    
+
     u1 := frobeniusTraceOnCanonicalModule(I1, J1+I1);
     tau := I1;
     if (#u1 > 1) then(
@@ -97,29 +97,29 @@ testModule(Ring, Ideal) := o->(R1, canIdeal) -> (
     (sub(tau, R1), sub(J1, R1), u1)
 );
 
-testModule(ZZ, RingElement) := o-> (tt, ff) -> ( --sometimes people pass in integers when the should pass rational numbers
-    testModule(tt/1, ff, FrobeniusRootStrategy => o.FrobeniusRootStrategy)
-);
 
-testModule(QQ, RingElement) := o-> (tt, ff) ->(
+
+testModule(Number, RingElement) := o-> (tt, ff) ->(
+    tt = tt/1;
     R1 := ring ff;
     S1 := ambient R1;
     canIdeal := canonicalIdeal(R1);
     I1 := ideal R1;
     J1 := sub(canIdeal, S1);
     u1 := frobeniusTraceOnCanonicalModule(I1, J1+I1);
-    testModule(tt, ff, canIdeal, u1, FrobeniusRootStrategy => o.FrobeniusRootStrategy)    
+    testModule(tt, ff, canIdeal, u1, FrobeniusRootStrategy => o.FrobeniusRootStrategy)
 );
 
-testModule(QQ, RingElement, Ideal, List) := o -> (tt, ff, canIdeal, u1) -> (
+testModule(Number, RingElement, Ideal, List) := o -> (tt, ff, canIdeal, u1) -> (
+    tt = tt/1;
     R1 := ring ff;
     pp := char R1;
     S1 := ambient R1;
     fff := sub(ff, S1);
     I1 := ideal R1;
     J1 := sub(canIdeal, S1);
-    
-    
+
+
     C1 := testElement(R1, AssumeDomain=>o.AssumeDomain);
     fractionDivided := decomposeFraction(pp, tt);
 
@@ -154,29 +154,31 @@ testModule(QQ, RingElement, Ideal, List) := o -> (tt, ff, canIdeal, u1) -> (
     tau := I1;
     curTau := I1;
     if (#u1 > 1) then(
-        print "testModule: Multiple trace map for omega generators (Macaulay2 failed to find the principal generator of a principal ideal).  Using them all.";
+        if (debugLevel > 0) then (
+            print "testModule: Multiple trace map for omega generators (Macaulay2 failed to find the principal generator of a principal ideal).  Using them all.";
+        );
         j := 0;
         while (j < #u1) do (
             curTau = ascendIdeal(ccc, {floor((pp^ccc - 1)/(pp-1)),  aaa}, {u1#j, fff}, (ideal(fff))*C1*J1*R1, FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
-                --note, we only have an ideal(ff) in the test element here since by construction, 
+                --note, we only have an ideal(ff) in the test element here since by construction,
                 --aaa/(pp^ccc-1) is less than 1.
                 --if we need to take more roots, do so...
             curTau = sub(curTau, S1);
             curTau = frobeniusRoot(bb, {floor((pp^bb - 1)/(pp-1)), newIntegerPart}, {u1#j, fff}, curTau, FrobeniusRootStrategy => o.FrobeniusRootStrategy);
             tau = tau + curTau;
             j = j+1;
-        );                
+        );
     )
     else (
         u1 = u1#0;
         curTau = ascendIdeal(ccc, {floor((pp^ccc - 1)/(pp-1)),  aaa}, {u1, fff}, (ideal(fff^(min(1, aaa))))*C1*J1*R1, FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
-                --note, we only have an ideal(ff) in the test element here since by construction, 
+                --note, we only have an ideal(ff) in the test element here since by construction,
                 --aaa/(pp^ccc-1) is less than 1.
                 --if we need to take more roots, do so...
-        curTau = sub(curTau, S1);                
+        curTau = sub(curTau, S1);
         tau = frobeniusRoot(bb, {floor((pp^bb - 1)/(pp-1)), newIntegerPart}, {u1, fff}, curTau, FrobeniusRootStrategy => o.FrobeniusRootStrategy);
     );
-    
+
     (sub(tau, R1), sub(J1, R1), u1)
 );
 
@@ -192,8 +194,8 @@ testModule(List, List, Ideal, List) := o -> (ttList, ffList, canIdeal, u1) -> (
     S1 := ambient R1;
     fff := sub(ff, S1);
     I1 := ideal R1;
-    J1 := sub(canIdeal, S1);    
-    
+    J1 := sub(canIdeal, S1);
+
     ffList = apply(ffList, zz->sub(zz, S1));
     C1 := testElement(R1, AssumeDomain=>o.AssumeDomain);
     fractionDividedList := apply(ttList, tt -> decomposeFraction(pp, tt));
@@ -204,7 +206,7 @@ testModule(List, List, Ideal, List) := o -> (ttList, ffList, canIdeal, u1) -> (
     bbList := apply(fractionDividedList, zz->zz#1);
     ccList := apply(fractionDividedList, zz->zz#2);
     --we need to write all of our fractions with the same denominator.
-    lcmCs := lcm(apply(ccList, zz -> (if zz == 0 then 1 else zz))); --take the lcm of the cs, 
+    lcmCs := lcm(apply(ccList, zz -> (if zz == 0 then 1 else zz))); --take the lcm of the cs,
                                                                    --but ignore those cs that
                                                                    --are equal to zero
     maxBs := max(bbList);
@@ -216,14 +218,14 @@ testModule(List, List, Ideal, List) := o -> (ttList, ffList, canIdeal, u1) -> (
                         );
     --we need to managed the case when ttt = aa/(pp^cc - 1) is huge, we handle this as folows.
     -- tau(\omega, ff^ttt) = \tau(\omega, ff^{ttt - floor(ttt)} ) * ff^{floor(ttt)}
-    -- we do this because we never want to actually compute ff^{floor(ttt)}                   
+    -- we do this because we never want to actually compute ff^{floor(ttt)}
     aaListForCsReduced := apply(aaListForCs, aa -> (aa % (pp^lcmCs - 1)) );
-    aaListForAfterAscension := apply(#fractionDividedList, nn -> (    
+    aaListForAfterAscension := apply(#fractionDividedList, nn -> (
                                                     if ( ((fractionDividedList#nn)#2) > 0 ) then floor((aaListForCs#nn)/(pp^lcmCs - 1)) else
                                                         ((fractionDividedList#nn)#0)*floor(pp^(maxBs - ((fractionDividedList#nn)#1)))
                                                  )
-                        );    
-    
+                        );
+
     tau := I1;
     curTau := I1;
     prodList := apply(#ffList, iii -> (ffList#iii)^(min(1, aaListForCsReduced#iii)) );
@@ -232,27 +234,27 @@ testModule(List, List, Ideal, List) := o -> (ttList, ffList, canIdeal, u1) -> (
         j := 0;
         while (j < #u1) do (
             curTau = ascendIdeal(lcmCs, append(aaListForCsReduced, floor((pp^lcmCs - 1)/(pp-1))), append(ffList, u1), (product(prodList))*C1*J1*R1, FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
-                --note, we only have an ideal(ff) in the test element here since by construction, 
+                --note, we only have an ideal(ff) in the test element here since by construction,
                 --aaa/(pp^ccc-1) is less than 1.
                 --if we need to take more roots, do so...
-            curTau = sub(curTau, S1);                
+            curTau = sub(curTau, S1);
 
             curTau = frobeniusRoot(maxBs, append(aaListForAfterAscension, floor((pp^maxBs - 1)/(pp-1))), append(ffList, u1), curTau, FrobeniusRootStrategy => o.FrobeniusRootStrategy);
 
             tau = tau + curTau;
             j = j+1;
-        );                
+        );
     )
     else (
         u1 = u1#0;
         curTau = ascendIdeal(lcmCs, append(aaListForCsReduced, floor((pp^lcmCs - 1)/(pp-1))), append(ffList, u1), (product(prodList))*C1*J1*R1, FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
-                --note, we only have an ideal(ff) in the test element here since by construction, 
+                --note, we only have an ideal(ff) in the test element here since by construction,
                 --aaa/(pp^ccc-1) is less than 1.
                 --if we need to take more roots, do so...
-        curTau = sub(curTau, S1);                
-        tau = frobeniusRoot(maxBs, append(aaListForAfterAscension, floor((pp^maxBs - 1)/(pp-1))), append(ffList, u1), curTau, FrobeniusRootStrategy => o.FrobeniusRootStrategy);        
+        curTau = sub(curTau, S1);
+        tau = frobeniusRoot(maxBs, append(aaListForAfterAscension, floor((pp^maxBs - 1)/(pp-1))), append(ffList, u1), curTau, FrobeniusRootStrategy => o.FrobeniusRootStrategy);
     );
-    
+
     (sub(tau, R1), sub(J1, R1), u1)
 );
 
@@ -263,7 +265,7 @@ testModule(List, List) := o-> (ttList, ffList) ->(
     I1 := ideal R1;
     J1 := sub(canIdeal, S1);
     u1 := frobeniusTraceOnCanonicalModule(I1, J1+I1);
-    testModule(ttList, ffList, canIdeal, u1, FrobeniusRootStrategy => o.FrobeniusRootStrategy)    
+    testModule(ttList, ffList, canIdeal, u1, FrobeniusRootStrategy => o.FrobeniusRootStrategy)
 );
 
 
@@ -280,7 +282,7 @@ parameterTestIdeal(Ring) := o-> (R1) -> (
 --Below is an isCohenMacaulay function.  There are other implementations of this in the packages
 --Depth and LexIdeals.  This one has the advantage that it works even if the ring is not local/graded.
 --If you pass it the Local=>true option, then it calls the isCM function in Depth.
-needsPackage "Depth";
+
 
 --warning, this only works if R is equidimensional.  If Spec R has disjoint components of different dimensions
 --then this function will return false, even if R is Cohen-Macaulay.
@@ -310,7 +312,7 @@ isCohenMacaulay(Ring) := o->(R1) ->(
             i := dimS - dimR + 1;
             while ((flag == true) and (i <= dimS))do (
                 if (dim (HH^i(RHom)) > -1) then (
-                    flag = false;                
+                    flag = false;
                 );
                 i = i+1;
             );
@@ -319,11 +321,11 @@ isCohenMacaulay(Ring) := o->(R1) ->(
     )
 );
 
---next we write an isFrational function
+--next we write an isFRational function
 
-isFrational = method(Options => {IsLocal => false, AssumeCM => false});
+isFRational = method(Options => {AssumeDomain => false, IsLocal => false, AssumeCM => false, FrobeniusRootStrategy=>Substitution });
 
-isFrational(Ring) := o->(R1) ->(
+isFRational(Ring) := o->(R1) ->(
     flag := true;
     --first verify if it is CM
     if (o.AssumeCM == false) then(
@@ -334,18 +336,18 @@ isFrational(Ring) := o->(R1) ->(
     --next verify if it is Frational
     if (flag == true) then (
         --note we don't compute the test module if we know that the ring is not CM.
-        MList := testModule(R1);
+        MList := testModule(R1, AssumeDomain=>o.AssumeDomain, FrobeniusRootStrategy=>o.FrobeniusRootStrategy);
         if (o.IsLocal == true) then (
             paraTestIdeal := (MList#0):(MList#1);
             myMaxIdeal := sub(maxIdeal(ambient R1), R1);
             flag = not isSubset(paraTestIdeal, myMaxIdeal);
-        ) 
+        )
         else (
             if (isSubset(MList#1, MList#0) == false) then (
                 flag = false;
             )
         );
     );
-    
-    flag 
+
+    flag
 );

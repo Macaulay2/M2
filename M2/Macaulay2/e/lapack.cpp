@@ -1486,7 +1486,7 @@ bool Lapack::SVD_divide_conquer(const LMatrixCCC *A,
   int max = (rows >= cols) ? rows : cols;
   int wsize = 2 * min * min + 4 * min + 2 * max;
 
-  double *workspace = newarray_atomic(double, wsize);
+  double *workspace = newarray_atomic(double, 2 * wsize);
   int *iworkspace = newarray_atomic(int, 8 * min);
   double *rwork = newarray_atomic(double, 5 * min * min + 7 * min);
 
@@ -3366,7 +3366,7 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A,
   int max = (rows >= cols) ? rows : cols;
   int wsize = 2 * min * min + 4 * min + 2 * max;
 
-  double *workspace = newarray_atomic(double, wsize);
+  double *workspace = newarray_atomic(double, 2 * wsize);
   int *iworkspace = newarray_atomic(int, 8 * min);
   double *rwork = newarray_atomic(double, 5 * min * min + 7 * min);
 

@@ -234,11 +234,10 @@ endif
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
 # status info
-WHY = @ (if [ -f $@ ] ;												\
-	 then echo "=================================================================" ;			\
-	      echo "--- remaking $@ in $$(basename $$PWD) because of $?" ; ls -l $@ || : ; ls -l $? | head -5 ;	\
-	      echo "=================================================================" ;			\
-	 else echo "=== making $@ in $$(basename $$PWD)" ;							\
+WHY = @ (if [ -f $@ ] ;						\
+	 then echo "=== remaking $@ in $$(basename $$PWD) :" ;	\
+	      ls -l $@ | sed 's/^/===   /' || : ;		\
+	      ls -l $? | sed 's/^/===   /' ;			\
 	 fi)
 
 test:

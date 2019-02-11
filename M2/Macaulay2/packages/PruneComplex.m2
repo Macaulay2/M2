@@ -19,7 +19,6 @@ newPackage(
         {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
         },
     Headline => "Prunes a given complex over R, R_m, and R_p",
-    DebuggingMode => true,
     AuxiliaryFiles => true
     )
 

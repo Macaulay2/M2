@@ -8,8 +8,7 @@ newPackage(
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "an example Macaulay2 package",
-	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
-    	DebuggingMode => true		 -- set to true only during development
+	AuxiliaryFiles => false -- set to true if package comes with auxiliary files
     	)
 
 -- Any symbols or functions that the user is to have access to

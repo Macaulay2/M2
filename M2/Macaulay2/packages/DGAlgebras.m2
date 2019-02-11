@@ -7,7 +7,8 @@ newPackage("DGAlgebras",
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
 	   Email => "moorewf@wfu.edu"}},
-     DebuggingMode => false
+     DebuggingMode => false,
+     PackageExports => {"IntegralClosure"}
      )
 
 export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff", "natural", "cycles",

@@ -1,4 +1,3 @@
-needsPackage"RandomObjects"
 newPackage(
 	"RandomGenus14Curves",
     	Version => "0.6",
@@ -11,6 +10,8 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth curves of genus 14",
+     	PackageExports => {"RandomObjects"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
         )
 
@@ -23,9 +24,6 @@ export{
      "curveGenus14Degree18inP6",
      "canonicalCurveGenus14"
      }
-
-needsPackage"RandomObjects"
-
 
 randomCanonicalCurveGenus8with8Points = method()
 

@@ -12,9 +12,7 @@ newPackage(
        HomePage => "http://www.mit.edu/~parrilo/"}
     },
     Headline => "A package that exploits chordal structure",
-    DebuggingMode => true,
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"Graphs","TriangularSets"}
 )
 

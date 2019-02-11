@@ -36,18 +36,18 @@ assert( (symmetricPower_4 L) === cokernel map(R^{{4},{4},{4},{4},{4}},R^{{3},{3}
 
 R = QQ[a,b][x]
 errorDepth = 0
-truncate(3,R^1)
+basis(3,R^1)
 assert isHomogeneous oo
 M = coker matrix {{a*x^2,b*x^4,x^5}}
-truncate(1,M)
+basis(1,M)
 assert isHomogeneous oo
-truncate(2,M)
+basis(2,M)
 assert isHomogeneous oo
-truncate(3,M)
+basis(3,M)
 assert isHomogeneous oo
-truncate(4,M)
+basis(4,M)
 assert isHomogeneous oo
-truncate(5,M)
+basis(5,M)
 assert isHomogeneous oo
-truncate(6,M)
+basis(6,M)
 assert isHomogeneous oo

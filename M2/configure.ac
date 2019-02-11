@@ -29,7 +29,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.12.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.13.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -161,16 +161,19 @@ then if test -f /usr/bin/sw_vers
 	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
-	 "arch") ISSUE_FLAVOR=ArchLinux ;;
+	 "arch") ISSUE_FLAVOR=ArchLinux ; ISSUE_RELEASE=none ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
-     case $ISSUE_RELEASE in
-	 "") AC_MSG_NOTICE([release number not found]) 
-	     ISSUE_RELEASE=unknown ;;
-     esac
      ISSUE_FLAVOR=`echo $ISSUE_FLAVOR | sed 's/ /-/g'`
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+     case $ISSUE_RELEASE in
+         none) ISSUE=$ISSUE_FLAVOR ;;
+	 "")   AC_MSG_NOTICE([release number not found])
+	       ISSUE_RELEASE=unknown
+	       ISSUE=$ISSUE_FLAVOR-unknown ;;
+	 *)    ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+     esac
+     
 fi
 
 # some operating systems have no ISSUE_FLAVOR, e.g., MacOS
@@ -218,9 +221,20 @@ then AC_MSG_CHECKING(whether $STRIP accepts the remove-section option)
 fi
 
 AC_MSG_CHECKING(whether $MAKE is GNU make)
-if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
+if "$MAKE" --version | head -1 | grep GNU >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR($MAKE: GNU make is required)
+else AC_MSG_RESULT(no)
+     AC_MSG_ERROR($MAKE: GNU make is required)
+fi
+
+AC_MSG_CHECKING(whether GNU make is recent enough)
+dnl Note: run our makefiles with GNU make, version 4 or larger.
+dnl       Version 3.81, provided on Mac OS X, has a bug, but you can
+dnl	  use "homebrew" to install a modern version under the name "gmake"
+if "$MAKE" --version | head -1 | grep "GNU Make 3.81" >/dev/null 2>&1
+then AC_MSG_RESULT(no)
+     AC_MSG_ERROR([$MAKE: GNU make 3.81 found, too old; install a more recent version])
+else AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(whether $TAR is GNU tar)
@@ -498,6 +512,7 @@ dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthr
 
 AC_SUBST(ENABLE_STRIP,no) AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
+# note: we build many programs for inclusion in the distribution -- stripping them saves 9MB of 70
 
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
@@ -746,7 +761,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 	template <class T> struct A { };])],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
 dnl Check for openmp and fail if it cannot be found.
-dnl This is required for building csdp and good for normaliz
+dnl This is required for building the library csdp and good for building the library normaliz
 AC_MSG_CHECKING(whether OpenMP is supported by the compiler)
 AC_LANG(C++)
 AC_PROG_CXX
@@ -754,7 +769,16 @@ AC_OPENMP
 if test "$ac_cv_prog_cxx_openmp" = unsupported
    then AC_MSG_ERROR([OpenMP does not work, use a compiler that supports OpenMP])
 fi
+TMP=$OPENMP_CXXFLAGS
+OPENMP_CXXFLAGS=
+for i in $TMP
+do case $i in
+   -l*) OPENMP_LIBS="$OPENMP_LIBS $i" ;;
+     *) OPENMP_CXXFLAGS="$OPENMP_CXXFLAGS $i" ;;
+   esac
+done
 AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
+AC_SUBST(OPENMP_LIBS,"$OPENMP_LIBS")
 
 dnl multi line sed commands may not work, reported by Anton:
 dnl AC_MSG_CHECKING(for the presence of synchronization builtins)
@@ -814,6 +838,7 @@ AC_SUBST(BUILTLIBS,)
 #    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
+#    mpc needs mpfr
 #    mpfr needs gmp
 # 	   We have always built mpfr because we told mpir (which is
 # 	   impersonating gmp) to use libgc for its memory allocation.  But mpfr
@@ -835,6 +860,7 @@ AC_SUBST(BUILTLIBS,)
 # 	   it, so we can use the gmp library that comes with many linux
 # 	   distributions.
 #    4ti2 needs glpk
+#    glpk needs mpir (as gmp)
 #    gfan needs cddlib
 #    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
@@ -906,6 +932,24 @@ BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
 # frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
 # Another possible problem can arise if mpfr comes dynamically linked to libgmp, but we want
 # to use mpir instead.
+
+BUILD_mpc=yes
+BUILD_ALWAYS="mpc $BUILD_ALWAYS"
+# We always build mpc because it depends on mpfr, which we always build.
+# If we don't build mpc, then we may end up linking with the system's shared mpc library, which
+# would bring in the systems shared mpfr library, conflicting with our mpfr library, which
+# has been built with with thread safety disabled, yielding this error under Debian 9:
+#    time g++ -Wl,-z,noexecstack -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/memtailor/.libs  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathic/.libs  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathicgb/.libs -g3  timestamp.o ../d/M2inits.o ../d/startup.o ../d/../regex/regex.o ../d/gmp_init.o ../d/gmp_aux.o ../d/main.o ../d/pari-c.o ../d/pari-gnump.o ../d/M2-factory.o ../d/M2types.o ../d/scclib.o ../d/M2lib.o ../d/M2mem.o ../d/gdbm_interface.o ../d/xml-c.o   ../d/arithmetic.o  ../d/atomic.o  ../d/M2.o  ../d/system.o  ../d/strings.o  ../d/varstrin.o  ../d/strings1.o  ../d/errio.o  ../d/vararray.o  ../d/ctype.o  ../d/nets.o  ../d/varnets.o  ../d/interrupts.o  ../d/pthread0.o  ../d/stdiop0.o  ../d/gmp.o  ../d/engine.o  ../d/xml.o  ../d/stdio0.o  ../d/parse.o  ../d/expr.o  ../d/stdio.o  ../d/stdiop.o  ../d/err.o  ../d/gmp1.o  ../d/tokens.o  ../d/getline.o  ../d/lex.o  ../d/parser.o  ../d/binding.o  ../d/basic.o  ../d/convertr.o  ../d/common.o  ../d/util.o  ../d/struct.o  ../d/classes.o  ../d/buckets.o  ../d/equality.o  ../d/hashtables.o  ../d/sets.o  ../d/version.o  ../d/evaluate.o  ../d/mysqldummy.o  ../d/pthread.o  ../d/actors.o  ../d/actors2.o  ../d/actors3.o  ../d/actors4.o  ../d/xmlactors.o  ../d/actors5.o  ../d/actors6.o  ../d/threads.o  ../d/pari.o  ../d/flint.o  ../d/interface.o  ../d/interface2.o  ../d/texmacs.o  ../d/interp.o ../e/error.o ../e/table.o ../e/exptable.o ../e/monordering.o ../e/complex.o ../e/rand.o ../e/monomial-sets.o ../e/mutablecomplex.o ../e/localring.o ../e/f4/res-monomial-sorter.o ../e/f4/res-varpower-monomial.o ../e/f4/res-f4-monlookup.o ../e/f4/res-moninfo-dense.o ../e/f4/res-moninfo-sparse.o ../e/f4/res-moninfo.o ../e/f4/res-poly-ring.o ../e/f4/res-f4-m2-interface.o ../e/f4/res-schreyer-frame.o ../e/f4/res-f4.o ../e/f4/res-f4-computation.o ../e/f4/res-gausser.o ../e/f4/res-gausser-ZZp.o ../e/f4/res-gausser-QQ.o ../e/f4/res-gausser-QQ-hybrid.o ../e/f4/f4.o ../e/f4/f4-syz.o ../e/f4/f4-mem.o ../e/f4/f4-monlookup.o ../e/f4/f4-types.o ../e/f4/f4-computation.o ../e/f4/f4-spairs.o ../e/f4/f4-m2-interface.o ../e/f4/hilb-fcn.o ../e/f4/monhashtable.o ../e/f4/monsort.o ../e/f4/moninfo.o ../e/f4/ntuple-monomial.o ../e/f4/varpower-monomial.o ../e/f4/gausser.o ../e/betti.o ../e/util.o ../e/GF.o ../e/ZZ.o ../e/ZZp.o ../e/reader.o ../e/matrix-stream.o ../e/cra.o ../e/aring-zz-gmp.o ../e/aring-qq-gmp.o ../e/aring-zz-flint.o ../e/aring-qq-flint.o ../e/aring-zzp-flint.o ../e/aring-RR.o ../e/aring-CC.o ../e/aring-RRR.o ../e/aring-CCC.o ../e/aring-tower.o ../e/aring-gf-flint-big.o ../e/aring-gf-flint.o ../e/aring-m2-gf.o ../e/aring-zzp.o ../e/aring-gf-givaro.o ../e/aring-zzp-ffpack.o ../e/aring.o ../e/schurSn.o ../e/schur2.o ../e/dpoly.o ../e/tower.o ../e/interreduce.o ../e/gb-test1.o ../e/finalize.o ../e/NAG.o ../e/SLP.o ../e/overflow.o ../e/memory-status.o ../e/imonorder.o ../e/sagbi.o ../e/monideal-minprimes.o ../e/lapack.o ../e/LLL.o ../e/fractionfreeLU.o ../e/ntl-interface.o ../e/fplll-interface.o ../e/mat.o ../e/dmat.o ../e/coeffrings.o ../e/Eschreyer.o ../e/gbweight.o ../e/qring.o ../e/polyquotient.o ../e/poly.o ../e/debug.o ../e/comp.o ../e/comp-gb.o ../e/comp-gb-proxy.o ../e/comp-gb-declared.o ../e/comp-res.o ../e/res-a0.o ../e/res-a0-poly.o ../e/res-a1.o ../e/res-a1-poly.o ../e/res-a2.o ../e/reducedgb.o ../e/reducedgb-field.o ../e/reducedgb-marked.o ../e/reducedgb-field-local.o ../e/reducedgb-ZZ.o ../e/montable.o ../e/montableZZ.o ../e/schorder.o ../e/assprime.o ../e/buffer.o ../e/comb.o ../e/det.o ../e/frac.o ../e/franzi-brp.o ../e/freemod.o ../e/gb-default.o ../e/gb-homog2.o ../e/gb-sugarless.o ../e/gb-toric.o ../e/gb-walk.o ../e/gbring.o ../e/gauss.o ../e/hermite.o ../e/hilb.o ../e/int-bag.o ../e/intarray.o ../e/matrix.o ../e/matrix-con.o ../e/mem.o ../e/monideal.o ../e/monoid.o ../e/monomial.o ../e/ntuple.o ../e/polyring.o ../e/pfaff.o ../e/relem.o ../e/ring.o ../e/ringmap.o ../e/schur.o ../e/skew.o ../e/skewpoly.o ../e/solvable.o ../e/spair.o ../e/text-io.o ../e/varpower.o ../e/weylalg.o ../e/interrupted.o ../e/newdelete.o ../e/ntl-internal.o ../e/ntl-debugio.o ../e/matrix-kbasis.o ../e/matrix-symm.o ../e/matrix-sort.o ../e/ring-vecs.o ../e/res-a2-gb.o ../e/engine.o ../e/x-aring.o ../e/x-monom.o ../e/x-monoid.o ../e/x-relem.o ../e/x-free.o ../e/x-mat.o ../e/x-gb.o ../e/x-ringmap.o ../e/x-mutablemat.o ../e/franzi-gb.o ../e/franzi-interface.o ../e/x-monideal.o ../e/x-factor.o ../e/polyroots.o ../system/m2file.o ../system/supervisor.o ../system/tests.o  ../kernel/bibasis/bibasis.o ../kernel/bibasis/allocator.o ../kernel/bibasis/launcher.o ../kernel/bibasis/monom.o ../kernel/bibasis/monomDL.o ../kernel/bibasis/monomDRL.o ../kernel/bibasis/monomLex.o ../kernel/bibasis/settings-manager.o  -L../d -lM2inits2  -lfactory   -lntl -lgivaro -lflint -lgc -lpthread -lmpfr -lfrobby -lpari -lgmpxx -lgmp -lmathicgb -lmathic -lmemtailor   -llapack -lblas -lblas -Wl,-Bstatic  -Wl,-Bdynamic  -lxml2 -llzma -lz -L/usr/lib/gcc/x86_64-linux-gnu/6 -L/usr/lib/gcc/x86_64-linux-gnu/6/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/6/../../.. -lgfortran -lm -lquadmath -llapack -lblas -lblas -lmpc -lgdbm -lreadline -ltinfo -Wl,-Bdynamic  -ldl -lpthread -ldl -Wl,-Bstatic  -Wl,-Bdynamic  -lm -lc  -lmemtailor  -lmathic  -lmathicgb -o "/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-dist/x86_64-Linux-Debian-9.6/bin/M2-binary".tmp
+#    /usr/bin/ld: __gmpfr_cache_const_euler: TLS definition in //usr/lib/x86_64-linux-gnu/libmpfr.so.4 section .tdata mismatches non-TLS definition in /home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib/libmpfr.a(const_euler.o) section .data.rel.local
+#    //usr/lib/x86_64-linux-gnu/libmpfr.so.4: error adding symbols: Bad value
+#    collect2: error: ld returned 1 exit status
+#    Command exited with non-zero status 1
+# Actually, we actually don't use any code from mpc, just one struct definition!  So we could eliminate its use.
+
+BUILD_glpk=yes
+BUILD_ALWAYS="glpk $BUILD_ALWAYS"
+# We always build glpk because it depends on mpir (as gmp), which we always build, and we don't want to
+# have the static version of mpir in memory along with the dynamic version of gmp.
 
 BUILD_givaro=yes
 BUILD_ALWAYS="givaro $BUILD_ALWAYS"
@@ -1316,6 +1360,13 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
+if test $BUILD_mpc = no
+then AC_LANG(C)
+     AC_SEARCH_LIBS(mpc_set,mpc,,BUILD_mpc=yes)
+     AC_CHECK_HEADER(mpc.h,,BUILD_mpc=yes)
+fi
+test $BUILD_mpc = yes && BUILTLIBS="-lmpc $BUILTLIBS"
+
 dnl mpir and mpfr are always built, so flint should also always be built:
 BUILD_ALWAYS="flint $BUILD_ALWAYS"
 if test $BUILD_mpir = yes -o $BUILD_mpfr = yes
@@ -1680,7 +1731,6 @@ AC_ARG_ENABLE(mpack,
     AC_DEFINE(HAVE_MPACK,1,[whether we are linking with the mpack library])
     BUILD_mpack=yes
     BUILD_qd=yes
-    BUILD_mpc=yes
     ENABLE_MPACK=yes
     BUILTLIBS="-lmlapack_mpfr -lmblas_mpfr -lmpfrcxx $BUILTLIBS"
     )

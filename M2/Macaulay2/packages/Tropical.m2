@@ -26,7 +26,6 @@ newPackage(
 		"tropicalMax" => false
 	},
         PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
 	optArgs

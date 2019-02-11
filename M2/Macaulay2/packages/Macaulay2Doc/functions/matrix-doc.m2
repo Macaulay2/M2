@@ -162,7 +162,7 @@ document {
      }
 
 document {
-     Key => (matrix, RingElement),
+     Key => {(matrix, RingElement),(matrix, Number)},
      Headline => "make a matrix from a ring element",
      Usage => "matrix r",
      Inputs => { "r" },

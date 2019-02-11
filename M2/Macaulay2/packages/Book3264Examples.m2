@@ -2,8 +2,6 @@
 --To do:
 -- -Add functionality to multiply elements of the "Schubert Ring", perhaps by
 --  overloading the * operator
-needsPackage "Schubert2"
-needsPackage "SchurRings"
 
 newPackage(
      "Book3264Examples",
@@ -12,8 +10,8 @@ newPackage(
      Authors => {{Name => "Charley Crissman",
 	       Email => "charleyc@math.berkeley.edu",
 	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
-     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris",
-     DebuggingMode => true
+     PackageExports => {"Schubert2", "SchurRings"},
+     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris"
      )
 
 export {"grassmannian", "placeholderSchubertCycle", "diagrams", "placeholderToSchubertBasis"}
@@ -22,8 +20,6 @@ protect schuberttoh
 protect htoschubert
 protect intersectionmap
 protect schubertring
-
-needsPackage "Schubert2"
 
 grassmannian = method(TypicalValue => FlagBundle)
 grassmannian(ZZ,ZZ) := (k,n) -> flagBundle({k,n-k}) --The grassmannian of k-dimensional subspaces of
