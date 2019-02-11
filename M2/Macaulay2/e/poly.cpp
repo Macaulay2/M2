@@ -846,38 +846,53 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
   return result;
 }
 
-ring_elem PolyRing::power_direct(const ring_elem f, int n) const
+ring_elem PolyRing::power_direct(const ring_elem ff, int n) const
 {
-  ring_elem result = from_long(0);
-  Nterm *lead = f;
-  if(!lead) return result;
-  ring_elem tail = lead->next;
+    ring_elem result, g, rest, h, tmp;
+    ring_elem coef1, coef2, coef3;
 
-  mpz_t binom_c;
-  mpz_init_set_si(binom_c, 1);
-  int *m = M_->make_one();
-  ring_elem c1, c2, c3;
-  ring_elem rest=from_long(1), temp;
+    Nterm *lead = ff;
+    if (lead == NULL) return ZERO_RINGELEM;
 
-  for(int i=0; i<=n; ++i)
-  {
-    c1 = K_->from_int(binom_c);
-    c2 = K_->power(lead->coeff, n-i);
-    c3 = K_->mult(c1, c2);
-    M_->power(lead->monom, n-i, m);
-    temp = mult_by_term(rest, c3, m);
-    add_to(result, temp);
+    rest = lead->next;
+    g = from_long(1);
 
-    if(!tail) break;
+    // Start the result with the n th power of the lead term
+    Nterm *t = new_term();
+    t->coeff = K_->power(lead->coeff, n);
+    M_->power(lead->monom, n, t->monom);
+    t->next = NULL;
+    //  if (_base_ring != NULL) normal_form(t);  NOT NEEDED
+    result = t;
 
-  // maintenance
-    mpz_mul_si(binom_c, binom_c, n-i);
-    mpz_fdiv_q_ui(binom_c, binom_c, (unsigned)(i+1));
-    temp = mult(rest, tail);
-    rest = temp;
-  }
+    if (POLY(rest) == 0) return result;
+    int *m = M_->make_one();
 
-  return result;
+    mpz_t bin_c;
+
+    mpz_init_set_ui(bin_c, 1);
+
+    for (int i = 1; i <= n; i++)
+    {
+        tmp = mult(g, rest);
+        g = tmp;
+
+        mpz_mul_ui(bin_c, bin_c, n - i + 1);
+        mpz_fdiv_q_ui(bin_c, bin_c, i);
+
+        coef1 = K_->from_int(bin_c);
+
+        if (!K_->is_zero(coef1))
+        {
+            coef2 = K_->power(lead->coeff, n - i);
+            coef3 = K_->mult(coef1, coef2);
+            M_->power(lead->monom, n - i, m);
+
+            h = mult_by_term(g, coef3, m);
+            add_to(result, h);
+        }
+    }
+    return result;
 }
 
 ring_elem PolyRing::power(const ring_elem f0, int n) const
