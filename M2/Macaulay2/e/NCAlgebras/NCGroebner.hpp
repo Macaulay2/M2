@@ -1,50 +1,10 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
-#include "PolynomialAlgebra.hpp"
-
-class KnuthMorrisPratt; // defined in NCGroebner.cpp
+#include "../PolynomialAlgebra.hpp"
+#include "WordTable.hpp"
 
 #if 0
-  class Triple
-  {
-  public:
-    size_t mGroebnerElement1Index; // will be suffix of this one
-    size_t mGroebnerElement2Index; // and a prefix of this one
-    size_t mOverlapLength; // length of the overlap
-  };
-
-  class MonomialLookup
-  {
-    // ConstMonomial m : m.cbegin(), m.cend(),  *i is the current variable.
-    // degree(m).
-    // ++i, --i.  Maybe not --i...
-    // for (auto v : m) {
-    //    v is each variables in turn from the first.
-    // }
-  public:
-    MonomialLookup() {}
-    ~MonomialLookup() {}
-    
-    void insert(ConstMonomial& mon);
-    // perhaps: remove() later...
-
-    auto subwords(ConstMonomial& word) -> std::vector<std::tuple<int,int,int>>; // which monomial, index into word, length of monomial.
-    //    void subwords(ConstMonomial& word, std::vector<std::tuple<int,int,int>>& matches);
-
-    auto leftOverlaps(ConstMonomial& word) -> std::vector<Triple>;
-    auto rightOverlaps(ConstMonomial& word) -> std::vector<Triple>;
-
-    bool isSubword(ConstMonomial& word);
-    bool isSuperword(ConstMonomial& word);
-
-    // iterator? const_iterator?
-  private:
-    size_t mMonomialCount;
-    MonomialPool mTipMonomials;
-    std::vector<int> mTipMonomials2;
-  };
-
   class AugmentedTriple
   {
     int mDegree;
@@ -103,17 +63,18 @@ public:
   static ConstPolyList twoSidedReduction(const PolynomialAlgebra* A,
                                          const ConstPolyList& reducees,
                                          const ConstPolyList& reducers);
-private:
+
   static auto twoSidedReduction(const PolynomialAlgebra* A,
                                 const Poly* reducee,
                                 const ConstPolyList& reducers,
-                                KnuthMorrisPratt& table
-                                ) -> Poly*;
+                                const WordTable& W) -> const Poly*;
 
 private:
   const PolynomialAlgebra* mRing;
+  WordTable mWordTable;
   const ConstPolyList mInput;
   int mTopComputedDegree;
+
 #if 0
   // chose one of these two, or use VECTOR.
   std::vector<Poly*> mGroebner;

@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include "NCAlgebras/WordTable.hpp"
+#include <iostream>
 
 std::vector<int> monom1 {2, 0, 1};  // cab
 std::vector<int> monom2 {2, 2};  // cc
@@ -75,6 +76,60 @@ TEST(WordTable, subwords)
   EXPECT_EQ(matches[5], std::make_pair(3, 6));
 }        
 
+std::ostream& operator<<(std::ostream& o, const std::vector<Triple>& val)
+{
+  int count = 0;
+  for (auto a : val)
+    {
+      o << "[" << std::get<0>(a) << ","
+        << std::get<1>(a) << ","
+        << std::get<2>(a) << "]";
+      o << " ";
+      count++;
+      if (count % 10 == 0) o << std::endl;
+    }
+  o << std::endl;
+  return o;
+}
+
+std::ostream& operator<<(std::ostream& o, const std::vector<std::pair<int,int>>& val)
+{
+  int count = 0;
+  for (auto a : val)
+    {
+      o << "[" << std::get<0>(a) << ","
+        << std::get<1>(a) << "]";
+      o << " ";
+      count++;
+      if (count % 10 == 0) o << std::endl;
+    }
+  o << std::endl;
+  return o;
+}
+
+#if 0
+template<class T>
+std::ostream& operator<<(std::ostream& o, const std::vector<T>& val)
+{
+  int count = 0;
+  for (auto a : val)
+    {
+      o << "[";
+      int sz = std::tuple_size<T>::value;
+      for (auto i=0; i<sz; ++i)
+        {
+          o << std::get<i>(a) << ",";
+        }
+        o << "]";
+      o << " ";
+      count++;
+      if (count % 10 == 0) o << std::endl;
+    }
+  o << std::endl;
+  return o;
+}
+#endif
+
 TEST(WordTable, skylanin)
 {
   // X,Y Z are the 3 variables
@@ -86,21 +141,83 @@ TEST(WordTable, skylanin)
           {Y, X, X, Y, Y, Y}}
 #endif
           
-  std::vector<int> m1 {2,0};  // ZX
-  std::vector<int> m2 {2,1};  // ZY
-  std::vector<int> m3 {2,2};  // ZZ
-  std::vector<int> m4 {1,1,0};  // YYX
-  std::vector<int> m5 {1,1,2};  // YYZ
-  std::vector<int> m6 {1,0,1,1};  // YXYY
-  std::vector<int> m7 {1,1,1,1};  // YYYY
-  std::vector<int> m8 {1,0,1,0,0};  // YXYXX
-  std::vector<int> m9 {1,0,1,0,1};  // YXYXY
-  std::vector<int> m10 {1,0,1,0,2};  // YXYXZ
-  std::vector<int> m11 {1,0,0,1,0,0};  // YXXYXX
-  std::vector<int> m12 {1,0,0,1,0,2};  // YXXYXZ
-  std::vector<int> m13 {1,0,0,1,1,1};  // YXXYYY
+  std::vector<int> m0 {2,0};  // ZX
+  std::vector<int> m1 {2,1};  // ZY
+  std::vector<int> m2 {2,2};  // ZZ
+  std::vector<int> m3 {1,1,0};  // YYX
+  std::vector<int> m4 {1,1,2};  // YYZ
+  std::vector<int> m5 {1,0,1,1};  // YXYY
+  std::vector<int> m6 {1,1,1,1};  // YYYY
+  std::vector<int> m7 {1,0,1,0,0};  // YXYXX
+  std::vector<int> m8 {1,0,1,0,1};  // YXYXY
+  std::vector<int> m9 {1,0,1,0,2};  // YXYXZ
+  std::vector<int> m10 {1,0,0,1,0,0};  // YXXYXX
+  std::vector<int> m11 {1,0,0,1,0,2};  // YXXYXZ
+  std::vector<int> m12 {1,0,0,1,1,1};  // YXXYYY
 
+  std::vector<Triple> overlaps;
+  std::vector<std::pair<int,int>> matches;
+  
   WordTable W;
+  W.insert(m0, overlaps);
+  EXPECT_EQ(0, overlaps.size());
+
+  W.insert(m1, overlaps);
+  EXPECT_EQ(0, overlaps.size());
+
+  W.insert(m2, overlaps);
+  std::cout << overlaps;
+  std::vector<Triple> ans {
+      std::make_tuple(2,1,0),
+      std::make_tuple(2,1,1),
+      std::make_tuple(2,1,2)
+      };
+  EXPECT_EQ(overlaps, ans);
+  overlaps.clear();
+  W.leftOverlaps(overlaps);
+  EXPECT_EQ(0, overlaps.size());
+
+  W.insert(m3);
+  W.insert(m4);
+  W.insert(m5);
+  W.insert(m6);
+  W.insert(m7);
+  W.insert(m8);
+  W.insert(m9);
+  W.insert(m10);
+  W.insert(m11);
+  W.insert(m12);
+
+  matches.clear();
+  W.superwords(std::vector<int> {1, 1}, matches);
+  std::vector<std::pair<int,int>> ans2
+    {
+     std::make_tuple(3,0),
+     std::make_tuple(4,0),
+     std::make_tuple(5,2),
+     std::make_tuple(6,0),
+     std::make_tuple(6,1),
+     std::make_tuple(6,2),
+     std::make_tuple(12,3),
+     std::make_tuple(12,4)
+    };
+  EXPECT_EQ(ans2, matches);
+  std::cout << matches;  
+
+  matches.clear();
+  W.subwords(std::vector<int> {2,2,0,1,1,0,1,0,1,1}, matches); // ZZXYYXYXYY
+  std::cout << matches;
+  //        Which is: { (0, 1), (2, 0), (3, 3), (5, 6), (8, 4) }
+  std::vector<std::pair<int,int>> ans3
+    {
+     {0,1},
+     {2,0},
+     {3,3},
+     {5,6},
+     {8,4}
+    };
+  EXPECT_EQ(ans3, matches);
+
 }        
 
 

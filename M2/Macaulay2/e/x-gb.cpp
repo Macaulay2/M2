@@ -12,7 +12,7 @@
 #include "relem.hpp"
 
 #include "PolynomialAlgebra.hpp"
-#include "NCGroebner.hpp"
+#include "NCAlgebras/NCGroebner.hpp"
 
 #include "poly.hpp"
 #include <sstream>

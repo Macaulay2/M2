@@ -12,7 +12,7 @@ INTERFACE2 = \
 
 INTERFACE = \
 	NCAlgebras/WordTable \
-	NCGroebner \
+	NCAlgebras/NCGroebner \
 	monomial-collection \
 	Polynomial \
 	PolynomialAlgebra \
