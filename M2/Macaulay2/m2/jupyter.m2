@@ -2,7 +2,6 @@ lastprompt := "";
 
 ZZ#{Jupyter,InputPrompt} = lineno -> concatenate(concatenate("[INP]",newline,"[INP]"), lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
 ZZ#{Jupyter,InputContinuationPrompt} = lineno -> concatenate("[INP]",#lastprompt);
-setJupyter = () -> ( ZZ#{Standard,InputPrompt} = ZZ#{Jupyter,InputPrompt}; ZZ#{Jupyter,InputPrompt} = x->print("hi") )
 
 Thing#{Jupyter,Print}   = x -> ( << "[VAL]" << endl; Thing#{Standard,Print}(x) )
 Nothing#{Jupyter,Print} = identity
