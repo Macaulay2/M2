@@ -77,6 +77,7 @@ texhtml.m2
 html.m2
 varieties.m2
 webapp.m2
+jupyter.m2
 mathml.m2
 texmacs.m2
 pretty.m2
