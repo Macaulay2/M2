@@ -802,7 +802,7 @@ Inputs => {
 "i" => ZZ => {"an integer between 1 and 9"},
 "K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
 Outputs => { 
-RationalMap => {"an example of special cubic birational transformation over ",TT"K",", according to the classification given in Table 1 of the paper: ",EM "Special cubic birational transformations of P^6"}},
+RationalMap => {"an example of special cubic birational transformation over ",TT"K",", according to the classification given in Table 2 of ",HREF{"https://arxiv.org/abs/1901.01203","arXiv:1901.01203"}}},
 PARA{"The field ",TT"K"," is required to be large enough."},
 EXAMPLE {
 "time specialCubicTransformation 9",

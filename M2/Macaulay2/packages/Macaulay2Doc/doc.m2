@@ -92,6 +92,13 @@ document {
      }
 
 document {
+    Key => Jupyter,
+    Headline => "top level printing method used in the Jupyter kernel",
+    "The mode allows for a more semantic output, with input, STDOUT, value and class clearly delimited.",
+    SeeAlso => {Standard, TeXmacs, WebApp}
+    }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",

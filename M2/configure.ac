@@ -161,16 +161,19 @@ then if test -f /usr/bin/sw_vers
 	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
-	 "arch") ISSUE_FLAVOR=ArchLinux ;;
+	 "arch") ISSUE_FLAVOR=ArchLinux ; ISSUE_RELEASE=none ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
-     case $ISSUE_RELEASE in
-	 "") AC_MSG_NOTICE([release number not found]) 
-	     ISSUE_RELEASE=unknown ;;
-     esac
      ISSUE_FLAVOR=`echo $ISSUE_FLAVOR | sed 's/ /-/g'`
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+     case $ISSUE_RELEASE in
+         none) ISSUE=$ISSUE_FLAVOR ;;
+	 "")   AC_MSG_NOTICE([release number not found])
+	       ISSUE_RELEASE=unknown
+	       ISSUE=$ISSUE_FLAVOR-unknown ;;
+	 *)    ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+     esac
+     
 fi
 
 # some operating systems have no ISSUE_FLAVOR, e.g., MacOS

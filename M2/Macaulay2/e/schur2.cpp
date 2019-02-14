@@ -79,10 +79,29 @@ void tableau2::display() const
 }
 
 //////////////////////////////////////////
+
+template<typename T>
+static inline void hash_combine(size_t& seed, const T& val)
+{
+// the typical implementation
+  seed ^= std::hash<T>()(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
 unsigned int SchurRing2::computeHashValue(const ring_elem a) const
 {
-  // TODO HASH //FLAG: should be written
-  return 95864398;
+//  assuming a normal form: distinct monomials in the linear order introduced by compare_partitions()
+
+  const auto& coeffs = a.schur_poly_val->coeffs;
+  const auto& monoms = a.schur_poly_val->monoms;
+
+  size_t seed = 95864398;  // using previous M2's constant hash value
+
+  for(auto it=coeffs.begin(); it!=coeffs.end(); ++it)
+    hash_combine(seed, coefficientRing->computeHashValue(*it));
+  for(auto it=monoms.begin(); it!=monoms.end(); ++it)
+    hash_combine(seed, *it);
+
+  return static_cast<unsigned>(seed);
 }
 
 bool operator==(const schur_poly::iterator &a, const schur_poly::iterator &b)
@@ -341,11 +360,25 @@ int SchurRing2::compare_partitions(const_schur_partition a,
   if (cmp > 0) return GT;
   return EQ;
 }
+
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  // Write this.  Issue #610.
-  return 0;
+//  assuming the monomials are sorted in the linear order on the partitions
+//  see SchurRing2::compare_partitions
+
+  auto f_it = f.schur_poly_val->begin(),
+       f_end = f.schur_poly_val->end();
+  auto g_it = g.schur_poly_val->begin(),
+       g_end = g.schur_poly_val->end();
+
+  for(; f_it!=f_end && g_it!=g_end; ++f_it, ++g_it) {
+    auto cmp = compare_partitions(f_it.getMonomial(), g_it.getMonomial());
+    if(cmp) return cmp;
+  }
+
+  return (f_it!=f_end)-(g_it!=g_end);  // LT, EQ or GT
 }
+
 bool SchurRing2::promote_coeffs(const SchurRing2 *Rf,
                                 const ring_elem f,
                                 ring_elem &resultRE) const
