@@ -5,6 +5,19 @@
 #include "WordTable.hpp"
 
 #if 0
+  Notes from 19 Feb 2019.
+  For polynomial reduction:
+
+  Use PolyWithPos as an Entry
+  Use mathic Geobucket code (and/or Heap, TourTree)
+    Use code/ideas from ReducerPack from mathicgb. (will need to crib from this code).
+    Probably: a hash table for all monomials/words in out polynomials.
+    SO: PolyWithPos: array of [ring_elem coeff, pointer to a monomial in the hash table structure, iterator in]
+    
+#endif
+
+
+#if 0
   class AugmentedTriple
   {
     int mDegree;
@@ -40,6 +53,29 @@
     Poly* value();
   };
   // during reduction: structure to keep track of what reductions we have done.
+
+class Reducer
+{
+public:
+  using Poly = PolynomialAlgebra::Poly;
+  using PolyList = std::vector<Poly*>;
+  using ConstPolyList = std::vector<const Poly*>;
+
+  Reducer(const PolynomialAlgebra* A,
+          const ConstPolyList& reducers,
+          const WordTable& leadWords)
+    : mRing(A),
+      mReducers(reducers),
+      mLeadWords(leadWords)
+  {
+  }
+  
+private:
+  const PolynomialAlgebra* mRing;
+  const ConstPolyList& mReducers;
+  const WordTable& mLeadWords;
+
+};
 #endif
 
 class NCGroebner
