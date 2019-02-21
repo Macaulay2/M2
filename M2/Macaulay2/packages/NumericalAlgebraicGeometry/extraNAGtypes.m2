@@ -117,19 +117,6 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     SPH                                                                                                                                                       
     ) 
 
-getVarGates = method()
-getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
-
-gatePolynomial = method()
-gatePolynomial RingElement := p -> (
-    -- one naive way of converting a sparse polynomial to a circuit  
-    X := getVarGates ring p;
-    sumGate apply(listForm p, mc->(
-	    (m,c) := mc;
-	    c*product(#m,i->X#i^(m#i))
-	    ))
-    ) 
-	
 makeGateMatrix = method(Options=>{Parameters=>{}})
 makeGateMatrix PolySystem := o -> F -> (
     R := ring F; 

@@ -24,13 +24,14 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
     "Gate", 
-    "GateMatrix", 
+    "GateMatrix", "gateMatrix",
     "InputGate", 
     "oneGate", "minusOneGate", "zeroGate",
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 
     "constants",  
     "printAsSLP", "cCode",
+    "getVarGates", "gatePolynomial",
     "ValueHashTable","valueHashTable"
     }
 exportMutable {
@@ -211,40 +212,84 @@ value (ProductGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else
 value (DetGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
 value (DivideGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
 
-support InputGate := g -> if isConstant g then {} else g
-support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
-support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
-support DivideGate := memoize (g -> g.Inputs/support//flatten//unique)
-support DetGate := memoize (g -> g.Inputs//flatten/support//flatten//unique)
-support List := memoize (L -> L/support//flatten//unique)
-support GateMatrix := memoize (M -> support flatten entries M)
+support InputGate := 
+support SumGate := 
+support ProductGate := 
+support DivideGate := 
+support DetGate := g -> findSupport(g, new MutableHashTable) 
+support List := L -> (
+    t := new MutableHashTable;
+    L/(g->findSupport(g,t))//flatten//unique 
+    ) 
+support GateMatrix := M -> support flatten entries M
 
-constants = method()
-constants InputGate := g -> if isConstant g then g else {}
-constants SumGate := memoize (g -> g.Inputs/constants//flatten//unique)
-constants ProductGate := memoize (g -> g.Inputs/constants//flatten//unique)
-constants DivideGate := memoize (g -> g.Inputs/constants//flatten//unique)
-constants DetGate := memoize (g -> g.Inputs//flatten/constants//flatten//unique)
-constants List := memoize (L -> L/constants//flatten//unique)
-constants GateMatrix := memoize (M -> constants flatten entries M)
+findSupport = method(TypicalValue=>List)
+findSupport (InputGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = if isConstant g then {} else {g}
+findSupport (ProductGate,MutableHashTable) := 
+findSupport (DivideGate,MutableHashTable) := 
+findSupport (SumGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = g.Inputs/(i->findSupport(i,t))//flatten//unique
+findSupport (DetGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = (flatten g.Inputs)/(i->findSupport(i,t))//flatten//unique
 
-depth InputGate := g -> 0
-depth SumGate := memoize (g -> g.Inputs//depth + 1)
-depth ProductGate := memoize (g -> g.Inputs//depth + 1)
-depth DivideGate := memoize (g -> g.Inputs//depth + 1)
-depth DetGate := memoize (g -> g.Inputs//flatten//depth + 1)
-depth GateMatrix := memoize (M -> depth flatten entries M)
-depth List := memoize (L -> L/depth//max)
+constants = method(TypicalValue=>List)
+constants InputGate := 
+constants SumGate := 
+constants ProductGate := 
+constants DivideGate := 
+constants DetGate := g -> findConstants(g, new MutableHashTable) 
+constants List := L -> (
+    t := new MutableHashTable;
+    L/(g->findConstants(g,t))//flatten//unique 
+    ) 
+constants GateMatrix := M -> constants flatten entries M
 
-flattenGates = method()
-flattenGates InputGate := g -> {}
-flattenGates SumGate := memoize (g -> g.Inputs//unique)
-flattenGates ProductGate := memoize (g -> g.Inputs//unique)
-flattenGates DivideGate := memoize (g -> g.Inputs//unique)
-flattenGates DetGate := memoize (g -> g.Inputs//flatten//unique)
-flattenGates GateMatrix := memoize (M -> flattenGates flatten entries M)
-flattenGates List := memoize (L -> L/flattenGates//flatten//unique)
+findConstants = method()
+findConstants (InputGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = if isConstant g then {g} else {}
+findConstants (ProductGate,MutableHashTable) := 
+findConstants (DivideGate,MutableHashTable) := 
+findConstants (SumGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = g.Inputs/(i->findConstants(i,t))//flatten//unique
+findConstants (DetGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = (flatten g.Inputs)/(i->findConstants(i,t))//flatten//unique
 
+depth InputGate := 
+depth SumGate := 
+depth ProductGate := 
+depth DivideGate := 
+depth DetGate := g -> findDepth(g, new MutableHashTable) 
+depth List := L -> (
+    t := new MutableHashTable;
+    L/(g->findDepth(g,t))//max
+    ) 
+depth GateMatrix := M -> depth flatten entries M
+
+findDepth = method()
+findDepth (InputGate,MutableHashTable) := (g,t) -> 0 
+findDepth (ProductGate,MutableHashTable) := 
+findDepth (DivideGate,MutableHashTable) := 
+findDepth (SumGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = 1 + g.Inputs/(i->findDepth(i,t))//max
+findDepth (DetGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = 1 + (flatten g.Inputs)/(i->findDepth(i,t))//max
+
+TEST ///
+X = inputGate symbol X
+C = inputGate symbol C
+XpC = X+C
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+
+support(X*X)
+support(detXCCX + X)
+support gateMatrix{{detXCCX,X}}
+
+assert(set support(C*X) === set support(X*C))
+
+constants(X*(1*X+2))
+constants(3*detXCCX + 2*X)
+constants gateMatrix{{detXCCX,12*X}}
+
+depth(X*X)
+depth(detXCCX + X)
+depth gateMatrix{{detXCCX,X}}
+assert (depth {X+((detXCCX+X)*X)/C}==5)
+///
 
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
 diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sumGate
@@ -323,7 +368,19 @@ compress ProductGate := g -> (
     productGate c
     )
 
+getVarGates = method()
+getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
 
+gatePolynomial = method()
+gatePolynomial RingElement := p -> (
+    -- one naive way of converting a sparse polynomial to a circuit  
+    X := getVarGates ring p;
+    sumGate apply(listForm p, mc->(
+	    (m,c) := mc;
+	    c*product(#m,i->X#i^(m#i))
+	    ))
+    ) 
+	
 --------------------------------------------------
 -- RawSLProgram routines
 --------------------------------------------------
@@ -484,8 +541,6 @@ value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
 
 sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
 sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> matrix applyTable(M,g->sub(g,A,B))
-
-support GateMatrix := memoize (M -> flatten entries M/support//flatten//unique)
 
 joinHorizontal = method()
 joinHorizontal List := L->(
