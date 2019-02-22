@@ -44,8 +44,8 @@
 /libraries/missing/src/Makefile
 /libraries/Makefile.library
 /Macaulay2/bin/M2
-/Macaulay2/c/.gdbinit*
-/Macaulay2/m2/.gdbinit*
+/Macaulay2/c/.gdbinit
+/Macaulay2/m2/.gdbinit
 /libraries/atomic_ops/Makefile
 /libraries/cohomcalg/Makefile
 /libraries/csdp/Makefile
