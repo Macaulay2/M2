@@ -359,14 +359,14 @@ concatCols = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
      mats = sameringMatrices mats;
+     mat0 := first mats;
      sources := apply(mats,source);
      -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
      -- if not same targets then error "expected matrices in the same row to have equal targets";
-     if all(mats, isHomogeneous) then (
-        S := ring mats#0;
-        d := degree mats#0;
-        sources = for i from 0 to #sources-1 list (sources#i)**(S^(d-degree mats#i)));
+     if (S:=ring source mat0) === ring target mat0 and all(mats, isHomogeneous) then
+       if (d:=degree mat0) =!= {} then
+         sources = for i from 0 to #sources-1 list (sources#i)**(S^{d-degree mats#i});
      ggConcatCols(targets#0, Module.directSum sources, mats))
 
 concatRows = mats -> (
