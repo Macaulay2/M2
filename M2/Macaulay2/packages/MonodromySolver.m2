@@ -16,8 +16,8 @@ newPackage(
 	PackageImports => {"PHCpack","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-  	DebuggingMode => false,		
-  	--DebuggingMode => true,		 -- set to true only during development
+  	--DebuggingMode => false,		
+  	DebuggingMode => true,		 -- set to true only during development
   	CacheExampleOutput => true
     	)
 
@@ -26,7 +26,7 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions"}
+     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions", "Gate"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry
@@ -38,7 +38,7 @@ needs "./MonodromySolver/solveViaMonodromy.m2"
 
 
 beginDocumentation()
-needs "./MonodromySolver/Documents/DocMonodromysolver.m2"
+load "MonodromySolver/Documents/DocMonodromysolver.m2"
 end
 
 restart

@@ -13,8 +13,9 @@ export {
     "HomotopyNode",
     "getTrackTime",
     "saturateEdges",
-    "Failures",
-    "tMin"}
+    "FilterCondition",
+    "FilterFailure",
+    "Randomizer"}
     
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
@@ -28,12 +29,15 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
         BasePoint => params,
         PartialSols => partialSols,
         Graph => G,
-        SpecializedSystem => specializeSystem (params, G.Family),
 	Edges => new MutableList from {}
     };
+    if not(G.Gate =!= null)  then (
+	N.SpecializedSystem = specializeSystem (params, G.Family));
     G.Vertices = append(G.Vertices, N);
     N
 )
+addNode (HomotopyGraph, Matrix, Matrix) := (G, p0, x0) -> addNode(point p0, pointArray {point x0})
+    
 
 addEdge = method(Options=>{"random gamma"=>true})
 addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
@@ -53,31 +57,47 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
     	E.Potential12 = G.Potential (E, true);
     	E.Potential21 = G.Potential (E, false);
     	);
-    F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
-    F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
-    if USEtrackHomotopy then (
-	if o#"random gamma" then (
-	    E#"homotopy12" = segmentHomotopy(F1,F2);
-    	    E#"homotopy21" = segmentHomotopy(F2,F1);
-	    )
-	else ( -- this is a hack engaged for a more general purpose (e.g., nonlinear systems)
-	    F := G.Family.PolyMap;
-	    (FR, mapFR) := flattenRing ring F;
-            FF := mapFR F;
-	    t := symbol t;
-	    Rt := CC(monoid [gens ring F, t]);
-	    t = last gens Rt;
-	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint + t*coordinates n2.BasePoint))) FF;   		
-	    F21 := sub(F12,t=>1-t);   		
-	    XT := getVarGates Rt;
-	    X := gateMatrix{drop(XT,-1)};
-	    T := last XT; 
-	    -- "-- setting up gateHomotopy for an edge...";
-	    E#"homotopy12" = gateHomotopy(gateMatrix polySystem F12, X, T, Strategy=>compress);
-	    E#"homotopy21" = gateHomotopy(gateMatrix polySystem F21, X, T, Strategy=>compress);
-	    )
-    	);
-    E
+    if (G.Gate) =!= null then (
+	p1 := transpose matrix n1.BasePoint;
+	p2 := transpose matrix n2.BasePoint;
+	if (G.Randomizer =!= null) then (
+	    p1 = G.Randomizer p1;
+	    p2 = G.Randomizer p2;
+	    );
+    	E#"homotopy12" = specialize(G.Gate, 
+	    ((E.gamma1)*p1)||
+	    ((E.gamma2)*p2));
+    	E#"homotopy21" = specialize(G.Gate, 
+	    ((E.gamma2)*p2)||
+	    ((E.gamma1)*p1));
+		)
+    else (
+	    F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
+    	    F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
+	    if USEtrackHomotopy then (
+		if o#"random gamma" then (
+	    	    E#"homotopy12" = segmentHomotopy(F1,F2);
+    	    	    E#"homotopy21" = segmentHomotopy(F2,F1);
+	    	    )
+		else ( -- this is a hack engaged for a more general purpose (e.g., nonlinear systems)
+	    	    F := G.Family.PolyMap;
+	    	    (FR, mapFR) := flattenRing ring F;
+            	    FF := mapFR F;
+	    	    t := symbol t;
+	    	    Rt := CC(monoid [gens ring F, t]);
+	    	    t = last gens Rt;
+	    	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint + t*coordinates n2.BasePoint))) FF;   		
+	    	    F21 := sub(F12,t=>1-t);   		
+	    	    XT := getVarGates Rt;
+	    	    X := gateMatrix{drop(XT,-1)};
+	    	    T := last XT; 
+	    	    -- "-- setting up gateHomotopy for an edge...";
+	    	    E#"homotopy12" = gateHomotopy(gateMatrix polySystem F12, X, T, Strategy=>compress);
+	    	    E#"homotopy21" = gateHomotopy(gateMatrix polySystem F21, X, T, Strategy=>compress);
+	    	    )
+    		);
+	    );
+    	    E
 )
 
 removeEdge = method()
@@ -98,7 +118,7 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
 	)
     )
 
-homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Family=>"IdSupport", Potential=>null})
+homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Family=>"IdSupport", Potential=>null, FilterCondition=>null, Randomizer=>null})
 installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 	Vertices => new MutableList from {},
 	Edges => new MutableList from {}
@@ -107,7 +127,18 @@ homotopyGraph PolySystem := o -> PF -> (
     G := homotopyGraph();
     G.Family = PF;
     G.Potential = o.Potential;
-    G.Failures = 0;
+    G.FilterCondition = o.FilterCondition;
+    G.Randomizer = o.Randomizer;
+    G.Gate = null;
+    G
+    )
+homotopyGraph GateParameterHomotopy := o -> PH -> (
+    G := homotopyGraph();
+    G.Gate = PH;
+    G.Potential = o.Potential;
+    G.SLP = true;
+    G.FilterCondition = o.FilterCondition;
+    G.Randomizer = o.Randomizer;
     G
     )
 
@@ -223,9 +254,9 @@ getTrackTime HomotopyGraph := G -> G#"track time"
 -- 2) specializeSystem method which converts parametric coefficients to a list of polynomials (inputs to track),
 -- 3) positions method defined for pointset object
 -- Output: 
-trackEdge = method(Options=>{tMin=>null, Verbose=>false})
-trackEdge (HomotopyEdge, Boolean) := o-> (e, from1to2) -> trackEdge(e,from1to2,infinity)
-trackEdge (HomotopyEdge, Boolean, Thing) := o -> (e, from1to2, batchSize) -> (
+trackEdge = method()
+trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> trackEdge(e,from1to2,infinity)
+trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     G := e.Graph;
     homotopy := null;
     if from1to2 then (
@@ -248,7 +279,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := o -> (e, from1to2, batchSize) -> (
 	    if USEtrackHomotopy then trackHomotopy(homotopy,startSolutions)  
 	    else track(polySystem (gammaHead * head.SpecializedSystem), 
 	    	polySystem(gammaTail * tail.SpecializedSystem), 
-	    	startSolutions,tStepMin=>o.tMin)
+	    	startSolutions)
 	    );
 	t := first t'sols;
 	sols := last t'sols;
@@ -260,27 +291,32 @@ trackEdge (HomotopyEdge, Boolean, Thing) := o -> (e, from1to2, batchSize) -> (
     scan(#untrackedInds, i->(
 	    a := untrackedInds#i;
 	    s := newSols#i;
-	    if status s =!= Regular then (
-		if o.Verbose then << "failure: status = " << status s << endl;
-		G.Failures = G.Failures + 1;
-		correspondence#a = null; -- record tracking failure, not a correspondence
-	      	)
+	    if ((G.FilterCondition =!= null) and 
+		(G.FilterCondition(transpose matrix tail.BasePoint, transpose matrix s))) then (
+		<< "filtering failure (probably a path jump)" << endl;
+		s.SolutionStatus = FilterFailure;
+	       	correspondence#a = null; -- record failure		  
+		);
+	    if (status s =!= Regular) then (
+		<< "failure: status = " << status s << endl;
+		correspondence#a = null; -- record failure
+		)
 	    else ( 
-	    	if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
-	    	else (    
+		if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
+		else (    
 		    s = point {coordinates s}; -- lose the rest of info
 		    appendPoint(tail.PartialSols, s);
 		    b = n;
 		    n = n+1;
 		    );
-	    	if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
-	    	then (
-		    if o.Verbose then print "failure: correspondence conflict";
-		    G.Failures = G.Failures + 1;
+		if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
+		then (
+		    print "failure: correspondence conflict";
 		    correspondence#a = null -- record failure 
 		    )
-		)
-	    ));
+		);
+	    )
+	);
     if G.Potential =!= null 
     then for e in tail.Edges do (
     	e.Potential12 = G.Potential (e, true);
