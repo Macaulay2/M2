@@ -56,10 +56,10 @@ MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
       // ignore returned value (the rank of mat):
       MatrixOps::rowReducedEchelonForm(mat, result->mat);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       delete result;
-      throw(e);
+      throw;
   }
 }
 

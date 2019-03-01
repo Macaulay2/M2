@@ -15,8 +15,7 @@ newPackage("PolyhedralObjects",
 	  Email => "nilten@math.berkeley.edu"},
      	  {Name => "Qingchun Ren"},
 	  {Name => "Josephine Yu"}
-     },
-    DebuggingMode => true
+     }
     )
 
 ---------------------------------------------------------------------------

@@ -1,23 +1,31 @@
 --- status: DRAFT
---- author(s): L.Gold
+--- author(s): L.Gold, Lily Silverstein
 --- notes: 
 
-document { 
-     Key => {applyValues,(applyValues,HashTable,Function)},
-     Headline => "apply a function to each value",
-     Usage => "applyValues(H,f)",
-     Inputs => {
-	  "H" => HashTable,
-	  "f" => Function => "with one argument"
-	  },
-     Outputs => {
-	  HashTable => {"obtained by applying ", TT "f", " to each value ", TT "v", 
-	       " in ", TT "H"}
-	  },
-     EXAMPLE {
-	  "H = new HashTable from {a => 1, b => 2, c => 3}",
-	  "applyValues(H, v -> v + 100)",
-	  },
-     SeeAlso => {"applyKeys", "applyPairs", "scanValues"
-	  }
-     }
+doc ///
+ Key
+  applyValues
+  (applyValues, HashTable, Function)
+ Headline
+  apply a function to each value in a hash table
+ Usage
+  applyValues(H, f)
+ Inputs
+  H:HashTable
+  f:Function
+   of one argument
+ Outputs
+  :HashTable
+   obtained by applying {\tt f} to each value in {\tt H}
+ Description
+  Example
+   H = new HashTable from {1 => 10, 2 => 15, 3 => 20}
+   applyValues(H, v -> v + 100)
+   applyValues(H, v -> 1)
+ SeeAlso
+  "hash tables"
+  applyKeys
+  applyPairs
+  scanValues
+  values
+///

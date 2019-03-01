@@ -8,7 +8,9 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include @srcdir@/Makefile.files
 include Makefile.common
-CPPFLAGS := -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors
+
+CPPFLAGS := -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors 
+CXXFLAGS += -Wno-unknown-pragmas
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
 

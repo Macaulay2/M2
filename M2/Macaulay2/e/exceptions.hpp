@@ -28,7 +28,7 @@ struct internal_error : public engine_error
     {
 #define CATCH                         \
   }                                   \
-  catch (exc::engine_error __x424621) \
+  catch (const exc::engine_error& __x424621) \
   {                                   \
     ERROR(__x424621.what());          \
     return NULL;                      \

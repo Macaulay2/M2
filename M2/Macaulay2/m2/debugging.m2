@@ -116,6 +116,12 @@ net Descent := x -> stack sort apply(pairs x,
 	  then net k
 	  else net k | " : " | net v
 	  ))
+texMath Descent := x -> "\\left|\\begin{array}{l}" | concatenate sort apply(pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then texMath net k -- sucks but no choice
+	  else texMath net k | " : " | texMath v
+	  ) | "\\\\") | "\\end{array}\\right."
 justTypes := syms -> select(apply(syms, value), s -> instance(s, Type))
 allThingsWithNames := syms -> select(apply(syms, value), s -> hasAttribute(s,ReverseDictionary))
      

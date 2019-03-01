@@ -2,8 +2,6 @@
 --To do:
 -- -Add functionality to multiply elements of the "Schubert Ring", perhaps by
 --  overloading the * operator
-needsPackage "Schubert2"
-needsPackage "SchurRings"
 
 newPackage(
      "Book3264Examples",
@@ -12,8 +10,8 @@ newPackage(
      Authors => {{Name => "Charley Crissman",
 	       Email => "charleyc@math.berkeley.edu",
 	       HomePage => "http://math.berkeley.edu/~charleyc/"}},
-     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris",
-     DebuggingMode => true
+     PackageExports => {"Schubert2", "SchurRings"},
+     Headline => "Examples to accompany the eponymous book by Eisenbud and Harris"
      )
 
 export {"grassmannian", "placeholderSchubertCycle", "diagrams", "placeholderToSchubertBasis"}
@@ -22,8 +20,6 @@ protect schuberttoh
 protect htoschubert
 protect intersectionmap
 protect schubertring
-
-needsPackage "Schubert2"
 
 grassmannian = method(TypicalValue => FlagBundle)
 grassmannian(ZZ,ZZ) := (k,n) -> flagBundle({k,n-k}) --The grassmannian of k-dimensional subspaces of
@@ -593,13 +589,13 @@ doc ///
       O1 = dual(S)
       chern O1
     Text
-      Now, Schubert2 also comes with a built-in function @TO projectiveSpace@ for making projective
-      spaces.  Using {/tt projectiveSpace} to build $\mathbb{P}^n$ is nice, because the resulting
+      Now, Schubert2 also comes with a built-in function @TO abstractProjectiveSpace@ for making projective
+      spaces.  Using {/tt abstractProjectiveSpace} to build $\mathbb{P}^n$ is nice, because the resulting
       Chow ring is presented as a truncated polynomial ring in one variable, rather than as a ring
       with $n+1$ generators.  {\bf But, be careful}: this built-in actually produces the projective
       space of 1-{\em quotients}.  For example:
     Example
-      P3' = projectiveSpace 3
+      P3' = abstractProjectiveSpace 3
       (S',Q') = P3'.Bundles
       chern S'
       chern Q' -- Q' is O(1) on P3'

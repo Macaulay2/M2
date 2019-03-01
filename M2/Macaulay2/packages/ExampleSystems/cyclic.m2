@@ -8,6 +8,8 @@ cyclic (ZZ,Ring) := (n,kk) -> (
 	    )) | {product gens R - 1}
     )
 
+beginDocumentation()
+
 doc /// 
     Key
     	cyclic

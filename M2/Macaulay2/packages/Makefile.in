@@ -4,10 +4,10 @@
 include ../../include/config.Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
-ALL_PACKAGES = @PACKAGES@
+ALL_PACKAGES = $(shell cat @srcdir@/=distributed-packages)
 
 # this one can be overridden by the user:
-PACKAGES = @PACKAGES@
+PACKAGES = $(ALL_PACKAGES)
 
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
@@ -24,7 +24,6 @@ ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
-	AbsoluteLinks => false, 				\
 	UserMode => false, 					\
 	Verbose => $(Verbose),					\
 	InstallPrefix => \"@LOCALSTAGINGAREA@/\",		\
@@ -64,7 +63,7 @@ uninstall-package-$1:
 all-$1: @pre_libm2dir@/$1/.installed
 unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
-@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
+@pre_libm2dir@/$1/.installed : $1.m2 $$(shell if [ -d @srcdir@/$1 ] ; then find @srcdir@/$1 -type f ; fi) | info-dir
 	: installing package $1
 	$$(WHY)
 	$(MKDIR_P) $1-temporary
@@ -93,8 +92,8 @@ endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
 # make packages Style and Macaulay2Doc get installed before the others:
-$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info

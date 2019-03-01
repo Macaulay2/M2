@@ -19,7 +19,7 @@ engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
       MonomialIdeal *result = m->make_monideal(n);
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -32,7 +32,7 @@ const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
   try
     {
       return Matrix::make(I);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -46,7 +46,7 @@ M2_string MonomialIdeal_to_string(const MonomialIdeal *I)
     {
       I->text_out(o);
       return o.to_string();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       o << "[unprintable monomial ideal]";
       return o.to_string();
@@ -61,7 +61,7 @@ int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
     {
       if (I->get_ring() != J->get_ring()) return false;
       return I->is_equal(*J);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return -1;
@@ -77,7 +77,7 @@ const MonomialIdeal /* or null */ *rawRadicalMonomialIdeal(
       intern_monideal(result);
       return result;
 
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -98,7 +98,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_intersect(
       MonomialIdeal *result = I->intersect(*J);
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -116,7 +116,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal1(
       MonomialIdeal *result = I->quotient(a->ints());
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -139,7 +139,7 @@ const MonomialIdeal /* or null */ *rawColonMonomialIdeal2(
       if (M2_gbTrace >= 1) dstash();
       return result;
 
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -155,7 +155,7 @@ const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal1(
       MonomialIdeal *result = I->erase(a->ints());
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -176,7 +176,7 @@ const MonomialIdeal /* or null */ *rawSaturateMonomialIdeal2(
       MonomialIdeal *result = I->sat(*J);
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -191,7 +191,7 @@ const MonomialIdeal /* or null */ *IM2_MonomialIdeal_borel(
       MonomialIdeal *result = I->borel();
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -209,7 +209,7 @@ int IM2_MonomialIdeal_codim(const MonomialIdeal *I)
     {
       MinimalPrimes ap(I);
       return ap.codimension();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return -1;  // -1 is not a valid codimension, and interface.d knows it
@@ -225,7 +225,7 @@ rawMonomialMinimalPrimes(const MonomialIdeal *I, int codim_limit, int count)
       MonomialIdeal *result = ap.alg1_min_primes(codim_limit, count);
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -242,7 +242,7 @@ const MonomialIdeal /* or null */ *rawMaximalIndependentSets(
       MonomialIdeal *result = ap.associated_primes(count);
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -258,7 +258,7 @@ const RingElement /* or null */ *IM2_MonomialIdeal_Hilbert(
   try
     {
       return hilb_comp::hilbertNumerator(I);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -400,7 +400,7 @@ const MonomialIdeal /* or null */ *rawAlexanderDual(const MonomialIdeal *I,
       MonomialIdeal *result = alexDual(I, top, strategy);
       intern_monideal(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

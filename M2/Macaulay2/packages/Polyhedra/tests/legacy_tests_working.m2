@@ -1,10 +1,10 @@
 -- Test 7
 -- Checking intersection that give a not pointed cone and intersection for lists
 TEST ///
-C = intersection matrix {{1,2,1},{2,1,1}};
+C = coneFromHData matrix {{1,2,1},{2,1,1}};
 assert(image linSpace C == image matrix{{1},{1},{-3}})
 assert(ambDim C == 3)
-P = intersection {hypercube 3,C,(matrix{{1,1,1}},matrix{{1}})};
+P = intersection {hypercube 3,C,polyhedronFromHData(matrix{{1,1,1}},matrix{{1}})};
 V = matrix {{1/3,1,0,1,1,-1,-1/3},{1/3,0,1,1,-1,1,-1/3},{-1,-1,-1,-1,1,1,1}};
 assert(vertices P == V);
 ///
@@ -47,33 +47,33 @@ assert isFace(C2,C1)
 -- Checking isFace
 TEST ///
 P1 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
-P2 = intersection(matrix {{1,0,0},{-1,0,0}},matrix {{-1},{-1}});
+P2 = polyhedronFromHData(matrix {{1,0,0},{-1,0,0}},matrix {{-1},{-1}});
 assert isEmpty P2
 assert isFace(P2,P1)
 P3 = convexHull matrix {{1,1,1},{1,1,-1},{1,-1,1}};
 assert not isFace(P3,P1)
-P4 = intersection {P3,(map(ZZ^0,ZZ^3,0),map(ZZ^0,ZZ^1,0),matrix{{0,1,0}},matrix{{1}})};
+P4 = intersection {P3,polyhedronFromHData(map(ZZ^0,ZZ^3,0),map(ZZ^0,ZZ^1,0),matrix{{0,1,0}},matrix{{1}})};
 assert isFace(P4,P1)
 ///
 
 -- Test 20
 -- Checking isCompact
 TEST ///
-P = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{1},{2},{3},{4},{5}});
+P = polyhedronFromHData(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{1},{2},{3},{4},{5}});
 assert not isCompact P
-P = intersection {P, (matrix {{0,0,-1}},matrix {{6}})};
+P = intersection {P, polyhedronFromHData(matrix {{0,0,-1}},matrix {{6}})};
 assert isCompact P
-P = intersection {P, {matrix {{1,1,1}},matrix {{0}}}};
+P = intersection {P, polyhedronFromHData(matrix {{1,1,1}},matrix {{0}})};
 assert isCompact P
 ///
 
 -- Test 21
 -- Checking tailCone
 TEST ///
-P = intersection(matrix {{1,0},{-1,0},{0,1}},matrix {{1},{2},{3}});
+P = polyhedronFromHData(matrix {{1,0},{-1,0},{0,1}},matrix {{1},{2},{3}});
 C = coneFromVData matrix {{0},{-1}};
 assert(tailCone P == C)
-P = intersection (matrix{{2,1,1},{1,2,1},{1,1,2}},matrix{{2},{2},{2}});
+P = polyhedronFromHData (matrix{{2,1,1},{1,2,1},{1,1,2}},matrix{{2},{2},{2}});
 C = coneFromVData matrix{{1,1,-3},{1,-3,1},{-3,1,1}};
 assert(tailCone P == C)
 ///
@@ -135,9 +135,9 @@ assert(interiorVector C == p)
 -- Checking commonFace for polyhedra
 TEST ///
 P1 = convexHull matrix {{1,1,1,1,-1},{1,1,-1,-1,0},{1,-1,1,-1,0}};
-P2 = intersection (matrix {{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{-1},{1},{1},{1}});
+P2 = polyhedronFromHData (matrix {{-1,0,0},{0,1,0},{0,-1,0},{0,0,1}},matrix {{-1},{1},{1},{1}});
 assert not commonFace(P1,P2)
-P2 = intersection {P2,(matrix {{0,0,-1}},matrix {{1}})};
+P2 = intersection {P2,polyhedronFromHData(matrix {{0,0,-1}},matrix {{1}})};
 assert commonFace(P1,P2)
 ///
 
@@ -278,7 +278,7 @@ v = matrix {{-1},{1}};
 P = affineImage(A,P,v);
 Q = convexHull matrix {{2,-2,0,-4},{8,0,2,-6}};
 assert(P == Q)
-P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
+P = polyhedronFromHData(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
 A = matrix {{0,2,0},{1,0,1},{0,0,2}};
 v = matrix {{1},{1},{1}};
 P = affineImage(A,P,v);
@@ -305,7 +305,7 @@ v = matrix {{-1},{1}};
 P = affinePreimage(A,P,v);
 Q = convexHull matrix {{0,-2,-4,-6},{0,1,3,4}};
 assert(P == Q)
-P = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
+P = polyhedronFromHData(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{1},{1},{1}});
 A = matrix {{0,2,0},{1,0,1},{0,0,2}};
 v = matrix {{1},{1},{1}};
 P = affinePreimage(A,P,v);
@@ -326,7 +326,7 @@ assert(C == C1)
 -- Test 45
 -- Checking pyramid
 TEST ///
-P = intersection(matrix {{1,0},{-1,0},{0,1},{0,-1}},matrix {{1},{1},{1},{1}});
+P = polyhedronFromHData(matrix {{1,0},{-1,0},{0,1},{0,-1}},matrix {{1},{1},{1},{1}});
 P = pyramid P;
 Q = convexHull matrix {{1,1,-1,-1,0},{1,-1,1,-1,0},{0,0,0,0,1}};
 assert(P == Q)
@@ -388,7 +388,7 @@ assert(P == Q)
 -- Checking posOrthant
 TEST ///
 C1 = posOrthant 3;
-C2 = intersection matrix {{1,0,0},{0,1,0},{0,0,1}};
+C2 = coneFromHData matrix {{1,0,0},{0,1,0},{0,0,1}};
 assert(C1 == C2)
 ///
 
@@ -411,7 +411,7 @@ assert(set L === set L1)
 -- Checking stdSimplex
 TEST ///
 P = stdSimplex 2;
-Q = intersection(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{0},{0},{0}},matrix{{1,1,1}},matrix{{1}});
+Q = polyhedronFromHData(matrix{{-1,0,0},{0,-1,0},{0,0,-1}},matrix{{0},{0},{0}},matrix{{1,1,1}},matrix{{1}});
 assert(P == Q)
 ///
 
@@ -466,10 +466,10 @@ assert(q == proximum(p,P))
 ///
 
 -- Test 59
--- Checking triangulate
+-- Checking barycentricTriangulation
 TEST ///
 P = crossPolytope 3;
-L = triangulate P;
+L = barycentricTriangulation P;
 L = apply(L,convexHull);
 L1 = {convexHull{matrix{{1},{0},{0}},matrix{{0},{1},{0}},matrix{{0},{0},{1}},matrix{{0},{0},{0}}},
      convexHull{matrix{{-1},{0},{0}},matrix{{0},{1},{0}},matrix{{0},{0},{1}},matrix{{0},{0},{0}}},
@@ -544,9 +544,9 @@ assert(ehrhart P == (1/2)*x^2+(3/2)*x+1)
 -- Test 66
 -- Checking isLatticePolytope
 TEST ///
-P = intersection(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{1},{1},{1},{1}})
+P = polyhedronFromHData(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{1},{1},{1},{1}})
 assert not isLatticePolytope P
-P = intersection(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{4},{6},{3},{6}})
+P = polyhedronFromHData(matrix{{2,0},{0,-3},{-3,0},{0,2}},matrix{{4},{6},{3},{6}})
 assert isLatticePolytope P
 ///
 

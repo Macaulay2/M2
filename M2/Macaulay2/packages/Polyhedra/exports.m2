@@ -109,5 +109,12 @@ export {
    "secondaryPolytope", 
    "statePolytope", 
    "stdSimplex",
-   "saveSession"}
+   "simplex",
+   "saveSession",
+   "regularTriangulation",
+   "barycentricTriangulation",
+   "regularSubdivision",
+   "minimalNonFaces",
+   "stanleyReisnerRing"
+}
 

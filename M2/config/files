@@ -62,6 +62,7 @@ libraries/givaro/Makefile
 libraries/fplll/Makefile
 libraries/polymake/Makefile
 libraries/normaliz/Makefile
+libraries/csdp/Makefile
 libraries/pari/Makefile
 libraries/readline/Makefile
 libraries/ntl/Makefile

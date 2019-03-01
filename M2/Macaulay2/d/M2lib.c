@@ -400,10 +400,6 @@ static void interrupt_handler(int sig) {
 			 _Exit(interruptExit);
 			 }
 		    interrupts_setInterruptFlag();
-		    # if 0
-		    /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
-		    if (reading_from_readline) rl_free_line_state();
-		    #endif
 		    if (interrupt_jump_set) 
 			 #ifdef HAVE_SIGLONGJMP
 			 siglongjmp(interrupt_jump,1);
@@ -510,17 +506,17 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 #if defined HAVE___ENVIRON
     #define our_environ __environ
     #if !HAVE_DECL___ENVIRON
-    extern char **__environ;
+    extern const char **__environ;
     #endif
 #elif defined HAVE__ENVIRON
     #define our_environ _environ
     #if !HAVE_DECL__ENVIRON
-    extern char **_environ;
+    extern const char **_environ;
     #endif
 #elif defined HAVE_ENVIRON
     #define our_environ environ
     #if !HAVE_DECL_ENVIRON
-    extern char **environ;
+    extern const char **environ;
     #endif
 #else
     #error "no environment variable available"
@@ -564,8 +560,8 @@ void* testFunc(void* q )
 struct saveargs
 {
   int argc;
-  char** argv;
-  char** envp;
+  const char** argv;
+  const char** envp;
   int volatile envc;
 };
 
@@ -576,8 +572,8 @@ static struct saveargs* vargs;
 void* interpFunc(void* vargs2)
 {
   struct saveargs* args = (struct saveargs*) vargs;
-  char** saveenvp = args->envp;
-  char** saveargv = args->argv;
+  const char** saveenvp = args->envp;
+  const char** saveargv = args->argv;
   int argc = args->argc;
   int volatile envc = args->envc;
      setInterpThread();
@@ -620,7 +616,7 @@ int have_arg(char **argv, const char *arg) {
 
 int Macaulay2_main(argc,argv)
 int argc; 
-char **argv;
+const char **argv;
 {
 
      int volatile envc = 0;
@@ -635,7 +631,7 @@ char **argv;
 #endif
      void main_inits();
 
-     char **x = our_environ; 
+     const char **x = our_environ; 
      while (*x) envc++, x++;
 
      GC_INIT();
@@ -761,12 +757,9 @@ char **argv;
      }
 
      signal(SIGPIPE,SIG_IGN);
-     have_arg_no_int = have_arg(argv,"--int");
 
-#if HAVE_DECL_RL_CATCH_SIGNALS     
-     if (have_arg_no_int)
-	  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
-#endif
+     /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
+     rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
 
      system_handleInterruptsSetup(TRUE);
      
@@ -776,11 +769,15 @@ char **argv;
      vargs->envp=saveenvp;
      vargs->envc = envc;
 
-
-     initializeThreadSupervisor();
-     struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0,0);
-     pushTask(interpTask);
-     waitOnTask(interpTask);
+     if (gotArg("--no-threads", saveargv)) {
+	  interpFunc(vargs);
+	  }
+     else {
+	  initializeThreadSupervisor();
+	  struct ThreadTask* interpTask = createThreadTask("Interp",interpFunc,vargs,0,0,0);
+	  pushTask(interpTask);
+	  waitOnTask(interpTask);
+	  }
      return 0;
      }
 

@@ -238,7 +238,10 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
-toString EngineRing := R -> if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary) else toString R.RawRing
+expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else expression toString R.RawRing -- should never be used
+texMath EngineRing := R -> texMath expression R
+toString EngineRing := toString @@ expression
+net EngineRing := net @@ expression
 
 ZZ _ EngineRing := 
 RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
@@ -270,22 +273,13 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
    degreeLength FractionField := F -> degreeLength last F.baseRings
         degrees FractionField := F -> degrees last F.baseRings
       precision FractionField := F -> precision last F.baseRings
-       toString FractionField := F -> (
-	    if hasAttribute(F,ReverseDictionary)
-	    then toString getAttribute(F,ReverseDictionary)
-	    else "frac(" | toString last F.baseRings | ")"
-	    )
         numgens FractionField := F -> numgens last F.baseRings
      generators FractionField := opts -> F -> if opts.CoefficientRing === F then {} else generators(last F.baseRings, opts) / (r -> promote(r,F))
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
-            net FractionField := F -> (
-		 if hasAttribute(F,ReverseDictionary)
-		 then toString getAttribute(F,ReverseDictionary)
-		 else net new FunctionApplication from { frac, last F.baseRings }
-		 )
-     expression FractionField := F -> (expression frac) (expression last F.baseRings)
-       describe FractionField := F -> net expression F
+     expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression frac) (expression last F.baseRings)
+     describe FractionField := F -> Describe (expression frac) (describe last F.baseRings)
+     toExternalString FractionField := F -> toString describe F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 isHomogeneous EngineRing := R -> isHomogeneous 0_R
@@ -330,6 +324,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	  );
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+     if R.?numallvars then F.numallvars=R.numallvars;
      F)
 
 -- methods for all ring elements
@@ -428,8 +423,8 @@ RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
 toString RingElement := x -> toString expression x
 toExternalString RingElement := x -> toExternalFormat expression x
-
 net RingElement := x -> net expression x
+texMath RingElement := x -> texMath expression x
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 

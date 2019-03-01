@@ -12,12 +12,11 @@ newPackage(
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "a simple documentation function",
+     	PackageImports => { "Text" },
     	DebuggingMode => false
     	)
 
 export {"multidoc", "doc", "docTemplate", "docExample", "packageTemplate", "simpleDocFrob"}
-
-needsPackage "Text"
 
 simpleDocFrob = method()
 simpleDocFrob(ZZ,Matrix) := (n,M) -> directSum(n:M)

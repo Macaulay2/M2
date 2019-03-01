@@ -128,3 +128,9 @@ dualFaceRepresentationMap Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    getProperty(C, facetRayDataConverter)
 )
+
+regularTriangulation = method()
+regularTriangulation Polyhedron := P -> (
+   if not isCompact P then error("Triangulation can only be produced for polytopes (i.e. compact polyhedra).");
+   regularFineTriangulation vertices P
+)

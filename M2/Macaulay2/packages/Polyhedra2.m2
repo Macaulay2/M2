@@ -16,8 +16,8 @@ newPackage("Polyhedra2",
      	  {Name => "Qingchun Ren"},
 	  {Name => "Josephine Yu"}
      },
-    Configuration => {"DefaultUsePolymake"=>false},
-    DebuggingMode => true
+    PackageImports => { "FourierMotzkin", "PolyhedralObjects","PolymakeInterface" },
+    Configuration => {"DefaultUsePolymake"=>false}
     )
 
 ---------------------------------------------------------------------------
@@ -86,11 +86,6 @@ export { "isFace",
 	"contains",
 	"convexHull", 
 	"posHull"}
-	
-needsPackage "FourierMotzkin"
-needsPackage "PolyhedralObjects"
-needsPackage("PolymakeInterface")
-
 
 Cone == Cone := (C1,C2)->(
      contains(C1,C2) and contains(C2,C1)

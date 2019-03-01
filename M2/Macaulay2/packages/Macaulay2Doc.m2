@@ -14,9 +14,6 @@ newPackage ("Macaulay2Doc",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
-if not member("Macaulay2Doc",Core#"base packages") 
-then Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
-
 scan(pairs Core#"raw documentation", (k,v) -> (
 	  remove(Core#"raw documentation", k);
 	  Macaulay2Doc#"raw documentation"#k = v;
@@ -32,5 +29,5 @@ then error splice (
      toSequence between_", " values Macaulay2Doc#"private dictionary")
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false PACKAGES=Macaulay2Doc"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=false RemakeAllDocumentation=false IgnoreExampleErrors=false"
 -- End:

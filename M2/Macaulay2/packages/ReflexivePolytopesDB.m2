@@ -8,8 +8,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
-        AuxiliaryFiles => true,
-        DebuggingMode => true
+        AuxiliaryFiles => true
         )
 
 export {
@@ -720,6 +719,62 @@ TEST ///
       "
   assert(matrixFromString str == answer) 
 ///
+
+TEST ///
+  -- yet another set of tests of matrixFromString
+  str1 = "              [ 1 -1 -1  1 -1 -1 -1  1  1  0]
+              [ 0  1  0 -1  1  0  0 -1 -1  0]
+              [-1  0  0  0  1  1  0  0  0  0]
+              [ 2  0  0  1 -1 -1 -1 -1  0  0]"
+  str2 = "            [[1, 0, -1, 2], [-1, 1, 0, 0], [-1, 0, 0, 0], [1, -1, 0, 1], [-1, 1, 1, -1], [-1, 0, 1, -1], [-1, 0, 0, -1], [1, -1, 0, -1]]    "
+  str3 =         "         1   0   0   0   1   1   0  -1  -1  -2  -4
+                  0   1   1   0  -2   2   3  -1  -4   1  -1
+                  0   0   2   0  -2   4   4  -1  -4  -2  -4
+                  0   0   0   1   0  -2  -2   2   2   0   2"
+  str4 =         "         1   0   0   0   1   1   0  -1  -1  -2  -4
+                  0   1   1   0  -2   2   3  -1  -4   1  -1
+                  0   0   2   0  -2   4   4  -1  -4  -2  -4
+                  0   0   0   1   0  -2  -2   2   2   0   2  
+                  "
+
+  assert(
+      matrixFromString str1 
+      == 
+      matrix {
+          {1, -1, -1, 1, -1, -1, -1, 1, 1, 0}, 
+          {0, 1, 0, -1, 1, 0, 0, -1, -1, 0}, 
+          {-1, 0, 0, 0, 1, 1, 0, 0, 0, 0}, 
+          {2, 0, 0, 1, -1, -1, -1, -1, 0, 0}}
+      )
+
+  assert(
+      matrixFromString str2
+      ==
+      matrix {{1, 0, -1, 2}, {-1, 1, 0, 0}, {-1, 0, 0, 0}, {1, -1, 0, 1}, {-1, 1, 1, -1}, {-1, 0, 1, -1}, {-1, 0, 0, -1}, {1, -1, 0, -1}}
+      )
+
+  assert(
+      matrixFromString str3
+      ==
+      matrix {
+          {1, 0, 0, 0, 1, 1, 0, -1, -1, -2, -4}, 
+          {0, 1, 1, 0, -2, 2, 3, -1, -4, 1, -1}, 
+          {0, 0, 2, 0, -2, 4, 4, -1, -4, -2, -4}, 
+          {0, 0, 0, 1, 0, -2, -2, 2, 2, 0, 2}}
+      )
+  
+  assert(
+      matrixFromString str4
+      ==
+      matrix {
+          {1, 0, 0, 0, 1, 1, 0, -1, -1, -2, -4}, 
+          {0, 1, 1, 0, -2, 2, 3, -1, -4, 1, -1}, 
+          {0, 0, 2, 0, -2, 4, 4, -1, -4, -2, -4}, 
+          {0, 0, 0, 1, 0, -2, -2, 2, 2, 0, 2}
+          }
+      )
+///
+
 
 TEST ///
   debug needsPackage "ReflexivePolytopesDB"

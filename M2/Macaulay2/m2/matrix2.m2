@@ -320,7 +320,7 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
 RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
 Matrix      \\ RingElement := (f,r) -> r // f
 
-Number // Matrix := (r,f) -> promote(r,ring f) // f
+Number // Matrix := (r,f) -> matrix{{promote(r,ring f)}} // f
 Matrix \\ Number := (f,r) -> r // f
 
 Matrix      // RingElement := (f,r) -> f // (r * id_(target f))
@@ -413,6 +413,7 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, i, wts)))
 
+homogenize(RingElement, RingElement) :=
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      R := ring f;
      if degreeLength R =!= 1 then error "homogenization requires degrees of length 1";
@@ -432,11 +433,6 @@ homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      else subquotient(
 	  if M.?generators then homogenize(M.generators,z,wts),
 	  if M.?relations then homogenize(M.relations,z,wts)))
-
-homogenize(RingElement, RingElement) := RingElement => (f,n) -> (
-     wts := (transpose (monoid ring f).Options.Degrees)#0;
-     homogenize(f,n,wts)
-     )
 
 homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
      p := homogenize(f#0,v,wts);

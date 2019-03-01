@@ -2,9 +2,11 @@ newPackage(
         "CohomCalg",
         Version => "0.1", 
         Date => "",
-        Authors => {{Name => "Mike Stillman", 
-                  Email => "", 
-                  HomePage => ""}},
+        Authors => {
+            {Name => "Michael E. Stillman", 
+             Email => "mike@math.cornell.edu", 
+             HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"
+             }},
         Headline => "interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety",
         PackageExports => {"NormalToricVarieties"},
         Configuration => {

@@ -42,6 +42,7 @@ EdgeIdeals
 FourTiTwo
 StatePolytope
 Polyhedra
+Truncations
 Polymake
 gfanInterface
 PieriMaps
@@ -158,6 +159,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
+FThresholds
 Seminormalization
 AlgebraicSplines
 TriangularSets
@@ -171,3 +173,16 @@ Matroids
 NumericalImplicitization
 NonminimalComplexes
 CoincidentRootLoci
+RelativeCanonicalResolution
+RandomCurvesOverVerySmallFiniteFields
+StronglyStableIdeals
+SLnEquivariantMatrices
+CorrespondenceScrolls
+NCAlgebra
+SpaceCurves
+ExteriorIdeals
+ToricInvariants
+SegreClasses
+SemidefiniteProgramming
+SOS
+MultiGradedRationalMap

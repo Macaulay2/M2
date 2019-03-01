@@ -30,7 +30,6 @@ newPackage(
         },
     Headline => "Operations over a local ring (R, P)",
     PackageExports => {"PruneComplex"},
-    DebuggingMode => true,
     AuxiliaryFiles => true
     )
 

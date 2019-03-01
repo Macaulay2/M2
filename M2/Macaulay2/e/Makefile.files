@@ -11,8 +11,10 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	monomial-sets \
 	mutablecomplex \
 	localring \
+	f4/res-monomial-sorter \
 	f4/res-varpower-monomial \
 	f4/res-f4-monlookup \
 	f4/res-moninfo-dense \

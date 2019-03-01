@@ -494,36 +494,6 @@ document {
      ", TT "M", ".",
      SeeAlso => "polynomial rings"}
 document {
-     Key => table,
-     Headline => "make a table (nested list)",
-     TT "table(u,v,f)", " -- yields a table m in which m_i_j is f(u_i,v_j).",
-     PARA{},
-     "A table is a list of lists, all of the same length.  The entry m_i_j is 
-     computed as f(u_i,v_j).",
-     PARA{},
-     "table(m,n,f) -- yields, when m and n are integers, a table of size m by n
-     whose entries are obtained by evaluating f() repeatedly.",
-     PARA{},
-     "See also ", TO "isTable", ", and ", TO "subtable", "."}
-document {
-     Key => applyTable,
-     Headline => "apply a function to elements of a table",
-     TT "applyTable(m,f)", " -- applies the function f to each element of the table m.",
-     PARA{},
-     "It yields a table of the same shape as m containing the resulting values.",
-     PARA{},
-     "See also ", TO "table", "."}
-document {
-     Key => subtable,
-     Headline => "extract a subtable from a table",
-     TT "subtable(u,v,m)", " -- yields the subtable of the table m obtained from the
-     list u of row numbers and the list v of column numbers.",
-     PARA{},
-     EXAMPLE {
-	  "m = table(5,5,identity)",
-      	  "subtable({1,3,4},toList(2..4), m)"
-	  }}
-document {
      Key => {(vector,List)},
      Headline => "make a vector",
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",

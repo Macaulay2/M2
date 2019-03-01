@@ -18,7 +18,7 @@ document {
      }
 
 document { 
-     Key => {(minimalPresentation,Ring),(prune,Ring),minimalPresentationMap, minimalPresentationMapInv},
+     Key => {(minimalPresentation,Ring),(prune,Ring),minimalPresentationMap, minimalPresentationMapInv, [minimalPresentation,Exclude], [prune,Exclude]},
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => "S = minimalPresentation R\nS = prune R",
      Inputs => { "R" => { "a quotient ring" }},

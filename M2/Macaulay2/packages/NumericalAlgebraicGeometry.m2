@@ -13,8 +13,8 @@ newPackage select((
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions"},
-     PackageImports => {"PHCpack","Bertini"},
+     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions","LLLBases"},
+     PackageImports => {"PHCpack","Bertini","Truncations"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      --DebuggingMode => true,
@@ -177,7 +177,7 @@ setDefault = method(Options => {
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
      Tolerance => null,
      SingularConditionNumber => null,
-     Precision => null,
+     Precision => null
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
@@ -318,7 +318,7 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     else error "not implemented"
     )
 
-{* not used???
+-* not used???
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := commonRing T;
@@ -332,7 +332,7 @@ dehomogenizeSystem List := List => T -> (
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
-*}
+*-
 
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
@@ -547,12 +547,12 @@ installPackage "NumericalAlgebraicGeometry"
 installPackage ("NumericalAlgebraicGeometry",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("NumericalAlgebraicGeometry",RerunExamples=>false, RemakeAllDocumentation=>true)
 
--- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true, AbsoluteLinks=>false)
+-- (old way) installPackage("NumericalAlgebraicGeometry", SeparateExec=>true)
 
 -- install docs with no absolute links
 uninstallPackage "Style"
-installPackage("Style", AbsoluteLinks=>false)
-installPackage("NumericalAlgebraicGeometry", AbsoluteLinks=>false)
+installPackage("Style")
+installPackage("NumericalAlgebraicGeometry")
 
 installPackage ("NumericalAlgebraicGeometry", MakeDocumentation=>false)
 check "NumericalAlgebraicGeometry"

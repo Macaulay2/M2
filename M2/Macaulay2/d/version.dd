@@ -29,6 +29,7 @@ header "
    #include <mpfr.h>
    #include <memtailor.h>
    #include <mathic.h>
+   #include <gdbm.h>
    #include <mathicgb.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
@@ -119,6 +120,10 @@ readlineversion():constcharstar := Ccode(returns,"
      return buf;
      ");
 
+gdbmversion():constcharstar := Ccode(returns,"
+     return gdbm_version;
+     ");
+
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
      	  __INTEL_COMPILER
@@ -148,6 +153,8 @@ compiler := (
 	    #endif
 	    #endif
 	    ")));
+
+header "#include \"distributed-packages.h\"";
 
 setupconst("version", Expr(toHashTable(Sequence(
    "VERSION" => Ccode(constcharstar,"M2_version()"),
@@ -192,6 +199,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 		 \"not present\"
 	#endif
 	"),
+   "gdbm version" => gdbmversion(),
    "gmp version" => Ccode(constcharstar,"
 	  #ifdef __MPIR_VERSION
 	       \"not present\"
@@ -240,7 +248,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
    "endianness" => Ccode(constcharstar,"(char *)endianness_string"),
    "pointer size" => Ccode(int,"sizeof(void *)"),
-   "packages" => Ccode(constcharstar,"PACKAGES"),
+   "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
    "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")

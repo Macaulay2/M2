@@ -12,7 +12,7 @@ linSpace Fan := F -> linealitySpace F
 
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
-isPointed Fan := F -> all(getProperty(F, honestMaxObjects), c->isPointed c)
+isPointed Fan := F -> all(values getProperty(F, honestMaxObjects), c->isPointed c)
 
 
 --   INPUT : 'F'  a Fan
@@ -33,7 +33,7 @@ smoothSubfan Fan := F -> (
       rays => rays F,
       computedLinealityBasis => linealitySpace F
    };
-   fan result
+   internalFanConstructor result
 )
 
 isPolytopal = method(TypicalValue => Boolean)
@@ -63,7 +63,7 @@ skeleton(ZZ,Fan) := (n,F) -> (
       inputCones => cones(n,F),
       computedLinealityBasis => linealitySpace F
    };
-   fan result
+   internalFanConstructor result
 )
 
 -- PURPOSE : Returning a polytope of which the fan is the normal if the fan is polytopal
@@ -81,7 +81,7 @@ maxObjects Fan := F -> getProperty(F, generatingObjects)
 objectsOfDim(ZZ, Fan) := (k,F) -> (
 	-- Checking for input errors
 	if k < 0 or dim F < k then error("k must be between 0 and the dimension of the polyhedral object family.");
-	L := select(getProperty(F, honestMaxObjects), C -> dim C >= k);
+	L := select(values getProperty(F, honestMaxObjects), C -> dim C >= k);
 	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 

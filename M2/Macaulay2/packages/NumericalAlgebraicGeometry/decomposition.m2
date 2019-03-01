@@ -3,7 +3,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-regeneration = method(TypicalValue=>numericalVariety, Options =>{Software=>null, Output=>Singular})
+regeneration = method(TypicalValue=>NumericalVariety, Options =>{Software=>null, Output=>Singular})
 regeneration List := List => o -> F -> (
 -- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials

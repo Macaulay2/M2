@@ -3,6 +3,12 @@ doc ///
      (minimalBetti,Ideal)
      (minimalBetti,Module)
      minimalBetti
+     [(minimalBetti,Ideal),Weights]
+     [(minimalBetti,Module),Weights]
+     [(minimalBetti,Ideal),DegreeLimit]
+     [(minimalBetti,Module),DegreeLimit]
+     [(minimalBetti,Ideal),LengthLimit]
+     [(minimalBetti,Module),LengthLimit]
    Headline
      minimal betti numbers of (the mininimal free resolution of) a homogeneous ideal or module
    Usage
