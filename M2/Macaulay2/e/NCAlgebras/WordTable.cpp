@@ -33,6 +33,32 @@ void WordTable::subwordPositions(ConstMonomial word1,
     }
 }
 
+bool WordTable::subwordPosition(ConstMonomial word1,
+                                 ConstMonomial word2,
+                                 int& result_start_index)
+// if there exists monomials p, q, such that p*word1*q == word2, then
+// the first position of word1 in word2 is returned in result_start_index
+// and true is returned.  If no match, then false is returned,
+// and result_start_index is not touched.
+{
+  for (auto j = 0; j <= word2.size() - word1.size(); ++j)
+    {
+      bool match = true;
+      for (auto k = 0; k < word1.size(); ++k)
+        if (word1.begin()[k] != word2.begin()[j+k])
+          {
+            match = false;
+            break;
+          }
+      if (match)
+        {
+          result_start_index = j;
+          return true;
+        }
+    }
+  return false;
+}
+
 void WordTable::subwords(ConstMonomial word,
                            std::vector<std::pair<int,int>>& output)
 {
@@ -44,6 +70,21 @@ void WordTable::subwords(ConstMonomial word,
       for (auto j : start_indices)
         output.push_back(std::make_pair(i,j));
     }
+}
+
+bool WordTable::subword(ConstMonomial word,
+                        std::pair<int,int>& output)
+{
+  int start_index = -1;
+  for (auto i = 0; i < mMonomials.size(); ++i)
+    {
+      if (subwordPosition(mMonomials[i], word, start_index))
+        {
+          output = std::make_pair(i, start_index);
+          return true;
+        }
+    }
+  return false;
 }
 
 void WordTable::superwords(ConstMonomial word,

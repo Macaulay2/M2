@@ -11,6 +11,8 @@ public:
 
   ConstMonomial(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
 
+  //  ConstMonomial(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
+                                  
   const int* begin() const { return mBegin; }
   const int* end() const { return mEnd; }
 
@@ -47,18 +49,31 @@ public:
 
   // lookup routines
 
-  // which monomial, index into word, length of monomial.
-  // subwords returns a vector of all subword matches:
-  //   each entry is a pair:
-  //     a. index of the monomial in the table
-  //     b. index into that monomial
+  // return all pairs (i,j), where
+  //   the i-th word in the table is w (say)
+  //   j is a position in word
+  //   such that w appears in word starting at position j.
   void subwords(ConstMonomial word,
                 std::vector<std::pair<int,int>>& output);
 
+  // sets 'output' to the first pair (i,j), where
+  //   the i-th word in the table is w (say)
+  //   j is a position in word
+  //   such that w appears in word starting at position j.
+  // if such a match is found, output is set, and true is returned.
+  // if not, false is returned.
+  bool subword(ConstMonomial word,
+                std::pair<int,int>& output);
+  
+  // return all pairs (i,j), where
+  //   the i-th word in the table is w (say)
+  //   j is a position in w
+  //   such that word appears in w starting at position j.
   void superwords(ConstMonomial word,
                   std::vector<std::pair<int,int>>& output);
   
-
+  //TODO: write superword.  i.e. only return 1, if any.
+  
   // given 'word', find all left over laps with elements of the table.
   // A left overlap of 'alpha' and 'beta' is:
   //  a prefix of alpha is a suffix of beta.
@@ -75,6 +90,10 @@ private:
                                ConstMonomial word2,
                                std::vector<int>& result_start_indices);
 
+  static bool subwordPosition(ConstMonomial word1,
+                               ConstMonomial word2,
+                               int& result_start_index);
+  
   // overlaps here: suffix of word1 == prefix of word2.
   // overlap value is the start of prefix of word2 in word1.
   static void overlaps(ConstMonomial word1,

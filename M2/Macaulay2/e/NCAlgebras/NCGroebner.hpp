@@ -5,7 +5,14 @@
 #include "WordTable.hpp"
 
 #if 0
+Notes: 5 March 2019:
+working on naive remainder function.
+might need to refactor monomials, ConstMonomial-->Word.
+  also make a PolynomialALgebra class that is slim, current PolynomialALgebra
+  will be a wrapper on that.
+  
   Notes from 19 Feb 2019.
+  
   For polynomial reduction:
 
   Use PolyWithPos as an Entry
@@ -13,8 +20,27 @@
     Use code/ideas from ReducerPack from mathicgb. (will need to crib from this code).
     Probably: a hash table for all monomials/words in out polynomials.
     SO: PolyWithPos: array of [ring_elem coeff, pointer to a monomial in the hash table structure, iterator in]
-    
+
+    PolyWithPos structure
+    add(f, g: PolyWithPos): PolyWithPos;
+    multByTerm(m:Term, f : PolyWithPos, n:Term) : PolyWithPos;
+    remainder(f:PolyWithPos, G:GroebnerList) : PolyWithPos);
+
+    Poly: will contain the integers defining its monomials
+    PolyHashed: will contain pointers to monomials.
+      PolyHashedWithPos
+    MonomialPool: actual monomials are stored here.
+      add in a new monomial.
+      clear all the monomials.
+      need: hash function for words.
+    MonomialPool: hashtable of monomials
+    Poly: {coeffs: CoefficientArray, monoms: array of pointers}
+    PolyIter{Poly}
+    PolyWithPos: {PolyIter}
+
 #endif
+
+
 
 
 #if 0
@@ -69,12 +95,32 @@ public:
       mLeadWords(leadWords)
   {
   }
+
+  auto remainder(const Poly* f) -> Poly*
+  {
+    Poly * g = mRing->copy(f);
+    Poly * remainder = mRing->zero();
+    while (not g->is_zero())
+      {
+        // lookup lead monomial of g in the word table
+        // TODO: change ConstMonomial to Word? or WordRef?
+        ConstMonomial w { g->leadMonomial() };
+        if (mLeadWords->
+        // if it matches, compute g -= a*v*h*w, for h in the PolyList.
+        mRing->subtractMultipleTo(g, a, v, h, w);
+
+        // if it doesn't match: append lead term of g to remainder, g = g->tail();
+        mRing->appendTerm(leadCoefficient(g), g->leadMonomial());
+        mRing->removeLeadTerm(g); // destructive to g: remove the first coefficient, and first monomial, from g, requiring copy.
+      }
+    return remainder;
+  }
+  
   
 private:
   const PolynomialAlgebra* mRing;
   const ConstPolyList& mReducers;
   const WordTable& mLeadWords;
-
 };
 #endif
 
