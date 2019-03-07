@@ -25,6 +25,7 @@ depth gateMatrix{{detXCCX,X}}
 assert (depth {X+((detXCCX+X)*X)/C}==5)
 
 
+--!!!!
 debug Core
 (consts,indets):=(positionsOfInputGates({C},s), positionsOfInputGates({X},s))
 eQQ = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_QQ}})

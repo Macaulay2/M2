@@ -68,13 +68,6 @@ debug Core
 TO DO:
 
 -- decide what types of non-terminal gates we need (see above)
--- what does MatrixGate do?
--- gatesToPreSLP List (rewrite existing preSLP code?)
--- diff(InputGate,Gate), jacobian
--- preSLPtoEngine
--- evaluator
--- evaluator in the engine
--- sub(Gate,{Gate=>Gate,...,}) 
 
 *-
 
@@ -193,7 +186,7 @@ detGate List := L -*doubly nested list*- -> add2GC(
 
 DivideGate = new Type of Gate
 net DivideGate := g -> net Divide(first g.Inputs,last g.Inputs) 
-Gate / Gate := (a,b) -> add2GC(
+divideGate = (a,b) -> add2GC(
     if b===zeroGate then error "division by zero"  else 
     if a===zeroGate then zeroGate else 
     new DivideGate from {
@@ -201,6 +194,7 @@ Gate / Gate := (a,b) -> add2GC(
       	cache => new CacheTable
       	}
     ) 
+Gate / Gate := (a,b) -> divideGate(a,b)
     
 ValueHashTable = new Type of HashTable
 valueHashTable = method()
@@ -309,41 +303,28 @@ diff (InputGate, DivideGate) := (x,g) -> (
     if db===zeroGate then da/b else (da*b-a*db)/(b*b)
     )
 
-subSanityCheck = method()
-subSanityCheck Option := memoize (ab -> (
-    if not instance(first ab, InputGate) then error "only an InputGate can be substituted";
-    if not instance(last ab, Gate) then error "can substitute with a Gate only";
-    ))
-sub (InputGate, Option) := memoize((g,ab) -> (
-    subSanityCheck ab;
-    (a,b) := toSequence ab; 
-    if a===g then b else g 
-    ))
-sub (SumGate, Option) := memoize((g,ab) -> (
-    subSanityCheck ab;
-    sumGate apply(g.Inputs, i->sub(i,ab))
-    ))
-sub (ProductGate, Option) := memoize((g,ab) -> (
-    subSanityCheck ab;
-    productGate apply(g.Inputs, i->sub(i,ab))
-    ))
-sub (DetGate, Option) := memoize((g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab)))
-sub (DivideGate, Option) := memoize((g,ab) -> (
-    subSanityCheck ab;
-    (x,y) := toSequence apply(g.Inputs, i->sub(i,ab));
-    x/y
-    ))
-
-sub (Gate, List) := (g,L) -> (
-    g' := g;
-    for ab in L do g' = sub(g',ab);
-    g'
+sub (GateMatrix,HashTable) := (M,s) -> (
+    if not all(keys s, k->instance(k, InputGate)) then error "only an InputGate can be substituted";
+    if not all(values s, v->instance(v, Gate)) then error "can substitute with a Gate only";
+    t := new MutableHashTable;
+    matrix makeSub(entries M, s, t)
     )
-sub (Gate, GateMatrix, GateMatrix) := (g,A,B) -> (
+sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> (
     if numcols A != numcols B or numrows A != numrows B 
     then error "matrices are of different shape";
-    sub(g, apply(flatten entries A, flatten entries B, (a,b)->a=>b))
+    sub(M, apply(flatten entries A, flatten entries B, (a,b)->a=>b))
     )
+sub (GateMatrix, List) := (M,L) -> sub(M,new HashTable from L)
+sub (GateMatrix, Option) := (M,ab) -> sub(M,{ab})
+
+makeSub = method(TypicalValue=>List)
+makeSub (InputGate,HashTable,MutableHashTable) := (g,s,t) -> if s#?g then s#g else g
+makeSub (ProductGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else t#g = productGate apply(g.Inputs, i->makeSub(i,s,t))
+makeSub (DivideGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else t#g =  divideGate apply(g.Inputs, i->makeSub(i,s,t))
+makeSub (SumGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else t#g = sumGate apply(g.Inputs, i->makeSub(i,s,t))
+makeSub (DetGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else t#g = detGate applyTable(g.Inputs, i->makeSub(i,s,t))
+makeSub (List,HashTable,MutableHashTable) := (L,s,t) -> apply(L,g->makeSub(g,s,t))
+
 isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
 compress Gate := g -> g
 compress SumGate := g -> (
@@ -538,9 +519,6 @@ det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a 
 compress GateMatrix := M -> gateMatrix applyTable(M,compress)
 
 value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
-
-sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
-sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> matrix applyTable(M,g->sub(g,A,B))
 
 joinHorizontal = method()
 joinHorizontal List := L->(
@@ -761,6 +739,55 @@ evaluate(E,inp,out)
 assert(clean_0.001(out - mutableMatrix {{3.6+4.8*ii, 1.56+4*ii, 1.66667+.833333*ii, 5.2+ii}})==0)  
 ///
 
+
+TEST /// -- moved from NumericalAlgebraicGeometry/SLP.m2; is it necessary?
+needsPackage "SLPexpressions"
+
+--InputGate
+X = inputGate symbol X
+Y = inputGate symbol Y
+
+--SumGate and ProductGate
+C = sumGate {X+Y,Y,X}
+D = productGate {X*Y,Y,C}
+h = valueHashTable({X,Y},{1,ii})
+assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
+support (X*X)
+support (D+C)
+
+-- one way to handle constants
+E = inputGate 2
+F = product{E*(X*X+E*Y)+oneGate, oneGate}
+
+G = (sub(sub(matrix{{F}},X=>X+Y),Y=>X*Y))_(0,0) 
+-- sub and compress = evaluate over a ring
+R = CC[x,y] 
+H = (sub(sub(matrix{{G}},X=>E),Y=>inputGate(x+2*y)))_(0,0)
+I = compress H 
+
+-- DetGate
+J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
+
+-- diff
+diff(X,F)
+diff(X,J)
+h = valueHashTable({X,Y},{x,y})
+assert(
+    value(diff(X,J),h) 
+    ==
+    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
+    )
+
+-- DivideGate
+G/F
+diff(X,X/Y)
+diff(Y,X/Y)
+h = valueHashTable({X,Y},{2,3})
+GY = value(diff(Y,G),h)
+FY = value(diff(Y,F),h)
+assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
+///
+
 beginDocumentation()
 -* run
 
@@ -938,15 +965,8 @@ constants,
 (symbol +,RR,Gate),
 (symbol -,RR,Gate),
 (submatrix,GateMatrix,List,List),
-(substitute,DetGate,Option),
-(substitute,DivideGate,Option),
-(substitute,Gate,GateMatrix,GateMatrix),
-(substitute,Gate,List),
 (substitute,GateMatrix,GateMatrix,GateMatrix),
 (substitute,GateMatrix,List),
-(substitute,InputGate,Option),
-(substitute,ProductGate,Option),
-(substitute,SumGate,Option),
 (support,DetGate),
 (support,DivideGate),
 (support,GateMatrix),
