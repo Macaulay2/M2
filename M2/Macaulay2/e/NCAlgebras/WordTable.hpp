@@ -47,6 +47,9 @@ public:
 
   size_t insert(ConstMonomial w, std::vector<Triple>& newRightOverlaps);
 
+  // access routine
+  ConstMonomial& operator[](int index) { return mMonomials[index]; }
+
   // lookup routines
 
   // return all pairs (i,j), where

@@ -47,6 +47,7 @@ public:
   void copy(const Monom& m, MonomialInserter& result) const;
   
   void mult(const Monom& m1, const Monom& m2, MonomialInserter& result) const;
+  void mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const;
 
   int compare(const Monom& m1, const Monom& m2) const;
 
@@ -184,6 +185,7 @@ public:
   // some internal functions for the above routines
   ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monom) const;
   ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monom) const;
+  ring_elem mult_by_term_left_and_right(const ring_elem f, const ring_elem c, const Monom, const Monom) const;
   void add_to_end(ring_elem f, const ring_elem g) const;
 
   // casting functions

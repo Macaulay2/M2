@@ -64,9 +64,25 @@ void NCMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result) 
 {
   result.push_back(m1[0] + m2[0] - 2);
   result.push_back(m1[1] + m2[1]);
+  // FM : Should we be using vector::insert?
   for (auto i = m1.begin()+2; i != m1.end(); ++i)
     result.push_back(*i);
   for (auto i = m2.begin()+2; i != m2.end(); ++i)
+    result.push_back(*i);
+
+  //  std::copy(std::begin(m1) + 2, std::end(m1), result);
+  //  std::copy(std::begin(m2) + 2, std::end(m1), result);
+}
+
+void NCMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
+{
+  result.push_back(m1[0] + m2[0] + m3[0] - 2);
+  result.push_back(m1[1] + m2[1] + m3[1]);
+  for (auto i = m1.begin()+2; i != m1.end(); ++i)
+    result.push_back(*i);
+  for (auto i = m2.begin()+2; i != m2.end(); ++i)
+    result.push_back(*i);
+  for (auto i = m3.begin()+2; i != m3.end(); ++i)
     result.push_back(*i);
 
   //  std::copy(std::begin(m1) + 2, std::end(m1), result);
@@ -584,7 +600,6 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
 ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
   // TODO: make this a geobucket heap multiply function?
-  //
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
   auto result = new Poly;
@@ -675,6 +690,28 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
 
       outcoeff.push_back(d);
       monoid().mult(m, i.monom(), outmonom);
+    }
+  return reinterpret_cast<Nterm*>(result);
+}
+
+ring_elem PolynomialAlgebra::mult_by_term_left_and_right(const ring_elem f1,
+                                                         const ring_elem c,
+                                                         const Monom leftM,
+                                                         const Monom rightM) const
+{
+  // return (c*leftM)*f*rightM
+  auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
+  auto result = new Poly;
+  auto& outcoeff = result->getCoeffInserter();
+  auto& outmonom = result->getMonomInserter();
+  for(auto i=f->cbegin(); i != f->cend(); i++)
+    {
+      ring_elem d = mCoefficientRing.mult(c, i.coeff());
+      if (mCoefficientRing.is_zero(d))
+        continue;
+
+      outcoeff.push_back(d);
+      monoid().mult3(leftM, i.monom(), rightM, outmonom);
     }
   return reinterpret_cast<Nterm*>(result);
 }

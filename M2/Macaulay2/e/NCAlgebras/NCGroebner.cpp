@@ -35,8 +35,7 @@ class NCPolyHeap
   ring_elem leadTermCoefficient();
   ConstMonomial leadTermMonomial();
   
-  
-  Poly value();  // Returns the linearized value, and resets the NCPolyHeap.
+    Poly value();  // Returns the linearized value, and resets the NCPolyHeap.
 
   ring_elem getValue();
   void add(ring_elem f1);
@@ -54,7 +53,6 @@ public:
 private:
   Poly* mPoly;
   Poly::iterator mLead;
-
 };
 #endif
 
@@ -64,14 +62,37 @@ auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
                                    const WordTable& W) -> const Poly*
 {
   Poly* remainder = new Poly;
-#if 0  
+  // pair will be (i,j) where the ith word in wordtable appears in word in position j
+  std::pair<int,int> subwordPos; 
+  const int* lmPtr;
+  std::vector<int> leftMonom, rightMonom;
+  Poly* result = new Poly;
+#if 0
   while (reducee != 0)
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reducee).
-
-      // If none, copy that term to the remainder.
-
-      // If one, subtract reducee -= coef * left*reducers[index]*right
+      ConstMonomial reduceeLM(f->cbegin().monom().begin()+2,f->cbegin().monom().end());
+      if (W.subword(reduceeLM,subwordPos))
+        {
+          // If one, subtract reducee -= coef * left*reducers[index]*right
+          // build left monomial
+          leftMonom.push_back(j + 2);
+          leftMonom.push_back(j);
+          leftMonom.insert(leftMonom.end(),
+                           f->cbegin().monom().begin()+2,
+                           f->cbegin().monom().begin()+2+j);
+          // build right monomial
+          rightMonom.push_back(reduceeLM.size() - W[subwordPos.first].size() - subwordPos.second + 2);
+          rightMonom.push_back(reduceeLM.size() - W[subwordPos.first].size() - subwordPos.second);
+          rightMonom.insert(rightMonom.end(),
+                            f->cbegin().monom().begin+W[subwordPos.first].size()+subwordPos.second+2,
+                            f->cbegin().monom.end());
+          
+        }
+      else
+        {
+          // If none, copy that term to the remainder.          
+        }
     }
 #endif  
   return remainder;
@@ -82,6 +103,7 @@ auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
                                    const ConstPolyList& reducers) -> ConstPolyList
 {
   WordTable W;
+  // Build the word table for the reduction
   for (auto& f : reducers)
     {
       auto i = f->cbegin();
