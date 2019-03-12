@@ -12,6 +12,7 @@
 #include "relem.hpp"
 
 #include "PolynomialAlgebra.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
 
 #include "poly.hpp"
@@ -1194,22 +1195,22 @@ const Matrix *rawMGB(
 // Noncommutative Groebner bases (2-sided) //
 /////////////////////////////////////////////
 
-const std::vector<const PolynomialAlgebra::Poly*> matrixToVector(const PolynomialAlgebra* A,
-                                                                 const Matrix* input)
+const std::vector<const Poly*> matrixToVector(const PolynomialAlgebra* A,
+                                              const Matrix* input)
 {
-  std::vector<const PolynomialAlgebra::Poly*> result;
+  std::vector<const Poly*> result;
   result.reserve(input->n_cols());
   for (int i=0; i<input->n_cols(); i++)
     {
       ring_elem a = input->elem(0,i);
-      auto f = reinterpret_cast<const PolynomialAlgebra::Poly*>(a.get_Poly());
+      auto f = reinterpret_cast<const Poly*>(a.get_Poly());
       result.push_back(f);
     }
   return result;
 }
 
 const Matrix* vectorToMatrix(const PolynomialAlgebra* A,
-                             const std::vector<const PolynomialAlgebra::Poly*>& elems)
+                             const std::vector<const Poly*>& elems)
 {
   MatrixConstructor mat(A->make_FreeModule(1), elems.size());
   for (auto i = 0; i < elems.size(); ++i)

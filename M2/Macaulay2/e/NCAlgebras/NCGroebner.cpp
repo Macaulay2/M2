@@ -68,10 +68,10 @@ auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
   std::vector<int> leftMonom, rightMonom;
   Poly* result = new Poly;
 #if 0
-  while (reducee != 0)
+  while (!A->is_zero(reducee))
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reducee).
-      ConstMonomial reduceeLM(f->cbegin().monom().begin()+2,f->cbegin().monom().end());
+      ConstMonomial reduceeLM(reducee->cbegin().monom().begin()+2,reducee->cbegin().monom().end());
       if (W.subword(reduceeLM,subwordPos))
         {
           // If one, subtract reducee -= coef * left*reducers[index]*right

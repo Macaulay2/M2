@@ -11,6 +11,8 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	NCAlgebras/FreeAlgebra \
+	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
 	monomial-collection \

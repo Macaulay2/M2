@@ -83,7 +83,6 @@ might need to refactor monomials, ConstMonomial-->Word.
 class Reducer
 {
 public:
-  using Poly = PolynomialAlgebra::Poly;
   using PolyList = std::vector<Poly*>;
   using ConstPolyList = std::vector<const Poly*>;
 
@@ -127,7 +126,6 @@ private:
 class NCGroebner
 {
 public:
-  using Poly = PolynomialAlgebra::Poly;
   using PolyList = std::vector<Poly*>;
   using ConstPolyList = std::vector<const Poly*>;
 
