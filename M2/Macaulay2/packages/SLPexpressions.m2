@@ -433,6 +433,7 @@ removeSLPfromCache (RawSLProgram, DetGate) := (slp,g) -> (
     )
 
 TEST /// 
+restart
 needsPackage "SLPexpressions"
 debug SLPexpressions
 X = inputGate symbol X
@@ -444,17 +445,19 @@ XoC = X/C
 s = makeSLProgram({C,X},{XXC,detXCCX,XoC,XpC+XoC}) 
 
 debug Core
-(consts,indets):=(positionsOfInputGates({C},s), positionsOfInputGates({X},s))
-eQQ = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_QQ}})
+(consts,indets):=(s#"constant positions",s#"input positions")
+assert(#consts == 0)
+(newConsts,newIndets):=(take(indets,1),drop(indets,1))
+eQQ = rawSLEvaluator(s#RawSLProgram,newConsts,newIndets,raw mutableMatrix{{3_QQ}}) -- set C=3_QQ
 output = mutableMatrix(QQ,1,4)
 rawSLEvaluatorEvaluate(eQQ, raw mutableMatrix{{7_QQ}}, raw output) 
 output
-eCC = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_CC}})
+eCC = rawSLEvaluator(s#RawSLProgram,newConsts,newIndets,raw mutableMatrix{{3_CC}})
 output = mutableMatrix(CC,1,4)
 rawSLEvaluatorEvaluate(eCC, raw mutableMatrix{{7_CC}}, raw output) 
 output
 R = CC_1000
-eCC = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_R}})
+eCC = rawSLEvaluator(s#RawSLProgram,newConsts,newIndets,raw mutableMatrix{{3_R}})
 rawM = mutableMatrix(R,1,4)
 rawSLEvaluatorEvaluate(eCC, raw mutableMatrix{{7_R}}, raw rawM) 
 assert (abs(last flatten entries rawM - 37/3) < 2^(-999))
