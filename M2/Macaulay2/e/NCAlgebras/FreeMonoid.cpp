@@ -192,7 +192,7 @@ void FreeMonoid::getMonomialReversed(Monom monom, std::vector<int>& result) cons
 void FreeMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
   // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
   // The output is of the following form, and stored in result.
-  // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
+  // [len deg v1 v2 v3 ... vn]
   // where len = n+2 and deg = sum of the degrees of the vi 
 {
   int inputMonomLength = *monom;
