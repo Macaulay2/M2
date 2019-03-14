@@ -110,7 +110,7 @@ public:
   ring_elem get_terms(const ring_elem f, int lo, int hi) const
   {
     const Poly* result = get_terms(reinterpret_cast<const Poly*>(f.get_Poly()), lo, hi);
-    return ring_elem(reinterpret_cast<const ::Poly*>(result));
+    return ring_elem(reinterpret_cast<const Poly*>(result));
   }
 
   // some internal functions for the above routines
