@@ -363,16 +363,29 @@ gatePolynomial RingElement := p -> (
     ) 
 	
 --------------------------------------------------
--- RawSLProgram routines
+-- (Raw)SLProgram routines
 --------------------------------------------------
+SLProgram = new Type of HashTable
 
-makeSLProgram = method()
+makeSLProgram = method(TypicalValue=>SLProgram)
 makeSLProgram (List,List) := (inL,outL) -> (
     s := rawSLProgram(1); -- 1 means nothing anymore
     scan(inL,g->appendToSLProgram(s,g)); 
     out := apply(outL, g->appendToSLProgram(s,g));
     rawSLPsetOutputPositions(s,out);
-    s
+    consts := constants outL;
+    constantPositions := positionsOfInputGates(consts,s);
+    inputPositions := positionsOfInputGates(inL,s);
+    constants := matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
+    scan(outL, g->removeSLPfromCache(s,g));
+    scan(inL, g->removeSLPfromCache(s,g));
+    new SLProgram from {
+	RawSLProgram => s, 
+	"constant positions" => constantPositions,
+	"input positions" => inputPositions,
+	"constants" =>  constants
+	-- "output positions" =>
+	}
     )
 makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
 
@@ -692,34 +705,29 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
 Evaluator = new Type of MutableHashTable
 makeEvaluator = method()
 makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
-    consts := constants M;
     slp := makeSLProgram(I,M);
     E := new Evaluator from {
-    	"rawSLP"=>slp
+    	"SLP"=>slp
     	};
-    E#"constant positions" = positionsOfInputGates(consts,slp);
-    E#"input positions" = positionsOfInputGates(flatten entries I,slp);
-    E#"constants" = matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
-    scan(flatten entries M, g->removeSLPfromCache(slp,g));
-    scan(flatten entries I, g->removeSLPfromCache(slp,g));
     E
     )
 
 rawSLEvaluatorK = method()
 rawSLEvaluatorK Evaluator := E -> rawSLEvaluatorK(E,ring E#"constants")
 rawSLEvaluatorK (Evaluator,Ring) := (E,K) -> if E#?K then E#K else E#K = rawSLEvaluator(
-    E#"rawSLP", E#"constant positions", E#"input positions",
-    raw mutableMatrix promote(E#"constants",K)
+    E#"SLP"#RawSLProgram, E#"SLP"#"constant positions", E#"SLP"#"input positions",
+    raw mutableMatrix promote(E#"SLP"#"constants",K)
     );
   
 evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
     K := ring I; 
-    assert(ring O === K);
+    if ring O =!= K then error "expected same Ring for input and output";
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
     )
 
  
 TEST /// 
+restart
 needsPackage "SLPexpressions"
 debug SLPexpressions
 X = inputGate symbol X
