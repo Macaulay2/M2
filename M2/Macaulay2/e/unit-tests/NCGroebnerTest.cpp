@@ -1,6 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
+#include "aring-glue.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/WordTable.hpp"
 #include <iostream>
 
@@ -8,6 +10,56 @@ std::vector<int> monom1 {2, 0, 1};  // cab
 std::vector<int> monom2 {2, 2};  // cc
 std::vector<int> monom3 {1, 0, 1, 0};  // baba
 std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
+
+extern const QQ * globalQQ;
+
+#if 0
+const Monoid* degreeMonoid(int n)
+{
+  return Monoid::create(mo, names, DR, degs, heft);
+}
+#endif
+
+const PolynomialRing* degreeRing(int n)
+{
+  return nullptr;
+  // TODO: improve engine creation of poly rings!
+  //  return PolyRing::create(globalZZ, degreeMonoid(n));
+}
+
+TEST(FreeAlgebra, create)
+{
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,2,3});
+  EXPECT_TRUE(A != nullptr);
+}
+
+TEST(FreeAlgebra, polyarithmetic)
+{
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,2,3});
+  Poly x, y, z, f, g;
+  A->init(x);
+  A->init(y);
+  A->init(z);
+  A->init(f);
+  A->init(g);
+  A->var(x, 0);
+  A->var(y, 1);
+  A->var(z, 2);
+  A->add(f, x, y);
+  A->add(g, y, x);
+  EXPECT_TRUE(A->is_equal(f,g));
+  A->clear(x);
+  A->clear(y);
+  A->clear(z);
+  A->clear(f);
+  A->clear(g);
+}
 
 TEST(WordTable, create)
 {

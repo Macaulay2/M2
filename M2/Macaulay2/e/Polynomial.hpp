@@ -142,6 +142,7 @@ template<typename CoefficientRingType>
 class Polynomial : public our_new_delete
 {
   friend class PolynomialAlgebra;
+  friend class FreeAlgebra;
   
   typedef typename CoefficientRingType::ElementType ElementType;
 public:  

@@ -9,15 +9,19 @@ FreeMonoid::FreeMonoid(
     mDegrees(degrees)
 {
   auto nvars = numVars();
-  auto ndegrees = degreeMonoid().n_vars();
+  //  auto ndegrees = degreeMonoid().n_vars(); // TODO
+  int ndegrees = mDegrees.size() / variableNames.size();
   assert(nvars * ndegrees == mDegrees.size());
-  
+
+#if 0
+  // TODO: we need to be able to create a degree ring in  engine
   for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)
     {
       int* deg = degreeMonoid().make_one();
       degreeMonoid().from_expvector(i, deg);
       mDegreeOfVar.push_back(deg);
     }
+#endif
 }
 
 void FreeMonoid::one(MonomialInserter& m) const
