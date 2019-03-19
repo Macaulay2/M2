@@ -54,6 +54,11 @@ TEST(FreeAlgebra, polyarithmetic)
   A->add(f, x, y);
   A->add(g, y, x);
   EXPECT_TRUE(A->is_equal(f,g));
+  A->setZero(f);
+  A->setZero(g);
+  A->mult(f,x,y);
+  A->mult(g,y,x);
+  EXPECT_FALSE(A->is_equal(f,g));
   A->clear(x);
   A->clear(y);
   A->clear(z);

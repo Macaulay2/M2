@@ -32,7 +32,8 @@ public:
   unsigned int computeHashValue(const Poly& a) const; // TODO
 
   void init(Poly& f) const {}
-  void clear(Poly& f) const; // TODO
+  void clear(Poly& f) const;
+  void setZero(Poly& f) const;
 
   void from_coefficient(Poly& result, const ring_elem a) const; // TODO
   void from_long(Poly& result, long n) const; // TODO
