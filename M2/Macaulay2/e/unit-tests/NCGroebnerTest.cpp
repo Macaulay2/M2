@@ -52,13 +52,34 @@ TEST(FreeAlgebra, polyarithmetic)
   EXPECT_FALSE(f == g);
   EXPECT_TRUE(x * (y + z) == x * y + x * z);
   EXPECT_TRUE((f * g) * f == f * (g * f));
+  EXPECT_TRUE((f^2) == (f * f));
+
   A->from_word(*h, {1,2,1,0,1});
   EXPECT_TRUE(h == y * z * y * x * y);
+
   A->setZero(*f);
   A->setZero(*g);
   A->from_long(*f,1);
   A->from_word(*g,{});
+  // from_rational test? How to create an mpq_ptr?
   EXPECT_TRUE(f == g);
+  EXPECT_TRUE(A->is_unit(*f));
+  EXPECT_TRUE((h^0) == f);
+}
+
+TEST(FreeAlgebra, comparisons)
+{
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,2,3});
+  FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
+  A->var(*x, 0);
+  A->var(*y, 1);
+  A->var(*z, 2);
+  EXPECT_TRUE(A->compare_elems(*x,*y) == GT);
+  EXPECT_TRUE(A->compare_elems(*y,*x) == LT);
+  EXPECT_TRUE(A->compare_elems(*x,*x) == EQ);
 }
 
 TEST(WordTable, create)
