@@ -108,10 +108,53 @@ void FreeAlgebra::setZero(Poly& f) const
   f.mMonomials.clear();
 }
 
+void FreeAlgebra::from_coefficient(Poly& result, const ring_elem a) const
+{
+  if (not mCoefficientRing.is_zero(a))
+    {
+      result.getCoeffInserter().push_back(a);
+      monoid().one(result.getMonomInserter());
+    }
+}
+
+void FreeAlgebra::from_long(Poly& result, long n) const
+{
+  from_coefficient(result, mCoefficientRing.from_long(n));
+}
+
+void FreeAlgebra::from_int(Poly& result, mpz_srcptr n) const
+{
+  from_coefficient(result, mCoefficientRing.from_int(n));
+}
+
+bool FreeAlgebra::from_rational(Poly& result, const mpq_ptr q) const
+{
+  ring_elem cq; // in coeff ring.
+  bool worked = mCoefficientRing.from_rational(q, cq);
+  if (!worked) return false;
+  from_coefficient(result, cq);
+  return true;
+}
+
 void FreeAlgebra::var(Poly& result, int v) const
 {
   result.getCoeffInserter().push_back(mCoefficientRing.from_long(1));
   monoid().var(v, result.getMonomInserter());
+}
+
+void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const
+{
+  auto& resultCoeff = result.getCoeffInserter();
+  auto& resultMonom = result.getMonomInserter();
+  resultCoeff.push_back(coeff);
+  resultMonom.push_back(word.size() + 2);
+  resultMonom.push_back(word.size());
+  for (auto v : word) resultMonom.push_back(v);  // std::insert?
+}
+
+void FreeAlgebra::from_word(Poly& result, const std::vector<int>& word) const
+{
+  from_word(result, mCoefficientRing.from_long(1), word);
 }
 
 bool FreeAlgebra::is_equal(const Poly& f, const Poly& g) const
@@ -276,6 +319,16 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
       outcoeff.push_back(d);
       monoid().mult3(leftM, i.monom(), rightM, outmonom);
     }
+}
+
+void FreeAlgebra::power(Poly& result, const Poly& f, int n) const
+{
+  
+}
+
+void FreeAlgebra::power(Poly& result, const Poly& f, mpz_srcptr n) const
+{
+
 }
 
 

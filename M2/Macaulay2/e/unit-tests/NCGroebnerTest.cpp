@@ -42,28 +42,23 @@ TEST(FreeAlgebra, polyarithmetic)
                                        { "x", "y", "z" },
                                        degreeRing(1),
                                        {1,2,3});
-  Poly x, y, z, f, g;
-  A->init(x);
-  A->init(y);
-  A->init(z);
-  A->init(f);
-  A->init(g);
-  A->var(x, 0);
-  A->var(y, 1);
-  A->var(z, 2);
-  A->add(f, x, y);
-  A->add(g, y, x);
-  EXPECT_TRUE(A->is_equal(f,g));
-  A->setZero(f);
-  A->setZero(g);
-  A->mult(f,x,y);
-  A->mult(g,y,x);
-  EXPECT_FALSE(A->is_equal(f,g));
-  A->clear(x);
-  A->clear(y);
-  A->clear(z);
-  A->clear(f);
-  A->clear(g);
+  FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
+  A->var(*x, 0);
+  A->var(*y, 1);
+  A->var(*z, 2);
+  f = x + y;
+  g = y + z;
+  EXPECT_TRUE(x + y == y + x);
+  EXPECT_FALSE(f == g);
+  EXPECT_TRUE(x * (y + z) == x * y + x * z);
+  EXPECT_TRUE((f * g) * f == f * (g * f));
+  A->from_word(*h, {1,2,1,0,1});
+  EXPECT_TRUE(h == y * z * y * x * y);
+  A->setZero(*f);
+  A->setZero(*g);
+  A->from_long(*f,1);
+  A->from_word(*g,{});
+  EXPECT_TRUE(f == g);
 }
 
 TEST(WordTable, create)
