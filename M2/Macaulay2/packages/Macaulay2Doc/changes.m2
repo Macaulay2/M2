@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release (1.14)",
+	  TO "changes made for the next release",
 	  TO "changes, 1.13",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
@@ -29,7 +29,19 @@ document {
      }
 
 document {
-     Key => "changes made for the next release (1.14)",
+     Key => "changes made for the next release",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "A bug related to determining the correct layout of a source directory prevented the function ", TO "help", " from
+			 finding the example output and merging it into the help message.  This has been fixed." 
+			 },
+		    LI { "A change to the way expressions interact with the reverse dictionary prevented normal toric varieties assigned
+			 to global variables from being printed out as the name of the variable."
+			 }
+		    }
+	       }
+	  }
      }
 
 document {
@@ -39,41 +51,51 @@ document {
                UL {
 		    LI { "Various packages have been preloaded for convenience when starting Macaulay2, but now they are no longer visible by
 			 default inside the source code of a package.  Developers of packages should add the names of the needed preloaded packages
-			 to the value of the ", TO "PackageImports", " or ", TO "PackageExports", " option, to ensure that needed definitions are visible."
-			 },
-                    LI { "the Schubert2 functions ", TT "projectiveSpace", " and ", TT "projectiveSpace'", "have been renamed ", TO "abstractProjectiveSpace", "  and ",
-                     	 TO "abstractProjectiveSpace'", ".  The reason is that there were name conflicts with the NormalToricVarieties package."
-                     	 },
-                    LI { "the Schubert2 functions ", TT "PP", " and ", TT "PP'", " have been removed.  Use ", TO "abstractProjectiveSpace", " and ",
-                     	 TO "abstractProjectiveSpace'", " instead. Since ", TT "PP", " is no longer protected, you can always do ", TT "PP = abstractProjectiveSpace", 
-                     	 " and then e.g. ", TT "X = PP 4", "."
-                     	 },
-                    LI {"a new package ", TO "Truncations", " has been added as a preloaded package.  It implements a better notion of truncation of a module, in the
-                     	 case when the grading is a multi-grading.  Some bugs in the old function have been fixed.  The function ", TO "truncate", " has also been made functorial."
-                     	 },
-		    LI { "The deprecated old-style block comment syntax has been disabled.  Now one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." }
-                    }
-               },
+			 to the value of the ", TO "PackageImports", " or ", TO "PackageExports", " option, to ensure that needed definitions are visible." },
+                    LI { "the Schubert2 functions ", TT "projectiveSpace", " and ", TT "projectiveSpace'", "have been renamed ", TO "Schubert2::abstractProjectiveSpace", "  and ",
+                     	 TO "Schubert2::abstractProjectiveSpace'", ".  The reason is that there were name conflicts with the ", TO "NormalToricVarieties::NormalToricVarieties", " package.  
+			 Since ", TT "PP", " is no longer protected, you may put ", TT "PP = abstractProjectiveSpace", 
+                     	 " in your init file and then use something like ", TT "X = PP 4", ", although ", TT "PP^4", " will no longer work." },
+		    LI { "The deprecated old-style block comment syntax has been disabled.  Now one types ", TT "-* COMMENT *-", " instead of ", TT "{* COMMENT *}", "." } } },
      	  LI { "new packages:",
      	       UL {
-	       	    LI { TO "Truncations::Truncations", ", a package by David Eisenbud and Mike Stillman for truncating modules, has been added." },
-	       	    LI { TO "FThresholds::FThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez, Zhibek Kadyrsizova, Moty Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan Smolkin, Pedro Teixeira and Emily Witt for calculation of F-thresholds, has been added." },
-	       	    LI { TO "ToricInvariants::ToricInvariants", ", a package by Martin Helmer for computing Euclidean distance degrees, polar degrees, degree and codimension of the dual, and Chern-Mather classes of toric varieties, has been added." },
-	       	    LI { TO "SegreClasses::SegreClasses", ", a package by Martin Helmer and Corey Harris for testing containment of varieties and computing algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, has been added." },
-	       	    LI { TO "SemidefiniteProgramming::SemidefiniteProgramming", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo, and Helfried Peyrl for semidefinite programming, has been added." },
-	       	    LI { TO "SOS::SOS", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo, and Helfried Peyrl for , has been added." },
-	       	    LI { TO "MultiGradedRationalMap::MultiGradedRationalMap", ", a package by Yairon Cid Ruiz for computing the degree and birationality of multi-graded rational maps, has been added." }
+	       	    LI { TO "Truncations::Truncations", ", a package by David Eisenbud and Mike Stillman for truncating modules, has been added.
+			 It implements a better notion of truncation of a multigraded module.  Some bugs in the old function have been fixed.  
+			 The function ", TO "Truncations::truncate", " has been made functorial, but it no longer allows partial degrees to be given." },
+	       	    LI { TO "FThresholds::FThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
+			 Zhibek Kadyrsizova, Moty Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan 
+			 Smolkin, Pedro Teixeira and Emily Witt for calculation of F-thresholds, has been added." },
+	       	    LI { TO "ToricInvariants::ToricInvariants", ", a package by Martin Helmer for computing Euclidean distance degrees, polar degrees,
+			 degree and codimension of the dual, and Chern-Mather classes of toric varieties, has been added." },
+	       	    LI { TO "SegreClasses::SegreClasses", ", a package by Martin Helmer and Corey Harris for testing containment of varieties and 
+			 computing algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, has been added." },
+	       	    LI { TO "SemidefiniteProgramming::SemidefiniteProgramming", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. 
+			 Parrilo, and Helfried Peyrl for semidefinite programming, has been added." },
+	       	    LI { TO "SOS::SOS", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo,
+			 and Helfried Peyrl for sums of squares, has been added." },
+	       	    LI { TO "MultiGradedRationalMap::MultiGradedRationalMap", ", a package by Yairon Cid Ruiz for computing the degree
+			 and birationality of multigraded rational maps, has been added." 
+			 }
 		    }
 	       },
 	  LI { "improved packages:",
 	       UL {
 		    LI { 
 		       	 TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " now has a full implementation of the Eisenbud-Shamash resolution, and
-		       	 using ", TO "MCMApproximations::MCMApproximations", ", now can compute the layered resolution of any Cohen-Macaulay module, not just a high syzygy."
-		       	 }
+		       	 using ", TO "MCMApproximations::MCMApproximations", ", now can compute the layered resolution of any Cohen-Macaulay module, not just a high syzygy." 
+			 }
+		    }
+	       },
+	  LI { "new constants and operators:",		    -- get this with : git diff version-1.9.2 ../../m2/exports.m2
+	       UL {
+		    LI { "The type ", TO "Describe", ", ", TO "MapExpression", ", ", TO "MatrixDegreeExpression", ", ", TO "SheafExpression", ", and ", TO "VectorExpression", "
+			 have been added." },
+		    LI { "The top level mode ", TO "WebApp", " has been added." },
+		    LI { "The function ", TO "htmlWithTex", " has been added." },
+		    LI { "The function ", TO "polarize", " has been added." }
 		    }
 	       }
-          }
+          } 
      }
 
 document {
@@ -149,7 +171,7 @@ document {
 		    LI {
 			 "Functionality for fast nonminimal free resolutions, ", TO "FastNonminimal", " has a number of bug fixes and
 			 improvements: (1) it now works for input modules, not just ideals (there was a monomial order mismatch which
-			     would often cause it to fail), (2) multi-graded and inhomogeneous ideals/modules are allowed, 
+			     would often cause it to fail), (2) multigraded and inhomogeneous ideals/modules are allowed, 
 			 (3) this function works over the exterior algebra as well (it has always done so, but that was not
 			     always realized), (4) it is possible to have M2 use an already created Groebner basis, instead of recomputing
 			 one.  Use Strategy=>5 in the ", TO "resolution", " command, to tell the command that the 
@@ -447,7 +469,7 @@ document {
 	  --      },
 	  LI { "new packages:",                       -- got this with git diff version-1.8.2 =distributed-packages 
 	       UL {
-	       	    LI { TO "ResidualIntersections::ResidualIntersections", ", a package by Katie Ansaldi, David Eisenbud, Robert Krone, and Jay Yang, for  studying conditions associated to residual intersection theory, has been added." },
+	       	    LI { TO "ResidualIntersections::ResidualIntersections", ", a package by Katie Ansaldi, David Eisenbud, Robert Krone, and Jay Yang, for studying conditions associated to residual intersection theory, has been added." },
 	       	    LI { TO "Visualize::Visualize", ", a package by Brett Barwick, Thomas Enkosky, Branden Stone, and Jim Vallandingham, to help visualize algebraic objects in the browser using javascript, has been added." },
 		    LI { TO "EquivariantGB::EquivariantGB", ", a package by Chris Hillar, Robert Krone, and Anton Leykin for equivariant Groebner bases and related algorithms, has been added." },
 		    LI { TO "ExampleSystems::ExampleSystems", ", a package by Anton Leykin for examples of polynomial systems in numerical algebraic geometry, has been added." }
@@ -1134,7 +1156,7 @@ document {
 			 between the images of the bases of the source and target."
 			 },
 		    LI {
-			 "The functions ", TO basis, ", and ", TO "Truncations::truncate", " now allow partial multi-degrees to be given.
+			 "The functions ", TO basis, ", and ", TO "Truncations::truncate", " now allow partial multidegrees to be given.
 			 The result is a basis or generating set over the subring generated by variables whose initial
 			 degrees are zero."
 			 },
@@ -1857,7 +1879,7 @@ document {
      ///,
      PARA ///
      The implementation of the Gröbner basis algorithm for polynomial rings
-     where the multi-degrees of the variables don't all have strictly positive
+     where the multidegrees of the variables don't all have strictly positive
      first component has been fixed by having it use the heft vector provided.
      The problem was that bases were not minimalized, and S-pairs were
      addressed in a non-optimal order.  (The total Ext functor Ext(M,N) used

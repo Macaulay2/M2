@@ -168,7 +168,8 @@ newPackage String := opts -> (pkgname) -> (
      	  hook = haderror -> (
 	       if haderror then (
 	       	    (dictionaryPath, loadedPackages, debuggingMode, loadDepth) = save;
-		    PackageDictionary#pkgname <- PackageDictionary#pkgname;
+		    if PackageDictionary#?pkgname
+		    then PackageDictionary#pkgname <- PackageDictionary#pkgname;
 		    )
 	       else endPackage pkgname
 	       );
@@ -180,6 +181,7 @@ newPackage String := opts -> (pkgname) -> (
      then error("expected Configuration option to be a list of options");
      defaultConfiguration = new OptionTable from defaultConfiguration;
      if not noinitfile then (
+     	  setUpApplicationDirectory();
 	  configfilename := concatenate(applicationDirectory(), "init-",pkgname,".m2");
 	  userConfiguration := if fileExists configfilename then simpleLoad configfilename else {};
 	  if not instance(userConfiguration, List) or not all(userConfiguration, x -> instance(x,Option) and #x == 2)

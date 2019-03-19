@@ -14,7 +14,7 @@ newPackage(
       HomePage => "http://www.mit.edu/~parrilo/"},
      {Name => "Helfried Peyrl",
       Email => "peyrl@control.ee.ethz.ch",
-      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
+      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ"}
     },
     Headline => "semidefinite programming",
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},

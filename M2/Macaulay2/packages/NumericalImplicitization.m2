@@ -1472,8 +1472,8 @@ I = ideal 0_R
 F = (minors(k, genericMatrix(R, k, n)))_*
 assert(numericalImageDim(F, I) == 1 + k*(n-k))
 T = numericalHilbertFunction(F, I, 2)
-J = super basis(2, Grassmannian(k-1,n-1))
-assert(T.hilbertFunctionValue == numcols J)
+-- J = super basis(2, Grassmannian(k-1,n-1))
+-- assert(T.hilbertFunctionValue == numcols J)
 -- I2 = image transpose extractImageEquations(T, attemptExact => true)
 -- assert(image (map(ring I2, ring J, gens ring I2))(J) == I2)
 -- time W = numericalImageDegree(F, I, repeats => 2, Verbose => false)

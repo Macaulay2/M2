@@ -215,6 +215,7 @@ export {
 	"Invertible",
 	"Iterate",
 	"Join",
+	"Jupyter",
 	"KeepZeroes",
 	"Key",
 	"Keyword",

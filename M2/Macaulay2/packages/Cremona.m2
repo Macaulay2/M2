@@ -1,8 +1,8 @@
 
 newPackage(
        "Cremona",
-	Version => "4.2.3", 
-        Date => "December 17, 2018",
+	Version => "4.2.4", 
+        Date => "January 25, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "Some computations for rational maps between projective varieties",
         AuxiliaryFiles => true,
@@ -862,8 +862,8 @@ inverseMapInt (RationalMap,Nothing) := o -> (Phi,nothing) -> (
    Bl := graphIdealInt(Phi,BlowUpStrategy=>o.BlowUpStrategy);
    n := Phi#"dimAmbientTarget"; 
    Sub := map(target Phi,ring Bl,matrix{{(n+1):0_(ambient target Phi)}}|(vars ambient target Phi));
-   T := transpose gens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
-   psi := map(target Phi,source Phi,submatrix(T,{0},));
+   T := transpose mingens kernel transpose Sub submatrix(jacobian Bl,{0..n},);
+   psi := try map rationalMap(target Phi,source Phi,submatrix(T,{0},)) else error "not able to obtain an inverse rational map";
    if not o.MathMode then return psi;
    if (if n - Phi#"dimTarget" <= Phi#"dimAmbientSource" - Phi#"dimSource" then isInverseMap(map Phi,psi) else isInverseMap(psi,map Phi)) then (
         if o.Verbose then <<certificate; return psi;
@@ -1880,7 +1880,7 @@ specialQuadraticTransformation (ZZ,Ring) := (j,K) -> specialQuadraticTransformat
 
 specialCubicTransformation (Ring,ZZ) := (K,a) -> (
    if not isField K then error "expected a field";
-   if a<1 or a>9 then error("expected integer between 1 and 9, see Table 1 of the paper: Special cubic birational transformations of P6");
+   if a<1 or a>9 then error("expected integer between 1 and 9, see Table 2 of "|"https://arxiv.org/abs/1901.01203");
    if a == 1 then return specialCremonaTransformation(K,1);
    if a == 2 then (
        cre3 := specialCremonaTransformation(K,3);
