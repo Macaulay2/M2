@@ -91,6 +91,12 @@ class Monoid : public MutableEngineObject
                         M2_arrayint degs,
                         M2_arrayint hefts);
 
+  static Monoid *create(const MonomialOrdering *mo,
+                        const std::vector<std::string>& names,
+                        const PolynomialRing *DR, /* degree ring */
+                        const std::vector<int>& degs,
+                        const std::vector<int>& hefts);
+  
   ~Monoid();
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);

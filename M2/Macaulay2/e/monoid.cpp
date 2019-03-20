@@ -1,6 +1,7 @@
 // Copyright 1996 Michael E. Stillman
 
 #include <ctype.h>
+#include "util.hpp"
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "varpower.hpp"
@@ -69,6 +70,20 @@ Monoid *Monoid::create(const MonomialOrdering *mo,
     }
 
   return new Monoid(mo, names, deg_ring, degs, hefts);
+}
+
+Monoid *Monoid::create(const MonomialOrdering *mo,
+                        const std::vector<std::string>& names,
+                        const PolynomialRing *DR, /* degree ring */
+                        const std::vector<int>& degs,
+                        const std::vector<int>& hefts)
+{
+  
+  return create(mo,
+                toM2ArrayString(names),
+                DR,
+                stdvector_to_M2_arrayint(degs),
+                stdvector_to_M2_arrayint(hefts));
 }
 
 Monoid::Monoid(const MonomialOrdering *mo,

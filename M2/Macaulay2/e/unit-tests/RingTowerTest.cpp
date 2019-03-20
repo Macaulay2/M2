@@ -19,17 +19,6 @@
 // another (number)
 // for GF, do we mix the a^r in?
 
-M2_ArrayString toM2ArrayString(std::vector<std::string>& strs)
-{
-  int n = static_cast<int>(
-      strs.size());  // needed since M2_ArrayString len field is int
-  int i;
-  M2_ArrayString a = getmemarraytype(M2_ArrayString, n);
-  a->len = n;
-  for (i = 0; i < n; i++) a->array[i] = M2_tostring(strs[i].c_str());
-  return a;
-}
-
 template <>
 ring_elem getElement<Tower>(const Tower& R, int index)
 {

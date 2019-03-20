@@ -1,5 +1,8 @@
 #ifndef __monordering_h_
 #define __monordering_h_
+
+#include "monordering.hpp"
+#if 0
 enum MonomialOrdering_type
 {
   MO_LEX = 1,
@@ -32,7 +35,7 @@ struct MonomialOrdering {
   unsigned int len;
   mon_part array[1];
 };
-
+#endif
 #endif
 
 /*

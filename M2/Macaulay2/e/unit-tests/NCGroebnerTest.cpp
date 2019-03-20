@@ -1,6 +1,8 @@
 #include <memory>
 #include <gtest/gtest.h>
 
+#include "engine.h"
+#include "poly.hpp"
 #include "aring-glue.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/WordTable.hpp"
@@ -13,18 +15,52 @@ std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
 
 extern const QQ * globalQQ;
 
-#if 0
+TEST(MonomialOrdering, create)
+{
+  auto mo1 = MonomialOrderings::Lex(5);
+  auto mo2 = MonomialOrderings::GroupLex(4);
+  auto mo3 = MonomialOrderings::join({mo1, mo2});
+  std::string answer3 { "MonomialOrder => {\n    Lex => 5,\n    GroupLex => 4\n    }" };
+  EXPECT_EQ(answer3, MonomialOrderings::toString(mo3));
+  EXPECT_EQ(9, rawNumberOfVariables(mo3));
+  EXPECT_TRUE(moIsLex(mo1));
+
+  auto mo4 = MonomialOrderings::GRevLex({3,2,5,7});
+  EXPECT_TRUE(moIsGRevLex(mo4));
+  auto mo5 = MonomialOrderings::GRevLex2({1,1,1,1});
+  EXPECT_TRUE(moIsGRevLex(mo5));
+  auto mo6 {
+    MonomialOrderings::join(
+    {
+     MonomialOrderings::GRevLex(3),
+     MonomialOrderings::GRevLex2(4),
+     MonomialOrderings::GRevLex4(5),
+     MonomialOrderings::GroupLex(3)
+    })};
+  std::cout << MonomialOrderings::toString(mo6) << std::endl;
+}
+
 const Monoid* degreeMonoid(int n)
 {
-  return Monoid::create(mo, names, DR, degs, heft);
+  MonomialOrdering* mo = MonomialOrderings::join
+    ({
+      MonomialOrderings::Weights( {-1} ),
+      MonomialOrderings::GroupLex(1),
+      MonomialOrderings::PositionUp()
+    });
+
+  std::vector<std::string> names {"T"};
+  return Monoid::create(mo,
+                        names,
+                        IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(),
+                        {{}},
+                        {});
 }
-#endif
 
 const PolynomialRing* degreeRing(int n)
 {
-  return nullptr;
-  // TODO: improve engine creation of poly rings!
   //  return PolyRing::create(globalZZ, degreeMonoid(n));
+  return nullptr;
 }
 
 TEST(FreeAlgebra, create)

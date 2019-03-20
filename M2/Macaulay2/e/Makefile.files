@@ -11,6 +11,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	monordering \
 	NCAlgebras/FreeAlgebra \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
@@ -195,7 +196,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex rand
+C_FILES = error table exptable complex rand
 
 D_FILES = 
 DD_FILES = #test
