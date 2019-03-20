@@ -118,7 +118,7 @@ public:
   void setZero(Poly& f) const // resets f to zero
   {
     for (auto a : f.mCoefficients)
-      mCoefficientRing.remove(a);
+      coefficientRing()->remove(a);
     
     f.mCoefficients.clear();
     f.mMonomials.clear();
@@ -128,8 +128,7 @@ public:
   
 private:
   const Ring& mCoefficientRing;
-  const FreeMonoid mMonoid;
-
+  const FreeMonoid& mMonoid;
 };
 
 class FreeAlgebraElement

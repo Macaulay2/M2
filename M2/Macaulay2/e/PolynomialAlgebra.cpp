@@ -14,8 +14,8 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
                                              )
 {
   assert(K != nullptr);
-  FreeMonoid *M = new FreeMonoid(names, degreeRing, degrees);
-  PolynomialAlgebra* result = new PolynomialAlgebra(K, M);
+  FreeAlgebra* F = FreeAlgebra::create(K, names, degreeRing, degrees);
+  PolynomialAlgebra* result = new PolynomialAlgebra(F);
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
@@ -24,17 +24,14 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
   return result;
 }
 
-PolynomialAlgebra::PolynomialAlgebra(const Ring* K,
-                                     const FreeMonoid* M
-                                     )
-  : mCoefficientRing(*K),
-    mMonoid(*M)
+PolynomialAlgebra::PolynomialAlgebra(const FreeAlgebra* F)
+  : mFreeAlgebra(F)
 {
 }
 
 void PolynomialAlgebra::text_out(buffer &o) const
 {
-  mCoefficientRing.text_out(o);
+  coefficientRing()->text_out(o);
   o << "{";
   for (int i = 0; i < monoid().variableNames().size(); i++)
     {
@@ -58,35 +55,31 @@ int PolynomialAlgebra::index_of_var(const ring_elem a) const
   // f is a variable iff: #terms is 1, monomial is [3,1,v], coeff is 1
   if (f->numTerms() != 1) return -1;
   auto i = f->cbegin();
-  if (!mCoefficientRing.is_equal(mCoefficientRing.one(), i.coeff())) return -1;
+  if (!coefficientRing()->is_equal(coefficientRing()->one(), i.coeff())) return -1;
   return monoid().index_of_variable(i.monom());
 }
 
 ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
 {
   auto result = new Poly;
-  if (not mCoefficientRing.is_zero(a))
-    {
-      result->getCoeffInserter().push_back(a);
-      monoid().one(result->getMonomInserter());
-    }
-  return ring_elem(reinterpret_cast<::Poly*>(result));
+  freeAlgebra()->from_coefficient(*result, a);
+  return ring_elem(reinterpret_cast<void *>(result));
 }
 
 ring_elem PolynomialAlgebra::from_long(long n) const
 {
-  return from_coefficient(mCoefficientRing.from_long(n));
+  return from_coefficient(coefficientRing()->from_long(n));
 }
 
 ring_elem PolynomialAlgebra::from_int(mpz_srcptr n) const
 {
-  return from_coefficient(mCoefficientRing.from_int(n));
+  return from_coefficient(coefficientRing()->from_int(n));
 }
 
 bool PolynomialAlgebra::from_rational(const mpq_ptr q, ring_elem& result1) const
 {
   ring_elem cq; // in coeff ring.
-  bool worked = mCoefficientRing.from_rational(q, cq);
+  bool worked = coefficientRing()->from_rational(q, cq);
   if (!worked) return false;
   result1 = from_coefficient(cq);
   return true;
@@ -95,18 +88,15 @@ bool PolynomialAlgebra::from_rational(const mpq_ptr q, ring_elem& result1) const
 ring_elem PolynomialAlgebra::var(int v) const
 {
   auto result = new Poly;
-
-  result->getCoeffInserter().push_back(mCoefficientRing.from_long(1));
-  monoid().var(v, result->getMonomInserter());
-
-  return reinterpret_cast<Nterm*>(result);
+  freeAlgebra()->var(*result,v);
+  return ring_elem(reinterpret_cast<void *>(result));
 }
 
 bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &result) const
 {
-  std::cout << "called promote NC case" << std::endl;  
+  // std::cout << "called promote NC case" << std::endl;  
   // Currently the only case to handle is R = A --> this, and A is the coefficient ring of this.
-  if (R == & mCoefficientRing)
+  if (R == coefficientRing())
     {
       result = from_coefficient(f);
       return true;
@@ -123,14 +113,14 @@ bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f1, ring_elem &resul
 
   // case: R is the coefficient ring of 'this'.
   std::cout << "called lift NC case" << std::endl;
-  if (R == & mCoefficientRing)
+  if (R == coefficientRing())
     {
       auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
       if (f->numTerms() != 1) return false;
       auto i = f->cbegin();
       if (monoid().is_one(i.monom()))
         {
-          result = mCoefficientRing.copy(i.coeff());
+          result = coefficientRing()->copy(i.coeff());
           return true;
         }
     }
@@ -142,10 +132,7 @@ bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f1, ring_elem &resul
 bool PolynomialAlgebra::is_unit(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
-
-  if (f->numTerms() != 1) return false;
-  auto i = f->cbegin();
-  return monoid().is_one(i.monom()) && mCoefficientRing.is_unit(i.coeff());
+  return freeAlgebra()->is_unit(*f);
 }
 
 long PolynomialAlgebra::n_terms(const ring_elem f1) const
@@ -170,7 +157,7 @@ bool PolynomialAlgebra::is_equal(const ring_elem f1, const ring_elem g1) const
   auto fEnd = f->cendCoeff();
   for ( ; fCoeffIt != fEnd ; fCoeffIt++, gCoeffIt++)
     {
-      bool cmp = mCoefficientRing.is_equal(*fCoeffIt, *gCoeffIt);
+      bool cmp = coefficientRing()->is_equal(*fCoeffIt, *gCoeffIt);
       if (!cmp) return false;
     }
   return true;
@@ -201,7 +188,7 @@ int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) con
         }
       // if we are here, then the monomials are the same and we compare coefficients.
       // for example if a,b are in the base and a > b then ax > bx.
-      cmp = mCoefficientRing.compare_elems(fIt.coeff(), fIt.coeff());
+      cmp = coefficientRing()->compare_elems(fIt.coeff(), fIt.coeff());
       if (cmp != 0) return cmp;
     }
 }
@@ -229,7 +216,7 @@ ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
     outmonom.push_back(*i);
 
   for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
-    outcoeff.push_back(mCoefficientRing.negate(*i));
+    outcoeff.push_back(coefficientRing()->negate(*i));
 
   return reinterpret_cast<Nterm*>(result);
 }
@@ -267,8 +254,8 @@ auto PolynomialAlgebra::addPolys(const Poly& f, const Poly& g) const -> Poly
           fIt++;
           break;
         case EQ:
-          ring_elem coeffResult = mCoefficientRing.add(fCoeff,gCoeff);
-          if (!mCoefficientRing.is_zero(coeffResult))
+          ring_elem coeffResult = coefficientRing()->add(fCoeff,gCoeff);
+          if (!coefficientRing()->is_zero(coeffResult))
             {
               outcoeff.push_back(coeffResult);
               monoid().copy(gMon, outmonom);
@@ -333,7 +320,7 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
       switch(monoid().compare(fMon,gMon))
         {
         case LT:
-          outcoeff.push_back(mCoefficientRing.negate(gCoeff));
+          outcoeff.push_back(coefficientRing()->negate(gCoeff));
           monoid().copy(gMon, outmonom);
           gIt++;
           break;
@@ -343,8 +330,8 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
           fIt++;
           break;
         case EQ:
-          ring_elem coeffResult = mCoefficientRing.subtract(fCoeff,gCoeff);
-          if (!mCoefficientRing.is_zero(coeffResult))
+          ring_elem coeffResult = coefficientRing()->subtract(fCoeff,gCoeff);
+          if (!coefficientRing()->is_zero(coeffResult))
             {
               outcoeff.push_back(coeffResult);
               monoid().copy(gMon, outmonom);
@@ -359,7 +346,7 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
         {
           auto gMon = gIt.monom();
           auto gCoeff = gIt.coeff();
-          outcoeff.push_back(mCoefficientRing.negate(gCoeff));
+          outcoeff.push_back(coefficientRing()->negate(gCoeff));
           monoid().copy(gMon, outmonom);
         }
     }
@@ -446,8 +433,8 @@ ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
       // multiply the coefficients
-      ring_elem d = mCoefficientRing.mult(i.coeff(),c);
-      if (mCoefficientRing.is_zero(d))
+      ring_elem d = coefficientRing()->mult(i.coeff(),c);
+      if (coefficientRing()->is_zero(d))
         continue;
 
       outcoeff.push_back(d);
@@ -466,8 +453,8 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
   auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
-      ring_elem d = mCoefficientRing.mult(c, i.coeff());
-      if (mCoefficientRing.is_zero(d))
+      ring_elem d = coefficientRing()->mult(c, i.coeff());
+      if (coefficientRing()->is_zero(d))
         continue;
 
       outcoeff.push_back(d);
@@ -488,8 +475,8 @@ ring_elem PolynomialAlgebra::mult_by_term_left_and_right(const ring_elem f1,
   auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
-      ring_elem d = mCoefficientRing.mult(c, i.coeff());
-      if (mCoefficientRing.is_zero(d))
+      ring_elem d = coefficientRing()->mult(c, i.coeff());
+      if (coefficientRing()->is_zero(d))
         continue;
 
       outcoeff.push_back(d);
@@ -505,7 +492,7 @@ ring_elem PolynomialAlgebra::power(const ring_elem f1, mpz_t n) const
   if (is_unit(f1))  // really want a routine 'is_scalar'...
     {
       ring_elem coeff = reinterpret_cast<const Poly*>(f1.get_Poly())->cbegin().coeff();
-      ring_elem a = mCoefficientRing.power(coeff, n);
+      ring_elem a = coefficientRing()->power(coeff, n);
       return from_coefficient(a);
     }
   std::pair<bool, int> n1 = RingZZ::get_si(n);
@@ -552,7 +539,7 @@ void PolynomialAlgebra::debug_display(const Poly* f) const
   for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
     {
       buffer o;
-      mCoefficientRing.elem_text_out(o, *i);
+      coefficientRing()->elem_text_out(o, *i);
       std::cout << o.str() << " ";
     }
   std::cout << std::endl  << "  monoms: ";
@@ -610,7 +597,7 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
       bool is_one = monoid().is_one(i.monom());
       p_parens = !is_one;
       bool p_one_this = (is_one && needs_parens) || (is_one && p_one);
-      mCoefficientRing.elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
+      coefficientRing()->elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
       if (!is_one)
         monoid().elem_text_out(o, i.monom());
       p_plus = true;
@@ -642,7 +629,7 @@ ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem ff, int fi
     {
       vp.clear();
       monoid().getMonomial(i.monom(), vp);
-      ring_elem g = map->eval_term(getCoefficientRing(), i.coeff(), vp.data(), first_var, n_vars());
+      ring_elem g = map->eval_term(coefficientRing(), i.coeff(), vp.data(), first_var, n_vars());
       H->add(g);
     }
   ring_elem result = H->getValue();
@@ -658,7 +645,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
   // the coefficients.
 
   auto f = reinterpret_cast<const Poly*>(ff.get_Poly());
-  if (coeffR != &mCoefficientRing)
+  if (coeffR != coefficientRing())
     {
       ERROR("expected coefficient ring");
       return nullptr;
@@ -677,7 +664,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
   int next = 0;
   for (auto i=f->cbegin(); i != f->cend(); ++i, ++next)
     {
-      ring_elem c = mCoefficientRing.copy(i.coeff());
+      ring_elem c = coefficientRing()->copy(i.coeff());
       vp.resize(0);
       monoid().getMonomialReversed(i.monom(), vp); // should this instead reverse the monomial?
       coeffs->array[next] = RingElement::make_raw(coeffR, c);
@@ -689,7 +676,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
 
 ring_elem PolynomialAlgebra::lead_coefficient(const Ring* coeffRing, const Poly* f) const
 {
-  if (coeffRing != &mCoefficientRing)
+  if (coeffRing != coefficientRing())
     {
       throw exc::engine_error("unexpected coefficient ring");
     }
@@ -774,7 +761,7 @@ bool PolynomialAlgebra::multi_degree(const Poly* f, int *result) const
 void PolynomialAlgebra::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
 {
   int comp_unused;
-  f.getCoeffInserter().push_back(getCoefficientRing()->from_long(1));
+  f.getCoeffInserter().push_back(coefficientRing()->from_long(1));
   appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
 }
   

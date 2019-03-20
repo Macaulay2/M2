@@ -102,7 +102,7 @@ void FreeAlgebra::clear(Poly& f) const
 void FreeAlgebra::setZero(Poly& f) const
 {
   for (auto a : f.mCoefficients)
-    mCoefficientRing.remove(a);
+    coefficientRing()->remove(a);
     
   f.mCoefficients.clear();
   f.mMonomials.clear();
@@ -110,7 +110,7 @@ void FreeAlgebra::setZero(Poly& f) const
 
 void FreeAlgebra::from_coefficient(Poly& result, const ring_elem a) const
 {
-  if (not mCoefficientRing.is_zero(a))
+  if (not coefficientRing()->is_zero(a))
     {
       result.getCoeffInserter().push_back(a);
       monoid().one(result.getMonomInserter());
@@ -119,18 +119,18 @@ void FreeAlgebra::from_coefficient(Poly& result, const ring_elem a) const
 
 void FreeAlgebra::from_long(Poly& result, long n) const
 {
-  from_coefficient(result, mCoefficientRing.from_long(n));
+  from_coefficient(result, coefficientRing()->from_long(n));
 }
 
 void FreeAlgebra::from_int(Poly& result, mpz_srcptr n) const
 {
-  from_coefficient(result, mCoefficientRing.from_int(n));
+  from_coefficient(result, coefficientRing()->from_int(n));
 }
 
 bool FreeAlgebra::from_rational(Poly& result, const mpq_ptr q) const
 {
   ring_elem cq; // in coeff ring.
-  bool worked = mCoefficientRing.from_rational(q, cq);
+  bool worked = coefficientRing()->from_rational(q, cq);
   if (!worked) return false;
   from_coefficient(result, cq);
   return true;
@@ -138,7 +138,7 @@ bool FreeAlgebra::from_rational(Poly& result, const mpq_ptr q) const
 
 void FreeAlgebra::var(Poly& result, int v) const
 {
-  result.getCoeffInserter().push_back(mCoefficientRing.from_long(1));
+  result.getCoeffInserter().push_back(coefficientRing()->from_long(1));
   monoid().var(v, result.getMonomInserter());
 }
 
@@ -154,14 +154,14 @@ void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const std::vector<int
 
 void FreeAlgebra::from_word(Poly& result, const std::vector<int>& word) const
 {
-  from_word(result, mCoefficientRing.from_long(1), word);
+  from_word(result, coefficientRing()->from_long(1), word);
 }
 
 bool FreeAlgebra::is_unit(const Poly& f) const
 {
   if (f.numTerms() != 1) return false;
   auto i = f.cbegin();
-  return monoid().is_one(i.monom()) && mCoefficientRing.is_unit(i.coeff());
+  return monoid().is_one(i.monom()) && coefficientRing()->is_unit(i.coeff());
 }
 
 int FreeAlgebra::compare_elems(const Poly& f, const Poly& g) const
@@ -187,7 +187,7 @@ int FreeAlgebra::compare_elems(const Poly& f, const Poly& g) const
         }
       // if we are here, then the monomials are the same and we compare coefficients.
       // for example if a,b are in the base and a > b then ax > bx.
-      cmp = mCoefficientRing.compare_elems(fIt.coeff(), fIt.coeff());
+      cmp = coefficientRing()->compare_elems(fIt.coeff(), fIt.coeff());
       if (cmp != 0) return cmp;
     }
 }
@@ -201,7 +201,7 @@ bool FreeAlgebra::is_equal(const Poly& f, const Poly& g) const
   auto fEnd = f.cendCoeff();
   for ( ; fCoeffIt != fEnd ; fCoeffIt++, gCoeffIt++)
     {
-      bool cmp = mCoefficientRing.is_equal(*fCoeffIt, *gCoeffIt);
+      bool cmp = coefficientRing()->is_equal(*fCoeffIt, *gCoeffIt);
       if (!cmp) return false;
     }
   return true;
@@ -248,8 +248,8 @@ void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
           fIt++;
           break;
         case EQ:
-          ring_elem coeffResult = mCoefficientRing.add(fCoeff,gCoeff);
-          if (!mCoefficientRing.is_zero(coeffResult))
+          ring_elem coeffResult = coefficientRing()->add(fCoeff,gCoeff);
+          if (!coefficientRing()->is_zero(coeffResult))
             {
               outcoeff.push_back(coeffResult);
               monoid().copy(gMon, outmonom);
@@ -318,8 +318,8 @@ void FreeAlgebra::mult_by_term_right(Poly& result,
   for(auto i=f.cbegin(); i != f.cend(); i++)
     {
       // multiply the coefficients
-      ring_elem d = mCoefficientRing.mult(i.coeff(),c);
-      if (mCoefficientRing.is_zero(d))
+      ring_elem d = coefficientRing()->mult(i.coeff(),c);
+      if (coefficientRing()->is_zero(d))
         continue;
 
       outcoeff.push_back(d);
@@ -337,8 +337,8 @@ void FreeAlgebra::mult_by_term_left(Poly& result,
   auto& outmonom = result.getMonomInserter();
   for(auto i=f.cbegin(); i != f.cend(); i++)
     {
-      ring_elem d = mCoefficientRing.mult(c, i.coeff());
-      if (mCoefficientRing.is_zero(d))
+      ring_elem d = coefficientRing()->mult(c, i.coeff());
+      if (coefficientRing()->is_zero(d))
         continue;
 
       outcoeff.push_back(d);
@@ -357,8 +357,8 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
   auto& outmonom = result.getMonomInserter();
   for(auto i=f.cbegin(); i != f.cend(); i++)
     {
-      ring_elem d = mCoefficientRing.mult(c, i.coeff());
-      if (mCoefficientRing.is_zero(d))
+      ring_elem d = coefficientRing()->mult(c, i.coeff());
+      if (coefficientRing()->is_zero(d))
         continue;
 
       outcoeff.push_back(d);
@@ -395,7 +395,7 @@ void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
   else if (is_unit(f))  // really want a routine 'is_scalar'...
     {
       ring_elem coeff = f.cbegin().coeff();
-      ring_elem a = mCoefficientRing.power(coeff, n);
+      ring_elem a = coefficientRing()->power(coeff, n);
       from_coefficient(result, a);
     }
   else

@@ -16,11 +16,12 @@ using ExponentVector = int*;
 class PolynomialAlgebra : public Ring
 {
 private:
-  const Ring& mCoefficientRing;
-  const FreeMonoid mMonoid;
+  // This information is now in mFreeAlgebra
+  //const Ring& mCoefficientRing;
+  //const FreeMonoid mMonoid;
   const FreeAlgebra* mFreeAlgebra;
 
-  PolynomialAlgebra(const Ring* K, const FreeMonoid* M);
+  PolynomialAlgebra(const FreeAlgebra* F);
 public:
   //using Poly = Polynomial<CoefficientRingTypeExample>;
 
@@ -30,9 +31,10 @@ public:
                                    const std::vector<int>& degrees
                                    );
 
-  const Ring* getCoefficientRing() const { return &mCoefficientRing; }
-  const FreeMonoid& monoid() const { return mMonoid; }
-  const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
+  const FreeAlgebra* freeAlgebra() const { return mFreeAlgebra; }
+  const Ring* coefficientRing() const { return freeAlgebra()->coefficientRing(); }
+  const FreeMonoid& monoid() const { return freeAlgebra()->monoid(); }
+  const Monoid& degreeMonoid() const { return freeAlgebra()->monoid().degreeMonoid(); }
   
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
@@ -133,7 +135,7 @@ public:
   void setZero(Poly& f) const // resets f to zero
   {
     for (auto a : f.mCoefficients)
-      mCoefficientRing.remove(a);
+      coefficientRing()->remove(a);
     
     f.mCoefficients.clear();
     f.mMonomials.clear();
