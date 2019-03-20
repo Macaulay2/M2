@@ -42,39 +42,43 @@ TEST(MonomialOrdering, create)
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names)
 {
+  std::vector<int> wts;
+  for (int i=0; i<names.size(); i++)
+    wts.push_back(-1);
   MonomialOrdering* mo = MonomialOrderings::join
     ({
-      MonomialOrderings::Weights( {-1} ),
+      MonomialOrderings::Weights(wts),
       MonomialOrderings::GroupLex(1),
       MonomialOrderings::PositionUp()
     });
 
-  auto result = Monoid::create(mo,
+  return Monoid::create(mo,
                         names,
                         IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(),
                         {},
                         {});
-  if (result == nullptr or error())
-    {
-      std::cout << "Error: " << error_message() << std::endl;
-      EXPECT_TRUE(false);
-    }
-  return result;
 }
 
 const PolynomialRing* degreeRing(const std::vector<std::string>& names)
 {
   auto degM = degreeMonoid(names);
+  if (degM == nullptr) return nullptr;
   return PolyRing::create(globalZZ, degM);
 }
 const PolynomialRing* degreeRing(int ndegrees)
 {
-  if (ndegrees == 1)
-    return degreeRing({"T"});
+  assert(ndegrees == 1);
+  return degreeRing({"T"});
 }
 
 TEST(FreeAlgebra, create)
 {
+  if (degreeRing(1) == nullptr or error())
+    {
+      std::cout << "Error: " << error_message() << std::endl;
+      EXPECT_TRUE(false);
+    }
+  
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
