@@ -50,9 +50,9 @@ public:
   bool is_equal(const Poly& f, const Poly& g) const;
   int compare_elems(const Poly& f, const Poly& g) const;
   
-  void negate(Poly& result, const Poly& f) const; // TODO
+  void negate(Poly& result, const Poly& f) const; 
   void add(Poly& result, const Poly& f, const Poly& g) const;
-  void subtract(Poly& result, const Poly& f, const Poly& g) const; //TODO
+  void subtract(Poly& result, const Poly& f, const Poly& g) const;
   void mult(Poly& result, const Poly& f, const Poly& g) const;
   void power(Poly& result, const Poly& f, int n) const;
   void power(Poly& result, const Poly& f, mpz_ptr n) const;
@@ -61,13 +61,13 @@ public:
                      const Poly& f,
                      bool p_one,
                      bool p_plus,
-                     bool p_parens) const; // TODO
+                     bool p_parens) const;
 
-  bool is_homogeneous(const Poly& f) const; // TODO
-  void degree(const Poly& f, int *d) const; // TODO
+  bool is_homogeneous(const Poly& f) const;
+  void degree(const Poly& f, int *d) const;
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
-  bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const; // TODO
+  bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const;
 
   void mult_by_term_right(Poly& result,
                           const Poly& f,
@@ -85,6 +85,8 @@ public:
   void add_to_end(Poly& f, const Poly& g) const; // TODO
   void mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) const;
   
+  SumCollector* make_SumCollector() const;
+
 #if 0  
   Poly* eval(const RingMap *map, const Poly* f, int first_var) const;
 
@@ -99,9 +101,6 @@ public:
 
   engine_RawArrayPairOrNull list_form(const Ring *coeffR,
                                       const Poly* f) const;
-
-
-  SumCollector *make_SumCollector() const;
 
   // lead coefficient, monomials and terms.
   ring_elem lead_coefficient(const Ring* coeffRing, const Poly* f) const;
@@ -159,6 +158,12 @@ public:
   {
     FreeAlgebraElement result(mRing);
     mRing->add(*result, **this, *g);
+    return result;  // this is a copy
+  }
+  FreeAlgebraElement operator-(const FreeAlgebraElement& g)
+  {
+    FreeAlgebraElement result(mRing);
+    mRing->subtract(*result, **this, *g);
     return result;  // this is a copy
   }
   FreeAlgebraElement operator*(const FreeAlgebraElement& g)

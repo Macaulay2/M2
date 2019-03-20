@@ -1,5 +1,7 @@
 #include "FreeAlgebra.hpp"
 
+using ExponentVector = int*;
+
 class FreeAlgebraHeap
 {
   const FreeAlgebra& F;  // Our elements will be vectors in here
@@ -70,6 +72,31 @@ void FreeAlgebraHeap::value(Poly& result)
     }
   top_of_heap = -1;
   F.clear(tmp1);
+}
+
+class SumCollectorFreeAlgebraHeap : public SumCollector
+{
+  FreeAlgebraHeap H;
+
+ public:
+  SumCollectorFreeAlgebraHeap(const FreeAlgebra& F) : H(F) {}
+  ~SumCollectorFreeAlgebraHeap() {}
+  virtual void add(ring_elem f1)
+  {
+    auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
+    H.add(*f);
+  }
+  virtual ring_elem getValue()
+  {
+    Poly* result = new Poly;
+    H.value(*result);
+    return ring_elem(reinterpret_cast<void *>(result));
+  }
+};
+
+SumCollector* FreeAlgebra::make_SumCollector() const
+{
+  return new SumCollectorFreeAlgebraHeap(*this);
 }
 
 FreeAlgebra* FreeAlgebra::create(const Ring* K,
@@ -209,13 +236,15 @@ bool FreeAlgebra::is_equal(const Poly& f, const Poly& g) const
 
 void FreeAlgebra::negate(Poly& result, const Poly& f) const
 {
-  // eventually we will want to make this an 'in-place' operation.
-  // for now, it is a copy.
-  Poly tmp;
-  from_long(tmp,-1);
-  mult(result, f, tmp);
-  clear(tmp);
-} 
+  auto& outmonom = result.getMonomInserter();
+  auto& outcoeff = result.getCoeffInserter();
+
+  for (auto i = f.cbeginMonom(); i != f.cendMonom(); ++i)
+    outmonom.push_back(*i);
+
+  for (auto i=f.cbeginCoeff(); i != f.cendCoeff(); ++i)
+    outcoeff.push_back(coefficientRing()->negate(*i));
+}
 
 void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
 {
@@ -265,6 +294,69 @@ void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
           auto gMon = gIt.monom();
           auto gCoeff = gIt.coeff();
           outcoeff.push_back(gCoeff);
+          monoid().copy(gMon, outmonom);
+        }
+    }
+  if (gIt == gEnd)
+    {
+      for ( ; fIt != fEnd; fIt++)
+        {
+          auto fMon = fIt.monom();
+          auto fCoeff = fIt.coeff();
+          outcoeff.push_back(fCoeff);
+          monoid().copy(fMon, outmonom);
+        }
+    }
+}
+
+void FreeAlgebra::subtract(Poly& result, const Poly& f, const Poly& g) const
+{
+  auto fIt = f.cbegin();
+  auto gIt = g.cbegin();
+  auto fEnd = f.cend();
+  auto gEnd = g.cend();
+
+  auto& outcoeff = result.getCoeffInserter();
+  auto& outmonom = result.getMonomInserter();
+
+  // loop over the iterators for f and g, adding the bigger of the two to
+  // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
+  while ((fIt != fEnd) && (gIt != gEnd))
+    {
+      auto fMon = fIt.monom();
+      auto gMon = gIt.monom();
+      auto fCoeff = fIt.coeff();
+      auto gCoeff = gIt.coeff();
+      switch(monoid().compare(fMon,gMon))
+        {
+        case LT:
+          outcoeff.push_back(coefficientRing()->negate(gCoeff));
+          monoid().copy(gMon, outmonom);
+          gIt++;
+          break;
+        case GT:
+          outcoeff.push_back(fCoeff);
+          monoid().copy(fMon, outmonom);
+          fIt++;
+          break;
+        case EQ:
+          ring_elem coeffResult = coefficientRing()->subtract(fCoeff,gCoeff);
+          if (!coefficientRing()->is_zero(coeffResult))
+            {
+              outcoeff.push_back(coeffResult);
+              monoid().copy(gMon, outmonom);
+            }
+          fIt++;
+          gIt++;
+        }
+    }
+  if (fIt == fEnd)
+    {
+      for ( ; gIt != gEnd; gIt++)
+        {
+          auto gMon = gIt.monom();
+          auto gCoeff = gIt.coeff();
+          outcoeff.push_back(coefficientRing()->negate(gCoeff));
           monoid().copy(gMon, outmonom);
         }
     }
@@ -411,6 +503,89 @@ void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
     }
 }
 
+void FreeAlgebra::elem_text_out(buffer &o,
+                                const Poly& f,
+                                bool p_one,
+                                bool p_plus,
+                                bool p_parens) const
+{
+  if (f.numTerms() == 0)
+    {
+      o << "0";
+      return;
+    }
+
+  bool two_terms = (f.numTerms() > 1);
+  bool needs_parens = p_parens && two_terms;
+  if (needs_parens)
+    {
+      if (p_plus) o << '+';
+      o << '(';
+      p_plus = false;
+    }
+
+  for (auto i = f.cbegin(); i != f.cend(); i++)
+    {
+      bool is_one = monoid().is_one(i.monom());
+      p_parens = !is_one;
+      bool p_one_this = (is_one && needs_parens) || (is_one && p_one);
+      coefficientRing()->elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
+      if (!is_one)
+        monoid().elem_text_out(o, i.monom());
+      p_plus = true;
+    }
+
+  if (needs_parens) o << ')';
+}
+
+bool FreeAlgebra::is_homogeneous(const Poly& f) const
+{
+  bool result = true;
+  if (f.numTerms() <= 1) return true;
+  ExponentVector e = degreeMonoid().make_one();
+  ExponentVector degf = degreeMonoid().make_one();
+  auto i = f.cbegin();
+  auto end = f.cend();
+  monoid().multi_degree(i.monom(), degf); // sets degf.
+  for (++i; i != end; ++i)
+    {
+        monoid().multi_degree(i.monom(), e);
+        if (not degreeMonoid().is_equal(e, degf))
+          {
+            result = false;
+            break;
+          }
+    }
+  degreeMonoid().remove(e);
+  degreeMonoid().remove(degf);
+  return result;
+}
+
+void FreeAlgebra::degree(const Poly& f, int *d) const
+{
+  multi_degree(f, d);
+}
+
+bool FreeAlgebra::multi_degree(const Poly& f,
+                               int *already_allocated_degree_vector) const
+{
+  int* degVec = already_allocated_degree_vector;
+  bool ishomog = true;
+  auto i = f.cbegin();
+  monoid().multi_degree(i.monom(), degVec);
+  ExponentVector e = degreeMonoid().make_one();
+  for (++i; i != f.cend(); ++i)
+    {
+      monoid().multi_degree(i.monom(), e);
+      if (not degreeMonoid().is_equal(degVec, e))
+        {
+          ishomog = false;
+          degreeMonoid().lcm(degVec, e, degVec);
+        }
+    }
+  degreeMonoid().remove(e);
+  return ishomog;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

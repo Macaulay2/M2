@@ -115,12 +115,6 @@ public:
     return ring_elem(reinterpret_cast<const Poly*>(result));
   }
 
-  // some internal functions for the above routines
-  ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monom) const;
-  ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monom) const;
-  ring_elem mult_by_term_left_and_right(const ring_elem f, const ring_elem c, const Monom, const Monom) const;
-  void add_to_end(ring_elem f, const ring_elem g) const;
-
   // casting functions
   virtual const PolynomialAlgebra * cast_to_PolynomialAlgebra()  const { return this; }
   virtual       PolynomialAlgebra * cast_to_PolynomialAlgebra()        { return this; }
@@ -141,8 +135,6 @@ public:
     f.mMonomials.clear();
   }
   
-  Poly addPolys(const Poly& f, const Poly& g) const;
-
   const Poly* toPoly(const ring_elem f) const { return reinterpret_cast<const Poly*>(f.mPolyVal); }
 
   ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }

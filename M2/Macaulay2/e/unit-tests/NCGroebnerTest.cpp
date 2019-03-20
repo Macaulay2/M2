@@ -108,6 +108,10 @@ TEST(FreeAlgebra, polyarithmetic)
   EXPECT_TRUE(h == y * z * y * x * y);
 
   A->setZero(*f);
+  A->subtract(*f,*x,*y);
+  EXPECT_TRUE(f == (x - y));
+
+  A->setZero(*f);
   A->setZero(*g);
   A->from_long(*f,1);
   A->from_word(*g,{});
@@ -141,6 +145,11 @@ TEST(FreeAlgebra, comparisons)
   EXPECT_TRUE(A->compare_elems(*x,*y) == GT);
   EXPECT_TRUE(A->compare_elems(*y,*x) == LT);
   EXPECT_TRUE(A->compare_elems(*x,*x) == EQ);
+}
+
+TEST(FreeAlgebra, degrees)
+{
+  
 }
 
 TEST(WordTable, create)
