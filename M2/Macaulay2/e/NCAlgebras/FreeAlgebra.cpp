@@ -157,6 +157,41 @@ void FreeAlgebra::from_word(Poly& result, const std::vector<int>& word) const
   from_word(result, mCoefficientRing.from_long(1), word);
 }
 
+bool FreeAlgebra::is_unit(const Poly& f) const
+{
+  if (f.numTerms() != 1) return false;
+  auto i = f.cbegin();
+  return monoid().is_one(i.monom()) && mCoefficientRing.is_unit(i.coeff());
+}
+
+int FreeAlgebra::compare_elems(const Poly& f, const Poly& g) const
+{
+  auto fIt = f.cbegin();
+  auto gIt = g.cbegin();
+  auto fEnd = f.cend();
+  auto gEnd = g.cend();
+  int cmp;
+  for ( ; ; fIt++, gIt++)
+    {
+      if (fIt == fEnd)
+        {
+          if (gIt == gEnd) return EQ;
+          return LT;
+        }
+      if (gIt == gEnd) return GT;
+      // TODO: can we remove the following block?  Make sure monoid can handle zero variables...
+      if (numVars() > 0)
+        {
+          cmp = monoid().compare(fIt.monom(),gIt.monom());
+          if (cmp != 0) return cmp;
+        }
+      // if we are here, then the monomials are the same and we compare coefficients.
+      // for example if a,b are in the base and a > b then ax > bx.
+      cmp = mCoefficientRing.compare_elems(fIt.coeff(), fIt.coeff());
+      if (cmp != 0) return cmp;
+    }
+}
+
 bool FreeAlgebra::is_equal(const Poly& f, const Poly& g) const
 {
   if (f.numTerms() != g.numTerms()) return false;
@@ -323,12 +358,37 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
 
 void FreeAlgebra::power(Poly& result, const Poly& f, int n) const
 {
-  
+  from_long(result, 1);
+  Poly tmp;
+  for (int i=0; i<n; i++)
+    {
+      mult(tmp, result, f);
+      result = tmp;
+      setZero(tmp);
+    }
 }
 
-void FreeAlgebra::power(Poly& result, const Poly& f, mpz_srcptr n) const
+void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
 {
-
+  if (mpz_sgn(n) == 0) from_long(result, 1);
+  else if (is_zero(f)) from_long(result, 0);
+  else if (is_unit(f))  // really want a routine 'is_scalar'...
+    {
+      ring_elem coeff = f.cbegin().coeff();
+      ring_elem a = mCoefficientRing.power(coeff, n);
+      from_coefficient(result, a);
+    }
+  else
+    {
+      std::pair<bool, int> n1 = RingZZ::get_si(n);
+      if (mpz_sgn(n) > 0 and n1.first)
+          power(result, f, n1.second);
+      else
+        {
+          ERROR("exponent too large");
+          from_long(result, 0);
+        }
+    }
 }
 
 

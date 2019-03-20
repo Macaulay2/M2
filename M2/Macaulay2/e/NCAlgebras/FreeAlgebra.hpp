@@ -35,27 +35,27 @@ public:
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
 
-  void from_coefficient(Poly& result, const ring_elem a) const; // TODO
-  void from_long(Poly& result, long n) const; // TODO
-  void from_int(Poly& result, mpz_srcptr n) const; // TODO
+  void from_coefficient(Poly& result, const ring_elem a) const;
+  void from_long(Poly& result, long n) const;
+  void from_int(Poly& result, mpz_srcptr n) const; 
   void copy(Poly& result, const Poly& f) const; // TODO
-  bool from_rational(Poly& result, const mpq_ptr q) const; // TODO
+  bool from_rational(Poly& result, const mpq_ptr q) const; 
   void var(Poly& result, int v) const;
   void from_word(Poly& result, const std::vector<int>& word) const; 
   void from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const; 
   
-  long n_terms(const Poly& f) const;  // TODO
-  bool is_unit(const Poly& f) const;  // TODO
-  bool is_zero(const Poly& f) const;  // TODO
+  long n_terms(const Poly& f) const { return f.numTerms(); }  
+  bool is_unit(const Poly& f) const;
+  bool is_zero(const Poly& f) const { return n_terms(f) == 0; }
   bool is_equal(const Poly& f, const Poly& g) const;
-  int compare_elems(const Poly& f, const Poly& g) const; // TODO
+  int compare_elems(const Poly& f, const Poly& g) const;
   
   void negate(Poly& result, const Poly& f) const; // TODO
   void add(Poly& result, const Poly& f, const Poly& g) const;
-  void subtract(Poly& result, const Poly& f, const Poly& g) const; // TODO
-  void mult(Poly& result, const Poly& f, const Poly& g) const; // TODO
-  void power(Poly& result, const Poly& f, int n) const; // TODO
-  void power(Poly& result, const Poly& f, mpz_srcptr n) const; // TODO
+  void subtract(Poly& result, const Poly& f, const Poly& g) const; //TODO
+  void mult(Poly& result, const Poly& f, const Poly& g) const;
+  void power(Poly& result, const Poly& f, int n) const;
+  void power(Poly& result, const Poly& f, mpz_ptr n) const;
 
   void elem_text_out(buffer &o,
                      const Poly& f,
@@ -69,10 +69,21 @@ public:
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
   bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const; // TODO
 
-  void mult_by_term_right(Poly& result, const Poly& f, const ring_elem c, const Monom) const; // TODO
-  void mult_by_term_left(Poly& result, const Poly& f, const ring_elem c, const Monom) const; // TODO
-  void mult_by_term_left_and_right(Poly& result, const Poly& f, const ring_elem c, const Monom, const Monom) const; // TODO
+  void mult_by_term_right(Poly& result,
+                          const Poly& f,
+                          const ring_elem c,
+                          const Monom) const;
+  void mult_by_term_left(Poly& result,
+                         const Poly& f,
+                         const ring_elem c,
+                         const Monom) const;
+  void mult_by_term_left_and_right(Poly& result,
+                                   const Poly& f,
+                                   const ring_elem c,
+                                   const Monom,
+                                   const Monom) const;
   void add_to_end(Poly& f, const Poly& g) const; // TODO
+  void mult_by_coeff(Poly& result, const ring_elem c) const; // need?
   
 #if 0  
   Poly* eval(const RingMap *map, const Poly* f, int first_var) const;
@@ -157,7 +168,13 @@ public:
     mRing->mult(*result, **this, *g);
     return result;  // this is a copy
   }
-
+  FreeAlgebraElement operator^(int n)
+  {
+    FreeAlgebraElement result(mRing);
+    mRing->power(*result, **this, n);
+    return result;  // this is a copy
+  }
+  
 private:
   const FreeAlgebra* mRing;
   Poly mPoly;
