@@ -65,11 +65,7 @@ int PolynomialAlgebra::index_of_var(const ring_elem a) const
 ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
 {
   auto result = new Poly;
-  if (not mCoefficientRing.is_zero(a))
-    {
-      result->getCoeffInserter().push_back(a);
-      monoid().one(result->getMonomInserter());
-    }
+  mFreeAlgebra->from_coefficient(*result, a);
   return ring_elem(reinterpret_cast<::Poly*>(result));
 }
 
