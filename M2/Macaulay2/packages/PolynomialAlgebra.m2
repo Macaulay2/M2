@@ -185,6 +185,9 @@ isWellDefined NCPolynomialRing := Boolean => R -> (
 -- listForm
 beginDocumentation()
 
+BENCHMARK = method()
+BENCHMARK String := (s) -> null
+
 doc ///
 Key
   PolynomialAlgebra
@@ -312,7 +315,8 @@ o3 = a b*a b + a b + a b*a + 2a b + a  + 2a + 1
      -- 2.66607 seconds elapsed
 ///
 
-TEST ///
+BENCHMARK ///
+-- this takes currently about 2 GB, so can't be run as a test
   R = QQ{a,b,c,d}
   g = a+b+c+d
   elapsedTime for i from 0 to 11 list (elapsedTime size (h = g^i))
@@ -369,7 +373,8 @@ TEST ///
   assert(size h3 == 492075)
 ///
 
-TEST ///
+BENCHMARK ///
+-- This one uses too much memory (about 1.7 GB)
   R = QQ{a,b,c,d}
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
@@ -383,7 +388,8 @@ TEST ///
   assert(size h3 == 1476225)
 ///
 
-TEST ///
+BENCHMARK ///
+-- this examples uses 2.2 GB
   R = QQ{a,b,c,d,e,f,g}
   G = a+b+c+d+e+f+g
   elapsedTime for i from 0 to 8 list (elapsedTime size (H = G^i))
@@ -477,6 +483,29 @@ TEST ///
   f = 3/(a^2-a-1)*b^2*c*b + 2/(a^3-a-1)*b^4
   assert(leadCoefficient f == 2/(a^3-a-1))
   assert(leadTerm f == 2/(a^3-a-1)*b^4)
+///
+
+TEST /// 
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{b,c,d, Degrees=>{2,3,4}}
+  degree b
+  degree c
+  degree d
+  assert(degree(b*d*c) == {9})
+  assert isHomogeneous(b^2-d)
+  assert not isHomogeneous(b^2-c)
+
+  R = QQ{b,c,d, Degrees=>{{1,0},{0,1},{3,-4}}}
+  degree b
+  degree c
+  degree d
+  assert(degree(b*d*c) == {4,-3})
+  assert isHomogeneous(c^4*d-b^3)
+  assert(degree(c^4*d-b^3) == {3,0})
+  assert not isHomogeneous(b^2-c)
 ///
 
 TEST ///
