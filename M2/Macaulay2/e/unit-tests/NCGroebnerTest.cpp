@@ -111,6 +111,17 @@ TEST(FreeAlgebra, polyarithmetic)
   EXPECT_TRUE(f == g);
   EXPECT_TRUE(A->is_unit(*f));
   EXPECT_TRUE((h^0) == f);
+
+  A->setZero(*f);
+  A->setZero(*g);
+  A->setZero(*h);
+  f = x + y;
+  A->from_long(*g,-1);
+  A->negate(*h,*f);
+  EXPECT_TRUE(h == f*g);
+  A->setZero(*h);
+  A->mult_by_coeff(*h,*f,A->coefficientRing()->from_long(-1));
+  EXPECT_TRUE(h == f*g);
 }
 
 TEST(FreeAlgebra, comparisons)
