@@ -130,6 +130,31 @@ TEST(FreeAlgebra, polyarithmetic)
   A->setZero(*h);
   A->mult_by_coeff(*h,*f,A->coefficientRing()->from_long(-1));
   EXPECT_TRUE(h == f*g);
+
+  A->setZero(*f);
+  A->setZero(*g);
+  A->setZero(*h);
+  EXPECT_TRUE(A->is_zero(*h));
+  f = x + y;
+  A->lead_term_as_poly(*g,*f);
+  EXPECT_TRUE(g == x);
+  A->add_to_end(*f,*z);
+  EXPECT_TRUE(f == (x + y + z));
+
+  A->subtract(*h,*f,*(x+y+z));
+  EXPECT_TRUE(A->is_zero(*h));
+
+  A->setZero(*f);
+  A->setZero(*g);
+  f = x + y;
+  A->mult_by_term_left(*g,*f,A->coefficientRing()->from_long(1),Word(monom2));
+  EXPECT_TRUE(g == z*z*f);
+  A->setZero(*g);
+  A->mult_by_term_right(*g,*f,A->coefficientRing()->from_long(1),Word(monom3));
+  EXPECT_TRUE(g == f*y*x*y*x);
+  A->setZero(*g);
+  A->mult_by_term_left_and_right(*g,*f,A->coefficientRing()->from_long(1),Word(monom2),Word(monom3));
+  EXPECT_TRUE(g == z*z*f*y*x*y*x);
 }
 
 TEST(FreeAlgebra, comparisons)
@@ -159,9 +184,9 @@ TEST(WordTable, create)
   EXPECT_EQ(monom1.size(), 3);
   EXPECT_EQ(monom2.size(), 2);
 
-  W.insert(ConstMonomial(monom1));
-  W.insert(ConstMonomial(monom2));
-  W.insert(ConstMonomial(monom3));
+  W.insert(Word(monom1));
+  W.insert(Word(monom2));
+  W.insert(Word(monom3));
 
   EXPECT_EQ(W.monomialCount(), 3);
 }        
@@ -173,12 +198,12 @@ TEST(WordTable, insert)
   EXPECT_EQ(monom1.size(), 3);
   EXPECT_EQ(monom2.size(), 2);
 
-  W.insert(ConstMonomial(monom1));
-  W.insert(ConstMonomial(monom2));
-  W.insert(ConstMonomial(monom3));
+  W.insert(Word(monom1));
+  W.insert(Word(monom2));
+  W.insert(Word(monom3));
 
   std::vector<std::pair<int,int>> matches;
-  W.subwords(ConstMonomial(word), matches);
+  W.subwords(Word(word), matches);
 
   EXPECT_EQ(matches.size(), 3);
   EXPECT_EQ(matches[0], std::make_pair(0, 0));
@@ -202,13 +227,13 @@ TEST(WordTable, subwords)
   EXPECT_EQ(monom4.size(), 2);
   EXPECT_EQ(word.size(), 10);
   
-  W.insert(ConstMonomial(monom1));
-  W.insert(ConstMonomial(monom2));
-  W.insert(ConstMonomial(monom3));
-  W.insert(ConstMonomial(monom4));
+  W.insert(Word(monom1));
+  W.insert(Word(monom2));
+  W.insert(Word(monom3));
+  W.insert(Word(monom4));
 
   std::vector<std::pair<int,int>> matches;
-  W.subwords(ConstMonomial(word), matches);
+  W.subwords(Word(word), matches);
 
   EXPECT_EQ(matches.size(), 6);
   EXPECT_EQ(matches[0], std::make_pair(0, 6));

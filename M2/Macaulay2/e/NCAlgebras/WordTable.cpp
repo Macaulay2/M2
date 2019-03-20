@@ -1,20 +1,20 @@
 #include "WordTable.hpp"
 
-size_t WordTable::insert(ConstMonomial w)
+size_t WordTable::insert(Word w)
 {
   mMonomials.push_back(w);
   return mMonomials.size();
 }
 
-size_t WordTable::insert(ConstMonomial w, std::vector<Triple>& newRightOverlaps)
+size_t WordTable::insert(Word w, std::vector<Triple>& newRightOverlaps)
 {
   mMonomials.push_back(w);
   rightOverlaps(newRightOverlaps); // find (right) overlaps with most recent added word 'w'.
   return mMonomials.size();
 }
 
-void WordTable::subwordPositions(ConstMonomial word1,
-                                 ConstMonomial word2,
+void WordTable::subwordPositions(Word word1,
+                                 Word word2,
                                  std::vector<int>& result_start_indices)
 // if there exists monomials p, q, such that p*word1*q == word2, then
 // the position of word1 in word2 is added (there may be several
@@ -33,8 +33,8 @@ void WordTable::subwordPositions(ConstMonomial word1,
     }
 }
 
-bool WordTable::subwordPosition(ConstMonomial word1,
-                                 ConstMonomial word2,
+bool WordTable::subwordPosition(Word word1,
+                                 Word word2,
                                  int& result_start_index)
 // if there exists monomials p, q, such that p*word1*q == word2, then
 // the first position of word1 in word2 is returned in result_start_index
@@ -59,8 +59,8 @@ bool WordTable::subwordPosition(ConstMonomial word1,
   return false;
 }
 
-void WordTable::subwords(ConstMonomial word,
-                           std::vector<std::pair<int,int>>& output)
+void WordTable::subwords(Word word,
+                           std::vector<std::pair<int,int>>& output) const
 {
   std::vector<int> start_indices;
   for (auto i = 0; i < mMonomials.size(); ++i)
@@ -72,8 +72,8 @@ void WordTable::subwords(ConstMonomial word,
     }
 }
 
-bool WordTable::subword(ConstMonomial word,
-                        std::pair<int,int>& output)
+bool WordTable::subword(Word word,
+                        std::pair<int,int>& output) const
 {
   int start_index = -1;
   for (auto i = 0; i < mMonomials.size(); ++i)
@@ -87,8 +87,8 @@ bool WordTable::subword(ConstMonomial word,
   return false;
 }
 
-void WordTable::superwords(ConstMonomial word,
-                           std::vector<std::pair<int,int>>& output)
+void WordTable::superwords(Word word,
+                           std::vector<std::pair<int,int>>& output) const
 {
   std::vector<int> start_indices;
   for (auto i = 0; i < mMonomials.size(); ++i)
@@ -101,21 +101,21 @@ void WordTable::superwords(ConstMonomial word,
 }
 
 // This function finds overlap where suffix of word at lindex == prefix of word at rindex
-void WordTable::overlaps(ConstMonomial word1,
-                         ConstMonomial word2,
+void WordTable::overlaps(Word word1,
+                         Word word2,
                          std::vector<int>& result_overlaps)
 {
   if (word1.size() <= 1) return;
   for (int i = word1.size() - 1; i > 0 and i > word1.size() - word2.size(); --i)
     {
-      ConstMonomial suffix(word1.begin() + i, word1.end());
-      ConstMonomial prefix(word2.begin(), word2.begin() + word1.size() - i); // indices should be in range.
+      Word suffix(word1.begin() + i, word1.end());
+      Word prefix(word2.begin(), word2.begin() + word1.size() - i); // indices should be in range.
       if (suffix == prefix)
         result_overlaps.push_back(i);
     }
 }
 
-void WordTable::leftOverlaps(std::vector<Triple>& newLeftOverlaps)
+void WordTable::leftOverlaps(std::vector<Triple>& newLeftOverlaps) const
 {
   // word here is the last word in the dictionary.
   // For left overlap: dictword is a word in the dictionary NOT word.
@@ -139,7 +139,7 @@ void WordTable::leftOverlaps(std::vector<Triple>& newLeftOverlaps)
   // triples will be <dict word index, index into dict word where suffix starts, word_index>.
 }
 
-void WordTable::rightOverlaps(std::vector<Triple>& newRightOverlaps)
+void WordTable::rightOverlaps(std::vector<Triple>& newRightOverlaps) const
 // find (right) overlaps with most recent added word 'w'.
 {
   int word_index = mMonomials.size()-1;

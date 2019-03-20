@@ -3,22 +3,22 @@
 
 #include <vector>
 
-class ConstMonomial
+class Word
 {
 public:
-  // warning: the pointers begin, end, should not go out of scope while this ConstMonomial is in use.
-  ConstMonomial(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
+  // warning: the pointers begin, end, should not go out of scope while this Word is in use.
+  Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
 
-  ConstMonomial(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
+  Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
 
-  //  ConstMonomial(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
+  //  Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
                                   
   const int* begin() const { return mBegin; }
   const int* end() const { return mEnd; }
 
   size_t size() const { return mEnd - mBegin; }
 
-  bool operator==(ConstMonomial rhs)
+  bool operator==(Word rhs)
   {
     if (size() != rhs.size()) return false;
     for (auto i=0; i<size(); ++i)
@@ -26,6 +26,14 @@ public:
         return false;
     return true;
   }
+
+  static void toAllocatedMonom(std::vector<int>& result, const Word& source)
+  {
+    result.push_back(source.end() - source.begin() + 2);
+    result.push_back(source.end() - source.begin());
+    result.insert(result.end(),source.begin(), source.end());
+  }
+  
 private:
   const int* mBegin;
   const int* mEnd;
@@ -43,12 +51,12 @@ public:
 
   size_t monomialCount() const { return mMonomials.size(); }
 
-  size_t insert(ConstMonomial w);
+  size_t insert(Word w);
 
-  size_t insert(ConstMonomial w, std::vector<Triple>& newRightOverlaps);
+  size_t insert(Word w, std::vector<Triple>& newRightOverlaps);
 
   // access routine
-  ConstMonomial& operator[](int index) { return mMonomials[index]; }
+  const Word& operator[](int index) const { return mMonomials[index]; }
 
   // lookup routines
 
@@ -56,8 +64,8 @@ public:
   //   the i-th word in the table is w (say)
   //   j is a position in word
   //   such that w appears in word starting at position j.
-  void subwords(ConstMonomial word,
-                std::vector<std::pair<int,int>>& output);
+  void subwords(Word word,
+                std::vector<std::pair<int,int>>& output) const;
 
   // sets 'output' to the first pair (i,j), where
   //   the i-th word in the table is w (say)
@@ -65,17 +73,17 @@ public:
   //   such that w appears in word starting at position j.
   // if such a match is found, output is set, and true is returned.
   // if not, false is returned.
-  bool subword(ConstMonomial word,
-                std::pair<int,int>& output);
+  bool subword(Word word,
+                std::pair<int,int>& output) const;
   
   // return all pairs (i,j), where
   //   the i-th word in the table is w (say)
   //   j is a position in w
   //   such that word appears in w starting at position j.
-  void superwords(ConstMonomial word,
-                  std::vector<std::pair<int,int>>& output);
+  void superwords(Word word,
+                  std::vector<std::pair<int,int>>& output) const;
   
-  //TODO: write superword.  i.e. only return 1, if any.
+  // TODO: write superword.  i.e. only return 1, if any.
   
   // given 'word', find all left over laps with elements of the table.
   // A left overlap of 'alpha' and 'beta' is:
@@ -83,28 +91,28 @@ public:
   // i.e. alpha = a.b
   //      beta  = c.a (a,b,c are words)
   // returned Triple for this overlap:
-  void leftOverlaps(std::vector<Triple>& newLeftOverlaps);
+  void leftOverlaps(std::vector<Triple>& newLeftOverlaps) const;
 
   // find (right) overlaps with most recent added word 'w'.
-  void rightOverlaps(std::vector<Triple>& newRightOverlaps); 
+  void rightOverlaps(std::vector<Triple>& newRightOverlaps) const; 
 
 private:
-  static void subwordPositions(ConstMonomial word1,
-                               ConstMonomial word2,
+  static void subwordPositions(Word word1,
+                               Word word2,
                                std::vector<int>& result_start_indices);
 
-  static bool subwordPosition(ConstMonomial word1,
-                               ConstMonomial word2,
+  static bool subwordPosition(Word word1,
+                               Word word2,
                                int& result_start_index);
   
   // overlaps here: suffix of word1 == prefix of word2.
   // overlap value is the start of prefix of word2 in word1.
-  static void overlaps(ConstMonomial word1,
-                       ConstMonomial word2,
+  static void overlaps(Word word1,
+                       Word word2,
                        std::vector<int>& result_overlaps);
 
 private:
-  std::vector<ConstMonomial> mMonomials;
+  std::vector<Word> mMonomials;
 };
 
 #endif

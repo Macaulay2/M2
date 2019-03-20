@@ -11,6 +11,7 @@ const NCGroebner::ConstPolyList* NCGroebner::currentValue()
   return &mInput;
 }
 
+// Heap for reduction? work in progress, to be sure.
 #if 0
 class NCPolyHeap
 {
@@ -46,6 +47,7 @@ class NCPolyHeap
   }  // DO NOT USE, except for debugging purposes!
 };
 
+// will eventually use this in the reduction code below.
 class PolyWithPosition
 {
 public:
@@ -56,49 +58,67 @@ private:
 };
 #endif
 
-auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
+auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
                                    const Poly* reducee,
                                    const ConstPolyList& reducers,
                                    const WordTable& W) -> const Poly*
 {
-  Poly* remainder = new Poly;
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 
-  const int* lmPtr;
-  std::vector<int> leftMonom, rightMonom;
-  Poly* result = new Poly;
-#if 0
-  while (!A->is_zero(reducee))
+  Poly tmp1,tmp2,reduceeSoFar;
+  Poly* remainder = new Poly;
+
+  A->copy(reduceeSoFar,*reducee);
+
+  while (!A->is_zero(reduceeSoFar))
     {
-      // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reducee).
-      ConstMonomial reduceeLM(reducee->cbegin().monom().begin()+2,reducee->cbegin().monom().end());
+      // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
+      Word reduceeLM(reduceeSoFar.cbegin().monom().begin()+2,
+                     reduceeSoFar.cbegin().monom().end());
       if (W.subword(reduceeLM,subwordPos))
         {
-          // If one, subtract reducee -= coef * left*reducers[index]*right
-          // build left monomial
-          leftMonom.push_back(j + 2);
-          leftMonom.push_back(j);
-          leftMonom.insert(leftMonom.end(),
-                           f->cbegin().monom().begin()+2,
-                           f->cbegin().monom().begin()+2+j);
-          // build right monomial
-          rightMonom.push_back(reduceeLM.size() - W[subwordPos.first].size() - subwordPos.second + 2);
-          rightMonom.push_back(reduceeLM.size() - W[subwordPos.first].size() - subwordPos.second);
-          rightMonom.insert(rightMonom.end(),
-                            f->cbegin().monom().begin+W[subwordPos.first].size()+subwordPos.second+2,
-                            f->cbegin().monom.end());
-          
+          // If one, perform reduceeSoFar -= coef * left * reducers[index] * right
+          Word leftWord(reduceeSoFar.cbegin().monom().begin()+2,
+                        reduceeSoFar.cbegin().monom().begin()+2+subwordPos.second);
+          Word rightWord(reduceeSoFar.cbegin().monom().begin()+2+W[subwordPos.first].size()+subwordPos.second,
+                         reduceeSoFar.cbegin().monom().end());
+          A->setZero(tmp1);
+          A->setZero(tmp2);
+          A->mult_by_term_left_and_right(tmp1,
+                                         *reducers[subwordPos.first],
+                                         reduceeSoFar.cbegin().coeff(),
+                                         leftWord,
+                                         rightWord);
+          A->subtract(tmp2,reduceeSoFar,tmp1);
+          A->copy(reduceeSoFar,tmp2); // swap
         }
       else
         {
-          // If none, copy that term to the remainder.          
+          // If none, copy that term to the remainder (use add_to_end), and subtract that term
+          A->setZero(tmp1);
+          A->setZero(tmp2);
+          A->lead_term_as_poly(tmp1,reduceeSoFar);
+          A->add_to_end(*remainder,tmp1);
+          A->subtract(tmp2,reduceeSoFar,tmp1);
+          A->copy(reduceeSoFar,tmp2);  // swap
         }
     }
-#endif  
+  A->clear(tmp1);
+  A->clear(tmp2);
+  A->clear(reduceeSoFar);
   return remainder;
 }
 
 auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
+                       const Poly* reducee,
+                       const ConstPolyList& reducers,
+                       const WordTable& W) -> const Poly*
+{
+  return twoSidedReduction(A->freeAlgebra(),reducee,reducers,W);
+}
+
+
+auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
                                    const ConstPolyList& reducees,
                                    const ConstPolyList& reducers) -> ConstPolyList
 {
@@ -107,13 +127,21 @@ auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
   for (auto& f : reducers)
     {
       auto i = f->cbegin();
-      W.insert(ConstMonomial(i.monom().begin()+2, i.monom().end()));
+      W.insert(Word(i.monom().begin()+2, i.monom().end()));
     }
   ConstPolyList result;
   for (auto i = reducees.cbegin(); i != reducees.cend(); ++i)
     result.push_back(twoSidedReduction(A, *i, reducers, W));
   return result;
 }
+
+auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
+                                   const ConstPolyList& reducees,
+                                   const ConstPolyList& reducers) -> ConstPolyList
+{
+  return twoSidedReduction(A->freeAlgebra(),reducees,reducers);
+}
+
 
 
 // Local Variables:

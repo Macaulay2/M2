@@ -4,6 +4,7 @@
 #include "../polyring.hpp"
 #include "../Polynomial.hpp"
 #include "FreeMonoid.hpp"
+#include "WordTable.hpp"
 
 struct CoefficientRingType
 {
@@ -38,8 +39,9 @@ public:
   void from_coefficient(Poly& result, const ring_elem a) const;
   void from_long(Poly& result, long n) const;
   void from_int(Poly& result, mpz_srcptr n) const; 
-  void copy(Poly& result, const Poly& f) const; // TODO
   bool from_rational(Poly& result, const mpq_ptr q) const; 
+  void copy(Poly& result, const Poly& f) const;
+  void swap(Poly& f, Poly& g) const; // TODO
   void var(Poly& result, int v) const;
   void from_word(Poly& result, const std::vector<int>& word) const; 
   void from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const; 
@@ -72,17 +74,31 @@ public:
   void mult_by_term_right(Poly& result,
                           const Poly& f,
                           const ring_elem c,
-                          const Monom) const;
+                          const Monom m) const;
   void mult_by_term_left(Poly& result,
                          const Poly& f,
                          const ring_elem c,
-                         const Monom) const;
+                         const Monom m) const;
   void mult_by_term_left_and_right(Poly& result,
                                    const Poly& f,
                                    const ring_elem c,
-                                   const Monom,
-                                   const Monom) const;
-  void add_to_end(Poly& f, const Poly& g) const; // TODO
+                                   const Monom leftM,
+                                   const Monom rightM) const;
+  void mult_by_term_left(Poly& result,
+                         const Poly& f,
+                         const ring_elem c,
+                         const Word& w) const;
+  void mult_by_term_right(Poly& result,
+                          const Poly& f,
+                          const ring_elem c,
+                          const Word& w) const;
+  void mult_by_term_left_and_right(Poly& result,
+                                   const Poly& f,
+                                   const ring_elem c,
+                                   const Word& leftW,
+                                   const Word& rightW) const;
+  void add_to_end(Poly& f, const Poly& g) const;
+  void lead_term_as_poly(Poly& result, const Poly& f) const;
   void mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) const;
   
   SumCollector* make_SumCollector() const;

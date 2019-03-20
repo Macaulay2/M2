@@ -1,4 +1,5 @@
 #include "FreeAlgebra.hpp"
+#include "WordTable.hpp"
 
 using ExponentVector = int*;
 
@@ -163,6 +164,24 @@ bool FreeAlgebra::from_rational(Poly& result, const mpq_ptr q) const
   return true;
 }
 
+void FreeAlgebra::copy(Poly& result, const Poly& f) const
+{
+  clear(result);
+  auto& resultCoeff = result.getCoeffInserter();
+  auto& resultMonom = result.getMonomInserter();
+  resultCoeff.insert(resultCoeff.end(),
+                     f.cbeginCoeff(),
+                     f.cendCoeff());
+  resultMonom.insert(resultMonom.end(),
+                     f.cbeginMonom(),
+                     f.cendMonom());
+}
+
+void FreeAlgebra::swap(Poly& f, Poly& g) const
+{
+  
+}
+
 void FreeAlgebra::var(Poly& result, int v) const
 {
   result.getCoeffInserter().push_back(coefficientRing()->from_long(1));
@@ -320,7 +339,8 @@ void FreeAlgebra::subtract(Poly& result, const Poly& f, const Poly& g) const
   auto& outmonom = result.getMonomInserter();
 
   // loop over the iterators for f and g, adding the bigger of the two to
-  // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
+  // the back of the monomial and coefficient vectors of the result.  If a tie, subtract the coefficients.
+  // if the result is zero, do not insert the monomial
   while ((fIt != fEnd) && (gIt != gEnd))
     {
       auto fMon = fIt.monom();
@@ -419,6 +439,19 @@ void FreeAlgebra::mult_by_term_right(Poly& result,
     }
 }
 
+
+void FreeAlgebra::mult_by_term_right(Poly& result,
+                                     const Poly& f,
+                                     const ring_elem c,
+                                     const Word& w) const
+{
+  std::vector<int> tmp;
+  Word::toAllocatedMonom(tmp,w);
+  Monom tmpMonom(&*tmp.cbegin());
+  mult_by_term_right(result,f,c,tmpMonom);
+  tmp.clear();
+}
+
 void FreeAlgebra::mult_by_term_left(Poly& result,
                                     const Poly& f,
                                     const ring_elem c,
@@ -436,6 +469,18 @@ void FreeAlgebra::mult_by_term_left(Poly& result,
       outcoeff.push_back(d);
       monoid().mult(m, i.monom(), outmonom);
     }
+}
+
+void FreeAlgebra::mult_by_term_left(Poly& result,
+                                    const Poly& f,
+                                    const ring_elem c,
+                                    const Word& w) const
+{
+  std::vector<int> tmp;
+  Word::toAllocatedMonom(tmp,w);
+  Monom tmpMonom(&*tmp.cbegin());
+  mult_by_term_left(result,f,c,tmpMonom);
+  tmp.clear();
 }
 
 void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
@@ -458,6 +503,21 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
     }
 }
 
+void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
+                                              const Poly& f,
+                                              const ring_elem c,
+                                              const Word& leftW,
+                                              const Word& rightW) const
+{
+  std::vector<int> leftTmp, rightTmp;
+  Word::toAllocatedMonom(leftTmp,leftW);
+  Word::toAllocatedMonom(rightTmp,rightW);
+  Monom leftTmpMonom(&*leftTmp.cbegin()), rightTmpMonom(&*rightTmp.cbegin());
+  mult_by_term_left_and_right(result,f,c,leftTmpMonom,rightTmpMonom);
+  leftTmp.clear();
+  rightTmp.clear();
+}
+
 void FreeAlgebra::mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) const
 {
   // return c*f -- perhaps make this in place later, but for now
@@ -466,6 +526,24 @@ void FreeAlgebra::mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) 
   from_coefficient(tmp,c);
   mult(result, f, tmp);
   clear(tmp);
+}
+
+void FreeAlgebra::lead_term_as_poly(Poly& result, const Poly& f) const
+{
+  if (is_zero(f)) return;
+  auto& outcoeff = result.getCoeffInserter();
+  auto& outmonom = result.getMonomInserter();
+  outcoeff.insert(outcoeff.end(),f.cbeginCoeff(),f.cbeginCoeff()+1);
+  outmonom.insert(outmonom.end(),f.cbeginMonom(),f.cbeginMonom()+*(f.cbeginMonom()));
+}
+
+void FreeAlgebra::add_to_end(Poly& f, const Poly& g) const
+{
+  if (is_zero(g)) return;
+  auto& outcoeff = f.getCoeffInserter();
+  auto& outmonom = f.getMonomInserter();
+  outcoeff.insert(outcoeff.end(),g.cbeginCoeff(),g.cendCoeff());
+  outmonom.insert(outmonom.end(),g.cbeginMonom(),g.cendMonom());
 }
 
 void FreeAlgebra::power(Poly& result, const Poly& f, int n) const

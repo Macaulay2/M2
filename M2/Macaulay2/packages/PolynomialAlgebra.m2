@@ -658,9 +658,15 @@ TEST ///
 *-
   R = QQ{a..d}
   I = ideal(a*b*a-a*c*b)
+  I2 = ideal(a*b*a-a*c*b, d*a*c*b)
+  J = ideal(a*b*a)
+  K = ideal(a*c*b)
   debug Core
   map(R, rawNCGroebnerBasisTwoSided(raw gens I, 387))
   map(R, rawNCReductionTwoSided(raw gens I, raw gens I))
+  map(R, rawNCReductionTwoSided(raw gens I, raw gens J))
+  map(R, rawNCReductionTwoSided(raw gens I, raw gens K))
+  map(R, rawNCReductionTwoSided(raw gens I2, raw gens K))
 ///
 end--
 

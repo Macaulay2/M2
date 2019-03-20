@@ -140,9 +140,18 @@ public:
 
   const ConstPolyList* currentValue();
 
-  static ConstPolyList twoSidedReduction(const PolynomialAlgebra* A,
+  static auto twoSidedReduction(const FreeAlgebra* A,
                                          const ConstPolyList& reducees,
-                                         const ConstPolyList& reducers);
+                                         const ConstPolyList& reducers) -> ConstPolyList;
+
+  static auto twoSidedReduction(const PolynomialAlgebra* A,
+                                         const ConstPolyList& reducees,
+                                         const ConstPolyList& reducers) -> ConstPolyList;
+
+  static auto twoSidedReduction(const FreeAlgebra* A,
+                                const Poly* reducee,
+                                const ConstPolyList& reducers,
+                                const WordTable& W) -> const Poly*;
 
   static auto twoSidedReduction(const PolynomialAlgebra* A,
                                 const Poly* reducee,

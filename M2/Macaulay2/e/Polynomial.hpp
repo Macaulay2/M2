@@ -31,6 +31,7 @@ struct Monom
   
   const int* begin() const { return mValue; }
   const int* end() const { return mValue + *mValue; }
+
 private:
   const int* mValue; // We are visiting this monomial, we do not own it!
 };

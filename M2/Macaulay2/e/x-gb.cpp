@@ -1231,7 +1231,7 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
       NCGroebner G(A, elems);
       G.compute(maxdeg);
       auto result = G.currentValue();
-      return vectorToMatrix(A, * result);
+      return vectorToMatrix(A, *result);
     }
   ERROR("expected a one row matrix over a noncommutative algebra");
   return nullptr;

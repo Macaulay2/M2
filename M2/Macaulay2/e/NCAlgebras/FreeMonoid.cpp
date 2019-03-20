@@ -69,7 +69,7 @@ void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result
 
 void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
 {
-  result.push_back(m1[0] + m2[0] + m3[0] - 2);
+  result.push_back(m1[0] + m2[0] + m3[0] - 4);
   result.push_back(m1[1] + m2[1] + m3[1]);
   for (auto i = m1.begin()+2; i != m1.end(); ++i)
     result.push_back(*i);
