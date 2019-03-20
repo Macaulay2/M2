@@ -207,6 +207,16 @@ bool FreeAlgebra::is_equal(const Poly& f, const Poly& g) const
   return true;
 }
 
+void FreeAlgebra::negate(Poly& result, const Poly& f) const
+{
+  // eventually we will want to make this an 'in-place' operation.
+  // for now, it is a copy.
+  Poly tmp;
+  from_long(tmp,-1);
+  mult(result, f, tmp);
+  clear(tmp);
+} 
+
 void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
 {
   auto fIt = f.cbegin();
@@ -354,6 +364,16 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
       outcoeff.push_back(d);
       monoid().mult3(leftM, i.monom(), rightM, outmonom);
     }
+}
+
+void FreeAlgebra::mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) const
+{
+  // return c*f -- perhaps make this in place later, but for now
+  // create a new element
+  Poly tmp;
+  from_coefficient(tmp,c);
+  mult(result, f, tmp);
+  clear(tmp);
 }
 
 void FreeAlgebra::power(Poly& result, const Poly& f, int n) const

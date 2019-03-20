@@ -83,7 +83,7 @@ public:
                                    const Monom,
                                    const Monom) const;
   void add_to_end(Poly& f, const Poly& g) const; // TODO
-  void mult_by_coeff(Poly& result, const ring_elem c) const; // need?
+  void mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) const;
   
 #if 0  
   Poly* eval(const RingMap *map, const Poly* f, int first_var) const;
