@@ -40,7 +40,7 @@ TEST(MonomialOrdering, create)
   std::cout << MonomialOrderings::toString(mo6) << std::endl;
 }
 
-const Monoid* degreeMonoid(int n)
+const Monoid* degreeMonoid(const std::vector<std::string>& names)
 {
   MonomialOrdering* mo = MonomialOrderings::join
     ({
@@ -49,18 +49,28 @@ const Monoid* degreeMonoid(int n)
       MonomialOrderings::PositionUp()
     });
 
-  std::vector<std::string> names {"T"};
-  return Monoid::create(mo,
+  auto result = Monoid::create(mo,
                         names,
                         IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(),
-                        {{}},
+                        {},
                         {});
+  if (result == nullptr or error())
+    {
+      std::cout << "Error: " << error_message() << std::endl;
+      EXPECT_TRUE(false);
+    }
+  return result;
 }
 
-const PolynomialRing* degreeRing(int n)
+const PolynomialRing* degreeRing(const std::vector<std::string>& names)
 {
-  //  return PolyRing::create(globalZZ, degreeMonoid(n));
-  return nullptr;
+  auto degM = degreeMonoid(names);
+  return PolyRing::create(globalZZ, degM);
+}
+const PolynomialRing* degreeRing(int ndegrees)
+{
+  if (ndegrees == 1)
+    return degreeRing({"T"});
 }
 
 TEST(FreeAlgebra, create)
