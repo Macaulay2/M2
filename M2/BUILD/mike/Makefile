@@ -86,6 +86,20 @@ darwin64-clang : always
 		--enable-dmg \
 		--enable-build-libraries="mpir flint pari ntl"
 
+debug64-latestclang : always
+	mkdir -p builds.tmp/debug64-latestclang
+	cd builds.tmp/debug64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--build=x86_64-apple-darwin \
+		--enable-debug \
+		--disable-optimize \
+		--disable-strip \
+		--enable-download
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
