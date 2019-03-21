@@ -1,5 +1,5 @@
-#ifndef _word_table_hpp_
-#define _word_table_hpp_
+#ifndef _suffix_tree_hpp_
+#define _suffix_tree_hpp_
 
 #include <vector>
 #include <unordered_set>
@@ -198,4 +198,11 @@ private:
 
   // this is where all the labels for the data structure will be housed
   LabelPool mLabelPool;
-}
+};
+
+#endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
+// End:
