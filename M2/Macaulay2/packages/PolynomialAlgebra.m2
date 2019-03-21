@@ -667,6 +667,21 @@ TEST ///
   map(R, rawNCReductionTwoSided(raw gens I, raw gens J))
   map(R, rawNCReductionTwoSided(raw gens I, raw gens K))
   map(R, rawNCReductionTwoSided(raw gens I2, raw gens K))
+
+NCReduction2Sided = method()
+NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
+    R := ring M;
+    if R =!= ring I then error "expected same ring";
+    map(R, rawNCReductionTwoSided(raw M, raw I))
+    )
+NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
+NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
+
+f = a*a-b*c-a
+g = NCReduction2Sided(a*f-f*a, ideal(f))
+g = -a*b*c+b*c*a
+h = a*g + f*b*c
+NCReduction2Sided(h, ideal(f,g)) -- never never land
 ///
 end--
 
