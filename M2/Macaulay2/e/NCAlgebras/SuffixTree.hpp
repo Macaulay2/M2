@@ -73,8 +73,8 @@ private:
   // (negative of) the index of the word w.  We use negatives here so they don't
   // collide with the nonnegative integers, which represent variables.
   Label* mArcLabel;
-  // this could be inductively recomputed each time, but I think it is better just
-  // to store a copy of it in the data type
+  // this could be inductively recomputed each time, but I think it is
+  // better just to store a copy of it in the data type
   Label* mLabel;
 }
 
@@ -139,36 +139,37 @@ public:
   void rightOverlaps(std::vector<Triple>& newRightOverlaps) const; 
 
 private:
-  // the following are internal functions needed for the SuffixTree data structure
-  // to work
+  // the following are internal functions needed for the SuffixTree data
+  // structure to work
 
-  // This function splits the arc from f to its parent by inserting a new internal
-  // node with arc label prefix, where prefix is a prefix of f->arcLabel().
-  // A pointer to the
+  // This function splits the arc from f to its parent by inserting a
+  // new internal node with arc label prefix, where prefix is a prefix
+  // of f->arcLabel().  A pointer to the new node is returned.
   auto splitArc(SuffixTreeNode* f,
 		Word prefix) -> SuffixTreeNode*;
 
-  // s is a suffix not yet in the table.  This function finds 
-  // the locus of the longest prefix of s whose locus exists.
-  // The search starts at y, and moves down the tree according to the
-  // string s.  The return value is the contracted locus x
-  // and a node f which is either a child of y sharing a prefix pre with s - y.label,
-  // or f is nullTreeNode if no such child exists.
+  // s is a suffix not yet in the table.  This function finds the
+  // locus of the longest prefix of s whose locus exists.  The search
+  // starts at y, and moves down the tree according to the string s.
+  // The return value is the contracted locus x and a node f which is
+  // either a child of y sharing a prefix pre with s - y.label, or f
+  // is nullTreeNode if no such child exists.
   auto contractedLocus(SuffixTreeNode* y,
 		       Label* s,
 		       bool incrementLeafCount) -> ContractedLocusType;
 
-  // For this function to work, there must be a path starting from x with
-  // beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)
-  // This function finds the locus of the shortest word that has beta as a prefix.
-  // it returns this locus, together with the prefix that needs to be split (if necessary)
-  // if beta is empty, then simply return (x,beta) since x is the extended locus
+  // For this function to work, there must be a path starting from x
+  // with beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)  This
+  // function finds the locus of the shortest word that has beta as a
+  // prefix.  It returns this locus, together with the prefix that
+  // needs to be split (if necessary) if beta is empty, then simply
+  // return (x,beta) since x is the extended locus
   auto extendedLocus(SuffixTreeNode* x,
 		     Label* beta) -> ExtendedLocusType;
 
   // Finds an arc from y to a child whose label shares a prefix with s
-  // return a pair of nullptrs if no match is found, i.e. the empty prefix is the only
-  // shared prefix with any child of y
+  // return a std::pair of nullptrs if no match is found, i.e. the empty
+  // prefix is the only shared prefix with any child of y
   auto findMatch(SuffixTreeNode* y,
 		 Label* s) -> ExtendedLocusType;
 
