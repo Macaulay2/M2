@@ -7,6 +7,7 @@
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/WordTable.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
+#include "NCAlgebras/OverlapTable.hpp"
 #include <iostream>
 
 std::vector<int> monom1 {2, 0, 1};  // cab
@@ -192,10 +193,23 @@ TEST(FreeAlgebra, spairs)
   EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWordPrefix.begin() && (*f).cbegin().monom().begin() + 4 == leadWordPrefix.end());
   EXPECT_TRUE((*f).cbegin().monom().begin() + 3 == leadWordSuffix.begin() && (*f).cbegin().monom().begin() + 5 == leadWordSuffix.end());
 
-  NCGroebner::ConstPolyList polyList {&*f};
-  *g = *(NCGroebner::createSPair(A, polyList, 0, 2, 0));
+  ConstPolyList polyList {&*f};
+  *g = *(NCGroebner::createOverlapPoly(A, polyList, 0, 2, 0));
   h = f*y*x - x*y*f;
   EXPECT_TRUE(g == h);
+}
+
+TEST(OverlapTable, insertion)
+{
+  OverlapTable overlapTable;
+  overlapTable.insert(3,std::make_tuple(1,2,3));
+  overlapTable.insert(3,std::make_tuple(1,2,1));
+  overlapTable.insert(2,std::make_tuple(1,1,1));
+  EXPECT_FALSE(overlapTable.isFinished());
+  EXPECT_TRUE(overlapTable.isFinished(1));
+  EXPECT_FALSE(overlapTable.isFinished(3));
+  EXPECT_TRUE(overlapTable.size() == 3);
+  overlapTable.dump(std::cout,true);
 }
 
 TEST(WordTable, create)

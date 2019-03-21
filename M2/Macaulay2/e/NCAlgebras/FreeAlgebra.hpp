@@ -12,6 +12,8 @@ struct CoefficientRingType
 };
 
 using Poly = Polynomial<CoefficientRingType>;
+using PolyList = VECTOR(Poly*);
+using ConstPolyList = VECTOR(const Poly*);
 
 class FreeAlgebra
 {

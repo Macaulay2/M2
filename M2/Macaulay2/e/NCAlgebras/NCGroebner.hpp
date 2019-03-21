@@ -1,45 +1,99 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
+#include "../style.hpp"
 #include "../PolynomialAlgebra.hpp"
 #include "WordTable.hpp"
+#include "OverlapTable.hpp"
 
+class NCGroebner
+{
+public:
+
+  NCGroebner(const PolynomialAlgebra* A, const ConstPolyList& input)
+    : mRing(A),
+      mInput(input),
+      mTopComputedDegree(-1)
+  {
+  }
+  
+  void compute(int maxdeg);
+
+  const ConstPolyList* currentValue();
+
+  static auto twoSidedReduction(const FreeAlgebra* A,
+                                         const ConstPolyList& reducees,
+                                         const ConstPolyList& reducers) -> ConstPolyList;
+
+  static auto twoSidedReduction(const PolynomialAlgebra* A,
+                                         const ConstPolyList& reducees,
+                                         const ConstPolyList& reducers) -> ConstPolyList;
+
+  static auto twoSidedReduction(const FreeAlgebra* A,
+                                const Poly* reducee,
+                                const ConstPolyList& reducers,
+                                const WordTable& W) -> const Poly*;
+
+  static auto twoSidedReduction(const PolynomialAlgebra* A,
+                                const Poly* reducee,
+                                const ConstPolyList& reducers,
+                                const WordTable& W) -> const Poly*;
+
+  static auto createOverlapPoly(const FreeAlgebra* A,
+                                const ConstPolyList& polyList,
+                                int polyIndex1,
+                                int polyIndex2,
+                                int overlapIndex) -> const Poly*;
+                          
+  
+private:
+  const PolynomialAlgebra* mRing;
+  WordTable mWordTable;
+  const ConstPolyList mInput;
+  int mTopComputedDegree;
+  PolyList mGroebner;
+  
 #if 0
-Notes: 5 March 2019:
-working on naive remainder function.
-might need to refactor monomials, ConstMonomial-->Word.
-  also make a PolynomialALgebra class that is slim, current PolynomialALgebra
-  will be a wrapper on that.
-  
-  Notes from 19 Feb 2019.
-  
-  For polynomial reduction:
-
-  Use PolyWithPos as an Entry
-  Use mathic Geobucket code (and/or Heap, TourTree)
-    Use code/ideas from ReducerPack from mathicgb. (will need to crib from this code).
-    Probably: a hash table for all monomials/words in out polynomials.
-    SO: PolyWithPos: array of [ring_elem coeff, pointer to a monomial in the hash table structure, iterator in]
-
-    PolyWithPos structure
-    add(f, g: PolyWithPos): PolyWithPos;
-    multByTerm(m:Term, f : PolyWithPos, n:Term) : PolyWithPos;
-    remainder(f:PolyWithPos, G:GroebnerList) : PolyWithPos;
-
-    Poly: will contain the integers defining its monomials
-    PolyHashed: will contain pointers to monomials.
-      PolyHashedWithPos
-    MonomialPool: actual monomials are stored here.
-      add in a new monomial.
-      clear all the monomials.
-      need: hash function for words.
-    MonomialPool: hashtable of monomials
-    Poly: {coeffs: CoefficientArray, monoms: array of pointers}
-    PolyIter{Poly}
-    PolyWithPos: {PolyIter}
+  // chose one of these two, or use VECTOR.
+  std::vector<Poly*> mGroebner;
+  std::vector<Poly> mGroebner2;
+#endif
+};
 
 #endif
 
+// Notes: 5 March 2019:
+// working on naive remainder function.
+// might need to refactor monomials, ConstMonomial-->Word.
+//   also make a PolynomialALgebra class that is slim, current PolynomialALgebra
+//   will be a wrapper on that.
+  
+//   Notes from 19 Feb 2019.
+  
+//   For polynomial reduction:
+
+//   Use PolyWithPos as an Entry
+//   Use mathic Geobucket code (and/or Heap, TourTree)
+//     Use code/ideas from ReducerPack from mathicgb. (will need to crib from this code).
+//     Probably: a hash table for all monomials/words in out polynomials.
+//     SO: PolyWithPos: array of [ring_elem coeff, pointer to a monomial in the hash table structure, iterator in]
+
+//     PolyWithPos structure
+//     add(f, g: PolyWithPos): PolyWithPos;
+//     multByTerm(m:Term, f : PolyWithPos, n:Term) : PolyWithPos;
+//     remainder(f:PolyWithPos, G:GroebnerList) : PolyWithPos;
+
+//     Poly: will contain the integers defining its monomials
+//     PolyHashed: will contain pointers to monomials.
+//       PolyHashedWithPos
+//     MonomialPool: actual monomials are stored here.
+//       add in a new monomial.
+//       clear all the monomials.
+//       need: hash function for words.
+//     MonomialPool: hashtable of monomials
+//     Poly: {coeffs: CoefficientArray, monoms: array of pointers}
+//     PolyIter{Poly}
+//     PolyWithPos: {PolyIter}
 
 #if 0
   class AugmentedTriple
@@ -118,63 +172,6 @@ private:
   const ConstPolyList& mReducers;
   const WordTable& mLeadWords;
 };
-#endif
-
-class NCGroebner
-{
-public:
-  using PolyList = std::vector<Poly*>;
-  using ConstPolyList = std::vector<const Poly*>;
-
-  NCGroebner(const PolynomialAlgebra* A, const ConstPolyList& input)
-    : mRing(A),
-      mInput(input),
-      mTopComputedDegree(-1)
-  {
-  }
-  
-  void compute(int maxdeg);
-
-  const ConstPolyList* currentValue();
-
-  static auto twoSidedReduction(const FreeAlgebra* A,
-                                         const ConstPolyList& reducees,
-                                         const ConstPolyList& reducers) -> ConstPolyList;
-
-  static auto twoSidedReduction(const PolynomialAlgebra* A,
-                                         const ConstPolyList& reducees,
-                                         const ConstPolyList& reducers) -> ConstPolyList;
-
-  static auto twoSidedReduction(const FreeAlgebra* A,
-                                const Poly* reducee,
-                                const ConstPolyList& reducers,
-                                const WordTable& W) -> const Poly*;
-
-  static auto twoSidedReduction(const PolynomialAlgebra* A,
-                                const Poly* reducee,
-                                const ConstPolyList& reducers,
-                                const WordTable& W) -> const Poly*;
-
-  static auto createSPair(const FreeAlgebra* A,
-                          const ConstPolyList& polyList,
-                          int polyIndex1,
-                          int polyIndex2,
-                          int overlapIndex) -> const Poly*;
-                          
-  
-private:
-  const PolynomialAlgebra* mRing;
-  WordTable mWordTable;
-  const ConstPolyList mInput;
-  int mTopComputedDegree;
-
-#if 0
-  // chose one of these two, or use VECTOR.
-  std::vector<Poly*> mGroebner;
-  std::vector<Poly> mGroebner2;
-#endif
-};
-
 #endif
 
 // Local Variables:

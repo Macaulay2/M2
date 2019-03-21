@@ -1195,10 +1195,10 @@ const Matrix *rawMGB(
 // Noncommutative Groebner bases (2-sided) //
 /////////////////////////////////////////////
 
-const std::vector<const Poly*> matrixToVector(const PolynomialAlgebra* A,
-                                              const Matrix* input)
+const VECTOR(const Poly*) matrixToVector(const PolynomialAlgebra* A,
+                                         const Matrix* input)
 {
-  std::vector<const Poly*> result;
+  VECTOR(const Poly*) result;
   result.reserve(input->n_cols());
   for (int i=0; i<input->n_cols(); i++)
     {
@@ -1210,7 +1210,7 @@ const std::vector<const Poly*> matrixToVector(const PolynomialAlgebra* A,
 }
 
 const Matrix* vectorToMatrix(const PolynomialAlgebra* A,
-                             const std::vector<const Poly*>& elems)
+                             const VECTOR(const Poly*)& elems)
 {
   MatrixConstructor mat(A->make_FreeModule(1), elems.size());
   for (auto i = 0; i < elems.size(); ++i)

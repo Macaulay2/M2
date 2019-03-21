@@ -5,7 +5,7 @@ void NCGroebner::compute(int maxdeg)
   // TODO
 }
 
-const NCGroebner::ConstPolyList* NCGroebner::currentValue()
+const ConstPolyList* NCGroebner::currentValue()
 {
   // TODO
   return &mInput;
@@ -141,11 +141,11 @@ auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
   return twoSidedReduction(A->freeAlgebra(),reducees,reducers);
 }
 
-auto NCGroebner::createSPair(const FreeAlgebra* A,
-                 const ConstPolyList& polyList,
-                 int polyIndex1,
-                 int overlapIndex,
-                 int polyIndex2) -> const Poly*
+auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
+                                   const ConstPolyList& polyList,
+                                   int polyIndex1,
+                                   int overlapIndex,
+                                   int polyIndex2) -> const Poly*
 {
   // here, polyIndex1 and 2 are indices into polyList, and overlapIndex
   // is the index where the overlap starts in the polynomial pointed in
