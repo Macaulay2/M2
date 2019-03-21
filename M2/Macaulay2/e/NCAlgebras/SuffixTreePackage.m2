@@ -211,7 +211,6 @@ extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
    --- beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)
    --- This function finds the locus of the shortest word that has beta as a prefix.
    --- it returns this locus, together with the prefix that needs to be split (if necessary)
-   
    --- if beta is empty, then simply return (x,beta) since x is the extended locus
    if beta == {} then return (x,beta);
    betaHat := beta;
@@ -229,9 +228,8 @@ findMatch (SuffixTreeNode, List) := (y,s) -> (
   -- PURPOSE : Find an arc from y to a child f whose label shares a prefix with s           
   -- INPUT   : Node y and a list s.
   -- OUTPUT  : Node f, list pre 
-  -- return y if no match is found, i.e. the empty prefix is the only shared prefix with any
-  -- children of y
-  --- TODO: Refactor this so that if no match is found, nullTreeNode is returned as f.
+  -- return nullTreeNode if no match is found, i.e. the empty prefix is the only shared prefix with any
+  -- child of y
   f := nullTreeNode;
   pre := {};
   for kv in pairs (y.children) list (
