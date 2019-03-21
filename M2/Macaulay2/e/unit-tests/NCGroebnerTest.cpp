@@ -6,6 +6,7 @@
 #include "aring-glue.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/WordTable.hpp"
+#include "NCAlgebras/NCGroebner.hpp"
 #include <iostream>
 
 std::vector<int> monom1 {2, 0, 1};  // cab
@@ -172,9 +173,29 @@ TEST(FreeAlgebra, comparisons)
   EXPECT_TRUE(A->compare_elems(*x,*x) == EQ);
 }
 
-TEST(FreeAlgebra, degrees)
+TEST(FreeAlgebra, spairs)
 {
-  
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,2,3});
+  FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
+  Word leadWord, leadWordPrefix, leadWordSuffix;
+  A->var(*x, 0);
+  A->var(*y, 1);
+  A->var(*z, 2);
+  f = x*y*x + z*y*z;
+  A->lead_word(leadWord,*f);
+  A->lead_word_prefix(leadWordPrefix,*f,2);
+  A->lead_word_suffix(leadWordSuffix,*f,1);
+  EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWord.begin() && (*f).cbegin().monom().begin() + 5 == leadWord.end());
+  EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWordPrefix.begin() && (*f).cbegin().monom().begin() + 4 == leadWordPrefix.end());
+  EXPECT_TRUE((*f).cbegin().monom().begin() + 3 == leadWordSuffix.begin() && (*f).cbegin().monom().begin() + 5 == leadWordSuffix.end());
+
+  NCGroebner::ConstPolyList polyList {&*f};
+  *g = *(NCGroebner::createSPair(A, polyList, 0, 2, 0));
+  h = f*y*x - x*y*f;
+  EXPECT_TRUE(g == h);
 }
 
 TEST(WordTable, create)

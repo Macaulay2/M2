@@ -665,6 +665,21 @@ bool FreeAlgebra::multi_degree(const Poly& f,
   return ishomog;
 }
 
+void FreeAlgebra::lead_word(Word& result, const Poly& f) const
+{
+  lead_word_prefix(result, f, *f.cbegin().monom().begin() - 2);
+}
+
+void FreeAlgebra::lead_word_prefix(Word& result, const Poly& f, int endIndex) const
+{
+  result.init(f.cbegin().monom().begin() + 2,f.cbegin().monom().begin() + 2 + endIndex);
+}
+
+void FreeAlgebra::lead_word_suffix(Word& result, const Poly& f, int beginIndex) const
+{
+  result.init(f.cbegin().monom().begin() + 2 + beginIndex, f.cbegin().monom().end());
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

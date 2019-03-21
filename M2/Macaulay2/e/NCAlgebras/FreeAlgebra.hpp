@@ -103,6 +103,10 @@ public:
   
   SumCollector* make_SumCollector() const;
 
+  void lead_word(Word& result, const Poly& f) const;
+  void lead_word_prefix(Word& result, const Poly& f, int endIndex) const;
+  void lead_word_suffix(Word& result, const Poly& f, int beginIndex) const;
+
 #if 0  
   Poly* eval(const RingMap *map, const Poly* f, int first_var) const;
 

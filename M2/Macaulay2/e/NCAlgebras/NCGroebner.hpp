@@ -24,7 +24,7 @@ might need to refactor monomials, ConstMonomial-->Word.
     PolyWithPos structure
     add(f, g: PolyWithPos): PolyWithPos;
     multByTerm(m:Term, f : PolyWithPos, n:Term) : PolyWithPos;
-    remainder(f:PolyWithPos, G:GroebnerList) : PolyWithPos);
+    remainder(f:PolyWithPos, G:GroebnerList) : PolyWithPos;
 
     Poly: will contain the integers defining its monomials
     PolyHashed: will contain pointers to monomials.
@@ -39,8 +39,6 @@ might need to refactor monomials, ConstMonomial-->Word.
     PolyWithPos: {PolyIter}
 
 #endif
-
-
 
 
 #if 0
@@ -97,8 +95,8 @@ public:
 
   auto remainder(const Poly* f) -> Poly*
   {
-    Poly * g = mRing->copy(f);
-    Poly * remainder = mRing->zero();
+    Poly* g = mRing->copy(f);
+    Poly* remainder = mRing->zero();
     while (not g->is_zero())
       {
         // lookup lead monomial of g in the word table
@@ -114,8 +112,7 @@ public:
       }
     return remainder;
   }
-  
-  
+    
 private:
   const PolynomialAlgebra* mRing;
   const ConstPolyList& mReducers;
@@ -158,6 +155,13 @@ public:
                                 const ConstPolyList& reducers,
                                 const WordTable& W) -> const Poly*;
 
+  static auto createSPair(const FreeAlgebra* A,
+                          const ConstPolyList& polyList,
+                          int polyIndex1,
+                          int polyIndex2,
+                          int overlapIndex) -> const Poly*;
+                          
+  
 private:
   const PolynomialAlgebra* mRing;
   WordTable mWordTable;

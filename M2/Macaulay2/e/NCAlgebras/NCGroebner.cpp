@@ -67,6 +67,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
   std::pair<int,int> subwordPos; 
   Poly tmp1,tmp2,reduceeSoFar;
   Poly* remainder = new Poly;
+  Word leftWord, rightWord;
 
   A->copy(reduceeSoFar,*reducee);
 
@@ -78,10 +79,8 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
       if (W.subword(reduceeLM,subwordPos))
         {
           // If one, perform reduceeSoFar -= coef * left * reducers[index] * right
-          Word leftWord(reduceeSoFar.cbegin().monom().begin()+2,
-                        reduceeSoFar.cbegin().monom().begin()+2+subwordPos.second);
-          Word rightWord(reduceeSoFar.cbegin().monom().begin()+2+W[subwordPos.first].size()+subwordPos.second,
-                         reduceeSoFar.cbegin().monom().end());
+          A->lead_word_prefix(leftWord, reduceeSoFar, subwordPos.second);
+          A->lead_word_suffix(rightWord, reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
           A->setZero(tmp1);
           A->setZero(tmp2);
           A->mult_by_term_left_and_right(tmp1,
@@ -142,6 +141,26 @@ auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
   return twoSidedReduction(A->freeAlgebra(),reducees,reducers);
 }
 
+auto NCGroebner::createSPair(const FreeAlgebra* A,
+                 const ConstPolyList& polyList,
+                 int polyIndex1,
+                 int overlapIndex,
+                 int polyIndex2) -> const Poly*
+{
+  // here, polyIndex1 and 2 are indices into polyList, and overlapIndex
+  // is the index where the overlap starts in the polynomial pointed in
+  // by *polyIndex1*.
+  Poly* result = new Poly;
+  Poly tmp1, tmp2;
+  Word prefix, suffix;
+  A->lead_word_prefix(prefix, *polyList[polyIndex1], overlapIndex);
+  A->lead_word_suffix(suffix, *polyList[polyIndex2], *(polyList[polyIndex1]->cbegin().monom().begin()) - 2 - overlapIndex);
+  A->mult_by_term_right(tmp1, *polyList[polyIndex1], A->coefficientRing()->from_long(1), suffix);
+  A->mult_by_term_left(tmp2, *polyList[polyIndex2], A->coefficientRing()->from_long(1), prefix);
+  A->subtract(*result, tmp1, tmp2);
+  return result;
+}
+                          
 
 
 // Local Variables:
