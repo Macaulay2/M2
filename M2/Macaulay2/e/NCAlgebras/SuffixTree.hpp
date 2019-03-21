@@ -7,19 +7,34 @@
 
 #include "WordTable.hpp"
 
+// used in return value for WordTable as well
 using Triple = std::tuple<int,int,int>;
 
+// data type of an arc/vertex label
 using Label = std::vector<int>;
 
 // return value types for internal functions
-using ContractedLocusType = std::tuple<SuffixTreeNode*, SuffixTreeNode*, Label*>;
-using ExtendedLocusType = std::tuple<SuffixTreeNode*, Label*>;
-using InsertWorkerType = std::tuple<SuffixTreeNode*, SuffixTreeNode*, SuffixTreeNode*>;
-using LeavesType = std::tuple<SuffixTreeNode*, int>;
-using SubwordsType = std::tuple<Label*, int, Label*>;
+using ContractedLocusType = std::tuple<SuffixTreeNode*,
+				       SuffixTreeNode*,
+				       Label*>;
+
+using ExtendedLocusType = std::tuple<SuffixTreeNode*,
+				     Label*>;
+
+using InsertWorkerType = std::tuple<SuffixTreeNode*,
+				    SuffixTreeNode*,
+				    SuffixTreeNode*>;
+
+using LeavesType = std::tuple<SuffixTreeNode*,
+			      int>;
+
+using SubwordsType = std::tuple<Label*,
+				int,
+				Label*>;
 
 // this class is basically a wrapper on std::unordered_set, but with a few
-// additional things added for dropping prefixes and adding them to the pool, etc.
+// additional things added for dropping prefixes and adding them to
+// the pool, etc.
 class LabelPool
 {
 public:
@@ -27,9 +42,9 @@ public:
   auto prefix(Label* f, int n) -> Label*;
   auto suffix(Label* f, int n) -> Label*;
 
-  // this is a wrapper for std::unordered_set insert.  The bool part of the pair
-  // will be discarded
-  auto insert(Label* f) -> std::unordered_set<Label*>::const_iterator;
+  // this is a wrapper for std::unordered_set::insert, but all
+  // return values are discarded.
+  void insert(Label* f);
 
 private:
   std::unordered_set<Label*> mLabelPool;
@@ -70,9 +85,12 @@ public:
   // these functions are also in WordTable; we would like to keep the
   // basic interface of both classes the same
 
-  SuffixTable() {}
+  // need to create the root
+  SuffixTree();
 
-  ~SuffixTable() {}
+  // the SuffixTree owns all Labels and SuffixTreeNodes created within,
+  // as well as the monomials inserted (stored as labels).
+  ~SuffixTree();
 
   size_t monomialCount() const { return mMonomials.size(); }
 
@@ -193,10 +211,14 @@ private:
   // root node of the tree
   SuffixTreeNode* mRoot;
 
-  // we will copy the monomials into the data structure
+  // we will copy the monomials into the data structure.  Even though
+  // this is of type Label, these monomials will not have the word number
+  // appended as a suffix when stored in this container.
   std::vector<Label> mMonomials;
 
   // this is where all the labels for the data structure will be housed
+  // The suffix tree owns all the labels, so all pointers in the label
+  // pool must be freed upon destruction
   LabelPool mLabelPool;
 };
 

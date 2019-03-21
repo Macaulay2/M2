@@ -16,6 +16,7 @@ INTERFACE = \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
+	NCAlgebras/SuffixTree \
 	monomial-collection \
 	Polynomial \
 	PolynomialAlgebra \
