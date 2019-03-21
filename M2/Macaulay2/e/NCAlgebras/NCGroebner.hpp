@@ -45,13 +45,15 @@ public:
                                 int polyIndex2,
                                 int overlapIndex) -> const Poly*;
                           
+  auto createOverlapPoly(Overlap o) const -> const Poly*;
   
 private:
   const PolynomialAlgebra* mRing;
   WordTable mWordTable;
+  OverlapTable mOverlapTable;
   const ConstPolyList mInput;
   int mTopComputedDegree;
-  PolyList mGroebner;
+  ConstPolyList mGroebner;
   
 #if 0
   // chose one of these two, or use VECTOR.

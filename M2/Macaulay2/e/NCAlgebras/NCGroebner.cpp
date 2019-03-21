@@ -161,7 +161,14 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
   return result;
 }
                           
-
+auto NCGroebner::createOverlapPoly(Overlap overlap) const -> const Poly*
+{
+  return createOverlapPoly(mRing->freeAlgebra(),
+                           mGroebner,
+                           std::get<0>(overlap),
+                           std::get<1>(overlap),
+                           std::get<2>(overlap));
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
