@@ -1,62 +1,71 @@
 #include "NCGroebner.hpp"
 
-void NCGroebner::compute(int maxdeg)
+void NCGroebner::compute(int softDegreeLimit)
 {
-  // TODO
+  std::vector<Overlap> newOverlaps;
+  Word tmpWord;
+  
+  // process input polynomials first
+  for (auto i = 0; i < mInput.size(); i++)
+    {
+      mRing->freeAlgebra()->lead_word(tmpWord,*mInput[i]);
+      mOverlapTable.insert(tmpWord.size(),
+                           true,
+                           std::make_tuple(i,-1,-1));
+    }
+  std::cout << "Here 1." << std::endl;
+  while (!mOverlapTable.isFinished(softDegreeLimit))
+    {
+      auto toBeProcessed = mOverlapTable.nextDegreeOverlaps().second;
+      while(!toBeProcessed->empty())
+        {
+          std::cout << "Here 2." << std::endl;
+          auto overlap = toBeProcessed->front();
+          auto overlapPoly = createOverlapPoly(overlap);
+          auto redOverlapPoly = twoSidedReduction(overlapPoly);
+          if (!mRing->freeAlgebra()->is_zero(*redOverlapPoly))
+            {
+              buffer o;
+              mRing->freeAlgebra()->elem_text_out(o,*redOverlapPoly,true,true,true);
+              std::cout << "Here 3." << std::endl;
+              std::cout << o.str() << std::endl;
+              mOverlapTable.dump(std::cout,true);
+              // if reduction is nonzero
+              newOverlaps.clear();
+              mRing->freeAlgebra()->lead_word(tmpWord,*redOverlapPoly);
+              mWordTable.insert(tmpWord,newOverlaps);
+              for (auto newOverlap : newOverlaps)
+                {
+                  mOverlapTable.insert(overlapWordLength(newOverlap),
+                                       false,
+                                       newOverlap);
+                }
+              newOverlaps.clear();
+              mWordTable.leftOverlaps(newOverlaps);
+              for (auto newOverlap : newOverlaps)
+                {
+                  mOverlapTable.insert(overlapWordLength(newOverlap),
+                                       false,
+                                       newOverlap);
+                }
+              mGroebner.push_back(redOverlapPoly);
+              std::cout << mOverlapTable << std::endl;
+            }
+          else
+            {
+              // if reduction is zero
+            }
+          toBeProcessed->pop_front();
+        }
+      // remove the lowest degree overlaps from the overlap table
+      mOverlapTable.removeLowestDegree();
+    }
 }
 
 const ConstPolyList* NCGroebner::currentValue()
 {
-  // TODO
-  return &mInput;
+  return &mGroebner;
 }
-
-// Heap for reduction? work in progress, to be sure.
-#if 0
-class NCPolyHeap
-{
-  using Poly = PolynomialAlgebra::Poly;
-  const PolynomialAlgebra& mRing;  // Our elements will be vectors in here
-  Poly mHeap[GEOHEAP_SIZE];
-  Poly::Iterator mLead[GEOHEAP_SIZE];
-  int mTop; // largest index into mHeap which has a polynomial in it.
-
-  bool leadTermComputed;
-  ring_elem mLeadCoefficient;
-  ConstMonomial mLeadMonomial;
- public:
-  NCPolyHeap(const PolynomialAlgebra& F);
-  ~NCPolyHeap();
-
-  void add(const Poly& f);
-
-  void subtractMultiple(ring_elem coeff, Word& left, const Poly* g, Word& right);
-
-  bool computeLeadTerm();
-  ring_elem leadTermCoefficient();
-  ConstMonomial leadTermMonomial();
-  
-    Poly value();  // Returns the linearized value, and resets the NCPolyHeap.
-
-  ring_elem getValue();
-  void add(ring_elem f1);
-  
-  const Poly& debug_list(int i) const
-  {
-    return mHeap[i];
-  }  // DO NOT USE, except for debugging purposes!
-};
-
-// will eventually use this in the reduction code below.
-class PolyWithPosition
-{
-public:
-  PolyWithPosition(std::unique_ptr<Poly>(f));
-private:
-  Poly* mPoly;
-  Poly::iterator mLead;
-};
-#endif
 
 auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
                                    const Poly* reducee,
@@ -108,15 +117,6 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
   return remainder;
 }
 
-auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
-                       const Poly* reducee,
-                       const ConstPolyList& reducers,
-                       const WordTable& W) -> const Poly*
-{
-  return twoSidedReduction(A->freeAlgebra(),reducee,reducers,W);
-}
-
-
 auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
                                    const ConstPolyList& reducees,
                                    const ConstPolyList& reducers) -> ConstPolyList
@@ -134,13 +134,14 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
   return result;
 }
 
-auto NCGroebner::twoSidedReduction(const PolynomialAlgebra* A,
-                                   const ConstPolyList& reducees,
-                                   const ConstPolyList& reducers) -> ConstPolyList
+auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> const Poly*
 {
-  return twoSidedReduction(A->freeAlgebra(),reducees,reducers);
+  return twoSidedReduction(mRing->freeAlgebra(),
+                           reducee,
+                           mGroebner,
+                           mWordTable);
 }
-
+ 
 auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
                                    const ConstPolyList& polyList,
                                    int polyIndex1,
@@ -163,12 +164,67 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
                           
 auto NCGroebner::createOverlapPoly(Overlap overlap) const -> const Poly*
 {
-  return createOverlapPoly(mRing->freeAlgebra(),
-                           mGroebner,
-                           std::get<0>(overlap),
-                           std::get<1>(overlap),
-                           std::get<2>(overlap));
+  if (std::get<1>(overlap) == -1) return mInput[std::get<0>(overlap)];
+  else return createOverlapPoly(mRing->freeAlgebra(),
+                                mGroebner,
+                                std::get<0>(overlap),
+                                std::get<1>(overlap),
+                                std::get<2>(overlap));
 }
+
+auto NCGroebner::overlapWordLength(Overlap o) const -> int
+{
+  Word tmp;
+  mRing->freeAlgebra()->lead_word(tmp,*mGroebner[std::get<2>(o)]);
+  return std::get<1>(o) + tmp.size();
+}
+
+// Heap for reduction? work in progress, to be sure.
+#if 0
+class NCPolyHeap
+{
+  using Poly = PolynomialAlgebra::Poly;
+  const PolynomialAlgebra& mRing;  // Our elements will be vectors in here
+  Poly mHeap[GEOHEAP_SIZE];
+  Poly::Iterator mLead[GEOHEAP_SIZE];
+  int mTop; // largest index into mHeap which has a polynomial in it.
+
+  bool leadTermComputed;
+  ring_elem mLeadCoefficient;
+  ConstMonomial mLeadMonomial;
+ public:
+  NCPolyHeap(const PolynomialAlgebra& F);
+  ~NCPolyHeap();
+
+  void add(const Poly& f);
+
+  void subtractMultiple(ring_elem coeff, Word& left, const Poly* g, Word& right);
+
+  bool computeLeadTerm();
+  ring_elem leadTermCoefficient();
+  ConstMonomial leadTermMonomial();
+  
+    Poly value();  // Returns the linearized value, and resets the NCPolyHeap.
+
+  ring_elem getValue();
+  void add(ring_elem f1);
+  
+  const Poly& debug_list(int i) const
+  {
+    return mHeap[i];
+  }  // DO NOT USE, except for debugging purposes!
+};
+
+// will eventually use this in the reduction code.
+class PolyWithPosition
+{
+public:
+  PolyWithPosition(std::unique_ptr<Poly>(f));
+private:
+  Poly* mPoly;
+  Poly::iterator mLead;
+};
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

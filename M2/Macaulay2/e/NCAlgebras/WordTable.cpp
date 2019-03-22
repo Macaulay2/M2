@@ -6,7 +6,7 @@ size_t WordTable::insert(Word w)
   return mMonomials.size();
 }
 
-size_t WordTable::insert(Word w, std::vector<Triple>& newRightOverlaps)
+size_t WordTable::insert(Word w, std::vector<Overlap>& newRightOverlaps)
 {
   mMonomials.push_back(w);
   rightOverlaps(newRightOverlaps); // find (right) overlaps with most recent added word 'w'.
@@ -115,7 +115,7 @@ void WordTable::overlaps(Word word1,
     }
 }
 
-void WordTable::leftOverlaps(std::vector<Triple>& newLeftOverlaps) const
+void WordTable::leftOverlaps(std::vector<Overlap>& newLeftOverlaps) const
 {
   // word here is the last word in the dictionary.
   // For left overlap: dictword is a word in the dictionary NOT word.
@@ -139,7 +139,7 @@ void WordTable::leftOverlaps(std::vector<Triple>& newLeftOverlaps) const
   // triples will be <dict word index, index into dict word where suffix starts, word_index>.
 }
 
-void WordTable::rightOverlaps(std::vector<Triple>& newRightOverlaps) const
+void WordTable::rightOverlaps(std::vector<Overlap>& newRightOverlaps) const
 // find (right) overlaps with most recent added word 'w'.
 {
   int word_index = mMonomials.size()-1;

@@ -2,10 +2,11 @@
 
 // will call find to see if degree exists, and if not will call
 // insert.  If degree exists, append overlap to value of degree
-auto OverlapTable::insert(int deg, Overlap o) -> void
+auto OverlapTable::insert(int deg, bool isGenerator, Overlap o) -> void
 {
   std::deque<Overlap> emptyDeque;
-  auto ret = mOverlapMap.insert(std::make_pair(deg, emptyDeque));
+  auto ret = mOverlapMap.insert(std::make_pair(std::make_pair(deg,isGenerator),
+                                               emptyDeque));
   (ret.first)->second.push_back(o);
 }
   
@@ -20,7 +21,7 @@ auto OverlapTable::isFinished(int topDegree) const -> bool
 {
   auto beginIter = mOverlapMap.begin();
   if (beginIter == mOverlapMap.end()) return false;
-  return (beginIter->first > topDegree);
+  return (beginIter->first.first > topDegree);
 }
 
 // returns the lowest degree and a pointer to the overlaps
@@ -30,7 +31,7 @@ auto OverlapTable::nextDegreeOverlaps() -> std::pair<int,std::deque<Overlap>*>
 {
   auto iter = mOverlapMap.begin();
   if (iter == mOverlapMap.end()) return std::make_pair(-1,nullptr);
-  return std::make_pair(iter->first, &(iter->second));
+  return std::make_pair(iter->first.first, &(iter->second));
 }
 
 auto OverlapTable::size() const -> size_t
@@ -77,9 +78,11 @@ auto OverlapTable::dump(std::ostream& ostr, bool outputDeques) const -> std::ost
   for (auto i : mOverlapMap)
     {
       if (!outputDeques)
-        ostr << "  Degree " << i.first << " # = " << i.second.size() << std::endl;
+        ostr << "  Degree [" << i.first.first
+             << "," << i.first.second << "] # = " << i.second.size() << std::endl;
       else
-        ostr << "  Degree " << i.first << " = " << i.second << std::endl;
+        ostr << "  Degree [" << i.first.first
+             << "," << i.first.second << "] # = " << i.second << std::endl;
     }
   ostr << std::endl;
   return ostr;

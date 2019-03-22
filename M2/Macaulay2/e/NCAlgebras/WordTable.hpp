@@ -44,7 +44,7 @@ private:
   const int* mEnd;
 };
 
-using Triple = std::tuple<int,int,int>;
+using Overlap = std::tuple<int,int,int>;
 
 class WordTable
 {
@@ -58,7 +58,7 @@ public:
 
   size_t insert(Word w);
 
-  size_t insert(Word w, std::vector<Triple>& newRightOverlaps);
+  size_t insert(Word w, std::vector<Overlap>& newRightOverlaps);
 
   // access routine
   const Word& operator[](int index) const { return mMonomials[index]; }
@@ -95,11 +95,11 @@ public:
   //  a prefix of alpha is a suffix of beta.
   // i.e. alpha = a.b
   //      beta  = c.a (a,b,c are words)
-  // returned Triple for this overlap:
-  void leftOverlaps(std::vector<Triple>& newLeftOverlaps) const;
+  // returned Overlap for this overlap:
+  void leftOverlaps(std::vector<Overlap>& newLeftOverlaps) const;
 
   // find (right) overlaps with most recent added word 'w'.
-  void rightOverlaps(std::vector<Triple>& newRightOverlaps) const; 
+  void rightOverlaps(std::vector<Overlap>& newRightOverlaps) const; 
 
 private:
   static void subwordPositions(Word word1,

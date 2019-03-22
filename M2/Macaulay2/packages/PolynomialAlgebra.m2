@@ -651,7 +651,7 @@ TEST ///
 ///
 
 TEST ///
-  -- noncommutative Groebner basis test
+  -- noncommutative reduction test
 -*
   restart
   needsPackage "PolynomialAlgebra"
@@ -664,7 +664,6 @@ TEST ///
   K = ideal(a*c*b)
   L = ideal(a*b*d*c*a*d*b*c*a*b*d*c*c*c*d*b*a)
   debug Core
-  map(R, rawNCGroebnerBasisTwoSided(raw gens I, 387))
   map(R, rawNCReductionTwoSided(raw gens I, raw gens I))
   map(R, rawNCReductionTwoSided(raw gens I, raw gens J))
   map(R, rawNCReductionTwoSided(raw gens I, raw gens K))
@@ -684,6 +683,19 @@ g = -a*b*c+b*c*a
 h = a*g + f*b*c
 NCReduction2Sided(h, ideal(f,g)) -- never never land
 ///
+
+TEST ///
+  -- noncommutative reduction test
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{a,b}
+  I = ideal(a^2 - b^2)
+  debug Core
+  map(R, rawNCGroebnerBasisTwoSided(raw gens I, 387))  
+///
+
 end--
 
 restart

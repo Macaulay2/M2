@@ -212,6 +212,23 @@ TEST(OverlapTable, insertion)
   overlapTable.dump(std::cout,true);
 }
 
+TEST(NCGroebner, sorting)
+{
+  auto key1 = std::make_pair(1,false);
+  auto key2 = std::make_pair(1,true);
+  auto key3 = std::make_pair(2,false);
+  auto key4 = std::make_pair(2,true);
+  std::map<std::pair<int,bool>,int> myMap;
+  myMap.insert(std::make_pair(key1,0));
+  myMap.insert(std::make_pair(key2,0));
+  myMap.insert(std::make_pair(key3,0));
+  myMap.insert(std::make_pair(key4,0));
+  for (auto i : myMap)
+    {
+      std::cout << "[" << i.first.first << "," << i.first.second << "]" << std::endl;
+    }
+}
+
 TEST(WordTable, create)
 {
   WordTable W;
@@ -279,7 +296,7 @@ TEST(WordTable, subwords)
   EXPECT_EQ(matches[5], std::make_pair(3, 6));
 }        
 
-std::ostream& operator<<(std::ostream& o, const std::vector<Triple>& val)
+std::ostream& operator<<(std::ostream& o, const std::vector<Overlap>& val)
 {
   int count = 0;
   for (auto a : val)
@@ -358,7 +375,7 @@ TEST(WordTable, skylanin)
   std::vector<int> m11 {1,0,0,1,0,2};  // YXXYXZ
   std::vector<int> m12 {1,0,0,1,1,1};  // YXXYYY
 
-  std::vector<Triple> overlaps;
+  std::vector<Overlap> overlaps;
   std::vector<std::pair<int,int>> matches;
   
   WordTable W;
@@ -370,7 +387,7 @@ TEST(WordTable, skylanin)
 
   W.insert(m2, overlaps);
   std::cout << overlaps;
-  std::vector<Triple> ans {
+  std::vector<Overlap> ans {
       std::make_tuple(2,1,0),
       std::make_tuple(2,1,1),
       std::make_tuple(2,1,2)

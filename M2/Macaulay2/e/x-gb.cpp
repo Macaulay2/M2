@@ -1228,8 +1228,8 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
   if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
-      NCGroebner G(A, elems);
-      G.compute(maxdeg);
+      NCGroebner G(A, elems, maxdeg);
+      G.compute(maxdeg); // this argument is actually the soft degree limit
       auto result = G.currentValue();
       return vectorToMatrix(A, *result);
     }
@@ -1250,7 +1250,7 @@ const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* re
     {
       auto reducees = matrixToVector(A, toBeReduced);
       auto reducers = matrixToVector(A, reducerMatrix);
-      auto result = NCGroebner::twoSidedReduction(A, reducees, reducers);
+      auto result = NCGroebner::twoSidedReduction(A->freeAlgebra(), reducees, reducers);
       return vectorToMatrix(A, result);
     }
   ERROR("expected one row matriices over a noncommutative algebra");

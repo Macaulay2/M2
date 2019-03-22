@@ -10,14 +10,17 @@ class NCGroebner
 {
 public:
 
-  NCGroebner(const PolynomialAlgebra* A, const ConstPolyList& input)
+  NCGroebner(const PolynomialAlgebra* A,
+             const ConstPolyList& input,
+             int hardDegreeLimit)
     : mRing(A),
       mInput(input),
-      mTopComputedDegree(-1)
+      mTopComputedDegree(-1),
+      mHardDegreeLimit(hardDegreeLimit)
   {
   }
   
-  void compute(int maxdeg);
+  void compute(int softDegreeLimit);
 
   const ConstPolyList* currentValue();
 
@@ -25,20 +28,13 @@ public:
                                          const ConstPolyList& reducees,
                                          const ConstPolyList& reducers) -> ConstPolyList;
 
-  static auto twoSidedReduction(const PolynomialAlgebra* A,
-                                         const ConstPolyList& reducees,
-                                         const ConstPolyList& reducers) -> ConstPolyList;
-
   static auto twoSidedReduction(const FreeAlgebra* A,
                                 const Poly* reducee,
                                 const ConstPolyList& reducers,
                                 const WordTable& W) -> const Poly*;
 
-  static auto twoSidedReduction(const PolynomialAlgebra* A,
-                                const Poly* reducee,
-                                const ConstPolyList& reducers,
-                                const WordTable& W) -> const Poly*;
-
+  auto twoSidedReduction(const Poly* reducee) const -> const Poly*;
+  
   static auto createOverlapPoly(const FreeAlgebra* A,
                                 const ConstPolyList& polyList,
                                 int polyIndex1,
@@ -46,14 +42,19 @@ public:
                                 int overlapIndex) -> const Poly*;
                           
   auto createOverlapPoly(Overlap o) const -> const Poly*;
+
+  auto overlapWordLength(Overlap o) const -> int;
   
 private:
   const PolynomialAlgebra* mRing;
+
   WordTable mWordTable;
   OverlapTable mOverlapTable;
   const ConstPolyList mInput;
-  int mTopComputedDegree;
   ConstPolyList mGroebner;
+  
+  int mTopComputedDegree;
+  int mHardDegreeLimit;
   
 #if 0
   // chose one of these two, or use VECTOR.

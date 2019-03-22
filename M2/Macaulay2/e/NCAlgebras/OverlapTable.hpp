@@ -21,8 +21,8 @@ public:
   
   // will call find to see if degree exists, and if not will call
   // insert.  If degree exists, append overlap to value of degree
-  auto insert(int deg, Overlap o) -> void;
-
+  auto insert(int deg, bool isGenerator, Overlap o) -> void;
+  
   // is the overlap map empty?
   auto isFinished() const -> bool;
   // is the overlap map empty in degrees <= topDegree?
@@ -44,7 +44,7 @@ public:
   
 private:
   ConstPolyList* mPolyList;
-  std::map<int,std::deque<Overlap>> mOverlapMap;
+  std::map<std::pair<int,bool>,std::deque<Overlap>> mOverlapMap;
 };
 
 std::ostream& operator<<(std::ostream& ostr, const OverlapTable& overlapTable);
