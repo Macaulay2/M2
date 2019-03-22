@@ -760,7 +760,7 @@ export rawNCFreeAlgebra(e:Expr):Expr := (
      if isSequenceOfStrings(a.1) then 
      if isSequenceOfSmallIntegers(a.3) then (
 	     names := getSequenceOfStrings(a.1);
-         toExpr(Ccode(RawRingOrNull, "rawRingNCFreeAlgebra(", R.p, ",",
+         toExpr(Ccode(RawRingOrNull, "rawRingM2FreeAlgebra(", R.p, ",",
  	       names, ",",
            degR.p, ",",
            getSequenceOfSmallIntegers(a.3),

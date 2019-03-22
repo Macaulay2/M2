@@ -1,5 +1,5 @@
-#ifndef _polynomial_algebra_hpp_
-#define _polynomial_algebra_hpp_
+#ifndef _m2_free_algebra_hpp_
+#define _m2_free_algebra_hpp_
 
 #include "polyring.hpp"
 #include "Polynomial.hpp"
@@ -13,7 +13,7 @@ using ExponentVector = int*;
 //  typedef ring_elem ElementType;
 //};
 
-class PolynomialAlgebra : public Ring
+class M2FreeAlgebra : public Ring
 {
 private:
   // This information is now in mFreeAlgebra
@@ -21,11 +21,11 @@ private:
   //const FreeMonoid mMonoid;
   const FreeAlgebra* mFreeAlgebra;
 
-  PolynomialAlgebra(const FreeAlgebra* F);
+  M2FreeAlgebra(const FreeAlgebra* F);
 public:
   //using Poly = Polynomial<CoefficientRingTypeExample>;
 
-  static PolynomialAlgebra* create(const Ring* K,
+  static M2FreeAlgebra* create(const Ring* K,
                                    const std::vector<std::string>& names,
                                    const PolynomialRing* degreeRing,
                                    const std::vector<int>& degrees
@@ -39,7 +39,7 @@ public:
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
   
-  // these are all the functions from Ring that must exist for PolynomialAlgebra to be instantiated
+  // these are all the functions from Ring that must exist for M2FreeAlgebra to be instantiated
   virtual int index_of_var(const ring_elem a) const;
   
   virtual void text_out(buffer &o) const;
@@ -116,8 +116,8 @@ public:
   }
 
   // casting functions
-  virtual const PolynomialAlgebra * cast_to_PolynomialAlgebra()  const { return this; }
-  virtual       PolynomialAlgebra * cast_to_PolynomialAlgebra()        { return this; }
+  virtual const M2FreeAlgebra * cast_to_M2FreeAlgebra()  const { return this; }
+  virtual       M2FreeAlgebra * cast_to_M2FreeAlgebra()        { return this; }
 
   void debug_display(const Poly* f) const;
   void debug_display(const ring_elem ff) const;
@@ -126,15 +126,6 @@ public:
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 
-  void setZero(Poly& f) const // resets f to zero
-  {
-    for (auto a : f.mCoefficients)
-      coefficientRing()->remove(a);
-    
-    f.mCoefficients.clear();
-    f.mMonomials.clear();
-  }
-  
   const Poly* toPoly(const ring_elem f) const { return reinterpret_cast<const Poly*>(f.mPolyVal); }
 
   ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }

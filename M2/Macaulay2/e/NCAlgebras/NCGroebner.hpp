@@ -1,7 +1,7 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
-#include "../PolynomialAlgebra.hpp"
+#include "../M2FreeAlgebra.hpp"
 #include "WordTable.hpp"
 #include "OverlapTable.hpp"
 
@@ -9,7 +9,7 @@ class NCGroebner : public our_new_delete
 {
 public:
 
-  NCGroebner(const PolynomialAlgebra* A,
+  NCGroebner(const M2FreeAlgebra* A,
              const ConstPolyList& input,
              int hardDegreeLimit)
     : mRing(A),
@@ -47,7 +47,7 @@ public:
   auto overlapWordLength(Overlap o) const -> int;
   
 private:
-  const PolynomialAlgebra* mRing;
+  const M2FreeAlgebra* mRing;
 
   WordTable mWordTable;
   OverlapTable mOverlapTable;

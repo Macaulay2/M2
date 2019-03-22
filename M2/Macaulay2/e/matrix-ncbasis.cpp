@@ -1,6 +1,6 @@
 // Copyright 2018  Michael E. Stillman
 
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 #include "ntuple.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
@@ -9,7 +9,7 @@
 class NCBasis
 {
 private:
-  const PolynomialAlgebra *mRing;
+  const M2FreeAlgebra *mRing;
   const NCMonoid& mMonoid;
   MatrixConstructor mMatrixConstructor; // result is collected here
   enum { KB_SINGLE, KB_MULTI } mComputationType;
@@ -62,7 +62,7 @@ public:
 };
 
 NCBasis::NCBasis(
-                 const PolynomialAlgebra* P,
+                 const M2FreeAlgebra* P,
                  const Matrix *zeroInitialTerms,
                  const int *lo_degree,
                  const int *hi_degree,
@@ -315,7 +315,7 @@ Matrix* ncBasis(const Matrix *leadTerms,
   ERROR("not implemented yet");
   return nullptr;
 #if 0
-  const PolynomialAlgebra *P = leadTerms->get_ring()->cast_to_PolynomialAlgebra();
+  const M2FreeAlgebra *P = leadTerms->get_ring()->cast_to_M2FreeAlgebra();
 
   // Now we check and set inputs to the algorithm.
   const PolynomialRing *D = P->get_degree_ring();

@@ -11,7 +11,7 @@
 #include "gb-walk.hpp"
 #include "relem.hpp"
 
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
 
@@ -1195,7 +1195,7 @@ const Matrix *rawMGB(
 // Noncommutative Groebner bases (2-sided) //
 /////////////////////////////////////////////
 
-const VECTOR(const Poly*) matrixToVector(const PolynomialAlgebra* A,
+const VECTOR(const Poly*) matrixToVector(const M2FreeAlgebra* A,
                                          const Matrix* input)
 {
   VECTOR(const Poly*) result;
@@ -1209,7 +1209,7 @@ const VECTOR(const Poly*) matrixToVector(const PolynomialAlgebra* A,
   return result;
 }
 
-const Matrix* vectorToMatrix(const PolynomialAlgebra* A,
+const Matrix* vectorToMatrix(const M2FreeAlgebra* A,
                              const VECTOR(const Poly*)& elems)
 {
   MatrixConstructor mat(A->make_FreeModule(1), elems.size());
@@ -1224,7 +1224,7 @@ const Matrix* vectorToMatrix(const PolynomialAlgebra* A,
 const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
 {
   const Ring* R = input->get_ring();
-  const PolynomialAlgebra* A = R->cast_to_PolynomialAlgebra();
+  const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
   if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
@@ -1245,7 +1245,7 @@ const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* re
       ERROR("expected matrices to be over the same ring");
       return nullptr;
     }
-  const PolynomialAlgebra* A = R->cast_to_PolynomialAlgebra();
+  const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
   if (A != nullptr and toBeReduced->n_rows() == 1 and reducerMatrix->n_rows() == 1)
     {
       auto reducees = matrixToVector(A, toBeReduced);

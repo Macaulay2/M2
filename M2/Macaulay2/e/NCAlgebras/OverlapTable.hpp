@@ -4,7 +4,7 @@
 #include <map>
 #include <deque>
 #include <ostream>
-#include "../PolynomialAlgebra.hpp"
+#include "../M2FreeAlgebra.hpp"
 
 // tuple is (i,j,k) where i is index of first word,
 // j is position of overlap in first word and k is

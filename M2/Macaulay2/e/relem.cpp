@@ -6,7 +6,7 @@
 #include "frac.hpp"
 #include "localring.hpp"
 #include "polyring.hpp"
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 
 #include "aring-glue.hpp"
 
@@ -30,7 +30,7 @@ int RingElement::n_terms(int nvars) const
     {
       return P->n_logical_terms(nvars, val);
     }
-  auto Q = dynamic_cast<const PolynomialAlgebra *>(R);
+  auto Q = dynamic_cast<const M2FreeAlgebra *>(R);
   if (Q != nullptr)
     {
       return Q->n_terms(val);
@@ -153,7 +153,7 @@ RingElement /* or null */ *RingElement::get_terms(int nvars,
     {
       return new RingElement(P, P->get_terms(nvars, val, lo, hi));
     }
-  const PolynomialAlgebra* A = dynamic_cast<const PolynomialAlgebra*>(R);
+  const M2FreeAlgebra* A = dynamic_cast<const M2FreeAlgebra*>(R);
   if (A != nullptr)
     {
       return new RingElement(A, A->get_terms(val, lo, hi));
@@ -173,7 +173,7 @@ RingElement /* or null */ *RingElement::lead_coeff(const Ring *coeffR) const
     {
       return new RingElement(coeffR, P->lead_logical_coeff(coeffR, val));
     }
-  const PolynomialAlgebra* A = dynamic_cast<const PolynomialAlgebra*>(R);
+  const M2FreeAlgebra* A = dynamic_cast<const M2FreeAlgebra*>(R);
   if (A != nullptr)
     {
       return new RingElement(coeffR, A->lead_coefficient(coeffR, val));

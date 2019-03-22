@@ -295,7 +295,7 @@ extern "C" {
      c (depending on i and j), or at least less than that in the monomial ordering.
   */
 
-  const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
+  const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
                                                  M2_ArrayString names,
                                                  const Ring* degreeRing,
                                                  M2_arrayint degrees);

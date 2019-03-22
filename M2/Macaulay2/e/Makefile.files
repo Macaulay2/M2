@@ -13,13 +13,15 @@ INTERFACE2 = \
 INTERFACE = \
 	monordering \
 	NCAlgebras/FreeAlgebra \
+	NCAlgebras/FreeAlgebraQuotient \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/OverlapTable \
 	monomial-collection \
 	Polynomial \
-	PolynomialAlgebra \
+	M2FreeAlgebra \
+	M2FreeAlgebraQuotient \
 	NCAlgebra \
 	monomial-sets \
 	mutablecomplex \

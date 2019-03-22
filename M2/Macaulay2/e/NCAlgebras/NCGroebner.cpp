@@ -220,8 +220,8 @@ auto NCGroebner::overlapWordLength(Overlap o) const -> int
 #if 0
 class NCPolyHeap
 {
-  using Poly = PolynomialAlgebra::Poly;
-  const PolynomialAlgebra& mRing;  // Our elements will be vectors in here
+  using Poly = M2FreeAlgebra::Poly;
+  const M2FreeAlgebra& mRing;  // Our elements will be vectors in here
   Poly mHeap[GEOHEAP_SIZE];
   Poly::Iterator mLead[GEOHEAP_SIZE];
   int mTop; // largest index into mHeap which has a polynomial in it.
@@ -230,7 +230,7 @@ class NCPolyHeap
   ring_elem mLeadCoefficient;
   ConstMonomial mLeadMonomial;
  public:
-  NCPolyHeap(const PolynomialAlgebra& F);
+  NCPolyHeap(const M2FreeAlgebra& F);
   ~NCPolyHeap();
 
   void add(const Poly& f);

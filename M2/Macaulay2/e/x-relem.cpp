@@ -18,7 +18,7 @@
 #include "skewpoly.hpp"
 #include "solvable.hpp"
 #include "Polynomial.hpp"
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 #include "NCAlgebra.hpp"
 #include "polyquotient.hpp"
 
@@ -206,7 +206,7 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
   }
 }
 
-const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
+const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
                                                    M2_ArrayString names,
                                                    const Ring* degreeRing,
                                                    M2_arrayint degrees)
@@ -223,7 +223,7 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
         ERROR("expected polynomial ring");
         return nullptr;
       }
-    const PolynomialAlgebra* result = PolynomialAlgebra::create(coefficientRing,
+    const M2FreeAlgebra* result = M2FreeAlgebra::create(coefficientRing,
                                                                 M2_ArrayString_to_stdvector(names),
                                                                 P,
                                                                 M2_arrayint_to_stdvector<int>(degrees));
@@ -241,7 +241,7 @@ const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
                                                const Ring* degreeRing,
                                                M2_arrayint degrees)
 {
-  return rawRingPolynomialAlgebra(coefficientRing, names, degreeRing, degrees);
+  return rawRingM2FreeAlgebra(coefficientRing, names, degreeRing, degrees);
 }
 
 const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
@@ -941,7 +941,7 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
         ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
         return RingElement::make_raw(R,val);
       }
-    auto Q = dynamic_cast<const PolynomialAlgebra *>(R);
+    auto Q = dynamic_cast<const M2FreeAlgebra *>(R);
     if (Q != nullptr)
       {
         if (Q->coefficientRing() != a->get_ring())
@@ -1045,8 +1045,8 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
         return S->list_form(coeffRing, f->get_value());
       }
     /* added by Frank */
-    const PolynomialAlgebra* ncP = dynamic_cast<const PolynomialAlgebra*>(f->get_ring());
-    //const PolynomialAlgebra *ncP = f->get_ring()->cast_to_PolynomialAlgebra();
+    const M2FreeAlgebra* ncP = dynamic_cast<const M2FreeAlgebra*>(f->get_ring());
+    //const M2FreeAlgebra *ncP = f->get_ring()->cast_to_M2FreeAlgebra();
     if (ncP != nullptr)
       {
         return ncP->list_form(coeffRing, f->get_value());

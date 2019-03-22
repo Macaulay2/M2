@@ -7,12 +7,12 @@
 //   Monom, ModuleMonom:
 //    try to remove operator[], etc, so the type is pretty much opaque.
 //    add in another type: VarPowerMonom (or call it SparseMonom, SparseModuleMonom)
-//   use these other types from PolynomialAlgebra, commutative version.
+//   use these other types from M2FreeAlgebra, commutative version.
 //   improve the hash function.
 //   remove dead code, e.g. starting at #if 0 below.
 //   use this code for coefficients, monomials, even in the commutative variant.
-//   get PolynomialAlgebra.m2 so 'make check' works in a reasonable amount of time.
-//   add in leadCoeff, leadMonomial, leadTerm.  What other poly routines need to be added for PolynomialAlgebra?
+//   get M2FreeAlgebra.m2 so 'make check' works in a reasonable amount of time.
+//   add in leadCoeff, leadMonomial, leadTerm.  What other poly routines need to be added for M2FreeAlgebra?
 //   consider looking at: https://github.com/skarupke/flat_hash_map
 //     it is under boost license, it might be (not sure) well-written.
 
@@ -20,7 +20,7 @@
 #define _monomial_collection_hpp_
 
 #include "memtailor.h"
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 
 #include <unordered_set>
 #include <iomanip>

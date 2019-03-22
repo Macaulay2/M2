@@ -1,4 +1,4 @@
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"
@@ -7,7 +7,7 @@
 #include <string>
 #include <iostream>
 
-PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
+M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
                                              const std::vector<std::string>& names,
                                              const PolynomialRing* degreeRing,
                                              const std::vector<int>& degrees
@@ -15,7 +15,7 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
 {
   assert(K != nullptr);
   FreeAlgebra* F = FreeAlgebra::create(K, names, degreeRing, degrees);
-  PolynomialAlgebra* result = new PolynomialAlgebra(F);
+  M2FreeAlgebra* result = new M2FreeAlgebra(F);
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
@@ -24,12 +24,12 @@ PolynomialAlgebra* PolynomialAlgebra::create(const Ring* K,
   return result;
 }
 
-PolynomialAlgebra::PolynomialAlgebra(const FreeAlgebra* F)
+M2FreeAlgebra::M2FreeAlgebra(const FreeAlgebra* F)
   : mFreeAlgebra(F)
 {
 }
 
-void PolynomialAlgebra::text_out(buffer &o) const
+void M2FreeAlgebra::text_out(buffer &o) const
 {
   coefficientRing()->text_out(o);
   o << "{";
@@ -41,12 +41,12 @@ void PolynomialAlgebra::text_out(buffer &o) const
   o << "}";
 }
 
-unsigned int PolynomialAlgebra::computeHashValue(const ring_elem a) const
+unsigned int M2FreeAlgebra::computeHashValue(const ring_elem a) const
 {
   return 0; // TODO: change this to a more reasonable hash code.
 }
 
-int PolynomialAlgebra::index_of_var(const ring_elem a) const
+int M2FreeAlgebra::index_of_var(const ring_elem a) const
 {
   // This function is needed at top level to be able to determine if a ring element is a variable
   //const Poly* f = reinterpret_cast<Poly*>(a.poly_val);
@@ -59,24 +59,24 @@ int PolynomialAlgebra::index_of_var(const ring_elem a) const
   return monoid().index_of_variable(i.monom());
 }
 
-ring_elem PolynomialAlgebra::from_coefficient(const ring_elem a) const
+ring_elem M2FreeAlgebra::from_coefficient(const ring_elem a) const
 {
   auto result = new Poly;
   freeAlgebra()->from_coefficient(*result, a);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-ring_elem PolynomialAlgebra::from_long(long n) const
+ring_elem M2FreeAlgebra::from_long(long n) const
 {
   return from_coefficient(coefficientRing()->from_long(n));
 }
 
-ring_elem PolynomialAlgebra::from_int(mpz_srcptr n) const
+ring_elem M2FreeAlgebra::from_int(mpz_srcptr n) const
 {
   return from_coefficient(coefficientRing()->from_int(n));
 }
 
-bool PolynomialAlgebra::from_rational(const mpq_ptr q, ring_elem& result1) const
+bool M2FreeAlgebra::from_rational(const mpq_ptr q, ring_elem& result1) const
 {
   ring_elem cq; // in coeff ring.
   bool worked = coefficientRing()->from_rational(q, cq);
@@ -85,14 +85,14 @@ bool PolynomialAlgebra::from_rational(const mpq_ptr q, ring_elem& result1) const
   return true;
 }
 
-ring_elem PolynomialAlgebra::var(int v) const
+ring_elem M2FreeAlgebra::var(int v) const
 {
   auto result = new Poly;
   freeAlgebra()->var(*result,v);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &result) const
+bool M2FreeAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &result) const
 {
   // std::cout << "called promote NC case" << std::endl;  
   // Currently the only case to handle is R = A --> this, and A is the coefficient ring of this.
@@ -104,7 +104,7 @@ bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &res
   return false;
 }
 
-bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f1, ring_elem &result) const
+bool M2FreeAlgebra::lift(const Ring *R, const ring_elem f1, ring_elem &result) const
 {
   // R is the target ring
   // f1 is an element of 'this'.
@@ -129,49 +129,49 @@ bool PolynomialAlgebra::lift(const Ring *R, const ring_elem f1, ring_elem &resul
   return false;
 }
 
-bool PolynomialAlgebra::is_unit(const ring_elem f1) const
+bool M2FreeAlgebra::is_unit(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   return freeAlgebra()->is_unit(*f);
 }
 
-long PolynomialAlgebra::n_terms(const ring_elem f1) const
+long M2FreeAlgebra::n_terms(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   return freeAlgebra()->n_terms(*f);
 }
 
-bool PolynomialAlgebra::is_zero(const ring_elem f1) const
+bool M2FreeAlgebra::is_zero(const ring_elem f1) const
 {
   return n_terms(f1) == 0;
 }
 
-bool PolynomialAlgebra::is_equal(const ring_elem f1, const ring_elem g1) const
+bool M2FreeAlgebra::is_equal(const ring_elem f1, const ring_elem g1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
   return freeAlgebra()->is_equal(*f,*g);
 }
 
-int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) const
+int M2FreeAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
   return freeAlgebra()->compare_elems(*f,*g);
 }
 
-ring_elem PolynomialAlgebra::copy(const ring_elem f) const
+ring_elem M2FreeAlgebra::copy(const ring_elem f) const
 {
   // FRANK: is this what we want to do?
   return f;
 }
 
-void PolynomialAlgebra::remove(ring_elem &f) const
+void M2FreeAlgebra::remove(ring_elem &f) const
 {
   // do nothing
 }
 
-ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
+ring_elem M2FreeAlgebra::negate(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   Poly* result = new Poly;
@@ -179,7 +179,7 @@ ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
+ring_elem M2FreeAlgebra::add(const ring_elem f1, const ring_elem g1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
@@ -188,7 +188,7 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) const
+ring_elem M2FreeAlgebra::subtract(const ring_elem f1, const ring_elem g1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
@@ -197,7 +197,7 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
+ring_elem M2FreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
@@ -206,7 +206,7 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
   return ring_elem(reinterpret_cast<void *>(result));  
 }
 
-ring_elem PolynomialAlgebra::power(const ring_elem f1, mpz_t n) const
+ring_elem M2FreeAlgebra::power(const ring_elem f1, mpz_t n) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto result = new Poly;
@@ -214,7 +214,7 @@ ring_elem PolynomialAlgebra::power(const ring_elem f1, mpz_t n) const
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-ring_elem PolynomialAlgebra::power(const ring_elem f1, int n) const
+ring_elem M2FreeAlgebra::power(const ring_elem f1, int n) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto result = new Poly;
@@ -222,17 +222,17 @@ ring_elem PolynomialAlgebra::power(const ring_elem f1, int n) const
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-ring_elem PolynomialAlgebra::invert(const ring_elem f) const
+ring_elem M2FreeAlgebra::invert(const ring_elem f) const
 {
   return f; // TODO: bad return value.
 }
 
-ring_elem PolynomialAlgebra::divide(const ring_elem f, const ring_elem g) const
+ring_elem M2FreeAlgebra::divide(const ring_elem f, const ring_elem g) const
 {
   return f; // TODO: bad return value.
 }
 
-void PolynomialAlgebra::syzygy(const ring_elem a, const ring_elem b,
+void M2FreeAlgebra::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
   // TODO: In the commutative case, this function is to find x and y (as simple as possible)
@@ -240,7 +240,7 @@ void PolynomialAlgebra::syzygy(const ring_elem a, const ring_elem b,
   //       In this case, the function should return x = y = 0.
 }
 
-void PolynomialAlgebra::debug_display(const Poly* f) const
+void M2FreeAlgebra::debug_display(const Poly* f) const
 {
   std::cout << "coeffs: ";
   for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
@@ -257,14 +257,14 @@ void PolynomialAlgebra::debug_display(const Poly* f) const
   std::cout << std::endl;
 }
 
-void PolynomialAlgebra::debug_display(const ring_elem ff) const
+void M2FreeAlgebra::debug_display(const ring_elem ff) const
 
 {
   auto f = reinterpret_cast<const Poly*>(ff.get_Poly());
   debug_display(f);
 }
 
-ring_elem PolynomialAlgebra::makeTerm(const ring_elem a, const int* monom) const
+ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const int* monom) const
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 {
@@ -276,7 +276,7 @@ ring_elem PolynomialAlgebra::makeTerm(const ring_elem a, const int* monom) const
   
 }
 
-void PolynomialAlgebra::elem_text_out(buffer &o,
+void M2FreeAlgebra::elem_text_out(buffer &o,
                              const ring_elem ff,
                              bool p_one,
                              bool p_plus,
@@ -286,7 +286,7 @@ void PolynomialAlgebra::elem_text_out(buffer &o,
   freeAlgebra()->elem_text_out(o,*f,p_one,p_plus,p_parens);
 }
 
-ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem ff, int first_var) const
+ring_elem M2FreeAlgebra::eval(const RingMap *map, const ring_elem ff, int first_var) const
 {
   // map: R --> S, this = R.
   // f is an ele ment in R
@@ -317,7 +317,7 @@ ring_elem PolynomialAlgebra::eval(const RingMap *map, const ring_elem ff, int fi
   return result;
 }
 
-engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const ring_elem ff) const
+engine_RawArrayPairOrNull M2FreeAlgebra::list_form(const Ring *coeffR, const ring_elem ff) const
 {
   // Either coeffR should be the actual coefficient ring (possible a "toField"ed ring)
   // or a polynomial ring.  If not, NULL is returned and an error given
@@ -354,7 +354,7 @@ engine_RawArrayPairOrNull PolynomialAlgebra::list_form(const Ring *coeffR, const
   return result;
 }
 
-ring_elem PolynomialAlgebra::lead_coefficient(const Ring* coeffRing, const Poly* f) const
+ring_elem M2FreeAlgebra::lead_coefficient(const Ring* coeffRing, const Poly* f) const
 {
   if (coeffRing != coefficientRing())
     {
@@ -364,7 +364,7 @@ ring_elem PolynomialAlgebra::lead_coefficient(const Ring* coeffRing, const Poly*
   return *(f->cbeginCoeff());
 }
 
-Poly* PolynomialAlgebra::get_terms(const Poly* f, int lo, int hi) const
+Poly* M2FreeAlgebra::get_terms(const Poly* f, int lo, int hi) const
 {
   auto result = new Poly;
   auto& outcoeff = result->getCoeffInserter();
@@ -379,49 +379,49 @@ Poly* PolynomialAlgebra::get_terms(const Poly* f, int lo, int hi) const
   return result;
 }
 
-bool PolynomialAlgebra::is_homogeneous(const ring_elem f1) const
+bool M2FreeAlgebra::is_homogeneous(const ring_elem f1) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(f1.get_Poly());
   return is_homogeneous(f);
 }
 
-bool PolynomialAlgebra::is_homogeneous(const Poly* f) const
+bool M2FreeAlgebra::is_homogeneous(const Poly* f) const
 {
   if (f == nullptr) return true;
   return freeAlgebra()->is_homogeneous(*f);
 }
 
-void PolynomialAlgebra::degree(const ring_elem f, int *d) const
+void M2FreeAlgebra::degree(const ring_elem f, int *d) const
 {
   multi_degree(f, d);
 }
 
-bool PolynomialAlgebra::multi_degree(const ring_elem g, int *d) const
+bool M2FreeAlgebra::multi_degree(const ring_elem g, int *d) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(g.get_Poly());
   return multi_degree(f, d);
 }
 
-bool PolynomialAlgebra::multi_degree(const Poly* f, int *result) const
+bool M2FreeAlgebra::multi_degree(const Poly* f, int *result) const
 {
   return freeAlgebra()->multi_degree(*f,result);
 }
 
-void PolynomialAlgebra::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
+void M2FreeAlgebra::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
 {
   int comp_unused;
   f.getCoeffInserter().push_back(coefficientRing()->from_long(1));
   appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
 }
   
-ring_elem PolynomialAlgebra::fromModuleMonom(const ModuleMonom& m) const
+ring_elem M2FreeAlgebra::fromModuleMonom(const ModuleMonom& m) const
 {
   auto result = new Poly;
   appendFromModuleMonom(*result, m);
   return fromPoly(result);
 }
 
-SumCollector* PolynomialAlgebra::make_SumCollector() const
+SumCollector* M2FreeAlgebra::make_SumCollector() const
 {
   return freeAlgebra()->make_SumCollector();
 }

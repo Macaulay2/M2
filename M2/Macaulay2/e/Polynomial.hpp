@@ -9,7 +9,7 @@ class Ring;
 
 #include "ring.hpp"
 #include <iostream>
-class PolynomialAlgebra;
+class M2FreeAlgebra;
 
 struct Monom
 // Format for monomials:
@@ -145,7 +145,7 @@ void appendModuleMonomToMonom(const ModuleMonom& a, int& comp, T& inserter)
 template<typename CoefficientRingType>
 class Polynomial : public our_new_delete
 {
-  friend class PolynomialAlgebra;
+  friend class M2FreeAlgebra;
   friend class FreeAlgebra;
   
   typedef typename CoefficientRingType::ElementType ElementType;

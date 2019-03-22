@@ -19,7 +19,7 @@
 #include "matrix-con.hpp"
 
 #include "monomial-collection.hpp"
-#include "PolynomialAlgebra.hpp"
+#include "M2FreeAlgebra.hpp"
 
 
 Matrix::Matrix(const FreeModule *rows0,
@@ -1508,16 +1508,16 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 #endif
 
 //////////////////////////////////////////////
-// PolynomialAlgebra coeff, monoms commands //
+// M2FreeAlgebra coeff, monoms commands //
 //////////////////////////////////////////////
 
 // NCMonomials: adds the monomials of 'M' to the hash table 'H'.
 void NCMonomials(ModuleMonomialSet& H, const Matrix* M)
 {
-  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
+  const M2FreeAlgebra* Q = dynamic_cast<const M2FreeAlgebra*>(M->get_ring());
   if (Q == nullptr) return; 
 
-  // should not get here unless 'M' is a matrix over a PolynomialAlgebra
+  // should not get here unless 'M' is a matrix over a M2FreeAlgebra
   
   for (int c = 0; c < M->n_cols(); c++)
     {
@@ -1536,7 +1536,7 @@ void NCMonomials(ModuleMonomialSet& H, const Matrix* M)
 // matrix used when constructing H.
 Matrix* NCMonomialMatrix(ModuleMonomialSet& H, const FreeModule* target)
 {
-  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(target->get_ring());
+  const M2FreeAlgebra* Q = dynamic_cast<const M2FreeAlgebra*>(target->get_ring());
   if (Q == nullptr)
     {
       ERROR("expected NC polynomial algebra");
@@ -1560,14 +1560,14 @@ Matrix* NCMonomialMatrix(ModuleMonomialSet& H, const FreeModule* target)
 
 Matrix* NCCoefficientMatrix(ModuleMonomialSet& H, const Matrix* M)
 {
-  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
+  const M2FreeAlgebra* Q = dynamic_cast<const M2FreeAlgebra*>(M->get_ring());
   if (Q == nullptr)
     {
       ERROR("expected NC polynomial algebra");
       return nullptr;
     }
 
-  // should not get here unless 'M' is a matrix over a PolynomialAlgebra
+  // should not get here unless 'M' is a matrix over a M2FreeAlgebra
 
   MatrixConstructor mat(Q->make_FreeModule(H.size()), M->cols());
   for (int c = 0; c < M->n_cols(); c++)
@@ -1594,7 +1594,7 @@ Matrix* NCCoefficientMatrix(ModuleMonomialSet& H, const Matrix* M)
 // TODO: not done yet!!  Although, it is not yet called either.
 std::pair<Matrix*, Matrix*> NCCoefficientMatrix(const Matrix* M)
 {
-  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(M->get_ring());
+  const M2FreeAlgebra* Q = dynamic_cast<const M2FreeAlgebra*>(M->get_ring());
   if (Q == nullptr)
     {
       ERROR("expected NC polynomial algebra");
@@ -1627,7 +1627,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == nullptr)
     {
-      const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(get_ring());
+      const M2FreeAlgebra* Q = dynamic_cast<const M2FreeAlgebra*>(get_ring());
       if (Q == nullptr)
         {
           ERROR("expected polynomial ring");
@@ -1833,7 +1833,7 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
 
       return mat.to_matrix();
     }
-  const PolynomialAlgebra* Q = dynamic_cast<const PolynomialAlgebra*>(get_ring());
+  const M2FreeAlgebra* Q = dynamic_cast<const M2FreeAlgebra*>(get_ring());
   if (Q != nullptr)
     {
       ModuleMonomialSet H(Q->n_vars());

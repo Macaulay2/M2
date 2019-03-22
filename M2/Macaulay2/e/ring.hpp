@@ -29,7 +29,8 @@ class SchurRing2;
 class SchurSnRing;
 class WeylAlgebra;
 class SolvableAlgebra;
-class PolynomialAlgebra;
+class M2FreeAlgebra;
+class M2FreeAlgebraQuotient;
 
 class FreeModule;
 class RingMap;
@@ -196,8 +197,10 @@ class Ring : public MutableEngineObject
   virtual const LocalRing *cast_to_LocalRing() const { return 0; }
   virtual LocalRing *cast_to_LocalRing() { return 0; }
 
-  virtual const PolynomialAlgebra *cast_to_PolynomialAlgebra() const { return 0; }
-  virtual PolynomialAlgebra *cast_to_PolynomialAlgebra() { return 0; }
+  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return 0; }
+  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return 0; }
+  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return 0; }
+  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return 0; }
   
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
