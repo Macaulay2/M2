@@ -221,6 +221,9 @@ public:
     return const_iterator(mCoefficients.cend(), mMonomials.cend());
   }
 
+  coeffIterator beginCoeff() { return mCoefficients.begin(); }
+  coeffIterator endCoeff() { return mCoefficients.end(); }
+  
   coeffConstIterator cbeginCoeff() const { return mCoefficients.cbegin(); }
   monomConstIterator cbeginMonom() const { return mMonomials.cbegin(); }
 

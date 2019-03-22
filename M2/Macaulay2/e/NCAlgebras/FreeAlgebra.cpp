@@ -593,6 +593,13 @@ void FreeAlgebra::makeMonic(Poly& result, Poly& f) const
     outcoeff.push_back(coefficientRing()->divide(*i,f.cbegin().coeff()));
 }
 
+void FreeAlgebra::makeMonicInPlace(Poly& f) const
+{
+  ring_elem c = f.cbegin().coeff();
+  for (auto iter = f.beginCoeff(); iter != f.endCoeff(); ++iter)
+    *iter = coefficientRing()->divide(*iter,c);
+}
+
 void FreeAlgebra::elem_text_out(buffer &o,
                                 const Poly& f,
                                 bool p_one,

@@ -26,6 +26,7 @@ void NCGroebner::compute(int softDegreeLimit)
           auto overlap = toBeProcessed->front();
           auto overlapPoly = createOverlapPoly(overlap);
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
+          delete overlapPoly;
           if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
               // if reduction is nonzero
@@ -36,6 +37,14 @@ void NCGroebner::compute(int softDegreeLimit)
                   std::cout << o.str() << std::endl;
                   mOverlapTable.dump(std::cout,true);
                 }
+              freeAlgebra().makeMonicInPlace(*redOverlapPoly);
+              if (M2_gbTrace >= 2)
+                {
+                  buffer o;
+                  freeAlgebra().elem_text_out(o,*redOverlapPoly,true,false,false);
+                  std::cout << "After makeMonic: " << o.str() << std::endl;
+                }
+
               mGroebner.push_back(redOverlapPoly);
 
               newOverlaps.clear();
@@ -102,7 +111,7 @@ const ConstPolyList* NCGroebner::currentValue()
 auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
                                    const Poly* reducee,
                                    const ConstPolyList& reducers,
-                                   const WordTable& W) -> const Poly*
+                                   const WordTable& W) -> Poly*
 {
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 
@@ -166,7 +175,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
   return result;
 }
 
-auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> const Poly*
+auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
 {
   return twoSidedReduction(& freeAlgebra(),
                            reducee,
@@ -178,7 +187,7 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
                                    const ConstPolyList& polyList,
                                    int polyIndex1,
                                    int overlapIndex,
-                                   int polyIndex2) -> const Poly*
+                                   int polyIndex2) -> Poly*
 {
   // here, polyIndex1 and 2 are indices into polyList, and overlapIndex
   // is the index where the overlap starts in the polynomial pointed in
@@ -194,9 +203,15 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
   return result;
 }
                           
-auto NCGroebner::createOverlapPoly(Overlap overlap) const -> const Poly*
+auto NCGroebner::createOverlapPoly(Overlap overlap) const -> Poly*
 {
-  if (std::get<1>(overlap) == -1) return mInput[std::get<0>(overlap)];
+  if (std::get<1>(overlap) == -1)
+    {
+      const Poly* f = mInput[std::get<0>(overlap)];
+      Poly * result = new Poly;
+      freeAlgebra().copy(*result, *f);
+      return result;
+    }
   else return createOverlapPoly(& freeAlgebra(),
                                 mGroebner,
                                 std::get<0>(overlap),

@@ -32,17 +32,17 @@ public:
   static auto twoSidedReduction(const FreeAlgebra* A,
                                 const Poly* reducee,
                                 const ConstPolyList& reducers,
-                                const WordTable& W) -> const Poly*;
+                                const WordTable& W) -> Poly*;
 
-  auto twoSidedReduction(const Poly* reducee) const -> const Poly*;
+  auto twoSidedReduction(const Poly* reducee) const -> Poly*;
   
   static auto createOverlapPoly(const FreeAlgebra* A,
                                 const ConstPolyList& polyList,
                                 int polyIndex1,
                                 int polyIndex2,
-                                int overlapIndex) -> const Poly*;
+                                int overlapIndex) -> Poly*;
                           
-  auto createOverlapPoly(Overlap o) const -> const Poly*;
+  auto createOverlapPoly(Overlap o) const -> Poly*;
 
   auto overlapWordLength(Overlap o) const -> int;
   

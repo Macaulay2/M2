@@ -62,6 +62,7 @@ public:
   void power(Poly& result, const Poly& f, mpz_ptr n) const;
 
   void makeMonic(Poly& result, Poly& f) const;
+  void makeMonicInPlace(Poly& f) const;
   
   void elem_text_out(buffer &o,
                      const Poly& f,
