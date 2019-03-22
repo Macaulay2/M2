@@ -1230,7 +1230,9 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
       auto elems = matrixToVector(A, input);
       NCGroebner G(A, elems, maxdeg);
       G.compute(maxdeg); // this argument is actually the soft degree limit
+      std::cout << "Done with G.compute()" << std::endl;
       auto result = G.currentValue();
+      std::cout << "Done with G.currentValue()" << std::endl;
       return vectorToMatrix(A, *result);
     }
   ERROR("expected a one row matrix over a noncommutative algebra");

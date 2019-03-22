@@ -4,6 +4,14 @@
 // insert.  If degree exists, append overlap to value of degree
 auto OverlapTable::insert(int deg, bool isGenerator, Overlap o) -> void
 {
+  if (M2_gbTrace >= 3)
+    {
+      std::cout << "overlapTable: inserting deg="
+                << deg
+                << "isGenerator=" << isGenerator
+                << " overlap=" << o
+                << std::endl;
+    }
   std::deque<Overlap> emptyDeque;
   auto ret = mOverlapMap.insert(std::make_pair(std::make_pair(deg,isGenerator),
                                                emptyDeque));
@@ -20,8 +28,12 @@ auto OverlapTable::isFinished() const -> bool
 auto OverlapTable::isFinished(int topDegree) const -> bool
 {
   auto beginIter = mOverlapMap.begin();
-  if (beginIter == mOverlapMap.end()) return false;
-  return (beginIter->first.first > topDegree);
+  std::cout << "about to check emptyness"  << std::endl;
+  if (beginIter == mOverlapMap.end()) return true;
+  std::cout << "about to determine isFinished"  << std::endl;
+  auto result = (beginIter->first.first > topDegree);
+  std::cout << "result of that = "  << result << std::endl;
+  return result;
 }
 
 // returns the lowest degree and a pointer to the overlaps

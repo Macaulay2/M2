@@ -15,7 +15,7 @@ using Poly = Polynomial<CoefficientRingType>;
 using PolyList = VECTOR(Poly*);
 using ConstPolyList = VECTOR(const Poly*);
 
-class FreeAlgebra
+class FreeAlgebra : public our_new_delete
 {
 private:
   FreeAlgebra(const Ring* K, const FreeMonoid* M);

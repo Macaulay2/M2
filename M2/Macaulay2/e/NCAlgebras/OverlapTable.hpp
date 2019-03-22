@@ -48,6 +48,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& ostr, const OverlapTable& overlapTable);
+auto operator<<(std::ostream& o, Overlap& a) -> std::ostream&;
 
 #endif
 

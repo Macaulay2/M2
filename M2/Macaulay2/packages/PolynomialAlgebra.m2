@@ -14,7 +14,8 @@ newPackage(
         )
 
 export {
-    "NCPolynomialRing",
+    "NCGB", -- uugh: change name!
+    "NCPolynomialRing", -- change this name too!
     "sequenceToVariableSymbols"
     }
 
@@ -183,6 +184,10 @@ isWellDefined NCPolynomialRing := Boolean => R -> (
     true
     )
 -- listForm
+
+NCGB = method()
+NCGB(Ideal, ZZ) := (I, maxdeg) -> map(ring I, rawNCGroebnerBasisTwoSided(raw gens I, maxdeg))
+
 beginDocumentation()
 
 BENCHMARK = method()
@@ -692,8 +697,9 @@ TEST ///
 *-
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
+  gbTrace=3
   debug Core
-  map(R, rawNCGroebnerBasisTwoSided(raw gens I, 387))  
+  NCGB(I, 387)
 ///
 
 end--

@@ -4,7 +4,7 @@
 #include "polyring.hpp"
 #include "Polynomial.hpp"
 
-class FreeMonoid
+class FreeMonoid : public our_new_delete
 {
   // types of monomials: (MES: just note to ourselves: remove it eventually).
   //  1. packed varpower (region of memory filled with int's)

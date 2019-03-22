@@ -8,30 +8,38 @@ void NCGroebner::compute(int softDegreeLimit)
   // process input polynomials first
   for (auto i = 0; i < mInput.size(); i++)
     {
-      mRing->freeAlgebra()->lead_word(tmpWord,*mInput[i]);
+      freeAlgebra().lead_word(tmpWord,*mInput[i]);
       mOverlapTable.insert(tmpWord.size(),
                            true,
                            std::make_tuple(i,-1,-1));
     }
-  std::cout << "Here 1." << std::endl;
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "Overlap table after including generators:" << std::endl;
+      mOverlapTable.dump(std::cout, true);
+    }
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
       auto toBeProcessed = mOverlapTable.nextDegreeOverlaps().second;
       while(!toBeProcessed->empty())
         {
-          std::cout << "Here 2." << std::endl;
           auto overlap = toBeProcessed->front();
           auto overlapPoly = createOverlapPoly(overlap);
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
-          if (!mRing->freeAlgebra()->is_zero(*redOverlapPoly))
+          if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
-              buffer o;
-              mRing->freeAlgebra()->elem_text_out(o,*redOverlapPoly,true,true,true);
-              std::cout << o.str() << std::endl;
-              mOverlapTable.dump(std::cout,true);
               // if reduction is nonzero
+              if (M2_gbTrace >= 2)
+                {
+                  buffer o;
+                  freeAlgebra().elem_text_out(o,*redOverlapPoly,true,true,true);
+                  std::cout << o.str() << std::endl;
+                  mOverlapTable.dump(std::cout,true);
+                }
+              mGroebner.push_back(redOverlapPoly);
+
               newOverlaps.clear();
-              mRing->freeAlgebra()->lead_word(tmpWord,*redOverlapPoly);
+              freeAlgebra().lead_word(tmpWord,*redOverlapPoly);
               mWordTable.insert(tmpWord,newOverlaps);
               std::cout << "Here 3a." << std::endl << std::flush;
               for (auto newOverlap : newOverlaps)
@@ -50,7 +58,13 @@ void NCGroebner::compute(int softDegreeLimit)
                                        false,
                                        newOverlap);
                 }
-              mGroebner.push_back(redOverlapPoly);
+              if (M2_gbTrace >= 2)
+                {
+                  buffer o;
+                  freeAlgebra().elem_text_out(o,*redOverlapPoly,true,true,true);
+                  std::cout << o.str() << std::endl;
+                  mOverlapTable.dump(std::cout,true);
+                }
               std::cout << "after insertion" << std::endl;
               std::cout << mOverlapTable << std::endl;
             }
@@ -58,11 +72,26 @@ void NCGroebner::compute(int softDegreeLimit)
             {
               // if reduction is zero
             }
+          std::cout << "about to pop last overlap" << std::endl;
           toBeProcessed->pop_front();
+          std::cout << "done with pop last overlap" << std::endl;
+          if (M2_gbTrace >= 2)
+            {
+              std::cout << "table after pop:";
+              mOverlapTable.dump(std::cout,true);
+            }
         }
       // remove the lowest degree overlaps from the overlap table
+      std::cout << "about to remove this last overlap degree set" << std::endl;
       mOverlapTable.removeLowestDegree();
+      std::cout << "done with remove this last overlap degree set" << std::endl;
+      if (M2_gbTrace >= 2)
+        {
+          std::cout << "table after removeLowestDegree:";
+          mOverlapTable.dump(std::cout,true);
+        }
     }
+  std::cout << "leaving compute..." << std::endl;
 }
 
 const ConstPolyList* NCGroebner::currentValue()
@@ -139,7 +168,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra* A,
 
 auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> const Poly*
 {
-  return twoSidedReduction(mRing->freeAlgebra(),
+  return twoSidedReduction(& freeAlgebra(),
                            reducee,
                            mGroebner,
                            mWordTable);
@@ -168,7 +197,7 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra* A,
 auto NCGroebner::createOverlapPoly(Overlap overlap) const -> const Poly*
 {
   if (std::get<1>(overlap) == -1) return mInput[std::get<0>(overlap)];
-  else return createOverlapPoly(mRing->freeAlgebra(),
+  else return createOverlapPoly(& freeAlgebra(),
                                 mGroebner,
                                 std::get<0>(overlap),
                                 std::get<1>(overlap),
@@ -178,7 +207,7 @@ auto NCGroebner::createOverlapPoly(Overlap overlap) const -> const Poly*
 auto NCGroebner::overlapWordLength(Overlap o) const -> int
 {
   Word tmp;
-  mRing->freeAlgebra()->lead_word(tmp,*mGroebner[std::get<2>(o)]);
+  freeAlgebra().lead_word(tmp,*mGroebner[std::get<2>(o)]);
   return std::get<1>(o) + tmp.size();
 }
 
