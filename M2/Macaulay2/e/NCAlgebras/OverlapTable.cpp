@@ -28,12 +28,8 @@ auto OverlapTable::isFinished() const -> bool
 auto OverlapTable::isFinished(int topDegree) const -> bool
 {
   auto beginIter = mOverlapMap.begin();
-  std::cout << "about to check emptyness"  << std::endl;
   if (beginIter == mOverlapMap.end()) return true;
-  std::cout << "about to determine isFinished"  << std::endl;
-  auto result = (beginIter->first.first > topDegree);
-  std::cout << "result of that = "  << result << std::endl;
-  return result;
+  return (beginIter->first.first > topDegree);
 }
 
 // returns the lowest degree and a pointer to the overlaps

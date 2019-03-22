@@ -50,15 +50,12 @@ void NCGroebner::compute(int softDegreeLimit)
               newOverlaps.clear();
               freeAlgebra().lead_word(tmpWord,*redOverlapPoly);
               mWordTable.insert(tmpWord,newOverlaps);
-              std::cout << "Here 3a." << std::endl << std::flush;
               for (auto newOverlap : newOverlaps)
                 {
                   mOverlapTable.insert(overlapWordLength(newOverlap),
                                        false,
                                        newOverlap);
                 }
-              std::cout << "Here 3b." << std::endl << std::flush;
-              std::cout << newOverlaps.size() << std::endl << std::flush;
               newOverlaps.clear();
               mWordTable.leftOverlaps(newOverlaps);
               for (auto newOverlap : newOverlaps)
@@ -74,16 +71,12 @@ void NCGroebner::compute(int softDegreeLimit)
                   std::cout << o.str() << std::endl;
                   mOverlapTable.dump(std::cout,true);
                 }
-              std::cout << "after insertion" << std::endl;
-              std::cout << mOverlapTable << std::endl;
             }
           else
             {
               // if reduction is zero
             }
-          std::cout << "about to pop last overlap" << std::endl;
           toBeProcessed->pop_front();
-          std::cout << "done with pop last overlap" << std::endl;
           if (M2_gbTrace >= 2)
             {
               std::cout << "table after pop:";
@@ -91,16 +84,8 @@ void NCGroebner::compute(int softDegreeLimit)
             }
         }
       // remove the lowest degree overlaps from the overlap table
-      std::cout << "about to remove this last overlap degree set" << std::endl;
       mOverlapTable.removeLowestDegree();
-      std::cout << "done with remove this last overlap degree set" << std::endl;
-      if (M2_gbTrace >= 2)
-        {
-          std::cout << "table after removeLowestDegree:";
-          mOverlapTable.dump(std::cout,true);
-        }
     }
-  std::cout << "leaving compute..." << std::endl;
 }
 
 const ConstPolyList* NCGroebner::currentValue()
