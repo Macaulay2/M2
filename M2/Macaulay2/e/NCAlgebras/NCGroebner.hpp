@@ -1,7 +1,6 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
-#include "../style.hpp"
 #include "../PolynomialAlgebra.hpp"
 #include "WordTable.hpp"
 #include "OverlapTable.hpp"

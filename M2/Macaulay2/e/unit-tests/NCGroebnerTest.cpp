@@ -157,6 +157,15 @@ TEST(FreeAlgebra, polyarithmetic)
   A->setZero(*g);
   A->mult_by_term_left_and_right(*g,*f,A->coefficientRing()->from_long(1),Word(monom2),Word(monom3));
   EXPECT_TRUE(g == z*z*f*y*x*y*x);
+
+  // making polynomial monic test
+  A->setZero(*f);
+  A->setZero(*g);
+  A->setZero(*h);
+  A->from_long(*f,-1);
+  g = f*(x + y);
+  A->makeMonic(*h,*g);
+  EXPECT_TRUE(h == x + y);
 }
 
 TEST(FreeAlgebra, comparisons)
@@ -202,9 +211,9 @@ TEST(FreeAlgebra, spairs)
 TEST(OverlapTable, insertion)
 {
   OverlapTable overlapTable;
-  overlapTable.insert(3,std::make_tuple(1,2,3));
-  overlapTable.insert(3,std::make_tuple(1,2,1));
-  overlapTable.insert(2,std::make_tuple(1,1,1));
+  overlapTable.insert(3,false,std::make_tuple(1,2,3));
+  overlapTable.insert(3,false,std::make_tuple(1,2,1));
+  overlapTable.insert(2,false,std::make_tuple(1,1,1));
   EXPECT_FALSE(overlapTable.isFinished());
   EXPECT_TRUE(overlapTable.isFinished(1));
   EXPECT_FALSE(overlapTable.isFinished(3));

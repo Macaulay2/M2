@@ -27,19 +27,21 @@ void NCGroebner::compute(int softDegreeLimit)
             {
               buffer o;
               mRing->freeAlgebra()->elem_text_out(o,*redOverlapPoly,true,true,true);
-              std::cout << "Here 3." << std::endl;
               std::cout << o.str() << std::endl;
               mOverlapTable.dump(std::cout,true);
               // if reduction is nonzero
               newOverlaps.clear();
               mRing->freeAlgebra()->lead_word(tmpWord,*redOverlapPoly);
               mWordTable.insert(tmpWord,newOverlaps);
+              std::cout << "Here 3a." << std::endl << std::flush;
               for (auto newOverlap : newOverlaps)
                 {
                   mOverlapTable.insert(overlapWordLength(newOverlap),
                                        false,
                                        newOverlap);
                 }
+              std::cout << "Here 3b." << std::endl << std::flush;
+              std::cout << newOverlaps.size() << std::endl << std::flush;
               newOverlaps.clear();
               mWordTable.leftOverlaps(newOverlaps);
               for (auto newOverlap : newOverlaps)
@@ -49,6 +51,7 @@ void NCGroebner::compute(int softDegreeLimit)
                                        newOverlap);
                 }
               mGroebner.push_back(redOverlapPoly);
+              std::cout << "after insertion" << std::endl;
               std::cout << mOverlapTable << std::endl;
             }
           else

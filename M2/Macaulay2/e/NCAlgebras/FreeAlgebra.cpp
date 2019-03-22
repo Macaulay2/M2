@@ -581,6 +581,18 @@ void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
     }
 }
 
+void FreeAlgebra::makeMonic(Poly& result, Poly& f) const
+{
+  auto& outmonom = result.getMonomInserter();
+  auto& outcoeff = result.getCoeffInserter();
+
+  for (auto i = f.cbeginMonom(); i != f.cendMonom(); ++i)
+    outmonom.push_back(*i);
+
+  for (auto i=f.cbeginCoeff(); i != f.cendCoeff(); ++i)
+    outcoeff.push_back(coefficientRing()->divide(*i,f.cbegin().coeff()));
+}
+
 void FreeAlgebra::elem_text_out(buffer &o,
                                 const Poly& f,
                                 bool p_one,
