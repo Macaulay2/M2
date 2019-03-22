@@ -1,5 +1,14 @@
 #include "Polynomial.hpp"
 
+std::ostream& operator<<(std::ostream& o, const Monom& m)
+{
+  o << "[";
+  for (int i=0; i<m[0]; ++i)
+    o << m[i] << " ";
+  o << "]";
+  return o;
+}
+
 std::ostream& operator<<(std::ostream& o, const ModuleMonom& m)
 {
   o << "[";

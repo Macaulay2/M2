@@ -272,6 +272,29 @@ TEST(WordTable, insert)
   EXPECT_EQ(matches[2], std::make_pair(2, 5));
 }        
 
+TEST(WordTable, sizet)
+{
+  size_t a = 3;
+  size_t b = 5;
+  auto c = a-b;
+  std::cout << c << std::endl;
+}
+
+
+TEST(WordTable, simpleSubwords)
+{
+  std::vector<int> monom1 {1, 1};  // yy
+  std::vector<int> word {1}; // y
+
+  WordTable W;
+  W.insert(Word(monom1));
+  
+  std::vector<std::pair<int,int>> matches;
+  W.subwords(Word(word), matches);
+
+  EXPECT_EQ(matches.size(), 0);
+}        
+
 TEST(WordTable, subwords)
 {
   std::vector<int> monom1 {1, 0, 1, 2};  // babc

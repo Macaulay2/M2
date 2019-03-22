@@ -497,7 +497,6 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
       ring_elem d = coefficientRing()->mult(c, i.coeff());
       if (coefficientRing()->is_zero(d))
         continue;
-
       outcoeff.push_back(d);
       monoid().mult3(leftM, i.monom(), rightM, outmonom);
     }
@@ -512,7 +511,8 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
   std::vector<int> leftTmp, rightTmp;
   Word::toAllocatedMonom(leftTmp,leftW);
   Word::toAllocatedMonom(rightTmp,rightW);
-  Monom leftTmpMonom(&*leftTmp.cbegin()), rightTmpMonom(&*rightTmp.cbegin());
+  Monom leftTmpMonom(&*leftTmp.cbegin());
+  Monom rightTmpMonom(&*rightTmp.cbegin());
   mult_by_term_left_and_right(result,f,c,leftTmpMonom,rightTmpMonom);
   leftTmp.clear();
   rightTmp.clear();

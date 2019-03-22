@@ -20,6 +20,7 @@ void WordTable::subwordPositions(Word word1,
 // the position of word1 in word2 is added (there may be several
 // matches)
 {
+  if (word2.size() < word1.size()) return;
   for (auto j = 0; j <= word2.size() - word1.size(); ++j)
     {
       bool match = true;
@@ -41,6 +42,7 @@ bool WordTable::subwordPosition(Word word1,
 // and true is returned.  If no match, then false is returned,
 // and result_start_index is not touched.
 {
+  if (word2.size() < word1.size()) return false;
   for (auto j = 0; j <= word2.size() - word1.size(); ++j)
     {
       bool match = true;
@@ -106,7 +108,7 @@ void WordTable::overlaps(Word word1,
                          std::vector<int>& result_overlaps)
 {
   if (word1.size() <= 1) return;
-  for (int i = word1.size() - 1; i > 0 and i > word1.size() - word2.size(); --i)
+  for (int i = word1.size() - 1; i > 0 and i + word2.size() > word1.size(); --i)
     {
       Word suffix(word1.begin() + i, word1.end());
       Word prefix(word2.begin(), word2.begin() + word1.size() - i); // indices should be in range.

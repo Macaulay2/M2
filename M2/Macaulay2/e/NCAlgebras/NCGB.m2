@@ -28,4 +28,44 @@ R = kk{z,y,x}
 
 B = flatten for i from 0 to 2 list flatten for j from 0 to 2 list for k from 0 to 2 list R_i * R_j * R_k
 inJ = (ideal J)_*/leadTerm//ideal
-NCReduction2Sided(matrix{B}, inJ)
+compress NCReduction2Sided(matrix{B}, inJ)
+
+kk = ZZ/32003
+R = kk{x,y}
+I = ideal(x^2-y^2)
+J = elapsedTime NCGB(I, 10);
+B = flatten for i from 0 to 1 list flatten for j from 0 to 1 list for k from 0 to 1 list R_i * R_j * R_k
+inJ = (ideal J)_*/leadTerm//ideal
+compress NCReduction2Sided(matrix{B}, inJ)
+
+restart
+needsPackage "PolynomialAlgebra"
+kk = ZZ/32003
+R = kk{z,y,x}
+I = ideal(5*z^2+3*y*x+2*x*y, 3*z*y+2*y*z+5*x^2, 2*z*x+5*y^2+3*x*z)
+J = elapsedTime NCGB(I, 10);
+B = flatten for i from 0 to 2 list flatten for j from 0 to 2 list for k from 0 to 2 list R_i * R_j * R_k
+inJ = (ideal J)_*/leadTerm//ideal
+compress NCReduction2Sided(matrix{{B_13}}, inJ) -- crashes
+compress NCReduction2Sided(matrix{{B_15}}, inJ) -- crashes
+
+compress NCReduction2Sided(matrix{B}, inJ)
+compress NCReduction2Sided(matrix{{y^3}}, J)
+compress NCReduction2Sided(matrix{{(y*x^2)^2}}, J)
+
+compress NCReduction2Sided(matrix{{B_0}}, inJ)
+compress NCReduction2Sided(matrix{{B_1}}, inJ)
+for i from 0 to 12 list elapsedTime compress NCReduction2Sided(matrix{{B_i}}, inJ)
+
+compress NCReduction2Sided(matrix{{y^3}}, ideal(z^2, z*y, z*x, y^2*x, y^2*z, y*x*y^2))
+compress NCReduction2Sided(matrix{{y^3}}, ideal(z^2, z*y, z*x))
+compress NCReduction2Sided(matrix{{y^3}}, ideal(z^2, z*y, z*x, y^2*x, y^2*z))
+compress NCReduction2Sided(matrix{{y^3}}, ideal(y*x*y^2)) -- crash
+
+
+restart
+needsPackage "PolynomialAlgebra"
+
+kk = ZZ/32003
+R = kk{x,y}
+compress NCReduction2Sided(matrix{{y}}, ideal(y^2)) -- crash

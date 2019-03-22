@@ -15,6 +15,7 @@ newPackage(
 
 export {
     "NCGB", -- uugh: change name!
+    "NCReduction2Sided",
     "NCPolynomialRing", -- change this name too!
     "sequenceToVariableSymbols"
     }
@@ -187,6 +188,15 @@ isWellDefined NCPolynomialRing := Boolean => R -> (
 
 NCGB = method()
 NCGB(Ideal, ZZ) := (I, maxdeg) -> map(ring I, rawNCGroebnerBasisTwoSided(raw gens I, maxdeg))
+
+NCReduction2Sided = method()
+NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
+    R := ring M;
+    if R =!= ring I then error "expected same ring";
+    map(R, rawNCReductionTwoSided(raw M, raw I))
+    )
+NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
+NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
 
 beginDocumentation()
 
@@ -673,14 +683,6 @@ TEST ///
   map(R, rawNCReductionTwoSided(raw gens I, raw gens J))
   map(R, rawNCReductionTwoSided(raw gens I, raw gens K))
   map(R, rawNCReductionTwoSided(raw gens I2, raw gens K))
-NCReduction2Sided = method()
-NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
-    R := ring M;
-    if R =!= ring I then error "expected same ring";
-    map(R, rawNCReductionTwoSided(raw M, raw I))
-    )
-NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
-NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
 
 f = a*a-b*c-a
 g = NCReduction2Sided(a*f-f*a, ideal(f))
