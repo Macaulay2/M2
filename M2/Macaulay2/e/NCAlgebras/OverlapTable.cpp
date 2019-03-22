@@ -8,7 +8,7 @@ auto OverlapTable::insert(int deg, bool isGenerator, Overlap o) -> void
     {
       std::cout << "overlapTable: inserting deg="
                 << deg
-                << "isGenerator=" << isGenerator
+                << " isGenerator=" << isGenerator
                 << " overlap=" << o
                 << std::endl;
     }

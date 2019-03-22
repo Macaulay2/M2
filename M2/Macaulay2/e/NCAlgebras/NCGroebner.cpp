@@ -75,6 +75,11 @@ void NCGroebner::compute(int softDegreeLimit)
           else
             {
               // if reduction is zero
+              if (M2_gbTrace >= 4)
+                {
+                  std::cout << "Overlap " << overlap << " reduced to zero."
+                            << std::endl;
+                }
             }
           toBeProcessed->pop_front();
           if (M2_gbTrace >= 2)

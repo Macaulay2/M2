@@ -12,6 +12,7 @@ elapsedTime (Igb = ncGroebnerBasis(I, DegreeLimit => 10))
 
 restart
 needsPackage "PolynomialAlgebra"
+gbTrace = 4
 kk = QQ
 R = kk{z,y,x}
 
@@ -28,6 +29,7 @@ R = kk{z,y,x}
 
 B = flatten for i from 0 to 2 list flatten for j from 0 to 2 list for k from 0 to 2 list R_i * R_j * R_k
 inJ = (ideal J)_*/leadTerm//ideal
+<<<<<<< HEAD
 compress NCReduction2Sided(matrix{B}, inJ)
 
 kk = ZZ/32003
@@ -69,3 +71,14 @@ needsPackage "PolynomialAlgebra"
 kk = ZZ/32003
 R = kk{x,y}
 compress NCReduction2Sided(matrix{{y}}, ideal(y^2)) -- crash
+
+
+restart
+needsPackage "PolynomialAlgebra"
+kk = frac(QQ[a,b,c])
+R = kk{x,y,z}
+I = ideal(a*x*y + b*y*x + c*z^2, a*y*z + b*z*y + c*x^2, a*z*x + b*x*z + c*y^2)
+elapsedTime Igb = NCGB(I,5)
+elapsedTime Igb = NCGB(I,6)
+
+
