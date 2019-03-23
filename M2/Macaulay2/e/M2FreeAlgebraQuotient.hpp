@@ -5,6 +5,7 @@
 #include "Polynomial.hpp"
 #include "NCAlgebras/FreeMonoid.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/FreeAlgebraQuotient.hpp"
 
 using ExponentVector = int*;
 
@@ -16,22 +17,20 @@ using ExponentVector = int*;
 class M2FreeAlgebraQuotient : public Ring
 {
 private:
-  // This information is now in mFreeAlgebra
-  //const Ring& mCoefficientRing;
-  //const FreeMonoid mMonoid;
-  const FreeAlgebra* mFreeAlgebra;
-
-  M2FreeAlgebraQuotient(const FreeAlgebra* F);
+  const M2FreeAlgebra* mFreeAlgebra;
+  const FreeAlgebraQuotient& mFreeAlgebraQuotient;
+  
+  M2FreeAlgebraQuotient(
+                        const M2FreeAlgebra* F,
+                        const FreeAlgebraQuotient& A
+                        );
 public:
-  //using Poly = Polynomial<CoefficientRingTypeExample>;
+  static M2FreeAlgebraQuotient* create(const M2FreeAlgebra* A,
+                                       const Matrix* GB
+                                       );
 
-  static M2FreeAlgebraQuotient* create(const Ring* K,
-                                   const std::vector<std::string>& names,
-                                   const PolynomialRing* degreeRing,
-                                   const std::vector<int>& degrees
-                                   );
-
-  const FreeAlgebra* freeAlgebra() const { return mFreeAlgebra; }
+  const M2FreeAlgebra* freeAlgebra() const { return mFreeAlgebra; }
+  const FreeAlgebraQuotient& freeAlgebraQuotient() const { return mFreeAlgebraQuotient; }
   const Ring* coefficientRing() const { return freeAlgebra()->coefficientRing(); }
   const FreeMonoid& monoid() const { return freeAlgebra()->monoid(); }
   const Monoid& degreeMonoid() const { return freeAlgebra()->monoid().degreeMonoid(); }
@@ -108,11 +107,13 @@ public:
   #endif
   
   // lead terms, or get contiguous terms
-  Poly* get_terms(const Poly* f, int lo, int hi) const;
+  Poly* get_terms(const Poly* f, int lo, int hi) const
+  {
+    return mFreeAlgebra->get_terms(f, lo, hi);
+  }
   ring_elem get_terms(const ring_elem f, int lo, int hi) const
   {
-    const Poly* result = get_terms(reinterpret_cast<const Poly*>(f.get_Poly()), lo, hi);
-    return ring_elem(reinterpret_cast<const Poly*>(result));
+    return mFreeAlgebra->get_terms(f, lo, hi);
   }
 
   // casting functions

@@ -10,10 +10,12 @@ INTERFACE2 = \
 	interrupted \
 	newdelete \
 
+#	NCAlgebras/FreeAlgebraQuotient \
+#	M2FreeAlgebraQuotient \
+
 INTERFACE = \
 	monordering \
 	NCAlgebras/FreeAlgebra \
-	NCAlgebras/FreeAlgebraQuotient \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
@@ -21,7 +23,6 @@ INTERFACE = \
 	monomial-collection \
 	Polynomial \
 	M2FreeAlgebra \
-	M2FreeAlgebraQuotient \
 	NCAlgebra \
 	monomial-sets \
 	mutablecomplex \
