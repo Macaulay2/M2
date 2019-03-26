@@ -264,16 +264,21 @@ void M2FreeAlgebra::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
+void M2FreeAlgebra::makeTerm(Poly& result, const ring_elem a, const int* monom) const
+  // 'monom' is in 'varpower' format
+  // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
+{
+  result.getCoeffInserter().push_back(a);
+  monoid().fromMonomial(monom, result.getMonomInserter());
+}
+
 ring_elem M2FreeAlgebra::makeTerm(const ring_elem a, const int* monom) const
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 {
   auto result = new Poly;
-
-  result->getCoeffInserter().push_back(a);
-  monoid().fromMonomial(monom, result->getMonomInserter());
+  makeTerm(*result, a, monom);
   return reinterpret_cast<Nterm*>(result);
-  
 }
 
 void M2FreeAlgebra::elem_text_out(buffer &o,

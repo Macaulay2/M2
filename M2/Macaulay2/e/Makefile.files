@@ -10,10 +10,10 @@ INTERFACE2 = \
 	interrupted \
 	newdelete \
 
-#	NCAlgebras/FreeAlgebraQuotient \
-#	M2FreeAlgebraQuotient \
 
 INTERFACE = \
+	NCAlgebras/FreeAlgebraQuotient \
+	M2FreeAlgebraQuotient \
 	monordering \
 	NCAlgebras/FreeAlgebra \
 	NCAlgebras/FreeMonoid \

@@ -16,15 +16,10 @@ using ExponentVector = int*;
 class M2FreeAlgebra : public Ring
 {
 private:
-  // This information is now in mFreeAlgebra
-  //const Ring& mCoefficientRing;
-  //const FreeMonoid mMonoid;
   const FreeAlgebra* mFreeAlgebra;
 
   M2FreeAlgebra(const FreeAlgebra* F);
 public:
-  //using Poly = Polynomial<CoefficientRingTypeExample>;
-
   static M2FreeAlgebra* create(const Ring* K,
                                    const std::vector<std::string>& names,
                                    const PolynomialRing* degreeRing,
@@ -34,7 +29,8 @@ public:
   const FreeAlgebra* freeAlgebra() const { return mFreeAlgebra; }
   const Ring* coefficientRing() const { return freeAlgebra()->coefficientRing(); }
   const FreeMonoid& monoid() const { return freeAlgebra()->monoid(); }
-  const Monoid& degreeMonoid() const { return freeAlgebra()->monoid().degreeMonoid(); }
+  const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
+  const PolynomialRing* degreeRing() const { return monoid().degreeRing(); }
   
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
@@ -123,6 +119,9 @@ public:
   void debug_display(const ring_elem ff) const;
 
   ring_elem makeTerm(const ring_elem a, const int* monom) const;
+
+  void makeTerm(Poly& result, const ring_elem a, const int* monom) const;
+  
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 

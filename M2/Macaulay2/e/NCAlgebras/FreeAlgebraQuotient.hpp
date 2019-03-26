@@ -2,14 +2,13 @@
 #define _free_algebra_quotient_hpp_
 
 #include "FreeAlgebra.hpp"
+#include <memory>
 
 class FreeAlgebraQuotient : public our_new_delete
 {
-private:
-  FreeAlgebraQuotient(const FreeAlgebra& A, ConstPolyList& GB);
-
-  void normalizeInPlace(Poly& f) const;
 public:
+  FreeAlgebraQuotient(const FreeAlgebra& A, std::unique_ptr<PolyList> GB);
+
   const Ring* coefficientRing() const { return mFreeAlgebra.coefficientRing(); }
   const FreeMonoid& monoid() const { return mFreeAlgebra.monoid(); }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
@@ -17,6 +16,8 @@ public:
   
   unsigned int computeHashValue(const Poly& a) const; // TODO
 
+  void normalizeInPlace(Poly& f) const;
+  
   void init(Poly& f) const {}
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
@@ -60,7 +61,7 @@ public:
 
 private:
   const FreeAlgebra& mFreeAlgebra;
-  ConstPolyList mGroebner;
+  std::unique_ptr<PolyList> mGroebner;
   WordTable mWordTable;
 };
 

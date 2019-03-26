@@ -6,15 +6,6 @@
 #include "FreeMonoid.hpp"
 #include "WordTable.hpp"
 
-struct CoefficientRingType
-{
-  typedef ring_elem ElementType;
-};
-
-using Poly = Polynomial<CoefficientRingType>;
-using PolyList = VECTOR(Poly*);
-using ConstPolyList = VECTOR(const Poly*);
-
 class FreeAlgebra : public our_new_delete
 {
 private:

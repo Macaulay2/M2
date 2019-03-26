@@ -9,11 +9,11 @@ SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 }
 
 FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
-                                         ConstPolyList& GB)
+                                         std::unique_ptr<PolyList> GB)
   : mFreeAlgebra(A),
-    mGroebner(GB)
+    mGroebner(std::move(GB))
 {
-  // TODO: generate W.
+  // generate W
 }
 
 void FreeAlgebraQuotient::normalizeInPlace(Poly& f) const

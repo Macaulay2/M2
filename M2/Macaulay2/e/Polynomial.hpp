@@ -269,6 +269,15 @@ private:
   std::vector<int> mMonomials;
 };
 
+struct CoefficientRingType
+{
+  typedef ring_elem ElementType;
+};
+
+using Poly = Polynomial<CoefficientRingType>;
+using PolyList = VECTOR(Poly*);
+using ConstPolyList = VECTOR(const Poly*);
+
 #endif
 
 // Local Variables:

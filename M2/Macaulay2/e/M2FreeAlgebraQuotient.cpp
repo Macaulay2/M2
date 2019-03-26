@@ -2,20 +2,39 @@
 #include "monomial.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"
+#include "matrix.hpp"
 
+#include "stdinc-m2.hpp"
 #include <vector>
 #include <string>
 #include <iostream>
+#include <memory>
+
+std::unique_ptr<PolyList> copyMatrixToVector(const M2FreeAlgebra* A,
+                             const Matrix* input)
+{
+  auto result = make_unique<PolyList>();
+  result->reserve(input->n_cols());
+  for (int i=0; i<input->n_cols(); i++)
+    {
+      ring_elem a = input->elem(0,i);
+      auto f = reinterpret_cast<const Poly*>(a.get_Poly());
+      auto g = new Poly;
+      A->freeAlgebra()->copy(*g, *f);
+      result->push_back(g);
+    }
+  return result;
+}
 
 M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
-                                                     const M2FreeAlgebra* A,
+                                                     const M2FreeAlgebra* F,
                                                      const Matrix* GB
                                                      )
 {
-  PolyList* gbElements = copyMatrixToVector(GB);
-  FreeAlgebraQuotient* F = FreeAlgebraQuotient::create(A, gbElements);
-  M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(A, F);
-  result->initialize_ring(K->characteristic(), degreeRing, nullptr);
+  std::unique_ptr<PolyList> gbElements = copyMatrixToVector(F, GB);
+  FreeAlgebraQuotient* A = new FreeAlgebraQuotient(*F->freeAlgebra(), std::move(gbElements));
+  M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, *A);
+  result->initialize_ring(F->coefficientRing()->characteristic(), F->degreeRing(), nullptr);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
   result->minus_oneV = result->from_long(-1);
@@ -23,7 +42,7 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
   return result;
 }
 
-M2FreeAlgebraQuotient::M2FreeAlgebraQuotient(const M2FreeAlgebra* F
+M2FreeAlgebraQuotient::M2FreeAlgebraQuotient(const M2FreeAlgebra* F,
                                              const FreeAlgebraQuotient& A)
   : mFreeAlgebra(F),
     mFreeAlgebraQuotient(A)
@@ -49,7 +68,7 @@ int M2FreeAlgebraQuotient::index_of_var(const ring_elem a) const
 ring_elem M2FreeAlgebraQuotient::from_coefficient(const ring_elem a) const
 {
   auto result = new Poly;
-  freeAlgebraQuotient()->from_coefficient(*result, a);
+  freeAlgebraQuotient().from_coefficient(*result, a);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -75,7 +94,7 @@ bool M2FreeAlgebraQuotient::from_rational(const mpq_ptr q, ring_elem& result1) c
 ring_elem M2FreeAlgebraQuotient::var(int v) const
 {
   auto result = new Poly;
-  freeAlgebraQuotient()->var(*result,v);
+  freeAlgebraQuotient().var(*result,v);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -127,13 +146,13 @@ bool M2FreeAlgebraQuotient::lift(const Ring *R, const ring_elem f1, ring_elem &r
 bool M2FreeAlgebraQuotient::is_unit(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
-  return freeAlgebraQuotient()->is_unit(*f);
+  return freeAlgebraQuotient().is_unit(*f);
 }
 
 long M2FreeAlgebraQuotient::n_terms(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
-  return freeAlgebraQuotient()->n_terms(*f);
+  return freeAlgebraQuotient().n_terms(*f);
 }
 
 bool M2FreeAlgebraQuotient::is_zero(const ring_elem f1) const
@@ -145,14 +164,14 @@ bool M2FreeAlgebraQuotient::is_equal(const ring_elem f1, const ring_elem g1) con
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
-  return freeAlgebraQuotient()->is_equal(*f,*g);
+  return freeAlgebraQuotient().is_equal(*f,*g);
 }
 
 int M2FreeAlgebraQuotient::compare_elems(const ring_elem f1, const ring_elem g1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
-  return freeAlgebraQuotient()->compare_elems(*f,*g);
+  return freeAlgebraQuotient().compare_elems(*f,*g);
 }
 
 ring_elem M2FreeAlgebraQuotient::copy(const ring_elem f) const
@@ -170,7 +189,7 @@ ring_elem M2FreeAlgebraQuotient::negate(const ring_elem f1) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   Poly* result = new Poly;
-  freeAlgebraQuotient()->negate(*result, *f);
+  freeAlgebraQuotient().negate(*result, *f);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -179,7 +198,7 @@ ring_elem M2FreeAlgebraQuotient::add(const ring_elem f1, const ring_elem g1) con
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
   auto result = new Poly;
-  freeAlgebraQuotient()->add(*result,*f,*g);
+  freeAlgebraQuotient().add(*result,*f,*g);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -188,7 +207,7 @@ ring_elem M2FreeAlgebraQuotient::subtract(const ring_elem f1, const ring_elem g1
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
   auto result = new Poly;
-  freeAlgebraQuotient()->subtract(*result,*f,*g);
+  freeAlgebraQuotient().subtract(*result,*f,*g);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -197,7 +216,7 @@ ring_elem M2FreeAlgebraQuotient::mult(const ring_elem f1, const ring_elem g1) co
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto g = reinterpret_cast<const Poly*>(g1.get_Poly());
   auto result = new Poly;
-  freeAlgebraQuotient()->mult(*result,*f,*g);
+  freeAlgebraQuotient().mult(*result,*f,*g);
   return ring_elem(reinterpret_cast<void *>(result));  
 }
 
@@ -205,7 +224,7 @@ ring_elem M2FreeAlgebraQuotient::power(const ring_elem f1, mpz_t n) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto result = new Poly;
-  freeAlgebraQuotient()->power(*result,*f,n);
+  freeAlgebraQuotient().power(*result,*f,n);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -213,7 +232,7 @@ ring_elem M2FreeAlgebraQuotient::power(const ring_elem f1, int n) const
 {
   auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
   auto result = new Poly;
-  freeAlgebraQuotient()->power(*result,*f,n);
+  freeAlgebraQuotient().power(*result,*f,n);
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
@@ -259,16 +278,19 @@ void M2FreeAlgebraQuotient::debug_display(const ring_elem ff) const
   debug_display(f);
 }
 
+void M2FreeAlgebraQuotient::makeTerm(Poly& result, const ring_elem a, const int* monom) const
+{
+  freeAlgebra()->makeTerm(result, a, monom);
+  freeAlgebraQuotient().normalizeInPlace(result);
+}
+
 ring_elem M2FreeAlgebraQuotient::makeTerm(const ring_elem a, const int* monom) const
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 {
-  auto result = new Poly;
-
-  result->getCoeffInserter().push_back(a);
-  monoid().fromMonomial(monom, result->getMonomInserter());
-  return reinterpret_cast<Nterm*>(result);
-  
+  Poly* f = new Poly;
+  makeTerm(*f, a, monom);
+  return ring_elem(reinterpret_cast<void*>(f));
 }
 
 void M2FreeAlgebraQuotient::elem_text_out(buffer &o,
@@ -278,7 +300,7 @@ void M2FreeAlgebraQuotient::elem_text_out(buffer &o,
                              bool p_parens) const
 {
   auto f = reinterpret_cast<const Poly*>(ff.get_Poly());
-  freeAlgebraQuotient()->elem_text_out(o,*f,p_one,p_plus,p_parens);
+  freeAlgebraQuotient().elem_text_out(o,*f,p_one,p_plus,p_parens);
 }
 
 ring_elem M2FreeAlgebraQuotient::eval(const RingMap *map, const ring_elem ff, int first_var) const
@@ -288,7 +310,8 @@ ring_elem M2FreeAlgebraQuotient::eval(const RingMap *map, const ring_elem ff, in
   // return an element of S.
 
   auto f = reinterpret_cast<const Poly*>(ff.get_Poly());
-  auto g = freeAlgebraQuotient()->eval(map, f, first_var);
+  // TODO  auto g = freeAlgebraQuotient().eval(map, f, first_var);
+  auto g = new Poly; // TODO: this is a place holder until previous line works.
   return ring_elem(reinterpret_cast<void*>(g));
 }
 
@@ -306,11 +329,6 @@ ring_elem M2FreeAlgebraQuotient::lead_coefficient(const Ring* coeffRing, const P
   return freeAlgebra()->lead_coefficient(coeffRing, f);
 }
 
-Poly* M2FreeAlgebraQuotient::get_terms(const Poly* f, int lo, int hi) const
-{
-  return freeAlgebra()->get_terms(f, lo, hi);
-}
-
 bool M2FreeAlgebraQuotient::is_homogeneous(const ring_elem f1) const
 {
   const Poly* f = reinterpret_cast<const Poly*>(f1.get_Poly());
@@ -320,7 +338,7 @@ bool M2FreeAlgebraQuotient::is_homogeneous(const ring_elem f1) const
 bool M2FreeAlgebraQuotient::is_homogeneous(const Poly* f) const
 {
   if (f == nullptr) return true;
-  return freeAlgebraQuotient()->is_homogeneous(*f);
+  return freeAlgebraQuotient().is_homogeneous(*f);
 }
 
 void M2FreeAlgebraQuotient::degree(const ring_elem f, int *d) const
@@ -336,19 +354,23 @@ bool M2FreeAlgebraQuotient::multi_degree(const ring_elem g, int *d) const
 
 bool M2FreeAlgebraQuotient::multi_degree(const Poly* f, int *result) const
 {
-  return freeAlgebraQuotient()->multi_degree(*f,result);
+  return freeAlgebraQuotient().multi_degree(*f,result);
 }
 
 void M2FreeAlgebraQuotient::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
 {
+  // TODO: get this function working, if we are going to use ModuleMonom...
+#if 0
   int comp_unused;
   f.getCoeffInserter().push_back(coefficientRing()->from_long(1));
   appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
   // NORMALIZE
+#endif
 }
   
 ring_elem M2FreeAlgebraQuotient::fromModuleMonom(const ModuleMonom& m) const
 {
+  // TODO: get this function working, if we are going to use ModuleMonom...
   auto result = new Poly;
   appendFromModuleMonom(*result, m);
   // NORMALIZE
@@ -357,7 +379,7 @@ ring_elem M2FreeAlgebraQuotient::fromModuleMonom(const ModuleMonom& m) const
 
 SumCollector* M2FreeAlgebraQuotient::make_SumCollector() const
 {
-  return freeAlgebraQuotient()->make_SumCollector();
+  return freeAlgebraQuotient().make_SumCollector();
 }
 
 // Local Variables:
