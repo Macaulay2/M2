@@ -52,6 +52,8 @@ public:
   void power(Poly& result, const Poly& f, int n) const;
   void power(Poly& result, const Poly& f, mpz_ptr n) const;
 
+  ring_elem eval(const RingMap *map, const Poly& f, int first_var) const;
+
   void makeMonic(Poly& result, Poly& f) const;
   void makeMonicInPlace(Poly& f) const;
   

@@ -296,30 +296,8 @@ ring_elem M2FreeAlgebra::eval(const RingMap *map, const ring_elem ff, int first_
   // map: R --> S, this = R.
   // f is an ele ment in R
   // return an element of S.
-
   auto f = reinterpret_cast<const Poly*>(ff.get_Poly());
-
-  // plan: do it as in polyring:
-  //  cast f to a Poly
-  //  loop throug the terms of f
-  //    for each term: call map->eval_term, need varpower monomial here.
-  //    add to a heap object
-  // return value of the heap object
-
-  const Ring* target = map->get_ring();
-  SumCollector *H = target->make_SumCollector();
-
-  std::vector<int> vp;
-  for (auto i = f->cbegin(); i != f->cend(); ++i)
-    {
-      vp.clear();
-      monoid().getMonomial(i.monom(), vp);
-      ring_elem g = map->eval_term(coefficientRing(), i.coeff(), vp.data(), first_var, n_vars());
-      H->add(g);
-    }
-  ring_elem result = H->getValue();
-  delete H;
-  return result;
+  return freeAlgebra()->eval(map, *f, first_var);
 }
 
 engine_RawArrayPairOrNull M2FreeAlgebra::list_form(const Ring *coeffR, const ring_elem ff) const

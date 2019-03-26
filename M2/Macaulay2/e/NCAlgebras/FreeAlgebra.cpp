@@ -1,5 +1,6 @@
 #include "FreeAlgebra.hpp"
 #include "WordTable.hpp"
+#include "ringmap.hpp"
 
 using ExponentVector = int*;
 
@@ -580,6 +581,37 @@ void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
         }
     }
 }
+
+ring_elem FreeAlgebra::eval(const RingMap *map,
+                            const Poly& f,
+                            int first_var) const
+{
+  // map: R --> S, this = R.
+  // f is an ele ment in R
+  // return an element of S.
+
+  // plan: do it as in polyring:
+  //  cast f to a Poly
+  //  loop throug the terms of f
+  //    for each term: call map->eval_term, need varpower monomial here.
+  //    add to a heap object
+  // return value of the heap object
+
+  const Ring* target = map->get_ring();
+  SumCollector *H = target->make_SumCollector();
+
+  std::vector<int> vp;
+  for (auto i = f.cbegin(); i != f.cend(); ++i)
+    {
+      vp.clear();
+      monoid().getMonomial(i.monom(), vp);
+      ring_elem g = map->eval_term(coefficientRing(), i.coeff(), vp.data(), first_var, numVars());
+      H->add(g);
+    }
+  ring_elem result = H->getValue();
+  return result;
+}
+
 
 void FreeAlgebra::makeMonic(Poly& result, Poly& f) const
 {
