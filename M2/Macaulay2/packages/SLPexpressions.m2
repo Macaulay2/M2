@@ -148,31 +148,12 @@ Gate ^ ZZ := (g,n) -> if n == 0 then oneGate else
 - Gate := g -> minusOneGate*g
 Gate - Gate := (a,b) -> a+(-b)
 
-ZZ + Gate := (a,b) -> inputGate a + b
-Gate + ZZ := (a,b) -> a + inputGate b 
-ZZ * Gate := (a,b) -> inputGate a * b			
-Gate * ZZ := (a,b) -> a * inputGate b
-RR + Gate := (a,b) -> inputGate a + b
-Gate + RR := (a,b) -> a + inputGate b 
-RR * Gate := (a,b) -> inputGate a * b			
-Gate * RR := (a,b) -> a * inputGate b
-CC + Gate := (a,b) -> inputGate a + b
-Gate + CC := (a,b) -> a + inputGate b 
-CC * Gate := (a,b) -> inputGate a * b			
-Gate * CC := (a,b) -> a * inputGate b
-QQ + Gate := (a,b) -> inputGate a + b
-Gate + QQ := (a,b) -> a + inputGate b 
-QQ * Gate := (a,b) -> inputGate a * b			
-Gate * QQ := (a,b) -> a * inputGate b
-
-ZZ - Gate := (a,b) -> inputGate a - b
-Gate - ZZ := (a,b) -> a - inputGate b 
-RR - Gate := (a,b) -> inputGate a - b
-Gate - RR := (a,b) -> a - inputGate b 
-CC - Gate := (a,b) -> inputGate a - b
-Gate - CC := (a,b) -> a - inputGate b 
-QQ - Gate := (a,b) -> inputGate a - b
-Gate - QQ := (a,b) -> a - inputGate b 
+Number + Gate := (a,b) -> inputGate a + b
+Gate + Number  := (a,b) -> a + inputGate b
+Number * Gate := (a,b) -> inputGate a * b
+Gate * Number  := (a,b) -> a * inputGate b
+Number - Gate := (a,b) -> inputGate a - b
+Gate - Number  := (a,b) -> a - inputGate b
 
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
@@ -900,9 +881,10 @@ constants,
 (constants,SumGate),
 "oneGate",
 (symbol -,Gate),
-(symbol *,CC,Gate),
+-* (symbol *,CC,Gate),
 (symbol +,CC,Gate),
 (symbol -,CC,Gate),
+*-
 (compress,Gate),
 (compress,GateMatrix),
 (compress,ProductGate),
@@ -922,8 +904,8 @@ constants,
 (diff,InputGate,ProductGate),
 (diff,InputGate,SumGate),
 (entries,GateMatrix),
-(symbol *,Gate,CC),
 (symbol *,Gate,Gate),
+-*(symbol *,Gate,CC),
 (symbol *,Gate,Matrix),
 (symbol *,Gate,QQ),
 (symbol *,Gate,RR),
@@ -938,6 +920,20 @@ constants,
 (symbol -,Gate,QQ),
 (symbol -,Gate,RR),
 (symbol -,Gate,ZZ),
+(symbol *,QQ,Gate),
+(symbol +,QQ,Gate),
+(symbol -,QQ,Gate),
+(symbol *,RingElement,GateMatrix),
+(symbol *,RR,Gate),
+(symbol +,RR,Gate),
+(symbol -,RR,Gate),
+*-
+-*
+(symbol *,ZZ,Gate),
+(symbol +,ZZ,Gate),
+(symbol -,ZZ,Gate)
+*-
+
 (symbol /,Gate,Gate),
 (symbol ^,Gate,ZZ),
 (symbol *,GateMatrix,GateMatrix),
@@ -968,13 +964,6 @@ constants,
 (net,SumGate),
 (numColumns,GateMatrix),
 (numRows,GateMatrix),
-(symbol *,QQ,Gate),
-(symbol +,QQ,Gate),
-(symbol -,QQ,Gate),
-(symbol *,RingElement,GateMatrix),
-(symbol *,RR,Gate),
-(symbol +,RR,Gate),
-(symbol -,RR,Gate),
 (submatrix,GateMatrix,List,List),
 (substitute,GateMatrix,GateMatrix,GateMatrix),
 (substitute,GateMatrix,List),
@@ -990,10 +979,7 @@ constants,
 (value,GateMatrix,ValueHashTable),
 (value,InputGate,ValueHashTable),
 (value,ProductGate,ValueHashTable),
-(value,SumGate,ValueHashTable),
-(symbol *,ZZ,Gate),
-(symbol +,ZZ,Gate),
-(symbol -,ZZ,Gate)
+(value,SumGate,ValueHashTable)
     }
 
 end
