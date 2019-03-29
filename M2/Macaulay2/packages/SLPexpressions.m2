@@ -80,21 +80,25 @@ concatenateNets List := L -> (
 
 Gate = new Type of HashTable
 GateMatrix = new Type of List
+InputGate = new Type of Gate -- "abstract" unit of input  
 
+isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
 
-gateCatalog = new MutableHashTable -- records all gates
+gateCatalog = new MutableHashTable -- records constant gates (to avoid duplication)
 gateCatalogCount = new MutableHashTable -- count for each gate
-add2GC := g -> if gateCatalog#?g then (
-    gateCatalogCount#g = gateCatalogCount#g + 1;
-    gateCatalog#g -- value = stored identical gate (may differ in "cache")
-    ) else (
-    gateCatalogCount#g= 1;
-    gateCatalog#g = g
-    ) 
-
+add2GC = method()
+add2GC InputGate := g -> if isConstant g then (
+    if gateCatalog#?g then (
+    	gateCatalogCount#g = gateCatalogCount#g + 1;
+    	gateCatalog#g -- value = stored identical gate (may differ in "cache")
+    	) else (
+    	gateCatalogCount#g= 1;
+    	gateCatalog#g = g
+    	)
+    ) else g	 	  
+add2GC Gate := g -> g
 getGateCatalogCount = () -> gateCatalogCount  
 
-InputGate = new Type of Gate -- "abstract" unit of input  
 inputGate = method()
 inputGate Thing := a -> add2GC new InputGate from {
     Name => a,
@@ -306,7 +310,6 @@ makeSub (SumGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else
 makeSub (DetGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else t#g = detGate applyTable(g.Inputs, i->makeSub(i,s,t))
 makeSub (List,HashTable,MutableHashTable) := (L,s,t) -> apply(L,g->makeSub(g,s,t))
 
-isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
 compress Gate := g -> g
 compress SumGate := g -> (
     L := g.Inputs/compress;
@@ -357,14 +360,14 @@ makeSLProgram (List,List) := (inL,outL) -> (
     consts := constants outL;
     constantPositions := positionsOfInputGates(consts,s);
     inputPositions := positionsOfInputGates(inL,s);
-    constants := matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
+    constantValues := matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
     scan(outL, g->removeSLPfromCache(s,g));
     scan(inL, g->removeSLPfromCache(s,g));
     new SLProgram from {
 	RawSLProgram => s, 
 	"constant positions" => constantPositions,
 	"input positions" => inputPositions,
-	"constants" =>  constants
+	"constants" =>  constantValues
 	-- "output positions" =>
 	}
     )
