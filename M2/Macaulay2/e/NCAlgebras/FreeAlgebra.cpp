@@ -180,7 +180,12 @@ void FreeAlgebra::copy(Poly& result, const Poly& f) const
 
 void FreeAlgebra::swap(Poly& f, Poly& g) const
 {
-  
+  auto& fCoeff = f.getCoeffInserter();
+  auto& fMonom = f.getMonomInserter();
+  auto& gCoeff = g.getCoeffInserter();
+  auto& gMonom = g.getMonomInserter();
+  std::swap(fCoeff,gCoeff);
+  std::swap(fMonom,gMonom);
 }
 
 void FreeAlgebra::var(Poly& result, int v) const

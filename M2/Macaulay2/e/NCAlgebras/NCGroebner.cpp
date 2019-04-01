@@ -101,7 +101,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
       Word reduceeLM(reduceeSoFar.cbegin().monom());
       if (W.subword(reduceeLM,subwordPos))
         {
-          // If one, perform reduceeSoFar -= coef * left * reducers[index] * right
+          // If there is one, perform reduceeSoFar -= coef * left * reducers[index] * right
           A.lead_word_prefix(leftWord, reduceeSoFar, subwordPos.second);
           A.lead_word_suffix(rightWord, reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
           A.setZero(tmp1);
@@ -112,7 +112,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                          leftWord,
                                          rightWord);
           A.subtract(tmp2,reduceeSoFar,tmp1);
-          A.copy(reduceeSoFar,tmp2); // swap
+          A.swap(reduceeSoFar,tmp2);
         }
       else
         {
@@ -122,7 +122,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
           A.lead_term_as_poly(tmp1,reduceeSoFar);
           A.add_to_end(*remainder,tmp1);
           A.subtract(tmp2,reduceeSoFar,tmp1);
-          A.copy(reduceeSoFar,tmp2);  // swap
+          A.swap(reduceeSoFar,tmp2);
         }
     }
   A.clear(tmp1);
