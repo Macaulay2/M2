@@ -5,6 +5,7 @@
 #include "poly.hpp"
 #include "aring-glue.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/FreeAlgebraQuotient.hpp"
 #include "NCAlgebras/WordTable.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
 #include "NCAlgebras/OverlapTable.hpp"
@@ -168,6 +169,37 @@ TEST(FreeAlgebra, polyarithmetic)
   EXPECT_TRUE(h == x + y);
 }
 
+TEST(FreeAlgebra, quotientArithmetic)
+{
+  FreeAlgebra* Q = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,2,3});
+  FreeAlgebraElement X(Q), Y(Q), Z(Q);
+  Q->var(*X,0);
+  Q->var(*Y,1);
+  Q->var(*Z,2);
+  
+  auto GB = std::unique_ptr<PolyList> (new PolyList);
+  GB->push_back(&*(X*Y+Y*X));
+  GB->push_back(&*(X*Z+Z*X));
+  GB->push_back(&*(Y*Z+Z*Y));
+  EXPECT_TRUE(GB->size() == 3);
+
+  FreeAlgebraQuotient* A = new FreeAlgebraQuotient(*Q,std::move(GB));
+
+  FreeAlgebraQuotientElement x(A), y(A), z(A), f(A), g(A), h(A);
+
+  // check if things reduce properly
+  A->setZero(*f);
+  A->setZero(*g);
+  A->setZero(*h);
+  f = x*y*x*z*x*y*x*z;
+  g = x*x*x*x*y*y*z*z;
+  A->negate(*h,*g);
+  EXPECT_TRUE(f == g);  
+}
+
 TEST(FreeAlgebra, comparisons)
 {
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
@@ -203,7 +235,7 @@ TEST(FreeAlgebra, spairs)
   EXPECT_TRUE((*f).cbegin().monom().begin() + 3 == leadWordSuffix.begin() && (*f).cbegin().monom().begin() + 5 == leadWordSuffix.end());
 
   ConstPolyList polyList {&*f};
-  *g = *(NCGroebner::createOverlapPoly(A, polyList, 0, 2, 0));
+  *g = *(NCGroebner::createOverlapPoly(*A, polyList, 0, 2, 0));
   h = f*y*x - x*y*f;
   EXPECT_TRUE(g == h);
 }

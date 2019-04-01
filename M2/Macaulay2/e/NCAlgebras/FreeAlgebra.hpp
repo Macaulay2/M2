@@ -148,6 +148,7 @@ public:
 #endif
 };
 
+// For debugging purposes
 class FreeAlgebraElement
 {
 public:

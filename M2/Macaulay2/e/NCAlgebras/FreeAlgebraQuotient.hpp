@@ -67,6 +67,7 @@ public:
   SumCollector* make_SumCollector() const;
 };
 
+// for debugging purposes
 class FreeAlgebraQuotientElement
 {
 public:
