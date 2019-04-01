@@ -19,24 +19,24 @@ public:
   {
   }
 
-  const FreeAlgebra& freeAlgebra() const { return *(mRing->freeAlgebra()); }
+  const std::unique_ptr<FreeAlgebra>& freeAlgebra() const { return mRing->freeAlgebra(); }
   
   void compute(int softDegreeLimit);
 
   const ConstPolyList* currentValue();
 
-  static auto twoSidedReduction(const FreeAlgebra* A,
+  static auto twoSidedReduction(const std::unique_ptr<FreeAlgebra>& A,
                                          const ConstPolyList& reducees,
                                          const ConstPolyList& reducers) -> ConstPolyList;
 
-  static auto twoSidedReduction(const FreeAlgebra* A,
+  static auto twoSidedReduction(const std::unique_ptr<FreeAlgebra>& A,
                                 const Poly* reducee,
                                 const ConstPolyList& reducers,
                                 const WordTable& W) -> Poly*;
 
   auto twoSidedReduction(const Poly* reducee) const -> Poly*;
   
-  static auto createOverlapPoly(const FreeAlgebra* A,
+  static auto createOverlapPoly(const std::unique_ptr<FreeAlgebra>& A,
                                 const ConstPolyList& polyList,
                                 int polyIndex1,
                                 int polyIndex2,

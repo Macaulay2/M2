@@ -14,8 +14,8 @@ M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
                                              )
 {
   assert(K != nullptr);
-  FreeAlgebra* F = FreeAlgebra::create(K, names, degreeRing, degrees);
-  M2FreeAlgebra* result = new M2FreeAlgebra(F);
+  auto F = std::unique_ptr<FreeAlgebra>(FreeAlgebra::create(K, names, degreeRing, degrees));
+  M2FreeAlgebra* result = new M2FreeAlgebra(std::move(F));
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
@@ -24,8 +24,8 @@ M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
   return result;
 }
 
-M2FreeAlgebra::M2FreeAlgebra(const FreeAlgebra* F)
-  : mFreeAlgebra(F)
+M2FreeAlgebra::M2FreeAlgebra(std::unique_ptr<FreeAlgebra> F)
+  : mFreeAlgebra(std::move(F))
 {
 }
 
