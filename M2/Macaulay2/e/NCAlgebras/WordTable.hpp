@@ -2,6 +2,7 @@
 #define _word_table_hpp_
 
 #include <vector>
+#include "../Polynomial.hpp"
 
 class Word
 {
@@ -9,15 +10,14 @@ public:
   // warning: the pointers begin, end, should not go out of scope while this Word is in use.
   Word() : mBegin(nullptr), mEnd(nullptr) {}
 
+  Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
   Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
 
   Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
 
   void init(const int* begin, const int* end) { mBegin = begin; mEnd = end; }
   void init(const std::vector<int>& val) { mBegin = val.data(); mEnd = val.data() + val.size(); }
-  
-  //  Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
-                                  
+                                 
   const int* begin() const { return mBegin; }
   const int* end() const { return mEnd; }
 

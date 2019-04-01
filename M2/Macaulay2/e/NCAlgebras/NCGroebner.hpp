@@ -28,6 +28,16 @@ public:
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {
+    Word tmpWord;
+    // process input polynomials
+    for (auto i = 0; i < mInput.size(); ++i)
+      {
+        freeAlgebra().lead_word(tmpWord,*mInput[i]);
+        mOverlapTable.insert(tmpWord.size(),
+                             true,
+                             std::make_tuple(i,-1,-1));
+      }
+  
   }
 
   const M2FreeAlgebra& m2FreeAlgebra() const { return mM2FreeAlgebra; }
@@ -57,6 +67,8 @@ public:
   auto createOverlapPoly(Overlap o) const -> Poly*;
 
   auto overlapWordLength(Overlap o) const -> int;
+
+  auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
   
 };
 

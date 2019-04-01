@@ -5,14 +5,6 @@ void NCGroebner::compute(int softDegreeLimit)
   std::vector<Overlap> newOverlaps;
   Word tmpWord;
   
-  // process input polynomials first
-  for (auto i = 0; i < mInput.size(); i++)
-    {
-      freeAlgebra().lead_word(tmpWord,*mInput[i]);
-      mOverlapTable.insert(tmpWord.size(),
-                           true,
-                           std::make_tuple(i,-1,-1));
-    }
   if (M2_gbTrace >= 2)
     {
       std::cout << "Overlap table after including generators:" << std::endl;
@@ -50,21 +42,13 @@ void NCGroebner::compute(int softDegreeLimit)
               newOverlaps.clear();
               freeAlgebra().lead_word(tmpWord,*redOverlapPoly);
               mWordTable.insert(tmpWord,newOverlaps);
-              for (auto newOverlap : newOverlaps)
-                {
-                  mOverlapTable.insert(overlapWordLength(newOverlap),
-                                       false,
-                                       newOverlap);
-                }
+              insertNewOverlaps(newOverlaps);
+
               newOverlaps.clear();
               mWordTable.leftOverlaps(newOverlaps);
-              for (auto newOverlap : newOverlaps)
-                {
-                  mOverlapTable.insert(overlapWordLength(newOverlap),
-                                       false,
-                                       newOverlap);
-                }
-              if (M2_gbTrace >= 2)
+              insertNewOverlaps(newOverlaps);
+
+              if (M2_gbTrace >= 2) 
                 {
                   buffer o;
                   freeAlgebra().elem_text_out(o,*redOverlapPoly,true,true,true);
@@ -114,8 +98,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   while (!A.is_zero(reduceeSoFar))
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
-      Word reduceeLM(reduceeSoFar.cbegin().monom().begin()+2,
-                     reduceeSoFar.cbegin().monom().end());
+      Word reduceeLM(reduceeSoFar.cbegin().monom());
       if (W.subword(reduceeLM,subwordPos))
         {
           // If one, perform reduceeSoFar -= coef * left * reducers[index] * right
@@ -157,7 +140,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   for (auto& f : reducers)
     {
       auto i = f->cbegin();
-      W.insert(Word(i.monom().begin()+2, i.monom().end()));
+      W.insert(Word(i.monom()));
     }
   ConstPolyList result;
   for (auto i = reducees.cbegin(); i != reducees.cend(); ++i)
@@ -214,6 +197,16 @@ auto NCGroebner::overlapWordLength(Overlap o) const -> int
   Word tmp;
   freeAlgebra().lead_word(tmp,*mGroebner[std::get<2>(o)]);
   return std::get<1>(o) + tmp.size();
+}
+
+auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
+{
+   for (auto newOverlap : newOverlaps)
+     {
+       mOverlapTable.insert(overlapWordLength(newOverlap),
+                            false,
+                            newOverlap);
+     }  
 }
 
 // Heap for reduction? work in progress, to be sure.

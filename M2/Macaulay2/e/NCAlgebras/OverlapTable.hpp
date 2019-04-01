@@ -4,7 +4,7 @@
 #include <map>
 #include <deque>
 #include <ostream>
-#include "../M2FreeAlgebra.hpp"
+#include "FreeAlgebra.hpp"
 
 // tuple is (i,j,k) where i is index of first word,
 // j is position of overlap in first word and k is
@@ -18,10 +18,12 @@ public:
   
   OverlapTable() : mPolyList(nullptr) {};
   OverlapTable(ConstPolyList* polyList) : mPolyList(polyList) {};
+
   
   // will call find to see if degree exists, and if not will call
   // insert.  If degree exists, append overlap to value of degree
   auto insert(int deg, bool isGenerator, Overlap o) -> void;
+  auto insert(bool areGenerators, std::vector<Overlap> os) -> void;
   
   // is the overlap map empty?
   auto isFinished() const -> bool;
@@ -36,6 +38,8 @@ public:
   auto size() const -> size_t;
 
   auto removeLowestDegree() -> void;
+
+  auto overlapWordLength(Overlap o) const -> int;
 
   // wipes out the entire data structure
   auto clear() -> void { mOverlapMap.clear(); };

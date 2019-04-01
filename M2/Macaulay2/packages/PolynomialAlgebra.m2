@@ -16,38 +16,38 @@ newPackage(
 export {
     "NCGB", -- uugh: change name!
     "NCReduction2Sided",
-    "NCPolynomialRing", -- change this name too!
+    "FreeAlgebra", -- change this name too!
     "sequenceToVariableSymbols"
     }
 
 debug Core
 
-NCPolynomialRing = new Type of EngineRing
-NCPolynomialRing.synonym = "noncommutative polynomial ring"
+FreeAlgebra = new Type of EngineRing
+FreeAlgebra.synonym = "noncommutative polynomial ring"
 
-new NCPolynomialRing from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
+new FreeAlgebra from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
 
 getNameIfAny = (k) -> expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k
 
 -- MES.  do we really need all 5 of these?
-expression NCPolynomialRing := R -> (
+expression FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      (getNameIfAny k) (R.generatorSymbols)
      )
-net NCPolynomialRing := R -> (
+net FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
-describe NCPolynomialRing := R -> (
+describe FreeAlgebra := R -> (
      k := last R.baseRings;
      net ((getNameIfAny k) R.generatorSymbols)
      )
-toExternalString NCPolynomialRing := R -> (
+toExternalString FreeAlgebra := R -> (
     --toString describe R
      k := last R.baseRings;
      toString ((getNameIfAny k) R.generatorSymbols)
      )
-toString NCPolynomialRing := R -> (
+toString FreeAlgebra := R -> (
     toString expression R
     -- 
     -- if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
@@ -107,7 +107,7 @@ Ring List := (A, args) -> (
    if #varSymbols == 0 then error "Expected at least one variable.";
    (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
    rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs);
-   R := new NCPolynomialRing from {
+   R := new FreeAlgebra from {
        (symbol RawRing) => rawR,
        (symbol generators) => {},
        (symbol generatorSymbols) => varSymbols,
@@ -149,15 +149,15 @@ Ring List := (A, args) -> (
    R
    );
 
-NCPolynomialRing _ ZZ := (R, n) -> (R.generators)#n
-coefficientRing NCPolynomialRing := R -> last R.baseRings
+FreeAlgebra _ ZZ := (R, n) -> (R.generators)#n
+coefficientRing FreeAlgebra := R -> last R.baseRings
 
-degreesRing NCPolynomialRing := PolynomialRing => R -> (
+degreesRing FreeAlgebra := PolynomialRing => R -> (
    if R#?(symbol degreesRing) then R#(symbol degreesRing)
    else error "no degreesRing for this ring"
    )
 
-isWellDefined NCPolynomialRing := Boolean => R -> (
+isWellDefined FreeAlgebra := Boolean => R -> (
     -- an internal check that R is defined properly.
     isbad := str -> (if debugLevel > 0 then << str; false);
     if # R.generators =!= numgens R then 
@@ -197,6 +197,11 @@ NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
     )
 NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
 NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
+
+FreeAlgebra / Ideal := (R, I) -> (
+   -- compute a GB of I and create the quotient ring at top level
+   R
+)
 
 beginDocumentation()
 
@@ -471,7 +476,7 @@ TEST ///
   needsPackage "PolynomialAlgebra"
 *-
   R = QQ{b,c,d}
-  assert instance(R, NCPolynomialRing)
+  assert instance(R, FreeAlgebra)
 
   f = 3*b^2*c*b + 2*b^4
   assert(leadTerm f == 2*b^4)
