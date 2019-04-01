@@ -14,9 +14,11 @@ private:
 public:
   FreeAlgebraQuotient(const FreeAlgebra& A, std::unique_ptr<PolyList> GB);
 
-  const Ring* coefficientRing() const { return mFreeAlgebra.coefficientRing(); }
   const FreeMonoid& monoid() const { return mFreeAlgebra.monoid(); }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
+
+  const Ring* coefficientRing() const { return mFreeAlgebra.coefficientRing(); }
+
   int numVars() const { return monoid().numVars(); }
   
   unsigned int computeHashValue(const Poly& a) const; // TODO

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <memory>
 
-std::unique_ptr<PolyList> copyMatrixToVector(const M2FreeAlgebra* A,
+std::unique_ptr<PolyList> copyMatrixToVector(const M2FreeAlgebra& F,
                              const Matrix* input)
 {
   auto result = make_unique<PolyList>();
@@ -20,21 +20,21 @@ std::unique_ptr<PolyList> copyMatrixToVector(const M2FreeAlgebra* A,
       ring_elem a = input->elem(0,i);
       auto f = reinterpret_cast<const Poly*>(a.get_Poly());
       auto g = new Poly;
-      A->freeAlgebra()->copy(*g, *f);
+      F.freeAlgebra().copy(*g, *f);
       result->push_back(g);
     }
   return result;
 }
 
 M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
-                                                     const M2FreeAlgebra* F,
+                                                     const M2FreeAlgebra& F,
                                                      const Matrix* GB
                                                      )
 {
   std::unique_ptr<PolyList> gbElements = copyMatrixToVector(F, GB);
-  FreeAlgebraQuotient* A = new FreeAlgebraQuotient(*F->freeAlgebra(), std::move(gbElements));
-  M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, *A);
-  result->initialize_ring(F->coefficientRing()->characteristic(), F->degreeRing(), nullptr);
+  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), std::move(gbElements)));
+  M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, std::move(A));
+  result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), nullptr);
   result->zeroV = result->from_long(0);
   result->oneV = result->from_long(1);
   result->minus_oneV = result->from_long(-1);
@@ -42,17 +42,17 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
   return result;
 }
 
-M2FreeAlgebraQuotient::M2FreeAlgebraQuotient(const M2FreeAlgebra* F,
-                                             const FreeAlgebraQuotient& A)
-  : mFreeAlgebra(F),
-    mFreeAlgebraQuotient(A)
+M2FreeAlgebraQuotient::M2FreeAlgebraQuotient(const M2FreeAlgebra& F,
+                                             std::unique_ptr<FreeAlgebraQuotient> A)
+  : mM2FreeAlgebra(F),
+    mFreeAlgebraQuotient(std::move(A))
 {
 }
 
 void M2FreeAlgebraQuotient::text_out(buffer &o) const
 {
   o << "Quotient of ";
-  mFreeAlgebra->text_out(o);
+  m2FreeAlgebra().text_out(o);
 }
 
 unsigned int M2FreeAlgebraQuotient::computeHashValue(const ring_elem a) const
@@ -62,7 +62,7 @@ unsigned int M2FreeAlgebraQuotient::computeHashValue(const ring_elem a) const
 
 int M2FreeAlgebraQuotient::index_of_var(const ring_elem a) const
 {
-  return mFreeAlgebra->index_of_var(a);
+  return m2FreeAlgebra().index_of_var(a);
 }
 
 ring_elem M2FreeAlgebraQuotient::from_coefficient(const ring_elem a) const
@@ -107,7 +107,7 @@ bool M2FreeAlgebraQuotient::promote(const Ring *R, const ring_elem f, ring_elem 
       result = from_coefficient(f);
       return true;
     }
-  if (R == mFreeAlgebra)
+  if (R == &m2FreeAlgebra())
     {
       // TODO: normalize the element
     }
@@ -134,7 +134,7 @@ bool M2FreeAlgebraQuotient::lift(const Ring *R, const ring_elem f1, ring_elem &r
         }
       return false;
     }
-  if (R == mFreeAlgebra)
+  if (R == &m2FreeAlgebra())
     {
       // just copy the element into result, considered in the free algebra.
     }
@@ -280,7 +280,7 @@ void M2FreeAlgebraQuotient::debug_display(const ring_elem ff) const
 
 void M2FreeAlgebraQuotient::makeTerm(Poly& result, const ring_elem a, const int* monom) const
 {
-  freeAlgebra()->makeTerm(result, a, monom);
+  m2FreeAlgebra().makeTerm(result, a, monom);
   freeAlgebraQuotient().normalizeInPlace(result);
 }
 
@@ -321,12 +321,12 @@ engine_RawArrayPairOrNull M2FreeAlgebraQuotient::list_form(const Ring *coeffR, c
   // or a polynomial ring.  If not, NULL is returned and an error given
   // In the latter case, the last set of variables are part of
   // the coefficients.
-  return freeAlgebra()->list_form(coeffR, ff);
+  return m2FreeAlgebra().list_form(coeffR, ff);
 }
 
 ring_elem M2FreeAlgebraQuotient::lead_coefficient(const Ring* coeffRing, const Poly* f) const
 {
-  return freeAlgebra()->lead_coefficient(coeffRing, f);
+  return m2FreeAlgebra().lead_coefficient(coeffRing, f);
 }
 
 bool M2FreeAlgebraQuotient::is_homogeneous(const ring_elem f1) const

@@ -13,23 +13,24 @@ using ExponentVector = int*;
 class M2FreeAlgebraQuotient : public Ring
 {
 private:
-  const M2FreeAlgebra* mFreeAlgebra;
-  const FreeAlgebraQuotient& mFreeAlgebraQuotient;
+  const M2FreeAlgebra& mM2FreeAlgebra;
+  const std::unique_ptr<FreeAlgebraQuotient> mFreeAlgebraQuotient;
   
   M2FreeAlgebraQuotient(
-                        const M2FreeAlgebra* F,
-                        const FreeAlgebraQuotient& A
+                        const M2FreeAlgebra& F,
+                        std::unique_ptr<FreeAlgebraQuotient> A
                         );
 public:
-  static M2FreeAlgebraQuotient* create(const M2FreeAlgebra* A,
+  static M2FreeAlgebraQuotient* create(const M2FreeAlgebra& F,
                                        const Matrix* GB
                                        );
 
-  const M2FreeAlgebra* freeAlgebra() const { return mFreeAlgebra; }
-  const FreeAlgebraQuotient& freeAlgebraQuotient() const { return mFreeAlgebraQuotient; }
-  const Ring* coefficientRing() const { return freeAlgebra()->coefficientRing(); }
-  const FreeMonoid& monoid() const { return freeAlgebra()->monoid(); }
-  const Monoid& degreeMonoid() const { return freeAlgebra()->monoid().degreeMonoid(); }
+  const M2FreeAlgebra& m2FreeAlgebra() const { return mM2FreeAlgebra; }
+  const FreeAlgebraQuotient& freeAlgebraQuotient() const { return *mFreeAlgebraQuotient; }
+  const FreeMonoid& monoid() const { return m2FreeAlgebra().monoid(); }
+
+  const Monoid& degreeMonoid() const { return m2FreeAlgebra().monoid().degreeMonoid(); }
+  const Ring* coefficientRing() const { return m2FreeAlgebra().coefficientRing(); }
   
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
@@ -105,11 +106,11 @@ public:
   // lead terms, or get contiguous terms
   Poly* get_terms(const Poly* f, int lo, int hi) const
   {
-    return mFreeAlgebra->get_terms(f, lo, hi);
+    return m2FreeAlgebra().get_terms(f, lo, hi);
   }
   ring_elem get_terms(const ring_elem f, int lo, int hi) const
   {
-    return mFreeAlgebra->get_terms(f, lo, hi);
+    return m2FreeAlgebra().get_terms(f, lo, hi);
   }
 
   // casting functions

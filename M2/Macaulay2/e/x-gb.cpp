@@ -1228,7 +1228,7 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
   if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
-      NCGroebner G(A, elems, maxdeg);
+      NCGroebner G(*A, elems, maxdeg);
       G.compute(maxdeg); // this argument is actually the soft degree limit
       auto result = G.currentValue();
       return vectorToMatrix(A, *result);

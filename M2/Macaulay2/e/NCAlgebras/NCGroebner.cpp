@@ -8,7 +8,7 @@ void NCGroebner::compute(int softDegreeLimit)
   // process input polynomials first
   for (auto i = 0; i < mInput.size(); i++)
     {
-      freeAlgebra()->lead_word(tmpWord,*mInput[i]);
+      freeAlgebra().lead_word(tmpWord,*mInput[i]);
       mOverlapTable.insert(tmpWord.size(),
                            true,
                            std::make_tuple(i,-1,-1));
@@ -27,28 +27,28 @@ void NCGroebner::compute(int softDegreeLimit)
           auto overlapPoly = createOverlapPoly(overlap);
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
           delete overlapPoly;
-          if (!freeAlgebra()->is_zero(*redOverlapPoly))
+          if (!freeAlgebra().is_zero(*redOverlapPoly))
             {
               // if reduction is nonzero
               if (M2_gbTrace >= 2)
                 {
                   buffer o;
-                  freeAlgebra()->elem_text_out(o,*redOverlapPoly,true,true,true);
+                  freeAlgebra().elem_text_out(o,*redOverlapPoly,true,true,true);
                   std::cout << o.str() << std::endl;
                   mOverlapTable.dump(std::cout,true);
                 }
-              freeAlgebra()->makeMonicInPlace(*redOverlapPoly);
+              freeAlgebra().makeMonicInPlace(*redOverlapPoly);
               if (M2_gbTrace >= 2)
                 {
                   buffer o;
-                  freeAlgebra()->elem_text_out(o,*redOverlapPoly,true,false,false);
+                  freeAlgebra().elem_text_out(o,*redOverlapPoly,true,false,false);
                   std::cout << "After makeMonic: " << o.str() << std::endl;
                 }
 
               mGroebner.push_back(redOverlapPoly);
 
               newOverlaps.clear();
-              freeAlgebra()->lead_word(tmpWord,*redOverlapPoly);
+              freeAlgebra().lead_word(tmpWord,*redOverlapPoly);
               mWordTable.insert(tmpWord,newOverlaps);
               for (auto newOverlap : newOverlaps)
                 {
@@ -67,7 +67,7 @@ void NCGroebner::compute(int softDegreeLimit)
               if (M2_gbTrace >= 2)
                 {
                   buffer o;
-                  freeAlgebra()->elem_text_out(o,*redOverlapPoly,true,true,true);
+                  freeAlgebra().elem_text_out(o,*redOverlapPoly,true,true,true);
                   std::cout << o.str() << std::endl;
                   mOverlapTable.dump(std::cout,true);
                 }
@@ -98,7 +98,7 @@ const ConstPolyList* NCGroebner::currentValue()
   return &mGroebner;
 }
 
-auto NCGroebner::twoSidedReduction(const std::unique_ptr<FreeAlgebra>& A,
+auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                    const Poly* reducee,
                                    const ConstPolyList& reducers,
                                    const WordTable& W) -> Poly*
@@ -109,9 +109,9 @@ auto NCGroebner::twoSidedReduction(const std::unique_ptr<FreeAlgebra>& A,
   Poly* remainder = new Poly;
   Word leftWord, rightWord;
 
-  A->copy(reduceeSoFar,*reducee);
+  A.copy(reduceeSoFar,*reducee);
 
-  while (!A->is_zero(reduceeSoFar))
+  while (!A.is_zero(reduceeSoFar))
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
       Word reduceeLM(reduceeSoFar.cbegin().monom().begin()+2,
@@ -119,36 +119,36 @@ auto NCGroebner::twoSidedReduction(const std::unique_ptr<FreeAlgebra>& A,
       if (W.subword(reduceeLM,subwordPos))
         {
           // If one, perform reduceeSoFar -= coef * left * reducers[index] * right
-          A->lead_word_prefix(leftWord, reduceeSoFar, subwordPos.second);
-          A->lead_word_suffix(rightWord, reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
-          A->setZero(tmp1);
-          A->setZero(tmp2);
-          A->mult_by_term_left_and_right(tmp1,
+          A.lead_word_prefix(leftWord, reduceeSoFar, subwordPos.second);
+          A.lead_word_suffix(rightWord, reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
+          A.setZero(tmp1);
+          A.setZero(tmp2);
+          A.mult_by_term_left_and_right(tmp1,
                                          *reducers[subwordPos.first],
                                          reduceeSoFar.cbegin().coeff(),
                                          leftWord,
                                          rightWord);
-          A->subtract(tmp2,reduceeSoFar,tmp1);
-          A->copy(reduceeSoFar,tmp2); // swap
+          A.subtract(tmp2,reduceeSoFar,tmp1);
+          A.copy(reduceeSoFar,tmp2); // swap
         }
       else
         {
           // If none, copy that term to the remainder (use add_to_end), and subtract that term
-          A->setZero(tmp1);
-          A->setZero(tmp2);
-          A->lead_term_as_poly(tmp1,reduceeSoFar);
-          A->add_to_end(*remainder,tmp1);
-          A->subtract(tmp2,reduceeSoFar,tmp1);
-          A->copy(reduceeSoFar,tmp2);  // swap
+          A.setZero(tmp1);
+          A.setZero(tmp2);
+          A.lead_term_as_poly(tmp1,reduceeSoFar);
+          A.add_to_end(*remainder,tmp1);
+          A.subtract(tmp2,reduceeSoFar,tmp1);
+          A.copy(reduceeSoFar,tmp2);  // swap
         }
     }
-  A->clear(tmp1);
-  A->clear(tmp2);
-  A->clear(reduceeSoFar);
+  A.clear(tmp1);
+  A.clear(tmp2);
+  A.clear(reduceeSoFar);
   return remainder;
 }
 
-auto NCGroebner::twoSidedReduction(const std::unique_ptr<FreeAlgebra>& A,
+auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                    const ConstPolyList& reducees,
                                    const ConstPolyList& reducers) -> ConstPolyList
 {
@@ -173,7 +173,7 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
                            mWordTable);
 }
  
-auto NCGroebner::createOverlapPoly(const std::unique_ptr<FreeAlgebra>& A,
+auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
                                    const ConstPolyList& polyList,
                                    int polyIndex1,
                                    int overlapIndex,
@@ -185,11 +185,11 @@ auto NCGroebner::createOverlapPoly(const std::unique_ptr<FreeAlgebra>& A,
   Poly* result = new Poly;
   Poly tmp1, tmp2;
   Word prefix, suffix;
-  A->lead_word_prefix(prefix, *polyList[polyIndex1], overlapIndex);
-  A->lead_word_suffix(suffix, *polyList[polyIndex2], *(polyList[polyIndex1]->cbegin().monom().begin()) - 2 - overlapIndex);
-  A->mult_by_term_right(tmp1, *polyList[polyIndex1], A->coefficientRing()->from_long(1), suffix);
-  A->mult_by_term_left(tmp2, *polyList[polyIndex2], A->coefficientRing()->from_long(1), prefix);
-  A->subtract(*result, tmp1, tmp2);
+  A.lead_word_prefix(prefix, *polyList[polyIndex1], overlapIndex);
+  A.lead_word_suffix(suffix, *polyList[polyIndex2], *(polyList[polyIndex1]->cbegin().monom().begin()) - 2 - overlapIndex);
+  A.mult_by_term_right(tmp1, *polyList[polyIndex1], A.coefficientRing()->from_long(1), suffix);
+  A.mult_by_term_left(tmp2, *polyList[polyIndex2], A.coefficientRing()->from_long(1), prefix);
+  A.subtract(*result, tmp1, tmp2);
   return result;
 }
                           
@@ -199,7 +199,7 @@ auto NCGroebner::createOverlapPoly(Overlap overlap) const -> Poly*
     {
       const Poly* f = mInput[std::get<0>(overlap)];
       Poly * result = new Poly;
-      freeAlgebra()->copy(*result, *f);
+      freeAlgebra().copy(*result, *f);
       return result;
     }
   else return createOverlapPoly(freeAlgebra(),
@@ -212,7 +212,7 @@ auto NCGroebner::createOverlapPoly(Overlap overlap) const -> Poly*
 auto NCGroebner::overlapWordLength(Overlap o) const -> int
 {
   Word tmp;
-  freeAlgebra()->lead_word(tmp,*mGroebner[std::get<2>(o)]);
+  freeAlgebra().lead_word(tmp,*mGroebner[std::get<2>(o)]);
   return std::get<1>(o) + tmp.size();
 }
 

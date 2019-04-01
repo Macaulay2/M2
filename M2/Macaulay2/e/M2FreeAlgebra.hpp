@@ -16,9 +16,10 @@ using ExponentVector = int*;
 class M2FreeAlgebra : public Ring
 {
 private:
-  std::unique_ptr<FreeAlgebra> mFreeAlgebra;
+  const std::unique_ptr<FreeAlgebra> mFreeAlgebra;
 
   M2FreeAlgebra(std::unique_ptr<FreeAlgebra> F);
+
 public:
   static M2FreeAlgebra* create(const Ring* K,
                                    const std::vector<std::string>& names,
@@ -26,11 +27,12 @@ public:
                                    const std::vector<int>& degrees
                                    );
 
-  const std::unique_ptr<FreeAlgebra>& freeAlgebra() const { return mFreeAlgebra; }
-  const Ring* coefficientRing() const { return freeAlgebra()->coefficientRing(); }
-  const FreeMonoid& monoid() const { return freeAlgebra()->monoid(); }
+  const FreeAlgebra& freeAlgebra() const { return *mFreeAlgebra; }
+  const FreeMonoid& monoid() const { return freeAlgebra().monoid(); }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
+
   const PolynomialRing* degreeRing() const { return monoid().degreeRing(); }
+  const Ring* coefficientRing() const { return freeAlgebra().coefficientRing(); }
   
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
