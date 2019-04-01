@@ -6,6 +6,11 @@
 
 class FreeAlgebraQuotient : public our_new_delete
 {
+private:
+  const FreeAlgebra& mFreeAlgebra;
+  std::unique_ptr<PolyList> mGroebner;
+  WordTable mWordTable;
+
 public:
   FreeAlgebraQuotient(const FreeAlgebra& A, std::unique_ptr<PolyList> GB);
 
@@ -58,11 +63,6 @@ public:
   bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const;
 
   SumCollector* make_SumCollector() const;
-
-private:
-  const FreeAlgebra& mFreeAlgebra;
-  std::unique_ptr<PolyList> mGroebner;
-  WordTable mWordTable;
 };
 
 class FreeAlgebraQuotientElement

@@ -9,6 +9,10 @@
 class FreeAlgebra : public our_new_delete
 {
 private:
+  const Ring& mCoefficientRing;
+  const FreeMonoid& mMonoid;
+
+private:
   FreeAlgebra(const Ring* K, const FreeMonoid* M);
 
 public:
@@ -105,8 +109,8 @@ public:
   void lead_word_prefix(Word& result, const Poly& f, int endIndex) const;
   void lead_word_suffix(Word& result, const Poly& f, int beginIndex) const;
 
+  // this stuff has yet to be moved over from ../M2FreeAlgebra
 #if 0  
-  Poly* eval(const RingMap *map, const Poly* f, int first_var) const;
 
   int index_of_var(const Poly& a) const;
   
@@ -142,10 +146,6 @@ public:
   }
 
 #endif
-  
-private:
-  const Ring& mCoefficientRing;
-  const FreeMonoid& mMonoid;
 };
 
 class FreeAlgebraElement
