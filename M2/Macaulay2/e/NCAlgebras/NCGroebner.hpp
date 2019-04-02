@@ -65,11 +65,13 @@ public:
                                 int overlapIndex) -> Poly*;
                           
   auto createOverlapPoly(Overlap o) const -> Poly*;
-
+  auto createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void;
+  
   auto overlapWordLength(Overlap o) const -> int;
 
   auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
-  
+
+  auto isOverlapNecessary(Overlap o) const -> bool;
 };
 
 #endif

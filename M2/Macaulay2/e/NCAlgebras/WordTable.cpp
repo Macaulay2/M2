@@ -1,5 +1,31 @@
 #include "WordTable.hpp"
 
+std::ostream& operator<<(std::ostream& o, const Word& w)
+{
+  o << "[";
+  int i = 0;
+  for (; i < w.size() - 1; ++i)
+    {
+      o << w.begin()[i] << ",";
+    }
+  o << w.begin()[i];
+  o << "]";
+  return o;
+}
+
+std::ostream& operator<<(std::ostream& o, const WordTable& wordTable)
+{
+  if (wordTable.mMonomials.size() == 0) return o;
+
+  int j = 0;
+  for (; j < wordTable.mMonomials.size() - 1; ++j)
+    {
+      o << wordTable.mMonomials[j] << ",";
+    }
+  o << wordTable.mMonomials[j];
+  return o;
+}
+
 size_t WordTable::insert(Word w)
 {
   mMonomials.push_back(w);
@@ -100,6 +126,27 @@ void WordTable::superwords(Word word,
       for (auto j : start_indices)
         output.push_back(std::make_pair(i,j));
     }
+}
+
+auto WordTable::isNontrivialSuperword(Word word, int index1, int index2) const -> bool
+{
+  std::vector<int> start_indices;
+  for (auto i = 0; i < mMonomials.size(); ++i)
+    {
+      start_indices.clear();
+      // TODO: need to loop over all subword positions found,
+      // not just the first one!
+      subwordPositions(mMonomials[i], word, start_indices);
+      for (auto j : start_indices)
+        {
+          if (i != index1 && i != index2) return true;
+          // these commands handle when the overlap is trivially a multiple of one of
+          // the monomials in index1 or index2
+          if (i == index1 && j != 0) return true;
+          if (i == index2 && j != word.size() - mMonomials[index2].size()) return true;
+        }
+    }
+  return false;
 }
 
 // This function finds overlap where suffix of word at lindex == prefix of word at rindex

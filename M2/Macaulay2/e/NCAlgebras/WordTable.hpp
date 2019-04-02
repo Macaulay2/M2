@@ -2,11 +2,14 @@
 #define _word_table_hpp_
 
 #include <vector>
+#include <ostream>
 #include "../Polynomial.hpp"
 
 class Word
 {
 public:
+  friend std::ostream& operator<<(std::ostream& o, const Word& w);
+
   // warning: the pointers begin, end, should not go out of scope while this Word is in use.
   Word() : mBegin(nullptr), mEnd(nullptr) {}
 
@@ -50,6 +53,8 @@ class WordTable
 {
   // abstract table class.
 public:
+  friend std::ostream& operator<<(std::ostream& o, const WordTable& wordTable);
+
   WordTable() {}
 
   ~WordTable() {}
@@ -80,6 +85,8 @@ public:
   // if not, false is returned.
   bool subword(Word word,
                 std::pair<int,int>& output) const;
+
+  auto isNontrivialSuperword(Word word, int index1, int index2) const -> bool;
   
   // return all pairs (i,j), where
   //   the i-th word in the table is w (say)
@@ -87,8 +94,6 @@ public:
   //   such that word appears in w starting at position j.
   void superwords(Word word,
                   std::vector<std::pair<int,int>>& output) const;
-  
-  // TODO: write superword.  i.e. only return 1, if any.
   
   // given 'word', find all left over laps with elements of the table.
   // A left overlap of 'alpha' and 'beta' is:
@@ -119,6 +124,9 @@ private:
 private:
   std::vector<Word> mMonomials;
 };
+
+std::ostream& operator<<(std::ostream& o, const Word& w);
+std::ostream& operator<<(std::ostream& o, const WordTable& wordTable);
 
 #endif
 

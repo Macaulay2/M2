@@ -489,6 +489,10 @@ TEST(WordTable, skylanin)
   std::cout << matches;  
 
   matches.clear();
+  EXPECT_TRUE(W.isNontrivialSuperword(std::vector<int> {1,2,1,1,2,1,1}, 6, 6));
+  EXPECT_TRUE(W.isNontrivialSuperword(std::vector<int> {1,1,2,1,1,2,1,1,2}, 4, 4));
+  
+  matches.clear();
   W.subwords(std::vector<int> {2,2,0,1,1,0,1,0,1,1}, matches); // ZZXYYXYXYY
   std::cout << matches;
   //        Which is: { (0, 1), (2, 0), (3, 3), (5, 6), (8, 4) }
