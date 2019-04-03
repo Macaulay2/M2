@@ -39,15 +39,16 @@ class LabelPool
 {
 public:
   // take the prefix/suffix of f and find/insert it in the pool
-  auto prefix(Label* f, int n) -> Label*;
-  auto suffix(Label* f, int n) -> Label*;
+  // return a pointer to the label in the pool
+  auto prefix(const Label& f, int indexOfPrefix) -> Label*;
+  auto suffix(const Label& f, int indexOfSuffix) -> Label*;
 
   // this is a wrapper for std::unordered_set::insert, but all
-  // return values are discarded.
-  void insert(Label* f);
+  // return values are discarded 
+  void insert(const Label& f);
 
 private:
-  std::unordered_set<Label*> mLabelPool;
+  std::unordered_set<Label> mLabelPool;
 }
 
 class SuffixTreeNode
@@ -55,8 +56,6 @@ class SuffixTreeNode
 public:
   
 private:
-  // should we use pointers, or indices into some list?
-
   // parent of this node
   SuffixTreeNode* mParent;
   // children of this node
@@ -72,6 +71,7 @@ private:
   // a label of a node can be any suffix of the word w . n where n is the
   // (negative of) the index of the word w.  We use negatives here so they don't
   // collide with the nonnegative integers, which represent variables.
+  // warning: the negative index is 1-based, not 0-based.
   Label* mArcLabel;
   // this could be inductively recomputed each time, but I think it is
   // better just to store a copy of it in the data type
@@ -125,9 +125,13 @@ public:
   void superwords(Word word,
                   std::vector<std::pair<int,int>>& output) const;
   
-  // TODO: write superword.  i.e. only return 1, if any.
+
+  // this command returns true if word = alpha . v . beta for some v in the
+  // word table, where if v = wordTable[index1], then alpha is not empty
+  // and if v = wordTable[index2] then beta is not empty.  Otherwise, it returns false.
+  auto isNontrivialSuperword(Word word, int index1, int index2) const -> bool;
   
-  // given 'word', find all left over laps with elements of the table.
+  // given 'word', find all left overlaps with elements of the table.
   // A left overlap of 'alpha' and 'beta' is:
   //  a prefix of alpha is a suffix of beta.
   // i.e. alpha = a.b
@@ -136,6 +140,7 @@ public:
   void leftOverlaps(std::vector<Triple>& newLeftOverlaps) const;
 
   // find (right) overlaps with most recent added word 'w'.
+  // Note: Not sure this is possible in this implementation
   void rightOverlaps(std::vector<Triple>& newRightOverlaps) const; 
 
 private:
@@ -218,7 +223,7 @@ private:
   std::vector<Label> mMonomials;
 
   // this is where all the labels for the data structure will be housed
-  // The suffix tree owns all the labels, so all pointers in the label
+  // The suffix tree owns all the labels, so all words in the label
   // pool must be freed upon destruction
   LabelPool mLabelPool;
 };
