@@ -9,6 +9,7 @@
 #include "NCAlgebras/WordTable.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
 #include "NCAlgebras/OverlapTable.hpp"
+#include "NCAlgebras/SuffixTree.hpp"
 #include <iostream>
 
 std::vector<int> monom1 {2, 0, 1};  // cab
@@ -506,7 +507,21 @@ TEST(WordTable, skylanin)
     };
   EXPECT_EQ(ans3, matches);
 
-}        
+}
+
+TEST(WordTable, suffixtree1)
+{
+  auto vec = std::vector<int> {};
+  EXPECT_TRUE(vec.size() == 0);
+  SuffixTree* suffixTree = new SuffixTree();
+  std::cout << *suffixTree << std::endl;
+  EXPECT_TRUE(suffixTree->numPatterns() == 0);
+
+  Label s {1,2,3,2,1};
+  Label t {1,2,3,4,1};
+  Label result {1,2,3};
+  EXPECT_TRUE(suffixTree->sharedPrefix(s,t) == result);
+}
 
 
 // Local Variables:

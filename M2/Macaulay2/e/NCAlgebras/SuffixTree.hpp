@@ -1,9 +1,12 @@
 #ifndef _suffix_tree_hpp_
 #define _suffix_tree_hpp_
 
+#include <iostream>
 #include <vector>
 #include <unordered_set>
 #include <tuple>
+#include <map>
+#include <gtest/gtest.h>
 
 #include "WordTable.hpp"
 
@@ -13,34 +16,20 @@ using Triple = std::tuple<int,int,int>;
 // data type of an arc/vertex label
 using Label = std::vector<int>;
 
-// return value types for internal functions
-using ContractedLocusType = std::tuple<SuffixTreeNode*,
-				       SuffixTreeNode*,
-				       Label*>;
-
-using ExtendedLocusType = std::tuple<SuffixTreeNode*,
-				     Label*>;
-
-using InsertWorkerType = std::tuple<SuffixTreeNode*,
-				    SuffixTreeNode*,
-				    SuffixTreeNode*>;
-
-using LeavesType = std::tuple<SuffixTreeNode*,
-			      int>;
-
-using SubwordsType = std::tuple<Label*,
-				int,
-				Label*>;
-
 // this class is basically a wrapper on std::unordered_set, but with a few
 // additional things added for dropping prefixes and adding them to
 // the pool, etc.
+
+#if 0
+// I am not sure we need this - the labels won't take up too much additional
+// room, and the copys required to do the lookup may be too much effort.
 class LabelPool
 {
+  
 public:
   // take the prefix/suffix of f and find/insert it in the pool
   // return a pointer to the label in the pool
-  auto prefix(const Label& f, int indexOfPrefix) -> Label*;
+  auto prefix(const Label& f, int lengthOfPrefix) -> Label*;
   auto suffix(const Label& f, int indexOfSuffix) -> Label*;
 
   // this is a wrapper for std::unordered_set::insert, but all
@@ -50,16 +39,68 @@ public:
 private:
   std::unordered_set<Label> mLabelPool;
 }
-
+#endif
+  
 class SuffixTreeNode
 {
 public:
+  friend std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode);
+  std::ostream& dump(std::ostream&, int depth);
+
+  // the default constructor makes a root node
+  SuffixTreeNode() :
+    mParent(nullptr),
+    mChildren(std::map<Label,SuffixTreeNode*> {}),
+    mSuffixLink(nullptr),
+    mIsFullPattern(false),
+    mPatternLeafCount(0),
+    mArcLabel(Label {}),
+    mLabel(Label {})
+  {};
+  
+  // this one makes nodes in the process of building the tree
+  SuffixTreeNode(SuffixTreeNode* parent,
+                 Label arcLabel,
+                 bool isFullPattern) :
+    mParent(parent),
+    mChildren(std::map<Label,SuffixTreeNode*> {}),
+    mSuffixLink(nullptr),
+    mIsFullPattern(isFullPattern),
+    mPatternLeafCount(0),
+    mArcLabel(arcLabel)
+  {
+    // build the label of the node from the label of the parent and the arc label
+    mLabel.insert(mLabel.begin(),parent->label().begin(),parent->label().end());
+    mLabel.insert(mLabel.end(),arcLabel.begin(),arcLabel.end());
+  }
+
+  static SuffixTreeNode* buildRoot();
+
+  SuffixTreeNode* parent() { return mParent; }
+  SuffixTreeNode* suffixLink() { return mSuffixLink; }
+  Label& arcLabel() { return mArcLabel; }
+  Label& label() { return mLabel; }
+  int patternLeafCount() { return mPatternLeafCount; }
+  bool isFullPattern() { return mIsFullPattern; }
+  
+  std::map<Label,SuffixTreeNode*>::iterator childrenBegin() { return mChildren.begin(); }
+  std::map<Label,SuffixTreeNode*>::iterator childrenEnd() { return mChildren.end(); }
+  
+  void setParent(SuffixTreeNode* newParent) { mParent = newParent; }
+  
+  void removeChild(Label& child) { mChildren.erase(child); }
+  void addChild(SuffixTreeNode* child) { mChildren.insert(std::make_pair(child->arcLabel(),child)); }
+
+  void dropFromArcLabel(int toDrop) { mArcLabel.erase(mArcLabel.begin(), mArcLabel.begin()+toDrop); }
+
+  void addToPatternLeafCount(bool doIncrement) { if (doIncrement) mPatternLeafCount++; }
+  void setPatternLeafCount(int newPatternLeafCount) { mPatternLeafCount = newPatternLeafCount; }
   
 private:
   // parent of this node
   SuffixTreeNode* mParent;
-  // children of this node
-  std::vector<SuffixTreeNode*> mChildren;
+  // children of this node.  keys are labels, values are nodes
+  std::map<Label,SuffixTreeNode*> mChildren;
   // suffix link pointer
   SuffixTreeNode* mSuffixLink;
 
@@ -72,16 +113,37 @@ private:
   // (negative of) the index of the word w.  We use negatives here so they don't
   // collide with the nonnegative integers, which represent variables.
   // warning: the negative index is 1-based, not 0-based.
-  Label* mArcLabel;
+  Label mArcLabel;
   // this could be inductively recomputed each time, but I think it is
   // better just to store a copy of it in the data type
-  Label* mLabel;
-}
+  Label mLabel;
+};
+
+// return value types for internal functions for SuffixTree
+using ContractedLocusType = std::tuple<SuffixTreeNode*,
+				       SuffixTreeNode*,
+				       Label>;
+
+using ExtendedLocusType = std::tuple<SuffixTreeNode*,
+				     Label>;
+
+using InsertWorkerType = std::tuple<SuffixTreeNode*,
+				    SuffixTreeNode*,
+				    SuffixTreeNode*>;
+
+using LeavesType = std::tuple<SuffixTreeNode*,
+			      int>;
+
+using SubwordsType = std::tuple<Label,
+				int,
+				Label>;
 
 class SuffixTree
 {
+private:
+  FRIEND_TEST(WordTable, suffixtree1);
 public:
-
+  friend std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree);
   // these functions are also in WordTable; we would like to keep the
   // basic interface of both classes the same
 
@@ -98,7 +160,7 @@ public:
 
   size_t insert(Word w, std::vector<Triple>& newRightOverlaps);
 
-  const Word& operator[](int index) const { return mMonomials[index]; }
+  const Word operator[](int index) const;
 
   // lookup routines
 
@@ -143,6 +205,12 @@ public:
   // Note: Not sure this is possible in this implementation
   void rightOverlaps(std::vector<Triple>& newRightOverlaps) const; 
 
+  // other public functions:
+  int numPatterns() const { return mMonomials.size(); }
+
+  // FM: the following are really just here so the tests will run, I would prefer
+  // it if they were private.  Is there a way to make this work?
+  
 private:
   // the following are internal functions needed for the SuffixTree data
   // structure to work
@@ -151,7 +219,7 @@ private:
   // new internal node with arc label prefix, where prefix is a prefix
   // of f->arcLabel().  A pointer to the new node is returned.
   auto splitArc(SuffixTreeNode* f,
-		Word prefix) -> SuffixTreeNode*;
+		Label prefix) -> SuffixTreeNode*;
 
   // s is a suffix not yet in the table.  This function finds the
   // locus of the longest prefix of s whose locus exists.  The search
@@ -160,7 +228,7 @@ private:
   // either a child of y sharing a prefix pre with s - y.label, or f
   // is nullTreeNode if no such child exists.
   auto contractedLocus(SuffixTreeNode* y,
-		       Label* s,
+		       Label s,
 		       bool incrementLeafCount) -> ContractedLocusType;
 
   // For this function to work, there must be a path starting from x
@@ -170,16 +238,16 @@ private:
   // needs to be split (if necessary) if beta is empty, then simply
   // return (x,beta) since x is the extended locus
   auto extendedLocus(SuffixTreeNode* x,
-		     Label* beta) -> ExtendedLocusType;
+		     Label beta) -> ExtendedLocusType;
 
   // Finds an arc from y to a child whose label shares a prefix with s
   // return a std::pair of nullptrs if no match is found, i.e. the empty
   // prefix is the only shared prefix with any child of y
   auto findMatch(SuffixTreeNode* y,
-		 Label* s) -> ExtendedLocusType;
+		 Label s) -> ExtendedLocusType;
 
-  // Return a pointer to the longest shared prefix of s and t
-  auto sharePrefix(Label* s, Label* t) -> Label*;
+  // Return the longest shared prefix of s and t as a copy
+  auto sharedPrefix(Label s, Label t) -> Label;
 
   // Return all pattern leaves below v
   auto patternLeaves(SuffixTreeNode* v) -> std::vector<LeavesType>;
@@ -191,27 +259,26 @@ private:
 
   // functions for insert algorithm
   auto insertWorker(SuffixTreeNode* v,
-		    Label* s,
+		    Label s,
 		    bool isFullPattern) -> InsertWorkerType;
   auto insertStepC(SuffixTreeNode* v,
 		   SuffixTreeNode* x,
-		   Label* beta,
-		   Label* s,
+		   Label beta,
+		   Label s,
 		   bool isFullPattern) -> InsertWorkerType;
   auto insertStepD(SuffixTreeNode* y,
-		   Label* s,
+		   Label s,
 		   bool isFullPattern) -> InsertWorkerType;
 
   // functions for subwords algorithm
   auto subwordsWorker(SuffixTreeNode* cLocus,
-		      Label* beta,
-		      Label* s) -> std::vector<SubwordsType>;
+		      Label beta,
+		      Label s) -> std::vector<SubwordsType>;
   auto subwordsStepC(SuffixTreeNode* x,
-		     Label* beta,
-		     Label* s) -> SubwordsType;
+		     Label beta,
+		     Label s) -> SubwordsType;
   auto subwordsStepD(SuffixTreeNode* y,
-		     Label* s) -> SubwordsType;
-  
+		     Label s) -> SubwordsType;
   
 private:
   // root node of the tree
@@ -224,9 +291,13 @@ private:
 
   // this is where all the labels for the data structure will be housed
   // The suffix tree owns all the labels, so all words in the label
-  // pool must be freed upon destruction
-  LabelPool mLabelPool;
+  // pool must be freed upon destruction.
+  // May not need.
+  // LabelPool mLabelPool;
 };
+
+std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree);
+std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode);
 
 #endif
 

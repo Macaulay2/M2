@@ -232,7 +232,7 @@ findMatch (SuffixTreeNode, List) := (y,s) -> (
   -- child of y
   f := nullTreeNode;
   pre := {};
-  for kv in pairs (y.children) list (
+  for kv in pairs (y.children) do (
      (key,val) := kv;
      pre = sharePrefix(key,s);
      if pre != {} then (
@@ -247,7 +247,7 @@ sharePrefix = method()
 sharePrefix (List,List) := (s,t) -> (
    -- PURPOSE : Return the longest shared prefix of s and t
    -- INPUT   : Lists s and t
-   -- OUTPUT  : List that s and t share as prefix.
+   -- OUTPUT  : List that s and t share as prefix
    i := 0;
    while (i < min(#s,#t) and s#i == t#i) do i = i + 1;
    take(s,i)

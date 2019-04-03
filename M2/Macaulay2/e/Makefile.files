@@ -20,6 +20,7 @@ INTERFACE = \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/OverlapTable \
+	NCAlgebras/SuffixTree \
 	monomial-collection \
 	Polynomial \
 	M2FreeAlgebra \
