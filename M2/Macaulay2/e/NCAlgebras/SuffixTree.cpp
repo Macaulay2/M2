@@ -79,6 +79,44 @@ SuffixTree::SuffixTree()
   mRoot = root;
 }
 
+auto SuffixTree::insert(Label w, std::vector<Triple>& rightOverlaps) -> size_t
+{
+  // warning: this function appends the results to the end of right overlaps.
+  int wordNum = mMonomials.size();
+  mMonomials.push_back(w);
+  Label s = w;
+  s.push_back(-(wordNum + 1));
+  auto v = mRoot;
+  bool isFullPattern = true;
+  while (s.size() != 0)
+    {
+      auto iwType = insertWorker(v,s,isFullPattern);
+      auto newv = std::get<0>(iwType);
+      auto roRoot = std::get<1>(iwType);
+      auto newLocus = std::get<2>(iwType);
+      v = newv;
+      if (roRoot != nullptr)
+        {
+          for(auto pl : patternLeaves(roRoot))
+            {
+              // recall that the negative of the 1-indexed word is appended
+              // to the monomials upon insertion to keep track of which word
+              // the suffix came from.  This is the reason for the -(blah)-1
+              // shenanigans below, since the right overlaps are to be zero
+              // indexed.
+              auto ro0 = (-*(newLocus->label().end()-1))-1;
+              auto ro1 = mMonomials[ro0].size() - std::get<0>(pl)->label().size();
+              auto ro2 = (-std::get<1>(pl))-1;
+              rightOverlaps.push_back(std::make_tuple(ro0,ro1,ro2));
+            }
+        }
+      if (v != mRoot && s.size() == 2) v->setSuffixLink(mRoot);
+      s = suffix(s,1);
+      isFullPattern = false;
+    }
+  return mMonomials.size();
+}
+
 auto SuffixTree::insertWorker(SuffixTreeNode* v,
 			      Label s,
 			      bool isFullPattern) -> InsertWorkerType
@@ -93,11 +131,36 @@ auto SuffixTree::insertStepC(SuffixTreeNode* v,
 			     Label s,
 			     bool isFullPattern) -> InsertWorkerType
 {
-  SuffixTreeNode* ret1 = nullptr;
-  SuffixTreeNode* ret2 = nullptr;
-  SuffixTreeNode* ret3 = nullptr;
-  return std::make_tuple(ret1,ret2,ret3);
+  // Carries out step C in the algorithm.  This amounts to computing (and building,
+  // if necessary) the suffix link of v.  This function can call the Step D code
+  // as well (see the algorithm in the paper by Amir, et.al.)
+  auto iwType = extendedLocus(x, beta);
+  auto f = std::get<0>(iwType);
+  auto betaHat = std::get<1>(iwType);
+  if (f->arcLabel().size() == betaHat.size())
+    {
+      // in this case, f is in fact the locus of beta
+      v->setSuffixLink(f);
+      return insertStepD(f,suffix(s,f->label().size()),isFullPattern);
+    }
+  // in this case, f is the extended locus of beta.  We need to split
+  // the arc from f to its parent and insert a node d and a child
+  // w which will be the locus of beta
+  auto d = splitArc(f,betaHat);
+  // update pattern leaf count of d
+  d->setPatternLeafCount(f->patternLeafCount());
+  d->addToPatternLeafCount(isFullPattern);
+  d->addToPatternLeafCount(f->isFullPattern());
+  // add in the locus of s
+  auto w = new SuffixTreeNode(d,suffix(s,d->label().size()),isFullPattern);
+  // set the suffix link of v to d
+  v->setSuffixLink(d);
+  if (w->label().size() == 1)
+    return std::make_tuple(d,f,w);
+  else
+    return std::make_tuple(d,nullptr,w);
 }
+
 auto SuffixTree::insertStepD(SuffixTreeNode* y,
 			     Label s,
 			     bool isFullPattern) -> InsertWorkerType
@@ -222,6 +285,38 @@ auto SuffixTree::findMatch(SuffixTreeNode* y,
 	}
     }
   return std::make_pair(f,pre);
+}
+
+// Return all pattern leaves below v
+auto SuffixTree::patternLeaves(SuffixTreeNode* v) -> std::vector<LeavesType>
+{
+  auto retval = std::vector<LeavesType> {};
+  if (v->numChildren() == 0) return retval;
+  for(auto x : patternLeavesWorker(v))
+    {
+      retval.push_back(std::make_tuple(v,*(x->label().end()-1)));
+    }
+  return retval;
+}
+
+auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>
+{
+  auto retval = std::vector<SuffixTreeNode*> {};
+  if (v->numChildren() == 0 && v->isFullPattern())
+    {
+      retval.push_back(v);
+      return retval;
+    }
+  if ((v->numChildren() == 0 && !v->isFullPattern()) || v->patternLeafCount() == 0)
+    {
+      return retval;
+    }
+  for (auto i = v->childrenBegin(); i != v->childrenEnd(); ++i)
+    {
+      auto tmp = patternLeavesWorker(i->second);
+      std::copy(tmp.begin(),tmp.end(),std::back_inserter(retval));
+    }
+  return retval;
 }
 
 // Return the longest shared prefix of s and t.  A copy is made

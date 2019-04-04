@@ -85,8 +85,10 @@ public:
   
   std::map<Label,SuffixTreeNode*>::iterator childrenBegin() { return mChildren.begin(); }
   std::map<Label,SuffixTreeNode*>::iterator childrenEnd() { return mChildren.end(); }
+  size_t numChildren() { return mChildren.size(); }
   
   void setParent(SuffixTreeNode* newParent) { mParent = newParent; }
+  void setSuffixLink(SuffixTreeNode* newSuffixLink) { mSuffixLink = newSuffixLink; }
   
   void removeChild(Label& child) { mChildren.erase(child); }
   void addChild(SuffixTreeNode* child) { mChildren.insert(std::make_pair(child->arcLabel(),child)); }
@@ -258,6 +260,7 @@ private:
   auto allLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>;
 
   // functions for insert algorithm
+  auto insert(Label s, std::vector<Triple>& rightOverlaps) -> size_t;
   auto insertWorker(SuffixTreeNode* v,
 		    Label s,
 		    bool isFullPattern) -> InsertWorkerType;
