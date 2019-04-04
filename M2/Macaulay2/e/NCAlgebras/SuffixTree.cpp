@@ -20,24 +20,32 @@ std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode)
 
 std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth)
 {
-  for (auto j = 0; j < depth; ++j) o << "  ";
-  o << "Label : ";
-  outputLabel(o,mLabel);
-  o << std::endl;
-
-  for (auto j = 0; j < depth; ++j) o << "  ";
-  o << "Arclabel : ";
-  outputLabel(o,mArcLabel);
-  o << std::endl;
-
-  for (auto j = 0; j < depth; ++j) o << "  ";
-  o << "SuffixTreeLabel : ";
-  if (mSuffixLink == nullptr)
-    o << "nullptr";
+  if (mParent == nullptr)
+    {
+      // the parent is nullptr if and only if it is the root.
+      std::cout << "Root" << std::endl;
+    }
   else
-    outputLabel(o,mSuffixLink->mLabel);
-  o << std::endl;
-
+    {
+      for (auto j = 0; j < depth; ++j) o << "  ";
+      o << "Label : ";
+      outputLabel(o,mLabel);
+      o << std::endl;
+      
+      for (auto j = 0; j < depth; ++j) o << "  ";
+      o << "Arclabel : ";
+      outputLabel(o,mArcLabel);
+      o << std::endl;
+      
+      for (auto j = 0; j < depth; ++j) o << "  ";
+      o << "SuffixTreeLabel : ";
+      if (mSuffixLink == nullptr)
+        o << "nullptr";
+      else
+        outputLabel(o,mSuffixLink->mLabel);
+      o << std::endl;
+    }
+  
   for (auto pair : mChildren)
     {
       pair.second->dump(o,depth+1);
@@ -48,9 +56,11 @@ std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth)
 std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree)
 {
   o << "Patterns in table: {";
-  for (auto m : suffixTree.mMonomials)
+  for (auto i = suffixTree.mMonomials.begin(); i != suffixTree.mMonomials.end(); ++i)
     {
-      o << m << ",";
+      if (i != suffixTree.mMonomials.begin())
+        o << ",";
+      o << *i;
     }
   o << "}" << std::endl;
   suffixTree.mRoot->dump(o,0);
@@ -79,7 +89,7 @@ SuffixTree::SuffixTree()
   mRoot = root;
 }
 
-auto SuffixTree::insert(Label w, std::vector<Triple>& rightOverlaps) -> size_t
+auto SuffixTree::insert(const Label& w, std::vector<Triple>& rightOverlaps) -> size_t
 {
   // warning: this function appends the results to the end of right overlaps.
   int wordNum = mMonomials.size();
@@ -88,7 +98,7 @@ auto SuffixTree::insert(Label w, std::vector<Triple>& rightOverlaps) -> size_t
   s.push_back(-(wordNum + 1));
   auto v = mRoot;
   bool isFullPattern = true;
-  while (s.size() != 0)
+  while (s.size() != 0) 
     {
       auto iwType = insertWorker(v,s,isFullPattern);
       auto newv = std::get<0>(iwType);
@@ -97,7 +107,8 @@ auto SuffixTree::insert(Label w, std::vector<Triple>& rightOverlaps) -> size_t
       v = newv;
       if (roRoot != nullptr)
         {
-          for(auto pl : patternLeaves(roRoot))
+          auto plList = patternLeaves(roRoot);
+          for(auto pl : plList)
             {
               // recall that the negative of the 1-indexed word is appended
               // to the monomials upon insertion to keep track of which word
@@ -110,25 +121,37 @@ auto SuffixTree::insert(Label w, std::vector<Triple>& rightOverlaps) -> size_t
               rightOverlaps.push_back(std::make_tuple(ro0,ro1,ro2));
             }
         }
-      if (v != mRoot && s.size() == 2) v->setSuffixLink(mRoot);
+      if (v != mRoot && s.size() == 2)
+        {
+          v->setSuffixLink(mRoot);
+        }
       s = suffix(s,1);
       isFullPattern = false;
     }
   return mMonomials.size();
 }
 
+auto SuffixTree::insert(std::vector<Label>& ss, std::vector<Triple>& rightOverlaps) -> size_t
+{
+  for (auto s : ss)
+    {
+      insert(s,rightOverlaps);
+    }
+  return mMonomials.size();
+}
+
 auto SuffixTree::insertWorker(SuffixTreeNode* v,
-			      Label s,
+			      const Label& s,
 			      bool isFullPattern) -> InsertWorkerType
 {
   if (v == mRoot) return insertStepD(v,s,isFullPattern);
-  if (v->parent() == mRoot) return insertStepC(v,mRoot,prefix(v->arcLabel(),1),s,isFullPattern);
+  if (v->parent() == mRoot) return insertStepC(v,mRoot,suffix(v->arcLabel(),1),s,isFullPattern);
   return insertStepC(v,v->parent()->suffixLink(),v->arcLabel(),s,isFullPattern);
 }
 auto SuffixTree::insertStepC(SuffixTreeNode* v,
 			     SuffixTreeNode* x,
-			     Label beta,
-			     Label s,
+			     const Label& beta,
+			     const Label& s,
 			     bool isFullPattern) -> InsertWorkerType
 {
   // Carries out step C in the algorithm.  This amounts to computing (and building,
@@ -162,7 +185,7 @@ auto SuffixTree::insertStepC(SuffixTreeNode* v,
 }
 
 auto SuffixTree::insertStepD(SuffixTreeNode* y,
-			     Label s,
+			     const Label& s,
 			     bool isFullPattern) -> InsertWorkerType
 {
   // Carries out step D in the algorithm.  This amounts to constructing
@@ -173,20 +196,20 @@ auto SuffixTree::insertStepD(SuffixTreeNode* y,
   auto f = std::get<1>(clType);
   auto pre = std::get<2>(clType);
   auto tmpNode = y;
-  auto tmpLabel = Label {};
+  auto tmpLabel = s;
 
   // drop the letters from s along the path traversed from y to std::get<0>(clType);
-  tmpLabel = suffix(s, std::get<0>(clType)->label().size() - y->label().size());
+  tmpLabel = suffix(tmpLabel, newy->label().size() - tmpNode->label().size());
   tmpNode = newy;
   if (f == nullptr)
     {
       // in this case, there is no common prefix of a label of any child of y and s
       // so just create a leaf immediately.
-      auto v = new SuffixTreeNode(y,s,isFullPattern);
+      auto v = new SuffixTreeNode(tmpNode,tmpLabel,isFullPattern);
       if (tmpNode->label().size() != 0 && v->arcLabel().size() == 1)
-	return std::make_tuple(y,y,v);
+	return std::make_tuple(tmpNode,tmpNode,v);
       else
-	return std::make_tuple(y,nullptr,v);
+	return std::make_tuple(tmpNode,nullptr,v);
     }
   // in this case, f is the extended locus of s.  We need to split the arc from y to f
   auto p = splitArc(f,pre);
@@ -200,7 +223,7 @@ auto SuffixTree::insertStepD(SuffixTreeNode* y,
   auto w = new SuffixTreeNode (p,tmpLabel,isFullPattern);
   // return overlap and head information
   if (tmpLabel.size() == 1)
-    return std::make_tuple(p,nullptr,w);
+    return std::make_tuple(p,p,w);
   else
     return std::make_tuple(p,nullptr,w);
 }
@@ -209,7 +232,7 @@ auto SuffixTree::insertStepD(SuffixTreeNode* y,
 // new internal node with arc label prefix, where prefix is a prefix
 // of f->arcLabel().  A pointer to the new node is returned.
 auto SuffixTree::splitArc(SuffixTreeNode* f,
-			  Label prefix) -> SuffixTreeNode*
+			  const Label& prefix) -> SuffixTreeNode*
 {
   auto p = f->parent();
   auto d = new SuffixTreeNode(p,prefix,false);
@@ -227,17 +250,17 @@ auto SuffixTree::splitArc(SuffixTreeNode* f,
 // either a child of y sharing a prefix pre with s - y.label, or f
 // is nullTreeNode if no such child exists.
 auto SuffixTree::contractedLocus(SuffixTreeNode* y,
-				 Label s,
+				 const Label& s,
 				 bool incrementLeafCount) -> ContractedLocusType
 {
   y->addToPatternLeafCount(incrementLeafCount);
-  auto match = findMatch(y,s);
   auto tmpNode = y;
-  auto tmpLabel = Label {};
+  auto tmpLabel = s;
+  auto match = findMatch(tmpNode,tmpLabel);
   while (std::get<0>(match) != nullptr && std::get<1>(match) == std::get<0>(match)->arcLabel())
     {
       tmpNode = std::get<0>(match);
-      tmpLabel = suffix(s,std::get<1>(match).size());
+      tmpLabel = suffix(tmpLabel,std::get<1>(match).size());
       tmpNode->addToPatternLeafCount(incrementLeafCount);
       match = findMatch(tmpNode,tmpLabel);
     }
@@ -251,7 +274,7 @@ auto SuffixTree::contractedLocus(SuffixTreeNode* y,
 // needs to be split (if necessary) if beta is empty, then simply
 // return (x,beta) since x is the extended locus
 auto SuffixTree::extendedLocus(SuffixTreeNode* x,
-			       Label beta) -> ExtendedLocusType
+			       const Label& beta) -> ExtendedLocusType
 {
   if (beta.size() == 0) return std::make_tuple(x,beta);
   auto tmpNode = x;
@@ -270,7 +293,7 @@ auto SuffixTree::extendedLocus(SuffixTreeNode* x,
 // return a std::pair of nullptrs if no match is found, i.e. the empty
 // prefix is the only shared prefix with any child of y
 auto SuffixTree::findMatch(SuffixTreeNode* y,
-			   Label s) -> ExtendedLocusType
+			   const Label& s) -> ExtendedLocusType
 {
   SuffixTreeNode* f = nullptr;
   auto pre = Label {};
@@ -320,7 +343,7 @@ auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTre
 }
 
 // Return the longest shared prefix of s and t.  A copy is made
-auto SuffixTree::sharedPrefix(Label s, Label t) -> Label
+auto SuffixTree::sharedPrefix(const Label& s, const Label& t) -> Label
 {
   int i = 0;
   while (i < s.size() && i < t.size() && s[i] == t[i]) i++;

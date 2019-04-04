@@ -72,6 +72,7 @@ public:
     // build the label of the node from the label of the parent and the arc label
     mLabel.insert(mLabel.begin(),parent->label().begin(),parent->label().end());
     mLabel.insert(mLabel.end(),arcLabel.begin(),arcLabel.end());
+    parent->addChild(this);
   }
 
   static SuffixTreeNode* buildRoot();
@@ -90,13 +91,22 @@ public:
   void setParent(SuffixTreeNode* newParent) { mParent = newParent; }
   void setSuffixLink(SuffixTreeNode* newSuffixLink) { mSuffixLink = newSuffixLink; }
   
-  void removeChild(Label& child) { mChildren.erase(child); }
+  void removeChild(const Label& child) { mChildren.erase(child); }
   void addChild(SuffixTreeNode* child) { mChildren.insert(std::make_pair(child->arcLabel(),child)); }
 
   void dropFromArcLabel(int toDrop) { mArcLabel.erase(mArcLabel.begin(), mArcLabel.begin()+toDrop); }
 
   void addToPatternLeafCount(bool doIncrement) { if (doIncrement) mPatternLeafCount++; }
   void setPatternLeafCount(int newPatternLeafCount) { mPatternLeafCount = newPatternLeafCount; }
+
+  auto getChild(Label& s) -> SuffixTreeNode*
+  {
+    auto search = mChildren.find(s);
+    if (search != mChildren.end())
+      return nullptr;
+    else
+      return search->second;
+  }
   
 private:
   // parent of this node
@@ -221,7 +231,7 @@ private:
   // new internal node with arc label prefix, where prefix is a prefix
   // of f->arcLabel().  A pointer to the new node is returned.
   auto splitArc(SuffixTreeNode* f,
-		Label prefix) -> SuffixTreeNode*;
+		const Label& prefix) -> SuffixTreeNode*;
 
   // s is a suffix not yet in the table.  This function finds the
   // locus of the longest prefix of s whose locus exists.  The search
@@ -230,7 +240,7 @@ private:
   // either a child of y sharing a prefix pre with s - y.label, or f
   // is nullTreeNode if no such child exists.
   auto contractedLocus(SuffixTreeNode* y,
-		       Label s,
+		       const Label& s,
 		       bool incrementLeafCount) -> ContractedLocusType;
 
   // For this function to work, there must be a path starting from x
@@ -240,16 +250,16 @@ private:
   // needs to be split (if necessary) if beta is empty, then simply
   // return (x,beta) since x is the extended locus
   auto extendedLocus(SuffixTreeNode* x,
-		     Label beta) -> ExtendedLocusType;
+		     const Label& beta) -> ExtendedLocusType;
 
   // Finds an arc from y to a child whose label shares a prefix with s
   // return a std::pair of nullptrs if no match is found, i.e. the empty
   // prefix is the only shared prefix with any child of y
   auto findMatch(SuffixTreeNode* y,
-		 Label s) -> ExtendedLocusType;
+		 const Label& s) -> ExtendedLocusType;
 
   // Return the longest shared prefix of s and t as a copy
-  auto sharedPrefix(Label s, Label t) -> Label;
+  auto sharedPrefix(const Label& s, const Label& t) -> Label;
 
   // Return all pattern leaves below v
   auto patternLeaves(SuffixTreeNode* v) -> std::vector<LeavesType>;
@@ -260,17 +270,18 @@ private:
   auto allLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>;
 
   // functions for insert algorithm
-  auto insert(Label s, std::vector<Triple>& rightOverlaps) -> size_t;
+  auto insert(const Label& s, std::vector<Triple>& rightOverlaps) -> size_t;
+  auto insert(std::vector<Label>& ss, std::vector<Triple>& rightOverlaps) -> size_t;
   auto insertWorker(SuffixTreeNode* v,
-		    Label s,
+		    const Label& s,
 		    bool isFullPattern) -> InsertWorkerType;
   auto insertStepC(SuffixTreeNode* v,
 		   SuffixTreeNode* x,
-		   Label beta,
-		   Label s,
+		   const Label& beta,
+		   const Label& s,
 		   bool isFullPattern) -> InsertWorkerType;
   auto insertStepD(SuffixTreeNode* y,
-		   Label s,
+		   const Label& s,
 		   bool isFullPattern) -> InsertWorkerType;
 
   // functions for subwords algorithm

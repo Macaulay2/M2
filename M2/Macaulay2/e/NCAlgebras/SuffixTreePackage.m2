@@ -84,12 +84,12 @@ suffixTreeInsert (SuffixTree, List) := (tree, w) -> (
    v := tree.root;
    isFullPattern := true;
    while s != {} do (
-      origv := v;
       (newv,roRoot,newLocus) := suffixTreeInsertWorker(tree,v,s,isFullPattern);
       v = newv;
       if roRoot != {} then (
 	 tempRos := apply(patternLeaves(first roRoot), pl -> (last newLocus.label,pl#0,pl#1));
 	 tempRos = apply(tempRos, ro -> (tree.wordList#(ro#0),#(tree.wordList#(ro#0)) - #(ro#1),tree.wordList#(ro#2)));
+	 << "String: " << s << " numROs: " << #tempRos << endl;
 	 rightOverlaps = rightOverlaps | tempRos;
       );
       if v =!= tree.root and #s == 2 then v.suffixLink = tree.root;
@@ -430,7 +430,8 @@ debug needsPackage "SuffixTreePackage"
 --- gens of lead term ideal of generic Sklyanin algebra out to degree 12 (as lists of symbols)
 --- I tried putting all this on one line but the parser doesn't like it.
 mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}, {Y, X, Y, X, X},
-        {Y, X, Y, X, Y}, {Y, X, Y, X, Z}, {Y, X, X, Y, X, X}, {Y, X, X, Y, X, Z}, {Y, X, X, Y, Y, Y},
+        {Y, X, Y, X, Y}}
+	{Y, X, Y, X, Z},{Y, X, X, Y, X, X}, {Y, X, X, Y, X, Z}, {Y, X, X, Y, Y, Y},
 	{Y, X, X, X, Y, X, Y}, {Y, X, X, X, Y, Y, Y}, {Y, X, X, Y, X, Y, X}, {Y, X, X, Y, X, Y, Z},
 	{Y, X, X, X, X, Y, Y, Y}, {Y, X, X, X, Y, X, X, X}, {Y, X, X, X, Y, X, X, Y},
 	{Y, X, X, X, Y, X, X, Z}, {Y, X, X, X, X, X, Y, Y, Y}, {Y, X, X, X, X, Y, X, X, X},
@@ -442,6 +443,11 @@ mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}
 	{Y, X, X, X, X, X, Y, X, X, X, Z}, {Y, X, X, X, X, X, X, X, Y, X, X, Z}, {Y, X, X, X, X, X, X, X, Y, X, Y, Z}, 
 	{Y, X, X, X, X, X, X, Y, X, X, X, X}, {Y, X, X, X, X, X, X, Y, X, X, X, Y}, {Y, X, X, X, X, X, X, Y, X, X, X, Z}, 
 	{Y, X, X, X, X, X, X, Y, X, X, Y, X}, {Y, X, X, X, X, X, X, Y, X, X, Y, Y}, {Y, X, X, X, X, X, X, Y, X, X, Y, Z}}
+symbolHash = hashTable {(X,0),(Y,1),(Z,2)}
+<< endl;
+scan(mons, m -> << "Label " << apply(m, s -> symbolHash#s) << ",")
+<< endl;
+(tree,rightOverlaps) = suffixTree mons;
 --- check that the code did not generate spurious right overlaps/superwords/subwords
 (tree, rightOverlaps) = suffixTree mons;
 assert(#rightOverlaps == 596)

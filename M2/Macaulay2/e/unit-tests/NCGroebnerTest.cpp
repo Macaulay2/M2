@@ -514,13 +514,52 @@ TEST(WordTable, suffixtree1)
   auto vec = std::vector<int> {};
   EXPECT_TRUE(vec.size() == 0);
   SuffixTree* suffixTree = new SuffixTree();
-  std::cout << *suffixTree << std::endl;
   EXPECT_TRUE(suffixTree->numPatterns() == 0);
 
   Label s {1,2,3,2,1};
   Label t {1,2,3,4,1};
   Label result {1,2,3};
   EXPECT_TRUE(suffixTree->sharedPrefix(s,t) == result);
+
+  std::vector<Triple> rightOverlaps {};
+
+  auto monList1 = std::vector<Label> { Label {2,2}, Label {2,0,1}, Label {1,0,1,0} };
+  suffixTree->insert(monList1, rightOverlaps);
+  auto xNode = std::get<0>(suffixTree->extendedLocus(suffixTree->mRoot,Label {0}));
+  auto yNode = std::get<0>(suffixTree->extendedLocus(suffixTree->mRoot,Label {1}));
+  auto zNode = std::get<0>(suffixTree->extendedLocus(suffixTree->mRoot,Label {2}));
+  auto yxNode = std::get<0>(suffixTree->extendedLocus(suffixTree->mRoot,Label {1,0}));
+  EXPECT_EQ(xNode->suffixLink(),suffixTree->mRoot);
+  EXPECT_EQ(yNode->suffixLink(),suffixTree->mRoot);
+  EXPECT_EQ(zNode->suffixLink(),suffixTree->mRoot);
+  EXPECT_EQ(yxNode->suffixLink(),xNode);
+  auto retval = std::vector<Overlap> { std::make_tuple(0,1,0), std::make_tuple(2,2,2) };
+  EXPECT_EQ(rightOverlaps, retval);
+
+  rightOverlaps.clear();
+  SuffixTree* suffixTree2 = new SuffixTree();
+  auto monList2 = std::vector<Label> {Label {2, 0},Label {2, 1},Label {2, 2},Label {1, 1, 0},Label {1, 1, 2},Label {1, 0, 1, 1},
+                                      Label {1, 1, 1, 1},Label {1, 0, 1, 0, 0},Label {1, 0, 1, 0, 1},
+                                      Label {1, 0, 1, 0, 2},Label {1, 0, 0, 1, 0, 0},Label {1, 0, 0, 1, 0, 2},Label {1, 0, 0, 1, 1, 1},
+                                      Label {1, 0, 0, 0, 1, 0, 1},Label {1, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 1, 0, 1, 0},
+                                      Label {1, 0, 0, 1, 0, 1, 2},Label {1, 0, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 0, 1, 0, 0, 0},
+                                      Label {1, 0, 0, 0, 1, 0, 0, 1},Label {1, 0, 0, 0, 1, 0, 0, 2},
+                                      Label {1, 0, 0, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 0, 0, 1, 0, 0, 0},
+                                      Label {1, 0, 0, 0, 0, 1, 0, 0, 2},Label {1, 0, 0, 0, 0, 1, 0, 1, 0},
+                                      Label {1, 0, 0, 0, 0, 1, 0, 1, 2},Label {1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
+                                      Label {1, 0, 0, 0, 0, 0, 1, 0, 0, 2},Label {1, 0, 0, 0, 0, 0, 1, 0, 1, 0},
+                                      Label {1, 0, 0, 0, 0, 0, 1, 0, 1, 2},Label {1, 0, 0, 0, 0, 1, 0, 0, 1, 0},
+                                      Label {1, 0, 0, 0, 0, 1, 0, 0, 1, 1},Label {1, 0, 0, 0, 0, 1, 0, 0, 1, 2},
+                                      Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2},Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0},
+                                      Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 2},Label {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+                                      Label {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1},Label {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2},
+                                      Label {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2},Label {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 2},
+                                      Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
+                                      Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2},Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0},
+                                      Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1},Label {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 2}};
+  suffixTree2->insert(monList2, rightOverlaps);
+  EXPECT_EQ(596,rightOverlaps.size());
+  EXPECT_EQ(47,suffixTree2->numPatterns());
 }
 
 
