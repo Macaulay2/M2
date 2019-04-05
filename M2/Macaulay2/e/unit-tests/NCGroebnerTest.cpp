@@ -518,7 +518,7 @@ TEST(WordTable, suffixtree1)
   Label result {1,2,3};
   EXPECT_TRUE(suffixTree->sharedPrefix(s,t) == result);
 
-  std::vector<Triple> rightOverlaps {};
+  std::vector<Overlap> rightOverlaps {};
 
   auto monList1 = std::vector<Label> { Label {2,2}, Label {2,0,1}, Label {1,0,1,0} };
   suffixTree->insert(monList1, rightOverlaps);
@@ -590,6 +590,31 @@ TEST(WordTable, suffixtree1)
   std::sort(superwordsOutput.begin(),superwordsOutput.end());
   std::sort(correctSuperwords.begin(),correctSuperwords.end());
   EXPECT_EQ(superwordsOutput,correctSuperwords);
+
+  auto leftOverlapsOutput = std::vector<std::pair<int,int>> {};
+  suffixTree2->leftOverlaps(Label {1,1,0}, leftOverlapsOutput);
+  auto correctLeftOverlaps = std::vector<std::pair<int,int>> { std::make_pair(1,1),std::make_pair(6,2),
+                                                               std::make_pair(6,3),std::make_pair(5,3),
+                                                               std::make_pair(5,2),std::make_pair(8,4),
+                                                               std::make_pair(12,4),std::make_pair(12,5),
+                                                               std::make_pair(14,5),std::make_pair(14,6),
+                                                               std::make_pair(13,6),std::make_pair(19,7),
+                                                               std::make_pair(17,6),std::make_pair(17,7),
+                                                               std::make_pair(21,7),std::make_pair(21,8),
+                                                               std::make_pair(31,8),std::make_pair(31,9),
+                                                               std::make_pair(26,9),std::make_pair(37,10),
+                                                               std::make_pair(45,10),std::make_pair(45,11),
+                                                              std::make_pair(42,11) };
+  std::sort(leftOverlapsOutput.begin(),leftOverlapsOutput.end());
+  std::sort(correctLeftOverlaps.begin(),correctLeftOverlaps.end());
+  EXPECT_EQ(leftOverlapsOutput, correctLeftOverlaps);
+  
+  SuffixTree* suffixTree3 = new SuffixTree();
+  auto monList3 = std::vector<Label> {Label {2, 0},Label {2, 1},
+                                      Label {2, 2}};
+  auto leftOverlapsOutput2 = std::vector<Overlap> {};
+  suffixTree3->leftOverlaps(leftOverlapsOutput2);
+  EXPECT_EQ(leftOverlapsOutput2.size(),0);
 }
 
 

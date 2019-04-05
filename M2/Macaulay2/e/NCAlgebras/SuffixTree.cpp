@@ -95,7 +95,7 @@ SuffixTree::SuffixTree()
   mRoot = root;
 }
 
-auto SuffixTree::insert(const Label& w, std::vector<Triple>& rightOverlaps) -> size_t
+auto SuffixTree::insert(const Label& w, std::vector<Overlap>& rightOverlaps) -> size_t
 {
   // warning: this function appends the results to the end of right overlaps.
   int wordNum = mMonomials.size();
@@ -134,7 +134,7 @@ auto SuffixTree::insert(const Label& w, std::vector<Triple>& rightOverlaps) -> s
   return mMonomials.size();
 }
 
-auto SuffixTree::insert(std::vector<Label>& ss, std::vector<Triple>& rightOverlaps) -> size_t
+auto SuffixTree::insert(std::vector<Label>& ss, std::vector<Overlap>& rightOverlaps) -> size_t
 {
   for (auto s : ss)
     {
@@ -254,7 +254,7 @@ auto SuffixTree::splitArc(SuffixTreeNode* f,
 // is nullTreeNode if no such child exists.
 auto SuffixTree::contractedLocus(SuffixTreeNode* y,
                                  const Label& s,
-                                 bool incrementLeafCount = false) const -> ContractedLocusType
+                                 bool incrementLeafCount) const -> ContractedLocusType
 {
   // warning: This function is not *really* const, since adding to the pattern
   // leaf count (if incrementalLeafCount = true) could change the behavior of
@@ -509,9 +509,73 @@ auto SuffixTree::superwords(const Label& w, std::vector<std::pair<int,int>>& out
       output.push_back(std::make_pair(f->getPatternNumber(),mMonomials[f->getPatternNumber()].size() - f->label().size() + 1));
       return true;
     }
-  else return false;
+  return false;
 }
 
+// the output is a list of pairs (i,j) where monomial i overlaps properly with w in position j
+// in other words, the proper prefixes of w that are also suffixes in the tree
+auto SuffixTree::leftOverlaps(const Label& w,
+                              std::vector<std::pair<int,int>>& output,
+                              bool avoidLast) const -> void
+{
+  auto tmpNode = mRoot;
+  auto tmpLabel = w;
+  auto match = findMatch(tmpNode,tmpLabel);
+  auto f = std::get<0>(match);
+  auto pre = std::get<1>(match);
+  int patternNum = -1;
+  while (f != nullptr && pre == f->arcLabel())
+    {
+      // in this case, the prefix found matches the arc label, so we move down
+      // the tree
+      tmpNode = f;
+      tmpLabel = suffix(tmpLabel,pre.size());
+      // after we move down add all children of tmpNode that are suffix leaves to leftOverlaps
+      // as long as tmpNode is not the root
+      for (auto i = tmpNode->childrenBegin(); i != tmpNode->childrenEnd(); ++i)
+        {
+          if (i->second->isLeaf() && !i->second->isFullPattern())
+            {
+              patternNum = i->second->getPatternNumber();
+              if (!(avoidLast && patternNum == mMonomials.size()-1))
+                output.push_back(std::make_tuple(patternNum,
+                                                 mMonomials[patternNum].size()-tmpNode->label().size()));
+            }
+        }
+      match = findMatch(tmpNode,tmpLabel);
+      f = std::get<0>(match);
+      pre = std::get<1>(match);
+     }
+  // At this point, if pre != {} then there is a common prefix to a child, but
+  // the label is not a full match to s.  In this case, we add
+  // the unique suffix leaf that shares a prefix to our list,
+  // as long as it is not a full pattern
+  if (pre.size() != 0 && !f->isFullPattern())
+    {
+      patternNum = f->getPatternNumber();
+      if (!(avoidLast && patternNum == mMonomials.size()-1))
+        output.push_back(std::make_tuple(patternNum,mMonomials[patternNum].size()-pre.size()));
+    }
+  return;
+}
+
+/// Here begin the functions to make the new class swappable with the old WordTable
+
+// this function computes the left overlaps of the most recently inserted monomial
+// with the rest of the tree, but not matching itself (by convention, that is considered a right overlap)
+auto SuffixTree::leftOverlaps(std::vector<Overlap>& output) const -> void
+{
+  if (mMonomials.size() == 0) return;
+  auto tmpLabel = *(mMonomials.end()-1);
+  auto pairs = std::vector<std::pair<int,int>> {};
+  leftOverlaps(tmpLabel,pairs,true);
+  for (auto p : pairs)
+    {
+      output.push_back(std::make_tuple(p.first, p.second, mMonomials.size()-1));
+    }
+  return;
+}
+  
 #if 0
 auto LabelPool::prefix(Label &f, int lengthOfPrefix) -> Label*
 {

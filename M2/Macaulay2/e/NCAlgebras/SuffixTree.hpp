@@ -11,7 +11,7 @@
 #include "WordTable.hpp"
 
 // used in return value for WordTable as well
-using Triple = std::tuple<int,int,int>;
+using Overlap = std::tuple<int,int,int>;
 
 // data type of an arc/vertex label
 using Label = std::vector<int>;
@@ -104,6 +104,7 @@ public:
   {
     // this function should *only* be called on leaves
     // since internal nodes may correspond to multiple patterns
+    // returns the 0 based index of the pattern corresponding to this leaf
     return -*(mLabel.end()-1)-1;
   }
   
@@ -180,7 +181,7 @@ public:
 
   size_t insert(Word w);
 
-  size_t insert(Word w, std::vector<Triple>& newRightOverlaps);
+  size_t insert(Word w, std::vector<Overlap>& newRightOverlaps);
 
   const Word operator[](int index) const;
 
@@ -221,11 +222,11 @@ public:
   // i.e. alpha = a.b
   //      beta  = c.a (a,b,c are words)
   // returned Triple for this overlap:
-  void leftOverlaps(std::vector<Triple>& newLeftOverlaps) const;
+  void leftOverlaps(std::vector<Overlap>& output) const;
 
   // find (right) overlaps with most recent added word 'w'.
   // Note: Not sure this is possible in this implementation
-  void rightOverlaps(std::vector<Triple>& newRightOverlaps) const; 
+  void rightOverlaps(std::vector<Overlap>& newRightOverlaps) const; 
 
   // other public functions:
   int numPatterns() const { return mMonomials.size(); }
@@ -251,7 +252,7 @@ private:
   // is nullTreeNode if no such child exists.
   auto contractedLocus(SuffixTreeNode* y,
 		       const Label& s,
-		       bool incrementLeafCount) const -> ContractedLocusType;
+		       bool incrementLeafCount = false) const -> ContractedLocusType;
 
   // For this function to work, there must be a path starting from x
   // with beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)  This
@@ -280,8 +281,8 @@ private:
   auto allLeaves(SuffixTreeNode* v, std::vector<SuffixTreeNode*>& output) const -> void;
 
   // functions for insert algorithm
-  auto insert(const Label& s, std::vector<Triple>& rightOverlaps) -> size_t;
-  auto insert(std::vector<Label>& ss, std::vector<Triple>& rightOverlaps) -> size_t;
+  auto insert(const Label& s, std::vector<Overlap>& rightOverlaps) -> size_t;
+  auto insert(std::vector<Label>& ss, std::vector<Overlap>& rightOverlaps) -> size_t;
   auto insertWorker(SuffixTreeNode* v,
 		    const Label& s,
 		    bool isFullPattern) -> InsertWorkerType;
@@ -313,6 +314,12 @@ private:
   auto superword(const Label& w, std::pair<int,int>& output) const -> bool;
   auto superwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool;
   auto superwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool;
+
+  // the output is a list of (i,j) giving the monomial and position of the overlap
+  // in the second argument
+  auto leftOverlaps(const Label& w,
+                    std::vector<std::pair<int,int>>& output,
+                    bool avoidLast = false) const -> void;
   
 private:
   // root node of the tree

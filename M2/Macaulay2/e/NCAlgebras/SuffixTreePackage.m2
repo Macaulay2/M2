@@ -452,9 +452,11 @@ scan(mons, m -> << "Label " << apply(m, s -> symbolHash#s) << ",")
 (tree, rightOverlaps) = suffixTree mons;
 assert(#rightOverlaps == 596)
 checkOverlaps rightOverlaps
+
 leftOverlaps = suffixTreeLeftOverlaps(tree, {symbol Y, symbol Y, symbol X});
 checkOverlaps leftOverlaps
 assert(#leftOverlaps == 23)
+
 superwords = suffixTreeSuperwords(tree, {symbol Y, symbol Y,symbol X});
 checkDivisions superwords
 assert(#superwords == 1)
