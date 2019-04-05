@@ -99,6 +99,13 @@ public:
   void addToPatternLeafCount(bool doIncrement) { if (doIncrement) mPatternLeafCount++; }
   void setPatternLeafCount(int newPatternLeafCount) { mPatternLeafCount = newPatternLeafCount; }
 
+  int getPatternNumber() const
+  {
+    // this function should *only* be called on leaves
+    // since internal nodes may correspond to multiple patterns
+    return -*(mLabel.end()-1)-1;
+  }
+  
   auto getChild(Label& s) -> SuffixTreeNode*
   {
     auto search = mChildren.find(s);
@@ -143,8 +150,9 @@ using InsertWorkerType = std::tuple<SuffixTreeNode*,
 				    SuffixTreeNode*,
 				    SuffixTreeNode*>;
 
-using LeavesType = std::tuple<SuffixTreeNode*,
-			      int>;
+using SubwordsWorkerType = std::tuple<SuffixTreeNode*,
+                                     Label,
+                                     bool>;
 
 using SubwordsType = std::tuple<Label,
 				int,
@@ -262,11 +270,11 @@ private:
   auto sharedPrefix(const Label& s, const Label& t) -> Label;
 
   // Return all pattern leaves below v
-  auto patternLeaves(SuffixTreeNode* v) -> std::vector<LeavesType>;
+  auto patternLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void;
   auto patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>;
 
   // return all leaves below v
-  auto allLeaves(SuffixTreeNode* v) -> std::vector<LeavesType>;
+  auto allLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void;
   auto allLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>;
 
   // functions for insert algorithm
@@ -285,14 +293,17 @@ private:
 		   bool isFullPattern) -> InsertWorkerType;
 
   // functions for subwords algorithm
+  auto subword(const Label& w, std::pair<int,int>& output) const -> bool;
+  auto subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> void;
+  auto subwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> void;
   auto subwordsWorker(SuffixTreeNode* cLocus,
-		      Label beta,
-		      Label s) -> std::vector<SubwordsType>;
+		      const Label& beta,
+		      const Label& s) const -> SubwordsWorkerType;
   auto subwordsStepC(SuffixTreeNode* x,
-		     Label beta,
-		     Label s) -> SubwordsType;
+		     const Label& beta,
+		     const Label& s) const -> SubwordsWorkerType;
   auto subwordsStepD(SuffixTreeNode* y,
-		     Label s) -> SubwordsType;
+		     const Label& s) const -> SubwordsWorkerType;
   
 private:
   // root node of the tree

@@ -41,7 +41,6 @@ TEST(MonomialOrdering, create)
      MonomialOrderings::GRevLex4(5),
      MonomialOrderings::GroupLex(3)
     })};
-  std::cout << MonomialOrderings::toString(mo6) << std::endl;
 }
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names)
@@ -251,7 +250,6 @@ TEST(OverlapTable, insertion)
   EXPECT_TRUE(overlapTable.isFinished(1));
   EXPECT_FALSE(overlapTable.isFinished(3));
   EXPECT_TRUE(overlapTable.size() == 3);
-  overlapTable.dump(std::cout,true);
 }
 
 TEST(NCGroebner, sorting)
@@ -265,6 +263,7 @@ TEST(NCGroebner, sorting)
   myMap.insert(std::make_pair(key2,0));
   myMap.insert(std::make_pair(key3,0));
   myMap.insert(std::make_pair(key4,0));
+  // TODO: Make this into a test
   for (auto i : myMap)
     {
       std::cout << "[" << i.first.first << "," << i.first.second << "]" << std::endl;
@@ -305,6 +304,8 @@ TEST(WordTable, insert)
   EXPECT_EQ(matches[2], std::make_pair(2, 5));
 }        
 
+
+#if 0
 TEST(WordTable, sizet)
 {
   size_t a = 3;
@@ -312,7 +313,7 @@ TEST(WordTable, sizet)
   auto c = a-b;
   std::cout << c << std::endl;
 }
-
+#endif
 
 TEST(WordTable, simpleSubwords)
 {
@@ -451,7 +452,6 @@ TEST(WordTable, skylanin)
   EXPECT_EQ(0, overlaps.size());
 
   W.insert(m2, overlaps);
-  std::cout << overlaps;
   std::vector<Overlap> ans {
       std::make_tuple(2,1,0),
       std::make_tuple(2,1,1),
@@ -487,7 +487,6 @@ TEST(WordTable, skylanin)
      std::make_tuple(12,4)
     };
   EXPECT_EQ(ans2, matches);
-  std::cout << matches;  
 
   matches.clear();
   EXPECT_TRUE(W.isNontrivialSuperword(std::vector<int> {1,2,1,1,2,1,1}, 6, 6));
@@ -495,8 +494,6 @@ TEST(WordTable, skylanin)
   
   matches.clear();
   W.subwords(std::vector<int> {2,2,0,1,1,0,1,0,1,1}, matches); // ZZXYYXYXYY
-  std::cout << matches;
-  //        Which is: { (0, 1), (2, 0), (3, 3), (5, 6), (8, 4) }
   std::vector<std::pair<int,int>> ans3
     {
      {0,1},
@@ -538,11 +535,15 @@ TEST(WordTable, suffixtree1)
 
   rightOverlaps.clear();
   SuffixTree* suffixTree2 = new SuffixTree();
-  auto monList2 = std::vector<Label> {Label {2, 0},Label {2, 1},Label {2, 2},Label {1, 1, 0},Label {1, 1, 2},Label {1, 0, 1, 1},
-                                      Label {1, 1, 1, 1},Label {1, 0, 1, 0, 0},Label {1, 0, 1, 0, 1},
-                                      Label {1, 0, 1, 0, 2},Label {1, 0, 0, 1, 0, 0},Label {1, 0, 0, 1, 0, 2},Label {1, 0, 0, 1, 1, 1},
-                                      Label {1, 0, 0, 0, 1, 0, 1},Label {1, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 1, 0, 1, 0},
-                                      Label {1, 0, 0, 1, 0, 1, 2},Label {1, 0, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 0, 1, 0, 0, 0},
+  auto monList2 = std::vector<Label> {Label {2, 0},Label {2, 1},
+                                      Label {2, 2},Label {1, 1, 0},Label {1, 1, 2},
+                                      Label {1, 0, 1, 1},Label {1, 1, 1, 1},
+                                      Label {1, 0, 1, 0, 0},Label {1, 0, 1, 0, 1},
+                                      Label {1, 0, 1, 0, 2},Label {1, 0, 0, 1, 0, 0},
+                                      Label {1, 0, 0, 1, 0, 2},Label {1, 0, 0, 1, 1, 1},
+                                      Label {1, 0, 0, 0, 1, 0, 1},Label {1, 0, 0, 0, 1, 1, 1},
+                                      Label {1, 0, 0, 1, 0, 1, 0},Label {1, 0, 0, 1, 0, 1, 2},
+                                      Label {1, 0, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 0, 1, 0, 0, 0},
                                       Label {1, 0, 0, 0, 1, 0, 0, 1},Label {1, 0, 0, 0, 1, 0, 0, 2},
                                       Label {1, 0, 0, 0, 0, 0, 1, 1, 1},Label {1, 0, 0, 0, 0, 1, 0, 0, 0},
                                       Label {1, 0, 0, 0, 0, 1, 0, 0, 2},Label {1, 0, 0, 0, 0, 1, 0, 1, 0},

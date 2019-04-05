@@ -93,6 +93,7 @@ auto SuffixTree::insert(const Label& w, std::vector<Triple>& rightOverlaps) -> s
 {
   // warning: this function appends the results to the end of right overlaps.
   int wordNum = mMonomials.size();
+  auto plList = std::vector<int> {};
   mMonomials.push_back(w);
   Label s = w;
   s.push_back(-(wordNum + 1));
@@ -107,17 +108,13 @@ auto SuffixTree::insert(const Label& w, std::vector<Triple>& rightOverlaps) -> s
       v = newv;
       if (roRoot != nullptr)
         {
-          auto plList = patternLeaves(roRoot);
+          plList.clear();
+          patternLeaves(roRoot,plList);
           for(auto pl : plList)
             {
-              // recall that the negative of the 1-indexed word is appended
-              // to the monomials upon insertion to keep track of which word
-              // the suffix came from.  This is the reason for the -(blah)-1
-              // shenanigans below, since the right overlaps are to be zero
-              // indexed.
-              auto ro0 = (-*(newLocus->label().end()-1))-1;
-              auto ro1 = mMonomials[ro0].size() - std::get<0>(pl)->label().size();
-              auto ro2 = (-std::get<1>(pl))-1;
+              auto ro0 = newLocus->getPatternNumber();
+              auto ro1 = mMonomials[ro0].size() - roRoot->label().size();
+              auto ro2 = pl;
               rightOverlaps.push_back(std::make_tuple(ro0,ro1,ro2));
             }
         }
@@ -311,19 +308,24 @@ auto SuffixTree::findMatch(SuffixTreeNode* y,
 }
 
 // Return all pattern leaves below v
-auto SuffixTree::patternLeaves(SuffixTreeNode* v) -> std::vector<LeavesType>
+// warning: output is placed in the second argument to the function.  The vector is *not*
+// cleared beforehand.
+auto SuffixTree::patternLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void
 {
-  auto retval = std::vector<LeavesType> {};
-  if (v->numChildren() == 0) return retval;
+  if (v->numChildren() == 0) return;
   for(auto x : patternLeavesWorker(v))
     {
-      retval.push_back(std::make_tuple(v,*(x->label().end()-1)));
+      output.push_back(x->getPatternNumber());
     }
-  return retval;
+  return;
 }
 
 auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>
 {
+  // TODO: the workers are still making a copy and returning it
+  // make change to allow for reference to be passed along.
+  // The workers also return the pointer to the node rather than the
+  // pattern number, as they probably should.
   auto retval = std::vector<SuffixTreeNode*> {};
   if (v->numChildren() == 0 && v->isFullPattern())
     {
@@ -350,6 +352,99 @@ auto SuffixTree::sharedPrefix(const Label& s, const Label& t) -> Label
   return prefix(s,i);
 }
 
+// return all leaves below v
+// warning: output is placed in the second argument to the function.  The vector is *not*
+// cleared beforehand.
+auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void
+{
+  if (v->numChildren() == 0)
+    {
+      output.push_back(v->getPatternNumber());
+      return;
+    }
+  for (auto x : allLeavesWorker(v))
+    {
+      output.push_back(x->getPatternNumber());
+    }
+  return;
+}
+
+auto SuffixTree::allLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>
+{
+  // TODO: the workers are still making a copy and returning it
+  // make change to allow for reference to be passed along.
+  auto retval = std::vector<SuffixTreeNode*> {};
+  if (v->numChildren() == 0)
+    {
+      retval.push_back(v);
+      return retval;
+    }
+  for (auto x = v->childrenBegin(); x != v->childrenEnd(); ++x)
+    {
+      auto tmp = allLeavesWorker(x->second);
+      std::copy(tmp.begin(),tmp.end(),std::back_inserter(retval));
+    }
+  return retval;
+}
+
+// functions for subwords algorithm
+auto SuffixTree::subword(const Label& w, std::pair<int,int>& output) const -> bool
+{
+  auto tmp = std::vector<std::pair<int,int>> {};
+  subwords(w,tmp,true);
+  if (tmp.size() == 0) return false;
+  else
+    {
+      output = *(tmp.begin());
+      return true;
+    }
+}
+
+auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> void
+{
+  subwords(w,output,false);
+}
+  
+auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& output, bool onlyFirst) const -> void
+{
+  auto cLocus = mRoot;
+  auto beta = Label {};
+  auto tmpLabel = w;
+  int pos = 0;
+  // TODO: Still working here.
+  while (tmpLabel.size() != 0)
+    {
+      auto swType = subwordsWorker(cLocus,beta,tmpLabel);
+      auto newcLocus = std::get<0>(swType);
+      auto newbeta = std::get<1>(swType);
+      auto wasPattern = std::get<2>(swType);
+      if (wasPattern)
+        {
+          if (onlyFirst)
+            {
+              Label tmp = newcLocus->label();
+            }
+        }
+    }
+}
+  
+
+auto SuffixTree::subwordsWorker(SuffixTreeNode* cLocus,
+                                const Label& beta,
+                                const Label& s) const -> SubwordsWorkerType
+{
+}
+
+auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
+                               const Label& beta,
+                               const Label& s) const -> SubwordsWorkerType
+{
+}
+
+auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
+                               const Label& s) const -> SubwordsWorkerType
+{
+}
 
 #if 0
 auto LabelPool::prefix(Label &f, int lengthOfPrefix) -> Label*
