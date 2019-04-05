@@ -29,6 +29,20 @@ void NCGroebner::compute(int softDegreeLimit)
                 }
             }
           auto overlapPoly = createOverlapPoly(overlap);
+
+          // investigate the bug
+          buffer o2;
+          freeAlgebra().elem_text_out(o2,*overlapPoly,true,true,true);
+          std::cout << o2.str() << std::endl << std::flush;
+          std::cout << mWordTable << std::endl << std::flush;
+          for (auto f : mGroebner)
+            {
+              buffer o3;
+              freeAlgebra().elem_text_out(o3,*f,true,true,true);
+              std::cout << o3.str() << std::endl << std::flush;
+            }
+
+          // fails
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
           delete overlapPoly;
           if (!freeAlgebra().is_zero(*redOverlapPoly))
@@ -53,7 +67,17 @@ void NCGroebner::compute(int softDegreeLimit)
 
               newOverlaps.clear();
               freeAlgebra().lead_word(tmpWord,*redOverlapPoly);
+              if (M2_gbTrace >= 4)
+                {
+                  std::cout << "SuffixTree before insert: " << std::endl;
+                  std::cout << mWordTable << std::endl;
+                }
               mWordTable.insert(tmpWord,newOverlaps);
+              if (M2_gbTrace >= 4)
+                {
+                  std::cout << "SuffixTree after insert: " << std::endl;
+                  std::cout << mWordTable << std::endl;
+                }
               insertNewOverlaps(newOverlaps);
 
               newOverlaps.clear();
@@ -94,10 +118,14 @@ const ConstPolyList* NCGroebner::currentValue()
   return &mGroebner;
 }
 
+// auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+//                                    const Poly* reducee,
+//                                    const ConstPolyList& reducers,
+//                                    const WordTable& W) -> Poly*
 auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                    const Poly* reducee,
                                    const ConstPolyList& reducers,
-                                   const WordTable& W) -> Poly*
+                                   const SuffixTree& W) -> Poly*
 {
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 
@@ -111,8 +139,20 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
       Word reduceeLM(reduceeSoFar.cbegin().monom());
+      std::cout << "Before subword: " << std::endl;
+      buffer o1;
+      A.elem_text_out(o1,reduceeSoFar,true,true,true);
+      std::cout << "reduceeSoFar : " << o1.str() << std::endl;
+      std::cout << "reduceeLM : " << Label(reduceeLM.begin(),reduceeLM.end()) << std::endl;
+      std::cout << "subwordPos : (" << subwordPos.first << "," << subwordPos.second << ")" << std::endl;
       if (W.subword(reduceeLM,subwordPos))
         {
+          std::cout << "After subword match: " << std::endl;
+          buffer o2;
+          A.elem_text_out(o2,reduceeSoFar,true,true,true);
+          std::cout << "reduceeSoFar : " << o2.str() << std::endl;
+          std::cout << "reduceeLM : " << Label(reduceeLM.begin(),reduceeLM.end()) << std::endl;
+          std::cout << "subwordPos : (" << subwordPos.first << "," << subwordPos.second << ")" << std::endl;
           // If there is one, perform reduceeSoFar -= coef * left * reducers[index] * right
           A.lead_word_prefix(leftWord, reduceeSoFar, subwordPos.second);
           A.lead_word_suffix(rightWord, reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
@@ -128,6 +168,12 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
         }
       else
         {
+          std::cout << "After subword no match: " << std::endl;
+          buffer o3;
+          A.elem_text_out(o3,reduceeSoFar,true,true,true);
+          std::cout << "reduceeSoFar : " << o3.str() << std::endl;
+          std::cout << "reduceeLM : " << Label(reduceeLM.begin(),reduceeLM.end()) << std::endl;
+          std::cout << "subwordPos : (" << subwordPos.first << "," << subwordPos.second << ")" << std::endl;
           // If none, copy that term to the remainder (use add_to_end), and subtract that term
           A.setZero(tmp1);
           A.setZero(tmp2);
@@ -147,7 +193,8 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                    const ConstPolyList& reducees,
                                    const ConstPolyList& reducers) -> ConstPolyList
 {
-  WordTable W;
+  //WordTable W;
+  SuffixTree W;
   // Build the word table for the reduction
   for (auto& f : reducers)
     {

@@ -95,6 +95,19 @@ SuffixTree::SuffixTree()
   mRoot = root;
 }
 
+void destroyChildren(SuffixTreeNode* p)
+{
+  for (auto i = p->childrenBegin(); i != p->childrenEnd(); ++i)
+      destroyChildren(i->second);
+  delete p;
+}
+
+SuffixTree::~SuffixTree()
+{
+  // must destroy the SuffixTreeNodes owned by this object
+  destroyChildren(mRoot);
+}
+
 auto SuffixTree::insert(const Label& w, std::vector<Overlap>& rightOverlaps) -> size_t
 {
   // warning: this function appends the results to the end of right overlaps.
@@ -560,6 +573,65 @@ auto SuffixTree::leftOverlaps(const Label& w,
 }
 
 /// Here begin the functions to make the new class swappable with the old WordTable
+
+size_t SuffixTree::insert(Word w)
+{
+  Label tmp(w.begin(),w.end());
+  auto tmp2 = std::vector<Overlap> {};
+  return insert(tmp,tmp2);
+}
+
+size_t SuffixTree::insert(Word w, std::vector<Overlap>& newRightOverlaps)
+{
+  Label tmp(w.begin(),w.end());
+  return insert(tmp, newRightOverlaps);
+}
+
+const Word SuffixTree::operator[](int index) const
+{
+  Word tmp(&*mMonomials[index].begin(),&*mMonomials[index].end());
+  return tmp;
+}
+
+bool SuffixTree::subwords(Word word,
+                          std::vector<std::pair<int,int>>& output) const
+{
+  Label tmp(word.begin(),word.end());
+  return subwords(tmp,output);
+}
+
+bool SuffixTree::subword(Word word,
+                std::pair<int,int>& output) const
+{
+  Label tmp(word.begin(),word.end());
+  return subword(tmp, output);
+}
+  
+bool SuffixTree::superwords(Word word,
+                            std::vector<std::pair<int,int>>& output) const
+{
+  Label tmp(word.begin(),word.end());
+  return superwords(tmp,output);
+}
+
+// this command returns true if word = alpha . v . beta for some v in the
+// word table, where if v = wordTable[index1], then alpha is not empty
+// and if v = wordTable[index2] then beta is not empty.  Otherwise, it returns false.
+auto SuffixTree::isNontrivialSuperword(Word word, int index1, int index2) const -> bool
+{
+  Label tmp(word.begin(),word.end());
+  std::vector<std::pair<int,int>> subs {};
+  subwords(tmp, subs);
+  for (auto sw : subs)
+    {
+      auto index = std::get<0>(sw);
+      auto pos = std::get<1>(sw);
+      if (index != index1 && index != index2) return true;
+      if (index == index1 && pos != 0) return true;
+      if (index == index2 && pos != word.size() - mMonomials[index2].size()) return true;
+    }
+  return false;
+}
 
 // this function computes the left overlaps of the most recently inserted monomial
 // with the rest of the tree, but not matching itself (by convention, that is considered a right overlap)

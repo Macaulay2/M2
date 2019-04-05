@@ -445,36 +445,39 @@ TEST(WordTable, skylanin)
   std::vector<std::pair<int,int>> matches;
   
   WordTable W;
-  W.insert(m0, overlaps);
+  W.insert(Word(m0), overlaps);
   EXPECT_EQ(0, overlaps.size());
 
-  W.insert(m1, overlaps);
+  W.insert(Word(m1), overlaps);
   EXPECT_EQ(0, overlaps.size());
 
-  W.insert(m2, overlaps);
+  W.insert(Word(m2), overlaps);
   std::vector<Overlap> ans {
       std::make_tuple(2,1,0),
       std::make_tuple(2,1,1),
       std::make_tuple(2,1,2)
       };
+  std::sort(ans.begin(),ans.end());
+  std::sort(overlaps.begin(),overlaps.end());
+  
   EXPECT_EQ(overlaps, ans);
   overlaps.clear();
   W.leftOverlaps(overlaps);
   EXPECT_EQ(0, overlaps.size());
 
-  W.insert(m3);
-  W.insert(m4);
-  W.insert(m5);
-  W.insert(m6);
-  W.insert(m7);
-  W.insert(m8);
-  W.insert(m9);
-  W.insert(m10);
-  W.insert(m11);
-  W.insert(m12);
+  W.insert(Word(m3));
+  W.insert(Word(m4));
+  W.insert(Word(m5));
+  W.insert(Word(m6));
+  W.insert(Word(m7));
+  W.insert(Word(m8));
+  W.insert(Word(m9));
+  W.insert(Word(m10));
+  W.insert(Word(m11));
+  W.insert(Word(m12));
 
   matches.clear();
-  W.superwords(std::vector<int> {1, 1}, matches);
+  W.superwords(Word(std::vector<int> {1, 1}), matches);
   std::vector<std::pair<int,int>> ans2
     {
      std::make_tuple(3,0),
@@ -486,14 +489,16 @@ TEST(WordTable, skylanin)
      std::make_tuple(12,3),
      std::make_tuple(12,4)
     };
+  std::sort(ans2.begin(),ans2.end());
+  std::sort(matches.begin(),matches.end());
   EXPECT_EQ(ans2, matches);
 
   matches.clear();
-  EXPECT_TRUE(W.isNontrivialSuperword(std::vector<int> {1,2,1,1,2,1,1}, 6, 6));
-  EXPECT_TRUE(W.isNontrivialSuperword(std::vector<int> {1,1,2,1,1,2,1,1,2}, 4, 4));
+  EXPECT_TRUE(W.isNontrivialSuperword(Word(std::vector<int> {1,2,1,1,2,1,1}), 6, 6));
+  EXPECT_TRUE(W.isNontrivialSuperword(Word(std::vector<int> {1,1,2,1,1,2,1,1,2}), 4, 4));
   
   matches.clear();
-  W.subwords(std::vector<int> {2,2,0,1,1,0,1,0,1,1}, matches); // ZZXYYXYXYY
+  W.subwords(Word(std::vector<int> {2,2,0,1,1,0,1,0,1,1}), matches); // ZZXYYXYXYY
   std::vector<std::pair<int,int>> ans3
     {
      {0,1},
@@ -502,11 +507,13 @@ TEST(WordTable, skylanin)
      {5,6},
      {8,4}
     };
+  std::sort(ans3.begin(),ans3.end());
+  std::sort(matches.begin(),matches.end());
   EXPECT_EQ(ans3, matches);
 
 }
 
-TEST(WordTable, suffixtree1)
+TEST(SuffixTree, suffixtree1)
 {
   auto vec = std::vector<int> {};
   EXPECT_TRUE(vec.size() == 0);
@@ -608,13 +615,114 @@ TEST(WordTable, suffixtree1)
   std::sort(leftOverlapsOutput.begin(),leftOverlapsOutput.end());
   std::sort(correctLeftOverlaps.begin(),correctLeftOverlaps.end());
   EXPECT_EQ(leftOverlapsOutput, correctLeftOverlaps);
-  
+
+  rightOverlaps.clear();
   SuffixTree* suffixTree3 = new SuffixTree();
   auto monList3 = std::vector<Label> {Label {2, 0},Label {2, 1},
                                       Label {2, 2}};
   auto leftOverlapsOutput2 = std::vector<Overlap> {};
+  std::pair<int,int> o;
+  suffixTree3->insert(monList3,rightOverlaps);
   suffixTree3->leftOverlaps(leftOverlapsOutput2);
   EXPECT_EQ(leftOverlapsOutput2.size(),0);
+
+  suffixTree3->insert(Label {1,1,0}, rightOverlaps);
+  EXPECT_FALSE(suffixTree3->subword(Label {1,1,2},o));
+  std::cout << "(" << o.first << "," << o.second << ")" << std::endl;
+  
+  delete suffixTree;
+  delete suffixTree2;
+  delete suffixTree3;
+}
+
+TEST(SuffixTree,suffixtree2)
+{
+  // this test is identical to the one above for WordTable
+  // except for the line 'SuffixTree W' below.
+  
+  std::vector<int> m0 {2,0};  // ZX
+  std::vector<int> m1 {2,1};  // ZY
+  std::vector<int> m2 {2,2};  // ZZ
+  std::vector<int> m3 {1,1,0};  // YYX
+  std::vector<int> m4 {1,1,2};  // YYZ
+  std::vector<int> m5 {1,0,1,1};  // YXYY
+  std::vector<int> m6 {1,1,1,1};  // YYYY
+  std::vector<int> m7 {1,0,1,0,0};  // YXYXX
+  std::vector<int> m8 {1,0,1,0,1};  // YXYXY
+  std::vector<int> m9 {1,0,1,0,2};  // YXYXZ
+  std::vector<int> m10 {1,0,0,1,0,0};  // YXXYXX
+  std::vector<int> m11 {1,0,0,1,0,2};  // YXXYXZ
+  std::vector<int> m12 {1,0,0,1,1,1};  // YXXYYY
+
+  std::vector<Overlap> overlaps;
+  std::vector<std::pair<int,int>> matches;
+  
+  SuffixTree W;
+  W.insert(Word(m0), overlaps);
+  EXPECT_EQ(0, overlaps.size());
+
+  W.insert(Word(m1), overlaps);
+  EXPECT_EQ(0, overlaps.size());
+
+  W.insert(Word(m2), overlaps);
+  std::vector<Overlap> ans {
+      std::make_tuple(2,1,0),
+      std::make_tuple(2,1,1),
+      std::make_tuple(2,1,2)
+      };
+  std::sort(ans.begin(),ans.end());
+  std::sort(overlaps.begin(),overlaps.end());
+  EXPECT_EQ(overlaps, ans);
+
+  overlaps.clear();
+  W.leftOverlaps(overlaps);
+  EXPECT_EQ(0, overlaps.size());
+
+  W.insert(Word(m3));
+  W.insert(Word(m4));
+  W.insert(Word(m5));
+  W.insert(Word(m6));
+  W.insert(Word(m7));
+  W.insert(Word(m8));
+  W.insert(Word(m9));
+  W.insert(Word(m10));
+  W.insert(Word(m11));
+  W.insert(Word(m12));
+
+  matches.clear();
+  W.superwords(Word(Word(std::vector<int> {1, 1})), matches);
+  std::vector<std::pair<int,int>> ans2
+    {
+     std::make_tuple(3,0),
+     std::make_tuple(4,0),
+     std::make_tuple(5,2),
+     std::make_tuple(6,0),
+     std::make_tuple(6,1),
+     std::make_tuple(6,2),
+     std::make_tuple(12,3),
+     std::make_tuple(12,4)
+    };
+  std::sort(ans2.begin(),ans2.end());
+  std::sort(matches.begin(),matches.end());
+  EXPECT_EQ(ans2, matches);
+
+  matches.clear();
+  EXPECT_TRUE(W.isNontrivialSuperword(Word(std::vector<int> {1,2,1,1,2,1,1}), 6, 6));
+  EXPECT_TRUE(W.isNontrivialSuperword(Word(std::vector<int> {1,1,2,1,1,2,1,1,2}), 4, 4));
+  
+  matches.clear();
+  W.subwords(Word(std::vector<int> {2,2,0,1,1,0,1,0,1,1}), matches); // ZZXYYXYXYY
+  std::vector<std::pair<int,int>> ans3
+    {
+     {0,1},
+     {2,0},
+     {3,3},
+     {5,6},
+     {8,4}
+    };
+  std::sort(ans3.begin(),ans3.end());
+  std::sort(matches.begin(),matches.end());
+  EXPECT_EQ(ans3, matches);
 }
 
 

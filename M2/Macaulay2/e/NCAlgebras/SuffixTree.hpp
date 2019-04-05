@@ -6,7 +6,6 @@
 #include <unordered_set>
 #include <tuple>
 #include <map>
-#include <gtest/gtest.h>
 
 #include "WordTable.hpp"
 
@@ -164,7 +163,7 @@ using SubwordsType = std::tuple<Label,
 class SuffixTree
 {
 private:
-  FRIEND_TEST(WordTable, suffixtree1);
+  FRIEND_TEST(SuffixTree, suffixtree1);
 public:
   friend std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree);
   // these functions are also in WordTable; we would like to keep the
@@ -191,7 +190,7 @@ public:
   //   the i-th word in the table is w (say)
   //   j is a position in word
   //   such that w appears in word starting at position j.
-  void subwords(Word word,
+  bool subwords(Word word,
                 std::vector<std::pair<int,int>>& output) const;
 
   // sets 'output' to the first pair (i,j), where
@@ -207,7 +206,7 @@ public:
   //   the i-th word in the table is w (say)
   //   j is a position in w
   //   such that word appears in w starting at position j.
-  void superwords(Word word,
+  bool superwords(Word word,
                   std::vector<std::pair<int,int>>& output) const;
   
 
@@ -226,7 +225,7 @@ public:
 
   // find (right) overlaps with most recent added word 'w'.
   // Note: Not sure this is possible in this implementation
-  void rightOverlaps(std::vector<Overlap>& newRightOverlaps) const; 
+  // void rightOverlaps(std::vector<Overlap>& newRightOverlaps) const; 
 
   // other public functions:
   int numPatterns() const { return mMonomials.size(); }
