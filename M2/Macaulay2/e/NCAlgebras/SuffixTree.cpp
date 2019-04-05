@@ -18,7 +18,7 @@ std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode)
   return o;
 }
 
-std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth)
+std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth) const
 {
   if (mParent == nullptr)
     {
@@ -247,9 +247,12 @@ auto SuffixTree::splitArc(SuffixTreeNode* f,
 // either a child of y sharing a prefix pre with s - y.label, or f
 // is nullTreeNode if no such child exists.
 auto SuffixTree::contractedLocus(SuffixTreeNode* y,
-				 const Label& s,
-				 bool incrementLeafCount) -> ContractedLocusType
+                                 const Label& s,
+                                 bool incrementLeafCount = false) const -> ContractedLocusType
 {
+  // warning: This function is not *really* const, since adding to the pattern
+  // leaf count (if incrementalLeafCount = true) could change the behavior of
+  // some functions.
   y->addToPatternLeafCount(incrementLeafCount);
   auto tmpNode = y;
   auto tmpLabel = s;
@@ -271,7 +274,7 @@ auto SuffixTree::contractedLocus(SuffixTreeNode* y,
 // needs to be split (if necessary) if beta is empty, then simply
 // return (x,beta) since x is the extended locus
 auto SuffixTree::extendedLocus(SuffixTreeNode* x,
-			       const Label& beta) -> ExtendedLocusType
+			       const Label& beta) const -> ExtendedLocusType
 {
   if (beta.size() == 0) return std::make_tuple(x,beta);
   auto tmpNode = x;
@@ -290,7 +293,7 @@ auto SuffixTree::extendedLocus(SuffixTreeNode* x,
 // return a std::pair of nullptrs if no match is found, i.e. the empty
 // prefix is the only shared prefix with any child of y
 auto SuffixTree::findMatch(SuffixTreeNode* y,
-			   const Label& s) -> ExtendedLocusType
+			   const Label& s) const -> ExtendedLocusType
 {
   SuffixTreeNode* f = nullptr;
   auto pre = Label {};
@@ -310,7 +313,7 @@ auto SuffixTree::findMatch(SuffixTreeNode* y,
 // Return all pattern leaves below v
 // warning: output is placed in the second argument to the function.  The vector is *not*
 // cleared beforehand.
-auto SuffixTree::patternLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void
+auto SuffixTree::patternLeaves(SuffixTreeNode* v, std::vector<int>& output) const -> void
 {
   if (v->numChildren() == 0) return;
   for(auto x : patternLeavesWorker(v))
@@ -320,7 +323,7 @@ auto SuffixTree::patternLeaves(SuffixTreeNode* v, std::vector<int>& output) -> v
   return;
 }
 
-auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>
+auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>
 {
   // TODO: the workers are still making a copy and returning it
   // make change to allow for reference to be passed along.
@@ -345,7 +348,7 @@ auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTre
 }
 
 // Return the longest shared prefix of s and t.  A copy is made
-auto SuffixTree::sharedPrefix(const Label& s, const Label& t) -> Label
+auto SuffixTree::sharedPrefix(const Label& s, const Label& t) const -> Label
 {
   int i = 0;
   while (i < s.size() && i < t.size() && s[i] == t[i]) i++;
@@ -355,7 +358,7 @@ auto SuffixTree::sharedPrefix(const Label& s, const Label& t) -> Label
 // return all leaves below v
 // warning: output is placed in the second argument to the function.  The vector is *not*
 // cleared beforehand.
-auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void
+auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<int>& output) const -> void
 {
   if (v->numChildren() == 0)
     {
@@ -369,7 +372,7 @@ auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void
   return;
 }
 
-auto SuffixTree::allLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>
+auto SuffixTree::allLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>
 {
   // TODO: the workers are still making a copy and returning it
   // make change to allow for reference to be passed along.
@@ -405,27 +408,35 @@ auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& outpu
   subwords(w,output,false);
 }
   
-auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& output, bool onlyFirst) const -> void
+auto SuffixTree::subwords(const Label& w,
+                          std::vector<std::pair<int,int>>& output,
+                          bool onlyFirst) const -> void
 {
+  // this command returns a pair (i,j) where word i in the table appears
+  // in position j of word.
   auto cLocus = mRoot;
   auto beta = Label {};
   auto tmpLabel = w;
   int pos = 0;
-  // TODO: Still working here.
   while (tmpLabel.size() != 0)
     {
       auto swType = subwordsWorker(cLocus,beta,tmpLabel);
       auto newcLocus = std::get<0>(swType);
       auto newbeta = std::get<1>(swType);
-      auto wasPattern = std::get<2>(swType);
+      auto leaf = std::get<2>(swType);
+      auto wasPattern = std::get<3>(swType);
       if (wasPattern)
         {
-          if (onlyFirst)
-            {
-              Label tmp = newcLocus->label();
-            }
+          auto tmp = std::make_pair(leaf->getPatternNumber(),pos);
+          output.push_back(tmp);
+          if (onlyFirst) return;
         }
+      pos++;
+      tmpLabel = suffix(tmpLabel,1);
+      cLocus = newcLocus;
+      beta = newbeta;
     }
+  return;
 }
   
 
@@ -433,17 +444,38 @@ auto SuffixTree::subwordsWorker(SuffixTreeNode* cLocus,
                                 const Label& beta,
                                 const Label& s) const -> SubwordsWorkerType
 {
+  if (cLocus == mRoot)
+    return subwordsStepD(mRoot,s);
+  else
+    return subwordsStepC(cLocus->suffixLink(),beta,s);
 }
 
 auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
                                const Label& beta,
                                const Label& s) const -> SubwordsWorkerType
 {
+  if (beta.size() == 0)
+    return subwordsStepD(x,suffix(s,x->label().size()));
+  auto elType = extendedLocus(x,beta);
+  auto f = std::get<0>(elType);
+  auto betaHat = std::get<1>(elType);
+  if (f->arcLabel().size() == betaHat.size())
+    return subwordsStepD(f,suffix(s,f->label().size()));
+  else
+    return std::make_tuple(x,betaHat,nullptr,false);
 }
 
 auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
                                const Label& s) const -> SubwordsWorkerType
 {
+  auto clType = contractedLocus(y,s);
+  auto newy = std::get<0>(clType);
+  auto f = std::get<1>(clType);
+  auto pre = std::get<2>(clType);
+  if (f == nullptr)
+    return std::make_tuple(newy,pre,nullptr,false);
+  else
+    return std::make_tuple(newy,pre,f,f->isFullPattern());
 }
 
 #if 0

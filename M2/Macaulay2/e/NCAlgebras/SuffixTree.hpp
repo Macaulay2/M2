@@ -45,7 +45,7 @@ class SuffixTreeNode
 {
 public:
   friend std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode);
-  std::ostream& dump(std::ostream&, int depth);
+  std::ostream& dump(std::ostream&, int depth) const;
 
   // the default constructor makes a root node
   SuffixTreeNode() :
@@ -81,12 +81,12 @@ public:
   SuffixTreeNode* suffixLink() { return mSuffixLink; }
   Label& arcLabel() { return mArcLabel; }
   Label& label() { return mLabel; }
-  int patternLeafCount() { return mPatternLeafCount; }
-  bool isFullPattern() { return mIsFullPattern; }
+  int patternLeafCount() const { return mPatternLeafCount; }
+  bool isFullPattern() const { return mIsFullPattern; }
   
   std::map<Label,SuffixTreeNode*>::iterator childrenBegin() { return mChildren.begin(); }
   std::map<Label,SuffixTreeNode*>::iterator childrenEnd() { return mChildren.end(); }
-  size_t numChildren() { return mChildren.size(); }
+  size_t numChildren() const { return mChildren.size(); }
   
   void setParent(SuffixTreeNode* newParent) { mParent = newParent; }
   void setSuffixLink(SuffixTreeNode* newSuffixLink) { mSuffixLink = newSuffixLink; }
@@ -151,7 +151,8 @@ using InsertWorkerType = std::tuple<SuffixTreeNode*,
 				    SuffixTreeNode*>;
 
 using SubwordsWorkerType = std::tuple<SuffixTreeNode*,
-                                     Label,
+                                      Label,
+                                      SuffixTreeNode*,
                                      bool>;
 
 using SubwordsType = std::tuple<Label,
@@ -249,7 +250,7 @@ private:
   // is nullTreeNode if no such child exists.
   auto contractedLocus(SuffixTreeNode* y,
 		       const Label& s,
-		       bool incrementLeafCount) -> ContractedLocusType;
+		       bool incrementLeafCount) const -> ContractedLocusType;
 
   // For this function to work, there must be a path starting from x
   // with beta as a prefix (See e.g. Lemma 1 in Amir, et.al.)  This
@@ -258,24 +259,25 @@ private:
   // needs to be split (if necessary) if beta is empty, then simply
   // return (x,beta) since x is the extended locus
   auto extendedLocus(SuffixTreeNode* x,
-		     const Label& beta) -> ExtendedLocusType;
+		     const Label& beta) const -> ExtendedLocusType;
 
   // Finds an arc from y to a child whose label shares a prefix with s
   // return a std::pair of nullptrs if no match is found, i.e. the empty
   // prefix is the only shared prefix with any child of y
   auto findMatch(SuffixTreeNode* y,
-		 const Label& s) -> ExtendedLocusType;
+		 const Label& s) const -> ExtendedLocusType;
 
   // Return the longest shared prefix of s and t as a copy
-  auto sharedPrefix(const Label& s, const Label& t) -> Label;
+  // this doesn't really belong here...
+  auto sharedPrefix(const Label& s, const Label& t) const -> Label;
 
   // Return all pattern leaves below v
-  auto patternLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void;
-  auto patternLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>;
+  auto patternLeaves(SuffixTreeNode* v, std::vector<int>& output) const -> void;
+  auto patternLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>;
 
   // return all leaves below v
-  auto allLeaves(SuffixTreeNode* v, std::vector<int>& output) -> void;
-  auto allLeavesWorker(SuffixTreeNode* v) -> std::vector<SuffixTreeNode*>;
+  auto allLeaves(SuffixTreeNode* v, std::vector<int>& output) const -> void;
+  auto allLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>;
 
   // functions for insert algorithm
   auto insert(const Label& s, std::vector<Triple>& rightOverlaps) -> size_t;

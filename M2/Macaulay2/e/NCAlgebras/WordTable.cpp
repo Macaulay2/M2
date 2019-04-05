@@ -90,6 +90,8 @@ bool WordTable::subwordPosition(Word word1,
 void WordTable::subwords(Word word,
                            std::vector<std::pair<int,int>>& output) const
 {
+  // this command returns a pair (i,j) where word i in the table appears
+  // in position j of word.
   std::vector<int> start_indices;
   for (auto i = 0; i < mMonomials.size(); ++i)
     {

@@ -89,7 +89,6 @@ suffixTreeInsert (SuffixTree, List) := (tree, w) -> (
       if roRoot != {} then (
 	 tempRos := apply(patternLeaves(first roRoot), pl -> (last newLocus.label,pl#0,pl#1));
 	 tempRos = apply(tempRos, ro -> (tree.wordList#(ro#0),#(tree.wordList#(ro#0)) - #(ro#1),tree.wordList#(ro#2)));
-	 << "String: " << s << " numROs: " << #tempRos << endl;
 	 rightOverlaps = rightOverlaps | tempRos;
       );
       if v =!= tree.root and #s == 2 then v.suffixLink = tree.root;
@@ -311,7 +310,9 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
    while (s != {}) do (
       (newcLocus,newbeta,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
       if wasPattern then
-         subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
+      (
+ 	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
+      );
       pos = pos + 1;
       s = drop(s,1);
       cLocus = newcLocus;
@@ -430,8 +431,7 @@ debug needsPackage "SuffixTreePackage"
 --- gens of lead term ideal of generic Sklyanin algebra out to degree 12 (as lists of symbols)
 --- I tried putting all this on one line but the parser doesn't like it.
 mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}, {Y, X, Y, X, X},
-        {Y, X, Y, X, Y}}
-	{Y, X, Y, X, Z},{Y, X, X, Y, X, X}, {Y, X, X, Y, X, Z}, {Y, X, X, Y, Y, Y},
+        {Y, X, Y, X, Y},{Y, X, Y, X, Z},{Y, X, X, Y, X, X}, {Y, X, X, Y, X, Z}, {Y, X, X, Y, Y, Y},
 	{Y, X, X, X, Y, X, Y}, {Y, X, X, X, Y, Y, Y}, {Y, X, X, Y, X, Y, X}, {Y, X, X, Y, X, Y, Z},
 	{Y, X, X, X, X, Y, Y, Y}, {Y, X, X, X, Y, X, X, X}, {Y, X, X, X, Y, X, X, Y},
 	{Y, X, X, X, Y, X, X, Z}, {Y, X, X, X, X, X, Y, Y, Y}, {Y, X, X, X, X, Y, X, X, X},

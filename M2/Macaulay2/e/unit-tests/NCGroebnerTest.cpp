@@ -561,6 +561,19 @@ TEST(WordTable, suffixtree1)
   suffixTree2->insert(monList2, rightOverlaps);
   EXPECT_EQ(596,rightOverlaps.size());
   EXPECT_EQ(47,suffixTree2->numPatterns());
+
+  auto subwordsOutput = std::vector<std::pair<int,int>> {};
+  suffixTree2->subwords(Label {2,2,0,1,1,0,1,0,1,1}, subwordsOutput);
+  auto correctSubwords = std::vector<std::pair<int,int>> { std::make_pair(2,0),
+                                                   std::make_pair(0,1),
+                                                   std::make_pair(3,3),
+                                                   std::make_pair(8,4),
+                                                   std::make_pair(5,6) };
+  EXPECT_EQ(subwordsOutput,correctSubwords);
+
+  auto subwordOutput = std::make_pair(-1,-1);
+  suffixTree2->subword(Label {2,2,0,1,1,0,1,0,1,1}, subwordOutput);
+  EXPECT_EQ(subwordOutput, std::make_pair(2,0));
 }
 
 
