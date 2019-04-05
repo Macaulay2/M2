@@ -83,6 +83,7 @@ public:
   Label& label() { return mLabel; }
   int patternLeafCount() const { return mPatternLeafCount; }
   bool isFullPattern() const { return mIsFullPattern; }
+  bool isLeaf() const { return (*(mLabel.end()-1) < 0); }
   
   std::map<Label,SuffixTreeNode*>::iterator childrenBegin() { return mChildren.begin(); }
   std::map<Label,SuffixTreeNode*>::iterator childrenEnd() { return mChildren.end(); }
@@ -276,8 +277,7 @@ private:
   auto patternLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>;
 
   // return all leaves below v
-  auto allLeaves(SuffixTreeNode* v, std::vector<int>& output) const -> void;
-  auto allLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>;
+  auto allLeaves(SuffixTreeNode* v, std::vector<SuffixTreeNode*>& output) const -> void;
 
   // functions for insert algorithm
   auto insert(const Label& s, std::vector<Triple>& rightOverlaps) -> size_t;
@@ -295,9 +295,11 @@ private:
 		   bool isFullPattern) -> InsertWorkerType;
 
   // functions for subwords algorithm
+  // the output is a list of pairs (i,j) such that monomial i appears in position j
+  // of the word w.
   auto subword(const Label& w, std::pair<int,int>& output) const -> bool;
-  auto subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> void;
-  auto subwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> void;
+  auto subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool;
+  auto subwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool;
   auto subwordsWorker(SuffixTreeNode* cLocus,
 		      const Label& beta,
 		      const Label& s) const -> SubwordsWorkerType;
@@ -306,6 +308,11 @@ private:
 		     const Label& s) const -> SubwordsWorkerType;
   auto subwordsStepD(SuffixTreeNode* y,
 		     const Label& s) const -> SubwordsWorkerType;
+
+  // the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
+  auto superword(const Label& w, std::pair<int,int>& output) const -> bool;
+  auto superwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool;
+  auto superwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool;
   
 private:
   // root node of the tree

@@ -563,17 +563,33 @@ TEST(WordTable, suffixtree1)
   EXPECT_EQ(47,suffixTree2->numPatterns());
 
   auto subwordsOutput = std::vector<std::pair<int,int>> {};
-  suffixTree2->subwords(Label {2,2,0,1,1,0,1,0,1,1}, subwordsOutput);
+  EXPECT_TRUE(suffixTree2->subwords(Label {2,2,0,1,1,0,1,0,1,1}, subwordsOutput));
   auto correctSubwords = std::vector<std::pair<int,int>> { std::make_pair(2,0),
                                                    std::make_pair(0,1),
                                                    std::make_pair(3,3),
                                                    std::make_pair(8,4),
                                                    std::make_pair(5,6) };
+  std::sort(subwordsOutput.begin(),subwordsOutput.end());
+  std::sort(correctSubwords.begin(),correctSubwords.end());
   EXPECT_EQ(subwordsOutput,correctSubwords);
 
   auto subwordOutput = std::make_pair(-1,-1);
-  suffixTree2->subword(Label {2,2,0,1,1,0,1,0,1,1}, subwordOutput);
+  EXPECT_TRUE(suffixTree2->subword(Label {2,2,0,1,1,0,1,0,1,1}, subwordOutput));
   EXPECT_EQ(subwordOutput, std::make_pair(2,0));
+
+  auto superwordsOutput = std::vector<std::pair<int,int>> {};
+  suffixTree2->superwords(Label {1,1}, superwordsOutput);
+  auto correctSuperwords = std::vector<std::pair<int,int>> { std::make_pair(12,4),std::make_pair(45,10),
+                                                             std::make_pair(14,5),std::make_pair(31,8),
+                                                             std::make_pair(3,0),std::make_pair(17,6),
+                                                             std::make_pair(4,0),std::make_pair(21,7),
+                                                             std::make_pair(5,2),std::make_pair(17,5),
+                                                             std::make_pair(6,0),std::make_pair(12,3),
+                                                             std::make_pair(21,6),std::make_pair(14,4),
+                                                             std::make_pair(6,1),std::make_pair(6,2) };
+  std::sort(superwordsOutput.begin(),superwordsOutput.end());
+  std::sort(correctSuperwords.begin(),correctSuperwords.end());
+  EXPECT_EQ(superwordsOutput,correctSuperwords);
 }
 
 

@@ -83,6 +83,12 @@ Label suffix(const Label &vec, int indexOfSuffix)
   return temp;
 }
 
+bool concatenatesTo(const Label& a, const Label&b, const Label&c)
+{
+  if (a.size() + b.size() != c.size()) return false;
+  return (std::equal(a.begin(),a.end(),c.begin()) && std::equal(b.begin(),b.end(),c.begin()+a.size()));
+}
+
 SuffixTree::SuffixTree()
 {
   SuffixTreeNode* root = new SuffixTreeNode();
@@ -355,39 +361,20 @@ auto SuffixTree::sharedPrefix(const Label& s, const Label& t) const -> Label
   return prefix(s,i);
 }
 
-// return all leaves below v
-// warning: output is placed in the second argument to the function.  The vector is *not*
-// cleared beforehand.
-auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<int>& output) const -> void
+// return all leaves below v, as pointers to their nodes in the second argument
+// warning: the output vector is *not* cleared beforehand
+auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<SuffixTreeNode*>& output) const -> void
 {
   if (v->numChildren() == 0)
     {
-      output.push_back(v->getPatternNumber());
+      output.push_back(v);
       return;
-    }
-  for (auto x : allLeavesWorker(v))
-    {
-      output.push_back(x->getPatternNumber());
-    }
-  return;
-}
-
-auto SuffixTree::allLeavesWorker(SuffixTreeNode* v) const -> std::vector<SuffixTreeNode*>
-{
-  // TODO: the workers are still making a copy and returning it
-  // make change to allow for reference to be passed along.
-  auto retval = std::vector<SuffixTreeNode*> {};
-  if (v->numChildren() == 0)
-    {
-      retval.push_back(v);
-      return retval;
     }
   for (auto x = v->childrenBegin(); x != v->childrenEnd(); ++x)
     {
-      auto tmp = allLeavesWorker(x->second);
-      std::copy(tmp.begin(),tmp.end(),std::back_inserter(retval));
+      allLeaves(x->second,output);
     }
-  return retval;
+  return;
 }
 
 // functions for subwords algorithm
@@ -403,14 +390,14 @@ auto SuffixTree::subword(const Label& w, std::pair<int,int>& output) const -> bo
     }
 }
 
-auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> void
+auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool
 {
-  subwords(w,output,false);
+  return subwords(w,output,false);
 }
   
 auto SuffixTree::subwords(const Label& w,
                           std::vector<std::pair<int,int>>& output,
-                          bool onlyFirst) const -> void
+                          bool onlyFirst) const -> bool
 {
   // this command returns a pair (i,j) where word i in the table appears
   // in position j of word.
@@ -418,6 +405,7 @@ auto SuffixTree::subwords(const Label& w,
   auto beta = Label {};
   auto tmpLabel = w;
   int pos = 0;
+  bool retval = false;
   while (tmpLabel.size() != 0)
     {
       auto swType = subwordsWorker(cLocus,beta,tmpLabel);
@@ -429,17 +417,17 @@ auto SuffixTree::subwords(const Label& w,
         {
           auto tmp = std::make_pair(leaf->getPatternNumber(),pos);
           output.push_back(tmp);
-          if (onlyFirst) return;
+          retval = true;
+          if (onlyFirst) return true;
         }
       pos++;
       tmpLabel = suffix(tmpLabel,1);
       cLocus = newcLocus;
       beta = newbeta;
     }
-  return;
+  return retval;
 }
   
-
 auto SuffixTree::subwordsWorker(SuffixTreeNode* cLocus,
                                 const Label& beta,
                                 const Label& s) const -> SubwordsWorkerType
@@ -476,6 +464,52 @@ auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
     return std::make_tuple(newy,pre,nullptr,false);
   else
     return std::make_tuple(newy,pre,f,f->isFullPattern());
+}
+
+// the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
+auto SuffixTree::superword(const Label& w, std::pair<int,int>& output) const -> bool
+{
+  auto tmp = std::vector<std::pair<int,int>> {};
+  superwords(w,tmp,true);
+  if (tmp.size() == 0) return false;
+  else
+    {
+      output = *(tmp.begin());
+      return true;
+    }
+}
+
+// the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
+auto SuffixTree::superwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool
+{
+  return superwords(w,output,false);
+}
+
+// the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
+auto SuffixTree::superwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool
+{
+  auto clType = contractedLocus(mRoot,w);
+  auto y = std::get<0>(clType);
+  auto f = std::get<1>(clType);
+  auto pre = std::get<2>(clType);
+
+  if (!concatenatesTo(y->label(),pre,w)) return false;
+  else if (f == nullptr)
+    {
+      auto leaves = std::vector<SuffixTreeNode*> {};
+      allLeaves(y,leaves);
+      for (auto g : leaves)
+        {
+          output.push_back(std::make_pair(g->getPatternNumber(),mMonomials[g->getPatternNumber()].size() - g->label().size() + 1));
+          if (onlyFirst) return true;
+        }
+    }
+  else if (f->isLeaf() && f->label().size() == w.size() + 1)
+    {
+      output.push_back(std::make_pair(f->getPatternNumber(),mMonomials[f->getPatternNumber()].size() - f->label().size() + 1));
+      return true;
+    }
+  else return false;
 }
 
 #if 0

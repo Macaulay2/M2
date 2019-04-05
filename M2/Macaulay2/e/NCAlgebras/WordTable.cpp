@@ -120,6 +120,8 @@ bool WordTable::subword(Word word,
 void WordTable::superwords(Word word,
                            std::vector<std::pair<int,int>>& output) const
 {
+  // this command returns a list of pairs (i,j) where word appears 
+  // appears in monomial i in position j
   std::vector<int> start_indices;
   for (auto i = 0; i < mMonomials.size(); ++i)
     {
