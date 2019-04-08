@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <tuple>
 #include <map>
+#include <gtest/gtest.h>
 
 #include "WordTable.hpp"
 
@@ -43,8 +44,8 @@ private:
 class SuffixTreeNode
 {
 public:
-  friend std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode);
-  std::ostream& dump(std::ostream&, int depth) const;
+  friend std::ostream& operator<<(std::ostream& o, const SuffixTreeNode& suffixTreeNode);
+  std::ostream& dump(std::ostream&, int depth, bool dumpChildren = true) const;
 
   // the default constructor makes a root node
   SuffixTreeNode() :
@@ -165,7 +166,8 @@ class SuffixTree
 private:
   FRIEND_TEST(SuffixTree, suffixtree1);
 public:
-  friend std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree);
+  friend std::ostream& operator<<(std::ostream& o, const SuffixTree& suffixTree);
+  friend void outputPatterns(std::ostream& o, const SuffixTree& suffixTree);
   // these functions are also in WordTable; we would like to keep the
   // basic interface of both classes the same
 
@@ -336,8 +338,11 @@ private:
   // LabelPool mLabelPool;
 };
 
-std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree);
-std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode);
+// some utility/debugging functions
+void outputPatterns(std::ostream& o, const SuffixTree& suffixTree);
+std::ostream& operator<<(std::ostream& o, const SuffixTree& suffixTree);
+std::ostream& operator<<(std::ostream& o, const SuffixTreeNode& suffixTreeNode);
+void outputLabel(std::ostream& o, const Label& vec);
 
 #endif
 

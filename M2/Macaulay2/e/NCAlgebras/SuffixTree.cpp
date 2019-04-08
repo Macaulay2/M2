@@ -12,13 +12,13 @@ void outputLabel(std::ostream& o, const Label& vec)
   o << "]";
 }
 
-std::ostream& operator<<(std::ostream& o, SuffixTreeNode& suffixTreeNode)
+std::ostream& operator<<(std::ostream& o, const SuffixTreeNode& suffixTreeNode)
 {
   suffixTreeNode.dump(o,0);
   return o;
 }
 
-std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth) const
+std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth, bool dumpChildren) const
 {
   if (mParent == nullptr)
     {
@@ -45,15 +45,17 @@ std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth) const
         outputLabel(o,mSuffixLink->mLabel);
       o << std::endl;
     }
-  
-  for (auto pair : mChildren)
+  if (dumpChildren)
     {
-      pair.second->dump(o,depth+1);
+      for (auto pair : mChildren)
+        {
+          pair.second->dump(o,depth+1);
+        }
     }
   return o;
 }
 
-std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree)
+void outputPatterns(std::ostream& o, const SuffixTree& suffixTree)
 {
   o << "Patterns in table: {";
   for (auto i = suffixTree.mMonomials.begin(); i != suffixTree.mMonomials.end(); ++i)
@@ -62,7 +64,12 @@ std::ostream& operator<<(std::ostream& o, SuffixTree& suffixTree)
         o << ",";
       o << *i;
     }
-  o << "}" << std::endl;
+  o << "}" << std::endl;  
+}
+
+std::ostream& operator<<(std::ostream& o, const SuffixTree& suffixTree)
+{
+  outputPatterns(o,suffixTree);
   suffixTree.mRoot->dump(o,0);
   return o;
 }
@@ -87,6 +94,13 @@ bool concatenatesTo(const Label& a, const Label&b, const Label&c)
 {
   if (a.size() + b.size() != c.size()) return false;
   return (std::equal(a.begin(),a.end(),c.begin()) && std::equal(b.begin(),b.end(),c.begin()+a.size()));
+}
+
+bool isPatternPrefix(const Label& a, const Label &b)
+{
+  // here, a is a pattern label so we only compare the first a.size()-1 many entries
+  if (b.size() < a.size() - 1) return false;
+  return std::equal(a.begin(),a.end()-1,b.begin());
 }
 
 SuffixTree::SuffixTree()
@@ -421,17 +435,38 @@ auto SuffixTree::subwords(const Label& w,
   bool retval = false;
   while (tmpLabel.size() != 0)
     {
+      cLocus->dump(std::cout,0,false);
+      outputLabel(std::cout,beta);
+      std::cout << std::endl;
+      outputLabel(std::cout,tmpLabel);
+      std::cout << std::endl;
       auto swType = subwordsWorker(cLocus,beta,tmpLabel);
       auto newcLocus = std::get<0>(swType);
       auto newbeta = std::get<1>(swType);
       auto leaf = std::get<2>(swType);
       auto wasPattern = std::get<3>(swType);
+      bool isPP;
       if (wasPattern)
         {
+          std::cout << "About to call isPP" << std::endl;
+          outputLabel(std::cout,leaf->label());
+          std::cout << std::endl;
+          outputLabel(std::cout,tmpLabel);
+          std::cout << std::endl;
+          isPP = isPatternPrefix(leaf->label(),tmpLabel);
+          std::cout << "Done" << std::endl;
+        }
+      if (wasPattern && isPP)
+        {
+          std::cout << "A subword found: (" << leaf->getPatternNumber() << "," << pos << ")" << std::endl;
           auto tmp = std::make_pair(leaf->getPatternNumber(),pos);
           output.push_back(tmp);
           retval = true;
           if (onlyFirst) return true;
+        }
+      else
+        {
+          std::cout << "Not a substring." << std::endl;
         }
       pos++;
       tmpLabel = suffix(tmpLabel,1);
@@ -621,7 +656,11 @@ auto SuffixTree::isNontrivialSuperword(Word word, int index1, int index2) const 
 {
   Label tmp(word.begin(),word.end());
   std::vector<std::pair<int,int>> subs {};
+  std::cout << "Checking subwords." << std::endl;
+  outputPatterns(std::cout,*this);
+  std::cout << "tmp: " << tmp << std::endl;
   subwords(tmp, subs);
+  std::cout << "Finished checking subwords." << std::endl;
   for (auto sw : subs)
     {
       auto index = std::get<0>(sw);

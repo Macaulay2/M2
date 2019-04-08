@@ -45,7 +45,8 @@ kk = ZZ/32003
 R = kk{z,y,x}
 I = ideal(5*z^2+3*y*x+2*x*y, 3*z*y+2*y*z+5*x^2, 2*z*x+5*y^2+3*x*z)
 gbTrace = 4
-J = elapsedTime NCGB(I, 3);
+-- crash!
+J = elapsedTime NCGB(I, 9);
 B = flatten for i from 0 to 2 list flatten for j from 0 to 2 list for k from 0 to 2 list R_i * R_j * R_k
 inJ = (ideal J)_*/leadTerm//ideal
 compress NCReduction2Sided(matrix{{B_13}}, inJ) -- crashes

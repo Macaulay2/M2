@@ -569,20 +569,20 @@ TEST(SuffixTree, suffixtree1)
   EXPECT_EQ(596,rightOverlaps.size());
   EXPECT_EQ(47,suffixTree2->numPatterns());
 
-  auto subwordsOutput = std::vector<std::pair<int,int>> {};
-  EXPECT_TRUE(suffixTree2->subwords(Label {2,2,0,1,1,0,1,0,1,1}, subwordsOutput));
-  auto correctSubwords = std::vector<std::pair<int,int>> { std::make_pair(2,0),
-                                                   std::make_pair(0,1),
-                                                   std::make_pair(3,3),
-                                                   std::make_pair(8,4),
-                                                   std::make_pair(5,6) };
-  std::sort(subwordsOutput.begin(),subwordsOutput.end());
-  std::sort(correctSubwords.begin(),correctSubwords.end());
-  EXPECT_EQ(subwordsOutput,correctSubwords);
+  // auto subwordsOutput = std::vector<std::pair<int,int>> {};
+  // EXPECT_TRUE(suffixTree2->subwords(Label {2,2,0,1,1,0,1,0,1,1}, subwordsOutput));
+  // auto correctSubwords = std::vector<std::pair<int,int>> { std::make_pair(2,0),
+  //                                                  std::make_pair(0,1),
+  //                                                  std::make_pair(3,3),
+  //                                                  std::make_pair(8,4),
+  //                                                  std::make_pair(5,6) };
+  // std::sort(subwordsOutput.begin(),subwordsOutput.end());
+  // std::sort(correctSubwords.begin(),correctSubwords.end());
+  // EXPECT_EQ(subwordsOutput,correctSubwords);
 
-  auto subwordOutput = std::make_pair(-1,-1);
-  EXPECT_TRUE(suffixTree2->subword(Label {2,2,0,1,1,0,1,0,1,1}, subwordOutput));
-  EXPECT_EQ(subwordOutput, std::make_pair(2,0));
+  // auto subwordOutput = std::make_pair(-1,-1);
+  // EXPECT_TRUE(suffixTree2->subword(Label {2,2,0,1,1,0,1,0,1,1}, subwordOutput));
+  // EXPECT_EQ(subwordOutput, std::make_pair(2,0));
 
   auto superwordsOutput = std::vector<std::pair<int,int>> {};
   suffixTree2->superwords(Label {1,1}, superwordsOutput);
@@ -626,13 +626,31 @@ TEST(SuffixTree, suffixtree1)
   suffixTree3->leftOverlaps(leftOverlapsOutput2);
   EXPECT_EQ(leftOverlapsOutput2.size(),0);
 
-  suffixTree3->insert(Label {1,1,0}, rightOverlaps);
-  EXPECT_FALSE(suffixTree3->subword(Label {1,1,2},o));
-  std::cout << "(" << o.first << "," << o.second << ")" << std::endl;
-  
+  // suffixTree3->insert(Label {1,1,0}, rightOverlaps);
+  // EXPECT_FALSE(suffixTree3->subword(Label {1,1,2},o));
+  // std::cout << "(" << o.first << "," << o.second << ")" << std::endl;
+
+  auto monList4 = std::vector<Label> {Label{0,0},Label{0,1},Label{0,2},Label{1,1,2},Label{1,1,0},
+                                      Label{1,1,1,1},Label{1,2,1,1},Label{1,2,1,2,1},Label{1,2,1,2,0},
+                                      Label{1,2,1,2,2},Label{1,2,2,1,1,1},Label{1,2,2,1,2,2},
+                                      Label{1,2,2,1,2,0},Label{1,2,2,1,2,1,0},Label{1,2,2,1,2,1,2},
+                                      Label{1,2,2,2,1,2,1},Label{1,2,2,2,1,1,1},Label{1,2,2,2,1,2,2,2},
+                                      Label{1,2,2,2,1,2,2,1},Label{1,2,2,2,1,2,2,0},Label{1,2,2,2,2,1,1,1}};
+  rightOverlaps.clear();
+  SuffixTree* suffixTree4 = new SuffixTree();
+  suffixTree4->insert(monList4, rightOverlaps);
+  suffixTree4->insert(Label{1,2,2,2,2,1,2,1,0}, rightOverlaps);
+  auto subwordsOutput2 = std::vector<std::pair<int,int>> {};
+  std::cout << "Here 11" << std::endl;
+  //auto clType = suffixTree4->contractedLocus(suffixTree4->mRoot,Label{2,2,2,1});
+  //std::get<0>(clType)->dump(std::cout,0,false) << std::endl;
+  //suffixTree4->subwordsWorker(std::get<0>(clType),Label{0},Label{2,2,1,2,1,0,0});
+  suffixTree4->subwords(Label{1,2,2,2,2,1,2,1,0,0}, subwordsOutput2);
+
   delete suffixTree;
   delete suffixTree2;
   delete suffixTree3;
+  delete suffixTree4;
 }
 
 TEST(SuffixTree,suffixtree2)

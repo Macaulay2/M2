@@ -309,7 +309,7 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
    pos := 0;
    while (s != {}) do (
       (newcLocus,newbeta,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
-      if wasPattern then
+      if (wasPattern and (newcLocus.label | newbeta == take(s,#newcLocus.label + #newbeta))) then
       (
  	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
       );
@@ -457,6 +457,8 @@ leftOverlaps = suffixTreeLeftOverlaps(tree, {symbol Y, symbol Y, symbol X});
 checkOverlaps leftOverlaps
 assert(#leftOverlaps == 23)
 
+suffixTreeSubwords(tree, {symbol Y, symbol Y, symbol Z})
+
 superwords = suffixTreeSuperwords(tree, {symbol Y, symbol Y,symbol X});
 checkDivisions superwords
 assert(#superwords == 1)
@@ -479,3 +481,12 @@ J = ncIdeal gens I
 Jgb = ncGroebnerBasis(J, DegreeLimit => 5)  -- this takes a bit of time (in bergman)
 mons = apply(gens Jgb, f -> (first first pairs (leadMonomial f).terms).monList)
 mons = sortUsing(mons, length)
+
+-- subwords bug!!!
+restart
+debug needsPackage "SuffixTreePackage"
+--- gens of lead term ideal of generic Sklyanin algebra out to degree 12 (as lists of symbols)
+--- I tried putting all this on one line but the parser doesn't like it.
+mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}}
+(tree,rightOverlaps) = suffixTree mons;
+subwords = suffixTreeSubwords(tree, {symbol Y, symbol Y, symbol Z})
