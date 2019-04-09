@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <tuple>
 #include <map>
-#include <gtest/gtest.h>
+//#include <gtest/gtest.h>
 
 #include "WordTable.hpp"
 
@@ -164,7 +164,7 @@ using SubwordsType = std::tuple<Label,
 class SuffixTree
 {
 private:
-  FRIEND_TEST(SuffixTree, suffixtree1);
+  //FRIEND_TEST(SuffixTree, suffixtree1);
 public:
   friend std::ostream& operator<<(std::ostream& o, const SuffixTree& suffixTree);
   friend void outputPatterns(std::ostream& o, const SuffixTree& suffixTree);

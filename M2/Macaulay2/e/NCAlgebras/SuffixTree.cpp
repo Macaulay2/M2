@@ -472,7 +472,7 @@ auto SuffixTree::subwords(const Label& w,
       std::cout << "-------------------------" << std::endl;
       pos++;
       cLocus = newcLocus;
-      beta = suffix(w,newcLocus->label.size());
+      beta = suffix(w,newcLocus->label().size());
       tmpLabel = suffix(tmpLabel,1);
     }
   return retval;

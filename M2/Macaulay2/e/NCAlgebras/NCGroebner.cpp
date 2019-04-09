@@ -67,9 +67,9 @@ void NCGroebner::compute(int softDegreeLimit)
                 }
               
               // TODO: Fix bug here!
-              std::cout << "Here1" << std::endl << std::flush;
+              // std::cout << "Here1" << std::endl << std::flush;
               insertNewOverlaps(newOverlaps);
-              std::cout << "Here2" << std::endl << std::flush;
+              // std::cout << "Here2" << std::endl << std::flush;
 
               newOverlaps.clear();
               mWordTable.leftOverlaps(newOverlaps);
@@ -109,14 +109,14 @@ const ConstPolyList* NCGroebner::currentValue()
   return &mGroebner;
 }
 
-// auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-//                                    const Poly* reducee,
-//                                    const ConstPolyList& reducers,
-//                                    const WordTable& W) -> Poly*
 auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-                                   const Poly* reducee,
-                                   const ConstPolyList& reducers,
-                                   const SuffixTree& W) -> Poly*
+                                    const Poly* reducee,
+                                    const ConstPolyList& reducers,
+                                    const WordTable& W) -> Poly*
+//auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+//                                   const Poly* reducee,
+//                                   const ConstPolyList& reducers,
+//                                   const SuffixTree& W) -> Poly*
 {
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 
@@ -166,8 +166,8 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                    const ConstPolyList& reducees,
                                    const ConstPolyList& reducers) -> ConstPolyList
 {
-  //WordTable W;
-  SuffixTree W;
+  WordTable W;
+  //SuffixTree W;
   // Build the word table for the reduction
   for (auto& f : reducers)
     {
@@ -258,8 +258,8 @@ auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
      {
        // check to see if the overlap is necessary before insertion
        // FM: not sure if we should do this here, or in the loop.
-       std::cout << "Checking overlap: " << newOverlap << std::endl;
-       printOverlapData(std::cout, newOverlap);
+       // std::cout << "Checking overlap: " << newOverlap << std::endl;
+       // printOverlapData(std::cout, newOverlap);
        if (isOverlapNecessary(newOverlap))
          {
            mOverlapTable.insert(overlapWordLength(newOverlap),
@@ -273,7 +273,7 @@ auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
                std::cout << "Reduction avoided using 2nd criterion." << std::endl;
              }
          }
-       std::cout << "Overlap check complete." << std::endl;
+       // std::cout << "Overlap check complete." << std::endl;
      }  
 }
 
