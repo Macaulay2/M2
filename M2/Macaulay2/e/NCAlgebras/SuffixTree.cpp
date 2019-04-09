@@ -28,13 +28,13 @@ std::ostream& SuffixTreeNode::dump(std::ostream& o, int depth, bool dumpChildren
   else
     {
       for (auto j = 0; j < depth; ++j) o << "  ";
-      o << "Label : ";
-      outputLabel(o,mLabel);
+      o << "Arclabel : ";
+      outputLabel(o,mArcLabel);
       o << std::endl;
       
       for (auto j = 0; j < depth; ++j) o << "  ";
-      o << "Arclabel : ";
-      outputLabel(o,mArcLabel);
+      o << "Label : ";
+      outputLabel(o,mLabel);
       o << std::endl;
       
       for (auto j = 0; j < depth; ++j) o << "  ";
@@ -435,6 +435,7 @@ auto SuffixTree::subwords(const Label& w,
   bool retval = false;
   while (tmpLabel.size() != 0)
     {
+      std::cout << "cLocus:" << std::endl;
       cLocus->dump(std::cout,0,false);
       outputLabel(std::cout,beta);
       std::cout << std::endl;
@@ -468,6 +469,7 @@ auto SuffixTree::subwords(const Label& w,
         {
           std::cout << "Not a substring." << std::endl;
         }
+      std::cout << "-------------------------" << std::endl;
       pos++;
       tmpLabel = suffix(tmpLabel,1);
       cLocus = newcLocus;
@@ -509,7 +511,7 @@ auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
   auto f = std::get<1>(clType);
   auto pre = std::get<2>(clType);
   if (f == nullptr)
-    return std::make_tuple(newy,pre,nullptr,false);
+      return std::make_tuple(newy,pre,nullptr,false);
   else
     return std::make_tuple(newy,pre,f,f->isFullPattern());
 }

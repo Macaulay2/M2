@@ -204,6 +204,8 @@ contractedLocus (SuffixTreeNode, List) := opts -> (y,s) -> (
    (y,f,pre)
 )
 
+isPrefix = (a,b) -> take(b,#a) == a
+
 extendedLocus = method()
 extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
    --- For this function to work, there must be a path starting from x with
@@ -211,6 +213,7 @@ extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
    --- This function finds the locus of the shortest word that has beta as a prefix.
    --- it returns this locus, together with the prefix that needs to be split (if necessary)
    --- if beta is empty, then simply return (x,beta) since x is the extended locus
+   initialX := x;
    if beta == {} then return (x,beta);
    betaHat := beta;
    (f,pre) := findMatch(x,betaHat);
@@ -219,6 +222,9 @@ extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
       betaHat = drop(betaHat,#(f.arcLabel));
       (f,pre) = findMatch(x,betaHat);
    );
+   -- this function needs to behave slightly differently when the search falls out of the tree
+   -- if (initialX.label | beta != f.label | betaHat) then error "Uhoh";
+   if not isPrefix(initialX.label | beta,f.label) then error "Uhoh.";
    (f,betaHat)
 )
 
@@ -308,15 +314,19 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
    initialS := s;
    pos := 0;
    while (s != {}) do (
+      --error "err 1";
       (newcLocus,newbeta,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
+      --error "err 2";
       if (wasPattern and (newcLocus.label | newbeta == take(s,#newcLocus.label + #newbeta))) then
       (
  	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
       );
       pos = pos + 1;
-      s = drop(s,1);
+      beta = drop(s,#(newcLocus.label));
       cLocus = newcLocus;
-      beta = newbeta;
+      s = drop(s,1);
+      --error "err 3";
+      ----beta = newbeta;
    );
    subwords
 )
@@ -324,7 +334,12 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
 suffixTreeSubwordsWorker = method()
 suffixTreeSubwordsWorker (SuffixTree,SuffixTreeNode, List, List) := (tree,cLocus, beta, s) -> (
    --- finds subwords for a single s, based on (cLocus,beta) of previous
-   if cLocus === tree.root then return suffixTreeSubwordsStepD(tree.root,s);
+   if cLocus === tree.root then 
+   (
+       --error "here 1";
+       return suffixTreeSubwordsStepD(tree.root,s);
+   );
+   --error "here 2";
    suffixTreeSubwordsStepC(cLocus.suffixLink,beta,s)
 )
 
@@ -332,17 +347,23 @@ suffixTreeSubwordsStepC = method()
 suffixTreeSubwordsStepC (SuffixTreeNode, List, List) := (x,beta,s) -> (
    --- Step C in algorithm SEARCH in Amir et.al.
    --- if there is no beta, then begin search at x (no need to traverse the path beta)
+   --error "here 3";
    if beta == {} then return suffixTreeSubwordsStepD(x,drop(s,#(x.label)));
+   --error "here 4";
    (f,betaHat) := extendedLocus(x,beta);
-   if #(f.arcLabel) == #betaHat then suffixTreeSubwordsStepD(f,drop(s,#(f.label))) else (x,betaHat,false)
+   --error "here 5";
+   if #(f.arcLabel) == #betaHat and isPrefix(x.label | beta, f.label) then suffixTreeSubwordsStepD(f,drop(s,#(f.label))) else (x,betaHat,false)
 )
 
 suffixTreeSubwordsStepD = method()
 suffixTreeSubwordsStepD (SuffixTreeNode, List) := (y, s) -> (
    --- Step D in algorithm SEARCH in Amir et.al.
+   --error "here 6";
    (newy,f,pre) := contractedLocus(y,s);
-   if f === nullTreeNode then return (newy,pre,false)
-   else return (newy,pre,f.isFullPattern)
+   --error "here 7";
+   if f === nullTreeNode then return (newy,pre,false);
+   --error "here 8";
+   return (newy,pre,f.isFullPattern)
 )
 
 suffixTreeSuperwords = method()
@@ -490,3 +511,15 @@ debug needsPackage "SuffixTreePackage"
 mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}}
 (tree,rightOverlaps) = suffixTree mons;
 subwords = suffixTreeSubwords(tree, {symbol Y, symbol Y, symbol Z})
+
+-- second bug.
+restart
+debug needsPackage "SuffixTreePackage"
+mons = {{Z,Z},{Z,Y},{Z,X},{Y,Y,X},{Y,Y,Z},{Y,Y,Y,Y},{Y,X,Y,Y},{Y,X,Y,X,Y},
+    {Y,X,Y,X,Z},{Y,X,Y,X,X},{Y,X,X,Y,Y,Y},{Y,X,X,Y,X,X},{Y,X,X,Y,X,Z},
+    {Y,X,X,Y,X,Y,Z},{Y,X,X,Y,X,Y,X},{Y,X,X,X,Y,X,Y},{Y,X,X,X,Y,Y,Y},
+    {Y,X,X,X,Y,X,X,X},{Y,X,X,X,Y,X,X,Y},{Y,X,X,X,Y,X,X,Z},{Y,X,X,X,X,Y,Y,Y},
+    {Y,X,X,X,X,Y,X,Y,Z}}
+#mons
+(tree,rightOverlaps) = suffixTree mons;
+subwords = suffixTreeSubwords(tree, {Y,X,X,X,X,Y,X,Y,Z,Z})

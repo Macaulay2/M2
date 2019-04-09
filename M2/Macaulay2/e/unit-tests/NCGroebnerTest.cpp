@@ -630,16 +630,61 @@ TEST(SuffixTree, suffixtree1)
   // EXPECT_FALSE(suffixTree3->subword(Label {1,1,2},o));
   // std::cout << "(" << o.first << "," << o.second << ")" << std::endl;
 
-  auto monList4 = std::vector<Label> {Label{0,0},Label{0,1},Label{0,2},Label{1,1,2},Label{1,1,0},
-                                      Label{1,1,1,1},Label{1,2,1,1},Label{1,2,1,2,1},Label{1,2,1,2,0},
-                                      Label{1,2,1,2,2},Label{1,2,2,1,1,1},Label{1,2,2,1,2,2},
-                                      Label{1,2,2,1,2,0},Label{1,2,2,1,2,1,0},Label{1,2,2,1,2,1,2},
-                                      Label{1,2,2,2,1,2,1},Label{1,2,2,2,1,1,1},Label{1,2,2,2,1,2,2,2},
-                                      Label{1,2,2,2,1,2,2,1},Label{1,2,2,2,1,2,2,0},Label{1,2,2,2,2,1,1,1}};
+  // auto monList4 = std::vector<Label> {Label{0,0},Label{0,1},Label{0,2},Label{1,1,2},Label{1,1,0},
+  //                                     Label{1,1,1,1},Label{1,2,1,1},Label{1,2,1,2,1},Label{1,2,1,2,0},
+  //                                     Label{1,2,1,2,2},Label{1,2,2,1,1,1},Label{1,2,2,1,2,2},
+  //                                     Label{1,2,2,1,2,0},Label{1,2,2,1,2,1,0},Label{1,2,2,1,2,1,2},
+  //                                     Label{1,2,2,2,1,2,1},Label{1,2,2,2,1,1,1},Label{1,2,2,2,1,2,2,2},
+  //                                     Label{1,2,2,2,1,2,2,1},Label{1,2,2,2,1,2,2,0},Label{1,2,2,2,2,1,1,1}};
   rightOverlaps.clear();
   SuffixTree* suffixTree4 = new SuffixTree();
-  suffixTree4->insert(monList4, rightOverlaps);
-  suffixTree4->insert(Label{1,2,2,2,2,1,2,1,0}, rightOverlaps);
+  suffixTree4->insert(Label{0,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{0,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{0,2},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,1,2},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,1,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,1,1,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,1,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,1,2,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,1,2,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,1,2,2},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,1,1,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,1,2,2},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,1,2,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,1,2,1,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,1,2,1,2},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,1,2,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,1,1,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,1,2,2,2},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,1,2,2,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,1,2,2,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,2,1,1,1},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  suffixTree4->insert(Label{1,2,2,2,2,1,2,1,0},rightOverlaps);
+  //std::cout << *suffixTree4 << std::endl;
+  
+  //suffixTree4->insert(monList4, rightOverlaps);
+  //suffixTree4->insert(Label{1,2,2,2,2,1,2,1,0}, rightOverlaps);
   auto subwordsOutput2 = std::vector<std::pair<int,int>> {};
   std::cout << "Here 11" << std::endl;
   //auto clType = suffixTree4->contractedLocus(suffixTree4->mRoot,Label{2,2,2,1});
