@@ -312,14 +312,14 @@ auto SuffixTree::extendedLocus(SuffixTreeNode* x,
   if (beta.size() == 0) return std::make_tuple(x,beta);
   auto tmpNode = x;
   auto betaHat = beta;
-  auto match = findMatch(tmpNode,betaHat);
-  while (std::get<0>(match)->arcLabel().size() < betaHat.size())
+  auto f = std::get<0>(findMatch(tmpNode,betaHat));
+  while (f != nullptr && f->arcLabel().size() < betaHat.size())
     {
-      tmpNode = std::get<0>(match);
-      betaHat = suffix(betaHat,std::get<0>(match)->arcLabel().size());
-      match = findMatch(tmpNode,betaHat);
+      tmpNode = f;
+      betaHat = suffix(betaHat,f->arcLabel().size());
+      f = std::get<0>(findMatch(tmpNode,betaHat));
     }
-  return std::make_tuple(std::get<0>(match), betaHat);
+  return std::make_tuple(f, betaHat);
 }
 
 // Finds an arc from y to a child whose label shares a prefix with s
@@ -471,9 +471,9 @@ auto SuffixTree::subwords(const Label& w,
         }
       std::cout << "-------------------------" << std::endl;
       pos++;
-      tmpLabel = suffix(tmpLabel,1);
       cLocus = newcLocus;
-      beta = newbeta;
+      beta = suffix(w,newcLocus->label.size());
+      tmpLabel = suffix(tmpLabel,1);
     }
   return retval;
 }
@@ -497,7 +497,8 @@ auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
   auto elType = extendedLocus(x,beta);
   auto f = std::get<0>(elType);
   auto betaHat = std::get<1>(elType);
-  if (f->arcLabel().size() == betaHat.size())
+  if (f == nullptr) return std::make_tuple(x,betaHat,nullptr,false);
+  if (f->arcLabel() == betaHat)
     return subwordsStepD(f,suffix(s,f->label().size()));
   else
     return std::make_tuple(x,betaHat,nullptr,false);
@@ -511,7 +512,7 @@ auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
   auto f = std::get<1>(clType);
   auto pre = std::get<2>(clType);
   if (f == nullptr)
-      return std::make_tuple(newy,pre,nullptr,false);
+    return std::make_tuple(newy,pre,nullptr,false);
   else
     return std::make_tuple(newy,pre,f,f->isFullPattern());
 }
