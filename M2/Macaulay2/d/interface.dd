@@ -774,6 +774,25 @@ export rawNCFreeAlgebra(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawNCFreeAlgebra",rawNCFreeAlgebra);
 
+export rawRingM2FreeAlgebraQuotient(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:ZZcell do (
+  if isInt(wb) then (b := toInt(wb);
+    toExpr(Ccode(RawRingOrNull,
+      "rawRingM2FreeAlgebraQuotient(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawRingM2FreeAlgebraQuotient",rawRingM2FreeAlgebraQuotient);
+
 export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
   when e is s:Sequence do (
   if length(s) == 2 then (

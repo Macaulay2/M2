@@ -412,6 +412,12 @@ TEST ///
         ("a"=>"Matrix", "b"=>"Matrix")
         ))
 
+  result = str (genFunctionCall(
+        "rawRingM2FreeAlgebraQuotient", 
+        "RingOrNull", 
+        ("a"=>"Matrix", "b"=>"int")
+        ))
+
   print result
   print result2
 ///

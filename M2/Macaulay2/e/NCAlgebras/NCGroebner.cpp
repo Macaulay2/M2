@@ -18,16 +18,16 @@ void NCGroebner::compute(int softDegreeLimit)
           auto overlap = toBeProcessed->front();
           // if this is a `real' overlap, and the overlap is not necessary, then move
           // on to the next overlap.
-          if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
-            {
-              toBeProcessed->pop_front();
-              if (M2_gbTrace >= 2)
-                {
-                  std::cout << "Reduction avoided using 2nd criterion." << std::endl;
-                  std::cout << "table after pop:";
-                  mOverlapTable.dump(std::cout,true);
-                }
-            }
+          // if (std::get<1>(overlap) != -1)  && !isOverlapNecessary(overlap))
+          //   {
+          //     toBeProcessed->pop_front();
+          //     if (M2_gbTrace >= 2)
+          //       {
+          //         std::cout << "Reduction avoided using 2nd criterion." << std::endl;
+          //         std::cout << "table after pop:";
+          //         mOverlapTable.dump(std::cout,true);
+          //       }
+          //   }
           auto overlapPoly = createOverlapPoly(overlap);
 
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
@@ -260,7 +260,7 @@ auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
        // FM: not sure if we should do this here, or in the loop.
        // std::cout << "Checking overlap: " << newOverlap << std::endl;
        // printOverlapData(std::cout, newOverlap);
-       if (isOverlapNecessary(newOverlap))
+       if (true or isOverlapNecessary(newOverlap))
          {
            mOverlapTable.insert(overlapWordLength(newOverlap),
                                 false,

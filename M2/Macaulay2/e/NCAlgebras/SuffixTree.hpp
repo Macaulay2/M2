@@ -236,6 +236,7 @@ public:
   // it if they were private.  Is there a way to make this work?
   
 private:
+public: // TODO: fix so we can test these private functions (right now, we just make them public)
   // the following are internal functions needed for the SuffixTree data
   // structure to work
 
@@ -323,6 +324,7 @@ private:
                     bool avoidLast = false) const -> void;
   
 private:
+public: // TODO: remove this public.  These are private...  Here for testing
   // root node of the tree
   SuffixTreeNode* mRoot;
 

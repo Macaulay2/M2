@@ -116,6 +116,7 @@ Ring List := (A, args) -> (
        (symbol degreesRing) => degreesRing degrk,
        (symbol degreeLength) => degrk,
        (symbol degrees) => degs,
+       (symbol isCommutative) => false,
        (symbol CoefficientRing) => A,
        (symbol cache) => new CacheTable from {},
        (symbol baseRings) => append(A.baseRings,A)
@@ -198,10 +199,37 @@ NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
 NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
 NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
 
-FreeAlgebra / Ideal := (R, I) -> (
-   -- compute a GB of I and create the quotient ring at top level
-   R
-)
+FreeAlgebra / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
+     if ring I =!= R then error "expected ideal of the same ring";
+     if I.cache.?QuotientRing then return I.cache.QuotientRing;
+     if I == 0 then return R;
+     -- recall that ZZ is NOT an engine ring.
+     A := R;
+     while class A === QuotientRing do A = last A.baseRings;
+     gensI := generators I;
+     S := new QuotientRing from rawQuotientRing(raw R, raw gensI);
+     S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gensI)} };
+     S.cache = new CacheTable;
+     --S.basering = R;
+     --S.numallvars = R.numallvars;
+     S.ideal = I;
+     S.baseRings = append(R.baseRings,R);
+     commonEngineRingInitializations S;
+     S.relations = gensI;
+     S.isCommutative = false;
+     --if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
+     S.generators = apply(generators S, m -> promote(m,S));
+     if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
+     if R.?generatorExpressions then S.generatorExpressions = (
+	  R.generatorExpressions
+	  );
+     if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
+     if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
+     expression S := lookup(expression,R);
+     S.use = x -> (
+	  );
+     --runHooks(R,QuotientRingHook,S);
+     S)
 
 beginDocumentation()
 
@@ -709,6 +737,34 @@ TEST ///
   NCGB(I, 387)
 ///
 
+TEST ///
+-- test of free algebra quotient rings
+-*
+  restart
+  needsPackage "PolynomialAlgebra"
+*-
+  debug Core
+  R = QQ{a,b}
+  I = ideal(a^2 - b^2)
+  J = ideal NCGB(I, 387)
+  R/J
+  A = rawRingM2FreeAlgebraQuotient(raw J, -1)  
+  a = A_0
+  b = A_1
+  a*b
+  (a*b)^2
+  a^3
+  a*a*a
+  a*a
+  
+R = QQ[a..d]  
+I = ideal(a^2-b*c)
+peek I
+gb I
+peek I
+peek I.cache
+peek (gens I).cache
+///
 end--
 
 restart

@@ -28,7 +28,8 @@ std::unique_ptr<PolyList> copyMatrixToVector(const M2FreeAlgebra& F,
 
 M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
                                                      const M2FreeAlgebra& F,
-                                                     const Matrix* GB
+                                                     const Matrix* GB,
+                                                     int maxdeg // TODO: need to handle use of 'maxdeg' in the class
                                                      )
 {
   std::unique_ptr<PolyList> gbElements = copyMatrixToVector(F, GB);

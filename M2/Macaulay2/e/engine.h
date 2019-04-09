@@ -304,6 +304,10 @@ extern "C" {
      The degreeRing should be a poly ring in 1 variable.
   */
 
+  const Ring* /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix* GB, int maxdeg);
+  /* Given a non-commutative Groebner basis GB, create the quotient ring of it.
+     maxdeg is either -1 (the GB is complete), or the maximum degree that the GB has been computed to */
+  
   const Ring /* or null */ *IM2_Ring_frac(const Ring *R); /* drg: connected rawFractionRing*/
 
   const Ring /* or null */ *IM2_Ring_localization(const Ring *R,

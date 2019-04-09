@@ -22,7 +22,8 @@ private:
                         );
 public:
   static M2FreeAlgebraQuotient* create(const M2FreeAlgebra& F,
-                                       const Matrix* GB
+                                       const Matrix* GB,
+                                       int maxdeg // -1 means complete GB, otherwise mx deg GB computed to
                                        );
 
   const M2FreeAlgebra& m2FreeAlgebra() const { return mM2FreeAlgebra; }

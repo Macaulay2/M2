@@ -19,6 +19,7 @@
 #include "solvable.hpp"
 #include "Polynomial.hpp"
 #include "M2FreeAlgebra.hpp"
+#include "M2FreeAlgebraQuotient.hpp"
 #include "NCAlgebra.hpp"
 #include "polyquotient.hpp"
 
@@ -236,6 +237,31 @@ const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
   }
 }
 
+const Ring* /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix* GB, int maxdeg)
+{
+  const Ring* A = GB->get_ring();
+  try {
+    if (A == nullptr)
+      {
+        ERROR("internal error: expected non-null Ring!");
+        return nullptr;
+      }
+    const M2FreeAlgebra* P = A->cast_to_M2FreeAlgebra();
+    if (P == nullptr)
+      {
+        ERROR("expected a free algebra");
+        return nullptr;
+      }
+    
+    const M2FreeAlgebraQuotient* result = M2FreeAlgebraQuotient::create(* P, GB, maxdeg);
+    return result;
+  }
+  catch (exc::engine_error& e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
                                                M2_ArrayString names,
                                                const Ring* degreeRing,
@@ -336,14 +362,20 @@ const Ring /* or null */ *IM2_Ring_quotient(const Ring *R, const Matrix *I)
           return 0;
         }
       const PolynomialRing *P = R->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P != nullptr)
         {
-          ERROR("expected a polynomial ring");
-          return 0;
+          PolynomialRing *result = PolynomialRing::create_quotient(P, I);
+          intern_polyring(result);
+          return result;
         }
-      PolynomialRing *result = PolynomialRing::create_quotient(P, I);
-      intern_polyring(result);
-      return result;
+      const M2FreeAlgebra *A = R->cast_to_M2FreeAlgebra();
+      if (A != nullptr)
+        {
+          auto result = M2FreeAlgebraQuotient::create(*A, I, -1);
+          return result;
+        }
+      ERROR("expected a polynomial ring or free algebra");
+      return nullptr;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

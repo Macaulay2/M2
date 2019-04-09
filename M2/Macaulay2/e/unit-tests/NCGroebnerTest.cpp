@@ -191,13 +191,16 @@ TEST(FreeAlgebra, quotientArithmetic)
   FreeAlgebraQuotientElement x(A), y(A), z(A), f(A), g(A), h(A);
 
   // check if things reduce properly
+  A->var(*x,0);
+  A->var(*y,1);
+  A->var(*z,2);
   A->setZero(*f);
   A->setZero(*g);
   A->setZero(*h);
   f = x*y*x*z*x*y*x*z;
   g = x*x*x*x*y*y*z*z;
   A->negate(*h,*g);
-  EXPECT_TRUE(f == g);  
+  EXPECT_TRUE(f == h);
 }
 
 TEST(FreeAlgebra, comparisons)
