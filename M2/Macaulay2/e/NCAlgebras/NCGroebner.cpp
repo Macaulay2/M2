@@ -16,18 +16,18 @@ void NCGroebner::compute(int softDegreeLimit)
       while(!toBeProcessed->empty())
         {
           auto overlap = toBeProcessed->front();
-          // if this is a `real' overlap, and the overlap is not necessary, then move
-          // on to the next overlap.
-          // if (std::get<1>(overlap) != -1)  && !isOverlapNecessary(overlap))
-          //   {
-          //     toBeProcessed->pop_front();
-          //     if (M2_gbTrace >= 2)
-          //       {
-          //         std::cout << "Reduction avoided using 2nd criterion." << std::endl;
-          //         std::cout << "table after pop:";
-          //         mOverlapTable.dump(std::cout,true);
-          //       }
-          //   }
+          //if this is a `real' overlap, and the overlap is not necessary, then move
+          //on to the next overlap.
+          if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
+            {
+              toBeProcessed->pop_front();
+              if (M2_gbTrace >= 2)
+                {
+                  std::cout << "Reduction avoided using 2nd criterion." << std::endl;
+                  std::cout << "t.able after pop:";
+                  mOverlapTable.dump(std::cout,true);
+                }
+            }
           auto overlapPoly = createOverlapPoly(overlap);
 
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
@@ -137,9 +137,14 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
           A.lead_word_suffix(rightWord, reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
           A.setZero(tmp1);
           A.setZero(tmp2);
+          auto c = reduceeSoFar.cbegin().coeff();
+          auto d = reducers[subwordPos.first]->cbegin().coeff();
+          // TODO: Check to see if d is a unit before inverting.
+          auto coeffNeeded = A.coefficientRing()->divide(c,d);
           A.mult_by_term_left_and_right(tmp1,
                                          *reducers[subwordPos.first],
-                                         reduceeSoFar.cbegin().coeff(),
+                                        coeffNeeded,
+                                        //reduceeSoFar.cbegin().coeff(),
                                          leftWord,
                                          rightWord);
           A.subtract(tmp2,reduceeSoFar,tmp1);
@@ -260,7 +265,7 @@ auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
        // FM: not sure if we should do this here, or in the loop.
        // std::cout << "Checking overlap: " << newOverlap << std::endl;
        // printOverlapData(std::cout, newOverlap);
-       if (true or isOverlapNecessary(newOverlap))
+       if (isOverlapNecessary(newOverlap))
          {
            mOverlapTable.insert(overlapWordLength(newOverlap),
                                 false,
@@ -293,7 +298,6 @@ auto NCGroebner::isOverlapNecessary(Overlap o) const -> bool
   createOverlapLeadWord(tmp,o);
   A.lead_word(w,tmp);
   retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
-  
   return retval;
 }
 

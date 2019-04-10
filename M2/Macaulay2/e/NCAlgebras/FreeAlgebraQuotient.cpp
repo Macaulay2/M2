@@ -1,5 +1,6 @@
 #include "FreeAlgebraQuotient.hpp"
-#include "WordTable.hpp"
+#include "NCGroebner.hpp"
+//#include "WordTable.hpp"
 
 using ExponentVector = int*;
 
@@ -9,16 +10,23 @@ SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 }
 
 FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
-                                         std::unique_ptr<PolyList> GB)
+                                         std::unique_ptr<ConstPolyList> GB,
+                                         int maxdeg)
   : mFreeAlgebra(A),
-    mGroebner(std::move(GB))
+    mGroebner(std::move(GB)),
+    mMaxdeg(maxdeg)
 {
-  // generate W
+  // Build the word table for the reduction
+  for (auto f : *mGroebner)
+    mWordTable.insert(Word(f->cbegin().monom()));
 }
 
 void FreeAlgebraQuotient::normalizeInPlace(Poly& f) const
 {
-  // TODO: finish this routine.
+  // for now, we will simply reduce the poly f and copy the result into f.
+  // TODO: Make this work 'in place'.
+  auto fRed = NCGroebner::twoSidedReduction(freeAlgebra(),&f,*mGroebner,mWordTable);
+  freeAlgebra().swap(f,*fRed);
 }
 
 void FreeAlgebraQuotient::clear(Poly& f) const

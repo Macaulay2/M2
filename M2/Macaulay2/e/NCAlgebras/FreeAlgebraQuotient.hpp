@@ -8,15 +8,17 @@ class FreeAlgebraQuotient : public our_new_delete
 {
 private:
   const FreeAlgebra& mFreeAlgebra;
-  std::unique_ptr<PolyList> mGroebner;
+  std::unique_ptr<ConstPolyList> mGroebner;
   WordTable mWordTable;
-
+  int mMaxdeg;
+  
 public:
-  FreeAlgebraQuotient(const FreeAlgebra& A, std::unique_ptr<PolyList> GB);
+  FreeAlgebraQuotient(const FreeAlgebra& A, std::unique_ptr<ConstPolyList> GB, int maxdeg);
 
   const FreeMonoid& monoid() const { return mFreeAlgebra.monoid(); }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }
-
+  const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; } 
+  
   const Ring* coefficientRing() const { return mFreeAlgebra.coefficientRing(); }
 
   int numVars() const { return monoid().numVars(); }

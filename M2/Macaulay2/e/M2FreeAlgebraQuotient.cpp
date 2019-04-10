@@ -10,10 +10,10 @@
 #include <iostream>
 #include <memory>
 
-std::unique_ptr<PolyList> copyMatrixToVector(const M2FreeAlgebra& F,
+std::unique_ptr<ConstPolyList> copyMatrixToVector(const M2FreeAlgebra& F,
                              const Matrix* input)
 {
-  auto result = make_unique<PolyList>();
+  auto result = make_unique<ConstPolyList>();
   result->reserve(input->n_cols());
   for (int i=0; i<input->n_cols(); i++)
     {
@@ -32,8 +32,8 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
                                                      int maxdeg // TODO: need to handle use of 'maxdeg' in the class
                                                      )
 {
-  std::unique_ptr<PolyList> gbElements = copyMatrixToVector(F, GB);
-  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), std::move(gbElements)));
+  std::unique_ptr<ConstPolyList> gbElements = copyMatrixToVector(F, GB);
+  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), std::move(gbElements), maxdeg));
   M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, std::move(A));
   result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), nullptr);
   result->zeroV = result->from_long(0);

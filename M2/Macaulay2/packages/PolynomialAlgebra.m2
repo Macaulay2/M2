@@ -575,19 +575,21 @@ TEST ///
   M = R^2 -- works
   B = matrix {{b}}
   C = matrix {{c}}
-  assert(B*C == matrix {{c*b}})
+  assert(B*C == matrix {{c*b}})  -- fails; it passes if you compare entries only
   N = mutableMatrix(R,2,3);
   N = mutableMatrix(R,2,3)
   N = mutableMatrix(R,100,200);
   N_(1,1)
   D = matrix {{b,c}}
   assert(D * transpose D - matrix {{b^2 + c^2}} == 0)
-  assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}}) -- is this test wrong?
+  assert(transpose D * D) == matrix {{b^2,c*b},{b*c,c^2}}) -- fails.  passes if you compare entries only.
 ///
 
 TEST ///
+-*
   restart
   needsPackage "PolynomialAlgebra"
+*-
 
   A = QQ[s,t]
   R = QQ{b,c,d}
@@ -721,6 +723,7 @@ f = a*a-b*c-a
 g = NCReduction2Sided(a*f-f*a, ideal(f))
 g = -a*b*c+b*c*a
 h = a*g + f*b*c
+-- TODO: Fix this!
 NCReduction2Sided(h, ideal(f,g)) -- never never land
 ///
 
@@ -746,17 +749,16 @@ TEST ///
   debug Core
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
-  J = ideal NCGB(I, 387)
-  R/J
+  J = gens ideal NCGB(I, 387)
+  --R/J
   A = rawRingM2FreeAlgebraQuotient(raw J, -1)  
   a = A_0
   b = A_1
   a*b
   (a*b)^2
   a^3
-  a*a*a
-  a*a
-  
+  unique flatten apply(2, i -> flatten apply(2, j -> flatten apply(2, k -> flatten apply(2, l -> A_i*A_j*A_k*A_l))))
+-*  
 R = QQ[a..d]  
 I = ideal(a^2-b*c)
 peek I
@@ -764,6 +766,7 @@ gb I
 peek I
 peek I.cache
 peek (gens I).cache
+*-
 ///
 end--
 
