@@ -32,7 +32,8 @@ export {
     "constants",  
     "printAsSLP", "cCode",
     "getVarGates", "gatePolynomial",
-    "ValueHashTable","valueHashTable"
+    "ValueHashTable","valueHashTable",
+    "SLProgram", "makeSLProgram"
     }
 exportMutable {
     }
@@ -92,7 +93,7 @@ add2GC InputGate := g -> if isConstant g then (
     	gateCatalogCount#g = gateCatalogCount#g + 1;
     	gateCatalog#g -- value = stored identical gate (may differ in "cache")
     	) else (
-    	gateCatalogCount#g= 1;
+    	gateCatalogCount#g = 1;
     	gateCatalog#g = g
     	)
     ) else g	 	  
@@ -354,71 +355,46 @@ SLProgram = new Type of HashTable
 makeSLProgram = method(TypicalValue=>SLProgram)
 makeSLProgram (List,List) := (inL,outL) -> (
     s := rawSLProgram(1); -- 1 means nothing anymore
-    scan(inL,g->appendToSLProgram(s,g)); 
-    out := apply(outL, g->appendToSLProgram(s,g));
+    t := new MutableHashTable;
+    varPositions := appendToSLProgram(s,inL,t); 
+    out := appendToSLProgram(s,outL,t);
     rawSLPsetOutputPositions(s,out);
     consts := constants outL;
-    constantPositions := positionsOfInputGates(consts,s);
-    inputPositions := positionsOfInputGates(inL,s);
+    constantPositions := appendToSLProgram(s,consts,t);
     constantValues := matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
-    scan(outL, g->removeSLPfromCache(s,g));
-    scan(inL, g->removeSLPfromCache(s,g));
     new SLProgram from {
 	RawSLProgram => s, 
-	"constant positions" => constantPositions,
-	"input positions" => inputPositions,
-	"constants" =>  constantValues
-	-- "output positions" =>
+	"variable positions" => varPositions,
+	"constants" =>  constantValues,
+	"constant positions" => constantPositions
 	}
     )
 makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
 
-positionsOfInputGates = method()
-positionsOfInputGates(List, RawSLProgram) := (L,s) -> apply(L, g->g.cache#s)
-
+----------------
 appendToSLProgram = method()
-appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
-    if g.cache#?slp then g.cache#slp else g.cache#slp = rawSLPInputGate(slp)
-appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
-    if g.cache#?slp then g.cache#slp else (
-	scan(g.Inputs, a->appendToSLProgram (slp,a));
-	g.cache#slp = rawSLPSumGate(slp, g.Inputs/(a->a.cache#slp))
-	)
-appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
-    if g.cache#?slp then g.cache#slp else (
-	scan(g.Inputs, a->appendToSLProgram (slp,a));
-    	g.cache#slp = rawSLPProductGate(slp, g.Inputs/(a->a.cache#slp))
-	)
-appendToSLProgram (RawSLProgram, DetGate) := (slp, g) -> 
-    if g.cache#?slp then g.cache#slp else (
-	scan(flatten g.Inputs, a->appendToSLProgram (slp,a));
-    	g.cache#slp = rawSLPDetGate(slp, flatten g.Inputs/(a->a.cache#slp))
-	)
-appendToSLProgram (RawSLProgram, DivideGate) := (slp, g) -> 
-    if g.cache#?slp then g.cache#slp else (
-	scan(g.Inputs, a->appendToSLProgram (slp,a));
-	g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
-	)
-removeSLPfromCache = method()
-removeSLPfromCache (RawSLProgram, InputGate) := (slp, g) -> 
-    if g.cache#?slp then remove(g.cache,slp) 
-removeSLPfromCache (RawSLProgram, SumGate) := 
-removeSLPfromCache (RawSLProgram, ProductGate) := 
-removeSLPfromCache (RawSLProgram, DivideGate) := (slp, g) -> 
-    if g.cache#?slp then (
-	remove(g.cache,slp); 
-	scan(g.Inputs, a->removeSLPfromCache(slp,a));
-	)
-removeSLPfromCache (RawSLProgram, DetGate) := (slp,g) -> (
-    if g.cache#?slp then (
-	remove(g.cache,slp); 
-	scan(flatten g.Inputs, a->removeSLPfromCache(slp,a));
-	)    
-    )
+appendToSLProgram (RawSLProgram, InputGate, MutableHashTable) := (slp, g, t) -> 
+    if t#?g then t#g else t#g = rawSLPInputGate(slp)
+appendToSLProgram (RawSLProgram, List, MutableHashTable) := (slp, L, t) -> 
+    apply(L,a->appendToSLProgram(slp,a,t))
+appendToSLProgram (RawSLProgram, SumGate, MutableHashTable) := (slp, g, t) -> 
+    if t#?g then t#g else 
+       t#g = rawSLPSumGate(slp, appendToSLProgram(slp,g.Inputs,t))
+appendToSLProgram (RawSLProgram, ProductGate, MutableHashTable) := (slp, g, t) -> 
+    if t#?g then t#g else 
+       t#g = rawSLPProductGate(slp, appendToSLProgram(slp,g.Inputs,t))
+appendToSLProgram (RawSLProgram, DetGate, MutableHashTable) := (slp, g, t) -> 
+    if t#?g then t#g else 
+       t#g = rawSLPDetGate(slp, appendToSLProgram(slp,flatten g.Inputs,t))
+appendToSLProgram (RawSLProgram, DivideGate, MutableHashTable) := (slp, g, t) -> 
+    if t#?g then t#g else 
+       t#g = rawSLPDivideGate(slp, appendToSLProgram(slp,g.Inputs,t))
 
 TEST /// 
+-*
 restart
 needsPackage "SLPexpressions"
+*-
 debug SLPexpressions
 X = inputGate symbol X
 C = inputGate symbol C
@@ -429,7 +405,7 @@ XoC = X/C
 s = makeSLProgram({C,X},{XXC,detXCCX,XoC,XpC+XoC}) 
 
 debug Core
-(consts,indets):=(s#"constant positions",s#"input positions")
+(consts,indets):=(s#"constant positions",s#"variable positions")
 assert(#consts == 0)
 (newConsts,newIndets):=(take(indets,1),drop(indets,1))
 eQQ = rawSLEvaluator(s#RawSLProgram,newConsts,newIndets,raw mutableMatrix{{3_QQ}}) -- set C=3_QQ
@@ -702,7 +678,7 @@ makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
 rawSLEvaluatorK = method()
 rawSLEvaluatorK Evaluator := E -> rawSLEvaluatorK(E,ring E#"constants")
 rawSLEvaluatorK (Evaluator,Ring) := (E,K) -> if E#?K then E#K else E#K = rawSLEvaluator(
-    E#"SLP"#RawSLProgram, E#"SLP"#"constant positions", E#"SLP"#"input positions",
+    E#"SLP"#RawSLProgram, E#"SLP"#"constant positions", E#"SLP"#"variable positions",
     raw mutableMatrix promote(E#"SLP"#"constants",K)
     );
   
