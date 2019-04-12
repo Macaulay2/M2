@@ -10,8 +10,8 @@ class FreeAlgebraQuotient : public our_new_delete
 private:
   const FreeAlgebra& mFreeAlgebra;
   std::unique_ptr<ConstPolyList> mGroebner;
-  //WordTable mWordTable;
-  SuffixTree mWordTable;
+  WordTable mWordTable;
+  //SuffixTree mWordTable;
   int mMaxdeg;
   
 public:

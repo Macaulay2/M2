@@ -74,43 +74,38 @@ std::ostream& operator<<(std::ostream& o, const SuffixTree& suffixTree)
   return o;
 }
 
-Label prefix(const Label& vec, int lengthOfPrefix)
+Word prefix(const Word vec, int lengthOfPrefix)
 {
-  // this command makes a copy of the prefix of f and returns it
-  Label temp;
-  std::copy(vec.begin(), vec.begin()+lengthOfPrefix, std::back_inserter(temp));
-  return temp;
+  // this command sets the pointers to the initial segment of vec
+  return Word(vec.begin(),vec.begin()+lengthOfPrefix);
 }
 
-Label suffix(const Label &vec, int indexOfSuffix)
+Word suffix(const Word vec, int indexOfSuffix)
 {
-  // this command makes a copy of the suffix of f and returns it
-  Label temp;
-  std::copy(vec.begin()+indexOfSuffix, vec.end(), std::back_inserter(temp));
-  return temp;
+  // this command sets the pointers to the terminal segment of vec
+  return Word(vec.begin()+indexOfSuffix,vec.end());
 }
 
-void suffixInPlace(const Label &vec, int indexOfSuffix)
-{
-  
-}
-
-bool concatenatesTo(const Label& a, const Label&b, const Label&c)
+bool concatenatesTo(const Word a, const Word b, const Word c)
 {
   if (a.size() + b.size() != c.size()) return false;
-  return (std::equal(a.begin(),a.end(),c.begin()) && std::equal(b.begin(),b.end(),c.begin()+a.size()));
+  Word tmpA(c.begin(),c.begin()+a.size());
+  Word tmpB(c.begin()+a.size(),c.end());
+  return (tmpA == a) && (tmpB == b);
 }
 
-bool isPatternPrefix(const Label& a, const Label &b, int startIndex)
+bool isPatternPrefix(const Word a, const Word b, int startIndex)
 {
   // here, a is a pattern label so we only compare the first a.size()-1 many entries
   // sometimes we know that the first startIndex many symbols will match, so we start
   // at the first possible non-match.
   if (b.size() < a.size() - 1) return false;
-  return std::equal(a.begin()+startIndex,a.end()-1,b.begin());
+  Word tmpA = Word(a.begin()+startIndex,a.end()-1);
+  Word tmpB = Word(b.begin(), b.begin()+a.size()-1-startIndex);
+  return (tmpA == tmpB);
 }
 
-bool isPatternPrefix(const Label& a, const Label &b)
+bool isPatternPrefix(const Word& a, const Word& b)
 {
   return isPatternPrefix(a,b,0);
 }
@@ -134,22 +129,26 @@ SuffixTree::~SuffixTree()
   destroyChildren(mRoot);
 }
 
-auto SuffixTree::insert(const Label& w, std::vector<Overlap>& rightOverlaps) -> size_t
+auto SuffixTree::insert(const Word& w, std::vector<Overlap>& rightOverlaps) -> size_t
 {
   // warning: this function appends the results to the end of right overlaps.
   int wordNum = mMonomials.size();
   auto plList = std::vector<int> {};
-  mMonomials.push_back(w);
-  Label s = w;
-  s.push_back(-(wordNum + 1));
+  Label tempS(w.begin(),w.end());
+  mMonomials.push_back(tempS);
+  tempS.push_back(-(wordNum + 1));
+  Word s(tempS);
   auto v = mRoot;
   bool isFullPattern = true;
   while (s.size() != 0) 
     {
-      auto iwType = insertWorker(v,s,isFullPattern);
-      auto newv = std::get<0>(iwType);
-      auto roRoot = std::get<1>(iwType);
-      auto newLocus = std::get<2>(iwType);
+      InsertType insertType;
+      if (v == mRoot) insertType = insertStepD(v,s,isFullPattern);
+      else if (v->parent() == mRoot) insertType = insertStepC(v,mRoot,suffix(Word(v->arcLabel()),1),s,isFullPattern);
+      else insertType = insertStepC(v,v->parent()->suffixLink(),v->arcLabel(),s,isFullPattern);
+      auto newv = std::get<0>(insertType);
+      auto roRoot = std::get<1>(insertType);
+      auto newLocus = std::get<2>(insertType);
       v = newv;
       if (roRoot != nullptr)
         {
@@ -173,7 +172,7 @@ auto SuffixTree::insert(const Label& w, std::vector<Overlap>& rightOverlaps) -> 
   return mMonomials.size();
 }
 
-auto SuffixTree::insert(std::vector<Label>& ss, std::vector<Overlap>& rightOverlaps) -> size_t
+auto SuffixTree::insert(std::vector<Word>& ss, std::vector<Overlap>& rightOverlaps) -> size_t
 {
   for (auto s : ss)
     {
@@ -182,19 +181,20 @@ auto SuffixTree::insert(std::vector<Label>& ss, std::vector<Overlap>& rightOverl
   return mMonomials.size();
 }
 
-auto SuffixTree::insertWorker(SuffixTreeNode* v,
-			      const Label& s,
-			      bool isFullPattern) -> InsertWorkerType
-{
-  if (v == mRoot) return insertStepD(v,s,isFullPattern);
-  if (v->parent() == mRoot) return insertStepC(v,mRoot,suffix(v->arcLabel(),1),s,isFullPattern);
-  return insertStepC(v,v->parent()->suffixLink(),v->arcLabel(),s,isFullPattern);
-}
+// auto SuffixTree::insertWorker(SuffixTreeNode* v,
+// 			      const Word& s,
+// 			      bool isFullPattern) -> InsertType
+// {
+//   if (v == mRoot) return insertStepD(v,s,isFullPattern);
+//   if (v->parent() == mRoot) return insertStepC(v,mRoot,suffix(v->arcLabel(),1),s,isFullPattern);
+//   return insertStepC(v,v->parent()->suffixLink(),v->arcLabel(),s,isFullPattern);
+// }
+
 auto SuffixTree::insertStepC(SuffixTreeNode* v,
 			     SuffixTreeNode* x,
-			     const Label& beta,
-			     const Label& s,
-			     bool isFullPattern) -> InsertWorkerType
+			     const Word& beta,
+			     const Word& s,
+			     bool isFullPattern) -> InsertType
 {
   // Carries out step C in the algorithm.  This amounts to computing (and building,
   // if necessary) the suffix link of v.  This function can call the Step D code
@@ -227,8 +227,8 @@ auto SuffixTree::insertStepC(SuffixTreeNode* v,
 }
 
 auto SuffixTree::insertStepD(SuffixTreeNode* y,
-			     const Label& s,
-			     bool isFullPattern) -> InsertWorkerType
+			     const Word& s,
+			     bool isFullPattern) -> InsertType
 {
   // Carries out step D in the algorithm.  This amounts to constructing
   // the locus of the head of s (which is not yet known before calling this function).
@@ -274,7 +274,7 @@ auto SuffixTree::insertStepD(SuffixTreeNode* y,
 // new internal node with arc label prefix, where prefix is a prefix
 // of f->arcLabel().  A pointer to the new node is returned.
 auto SuffixTree::splitArc(SuffixTreeNode* f,
-			  const Label& prefix) -> SuffixTreeNode*
+			  const Word& prefix) -> SuffixTreeNode*
 {
   auto p = f->parent();
   auto d = new SuffixTreeNode(p,prefix,false);
@@ -292,7 +292,7 @@ auto SuffixTree::splitArc(SuffixTreeNode* f,
 // either a child of y sharing a prefix pre with s - y.label, or f
 // is nullTreeNode if no such child exists.
 auto SuffixTree::contractedLocus(SuffixTreeNode* y,
-                                 const Label& s,
+                                 const Word& s,
                                  bool incrementLeafCount) const -> ContractedLocusType
 {
   // warning: This function is not *really* const, since adding to the pattern
@@ -319,7 +319,7 @@ auto SuffixTree::contractedLocus(SuffixTreeNode* y,
 // needs to be split (if necessary) if beta is empty, then simply
 // return (x,beta) since x is the extended locus
 auto SuffixTree::extendedLocus(SuffixTreeNode* x,
-			       const Label& beta) const -> ExtendedLocusType
+			       const Word& beta) const -> ExtendedLocusType
 {
   if (beta.size() == 0) return std::make_tuple(x,beta);
   auto tmpNode = x;
@@ -338,10 +338,10 @@ auto SuffixTree::extendedLocus(SuffixTreeNode* x,
 // return a std::pair of nullptrs if no match is found, i.e. the empty
 // prefix is the only shared prefix with any child of y
 auto SuffixTree::findMatch(SuffixTreeNode* y,
-			   const Label& s) const -> ExtendedLocusType
+			   const Word& s) const -> ExtendedLocusType
 {
   SuffixTreeNode* f = nullptr;
-  auto pre = Label {};
+  auto pre = Word();
   for (auto i = y->childrenBegin(); i != y->childrenEnd(); ++i)
     {
       auto kv = *i;
@@ -392,11 +392,11 @@ auto SuffixTree::patternLeavesWorker(SuffixTreeNode* v) const -> std::vector<Suf
   return retval;
 }
 
-// Return the longest shared prefix of s and t.  A copy is made
-auto SuffixTree::sharedPrefix(const Label& s, const Label& t) const -> Label
+// Return the longest shared prefix of s and t.
+auto SuffixTree::sharedPrefix(const Word s, const Word t) const -> Word
 {
   int i = 0;
-  while (i < s.size() && i < t.size() && s[i] == t[i]) i++;
+  while (i < s.size() && i < t.size() && s.begin()[i] == t.begin()[i]) i++;
   return prefix(s,i);
 }
 
@@ -416,8 +416,11 @@ auto SuffixTree::allLeaves(SuffixTreeNode* v, std::vector<SuffixTreeNode*>& outp
   return;
 }
 
+// It is very important that the subword algorithm not perform any copies
+// of a label during the search.
+
 // functions for subwords algorithm
-auto SuffixTree::subword(const Label& w, std::pair<int,int>& output) const -> bool
+auto SuffixTree::subword(const Word& w, std::pair<int,int>& output) const -> bool
 {
   auto tmp = std::vector<std::pair<int,int>> {};
   subwords(w,tmp,true);
@@ -429,19 +432,19 @@ auto SuffixTree::subword(const Label& w, std::pair<int,int>& output) const -> bo
     }
 }
 
-auto SuffixTree::subwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool
+auto SuffixTree::subwords(const Word& w, std::vector<std::pair<int,int>>& output) const -> bool
 {
   return subwords(w,output,false);
 }
   
-auto SuffixTree::subwords(const Label& w,
+auto SuffixTree::subwords(const Word& w,
                           std::vector<std::pair<int,int>>& output,
                           bool onlyFirst) const -> bool
 {
   // this command returns a pair (i,j) where word i in the table appears
   // in position j of word.
   auto cLocus = mRoot;
-  auto beta = Label {};
+  auto beta = Word();
   auto tmpLabel = w;
   int pos = 0;
   bool retval = false;
@@ -472,19 +475,9 @@ auto SuffixTree::subwords(const Label& w,
   return retval;
 }
   
-auto SuffixTree::subwordsWorker(SuffixTreeNode* cLocus,
-                                const Label& beta,
-                                const Label& s) const -> SubwordsType
-{
-  if (cLocus == mRoot)
-    return subwordsStepD(mRoot,s);
-  else
-    return subwordsStepC(cLocus->suffixLink(),beta,s);
-}
-
 auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
-                               const Label& beta,
-                               const Label& s) const -> SubwordsType
+                               const Word& beta,
+                               const Word& s) const -> SubwordsType
 {
   if (beta.size() == 0)
     return subwordsStepD(x,suffix(s,x->label().size()));
@@ -498,7 +491,7 @@ auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
 }
 
 auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
-                               const Label& s) const -> SubwordsType
+                               const Word& s) const -> SubwordsType
 {
   auto clType = contractedLocus(y,s);
   auto newy = std::get<0>(clType);
@@ -511,7 +504,7 @@ auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
 }
 
 // the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
-auto SuffixTree::superword(const Label& w, std::pair<int,int>& output) const -> bool
+auto SuffixTree::superword(const Word& w, std::pair<int,int>& output) const -> bool
 {
   auto tmp = std::vector<std::pair<int,int>> {};
   superwords(w,tmp,true);
@@ -524,13 +517,13 @@ auto SuffixTree::superword(const Label& w, std::pair<int,int>& output) const -> 
 }
 
 // the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
-auto SuffixTree::superwords(const Label& w, std::vector<std::pair<int,int>>& output) const -> bool
+auto SuffixTree::superwords(const Word& w, std::vector<std::pair<int,int>>& output) const -> bool
 {
   return superwords(w,output,false);
 }
 
 // the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
-auto SuffixTree::superwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool
+auto SuffixTree::superwords(const Word& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool
 {
   auto clType = contractedLocus(mRoot,w);
   auto y = std::get<0>(clType);
@@ -558,7 +551,7 @@ auto SuffixTree::superwords(const Label& w, std::vector<std::pair<int,int>>& out
 
 // the output is a list of pairs (i,j) where monomial i overlaps properly with w in position j
 // in other words, the proper prefixes of w that are also suffixes in the tree
-auto SuffixTree::leftOverlaps(const Label& w,
+auto SuffixTree::leftOverlaps(const Word& w,
                               std::vector<std::pair<int,int>>& output,
                               bool avoidLast) const -> void
 {
@@ -605,18 +598,12 @@ auto SuffixTree::leftOverlaps(const Label& w,
 
 /// Here begin the functions to make the new class swappable with the old WordTable
 
-size_t SuffixTree::insert(Word w)
-{
-  Label tmp(w.begin(),w.end());
-  auto tmp2 = std::vector<Overlap> {};
-  return insert(tmp,tmp2);
-}
-
-size_t SuffixTree::insert(Word w, std::vector<Overlap>& newRightOverlaps)
-{
-  Label tmp(w.begin(),w.end());
-  return insert(tmp, newRightOverlaps);
-}
+// size_t SuffixTree::insert(Word w)
+// {
+//   Label tmp(w.begin(),w.end());
+//   auto tmp2 = std::vector<Overlap> {};
+//   return insert(tmp,tmp2);
+// }
 
 const Word SuffixTree::operator[](int index) const
 {
@@ -624,31 +611,31 @@ const Word SuffixTree::operator[](int index) const
   return tmp;
 }
 
-bool SuffixTree::subwords(Word word,
-                          std::vector<std::pair<int,int>>& output) const
-{
-  Label tmp(word.begin(),word.end());
-  return subwords(tmp,output);
-}
+// bool SuffixTree::subwords(const Word& word,
+//                           std::vector<std::pair<int,int>>& output) const
+// {
+//   Label tmp(word.begin(),word.end());
+//   return subwords(tmp,output);
+// }
 
-bool SuffixTree::subword(Word word,
-                std::pair<int,int>& output) const
-{
-  Label tmp(word.begin(),word.end());
-  return subword(tmp, output);
-}
+// bool SuffixTree::subword(const Word& word,
+//                 std::pair<int,int>& output) const
+// {
+//   Label tmp(word.begin(),word.end());
+//   return subword(tmp, output);
+// }
   
-bool SuffixTree::superwords(Word word,
-                            std::vector<std::pair<int,int>>& output) const
-{
-  Label tmp(word.begin(),word.end());
-  return superwords(tmp,output);
-}
+// bool SuffixTree::superwords(const Word& word,
+//                             std::vector<std::pair<int,int>>& output) const
+// {
+//   Label tmp(word.begin(),word.end());
+//   return superwords(tmp,output);
+// }
 
 // this command returns true if word = alpha . v . beta for some v in the
 // word table, where if v = wordTable[index1], then alpha is not empty
 // and if v = wordTable[index2] then beta is not empty.  Otherwise, it returns false.
-auto SuffixTree::isNontrivialSuperword(Word word, int index1, int index2) const -> bool
+auto SuffixTree::isNontrivialSuperword(const Word& word, int index1, int index2) const -> bool
 {
   Label tmp(word.begin(),word.end());
   std::vector<std::pair<int,int>> subs {};
@@ -677,38 +664,7 @@ auto SuffixTree::leftOverlaps(std::vector<Overlap>& output) const -> void
       output.push_back(std::make_tuple(p.first, p.second, mMonomials.size()-1));
     }
   return;
-}
-  
-#if 0
-auto LabelPool::prefix(Label &f, int lengthOfPrefix) -> Label*
-{
-  // this command makes a copy of the prefix of f, and inserts
-  // it into the pool if it is not there already.
-  // indexOfSuffix should be >0, otherwise insert should be used.
-  Label temp;
-  std::copy(f.begin(), f.begin()+lengthOfPrefix, temp.begin());
-  return insert(temp);  
-}
-
-auto LabelPool::suffix(Label &f, int indexOfSuffix) -> Label*
-{
-  // this command makes a copy of the suffix of f, and inserts
-  // it into the pool if it is not there already.
-  // indexOfSuffix should be >0, otherwise insert should be used.
-  Label temp;
-  std::copy(f.begin()+indexOfSuffix, f.end(), temp.begin());
-  return insert(temp);
-}
-
-auto LabelPool::insert(Label &f) -> Label*
-{
-  // returns a pointer to the item inserted/found.
-  // we don't really care about insertRetval.second, which indicates
-  // whether the insertion actually took place or not.
-  auto insertRetval = mLabelPool.insert(f);
-  return &*(insertRetval.first);
-}
-#endif
+}  
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

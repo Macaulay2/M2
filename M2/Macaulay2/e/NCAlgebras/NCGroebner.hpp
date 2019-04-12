@@ -11,8 +11,8 @@ class NCGroebner : public our_new_delete
 private:
   const M2FreeAlgebra& mM2FreeAlgebra;
 
-  //WordTable mWordTable;
-  SuffixTree mWordTable;
+  WordTable mWordTable;
+  //SuffixTree mWordTable;
   OverlapTable mOverlapTable;
   const ConstPolyList mInput;
   ConstPolyList mGroebner;
@@ -53,15 +53,15 @@ public:
                                 const ConstPolyList& reducees,
                                 const ConstPolyList& reducers) -> ConstPolyList;
 
-  //static auto twoSidedReduction(const FreeAlgebra& A,
-  //                              const Poly* reducee,
-  //                              const ConstPolyList& reducers,
-  //                              const WordTable& W) -> Poly*;
-
   static auto twoSidedReduction(const FreeAlgebra& A,
                                 const Poly* reducee,
                                 const ConstPolyList& reducers,
-                                const SuffixTree& W) -> Poly*;
+                                const WordTable& W) -> Poly*;
+
+  // static auto twoSidedReduction(const FreeAlgebra& A,
+  //                               const Poly* reducee,
+  //                               const ConstPolyList& reducers,
+  //                               const SuffixTree& W) -> Poly*;
 
   auto twoSidedReduction(const Poly* reducee) const -> Poly*;
   

@@ -109,14 +109,14 @@ const ConstPolyList* NCGroebner::currentValue()
   return &mGroebner;
 }
 
-//auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+                                    const Poly* reducee,
+                                    const ConstPolyList& reducers,
+                                    const WordTable& W) -> Poly*
+// auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
 //                                    const Poly* reducee,
 //                                    const ConstPolyList& reducers,
-//                                    const WordTable& W) -> Poly*
-auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-                                   const Poly* reducee,
-                                   const ConstPolyList& reducers,
-                                   const SuffixTree& W) -> Poly*
+//                                    const SuffixTree& W) -> Poly*
 {
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 
@@ -171,8 +171,8 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                    const ConstPolyList& reducees,
                                    const ConstPolyList& reducers) -> ConstPolyList
 {
-  //WordTable W;
-  SuffixTree W;
+  WordTable W;
+  //SuffixTree W;
   // Build the word table for the reduction
   for (auto& f : reducers)
     {
