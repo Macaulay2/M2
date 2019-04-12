@@ -313,7 +313,7 @@ auto SuffixTree::extendedLocus(SuffixTreeNode* x,
   auto tmpNode = x;
   auto betaHat = beta;
   auto f = std::get<0>(findMatch(tmpNode,betaHat));
-  while (f != nullptr && f->arcLabel().size() < betaHat.size())
+  while (f->arcLabel().size() < betaHat.size())
     {
       tmpNode = f;
       betaHat = suffix(betaHat,f->arcLabel().size());
@@ -435,44 +435,21 @@ auto SuffixTree::subwords(const Label& w,
   bool retval = false;
   while (tmpLabel.size() != 0)
     {
-      std::cout << "cLocus:" << std::endl;
-      cLocus->dump(std::cout,0,false);
-      outputLabel(std::cout,beta);
-      std::cout << std::endl;
-      outputLabel(std::cout,tmpLabel);
-      std::cout << std::endl;
       auto swType = subwordsWorker(cLocus,beta,tmpLabel);
       auto newcLocus = std::get<0>(swType);
       auto newbeta = std::get<1>(swType);
       auto leaf = std::get<2>(swType);
       auto wasPattern = std::get<3>(swType);
-      bool isPP;
-      if (wasPattern)
+      if (wasPattern && isPatternPrefix(leaf->label(),tmpLabel))
         {
-          std::cout << "About to call isPP" << std::endl;
-          outputLabel(std::cout,leaf->label());
-          std::cout << std::endl;
-          outputLabel(std::cout,tmpLabel);
-          std::cout << std::endl;
-          isPP = isPatternPrefix(leaf->label(),tmpLabel);
-          std::cout << "Done" << std::endl;
-        }
-      if (wasPattern && isPP)
-        {
-          std::cout << "A subword found: (" << leaf->getPatternNumber() << "," << pos << ")" << std::endl;
           auto tmp = std::make_pair(leaf->getPatternNumber(),pos);
           output.push_back(tmp);
           retval = true;
           if (onlyFirst) return true;
         }
-      else
-        {
-          std::cout << "Not a substring." << std::endl;
-        }
-      std::cout << "-------------------------" << std::endl;
       pos++;
       cLocus = newcLocus;
-      beta = suffix(w,newcLocus->label().size());
+      beta = newbeta;
       tmpLabel = suffix(tmpLabel,1);
     }
   return retval;
@@ -497,11 +474,10 @@ auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
   auto elType = extendedLocus(x,beta);
   auto f = std::get<0>(elType);
   auto betaHat = std::get<1>(elType);
-  if (f == nullptr) return std::make_tuple(x,betaHat,nullptr,false);
-  if (f->arcLabel() == betaHat)
+  if (f->arcLabel().size() == betaHat.size())
     return subwordsStepD(f,suffix(s,f->label().size()));
   else
-    return std::make_tuple(x,betaHat,nullptr,false);
+    return std::make_tuple(f->parent(),betaHat,nullptr,false);
 }
 
 auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
@@ -659,18 +635,14 @@ auto SuffixTree::isNontrivialSuperword(Word word, int index1, int index2) const 
 {
   Label tmp(word.begin(),word.end());
   std::vector<std::pair<int,int>> subs {};
-  std::cout << "Checking subwords." << std::endl;
-  outputPatterns(std::cout,*this);
-  std::cout << "tmp: " << tmp << std::endl;
   subwords(tmp, subs);
-  std::cout << "Finished checking subwords." << std::endl;
   for (auto sw : subs)
     {
       auto index = std::get<0>(sw);
       auto pos = std::get<1>(sw);
       if (index != index1 && index != index2) return true;
-      if (index == index1 && pos != 0) return true;
-      if (index == index2 && pos != word.size() - mMonomials[index2].size()) return true;
+      if (index != index1 && pos == 0) return true;
+      if (index != index2 && pos == word.size() - mMonomials[index2].size()) return true;
     }
   return false;
 }

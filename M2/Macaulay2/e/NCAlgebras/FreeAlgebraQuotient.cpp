@@ -1,6 +1,5 @@
 #include "FreeAlgebraQuotient.hpp"
 #include "NCGroebner.hpp"
-//#include "WordTable.hpp"
 
 using ExponentVector = int*;
 
@@ -17,8 +16,8 @@ FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
     mMaxdeg(maxdeg)
 {
   // Build the word table for the reduction
-  for (auto f : *mGroebner)
-    mWordTable.insert(Word(f->cbegin().monom()));
+   for (auto f : *mGroebner)
+     mWordTable.insert(f->cbegin().monom());
 }
 
 void FreeAlgebraQuotient::normalizeInPlace(Poly& f) const

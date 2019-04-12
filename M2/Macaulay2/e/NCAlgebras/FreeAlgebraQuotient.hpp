@@ -2,6 +2,7 @@
 #define _free_algebra_quotient_hpp_
 
 #include "FreeAlgebra.hpp"
+#include "SuffixTree.hpp"
 #include <memory>
 
 class FreeAlgebraQuotient : public our_new_delete
@@ -10,6 +11,7 @@ private:
   const FreeAlgebra& mFreeAlgebra;
   std::unique_ptr<ConstPolyList> mGroebner;
   WordTable mWordTable;
+  //SuffixTree mWordTable;
   int mMaxdeg;
   
 public:

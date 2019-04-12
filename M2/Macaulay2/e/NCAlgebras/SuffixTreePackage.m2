@@ -213,21 +213,13 @@ extendedLocus (SuffixTreeNode, List) := (x,beta) -> (
    --- This function finds the locus of the shortest word that has beta as a prefix.
    --- it returns this locus, together with the prefix that needs to be split (if necessary)
    --- if beta is empty, then simply return (x,beta) since x is the extended locus
-   initialX := x;
    if beta == {} then return (x,beta);
    betaHat := beta;
    (f,pre) := findMatch(x,betaHat);
-   if (f === nullTreeNode) then return (f,betaHat);
    while #(f.arcLabel) < #betaHat do (
       x = f;
-      oldbetaHat := betaHat;
       betaHat = drop(betaHat,#(f.arcLabel));
       (f,pre) = findMatch(x,betaHat);
-      if (f === nullTreeNode) then
-      (
-	error "errr";
-        return (x.parent,betaHat | f.arcLabel);
-      )
    );
    (f,betaHat)
 )
@@ -297,7 +289,7 @@ suffixTreeFirstSubword (SuffixTree, List) := (tree, s) -> (
    initialS := s;
    pos := 0;
    while (s != {}) do (
-      (newcLocus,newbeta,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
+      (newcLocus,newbeta,leaf,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
       --- this version only returns the first subword
       if wasPattern then return {(newcLocus.label | newbeta,pos,initialS)};
       pos = pos + 1;
@@ -318,14 +310,13 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
    initialS := s;
    pos := 0;
    while (s != {}) do (
-      (newcLocus,newbeta,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
-      --error "err 1";
-      if (wasPattern and (newcLocus.label | newbeta == take(s,#newcLocus.label + #newbeta))) then
+      (newcLocus,newbeta,leaf,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
+      if (wasPattern and isPrefix(drop(leaf.label,-1),s)) then
       (
- 	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
+	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
       );
       pos = pos + 1;
-      beta = drop(s,#(newcLocus.label));
+      beta = newbeta;
       cLocus = newcLocus;
       s = drop(s,1);
    );
@@ -345,17 +336,15 @@ suffixTreeSubwordsStepC (SuffixTreeNode, List, List) := (x,beta,s) -> (
    --- if there is no beta, then begin search at x (no need to traverse the path beta)
    if beta == {} then return suffixTreeSubwordsStepD(x,drop(s,#(x.label)));
    (f,betaHat) := extendedLocus(x,beta);
-   -- if beta does not define a path starting from x, then return.
-   if f === nullTreeNode then return (x,beta,false);
-   if f.arcLabel == betaHat then suffixTreeSubwordsStepD(f,drop(s,#(f.label))) else (x,beta,false)
+   if #(f.arcLabel) == #(betaHat) then suffixTreeSubwordsStepD(f,drop(s,#(f.label))) else (f.parent,betaHat,nullTreeNode,false)
 )
 
 suffixTreeSubwordsStepD = method()
 suffixTreeSubwordsStepD (SuffixTreeNode, List) := (y, s) -> (
    --- Step D in algorithm SEARCH in Amir et.al.
    (newy,f,pre) := contractedLocus(y,s);
-   if f === nullTreeNode then return (newy,pre,false);
-   return (newy,pre,f.isFullPattern)
+   if f === nullTreeNode then return (newy,pre,nullTreeNode,false);
+   return (newy,pre,f,f.isFullPattern)
 )
 
 suffixTreeSuperwords = method()
@@ -481,7 +470,6 @@ assert(#superwords == 16)
 
 subwords = suffixTreeSubwords(tree, {symbol Z, symbol Z, symbol X, symbol Y, symbol Y, symbol X, symbol Y, symbol X, symbol Y, symbol Y});
 checkDivisions subwords
-#subwords
 assert(#subwords == 5)
 
 firstSubword = suffixTreeFirstSubword(tree, {symbol Z, symbol Z, symbol X, symbol Y, symbol Y, symbol X, symbol Y, symbol X, symbol Y, symbol Y});
@@ -518,3 +506,9 @@ mons = {{Z,Z},{Z,Y},{Z,X},{Y,Y,X},{Y,Y,Z},{Y,Y,Y,Y},{Y,X,Y,Y},{Y,X,Y,X,Y},
 #mons
 (tree,rightOverlaps) = suffixTree mons;
 subwords = suffixTreeSubwords(tree, {Y,X,X,X,X,Y,X,Y,Z,Z})
+
+restart
+debug needsPackage "SuffixTreePackage"
+mons = {{Z,X},{Z,Y},{Z,Z},{Y,Y,X}}
+(tree,rightOverlaps) = suffixTree mons;
+subwords = suffixTreeSubwords(tree, {Y,Y,Z})
