@@ -152,14 +152,10 @@ using InsertWorkerType = std::tuple<SuffixTreeNode*,
 				    SuffixTreeNode*,
 				    SuffixTreeNode*>;
 
-using SubwordsWorkerType = std::tuple<SuffixTreeNode*,
+using SubwordsType = std::tuple<SuffixTreeNode*,
                                       Label,
                                       SuffixTreeNode*,
                                      bool>;
-
-using SubwordsType = std::tuple<Label,
-				int,
-				Label>;
 
 class SuffixTree
 {
@@ -305,12 +301,12 @@ public: // TODO: fix so we can test these private functions (right now, we just 
   auto subwords(const Label& w, std::vector<std::pair<int,int>>& output,bool onlyFirst) const -> bool;
   auto subwordsWorker(SuffixTreeNode* cLocus,
 		      const Label& beta,
-		      const Label& s) const -> SubwordsWorkerType;
+		      const Label& s) const -> SubwordsType;
   auto subwordsStepC(SuffixTreeNode* x,
 		     const Label& beta,
-		     const Label& s) const -> SubwordsWorkerType;
+		     const Label& s) const -> SubwordsType;
   auto subwordsStepD(SuffixTreeNode* y,
-		     const Label& s) const -> SubwordsWorkerType;
+		     const Label& s) const -> SubwordsType;
 
   // the output is a list of pairs (i,j) such that the word w appears in monomial i in position j
   auto superword(const Label& w, std::pair<int,int>& output) const -> bool;

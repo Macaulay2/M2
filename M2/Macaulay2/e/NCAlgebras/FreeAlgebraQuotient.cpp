@@ -15,7 +15,7 @@ FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
     mGroebner(std::move(GB)),
     mMaxdeg(maxdeg)
 {
-  // Build the word table for the reduction
+   // Build the word table for the reduction
    for (auto f : *mGroebner)
      mWordTable.insert(f->cbegin().monom());
 }

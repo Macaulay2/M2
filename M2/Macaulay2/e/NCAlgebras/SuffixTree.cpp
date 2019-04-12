@@ -90,17 +90,29 @@ Label suffix(const Label &vec, int indexOfSuffix)
   return temp;
 }
 
+void suffixInPlace(const Label &vec, int indexOfSuffix)
+{
+  
+}
+
 bool concatenatesTo(const Label& a, const Label&b, const Label&c)
 {
   if (a.size() + b.size() != c.size()) return false;
   return (std::equal(a.begin(),a.end(),c.begin()) && std::equal(b.begin(),b.end(),c.begin()+a.size()));
 }
 
-bool isPatternPrefix(const Label& a, const Label &b)
+bool isPatternPrefix(const Label& a, const Label &b, int startIndex)
 {
   // here, a is a pattern label so we only compare the first a.size()-1 many entries
+  // sometimes we know that the first startIndex many symbols will match, so we start
+  // at the first possible non-match.
   if (b.size() < a.size() - 1) return false;
-  return std::equal(a.begin(),a.end()-1,b.begin());
+  return std::equal(a.begin()+startIndex,a.end()-1,b.begin());
+}
+
+bool isPatternPrefix(const Label& a, const Label &b)
+{
+  return isPatternPrefix(a,b,0);
 }
 
 SuffixTree::SuffixTree()
@@ -435,11 +447,16 @@ auto SuffixTree::subwords(const Label& w,
   bool retval = false;
   while (tmpLabel.size() != 0)
     {
-      auto swType = subwordsWorker(cLocus,beta,tmpLabel);
-      auto newcLocus = std::get<0>(swType);
-      auto newbeta = std::get<1>(swType);
-      auto leaf = std::get<2>(swType);
-      auto wasPattern = std::get<3>(swType);
+      SubwordsType swwType;
+      if (cLocus == mRoot)
+        swwType = subwordsStepD(mRoot,tmpLabel);
+      else
+        swwType = subwordsStepC(cLocus->suffixLink(),beta,tmpLabel);
+      auto newcLocus = std::get<0>(swwType);
+      auto newbeta = std::get<1>(swwType);
+      auto leaf = std::get<2>(swwType);
+      auto wasPattern = std::get<3>(swwType);
+      //if (wasPattern && isPatternPrefix(leaf->label(),tmpLabel,newcLocus->label().size()+newbeta.size()))
       if (wasPattern && isPatternPrefix(leaf->label(),tmpLabel))
         {
           auto tmp = std::make_pair(leaf->getPatternNumber(),pos);
@@ -457,7 +474,7 @@ auto SuffixTree::subwords(const Label& w,
   
 auto SuffixTree::subwordsWorker(SuffixTreeNode* cLocus,
                                 const Label& beta,
-                                const Label& s) const -> SubwordsWorkerType
+                                const Label& s) const -> SubwordsType
 {
   if (cLocus == mRoot)
     return subwordsStepD(mRoot,s);
@@ -467,7 +484,7 @@ auto SuffixTree::subwordsWorker(SuffixTreeNode* cLocus,
 
 auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
                                const Label& beta,
-                               const Label& s) const -> SubwordsWorkerType
+                               const Label& s) const -> SubwordsType
 {
   if (beta.size() == 0)
     return subwordsStepD(x,suffix(s,x->label().size()));
@@ -481,7 +498,7 @@ auto SuffixTree::subwordsStepC(SuffixTreeNode* x,
 }
 
 auto SuffixTree::subwordsStepD(SuffixTreeNode* y,
-                               const Label& s) const -> SubwordsWorkerType
+                               const Label& s) const -> SubwordsType
 {
   auto clType = contractedLocus(y,s);
   auto newy = std::get<0>(clType);

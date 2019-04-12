@@ -311,6 +311,7 @@ suffixTreeSubwords (SuffixTree, List) := (tree, s) -> (
    pos := 0;
    while (s != {}) do (
       (newcLocus,newbeta,leaf,wasPattern) := suffixTreeSubwordsWorker(tree,cLocus,beta,s);
+      if (wasPattern) then error "err";
       if (wasPattern and isPrefix(drop(leaf.label,-1),s)) then
       (
 	  subwords = subwords | {(newcLocus.label | newbeta,pos,initialS)};
