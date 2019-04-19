@@ -129,7 +129,7 @@ Usage => "isBirational phi",
 Inputs => { 
 "phi" => RationalMap}, 
 Outputs => { 
-Boolean => {"whether ",TT"Phi"," is birational"}},
+Boolean => {"whether ",TT"phi"," is birational"}},
 PARA{"The testing passes through the methods ", TO projectiveDegrees, ", ", TO degreeOfRationalMap," and ", TO isDominant,"."},
 EXAMPLE { 
 "GF(331^2)[t_0..t_4]",
@@ -145,7 +145,7 @@ Usage => "isDominant phi",
 Inputs => { 
 "phi" => RationalMap}, 
 Outputs => { 
-Boolean => {"whether ",TT"Phi"," is dominant"}},
+Boolean => {"whether ",TT"phi"," is dominant"}},
 PARA{"This method is based on the fibre dimension theorem. A more standard way would be to perform the command ", TT "kernel map phi == 0","."},
 EXAMPLE { 
 "P8 = ZZ/101[x_0..x_8];",
@@ -348,10 +348,8 @@ Headline => "the class of all rational maps between absolutely irreducible proje
 PARA{"An object of the class ",EM "RationalMap", " can be basically replaced by a homogeneous ring map of quotients of polynomial rings by homogeneous ideals. The main advantage to using this class is that things computed using non-probabilistic algorithms are stored internally (or partially stored)."},
 PARA{"The constructor for the class is ",TO "rationalMap",", which works quite similar to ",TO "toMap","."}}
 
-undocumented {(symbol ^*,RationalMap)}
-
 document { 
-Key => {(symbol ^**,RationalMap,Ideal)}, 
+Key => {(symbol ^**,RationalMap,Ideal),(symbol ^*,RationalMap)}, 
 Headline => "inverse image via a rational map", 
 Usage => "phi^** I", 
 Inputs => { 
@@ -359,7 +357,7 @@ RationalMap => "phi",
 Ideal => "I" => {"a homogeneus ideal in the coordinate ring of the target of ",TT "phi"},}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the inverse image of ", TT"V(I)", " via ",TT"phi"}},
-PARA{"In most cases this is equivalent to ",TT"phi^*I", ", which is faster but may not take into account other representations of the map."},
+PARA{"In most cases this is equivalent to ",TT"phi^* I", ", which is faster but may not take into account other representations of the map."},
 PARA{"In the example below, we apply the method to check the birationality of a map (deterministically)."},
 EXAMPLE { 
 "phi = quadroQuadricCremonaTransformation(5,1)",
@@ -373,12 +371,12 @@ SeeAlso => {(symbol _*,RationalMap),(target,RationalMap)}}
 document { 
 Key => {(symbol _*,RationalMap),(symbol SPACE,RationalMap,Ideal)}, 
 Headline => "direct image via a rational map", 
-Usage => "phi_* I 
-phi I", 
+Usage => "phi_* I", 
 Inputs => { 
 RationalMap => "phi" => {TT"I", " a homogeneus ideal in the coordinate ring of the source of ",TT "phi"},}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the direct image of ", TT"V(I)", " via ",TT"phi"}},
+PARA{"In most cases this is equivalent to ",TT"phi I", ", which is faster but may not take into account other representations of the map."},
 SeeAlso => {(symbol ^**,RationalMap,Ideal),(source,RationalMap)}}
 
 document { 
@@ -411,6 +409,29 @@ Inputs => {
 RationalMap => "phi"}, 
 Outputs => { 
 Ideal => {"the ideal of the base locus of ",TT"phi"}}}
+
+document { 
+Key => {exceptionalLocus,(exceptionalLocus,RationalMap)}, 
+Headline => "exceptional locus of a birational map", 
+Usage => "exceptionalLocus phi", 
+Inputs => { 
+RationalMap => "phi" => {"a birational map ",TEX///$X--->Y$///}}, 
+Outputs => { 
+Ideal => {"an ideal defining the closure in ",TT"X"," of the locus where ",TT "phi"," is not a local isomorphism"}},
+PARA{"This method simply calculates the inverse image of the base locus of the inverse map, which in turn is determined through the method ",TO (inverse,RationalMap),"."},
+PARA{"Below, we compute the exceptional locus of the map defined by the linear system of quadrics through the quintic rational normal curve in ",TEX///$\mathbb{P}^5$///,"."},
+EXAMPLE { 
+"P5 := ZZ/100003[x_0..x_5];",
+"phi = rationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);",
+"psi = inverseMap phi;",
+"-- a fast probabilistic test
+assert last(p = point source phi, psi phi p == p)",
+"forceInverseMap(phi,psi)",
+"E = exceptionalLocus phi;",
+"E == phi^* ideal psi",
+"assert(E == minors(3,matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4},{x_2,x_3,x_4,x_5}}))"
+},
+SeeAlso => {(ideal,RationalMap),(inverseMap,RationalMap),(symbol ^**,RationalMap,Ideal),(isIsomorphism,RationalMap),forceInverseMap}}
 
 document { 
 Key => {(target,RationalMap)}, 
@@ -936,5 +957,50 @@ EXAMPLE {
 Caveat => {"This is under development yet."}
 }
 undocumented{(abstractRationalMap,Ideal,String)}
+
+document { 
+Key => {(toExternalString,RationalMap)}, 
+Headline => "convert to a readable string", 
+Usage => "toExternalString phi", 
+Inputs => {RationalMap => "phi"}, 
+Outputs => {String => {"a string representation of ",TT "phi",", which can be used, in conjunction with ",TO "value",", to read the object back into the program later"}},
+PARA{"All internal data of the input are included in the returned string."},
+EXAMPLE {
+"phi = (specialCubicTransformation 2)!;",
+"str = toExternalString phi;",
+"#str",
+"time phi' = value str;",
+"time describe phi'",
+"time describe inverse phi'"}
+}
+undocumented{(sub,RationalMap,PolynomialRing,PolynomialRing)}
+
+document { 
+Key => {isMorphism,(isMorphism,RationalMap)}, 
+Headline => "whether a rational map is a morphism", 
+Usage => "isMorphism phi", 
+Inputs => { 
+"phi" => RationalMap}, 
+Outputs => { 
+Boolean => {"whether ",TT"phi"," is a morphism (i.e., everywhere defined)"}},
+EXAMPLE { 
+"phi = quadroQuadricCremonaTransformation(5,1)",
+"isMorphism phi",
+"phi' = last graph phi;",
+"isMorphism phi'"},
+SeeAlso => {(ideal,RationalMap),(isIsomorphism,RationalMap)}}
+
+document { 
+Key => {(isIsomorphism,RationalMap)}, 
+Headline => "whether a birational map is an isomorphism", 
+Usage => "isIsomorphism phi", 
+Inputs => {"phi" => RationalMap}, 
+Outputs => {Boolean => {"whether ",TT"phi"," is an isomorphism"}},
+PARA{"This method computes the inverse rational map via the deterministic method ",TO (inverse,RationalMap),"."},
+EXAMPLE { 
+"P1 := QQ[a,b]; P4 := QQ[x,y,z,w];",
+"phi = rationalMap({a^4,a^3*b,a^2*b^2,a*b^3,b^4},Dominant=>true)",
+"isIsomorphism phi"},
+SeeAlso => {(ideal,RationalMap),isBirational,isMorphism}}
 
 
