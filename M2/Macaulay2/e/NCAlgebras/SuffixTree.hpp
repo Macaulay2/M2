@@ -160,7 +160,7 @@ public:
 
   size_t monomialCount() const { return mMonomials.size(); }
 
-  size_t insert(Word w);
+  size_t insert(const Word& w);
 
   auto insert(const Word& s, std::vector<Overlap>& newRightOverlaps) -> size_t;
   //size_t insert(Word w, std::vector<Overlap>& newRightOverlaps);
@@ -264,6 +264,11 @@ public: // TODO: fix so we can test these private functions (right now, we just 
   auto allLeaves(SuffixTreeNode* v, std::vector<SuffixTreeNode*>& output) const -> void;
 
   // functions for insert algorithm
+
+  // these functions are for debugging purposes.
+  auto insert(Label& lab, std::vector<Overlap>& rightOverlaps) -> size_t;
+  auto insert(std::vector<Label>& labs, std::vector<Overlap>& rightOverlaps) -> size_t;
+  
   auto insert(std::vector<Word>& ss, std::vector<Overlap>& rightOverlaps) -> size_t;
   auto insertWorker(SuffixTreeNode* v,
 		    const Word& s,

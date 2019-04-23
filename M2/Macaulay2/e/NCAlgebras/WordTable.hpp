@@ -16,7 +16,9 @@ public:
   Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
   Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
 
-  Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
+  // keyword 'explicit' to prevent calling this constructor implicitly.  It
+  // causes some strange behavior in debugging.
+  explicit Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
 
   void init(const int* begin, const int* end) { mBegin = begin; mEnd = end; }
   void init(const std::vector<int>& val) { mBegin = val.data(); mEnd = val.data() + val.size(); }
