@@ -1078,10 +1078,15 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
       }
     /* added by Frank */
     const M2FreeAlgebra* ncP = dynamic_cast<const M2FreeAlgebra*>(f->get_ring());
-    //const M2FreeAlgebra *ncP = f->get_ring()->cast_to_M2FreeAlgebra();
     if (ncP != nullptr)
       {
         return ncP->list_form(coeffRing, f->get_value());
+      }
+    /* added by Frank */
+    const M2FreeAlgebraQuotient* ncQ = dynamic_cast<const M2FreeAlgebraQuotient*>(f->get_ring());
+    if (ncQ != nullptr)
+      {
+        return ncQ->m2FreeAlgebra().list_form(coeffRing, f->get_value());
       }
     ERROR("expected a polynomial");
     return nullptr;

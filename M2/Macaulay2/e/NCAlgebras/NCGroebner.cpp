@@ -56,7 +56,7 @@ void NCGroebner::compute(int softDegreeLimit)
               freeAlgebra().lead_word(tmpWord,*redOverlapPoly);
               if (M2_gbTrace >= 4)
                 {
-                  std::cout << "SuffixTree before inserting : " << Label(tmpWord.begin(),tmpWord.end()) << std::endl;
+                  std::cout << "SuffixTree before inserting : " << tmpWord << std::endl;
                   std::cout << mWordTable << std::endl;
                 }
               mWordTable.insert(tmpWord,newOverlaps);

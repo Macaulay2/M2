@@ -188,7 +188,14 @@ isWellDefined FreeAlgebra := Boolean => R -> (
 -- listForm
 
 NCGB = method()
-NCGB(Ideal, ZZ) := (I, maxdeg) -> map(ring I, rawNCGroebnerBasisTwoSided(raw gens I, maxdeg))
+NCGB(Ideal, ZZ) := (I, maxdeg) -> (
+    if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
+        tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
+        gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg));
+        I.cache.NCGB = {maxdeg, gbI};
+        );
+    I.cache.NCGB#1
+    )
 
 NCReduction2Sided = method()
 NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
@@ -199,25 +206,22 @@ NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
 NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
 NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
 
-FreeAlgebra / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
+FreeAlgebra / Ideal := QuotientRing => (R,I) -> (
      if ring I =!= R then error "expected ideal of the same ring";
-     if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
-     -- recall that ZZ is NOT an engine ring.
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
      gensI := generators I;
-     S := new QuotientRing from rawQuotientRing(raw R, raw gensI);
-     S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gensI)} };
+     maxdegI := first max(degrees source gensI); -- TODO: change once multidegrees are allowed.
+     gbI := if I.cache.?NCGB then I.cache.NCGB#1 else NCGB(I, 2*maxdegI);
+     S := new QuotientRing from rawQuotientRing(raw R, raw gbI);
+     --S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gbI)} };
      S.cache = new CacheTable;
-     --S.basering = R;
-     --S.numallvars = R.numallvars;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations S;
      S.relations = gensI;
      S.isCommutative = false;
-     --if R.?SkewCommutative then S.SkewCommutative = R.SkewCommutative;
      S.generators = apply(generators S, m -> promote(m,S));
      if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
      if R.?generatorExpressions then S.generatorExpressions = (
@@ -226,9 +230,8 @@ FreeAlgebra / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);
-     S.use = x -> (
+     S.use = x -> ( -- what is this for??
 	  );
-     --runHooks(R,QuotientRingHook,S);
      S)
 
 beginDocumentation()
@@ -489,7 +492,6 @@ TEST ///
 ///
 
 TEST /// 
-  -- XXX
   R = QQ{b,c,d}
   f = 3*b^2*c*b + 2*b^4
   assert(size (b+c) == 2)
@@ -743,21 +745,47 @@ TEST ///
 TEST ///
 -- test of free algebra quotient rings
 -*
+-- XXX
   restart
   needsPackage "PolynomialAlgebra"
 *-
   debug Core
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
-  J = gens ideal NCGB(I, 387)
-  --R/J
+  --J = gens ideal NCGB(I, 387)
+
+  A = R/I
+
+  NCGB(I, 1000)
+  A1 = R/I
+  assert(A1 =!= A)
+  assert(I.cache.NCGB#0 == 1000)
+
+  a^3  
+  use A
+  a^3
+
   A = rawRingM2FreeAlgebraQuotient(raw J, -1)  
+  
+-- i16 : coefficients(a^3)
+-- stdio:16:1:(3): error: expected polynomial ring
+
+-- i17 : lift(a^3, R)
+-- stdio:17:1:(3): error: cannot lift given ring element
+  
   a = A_0
   b = A_1
   a*b
   (a*b)^2
   a^3
   unique flatten apply(2, i -> flatten apply(2, j -> flatten apply(2, k -> flatten apply(2, l -> A_i*A_j*A_k*A_l))))
+
+  A = R/(ideal J)
+  use R
+  assert(ring a === R)
+  assert(ring b === R)
+  A = R/I
+
 -*  
 R = QQ[a..d]  
 I = ideal(a^2-b*c)
@@ -768,6 +796,7 @@ peek I.cache
 peek (gens I).cache
 *-
 ///
+
 end--
 
 restart

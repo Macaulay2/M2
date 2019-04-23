@@ -99,18 +99,23 @@ ring_elem M2FreeAlgebraQuotient::var(int v) const
   return ring_elem(reinterpret_cast<void *>(result));
 }
 
-bool M2FreeAlgebraQuotient::promote(const Ring *R, const ring_elem f, ring_elem &result) const
+bool M2FreeAlgebraQuotient::promote(const Ring *R, const ring_elem f1, ring_elem &result) const
 {
   // std::cout << "called promote NC case" << std::endl;  
   // Currently the only case to handle is R = A --> this, and A is the coefficient ring of this.
   if (R == coefficientRing())
     {
-      result = from_coefficient(f);
+      result = from_coefficient(f1);
       return true;
     }
   if (R == &m2FreeAlgebra())
     {
-      // TODO: normalize the element
+      auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
+      auto resultf = new Poly;
+      freeAlgebraQuotient().copy(*resultf, *f);
+      freeAlgebraQuotient().normalizeInPlace(*resultf);
+      result = ring_elem(reinterpret_cast<void *>(resultf));
+      return true;
     }
   return false;
 }
