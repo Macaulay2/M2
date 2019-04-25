@@ -1,6 +1,15 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
+-- TODO (Anton+Mike):
+--  SLProgram will replace Evaluator
+--    each EvaluatorK will be stashed in SLProgram.cache, under key : the ring.
+--    evaluate(SLProgram, ...) will replace evaluate(Evaluator, ...)
+--    makeEvaluator --> makeSLProgram
+-- files involved: this one.
+--    NumericalAlgebraicGeometry/extraNAGtypes.m2
+--    that might be it?
+
 newPackage select((
      "SLPexpressions",
      Version => "1.9.3",
