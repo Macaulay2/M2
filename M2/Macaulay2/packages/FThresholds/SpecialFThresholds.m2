@@ -24,7 +24,7 @@ carryTest = ( p, w ) ->
 (
     if any( w, x -> x < 0 or x > 1 ) then 
         error "carryTest: Expected the second argument to be a list of rational numbers in [0,1]";
-     div := apply( w, x -> decomposeFraction(p, x) );
+     div := apply( w, x -> toList decomposeFraction( p, x ) );
      c := max (transpose div)#1; --max of second components of div
      v := selectNonzero (transpose div)#2; -- nonzero third components of div
      d := if v === {} then 1 else lcm v;
