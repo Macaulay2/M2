@@ -53,29 +53,29 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     GH#"Hx" = diff(X,H);
     GH#"Ht" = diff(T,H);
     if o.Strategy === compress then (
-    	GH#"H" = compress H;
-    	GH#"Hx" = compress GH#"Hx";
-    	GH#"Ht" = compress GH#"Ht";
-	);
+        GH#"H" = compress H;
+        GH#"Hx" = compress GH#"Hx";
+        GH#"Ht" = compress GH#"Ht";
+        );
     GH.Software = soft;
     if soft === M2 then (
-	)
+        )
     else if soft === M2engine then (
-	varMat := X | matrix{{T}};
-	if para then varMat = o.Parameters | varMat;
-	GH#"EH" = makeEvaluator(H,varMat);
-	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
-	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
-	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
-	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
-	)
+        varMat := X | matrix{{T}};
+        if para then varMat = o.Parameters | varMat;
+        GH#"EH" = makeSLProgram(varMat, GH#"H");
+        GH#"EHx" = makeSLProgram(varMat, GH#"Hx");
+        GH#"EHt" = makeSLProgram(varMat, GH#"Ht");
+        GH#"EHxt" = makeSLProgram(varMat, GH#"Hx"|GH#"Ht");
+        GH#"EHxH" = makeSLProgram(varMat, GH#"Hx"|GH#"H");
+        )
     else error "uknown Software option value";
     if para then (
-	GPH := new GateParameterHomotopy;
-	GPH.GateHomotopy = GH;
-	GPH.Parameters = o.Parameters;
-	GPH
-	) 
+        GPH := new GateParameterHomotopy;
+        GPH.GateHomotopy = GH;		
+        GPH.Parameters = o.Parameters;
+        GPH
+        ) 
     else GH
     ) 
     

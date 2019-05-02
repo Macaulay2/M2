@@ -1,14 +1,7 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
--- TODO (Anton+Mike):
---  SLProgram will replace Evaluator
---    each EvaluatorK will be stashed in SLProgram.cache, under key : the ring.
---    evaluate(SLProgram, ...) will replace evaluate(Evaluator, ...)
---    makeEvaluator --> makeSLProgram
--- files involved: this one.
---    NumericalAlgebraicGeometry/extraNAGtypes.m2
---    that might be it?
+-- TODO: compress (with CacheTable)
 
 newPackage select((
      "SLPexpressions",
@@ -355,7 +348,14 @@ gatePolynomial RingElement := p -> (
 	    c*product(#m,i->X#i^(m#i))
 	    ))
     ) 
-	
+
+TEST ///
+R = QQ[x,y]
+f = random(3,R)
+gf = gatePolynomial f
+printAsSLP(getVarGates R,{gf})
+slp = makeSLProgram(getVarGates R,{gf})
+///	
 --------------------------------------------------
 -- (Raw)SLProgram routines
 --------------------------------------------------
@@ -372,11 +372,14 @@ makeSLProgram (List,List) := (inL,outL) -> (
     constantPositions := appendToSLProgram(s,consts,t);
     constantValues := matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
     new SLProgram from {
-	RawSLProgram => s, 
-	"variable positions" => varPositions,
-	"constants" =>  constantValues,
-	"constant positions" => constantPositions
-	}
+				RawSLProgram => s, 
+				"number of inputs" => #inL,
+				"number of outputs" => #outL,
+				"variable positions" => varPositions,
+				"constants" =>  constantValues,
+				"constant positions" => constantPositions,
+				cache => new CacheTable
+				}
     )
 makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
 
@@ -528,9 +531,8 @@ diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
 -------------------------
 -- printAsSLP functions
 PrintTable = new Type of MutableHashTable
-newPrintTable := method()
-newPrintTable List := o -> (h := new PrintTable; h#"#consts"=h#"#vars"=h#"#gates"=h#"#lines"=0; h.Outputs=o; h)
-addLine := method()
+newPrintTable = () -> (h := new PrintTable; h#"#consts"=h#"#vars"=h#"#gates"=h#"#lines"=0; h)
+addLine = method()
 addLine (PrintTable, Thing) := (h,t) -> ( h#(h#"#lines") = t; h#"#lines" = h#"#lines" + 1; )    
 printName = method()
 printName (Gate, PrintTable) := (g,h) -> error "not implemented"
@@ -575,23 +577,25 @@ printName (DetGate, PrintTable) := (g,h) -> if h#?g then h#g else (
     )
 
 printAsSLP = method()
-printAsSLP List := outputs -> (
-    h := newPrintTable outputs;
+printAsSLP (List, List) := (inputs, outputs) -> (
+    h := newPrintTable();
+    scan(inputs, g-> << printName(g,h) << " = " << g.Name << endl);  
     scan(outputs, g->printName(g,h));
     scan(h#"#lines", i->print h#i);
     print "output:";
-    scan(h#Outputs, g->print printName(g,h));     
+    scan(outputs, g-> << printName(g,h) << endl);     
     )
-printAsSLP GateMatrix := M -> printAsSLP flatten entries M
+printAsSLP (GateMatrix,GateMatrix) := (I,O) -> printAsSLP (flatten entries I, flatten entries O)
 
 TEST ///
+needsPackage "SLPexpressions"
 X = inputGate symbol X
 C = inputGate symbol C
 XpC = X+C
 XXC = productGate{X,X,C}
 detXCCX = detGate{{X,C},{C,X}}
 XoC = X/C
-printAsSLP matrix{{XXC,detXCCX,XoC}}
+printAsSLP ({X,C},{XXC,detXCCX,XoC+1+XpC})
 ///
 
 -----------------------------------------------
@@ -674,29 +678,29 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
     map(R^m,R^n,(i,j)->e#(n*i+j)) 
     )
 
-Evaluator = new Type of MutableHashTable
-makeEvaluator = method()
-makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
-    slp := makeSLProgram(I,M);
-    E := new Evaluator from {
-    	"SLP"=>slp
-    	};
-    E
-    )
-
 rawSLEvaluatorK = method()
-rawSLEvaluatorK Evaluator := E -> rawSLEvaluatorK(E,ring E#"constants")
-rawSLEvaluatorK (Evaluator,Ring) := (E,K) -> if E#?K then E#K else E#K = rawSLEvaluator(
-    E#"SLP"#RawSLProgram, E#"SLP"#"constant positions", E#"SLP"#"variable positions",
-    raw mutableMatrix promote(E#"SLP"#"constants",K)
+rawSLEvaluatorK (SLProgram, Ring) := (slp, K) -> if slp.cache#?K then slp.cache#K else slp.cache#K = rawSLEvaluator(
+    slp#RawSLProgram, 
+		slp#"constant positions", 
+		slp#"variable positions",
+    raw mutableMatrix promote(slp#"constants",K)
     );
   
-evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
-    K := ring I; 
+evaluate(SLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
+		if numrows I =!= 1 or numrows O =!= 1 then error "expected matrices with 1 row";
+		if numcols I =!= slp#"number of inputs" then error "wrong number of inputs";
+		if numcols O =!= slp#"number of outputs" then error "wrong number of outputs";
+		K := ring I; 
     if ring O =!= K then error "expected same Ring for input and output";
-    rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
+    rawSLEvaluatorEvaluate(rawSLEvaluatorK(slp,K), raw I, raw O);
     )
 
+evaluate(SLProgram, Matrix) := (slp, inp) -> (
+		I := mutableMatrix inp;
+		O := mutableMatrix(ring I, 1, slp#"number of outputs");
+		evaluate(slp,I,O);
+		matrix O
+		)
  
 TEST /// 
 restart
@@ -708,15 +712,16 @@ XpC = X+C
 XXC = productGate{X,X,C}
 detXCCX = detGate{{X,C},{C,X}}
 XoC = X/C
-E = makeEvaluator(matrix{{XXC,detXCCX,XoC,XpC+2}},matrix{{C,X}}) 
+slp = makeSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}}) 
 inp = mutableMatrix{{1.2,-1}}
 out = mutableMatrix(ring inp,1,4)
-evaluate(E,inp,out)
+evaluate(slp,inp,out)
 assert(clean_0.001(out - mutableMatrix {{1.2, -.44, -.833333, 2.2}})==0)  
 inp = mutableMatrix{{1.2,ii+2}}
 out = mutableMatrix(ring inp,1,4)
-evaluate(E,inp,out)
+evaluate(slp,inp,out)
 assert(clean_0.001(out - mutableMatrix {{3.6+4.8*ii, 1.56+4*ii, 1.66667+.833333*ii, 5.2+ii}})==0)  
+assert(evaluate(slp, matrix{{1/2,2/3}}) === matrix {{2/9, 7/36, 4/3, 19/6}})
 ///
 
 
