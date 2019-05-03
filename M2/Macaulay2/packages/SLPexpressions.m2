@@ -350,11 +350,13 @@ gatePolynomial RingElement := p -> (
     ) 
 
 TEST ///
+needsPackage "SLPexpressions"
 R = QQ[x,y]
 f = random(3,R)
 gf = gatePolynomial f
 printAsSLP(getVarGates R,{gf})
 slp = makeSLProgram(getVarGates R,{gf})
+assert(evaluate(slp,vars R)==f)
 ///	
 --------------------------------------------------
 -- (Raw)SLProgram routines
@@ -810,7 +812,7 @@ document {
     time B = sub((y+1)^(2^n),{y=>1})    
     A == B
     ///,
-    SeeAlso=>{"NumericalAlgebraicGeometry",NAGtypes}
+    SeeAlso=>{"NumericalAlgebraicGeometry","NAGtypes"}
     }
 
 document {
@@ -845,6 +847,7 @@ document {
     }
 
 undocumented {
+-*
 "zeroGate",
 inputGate,
 (inputGate,Thing),
@@ -874,10 +877,6 @@ constants,
 (constants,SumGate),
 "oneGate",
 (symbol -,Gate),
--* (symbol *,CC,Gate),
-(symbol +,CC,Gate),
-(symbol -,CC,Gate),
-*-
 (compress,Gate),
 (compress,GateMatrix),
 (compress,ProductGate),
@@ -898,35 +897,6 @@ constants,
 (diff,InputGate,SumGate),
 (entries,GateMatrix),
 (symbol *,Gate,Gate),
--*(symbol *,Gate,CC),
-(symbol *,Gate,Matrix),
-(symbol *,Gate,QQ),
-(symbol *,Gate,RR),
-(symbol *,Gate,ZZ),
-(symbol +,Gate,CC),
-(symbol +,Gate,Gate),
-(symbol +,Gate,QQ),
-(symbol +,Gate,RR),
-(symbol +,Gate,ZZ),
-(symbol -,Gate,CC),
-(symbol -,Gate,Gate),
-(symbol -,Gate,QQ),
-(symbol -,Gate,RR),
-(symbol -,Gate,ZZ),
-(symbol *,QQ,Gate),
-(symbol +,QQ,Gate),
-(symbol -,QQ,Gate),
-(symbol *,RingElement,GateMatrix),
-(symbol *,RR,Gate),
-(symbol +,RR,Gate),
-(symbol -,RR,Gate),
-*-
--*
-(symbol *,ZZ,Gate),
-(symbol +,ZZ,Gate),
-(symbol -,ZZ,Gate)
-*-
-
 (symbol /,Gate,Gate),
 (symbol ^,Gate,ZZ),
 (symbol *,GateMatrix,GateMatrix),
@@ -973,6 +943,7 @@ constants,
 (value,InputGate,ValueHashTable),
 (value,ProductGate,ValueHashTable),
 (value,SumGate,ValueHashTable)
+*-
     }
 
 end
