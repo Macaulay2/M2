@@ -650,11 +650,12 @@ TEST(SuffixTree, suffixtree1)
   suffixTree3->leftOverlaps(leftOverlapsOutput2);
   EXPECT_EQ(leftOverlapsOutput2.size(),0);
 
+  std::cout << "Here0" << std::endl;
   Label yyzLabel {1,1,2};
   Word yyzWord(yyzLabel);
   suffixTree3->insert(yyxWord, rightOverlaps);
+  std::cout << "Here1" << std::endl;
   EXPECT_FALSE(suffixTree3->subword(yyzWord,o));
-
   auto monList4 = std::vector<Label> {Label{0,0},Label{0,1},Label{0,2},Label{1,1,2},Label{1,1,0},
                                       Label{1,1,1,1},Label{1,2,1,1},Label{1,2,1,2,1},Label{1,2,1,2,0},
                                       Label{1,2,1,2,2},Label{1,2,2,1,1,1},Label{1,2,2,1,2,2},
@@ -664,15 +665,18 @@ TEST(SuffixTree, suffixtree1)
   rightOverlaps.clear();
   SuffixTree* suffixTree4 = new SuffixTree();
   suffixTree4->insert(monList4, rightOverlaps);
+  std::cout << "Here2" << std::endl;
   Label bigLabel {1,2,2,2,2,1,2,1,0};
   Word bigWord(bigLabel);
   suffixTree4->insert(bigWord, rightOverlaps);
+  std::cout << "Here3" << std::endl;
   auto subwordsOutput2 = std::vector<std::pair<int,int>> {};
   Label bigLabel2 {1,2,2,2,2,1,2,1,0,0};
   Word bigWord2(bigLabel2);
   suffixTree4->subwords(bigWord2, subwordsOutput2);
   EXPECT_EQ(subwordsOutput2.size(),2);
-  
+  std::cout << "Here4" << std::endl;
+
   delete suffixTree;
   delete suffixTree2;
   delete suffixTree3;

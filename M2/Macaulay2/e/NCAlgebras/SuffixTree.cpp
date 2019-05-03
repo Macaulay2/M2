@@ -99,13 +99,14 @@ bool isPatternPrefix(const Word a, const Word b, int startIndex)
   // here, a is a pattern label so we only compare the first a.size()-1 many entries
   // sometimes we know that the first startIndex many symbols will match, so we start
   // at the first possible non-match.
-  if (b.size() < a.size() - 1) return false;
+  std::cout << a << " " << b << " " << startIndex << std::endl;
+  if (b.size() + 1 < a.size()) return false;
   Word tmpA = Word(a.begin()+startIndex,a.end()-1);
-  Word tmpB = Word(b.begin(), b.begin()+a.size()-1-startIndex);
+  Word tmpB = Word(b.begin()+startIndex, b.begin()+a.size()-1);
   return (tmpA == tmpB);
 }
 
-bool isPatternPrefix(const Word& a, const Word& b)
+bool isPatternPrefix(const Word a, const Word b)
 {
   return isPatternPrefix(a,b,0);
 }
@@ -180,9 +181,12 @@ auto SuffixTree::insert(const Word& w, std::vector<Overlap>& rightOverlaps) -> s
 
 auto SuffixTree::insert(std::vector<Word>& ss, std::vector<Overlap>& rightOverlaps) -> size_t
 {
-  for (auto s : ss)
+  // note that I got a crash if I used for (auto s : ss) and then inserted s.
+  // Here, s is a copy of the element in ss, not s itself, apparently?
+  // in order for it to do the right thing, I think it must be auto& s : ss
+  for (auto i = ss.begin(); i != ss.end(); ++i)
     {
-      insert(s,rightOverlaps);
+      insert(*i,rightOverlaps);
     }
   return mMonomials.size();
 }
@@ -196,8 +200,10 @@ auto SuffixTree::insert(Label& lab, std::vector<Overlap>& rightOverlaps) -> size
 auto SuffixTree::insert(std::vector<Label>& labs, std::vector<Overlap>& rightOverlaps) -> size_t
 {
   std::vector<Word> tmpWords;
-  for (auto l : labs)
-    tmpWords.push_back(Word(l));
+  for (auto i = labs.begin(); i != labs.end(); ++i)
+    {
+      tmpWords.push_back(Word(*i));
+    }
   return insert(tmpWords, rightOverlaps);
 }
 
@@ -454,6 +460,7 @@ auto SuffixTree::subword(const Word& w, std::pair<int,int>& output) const -> boo
   if (tmp.size() == 0) return false;
   else
     {
+      std::cout << (*tmp.begin()).first << " " << (*tmp.begin()).second << std::endl;
       output = *(tmp.begin());
       return true;
     }
@@ -472,23 +479,26 @@ auto SuffixTree::subwords(const Word& w,
   // in position j of word.
   auto cLocus = mRoot;
   auto beta = Word();
-  auto tmpLabel = w;
+  Word tmpLabel = w;
   int pos = 0;
   bool retval = false;
+  std::cout << *(this->mRoot) << std::endl;
+  std::cout << w << std::endl;
   while (tmpLabel.size() != 0)
     {
-      SubwordsType swwType;
+      SubwordsType swType;
       if (cLocus == mRoot)
-        swwType = subwordsStepD(mRoot,tmpLabel);
+        swType = subwordsStepD(mRoot,tmpLabel);
       else
-        swwType = subwordsStepC(cLocus->suffixLink(),beta,tmpLabel);
-      auto newcLocus = std::get<0>(swwType);
-      auto newbeta = std::get<1>(swwType);
-      auto leaf = std::get<2>(swwType);
-      auto wasPattern = std::get<3>(swwType);
+        swType = subwordsStepC(cLocus->suffixLink(),beta,tmpLabel);
+      auto newcLocus = std::get<0>(swType);
+      auto newbeta = std::get<1>(swType);
+      auto leaf = std::get<2>(swType);
+      auto wasPattern = std::get<3>(swType);
       //if (wasPattern && isPatternPrefix(leaf->label(),tmpLabel,newcLocus->label().size()+newbeta.size()))
       if (wasPattern && isPatternPrefix(Word(leaf->label()),tmpLabel))
         {
+          std::cout << Word(leaf->label()) << " " << tmpLabel << std::endl << std::flush;
           auto tmp = std::make_pair(leaf->getPatternNumber(),pos);
           output.push_back(tmp);
           retval = true;
@@ -498,6 +508,7 @@ auto SuffixTree::subwords(const Word& w,
       cLocus = newcLocus;
       beta = newbeta;
       tmpLabel = suffix(tmpLabel,1);
+      std::cout << *cLocus << " " << tmpLabel << std::endl;
     }
   return retval;
 }
