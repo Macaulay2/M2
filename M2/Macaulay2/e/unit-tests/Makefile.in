@@ -34,7 +34,7 @@ all: $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
 	echo @LIBS@
 
 # disabling a test temporarily, because it doesn't compile
-# check:
+#check:
 #	@ echo "makefile: Warning : skipping temporarily disabled test in e/unit-test"
 check: runtests
 
