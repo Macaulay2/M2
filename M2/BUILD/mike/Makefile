@@ -35,6 +35,18 @@ darwin64-gcc8 : always
 
 #rewrite this: don't change the compiler this way?
 # Thomas Kahle: I rewrote this to use brew's clang latest
+darwin64-latestclang8 : always
+	mkdir -p builds.tmp/darwin64-latestclang8
+	cd builds.tmp/darwin64-latestclang8; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+	    CXX="/usr/local/opt/llvm/bin/clang++" \
+        LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
 	cd builds.tmp/darwin64-latestclang; ../../../../configure \

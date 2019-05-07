@@ -1,3 +1,22 @@
+-------------------------------
+todo: for "today":
+  1. debug NCGB
+  1a. put tests, clean up code, code review.
+  2. add in computation type, some functions to query
+      computation object
+      make one
+      compute it (soft degree bound)
+      get answer from it
+      get status
+      add interrupts to M2
+      add gbTrace usage.
+  3. NCAlgebra class (quotient of a free algebra)
+  4. SuffixTree
+  5. Better reduction (heap, poly with pos, using hashtables)
+  6. F4 like reduction of overlap pairs.
+-------------------------------
+
+
 -- Monomial type: want to allow non-commutative values in front end.
 --   any obstructions to do this?
   RawMonomial -- at m2 level
@@ -162,3 +181,4 @@ kk = QQ
 R = rawNCFreeAlgebra(raw kk, ("a","b","c"), raw degreesRing 1)
 A = newNCEngineRing R;
 
+>>>>>>> Stashed changes
