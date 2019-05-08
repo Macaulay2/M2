@@ -1151,7 +1151,6 @@ ring NormalToricVariety := PolynomialRing => (
 	)
     );
 
-variety Ring := Variety => S -> if S.?variety then S.variety else if S.?Variety then S.Variety else null
 normalToricVariety Ring := NormalToricVariety => opts -> S -> variety S
 
 ideal NormalToricVariety := Ideal => (
