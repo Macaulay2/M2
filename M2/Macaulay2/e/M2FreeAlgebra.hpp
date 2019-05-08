@@ -13,7 +13,26 @@ using ExponentVector = int*;
 //  typedef ring_elem ElementType;
 //};
 
-class M2FreeAlgebra : public Ring
+class M2FreeAlgebraOrQuotient : public Ring
+{
+public:
+  const Poly* toPoly(const ring_elem f) const { return reinterpret_cast<const Poly*>(f.mPolyVal); }
+
+  ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }
+
+  void appendFromModuleMonom(Poly& f, const ModuleMonom& m) const;
+
+  ring_elem fromModuleMonom(const ModuleMonom& m) const;
+
+public:  
+  virtual int n_vars() const = 0;
+
+  virtual const Ring* coefficientRing() const = 0;
+
+  virtual ring_elem from_coefficient(const ring_elem a) const = 0;
+};
+
+class M2FreeAlgebra : public M2FreeAlgebraOrQuotient
 {
 private:
   const std::unique_ptr<FreeAlgebra> mFreeAlgebra;
@@ -35,7 +54,7 @@ public:
   const Ring* coefficientRing() const { return freeAlgebra().coefficientRing(); }
   
   int numVars() const { return monoid().numVars(); }
-  int n_vars() const { return numVars(); }
+  virtual int n_vars() const { return numVars(); }
   
   // these are all the functions from Ring that must exist for M2FreeAlgebra to be instantiated
   virtual int index_of_var(const ring_elem a) const;
@@ -126,10 +145,6 @@ public:
   
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
-
-  const Poly* toPoly(const ring_elem f) const { return reinterpret_cast<const Poly*>(f.mPolyVal); }
-
-  ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }
 
   void appendFromModuleMonom(Poly& f, const ModuleMonom& m) const;
   

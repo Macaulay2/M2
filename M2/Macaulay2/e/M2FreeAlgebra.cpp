@@ -7,6 +7,22 @@
 #include <string>
 #include <iostream>
 
+void M2FreeAlgebraOrQuotient::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
+{
+  int comp_unused;
+  f.getCoeffInserter().push_back(coefficientRing()->from_long(1));
+  appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
+}
+  
+ring_elem M2FreeAlgebraOrQuotient::fromModuleMonom(const ModuleMonom& m) const
+{
+  auto result = new Poly;
+  appendFromModuleMonom(*result, m);
+  return fromPoly(result);
+}
+
+
+
 M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
                                              const std::vector<std::string>& names,
                                              const PolynomialRing* degreeRing,
@@ -388,20 +404,6 @@ bool M2FreeAlgebra::multi_degree(const ring_elem g, int *d) const
 bool M2FreeAlgebra::multi_degree(const Poly* f, int *result) const
 {
   return freeAlgebra().multi_degree(*f,result);
-}
-
-void M2FreeAlgebra::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
-{
-  int comp_unused;
-  f.getCoeffInserter().push_back(coefficientRing()->from_long(1));
-  appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
-}
-  
-ring_elem M2FreeAlgebra::fromModuleMonom(const ModuleMonom& m) const
-{
-  auto result = new Poly;
-  appendFromModuleMonom(*result, m);
-  return fromPoly(result);
 }
 
 SumCollector* M2FreeAlgebra::make_SumCollector() const

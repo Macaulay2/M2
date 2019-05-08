@@ -10,7 +10,7 @@
 
 using ExponentVector = int*;
 
-class M2FreeAlgebraQuotient : public Ring
+class M2FreeAlgebraQuotient : public M2FreeAlgebraOrQuotient
 {
 private:
   const M2FreeAlgebra& mM2FreeAlgebra;
@@ -126,10 +126,6 @@ public:
   ring_elem makeTerm(const ring_elem a, const int* monom) const;
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
-
-  const Poly* toPoly(const ring_elem f) const { return reinterpret_cast<const Poly*>(f.mPolyVal); }
-
-  ring_elem fromPoly(Poly* f) const { return reinterpret_cast<Nterm*>(f); }
 
   void appendFromModuleMonom(Poly& f, const ModuleMonom& m) const;
   

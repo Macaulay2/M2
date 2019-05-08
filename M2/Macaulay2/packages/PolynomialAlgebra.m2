@@ -410,7 +410,7 @@ TEST ///
   assert(size h3 == 164025)
 ///
 
-TEST ///
+BENCHMARK ///
   R = QQ{a,b,c,d}
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
@@ -513,7 +513,7 @@ TEST ///
   assert(leadCoefficient f == 2)
   assert(degree f == {4})
   assert(someTerms(f,0,2) == f)
-  assert(leadMonomial f == b^4) -- fails
+  assert(leadMonomial f == b^4) -- FAILS: needs a monoid...
   assert(isHomogeneous f)
   
   g = b*c*b-b
@@ -566,25 +566,25 @@ TEST ///
   M_(1,1)
   B = matrix {{b}}
   C = matrix {{c}}
-  assert(B*C == matrix {{c*b}})
+  assert(B*C - matrix {{c*b}} == 0)
   D = matrix {{b,c}}
-  assert(D * transpose D == matrix {{b^2 + c^2}})
-  assert(transpose D * D == matrix {{b^2,c*b},{b*c,c^2}})
+  assert(D * transpose D - matrix {{b^2 + c^2}} == 0)
+  assert(transpose D * D - matrix {{b^2,c*b},{b*c,c^2}} == 0)
 ///
 
 TEST ///
   R = QQ{b,c,d}
-  M = R^2 -- works
+  M = R^2
   B = matrix {{b}}
   C = matrix {{c}}
-  assert(B*C == matrix {{c*b}})  -- fails; it passes if you compare entries only
+  assert(B*C - matrix {{c*b}} == 0)
   N = mutableMatrix(R,2,3);
   N = mutableMatrix(R,2,3)
   N = mutableMatrix(R,100,200);
   N_(1,1)
   D = matrix {{b,c}}
   assert(D * transpose D - matrix {{b^2 + c^2}} == 0)
-  assert(transpose D * D) == matrix {{b^2,c*b},{b*c,c^2}}) -- fails.  passes if you compare entries only.
+  assert((transpose D * D) - matrix {{b^2,c*b},{b*c,c^2}} == 0)
 ///
 
 TEST ///
@@ -752,50 +752,72 @@ TEST ///
   debug Core
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
-  --J = gens ideal NCGB(I, 387)
-
   A = R/I
 
-  NCGB(I, 1000)
+  NCGB(I, 1000) 
+  J = gens ideal NCGB(I, 1000)
   A1 = R/I
   assert(A1 =!= A)
   assert(I.cache.NCGB#0 == 1000)
 
-  a^3  
-  use A
-  a^3
-
-  A = rawRingM2FreeAlgebraQuotient(raw J, -1)  
-  
 -- i16 : coefficients(a^3)
 -- stdio:16:1:(3): error: expected polynomial ring
 
 -- i17 : lift(a^3, R)
 -- stdio:17:1:(3): error: cannot lift given ring element
-  
-  a = A_0
-  b = A_1
-  a*b
-  (a*b)^2
-  a^3
-  unique flatten apply(2, i -> flatten apply(2, j -> flatten apply(2, k -> flatten apply(2, l -> A_i*A_j*A_k*A_l))))
 
-  A = R/(ideal J)
+-- basis(4, A) -- error: can't handle this kind of ring.  
   use R
-  assert(ring a === R)
-  assert(ring b === R)
-  A = R/I
+  f = a^3
+  use A
+  assert(promote(f, A) == b^2*a)
+  assert(a == A_0)
+  assert(b == A_1)
+  assert(5 == # unique for e in (0,0,0,0)..(1,1,1,1) list product for i in e list A_i)
+  assert(6 == # unique for e in (0,0,0,0,0)..(1,1,1,1,1) list product for i in e list A_i)
 
--*  
-R = QQ[a..d]  
-I = ideal(a^2-b*c)
-peek I
-gb I
-peek I
-peek I.cache
-peek (gens I).cache
+  R = QQ{a,b,c}
+  I = ideal"aba-bab, ac-ca, ab+ba"
+  J = gens ideal NCGB(I, 10)  
+
+  -- 'monomials' seems to be working:
+  assert(monomials matrix"ab-ba,ab+ba" == matrix"ab,ba")
+  assert(numcols monomials J == 131)
+
+  -- coefficients works over free algebras
+  coefficients(a^3)
+  elapsedTime (monoms, cfs) = coefficients(J, Monomials => monomials J);
+  assert(monoms * cfs == J)  
+  elapsedTime (monoms, cfs) = coefficients(J);
+  assert(monoms * cfs == J)  
+
+  -- monomials, coefficients, over quotients of free algebras.
+  A = R/I  
+
+  -- 'monomials' seems to be working:
+  assert(monomials matrix"ab-ba,ab+ba" == matrix"ba")
+  coefficients(a^3)
+  assert(sub(J, A) == 0)
+  M = matrix"ab-ba,ac-ba,aca-bab-a3"
+  monomials M 
+  elapsedTime (monoms, cfs) = coefficients(M, Monomials => monomials M);
+  assert(monoms * cfs == M)  
+  elapsedTime (monoms, cfs) = coefficients M;
+  assert(monoms * cfs == M)  
+
+  sub(M, R) -- NOT CORRECT
+  
+-- TODO
+-*
+  . raw A -- display quotient elements, for debugging purposes.
+  . coefficients, monomials DONE (might need some more refactoring in c++ code.
+  . basis
+  . random
+  . lift
+  .   
 *-
 ///
+
 
 end--
 
