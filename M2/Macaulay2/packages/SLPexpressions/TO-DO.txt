@@ -1,7 +1,13 @@
 -- Decouple NAGtypes and SLPexpressions
 the only problem is: who exports "evaluate"? 
 
+-- What slows us down?
+not cataloging all gates?
+create several examples of large circuits (1-10 sec to setup)
+
 -- Documentation
+getVarGates
+gatePolynomial
 SLProgram
 makeSLProgram
 Gate

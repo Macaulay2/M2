@@ -689,9 +689,9 @@ rawSLEvaluatorK (SLProgram, Ring) := (slp, K) -> if slp.cache#?K then slp.cache#
     );
   
 evaluate(SLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
-		if numrows I =!= 1 or numrows O =!= 1 then error "expected matrices with 1 row";
-		if numcols I =!= slp#"number of inputs" then error "wrong number of inputs";
-		if numcols O =!= slp#"number of outputs" then error "wrong number of outputs";
+		--if numrows I =!= 1 or numrows O =!= 1 then error "expected matrices with 1 row";
+		if numrows I * numcols I =!= slp#"number of inputs" then error "wrong number of inputs";
+		if numrows O * numcols O =!= slp#"number of outputs" then error "wrong number of outputs";
 		K := ring I; 
     if ring O =!= K then error "expected same Ring for input and output";
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(slp,K), raw I, raw O);
