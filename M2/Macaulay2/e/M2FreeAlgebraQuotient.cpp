@@ -143,6 +143,11 @@ bool M2FreeAlgebraQuotient::lift(const Ring *R, const ring_elem f1, ring_elem &r
   if (R == &m2FreeAlgebra())
     {
       // just copy the element into result, considered in the free algebra.
+      auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
+      auto resultf = new Poly;
+      freeAlgebra().copy(*resultf, *f);
+      result = ring_elem(reinterpret_cast<void *>(resultf));
+      return true;
     }
   
   // at this point, we can't lift it.

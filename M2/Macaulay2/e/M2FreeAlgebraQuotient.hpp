@@ -29,7 +29,8 @@ public:
   const M2FreeAlgebra& m2FreeAlgebra() const { return mM2FreeAlgebra; }
   const FreeAlgebraQuotient& freeAlgebraQuotient() const { return *mFreeAlgebraQuotient; }
   const FreeMonoid& monoid() const { return m2FreeAlgebra().monoid(); }
-
+  const FreeAlgebra& freeAlgebra() const { return m2FreeAlgebra().freeAlgebra(); }
+  
   const Monoid& degreeMonoid() const { return m2FreeAlgebra().monoid().degreeMonoid(); }
   const Ring* coefficientRing() const { return m2FreeAlgebra().coefficientRing(); }
   

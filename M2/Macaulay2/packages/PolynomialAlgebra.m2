@@ -768,8 +768,10 @@ TEST ///
 
 -- basis(4, A) -- error: can't handle this kind of ring.  
   use R
+  terms(a^3)
   f = a^3
   use A
+  terms(a^3)
   assert(promote(f, A) == b^2*a)
   assert(a == A_0)
   assert(b == A_1)
@@ -810,13 +812,19 @@ TEST ///
 -- TODO
 -*
   . raw A -- display quotient elements, for debugging purposes.
-  . coefficients, monomials DONE (might need some more refactoring in c++ code.
+  . coefficients, monomials DONE (might need some more refactoring in c++ code).
   . basis
   . random
-  . lift
-  .   
+  . terms DONE (changed makeTerm to use M2FreeAlgebraOrQuotient)  
 *-
 ///
+
+-* Some Thoughts on basis:
+
+ . Should not do full subword search when building a basis, just a prefix search
+ . 
+
+-*
 
 
 end--

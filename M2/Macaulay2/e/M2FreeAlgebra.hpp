@@ -30,6 +30,8 @@ public:
   virtual const Ring* coefficientRing() const = 0;
 
   virtual ring_elem from_coefficient(const ring_elem a) const = 0;
+
+  virtual ring_elem makeTerm(const ring_elem a, const int* monom) const = 0;
 };
 
 class M2FreeAlgebra : public M2FreeAlgebraOrQuotient

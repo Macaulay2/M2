@@ -973,7 +973,7 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
         ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
         return RingElement::make_raw(R,val);
       }
-    auto Q = dynamic_cast<const M2FreeAlgebra *>(R);
+    auto Q = dynamic_cast<const M2FreeAlgebraOrQuotient *>(R);
     if (Q != nullptr)
       {
         if (Q->coefficientRing() != a->get_ring())
