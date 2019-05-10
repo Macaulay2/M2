@@ -109,9 +109,9 @@ inputGate Thing := a -> add2GC new InputGate from {
     } 
 net InputGate := g -> net g.Name
 
-oneGate = inputGate 1
-minusOneGate = inputGate(-1)
-zeroGate = inputGate 0
+oneGate := inputGate 1
+minusOneGate := inputGate(-1)
+zeroGate := inputGate 0
 
 SumGate = new Type of Gate
 net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
@@ -796,8 +796,7 @@ document {
     Caveat => {"" },
     SeeAlso=>{()}
     }
-*-
-
+    
 document {
     Key => {SLPexpressions},
     Headline => "Straight Line Programs and expressions for evaluation circuits",
@@ -814,7 +813,7 @@ document {
     ///,
     SeeAlso=>{"NumericalAlgebraicGeometry","NAGtypes"}
     }
-
+    
 document {
     Key => {Gate,InputGate,SumGate,ProductGate},
     "Some basic gates:",
@@ -845,24 +844,27 @@ document {
     ///,
     SeeAlso=>{Gate, Matrix}
     }
+    
+*-
+
+load "./SLPexpressions/doc.m2"
 
 undocumented {
--*
-"zeroGate",
-inputGate,
-(inputGate,Thing),
-sumGate,
-(sumGate,List),
+-- "zeroGate",
+-- inputGate,
+-- (inputGate,Thing),
+-- sumGate,
+-- (sumGate,List),
 printAsSLP,
-(printAsSLP,GateMatrix),
-(printAsSLP,List),
+(printAsSLP,GateMatrix,GateMatrix),
+(printAsSLP,List,List),
 cCode,
-productGate,
-(productGate,List),
+-- productGate,
+-- (productGate,List),
 detGate,
 (detGate,List),
 DetGate,
-"minusOneGate",
+-- "minusOneGate",
 DivideGate,
 valueHashTable,
 (valueHashTable,List,List),
@@ -875,7 +877,7 @@ constants,
 (constants,List),
 (constants,ProductGate),
 (constants,SumGate),
-"oneGate",
+-- "oneGate",
 (symbol -,Gate),
 (compress,Gate),
 (compress,GateMatrix),
@@ -896,7 +898,7 @@ constants,
 (diff,InputGate,ProductGate),
 (diff,InputGate,SumGate),
 (entries,GateMatrix),
-(symbol *,Gate,Gate),
+-- (symbol *,Gate,Gate),
 (symbol /,Gate,Gate),
 (symbol ^,Gate,ZZ),
 (symbol *,GateMatrix,GateMatrix),
@@ -943,7 +945,6 @@ constants,
 (value,InputGate,ValueHashTable),
 (value,ProductGate,ValueHashTable),
 (value,SumGate,ValueHashTable)
-*-
     }
 
 end
@@ -957,6 +958,8 @@ uninstallPackage "SLPexpressions"
 installPackage "SLPexpressions"
 installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
 installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
+debug loadPackage("SLPexpressions", Reload => true)
+viewHelp "SLPexpressions"
 
 -- (old way) installPackage("SLPexpressions", SeparateExec=>true)
 
