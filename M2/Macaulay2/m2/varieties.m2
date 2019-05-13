@@ -124,7 +124,7 @@ variety SheafOfRings := Variety => O -> O.variety
 -- (from Schubert2) an AbstractVariety, or
 -- (from NormalToricVarieties) a NormalToricVariety
 -- and perhaps other uses later...
-variety Ring := S -> if S.?variety then S.variety else null
+variety Ring := S -> if S.?variety then S.variety else error "no variety associated with ring"
 variety RingElement := f -> variety ring f
 
 ring CoherentSheaf := (F) -> ring F.module
