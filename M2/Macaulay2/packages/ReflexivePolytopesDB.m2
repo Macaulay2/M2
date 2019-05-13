@@ -12,6 +12,7 @@ newPackage(
         )
 
 export {
+    "matrixFromKS", -- TODO: doc, test
     "matrixFromString", -- doc
     "generateOffline", -- doc
     "getKreuzerSkarke", -- doc
@@ -69,6 +70,25 @@ matrixFromString String := (str) -> (
     matrix rows
     )
 
+-- matrixFromKS:
+-- expect that str is something like:
+str = ///4 5  M:53 5 N:9 5 H:3,43 [-80] id:0
+   1   0   2   4 -10
+   0   1   3   5  -9
+   0   0   4   0  -4
+   0   0   0   8  -8
+   ///
+
+matrixFromKS = method()
+matrixFromKS String := (str) -> (
+    matrixFromString concatenate between("\n", drop(lines str, 1))
+    )
+
+TEST ///
+  debug needsPackage "ReflexivePolytopesDB"
+  assert(matrixFromKS str == matrix {{1, 0, 2, 4, -10}, {0, 1, 3, 5, -9}, {0, 0, 4, 0, -4}, {0, 0, 0, 8, -8}})
+///
+
 getURL = method()
 getURL(String, String) := String => (str, access) -> (
     print str;
@@ -122,22 +142,19 @@ getKreuzerSkarkeDim3 = () -> (
 
 parseKS = method()
 parseKS String := (str) -> (
-    -- result is a List of pairs of strings.
+    -- result is a List of strings: each string has first line a description, rest of the lines a matrix, in string form
     locA := regex("<b>Result:</b>\n", str);
     locB := regex("#NF", str);
     if locB === null then locB = regex("Exceeded", str);
-    --if locA === null or locB === null then error "data not in correct Kreuzer-Skarke format";
     firstloc := if locA === null then 0 else locA#0#0 + locA#0#1;
     lastloc := if locB === null then #str else locB#0#0;
-    --firstloc := locA#0#0 + locA#0#1;
-    --lastloc := locB#0#0;
     cys := substring(firstloc, lastloc-firstloc, str);
     cys = lines cys;
     cys = select(cys, s -> #s > 0);
     starts := positions(cys, s -> s#0 != " ");
     starts = append(starts, #cys);
     for i from 0 to #starts-2 list (
-        cys_(starts#i), demark("\n", cys_{starts#i+1 .. starts#(i+1)-1})
+        cys_(starts#i) | " id:" | i | "\n" |  demark("\n", cys_{starts#i+1 .. starts#(i+1)-1})
         )
     )
 
@@ -267,20 +284,20 @@ Description
   Example
     str = getKreuzerSkarke(23,17, Limit=>2)
   Text
-    Now we parse this string, into a list of pairs of Strings.
+    Now we parse this string, into a list of Strings.
   Example
     L = parseKS str;
     netList L
   Text
-    The result consists of lists of two strings.  For each element in the list,
-    the first is a header string, see @TO "Kreuzer-Skarke headers"@.
-    The second is a string that corresponds to a matrix.  
+    The result consists of lists of strings.  For each string in the list,
+    the first line is a header string, see @TO "Kreuzer-Skarke headers"@.
+    The following lines form a string that corresponds to a matrix.
     
-    Let's consider the last example in this last.  We get that matrix
-    via the utility function @TO "matrixFromString"@.
+    Let's consider the last example in this list.  We get that matrix
+    via the utility function @TO "matrixFromKS"@.
   Example
     eg = last L
-    A = matrixFromString eg_1
+    A = matrixFromKS eg
   Text
     The corresponding reflexive polytope has 5 vertices, the columns of this matrix.
   Example
@@ -345,6 +362,54 @@ Description
 
 doc ///
 Key
+  matrixFromKS
+  (matrixFromKS, String)
+Headline
+  convert a Kreuzer-Skarke entry to a matrix of integers
+Usage
+  m = matrixFromKS str
+Inputs
+  str:String
+Outputs
+  m:Matrix
+Description
+  Text
+    This utility function is used to parse, as matrices of integers, example polytopes
+    returned by the Kreuzer-Skarke database.
+  Example
+    str = "4 5  M:53 5 N:9 5 H:3,43 [-80] id:0
+      1   0   2   4 -10
+      0   1   3   5  -9
+      0   0   4   0  -4
+      0   0   0   8  -8
+      ";
+    A = matrixFromKS str
+  Text
+    The actual format allowed is the following: The first non-empty line is ignored (this 
+    is the header from the Kreuzer-Skarke database), the rest of the lines make up the matrix:
+    spaces, tabs, and
+    commas are all separators for elements of the array.  Newlines,
+    and ] characters separate rows.  Finally, each empty line is
+    ignored, and the remaining lines must all have the same number of
+    elements.
+    
+    The actual format allowed for matrices is described in @TO "matrixFromString"@.  
+    After calling @TO "getKreuzerSkarke"@ to get a raw string, one uses @TO "parseKS"@
+    to split the raw string into a list of strings, each one which is a polytope.  Then
+    use this function to obtain the matrix.
+  Example
+    str = getKreuzerSkarke(17, Limit=>3)
+    topes = parseKS str;
+    netList topes
+    topes/matrixFromKS
+SeeAlso
+  matrixFromString
+  getKreuzerSkarke
+  parseKS
+///
+
+doc ///
+Key
   getKreuzerSkarke
   (getKreuzerSkarke, ZZ)
   (getKreuzerSkarke, ZZ, ZZ)
@@ -382,14 +447,14 @@ Description
     polytopes = parseKS str;
     #polytopes
     tope = polytopes_3
-    header = tope_0
-    A = matrixFromString tope_1
+    header = first lines tope
+    A = matrixFromKS tope
   Text
     The first line gives some information about the example, see @TO "Kreuzer-Skarke headers"@ for more details.
     The polytope is the convex hull of the columns of the matrix $A$.
 SeeAlso
   parseKS
-  matrixFromString
+  matrixFromKS
   "Kreuzer-Skarke headers"
   getKreuzerSkarkeDim3
 ///
@@ -409,9 +474,9 @@ doc ///
       obtain this information directly.
     Example
       str = getKreuzerSkarke(5,Limit=>1);
-      eg = first parseKS str;
-      A = matrixFromString eg_1
-      header = eg_0      
+      eg = parseKS str;
+      A = matrixFromKS eg_0
+      header = first lines eg_0
     Text
       This header line is what we wish to explain now.
       
@@ -427,7 +492,8 @@ doc ///
             the polar dual polytope $P^o$ of $P$" },
         { TEX "'H: 5,20 [-30]' are the Hodge numbers $h^{1,1}(X)$, $h^{1,2}(X)$, and the
             topological Euler characteristic of $X$, where $X$ is the 
-            Calabi-Yau variety described next"}
+            Calabi-Yau variety described next"},
+        { TEX "'id: 0' is added by {\tt getKreuzerSkarke}: each retrieved entry gets an id, starting with 0"}
         }@
     Text
       Here, $X$ is defined as follows.
@@ -485,8 +551,8 @@ Description
     polytopes = parseKS str;
     #polytopes
     tope = polytopes_100
-    header = tope_0
-    A = matrixFromString tope_1
+    header = first lines tope
+    A = matrixFromKS tope
   Text
     The first line gives some information about the example, see @TO "Kreuzer-Skarke headers"@ for more details.
     The polytope is the convex hull of the columns of the matrix $A$.
@@ -515,7 +581,7 @@ Description
     dim V
 SeeAlso
   getKreuzerSkarke
-  matrixFromString
+  matrixFromKS
   parseKS
   "Kreuzer-Skarke headers"
 ///
@@ -534,7 +600,7 @@ doc ///
        a string containing examples generated from the database
    Outputs
      L:List
-       of pairs of strings
+       of strings
    Description
     Text
       The following request results in 5 examples.
@@ -547,9 +613,8 @@ doc ///
       Let's get the one at index 3 (fourth one on the list, since
       lists are 0-based)
     Example
-      eg = L_3;
-      header = eg_0
-      A = matrixFromString eg_1
+      eg = L_3
+      A = matrixFromKS eg
     Text
       The input string can also be a string containing examples from the Kreuzer-Skarke list.
       In this case the 'header' line should start in the first character of the line, and
@@ -567,7 +632,7 @@ doc ///
     Text 
       See @TO "Kreuzer-Skarke headers"@
    SeeAlso
-     matrixFromString
+     matrixFromKS
      getKreuzerSkarke
      "Kreuzer-Skarke headers"
 ///
@@ -803,7 +868,7 @@ TEST ///
   polytopes3 = parseKS str;
   assert(#polytopes3 == 4319)
   polytopes3_10
-  assert(matrixFromString polytopes3_10_1 == id_(ZZ^3) | matrix{{-6},{-4},{-1}})
+  assert(matrixFromKS polytopes3_10 == id_(ZZ^3) | matrix{{-6},{-4},{-1}})
 ///
 
 end--
@@ -818,6 +883,9 @@ viewHelp
 restart
 check "ReflexivePolytopesDB"
 
+-- Generate the file of 4319 reflexive polytopes
+  str = getKreuzerSkarkeDim3()
+  "ks.dim3" << str << endl << close
 -- Use the following lines to generate some offline files
 ///
 -*

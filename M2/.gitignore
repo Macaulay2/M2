@@ -47,6 +47,9 @@
 /Macaulay2/c/.gdbinit
 /Macaulay2/m2/.gdbinit
 /libraries/atomic_ops/Makefile
+/libraries/cohomcalg/Makefile
+/libraries/csdp/Makefile
+/libraries/topcom/Makefile
 /libraries/M2/Makefile
 /libraries/gc/Makefile
 /libraries/gdbm/Makefile
@@ -101,6 +104,7 @@
 /Macaulay2/e/Makefile.common
 /Macaulay2/e/f4/Makefile
 /Macaulay2/e/unit-tests/Makefile
+/Macaulay2/d/distributed-packages.h
 /Macaulay2/emacs/M2-init.el
 /Macaulay2/emacs/Makefile
 /Macaulay2/html-check-links/Makefile
