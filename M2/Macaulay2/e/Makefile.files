@@ -12,6 +12,7 @@ INTERFACE2 = \
 
 
 INTERFACE = \
+	matrix-ncbasis \
 	NCAlgebras/FreeAlgebraQuotient \
 	M2FreeAlgebraQuotient \
 	monordering \
@@ -177,7 +178,6 @@ COMMANDS = \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
-	matrix-ncbasis \
 	matrix-symm \
 	matrix-sort \
 	ring-vecs \

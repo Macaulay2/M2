@@ -7,6 +7,21 @@
 #include <string>
 #include <iostream>
 
+PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
+                        const ConstPolyList& polys)
+{
+  auto& A0 = A->freeAlgebra();
+  PolyList result;
+  auto end = polys.cend();
+  for (auto i = polys.cbegin(); i != end; ++i)
+    {
+      Poly* f = new Poly;
+      A0.copy(*f, *(*i));
+      result.push_back(f);
+    }
+  return result;
+}
+
 void M2FreeAlgebraOrQuotient::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
 {
   int comp_unused;

@@ -104,9 +104,9 @@ void NCGroebner::compute(int softDegreeLimit)
     }
 }
 
-const ConstPolyList* NCGroebner::currentValue()
+const ConstPolyList& NCGroebner::currentValue()
 {
-  return &mGroebner;
+  return mGroebner;
 }
 
 auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,

@@ -4,14 +4,6 @@
 #include "ntuple.hpp"
 #include "interrupted.hpp"
 
-extern Matrix* ncBasis(const Matrix *leadTerms,
-                         M2_arrayint lo_degree,
-                         M2_arrayint hi_degree,
-                         M2_arrayint heft,
-                         M2_arrayint vars,
-                         bool do_truncation,
-                         int limit);
-
 class KBasis
 {
   // A class for construction of

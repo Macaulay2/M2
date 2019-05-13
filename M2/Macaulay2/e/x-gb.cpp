@@ -10,6 +10,8 @@
 #include "exceptions.hpp"
 #include "gb-walk.hpp"
 #include "relem.hpp"
+#include "util.hpp"
+#include "matrix-ncbasis.hpp"
 
 #include "M2FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
@@ -1195,10 +1197,10 @@ const Matrix *rawMGB(
 // Noncommutative Groebner bases (2-sided) //
 /////////////////////////////////////////////
 
-const VECTOR(const Poly*) matrixToVector(const M2FreeAlgebra* A,
+ConstPolyList matrixToVector(const M2FreeAlgebraOrQuotient* A,
                                          const Matrix* input)
 {
-  VECTOR(const Poly*) result;
+  ConstPolyList result;
   result.reserve(input->n_cols());
   for (int i=0; i<input->n_cols(); i++)
     {
@@ -1209,8 +1211,10 @@ const VECTOR(const Poly*) matrixToVector(const M2FreeAlgebra* A,
   return result;
 }
 
-const Matrix* vectorToMatrix(const M2FreeAlgebra* A,
-                             const VECTOR(const Poly*)& elems)
+// vectorToMatrix consumes 'elems': the saame pointers are used for the resulting Matrix.
+template<typename PolyL>
+const Matrix* vectorToMatrix(const M2FreeAlgebraOrQuotient* A,
+                             const PolyL& elems)
 {
   MatrixConstructor mat(A->make_FreeModule(1), elems.size());
   for (auto i = 0; i < elems.size(); ++i)
@@ -1230,8 +1234,8 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
       auto elems = matrixToVector(A, input);
       NCGroebner G(*A, elems, maxdeg);
       G.compute(maxdeg); // this argument is actually the soft degree limit
-      auto result = G.currentValue();
-      return vectorToMatrix(A, *result);
+      auto result = copyPolyVector(A, G.currentValue());
+      return vectorToMatrix(A, result);
     }
   ERROR("expected a one row matrix over a noncommutative algebra");
   return nullptr;
@@ -1262,20 +1266,22 @@ const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
                          M2_arrayint hi_degree
                          )
 {
-  const Ring* A = gb2SidedIdeal->get_ring();
-  if (A == nullptr)
+  const Ring* R = gb2SidedIdeal->get_ring();
+  if (R == nullptr)
     {
       ERROR("internal error: expected non-null Ring!");
       return nullptr;
     }
   try {
-    const M2FreeAlgebra* P = A->cast_to_M2FreeAlgebra();
-    if (P != nullptr)
+    const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();
+    if (A != nullptr)
       {
-        ERROR("not implementeeed yet");
-        return nullptr;
-        //        Matrix* result = ncBasis(P, gb2SidedIdeal, lo_degree, hi_degree);
-        //        return result;
+        ConstPolyList G = matrixToVector(A, gb2SidedIdeal);
+        PolyList result = ncBasis(A->freeAlgebra(),
+                                  G,
+                                  M2_arrayint_to_stdvector<int>(lo_degree),
+                                  M2_arrayint_to_stdvector<int>(hi_degree));
+        return vectorToMatrix(A, result);
       }
     ERROR("expected a free algebra");
     return nullptr;

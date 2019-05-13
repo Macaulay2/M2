@@ -47,7 +47,7 @@ public:
   
   void compute(int softDegreeLimit);
 
-  const ConstPolyList* currentValue();
+  const ConstPolyList& currentValue();
 
   static auto twoSidedReduction(const FreeAlgebra& A,
                                 const ConstPolyList& reducees,

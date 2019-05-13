@@ -199,6 +199,14 @@ NCGB(Ideal, ZZ) := (I, maxdeg) -> (
         );
     I.cache.NCGB#1
     )
+NCGB Ideal := (I) -> (
+    if I.cache.?NCGB then I.cache.NCGB#1
+    else (
+        maxdegI := first max(degrees source gens I); -- TODO: change once multidegrees are allowed.
+        NCGB(I, 2*maxdegI)
+        )
+    )
+    
 
 NCReduction2Sided = method()
 NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
@@ -215,10 +223,7 @@ FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
      gensI := generators I;
-     maxdegI := first max(degrees source gensI); -- TODO: change once multidegrees are allowed.
-     gbI := if I.cache.?NCGB then I.cache.NCGB#1 else NCGB(I, 2*maxdegI);
-     S := new FreeAlgebraQuotient from rawQuotientRing(raw R, raw gbI);
-     --S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gbI)} };
+     S := new FreeAlgebraQuotient from rawQuotientRing(raw R, raw NCGB I);
      S.cache = new CacheTable;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
@@ -253,9 +258,9 @@ ncBasis(List,List,Ring) := (lo,hi,R) -> (
     if not all(lo, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString lo);
     if not all(hi, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString hi);
 
-    gbR := (ideal R).cache.NCGB#1;
-    result := rawNCBasis(raw gbR, lo, hi);
-    map(R^1,, promote(gbR, R))
+    gbR := NCGB ideal R;
+    result := map(ring gbR, rawNCBasis(raw gbR, lo, hi));
+    map(R^1,, promote(result, R))
     )
 
 -*
@@ -885,20 +890,14 @@ TEST ///
   debug Core
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
-  NCGB(I, 1000) 
+  NCGB(I, 1000)
+  NCGB I
   J = gens ideal NCGB(I, 1000)
   A = R/I
   
   ideal A
   isQuotientRing A
-  errorDepth = 0
   ncBasis({1}, {1}, A)
--* Some Thoughts on basis:
-
- . Should not do full subword search when building a basis, just a prefix search
- . 
-
-*-
 ///
 
 end--

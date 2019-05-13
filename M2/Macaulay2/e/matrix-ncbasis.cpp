@@ -304,6 +304,17 @@ void NCBasis::compute()
 }
 #endif
 
+PolyList ncBasis(
+                 const FreeAlgebra& A,
+                 const ConstPolyList& gb, // actually, only the lead terms are ever considered
+                 const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
+                 const std::vector<int>& hi_degree) // length 0: +infinity
+{
+  PolyList result;
+  return result;
+}
+
+#if 0
 Matrix* ncBasis(const Matrix *leadTerms,
                 M2_arrayint lo_degree,
                 M2_arrayint hi_degree,
@@ -374,7 +385,7 @@ Matrix* ncBasis(const Matrix *leadTerms,
   return KB.value();
 #endif
 }
-
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e matrix-kbasis.o "

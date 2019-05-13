@@ -25,6 +25,8 @@ public:
   ring_elem fromModuleMonom(const ModuleMonom& m) const;
 
 public:  
+  virtual const FreeAlgebra& freeAlgebra() const = 0;
+
   virtual int n_vars() const = 0;
 
   virtual const Ring* coefficientRing() const = 0;
@@ -153,6 +155,9 @@ public:
   ring_elem fromModuleMonom(const ModuleMonom& m) const;
 };
 
+PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
+                        const ConstPolyList& polys);
+  
 #endif
 
 // Local Variables:
