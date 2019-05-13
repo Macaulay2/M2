@@ -5,6 +5,7 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
+#include <cstdlib>
 #include "timing.hpp"
 
 // SLEvaluator
@@ -16,7 +17,8 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     const MutableMat<SMat<RT> >* consts /* DMat<RT>& DMat_consts */)
     : mRing(consts->getMat().ring())
 {
-  ERROR("not implemented");
+  std::cerr << "SLEvaluatorConcrete constructor not defined for sparse matrices\n";  
+  abort();
 }
 
 // copy constructor
@@ -45,8 +47,6 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     const MutableMat<DMat<RT> >* consts /* DMat<RT>& DMat_consts */)
     : mRing(consts->getMat().ring())
 {
-  if (consts->n_rows() != 1 || consts->n_cols() != cPos->len)
-    ERROR("1-row matrix expected; or numbers of constants don't match");
   slp = SLP;
   // for(int i=0; i<cPos->len; i++)
   //  constsPos.push_back(slp->inputCounter+cPos->array[i]);
@@ -77,8 +77,10 @@ template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMat<DMat<RT> >* parameters) const
 {
-  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size())
+  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size()) {
     ERROR("1-column matrix expected; or #parameters > #vars");
+    return nullptr;
+  }
   auto* e = new SLEvaluatorConcrete<RT>(*this);
   size_t nParams = parameters->n_rows();
   for (int i = 0; i < nParams; ++i)
@@ -120,7 +122,8 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
         ring().divide(v, v, *(vIt + (*inputPositionsIt++)));
         break;
       default:
-        ERROR("unknown node type");
+        std::cerr << "unknown node type\n";
+        abort();
     }
 }
 

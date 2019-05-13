@@ -6,7 +6,7 @@
 newPackage select((
      "SLPexpressions",
      Version => "1.9.3",
-     Date => "May 2017",
+     Date => "May 2019",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -28,7 +28,6 @@ export {
     "Gate", 
     "GateMatrix", "gateMatrix",
     "InputGate", 
-    "oneGate", "minusOneGate", "zeroGate",
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 
     "constants",  
@@ -109,9 +108,9 @@ inputGate Thing := a -> add2GC new InputGate from {
     } 
 net InputGate := g -> net g.Name
 
-oneGate := inputGate 1
-minusOneGate := inputGate(-1)
-zeroGate := inputGate 0
+oneGate = inputGate 1
+minusOneGate = inputGate(-1)
+zeroGate = inputGate 0
 
 SumGate = new Type of Gate
 net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
@@ -744,7 +743,7 @@ support (D+C)
 
 -- one way to handle constants
 E = inputGate 2
-F = product{E*(X*X+E*Y)+oneGate, oneGate}
+F = product{E*(X*X+E*Y)+1, inputGate 1}
 
 G = (sub(sub(matrix{{F}},X=>X+Y),Y=>X*Y))_(0,0) 
 -- sub and compress = evaluate over a ring
@@ -850,7 +849,6 @@ document {
 load "./SLPexpressions/doc.m2"
 
 undocumented {
--- "zeroGate",
 -- inputGate,
 -- (inputGate,Thing),
 -- sumGate,
@@ -864,7 +862,6 @@ cCode,
 detGate,
 (detGate,List),
 DetGate,
--- "minusOneGate",
 DivideGate,
 valueHashTable,
 (valueHashTable,List,List),
@@ -877,7 +874,6 @@ constants,
 (constants,List),
 (constants,ProductGate),
 (constants,SumGate),
--- "oneGate",
 (symbol -,Gate),
 (compress,Gate),
 (compress,GateMatrix),

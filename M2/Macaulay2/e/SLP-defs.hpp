@@ -8,12 +8,11 @@
 // SLP
 class SLProgram
 {
-  //  friend class SLEvaluator;
  public:
   enum GATE_TYPE { Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide };
   typedef int GATE_SIZE;
   typedef int GATE_POSITION;  // gate position is RELATIVE (exception: ABSOLUTE
-                              // for output)
+                              // for mOutputPositions)
   std::vector<GATE_TYPE> mNodes;      // nodes types
   std::vector<GATE_SIZE> mNumInputs;  // corresponding nodes sizes
   std::vector<GATE_POSITION>
@@ -129,10 +128,8 @@ class SLEvaluatorConcrete : public SLEvaluator
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 
  private:
-  // typedef ring_elem ElementType;
   typedef typename RT::ElementType ElementType;
   void computeNextNode();
-  // const Ring* R;
   const RT& mRing;
   std::vector<ElementType>
       values; /* should be a vector of values
