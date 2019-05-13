@@ -793,6 +793,25 @@ export rawRingM2FreeAlgebraQuotient(e:Expr):Expr := (
   );
 setupfun("rawRingM2FreeAlgebraQuotient",rawRingM2FreeAlgebraQuotient);
 
+export rawNCBasis(e:Expr):Expr := (
+     when e is s:Sequence do
+     when s.0 is M:RawMatrixCell do
+     if isSequenceOfSmallIntegers(s.1) then 
+     if isSequenceOfSmallIntegers(s.2) then 
+         toExpr(Ccode(RawMatrixOrNull,
+	             "rawNCBasis(",
+	             M.p, ",",
+	             getSequenceOfSmallIntegers(s.1), ",", -- lo_degree
+	             getSequenceOfSmallIntegers(s.2),  -- hi_degree
+	             ")"
+	             ))
+     else WrongArg(3,"a sequence of small integers")
+     else WrongArg(2,"a sequence of small integers")
+     else WrongArgMatrix(1)
+     else WrongNumArgs(3)
+     );
+setupfun("rawNCBasis",rawNCBasis);
+
 export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
   when e is s:Sequence do (
   if length(s) == 2 then (

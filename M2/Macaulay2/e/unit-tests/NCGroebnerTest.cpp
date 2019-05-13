@@ -368,6 +368,36 @@ TEST(WordTable, subwords)
   EXPECT_EQ(matches[5], std::make_pair(3, 6));
 }        
 
+TEST(WordTable, prefix)
+{
+  std::vector<int> monom1 {1, 0, 1, 2};  // babc
+  std::vector<int> monom2 {1, 0, 2, 2};  // bacc
+  std::vector<int> monom3 {1, 0, 1, 0};  // baba
+  std::vector<int> word {1, 0, 1, 0, 2, 2, 1, 0, 1, 2};
+  std::vector<int> word2 {1, 0, 1, 1, 2, 2, 1, 0, 1, 2};
+
+  WordTable W;
+
+  EXPECT_EQ(monom1.size(), 4);
+  EXPECT_EQ(monom2.size(), 4);
+  EXPECT_EQ(monom3.size(), 4);
+  EXPECT_EQ(word.size(), 10);
+  
+  W.insert(Word(monom1));
+  W.insert(Word(monom2));
+  W.insert(Word(monom3));
+
+  int ind; // index of solution, if any.
+  bool isprefix = W.isPrefix(Word(word), ind);
+
+  EXPECT_TRUE(isprefix);
+  EXPECT_EQ(2, ind);
+
+  isprefix = W.isPrefix(Word(word2), ind);
+
+  EXPECT_FALSE(isprefix);
+}        
+
 std::ostream& operator<<(std::ostream& o, const std::vector<Overlap>& val)
 {
   int count = 0;

@@ -23,7 +23,10 @@ export {
 debug Core
 
 FreeAlgebra = new Type of EngineRing
-FreeAlgebra.synonym = "noncommutative polynomial ring"
+FreeAlgebra.synonym = "free algebra"
+
+FreeAlgebraQuotient = new Type of QuotientRing
+FreeAlgebraQuotient.synonym = "quotient of a free algebra"
 
 new FreeAlgebra from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
 
@@ -206,7 +209,7 @@ NCReduction2Sided(Matrix, Matrix) := (M, I) -> (
 NCReduction2Sided(Matrix, Ideal) := (M, I) -> NCReduction2Sided(M, gens I)
 NCReduction2Sided(RingElement, Ideal) := (F, I) -> (NCReduction2Sided(matrix{{F}}, gens I))_(0,0)
 
-FreeAlgebra / Ideal := QuotientRing => (R,I) -> (
+FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      if ring I =!= R then error "expected ideal of the same ring";
      if I == 0 then return R;
      A := R;
@@ -214,7 +217,7 @@ FreeAlgebra / Ideal := QuotientRing => (R,I) -> (
      gensI := generators I;
      maxdegI := first max(degrees source gensI); -- TODO: change once multidegrees are allowed.
      gbI := if I.cache.?NCGB then I.cache.NCGB#1 else NCGB(I, 2*maxdegI);
-     S := new QuotientRing from rawQuotientRing(raw R, raw gbI);
+     S := new FreeAlgebraQuotient from rawQuotientRing(raw R, raw gbI);
      --S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gbI)} };
      S.cache = new CacheTable;
      S.ideal = I;
@@ -233,6 +236,60 @@ FreeAlgebra / Ideal := QuotientRing => (R,I) -> (
      S.use = x -> ( -- what is this for??
 	  );
      S)
+
+ncBasis = method()
+ncBasis(List,List,Ring) := (lo,hi,R) -> (
+    if not instance(R, FreeAlgebra) and not instance(R, FreeAlgebraQuotient)
+    then error "expected a free algebra or a free algebra quotient ring";
+    neginfinity := -infinity;
+    if lo === infinity then error "incongruous lower degree bound: infinity";
+    if hi === -infinity then error "incongruous upper degree bound: -infinity";
+    if lo === -infinity then lo = {};
+    if hi === infinity then hi = {};
+    if (#lo != 0 and #lo > degreeLength R) or 
+       (#hi != 0 and #hi > degreeLength R) then
+        error "expected length of degree bound not to exceed that of ring";
+    if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
+    if not all(lo, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString lo);
+    if not all(hi, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString hi);
+
+    gbR := (ideal R).cache.NCGB#1;
+    result := rawNCBasis(raw gbR, lo, hi);
+    map(R^1,, promote(gbR, R))
+    )
+
+-*
+basis(List,Ideal) := basis(ZZ,Ideal) := opts -> (deg,I) -> basis(deg,module I,opts)
+
+basis(InfiniteNumber,InfiniteNumber,Ideal) := 
+basis(List,InfiniteNumber,Ideal) := 
+basis(InfiniteNumber,List,Ideal) := 
+basis(InfiniteNumber,ZZ,Ideal) := 
+basis(ZZ,InfiniteNumber,Ideal) := 
+basis(InfiniteNumber,InfiniteNumber,Ideal) := 
+basis(List,ZZ,Ideal) := 
+basis(ZZ,List,Ideal) := 
+basis(List,List,Ideal) := 
+basis(ZZ,ZZ,Ideal) := opts -> (lo,hi,I) -> basis(lo,hi,module I,opts)
+
+basis(InfiniteNumber,InfiniteNumber,Ring) := 
+basis(List,InfiniteNumber,Ring) := 
+basis(InfiniteNumber,List,Ring) := 
+basis(List,ZZ,Ring) := 
+basis(ZZ,List,Ring) := 
+basis(List,List,Ring) := 
+basis(InfiniteNumber,ZZ,Ring) := 
+basis(ZZ,InfiniteNumber,Ring) := 
+basis(InfiniteNumber,InfiniteNumber,Ring) := 
+basis(ZZ,ZZ,Ring) := opts -> (lo,hi,R) -> basis(lo,hi,module R,opts)
+
+basis(ZZ,Ring) := 
+basis(List,Ring) := opts -> (deg,R) -> basis(deg, module R, opts)
+
+basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
+basis Ring := opts -> R -> basis(R^1,opts)
+basis Ideal := opts -> I -> basis(module I,opts)
+*-
 
 beginDocumentation()
 
@@ -745,7 +802,6 @@ TEST ///
 TEST ///
 -- test of free algebra quotient rings
 -*
--- XXX
   restart
   needsPackage "PolynomialAlgebra"
 *-
@@ -819,13 +875,31 @@ TEST ///
 *-
 ///
 
+TEST ///
+-- test of basis of a quotient ring
+-*
+-- XXX
+  restart
+  debug needsPackage "PolynomialAlgebra"
+*-
+  debug Core
+  R = QQ{a,b}
+  I = ideal(a^2 - b^2)
+  NCGB(I, 1000) 
+  J = gens ideal NCGB(I, 1000)
+  A = R/I
+  
+  ideal A
+  isQuotientRing A
+  errorDepth = 0
+  ncBasis({1}, {1}, A)
 -* Some Thoughts on basis:
 
  . Should not do full subword search when building a basis, just a prefix search
  . 
 
--*
-
+*-
+///
 
 end--
 

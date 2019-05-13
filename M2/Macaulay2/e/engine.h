@@ -1818,6 +1818,11 @@ enum gbTraceValues
   const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg);
 
   const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducers);
+
+  const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
+                           M2_arrayint lo_degree,
+                           M2_arrayint hi_degree
+                           );
   
   /*******************************************
    * Computation routines for Resolutions ****

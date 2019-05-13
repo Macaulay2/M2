@@ -1257,6 +1257,34 @@ const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* re
   return nullptr;
 }
 
+const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
+                         M2_arrayint lo_degree,
+                         M2_arrayint hi_degree
+                         )
+{
+  const Ring* A = gb2SidedIdeal->get_ring();
+  if (A == nullptr)
+    {
+      ERROR("internal error: expected non-null Ring!");
+      return nullptr;
+    }
+  try {
+    const M2FreeAlgebra* P = A->cast_to_M2FreeAlgebra();
+    if (P != nullptr)
+      {
+        ERROR("not implementeeed yet");
+        return nullptr;
+        //        Matrix* result = ncBasis(P, gb2SidedIdeal, lo_degree, hi_degree);
+        //        return result;
+      }
+    ERROR("expected a free algebra");
+    return nullptr;
+  }
+  catch (exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+}
 
 
 // Local Variables:

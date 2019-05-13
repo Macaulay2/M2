@@ -87,6 +87,20 @@ bool WordTable::subwordPosition(Word word1,
   return false;
 }
 
+bool WordTable::isPrefixOf(Word word1, Word word2)
+// true is returned if there exists monomial q, such that word1*q == word2
+{
+  if (word2.size() < word1.size()) return false;
+  bool match = true;
+  for (auto k = 0; k < word1.size(); ++k)
+    if (word1.begin()[k] != word2.begin()[k])
+      {
+        match = false;
+        break;
+      }
+  return match;
+}
+
 void WordTable::subwords(Word word,
                            std::vector<std::pair<int,int>>& output) const
 {
@@ -100,6 +114,20 @@ void WordTable::subwords(Word word,
       for (auto j : start_indices)
         output.push_back(std::make_pair(i,j));
     }
+}
+
+bool WordTable::isPrefix(Word word,
+                         int& output) const
+{
+  for (auto i = 0; i < mMonomials.size(); ++i)
+    {
+      if (isPrefixOf(mMonomials[i], word))
+        {
+          output = i;
+          return true;
+        }
+    }
+  return false;
 }
 
 bool WordTable::subword(Word word,
