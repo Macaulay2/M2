@@ -42,9 +42,6 @@ doc ///
         inputGate
         sumGate
         productGate
-        zeroGate
-        oneGate
-        minusOneGate
         (symbol *,Gate,Gate)
         (symbol +,Gate,Gate)
     Headline
@@ -63,7 +60,7 @@ doc ///
         Text
             This method returns an @TO InputGate@ from the given data.
             
-            Some specific @TO InputGate@s: @TO zeroGate@, @TO oneGate@, @TO minusOneGate@, which represent $0, 1, -1$ (in @TO ZZ@) respectively.
+            Some specific @TO InputGate@s: 
         
             @TO SumGate@ is constructed with @TO sumGate@ {\tt list of gates}, or @TO (symbol +,Gate,Gate)@.
         
@@ -85,8 +82,6 @@ doc ///
                  
         Example
             X = inputGate x; Y = inputGate y;
-	    F = 
-	    diff(gateMatrix{{X,Y}},gateMatrix{{Y^2-X^3-X}})
             A = matrix { apply(5,i->i*X) }
             B = matrix { apply(4,i->Y^i) }
             C = transpose A * B    
