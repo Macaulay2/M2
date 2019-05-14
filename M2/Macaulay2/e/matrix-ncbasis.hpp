@@ -1,15 +1,15 @@
 #ifndef matrix_ncbasis_hpp_
 #define matrix_ncbasis_hpp_
 
-#include <vector>
-#include "style.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 
+#include <vector>
+#include <memory>
 /**
  * \ingroup matrices
  */
 
-PolyList ncBasis(
+std::unique_ptr<PolyList> ncBasis(
                  const FreeAlgebra& A,
                  const ConstPolyList& gb, // actually, only the lead terms are ever considered
                  const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.

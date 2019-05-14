@@ -1,66 +1,116 @@
 // Copyright 2018  Michael E. Stillman
 
-#include "M2FreeAlgebra.hpp"
-#include "ntuple.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"
+#include "NCAlgebras/WordTable.hpp"
 
-#if 0
+#include <ostream>
+
 class NCBasis
 {
 private:
-  const M2FreeAlgebra *mRing;
-  const NCMonoid& mMonoid;
-  MatrixConstructor mMatrixConstructor; // result is collected here
-  enum { KB_SINGLE, KB_MULTI } mComputationType;
-  const Matrix *mZeroInitialTerms; //TODO: currently, not considered!!
-  std::vector<int> mHeftVector; // length: degreeRank := degreeMonoid().numVars()
+  const FreeAlgebra& mFreeAlgebra;
+  const FreeMonoid& mMonoid;
+
   std::vector<int> mVariables; // the variable indices being used.
   std::vector<int> mVariableHefts; // matches mVariables array.
+
+  // Word table of all lead terms from the input GB
+  std::unique_ptr<WordTable> mWordTable;
   
   // Construction of monomials: these are used in the recursion.
-  int mLimit; // if >= 0, then number of monomials to collect.
-  int mComponent; // component of monomials currently being constructed
-  std::vector<int> mMonomial; // being constructed.
+  std::vector<int> mMonomial; // word being constructed.
   int mCurrentIndex; // into mMonomial... this is where we place next variable.
   int mCurrentHeftValue; // heft value so far, of monomial being constructed.
-  const int* mCurrentMultiDegree; // only used in multi-grading case?
 
-  int mLoHeft; // 
-  int mHiHeft; //
-  const int* mMultiDegree; // target multi-degree in the multi-graded case.
+  // Result
+  std::unique_ptr<PolyList> mBasis;
 
-  // do we need these?
-  const int* mLoDegree; // either nullptr (if -infinity), or an array of length = degreeRank
-  const int* mHiDegree; // an array of length = degreeRank
+  // Input degree bounds, and input options
+  int mLimit; // if >= 0, then number of monomials to collect.
+  int mLoHeft; // 0 if -infinity was given
+  int mHiHeft; // -1 if infinity was given
+
+  // do we need these?  Keep for now.
+  // // const int* mLoDegree; // either nullptr (if -infinity), or an array of length = degreeRank
+  // // const int* mHiDegree; // an array of length = degreeRank
+  // // enum { KB_SINGLE, KB_MULTI } mComputationType;
+  // // const int* mCurrentMultiDegree; // only used in multi-grading case?
+  // // const int* mMultiDegree; // target multi-degree in the multi-graded case.
+
+  // // std::vector<int> mHeftVector; // length: degreeRank := degreeMonoid().numVars()
+  // // std::vector<int> mLoDegree; // either nullptr (if -infinity), or an array of length = degreeRank
+  // // std::vector<int> mHiDegree; // an array of length = degreeRank
+
 private:
-  void insert();
-  void basis0_singly_graded();
-  void basis0_multi_graded();
+  // TODO: add in a list of variable indices, add in a limit.
+  //       add in heft vectors, multi-degree.
+  NCBasis(const FreeAlgebra& A,
+          const ConstPolyList& gb,
+          const std::vector<int>& lo_degree,
+          const std::vector<int>& hi_degree
+          )
+    :
+    mFreeAlgebra(A),
+    mMonoid(A.monoid()),
+    mWordTable(constructWordTable(gb)),
+    mCurrentIndex(0),
+    mCurrentHeftValue(0),
+    mBasis(new PolyList),
+    mLimit(10000),
+    mLoHeft(0),
+    mHiHeft(-1)
+  {
+    // TODO: set mVariables and their hefts from mMonoid info.
 
-  NCBasis(const Matrix *zeroInitialTerms,
-          const int *lo_degree,
-          const int *hi_degree,
-          std::vector<int> heftVector,
-          std::vector<int> variables,
-          bool do_truncation,
-          int limit);
+    if (lo_degree.size() > 0) mLoHeft = lo_degree[0];
+    if (hi_degree.size() > 0) mHiHeft = hi_degree[0];
+  }
 
-  ~NCBasis() {}
+  ~NCBasis()
+  {
+  }
 
-  void compute();
+  void insert() {} // takes mMonomial, and makes a polynomial from it (but with new memory), appending to mBasis.
+  void basis0() {
+    std::cout << "in basis0" << std::endl;
+  } // the main recursion step
 
-  Matrix *value() { return mMatrixConstructor.to_matrix()); }
 public:
-  friend Matrix *ncBasis(const Matrix *leadTerms,
-                         M2_arrayint lo_degree,
-                         M2_arrayint hi_degree,
-                         M2_arrayint heft,
-                         M2_arrayint vars,
-                         bool do_truncation,
-                         int limit);
+  static std::unique_ptr<PolyList> ncBasis(
+                    const FreeAlgebra& A,
+                    const ConstPolyList& gb, // actually, only the lead terms are ever considered
+                    const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
+                    const std::vector<int>& hi_degree // length 0: +infinity
+                    )
+  {
+    if (lo_degree.size() > 1 or hi_degree.size() > 1)
+      {
+        ERROR("expected singly grading");
+        return nullptr;
+      }
+    NCBasis computation(A, gb, lo_degree, hi_degree);
+    computation.basis0();
+    return std::move(computation.mBasis);
+  }
 };
 
+std::unique_ptr<PolyList> ncBasis(
+                                  const FreeAlgebra& A,
+                                  const ConstPolyList& gb, // actually, only the lead terms are ever considered
+                                  const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
+                                  const std::vector<int>& hi_degree) // length 0: +infinity
+{
+  return NCBasis::ncBasis(A, gb, lo_degree, hi_degree);
+}
+
+
+
+
+
+
+
+
+#if 0
 NCBasis::NCBasis(
                  const M2FreeAlgebra* P,
                  const Matrix *zeroInitialTerms,
@@ -303,16 +353,6 @@ void NCBasis::compute()
     }
 }
 #endif
-
-PolyList ncBasis(
-                 const FreeAlgebra& A,
-                 const ConstPolyList& gb, // actually, only the lead terms are ever considered
-                 const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
-                 const std::vector<int>& hi_degree) // length 0: +infinity
-{
-  PolyList result;
-  return result;
-}
 
 #if 0
 Matrix* ncBasis(const Matrix *leadTerms,

@@ -1277,11 +1277,11 @@ const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
     if (A != nullptr)
       {
         ConstPolyList G = matrixToVector(A, gb2SidedIdeal);
-        PolyList result = ncBasis(A->freeAlgebra(),
-                                  G,
-                                  M2_arrayint_to_stdvector<int>(lo_degree),
-                                  M2_arrayint_to_stdvector<int>(hi_degree));
-        return vectorToMatrix(A, result);
+        std::unique_ptr<PolyList> result = ncBasis(A->freeAlgebra(),
+                                                   G,
+                                                   M2_arrayint_to_stdvector<int>(lo_degree),
+                                                   M2_arrayint_to_stdvector<int>(hi_degree));
+        return vectorToMatrix(A, *result);
       }
     ERROR("expected a free algebra");
     return nullptr;

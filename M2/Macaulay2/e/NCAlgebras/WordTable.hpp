@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <ostream>
+#include <memory>
+
 #include "../Polynomial.hpp"
 
 class Word
@@ -140,6 +142,8 @@ private:
 
 std::ostream& operator<<(std::ostream& o, const Word& w);
 std::ostream& operator<<(std::ostream& o, const WordTable& wordTable);
+
+std::unique_ptr<WordTable> constructWordTable(const ConstPolyList& gb);
 
 #endif
 
