@@ -39,6 +39,7 @@ doc ///
 
 doc ///
     Key
+    	"creating gates"
         inputGate
         sumGate
         productGate
@@ -60,7 +61,7 @@ doc ///
         Text
             This method returns an @TO InputGate@ from the given data.
             
-            Some specific @TO InputGate@s: 
+--            Some specific @TO InputGate@s: 
         
             @TO SumGate@ is constructed with @TO sumGate@ {\tt list of gates}, or @TO (symbol +,Gate,Gate)@.
         
@@ -93,6 +94,7 @@ doc ///
 
 doc ///
     Key
+    	"differentiating circuits"
     	(diff, GateMatrix, GateMatrix)
      	(diff, InputGate, DetGate)    
      	(diff, InputGate, DivideGate) 
@@ -100,8 +102,6 @@ doc ///
      	(diff, InputGate, InputGate)  
      	(diff, InputGate, ProductGate)
      	(diff, InputGate, SumGate)    
-    Headline
-        methods for differentiating circuits
     Description
         Text
     	    The output of these commands is generally a circuit for evaluating the derivative of the second argument with respect to the first.
