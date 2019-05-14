@@ -90,9 +90,10 @@ public:
   bool subword(Word word,
                 std::pair<int,int>& output) const;
 
-  // returns true if some element in the table is a prefix of 'word'.
+  // returns true if some element in the table is a prefix/suffix of 'word'.
   // In this case, 'output' is set to the index of the corresponding element.
   bool isPrefix(Word word, int& output) const;
+  bool isSuffix(Word word, int& output) const;
   
   auto isNontrivialSuperword(Word word, int index1, int index2) const -> bool;
   
@@ -115,8 +116,9 @@ public:
   void rightOverlaps(std::vector<Overlap>& newRightOverlaps) const; 
 
 private:
-  // returns true if there is a monomial q s.t. word1*q == word2.
+  // returns true if word1 is a prefix/suffix of word2
   static bool isPrefixOf(Word word1, Word word2);
+  static bool isSuffixOf(Word word1, Word word2);
   
   static void subwordPositions(Word word1,
                                Word word2,

@@ -368,13 +368,13 @@ TEST(WordTable, subwords)
   EXPECT_EQ(matches[5], std::make_pair(3, 6));
 }        
 
-TEST(WordTable, prefix)
+TEST(WordTable, prefix_suffix)
 {
   std::vector<int> monom1 {1, 0, 1, 2};  // babc
   std::vector<int> monom2 {1, 0, 2, 2};  // bacc
   std::vector<int> monom3 {1, 0, 1, 0};  // baba
   std::vector<int> word {1, 0, 1, 0, 2, 2, 1, 0, 1, 2};
-  std::vector<int> word2 {1, 0, 1, 1, 2, 2, 1, 0, 1, 2};
+  std::vector<int> word2 {1, 0, 1, 1, 2, 2, 1, 1, 1, 2};
 
   WordTable W;
 
@@ -387,15 +387,33 @@ TEST(WordTable, prefix)
   W.insert(Word(monom2));
   W.insert(Word(monom3));
 
-  int ind; // index of solution, if any.
+  int ind = -1; // index of prefix solution, if any.
+  int ind2 = -1; // index of suffix solution, if any.
   bool isprefix = W.isPrefix(Word(word), ind);
+  bool issuffix = W.isSuffix(Word(word), ind2);
 
   EXPECT_TRUE(isprefix);
+  EXPECT_TRUE(issuffix);
   EXPECT_EQ(2, ind);
+  EXPECT_EQ(0, ind2);
 
+  ind = -1;
+  ind2 = -1;
+  isprefix = W.isPrefix(Word(monom1), ind);
+  issuffix = W.isSuffix(Word(monom2), ind2);
+  EXPECT_TRUE(isprefix);
+  EXPECT_EQ(0,ind);
+  EXPECT_TRUE(issuffix);
+  EXPECT_EQ(1,ind2);
+
+    
+  ind = -1;
+  ind2 = -1;
   isprefix = W.isPrefix(Word(word2), ind);
-
+  issuffix = W.isSuffix(Word(word2), ind2);
+  
   EXPECT_FALSE(isprefix);
+  EXPECT_FALSE(issuffix);
 }        
 
 std::ostream& operator<<(std::ostream& o, const std::vector<Overlap>& val)

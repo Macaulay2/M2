@@ -101,6 +101,24 @@ bool WordTable::isPrefixOf(Word word1, Word word2)
   return match;
 }
 
+bool WordTable::isSuffixOf(Word word1, Word word2)
+// true is returned if there exists monomial p, such that p*word1 == word2
+{
+  auto word1size = word1.size();
+  auto word2size = word2.size();
+  if (word2size < word1size) return false;
+  // at this point if word2.size() == 0, then word2 (and hence word1) are both empty
+  if (word2size == 0) return false;
+  bool match = true;
+  for (auto k = 0; k < word1size; ++k)
+    if (word1.begin()[word1size-1-k] != word2.begin()[word2size-1-k])
+      {
+        match = false;
+        break;
+      }
+  return match;
+}
+
 void WordTable::subwords(Word word,
                            std::vector<std::pair<int,int>>& output) const
 {
@@ -122,6 +140,20 @@ bool WordTable::isPrefix(Word word,
   for (auto i = 0; i < mMonomials.size(); ++i)
     {
       if (isPrefixOf(mMonomials[i], word))
+        {
+          output = i;
+          return true;
+        }
+    }
+  return false;
+}
+
+bool WordTable::isSuffix(Word word,
+                         int& output) const
+{
+  for (auto i = 0; i < mMonomials.size(); ++i)
+    {
+      if (isSuffixOf(mMonomials[i], word))
         {
           output = i;
           return true;
