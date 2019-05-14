@@ -14,12 +14,6 @@ setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
    then (() -> setRandomSeed 0)
    else (() -> setRandomSeed((currentTime() << 16) + processID())))
 
-addStartFunction(
-     () -> (
-	  path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
-	  path = unique apply( path, minimizeFilename);	    -- beautify
-	  ))
-
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
 
@@ -42,6 +36,8 @@ addStartFunction(
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
 	       newPackage("User", DebuggingMode => true, PackageImports => if member("--no-preload",commandLine) then {} else Core#"pre-installed packages");
+	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
+	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
 	       );
 	  if not nobanner then (

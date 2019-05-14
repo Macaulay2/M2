@@ -177,4 +177,22 @@ TEST /// -- bug fixed in inverseMap (25/01/2019)
    assert(degree h == 2)
 ///
 
+TEST /// -- graph of inverse map
+P5 := ZZ/100003[x_0..x_5];
+phi = rationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);
+(p1,p2) = graph phi;
+(q1,q2) = graph inverse phi;
+assert(q1 * inverse phi == q2 and q2 * phi == q1 and p1 * phi == p2 and p2 * inverse phi == p1)
+Bl = ideal source q1;
+Bl' = ideal source first graph rationalMap map inverse phi;
+assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
+--
+phi = specialCubicTransformation(2,ZZ/100003);
+(p1,p2) = graph phi;
+(q1,q2) = graph inverse phi;
+assert(q1 * inverse phi == q2 and q2 * phi == q1 and p1 * phi == p2 and p2 * inverse phi == p1)
+Bl = ideal source q1;
+Bl' = ideal source first graph rationalMap map inverse phi;
+assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
+///
 

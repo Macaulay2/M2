@@ -224,6 +224,8 @@ void RingZZ::lower_content(ring_elem &c, ring_elem g) const
   mpz_srcptr a = c.get_mpz();
   mpz_srcptr b = g.get_mpz();
   mpz_gcd(result, a, b);
+  if(mpz_sgn(a) == -1)
+    mpz_neg(result, result);
   mpz_reallocate_limbs(result);  
   c = ring_elem(result);
 }
