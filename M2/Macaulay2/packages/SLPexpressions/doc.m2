@@ -85,6 +85,8 @@ doc ///
                  
         Example
             X = inputGate x; Y = inputGate y;
+	    F = 
+	    diff(gateMatrix{{X,Y}},gateMatrix{{Y^2-X^3-X}})
             A = matrix { apply(5,i->i*X) }
             B = matrix { apply(4,i->Y^i) }
             C = transpose A * B    
@@ -93,3 +95,29 @@ doc ///
         Gate
         Matrix
 ///
+
+doc ///
+    Key
+    	(diff, GateMatrix, GateMatrix)
+     	(diff, InputGate, DetGate)    
+     	(diff, InputGate, DivideGate) 
+     	(diff, InputGate, GateMatrix) 
+     	(diff, InputGate, InputGate)  
+     	(diff, InputGate, ProductGate)
+     	(diff, InputGate, SumGate)    
+    Headline
+        methods for differentiating circuits
+    Description
+        Text
+    	    The output of these commands is generally a circuit for evaluating the derivative of the second argument with respect to the first.
+        Example
+            X = inputGate x; Y = inputGate y;
+	    F = Y^2-X^3-X
+	    diff(X,F)
+	    J = diff(gateMatrix{{X,Y}},gateMatrix{{F}})
+	    (numrows J, numcols J)
+    SeeAlso
+        InputGate
+        GateMatrix
+///
+
