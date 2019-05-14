@@ -204,6 +204,16 @@ void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const std::vector<int
   for (auto v : word) resultMonom.push_back(v);  // std::insert?
 }
 
+void FreeAlgebra::from_word(Poly& result, const Word& word) const
+{
+  auto& resultCoeff = result.getCoeffInserter();
+  auto& resultMonom = result.getMonomInserter();
+  resultCoeff.push_back(coefficientRing()->from_long(1));
+  resultMonom.push_back(word.size() + 2);
+  resultMonom.push_back(word.size());
+  for (auto a : word) resultMonom.push_back(a);
+}
+
 void FreeAlgebra::from_word(Poly& result, const std::vector<int>& word) const
 {
   from_word(result, coefficientRing()->from_long(1), word);

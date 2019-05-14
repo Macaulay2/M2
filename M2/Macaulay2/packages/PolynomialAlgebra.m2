@@ -263,6 +263,9 @@ ncBasis(List,List,Ring) := (lo,hi,R) -> (
     map(R^1,, promote(result, R))
     )
 
+ncBasis(ZZ,ZZ,Ring) := (lo,hi,R) -> ncBasis({lo},{hi},R)
+ncBasis(ZZ,Ring) := (d,R) -> ncBasis(d,d,R)
+
 -*
 basis(List,Ideal) := basis(ZZ,Ideal) := opts -> (deg,I) -> basis(deg,module I,opts)
 
@@ -891,13 +894,34 @@ TEST ///
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
   NCGB(I, 1000)
-  NCGB I
-  J = gens ideal NCGB(I, 1000)
   A = R/I
-  
-  ideal A
-  isQuotientRing A
-  ncBasis({1}, {1}, A)
+  ncBasis({10}, {10}, A)
+
+  S = QQ{u,v,Degrees=>{2,3}}
+  I = ideal(u*v + v*u)
+  T = S/I
+  ncBasis({15},{15},T)
+///
+
+TEST ///
+-*
+-- XXX
+  restart
+  debug needsPackage "PolynomialAlgebra"
+*-
+  R = (ZZ/32003){a,b,c}
+  I = ideal(2*a*b + 3*b*a + 5*c^2,
+             2*b*c + 3*c*b + 5*a^2,
+             2*c*a + 3*a*c + 5*b^2)
+  NCGB(I, 10);
+  A = R/I
+  assert(numcols ncBasis(0,A) == 1)
+  assert(numcols ncBasis(1,A) == 3)
+  assert(numcols ncBasis(2,A) == 6)
+  assert(numcols ncBasis(3,A) == 10)
+  assert(numcols ncBasis(4,A) == 15)
+  assert(numcols ncBasis(5,A) == 21)
+  assert(numcols ncBasis(10,A) == 66)
 ///
 
 end--

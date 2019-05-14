@@ -40,6 +40,7 @@ public:
   void copy(Poly& result, const Poly& f) const;
   void swap(Poly& f, Poly& g) const;
   void var(Poly& result, int v) const;
+  void from_word(Poly& result, const Word& word) const;
   void from_word(Poly& result, const std::vector<int>& word) const; 
   void from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const; 
   
