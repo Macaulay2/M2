@@ -7,16 +7,16 @@ create several examples of large circuits (1-10 sec to setup)
 
 -- Documentation
 getVarGates
-gatePolynomial
+gatePolynomial -- Tim
 SLProgram
-makeSLProgram
+makeSLProgram -- Tim
 Gate
 InputGate
 GateMatrix
-support
-constants
-sub
-diff
+support -- Tim
+constants -- Tim
+sub -- Tim
+diff -- Tim
 compress
 sumGate
 productGate

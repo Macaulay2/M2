@@ -346,7 +346,8 @@ gatePolynomial RingElement := p -> (
 	    (m,c) := mc;
 	    c*product(#m,i->X#i^(m#i))
 	    ))
-    ) 
+    )
+gatePolynomial Matrix := F -> gateMatrix applyTable(entries F, gatePolynomial) 
 
 TEST ///
 needsPackage "SLPexpressions"
