@@ -14,6 +14,7 @@ newPackage(
         )
 
 export {
+    "ncBasis",
     "NCGB", -- uugh: change name!
     "NCReduction2Sided",
     "FreeAlgebra", -- change this name too!
@@ -242,8 +243,11 @@ FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
 	  );
      S)
 
-ncBasis = method()
-ncBasis(List,List,Ring) := (lo,hi,R) -> (
+ncBasis = method(Options => {Limit => infinity})
+ncBasis(InfiniteNumber,InfiniteNumber,Ring) := 
+ncBasis(List,InfiniteNumber,Ring) := 
+ncBasis(InfiniteNumber,List,Ring) := 
+ncBasis(List,List,Ring) := opts -> (lo,hi,R) -> (
     if not instance(R, FreeAlgebra) and not instance(R, FreeAlgebraQuotient)
     then error "expected a free algebra or a free algebra quotient ring";
     neginfinity := -infinity;
@@ -257,47 +261,19 @@ ncBasis(List,List,Ring) := (lo,hi,R) -> (
     if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
     if not all(lo, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString lo);
     if not all(hi, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString hi);
-
+    limit := if opts.Limit === infinity then -1 else if instance(opts.Limit,ZZ) then opts.Limit else
+       error "expected 'Limit' option to be an integer or infinity";
     gbR := NCGB ideal R;
-    result := map(ring gbR, rawNCBasis(raw gbR, lo, hi));
+    result := map(ring gbR, rawNCBasis(raw gbR, lo, hi, limit));
     map(R^1,, promote(result, R))
     )
 
-ncBasis(ZZ,ZZ,Ring) := (lo,hi,R) -> ncBasis({lo},{hi},R)
-ncBasis(ZZ,Ring) := (d,R) -> ncBasis(d,d,R)
-
--*
-basis(List,Ideal) := basis(ZZ,Ideal) := opts -> (deg,I) -> basis(deg,module I,opts)
-
-basis(InfiniteNumber,InfiniteNumber,Ideal) := 
-basis(List,InfiniteNumber,Ideal) := 
-basis(InfiniteNumber,List,Ideal) := 
-basis(InfiniteNumber,ZZ,Ideal) := 
-basis(ZZ,InfiniteNumber,Ideal) := 
-basis(InfiniteNumber,InfiniteNumber,Ideal) := 
-basis(List,ZZ,Ideal) := 
-basis(ZZ,List,Ideal) := 
-basis(List,List,Ideal) := 
-basis(ZZ,ZZ,Ideal) := opts -> (lo,hi,I) -> basis(lo,hi,module I,opts)
-
-basis(InfiniteNumber,InfiniteNumber,Ring) := 
-basis(List,InfiniteNumber,Ring) := 
-basis(InfiniteNumber,List,Ring) := 
-basis(List,ZZ,Ring) := 
-basis(ZZ,List,Ring) := 
-basis(List,List,Ring) := 
-basis(InfiniteNumber,ZZ,Ring) := 
-basis(ZZ,InfiniteNumber,Ring) := 
-basis(InfiniteNumber,InfiniteNumber,Ring) := 
-basis(ZZ,ZZ,Ring) := opts -> (lo,hi,R) -> basis(lo,hi,module R,opts)
-
-basis(ZZ,Ring) := 
-basis(List,Ring) := opts -> (deg,R) -> basis(deg, module R, opts)
-
-basis Module := opts -> (M) -> basis(-infinity,infinity,M,opts)
-basis Ring := opts -> R -> basis(R^1,opts)
-basis Ideal := opts -> I -> basis(module I,opts)
-*-
+ncBasis(List,Ring) := opts -> (d,R) -> ncBasis(d,d,R,opts)
+ncBasis(ZZ,Ring) := opts -> (d,R) -> ncBasis(d, d, R, opts)
+ncBasis(ZZ,ZZ,Ring) := opts -> (lo,hi,R) -> ncBasis({lo}, {hi}, R, opts)
+ncBasis(InfiniteNumber,ZZ,Ring) := opts -> (lo,hi,R) -> ncBasis(lo, {hi}, R, opts)
+ncBasis(ZZ,InfiniteNumber,Ring) := opts -> (lo,hi,R) -> ncBasis({lo}, hi, R, opts)
+ncBasis Ring := opts -> R -> ncBasis(-infinity, infinity, R, opts)
 
 beginDocumentation()
 
@@ -886,22 +862,20 @@ TEST ///
 TEST ///
 -- test of basis of a quotient ring
 -*
--- XXX
   restart
-  debug needsPackage "PolynomialAlgebra"
+  needsPackage "PolynomialAlgebra"
 *-
-  debug Core
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
   NCGB(I, 1000)
   A = R/I
-  assert(numcols ncBasis({10}, {10}, A) == 11)
-  numcols ncBasis({10000},{10000},A)
+  assert(numcols ncBasis({10}, {10}, A) == 11) 
+  elapsedTime assert(numcols ncBasis({1000},{1000},A) == 1001)
 
   S = QQ{u,v,Degrees=>{2,3}}
   I = ideal(u*v + v*u)
   T = S/I
-  ncBasis({15},{15},T)
+  assert(ncBasis({15},{15},T) == matrix{{v*u^6, v^3*u^3, v^5}})
 ///
 
 TEST ///
