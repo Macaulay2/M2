@@ -25,7 +25,6 @@ INTERFACE = \
 	monomial-collection \
 	Polynomial \
 	M2FreeAlgebra \
-	NCAlgebra \
 	monomial-sets \
 	mutablecomplex \
 	localring \

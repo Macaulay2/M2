@@ -368,26 +368,6 @@ bool M2FreeAlgebraQuotient::multi_degree(const Poly* f, int *result) const
   return freeAlgebraQuotient().multi_degree(*f,result);
 }
 
-void M2FreeAlgebraQuotient::appendFromModuleMonom(Poly& f, const ModuleMonom& m) const
-{
-  // TODO: get this function working, if we are going to use ModuleMonom...
-#if 0
-  int comp_unused;
-  f.getCoeffInserter().push_back(coefficientRing()->from_long(1));
-  appendModuleMonomToMonom(m, comp_unused, f.getMonomInserter());
-  // NORMALIZE
-#endif
-}
-  
-ring_elem M2FreeAlgebraQuotient::fromModuleMonom(const ModuleMonom& m) const
-{
-  // TODO: get this function working, if we are going to use ModuleMonom...
-  auto result = new Poly;
-  appendFromModuleMonom(*result, m);
-  // NORMALIZE
-  return fromPoly(result);
-}
-
 SumCollector* M2FreeAlgebraQuotient::make_SumCollector() const
 {
   return freeAlgebraQuotient().make_SumCollector();

@@ -20,7 +20,6 @@
 #include "Polynomial.hpp"
 #include "M2FreeAlgebra.hpp"
 #include "M2FreeAlgebraQuotient.hpp"
-#include "NCAlgebra.hpp"
 #include "polyquotient.hpp"
 
 #include "matrix.hpp"

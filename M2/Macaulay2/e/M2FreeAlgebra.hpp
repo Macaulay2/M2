@@ -146,13 +146,8 @@ public:
   ring_elem makeTerm(const ring_elem a, const int* monom) const;
 
   void makeTerm(Poly& result, const ring_elem a, const int* monom) const;
-  
   // 'monom' is in 'varpower' format
   // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
-
-  void appendFromModuleMonom(Poly& f, const ModuleMonom& m) const;
-  
-  ring_elem fromModuleMonom(const ModuleMonom& m) const;
 };
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
