@@ -4,7 +4,7 @@
 --*************************************************
 --This file is used for doing basic computations
 --i.e. things using only lists, numbers, etc.
--- that support other functions in the Fsing
+-- that support other functions in the TestIdeals
 --package.
 --*************************************************
 --*************************************************
@@ -16,9 +16,10 @@
 --*************************************************
 --===================================================================================
 
-denominator( ZZ ) := x -> 1
+--Extend denominator and numerator to integers
+denominator ZZ := x -> 1
 
-numerator( ZZ ) := x -> x
+numerator ZZ := x -> x
 
 --===================================================================================
 
@@ -30,7 +31,7 @@ fracPart = x -> x - floor(x)
 --Computes floor(log_b x), correcting problems due to rounding.
 floorLog = method( TypicalValue => ZZ )
 
-floorLog ( ZZ, ZZ ) := ZZ => ( b, x ) ->
+floorLog ( Number, Number ) := ZZ => ( b, x ) ->
 (
     if b <= 1 then error "floorLog: expected the first argument to be greater than 1";
     if x <= 0 then error "floorLog: expected the second argument to be positive";
@@ -48,56 +49,54 @@ multiplicativeOrder = method( TypicalValue => ZZ )
 --cyclicOrdPGroup := (pp, nn) -> ( return (factor(pp-1))*(new Power from {pp, (nn-1)}) );
 
 --Finds the multiplicative order of a modulo b.
-multiplicativeOrder( ZZ, ZZ ) := ZZ => ( a, b ) ->
+multiplicativeOrder ( ZZ, ZZ ) := ZZ => ( a, b ) ->
 (
-    if gcd( a, b ) != 1 then error "multiplicativeOrder: Expected numbers to be relatively prime.";
-    if b==1 then return 1;
+    if gcd( a, b ) != 1 then error "multiplicativeOrder: Expected numbers to be relatively prime";
+    if b == 1 then return 1;
     maxOrder := lcm(apply(toList apply(factor b, i-> factor ((i#0-1)*((i#0)^(i#1-1)))), tt -> value tt));
     primeFactorList := sort unique apply( subsets( flatten apply(toList factor maxOrder, myPower -> apply(myPower#1, tt->myPower#0))), tt -> product tt);
 --    potentialOrderList := sort unique flatten  apply(flatten apply(toList apply(toList factor b, tt -> cyclicOrdPGroup(tt#0, tt#1)), tt -> toList tt), myPower -> subsets apply(myPower#1, tt->myPower#0));
     i := 0;
-    while (i < #primeFactorList) do (
-        if (powermod(a, primeFactorList#i, b) == 1) then return primeFactorList#i;
-        i = i + 1;
+    while i < #primeFactorList do 
+    (
+        if powermod(a, primeFactorList#i, b) == 1 then return primeFactorList#i;
+        i = i + 1
     );
-    error "Something went wrong, multiplicativeOrder failed to find the multiplicative order";
+    error "multiplicativeOrder: Something went wrong; failed to find the multiplicative order";
 )
 
 --===================================================================================
 
-decomposeFraction = method( TypicalValue => List, Options => { NoZeroC => false } );
+decomposeFraction = method( TypicalValue => Sequence, Options => { NoZeroC => false } )
 
 -- This function takes in a fraction t and a prime p and spits out a list
--- {a,b,c}, where t = a/(p^b*(p^c-1))
--- if c = 0, then this means that t = a/p^b
---alternately, if NoZeroC => true, then we will always write t = a/p^b(p^c - 1)
---even if it means increasing a.
-decomposeFraction( ZZ, Number ) := List => o -> ( p, t ) ->
+-- {a,b,c}, where t = a/(p^b*(p^c-1)). If c = 0, then this means that t = a/p^b.
+-- Alternately, if NoZeroC => true, then we will always write t = a/p^b(p^c - 1),
+-- even if it means increasing a.
+decomposeFraction ( ZZ, QQ ) := Sequence => o -> ( p, t ) ->
 (
-    t = t/1;
-    if not isPrime( p ) then error "decomposeFraction: first argument must be a prime number.";
+    if not isPrime p then error "decomposeFraction: first argument must be a prime number";
     a := numerator t; -- finding a is easy, for now
-    den := denominator(t);
+    den := denominator t;
     b := 1;
     while den % p^b == 0 do b = b+1;
     b = b-1;
     temp := denominator( t*p^b );
     local c;
-    if (temp == 1) then c = 0 else
+    if temp == 1 then c = 0 else
     (
         c = multiplicativeOrder( p, temp );
-        a = lift( a*(p^c-1)/temp, ZZ ); -- fix a
+        a = lift( a*(p^c-1)/temp, ZZ ) -- fix a
     );
     if o.NoZeroC and c == 0 then
     (
         a = a*(p-1);
-        c = 1;
+        c = 1
     );
-    {a,b,c}
+    (a,b,c)
 )
 
---decomposeFraction( ZZ, ZZ ) := List => o -> (p, t) -> decomposeFraction(p, t/1, o)
-
+decomposeFraction( ZZ, ZZ ) := List => o -> (p, t) -> decomposeFraction(p, t/1, o)
 
 --===================================================================================
 
@@ -107,16 +106,16 @@ decomposeFraction( ZZ, Number ) := List => o -> ( p, t ) ->
 
 --===================================================================================
 
-adicDigit = method( )
+adicDigit = method()
 
 --Gives the e-th digit of the non-terminating base p expansion of x in [0,1].
 adicDigit ( ZZ, ZZ, QQ ) := ZZ => ( p, e, x ) ->
 (
     if p <= 1 then error "adicDigit: Expected first argument to be greater than 1";
     if e <= 0 then error "adicDigit: Expected second argument to be positive";
-    if x < 0 or x > 1 then error "adicDigit: Expected last argument in [0,1]";
+    if x < 0 or x > 1 then error "adicDigit: Expected last argument to be in the interval [0,1]";
     if x == 0 then return 0;
-    lift( ( adicTruncation(p, e, x) - adicTruncation(p, e-1, x) ) * p^e, ZZ )
+    lift( ( adicTruncation( p, e, x ) - adicTruncation( p, e-1, x ) ) * p^e, ZZ )
 )
 
 adicDigit ( ZZ, ZZ, ZZ ) := ZZ => ( p, e, x ) -> adicDigit( p, e, x/1 )
@@ -126,7 +125,7 @@ adicDigit ( ZZ, ZZ, List ) := ZZ => ( p, e, u ) -> apply( u, x -> adicDigit( p, 
 
 --===================================================================================
 
-adicExpansion = method( );
+adicExpansion = method()
 
 --Computes the terminating base p expansion of a positive integer.
 --Gives expansion in reverse... so from left to right it gives
@@ -147,13 +146,13 @@ adicExpansion( ZZ, ZZ, ZZ ) := List => ( p, e, x ) -> adicExpansion( p, e, x/1 )
 adicExpansion( ZZ, ZZ, QQ ) := List => ( p, e, x ) ->
 (
     if p <= 1 then error "adicExpansion: Expected first argument to be greater than 1";
-    if x < 0 or x > 1 then error "adicExpansion: Expected x in [0,1]";
+    if x < 0 or x > 1 then error "adicExpansion: Expected the last argument to be in the interval [0,1]";
     apply( e, i -> adicDigit( p, i+1, x ) )
 )
 
 --===================================================================================
 
-adicTruncation = method( )
+adicTruncation = method()
 
 --Gives the e-th truncation of the non-terminating base p expansion of a rational
 -- number, unless that number is zero.
@@ -181,16 +180,16 @@ adicTruncation ( ZZ, ZZ, List ) := List => ( p, e, u ) ->
 --- The change I made was switching the order of the first two arguments
 baseP1 = ( p, n, e ) ->
 (
-    a:=n//(p^e);
-    answer:=1:a; -- this generates the list (a)
-    m:=n-a*(p^e);
-    f:=e-1;
-    while (f>=0) do
+    a := n // p^e;
+    answer := 1 : a; -- this generates the list (a)
+    m := n - a * p^e;
+    f := e - 1;
+    while f >= 0 do
     (
-        d:=m//(p^f);
-        answer=append(answer,d);
-        m=m-d*(p^f);
-        f=f-1;
+        d := m // p^f;
+        answer = append( answer, d );
+        m = m - d * p^f;
+        f = f - 1
     );
     answer
 )
@@ -200,12 +199,13 @@ baseP1 = ( p, n, e ) ->
 --*************************************************
 --Tests for various types of polynomials
 --*************************************************
+
 --===================================================================================
 
 --isPolynomial(F) checks if F is a polynomial
 isPolynomial = method( TypicalValue => Boolean )
 
-isPolynomial (RingElement) := Boolean => F -> isPolynomialRing( ring F )
+isPolynomial RingElement := Boolean => F -> isPolynomialRing ring F
 
 --===================================================================================
 
@@ -213,7 +213,7 @@ isPolynomial (RingElement) := Boolean => F -> isPolynomialRing( ring F )
 --of positive characteristic
 isPolynomialOverPosCharField = method( TypicalValue => Boolean )
 
-isPolynomialOverPosCharField (RingElement) := Boolean => F ->
+isPolynomialOverPosCharField RingElement := Boolean => F ->
     isPolynomial F and isField( kk := coefficientRing ring F ) and ( char kk ) > 0
 
 --===================================================================================
@@ -221,22 +221,16 @@ isPolynomialOverPosCharField (RingElement) := Boolean => F ->
 --isPolynomialOverFiniteField(F) checks if F is a polynomial over a finite field.
 isPolynomialOverFiniteField = method( TypicalValue => Boolean )
 
-isPolynomialOverFiniteField (RingElement) := Boolean => F ->
-    isPolynomialOverPosCharField( F ) and  (coefficientRing ring F)#?order
+isPolynomialOverFiniteField RingElement := Boolean => F ->
+    isPolynomialOverPosCharField F and (coefficientRing ring F)#?order
 
 --===================================================================================
-
 
 --isPolynomialOverPrimeField(F) checks if F is a polynomial over ZZ/p.
 isPolynomialOverPrimeField = method( TypicalValue => Boolean )
 
-isPolynomialOverPrimeField (RingElement) := Boolean => F ->
-    isPolynomial( F ) and  (coefficientRing ring F) === ZZ/(char ring F)
-
--- use isFinitePrimeField
-
---===================================================================================
-
+isPolynomialOverPrimeField RingElement := Boolean => F ->
+    isPolynomial F and isFinitePrimeField coefficientRing ring F
 
 --===================================================================================
 
@@ -249,13 +243,21 @@ isPolynomialOverPrimeField (RingElement) := Boolean => F ->
 -- maxIdeal returns the ideal generated by the variables of a polynomial ring
 maxIdeal = method( TypicalValue => MonomialIdeal )
 
-maxIdeal ( PolynomialRing ) := MonomialIdeal => R -> monomialIdeal R_*
+maxIdeal PolynomialRing := MonomialIdeal => R -> monomialIdeal R_*
 
-maxIdeal ( QuotientRing ) := MonomialIdeal => R -> ideal R_*
+maxIdeal QuotientRing := MonomialIdeal => R -> ideal R_*
 
 --Not used
---maxIdeal ( RingElement ) := Ideal => f -> maxIdeal (ring f)
+--maxIdeal RingElement := Ideal => f -> maxIdeal ring f
 
-maxIdeal ( Ideal ) := MonomialIdeal => I -> maxIdeal ring I
+maxIdeal Ideal := MonomialIdeal => I -> maxIdeal ring I
+
+--===================================================================================
+
+-- passOptions selects a subset of options from an OptionTable
+passOptions = method()
+
+passOptions ( OptionTable, List ) := (o, L) -> 
+    new OptionTable from apply( L, k -> k => o#k )
 
 --===================================================================================
