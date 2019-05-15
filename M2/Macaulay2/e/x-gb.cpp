@@ -1263,7 +1263,8 @@ const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* re
 
 const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
                          M2_arrayint lo_degree,
-                         M2_arrayint hi_degree
+                         M2_arrayint hi_degree,
+                         int limit
                          )
 {
   const Ring* R = gb2SidedIdeal->get_ring();
@@ -1280,7 +1281,8 @@ const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
         std::unique_ptr<PolyList> result = ncBasis(A->freeAlgebra(),
                                                    G,
                                                    M2_arrayint_to_stdvector<int>(lo_degree),
-                                                   M2_arrayint_to_stdvector<int>(hi_degree));
+                                                   M2_arrayint_to_stdvector<int>(hi_degree),
+                                                   limit);
         return vectorToMatrix(A, *result);
       }
     ERROR("expected a free algebra");

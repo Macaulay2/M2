@@ -1821,7 +1821,8 @@ enum gbTraceValues
 
   const Matrix* rawNCBasis(const Matrix* gb2SidedIdeal,
                            M2_arrayint lo_degree,
-                           M2_arrayint hi_degree
+                           M2_arrayint hi_degree,
+                           int limit
                            );
   
   /*******************************************

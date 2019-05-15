@@ -895,7 +895,8 @@ TEST ///
   I = ideal(a^2 - b^2)
   NCGB(I, 1000)
   A = R/I
-  ncBasis({10}, {10}, A)
+  assert(numcols ncBasis({10}, {10}, A) == 11)
+  numcols ncBasis({10000},{10000},A)
 
   S = QQ{u,v,Degrees=>{2,3}}
   I = ideal(u*v + v*u)

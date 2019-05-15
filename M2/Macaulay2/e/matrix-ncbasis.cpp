@@ -48,7 +48,8 @@ private:
   NCBasis(const FreeAlgebra& A,
           const ConstPolyList& gb,
           const std::vector<int>& lo_degree,
-          const std::vector<int>& hi_degree
+          const std::vector<int>& hi_degree,
+          int limit
           )
     :
     mFreeAlgebra(A),
@@ -58,7 +59,7 @@ private:
     mCurrentIndex(-1),
     mCurrentHeftValue(0),
     mBasis(new PolyList),
-    mLimit(10000),
+    mLimit(limit),
     mLoHeft(0),
     mHiHeft(-1)
   {
@@ -105,9 +106,10 @@ std::unique_ptr<PolyList> ncBasis(
                                   const FreeAlgebra& A,
                                   const ConstPolyList& gb, // actually, only the lead terms are ever considered
                                   const std::vector<int>& lo_degree, // length 0: means -infinity, i.e. 0.
-                                  const std::vector<int>& hi_degree) // length 0: +infinity
+                                  const std::vector<int>& hi_degree, // length 0: +infinity
+                                  int limit) 
 {
-  return NCBasis::ncBasis(A, gb, lo_degree, hi_degree);
+  return NCBasis::ncBasis(A, gb, lo_degree, hi_degree, limit);
 }
 
 void NCBasis::basis0()
@@ -121,8 +123,6 @@ void NCBasis::basis0()
   // 4. if the degree is equal to hi_degree, then exit (no recursion necessary)
   // 5. for each variable, append the variable to the state monomial, and make recursive call.
 
-  //std::cout << "In basis0" << std::endl;
-  
   Word tmpWord(mMonomial.data(),mMonomial.data() + mCurrentIndex + 1);
   int notUsed;
   
