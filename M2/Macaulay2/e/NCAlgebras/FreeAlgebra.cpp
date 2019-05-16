@@ -4,24 +4,7 @@
 
 using ExponentVector = int*;
 
-class FreeAlgebraHeap
-{
-  const FreeAlgebra& F;  // Our elements will be vectors in here
-  Poly heap[GEOHEAP_SIZE];
-  int top_of_heap;
-
- public:
-  FreeAlgebraHeap(const FreeAlgebra& F);
-  ~FreeAlgebraHeap();
-
-  void add(const Poly& f);
-  void value(Poly& result);  // Returns the linearized value, and resets the FreeAlgebraHeap.
-
-  const Poly& debug_list(int i) const
-  {
-    return heap[i];
-  }  // DO NOT USE, except for debugging purposes!
-};
+// FreeAlgebraHeap functions
 
 FreeAlgebraHeap::FreeAlgebraHeap(const FreeAlgebra& FF)
   : F(FF), top_of_heap(-1)
@@ -76,30 +59,14 @@ void FreeAlgebraHeap::value(Poly& result)
   F.clear(tmp1);
 }
 
-class SumCollectorFreeAlgebraHeap : public SumCollector
-{
-  FreeAlgebraHeap H;
-
- public:
-  SumCollectorFreeAlgebraHeap(const FreeAlgebra& F) : H(F) {}
-  ~SumCollectorFreeAlgebraHeap() {}
-  virtual void add(ring_elem f1)
-  {
-    auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
-    H.add(*f);
-  }
-  virtual ring_elem getValue()
-  {
-    Poly* result = new Poly;
-    H.value(*result);
-    return ring_elem(reinterpret_cast<void *>(result));
-  }
-};
+// SumCollector functions
 
 SumCollector* FreeAlgebra::make_SumCollector() const
 {
   return new SumCollectorFreeAlgebraHeap(*this);
 }
+
+// FreeAlgebra starts here
 
 FreeAlgebra* FreeAlgebra::create(const Ring* K,
 				 const std::vector<std::string>& names,
@@ -598,12 +565,12 @@ void FreeAlgebra::power(Poly& result, const Poly& f, mpz_ptr n) const
 }
 
 ring_elem FreeAlgebra::eval(const RingMap *map,
-                            const Poly& f,
-                            int first_var) const
+                       const Poly& f,
+                       int first_var) const
 {
   // map: R --> S, this = R.
-  // f is an ele ment in R
-  // return an element of S.
+  // f is an element in R
+  // return an element of S - we don't know anything about S
 
   // plan: do it as in polyring:
   //  cast f to a Poly
@@ -626,7 +593,6 @@ ring_elem FreeAlgebra::eval(const RingMap *map,
   ring_elem result = H->getValue();
   return result;
 }
-
 
 void FreeAlgebra::makeMonic(Poly& result, Poly& f) const
 {

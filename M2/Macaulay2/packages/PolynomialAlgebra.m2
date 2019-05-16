@@ -848,6 +848,13 @@ TEST ///
   assert(monoms * cfs == M)  
 
   sub(M, R) -- NOT CORRECT
+  map(R,A) -- gives the 0 map
+  map(A,R) -- ok
+  sub(M, vars R) -- ok
+  
+  lift(M,R)
+  phi = map(R,A,vars R)
+  phi M
   
 -- TODO
 -*
@@ -899,6 +906,65 @@ TEST ///
   assert(numcols ncBasis(10,A) == 66)
 ///
 
+TEST ///
+-*
+  restart
+  debug needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}}
+  -- R = QQ{a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}, Heft=>{1,1,1}} -- not working
+  assert(degree a == {1,0,0})
+  assert(degree (a^2 + b^2 + c^2) == {2,2,2})
+  assert not isHomogeneous (a^2 + b^2 + c^2)
+  assert isHomogeneous a^2
+///
+
+TEST ///
+-*
+  restart
+  debug needsPackage "PolynomialAlgebra"
+*-
+  -- note that variables in the base of a FreeAlgebra commute
+  -- with the variables adjoined.  I.e. QQ{x}{y} is the same as QQ[x,y]
+  R = QQ[x,y]/ideal{x^2,x*y,y^2}
+  S = R{a,b}
+  T = S{c,d}
+  assert(a*c == c*a)
+  assert(x*c == c*x)
+  f = x*c + y*d
+  assert(f^2 == 0)
+  assert(x*f == 0)
+  assert(numcols ncBasis(2,S) == 4)
+  assert(numcols ncBasis(2,T) == 4)
+  assert(numcols ncBasis(0,S) == 1)
+  ncBasis(-1,S) -- bug
+  g = (a*c + b*d)^2
+  assert(#(terms g) == 4)
+///  
+
+TEST ///
+-*
+  restart
+  debug needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{a,b,c,t}
+  I = ideal {a*b - c*t, b*c - a*t, c*a - b*t, a*t - t*a, b*t - t*b, c*t - t*c}
+  J = NCGB(I,2)
+  J = NCGB(I,3)
+  J = NCGB(I,4)
+  I2 = I + ideal {a^2 - c^2, b^2 - c^2, c^2*b - t*a*c, a*c^2 - t*c*b, b*a^2 - t*a*c, c^3 - t*b*a, c*b^2 - t*b*a}
+  J2 = NCGB(I2,4)
+  I3 = ideal J2_(toList(0..10)) + ideal {a*c*b - b*a*c, b*a*c - c*b*a}
+  J3 = NCGB(I3,4)
+  J3 = NCGB(I3,10)
+  compress sub(J3, {t => 1})
+  
+  R = QQ{a,b,Degrees=>{2,3}}
+  assert(leadTerm (a+b) == b)  -- should be b
+  assert(leadTerm (a^3 + b^2) == a^3)-- should be a^3 (which it is)
+  
+///
+
 end--
 
 restart
@@ -908,11 +974,21 @@ uninstallPackage "PolynomialAlgebra"
 viewHelp "PolynomialAlgebra"
 check "PolynomialAlgebra"
 
--- XXX
-restart
-needsPackage "PolynomialAlgebra"
-debug Core
-check PolynomialAlgebra
+-- TODO:
+-- Engine code:
+-- 1. eval for FreeAlgebraQuotient, separate heap from FreeAlgebra for use in FreeAlgebraQuotient
+-- 2. PolyWithPos for reduction code/use heaps there as well
+-- 3. Inhomogeneous GBs (rabbit)
+-- 4. ncBasis in multidegree
+-- 5. heft vectors for multidegrees
+-- 6. bug with ncBasis(-1,ring)
+-- 7. How to tell the difference between finding the entire GB and hitting a degree cap
+-- 8. Add weight vectors for more general monomial orders (elimination, etc)
+-- Top Level Code:
+-- 1. Documentation
+-- 2. Tests
+-- 3. Convert left/rightMult to new basis code
+-- 4. Convert central/normal elements to new basis code
 
 -- play with listForm
 -- calls rawPairs, which calls IM2_RingElement_list_form in engine

@@ -204,6 +204,47 @@ private:
   Poly mPoly;
 };
 
+// FreeAlgebraHeap and the SumCollector below are used for eval and mult
+
+class FreeAlgebraHeap
+{
+  const FreeAlgebra& F;  // Our elements will be vectors in here
+  Poly heap[GEOHEAP_SIZE];
+  int top_of_heap;
+
+ public:
+  FreeAlgebraHeap(const FreeAlgebra& F);
+  ~FreeAlgebraHeap();
+
+  void add(const Poly& f);
+  void value(Poly& result);  // Returns the linearized value, and resets the FreeAlgebraHeap.
+
+  const Poly& debug_list(int i) const
+  {
+    return heap[i];
+  }  // DO NOT USE, except for debugging purposes!
+};
+
+class SumCollectorFreeAlgebraHeap : public SumCollector
+{
+  FreeAlgebraHeap H;
+
+ public:
+  SumCollectorFreeAlgebraHeap(const FreeAlgebra& F) : H(F) {}
+  ~SumCollectorFreeAlgebraHeap() {}
+  virtual void add(ring_elem f1)
+  {
+    auto f = reinterpret_cast<const Poly*>(f1.get_Poly());
+    H.add(*f);
+  }
+  virtual ring_elem getValue()
+  {
+    Poly* result = new Poly;
+    H.value(*result);
+    return ring_elem(reinterpret_cast<void *>(result));
+  }
+};
+
 #endif
 
 // Local Variables:

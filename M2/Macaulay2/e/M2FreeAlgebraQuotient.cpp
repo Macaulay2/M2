@@ -321,9 +321,8 @@ ring_elem M2FreeAlgebraQuotient::eval(const RingMap *map, const ring_elem ff, in
   // return an element of S.
 
   auto f = reinterpret_cast<const Poly*>(ff.get_Poly());
-  // TODO  auto g = freeAlgebraQuotient().eval(map, f, first_var);
-  auto g = new Poly; // TODO: this is a place holder until previous line works.
-  return ring_elem(reinterpret_cast<void*>(g));
+  auto g = freeAlgebraQuotient().eval(map, *f, first_var);
+  return g;
 }
 
 engine_RawArrayPairOrNull M2FreeAlgebraQuotient::list_form(const Ring *coeffR, const ring_elem ff) const

@@ -139,6 +139,13 @@ void FreeAlgebraQuotient::power(Poly& result, const Poly& f, mpz_ptr n) const
   normalizeInPlace(result);
 }
 
+ring_elem FreeAlgebraQuotient::eval(const RingMap *map, const Poly& f, int first_var) const
+{
+  // For now, just call the freeAlgebra eval function, and normalize at the end.
+  // Not sure there is a better way unless we move part of eval out.
+  return mFreeAlgebra.eval(map,f,first_var);
+}
+
 void FreeAlgebraQuotient::elem_text_out(buffer &o,
                                 const Poly& f,
                                 bool p_one,
