@@ -95,13 +95,8 @@ doc ///
 doc ///
     Key
     	"differentiating circuits"
-    	(diff, GateMatrix, GateMatrix)
-     	(diff, InputGate, DetGate)    
-     	(diff, InputGate, DivideGate) 
-     	(diff, InputGate, GateMatrix) 
-     	(diff, InputGate, InputGate)  
-     	(diff, InputGate, ProductGate)
-     	(diff, InputGate, SumGate)    
+     	(diff, InputGate, Gate)    
+     	(diff, InputGate, GateMatrix)    
     Description
         Text
     	    The output of these commands is generally a circuit for evaluating the derivative of the second argument with respect to the first.

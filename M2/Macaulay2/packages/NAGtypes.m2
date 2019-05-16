@@ -10,6 +10,7 @@ newPackage(
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
+     PackageExports => {"ReesAlgebra"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 
@@ -46,7 +47,7 @@ export {
      -- point sets 
      "PointSet", "pointSet", "unionPointSet", "differencePointSet",
      -- polynomial systems
-     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
      "polySystem", 
      -- "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
