@@ -4,6 +4,14 @@
 #include "polyring.hpp"
 #include "Polynomial.hpp"
 
+// TODO for weights in orders
+//  1. make sure it is input correctly from front end.
+//  2. make sure that monomials have weight function values put in.
+//  3. make sure compare uses that info
+//  4.
+// format
+// [total length] wt0 wt1 ... w(tr-1) w0 w1  ... ws
+
 class FreeMonoid : public our_new_delete
 {
   // types of monomials: (MES: just note to ourselves: remove it eventually).
@@ -16,13 +24,17 @@ private:
   const std::vector<std::string> mVariableNames;
   const PolynomialRing* mDegreeRing;
   const std::vector<int> mDegrees;
+  const std::vector<int> mWeightVectors;
+  const int mNumWeights;
   VECTOR(const int*) mDegreeOfVar;
 public:
   FreeMonoid(
-           const std::vector<std::string>& variableNames,
-           const PolynomialRing* degreeRing,
-           const std::vector<int>& degrees);
-
+             const std::vector<std::string>& variableNames,
+             const PolynomialRing* degreeRing,
+             const std::vector<int>& degrees,
+             const std::vector<int>& wtvecs
+             );
+  
   // Informational
   const std::vector<std::string>& variableNames() const { return mVariableNames; }
   const std::vector<int>& flattenedDegrees() const { return mDegrees; }
@@ -73,7 +85,10 @@ public:
   // [len deg v1 v2 v3 ... vn], where each ei > 0, (in 'varpower' format)
   // where len = n+2 and deg = sum of the degrees of the vi 
   void fromMonomial(const int* monom, MonomialInserter& result) const;
-  
+
+private:
+  int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }
+  void setWeights(const Monom&m ) const; // assumes length and word are already in place.
 };
 
 #endif

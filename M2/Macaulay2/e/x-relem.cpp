@@ -207,9 +207,10 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
 }
 
 const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
-                                                   M2_ArrayString names,
-                                                   const Ring* degreeRing,
-                                                   M2_arrayint degrees)
+                                               M2_ArrayString names,
+                                               const Ring* degreeRing,
+                                               M2_arrayint degrees,
+                                               M2_arrayint wtvecs)
 {
   try {
     if (coefficientRing == nullptr)
@@ -224,9 +225,10 @@ const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
         return nullptr;
       }
     const M2FreeAlgebra* result = M2FreeAlgebra::create(coefficientRing,
-                                                                M2_ArrayString_to_stdvector(names),
-                                                                P,
-                                                                M2_arrayint_to_stdvector<int>(degrees));
+                                                        M2_ArrayString_to_stdvector(names),
+                                                        P,
+                                                        M2_arrayint_to_stdvector<int>(degrees),
+                                                        M2_arrayint_to_stdvector<int>(wtvecs));
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }
@@ -259,14 +261,6 @@ const Ring* /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix* GB, int max
     ERROR(e.what());
     return NULL;
   }
-}
-
-const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
-                                               M2_ArrayString names,
-                                               const Ring* degreeRing,
-                                               M2_arrayint degrees)
-{
-  return rawRingM2FreeAlgebra(coefficientRing, names, degreeRing, degrees);
 }
 
 const Ring /* or null */ *IM2_Ring_frac(const Ring *R)

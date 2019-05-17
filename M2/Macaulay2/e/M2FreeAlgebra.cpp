@@ -39,13 +39,14 @@ ring_elem M2FreeAlgebraOrQuotient::fromModuleMonom(const ModuleMonom& m) const
 
 
 M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
-                                             const std::vector<std::string>& names,
-                                             const PolynomialRing* degreeRing,
-                                             const std::vector<int>& degrees
-                                             )
+                                     const std::vector<std::string>& names,
+                                     const PolynomialRing* degreeRing,
+                                     const std::vector<int>& degrees,
+                                     const std::vector<int>& wtvecs
+                                     )
 {
   assert(K != nullptr);
-  auto F = std::unique_ptr<FreeAlgebra>(FreeAlgebra::create(K, names, degreeRing, degrees));
+  auto F = std::unique_ptr<FreeAlgebra>(FreeAlgebra::create(K, names, degreeRing, degrees, wtvecs));
   M2FreeAlgebra* result = new M2FreeAlgebra(std::move(F));
   result->initialize_ring(K->characteristic(), degreeRing, nullptr);
   result->zeroV = result->from_long(0);

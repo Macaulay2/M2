@@ -196,25 +196,30 @@ RingElement /* or null */ *RingElement::get_coeff(const Ring *coeffR,
 
 Monomial *RingElement::lead_monom(int nvars) const
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected polynomial ring");
-      return 0;
-    }
   if (is_zero())
     {
-      ERROR("zero polynomial has no lead monomial");
-      return 0;
+      ERROR("the zero element has no lead monomial");
+      return nullptr;
     }
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != nullptr)
+    {
+      intarray resultvp;
+      Nterm *t = get_value();
 
-  intarray resultvp;
-  Nterm *t = get_value();
-
-  int *exp = newarray_atomic(int, nvars);
-  P->lead_logical_exponents(nvars, t, exp);
-  varpower::from_ntuple(nvars, exp, resultvp);
-  return Monomial::make(resultvp.raw());
+      int *exp = newarray_atomic(int, nvars);
+      P->lead_logical_exponents(nvars, t, exp);
+      varpower::from_ntuple(nvars, exp, resultvp);
+      return Monomial::make(resultvp.raw());
+    }
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(R);
+  if (Q != nullptr)
+    {
+      ERROR("not implemented yet");
+      return nullptr;
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }

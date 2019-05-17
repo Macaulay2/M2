@@ -298,10 +298,11 @@ extern "C" {
   const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
                                                  M2_ArrayString names,
                                                  const Ring* degreeRing,
-                                                 M2_arrayint degrees);
+                                                 M2_arrayint degrees,
+                                                 M2_arrayint wtvecs);
   /* coefficientRing will be the allowed coefficients of our non-comm polynomials.
-     Currently: all variables have degree 1, and the monomial order is the graded lex order.
-     The degreeRing should be a poly ring in 1 variable.
+     wtvecs is a flattened array of all of the weight vectors for the monomial order,
+     where contains the first weightvector, then second weightvector, etc.
   */
 
   const Ring* /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix* GB, int maxdeg);

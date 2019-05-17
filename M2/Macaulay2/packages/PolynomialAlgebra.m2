@@ -58,27 +58,18 @@ toString FreeAlgebra := R -> (
     -- else toString expression R
     )
 
--- Currently, we are using findSymbols in m2/ofcm.m2 instead of this.
-sequenceToVariableSymbols = args -> (
-    variables := splice args;
-    v := flatten toList apply(variables, x -> if class x === MutableList then toList x else x);
-    for v0 in v list (
-	    try baseName v0
-	    else if instance(v0,String) and match("[[:alnum:]$]+",v0) then getSymbol v0
-	    else error ("name " | v0 | " not usable as a variable")
-       )
+combineWeightsAndDegree = (nvars, wtvecs, degvector) -> (
+    -- nvars: ZZ
+    -- wtvecs: List (of lists of ZZ's)
+    -- degvector: List (of lists of ZZ's)
+    -- wtvecs: should be a list lists of length nvars, consisting of all ints.
+    -- return value: List of lists of (small) ZZ's
+    wtvecs = processWeights(nvars, wtvecs);
+    if nvars =!= #degvector then error "expected a degree for each variable";
+    wtd := if #degvector#0 == 1 and all(degvector, d -> d#0 > 0) then flatten degvector
+           else for i from 0 to nvars-1 list 1;
+    append(wtvecs, wtd)
     )
-
--- MES: remove this older code:
--* getVariableSymbols = method()
-getVariableSymbols List := variables -> (
-    genSymbols := sequenceToVariableSymbols variables;
-
-    << "symbols: " << genSymbols << endl;
-    --newNCAlgebra(A, v)
-    genSymbols
-    )
-*-
 
 -- TODO (11 Jan 2017 MS+FM), now (19 Dec 2017 MS+FM), and again Dec 2018...!
 --   1. handle multigradings
@@ -101,16 +92,17 @@ getVariableSymbols List := variables -> (
 --   - add in e.g. leadMonomial, support.  
 Ring List := (A, args) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
-   opts := new OptionTable from {Degrees=>null, DegreeRank=>null};
+   opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}};
    (opts,args) = override(opts,toSequence args);
    varList := args;
    if not (A.?Engine and A.Engine) then
        error "expected coefficient ring handled by the engine";
-   --varSymbols := sequenceToVariableSymbols toSequence varList;
    varSymbols := findSymbols toSequence varList;
    if #varSymbols == 0 then error "Expected at least one variable.";
    (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
-   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs);
+   -- now check correctness of weights, flatten them
+   wtvecs := combineWeightsAndDegree(#varSymbols, opts.Weights, degs);
+   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs, flatten wtvecs);
    R := new FreeAlgebra from {
        (symbol RawRing) => rawR,
        (symbol generators) => {},
@@ -120,6 +112,7 @@ Ring List := (A, args) -> (
        (symbol degreesRing) => degreesRing degrk,
        (symbol degreeLength) => degrk,
        (symbol degrees) => degs,
+       (symbol Weights) => wtvecs,
        (symbol isCommutative) => false,
        (symbol CoefficientRing) => A,
        (symbol cache) => new CacheTable from {},
@@ -151,6 +144,7 @@ Ring List := (A, args) -> (
 		    ) (rawP#0, rawP#1 / rawSparseListFormMonomial)
         );
    net R := f -> net expression f;
+   -- TODO: implement this: leadMonomial R := f -> new R from rawTerm(raw R, raw 1_A, rawLeadMonomial(n, raw f));
    R
    );
 
@@ -556,6 +550,9 @@ TEST ///
   assert(someTerms(f,0,2) == f)
   assert(leadMonomial f == b^4) -- FAILS: needs a monoid...
   assert(isHomogeneous f)
+
+  debug Core
+  rawLeadMonomial(numgens R, raw f)
   
   g = b*c*b-b
   assert not isHomogeneous g
@@ -962,7 +959,10 @@ TEST ///
   R = QQ{a,b,Degrees=>{2,3}}
   assert(leadTerm (a+b) == b)  -- should be b
   assert(leadTerm (a^3 + b^2) == a^3)-- should be a^3 (which it is)
-  
+
+  R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1}}}
+  R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1,1}}}
+  R = QQ{a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}}  
 ///
 
 end--

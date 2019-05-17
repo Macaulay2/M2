@@ -69,13 +69,14 @@ SumCollector* FreeAlgebra::make_SumCollector() const
 // FreeAlgebra starts here
 
 FreeAlgebra* FreeAlgebra::create(const Ring* K,
-				 const std::vector<std::string>& names,
-				 const PolynomialRing* degreeRing,
-				 const std::vector<int>& degrees
-				 )
+                                 const std::vector<std::string>& names,
+                                 const PolynomialRing* degreeRing,
+                                 const std::vector<int>& degrees,
+                                 const std::vector<int>& wtvecs
+                                 )
 {
   assert(K != nullptr);
-  FreeMonoid *M = new FreeMonoid(names, degreeRing, degrees);
+  FreeMonoid *M = new FreeMonoid(names, degreeRing, degrees, wtvecs);
   FreeAlgebra* result = new FreeAlgebra(K, M);
 
   return result;
@@ -704,11 +705,13 @@ void FreeAlgebra::lead_word(Word& result, const Poly& f) const
 
 void FreeAlgebra::lead_word_prefix(Word& result, const Poly& f, int endIndex) const
 {
+  // TODO   // something like: freeMonoid.referenceToWord(result, f.begin().monom());
   result.init(f.cbegin().monom().begin() + 2,f.cbegin().monom().begin() + 2 + endIndex);
 }
 
 void FreeAlgebra::lead_word_suffix(Word& result, const Poly& f, int beginIndex) const
 {
+  // TODO fix +2...
   result.init(f.cbegin().monom().begin() + 2 + beginIndex, f.cbegin().monom().end());
 }
 

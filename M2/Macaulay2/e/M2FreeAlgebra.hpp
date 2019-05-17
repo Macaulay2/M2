@@ -45,10 +45,11 @@ private:
 
 public:
   static M2FreeAlgebra* create(const Ring* K,
-                                   const std::vector<std::string>& names,
-                                   const PolynomialRing* degreeRing,
-                                   const std::vector<int>& degrees
-                                   );
+                               const std::vector<std::string>& names,
+                               const PolynomialRing* degreeRing,
+                               const std::vector<int>& degrees,
+                               const std::vector<int>& wtvecs
+                               );
 
   const FreeAlgebra& freeAlgebra() const { return *mFreeAlgebra; }
   const FreeMonoid& monoid() const { return freeAlgebra().monoid(); }
