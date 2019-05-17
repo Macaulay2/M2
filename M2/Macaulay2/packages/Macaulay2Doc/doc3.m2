@@ -1010,6 +1010,7 @@ document { Key => {MultigradedBettiTally,
       2 * oo
       lift(oo,ZZ)
     ///,
+    "This feature was implemented by Mahrud Sayrafi based on earlier work by Gregory G. Smith.",
     SeeAlso => { BettiTally }
     }
 
