@@ -17,7 +17,11 @@ FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
 {
    // Build the word table for the reduction
    for (auto f : *mGroebner)
-     mWordTable.insert(f->cbegin().monom());
+     {
+       Word tmp;
+       A.monoid().wordFromMonom(tmp,f->cbegin().monom());
+       mWordTable.insert(tmp);
+     }
 }
 
 void FreeAlgebraQuotient::normalizeInPlace(Poly& f) const
