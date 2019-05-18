@@ -946,15 +946,16 @@ TEST ///
 *-
   R = QQ{a,b,c,t, Weights=>{{1,1,1,0}}}
   I = ideal {a*b - c*t, b*c - a*t, c*a - b*t, a*t - t*a, b*t - t*b, c*t - t*c}
-  J = NCGB(I,2) 
-  J = NCGB(I,3)
-  J = NCGB(I,4)
-  I2 = I + ideal {a^2 - c^2, b^2 - c^2, c^2*b - t*a*c, a*c^2 - t*c*b, b*a^2 - t*a*c, c^3 - t*b*a, c*b^2 - t*b*a}
-  J2 = NCGB(I2,4)
-  I3 = ideal J2_(toList(0..10)) + ideal {a*c*b - b*a*c, b*a*c - c*b*a}
-  J3 = NCGB(I3,4)
-  J3 = NCGB(I3,10)
-  compress sub(J3, {t => 1})
+  J2 = NCGB(I,2) 
+  J3 = NCGB(I,3)
+  J4 = NCGB(I,4)
+  I2 = ideal J2 + ideal {a^2-c^2,b^2-c^2,c^2*b - t*a*c, a*c^2 - t*c*b, b*a^2-t*a*c, c^3 - t*b*a, c*b^2 - t*b*a}
+  J4 = NCGB(I2,4)
+  I3 = ideal J4_(toList(0..10)) + ideal {a*c*b - b*a*c, b*a*c - c*b*a}
+  J4 = NCGB(I3,4)
+  J5 = NCGB(I3,5)
+  J6 = NCGB(I3,6)
+  compress sub(J6, {t => 1}) -- looks like it is working :)
   
   R = QQ{a,b,Degrees=>{2,3}}
   assert(leadTerm (a+b) == b)  -- should be b
