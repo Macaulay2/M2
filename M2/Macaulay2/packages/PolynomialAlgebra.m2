@@ -342,7 +342,8 @@ TEST ///
 ///
 
 TEST ///
-  --- equality   R = QQ{a,b,c}
+  --- equality
+  R = QQ{a,b,c}
   assert(a != b)
   assert(a == a)
   assert(b*a + a*b + b*a == 2*b*a + a*b)

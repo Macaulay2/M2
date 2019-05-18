@@ -66,9 +66,6 @@ void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result
     result.push_back(*i);
   for (auto i = m2.begin()+mNumWeights+1; i != m2.end(); ++i)
     result.push_back(*i);
-
-  //  std::copy(std::begin(m1) + 2, std::end(m1), result);
-  //  std::copy(std::begin(m2) + 2, std::end(m1), result);
 }
 
 void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
@@ -82,9 +79,6 @@ void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, Monomi
     result.push_back(*i);
   for (auto i = m3.begin()+mNumWeights+1; i != m3.end(); ++i)
     result.push_back(*i);
-
-  //  std::copy(std::begin(m1) + 2, std::end(m1), result);
-  //  std::copy(std::begin(m2) + 2, std::end(m1), result);
 }
 
 int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
@@ -104,7 +98,7 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   if (m1WordLen > m2WordLen) return GT;
   if (m1WordLen < m2WordLen) return LT;
   // at this stage, they have the same weights and word length, so use lex order
-  for (int j = mNumWeights+1; j < m1WordLen; ++j)
+  for (int j = mNumWeights+1; j < m1WordLen + mNumWeights + 1; ++j)
     {
       if (m1[j] > m2[j]) return LT;
       if (m1[j] < m2[j]) return GT;
@@ -150,8 +144,8 @@ void FreeMonoid::elem_text_out(buffer& o, const Monom& m) const
 // This function should reverse the order of the varpower terms.
 // as the front end reverses the order of terms in a monomial.
 void FreeMonoid::getMonomial(Monom m, std::vector<int>& result) const
-// Input is of the form: [len degree v1 v2 ... vn]
-//                        where len = n + 2
+// Input is of the form: [len wt1 .. wtm v1 v2 ... vn]
+//                        where len = m + n + 1, wt are the weights, and vs are the variables in the word
 // The output is of the following form, and appended to result.
 // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 // and the order is that of m.  that is: a*b is encoded as [5, 0 1, 1 1] (commas are only for clarity)
@@ -160,7 +154,7 @@ void FreeMonoid::getMonomial(Monom m, std::vector<int>& result) const
   result.push_back(0);
 
   auto word_length = wordLength(m);
-  auto word_ptr = m + mNumWeights+1;
+  auto word_ptr = m + mNumWeights + 1;
   for (auto j = 0; j < word_length; j++)
     {
       int curvar = word_ptr[j];
@@ -179,8 +173,8 @@ void FreeMonoid::getMonomial(Monom m, std::vector<int>& result) const
 }
 
 void FreeMonoid::getMonomialReversed(Monom m, std::vector<int>& result) const
-// Input is of the form: [len degree v1 v2 ... vn]
-//                        where len = n + 2
+// Input is of the form: [len wt1 .. wtm v1 v2 ... vn]
+//                        where len = m + n + 1, wt are the weights, and vs are the variables in the word
 // The output is of the following form, and appended to result.
 // [2n+1 v1 e1 v2 e2 ... vn en], where each ei > 0, (in 'varpower' format)
 // and the order is the OPPOSITE of m.  that is: a*b is encoded as [5, 1 1, 0 1] (commas are only for clarity)
@@ -210,8 +204,8 @@ void FreeMonoid::getMonomialReversed(Monom m, std::vector<int>& result) const
 void FreeMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
   // Input is of the form: [2n+1 v1 e1 v2 e2 ... vn en] (in 'varpower' format)
   // The output is of the following form, and stored in result.
-  // [len deg v1 v2 v3 ... vn]
-  // where len = n+2 and deg = sum of the degrees of the vi 
+  // [len wt1 wt2 ... wtm v1 v2 v3 ... vn]
+  // where len = m+n+1 and wt1 .. wtm are the weights and v1 .. vn is the word 
 {
   int inputMonomLength = *monom;
   int startMon = static_cast<int>(result.size());  
