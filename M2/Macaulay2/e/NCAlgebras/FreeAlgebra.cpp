@@ -164,25 +164,26 @@ void FreeAlgebra::var(Poly& result, int v) const
 
 void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const std::vector<int>& word) const
 {
-  auto& resultCoeff = result.getCoeffInserter();
-  auto& resultMonom = result.getMonomInserter();
-  resultCoeff.push_back(coeff);
-  resultMonom.push_back(word.size() + 2);
-  resultMonom.push_back(word.size());
-  for (auto v : word) resultMonom.push_back(v);  // std::insert?
+  Word tmpWord;
+  tmpWord.init(word.data(),word.data() + word.size());
+  from_word(result,coeff,tmpWord);
 }
 
-void FreeAlgebra::from_word(Poly& result, const Word& word) const
+void FreeAlgebra::from_word(Poly& result, ring_elem coeff, const Word& word) const
 {
   auto& resultCoeff = result.getCoeffInserter();
   auto& resultMonom = result.getMonomInserter();
-  resultCoeff.push_back(coefficientRing()->from_long(1));
-  resultMonom.push_back(word.size() + 2);
-  resultMonom.push_back(word.size());
-  for (auto a : word) resultMonom.push_back(a);
+  resultCoeff.push_back(coeff);
+
+  monoid().monomInsertFromWord(resultMonom,word);
 }
 
 void FreeAlgebra::from_word(Poly& result, const std::vector<int>& word) const
+{
+  from_word(result, coefficientRing()->from_long(1), word);
+}
+
+void FreeAlgebra::from_word(Poly& result, const Word& word) const
 {
   from_word(result, coefficientRing()->from_long(1), word);
 }
@@ -700,19 +701,17 @@ bool FreeAlgebra::multi_degree(const Poly& f,
 
 void FreeAlgebra::lead_word(Word& result, const Poly& f) const
 {
-  lead_word_prefix(result, f, *f.cbegin().monom().begin() - 2);
+  monoid().wordFromMonom(result,f.cbegin().monom());
 }
 
 void FreeAlgebra::lead_word_prefix(Word& result, const Poly& f, int endIndex) const
 {
-  // TODO   // something like: freeMonoid.referenceToWord(result, f.begin().monom());
-  result.init(f.cbegin().monom().begin() + 2,f.cbegin().monom().begin() + 2 + endIndex);
+  monoid().wordPrefixFromMonom(result,f.cbegin().monom(),endIndex);
 }
 
 void FreeAlgebra::lead_word_suffix(Word& result, const Poly& f, int beginIndex) const
 {
-  // TODO fix +2...
-  result.init(f.cbegin().monom().begin() + 2 + beginIndex, f.cbegin().monom().end());
+  monoid().wordSuffixFromMonom(result,f.cbegin().monom(),beginIndex);
 }
 
 // Local Variables:

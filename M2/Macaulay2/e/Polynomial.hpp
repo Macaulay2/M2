@@ -25,6 +25,7 @@ struct Monom
   Monom(const int* value) : mValue(value) {}
   //  const int* operator*() const { return mValue; }
   const int* operator+(int i) const { return mValue+i; }
+
   int operator[](int i) const { return mValue[i]; }
 
   int size() const { return *mValue; }

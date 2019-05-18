@@ -3,6 +3,7 @@
 
 #include "polyring.hpp"
 #include "Polynomial.hpp"
+#include "WordTable.hpp"
 
 // TODO for weights in orders
 //  1. make sure it is input correctly from front end.
@@ -86,9 +87,18 @@ public:
   // where len = n+2 and deg = sum of the degrees of the vi 
   void fromMonomial(const int* monom, MonomialInserter& result) const;
 
+  // these functions create a Word from the (prefix/suffix of) a Monom and visa versa
+  void wordFromMonom(Word& result, const Monom& m) const;
+  void wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const;
+  void wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const;
+  void monomInsertFromWord(MonomialInserter& result, const Word& w) const;
+  
 private:
   int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }
-  void setWeights(const Monom&m ) const; // assumes length and word are already in place.
+  void setWeights(Monom&m ) const; // assumes length and word are already in place.
+
+  int weightOfVar(int v, int wt) const { return mWeightVectors[v+wt*numVars()]; }
+
 };
 
 #endif

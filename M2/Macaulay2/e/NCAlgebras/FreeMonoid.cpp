@@ -11,7 +11,6 @@ FreeMonoid::FreeMonoid(
     mWeightVectors(wtvecs),
     mNumWeights(wtvecs.size() / variableNames.size())
 {
-  auto nvars = numVars();
   auto ndegrees = degreeMonoid().n_vars();
   assert(nvars * ndegrees == mDegrees.size());
 
@@ -33,7 +32,7 @@ void FreeMonoid::var(int v, MonomialInserter& m) const
 {
   m.push_back(mNumWeights+2);
   for (int i=0; i<mNumWeights; ++i)
-    m.push_back(mWeightVectors[v+i*numVars()]);
+    m.push_back(weightOfVar(v,i));
   m.push_back(v);
 }
 
@@ -90,13 +89,22 @@ void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, Monomi
 
 int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
 {
-  // TODO: rewrite with mNumWeights
-  
-  // compare
-  if (m1[1] > m2[1]) return GT;
-  if (m1[1] < m2[1]) return LT;
-  // at this stage, they have the same degree, so use lex order
-  for (int j = 2; j < m1[0]; j++)
+  // order of events:
+  // compare weights first
+  // then compare word length
+  // then compare with lex
+
+  for (int j = 1; j <= mNumWeights; ++j)
+    {
+      if (m1[j] > m2[j]) return GT;
+      if (m1[j] < m2[j]) return LT;
+    }
+  int m1WordLen = wordLength(m1);
+  int m2WordLen = wordLength(m2);  
+  if (m1WordLen > m2WordLen) return GT;
+  if (m1WordLen < m2WordLen) return LT;
+  // at this stage, they have the same weights and word length, so use lex order
+  for (int j = mNumWeights+1; j < m1WordLen; ++j)
     {
       if (m1[j] > m2[j]) return LT;
       if (m1[j] < m2[j]) return GT;
@@ -121,7 +129,7 @@ void FreeMonoid::multi_degree(const Monom& m, int* already_allocated_degree_vect
 void FreeMonoid::elem_text_out(buffer& o, const Monom& m) const
 {
   auto word_length = wordLength(m);
-  auto word_ptr = m + mNumWeights+1;
+  auto word_ptr = m + mNumWeights + 1;
   for (auto j = 0; j < word_length; j++)
     {
       // for now, just output the string.
@@ -180,7 +188,7 @@ void FreeMonoid::getMonomialReversed(Monom m, std::vector<int>& result) const
   auto start = result.size();
   result.push_back(0);
   auto word_length = wordLength(m);
-  auto word_ptr = m + mNumWeights+1;
+  auto word_ptr = m + mNumWeights + 1;
   for (auto j = word_length-1; j >= 0; --j)
     {
       int curvar = word_ptr[j];
@@ -219,12 +227,53 @@ void FreeMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
         }
     }
   result[startMon] = static_cast<int>(result.size() - startMon);
-  setWeights(Monom(result.data()+startMon));
+  Monom tmpMon(result.data()+startMon);
+  setWeights(tmpMon);
 }
 
-void FreeMonoid::setWeights(const Monom&m ) const
+// these functions create a Word from the (prefix/suffix of) a Monom
+void FreeMonoid::wordFromMonom(Word& result, const Monom& m) const
 {
-  // TODO
+  // just call the prefix command on the word length of the monom
+  wordPrefixFromMonom(result,m,wordLength(m));
+}
+
+void FreeMonoid::wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const 
+{
+  result.init(m.begin() + mNumWeights + 1, m.begin() + mNumWeights + 1 + endIndex);
+}
+
+void FreeMonoid::wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const
+{
+  result.init(m.begin() + mNumWeights + 1 + beginIndex, m.end());
+}
+
+void FreeMonoid::monomInsertFromWord(MonomialInserter& result, const Word& word) const
+{
+  result.push_back(word.size() + mNumWeights + 1);
+  for (int j = 0; j < mNumWeights; ++j)
+    result.push_back(0);
+  for (auto a : word) result.push_back(a);
+  Monom tmpMon(result.data());
+  setWeights(tmpMon);
+}
+
+void FreeMonoid::setWeights(Monom& m) const
+{
+  // since Monoms are wrappers to const ints, it seems we need
+  // this line so we can set the weights, but I'm not 100% sure
+  auto monom = const_cast<int*>(m.begin());
+
+  int word_len = wordLength(m);
+  for (int j = 0; j < mNumWeights; ++j)
+      monom[j + 1] = 0;
+  for (int j = 0; j < word_len; ++j)
+    {
+      for (int k = 0; k < mNumWeights; ++k)
+        {
+          monom[k] += weightOfVar(m[j],k);
+        }
+    }
 }
 
 // Local Variables:
