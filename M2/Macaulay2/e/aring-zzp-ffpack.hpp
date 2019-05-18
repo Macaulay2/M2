@@ -13,6 +13,7 @@
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wunused-variable"
 #include <fflas-ffpack/ffpack/ffpack.h>
 #pragma GCC diagnostic pop
 

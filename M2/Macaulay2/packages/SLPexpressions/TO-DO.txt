@@ -1,0 +1,40 @@
+-- Decouple NAGtypes and SLPexpressions
+the only problem is: who exports "evaluate"? 
+
+-- What slows us down?
+not cataloging all gates?
+create several examples of large circuits (1-10 sec to setup)
+
+-- Documentation
+getVarGates
+gatePolynomial -- Tim
+SLProgram
+makeSLProgram -- Tim
+Gate
+InputGate
+GateMatrix
+support -- Tim
+constants -- Tim
+sub -- Tim
+diff -- Tim
+compress
+sumGate
+productGate
+divideGate
+detGate
+
+-- Circuit creation
+gatePolynomial -- currently, has a naive algorithm to produce a circuit for a poly
+gatePolynomial(Strategy=>"optimal evaluation of the support monomials")
+gatePolynomial(Strategy=>"Horner")
+gateMatrix {list of polynomials}
+diff -- has to be provided for any type of Gate
+
+-- Gates of the future
+analytic gates (cos, sin, exp)
+"many-to-many" gates
+constant gates of non-number type (pi, algebraic numbers, described by a subroutine, ...)
+
+-- Naming questions
+evaluate vs value -- value is not used much (rename?)
+sub vs compose -- could sub be more general?   
