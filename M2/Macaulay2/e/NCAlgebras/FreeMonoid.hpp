@@ -39,10 +39,13 @@ public:
   // Informational
   const std::vector<std::string>& variableNames() const { return mVariableNames; }
   const std::vector<int>& flattenedDegrees() const { return mDegrees; }
+
   unsigned int numVars() const { return static_cast<unsigned int>(mVariableNames.size()); }
+  unsigned int numWeights() const { return mNumWeights; }
+
   const PolynomialRing* degreeRing() const { return mDegreeRing; }
   const Monoid& degreeMonoid() const { return * mDegreeRing->getMonoid(); }
-
+  
   // Monomial operations
   using MonomialInserter = std::vector<int>;
 

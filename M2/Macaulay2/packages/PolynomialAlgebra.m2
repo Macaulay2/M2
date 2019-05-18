@@ -944,9 +944,9 @@ TEST ///
   restart
   debug needsPackage "PolynomialAlgebra"
 *-
-  R = QQ{a,b,c,t}
+  R = QQ{a,b,c,t, Weights=>{{1,1,1,0}}}
   I = ideal {a*b - c*t, b*c - a*t, c*a - b*t, a*t - t*a, b*t - t*b, c*t - t*c}
-  J = NCGB(I,2)
+  J = NCGB(I,2) 
   J = NCGB(I,3)
   J = NCGB(I,4)
   I2 = I + ideal {a^2 - c^2, b^2 - c^2, c^2*b - t*a*c, a*c^2 - t*c*b, b*a^2 - t*a*c, c^3 - t*b*a, c*b^2 - t*b*a}

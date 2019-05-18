@@ -5,6 +5,7 @@
 #include <ostream>
 #include <memory>
 
+#include "FreeMonoid.hpp"
 #include "../Polynomial.hpp"
 
 class Word
@@ -14,10 +15,6 @@ public:
 
   // warning: the pointers begin, end, should not go out of scope while this Word is in use.
   Word() : mBegin(nullptr), mEnd(nullptr) {}
-
-  // this constructor is no longer valid since the Monom does not know
-  // how many weights are present.
-  //Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
 
   Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
 

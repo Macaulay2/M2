@@ -129,7 +129,8 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   while (!A.is_zero(reduceeSoFar))
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
-      Word reduceeLM(reduceeSoFar.cbegin().monom());
+      Word reduceeLM;
+      A.monoid().wordFromMonom(reduceeLM,reduceeSoFar.cbegin().monom());
       if (W.subword(reduceeLM,subwordPos))
         {
           // If there is one, perform reduceeSoFar -= coef * left * reducers[index] * right
@@ -177,7 +178,9 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   for (auto& f : reducers)
     {
       auto i = f->cbegin();
-      W.insert(Word(i.monom()));
+      Word tmp;
+      A.monoid().wordFromMonom(tmp,i.monom());
+      W.insert(tmp);
     }
   ConstPolyList result;
   for (auto i = reducees.cbegin(); i != reducees.cend(); ++i)
@@ -206,7 +209,7 @@ auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
   Poly tmp1, tmp2;
   Word prefix, suffix;
   A.lead_word_prefix(prefix, *polyList[polyIndex1], overlapIndex);
-  A.lead_word_suffix(suffix, *polyList[polyIndex2], *(polyList[polyIndex1]->cbegin().monom().begin()) - 2 - overlapIndex);
+  A.lead_word_suffix(suffix, *polyList[polyIndex2], *(polyList[polyIndex1]->cbegin().monom().begin()) - A.monoid().numWeights() - 1 - overlapIndex);
   A.mult_by_term_right(tmp1, *polyList[polyIndex1], A.coefficientRing()->from_long(1), suffix);
   A.mult_by_term_left(tmp2, *polyList[polyIndex2], A.coefficientRing()->from_long(1), prefix);
   A.subtract(*result, tmp1, tmp2);
