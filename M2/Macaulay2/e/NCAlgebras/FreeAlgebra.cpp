@@ -431,8 +431,8 @@ void FreeAlgebra::mult_by_term_right(Poly& result,
                                      const Word& w) const
 {
   std::vector<int> tmp;
-  Word::toAllocatedMonom(tmp,w);
-  Monom tmpMonom(&*tmp.cbegin());
+  monoid().monomInsertFromWord(tmp,w);
+  Monom tmpMonom(tmp.data());
   mult_by_term_right(result,f,c,tmpMonom);
   tmp.clear();
 }
@@ -462,10 +462,10 @@ void FreeAlgebra::mult_by_term_left(Poly& result,
                                     const Word& w) const
 {
   std::vector<int> tmp;
-  Word::toAllocatedMonom(tmp,w);
-  Monom tmpMonom(&*tmp.cbegin());
+  monoid().monomInsertFromWord(tmp,w);
+  Monom tmpMonom(tmp.data());
   mult_by_term_left(result,f,c,tmpMonom);
-  tmp.clear();
+  tmp.clear();  
 }
 
 void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
@@ -494,10 +494,10 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
                                               const Word& rightW) const
 {
   std::vector<int> leftTmp, rightTmp;
-  Word::toAllocatedMonom(leftTmp,leftW);
-  Word::toAllocatedMonom(rightTmp,rightW);
-  Monom leftTmpMonom(&*leftTmp.cbegin());
-  Monom rightTmpMonom(&*rightTmp.cbegin());
+  monoid().monomInsertFromWord(leftTmp,leftW);
+  monoid().monomInsertFromWord(rightTmp,rightW);
+  Monom leftTmpMonom(leftTmp.data());
+  Monom rightTmpMonom(rightTmp.data());
   mult_by_term_left_and_right(result,f,c,leftTmpMonom,rightTmpMonom);
   leftTmp.clear();
   rightTmp.clear();

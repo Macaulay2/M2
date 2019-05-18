@@ -15,15 +15,20 @@ public:
   // warning: the pointers begin, end, should not go out of scope while this Word is in use.
   Word() : mBegin(nullptr), mEnd(nullptr) {}
 
-  Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
+  // this constructor is no longer valid since the Monom does not know
+  // how many weights are present.
+  //Word(const Monom& m) : mBegin(m.begin()+2), mEnd(m.end()) {}
+
   Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
 
   // keyword 'explicit' to prevent calling this constructor implicitly.  It
   // causes some strange behavior in debugging.
+  // to be honest, we should only be using this in the unit-tests file ONLY
   explicit Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
 
   void init(const int* begin, const int* end) { mBegin = begin; mEnd = end; }
-  void init(const std::vector<int>& val) { mBegin = val.data(); mEnd = val.data() + val.size(); }
+  // this constructor is a bit dangerous since we have several std::vector<int> types running around
+  //void init(const std::vector<int>& val) { mBegin = val.data(); mEnd = val.data() + val.size(); }
                                  
   const int* begin() const { return mBegin; }
   const int* end() const { return mEnd; }
@@ -39,13 +44,6 @@ public:
     return true;
   }
 
-  static void toAllocatedMonom(std::vector<int>& result, const Word& source)
-  {
-    result.push_back(source.end() - source.begin() + 2);
-    result.push_back(source.end() - source.begin());
-    result.insert(result.end(),source.begin(), source.end());
-  }
-  
 private:
   const int* mBegin;
   const int* mEnd;
@@ -73,8 +71,6 @@ public:
   const Word& operator[](int index) const { return mMonomials[index]; }
 
   // lookup routines
-
-  
   
   // return all pairs (i,j), where
   //   the i-th word in the table is w (say)

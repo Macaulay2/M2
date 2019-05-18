@@ -259,13 +259,13 @@ void FreeMonoid::setWeights(Monom& m) const
   auto monom = const_cast<int*>(m.begin());
 
   int word_len = wordLength(m);
-  for (int j = 0; j < mNumWeights; ++j)
-      monom[j + 1] = 0;
+  for (int j = 1; j <= mNumWeights; ++j)
+      monom[j] = 0;
   for (int j = 0; j < word_len; ++j)
     {
       for (int k = 0; k < mNumWeights; ++k)
         {
-          monom[k] += weightOfVar(m[j],k);
+          monom[k+1] += weightOfVar(m[mNumWeights+1+j],k);
         }
     }
 }

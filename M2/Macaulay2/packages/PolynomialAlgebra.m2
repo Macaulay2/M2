@@ -961,6 +961,7 @@ TEST ///
   assert(leadTerm (a^3 + b^2) == a^3)-- should be a^3 (which it is)
 
   R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1}}}
+  -- how to we test to ensure an error is thrown for these two?
   R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1,1}}}
   R = QQ{a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}}  
 ///
