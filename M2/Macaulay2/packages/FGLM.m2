@@ -263,14 +263,6 @@ cyclic(ZZ) := Ideal => opts -> (n) -> (
     ideal F
     )
 
-hcyclic = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
-hcyclic(ZZ) := Ideal => opts -> (n) -> (
-    R := (opts.CoefficientRing)[vars(0..n), MonomialOrder => opts.MonomialOrder];
-    F := toList apply(1..n-1, d -> sum(0..n-1, i -> product(d, k -> R_((i+k)%n)))) 
-         | {product(n, i -> R_i) - R_n^n};
-    ideal F
-    )
-
 katsura = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
 katsura(ZZ) := Ideal => opts -> (n) -> (
     n = n-1;
