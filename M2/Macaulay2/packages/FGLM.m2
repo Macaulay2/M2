@@ -1,10 +1,14 @@
 newPackage(
         "FGLM",
         Version => "1.0.0",
-        Date => "January 29, 2019",
+        Date => "May 20, 2019",
         Authors => {
-	    { Name => "Dylan Peifer", Email => "djp282@cornell.edu", HomePage => "https://www.math.cornell.edu/~djp282" },
-	    { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu", HomePage => "https://math.umn.edu/~mahrud" }
+	    { Name => "Dylan Peifer",
+	      Email => "djp282@cornell.edu",
+	      HomePage => "https://www.math.cornell.edu/~djp282" },
+	    { Name => "Mahrud Sayrafi",
+	      Email => "mahrud@umn.edu",
+	      HomePage => "https://math.umn.edu/~mahrud" }
 	    },
         Headline => "Compute Groebner bases via the FGLM algorithm",
         DebuggingMode => true
@@ -54,7 +58,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     m := numcols M#0;
     n := #gens R2;
 
-    -- elements in the grobner basis
+    -- elements in the groebner basis
     G2 := new MutableHashTable from {}; -- leading term => gb element
     -- elements in the staircase
     B2 := new MutableHashTable from {1_R2 => true};
@@ -65,7 +69,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	 1_R2 => transpose matrix { {1_(coefficientRing R1)} | toList ((m-1):0) }
 	 };
 
-    -- list of elements between the staircase and grobner basis generators
+    -- list of elements between the staircase and groebner basis generators
     -- Note: use a heap in the engine for this
     S := new MutableHashTable from for i to n - 1 list R2_i * 1_R2 => (i, 1_R2);
 
@@ -88,7 +92,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	    -- TODO: add elt to VS and row reduce here
 	    V#elt = v;
 	    B2#elt = true;
-	    -- Add the product of elt and generatros of R2 to S
+	    -- Add the product of elt and generators of R2 to S
 	    for j to n - 1 do if not B2#?(R2_j * elt) then S#(R2_j * elt) = (j, elt);
 	    );
 	);
