@@ -53,7 +53,7 @@ public:
     mFreeAlgebra(A),
     mMonoid(A.monoid()),
     mVariableHefts(A.monoid().flattenedDegrees()),
-    mWordTable(constructWordTable(gb)),
+    mWordTable(constructWordTable(A,gb)),
     mCurrentIndex(-1),
     mCurrentHeftValue(0),
     mBasis(new PolyList),

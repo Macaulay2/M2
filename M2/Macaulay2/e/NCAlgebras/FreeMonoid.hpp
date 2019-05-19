@@ -13,6 +13,8 @@
 // format
 // [total length] wt0 wt1 ... w(tr-1) w0 w1  ... ws
 
+class Word;
+
 class FreeMonoid : public our_new_delete
 {
   // types of monomials: (MES: just note to ourselves: remove it eventually).

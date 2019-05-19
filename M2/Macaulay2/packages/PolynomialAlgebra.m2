@@ -966,6 +966,17 @@ TEST ///
   R = QQ{a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}}  
 ///
 
+TEST ///
+-*
+  restart
+  debug needsPackage "PolynomialAlgebra"
+*-
+  R = QQ{a,b,c,d, Degrees => {3,2,1,1}, Weights => {{0,0,1,1}} }
+  I = ideal {c*d*c*d - a, c*d - b}
+  isHomogeneous I
+  J = NCGB(I,20)
+///
+
 end--
 
 restart
