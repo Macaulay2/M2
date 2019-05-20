@@ -882,14 +882,15 @@ document {
     }
 
 document {
-    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem, Matrix), 
+    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem,ZZ), (squareUp,PolySystem, Matrix), 
 	SquaredUpSystem, SquareUpMatrix
 	},
     Headline => "square up a polynomial system",
-    Usage => "G = squareUp F\nG = squareUp(F,M)",
+    Usage => "G = squareUp F\\nG = squareUp(F,M)\\nsquareUp(F,n)",
     Inputs => { 
 	"F"=>PolySystem,
-	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"}  
+	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"},
+	"n"=>ZZ=>{" the number of polynomials to be formed (by default, this equals the number of variables)"}  
 	},
     Outputs => { "G"=>PolySystem },
     "Squares up an overdetermined polynomial system. Attaches keys ", 

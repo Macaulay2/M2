@@ -5,10 +5,54 @@
 ------------------------------------------------------
 
 export{ 
+    "GatePolySystem", "gatePolySystem", "parameters",
     "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "parametricSegmentHomotopy"
     }
 
 debug SLPexpressions
+
+GatePolySystem = new Type of PolySystem -- this essentially is a wrapper for SLProgram
+net GatePolySystem := P -> net "gate poly system"
+gatePolySystem = method(Options=>{Parameters=>gateMatrix{{}}})
+gatePolySystem GatePolySystem := o -> P -> new GatePolySystem from P
+gatePolySystem (GateMatrix,GateMatrix) := o -> (I,O) -> (
+    P := o.Parameters;
+    if not instance(P,GateMatrix) or numrows P != 1 then error "expected the matrix of parameters to be a row vector";
+    if numcols O != 1 then error "expected the output matrix (2nd argument) with 1 column";
+    if numrows I != 1 then error "expected the matrix of inputs (1st argument) to be a row vector";
+    new GatePolySystem from {Variables=>I, GateMatrix=>O, Parameters=>P,
+	"SLP"=>makeSLProgram(P|I,O), 
+	NumberOfVariables=>numcols I, NumberOfPolys=>numrows O, 
+	"number of parameters"=>numcols P}
+    )
+
+ring GatePolySystem := F -> error "not defined; try \n  vars GatePolySystem\nto get input gates, and\n  parameters GatePolySystem\nto get parameters" 
+vars GatePolySystem := F -> F.Variables
+parameters = method()
+parameters GatePolySystem := F -> F.Parameters
+gateMatrix GatePolySystem := F -> F#GateMatrix
+
+evaluate (GatePolySystem,Point) := (F,x) -> (
+    if F#"number of parameters">0 then 
+    error("the system involves parameters: use\n  evaluate(system,parameters-point,point)");
+    if F.NumberOfVariables != # coordinates x then "expected the same number of coordinates as variables";
+    evaluate(F#"SLP",matrix x)
+    )
+evaluate (GatePolySystem,Point,Point) := (F,p,x) -> evaluate(F#"SLP", matrix p | matrix x)
+
+TEST ///
+declareVariable \ {x,y,t}
+S = matrix{{x^2-1},{y^3-1}}
+T = matrix{{x*y-1},{x^3+y^2-2}}
+fS = gatePolySystem(matrix{{x,y}},S)
+fT = gatePolySystem(matrix{{x,y}},T)
+evaluate(fS,point{{0.1,0.2}}) 
+valueT = evaluate(fT,point{{0.1,2*ii}}) 
+fH = gatePolySystem(matrix{{x,y}},(1-t)*S + (1+ii)*t*T,Parameters=>matrix{{t}}) 
+valueH1 = evaluate(fH,point{{1}},point{{0.1,2*ii}})
+assert(norm(valueH1 - (1+ii)*valueT)<0.00001)  
+///
+-- jacobian PolySystem := ??? -- where is this used?
 
 ----------------------------------
 -- GateHomotopy (::Homotopy::MutableHashTable)
@@ -117,19 +161,18 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
     SPH                                                                                                                                                       
     ) 
 
-makeGateMatrix = method(Options=>{Parameters=>{}})
-makeGateMatrix PolySystem := o -> F -> (
+gatePolySystem PolySystem := o -> F -> ( -- replaces makeGateMatrix
     R := ring F; 
     if not isSubset(o.Parameters, gens R) then "some parameters are not among generators of the ring";
     X := getVarGates R;
-    F.Variables = X_(positions(gens R, x->not member(x,o.Parameters)));  
-    F.NumberOfVariables = #F.Variables; -- reconsile 
-    F.Parameters =X_(positions(gens R, x->member(x,o.Parameters)));
-    polys := flatten entries F.PolyMap;
-    F.GateMatrix = gateMatrix apply(polys, p->{gatePolynomial p})   
+    variables := gateMatrix {X_(positions(gens R, x->not member(x,o.Parameters)))};  
+    parameters := gateMatrix {X_(positions(gens R, x->member(x,o.Parameters)))};
+    gatePolySystem(variables, gatePolynomial F.PolyMap, Parameters=>parameters)
     ) 
  
-gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else makeGateMatrix F
+-- !!! a general problem: some methods need PolySystem to be "upgraded" to GatePolySystem
+gateMatrix PolySystem := F -> if F.?GatePolySystem then F.GatePolySystem#GateMatrix else 
+(F.GatePolySystem = gatePolySystem F)#GateMatrix 
 
 -- Homotopy that follows a segment in the parameter space 
 parametricSegmentHomotopy = method()
@@ -157,14 +200,14 @@ parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
     H := sub(S,matrix{W},(1-t)*A+t*B);
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
+parametricSegmentHomotopy GatePolySystem := F -> parametricSegmentHomotopy (gateMatrix F, flatten entries vars F, flatten entries parameters F)
+
 TEST /// 
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,a]
 PS = polySystem {x^2+y^2-1, x+a*y, (a^2+1)*y^2-1}
-PS.NumberOfVariables = 2 -- hack!!!
-squarePS = squareUp PS
-makeGateMatrix(squarePS,Parameters=>drop(gens R,2))  
-PH := parametricSegmentHomotopy squarePS
+F = gatePolySystem(squareUp(PS,2), Parameters=>drop(gens R,2)) 
+PH := parametricSegmentHomotopy F
 a0 = 0; a1 = 1;
 H = specialize (PH, transpose matrix{{a0,a1}})
 s'sols = { {{0,1}},{{0,-1}} }/point
@@ -198,14 +241,45 @@ assert(evaluate(jacobian S, p)== value(diff(matrix{X},gS),vals))
 
 segmentHomotopy = method(Options=>{gamma=>1})
 segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
+segmentHomotopy (GatePolySystem, GatePolySystem) := o -> (S,T) -> (
+    if T.Variables =!= S.Variables or T#"number of parameters">0 or S#"number of parameters">0 
+    then error "expented systems with the same inputs and no parameters";  
+    if T.NumberOfPolys =!= S.NumberOfPolys 
+    then error "expected systems with the same dimension of codomain";
+    t := local t;
+    tt := inputGate [t];
+    gateHomotopy((1-tt)*gateMatrix S+ o.gamma*tt*gateMatrix T, 
+	S.Variables, tt, Strategy=>compress)
+    )
 segmentHomotopy (PolySystem, PolySystem) := o -> (S,T) -> (
     R := ring T;
     if R =!= ring S then error "systems in the same ring expected";  
     t := local t;
     tt := inputGate [t];
-    gateHomotopy(o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T, 
+    gateHomotopy((1-tt)*gateMatrix S + o.gamma*tt*gateMatrix T, 
 	gateMatrix{getVarGates R}, tt, Strategy=>compress)
     )
+
+TEST ///
+n = 2; d = 2;
+debug needsPackage "NumericalAlgebraicGeometry"
+R=QQ[x_0..x_(n-1)]
+eps = 1/10^2
+T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
+(S,solsS) = totalDegreeStartSystem T
+H = segmentHomotopy(S,T,gamma=>1+ii)
+t0 = 0.3
+x0 = matrix{{0.1,0.2*ii}}
+assert (
+    norm(
+    	(1-t0)*evaluate(polySystem S,x0)+(1+ii)*t0*evaluate(polySystem T,x0)    
+    	-
+    	evaluateH(H,transpose x0,t0)
+    	) < 1e-9
+    )
+V = matrix{getVarGates R}
+GH = segmentHomotopy(gatePolySystem(V,transpose gatePolynomial matrix {S}), gatePolySystem(V,transpose gatePolynomial matrix{T}), gamma=>1+pi*ii)
+///
 
 segmentHomotopyProjective = method(Options=>{gamma=>1})
 segmentHomotopyProjective (List, List) := o -> (S,T) -> segmentHomotopyProjective(polySystem S, polySystem T, o)

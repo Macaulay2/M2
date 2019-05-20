@@ -1103,7 +1103,6 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
     )
 
 TEST ///
-restart
 setRandomSeed 0
 debug needsPackage "NumericalAlgebraicGeometry"
 NAGtrace 2

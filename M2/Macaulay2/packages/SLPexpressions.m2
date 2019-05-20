@@ -332,7 +332,10 @@ compress Gate := g -> (
     t := new MutableHashTable;
     compressMemoize(g,t)
     )
-compress GateMatrix := M -> gateMatrix applyTable(M,compress)
+compress GateMatrix := M -> (
+    t := new MutableHashTable;
+    gateMatrix applyTable(M,g->compressMemoize(g,t))
+    )
 
 compressMemoize = method()
 compressMemoize (Gate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = g
@@ -721,7 +724,6 @@ evaluate(SLProgram, Matrix) := (slp, inp) -> (
 		)
  
 TEST /// 
-restart
 needsPackage "SLPexpressions"
 debug SLPexpressions
 X = inputGate symbol X

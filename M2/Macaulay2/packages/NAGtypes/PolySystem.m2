@@ -1,4 +1,3 @@
- 
 -----------------------------------------------------------------------
 -- POLYSYSTEM = {
 --   NumberOfVariables => ZZ,
@@ -25,15 +24,18 @@ globalAssignment PolySystem
 polySystem = method()
 polySystem PolySystem := P -> new PolySystem from P
 polySystem List := L -> (
+    if not instance(commonRing L,PolynomialRing) then error "expected a list of polynomials";
     polySystem transpose matrix {L} 
     )
 polySystem Matrix := M -> (
-    assert(numcols M == 1);
+    if not instance(ring M,PolynomialRing) then error "expected a matrix of polynomials";    
+    if numcols M != 1 then error "expected a matrix with 1 column";
     new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
     )
 polySystem Ideal := I -> polySystem transpose gens I
 
-ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
+ring PolySystem := P -> ring P.PolyMap 
+vars PolySystem := P -> error "not defined; try \n  vars ring Polysystem"
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
@@ -62,11 +64,7 @@ toCCpolynomials (Matrix,InexactField) := (F,C) -> (
 -- evaluate = method()
 evaluate (PolySystem,Point) := (P,p) -> evaluate(P, matrix p)
 evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
-evaluate (PolySystem,Matrix) := (P,X) -> (
-    if class P.PolyMap === Matrix 
-    then evaluate(P.PolyMap,X)
-    else error "evaluation not implemented for this type of PolyMap"
-    )    
+evaluate (PolySystem,Matrix) := (P,X) -> evaluate(P.PolyMap,X)
 evaluate (Matrix,Matrix) := (M,X) ->  (
     C := coefficientRing ring M;
     -- work around a sub(CC,QQ) bug!!!
@@ -76,7 +74,6 @@ evaluate (Matrix,Matrix) := (M,X) ->  (
     if numRows X == 1 then sub(M,sub(X,C))
     else error "expected a row or a column vector"
     )
-evaluate (PolySystem,Point) := (P,p) -> evaluate(P,matrix p)
 
 jacobian PolySystem := P -> (
     if P.?Jacobian then P.Jacobian

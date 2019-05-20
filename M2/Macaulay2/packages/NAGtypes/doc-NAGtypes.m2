@@ -348,7 +348,7 @@ document {
     Key => {PolySystem, 
 	(ideal,PolySystem), (isHomogeneous,PolySystem), (jacobian,PolySystem), (net,PolySystem),
 	(ring,PolySystem), (equations,PolySystem),
-	NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, ContinuationParameter, 
+	NumberOfPolys, NumberOfVariables, PolyMap, ContinuationParameter, 
 	SpecializationRing
 	},
     Headline => "a polynomial system",

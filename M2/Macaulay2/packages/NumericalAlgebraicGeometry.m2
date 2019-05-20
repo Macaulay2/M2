@@ -374,8 +374,8 @@ randomOrthonormalCols(ZZ,ZZ) := (m,n) ->
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
 squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
-    n := P.NumberOfVariables;
+squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, P.NumberOfVariables)
+squareUp (PolySystem,ZZ) := (P,n) -> (
     m := P.NumberOfPolys;
     if m<=n then "overdetermined system expected";
     C := coefficientRing ring P;

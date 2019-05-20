@@ -156,24 +156,23 @@ restart
 load "minProblemRankChecks.m2"
 load "99problems.m2"
 
---i = 1
+--i = 98
 --pl1p := PROBLEMS#i#"pl1p"; --prob#"pl1p";
 elapsedTime scan(
     #PROBLEMS, 
-    --100000,
+    --100,
     i->(
     pl1p := PROBLEMS#i#"pl1p"; --prob#"pl1p";
     -- resetGates(); -- does not leak anymore (after declareVariable introduction)  
     if i % 10 == 0 then << "on problem number " << i << endl;
     Phi := makePhi(pl1p,cameras);
-    inGates = transpose matrix {installedGates};
+    inGates := transpose matrix {installedGates};
     J := diff(inGates, Phi); -- leaks (RES=171m, memoized diff helps to reduce memory consumption) 
-    -- J = compress J; -- leaks more (RES=231, also slow)  
-    E := makeSLProgram(inGates,J); --leaks more (RES=629m with no compress; RES=874m with)
+    J = compress J; -- leaks more (RES=183m, also slow)  
+    -- E := makeSLProgram(inGates,J); --leaks more (RES=629m with no compress; RES=874m with)
     --print E;
     collectGarbage()
     ))
-
 
 
 
