@@ -43,16 +43,12 @@ doc ///
         inputGate
         sumGate
         productGate
-        (symbol *,Gate,Gate)
-        (symbol +,Gate,Gate)
     Headline
         create an input gate
     Usage
         inputGate L
         sumGate L
         productGate L
-        Gate + Gate
-        Gate * Gate
     Inputs
         L:List
     Outputs
@@ -63,9 +59,9 @@ doc ///
             
 --            Some specific @TO InputGate@s: 
         
-            @TO SumGate@ is constructed with @TO sumGate@ {\tt list of gates}, or @TO (symbol +,Gate,Gate)@.
+            @TO SumGate@ is constructed with @TO sumGate@ {\tt list of gates}.
         
-            @TO ProductGate@ is constructed with @TO productGate@ {\tt list of gates}, or @TO (symbol *,Gate,Gate)@.
+            @TO ProductGate@ is constructed with @TO productGate@ {\tt list of gates}.
     SeeAlso
         InputGate
 ///
@@ -78,18 +74,140 @@ doc ///
     Description
         Text
             An object of this type is a matrix with Gates as entries. Some algebraic operations (matrix multiplication, determinant, etc.) are defined for this type. It is provided, in part, for convenience of setting up involved evaluation circuits.
+    SeeAlso
+        Gate
+        gateMatrix
+///
+
+doc ///
+    Key
+        gateMatrix
+        (gateMatrix, GateMatrix)
+        (gateMatrix, List)
+        (gateMatrix, Matrix)
+    Headline
+        create a GateMatrix
+    Usage
+        gateMatrix M
+    Inputs
+        M:
+            a @TO matrix@ or a table (a nested @TO List@)
+    Outputs
+        :GateMatrix
+    Description
+        Text
+            This methods creates a @TO GateMatrix@ from the given input data, which should be a matrix or a doubly-nested list.
         
             The package @TO SLPexpressions@ overrides @TO matrix@ to allow a table (a nested list) of @TO Gate@s as an argument.
                  
         Example
             X = inputGate x; Y = inputGate y;
             A = matrix { apply(5,i->i*X) }
+            A#0
+            A#0#0
             B = matrix { apply(4,i->Y^i) }
             C = transpose A * B    
             numrows C, numcols C
     SeeAlso
+        GateMatrix
+///
+
+doc ///
+    Key
+        gatePolynomial
+        (gatePolynomial, RingElement)
+        (gatePolynomial, Matrix)
+    Headline
+        creates an input gate for a given polynomial
+    Usage
+        gatePolynomial f
+    Inputs
+        f:RingElement
+    Outputs
+        :Gate
+            representing the polynomial $f$
+    Description
+        Text
+            This methods creates a @TO Gate@ from the given input polynomial $f$. The resulting @TO Gate@ is a @TO SumGate@ whose terms are @TO2{ProductGate, "product gates"}@ corresponding to monomials of $f$.
+                 
+        Example
+            R = QQ[x,y]
+            f = random(3, R)
+            gatePolynomial f
+    SeeAlso
         Gate
-        Matrix
+///
+
+doc ///
+    Key
+        getVarGates
+        (getVarGates, PolynomialRing)
+    Headline
+        returns the input gates for variables in a polynomial ring
+    Usage
+        getVarGates R
+    Inputs
+        R:PolynomialRing
+    Outputs
+        :List
+            of input gates for the variables in $R$
+    Description
+        Text
+            This methods returns a @TO List@ of @TO2{InputGate, "input gates"}@ corresponding to variables in the given polynomial $R$, and caches the result in the ring for future use.
+                 
+        Example
+            R = QQ[x,y]
+            getVarGates R
+    SeeAlso
+        Gate
+///
+
+doc ///
+    Key
+    	"arithmetic with circuits"
+        (symbol *,Gate,Gate)
+        (symbol +,Gate,Gate)
+     	(symbol /,Gate,Gate)
+     	(symbol ^,Gate,ZZ)
+        (symbol *,GateMatrix,GateMatrix)
+        (symbol *,GateMatrix,Matrix)
+        (symbol *,GateMatrix,RingElement)
+        (symbol +,GateMatrix,GateMatrix)
+        (symbol +,GateMatrix,Matrix)
+        (symbol -,GateMatrix,GateMatrix)
+        (symbol -,GateMatrix,Matrix)
+        (symbol ^,GateMatrix,List)
+        (symbol *,Matrix,Gate)
+        (symbol *,Matrix,GateMatrix)
+        (symbol +,Matrix,GateMatrix)
+        (symbol -,Matrix,GateMatrix)
+        (symbol +,Gate,Number)
+        (symbol -,Gate,Number)
+        (symbol *,Gate,Number)
+        (symbol +,Number,Gate)
+        (symbol -,Number,Gate)
+        (symbol *,Number,Gate)
+    Description
+        Text
+    	    There are many arithmetic operations that can be performed on @TO2{Gate, "gates"}@. This makes it easy to create combine existing gates into new gates.
+        Example
+            X = inputGate x; Y = inputGate y;
+	    F = Y^2-X^3-X
+        
+        Text
+            If one of the inputs is a @TO Number@, it is first converted to an @TO InputGate@:
+        Example
+            X + 2
+        
+        Text
+            By extension, arithmetic operations also work with @TO2{GateMatrix, "gate matrices"}@:
+        Example
+            M = matrix {{X, Y}}
+            3*M
+            transpose M * M
+    SeeAlso
+        InputGate
+        GateMatrix
 ///
 
 doc ///
@@ -111,3 +229,38 @@ doc ///
         GateMatrix
 ///
 
+doc ///
+    Key
+        "working with gate matrices"
+        (symbol _,GateMatrix,List)
+        (symbol _,GateMatrix,Sequence)
+        (symbol |,GateMatrix,GateMatrix)
+        (symbol |,GateMatrix,Matrix)
+        (symbol ||,GateMatrix,GateMatrix)
+        (symbol ||,GateMatrix,Matrix)
+        (symbol |,Matrix,GateMatrix)
+        (symbol ||,Matrix,GateMatrix)
+        (numColumns,GateMatrix)
+        (numRows,GateMatrix)
+    Description
+        Text
+            Many typical matrix operations can also be performed on @TO2{GateMatrix, "gate matrices"}@, such as obtaining entries, number of rows and columns, and vertical or horizontal concatenation.
+        Example
+            R = RR[x,y]
+            M = gateMatrix basis(3, R)
+            numcols M, numrows M
+        Text
+            Rows or entries can be accessed with &#95; or #:
+        Example
+            M_0
+            M#0
+            M#0#0
+        Text
+            Horizontal (resp. vertical) concatenation is done with @TO2{(symbol |, GateMatrix, Matrix), "|"}@ (resp. @TO2{(symbol ||, GateMatrix, Matrix), "||"}@):
+        Example
+            N = gateMatrix {delete(x^2*y^2, flatten entries basis(4, R))}
+            M | N
+            M || N
+    SeeAlso
+        GateMatrix
+///
