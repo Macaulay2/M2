@@ -8,6 +8,8 @@
 #include "FreeMonoid.hpp"
 #include "../Polynomial.hpp"
 
+class FreeAlgebra;
+
 class Word
 {
 public:
@@ -136,7 +138,7 @@ private:
 std::ostream& operator<<(std::ostream& o, const Word& w);
 std::ostream& operator<<(std::ostream& o, const WordTable& wordTable);
 
-std::unique_ptr<WordTable> constructWordTable(const ConstPolyList& gb);
+std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstPolyList& gb);
 
 #endif
 
