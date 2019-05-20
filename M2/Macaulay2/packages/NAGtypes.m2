@@ -2,15 +2,15 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.11",
-     Date => "Nov 2017",
+     Version => "1.13",
+     Date => "May 2019",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
-     PackageExports => {"ReesAlgebra"},
+     PackageExports => {"ReesAlgebra"}, -- avoids collision with "Jacobian" 
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 

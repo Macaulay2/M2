@@ -335,7 +335,6 @@ assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 ///
 
 TEST ///-- Homotopy
-restart
 needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -379,7 +378,6 @@ assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
 ///
 
 TEST /// -- ParameterHomotopy
-restart
 needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -407,7 +405,6 @@ assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
 ///
 
 TEST ///
-restart
 debug needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y

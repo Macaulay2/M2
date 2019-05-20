@@ -1114,7 +1114,7 @@ T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
-assert((first sols).NumberOfSteps == 101)
+assert((first sols).NumberOfSteps == 6)
 
 sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
 peek sols 

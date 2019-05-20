@@ -714,7 +714,6 @@ inline mul(complex c)
       )
 
 ///
-restart
 loadPackage "NumericalAlgebraicGeometry"; debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 g = 3*y^2+(2.1+ii)*x

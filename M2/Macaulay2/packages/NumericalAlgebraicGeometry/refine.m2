@@ -350,7 +350,6 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     )
 
 TEST ///
-restart
 debug needsPackage "NumericalAlgebraicGeometry"
 CC[x,y]
 d = 4;
@@ -366,9 +365,9 @@ p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>0.5)
 assert (d == p.Multiplicity)
 p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>20)
 assert (d == p.Multiplicity)
+///
 
--- 
-restart
+TEST ///
 needsPackage "NumericalAlgebraicGeometry"
 n = 3;
 R = CC[x_1..x_n]
@@ -391,8 +390,9 @@ assert (d == p.Multiplicity)
 p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>100,"number of vertices"=>100)
 norm evaluate(T,p)
 assert (d == p.Multiplicity)
---
-restart
+///
+
+TEST ///
 R=QQ[x,y]
 f = x^2 + y^2 - 1 
 g = x^3 + y^3 - 1 
