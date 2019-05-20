@@ -6,7 +6,7 @@
 #define _slp_defs_hpp_
 
 // SLP
-class SLProgram
+class SLProgram : public MutableEngineObject
 {
   //  friend class SLEvaluator;
  public:
@@ -34,6 +34,8 @@ class SLProgram
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
   // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
+  
+  // !!! replace M2_arrayint with std::vector (M2_arrayint pertains to front end) 
   GATE_POSITION addInput() { return -(++inputCounter); }
   GATE_POSITION addMSum(const M2_arrayint);
   GATE_POSITION addMProduct(const M2_arrayint);
@@ -81,7 +83,7 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 };
 */
 
-class SLEvaluator
+class SLEvaluator : public MutableEngineObject
 {
  public:
   virtual ~SLEvaluator() {}
@@ -93,7 +95,7 @@ class SLEvaluator
 
  protected:
   int ap(int rp) { return rp + slp->inputCounter; }  // absolute position
-  SLProgram* slp;
+  SLProgram* slp; //!!! can we make it a reference???
   //  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of
   //  consts in mValues (slp.inputCounter + rel position)
   std::vector<SLProgram::GATE_POSITION>
@@ -131,7 +133,7 @@ class SLEvaluatorConcrete : public SLEvaluator
  private:
   // typedef ring_elem ElementType;
   typedef typename RT::ElementType ElementType;
-  void computeNextNode();
+  void computeNextNode();  // !!! should this and vIt be here???
   // const Ring* R;
   const RT& mRing;
   std::vector<ElementType>
@@ -141,9 +143,10 @@ class SLEvaluatorConcrete : public SLEvaluator
   typename std::vector<ElementType>::iterator vIt;  // values
 };
 
-class Homotopy
+class Homotopy : public MutableEngineObject
 {
  public:
+  virtual ~Homotopy() {}
   virtual bool track(const MutableMatrix* inputs,
                      MutableMatrix* outputs,
                      MutableMatrix* output_extras,
