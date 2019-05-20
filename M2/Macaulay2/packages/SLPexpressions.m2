@@ -30,7 +30,8 @@ export {
     "InputGate", "declareVariable", "undeclareVariable", 
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 
-    "constants",  
+    "constants",
+    "countGates",  
     "printAsSLP", "cCode",
     "getVarGates", "gatePolynomial",
     "ValueHashTable","valueHashTable",
@@ -253,6 +254,31 @@ findDepth (DivideGate,MutableHashTable) :=
 findDepth (SumGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = 1 + g.Inputs/(i->findDepth(i,t))//max
 findDepth (DetGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = 1 + (flatten g.Inputs)/(i->findDepth(i,t))//max
 
+countGates = method()
+countGates GateMatrix := M -> (
+    t := new MutableHashTable from {cache=>new CacheTable};
+    scan(flatten entries M, g->findTally(g,t));
+    new HashTable from t
+    ) 
+
+findTally = method()
+findTally (InputGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
+    t.cache#g = 1;
+    if not t#?(class g) then t#(class g) = 1 else t#(class g)= t#(class g) + 1;
+    ) 
+findTally (ProductGate,MutableHashTable) := 
+findTally (DivideGate,MutableHashTable) := 
+findTally (SumGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
+    t.cache#g = 1;
+    if not t#?(class g) then t#(class g) = 1 else t#(class g)= t#(class g) + 1;
+    scan(g.Inputs,i->findTally(i,t))
+    )
+findTally (DetGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
+    t.cache#g = 1;
+    if not t#?(class g) then t#(class g) = 1 else t#(class g)= t#(class g) + 1;
+    scan(flatten g.Inputs,i->findTally(i,t))
+    )
+
 TEST ///
 X = inputGate symbol X
 C = inputGate symbol C
@@ -275,6 +301,8 @@ depth(X*X)
 depth(detXCCX + X)
 depth gateMatrix{{detXCCX,X}}
 assert (depth {X+((detXCCX+X)*X)/C}==5)
+
+countGates matrix{{detXCCX,12*X}}
 ///
 
 diff (InputGate, Gate) := (x,g) -> (

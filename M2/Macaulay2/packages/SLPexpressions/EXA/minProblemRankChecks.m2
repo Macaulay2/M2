@@ -169,7 +169,7 @@ elapsedTime scan(
     inGates := transpose matrix {installedGates};
     J := diff(inGates, Phi); -- leaks (RES=171m, memoized diff helps to reduce memory consumption) 
     J = compress J; -- leaks more (RES=183m, also slow)  
-    -- E := makeSLProgram(inGates,J); --leaks more (RES=629m with no compress; RES=874m with)
+    E := makeSLProgram(inGates,J); --leaks more (RES=171m with no compress; RES=199m with)
     --print E;
     collectGarbage()
     ))
