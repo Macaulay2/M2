@@ -35,7 +35,7 @@ frobeniusMethod ( ZZ, Ideal ) := Ideal => o -> ( e, I ) ->
     if p == 0 then 
         error "frobeniusMethod: expected an ideal in a ring of positive characteristic.";
     if e == 0 then return I;
-    if e < 0 then return frobeniusRoot( -e, I, FrobeniusRootStrategy => o.FrobeniusRootStrategy );
+    if e < 0 then return frobeniusRoot( -e, I, o );
     G := I_*;
     if #G == 0 then ideal( 0_R ) else ideal( apply( G, j -> fastExponentiation( p^e, j ) ) )
 )
@@ -117,11 +117,12 @@ frobeniusPowerHelper = { FrobeniusPowerStrategy => Naive, FrobeniusRootStrategy 
     if o.FrobeniusPowerStrategy == Safe then 
     (
 	E := adicExpansion( p, rem );
-	J * product( #E, m -> frobeniusRoot( e-m, I^( E#m ), FrobeniusRootStrategy => o.FrobeniusRootStrategy ) );  
+	J * product( #E, m -> frobeniusRoot( e-m, I^(E#m), FrobeniusRootStrategy => o.FrobeniusRootStrategy ) );  
         --step-by-step computation of generalized Frobenius power of I^[rem/p^e]
         --using the base p expansion of rem/p^e < 1
     )
-    else J * frobeniusRoot( e, frobeniusPower( rem, I ), FrobeniusRootStrategy => o.FrobeniusRootStrategy )  --Skoda to compute I^[N/p^e] from I^[rem/p^e] 
+    else if (numColumns gens I == 1) then J * frobeniusRoot( e, rem, I, FrobeniusRootStrategy => o.FrobeniusRootStrategy )  
+    else J * frobeniusRoot( e, frobeniusPower(rem, I), FrobeniusRootStrategy => o.FrobeniusRootStrategy )  --Skoda to compute I^[N/p^e] from I^[rem/p^e] 
 )
 
 --Computes the generalized Frobenius power I^[t] for a rational number t 
@@ -131,7 +132,7 @@ frobeniusPower( QQ, Ideal ) := Ideal => o -> ( t, I ) ->
     p := char ring I;
     if p == 0 then 
         error "frobeniusPower: expected an ideal in a ring of positive characteristic.";
-    ( a, b, c ) := toSequence decomposeFraction( p, t ); --write t = a/(p^b*(p^c-1))
+    ( a, b, c ) := decomposeFraction( p, t ); --write t = a/(p^b*(p^c-1))
     if c == 0 then frobeniusPowerHelper( b, a, I, o )  --if c = 0, call simpler function
         else 
 	(

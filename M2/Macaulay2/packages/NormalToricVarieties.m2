@@ -1151,7 +1151,6 @@ ring NormalToricVariety := PolynomialRing => (
 	)
     );
 
-variety Ring := Variety => S -> if S.?variety then S.variety else null
 normalToricVariety Ring := NormalToricVariety => opts -> S -> variety S
 
 ideal NormalToricVariety := Ideal => (
@@ -5602,13 +5601,13 @@ doc ///
 	    assert (PP3 === variety S)
         Text
             If the polynomial ring is not constructed from a variety, then
-  	    this method returns @TO null@.
+  	    this method produces an error: "no variety associated with ring".
         Example  
      	   S = QQ[x_0..x_2];
     	   gens S
     	   degrees S
-    	   assert (null === normalToricVariety S)	   
-    	   assert (null === variety S)
+    	   assert (try (normalToricVariety S; false) else true)
+    	   assert (try (variety S; false) else true)
     SeeAlso
         "Total coordinate rings and coherent sheaves"
        	(ring, NormalToricVariety)
