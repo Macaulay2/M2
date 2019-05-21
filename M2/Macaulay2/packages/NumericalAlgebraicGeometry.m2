@@ -73,7 +73,7 @@ protect LastIncrement;
 solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
 
 -- experimental:
-protect LanguageCPP, protect MacOsX, protect System, 
+protect LanguageCPP, protect MacOsX, -- protect System, 
 protect LanguageC, protect Linux, protect Language
 protect maxNumberOfVariables
 protect maxPrecision

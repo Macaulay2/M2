@@ -46,12 +46,12 @@ export {
      "Origin", "IncreasePrecision", "DecreasePrecision", 
      -- point sets 
      "PointSet", "pointSet", "unionPointSet", "differencePointSet",
-     -- polynomial systems
+     -- systems
+     "System", "numVars", "numFuns", "evaluate", "evaluateJacobian",
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
      "polySystem", 
-     -- "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
-     "evaluate",
+     -- "segmentHomotopy"(defined in extraNAGtypes), "substituteContinuationParameter"(delete???), "specializeContinuationParameter"(delete???),
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
      }
@@ -61,7 +61,8 @@ debug Core -- to enable engine routines
 
 Point = new Type of MutableHashTable 
 load "./NAGtypes/WSet-abstract.m2"
-PolySystem = new Type of MutableHashTable
+System = new Type of MutableHashTable
+PolySystem = new Type of System
 WitnessSet = new Type of WSet 
 ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 

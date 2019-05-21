@@ -402,53 +402,6 @@ solveSystem  {f,g}
 
 ///
 
--* -- (Deprecated) 
-endGame'Cauchy'polygon = method(Dispatch=>Thing)
-endGame'Cauchy'polygon Sequence := parameters -> (
-    -- H: PolySystem, a homotopy
-    -- t'end: the end value of the continuation parameter t
-    -- t0: a value of t close to t'end
-    -- x0: Point, a solution to H_t(x)=0 
-    -- m: the number of vertices of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
-    (H,t'end,t0,x0,m) := parameters;
-    -- output: (x'end, w) = (a solution at t=t'end, the winding number)  
-    H' := substituteContinuationParameter(H,
-	(t0-t'end)*H.ContinuationParameter + t'end);  -- t'end = 0 after this and t0 = 1
-    loop'incomplete := true;
-    w := 0;
-    x := x0;
-    x'values := {}; -- the list of values of x along the loop
-    while loop'incomplete do (
-    	for i to m-1 do (
-	    x = first trackSegment(H', exp(2*pi*i*ii/m), exp(2*pi*(i+1)*ii/m), {x}); 
-	    x'values = append(x'values,x);
-	);
-    	w = w + 1;
-	loop'incomplete = not areEqual(x,x0);
-	);
-    print VerticalList x'values;
-    (sum (coordinates\x'values) /(w*m), w)
-    )  
-
-TEST ///
-CC[x,y]
-d = 5;
-T = {(x-2)^d,y-x+x^2-x^3}
-(S,solsS) = totalDegreeStartSystem T
-H = segmentHomotopy(polySystem S, polySystem ((1+ii)*T))
-t0 = 0.999
-solsT = trackSegment(H,0,t0,solsS)
-debug NumericalAlgebraicGeometry
-x0 := first select(solsT, p->norm matrix p < 15)
-endGame'Cauchy'polygon(H,1,t0,x0,3)
-endGame'Cauchy'polygon(H,1,t0,x0,8)
-endGame'Cauchy'polygon(H,1,t0,x0,16)
-x32 = endGame'Cauchy'polygon(H,1,t0,x0,32)
--- x64 = endGame'Cauchy'polygon(H,1,t0,x0,64)
-assert areEqual(first x32, {2,6}, Tolerance=>0.001)
-///
-*-
-
 /// -- OLD CODE
 refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})
 refineViaDeflation(List, List) := o->(T,solsT) -> refineViaDeflation(transpose matrix{T},solsT,o)

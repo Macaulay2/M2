@@ -1,5 +1,17 @@
 -----------------------------------------------------------------------
--- POLYSYSTEM = {
+-- System is an ABSTRACT TYPE 
+
+numVars = method()
+numFuns = method()
+evaluateJacobian = method()
+numVars System := -- dimension of domain
+numFuns System := -- dimension of codomain
+  S -> error "not implemented"   
+evaluateJacobian(System, Point) := 
+evaluate (System, Point) := (S,x) -> error "not implemented"  
+
+-----------------------------------------------------------------------
+-- PolySystem = {
 --   NumberOfVariables => ZZ,
 --   NumberOfPolys => ZZ,
 --   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coeffiecients)
@@ -34,8 +46,10 @@ polySystem Matrix := M -> (
     )
 polySystem Ideal := I -> polySystem transpose gens I
 
+numVars PolySystem := P -> P.NumberOfVariables
+numFuns PolySystem := P -> P.NumberOfPolys
 ring PolySystem := P -> ring P.PolyMap 
-vars PolySystem := P -> error "not defined; try \n  vars ring Polysystem"
+-- vars PolySystem := P -> error "not defined; try \n  vars ring Polysystem"
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
@@ -79,4 +93,13 @@ jacobian PolySystem := P -> (
     if P.?Jacobian then P.Jacobian
     else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
     )
-
+evaluateJacobian (PolySystem,Point) := (P,p) -> sub(jacobian P,sub(matrix p,coefficientRing ring P))
+TEST /// 
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point({{1.0_CC,2.3_CC}});
+assert(numVars S == 2)
+assert(numFuns S == 2)
+evaluate(S,p)
+evaluateJacobian(S,p)
+///
