@@ -1,6 +1,6 @@
 newPackage( "FThresholds",
-Version => "1.0",
-Date => "August 17th, 2018",
+Version => "1.01",
+Date => "March 24th, 2019",
 Authors => {
      {Name => "Erin Bela",
      Email => "ebela@nd.edu"
@@ -49,7 +49,7 @@ Authors => {
      },
      {Name => "Pedro Teixeira",
      Email => "pteixeir@knox.edu",
-     HomePage => "http://www.knox.edu/academics/faculty/teixeira-pedro.html"
+     HomePage => "https://www.knox.edu/academics/majors-and-minors/mathematics/faculty/teixeira-pedro"
      },
      {Name => "Emily Witt",
      Email => "witt@ku.edu",

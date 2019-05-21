@@ -34,7 +34,8 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
 template <typename RT>
 SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
 {
-  for (auto v : values) ring().clear(v);
+  //std::cout << "SLEvaluatorConcrete: deleting values" << std::endl;
+  for (auto& v : values) ring().clear(v);
 }
 
 template <typename RT>
