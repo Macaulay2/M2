@@ -416,6 +416,8 @@ class Lapack
                               LMatrixRRR *L,
                               LMatrixRRR *U);
 
+  static bool solve_triangular(const LMatrixRRR *U, const LMatrixRRR *b, LMatrixRRR *x);
+
   static bool solve(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x);
   // A and b are not modifed.  The result is placed into x.
   // Returns x s.t. Ax = b

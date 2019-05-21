@@ -143,6 +143,36 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     for x in gens R list lift(last coefficients(x * B, Monomials => B), coefficientRing R)
     )
 
+-*
+-- Input invertible upper triangular U and b and return x such that Ux=b
+backsub(Matrix, Matrix) := Matrix => opts -> (U, b) -> (
+    )
+
+-- Input invertible upper triangular U and b and return x such that Ux=b
+forwardsub(Matrix, Matrix) := Matrix => (L, b) -> (
+    backsub(L, b, Forward => true)
+    )
+
+-- Input A, x, b and returns true if Ax=b
+isEqual(Matrix, Matrix, Matrix) := Boolean -> (
+    )
+
+-- permute rows or columns
+permuteMatrix(Matrix, List) := Matrix -> opts -> (
+    )
+
+-- return x such that LUx=b or null
+solveLU(List, Matrix, Matrix, Matrix) := Matrix -> opts -> (P, L, U, b) -> (
+    )
+
+updateLU(List, Matrix, Matrix, Matrix) := (List, Matrix, Matrix) -> opts -> (P, L, U, b) -> (
+    opts->U'
+    call permute
+    call backsub
+    return LU factorization
+    )
+*-
+
 -------------------------------------------------------------------------------
 --- Helper functions for tests
 -------------------------------------------------------------------------------
