@@ -120,19 +120,12 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
     )
 
 
-certifySolution = method()
-certifySolution(PolySystem, List) := (f, X) -> (
-    Y := {};
-    C := {};
-    F := {};
-    consts := 0;
-    for i from 0 to (length(X) - 1) do if (evaluate(f,X#i) == 0) then ( Y = append(Y, X#i); C = append(C, (0,0,0)); )
-	else if det(evaluate(jacobian f, X#i)) =!= 0 then (  consts = computeConstants(f,X#i);
-	    if consts#0 <(13-3*sqrt(17))/4 then (
-		 Y = append(Y, X#i); C = append(C,consts); ));
-    (Y,C)
+certifySolution = method() -- returns null if not successful, (alpha,beta,gamma) if alpha-certified 
+certifySolution(PolySystem, Point) := (f, x) -> (
+    alpha := first computeConstants(f,x);
+    -- check: alpha < (13-3*sqrt(17))/4
+    if 4*alpha < 13 and (13-4*alpha)^2 > 9*17 then alpha else null
     )
-
 
 certifyDistinctSoln = method()
 certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
