@@ -1035,3 +1035,52 @@ document {
     Key => "DoublePrecision",
     Headline => "a constant equal to 53 (the number of bits of precision)"
     }
+
+doc ///
+    Key
+	gateSystem
+    Headline
+        a constructor for GateSystem
+    Usage
+    	gateSystem(params,variables,M)
+	gateSystem(variables,M)
+    Inputs
+    	M:GateMatrix
+	parameters:GateMatrix
+	variables:GateMatrix	  
+    Description
+    	Text 
+            @TO GateMatrix@ {\tt M} is expected to have 1 column.
+    	    Matrices {\tt params} and {\tt variables} are expected to have 1 row.
+        Example
+            variables = declareVariable \ {x,y}
+    	    F = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2}})
+	    evaluate(F,point{{0.1,0.2+ii}}) 
+	    evaluate(F,point{{1/2,1/3}})
+	    evaluate(F,point{{2_(ZZ/101),3}})
+	Text
+	    Systems with parameters are allowed. 
+	Example    
+	    params = declareVariable \ {a,b}  
+	    Fab = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	    evaluate(Fab,point{{1,2}},point{{0.1,0.2+ii}})   
+    SeeAlso
+    	System
+        PolySystem
+        GateSystem	
+///
+
+doc ///
+    Key
+        GateSystem
+    Headline
+        a system of functions represented via a evaluation circuits
+    Description
+        Text
+            An object of this type (constructed with @TO gateSystem@) 
+	    is a @TO System@ of functions represented via a @TO GateMatrix@.
+	    In particular, polynomial systems and systems of rational functions can be represented this way.
+	    
+	    Unlike @TO PolySystem@, the functions of a @TO GateSystem@ do not belong to a ring and can be evaluated on @TO Number@s and @TO RingElement@s 
+	    as long as the constants in the evaluation circuits can be promoted to the corresponding @TO Ring@s. 
+///
