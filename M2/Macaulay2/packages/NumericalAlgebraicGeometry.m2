@@ -508,9 +508,10 @@ beginDocumentation()
 
 load "./NumericalAlgebraicGeometry/doc.m2";
 
+-*
 undocumented {
     Field, 
-    GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
+    GateParameterHomotopy, 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
     (endGameCauchy,GateHomotopy,Number,Point),
     (evaluateH,GateHomotopy,Matrix,Number),
@@ -522,6 +523,7 @@ undocumented {
 (specialize,GateParameterHomotopy,MutableMatrix),
 [trackHomotopy,Software],
     }
+*-
 
 TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")

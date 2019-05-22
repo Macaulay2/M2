@@ -47,7 +47,8 @@ export {
      -- point sets 
      "PointSet", "pointSet", "unionPointSet", "differencePointSet",
      -- systems
-     "System", "numVars", "numFuns", "evaluate", "evaluateJacobian",
+     "System", "numVariables", "numFunctions", "numParameters", 
+     "evaluate", "evaluateJacobian",
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
      "polySystem", 
@@ -61,7 +62,7 @@ debug Core -- to enable engine routines
 
 Point = new Type of MutableHashTable 
 load "./NAGtypes/WSet-abstract.m2"
-System = new Type of MutableHashTable
+System = new Type of MutableHashTable -- TODO: make it a HashTable
 PolySystem = new Type of System
 WitnessSet = new Type of WSet 
 ProjectiveWitnessSet = new Type of WitnessSet

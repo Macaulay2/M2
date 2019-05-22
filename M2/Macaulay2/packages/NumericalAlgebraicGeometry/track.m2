@@ -642,7 +642,7 @@ trackHomotopyM2engine = (H, inp,
 	InfinityThreshold,
 	checkPrecision
 	) -> (
-    if numVars H != numrows inp - 1 -- one input is t-value 
+    if numVariables H != numrows inp - 1 -- one input is t-value 
     then error "the number of variables does not match the number of inputs"; 
     K := ring inp;
     if K =!= ring out then error "inp and out have to have the same ring";

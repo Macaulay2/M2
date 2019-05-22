@@ -397,7 +397,7 @@ evaluate(jacobian S, p)
      }
 
 document {
-    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,Point), (evaluate,PolySystem,Matrix), (evaluate,PolySystem,Point)},
+    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,Point), (evaluate,PolySystem,Matrix)},
     Headline => "evaluate a polynomial system or matrix at a point",
     Usage => "y = evaluate(f,x)",
     Inputs => { 

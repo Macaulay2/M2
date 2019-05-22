@@ -1,23 +1,39 @@
 -----------------------------------------------------------------------
--- System is an ABSTRACT TYPE 
+-- System is an ABSTRACT TYPE
 
-numVars = method()
-numFuns = method()
+numParameters = method()
+numVariables = method()
+numFunctions = method()
 evaluateJacobian = method()
-numVars System := -- dimension of domain
-numFuns System := -- dimension of codomain
+
+numParameters System :=  
+numVariables System := -- dimension of domain
+numFunctions System := -- dimension of codomain
   S -> error "not implemented"   
-evaluateJacobian(System, Point) := 
-evaluate (System, Point) := (S,x) -> error "not implemented"  
+evaluateJacobian(System, Matrix, Matrix) := 
+evaluate (System, Matrix, Matrix) := Matrix => (S,p,x) -> error "not implemented"  
+-- specialize(System, Matrix) := System => (S,p) -> error "not implemented" 
+-- evaluation for systems with 0 parameters
+evaluateJacobian(System, Matrix) := 
+evaluate (System, Matrix) := Matrix => (S,x) -> error "not implemented"  
+-- convenience functions for points
+evaluateJacobian(System, Point, Point) := Matrix => 
+  (S,p,x) -> evaluateJacobian(S, matrix p, matrix x)
+evaluate (System, Point, Point) := Matrix => 
+  (S,p,x) -> evaluate(S, matrix p, matrix x)
+-- specialize(System, Point) := System => 
+--  (S,p) -> specialize(S, matrix p)
+evaluateJacobian(System, Point) := Matrix =>
+  (S,x) -> evaluateJacobian(S, matrix x) 
+evaluate (System, Point) := Matrix => 
+  (S,x) -> evaluate(S, matrix x)   
 
 -----------------------------------------------------------------------
 -- PolySystem = {
 --   NumberOfVariables => ZZ,
 --   NumberOfPolys => ZZ,
---   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coeffiecients)
---           or SLP;
---   Jacobian => Matrix or SLP, the jacobian of PolyMap
---   JacobianAndPolySystem => SLP, a circuit evaluating PolyMap and Jacobian (the two are not necessary then)
+--   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coeffiecients),
+--   Jacobian => Matrix, the jacobian of PolyMap
 --   }
 PolySystem.synonym = "polynomial system"
 net PolySystem := p -> (
@@ -46,8 +62,8 @@ polySystem Matrix := M -> (
     )
 polySystem Ideal := I -> polySystem transpose gens I
 
-numVars PolySystem := P -> P.NumberOfVariables
-numFuns PolySystem := P -> P.NumberOfPolys
+numVariables PolySystem := P -> P.NumberOfVariables
+numFunctions PolySystem := P -> P.NumberOfPolys
 ring PolySystem := P -> ring P.PolyMap 
 -- vars PolySystem := P -> error "not defined; try \n  vars ring Polysystem"
 equations = method() -- returns list of equations
@@ -76,7 +92,6 @@ toCCpolynomials (Matrix,InexactField) := (F,C) -> (
     )    
 
 -- evaluate = method()
-evaluate (PolySystem,Point) := (P,p) -> evaluate(P, matrix p)
 evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
 evaluate (PolySystem,Matrix) := (P,X) -> evaluate(P.PolyMap,X)
 evaluate (Matrix,Matrix) := (M,X) ->  (
@@ -98,8 +113,8 @@ TEST ///
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
 p = point({{1.0_CC,2.3_CC}});
-assert(numVars S == 2)
-assert(numFuns S == 2)
+assert(numVariables S == 2)
+assert(numFunctions S == 2)
 evaluate(S,p)
 evaluateJacobian(S,p)
 ///
