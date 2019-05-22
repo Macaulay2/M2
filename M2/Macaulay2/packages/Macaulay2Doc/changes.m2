@@ -30,7 +30,7 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
      }
 
 document {
