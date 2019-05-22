@@ -1,12 +1,15 @@
 newPackage( "Divisor",
-     Version => "0.3", Date => "May 30th, 2018", 
-     Authors => {
-     	  { Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede" },
-     	  { Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com" }
-	  }, --this file is in the public domain
-     Headline => "a package for working with Weil divisors",
-     PackageImports => {"IntegralClosure","RationalMaps"}
-     )
+Version => "0.3", Date => "May 30th, 2018", Authors => {
+     {Name => "Karl Schwede",
+     Email=> "kschwede@gmail.com",
+     HomePage=> "http://www.math.utah.edu/~schwede"
+     },
+     {Name=> "Zhaoning Yang",
+     Email=> "zyy5054@gmail.com",
+     HomePage => "http://sites.psu.edu/zhaoningyang"
+     }
+}, --this file is in the public domain
+Headline => "a package for working with Weil divisors", DebuggingMode => true, Reload=>true)
 export{
     --objects
 	"BasicDivisor",
@@ -84,6 +87,7 @@ export{
 	"Section", --an option for specifying a section when find a divisor corresponding to a module
     --hashtable keys
     "ideals"
+
 }
 
 ----------------------------------------------------------------
