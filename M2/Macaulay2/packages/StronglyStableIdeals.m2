@@ -6,7 +6,21 @@ newPackage("StronglyStableIdeals",
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
 	   Headline => "studying strongly stable ideals related to Hilbert polynomials",
-	   PackageImports => {"gfanInterface","Truncations"}
+	   PackageImports => {"gfanInterface","Truncations"},
+	   Certification => {
+		"journal name" => "The Journal of Software for Algebra and Geometry",
+		"journal URI" => "http://j-sag.org/",
+		"article title" => "Strongly stable ideals and Hilbert polynomials",
+		"acceptance date" => "4 November 2018",
+		"published article URI" => "https://msp.org/jsag/2019/9-1/p01.xhtml",
+         	"published article DOI" => "10.2140/jsag.2019.9.1",
+		"published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x01-StronglyStableIdeals.m2",
+     	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/StronglyStableIdeals.m2",
+		"release at publication" => "8c301dd0cdfb015d06f7967d12a7592a6c2e07b9",	    -- git commit number in hex
+		"version at publication" => "1.1",
+		"volume number" => "9",
+		"volume URI" => "https://msp.org/jsag/2018/9-1/"
+		}
 	  )
 
 -- For information see documentation key "StronglyStableIdeals" below.
