@@ -51,6 +51,7 @@ document {
      	  LI { "packages that have been published and certified:",
      	       UL {
      	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been published." },
 		    LI { star, " ", TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been published." },
 		    LI { star, " ", TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been published." },
 		    LI { star, " ", TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been published." },
