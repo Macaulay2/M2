@@ -1,8 +1,8 @@
 newPackage("StronglyStableIdeals",
            Version => "1.1",
-	   Date => "June 1, 2018",
+	   Date => "June 2018",
            Authors => {
-	               {Name => "Davide Alberelli"},
+	               {Name => "Davide Alberelli", Email => "davide.alberelli@gmail.com"},
 	               {Name => "Paolo Lella", Email => "paolo.lella@polimi.it", HomePage => "http://www.paololella.it/"}
     	              },
 	   Headline => "A package to study strongly stable ideals related to Hilbert polynomials",
@@ -629,13 +629,18 @@ doc ///
       
       Strongly stable ideals are a key tool in commutative algebra and algebraic geometry. These ideals have nice combinatorial properties 
       that make them well suited for both theoretical and computational applications. In the case of polynomial rings with coefficients in 
-      a field of characteristic zero, the notion of strongly stable ideals coincides with the notion of Borel-fixed ideals. Borel-fixed ideals 
-      are fixed by the action of the Borel subgroup of triangular matrices and a famous result by Galligo says that generic initial ideals 
-      are of this type. In the context of Hilbert schemes, Galligo's theorem means that each component and each intersection of components
-      contains at least a point corresponding to a scheme defined by a Borel-fixed ideal. Hence, these ideals are distributed throughout the
-      Hilbert schemes and they can be used to understand its local structure.
-      The main feature of the this package is a method to compute the set of all saturated strongly stable ideals in a given polynomial ring 
-      with a given Hilbert polynomial. This method has been theoretically introduced in [CLMR11] and improved in [Lel12].
+      a field of characteristic zero, the notion of strongly stable ideals coincides with the notion of Borel-fixed ideals. Such ideals are 
+      fixed by the action of the Borel subgroup of triangular matrices and play a special role in theory of Gröbner bases because initial 
+      ideals in generic coordinates are of this type by a famous result by Galligo.
+      In the context of parameter spaces of algebraic varieties, Galligo's theorem says that each component and each intersection of 
+      components of a Hilbert scheme contains at least a point corresponding to a scheme defined by a Borel-fixed ideal. Hence, these ideals 
+      are distributed throughout the Hilbert scheme and can be used to study its local structure. To this aim, in recent years several authors 
+      developed algorithmic methods based on the use of strongly stable ideals to construct flat families corresponding to special loci of 
+      the Hilbert scheme. In particular, a new open cover of the Hilbert scheme has been defined using strongly stable ideals and the action 
+      of the projective linear group. In this construction, the list of all points corresponding to Borel-fixed ideals in a given Hilbert 
+      scheme is needed. 
+      The main feature of this package is a method to compute this set of points, i.e. the list of all saturated strongly stable ideals in
+      a polynomial ring with a given Hilbert polynomial. The method has been theoretically introduced in [CLMR11] and improved in [Lel12].
       
       {\bf References:}
       
