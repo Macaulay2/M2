@@ -2,12 +2,14 @@ needsPackage "LieTypes"
 
 newPackage(
     "ConformalBlocks",
-    Version => "2.2", 
-    Date => "August 5, 2014",
+    Version => "2.4", 
+    Date => "June 22, 2018",
     Authors => {
 	{Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	},
-    Headline => "for conformal block divisors"
+    Headline => "for conformal block divisors",
+    PackageExports => {"LieTypes"},
+    DebuggingMode => false
     )
 
 export {
@@ -33,8 +35,7 @@ export {
     "FCurveDotConformalBlockDivisor"
      }
 
-needsPackage "LieTypes"
-
+debug Core
 ---------------------------------------------------------
 ---------------------------------------------------------
 -- New types: 
@@ -44,6 +45,35 @@ needsPackage "LieTypes"
 
 
 ConformalBlockVectorBundle = new Type of HashTable;
+ConformalBlockVectorBundle.GlobalAssignHook = globalAssignFunction
+ConformalBlockVectorBundle.GlobalReleaseHook = globalReleaseFunction
+expression ConformalBlockVectorBundle := V -> (
+    if hasAttribute(V,ReverseDictionary) then expression toString getAttribute(V,ReverseDictionary) else toString(pairs V)
+);
+net ConformalBlockVectorBundle := V -> (
+    if hasAttribute(V,ReverseDictionary) then return net expression V; 
+    if not hasAttribute(V,ReverseDictionary) then return (
+	horizontalJoin flatten (
+          "{",
+          -- the first line prints the parts vertically, second: horizontally    
+          stack (horizontalJoin \ apply(pairs V,(k,v) -> (net k, " => ", net v))),                                        
+          "}"
+          )
+      )
+);
+
+ConformalBlockVectorBundle#{Standard,AfterPrint} = V -> (
+    g:=toString(V#"Genus");
+    n:=toString(V#"NumberOfPoints");
+    ostring:=concatenate(interpreterDepth:"o");
+    << endl;
+    << concatenate(ostring,toString lineNumber," : Conformal block vector bundle on M-",g,"-",n,"-bar");
+    << endl;
+);    
+
+
+
+
 
 conformalBlockVectorBundle = method(
     TypicalValue => ConformalBlockVectorBundle
@@ -83,6 +113,53 @@ SymmetricDivisorM0nbar = new Type of HashTable;
 --F=symmetricDivisorM0nbar(6,{2,3});
 --G=symmetricDivisorM0nbar(6,2*B_2+3*B_3);
 *}
+
+expression SymmetricDivisorM0nbar := D -> (    
+    if keys(D) == {"NumberOfPoints"} then return expression 0;
+    CL:=coefficientList(D);
+    coeff:=0;
+    divisorSymbol:=expression "B";
+    Sum delete(null,apply(#CL, j -> (if CL_j != 0 then (
+	    coeff = expression abs(CL_j);
+	    if CL_j === -1 then 
+	        Minus Subscript{divisorSymbol, j+2}
+	    else if CL_j < 0 then 
+	        Minus {coeff * Subscript{divisorSymbol, j+2}}
+	    else if CL_j === 1 then 
+	        Subscript{divisorSymbol, j+2}
+	    else coeff * Subscript{divisorSymbol, j+2} )
+    )))
+); 
+
+{*
+f = D -> (    
+    if keys(D) == {"NumberOfPoints"} then return expression 0;
+    CL:=coefficientList(D);
+    coeff:=0;
+    divisorSymbol:=expression "B";
+    Sum apply(#CL, j -> (
+	    coeff = expression abs(CL_j);
+	    if CL_j === -1 then 
+	        Minus Subscript{divisorSymbol, j+2}
+	    else if CL_j < 0 then 
+	        Minus {coeff * Subscript{divisorSymbol, j+2}}
+	    else if CL_j === 1 then 
+	        Subscript{divisorSymbol, j+2}
+	    else coeff * Subscript{divisorSymbol, j+2} )
+    )
+); 
+*}
+net SymmetricDivisorM0nbar := D -> net expression D;
+
+SymmetricDivisorM0nbar#{Standard,AfterPrint} = D -> (
+    n:=toString(D#"NumberOfPoints");
+    ostring:=concatenate(interpreterDepth:"o");
+    << endl;
+    << concatenate(ostring,toString lineNumber," : S_",n,"-symmetric divisor on M-0-",n,"-bar");
+    << endl;
+);    
+
+
 
 SymmetricDivisorM0nbar==SymmetricDivisorM0nbar :=(D,E) -> ( 
     pairs(D)==pairs(E)
@@ -719,7 +796,7 @@ doc ///
 	    Some of the documentation nodes refer to books, papers, and preprints.  Here is a link to the @TO "Bibliography"@. 
 	    
 	Text
-	    NEW in version 2.1: the package has been rewritten in a more object-oriented way, and the basic Lie algebra functions have been moved into a separate package called @TO "LieTypes::LieTypes"@.  
+	    Between versions 1.x and 2.0, the package was rewritten in a more object-oriented way, and the basic Lie algebra functions were moved into a separate package called @TO "LieTypes::LieTypes"@.  
 ///
 
 
@@ -1317,13 +1394,13 @@ doc ///
 	    In the example below we create the conformal block bundle $V(sl_3,2,(\omega_1,\omega_1,\omega_1,\omega_2,\omega_2,\omega_2))$ on $\bar{M}_{0,6}$.
 
 	Example
-	    needsPackage("LieTypes")
+	    ----needsPackage("LieTypes");
 	    sl_3=simpleLieAlgebra("A",2);
 	    V=conformalBlockVectorBundle(sl_3,2,{{1,0},{1,0},{1,0},{0,1},{0,1},{0,1}},0)
 ///
 
 TEST ///
-    needsPackage "LieTypes"
+    ----needsPackage "LieTypes"
     sl_3=simpleLieAlgebra("A",2);
     V=conformalBlockVectorBundle(sl_3,2,{{1,0},{1,0},{1,0},{0,1},{0,1},{0,1}},0)
     assert(V#"LieAlgebra" === sl_3)
@@ -1356,14 +1433,14 @@ doc ///
 	    In the example below we compute the rank of the conformal block bundle $V(sl_3,2,(\omega_1,\omega_1,\omega_2,\omega_2))$.
 
 	Example
-	    needsPackage("LieTypes")
+	    --needsPackage("LieTypes")
 	    sl_3=simpleLieAlgebra("A",2);
 	    V=conformalBlockVectorBundle(sl_3,2,{{1,0},{1,0},{0,1},{0,1}},0)
 	    conformalBlockRank(V)
 ///
 
 TEST ///
-    needsPackage "LieTypes"
+    --needsPackage "LieTypes"
     sl_3=simpleLieAlgebra("A",2);
     V=conformalBlockVectorBundle(sl_3,2,{{1,0},{1,0},{0,1},{0,1}},0)
     assert(conformalBlockRank(V)=== 2)
@@ -1392,14 +1469,14 @@ doc ///
 	    In the example below, we compute the symmetrization of the divisor class of the conformal block bundle $V(sl_4,1,(\omega_1,\omega_1,\omega_2,\omega_2,\omega_3,\omega_3))$.	  
 
 	Example
-	    needsPackage("LieTypes")
+	    --needsPackage("LieTypes")
 	    sl_4 =simpleLieAlgebra("A",3);
 	    V=conformalBlockVectorBundle(sl_4,1,{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}},0);
 	    D=symmetrizedConformalBlockDivisor(V)
 ///
 
 TEST ///
-    needsPackage "LieTypes"
+    --needsPackage "LieTypes"
     sl_4 =simpleLieAlgebra("A",3);
     V=conformalBlockVectorBundle(sl_4,1,{{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}},0);
     D=symmetrizedConformalBlockDivisor(V)
@@ -1425,7 +1502,7 @@ doc ///
 	    The first line of the example below shows that the conformal block bundle $V(sl_3,1,(\omega_1,\omega_1,\omega_2,\omega_2))$ has degree 1 on $\bar{M}_{0,4} \cong \mathbb{P}^1$. The second line shows that this vector bundle is a line bundle.  Hence, $V(sl_3,1,(\omega_1,\omega_1,\omega_2,\omega_2))$ is isomorphic to $\mathcal{O}(1)$.
 
 	Example
-	    needsPackage("LieTypes")
+	    --needsPackage("LieTypes")
 	    sl_3 = simpleLieAlgebra("A",2);
 	    V=conformalBlockVectorBundle(sl_3,1,{{1,0},{1,0},{0,1},{0,1}},0);
 	    conformalBlockDegreeM04bar(V)
@@ -1433,7 +1510,7 @@ doc ///
 ///
 
 TEST ///
-    needsPackage("LieTypes")
+    --needsPackage("LieTypes")
     sl_3 = simpleLieAlgebra("A",2);
     V=conformalBlockVectorBundle(sl_3,1,{{1,0},{1,0},{0,1},{0,1}},0);
     assert(conformalBlockDegreeM04bar(V) === 1)
@@ -1460,7 +1537,7 @@ doc ///
 	    The example below shows that the first Chern class of the conformal block bundle $V(sl_2,1,(1,1,1,1,1,1))$ intersects the F curve $F_{123,4,5,6}$ positively, and intersects $F_{12,34,5,6}$ in degree zero.
 
 	Example
-	    needsPackage("LieTypes")
+	    --needsPackage("LieTypes")
 	    sl_2=simpleLieAlgebra("A",1);
 	    V=conformalBlockVectorBundle(sl_2,1,{{1},{1},{1},{1},{1},{1}},0);
 	    FCurveDotConformalBlockDivisor({{1,2,3},{4},{5},{6}},V)
@@ -1471,7 +1548,7 @@ doc ///
 ///
 
 TEST ///
-    needsPackage("LieTypes")
+    --needsPackage("LieTypes")
     sl_2=simpleLieAlgebra("A",1);
     V=conformalBlockVectorBundle(sl_2,1,{{1},{1},{1},{1},{1},{1}},0);
     assert( FCurveDotConformalBlockDivisor({{1,2,3},{4},{5},{6}},V) === 1 )
