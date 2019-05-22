@@ -8,7 +8,8 @@ newPackage("Matroids",
 		HomePage => "https://math.berkeley.edu/~jchen"}},
 	Headline => "a package for computations with matroids",
 	HomePage => "https://github.com/jchen419/Matroids-M2",
-	PackageExports => {"Graphs", "Posets"}
+	PackageExports => {"Graphs", "Posets"},
+	DebuggingMode => false
 )
 export {
 	"Matroid",
@@ -70,7 +71,7 @@ matroid (List, List) := Matroid => opts -> (E, L) -> (
 	else if opts.EntryMode == "bases" then if #L == 0 then error "There must be at least one basis" else L
 	else if opts.EntryMode == "circuits" then (
 		x := getSymbol "x";
-		R := QQ[x_0..x_(#E-1)];
+		R := QQ(monoid [x_0..x_(#E-1)]);
 		I := monomialIdeal({0_R} | L/(c -> product(c/(i -> R_i))));
 		allVars := product gens R;
 		(dual I)_* / (g -> set indices(allVars//g))
@@ -121,7 +122,7 @@ matroid Ideal := Matroid => opts -> I -> (
 ideal Matroid := MonomialIdeal => M -> ( -- Stanley-Reisner ideal of independence complex
 	if not M.cache.?ideal then (
 		x := getSymbol "x";
-		R := QQ[x_0..x_(#M.groundSet - 1)];
+		R := QQ(monoid [x_0..x_(#M.groundSet - 1)]);
 		M.cache.ideal = dual monomialIdeal({0_R} | apply(bases M, b -> product(toList(M.groundSet - b) /(i -> R_i))))
 	);
 	M.cache.ideal
@@ -233,7 +234,7 @@ rank (Matroid, Set) := ZZ => (M, S) -> (
 		currentRank := 0;
 		if #bases M > 100 then (
 			I := ideal M; R := ring I;
-			currentRank = dim (map((coefficientRing R)[(gens R)_(keys S)], R))(I);
+			currentRank = dim (map((coefficientRing R)(monoid [(gens R)_(keys S)]), R))(I);
 		) else (
 			maxRank := min(#S, rank M);
 			for b in bases M do (
@@ -289,7 +290,7 @@ flats Matroid := List => M -> (
 latticeOfFlats = method()
 latticeOfFlats Matroid := Poset => M -> poset(flats M/toList, (a, b) -> isSubset(a, b))
 
-fVector Matroid := HashTable => opts -> M -> hashTable pairs tally(flats M/rank_M)
+fVector Matroid := HashTable => M -> hashTable pairs tally(flats M/rank_M)
 
 dual Matroid := Matroid => {} >> opts -> M -> (
 	if not M.cache.?dual then (
@@ -306,7 +307,7 @@ restriction (Matroid, Set) := Matroid => (M, S) -> ( -- assumes S is a subset of
 	S0 := sort keys S;
 	if #bases M > 100 then (
 		I := ideal M; R := ring I;
-		return matroid(M_S0, monomialIdeal (map((coefficientRing R)[(gens R)_(S0)], R))(I));
+		return matroid(M_S0, monomialIdeal (map((coefficientRing R)(monoid [(gens R)_(S0)]), R))(I));
 	);
 	B := bases M/(b -> S*b);
 	r := max sizes B;
@@ -428,10 +429,10 @@ getIsos (Matroid, Matroid) := List => (M, N) -> (
 isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
 	local coloopStore, local C, local D, local e, local C1, local c0slice;
 	local coverCircuits, local H, local candidates, local extraElts, local F, local E;
-	coloopStore = (M, N)/coloops/sort;
-	(M, N) = (M \ coloopStore#0, N \ coloopStore#1); -- (M, N) are now both unions of circuits
+	coloopStore = (M, N)/coloops/sort; -- sort is crucial!
+	if #(coloopStore#0) > 0 then (M, N) = (M \ (coloopStore#0), N \ (coloopStore#1)); -- (M, N) are now both unions of circuits
 	(C, D, e) = (sort(circuits M, c -> #c), circuits N, #M.groundSet);
-	if #C == 0 then return hashTable toList apply(#(coloopStore#0), i -> (i, i));
+	if #C == 0 then return hashTable pack(2, mingle coloopStore);
 	C1 = C;
 	c0slice = sliceBySize(C1#0, C1);
 	coverCircuits = {(last values c0slice)#0} | while c0slice#?0 list (
@@ -453,7 +454,13 @@ isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) sat
 	for cand in candidates do (
 		for f in fold((a,b) -> flatten table(a,b,identity), cand/last/keys/permutations) /deepSplice/join do (
 			F = hashTable apply(e, i -> E#i => f#i);
-			if all(C, c -> member(c/(i -> F#i), D)) then return F;
+			if all(C, c -> member(c/(i -> F#i), D)) then return (
+				if #(coloopStore#0) == 0 then F else (
+					F = pairs F;
+					for i to #(coloopStore#0)-1 do F = apply(F, p -> (p#0 + (if p#0 >= coloopStore#0#i then 1 else 0), p#1 + (if p#1 >= coloopStore#1#i then 1 else 0)));
+					hashTable(pack(2, mingle coloopStore) | F)
+				)
+			);
 		);
 	);
 )
@@ -3172,7 +3179,7 @@ doc ///
 
 			o2 = 38
 			
-			i3 : all(L, M -> isWellDefined M)
+			i3 : all(L, isWellDefined)
 			
 			o3 = true
 			
@@ -3361,9 +3368,15 @@ G0 = graph(toList(0..5), {{0, 3}, {4, 0}, {0, 5}, {4, 1}, {5, 1}, {5, 2}, {4, 3}
 G1 = graph(toList(0..5), {{0, 3}, {4, 0}, {0, 5}, {1, 3}, {4, 1}, {5, 2}, {4, 3}, {5, 3}, {4, 5}})
 G2 = graph(toList(0..5), {{0, 2}, {4, 0}, {0, 5}, {1, 3}, {4, 1}, {5, 1}, {4, 2}, {5, 2}, {4, 5}})
 (M0, M1, M2) = (G0, G1, G2)/matroid
+assert(not(M0 == M1) and not(M1 == M2) and not(M0 == M2))
 assert((#getIsos(M0,M1), #getIsos(M1,M0)) == (8,8))
 T = ZZ[x,y]
 assert(tuttePolynomial(M0, T) == tuttePolynomial(M1, T) and tuttePolynomial(M1, T) == tuttePolynomial(M2, T))
+G = graph({{0,1},{0,2},{1,2},{2,3},{3,4},{4,5},{4,6},{5,6}}) -- bowtie graph
+M = matroid G
+assert(set coloops M === set {4,3})
+p = {6, 0, 5, 1, 4, 7, 2, 3}
+assert(values isomorphism (M, matroid(M_*, (circuits M)/(c -> c/(i -> p#i)), EntryMode => "circuits")) === p)
 ///
 
 TEST ///
@@ -3401,7 +3414,7 @@ TEST ///
 smallMatroids = apply(6, i -> allMatroids i)
 assert(smallMatroids/(l -> #l) == {1,2,4,8,17,38})
 smallMatroids = flatten smallMatroids
-assert(all(smallMatroids, M -> isWellDefined M))
+assert(all(smallMatroids, isWellDefined))
 assert(not any(subsets(smallMatroids, 2), S -> areIsomorphic(S#0, S#1)))
 assert(all(smallMatroids_{1..69}, M -> areIsomorphic(M, fold(components M, (a, b) -> a ++ b))))
 ///
