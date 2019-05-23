@@ -1,5 +1,4 @@
 newPackage("DeterminantalRepresentations",
-	AuxiliaryFiles => false,
 	Version => "1.0.0",
 	Date => "May 18, 2019",
 	Authors => {
@@ -10,9 +9,7 @@ newPackage("DeterminantalRepresentations",
 	},
 	Headline => "a package for computing determinantal representations",
 	HomePage => "https://github.com/papridey/DeterminantalRepresentations",
-	PackageExports => {"NumericalAlgebraicGeometry"},
-	DebuggingMode => false,
-        Reload => true
+	PackageExports => {"NumericalAlgebraicGeometry"}
 )
 export {
     "quadraticDetRep",
