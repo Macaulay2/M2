@@ -35,7 +35,7 @@ doc ///
          ideal(x_1 - 2*x_0, x_3 - 5*x_2),
          ideal(x_1 - 3*x_0, x_3 - 6*x_2)), B);
      minres = res J;
-     betti minres
+     multigraded betti minres
     Text
      As described in Algorithm 3.4 of Berkesch, Erman, and Smith's
      paper, one may construct a virtual resolution of a module from its graded minimal free resolution and
@@ -49,7 +49,7 @@ doc ///
     Example
      multigradedRegularity(X, J)
      vres = virtualOfPair(J, {{3,1}})
-     betti vres
+     multigraded betti vres
     Text
      Notice that this virtual resolution of $S/J$ is much shorter and thinner than the graded minimal
      free resolution of $S/J$. This is a common theme: virtual resolutions tend to be much
