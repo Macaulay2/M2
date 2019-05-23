@@ -73,6 +73,7 @@ needsPackage = method(
      Options => {
 	  -- these are most of the options of loadPackage
 	  FileName => null,
+	  Reload => null,
 	  DebuggingMode => null,
 	  LoadDocumentation => false,
 	  Configuration => {}
