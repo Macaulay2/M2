@@ -105,6 +105,8 @@ cubicSurface Ring := R -> (
         points := apply(6,i-> ideal (vars S * syz transpose M_{i}));
         I := intersect points;
         fI := res I;
+        if numgens R =!= numColumns fI.dd_1 then
+          error "randomization produced an error: try again, and/or increase the size of your base field";
         phi := map(S,R,fI.dd_1);
         matS := sub(diff(transpose sub(vars S,RS),sub(vars R,RS) * sub(fI.dd_2,RS)),R);
         f := ideal det matS;
