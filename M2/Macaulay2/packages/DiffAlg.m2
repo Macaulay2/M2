@@ -1,5 +1,9 @@
 -- -*- coding: utf-8 -*-
 
+i := getSymbol "i"
+QQi := QQ(monoid [i])
+F := toField (QQi / QQi_0^2)
+
 newPackage (
 	"DiffAlg",
 	Version => "1.5",
@@ -17,11 +21,10 @@ newPackage (
 		{ Name => "Federico Quallbrunn",
 		  Email => "fquallb@dm.uba.ar",
 		  HomePage => ""}
-
 	},
 	Headline => "Specialized routines for differential forms",
 	Configuration => { 
-		"BaseRing" => toField(QQ[i]/(i^2+1)),
+		"BaseRing" => F,
 		"VariableName" => "x",
 		"DiffName" => "d",
 		"FieldName" => "a"
