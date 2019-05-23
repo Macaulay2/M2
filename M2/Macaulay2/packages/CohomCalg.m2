@@ -37,12 +37,6 @@ silent = (
 Symbol * Symbol := (a,b) -> Product{a,b}
 ZZ * Symbol := (a,b) -> Product{a,b}
 
--- The following is a local function, which something similar should be in NormalToricVarieties
-degree ToricDivisor := List => (D) -> (
-    X := variety D; 
-    entries((fromWDivToCl X) * (vector D))
-    )
-
 ---------------------------------------------------------------------
 -- Routines for translating to form of input expected by cohomcalg --
 ---------------------------------------------------------------------
@@ -130,6 +124,72 @@ cohomCalgVector ToricDivisor := opts -> (D) -> (
 
 beginDocumentation()
 
+doc ///
+Key
+  CohomCalg
+Headline
+  an interface to the CohomCalg software for computing cohomology of torus invariant divisors on a toric variety
+Description
+  Text
+     CohomCalg is software written by Benjamin Jurke and Thorsten Rahn (in collaboration with 
+     Ralph Blumenhagen and Helmut Roschy) for computing the cohomology vectors of torus
+     invariant divisors on a (normal) toric variety (see @HREF "https://github.com/BenjaminJurke/cohomCalg"@ for 
+     more information).
+   Text
+     CohomCalg is an efficient and careful implementation.
+     One limitation is that the number of rays in the fan
+     and the number of generators of the Stanley-Reisner ideal of the fan must both be no larger
+     than 64.
+   Text
+     Here is a sample usage of this package in Macaulay2.  Let's compute the cohomology of some 
+     divisors on a smooth Fano toric variety.
+   Example
+     needsPackage "NormalToricVarieties"
+     X = smoothFanoToricVariety(3,15)
+     rays X
+     max X
+     S = ring X
+     SR = dual monomialIdeal X
+     KX = toricDivisor X
+     assert isVeryAmple (-KX)
+     cohoms1 = for i from 0 to 6 list X_i => cohomCalgVector X_i
+     cohoms2 = for i from 0 to 6  list X_i => (
+         for j from 0 to dim X list rank HH^j(X, OO_X(toSequence degree X_i))
+         )
+     assert(cohoms1 === cohoms2)
+   Text
+     For efficiency reasons, it is better, if this works for your use, to 
+     call CohomCalg by batching together several cohomology requests.
+   Example
+     needsPackage "ReflexivePolytopesDB"
+     topes = kreuzerSkarke(30, Limit => 20)
+     A = matrix topes_12
+
+     topes = kreuzerSkarke(21, Limit => 20)
+     A = matrix topes_10
+     P = convexHull A
+     X = normalToricVariety P
+     SR = dual monomialIdeal X
+     
+     D2 = subsets(for i from 0 to #rays X - 1 list X_i, 2)
+     D2 = D2/sum/degree
+     elapsedTime H = cohomCalg(X, D2)
+     peek H
+     elapsedTime cohomCalgVector(X_3 + X_7 + X_8)
+     degree(X_3 + X_7 + X_8)
+     elapsedTime for j from 0 to dim X list rank HH^j(X, OO_X(0,0,1,2,0,-1))
+     elapsedTime cohomCalgVector(X_3 + X_7 - X_8)
+     degree(X_3 + X_7 - X_8)
+     elapsedTime for j from 0 to dim X list rank HH^j(X, OO_X(0,0,1,2,-2,-1))
+
+
+   Text
+     @TO "cohomCalgVector"@ computes cohomology vectors by calling CohomCalg.  It also stashes 
+     it's results in the toric variety's cache table, so computations need not be performed twice.
+SeeAlso
+  cohomCalg
+///
+
 TEST ///
   needsPackage "CohomCalg"
   X = smoothFanoToricVariety(3,2)
@@ -157,19 +217,70 @@ TEST ///
   peek cohomCalg(X, {{0,-6}})
 ///
 
-doc ///
-Key
-  CohomCalg
-Headline
-  an interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety
-Description
-  Text
-     This package is experimental.
+
+TEST ///
+-- of internal creation routines
+-*
+restart
+*-
+  debug needsPackage "CohomCalg"
+  X = smoothFanoToricVariety(3,2)
+
+  assert(toCohomCalg X === 
+"vertex x0 | GLSM:(0,1);
+vertex x1 | GLSM:(0,1);
+vertex x2 | GLSM:(0,1);
+vertex x3 | GLSM:(1,0);
+vertex x4 | GLSM:(1,-1);
+srideal [x0*x1*x2,x3*x4];
+")
+
+  Ds = for i from 0 to # rays X - 1 list X_i
+  allDs = (drop(subsets Ds,1))/sum/(d -> -d);
+  degs = take(allDs/degree, 5)
+  assert(
+      toCohomCalg degs
+      ===
+"ambientcohom O(0,-1);
+ambientcohom O(0,-1);
+ambientcohom O(0,-2);
+ambientcohom O(0,-1);
+ambientcohom O(0,-2);
+monomialfile off;
+")
+
+  debugLevel = 5
+  H = cohomCalg(X,allDs)
+  peek H
+  peek cohomCalg(X, {{0,-6}})
+
+  debugLevel = 1  
+  H = cohomCalg(X,allDs)
+
+  debugLevel = 2
+  H = cohomCalg(X,allDs)
+
+  debugLevel = 3
+  H = cohomCalg(X,allDs)
+  peek H
+  
+  -- compare these results to NormalToricVarieties:
+  for d in keys H do (
+    assert(first H#d === for i from 0 to dim X list rank HH^i(X, OO_X(toSequence d)))
+    )
 ///
+
+
 
 
 end--
 
+restart
+uninstallPackage "CohomCalg"
+restart
+needsPackage "CohomCalg"
+installPackage "CohomCalg"
+check "CohomCalg"
 
 
 doc ///
@@ -186,11 +297,6 @@ Description
   Pre
 Caveat
 SeeAlso
-///
-
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
 ///
 
 end
