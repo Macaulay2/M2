@@ -39,39 +39,27 @@ cpoly GateMatrix := o -> M -> (
 
 end--
 restart
+FF = ZZ/101
 needs "charPoly.m2"
 
-n=40
-FF = QQ
-R = QQ[flatten for i from 1 to n list for j from 1 to n list M_(i,j)];
-Ms = getVarGates R;
-M = gateMatrix for i from 0 to n-1 list for j from 0 to n-1 list Ms#(i*n+j); -- better way?
+n=20
+A = matrix (for i from 1 to n list for j from 1 to n list declareVariable M_(i,j)) -- generic matrix
 
 -- build circuit for characteristic polynomial
 --elapsedTime p = cpoly M;
 -- 12.3016 seconds elapsed
 -- M2-binary now consumes about ~2.8 g
 
-elapsedTime p = cpoly(M,SumStrategy=>"DivideConquer");
+elapsedTime p = cpoly(A,SumStrategy=>"DivideConquer");
 --depth p
-
-elapsedTime E= makeSLProgram(M, p);
-
-
-
---elapsedTime E = makeEvaluator(p,M);-- this should no longer work: why does it hang?
-
-cpout = mutableMatrix(FF,1,n+1)
+elapsedTime q = compress p;
+elapsedTime Ep= makeSLProgram(A, p);
+elapsedTime Eq= makeSLProgram(A, q);
 
 --M0 = matrix(FF,{{3,1,5},{3,3,1},{4,6,4}}); -- 3x3 test
-M0 = random(FF^n,FF^n)
-elapsedTime evaluate(E,M0);
--- 4.36379 seconds elapsed
-
-
-
-
-
+A0 = random(FF^n,FF^n)
+elapsedTime evaluate(Ep,A0);
+elapsedTime evaluate(Eq,A0);
 
 
 

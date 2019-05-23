@@ -29,6 +29,16 @@ gateSystem (GateMatrix,GateMatrix,GateMatrix) := (P,I,O) -> (
     new GateSystem from {Variables=>I, GateMatrix=>O, Parameters=>P,
 	"SLP"=>makeSLProgram(P|I,O)}
     )
+-- take a Matrix of elements in a polynomial ring that looks like K[x] or K[p][x] 
+gateSystem Matrix := GateSystem => F -> (
+    if numcols F != 1 then error "expected a matrix with 1 column";
+    R := ring F;
+    if not instance(R,PolynomialRing) then error "expected a matrix over a polynomial ring with the form K[variables] or K[parameters][variables]";
+    (FR,toFR) := flattenRing R;
+    vars'params := getVarGates FR;
+    if numgens R + numgens coefficientRing R != numgens FR then error "expected a matrix over a polynomial ring with the form K[variables] or K[parameters][variables]";    
+    gateSystem(gateMatrix{drop(vars'params,numgens R)}, gateMatrix{take(vars'params,numgens R)}, gatePolynomial toFR F) 
+    )
 
 vars GateSystem := F -> F.Variables
 parameters GateSystem := F -> F.Parameters
@@ -61,6 +71,13 @@ valueT = evaluate(fT,point{{0.1,2*ii}})
 fH = gateSystem(matrix{{t}}, matrix{{x,y}}, (1-t)*S + (1+ii)*t*T) 
 valueH1 = evaluate(fH,point{{1}},point{{0.1,2*ii}})
 assert(norm(valueH1 - (1+ii)*valueT)<0.00001)  
+R = CC[X,Y]
+F = gateSystem matrix{{X*Y-1},{X^2+Y^3-2}}
+vF = evaluate(F,point{{0.1,2*ii}}) 
+R = CC[A,B][X,Y]
+G = gateSystem matrix{{X*Y-A},{X^2+Y^3-B}}
+vG = evaluate(G,point{{1,2}},point{{0.1,2*ii}}) 
+assert(norm(vF - vG)<0.00001)  
 ///
 
 -- jacobian PolySystem := ??? -- where is this used?
@@ -184,7 +201,7 @@ gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> (
     ) 
  
 -- !!! a general problem: some methods need PolySystem to be changed to GateSystem
-gateMatrix PolySystem := F -> (gateSystem F)#GateMatrix
+gateMatrix PolySystem := F -> gateMatrix gateSystem F
 
 -- Homotopy that follows a segment in the parameter space 
 parametricSegmentHomotopy = method()

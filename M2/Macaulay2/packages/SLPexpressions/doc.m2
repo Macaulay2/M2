@@ -5,12 +5,14 @@ doc ///
     Headline
         Straight Line Programs and expressions for evaluation circuits
     Description
+        What is this useful for??? 
         Example
-            X = inputGate x
-            f = X + 1
+            declareVariable x
+            f = x + 1
             n = 12;
             for i from 1 to n do f = f*f -- f = (x+1)^(2^n)
-            time A = value(f,valueHashTable({X},{1}))  
+            slp = makeSLProgram({x},{f})
+	    time A = evaluate(slp,matrix{{1}})
             ZZ[y];
             time B = sub((y+1)^(2^n),{y=>1})    
             A == B

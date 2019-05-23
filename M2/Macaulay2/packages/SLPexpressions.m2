@@ -114,12 +114,14 @@ zeroGate = inputGate 0
 
 declareVariable = method()
 declareVariable Symbol :=  
-declareVariable IndexedVariable := g-> (g <- inputGate g) 
+declareVariable IndexedVariable := g -> (g <- inputGate g) 
+declareVariable InputGate := g -> g
+declareVariable Thing := g -> error "defined only for a Symbol or an IndexedVariable" 
 
 undeclareVariable = method()
 undeclareVariable InputGate := g -> 
 if member(class g.Name, {Symbol, IndexedVariable}) 
-then g.Name <- g.Name else error "expected a Symbol or an IndexedVariable" 
+then g.Name <- g.Name else error "expected the InputGate's Name to be a Symbol or an IndexedVariable" 
 
 SumGate = new Type of Gate
 net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
@@ -167,6 +169,13 @@ Number * Gate := (a,b) -> inputGate a * b
 Gate * Number  := (a,b) -> a * inputGate b
 Number - Gate := (a,b) -> inputGate a - b
 Gate - Number  := (a,b) -> a - inputGate b
+
+RingElement + Gate := (a,b) -> inputGate a + b
+Gate + RingElement  := (a,b) -> a + inputGate b
+RingElement * Gate := (a,b) -> inputGate a * b
+Gate * RingElement  := (a,b) -> a * inputGate b
+RingElement - Gate := (a,b) -> inputGate a - b
+Gate - RingElement  := (a,b) -> a - inputGate b
 
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
