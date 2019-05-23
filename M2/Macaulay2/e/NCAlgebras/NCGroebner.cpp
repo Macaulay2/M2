@@ -12,6 +12,7 @@ void NCGroebner::compute(int softDegreeLimit)
     }
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
+      std::cout << softDegreeLimit << std::endl;
       auto toBeProcessed = mOverlapTable.nextDegreeOverlaps().second;
       while(!toBeProcessed->empty())
         {
@@ -220,6 +221,7 @@ auto NCGroebner::createOverlapPoly(Overlap overlap) const -> Poly*
 {
   if (std::get<1>(overlap) == -1)
     {
+      // if we are here, then 'overlap' represents a generator
       const Poly* f = mInput[std::get<0>(overlap)];
       Poly * result = new Poly;
       freeAlgebra().copy(*result, *f);
@@ -242,11 +244,17 @@ auto NCGroebner::createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> voi
   A.mult_by_term_left(wordAsPoly, tmp, A.coefficientRing()->from_long(1), prefix);
 }
 
+// not what we need - need an overlapDegree function
 auto NCGroebner::overlapWordLength(Overlap o) const -> int
 {
   Word tmp;
   freeAlgebra().lead_word(tmp,*mGroebner[std::get<2>(o)]);
   return std::get<1>(o) + tmp.size();
+}
+
+auto NCGroebner::overlapDegree(Overlap o) const -> int
+{
+  return overlapWordLength(o);
 }
 
 auto NCGroebner::printOverlapData(std::ostream& o, Overlap overlap) const -> void

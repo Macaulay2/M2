@@ -26,16 +26,19 @@ class FreeMonoid : public our_new_delete
 private:
   const std::vector<std::string> mVariableNames;
   const PolynomialRing* mDegreeRing;
-  const std::vector<int> mDegrees;
-  const std::vector<int> mWeightVectors;
+  const std::vector<int> mDegrees;       // length numVars()*(length of a single degree vector)
+  const std::vector<int> mWeightVectors; // length numVars()*(length of a single weight vector)
+  const std::vector<int> mHeftVector;    // length is size of degree vector
+  const std::vector<int> mHeftDegrees;   // length numVars()
   const int mNumWeights;
-  VECTOR(const int*) mDegreeOfVar;
+  VECTOR(const int*) mDegreeOfVar;       // length numVars(), each is a pointer to an allocated degree vector
 public:
   FreeMonoid(
              const std::vector<std::string>& variableNames,
              const PolynomialRing* degreeRing,
              const std::vector<int>& degrees,
-             const std::vector<int>& wtvecs
+             const std::vector<int>& wtvecs,
+             const std::vector<int>& heftVector
              );
   
   // Informational
@@ -103,6 +106,9 @@ private:
   void setWeights(Monom&m ) const; // assumes length and word are already in place.
 
   int weightOfVar(int v, int wt) const { return mWeightVectors[v+wt*numVars()]; }
+  int heftOfVar(int v) const { return mHeftDegrees[v]; }
+
+  int wordWeight(Word& word, std::vector<int>& weight) const;
 
 };
 

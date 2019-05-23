@@ -33,7 +33,7 @@ auto OverlapTable::isFinished(int topDegree) const -> bool
 }
 
 // returns the lowest degree and a pointer to the overlaps
-// in that degree if isFinished returns true.  Otherwise
+// in that degree if isFinished returns false.  Otherwise
 // return (-1,nullptr).
 auto OverlapTable::nextDegreeOverlaps() -> std::pair<int,std::deque<Overlap>*>
 {

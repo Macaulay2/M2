@@ -72,11 +72,12 @@ FreeAlgebra* FreeAlgebra::create(const Ring* K,
                                  const std::vector<std::string>& names,
                                  const PolynomialRing* degreeRing,
                                  const std::vector<int>& degrees,
-                                 const std::vector<int>& wtvecs
+                                 const std::vector<int>& wtvecs,
+                                 const std::vector<int>& heftVector
                                  )
 {
   assert(K != nullptr);
-  FreeMonoid *M = new FreeMonoid(names, degreeRing, degrees, wtvecs);
+  FreeMonoid *M = new FreeMonoid(names, degreeRing, degrees, wtvecs, heftVector);
   FreeAlgebra* result = new FreeAlgebra(K, M);
 
   return result;

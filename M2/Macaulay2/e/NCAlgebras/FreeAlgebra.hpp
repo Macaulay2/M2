@@ -20,7 +20,8 @@ public:
                              const std::vector<std::string>& names,
                              const PolynomialRing* degreeRing,
                              const std::vector<int>& degrees,
-                             const std::vector<int>& wtvecs
+                             const std::vector<int>& wtvecs,
+                             const std::vector<int>& heftVector
                              );
 
   const Ring* coefficientRing() const { return &mCoefficientRing; }

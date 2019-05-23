@@ -299,7 +299,8 @@ extern "C" {
                                                  M2_ArrayString names,
                                                  const Ring* degreeRing,
                                                  M2_arrayint degrees,
-                                                 M2_arrayint wtvecs);
+                                                 M2_arrayint wtvecs,
+                                                 M2_arrayint heftVector);
   /* coefficientRing will be the allowed coefficients of our non-comm polynomials.
      wtvecs is a flattened array of all of the weight vectors for the monomial order,
      where contains the first weightvector, then second weightvector, etc.

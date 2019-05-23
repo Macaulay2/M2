@@ -210,7 +210,8 @@ const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
                                                M2_ArrayString names,
                                                const Ring* degreeRing,
                                                M2_arrayint degrees,
-                                               M2_arrayint wtvecs)
+                                               M2_arrayint wtvecs,
+                                               M2_arrayint heftVector)
 {
   try {
     if (coefficientRing == nullptr)
@@ -228,7 +229,8 @@ const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
                                                         M2_ArrayString_to_stdvector(names),
                                                         P,
                                                         M2_arrayint_to_stdvector<int>(degrees),
-                                                        M2_arrayint_to_stdvector<int>(wtvecs));
+                                                        M2_arrayint_to_stdvector<int>(wtvecs),
+                                                        M2_arrayint_to_stdvector<int>(heftVector));
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }

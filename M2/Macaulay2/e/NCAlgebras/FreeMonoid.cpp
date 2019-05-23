@@ -4,11 +4,13 @@ FreeMonoid::FreeMonoid(
           const std::vector<std::string>& variableNames,
           const PolynomialRing* degreeRing,
           const std::vector<int>& degrees,
-          const std::vector<int>& wtvecs)
+          const std::vector<int>& wtvecs,
+          const std::vector<int>& heftVector)
   : mVariableNames(variableNames),
     mDegreeRing(degreeRing),
     mDegrees(degrees),
     mWeightVectors(wtvecs),
+    mHeftVector(heftVector),
     mNumWeights(wtvecs.size() / variableNames.size())
 {
   auto ndegrees = degreeMonoid().n_vars();
@@ -20,6 +22,7 @@ FreeMonoid::FreeMonoid(
       degreeMonoid().from_expvector(i, deg);
       mDegreeOfVar.push_back(deg);
     }
+  // TODO: call wordWeight to set heft of each variable in mHeftDegrees
 }
 
 void FreeMonoid::one(MonomialInserter& m) const
@@ -261,6 +264,10 @@ void FreeMonoid::setWeights(Monom& m) const
   int word_len = wordLength(m);
   for (int j = 1; j <= mNumWeights; ++j)
       monom[j] = 0;
+  // eventually replace both for loops with:
+  // word = Word(m)
+  //for (int k = 0; k < mNumWeights; ++k)
+  //  monom[k+1] = wordWeight(word,iterator to beginning of kth weight)
   for (int j = 0; j < word_len; ++j)
     {
       for (int k = 0; k < mNumWeights; ++k)
@@ -268,6 +275,14 @@ void FreeMonoid::setWeights(Monom& m) const
           monom[k+1] += weightOfVar(m[mNumWeights+1+j],k);
         }
     }
+}
+
+int FreeMonoid::wordWeight(Word& word, std::vector<int>& weight) const
+{
+  int result = 0;
+  for (int j = 0; j < word.size(); ++j)
+    result += weight[word.begin()[j]];
+  return result;
 }
 
 // Local Variables:

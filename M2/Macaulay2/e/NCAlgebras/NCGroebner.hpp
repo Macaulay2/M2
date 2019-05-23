@@ -75,6 +75,7 @@ public:
   auto createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void;
   
   auto overlapWordLength(Overlap o) const -> int;
+  auto overlapDegree(Overlap o) const -> int;
   
   auto printOverlapData(std::ostream& o, Overlap overlap) const -> void;
   

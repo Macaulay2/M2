@@ -972,10 +972,17 @@ TEST ///
   restart
   debug needsPackage "PolynomialAlgebra"
 *-
-  R = QQ{a,b,c,d, Degrees => {3,2,1,1}, Weights => {{0,0,1,1}} }
-  I = ideal {c*d*c*d - a, c*d - b}
-  isHomogeneous I
-  J = NCGB(I,20)
+R = QQ{a,b,c,x,y, Degrees => {3,3,2,1,1}, Weights => {{0,0,0,1,1}} }
+I = ideal{x*y - c, x*y*x-a, y*x*y-b}
+isHomogeneous I
+J = NCGB(I,3) 
+J = NCGB(I,4) -- this is not working
+J = NCGB(I,5)
+J = NCGB(I,6)
+
+I1 = ideal {x*y - c}
+NCReduction2Sided(x*y*x - a, I1)
+I2 = ideal {x*y - c, c*x - a}
 ///
 
 end--
