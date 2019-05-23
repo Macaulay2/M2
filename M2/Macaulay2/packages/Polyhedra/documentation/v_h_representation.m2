@@ -39,7 +39,7 @@ doc ///
          (facets C) * (linealitySpace C)
 
       Text
-         {\bf Conventions for cones}
+         {\bf Conventions for polyhedra}
 
          For a polyhedron the situation is slightly different, as we have a
          right hand side to take into account, since we are dealing with affine
@@ -79,58 +79,40 @@ doc ///
          E * (rays P)
          E * (vertices P)
             
-
-
-
       Text
-         {\bf Cones}
+         {\bf Full representations}
 
-         A cone can be described in two ways. On the one hand one can take a
-         set of vectors $\{v_1,\dots,v_n\}$ in $\QQ^d$ and then take their
-         positive hull, namely the set of all linear combinations $a_1\cdot
-         v_1+\ldots+a_n\cdot v_n$ with positive coefficients $a_i\in\QQ_{\ge
-         0}$.
-         This is the decription of a cone via generators, the so-called {\it
-         V-representation}. In M2 a cone can be made from generators with @TO
-         coneFromVData@:
+         1. The pair (@TO rays@, @TO linealitySpace@) is a valid V-representation of a cone.
+
+         2. The pair (@TO facets@, @TO hyperplanes@) is a valid H-representation of a cone.
+
+         3. The triple (@TO vertices@, @TO rays@, @TO linealitySpace@) is a valid V-representation of a polyhedron.
+         
+         4. The triple (@TO facets@, @TO hyperplanes@) is a valid H-representation of a polyhedron.
+
+         That means we have the following identities:
 
       Example
-         V = matrix {{0,1,2},{1,1,1}}
-         Cv = coneFromVData V
+         C == coneFromVData(rays C, linealitySpace C)
+         C == coneFromRays(rays C, linealitySpace C)
+         C == coneFromHData(facets C, hyperplanes C)
+         C == coneFromInequalities(facets C, hyperplanes C)
+         P == convexHull (vertices P, rays P, linealitySpace P)
+         F = facets P
+         H = hyperplanes P
+         P == polyhedronFromHData(F#0, F#1, H#0, H#1)
+         P == polyhedronFromInequalities(F#0, F#1, H#0, H#1)
 
-      Text
-         Note that the generators are the {\bf columns} of the matrix {\tt V}.
-
-         Alternatively one can describe a cone as the intersection of finitely
-         many linear halfspaces. This is the so-called {\it H-representation}:
-         Given finitely many vectors $\{h_1,\dots,h_m\}$ from $\QQ^d$, take the
-         set of all vectors $x\in\QQ^d$ such that the scalar product $\langle
-         x,h_i\rangle\ge 0$ is positive for all $i=1,\dots,m$. In M2 a cone can
-         be made from halfspaces with @TO coneFromHData@:
-
-      Example
-         H = matrix {{1,0},{1,1},{-1,2}}
-         Ch = coneFromHData H
-         Cv == Ch
-
-      Text
-         Note that the hyperplanes are the {\bf columns} of the matrix {\tt H}.
-
-         Further note that neither representation is unique. To get a minimal
-         set of generators use @TO rays@, to get a minimal set of inequalities
-         use @TO facets@:
-
-      Example
-         rays Ch
-         facets Cv
-         A = (facets Cv) * (rays Ch)
-
-      Text
-         It is an important convention that we require the scalar product of
-         generators with inequalities to be positive, i.e. that all the entries
-         of the matrix {\tt A} are positive. Other software and parts of
-         mathematics may require this scalar product to be negative.
-
+   SeeAlso
+      coneFromVData
+      coneFromHData
+      convexHull
+      polyhedronFromHData
+      facets
+      hyperplanes
+      linealitySpace
+      (rays, PolyhedralObject)
+      vertices
 
 
 ///
