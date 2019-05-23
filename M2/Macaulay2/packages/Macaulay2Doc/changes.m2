@@ -50,7 +50,8 @@ document {
      	       UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been added." },
-	       	    LI { TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been added." }
+	       	    LI { TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been added." },
+		    LI { TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been added." }
 		    }
 	       },
      	  LI { "packages that have been published and certified:",
