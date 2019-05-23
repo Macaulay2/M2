@@ -1443,7 +1443,7 @@ doc ///
 	Text
             This is a type of hash table storing the output of a 
             pseudo-witness set computation using monodromy, 
-            with the following keys:
+            with the following keys:
         Code
             UL {
                 {TEX "\\bf isCompletePseudoWitnessSet: whether the pseudo-witness set has passed the trace test, according to the trace test threshold"},
