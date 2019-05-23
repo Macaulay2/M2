@@ -1,7 +1,7 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "0.9.7",
-	Date => "August 28, 2018",
+	Version => "0.9.8",
+	Date => "September 28, 2018",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu",
@@ -304,7 +304,7 @@ flats Matroid := List => M -> (
 latticeOfFlats = method()
 latticeOfFlats Matroid := Poset => M -> poset(flats M/toList, (a, b) -> isSubset(a, b))
 
-fVector Matroid := HashTable => opts -> M -> hashTable pairs tally(flats M/rank_M)
+fVector Matroid := HashTable => M -> hashTable pairs tally(flats M/rank_M)
 
 dual Matroid := Matroid => {} >> opts -> M -> (
 	if not M.cache.?dual then (
@@ -1782,9 +1782,9 @@ doc ///
 			a chain from 0). Conversely, every geometric lattice is the 
 			lattice of flats of a matroid.
 			
-			If M1 and M2 are @TO2{(isSimple, Matroid), "simple matroids"}@
+			If M and N are @TO2{(isSimple, Matroid), "simple matroids"}@
 			(i.e. no loops or parallel classes) with isomorphic lattice of 
-			flats, then M1 and M2 are isomorphic.
+			flats, then M and N are isomorphic.
 			
 		Example
 			M = matroid({a,b,c,d},{{a,b},{a,c}})
@@ -2171,11 +2171,11 @@ doc ///
 			@TO2{(symbol ==, Matroid, Matroid), "=="}@ though:
 			
 		Example
-			M1 = uniformMatroid(2, 4) + matroid completeGraph 4
-			M1 == uniformMatroid(2, 4) ++ matroid completeGraph 4
-			M2 = matroid completeGraph 4 ++ uniformMatroid(2, 4)
-			M1 == M2
-			areIsomorphic(M1, M2)
+			M0 = uniformMatroid(2, 4) + matroid completeGraph 4
+			M0 == uniformMatroid(2, 4) ++ matroid completeGraph 4
+			M1 = matroid completeGraph 4 ++ uniformMatroid(2, 4)
+			M0 == M1
+			areIsomorphic(M0, M1)
 		Text
 			
 			Matroid union is an important operation in combinatorial optimization,
@@ -2191,9 +2191,9 @@ doc ///
 			of two graphic matroids need not be binary:
 			
 		Example
-			M1 = matroid({a,b,c,d}, {{a},{b},{c}})
-			M2 = matroid({a,b,c,d}, {{b},{c},{d}})
-			M1 + M2 == uniformMatroid(2,4)
+			M0 = matroid({a,b,c,d}, {{a},{b},{c}})
+			M1 = matroid({a,b,c,d}, {{b},{c},{d}})
+			M0 + M1 == uniformMatroid(2,4)
 			F7 = specificMatroid "fano"
 			NF = specificMatroid "nonfano"
 			all({F7 + NF, F7 + F7, NF + NF}, M -> M == uniformMatroid(6, 7))
@@ -2218,11 +2218,11 @@ doc ///
 			M = matroid A
 			M_*
 			unique M_*
-			M1 = matroid(M_{0,1,2} | {d}, bases M)
-			M == M1
+			M0 = matroid(M_{0,1,2} | {d}, bases M)
+			M == M0
 			B = matrix{{0,1,2},{0,1,2}}
 			N = matroid B
-			U = M1 + N
+			U = M0 + N
 			peek U
 			U_*
 	SeeAlso
@@ -2465,15 +2465,15 @@ doc ///
 			@TO Boolean@.
 			
 		Example
-			M1 = matroid(toList(a..z)/toString,{{"m","a","t","r","o","i","d"}})
-			M2 = matroid(toList(0..25), {{random(ZZ),23,15,12,19,20,11}})
-			quickIsomorphismTest(M1, M2)
+			M0 = matroid(toList(a..z)/toString,{{"m","a","t","r","o","i","d"}})
+			M1 = matroid(toList(0..25), {{random(ZZ),23,15,12,19,20,11}})
+			quickIsomorphismTest(M0, M1)
 			quickIsomorphismTest(matroid random(ZZ^5,ZZ^8), uniformMatroid(5, 8))
 			quickIsomorphismTest(uniformMatroid(5, 9), uniformMatroid(4, 9))
-			M1 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{d,g}})
-			M2 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{a,h}})
-			R = ZZ[x,y]; tuttePolynomial(M1, R) == tuttePolynomial(M2, R)
-			time quickIsomorphismTest(M1, M2)
+			M0 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{d,g}})
+			M1 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{a,h}})
+			R = ZZ[x,y]; tuttePolynomial(M0, R) == tuttePolynomial(M1, R)
+			time quickIsomorphismTest(M0, M1)
 			value oo === false
 	SeeAlso
 		(isomorphism, Matroid, Matroid)
@@ -2509,8 +2509,8 @@ doc ///
 		Example
 			M = matroid({a,b,c},{{a,b},{a,c},{b,c}})
 			areIsomorphic(M, uniformMatroid(2,3))
-			M1 = matroid({a,b,c},{{a,b},{a,c}})
-			areIsomorphic(M, M1)
+			M0 = matroid({a,b,c},{{a,b},{a,c}})
+			areIsomorphic(M, M0)
 	Caveat
 		Isomorphism of matroids should not be confused with equality: cf.
 		@TO2{(symbol ==, Matroid, Matroid), "=="}@ for more details.
@@ -3296,9 +3296,9 @@ assert(#loops M == 3 and #connectedComponents representationOf M == 2)
 C = components M
 assert(#C == 5 and #getIsos(M, fold(C, (a, b) -> a ++ b)) == 432)
 assert(characteristicPolynomial M == 0)
-M1 = matroid({a,b,c,d}, {{a},{b},{c}})
-M2 = matroid({a,b,c,d}, {{b},{c},{d}})
-assert(M1 + M2 == uniformMatroid(2,4))
+M0 = matroid({a,b,c,d}, {{a},{b},{c}})
+M1 = matroid({a,b,c,d}, {{b},{c},{d}})
+assert(M0 + M1 == uniformMatroid(2,4))
 F7 = specificMatroid "fano"
 NF = specificMatroid "nonfano"
 assert(all({F7 + NF, F7 + F7, NF + NF}, M -> M == uniformMatroid(6, 7)))
@@ -3348,28 +3348,28 @@ assert(maxWeightBasis(F7, rsort w) === set{0,1,2})
 ///
 
 TEST ///
-M1 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{d,g}})
-M2 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{a,h}})
+M0 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{d,g}})
+M1 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{a,h}})
 T = ZZ[x,y]
-assert(isWellDefined M1 and isWellDefined M2)
-assert(tuttePolynomial(M1, T) === tuttePolynomial(M2, T))
+assert(isWellDefined M0 and isWellDefined M1)
+assert(tuttePolynomial(M0, T) === tuttePolynomial(M1, T))
 F1 = set{0,1,2,3,7}
 F2 = F1 + set{5,8}
-assert(areIsomorphic(uniformMatroid(2,2), minor(M1, F1, M1.groundSet - F2)))
-assert(areIsomorphic(M1, matroid graph edges graph M1_*))
-Delta = independenceComplex M1
+assert(areIsomorphic(uniformMatroid(2,2), minor(M0, F1, M0.groundSet - F2)))
+assert(areIsomorphic(M0, matroid graph edges graph M0_*))
+Delta = independenceComplex M0
 F = fVector Delta
-assert(ideal Delta == ideal M1 and F === fVector independenceComplex M2)
+assert(ideal Delta == ideal M0 and F === fVector independenceComplex M1)
 assert((sort keys F)/(k -> F#k) === {1,11,55,164,319,409,324,125})
-assert(not areIsomorphic(M1, M2))
+assert(not areIsomorphic(M0, M1))
 ///
 
 TEST ///
 R = QQ[x_0..x_6]
-M1 = matroid(graph(toList(0..4), {set{0,3},set{0,4},set{1,3},set{1,4},set{2,3},set{2,4}}), ParallelEdges => {set{2,4}})
-M2 = matroid ideal(x_0*x_1*x_2*x_3,x_0*x_1*x_2*x_4,x_0*x_1*x_3*x_4,x_0*x_2*x_3*x_4,x_1*x_2*x_3*x_4,x_5*x_6)
-assert(betti res ideal M1 === betti res ideal M2)
-assert(areIsomorphic(M1, M2) == false)
+M0 = matroid(graph(toList(0..4), {set{0,3},set{0,4},set{1,3},set{1,4},set{2,3},set{2,4}}), ParallelEdges => {set{2,4}})
+M1 = matroid ideal(x_0*x_1*x_2*x_3,x_0*x_1*x_2*x_4,x_0*x_1*x_3*x_4,x_0*x_2*x_3*x_4,x_1*x_2*x_3*x_4,x_5*x_6)
+assert(betti res ideal M0 === betti res ideal M1)
+assert(areIsomorphic(M0, M1) == false)
 M3 = matroid ideal (x_0*x_1*x_2,x_0*x_3*x_4,x_1*x_2*x_3*x_4,x_0*x_1*x_3*x_5,x_0*x_2*x_3*x_5,x_1*x_2*x_3*x_5,x_0*x_1*x_4*x_5,x_0*x_2*x_4*x_5,x_1*x_2*x_4*x_5,x_1*x_3*x_4*x_5,x_2*x_3*x_4*x_5,x_0*x_1*x_3*x_6,x_0*x_2*x_3*x_6,x_1*x_2*x_3*x_6,x_0*x_1*x_4*x_6,x_0*x_2*x_4*x_6,x_1*x_2*x_4*x_6,x_1*x_3*x_4*x_6,x_2*x_3*x_4*x_6,x_1*x_5*x_6,x_0*x_2*x_5*x_6,x_0*x_3*x_5*x_6,x_2*x_3*x_5*x_6,x_0*x_4*x_5*x_6,x_2*x_4*x_5*x_6,x_3*x_4*x_5*x_6)
 M4 = matroid ideal (x_0*x_1*x_2,x_0*x_3*x_4,x_1*x_2*x_3*x_4,x_0*x_1*x_3*x_5,x_0*x_2*x_3*x_5,x_1*x_2*x_3*x_5,x_0*x_1*x_4*x_5,x_0*x_2*x_4*x_5,x_1*x_2*x_4*x_5,x_1*x_3*x_4*x_5,x_2*x_3*x_4*x_5,x_0*x_1*x_3*x_6,x_0*x_2*x_3*x_6,x_1*x_2*x_3*x_6,x_0*x_1*x_4*x_6,x_0*x_2*x_4*x_6,x_1*x_2*x_4*x_6,x_1*x_3*x_4*x_6,x_2*x_3*x_4*x_6,x_0*x_5*x_6,x_1*x_2*x_5*x_6,x_1*x_3*x_5*x_6,x_2*x_3*x_5*x_6,x_1*x_4*x_5*x_6,x_2*x_4*x_5*x_6,x_3*x_4*x_5*x_6)
 assert(betti res ideal M3 === betti res ideal M4 and betti res dual ideal M3 === betti res dual ideal M4)
@@ -3381,11 +3381,11 @@ TEST ///
 G0 = graph(toList(0..5), {{0, 3}, {4, 0}, {0, 5}, {4, 1}, {5, 1}, {5, 2}, {4, 3}, {5, 3}, {4, 5}})
 G1 = graph(toList(0..5), {{0, 3}, {4, 0}, {0, 5}, {1, 3}, {4, 1}, {5, 2}, {4, 3}, {5, 3}, {4, 5}})
 G2 = graph(toList(0..5), {{0, 2}, {4, 0}, {0, 5}, {1, 3}, {4, 1}, {5, 1}, {4, 2}, {5, 2}, {4, 5}})
-(M0, M1, M2) = (G0, G1, G2)/matroid
-assert(not(M0 == M1) and not(M1 == M2) and not(M0 == M2))
-assert((#getIsos(M0,M1), #getIsos(M1,M0)) == (8,8))
+(M, N, P) = (G0, G1, G2)/matroid
+assert(not(M == N) and not(N == P) and not(M == P))
+assert((#getIsos(M,N), #getIsos(N,M)) == (8,8))
 T = ZZ[x,y]
-assert(tuttePolynomial(M0, T) == tuttePolynomial(M1, T) and tuttePolynomial(M1, T) == tuttePolynomial(M2, T))
+assert(tuttePolynomial(M, T) == tuttePolynomial(N, T) and tuttePolynomial(N, T) == tuttePolynomial(P, T))
 G = graph({{0,1},{0,2},{1,2},{2,3},{3,4},{4,5},{4,6},{5,6}}) -- bowtie graph
 M = matroid G
 assert(set coloops M === set {4,3})
