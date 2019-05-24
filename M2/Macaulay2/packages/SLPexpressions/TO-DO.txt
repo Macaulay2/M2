@@ -61,3 +61,38 @@ constant gates of non-number type (pi, algebraic numbers, described by a subrout
 -- Naming questions
 evaluate vs value -- value is not used much (rename?)
 sub vs compose -- could sub be more general?   
+
+----------------- OLD TO-DO ----------------------------------------------------------------
+-* Expressions in M2 
+   *** should have this as a Gate 
+   ??? maybe?
+                            Expression : Adjacent
+                                      AssociativeExpression : Equation
+                                                              Product  ***
+                                                              Sum      ***
+                                      BinaryOperation
+                                      Divide                           ???
+                                      FunctionApplication
+                                      Holder : OneExpression           ???
+                                               ZeroExpression          ???
+                                      MatrixExpression                 ***
+                                      Minus                            ***
+                                      NonAssociativeProduct            ???
+                                      Parenthesize                     
+                                      Power                            ???
+                                      RowExpression                    
+                                      SparseMonomialVectorExpression
+                                      SparseVectorExpression
+                                      Subscript
+                                      Superscript
+                                      Table
+   In addition: 
+       Det     	   ***
+       Submatrix   ???
+       Minor       ???     
+
+TO DO:
+
+-- decide what types of non-terminal gates we need (see above)
+
+*-

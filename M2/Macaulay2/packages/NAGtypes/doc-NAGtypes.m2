@@ -348,6 +348,7 @@ document {
     Key => {PolySystem, 
 	(ideal,PolySystem), (isHomogeneous,PolySystem), (jacobian,PolySystem), (net,PolySystem),
 	(ring,PolySystem), (equations,PolySystem),
+	(numVariables,PolySystem), (numFunctions,PolySystem),(numParameters,PolySystem),
 	NumberOfPolys, NumberOfVariables, PolyMap, ContinuationParameter, 
 	SpecializationRing
 	},
@@ -397,7 +398,7 @@ evaluate(jacobian S, p)
      }
 
 document {
-    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,Point), (evaluate,PolySystem,Matrix)},
+    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,Point), (evaluate,PolySystem,Matrix), (evaluateJacobian,PolySystem,Point)},
     Headline => "evaluate a polynomial system or matrix at a point",
     Usage => "y = evaluate(f,x)",
     Inputs => { 
@@ -922,6 +923,39 @@ doc ///
       M = matrix{{1,x,x^2-y}}
       p = point matrix{{1,0}};
       D = dualSpace(M,p)
+///
+
+doc ///
+  Key
+    System
+    numVariables
+    (numVariables,System)
+    numFunctions
+    (numFunctions,System)
+    numParameters
+    (numParameters,System)
+    (evaluate,System,Matrix)
+    (evaluate,System,Matrix,Matrix)
+    (evaluate,System,Point)
+    (evaluate,System,Point,Point)
+    evaluateJacobian
+    (evaluateJacobian,System,Matrix)
+    (evaluateJacobian,System,Matrix,Matrix)
+    (evaluateJacobian,System,Point)
+    (evaluateJacobian,System,Point,Point)
+  Headline
+    a system of functions
+  Description
+    Text
+      An object of a type that inherits from this {\bf abstract} type should supply 
+      methods for 
+      evaluating a map that takes @TO numVariables@ (+ @TO numParameters@ if the sstem is parametric) inputs and 
+      produces @TO numFunctions@ outputs and its jacobian.
+      
+      Note for developers: it suffices to override the versions of @TO evaluate@ and @TO evaluateJacobian@ 
+      that take {\tt (System,Matrix,Matrix)} as parameters. 
+  SeeAlso
+    PolySystem
 ///
 
 doc ///

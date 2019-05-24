@@ -1084,3 +1084,34 @@ doc ///
 	    Unlike @TO PolySystem@, the functions of a @TO GateSystem@ do not belong to a ring and can be evaluated on @TO Number@s and @TO RingElement@s 
 	    as long as the constants in the evaluation circuits can be promoted to the corresponding @TO Ring@s. 
 ///
+
+doc ///
+    Key
+    	endGameCauchy
+	(endGameCauchy,GateHomotopy,Number,Point)
+	(endGameCauchy,GateHomotopy,Number,MutableMatrix)
+    Headline
+        Cauchy end game for getting a better approximation of a singular solution 
+    Usage
+    	endGameCauchy(H,t'end,p0)
+    	endGameCauchy(H,t'end,points)
+    Inputs
+	H:GateHomotopy
+	t'end:Number
+	p0:Point
+	points:MutableMatrix
+    Description
+    	Text 
+            Refines an approximation of a (singular) solution to a polynomial system which was obtained via homotopy contiuation.
+	    This method is used for posprocessing in the blackbox solver implmented in @TO solveSystem@.  
+        Example
+            CC[x,y]
+	    T = {(x-2)^3,y-x+x^2-x^3}
+	    sols = solveSystem(T,PostProcess=>false);
+	    p0 = first sols;
+	    peek p0
+	    t'end = 1
+    	    p = endGameCauchy(p0#"H",t'end,p0)
+    SeeAlso
+    	refine
+///

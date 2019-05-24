@@ -1,17 +1,24 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
--- TODO: compress (with CacheTable)
-
 newPackage select((
      "SLPexpressions",
-     Version => "1.9.3",
+     Version => "1.13",
      Date => "May 2019",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	  {Name => "Anton Leykin", 
+	      Email => "leykin@math.gatech.edu",
+	      HomePage => "https://people.math.gatech.edu/~aleykin3"
+	      },
+	  {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
+	  {Name => "Justin Chen"},
+	  {Name => "Mike Stillman", 
+                Email => "mike@math.cornell.edu", 
+                HomePage => "http://www.math.cornell.edu/~mike"
+                }
 	  },
      Configuration =>  {},	
      PackageExports => {"NAGtypes"},
@@ -40,39 +47,6 @@ export {
 exportMutable {
     }
 debug Core 
--* Expressions in M2 
-   *** should have this as a Gate 
-   ??? maybe?
-                            Expression : Adjacent
-                                      AssociativeExpression : Equation
-                                                              Product  ***
-                                                              Sum      ***
-                                      BinaryOperation
-                                      Divide                           ???
-                                      FunctionApplication
-                                      Holder : OneExpression           ???
-                                               ZeroExpression          ???
-                                      MatrixExpression                 ***
-                                      Minus                            ***
-                                      NonAssociativeProduct            ???
-                                      Parenthesize                     
-                                      Power                            ???
-                                      RowExpression                    
-                                      SparseMonomialVectorExpression
-                                      SparseVectorExpression
-                                      Subscript
-                                      Superscript
-                                      Table
-   In addition: 
-       Det     	   ***
-       Submatrix   ???
-       Minor       ???     
-
-TO DO:
-
--- decide what types of non-terminal gates we need (see above)
-
-*-
 
 concatenateNets = method()
 concatenateNets List := L -> (

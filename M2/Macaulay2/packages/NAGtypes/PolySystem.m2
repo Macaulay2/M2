@@ -64,8 +64,8 @@ polySystem Ideal := I -> polySystem transpose gens I
 
 numVariables PolySystem := P -> P.NumberOfVariables
 numFunctions PolySystem := P -> P.NumberOfPolys
+numParameters PolySystem := P -> if P.?Parameters then #P.Parameters else 0
 ring PolySystem := P -> ring P.PolyMap 
--- vars PolySystem := P -> error "not defined; try \n  vars ring Polysystem"
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
