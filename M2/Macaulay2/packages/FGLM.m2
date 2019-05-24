@@ -145,6 +145,40 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     )
 
 -------------------------------------------------------------------------------
+--- Helper functions for tests
+-------------------------------------------------------------------------------
+
+cyclic = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
+cyclic(ZZ) := Ideal => opts -> (n) -> (
+    R := (opts.CoefficientRing)[vars(0..n-1), MonomialOrder => opts.MonomialOrder];
+    F := toList apply(1..n-1, d -> sum(0..n-1, i -> product(d, k -> R_((i+k)%n))))
+         | {product gens R - 1};
+    ideal F
+    )
+
+katsura = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
+katsura(ZZ) := Ideal => opts -> (n) -> (
+    n = n-1;
+    R := (opts.CoefficientRing)[vars(0..n), MonomialOrder => opts.MonomialOrder];
+    L := gens R;
+    u := i -> (
+	 if i < 0 then i = -i;
+	 if i <= n then L_i else 0_R
+	 );
+    f1 := -1 + sum for i from -n to n list u i;
+    F := toList prepend(f1, apply(0..n-1, i -> - u i + sum(-n..n, j -> (u j) * (u (i-j)))));
+    ideal F
+    )
+
+test = (I1, MO2) -> (
+    R1 := ring I1;
+    R2 := (coefficientRing R1)(monoid ([gens R1], MonomialOrder => MO2));
+    G2 := gb(sub(I1, R2));
+    elapsedTime G2' := fglm(I1, R2);
+    assert(gens G2 == gens G2')
+    )
+
+-------------------------------------------------------------------------------
 --- documentation
 -------------------------------------------------------------------------------
 beginDocumentation()
@@ -251,44 +285,8 @@ SeeAlso
   groebnerBasis
 ///
 
-
 -------------------------------------------------------------------------------
---- Helper functions for tests
--------------------------------------------------------------------------------
-
-cyclic = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
-cyclic(ZZ) := Ideal => opts -> (n) -> (
-    R := (opts.CoefficientRing)[vars(0..n-1), MonomialOrder => opts.MonomialOrder];
-    F := toList apply(1..n-1, d -> sum(0..n-1, i -> product(d, k -> R_((i+k)%n))))
-         | {product gens R - 1};
-    ideal F
-    )
-
-katsura = method(Options => {CoefficientRing => ZZ/32003, MonomialOrder => GRevLex})
-katsura(ZZ) := Ideal => opts -> (n) -> (
-    n = n-1;
-    R := (opts.CoefficientRing)[vars(0..n), MonomialOrder => opts.MonomialOrder];
-    L := gens R;
-    u := i -> (
-	 if i < 0 then i = -i;
-	 if i <= n then L_i else 0_R
-	 );
-    f1 := -1 + sum for i from -n to n list u i;
-    F := toList prepend(f1, apply(0..n-1, i -> - u i + sum(-n..n, j -> (u j) * (u (i-j)))));
-    ideal F
-    )
-
-test = (I1, MO2) -> (
-    R1 := ring I1;
-    R2 := (coefficientRing R1)(monoid ([gens R1], MonomialOrder => MO2));
-    G2 := gb(sub(I1, R2));
-    elapsedTime G2' := fglm(I1, R2);
-    assert(gens G2 == gens G2')
-    )
-
-
--------------------------------------------------------------------------------
---- Helper functions for tests
+--- tests
 -------------------------------------------------------------------------------
 
 TEST ///
