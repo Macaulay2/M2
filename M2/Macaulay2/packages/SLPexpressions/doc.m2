@@ -5,7 +5,8 @@ doc ///
     Headline
         Straight Line Programs and expressions for evaluation circuits
     Description
-        What is this useful for??? 
+        Text 
+	    ???What is this useful for??? 
         Example
             declareVariable x
             f = x + 1

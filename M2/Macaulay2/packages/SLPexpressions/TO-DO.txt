@@ -5,47 +5,6 @@ the only problem is: who exports "evaluate"?
 not cataloging all gates?
 create several examples of large circuits (1-10 sec to setup)
 
--- Documentation
---warning: method has no documentation: SLPexpressions :: inputGate(Thing), key (inputGate,Thing), package SLPexpressions
---warning: method has no documentation: SLPexpressions :: sumGate(List), key (sumGate,List), package SLPexpressions
---warning: symbol has no documentation: SLPexpressions :: countGates, package SLPexpressions
---warning: method has no documentation: SLPexpressions :: countGates(GateMatrix), key (countGates,GateMatrix), package SLPexpressions
---warning: method has no documentation: SLPexpressions :: productGate(List), key (productGate,List), package SLPexpressions
---warning: symbol has no documentation: SLPexpressions :: makeSLProgram, package SLPexpressions
---warning: method has no documentation: SLPexpressions :: makeSLProgram(GateMatrix,GateMatrix), key (makeSLProgram,GateMatrix,GateMatrix), package SLPexpressions
---warning: method has no documentation: SLPexpressions :: makeSLProgram(List,List), key (makeSLProgram,List,List), package SLPexpressions
---warning: symbol has no documentation: SLPexpressions :: declareVariable, package SLPexpressions
---warning: method has no documentation: SLPexpressions :: declareVariable(IndexedVariable), key (declareVariable,IndexedVariable), package SLPexpressions
---warning: method has no documentation: SLPexpressions :: declareVariable(Symbol), key (declareVariable,Symbol), package SLPexpressions
---warning: symbol has no documentation: SLPexpressions :: SLProgram, package SLPexpressions
---warning: symbol has no documentation: SLPexpressions :: undeclareVariable, package SLPexpressions
---warning: method has no documentation: SLPexpressions :: undeclareVariable(InputGate), key (undeclareVariable,InputGate), package SLPexpressions
---warning: method has no documentation: SLPexpressions :: cCode(GateMatrix,GateMatrix), key (cCode,GateMatrix,GateMatrix), package SLPexpressions
---warning: method has no documentation: SLPexpressions :: cCode(List,List), key (cCode,List,List), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: evaluate(SLProgram,Matrix), key (evaluate,SLProgram,Matrix), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: evaluate(SLProgram,MutableMatrix,MutableMatrix), key (evaluate,SLProgram,MutableMatrix,MutableMatrix), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: Gate * Matrix, key (symbol *,Gate,Matrix), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: Gate - Gate, key (symbol -,Gate,Gate), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: RingElement * GateMatrix, key (symbol *,RingElement,GateMatrix), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: substitute(GateMatrix,HashTable), key (substitute,GateMatrix,HashTable), package SLPexpressions
---warning: tag has no documentation: SLPexpressions :: substitute(GateMatrix,Option), key (substitute,GateMatrix,Option), package SLPexpressions
-getVarGates
-gatePolynomial -- Tim
-SLProgram
-makeSLProgram -- Tim
-Gate
-InputGate
-GateMatrix
-support -- Tim
-constants -- Tim
-sub -- Tim
-diff -- Tim
-compress
-sumGate
-productGate
-divideGate
-detGate
-
 -- Circuit creation
 gatePolynomial -- currently, has a naive algorithm to produce a circuit for a poly
 gatePolynomial(Strategy=>"optimal evaluation of the support monomials")
@@ -63,6 +22,11 @@ evaluate vs value -- value is not used much (rename?)
 sub vs compose -- could sub be more general?   
 
 ----------------- OLD TO-DO ----------------------------------------------------------------
+-- functions that one may forget exist...
+
+segmentHomotopyProjective
+
+
 -* Expressions in M2 
    *** should have this as a Gate 
    ??? maybe?
