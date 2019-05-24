@@ -3,7 +3,9 @@
 
 needsPackage "NumericalCertification"
 
-FF = QQ
+FF = RR
+--FF = QQ
+--FF = QQ[i]/ideal(i^2+1)
 -- Derive Eqs
 R = FF[x_1..x_7,y_1..y_7,z_1..z_7,t_1..t_7,u_1..u_7,v_1..v_7];
 ind = {1,2,3,4,5,6,7};
@@ -31,22 +33,30 @@ f = polySystem sub(transpose matrix {eqsEval3},R1)
 sol1 = apply({11.675771704477,3.802878122730,8.311818491659,-6.487945444917,-3.168475045360,
     -4.124414157636, -2.910611127075, -1.732276613733, -8.537495065091, -2.459640638529,
     0.704116159640, 0.895623427074, 2.515897624878, 0.785632006191, 0.192767499267,
-    0.235129952793, -0.149726023342, -0.566129665502, 0.338461562103, 0.536724141124}, x->promote(x,FF));
+    0.235129952793, -0.149726023342, -0.566129665502, 0.338461562103, 0.536724141124}, x->promote(x,QQ));
+sol2 = apply({2.075088491891, -2.688893665930, -4.033142850644, 6.311134419772, 3.914613907006,
+	-2.036516392124, 4.070505903499, -2.655943449984, -5.229892181735, -7.881492743224,
+	-0.030209763440, 0.184499043058, 0.251380280590, -0.474742889365, 1.698198197367,
+	0.599691085438, 0.426965115851, 0.516678258430, 1.230302197822, -1.164062857743}, x->promote(x,QQ));
+
 
 -- alpha-theory
 sol1point = point {sol1};
-L = {sol1point,point random(FF^1,FF^(#coordinates sol1point))}
-apply(L, x->certifySolution(f,x)) 
-select(L, x->certifySolution(f,x)=!=null) 
+sol2point = point {sol2};
+computeConstants(f, sol1point)
+L = {sol1point,point random(FF^1,FF^(#coordinates sol1point)), sol2point}
+apply(L, x->certifySolution(f,x))
+certifyCount(f, L)
 
--- Krawczyk (fails, more convenient IntervalArithmetic needed?)
-sol1int = apply({1..20}#0, i -> I_i=interval((sol1#0)#(i-1)-(1e-8),(sol1#0)#(i-1)+(1e-8)));
-o = intervalOptionList {("x3"=>"I_1"), ("x4"=>"I_2"), ("x5"=>"I_3"), ("x6"=>"I_4"), ("x7"=>"I_5"),
-    ("y3"=>"I_6"), ("y4"=>"I_7"), ("y5"=>"I_8"), ("y6"=>"I_9"), ("y7"=>"I_10"),
-    ("t3"=>"I_11"), ("t4"=>"I_12"), ("t5"=>"I_13"), ("t6"=>"I_14"), ("t7"=>"I_15"),
-    ("u3"=>"I_16"), ("u4"=>"I_17"), ("u5"=>"I_18"), ("u6"=>"I_19"), ("u7"=>"I_20")}
+
+-- Krawczyk (faster IntervalArithmetic needed?)
+sol1int = apply({1..20}#0, i -> I_i=interval(({sol1}#0)#(i-1)-(10^(-8)),({sol1}#0)#(i-1)+(10^(-8))));
+sol1int = apply({1..20}#0, i -> I_i=interval((promote(({sol1}#0)#(i-1)-(10^(-8)),QQ)),promote(({sol1}#0)#(i-1)+(10^(-8)),QQ)));
+o = intervalOptionList {("x_3"=>"I_1"), ("x_4"=>"I_2"), ("x_5"=>"I_3"), ("x_6"=>"I_4"), ("x_7"=>"I_5"),
+    ("y_3"=>"I_6"), ("y_4"=>"I_7"), ("y_5"=>"I_8"), ("y_6"=>"I_9"), ("y_7"=>"I_10"),
+    ("t_3"=>"I_11"), ("t_4"=>"I_12"), ("t_5"=>"I_13"), ("t_6"=>"I_14"), ("t_7"=>"I_15"),
+    ("u_3"=>"I_16"), ("u_4"=>"I_17"), ("u_5"=>"I_18"), ("u_6"=>"I_19"), ("u_7"=>"I_20")}
 krawczykMethod(f,o)
-   
-
+--krawczykOper(f,o)   
 
 

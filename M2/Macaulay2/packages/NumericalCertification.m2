@@ -60,30 +60,62 @@ net Interval := i -> net "[" | net first i | ", " | net last i | "]"
 
 pointNorm = method()
 pointNorm(Point) := x -> (
-    N := sqrt(1+((norm(2,x))^2))
+    coordinateList := x#Coordinates;
+    -- returns the square of the norm
+    1 + sum(apply(coordinateList, x -> x^2))
     )
+
+-- For floating points only
+--pointNorm(Point) := x -> (
+--    N := sqrt(1+((norm(2,x))^2))
+--    )
 
 
 polyNorm = method()
 polyNorm(Number) := r -> (
-    abs(r)
+    abs(r)^2
     )
 polyNorm(RingElement) := r -> (
     L := listForm r;
-    sqrt(sum(L,a->(
+    sum(L,a->(
 	(e,c) := a;
 	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
- 	)))
+ 	))
     )
+
+
+
+
+-- For floating points only
+-*
+polyNorm(Number) := r -> (
+    abs(r)^2
+    )
+polyNorm(RingElement) := r -> (
+    L := listForm r;
+    sum(L,a->(
+	(e,c) := a;
+	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+ 	))
+    )
+*-
 
 
 polySysNorm = method()
 polySysNorm(PolySystem) := f -> (
     listOfEq := equations f;
+    listOfpolyNorms := apply(listOfEq, i -> polyNorm(i));
+    N := sum listOfpolyNorms
+    )
+
+-- For floating points
+-*
+polySysNorm(PolySystem) := f -> (
+    listOfEq := equations f;
     listOfpolyNorms := apply( listOfEq, i -> (polyNorm(i))^2);
     N := sqrt(sum listOfpolyNorms)
     )
-
+*-
 
 newtonOper = method()
 newtonOper(PolySystem, Point) := (f, x) -> (
@@ -99,8 +131,23 @@ newtonOper(PolySystem, Point) := (f, x) -> (
     
 
 
-computeConstants = method()
-computeConstants(PolySystem, Point) := (ff, xx) -> (
+computeConstants = method() --computes alpha^2 beta^2 gamma^2
+computeConstants(PolySystem, Point) := (f, x) -> (
+    eqs := equations f;
+    J := evaluate(jacobian f, x);
+    inverseJ := inverse J;
+    if det J == 0 then error "The Jacobian is not invertible";
+    y := point(inverseJ * evaluate(f,x));
+    degs := flatten apply(eqs, i -> degree i);--for i from 1 to numOfPoly list degree (eqs#(numOfPoly-i));
+    deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNorm(x))^(i-1))); --for i from 1 to numOfPoly list (degs)#(numOfPoly-i)*(pointNorm(x))^((degs)#(numOfPoly-i)-1);
+    mu := max {1, polySysNorm(f) * (promote(norm(inverseJ * deltaD),QQ))^2};  -- Is this okay???  
+    beta := sum apply(y#Coordinates, i -> i^2);
+    gamma := mu*((max degs)^3)/(4* pointNorm(x));
+    alpha := beta * gamma;
+    (alpha, beta, gamma)
+    )
+
+-*computeConstants(PolySystem, Point) := (ff, xx) -> (
     R := ring ff;
     numOfPoly := # equations ff;
     jacobianOfSys := jacobian ff;
@@ -117,18 +164,35 @@ computeConstants(PolySystem, Point) := (ff, xx) -> (
     gamma := mu*sqrt(maxdeg^3)/(2* pointNorm(xx));
     alpha := beta * gamma;
     (alpha, beta, gamma)
-    )
+    )*-
 
 
 certifySolution = method() -- returns null if not successful, (alpha,beta,gamma) if alpha-certified 
 certifySolution(PolySystem, Point) := (f, x) -> (
     alpha := first computeConstants(f,x);
     -- check: alpha < (13-3*sqrt(17))/4
-    if 4*alpha < 13 and (13-4*alpha)^2 > 9*17 then alpha else null
+    if 16*alpha < 169 and (322-16*alpha)^2 > 78*78*17 then alpha else null
     )
 
 certifyDistinctSoln = method()
 certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
+    Consts1 := computeConstants(f,x1);
+    Consts2 := computeConstants(f,x2);
+    normOfDist := sum apply((point{(coordinates x1)-(coordinates x2)})#Coordinates, c->c^2);
+    if Consts1 #0 >= ((13-3*sqrt(17))/4)^2 or Consts2 #0 >= ((13-3*sqrt(17))/4)^2 then (
+	false
+	)
+    else if normOfDist > 4*((Consts1)#1 + (Consts2)#1 + 2*sqrt((Consts1)#1 * (Consts2)#1)) then (
+	true
+	)
+    else if (Consts1)#0 < 0.0009 and normOfDist < 1/(400*(Consts1)#2) or (Consts2)#0 < 0.0009 and normOfDist < 1/(400*(Consts2)#2) then (
+	false
+	)
+    else (
+      	false
+	)
+    )
+-*certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
     Consts1 := computeConstants(f,x1);
     Consts2 := computeConstants(f,x2);
     if Consts1 #0 >= (13-3*sqrt(17))/4 then (
@@ -146,17 +210,16 @@ certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
     else (
       	false
 	)
-    )
+    )*-
 
 
 certifyRealSoln = method()
 certifyRealSoln(PolySystem, Point) := (f, x) -> (
-    (a, b, c) := computeConstants(f,x);
-    coordinate := coordinates x;
-    imagPart := apply(coordinate, c -> imaginaryPart(c));
-    normOfimagPart := norm(2,point{imagPart});
-    if normOfimagPart > 2*b then false
-    else if a < 0.03 and normOfimagPart < 1/(20*c) then true
+    (alpha, beta, gamma) := computeConstants(f,x);
+    imagPart := apply(coordinates x, i -> imaginaryPart(i));
+    normOfimagPart := sum apply(imagPart, i -> i^2); --norm(2,point{imagPart});
+    if normOfimagPart > 4*beta then false
+    else if alpha < 0.0009 and normOfimagPart < 1/(400*gamma) then true
     else (
     false
     )
@@ -164,6 +227,26 @@ certifyRealSoln(PolySystem, Point) := (f, x) -> (
 
 certifyCount = method()
 certifyCount(PolySystem, List) := (f, X) -> (
+    Y := select(X, i->certifySolution(f,i)=!=null); 
+    C := select(apply(X, i->certifySolution(f,i)), i->i=!=null); -- Can we have this without using function twice?
+    S := new MutableList from Y;
+    for i from 0 to length(Y) - 1 do S#i = true;
+    for i from 0 to length(Y) - 2 do for j from i+1 to length(Y) - 1 do if (
+	S#i == true and S#j == true
+	)
+    then (
+	S#j = certifyDistinctSoln(f,Y#i, Y#j);
+	);
+    D := {};
+    for i from 0 to length(Y) - 1 do if S#i == true then D = append(D, Y#i);
+    R := {};
+    if coefficientRing ring f =!= CC then for i from 0 to length(D) - 1 do if certifyRealSoln(f,D#i) == true then R = append(R,D#i);
+    new HashTable from {"certifiedSolutions" => Y, "alphaValues" => C, "certifiedDistinct" =>D, "certifiedReal" => R}
+    )
+
+
+
+-*certifyCount(PolySystem, List) := (f, X) -> (
     (Y, C) := certifySolution(f,X);
     S := new MutableList from Y;
     for i from 0 to length(Y) - 1 do S#i = true;
@@ -178,7 +261,7 @@ certifyCount(PolySystem, List) := (f, X) -> (
     R := {};
     if coefficientRing ring f =!= CC then for i from 0 to length(D) - 1 do if certifyRealSoln(f,D#i) == true then R = append(R,D#i);
     new HashTable from {"certifiedSolutions" => Y, "constants" => C, "certifiedDistinct" =>D, "certifiedReal" => R}
-    )
+    )*-
 
 
 
@@ -201,16 +284,25 @@ intervalOptionList(List) := l -> new IntervalOptionList from (
 interval = method(TypicalValue => Interval)
 interval (Number, Number) := (a, b) -> new Interval from (
     if a < b then (int := (a, b);
-    int':= toList int
+    intReturn:= toList int
     )
     else (int = (b, a);
-    int' = toList int
+    intReturn = toList int
     )
     )
 -- If interval function takes only one input, the it makes an interval with width 0
 interval (Number) := a -> new Interval from (
     interval (a,a)
     )
+-*interval (InputGate, InputGate) := (a, b) -> new Interval from (
+    int := toList (a, b)
+    )
+interval (SumGate, SumGate) := (a, b) -> new Interval from (
+    int := toList (a, b)
+    )
+interval (ProductGate, ProductGate) := (a, b) -> new Interval from (
+    int := toList (a, b)
+    )*-
 -- interval function for polynomial entries
 interval (Number, RingElement) := (a, b) -> new Interval from (
     a' := sub(a, ring b);
@@ -438,7 +530,7 @@ invmat(PolySystem, IntervalOptionList) := (p, o) -> (
     j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
     e := entries j;
     n := length e; 
-    -- plug in intervals into the jacobian entries   
+    -- plug in intervals into the jacobian entries
     ijm := intervalMatrix applyTable(e, a -> interval(sub(a,o))); 
     mf := matrix applyTable(ijm, i -> mInterval i);
     inverse mf
@@ -493,7 +585,7 @@ krawczykOper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
     ng := numgens coefficientRing(ring eqsOfp#0);
     j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
     e := entries j;
-    n := length e; 
+    n := length e;
     -- plug in intervals into the jacobian entries   
     ijm := intervalMatrix applyTable(e, a -> interval(sub(a,option)));
     mf := matrix applyTable(ijm, i -> mInterval i);
@@ -505,7 +597,7 @@ krawczykOper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
 	my := o.InvertibleMatrix
 	)
     else (
-	my = invmat(polySys,option)
+	my = invmat(polySys,option);
 	);
     yintmatrix := intervalMatrix applyTable(entries my, a -> interval(a,a));
     -- centering intervals in option at the origin
