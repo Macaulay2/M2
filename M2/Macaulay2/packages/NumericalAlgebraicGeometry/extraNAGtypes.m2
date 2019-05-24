@@ -47,15 +47,11 @@ numVariables GateSystem := F -> numcols vars F
 numFunctions GateSystem := F -> numrows gateMatrix F
 numParameters GateSystem := F -> numcols parameters F
 
-evaluate (GateSystem,Point,Point) := (F,p,x) -> (
-    if numVariables F != # coordinates x then error "expected the same number of coordinates as variables";
+evaluate (GateSystem,Matrix,Matrix) := (F,p,x) -> (
+    if numrows x =!= 1 or numrows p != 1 then "expected a 1-row matrix of values";
+    if numVariables F =!= numcols x then error "wrong number of variables values";
+    if numParameters F =!= numcols p then error "wrong number of parameter values";
     evaluate(F#"SLP", matrix p | matrix x)
-    )
-
-evaluate (GateSystem,Point) := (F,x) -> (
-    if numVariables F != # coordinates x then error "expected the same number of coordinates as variables";
-    if numParameters F != 0 then error "this is a system with parameters: use, e.g., evaluate(S,p,x)";
-    evaluate(F#"SLP", matrix x)
     )
 
 

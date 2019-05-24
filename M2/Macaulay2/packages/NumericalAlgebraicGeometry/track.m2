@@ -635,6 +635,8 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 
 debug Core -------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------
+-- trackHomotopyM2engine SUBROUTINES
 trackHomotopyM2engine = (H, inp, 
 	out, statusOut,
 	tStep, tStepMin, 
@@ -700,6 +702,7 @@ lowerPrecision = new HashTable from {
     100 => 53,
     53 => null
     }
+
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Field => null,
 	  Software => null, 
@@ -719,19 +722,23 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
 	  InfinityThreshold => null -- used to tell if the path is diverging
 	  } )
-trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
+  
+  
+trackHomotopy(Matrix,List) := List => o -> (H,solsS) -> (
+    F := gateMatrix polySystem H;
+    XT := getVarGates ring H;
+    X := drop(XT,-1);
+    T := last XT;
+    trackHomotopy(gateHomotopy(F, gateMatrix{X}, T), solsS, o)
+    )
+ 
+trackHomotopy(Sequence,List) :=
+trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 -- tracks homotopy H starting with solutions solsS 
 -- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t]  -- the last variable is assumed to be the _continuation parameter_
 --          or an SLP representing one -- !!! at this point it is preSLP
 --      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
-     if instance(H,Matrix) then (
-	 F := gateMatrix polySystem H;
-	 XT := getVarGates ring H;
-	 X := drop(XT,-1);
-	 T := last XT;
-	 H = gateHomotopy(F, gateMatrix{X}, T); 
-	 );
      if #solsS === 0 then return {};
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;

@@ -14,8 +14,12 @@ evaluateJacobian(System, Matrix, Matrix) :=
 evaluate (System, Matrix, Matrix) := Matrix => (S,p,x) -> error "not implemented"  
 -- specialize(System, Matrix) := System => (S,p) -> error "not implemented" 
 -- evaluation for systems with 0 parameters
-evaluateJacobian(System, Matrix) := 
-evaluate (System, Matrix) := Matrix => (S,x) -> error "not implemented"  
+evaluate (System, Matrix) := Matrix => (S,x) -> if numParameters S != 0 
+    then error "this is a system with parameters: use, e.g., evaluate(S,p,x)" else 
+    evaluate(S, matrix{{}}, matrix x) 
+evaluateJacobian (System, Matrix) := Matrix => (S,x) -> if numParameters S != 0 
+    then error "this is a system with parameters: use, e.g., evaluate(S,p,x)" else 
+    evaluateJacobian(S, matrix{{}}, matrix x) 
 -- convenience functions for points
 evaluateJacobian(System, Point, Point) := Matrix => 
   (S,p,x) -> evaluateJacobian(S, matrix p, matrix x)

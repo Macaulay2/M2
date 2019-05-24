@@ -947,13 +947,12 @@ doc ///
     a system of functions
   Description
     Text
-      An object of a type that inherits from this {\bf abstract} type should supply 
-      methods for 
+      A type that inherits from this {\bf abstract} type should supply methods for 
       evaluating a map that takes @TO numVariables@ (+ @TO numParameters@ if the sstem is parametric) inputs and 
       produces @TO numFunctions@ outputs and its jacobian.
       
       Note for developers: it suffices to override the versions of @TO evaluate@ and @TO evaluateJacobian@ 
-      that take {\tt (System,Matrix,Matrix)} as parameters. 
+      that take {\tt (System,Matrix,Matrix)} as arguments. 
   SeeAlso
     PolySystem
 ///
