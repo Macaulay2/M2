@@ -6,14 +6,12 @@
 
 export{ 
     "GateSystem", "gateSystem", 
-    "parameters",
-    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "parametricSegmentHomotopy"
+    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "segmentHomotopy", "parametricSegmentHomotopy"
     }
 
 debug SLPexpressions
 
 gateSystem = method()
-parameters = method()
 
 GateSystem = new Type of System -- this essentially is a wrapper for SLProgram
 net GateSystem := S -> (

@@ -180,7 +180,9 @@ document { Key => {"numerical homotopy tracking options",
     	-- endGameCauchy
 	[endGameCauchy,InfinityThreshold], [endGameCauchy,EndZoneFactor], [endGameCauchy,maxCorrSteps], [endGameCauchy,numberSuccessesBeforeIncrease], [endGameCauchy,stepIncreaseFactor], [endGameCauchy,CorrectorTolerance], [endGameCauchy,tStep], [endGameCauchy,tStepMin],
     	-- trackHomotopy
-	[trackHomotopy,EndZoneFactor], [trackHomotopy,maxCorrSteps], [trackHomotopy,Predictor], [trackHomotopy,stepIncreaseFactor], [trackHomotopy,Precision], [trackHomotopy,tStep], [trackHomotopy,CorrectorTolerance], [trackHomotopy,NoOutput], [trackHomotopy,InfinityThreshold], [trackHomotopy,Software], [trackHomotopy,numberSuccessesBeforeIncrease], [trackHomotopy, tStepMin]
+	[trackHomotopy,EndZoneFactor], [trackHomotopy,maxCorrSteps], [trackHomotopy,Predictor], [trackHomotopy,stepIncreaseFactor], [trackHomotopy,Precision], [trackHomotopy,tStep], [trackHomotopy,CorrectorTolerance], [trackHomotopy,NoOutput], [trackHomotopy,InfinityThreshold], [trackHomotopy,Software], [trackHomotopy,numberSuccessesBeforeIncrease], [trackHomotopy, tStepMin],
+	-- segmentHomotopy
+	[segmentHomotopy,gamma]
 	},
     Headline => "options for core functions of Numerical Algebraic Geometry",
     UL apply({
@@ -1211,6 +1213,34 @@ doc ///
     	An object of this type specialized to a @TO Homotopy@ given values of the parameters. 
 	It is related to @TO GateHomotopy@. 
 ///
+
+doc ///
+    Key
+        segmentHomotopy
+	(segmentHomotopy,GateSystem,GateSystem)
+	(segmentHomotopy,PolySystem,PolySystem)
+	(segmentHomotopy,List,List)    		
+    Headline
+        a segment homotopy
+    Usage 
+    	H = segmentHomotopy(S,T)
+    Inputs
+        S:System
+	  start system (could be GateSystem, PolySystem, or list of polynomials)
+	T:System
+	  target system  (could be GateSystem, PolySystem, or list of polynomials)
+    Outputs 
+    	H:GateHomotopy
+    Description
+        Text 
+	  This method produces a @TO Homotopy@ @TEX "(1-t) S+ t \\gamma T, t\\in[0,1]"@.
+	Example
+	  R = QQ[x,y]
+	  T = {random(3,R)-1, random(2,R)-2}
+	  (S,solsS) = totalDegreeStartSystem T
+	  H = segmentHomotopy(S,T,gamma=>1+ii)
+	  evaluateH(H,transpose matrix first solsS,0)
+///	 
 
 doc ///
     Key

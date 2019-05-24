@@ -51,7 +51,7 @@ export {
      "evaluate", "evaluateJacobian",
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", 
      "ContinuationParameter", "SpecializationRing",
-     "polySystem", 
+     "polySystem", "parameters",
      -- "segmentHomotopy"(defined in extraNAGtypes), "substituteContinuationParameter"(delete???), "specializeContinuationParameter"(delete???),
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
@@ -363,8 +363,6 @@ load "./NAGtypes/doc-NAGtypes.m2"
 
 undocumented {BasePoint,origin,(origin,Ring),Gens,Space} --Robert???
 undocumented {
-    ParameterHomotopy, 
-    Parameters, SpecializedParameterHomotopy, Homotopy,
     evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
     evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
     evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)

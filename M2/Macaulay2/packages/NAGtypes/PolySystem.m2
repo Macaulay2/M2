@@ -1,6 +1,7 @@
 -----------------------------------------------------------------------
 -- System is an ABSTRACT TYPE
 
+parameters = method()
 numParameters = method()
 numVariables = method()
 numFunctions = method()
@@ -72,8 +73,10 @@ numParameters PolySystem := P -> if P.?Parameters then #P.Parameters else 0
 ring PolySystem := P -> ring P.PolyMap 
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
+parameters PolySystem := P -> if P.?Parameters then P.Parameters else {}
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
 toExternalString PolySystem := P -> "polySystem " | toExternalString equations P 
+
 
 isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()
