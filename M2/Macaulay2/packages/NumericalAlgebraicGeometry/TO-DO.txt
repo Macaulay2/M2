@@ -50,3 +50,6 @@ points WitnessSet -- should return list of Points not list of lists (check if ex
 
 decompose -- still not robust for nonreduced components 
 
+---functions that we may forget---
+
+segmentHomotopyProjective

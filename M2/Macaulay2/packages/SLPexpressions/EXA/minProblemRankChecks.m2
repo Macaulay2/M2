@@ -18,29 +18,18 @@ det2 = M -> M_(0,0)*M_(1,1)-M_(1,0)*M_(0,1)
 -- plucker vector for a 3*2 matrix
 pl3 = M -> matrix{{det2 M^{1,2},det2 M^{2,0},det2 M^{0,1}}}
 
-installedGates = new MutableList from {}
-lastGate = 0
+installedGates = {}
 
 resetGates = () -> (
-    scan(installedGates, g-> (
-	    str := toString g.Name;
-	    value(str|" = symbol " | str)
-	    ));
-    installedGates = new MutableList from {};
-    lastGate = 0;
-    installGates {x_2,y_2,z_2,x_3,y_3,z_3,t_(2,1),t_(2,2),t_(3,1),t_(3,2),t_(3,3)};
+    undeclareVariable \ installedGates;
+    installedGates = declareVariable \ {x_2,y_2,z_2,x_3,y_3,z_3,t_(2,1),t_(2,2),t_(3,1),t_(3,2),t_(3,3)};
     )
 	
-installGate = sym -> (
-    str := toString sym;
-    g := value(str|" = inputGate " | str);
-    installedGates#lastGate = g;
-    lastGate = lastGate + 1;
-    g
+installGates = G -> (
+    newG := declareVariable \ G;
+    installedGates = installedGates | newG;
+    newG
     )
-installGates = G -> apply(G, s -> installGate s)
-
-installGates {x_2,y_2,z_2,x_3,y_3,z_3,t_(2,1),t_(2,2),t_(3,1),t_(3,2),t_(3,3)}
 
 cay2R = method(Options=>{Normalized=>true})
 cay2R (Thing,Thing,Thing) := o -> (x,y,z) -> (
@@ -78,6 +67,7 @@ checkPL1P = pl1p -> (
     *-
     )
 
+resetGates()
 
 cameras = {
     gateMatrix(id_(FF^3)|matrix{{0},{0},{0}}),
@@ -118,7 +108,7 @@ makePhi (List, List) := (pl1p,cameras) -> (
     (n, l) := (getNumPoints pl1p, getNumLines pl1p);
     firstPin := position(getLines pl1p|{0}, i -> i > -1);
     phi := new MutableList from {}; -- list of (lists of) Gates (coordinates in some chart on the codomain) 
-    lastPhi = 0;
+    lastPhi := 0;
     scan(#cameras, j->(
 	c := cameras#j;
 	(ls, ps) := (v#j#0, v#j#1); -- visibility pattern for camera j
@@ -150,6 +140,7 @@ rankCheck List := pl1p -> (
     Phi := makePhi(pl1p,cameras);
     inGates := matrix {toList installedGates};
     J := diff(transpose inGates, Phi);
+    -*
     E := makeSLProgram(inGates,J); -- this is potential trouble
     Mout := mutableMatrix(FF,numrows J,numcols J);
     evaluate(E,mutableMatrix random(FF^(#installedGates),FF^1),Mout);
@@ -157,15 +148,36 @@ rankCheck List := pl1p -> (
     << "minimal is " << (#installedGates == r) << endl;
     << "inputs, outputs, rank of Jacobian" << endl;
     append(size J,r)
+    *-
     )    
 end--
 
 restart
 load "minProblemRankChecks.m2"
 load "99problems.m2"
-i=1
-elapsedTime for prob in PROBLEMS do (
-    << "on problem number " << i << endl;
-    rankCheck prob#"pl1p";
-    i=i+1;
-    )
+
+--i = 98
+--pl1p := PROBLEMS#i#"pl1p"; --prob#"pl1p";
+elapsedTime scan(
+    #PROBLEMS, 
+    --100,
+    i->(
+    pl1p := PROBLEMS#i#"pl1p"; --prob#"pl1p";
+    -- resetGates(); -- does not leak anymore (after declareVariable introduction)  
+    if i % 10 == 0 then << "on problem number " << i << endl;
+    Phi := makePhi(pl1p,cameras);
+    inGates := transpose matrix {installedGates};
+    J := diff(inGates, Phi); -- leaks (RES=171m, memoized diff helps to reduce memory consumption) 
+    J = compress J; -- leaks more (RES=183m, also slow)  
+    E := makeSLProgram(inGates,J); --leaks more (RES=171m with no compress; RES=199m with)
+    --print E;
+    collectGarbage()
+    ))
+
+
+
+
+
+
+
+

@@ -5,24 +5,6 @@ the only problem is: who exports "evaluate"?
 not cataloging all gates?
 create several examples of large circuits (1-10 sec to setup)
 
--- Documentation
-getVarGates
-gatePolynomial -- Tim
-SLProgram
-makeSLProgram -- Tim
-Gate
-InputGate
-GateMatrix
-support -- Tim
-constants -- Tim
-sub -- Tim
-diff -- Tim
-compress
-sumGate
-productGate
-divideGate
-detGate
-
 -- Circuit creation
 gatePolynomial -- currently, has a naive algorithm to produce a circuit for a poly
 gatePolynomial(Strategy=>"optimal evaluation of the support monomials")
@@ -38,3 +20,43 @@ constant gates of non-number type (pi, algebraic numbers, described by a subrout
 -- Naming questions
 evaluate vs value -- value is not used much (rename?)
 sub vs compose -- could sub be more general?   
+
+----------------- OLD TO-DO ----------------------------------------------------------------
+-- functions that one may forget exist...
+
+segmentHomotopyProjective
+
+
+-* Expressions in M2 
+   *** should have this as a Gate 
+   ??? maybe?
+                            Expression : Adjacent
+                                      AssociativeExpression : Equation
+                                                              Product  ***
+                                                              Sum      ***
+                                      BinaryOperation
+                                      Divide                           ???
+                                      FunctionApplication
+                                      Holder : OneExpression           ???
+                                               ZeroExpression          ???
+                                      MatrixExpression                 ***
+                                      Minus                            ***
+                                      NonAssociativeProduct            ???
+                                      Parenthesize                     
+                                      Power                            ???
+                                      RowExpression                    
+                                      SparseMonomialVectorExpression
+                                      SparseVectorExpression
+                                      Subscript
+                                      Superscript
+                                      Table
+   In addition: 
+       Det     	   ***
+       Submatrix   ???
+       Minor       ???     
+
+TO DO:
+
+-- decide what types of non-terminal gates we need (see above)
+
+*-

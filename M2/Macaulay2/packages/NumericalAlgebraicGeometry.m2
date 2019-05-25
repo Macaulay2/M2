@@ -3,13 +3,13 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.11",
-     Date => "Nov 2017",
+     Version => "1.13",
+     Date => "May 2019",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu", HomePage => "https://people.math.gatech.edu/~aleykin3"},
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
@@ -73,7 +73,7 @@ protect LastIncrement;
 solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
 
 -- experimental:
-protect LanguageCPP, protect MacOsX, protect System, 
+protect LanguageCPP, protect MacOsX, -- protect System, 
 protect LanguageC, protect Linux, protect Language
 protect maxNumberOfVariables
 protect maxPrecision
@@ -374,8 +374,8 @@ randomOrthonormalCols(ZZ,ZZ) := (m,n) ->
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
 squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
-    n := P.NumberOfVariables;
+squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, P.NumberOfVariables)
+squareUp (PolySystem,ZZ) := (P,n) -> (
     m := P.NumberOfPolys;
     if m<=n then "overdetermined system expected";
     C := coefficientRing ring P;
@@ -508,9 +508,10 @@ beginDocumentation()
 
 load "./NumericalAlgebraicGeometry/doc.m2";
 
+-*
 undocumented {
     Field, 
-    GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
+    GateParameterHomotopy, 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
     (endGameCauchy,GateHomotopy,Number,Point),
     (evaluateH,GateHomotopy,Matrix,Number),
@@ -522,6 +523,7 @@ undocumented {
 (specialize,GateParameterHomotopy,MutableMatrix),
 [trackHomotopy,Software],
     }
+*-
 
 TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")

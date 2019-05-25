@@ -5,13 +5,22 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.9.3",
+     Version => "1.13",
      Date => "May 2019",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	  {Name => "Anton Leykin", 
+	      Email => "leykin@math.gatech.edu",
+	      HomePage => "https://people.math.gatech.edu/~aleykin3"
+	      },
+	  {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
+	  {Name => "Justin Chen"},
+	  {Name => "Mike Stillman", 
+                Email => "mike@math.cornell.edu", 
+                HomePage => "http://www.math.cornell.edu/~mike"
+                }
 	  },
      Configuration =>  {},	
      PackageExports => {"NAGtypes"},
@@ -27,10 +36,11 @@ newPackage select((
 export {
     "Gate", 
     "GateMatrix", "gateMatrix",
-    "InputGate", 
+    "InputGate", "declareVariable", "undeclareVariable", 
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 
-    "constants",  
+    "constants",
+    "countGates",  
     "printAsSLP", "cCode",
     "getVarGates", "gatePolynomial",
     "ValueHashTable","valueHashTable",
@@ -39,39 +49,6 @@ export {
 exportMutable {
     }
 debug Core 
--* Expressions in M2 
-   *** should have this as a Gate 
-   ??? maybe?
-                            Expression : Adjacent
-                                      AssociativeExpression : Equation
-                                                              Product  ***
-                                                              Sum      ***
-                                      BinaryOperation
-                                      Divide                           ???
-                                      FunctionApplication
-                                      Holder : OneExpression           ???
-                                               ZeroExpression          ???
-                                      MatrixExpression                 ***
-                                      Minus                            ***
-                                      NonAssociativeProduct            ???
-                                      Parenthesize                     
-                                      Power                            ???
-                                      RowExpression                    
-                                      SparseMonomialVectorExpression
-                                      SparseVectorExpression
-                                      Subscript
-                                      Superscript
-                                      Table
-   In addition: 
-       Det     	   ***
-       Submatrix   ???
-       Minor       ???     
-
-TO DO:
-
--- decide what types of non-terminal gates we need (see above)
-
-*-
 
 concatenateNets = method()
 concatenateNets List := L -> (
@@ -92,7 +69,7 @@ add2GC = method()
 add2GC InputGate := g -> if isConstant g then (
     if gateCatalog#?g then (
     	gateCatalogCount#g = gateCatalogCount#g + 1;
-    	gateCatalog#g -- value = stored identical gate (may differ in "cache")
+    	gateCatalog#g -- value = stored identical gate 
     	) else (
     	gateCatalogCount#g = 1;
     	gateCatalog#g = g
@@ -103,8 +80,7 @@ getGateCatalogCount = () -> gateCatalogCount
 
 inputGate = method()
 inputGate Thing := a -> add2GC new InputGate from {
-    Name => a,
-    cache => new CacheTable
+    Name => a
     } 
 net InputGate := g -> net g.Name
 
@@ -112,21 +88,31 @@ oneGate = inputGate 1
 minusOneGate = inputGate(-1)
 zeroGate = inputGate 0
 
+declareVariable = method()
+declareVariable Symbol :=  
+declareVariable IndexedVariable := g -> (g <- inputGate g) 
+declareVariable InputGate := g -> g
+declareVariable Thing := g -> error "defined only for a Symbol or an IndexedVariable" 
+
+undeclareVariable = method()
+undeclareVariable InputGate := g -> 
+if member(class g.Name, {Symbol, IndexedVariable}) 
+then g.Name <- g.Name else error "expected the InputGate's Name to be a Symbol or an IndexedVariable" 
+
 SumGate = new Type of Gate
 net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
 Gate + Gate := (a,b) -> add2GC (
     if a===zeroGate then b else 
     if b===zeroGate then a else 
     new SumGate from {
-      	Inputs => {a,b}, 
-      	cache => new CacheTable
+      	Inputs => {a,b}
       	} 
     )
 sumGate = method()
 sumGate List := L -> add2GC(
     if not all(L, a->instance(a,Gate)) 
     then error "expected a list of gates";
-    new SumGate from {Inputs=>L, cache => new CacheTable}
+    new SumGate from {Inputs=>L}
     )
  
 ProductGate = new Type of Gate
@@ -136,8 +122,7 @@ Gate * Gate := (a,b) -> add2GC (
     if a===oneGate then b else 
     if b===oneGate then a else 
     new ProductGate from {
-      	Inputs => {a,b},
-      	cache => new CacheTable
+      	Inputs => {a,b}
       	}	   
     )
 
@@ -145,7 +130,7 @@ productGate = method()
 productGate List := L -> add2GC(
     if not all(L, a->instance(a,Gate)) 
     then error "expected a list of gates";
-    new ProductGate from {Inputs=>L, cache => new CacheTable}
+    new ProductGate from {Inputs=>L}
     )
 Gate ^ ZZ := (g,n) -> if n == 0 then oneGate else 
     if n > 0 then productGate toList(n:g) else -- inefficient!!!
@@ -161,6 +146,13 @@ Gate * Number  := (a,b) -> a * inputGate b
 Number - Gate := (a,b) -> inputGate a - b
 Gate - Number  := (a,b) -> a - inputGate b
 
+RingElement + Gate := (a,b) -> inputGate a + b
+Gate + RingElement  := (a,b) -> a + inputGate b
+RingElement * Gate := (a,b) -> inputGate a * b
+Gate * RingElement  := (a,b) -> a * inputGate b
+RingElement - Gate := (a,b) -> inputGate a - b
+Gate - RingElement  := (a,b) -> a - inputGate b
+
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
 detGate = method()
@@ -168,7 +160,7 @@ detGate List := L -*doubly nested list*- -> add2GC(
     n := #L;
     if not all(L, a->instance(a,List) and #a==n and all(a,b->instance(b,Gate)))
     then error "expected a square matrix (a doubly nested list) of gates";
-    new DetGate from {Inputs=>L,cache => new CacheTable}
+    new DetGate from {Inputs=>L}
     )
 
 DivideGate = new Type of Gate
@@ -177,21 +169,20 @@ divideGate = (a,b) -> add2GC(
     if b===zeroGate then error "division by zero"  else 
     if a===zeroGate then zeroGate else 
     new DivideGate from {
-      	Inputs => {a,b}, 
-      	cache => new CacheTable
+      	Inputs => {a,b}
       	}
     ) 
 Gate / Gate := (a,b) -> divideGate(a,b)
     
-ValueHashTable = new Type of HashTable
+ValueHashTable = new Type of MutableHashTable
 valueHashTable = method()
-valueHashTable (List,List) := (a,b) -> new ValueHashTable from hashTable (apply(a,b,identity) | {(cache,new CacheTable)})
+valueHashTable (List,List) := (a,b) -> new ValueHashTable from apply(a,b,identity)
 			
-value (InputGate,ValueHashTable) := (g,h)-> if h.cache#?g then h.cache#g else h.cache#g = (if isConstant g then g.Name else h#g)
-value (SumGate,ValueHashTable) :=  (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (sum apply(g.Inputs, a->value(a,h)))
-value (ProductGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (product apply(g.Inputs, a->value(a,h)))
-value (DetGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
-value (DivideGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
+value (InputGate,ValueHashTable) := (g,h)-> if h#?g then h#g else h#g = (if isConstant g then g.Name else error "value for inputGate is not set")
+value (SumGate,ValueHashTable) :=  (g,h) -> if h#?g then h#g else h#g = (sum apply(g.Inputs, a->value(a,h)))
+value (ProductGate,ValueHashTable) := (g,h) -> if h#?g then h#g else h#g = (product apply(g.Inputs, a->value(a,h)))
+value (DetGate,ValueHashTable) := (g,h) -> if h#?g then h#g else h#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
+value (DivideGate,ValueHashTable) := (g,h) -> if h#?g then h#g else h#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
 
 support InputGate := 
 support SumGate := 
@@ -248,6 +239,31 @@ findDepth (DivideGate,MutableHashTable) :=
 findDepth (SumGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = 1 + g.Inputs/(i->findDepth(i,t))//max
 findDepth (DetGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = 1 + (flatten g.Inputs)/(i->findDepth(i,t))//max
 
+countGates = method()
+countGates GateMatrix := M -> (
+    t := new MutableHashTable from {cache=>new CacheTable};
+    scan(flatten entries M, g->findTally(g,t));
+    new HashTable from t
+    ) 
+
+findTally = method()
+findTally (InputGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
+    t.cache#g = 1;
+    if not t#?(class g) then t#(class g) = 1 else t#(class g)= t#(class g) + 1;
+    ) 
+findTally (ProductGate,MutableHashTable) := 
+findTally (DivideGate,MutableHashTable) := 
+findTally (SumGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
+    t.cache#g = 1;
+    if not t#?(class g) then t#(class g) = 1 else t#(class g)= t#(class g) + 1;
+    scan(g.Inputs,i->findTally(i,t))
+    )
+findTally (DetGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
+    t.cache#g = 1;
+    if not t#?(class g) then t#(class g) = 1 else t#(class g)= t#(class g) + 1;
+    scan(flatten g.Inputs,i->findTally(i,t))
+    )
+
 TEST ///
 X = inputGate symbol X
 C = inputGate symbol C
@@ -270,23 +286,36 @@ depth(X*X)
 depth(detXCCX + X)
 depth gateMatrix{{detXCCX,X}}
 assert (depth {X+((detXCCX+X)*X)/C}==5)
+
+countGates matrix{{detXCCX,12*X}}
 ///
 
-diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
-diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sumGate
-diff (InputGate, ProductGate) := (x,g) -> sumGate apply(#g.Inputs, i->(
-	dgi := diff(x,g.Inputs#i);
+diff (InputGate, Gate) := (x,g) -> (
+    t := new MutableHashTable;
+    diffMemoize(x,g,t)
+    )
+diff (InputGate, GateMatrix) := (x,M) -> gateMatrix applyTable(entries M, g->diff(x,g))
+diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
+    applyTable(entries xx, x->diff(x,M)), 
+    row-> joinHorizontal row
+    )
+
+diffMemoize = method()
+diffMemoize (InputGate, InputGate, MutableHashTable) := (x,y,t) -> if y === x then oneGate else zeroGate
+diffMemoize (InputGate, SumGate, MutableHashTable) := (x,g,t) -> if t#?g then t#g else t#g = g.Inputs/(s->diffMemoize(x,s,t))//sumGate
+diffMemoize (InputGate, ProductGate, MutableHashTable) := (x,g,t) -> if t#?g then t#g else t#g = sumGate apply(#g.Inputs, i->(
+	dgi := diffMemoize(x,g.Inputs#i,t);
 	productGate drop(g.Inputs,{i,i}) * dgi -- commutativity assumed
 	))
-diff (InputGate, DetGate) := (x,g) -> sumGate apply(#g.Inputs, i->(
-	dgi := apply(g.Inputs#i, a->diff(x,a));
+diffMemoize (InputGate, DetGate, MutableHashTable) := (x,g,t) -> if t#?g then t#g else t#g = sumGate apply(#g.Inputs, i->(
+	dgi := apply(g.Inputs#i, a->diffMemoize(x,a,t));
 	detGate replace(i,dgi,g.Inputs)
 	))
-diff (InputGate, DivideGate) := (x,g) -> (
+diffMemoize (InputGate, DivideGate, MutableHashTable) := (x,g,t) -> if t#?g then t#g else t#g = (
     a := first g.Inputs;
     b := last g.Inputs;	
-    da := diff(x,a);
-    db := diff(x,b);
+    da := diffMemoize(x,a,t);
+    db := diffMemoize(x,b,t);
     if db===zeroGate then da/b else (da*b-a*db)/(b*b)
     )
 
@@ -312,9 +341,19 @@ makeSub (SumGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else
 makeSub (DetGate,HashTable,MutableHashTable) := (g,s,t) -> if t#?g then t#g else t#g = detGate applyTable(g.Inputs, i->makeSub(i,s,t))
 makeSub (List,HashTable,MutableHashTable) := (L,s,t) -> apply(L,g->makeSub(g,s,t))
 
-compress Gate := g -> g
-compress SumGate := g -> (
-    L := g.Inputs/compress;
+compress Gate := g -> (
+    t := new MutableHashTable;
+    compressMemoize(g,t)
+    )
+compress GateMatrix := M -> (
+    t := new MutableHashTable;
+    gateMatrix applyTable(M,g->compressMemoize(g,t))
+    )
+
+compressMemoize = method()
+compressMemoize (Gate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = g
+compressMemoize (SumGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = (
+    L := g.Inputs/(h->compressMemoize(h,t));
     nums := positions(L, a -> instance(a,InputGate) and isConstant a);
     not'nums := toList(0..<#L) - set nums;
     s := L_nums/(a->a.Name)//sum;
@@ -323,8 +362,8 @@ compress SumGate := g -> (
     if #c == 1 then first c else 
     sumGate c
     )
-compress ProductGate := g -> (
-    L := g.Inputs/compress;
+compressMemoize (ProductGate,MutableHashTable) := (g,t) -> if t#?g then t#g else t#g = (
+    L := g.Inputs/(h->compressMemoize(h,t));
     nums := positions(L, a -> instance(a,InputGate) and isConstant a);
     not'nums := toList(0..<#L) - set nums;
     p := L_nums/(a->a.Name)//product;
@@ -506,8 +545,6 @@ GateMatrix - Matrix := (A,B) -> A - gateMatrix B
 
 det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a else inputGate a)
 
-compress GateMatrix := M -> gateMatrix applyTable(M,compress)
-
 value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
 
 joinHorizontal = method()
@@ -523,11 +560,6 @@ joinVertical List := L->(
     r := first L;
     scan(drop(L,1), x->r=r||x);
     r
-    )
-diff (InputGate, GateMatrix) := (x,M) -> gateMatrix applyTable(entries M, g->diff(x,g))
-diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
-    applyTable(entries xx, x->diff(x,M)), 
-    row-> joinHorizontal row
     )
 
 -------------------------
@@ -876,16 +908,6 @@ constants,
 (constants,ProductGate),
 (constants,SumGate),
 (symbol -,Gate),
-(compress,Gate),
-(compress,GateMatrix),
-(compress,ProductGate),
-(compress,SumGate),
-(depth,DetGate),
-(depth,DivideGate),
-(depth,GateMatrix),
-(depth,InputGate),
-(depth,ProductGate),
-(depth,SumGate),
 (determinant,GateMatrix),
 --(diff,GateMatrix,GateMatrix),
 --(diff,InputGate,DetGate),
@@ -896,36 +918,36 @@ constants,
 --(diff,InputGate,SumGate),
 (entries,GateMatrix),
 -- (symbol *,Gate,Gate),
-(symbol /,Gate,Gate),
-(symbol ^,Gate,ZZ),
-(symbol *,GateMatrix,GateMatrix),
-(symbol *,GateMatrix,Matrix),
-(symbol *,GateMatrix,RingElement),
-(symbol +,GateMatrix,GateMatrix),
-(symbol +,GateMatrix,Matrix),
-(symbol -,GateMatrix,GateMatrix),
-(symbol -,GateMatrix,Matrix),
-(symbol ^,GateMatrix,List),
-(symbol _,GateMatrix,List),
-(symbol _,GateMatrix,Sequence),
-(symbol |,GateMatrix,GateMatrix),
-(symbol |,GateMatrix,Matrix),
-(symbol ||,GateMatrix,GateMatrix),
-(symbol ||,GateMatrix,Matrix),
+-- (symbol /,Gate,Gate),
+-- (symbol ^,Gate,ZZ),
+-- (symbol *,GateMatrix,GateMatrix),
+-- (symbol *,GateMatrix,Matrix),
+-- (symbol *,GateMatrix,RingElement),
+-- (symbol +,GateMatrix,GateMatrix),
+-- (symbol +,GateMatrix,Matrix),
+-- (symbol -,GateMatrix,GateMatrix),
+-- (symbol -,GateMatrix,Matrix),
+-- (symbol ^,GateMatrix,List),
+-- (symbol _,GateMatrix,List),
+-- (symbol _,GateMatrix,Sequence),
+-- (symbol |,GateMatrix,GateMatrix),
+-- (symbol |,GateMatrix,Matrix),
+-- (symbol ||,GateMatrix,GateMatrix),
+-- (symbol ||,GateMatrix,Matrix),
+-- (symbol |,Matrix,GateMatrix),
+-- (symbol ||,Matrix,GateMatrix),
 (isConstant,InputGate),
-(symbol *,Matrix,Gate),
-(symbol *,Matrix,GateMatrix),
-(symbol +,Matrix,GateMatrix),
-(symbol -,Matrix,GateMatrix),
-(symbol |,Matrix,GateMatrix),
-(symbol ||,Matrix,GateMatrix),
+-- (symbol *,Matrix,Gate),
+-- (symbol *,Matrix,GateMatrix),
+-- (symbol +,Matrix,GateMatrix),
+-- (symbol -,Matrix,GateMatrix),
 (net,DetGate),
 (net,DivideGate),
 (net,InputGate),
 (net,ProductGate),
 (net,SumGate),
-(numColumns,GateMatrix),
-(numRows,GateMatrix),
+-- (numColumns,GateMatrix),
+-- (numRows,GateMatrix),
 (submatrix,GateMatrix,List,List),
 (substitute,GateMatrix,GateMatrix,GateMatrix),
 (substitute,GateMatrix,List),

@@ -6,22 +6,22 @@
 #define _slp_defs_hpp_
 
 // SLP
-class SLProgram
+class SLProgram : public MutableEngineObject
 {
  public:
   enum GATE_TYPE { Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide };
   typedef int GATE_SIZE;
   typedef int GATE_POSITION;  // gate position is RELATIVE (exception: ABSOLUTE
                               // for mOutputPositions)
-  std::vector<GATE_TYPE> mNodes;      // nodes types
-  std::vector<GATE_SIZE> mNumInputs;  // corresponding nodes sizes
-  std::vector<GATE_POSITION>
+  VECTOR(GATE_TYPE) mNodes;      // nodes types
+  VECTOR(GATE_SIZE) mNumInputs;  // corresponding nodes sizes
+  VECTOR(GATE_POSITION)
       mInputPositions; /* which nodes does input come from?
                           !!! this vector could be longer than mNodes !!!
                           !!! since there could be several inputs per node !!!
                           (nonnegative = node position,
                           negative = var or const) */
-  std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
+  VECTOR(GATE_POSITION) mOutputPositions; /* which nodes are outputs
                                                   (nonnegative = node position,
                                                   negative = var or const) */
   /* LOOKUP TABLE */
@@ -33,6 +33,8 @@ class SLProgram
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
   // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
+  
+  // !!! replace M2_arrayint with std::vector (M2_arrayint pertains to front end) 
   GATE_POSITION addInput() { return -(++inputCounter); }
   GATE_POSITION addMSum(const M2_arrayint);
   GATE_POSITION addMProduct(const M2_arrayint);
@@ -80,7 +82,7 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 };
 */
 
-class SLEvaluator
+class SLEvaluator : public MutableEngineObject
 {
  public:
   virtual ~SLEvaluator() {}
@@ -92,14 +94,14 @@ class SLEvaluator
 
  protected:
   int ap(int rp) { return rp + slp->inputCounter; }  // absolute position
-  SLProgram* slp;
-  //  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of
+  SLProgram* slp; //!!! can we make it a reference???
+  //  VECTOR<SLProgram::GATE_POSITION> constsPos; // absolute position of
   //  consts in mValues (slp.inputCounter + rel position)
-  std::vector<SLProgram::GATE_POSITION>
+  VECTOR(SLProgram::GATE_POSITION)
       varsPos;  // the rest of inputs with neg rel position
-  std::vector<SLProgram::GATE_TYPE>::iterator nIt;  // slp nodes
-  std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt;
-  std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
+  VECTOR(SLProgram::GATE_TYPE)::iterator nIt;  // slp nodes
+  VECTOR(SLProgram::GATE_SIZE)::iterator numInputsIt;
+  VECTOR(SLProgram::GATE_POSITION)::iterator inputPositionsIt;
 };
 
 template <typename RT>
@@ -129,13 +131,13 @@ class SLEvaluatorConcrete : public SLEvaluator
 
  private:
   typedef typename RT::ElementType ElementType;
-  void computeNextNode();
+  void computeNextNode();  // !!! should this and vIt be here???
   const RT& mRing;
-  std::vector<ElementType>
+  VECTOR(ElementType)
       values; /* should be a vector of values
          starting with inputCounter many vars and consts and
          continuing with the values of other GATEs */
-  typename std::vector<ElementType>::iterator vIt;  // values
+  typename VECTOR(ElementType)::iterator vIt;  // values
 };
 
 class Homotopy : public MutableEngineObject

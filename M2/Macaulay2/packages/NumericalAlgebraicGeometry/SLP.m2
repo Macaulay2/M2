@@ -714,7 +714,6 @@ inline mul(complex c)
       )
 
 ///
-restart
 loadPackage "NumericalAlgebraicGeometry"; debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 g = 3*y^2+(2.1+ii)*x
@@ -892,6 +891,7 @@ debug needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y
 E = inputGate 2
+oneGate = inputGate 1
 F = product{E*(X*X+E*Y)+oneGate, oneGate}
 G = (sub(sub(matrix{{F}},X=>X+Y),Y=>X*Y))_(0,0) 
 R = CC[x,y] 
@@ -902,6 +902,6 @@ out'eval = evaluatePreSLP(preSLP, gens R)
 out'comp = matrix applyTable(entries compress sub(matrix{output},{X=>inputGate x,Y=>inputGate y}), g->g.Name)
 assert(out'eval == out'comp)
 printSLP preSLP
-printAsSLP output
+printAsSLP ({X,Y},output)
 ///
 
