@@ -35,6 +35,18 @@ darwin64-gcc8 : always
 
 #rewrite this: don't change the compiler this way?
 # Thomas Kahle: I rewrote this to use brew's clang latest
+darwin64-latestclang8 : always
+	mkdir -p builds.tmp/darwin64-latestclang8
+	cd builds.tmp/darwin64-latestclang8; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+	    CXX="/usr/local/opt/llvm/bin/clang++" \
+        LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
 	cd builds.tmp/darwin64-latestclang; ../../../../configure \
@@ -86,6 +98,20 @@ darwin64-clang : always
 		--enable-dmg \
 		--enable-build-libraries="mpir flint pari ntl"
 
+debug64-latestclang : always
+	mkdir -p builds.tmp/debug64-latestclang
+	cd builds.tmp/debug64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--build=x86_64-apple-darwin \
+		--enable-debug \
+		--disable-optimize \
+		--disable-strip \
+		--enable-download
 
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
@@ -117,6 +143,8 @@ darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
 	cd builds.tmp/darwin64-gcc4.9; ../../../../configure \
 		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

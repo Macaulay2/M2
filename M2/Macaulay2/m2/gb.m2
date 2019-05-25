@@ -241,7 +241,6 @@ elseSomething(Nothing,Function) := (x,f) -> f()
 newGB := (f,type,opts) -> (
      if flagInhomogeneity then (
 	  if not isHomogeneous f then error "internal error: gb: inhomogeneous matrix flagged";
-	  if debugLevel > 0 then stderr << "gb: matrix is homogeneous, good" << endl;
 	  );
      G := new GroebnerBasis;
      if debugLevel > 5 then (
