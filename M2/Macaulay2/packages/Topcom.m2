@@ -577,6 +577,7 @@ restart
         0   0   2   0  -2   0   2  -3   0   2  -3   0
         0   0   0   0   0   1  -1   1   1  -2   1  -2"
  A = matrixFromString last first parseKS str
+ A = matrix first kreuzerSkarke str
  P = convexHull A
  P2 = polar P
  A1 = vertices P2
@@ -656,10 +657,9 @@ TEST ///
   debug needsPackage "Topcom"
   needsPackage "ReflexivePolytopesDB"
   needsPackage "StringTorics"
-  str = getKreuzerSkarke(50, Limit=>10);
-  polytopes = parseKS str
-  tope = polytopes_5_1
-  A = matrixFromString tope
+  polytopes = kreuzerSkarke(50, Limit=>10);
+  tope = polytopes_5
+  A = matrix tope
   P = convexHull A
   P2 = polar P
   A = matrix{latticePoints P2}

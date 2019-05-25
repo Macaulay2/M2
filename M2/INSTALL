@@ -354,36 +354,13 @@ make.
 
 Now continue building the program this way:
 
-        ./configure --enable-download
+        ./configure --enable-download --prefix=/foo/bar
         make
         make check                      # optional
         make install
 
-Note: version 3.82 of the "make" program, used above, seems to have a bug that
-results in this error message:
-    CC scclib.c
-    ../../../Macaulay2/d/scclib.c:5:10: fatal error: 'expr-exports.h' file not found
-Under Mac OS X, one encounters that old version of "make", so it is better to
-use a later version instead, such as the "gmake" program, as provided by
-"brew", and installed according to the instructions above.
-
 Remember to add any options specified above, in the section for your particular
 operating system, to the "configure" command line.
-
-To take advantage of parallelism when running "make", append an option of
-the form "-jN" to the command line, where "N" is replaced by the number of
-processors you wish to devote to the task.  (Our makefiles are just begining to
-take advantage of this.)
-
-To enable the running of the NTL "wizard", which conducts time consuming
-experiments to optimize the speed of its code, before compiling it, add the
-option --enable-ntl-wizard to the "configure" command line above.
-
-By default, the files are installed in appropriate subdirectories of
-/usr/local.  To specify a different location (prefix) you may use an option to
-the configure script:
-
-        ./configure --enable-download --prefix=/foo/bar
 
 Files will then be installed in the following directories:
 
@@ -394,14 +371,24 @@ Files will then be installed in the following directories:
         /foo/bar/share/emacs/site-lisp
         /foo/bar/lib/Macaulay2
 
-instead of in
+The Macaulay2 program itself will be located at /foo/bar/bin/M2.
 
-        /usr/local/bin
-        /usr/local/share/Macaulay2
-        /usr/local/share/doc/Macaulay2
-        /usr/local/share/man/man1
-        /usr/local/share/emacs/site-lisp
-        /usr/local/lib/Macaulay2
+Choose an appropriate directory path, instead of /foo/bar, as the installation
+prefix, or omit the option entirely for installation in /usr/local.
+
+Note: the "make" program in the commands above should be at least version 4.
+Under Mac OS X, one encounters an old version of "make", so it is better to use
+the "gmake" program, as provided by "brew", and installed according to the
+instructions above.
+
+To take advantage of parallelism when running "make", append an option of
+the form "-jN" to the command line, where "N" is replaced by the number of
+processors you wish to devote to the task.  (Our makefiles are just begining to
+take advantage of this.)
+
+To enable the running of the NTL "wizard", which conducts time consuming
+experiments to optimize the speed of its code, before compiling it, add the
+option --enable-ntl-wizard to the "configure" command line above.
 
 To use a different prefix, say $HOME/local, for finding libraries and include
 files installed in a nonstandard location, add the following options to the

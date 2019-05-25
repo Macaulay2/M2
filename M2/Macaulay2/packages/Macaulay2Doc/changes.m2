@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.14",
 	  TO "changes, 1.13",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
@@ -29,7 +30,11 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.14",
      UL {
 	  LI { "functionality added or improved:",
 	       UL {
@@ -38,6 +43,40 @@ document {
 			 },
 		    LI { "A change to the way expressions interact with the reverse dictionary prevented normal toric varieties assigned
 			 to global variables from being printed out as the name of the variable."
+			 }
+		    }
+	       },
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been added." },
+	       	    LI { TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been added." },
+		    LI { TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been added." },
+		    LI { TO "FGLM::FGLM", ", a package by Dylan Peifer and Mahrud Sayrafi for computing Groebner bases via the algorithm of Faugère, Gianni, Lazard, and Mora, has been added." }
+		    }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "LieTypes::LieTypes", " and ", TO "ConformalBlocks::ConformalBlocks", ", two packages by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, have been published." },
+		    LI { star, " ", TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been published." },
+		    LI { star, " ", TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been published." },
+		    LI { star, " ", TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been published." },
+		    LI { star, " ", TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been published." },
+		    LI { star, " ", TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been published." }
+		    }
+	       },
+	  LI { "improved packages:",
+	       UL {
+		    LI { 
+		       	 TO "ReflexivePolytopesDB::ReflexivePolytopesDB", " now has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code."
+			 },
+		    LI { 
+		       	 TO "CohomCalg::CohomCalg", " also has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code
+                         using this package."
 			 }
 		    }
 	       }
