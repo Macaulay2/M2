@@ -146,3 +146,11 @@ totalDegreeStartSystem List := Sequence => T -> (
      (S, apply(solsS,s->point{toList s}))
      ) 
 
+TEST ///
+needsPackage "NumericalAlgebraicGeometry"
+R = QQ[x,y]
+F = polySystem {x*y-1,x^2+y^3-2}
+solveSystem F
+NAGtrace 3
+assert(#solveSystem(F,Precision=>infinity) == 5)
+///

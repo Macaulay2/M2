@@ -70,7 +70,18 @@ protect Tracker -- an internal key in Point
 protect LastIncrement;
 
 -- possible solution statuses returned by engine
-solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
+solutionStatusLIST = {
+    Undetermined, 
+    Processing, 
+    Regular, 
+    Singular, 
+    Infinity, 
+    MinStepFailure, 
+    Origin, 
+    IncreasePrecision, 
+    DecreasePrecision, 
+    RefinementFailure
+    }
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, -- protect System, 
