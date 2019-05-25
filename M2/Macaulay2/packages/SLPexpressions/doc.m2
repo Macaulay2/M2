@@ -6,17 +6,22 @@ doc ///
         Straight Line Programs and expressions for evaluation circuits
     Description
         Text 
-	    ???What is this useful for??? 
+	    Many polynomials can be stored and evaluated efficiently when represented as a straight line program (SLP), also known as an @HREF("https://en.wikipedia.org/wiki/Circuit_(computer_science)", "algebraic circuit")@. By contrast, elements of a @TO PolynomialRing@s are necessarily represented in "expanded" form. 
+	    
+	    This package provides basic types and methods for constructing and evaluating SLPs.
+	    
+	    Here is a simple example illustrating an advantage of SLP representations.
         Example
             declareVariable x
             f = x + 1
             n = 12;
             for i from 1 to n do f = f*f -- f = (x+1)^(2^n)
             slp = makeSLProgram({x},{f})
-	    time A = evaluate(slp,matrix{{1}})
+	    time A = evaluate(slp,matrix{{1}});
             ZZ[y];
             time B = sub((y+1)^(2^n),{y=>1})    
             A == B
+	Text
     SeeAlso
         NAGtypes
 ///
@@ -131,8 +136,7 @@ doc ///
             representing the polynomial $f$
     Description
         Text
-            This methods creates a @TO Gate@ from the given input polynomial $f$. The resulting @TO Gate@ is a @TO SumGate@ whose terms are @TO2{ProductGate, "product gates"}@ corresponding to monomials of $f$.
-                 
+            This methods creates a @TO Gate@ from the given input polynomial $f$. The resulting @TO Gate@ is a @TO SumGate@ whose terms are @TO2{ProductGate, "product gates"}@ corresponding to monomials of $f$.                 
         Example
             R = QQ[x,y]
             f = random(3, R)
@@ -156,8 +160,7 @@ doc ///
             of input gates for the variables in $R$
     Description
         Text
-            This methods returns a @TO List@ of @TO2{InputGate, "input gates"}@ corresponding to variables in the given polynomial $R$, and caches the result in the ring for future use.
-                 
+            This methods returns a @TO List@ of @TO2{InputGate, "input gates"}@ corresponding to variables in the given polynomial $R$, and caches the result in the ring for future use.                 
         Example
             R = QQ[x,y]
             getVarGates R
@@ -190,18 +193,25 @@ doc ///
         (symbol +,Number,Gate)
         (symbol -,Number,Gate)
         (symbol *,Number,Gate)
+	(symbol *,RingElement,Gate)
+	(symbol *,RingElement,GateMatrix)
+	(symbol +,RingElement,Gate)
+	(symbol -,RingElement,Gate)
+	(symbol *,Gate,Matrix)
+	(symbol *,Gate,RingElement)
+	(symbol +,Gate,RingElement)
+	(symbol -,Gate,Gate)
+	(symbol -,Gate,RingElement)
     Description
         Text
     	    There are many arithmetic operations that can be performed on @TO2{Gate, "gates"}@. This makes it easy to create combine existing gates into new gates.
         Example
             X = inputGate x; Y = inputGate y;
-	    F = Y^2-X^3-X
-        
+	    F = Y^2-X^3-X        
         Text
             If one of the inputs is a @TO Number@, it is first converted to an @TO InputGate@:
         Example
-            X + 2
-        
+            X + 2        
         Text
             By extension, arithmetic operations also work with @TO2{GateMatrix, "gate matrices"}@:
         Example
@@ -266,4 +276,84 @@ doc ///
             M || N
     SeeAlso
         GateMatrix
+///
+
+doc ///
+    Key
+        "compressing circuits"
+	(compress,Gate)
+	(compress,GateMatrix)
+    Usage
+        g' = compress g
+	G' = compress G
+    Inputs
+    	g:Gate
+        G:GateMatrix
+    Outputs
+        g':Gate    	   
+        G':GateMatrix
+    Description
+        Text
+	    These commands attempt to remove superfluous operations involving constants from the building blocks of an @TO SLProgram@. The example below is contrived, but illustrates what may happen in general.
+	Example
+	    declareVariable \ {a,b,c}
+	    x = inputGate 1
+	    y = inputGate 2
+    	    G = gateMatrix{{(x+y)+3+4+b+4+c+4*(a+b+2)}}
+	    cG = compress G
+	    depth G
+	    depth cG
+	    countGates G
+	    countGates cG
+    SeeAlso
+	"measuring the size of circuits"
+///
+
+doc ///
+    Key
+        "measuring the size of circuits"
+	(depth,DetGate)
+	(depth,DivideGate)
+	(depth,GateMatrix)
+	(depth,InputGate)
+	(depth,ProductGate)
+	(depth,SumGate)
+	countGates
+	(countGates, GateMatrix)
+    Usage
+        d = depth g
+	d = depth G
+	H = countGates g
+	H = countGates G
+    Inputs
+    	g:Gate
+        G:GateMatrix
+    Outputs
+    	d:ZZ
+	    circuit depth
+	H:HashTable
+	    total number of gates of each type
+    Description
+        Text
+	    The depth of an algebraic circuit is the length of the longest path of evaluations from any input gate to any output gate.
+        Example
+            declareVariable x
+	    f = x + 1
+	    n = 12;
+	    for i from 1 to n do f = f*f -- f = (x+1)^(2^n)
+    	    depth f
+    	Text
+            depth is not the sole indicator of circuit complexity. For instance, the total number of gates in a circuit (sometimes referred to as its "size") also plays a role. "countGates" returns the number of constituent @TO Gate@s according to their type.
+        Example
+	    x = symbol x
+	    n = 8
+	    varGates = declareVariable \ for i from 1 to n list x_i
+    	    G1 = gateMatrix{{x_1+x_2+x_3+x_4+x_5+x_6+x_7+x_8}}
+	    G2 = gateMatrix{{((x_1+x_2)+(x_3+x_4))+((x_5+x_6)+(x_7+x_8))}}
+	    depth G1
+	    depth G2
+    	    countGates G1
+	    countGates G2
+    SeeAlso
+        "compressing circuits"
 ///
