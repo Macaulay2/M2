@@ -1112,23 +1112,22 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
 TEST ///
 setRandomSeed 0
 debug needsPackage "NumericalAlgebraicGeometry"
-NAGtrace 2
+NAGtrace 1
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
-eps = 1/10^20
+eps = 1/10^14
 T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 (S,solsS) = totalDegreeStartSystem T
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
-assert((first sols).NumberOfSteps == 6)
+assert all(sols, s->status s === Regular and s.NumberOfSteps > 100)
 
-sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
+sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
 peek sols 
+assert all(sols, s->status s === MinStepFailure)
 
-sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
+sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 100,CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
 peek sols 
-
-sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>1000,EndZoneFactor=>0)
-peek sols 
+assert all(sols, s->status s === Regular)
 ///

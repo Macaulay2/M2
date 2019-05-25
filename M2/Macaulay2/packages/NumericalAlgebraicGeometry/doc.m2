@@ -214,8 +214,8 @@ document { Key => {"numerical homotopy tracking options",
 	ErrorTolerance => {" (default ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
 	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."},
 	Precision => {" (default Precision = ", toString DEFAULT.Precision, "). Precision of the floating-point numbers used in computation. If set to ", 
-	    TO "infinity", " the precision in homotopy continuation adapts according to numerical conditioning. ", 
-	    "The other popular setting, ", TT "DoublePrecision", ", forces fast arithmetic and linear algebra in standard precision. "}
+	    TO "infinity", "(EXPERIMENTAL!) the precision in homotopy continuation adapts according to numerical conditioning. ", 
+	    "The default setting, ", TT "DoublePrecision", ", forces fast arithmetic and linear algebra in standard precision. (Other settings invoke MPFR library.)"}
     	}, 
         item -> {TT "[", TT toString item#0, TT "]: "} | item#1 
 	)

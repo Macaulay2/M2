@@ -275,8 +275,6 @@ doc ///
         (makeSLProgram,GateMatrix,GateMatrix)
         (makeSLProgram,List,List)
         SLProgram
-        (evaluate,SLProgram,Matrix)
-        (evaluate,SLProgram,MutableMatrix,MutableMatrix)
     Headline
         create a straight-line program
     Usage
@@ -452,7 +450,8 @@ doc ///
     Key
     	"differentiating circuits"
      	(diff, InputGate, Gate)    
-     	(diff, InputGate, GateMatrix)    
+     	(diff, InputGate, GateMatrix)
+	(diff, GateMatrix, GateMatrix)    
     Description
         Text
     	    The output of these commands is generally a circuit for evaluating the derivative of the second argument with respect to the first.

@@ -654,16 +654,22 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 //   ||J^{-1}|| should be multiplied by a factor
 //   reflecting an estimate on the error of evaluation of J
 #define PRECISION_SAFETY_BITS 10
-              int more_bits = int(log2(fabs(R.coerceToDouble(dx_norm2)))) -
-                              1;  // subtract 1 for using squares under "log".
-                                  // TODO: should this be divide by 2??
-              int precision_needed =
-                  PRECISION_SAFETY_BITS + tolerance_bits + more_bits;
-              if (R.get_precision() < precision_needed)
-                status = INCREASE_PRECISION;
+              int more_bits = int(log2(fabs(R.coerceToDouble(dx_norm2)))) / 2;
+              int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + more_bits;
+              if (precision_needed<53) precision_needed = 53;
+              if (M2_numericalAlgebraicGeometryTrace > 3)
+                std::cout << "precision needed = " << precision_needed << " = " 
+                          << PRECISION_SAFETY_BITS << "(safety) + " 
+                          << tolerance_bits << "(tolerance) + "
+                          << more_bits << "(additional)\n"
+                          << "current precision = " << R.get_precision() << std::endl;
+              if (R.get_precision() < precision_needed) 
+                 status = INCREASE_PRECISION;
               else if (R.get_precision() != 53 and
                        R.get_precision() > 2 * precision_needed)
                 status = DECREASE_PRECISION;
+              if (M2_numericalAlgebraicGeometryTrace > 3)
+                std::cout << "status = " << status << std::endl;
             };
 
           // infinity/origin checks
