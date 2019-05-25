@@ -72,6 +72,11 @@ document {
 		    LI { 
 		       	 TO "ReflexivePolytopesDB::ReflexivePolytopesDB", " now has a simplified interface and also 
                          does not access the web during installation.  However, these changes will likely break previous code."
+			 },
+		    LI { 
+		       	 TO "CohomCalg::CohomCalg", " also has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code
+                         using this package."
 			 }
 		    }
 	       }
