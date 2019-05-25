@@ -31,7 +31,7 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
         Graph => G,
 	Edges => new MutableList from {}
     };
-    if not(G.Gate =!= null)  then (
+    if (not G.SLP)  then (
 	N.SpecializedSystem = specializeSystem (params, G.Family));
     G.Vertices = append(G.Vertices, N);
     N
@@ -57,17 +57,17 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
     	E.Potential12 = G.Potential (E, true);
     	E.Potential21 = G.Potential (E, false);
     	);
-    if (G.Gate) =!= null then (
+    if G.SLP then (
 	p1 := transpose matrix n1.BasePoint;
 	p2 := transpose matrix n2.BasePoint;
 	if (G.Randomizer =!= null) then (
 	    p1 = G.Randomizer p1;
 	    p2 = G.Randomizer p2;
 	    );
-    	E#"homotopy12" = specialize(G.Gate, 
+    	E#"homotopy12" = specialize(G.Family, 
 	    ((E.gamma1)*p1)||
 	    ((E.gamma2)*p2));
-    	E#"homotopy21" = specialize(G.Gate, 
+    	E#"homotopy21" = specialize(G.Family, 
 	    ((E.gamma2)*p2)||
 	    ((E.gamma1)*p1));
 		)
@@ -79,7 +79,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
 	    	    E#"homotopy12" = segmentHomotopy(F1,F2);
     	    	    E#"homotopy21" = segmentHomotopy(F2,F1);
 	    	    )
-		else ( -- this is a hack engaged for a more general purpose (e.g., nonlinear systems)
+		else ( -- this is a hack engaged for a more general purpose (e.g., systems which are non-linear in parameter)
 	    	    F := G.Family.PolyMap;
 	    	    (FR, mapFR) := flattenRing ring F;
             	    FF := mapFR F;
@@ -118,25 +118,16 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
 	)
     )
 
-homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Family=>"IdSupport", Potential=>null, FilterCondition=>null, Randomizer=>null})
+homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Potential=>null, FilterCondition=>null, Randomizer=>null})
 installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 	Vertices => new MutableList from {},
 	Edges => new MutableList from {}
 	})
-homotopyGraph PolySystem := o -> PF -> (
+homotopyGraph System := o -> PF -> (
     G := homotopyGraph();
-    G.Family = PF;
+    G.SLP = instance(PF, GateSystem);
+    G.Family = if G.SLP then parametricSegmentHomotopy PF else PF;
     G.Potential = o.Potential;
-    G.FilterCondition = o.FilterCondition;
-    G.Randomizer = o.Randomizer;
-    G.Gate = null;
-    G
-    )
-homotopyGraph GateParameterHomotopy := o -> PH -> (
-    G := homotopyGraph();
-    G.Gate = PH;
-    G.Potential = o.Potential;
-    G.SLP = true;
     G.FilterCondition = o.FilterCondition;
     G.Randomizer = o.Randomizer;
     G
@@ -169,12 +160,6 @@ specializeSystem (Point, Matrix) := (p, M) -> (
     specializeSystemInternal(p,M,(R,PR,toPR,X))
     )
 
--- convenience function for WS init
-edgeInds = (G,v) -> (
-    i := (positions(G.Vertices, x -> x == v))#0;
-    positions(G.Vertices, x -> member(x,G.Edges)) 
-    )
-
 -- returns (head,tail,correspondence,correspondence')
 head'n'tail = (e, from1to2) -> 
     if from1to2 then (e.Node1, e.Node2, e.Correspondence12, e.Correspondence21) else
@@ -186,24 +171,6 @@ potentialLowerBound = (e,from1to2) -> (
     n2 := length tail.PartialSols - length keys correspondence';
     max(n1-n2, 0)
     ) 
-
--*
-potentialE = (e,from1to2) -> (
-    G := e.Graph;
-    (head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
-    a := length head.PartialSols - length keys correspondence;
-    b := length tail.PartialSols - length keys correspondence';
-    d := (e.Graph).TargetSolutionCount;
-    c := length keys correspondence;
---    << "# of sols to track" << a << endl;
---    << "# of sols in target w/o correspondence" << b << endl;
---    << "# of established correspondences" << c << endl;
---    << "target solution count" << d << endl;
-    if d!=c and a!=0 then p := (d-c-b) / (d-c)
-    else p=0;
-    p
-    ) 
-*-
 
 makeBatchPotential = method()
 makeBatchPotential ZZ := batchSize -> (

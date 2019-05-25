@@ -33,12 +33,11 @@ debug NumericalAlgebraicGeometry
 debug Core
 needs "./MonodromySolver/PointArray.m2"
 needs "./MonodromySolver/HomotopyGraphTypes.m2"
-needs "./MonodromySolver/random_methods.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
 
 
 beginDocumentation()
-load "MonodromySolver/Documents/DocMonodromysolver.m2"
+needs "./MonodromySolver/Documents/DocMonodromysolver.m2"
 end
 
 restart

@@ -361,7 +361,7 @@ randomDiagonalUnitaryMatrix ZZ := n -> diagonalMatrix apply(n, i->exp(ii*random(
 randomUnitaryMatrix = method()
 randomUnitaryMatrix ZZ := n -> (
      Ml := flatten entries randomInComplexUnitBall(n^2);
-     M := map(CC^n, n, (i,j)->Ml#(n*i+j)); -- n+1 by n+1 matrix                         
+     M := map(CC^n, n, (i,j)->Ml#(n*i+j)); -- n by n matrix                         
      randomDiagonalUnitaryMatrix n * (last SVD M) 
      )
 

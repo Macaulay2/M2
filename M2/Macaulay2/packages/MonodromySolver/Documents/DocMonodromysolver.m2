@@ -1,9 +1,9 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
-undocumented {randomWeights, Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
      Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect}
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
-undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function),  1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount], [homotopyGraph,Family]}
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function),  1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount]}
 
 doc ///
     Key
@@ -49,19 +49,19 @@ doc ///
         Text
                 In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
             for instance, in cases where there are equations without parameters. In such a case, the user may find a seed pair
-            themselves (see @TO (monodromySolve, PolySystem, Point, List) @ for an example.)
+            themselves (see @TO (monodromySolve, System, Point, List) @ for an example.)
     ///
 
 doc ///
     Key
         sparseMonodromySolve
-        (sparseMonodromySolve, PolySystem)
+        (sparseMonodromySolve, System)
     Headline
         an "out of the box" polynomial system solver
     Usage
         sols = sparseMonodromySolve PS
     Inputs 
-        PS:PolySystem
+        PS:System
             whose coefficients are complex numbers
     Outputs
         sols:List
@@ -87,14 +87,13 @@ doc ///
 doc ///
     Key
         solveFamily
-        (solveFamily,PolySystem)
-        (solveFamily,PolySystem,Point,List)
+        (solveFamily,System)
     Headline
         a solver for parametric families with simple output
     Usage
         (sys,sols) = solveFamily PS
     Inputs 
-        PS:PolySystem
+        PS:System
            whose underlying coefficient ring is defined by parameters.
     Outputs
         sys:List
@@ -121,18 +120,18 @@ doc ///
         Code
 	    HEADER3 "Ways to use:",
 	    UL {
-		TO (monodromySolve, PolySystem, Point, List),             
-                TO (monodromySolve, PolySystem)
+		TO (monodromySolve, System, Point, List),             
+                TO (monodromySolve, System)
                 }
        ///       
 
 doc ///
     Key
-        (monodromySolve, PolySystem, Point, List)
+        (monodromySolve, System, Point, List)
     Usage
             (N, npaths) = monodromySolve(PS,p0,L)
     Inputs
-        PS:PolySystem
+        PS:System
 	    with parametric coefficients
         p0:Point
             representing a parametrized system
@@ -159,7 +158,7 @@ doc ///
 
 doc ///
     Key
-        (monodromySolve, PolySystem)
+        (monodromySolve, System)
     Description
         Text
 	    This blackbox solver is similar in usage to @TO sparseMonodromySolve @, but with "technical" output.
@@ -181,7 +180,7 @@ doc ///
     Inputs
         p0:Point
 	    in parameter space
-        PS:PolySystem
+        PS:System
 	    with parameters as coefficients
     Outputs
         equations:List
@@ -192,15 +191,15 @@ doc ///
 doc ///
     Key
         createSeedPair
-        (createSeedPair, PolySystem)
-        (createSeedPair, PolySystem, List)
+        (createSeedPair, System)
+        (createSeedPair, System, Point)
     Headline
         create initial seed for the homotopy continuation
     Usage
         (p0,x0) = createSeedPair PS
 	(p0, x0) = createSeedPair(PS,x0)
     Inputs
-        PS:PolySystem
+        PS:System
 	    a parametric polynomial system
 	x0:Point
 	    an initial solution for some system
@@ -223,7 +222,7 @@ doc ///
             -- line below checks that the system defined by p0 nearly vanishes at x0
             apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
    SeeAlso
-       (monodromySolve,PolySystem,Point,List)
+       (monodromySolve,System,Point,List)
     ///
 
 doc ///
@@ -321,8 +320,6 @@ doc ///
 	[sparseMonodromySolve,StoppingCriterion]
         TargetSolutionCount
         [monodromySolve,TargetSolutionCount]
-	tMin
-	[monodromySolve,tMin]
         [solveFamily,TargetSolutionCount]
         [sparseMonodromySolve,TargetSolutionCount]
         [monodromySolve,Verbose]
@@ -525,7 +522,7 @@ doc ///
     Usage
         G = homotopyGraph PS
     Inputs
-        PS:PolySystem
+        PS:System
     Outputs
         G:HomotopyGraph
     ///
@@ -732,16 +729,17 @@ doc ///
         "member"
     ///
 
+-*
 doc ///
     Key
         seedTest
-	(seedTest, PolySystem, Point, Point)
+	(seedTest, System, Point, Point)
     Headline
         test initial seed
     Usage
         H = seedTest(P,p0,L)
     Inputs
-        P:PolySystem
+        P:System
         p0:Point
 	L:List
     Outputs
@@ -752,7 +750,7 @@ doc ///
 	    The function @TO createSeedPair @ assumes very little of its input; seedTest performs
 	    some basic tests on the seed data:
     ///
-
+*-
     
 -* doc ///
     Key
