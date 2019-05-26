@@ -3,7 +3,7 @@ undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,Homoto
      Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect}
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
-undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function),  1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount]}
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), (positions,PointArray,Function),  1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
 
 doc ///
     Key
@@ -21,33 +21,28 @@ doc ///
 	    It includes several blackbox functions based on these methods.
         Code
                 UL {
+		    TO solveFamily,
                    TO sparseMonodromySolve,
-                TO solveFamily,
-                   TO monodromySolve,
-                TO dynamicFlowerSolve
+                   TO monodromySolve
                       } 
         Text
-            The most basic interface is provided by the method @TO "sparseMonodromySolve" @. More advanced solvers can be applied to
-            linearly parametrized families. The family in the example below is the 5-variable Reimer system from the Posso test
-            suite: the generic solution count is 144, while the Bezout number and mixed volume are both 720.
-        Text
-        
+            @TO solveFamily@ is blackbox solver that can work with @TO SLPexpressions@ or the @TO PolySystem@ type. Here is an example illustrating how to solve a parametric family for specific parameter values.
         Example
-	    setRandomSeed 0
-	    R = CC[a_1..a_5,b_1..b_5][x,y,z,t,u]   
-	    P = polySystem {-a_1+b_1*(x^2-y^2+z^2+u^2-t^2),-a_2+b_2*(x^3-y^3+z^3+u^3-t^3),-a_3+b_3*(x^4-y^4+z^4+u^4-t^4),-a_4+b_4*(x^5-y^5+z^5+u^5-t^5), -a_5+b_5*(x^6-y^6+z^6+u^6-t^6)}                  
-	    (N,npaths) = monodromySolve P                
-            first N.SpecializedSystem -- (the first polynomial of) a randomly generated system in the family defined by P
-            first N.PartialSols -- a solution to N.SpecializedSystem
-            npaths -- total number of paths tracked in call to monodromySolve
-        Text
-
+    	    setRandomSeed 0
+	    declareVariable \ {A,B,C,D,X,Y}
+	    PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B},{C*(Y+2)^2+D}})
+	    solveFamily(PS,point{{1,1,1,1}})
+	    R=CC[a,b,c,d][x,y]
+	    F=polySystem {a*(x-1)^2-b,c*(y+2)^2+d}
+	    solveFamily(F,point{{1,1,1,1}})
+	Text
+	    @TO monodromySolve@ is the core function called by @TO solveFamily@. Its default setting are less conservative and may be faster at the expense of reliability: see @TO MonodromySolverOptions@. For non-parametric systems, the solver @TO sparseMonodromySolve@ essentially calls @TO solveFamily @ assuming the genericity conditions of the Bernstein-Kurhnirenko theorem are satisfied.
         Text
             Each solver works by assembling randomly generated systems within a @TO HomotopyGraph@ and tracking paths between
             them. They are also equipped with a number of options, which may be useful for speeding up computation or 
             increasing the probability of success.
         Text
-                In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
+            In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
             for instance, in cases where there are equations without parameters. In such a case, the user may find a seed pair
             themselves (see @TO (monodromySolve, System, Point, List) @ for an example.)
     ///
@@ -55,7 +50,7 @@ doc ///
 doc ///
     Key
         sparseMonodromySolve
-        (sparseMonodromySolve, System)
+        (sparseMonodromySolve, PolySystem)
     Headline
         an "out of the box" polynomial system solver
     Usage
@@ -91,13 +86,16 @@ doc ///
     Headline
         a solver for parametric families with simple output
     Usage
-        (sys,sols) = solveFamily PS
+        (pTarg,sols) = solveFamily PS
+	sols = solveFamily(PS,pTarg)
     Inputs 
         PS:System
-           whose underlying coefficient ring is defined by parameters.
+           eg. a @TO PolySystem@ whose underlying coefficient ring is defined by parameters, or a @TO GateSystem@ with parameters.
+	pTarg:Point
+	   parameter values for desired system
     Outputs
-        sys:List
-            containing the equations of a random specialization of PS.
+        pTarg:List
+            parameter value 
         sols:List
             containing solutions to sys, each represented as a @TO Point @.
     Description
@@ -289,6 +287,7 @@ doc ///
         [monodromySolve,EdgesSaturated]
         [solveFamily,EdgesSaturated]
         [sparseMonodromySolve,EdgesSaturated]
+	FilterCondition
         GraphInitFunction
         [monodromySolve,GraphInitFunction]
         [solveFamily,GraphInitFunction]
@@ -309,6 +308,7 @@ doc ///
         [monodromySolve,Potential]
         [solveFamily,Potential]
         [sparseMonodromySolve,Potential]
+	Randomizer
         SelectEdgeAndDirection
         [monodromySolve,SelectEdgeAndDirection]
         [solveFamily,SelectEdgeAndDirection]

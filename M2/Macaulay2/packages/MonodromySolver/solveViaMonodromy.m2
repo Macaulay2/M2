@@ -223,7 +223,7 @@ f_1 = a_1*x_1+a_2*x_2 - x_1*lambda
 f_2 = a_3*x_1+a_4*x_2 - x_2*lambda
 f_3 = a_5*x_1+a_6*x_2 + 1
 H = {f_1,f_2,f_3}
-assert((last createSeedPair polySystem H).SolutionStatus =!= RefinementFailure)
+assert(status (last createSeedPair polySystem H) =!= RefinementFailure)
 ///
 
 staticMonodromySolve = method(Options=>{
@@ -242,7 +242,9 @@ staticMonodromySolve = method(Options=>{
 	FilterCondition => null,
 	Randomizer => null})
 staticMonodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
-	USEtrackHomotopy = instance(PS,GateSystem) or (getDefault Software === M2engine and o#"new tracking routine");
+    	isGS := instance(PS,GateSystem);
+        if (isGS and not o#"new tracking routine") then error "GateSystem requires new tracking routine";
+	USEtrackHomotopy = isGS or (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount =!= null then
 		mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
@@ -281,8 +283,7 @@ count = 6;
 (V,npaths) = monodromySolve polys;
 assert( length V.PartialSols == count );
 
--- Can provide no options
-(V,npaths) = monodromySolve(polys,p0,{x0});
+(V,npaths) = monodromySolve(polys,p0,{x0},NumberOfNodes=>3);
 assert( length V.PartialSols == count );
 
 setRandomSeed 0
@@ -296,6 +297,7 @@ assert( length V.PartialSols == count );
 --Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 --must also provide a Potential function.
 (V,npaths) = monodromySolve(polys,p0,{x0},
+    	    	NumberOfNodes=>3,
 		NumberOfEdges=>5,
 		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
 assert( length V.PartialSols == count );
@@ -330,7 +332,8 @@ assert( length V.PartialSols == count );
 --and Verbose (defaults to false). We test that both the defaults work
 --and that non-default values work.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-		NumberOfEdges=>5,
+		NumberOfEdges=>4,
+		NumberOfNodes=>3,
 		"new tracking routine"=>false,
 		Verbose=>false);
 assert( length V.PartialSols == count );
@@ -514,12 +517,7 @@ sparseMonodromySolve = method(Options=>{
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
 	EdgesSaturated => false})
-sparseMonodromySolve System := o ->  PS -> (
--*    mutableOptions := new MutableHashTable from o;
-    if mutableOptions.TargetSolutionCount =!= null then
-        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
-    if mutableOptions.StoppingCriterion === null then 
-        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;*-
+sparseMonodromySolve PolySystem := o ->  PS -> (
     polys := flatten entries PS.PolyMap;
     ind := flatten apply(#polys,i-> -- indices for parameters
 	apply(exponents polys#i, t->(i,t))
@@ -541,12 +539,12 @@ solveFamily = method(Options=>{
 	StoppingCriterion => null,
 	GraphInitFunction => completeGraphInit,
 	AugmentGraphFunction => null,
-	AugmentNumberOfRepeats => null,
-	AugmentEdgeCount=>0,
-	AugmentNodeCount=>0,
+	AugmentNumberOfRepeats => 2,
+	AugmentEdgeCount=>3,
+	AugmentNodeCount=>1,
 	BatchSize => infinity,
 	Potential => null,
-	NumberOfNodes => 2,
+	NumberOfNodes => 3,
 	NumberOfEdges => 4,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
@@ -567,14 +565,13 @@ solveFamily (System, Point) := o -> (P, p1) -> (
     G := V.Graph;
     start := transpose matrix V.BasePoint;
     targ := transpose matrix p1;
-    H := if G.SLP then G.Family else gateSystem G.Family.PolyMap;
+    H := if G.SLP then G.Family else parametricSegmentHomotopy gateSystem G.Family.PolyMap;
     if o#"new tracking routine" then (
-	H01 := specialize(G.Family,start||targ);
+	H01 := specialize(H, start||targ);
     	trackHomotopy(H01,points V.PartialSols)
 	) else (
-	if G.SLP then error "GateSystem requires new tracking routine";
-	P0 := specializeSystem(start, G.Family);
-	P1 := specializeSystem(start, G.Family);
+	P0 := specializeSystem(start, H);
+	P1 := specializeSystem(targ, H);
 	track(P0, P1, points V.PartialSols)
 	)
     )
