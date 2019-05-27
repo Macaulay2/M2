@@ -5,7 +5,7 @@ dnl appears as a literal value.
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
 
-dnl Things to do when incrementing the version number to X.Y.Z :
+dnl Things to do when incrementing the version number to X.Y.Z (or X.Y) :
 dnl    - increment the version number in the AC_INIT macro below
 dnl    - add an entry to distributions/deb/changelog
 dnl    - commit those two changed files
@@ -17,10 +17,11 @@ dnl    - push the new branch to github and track it
 dnl           git push -u origin release-X.Y.Z
 dnl    - push the new tag to github
 dnl           git push --tags origin release-X.Y.Z
-dnl    - on the master branch, if a new branch was made for development,
-dnl      increment the version number again to X.Y.Z.1 in this file and add an
+
+dnl Things to do when the release has been accomplished and pulling from the master branch to the release branch will not be needed:
+dnl    - on the master branch, the version number again to X.Y.Z.1 in this file and add an
 dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
-dnl      omitted above.  Commit that change and make a tag.
+dnl      omitted above.  Commit that change and make a tag.  I.e.:
 dnl           git checkout master
 dnl           # edit two files, as above
 dnl           git tag version-X.Y.Z.1
