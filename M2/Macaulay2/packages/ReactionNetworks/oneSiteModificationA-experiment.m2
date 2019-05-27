@@ -12,11 +12,11 @@ needsPackage "MonodromySolver"
 multipleModificationA = n -> (
     A := oneSiteModificationA();
     for i from 2 to n do 
-    A = glue(A, sub(oneSiteModificationA(), {"S_0" => "2S_"|(i-1), "S_1" => "S_"|i}));
+    A = glue(A, sub(oneSiteModificationA(), {"S_0" => "S_"|(i-1), "S_1" => "S_"|i}));
     A
     )
 
--*
+{*
 gb(J, BasisElementLimit=>1)
 netList flatten entries gbSnapshot J
 gb(J, BasisElementLimit=>2)
@@ -49,9 +49,9 @@ gb(J, BasisElementLimit=>15)
 netList flatten entries gbSnapshot J
 gb(J, BasisElementLimit=>16)
 netList flatten entries gbSnapshot J
-*-
+*}
 
--*
+{*
 --make a ring that only has conc rates as vars
 Rx = CC[A.ConcentrationRates]
 --create a random linear combination of equations to get a square system
@@ -62,20 +62,24 @@ B = random(CC^9, CC^6)
 M = M'*B
 --compute mixed volume
 computeMixedVolume (flatten entries M)
-*-
+*}
 
 end -------------------------------
 
 restart
 load "~/M2/M2/Macaulay2/packages/ReactionNetworks/oneSiteModificationA-experiment.m2"
 
-
-n = 2
 FF = QQ
+n = 60
 An = multipleModificationA n
 Rn = createRing(An, FF)
 Fn = join(subRandomInitVals An, subRandomReactionRates An)
 In = ideal Fn
+Sn=FF[toList(apply(0..length An.ConcentrationRates-1,
+	    i-> value(An.ConcentrationRates)#i))]
+Jn = sub(In, Sn)
+elapsedTime degree Jn 
+
 Sn = FF[value(An.ConcentrationRates)#2,
     value(An.ConcentrationRates)#5,
     value(An.ConcentrationRates)#0, 
@@ -84,22 +88,22 @@ Sn = FF[value(An.ConcentrationRates)#2,
     value(An.ConcentrationRates)#4,
     value(An.ConcentrationRates)#1, 
     MonomialOrder => {Eliminate 1,Lex}]
-Jn = sub(In, Sn)    
+
 netList (flatten entries gens Jn//unique)
 
     
 
 
-gb(J, BasisElementLimit=>1)
-netList flatten entries gbSnapshot J
-gb(J, BasisElementLimit=>2)
-netList flatten entries gbSnapshot J
-gb(J, BasisElementLimit=>3)
-netList flatten entries gbSnapshot J
-gb(J, BasisElementLimit=>4)
-netList flatten entries gbSnapshot J
-gb(J, BasisElementLimit=>5)
-netList flatten entries gbSnapshot J
+gb(Jn, BasisElementLimit=>1)
+netList flatten entries gbSnapshot Jn
+gb(Jn, BasisElementLimit=>2)
+netList flatten entries gbSnapshot Jn
+gb(Jn, BasisElementLimit=>3)
+netList flatten entries gbSnapshot Jn
+gb(Jn, BasisElementLimit=>4)
+netList flatten entries gbSnapshot Jn
+gb(Jn, BasisElementLimit=>5)
+netList flatten entries gbSnapshot Jn
 gb(J, BasisElementLimit=>6)
 netList flatten entries gbSnapshot J
 gb(J, BasisElementLimit=>7)
@@ -124,10 +128,10 @@ gb(J, BasisElementLimit=>16)
 netList flatten entries gbSnapshot J
 
 --quotient ring
-A = S/J
+A = Sn/Jn
 B = basis A
 dim A
-value(C''.ConcentrationRates)#3//basis A
+value(An.ConcentrationRates)#3//basis A
 --dim A = degree J when J is prime (We can prove J is prime)
 
 
