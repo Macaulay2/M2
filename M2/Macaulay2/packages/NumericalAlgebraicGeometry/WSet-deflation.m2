@@ -56,7 +56,6 @@ deflatedWSet(Ideal,Ideal,ZZ,List) := (F,S,m,pts) -> (
     )
 
 TEST ///
-restart
 debug needsPackage "NumericalAlgebraicGeometry"
 CC[x_0..x_3]
 A = matrix{{x_0,x_1,x_2},{x_1,x_2,x_3},{x_2,x_3,0}}

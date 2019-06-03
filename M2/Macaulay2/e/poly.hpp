@@ -239,6 +239,7 @@ class PolyRing : public PolyRingFlat
                       const int *n,
                       int *resultmon,
                       int use_coeff) const;
+  ring_elem power_direct(const ring_elem f, int n) const;
 
   ring_elem get_logical_coeff(const Ring *coeffR, const Nterm *&f) const;
   // Given an Nterm f, return the coeff of its logical monomial, in the

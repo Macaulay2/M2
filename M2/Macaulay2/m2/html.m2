@@ -65,16 +65,6 @@ initInstallDirectory := o -> (
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 toURL := method()
-
-toURL Function := pth -> ( 				    -- probably already obsolete
-     error "this branch is not obsolete";
-     p := searchPrefixPath pth;
-     if p =!= null
-     then concatenate(rootURI, realpath p)
-     else (
-	  error("needed file not found on prefixPath: ",format pth,".\n--    Try: (1) add a scheme, such as http://, to make an absolute URL;\n--         (2) install the package that provides the file");
-	  -- relativizeFilename(htmlDirectory, pth)
-	  ))
      
 toURL String := pth -> (				    -- phase this one out eventually
      if isAbsolutePath pth then concatenate(rootURI,
@@ -86,18 +76,24 @@ toURL String := pth -> (				    -- phase this one out eventually
      else (
 	  r := if htmlDirectory === null then pth else relativizeFilename(htmlDirectory, pth);
 	  if debugLevel == 121 then (
-	       stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
-	       stderr << "--       pth             = " << pth << endl;
-	       stderr << "--       relative result = " << r << endl;
+	       stderr << "--toURL String: htmlDirectory   = " << htmlDirectory << endl;
+	       stderr << "--              pth             = " << pth << endl;
+	       stderr << "--              relative result = " << r << endl;
 	       );
 	  r))
 
 toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
      -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
-     if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
-     and htmlDirectory =!= null
-     then relativizeFilename(htmlDirectory,tail) 
-     else prefix|tail)
+     r := if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
+          and htmlDirectory =!= null
+          then relativizeFilename(htmlDirectory,tail) 
+          else prefix|tail;
+     if debugLevel == 121 then (
+	  stderr << "--toURL(String,String): htmlDirectory = " << htmlDirectory << endl;
+	  stderr << "--                      prefix        = " << prefix << endl;
+	  stderr << "--                      result        = " << r << endl;
+	  );
+     r)
 
 htmlFilename1 = (fkey,pkgname,layout) -> (
      basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
@@ -472,7 +468,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      setseed := " --no-randomize";
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
+     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      -- we specify --no-readline because the readline library catches SIGINT:
      args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;

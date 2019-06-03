@@ -1,8 +1,8 @@
 -- -*- M2-comint -*- hash: -491356505
--- COMPILE TIME: Sep  9 2017, 07:55:04
---loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
---loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "PHCpack" from file /home/tim/.Macaulay2/init-PHCpack.m2
+--loading configuration for package "Bertini" from file /home/tim/.Macaulay2/init-Bertini.m2
+--loading configuration for package "FourTiTwo" from file /home/tim/.Macaulay2/init-FourTiTwo.m2
 
 i1 : R = CC[a,b,c,d,e,f,g,h][x,y,z];
 
@@ -10,13 +10,13 @@ i2 : polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
 
 i3 : (p0,x0) := createSeedPair polys
 
-o3 = ({.302305-.0022597*ii, -.104267-.470079*ii, -.151501-.0959349*ii,
+o3 = ({-.614855+.085554*ii, 1.14605-.389426*ii, -.380571-.0460979*ii,
      ------------------------------------------------------------------------
-     -.493959-.451223*ii, .658738+.072703*ii, -.194472-1.31476*ii,
+     .391714-.470397*ii, -.289573+.311588*ii, .359049+.280186*ii,
      ------------------------------------------------------------------------
-     .733494-.676514*ii, .053173+.996422*ii}, {.781262-.624203*ii,
+     .261008+.885559*ii, .057279+.512152*ii}, {.892712+.673395*ii,
      ------------------------------------------------------------------------
-     -.462954-.886382*ii, -.272832+.962062*ii})
+     .29398+.632944*ii, .025888+.714827*ii})
 
 o3 : Sequence
 

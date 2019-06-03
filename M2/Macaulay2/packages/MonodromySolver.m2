@@ -4,7 +4,7 @@ newPackage(
     	Version => "1.11", 
     	Date => "Nov 2017",
     	Authors => {
-	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
+	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
 	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
@@ -17,7 +17,7 @@ newPackage(
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => false,		
-  	-- DebuggingMode => true,		 -- set to true only during development
+  	--DebuggingMode => true,		 -- set to true only during development
   	CacheExampleOutput => true
     	)
 
@@ -33,12 +33,11 @@ debug NumericalAlgebraicGeometry
 debug Core
 needs "./MonodromySolver/PointArray.m2"
 needs "./MonodromySolver/HomotopyGraphTypes.m2"
-needs "./MonodromySolver/random_methods.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
 
 
 beginDocumentation()
-load "MonodromySolver/Documents/DocMonodromysolver.m2"
+needs "./MonodromySolver/Documents/DocMonodromysolver.m2"
 end
 
 restart

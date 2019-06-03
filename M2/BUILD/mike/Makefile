@@ -64,7 +64,19 @@ darwin64-appleclang : always
 		--disable-strip \
 		--enable-download
 
-## below this is older code (for darwin stuff)
+darwin64-clang : always
+	mkdir -p builds.tmp/darwin64-clang
+	cd builds.tmp/darwin64-clang; ../../../../configure \
+		CC="clang -m64" CXX="clang++ -m64" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-dmg \
+		--enable-build-libraries="mpir flint pari ntl"
+
 darwin64-gcc6 : always
 	mkdir -p builds.tmp/darwin64-gcc6
 	cd builds.tmp/darwin64-gcc6; ../../../../configure \
@@ -95,6 +107,8 @@ darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
 	cd builds.tmp/darwin64-gcc4.9; ../../../../configure \
 		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

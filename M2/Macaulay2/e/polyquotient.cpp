@@ -151,7 +151,7 @@ ring_elem PolyRingQuotient::power(const ring_elem f, int n) const
 
 ring_elem PolyRingQuotient::invert(const ring_elem f) const
 {
-  if (nvars_ == 1 && n_quotients() == 1 && K_->is_field())
+  if (nvars_ == 1 && n_quotients() == 1 && K_->is_field() && ! K_->is_fraction_field())
     {
       ring_elem g = quotient_element(0);
 
