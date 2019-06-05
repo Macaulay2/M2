@@ -29,7 +29,7 @@ class Homotopy;
 class SLProgram;
 class StraightLineProgram;
 class PathTracker;
-class PointArray;
+class M2PointArray;
 // NAG end
 
 typedef struct MonomialOrdering MonomialOrdering;
@@ -54,7 +54,7 @@ typedef struct Homotopy Homotopy;
 typedef struct SLProgram SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
-typedef struct PointArray PointArray;
+typedef struct M2PointArray M2PointArray;
 // NAG end
 #endif
 
@@ -2093,12 +2093,12 @@ enum gbTraceValues
   gmp_RRorNull rawGetSolutionLastTvaluePT(PathTracker* PT, int solN);
   gmp_RRorNull rawGetSolutionRcondPT(PathTracker* PT, int solN);
   const Matrix /* or null */ *rawRefinePT(PathTracker* PT, const Matrix* sols, gmp_RR tolerance, int max_corr_steps_refine);
-  // PointArray
-  unsigned int rawPointArrayHash(PointArray *); 
-  M2_string rawPointArrayToString(PointArray *);
-  PointArray /* or null */ *rawPointArray(double epsilon, int n);
-  int rawPointArrayLookup(PointArray *pa, const MutableMatrix *M, int col);
-  int rawPointArrayLookupOrAppend(PointArray *pa, const MutableMatrix *M, int col);
+  // M2PointArray
+  unsigned int rawPointArrayHash(M2PointArray *); 
+  M2_string rawPointArrayToString(M2PointArray *);
+  M2PointArray /* or null */ *rawPointArray(double epsilon, int n);
+  int rawPointArrayLookup(M2PointArray *pa, const MutableMatrix *M, int col);
+  int rawPointArrayLookupOrAppend(M2PointArray *pa, const MutableMatrix *M, int col);
   // NAG end  
   const Matrix /* or null */ *rawGbBoolean(const Matrix *m);
   const Matrix /* or null */ *rawBIBasis(const Matrix* m, int toGroebner);

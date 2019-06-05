@@ -865,16 +865,21 @@ M2_string rawPathTrackerToString(PathTracker *p)
 unsigned int rawPathTrackerHash(PathTracker *p) { return p->hash(); }
 // PointArray
 
-M2_string rawPointArrayToString(PointArray *pa)
+M2_string rawPointArrayToString(M2PointArray *pa)
 {
   buffer o;
-  pa->text_out(o);
+  pa->value().text_out(o);
   return o.to_string();
 }
-unsigned int rawPointArrayHash(PointArray *) { return 0; }
-PointArray /* or null */ *rawPointArray(double epsilon, int n)
+
+unsigned int rawPointArrayHash(M2PointArray *pa)
 {
-  return new PointArray(epsilon, n);
+  return pa->hash();
+}
+
+M2PointArray /* or null */ *rawPointArray(double epsilon, int n)
+{
+  return new M2PointArray(new PointArray(epsilon, n));
 }
 
 PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
@@ -892,14 +897,14 @@ PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
   return result;
 }
 
-int rawPointArrayLookup(PointArray *pa, const MutableMatrix *M, int col)
+int rawPointArrayLookup(M2PointArray *pa, const MutableMatrix *M, int col)
 {
-  return pa->lookup(getRealVector(M, col));
+  return pa->value().lookup(getRealVector(M, col));
 }
 
-int rawPointArrayLookupOrAppend(PointArray *pa, const MutableMatrix *M, int col)
+int rawPointArrayLookupOrAppend(M2PointArray *pa, const MutableMatrix *M, int col)
 {
-  return pa->lookup_or_append(getRealVector(M, col));
+  return pa->value().lookup_or_append(getRealVector(M, col));
 }
 
 // Local Variables:

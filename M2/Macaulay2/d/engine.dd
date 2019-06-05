@@ -35,7 +35,7 @@ export RawStraightLineProgram := Pointer "struct StraightLineProgram *";
 export RawStraightLineProgramOrNull := RawStraightLineProgram or null;
 export RawPathTracker := Pointer "struct PathTracker *";
 export RawPathTrackerOrNull := RawPathTracker or null;
-export RawPointArray := Pointer "struct PointArray *";
+export RawPointArray := Pointer "struct M2PointArray *";
 export RawPointArrayOrNull := RawPointArray or null;
 -- NAG end
 export RawMutableMatrix := Pointer "struct MutableMatrix *";

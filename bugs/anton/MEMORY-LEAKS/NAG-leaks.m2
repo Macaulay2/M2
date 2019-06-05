@@ -102,7 +102,7 @@ testF(10000,TESTsolve)
 -- elapsed time = 84.1909
 -- leaks 7161.45 bytes, takes 8.41909 ms. (per call)
 
-testF(100000,TESTpointArray)
+testF(10000000,TESTpointArray)
 -- elapsed time = 79.8302
 -- leaks 874.619 bytes, takes .798302 ms. (per call)
 
