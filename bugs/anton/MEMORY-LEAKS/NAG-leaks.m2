@@ -3,6 +3,8 @@ debug needsPackage "NumericalAlgebraicGeometry"
 debug SLPexpressions
 debug Core
 
+setRandomSeed "ab"
+
 errorDepth = 0
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
@@ -15,19 +17,16 @@ polyT = polySystem T;
 M = H#"X" | matrix{{H#"T"}};
 I = H#"H";
 gammaValue = random CC
+M0 = random(CC^1, CC^(n+1));
 
-TESTrawSLProgram = () -> (
-    rawSLProgram(1);
-    )
-
+        
 TESTmakeSLProgram = () -> (
-    slp := makeSLProgram(I,M);
-    --scan(flatten entries M, g->removeSLPfromCache(slp,g));    
-    --scan(flatten entries I, g->removeSLPfromCache(slp,g));    
+    slp := makeSLProgram(M, I);
     )
 
-TESTmakeEvaluator = () -> (
-    makeEvaluator(I,M);
+TESTrawSLEvaluator = () -> (
+    slp := makeSLProgram(M, I);
+    evaluate(slp, M0);
     )
 
 TESTgateMatrix = () -> (
@@ -86,15 +85,6 @@ testF(10000000, TESTmutableMatrix)
   --   elapsed time = 60.8538
   --   leaks -.936346 bytes, takes .00608538 ms. (per call)
   
-testF(3*10000000,TESTrawSLProgram) 
-  -- does not leak
-  -- M2 eigen branch 5 June 2019: no leak
-  --   elapsed time = 19.488
-  --   leaks .185139 bytes, takes .0006496 ms. (per call)
-  -- M2 master branch 5 June 2019 (no leak) MUCH FASTER?
-  --   elapsed time = 7.56468
-  --   leaks .0101035 bytes, takes .000252156 ms. (per call)
-
 testF(3*100000,TESTmakeSLProgram) 
   -- does not leak
   -- M2 eigen branch 5 June 2019: no leak
@@ -104,12 +94,15 @@ testF(3*100000,TESTmakeSLProgram)
   --   elapsed time = 20.4895
   --   leaks 1.01035 bytes, takes .0682984 ms. (per call)
 
-testF(100000,TESTmakeEvaluator) -- eigen branch: DOESN'T RUN
--- elapsed time = 19.4445
--- leaks 6.06208 bytes, takes .194445 ms. (per call)
+testF(100000,TESTrawSLEvaluator) 
+  -- M2 eigen branch 5 June 2019
+  --   elapsed time = 24.872
+  --   leaks 3.31776 bytes, takes .24872 ms. (per call)
+  -- M2 master branch 5 June 2019
+  --   elapsed time = 23.485
+  --   leaks 3.35872 bytes, takes .23485 ms. (per call)
 
 testF(1000000,TESTgateMatrix)
-  -- earlier time? elapsed time = 29.2733
   -- M2 eigen branch 5 June 2019 (no leak)
   --   elapsed time = 20.6455
   --   leaks .344064 bytes, takes .0206455 ms. (per call)
@@ -117,7 +110,7 @@ testF(1000000,TESTgateMatrix)
   --   elapsed time = 19.5357
   --   leaks .335872 bytes, takes .0195357 ms. (per call)
 
-testF(2*10000,TESTsegmentHomotopy) -- LEAK (FIX)
+testF(2*10000,TESTsegmentHomotopy) -- LEAK (FIX) (problem is likely in 'compress')
 -- elapsed time = 52.4079
 -- leaks 4.096 bytes, takes 5.24079 ms. (per call)
   -- M2 eigen branch 5 June 2019: SMALL LEAK (I think)
