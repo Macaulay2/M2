@@ -1,3 +1,5 @@
+debug Core
+
 testGF1 = (p,d,kk) -> (
    A := ambient kk;
    gen := rawMultiplicativeGenerator raw kk;
@@ -24,26 +26,29 @@ testGFpromote = (p,d,strategy) -> (
    testGF1(p,d,kk)
    )
 
-restart
-describe kk
-
-raw kk
+end--
 
 restart
-debug Core
+load "gf-bug.m2"
 kk = GF(7,1,Strategy=>"FlintBig")
 kk = GF(7,2,Strategy=>"FlintBig")
 kk = GF(7,20,Strategy=>"FlintBig")
 
-A = ambient kk
-gen = rawMultiplicativeGenerator raw kk;
-gen * gen * gen
-gen^2 != 1
-gen^3 != 1
-gen^3;
-facs = (6)//factor//toList/toList/first
-facs/class
-for a in facs do assert(gen^((6)//a) != 1);
-facdivs = for a in facs list (6)//a
-for a in facdivs list gen^a
-for a in oo list assert(a != 1)
+
+
+restart
+debug Core
+kk = GF(7,1,Strategy=>"FlintBig")
+a = new kk from rawMultiplicativeGenerator raw kk
+a^3 -- crashes many times, but not all.
+  -- I think I at one point found this bug: I think that flint is not doing the reduction
+  -- correctly when the power is 1...  (it assumes, if I recall correctly, that 
+  -- the result polynomial being reduced is of a certain size (FIND THE SPECIFIC ISSUE).
+  -- work around: FlintBig should not be used at all on p^1 in any case!
+
+restart
+debug Core
+kk = GF(7,2,Strategy=>"FlintBig")
+a = new kk from rawMultiplicativeGenerator raw kk
+a^3 -- doesn't seem to crash at all
+
