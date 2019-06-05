@@ -19,6 +19,8 @@ I = H#"H";
 gammaValue = random CC
 M0 = random(CC^1, CC^(n+1));
 
+tt = inputGate [symbol t];
+Huncompressed = gammaValue*(1-tt)*gateMatrix polyS + tt*gateMatrix polyT;
         
 TESTmakeSLProgram = () -> (
     slp := makeSLProgram(M, I);
@@ -37,6 +39,10 @@ TESTgateMatrix = () -> (
 
 TESTsegmentHomotopy = () -> (
     segmentHomotopy(S,T,gamma=>1+pi*ii);
+    )
+
+TESTsegmentHomotopy1 = () -> (
+    segmentHomotopy(S,T);
     )
 
 TESTsolve = () -> (
@@ -110,7 +116,7 @@ testF(1000000,TESTgateMatrix)
   --   elapsed time = 19.5357
   --   leaks .335872 bytes, takes .0195357 ms. (per call)
 
-testF(2*10000,TESTsegmentHomotopy) -- LEAK (FIX) (problem is likely in 'compress')
+testF(2*10000,TESTsegmentHomotopy) -- LEAK (FIX) 
 -- elapsed time = 52.4079
 -- leaks 4.096 bytes, takes 5.24079 ms. (per call)
   -- M2 eigen branch 5 June 2019: SMALL LEAK (I think)
@@ -119,6 +125,8 @@ testF(2*10000,TESTsegmentHomotopy) -- LEAK (FIX) (problem is likely in 'compress
   -- M2 master branch 5 June 2019 (small leak?) MUCH SLOWER...
   --   elapsed time = 55.3778
   --   leaks 16.5888 bytes, takes 2.76889 ms. (per call)
+testF(2*10000,TESTsegmentHomotopy1) -- LEAK (FIX) 
+-- LEEKS MORE than the one above
 
 testF(10000,TESTsolve) -- LEAK (FIX)
 -- elapsed time = 84.1909

@@ -6,22 +6,33 @@
 #define _slp_defs_hpp_
 
 // SLP
-class SLProgram : public MutableEngineObject
+class SLProgram;
+
+class M2SLProgram : public MutableEngineObject
+{
+  std::unique_ptr<SLProgram> mSLProgram;
+public:
+  M2SLProgram(SLProgram* pa) : mSLProgram(pa) {}
+
+  SLProgram& value() { return *mSLProgram; }
+};
+
+class SLProgram
 {
  public:
   enum GATE_TYPE { Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide };
   typedef int GATE_SIZE;
   typedef int GATE_POSITION;  // gate position is RELATIVE (exception: ABSOLUTE
                               // for mOutputPositions)
-  VECTOR(GATE_TYPE) mNodes;      // nodes types
-  VECTOR(GATE_SIZE) mNumInputs;  // corresponding nodes sizes
-  VECTOR(GATE_POSITION)
-      mInputPositions; /* which nodes does input come from?
-                          !!! this vector could be longer than mNodes !!!
-                          !!! since there could be several inputs per node !!!
-                          (nonnegative = node position,
-                          negative = var or const) */
-  VECTOR(GATE_POSITION) mOutputPositions; /* which nodes are outputs
+  std::vector<GATE_TYPE> mNodes;      // nodes types
+  std::vector<GATE_SIZE> mNumInputs;  // corresponding nodes sizes
+  std::vector<GATE_POSITION>
+  mInputPositions; /* which nodes does input come from?
+                      !!! this vector could be longer than mNodes !!!
+                      !!! since there could be several inputs per node !!!
+                      (nonnegative = node position,
+                      negative = var or const) */
+  std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
                                                   (nonnegative = node position,
                                                   negative = var or const) */
   /* LOOKUP TABLE */
@@ -82,7 +93,18 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 };
 */
 
-class SLEvaluator : public MutableEngineObject
+class SLEvaluator;
+
+class M2SLEvaluator : public MutableEngineObject
+{
+  std::unique_ptr<SLEvaluator> mSLEvaluator;
+public:
+  M2SLEvaluator(SLEvaluator* pa) : mSLEvaluator(pa) {}
+
+  SLEvaluator& value() { return *mSLEvaluator; }
+};
+
+class SLEvaluator
 {
  public:
   virtual ~SLEvaluator() {}
@@ -96,10 +118,10 @@ class SLEvaluator : public MutableEngineObject
   int ap(int rp) { return rp + slp->inputCounter; }  // absolute position
 
   SLProgram* slp; //!!! can we make it a reference???
-  VECTOR(SLProgram::GATE_POSITION) varsPos;  // the rest of inputs with neg rel position
-  VECTOR(SLProgram::GATE_TYPE)::iterator nIt;  // slp nodes
-  VECTOR(SLProgram::GATE_SIZE)::iterator numInputsIt;
-  VECTOR(SLProgram::GATE_POSITION)::iterator inputPositionsIt;
+  std::vector<SLProgram::GATE_POSITION> varsPos;  // the rest of inputs with neg rel position
+  std::vector<SLProgram::GATE_TYPE>::iterator nIt;  // slp nodes
+  std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt;
+  std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
 };
 
 template <typename RT>
@@ -131,11 +153,11 @@ class SLEvaluatorConcrete : public SLEvaluator
   typedef typename RT::ElementType ElementType;
   void computeNextNode();  // !!! should this and vIt be here???
   const RT& mRing;
-  VECTOR(ElementType)
+  std::vector<ElementType>
       values; /* should be a vector of values
          starting with inputCounter many vars and consts and
          continuing with the values of other GATEs */
-  typename VECTOR(ElementType)::iterator vIt;  // values
+  typename std::vector<ElementType>::iterator vIt;  // values
 };
 
 class Homotopy : public MutableEngineObject

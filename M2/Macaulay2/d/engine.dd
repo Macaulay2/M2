@@ -27,9 +27,9 @@ export RawMatrixOrNull := RawMatrix or null;
 -- NAG begin
 export RawHomotopy := Pointer "struct Homotopy *";
 export RawHomotopyOrNull := RawHomotopy or null;
-export RawSLEvaluator := Pointer "struct SLEvaluator *";
+export RawSLEvaluator := Pointer "struct M2SLEvaluator *";
 export RawSLEvaluatorOrNull := RawSLEvaluator or null;
-export RawSLProgram := Pointer "struct SLProgram *";
+export RawSLProgram := Pointer "struct M2SLProgram *";
 export RawSLProgramOrNull := RawSLProgram or null;
 export RawStraightLineProgram := Pointer "struct StraightLineProgram *";
 export RawStraightLineProgramOrNull := RawStraightLineProgram or null;

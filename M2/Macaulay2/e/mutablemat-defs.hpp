@@ -760,8 +760,8 @@ class MutableMat : public MutableMatrix
   virtual void clean(gmp_RR epsilon);  // modifies 'this'
   virtual gmp_RRorNull norm() const;
 
-  virtual SLEvaluator* createSLEvaluator(
-      SLProgram* P,
+  virtual M2SLEvaluator* createSLEvaluator(
+      M2SLProgram* P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const;  // this = const matrix
 };

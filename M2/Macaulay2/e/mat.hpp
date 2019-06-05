@@ -335,8 +335,8 @@ class MutableMatrix : public MutableEngineObject
   virtual void clean(gmp_RR epsilon) = 0;  // modifies 'this'
   virtual gmp_RRorNull norm() const = 0;
 
-  virtual SLEvaluator *createSLEvaluator(
-      SLProgram *P,
+  virtual M2SLEvaluator *createSLEvaluator(
+      M2SLProgram *P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const = 0;  // this = const matrix
 };
