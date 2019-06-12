@@ -3,11 +3,14 @@
 
 
 -- These are methods/functions only used as a mechanism. (will not be used by users)
-undocumented{(invmat, PolySystem, IntervalOptionList), (net, Interval),
-    (substitute, Interval, IntervalOptionList), (substitute, Interval, StringOption),
-    (substitute, Number, StringOption), (substitute, RingElement, IntervalOptionList),
-    (substitute, RingElement, StringOption), stringOption, StringOption, invmat, 
-    krawczykUniqueness, (krawczykUniqueness, PolySystem, IntervalOptionList)}
+undocumented{(inverseMat, IntervalMatrix), (net, Interval),
+    (substitute, Interval, IntervalOptionList), (substitute, Interval, IntervalOption),
+    (substitute, RingElement, IntervalOptionList), (substitute, Number, IntervalOption),
+    (substitute, Number, IntervalOptionList), (substitute, RingElement, IntervalOption),
+    (krawczykOper, Matrix, IntervalMatrix, PolySystem, IntervalOptionList),
+    ingredientsForKoper, (ingredientsForKoper, PolySystem, IntervalOptionList),
+    intervalJacMat, (intervalJacMat, PolySystem, IntervalOptionList), inverseMat,
+    subOnMonomial, (subOnMonomial, Number, IntervalOption), (subOnMonomial,RingElement, IntervalOption)}
 
 
 -- These are already documented as methods.
@@ -37,7 +40,10 @@ doc ///
 			
 			In the case of alpha theory, this package follows the algorithms of alpha theory introduced in @HREF("https://arxiv.org/abs/1011.1091","\"alphaCertified: certifying solutions to polynomial systems\" (2012)")@.
 			
-			In the case of Krawczyk method, this package follows the theory suggested in @HREF("https://epubs.siam.org/doi/book/10.1137/1.9780898717716","\"Introduction to Interval Analysis\" (2009)")@.
+			In the case of Krawczyk method, this package follows the theory suggested in @HREF("https://epubs.siam.org/doi/book/10.1137/1.9780898717716","\"Introduction to Interval Analysis\" (2009)")@. 
+			The Krawczyk method implemented in the package supports the complex-valued inputs also.
+			
+			This package also supports the exact computation with inputs of rational numbers.
 			    
 		Text
 		    	{\bf Ceritification Methods:}
@@ -57,15 +63,15 @@ doc ///
 		Text
 		    A set of points for certification should be given in advance using other system solvers.
 		Example
-		    R = QQ[x1,x2,y1,y2];
-		    f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
+		    R = RR[x1,x2,y1,y2];
+		    f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
 		    p1 = point{{.95, .32, -.30, .95}};
 		    p2 = point{{.9, .3, -.3, 1}}; -- poorly approximated solution
-		    P = {p1,p2};
 		Text
-		    It shows the result of certification.
+		    It shows the square of alpha value of the certified solution.
 		Example
-		    certifySolution(f,P)
+		    certifySolution(f,p1)
+		    certifySolution(f,p2) -- not an approximate solution
 		    
 		Text
 		    Also, if we have other solutions of the system, alpha theory suggests an algorithm for distinguishing these solutions.
@@ -84,13 +90,13 @@ doc ///
 		Text
 		    Intervals for certification should be given in advance using other system solvers.
 		Example
-		    R = QQ[x1,x2,y1,y2];
-		    f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
+		    R = RR[x1,x2,y1,y2];
+		    f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
 		    (I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
 		Text
 		    We set the relationships between variables and intervals using the function @TO "intervalOptionList"@.
 		Example
-		    o = intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")};
+		    o = intervalOptionList apply({x1 => I1, x2 => I2, y1 => I3, y2 => I4}, i -> intervalOption i);
     	    	    krawczykOper(f,o)
 		Text
 		    The function @TO "krawczykMethod"@ automatically checks whether the Krawczyk operator is contained in the input interval box.
@@ -108,7 +114,7 @@ doc ///
 	    (pointNorm, Point)
 	    "(pointNorm, Point)"
 	Headline
-	    compute the "projectivized" norm of the given point
+	    compute the square of the "projectivized" norm of the given point
 	Usage
 	    n = pointNorm(p)
 	Inputs
@@ -129,13 +135,13 @@ doc ///
 	    (polyNorm, RingElement)
 	    "(polyNorm, RingElement)"
 	Headline
-	    compute the "Bombieri-Weyl" norm of the given polynomial
+	    compute the square of the "Bombieri-Weyl" norm of the given polynomial
 	Description
 	    Text
 	    	For the given point this function computes the "Bombieri-Weyl" norm of the given point.
 		This will be used in order to compute the gamma value.
 	    Example
-	    	R = QQ[x,y];
+	    	R = RR[x,y];
 		f = 3*x*y^2 + 3*x + 7*y^2;
 		polyNorm(f)
 ///
@@ -147,7 +153,7 @@ doc ///
 	    (polySysNorm, PolySystem)
 	    "(polySysNorm, PolySystem)"
 	Headline
-	    compute the norm of the given polynomial system
+	    compute the square of the norm of the given polynomial system
 	Usage
 	    polySysNorm(PS)
 	Inputs
@@ -157,8 +163,8 @@ doc ///
 	    	For the given polynomial system we define the polynomial system norm by square root of the sum of all squares of polynomial norms.
 		This will be used in order to compute the gamma value.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		polySysNorm(f)
 ///		
 	       
@@ -181,8 +187,8 @@ doc ///
 		
 		It converges to an exact solution if a given point is an approximate solution.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p = point{{.95,.32,-.30,.95}};
     	    	newtonOper(f,p)
     	    Text
@@ -201,7 +207,7 @@ doc ///
 	    (computeConstants, PolySystem, Point)
 	    "(computeConstants, PolySystem, Point)"
 	Headline
-	    compute the auxilary quantities related to alpha theory
+	    compute the square of the auxilary quantities related to alpha theory
 	Usage
 	    (alpha, beta, gamma) = computeConstants(PS, P)
 	Inputs
@@ -215,8 +221,8 @@ doc ///
 
 		Alpha value is defined by the multiplication of beta and gamma. When it is smaller than  $0.157671$, then the input point is an approximate solution to the system. The function @TO "certifySolution"@ does this process.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p = point{{.95,.32,-.30,.95}};
     	    	(a, b, g) = computeConstants(f,p)
 ///		
@@ -226,31 +232,29 @@ doc ///
 doc ///
     	Key
     	    certifySolution
-	    (certifySolution, PolySystem, List)
-	    "(certifySolution, PolySystem, List)"
+	    (certifySolution, PolySystem, Point)
+	    "(certifySolution, PolySystem, Point)"
 	Headline
 	    certify whether a given point is an approximate solution to the system
 	Usage
-	    (points, constants) = certifySolution(PS, P)
+	    alpha = certifySolution(PS, P)
 	Inputs
             PS:PolySystem
 	    P:List
 	Outputs
-	    points:List
-	          a list of certified solutions
-	    constants:List
-	          a list of constants for each certified solution
+	    alpha:Number
+	          a square of the alpha value for a given certified solution
 	Description
 	    Text
     	    	This function executes the alpha test based on the value computed by @TO "computeConstants"@.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 	    Text
 	    	Input should be a list of @TO "Point"@ type objects.
 	    Example
 		p = point{{.95,.32,-.30,.95}};
-    	    	certifySolution(f,{p})
+    	    	certifySolution(f,p)
 ///		
 
 
@@ -272,8 +276,8 @@ doc ///
 	    Text
     	    	This function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether given points are distinct or not.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p1 = point{{.95,.32,-.30,.95}};
 		p2 = point{{.65,.77,.76,-.64}};
     	    	certifyDistinctSoln(f,p1,p2)
@@ -311,8 +315,8 @@ doc ///
 	    Text
     	    	When the system is real (or rational) polynomial system, this function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether a given point is a real approximate solution  or not.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p = point{{.954379,.318431,-.298633,.947949}};
     	    	certifyRealSoln(f,p)
 	    Text
@@ -350,8 +354,8 @@ doc ///
 	    Text
 	    	When the system solved by solver has lots of points, this function does all procedures of @TO "certifySolution"@, @TO "certifyDistinctSoln"@ and @TO "certifyRealSoln"@ at once.
 	    Example
-	        R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	        R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p1 = point{{.954379,.318431,-.298633,.947949}}; p2 = point{{.95, .32, -.30, .95}}; p3 = point{{.652567, .77115, .757776, -.636663}}; p4 = point{{.65, .77, .76, -.64}}; 
 		p5 = point{{.31, .30, .72, -.60}}; -- poorly approximated solution
 		P = {p1, p2, p3, p4, p5}
@@ -376,7 +380,7 @@ doc ///
 	    Text	
 	    	Users can make an interval which has polynomials as entries.
 	    Example
-	    	R = QQ[x];
+	    	R = RR[x];
 		J = interval(5,3*x)
 	    Text
 	    	@TO "NumericalCertification"@ supports some basic interval arithmetics.
@@ -388,6 +392,16 @@ doc ///
 		I1 * I2
 		I1 / I2
 		I1 ^ 3
+	    Text
+	        Also, @TO "Interval"@ can be defined for complex number inputs.
+	    Example
+	    	I1 = interval(3-ii, 2+2*ii)
+		I2 = interval(-1+3*ii, 1+ii)
+	    Text
+	    	We define the multiplication of complex-valued intervals as : 
+		$([a_1,b_1]+i[c_1,d_1])([a_2,b_2]+i[c_2,d_2])=([a_1,b_1][a_2,b_2]-[c_1,d_1][c_2,d_2])+i([a_1,b_1][c_2,d_2]+[a_2,b_2][c_1,d_1])$. 
+	    Example
+		I1 * I2
 
 ///
 
@@ -411,6 +425,24 @@ doc ///
 ///
 
 
+
+doc ///
+    	Key
+	    IntervalOption
+	Headline
+	    a class of an option assigning an interval to a variable
+	Description
+	    Text
+	    	This type is a new type of @TO "Option"@, and it works when @TO "krawczykOper"@ and @TO "krawczykMethod"@ assign an interval to a variable in a function.
+
+		The function @TO "intervalOption"@ should be used to convert a @TO "Option"@ type object into @TO "IntervalOption"@.
+	    Example
+                R = RR[x];
+		I = interval(.94,.96);
+    	    	intervalOption(x => I)
+///
+
+
 doc ///
     	Key
 	    IntervalOptionList
@@ -426,10 +458,10 @@ doc ///
 		
 		The function @TO "intervalOptionList"@ can be used to convert a @TO "List"@ type object into @TO "IntervalOptionList"@.
 	    Example
-                R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
+                R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
 		(I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
-	       	intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")}
+	       	intervalOptionList {intervalOption(x1 => I1), intervalOption(x2 => I2), intervalOption(y1 => I3), intervalOption(y2 => I4)}
 ///
 
 		
@@ -437,7 +469,6 @@ doc ///
 doc ///
     	Key
 	    interval
-	    (interval, Number)
 	    (interval, Number, Number)
 	    (interval, Number, RingElement)
 	    (interval, RingElement, Number)
@@ -455,7 +486,7 @@ doc ///
 	    Text	
 	    	Users can make an interval which has polynomials as entries.
 	    Example
-	    	R = QQ[x];
+	    	R = RR[x];
 		J = interval(5,3*x)
     	    Text
 	    	The type @TO "Interval"@ can also be an input for the @TO "interval"@.
@@ -496,28 +527,55 @@ doc ///
 
 
 
+doc ///
+    	Key
+	    intervalOption
+	    (intervalOption, Option)
+	Headline
+	    convert an Option to an IntervalOption
+	Description
+	    Text
+	    	This function converts an @TO "Option"@ to an @TO "IntervalOption"@ type object.
+
+    	    	First, assume that we have the following ring and interval. 
+	    Example
+                R = RR[x];
+		I = interval(.94,.96);
+    	    Text
+	    	We want to plug in "I" into "x".
+		
+		Then, write an @TO "Option"@ object as the way we want.
+	    Example
+    	    	option = x => I
+	    Text
+	    	Then, use @TO "intervalOption"@ function to convert the type of "option" to @TO "IntervalOption"@.
+	    Example
+	       	intervalOption option 
+///
+
+
 
 doc ///
     	Key
 	    intervalOptionList
 	    (intervalOptionList, List)
 	Headline
-	    convert a list type object to list of options for intervals
+	    convert a list of IntervalOption to list of options for intervals
 	Description
 	    Text
-	    	This function converts a @TO "List"@ type object to a @TO "IntervalOptionList"@ type object.
+	    	This function converts a @TO "List"@ of @TO "IntervalOption"@ to a @TO "IntervalOptionList"@ type object.
 
     	    	First, assume that we have the following ring, polynomial system, and interval. 
 	    Example
-                R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
+                R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
 		(I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
     	    Text
 	    	We want to plug in "I1" into "x1", "I2" into "x2", "I3" into "y1" and "I4" into "y2".
 		
 		Then, write a @TO "List"@ object as the way we want.
 	    Example
-    	    	l = {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")}
+    	    	l = {intervalOption(x1 => I1), intervalOption(x2 => I2), intervalOption(y1 => I3), intervalOption(y2 => I4)}
 	    Text
 	    	Then, use @TO "intervalOptionList"@ function to convert the type of "l" to @TO "IntervalOptionList"@.
 	    Example
@@ -600,10 +658,10 @@ doc ///
        	       	
 		Input for this option have to be an invertible matrix.
 	    Example
-	    	R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	    	R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 - 3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 	        (I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
-		o = intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")};
+		o = intervalOptionList apply({x1 => I1, x2 => I2, y1 => I3, y2 => I4}, i -> intervalOption i);
 		Y = matrix {{.095, .032, .476, -.100},{-.143, .452, -.714, .150},{.301,.101,-.160, -.317},{.048,-.152,.240,.476}};
     	    	krawczykMethod(f,o,InvertibleMatrix => Y)		
 ///    
@@ -618,14 +676,14 @@ doc ///
 	    Text
 	    	For given interval and polynomial system, this function computes the Krawczyk operator.
 	    Example
-	    	R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	    	R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 	        (I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
 	    Text
 	        Intervals for certification should be given in advance using other system solvers.
 	        After that we set the relationships between variables and intervals.
 	    Example
-		o = intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")};
+		o = intervalOptionList apply({x1 => I1, x2 => I2, y1 => I3, y2 => I4}, i -> intervalOption i);
     	    Text
 	    	If the Krawczyk operator is contained in the input interval, then we conclude that the input interval (or the Krawczyk operator) contains a unique root of the system.
 	    Example
@@ -653,14 +711,14 @@ doc ///
 	    Text
 	    	For given interval and polynomial system, this function computes the Krawczyk operator and check that the operator is contained in the input interval.
 	    Example
-	    	R = QQ[x1,x2,y1,y2];
-		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
+	    	R = RR[x1,x2,y1,y2];
+		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 	        (I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
 	    Text
 	        Intervals for certification should be given in advance using other system solvers.
 	        After that we set the relationships between variables and intervals.
 	    Example
-		o = intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")};
+		o = intervalOptionList apply({x1 => I1, x2 => I2, y1 => I3, y2 => I4}, i -> intervalOption i);
 	    Text
 	    	If the Krawczyk operator is contained in the input interval, then the function returns the result that the input interval (or the Krawczyk operator) contains a unique root of the system.
 	    Example

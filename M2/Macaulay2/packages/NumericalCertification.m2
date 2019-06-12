@@ -27,33 +27,36 @@ export {"pointNorm",
     "certifyCount",
     "Interval", 
     "interval", 
-    "invmat",
-    "StringOption", 
-    "stringOption", 
     "mInterval", 
     "intervalNorm", 
     "intervalMatrix", 
     "IntervalMatrix", 
     "wInterval", 
-    "krawczykUniqueness",
     "intervalMatrixNorm",
     "krawczykOper", 
     "InvertibleMatrix",
     "krawczykMethod",
     "krawczykMethodOptions",
     "identityIntMat", 
+    "intervalOption",
+    "IntervalOption",
+    "subOnMonomial",
     "intervalOptionList", 
-    "IntervalOptionList"}
+    "IntervalOptionList",
+    "ingredientsForKoper",
+    "inverseMat",
+    "intervalJacMat"}
 exportMutable {}
 
 
 Interval = new Type of List
-StringOption = new Type of Option
+IntervalOption = new Type of Option
 IntervalMatrix = new Type of List
 IntervalOptionList = new Type of List
 
 -- the following net function changes design of intervals in M2 output
 net Interval := i -> net "[" | net first i | ", " | net last i | "]" 
+
 
 
 
@@ -65,10 +68,6 @@ pointNorm(Point) := x -> (
     1 + sum(apply(coordinateList, x -> x^2))
     )
 
--- For floating points only
---pointNorm(Point) := x -> (
---    N := sqrt(1+((norm(2,x))^2))
---    )
 
 
 polyNorm = method()
@@ -79,26 +78,17 @@ polyNorm(RingElement) := r -> (
     L := listForm r;
     sum(L,a->(
 	(e,c) := a;
-	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+	if c > 0 then (
+	    c^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+	    )
+	else (
+	    ((-1)*c)^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+	    )
  	))
     )
 
 
 
-
--- For floating points only
--*
-polyNorm(Number) := r -> (
-    abs(r)^2
-    )
-polyNorm(RingElement) := r -> (
-    L := listForm r;
-    sum(L,a->(
-	(e,c) := a;
-	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
- 	))
-    )
-*-
 
 
 polySysNorm = method()
@@ -108,14 +98,6 @@ polySysNorm(PolySystem) := f -> (
     N := sum listOfpolyNorms
     )
 
--- For floating points
--*
-polySysNorm(PolySystem) := f -> (
-    listOfEq := equations f;
-    listOfpolyNorms := apply( listOfEq, i -> (polyNorm(i))^2);
-    N := sqrt(sum listOfpolyNorms)
-    )
-*-
 
 newtonOper = method()
 newtonOper(PolySystem, Point) := (f, x) -> (
@@ -136,35 +118,37 @@ computeConstants(PolySystem, Point) := (f, x) -> (
     eqs := equations f;
     J := evaluate(jacobian f, x);
     inverseJ := inverse J;
-    if det J == 0 then error "The Jacobian is not invertible";
+    R := coefficientRing ring f;
+    if precision R =!= infinity then (
+	R = R;
+    	if det J == 0 then error "The Jacobian is not invertible";
+	)
+    else if R =!= QQ then (
+	R = coefficientRing R;
+	print "Warning: invertibility check for Jacobian is skipped for Gaussian rational inputs";
+	)
+    else (
+	R = R;
+    	if det J == 0 then error "The Jacobian is not invertible";
+	); 
+    pointNormx := pointNorm x;
+    -- beta
     y := point(inverseJ * evaluate(f,x));
-    degs := flatten apply(eqs, i -> degree i);--for i from 1 to numOfPoly list degree (eqs#(numOfPoly-i));
-    deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNorm(x))^(i-1))); --for i from 1 to numOfPoly list (degs)#(numOfPoly-i)*(pointNorm(x))^((degs)#(numOfPoly-i)-1);
-    mu := max {1, polySysNorm(f) * (promote(norm(inverseJ * deltaD),QQ))^2};  -- Is this okay???  
-    beta := sum apply(y#Coordinates, i -> i^2);
-    gamma := mu*((max degs)^3)/(4* pointNorm(x));
-    alpha := beta * gamma;
+    beta := sub(sum apply(y#Coordinates, i -> i^2),R);
+    -- gamma
+    degs := select(flatten apply(eqs, i -> degree i), i -> i =!= 0);
+    if class x#Coordinates#0 === RR or class x#Coordinates#0 === CC then (
+    	deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNormx)^(i-1))); 
+     	mu := max {1, polySysNorm(f) * (norm(2,inverseJ * deltaD))^2};
+	)
+    else (
+    	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1)); 
+     	mu = max {1, polySysNorm(f) * trace(inverseJ * deltaD * (transpose inverseJ))};  
+	);
+    gamma := sub(mu*((max degs)^3)/(4* pointNormx), R);
+    alpha := sub(beta * gamma, R);
     (alpha, beta, gamma)
     )
-
--*computeConstants(PolySystem, Point) := (ff, xx) -> (
-    R := ring ff;
-    numOfPoly := # equations ff;
-    jacobianOfSys := jacobian ff;
-    J := evaluate(jacobianOfSys, xx);
-    if det J == 0 then error "The Jacobian is not invertible";
-    eval := evaluate(ff,xx);
-    y := point(inverse J * eval);
-    degs := flatten for i from 1 to numOfPoly list degree ((equations ff)#(numOfPoly-i));
-    diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(pointNorm(xx))^((degs)#(numOfPoly-i)-1);
-    deltaD := diagonalMatrix diagonals;
-    mu := max {1, (polySysNorm(ff)) * norm(inverse J * deltaD)};    
-    maxdeg := max degs;
-    beta := norm(2,y);
-    gamma := mu*sqrt(maxdeg^3)/(2* pointNorm(xx));
-    alpha := beta * gamma;
-    (alpha, beta, gamma)
-    )*-
 
 
 certifySolution = method() -- returns null if not successful, (alpha,beta,gamma) if alpha-certified 
@@ -176,50 +160,61 @@ certifySolution(PolySystem, Point) := (f, x) -> (
 
 certifyDistinctSoln = method()
 certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
+    R := coefficientRing ring f;
+    if precision R =!= infinity then (
+	R = R;
+	)
+    else if R =!= QQ then (
+	R = coefficientRing R;
+	)
+    else (
+ 	R = R;
+	); 
     Consts1 := computeConstants(f,x1);
     Consts2 := computeConstants(f,x2);
-    normOfDist := sum apply((point{(coordinates x1)-(coordinates x2)})#Coordinates, c->c^2);
+    normOfDist := sum apply((point{(coordinates x1)-(coordinates x2)})#Coordinates, c->sub(c^2,R));
     if Consts1 #0 >= ((13-3*sqrt(17))/4)^2 or Consts2 #0 >= ((13-3*sqrt(17))/4)^2 then (
 	false
 	)
     else if normOfDist > 4*((Consts1)#1 + (Consts2)#1 + 2*sqrt((Consts1)#1 * (Consts2)#1)) then (
 	true
 	)
-    else if (Consts1)#0 < 0.0009 and normOfDist < 1/(400*(Consts1)#2) or (Consts2)#0 < 0.0009 and normOfDist < 1/(400*(Consts2)#2) then (
+    else if (Consts1)#0 < 9/10000 and normOfDist < 1/(400*(Consts1)#2) or (Consts2)#0 < 9/10000 and normOfDist < 1/(400*(Consts2)#2) then (
 	false
 	)
     else (
       	false
 	)
     )
--*certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
-    Consts1 := computeConstants(f,x1);
-    Consts2 := computeConstants(f,x2);
-    if Consts1 #0 >= (13-3*sqrt(17))/4 then (
-	false
-	)
-    else if Consts2 #0 >= ((13-3*sqrt(17))/4) then (
-	false
-	)
-    else if norm(2,point{(coordinates x1)-(coordinates x2)}) > 2*(Consts1)#1 + (Consts2)#1 then (
-	true
-	)
-    else if (Consts1)#0 < 0.03 and norm(2,point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and norm(2,point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then (
-	false
-	)
-    else (
-      	false
-	)
-    )*-
 
 
 certifyRealSoln = method()
 certifyRealSoln(PolySystem, Point) := (f, x) -> (
     (alpha, beta, gamma) := computeConstants(f,x);
-    imagPart := apply(coordinates x, i -> imaginaryPart(i));
-    normOfimagPart := sum apply(imagPart, i -> i^2); --norm(2,point{imagPart});
+    R := coefficientRing ring f;
+    if precision R =!= infinity then (
+    	imagPart := apply(coordinates x, i -> imaginaryPart(i));
+	R = R;
+	)
+    else if R =!= QQ then (
+	coordinatesOfx := coordinates x;
+	l := length coordinatesOfx;
+	imagPart = {};
+	for i from 0 to l-1 do if degree(coordinatesOfx#i) === 1 then (
+		append(imagPart,leadCoefficient sub(i,R));
+		)
+	    else (
+		append(imagPart, 0);
+		);
+	R = coefficientRing R;
+	)
+    else (
+    	imagPart = apply(coordinates x, i -> imaginaryPart(i));
+	R = R;
+	); 
+    normOfimagPart := sum apply(imagPart, i -> sub(i^2,R));
     if normOfimagPart > 4*beta then false
-    else if alpha < 0.0009 and normOfimagPart < 1/(400*gamma) then true
+    else if alpha < 9/10000 and normOfimagPart < 1/(400*gamma) then true
     else (
     false
     )
@@ -227,6 +222,16 @@ certifyRealSoln(PolySystem, Point) := (f, x) -> (
 
 certifyCount = method()
 certifyCount(PolySystem, List) := (f, X) -> (
+    R := coefficientRing ring f;
+    if precision R =!= infinity then (
+	R = R;
+	)
+    else if R =!= QQ then (
+	R = coefficientRing R;
+	)
+    else (
+ 	R = R;
+	); 
     Y := select(X, i->certifySolution(f,i)=!=null); 
     C := select(apply(X, i->certifySolution(f,i)), i->i=!=null); -- Can we have this without using function twice?
     S := new MutableList from Y;
@@ -239,70 +244,50 @@ certifyCount(PolySystem, List) := (f, X) -> (
 	);
     D := {};
     for i from 0 to length(Y) - 1 do if S#i == true then D = append(D, Y#i);
-    R := {};
-    if coefficientRing ring f =!= CC then for i from 0 to length(D) - 1 do if certifyRealSoln(f,D#i) == true then R = append(R,D#i);
-    new HashTable from {"certifiedSolutions" => Y, "alphaValues" => C, "certifiedDistinct" =>D, "certifiedReal" => R}
+    Real := {};
+    if R =!= CC then for i from 0 to length(D) - 1 do if certifyRealSoln(f,D#i) == true then Real = append(Real,D#i);
+    new HashTable from {"certifiedSolutions" => Y, "alphaValues" => C, "certifiedDistinct" =>D, "certifiedReal" => Real}
     )
 
 
 
--*certifyCount(PolySystem, List) := (f, X) -> (
-    (Y, C) := certifySolution(f,X);
-    S := new MutableList from Y;
-    for i from 0 to length(Y) - 1 do S#i = true;
-    for i from 0 to length(Y) - 2 do for j from i+1 to length(Y) - 1 do if (
-	S#i == true and S#j == true
-	)
-    then (
-	S#j = certifyDistinctSoln(f,Y#i, Y#j);
-	);
-    D := {};
-    for i from 0 to length(Y) - 1 do if S#i == true then D = append(D, Y#i);
-    R := {};
-    if coefficientRing ring f =!= CC then for i from 0 to length(D) - 1 do if certifyRealSoln(f,D#i) == true then R = append(R,D#i);
-    new HashTable from {"certifiedSolutions" => Y, "constants" => C, "certifiedDistinct" =>D, "certifiedReal" => R}
-    )*-
 
 
 
--- In order to use the options of interval, we need to change options into new Type of Option 'StringOption'
-stringOption = method(TypicalValue => StringOption)
-stringOption(Option) := o -> new StringOption from (
+intervalOption = method(TypicalValue => IntervalOption)
+intervalOption(Option) := o -> new IntervalOption from (
+    (a,b) := toSequence o;
+    if not instance(b, Interval) then error "only an Interval can be substituted";
     o
     )
 
 
--- List the StringOptions and change it into new Type IntervalOptionList
 intervalOptionList = method(TypicalValue => IntervalOptionList)
 intervalOptionList(List) := l -> new IntervalOptionList from (
-    ll := apply(l, i -> stringOption(i));
-    ll
+    if not instance(first l, IntervalOption) then error "only an IntervalOption can be an input";
+    l
     )
 
 
 -- Function to define intervals
 interval = method(TypicalValue => Interval)
 interval (Number, Number) := (a, b) -> new Interval from (
-    if a < b then (int := (a, b);
-    intReturn:= toList int
-    )
-    else (int = (b, a);
-    intReturn = toList int
-    )
+    ai := imaginaryPart a;
+    bi := imaginaryPart b;
+    if ai == 0 and bi == 0 then (
+	if a < b then (int := (a, b);
+	    intReturn:= toList int
+	    )
+	else (int = (b, a);
+	    intReturn = toList int
+	    )
+	)
+    else intReturn = toList (min(a-ai*ii, b-bi*ii) + min(ai*ii, bi*ii), max(a-ai*ii, b-bi*ii) + max(ai*ii, bi*ii))
     )
 -- If interval function takes only one input, the it makes an interval with width 0
 interval (Number) := a -> new Interval from (
     interval (a,a)
     )
--*interval (InputGate, InputGate) := (a, b) -> new Interval from (
-    int := toList (a, b)
-    )
-interval (SumGate, SumGate) := (a, b) -> new Interval from (
-    int := toList (a, b)
-    )
-interval (ProductGate, ProductGate) := (a, b) -> new Interval from (
-    int := toList (a, b)
-    )*-
 -- interval function for polynomial entries
 interval (Number, RingElement) := (a, b) -> new Interval from (
     a' := sub(a, ring b);
@@ -316,8 +301,11 @@ interval (RingElement, RingElement) := (f,g) -> new Interval from (
     int := toList (f,g)
     )
 interval (RingElement, Interval) := (f, i) -> new Interval from (
-    f toString (*) i
+    f * i
     )
+interval(RingElement) := i -> new Interval from (
+    interval(i, i)
+    ) 
 -- if interval function takes Interval, then it just shows its input again. It will be needed when we do the computation between number and interval such as interval(a+I).
 interval(Interval) := i -> new Interval from (
     i
@@ -354,15 +342,31 @@ Interval - Interval := (i1,i2) -> (
 
 
 Interval * Interval := (i1,i2) -> (
-        if (class i1#0 === RingElement or class i1#1 === RingElement or i2#0 === RingElement or i2#1 === RingElement) 
-    then (i1 * i2)
-    else
-        a := i1#0;
+    a := i1#0;
     c := i2#0;
     b := i1#1;
     d := i2#1;
-    A := {a*c,a*d,b*c,b*d};
-    interval(min A, max A)
+    if (length degree a =!= 0 or length degree b =!= 0 or length degree c =!= 0 or length degree d =!= 0) then (
+	    A := {a*c,a*d,b*c,b*d};
+	    interval(min A, max A)
+	    )
+    else (
+	(ai,bi,ci,di) := apply((a,b,c,d), k -> imaginaryPart k);
+	(ar,br,cr,dr) := apply((a,b,c,d), k -> realPart k);
+	if ai == 0 and bi ==0 and ci == 0 and di == 0 then (
+	    A = {a*c,a*d,b*c,b*d};
+	    interval(min A, max A)
+	    )
+	else (
+	    Ar := {ar*cr, ar*dr, br*cr, br*dr};
+	    Ai := {ai*ci, ai*di, bi*ci, bi*di};
+	    rePart := interval(min Ar, max Ar) - interval(min Ai, max Ai);
+	    Br := {ar*ci, ar*di, br*ci, br*di};
+	    Bi := {ai*cr, ai*dr, bi*cr, bi*dr};
+	    imPart := interval((min Br)* ii, (max Br)* ii) + interval((min Bi)* ii, (max Bi)* ii);
+	    rePart + imPart
+	    )
+	) 
     )
 Number * Interval := (a,i1) -> (
     b:=i1#0;
@@ -404,53 +408,51 @@ Interval/Interval := (i1,i2) -> (
        )
        )
 
--- substitution function. it applies one option to given polynomial.
--- inputs are polynomial and one option such as x => I
--- then it shows interval of polynomials obtained by switching x variable into the inteval I
-sub(RingElement, StringOption) := (f, o) -> (
-    xx := toExternalString f;  -- make polynomial into String
-    o1 := o #0; -- take the variable 
-    o2 := o #1; -- take the interval
-    rep := replace(o1,o2,xx);  -- replace the variable 'o1' into the interval 'o2' in the String 'xx'
-    repc := concatenate("(",rep, ")*interval(1,1)");  -- in order to deal with the constant term, multiply the interval '[1,1]' on the whole string
-    value repc -- read string
+
+
+
+
+
+
+
+
+subOnMonomial = method()
+subOnMonomial(Number, IntervalOption) := (f, ab) -> (
+    interval(f,f)
     )
-
-
--- substitution function for interval and one option
--- inputs are interval of polynomials and one option such as x => I
--- then it switch the variable x in the given interval of polynomials into the interval I 
-sub(Interval, StringOption) := (f, o) -> (
-    interval((sub((f)#0,o))#0,(sub((f)#1,o))#1)
+subOnMonomial(RingElement, IntervalOption) := (f, ab) -> (
+    ringOff := ring f;
+    (a,b) := toSequence ab;
+    degreeOfVar := degree(a,f);
+    if degreeOfVar == 0 then return f
+    else f = sub(f, a=>1);
+    f * (b^degreeOfVar)
+    )   
+sub(Number, IntervalOption) := (f, ab) -> (
+    interval(f,f)
     )
-
-
+sub(RingElement, IntervalOption) := (f, ab) -> (
+    listOfTerms := terms f;
+    (a,b) := toSequence ab;
+    sum apply(listOfTerms, i -> interval(subOnMonomial(i, ab)))
+    )   
+sub(Interval, IntervalOption) := (i, ab) -> (
+    i1 := sub(i#0,ab);
+    i2 := sub(i#1,ab);
+    interval(min(i1#0, i2#0), max(i1#1, i2#1))
+    )
+sub(Number, IntervalOptionList) := (f, l) -> (
+    interval(f,f)
+    )
+sub(RingElement, IntervalOptionList) := (f, l) -> (
+    last apply(l, i -> f = sub(f,i))
+    )
 -- substitution function for interval and interval option list
 -- using above function, it changes all variables in the option list into intervals in the option list
 sub(Interval, IntervalOptionList) := (f, o) -> (
     interval((sub((f)#0,o))#0,(sub((f)#1,o))#1)
     )
 
-
--- when we have a just constant 'r' not an interval, then it just shows us an interval '[r,r]'
-sub(Number, StringOption) := (r, o) -> (
-    interval(r,r)
-    )
-    
-
--- this substitute function substitutes intervals into all variables in the given polynomial
--- inputs are polynomial and the list of interval options
-sub(RingElement, IntervalOptionList) := (f, l) -> (
-    i := 0;
-    D := (flattenRing ring f)#0;
-    fr := sub(f,D);
-    tl := terms fr;  -- list the all monomial terms of polynomial
-    al := apply(tl, i -> i*interval(1,1));  -- multiply the interval '[1,1]' on all monomial terms of polynomial
-    sl := (i = 0; while i < (length l) list al = apply(al, j -> sub(j, l#i)) do i = i+1);  -- apply options for all monomial terms
-    -- a := sum sl;
-    lsl := last sl;
-    sum lsl 
-    )
 
 
 -- width of an interval
@@ -505,7 +507,24 @@ intervalMatrixNorm = method()
 intervalMatrixNorm(IntervalMatrix) := i -> (
     numrow := length(i);
     numcol := length(i#0);
-    listOfAbs := (l := 0; while l < numcol list sum((apply(i, j -> (k := 0; while k < numrow list abs((j#k)#1) do k = k+1)))#l) do l = l+1);
+    if class i#0#0#0 === ZZ then (
+	R := QQ
+	)
+    else (
+    	R = coefficientRing ring i#0#0#0;
+    );
+    if precision R =!= infinity then (
+	R = R;
+	listOfAbs := (l := 0; while l < numcol list sum((apply(i, j -> (k := 0; while k < numrow list abs(sub(j#k#1,R)) do k = k+1)))#l) do l = l+1);
+	)
+    else if R =!= QQ then (
+	rationalRing := coefficientRing R;
+	listOfAbs = (l = 0; while l < numcol list sum((apply(i, j -> (k := 0; while k < numrow list abs(sub(j#k#1,rationalRing)) do k = k+1)))#l) do l = l+1);
+	)
+    else (
+	R = R;
+	listOfAbs = (l = 0; while l < numcol list sum((apply(i, j -> (k := 0; while k < numrow list abs(sub(j#k#1,R)) do k = k+1)))#l) do l = l+1);
+	); 
     max listOfAbs
     )
 
@@ -520,55 +539,49 @@ identityIntMat(ZZ) := n -> (
     )
 
 
-invmat = method()
-invmat(PolySystem, IntervalOptionList) := (p, o) -> (
-    eqsOfp := equations p;
-    mm := polySystem transpose matrix{eqsOfp};
-    m := mm#PolyMap;
-    nv := numgens ring eqsOfp#0;
-    ng := numgens coefficientRing(ring eqsOfp#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
-    e := entries j;
-    n := length e; 
-    -- plug in intervals into the jacobian entries
-    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,o))); 
-    mf := matrix applyTable(ijm, i -> mInterval i);
+
+
+inverseMat = method()
+inverseMat(IntervalMatrix) := m -> (
+    mf := matrix applyTable(m, i -> mInterval i);
     inverse mf
     )
 
 
-
-
-krawczykUniqueness = method(Options=>{
-	InvertibleMatrix => null})
-krawczykUniqueness(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
+intervalJacMat = method()
+intervalJacMat(PolySystem, IntervalOptionList) := (polySys, option) -> (
     eqsOfp := equations polySys;
-    mm := polySystem transpose matrix{eqsOfp};
-    m := mm#PolyMap;
-    nv := numgens ring eqsOfp#0;
-    ng := numgens coefficientRing(ring eqsOfp#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
-    e := entries j;
-    n := length e; 
-    -- plug in intervals into the jacobian entries   
-    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,option)));
-    mf := matrix applyTable(ijm, i -> mInterval i);
-    -- midpoints of intervals in option
-    y := toList apply(option, i ->  mInterval(value((i)#1)) );
-    oll := toList apply(0.. length(option)-1, k -> value((option#k)#0) => y#k);
-    -- START constructing the (box containing the) inverse 
+    polyMapOfeqs := polySys#PolyMap;
+    numOfVars := numgens ring polySys;
+    R := coefficientRing(ring polySys);
+    numOfGens := numgens R;
+    jacOfSys := transpose jacobian transpose polyMapOfeqs;
+    entriesOfJac := entries jacOfSys;
+    ijm := intervalMatrix applyTable(entriesOfJac, a -> interval(sub(a, option)));
+    ijm
+    )
+
+
+ingredientsForKoper = method(Options=>{InvertibleMatrix => null})
+ingredientsForKoper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
+    eqsOfp := equations polySys;
+    numOfVars := numgens ring polySys;
+    ijm := intervalJacMat(polySys, option);
+    midPointf := matrix applyTable(ijm, i -> mInterval i);
+    midpointsOfIntervals := toList apply(option, i ->  mInterval(i#1));
+    optionForPoints := toList apply(0.. length(option)-1, k -> 
+	(option#k)#0 => midpointsOfIntervals#k);
     if o.InvertibleMatrix =!= null then (
-	my := o.InvertibleMatrix
+	inverseMatrix := o.InvertibleMatrix
 	)
     else (
-	my = invmat(polySys,option)
+	inverseMatrix = inverseMat ijm
 	);
-    yintmatrix := intervalMatrix applyTable(entries my, a -> interval(a,a));
-    -- centering intervals in option at the origin
-    z := intervalMatrix apply(option, i -> {interval(-wInterval(value((i)#1)/2),wInterval(value((i)#1))/2)} );
-    lengthofmat := length(yintmatrix*ijm);
-    identityIntMat(lengthofmat)-yintmatrix*ijm
+    midpointsIntoIntervals := intervalMatrix applyTable(entries inverseMatrix, a -> interval(a,a));
+    z := intervalMatrix apply(option, i -> {interval(-wInterval((i#1)/2),wInterval((i#1))/2)} );
+    (identityIntMat(numOfVars)-midpointsIntoIntervals*ijm, inverseMatrix)
     )
+
 
 
 
@@ -579,31 +592,40 @@ krawczykOper = method(Options=>{
 	InvertibleMatrix => null})
 krawczykOper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
     eqsOfp := equations polySys;
-    mm := polySystem transpose matrix{eqsOfp};
-    m := mm#PolyMap;
-    nv := numgens ring eqsOfp#0;
-    ng := numgens coefficientRing(ring eqsOfp#0);
-    j := if ng == 0 then transpose jacobian transpose m else (transpose jacobian transpose m) +(transpose (matrix apply((entries vars coefficientRing(ring eqsOfp#0))#0, i ->  flatten entries ((value(toString(i)|"'"))*diff(i,m))))^{0..(nv-1)});
-    e := entries j;
-    n := length e;
-    -- plug in intervals into the jacobian entries   
-    ijm := intervalMatrix applyTable(e, a -> interval(sub(a,option)));
-    mf := matrix applyTable(ijm, i -> mInterval i);
-    -- midpoints of intervals in option
-    y := toList apply(option, i ->  mInterval(value((i)#1)) );
-    oll := toList apply(0.. length(option)-1, k -> value((option#k)#0) => y#k);
+    lengthofmat := length(eqsOfp);
+    y := toList apply(option, i ->  mInterval((i)#1) );
+    z := intervalMatrix apply(option, i -> {interval(-wInterval((i#1)/2),wInterval((i#1))/2)} );
+    oll := toList apply(0.. length(option)-1, k -> (option#k)#0 => y#k);
+    matrixIngredients := ingredientsForKoper(polySys, option);
+    identitysubstractmatrix := matrixIngredients#0;
     -- START constructing the (box containing the) inverse 
     if o.InvertibleMatrix =!= null then (
 	my := o.InvertibleMatrix
 	)
     else (
-	my = invmat(polySys,option);
+	my = matrixIngredients#1
 	);
-    yintmatrix := intervalMatrix applyTable(entries my, a -> interval(a,a));
-    -- centering intervals in option at the origin
-    z := intervalMatrix apply(option, i -> {interval(-wInterval(value((i)#1)/2),wInterval(value((i)#1))/2)} );
-    lengthofmat := length(yintmatrix*ijm);
-    identitysubstractMatrix := identityIntMat(lengthofmat)-yintmatrix*ijm;
+    -- substitute y values into system
+    eval := matrix apply(eqsOfp, k -> {sub(k,oll)});
+    -- multiplying Y matrix and f(y)
+    entofmat := entries( ( (transpose matrix {take(y,lengthofmat)})-(my*eval)));
+    -- computing Krawczyk operator
+    (intervalMatrix apply(entofmat, i ->  {interval((i#0),(i#0))}))+(identitysubstractmatrix*z)
+    )
+krawczykOper(Matrix, IntervalMatrix, PolySystem, IntervalOptionList) := o -> (mat, intervalMat, polySys, option) -> (
+    eqsOfp := equations polySys;
+    lengthofmat := length(eqsOfp);
+    y := toList apply(option, i ->  mInterval((i)#1) );
+    z := intervalMatrix apply(option, i -> {interval(-wInterval((i#1)/2),wInterval((i#1))/2)} );
+    oll := toList apply(0.. length(option)-1, k -> (option#k)#0 => y#k);
+    -- START constructing the (box containing the) inverse 
+    if o.InvertibleMatrix =!= null then (
+	my := o.InvertibleMatrix
+	)
+    else (
+	my = mat
+	);
+    identitysubstractMatrix := intervalMat;
     -- substitute y values into system
     eval := matrix apply(eqsOfp, k -> {sub(k,oll)});
     -- multiplying Y matrix and f(y)
@@ -613,54 +635,104 @@ krawczykOper(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
     )
 
 
+
 krawczykMethod = method(Options=>{
 	InvertibleMatrix => null})
 krawczykMethod(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
     if o.InvertibleMatrix =!= null then (
-    	kOperator := krawczykOper(polySys, option, InvertibleMatrix => o.InvertibleMatrix);
+    	identitysubstractmatrix := ingredientsForKoper(polySys, option, InvertibleMatrix => o.InvertibleMatrix);
+	kUnique := identitysubstractmatrix#0;
+	mat := identitysubstractmatrix#1;
+    	kOperator := krawczykOper(mat, kUnique, polySys, option, InvertibleMatrix => o.InvertibleMatrix);
 	)
     else (
-    	kOperator = krawczykOper(polySys, option);
+    	identitysubstractmatrix = ingredientsForKoper(polySys, option);
+	kUnique = identitysubstractmatrix#0;
+	mat = identitysubstractmatrix#1;
+    	kOperator = krawczykOper(mat, kUnique, polySys, option);
 	);
-    intervalList := (apply(option, k -> value(k#1)));
+    intervalList := (apply(option, k -> k#1));
     k := 0;
-    for i from 0 to (length(option) - 1) do if (kOperator#i#0#0 < intervalList#i#0 or kOperator#i#0#1 > intervalList#i#1) then  break k = 1;
+    R := coefficientRing ring polySys;
+    if precision R =!= infinity then (
+	R = R;
+    	for i from 0 to (length(option) - 1) do if (
+	    realPart sub(kOperator#i#0#0, R)  < realPart intervalList#i#0 or
+	    realPart sub(kOperator#i#0#1, R)  > realPart intervalList#i#1 or
+	    imaginaryPart sub(kOperator#i#0#0, R)  < imaginaryPart intervalList#i#0 or 
+	    imaginaryPart sub(kOperator#i#0#1, R)  > imaginaryPart intervalList#i#1
+	    ) 
+    	then  break k = 1;
+	)
+    else if R =!= QQ then (
+	var := first gens R;
+	rationalRing := coefficientRing R;
+    	for i from 0 to (length(option) - 1) do if (
+	    sub(coefficient(var,kOperator#i#0#0), rationalRing)  
+	    < sub(coefficient(var, sub(intervalList#i#0, R)), rationalRing) or 
+	    sub(coefficient(var,kOperator#i#0#1), rationalRing)  
+	    > sub(coefficient(var, sub(intervalList#i#1, R)), rationalRing) or
+	    sub(kOperator#i#0#0 - coefficient(var,kOperator#i#0#0), rationalRing) 
+	    < sub(intervalList#i#0 - coefficient(var,sub(intervalList#i#0, R)), rationalRing) or
+	    sub(kOperator#i#0#1 - coefficient(var,kOperator#i#0#1), rationalRing) 
+	    > sub(intervalList#i#1 - coefficient(var,sub(intervalList#i#1, R)), rationalRing)
+	    ) 
+    	then  break k = 1;
+	)
+    else (
+	R = R;
+    	for i from 0 to (length(option) - 1) do if (
+	    sub(kOperator#i#0#0, R)  < intervalList#i#0 or
+	    sub(kOperator#i#0#1, R)  > intervalList#i#1 
+	    ) 
+    	then  break k = 1;
+	); 
     if k === 0 then ( if o.InvertibleMatrix =!= null then (
-	    if intervalMatrixNorm(krawczykUniqueness(polySys, option, InvertibleMatrix => o. InvertibleMatrix)) < 1 then (
+	    if class R === ComplexField or class R === QuotientRing and 2 * (intervalMatrixNorm(kUnique))^2 < 1 then (
+		    print "given interval contains a unique solution"; 
 			true
     	    	    	)
+		    else if intervalMatrixNorm(kUnique) < 1 then (
+		        print "given interval contains a unique solution"; 
+			true
+			)
+		    else (
+			print "Uniqueness fail";
+			false
+			)
+		    )
+		else if class R === ComplexField or class R === QuotientRing and 2 * (intervalMatrixNorm(kUnique))^2 < 1 then (
+      		        print "given interval contains a unique solution"; 
+			true
+    	    	    	)
+		    else if intervalMatrixNorm(kUnique) < 1 then (
+		    print "given interval contains a unique solution"; 
+		    true
+		    )
+		else (
+		    print "Uniqueness fail";
+		    false
+		    )
+		)
 	    else (
-		print "Uniqueness fail";
+		print "Existence fail";
 		false
 		)
 	    )
-	    else if intervalMatrixNorm(krawczykUniqueness(polySys, option)) < 1 then (
-		    	print "given interval contains a unique solution"; 
-			true
-    	    	    	)
-	    else (
-		print "Uniqueness fail";
-		false
-		)
-    	    )		    
-    else (
-	false
-	)
-    )
 
 
 
 
 
 TEST ///
-R = QQ[x1,x2,y1,y2]
-f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1}
+R = RR[x1,x2,y1,y2]
+f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1}
 I1 = interval(.90,.96)
 I2 = interval(.31,.33)
 I3 = interval(-.33,-.27)
 I4 = interval(.9,1)
-o = intervalOptionList {("x1" => "I1"), ("x2" => "I2"), ("y1" => "I3"), ("y2" => "I4")}
-intervalMatrixNorm(krawczykUniqueness(f,o))
+o = intervalOptionList apply({x1 => I1, x2 => I2, y1 => I3, y2 => I4}, i -> intervalOption i)
+krawczykMethod(f,o)
 ///
 
 
