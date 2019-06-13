@@ -229,7 +229,7 @@ M2_string engineMemory()
         << ") #left = " << (schorder_nfinalized - schorder_nremoved) << newline;
 
       return o.to_string();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       o << "Internal error: [unprintable memory display]";
       return o.to_string();

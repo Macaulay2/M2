@@ -37,7 +37,6 @@ newPackage (
         Email => "aaronmdall -at- gmail.com",
         HomePage => "https://www.aarondall.com"}},
     Headline => "citation of Macaulay2 packages",
-    DebuggingMode => true,
     HomePage => "https://github.com/aarondall/PackageCitations-M2"
     )
 

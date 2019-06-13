@@ -65,16 +65,6 @@ initInstallDirectory := o -> (
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 toURL := method()
-
-toURL Function := pth -> ( 				    -- probably already obsolete
-     error "this branch is not obsolete";
-     p := searchPrefixPath pth;
-     if p =!= null
-     then concatenate(rootURI, realpath p)
-     else (
-	  error("needed file not found on prefixPath: ",format pth,".\n--    Try: (1) add a scheme, such as http://, to make an absolute URL;\n--         (2) install the package that provides the file");
-	  -- relativizeFilename(htmlDirectory, pth)
-	  ))
      
 toURL String := pth -> (				    -- phase this one out eventually
      if isAbsolutePath pth then concatenate(rootURI,
@@ -86,18 +76,24 @@ toURL String := pth -> (				    -- phase this one out eventually
      else (
 	  r := if htmlDirectory === null then pth else relativizeFilename(htmlDirectory, pth);
 	  if debugLevel == 121 then (
-	       stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
-	       stderr << "--       pth             = " << pth << endl;
-	       stderr << "--       relative result = " << r << endl;
+	       stderr << "--toURL String: htmlDirectory   = " << htmlDirectory << endl;
+	       stderr << "--              pth             = " << pth << endl;
+	       stderr << "--              relative result = " << r << endl;
 	       );
 	  r))
 
 toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
      -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
-     if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
-     and htmlDirectory =!= null
-     then relativizeFilename(htmlDirectory,tail) 
-     else prefix|tail)
+     r := if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
+          and htmlDirectory =!= null
+          then relativizeFilename(htmlDirectory,tail) 
+          else prefix|tail;
+     if debugLevel == 121 then (
+	  stderr << "--toURL(String,String): htmlDirectory = " << htmlDirectory << endl;
+	  stderr << "--                      prefix        = " << prefix << endl;
+	  stderr << "--                      result        = " << r << endl;
+	  );
+     r)
 
 htmlFilename1 = (fkey,pkgname,layout) -> (
      basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
@@ -139,12 +135,12 @@ htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
      if o#"alt" === null then error ("IMG item is missing alt attribute");
-     concatenate("<img src=", format toURL o#"src", " alt=", format o#"alt", "/>"))
+     concatenate("<img src=\"", htmlLiteral toURL o#"src", "\" alt=", format o#"alt", "/>"))
 
 html HREF := x -> (
      r := html last x;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
+     concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
 
@@ -451,7 +447,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := null
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
@@ -472,20 +468,18 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      setseed := " --no-randomize";
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
+     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      -- we specify --no-readline because the readline library catches SIGINT:
      args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
+     env := "GC_MAXIMUM_HEAP_SIZE=400M ";
      cmdname := commandLine#0;
      -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
-     if ulimit === null then (
-	  ulimit = utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
-	  );
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
-     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
+     cmd := ulimit | "cd " | rundir | "; " | env | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
      makeDirectory rundir;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);

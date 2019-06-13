@@ -21,6 +21,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
+	PackageExports => {"LLLBases"},
         DebuggingMode => false
         )
 

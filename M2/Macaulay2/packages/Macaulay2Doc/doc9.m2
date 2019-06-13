@@ -422,7 +422,7 @@ document {
 	  TO (symbol-, MonomialIdeal, MonomialIdeal),
 	  TO (dual, MonomialIdeal),
 	  TO independentSets,
-	  TO irreducibleDecomposition,
+	  TO "PrimaryDecomposition::irreducibleDecomposition",
 	  TO standardPairs,
 	  },
      EXAMPLE lines ///

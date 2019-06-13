@@ -92,6 +92,13 @@ document {
      }
 
 document {
+    Key => Jupyter,
+    Headline => "top level printing method used in the Jupyter kernel",
+    "The mode allows for a more semantic output, with input, STDOUT, value and class clearly delimited.",
+    SeeAlso => {Standard, TeXmacs, WebApp}
+    }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
@@ -1299,6 +1306,25 @@ document {
 	EXAMPLE "f || 33",
 	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO Ring, "."},
      SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
+     }
+
+
+document {
+     Key => (symbol ||, Vector, Vector),
+     Headline => "join Vectors ",
+     Usage => "v || w",
+	Inputs => {"v", "w"},
+	Outputs => {
+		Vector => {"obtained from vectors v and w by concatenating the columns."}
+                   },
+     EXAMPLE lines ///
+	      R = (ZZ[x,y,z])^3;
+      	  v = vector {1,x,x*y,x*z,x*y*z}
+      	  w = vector {z*x,z^2,3}
+      	  v || w
+	  ///,
+     PARA{},
+     SeeAlso => {(symbol ||, Matrix, Matrix)}
      }
 
 document {

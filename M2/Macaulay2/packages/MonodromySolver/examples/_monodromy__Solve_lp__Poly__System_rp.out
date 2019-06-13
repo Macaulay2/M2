@@ -1,0 +1,34 @@
+-- -*- M2-comint -*- hash: 1408600836
+--loading configuration for package "FourTiTwo" from file /home/tduff3/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "Topcom" from file /home/tduff3/.Macaulay2/init-Topcom.m2
+--loading configuration for package "NumericalAlgebraicGeometry" from file /home/tduff3/.Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "PHCpack" from file /home/tduff3/.Macaulay2/init-PHCpack.m2
+--loading configuration for package "Bertini" from file /home/tduff3/.Macaulay2/init-Bertini.m2
+
+i1 : R = CC[a,b,c,d][A,B]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : polys = polySystem {A^2*a+B^2*b,A*B*c+d}
+
+o2 = polys
+
+o2 : PolySystem
+
+i3 : setRandomSeed 0;
+
+i4 : (V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
+
+i5 : peek V
+
+o5 = HomotopyNode{BasePoint => {-.971549+.236839*ii, .157598-.987503*ii, .841103-.540875*ii, -.396553+.918012*ii}                                                                                                                         }
+                  Edges => MutableList{...8...}
+                  Graph => HomotopyGraph{...8...}
+                  PartialSols => {PointArray( 4 points: 3 2 0 1 ), {-.555644-.83142*ii, .002423+.999997*ii}, {.83142-.555644*ii, .999997-.002423*ii}, {.555644+.83142*ii, -.002423-.999997*ii}, {-.83142+.555644*ii, -.999997+.002423*ii}}
+
+                                                                 2                          2
+                  SpecializedSystem => {(- .971549 + .236839*ii)A  + (.157598 - .987503*ii)B , (.841103 - .540875*ii)A*B - .396553 + .918012*ii}
+
+i6 : 

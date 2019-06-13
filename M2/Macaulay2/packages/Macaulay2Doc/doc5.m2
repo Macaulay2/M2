@@ -321,6 +321,38 @@ document {
      }
 
 document {
+     Key => (symbol +, VirtualTally, VirtualTally),
+     Headline => "union of tallies",
+     TT "x + y", " -- produces the union of two tallies.",
+     PARA{},
+     "One of the arguments may be a ", TO "Set", ".",
+     PARA{},
+     EXAMPLE {
+	      "x = tally {a,b,b,c,c,c,d,d,d}",
+      	  "y = tally {a,a,a,b,b,c,d}",
+     	  "x' = new VirtualTally from x",
+	 	  "y' = new VirtualTally from y",
+	 	  "z' = y' - x'",
+	 	  "z' + x'",
+	  	  "z' + y'",
+	  },
+     }
+     
+document {
+     Key => (symbol -, VirtualTally),
+     Headline => "negation of a VirtualTally",
+     TT "-x", " -- the negation of ", TT "x",
+     PARA{},
+     EXAMPLE {
+      	  "x = tally {a,b,b,c,c,d,d,d}",
+	 	  "x' = new VirtualTally from x",
+	  	  "- x'",
+     },
+}     
+
+
+
+document {
      Key => (symbol +, Tally, Tally),
      Headline => "union of tallies",
      TT "x + y", " -- produces the union of two tallies.",

@@ -28,8 +28,7 @@ newPackage(
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://thomas-kahle.de"}},
-	Headline => "Routines for cyclotomic fields",
-        Reload=>true
+	Headline => "Routines for cyclotomic fields"
     	)
 
 export {"cyclotomicField",

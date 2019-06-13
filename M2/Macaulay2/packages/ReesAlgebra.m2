@@ -30,7 +30,6 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	DebuggingMode => false,
-	Reload =>true,
     	Headline => "Rees algebras",
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -760,10 +759,7 @@ doc ///
     reesIdeal
 ///
 
-{*
-viewHelp symmetricAlgebra
-*}
-
+-- viewHelp symmetricAlgebra
 
 doc ///
   Key

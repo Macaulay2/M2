@@ -7,8 +7,7 @@ newPackage(
                 Email => "mike@math.cornell.edu", 
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
-        Headline => "helper code for writing boiler-plate code for new engine routines and types",
-        DebuggingMode => true
+        Headline => "helper code for writing boiler-plate code for new engine routines and types"
         )
 
 export {
@@ -195,7 +194,7 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
   )
 
 genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
-{*    
+-*    
     if celltype#argtype#?Array then (
         {
             (f1, f2, err) := celltype#argtype#Array;
@@ -206,7 +205,7 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
             ") else WrongArgZZ("|argnum|")"
             }
         )
-*}    
+*-
     if argtype == "int" then (
         {
             "when s."|argnum|" is w"|argname|":ZZcell do (", 
@@ -484,7 +483,7 @@ readTemplateFile String := (filename) -> (
     hashTable for i from 0 to #pos-2 list L_(pos#i) => parseTemplate L_{pos#i+1..pos#(i+1)-1}
     )
 
-{*
+-*
 debug needsPackage "SimpleDoc"
 
 SplitByNameFcns = new HashTable from {
@@ -493,7 +492,7 @@ SplitByNameFcns = new HashTable from {
 
 errorDepth=0
 toDoc(SplitByNameFcns, get "templates.txt")
-*}
+*-
 
 generateType = method(Option=>{Dryrun => true})
 generateType String := opts -> (typename) -> (

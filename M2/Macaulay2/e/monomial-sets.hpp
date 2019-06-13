@@ -58,7 +58,6 @@ private:
   memt::Arena mArena;
 };
 
-namespace {
 class MonomialHashAndEqFixedSize
 {
 public:
@@ -100,7 +99,6 @@ public:
     if (*a != *b) return false;
     return std::equal(a, a + *a, b);
   }
-};
 };
 
 /// A set of monomials, all of the same fixed size.

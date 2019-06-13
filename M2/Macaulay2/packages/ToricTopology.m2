@@ -27,6 +27,7 @@ newPackage(
     		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", HomePage => "http://www.enpicom.com"},
     		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"}
 		},  
+     	PackageImports => { "SimplicialComplexes" },
     	Headline => "Toric topology"
     	)
 
@@ -44,8 +45,6 @@ export{
 	"realProjectiveSpace", "hessenbergVariety", "complexProjectiveSpace",
 	"QTMSimplicialComplex", "QTMCharacteristicMatrix", "QTMDimension"
 }
-
-needsPackage "SimplicialComplexes"
 
 -- type definitions --
 SmallCover = new Type of HashTable

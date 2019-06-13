@@ -15,6 +15,8 @@ katsura (ZZ,Ring) := (n,kk) -> (
 	     ))
      )
 
+beginDocumentation()
+
 doc /// 
     Key
     	katsura
