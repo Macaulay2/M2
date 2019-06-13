@@ -18,6 +18,7 @@ newPackage ("RandomObjects",
 	      Email    => "schreyer@math.uni-sb.de",
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}},
         Headline => "a framework for making random objects in algebraic geometry",
+	PackageImports => {"SimpleDoc"},
     	DebuggingMode => false
         )
 
@@ -116,8 +117,6 @@ random RandomObject := randomopts -> Object -> args -> (
 -- the following function returns a template
 -- for a package that implements the randomObject
 --
-
-needsPackage "SimpleDoc"				    -- to get docTemplate defined
 
 randomObjectTemplate=method()
 randomObjectTemplate(String):=(Object)->(

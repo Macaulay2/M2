@@ -24,7 +24,7 @@ if  schurVersion < 0.5 then protect EorH
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
      "AbstractVarietyMap", "adams", "Base", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "exceptionalDivisor", "FlagBundle",
-     "flagBundle", "projectiveBundle'", "projectiveBundle", "projectiveSpace'", "projectiveSpace", "PP'", "PP", "integral", "IntersectionRing",
+     "flagBundle", "projectiveBundle'", "projectiveBundle", "abstractProjectiveSpace'", "abstractProjectiveSpace", "integral", "IntersectionRing",
      "intersectionRing", "Rank","PullBack", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
      "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
@@ -284,7 +284,7 @@ abstractVariety(ZZ,Ring) := opts -> (d,A) -> (
 	  then x -> part(d,x)
 	  else x -> (hold integral) part(d,x)
 	  );	  
-     A.Variety = new opts#ReturnType from { global dim => d, IntersectionRing => A })
+     A.variety = new opts#ReturnType from { global dim => d, IntersectionRing => A })
 
 -- The DefaultPullBack option has two effects:
 -- 1) if the given pullback method does not provide a method for pulling back integers and rationals, it installs the default one (promotion)
@@ -552,8 +552,6 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
 
 rank AbstractSheaf := RingElement => E -> E.cache.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
-variety Ring := AbstractVariety => R -> R.Variety
-variety RingElement := AbstractVariety => r -> variety ring r
 
 tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
 
@@ -703,7 +701,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      -- use C;
      C#"hilbert Function hint" = hilbertSeriesHint;
      d := dim X + sum(n, i -> sum(i+1 .. n-1, j -> bundleRanks#i * bundleRanks#j));
-     FV := C.Variety = abstractVariety(d,C,ReturnType => FlagBundle);
+     FV := abstractVariety(d,C,ReturnType => FlagBundle);
      FV.BundleRanks = bundleRanks;
      FV.Rank = rk;
      FV.Base = X;
@@ -763,16 +761,13 @@ projectiveBundle ZZ := opts -> n -> flagBundle({1,n},opts)
 projectiveBundle(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,opts)
 projectiveBundle AbstractSheaf := opts -> E -> flagBundle({1, rank E - 1},E,opts)
 
-projectiveSpace' = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
-projectiveSpace' ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{fixvar opts.VariableName}})
-projectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{fixvar opts.VariableName}})
+abstractProjectiveSpace' = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
+abstractProjectiveSpace' ZZ := opts -> n -> flagBundle({n,1},VariableNames => {,{fixvar opts.VariableName}})
+abstractProjectiveSpace'(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({n,1},X,VariableNames => {,{fixvar opts.VariableName}})
 
-projectiveSpace = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
-projectiveSpace ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{fixvar opts.VariableName},})
-projectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{fixvar opts.VariableName},})
-
-PP'  = new ScriptedFunctor from { superscript => i -> projectiveSpace' i }
-PP = new ScriptedFunctor from { superscript => i -> projectiveSpace i }
+abstractProjectiveSpace = method(Options => { VariableName => "h" }, TypicalValue => FlagBundle)
+abstractProjectiveSpace ZZ := opts -> n -> flagBundle({1,n},VariableNames => {{fixvar opts.VariableName},})
+abstractProjectiveSpace(ZZ,AbstractVariety) := opts -> (n,X) -> flagBundle({1,n},X,VariableNames => {{fixvar opts.VariableName},})
 
 bundles = method()
 bundles FlagBundle := X -> X.Bundles
@@ -885,7 +880,7 @@ multiFlag(List,List) := (bundleRanks, bundles) -> (
      C := B; H := identity;
      d := dim X + sum(bundleRanks, l-> (
 	       sum(0 .. #l-1, i-> sum(0 .. i-1, j-> l#i * l#j))));
-     MF := C.Variety = abstractVariety(d,C);
+     MF := abstractVariety(d,C);
      MF.Base = X;
      MF.Bundles = apply(0 .. n-1, l -> (
 	         	       apply(0 .. #(bundleRanks#l)-1, i -> (

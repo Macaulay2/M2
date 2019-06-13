@@ -1,9 +1,9 @@
-# http://www.singular.uni-kl.de/
+# https://www.singular.uni-kl.de/
 # svn co svn+ssh://monty.mathematik.uni-kl.de/usr/local/Singular/svn/trunk
 # svn co http://www.singular.uni-kl.de/svn/trunk
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 4.1.1
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif

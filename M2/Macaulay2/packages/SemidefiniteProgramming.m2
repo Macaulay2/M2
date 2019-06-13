@@ -14,13 +14,11 @@ newPackage(
       HomePage => "http://www.mit.edu/~parrilo/"},
      {Name => "Helfried Peyrl",
       Email => "peyrl@control.ee.ethz.ch",
-      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
+      HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ"}
     },
-    Headline => "Semidefinite Programming Package",
+    Headline => "semidefinite programming",
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
-    DebuggingMode => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"NumericalAlgebraicGeometry"}
 )
 
@@ -69,13 +67,15 @@ chooseDefaultSolver = execs -> (
     solvers := {"CSDP", "MOSEK", "SDPA"}; --sorted by preference
     found := for i to #solvers-1 list
         if execs#i=!=null then solvers#i else continue;
-    print if #found>0 then "Solvers configured: "|demark(", ",found)
-        else "Warning: No external solver was found.";
+    -- Packages should load silently:
+    -- print if #found>0 then "Solvers configured: "|demark(", ",found)
+    --     else "Warning: No external solver was found.";
     found = append(found,"M2");
     defaultSolver = ((options SemidefiniteProgramming).Configuration)#"DefaultSolver";
     if not member(defaultSolver,found) then
         defaultSolver = first found;
-    print("Default solver: " | defaultSolver);
+    -- Packages should load silently:
+    -- print("Default solver: " | defaultSolver);
     return defaultSolver;
     )
 
@@ -117,7 +117,7 @@ SDP = new Type of HashTable
 
 sdp = method()
 sdp (Matrix, Sequence, Matrix) := (C, A, b) -> (
-    kk := if isExactField ring C then QQ else RR;
+    kk := if all(A|(C,b), isExactField @@ ring) then QQ else RR;
     checkMat := (dims,M) -> (
         if dims!={numrows M,numcols M} then error "Bad matrix dimensions.";
         return sub(M,kk);
@@ -129,8 +129,24 @@ sdp (Matrix, Sequence, Matrix) := (C, A, b) -> (
     return sdp0(C,A,b);
     )
 sdp (Matrix, Matrix, Matrix) := (C, A, b) -> sdp(C,sequence A,b)
--- Internal constructor that runs no checks:
+-- internal constructor that runs no checks:
 sdp0 = (C,A,b) -> new SDP from { "C" => C, "A" => A, "b" => b }
+
+-- constructor given symbolic matrix
+sdp(List,Matrix,RingElement) := (X,M,objFun) -> (
+    n := numrows M;
+    if n!=numcols M then error "Matrix must be square";
+    coeff := (x,f) -> ( 
+        if f==0 then return f;
+        if x!=1 and degree(x,f)>1 then 
+            error "Entries must be affine functions";
+        coefficient(x,f) );
+    e := 1_(ring M);
+    A := for x in {e}|X list 
+        matrix for i to n-1 list for j to n-1 list -coeff(x,M_(i,j));
+    b := matrix for x in X list {-coeff(x,objFun)};
+    return sdp(-A#0,toSequence drop(A,1),b);
+    )
 
 ring SDP := P -> ring P#"C";
 
@@ -410,7 +426,7 @@ sdpNoConstraints = (C,A) -> (
     if #A==0 then(
         lambda := min eigenvalues(C, Hermitian=>true);
         if lambda>=-tol then(
-            print "SDP solved";
+            print "SDP solved in preprocessing";
             y0 := zeros(RR,#A,1);
             return (true, 0*C, y0, C);
         )else(
@@ -426,7 +442,7 @@ trivialSDP = (C,A,b) -> (
     if #A==0 or b==0 then(
         lambda := min eigenvalues(C, Hermitian=>true);
         if lambda>=0 then(
-            print "SDP solved";
+            print "SDP solved in preprocessing";
             y0 := zeros(RR,#A,1);
             return (true, 0*C, y0, C);
         )else if #A==0 then(
@@ -950,6 +966,27 @@ beginDocumentation()
 load "./SemidefiniteProgramming/SDPdoc.m2"
 
 --0
+TEST /// --sdp construction
+    R = QQ[u,v,w];
+    M = matrix {{1,u,3-v},{u,5,w},{3-v,w,9+u}};
+    objFun = u+v+w;
+    P = sdp({u,v,w}, M, objFun);
+    A=P#"A"; b=P#"b"; C=P#"C"; 
+    assert( #A == 3 )
+    assert( A#0 == -matrix(QQ,{{0,1,0},{1,0,0},{0,0,1}}) )
+    assert( b == -matrix(QQ,{{1},{1},{1}}) )
+    assert( C == matrix(QQ,{{1,0,3},{0,5,0},{3,0,9}}) )
+///
+
+--1
+TEST /// --smat2vec
+    A = matrix(QQ, {{1,2,3,4},{2,5,6,7},{3,6,8,9},{4,7,9,10}})
+    v = smat2vec A
+    assert( v == matrix(QQ, {{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}}) )
+    assert( vec2smat v == A )
+///
+
+--2
 TEST /// --PSDdecomposition
     debug needsPackage "SemidefiniteProgramming"
     equal = (f1,f2) -> norm(f1-f2) < HighPrecision;
@@ -976,7 +1013,7 @@ TEST /// --PSDdecomposition
     assert(L===null)
 ///
 
---1
+--3
 TEST /// --roundPSDmatrix
     Q=matrix{{2.01,0,0},{0,1.1,0},{0,0,2}}
     A=matrix{{1,0,0,0,0,0},{0,0,0,1,0,0},{0,0,0,0,0,1}}
@@ -1001,7 +1038,7 @@ TEST /// --roundPSDmatrix
     assert(Qpsd==Qtrue and not boolv)
 ///
 
---2
+--4
 TEST /// --optimize
     debug needsPackage "SemidefiniteProgramming"
 
@@ -1017,7 +1054,7 @@ TEST /// --optimize
     assert all(results,t->t=!=false);
 ///
 
---3
+--5
 TEST /// --criticalIdeal
     A = (-matrix{{0,1,0},{1,0,0},{0,0,1}}, matrix{{0,0,1},{0,0,0},{1,0,0}}, -matrix{{0,0,0},{0,0,1},{0,1,0}});
     (C, b) = (matrix{{1/1,0,3},{0,5,0},{3,0,9}}, matrix{{-1},{-1},{-1}});
@@ -1028,7 +1065,7 @@ TEST /// --criticalIdeal
     assert(degree I==4);
 ///
 
---4
+--6
 TEST /// --refine
     debug needsPackage "SemidefiniteProgramming"
     tol = HighPrecision;
@@ -1037,3 +1074,4 @@ TEST /// --refine
     (X1,y1) = refine(P,(X0,y0))
     assert(norm(y1+sqrt 2)<tol)
 ///
+

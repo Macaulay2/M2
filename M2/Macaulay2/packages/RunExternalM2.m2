@@ -93,8 +93,6 @@ export {
 
 --exportMutable {};
 
-needsPackage "SimpleDoc";
-
 mydoc:="";
 
 mydoc=concatenate(mydoc,///

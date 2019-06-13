@@ -967,6 +967,81 @@ document { Key => {(betti,BettiTally)},
      ///
      }
 
+document { Key => {MultigradedBettiTally,
+	(symbol SPACE,MultigradedBettiTally,List)},
+    Headline => "the class of all multigraded Betti tallies",
+    "A multigraded Betti tally is a special type of ", TO "BettiTally", " that is
+     printed as a display of the multigraded Betti numbers.  The class was
+     created so that the function ", TO "multigraded", " could return something that
+     both prints nicely and from which information could be extracted.  The keys
+     are triples ", TT "(i,d,h)", " where ", TT "i", " is the homological
+     degree, ", TT "d", " is a list of integers giving a multidegree, and ",
+     TT "h", " is the result of applying a weight covector to ", TT "d", ".",
+    PARA{},
+    "By default the data is presented as a table of polynomials where each column
+     corresponds to a given homological degree appearing as the top entry and each
+     monomial in the other entries represents the multidegree of a given generator.",
+    PARA{},
+    "When ", TT "compactMatrixForm", " is set to true, the entries in a
+     column correspond to a fixed multidegree, ordered by the ", TT "h",
+     ".  The number of summand correspond to a given multidegree appears to
+     the left of the multidegree.",
+    EXAMPLE lines ///
+      B = new MultigradedBettiTally from {(0, {0, 0}, 0) => 1, (1, {0, 2}, 2) => 1, (1, {1, 1}, 2) => 2, (1, {2, 0}, 2) => 1, (2, {1, 2}, 3) => 2, (2, {2, 1}, 3) => 2, (3, {2, 2}, 4) => 1}
+      peek oo
+    ///,
+    "For convenience, most operations on", TT "BettiTally", " such as direct sum
+     (", TO "++", "), tensor product (", TO "**", "), ", TO "pdim", " and degree
+     shifting (numbers in brackets or lists in parentheses) are automatically
+     extended to work with multigraded Betti tables.  These operations mimic the
+     corresponding operations on chain complexes.",
+    EXAMPLE lines ///
+      B({-1,-1})
+      B[1]
+      B[1] ++ B
+      B ** B
+      pdim B
+      compactMatrixForm = false
+      dual B
+    ///,
+    "A multigraded Betti tally also can multiplied by an integer or by a rational number.",
+    EXAMPLE lines ///
+      (1/2) * B
+      2 * oo
+      lift(oo,ZZ)
+    ///,
+    "This feature was implemented by Mahrud Sayrafi based on earlier work by Gregory G. Smith.",
+    SeeAlso => { BettiTally }
+    }
+
+document { Key => { (multigraded, BettiTally), multigraded },
+    Headline => "convert a Betti tally into a multigraded Betti tally",
+    Usage => "multigraded t",
+    Inputs => { "t" => BettiTally },
+    Outputs => { MultigradedBettiTally => { "different from the input only in the ordering of each column"} },
+    "A multigraded Betti tally is a special type of ", TO "BettiTally", " that both
+     prints nicely and from which multigraded Betti numbers could be easily extracted.",
+    EXAMPLE lines ///
+      R = ZZ/101[a..d, Degrees => {2:{1,0},2:{0,1}}];
+      I = ideal random(R^1, R^{2:{-2,-2},2:{-3,-3}});
+      t = betti res I
+      peek t
+      B = multigraded t
+      peek B
+    ///,
+    "By changing the weights, we can reorder the columns of the diagram. The following three
+     displays display the first degree, the second degree, and the total degree, respectively.",
+    EXAMPLE lines ///
+      betti(B, Weights => {1,0})
+      betti(B, Weights => {0,1})
+      B' = betti(B, Weights => {1,1})
+    ///,
+    SeeAlso => {
+	MultigradedBettiTally,
+	(betti, BettiTally)
+	}
+    }
+
 document { Key => {(netList, VisibleList),
 	  netList,
 	  [netList, Boxes],

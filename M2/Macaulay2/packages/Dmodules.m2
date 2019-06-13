@@ -9,7 +9,8 @@ newPackage("Dmodules",
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
-     DebuggingMode => false
+     DebuggingMode => false,
+     PackageImports => {"PrimaryDecomposition","ReesAlgebra","Elimination"}
      )
 
 load "./Dmodules/Dmodules.m2"

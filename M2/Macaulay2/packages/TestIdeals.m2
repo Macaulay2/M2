@@ -1,23 +1,32 @@
 --*************************************************
 --*************************************************
 --This is the revised (and cleaned up) version
---of the PosChar package, which has been under 
---continuous development since the Wake Forest 
+--of the TestIdeals.m2 package, which has been under
+--continuous development since the Wake Forest
 --Macaulay2 workshop of August 2012.
---Only well documented and working functions are 
---migrated to this package.
+--TestIdeals.m2 and FThresholds.m2 broke off from
+--the original package, called PosChar.m2
 --*************************************************
 --*************************************************
 
+--version history
+--0.2 first public version
+--0.2a added AssumeDomain options to isFRegular and isFRational
+--1.0 first complete version
+--protect QGorensteinIndex;
+--protect MaxCartierIndex;
+--protect DepthOfSearch;
+--protect FrobeniusPowerStrategy;
+
 newPackage( "TestIdeals",
-Version => "0.2", 
-Date => "July 25th, 2017", 
+Version => "1.01",
+Date => "3/22/2019, 2019",
 Authors => {
      {Name => "Erin Bela",
      Email => "ebela@nd.edu"
      },
      {Name => "Alberto F. Boix",
-     Email => "alberto.fernandezb@upf.edu"
+     Email => "albertof.boix@gmail.com"
      },
      {Name => "Juliette Bruce",
      Email => "juliette.bruce@math.wisc.edu",
@@ -41,7 +50,8 @@ Authors => {
      Email => "malec@hood.edu"
      },
      {Name => "Matthew Mastroeni",
-     Email => "mastroe2@illinois.edu"
+     Email => "mmastro@okstate.edu",
+     HomePage => "https://mnmastro.github.io/"
      },
      {Name => "Maral Mostafazadehfard",
      Email => "maralmostafazadehfard@gmail.com"
@@ -54,49 +64,50 @@ Authors => {
      HomePage => "http://math.utah.edu/~schwede/"
      },
      {Name => "Dan Smolkin",
-     Email => "smolkin@math.utah.edu"
+     Email => "smolkin@math.utah.edu",
+     HomePage => "http://cohenmacaulay.life"
      },
      {Name => "Pedro Teixeira",
      Email => "pteixeir@knox.edu",
-     HomePage => "http://www.knox.edu/academics/faculty/teixeira-pedro.html"
+     HomePage => "https://www.knox.edu/academics/majors-and-minors/mathematics/faculty/teixeira-pedro"
      },
      {Name=> "Emily Witt",
      Email => "witt@ku.edu",
      HomePage => "https://witt.faculty.ku.edu"
      }
 },
-Headline => "A package for calculations of singularities in positive characteristic", 
-DebuggingMode => true, 
-Reload => true,
-AuxiliaryFiles=>true
+Headline => "A package for calculations of singularities in positive characteristic",
+AuxiliaryFiles=>true,
+PackageExports=>{"Depth"}
 )
 
 export{
---BasicFunctions (BasicFunctions.m2) 
-    "adicExpansion",    
-    "adicDigit", 	   
+--BasicFunctions (BasicFunctions.m2)
+    "adicExpansion",
+    "adicDigit",
     "adicTruncation",
     "decomposeFraction",
     "floorLog",
     "multiplicativeOrder",
     "NoZeroC", --option to force certain behavior from a function
-        
+
 --ethRootFunctions (EthRoots.m2)
-    "ascendIdeal", --Karl (still needs more tests / documentation)
+    "ascendIdeal",
+    "ascendModule",
     "AscentCount",
-    "FrobeniusRootStrategy",  
-    "frobeniusRoot",  
-    "MonomialBasis",	
+    "FrobeniusRootStrategy",
+    "frobeniusRoot",
+    "MonomialBasis",
     "Substitution",
-    
+
 --Frobenius Powers (frobeniusPowers.m2)
     "fastExponentiation",
     "frobenius",
     "frobeniusPower",
     "FrobeniusPowerStrategy",
-    "Naive", 
-    "Safe", 
-    
+    "Naive",
+    "Safe",
+
 -- parameterTestIdeal.m2
     "AssumeCM", --an option for function, if true, then the function will do less work.
     "AssumeReduced", --an option telling functions to assume a ring is reduced.
@@ -105,17 +116,20 @@ export{
     "canonicalIdeal", --Karl (still needs more tests / documentation), this is based on Moty's old code.
     "frobeniusTraceOnCanonicalModule", --Karl (this is Moty's find u function, but it returns a list if Macaulay2 doesn't identify 1 element).
     "isCohenMacaulay", --Karl (added recently, if anyone has ideas to improve this...)
-    "isFrational", --Karl (added recently).
-    "IsLocal", --an option for isCohenMacaulay, isFrational, etc.
+    "isFRational", --Karl (added recently).
+    "IsLocal", --an option for isCohenMacaulay, isFRational, etc.
     "testModule", --Karl (this subsumes a bunch of older functions)
-    "MTries",
     "parameterTestIdeal",
-    
+
 -- Finjective.m2
-    "HSLGModule", --produces the non-F-injective module, ie the submodule of the canonical module
-    "isFinjective",
+    "FPureModule", --produces the non-F-injective module, ie the submodule of the canonical module
+    "descendIdeal",
+    "isFInjective",
     "CanonicalStrategy", --how to check F-injectivity on the canonical module (Ext or Katzman)
     "Katzman", --an option for CanonicalStrategy
+    "CanonicalIdeal", --an option for passing the canonical ideal
+    "GeneratorList", --an option for passing a list of u-generators (in Katzman's notation) for the canonical ideal or a canonical-like ideal
+    "CurrentRing",--an option for passing a ring to work with
 
 -- testIdeals.m2
     "QGorensteinGenerator", --Karl (this finds y such that I^{[p^e]} : I = (y) + I^{[p^e]}, if it exists) **Documented**
@@ -123,10 +137,10 @@ export{
     "MaxCartierIndex", --the cartier index limfindAllCompatibleIdealsit in the test ideal method
     "testIdeal", --Karl (the new version)
     "QGorensteinIndex", --if you already know the Q-Gorenstein index, you can pass it
-    "isFregular",
-    "isFpure",
-    "compatibleIdeals" ---MK	   
-
+    "DepthOfSearch",
+    "isFRegular",
+    "isFPure",
+    "compatibleIdeals" ---MK
 }
 
 

@@ -34,25 +34,25 @@ assert(J == 2)
 -- divideFraction test#1 - (denominator a power of p)
 TEST ///
 time J = decomposeFraction(7, 19/49);
-assert(J == {19, 2, 0} )
+assert(J == (19, 2, 0) )
 ///
 
 -- divideFraction test#2 - (denominator not power of p)
 TEST ///
 time J = decomposeFraction(2, 5/56);
-assert(J == {5, 3, 3} )
+assert(J == (5, 3, 3) )
 ///
 
 -- divideFraction test#3 - (denominator not power of p)
 TEST ///
 time J = decomposeFraction(2, 5/24);
-assert(J == {5, 3, 2} )
+assert(J == (5, 3, 2) )
 ///
 
 -- divideFraction test#4 - (negative)
 TEST ///
 time J = decomposeFraction(7, -19/49);
-assert(J == { -19, 2, 0} )
+assert(J == (-19, 2, 0) )
 ///
 
 -- adicDigit tests

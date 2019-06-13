@@ -163,7 +163,10 @@ method = methodDefaults >> opts -> args -> (
        	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
 	       )
 	  );
-     if opts.TypicalValue =!= Thing then typicalValues#methodFunction = opts.TypicalValue;
+     if opts.TypicalValue =!= Thing then (
+	  if not instance(opts.TypicalValue,Type) then error("expected typical value ", toString opts.TypicalValue, " to be a type");
+	  typicalValues#methodFunction = opts.TypicalValue;
+	  );
      methodFunction)
 
 setupMethods := (args, symbols) -> (

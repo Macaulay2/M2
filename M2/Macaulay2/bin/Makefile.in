@@ -2,7 +2,23 @@
 
 # @configure_input@
 VPATH = @srcdir@
+
 ENABLE_STRIP = @ENABLE_STRIP@
+
+ifeq "@OS@" "Darwin"
+STRIP_ARGS = -u -r
+# Under Mac OS X stripping the file M2-binary saves 2MB (when built without -g) but leads to several reproducible bugs under Mac OS X, such as this one:
+#  i2 : R = QQ[x,y,z];
+#  i3 : gcd(x^2*y,x*y^3^6)
+#  -- SIGSEGV
+#  -- stack trace, pid 8637:
+#  level 0 -- return addr: 0x0x1002bba71 -- frame: 0x0x700005134f30
+#  level 1 -- return addr: 0x0x7fff5c17eb3d -- frame: 0x0x700005134f50
+#  level 2 -- return addr: 0x0x1 -- frame: 0x0x700005134f60
+# The man page says "strip" is equivalent to "strip -u -r", but
+# experiments show that stripping with "strip -u -r" gets the file as small and prevents the crash. Why?
+endif
+
 NORULES = yes
 include ../../include/config.Makefile
 include ../d/Makefile.files
@@ -214,7 +230,6 @@ endif
 ifneq (@OTOOL@,false)
 	@OTOOL@ -L $@.tmp
 endif
-
 ifneq "@DEBUG@" "yes"
 ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
@@ -222,9 +237,9 @@ endif
 ifeq "$(ENABLE_STRIP)" "yes"
 ifneq "@STRIP@" "false"
 ifeq (@STRIP_REMOVE_SECTION@,yes)
-	@STRIP@ --remove-section=.comment --remove-section=.note "$@".tmp
+	@STRIP@ $(STRIP_ARGS) --remove-section=.comment --remove-section=.note "$@".tmp
 else
-	@STRIP@ "$@".tmp
+	@STRIP@ $(STRIP_ARGS) "$@".tmp
 ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
 endif

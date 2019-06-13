@@ -1,8 +1,8 @@
 HOMEPAGE = http://wwwth.mpp.mpg.de/members/bjurke/cohomcalg/
 HOMEPAGE = http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 031b
-BUILDOPTIONS := CC=@CC@ CXX=@CXX@ LD=@CXX@ CFLAGS=$(CFLAGS)
+BUILDOPTIONS := CC="@CC@" CXX="@CXX@" LD="@CXX@" CFLAGS="$(CFLAGS)"
 TARFILE = cohomCalg-$(VERSION).zip
 UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
 LICENSEFILES = "GPLv3 License.txt"

@@ -1501,7 +1501,7 @@ doc ///
        for @ TO (symbol %, NCRingElement, NCGroebnerBasis) @ for details on controlling when Bergman is called.
 ///
 
-{*
+-*
 
 -- This block of doc nodes is in case we decide to have stubs for the name of the option
 -- in addition to the description of how to use the option in the function call.
@@ -1560,7 +1560,7 @@ doc ///
       ncGroebnerBasis
 ///
 
-*}
+*-
 
 doc ///
    Key
@@ -3645,7 +3645,7 @@ doc ///
 	 normalFormBergman(z^17,Igb)
 ///
 
-{*
+-*
 doc ///
    Key
       isReduced
@@ -3671,7 +3671,7 @@ doc ///
 	 w'=w % Igb
 	 w'.isReduced
 ///
-*}
+*-
 
 doc ///
    Key

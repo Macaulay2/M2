@@ -9,9 +9,8 @@ newPackage(
        HomePage => "http://www.mit.edu/~diegcif"}
     },
     Headline => "A package for triangular decompositions of ideals",
-    DebuggingMode => true,
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc","Binomials","MapleInterface"},
+    PackageImports => {"Binomials","MapleInterface","Elimination"},
     PackageExports => {}
 )
 

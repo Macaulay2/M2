@@ -17,8 +17,8 @@ newPackage(
 		   Email => "mike@math.cornell.edu", 
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
-        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module",
-        DebuggingMode => true
+     	PackageImports => { "SVDComplexes" },
+        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
 export {
@@ -39,7 +39,6 @@ export {
 }
 
 debug Core
-needsPackage "SVDComplexes"
 
 -*
 -- The following shuold be where?

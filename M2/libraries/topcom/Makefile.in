@@ -1,6 +1,6 @@
 # http://www.rambau.wm.uni-bayreuth.de/Software/
 HOMEPAGE = http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 0.17.8
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = TOPCOM-$(VERSION).tar.gz

@@ -1,4 +1,3 @@
-needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "2.1.2.3", 
@@ -19,8 +18,8 @@ newPackage(
   }, 
   Headline => "Interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
- -- DebuggingMode => true,
-  DebuggingMode => true,
+  -- DebuggingMode => true,
+  PackageExports => {"NAGtypes"},
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 ) 
@@ -217,8 +216,6 @@ export {
   protect StartSolutions
   protect FailedPath
   protect AllowStrings
-       
-needsPackage "NAGtypes"
 
 --##########################################################################--
 -- GLOBAL VARIABLES 
@@ -227,7 +224,6 @@ needsPackage "NAGtypes"
 DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
 
-needsPackage "SimpleDoc"
      storeBM2Files = temporaryFileName()
      makeDirectory storeBM2Files
 -- Bertini interface for M2
@@ -2147,7 +2143,7 @@ importMainDataFile(String) := o->(aString)->(
       theLine0:=separate(" ",allInfo_0);      
       aNewPoint.SolutionNumber=value (theLine0_1);
       if o.Verbose then print theLine0;
-      aNewPoint.PathNumber=value replace(")|#","",(theLine0_4));
+      aNewPoint.PathNumber=value replace(")","",(theLine0_4));
       --Estimated condition number
       theLine1:=separate(":",allInfo_1);
       aNewPoint.ConditionNumber=valueBM2(theLine1_1);

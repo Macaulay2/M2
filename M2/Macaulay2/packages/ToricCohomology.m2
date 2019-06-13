@@ -2,6 +2,7 @@ newPackage("ToricCohomology",
     Headline => "A package for computing toric and multiproj cohomology",
     Version => "0.1",
     Date => "June 10, 2009",
+    PackageImports => { "LLLBases", "FourierMotzkin" },
     Authors => {
          {Name => "Alexandra Seceleanu", Email => "asecele2@illinois.edu"}}
     )
@@ -13,8 +14,6 @@ export {"picard","toricIdeal","toricVariety","toricHH","irrelevantIdeal"}
 -- =======================================================================================
 --Algorithm for producing toricIdeal taken from "Computations with Macaulay2" book
 -- chapter "Toric Hilbert Scheme"
-
-needsPackage "LLLBases";
 
 toBinomial = (b,R) -> (
      top := 1_R; bottom := 1_R;
@@ -43,8 +42,6 @@ toricIdeal (Matrix) := (A) -> (
 -- =========================================================================================== 
  
 -- makes a cone over a polytope by placing it at height 1 in a higher dim space
-
-needsPackage "FourierMotzkin"
  
  homogenizePolytope = V -> (                                             
                R := ring V;                                                       

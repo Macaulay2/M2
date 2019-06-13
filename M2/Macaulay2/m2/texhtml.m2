@@ -16,8 +16,10 @@ html TEX := str -> (
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
-     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///);
-     f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
+     while match("\\$.*\\$", str) do (
+     	  f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///);
+     	  f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
+	  );
      if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
      f(///\\\{///,///\lbrace ///);
      f(///\\\}///,///\rbrace ///);
@@ -112,6 +114,9 @@ html TEX := str -> (
      f(///\\NN\> *///,///&#x2115;///);			    -- these unicode characters are experimental
      f(///\\QQ\> *///,///&#x211A;///);			    -- on at least some machines they are represented by bitmaps, not by truetype fonts!
      f(///\\RR\> *///,///&#x211D;///);
+     f(///\\R\> *///,///&#x211D;///);			   -- used by arxiv.org
+     f(///\\C\> *///,///&#x2102;///);			   -- used by arxiv.org
+     f(///\\CC\> *///,///&#x2102;///);
      f(///\\ZZ\> *///,///&#x2124;///);
      f(///\\PP\> *///,///&#x2119;///);
      f(///\\Delta\> *///,///&Delta;///);
@@ -133,6 +138,7 @@ html TEX := str -> (
      f(///\\break\> *///,///<br/>///);
      f(///\\bullet\> *///,///&bull;///);
      f(///\\cap\> *///,///&cap;///);
+     f(///\\cdot\> *///,///&#8901;///);
      f(///\\cdots\> *///,///&hellip;///);
      -- f(///\\centerline\> *///,"");
      f(///\\cong\> *///,///&#8773;///);

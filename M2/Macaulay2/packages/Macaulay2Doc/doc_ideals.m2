@@ -70,7 +70,7 @@ document {
 	  TO minimalPrimes,
 	  TO radical,
 	  TO associatedPrimes,
-	  TO primaryDecomposition,
+	  TO "PrimaryDecomposition::primaryDecomposition",
 	  TO topComponents,
 	  TO saturate,
 	  TO quotient,

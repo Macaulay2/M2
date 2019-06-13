@@ -22,6 +22,7 @@ newPackage select((
         Headline => "Package for splines on simplicial complexes, polytopal complexes, and graphs",
         Configuration => {},
         DebuggingMode => false,
+	PackageImports => { "Elimination" },
         PackageExports => {
 	    "FourierMotzkin"
 	    }

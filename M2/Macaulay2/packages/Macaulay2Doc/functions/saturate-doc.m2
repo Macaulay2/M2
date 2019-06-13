@@ -117,6 +117,6 @@ document {
 	  numgens J1
 	  ///,
      Caveat => {"Most of the time, you don't want to do this!"},
-     SeeAlso => {monomialCurveIdeal, truncate}
+     SeeAlso => {monomialCurveIdeal, "Truncations::truncate"}
      }
 

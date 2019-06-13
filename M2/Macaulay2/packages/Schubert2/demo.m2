@@ -13,7 +13,7 @@ needsPackage "Schubert2";
 ---- 
 
 pt = base n
-Ph = projectiveSpace'(3,pt,VariableName=>h) -- this applies "use" to the variety, and to its intersection ring, giving h a value
+Ph = abstractProjectiveSpace'(3,pt,VariableName=>h) -- this applies "use" to the variety, and to its intersection ring, giving h a value
 factor chi OO(n*h)
      	        assert( oo === new Product from {new Power from {n+1,1},new Power from {n+2,1},new Power from {n+3,1},new Power from {1/6 + 0*n,1}} )
 
@@ -125,7 +125,7 @@ assert( 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 == oo )
 ----                      1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
 ----                                          12
 
-use projectiveSpace'(5,pt,VariableName=>H)
+use abstractProjectiveSpace'(5,pt,VariableName=>H)
 chi(OO(n*H)-OO((n-2)*H))
 assert( oo == 1/12*n^4+2/3*n^3+23/12*n^2+7/3*n+1 )
 
@@ -254,7 +254,7 @@ assert( 92 == oo )
 ---- > 
 ---- > proj(4,h,tang):            # need tangentbundle for chi
 
-X = projectiveSpace'(4,pt,VariableName => h)
+X = abstractProjectiveSpace'(4,pt,VariableName => h)
 
 ---- > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
 

@@ -50,7 +50,6 @@ newPackage(
   DebuggingMode => false,
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  PackageImports => {"SimpleDoc"},
   PackageExports => {"NAGtypes"}
 )
 

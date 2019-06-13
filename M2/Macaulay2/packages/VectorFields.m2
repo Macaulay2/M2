@@ -16,6 +16,7 @@ newPackage(
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
 		Headline => "a package for computations with vector fields",
+		PackageImports => {"PrimaryDecomposition"},		     
 		DebuggingMode => false 
 	)
 
@@ -117,8 +118,6 @@ export {
 	"isHolonomic",
 	"isHHolonomic"
 };
-
-needsPackage "SimpleDoc";
 
 mydoc:="";
 

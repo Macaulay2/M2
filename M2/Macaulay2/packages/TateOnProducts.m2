@@ -19,6 +19,7 @@ newPackage(
 	{ Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/" },
 	{ Name => "Michael E. Stillman", Email => "mike@math.cornell.edu",   HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html" }
 	},
+    PackageImports => {"Truncations"},
     DebuggingMode => false
     )
 

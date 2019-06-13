@@ -75,7 +75,7 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
   try
     {
       return GF::create(f);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -108,7 +108,7 @@ const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
       const PolyRing *result = PolyRing::create(K, M);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -124,7 +124,7 @@ const Ring * /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
     intern_polyring(result);
     return result;
   }
-  catch (exc::engine_error e) {
+  catch (const exc::engine_error& e) {
     ERROR(e.what());
     return NULL;
   }
@@ -148,7 +148,7 @@ const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
           P->getCoefficients(), P->getMonoid(), skewvars);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -175,7 +175,7 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
                                                 homog_var);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -196,7 +196,7 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
       SolvableAlgebra *result = SolvableAlgebra::create(P, Q);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -245,7 +245,7 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
           return 0;
         }
       return FractionField::create(P);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -274,7 +274,7 @@ const Ring /* or null */ *IM2_Ring_localization(const Ring *R, Computation *C)
           return nullptr;
         }
       return LocalRing::create(PR, P);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -303,7 +303,7 @@ const Ring /* or null */ *IM2_Ring_quotient(const Ring *R, const Matrix *I)
       PolynomialRing *result = PolynomialRing::create_quotient(P, I);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -333,7 +333,7 @@ const Ring /* or null */ *IM2_Ring_quotient1(const Ring *R, const Ring *B)
       PolynomialRing *result = PolyRingQuotient::create_quotient(R1, B1);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -353,7 +353,7 @@ const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
       SchurRing *result = SchurRing::create(P);
       intern_polyring(result);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -366,7 +366,7 @@ const Ring *rawSchurRing1(const Ring *A)
     {
       SchurRing2 *result = SchurRing2::createInfinite(A);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -379,7 +379,7 @@ const Ring *rawSchurRing2(const Ring *A, int n)
     {
       SchurRing2 *result = SchurRing2::create(A, n);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -392,7 +392,7 @@ const Ring *rawSchurSnRing(const Ring *A, int n)
     {
       SchurSnRing *result = SchurSnRing::create(A, n);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -416,7 +416,7 @@ const Ring /* or null */ *rawTowerRing2(const Ring *R1,
           return 0;
         }
       return Tower::create(R, new_names);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return 0;
@@ -446,7 +446,7 @@ const Ring /* or null */ *rawTowerRing3(const Ring *R1,
           extensions.push_back(f->get_value());
         }
       return Tower::create(R, extensions);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return 0;
@@ -671,7 +671,7 @@ long rawDiscreteLog(const RingElement *h)
     {
       const Ring *R = h->get_ring();
       return R->discreteLog(h->get_value());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return -1;
@@ -690,7 +690,7 @@ const RingElement /* or null */ *IM2_RingElement_make_var(const Ring *R, int v)
       ring_elem a = R->var(v);
       if (error()) return 0;
       return RingElement::make_raw(R, a);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -731,7 +731,7 @@ engine_RawRingElementPair IM2_RingElement_divmod(const RingElement *a,
       result->a = RingElement::make_raw(R, fquot);
       result->b = RingElement::make_raw(R, frem);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -751,7 +751,7 @@ int rawRingElementCompare(const RingElement *a, const RingElement *b)
       //    }
       //  if (b->is_zero()) return -1;
       return R->compare_elems(a->get_value(), b->get_value());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return -2;
@@ -767,7 +767,7 @@ const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f)
       if (f->promote(S, result)) return result;
       ERROR("cannot promote given ring element");
       return 0;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -789,7 +789,7 @@ const RingElement /* or null */ *IM2_RingElement_lift(int *success_return,
         }
       // ERROR("cannot lift given ring element");
       return 0;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -806,7 +806,7 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
   try
     {
       return a->multi_degree();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -819,7 +819,7 @@ const RingElement * /* or null */ rawRingElementAntipode(const RingElement *f)
     {
       const Ring *R = f->get_ring();
       return RingElement::make_raw(R, R->antipode(f->get_value()));
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -845,7 +845,7 @@ gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, const RingElement *a)
       mpz_init_set_si(p->a, static_cast<long>(lo));
       mpz_init_set_si(p->b, static_cast<long>(hi));
       return p;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -861,7 +861,7 @@ const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
   try
     {
       return a->homogenize(v, deg, wts);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -874,7 +874,7 @@ IM2_RingElement_homogenize(const RingElement *a, int v, M2_arrayint wts)
   try
     {
       return a->homogenize(v, wts);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -904,7 +904,7 @@ const RingElement /* or null */ *IM2_RingElement_term(const Ring *R,
       varpower::to_ntuple(nvars0, m->ints(), exp);
       ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
       return RingElement::make_raw(R, val);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -936,7 +936,7 @@ const RingElement /* or null */ *IM2_RingElement_get_coeff(
   try
     {
       return a->get_coeff(coeffRing, m);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -950,7 +950,7 @@ const RingElement /* or null */ *IM2_RingElement_lead_coeff(
   try
     {
       return a->lead_coeff(coeffRing);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -964,7 +964,7 @@ const Monomial /* or null */ *IM2_RingElement_lead_monomial(
   try
     {
       return a->lead_monom(nvars);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -996,7 +996,7 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
         }
       ERROR("expected a polynomial");
       return 0;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1026,7 +1026,7 @@ engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
         result->array[i] = RingElement::make_raw(P, relems[i]);
       deletearray(relems);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1130,7 +1130,7 @@ engine_RawRingElementArrayOrNull rawConvolve(engine_RawRingElementArray H,
         result->array[i] = RingElement::make_raw(P, output_relems[i]);
 
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1160,7 +1160,7 @@ const RingElement /* or null */ *rawGetPart(const M2_arrayint wts,
       ring_elem g = P->get_part(
           wts, f->get_value(), lobound_given, hibound_given, lobound, hibound);
       return RingElement::make_raw(P, g);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1199,7 +1199,7 @@ const RingElement /* or null */ *rawAssociateDivisor(const RingElement *f)
         }
       return RingElement::make_raw(
           P->getCoefficients(), P->preferred_associate_divisor(f->get_value()));
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1233,7 +1233,7 @@ const RingElement /* or null */ *IM2_RingElement_numerator(const RingElement *a)
   try
     {
       return a->numerator();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1246,7 +1246,7 @@ const RingElement /* or null */ *IM2_RingElement_denominator(
   try
     {
       return a->denominator();
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1262,7 +1262,7 @@ const RingElement /* or null */ *IM2_RingElement_fraction(const Ring *R,
       const RingElement *f = a->fraction(R, b);
       if (error()) return NULL;
       return f;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1280,9 +1280,8 @@ gmp_ZZorNull rawSchurDimension(const RingElement *f)
           return 0;
         }
       ring_elem result = S->dimension(f->get_value());
-#warning "const cast from mpz_srcptr to mpz_ptr"
       return const_cast<mpz_ptr>(result.get_mpz());
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1308,7 +1307,7 @@ const RingElement /* or null */ *rawSchurSnTensorMult(const RingElement *a,
         }
       ring_elem result = R->tensor_mult(a->get_value(), b->get_value());
       return RingElement::make_raw(R, result);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -1335,7 +1334,7 @@ const RingElement /* or null */ *rawSchurFromPartition(const Ring *R,
       if (!S->is_valid_partition(part)) return 0;
       ring_elem result = S->from_partition(part);
       return RingElement::make_raw(S, result);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;

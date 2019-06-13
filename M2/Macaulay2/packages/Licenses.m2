@@ -4,24 +4,10 @@ newPackage ( "Licenses",
      Authors => {{Name => "Daniel R. Grayson", 
 	       Email => "danielrichardgrayson@gmail.com", 
 	       HomePage => "http://dangrayson.com/"}},
-     Headline => "licensing of Macaulay2",
-     DebuggingMode => true
+     Headline => "licensing of Macaulay2"
      )
 
 export "checkLicense"
-
-needsPackage "SimpleDoc"
-needsPackage "Text"
-
-multidoc ///
-Node
- Key
-   Licenses
- Description
-   Text 
-       This package examines the version number of the various packages compiled
-       with Macaulay2 to determine under which licenses Macaulay2 may be offered.
-///
 
 -- We issue the M2 binary under GPL 3, and libraries licensed under the following licenses
 -- can be linked with our binary:
@@ -168,6 +154,17 @@ checkLicense = () -> (
 	  ver := version#lib;
 	  (concatenate (lib, " ", ver)) => lic (lib, ver)))
 
+beginDocumentation()
+
+multidoc ///
+Node
+ Key
+   Licenses
+ Description
+   Text 
+       This package examines the version number of the various packages compiled
+       with Macaulay2 to determine under which licenses Macaulay2 may be offered.
+///
 
 -- this test doesn't ever produce an error, and thus the warning is invisible, since it 
 -- normally redirected to a file

@@ -195,7 +195,7 @@ rmNmzFiles=()->
 ---------------------------------------------------------
 
 -- returns the next number in the string s, and the remaining string
-getNumber=method(TypicalValue=>(String,String))
+getNumber=method()
 getNumber String :=s->
 (
     l:=regex("[0-9-]+",s);

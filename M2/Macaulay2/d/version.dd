@@ -29,6 +29,7 @@ header "
    #include <mpfr.h>
    #include <memtailor.h>
    #include <mathic.h>
+   #include <gdbm.h>
    #include <mathicgb.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
@@ -119,6 +120,10 @@ readlineversion():constcharstar := Ccode(returns,"
      return buf;
      ");
 
+gdbmversion():constcharstar := Ccode(returns,"
+     return gdbm_version;
+     ");
+
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
      	  __INTEL_COMPILER
@@ -194,6 +199,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 		 \"not present\"
 	#endif
 	"),
+   "gdbm version" => gdbmversion(),
    "gmp version" => Ccode(constcharstar,"
 	  #ifdef __MPIR_VERSION
 	       \"not present\"

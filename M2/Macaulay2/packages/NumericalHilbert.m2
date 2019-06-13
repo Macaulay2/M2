@@ -7,8 +7,8 @@ newPackage(
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "numerically compute local dual space and Hilbert functions",
-     AuxiliaryFiles => true,
-     DebuggingMode => true
+     PackageImports => {"Truncations"},
+     AuxiliaryFiles => true
 )
 
 export {

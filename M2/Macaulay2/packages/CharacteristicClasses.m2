@@ -11,6 +11,7 @@ newPackage(
 		  Email => "christine.e.jost@gmail.com"}},
     	Headline => "Computes CSM classes, Segre classes and the Euler Char. for some Subschemes of Smooth Complete Toric Varieties",
     	DebuggingMode => false,
+	PackageImports => { "Elimination", "PrimaryDecomposition", "NormalToricVarieties"},
 	Configuration => { "pathToBertini" => ""},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -31,7 +32,6 @@ newPackage(
 -- Check the ~/.Macaulay2/init-CharacteristicClasses.m2 file for the absolute path.
 bertini'path = (options CharacteristicClasses).Configuration#"pathToBertini";
 if not instance(bertini'path,String) then error "expected configuration option pathToBertini to be a string."
-needsPackage "NormalToricVarieties";
 --Exported functions/variables
 export{"Segre",
    "CSM",
@@ -2463,7 +2463,7 @@ doc ///
 	       The option CheckSmooth is only used by the commands @TO CSM@ and only when computing the CSM class of a toric variety. It is set to true by default. When true it will check if the toric variety is smooth before proceeding, if it is this will speed up computation; however checking for smoothness does take some time.
 	  Example
 	       needsPackage "NormalToricVarieties"
-               U = projectiveSpace 7
+               U = toricProjectiveSpace 7
 	       time CSM U
                time CSM(U,CheckSmooth=>false)
 	       
