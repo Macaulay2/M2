@@ -37,10 +37,18 @@ document {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added." }
 		    }
-	       }
+	       },
+	  LI { "functionality added or improved:",
+          UL {
+              LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
+                  created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, GRevLex
+                      group counts as a block)"
+                  }
+              }
+          }
 	  }
      }
-
+ 
 document {
      Key => "changes, 1.14",
      UL {
