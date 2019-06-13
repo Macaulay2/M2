@@ -6,7 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
-	  TO "changes, 1.11.1",
+	  TO "changes, 1.12",
 	  TO "changes, 1.11",
 	  TO "changes, 1.10",
 	  TO "changes, 1.9.2",
@@ -32,29 +32,32 @@ document {
      }
 
 document {
-     Key => "changes, 1.11.1",
+     Key => "changes, 1.12",
      UL {
      	  LI { "new packages:",
      	       UL {
-	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." }
-     		    },
-     	       UL {
-	       	    LI TEX { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." }
-     		    },
-     	       UL {
-	       	    LI TEX { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." }
-     		    },
-     	       UL {
-	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles 
-	               on the space of symmetric forms\", has been added." }
-     		    }
+	       	    LI { TO "Seminormalization::Seminormalization", ", a package by Bernard Serbinowski and Karl Schwede for computing seminormalization of rings, has been added." },
+	       	    LI { TO "CoincidentRootLoci::CoincidentRootLoci", ", a package by M. C. Brambilla and G. Staglianò for computations with coincident root loci, has been added." },
+	       	    LI { TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been added." },
+	       	    LI { TO "RandomCurvesOverVerySmallFiniteFields::RandomCurvesOverVerySmallFiniteFields", TEX ", a package by Christian Bopp and Frank-Olaf Schreyer for computation of general canonical curves of genus \\le 15 over fields with small characteristic, has been added." },
+	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." },
+	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles on the space of symmetric forms\", has been added." },
+		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." },
+		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementating data types for noncommutative algebras, has been added." },
+		    LI { TO "SpaceCurves::SpaceCurves", ", a package by Frank Schreyer, Mike Stillman, and Mengyuan Zhang, for generation of space curves, has been added." },
+     	       	    LI { TO "ExteriorIdeals::ExteriorIdeals", ", a package by Marilena Crupi and Luca Amata for manipulating monomial ideals over exterior algebras, has been added." }
+		    }
 	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "Resultants::Resultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been published." },
+		    LI { star, " ", TO "SpaceCurves::SpaceCurves", ", a package by Frank Schreyer, Mike Stillman, and Mengyuan Zhang, for generation of space curves, has been published." },
+     	       	    LI { star, " ", TO "ReesAlgebra::ReesAlgebra", ", a package by David Eisenbud, Amelia Taylor, and Sorin Popescu for computations with Rees algebras, has been published." },
+     	       	    LI { star, " ", TO "Cremona::Cremona", ", a package by Giovanni Staglianò for computations for rational maps between projective varieties, has been published." },
+     	       	    LI { star, " ", TO "ExteriorIdeals::ExteriorIdeals", ", a package by Marilena Crupi and Luca Amata for manipulating monomial ideals over exterior algebras, has been published." }
+     	       	    }
+     	       },
      	  LI { "improved packages:",
      	       UL {
 		    LI {
@@ -64,10 +67,18 @@ document {
 			 lowest order terms of the obstruction equations. This has been remedied by
 			 actually calculating the tangent cone, and making appropriate adjustments
 			 to the algorithm."
+			 },
+		    LI {
+			 "The package ", TO "TateOnProducts::TateOnProducts", " has been improved.  The
+			 package implements the method of Tate resolutions, for computing cohomology of sheaves
+			 on products of projective spaces, and also the pushforward complex of a sheaf under a
+			 map from a variety to a projective space. Tate resolutions on single projective spaces
+			 were treated in the package ", TO "BGG::BGG", ", but the case of a product of projective spaces is
+			 much more subtle, since no term of the full Tate resolution is finitely generated."
 			 }
 		    }
 	       },
-	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	  LI { "functionality added or improved:",
 	       UL {
 		    LI {
 			 "The function ", TO "about", " has been added.  It allows one to search the documentation of all the
@@ -78,10 +89,6 @@ document {
 			 "The class ", TO "NumberedVerticalList", " has been added.  It's a new type of vertical list (see ", TO "VerticalList", ")
 			 that is also printed vertically, but with numbered entries, for ease of referring to them."
 			 },
-		    }
-	       },
-	  LI { "functionality added or improved:",
-	       UL {
 		    LI {
 			 "The option ", TT "AbsoluteLinks", " to ", TO "installPackage", " has been removed.  Better logic
 			 is now used internally, producing relative links only between files installed under the same prefix."
@@ -93,6 +100,46 @@ document {
 		    LI {
 			 "Each directory listed in ", TO "prefixPath", " now has its own layout, which is detected at runtime.
 			 See ", TO "Layout", "."
+			 },
+		    LI {
+			 "Functionality for fast nonminimal free resolutions, ", TO "FastNonminimal", " has a number of bug fixes and
+			 improvements: (1) it now works for input modules, not just ideals (there was a monomial order mismatch which
+			     would often cause it to fail), (2) multi-graded and inhomogeneous ideals/modules are allowed, 
+			 (3) this function works over the exterior algebra as well (it has always done so, but that was not
+			     always realized), (4) it is possible to have M2 use an already created Groebner basis, instead of recomputing
+			 one.  Use Strategy=>5 in the ", TO "resolution", " command, to tell the command that the 
+			 provided ideal has generators which already form a Groebner basis, not necessarily a reduced
+			 Groebner basis, or a quotient module, whose presentation matrix forms a Groebner basis.  
+			 If the input is not, then this function can give incorrect answers or fail.  See ",
+			 TO "FastNonminimal", " for details and examples."
+			 },
+		    LI {
+			 "New types ", TO "MethodFunctionSingle", " and ", TO "MethodFunctionBinary", " were introduced to serve as classes of
+			 method functions with a single argument, such as ", TO "code", ", and of associative method functions based on methods
+			 with two arguments, such as ", TO "gcd", ", from other compiled functions."
+			 },
+		    LI {
+			 "We have removed the feature where typing an extra empty line ends multiline 
+			 input in a terminal window or emacs buffer.
+			 This will make it easier to feed input from a file into the interpreter with
+			 F-11 and encounter the same behavior, since in files we have permit empty lines.
+			 This change was requested at our Leipzig workshop, with Q2 at ",
+			 HREF {"https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&amp;A-Thursday",
+			       "https://github.com/Macaulay2/Workshop-2018-Leipzig/wiki/Q&A-Thursday"},
+			 " being the question that prompted the discussion."
+			 }
+		    }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.12%22+is%3Aclosed","closed 1.12 issues"}, ",
+			 for the issues and pull requests incorporated into 1.12."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.12","1.12 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.12."
 			 }
 		    }
 	       }
@@ -219,7 +266,7 @@ document {
 			 "The format for multi-line (un-nested) block comments has been changed from ", TT "{* ... *}", " to ", TT "-* ... *-", " so emacs can colorize 
 			 the comments correctly.  The (deprecated) old style will be recognized by M2 for a while."
 			 }
-     	  	       }
+		    }
                }
      	  }
      }
@@ -1892,3 +1939,7 @@ document {
      working as expected).
      ///
      }
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=false RemakeAllDocumentation=false IgnoreExampleErrors=false"
+-- End:

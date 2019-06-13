@@ -177,7 +177,7 @@ setDefault = method(Options => {
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
      Tolerance => null,
      SingularConditionNumber => null,
-     Precision => null,
+     Precision => null
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()

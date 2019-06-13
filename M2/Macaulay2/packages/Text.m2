@@ -641,15 +641,16 @@ document {
 document {
      Key => HREF,
      Headline => "hypertext link",
-	Usage => "HREF{u,p}",
+	Usage => "HREF{u,p}\nHREF{u}",
 	Inputs => {
 		"u" => {"a url"},
 		"p" => {"a phrase"}
 		},
 	Outputs => {HREF => {}},
-     TT "HREF{u,p}", " encloses the phrase ", TT "p", " in a hypertext HREF link
-     pointing to the url ", TT "u", ".",
-     PARA{},
+     PARA {
+	  TT "HREF{u,p}", " encloses the phrase ", TT "p", " in a hypertext HREF link
+     	  pointing to the URL ", TT "u", ".  If ", TT "p", " is omitted, then ", TT "u", " is used as the phrase and as the URL."
+	  },
      SeeAlso => "hypertext"
      }
 

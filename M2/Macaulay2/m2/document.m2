@@ -321,11 +321,12 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 packageKey0 = method(Dispatch => Thing)
 packageKey0 Thing := key -> currentPackage
+packageKey0 Sequence := key -> currentPackage		    -- this is a kludge, which allows Schubert2 to document (symbol SPACE,OO,RingElement)
+-- packageKey0 Sequence := 				    -- this might be the right way to do it
 packageKey0 Array := key -> (
      n := youngest apply(toSequence key, package);
      assert( n =!= null );
      n )
-packageKey0 Sequence := key -> currentPackage
 packageKey = method()
 packageKey(Array,String) := (key,fkey) -> packageKey0 key
 packageKey(Thing,String) := (key,fkey) -> (
@@ -753,7 +754,10 @@ headline DocumentTag := tag -> (
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
 	       if signalDocError tag and packageName tag === currentPackage#"pkgname" 
-	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
+	       then (
+		    dtag := DocumentTag.Key tag;
+		    stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString dtag << ", package " << package dtag << endl;
+		    );
 	       return null;
 	       ));
      if d#?Headline then d#Headline
@@ -991,6 +995,7 @@ document List := opts -> args -> (
      rest := {};
      if class key === List then (
 	  key = nonnull key;
+     	  if not all(values tally key, i -> i == 1) then error ("documentation key(s) mentioned twice: ", concatenate \\ between_", " \\ toString \ first \ select(pairs tally key, (k,n) -> n > 1));
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
@@ -1293,13 +1298,26 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 	  DIV1 { SUBSECTION "Version", "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 	       if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname",
 	       "." },
-	  if pkg#"pkgname" =!= "Macaulay2Doc" 
+	  if pkg#"pkgname" =!= "Macaulay2Doc"
 	  then DIV1 {
 	       SUBSECTION "Source code",
-	       "The source code from which this documentation is derived is in the file ", HREF { installLayout#"packages" | fn, fn }, ".",
+	       "The source code from which this documentation is derived is in the file ", 
+	       HREF {
+		    if installLayout =!= null
+		    then installLayout#"packages" | fn
+		    else pkg#"source file",
+		    fn },
+	       ".",
 	       if pkg#?"auxiliary files" then (
 		    "  The auxiliary files accompanying it are in the
-		    directory ", HREF { installLayout#"packages" | pkg#"pkgname" | "/", pkg#"pkgname" | "/" }, "."
+		    directory ", 
+		    HREF { 
+			 if installLayout =!= null
+			 then installLayout#"packages" | pkg#"pkgname" | "/"
+			 else pkg#"auxiliary files",
+			 pkg#"pkgname" | "/" 
+			 },
+		    "."
 		    )
 	       },
 	  if #e > 0 then DIV1 {

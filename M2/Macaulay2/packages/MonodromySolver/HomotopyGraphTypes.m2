@@ -59,6 +59,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
     	    E#"homotopy21" = segmentHomotopy(F2,F1);
 	    )
 	else ( -- this is a hack engaged for a more general purpose (e.g., nonlinear systems)
+    	    << "is this working?";
 	    F := G.Family.PolyMap;
 	    (FR, mapFR) := flattenRing ring F;
             FF := mapFR F;
@@ -242,7 +243,10 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     startSolutions := (head.PartialSols)_(untrackedInds);
     newSols := if #untrackedInds > 0 then (
 	t'sols := elapsedTiming(    	 
-	    if USEtrackHomotopy then trackHomotopy(homotopy,startSolutions)  
+	    if USEtrackHomotopy then (
+		<< "is this working << endl;
+		trackHomotopy(homotopy,startSolutions);
+		)
 	    else track(polySystem (gammaHead * head.SpecializedSystem), 
 	    	polySystem(gammaTail * tail.SpecializedSystem), 
 	    	startSolutions)

@@ -131,51 +131,6 @@ document {
      "This is the identity function."
      }
 
-document {
-     Key => {pairs},
-     Headline => "list the pairs in a hash table, dictionary, or basic list",
-     }
-
-document {
-     Key => {(pairs, HashTable)},
-     Headline => "list the pairs in a hash table",
-     Usage => "pairs x",
-     Inputs => { "x" },
-     Outputs => {{ "a list of all pairs ", TT "(k,x#k)" }},
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2, c => 3}",
-	  "pairs x",
-	  }
-     }
-
-document {
-     Key => {(pairs, Dictionary)},
-     Headline => "list the pairs in a dictionary",
-     Usage => "pairs d",
-     Inputs => { "d" },
-     Outputs => {{ "a list of all pairs ", TT "(k,d#k)" }},
-     EXAMPLE lines ///
-     	  d = new Dictionary
-	  getGlobalSymbol (d,"foo")
-	  getGlobalSymbol (d,"bar")
-	  pairs d
-	  first oo
-	  class \ oo
-	  ///
-     }
-
-document {
-     Key => {(pairs, BasicList)},
-     Headline => "list the pairs in a sequence or list",
-     Usage => "pairs L",
-     Inputs => { "L" },
-     Outputs => {{ "a list of pairs ", TT "(i,L#i)" }},
-     EXAMPLE {
-	  "L = (a,b,c)",
-	  "pairs L",
-	  "pairs {x,y,z}",
-	  }
-     }
 
 document {
      Key => sequence,
@@ -209,26 +164,6 @@ document {
      SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
      }
 
-document {
-     Key => {mingle,(mingle, BasicList)},
-     Headline => "mingle elements of several lists",
-     TT "mingle {v,w,...}", " -- produces a new list from the lists or
-     sequences v,w,... by taking the first element from each, then the second, 
-     and so on.",
-     BR{},
-     TT "mingle (v,w,...)", " -- does the same.",
-     PARA{},
-     "After one of the lists is exhausted, it is silently ignored.",
-     EXAMPLE {
-	  "mingle({1,2,3,4},{a},{F,F,F,F,F,F,F,F,F,F})",
-      	  ///concatenate mingle( {"a","b","c"} , {",",","} )///,
-	  },
-     "It is easy to transpose a nested list (thinking of it as a matrix)
-     using ", TO "mingle", " and ", TO "pack", ".",
-     EXAMPLE {
-      	  "pack(2, mingle {{1,2,3,4},{5,6,7,8}})"
-	  }
-     }
 
 document {
      Key => {SelfInitializingType,
@@ -595,33 +530,6 @@ document {
       	  "x#a",
      	  "hashTable(plus, {(a,3),(b,4),(a,10)})"
 	  },
-     }
-
-document {
-     Key => (toList, BasicList),
-     Headline => "list of elements",
-     TT "toList x", " -- provides a list of elements in the basic list ", TT "x", ".",
-     PARA{},
-     "This is a good way to convert a list of some other type to a list of type
-     ", TO "List", ".",
-     EXAMPLE {
-	  "toList [a,b,c]"
-	  } 
-     }
-
-document {
-     Key => (toList, Set),
-     Headline => "list of elements",
-     TT "toList x", " -- provides a list of element in the set ", TT "x", ".",
-     EXAMPLE {
-	  "x = set {a,b,c}",
-	  "toList x"
-	  }
-     }
-
-document {
-     Key => toList,
-     Headline => "list of elements"
      }
 
 document {

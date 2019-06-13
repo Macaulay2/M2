@@ -29,7 +29,7 @@ if firstTime then (
 disassemble ( () -> debug Core )
 if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
-toString := value getGlobalSymbol if firstTime then "simpleToString" else "toString"
+toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"
 match := X -> null =!= regex X
 
 local exe
@@ -214,10 +214,10 @@ if firstTime then (
      protect PrintNames;
      protect ReverseDictionary;
 
-     globalAssign = (s,v) -> if v =!= value s then (
-	  X := class value s;
+     globalAssign = (s,v) -> if v =!= value' s then (
+	  X := class value' s;
 	  m := lookup(GlobalReleaseHook,X);
-	  if m =!= null then m(s,value s);
+	  if m =!= null then m(s,value' s);
 	  Y := class v;
 	  n := lookup(GlobalAssignHook,Y);
 	  if n =!= null then n(s,v);
@@ -242,10 +242,10 @@ if firstTime then (
 	  else error "expected a type";
 	  );
      globalAssignment {Type,Function,GlobalDictionary,Manipulator};
-     scan((symbol true,symbol false,symbol stdio, symbol stderr), sym -> globalAssignFunction(sym, value sym));
+     scan((symbol true,symbol false,symbol stdio, symbol stderr), sym -> globalAssignFunction(sym, value' sym));
      scan(dictionaryPath, dict -> (
 	       scan(pairs dict, (nm,sym) -> (
-			 x := value sym;
+			 x := value' sym;
 			 f := lookup(GlobalAssignHook, class x);
 			 if f =!= null then f(sym,x);
 			 ))));
@@ -517,7 +517,7 @@ action := hashTable {
 
 valueNotify := arg -> (
      if notify then stderr << "--evaluating command line argument " << argno << ": " << format arg << endl;
-     value arg)
+     value' arg)
 
 initialPath := {}
 
@@ -529,8 +529,8 @@ action2 := hashTable {
 	  ),
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
-     "--print-width" => arg -> if phase == 3 then printWidth = value arg,
-     "--debug" => arg -> debugWarningHashcode = value arg,
+     "--print-width" => arg -> if phase == 3 then printWidth = value' arg,
+     "--debug" => arg -> debugWarningHashcode = value' arg,
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
@@ -561,7 +561,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       -- which may not even be on the user's machine.  So we convert it to an absolute path
 	       if match("^(\\./|\\../)",arg) then arg = toAbsolutePath arg;
 	       scriptCommandLine = drop(commandLine,2);
-	       if instance(value global load, Function) then load arg else simpleLoad arg;
+	       if instance(value' global load, Function) then load arg else simpleLoad arg;
 	       exit 0))
      else (
 	  if notify then stderr << "--phase " << phase << endl;

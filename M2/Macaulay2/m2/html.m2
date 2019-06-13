@@ -42,8 +42,8 @@ signalDocError = tag -> (				    -- also called from document.m2, temporarily
 
 buildPackage := null					    -- name of the package currently being built
 topDocumentTag := null
-indexFileName = "master.xhtml"  			    -- file name for master index of topics in a package
-tocFileName = "toc.xhtml"       			    -- file name for the table of contents of a package
+indexFileName = "master.html"  			    	    -- file name for master index of topics in a package
+tocFileName = "toc.html"       			    	    -- file name for the table of contents of a package
 installPrefix = null	  	       	    	      	    -- the installation prefix
 installLayout = null		     	       	    	    -- the layout of the installPrefix, global for communication to document.m2
 installLayoutIndex = null				    -- the layout index of the installPrefix, equal to 1 or 2
@@ -51,7 +51,7 @@ htmlDirectory = ""					    -- relative path to the html directory, depends on th
 
 runfun := o -> if instance(o, Function) then o() else o
 initInstallDirectory := o -> (
-     installPrefix = toAbsolutePath(runfun o.InstallPrefix);
+     installPrefix = realpath toAbsolutePath(runfun o.InstallPrefix);
      if not match("/$",installPrefix) then installPrefix = installPrefix | "/";
      installLayoutIndex = detectCurrentLayout installPrefix;
      if installLayoutIndex === null then installLayoutIndex = if o.SeparateExec then 2 else 1;
@@ -94,12 +94,13 @@ toURL String := pth -> (				    -- phase this one out eventually
 
 toURL (String,String) := (prefix,tail) -> (		    -- this is the good one
      -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
-     if prefix === installPrefix			    -- note: installPrefix might be null, if we aren't installing a package
+     if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
+     and htmlDirectory =!= null
      then relativizeFilename(htmlDirectory,tail) 
      else prefix|tail)
 
 htmlFilename1 = (fkey,pkgname,layout) -> (
-     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".xhtml";
+     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
      replace("PKG",pkgname,layout#"packagehtml") | basefilename)
 
 htmlFilename2 = (tag,layout) -> (
@@ -111,7 +112,7 @@ htmlFilename = method(Dispatch => Thing)
 htmlFilename DocumentTag := tag -> (
      pkgname := packageName tag;
      fkey := formattedKey tag;
-     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".xhtml";
+     basefilename := if fkey === pkgname then topFileName else toFilename fkey|".html";
      if currentPackage#"pkgname" === pkgname
      then (
 	  layout := installLayout;
@@ -128,6 +129,7 @@ htmlFilename DocumentTag := tag -> (
 	       layout = Layout#(pkginfo#"layout index");
 	       prefix = pkginfo#"prefix";
 	       ));
+     if layout === null then error ("package ",pkgname," is not installed on the prefixPath");
      tail := replace("PKG",pkgname,layout#"packagehtml") | basefilename;
      assert isAbsolutePath prefix;
      (prefix,tail)					    -- this pair will be processed by toURL(String,String)
@@ -479,7 +481,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      if ulimit === null then (
-	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
+	  ulimit = utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512";
 	  );
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
@@ -885,13 +887,13 @@ installPackage Package := opts -> pkg -> (
 	       scan((if pkg#"pkgname" == "Macaulay2Doc" then Core else pkg)#"exported symbols", s -> (
 			 tag := makeDocumentTag s;
 			 if not isUndocumented tag and not hasDocumentation s and signalDocError tag
-			 then stderr << "--warning: symbol has no documentation: " << tag << endl;
+			 then stderr << "--warning: symbol has no documentation: " << tag << ", package " << packageName tag << endl;
 			 f := value s;
 			 if instance(f, Function) then (
 			      scan(methods f, m -> if isDocumentableMethod m then (
 					tag := makeDocumentTag m;
 					if not isUndocumented tag and not dispatcherMethod m and not hasDocumentation m and signalDocError tag
-					then stderr << "--warning: method has no documentation: " << tag << ", key: " << toString DocumentTag.Key tag << endl;
+					then stderr << "--warning: method has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << ", package " << packageName tag << endl;
 					));
 			      ))));
 
@@ -1230,7 +1232,7 @@ fix := fn -> (
      if debugLevel > 0 then stderr << "--fixed URL: " << r << endl;
      r)
 showHtml = show Hypertext := x -> (
-     fn := temporaryFileName() | ".xhtml";
+     fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {
 	       TITLE "Macaulay2 Output",

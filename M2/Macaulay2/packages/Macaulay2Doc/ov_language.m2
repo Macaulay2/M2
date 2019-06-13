@@ -35,7 +35,6 @@ document {
 	      TO "conditional execution",
 	      TO "while",
 	      TO "for",
-	      TO "mapping over lists",
 	      TO "mapping over hash tables",
 	      TO "error handling",
 	      TO "catch",

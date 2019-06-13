@@ -81,7 +81,7 @@ searchPrefixPath = f -> (
      	  if debugLevel > 5 then stderr << "--file not found in prefixPath = " << stack prefixPath << endl;
 	  ))
 
-getDBkeys := dbfn -> (
+getDBkeys = dbfn -> (
      dbkeys := new MutableHashTable;
      db := openDatabase dbfn;
      for key in keys db do dbkeys#key = 1;
@@ -89,16 +89,24 @@ getDBkeys := dbfn -> (
      dbkeys)
 
 makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
-     new HashTable from {
+     new MutableHashTable from {
 	  "doc db file name" => dbfn,
-	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp
-	  "doc keys" => getDBkeys dbfn,
+	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp (unless the package takes less than a second to install, which is unlikely)
+	  -- "doc keys" => getDBkeys dbfn, -- do this lazily, getting it later, when needed for "about"
 	  "prefix" => prefix,
      	  "layout index" => layoutIndex,
 	  "name" => pkgname
 	  })
 
+fetchDocKeys = i -> (
+     if i#?"doc keys"
+     then i#"doc keys"
+     else i#"doc keys" = getDBkeys i#"doc db file name"
+     )
+
 installedPackagesByPrefix = new MutableHashTable
+
+allPackages = () -> unique sort flatten for prefix in keys installedPackagesByPrefix list keys installedPackagesByPrefix#prefix#"package table"
 
 getPackageInfo = pkgname ->				    -- returns null if the package is not installed
      for prefix in prefixPath 
@@ -125,7 +133,9 @@ locatePackageFile = (defaultPrefix,defaultLayoutIndex,pkgname,f) -> (
 
 locatePackageFileRelative = (defaultPrefix,defaultLayoutIndex,pkgname,f,installPrefix,installTail) -> (
      (prefix,tail) := locatePackageFile(defaultPrefix,defaultLayoutIndex,pkgname,f);
-     if prefix === installPrefix then relativizeFilename(installTail,tail) else prefix|tail)
+     if prefix === installPrefix			    -- we assume these are both real paths, without symbolic links
+     then relativizeFilename(installTail,tail)
+     else prefix|tail)
 
 locateCorePackageFile = (pkgname,f) -> locatePackageFile(prefixDirectory,currentLayout,pkgname,f)
 
@@ -133,9 +143,18 @@ locateCorePackageFileRelative = (pkgname,f,installPrefix,installTail) -> locateP
 
 locateDocumentationNode = method()
 
+keyExists = (i,fkey) -> (
+     if i#?"doc keys" 
+     then i#"doc keys"#?fkey
+     else (
+	  db := openDatabase i#"doc db file name";	    -- how long does it take to open and close 170 database files?
+	  r := db#?fkey;
+	  close db;
+	  r))
+
 locateDocumentationNode (String,String) := (pkgname,fkey) -> (
      i := getPackageInfo pkgname;
-     if i === null or not i#"doc keys"#?fkey then return null;
+     if i === null or not keyExists(i,fkey) then return null;
      layout := Layout#(i#"layout index");
      fn := i#"prefix" | htmlFilename1(fkey,pkgname,layout);
      if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
@@ -150,7 +169,7 @@ locateDocumentationNode String := fkey -> (			    -- search packages for one wit
 	       pkgtable := installedPackagesByPrefix#prefix#"package table";
 	       for pkgname in keys pkgtable do (
 		    q := pkgtable#pkgname;
-		    if q#"doc keys"#?fkey then (
+		    if keyExists(q,fkey) then (
 			 layout := Layout#(q#"layout index");
 			 fn := prefix | htmlFilename1(fkey,pkgname,layout);
 			 if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
@@ -169,12 +188,21 @@ getPackageInfoList = () -> flatten (
 	  else {})
 
 tallyInstalledPackages = () -> for prefix in prefixPath do (
-     if not isDirectory prefix then continue;
+     if not isDirectory prefix then (
+	  remove(installedPackagesByPrefix,prefix);
+	  continue;
+	  );
      currentLayoutIndex := detectCurrentLayout prefix;
-     if currentLayoutIndex === null then continue;
+     if currentLayoutIndex === null then (
+	  remove(installedPackagesByPrefix,prefix);
+	  continue;
+	  );
      layout := Layout#currentLayoutIndex;
      docdir := prefix | layout#"docdir";
-     if not isDirectory docdir then continue;
+     if not isDirectory docdir then (
+	  remove(installedPackagesByPrefix,prefix);
+	  continue;
+	  );
      -- note: we assume that the packagedoc directory is obtained from the docdir directory by appending the name of the package, as here in Layout#1
      --   docdir => share/doc/Macaulay2/
      --   packagedoc => share/doc/Macaulay2/PKG/
@@ -188,16 +216,22 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 	  installedPackagesByPrefix#prefix = new HashTable from {
 	       "docdir time stamp" => docdirtime,
 	       "package table" => p := new MutableHashTable};
-	  for pkgname in readDirectory docdir list if pkgname =!= "." and pkgname =!= ".." and isDirectory (docdir | pkgname) then (
+	  for pkgname in readDirectory docdir do if pkgname =!= "." and pkgname =!= ".." and isDirectory (docdir | pkgname) then (
 	       dbfn := databaseFilename (layout,prefix,pkgname);
 	       if not fileExists dbfn then continue;	    -- maybe installation was interrupted, so ignore this package
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);))
      else (
 	  -- no packages have been added or removed, so scan the packages previously encountered
+	  -- well, sometimes it takes less than a second to uninstall a package, so be careful about that case
 	  p = installedPackagesByPrefix#prefix#"package table";
 	  for pkgname in keys p do (
 	       q := p#pkgname;
 	       dbfn := q#"doc db file name";
+	       if not (isDirectory (docdir | pkgname) and fileExists dbfn) then (
+		    -- it must have been removed in less than a second; this can happen if you remove two packages, because it rescans each time
+		    remove(p,pkgname);
+		    continue;
+		    );
 	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);)))     
 

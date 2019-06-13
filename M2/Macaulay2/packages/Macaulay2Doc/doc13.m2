@@ -179,18 +179,6 @@ document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)
 	  }
      }
 
-document { Key => separateRegexp,
-     Headline => "separate a string into pieces, with separators determined by a regular expression" }
-document { Key => (separateRegexp, String, String),
-     Usage => "separateRegexp(sep,str)",
-     Inputs => { "sep" => "a regular expression" , "str" => "a string to be separated" },
-     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by ", TT "sep" } },
-     EXAMPLE { ///separateRegexp("-", "asdf-qwer-dfadf")/// }}
-document { Key => (separateRegexp, String, ZZ, String),
-     Usage => "separateRegexp(sep,n,str)",
-     Inputs => { "sep" => "a regular expression" , "n", "str" => "a string to be separated" },
-     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of ", TT "sep" } },
-     EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
 document { Key => tutorial,
      Headline => "convert documentation from tutorial format",
      Usage => "tutorial x",
@@ -365,22 +353,6 @@ document { Key => (conjugate,Partition),
      	  partitions 4
 	  conjugate \ oo
      ///}
-document { Key => partitions,
-     Headline => "list the partitions of an integer" }
-document { Key => (partitions, ZZ, ZZ),
-     Usage => "partitions(n,k)",
-     Inputs => { "n", "k" },
-     Outputs => {{"a list of the partitions of the integer ", TT "n", " as a sum of terms each of which does not exceed ", TT "k"}},
-     PARA { "Each partition is a basic list of type ", TO "Partition", "." },
-     SeeAlso => {Partition, (partitions, ZZ)},
-     EXAMPLE "partitions(4,2)"}
-document { Key => (partitions, ZZ),
-     Usage => "partitions n",
-     Inputs => { "n" },
-     Outputs => {{"a list of the partitions of the integer ", TT "n"}},
-     PARA { "Each partition is a basic list of type ", TO "Partition", "." },
-     SeeAlso => {Partition,(partitions, ZZ, ZZ)},
-     EXAMPLE "partitions 4"}
 document { Key => UpdateOnly,
      Headline => "only copies of newer files should replace files" }
 document { Key => [copyDirectory, UpdateOnly],
@@ -784,6 +756,7 @@ document { Key => {(unbag, Bag), unbag},
      ///
      }
 document { Key => {undocumented,(undocumented, Thing), (undocumented, List)},
+     Headline => "declare that something need not be documented",
      Usage => "undocumented key",
      Inputs => { "key" => { "a documentation key, or a list of keys" }},
      Consequences => { { "the documentation key(s) are designated as keys not needing documentation, thus avoiding warning messages when a package is installed" }},
@@ -834,25 +807,35 @@ document { Key => "documentation keys",
      ///
      }
 
-document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
+document { Key => {about, [about, Body], Body, (help,ZZ), (about,Function), (about,String), (about,Symbol), (about,Type)},
+     Headline => "search the documentation",
      Usage => "about s",
      Inputs => { 
 	  "s" => { ofClass { String, Function, Symbol, Type } },
-	  SearchBody => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
+	  Body => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
 	  },
      Outputs => {
-	  NumberedVerticalList => { "a list of documentation node keys containing ", TT "s", ".  If ", TT "s", " is not a string, then it must
-	       appear as a complete word." }},
+	  NumberedVerticalList => { "a list of documentation node keys matching the regular expression in the string ", TT "s", ", if ", TT "s", " is a string.
+	       Otherwise the search matches against the name of ", TT "s", " as a complete word." 
+	       }
+	  },
      PARA {
-	  "The documentation corresponding to the keys can be displayed by applying the function ", TO "help", " to the resulting list.
-	  To see the documentation corresponding to just one or some of the keys, help ", TO "help", " an integer or a list of integers
-	  to be used for indexing into the list returned by the most recent application of ", TO "about", "."
+	  "The documentation corresponding to the keys in the list returned can be displayed by applying the function ", TO "help", " to it.
+	  To see the documentation corresponding to just one or some of the keys, give ", TO "help", " an integer or a list of integers
+	  to be used as indices in the list returned by the most recent application of ", TO "about", "."
+	  },
+     PARA {
+	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", ".
+	  The first search will take a few seconds while it reads all the documentation keys into memory."
 	  },
      ---- this example won't work until after Macaulay2Doc is installed.
      -- EXAMPLE lines ///
      -- about resolution
      -- help 5
      -- ///,
+     Caveat => { "Since ", TT "s", " is taken as a regular expression, parentheses
+	  serve for grouping subexpressions, rather than matching themselves."
+	  },
      SeeAlso => { help, apropos }
      }
 
