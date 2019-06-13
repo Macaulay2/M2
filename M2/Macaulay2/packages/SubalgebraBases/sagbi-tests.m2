@@ -14,6 +14,17 @@ genericminors = (minorsize,rowsize,colsize) -> (
 --------------------------------------------
 -- test top-level and engine strategies on trivial example
 TEST ///
+R=QQ[x,y]
+S=matrix{{x+y^2,x^2+2*x*y}}
+subalgebraBasis(S,PrintLevel=>1)--top level
+subalgebraBasis(S,PrintLevel=>1,Strategy=>Engine)
+R=QQ[x,y,MonomialOrder=>Lex]
+S=matrix{{x+y^2,x^2+2*x*y}}
+subalgebraBasis(S,PrintLevel=>1)--top level
+subalgebraBasis(S,PrintLevel=>1,Strategy=>Engine)
+///
+
+TEST ///
 R=QQ[x,y,MonomialOrder=>Lex]
 M=matrix{{x+y,x*y,x*y^2}}
 assert(subalgebraBasis(M,Limit=>3)==M)
