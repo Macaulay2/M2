@@ -1,9 +1,5 @@
 -- -*- coding: utf-8 -*-
 
-i := getSymbol "i"
-QQi := QQ(monoid [i])
-F := toField (QQi / QQi_0^2)
-
 newPackage (
 	"DiffAlg",
 	Version => "1.5",
@@ -21,28 +17,16 @@ newPackage (
 		{ Name => "Federico Quallbrunn",
 		  Email => "fquallb@dm.uba.ar",
 		  HomePage => ""}
+
 	},
 	Headline => "Specialized routines for differential forms",
 	Configuration => { 
-		"BaseRing" => F,
+		"BaseRing" => toField(QQ[i]/(i^2+1)),
 		"VariableName" => "x",
 		"DiffName" => "d",
 		"FieldName" => "a"
 	},
-	Certification => {
-	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
-	     "article title" => "DiffAlg: a Differential algebra package",
-	     "acceptance date" => "19 November 2018",
-	     "published article URI" => "https://msp.org/jsag/2019/9-1/p02.xhtml",
-	     "published article DOI" => "10.2140/jsag.2019.9.11",
-	     "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x02-DiffAlg.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/DiffAlg.m2",
-	     "release at publication" => "fb0887a15f6ff5ec7f940f60ad46f738412924cd",	    -- git commit number in hex
-	     "version at publication" => "1.5",
-	     "volume number" => "9",
-	     "volume URI" => "https://msp.org/jsag/2019/9-1/"
-	     }
+	DebuggingMode => false
 )
 
 export {
@@ -62,7 +46,6 @@ export {
 	"DiffAlgField",
 	"DiffAlgDistribution",
 	"projectivize"
-	
 }
 
 DiffAlgElement = new Type of HashTable;
