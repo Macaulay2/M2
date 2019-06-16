@@ -6,8 +6,8 @@ F := toField (QQi / (QQi_0^2+1))
 
 newPackage (
 	"DiffAlg",
-	Version => "1.6",
-	Date => "June, 2019",
+	Version => "1.5",
+	Date => "October, 2018",
 	Authors => {
 		{ Name => "Manuel Dubinsky",
 		  Email => "manudubinsky@gmail.com",
