@@ -101,7 +101,6 @@ export{
     "Substitution",
 
 --Frobenius Powers (frobeniusPowers.m2)
-    "fastExponentiation",
     "frobenius",
     "frobeniusPower",
     "FrobeniusPowerStrategy",
@@ -117,7 +116,7 @@ export{
     "frobeniusTraceOnCanonicalModule", --Karl (this is Moty's find u function, but it returns a list if Macaulay2 doesn't identify 1 element).
     "isCohenMacaulay", --Karl (added recently, if anyone has ideas to improve this...)
     "isFRational", --Karl (added recently).
-    "IsLocal", --an option for isCohenMacaulay, isFRational, etc.
+    "AtOrigin", --an option for isCohenMacaulay, isFRational, etc.
     "testModule", --Karl (this subsumes a bunch of older functions)
     "parameterTestIdeal",
 
