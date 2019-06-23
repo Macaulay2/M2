@@ -30,9 +30,25 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     UL {
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added." }
+		    }
+	       },
+	  LI { "functionality added or improved:",
+          UL {
+              LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
+                  created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, GRevLex
+                      group counts as a block)"
+                  }
+              }
+          }
+	  }
      }
-
+ 
 document {
      Key => "changes, 1.14",
      UL {
@@ -79,7 +95,27 @@ document {
                          using this package."
 			 }
 		    }
-	       }
+	       },
+	  LI { "new constants and operators:",		    -- get this with : git diff version-1.13 ../../m2/exports.m2
+	       UL {
+		    LI { "The symbol ", TO "Jupyter", " has been added." },
+		    LI { "The type ", TO "MultigradedBettiTally", " has been added." },
+		    LI { "The function ", TO "multigraded", " has been added." }
+		    }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.14%22+is%3Aclosed","closed 1.14 issues"}, ",
+			 for the issues and pull requests incorporated into 1.14."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.14","1.14 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.14."
+			 }
+		    }
+	       }	  
 	  }
      }
 

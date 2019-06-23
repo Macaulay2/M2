@@ -44,6 +44,7 @@ ifeq ($(DEBUG),yes)
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY := $(DIRECTORY).debug
 else
+CONFIGOPTIONS += --enable-strip
 ifeq ($(DEBIAN),yes)
 CONFIGOPTIONS += --enable-deb
 else

@@ -1014,7 +1014,7 @@ document { Key => {MultigradedBettiTally,
     SeeAlso => { BettiTally }
     }
 
-document { Key => { (multigraded, BettiTally) },
+document { Key => { (multigraded, BettiTally), multigraded },
     Headline => "convert a Betti tally into a multigraded Betti tally",
     Usage => "multigraded t",
     Inputs => { "t" => BettiTally },

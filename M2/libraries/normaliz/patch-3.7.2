@@ -1,0 +1,21 @@
+diff -ur /mike-raid/home/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/habanero-release-1.14/libraries/normaliz/tmp/normaliz-3.7.2/configure.ac normaliz-3.7.2/configure.ac
+--- /mike-raid/home/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/habanero-release-1.14/libraries/normaliz/tmp/normaliz-3.7.2/configure.ac	2019-04-26 07:54:38.000000000 -0400
++++ normaliz-3.7.2/configure.ac	2019-05-27 05:47:16.021329601 -0400
+@@ -214,7 +214,7 @@
+     [:],
+     [enable_flint=check])
+ AS_IF([test "x$enable_flint" != xno],
+-    [FLINT_LIBS="-lflint -lmpfr"
++    [FLINT_LIBS="-lflint -lmpfr -lgc"
+      LIBS_SAVED="$LIBS"
+      LIBS="$LIBS $FLINT_LIBS"
+      AC_CHECK_LIB(flint,dummy_fn_to_prevent_ISOC_warning,[have_flint=yes],[have_flint=no])
+@@ -247,7 +247,7 @@
+     [enable_enfnormaliz=check])
+ AS_IF([test "x$enable_enfnormaliz" != xno],
+     [AC_MSG_CHECKING([whether e-antic headers and library are available])
+-     E_ANTIC_LIBS="-leanticxx -leantic -larb -lflint -lmpfr"
++     E_ANTIC_LIBS="-leanticxx -leantic -larb -lflint -lmpfr -lgc"
+      LIBS_SAVED="$LIBS"
+      LIBS="$LIBS $E_ANTIC_LIBS"
+      AC_LINK_IFELSE(
