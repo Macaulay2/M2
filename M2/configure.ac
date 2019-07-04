@@ -1619,7 +1619,7 @@ else lapack_found=no
 	 [USE_FCLIBS=no; blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
 	 [LINALGLIBS= LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
      if test $blas_found = no
-     then AC_MSG_CHECKING([whether package blas is provided])
+     then AC_MSG_CHECKING([whether package blas is provided (by pkg-config)])
 	  if pkg-config --exists blas
 	  then AC_MSG_RESULT(yes)
 	       blas_found=yes
@@ -1631,7 +1631,7 @@ else lapack_found=no
 	  fi
      fi
      if test $lapack_found = no
-     then AC_MSG_CHECKING([whether package lapack is provided])
+     then AC_MSG_CHECKING([whether package lapack is provided (by pkg-config)])
 	  if pkg-config --exists lapack
 	  then AC_MSG_RESULT(yes)
 	       lapack_found=yes
@@ -1660,8 +1660,9 @@ else lapack_found=no
      fi
      if test $blas_found = no -o $lapack_found = no
      then BUILD_lapack=yes
+          LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
+     else LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
      fi
-     LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
 fi
 
 if test $BUILD_lapack = yes
