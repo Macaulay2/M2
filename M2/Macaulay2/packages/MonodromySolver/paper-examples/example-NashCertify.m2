@@ -21,7 +21,7 @@ s = 0
 setRandomSeed s
 (c0,pre0) = createSeedPair G
 assert(norm sub(matrix{specializeSystem(c0,G)},matrix pre0) < 0.001)
-(node,n') = monodromySolve(transpose G.PolyMap,c0,{pre0},
+(node,n') = monodromySolve(polySystem G.PolyMap,c0,{pre0},
     NumberOfEdges => 3,
     NumberOfNodes => 3,
     TargetSolutionCount => mixedVolume,

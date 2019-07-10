@@ -10,6 +10,9 @@ undocumented{(inverseMat, IntervalMatrix), (net, Interval),
     (krawczykOper, Matrix, IntervalMatrix, PolySystem, IntervalOptionList),
     ingredientsForKoper, (ingredientsForKoper, PolySystem, IntervalOptionList),
     intervalJacMat, (intervalJacMat, PolySystem, IntervalOptionList), inverseMat,
+    sqabsForGaussianRational, (sqabsForGaussianRational, RingElement),
+    conjugateGaussian, (conjugateGaussian, RingElement),
+    conjugateGaussianRationalMatrix, (conjugateGaussianRationalMatrix, Matrix),
     subOnMonomial, (subOnMonomial, Number, IntervalOption), (subOnMonomial,RingElement, IntervalOption)}
 
 

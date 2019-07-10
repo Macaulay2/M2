@@ -1,12 +1,12 @@
 restart ---------------------------------------------------------------------
-load "../cyclic.m2"
+load "cyclic.m2"
 nedges = 3
 setRandomSeed 0
 polys = parametrizedCyclic 10 
 (p0,x0) = createSeedPair polySystem polys
 elapsedTime mixedVolume = computeMixedVolume specializeSystem (p0,polys)
 elapsedTime (V,npaths) = monodromySolve(polys,p0,{x0},NumberOfEdges=>nedges,
-    NumberOfNodes=>2, TargetSolutionCount=>mixedVolume, Verbose=>true)
+    NumberOfNodes=>2, TargetSolutionCount=>1000, Verbose=>true)
 getTrackTime V.Graph
 -* -- Anton's office machine:
 mixedVolume = 35940

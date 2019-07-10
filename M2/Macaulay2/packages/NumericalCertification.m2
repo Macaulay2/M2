@@ -45,7 +45,10 @@ export {"pointNorm",
     "IntervalOptionList",
     "ingredientsForKoper",
     "inverseMat",
-    "intervalJacMat"}
+    "intervalJacMat",
+    "sqabsForGaussianRational",
+    "conjugateGaussian",
+    "conjugateGaussianRationalMatrix"}
 exportMutable {}
 
 
@@ -58,14 +61,43 @@ IntervalOptionList = new Type of List
 net Interval := i -> net "[" | net first i | ", " | net last i | "]" 
 
 
+conjugateGaussian = method()
+conjugateGaussian(RingElement) := x -> (
+    R := ring x;
+    var := first gens R;
+    x - 2* var * coefficient(var, x)
+    )
+
+conjugateGaussianRationalMatrix = method()
+conjugateGaussianRationalMatrix(Matrix) := m -> (
+    matrix apply(entries m, k -> apply(k, i -> conjugateGaussian i))
+    )
 
 
+sqabsForGaussianRational = method()
+sqabsForGaussianRational(RingElement) := x -> (
+    R := ring x;
+    var := first gens R;
+    rationalRing := coefficientRing R;
+    sub((coefficient(var, x))^2, rationalRing) + sub((x - var * coefficient(var, x))^2, rationalRing)
+    )
 
 pointNorm = method()
 pointNorm(Point) := x -> (
     coordinateList := x#Coordinates;
     -- returns the square of the norm
-    1 + sum(apply(coordinateList, x -> x^2))
+    R := ring first coordinateList;
+    if precision R =!= infinity then (
+    	1 + sum(apply(coordinateList, i -> abs(i)^2))
+	)
+    else if R =!= QQ then (
+	var := first gens R;
+	rationalRing := coefficientRing R;
+	1 + sum apply(coordinateList, i -> sqabsForGaussianRational i)
+	)
+    else (
+    	1 + sum(apply(coordinateList, i -> i^2))
+	)
     )
 
 
@@ -75,16 +107,30 @@ polyNorm(Number) := r -> (
     abs(r)^2
     )
 polyNorm(RingElement) := r -> (
+    R := coefficientRing ring r;
     L := listForm r;
-    sum(L,a->(
+    if precision R =!= infinity then (
+	sum(L,a->(
+		(e,c) := a;
+		abs(c)^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+		)
+	)
+    )
+    else if R =!= QQ then (
+	var := first gens R;
+	rationalRing := coefficientRing R;
+    	sum(L,a->(
 	(e,c) := a;
-	if c > 0 then (
-	    c^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
-	    )
-	else (
-	    ((-1)*c)^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
-	    )
+	    (sqabsForGaussianRational c)*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
  	))
+	)
+    else (
+	sum(L,a->(
+		(e,c) := a;
+		(c^2)*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+		)
+	)
+	)
     )
 
 
@@ -103,12 +149,9 @@ newtonOper = method()
 newtonOper(PolySystem, Point) := (f, x) -> (
     jacOfPoly := jacobian f;
     evalJac := evaluate(jacOfPoly, x);
-    if det evalJac == 0 then ( x )
-    else (
     inverseOfJac := inverse(evalJac);
     evalSys := evaluate(f, x);
     point {transpose (matrix x) - inverseOfJac * evalSys}
-    )
     )
     
 
@@ -119,32 +162,38 @@ computeConstants(PolySystem, Point) := (f, x) -> (
     J := evaluate(jacobian f, x);
     inverseJ := inverse J;
     R := coefficientRing ring f;
+    pointNormx := pointNorm x;
+    degs := select(flatten apply(eqs, i -> degree i), i -> i =!= 0);
     if precision R =!= infinity then (
 	R = R;
     	if det J == 0 then error "The Jacobian is not invertible";
+    	-- beta
+    	y := point(inverseJ * evaluate(f,x));
+    	beta := sub(sum apply(y#Coordinates, i -> abs(i)^2),R);
+    	deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNormx)^(i-1))); 
+     	mu := max {1, polySysNorm(f) * (norm(2,inverseJ * deltaD))^2};
 	)
     else if R =!= QQ then (
+	var := first gens R;
 	R = coefficientRing R;
 	print "Warning: invertibility check for Jacobian is skipped for Gaussian rational inputs";
+    	-- beta
+    	y = point(inverseJ * evaluate(f,x));
+    	beta = sub(sum apply(y#Coordinates, i -> sqabsForGaussianRational i),R);
+    	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1)); 
+	sqFrobenius := trace(inverseJ * deltaD * (transpose conjugateGaussianRationalMatrix inverseJ));
+     	mu = max {1, polySysNorm(f) * (sub((coefficient(var, sqFrobenius))^2, R) + sub((sqFrobenius - var * coefficient(var,sqFrobenius)), R))};  
 	)
     else (
 	R = R;
     	if det J == 0 then error "The Jacobian is not invertible";
-	); 
-    pointNormx := pointNorm x;
-    -- beta
-    y := point(inverseJ * evaluate(f,x));
-    beta := sub(sum apply(y#Coordinates, i -> i^2),R);
-    -- gamma
-    degs := select(flatten apply(eqs, i -> degree i), i -> i =!= 0);
-    if class x#Coordinates#0 === RR or class x#Coordinates#0 === CC then (
-    	deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNormx)^(i-1))); 
-     	mu := max {1, polySysNorm(f) * (norm(2,inverseJ * deltaD))^2};
-	)
-    else (
+    	-- beta
+    	y = point(inverseJ * evaluate(f,x));
+    	beta = sub(sum apply(y#Coordinates, i -> i^2),R);
     	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1)); 
      	mu = max {1, polySysNorm(f) * trace(inverseJ * deltaD * (transpose inverseJ))};  
-	);
+	); 
+    -- gamma
     gamma := sub(mu*((max degs)^3)/(4* pointNormx), R);
     alpha := sub(beta * gamma, R);
     (alpha, beta, gamma)
@@ -213,9 +262,10 @@ certifyRealSoln(PolySystem, Point) := (f, x) -> (
 	R = R;
 	); 
     normOfimagPart := sum apply(imagPart, i -> sub(i^2,R));
-    if normOfimagPart > 4*beta then false
+    if (normOfimagPart > 4*beta) then false
     else if alpha < 9/10000 and normOfimagPart < 1/(400*gamma) then true
     else (
+	print "apply more Newton's operators!";
     false
     )
     )
@@ -501,7 +551,6 @@ IntervalMatrix * IntervalMatrix := (l, n) -> (
     intervalMatrix mat
     )
 
-
 -- intervalMatrixNorm computes the norm of interval matrix, an interval extension of the maximum row sum norm
 intervalMatrixNorm = method()
 intervalMatrixNorm(IntervalMatrix) := i -> (
@@ -673,9 +722,9 @@ krawczykMethod(PolySystem, IntervalOptionList) := o -> (polySys, option) -> (
 	    sub(coefficient(var,kOperator#i#0#1), rationalRing)  
 	    > sub(coefficient(var, sub(intervalList#i#1, R)), rationalRing) or
 	    sub(kOperator#i#0#0 - coefficient(var,kOperator#i#0#0), rationalRing) 
-	    < sub(intervalList#i#0 - coefficient(var,sub(intervalList#i#0, R)), rationalRing) or
+	    < sub(intervalList#i#0 - var * coefficient(var,sub(intervalList#i#0, R)), rationalRing) or
 	    sub(kOperator#i#0#1 - coefficient(var,kOperator#i#0#1), rationalRing) 
-	    > sub(intervalList#i#1 - coefficient(var,sub(intervalList#i#1, R)), rationalRing)
+	    > sub(intervalList#i#1 - var * coefficient(var,sub(intervalList#i#1, R)), rationalRing)
 	    ) 
     	then  break k = 1;
 	)
