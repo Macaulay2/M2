@@ -7,7 +7,12 @@ URL = http://www.coin-or.org/download/source/Csdp
 TARFILE = Csdp-$(VERSION).tgz
 
 CONFIGURECMD = true
-BUILDOPTIONS = CC="$(CC) $(OPENMP_CXXFLAGS)" CXX="$(CXX) $(OPENMP_CXXFLAGS)" LDFLAGS="$(LDFLAGS) $(OPENMP_CXXFLAGS)" LDLIBS="$(LDLIBS) @OPENMP_LIBS@" #PREFIX=/nowhere
+BUILDOPTIONS  = CC="$(CC) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += CXX="$(CXX) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += LDFLAGS="$(LDFLAGS) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += LDLIBS="$(LDLIBS) @OPENMP_LIBS@"
+BUILDOPTIONS += LIBS="-L../lib -lsdp @LINALGLIBS@ @FCLIBS_DYNAMIC@ -lm"
+
 #INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 
 # the test uses too much memory, leading to "libgomp: Thread creation failed: Resource temporarily unavailable", so we disable it
