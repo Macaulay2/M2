@@ -14,7 +14,7 @@ URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\
-	CFLAGS="$(CFLAGS)"				\
+	CXXFLAGS="$(CXXFLAGS)"				\
 	CXX="$(CXX)"					\
 	LDFLAGS="$(LDFLAGS)"				\
 	CPPFLAGS="$(CPPFLAGS)"				\
