@@ -204,7 +204,7 @@ certifySolution = method() -- returns null if not successful, (alpha,beta,gamma)
 certifySolution(PolySystem, Point) := (f, x) -> (
     alpha := first computeConstants(f,x);
     -- check: alpha < (13-3*sqrt(17))/4
-    if 16*alpha < 169 and (322-16*alpha)^2 > 78*78*17 then alpha else null
+    if 16*alpha < 169 and (322-16*alpha)^2 > 78*78*17 then true else false
     )
 
 certifyDistinctSoln = method()
@@ -282,8 +282,8 @@ certifyCount(PolySystem, List) := (f, X) -> (
     else (
  	R = R;
 	); 
-    Y := select(X, i->certifySolution(f,i)=!=null); 
-    C := select(apply(X, i->certifySolution(f,i)), i->i=!=null); -- Can we have this without using function twice?
+    Y := select(X, i->certifySolution(f,i)=!=false); 
+    C := apply(X, i-> first computeConstants(f,i)); -- Can we have this without using function twice?
     S := new MutableList from Y;
     for i from 0 to length(Y) - 1 do S#i = true;
     for i from 0 to length(Y) - 2 do for j from i+1 to length(Y) - 1 do if (
