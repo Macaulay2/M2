@@ -71,7 +71,7 @@ doc ///
 		    p1 = point{{.95, .32, -.30, .95}};
 		    p2 = point{{.9, .3, -.3, 1}}; -- poorly approximated solution
 		Text
-		    It shows the square of alpha value of the certified solution.
+		    It shows the results of the certification.
 		Example
 		    certifySolution(f,p1)
 		    certifySolution(f,p2) -- not an approximate solution
@@ -244,9 +244,6 @@ doc ///
 	Inputs
             PS:PolySystem
 	    P:List
-	Outputs
-	    alpha:Number
-	          a square of the alpha value for a given certified solution
 	Description
 	    Text
     	    	This function executes the alpha test based on the value computed by @TO "computeConstants"@.
