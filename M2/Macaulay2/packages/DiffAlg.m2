@@ -2,7 +2,7 @@
 
 i := getSymbol "i"
 QQi := QQ(monoid [i])
-F := toField (QQi / QQi_0^2)
+F := toField (QQi / (QQi_0^2+1))
 
 newPackage (
 	"DiffAlg",
