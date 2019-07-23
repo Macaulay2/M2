@@ -541,6 +541,14 @@ export rawMonomialOrderingToMatrix(e:Expr):Expr := (
 	      toExpr(Ccode(RawArrayIntOrNull, "rawMonomialOrderingToMatrix(", m.p, ")"))
      else WrongArg("a monomial ordering"));
 setupfun("rawMonomialOrderingToMatrix",rawMonomialOrderingToMatrix);
+
+export rawMonoidNumberOfBlocks(e:Expr):Expr := (
+     when e
+     is m:RawMonoidCell do toExpr(Ccode( int, "rawMonoidNumberOfBlocks(", m.p, ")" ))
+     else WrongArg("a monoid"));
+setupfun("rawMonoidNumberOfBlocks",rawMonoidNumberOfBlocks);
+
+
 -----------------------------------------------------------------------------
 -- monoids
 
@@ -4030,15 +4038,19 @@ export rawHermiteNormalForm(e:Expr):Expr := (
 setupfun("rawHermiteNormalForm",rawHermiteNormalForm);
 
 export rawSubduction(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
-     when s.0 is M:RawMatrixCell do
-     when s.1 is F:RawRingMapCell do 
-     when s.2 is G:RawComputationCell do toExpr(
-	  Ccode(RawMatrixOrNull, "rawSubduction(", M.p, ", ", F.p, ", ", G.p, ")" ))
-     else WrongArg(3,"a raw computation")
-     else WrongArgMatrix(2)
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(3));
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
+     when s.0 is numparts:ZZcell do
+     if isInt(numparts) then 
+     when s.1 is M:RawMatrixCell do
+     when s.2 is F:RawRingMapCell do 
+     when s.3 is G:RawComputationCell do toExpr(
+	  Ccode(RawMatrixOrNull, "rawSubduction(", toInt(numparts), ",", M.p, ", ", F.p, ", ", G.p, ")" ))
+     else WrongArg(4,"a raw computation")
+     else WrongArgMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgSmallInteger(1)
+     else WrongNumArgs(4));
 setupfun("rawSubduction",rawSubduction);
 
 -----------------------------------------------------------------------------
