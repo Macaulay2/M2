@@ -1,11 +1,12 @@
 # temporary beta testing version
-VERSION = 1.6.7
+VERSION = 1.6.9
 TARDIR = 4ti2-$(VERSION)
 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 # URL = http://www.4ti2.de/version_$(VERSION)
+# URL = https://github.com/4ti2/4ti2/releases/download/Release_1_6_9/4ti2-1.6.9.tar.gz
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 STRIPFILES =					\
 	src/groebner/4ti2int32@EXEEXT@		\

@@ -5,7 +5,7 @@ dnl appears as a literal value.
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
 
-dnl Things to do when incrementing the version number to X.Y.Z :
+dnl Things to do when incrementing the version number to X.Y.Z (or X.Y) :
 dnl    - increment the version number in the AC_INIT macro below
 dnl    - add an entry to distributions/deb/changelog
 dnl    - commit those two changed files
@@ -16,20 +16,22 @@ dnl           git checkout -b release-X.Y.Z
 dnl    - push the new branch to github and track it
 dnl           git push -u origin release-X.Y.Z
 dnl    - push the new tag to github
-dnl           git push --tags origin release-X.Y.Z
-dnl    - on the master branch, if a new branch was made for development,
-dnl      increment the version number again to X.Y.Z.1 in this file and add an
+dnl           git push --tags origin version-X.Y.Z
+
+dnl Things to do when the release has been accomplished and pulling from the master branch to the release branch will not be needed:
+dnl    - on the master branch, increment the version number to X.Y.Z.1 in this file and add an
 dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
-dnl      omitted above.  Commit that change and make a tag.
+dnl      omitted above.  Commit that change and make a tag.  I.e.:
 dnl           git checkout master
-dnl           # edit two files, as above
+dnl           # edit two files, as above, and commit
 dnl           git tag version-X.Y.Z.1
+dnl           git push --tags origin version-X.Y.Z.1
 
 dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.13.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.14.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -1617,7 +1619,7 @@ else lapack_found=no
 	 [USE_FCLIBS=no; blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
 	 [LINALGLIBS= LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
      if test $blas_found = no
-     then AC_MSG_CHECKING([whether package blas is provided])
+     then AC_MSG_CHECKING([whether package blas is provided (by pkg-config)])
 	  if pkg-config --exists blas
 	  then AC_MSG_RESULT(yes)
 	       blas_found=yes
@@ -1629,7 +1631,7 @@ else lapack_found=no
 	  fi
      fi
      if test $lapack_found = no
-     then AC_MSG_CHECKING([whether package lapack is provided])
+     then AC_MSG_CHECKING([whether package lapack is provided (by pkg-config)])
 	  if pkg-config --exists lapack
 	  then AC_MSG_RESULT(yes)
 	       lapack_found=yes
@@ -1658,8 +1660,9 @@ else lapack_found=no
      fi
      if test $blas_found = no -o $lapack_found = no
      then BUILD_lapack=yes
+          LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
+     else LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
      fi
-     LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
 fi
 
 if test $BUILD_lapack = yes

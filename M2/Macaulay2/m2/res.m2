@@ -86,7 +86,6 @@ resolutionInEngine := opts -> (M) -> (
 	  then error "fast non-minimal resolutions are implemented only over prime finite fields";
           if flagInhomogeneity then (
 	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
-	       if debugLevel > 0 then stderr << "--res: matrix is homogeneous, good" << endl;
 	       );
 	  g := presentation M;
 	  if not (
