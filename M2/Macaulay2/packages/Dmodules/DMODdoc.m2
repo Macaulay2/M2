@@ -1382,12 +1382,6 @@ document {
      },
 
 document {
-     Key => {Drank, (Drank,Module), (Drank,Ideal) },
-     Headline => "an old name of holonomicRank",
-     SeeAlso => {"holonomicRank"}
-}
-
-document {
      Key => {holonomicRank, (holonomicRank,Module), (holonomicRank,Ideal) },
      Headline => "rank of a D-module",
      Usage => "holonomicRank M, holonomicRank I",

@@ -101,8 +101,8 @@ createCommAlgebra PolynomialRing := W -> (
 
 -- These routines compute the Fourier transform which is the automorhpism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
--- Input: RingElement f, Matrix m, Ideal I, or List L
--- Output: Fourier transform of f, m, I, or L
+-- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
+-- Output: Fourier transform of f, m, I, C, or M
 Fourier = method()
 FourierLocal := M -> (
      W := ring M;
@@ -127,6 +127,8 @@ FourierLocal := M -> (
 Fourier RingElement := M -> (FourierLocal M)
 Fourier Ideal := M -> (FourierLocal M)
 Fourier Matrix := M -> (FourierLocal M)
+Fourier ChainComplex := M -> (FourierLocal M)
+Fourier Module := M -> (cokernel FourierLocal relations prune M)
 
 FourierInverse = method()
 FourierInverseLocal := M -> (
@@ -221,7 +223,7 @@ zeroize Matrix := m -> (
 -- check whether a module is a quotient of a free module.
 --   In the Dmodule code, it appears that this is checked in
 --   3 ways: using isQuotientModule, doing what is done here,
---   and doing what is done here, without the zerioize.
+--   and doing what is done here, without the zeroize.
 ensureQuotientModule = method()
 ensureQuotientModule(Module, String) := (M,errorString) -> (
    F := (ring M)^(numgens source gens M);
@@ -286,16 +288,6 @@ isHolonomic Module := M -> (
 
 -- This routine computes the rank of a D-module
 -- QUESTION: this changes the current ring?
-Drank = method()
-Drank Ideal := I -> (
-     print("WARNING! The function Drank is phased out, use holonomicRank.");
-     holonomicRank I
-     )
-Drank Module := M -> (
-     print("WARNING! The function Drank is phased out, use holonomicRank.");
-     holonomicRank M
-     )
-
 holonomicRank = method()
 holonomicRank Ideal := I -> (
      holonomicRank ((ring I)^1/I)
