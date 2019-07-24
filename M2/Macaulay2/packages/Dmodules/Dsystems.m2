@@ -1,119 +1,169 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+needsPackage "FourTiTwo"; -- Needed only for gkz
 
 -- This routine returns the GKZ hypergeometric system of PDE's associated
 -- to the matrix A and the parameter vector b.
 gkz = method(Options => {Vars => Global} )
-gkz(Matrix, List) := options -> (A, b) -> (
-     d := numgens target A;     
-     n := numgens source A;
-     if (d != #b) then
-       error "expected number of rows of A to same as length of b in gkz(A,b)";
-     y := symbol y;
-     S := QQ[y_1 .. y_n];
-     tempList := {};
-     i := 0;
-     Ker := kernel A;
-     B := generators Ker;
-     while i < numgens Ker do (
-	  posComp := {};
-	  negComp := {};
-	  j := 0;
-	  while j < n do (
-	       if B_i_j >= 0 then (
-		    posComp = append(posComp, B_i_j);
-		    negComp = append(negComp, 0);)
-	       else (
-		    posComp = append(posComp, 0);
-		    negComp = append(negComp, -B_i_j);
-		    );
-	       j = j+1;
-	       );
-	  tempList = append(tempList,
-	       product(posComp, toList(y_1..y_n), (k,l)->l^k) -
-	       product(negComp, toList(y_1..y_n), (k,l)->l^k));
-	  i = i+1;
-	  );
-     -- should do smarter saturation in future
-     J := saturate ( ideal(tempList), product toList(y_1..y_n) );
-     -- local version: better way to do this?
-     if options.Vars == Local then (
-	  u := symbol u;
-	  Du := symbol Du;
-	  R := QQ[u_1 .. u_n, Du_1 .. Du_n,
-	       WeylAlgebra => (toList(1..n)) / (i->(u_i=>Du_i))];
-     	  StoR := map(R, S, (vars R)_{n..numgens R - 1});
-     	  i = 0;
-     	  tempList = {};
-     	  while i < d do (
-	       tempList = append(tempList,
-	       	    sum(1..n, j -> (A^{i}_(0,j-1))*u_j*Du_j) - b#i);
-	       i = i+1;
-	       );     
-     	  out := (StoR J) + ideal(tempList);
-	  )
-     else (
-	  D := symbol D;
-	  x := symbol x;
-     	  R = QQ[x_1 .. x_n, D_1 .. D_n,
-	       WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i))];  
-     	  StoR = map(R, S, (vars R)_{n..numgens R - 1});
-     	  i = 0;
-     	  tempList = {};
-     	  while (i < d) do (
-	       tempList = append(tempList,
-	       	    sum(1..n, j -> (A^{i}_(0,j-1))*x_j*D_j) - b#i);
-	       i = i+1;
-	       );     
-     	  out =(StoR J) + ideal(tempList)
-	  );
-     out)
+gkz(Matrix, List, Ring) := options -> (A, b, W) -> (
+    d := numgens target A;
+    n := numgens source A;
+    if W.monoid.Options.WeylAlgebra === {} then 
+        error "expected a Weyl algebra";
+    if (d != #b) then
+        error "expected number of rows of A to equal length of b in gkz(A,b)";
+    
+    -- Extract the polynomial ring of the partials
+    createDpairs W;
+    partialsRing := (coefficientRing W)( monoid [W.dpairVars#1] );
+    
+    -- Make the toric ideal
+    toricIdeal := toricMarkov(A, partialsRing);
+    
+    -- Make the Euler operators
+    eulerOpsWithBeta := apply(d, 
+	i -> sum(n, j -> A_(i,j) * W.dpairVars#0#j * W.dpairVars#1#j) - b#i);
+    
+    -- Make the gkz ideal
+    ideal eulerOpsWithBeta + (map(W, partialsRing)) toricIdeal
+    )
 
-///
-gkz Matrix := options -> A -> (
-     d := numgens target A;     
-     n := numgens source A;
-     y := symbol y;
-     S := QQ[y_1 .. y_n];
-     tempList := {};
-     i := 0;
-     Ker := kernel A;
-     B := generators Ker;
-     while i < numgens Ker do (
-	  posComp := {};
-	  negComp := {};
-	  j := 0;
-	  while j < n do (
-	       if B_i_j >= 0 then (
-		    posComp = append(posComp, B_i_j);
-		    negComp = append(negComp, 0);)
-	       else (
-		    posComp = append(posComp, 0);
-		    negComp = append(negComp, -B_i_j);
-		    );
-	       j = j+1;
-	       );
-	  tempList = append(tempList,
-	       product(posComp, toList(y_1..y_n), (k,l)->l^k) -
-	       product(negComp, toList(y_1..y_n), (k,l)->l^k));
-	  i = i+1;
-	  );
-     -- should do smarter saturation in future
-     J := saturate ( ideal(tempList), product toList(y_1..y_n) );
-     D := symbol D; s := symbol s; x := symbol x;
-     R := QQ[s_1 .. s_d, x_1 .. x_n, 
-	  D_1 .. D_n,
-	  WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i)),
-	  MonomialOrder => Eliminate d];
-     StoR := map(R, S, (vars R)_{d+n..numgens R - 1});
-     i = 0;
-     tempList = {};
-     while i < d do (
-	  tempList = append(tempList,
-	       sum(1..n, j -> (A^{i}_(0,j-1))*x_j*D_j) - s_(i+1));
-	  i = i+1;
-	  );     
-     (StoR J) + ideal(tempList))
-///
+gkz(Matrix, List) := options -> (A, b) -> (
+    d := numgens target A;
+    n := numgens source A;
+    if (d != #b) then
+        error "expected number of rows of A to equal length of b in gkz(A,b)";
+    
+    -- local version: better way to do this?
+    if options.Vars == Local then (
+	u := symbol u;
+	Du := symbol Du;
+	W := QQ( monoid [u_1 .. u_n, Du_1 .. Du_n,
+	    WeylAlgebra => (toList(1..n)) / (i->(u_i=>Du_i))] );
+	)
+    -- global version. Right now, this seems to do the same thing as the local version.
+    else (
+	D := symbol D;
+	x := symbol x;
+	W = QQ[x_1 .. x_n, D_1 .. D_n,
+	    WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i))];  
+	);
+    
+    gkz(A, b, W)
+    )
+    
+
+
+-- gkz(Matrix, List) := options -> (A, b) -> (
+--      d := numgens target A;     
+--      n := numgens source A;
+--      if (d != #b) then
+--        error "expected number of rows of A to equal length of b in gkz(A,b)";
+--      y := symbol y;
+--      S := QQ[y_1 .. y_n];
+--      tempList := {};
+--      i := 0;
+--      Ker := kernel A;
+--      B := generators Ker;
+--      while i < numgens Ker do (
+-- 	  posComp := {};
+-- 	  negComp := {};
+-- 	  j := 0;
+-- 	  while j < n do (
+-- 	       if B_i_j >= 0 then (
+-- 		    posComp = append(posComp, B_i_j);
+-- 		    negComp = append(negComp, 0);)
+-- 	       else (
+-- 		    posComp = append(posComp, 0);
+-- 		    negComp = append(negComp, -B_i_j);
+-- 		    );
+-- 	       j = j+1;
+-- 	       );
+-- 	  tempList = append(tempList,
+-- 	       product(posComp, toList(y_1..y_n), (k,l)->l^k) -
+-- 	       product(negComp, toList(y_1..y_n), (k,l)->l^k));
+-- 	  i = i+1;
+-- 	  );
+--      -- should do smarter saturation in future
+--      J := saturate ( ideal(tempList), product toList(y_1..y_n) );
+--      -- local version: better way to do this?
+--      if options.Vars == Local then (
+-- 	  u := symbol u;
+-- 	  Du := symbol Du;
+-- 	  R := QQ[u_1 .. u_n, Du_1 .. Du_n,
+-- 	       WeylAlgebra => (toList(1..n)) / (i->(u_i=>Du_i))];
+--      	  StoR := map(R, S, (vars R)_{n..numgens R - 1});
+--      	  i = 0;
+--      	  tempList = {};
+--      	  while i < d do (
+-- 	       tempList = append(tempList,
+-- 	       	    sum(1..n, j -> (A^{i}_(0,j-1))*u_j*Du_j) - b#i);
+-- 	       i = i+1;
+-- 	       );     
+--      	  out := (StoR J) + ideal(tempList);
+-- 	  )
+--      else (
+-- 	  D := symbol D;
+-- 	  x := symbol x;
+--      	  R = QQ[x_1 .. x_n, D_1 .. D_n,
+-- 	       WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i))];  
+--      	  StoR = map(R, S, (vars R)_{n..numgens R - 1});
+--      	  i = 0;
+--      	  tempList = {};
+--      	  while (i < d) do (
+-- 	       tempList = append(tempList,
+-- 	       	    sum(1..n, j -> (A^{i}_(0,j-1))*x_j*D_j) - b#i);
+-- 	       i = i+1;
+-- 	       );     
+--      	  out =(StoR J) + ideal(tempList)
+-- 	  );
+--      out)
+
+-- ///
+-- gkz Matrix := options -> A -> (
+--      d := numgens target A;     
+--      n := numgens source A;
+--      y := symbol y;
+--      S := QQ[y_1 .. y_n];
+--      tempList := {};
+--      i := 0;
+--      Ker := kernel A;
+--      B := generators Ker;
+--      while i < numgens Ker do (
+-- 	  posComp := {};
+-- 	  negComp := {};
+-- 	  j := 0;
+-- 	  while j < n do (
+-- 	       if B_i_j >= 0 then (
+-- 		    posComp = append(posComp, B_i_j);
+-- 		    negComp = append(negComp, 0);)
+-- 	       else (
+-- 		    posComp = append(posComp, 0);
+-- 		    negComp = append(negComp, -B_i_j);
+-- 		    );
+-- 	       j = j+1;
+-- 	       );
+-- 	  tempList = append(tempList,
+-- 	       product(posComp, toList(y_1..y_n), (k,l)->l^k) -
+-- 	       product(negComp, toList(y_1..y_n), (k,l)->l^k));
+-- 	  i = i+1;
+-- 	  );
+--      -- should do smarter saturation in future
+--      J := saturate ( ideal(tempList), product toList(y_1..y_n) );
+--      D := symbol D; s := symbol s; x := symbol x;
+--      R := QQ[s_1 .. s_d, x_1 .. x_n, 
+-- 	  D_1 .. D_n,
+-- 	  WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i)),
+-- 	  MonomialOrder => Eliminate d];
+--      StoR := map(R, S, (vars R)_{d+n..numgens R - 1});
+--      i = 0;
+--      tempList = {};
+--      while i < d do (
+-- 	  tempList = append(tempList,
+-- 	       sum(1..n, j -> (A^{i}_(0,j-1))*x_j*D_j) - s_(i+1));
+-- 	  i = i+1;
+-- 	  );     
+--      (StoR J) + ideal(tempList))
+-- ///
 
 -- Appell F1 system --
 AppellF1 = method(Options => {Vars => Global})
