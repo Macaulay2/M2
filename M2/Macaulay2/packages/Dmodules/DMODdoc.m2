@@ -19,10 +19,15 @@ TEST /// input "Dmodules/TST/CC.tst.m2" ///
 TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
 TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
 
+input "Dmodules/DMODtutorial.m2"
+
 document {
      Key => "Dmodules",
      Headline => "algorithms for D-modules",
      HEADER3 "How to make Weyl algebras:",
+     
+     "To begin, read the ", TO {"D-modules tutorial"},
+     
      UL{TO {"WeylAlgebra", " -- 
 	       The class of Weyl algebras"}},
      
@@ -2879,5 +2884,6 @@ THE END
 restart
 loadPackage "Dmodules"
 uninstallPackage "Dmodules"
+installPackage("Dmodules")
 installPackage("Dmodules", SeparateExec=>true, RerunExamples=>true)
 check Dmodules
