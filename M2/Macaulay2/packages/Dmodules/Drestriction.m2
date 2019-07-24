@@ -553,7 +553,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 -- ERROR CHECKING
      W := ring M;
      createDpairs W;
-     -- check weight vector
+     -- check weight vector; we need it to be non-negative and to have length 
+     -- equal to the number of x_i's
      if #wt != #W.dpairInds#0
      then error ("expected weight vector of length " | #W.dpairInds#0);
      if any(wt, i -> (i<0))
