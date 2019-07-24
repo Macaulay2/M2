@@ -9,7 +9,7 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "AnnFs","AnnIFs","Dtrace","getDtrace","setHomSwitch","getHomSwitch","localCohom","Walther","OaTa","LocStrategy",
      "OaTaWa","pruneLocalCohom","paramBpoly","GroundField","makeCyclic","Generator","AnnG","isHolonomic","DHom","DExt","Special",
      "None","Info","PolySols","Alg","GD","Duality","PolyExt","RatSols","RatExt","createDpairs","dpairInds",
-     "dpairVars","Fourier","Dtransposition","singLocus","charIdeal","holonomicRank","Drank","Ddim","makeWA"=>"makeWeylAlgebra","makeWeylAlgebra","Ddual","Dlocalize",
+     "dpairVars","Fourier","Dtransposition","singLocus","charIdeal","holonomicRank","Ddim","makeWA"=>"makeWeylAlgebra","makeWeylAlgebra","Ddual","Dlocalize",
      "Oaku","OTW","Dlocalization","DlocalizationAll","DlocalizeMap","LocModule","GeneratorPower","LocMap","annFS",
      "DlocalizeAll","IntegrateBfunction","Bfunction","DlocalizationMap","Dresolution","Schreyer","Vhomogenize","Dres",
      "Drestriction","Drestrict","DrestrictionClasses","DrestrictClasses","DrestrictIdeal","DrestrictAll",
