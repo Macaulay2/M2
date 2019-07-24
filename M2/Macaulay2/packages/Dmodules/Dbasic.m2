@@ -96,35 +96,13 @@ createCommAlgebra PolynomialRing := W -> (
      W.CAtoWA = map(W, W.CommAlgebra, vars W);
      );
 
--- This routine takes a list {k_0 .. k_n} representing the permutation
---            {0   1   ... n  }
---            {k_0 k_1 ... k_n}
--- and returns the list representing the inverse permutation
-invPermute = method()
-invPermute List := L -> (
-     tempL := {};
-     i := 0;
-     while i < #L do (
-          j := 0;
-          tempFlag := false;
-          while j < #L do (
-               if L#j == i then (
-                    tempL = append(tempL, j);
-                    tempFlag = true;
-                    );
-               j = j+1;
-               );
-          if not tempFlag then
-          error "expected list from 0 to n";
-          i = i+1;
-          );
-     tempL)
+
 
 
 -- These routines compute the Fourier transform which is the automorhpism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
--- Input: RingElement f, Matrix m, Ideal I, or List L
--- Output: Fourier transform of f, m, I, or L
+-- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
+-- Output: Fourier transform of f, m, I, C, or M
 Fourier = method()
 FourierLocal := M -> (
      W := ring M;
@@ -149,6 +127,8 @@ FourierLocal := M -> (
 Fourier RingElement := M -> (FourierLocal M)
 Fourier Ideal := M -> (FourierLocal M)
 Fourier Matrix := M -> (FourierLocal M)
+Fourier ChainComplex := M -> (FourierLocal M)
+Fourier Module := M -> (cokernel FourierLocal relations prune M)
 
 FourierInverse = method()
 FourierInverseLocal := M -> (
@@ -243,7 +223,7 @@ zeroize Matrix := m -> (
 -- check whether a module is a quotient of a free module.
 --   In the Dmodule code, it appears that this is checked in
 --   3 ways: using isQuotientModule, doing what is done here,
---   and doing what is done here, without the zerioize.
+--   and doing what is done here, without the zeroize.
 ensureQuotientModule = method()
 ensureQuotientModule(Module, String) := (M,errorString) -> (
    F := (ring M)^(numgens source gens M);
@@ -308,16 +288,6 @@ isHolonomic Module := M -> (
 
 -- This routine computes the rank of a D-module
 -- QUESTION: this changes the current ring?
-Drank = method()
-Drank Ideal := I -> (
-     print("WARNING! The function Drank is phased out, use holonomicRank.");
-     holonomicRank I
-     )
-Drank Module := M -> (
-     print("WARNING! The function Drank is phased out, use holonomicRank.");
-     holonomicRank M
-     )
-
 holonomicRank = method()
 holonomicRank Ideal := I -> (
      holonomicRank ((ring I)^1/I)
@@ -341,7 +311,7 @@ holonomicRank Module := M -> (
      -- commutative ring of derivative variables
      Rvars := symbol Rvars;
      R := (coefficientRing W)(monoid [apply(toList(0..n-1), i -> Rvars_i)]);
-     newInds := invPermute join(W.dpairInds#1, W.dpairInds#0);
+     newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);
      matList := apply( toList(0..m-1), i -> if newInds#i < n
 	  then R_(newInds#i) else 1_R );
      tempWtoR := map (R, tempW, matrix{ matList });
@@ -396,13 +366,14 @@ singLocus Module := M -> (
      -- set up an auxilary ring to perform intersection
      tempCA := (coefficientRing W)(monoid [W.dpairVars#1, W.dpairVars#0, 
           MonomialOrder => Eliminate (#W.dpairInds#1)]);
-     newInds := invPermute join(W.dpairInds#1, W.dpairInds#0);
+     newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);
      CAtotempCA := map(tempCA, W.CommAlgebra, 
 	  matrix {apply(newInds, i -> tempCA_i)});
      tempCAtoCA := map(W.CommAlgebra, tempCA, matrix{ join (
 		    apply(W.dpairVars#1, i -> W.WAtoCA i),
 	            apply(W.dpairVars#0, i -> W.WAtoCA i) ) } );
      -- do the intersection
+
      gbSatI := gb CAtotempCA SatI;
      I3 := ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);
      if I3 == ideal 1_(W.CommAlgebra) then W.CAtoWA I3
