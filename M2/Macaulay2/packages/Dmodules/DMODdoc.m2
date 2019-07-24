@@ -1,5 +1,6 @@
 -- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
+TEST /// input "Dmodules/TST/gkz.tst.m2" ///
 TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
 TEST /// input "Dmodules/TST/DHom.tst.m2" ///
 TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
