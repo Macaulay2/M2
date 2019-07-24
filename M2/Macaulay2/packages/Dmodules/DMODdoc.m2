@@ -24,7 +24,9 @@ document {
      Headline => "algorithms for D-modules",
      HEADER3 "How to make Weyl algebras:",
      UL{TO {"WeylAlgebra", " -- 
-	       The class of Weyl algebras"}},
+	       The class of Weyl algebras"},
+     TO {"makeWeylAlgebra", 
+	       " -- Weyl algebra associated to a polynomial ring"}},
      
      HEADER3 "Basic commands:",
      UL{
@@ -33,8 +35,6 @@ document {
 	  TO {"Fourier", " -- Fourier transform"},
 	  TO {"Dtransposition", " -- standard transposition"},
 	  TO {"makeCyclic", " -- cyclic presentation"},
-	  TO {"makeWeylAlgebra", 
-	       " -- Weyl algebra associated to a polynomial ring"},
 	  TO {"stafford", " -- compute 2 generators for an ideal in the Weyl algebra"}
 	  },
      HEADER3 "Some examples of D-modules:",
@@ -1194,31 +1194,33 @@ document {
      SeeAlso => {"Dresolution", "Dintegration"}
      }
 
---document {
---     Key => WeylAlgebra,
---     TT "WeylAlgebra", " --
---     name for an optional argument for a monoid that
---     specifies that a PolynomialRing created from it will
---     be a Weyl Algebra.",
---
---     PARA{},
---     "The n-th Weyl algebra is the associative ring on 2n variables,
---     e.g., K<x_1..x_n, D_1..D_n>, where all the variables commute except
---     for (D_i x_i = x_i D_i + 1).  It can be viewed as the ring
---     of algebraic differential operators on affine space K^n.",
---
---     PARA{},
---     "A simple example:",
---     EXAMPLE {
---	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
---     	"x*Dx", 
---     	"Dx*x"},     
---     PARA{},
---     "Caveats and known problems:",
---     UL{"The variables can be called by any name, but for each
---	  pair such as x => Dx, the commutative variable (in this case x)
---	  must be listed before the derivation variable (in this case Dx)"}
---     }
+-*
+document {
+     Key => WeylAlgebra,
+     TT "WeylAlgebra", " --
+     name for an optional argument for a monoid that
+     specifies that a PolynomialRing created from it will
+     be a Weyl Algebra.",
+
+     PARA{},
+     "The n-th Weyl algebra is the associative ring on 2n variables,
+     e.g., K<x_1..x_n, D_1..D_n>, where all the variables commute except
+     for (D_i x_i = x_i D_i + 1).  It can be viewed as the ring
+     of algebraic differential operators on affine space K^n.",
+
+     PARA{},
+     "A simple example:",
+     EXAMPLE {
+	"W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
+     	"x*Dx", 
+     	"Dx*x"},     
+     PARA{},
+     "Caveats and known problems:",
+     UL{"The variables can be called by any name, but for each
+	  pair such as x => Dx, the commutative variable (in this case x)
+	  must be listed before the derivation variable (in this case Dx)"}
+     }
+*-
 
 document {
      Key => {(createDpairs,PolynomialRing), createDpairs},
