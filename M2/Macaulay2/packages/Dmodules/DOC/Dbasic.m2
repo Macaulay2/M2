@@ -200,3 +200,51 @@ document {
 	  The output and input ideals are not equal necessarily."},
      SeeAlso => {"makeCyclic"}
 }
+
+doc ///
+  Key
+    extractVarsAlgebra
+    (extractVarsAlgebra, PolynomialRing)
+  Headline
+   underlying polynomial ring in the ordinary variables of a Weyl algebra
+  Usage
+    extractVarsAlgebra D
+  Inputs
+    D:PolynomialRing
+       a Weyl algebra
+  Outputs
+    :PolynomialRing
+  Description
+    Text
+      Extracts from a Weyl algebra the polynomial ring in its ordinary variables.
+    Example
+      D = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+      R = extractVarsAlgebra D
+      describe R
+  SeeAlso
+    extractDiffsAlgebra
+///
+
+doc ///
+  Key
+    extractDiffsAlgebra
+    (extractDiffsAlgebra, PolynomialRing)
+  Headline
+   underlying polynomial ring in the differentials of a Weyl algebra
+  Usage
+    extractDiffsAlgebra D
+  Inputs
+    D:PolynomialRing
+      a Weyl algebra
+  Outputs
+    :PolynomialRing
+  Description
+    Text
+      Extracts from a Weyl algebra the polynomial ring in its differentials only.
+    Example
+      D = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
+      S = extractDiffsAlgebra D
+      describe S
+  SeeAlso
+    extractVarsAlgebra 
+///
