@@ -27,10 +27,12 @@ load "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
 document {
      Key => "Dmodules",
      Headline => "algorithms for D-modules",
-     HEADER3 "How to make Weyl algebras:",
      
      "To begin, read the ", TO {"D-modules tutorial"}, ".",
+
      
+     HEADER3 "How to make Weyl algebras:",
+          
      UL{TO {"WeylAlgebra", " -- 
 	       The class of Weyl algebras"},
      TO {"makeWeylAlgebra", 

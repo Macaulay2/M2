@@ -10,7 +10,7 @@ doc ///
      the ring of differential operators over affine space (over a field of characteristic zero).
      Most algorithms in this package can be found in the book
      {\em Gr\"obner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
-     hereafter referred to as [SST].
+     hereafter referred to as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
      This is also the best place to learn about computational D-module theory. The book
      {\em Computational Algebraic Geometry with Macaulay2} has a chapter on D-modules and local cohomology.
      A good introduction to D-module theory is {\em A primer of algebraic D-modules} by Coutinho.
@@ -56,7 +56,7 @@ doc ///
      holonomicRank I
 
     Text
-     A-Hypergeometric systems, also known as GKZ systems (see [SST, Chapters 3 and 4]) are implemented.
+     A-Hypergeometric systems, also known as GKZ systems (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4]) are implemented.
 
 
     Example
@@ -66,7 +66,7 @@ doc ///
      H = sub(gkz(A,b), vars D4) -- change this when GKZ is modified
 
     Text
-     Holonomic D-ideals are analogous to zero-dimensional ideals in polynomial rings (see [SST, Section 1.4]).
+     Holonomic D-ideals are analogous to zero-dimensional ideals in polynomial rings (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]).
      Let us confirm that our GKZ systems are holonomic.
 
     Example
@@ -81,7 +81,7 @@ doc ///
      holonomicRank sub(gkz(A,{1,0}), vars D4)
 
     Text
-     We can compute the characteristic ideal and singular locus of a D-ideal [SST, Section 1.4]. Note that the output of charIdeal
+     We can compute the characteristic ideal and singular locus of a D-ideal [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]. Note that the output of charIdeal
      belongs to a commutative ring, the associated graded ring of $D_n$ with respect to the order filtration.
 
     Example
