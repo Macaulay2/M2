@@ -1,53 +1,69 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 needsPackage "FourTiTwo"; -- Needed only for gkz
 
--- This routine returns the GKZ hypergeometric system of PDE's associated
--- to the matrix A and the parameter vector b.
-gkz = method(Options => {Vars => Global} )
-gkz(Matrix, List, Ring) := options -> (A, b, W) -> (
-    d := numgens target A;
-    n := numgens source A;
+
+-----------------------------------------
+-- GKZ related things
+-----------------------------------------
+
+gkzInputValidation = method();
+gkzInputValidation (Matrix, List, PolynomialRing) := (A, b, W) -> (
+    if (numRows A != #b) then
+        error "expected number of rows of A to equal length of b in gkz(A,b,W)";
     if W.monoid.Options.WeylAlgebra === {} then 
         error "expected a Weyl algebra";
-    if (d != #b) then
-        error "expected number of rows of A to equal length of b in gkz(A,b)";
-    
-    -- Extract the polynomial ring of the partials
     createDpairs W;
-    partialsRing := (coefficientRing W)( monoid [W.dpairVars#1] );
-    
+    if #W.dpairVars#0 != numColumns A then
+        error "expected number of columns of A to equal number of \"x\"s of Weyl algebra in gkz(A,b,W)";
+    )
+gkzInputValidation (Matrix, PolynomialRing) := (A, W) -> gkzInputValidation(A, toList((numRows A): 0), W)
+
+
+eulerOperators = method();
+eulerOperators (Matrix, List, PolynomialRing) := (A, b, W) -> (
+    gkzInputValidation(A, b, W);
+    apply(numRows A, i -> sum(numColumns A, j -> A_(i,j) * W.dpairVars#0#j * W.dpairVars#1#j) - b#i)
+    )
+eulerOperators (Matrix, PolynomialRing) := (A, W) -> eulerOperators(A, toList((numRows A): 0), W)
+
+
+toricIdealPartials = method();
+toricIdealPartials (Matrix, PolynomialRing) := (A, W) -> (
+    gkzInputValidation(A, W);
+    -- Extract the polynomial ring of the partials
+    partialsRing := (coefficientRing W)( monoid [W.dpairVars#1] );    
     -- Make the toric ideal
-    toricIdeal := toricMarkov(A, partialsRing);
-    
-    -- Make the Euler operators
-    eulerOpsWithBeta := apply(d, 
-	i -> sum(n, j -> A_(i,j) * W.dpairVars#0#j * W.dpairVars#1#j) - b#i);
-    
-    -- Make the gkz ideal
-    ideal eulerOpsWithBeta + (map(W, partialsRing)) toricIdeal
+    toricMarkov(A, partialsRing)
     )
 
-gkz(Matrix, List) := options -> (A, b) -> (
-    d := numgens target A;
-    n := numgens source A;
-    if (d != #b) then
-        error "expected number of rows of A to equal length of b in gkz(A,b)";
+
+-- This routine returns the GKZ hypergeometric system of PDE's associated
+-- to the matrix A and the parameter vector b.
+gkz = method();
+gkz(Matrix, List, PolynomialRing) := (A, b, W) -> (
+    gkzInputValidation(A, b, W);
     
-    -- local version: better way to do this?
-    if options.Vars == Local then (
-	u := symbol u;
-	Du := symbol Du;
-	W := QQ( monoid [u_1 .. u_n, Du_1 .. Du_n,
-	    WeylAlgebra => (toList(1..n)) / (i->(u_i=>Du_i))] );
-	)
-    -- global version. Right now, this seems to do the same thing as the local version.
-    else (
-	D := symbol D;
-	x := symbol x;
-	W = QQ[x_1 .. x_n, D_1 .. D_n,
-	    WeylAlgebra => (toList(1..n)) / (i->(x_i=>D_i))];  
-	);
+    d := numRows A;
+    n := numColumns A;
+        
+    -- Make the toric ideal
+    toricIdeal := toricIdealPartials(A, W);
     
+    -- Make the Euler operators
+    eulerOpsWithBeta := eulerOperators(A, b, W);
+    
+    -- Make the gkz ideal
+    ideal eulerOpsWithBeta + (map(W, ring toricIdeal)) toricIdeal
+    )
+
+gkz(Matrix, List) := (A, b) -> (
+    d := numRows A;
+    n := numColumns A;
+    D := symbol D;
+    x := symbol x;
+    W := QQ(monoid [x_1 .. x_n, D_1 .. D_n,
+	WeylAlgebra => apply(toList(1..n), i -> x_i=>D_i)]);
+        
     gkz(A, b, W)
     )
     
@@ -190,6 +206,11 @@ AppellF1 List := options -> w -> (
 	  );
      --J = ideal(I_2, I_1+y^2*I_2); 
      I)
+
+
+--------------------------------------
+-- Other things
+--------------------------------------
 
 -- This routine takes a polynomial element f of the Weyl algebra 
 -- and returns its annihilator ideal.

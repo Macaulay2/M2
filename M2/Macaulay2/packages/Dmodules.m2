@@ -9,10 +9,14 @@ newPackage("Dmodules",
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
-     DebuggingMode => false,
+     DebuggingMode => true,
      PackageImports => {"PrimaryDecomposition","ReesAlgebra","Elimination"}
      )
 
+-- export {
+--     -- annFs.m2
+--     "AnnFs", "AnnIFs", "kDiffFs", "kappaAnnF1PlanarCurve", "kOrderAnnFa", "kOrderAnnFs"
+--     }
 export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDiffFs",
      "localBFunction", "multiplierIdeal", "ViaElimination", "ViaColonIdeal", "ViaLinearAlgebra",
      "isInMultiplierIdeal", "generalizedBFunction", "mGeneralizedBFunction",
@@ -36,7 +40,7 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "diffOps","PolyGens","BasisElts","putWeylAlgebra","inw","gbw",
      "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
      "BMM","pruneCechComplexCC","populateCechComplexCC",
-     "logCohomology","SetVariables"
+     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials"
      }
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
