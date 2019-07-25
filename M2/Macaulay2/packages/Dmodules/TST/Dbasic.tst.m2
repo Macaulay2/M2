@@ -103,3 +103,12 @@ I1 = inw(I, w1);
 assert(I1 == substitute(inw(I, w2), ring I1));
 assert(gbw(I, w1) == gbw(I, w2));
 
+-- extract polynomial ring of ordinary variables from Weyl algebras
+S = QQ[u,v]
+W = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}];
+assert(describe extractVarsAlgebra W === describe S);
+
+-- extract polyomial ring of differentials  from Weyl algebras
+S = QQ[Du,Dv]
+W = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}];
+assert(describe extractDiffsAlgebra W === describe S);
