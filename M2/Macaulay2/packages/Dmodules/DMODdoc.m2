@@ -20,9 +20,9 @@ TEST /// input "Dmodules/TST/CC.tst.m2" ///
 TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
 TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
 
-input "Dmodules/DOC/tutorial.m2" -- basic tutorial
-input "Dmodules/DOC/Dbasic.m2"   -- basic commands
-input "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
+load "Dmodules/DOC/tutorial.m2" -- basic tutorial
+load "Dmodules/DOC/Dbasic.m2"   -- basic commands
+load "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
 
 document {
      Key => "Dmodules",
