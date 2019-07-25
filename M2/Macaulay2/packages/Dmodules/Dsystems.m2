@@ -31,7 +31,7 @@ toricIdealPartials = method();
 toricIdealPartials (Matrix, PolynomialRing) := (A, W) -> (
     gkzInputValidation(A, W);
     -- Extract the polynomial ring of the partials
-    partialsRing := (coefficientRing W)( monoid [W.dpairVars#1] );    
+    partialsRing := extractDiffsAlgebra W;
     -- Make the toric ideal
     toricMarkov(A, partialsRing)
     )

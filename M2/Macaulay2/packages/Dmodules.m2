@@ -9,14 +9,10 @@ newPackage("Dmodules",
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
-     DebuggingMode => true,
+     DebuggingMode => false,
      PackageImports => {"PrimaryDecomposition","ReesAlgebra","Elimination"}
      )
 
--- export {
---     -- annFs.m2
---     "AnnFs", "AnnIFs", "kDiffFs", "kappaAnnF1PlanarCurve", "kOrderAnnFa", "kOrderAnnFs"
---     }
 export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDiffFs",
      "localBFunction", "multiplierIdeal", "ViaElimination", "ViaColonIdeal", "ViaLinearAlgebra",
      "isInMultiplierIdeal", "generalizedBFunction", "mGeneralizedBFunction",
