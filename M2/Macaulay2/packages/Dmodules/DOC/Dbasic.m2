@@ -25,7 +25,9 @@ document {
      guarantee termination.  There are two strategies for doing this.  
      One is to homogenize
      to an ideal of the homogeneous Weyl algebra.  The other is
-     to homogenize with respect to the weight vector ", EM "w", ".",
+     to homogenize with respect to the weight vector ", EM "w", ".", 
+     " More information can be found in Sections 1.1 and 1.2 of the book by
+     Saito, Sturmfels and Takayama.",
      EXAMPLE lines ///
 	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
      	I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy) 
