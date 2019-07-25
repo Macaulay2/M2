@@ -64,6 +64,24 @@ createDpairs PolynomialRing := W -> (
      	  );
      );
 
+-- This routine extracts from a Weyl algebra W the polynomial ring in its ordinary variables (not its differentials).
+extractVarsAlgebra = method()
+extractVarsAlgebra PolynomialRing := W -> (
+     if W.monoid.Options.WeylAlgebra === {} then
+     error "Expected a Weyl algebra" ;
+     createDpairs W;
+     (coefficientRing W)(monoid [(W.dpairVars)#0])
+     );
+
+-- This routine extracts from a Weyl algebra W the polynomial ring in its differentials only.
+extractDiffsAlgebra = method()
+extractDiffsAlgebra PolynomialRing := W -> (
+     if W.monoid.Options.WeylAlgebra === {} then
+     error "Expected a Weyl algebra" ;
+     createDpairs W;
+     (coefficientRing W)(monoid [(W.dpairVars)#1])
+     );
+
 -- this new version of Dan's breaks something else:
 --- createDpairs PolynomialRing := W -> (
 ---      if not W.?dpairVars then (
@@ -91,7 +109,7 @@ createCommAlgebra = method()
 createCommAlgebra PolynomialRing := W -> (
      if W.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;     
-     W.CommAlgebra = (coefficientRing W)(monoid [(entries vars W)#0]);
+     W.CommAlgebra = (coefficientRing W)(monoid [W_*]);
      W.WAtoCA = map(W.CommAlgebra, W, vars W.CommAlgebra);
      W.CAtoWA = map(W, W.CommAlgebra, vars W);
      );
