@@ -64,22 +64,24 @@ createDpairs PolynomialRing := W -> (
      	  );
      );
 
--- This routine extracts from a Weyl algebra W the polynomial ring in its ordinary variables (not its differentials).
+-- This routine extracts from a Weyl algebra D the polynomial ring in its ordinary variables (not its differentials).
 extractVarsAlgebra = method()
-extractVarsAlgebra PolynomialRing := W -> (
-     if W.monoid.Options.WeylAlgebra === {} then
+extractVarsAlgebra PolynomialRing := D -> (
+     if D.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;
-     createDpairs W;
-     (coefficientRing W)(monoid [(W.dpairVars)#0])
+     createDpairs D;
+     L := (D.dpairVars)#0;
+     (coefficientRing D)(monoid [L, Degrees => L/degree])
      );
 
--- This routine extracts from a Weyl algebra W the polynomial ring in its differentials only.
+-- This routine extracts from a Weyl algebra D the polynomial ring in its differentials only.
 extractDiffsAlgebra = method()
-extractDiffsAlgebra PolynomialRing := W -> (
-     if W.monoid.Options.WeylAlgebra === {} then
+extractDiffsAlgebra PolynomialRing := D -> (
+     if D.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;
-     createDpairs W;
-     (coefficientRing W)(monoid [(W.dpairVars)#1])
+     createDpairs D;
+     L := (D.dpairVars)#1;
+     (coefficientRing D)(monoid [L, Degrees => L/degree])
      );
 
 -- this new version of Dan's breaks something else:
