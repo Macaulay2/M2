@@ -115,12 +115,12 @@ doc ///
 
 doc ///
    Key
-     isTFixed
-     (isTFixed, Ideal)
+     isTorusFixed
+     (isTorusFixed, Ideal)
    Headline
      checks if an ideal in a Weyl algebra is torus-fixed
    Usage
-     isTFixed I
+     isTorusFixed I
    Inputs
      I:Ideal
        in a WeylAlgebra
