@@ -1,5 +1,3 @@
-needsPackage "Dmodules"
-
 --ToMake:
 --isThetaRing
 --isDpaired
@@ -9,7 +7,6 @@ needsPackage "Dmodules"
 isTorusFixed = method();
 isTorusFixed(Ideal) := Boolean => (J)->(
     n := numgens ring J//2;
-    S := QQ[t_1..t_n]; 
     testIdeal := ideal flatten apply(J_*,f->( 
 	    if isHomogeneous f then f else( 
 		apply(apbFactor(f),v->(		
@@ -80,7 +77,7 @@ thetaIdeal = method();
 thetaIdeal(Ideal,Ring) := (Ideal) => (J,S) ->(
     n := numgens ring J//2;
     if n != numgens S then error "mismatched numbers of variables";
-    ideal flatten apply(J_*,j-> genToDistractionsGens(j,S))
+    ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
 )
 
 --Input: 0-dimensional primary ideal I
@@ -98,7 +95,7 @@ solveMax(Ideal) := List => (I)->(
 --Input: holonomic D-ideal H, weight vector w as List, half the number of variables in H
 --Output: list of 0-dimensional ideals encoding css exponents and their multiplicities
 beginExptComp = method();
-beginExptComp(Ideal,List,ZZ) := List => (H,w,n)->(
+beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
     	if not isHolonomic(H) then error "ideal is not holonomic";
 	if #w != n then error "weight vector has wrong length";
         J := inw(H,(-w)|w);
@@ -110,9 +107,10 @@ beginExptComp(Ideal,List,ZZ) := List => (H,w,n)->(
 --Output: list of starting monomial exponents for H wrt w
 cssExpts = method();
 cssExpts(Ideal,List) := List => (H,w)->(
-	n:= (numgens ring I)//2;
-	S := QQ[t_1..t_n];
-    	L := beginExptComp(H,w,n);
+	n:= (numgens ring H)//2;
+	t := symbol t;
+	S := QQ(monoid [t_1..t_n]);
+    	L := beginExptComp(H,w,n,S);
     	apply(L,l-> solveMax(l))
 	)
 
@@ -121,9 +119,10 @@ cssExpts(Ideal,List) := List => (H,w)->(
 --Output: list of starting monomial exponents for H wrt w, with multiplicities
 cssExptsMult = method(); 
 cssExptsMult(Ideal,List) := List => (H,w)->(
-	n:= (numgens ring I)//2;
-	S := QQ[t_1..t_n];
-    	L := beginExptComp(H,w,n);
+	n:= (numgens ring H)//2;
+	t := symbol t;
+	S := QQ(monoid [t_1..t_n]);
+    	L := beginExptComp(H,w,n,S);
     	apply(L,l->( {degree l,solveMax(l)}))
 	)    
     

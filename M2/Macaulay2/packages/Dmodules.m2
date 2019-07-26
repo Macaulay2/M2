@@ -36,7 +36,8 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "diffOps","PolyGens","BasisElts","putWeylAlgebra","inw","gbw",
      "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
      "BMM","pruneCechComplexCC","populateCechComplexCC",
-     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials"
+     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "thetaIdeal", 
+     "cssExpts", "cssExptsMult", "isTorusFixed"
      }
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
@@ -73,6 +74,9 @@ load "./Dmodules/stafford.m2"
 load "./Dmodules/CC.m2"
 load "./Dmodules/localBFunction.m2"
 load "./Dmodules/multiplierIdeals.m2"
+
+-- Christine's algorithms
+load "./Dmodules/canonicalSeries.m2"
 
 -- HOOKS
 
