@@ -1161,6 +1161,7 @@ export {
 	"unstack",
 	"use",
 	"userSymbols",
+	"usleep",
 	"utf8",
 	"utf8check",
 	"value",
