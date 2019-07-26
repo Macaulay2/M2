@@ -18,10 +18,6 @@ newPackage(
         PackageImports => {"Elimination"}
         )
 
--- << "warning!  This package is experimental.  The interface will change, and although" << endl;
--- << "  it passes its tests, it has not been fully debugged yet!" << endl;
--- << "  In particular, in small characteristic, it *sometimes* might miss a component" << endl;
-
 --USEMGB = true;
 USEMGB = false;
 --if USEMGB then needsPackage "MGBInterface";
@@ -34,6 +30,7 @@ export {
     "Verbosity"
     }
 
+protect symbol Legacy
 protect symbol IndependentSet
 protect symbol Trim
 protect symbol Birational
@@ -93,13 +90,33 @@ raw  = value Core#"private dictionary"#"raw"
 rawGBContains = value Core#"private dictionary"#"rawGBContains"
 rawCharSeries = value Core#"private dictionary"#"rawCharSeries"
 
-installMinprimes = () -> (
-    minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
-     (I) -> minprimes(I, Verbosity=>0));
-    --isPrime Ideal := (I) -> newIsPrime I;
-    << "minimalPrimes Ideal, decompose Ideal, and isPrime Ideal have been " << endl;
-    << "re-installed to use experimental code" << endl;
+installMinprimes = () -> () -- nothing needs to be done.
+    
+minimalPrimesOptions = {    
+        Verbosity => 0,
+        Strategy => "Birational",  -- if null, calls older minprimesWorker code
+        "SquarefreeFactorSize" => 1,
+        CodimensionLimit => null, -- only find minimal primes of codim <= this bound
+        "IdealSoFar" => null,  -- used in inductive setting
+        "RadicalSoFar" => null, -- used in inductive setting
+        "CheckPrimeOnly" => false
+        }
+
+minimalPrimes Ideal := decompose Ideal := minimalPrimesOptions >> opts -> (cacheValue symbol minimalPrimes) (
+     (I) -> (
+         if opts.Strategy === Legacy then legacyMinimalPrimes I
+         else 
+             minprimes(I, opts, Verbosity=>0)
+         )
     )
+
+minimalPrimes MonomialIdeal := decompose MonomialIdeal := {} >> opts -> (cacheValue symbol minimalPrimes) (
+     (I) -> (
+	  minI := dual radical I;
+          if minI == 1 then {monomialIdeal(0_(ring I))}
+          else
+	      apply(flatten entries generators minI, monomialIdeal @@ support)))
+
 
 load "./MinimalPrimes/factorTower.m2"
 
@@ -142,6 +159,64 @@ if USEMGB then (
       Jsat)
       
 
+-- TODO: this function should be called from minimalPrimes/decompose
+--   under an option Strategy=>Legacy.
+--   'minimalPrimes' is responsible for stashing the value under the 
+--   cache value 'minimalPrimes'.
+legacyMinimalPrimes = (I) -> (
+          -- I: Ideal 
+          -- result: list of prime ideals.
+          if not instance(I, Ideal) then error "expected an ideal";
+	  R := ring I;
+	  (I',F) := flattenRing I; -- F is not needed
+	  A := ring I';
+	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
+     	  --I = trim I';
+	  I = I';
+	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
+	  if not isCommutative A then
+	    error "expected commutative polynomial ring";
+	  kk := coefficientRing A;
+	  if kk =!= QQ and not instance(kk,QuotientRing) then
+	    error "expected base field to be QQ or ZZ/p";
+	  if I == 0 then return {if A === R then I else ideal map(R^1,R^0,0)};
+	  if debugLevel > 0 then homog := isHomogeneous I;
+	  ics := irreducibleCharacteristicSeries I;
+	  if debugLevel > 0 and homog then (
+	       if not all(ics#0, isHomogeneous) then error "minimalPrimes: irreducibleCharacteristicSeries destroyed homogeneity";
+	       );
+	  -- remove any elements which have numgens > numgens I (Krull's Hauptidealsatz)
+	  ngens := numgens I;
+	  ics0 := select(ics#0, CS -> numgens source CS <= ngens);
+	  Psi := apply(ics0, CS -> (
+		    chk := topCoefficients CS;
+		    chk = chk#1;  -- just keep the coefficients
+		    chk = first entries chk;
+		    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
+		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
+		    CS = ideal CS;
+		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
+		    -- warning: over ZZ saturate does unexpected things.
+		    scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
+     --	       scan(iniCS, a -> CS = saturate(CS, a));
+		    --<< "result is " << CS << endl;
+		    CS));
+	  Psi = select(Psi, I -> I != 1);
+	  Psi = new MutableList from Psi;
+	  p := #Psi;
+	  scan(0 .. p-1, i -> if Psi#i =!= null then
+	       scan(i+1 .. p-1, j ->
+		    if Psi#i =!= null and Psi#j =!= null then
+		    if isSubset(Psi#i, Psi#j) then Psi#j = null else
+		    if isSubset(Psi#j, Psi#i) then Psi#i = null));
+	  Psi = toList select(Psi,i -> i =!= null);
+	  components := apply(Psi, p -> ics#1 p);
+	  if A =!= R then (
+	       components = apply(components, P -> trim(G P));
+	       );
+	  components
+	  )
+
 ---------------------------------
 --- Minprimes strategies
 ---------------------------------
@@ -156,7 +231,9 @@ getMinPrimesStrategy = strat -> (
     -- output: is a strategy list/sequence, etc for use with minprimes
     -- MES
     if not instance(strat, String) then return strat;
-    if strat === "NoBirational" then
+    if strat === "Legacy" then
+        Legacy
+    else if strat === "NoBirational" then
         NoBirationalStrat
     else if strat === "Birational" then
         BirationalStrat

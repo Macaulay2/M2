@@ -411,6 +411,19 @@ document { Key => [copyDirectory, UpdateOnly],
      Consequences => {{ "during the indicated copy operation, newer files will not be replaced by copies of older ones" }}}
 document { Key => Verbose,
      Headline => "request verbose feedback" }
+
+doc ///
+  Key
+    Verbosity
+  Headline
+    optional argument describing how verbose the output should be
+  Description
+   Text
+     Specifying the optional argument {\tt Verbosity => n}, where $n$ is an integer
+     tells the routine how much output should be given.  A value of 0 means be silent.
+     The larger the value $n$, the more output one might see.
+///
+
 document { Key => PrimaryTag,
      Headline => "for internal use only: a symbol used in storing documentation" }
 document { Key => LoadDocumentation,

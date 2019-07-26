@@ -5,6 +5,7 @@ newPackage(
      Date => "July 1, 2008",
      AuxiliaryFiles => true,
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
+     PackageExports => {"MinimalPrimes"},
      Headline => "functions for primary decomposition"
      )
 
@@ -137,12 +138,6 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      else false
      )
 
-minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
-     (I) -> (
-	  minI := dual radical I;
-          if minI == 1 then {monomialIdeal(0_(ring I))}
-          else
-	      apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
