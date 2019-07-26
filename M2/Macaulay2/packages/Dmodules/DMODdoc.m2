@@ -23,6 +23,7 @@ TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
 load "Dmodules/DOC/tutorial.m2" -- basic tutorial
 load "Dmodules/DOC/Dbasic.m2"   -- basic commands
 load "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
+load "Dmodules/DOC/canonicalSeries.m2" -- some examples of D-modules
 load "Dmodules/DOC/general.m2"
 load "Dmodules/DOC/localCohom.m2"
 
