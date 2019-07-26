@@ -575,7 +575,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  i = i+1;
 	  );
      w = toList w;
-     d := #positions(w, i->(i>0));
+     d := #positions(w, i->(i>0)); -- the number of positive entries of w
      -- the variables t_1, ..., t_d
      negVars := (entries vars W)#0_(positions(w, i->(i<0)));
      -- the substitution which sets t_1 = ... = t_d = 0
