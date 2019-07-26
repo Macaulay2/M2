@@ -4,8 +4,8 @@
 
 --Input: J an ideal in a Weyl algebra
 --Output: True if ideal is torus fixed, as in SST Thm. 2.3.3(1). False if not.
-isTorusFixed = method();
-isTorusFixed(Ideal) := Boolean => (J)->(
+isTFixed = method();
+isTFixed(Ideal) := Boolean => (J)->(
     n := numgens ring J//2;
     testIdeal := ideal flatten apply(J_*,f->( 
 	    if isHomogeneous f then f else( 
@@ -99,7 +99,7 @@ beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
     	if not isHolonomic(H) then error "ideal is not holonomic";
 	if #w != n then error "weight vector has wrong length";
         J := inw(H,(-w)|w);
-    	if isTorusFixed(J) then error "ideal is not torus-fixed"; 
+    	if isTFixed(J) then error "ideal is not torus-fixed"; 
         primaryDecomposition thetaIdeal(J,S)
 	)
 
@@ -134,13 +134,22 @@ end;
 restart; --
 needsPackage "Dmodules"
 load "canonicalSeries.m2"
+A = matrix{{1,1,1,1},{0,1,3,4}}
+beta = {1,2}  
+Hbeta = gkz(A,beta)
+w = {2,999,51,1}
+J = inw(Hbeta,flatten {-w,w});
+exptsMult(J,w)
+
+
+
 A = matrix{{1,1,1,1,1,1},{-2,0,0,0,0,1},{0,1,0,1,0,0},{1,1,2,0,0,1}}
 beta = {2,1,0,2}  
 Hbeta = gkz(A,beta)
 w = {2,999,51,1,101,7}
 J = inw(Hbeta,flatten {-w,w});
 S = QQ[t_1..t_(numgens ring J//2)]
-isTorusFixed J
+isTFixed J
 
 
 f = J_6+J_7
