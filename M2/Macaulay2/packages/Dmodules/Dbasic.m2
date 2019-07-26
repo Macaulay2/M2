@@ -324,7 +324,7 @@ holonomicRank Module := M -> (
      weightList := { apply ( toList(0..m-1), i -> if member(i, W.dpairInds#1) 
 	  then 1 else 0 ) };
      -- ring equipped with the new order
-     tempW := (coefficientRing W)(monoid [(entries vars W)#0,
+     tempW := (coefficientRing W)(monoid [W_*,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
 	  Weights => weightList]);
      WtotempW := map (tempW, W, vars tempW);
