@@ -24,39 +24,39 @@ localCohom = method(Options => {Strategy => Walther, LocStrategy => null})
 -- option: Strategy (sets the way localizations are computed)
 ----------------------------------------------------------------------------------------
 localCohom(Ideal) := HashTable => o -> I -> (
-     R = ring I;
+     R := ring I;
      if (R.monoid.Options.WeylAlgebra === {})
      then (
 	   D:=makeWA R;
-	   J:=ID;
+	   J:=sub(I,D);
 	   )else (
-	   J:=I;
-	   )
+	   J=I;
+	   );
      localCohom(toList (0..numgens J), J, o)
 );
 
 localCohom(ZZ, Ideal) := HashTable => o -> (l,I) -> (
-     R = ring I;
+     R := ring I;
      if (R.monoid.Options.WeylAlgebra === {})
      then (
 	   D:=makeWA R;
 	   J:= sub(I,D);
 	   ) else (
 	   J = I;
-	   )
+	   );
      localCohom({l}, J, o)
      );
  
 localCohom(List, Ideal) := HashTable => o -> (l,I) -> (
-     R = ring I;
+     R := ring I;
      if (R.monoid.Options.WeylAlgebra === {})
      then (
 	   D:=makeWA R;
 	   J:=sub (I,D);
 	   ) else (
 	   J = I;
-	   )
-     if (o.Strategy == Walther and o.LocStrategy === null) 
+	   );
+     if (o.Strategy == Walther and o.LocStrategy === null)
      then localCohomUli (l,J)
      else (
 	  S := ring J;
@@ -144,7 +144,7 @@ localCohomUli = (l, I) -> (
 ----------------------------------------------------------------------
 
 localCohom(Ideal, Module) := HashTable => o -> (I, M) -> (
-    R = ring I;
+    R := ring I;
     if (R.monoid.Options.WeylAlgebra === {})
      then (
 	   D:=makeWA R;
@@ -153,12 +153,12 @@ localCohom(Ideal, Module) := HashTable => o -> (I, M) -> (
 	   ) else (
 	   J = I;
 	   N = M;
-	   )
+	   );
      localCohom(toList (0..numgens J), J, N, o)
 );
 
 localCohom(ZZ, Ideal, Module) := HashTable => o -> (l,I,M) -> (
-         R = ring I;
+         R := ring I;
          if (R.monoid.Options.WeylAlgebra === {})
          then (
 	 D:=makeWA R;
@@ -167,12 +167,12 @@ localCohom(ZZ, Ideal, Module) := HashTable => o -> (l,I,M) -> (
 	   ) else (
 	 J = I;
 	 N = M;
-	 )
+	 );
      localCohom({l}, J, N, o)
      );
 
 localCohom(List, Ideal, Module) := HashTable => o -> (l,I,M) -> (
-     R = ring I;
+     R := ring I;
      if (R.monoid.Options.WeylAlgebra === {})
      then (
 	   D:=makeWA R;
@@ -181,7 +181,7 @@ localCohom(List, Ideal, Module) := HashTable => o -> (l,I,M) -> (
 	   ) else (
 	   J = I;
 	   N = M;
-	   )
+	   );
      pInfo (1, "localCohom: holonomicity check ...");
      if not isHolonomic N then
      error "expected a holonomic module";
