@@ -575,7 +575,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  i = i+1;
 	  );
      w = toList w;
-     d := #positions(w, i->(i>0));
+     d := #positions(w, i->(i>0)); -- the number of positive entries of w
      -- the variables t_1, ..., t_d
      negVars := (entries vars W)#0_(positions(w, i->(i<0)));
      -- the substitution which sets t_1 = ... = t_d = 0
@@ -959,3 +959,13 @@ if member(ResToOrigRing, output) then outputList = append(
 
 hashTable outputList 
 )
+
+TEST ///
+R1 = QQ[a,x,y,Da,Dx,Dy,WeylAlgebra=>{x=>Dx,y=>Dy,a=>Da}] -- order a,x,y
+I = ideal(x*Dx+y*Dy+a*Da+1, Dx^2 - Da*Dy, -2*a*Da -x*Dx -3)
+resIdeal1 = DrestrictionIdeal(I, {1,0,0}) -- correct restriction ideal
+R2 = QQ[x,y,a,Dx,Dy,Da,WeylAlgebra=>{x=>Dx,y=>Dy,a=>Da}] -- order x,y,a
+I = ideal(x*Dx+y*Dy+a*Da+1, Dx^2 - Da*Dy, -2*a*Da -x*Dx -3)
+resIdeal2 = DrestrictionIdeal(I, {0,0,1}) -- wrong restriction ideal
+assert((map(ring resIdeal2, ring resIdeal1)) resIdeal1 == resIdeal2)
+///
