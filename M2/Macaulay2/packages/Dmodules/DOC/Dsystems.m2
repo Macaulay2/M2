@@ -2,7 +2,7 @@ doc ///
   Key
     gkz
     (gkz, Matrix, List)
---    (gkz, Matrix, List, PolynomialRing)
+--    (gkz, Matrix, List, Ring)
   Headline
     The A-hypergeometric systems of Gelfand, Kapranov and Zelevinsky (GKZ)
   Usage
@@ -65,7 +65,6 @@ doc ///
 doc ///
   Key
     Vars
-    [gkz,Vars]
     [AppellF1,Vars]
 ///
 
