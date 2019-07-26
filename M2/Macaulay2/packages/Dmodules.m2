@@ -54,7 +54,6 @@ load "./Dmodules/newRings.m2"
 -- Harry's algorithms
 load "./Dmodules/Dresolution.m2"
 load "./Dmodules/Drestriction.m2"
-load "./Dmodules/Sparsemat.m2"
 load "./Dmodules/Dlocalize.m2"
 load "./Dmodules/WeylClosure.m2"
 load "./Dmodules/Ddual.m2"
