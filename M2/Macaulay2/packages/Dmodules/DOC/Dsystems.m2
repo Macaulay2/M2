@@ -2,11 +2,12 @@ doc ///
   Key
     gkz
     (gkz, Matrix, List)
---    (gkz, Matrix, List, Ring)
+    (gkz, Matrix, List, PolynomialRing)
   Headline
     The A-hypergeometric systems of Gelfand, Kapranov and Zelevinsky (GKZ)
   Usage
     gkz(A,b)
+    gkz(A,b,D)
   Inputs
     A:Matrix
     b:List
@@ -31,6 +32,17 @@ doc ///
       A = matrix{{1,1,1},{0,1,2}}
       b = {3,4}
       I = gkz (A,b)
+      describe ring I
+    Text
+      The ambient Weyl algebra can be determined as an input.
+    Example
+      D = makeWA(QQ[x_1..x_3])
+      gkz(A,b,D)
+    Text 
+      One may separately produce the toric ideal and the Euler operators.
+   Example
+      toricIdealPartials(A,D)
+      eulerOperators(A,b,D)
   Caveat
     gkz(A,b) always returns a different ring and will use 
     variables x_1,...,x_n, D_1,...D_n.
