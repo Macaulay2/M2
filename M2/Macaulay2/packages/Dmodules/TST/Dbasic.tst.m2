@@ -72,7 +72,7 @@ assert ( singLocus L == ideal(f) );
 -- Initial ideals and gb's in the same Grobner cone
 A = matrix{{1,1,1},{0,2,7}};
 b = {1,5};
-I = gkz(A,b,Vars=>Local);
+I = gkz(A,b);
 
 -- weight vector of the form (-u,u)
 w1 = {-1,-10,-30,1,10,30};
