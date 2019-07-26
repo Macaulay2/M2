@@ -23,7 +23,11 @@ doc ///
       and @EM "dx_1,..,dx_n"@.
     Example
       R = QQ[x,y,z]
-      W = makeWeylAlgebra R
+      D = makeWeylAlgebra R
+    Text
+      To skip naming the ring, use parentheses.
+    Example
+      makeWA(QQ[x,y,z])
   Caveat
     The polynomial ring R must be commutative.
   SeeAlso
@@ -47,29 +51,35 @@ doc ///
       a polynomial
   Outputs
     :Ideal
-      the Weyl closure (w.r.t. @TEX "f"@) of @TEX "I"@
+      the Weyl closure (w.r.t. $f$) of $I$
   Description
     Text
-     Let @TEX "R = K(x_1..x_n)<d_1..d_n>"@, denote the ring of differential
-     operators with rational function coefficients. The Weyl closure
-     of an ideal @TEX "I"@ in @TEX "D"@ is the intersection of the extended ideal
-     @TEX "RI"@ with @TEX "D"@.  It consists of all operators which vanish on the common
-     holomorphic solutions of @TEX "I"@ and is thus analogous to the radical
+     Let $D$ be the Weyl algebra 
+     with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over a field $K$
+     of characteristic zero, and denote
+     $R = K(x_1..x_n)<\partial_1..\partial_n>$, 
+     the ring of differential
+     operators with rational function coefficients. The {\em Weyl closure}
+     of an ideal $I$ in $D$ is the intersection of the extended ideal
+     $R I$ with $D$.  It consists of all operators which vanish on the common
+     holomorphic solutions of $D$ and is thus analogous to the radical
      operation on a commutative ideal.
-     @BR{}@
-     The partial Weyl closure of @TEX "I"@ with respect to a polynomial @TEX "f"@
-     is the intersection of the extended ideal @TEX "D[f^{-1}] I"@ with @TEX "D"@.
-     @BR{}@
-     The Weyl closure is computed by localizing @TEX "D/I"@ with respect to
-     a polynomial f vanishing on the singular locus, and computing
-     the kernel of the map D -> D/I -> (D/I)[f^{-1}].
+     
+     The 
+     {\em partial Weyl closure} of $I$ with respect to a polynomial $f$
+     is the intersection of the extended ideal $D[f^{-1}] I$ with $D$.
+     
+     The Weyl closure is computed by localizing $D/I$ with respect to
+     a polynomial $f$ vanishing on the singular locus, and computing
+     the kernel of the map $D \to D/I \to (D/I)[f^{-1}]$.
     Example
-      W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]
-      I = ideal(x*Dx-2)
+      makeWA(QQ[x])
+      I = ideal(x*dx-2)
+      holonomicRank I
       WeylClosure I
   Caveat
-    The ideal I should be finite holonomic rank, which can be tested
-    manually by holonomicRank. The Weyl closure of non-finite rank
+    The ideal I should be of finite holonomic rank, which can be tested
+    manually by using the function holonomicRank. The Weyl closure of non-finite rank
     ideals or arbitrary submodules has not been implemented.
   SeeAlso
     Dlocalize
@@ -96,13 +106,17 @@ doc ///
     :Boolean
   Description
     Text
-      A module is holonomic if it has dimension @EM "n"@,
-      the number of variables in the Weyl algebra @EM "D = "@
-      @BOLD "C"@ @EM "<x_1,...,x_n,,d_1,...,d_n>"@,
+      Let $D$ be the Weyl algebra
+      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$.
+      over a field.
+      A $D$-module is holonomic if it has dimension $n$.
+      For more details see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
+
     Example
+      D = makeWA(QQ[x_1..x_3])
       A = matrix{{1,1,1},{0,1,2}}
       b = {3,4}
-      I = gkz(A,b)
+      I = gkz(A,b,D)
       isHolonomic I
   SeeAlso
     Ddim
@@ -135,14 +149,12 @@ doc ///
       equals the projection
       of the characteristic variety of @EM "M"@ minus the zero section
       of the cotangent bundle to the base affine space @BOLD "C"@ @EM "^n"@.
-      @BR{}@
-      For details of the algorithm for computing singular locus
-      see the book 'Groebner deformations
-      of hypergeometric differential equations' by
-      Saito-Sturmfels-Takayama (1999).
+      @BR{}@ 
+      More details can be found in 
+      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
     Example
-      W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-      I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)
+      makeWA(QQ[x,y])
+      I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       singLocus I
   SeeAlso
     charIdeal
@@ -169,26 +181,30 @@ doc ///
       the characteristic ideal of @EM "M"@
   Description
     Text
+      
       The characteristic ideal of @EM "M"@ is the annihilator of
       @EM "gr(M)"@ under a good filtration with respect to the order
-      filtration. If @EM "D"@ is the Weyl algebra
-      @BOLD "C"@ @TT "<"@ @EM "x_1,....,x_n,d_1,...,d_n"@ @TT ">"@
-      then the order filtration corresponds to the weight vector (0,...,0,1...,1).
-      The characteristic ideal lives in the associated graded ring of @EM "D"@ with respect to
+      filtration. 
+      If $D$ is the Weyl algebra over &#x2102;
+      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
+      then the order filtration corresponds to the weight vector $(0,...,0,1,...,1)$.
+      The characteristic ideal lives in the associated graded ring of $D$ with respect to
       the order filtration, and this is a commutative polynomial ring
-      @BOLD "C"@ @TT "["@ @EM "x_1,....,x_n,xi_1,...,xi_n"@ @TT "]"@
-      - here the @EM "x_i"@'s are the symbols of the @EM "d_i"@'s.
-      The zero locus of the characteristic ideal is equal to the characteristic variety
+      &#x2102;$[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
+      Here the $\xi_i$ is the principal symbol of $\partial_i$, that is, the image of $\partial_i$
+      in the associated graded ring.
+      The zero locus of the characteristic ideal is equal to the {\em characteristic variety}
       of @EM "D/I"@ which is an invariant of a D-module.
-      @BR{}@
+   Text
       The algorithm to compute the characteristic ideal consists of computing
       the initial ideal of I with respect to the weight vector
-      (0,...,0,1...,1).  See the book 'Groebner deformations
-      of hypergeometric differential equations' by
-      Saito-Sturmfels-Takayama (1999) for more details.
-    Example
-      W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-      I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)
+      $(0,...,0,1...,1)$.  
+      More details can be found in 
+      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
+    
+   Example
+      makeWA(QQ[x,y])
+      I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       charIdeal I
   SeeAlso
     Ddim
@@ -216,25 +232,33 @@ doc ///
       the rank of @EM "M"@
   Description
     Text
-      The rank of a D-module @EM "M = D^r/N"@ provides analytic information
-      about the system of PDE's given by @EM "N"@. In particular, a theorem of
-      Cauchy states that the dimension of holomorphic solutions to @EM "N"@ in a
-      neighborhood of a nonsinugular point is equal to the rank.
-      @BR{}@
-      The rank of a D-module is defined algebraically as follows.
-      Let @EM "D"@ denote the Weyl algebra
-      @BOLD "C"@ @TT "<"@ @EM "x_1,....,x_n,d_1,...,d_n"@ @TT ">"@
-      and let @EM "R"@ denote the ring of differential operators
-      @BOLD "C"@ @TT "("@ @EM "x_1,...,x_n"@ @TT ")"@ @TT "<"@ @EM "d_1,...,d_n"@ @TT ">"@
+      The {\em holonomic rank} of a D-module @EM "M = D^r/N"@ provides analytic information
+      about the system of PDE's given by @EM "N"@. By the Cauchy-Kovalevskii-Kashiwara Theorem,
+      the dimension of the space of germs of holomorphic solutions to @EM "N"@ in a
+      neighborhood of a nonsingular point is equal to the holonomic rank of @EM "M"@.
+    
+    Text
+      The holonomic rank of a D-module is defined algebraically as follows.
+      Let $D$ be the Weyl algebra
+      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over &#x2102;.
+      and let $R$ denote the ring of differential operators
+      &#x2102;$(x_1,\dots,x_n)<\partial_1,\dots,\partial_n>$
+--      @BOLD "C"@ @TT "("@ @EM "x_1,...,x_n"@ @TT ")"@ @TT "<"@ @EM "d_1,...,d_n"@ @TT ">"@
       with rational function coefficients.
-      Then the rank of @EM "M = D^r/N"@ is equal to the dimension of
-      @EM "R^r/RN"@ as a vector space over @BOLD "C"@ ( @EM "x_1,...,x_n"@ ).
-      @BR{}@
-      See the book 'Groebner deformations of hypergeometric differential equations' by
-      Saito-Sturmfels-Takayama (1999) for more details of the algorithm.
+      Then the holonomic rank of $M = D^r/N$ is equal to the dimension of
+      $R^r/RN$ as a vector space over
+      &#x2102;$[x_1,\dots,x_n]$.
+      More details can be found in 
+      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
+--    
+--       @BOLD "C"@ ( @EM "x_1,...,x_n"@ ).
+--      @BR{}@
+--      See the book 'Groebner deformations of hypergeometric differential equations' by
+--      Saito-Sturmfels-Takayama (1999) for more details of the algorithm.
+    
     Example
-      W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-      I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)
+      makeWA(QQ[x,y])
+      I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       holonomicRank I
   SeeAlso
     charIdeal
@@ -254,20 +278,23 @@ doc ///
     Ddim I
   Inputs
     M:Module
-      over the Weyl algebra @EM "D"@
+      over the Weyl algebra $D$
     I:Ideal
-      which represents the module @EM "M = D/I"@
+      which represents the module $M=D/I$
   Outputs
     :ZZ
-      the dimension of @EM "M"@
+      the dimension of $M$
   Description
     Text
-      The dimension of @EM "M"@ is equal to the dimension of
+      The dimension of $M$ is equal to the dimension of
       the associated graded module with respect to the Bernstein
-      filtration.
+      filtration. 
+      If $D$ is the Weyl algebra over &#x2102;
+      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
+      then the Bernstein filtration corresponds to the weight vector $(1,...,1,1,...,1)$.
     Example
-      W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-      I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)
+      makeWA(QQ[x,y])
+      I = ideal (x*dx+2*y*dy-3, dx^2-dy)
       Ddim I
   SeeAlso
     charIdeal
@@ -291,30 +318,30 @@ doc ///
     PolySols(M,w)
   Inputs
     M:Module
-      over the Weyl algebra @EM "D"@
+      over the Weyl algebra $D$
     I:Ideal
-      holonomic ideal in the Weyl algebra @EM "D"@
+      holonomic ideal in the Weyl algebra $D$
     w:List
       a weight vector
   Outputs
     :List
-      a basis of the polynomial solutions of @EM "I"@
-      (or of D-homomorhpisms between @EM "M"@ and the polynomial ring)
-      using @EM "w"@ for Groebner deformations
+      a basis of the polynomial solutions of $I$
+      (or of $D$-homomorphisms between $M$ and the polynomial ring)
+      using $w$ for Groebner deformations
   Description
     Text
       The polynomial solutions of a holonomic system form a
       finite-dimensional vector space.
       There are two algorithms implemented to get these solutions.
-      The first algorithm is based on Groebner deformations and
-      works for ideals @EM "I"@ of PDE's - see the paper 'Polynomial
-      and rational solutions of a holonomic system' by
-      Oaku-Takayama-Tsai (2000).  The second algorithm is based
-      on homological algebra - see the paper 'Computing
-      homomorphims between holonomic D-modules' by Tsai-Walther (2000).
+      The first algorithm is based on Gr\"obner deformations and
+      works for ideals $I$ of PDE's - see the paper {\em Polynomial
+      and rational solutions of a holonomic system} by
+      Oaku, Takayama and Tsai (2000).  The second algorithm is based
+      on homological algebra - see the paper {\em Computing
+      homomorphims between holonomic D-modules} by Tsai and Walther (2000).
     Example
-      W = QQ[x, D, WeylAlgebra=>{x=>D}]
-      I = ideal(D^2, (x-1)*D-1)
+      makeWA(QQ[x])
+      I = ideal(dx^2, (x-1)*dx-1)
       PolySols I
   SeeAlso
     RatSols
@@ -378,16 +405,17 @@ doc ///
       The only possibilities for the poles of a rational solution
       are the codimension one components of the singular locus.
       An algorithm to compute rational solutions
-      is based on Groebner deformations and
-      works for ideals @EM "I"@ of PDE's - see the paper 'Polynomial
-      and rational solutions of a holonomic system' by
-      Oaku-Takayama-Tsai (2000).
+      is based on Gr\"obner deformations and
+      works for ideals $I$ of PDE's - see the paper {\em Polynomial
+      and rational solutions of a holonomic system} by
+      Oaku, Takayama and Tsai (2000).
     Example
-      W = QQ[x, D, WeylAlgebra=>{x=>D}]
-      I = ideal((x+1)*D+5)
+      makeWA(QQ[x])
+      I = ideal((x+1)*dx+5)
       RatSols I
   Caveat
-    The most efficient method to find rational solutions is
+    The most efficient method to find rational solutions of a system of differential
+    equations is
     to find the singular locus, then try to find its irreducible
     factors.  With these, call RatSols(I, ff, w), where w
     should be generic enough so that the PolySols routine
@@ -421,11 +449,12 @@ doc ///
       of the quotient ring @EM "R/I"@ (or @EM "R/(f)"@)
   Description
     Text
-      Given an ideal @EM "I"@ of a polynomial ring @EM "R"@ the set of
-      differential operators of the quotient ring @EM "R/I"@ having order
-      less than or equal to @EM "k"@ forms a finitely generated module over
-      @EM "R/I"@. This routine returns its generating set.
-      @BR{}@
+      Given an ideal $I$ of a polynomial ring $R$ the set of
+      differential operators of the quotient ring $R/I$ having order
+      less than or equal to $k$ forms a finitely generated module over
+      $R/I$. This routine returns its generating set.
+      
+    Text 
       The output is in the form of a hash table.
       The key @TT "BasisElts"@ is a row vector of basic differential operators.
       The key @TT "PolyGens"@ is a matrix over @EM "R"@ whose column vectors represent
@@ -433,7 +462,7 @@ doc ///
       vector, consider its image in @TT "R/I"@ then take its dot product with
       the @TT "BasisElts"@. This gives a differential operator, and
       the set of these operators generates the differential operators of
-      @EM "R/I"@@ of order @EM "k"@ or less as an @EM "(R/I)"@-module.
+      @EM "R/I"@ of order @EM "k"@ or less as an @EM "(R/I)"@-module.
     Example
       R = QQ[x,y,z]
       I = ideal(x^2-y*z)
