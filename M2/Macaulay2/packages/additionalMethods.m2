@@ -455,24 +455,6 @@ calculateB'Trace(String) := o ->(
 		     if o.ReturnPoints then return importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 
 
-		 radicalList=method(TypicalValue=>Thing,Options=>{
-		 	})
-		 radicalList(List,Number) := o ->(aList,aTolerance)->(
-		     newList:={aList_0};
-		     for i to #aList-1 do (
-		 	appendToList:=true;
-		 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
-		 	if appendToList then newList=append(newList,aList_i));
-		     return newList)
-		 radicalList(List) := o ->(aList)->(
-		     aTolerance:=1e-10;
-		     newList:={aList_0};
-		     for i to #aList-1 do (
-		 	appendToList:=true;
-		 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
-		 	if appendToList then newList=append(newList,aList_i));
-		     return newList)
-
 		 b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 		     	LoopRadius=>{},
 		 	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies

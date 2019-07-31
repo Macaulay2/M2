@@ -28,7 +28,6 @@ exportMutable{"storeBM2Files"
   }
 
 export {
-  "BertiniVariety",
   "SetParameterGroup",
   "bertiniUserHomotopy",
   "ContinueLoop",
@@ -231,8 +230,7 @@ needsPackage "SimpleDoc"
 -- Bertini interface for M2
 -- used by ../NumericalAlgebraicGeometry.m2
 
-BertiniVariety = new Type of MutableHashTable
-BertiniWitnessSet = new Type of MutableHashTable
+--BertiniVariety = new Type of MutableHashTable
 
 
 -- The following seven exported methods are front ends for various Bertini
@@ -289,32 +287,6 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%%%--If the same configuration is set twice then Bertini will use the one set last.
 --%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
   myConfigs:=(o.BertiniInputConfiguration);
---%%%%--The second is as individual options from 'knownConfigs' (search in Beritni.m2 to see the knownConfigs).
-    if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MPType",o.MPType});
-    if o.PRECISION=!=-1 then myConfigs=append(myConfigs,{"PRECISION",o.PRECISION});
-    if o.ODEPredictor=!=-1 then myConfigs=append(myConfigs,{"ODEPredictor",o.ODEPredictor});
-    if o.TrackTolBeforeEG=!=-1 then myConfigs=append(myConfigs,{"TrackTolBeforeEG",o.TrackTolBeforeEG});
-    if o.TrackTolDuringEG=!=-1 then myConfigs=append(myConfigs,{"TrackTolDuringEG",o.TrackTolDuringEG});
-    if o.FinalTol=!=-1 then myConfigs=append(myConfigs,{"FinalTol",o.FinalTol});
-    if o.MinStepSizeBeforeEG=!=-1 then myConfigs=append(myConfigs,{"MaxNorm",o.MaxNorm});
-    if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MinStepSizeBeforeEG",o.MinStepSizeBeforeEG});
-    if o.ImagThreshold=!=-1 then myConfigs=append(myConfigs,{"ImagThreshold",o.ImagThreshold});
-    if o.CoeffBound=!=-1 then myConfigs=append(myConfigs,{"CoeffBound",o.CoeffBound});
-    if o.DegreeBound=!=-1 then myConfigs=append(myConfigs,{"DegreeBound",o.DegreeBound});
-    if o.CondNumThreshold=!=-1 then myConfigs=append(myConfigs,{"CondNumThreshold",o.CondNumThreshold});
-    if o.RandomSeed=!=-1 then myConfigs=append(myConfigs,{"RandomSeed",o.RandomSeed});
-    if o.SingValZeroTol=!=-1 then myConfigs=append(myConfigs,{"SingValZeroTol",o.SingValZeroTol});
-    if o.EndGameNum=!=-1 then myConfigs=append(myConfigs,{"EndGameNum",o.EndGameNum});
-    if o.UseRegeneration=!=-1 then myConfigs=append(myConfigs,{"UseRegeneration",o.UseRegeneration});
-    if o.SecurityLevel=!=-1 then myConfigs=append(myConfigs,{"SecurityLevel",o.SecurityLevel});
-    if o.ScreenOut=!=-1 then myConfigs=append(myConfigs,{"ScreenOut",o.ScreenOut});
-    if o.OutputLevel=!=-1 then myConfigs=append(myConfigs,{"OutputLevel",o.OutputLevel});
-    if o.StepsForIncrease=!=-1 then myConfigs=append(myConfigs,{"StepsForIncrease",o.StepsForIncrease});
-    if o.MaxNewtonIts=!=-1 then myConfigs=append(myConfigs,{"MaxNewtonIts",o.MaxNewtonIts});
-    if o.MaxStepSize=!=-1 then myConfigs=append(myConfigs,{"MaxStepSize",o.MaxStepSize});
-    if o.MaxNumberSteps=!=-1 then myConfigs=append(myConfigs,{"MaxNumberSteps",o.MaxNumberSteps});
-    if o.MaxCycleNum=!=-1 then myConfigs=append(myConfigs,{"MaxCycleNum",o.MaxCycleNum});
-    if o.RegenStartLevel=!=-1 then myConfigs=append(myConfigs,{"RegenStartLevel",o.RegenStartLevel});
 --    print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file.
   makeB'InputFile(myTopDir,
@@ -349,15 +321,10 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --Do an error for this.
 
 
-bertiniPosDimSolve = method(TypicalValue => BertiniVariety, Options=>{
-	Verbose=>false,MPType=>-1,PRECISION=>-1,
-	IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
-	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
-	CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,
-	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
-	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
-	MaxCycleNum=>-1,RegenStartLevel=>-1})
+bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
+	Verbose=>false,
+	IsProjective=>-1
+  })
 bertiniPosDimSolve List := o -> F -> (
 --F is the list of polynomials
          L := {runType=>2};
@@ -374,7 +341,7 @@ bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false, MPType=>-
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
 	MaxCycleNum=>-1,RegenStartLevel=>-1})
-bertiniSample (ZZ, BertiniWitnessSet) := o -> (n, W) -> (
+bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
 --W is a witness set
 -- n is the number of points to sample
          L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n,
@@ -394,7 +361,7 @@ bertiniComponentMemberTest = method(TypicalValue => List, Options=>{Verbose=>fal
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
 	MaxCycleNum=>-1,RegenStartLevel=>-1})
-bertiniComponentMemberTest (List, BertiniVariety) := o -> (pts, NV) -> (
+bertiniComponentMemberTest (List, NumericalVariety) := o -> (pts, NV) -> (
 --pts, list of pts to test
 --NV, numerical variety
 	 L := {runType=>4, StartSolutions=>pts, WitnessData=>NV.WitnessDataFileName,
@@ -996,7 +963,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 -- readSolutionsBertini
 -----------------------
 
-readSolutionsBertini = method(TypicalValue=>BertiniVariety, Options=>{
+readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{
 	Verbose=>false,MultiplicityTol=>1e-6, AllowStrings=>-1,
 	ConditionNumTol=>1e10,IsProjective=>-1,Parameters=>null,
 	ParameterValues=>null, StartSystem=>{},NVariety=>null,
@@ -1443,7 +1410,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 
           );
 
-    nv = BertiniVariety wList;
+    nv = numericalVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
     return nv
@@ -2587,6 +2554,24 @@ moveB'File(String,String,String) := o ->(storeFiles,originalName,newName)->(
     if o.CopyB'File===true then copyFile(storeFiles|originalName,finalDirectory|newName))
 )
 
+--TODO: radicalList needs a more descriptive name
+		 radicalList=method(TypicalValue=>Thing,Options=>{
+		 	})
+		 radicalList(List,Number) := o ->(aList,aTolerance)->(
+		     newList:={aList_0};
+		     for i to #aList-1 do (
+		 	appendToList:=true;
+		 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
+		 	if appendToList then newList=append(newList,aList_i));
+		     return newList)
+		 radicalList(List) := o ->(aList)->(
+		     aTolerance:=1e-10;
+		     newList:={aList_0};
+		     for i to #aList-1 do (
+		 	appendToList:=true;
+		 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
+		 	if appendToList then newList=append(newList,aList_i));
+		     return newList)
 
 
 
@@ -2702,7 +2687,6 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniUserHomotopy.t
 -- DOCUMENTATION
 --##########################################################################--
 
-beginDocumentation()
-
-load "./Bertini/doc.m2";
+--beginDocumentation()
+--load "./Bertini/doc.m2";
 end

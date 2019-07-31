@@ -80,10 +80,7 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
      B0=importSolutionsFile(dir1,NameSolutionsFile=>"raw_solutions")     
      B1=importSolutionsFile(dir1)     
      B2=importMainDataFile(dir1)     
-      assert(1===#radicalList({ (B0_0_0)^2,2})     )
-      assert(1===#radicalList({ (B1_0_0)^2,2})     )
-      assert(1===#radicalList({ ((B2_0#Coordinates)_0)^2,2})     )
-
+--TO DO: need assertions
 ---
      dir1 := temporaryFileName(); -- build a directory to store temporary data 
      makeDirectory dir1;  
@@ -94,12 +91,14 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
      B0=importSolutionsFile(dir1,NameSolutionsFile=>"raw_solutions")     
      B1=importSolutionsFile(dir1)     
      B2=importMainDataFile(dir1)     
+--TODO: Need assertions
+-*
       assert(1===#radicalList({ (B0_0_0),2})     )
       assert(1===#radicalList({ (B1_0_0),2})     )
       assert(1===#radicalList({ ((B2_0#Coordinates)_0),2})     )
       assert(1===#radicalList(flatten B0))
       assert( B2_0#Multiplicity===2)
-      
+    *_  
 ------Multi Affine variable groups
      dir1 := temporaryFileName(); -- build a directory to store temporary data 
      makeDirectory dir1;  

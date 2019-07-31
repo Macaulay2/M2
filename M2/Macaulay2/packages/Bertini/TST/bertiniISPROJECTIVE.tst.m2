@@ -1,4 +1,4 @@
-needsPackage "Bertini"
+loadPackage("Bertini",Reload=>true)
 
 --To solve a positive dimensional system use the bertiniPosDimSolve command
 -- the input is a list of equations 
@@ -12,6 +12,5 @@ g=x^2-y^2
 
 output1=bertiniPosDimSolve({f,g},IsProjective=>1)
 assert (0==dim (output1#0_0))
-
 
 
