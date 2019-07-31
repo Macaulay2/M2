@@ -1,0 +1,5 @@
+uninstallPackage "MonodromySolver"
+restart
+installPackage("MonodromySolver",FileName=>"../MonodromySolver.m2",RerunExamples=>true)
+
+check MonodromySolver

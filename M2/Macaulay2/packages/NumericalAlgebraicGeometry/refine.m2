@@ -350,7 +350,6 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     )
 
 TEST ///
-restart
 debug needsPackage "NumericalAlgebraicGeometry"
 CC[x,y]
 d = 4;
@@ -366,9 +365,9 @@ p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>0.5)
 assert (d == p.Multiplicity)
 p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>20)
 assert (d == p.Multiplicity)
+///
 
--- 
-restart
+TEST ///
 needsPackage "NumericalAlgebraicGeometry"
 n = 3;
 R = CC[x_1..x_n]
@@ -391,8 +390,9 @@ assert (d == p.Multiplicity)
 p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>100,"number of vertices"=>100)
 norm evaluate(T,p)
 assert (d == p.Multiplicity)
---
-restart
+///
+
+TEST ///
 R=QQ[x,y]
 f = x^2 + y^2 - 1 
 g = x^3 + y^3 - 1 
@@ -401,53 +401,6 @@ solveSystem  ({f,g},PostProcess=>false)
 solveSystem  {f,g}
 
 ///
-
--* -- (Deprecated) 
-endGame'Cauchy'polygon = method(Dispatch=>Thing)
-endGame'Cauchy'polygon Sequence := parameters -> (
-    -- H: PolySystem, a homotopy
-    -- t'end: the end value of the continuation parameter t
-    -- t0: a value of t close to t'end
-    -- x0: Point, a solution to H_t(x)=0 
-    -- m: the number of vertices of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
-    (H,t'end,t0,x0,m) := parameters;
-    -- output: (x'end, w) = (a solution at t=t'end, the winding number)  
-    H' := substituteContinuationParameter(H,
-	(t0-t'end)*H.ContinuationParameter + t'end);  -- t'end = 0 after this and t0 = 1
-    loop'incomplete := true;
-    w := 0;
-    x := x0;
-    x'values := {}; -- the list of values of x along the loop
-    while loop'incomplete do (
-    	for i to m-1 do (
-	    x = first trackSegment(H', exp(2*pi*i*ii/m), exp(2*pi*(i+1)*ii/m), {x}); 
-	    x'values = append(x'values,x);
-	);
-    	w = w + 1;
-	loop'incomplete = not areEqual(x,x0);
-	);
-    print VerticalList x'values;
-    (sum (coordinates\x'values) /(w*m), w)
-    )  
-
-TEST ///
-CC[x,y]
-d = 5;
-T = {(x-2)^d,y-x+x^2-x^3}
-(S,solsS) = totalDegreeStartSystem T
-H = segmentHomotopy(polySystem S, polySystem ((1+ii)*T))
-t0 = 0.999
-solsT = trackSegment(H,0,t0,solsS)
-debug NumericalAlgebraicGeometry
-x0 := first select(solsT, p->norm matrix p < 15)
-endGame'Cauchy'polygon(H,1,t0,x0,3)
-endGame'Cauchy'polygon(H,1,t0,x0,8)
-endGame'Cauchy'polygon(H,1,t0,x0,16)
-x32 = endGame'Cauchy'polygon(H,1,t0,x0,32)
--- x64 = endGame'Cauchy'polygon(H,1,t0,x0,64)
-assert areEqual(first x32, {2,6}, Tolerance=>0.001)
-///
-*-
 
 /// -- OLD CODE
 refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})

@@ -72,7 +72,7 @@ Holder.synonym = "holder"
 
 Describe = new WrapperType of Holder
 Describe.synonym = "description"
-describe = method()
+describe = method(Dispatch => Thing)
 describe Thing := x -> new Describe from { unhold expression x }
 Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
 
