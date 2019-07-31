@@ -28,6 +28,7 @@ exportMutable{"storeBM2Files"
   }
 
 export {
+  "BertiniVariety",
   "SetParameterGroup",
   "bertiniUserHomotopy",
   "ContinueLoop",
@@ -97,7 +98,7 @@ export {
   "NameFunctionFile",
 --
   "makeB'InputFile",
-  "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file.
+  "BertiniInputConfiguration", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file.
   "HomVariableGroup", --A list of lists of homogeneous variable groups.
   "AffVariableGroup", --A list of lists of affine variable groups.
   "ParameterGroup",
@@ -223,13 +224,16 @@ export {
 
 DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
-
+needsPackage"NAGtypes"
 needsPackage "SimpleDoc"
-needsPackage "NAGtypes"
      storeBM2Files = temporaryFileName()
      makeDirectory storeBM2Files
 -- Bertini interface for M2
 -- used by ../NumericalAlgebraicGeometry.m2
+
+BertiniVariety = new Type of MutableHashTable
+BertiniWitnessSet = new Type of MutableHashTable
+
 
 -- The following seven exported methods are front ends for various Bertini
 -- functions.
@@ -246,21 +250,20 @@ knownConfigs={
 	ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,
 	MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1
 	}
-
-bertiniZeroDimSolve = method(TypicalValue => List, Options=>knownConfigs|{
-    	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
-    	TopDirectory=>storeBM2Files,
-	B'Configs=>{},
+bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
+  OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+  TopDirectory=>storeBM2Files,
+	BertiniInputConfiguration=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
-      	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
-      	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
-      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
-      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.
-    	NameSolutionsFile=>"raw_solutions",
-    	NameMainDataFile=>"main_data",
+  RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
+  RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
+  B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
+  B'Functions=>{},--A list of pairs consisting of a name and a polynomial.
+  NameSolutionsFile=>"raw_solutions",
+  NameMainDataFile=>"main_data",
 	M2Precision=>53,
-    	Verbose=>false
+  Verbose=>false
 	} )
 bertiniZeroDimSolve(List) := o -> (myPol) ->(
     --myPol are your polynomial system that you want to solve. If empty return empty.
@@ -284,8 +287,8 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%--We need to set the CONFIGS of the Bertini input file.
 --%%%%--These CONFIGS come in two flavors:
 --%%%%--If the same configuration is set twice then Bertini will use the one set last.
---%%%%--The first is in B'Configs where we just list the configurations.
-  myConfigs:=(o.B'Configs);
+--%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
+  myConfigs:=(o.BertiniInputConfiguration);
 --%%%%--The second is as individual options from 'knownConfigs' (search in Beritni.m2 to see the knownConfigs).
     if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MPType",o.MPType});
     if o.PRECISION=!=-1 then myConfigs=append(myConfigs,{"PRECISION",o.PRECISION});
@@ -319,7 +322,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
     AffVariableGroup=>myAVG,
     HomVariableGroup=>myHVG,
 --%%--These are extra options the user can specify. For more information refer to their documentation.
-    B'Configs=>o.B'Configs,
+    BertiniInputConfiguration=>o.BertiniInputConfiguration,
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
     B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
@@ -346,7 +349,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --Do an error for this.
 
 
-bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
+bertiniPosDimSolve = method(TypicalValue => BertiniVariety, Options=>{
 	Verbose=>false,MPType=>-1,PRECISION=>-1,
 	IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
 	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
@@ -371,7 +374,7 @@ bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false, MPType=>-
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
 	MaxCycleNum=>-1,RegenStartLevel=>-1})
-bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
+bertiniSample (ZZ, BertiniWitnessSet) := o -> (n, W) -> (
 --W is a witness set
 -- n is the number of points to sample
          L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n,
@@ -391,7 +394,7 @@ bertiniComponentMemberTest = method(TypicalValue => List, Options=>{Verbose=>fal
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
 	MaxCycleNum=>-1,RegenStartLevel=>-1})
-bertiniComponentMemberTest (List, NumericalVariety) := o -> (pts, NV) -> (
+bertiniComponentMemberTest (List, BertiniVariety) := o -> (pts, NV) -> (
 --pts, list of pts to test
 --NV, numerical variety
 	 L := {runType=>4, StartSolutions=>pts, WitnessData=>NV.WitnessDataFileName,
@@ -437,7 +440,7 @@ bertiniUserHomotopy = method(TypicalValue => List, Options=>knownConfigs|{Verbos
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
     	B'Functions=>{},
-	B'Configs=>{},
+	BertiniInputConfiguration=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
 	RandomComplex=>{},
@@ -473,7 +476,7 @@ bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
     HomVariableGroup=>myHVG,
     PathVariable=>{pathT},
 --%%--These are extra options the user can specify. For more information refer to their documentation.
-    B'Configs=>({{"UserHomotopy",2}}|o.B'Configs),
+    BertiniInputConfiguration=>({{"UserHomotopy",2}}|o.BertiniInputConfiguration),
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
     B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
@@ -502,7 +505,7 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
     	B'Functions=>{},
-	B'Configs=>{},
+	BertiniInputConfiguration=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
       	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
@@ -538,7 +541,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
     AffVariableGroup=>myAVG,
     HomVariableGroup=>myHVG,
 --%%--These are extra options the user can specify. For more information refer to their documentation.
-    B'Configs=>({{ParameterHomotopy,1}}|o.B'Configs),
+    BertiniInputConfiguration=>({{ParameterHomotopy,1}}|o.BertiniInputConfiguration),
     B'Functions=>o.B'Functions,
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
@@ -993,7 +996,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 -- readSolutionsBertini
 -----------------------
 
-readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{
+readSolutionsBertini = method(TypicalValue=>BertiniVariety, Options=>{
 	Verbose=>false,MultiplicityTol=>1e-6, AllowStrings=>-1,
 	ConditionNumTol=>1e10,IsProjective=>-1,Parameters=>null,
 	ParameterValues=>null, StartSystem=>{},NVariety=>null,
@@ -1440,7 +1443,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 
           );
 
-    nv = numericalVariety wList;
+    nv = BertiniVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
     return nv
@@ -1626,7 +1629,7 @@ pairTypes={List,Option}
 makeB'InputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
-	B'Configs=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file.
+	BertiniInputConfiguration=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file.
 --For different functions using Bertini one must state "homogeneous variable groups", "affine variable groups", "parameters", "variables", or "path variables".
 	HomVariableGroup=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
 	AffVariableGroup=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
@@ -1664,11 +1667,11 @@ makeB'InputFile(String) := o ->(IFD)->(
      openedInputFile <<  endl  << "% This input file was written with the Bertini.m2 Macaulay2 package." << endl<<endl;
 --The first part of a Bertini input file is the configurations.  We write the configuratiosn followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file.
      openedInputFile << "CONFIG" << endl << endl;
-     for oneConfig in o.B'Configs do (
+     for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option
        then openedInputFile << toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
        else if class oneConfig===List then openedInputFile << toString(oneConfig_0) << " : " << toString(oneConfig_1) << " ; " << endl
-       else error("B'Config has an unreadable element: "|toString oneConfig));
+       else error("BertiniInputConfiguration has an unreadable element: "|toString oneConfig));
      openedInputFile <<  endl << "%%%ENDCONFIG;" << endl;
      openedInputFile << "END;" << endl << endl;
 --The second part of a Bertini input file is the INPUT.
