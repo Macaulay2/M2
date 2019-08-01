@@ -1088,11 +1088,8 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
       then i.SolutionStatus=Regular);
     return pts)
     )
-
   --if PosDim, we read in the output from witness_data
-
   else if (o.runType == 2) then (
-
 --witness_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  #nonempty codims
@@ -1113,52 +1110,44 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 --      component number
 --      deflations needed for this point
 --    -1 (at end of blocks)
-
 --  junk at end is the matrix of slice coefficients and such.
-
     l = lines get (dir|"/witness_data"); -- grabs all lines of the file
     numVars = value(first l);  l=drop(l,1);
     numCodims = value(first l); l=drop(l,1);
     wList = {};  --list of witness sets
     listOfCodims = {};  --keeps track of codimension of each witness set;
     --needed since we add slice data later.
-
     for codimNum from 1 to numCodims do (
-	pts := {};  --for each codim, we store all points and
+	     pts := {};  --for each codim, we store all points and
 	--all codims (next line), then sort after gathering all points in the codim
-        compNums := {};
-        maxCompNum := 0;  --keeps track of max component number in this codim
-        codimen = value(first l); l=drop(l,1);
-        ptsInCodim = value(first l); l=drop(l,1);
-
-        for ptNum from 1 to ptsInCodim do (
-	    maxPrec := value(first l);
-            l = drop(l,1);
-            coords = {};
-            for j from 1 to numVars do ( -- grab each coordinate
+      compNums := {};
+      maxCompNum := 0;  --keeps track of max component number in this codim
+      codimen = value(first l); l=drop(l,1);
+      ptsInCodim = value(first l); l=drop(l,1);
+      for ptNum from 1 to ptsInCodim do (
+  	    maxPrec := value(first l);
+        l = drop(l,1);
+        coords = {};
+        for j from 1 to numVars do ( -- grab each coordinate
               -- use regexp to get the two numbers from the string
-	      coord = select("[0-9.e+-]+", cleanupOutput(first l));
-              coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});
+  	      coord = select("[0-9.e+-]+", cleanupOutput(first l));
+          coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});
 	      -- NOTE: we convert to maxPrec bits complex type
-              l = drop(l,1);
-              );
-
-            l = drop(l,numVars+1);  -- don't need second copy of point or
-	    --extra copy of maxPrec
-
-            -- now we dehomogenize, assuming the first variable is the hom coord:
-
-	    dehomCoords = {};
-	    if o.IsProjective==-1 then (
-		for j from 1 to numVars-1 do (
-		    dehomCoords = join(dehomCoords, {coords#j / coords#0});
-                    )
-		)
-	        else for j from 0 to numVars-1 do (
-		    dehomCoords = join(dehomCoords, {coords#j });
+          l = drop(l,1);
+        );
+        l = drop(l,numVars+1);  -- don't need second copy of point or
+  	    --extra copy of maxPrec
+        -- now we dehomogenize, assuming the first variable is the hom coord:
+  	    dehomCoords = {};
+  	    if o.IsProjective==-1
+        then (
+	        for j from 1 to numVars-1 do (
+  		    dehomCoords = join(dehomCoords, {coords#j / coords#0});
+          ))
+        else for j from 0 to numVars-1 do (
+  		    dehomCoords = join(dehomCoords, {coords#j });
                     );
-
-	    condNum = value(cleanupOutput(first l)); l=drop(l,4);
+  	    condNum = value(cleanupOutput(first l)); l=drop(l,4);
             ptType = value(first l); l=drop(l,1);
             ptMult = value(first l); l=drop(l,1);
             compNum = value(first l); l=drop(l,1);
@@ -1169,83 +1158,66 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
             compNums = join(compNums,{compNum});
             if (compNum > maxCompNum) then maxCompNum=compNum;
             );
-
-	for j from 0 to maxCompNum do (
+      	for j from 0 to maxCompNum do (
 	    --loop through the component numbers in this codim
 	    --to break them into witness sets
-	    ptsInWS := {}; --stores all points in the same witness set
-
-	    for k from 0 to #pts-1 do (
-	      --save the point if its in the current component (component j)
-	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k});
-	      );
-
-	    N = map(CC^0,CC^(numVars+1),0);
-
-	    if AllowStrings===-1 then ws = witnessSet(ideal F,N, ptsInWS)
+  	    ptsInWS := {}; --stores all points in the same witness set
+  	    for k from 0 to #pts-1 do (
+  	      --save the point if its in the current component (component j)
+  	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k});
+  	      );
+  	    N = map(CC^0,CC^(numVars+1),0);
+  	    if AllowStrings===-1
+        then ws = witnessSet(ideal F,N, ptsInWS)
 	      --turn these points into a witness set
-    	      else (
-		  ws = witnessSet(ideal(1),N,ptsInWS);
-		  ws.Equations=F;
-		  ws.IsIrreducible=true
-	        );
-
+    	  else (
+    		  ws = witnessSet(ideal(1),N,ptsInWS);
+    		  ws.Equations=F;
+    		  ws.IsIrreducible=true
+    	        );
            -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
-            ws.ComponentNumber=j;
-	    ws.WitnessDataFileName=dir|"/witness_data";
-	    wList = join(wList, {ws}); --add witness set to list
+        ws.ComponentNumber=j;
+  	    ws.WitnessDataFileName=dir|"/witness_data";
+  	    wList = join(wList, {ws}); --add witness set to list
             listOfCodims = join(listOfCodims, {codimNum});
             );
-	);
-
--- now we grab the slice data, at the end of the witness_data file,
---to be inserted into the witnessSets with dim>0
+  	);
+    -- now we grab the slice data, at the end of the witness_data file,
+    --to be inserted into the witnessSets with dim>0
     l = drop(l,3); -- -1, blank line, MPType
     randDims = select("[0-9]+", first l);  -- grabs #rows,
-
     --#cols for the matrix used to randomize the system
     l = drop(l,1);
-
     numRands = value(randDims#0) * value(randDims#1);  -- numRands is the
     --number of random numbers we want to skip next
-
     l = drop(l,numRands+1);   -- includes blank line after rands
-
     -- next we have the same number of integers
     --(degrees needed ot keep homogenization right)
     l = drop(l,numRands);
-
     -- next we have an integer and a list of row vectors
     --(the number of which is the initial integer).  Again related to
     --homogenization.
     numToSkip = select("[0-9]+", first l);
-
     l = drop(l,value(numToSkip#0)+3); -- dropping all those,
     --plus line containing integer (before), then blank line, and one more line
-
     --finally, we have the number of linears and the number of coefficients per linear
     linCoeffDims = select("[0-9-]+", first l);
     l = drop(l,1);
-
     --now we just read in the matrix
     numLinCoeffs = value(linCoeffDims#0) * value(linCoeffDims#1);
     rw = {};
     mat = {};
-
     for i from 1 to value(linCoeffDims#1) do (
-	for j from 1 to value(linCoeffDims#0) do (
-            coefParts = select("[0-9-]+/[0-9-]+", first l);
-            rw = join(rw, {toCC(53,value(coefParts#0)) +
-		    ii*toCC(53,value(coefParts#1))});
-	    -- definitely losing data here, going from rational number to float!
-            l = drop(l,1);
-            );
+	     for j from 1 to value(linCoeffDims#0) do (
+         coefParts = select("[0-9-]+/[0-9-]+", first l);
+         rw = join(rw, {toCC(53,value(coefParts#0)) + ii*toCC(53,value(coefParts#1))});
+	        -- definitely losing data here, going from rational number to float!
+          l = drop(l,1);
+        );
         mat = join(mat, {rw});
         rw = {};
-        );
-
+    );
     M = matrix(mat);
-
     -- Finally, we can cycle through the witness sets in nv
     -- and add the slice data.
     -- There are length listOfCodims witness sets,
@@ -1257,44 +1229,31 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     -- a subsequent codim 2 set would have a
     -- 1x4 matrix of slice data consists of the second (not first)
     -- line of the codim 1 slice data.
-
     for codimNum from 0 to length listOfCodims - 1 do (
-	 coeffList := {};
-
-	 --We store the cols of M needed for this particular codimNum in coeffList,
-	 --then turn it into a matrix and store it the witness set.
-
-	 colsToSkip = listOfCodims#codimNum - listOfCodims#0;
-
-	 for i from colsToSkip to numgens source M - 1 do (
-	     coeffCol := {};
-	     for j from 0 to numgens target M - 1 do (
-		 coeffCol = join(coeffCol, {M_(j,i)});
-                 );
-             coeffList = join(coeffList, {coeffCol});
-             );
-
-	  if (#coeffList > 0) then N = matrix(coeffList)
-	      else N = map(CC^0,CC^(numVars+1),0);
-
-	   -- rearrange columns so slice from NAGtypes
-	  --returns the correct linear functional
-
-	  firstCol:=N_{0};
-	  N=(submatrix'(N, ,{0})|firstCol);
-
-	  (wList#codimNum).Slice = N;
-
+	     coeffList := {};
+    	 --We store the cols of M needed for this particular codimNum in coeffList,
+    	 --then turn it into a matrix and store it the witness set.
+    	 colsToSkip = listOfCodims#codimNum - listOfCodims#0;
+    	 for i from colsToSkip to numgens source M - 1 do (
+    	    coeffCol := {};
+    	    for j from 0 to numgens target M - 1 do (
+        	   coeffCol = join(coeffCol, {M_(j,i)});
           );
-
+          coeffList = join(coeffList, {coeffCol});
+        );
+    	  if (#coeffList > 0) then N = matrix(coeffList) else N = map(CC^0,CC^(numVars+1),0);
+    	   -- rearrange columns so slice from NAGtypes
+    	  --returns the correct linear functional
+    	  firstCol:=N_{0};
+    	  N=(submatrix'(N, ,{0})|firstCol);
+    	  (wList#codimNum).Slice = N;
+        );
     nv = numericalVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
     return nv
-    )
-
------ start Sample
-
+  )
+  ----- start Sample
   else if (o.runType == 3) then (
        l = lines get (dir|"/sample_points"); -- grabs all lines of the file
        var's := gens ring F#0; -- variables
