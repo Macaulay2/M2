@@ -1465,7 +1465,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      openedInputFile << "CONFIG" << endl << endl;
      for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option
-       then openedInputFile << toString toUpper((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
+       then openedInputFile << toUpper toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
        else if class oneConfig===List then openedInputFile << toString(oneConfig_0) << " : " << toString(oneConfig_1) << " ; " << endl
        else error("BertiniInputConfiguration has an unreadable element: "|toString oneConfig));
      openedInputFile <<  endl << "%%%ENDCONFIG;" << endl;

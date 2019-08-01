@@ -20,6 +20,5 @@ assert(class first S3===Point)
 
 end
 
-true
-Reload
 --TODO: explain in the documentation how BertiniInputConfiguration are written in uppercase.
+--TODO: atom editor needs Reload coloring like true
