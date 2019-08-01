@@ -925,20 +925,15 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   local R;
 
   s := {};
-
-  if (member(o.runType,{0,8})) then (
+  if (member(o.runType,{0,8}))
+  then (
     sessionLog:= lines get (dir|"/bertini_session.log"); -- get contents of session log
     --and check for rank error
-
     scan(sessionLog, i->if i=="The system has no zero dimensional solutions based on its rank!" then
-	error  "The system has no zero dimensional solutions based on its rank!");
-
+	     error  "The system has no zero dimensional solutions based on its rank!");
     failedPaths := lines get (dir|"/failed_paths"); -- get contents of failed paths file and check if non-empty
-
     if  failedPaths=!={""} then (
-	if o.Verbose then
-	stdio << "Warning: Some paths failed, the set of solutions may be incomplete" <<endl<<endl) ;
-
+	  if o.Verbose then stdio << "Warning: Some paths failed, the set of solutions may be incomplete" <<endl<<endl) ;
   --raw_data, for zeroDim
 
 --raw_data output file structure:
@@ -962,149 +957,136 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 --  junk at end is the matrix of patch coefficients
     -- MPType on first line, then number or rows & columns on second,
     -- then the coeffs
-
     l := lines get (dir|"/raw_data"); -- grabs all lines of the file
     numVars = value(first l);
     l = drop(l,2);
     solNum = value(first l);
     l = drop(l,1);
-
     --Now we go through all blocks of solutions
     -- each block contains the coordinates of the solution
     -- and a bunch of other stuff.
-
     wList := {}; --list of witness sets
     pts:={};
     while solNum > -1 do ( -- -1 in solNum position (top of solution block)
-	--is key to end of solutions.
-        maxPrec := value(first l);
-        l = drop(l,1);
-	coords = {};
-
-	for j from 1 to numVars do ( -- grab each coordinate
-	    -- use regexp to get the two numbers from the string
-	    coord = select("[0-9.e+-]+", cleanupOutput(first l));
-	    coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});
-	    -- NOTE: we convert to a 53 bit floating point complex type
-	    -- beware that we might be losing data here!!!
-            l = drop(l,1);
-	    );
-
+	     --is key to end of solutions.
+       maxPrec := value(first l);
+      l = drop(l,1);
+      coords = {};
+    	for j from 1 to numVars do ( -- grab each coordinate
+    	    -- use regexp to get the two numbers from the string
+    	    coord = select("[0-9.e+-]+", cleanupOutput(first l));
+    	    coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});
+    	    -- NOTE: we convert to a 53 bit floating point complex type
+    	    -- beware that we might be losing data here!!!
+                l = drop(l,1);
+    	 );
         -- now we dehomogenize, assuming the first variable is the hom coord:
-
-	dehomCoords = {};
-	if o.IsProjective==-1 then
-            for j from 1 to numVars-1 do (
-	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
-              )
-	    else for j from 0 to numVars-1 do (
-	      dehomCoords = join(dehomCoords, {coords#j });
-              );
- 	pt = new Point;
-        pt.MaximumPrecision=maxPrec;
-	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
-        pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
-        pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
-        pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
-        pt.CycleNumber = value(first l); l=drop(l,1);
-        if(value(first l)=!=1) then pt.SolutionStatus=FailedPath else pt.SolutionStatus=null;
-	l = drop(l,1);
-        pt.SolutionNumber = value(first l);
-     	solNum = pt.SolutionNumber;
-        l = drop(l,1);
-        pt.Coordinates = dehomCoords; --we want to output these
-	pts = join(pts,{pt});
-	);
-    pts = solutionsWithMultiplicity(pts, Tolerance=>o.MultiplicityTol);
-    if o.UseRegeneration=!=1 then checkMultiplicity(pts);
-    if o.UseRegeneration==1 then return pts
-       else (
-	   checkConditionNumber(pts, 1e10);--TODO: 1e10 specifies a condition number tolerance that should be an option.
-	   for i in pts do (
-	       if (i.SolutionStatus=!=Singular
-	           and i.SolutionStatus=!=FailedPath
-		   and i.SolutionStatus=!=RefinementFailure)
-	       then i.SolutionStatus=Regular);
-	   return pts
-	   )
-    )
-
+    	dehomCoords = {};
+    	if o.IsProjective==-1
+      then for j from 1 to numVars-1 do (
+    	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
+                  )
+      else for j from 0 to numVars-1 do (
+    	      dehomCoords = join(dehomCoords, {coords#j });
+                  );
+     	pt = new Point;
+            pt.MaximumPrecision=maxPrec;
+    	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
+            pt.CycleNumber = value(first l); l=drop(l,1);
+            if(value(first l)=!=1) then pt.SolutionStatus=FailedPath else pt.SolutionStatus=null;
+    	l = drop(l,1);
+      pt.SolutionNumber = value(first l);
+      solNum = pt.SolutionNumber;
+      l = drop(l,1);
+      pt.Coordinates = dehomCoords; --we want to output these
+    	pts = join(pts,{pt});
+    	);
+      pts = solutionsWithMultiplicity(pts, Tolerance=>o.MultiplicityTol);
+      if o#?UseRegeneration then(
+          if o.UseRegeneration==1 then return pts
+          );
+      checkMultiplicity(pts);
+      checkConditionNumber(pts, 1e10);--TODO: 1e10 specifies a condition number tolerance that should be an option.
+      for i in pts do (
+        if (i.SolutionStatus=!=Singular
+          and i.SolutionStatus=!=FailedPath
+      	  and i.SolutionStatus=!=RefinementFailure)
+        then i.SolutionStatus=Regular);
+    	return pts
+    	   )
   else if (o.runType == 1 or o.runType==6 or o.runType==5) then (
     -- get contents of session log and check errors
     sessionLog = lines get (dir|"/bertini_session.log");
     scan(sessionLog, i->if i=="ERROR: The matrix has more columns than rows in QLP_L_mp!!" then
 	  error  "The matrix has more columns than rows in QLP_L_mp!"
 	  );
-
     l = lines get (dir|"/raw_data"); -- grabs all lines of the file
     numVars = value(first l);
     l = drop(l,2);
     solNum = value(first l);
     l = drop(l,1);
-
     --Now we go through all blocks of solutions
     -- (each block contains the coordinates of the solution and other stuff)
-
     pts={};
-
     prec'value := (P,s) -> ( -- P:ZZ and s:String
-	where'is'e := regex("e",s);
-	if where'is'e===null then value(s|"p" | toString P)
-	   else (
-	       pos := first first where'is'e;
-	       value (substring((0,pos),s) | "p" | toString P | substring((pos,#s-pos),s))
-	       )
-	 );
-
+  	  where'is'e := regex("e",s);
+    	if where'is'e===null
+      then value(s|"p" | toString P)
+  	   else (
+         pos := first first where'is'e;
+         value (substring((0,pos),s) | "p" | toString P | substring((pos,#s-pos),s))
+         ));
     while solNum > -1 do (
-	-- -1 in solNum position (top of solution block) is key to end of solutions.
-	maxPrec = value(first l);
-	l = drop(l,1);
-	bitPrec := ceiling((log 10/log 2)*o.digits);
-	coords = {};
-	for j from 1 to numVars do ( -- grab each coordinate
-	    -- use regexp to get the two numbers from the string
-	    coord = select("[0-9.e+-]+", cleanupOutput(first l));
-	    if (o.runType==1 or o.runType==6) then (
-		coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))
-	        -- NOTE: we convert to a 53 bit floating point complex type
-		-- beware that we might be losing data here!!!
-	        else (coords = join(coords,
-			{toCC(bitPrec, prec'value(bitPrec,coord#0), prec'value(bitPrec,coord#1))}
-		        ));
-            l = drop(l,1);
-	    );
-
-	pt = new Point;
-        pt.MaximumPrecision=maxPrec;
-	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
-        pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
-        pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
-        pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
-        pt.CycleNumber = value(first l); l=drop(l,1);
-
-	if(value(first l)=!=1) and o.runType==5 then
-	    pt.SolutionStatus=RefinementFailure else pt.SolutionStatus=null;
-
-	if(value(first l)=!=1) and o.runType=!=5 then
-	         pt.SolutionStatus=FailedPath;
-	l=drop(l,1);
-        pt.SolutionNumber = value(first l);
+  	-- -1 in solNum position (top of solution block) is key to end of solutions.
+    	maxPrec = value(first l);
+    	l = drop(l,1);
+    	bitPrec := ceiling((log 10/log 2)*o.digits);
+    	coords = {};
+    	for j from 1 to numVars do ( -- grab each coordinate
+    	    -- use regexp to get the two numbers from the string
+    	    coord = select("[0-9.e+-]+", cleanupOutput(first l));
+    	    if (o.runType==1 or o.runType==6)
+          then (
+    		      coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))
+    	        -- NOTE: we convert to a 53 bit floating point complex type
+    		      -- beware that we might be losing data here!!!
+    	    else (coords = join(coords,
+    			     {toCC(bitPrec, prec'value(bitPrec,coord#0), prec'value(bitPrec,coord#1))}
+    		        ));
+          l = drop(l,1);
+    	    );
+    	pt = new Point;
+      pt.MaximumPrecision=maxPrec;
+    	pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
+            pt.CycleNumber = value(first l); l=drop(l,1);
+    	if(value(first l)=!=1) and o.runType==5
+      then pt.SolutionStatus=RefinementFailure else pt.SolutionStatus=null;
+    	if(value(first l)=!=1) and o.runType=!=5 then  pt.SolutionStatus=FailedPath;
+    	l=drop(l,1);
+      pt.SolutionNumber = value(first l);
      	solNum=pt.SolutionNumber;
-        l = drop(l,1);
-        pt.Coordinates = coords; --we want to output these
-	pts=join(pts,{pt})
+      l = drop(l,1);
+      pt.Coordinates = coords; --we want to output these
+    	pts=join(pts,{pt})
+      );
+    pts=solutionsWithMultiplicity(pts, Tolerance => o.MultiplicityTol);
+    if o#?UseRegeneration then(
+        if o.UseRegeneration==1 then return pts
         );
-    pts=solutionsWithMultiplicity(pts,Tolerance=>o.MultiplicityTol);
-    if true then checkMultiplicity(pts); --TODO need a regeneration option
-    if false then return pts--TODO need a regeneration option
-       else (
-	   checkConditionNumber(pts, 1e10);--TODO: 1e10 specifies a condition number tolerance that should be an option.
-	   for i in pts do if (i.SolutionStatus=!=Singular
-	       and i.SolutionStatus=!=FailedPath
-	       and i.SolutionStatus=!=RefinementFailure)
-	       then i.SolutionStatus=Regular;
-	   return pts)
+    checkMultiplicity(pts);
+    checkConditionNumber(pts, 1e10);--TODO: 1e10 specifies a condition number tolerance that should be an option.
+    for i in pts do (
+      if (i.SolutionStatus=!=Singular
+        and i.SolutionStatus=!=FailedPath
+        and i.SolutionStatus=!=RefinementFailure)
+      then i.SolutionStatus=Regular);
+    return pts)
     )
 
   --if PosDim, we read in the output from witness_data
