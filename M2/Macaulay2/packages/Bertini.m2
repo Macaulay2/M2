@@ -591,7 +591,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	    -- runs Bertini, storing screen output to bertini_session.log
             );
 
-         else readSolutionsBertini(dir,F,o) -- o contains runType,
+         readSolutionsBertini(dir,F,o) -- o contains runType,
 	 --so we can switch inside readSolutionsBertini
          )
 
@@ -1067,33 +1067,33 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     listOfCodims = {};  --keeps track of codimension of each witness set;
     --needed since we add slice data later.
     for codimNum from 1 to numCodims do (
-	     pts := {};  --for each codim, we store all points and
+	pts := {};  --for each codim, we store all points and
 	--all codims (next line), then sort after gathering all points in the codim
-      compNums := {};
-      maxCompNum := 0;  --keeps track of max component number in this codim
-      codimen = value(first l); l=drop(l,1);
-      ptsInCodim = value(first l); l=drop(l,1);
-      for ptNum from 1 to ptsInCodim do (
+      	compNums := {};
+      	maxCompNum := 0;  --keeps track of max component number in this codim
+      	codimen = value(first l); l=drop(l,1);
+      	ptsInCodim = value(first l); l=drop(l,1);
+      	for ptNum from 1 to ptsInCodim do (
   	    maxPrec := value(first l);
-        l = drop(l,1);
-        coords = {};
-        for j from 1 to numVars do ( -- grab each coordinate
-              -- use regexp to get the two numbers from the string
-  	      coord = select("[0-9.e+-]+", cleanupOutput(first l));
-          coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});
-	      -- NOTE: we convert to maxPrec bits complex type
-          l = drop(l,1);
-        );
-        l = drop(l,numVars+1);  -- don't need second copy of point or
+            l = drop(l,1);
+            coords = {};
+            for j from 1 to numVars do ( -- grab each coordinate
+              	-- use regexp to get the two numbers from the string
+  	      	coord = select("[0-9.e+-]+", cleanupOutput(first l));
+          	coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});
+	      	-- NOTE: we convert to maxPrec bits complex type
+          	l = drop(l,1);
+        	);
+            l = drop(l,numVars+1);  -- don't need second copy of point or
   	    --extra copy of maxPrec
-        -- now we dehomogenize, assuming the first variable is the hom coord:
+            -- now we dehomogenize, assuming the first variable is the hom coord:
   	    dehomCoords = {};
   	    if o.IsProjective==-1
-        then (
+            then (
 	        for j from 1 to numVars-1 do (
   		    dehomCoords = join(dehomCoords, {coords#j / coords#0});
-          ))
-        else for j from 0 to numVars-1 do (
+          	    ))
+  	    else for j from 0 to numVars-1 do (
   		    dehomCoords = join(dehomCoords, {coords#j });
                     );
   	    condNum = value(cleanupOutput(first l)); l=drop(l,4);
@@ -1112,25 +1112,20 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	    --to break them into witness sets
   	    ptsInWS := {}; --stores all points in the same witness set
   	    for k from 0 to #pts-1 do (
-  	      --save the point if its in the current component (component j)
-  	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k});
-  	      );
-  	    N = map(CC^0,CC^(numVars+1),0);
-  	    if AllowStrings===-1
-        then ws = witnessSet(ideal F,N, ptsInWS)
-	      --turn these points into a witness set
-    	  else (
-    		  ws = witnessSet(ideal(1),N,ptsInWS);
-    		  ws.Equations=F;
-    		  ws.IsIrreducible=true
-    	        );
-           -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
-        ws.ComponentNumber=j;
-  	    ws.WitnessDataFileName=dir|"/witness_data";
-  	    wList = join(wList, {ws}); --add witness set to list
-            listOfCodims = join(listOfCodims, {codimNum});
-            );
-  	);
+  	      	--save the point if its in the current component (component j)
+  	      	if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k});
+  	      	);
+  	    N = map(CC^0,CC^numVars,0); -- this is a dummy, will grab slice data later
+  	    ws = witnessSet(ideal F, N, ptsInWS);
+	    ws.IsIrreducible = true;
+	    --turn these points into a witness set
+	    -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
+            ws.ComponentNumber=j;
+	    ws.WitnessDataFileName=dir|"/witness_data";
+	    wList = join(wList, {ws}); --add witness set to list
+	    listOfCodims = join(listOfCodims, {codimen});
+	    );    
+    	);
     -- now we grab the slice data, at the end of the witness_data file,
     --to be inserted into the witnessSets with dim>0
     l = drop(l,3); -- -1, blank line, MPType
@@ -1166,7 +1161,8 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
         mat = join(mat, {rw});
         rw = {};
     );
-    M = matrix(mat);
+    M = matrix(mat); -- "master matrix" that stores all slices
+    
     -- Finally, we can cycle through the witness sets in nv
     -- and add the slice data.
     -- There are length listOfCodims witness sets,
@@ -2368,7 +2364,7 @@ load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.t
 -- DOCUMENTATION
 --##########################################################################--
 
---beginDocumentation()
+beginDocumentation()
 --load "./Bertini/doc.m2";
 
 
