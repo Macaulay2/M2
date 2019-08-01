@@ -470,17 +470,17 @@ bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
 
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
-    	OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
-    	TopDirectory=>storeBM2Files,
-    	B'Functions=>{},
+	OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+	TopDirectory=>storeBM2Files,
+	B'Functions=>{},
 	BertiniInputConfiguration=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
-      	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
-      	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
-      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
-      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.
-    	M2Precision=>53,
+	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
+	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
+	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
+	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.
+	M2Precision=>53,
 	Verbose=>false
 	} )
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
