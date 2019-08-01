@@ -591,16 +591,6 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	    -- runs Bertini, storing screen output to bertini_session.log
             );
 
-          if o.runType == 7 then ( -- parameter homotopy, stage 1
-    	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
-	    -- runs Bertini, storing screen output to bertini_session.log
-	    o2 := o;
-	    o2 = delete(runType => 7, o2);
-	    o2 = o2 ++ {runType => 8};
-	    dir2:=makeBertiniInput(F,o2);
-	    copyFile(dir2|"/input",dir|"/input");
-	    stageTwoParameterRun(dir,F,o2) )
-
          else readSolutionsBertini(dir,F,o) -- o contains runType,
 	 --so we can switch inside readSolutionsBertini
          )
@@ -632,8 +622,6 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
     if o.runType==6  then (v=delete(t,v));  --special for runtype6
 
-    if (o.runType==7 or o.runType==8) then (for i in params do v=delete(i,v));
-
     dir := temporaryFileName(); -- build a directory to store temporary data
     makeDirectory dir;
     f := openOut (dir|"/input"); -- typical (but not only possible) name for
@@ -663,14 +651,6 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
     if o.runType == 6 then ( --trackHomotopy
         if o.IsProjective==-1 then f << "USERHOMOTOPY: 1;\n"
 	    else f << "USERHOMOTOPY: 2;\n");
-
-    if o.runType == 7 then --parameterHomotopy, stage 1
-        f << "PARAMETERHOMOTOPY: 1;\n";
-        --  else ( if o.runType == 7 and o.WriteOnly=!=-1
-	---then  f << "PARAMETERHOMOTOPY: 2;\n");
-
-    if o.runType == 8 then --parameterHomotopy, stage 2
-        f << "PARAMETERHOMOTOPY: 2;\n";
 
     f << endl << "END;\n\n";  -- end of config section
 
@@ -703,14 +683,6 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 	--so we chose our initials and T
 	f << "parameter "<<toString(t)|" ;" <<endl;
         f << toString(t)|"= daejT ;"<<endl);
-
-    if (member(o.runType, {7,8})) then (
-	f << "parameter ";
-        scan(#params, i->  -- now we list the variables in a single list
-       	    if i<#params-1
-       	    then f << toString params#i << ", "
-       	    else f << toString params#i << ";" << endl
-	    ));
 
     bertiniNumbers := p->if class p === CC then (
 	toString realPart p | "+" | toString imaginaryPart p | "*I"
@@ -839,9 +811,8 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
           close f;
           );
 
-      if (o.runType=!=8) then (
 	  if o.Verbose then stdio
-	       << "Temporary directory for input and output files:" << dir << endl << endl);
+	       << "Temporary directory for input and output files:" << dir << endl << endl;
 
       dir
       )
@@ -907,6 +878,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   then (
     sessionLog:= lines get (dir|"/bertini_session.log"); -- get contents of session log
     --and check for rank error
+    --TODO incorporate this error in bertiniZeroDimSolve
     scan(sessionLog, i->if i=="The system has no zero dimensional solutions based on its rank!" then
 	     error  "The system has no zero dimensional solutions based on its rank!");
     failedPaths := lines get (dir|"/failed_paths"); -- get contents of failed paths file and check if non-empty
@@ -1312,30 +1284,6 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
          );
        return wSets
   )
-
-  else if o.runType == 8 then (
-       l = lines get (dir|"/raw_solutions");
-
-       while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
-
-       while #l>0 do (
-	    if DBG>=10 then << "------------------------------" << endl;
-	    coords = {};
-	    while #l>0 and #separate(" ", l#0) >= 2 do (
-	      	 coords = coords | {(
-		   	   a = separate(" ",  cleanupOutput(first l));
-		   	   (value a#0)+ii*(value a#1)
-	      	   	   )};
-    	      	 l = drop(l,1);
-	      	 );
-	    while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
-            if DBG>=10 then << coords << endl;
-	    s = s | {{coords}};
-	    return s
-	    );
-
-    )
-
   else error "unknown output file";
   )
 
@@ -1351,34 +1299,6 @@ cleanupOutput String := s -> (
   t = replace("e\\+","e",t)
   )
 
-stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{Verbose=>false,
-	MultiplicityTol=>1e-6, AllowStrings=>-1,
-	Parameters=>null,ParameterValues=>null,
-	StartSystem=>{},StartSolutions=>{},RawData=>null,WitnessData=>null,
-	NVariety=>null,MPType=>-1,IsProjective=>-1,
-  dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,
-	PathVariable=>null})
-stageTwoParameterRun (String, List) := o -> (dir, F) -> (
-  copyFile(dir|"/nonsingular_solutions",dir|"/start");
-  moveFile(dir|"/nonsingular_solutions",dir|"/nonsingular_solutions_stage1");
-  sols:={};
-  for i from 0 to #o.ParameterValues-1 do (
-  --writing parameter values to file
-     f:= openOut (dir|"/final_parameters"); -- the only name for Bertini's final
-     --parameters file
-     f << #(o.Parameters) << endl << endl;
-     scan((o.ParameterValues)_i, s->(
-       scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
-       f << endl;
-       ));
-     close f;
-     run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
-     solution :=readSolutionsBertini(dir, F, o);
-     sols = append(sols, solution);
-     moveFile(dir|"/nonsingular_solutions",dir|"/nonsingular_solutions"|toString(i));
-     );
-  return sols
-  )
 
 checkConditionNumber=(listOfPoints, tolerance)->(
     for i in listOfPoints do (
