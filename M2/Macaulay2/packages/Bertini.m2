@@ -290,14 +290,15 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
   myConfigs:=(o.BertiniInputConfiguration);
   if o.UseRegeneration===1 then myConfigs=myConfigs|{"UseRegeneration"=>1};
---    print myConfigs;
+--  TODO: Regeneraetion test R=QQ[x]; length(bertiniZeroDimSolve({x^2}))==1;  bertiniZeroDimSolve({x^2},UseRegeneration=>1)=={}
+--  print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file.
   makeB'InputFile(myTopDir,
     B'Polynomials=>myPol,
     AffVariableGroup=>myAVG,
     HomVariableGroup=>myHVG,
 --%%--These are extra options the user can specify. For more information refer to their documentation.
-    BertiniInputConfiguration=>o.BertiniInputConfiguration,
+    BertiniInputConfiguration=>myConfigs,
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
     B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
@@ -322,7 +323,6 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 
 --For zero dim solve OutStyle and NameSolutionsFile need to both be changed.
 --Do an error for this.
-
 
 bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
   BertiniInputConfiguration=>{},
@@ -1086,10 +1086,9 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
         and i.SolutionStatus=!=FailedPath
         and i.SolutionStatus=!=RefinementFailure)
       then i.SolutionStatus=Regular);
-    return pts)
-    )
+    return pts ) else
   --if PosDim, we read in the output from witness_data
-  else if (o.runType == 2) then (
+   if (o.runType == 2) then (
 --witness_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  #nonempty codims
@@ -1466,7 +1465,7 @@ makeB'InputFile(String) := o ->(IFD)->(
      openedInputFile << "CONFIG" << endl << endl;
      for oneConfig in o.BertiniInputConfiguration do (
        if class oneConfig===Option
-       then openedInputFile << toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
+       then openedInputFile << toString toUpper((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
        else if class oneConfig===List then openedInputFile << toString(oneConfig_0) << " : " << toString(oneConfig_1) << " ; " << endl
        else error("BertiniInputConfiguration has an unreadable element: "|toString oneConfig));
      openedInputFile <<  endl << "%%%ENDCONFIG;" << endl;
