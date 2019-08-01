@@ -40,12 +40,11 @@ export {
   "EquivalentCoordinates",
   "ReturnPoints",
   "PrintMidStatus",
-  "OutputSyle",
+  "OutputStyle",--TODO remove this option
   "TopDirectory",
   "StorageFolder",
   "ReturnGaloisGroupGeneratorFile",
   "StopBeforeTest",
-  "MapPoints",
   "RandomGamma",
   "SubFolder",
   "StartParameters",
@@ -251,7 +250,8 @@ knownConfigs={
 	MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1
 	}
 bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
-  OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+  UseRegeneration =>-1,
+  OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
   TopDirectory=>storeBM2Files,
 	BertiniInputConfiguration=>{},
 	AffVariableGroup=>{},
@@ -289,6 +289,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%%%--If the same configuration is set twice then Bertini will use the one set last.
 --%%%%--The first is in BertiniInputConfiguration where we just list the configurations.
   myConfigs:=(o.BertiniInputConfiguration);
+  if o.UseRegeneration===1 then myConfigs=myConfigs|{"UseRegeneration"=>1};
 --    print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file.
   makeB'InputFile(myTopDir,
@@ -304,19 +305,19 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
     );
 --%%--Check for some errors.
 --%%%%--
-  if o.NameSolutionsFile=!="raw_solutions" and o.OutputSyle=!="OutSolutions"
-  then error"If NameSolutionsFile is set then OutputSyle should be set to OutSolutions. ";
+  if o.NameSolutionsFile=!="raw_solutions" and o.OutputStyle=!="OutSolutions"
+  then error"If NameSolutionsFile is set then OutputStyle should be set to OutSolutions. ";
 --%%--We call Bertini and solve the zero dimensional system.
     successRun:=runBertini(myTopDir,Verbose=>o.Verbose);
 --    print successRun;
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called theSols below.
 --%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files.
-    if o.OutputSyle==="OutPoints"
+    if o.OutputStyle==="OutPoints"
     then theSols:=importMainDataFile(myTopDir,NameMainDataFile=>o.NameMainDataFile,M2Precision=>o.M2Precision);
-    if o.OutputSyle==="OutSolutions"
+    if o.OutputStyle==="OutSolutions"
     then theSols=importSolutionsFile(myTopDir,NameSolutionsFile=>o.NameSolutionsFile,OrderPaths=>true,M2Precision=>o.M2Precision);
 --
-    if o.OutputSyle=!="OutNone"
+    if o.OutputStyle=!="OutNone"
     then return theSols)
 
 --For zero dim solve OutStyle and NameSolutionsFile need to both be changed.
@@ -404,7 +405,7 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
 
 --This is a type 2 user-defined homotopy
 bertiniUserHomotopy = method(TypicalValue => List, Options=>knownConfigs|{Verbose=>false,
-    	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+    	OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
     	B'Functions=>{},
 	BertiniInputConfiguration=>{},
@@ -453,15 +454,15 @@ bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
     writeStartFile(myTopDir,S1);
     runBertini(myTopDir,Verbose=>o.Verbose);
 --    print 2;
---%%%%--Depending on the OutputSyle option, the style of this text file can be main_data or a list of coordinates.
+--%%%%--Depending on the OutputStyle option, the style of this text file can be main_data or a list of coordinates.
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called allSols below.
 --%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files.
     allSols:={};
-    if o.OutputSyle==="OutPoints"
+    if o.OutputStyle==="OutPoints"
     then  allSols=importMainDataFile(myTopDir,M2Precision=>o.M2Precision,NameMainDataFile=>"main_data");
-    if o.OutputSyle==="OutSolutions"
+    if o.OutputStyle==="OutSolutions"
     then allSols=importSolutionsFile(myTopDir,NameSolutionsFile=>"raw_solutions",OrderPaths=>true,M2Precision=>o.M2Precision);
-    if o.OutputSyle=!="OutNone"
+    if o.OutputStyle=!="OutNone"
     then return allSols)
 --bertiniUserHomotopy(RingElement, List, List) := o -> (pathT, myPol, S1) -> bertiniUserHomotopy(pathT,{},myPol,S1)
 
@@ -469,7 +470,7 @@ bertiniUserHomotopy(Thing,List, List, List) := o -> (pathT, SPG, myPol, S1) -> (
 
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
-    	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+    	OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
     	B'Functions=>{},
 	BertiniInputConfiguration=>{},
@@ -521,25 +522,25 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
     runBertini(myTopDir,PreparePH2=>true,Verbose=>o.Verbose);
 --%%--For each set of parameter values, i.e. each element of myParValues we will do a Bertini run.
 --%%%%--The output of run # will be stored as a text file named "ph_jade_#".
---%%%%--Depending on the OutputSyle option, the style of this text file can be main_data or a list of coordinates.
+--%%%%--Depending on the OutputStyle option, the style of this text file can be main_data or a list of coordinates.
     runNumber:=0;
     for i in myParValues do(
       writeParameterFile(myTopDir,i);
       runBertini(myTopDir,Verbose=>o.Verbose);
-      if o.OutputSyle==="OutPoints" then moveB'File(myTopDir,"main_data","ph_jade_"|runNumber);
-      if o.OutputSyle==="OutNone" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
-      if o.OutputSyle==="OutSolutions" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
+      if o.OutputStyle==="OutPoints" then moveB'File(myTopDir,"main_data","ph_jade_"|runNumber);
+      if o.OutputStyle==="OutNone" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
+      if o.OutputStyle==="OutSolutions" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
       runNumber=runNumber+1
       );
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called allSols below.
 --%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files.
     allSols:={};
-    if o.OutputSyle==="OutPoints"
+    if o.OutputStyle==="OutPoints"
     then for i from 0 to #myParValues-1 do allSols=allSols|{importMainDataFile(myTopDir,M2Precision=>o.M2Precision,NameMainDataFile=>"ph_jade_"|i)};
-    if o.OutputSyle==="OutSolutions"
+    if o.OutputStyle==="OutSolutions"
     then for i from 0 to #myParValues-1 do allSols=allSols|{importSolutionsFile(myTopDir,NameSolutionsFile=>"ph_jade_"|i,OrderPaths=>true,M2Precision=>o.M2Precision)};
 --
-    if o.OutputSyle=!="OutNone"
+    if o.OutputStyle=!="OutNone"
     then return allSols)
 
 
