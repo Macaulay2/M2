@@ -566,16 +566,6 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 
 	  --if o.WriteOnly=!=-1 then break "Write Only";
 
-	  if o.runType == 0 then ( -- ZeroDim
-    	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
-	    -- runs Bertini, storing screen output to bertini_session.log
-            );
-
-          if o.runType == 1 then ( -- segment homotopy
-    	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
-	    -- runs Bertini, storing screen output to bertini_session.log
-            );
-
 	  if o.runType == 2 then ( -- PosDim
     	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
 	    -- runs Bertini, storing screen output to bertini_session.log
@@ -656,9 +646,6 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
     -- for each user-provided option, we write the appropriate config to the file:
     scan(o.BertiniInputConfiguration,i->f<<(toString first i) <<": "<<(toString last i)<<" ;\n");
     -- now we handle the various runType options:
-
-    if o.runType == 1 then --segment run
-        f << "USERHOMOTOPY: 1;\n";
 
     if o.runType == 2 then --pos dim run
         f << "TRACKTYPE: 1;\n";
@@ -749,16 +736,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 		   T#i else bertiniNumbers T#i) << ";" << endl)
 	   )
       -- param runs: write out polys and some other stuff
-      else (if (o.runType==1) then (
-	      if #o.StartSystem != #T then error "expected equal number of
-	          equations in start and target systems";
-	      f << "pathvariable t;\n" << "parameter s;\n"<< "s = t;\n\n";
-              scan(#T, i -> f << "f" << i << " = (" << bertiniNumbers T#i << ")
-		  *(1-s)+s*("<< bertiniNumbers gamma << ")*("
-		  << bertiniNumbers o.StartSystem#i << ");" << endl
-	      );
-              )
-             else (  -- refine sols runs: write out polys and some other stuff
+      else ((  -- refine sols runs: write out polys and some other stuff
                  f << "pathvariable t;\n"
                  << "parameter s;\n"
                  << "s = t;\n\n";
