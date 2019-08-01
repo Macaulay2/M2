@@ -13,9 +13,6 @@ newPackage(
     	DebuggingMode => false
     	)
 
-needsPackage "Text"
-needsPackage "SimpleDoc"
-
 examples'names = {
     "cyclic",
     "katsura",

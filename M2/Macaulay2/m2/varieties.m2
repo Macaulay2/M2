@@ -120,6 +120,13 @@ Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(Proj ring M,M)
 variety = method()
 variety CoherentSheaf := Variety => (F) -> F.variety
 variety SheafOfRings := Variety => O -> O.variety
+-- The following two methods returns either a Variety or 
+-- (from Schubert2) an AbstractVariety, or
+-- (from NormalToricVarieties) a NormalToricVariety
+-- and perhaps other uses later...
+variety Ring := S -> if S.?variety then S.variety else error "no variety associated with ring"
+variety RingElement := f -> variety ring f
+
 ring CoherentSheaf := (F) -> ring F.module
 numgens CoherentSheaf := (F) -> numgens F.module
 module CoherentSheaf := Module => F -> F.module
@@ -392,6 +399,8 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -----------------------------------------------------------------------------
 
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
+     needsPackage "Truncations";
+     truncate := value getGlobalSymbol "truncate";
      G := G'#0;
      e := G'#1#0;
      if variety G =!= variety F

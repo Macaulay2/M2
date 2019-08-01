@@ -5,8 +5,7 @@ newPackage(
         Authors => {{Name => "Mike Stillman", 
                   Email => "", 
                   HomePage => ""}},
-        Headline => "Experimental versions of free resolutions",
-        DebuggingMode => true
+        Headline => "Experimental versions of free resolutions"
         )
 
 export {

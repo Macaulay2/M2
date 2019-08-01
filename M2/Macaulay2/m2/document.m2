@@ -543,7 +543,11 @@ separateM2output String := r -> (
 
 makeExampleOutputFileName := (fkey,pkg) -> (			 -- may return 'null'
      if pkg#?"package prefix" and pkg#"package prefix" =!= null 
-     then pkg#"package prefix" | replace("PKG",pkg#"pkgname",currentLayout#"packageexampleoutput") | toFilename fkey | ".out"
+     then (
+	  packageLayout := detectCurrentLayout pkg#"package prefix";
+	  if packageLayout === null then error "internal error: package layout not detected";
+	  pkg#"package prefix" | replace("PKG",pkg#"pkgname",Layout#packageLayout#"packageexampleoutput") | toFilename fkey | ".out"
+	  )
      )
 
 exampleResults := {}
@@ -554,10 +558,17 @@ checkForExampleOutputFile := (node,pkg) -> (
      if pkg#"example results"#?node then (
 	  exampleResults = pkg#"example results"#node;
 	  true)
-     else if exampleOutputFilename =!= null and fileExists exampleOutputFilename then (
-     	  if debugLevel > 1 then stderr << "--reading example results from " << exampleOutputFilename << endl;
-	  exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
- 	  true)
+     else if exampleOutputFilename =!= null then (
+	  if fileExists exampleOutputFilename then (
+     	       if debugLevel > 1 then stderr << "--reading example results from " << exampleOutputFilename << endl;
+	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
+	       true
+	       )
+	  else (
+	       if debugLevel > 0 then stderr << "--example output file not present: " << exampleOutputFilename << endl;
+	       false
+	       )
+	  )
      else false)
 
 currentExampleKey := ""

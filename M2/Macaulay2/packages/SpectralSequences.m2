@@ -46,8 +46,7 @@ newPackage(
       Email => "vqthanh@math.berkeley.edu",
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
-  DebuggingMode => true,
-  PackageImports => {"SimplicialComplexes", "ChainComplexExtras", "PushForward"},
+  PackageImports => {"Truncations"},
   PackageExports => {"SimplicialComplexes", "ChainComplexExtras", "PushForward"}
   )
 

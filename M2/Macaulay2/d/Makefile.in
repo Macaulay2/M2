@@ -148,7 +148,7 @@ M2INCLUDES += -I@srcdir@/../regex
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
-CPPFLAGS += -Wno-fatal-errors
+CPPFLAGS += -Wno-fatal-errors -Wno-unknown-pragmas
 
 CFLAGS += $(M2_CFLAGS)
 ifeq "@__INTEL_COMPILER@" "no"
@@ -159,6 +159,10 @@ CXXFLAGS += $(M2_CXXFLAGS)
 
 CFLAGS   += -Wreturn-type
 CXXFLAGS += -Wreturn-type
+
+# the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
+# and apparently it can't be silenced in source code.
+CXXFLAGS += -Wno-unknown-pragmas
 
 python-c.o : | python-exports.h.tmp
 

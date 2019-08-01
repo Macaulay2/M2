@@ -10,8 +10,10 @@ SLEvaluator* MutableMat<Mat>::createSLEvaluator(SLProgram* P,
                                                 M2_arrayint constsPos,
                                                 M2_arrayint varsPos) const
 {
-  return new SLEvaluatorConcrete<typename Mat::CoeffRing>(
-      P, constsPos, varsPos, this /*->getMat()*/);
+  if (n_rows() != 1 || n_cols() != constsPos->len) {
+    ERROR("1-row matrix expected; or numbers of constants don't match");
+    return nullptr;
+  } else return new SLEvaluatorConcrete<typename Mat::CoeffRing> (P, constsPos, varsPos, this);
 }
 
 template <typename T>
@@ -56,10 +58,10 @@ MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
       // ignore returned value (the rank of mat):
       MatrixOps::rowReducedEchelonForm(mat, result->mat);
       return result;
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       delete result;
-      throw(e);
+      throw;
   }
 }
 

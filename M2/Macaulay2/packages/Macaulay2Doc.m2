@@ -14,9 +14,6 @@ newPackage ("Macaulay2Doc",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
-if not member("Macaulay2Doc",Core#"base packages") 
-then Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
-
 scan(pairs Core#"raw documentation", (k,v) -> (
 	  remove(Core#"raw documentation", k);
 	  Macaulay2Doc#"raw documentation"#k = v;

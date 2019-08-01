@@ -148,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2017 Daniel R. Grayson and Michael E. Stillman:" | newline
+	  | "Copyright 2019 Daniel R. Grayson and Michael E. Stillman:" | newline
      	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
      	  | "  this binary code licensed under the GNU General Public License version 3." | newline
      	  -- our binary code is linked with :
@@ -411,6 +411,7 @@ usage := arg -> (
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
      << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
+     << "    --no-threads       don't start any additional threads (or tasks)" << newline
      << "    --no-preload       don't load the preloaded packages" << newline;
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-randomize     don't set the random number seed based on the date" << newline
@@ -480,6 +481,7 @@ action := hashTable {
      "--no-randomize" => arg -> arg,
      "--no-time" => arg -> arg,
      "--no-personality" => arg -> arg,
+     "--no-threads" => arg -> arg,
      "--no-preload" => arg -> arg,
      "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d

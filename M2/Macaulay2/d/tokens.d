@@ -135,10 +135,10 @@ export unopNameListCell := {f:unop,name:string,next:unopNameListCell};
 export binopNameListCell := {f:binop,name:string,next:binopNameListCell};
 export ternopNameListCell := {f:ternop,name:string,next:ternopNameListCell};
 export multopNameListCell := {f:multop,name:string,next:multopNameListCell};
-export unopNameList := unopNameListCell(dummyUnop,"{*dummy unary operator*}",self);
-export binopNameList := binopNameListCell(dummyBinop,"{*dummy binnary operator*}",self);
-export ternopNameList := ternopNameListCell(dummyTernop,"{*dummy ternary operator*}",self);
-export multopNameList := multopNameListCell(dummyMultop,"{*dummy n-ary operator*}",self);
+export unopNameList := unopNameListCell(dummyUnop,"-*dummy unary operator*-",self);
+export binopNameList := binopNameListCell(dummyBinop,"-*dummy binnary operator*-",self);
+export ternopNameList := ternopNameListCell(dummyTernop,"-*dummy ternary operator*-",self);
+export multopNameList := multopNameListCell(dummyMultop,"-*dummy n-ary operator*-",self);
 export getUnopName(f:unop):string := (
      p := unopNameList;
      while true do (

@@ -13,8 +13,7 @@ newPackage("Polyhedra",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
-	  Email => "rbirkner@mi.fu-berlin.de"}},
-    DebuggingMode => true
+	  Email => "rbirkner@mi.fu-berlin.de"}}
     )
 
 export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersection, makeFan, addCone, 

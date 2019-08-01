@@ -94,7 +94,7 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
     {
       M2::ARingGFM2 *A = new M2::ARingGFM2(*R, f->get_value());
       return M2::ConcreteRing<M2::ARingGFM2>::create(A);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -108,7 +108,7 @@ const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *f)
     {
       M2::ARingGFFlintBig *A = new M2::ARingGFFlintBig(*R, f->get_value());
       return M2::ConcreteRing<M2::ARingGFFlintBig>::create(A);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -123,7 +123,7 @@ const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
     {
       M2::ARingGFFlint *A = new M2::ARingGFFlint(*R, f->get_value());
       return M2::ConcreteRing<M2::ARingGFFlint>::create(A);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -185,7 +185,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
       ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
       return 0;
 #endif
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -243,7 +243,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       M2::ARingGFGivaro *A = new M2::ARingGFGivaro(
           R->characteristic(), modPoly, primitiveElementPoly, *R);
       return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -305,7 +305,7 @@ const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
       auto varnames = M2_ArrayString_to_stdvector(names);
       const M2::ARingTower *T = M2::ARingTower::create(A, varnames);
       return M2::ConcreteRing<M2::ARingTower>::create(T);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -329,7 +329,7 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1,
       auto new_varnames = M2_ArrayString_to_stdvector(new_names);
       const M2::ARingTower *T = M2::ARingTower::create(A, new_varnames);
       return M2::ConcreteRing<M2::ARingTower>::create(T);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return NULL;
@@ -366,7 +366,7 @@ const Ring /* or null */ *rawARingTower3(const Ring *R1,
         }
       const M2::ARingTower *T = M2::ARingTower::create(A, extensions);
       return M2::ConcreteRing<M2::ARingTower>::create(T);
-  } catch (exc::engine_error e)
+  } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
       return 0;

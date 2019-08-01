@@ -86,7 +86,7 @@ doc /// --coefficients field
         The following example of Scheiderer is SOS, but does not admit any rational SOS decomposition.  Consequently the package must return a real solution:
       Example
         f = library("Scheiderer", QQ[x,y,z])
-        sol = solveSOS (f, Solver=>"CSDP");
+        sol = solveSOS (f);
         sosPoly sol
       Text
         Once the rational world has been left, there is usually now way back.
@@ -500,7 +500,7 @@ doc /// --sosdecTernary
       Example
         R = RR[x,y,z];
         f = library ("Motzkin", {x,y,z});
-        (p,q) = sosdecTernary (f, Solver=>"CSDP");
+        (p,q) = sosdecTernary (f);
       Text
         The result, in this case, is a quotient of two sums of squares.
       Example
@@ -548,8 +548,8 @@ doc /// --sosInIdeal
         More precisely, given equations $h_1(x),...,h_m(x)$, the method looks for polynomial multipliers $h_i(x)$ such that $\sum_i l_i(x) h_i(x)$ is SOS.
      Example
         R = QQ[x,y,z];
-        h = matrix {{x^2+y^2+y, y-z^2}};
-        (sol,mult) = sosInIdeal (h, 2, Solver=>"CSDP");
+        h = matrix {{x^2-4*x+2*y^2, 2*z^2-y^2+2}};
+        (sol,mult) = sosInIdeal (h, 2);
         sosPoly sol
         h * mult == sosPoly sol
      Text
@@ -557,7 +557,7 @@ doc /// --sosInIdeal
         This tries to decompose the zero of the quotient ring as a sum-of-squares.
      Example
         S = R/ideal h;
-        sol = sosInIdeal (S, 2, Solver=>"CSDP");
+        sol = sosInIdeal (S, 2);
         sosPoly sol
         sosPoly sol
     Caveat
@@ -636,7 +636,7 @@ doc /// --lowerBound
       Example
         R = QQ[x];
         f = (x^2-x)/(x^2+1);
-        (bound,sol) = lowerBound (f, Solver=>"CSDP");
+        (bound,sol) = lowerBound (f);
         (bound, recoverSolution sol)
     SeeAlso
         recoverSolution

@@ -10,6 +10,7 @@ newPackage(
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "Package to deal with commutative formal group laws",
+	PackageImports => {"Truncations"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users

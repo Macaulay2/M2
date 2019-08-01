@@ -145,7 +145,7 @@ void *sbrk();		/* not really ansi standard, sigh */
 extern char current_date[];
 extern char current_time[];
 extern int system_errno();
-extern char *progname;
+extern const char *progname;
 
 #include "../dumpdata/dumpdata.h"
 

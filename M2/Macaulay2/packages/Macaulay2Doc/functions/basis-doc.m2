@@ -73,7 +73,7 @@ doc ///
      Degree=>List
        or @ofClass ZZ@.  Sets the degree of the resulting matrix.  Default is 0.  Seldom Used
      Truncate=>Boolean
-       internal use only.  Used to implement @TO truncate@
+       internal use only.  Used to implement @TO "Truncations::truncate"@
    Outputs
      f:Matrix
        a map from a free module over the ring of {\tt M} (or by the ring specified with the {\tt SourceRing} option, if given),
@@ -119,7 +119,7 @@ doc ///
       Notice that {\tt phi} is a matrix whose source is a free module, and whose target is the ideal.  @TO super@ is
       used to get the actual elements of $I$.
 
-      {\bf Basis ina specific multi-degree}
+      {\bf Basis in a specific multi-degree}
             
       If a multidegree is given, then a range cannot be given.
       In this example, the dimension over QQ of this multigraded piece of R is 2.
@@ -192,7 +192,7 @@ doc ///
      If the base ring is not a field, then the result is only a generating set.  If the optional argument
      Variables is provided, then even this might not be correct.
    SeeAlso
-     truncate
+     "Truncations::truncate"
      (sort, Matrix)
      comodule
      super
@@ -351,7 +351,7 @@ document { Key => {
 	  Limit => ZZ => {"the maximum number of basis elements to find"},
 	  Truncate => Boolean => {"whether to add additional generators to the basis sufficient to generate the submodule of ", TT "M", " generated
 	       by all elements of degree at least ", TT "i", ".  If true, the degree rank must be equal to 1.  This option is intended mainly for internal use by
-	       ", TO "truncate", "."
+	       ", TO "Truncations::truncate", "."
 	       },
 	  Variables => List => {"a list of variables; only basis elements involving only these variables will be reported"},
 	  SourceRing => Ring => {"the ring to use as the ring of the source of the map produced; by default, this is the same

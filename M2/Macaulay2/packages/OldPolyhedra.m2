@@ -29,7 +29,8 @@ newPackage("OldPolyhedra",
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/index.htm",
 	  Email => "rbirkner@mi.fu-berlin.de"}},
-    DebuggingMode => false
+    DebuggingMode => false,
+    PackageImports=>{"IntegralClosure", "ReesAlgebra", "LLLBases", "FourierMotzkin" }
     )
 
 ---------------------------------------------------------------------------
@@ -153,8 +154,6 @@ export {"PolyhedralObject",
 	"statePolytope", 
 	"stdSimplex",
 	"saveSession"}
-
-needsPackage "FourierMotzkin"
 
 
 ---------------------------------------------------------------

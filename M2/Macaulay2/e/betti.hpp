@@ -62,31 +62,8 @@ public:
   {
     return a == b;
   }
-
-private:
-  int mSize;
 };
 
-class MultigradedBettiDisplay
-{
-public:
-  using monomial = const int *;
-  MultigradedBettiDisplay(int degree_size) :
-    mSize(degree_size),
-    mHash(100,
-          BettiHashAndEq(),
-          BettiHashAndEq()
-          )
-  {
-  }
-
-  int insert(monomial deg, int lev); // adds one to the value here, or sets value to be 1.
-  int value(monomial deg, int lev); // returns the current value (0 if not present).
-  std::vector<int> flatten() const; // flattens the data into format: {value, level, deg (inline), ...}
-private:
-  int mSize; // size of a monomial
-  std::unordered_map<std::pair<monomial,int>, int, BettiHashAndEq, BettiHashAndEq> mHash;
-};
 #endif
 
 // Local Variables:

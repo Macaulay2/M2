@@ -5,6 +5,7 @@
 #endif
 
 #include "monhashtable.hpp"
+#include <iostream>
 
 #define HASHVALUE(m) (M->hash_value(m))
 #define MONOMIAL_EQUAL(m, n) (M->is_equal(m, n))
@@ -180,14 +181,14 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
 template <typename ValueType>
 void MonomialHashTable<ValueType>::dump() const
 {
-  fprintf(stderr, "--hash table info--\n");
-  fprintf(stderr, "  size of hashtable = %ld\n", size);
-  fprintf(stderr, "  number of calls   = %ld\n", nfind_or_insert);
-  fprintf(stderr, "  number of monoms  = %ld\n", count);
-  fprintf(stderr, "  number of clashes = %ld\n", nclashes);
-  fprintf(stderr, "  max run length    = %ld\n", max_run_length);
-  fprintf(stderr, "  monequal calls    = %ld\n", monequal_count);
-  fprintf(stderr, "  monequal false    = %ld\n", monequal_fails);
+  std::cout << "--hash table info--" << std::endl;
+  std::cout << "  size of hashtable = " << size << std::endl;
+  std::cout << "  number of calls   = " << nfind_or_insert << std::endl;
+  std::cout << "  number of monoms  = " << count << std::endl;
+  std::cout << "  number of clashes = " << nclashes << std::endl;
+  std::cout << "  max run length    = " << max_run_length << std::endl;
+  std::cout << "  monequal calls    = " << monequal_count << std::endl;
+  std::cout << "  monequal false    = " << monequal_fails << std::endl;
 }
 
 template <typename ValueType>
@@ -203,15 +204,15 @@ void MonomialHashTable<ValueType>::show() const
           value m = hashtab[i];
           if (nzeros > 0)
             {
-              fprintf(stderr, "-- %ld zero elements --\n", nzeros);
+              std::cerr << "-- " << nzeros << " zero elements --" << std::endl;
               nzeros = 0;
             }
-          fprintf(stderr, "hash %ld monomial ", M->hash_value(m));
+          std::cerr << "hash " << M->hash_value(m) << " monomial ";
           M->show(m);
-          fprintf(stderr, "\n");
+          std::cerr << std::endl;
         }
     }
-  if (nzeros > 0) fprintf(stderr, "-- %ld zero elements --\n", nzeros);
+  if (nzeros > 0) std::cerr << "-- " << nzeros << " zero elements --" << std::endl;
 }
 
 template class MonomialHashTable<MonomialInfo>;

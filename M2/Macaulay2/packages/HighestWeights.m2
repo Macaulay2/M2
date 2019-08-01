@@ -25,7 +25,6 @@ newPackage(
 	       HomePage => "http://math.galetto.org"}},
      Headline => "decompose free resolutions and graded modules with a semisimple Lie group action",
      PackageExports => {"WeylGroups"},
-     PackageImports => {"SimpleDoc"},
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
 	  "journal URI" => "http://j-sag.org/",

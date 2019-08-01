@@ -110,7 +110,7 @@ export verifyMinimizeFilename(filename:string):string := (
 	       )));
 export tostring(w:Position) : string := (
      if w == dummyPosition 
-     then "{*dummy position*}"
+     then "-*dummy position*-"
      else errfmt(verifyMinimizeFilename(w.filename),int(w.line),int(w.column + 1),int(w.loadDepth)));
 export (o:file) << (w:Position) : file := o << tostring(w);
 export (o:BasicFile) << (w:Position) : BasicFile := o << tostring(w);
@@ -145,7 +145,7 @@ export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Pos
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
 export copy(p:Position):Position := Position(p.filename, p.line, p.column, loadDepth);
 export position(file:PosFile):Position := Position(file.filename,file.line,file.column,loadDepth);
-export dummyPosFile := PosFile(dummyfile,0,"{*dummy file name*}",ushort(0),ushort(0));
+export dummyPosFile := PosFile(dummyfile,0,"-*dummy file name*-",ushort(0),ushort(0));
 export fileError(f:PosFile):bool := fileError(f.file);
 export clearFileError(f:PosFile):void := clearFileError(f.file);
 export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);

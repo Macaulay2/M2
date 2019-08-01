@@ -129,7 +129,7 @@ Usage => "isBirational phi",
 Inputs => { 
 "phi" => RationalMap}, 
 Outputs => { 
-Boolean => {"whether ",TT"Phi"," is birational"}},
+Boolean => {"whether ",TT"phi"," is birational"}},
 PARA{"The testing passes through the methods ", TO projectiveDegrees, ", ", TO degreeOfRationalMap," and ", TO isDominant,"."},
 EXAMPLE { 
 "GF(331^2)[t_0..t_4]",
@@ -145,7 +145,7 @@ Usage => "isDominant phi",
 Inputs => { 
 "phi" => RationalMap}, 
 Outputs => { 
-Boolean => {"whether ",TT"Phi"," is dominant"}},
+Boolean => {"whether ",TT"phi"," is dominant"}},
 PARA{"This method is based on the fibre dimension theorem. A more standard way would be to perform the command ", TT "kernel map phi == 0","."},
 EXAMPLE { 
 "P8 = ZZ/101[x_0..x_8];",
@@ -348,10 +348,8 @@ Headline => "the class of all rational maps between absolutely irreducible proje
 PARA{"An object of the class ",EM "RationalMap", " can be basically replaced by a homogeneous ring map of quotients of polynomial rings by homogeneous ideals. The main advantage to using this class is that things computed using non-probabilistic algorithms are stored internally (or partially stored)."},
 PARA{"The constructor for the class is ",TO "rationalMap",", which works quite similar to ",TO "toMap","."}}
 
-undocumented {(symbol ^*,RationalMap)}
-
 document { 
-Key => {(symbol ^**,RationalMap,Ideal)}, 
+Key => {(symbol ^**,RationalMap,Ideal),(symbol ^*,RationalMap)}, 
 Headline => "inverse image via a rational map", 
 Usage => "phi^** I", 
 Inputs => { 
@@ -359,7 +357,7 @@ RationalMap => "phi",
 Ideal => "I" => {"a homogeneus ideal in the coordinate ring of the target of ",TT "phi"},}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the inverse image of ", TT"V(I)", " via ",TT"phi"}},
-PARA{"In most cases this is equivalent to ",TT"phi^*I", ", which is faster but may not take into account other representations of the map."},
+PARA{"In most cases this is equivalent to ",TT"phi^* I", ", which is faster but may not take into account other representations of the map."},
 PARA{"In the example below, we apply the method to check the birationality of a map (deterministically)."},
 EXAMPLE { 
 "phi = quadroQuadricCremonaTransformation(5,1)",
@@ -373,12 +371,12 @@ SeeAlso => {(symbol _*,RationalMap),(target,RationalMap)}}
 document { 
 Key => {(symbol _*,RationalMap),(symbol SPACE,RationalMap,Ideal)}, 
 Headline => "direct image via a rational map", 
-Usage => "phi_* I 
-phi I", 
+Usage => "phi_* I", 
 Inputs => { 
 RationalMap => "phi" => {TT"I", " a homogeneus ideal in the coordinate ring of the source of ",TT "phi"},}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the direct image of ", TT"V(I)", " via ",TT"phi"}},
+PARA{"In most cases this is equivalent to ",TT"phi I", ", which is faster but may not take into account other representations of the map."},
 SeeAlso => {(symbol ^**,RationalMap,Ideal),(source,RationalMap)}}
 
 document { 
@@ -411,6 +409,29 @@ Inputs => {
 RationalMap => "phi"}, 
 Outputs => { 
 Ideal => {"the ideal of the base locus of ",TT"phi"}}}
+
+document { 
+Key => {exceptionalLocus,(exceptionalLocus,RationalMap)}, 
+Headline => "exceptional locus of a birational map", 
+Usage => "exceptionalLocus phi", 
+Inputs => { 
+RationalMap => "phi" => {"a birational map ",TEX///$X--->Y$///}}, 
+Outputs => { 
+Ideal => {"an ideal defining the closure in ",TT"X"," of the locus where ",TT "phi"," is not a local isomorphism"}},
+PARA{"This method simply calculates the inverse image of the base locus of the inverse map, which in turn is determined through the method ",TO (inverse,RationalMap),"."},
+PARA{"Below, we compute the exceptional locus of the map defined by the linear system of quadrics through the quintic rational normal curve in ",TEX///$\mathbb{P}^5$///,"."},
+EXAMPLE { 
+"P5 := ZZ/100003[x_0..x_5];",
+"phi = rationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);",
+"psi = inverseMap phi;",
+"-- a fast probabilistic test
+assert last(p = point source phi, psi phi p == p)",
+"forceInverseMap(phi,psi)",
+"E = exceptionalLocus phi;",
+"E == phi^* ideal psi",
+"assert(E == minors(3,matrix{{x_0,x_1,x_2,x_3},{x_1,x_2,x_3,x_4},{x_2,x_3,x_4,x_5}}))"
+},
+SeeAlso => {(ideal,RationalMap),(inverseMap,RationalMap),(symbol ^**,RationalMap,Ideal),(isIsomorphism,RationalMap),forceInverseMap}}
 
 document { 
 Key => {(target,RationalMap)}, 
@@ -467,10 +488,17 @@ EXAMPLE {
 "describe phi",
 "time phi! ;",
 "describe phi",
-"QQ[x_0..x_4]; psi = rationalMap {-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3,-x_1*x_3+x_0*x_4,-x_2*x_3+x_1*x_4,-x_3^2+x_2*x_4};",
-"describe psi",
-"time psi! ;",
-"describe psi"}}
+"QQ[x_0..x_4]; phi = rationalMap {-x_1^2+x_0*x_2,-x_1*x_2+x_0*x_3,-x_2^2+x_1*x_3,-x_1*x_3+x_0*x_4,-x_2*x_3+x_1*x_4,-x_3^2+x_2*x_4};",
+"describe phi",
+"time phi! ;",
+"describe phi"},
+PARA{"The command ",TT"phi(*)"," does more or less the same thing but it uses probabilistic methods and treats them as deterministic (the user should never use this)."},
+EXAMPLE {
+"phi = rationalMap rationalMap map specialQuadraticTransformation(8,ZZ/33331);",
+"describe phi",
+"time phi(*) ;",
+"describe phi"}
+}
 
 document { 
 Key => {(degrees,RationalMap),(multidegree,RationalMap)}, 
@@ -683,7 +711,7 @@ EXAMPLE {
 SeeAlso => {(symbol |,RationalMap,Ideal)}}
 
 document { 
-Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,ZZ,ZZ),(rationalMap,Ring),(rationalMap,Ring,Ring),(rationalMap,RationalMap),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List)}, 
+Key => {rationalMap,(rationalMap,RingMap),(rationalMap,Matrix),(rationalMap,List),(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,List),(rationalMap,Ideal,ZZ,ZZ),(rationalMap,Ring),(rationalMap,Ring,Ring),(rationalMap,RationalMap),(rationalMap,Ring,Ring,Matrix),(rationalMap,Ring,Ring,List)}, 
 Headline => "makes a rational map", 
 Usage => "rationalMap phi 
 rationalMap F", 
@@ -707,7 +735,7 @@ EXAMPLE {
 SeeAlso => {toMap}}
 
 document { 
-Key => {toMap,(toMap,Matrix),(toMap,Ideal),(toMap,Ideal,ZZ),(toMap,Ideal,ZZ,ZZ),(toMap,List),(toMap,RingMap)}, 
+Key => {toMap,(toMap,Matrix),(toMap,Ideal),(toMap,Ideal,ZZ),(toMap,Ideal,List),(toMap,Ideal,ZZ,ZZ),(toMap,List),(toMap,RingMap)}, 
 Headline => "rational map defined by a linear system", 
 Usage => "toMap(\"linear system\")", 
 Inputs => { 
@@ -725,13 +753,13 @@ PARA{"If the input is a pair consisting of a homogeneous ideal ",TEX///$I$///, "
 EXAMPLE { 
 "I=kernel phi",
 "toMap(I,2)"}, 
-PARA{"This is identical to ", TT "toMap(I,v,1)", ", while the output of ", TT "toMap(I,v,2)", " will be the map defined by the linear system of hypersurfaces of degree ",TEX///$v$///, " which are singular along the projective subscheme defined by ",TEX///$I$///,"."},
+PARA{"This is identical to ", TT "toMap(I,v,1)", ", while the output of ", TT "toMap(I,v,e)", " will be the map defined by the linear system of hypersurfaces of degree ",TEX///$v$///, " having points of multiplicity ",TEX///$e$///," along the projective subscheme defined by ",TEX///$I$///,"."},
 EXAMPLE { 
 "toMap(I,2,1)", 
 "toMap(I,2,2)", 
 "toMap(I,3,2)"},} 
 
-undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring)}
+undocumented{(net,RationalMap),(describe,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol **,RationalMap,Ring),(symbol (*),RationalMap),(rationalMap,PolynomialRing,List)}
 
 document { 
 Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
@@ -746,7 +774,7 @@ RationalMap => {"an example of special Cremona transformation over ",TT"K",", ac
 PARA{"A Cremona transformation is said to be special if the base locus scheme is smooth and irreducible. To ensure this condition, the field ",TT"K"," must be large enough but no check is made."},
 EXAMPLE {
 "time apply(1..12,i -> describe specialCremonaTransformation(i,ZZ/3331))"},
-SeeAlso => {"quadroQuadricCremonaTransformation", "specialQuadraticTransformation"}}
+SeeAlso => {"quadroQuadricCremonaTransformation", "specialQuadraticTransformation","specialCubicTransformation"}}
 
 document { 
 Key => {quadroQuadricCremonaTransformation,(quadroQuadricCremonaTransformation,Ring,ZZ,ZZ),(quadroQuadricCremonaTransformation,ZZ,ZZ,Ring),(quadroQuadricCremonaTransformation,ZZ,ZZ)}, 
@@ -768,7 +796,7 @@ EXAMPLE {
 "describe quadroQuadricCremonaTransformation(8,1)",
 "describe quadroQuadricCremonaTransformation(14,1)",
 "describe quadroQuadricCremonaTransformation(26,1)"},
-SeeAlso => {"specialCremonaTransformation", "specialQuadraticTransformation"}}
+SeeAlso => {"specialCremonaTransformation", "specialQuadraticTransformation","specialCubicTransformation"}}
 
 document { 
 Key => {specialQuadraticTransformation,(specialQuadraticTransformation,Ring,ZZ),(specialQuadraticTransformation,ZZ,Ring),(specialQuadraticTransformation,ZZ)}, 
@@ -784,7 +812,23 @@ PARA{"The field ",TT"K"," is required to be large enough."},
 EXAMPLE {
 "time specialQuadraticTransformation 4",
 "time describe oo"},
-SeeAlso => {"specialCremonaTransformation","quadroQuadricCremonaTransformation"}}
+SeeAlso => {"specialCremonaTransformation","specialCubicTransformation","quadroQuadricCremonaTransformation"}}
+
+document { 
+Key => {specialCubicTransformation,(specialCubicTransformation,Ring,ZZ),(specialCubicTransformation,ZZ,Ring),(specialCubicTransformation,ZZ)}, 
+Headline => "special cubic transformations whose base locus has dimension at most three", 
+Usage => "specialCubicTransformation i 
+specialCubicTransformation(i,K)", 
+Inputs => { 
+"i" => ZZ => {"an integer between 1 and 9"},
+"K" => Ring => {"the ground field (optional, the default value is ",TO QQ,")"}}, 
+Outputs => { 
+RationalMap => {"an example of special cubic birational transformation over ",TT"K",", according to the classification given in Table 2 of ",HREF{"https://arxiv.org/abs/1901.01203","arXiv:1901.01203"}}},
+PARA{"The field ",TT"K"," is required to be large enough."},
+EXAMPLE {
+"time specialCubicTransformation 9",
+"time describe oo"},
+SeeAlso => {"specialCremonaTransformation","specialQuadraticTransformation","quadroQuadricCremonaTransformation"}}
 
 document { 
 Key => {[inverseMap,Verbose], [projectiveDegrees,Verbose],[degreeOfRationalMap,Verbose],[approximateInverseMap,Verbose],[isDominant,Verbose],[isBirational,Verbose],[SegreClass,Verbose],[ChernSchwartzMacPherson,Verbose],[EulerCharacteristic,Verbose]}, 
@@ -860,4 +904,103 @@ PARA{"More properly, this method accepts and returns objects of the class ",TT"M
 EXAMPLE {
 "phi = first graph quadroQuadricCremonaTransformation(3,1)",
 "segre phi"}}
+
+document { 
+Key => {abstractRationalMap,(abstractRationalMap,PolynomialRing,PolynomialRing,FunctionClosure,ZZ),(abstractRationalMap,PolynomialRing,PolynomialRing,FunctionClosure),(abstractRationalMap,RationalMap)}, 
+Headline => "make an abstract rational map", 
+Usage => "abstractRationalMap(R,S,f,d) 
+          abstractRationalMap(R,S,f)",
+Inputs => { 
+PolynomialRing => "R" => {"the coordinate ring of the source of the map"},
+PolynomialRing => "S" => {"the coordinate ring of the target of the map"},
+FunctionClosure => "f" => {"the abstract definition of the map"},
+ZZ => "d" => {"(optional) an integer close to the degree of the forms defining the map"}}, 
+Outputs => { 
+RationalMap => {"the abstract rational map from ",TT"Proj(R)"," to ",TT"Proj(S)"," defined by f"}}, 
+PARA{"The main ingredient behind this method is the interpolation of multivariate polynomials. We illustrate this feature with some examples."},
+EXAMPLE {
+"f = a -> {-a_1^3*max(sin(a_2),1)+a_0*a_1*a_2*ceiling((log(1 + abs a_0))^0),-a_1^2*a_2+a_0*a_1*a_3,-a_1*a_2^2+a_1^2*a_3,-a_1^2*a_3+a_0*a_1*a_4,-a_1*a_2*a_3+a_1^2*a_4,-a_1*a_3^2+a_1*a_2*a_4}",
+"P4 := QQ[t_0..t_4]",
+"P5 := QQ[u_0..u_5]",
+"time psi = abstractRationalMap(P4,P5,f)"},
+PARA{"Now we compute first the degree of the forms defining the abstract map ",TT"psi"," and then the corresponding concrete rational map."},
+EXAMPLE {
+"time projectiveDegrees(psi,3)",
+"time rationalMap psi"},
+PARA{"As a second example, we apply the method to compute the inverse of a Cremona transformation."},
+EXAMPLE {
+"phi = rationalMap map specialCremonaTransformation(3,ZZ/10000019);",
+"phi' = abstractRationalMap phi",
+"psi' = inverseMap phi'",
+"psi = rationalMap psi';",
+"assert(isInverseMap(phi,psi))"},
+PARA{"We now consider a more interesting application. Recall that a closed subvariety ",TEX///$X\subset\mathbb{P}^n$///," is called a subvariety with one apparent double point if a general point in ",TEX///$\mathbb{P}^n$///," lies on a unique secant of ",TEX///$X$///,". A subvariety ",TEX///$X\subset\mathbb{P}^n$///," with an apparent double point defines a Cremona involution of ",TEX///$\mathbb{P}^n$///,": for a general point ",TEX///$x\in\mathbb{P}^n$///," we find a unique secant of ",TEX///$X$///," intersecting ",TEX///$X$///," at two points ",TEX///$(a,b)$///,", and then define the unique ",TEX///$T(x)$///," such that the pair ",TEX///$\{x,T(x)\}$///," is harmonically conjugate to ",TEX///$\{a,b\}$///,". For more details, see Lecture 4 in ",HREF{"http://www.math.lsa.umich.edu/~idolga/cremonalect.pdf","Lectures on Cremona transformations, by I. Dolgachev"},". This abstract construction is implemented in the package: if ",TT"I"," is the ideal of one apparent double point variety ",TEX///$X\subset\mathbb{P}^n$///,", then the command ",TT"abstractRationalMap(I,\"OADP\")"," returns the abstract rational map above defined. For instance, we can take ",TEX///$X$///," to be the twisted cubic curve in ",TEX///$\mathbb{P}^3$///,"."},
+EXAMPLE {
+"ZZ/65521[x_0..x_3]; I = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}})", 
+"time T = abstractRationalMap(I,\"OADP\")"},
+PARA{"The degree of the forms defining the abstract map ",TT"T"," can be obtained by the following command:"},
+EXAMPLE {
+"time projectiveDegrees(T,2)"},
+PARA{"We verify that the composition of ",TT"T"," with itself is defined by linear forms:"},
+EXAMPLE {
+"time T2 = T * T",
+"time projectiveDegrees(T2,2)"},
+PARA{"We verify that the composition of ",TT"T"," with itself leaves a random point fixed:"},
+EXAMPLE {
+"p = apply(3,i->random(ZZ/65521))|{1}",
+"q = T p",
+"T q"},
+PARA{"We now compute the concrete rational map corresponding to ",TT"T",":"},
+EXAMPLE {
+"time f = rationalMap T",
+"describe f!"},
+Caveat => {"This is under development yet."}
+}
+undocumented{(abstractRationalMap,Ideal,String)}
+
+document { 
+Key => {(toExternalString,RationalMap)}, 
+Headline => "convert to a readable string", 
+Usage => "toExternalString phi", 
+Inputs => {RationalMap => "phi"}, 
+Outputs => {String => {"a string representation of ",TT "phi",", which can be used, in conjunction with ",TO "value",", to read the object back into the program later"}},
+PARA{"All internal data of the input are included in the returned string."},
+EXAMPLE {
+"phi = (specialCubicTransformation 2)!;",
+"str = toExternalString phi;",
+"#str",
+"time phi' = value str;",
+"time describe phi'",
+"time describe inverse phi'"}
+}
+undocumented{(sub,RationalMap,PolynomialRing,PolynomialRing)}
+
+document { 
+Key => {isMorphism,(isMorphism,RationalMap)}, 
+Headline => "whether a rational map is a morphism", 
+Usage => "isMorphism phi", 
+Inputs => { 
+"phi" => RationalMap}, 
+Outputs => { 
+Boolean => {"whether ",TT"phi"," is a morphism (i.e., everywhere defined)"}},
+EXAMPLE { 
+"phi = quadroQuadricCremonaTransformation(5,1)",
+"isMorphism phi",
+"phi' = last graph phi;",
+"isMorphism phi'"},
+SeeAlso => {(ideal,RationalMap),(isIsomorphism,RationalMap)}}
+
+document { 
+Key => {(isIsomorphism,RationalMap)}, 
+Headline => "whether a birational map is an isomorphism", 
+Usage => "isIsomorphism phi", 
+Inputs => {"phi" => RationalMap}, 
+Outputs => {Boolean => {"whether ",TT"phi"," is an isomorphism"}},
+PARA{"This method computes the inverse rational map via the deterministic method ",TO (inverse,RationalMap),"."},
+EXAMPLE { 
+"P1 := QQ[a,b]; P4 := QQ[x,y,z,w];",
+"phi = rationalMap({a^4,a^3*b,a^2*b^2,a*b^3,b^4},Dominant=>true)",
+"isIsomorphism phi"},
+SeeAlso => {(ideal,RationalMap),isBirational,isMorphism}}
+
 

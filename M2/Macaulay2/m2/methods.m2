@@ -163,7 +163,10 @@ method = methodDefaults >> opts -> args -> (
        	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
 	       )
 	  );
-     if opts.TypicalValue =!= Thing then typicalValues#methodFunction = opts.TypicalValue;
+     if opts.TypicalValue =!= Thing then (
+	  if not instance(opts.TypicalValue,Type) then error("expected typical value ", toString opts.TypicalValue, " to be a type");
+	  typicalValues#methodFunction = opts.TypicalValue;
+	  );
      methodFunction)
 
 setupMethods := (args, symbols) -> (
@@ -192,7 +195,7 @@ setupMethods((), {
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
 
-use = method()
+use = method(Dispatch => Thing)
 use Thing := identity
 
 dual = method(Options => true)

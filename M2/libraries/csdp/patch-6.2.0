@@ -1,6 +1,6 @@
-diff -ur Csdp-6.2.0-orig/Makefile Csdp-6.2.0/Makefile
---- Csdp-6.2.0-orig/Makefile	2017-07-25 14:44:57.000000000 -0400
-+++ Csdp-6.2.0/Makefile	2018-11-12 18:58:04.000000000 -0500
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/Makefile Csdp-6.2.0/Makefile
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/Makefile	2017-07-17 17:34:04.000000000 -0700
++++ Csdp-6.2.0/Makefile	2018-12-26 15:34:22.000000000 -0800
 @@ -11,49 +11,50 @@
  #
  # CFLAGS settings for 64 bit Linux/unix systems.
@@ -70,21 +70,32 @@ diff -ur Csdp-6.2.0-orig/Makefile Csdp-6.2.0/Makefile
  
  
  
-diff -ur Csdp-6.2.0-orig/example/Makefile Csdp-6.2.0/example/Makefile
---- Csdp-6.2.0-orig/example/Makefile	2017-07-25 14:44:57.000000000 -0400
-+++ Csdp-6.2.0/example/Makefile	2018-11-12 14:40:20.000000000 -0500
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/example/Makefile Csdp-6.2.0/example/Makefile
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/example/Makefile	2017-07-17 16:47:30.000000000 -0700
++++ Csdp-6.2.0/example/Makefile	2018-12-26 15:34:22.000000000 -0800
 @@ -6,7 +6,7 @@
  # This builds the example code.
  #
  example: example.o 
 -	$(CC) $(CFLAGS) example.o $(LIBS) -o example
-+	$(CC) $(CFLAGS) example.o $(LDFLAGS) $(LIBS) -o example
++	$(CC) $(CFLAGS) example.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o example
  #
  # To clean up the directory.
  #
-diff -ur Csdp-6.2.0-orig/solver/Makefile Csdp-6.2.0/solver/Makefile
---- Csdp-6.2.0-orig/solver/Makefile	2017-07-25 14:44:57.000000000 -0400
-+++ Csdp-6.2.0/solver/Makefile	2018-11-12 14:40:20.000000000 -0500
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/lib/user_exit.c Csdp-6.2.0/lib/user_exit.c
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/lib/user_exit.c	2017-07-21 09:32:48.000000000 -0700
++++ Csdp-6.2.0/lib/user_exit.c	2018-12-26 15:34:22.000000000 -0800
+@@ -13,6 +13,7 @@
+ #include <sys/time.h>
+ #include <sys/resource.h>
+ #include <signal.h>
++#include <stdio.h>
+ 
+ int sigterm_signaled=0;
+ 
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/solver/Makefile Csdp-6.2.0/solver/Makefile
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/solver/Makefile	2017-07-17 16:47:30.000000000 -0700
++++ Csdp-6.2.0/solver/Makefile	2018-12-26 15:34:22.000000000 -0800
 @@ -1,8 +1,10 @@
  #
  #  This builds the stand alone solver.
@@ -97,34 +108,57 @@ diff -ur Csdp-6.2.0-orig/solver/Makefile Csdp-6.2.0/solver/Makefile
  #
  # To clean out the directory:
  #
-diff -ur Csdp-6.2.0-orig/theta/Makefile Csdp-6.2.0/theta/Makefile
---- Csdp-6.2.0-orig/theta/Makefile	2017-07-25 14:44:57.000000000 -0400
-+++ Csdp-6.2.0/theta/Makefile	2018-11-12 14:40:20.000000000 -0500
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/Makefile Csdp-6.2.0/theta/Makefile
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/Makefile	2017-07-17 16:47:30.000000000 -0700
++++ Csdp-6.2.0/theta/Makefile	2018-12-26 15:34:22.000000000 -0800
 @@ -6,23 +6,23 @@
  # This builds the theta number code. 
  #
  theta: theta.o 
 -	$(CC) $(CFLAGS) theta.o $(LIBS) -o theta
-+	$(CC) $(CFLAGS) theta.o $(LDFLAGS) $(LIBS) -o theta
++	$(CC) $(CFLAGS) theta.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o theta
  #
  # Complement computes the complement of a graph.
  #
  complement: complement.o 
 -	$(CC) $(CFLAGS) complement.o $(LIBS) -o complement
-+	$(CC) $(CFLAGS) complement.o $(LDFLAGS) $(LIBS) -o complement
++	$(CC) $(CFLAGS) complement.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o complement
  #
  # rand_graph generates a random graph.  
  #
  rand_graph: rand_graph.o
 -	$(CC) $(CFLAGS) rand_graph.o $(LIBS) -o rand_graph
-+	$(CC) $(CFLAGS) rand_graph.o $(LDFLAGS) $(LIBS) -o rand_graph
++	$(CC) $(CFLAGS) rand_graph.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o rand_graph
  #
  # graphtoprob converts a file in the graph format to an SDP problem in our
  # SDP format.
  #
  graphtoprob: graphtoprob.o 
 -	$(CC) $(CFLAGS) graphtoprob.o $(LIBS) -o graphtoprob
-+	$(CC) $(CFLAGS) graphtoprob.o $(LDFLAGS) $(LIBS) -o graphtoprob
++	$(CC) $(CFLAGS) graphtoprob.o $(LDFLAGS) $(LDLIBS) $(LIBS) -o graphtoprob
  #
  # To clean up the directory.
  #
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/rand_graph.c Csdp-6.2.0/theta/rand_graph.c
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-master/libraries/csdp/tmp/Csdp-6.2.0/theta/rand_graph.c	2006-07-12 11:52:29.000000000 -0700
++++ Csdp-6.2.0/theta/rand_graph.c	2018-12-26 15:34:32.000000000 -0800
+@@ -30,7 +30,7 @@
+   FILE *fidout;
+   int i;
+   int j;
+-  int n;
++  int n=0;
+   int m;
+   int s;
+   double p;
+@@ -44,8 +44,8 @@
+     {
+       printf("Usage: rand_graph <file> <n> <p> [<seed>] \n");
+       exit(1);
+-    };
+-  if (argc >= 4)
++    }
++  else
+     {
+       fidout=fopen(*++argv,"w");
+       n=atoi(*++argv);
