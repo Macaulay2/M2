@@ -1,4 +1,4 @@
-needsPackage "Bertini"
+loadPackage("Bertini",Reload=>true)
 
 --To solve a zero dimensional system use the bertiniZeroDimSolve command
 -- the input is a list of equations 
@@ -59,7 +59,7 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
       assert(1===#radicalList({ (((S6_0))_0)^2,1})     )
       assert(1===#radicalList({ (((S6_1))_0)^2,1})     )
 --
-     dir1 := temporaryFileName(); -- build a directory to store temporary data 
+     dir1 = temporaryFileName(); -- build a directory to store temporary data 
      makeDirectory dir1;  
      S7=bertiniZeroDimSolve( {"x^2-2"},
 	 AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)            
@@ -71,11 +71,11 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
       assert(1===#radicalList({ ((B2_0#Coordinates)_0)^2,2})     )
 
 ---
-     dir1 := temporaryFileName(); -- build a directory to store temporary data 
+     dir1 = temporaryFileName(); -- build a directory to store temporary data 
      makeDirectory dir1;  
      S8=bertiniZeroDimSolve( {"x^2-2"},
 	 AffVariableGroup=>{x},
-	 B'Configs=>{UseRegeneration=>1,MPType=>2},
+	 BertiniInputConfiguration=>{UseRegeneration=>1,MPType=>2},
 	 OutputSyle=>"OutNone",TopDirectory=>dir1)            
      B0=importSolutionsFile(dir1,NameSolutionsFile=>"raw_solutions")     
      B1=importSolutionsFile(dir1)     
@@ -86,7 +86,7 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
      makeDirectory dir1;  
      S9=bertiniZeroDimSolve( {"(x-2)^2"},
 	 AffVariableGroup=>{x},
-	 B'Configs=>{MPType=>2},
+	 BertiniInputConfiguration=>{MPType=>2},
 	 OutputSyle=>"OutNone",TopDirectory=>dir1)            
      B0=importSolutionsFile(dir1,NameSolutionsFile=>"raw_solutions")     
      B1=importSolutionsFile(dir1)     
@@ -98,7 +98,6 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
       assert(1===#radicalList({ ((B2_0#Coordinates)_0),2})     )
       assert(1===#radicalList(flatten B0))
       assert( B2_0#Multiplicity===2)
-    *_  
 ------Multi Affine variable groups
      dir1 := temporaryFileName(); -- build a directory to store temporary data 
      makeDirectory dir1;  
@@ -114,10 +113,12 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
       assert(1===#radicalList({ ((B2_0#Coordinates)_0),2})     )
       assert(1===#radicalList(flatten (B0/first)))
       assert( B2_0#Multiplicity===2)
+    *-
       
     
 
 ---test M2Precision
+-*
 s1= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x},M2Precision=>300,OutputSyle=>"OutSolutions")
 s2= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x},M2Precision=>300)
 s3= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")
@@ -127,3 +128,4 @@ assert(#toExternalString(s1_0_0)>190)
 assert(#toExternalString(s3_0_0)<190)
 assert(#toExternalString((coordinates (s2_0))_0)>190)
 assert(#toExternalString((coordinates (s4_0))_0)<190)
+*-

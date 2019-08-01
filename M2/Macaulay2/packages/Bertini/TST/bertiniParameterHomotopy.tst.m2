@@ -16,12 +16,7 @@ bPH=bertiniParameterHomotopy(
      {f1,f2},--list of polynomials thathave zero dimensional solutions
      {u1,u2,u3},--your parameters
      {	  {1,0,0},	  {0,1,0}	  })---list of {list of numbers})
-
-assert(areEqual(sortSolutions myPoints_0,   sortSolutions  bPH_0))
-assert(areEqual(sortSolutions myPoints_1,   sortSolutions  bPH_1))
-
-
-
+apply(bPH/first,{1,2},(P,yValue)->assert(abs((matrix P)_(0,1)-yValue)<1e-6 ))
 
 ------
      R=CC[x,u1]
@@ -66,4 +61,9 @@ assert(areEqual(sortSolutions myPoints_1,   sortSolutions  bPH_1))
 --TODO: need new assertions
 --      assert(1===#radicalList({ (B0_0_0)^2,1})     )
 --      assert(1===#radicalList({ (B1_0_0)^2,2})     )
+
+
+
+
+
 
