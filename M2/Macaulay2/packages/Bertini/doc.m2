@@ -1,7 +1,6 @@
 -----------------------
 -------MAIN------------
 -----------------------
-
 doc ///
   Key
     Bertini
@@ -24,48 +23,152 @@ doc ///
       a basic zero-dimensional solve with no special options.
     Example
       R = CC[x,y]
-      F = {x^2-1,y^2-1}
+      F = {x^2-1,y^2-2}
       solns = bertiniZeroDimSolve(F)
 ///;
+
 
 ------------------------------------------------------
 ------FUNCTIONS BERTINI VERSION 1------------
 ------------------------------------------------------
 doc ///
- Key
-   bertiniZeroDimSolve
-   (bertiniZeroDimSolve,List)
- Headline
-   solve zero-dimensional system of equations
- Usage
-   S = bertiniZeroDimSolve F
- Inputs
-   F:List
-     whose entries are polynomials (system need not be square)
- Outputs
-   S:List
-     of solutions of type Point
- Description
-   Text
-     Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
-     This function builds a Bertini input file from the system F and calls Bertini on
-     this input file. Solutions are pulled from machine readable file {\tt finitesolutions}
-     and returned as a list.
-   Example
-     R = CC[x,y];
-     F = {x^2-1,y^2-1};
-     S = bertiniZeroDimSolve F
-   Text
-     Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@.
-   Example
-     peek S_0
- Caveat
-   Variables must begin with a letter (lowercase or capital) and
-   can only contain letters, numbers, underscores, and square brackets.
+  Key
+    bertiniZeroDimSolve
+    (bertiniZeroDimSolve,List)
+    (bertiniZeroDimSolve,Ideal)
+  Headline
+    solve zero-dimensional system of equations
+  Usage
+    S = bertiniZeroDimSolve F
+    S = bertiniZeroDimSolve I
+    S = bertiniZeroDimSolve(I, UseRegeneration=>1)
+  Inputs
+    F:List
+      whose entries are polynomials (system need not be square)
+    F:Ideal
+      defining a variety
+  Outputs
+    S:List
+      of solutions of type Point
+  Description
+    Text
+      Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
+      This function builds a Bertini input file from the system F and calls Bertini on
+      this input file. Solutions are pulled from machine readable file {\tt finitesolutions}
+      and returned as a list.
+    Example
+      R = CC[x,y];
+      F = {x^2-1,y^2-2};
+      S = bertiniZeroDimSolve F
+    Text
+      Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@.
+    Example
+      peek S_0
+    Text
+      Bertini uses a multihomogeneous homotopy as a default, but regeneration can be deployed with the option UseRegeneration=>1 .
+    Example
+      R = CC[x];
+      F = {x^2*(x-1)};
+      S = bertiniZeroDimSolve F
+      B = bertiniZeroDimSolve(F,UseRegeneration=>1)
+  Caveat
+    Variables must begin with a letter (lowercase or capital) and
+    can only contain letters, numbers, underscores, and square brackets.
+    Regeneration in bertiniZeroDimSolve only finds nonsingular isolated points.
+///
 
-///;
 
-
+undocumented {
+    "Bertini options",
+    NameMainDataFile,
+    NameIncidenceMatrixFile,
+    NameB'Slice,
+    NameFunctionFile,
+    NameSampleSolutionsFile,
+   NameIncidenceMatrixFile,
+   NameStartFile,
+   NameWitnessSliceFile,
+   NameWitnessSolutionsFile,
+   OrderPaths,
+   PathNumber,
+   PreparePH2,
+    RandomComplex,
+   RandomReal,
+   SaveData,
+   SpecifyComponent,
+   SpecifyDim,
+   StartParameterFileDirectory,
+   TestSolutions,
+   TextScripts,
+    MPType,
+    PRECISION,
+    ODEPredictor,
+    TrackTolBeforeEG,
+    TrackTolDuringEG,
+    FinalTol,
+    MaxNorm,
+    MinStepSizeBeforeEG,
+    MinStepSizeDuringEG,
+    ImagThreshold,
+    CoeffBound,
+    DegreeBound,
+    CondNumThreshold,
+    RandomSeed,
+    SingValZeroTol,
+    EndGameNum,
+    UseRegeneration,
+    SecurityLevel,
+    ScreenOut,
+    OutputLevel,
+    StepsForIncrease,
+    MaxNewtonIts,
+    MaxStepSize,
+    MaxNumberSteps,
+    MaxCycleNum,
+    RegenStartLevel,
+   PathVariable,
+   PathsWithSameEndpoint,
+   FunctionResidual,
+   ParameterValues,
+   CycleNumber,
+   VariableList,
+   AccuracyEst,
+   PrecisionIncreased,
+   AccuracyEstInternal,
+   ComponentNumber,
+   B'Exe,
+      DeflationsNeeded,
+   Dimension,
+   MaxPrecisionUtilized,
+   FinalTValue,
+   SolutionType,
+   B'Homogenization,
+   ContainsPoint,
+   RandomCoefficientGenerator,
+   NameB'Section,
+   B'NumberCoefficients,
+   B'SectionString,
+   SpecifyVariables,
+   RandomGamma,
+   StorageFolder,
+   SubFolder,
+   StartPoints,
+   StartParameters,
+   SubIntoCC,
+   storeBM2Files,
+   MultiplicityTol,
+   SetParameterGroup,
+   ReturnPoints,
+   ConditionNumTol,
+   ContainsMultiProjectivePoint,
+   HomVariableGroup,
+   importSliceFile,
+   InputFileDirectory,
+   ListB'Sections,
+   makeB'TraceInput,
+  MoveToDirectory
+}    
+end
 
 doc ///
  Key
@@ -482,7 +585,7 @@ doc ///
  Description
    Text
      This function writes a Bertini input file.
-     The user can specify CONFIGS for the file using the BertininInputConfiguration option.
+     The user can specify CONFIGS for the file using the BertiniInputConfiguration option.
      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogenous variable group) option.
      The user should specify the polynomial system they want to solve with the  B'Polynomials option or B'Functions option.
      If B'Polynomials is not used then the user should use the  NamePolynomials option.
@@ -491,13 +594,13 @@ doc ///
      theDir = temporaryFileName()
      makeDirectory theDir
      makeB'InputFile(theDir,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
    Example
      R=QQ[x1,x2,y,X]
      makeB'InputFile(theDir,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 NamePolynomials=>{f1,f2,f3},
 	 B'Functions=>{
@@ -508,7 +611,7 @@ doc ///
    Example
      R=QQ[x1,x2,y,X]
      makeB'InputFile(theDir,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
 	 B'Functions=>{
@@ -624,7 +727,7 @@ doc ///
    Example
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
-       BertininInputConfiguration=>{{TrackType,1}},
+       BertiniInputConfiguration=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
      thePoints=importMainDataFile(storeBM2Files)
@@ -658,7 +761,7 @@ doc ///
      If the NameIncidenceMatrixFile option is set when we want to import files with a different name.
    Example
     makeB'InputFile(storeBM2Files,
-    	BertininInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
+    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
     makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
@@ -721,7 +824,7 @@ doc ///
      The option TestSolutions can be set to a list of coordinates of points which will be written to a file.
    Example
     makeB'InputFile(storeBM2Files,
-    	BertininInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
+    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
     makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
@@ -751,7 +854,7 @@ doc ///
    Example
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
-       BertininInputConfiguration=>{{TrackType,1}},
+       BertiniInputConfiguration=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
      makeWitnessSetFiles(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components.
@@ -788,7 +891,7 @@ doc ///
    Example
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
-       BertininInputConfiguration=>{{TrackType,1}},
+       BertiniInputConfiguration=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
      makeSampleSolutionsFile(storeBM2Files,4,SpecifyComponent=>{2,0})--creates a witness point file with 4 sample points for the 0th component in dimension 2.
@@ -816,13 +919,13 @@ doc ///
    Example
      R=QQ[x,y,t]
      makeB'InputFile(storeBM2Files,
-     	 BertininInputConfiguration=>{{"PARAMETERHOMOTOPY",1}},
+     	 BertiniInputConfiguration=>{{"PARAMETERHOMOTOPY",1}},
 	 ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-t})
      runBertini(storeBM2Files)
      copyFile(storeBM2Files|"/nonsingular_solutions",storeBM2Files|"/start")
      makeB'InputFile(storeBM2Files,
-     	 BertininInputConfiguration=>{{"PARAMETERHOMOTOPY",2}},
+     	 BertiniInputConfiguration=>{{"PARAMETERHOMOTOPY",2}},
 	 ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-t})
      writeParameterFile(storeBM2Files,{1})
@@ -854,7 +957,7 @@ doc ///
      After importing a main_data file we have a list of points. This function organizes the components by irreducible component.
    Example
      F={"x*(x+2*y+3*z^2)","(y^3-x+z)*(z)*(x+2*y+3*z^2)"}
-     makeB'InputFile(storeBM2Files,BertininInputConfiguration=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F)
+     makeB'InputFile(storeBM2Files,BertiniInputConfiguration=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F)
      runBertini(storeBM2Files)
      listPoints=importMainDataFile(storeBM2Files)
      #listPoints
@@ -1352,7 +1455,7 @@ doc///
    Example
      R=QQ[x,y,u]
      makeB'InputFile(storeBM2Files,
-	 BertininInputConfiguration=>{{"PARAMETERHOMOTOPY",1}},
+	 BertiniInputConfiguration=>{{"PARAMETERHOMOTOPY",1}},
 	 AffVariableGroup=>{{x,y}},
 	 ParameterGroup=>{u},
 	 B'Polynomials=>{y-(x^2-1),y-u})
@@ -1361,11 +1464,11 @@ doc///
 
 doc///
  Key
-   BertininInputConfiguration
-   [makeB'InputFile, BertininInputConfiguration]
-   [makeB'TraceInput,BertininInputConfiguration]
-   [bertiniParameterHomotopy,BertininInputConfiguration]
-   [bertiniZeroDimSolve,BertininInputConfiguration]
+   BertiniInputConfiguration
+   [makeB'InputFile, BertiniInputConfiguration]
+   [makeB'TraceInput,BertiniInputConfiguration]
+   [bertiniParameterHomotopy,BertiniInputConfiguration]
+   [bertiniZeroDimSolve,BertiniInputConfiguration]
  Headline
    An option to designate the CONFIG part of a Bertini Input file.
  Description
@@ -1374,13 +1477,12 @@ doc///
    Example
      R=QQ[x0,x1,y0,y1,z]
      makeB'InputFile(storeBM2Files,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
      	 HomVariableGroup=>{{x0,x1},{y0,y1}},
 	 AffVariableGroup=>{{z}},
 	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
 
 ///;
-
 
 doc///
  Key
@@ -1398,7 +1500,7 @@ doc///
    Example
      R=QQ[z,a,b,c]
      makeB'InputFile(storeBM2Files,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{z}},
 	 B'Constants=>{{a,2},{b,3+2*ii},c=>3/2},
 	 B'Polynomials=>{a*z^2+b*z+c})
@@ -1454,7 +1556,7 @@ doc///
    Example
      R=QQ[x,y]
      makeB'InputFile(storeBM2Files,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2})
    Text
@@ -1624,7 +1726,7 @@ doc///
      writeStartFile(storeBM2Files,{{2},{ -2}},NameStartFile=>"start");
      writeParameterFile(storeBM2Files,{4},NameParameterFile=>"start_parameters");
      writeParameterFile(storeBM2Files,{3},NameParameterFile=>"final_parameters");
-     makeB'InputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},BertininInputConfiguration=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
+     makeB'InputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},BertiniInputConfiguration=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
      runBertini(storeBM2Files,NameB'InputFile=>"inputWin");
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
      importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
@@ -1910,7 +2012,7 @@ doc ///
       (1) Specify individual parameters in a function call:
     Example
       CC[x,y]; F = {x^2-1,y^2-1};
-      bertiniZeroDimSolve(F,BertininInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
+      bertiniZeroDimSolve(F,BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
     Text
       (2) Store your frequently used favorites in an OptionTable
       and pass it as the last argument in each function call:
@@ -1977,13 +2079,8 @@ doc ///
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
-   DeflationsNeeded
-   Dimension
-   MaxPrecisionUtilized
-   FinalTValue
    (calculateB'Trace,String)
    (importSliceFile,String)
-   SolutionType
 --   storeBM2Files
    [b'PHMonodromyCollect,NumSolBound]
    (makeB'TraceInput,String,Number,Number)
@@ -2000,12 +2097,7 @@ doc ///
    [b'PHMonodromyCollect,NumberOfLoops]
    [b'PHMonodromyCollect,SaveData]
    [b'PHMonodromyCollect,SpecifyLoops]
-   B'Homogenization
-   ContainsPoint
-   RandomCoefficientGenerator
-   NameB'Section
-   B'NumberCoefficients
-   B'SectionString
+
    [makeB'Slice,B'Homogenization]
    [makeB'Slice,B'NumberCoefficients]
    [makeB'Slice,ContainsMultiProjectivePoint]
@@ -2029,16 +2121,6 @@ doc ///
    [makeB'Section,B'Homogenization]
    [makeB'Section,ContainsPoint]
    [makeB'Section,RandomCoefficientGenerator]
-   PathVariable
-   PathsWithSameEndpoint
-   FunctionResidual
-   ParameterValues
-   CycleNumber
-   VariableList
-   AccuracyEst
-   PrecisionIncreased
-   AccuracyEstInternal
-   ComponentNumber
    [b'PHGaloisGroup,LoopRadius]
    [b'TraceTestImage,MapPoints]
    [moveB'File,MoveToDirectory]
@@ -2076,32 +2158,10 @@ doc ///
    [b'PHGaloisGroup,NumberOfLoops]
    [b'PHGaloisGroup,SaveData]
    [b'PHGaloisGroup,M2Precision]
-   SpecifyVariables
-   MapPoints
-   ReturnGaloisGroupGeneratorFile
-   OnlyCalculateTrace
-   StopBeforeTest
-   LoopRadius
-   MoveToDirectory
-   RandomGamma
-   StorageFolder
-   SubFolder
-   StartPoints
-   StartParameters
-   SubIntoCC
-   storeBM2Files
-   MultiplicityTol
-   SetParameterGroup
-   ReturnPoints
-   GeneralCoordinate
-   OnlyMoveParameters
-   ImageCoordinates
-   ConditionNumTol
-   ContinueLoop
-   EquivalentCoordinates
+
    [bertiniImageMonodromyCollect,AffVariableGroup]
    [bertiniUserHomotopy,AffVariableGroup]
-   [bertiniUserHomotopy,BertininInputConfiguration]
+   [bertiniUserHomotopy,BertiniInputConfiguration]
    [bertiniImageMonodromyCollect,B'Constants]
    [bertiniUserHomotopy,B'Constants]
    [bertiniImageMonodromyCollect,B'Functions]
@@ -2315,7 +2375,7 @@ doc///
    Example
      R=QQ[x1,x2,y]
      makeB'InputFile(storeBM2Files,
-	 BertininInputConfiguration=>{{"MPTYPE",2}},
+	 BertiniInputConfiguration=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
 
@@ -2343,3 +2403,188 @@ doc ///
    Text
      When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
 ///;
+
+
+
+    [bertiniComponentMemberTest, MPType],
+    [bertiniComponentMemberTest, PRECISION],
+    [bertiniComponentMemberTest, ODEPredictor],
+    [bertiniComponentMemberTest, TrackTolBeforeEG],
+    [bertiniComponentMemberTest, TrackTolDuringEG],
+    [bertiniComponentMemberTest, FinalTol],
+    [bertiniComponentMemberTest, MaxNorm],
+    [bertiniComponentMemberTest, MinStepSizeBeforeEG],
+    [bertiniComponentMemberTest, MinStepSizeDuringEG],
+    [bertiniComponentMemberTest, ImagThreshold],
+    [bertiniComponentMemberTest, CoeffBound],
+    [bertiniComponentMemberTest, DegreeBound],
+    [bertiniComponentMemberTest, CondNumThreshold],
+    [bertiniComponentMemberTest, RandomSeed],
+    [bertiniComponentMemberTest, SingValZeroTol],
+    [bertiniComponentMemberTest, EndGameNum],
+    [bertiniComponentMemberTest, UseRegeneration],
+    [bertiniComponentMemberTest, SecurityLevel],
+    [bertiniComponentMemberTest, ScreenOut],
+    [bertiniComponentMemberTest, OutputLevel],
+    [bertiniComponentMemberTest, StepsForIncrease],
+    [bertiniComponentMemberTest, MaxNewtonIts],
+    [bertiniComponentMemberTest, MaxStepSize],
+    [bertiniComponentMemberTest, MaxNumberSteps],
+    [bertiniComponentMemberTest, MaxCycleNum],
+    [bertiniComponentMemberTest, RegenStartLevel],
+    [bertiniPosDimSolve, MPType],
+    [bertiniPosDimSolve, PRECISION],
+    [bertiniPosDimSolve, ODEPredictor],
+    [bertiniPosDimSolve, TrackTolBeforeEG],
+    [bertiniPosDimSolve, TrackTolDuringEG],
+    [bertiniPosDimSolve, FinalTol],
+    [bertiniPosDimSolve, MaxNorm],
+    [bertiniPosDimSolve, MinStepSizeBeforeEG],
+    [bertiniPosDimSolve, MinStepSizeDuringEG],
+    [bertiniPosDimSolve, ImagThreshold],
+    [bertiniPosDimSolve, CoeffBound],
+    [bertiniPosDimSolve, DegreeBound],
+    [bertiniPosDimSolve, CondNumThreshold],
+    [bertiniPosDimSolve, RandomSeed],
+    [bertiniPosDimSolve, SingValZeroTol],
+    [bertiniPosDimSolve, EndGameNum],
+    [bertiniPosDimSolve, UseRegeneration],
+    [bertiniPosDimSolve, SecurityLevel],
+    [bertiniPosDimSolve, ScreenOut],
+    [bertiniPosDimSolve, OutputLevel],
+    [bertiniPosDimSolve, StepsForIncrease],
+    [bertiniPosDimSolve, MaxNewtonIts],
+    [bertiniPosDimSolve, MaxStepSize],
+    [bertiniPosDimSolve, MaxNumberSteps],
+    [bertiniPosDimSolve, MaxCycleNum],
+    [bertiniPosDimSolve, RegenStartLevel],
+    [bertiniRefineSols, MPType],
+    [bertiniRefineSols, PRECISION],
+    [bertiniRefineSols, ODEPredictor],
+    [bertiniRefineSols, TrackTolBeforeEG],
+    [bertiniRefineSols, TrackTolDuringEG],
+    [bertiniRefineSols, FinalTol],
+    [bertiniRefineSols, MaxNorm],
+    [bertiniRefineSols, MinStepSizeBeforeEG],
+    [bertiniRefineSols, MinStepSizeDuringEG],
+    [bertiniRefineSols, ImagThreshold],
+    [bertiniRefineSols, CoeffBound],
+    [bertiniRefineSols, DegreeBound],
+    [bertiniRefineSols, CondNumThreshold],
+    [bertiniRefineSols, RandomSeed],
+    [bertiniRefineSols, SingValZeroTol],
+    [bertiniRefineSols, EndGameNum],
+    [bertiniRefineSols, UseRegeneration],
+    [bertiniRefineSols, SecurityLevel],
+    [bertiniRefineSols, ScreenOut],
+    [bertiniRefineSols, OutputLevel],
+    [bertiniRefineSols, StepsForIncrease],
+    [bertiniRefineSols, MaxNewtonIts],
+    [bertiniRefineSols, MaxStepSize],
+    [bertiniRefineSols, MaxNumberSteps],
+    [bertiniRefineSols, MaxCycleNum],
+    [bertiniRefineSols, RegenStartLevel],
+    [bertiniSample, MPType],
+    [bertiniSample, PRECISION],
+    [bertiniSample, ODEPredictor],
+    [bertiniSample, TrackTolBeforeEG],
+    [bertiniSample, TrackTolDuringEG],
+    [bertiniSample, FinalTol],
+    [bertiniSample, MaxNorm],
+    [bertiniSample, MinStepSizeBeforeEG],
+    [bertiniSample, MinStepSizeDuringEG],
+    [bertiniSample, ImagThreshold],
+    [bertiniSample, CoeffBound],
+    [bertiniSample, DegreeBound],
+    [bertiniSample, CondNumThreshold],
+    [bertiniSample, RandomSeed],
+    [bertiniSample, SingValZeroTol],
+    [bertiniSample, EndGameNum],
+    [bertiniSample, UseRegeneration],
+    [bertiniSample, SecurityLevel],
+    [bertiniSample, ScreenOut],
+    [bertiniSample, OutputLevel],
+    [bertiniSample, StepsForIncrease],
+    [bertiniSample, MaxNewtonIts],
+    [bertiniSample, MaxStepSize],
+    [bertiniSample, MaxNumberSteps],
+    [bertiniSample, MaxCycleNum],
+    [bertiniSample, RegenStartLevel],
+    [bertiniTrackHomotopy, MPType],
+    [bertiniTrackHomotopy, PRECISION],
+    [bertiniTrackHomotopy, ODEPredictor],
+    [bertiniTrackHomotopy, TrackTolBeforeEG],
+    [bertiniTrackHomotopy, TrackTolDuringEG],
+    [bertiniTrackHomotopy, FinalTol],
+    [bertiniTrackHomotopy, MaxNorm],
+    [bertiniTrackHomotopy, MinStepSizeBeforeEG],
+    [bertiniTrackHomotopy, MinStepSizeDuringEG],
+    [bertiniTrackHomotopy, ImagThreshold],
+    [bertiniTrackHomotopy, CoeffBound],
+    [bertiniTrackHomotopy, DegreeBound],
+    [bertiniTrackHomotopy, CondNumThreshold],
+    [bertiniTrackHomotopy, RandomSeed],
+    [bertiniTrackHomotopy, SingValZeroTol],
+    [bertiniTrackHomotopy, EndGameNum],
+    [bertiniTrackHomotopy, UseRegeneration],
+    [bertiniTrackHomotopy, SecurityLevel],
+    [bertiniTrackHomotopy, ScreenOut],
+    [bertiniTrackHomotopy, OutputLevel],
+    [bertiniTrackHomotopy, StepsForIncrease],
+    [bertiniTrackHomotopy, MaxNewtonIts],
+    [bertiniTrackHomotopy, MaxStepSize],
+    [bertiniTrackHomotopy, MaxNumberSteps],
+    [bertiniTrackHomotopy, MaxCycleNum],
+    [bertiniTrackHomotopy, RegenStartLevel],
+    [bertiniUserHomotopy,CoeffBound],
+    [bertiniUserHomotopy,CondNumThreshold],
+    [bertiniUserHomotopy,DegreeBound],
+    [bertiniUserHomotopy,EndGameNum],
+    [bertiniUserHomotopy,FinalTol],
+    [bertiniUserHomotopy,ImagThreshold],
+    [bertiniUserHomotopy,MaxCycleNum],
+    [bertiniUserHomotopy,MaxNewtonIts],
+    [bertiniUserHomotopy,MaxNorm],
+    [bertiniUserHomotopy,MaxNumberSteps],
+    [bertiniUserHomotopy,MaxStepSize],
+    [bertiniUserHomotopy,MinStepSizeBeforeEG],
+    [bertiniUserHomotopy,MinStepSizeDuringEG],
+    [bertiniUserHomotopy,MPType],
+    [bertiniUserHomotopy,ODEPredictor],
+    [bertiniUserHomotopy,OutputLevel],
+    [bertiniUserHomotopy,PRECISION],
+    [bertiniUserHomotopy,RandomSeed],
+    [bertiniUserHomotopy,RegenStartLevel],
+    [bertiniUserHomotopy,ScreenOut],
+    [bertiniUserHomotopy,SecurityLevel],
+    [bertiniUserHomotopy,SingValZeroTol],
+    [bertiniUserHomotopy,StepsForIncrease],
+    [bertiniUserHomotopy,TrackTolBeforeEG],
+    [bertiniUserHomotopy,TrackTolDuringEG],
+    [bertiniUserHomotopy,UseRegeneration],
+    [bertiniZeroDimSolve, MPType],
+    [bertiniZeroDimSolve, PRECISION],
+    [bertiniZeroDimSolve, ODEPredictor],
+    [bertiniZeroDimSolve, TrackTolBeforeEG],
+    [bertiniZeroDimSolve, TrackTolDuringEG],
+    [bertiniZeroDimSolve, FinalTol],
+    [bertiniZeroDimSolve, MaxNorm],
+    [bertiniZeroDimSolve, MinStepSizeBeforeEG],
+    [bertiniZeroDimSolve, MinStepSizeDuringEG],
+    [bertiniZeroDimSolve, ImagThreshold],
+    [bertiniZeroDimSolve, CoeffBound],
+    [bertiniZeroDimSolve, DegreeBound],
+    [bertiniZeroDimSolve, CondNumThreshold],
+    [bertiniZeroDimSolve, RandomSeed],
+    [bertiniZeroDimSolve, SingValZeroTol],
+    [bertiniZeroDimSolve, EndGameNum],
+    [bertiniZeroDimSolve, UseRegeneration],
+    [bertiniZeroDimSolve, SecurityLevel],
+    [bertiniZeroDimSolve, ScreenOut],
+    [bertiniZeroDimSolve, OutputLevel],
+    [bertiniZeroDimSolve, StepsForIncrease],
+    [bertiniZeroDimSolve, MaxNewtonIts],
+    [bertiniZeroDimSolve, MaxStepSize],
+    [bertiniZeroDimSolve, MaxNumberSteps],
+    [bertiniZeroDimSolve, MaxCycleNum],
+    [bertiniZeroDimSolve, RegenStartLevel]

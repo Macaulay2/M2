@@ -32,25 +32,15 @@ exportMutable{"storeBM2Files"
 export {
   "SetParameterGroup",
   "bertiniUserHomotopy",
-  "ContinueLoop",
-  "bertiniImageMonodromyCollect",
-  "ImageCoordinates",
-  "GeneralCoordinate",
-  "OnlyMoveParameters",
-  "EquivalentCoordinates",
   "ReturnPoints",
   "PrintMidStatus",
   "OutputStyle",--TODO remove this option
   "TopDirectory",
   "StorageFolder",
-  "ReturnGaloisGroupGeneratorFile",
-  "StopBeforeTest",
   "RandomGamma",
   "SubFolder",
   "StartParameters",
   "StartPoints",
-  "OnlyCalculateTrace",
-  "b'TraceTestImage",
   "subPoint",
   "OrderPaths",
   "bertiniZeroDimSolve",
@@ -121,26 +111,10 @@ export {
   "writeParameterFile",
   "writeStartFile",
   "importParameterFile",   --need doc
---  "b'TraceTest", Depracated.
-  "calculateB'Trace",
-  "UseStartPointsFirst",
-  "b'PHSequence"   ,
-  "b'PHMonodromyCollect",
   "importSolutionsFile",
   "importIncidenceMatrix",
   "SaveData",
-  "MonodromyStartPoints",
-  "MonodromyStartParameters",
-  "NumberOfLoops",
-  "NumSolBound",
-  "SpecifyLoops",
-  "b'PHGaloisGroup",
-  "LoopRadius",
-  "NameGaloisGroupGeneratorFile",
-  "BranchPoints",
   "SolutionFileStyle",
-  "B'Section",
-  "B'Slice",
   "radicalList",
 --  "B'MultiProjectivePoint",
   "makeB'Section",
@@ -265,6 +239,7 @@ bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
 	M2Precision=>53,
   Verbose=>false
 	} )
+bertiniZeroDimSolve(Ideal) := o -> (I) ->bertiniZeroDimSolve( I_*,o )
 bertiniZeroDimSolve(List) := o -> (myPol) ->(
     --myPol are your polynomial system that you want to solve. If empty return empty.
   if myPol=={} then error"Polynomial system is the empty list. ";
@@ -347,7 +322,7 @@ bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
 	     WitnessData=>W.WitnessDataFileName};
 	 o2 := new OptionTable from L;
          o3 := o ++ o2 ;
-         bertiniSolve(W.Equations,o3)
+         bertiniSolve(flatten entries gens (W.Equations),o3)
          )
 
 
@@ -1124,7 +1099,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	    ws.WitnessDataFileName=dir|"/witness_data";
 	    wList = join(wList, {ws}); --add witness set to list
 	    listOfCodims = join(listOfCodims, {codimen});
-	    );    
+	    );
     	);
     -- now we grab the slice data, at the end of the witness_data file,
     --to be inserted into the witnessSets with dim>0
@@ -1162,7 +1137,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
         rw = {};
     );
     M = matrix(mat); -- "master matrix" that stores all slices
-    
+
     -- Finally, we can cycle through the witness sets in nv
     -- and add the slice data.
     -- There are length listOfCodims witness sets,
@@ -2350,24 +2325,14 @@ TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bertiniUserHomotopy.tst.m2")
 ///
 
-end
-
---TODO fix this test
-TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.tst.m2")
-///
-
-
----newtst
-
 --##########################################################################--
 -- DOCUMENTATION
 --##########################################################################--
 
 beginDocumentation()
---load "./Bertini/doc.m2";
+load "./Bertini/doc.m2";
 
-
+end
 makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
 	NameWitnessSliceFile=>"linear_slice_file",
     	NameSolutionsFile=>"witness_solutions_file",
@@ -2395,3 +2360,8 @@ makeWitnessSetFiles(String,Number) := o ->(IFD,theDim)->(
     runBertini(filesGoHere,TextScripts=>tempfileName,Verbose=>o.Verbose);
     removeFile(filesGoHere|tempfileName);
         )
+
+        --TODO fix this test
+        TEST///
+        load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.tst.m2")
+        ///
