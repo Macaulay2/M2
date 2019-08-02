@@ -307,11 +307,11 @@ bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
   })
 bertiniPosDimSolve List := o -> F -> (
 --F is the list of polynomials
-         L := {runType=>2};
-         o2 := new OptionTable from L;
-         o3 := o ++ o2;
-         bertiniSolve(F,o3)
-         )
+   L := {runType=>2};
+   o2 := new OptionTable from L;
+   o3 := o ++ o2;
+   bertiniSolve(F,o3)
+   )
 bertiniPosDimSolve Ideal := o -> I -> bertiniPosDimSolve(I_*, o)
 
 
@@ -319,14 +319,13 @@ bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false,
 	IsProjective=>-1
   })
 bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
---W is a witness set
--- n is the number of points to sample
-         L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n,
-	     WitnessData=>W.WitnessDataFileName};
-	 o2 := new OptionTable from L;
-         o3 := o ++ o2 ;
-         bertiniSolve(flatten entries gens (W.Equations),o3)
-         )
+  --W is a witness set
+  -- n is the number of points to sample
+  L := {runType=>3,dimen=>dim W, compnum => W.ComponentNumber,numpts => n, WitnessData=>W.WitnessDataFileName};
+  o2 := new OptionTable from L;
+  o3 := o ++ o2 ;
+  bertiniSolve(flatten entries gens (W.Equations),o3)
+  )
 
 
 bertiniComponentMemberTest = method(TypicalValue => List, Options=>{Verbose=>false,
@@ -382,18 +381,19 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
    )
 
 --This is a type 2 user-defined homotopy
-bertiniUserHomotopy = method(TypicalValue => List, Options=>knownConfigs|{Verbose=>false,
-    	OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
-    	TopDirectory=>storeBM2Files,
-    	B'Functions=>{},
+bertiniUserHomotopy = method(TypicalValue => List, Options=>{
+  Verbose=>false,
+	OutputStyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+	TopDirectory=>storeBM2Files,
+	B'Functions=>{},
 	BertiniInputConfiguration=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
 	RandomComplex=>{},
 	RandomReal=>{},
-      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
-      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.
-    	M2Precision=>53
+	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number.
+	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.
+	M2Precision=>53
 --	IsProjective=>-1
 	--NonPolynomial=>false
 	} )
@@ -2360,7 +2360,7 @@ doc ///
       solns = bertiniZeroDimSolve(F)
 ///;
 ------------------------------------------------------
-------MAIN FUNCTIONS ------------
+------MAIN METHODS ------------
 ------------------------------------------------------
 --bertiniZeroDimSolve,bertiniPosDimSolve,bertiniParameterHomotopy,bertiniUserHomotopy,bertiniComponentMemberTest,bertiniSample
 doc ///
@@ -2369,25 +2369,25 @@ doc ///
     (bertiniZeroDimSolve,Ideal)
     (bertiniZeroDimSolve,List)
   Headline
-    solve zero-dimensional system of equations
+    a main method to solve a zero-dimensional system of equations
   Usage
     S = bertiniZeroDimSolve F
     S = bertiniZeroDimSolve I
     S = bertiniZeroDimSolve(I, UseRegeneration=>1)
   Inputs
     F:List
-      whose entries are polynomials (system need not be square)
-    F:Ideal
-      defining a variety
+      a list of ring elements (system need not be square)
+    I:Ideal
+      an ideal defining a variety
   Outputs
     S:List
-      of solutions of type Point
+      a list of points that are contained in the variety of F
   Description
     Text
-      Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
-      This function builds a Bertini input file from the system F and calls Bertini on
-      this input file. Solutions are pulled from machine readable file {\tt finitesolutions}
-      and returned as a list.
+      This method finds isolated solutions to the system F via numerical polynomial homotopy continuation
+      by (1) building a Bertini input file from the system F,
+      (2) calling Bertini on this input file,
+      (3) returning solutions from a machine readable file that is an output from Bertini.
     Example
       R = CC[x,y];
       F = {x^2-1,y^2-2};
@@ -2403,10 +2403,10 @@ doc ///
       F = {x^2*(x-1)};
       S = bertiniZeroDimSolve F
       B = bertiniZeroDimSolve(F,UseRegeneration=>1)
-  Caveat
-    Variables must begin with a letter (lowercase or capital) and
-    can only contain letters, numbers, underscores, and square brackets.
-    Regeneration in bertiniZeroDimSolve only finds nonsingular isolated points.
+    Text
+      Variables must begin with a letter (lowercase or capital) and
+      can only contain letters, numbers, underscores, and square brackets.
+      Regeneration in bertiniZeroDimSolve only finds nonsingular isolated points.
 ///
 
 --Options
@@ -2424,8 +2424,8 @@ doc ///
     bertiniUserHomotopy(...,TopDirectory=>String)
   Description
     Text
-       This option specifies a directory to store Bertini output files.
-///;
+      This option specifies a directory to store Bertini output files.
+///
 
 doc ///
   Key
@@ -2439,12 +2439,402 @@ doc ///
   Description
     Text
       This option is set to 1 to have Bertini use regeneration when solving a polynomial system.
-///;
+
+///
+
+doc ///
+  Key
+    bertiniPosDimSolve
+    (bertiniPosDimSolve,Ideal)
+    (bertiniPosDimSolve,List)
+  Headline
+    a main method that is used to produce witness sets
+  Usage
+    V = bertiniPosDimSolve I
+    V = bertiniPosDimSolve F
+  Inputs
+    F:List
+      a list of ring elements defining a variety
+  Outputs
+    V:NumericalVariety
+      a numerical irreducible decomposition of the variety defined by F
+  Description
+    Text
+      The method {\tt bertiniPosDimSolve} calls  {\tt Bertini} to find
+      a numerical irreducible decomposition of the zero-set of F.  The decomposition is
+      returned as the @TO NumericalVariety@ NV.  Witness sets of NV contain approximations
+      to solutions of the system F=0.
+      Bertini (1) writes the system to temporary files,
+      (2) invokes {\tt Bertini}'s solver with {\tt TrackType => 1},
+      (3) Bertini uses a cascade homotopy to find witness supersets in each dimension,
+      (4) removes extra points using a membership test or local dimension test,
+      (5) deflates singular witness points, and finally
+      (6) decomposes using a combination of monodromy and a linear trace test
+    Example
+      R = QQ[x,y,z]
+      F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+      S = bertiniPosDimSolve F
+      S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+    Text
+      Each @TO WitnessSet@ is accessed by dimension and then list position.
+    Example
+      S#1 --first specify dimension
+      peek oo_0 --then list position
+    Text
+      In the example, we find two components, one component has dimension 1 and degree 1 and the other has
+      dimension 2 and degree 2.  We get the same results using symbolic methods.
+    Example
+      PD=primaryDecomposition( ideal F)
+      dim PD_0
+      degree PD_0
+      dim PD_1
+      degree PD_1
+///
+
+doc ///
+  Key
+    bertiniSample
+    (bertiniSample, ZZ, WitnessSet)
+  Headline
+    a main method to sample points from an irreducible component of a variety
+  Usage
+    V = bertiniSample (n, W)
+  Inputs
+    n:ZZ
+      an integer specifying the number of desired sample points
+    W:WitnessSet
+      a witness set for an irreducible component
+  Outputs
+    L:List
+      a list of sample points
+  Description
+    Text
+      Samples points from an irreducible component of a variety using Bertini.  The irreducible
+      component needs to be in its numerical form as a @TO WitnessSet@.  The method
+      @TO bertiniPosDimSolve@ can be used to generate a witness set for the component.
+      Bertini (1) writes the witness set to a temporary file,
+      (2) invokes {\tt Bertini}'s solver with option {\tt TrackType => 2}, and
+      (3 moves the hyperplanes defined in the @TO WitnessSet@ W within the space until the desired points are sampled,
+      (4) stores the output of {\tt Bertini} in a temporary file, and finally
+      (5) parses and outputs the solutions.
+    Example
+      R = CC[x,y,z]
+      F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
+      NV = bertiniPosDimSolve(F)
+      W = NV#1_0 --z-axis
+      bertiniSample(4, W)
+///
+
+
+doc ///
+  Key
+    bertiniTrackHomotopy
+    (bertiniTrackHomotopy, RingElement, List, List)
+  Headline
+    a main method to track using a user-defined homotopy
+  Usage
+    S0=bertiniTrackHomotopy(t, H, S1)
+  Inputs
+    t:RingElement
+      a path variable
+    H:List
+      a list polynomials that define the homotopy with respect to the path variable
+    S1:List
+      a list of solutions to the start system
+  Outputs
+    S0:List
+      a list of solutions to the target system
+  Description
+    Text
+      This method calls {\tt Bertini} to track a user-defined homotopy.  The
+      user needs to specify the homotopy H, the path variable t, and a list
+      of start solutions S1.
+      Bertini (1) writes the homotopy and start solutions to temporary files,
+      (2) invokes {\tt Bertini}'s solver with configuration keyword {\tt UserHomotopy => 1}
+      in the affine case and {\tt UserHomotopy => 2} in the projective situation,
+      (3) stores the output of {\tt Bertini} in a temporary file, and
+      (4) parses a machine readable file to output a list of solutions.
+    Example
+      R = CC[x,t]; -- include the path variable in the ring
+      H = { (x^2-1)*t + (x^2-2)*(1-t)};
+      sol1 = point {{1}};
+      sol2 = point {{-1}};
+      S1= { sol1, sol2  };--solutions to H when t=1
+      S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
+      peek S0_0
+    Text
+      In the previous example, we solved $x^2-2$ by moving
+      from $x^2-1$ with a linear homotopy. {\tt Bertini} tracks homotopies starting at
+      $t=1$ and ending at $t=0$. Final solutions are of the type Point.
+    Example
+      R=CC[x,y,t]; -- include the path variable in the ring
+      f1=(x^2-y^2);
+      f2=(2*x^2-3*x*y+5*y^2);
+      H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
+      sol1=    point{{1,1}}--{{x,y}} coordinates
+      sol2=    point{{ -1,1}}
+      S1={sol1,sol2}--solutions to H when t=1
+      S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
+    Text
+      Variables must begin with a letter (lowercase or capital) and
+      can only contain letters, numbers, underscores, and square brackets.
+///
+
+doc ///
+  Key
+    bertiniUserHomotopy
+    (bertiniUserHomotopy, Thing, List, List, List)
+  Headline
+    a main method to track a user-defined homotopy
+  Usage
+    S0=bertiniUserHomotopy(t, P, H, S1)
+  Inputs
+    t:RingElement
+      a path variable
+    P: List
+      a list of options that set the parameters
+    H:List
+      a list of polynomials that define the homotopy
+    S1:List
+      a list of solutions to the start system
+  Outputs
+    S0:List
+      a list of solutions to the target system
+  Description
+    Text
+      This method calls {\tt Bertini} to track a user-defined homotopy.  The
+      user needs to specify the homotopy H, the path variable t, and a list
+      of start solutions S1.
+      Bertini (1) writes the homotopy and start solutions to temporary files,
+      (2) invokes {\tt Bertini}'s solver with configuration keyword {\tt UserHomotopy => 2},
+      (3) stores the output of {\tt Bertini} in a temporary file, and
+      (4) parses a machine readable file to output a list of solutions.
+    Example
+      R = CC[x,a,t]; -- include the path variable in the ring
+      H = { (x^2-1)*a + (x^2-2)*(1-a)};
+      sol1 = point {{1}};
+      sol2 = point {{-1}};
+      S1= { sol1, sol2  };--solutions to H when t=1
+      S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
+      peek S0_0
+    Example
+      R=CC[x,y,t,a]; -- include the path variable in the ring
+      f1=(x^2-y^2);
+      f2=(2*x^2-3*x*y+5*y^2);
+      H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
+      sol1=    point{{1,1}}--{{x,y}} coordinates
+      sol2=    point{{ -1,1}}
+      S1={sol1,sol2}--solutions to H when t=1
+      S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
+///
+
+
+doc ///
+  Key
+    bertiniComponentMemberTest
+    (bertiniComponentMemberTest, List, NumericalVariety)
+  Headline
+    a main method to test whether points lie on a given variety
+  Usage
+    L = bertiniComponentMemberTest (pts, NV)
+  Inputs
+    pts:List
+      a list of points to test
+    NV:NumericalVariety
+      a numerical variety to test if points lie on a given irreducible component
+  Outputs
+    L:List
+      entries are lists of witness sets containing the test point
+  Description
+    Text
+      This method checks whether the test points pts lie on NV using {\tt Bertini} by
+      (1) writing the witness set information of NV and the test points to temporary files,
+      (2) invokes {\tt Bertini}'s solver with option {\tt TRACKTYPE => 3},
+      (3) stores output of {\tt Bertini} in temporary file,
+      (4) parses and outputs the solutions.
+    Example
+      R = CC[x,y,z];
+      F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
+      NV = bertiniPosDimSolve(F)
+      pts = {{0,0,0}} --z-axis
+      bertiniComponentMemberTest(pts, NV)
+    Text
+      In the current implementation, at most one witness set is listed for each test point although the point may lie on more than one component.
+///
+
+doc ///
+  Key
+    bertiniRefineSols
+    (bertiniRefineSols, ZZ, List, List)
+  Headline
+    sharpen solutions to a prescribed number of digits
+  Usage
+    S = bertiniRefineSols(d, F, l)
+  Inputs
+    d:ZZ
+      an integer specifying the number of digits of precision
+    F:List
+      a list of polynomials (system need not be square)
+    l:List
+      a list of points to be sharpened
+  Outputs
+    S:List
+      a list of solutions of type Point
+  Description
+    Text
+      This method takes the list l of solutions of F and sharpens them to d digits using the sharpening module of {\tt Bertini}.
+    Example
+      R = CC[x,y];
+      F = {x^2-2,y^2-2};
+      sols = bertiniZeroDimSolve (F)
+      S = bertiniRefineSols (100, F, sols)
+      coords = coordinates S_0
+      coords_0
+    Text
+      @TO bertiniRefineSols@ will only refine non-singular solutions and does not currently work for homogeneous systems.
+///
+
+doc ///
+  Key
+    bertiniParameterHomotopy
+    (bertiniParameterHomotopy,List,List,List)
+  Headline
+    a main method to perform a parameter homotopy in Bertini
+  Usage
+    S = bertiniParameterHomotopy(F,P,T)
+  Inputs
+    F:List
+      a list of polynomials
+    P:List
+      a list of parameter indeterminants
+    T:List
+      a list of lists of target parameter values
+  Outputs
+    S:List
+      a list whose entries are lists of solutions for each target system
+  Description
+    Text
+      This method numerically solves several polynomial systems from
+      a parameterized family at once.  The list F is a system of polynomials
+      in ring variables and the parameters listed in P.  The list T is the
+      set of parameter values for which solutions to F are desired.  Both stages of
+      {\tt Bertini}'s parameter homotopy method are called with {\tt bertiniParameterHomotopy}.
+      First, {\tt Bertini} assigns a random complex number to each parameter
+      and solves the resulting system, then, after this initial phase, {\tt Bertini} computes solutions
+      for every given choice of parameters using a number of paths equal to the exact root count in the
+      first stage.
+    Example
+      R=CC[u1,u2,u3,x,y];
+      f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
+      f2=(x-11)*(x-12)*(x-13)-u1;
+      paramValues0={1,0,0};
+      paramValues1={0,1+2*ii,0};
+      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
+      bPH_0--the solutions to the system with parameters set equal to paramValues0
+    Example
+      R=CC[x,y,z,u1,u2]
+      f1=x^2+y^2-z^2
+      f2=u1*x+u2*y
+      finalParameters0={0,1}
+      finalParameters1={1,0}
+      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
+      bPH_0--The two solutions for finalParameters0
+    Example
+      finParamValues={{1},{2}}
+      bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
+      bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")
+      class bPH1_0_0
+      class bPH2_0_0
+    Example
+      dir1 := temporaryFileName(); -- build a directory to store temporary data
+      makeDirectory dir1;
+      bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)
+      B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
+      B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
+///
+
+------------------------------------------------------------------
+------FUNCTIONS WRITING FILES WITHOUT CALLING BERTINI ------------
+------------------------------------------------------------------
+
+doc ///
+  Key
+    makeB'InputFile
+    (makeB'InputFile,String)
+  Headline
+    write a Bertini input file in a directory
+  Usage
+    makeB'InputFile(s)
+  Inputs
+    s:String
+      a directory where the input file will be written
+  Description
+    Text
+      This function writes a Bertini input file.
+      The user can specify CONFIGS for the file using the BertiniInputConfiguration option.
+      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogenous variable group) option.
+      The user should specify the polynomial system they want to solve with the  B'Polynomials option or B'Functions option.
+      If B'Polynomials is not used then the user should use the  NamePolynomials option.
+    Example
+      R=QQ[x1,x2,y]
+      theDir = temporaryFileName()
+      makeDirectory theDir
+      makeB'InputFile(theDir,
+	      BertiniInputConfiguration=>{MPType=>2},
+     	  AffVariableGroup=>{{x1,x2},{y}},
+	      B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
+    Example
+      R=QQ[x1,x2,y,X]
+      makeB'InputFile(theDir,
+	      BertiniInputConfiguration=>{MPType=>2},
+     	  AffVariableGroup=>{{x1,x2},{y}},
+	      NamePolynomials=>{f1,f2,f3},
+	      B'Functions=>{
+  	     {X,x1+x2+1},
+  	     {f1,y*X^2+1},
+  	     {f2,x1-x2+1},
+  	     {f3,y-2}})
+    Example
+      R=QQ[x1,x2,y,X]
+      makeB'InputFile(theDir,
+	       BertiniInputConfiguration=>{MPype=>2},
+     	   AffVariableGroup=>{{x1,x2},{y}},
+	        B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
+	         B'Functions=>{
+	            {X,x1+x2+1}})
+    Text
+      Variables must begin with a letter (lowercase or capital) and can only
+      contain letters, numbers, underscores, and square brackets.
+      "jade" should not be used in any expression.
+      "I" can only be used to represent the complex number sqrt(-1).
+///
+
+
+doc ///
+  Key
+    writeStartFile
+    (writeStartFile,String,List)
+  Headline
+    Writes the list of list of coordinates to a file that Bertini can read.
+  Usage
+    writeStartFile(s,v)
+  Inputs
+    s:String
+      The directory where the Bertini file will be written.
+    v:List
+      A list of list numbers that will be written to the file.
+  Description
+    Text
+      This function can be used to write "start" files and any other solution file using the option NameStartFile=>"AnyNameYouWant".
+    Example
+      coordinatesOfTwoPnts={{1,0},{3,4}}
+      writeStartFile(storeBM2Files,coordinatesOfTwoPnts)
+///
+
 
 
 undocumented {
   SetParameterGroup,
-bertiniUserHomotopy,
 ReturnPoints,
 PrintMidStatus,
 OutputStyle,--TODO remove this option
@@ -2455,12 +2845,6 @@ StartParameters,
 StartPoints,
 subPoint,
 OrderPaths,
-bertiniParameterHomotopy,
-bertiniPosDimSolve,
-bertiniSample,
-bertiniTrackHomotopy,
-bertiniComponentMemberTest,
-bertiniRefineSols,
 MultiplicityTol,
 ConditionNumTol,
 MPType,
@@ -2498,7 +2882,6 @@ NameIncidenceMatrixFile,
 NameStartFile,
 NameFunctionFile,
 --
-makeB'InputFile,
 BertiniInputConfiguration, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file.
 HomVariableGroup, --A list of lists of homogeneous variable groups.
 AffVariableGroup, --A list of lists of affine variable groups.
@@ -2520,7 +2903,6 @@ B'Exe,
 NumberToB'String,
 M2Precision,--needs doc
 writeParameterFile,
-writeStartFile,
 importParameterFile,   --need doc
 importSolutionsFile,
 importIncidenceMatrix,
