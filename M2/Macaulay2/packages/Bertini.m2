@@ -130,7 +130,6 @@ export {
   "NameB'Slice",
   "ListB'Sections",
   "makeB'TraceInput",
-  "replaceFirstLine",
   "PreparePH2",
   "readFile",
   "valueBM2",
@@ -2833,9 +2832,697 @@ doc ///
 
 
 
+
+doc ///
+ Key
+   importSolutionsFile
+   (importSolutionsFile,String)
+ Headline
+   Imports coordinates from a Bertini solution file.
+ Usage
+   importSolutionsFile(s)
+ Inputs
+   s:String
+     The directory where the file is stored.
+ Description
+   Text
+     After Bertini does a run many files are created.
+     This function imports the coordinates of solutions from the simple "raw_solutions" file.
+     By using the option NameSolutionsFile=>"real_finite_solutions" we would import solutions from real finite solutions.
+     Other common file names are "nonsingular_solutions", "finite_solutions", "infinite_solutions", and "singular_solutions".
+   Text
+     If the NameSolutionsFile option
+     is set to 0 then "nonsingular_solutions" is imported,
+     is set to 1 then "real_finite_solutions" is imported,
+     is set to 2 then "infinite_solutions" is imported,
+     is set to 3 then "finite_solutions" is imported,
+     is set to 4 then "start" is imported,
+     is set to 5 then "raw_solutions" is imported.
+   Example
+     R=QQ[x,y]
+     makeB'InputFile(storeBM2Files,
+     	 AffVariableGroup=>{{x,y}},
+	 B'Polynomials=>{x^2-1,y^3-1})
+     runBertini(storeBM2Files)
+     importSolutionsFile(storeBM2Files)
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
+
+///;
+
+
+doc ///
+ Key
+   importParameterFile
+   (importParameterFile,String)
+ Headline
+   Imports parameters from a Bertini parameter file.
+ Usage
+   importParameterFile(s)
+ Inputs
+   s:String
+     The directory where the file is stored.
+ Description
+   Text
+     After Bertini does a parameter homotopy many files are created.
+     This function imports the parameters from  the "final_parameters" file as the default.
+   Example
+     writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters")
+     importParameterFile(storeBM2Files)
+
+///;
+
+doc ///
+ Key
+   importMainDataFile
+   (importMainDataFile,String)
+ Headline
+   This function imports points from the main data file form a Bertini run.
+ Usage
+   importMainDataFile(theDir)
+ Inputs
+   theDir:String
+     The directory where the main_data file is located.
+ Description
+   Text
+     This function does not import a list of coordinates. Instead it imports points from a main_data file. These points contain coordinates, condition numbers, and etc.
+     The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.
+     When TrackType 1 is used, UNCLASSIFIED points will have component number -1.
+   Example
+     makeB'InputFile(storeBM2Files,
+       AffVariableGroup=>{x,y,z},
+       BertiniInputConfiguration=>{{TrackType,1}},
+       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
+     runBertini(storeBM2Files)
+     thePoints=importMainDataFile(storeBM2Files)
+     witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+     sortMainDataComponents(thePoints)
+///;
+
+
+doc ///
+ Key
+   importIncidenceMatrix
+   (importIncidenceMatrix,String)
+ Headline
+   Imports an incidence matrix file after running makeMembershipFile.
+ Usage
+   importIncidenceMatrix(s)
+ Inputs
+   s:String
+     The directory where the file is stored.
+ Description
+   Text
+     After running makeMembershipFile Bertini produces an incidence_matrix file.
+     The incidence_matrix says which points belong to which components.
+     Our incidence matrix is flattened to a list.
+     The number of elemenets in theIM is equal to the number of points in the solutions file.
+     Each element of theIM is a list of sequences of 2 elements (codim,component Number).
+     Note that we follow the Bertini convention and switch from (dimension,component number) indexing to (codimension,component number) indexing.
+   Text
+     If the NameIncidenceMatrixFile option is set when we want to import files with a different name.
+   Example
+    makeB'InputFile(storeBM2Files,
+    	BertiniInputConfiguration=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
+    runBertini(storeBM2Files)
+    makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
+    makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
+    theIM=importIncidenceMatrix(storeBM2Files)
+
+///;
+
+
+doc ///
+  Key
+    IsProjective
+    [bertiniTrackHomotopy, IsProjective]
+    --   [bertiniParameterHomotopy, IsProjective]
+    [bertiniComponentMemberTest, IsProjective]
+    [bertiniPosDimSolve, IsProjective]
+    [bertiniRefineSols, IsProjective]
+    [bertiniSample, IsProjective]
+    --   [bertiniZeroDimSolve, IsProjective]
+  Headline
+    optional argument to specify whether to use homogeneous coordinates
+  Description
+    Text
+      When set to 1, this option indicates that the input system is homogenized and the output should be given in projective space.
+    Example
+      R = CC[x,y,z];
+      f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
+      bertiniPosDimSolve(f,IsProjective=>1);
+///;
+
+
+doc ///
+  Key
+    "Variable groups"
+    AffVariableGroup
+    HomVariableGroup
+    [bertiniParameterHomotopy, AffVariableGroup]
+    [bertiniParameterHomotopy, HomVariableGroup]
+    [makeB'InputFile, AffVariableGroup]
+    [makeB'InputFile, HomVariableGroup]
+    [bertiniZeroDimSolve,HomVariableGroup]
+    [bertiniZeroDimSolve,AffVariableGroup]
+    [bertiniUserHomotopy,AffVariableGroup]
+  Headline
+    an option to group variables and use multihomogeneous homotopies
+  Description
+    Text
+      Grouping the variables has Bertini solve zero dimensional systems using multihomogeneous homotopies.
+    Example
+      R = CC[x,y];
+      F1 = {x*y+1,2*x*y+3*x+4*y+5};
+      bertiniZeroDimSolve(F1, AffVariableGroup=>{{x},{y}});
+      hR =CC[x0,x1,y0,y1]
+      F2 = {x1*y1+x0*y0,2*x1*y1+3*x1*y0+4*x0*y1+5*x0*y0};
+      bertiniZeroDimSolve(F2,HomVariableGroup=>{{x0,x1},{y0,y1}});
+
+///;
+
+doc ///
+  Key
+    "Bertini input configuration"
+    MPType
+    PRECISION
+    ODEPredictor
+    TrackTolBeforeEG
+    TrackTolDuringEG
+    FinalTol
+    MaxNorm
+    MinStepSizeBeforeEG
+    MinStepSizeDuringEG
+    ImagThreshold
+    CoeffBound
+    DegreeBound
+    CondNumThreshold
+    RandomSeed
+    SingValZeroTol
+    EndGameNum
+    SecurityLevel
+    ScreenOut
+    OutputLevel
+    StepsForIncrease
+    MaxNewtonIts
+    MaxStepSize
+    MaxNumberSteps
+    MaxCycleNum
+    RegenStartLevel
+  Headline
+    a configuration option for a Bertini input file
+  Description
+    Text
+      Refer to Appendix E of SIAM Bertini book for full details and list of options.
+
+      MPType: Type of precision (0=double, 1=fixed higher, 2=adaptive).
+
+      PRECISION: Precision, in bits, when used MPType=1. Precision is capitalized here to not conflict with Precision.
+
+      ODEPredictor: Choice of predictor method (9 choices).
+
+      TrackTolBeforeEG: Before endgame zone, Newton error must be less than this for success.
+
+      TrackTolDuringEG: Same as previous, but during endgame.
+
+      FinalTol: Path is deemed successful if final two endpoint approximations agree to FinalTol.
+
+      MaxNorm: If SecurityLevel=0, path is truncated if two consecutive endpoint approximations exceed this value.
+
+      MinStepSizeBeforeEG: Path is truncated if stepsize drops below this level before endgame.
+
+      MinStepSizeDuringEG: Same as previous, but during endgame.
+
+      ImagThreshold: Endpoint deemed real if infinity norm is smaller than this.
+
+      CoeffBound: Useful only if MPType=2, bound on sum of coefficients of each polynomial.
+
+      DegreeBound: Useful only if MPType=2, bound on degree of each polynomial.
+
+      CondNumThreshold: Endpoint is deemed singular if multiple paths lead to it or condition number exceeds this.
+
+      RandomSeed: Useful to repeat runs with the same random numbers.
+
+      SingValZeroTol: Singular value is considered 0 if less than this value, when using fixed precision.
+
+      EndGameNum: Choice of endgame (1=power series, 2=Cauchy, 3=trackback Cauchy).
+
+      UseRegeneration: 1 to use regeneration for a zero-dimensional run.
+
+      SecurityLevel: 1 to avoid truncation of possibly-infinite paths.
+
+      ScreenOut: Level of output to the screen.
+
+      OutputLevel: Level of output to files.
+
+      StepsForIncrease: Number of consecutive Newton corrector successes before increase of stepsize.
+
+      MaxNewtonIts: Newton corrector step deemed failed if no convergence prior to this number of iterations.
+
+      MaxStepSize: Largest stepsize allowed.
+
+      MaxNumberSteps: Max number of steps for entire path.  Path failure if number of steps exceeds this.
+
+      MaxCycleNum: Max cycle number considered during endgame.
+
+      RegenStartLevel: Level at which regeneration begins.
+
+      There are two recommended ways of using the optional arguments based on zero-dim solving and pos-dim solving.
+
+      (1) Specify individual parameters in a function call:
+    Example
+      CC[x,y]; F = {x^2-1,y^2-1};
+      bertiniZeroDimSolve(F,BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
+    Text
+      (2) Store your frequently used favorites in an OptionTable
+      and pass it as the last argument in each function call:
+    Example
+      opts = new OptionTable from {BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}}
+      G = {x^2+y^2-1};
+      bertiniPosDimSolve(G,opts)
+///;
+
+doc///
+ Key
+ 	 "Bertini input file declarations: random numbers"
+   RandomReal
+   RandomComplex
+   [makeB'InputFile, RandomReal]
+   [makeB'InputFile, RandomComplex]
+   [bertiniParameterHomotopy,RandomComplex]
+   [bertiniParameterHomotopy,RandomReal]
+   [bertiniZeroDimSolve,RandomComplex]
+   [bertiniZeroDimSolve,RandomReal]
+ Headline
+   an option which designates symbols/strings/variables that will be set to be a random real number or random complex number
+ Description
+   Text
+     This option should be set to a list of symbols, strings, or variables.
+     Elements of this list will be fixed to random real/complex numbers when Bertini is called.
+   Example
+     R=QQ[x,y,c1,c2]
+     makeB'InputFile(storeBM2Files,
+	      AffVariableGroup=>{{x,y}},
+	      RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
+	      B'Polynomials=>{x-c1,y-c2})
+   Example
+     R=QQ[x,y,c1,c2]
+     makeB'InputFile(storeBM2Files,
+	      AffVariableGroup=>{{x,y}},
+	      RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
+	      B'Polynomials=>{x-c1,y-c2})
+   Text
+     AFTER Bertini is run, the random values are stored in a file named "random_values".
+
+///;
+
+
+
+doc///
+ Key
+   B'Constants
+   [makeB'InputFile, B'Constants]
+   [bertiniParameterHomotopy,B'Constants]
+   [bertiniZeroDimSolve,B'Constants]
+ Headline
+   an option to designate the constants for a Bertini Input file
+ Description
+   Text
+     This option should be set to a list of options X=>v with X denoting the
+     constant as an indeterminant and v as it's value.
+   Example
+     R=QQ[z,a,b,c]
+     makeB'InputFile(storeBM2Files,
+	      BertiniInputConfiguration=>{MPType=>2},
+	      AffVariableGroup=>{{z}},
+	       B'Constants=>{a=>2,b=>3+2*ii,c=>3/2},
+	        B'Polynomials=>{a*z^2+b*z+c})
+///;
+
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, Verbose]
+    [bertiniComponentMemberTest, Verbose]
+    [bertiniPosDimSolve, Verbose]
+    [bertiniRefineSols, Verbose]
+    [bertiniSample, Verbose]
+    [bertiniZeroDimSolve, Verbose]
+    [bertiniParameterHomotopy, Verbose]
+    [makeB'InputFile, Verbose]
+    [makeMembershipFile, Verbose]
+    [importIncidenceMatrix,Verbose]
+    [importMainDataFile,Verbose]
+    [importSolutionsFile,Verbose]
+    [runBertini,Verbose]
+    [makeSampleSolutionsFile,Verbose]
+    [bertiniUserHomotopy,Verbose]
+  Headline
+    Option to silence additional output
+  Usage
+    bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
+    bertiniUserHomotopyVerbose(...,Verbose=>Boolean)
+    bertiniPosDimSolve(...,Verbose=>Boolean)
+    bertiniRefineSols(...,Verbose=>Boolean)
+    bertiniSample(...,Verbose=>Boolean)
+    bertiniZeroDimSolve(...,Verbose=>Boolean)
+    bertiniParameterHomotopy(...,Verbose=>Boolean)
+    makeB'InputFile(...,Verbose=>Boolean)
+    makeMembershipFile(...,Verbose=>Boolean)
+    b'PHGaloisGroup(...,Verbose=>Boolean)
+    b'PHMonodromyCollect(...,Verbose=>Boolean)
+    importIncidenceMatrix(...,Verbose=>Boolean)
+    importMainDataFile(...,Verbose=>Boolean)
+    importSliceFile(...,Verbose=>Boolean)
+    importSolutionsFile(...,Verbose=>Boolean)
+    runBertini(...,Verbose=>Boolean)
+  Description
+    Text
+      Use {\tt Verbose=>false} to silence additional output.
+///;
+
+
+
+doc ///
+ Key
+   moveB'File
+   (moveB'File,String,String,String)
+   [moveB'File,MoveToDirectory]
+   [moveB'File,SubFolder]
+ Headline
+   Move or copy files.
+ Usage
+   moveB'File(s,f,n)
+ Inputs
+   s:String
+     A string giving a directory.
+   f:String
+     A name of a file.
+   s:String
+     A new name for the file.
+ Description
+   Text
+     This function takes the file f in the directory s and renames it to n.
+   Example
+     writeParameterFile(storeBM2Files,{2,3,5,7})
+     fileExists(storeBM2Files|"/final_parameters")
+     moveB'File(storeBM2Files,"final_parameters","start_parameters")
+     fileExists(storeBM2Files|"/final_parameters")
+     fileExists(storeBM2Files|"/start_parameters")
+     moveB'File(storeBM2Files,"start_parameters","backup",CopyB'File=>true)
+     fileExists(storeBM2Files|"/start_parameters")
+     fileExists(storeBM2Files|"/backup")
+   Text
+     The options MoveToDirectory and SubFolder give greater control for where to move the file.
+   Example
+     Dir1 = temporaryFileName()
+     makeDirectory Dir1
+     writeParameterFile(storeBM2Files,{2,3,5,7})
+     moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
+     fileExists(Dir1|"/start_parameters")
+   Example
+     makeDirectory (storeBM2Files|"/Dir2")
+     writeParameterFile(storeBM2Files,{2,3,5,7})
+     moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
+     fileExists(storeBM2Files|"/Dir2/start_parameters")
+
+///;
+
+doc ///
+ Key
+   CopyB'File
+   [moveB'File, CopyB'File]
+ Headline
+   an optional argument to specify whether make a copy of the file.
+ Description
+   Text
+     When set to true, a file is copy of the file is made rather than just moved. The default in moveB'File is set to false.
+///;
+
+
+doc ///
+ Key
+   B'Section
+ Headline
+   a mutable hash table that gives information about a hyperplane used to slice a numerical variety.
+ Description
+   Text
+     B'Section is a type of mutable hash table. It can be created using makeB'Section.
+///;
+
+doc ///
+ Key
+   B'Slice
+ Headline
+   a mutable hash table that gives information about a linear space used to slice a numerical variety.
+ Description
+   Text
+     B'Slice is a type of mutable hash table. It can be created using makeB'Slice.
+///;
+
+doc ///
+ Key
+   makeB'Section
+   (makeB'Section,List)
+   [makeB'Slice,B'Homogenization]
+   [makeB'Section,B'NumberCoefficients]
+   [makeB'Section,NameB'Section]
+   [makeB'Section,B'Homogenization]
+   [makeB'Section,ContainsPoint]
+   [makeB'Section,RandomCoefficientGenerator]
+ Headline
+   makeB'Section creates a hash table that represents a hyperplane.
+ Usage
+   makeB'Section(l)
+ Inputs
+   l:List
+     A list of variables.
+ Description
+   Text
+     makeB'Section allows for easy creation of equations that define hyperplanes.
+     The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
+     The first key is a list of numbers in CC that are coefficients, and the second key is a string representing the linear polynomial.
+     The option RandomCoefficientGenerator can be set to a function to generate random numbers for the coefficients.
+   Text
+     To get affine linear equations include 1 in the input list.
+   Text
+     To have an affine linear equation that contains a particular point we set the ContainsPoint option to a list of coordinates or a point.
+     To get an homogeneous equation that contains a projective point we have to set the ContainsPoint option as well as the B'Homogenization option.
+   Example
+     s=makeB'Section({x,y,z})
+     class s
+     randomRealCoefficientGenerator=()->random(RR)
+     sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
+     sReal#B'NumberCoefficients
+     randomRationalCoefficientGenerator=()->random(QQ)
+     sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
+     sRational#B'NumberCoefficients
+   Example
+     affineSection=makeB'Section({x,y,z,1})
+   Example
+     X={x,y,z}
+     P={1,2,3}
+     affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
+     r= affineContainingPoint#B'SectionString
+     print r
+   Example
+     rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
+     peek rHomogeSection
+     print rHomogeSection#B'SectionString
+   Example
+     f="y^3-x*y+1"
+     s1=makeB'Section({x,y,1})
+     makeB'InputFile(storeBM2Files,
+       AffVariableGroup=>{x,y},
+       B'Polynomials=>{f,s1})
+     runBertini(storeBM2Files)
+     #importSolutionsFile(storeBM2Files)==3
+
+///;
+
+
+doc ///
+ Key
+   makeB'Slice
+   NameB'Slice
+   (makeB'Slice,Thing,List)
+   [makeB'Slice,B'NumberCoefficients]
+   [makeB'Slice,ContainsMultiProjectivePoint]
+   [makeB'Slice,ContainsPoint]
+   [makeB'Slice,NameB'Slice]
+   [makeB'Slice,RandomCoefficientGenerator]
+ Headline
+   makeB'Slice creates a hash table that represents a linear slice.
+ Usage
+   makeB'Slice(sliceType,variableGroups)
+ Inputs
+   sliceType:List
+     A list of integers or integer.
+   variableGroups:List
+     A list of list of variables or list of variables.
+ Description
+   Text
+     makeB'Slice allows for easy creation of equations that define linear spaces, i.e. slices.
+     The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
+     When we have a multiprojective variety we can different types of slices.
+     To make a slice we need to specify the type of slice we want followed by variable groups.
+   Example
+     sliceType={1,1}
+     variableGroups={{x0,x1},{y0,y1,y2}}
+     xySlice=makeB'Slice(sliceType,variableGroups)
+     peek xySlice
+     --Our slice consists of two sections.
+     --The ith section is in the variables variableGroups_(sliceType_i)
+     for i in  xySlice#B'SectionString do print i
+   Example
+     --Using the NameB'Slice option we can put a slice in the B'Functions option.
+     aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
+     aSlice#NameB'Slice
+     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
+   Example
+     --We can use slices to determine multidegrees.
+     f1="x0*y0+x1*y0+x2*y2"
+     f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
+     variableGroups={{x0,x1,x2},{y0,y1,y2}}
+     xxSlice=makeB'Slice({2,0},variableGroups)
+     xySlice=makeB'Slice({1,1},variableGroups)
+     yySlice=makeB'Slice({0,2},variableGroups)
+     makeB'InputFile(storeBM2Files,
+    	 HomVariableGroup=>variableGroups,
+    	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
+     runBertini(storeBM2Files)
+     xxDegree=#importSolutionsFile(storeBM2Files)
+     makeB'InputFile(storeBM2Files,
+    	 HomVariableGroup=>variableGroups,
+    	 B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
+     runBertini(storeBM2Files)
+     xyDegree=#importSolutionsFile(storeBM2Files)
+     makeB'InputFile(storeBM2Files,
+    	 HomVariableGroup=>variableGroups,
+    	 B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
+     runBertini(storeBM2Files)
+     yyDegree=#importSolutionsFile(storeBM2Files)
+
+///;
+
+
+
+doc ///
+ Key
+   radicalList
+   (radicalList,List)
+   (radicalList,List,Number)
+ Headline
+   A support function that removes multiplicities of numbers in a list up to a tolerance.
+ Usage
+   radicalList(List,Number)
+   radicalList(List)
+ Inputs
+   L:List
+     A list of complex or real numbers.
+   N:Number
+     A small real number.
+ Description
+   Text
+     This outputs a sublist of complex or real numbers that all have distinct norms up to the tolerance N (default is 1e-10).
+   Example
+     radicalList({2.000,1.999})
+     radicalList({2.000,1.999},1e-10)
+     radicalList({2.000,1.999},1e-2)
+///;
+
+
+doc ///
+ Key
+   NumberToB'String
+   (NumberToB'String,Thing)
+ Headline
+   Translates a number to a string that Bertini can read.
+ Usage
+   NumberToB'String(n)
+ Inputs
+   n:Thing
+     n is a number.
+ Description
+   Text
+     This function takes a number as an input then outputs a string to represent this number to Bertini.
+     The numbers are converted to floating point to precision determined by the option M2Precision.
+   Example
+     NumberToB'String(2+5*ii)
+     NumberToB'String(1/3,M2Precision=>16)
+     NumberToB'String(1/3,M2Precision=>128)
+
+///;
+
+
+doc ///
+ Key
+   valueBM2
+   (valueBM2,String)
+ Headline
+   This function makes a number in CC from a string.
+ Usage
+   valueBM2(s)
+ Inputs
+   s:String
+     A string that gives a coordinate.
+ Description
+   Text
+     This function take a string representing a coordinate in a Bertini solutions file or parameter file and makes a number in CC.
+     We can adjust the precision using the M2Precision option.
+     Fractions should not be in the string s.
+   Example
+     valueBM2("1.22e-2 4e-5")
+     valueBM2("1.22 4e-5")
+     valueBM2("1.22 4")
+     valueBM2("1.22e+2 4 ")
+     n1=valueBM2("1.11",M2Precision=>52)
+     n2=valueBM2("1.11",M2Precision=>300)
+     toExternalString n1
+     toExternalString n2
+///;
+
+
+doc ///
+ Key
+   subPoint
+   (subPoint,Thing,List,Thing)
+ Headline
+   This function evaluates a polynomial or matrix at a point.
+ Usage
+   subPoint(f,v,p)
+ Inputs
+   f:Thing
+     A polynomial or a matrix.
+   v:List
+     List of variables that we will be evaluated at the point.
+   p:Thing
+     A point or a list of coordinates or a matrix.
+ Caveat
+   When SubIntoCC is set to true then unset variables will be set to zero or unexpected values.
+ Description
+   Text
+     Evaluate f at a point.
+   Example
+     R=CC[x,y,z]
+     f=z*x+y
+     subPoint(f,{x,y},{.1,.2})
+     subPoint(f,{x,y,z},{.1,.2,.3},SpecifyVariables=>{y})
+   Example
+     R=CC_200[x,y,z]
+     f=z*x+y
+     subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
+     subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
+	     0,1},SubIntoCC=>true,M2Precision=>200)
+
+///;
+
 undocumented {
   SetParameterGroup,
 ReturnPoints,
+B'SectionString,
+ContainsMultiProjectivePoint,
+ListB'Sections,
 PrintMidStatus,
 OutputStyle,--TODO remove this option
 StorageFolder,
@@ -2843,37 +3530,9 @@ RandomGamma,
 SubFolder,
 StartParameters,
 StartPoints,
-subPoint,
 OrderPaths,
 MultiplicityTol,
 ConditionNumTol,
-MPType,
-PRECISION,
-IsProjective,
-ODEPredictor,
-TrackTolBeforeEG,
-TrackTolDuringEG,
-FinalTol,
-MaxNorm,
-MinStepSizeBeforeEG,
-MinStepSizeDuringEG,
-ImagThreshold,
-CoeffBound,
-DegreeBound,
-CondNumThreshold,
-RandomSeed,
-SingValZeroTol,
-EndGameNum,
-UseRegeneration,
-SecurityLevel,
-ScreenOut,
-OutputLevel,
-StepsForIncrease,
-MaxNewtonIts,
-MaxStepSize,
-MaxNumberSteps,
-MaxCycleNum,
-RegenStartLevel,
 ParameterValues,
 NameB'InputFile,--This option allows us to change the name of the input file.
 NameParameterFile,
@@ -2883,14 +3542,9 @@ NameStartFile,
 NameFunctionFile,
 --
 BertiniInputConfiguration, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file.
-HomVariableGroup, --A list of lists of homogeneous variable groups.
-AffVariableGroup, --A list of lists of affine variable groups.
 ParameterGroup,
 VariableList,
 PathVariable,
-RandomComplex,
-RandomReal,  --a list of unknowns whose values will be fixed by Bertini
-B'Constants,--A list of pairs
 B'Polynomials, --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named jade
 NamePolynomials, --A list of names of the polynomials which we want to find the common zero set of.
 B'Functions, --A list of list of pairs.
@@ -2900,33 +3554,20 @@ InputFileDirectory,
 StartFileDirectory,
 StartParameterFileDirectory,
 B'Exe,
-NumberToB'String,
 M2Precision,--needs doc
 writeParameterFile,
-importParameterFile,   --need doc
-importSolutionsFile,
-importIncidenceMatrix,
 SaveData,
 SolutionFileStyle,
-radicalList,
 --  B'MultiProjectivePoint,
-makeB'Section,
-makeB'Slice,
 ContainsPoint,
 B'NumberCoefficients,
 B'Homogenization,
 RandomCoefficientGenerator,
-B'SectionString,
-B'Section,
 NameB'Section,
-ContainsMultiProjectivePoint,--Eventually we will want to have multiprojective points.
-NameB'Slice,
-ListB'Sections,
 makeB'TraceInput,
 replaceFirstLine,
 PreparePH2,
 readFile,
-valueBM2,
 NameMainDataFile,
 --  linesPerSolutions,
 PathNumber,
@@ -2936,7 +3577,6 @@ PrecisionIncreased,
 AccuracyEstInternal,
 AccuracyEst,
 PathsWithSameEndpoint,
-importMainDataFile,
 CycleNumber,
 FunctionResidual,
 Dimension,
@@ -2956,8 +3596,6 @@ TestSolutions,
 makeMembershipFile,
 ComponentNumber,
 sortMainDataComponents,
-moveB'File,
-CopyB'File,
 MoveToDirectory,
 SpecifyVariables,
 SubIntoCC
