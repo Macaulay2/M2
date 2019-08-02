@@ -5,8 +5,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.13",
-     Date => "May 2019",
+     Version => "1.14",
+     Date => "Aug 2019",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -491,8 +491,12 @@ old'matrix'List = lookup(matrix,List)
 gateMatrix = method()
 gateMatrix GateMatrix := M -> M
 gateMatrix List := L -> (
-    if not isTable L then error "a table is expected";
-    new GateMatrix from applyTable(L,x->if instance(x,Gate) then x else inputGate x) 
+    if not isTable L then error "a table (nested list) is expected";
+    new GateMatrix from applyTable(L,x->if instance(x,Gate) then x else 
+	if instance(x,List) then error "cowardly refusing to create an InputGate with a List for its name
+	(commonly results from having too many braces {{{...}}})"
+	else inputGate x
+	) 
     )
 gateMatrix Matrix := M -> if numcols M == 0 then gateMatrix toList (numrows M:{}) else gateMatrix entries M
 
@@ -567,6 +571,8 @@ joinVertical List := L->(
     scan(drop(L,1), x->r=r||x);
     r
     )
+
+flatten GateMatrix := M -> error "flatten is not defined for GateMatrix"
 
 -------------------------
 -- printAsSLP functions
