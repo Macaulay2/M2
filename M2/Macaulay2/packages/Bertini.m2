@@ -124,6 +124,7 @@ export {
   "B'Homogenization",
   "RandomCoefficientGenerator",
   "B'SectionString",
+  "B'Section",
   "NameB'Section",
   "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
   "NameB'Slice",
@@ -311,6 +312,8 @@ bertiniPosDimSolve List := o -> F -> (
          o3 := o ++ o2;
          bertiniSolve(F,o3)
          )
+bertiniPosDimSolve Ideal := o -> I -> bertiniPosDimSolve(I_*, o)
+
 
 bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false,
 	IsProjective=>-1
@@ -2330,7 +2333,257 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniUserHomotopy.t
 --##########################################################################--
 
 beginDocumentation()
-load "./Bertini/doc.m2";
+
+doc ///
+  Key
+    Bertini
+  Headline
+    software for numerical algebraic geometry
+  Description
+    Text
+      Interfaces the functionality of the software {\tt Bertini}
+      to solve polynomial systems and perform calculations in
+      {\em numerical algebraic geometry}. The software is available at
+      @HREF"http://bertini.nd.edu/"@. {\tt Bertini} is under ongoing development by
+      D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+      The user may place the executable program {\tt bertini} in the executation path.
+      Alternatively, the path to the executable needs to be specified, for instance,
+    Example
+      needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
+    Text
+      Below is a simple example using the most popular function,
+      a basic zero-dimensional solve with no special options.
+    Example
+      R = CC[x,y]
+      F = {x^2-1,y^2-2}
+      solns = bertiniZeroDimSolve(F)
+///;
+------------------------------------------------------
+------MAIN FUNCTIONS ------------
+------------------------------------------------------
+--bertiniZeroDimSolve,bertiniPosDimSolve,bertiniParameterHomotopy,bertiniUserHomotopy,bertiniComponentMemberTest,bertiniSample
+doc ///
+  Key
+    bertiniZeroDimSolve
+    (bertiniZeroDimSolve,Ideal)
+    (bertiniZeroDimSolve,List)
+  Headline
+    solve zero-dimensional system of equations
+  Usage
+    S = bertiniZeroDimSolve F
+    S = bertiniZeroDimSolve I
+    S = bertiniZeroDimSolve(I, UseRegeneration=>1)
+  Inputs
+    F:List
+      whose entries are polynomials (system need not be square)
+    F:Ideal
+      defining a variety
+  Outputs
+    S:List
+      of solutions of type Point
+  Description
+    Text
+      Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
+      This function builds a Bertini input file from the system F and calls Bertini on
+      this input file. Solutions are pulled from machine readable file {\tt finitesolutions}
+      and returned as a list.
+    Example
+      R = CC[x,y];
+      F = {x^2-1,y^2-2};
+      S = bertiniZeroDimSolve F
+    Text
+      Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@.
+    Example
+      peek S_0
+    Text
+      Bertini uses a multihomogeneous homotopy as a default, but regeneration can be deployed with the option UseRegeneration=>1 .
+    Example
+      R = CC[x];
+      F = {x^2*(x-1)};
+      S = bertiniZeroDimSolve F
+      B = bertiniZeroDimSolve(F,UseRegeneration=>1)
+  Caveat
+    Variables must begin with a letter (lowercase or capital) and
+    can only contain letters, numbers, underscores, and square brackets.
+    Regeneration in bertiniZeroDimSolve only finds nonsingular isolated points.
+///
+
+--Options
+doc ///
+  Key
+    TopDirectory
+    [bertiniParameterHomotopy, TopDirectory]
+    [bertiniZeroDimSolve,TopDirectory]
+    [bertiniUserHomotopy,TopDirectory]
+  Headline
+    Option to change directory for file storage.
+  Usage
+    bertiniParameterHomotopy(...,TopDirectory=>String)
+    bertiniZeroDimSolve(...,TopDirectory=>String)
+    bertiniUserHomotopy(...,TopDirectory=>String)
+  Description
+    Text
+       This option specifies a directory to store Bertini output files.
+///;
+
+doc ///
+  Key
+    UseRegeneration
+  Headline
+    an option specifying when to use regeneration
+  Usage
+    bertiniParameterHomotopy(...,TopDirectory=>String)
+    bertiniZeroDimSolve(...,TopDirectory=>String)
+    bertiniUserHomotopy(...,TopDirectory=>String)
+  Description
+    Text
+      This option is set to 1 to have Bertini use regeneration when solving a polynomial system.
+///;
+
+
+undocumented {
+  SetParameterGroup,
+bertiniUserHomotopy,
+ReturnPoints,
+PrintMidStatus,
+OutputStyle,--TODO remove this option
+StorageFolder,
+RandomGamma,
+SubFolder,
+StartParameters,
+StartPoints,
+subPoint,
+OrderPaths,
+bertiniParameterHomotopy,
+bertiniPosDimSolve,
+bertiniSample,
+bertiniTrackHomotopy,
+bertiniComponentMemberTest,
+bertiniRefineSols,
+MultiplicityTol,
+ConditionNumTol,
+MPType,
+PRECISION,
+IsProjective,
+ODEPredictor,
+TrackTolBeforeEG,
+TrackTolDuringEG,
+FinalTol,
+MaxNorm,
+MinStepSizeBeforeEG,
+MinStepSizeDuringEG,
+ImagThreshold,
+CoeffBound,
+DegreeBound,
+CondNumThreshold,
+RandomSeed,
+SingValZeroTol,
+EndGameNum,
+UseRegeneration,
+SecurityLevel,
+ScreenOut,
+OutputLevel,
+StepsForIncrease,
+MaxNewtonIts,
+MaxStepSize,
+MaxNumberSteps,
+MaxCycleNum,
+RegenStartLevel,
+ParameterValues,
+NameB'InputFile,--This option allows us to change the name of the input file.
+NameParameterFile,
+NameSolutionsFile,
+NameIncidenceMatrixFile,
+NameStartFile,
+NameFunctionFile,
+--
+makeB'InputFile,
+BertiniInputConfiguration, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file.
+HomVariableGroup, --A list of lists of homogeneous variable groups.
+AffVariableGroup, --A list of lists of affine variable groups.
+ParameterGroup,
+VariableList,
+PathVariable,
+RandomComplex,
+RandomReal,  --a list of unknowns whose values will be fixed by Bertini
+B'Constants,--A list of pairs
+B'Polynomials, --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named jade
+NamePolynomials, --A list of names of the polynomials which we want to find the common zero set of.
+B'Functions, --A list of list of pairs.
+--
+runBertini,
+InputFileDirectory,
+StartFileDirectory,
+StartParameterFileDirectory,
+B'Exe,
+NumberToB'String,
+M2Precision,--needs doc
+writeParameterFile,
+writeStartFile,
+importParameterFile,   --need doc
+importSolutionsFile,
+importIncidenceMatrix,
+SaveData,
+SolutionFileStyle,
+radicalList,
+--  B'MultiProjectivePoint,
+makeB'Section,
+makeB'Slice,
+ContainsPoint,
+B'NumberCoefficients,
+B'Homogenization,
+RandomCoefficientGenerator,
+B'SectionString,
+B'Section,
+NameB'Section,
+ContainsMultiProjectivePoint,--Eventually we will want to have multiprojective points.
+NameB'Slice,
+ListB'Sections,
+makeB'TraceInput,
+replaceFirstLine,
+PreparePH2,
+readFile,
+valueBM2,
+NameMainDataFile,
+--  linesPerSolutions,
+PathNumber,
+FinalTValue,
+MaxPrecisionUtilized,
+PrecisionIncreased,
+AccuracyEstInternal,
+AccuracyEst,
+PathsWithSameEndpoint,
+importMainDataFile,
+CycleNumber,
+FunctionResidual,
+Dimension,
+SolutionType,
+DeflationsNeeded,
+--  B'WitnessSet,
+SpecifyDim,
+NameWitnessSliceFile,
+importSliceFile,
+TextScripts,
+NameWitnessSolutionsFile,
+SpecifyComponent,
+makeWitnessSetFiles,
+makeSampleSolutionsFile,
+NameSampleSolutionsFile,
+TestSolutions,
+makeMembershipFile,
+ComponentNumber,
+sortMainDataComponents,
+moveB'File,
+CopyB'File,
+MoveToDirectory,
+SpecifyVariables,
+SubIntoCC
+}
+end
+installPackage("Bertini",RemakeAllDocumentation=>true)
+
+--load "./Bertini/doc.m2";
 
 end
 makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
