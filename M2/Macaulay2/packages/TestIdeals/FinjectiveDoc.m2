@@ -147,7 +147,7 @@ doc ///
         isFInjective
         (isFInjective, Ring)
         [isFInjective, FrobeniusRootStrategy]
-        [isFInjective, IsLocal]
+        [isFInjective, AtOrigin]
         [isFInjective, AssumeCM]
         [isFInjective, AssumeNormal]
         [isFInjective, AssumeReduced]
@@ -160,7 +160,7 @@ doc ///
         R:Ring
         FrobeniusRootStrategy => Symbol
             selects the strategy for internal {\tt frobeniusRoot} calls
-        IsLocal => Boolean
+        AtOrigin => Boolean
             stipulates whether to check $F$-injectivity only at the origin
         AssumeCM => Boolean
             assumes the ring is Cohen-Macaulay
@@ -213,14 +213,14 @@ doc ///
             time isFInjective(R)
             time isFInjective(R, CanonicalStrategy => null)
         Text
-            If the option {\tt IsLocal} (default value {\tt false}) is set to {\tt true}, {\tt isFInjective} will only check $F$-injectivity at the origin.
+            If the option {\tt AtOrigin} (default value {\tt false}) is set to {\tt true}, {\tt isFInjective} will only check $F$-injectivity at the origin.
 	    Otherwise, it will check $F$-injectivity globally.
 	    Note that checking $F$-injectivity at the origin can be slower than checking it globally.
 	    Consider the following example of a non-$F$-injective ring.
         Example
             R = ZZ/7[x,y,z]/((x-1)^5 + (y+1)^5 + z^5);
             time isFInjective(R)
-            time isFInjective(R, IsLocal => true)
+            time isFInjective(R, AtOrigin => true)
         Text
             If the option {\tt AssumeCM} (default value {\tt false}) is set to {\tt true}, then {\tt isFInjective} only checks the Frobenius action on top cohomology (which is typically much faster). Note that it can give an incorrect answer if the non-injective Frobenius occurs in a lower degree.  Consider the example of the cone over a supersingular elliptic curve times $\mathbb{P}^1$.
         Example

@@ -157,6 +157,18 @@ various modern operating systems:
       sudo pacman-key --refresh-keys
       sudo pacman --sync --refresh --sysupgrade
 
+  Gentoo Linux:
+
+    To install generally needed packages, run this command as root:
+
+       emerge sudo xauth git emacs
+
+    Note: set the USE variable for emacs to include "X" before running the command above, so emacs will work under X11.
+
+    To install packages needed by Macaulay2, run this command:
+
+       sudo emerge yasm
+
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
