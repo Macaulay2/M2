@@ -270,7 +270,6 @@ class ARingGFFlintBig : public RingInterface
         set_zero(result);
         return;
       }
-    // bool neg = false;
     mpz_t abs_n;
     mpz_init(abs_n);
 #if 0    
@@ -289,10 +288,7 @@ class ARingGFFlintBig : public RingInterface
     std::cout << " sizeof(nmod_t) = " << sizeof(nmod_t) << std::endl;
 #endif    
     if (mpz_sgn(n) < 0)
-      {
-        // neg = true;
-        invert(base, a);
-      }
+      invert(base, a);
     else
       copy(base, a);
 #if 0    

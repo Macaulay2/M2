@@ -11,7 +11,7 @@ M2_OBJECTS += debug.o
 endif
 M2_CFILES += gmp_aux.c 
 M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c
-M2_CFILES += main.c 
+M2_CFILES += main.c
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_OBJECTS += ../regex/regex.o
