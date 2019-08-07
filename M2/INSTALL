@@ -161,13 +161,21 @@ various modern operating systems:
 
     To install generally needed packages, run this command as root:
 
-       emerge sudo xauth git emacs
+       emerge --ask -n sudo xauth git emacs
 
-    Note: set the USE variable for emacs to include "X" before running the command above, so emacs will work under X11.
+       Note: for emacs, set the USE variables (package.use), so emacs will use X11 when available:
+		app-editors/emacs X
+		app-emacs/emacs-common-gentoo X
 
     To install packages needed by Macaulay2, run this command:
 
-       sudo emerge yasm
+       emerge --ask -n yasm sys-process/time
+
+    To install packages potentially usable by Macaulay2, run this command:
+
+       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl pari topcom
+
+       Note: various variables, licenses, and options will have to be set
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
