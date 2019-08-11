@@ -278,7 +278,7 @@ void mpfc_abs(gmp_RRmutable result, gmp_CCmutable c)
   }
 #endif
 }
-void mpfc_sqrt(gmp_CCmutable result, gmp_CCmutable a)
+void mpfc_sqrt(gmp_CCmutable result, gmp_CC a)
 {
   // The idea is: write a = a1 + i * a2
   // first make it numerically more stable by dividing by the larger

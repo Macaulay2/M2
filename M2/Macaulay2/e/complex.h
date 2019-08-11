@@ -35,7 +35,7 @@ extern "C" {
 
   void mpfc_div(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
   void mpfc_abs(gmp_RRmutable result, gmp_CCmutable a);
-  void mpfc_sqrt(gmp_CCmutable result, gmp_CCmutable a);
+  void mpfc_sqrt(gmp_CCmutable result, gmp_CC a);
   void mpfc_conj(gmp_CCmutable result, gmp_CCmutable a);
 
 #if defined(__cplusplus)
