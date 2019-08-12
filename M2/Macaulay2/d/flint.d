@@ -19,14 +19,20 @@ util_arrayZZ flint_factor(gmp_ZZ x) {
      int len = factor->num;
      util_arrayZZ result = getmemarraytype(util_arrayZZ,2*len+1);
      result->len = 2*len+1;
-     for (i=0; i<result->len; i++) {
-	  result->array[i] = (__mpz_struct *)getmem(sizeof(__mpz_struct));
-     	  mpz_init(result->array[i]);
-	  }
-     mpz_set_si(result->array[0], factor->sign);
+     __mpz_struct *tmp;
+     tmp = (void *)getmem(sizeof(__mpz_struct));
+     mpz_init(tmp);
+     mpz_set_si(tmp, factor->sign);
+     result->array[0] = tmp;
      for (i=0; i<len; i++) {
-	  fmpz_get_mpz(result->array[2*i+1],factor->p + i);
-	  fmpz_get_mpz(result->array[2*i+2],(fmpz *)(factor->exp + i));
+	  tmp = (void *)getmem(sizeof(__mpz_struct));
+     	  mpz_init(tmp);
+	  fmpz_get_mpz(tmp,factor->p + i);
+	  result->array[2*i+1] = tmp;
+	  tmp = (void *)getmem(sizeof(__mpz_struct));
+     	  mpz_init(tmp);
+	  fmpz_get_mpz(tmp,(fmpz *)(factor->exp + i));
+	  result->array[2*i+2] = tmp;
 	  }
      fmpz_factor_clear(factor);
      return result;
