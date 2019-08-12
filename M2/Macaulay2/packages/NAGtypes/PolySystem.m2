@@ -69,11 +69,17 @@ polySystem Ideal := I -> polySystem transpose gens I
 
 numVariables PolySystem := P -> P.NumberOfVariables
 numFunctions PolySystem := P -> P.NumberOfPolys
-numParameters PolySystem := P -> if P.?Parameters then #P.Parameters else 0
+numParameters PolySystem := P -> (
+    C := coefficientRing ring P;
+    if instance(C,PolynomialRing) then numgens C else 0
+    )
 ring PolySystem := P -> ring P.PolyMap 
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
-parameters PolySystem := P -> if P.?Parameters then P.Parameters else {}
+parameters PolySystem := P -> (
+    C := coefficientRing ring P;
+    if instance(C,PolynomialRing) then gens C else {}
+    )
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
 toExternalString PolySystem := P -> "polySystem " | toExternalString equations P 
 

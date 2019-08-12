@@ -184,7 +184,7 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
 
 -- !!! replaces makeGateMatrix
 gateSystem PolySystem := GateSystem => F -> if F#?GateSystem then F#GateSystem else 
-  F#GateSystem = gateSystem(F,if F.?Parameters then F.Parameters else {})
+  F#GateSystem = gateSystem(F,parameters F)
 gateSystem (PolySystem,List-*of parameters*-) := (F,P) -> ( 
     R := ring F; 
     if not isSubset(P, gens R) then "some parameters are not among generators of the ring";
