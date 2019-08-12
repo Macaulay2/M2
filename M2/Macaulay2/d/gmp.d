@@ -22,7 +22,7 @@ declarations "
 ";
 
 header "#include \"gmp_aux.h\"";
-header "#include <gmp-util.h>";
+header "#include <M2mem.h>";
 
 -- We introduce two types of big gmp-type integers here.  One type is mutable, and the vector of limbs gets
 -- allocated with the standard memory allocator used by libgmp (or by its replacement, libmpir), when we use
