@@ -129,6 +129,8 @@ CFLAGS += -diag-disable 1418
 endif
 endif
 
+CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
+
 .SECONDARY:
 
 M2-factory.o : COMPILE.cc += -Wno-old-style-cast
