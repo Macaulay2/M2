@@ -8,7 +8,7 @@
 extern RingZZ *globalZZ;
 
 static long nallocs_hm_elem = 0;
-static long highwater_hm_elem = 0;
+// static long highwater_hm_elem = 0;
 static long nfree_hm_elem = 0;
 
 int HermiteComputation::complete_thru_degree() const

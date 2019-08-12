@@ -1349,7 +1349,7 @@ fi
 if test $BUILD_gc = yes
 then 
      # libpthread isn't really built by us, but gc will need to link against it
-     GC_LIBS="-lgc -lpthread"
+     GC_LIBS="-lgc -lgccpp -lpthread"
      BUILTLIBS="$GC_LIBS $BUILTLIBS"
 fi
 
