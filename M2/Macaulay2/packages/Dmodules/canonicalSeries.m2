@@ -99,7 +99,7 @@ beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
     	if not isHolonomic(H) then error "ideal is not holonomic";
 	if #w != n then error "weight vector has wrong length";
         J := inw(H,(-w)|w);
-    	if isTFixed(J) then error "ideal is not torus-fixed"; 
+    	if not isTFixed(J) then error "ideal is not torus-fixed"; 
         primaryDecomposition thetaIdeal(J,S)
 	)
 
