@@ -5,8 +5,8 @@
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 # compilation of givaro needs a little extra memory
-VLIMIT = 800000
-MLIMIT = 800000
+VLIMIT = 900000
+MLIMIT = 900000
 
 VERSION = 4.0.2
 # disable the test because it fails to find <bits/stl_pair.h>
