@@ -25,14 +25,14 @@ sleepfun(e:Expr):Expr := (
      else WrongArgZZ(1));
 setupfun("sleep",sleepfun);
 
-usleepfun(e:Expr):Expr := (
+nanosleepfun(e:Expr):Expr := (
      when e
      is i:ZZcell do (
-	  if isInt(i)
-	  then toExpr(usleep(toInt(i)))
+	  if isLong(i)
+	  then toExpr(nanosleep(toLong(i)))
 	  else WrongArgSmallInteger(1))
      else WrongArgZZ(1));
-setupfun("usleep",usleepfun);
+setupfun("nanosleep",nanosleepfun);
 
 forkfun(e:Expr):Expr := (
      when e
