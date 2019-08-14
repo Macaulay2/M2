@@ -343,7 +343,12 @@ remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
-RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
+RingElement % Matrix := (r,f) -> (
+     if isFreeModule target f and numgens target f === 1 
+     then ((r * id_(target f)) % f)_(0,0)
+     else error "expected target of matrix to be free, and of rank 1"
+     )
+
 RingElement % Ideal := (r,I) -> (
      R := ring I;
      if ring r =!= R then error "expected ring element and ideal for the same ring";

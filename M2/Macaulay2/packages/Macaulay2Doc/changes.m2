@@ -30,9 +30,25 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     UL {
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added." }
+		    }
+	       },
+	  LI { "functionality added or improved:",
+          UL {
+              LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
+                  created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, GRevLex
+                      group counts as a block)"
+                  }
+              }
+          }
+	  }
      }
-
+ 
 document {
      Key => "changes, 1.14",
      UL {
@@ -79,7 +95,27 @@ document {
                          using this package."
 			 }
 		    }
-	       }
+	       },
+	  LI { "new constants and operators:",		    -- get this with : git diff version-1.13 ../../m2/exports.m2
+	       UL {
+		    LI { "The symbol ", TO "Jupyter", " has been added." },
+		    LI { "The type ", TO "MultigradedBettiTally", " has been added." },
+		    LI { "The function ", TO "multigraded", " has been added." }
+		    }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.14%22+is%3Aclosed","closed 1.14 issues"}, ",
+			 for the issues and pull requests incorporated into 1.14."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.14","1.14 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.14."
+			 }
+		    }
+	       }	  
 	  }
      }
 
@@ -101,9 +137,9 @@ document {
 	       	    LI { TO "Truncations::Truncations", ", a package by David Eisenbud and Mike Stillman for truncating modules, has been added.
 			 It implements a better notion of truncation of a multigraded module.  Some bugs in the old function have been fixed.  
 			 The function ", TO "Truncations::truncate", " has been made functorial, but it no longer allows partial degrees to be given." },
-	       	    LI { TO "FThresholds::FThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
+	       	    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
 			 Zhibek Kadyrsizova, Moty Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan 
-			 Smolkin, Pedro Teixeira and Emily Witt for calculation of F-thresholds, has been added." },
+			 Smolkin, Pedro Teixeira and Emily Witt for calculation of Frobenious thresholds, has been added." },
 	       	    LI { TO "ToricInvariants::ToricInvariants", ", a package by Martin Helmer for computing Euclidean distance degrees, polar degrees,
 			 degree and codimension of the dual, and Chern-Mather classes of toric varieties, has been added." },
 	       	    LI { TO "SegreClasses::SegreClasses", ", a package by Martin Helmer and Corey Harris for testing containment of varieties and 

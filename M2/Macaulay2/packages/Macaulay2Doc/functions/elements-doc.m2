@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {elements,(elements,VirtualTally),(elements,Set)},
+     Key => {elements,(elements,Tally),(elements,Set)},
      Headline => "list of elements",
      Usage => "elements S",
      Inputs => {

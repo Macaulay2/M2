@@ -19,12 +19,11 @@ export {
     "AugmentNumberOfRepeats",
     "AugmentEdgeCount",
     "AugmentNodeCount",
-    "randomWeights",
     "EdgesSaturated",
     "sparseMonodromySolve",
     "solveFamily"}
 
--- change the behavior of random CC (pick uniformly in a unit disk)
+-- changes the behavior of random CC (pick uniformly in a unit disk)
 old'random'Type = lookup(random,Type)
 random Type := o -> R -> (
     if class R === ComplexField then (
@@ -32,10 +31,6 @@ random Type := o -> R -> (
 	) 
     else (old'random'Type o) R
     ) 
-
--- random complex vector
-randomWeights = method()
-randomWeights ZZ := n -> matrix(CC, {apply(n,i->random CC)})
 
 completeGraphInit = (G, p, node1, nnodes, nedges) -> (
     nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
@@ -87,6 +82,27 @@ flowerGraphAugment = (G, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
 		apply(nNewEdges, k -> addEdge(G, G.Vertices#i, node1));
 	);
 )
+
+ms'option'list = {
+	TargetSolutionCount => null,
+	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
+	StoppingCriterion => null,
+	GraphInitFunction => completeGraphInit,
+	AugmentGraphFunction => null,
+	AugmentNumberOfRepeats => null,
+	AugmentEdgeCount=>0,
+	AugmentNodeCount=>0,
+	BatchSize => infinity,
+	Potential => null,
+	NumberOfNodes => 2,
+	NumberOfEdges => 4,
+	NumberOfRepeats => 10,
+	"new tracking routine" => true, -- uses old "track" if false
+	Verbose => false,
+	EdgesSaturated => false,
+	FilterCondition => null,
+	Randomizer => null}
+
 
 dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
@@ -148,17 +164,15 @@ computeMixedVolume List := polys -> mixedVolume(toRingXphc polys,StartSystem => 
 
 -- find the "seed" for the parametric system
 createSeedPair = method(Options=>{"initial parameters" => "random unit"})
-createSeedPair PolySystem := o -> G -> (
-	R := ring G;   
-	C := coefficientRing coefficientRing R; 
-	init := o#"initial parameters";
-	createSeedPair(G,
-		if init == "random unit" then apply(numgens R, i->(x:=random C; x/abs x))
-		else if init == "random" then apply(numgens R, i->random C)
-		else if init == "one" then toList(numgens R:1_C)
-		else error "unknown option"
-	)
-)
+createSeedPair System := o -> P -> (
+    init := o#"initial parameters";
+    n := numVariables P;
+    x0 := if (init == "random unit") then point random(CC^1,CC^n)
+      else if (init == "one") then point {for i from 1 to n list 1_CC}
+      else error "unknown option";
+    createSeedPair(P, x0)
+    )
+-*
 createSeedPair(PolySystem, List) := o -> (G, L) -> (
     SubList := apply(toList(0..numgens ring G-1), i -> (gens ring G)#i => L#i);
     subZeros := apply(gens coefficientRing ring G, g -> g => 0);
@@ -184,6 +198,22 @@ createSeedPair(PolySystem, List) := o -> (G, L) -> (
     pre0' := first refine(G0,{pre0});
     (c0,pre0')
     )
+*-
+createSeedPair (System, Point) := o -> (P, x0) -> (
+    G := if instance(P, GateSystem) then P else gateSystem P.PolyMap;
+    n := numVariables G;
+    m := numParameters G;
+    N := numFunctions G;
+    I := id_(CC^m);
+    A := random(CC^0,CC^N);
+    scan(m, i -> A = A || evaluate(G, point I_{i}, x0));
+    b := evaluate(G, point matrix 0_(CC^m), x0);
+    K := numericalKernel(transpose A, 1e-5) ;
+    offset := solve(transpose A,transpose b,ClosestFit=>true);
+    p0 := point(K* random(CC^(m-n), CC^1) - offset);
+    (p0, x0)
+    )
+
 
 TEST ///
 --- seeding bug discovered by Courtney Gibbons
@@ -193,7 +223,7 @@ f_1 = a_1*x_1+a_2*x_2 - x_1*lambda
 f_2 = a_3*x_1+a_4*x_2 - x_2*lambda
 f_3 = a_5*x_1+a_6*x_2 + 1
 H = {f_1,f_2,f_3}
-assert((last createSeedPair polySystem H).SolutionStatus =!= RefinementFailure)
+assert(status (last createSeedPair polySystem H) =!= RefinementFailure)
 ///
 
 staticMonodromySolve = method(Options=>{
@@ -208,9 +238,13 @@ staticMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
-staticMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
-	USEtrackHomotopy = (getDefault Software === M2engine and o#"new tracking routine");
+	EdgesSaturated => false,
+	FilterCondition => null,
+	Randomizer => null})
+staticMonodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
+    	isGS := instance(PS,GateSystem);
+        if (isGS and not o#"new tracking routine") then error "GateSystem requires new tracking routine";
+	USEtrackHomotopy = isGS or (getDefault Software === M2engine and o#"new tracking routine");
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount =!= null then
 		mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
@@ -249,8 +283,7 @@ count = 6;
 (V,npaths) = monodromySolve polys;
 assert( length V.PartialSols == count );
 
--- Can provide no options
-(V,npaths) = monodromySolve(polys,p0,{x0});
+(V,npaths) = monodromySolve(polys,p0,{x0},NumberOfNodes=>3);
 assert( length V.PartialSols == count );
 
 setRandomSeed 0
@@ -264,6 +297,7 @@ assert( length V.PartialSols == count );
 --Two options for SelectEdgeAndDirection. If SelectBestEdgeAndDirection, then
 --must also provide a Potential function.
 (V,npaths) = monodromySolve(polys,p0,{x0},
+    	    	NumberOfNodes=>3,
 		NumberOfEdges=>5,
 		SelectEdgeAndDirection=>selectRandomEdgeAndDirection);
 assert( length V.PartialSols == count );
@@ -298,7 +332,8 @@ assert( length V.PartialSols == count );
 --and Verbose (defaults to false). We test that both the defaults work
 --and that non-default values work.
 (V,npaths) = monodromySolve(polys,p0,{x0},
-		NumberOfEdges=>5,
+		NumberOfEdges=>4,
+		NumberOfNodes=>3,
 		"new tracking routine"=>false,
 		Verbose=>false);
 assert( length V.PartialSols == count );
@@ -334,42 +369,27 @@ assert( length V.PartialSols == count );
 	AugmentNumberOfRepeats=>10);
 assert( length V.PartialSols == count );
 
--- test for sparseSolver which sometimes fails: 3 iterations is to reduce failure probability, but might slow tests down
-S = QQ[x,y]
-P = polySystem {x+y, x+1-y^2}
-sols = sparseMonodromySolve(P,NumberOfEdges=>20, NumberOfRepeats => 30)
-assert (#sols == 2) 
+-- test for sparseSolver which sometimes fails: many repeats is there to reduce failure probability, but might slow tests down
+S = CC[x,y]
+P = polySystem {(x-ii)^2+y^2-1, x+1-y^2}
+sols = sparseMonodromySolve(P, NumberOfEdges=>10, NumberOfRepeats=>20)
+assert (#sols == 4) 
 assert all(sols,s->norm evaluate(P,s) < 0.0001)
 ///
 
-monodromySolve = method(Options=>{
-	TargetSolutionCount => null,
-	SelectEdgeAndDirection => selectRandomEdgeAndDirection,
-	StoppingCriterion => null,
-	GraphInitFunction => completeGraphInit,
-	AugmentGraphFunction => null,
-	AugmentNumberOfRepeats => null,
-	AugmentEdgeCount=>0,
-	AugmentNodeCount=>0,
-	BatchSize => infinity,
-	Potential => null,
-	NumberOfNodes => 2,
-	NumberOfEdges => 4,
-	NumberOfRepeats => 10,
-	"new tracking routine" => true, -- uses old "track" if false
-	Verbose => false,
-	EdgesSaturated => false})
-monodromySolve PolySystem := o -> PS -> (
+monodromySolve = method(Options=>ms'option'list)
+monodromySolve System := o -> PS -> (
     (p0,x0) := createSeedPair PS;
     monodromySolve(PS,p0,{x0},o)
     )
-monodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+monodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
 		result := dynamicMonodromySolve(PS,point0,s0, o)
 	else
 		result = staticMonodromySolve(PS, point0, s0, trimDynamicOptions(o));
 	result
 );
+    
 
 trimDynamicOptions = method()
 trimDynamicOptions OptionTable := opt -> trimDynamicOptions(new MutableHashTable from opt)
@@ -400,8 +420,10 @@ dynamicMonodromySolve = method(Options=>{
 	NumberOfRepeats => null,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
-dynamicMonodromySolve (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+	EdgesSaturated => false,
+	FilterCondition => null,
+	Randomizer => null})
+dynamicMonodromySolve (MutableHashTable, Point, List) := o -> (PS,point0,s0) -> (
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount === null then 
 		mutableOptions.TargetSolutionCount = computeMixedVolume specializeSystem (point0,PS);
@@ -440,7 +462,10 @@ coreMonodromySolve = method(Options=>{
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
-	EdgesSaturated => false})
+	EdgesSaturated => false,
+	FilterCondition => null,
+	Randomizer => null})
+coreMonodromySolve HomotopyGraph := o -> HG -> coreMonodromySolve(HG, first HG#"Vertices", o)
 coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;
 	same := 0;
@@ -493,11 +518,6 @@ sparseMonodromySolve = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false})
 sparseMonodromySolve PolySystem := o ->  PS -> (
--*    mutableOptions := new MutableHashTable from o;
-    if mutableOptions.TargetSolutionCount =!= null then
-        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
-    if mutableOptions.StoppingCriterion === null then 
-        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;*-
     polys := flatten entries PS.PolyMap;
     ind := flatten apply(#polys,i-> -- indices for parameters
 	apply(exponents polys#i, t->(i,t))
@@ -505,11 +525,11 @@ sparseMonodromySolve PolySystem := o ->  PS -> (
     R := PS.PolyMap.ring;
     W := symbol W;
     AR := CC[apply(ind,i->W_i)][gens R];
-    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
-    sum(exponents polys#i, t->W_(i,t)*AR_(t));
-    genericPS := polySystem transpose matrix {polysP};
-    (sys,sols):=solveFamily(genericPS,o);--new OptionTable from (new HashTable from mutableOptions));
-    track(polySystem sys,PS,sols)
+    polysP := transpose matrix{for i to #polys-1 list -- system with parameteric coefficients and same support 
+      sum(exponents polys#i, t->W_(i,t)*AR_(t))};
+  P := if o#"new tracking routine" then gateSystem polysP else polySystem polysP;
+  targetParam := point sub(fold(polys/coefficients/last,(a,b)->a||b),CC);
+  solveFamily(P, targetParam, o)
 )
 
 -- IN: parametric Polysystem OUT: a sequence (random system, its solutions)
@@ -519,61 +539,41 @@ solveFamily = method(Options=>{
 	StoppingCriterion => null,
 	GraphInitFunction => completeGraphInit,
 	AugmentGraphFunction => null,
-	AugmentNumberOfRepeats => null,
-	AugmentEdgeCount=>0,
-	AugmentNodeCount=>0,
+	AugmentNumberOfRepeats => 2,
+	AugmentEdgeCount=>3,
+	AugmentNodeCount=>1,
 	BatchSize => infinity,
 	Potential => null,
-	NumberOfNodes => 2,
+	NumberOfNodes => 3,
 	NumberOfEdges => 4,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses old "track" if false
 	Verbose => false,
 	EdgesSaturated => false})
-solveFamily PolySystem := o -> PS -> (
-    (point0,s0) := createSeedPair PS;
-    solveFamily(PS, point0, {s0},o)
+solveFamily System := o -> P -> (
+    (p0, x0) := createSeedPair P;
+    (p0, solveFamily(P, p0, o))
     )
-solveFamily (PolySystem, Point, List) := o -> (PS,point0,s0) -> (
+solveFamily (System, Point) := o -> (P, p1) -> (
     mutableOptions := new MutableHashTable from o;
     if mutableOptions.TargetSolutionCount =!= null then
-        mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
+      mutableOptions.StoppingCriterion = (n,L) -> (length L >= mutableOptions.TargetSolutionCount or n >= mutableOptions.NumberOfRepeats);
     if mutableOptions.StoppingCriterion === null then 
-        mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
-    N := first monodromySolve(PS,point0,s0,new OptionTable from (new HashTable from mutableOptions));
-    (N.SpecializedSystem, points N.PartialSols)
+      mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
+    (p0, x0) := createSeedPair P;
+    (V, npaths) := monodromySolve(P,p0,{x0}, new OptionTable from (new HashTable from mutableOptions));
+    G := V.Graph;
+    start := transpose matrix V.BasePoint;
+    targ := transpose matrix p1;
+    H := if G.SLP then G.Family else parametricSegmentHomotopy gateSystem G.Family.PolyMap;
+    if o#"new tracking routine" then (
+	H01 := specialize(H, start||targ);
+    	trackHomotopy(H01,points V.PartialSols)
+	) else (
+	P0 := specializeSystem(start, H);
+	P1 := specializeSystem(targ, H);
+	track(P0, P1, points V.PartialSols)
+	)
     )
 
-
 end
-
-------------------------------------------
-------------------------------------------
--- Documentation
-------------------------------------------
-------------------------------------------
-
-beginDocumentation()
-
-doc ///
-  Key
-      monodromySolve
-      (monodromySolve, Matrix, Point, List)
-      (monodromySolve, PolySystem, Point, List)
-  Headline
-      Finds solutions for a given polynomial system (generic relative to a given family) given some seed solution.
-  Usage
-      (N,m) = monodromySolve(SP, c0, {pre0})
-      (N,m) = monodromySolve(polys, c0, {pre0})
-  Inputs
-      SP:Matrix
-      polys:PolySystem
-      c0:Point
-      p0:Point
-  Outputs
-      N:HomotopyNode
-      m:ZZ
-  Description
-      Text      
-          There are a lot of options. Where should we describe these?
-///
