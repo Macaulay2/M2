@@ -124,10 +124,6 @@ M2_string system_getcwd()
         cwd from when dumpdata was run, which could have been different from now. */
      static const char slash[] = "/";
      char *x = getcwd(buf,sizeof(buf)-strlen(slash));
-#if defined(_WIN32)
-     char *p;
-     for (p=x; *p; p++) if (*p == '\\') *p = '/';
-#endif
      if (0 != strcmp(buf,slash)) strcat(buf,slash);
      if (x != NULL) return M2_tostring(x);
      return M2_tostring("");

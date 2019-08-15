@@ -13,7 +13,6 @@
 #include <M2/gc-include.h>
 
 #include "M2mem.h"
-#include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
 #include "mpfr.h"
@@ -312,14 +311,6 @@ void segv_handler(int sig) {
   _exit(1);
 }
 
-#if DUMPDATA
-#ifdef HAVE_SIGLONGJMP
- static sigjmp_buf loaddata_jump;
-#else
- static jmp_buf loaddata_jump;
-#endif
-#endif
-
 #ifdef HAVE_SIGLONGJMP
  static sigjmp_buf abort_jump;
  sigjmp_buf interrupt_jump;
@@ -531,7 +522,7 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 extern void clean_up();
 extern char *GC_stackbottom;
 extern void arginits(int, const char **);
-extern bool gotArg(const char *arg, char ** argv);
+extern bool gotArg(const char *arg, char * const* argv);
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
@@ -617,24 +608,14 @@ int have_arg(char **argv, const char *arg) {
      return FALSE;
      }
 
-int Macaulay2_main(argc,argv)
-int argc; 
-char * const * argv;
+int Macaulay2_main(const int argc, char * const* argv)
 {
-
      int volatile envc = 0;
-#if DUMPDATA
-     static int old_collections = 0;
-     const char ** volatile saveenvp = NULL;
-     const char ** volatile saveargv;
-     int volatile savepid = 0;
-#else
 #define saveenvp our_environ
 #define saveargv argv
-#endif
      void main_inits();
 
-     char const * const *x = (char const * const *) our_environ; 
+     char * const* x = our_environ; 
      while (*x) envc++, x++;
 
      GC_INIT();
@@ -653,7 +634,7 @@ char * const * argv;
 #endif
 
 #if defined HAVE_PERSONALITY && !PROFILING
-     if (!gotArg("--no-personality", argv)) {
+     if (!gotArg("--no-personality", (char * const*)argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
 	  if ((oldpersonality & ADDR_NO_RANDOMIZE) == 0) {
@@ -695,78 +676,16 @@ char * const * argv;
      }
 #endif
 
-#if DUMPDATA
-     {
-	  int i;
-
-	  /* save arguments on stack in case they're on the heap */
-	  saveargv = (char **)alloca((argc + 1)*sizeof(char *));
-	  for (i=0; i<argc; i++) {
-	       saveargv[i] = alloca(strlen(argv[i]) + 1);
-	       strcpy(saveargv[i],argv[i]);
-	  }
-	  saveargv[i] = NULL;
-
-	  /* save environment on stack in case it's on the heap */
-	  saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
-	  for (i=0; i<envc; i++) {
-	       saveenvp[i] = alloca(strlen(our_environ[i]) + 1);
-	       strcpy(saveenvp[i],our_environ[i]);
-	  }
-	  saveenvp[i] = NULL;
-     }
-#endif
-
-#if DUMPDATA
-     if (0 != 
-	 #ifdef HAVE_SIGLONGJMP
-	 sigsetjmp(loaddata_jump,TRUE)
-	 #else
-	 setjmp(loaddata_jump)
-         #endif
-	  ) {
-	  if (gotArg("--notify", saveargv)) putstderr("--loaded cached memory data");
-	  struct GC_stack_base sb;
-	  GC_get_stack_base(&sb);
-	  GC_stackbottom = (char *)sb.mem_base;	/* the stack may have moved (since we may have reloaded all the static data) */
-	  old_collections = GC_gc_no;
-          {
-	       char **environ0;
-	       int i;
-	       our_environ = saveenvp;	/* our_environ is a static variable that points
-					to the heap and has been overwritten by
-					loaddata(), thereby pointing to a previous
-					incarnation of the heap. */
-	       /* Make a copy of the environment on the heap for 'our_environ'. */
-	       /* In some systems, putenv() calls free() on the old item,
-		  so we are careful to use malloc here, and not GC_malloc. */
-	       environ0 = (char **)malloc((envc + 1)*sizeof(char *));
-	       /* amazing but true:
-		  On linux, malloc calls getenv to get values for tunable
-		  parameters, so don't trash our_environ yet.
-		  */
-	       if (environ0 == NULL) fatal("out of memory");
-	       for (i=0; i<envc; i++) {
-		    environ0[i] = malloc(strlen(saveenvp[i]) + 1);
-		    if (environ0[i] == NULL) fatal("out of memory");
-		    strcpy(environ0[i],saveenvp[i]);
-	       }
-	       environ0[i] = NULL;
-	       our_environ = environ0;
-               }
-	  }
-#endif
-
      signal(SIGPIPE,SIG_IGN);
 
      /* the configure script is responsible for ensuring that rl_catch_signals is defined, or else we build readline ourselves */
      rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
-     vargs->argv= (char const * const *)saveargv;
-     vargs->argc= argc;
-     vargs->envp= (char const * const *)saveenvp;
-     vargs->envc= envc;
+     vargs->argv = (const char **)saveargv;
+     vargs->argc = argc;
+     vargs->envp = (const char **)saveenvp;
+     vargs->envc = envc;
 
      if (gotArg("--no-threads", (const char **) saveargv)) {
 	  interpFunc(vargs);
@@ -803,49 +722,15 @@ void scclib__prepare(void) {}
 
 int system_dumpdata(M2_string datafilename)
 {
-     /* this routine should keep its data on the stack */
-#if !DUMPDATA
-     return ERROR;
-#else
-     bool haderror = FALSE;
-     char *datafilename_s = tocharstar(datafilename);
-     if (ERROR == dumpdata(datafilename_s)) haderror = TRUE;
-     GC_FREE(datafilename_s);
-     return haderror ? ERROR : OKAY;
-#endif
-     }
+  return ERROR;
+}
 
 #define FENCE 0x47474747
 
-int system_loaddata(int notify, M2_string datafilename){
-#if !DUMPDATA
-     return ERROR;
-#else
-     char *datafilename_s = tocharstar(datafilename);
-     volatile int fence0 = FENCE;
-     #ifdef HAVE_SIGLONGJMP
-     sigjmp_buf save_loaddata_jump;
-     #else
-     jmp_buf save_loaddata_jump;
-     #endif
-     volatile int fence1 = FENCE;
-     /* int loadDepth = system_loadDepth; */
-     memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
-     if (ERROR == loaddata(M2_notify,datafilename_s)) return ERROR;
-     memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
-     /* system_loadDepth = loadDepth + 1; */
-     if (fence0 != FENCE || fence1 != FENCE) {
-       putstderr("--internal error: fence around loaddata longjmp save area on stack destroyed, aborting");
-       abort();
-     }
-     if (M2_notify) putstderr("--loaddata: data loaded, ready for longjmp");
-     #ifdef HAVE_SIGLONGJMP
-      siglongjmp(loaddata_jump,1);
-     #else
-      longjmp(loaddata_jump,1);
-     #endif
-#endif
-     }
+int system_loaddata(int notify, M2_string datafilename)
+{
+  return ERROR;
+}
 
 int system_isReady(int fd) {
   int ret;

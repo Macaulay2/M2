@@ -146,8 +146,6 @@ extern char current_date[];
 extern char current_time[];
 extern int system_errno();
 
-#include "../dumpdata/dumpdata.h"
-
  /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
  #ifdef HAVE_SIGLONGJMP
   extern sigjmp_buf interrupt_jump;

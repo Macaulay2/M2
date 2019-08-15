@@ -103,15 +103,6 @@ prep:: $(DUMPEDM2FILES)
 
 phase1:: prep
 
-ifneq "@DUMPDATA@" "no"
-phase1:: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
-@pre_libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_bindir@/M2@EXE@ $(OTHERDUMPEDM2FILES)
-	rm -f @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
-	$(MKDIR_P) @pre_libm2dir@/Core/cache
-	@pre_exec_prefix@/bin/M2 -q --stop -e 'errorDepth = 0' --dumpdata
-	printenv LD_LIBRARY_PATH
-endif
-
 # try to eliminate this intermediate file:
 phase1:: .Macaulay2-made
 .Macaulay2-made: $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
@@ -152,7 +143,7 @@ clean::; rm -f profile
 @pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) loadsequence installedpackages
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
-clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
+clean::; rm -rf cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
 distclean: clean; rm -f Makefile version.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

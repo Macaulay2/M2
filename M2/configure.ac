@@ -573,21 +573,6 @@ fi
 AC_SUBST(DEVELOPER,)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
-AC_SUBST(DUMPDATA,)
-AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
-if ! test "$DUMPDATA"
-then case $OS in
-	 Linux|SunOS) DUMPDATA=no;; # sigh, dumpdata no longer works, even under linux
-	 *) DUMPDATA=no;;
-     esac
-     AC_MSG_NOTICE([default dumpdata option for $OS operating system used, value: $DUMPDATA])
-else case $DUMPDATA in
-         yes|no) ;;
-	 *) AC_MSG_ERROR([dumpdata option: invalid value: $DUMPDATA])
-     esac
-fi
-test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
-
 AC_SUBST(TAR_COMPRESS_OPTION,)
 case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
