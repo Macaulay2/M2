@@ -51,8 +51,6 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      else applyEE(method,g)
      );
 
-header "extern \"C\" void check_M2init();";
-
 readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool,returnIfError:bool):Expr := (
      lastvalue := nullE;
      mode := topLevelMode;
@@ -66,7 +64,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
      issuePrompt := false;
      lasterrmsg := dummyError;
      while true do (
-     	  Ccode(void, "check_M2init()");
 	  if debugLevel == 123 then stderr <<  "------------ top of loop" << endl;
 	  if bumpLineNumber then (
 	       if debugLevel == 123 then stderr <<  "-- bumpLineNumber" << endl;

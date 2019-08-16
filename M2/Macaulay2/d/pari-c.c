@@ -70,7 +70,6 @@ static void initpari() {
     self_initialized = TRUE;
   }
   cb_pari_err_recover = m2_pari_err_recover;
-  enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 
 static void closepari() {

@@ -175,7 +175,7 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      }
 
 /* 
-   memory allocation issues:
+   memory allocation issues: (2017: this is now out of date).
 
       libgc works best for us
       on some systems (used by us?) libgc uses malloc as its primary source of new memory, so we can't
@@ -222,32 +222,6 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
       so we replace backtrace() by a better version that does nothing!
 
 */
-
-/*
- the next routines redefine malloc and friends
-   */
-
-#if 0
-
-void *malloc (size_t n) {
-  if (M2inits_firsttime) M2inits();
-  return getmem(n);
-}
-
-void *calloc (size_t n,size_t k) {
-  if (M2inits_firsttime) M2inits();
-  return getmem_clear(n*k);
-}
-
-void free (void *p) {
-  GC_FREE(p);
-}
-
-void *realloc (void *p, size_t n) {
-  return getmoremem1(p,n);
-}
-
-#endif
 
 /*
  Local Variables:
