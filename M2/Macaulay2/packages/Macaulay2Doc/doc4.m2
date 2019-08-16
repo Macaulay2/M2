@@ -48,18 +48,17 @@ document {
    document {
         Key => sleep,
         Headline => "sleep for a while",
-        TT "sleep n", " -- sleeps for ", TT "n", " seconds."
+        TT "sleep n", " -- sleeps for ", TT "n", " seconds.",
         SeeAlso => {nanosleep}
         }
 
    document {
            Key => nanosleep,
            Headline => "sleep for a given number of nanoseconds",
-           TT "nanosleep n", " -- sleeps for ", TT "n", " nanoseconds."
-           },
-             EXAMPLE "elapsedTime nanosleep 500000000",
-             SeeAlso => {sleep}
-             }
+           TT "nanosleep n", " -- sleeps for ", TT "n", " nanoseconds.",
+           EXAMPLE "elapsedTime nanosleep 500000000",
+           SeeAlso => {sleep}
+   }
 
 document {
      Key => processID,
