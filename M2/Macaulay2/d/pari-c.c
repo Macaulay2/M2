@@ -2,7 +2,6 @@
 #include <pari/pari.h>
 #include <gmp.h>
 #include "M2mem.h"
-#include "M2inits.h"
 #include "pari-c.h"
 #include "M2/config.h"
 

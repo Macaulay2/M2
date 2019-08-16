@@ -639,6 +639,10 @@ const char **argv;
      progname = argv[0];
      IM2_initialize();
 
+#    ifndef NDEBUG
+     trap();			/* we call trap() once so variables (such as trapset) can be set */
+#    endif
+     
      system_cpuTime_init();
      call_shared_library();
 
