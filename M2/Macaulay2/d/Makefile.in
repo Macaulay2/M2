@@ -63,8 +63,6 @@ LIBFILES :=
 LIBFILES += M2inits.o
 # to get getmem
 LIBFILES += M2mem.o 
-# to get initializeGMP_Cwrapper
-LIBFILES += gmp_init.o
 # to get trapchk()
 LIBFILES += debug.o
 LIBFILES += 
@@ -177,12 +175,6 @@ scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ..
 M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
 gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o M2inits.o debug.o : ../../include/M2/config.h
 M2.o : ../../include/M2/config.h
-
-all: M2inits1.o
-all: libM2inits2.a
-libM2inits2.a: M2inits2.o
-	:; @AR@ ru $@ $^
-	:; @RANLIB@ $@
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
