@@ -9,7 +9,6 @@
 #include "monideal-minprimes.hpp"
 #include "exceptions.hpp"
 #include "text-io.hpp"
-#include "../d/M2inits.h"
 #include "finalize.hpp"
 
 engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
