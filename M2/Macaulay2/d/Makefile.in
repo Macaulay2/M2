@@ -131,8 +131,6 @@ CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
 
 .SECONDARY:
 
-M2-factory.o : COMPILE.cc += -Wno-old-style-cast
-
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I@srcdir@/../e
 

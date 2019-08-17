@@ -9,9 +9,6 @@
 //   factoryseed(s);
 // }
 
-void factory_setup_1() {
-}
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 // End:

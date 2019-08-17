@@ -126,7 +126,6 @@ actors5.o basic.o : \
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))
 M2_OBJECTS += $(M2_CFILES:.c=.o)
-M2_OBJECTS += M2-factory.o
 M2_OBJECTS += $(M2_LASTCFILES:.c=.o)
 M2_SRCFILES += $(M2_OPTCFILES) $(M2_CFILES) M2inits.c
 M2_SRCFILES += $(M2_CCFILES)
