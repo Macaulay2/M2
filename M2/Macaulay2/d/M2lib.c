@@ -11,7 +11,6 @@
 #define GC_INITIAL_HEAP_SIZE 70000000
 
 #include "M2mem.h"
-#include "M2inits.h"
 #include "../dumpdata/map.h"
 #include "types.h"
 #include "debug.h"
@@ -583,9 +582,6 @@ void* interpFunc(void* vargs2)
   int volatile envc = args->envc;
      setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
-
-     //     void M2__prepare();
-     ///     M2__prepare();
 
      M2_envp = M2_tostrings(envc,(char **)saveenvp);
      M2_argv = M2_tostrings(argc,(char **)saveargv);

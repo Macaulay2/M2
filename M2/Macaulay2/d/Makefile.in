@@ -58,9 +58,10 @@ all: $(M2_OBJECTS)
 # all: libd.a
 # LIBFILES := $(patsubst M2mem.o,,$(patsubst scclib.o,,$(M2_OBJECTS))) $(patsubst %, %.o, $(M2_DNAMES))
 LIBFILES :=
+
 # LIBFILES += ../c/scc-core.o 
 # to get scc_core_prepare
-LIBFILES += M2inits.o
+
 # to get getmem
 LIBFILES += M2mem.o 
 # to get trapchk()
@@ -72,7 +73,7 @@ rm-libd.a:; rm libd.a
 
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h xml-exports.h
-M2lib.o M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
+M2lib.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
 ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
@@ -135,7 +136,7 @@ M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I@srcdir@/../e
 
 # these are the files that need to find include files built in the current build directory
-M2inits.o $(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
+$(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
 
 # to get scc-core.h:
 M2INCLUDES += -I@srcdir@/../c
@@ -171,9 +172,9 @@ M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
 
 M2lib.o scclib.o : | interp-exports.h.tmp
-scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
+scclib.o : expr-exports.h M2mem.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
 M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
-gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o M2inits.o debug.o : ../../include/M2/config.h
+M2lib.o scclib.o gdbm_interface.o gc_cpp.o debug.o : ../../include/M2/config.h
 M2.o : ../../include/M2/config.h
 
 clean::; rm -f startup.c
@@ -201,7 +202,7 @@ clean-startup.c:; rm -f startup.c
 cat-startup.c:; cat startup.c
 redo-startup:clean-startup.c startup.c cat-startup.c
 
-all: $(M2_LIBDEPS) M2inits.o
+all: $(M2_LIBDEPS)
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
