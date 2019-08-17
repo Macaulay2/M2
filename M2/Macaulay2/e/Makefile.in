@@ -31,7 +31,7 @@ TAGS tags: @srcdir@/TAGS
 	@ cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
 # overflows
-LDLIBS = @GC_LIBS@
+LDLIBS = -lgc
 
 check:: run-overflow-test
 run-overflow-test : overflow-test Makefile

@@ -438,10 +438,6 @@ dnl AC_TYPE_INT64_T()
 
 AC_FUNC_ALLOCA()
 
-AC_LANG(C++)
-AC_CHECK_HEADERS(NTL/tools.h)
-AC_LANG(C)
-
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
 AC_SUBST(ENABLE_STRIP,no) AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay2 binary), ENABLE_STRIP=$enableval)
@@ -460,18 +456,6 @@ AC_COMPILE_IFELSE(
 	[AC_LANG_SOURCE([__thread int x;])],
      	CC_THREAD_SUPPORT=yes; [AC_MSG_RESULT(yes)],
 	CC_THREAD_SUPPORT=no ; [AC_MSG_RESULT(no)])
-
-AC_SUBST(FROBBY,yes)
-AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
-if test "$FROBBY" = yes
-then AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
-fi
-
-AC_SUBST(PARI,yes)
-AC_ARG_ENABLE(pari, AS_HELP_STRING(--disable-pari,[do not download, compile, and link with pari library]), PARI=$enableval)
-if test "$PARI" = yes
-then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
-fi
 
 AC_SUBST(XML,yes)
 AC_ARG_ENABLE(xml, AS_HELP_STRING(--disable-xml,[do not link with xml library]), XML=$enableval)
@@ -768,31 +752,18 @@ AC_SUBST(BUILTLIBS,)
 #    gc needs atomic_ops (and sometimes includes it)
 #    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
-#    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
+#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too.
+#    mpfr needs gmp (or mpir
+#    	  mpfr puts pointers to gmp numbers in thread local variables, unless
+# 	  specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 #    mpc needs mpfr
-#    mpfr needs gmp
-# 	   We have always built mpfr because we told mpir (which is
-# 	   impersonating gmp) to use libgc for its memory allocation.  But mpfr
-# 	   puts pointers to gmp numbers in thread local variables, unless
-# 	   specially configured, which libgc can't find, so libgc regards them
-# 	   as garbage and ultimately frees them, causing strange errors.  See
-# 	   libraries/mpfr/Makefile.in for more information.  Another possible
-# 	   problem can arise if mpfr comes preinstalled and dynamically linked
-# 	   to libgmp, but we want to use mpir instead.
-#	   We cannot continue to tell gmp to use GC_malloc while mpfr is using it.
-#	   *** Conclusion: we must let gmp use malloc, not GC_malloc.  So what
-#	   do with objects returned by libraries that use gmp, directly or
-# 	   indirectly?  Either deep copy to the GC heap or finalization to free it explicitly?
-#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
-# 	   We have always built mpir, so we can patch the routine
-# 	   mp_set_memory_functions() in it so it does nothing; that prevents
-# 	   libraries such as pari from telling it what memory allocation
-# 	   functions to use.  But we should instead patch pari or work around
-# 	   it, so we can use the gmp library that comes with many linux
-# 	   distributions.
+#    ntl needs gmp (or mpir)
+#    pari uses gmp
+#         pari calls mp_set_memory_functions to install its own memory allocation functions
+#	  for use by gmp -- this is not thread safe, so we should PREVENT IT somehow
 #    4ti2 needs glpk
-#    glpk needs mpir (as gmp)
+#    glpk needs gmp (or mpir)
 #    gfan needs cddlib
 #    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
@@ -808,14 +779,13 @@ AC_SUBST(BUILTLIBS,)
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
 #    linbox needs fflas_ffpack and givaro
-#    givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
+#    givaro uses gmp
 #    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
-#    mpack depends on gmp (which mpir provides) mpfr mpc qd
-#    flint depends on gmp or mpir and mpfr
-#    pari uses gmp, so if we build gmp, we should build pari
+#    mpack depends on gmp (or mpir) mpfr mpc qd
+#    flint depends on gmp (or mpir) and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
@@ -845,67 +815,114 @@ dnl make some programs optional:
 BUILD_cddplus=no
 BUILD_gftables=no
 
-BUILD_mpir=yes
-BUILD_ALWAYS="mpir $BUILD_ALWAYS"
-# We always build mpir so we can patch the routine mp_set_memory_functions() in
-# it so it does nothing; that prevents libraries such as pari from telling it
-# what memory allocation functions to use.  But we should instead set
-# RETAIN_PARI_STATE to TRUE here, so we can use the gmp library that comes with
-# many linux distributions.  It will thus not be thread safe.
+#############################################################################
 
-# When linking with python and running sage, sage will initialize and use the
-# pari library, too.  We should investigte whether it tells pari to retain its state.
-
-BUILD_mpfr=yes
-BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
-# We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
-# memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
-# specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
-# frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
-# Another possible problem can arise if mpfr comes dynamically linked to libgmp, but we want
-# to use mpir instead.
-
-BUILD_mpc=yes
-BUILD_ALWAYS="mpc $BUILD_ALWAYS"
-# We always build mpc because it depends on mpfr, which we always build.
-# If we don't build mpc, then we may end up linking with the system's shared mpc library, which
-# would bring in the systems shared mpfr library, conflicting with our mpfr library, which
-# has been built with with thread safety disabled, yielding this error under Debian 9:
-#    time g++ -Wl,-z,noexecstack -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/memtailor/.libs  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathic/.libs  -L/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/submodules/mathicgb/.libs -g3  timestamp.o ../d/M2inits.o ../d/startup.o ../d/../regex/regex.o ../d/gmp_init.o ../d/gmp_aux.o ../d/main.o ../d/pari-c.o ../d/pari-gnump.o ../d/M2-factory.o ../d/M2types.o ../d/scclib.o ../d/M2lib.o ../d/M2mem.o ../d/gdbm_interface.o ../d/xml-c.o   ../d/arithmetic.o  ../d/atomic.o  ../d/M2.o  ../d/system.o  ../d/strings.o  ../d/varstrin.o  ../d/strings1.o  ../d/errio.o  ../d/vararray.o  ../d/ctype.o  ../d/nets.o  ../d/varnets.o  ../d/interrupts.o  ../d/pthread0.o  ../d/stdiop0.o  ../d/gmp.o  ../d/engine.o  ../d/xml.o  ../d/stdio0.o  ../d/parse.o  ../d/expr.o  ../d/stdio.o  ../d/stdiop.o  ../d/err.o  ../d/gmp1.o  ../d/tokens.o  ../d/getline.o  ../d/lex.o  ../d/parser.o  ../d/binding.o  ../d/basic.o  ../d/convertr.o  ../d/common.o  ../d/util.o  ../d/struct.o  ../d/classes.o  ../d/buckets.o  ../d/equality.o  ../d/hashtables.o  ../d/sets.o  ../d/version.o  ../d/evaluate.o  ../d/mysqldummy.o  ../d/pthread.o  ../d/actors.o  ../d/actors2.o  ../d/actors3.o  ../d/actors4.o  ../d/xmlactors.o  ../d/actors5.o  ../d/actors6.o  ../d/threads.o  ../d/pari.o  ../d/flint.o  ../d/interface.o  ../d/interface2.o  ../d/texmacs.o  ../d/interp.o ../e/error.o ../e/table.o ../e/exptable.o ../e/monordering.o ../e/complex.o ../e/rand.o ../e/monomial-sets.o ../e/mutablecomplex.o ../e/localring.o ../e/f4/res-monomial-sorter.o ../e/f4/res-varpower-monomial.o ../e/f4/res-f4-monlookup.o ../e/f4/res-moninfo-dense.o ../e/f4/res-moninfo-sparse.o ../e/f4/res-moninfo.o ../e/f4/res-poly-ring.o ../e/f4/res-f4-m2-interface.o ../e/f4/res-schreyer-frame.o ../e/f4/res-f4.o ../e/f4/res-f4-computation.o ../e/f4/res-gausser.o ../e/f4/res-gausser-ZZp.o ../e/f4/res-gausser-QQ.o ../e/f4/res-gausser-QQ-hybrid.o ../e/f4/f4.o ../e/f4/f4-syz.o ../e/f4/f4-mem.o ../e/f4/f4-monlookup.o ../e/f4/f4-types.o ../e/f4/f4-computation.o ../e/f4/f4-spairs.o ../e/f4/f4-m2-interface.o ../e/f4/hilb-fcn.o ../e/f4/monhashtable.o ../e/f4/monsort.o ../e/f4/moninfo.o ../e/f4/ntuple-monomial.o ../e/f4/varpower-monomial.o ../e/f4/gausser.o ../e/betti.o ../e/util.o ../e/GF.o ../e/ZZ.o ../e/ZZp.o ../e/reader.o ../e/matrix-stream.o ../e/cra.o ../e/aring-zz-gmp.o ../e/aring-qq-gmp.o ../e/aring-zz-flint.o ../e/aring-qq-flint.o ../e/aring-zzp-flint.o ../e/aring-RR.o ../e/aring-CC.o ../e/aring-RRR.o ../e/aring-CCC.o ../e/aring-tower.o ../e/aring-gf-flint-big.o ../e/aring-gf-flint.o ../e/aring-m2-gf.o ../e/aring-zzp.o ../e/aring-gf-givaro.o ../e/aring-zzp-ffpack.o ../e/aring.o ../e/schurSn.o ../e/schur2.o ../e/dpoly.o ../e/tower.o ../e/interreduce.o ../e/gb-test1.o ../e/finalize.o ../e/NAG.o ../e/SLP.o ../e/overflow.o ../e/memory-status.o ../e/imonorder.o ../e/sagbi.o ../e/monideal-minprimes.o ../e/lapack.o ../e/LLL.o ../e/fractionfreeLU.o ../e/ntl-interface.o ../e/fplll-interface.o ../e/mat.o ../e/dmat.o ../e/coeffrings.o ../e/Eschreyer.o ../e/gbweight.o ../e/qring.o ../e/polyquotient.o ../e/poly.o ../e/debug.o ../e/comp.o ../e/comp-gb.o ../e/comp-gb-proxy.o ../e/comp-gb-declared.o ../e/comp-res.o ../e/res-a0.o ../e/res-a0-poly.o ../e/res-a1.o ../e/res-a1-poly.o ../e/res-a2.o ../e/reducedgb.o ../e/reducedgb-field.o ../e/reducedgb-marked.o ../e/reducedgb-field-local.o ../e/reducedgb-ZZ.o ../e/montable.o ../e/montableZZ.o ../e/schorder.o ../e/assprime.o ../e/buffer.o ../e/comb.o ../e/det.o ../e/frac.o ../e/franzi-brp.o ../e/freemod.o ../e/gb-default.o ../e/gb-homog2.o ../e/gb-sugarless.o ../e/gb-toric.o ../e/gb-walk.o ../e/gbring.o ../e/gauss.o ../e/hermite.o ../e/hilb.o ../e/int-bag.o ../e/intarray.o ../e/matrix.o ../e/matrix-con.o ../e/mem.o ../e/monideal.o ../e/monoid.o ../e/monomial.o ../e/ntuple.o ../e/polyring.o ../e/pfaff.o ../e/relem.o ../e/ring.o ../e/ringmap.o ../e/schur.o ../e/skew.o ../e/skewpoly.o ../e/solvable.o ../e/spair.o ../e/text-io.o ../e/varpower.o ../e/weylalg.o ../e/interrupted.o ../e/newdelete.o ../e/ntl-internal.o ../e/ntl-debugio.o ../e/matrix-kbasis.o ../e/matrix-symm.o ../e/matrix-sort.o ../e/ring-vecs.o ../e/res-a2-gb.o ../e/engine.o ../e/x-aring.o ../e/x-monom.o ../e/x-monoid.o ../e/x-relem.o ../e/x-free.o ../e/x-mat.o ../e/x-gb.o ../e/x-ringmap.o ../e/x-mutablemat.o ../e/franzi-gb.o ../e/franzi-interface.o ../e/x-monideal.o ../e/x-factor.o ../e/polyroots.o ../system/m2file.o ../system/supervisor.o ../system/tests.o  ../kernel/bibasis/bibasis.o ../kernel/bibasis/allocator.o ../kernel/bibasis/launcher.o ../kernel/bibasis/monom.o ../kernel/bibasis/monomDL.o ../kernel/bibasis/monomDRL.o ../kernel/bibasis/monomLex.o ../kernel/bibasis/settings-manager.o  -L../d -lM2inits2  -lfactory   -lntl -lgivaro -lflint -lgc -lpthread -lmpfr -lfrobby -lpari -lgmpxx -lgmp -lmathicgb -lmathic -lmemtailor   -llapack -lblas -lblas -Wl,-Bstatic  -Wl,-Bdynamic  -lxml2 -llzma -lz -L/usr/lib/gcc/x86_64-linux-gnu/6 -L/usr/lib/gcc/x86_64-linux-gnu/6/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/6/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/6/../../.. -lgfortran -lm -lquadmath -llapack -lblas -lblas -lmpc -lgdbm -lreadline -ltinfo -Wl,-Bdynamic  -ldl -lpthread -ldl -Wl,-Bstatic  -Wl,-Bdynamic  -lm -lc  -lmemtailor  -lmathic  -lmathicgb -o "/home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-dist/x86_64-Linux-Debian-9.6/bin/M2-binary".tmp
-#    /usr/bin/ld: __gmpfr_cache_const_euler: TLS definition in //usr/lib/x86_64-linux-gnu/libmpfr.so.4 section .tdata mismatches non-TLS definition in /home/dan/src/M2/M2/BUILD/dan/builds.tmp/debian-release-1.13/usr-host/lib/libmpfr.a(const_euler.o) section .data.rel.local
-#    //usr/lib/x86_64-linux-gnu/libmpfr.so.4: error adding symbols: Bad value
-#    collect2: error: ld returned 1 exit status
-#    Command exited with non-zero status 1
-# Actually, we actually don't use any code from mpc, just one struct definition!  So we could eliminate its use.
-
-BUILD_glpk=yes
-BUILD_ALWAYS="glpk $BUILD_ALWAYS"
-# We always build glpk because it depends on mpir (as gmp), which we always build, and we don't want to
-# have the static version of mpir in memory along with the dynamic version of gmp.
-
-BUILD_givaro=yes
-BUILD_ALWAYS="givaro $BUILD_ALWAYS"
-# givaro uses gmp, but we replace gmp with mpir (a patched version), so we must always build givaro
-
-BUILD_cddlib=yes
-BUILD_ALWAYS="cddlib $BUILD_ALWAYS"
-# cddlib uses gmp, but we replace gmp with mpir (a patched version), so we must always build cddlib
-
-if [[ $BUILD_mpir = yes ]]
-then AC_MSG_NOTICE([mpir is being built (to replace gmp), so we will build pari])
-     BUILD_pari=yes
-     BUILD_ALWAYS="pari $BUILD_ALWAYS"
+AC_MSG_CHECKING(whether package bdw-gc is provided)
+if [ pkg-config --exists bdw-gc ]
+then AC_MSG_RESULT(yes)
+     CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+     LIBS="`pkg-config --libs-only-l bdw-gc` $LIBS"
+else AC_MSG_RESULT([no, will be built from downloaded sources])
+     BUILD_gc=yes
+fi
+if test $BUILD_gc = yes
+then BUILTLIBS="-lgc -lgccpp -lpthread $BUILTLIBS"
+else 
+     # We used to always build gc, because the homebrew bdw-gc package builds
+     # the library in such a way that running the tests in the package
+     # "CoincidentRootLoci" results in several crashes with the message "Too many
+     # heap sections: Increase MAXHINCR or MAX_HEAP_SECTS".  Perhaps our use of the
+     # configure option "--enable-large-config" is what makes the difference.
+     LIBS="-lgc -lgccpp -lpthread $LIBS"
 fi
 
-AC_ARG_ENABLE(gfan, AS_HELP_STRING(--disable-gfan,[do not build gfan program]), GFAN=$enableval)
-if test "$GFAN" = no
-then BUILD_gfan=no
+MPIR_FOUND=no
+AC_CHECK_HEADER(mpir.h,MPIR_FOUND=yes)
+
+GMP_FOUND=no
+AC_CHECK_HEADER(gmp.h,GMP_FOUND=yes)
+
+MPFR_FOUND=no
+AC_CHECK_HEADER(mpfr.h,MPFR_FOUND=yes)
+
+MPC_FOUND=no
+AC_CHECK_HEADER(mpc.h,MPC_FOUND=yes)
+
+GLPK_FOUND=no
+AC_CHECK_HEADER(glpk.h,GLPK_FOUND=yes)
+
+GIVARO_FOUND=no
+AC_MSG_CHECKING([whether givaro library is installed])
+if $PKG_CONFIG --exists givaro
+then GIVARO_FOUND=yes
+fi
+AC_MSG_RESULT($GIVARO_FOUND)
+
+CDDLIB_FOUND=no
+AC_CHECK_HEADER(cdd/cdd.h,CDDLIB_FOUND=yes)
+
+PARI_FOUND=no
+AC_CHECK_HEADER(pari/pari.h,PARI_FOUND=yes)
+
+NTL_FOUND=no
+AC_CHECK_HEADER(NTL/version.h,NTL_FOUND=yes)
+
+#############################################################################
+
+dnl By default, we prefer to use mpir, if mpir and gmp are both found.
+AC_SUBST(MP_SWITCH,mpir)
+AC_ARG_WITH(integer-package,
+		AS_HELP_STRING(--with-integer-package=[mpir|gmp],specify the big integer package to use (mpir or gmp)),
+		if ! test $withval = mpir -o $withval = gmp
+		then AC_MSG_ERROR([big integer package option: invalid value: $withval])
+		fi
+		MP_SWITCH=$withval)
+
+AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
+if test $MPIR_FOUND = yes
+then if test $GMP_FOUND = yes
+     then if test $MP_SWITCH = gmp
+          then AC_DEFINE(USING_MPIR,0)
+	  fi
+     fi
+else if test $GMP_FOUND = yes
+     then AC_DEFINE(USING_MPIR,0)
+     else BUILD_mpir=yes
+     fi
 fi
 
-AC_ARG_ENABLE(csdp, AS_HELP_STRING(--disable-csdp,[do not build csdp program]), CSDP=$enableval)
-if test "$CSDP" = no
-then BUILD_csdp=no
+if test $MPFR_FOUND = no
+then BUILD_mpfr=yes
 fi
+
+if test $MPC_FOUND = no
+then BUILD_mpc=yes
+fi
+
+if test $GLPK_FOUND = no
+then BUILD_glpk=yes
+fi
+
+if test $GIVARO_FOUND = no
+then BUILD_givaro=yes
+fi
+
+if test $CDDLIB_FOUND = no
+then BUILD_cddlib=yes
+fi
+
+if test $PARI_FOUND = no
+then BUILD_pari=yes
+fi
+
+if test $NTL_FOUND = no
+then BUILD_ntl=yes
+     BUILTLIBS="-lntl $BUILTLIBS"
+else LIBS="-lntl $LIBS"
+fi
+AC_SUBST(BUILD_ntl)		dnl factory needs to know
+
+#############################################################################
 
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
@@ -1109,14 +1126,12 @@ then AC_MSG_CHECKING(for gmp ostream compatibility)
          AC_MSG_RESULT([no, will build mpir])])
 fi
 
-if test "$PARI" = yes
-then if test $BUILD_pari = no
-     then AC_LANG(C)
-	  AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes,-lm)
-	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
-     fi
-     test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
+if test $BUILD_pari = no
+then AC_LANG(C)
+     AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes,-lm)
+     AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
 fi
+test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
 
 if test "$PYTHON" = yes
 then AC_LANG(C)
@@ -1253,38 +1268,6 @@ then AC_MSG_CHECKING(whether package atomic_ops is provided)
      fi
 fi
 
-BUILD_gc=yes
-BUILD_ALWAYS="gc $BUILD_ALWAYS"
-# We always build gc now, because the homebrew bdw-gc package (at least) builds
-# the library in such a way that running the tests in the package
-# "CoincidentRootLoci" results in several crashes with the message "Too many
-# heap sections: Increase MAXHINCR or MAX_HEAP_SECTS".  Perhaps our use of the
-# configure option "--enable-large-config" is what makes the difference.
-
-AC_SUBST(GC_LIBS)
-if test $BUILD_gc = no
-then AC_MSG_CHECKING(whether package bdw-gc is provided)
-     if [ pkg-config --exists bdw-gc ]
-     then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-	  GC_LIBS=`pkg-config --libs-only-l bdw-gc`
-	  LIBS="$GC_LIBS $LIBS"
-     else AC_MSG_RESULT([no, will be built from downloaded sources])
-	  BUILD_gc=yes
-     fi
-     AC_MSG_CHECKING(whether libgc is recent enough)
-     TMP=`pkg-config --modversion bdw-gc`
-     AX_COMPARE_VERSION($TMP,ge,7.2,
-        [ AC_MSG_RESULT(yes) ],
-        [ AC_MSG_RESULT([no, version at least 7.2 is required (gc and atomic_ops will be built from downloaded sources)]); BUILD_atomic_ops=yes ; BUILD_gc=yes ])
-fi
-if test $BUILD_gc = yes
-then 
-     # libpthread isn't really built by us, but gc will need to link against it
-     GC_LIBS="-lgc -lgccpp -lpthread"
-     BUILTLIBS="$GC_LIBS $BUILTLIBS"
-fi
-
 if test $BUILD_gdbm = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(gdbm_close,gdbm,,BUILD_gdbm=yes)
@@ -1355,70 +1338,6 @@ then AC_MSG_CHECKING(for fflas_ffpack library)
           BUILD_fflas_ffpack=yes
      fi
 fi
-
-# We are using mpir.  If ntl is present, and sharable, then it depends
-# explicitly on gmp instead of mpir, which can cause a conflict, so we build
-# it, just in case.
-if test $BUILD_mpir = yes; then BUILD_ntl=yes; BUILD_ALWAYS="ntl $BUILD_ALWAYS"; fi
-if test $BUILD_ntl = no
-then AC_LANG(C++)
-     AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
-     AC_MSG_CHECKING(for ntl library)
-     FOUND=
-     SAVELIBS=$LIBS
-     for lib in "" "-lntl" "-lntl -lgf2x"
-     do  test "$lib" && LIBS="$lib $LIBS"
-	 AC_LINK_IFELSE([AC_LANG_SOURCE([
-		 #include <NTL/tools.h>
-		 int main () { _ntl_GetTime(); }
-		 ])],
-	     FOUND=yes; break;,
-	     LIBS=$SAVELIBS)
-     done
-     if test "$FOUND"
-     then if test "$lib"
-	  then AC_MSG_RESULT([$lib])
-	  else AC_MSG_RESULT([none needed])
-	  fi
-     else AC_MSG_RESULT([no, will build ntl])
-	  BUILD_ntl=yes
-     fi 
-
-     if test $BUILD_ntl = no
-     then AC_MSG_CHECKING([whether ntl library is version at least 5.4.1])
-	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
-		  #include <stdio.h>
-		  #include <NTL/version.h>
-		  main () {
-		      FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		      unsigned major, minor, revision;
-		      major = NTL_MAJOR_VERSION;
-		      minor = NTL_MINOR_VERSION;
-		      revision = NTL_REVISION;
-		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
-		      return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]])],
-	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT(no); BUILD_ntl=yes ])
-     fi
-
-     if test $BUILD_ntl = no
-     then AC_MSG_CHECKING([whether ntl library is compiled with gmp (or mpir), using NTL/config.h])
-	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
-		  #include <NTL/config.h>
-		  main () {
-		      return !( 
-			  #ifdef NTL_GMP_LIP
-			  1
-			  #else
-			  0
-			  #endif
-			  ); }]])],
-	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, ntl compiled with gmp (or mpir) is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
-     fi
-fi
-test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
-AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
@@ -1905,6 +1824,7 @@ AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
+AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
 
 subset() {
     # whether the words of $1 are among the words of $2

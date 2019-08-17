@@ -88,14 +88,9 @@ endif
 M2_DFILES += actors5.d
 M2_DFILES += actors6.dd
 M2_DFILES += threads.dd
-ifeq (@PARI@,yes)
 M2_DFILES += pari.d
 M2_HFILES += pari-c.h
 M2_CFILES += pari-c.c
-else
-M2_SRCFILES += pari.d pari-c.h pari-c.c
-endif
-
 M2_HFILES += pari-gnump.h
 M2_CFILES += pari-gnump.c
 
