@@ -817,6 +817,20 @@ BUILD_gftables=no
 
 #############################################################################
 
+LIBLIST=" $LIBLIST "
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+    [for i in $enableval
+    do case "$LIBLIST $SUBLIST" in
+	    *" $i "*) 
+	        eval BUILD_$i=yes 
+		BUILD_ALWAYS="$BUILD_ALWAYS $i"
+	    	;;
+	    *) AC_MSG_ERROR(--enable-build-libraries option: unrecognized library name: $i) ;;
+       esac
+    done])
+
+#############################################################################
+
 AC_MSG_CHECKING(whether package bdw-gc is provided)
 if [ pkg-config --exists bdw-gc ]
 then AC_MSG_RESULT(yes)
@@ -842,33 +856,6 @@ AC_CHECK_HEADER(mpir.h,MPIR_FOUND=yes)
 GMP_FOUND=no
 AC_CHECK_HEADER(gmp.h,GMP_FOUND=yes)
 
-MPFR_FOUND=no
-AC_CHECK_HEADER(mpfr.h,MPFR_FOUND=yes)
-
-MPC_FOUND=no
-AC_CHECK_HEADER(mpc.h,MPC_FOUND=yes)
-
-GLPK_FOUND=no
-AC_CHECK_HEADER(glpk.h,GLPK_FOUND=yes)
-
-GIVARO_FOUND=no
-AC_MSG_CHECKING([whether givaro library is installed])
-if $PKG_CONFIG --exists givaro
-then GIVARO_FOUND=yes
-fi
-AC_MSG_RESULT($GIVARO_FOUND)
-
-CDDLIB_FOUND=no
-AC_CHECK_HEADER(cdd/cdd.h,CDDLIB_FOUND=yes)
-
-PARI_FOUND=no
-AC_CHECK_HEADER(pari/pari.h,PARI_FOUND=yes)
-
-NTL_FOUND=no
-AC_CHECK_HEADER(NTL/version.h,NTL_FOUND=yes)
-
-#############################################################################
-
 dnl By default, we prefer to use mpir, if mpir and gmp are both found.
 AC_SUBST(MP_SWITCH,mpir)
 AC_ARG_WITH(integer-package,
@@ -891,50 +878,45 @@ else if test $GMP_FOUND = yes
      fi
 fi
 
-if test $MPFR_FOUND = no
-then BUILD_mpfr=yes
+AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
+
+AC_CHECK_HEADER(mpc.h,,BUILD_mpc=yes)
+
+AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
+
+AC_MSG_CHECKING([whether givaro library is installed])
+if $PKG_CONFIG --exists givaro
+then AC_MSG_RESULT(yes)
+     LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
+     M2_CPPFLAGS="$M2_CPPFLAGS `$PKG_CONFIG --cflags givaro`"
+else AC_MSG_RESULT(no)
+     BUILD_givaro=yes
+     BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
-if test $MPC_FOUND = no
-then BUILD_mpc=yes
-fi
+AC_CHECK_HEADER(cdd/cdd.h,,BUILD_cddlib=yes)
 
-if test $GLPK_FOUND = no
-then BUILD_glpk=yes
-fi
+AC_CHECK_HEADER(pari/pari.h,
+     LIBS="-lpari $LIBS"
+     ,
+     BUILTLIBS="-lpari $BUILTLIBS"
+     BUILD_pari=yes)
 
-if test $GIVARO_FOUND = no
-then BUILD_givaro=yes
-fi
+AC_CHECK_HEADER(flint/flint.h,
+     LIBS="-lflint $LIBS"
+     ,
+     BUILTLIBS="-lflint $BUILTLIBS"
+     BUILD_flint=yes)
 
-if test $CDDLIB_FOUND = no
-then BUILD_cddlib=yes
-fi
-
-if test $PARI_FOUND = no
-then BUILD_pari=yes
-fi
-
-if test $NTL_FOUND = no
-then BUILD_ntl=yes
+AC_CHECK_HEADER(NTL/version.h,
+     LIBS="-lntl $LIBS"
+     ,
+     BUILD_ntl=yes
      BUILTLIBS="-lntl $BUILTLIBS"
-else LIBS="-lntl $LIBS"
-fi
+     )
 AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
 #############################################################################
-
-LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
-    [for i in $enableval
-    do case "$LIBLIST $SUBLIST" in
-	    *" $i "*) 
-	        eval BUILD_$i=yes 
-		BUILD_ALWAYS="$BUILD_ALWAYS $i"
-	    	;;
-	    *) AC_MSG_ERROR(--enable-build-libraries option: unrecognized library name: $i) ;;
-       esac
-    done])
 
 if test $BUILD_gtest = no
 then
@@ -1126,13 +1108,6 @@ then AC_MSG_CHECKING(for gmp ostream compatibility)
          AC_MSG_RESULT([no, will build mpir])])
 fi
 
-if test $BUILD_pari = no
-then AC_LANG(C)
-     AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes,-lm)
-     AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
-fi
-test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
-
 if test "$PYTHON" = yes
 then AC_LANG(C)
      if test "$LIBPYTHON" = "$LIBPYTHONORIG"
@@ -1282,51 +1257,6 @@ then AC_LANG(C)
 fi
 test $BUILD_mpc = yes && BUILTLIBS="-lmpc $BUILTLIBS"
 
-dnl mpir and mpfr are always built, so flint should also always be built:
-BUILD_ALWAYS="flint $BUILD_ALWAYS"
-if test $BUILD_mpir = yes -o $BUILD_mpfr = yes
-then BUILD_flint=yes
-fi
-if test $BUILD_flint = no
-then AC_LANG(C)
-     AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
-     if test $BUILD_flint = no
-     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
-     fi
-     if test $BUILD_flint = no
-     then AC_MSG_CHECKING([whether flint library is version at least 2.4.3])
-          AC_RUN_IFELSE([AC_LANG_SOURCE([[
-		  #include <flint/flint.h>
-		  main () { 
- 		    FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
- 		    fprintf(msg,"(version %d.%d.%d found) ", __FLINT_RELEASE / 10000, __FLINT_RELEASE/100%100, __FLINT_RELEASE%100);
-		    return __FLINT_RELEASE >= 20403 /* 2.4.3 */ ? 0 : 1 ; 
-		    } ]])],
-	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT(no); BUILD_flint=yes ])
-     fi
-fi
-test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
-AC_SUBST(BUILD_flint)		dnl factory needs to know
-
-# test for givaro
-if test $BUILD_givaro = no
-then AC_MSG_CHECKING(for givaro library, at least version 4)
-     GIVARO_LIBS=`givaro-config --libs 2>&1`
-     dnl warning: a pre-installed givaro library might be compiled and linked against gmp, which could cause a problem if we are building mpir ourselves
-     if test $? = 0 && test "`givaro-config --decimal-version`" -gt 40000
-     then AC_MSG_RESULT(found)
-	  LIBS="$LIBS $GIVARO_LIBS"
-          M2_CPPFLAGS="$M2_CPPFLAGS `givaro-config --cflags`"
-     else AC_MSG_RESULT(not found, will build)
-          BUILD_givaro=yes
-     fi
-fi
-if test $BUILD_givaro = yes
-then BUILTLIBS="-lgivaro $BUILTLIBS"
-     BUILD_fflas_ffpack=yes
-fi
-
 # test for fflas_ffpack
 if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING(for fflas_ffpack library)
@@ -1362,6 +1292,7 @@ if test $BUILD_flint = yes -o $BUILD_ntl = yes -o $BUILD_mpir = yes
 then BUILD_factory=yes
      BUILD_ALWAYS="factory $BUILD_ALWAYS"
 fi
+
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
