@@ -44,9 +44,8 @@ run-overflow-test : overflow-test Makefile
 	./overflow-test add   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	touch $@
 clean :: ; rm -f run-overflow-test
-pi overflow-test : overflow.o ../d/debug.o
+overflow-test : overflow.o ../d/debug.o
 clean :: ; rm -f overflow-test
-pi : pi.h
 
 #all:; $(MAKE) -C f4
 
@@ -104,15 +103,6 @@ dups-okay: dups-tmp
 doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile @srcdir@/TAGS
 
-pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o : pi.h pi-masks.h
-pi-test : exceptions.o overflow.o
-# check :: pi-test-run
-pi-test-run : pi-test ; ./pi-test
-pi-masks.h : pi-genmask
-	./$^ >$@
-
-pm-test.o : pm.hpp
-
 SCCFLAGS += -I../d
 
 # a stand-alone program made from test.dd
@@ -123,7 +113,6 @@ test : LDLIBS += -ld
 
 test.o : CXXFLAGS += -Wno-unused -Wno-uninitialized -Wno-cast-qual
 
-clean :: ; rm -f pi-demangled.s pi-test.s pi-test.o pi.s pi.E pi.o pi-test pi-test-run pi-masks.h
 clean :: ; rm -rf *.dSYM
 
 DOXYGEN_OUTPUT_BASEDIR = doc
