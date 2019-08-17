@@ -6,6 +6,10 @@
 #define GDBM_STATIC
 #include <gdbm.h>
 
+/* these two macros affect GC_INIT below */
+#define GC_FREE_SPACE_DIVISOR 12
+#define GC_INITIAL_HEAP_SIZE 70000000
+
 #include "M2mem.h"
 #include "M2inits.h"
 #include "../dumpdata/map.h"
@@ -579,7 +583,6 @@ void* interpFunc(void* vargs2)
   int volatile envc = args->envc;
      setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
-     arginits(argc,(const char **)saveargv);
 
      //     void M2__prepare();
      ///     M2__prepare();
@@ -636,7 +639,6 @@ const char **argv;
      while (*x) envc++, x++;
 
      GC_INIT();
-     progname = argv[0];
      IM2_initialize();
 
 #    ifndef NDEBUG
@@ -883,6 +885,11 @@ int system_randomint(void) {
      return rawRandomInt(2<<31-1);
 #endif
      }
+
+/* Perhaps this is inserted from scc code? */
+
+void scc_core_prepare() {
+}
 
 /*
 // Local Variables:

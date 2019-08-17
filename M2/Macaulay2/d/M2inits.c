@@ -16,12 +16,6 @@
 #define TRUE 1
 #define FALSE 0
 
-const char *progname;
-void arginits(int argc, char **argv) { progname = argv[0]; }
-
-void scc_core_prepare() {
-}
-
 /*
  Local Variables:
  compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
