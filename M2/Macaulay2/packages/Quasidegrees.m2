@@ -582,7 +582,7 @@ doc ///
       $R/I$ where $R$ is the ring of $I$.
       
      Text
-      A synonym for this function is @TO qav@.
+      A synonym for this function is @TO "qav"@.
      
      Example
       R = QQ[x,y,Degrees=>{{1,0},{0,1}}]
@@ -730,7 +730,7 @@ doc ///
       executes for the module $R/I$ where $R$ is the ring of $I$.
       
      Text
-      A synonym for this function is @TO qlc@.
+      A synonym for this function is @TO "qlc"@.
      
      Text 
       The first example computes the quasidegree set of 
@@ -852,7 +852,7 @@ doc ///
 
 doc ///
     Key
-     qlc
+     "qlc"
     Headline
      quasidegrees of local cohomology of module
     Description
@@ -867,7 +867,7 @@ doc ///
 
 doc ///
     Key
-     qav
+     "qav"
     Headline
      quasidegrees represented as variables
     Description
