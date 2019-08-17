@@ -22,7 +22,7 @@ declarations "
 ";
 
 header "#include \"gmp_aux.h\"";
-header "#include <gmp-util.h>";
+header "#include <M2mem.h>";
 
 -- We introduce two types of big gmp-type integers here.  One type is mutable, and the vector of limbs gets
 -- allocated with the standard memory allocator used by libgmp (or by its replacement, libmpir), when we use
@@ -366,39 +366,6 @@ bigint := 2147483647.; -- 2^31-1
 
 (x:double) << (n:int) ::= ldexp(x, n);
 (x:double) >> (n:int) ::= ldexp(x,-n);
-
--- export Floor(x:double):ZZ := (
---      x = floor(x);
---      if x < bigint && x > -bigint
---      then toInteger(int(x))
---      else (
--- 	  wasneg := x < 0.;
--- 	  if wasneg then x = -x;
--- 	  n := 0;
--- 	  x = Ccode(double, "frexp(", x, ", &", n, ")");
--- 	  r := toInteger(0);
--- 	  while (
--- 	       i := int(floor(x));
--- 	       x = x - i;
--- 	       r = r + i;
--- 	       n > 0
--- 	       )
--- 	  do if n > 16 then (
--- 	       n = n - 16;
--- 	       x = x << 16;
--- 	       r = r << 16;
--- 	       )
--- 	  else (
--- 	       x = x << n;
--- 	       r = r << n;
--- 	       n = 0;
--- 	       );
--- 	  if wasneg then (
--- 	       r = -r;
--- 	       if x > 0. then r = r-1;
--- 	       );
--- 	  r));
--- export Round(x:double):ZZ := Floor(x + 0.5);
 
 -----------------------------------------------------------------------------
 -- rationals

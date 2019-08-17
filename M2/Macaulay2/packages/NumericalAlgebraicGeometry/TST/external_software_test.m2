@@ -22,3 +22,7 @@ elapsedTime B = pointSet solveSystem (I_*,Software=>BERTINI);
 assert (M == B)
 assert (M == P)
 -- assert (M == H)
+
+-----------------------------------------------------
+-- OTHER TESTS
+load "NumericalAlgebraicGeometry/Bertini/Bertini.test.m2"
