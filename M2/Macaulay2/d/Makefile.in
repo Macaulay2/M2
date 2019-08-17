@@ -127,7 +127,9 @@ CFLAGS += -diag-disable 1418
 endif
 endif
 
+ifeq "@HAVE_WDISCARDS_QUALIFIERS@" "yes"
 CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
+endif
 
 .SECONDARY:
 
