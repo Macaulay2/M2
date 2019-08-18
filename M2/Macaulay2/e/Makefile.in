@@ -27,7 +27,7 @@ TAGS tags: @srcdir@/TAGS
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 @srcdir@/unit-tests/*.cpp \
 		 @srcdir@/../e-includes/statuscodes
-	@ echo " ** making etags file"
+	@ echo " ** making TAGS file"
 	@ cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
 # overflows
@@ -163,7 +163,7 @@ help:
 	@ echo "Macaulay2 @PACKAGE_VERSION@"
 	@ echo ""
 	@ echo "Current configuration:"
-	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@ STATIC=@STATIC@"
+	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@"
 	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
 	@ echo ""
 	@ echo "targets:"

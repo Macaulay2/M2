@@ -35,16 +35,8 @@ header "
    #define stringize(a) stringize0(a)
    extern char timestamp[];
    #undef ASSERT
-   #ifdef HAVE_FROBBY
-     #if HAVE_FROBBY_VERSION_NUMBER
-       #include <stdinc.h>		// to get version number of frobby
-       #define FROBBY_VERSION constants::version
-     #else
-       #define FROBBY_VERSION \"unknown\"
-     #endif
-   #else
-     #define FROBBY_VERSION \"not present\"
-   #endif
+   #include <stdinc.h>		// to get version number of frobby; yes, the filename is inappropriate
+   #define FROBBY_VERSION constants::version		   // yes, 'constants' should be something like 'frobby_constants'
    #include <pari-c.h>
    #ifdef HAVE_SCSCP
      #include <scscp.h>
@@ -52,7 +44,11 @@ header "
    #endif
    #include <stdio.h>
    extern unsigned int GC_version; /* in libgc.a */
+   #if USING_MPIR 
+   #include <mpir.h>
+   #else
    #include <gmp.h>
+   #endif
    #include <NTL/version.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
@@ -201,14 +197,14 @@ setupconst("version", Expr(toHashTable(Sequence(
 	"),
    "gdbm version" => gdbmversion(),
    "gmp version" => Ccode(constcharstar,"
-	  #ifdef __MPIR_VERSION
+	  #if USING_MPIR
 	       \"not present\"
 	  #else
 	       __gmp_version
 	  #endif
 	  "),
    "mpir version" => Ccode(constcharstar,"
-	#ifdef __MPIR_VERSION
+	#if USING_MPIR
 	     __mpir_version
 	#else
 	     \"not present\"

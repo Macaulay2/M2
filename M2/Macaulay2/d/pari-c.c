@@ -1,6 +1,10 @@
 #include <assert.h>
 #include <pari/pari.h>
+#if USING_MPIR 
+#include <mpir.h>
+#else
 #include <gmp.h>
+#endif
 #include "M2mem.h"
 #include "pari-c.h"
 #include "M2/config.h"

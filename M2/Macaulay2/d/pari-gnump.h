@@ -26,7 +26,11 @@ along with Pari-gnump.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <limits.h>
 #include <assert.h>
+#if USING_MPIR 
+#include <mpir.h>
+#else
 #include <gmp.h>
+#endif
 #include <mpfr.h>
 #include <mpc.h>
 #include <pari/pari.h>

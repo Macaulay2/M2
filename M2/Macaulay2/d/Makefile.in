@@ -73,7 +73,7 @@ rm-libd.a:; rm libd.a
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h xml-exports.h
 M2lib.o M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
-ifeq (@PARI@,yes)
+
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
 pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow -Wno-error
@@ -82,7 +82,6 @@ ifeq "@__INTEL_COMPILER@" "no"
 pari-c.o: CFLAGS += -Wno-unused
 endif
 pari-c.o: ../../include/M2/config.h ../../config.status
-endif
 
 # struct is a synonym for public class...:
 equality.o version.o engine.o interface.o: CXXFLAGS += -Wno-mismatched-tags
