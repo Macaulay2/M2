@@ -128,7 +128,8 @@ CFLAGS += -diag-disable 1418
 endif
 endif
 
-CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
+# TODO: this warning isn't understood by gcc-8, at least.
+#CFLAGS += -Werror=incompatible-pointer-types-discards-qualifiers
 
 .SECONDARY:
 
