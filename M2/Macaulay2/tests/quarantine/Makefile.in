@@ -1,13 +1,9 @@
 # @configure_input@
 # DOTS is the path to M2/Macaulay2 from this directory
 
-
-
 DEFERRED = yes
 
-
-
-DOTS = ../../../..
+DOTS = ../..
 include $(DOTS)/../include/config.Makefile
 VPATH = @srcdir@
 
@@ -25,9 +21,9 @@ endif
 SRCDIR = @srcdir@
 include ../Makefile.test
 
-Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/quarantine/Makefile
+Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/quarantine/Makefile
 
 # Local Variables:
-# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/slow "
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/quarantine check "
 # End:
 .NOTPARALLEL:

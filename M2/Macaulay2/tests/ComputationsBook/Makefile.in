@@ -12,10 +12,10 @@ $(foreach d,$(CHAPTERS),											\
 	$(eval changes::; diff -u @srcdir@/$d/chapter.m2 @srcdir@/$d/test.m2 || true)				\
 	$(eval changes::; diff -u @srcdir@/$d/chapter.out.expected @srcdir@/$d/test.out.expected || true))
 clean:; rm -f */*.trim */*.out programming/foo */*.tmp
-Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile
-Makefile.chapter: Makefile.chapter.in; cd ../../..; ./config.status Macaulay2/packages/ComputationsBook/Makefile.chapter
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/tests/ComputationsBook/Makefile
+Makefile.chapter: Makefile.chapter.in; cd ../../..; ./config.status Macaulay2/tests/ComputationsBook/Makefile.chapter
 distclean:clean; rm -f Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/tests/ComputationsBook "
 # End:
 .NOTPARALLEL:

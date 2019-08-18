@@ -61,5 +61,5 @@ test.oldvalues test.oldout : chapter.m2 ../capture.m2 ../Makefile.chapter
 	mv test.oldout.tmp test.oldout
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/tests/ComputationsBook "
 # End:

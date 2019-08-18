@@ -9,7 +9,6 @@ SUBDIRS += dumpdata
 endif
 SUBDIRS += e-includes d e system kernel bin m2 man packages emacs html-check-links tests
 SUBDIRS += book
-SUBDIRS += packages/Macaulay2Doc/test
 
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),

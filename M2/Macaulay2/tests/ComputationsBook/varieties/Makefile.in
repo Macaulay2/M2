@@ -12,9 +12,9 @@ diff-32:; diff -u @srcdir@/test.out.expected @srcdir@/test.out.expected-32
 
 include ../Makefile.chapter
 
-Makefile: Makefile.in; cd ../../../..; ./config.status Macaulay2/packages/ComputationsBook/varieties/Makefile
+Makefile: Makefile.in; cd ../../../..; ./config.status Macaulay2/tests/ComputationsBook/varieties/Makefile
 
 .NOTPARALLEL:
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/ComputationsBook/varieties "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/tests/ComputationsBook/varieties "
 # End:

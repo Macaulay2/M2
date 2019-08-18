@@ -3,18 +3,17 @@
 VPATH = @srcdir@
 
 # DOTS is the path to M2/Macaulay2 from this directory
-DOTS = ../../..
+DOTS = ..
 include $(DOTS)/../include/config.Makefile
 
 SRCDIR = @srcdir@
 include Makefile.test
 
-
 all:
 
 TARGETS = all check status
 CLEANTARGETS = clean distclean
-SUBDIRS = slow gigantic goals quarantine
+SUBDIRS = normal slow gigantic goals quarantine
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
 	$(eval .PHONY: $1-in-subdirs)
@@ -32,20 +31,16 @@ check-deferred:
 	       false ; \
 	  fi
 
-ifneq "@DUMPDATA@" "no"
-RESULTS += dumpdata.out
-endif
-
 docStructure.out: docStructure.m2
 
-Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile
-Makefile.test: Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaulay2Doc/test/Makefile.test
+Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/Makefile
+Makefile.test: Makefile.test.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/Makefile.test
 
 MIKE_TESTS := $(wildcard @srcdir@/mt-*.m2 @srcdir@/gigantic/mt-*.m2)
 MIKE_RESULTS := $(patsubst @srcdir@/%.m2, %.out, $(MIKE_TESTS))
 mike-tests: $(MIKE_RESULTS) ; grep sys $^ 
 
 # Local Variables:
-# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test "
+# compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests check "
 # End:
 .NOTPARALLEL:

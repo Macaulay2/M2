@@ -72,17 +72,17 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../packages/Macaulay2Doc/test/*.m2 \
-		@srcdir@/../packages/Macaulay2Doc/test/engine/*.m2 \
+		@srcdir@/../tests/normal/*.m2 \
+		@srcdir@/../tests/engine/*.m2 \
 		@srcdir@/../packages/SimpleDoc/doc.txt \
 		loadsequence \
 		Makefile.in \
 		Makefile.tests \
 		../emacs/Makefile.in \
-		../packages/Macaulay2Doc/test/Makefile.in \
-		../packages/Macaulay2Doc/test/Makefile.test.in \
-		../packages/Macaulay2Doc/test/slow/Makefile.in \
-		../packages/Macaulay2Doc/test/engine/Makefile.in \
+		../tests/Makefile.in \
+		../tests/Makefile.test.in \
+		../tests/slow/Makefile.in \
+		../tests/engine/Makefile.in \
 		../packages/Makefile.in \
 		../../Makefile ../../GNUmakefile.in \
 		@srcdir@/../packages/*/Makefile.in \

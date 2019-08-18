@@ -190,8 +190,6 @@ endif
 M2_LIBDEPS += $(LIBDEPS_FOR_BUILD)
 M2_LIBRARIES += $(LDLIBS_FOR_BUILD)
 
-M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
-
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 

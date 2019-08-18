@@ -4,7 +4,7 @@
 
 DEFERRED ?= no
 
-DOTS ?= ../../..
+DOTS ?= ../..
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 90
 # one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
