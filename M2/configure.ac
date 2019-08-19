@@ -704,7 +704,7 @@ AC_SUBST(BUILTLIBS,)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest eigen ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -895,7 +895,7 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-AC_CHECK_HEADER(cdd/cdd.h,LIBS="-lcdd $LIBS",BUILD_cddlib=yes)
+AC_CHECK_HEADER(cdd/setoper.h,LIBS="-lcdd $LIBS",BUILD_cddlib=yes)
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 fi
@@ -913,10 +913,13 @@ then BUILTLIBS="-lflint $BUILTLIBS"
 fi
 AC_SUBST(BUILD_flint)		dnl factory needs to know
 
+AC_MSG_CHECKING([whether eigen3 library is installed])
 if $PKG_CONFIG --exists eigen3
-then CF=`$PKG_CONFIG --cflags eigen3`
-     CXXFLAGS="$CXXFLAGS $CF"
-     AC_MSG_RESULT([yes, flags $CF])
+then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
+     CFI=`$PKG_CONFIG --cflags-only-I eigen3`
+     CXXFLAGS="$CXXFLAGS $CFO"
+     CPPFLAGS="$CPPFLAGS $CFI"
+     AC_MSG_RESULT([yes, with flags $CFI $CFO])
 else AC_MSG_ERROR(eigen library not found)
 fi
 
