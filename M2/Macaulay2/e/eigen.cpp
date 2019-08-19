@@ -16,7 +16,7 @@ using std::my_free;
 
 #define mpfr foo
 #include "mpreal.h"
-#include <Eigen/MPRealSupport>
+#include <unsupported/Eigen/MPRealSupport>
 #undef mpfr
 #include "eigen.hpp"
 #include <Eigen/SVD>

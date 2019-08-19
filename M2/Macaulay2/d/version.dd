@@ -24,6 +24,13 @@ declarations "
    ";
 
 header "
+   #if USING_MPIR 
+   #include <mpir.h>
+   #include <mpirxx.h>
+   #else
+   #include <gmp.h>
+   #include <gmpxx.h>
+   #endif
    #include <M2/config.h>
    #include <atomic_ops.h>
    #include <mpfr.h>
@@ -44,11 +51,6 @@ header "
    #endif
    #include <stdio.h>
    extern unsigned int GC_version; /* in libgc.a */
-   #if USING_MPIR 
-   #include <mpir.h>
-   #else
-   #include <gmp.h>
-   #endif
    #include <NTL/version.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};

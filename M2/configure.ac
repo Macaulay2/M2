@@ -704,7 +704,7 @@ AC_SUBST(BUILTLIBS,)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -822,6 +822,11 @@ fi
 AC_LANG(C)
 AC_CHECK_HEADER(gmp.h, LIBS="-lgmpxx  -lgmp  $LIBS";FOUND_gmp=yes ,FOUND_gmp=no )
 AC_CHECK_HEADER(mpir.h,LIBS="-lmpirxx -lmpir $LIBS";FOUND_mpir=yes,FOUND_mpir=no)
+dnl Remark: both gmp.h and mpir.h are surrounded by 
+dnl 	#ifndef __GMP_H__
+dnl 	#endif
+dnl , so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
+dnl the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
 AC_SUBST(PREFERRED_INTEGER_PACKAGE)
 AC_ARG_WITH(integer-package,
 		AS_HELP_STRING(--with-integer-package=[mpir|gmp],specify the big integer package to use (mpir or gmp)),
@@ -829,7 +834,6 @@ AC_ARG_WITH(integer-package,
 		then AC_MSG_ERROR([big integer package option: invalid value: $withval])
 		fi
 		PREFERRED_INTEGER_PACKAGE=$withval)
-AC_DEFINE(USING_MPIR,,[Whether we use MPIR (instead of GMP)])
 if test "$FOUND_mpir" = yes
 then if test "$FOUND_gmp" = yes
      then if test "$PREFERRED_INTEGER_PACKAGE" = gmp
@@ -851,7 +855,10 @@ else if test "$FOUND_gmp" = yes
 	  fi
      fi
 fi
-AC_DEFINE(USING_MPIR,$USING_MPIR)
+if test "$USING_MPIR" = 0
+then AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
+else AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
+fi
 if test $BUILD_mpir = yes
 then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
 fi
@@ -892,17 +899,27 @@ if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 fi
 
+AC_LANG(C)
 AC_CHECK_HEADER(pari/pari.h,LIBS="-lpari $LIBS",BUILD_pari=yes)
 if test $BUILD_pari = yes
 then BUILTLIBS="-lpari $BUILTLIBS"
 fi
 
+AC_LANG(C)
 AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS"
 fi
 AC_SUBST(BUILD_flint)		dnl factory needs to know
 
+if $PKG_CONFIG --exists eigen3
+then CF=`$PKG_CONFIG --cflags eigen3`
+     CXXFLAGS="$CXXFLAGS $CF"
+     AC_MSG_RESULT([yes, flags $CF])
+else AC_MSG_ERROR(eigen library not found)
+fi
+
+AC_LANG(C)
 AC_CHECK_HEADER(NTL/version.h,LIBS="-lntl $LIBS",BUILTLIBS="-lntl $BUILTLIBS")
 if test $BUILD_ntl = yes
 then BUILTLIBS="-lntl $BUILTLIBS"
