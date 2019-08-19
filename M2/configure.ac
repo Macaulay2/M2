@@ -862,6 +862,7 @@ fi
 if test $BUILD_mpir = yes
 then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
 fi
+AC_SUBST(USING_MPIR,$USING_MPIR)
 
 AC_LANG(C)
 AC_CHECK_HEADER(mpfr.h,LIBS="-lmpfr $LIBS",BUILD_mpfr=yes)

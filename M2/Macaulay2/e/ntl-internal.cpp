@@ -7,7 +7,13 @@
 #include <M2/config.h>
 #include <M2/gc-include.h>
 #include <stddef.h>
+#if USING_MPIR 
+#include <mpir.h>
+#include <mpirxx.h>
+#else
 #include <gmp.h>
+#include <gmpxx.h>
+#endif
 #include <mpfr.h>
 #include "ntl-interface.hpp"
 

@@ -4,7 +4,13 @@
 #define _ringelem_hh_
 
 #include <stddef.h>
+#if USING_MPIR 
+#include <mpir.h>
+#include <mpirxx.h>
+#else
 #include <gmp.h>
+#include <gmpxx.h>
+#endif
 #include <mpfr.h>
 #if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>

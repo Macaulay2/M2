@@ -4,7 +4,13 @@
 
 #include "buffer.hpp"
 #include "engine-includes.hpp"
+#if USING_MPIR 
+#include <mpir.h>
+#include <mpirxx.h>
+#else
 #include <gmp.h>
+#include <gmpxx.h>
+#endif
 
 extern int i_text_io();
 

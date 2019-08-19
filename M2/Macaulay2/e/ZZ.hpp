@@ -6,7 +6,13 @@
 #include "error.h"
 #include "ring.hpp"
 #include <cstddef>
+#if USING_MPIR 
+#include <mpir.h>
+#include <mpirxx.h>
+#else
 #include <gmp.h>
+#include <gmpxx.h>
+#endif
 
 namespace M2 {
 class ARingZZGMP;
