@@ -732,6 +732,7 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 #	  for use by gmp -- this is not thread safe, so we should PREVENT IT somehow
 #    4ti2 needs glpk
 #    glpk needs gmp (or mpir)
+#    topcom depends on cddlib
 #    gfan needs cddlib
 #    cddlib uses gmp
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
@@ -760,7 +761,7 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=""
 
-for i in $LIBLIST $SUBLIST
+for i in $LIBLIST $SUBLIST $PROGLIST
 do eval BUILD_$i=no
 done
 
@@ -773,13 +774,6 @@ for i in $LIBLIST
 do eval PKGNAME_$i=$i
 done
 PKGNAME_fflas_ffpack=fflas-ffpack
-
-for i in $PROGLIST
-do eval BUILD_$i=yes
-done
-dnl make some programs optional:
-BUILD_cddplus=no
-BUILD_gftables=no
 
 #############################################################################
 
@@ -798,10 +792,13 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list
 #############################################################################
 
 AC_LANG(C)
-AC_CHECK_HEADER(gdbm.h,LIBS="-lgdbm $LIBS";FOUND_gdbm=yes,BUILD_gdbm=yes)
+AC_CHECK_HEADER(gdbm.h,
+	test $BUILD_gdbm = yes && AC_MSG_WARN([[library gdbm exists, but we are asked to build it]])
+	LIBS="-lgdbm $LIBS"
+	,
+	BUILD_gdbm=yes)
 if test $BUILD_gdbm = yes
 then BUILTLIBS="-lgdbm $BUILTLIBS"
-     test "$FOUND_gdbm" = yes && AC_MSG_WARN([library gdbm exists, but we are asked to build it])
 fi
 
 AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -815,13 +812,12 @@ else AC_MSG_RESULT(no)
 fi
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lgccpp -lpthread $BUILTLIBS"
-     test "$FOUND_gdbm" = yes && AC_MSG_WARN([library gdbm exists, but we are asked to build it])
 fi
 
 # mpir and gmp server the same purpose
 AC_LANG(C)
-AC_CHECK_HEADER(gmp.h, LIBS="-lgmpxx  -lgmp  $LIBS";FOUND_gmp=yes ,FOUND_gmp=no )
-AC_CHECK_HEADER(mpir.h,LIBS="-lmpirxx -lmpir $LIBS";FOUND_mpir=yes,FOUND_mpir=no)
+AC_CHECK_HEADER(gmp.h, FOUND_gmp=yes ,FOUND_gmp=no )
+AC_CHECK_HEADER(mpir.h,FOUND_mpir=yes,FOUND_mpir=no)
 dnl Remark: both gmp.h and mpir.h are surrounded by 
 dnl 	#ifndef __GMP_H__
 dnl 	#endif
@@ -861,8 +857,12 @@ else AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
 fi
 if test $BUILD_mpir = yes
 then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
+else if test "$USING_MPIR" = 1
+     then LIBS="-lmpirxx -lmpir $LIBS"
+     else LIBS="-lgmpxx  -lgmp  $LIBS"
+     fi
 fi
-AC_SUBST(USING_MPIR,$USING_MPIR)
+AC_SUBST(USING_MPIR)
 
 AC_LANG(C)
 AC_CHECK_HEADER(mpfr.h,LIBS="-lmpfr $LIBS",BUILD_mpfr=yes)
@@ -895,9 +895,10 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-AC_CHECK_HEADER(cdd/setoper.h,LIBS="-lcdd $LIBS",BUILD_cddlib=yes)
+AC_CHECK_HEADER(cdd/setoper.h,,BUILD_cddlib=yes)
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
+else LIBS="-lcdd $LIBS"
 fi
 
 AC_LANG(C)
@@ -913,6 +914,58 @@ then BUILTLIBS="-lflint $BUILTLIBS"
 fi
 AC_SUBST(BUILD_flint)		dnl factory needs to know
 
+AC_MSG_CHECKING(whether the package 4ti2 is installed)
+if test "`type -t 4ti2-circuits`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_4ti2=yes
+fi
+
+AC_MSG_CHECKING(whether the package cohomcalg is installed)
+if test "`type -t cohomcalg`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_cohomcalg=yes
+fi
+
+AC_MSG_CHECKING(whether the package gfan is installed)
+if test "`type -t gfan`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_gfan=yes
+fi
+
+AC_MSG_CHECKING(whether the package lrs is installed)
+if test "`type -t lrs`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_lrslib=yes
+fi
+
+AC_MSG_CHECKING(whether the package csdp is installed)
+if test "`type -t csdp`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_csdp=yes
+fi
+
+AC_MSG_CHECKING(whether the package normaliz is installed)
+if test "`type -t normaliz`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_normaliz=yes
+fi
+
+AC_LANG(C)
+AC_CHECK_HEADER(nauty/nauty.h,,BUILD_nauty=yes)
+if test $BUILD_nauty = yes
+then BUILTLIBS="-lnauty $BUILTLIBS"
+else LIBS="-lnauty $LIBS"
+fi
+
+# no test for presence of topcom yet ...
+BUILD_topcom=no
+
 AC_MSG_CHECKING([whether eigen3 library is installed])
 if $PKG_CONFIG --exists eigen3
 then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
@@ -924,9 +977,10 @@ else AC_MSG_ERROR(eigen library not found)
 fi
 
 AC_LANG(C)
-AC_CHECK_HEADER(NTL/version.h,LIBS="-lntl $LIBS",BUILTLIBS="-lntl $BUILTLIBS")
+AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 if test $BUILD_ntl = yes
 then BUILTLIBS="-lntl $BUILTLIBS"
+else LIBS="-lntl $LIBS"
 fi
 AC_SUBST(BUILD_ntl)		dnl factory needs to know
 

@@ -29,7 +29,7 @@ configure builds.tmp/$(DIRECTORY)/include/configuration:
 	E=`pwd` ;								\
 	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&	\
 	  cd builds.tmp/$(DIRECTORY) &&						\
-	  $$D/configure --no-create $(CONFIGOPTIONS) &&				\
+	  (set -x ; $$D/configure --no-create $(CONFIGOPTIONS)) &&		\
 	  (set -x ; ./config.status > /dev/null) &&				\
 	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all check check-links
