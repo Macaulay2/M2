@@ -42,8 +42,6 @@ header "
    #define stringize(a) stringize0(a)
    extern char timestamp[];
    #undef ASSERT
-   #include <stdinc.h>		// to get version number of frobby; yes, the filename is inappropriate
-   #define FROBBY_VERSION constants::version		   // yes, 'constants' should be something like 'frobby_constants'
    #include <pari-c.h>
    #ifdef HAVE_SCSCP
      #include <scscp.h>
@@ -213,7 +211,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
+   "frobby version" => "unknown",
    "pari version" => Ccode(constcharstar,"
 	 #ifdef HAVE_PARI
 	   get_pari_version()

@@ -845,38 +845,6 @@ doc ///
       removeRedundancy Q
 ///
 
-
------------------------
--- Documentation qlc --
------------------------
-
-doc ///
-    Key
-     "qlc"
-    Headline
-     quasidegrees of local cohomology of module
-    Description
-     Text
-      qlc is a synonym for @TO quasidegreesLocalCohomology@.
-///
-
-
------------------------
--- Documentation qav --
------------------------
-
-doc ///
-    Key
-     "qav"
-    Headline
-     quasidegrees represented as variables
-    Description
-     Text
-      qav is a synonym for @TO quasidegreesAsVariables@.
-///
-
-
-
 --================================================--
 --******************** TESTS *********************--
 --================================================--
