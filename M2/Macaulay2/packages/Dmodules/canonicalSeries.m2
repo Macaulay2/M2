@@ -64,7 +64,12 @@ genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
     apbF := apbFactor(f);
     sum apply(apbF,q->( 
          b:= drop(q#0,n);
-	 pTheta := sum apply(q#1,v->( sub(v#0,S)*(S_(v#1)) ));
+	 --
+	 pTheta := sum apply(q#1,v->( sub(v#0,S)*( 
+		     product apply(length v#1,k->( product apply(v#1#k,i->( S_k-i))))
+		     )));
+	 --pTheta := sum apply(q#1,v->( sub(v#0,S)*(S_(v#1)) ));--I need to add some factorials here!!!
+	 --error "pTheta is wrong";
 	 phi := map(S,S,S_*-b);
 	 pThetaMinusb := phi(pTheta);
 	 thetaBracketSub(b,S)*pThetaMinusb
@@ -98,7 +103,7 @@ beginExptComp = method();
 beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
     	if not isHolonomic(H) then error "ideal is not holonomic";
 	if #w != n then error "weight vector has wrong length";
-        J := inw(H,(-w)|w);
+	J := inw(H,(-w)|w);
     	if not isTorusFixed(J) then error "ideal is not torus-fixed"; 
         primaryDecomposition thetaIdeal(J,S)
 	)
@@ -132,15 +137,141 @@ end;
 --------------------
 
 restart; --
-needsPackage "Dmodules"
+--uninstallPackage "Dmodules"
+path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
+needsPackage "Dmodules";
 A = matrix{{1,1,1,1},{0,1,3,4}}
 beta = {1,2}  
 Hbeta = gkz(A,beta)
 w = {2,999,51,1}
-J = inw(Hbeta,flatten {-w,w});
-cssExptsMult(J,w)
+cssExptsMult(Hbeta,w)
 
+
+--Now, check that isTorusFixed is also computing p(theta) correctly...
+J = inw(Hbeta,(-w)|w);
+S = QQ[t_1..t_4]
+
+    n := numgens ring J//2;
+    testIdeal := ideal flatten apply(J_*,f->( 
+	    if isHomogeneous f then f else( 
+		apply(apbFactor(f),v->(		
+			a := take(v#0,n)|apply(n,i-> 0);
+			b := apply(n,i-> 0)|drop(v#0,n);
+			pTheta := sum apply(v#1,u->( u#0*((ring J)_((u#1)|(u#1)) )));
+			(ring J)_a*pTheta*(ring J)_b
+			)))));
+    J == testIdeal
+
+
+
+
+
+
+Dis = ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
+numgens Dis
+decompose Dis
+numgens J
+
+J = inw(Hbeta,(-w)|w);
+S = QQ[t_1..t_4]
+f = J_7
 isTorusFixed J
+primaryDecomposition ideal apply(J_*,f-> genToDistractionGens(f,S))
+
+
+A = matrix{{1,1,1},{0,1,2}}
+beta = {0,-1}
+Hbeta = gkz(A,beta)
+w = {1,51,2}
+cssExptsMult(Hbeta,w)
+
+
+A = matrix{{1,1,1,1},{0,1,2,3}}
+beta = {7,6}
+Hbeta = gkz(A,beta)
+w = {1,7,51,2}
+n= (numgens ring H)//2;
+S := QQ[t_1..t_n];
+--L := beginExptComp(H,w,n,S);
+if not isHolonomic(H) then error "ideal is not holonomic";
+if #w != n then error "weight vector has wrong length";
+J := inw(H,(-w)|w);
+if not isTorusFixed(J) then error "ideal is not torus-fixed"; 
+transpose gens J
+T = thetaIdeal(J,S)
+transpose gens T
+degree T
+primaryDecomposition T    
+associatedPrimes T
+A
+beta
+i = 13; netList {J_i, genToDistractionGens(J_i,S)}
+
+genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
+f = J_i
+    n := (numgens ring f)//2;
+    if n != numgens S then error "mismatched numbers of variables";
+    apbF := apbFactor(f);
+apbF
+    sum apply(apbF,q->( 
+q = apbF#0
+         b:= drop(q#0,n);
+b
+v = q#1#0
+	 pTheta := sum apply(q#1,v->( sub(v#0,S)*( 
+		     product apply(length v#1,k->( product apply(v#1#k,i->( S_k-i))))
+			 S_(v#1)) ));
+pTheta
+	 phi := map(S,S,S_*-b);
+	 pThetaMinusb := phi(pTheta);
+	 thetaBracketSub(b,S)*pThetaMinusb
+	 ))
+)
+
+
+
+
+
+thetaIdeal(Hbeta,S)
+
+apply(L,l->( {degree l,solveMax(l)}))
+
+cssExptsMult(Hbeta,w)
+
+
+
+
+
+
+primaryDecomposition thetaIdeal(J,S)
+
+cssExptsMult(Hbeta,w)
+
+H = Hbeta
+n = (numgens ring H)//2
+S = QQ[t_1..t_n];
+L = beginExptComp(H,w,n,S)
+L
+apply(L,l->( 
+L
+	l = L#1
+	{degree l,solveMax(l)}
+	))
+
+
+J = inw(Hbeta,(-w)|w);
+isTorusFixed J
+
+-----
+W = makeWA(QQ[x,y,z])
+thetaIdeal(ideal(dx,dy^2,dy*z*dz),QQ[t_1..t_3])
+primaryDecomposition thetaIdeal(ideal(dx*dy*(dz-1),dy^2*(dz-1),dy*z*dz*(dz-1)),QQ[t_1..t_3])
+
+
+
+
+
+
 
 
 A = matrix{{1,1,1,1,1,1},{-2,0,0,0,0,1},{0,1,0,1,0,0},{1,1,2,0,0,1}}
