@@ -1222,6 +1222,7 @@ const Matrix* vectorToMatrix(const M2FreeAlgebraOrQuotient* A,
       ring_elem a = const_cast<Nterm*>(reinterpret_cast<const Nterm*>(elems[i]));
       mat.set_entry(0, i, a);
     }
+  mat.compute_column_degrees();
   return mat.to_matrix();
 }
 

@@ -775,8 +775,8 @@ export rawNCFreeAlgebra(e:Expr):Expr := (
      else WrongArg(2,"a sequence of strings to be used as names")
      else WrongArg(3,"a raw ring")
      else WrongArg(1,"a raw ring")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
+     else WrongNumArgs(6)
+     else WrongNumArgs(6));
 setupfun("rawNCFreeAlgebra",rawNCFreeAlgebra);
 
 export rawRingM2FreeAlgebraQuotient(e:Expr):Expr := (

@@ -71,6 +71,10 @@ combineWeightsAndDegree = (nvars, wtvecs, degvector) -> (
     append(wtvecs, wtd)
     )
 
+checkHeft = (degs, heftvec) -> (
+    all(degs, d -> #d === #heftvec) and
+    all(degs, d -> sum apply(d,heftvec,times) > 0)
+    )
 -- TODO (11 Jan 2017 MS+FM), now (19 Dec 2017 MS+FM), and again Dec 2018...!
 --   1. handle multigradings
 --   2. handle different monomial orders
@@ -92,7 +96,7 @@ combineWeightsAndDegree = (nvars, wtvecs, degvector) -> (
 --   - add in e.g. leadMonomial, support.  
 Ring List := (A, args) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
-   opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}};
+   opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}, Heft=>null};
    (opts,args) = override(opts,toSequence args);
    varList := args;
    if not (A.?Engine and A.Engine) then
@@ -102,7 +106,11 @@ Ring List := (A, args) -> (
    (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length varSymbols);
    -- now check correctness of weights, flatten them
    wtvecs := combineWeightsAndDegree(#varSymbols, opts.Weights, degs);
-   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs, flatten wtvecs);
+   heftvec := if opts.Heft =!= null then opts.Heft
+       else splice {degrk: 1};
+   -- check that we have a valid heft vector.
+   if not checkHeft(degs, heftvec) then error "expected a valid Heft vector, which dots positively with each degree vector";
+   rawR := rawNCFreeAlgebra(raw A, toSequence(varSymbols/toString), raw degreesRing degrk, flatten degs, flatten wtvecs, heftvec);
    R := new FreeAlgebra from {
        (symbol RawRing) => rawR,
        (symbol generators) => {},
@@ -112,6 +120,7 @@ Ring List := (A, args) -> (
        (symbol degreesRing) => degreesRing degrk,
        (symbol degreeLength) => degrk,
        (symbol degrees) => degs,
+       (symbol Heft) => heftvec,
        (symbol Weights) => wtvecs,
        (symbol isCommutative) => false,
        (symbol CoefficientRing) => A,
@@ -969,16 +978,33 @@ TEST ///
 
 TEST ///
 -*
+-- YYY
   restart
   debug needsPackage "PolynomialAlgebra"
 *-
 R = QQ{a,b,c,x,y, Degrees => {3,3,2,1,1}, Weights => {{0,0,0,1,1}} }
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 isHomogeneous I
+assert(degrees source gens I === {{2},{3},{3}})
+
+I = ideal{x*y - c, x*y*x-a, y*x*y-b}
+M1 = gens I
+J = NCGB(I,3) 
+M2 = I.cache.NCGB#1
+J1 = ideal (ideal M1)_*
+J2 = ideal (ideal M2)_*
+assert(NCGB(J1, 20) == NCGB(J2, 20)) -- note: NCGB J2 seems correct.
+
 J = NCGB(I,3) 
 J = NCGB(I,4) -- this is not working
 J = NCGB(I,5)
 J = NCGB(I,6)
+J = NCGB(I,20)
+assert isHomogeneous J
+-- several problems (22 Aug 2019):
+--  1. doing e.g. NCGB(I, 20) after defining I, gives wrong answer
+--  2. doing NCGB(I, 3) first, seems to give better answer. (not sure yet if correct)
+--  3. NCGB is computing too far, e.g. NCGB(I,3); NCGB(I,4) computes to degree 8...
 
 I1 = ideal {x*y - c}
 NCReduction2Sided(x*y*x - a, I1)
