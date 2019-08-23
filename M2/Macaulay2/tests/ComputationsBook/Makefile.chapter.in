@@ -7,7 +7,7 @@ all: check
 # we depend on "diff" accepting some options that perhaps only GNU diff does
 check: test.out.expected.trim test.out.trim
 	if ! diff -B -b -u test.out.expected.trim test.out.trim ;\
-	then echo 'make[$(MAKELEVEL)]: *''** test failed: [Macaulay2/packages/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
+	then echo 'make[$(MAKELEVEL)]: *''** test failed: [Macaulay2/tests/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
 	     false ;\
 	fi
 diff:
