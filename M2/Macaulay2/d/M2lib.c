@@ -9,6 +9,7 @@
 /* these two macros affect GC_INIT below */
 #define GC_FREE_SPACE_DIVISOR 12
 #define GC_INITIAL_HEAP_SIZE 70000000
+#include <M2/gc-include.h>
 
 #include "M2mem.h"
 #include "../dumpdata/map.h"
@@ -882,9 +883,12 @@ int system_randomint(void) {
 #endif
      }
 
-/* Perhaps this is inserted from scc code? */
+/* The following function is, I believe, inserted into each d file,
+   and is set to run before main starts. */
 
 void scc_core_prepare() {
+  GC_INIT();
+  IM2_initialize();
 }
 
 /*
