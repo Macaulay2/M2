@@ -500,8 +500,9 @@ gateMatrix List := L -> (
     )
 gateMatrix Matrix := M -> if numcols M == 0 then gateMatrix toList (numrows M:{}) else gateMatrix entries M
 
+matrix GateMatrix := o -> identity
 matrix List := o -> L -> (
-    fL := flatten L;
+    fL := flatten toList L;
     if #fL>0 and any(fL, g->instance(g,Gate)) 
     then gateMatrix L
     else (old'matrix'List o) L
@@ -555,7 +556,7 @@ GateMatrix - Matrix := (A,B) -> A - gateMatrix B
 
 det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a else inputGate a)
 
-value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
+value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(toList M,g->value(g,H))
 
 joinHorizontal = method()
 joinHorizontal List := L->(
