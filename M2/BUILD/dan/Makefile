@@ -33,6 +33,7 @@ MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 ifeq ($(MACOSX),yes)
 OPTLIBS += /usr/local/opt/readline
+OPTLIBS += /usr/local/opt/ncurses
 endif
 
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)

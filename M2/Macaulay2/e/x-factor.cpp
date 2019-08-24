@@ -6,6 +6,14 @@
 #include <iostream>
 #include <cstdio>
 
+#if USING_MPIR 
+#include <mpir.h>
+#include <mpirxx.h>
+#else
+#include <gmp.h>
+#include <gmpxx.h>
+#endif
+
 #define Matrix FactoryMatrix
 #include <factory/factory.h>  // from Messollen's libfac
 #if !HAVE_FACTORY_PREM

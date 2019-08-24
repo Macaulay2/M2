@@ -25,18 +25,20 @@ help:
 	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
 configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
-	D=`cd ../.. ; /bin/pwd` ;\
-	E=`pwd` ;\
-	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
-	  cd builds.tmp/$(DIRECTORY) && $$D/configure $(CONFIGOPTIONS) &&\
+	D=`cd ../.. ; /bin/pwd` ;						\
+	E=`pwd` ;								\
+	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&	\
+	  cd builds.tmp/$(DIRECTORY) &&						\
+	  (set -x ; $$D/configure --no-create $(CONFIGOPTIONS)) &&		\
+	  (set -x ; ./config.status > /dev/null) &&				\
 	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all check check-links
 distclean: distclean1
 distclean1:
-	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
-	then $(MAKE) -k -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
+	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ;				\
+	then $(MAKE) -k -C builds.tmp/$(DIRECTORY) distclean -o config.status ;	\
 	fi
-	-! [ -d builds.tmp/$(DIRECTORY) ] || ! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | head -50 | grep . \
+	-! [ -d builds.tmp/$(DIRECTORY) ] || ! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | head -50 | grep .	\
 		|| echo "========== files left after make distclean (first 50) ========" >&2
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install

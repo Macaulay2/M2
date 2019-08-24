@@ -115,69 +115,12 @@ endif
 
 ############################## macros
 
-TOSTATIC =
-UNSTATIC =
-
-ifeq (@OS@ @ISSUE@,MicrosoftWindows Cygwin)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,Linux)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,FreeBSD)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,SunOS)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,Darwin)
-# we know about it
-else
-$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE@))
-endif
-endif
-endif
-endif
-endif
-
-ifeq "@STATIC@" "yes"
-MAYBESTATIC = $(TOSTATIC)
-else 
-MAYBESTATIC = $(UNSTATIC)
-endif
-
 M2_LIBRARIES :=
-
-ifeq (@STATIC@,yes)
-M2_LIBRARIES += $(MAYBESTATIC)
-ifeq (@OS@,Linux)
-# This is for gc, see the end of gc/doc/README.linux:
-# --Dynamic libraries are supported on an ELF system.  A static executable
-# --should be linked with the gcc option "-Wl,-defsym,_DYNAMIC=0".
-# I'm turning this off, because we are never completely static any longer,
-# and because I don't understand it.
-# M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
-endif
-endif
-
-ifeq "@DUMPDATA@" "yes"
-M2_LIBDEPS += ../dumpdata/libdump.a
-M2_LIBRARIES += -L../dumpdata -ldump
-endif
 
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@
-M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
-M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
-
-M2_LDFLAGS += @FCLIBS_FLAGS@
-M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient

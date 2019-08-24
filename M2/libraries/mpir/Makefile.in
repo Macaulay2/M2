@@ -55,7 +55,6 @@ endif
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif
-CONFIGOPTIONS += @MPIR_CONFIG_OPTIONS@
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpir/Makefile
 
 test test.o : LOADLIBES += -lmpir

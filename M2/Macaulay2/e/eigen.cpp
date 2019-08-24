@@ -16,11 +16,19 @@ using std::my_free;
 
 #define mpfr foo
 #include "mpreal.h"
-#include <Eigen/MPRealSupport>
+#include <unsupported/Eigen/MPRealSupport>
 #undef mpfr
 #include "eigen.hpp"
 #include <Eigen/SVD>
-#include "mpfr.h"
+
+#if USING_MPIR 
+#include <mpir.h>
+#include <mpirxx.h>
+#else
+#include <gmp.h>
+#include <gmpxx.h>
+#endif
+#include <mpfr.h>
 
 #if 0
 #undef free
@@ -202,7 +210,7 @@ SVD M53
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e eigen.o "
 // indent-tabs-mode: nil
 // End:
 */

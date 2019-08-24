@@ -39,7 +39,7 @@ endif
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 
 ############################## compiling
 scc1: $(OFILES) 

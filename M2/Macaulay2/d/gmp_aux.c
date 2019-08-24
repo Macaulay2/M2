@@ -1,6 +1,10 @@
 /* some routines to augment the gmp library */
 
+#if USING_MPIR 
+#include <mpir.h>
+#else
 #include <gmp.h>
+#endif
 #include <mpfr.h>
 
 int mpz_hash(mpz_srcptr x) {
