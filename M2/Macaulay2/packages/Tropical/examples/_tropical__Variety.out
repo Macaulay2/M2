@@ -1,4 +1,5 @@
--- -*- M2-comint -*- hash: -487926035
+-- -*- M2-comint -*- hash: 598874853
+-- polymake not present
 
 i1 : QQ[x,y];
 
@@ -43,86 +44,114 @@ o8 : List
 
 i9 : QQ[x,y,z,w];
 
-i10 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
+i10 : I = ideal(w+x+y+z)
+
+o10 = ideal(x + y + z + w)
 
 o10 : Ideal of QQ[x, y, z, w]
 
-i11 : T= tropicalVariety(I,Prime=>false);
+i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
+
+o11 = T
+
+o11 : TropicalCycle
 
 i12 : rays(T)
 
-o12 = | 1  3  1  -1 1  -1 -1 -1 |
+o12 = | 3  -1 -1 -1 |
+      | -1 3  -1 -1 |
+      | -1 -1 3  -1 |
+      | -1 -1 -1 3  |
+
+               4        4
+o12 : Matrix ZZ  <--- ZZ
+
+i13 : maxCones(T)
+
+o13 = {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}}
+
+o13 : List
+
+i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
+
+o14 : Ideal of QQ[x, y, z, w]
+
+i15 : T= tropicalVariety(I,Prime=>false);
+
+i16 : rays(T)
+
+o16 = | 1  3  1  -1 1  -1 -1 -1 |
       | 1  -1 1  3  -1 1  -1 -1 |
       | 1  -1 -1 -1 1  1  3  -1 |
       | -3 -1 -1 -1 -1 -1 -1 3  |
 
                4        8
-o12 : Matrix ZZ  <--- ZZ
+o16 : Matrix ZZ  <--- ZZ
 
-i13 : maxCones(T)
+i17 : maxCones(T)
 
-o13 = {{0}, {1, 2}, {1, 4}, {1, 7}, {2, 3}, {4, 6}, {3, 5}, {3, 7}, {5, 6},
+o17 = {{0}, {1, 2}, {1, 4}, {1, 7}, {2, 3}, {4, 6}, {3, 5}, {3, 7}, {5, 6},
       -----------------------------------------------------------------------
       {6, 7}}
 
-o13 : List
+o17 : List
 
-i14 : multiplicities(T)
+i18 : multiplicities(T)
 
-o14 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+o18 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 
-o14 : List
+o18 : List
 
-i15 : linealitySpace T
+i19 : linealitySpace T
 
-o15 = | 1 |
+o19 = | 1 |
       | 1 |
       | 1 |
       | 1 |
 
                4        1
-o15 : Matrix ZZ  <--- ZZ
+o19 : Matrix ZZ  <--- ZZ
 
-i16 : QQ[x,y,z,w];
+i20 : QQ[x,y,z,w];
 
-i17 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
+i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
 
-o17 : Ideal of QQ[x, y, z, w]
+o21 : Ideal of QQ[x, y, z, w]
 
-i18 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
+i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
 
-i19 : rays(T)
+i23 : rays(T)
 
-o19 = | -4 4 0 0 4 4 |
+o23 = | -4 4 0 0 4 4 |
       | -4 0 4 0 8 0 |
       | -4 0 0 4 0 8 |
       | -3 1 1 1 3 3 |
 
                4        6
-o19 : Matrix ZZ  <--- ZZ
+o23 : Matrix ZZ  <--- ZZ
 
-i20 : maxCones(T)
+i24 : maxCones(T)
 
-o20 = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {2, 3}, {1, 4}, {1, 5}, {2,
+o24 = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {2, 3}, {1, 4}, {1, 5}, {2,
       -----------------------------------------------------------------------
       4}, {3, 5}, {4, 5}}
 
-o20 : List
+o24 : List
 
-i21 : linealitySpace T
+i25 : linealitySpace T
 
-o21 = | 0 |
+o25 = | 0 |
       | 0 |
       | 0 |
       | 1 |
 
                4        1
-o21 : Matrix ZZ  <--- ZZ
+o25 : Matrix ZZ  <--- ZZ
 
-i22 : multiplicities(T)
+i26 : multiplicities(T)
 
-o22 = {{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}
+o26 = {{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}
 
-o22 : List
+o26 : List
 
-i23 : 
+i27 : 
