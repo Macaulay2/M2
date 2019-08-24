@@ -956,11 +956,11 @@ else AC_MSG_RESULT([no, will build])
      BUILD_normaliz=yes
 fi
 
-AC_LANG(C)
-AC_CHECK_HEADER(nauty/nauty.h,,BUILD_nauty=yes)
-if test $BUILD_nauty = yes
-then BUILTLIBS="-lnauty $BUILTLIBS"
-else LIBS="-lnauty $LIBS"
+AC_MSG_CHECKING(whether the package nauty is installed)
+if test "`type -t nauty-complg`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_nauty=yes
 fi
 
 # no test for presence of topcom yet ...
