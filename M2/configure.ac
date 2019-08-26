@@ -964,7 +964,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 # no test for presence of topcom yet ...
-BUILD_topcom=no
+BUILD_topcom=yes
 
 AC_MSG_CHECKING([whether eigen3 library is installed])
 if $PKG_CONFIG --exists eigen3
