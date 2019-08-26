@@ -5,6 +5,7 @@
 #include "WordTable.hpp"
 #include "SuffixTree.hpp"
 #include "OverlapTable.hpp"
+#include <iostream>
 
 class NCGroebner : public our_new_delete
 {
@@ -35,7 +36,7 @@ public:
     for (auto i = 0; i < mInput.size(); ++i)
       {
         freeAlgebra().lead_word(tmpWord,*mInput[i]);
-        mOverlapTable.insert(tmpWord.size(),
+        mOverlapTable.insert(freeAlgebra().monoid().wordHeft(tmpWord),
                              true,
                              std::make_tuple(i,-1,-1));
       }
@@ -75,7 +76,7 @@ public:
   auto createOverlapLeadWord(Poly& wordAsPoly, Overlap o) const -> void;
   
   auto overlapWordLength(Overlap o) const -> int;
-  auto overlapDegree(Overlap o) const -> int;
+  auto overlapHeft(Overlap o) const -> int;
   
   auto printOverlapData(std::ostream& o, Overlap overlap) const -> void;
   

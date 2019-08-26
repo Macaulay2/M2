@@ -209,6 +209,10 @@ class Monoid : public MutableEngineObject
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
   int degree_weights(const_monomial m, M2_arrayint wts) const;
+
+  template<typename T>
+  T degree_weights(const_monomial m, const std::vector<T>& wts) const;
+  
   int simple_degree(const_monomial m) const;  // simply sum of exponents
   void degree_of_varpower(const_varpower vp, monomial result) const;
 

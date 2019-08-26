@@ -640,6 +640,22 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
   return ntuple::weight(sz, EXP1, wts);
 }
 
+template<typename T>
+T Monoid::degree_weights(const_monomial m, const std::vector<T>& wts) const
+{
+  if (nvars_ == 0) return 0;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  to_expvector(m, EXP1);
+  int sz = (wts.size() < nvars_ ? wts.size() : nvars_);
+  T wt = 0;
+  for (int i=0; i<sz; i++)
+    wt += EXP1[i] * wts[i];
+  return wt;
+}
+
+template int Monoid::degree_weights<int>(const_monomial m, const std::vector<int>& wts) const;
+
 int Monoid::simple_degree(const_monomial m) const
 {
   if (nvars_ == 0) return 0;

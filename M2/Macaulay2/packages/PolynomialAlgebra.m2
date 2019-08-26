@@ -898,10 +898,12 @@ TEST ///
   debug needsPackage "PolynomialAlgebra"
 *-
   R = (ZZ/32003){a,b,c}
+  R = QQ{a,b,c}
   I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
-  NCGB(I, 10);
+  elapsedTime NCGB(I, 10);
+    elapsedTime NCGB(I, 15);
   A = R/I
   assert(numcols ncBasis(0,A) == 1)
   assert(numcols ncBasis(1,A) == 3)
@@ -910,6 +912,16 @@ TEST ///
   assert(numcols ncBasis(4,A) == 15)
   assert(numcols ncBasis(5,A) == 21)
   assert(numcols ncBasis(10,A) == 66)
+///
+
+///
+  kk := Rationals();
+  F<a,b,c> := FreeAlgebra(kk,3);
+  B := [2*a*b + 3*b*a + 5*c^2,
+             2*b*c + 3*c*b + 5*a^2,
+             2*c*a + 3*a*c + 5*b^2];
+  I := ideal<F | B>;
+  GroebnerBasis(B,15):
 ///
 
 TEST ///
@@ -990,10 +1002,48 @@ assert(degrees source gens I === {{2},{3},{3}})
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 M1 = gens I
 J = NCGB(I,3) 
+J = NCGB(I,20)
 M2 = I.cache.NCGB#1
 J1 = ideal (ideal M1)_*
 J2 = ideal (ideal M2)_*
 assert(NCGB(J1, 20) == NCGB(J2, 20)) -- note: NCGB J2 seems correct.
+
+-- test #1: homog with std grading
+  restart
+  debug needsPackage "PolynomialAlgebra"
+  R = QQ{a,b,c,x,y, Degrees => {1,1,1,1,1}, Weights => {{0,0,0,1,1}} }
+  I = ideal{x*y - c*c, x*y*x-a*a*a, y*x*y-b*b*b}
+  isHomogeneous I
+  assert(degrees source gens I === {{2},{3},{3}})
+  elapsedTime J = NCGB(I,5) 
+  elapsedTime NCGB(ideal I_*, 3)
+  elapsedTime NCGB(ideal I_*, 5)
+  elapsedTime NCGB(ideal I_*, 7)
+  elapsedTime NCGB(ideal I_*, 9)
+  elapsedTime NCGB(ideal I_*, 11)
+  elapsedTime NCGB(ideal I_*, 13)
+  elapsedTime NCGB(ideal I_*, 15)
+  elapsedTime NCGB(ideal I_*, 17) -- 3.3 sec
+  elapsedTime NCGB(ideal I_*, 18); -- 14.9 sec
+  elapsedTime NCGB(ideal I_*, 19); -- 60 sec (1865 gens)
+
+  I = ideal I_*
+  elapsedTime NCGB(I, 3)
+  elapsedTime NCGB(I, 5)
+  elapsedTime NCGB(I, 7)
+  elapsedTime NCGB(I, 9)
+  elapsedTime NCGB(I, 11)
+  elapsedTime NCGB(I, 13)
+  elapsedTime NCGB(I, 15)
+  elapsedTime NCGB(I, 17) -- 3.3  sec
+  elapsedTime NCGB(I, 18); --  sec
+  elapsedTime NCGB(I, 19); --  sec (1865 gens)
+
+  NCGB(ideal oo, 5)
+  NCGB(I, 7)
+  -- these seem potentially correct, at least, they agree!
+  -- so first place to look is word length vs degree, in the code...
+-- end of test#1 -------------------
 
 J = NCGB(I,3) 
 J = NCGB(I,4) -- this is not working

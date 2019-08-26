@@ -29,9 +29,11 @@ private:
   const std::vector<int> mDegrees;       // length numVars()*(length of a single degree vector)
   const std::vector<int> mWeightVectors; // length numVars()*(length of a single weight vector)
   const std::vector<int> mHeftVector;    // length is size of degree vector
-  const std::vector<int> mHeftDegrees;   // length numVars()
+  std::vector<int> mHeftDegrees;   // length numVars().  Should be const (after construction)
   const int mNumWeights;
-  VECTOR(const int*) mDegreeOfVar;       // length numVars(), each is a pointer to an allocated degree vector
+  VECTOR(const int*) mDegreeOfVar;
+     // length numVars(), each is a pointer to an allocated degree vector.
+     // Should be const (after construction)
 public:
   FreeMonoid(
              const std::vector<std::string>& variableNames,
@@ -100,7 +102,9 @@ public:
   void wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const;
   void wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const;
   void monomInsertFromWord(MonomialInserter& result, const Word& w) const;
-  
+
+  int wordHeft(Word& word) const { return wordWeight(word, mHeftDegrees, 0); }
+  int wordHeft(Word& word, int start_index) const { return wordWeight(word, mHeftDegrees, start_index); }
 private:
   int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }
   void setWeights(Monom&m ) const; // assumes length and word are already in place.
@@ -108,8 +112,7 @@ private:
   int weightOfVar(int v, int wt) const { return mWeightVectors[v+wt*numVars()]; }
   int heftOfVar(int v) const { return mHeftDegrees[v]; }
 
-  int wordWeight(Word& word, std::vector<int>& weight) const;
-
+  int wordWeight(Word& word, const std::vector<int>& weight, int start_index) const;
 };
 
 #endif

@@ -22,7 +22,8 @@ FreeMonoid::FreeMonoid(
       degreeMonoid().from_expvector(i, deg);
       mDegreeOfVar.push_back(deg);
     }
-  // TODO: call wordWeight to set heft of each variable in mHeftDegrees
+  for (auto deg : mDegreeOfVar)
+    mHeftDegrees.push_back(degreeMonoid().degree_weights(deg, mHeftVector));
 }
 
 void FreeMonoid::one(MonomialInserter& m) const
@@ -277,10 +278,11 @@ void FreeMonoid::setWeights(Monom& m) const
     }
 }
 
-int FreeMonoid::wordWeight(Word& word, std::vector<int>& weight) const
+int FreeMonoid::wordWeight(Word& word, const std::vector<int>& weight, int start_index) const
 {
+  assert(start_index < word.size());
   int result = 0;
-  for (int j = 0; j < word.size(); ++j)
+  for (int j = start_index; j < word.size(); ++j)
     result += weight[word.begin()[j]];
   return result;
 }

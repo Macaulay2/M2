@@ -12,7 +12,6 @@ void NCGroebner::compute(int softDegreeLimit)
     }
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      std::cout << softDegreeLimit << std::endl;
       auto toBeProcessed = mOverlapTable.nextDegreeOverlaps().second;
       while(!toBeProcessed->empty())
         {
@@ -252,9 +251,19 @@ auto NCGroebner::overlapWordLength(Overlap o) const -> int
   return std::get<1>(o) + tmp.size();
 }
 
-auto NCGroebner::overlapDegree(Overlap o) const -> int
+auto NCGroebner::overlapHeft(Overlap o) const -> int
+// overlap: of a pair of words v, w, v = a*s, w = s*b, returns the
+// heft degree of a*s*b.
+// o = triple (index of left GB element, pos, index of right GB element,
+//   pos is the location in left GB element where s starts.
 {
-  return overlapWordLength(o);
+  Word tmpL;
+  Word tmpR;
+  freeAlgebra().lead_word(tmpR,*mGroebner[std::get<2>(o)]);
+  freeAlgebra().lead_word(tmpL,*mGroebner[std::get<0>(o)]);
+  int len_of_s = tmpL.size() - std::get<1>(o);
+  return freeAlgebra().monoid().wordHeft(tmpL) +
+    freeAlgebra().monoid().wordHeft(tmpR, len_of_s);
 }
 
 auto NCGroebner::printOverlapData(std::ostream& o, Overlap overlap) const -> void
@@ -278,7 +287,7 @@ auto NCGroebner::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
        // printOverlapData(std::cout, newOverlap);
        if (isOverlapNecessary(newOverlap))
          {
-           mOverlapTable.insert(overlapWordLength(newOverlap),
+           mOverlapTable.insert(overlapHeft(newOverlap),
                                 false,
                                 newOverlap);
          }
