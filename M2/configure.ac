@@ -963,8 +963,12 @@ else AC_MSG_RESULT([no, will build])
      BUILD_nauty=yes
 fi
 
-# no test for presence of topcom yet ...
-BUILD_topcom=yes
+AC_MSG_CHECKING(whether the package topcom is installed)
+if test "`type -t points2finetriang`" = file
+then AC_MSG_RESULT(yes)
+else AC_MSG_RESULT([no, will build])
+     BUILD_topcom=yes
+fi
 
 AC_MSG_CHECKING([whether eigen3 library is installed])
 if $PKG_CONFIG --exists eigen3
