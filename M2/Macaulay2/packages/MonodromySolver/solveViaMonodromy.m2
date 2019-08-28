@@ -210,7 +210,7 @@ createSeedPair (System, Point) := o -> (P, x0) -> (
     b := evaluate(G, point matrix 0_(CC^m), x0);
     K := numericalKernel(transpose A, 1e-5) ;
     offset := solve(transpose A,transpose b,ClosestFit=>true);
-    p0 := point(K* random(CC^(m-n), CC^1) - offset);
+    p0 := point(K* random(CC^(numcols K), CC^1) - offset);
     (p0, x0)
     )
 
@@ -252,7 +252,7 @@ staticMonodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
 	if mutableOptions.StoppingCriterion === null then 
 		mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
 		
-	HG := homotopyGraph(PS, Potential=>o.Potential);
+	HG := homotopyGraph(PS, Potential=>o.Potential, Randomizer => o.Randomizer, FilterCondition => o.FilterCondition);
 	if o.TargetSolutionCount =!= null then (
 		HG.TargetSolutionCount = o.TargetSolutionCount;
 	);
