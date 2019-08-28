@@ -1242,7 +1242,7 @@ showHtml = show Hypertext := x -> (
 
 show TEX := x -> showTex x
 
-viewHelp = method()
+viewHelp = method(Dispatch=>Thing)
 
 installMethod(viewHelp, () -> (
      i := applicationDirectory() | topFileName;

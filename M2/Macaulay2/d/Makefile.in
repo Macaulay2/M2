@@ -87,7 +87,7 @@ pari-c.o: ../../include/M2/config.h ../../config.status
 endif
 
 # struct is a synonym for public class...:
-equality.o version.o engine.o interface.o: CXXFLAGS += -Wno-mismatched-tags
+# equality.o version.o engine.o interface.o: CXXFLAGS += -Wno-mismatched-tags
 
 pari-gnump.o: CFLAGS += -Wno-error
 

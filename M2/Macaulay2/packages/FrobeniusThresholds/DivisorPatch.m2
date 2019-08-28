@@ -111,37 +111,37 @@ reflexivePower(ZZ, Ideal) := Ideal => o -> (n1, I1) -> (
 -- http://katzman.staff.shef.ac.uk/FSplitting/ParameterTestIdeals.m2
 --under canonicalIdeal
 
-embedAsIdeal = method(Options => {Attempts =>10, IsGraded=>false, ReturnMap=>false, Section=>null});
+embedAsIdeal = method(Options => {IsGraded=>false, ReturnMap=>false, Section=>null});
 
 embedAsIdeal(Module) := Ideal => o -> (M1) -> (
     S1 := ring M1;
-	embedAsIdeal(S1, M1, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap, Section=>o.Section)
+	embedAsIdeal(S1, M1,  IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap, Section=>o.Section)
 )
 
 embedAsIdeal(Matrix) := Ideal => o -> (Mat1) -> (
     S1 := ring Mat1;
-	embedAsIdeal(S1, Mat1, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+	embedAsIdeal(S1, Mat1,  IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
 )
 
 embedAsIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->(
     if (instance(o.Section, Matrix)) then ( --if we are passing a section
         if (target o.Section == M2) then (
-            embedAsIdeal(R1, o.Section, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+            embedAsIdeal(R1, o.Section,  IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
         )
         else (
             error "embedAsIdeal: the target of the section is not equal to the given module.";
         )
     )
     else(
-        internalModuleToIdeal(R1, M2, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+        internalModuleToIdeal(R1, M2,  IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
     )
 )
 
 embedAsIdeal(Ring, Matrix) := Ideal => o->(R1, Mat2) -> (
-    internalModuleWithSectionToIdeal(R1, Mat2, Attempts=>o.Attempts, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
+    internalModuleWithSectionToIdeal(R1, Mat2,  IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
 )
 
-internalModuleToIdeal = method(Options => {Attempts=>10, IsGraded=>false, ReturnMap=>false});
+internalModuleToIdeal = method(Options => {IsGraded=>false, ReturnMap=>false});
 
 internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->
 (--turns a module to an ideal of a ring
@@ -194,7 +194,7 @@ internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->
 	);
 	-- if that doesn't work, then try a random combination/embedding
      i = 0;
-	while ((flag == false) and (i < o.Attempts) ) do (
+	while ((flag == false) and (i < 10) ) do (
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
        -- print d;
@@ -220,7 +220,7 @@ internalModuleToIdeal(Ring, Module) := Ideal => o ->(R1, M2) ->
 
 --this variant takes a map from a free module of rank 1 and maps to another rank 1 module.  The function returns the second module as an ideal combined with the element
 
-internalModuleWithSectionToIdeal = method(Options => {Attempts=>10, ReturnMap=>false, IsGraded=>false});
+internalModuleWithSectionToIdeal = method(Options => {ReturnMap=>false, IsGraded=>false});
 
 internalModuleWithSectionToIdeal(Ring, Matrix) := Ideal => o->(R1, f1)->
 (
@@ -254,7 +254,7 @@ internalModuleWithSectionToIdeal(Ring, Matrix) := Ideal => o->(R1, f1)->
 		i = i+1;
 	);
 	-- if that doesn't work, then try a random combination/embedding
-	while ((flag == false) and (i < o.Attempts) ) do (
+	while ((flag == false) and (i < 10) ) do (
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
 		h = map(R1^1, M2**R1, {d});
