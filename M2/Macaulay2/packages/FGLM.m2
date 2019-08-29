@@ -491,3 +491,37 @@ G1 = elapsedTime gb I1
 R2 = kk[w,x3,x4,y2,y3,y4,y5,z2,z3,z4,z5]
 I2 = sub(I1, R2)
 G2 = elapsedTime fglm(I2, R1)
+
+-- MES test
+restart
+needsPackage "FGLM"
+kk = ZZ/32003
+A = random(kk^3, kk^10)
+(P,L,U) = LUdecomposition A
+  Q = id_(target A) _ P
+  Q*L*U == A
+
+A = random(kk^10, kk^3)
+(P,L,U) = LUdecomposition A
+  Q = id_(target A) _ P
+  Q*L*U == A
+
+A = matrix"0,0,0,1;0,1,0,1;0,0,1,1" **kk
+(P,L,U) = LUdecomposition A
+  Q = id_(target A) _ P
+  Q*L*U == A
+
+A = transpose matrix"0,0,0,1;0,1,0,1;0,0,1,1" **kk
+(P,L,U) = LUdecomposition A
+  Q = id_(target A) _ P
+  Q*L*U == A
+
+A = transpose matrix"0,0,0,1;0,1,0,1;0,0,1,1" ** QQ
+(P,L,U) = LUdecomposition A
+  Q = id_(target A) _ P
+  Q*L*U == A
+
+A = transpose matrix"0,0,0,1;0,1,0,1;0,0,1,1" ** RR
+(P,L,U) = LUdecomposition A
+  Q = id_(target A) _ P
+  Q*L*U == A
