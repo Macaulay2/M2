@@ -691,6 +691,8 @@ class MutableMat : public MutableMatrix
 
   virtual M2_arrayintOrNull LU(MutableMatrix* L, MutableMatrix* U) const;
 
+  virtual void LUincremental(std::vector<int>& P, const MutableMatrix* v, int i);
+
   virtual bool eigenvalues(MutableMatrix* eigenvals,
                            bool is_symm_or_hermitian) const;
 

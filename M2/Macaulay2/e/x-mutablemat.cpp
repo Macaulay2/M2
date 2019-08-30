@@ -580,10 +580,6 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
  ***** Lapack routines for dense mutable matrices **
  ***************************************************/
 
-/* Each of the following routines accepts honest MutableMatrix arguments,
-   and returns false if there is an error.  The return values are placed into
-   some of the (already existing) parameters of the routine */
-
 M2_arrayintOrNull rawLU(const MutableMatrix *A,
                         MutableMatrix *L,
                         MutableMatrix *U)
@@ -591,6 +587,23 @@ M2_arrayintOrNull rawLU(const MutableMatrix *A,
   try
     {
       return A->LU(L, U);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return NULL;
+  }
+}
+
+M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
+                                   MutableMatrix *LU,
+                                   const MutableMatrix* v,
+                                   int i)
+{
+  try
+    {
+      std::vector<int> P1 = M2_arrayint_to_stdvector<int>(P);
+      LU->LUincremental(P1, v, i);
+      return stdvector_to_M2_arrayint(P1);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

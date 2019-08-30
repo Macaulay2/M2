@@ -58,6 +58,8 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include <flint/fmpz_mat.h>
 #pragma GCC diagnostic pop
 
+#include <iostream>
+
 namespace MatrixOps {
 /// @brief the rank of a matrix
 ///
@@ -232,8 +234,19 @@ void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
 template <typename Mat>
 M2_arrayintOrNull LU(const Mat& A, Mat& L, Mat& U)
 {
+  std::cout << "calling LU<Mat>" << std::endl;  
   throw exc::engine_error(
       "'LU' not implemented for this kind of matrix over this ring");
+}
+
+template <typename Mat> 
+void LUincremental(std::vector<int>& P,
+                   Mat& LU,
+                   const Mat& v,
+                   int i)
+{
+  throw exc::engine_error(
+      "'LUincremental' not implemented for this kind of matrix over this ring");
 }
 
 template <typename Mat, typename Mat2>
@@ -392,10 +405,33 @@ inline void determinant(const DMat<RT>& A, typename RT::ElementType& result)
 template <typename RT>
 inline M2_arrayintOrNull LU(const DMat<RT>& A, DMat<RT>& L, DMat<RT>& U)
 {
+  std::cout << "calling LU<RT>" << std::endl;
+  
   std::vector<size_t> perm;
   DMatLinAlg<RT> LUdecomp(A);
   LUdecomp.matrixPLU(perm, L, U);
   return stdvector_to_M2_arrayint(perm);
+}
+
+template <typename RT> 
+void LUincremental(std::vector<int>& P,
+                   DMat<RT>& LU,
+                   const DMat<RT>& v,
+                   int i)
+{
+  //TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
+  //TODO:  Write the general code here.
+}
+
+template<>
+inline void LUincremental(std::vector<int>& P,
+                   DMat<M2::ARingZZpFlint>& LU,
+                   const DMat<M2::ARingZZpFlint>& v,
+                   int i)
+{
+  std::cout << "calling LUincremental<RT>" << std::endl;
+  //TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
+
 }
 
 template <typename RT>
