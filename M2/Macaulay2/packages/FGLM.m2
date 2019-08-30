@@ -1,6 +1,6 @@
 newPackage(
     "FGLM",
-    Version => "1.0.0",
+    Version => "1.1.0",
     Date => "May 20, 2019",
     Authors => {
         { Name => "Dylan Peifer",   Email => "djp282@cornell.edu", HomePage => "https://math.cornell.edu/~djp282" },
@@ -46,6 +46,9 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     R1 := ring G1;
     kk := coefficientRing R1;
     I1 := ideal gens G1; -- TODO: make a github issue add gb to cache
+    -- FIXME: this is a hecking hack
+    gbOpt := new GroebnerBasisOptions from {HardDegreeLimit => null, Syzygies => false, SyzygyRows => 0};
+    I1.generators.cache#gbOpt = G1;
     if R1 == I1 then return forceGB(sub(gens G1, R2));
     if dim I1 > 0 then error "expected zero-dimensional ideal";
     if #gens R1 != #gens R2 then error "expected the same number of generators";
@@ -135,12 +138,38 @@ incrLU = (P, LU, v, n) -> (
     transpose matrix { toList(n:0) | for j from n to m - 1 list LU_(j, n) }
     )
 
+-- naive backsub
+-- U is upper triangular
+-- fills x such that Ux=v
+backSub' = (U, v, x) -> (
+    n := numrows U;
+    x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
+    for i from 2 to n do x_(n-i,0) = (v_(n-i, 0) - sum(n-i+1..n-1, j -> U_(n-i, j) * x_(j,0))) / U_(n-i,n-i);
+    )
+
+-- vectorized backsub
 -- U is upper triangular
 -- fills x such that Ux=v
 backSub = (U, v, x) -> (
     n := numrows U;
     x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
-    for i from 2 to n do x_(n-i,0) = (v_(n-i, 0) - sum(n-i+1..n-1, j -> U_(n-i, j) * x_(j,0))) / U_(n-i,n-i);
+    for i from 2 to n do x_(n-i,0) = (
+	v_(n-i, 0) -
+	(submatrix(U, {n-i}, toList(n-i+1..n-1)) *
+	submatrix(x, toList(n-i+1..n-1), {0}))_(0,0)
+	) / U_(n-i,n-i);
+    )
+
+-- not really a backsub
+-- U is upper triangular
+-- fills x such that Ux=v
+backSub'' = (U', v, x) -> (
+    U := submatrix(U', {0..n-1},{0..n-1});
+    n := numrows U;
+    for i from 1 to n do (
+	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
+	columnAdd(U, n, x_(n-i, 0), n-i);
+	);
     )
 
 -------------------------------------------------------------------------------
@@ -187,6 +216,9 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
 
     R := ring G;
     I := ideal gens G;
+    -- FIXME: this is a hecking hack
+    gbOpt := new GroebnerBasisOptions from {HardDegreeLimit => null, Syzygies => false, SyzygyRows => 0};
+    I.generators.cache#gbOpt = G;
     B := basis (R/I); -- TODO: find a way to avoid recomputing GB
 
     for x in gens R list lift(last coefficients(x * B, Monomials => B), coefficientRing R)
@@ -437,6 +469,34 @@ needsPackage "FGLM"
 elapsedTime check FGLM -- ~3.2 seconds
 
 viewHelp "FGLM"
+
+-- Profiling
+restart
+debug needsPackage "FGLM"
+backSub = profile backSub
+incrLU  = profile incrLU
+multiplicationMatrices = profile multiplicationMatrices
+
+--gbTrace = 1
+
+kk = ZZ/32003
+R1 = kk[x1,x2,x3,x4,x5,x6,x7,x8, MonomialOrder=>Lex]
+I1 = ideal(8*x1^2 + 8*x1*x2 + 8*x1*x3 + 2*x1*x4 + 2*x1*x5 + 2*x1*x6 + 2*x1*x7 - x1 - 8* x2*x3 - 2*x4*x7 - 2*x5*x6,
+           8*x1*x2 - 8*x1*x3 + 8*x2^2 + 8*x2*x3 + 2*x2*x4 + 2*x2*x5 + 2*x2*x6 + 2*x2* x7 - x2 - 2*x4*x6 - 2*x5*x7,
+	   -8*x1*x2 + 8*x1*x3 + 8*x2*x3 + 8*x3^2 + 2*x3*x4 + 2*x3*x5 + 2*x3*x6 + 2* x3*x7 - x3 - 2*x4*x5 - 2*x6*x7,
+	   2*x1*x4 - 2*x1*x7 + 2*x2*x4 - 2*x2*x6 + 2*x3*x4 - 2*x3*x5 + 8*x4^2 + 8*x4* x5 + 2*x4*x6 + 2*x4*x7 + 6*x4*x8 - x4 - 6*x5*x8,
+	   2*x1*x5 - 2*x1*x6 + 2*x2*x5 - 2*x2*x7 - 2*x3*x4 + 2*x3*x5 + 8*x4*x5 - 6*x4* x8 + 8*x5^2 + 2*x5*x6 + 2*x5*x7 + 6*x5*x8 - x5,
+	   -2*x1*x5 + 2*x1*x6 - 2*x2*x4 + 2*x2*x6 + 2*x3*x6 - 2*x3*x7 + 2*x4*x6 + 2* x5*x6 + 8*x6^2 + 8*x6*x7 + 6*x6*x8 - x6 - 6*x7*x8,
+	   -2*x1*x4 + 2*x1*x7 - 2*x2*x5 + 2*x2*x7 - 2*x3*x6 + 2*x3*x7 + 2*x4*x7 + 2* x5*x7 + 8*x6*x7 - 6*x6*x8 + 8*x7^2 + 6*x7*x8 - x7,
+	   -6*x4*x5 + 6*x4*x8 + 6*x5*x8 - 6*x6*x7 + 6*x6*x8 + 6*x7*x8 + 8*x8^2 - x8);
+--G1 = elapsedTime gb I1;
+R2 = kk[x1,x2,x3,x4,x5,x6,x7,x8];
+I2 = sub(I1, R2);
+G0 = elapsedTime gb I2;
+G2 = elapsedTime fglm(G0, R1);
+--assert(gens G1 == gens G2)
+
+profileSummary
 
 -------------------------------------------------------------------------------
 --- Longer tests
