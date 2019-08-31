@@ -92,7 +92,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	r := incrLU(P, LU, v, s);
 	if r == 0 then (
 	    backSub(
-		submatrix(LU, toList(0..s-1), toList(0..s-1)),
+		submatrix(LU, toList(0..s-1), toList(0..s)), -- passing an extra column as temp
 		submatrix(LU, toList(0..s-1), {s}), lambda
 		);
 	    -- TODO: don't remake a matrix every time
@@ -150,7 +150,7 @@ backSub' = (U, v, x) -> (
 -- vectorized backsub
 -- U is upper triangular
 -- fills x such that Ux=v
-backSub = (U, v, x) -> (
+backSub'' = (U, v, x) -> (
     n := numrows U;
     x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
     for i from 2 to n do x_(n-i,0) = (
@@ -160,15 +160,15 @@ backSub = (U, v, x) -> (
 	) / U_(n-i,n-i);
     )
 
--- not really a backsub
+-- not really a backsub, just a column reduction
 -- U is upper triangular
 -- fills x such that Ux=v
-backSub'' = (U', v, x) -> (
-    U := submatrix(U', {0..n-1},{0..n-1});
-    n := numrows U;
+backSub = (U', v, x) -> (
+    n := numrows U';
+    U := submatrix(U',{0..n-1},{0..n});
     for i from 1 to n do (
 	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
-	columnAdd(U, n, x_(n-i, 0), n-i);
+	columnAdd(U, n, -x_(n-i, 0), n-i);
 	);
     )
 
@@ -471,32 +471,28 @@ elapsedTime check FGLM -- ~3.2 seconds
 viewHelp "FGLM"
 
 -- Profiling
+-- cyclic7
+-- gb: 1354.44
+-- fglm: 353.367 -> 37.76 (+ 6.63 base gb)
 restart
+gbTrace = 1
 debug needsPackage "FGLM"
 backSub = profile backSub
 incrLU  = profile incrLU
 multiplicationMatrices = profile multiplicationMatrices
 
---gbTrace = 1
-
-kk = ZZ/32003
-R1 = kk[x1,x2,x3,x4,x5,x6,x7,x8, MonomialOrder=>Lex]
-I1 = ideal(8*x1^2 + 8*x1*x2 + 8*x1*x3 + 2*x1*x4 + 2*x1*x5 + 2*x1*x6 + 2*x1*x7 - x1 - 8* x2*x3 - 2*x4*x7 - 2*x5*x6,
-           8*x1*x2 - 8*x1*x3 + 8*x2^2 + 8*x2*x3 + 2*x2*x4 + 2*x2*x5 + 2*x2*x6 + 2*x2* x7 - x2 - 2*x4*x6 - 2*x5*x7,
-	   -8*x1*x2 + 8*x1*x3 + 8*x2*x3 + 8*x3^2 + 2*x3*x4 + 2*x3*x5 + 2*x3*x6 + 2* x3*x7 - x3 - 2*x4*x5 - 2*x6*x7,
-	   2*x1*x4 - 2*x1*x7 + 2*x2*x4 - 2*x2*x6 + 2*x3*x4 - 2*x3*x5 + 8*x4^2 + 8*x4* x5 + 2*x4*x6 + 2*x4*x7 + 6*x4*x8 - x4 - 6*x5*x8,
-	   2*x1*x5 - 2*x1*x6 + 2*x2*x5 - 2*x2*x7 - 2*x3*x4 + 2*x3*x5 + 8*x4*x5 - 6*x4* x8 + 8*x5^2 + 2*x5*x6 + 2*x5*x7 + 6*x5*x8 - x5,
-	   -2*x1*x5 + 2*x1*x6 - 2*x2*x4 + 2*x2*x6 + 2*x3*x6 - 2*x3*x7 + 2*x4*x6 + 2* x5*x6 + 8*x6^2 + 8*x6*x7 + 6*x6*x8 - x6 - 6*x7*x8,
-	   -2*x1*x4 + 2*x1*x7 - 2*x2*x5 + 2*x2*x7 - 2*x3*x6 + 2*x3*x7 + 2*x4*x7 + 2* x5*x7 + 8*x6*x7 - 6*x6*x8 + 8*x7^2 + 6*x7*x8 - x7,
-	   -6*x4*x5 + 6*x4*x8 + 6*x5*x8 - 6*x6*x7 + 6*x6*x8 + 6*x7*x8 + 8*x8^2 - x8);
+--I1 = cyclic(7, MonomialOrder=>Lex)
 --G1 = elapsedTime gb I1;
-R2 = kk[x1,x2,x3,x4,x5,x6,x7,x8];
-I2 = sub(I1, R2);
+I2 = cyclic(7)
+R2 = newRing(ring I2, MonomialOrder=>Lex)
 G0 = elapsedTime gb I2;
-G2 = elapsedTime fglm(G0, R1);
+G2 = elapsedTime fglm(G0, R2);
 --assert(gens G1 == gens G2)
 
 profileSummary
+--backSub: 35 times, used .938288 seconds
+--incrLU: 959 times, used 20.4525 seconds
+--multiplicationMatrices: 1 times, used 1.89804 seconds
 
 -------------------------------------------------------------------------------
 --- Longer tests
