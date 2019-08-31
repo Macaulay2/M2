@@ -112,7 +112,12 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     forceGB(matrix {values G2})
     )
 
-incrLU = (P, LU, v', n) -> (
+-------------------------------------------------------------------------------
+-- Fast incremental LU decomposition code
+-------------------------------------------------------------------------------
+-- TODO: Move to engine
+incrLU = method();
+incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
     v := mutableMatrix v'^(new List from P); -- FIXME
     m := numrows LU;
     -- copy v to LU_{n}
@@ -140,18 +145,31 @@ incrLU = (P, LU, v', n) -> (
     transpose matrix { toList(n:0) | for j from n to m - 1 list LU_(j, n) }
     )
 
--- naive backsub
--- U is upper triangular
--- fills x such that Ux=v
+-------------------------------------------------------------------------------
+-- Fast back substitution code
+-------------------------------------------------------------------------------
+-- TODO: Move to engine
+-- NOTE: U is upper triangular with one extra column for temp
+-- Input upper triangular U and v and update x such that Ux=v
+-- This version is pretty much a column reduction
+backSub = method();
+backSub(MutableMatrix, MutableMatrix, MutableMatrix) := (U', v, x) -> (
+    n := numrows U';
+    U := submatrix(U',{0..n-1},{0..n});
+    for i from 1 to n do (
+	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
+	columnAdd(U, n, -x_(n-i, 0), n-i);
+	);
+    )
+
+-- This version is a naive backsub
 backSub' = (U, v, x) -> (
     n := numrows U;
     x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
     for i from 2 to n do x_(n-i,0) = (v_(n-i, 0) - sum(n-i+1..n-1, j -> U_(n-i, j) * x_(j,0))) / U_(n-i,n-i);
     )
 
--- vectorized backsub
--- U is upper triangular
--- fills x such that Ux=v
+-- This is a vectorized backsub
 backSub'' = (U, v, x) -> (
     n := numrows U;
     x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
@@ -163,17 +181,16 @@ backSub'' = (U, v, x) -> (
 	) / U_(n-i,n-i);
     )
 
--- not really a backsub, just a column reduction
--- U is upper triangular with one extra column for temp
--- fills x such that Ux=v
-backSub = (U', v, x) -> (
-    n := numrows U';
-    U := submatrix(U',{0..n-1},{0..n});
-    for i from 1 to n do (
-	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
-	columnAdd(U, n, -x_(n-i, 0), n-i);
-	);
+-*
+-------------------------------------------------------------------------------
+-- Fast forward substitution code (NOT implemented)
+-------------------------------------------------------------------------------
+-- TODO: Move to engine
+-- Input lower triangular U and v and update x such that Ux=v
+forwardSub(MutableMatrix, MutableMatrix, MutableMatrix) := Nothing => opts -> (U, v, x) -> (
+    backsub(L, b, Forward => true)
     )
+*-
 
 -------------------------------------------------------------------------------
 -- See Section 2.4.4, Algorithm 2.4 of Thibaut Verron's thesis for details:
@@ -226,36 +243,6 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
 
     for x in gens R list lift(last coefficients(x * B, Monomials => B), coefficientRing R)
     )
-
--*
--- Input invertible upper triangular U and b and return x such that Ux=b
-backsub(Matrix, Matrix) := Matrix => opts -> (U, b) -> (
-    )
-
--- Input invertible upper triangular U and b and return x such that Ux=b
-forwardsub(Matrix, Matrix) := Matrix => (L, b) -> (
-    backsub(L, b, Forward => true)
-    )
-
--- Input A, x, b and returns true if Ax=b
-isEqual(Matrix, Matrix, Matrix) := Boolean -> (
-    )
-
--- permute rows or columns
-permuteMatrix(Matrix, List) := Matrix -> opts -> (
-    )
-
--- return x such that LUx=b or null
-solveLU(List, Matrix, Matrix, Matrix) := Matrix -> opts -> (P, L, U, b) -> (
-    )
-
-updateLU(List, Matrix, Matrix, Matrix) := (List, Matrix, Matrix) -> opts -> (P, L, U, b) -> (
-    opts->U'
-    call permute
-    call backsub
-    return LU factorization
-    )
-*-
 
 -------------------------------------------------------------------------------
 --- Helper functions for tests
@@ -473,7 +460,9 @@ elapsedTime check FGLM -- ~3.2 seconds
 
 viewHelp "FGLM"
 
--- Profiling
+-------------------------------------------------------------------------------
+--- Profiling
+-------------------------------------------------------------------------------
 -- cyclic7
 -- gb: 1354.44
 -- fglm: 353.367 -> 37.76 (+ 6.63 base gb)
