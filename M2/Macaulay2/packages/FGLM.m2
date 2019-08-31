@@ -81,6 +81,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 
     s := 1;
     while #S > 0 do (
+	-- FIXME: About 25% of total time is spent here
 	-- TODO: use O(1) min for fun and profit
 	(elt, vals) := min pairs S;
 	remove(S, elt);
@@ -88,7 +89,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	(i, mu) := vals;
 	v = M#i * V#mu;
 
-	-- FIXME: About 70% of time is spent on these three lines:
+	-- FIXME: About 50% of total time is spent here
 	r := incrLU(P, LU, v, s);
 	if r == 0 then (
 	    backSub(
@@ -111,12 +112,13 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     forceGB(matrix {values G2})
     )
 
-incrLU = (P, LU, v, n) -> (
-    v = mutableMatrix v^(new List from P); -- FIXME
+incrLU = (P, LU, v', n) -> (
+    v := mutableMatrix v'^(new List from P); -- FIXME
     m := numrows LU;
     -- copy v to LU_{n}
     for j to m - 1 do LU_(j, n) = v_(j, 0);
     -- reduce LU_{n}
+    -- FIXME: about 25% of total time is spent in this loop
     for i to n - 1 do (
 	v_(i, 0) = LU_(i, n);
 	columnAdd(LU, n, -LU_(i, n), i);
@@ -154,14 +156,15 @@ backSub'' = (U, v, x) -> (
     n := numrows U;
     x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
     for i from 2 to n do x_(n-i,0) = (
-	v_(n-i, 0) -
-	(submatrix(U, {n-i}, toList(n-i+1..n-1)) *
-	submatrix(x, toList(n-i+1..n-1), {0}))_(0,0)
+	v_(n-i, 0) - (
+	    submatrix(U, {n-i}, toList(n-i+1..n-1)) *
+	    submatrix(x, toList(n-i+1..n-1), {0})
+	    )_(0,0)
 	) / U_(n-i,n-i);
     )
 
 -- not really a backsub, just a column reduction
--- U is upper triangular
+-- U is upper triangular with one extra column for temp
 -- fills x such that Ux=v
 backSub = (U', v, x) -> (
     n := numrows U';
@@ -494,13 +497,18 @@ profileSummary
 --incrLU: 959 times, used 20.4525 seconds
 --multiplicationMatrices: 1 times, used 1.89804 seconds
 
+--T = new MutableList from toList(20:0);
+--ticker := cpuTime(); ctr := 0;
+--ctr = 1; T#ctr = T#ctr + cpuTime() - ticker; ticker = cpuTime();
+--peek T
+
 -------------------------------------------------------------------------------
 --- Longer tests
 -------------------------------------------------------------------------------
 
 -- cyclic7
 -- gb: 1354.44
--- fglm: 353.367
+-- fglm: 353.367 -> 43.531
 restart
 debug needsPackage "FGLM"
 I = cyclic(7, MonomialOrder=>Lex)
@@ -512,7 +520,7 @@ G2 = elapsedTime fglm(I, R)
 
 -- katsura7
 -- gb: 6.78653
--- fglm: 0.779608
+-- fglm: 0.779608 -> 0.325
 restart
 debug needsPackage "FGLM"
 I = katsura(7, MonomialOrder=>Lex)
@@ -524,7 +532,7 @@ G2 = elapsedTime fglm(I, R)
 
 -- katsura8
 -- gb: 2305.46
--- fglm: 8.23514
+-- fglm: 8.23514 -> 1.571
 restart
 debug needsPackage "FGLM"
 I = katsura(8, MonomialOrder=>Lex)
@@ -536,7 +544,7 @@ G2 = elapsedTime fglm(I, R)
 
 -- reimer5
 -- gb: 8.3658
--- fglm: 3.79775
+-- fglm: 3.79775 -> 1.064
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
@@ -553,7 +561,7 @@ G2 = elapsedTime fglm(I2, R1)
 
 -- virasoro
 -- gb: 8.91079
--- fglm: 52.1752
+-- fglm: 52.1752 -> 6.033
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
@@ -573,7 +581,7 @@ G2 = elapsedTime fglm(I2, R1);
 
 -- chemkin
 -- gb: 5916.76
--- fglm: 4.46076
+-- fglm: 4.46076 -> 1.611
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
