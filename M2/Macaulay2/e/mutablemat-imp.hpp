@@ -186,13 +186,25 @@ M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L, MutableMatrix* U) const
 template <typename T> // T should be a matrix type, generally DMat<RT>
 void MutableMat<T>::LUincremental(std::vector<int>& P,
                    const MutableMatrix* v,
-                   int i)
+                   int m)
 {
   T* LU1 = this->coerce<T>();
   const T* v1 = const_cast<MutableMatrix*>(v)->coerce<T>();
   if (LU1 == nullptr or v1 == nullptr)
     throw exc::engine_error("expected matrices of the same ring/type");
-  MatrixOps::LUincremental(P, *LU1, *v1, i);
+  MatrixOps::LUincremental(P, *LU1, *v1, m);
+}
+
+template <typename T> // T should be a matrix type, generally DMat<RT>
+void MutableMat<T>::triangularSolve(MutableMatrix* x,
+                                    int m,
+                                    int strategy)
+{
+  T* Lv1 = this->coerce<T>();
+  T* x1 = x->coerce<T>();
+  if (Lv1 == nullptr or x1 == nullptr)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  MatrixOps::triangularSolve(*Lv1, *x1, m, strategy);
 }
 
 template <typename T>

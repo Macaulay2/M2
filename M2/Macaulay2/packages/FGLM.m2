@@ -615,3 +615,76 @@ A = transpose matrix"0,0,0,1;0,1,0,1;0,0,1,1" ** RR
 (P,L,U) = LUdecomposition A
   Q = id_(target A) _ P
   Q*L*U == A
+
+-*
+-- add tests for incrLU and backSub
+
+n = 1000
+kk = ZZ/32003
+M = random(kk^n,kk^n)
+LU = mutableMatrix map(kk^n,kk^n,0)
+
+P = new MutableList from toList(0..n-1)
+elapsedTime for i to n - 1 do { LUincr(P, LU, M_{i}, i); };
+
+U = matrix for i to n - 1 list toList(i:0) | first entries submatrix(LU, {i}, {i..n-1});
+L = matrix LU - U + id_(kk^n);
+assert(0 == M - id_(kk^n)_(new List from P) * L * U)
+
+elapsedTime (P',L',U') = LUdecomposition M;
+id_(kk^n)_P' * L' * U' == M
+assert(L == L')
+assert(U == U')
+assert(P' == new List from P)
+*-
+
+
+
+-- Singular test
+LIB "poly.lib";
+ring r=32003,(a,b,c,d,e,f,g),lp;
+ideal I = cyclic(nvars(r));
+timer=1;
+int t = timer;
+stdfglm(I);
+t=timer-t;
+t;
+
+-- engine test
+restart
+debug Core
+
+n = 3
+kk = ZZ/32003
+M = mutableMatrix random(kk^n,kk^n)
+LU = mutableMatrix map(kk^n,kk^n,0)
+
+P = (0..n-1)
+rawLUincremental(P, raw LU, raw M_{0}, 0)
+
+
+
+restart
+debug Core
+setRandomSeed("hello")
+
+n = 3
+kk= ZZ/17
+U' = matrix (random(kk^n,kk^(n+1), UpperTriangular => true) + (id_(kk^n) | random(kk^n,kk^1)))
+U = mutableMatrix U'
+x = mutableMatrix map(kk^n,kk^1,0)
+
+rawTriangularSolve(raw U, raw x, 3, 1)
+
+r = matrix submatrix(U,{0..n-1},{n})
+v = submatrix(U',{0..n-1}, {n})
+X = matrix x
+U'' = submatrix(U', {0..n-1}, {0..n-1})
+U'' * X + r == v
+
+submatrix(U,, {0..n-1}) * x + submatrix(U,,{n})
+
+
+v = submatrix(U, {0..n-1},{n})
+backSub(U,v,x)
+submatrix(U,{0..n-1},{0..n-1}) * x - v

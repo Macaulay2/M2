@@ -233,8 +233,10 @@ class MutableMatrix : public MutableEngineObject
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L, MutableMatrix *U) const = 0;
 
-  virtual void LUincremental(std::vector<int>& P, const MutableMatrix* v, int i) = 0;
-  
+  virtual void LUincremental(std::vector<int>& P, const MutableMatrix* v, int m) = 0;
+
+  virtual void triangularSolve(MutableMatrix* x, int m, int strategy) = 0;
+
   // replace 'this=A' with a matrix which encodes both 'L' and 'U', returning a
   // permutation P
   // of 0..numRows A-1 s.t. LU = PA

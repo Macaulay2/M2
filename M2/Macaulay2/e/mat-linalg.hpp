@@ -234,12 +234,12 @@ void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
 template <typename Mat>
 M2_arrayintOrNull LU(const Mat& A, Mat& L, Mat& U)
 {
-  std::cout << "calling LU<Mat>" << std::endl;  
+  std::cout << "calling LU<Mat>" << std::endl;
   throw exc::engine_error(
       "'LU' not implemented for this kind of matrix over this ring");
 }
 
-template <typename Mat> 
+template <typename Mat>
 void LUincremental(std::vector<int>& P,
                    Mat& LU,
                    const Mat& v,
@@ -247,6 +247,16 @@ void LUincremental(std::vector<int>& P,
 {
   throw exc::engine_error(
       "'LUincremental' not implemented for this kind of matrix over this ring");
+}
+
+template <typename Mat>
+void triangularSolve(Mat& Lv,
+                     Mat& x,
+                     int m,
+                     int strategy)
+{
+  throw exc::engine_error(
+      "'triangularSolve' not implemented for this kind of matrix over this ring");
 }
 
 template <typename Mat, typename Mat2>
@@ -406,32 +416,123 @@ template <typename RT>
 inline M2_arrayintOrNull LU(const DMat<RT>& A, DMat<RT>& L, DMat<RT>& U)
 {
   std::cout << "calling LU<RT>" << std::endl;
-  
+
   std::vector<size_t> perm;
   DMatLinAlg<RT> LUdecomp(A);
   LUdecomp.matrixPLU(perm, L, U);
   return stdvector_to_M2_arrayint(perm);
 }
 
-template <typename RT> 
+template <typename RT>
 void LUincremental(std::vector<int>& P,
                    DMat<RT>& LU,
                    const DMat<RT>& v,
-                   int i)
+                   int m)
 {
-  //TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
-  //TODO:  Write the general code here.
+  std::cout << "calling LUincremental<RT>" << std::endl;
+  /*
+incrLU = method()
+incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
+    m := numrows LU;
+    -- permute rows of v according to P
+    v := mutableMatrix v'^(new List from P); -- FIXME
+    -- copy v to LU_{n}
+    for j to m - 1 do LU_(j, n) = v_(j, 0);
+    -- reduce LU_{n} + forward substitute
+    -- FIXME: about 25% of total time is spent in this loop
+    forwardSub(LU, v, n, Strategy => "incrLU");
+    -- place solution of forward substitution in U
+    for i to n - 1 do LU_(i, n) = v_(i, 0);
+    -- update P
+    n' := position(n..m-1, j -> LU_(j, n) != 0);
+    if ZZ === class n' then n' = n' + n else return 0;
+    if n != n' then (
+	rowSwap(LU, n, n');
+	P#n = P#n + P#n';
+	P#n' = P#n - P#n';
+	P#n = P#n - P#n';
+    );
+    -- set 1 to diagonal of L
+    for j from n + 1 to m - 1 do LU_(j, n) = LU_(j, n) / LU_(n, n);
+    -- return new v
+    transpose matrix { toList(n:0) | for j from n to m - 1 list LU_(j, n) }
+    )
+  */
 }
 
+/*
+//TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
 template<>
 inline void LUincremental(std::vector<int>& P,
                    DMat<M2::ARingZZpFlint>& LU,
                    const DMat<M2::ARingZZpFlint>& v,
-                   int i)
+                   int n)
 {
-  std::cout << "calling LUincremental<RT>" << std::endl;
-  //TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
+  std::cout << "calling LUincremental<ARingZZpFlint>" << std::endl;
+}
+*/
 
+/*
+  Cases for strategy:
+  00 upper triangular (forward substitution)
+  01 upper triangular, assume 1 on diagonal
+  10 lower triangular (backward substitution)
+  11 lower triangular, assume 1 on diagonal
+  Note: the rest of the matrix need not be 0 filled.
+*/
+template <typename RT>
+void triangularSolve(DMat<RT>& Lv,
+                     DMat<RT>& x,
+                     int m,
+                     int strategy)
+{
+  std::cout << "calling TriangularSolve<RT>" << std::endl;
+  // TODO: check rings match
+  // TODO: no divide by zero
+  // TODO: size of matrices
+  // TODO: add tests
+  // TODO: for size 0 also
+  switch (strategy)
+    {
+    case 0:
+      for (size_t i = 0; i < m; i++)
+        {
+          auto& a = x.entry(i, 0);
+          x.ring().divide(a, Lv.entry(i, m), Lv.entry(i, i));
+          x.ring().negate(a, a);
+          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, i);
+          x.ring().negate(a, a);
+        }
+      break;
+    case 1:
+      for (size_t i = 0; i < m; i++)
+        {
+          auto& a = x.entry(i, 0);
+          x.ring().negate(a, Lv.entry(i, m));
+          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, i);
+          x.ring().negate(a, a);
+        }
+      break;
+    case 2:
+      for (size_t i = 1; i < m + 1; i++)
+        {
+          auto& a = x.entry(m-i, 0);
+          x.ring().divide(a, Lv.entry(m-i, m), Lv.entry(m-i, m-i));
+          x.ring().negate(a, a);
+          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, m-i);
+          x.ring().negate(a, a);
+        }
+      break;
+    case 3:
+      for (size_t i = 1; i < m + 1; i++)
+        {
+          auto& a = x.entry(m-i, 0);
+          x.ring().negate(a, Lv.entry(m-i, m));
+          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, m-i);
+          x.ring().negate(a, a);
+        }
+      break;
+    }
 }
 
 template <typename RT>

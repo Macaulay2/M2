@@ -1473,19 +1473,27 @@ extern "C" {
      A encodes both the L and the U part, as in lapack.
    */
 
+  /**
+     Hi, this is rawLUincremental.
+
+     Returns the permutation array: we need to be more precise which one.
+     Given (first m columns of PLU = first m columns of A (not given), and
+     given the (m+1)-st column of A, then returns a Q, modified from P,
+     and changes LU (which encodes L and U)
+     s.t.  (first (m+1) columns of QLU = first (m+1) columns of A (not given)
+     Note: LU encodes L and U in the usual manner: lower triangular part is L,
+     diagonal of L is all ones, and U is the upper triangular part.
+  */
   M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P, /* constant */
                                      MutableMatrix *LU, /* modified in routine */
                                      const MutableMatrix *v, /* constant */
-                                     int i);
-  /* Returns the permutation array: we need to be more precise which one.
-     Given (first i columns of PLU = first i columns of A (not given), and
-     given the (i+1)-st column of A, then returns a Q, modified from P, 
-     and changes LU (which encodes L and U)
-     s.t.  (first (i+1) columns of QLU = first (i+1) columns of A (not given)
-     Note: LU encodes L and U in the usual manner: lower triangular part is L,
-     diagonal of L is all ones, and U is the upper triangular part.
-   */
-  
+                                     int m);
+
+  void rawTriangularSolve(MutableMatrix *Lv, /* modified in routine */
+                          MutableMatrix *x, /* modified in routine */
+                          int m,
+                          int strategy);
+
   M2_bool rawEigenvalues(MutableMatrix *A,
                          MutableMatrix *eigenvalues,
                          M2_bool isHermitian); /* connected */

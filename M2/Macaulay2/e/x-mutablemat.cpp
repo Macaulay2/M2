@@ -1,5 +1,7 @@
 // Copyright 2004 Michael E. Stillman
 
+#include <iostream>
+
 #include "engine.h"
 #include "relem.hpp"
 #include "ring.hpp"
@@ -580,6 +582,10 @@ M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
  ***** Lapack routines for dense mutable matrices **
  ***************************************************/
 
+/* Each of the following routines accepts honest MutableMatrix arguments,
+   and returns false if there is an error.  The return values are placed into
+   some of the (already existing) parameters of the routine */
+
 M2_arrayintOrNull rawLU(const MutableMatrix *A,
                         MutableMatrix *L,
                         MutableMatrix *U)
@@ -608,6 +614,21 @@ M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
     {
       ERROR(e.what());
       return NULL;
+  }
+}
+
+void rawTriangularSolve(MutableMatrix *Lv, /* modified in routine */
+                        MutableMatrix *x, /* modified in routine */
+                        int m,
+                        int strategy)
+{
+  std::cout << "hello from rawTriangularSolve in x-mutablemat" << std::endl;
+  try
+    {
+      Lv->triangularSolve(x, m, strategy);
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
   }
 }
 

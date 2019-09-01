@@ -693,6 +693,8 @@ class MutableMat : public MutableMatrix
 
   virtual void LUincremental(std::vector<int>& P, const MutableMatrix* v, int i);
 
+  virtual void triangularSolve(MutableMatrix* x, int m, int strategy);
+
   virtual bool eigenvalues(MutableMatrix* eigenvals,
                            bool is_symm_or_hermitian) const;
 
