@@ -92,10 +92,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	-- FIXME: About 50% of total time is spent here
 	r := incrLU(P, LU, v, s);
 	if r == 0 then (
-	    backSub(
-		submatrix(LU, toList(0..s-1), toList(0..s)), -- passing an extra column as temp
-		submatrix(LU, toList(0..s-1), {s}), lambda
-		);
+	    backSub(submatrix(LU, toList(0..s-1), toList(0..s)), lambda, s);
 	    -- TODO: don't remake a matrix every time
 	    g := elt - matrix {B2'} * matrix submatrix(lambda, toList(0..s-1), {0});
 	    G2#elt = g;
@@ -116,19 +113,17 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 -- Fast incremental LU decomposition code
 -------------------------------------------------------------------------------
 -- TODO: Move to engine
-incrLU = method();
+incrLU = method()
 incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
-    v := mutableMatrix v'^(new List from P); -- FIXME
     m := numrows LU;
+    -- permute rows of v according to P
+    v := mutableMatrix v'^(new List from P); -- FIXME
     -- copy v to LU_{n}
     for j to m - 1 do LU_(j, n) = v_(j, 0);
-    -- reduce LU_{n}
+    -- reduce LU_{n} + forward substitute
     -- FIXME: about 25% of total time is spent in this loop
-    for i to n - 1 do (
-	v_(i, 0) = LU_(i, n);
-	columnAdd(LU, n, -LU_(i, n), i);
-	);
-    -- replace top of v in U
+    forwardSub(LU, v, n, Strategy => "incrLU");
+    -- place solution of forward substitution in U
     for i to n - 1 do LU_(i, n) = v_(i, 0);
     -- update P
     n' := position(n..m-1, j -> LU_(j, n) != 0);
@@ -149,48 +144,42 @@ incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
 -- Fast back substitution code
 -------------------------------------------------------------------------------
 -- TODO: Move to engine
--- NOTE: U is upper triangular with one extra column for temp
--- Input upper triangular U and v and update x such that Ux=v
--- This version is pretty much a column reduction
-backSub = method();
-backSub(MutableMatrix, MutableMatrix, MutableMatrix) := (U', v, x) -> (
-    n := numrows U';
-    U := submatrix(U',{0..n-1},{0..n});
+-- Inputs:
+--   n x n+1 mutable matrix (U|v)
+--   n x 1 mutable matrix x
+--   integer n
+-- Consequences:
+--   Updates v to r = v % U
+--   Updates x such that v = Ux + r
+-- Notes: assumes U is upper triangular, but the actual values above the diagonal need not be zero
+backSub = method()
+backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
     for i from 1 to n do (
 	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
 	columnAdd(U, n, -x_(n-i, 0), n-i);
 	);
     )
 
--- This version is a naive backsub
-backSub' = (U, v, x) -> (
-    n := numrows U;
-    x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
-    for i from 2 to n do x_(n-i,0) = (v_(n-i, 0) - sum(n-i+1..n-1, j -> U_(n-i, j) * x_(j,0))) / U_(n-i,n-i);
-    )
-
--- This is a vectorized backsub
-backSub'' = (U, v, x) -> (
-    n := numrows U;
-    x_(n-1, 0) = v_(n-1, 0) / U_(n-1, n-1);
-    for i from 2 to n do x_(n-i,0) = (
-	v_(n-i, 0) - (
-	    submatrix(U, {n-i}, toList(n-i+1..n-1)) *
-	    submatrix(x, toList(n-i+1..n-1), {0})
-	    )_(0,0)
-	) / U_(n-i,n-i);
-    )
-
--*
 -------------------------------------------------------------------------------
--- Fast forward substitution code (NOT implemented)
+-- Fast forward substitution code
 -------------------------------------------------------------------------------
 -- TODO: Move to engine
--- Input lower triangular U and v and update x such that Ux=v
-forwardSub(MutableMatrix, MutableMatrix, MutableMatrix) := Nothing => opts -> (U, v, x) -> (
-    backsub(L, b, Forward => true)
+-- Inputs:
+--   n x n+1 mutable matrix (L|v)
+--   n x 1 mutable matrix x
+--   integer n
+-- Consequences:
+--   Updates v to r = v % L
+--   Updates x such that v = Lx + r
+-- Notes: assumes L is lower triangular, but the actual values below the diagonal need not be zero.
+-- If LUdecomposition => true, assumes the diagonal to be 1. This option is mainly used for incrLU.
+forwardSub = method(Options => {Strategy => null})
+forwardSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => opts -> (L, x, n) -> (
+    for i to n - 1 do (
+	if opts.Strategy == "incrLU" then x_(i, 0) = L_(i, n) else x_(i, 0) = L_(i, n) / L_(i,i);
+	columnAdd(L, n, -x_(i, 0), i);
+	);
     )
-*-
 
 -------------------------------------------------------------------------------
 -- See Section 2.4.4, Algorithm 2.4 of Thibaut Verron's thesis for details:
@@ -470,6 +459,7 @@ restart
 gbTrace = 1
 debug needsPackage "FGLM"
 backSub = profile backSub
+forwardSub = profile forwardSub
 incrLU  = profile incrLU
 multiplicationMatrices = profile multiplicationMatrices
 
@@ -483,6 +473,7 @@ G2 = elapsedTime fglm(G0, R2);
 
 profileSummary
 --backSub: 35 times, used .938288 seconds
+--forwardSub: 959 times, used 10.1295 seconds
 --incrLU: 959 times, used 20.4525 seconds
 --multiplicationMatrices: 1 times, used 1.89804 seconds
 
