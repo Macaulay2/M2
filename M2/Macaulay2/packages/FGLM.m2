@@ -171,11 +171,17 @@ incrLU(MutableList, MutableMatrix, MutableMatrix, ZZ) := (P', LU, v, n) -> (
 -- Notes: assumes U is upper triangular, but the actual values above the diagonal need not be zero
 backSub = method()
 backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
+    rawTriangularSolve(raw U, raw x, n, 2);
+    )
+
+-*
+backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
     for i from 1 to n do (
 	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
 	columnAdd(U, n, -x_(n-i, 0), n-i);
 	);
     )
+*-
 
 -------------------------------------------------------------------------------
 -- Fast forward substitution code
@@ -192,11 +198,20 @@ backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
 -- If LUdecomposition => true, assumes the diagonal to be 1. This option is mainly used for incrLU.
 forwardSub = method(Options => {Strategy => null})
 forwardSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => opts -> (L, x, n) -> (
+    if opts.Strategy == "incrLU" then
+      rawTriangularSolve(raw L, raw x, n, 1)
+    else
+      rawTriangularSolve(raw L, raw x, n, 0)
+    )
+
+-*
+forwardSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => opts -> (L, x, n) -> (
     for i to n - 1 do (
 	if opts.Strategy == "incrLU" then x_(i, 0) = L_(i, n) else x_(i, 0) = L_(i, n) / L_(i,i);
 	columnAdd(L, n, -x_(i, 0), i);
 	);
     )
+*-
 
 -------------------------------------------------------------------------------
 -- See Section 2.4.4, Algorithm 2.4 of Thibaut Verron's thesis for details:
@@ -212,6 +227,9 @@ multiplicationMatrices'(GroebnerBasis) := List => (G) -> (
 
     R := ring G;
     I := ideal gens G;
+    -- FIXME: this is a hecking hack
+    gbOpt := new GroebnerBasisOptions from {HardDegreeLimit => null, Syzygies => false, SyzygyRows => 0};
+    I.generators.cache#gbOpt = G;
     B := first entries sub(basis (R/I), R); -- TODO: find a way to avoid recomputing GB
     N := new MutableHashTable from for b in B list b => b;
     F := flatten for x in gens R list flatten apply(B, b -> if not N#?(x * b) then x * b else {});
@@ -471,7 +489,7 @@ viewHelp "FGLM"
 -------------------------------------------------------------------------------
 -- cyclic7
 -- gb: 1354.44
--- fglm: 353.367 -> 37.76 (+ 6.63 base gb)
+-- fglm: 353.37 -> 37.76 -> 39.67 (+ 0.45s gb in GRevLex w/ F4)
 restart
 gbTrace = 1
 debug needsPackage "FGLM"
@@ -484,7 +502,7 @@ multiplicationMatrices = profile multiplicationMatrices
 --G1 = elapsedTime gb I1;
 I2 = cyclic(7)
 R2 = newRing(ring I2, MonomialOrder=>Lex)
-G0 = elapsedTime gb I2;
+G0 = elapsedTime forceGB(groebnerBasis(I2, Strategy => "F4"));
 G2 = elapsedTime fglm(G0, R2);
 --assert(gens G1 == gens G2)
 
@@ -655,8 +673,6 @@ assert(U == U')
 assert(P' == new List from P)
 *-
 
-
-
 -- Singular test
 LIB "poly.lib";
 ring r=32003,(a,b,c,d,e,f,g),lp;
@@ -697,21 +713,11 @@ setRandomSeed("hello")
 
 n = 3
 kk= ZZ/17
-U' = matrix (random(kk^n,kk^(n+1), UpperTriangular => true) + (id_(kk^n) | random(kk^n,kk^1)))
-U = mutableMatrix U'
+U = mutableMatrix (random(kk^n,kk^(n+1), UpperTriangular => true) + (id_(kk^n) | random(kk^n,kk^1)))
 x = mutableMatrix map(kk^n,kk^1,0)
+v = matrix submatrix(U,{0..n-1}, {n})
 
 rawTriangularSolve(raw U, raw x, 3, 3)
 
 r = matrix submatrix(U,{0..n-1},{n})
-v = submatrix(U',{0..n-1}, {n})
-X = matrix x
-U'' = submatrix(U', {0..n-1}, {0..n-1})
-U'' * X + r == v
-
-submatrix(U,, {0..n-1}) * x + submatrix(U,,{n})
-
-
-v = submatrix(U, {0..n-1},{n})
-backSub(U,v,x)
-submatrix(U,{0..n-1},{0..n-1}) * x - v
+assert(matrix submatrix(U,, {0..n-1}) * matrix x + r == v)
