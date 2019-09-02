@@ -7,7 +7,6 @@
  * \ingroup matrices
  */
 
-#include <iostream>
 #include "util.hpp"
 #include "exceptions.hpp"
 #include "dmat.hpp"
@@ -59,6 +58,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 #pragma GCC diagnostic pop
 
 #include <iostream>
+#include <algorithm>
 
 namespace MatrixOps {
 /// @brief the rank of a matrix
@@ -423,61 +423,12 @@ inline M2_arrayintOrNull LU(const DMat<RT>& A, DMat<RT>& L, DMat<RT>& U)
   return stdvector_to_M2_arrayint(perm);
 }
 
-template <typename RT>
-void LUincremental(std::vector<int>& P,
-                   DMat<RT>& LU,
-                   const DMat<RT>& v,
-                   int m)
-{
-  std::cout << "calling LUincremental<RT>" << std::endl;
-  /*
-incrLU = method()
-incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
-    m := numrows LU;
-    -- permute rows of v according to P
-    v := mutableMatrix v'^(new List from P); -- FIXME
-    -- copy v to LU_{n}
-    for j to m - 1 do LU_(j, n) = v_(j, 0);
-    -- reduce LU_{n} + forward substitute
-    -- FIXME: about 25% of total time is spent in this loop
-    forwardSub(LU, v, n, Strategy => "incrLU");
-    -- place solution of forward substitution in U
-    for i to n - 1 do LU_(i, n) = v_(i, 0);
-    -- update P
-    n' := position(n..m-1, j -> LU_(j, n) != 0);
-    if ZZ === class n' then n' = n' + n else return 0;
-    if n != n' then (
-	rowSwap(LU, n, n');
-	P#n = P#n + P#n';
-	P#n' = P#n - P#n';
-	P#n = P#n - P#n';
-    );
-    -- set 1 to diagonal of L
-    for j from n + 1 to m - 1 do LU_(j, n) = LU_(j, n) / LU_(n, n);
-    -- return new v
-    transpose matrix { toList(n:0) | for j from n to m - 1 list LU_(j, n) }
-    )
-  */
-}
-
-/*
-//TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
-template<>
-inline void LUincremental(std::vector<int>& P,
-                   DMat<M2::ARingZZpFlint>& LU,
-                   const DMat<M2::ARingZZpFlint>& v,
-                   int n)
-{
-  std::cout << "calling LUincremental<ARingZZpFlint>" << std::endl;
-}
-*/
-
 /*
   Cases for strategy:
-  00 upper triangular (forward substitution)
-  01 upper triangular, assume 1 on diagonal
-  10 lower triangular (backward substitution)
-  11 lower triangular, assume 1 on diagonal
+  00 lower triangular (forward substitution)
+  01 lower triangular, assume 1 on diagonal
+  10 upper triangular (backward substitution)
+  11 upper triangular, assume 1 on diagonal
   Note: the rest of the matrix need not be 0 filled.
 */
 template <typename RT>
@@ -533,6 +484,58 @@ void triangularSolve(DMat<RT>& Lv,
         }
       break;
     }
+}
+
+/*
+//TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
+template<>
+inline void LUincremental(std::vector<int>& P,
+                   DMat<M2::ARingZZpFlint>& LU,
+                   const DMat<M2::ARingZZpFlint>& v,
+                   int n)
+{
+  std::cout << "calling LUincremental<ARingZZpFlint>" << std::endl;
+}
+*/
+
+template <typename RT>
+void LUincremental(std::vector<int>& P,
+                   DMat<RT>& LU,
+                   const DMat<RT>& v,
+                   int m)
+{
+  std::cout << "calling LUincremental<RT>" << std::endl;
+
+  size_t n = LU.numRows();
+
+  // copy permuted v to m-th column of LU
+  for (int j = 0; j < n; j++) {
+    LU.ring().set(LU.entry(j, m), v.entry(P[j], 0));
+  }
+
+  // forward solve
+  DMat<RT> x {LU.ring(), n, 1};
+  triangularSolve(LU, x, m, 1);
+  for (int i = 0; i < m; i++) {
+    LU.ring().set(LU.entry(i, m), x.entry(i, 0)); 
+  }
+
+  // find pivot and swap if needed
+  int pivotPosition = -1;
+  for (int j = m; j < n; j++) {
+    if (!LU.ring().is_zero(LU.entry(j, m))) {
+      pivotPosition = j;
+      break;
+    }
+  }
+  if (pivotPosition == -1) return;
+  MatElementaryOps<DMat<RT>>::interchange_rows(LU, pivotPosition, m);
+  std::swap(P[pivotPosition], P[m]);
+
+  // scale column of L
+  for (int j = m+1; j < n; j++) {
+    LU.ring().divide(LU.entry(j, m), LU.entry(j, m), LU.entry(m, m));
+  }
 }
 
 template <typename RT>

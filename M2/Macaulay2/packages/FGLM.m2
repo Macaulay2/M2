@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export {"fglm"}
 
+debug Core
+
 -------------------------------------------------------------------------------
 --- top level functions
 -------------------------------------------------------------------------------
@@ -65,7 +67,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 
     -- initiating LU-decomposition matrices
     P := new MutableList from toList(0..m-1);
-    v := transpose matrix {{1_kk} | toList ((m-1):0)};
+    v := transpose mutableMatrix {{1_kk} | toList ((m-1):0)};
     LU := mutableMatrix map(kk^m, kk^(m+1), 0);
     lambda := transpose mutableMatrix {toList (m:0_kk)};
     incrLU(P, LU, v, 0);
@@ -83,6 +85,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     while #S > 0 do (
 	-- FIXME: About 25% of total time is spent here
 	-- TODO: use O(1) min for fun and profit
+	print 1/0;
 	(elt, vals) := min pairs S;
 	remove(S, elt);
 	if any(keys G2, lt -> elt % lt == 0) then continue;
@@ -90,7 +93,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	v = M#i * V#mu;
 
 	-- FIXME: About 50% of total time is spent here
-	r := incrLU(P, LU, v, s);
+	r := incrLU(P, LU, submatrix(v, , {0}), s);
 	if r == 0 then (
 	    backSub(submatrix(LU, toList(0..s-1), toList(0..s)), lambda, s);
 	    -- TODO: don't remake a matrix every time
@@ -114,10 +117,20 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 -------------------------------------------------------------------------------
 -- TODO: Move to engine
 incrLU = method()
-incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
+incrLU(MutableList, MutableMatrix, MutableMatrix, ZZ) := (P', LU, v, n) -> (
+
+    m := numrows LU;
+    P := toSequence P';
+    print P;
+    print LU;
+    print transpose v;
+    print n;
+
+    rawLUincremental(P, raw LU, raw v, n);
+-*
     m := numrows LU;
     -- permute rows of v according to P
-    v := mutableMatrix v'^(new List from P); -- FIXME
+    rowPermute(v, 0, new List from P);
     -- copy v to LU_{n}
     for j to m - 1 do LU_(j, n) = v_(j, 0);
     -- reduce LU_{n} + forward substitute
@@ -138,7 +151,11 @@ incrLU(MutableList, MutableMatrix, Matrix, ZZ) := (P, LU, v', n) -> (
     for j from n + 1 to m - 1 do LU_(j, n) = LU_(j, n) / LU_(n, n);
     -- return new v
     transpose matrix { toList(n:0) | for j from n to m - 1 list LU_(j, n) }
-    )
+*-
+    scan(m, i -> P'#i = P#i);
+    print "hi";
+    LU_(n, n) == 0
+)
 
 -------------------------------------------------------------------------------
 -- Fast back substitution code
@@ -230,7 +247,7 @@ multiplicationMatrices(GroebnerBasis) := List => (G) -> (
     I.generators.cache#gbOpt = G;
     B := basis (R/I); -- TODO: find a way to avoid recomputing GB
 
-    for x in gens R list lift(last coefficients(x * B, Monomials => B), coefficientRing R)
+    for x in gens R list mutableMatrix lift(last coefficients(x * B, Monomials => B), coefficientRing R)
     )
 
 -------------------------------------------------------------------------------
@@ -652,16 +669,26 @@ t;
 
 -- engine test
 restart
-debug Core
-
-n = 3
-kk = ZZ/32003
-M = mutableMatrix random(kk^n,kk^n)
-LU = mutableMatrix map(kk^n,kk^n,0)
+debug needsPackage "FGLM"
+setRandomSeed("hello")
+n = 6
+kk = ZZ/101
+M = mutableMatrix id_(kk^n)--random(kk^n,kk^n)
+LU = mutableMatrix map(kk^n,kk^(n+1),0)
 
 P = (0..n-1)
-rawLUincremental(P, raw LU, raw M_{0}, 0)
+P = new MutableList from P
+--rawLUincremental(P, raw LU, raw M_{0}, 0)
+incrLU(P, LU, M_{0}, 0)
+incrLU(P, LU, M_{1}, 1)
+incrLU(P, LU, M_{2}, 2)
 
+
+restart
+debug needsPackage "FGLM"
+R1 = ZZ/101[x,y,z]
+I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
+test(I1, Lex) 
 
 
 restart
@@ -674,7 +701,7 @@ U' = matrix (random(kk^n,kk^(n+1), UpperTriangular => true) + (id_(kk^n) | rando
 U = mutableMatrix U'
 x = mutableMatrix map(kk^n,kk^1,0)
 
-rawTriangularSolve(raw U, raw x, 3, 1)
+rawTriangularSolve(raw U, raw x, 3, 3)
 
 r = matrix submatrix(U,{0..n-1},{n})
 v = submatrix(U',{0..n-1}, {n})
