@@ -25,7 +25,7 @@ JGB = ncGroebnerBasis(J, DegreeLimit=>10);
 (gens JGB)/degree//tally
 
 restart
-debug needsPackage "PolynomialAlgebra"
+debug needsPackage "AssociativeAlgebras"
 kk = ZZ/32003
 R = kk{d,c,b,a}
 J = ideal {b*a+a*b-a^2, c*b+b*c, d*b-c*a+b*d-a*c, d^2-d*c-c*d}

@@ -1,5 +1,5 @@
 newPackage(
-        "PolynomialAlgebra",
+        "AssociativeAlgebras",
         Version => "0.1", 
         Date => "16 Feb 2016",
         Authors => {{Name => "Frank Moore", 
@@ -285,7 +285,7 @@ BENCHMARK String := (s) -> null
 
 doc ///
 Key
-  PolynomialAlgebra
+  AssociativeAlgebras
 Headline
   non-commutative polynomial algebra
 Description
@@ -304,10 +304,10 @@ SeeAlso
 TEST ///
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 
   restart
-  check "PolynomialAlgebra"
+  check "AssociativeAlgebras"
 
 *-
   --- generators test
@@ -441,7 +441,7 @@ TEST ///
 ///
 
 TEST ///
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
   R = QQ{a,b,c,d}
   g1 = a^2-b*c+c^3
   g2 = a*b*a+c*d*b+3*a*b*c*d
@@ -517,7 +517,7 @@ TEST ///
 TEST ///
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   debug Core
   -- basic arithmetic
@@ -547,7 +547,7 @@ TEST ///
 TEST /// 
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = QQ{b,c,d}
   assert instance(R, FreeAlgebra)
@@ -585,7 +585,7 @@ TEST ///
 TEST /// 
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = QQ{b,c,d, Degrees=>{2,3,4}}
   degree b
@@ -595,7 +595,7 @@ TEST ///
   assert isHomogeneous(b^2-d)
   assert not isHomogeneous(b^2-c)
 
-  R = QQ{b,c,d, Degrees=>{{1,0},{0,1},{3,-4}}}
+  R = QQ{b,c,d, Degrees=>{{1,0},{0,1},{3,-4}}, Heft=>{2,1}}
   degree b
   degree c
   degree d
@@ -603,6 +603,13 @@ TEST ///
   assert isHomogeneous(c^4*d-b^3)
   assert(degree(c^4*d-b^3) == {3,0})
   assert not isHomogeneous(b^2-c)
+  
+  F = b^3 + c^4*d
+  assert(leadTerm F == c^4*d);  -- default order is heft-graded, then word length, then lexicographic
+  I = ideal"b3-c2dc2"
+  assert isHomogeneous I
+  NCGB(I, 10)
+
 ///
 
 TEST ///
@@ -637,7 +644,7 @@ TEST ///
 TEST ///
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
 
   A = QQ[s,t]
@@ -709,7 +716,7 @@ TEST ///
 TEST ///
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a,b,c,d}
   M = matrix{{a*b*c-2*a*a*b*a}}
@@ -720,7 +727,7 @@ TEST ///
 TEST ///
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   A = QQ[a..d]
   M = matrix{{a,b},{c,d}}
@@ -753,7 +760,7 @@ TEST ///
   -- noncommutative reduction test
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a..d}
   I = ideal(a*b*a-a*c*b)
@@ -780,7 +787,7 @@ TEST ///
   -- noncommutative reduction test
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
@@ -793,7 +800,7 @@ TEST ///
 -- test of free algebra quotient rings
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   debug Core
   R = QQ{a,b}
@@ -876,7 +883,7 @@ TEST ///
 -- test of basis of a quotient ring
 -*
   restart
-  needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a,b}
   I = ideal(a^2 - b^2)
@@ -895,15 +902,13 @@ TEST ///
 -*
 -- XXX
   restart
-  debug needsPackage "PolynomialAlgebra"
+  needsPackage "AssociativeAlgebras"
 *-
   R = (ZZ/32003){a,b,c}
-  R = QQ{a,b,c}
   I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
   elapsedTime NCGB(I, 10);
-    elapsedTime NCGB(I, 15);
   A = R/I
   assert(numcols ncBasis(0,A) == 1)
   assert(numcols ncBasis(1,A) == 3)
@@ -915,22 +920,27 @@ TEST ///
 ///
 
 ///
+  -- magma code
   kk := Rationals();
+  kk := FiniteField(32003);
   F<a,b,c> := FreeAlgebra(kk,3);
   B := [2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2];
   I := ideal<F | B>;
-  GroebnerBasis(B,15):
+  # GroebnerBasis(B,15);
+  
+  B := [a^2-1, b^2-1, c^2-1, a*b*a-b*a*b, b*c*b-c*b*c, a*c-c*a];
+  I := ideal<F | B>; 
+  GroebnerBasis(B,3); 
 ///
 
 TEST ///
 -*
   restart
-  debug needsPackage "PolynomialAlgebra"
+  debug needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}}
-  -- R = QQ{a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}, Heft=>{1,1,1}} -- not working
   assert(degree a == {1,0,0})
   assert(degree (a^2 + b^2 + c^2) == {2,2,2})
   assert not isHomogeneous (a^2 + b^2 + c^2)
@@ -940,7 +950,7 @@ TEST ///
 TEST ///
 -*
   restart
-  debug needsPackage "PolynomialAlgebra"
+  debug needsPackage "AssociativeAlgebras"
 *-
   -- note that variables in the base of a FreeAlgebra commute
   -- with the variables adjoined.  I.e. QQ{x}{y} is the same as QQ[x,y]
@@ -963,7 +973,7 @@ TEST ///
 TEST ///
 -*
   restart
-  debug needsPackage "PolynomialAlgebra"
+  debug needsPackage "AssociativeAlgebras"
 *-
   R = QQ{a,b,c,t, Weights=>{{1,1,1,0}}}
   I = ideal {a*b - c*t, b*c - a*t, c*a - b*t, a*t - t*a, b*t - t*b, c*t - t*c}
@@ -983,23 +993,20 @@ TEST ///
   assert(leadTerm (a^3 + b^2) == a^3)-- should be a^3 (which it is)
 
   R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1}}}
-  -- how to we test to ensure an error is thrown for these two?
-  R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1,1}}}
-  R = QQ{a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}}  
+  -- The following two ring definitions are supposed to give errors.
+  assert try (R = QQ{a,b,Degrees=>{2,3}, Weights=>{{1,0},{0,1,1}}}; false) else true
+  assert try (R = QQ{a,b,Degrees=>{2,3}, Weights=>{{-1,0},{0,-1}}}; false) else true
 ///
 
 TEST ///
 -*
--- YYY
   restart
-  debug needsPackage "PolynomialAlgebra"
+  debug needsPackage "AssociativeAlgebras"
 *-
 R = QQ{a,b,c,x,y, Degrees => {3,3,2,1,1}, Weights => {{0,0,0,1,1}} }
 I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 isHomogeneous I
 assert(degrees source gens I === {{2},{3},{3}})
-
-I = ideal{x*y - c, x*y*x-a, y*x*y-b}
 M1 = gens I
 J = NCGB(I,3) 
 J = NCGB(I,20)
@@ -1008,116 +1015,24 @@ J1 = ideal (ideal M1)_*
 J2 = ideal (ideal M2)_*
 assert(NCGB(J1, 20) == NCGB(J2, 20)) -- note: NCGB J2 seems correct.
 
--- test #1: homog with std grading
-  restart
-  debug needsPackage "PolynomialAlgebra"
-  R = QQ{a,b,c,x,y, Degrees => {1,1,1,1,1}, Weights => {{0,0,0,1,1}} }
-  I = ideal{x*y - c*c, x*y*x-a*a*a, y*x*y-b*b*b}
-  isHomogeneous I
-  assert(degrees source gens I === {{2},{3},{3}})
-  elapsedTime J = NCGB(I,5) 
-  elapsedTime NCGB(ideal I_*, 3)
-  elapsedTime NCGB(ideal I_*, 5)
-  elapsedTime NCGB(ideal I_*, 7)
-  elapsedTime NCGB(ideal I_*, 9)
-  elapsedTime NCGB(ideal I_*, 11)
-  elapsedTime NCGB(ideal I_*, 13)
-  elapsedTime NCGB(ideal I_*, 15)
-  elapsedTime NCGB(ideal I_*, 17) -- 3.3 sec
-  elapsedTime NCGB(ideal I_*, 18); -- 14.9 sec
-  elapsedTime NCGB(ideal I_*, 19); -- 60 sec (1865 gens)
-
-  I = ideal I_*
-  elapsedTime NCGB(I, 3)
-  elapsedTime NCGB(I, 5)
-  elapsedTime NCGB(I, 7)
-  elapsedTime NCGB(I, 9)
-  elapsedTime NCGB(I, 11)
-  elapsedTime NCGB(I, 13)
-  elapsedTime NCGB(I, 15)
-  elapsedTime NCGB(I, 17) -- 3.3  sec
-  elapsedTime NCGB(I, 18); --  sec
-  elapsedTime NCGB(I, 19); --  sec (1865 gens)
-
-  NCGB(ideal oo, 5)
-  NCGB(I, 7)
-  -- these seem potentially correct, at least, they agree!
-  -- so first place to look is word length vs degree, in the code...
--- end of test#1 -------------------
-
-J = NCGB(I,3) 
-J = NCGB(I,4) -- this is not working
-J = NCGB(I,5)
-J = NCGB(I,6)
-J = NCGB(I,20)
+J = NCGB(I, 6)
 assert isHomogeneous J
--- several problems (22 Aug 2019):
---  1. doing e.g. NCGB(I, 20) after defining I, gives wrong answer
---  2. doing NCGB(I, 3) first, seems to give better answer. (not sure yet if correct)
---  3. NCGB is computing too far, e.g. NCGB(I,3); NCGB(I,4) computes to degree 8...
-
-I1 = ideal {x*y - c}
-NCReduction2Sided(x*y*x - a, I1)
-I2 = ideal {x*y - c, c*x - a}
+assert(NCReduction2Sided(x*y*x*y*x, ideal J) == c*a)
 ///
 
 end--
 
 restart
-needsPackage "PolynomialAlgebra"
-installPackage "PolynomialAlgebra"
-uninstallPackage "PolynomialAlgebra"
-viewHelp "PolynomialAlgebra"
-check "PolynomialAlgebra"
+uninstallPackage "AssociativeAlgebras"
+restart
+needsPackage "AssociativeAlgebras"
+installPackage "AssociativeAlgebras"
+viewHelp "AssociativeAlgebras"
+restart
+check "AssociativeAlgebras"
+  -- 3 tests fail (3 Sep 2019):
+  -- leadMonomial, ncBasis(-1, ...), and negative Weights in ring def.
 
--- TODO:
--- Engine code:
--- 1. eval for FreeAlgebraQuotient, separate heap from FreeAlgebra for use in FreeAlgebraQuotient
--- 2. PolyWithPos for reduction code/use heaps there as well
--- 3. Inhomogeneous GBs (rabbit)
--- 4. ncBasis in multidegree
--- 5. heft vectors for multidegrees
--- 6. bug with ncBasis(-1,ring)
--- 7. How to tell the difference between finding the entire GB and hitting a degree cap
--- 8. Add weight vectors for more general monomial orders (elimination, etc)
--- Top Level Code:
--- 1. Documentation
--- 2. Tests
--- 3. Convert left/rightMult to new basis code
--- 4. Convert central/normal elements to new basis code
-
--- play with listForm
--- calls rawPairs, which calls IM2_RingElement_list_form in engine
--- each ring has its own "list_form(coeff ring, ring_elem)"
-
--- TODO: 1/3/19 MS+FM (DONE means: make sure there are tests for it!!)
--- 1. isEqual DONE
--- 2. mutable matrices DONE
--- 3. promote/lift DONE
--- 4. rawPairs, etc (rawPairs: DONE)
--- 5. leadTerm/Coefficient/Monomial (NOT DONE)
--- 6. terms DONE
--- 7. degrees/weights of variables (NOT DONE)
--- 8. listForm (Not correct for NC case): use rawSparseListFormMonomial.
--- 9. check on ring map evaluation.
--- eventually: 
---  a. want ring of square matrices over a ring.
---  b. Endomorphism ring and/or Ext algebra.
---  c. Skew poly rings
---  d. path algebra?
--- not written:
---   is_homogeneous
---   degree
---   multi_degree
--- order of events:
---  a. fix the little stuff above.
---   a1. then get existing bergman interface to work with this code.
---  b. understand bergman GB/res algorithms/tricks.
---  c. implement GB and res
---  d. add in these other non-commutative rings.
--- Eventually: make a front end type: NCMonoid, or FreeMonoid, ...
---   have PolynomialAlgebra::create use that, instead of create one.
--- Get torsion in a monoid to work.
 doc ///
 Key
 Headline
@@ -1140,7 +1055,7 @@ TEST ///
 ///
 
 restart
-needsPackage "PolynomialAlgebra"
+needsPackage "AssociativeAlgebras"
 debug Core
 A = QQ[x,y]
 R = A{b,c,d}
@@ -1150,6 +1065,6 @@ rawP = rawPairs(raw coefficientRing R, raw f)
 -- this code can be used, for example, to get the 'monomial part' of terms.
 toList apply(last rawP / rawSparseListFormMonomial, t -> product(apply(t, p -> R_(p#0)^(p#1))))
 --- this is how terms is computed.  rawTerm calls IM2_RingElement_term in the engine.
---- Q: Do we change this code to work for PolynomialAlgebra objects as well, or will they
+--- Q: Do we change this code to work for AssociativeAlgebra objects as well, or will they
 ---    get their own function?  (We added a separate function for these types of things in the past).
 apply(rawP#0,rawP#1,(c,m) -> new R from rawTerm(raw R, c, m))

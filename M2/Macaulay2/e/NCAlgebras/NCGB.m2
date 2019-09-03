@@ -11,7 +11,7 @@ elapsedTime (Igb = ncGroebnerBasis(I, DegreeLimit => 15));
 {y^2*x-x*y^2, y*x^2-x^2*y, z*x-2*y^2+x*z, z*y+y*z-2*x^2, z^2-1/2*y*x-1/2*x*y}
 
 restart
-needsPackage "PolynomialAlgebra"
+needsPackage "AssociativeAlgebras"
 gbTrace = 4
 kk = QQ
 R = kk{z,y,x}
@@ -40,7 +40,7 @@ inJ = (ideal J)_*/leadTerm//ideal
 compress NCReduction2Sided(matrix{B}, inJ)
 
 restart
-needsPackage "PolynomialAlgebra"
+needsPackage "AssociativeAlgebras"
 kk = ZZ/32003
 R = kk{z,y,x}
 I = ideal(5*z^2+3*y*x+2*x*y, 3*z*y+2*y*z+5*x^2, 2*z*x+5*y^2+3*x*z)
@@ -71,7 +71,7 @@ compress NCReduction2Sided(matrix{{y^3}}, ideal(y*x*y^2)) -- crash
 
 
 restart
-needsPackage "PolynomialAlgebra"
+needsPackage "AssociativeAlgebras"
 
 kk = ZZ/32003
 R = kk{x,y}
@@ -79,7 +79,7 @@ compress NCReduction2Sided(matrix{{y}}, ideal(y^2)) -- crash
 
 
 restart
-needsPackage "PolynomialAlgebra"
+needsPackage "AssociativeAlgebras"
 kk = frac(QQ[a,b,c])
 R = kk{x,y,z}
 I = ideal(a*x*y + b*y*x + c*z^2, a*y*z + b*z*y + c*x^2, a*z*x + b*x*z + c*y^2)
@@ -87,7 +87,7 @@ elapsedTime Igb = NCGB(I,5)
 elapsedTime Igb = NCGB(I,6)
 
 restart
-needsPackage "PolynomialAlgebra"
+needsPackage "AssociativeAlgebras"
 R = QQ{x,y}
 I = ideal{x^2 - y^2}
 Igb = NCGB(I,3)
