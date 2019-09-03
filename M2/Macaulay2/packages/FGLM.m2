@@ -66,7 +66,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     B2' := matrix {{1_R2}};
 
     -- initiating LU-decomposition matrices
-    P := new MutableList from (0..m-1);
+    P := toList(0..m-1);
     v := transpose mutableMatrix {{1_kk} | toList ((m-1):0)};
     LU := mutableMatrix map(kk^m, kk^(m+1), 0);
     lambda := transpose mutableMatrix {toList (m:0_kk)};
@@ -81,9 +81,10 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     -- Note: use a heap in the engine for this
     S := new MutableHashTable from for i to n - 1 list R2_i * 1_R2 => (i, 1_R2);
 
+    -- ~2s up to this point
     s := 1;
     while #S > 0 do (
-	-- FIXME: About 25% of total time is spent here
+	-- ~14s in this line
 	-- TODO: use O(1) min for fun and profit
 	(elt, vals) := min pairs S;
 	remove(S, elt);
@@ -91,14 +92,17 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	(i, mu) := vals;
 	v = M#i * V#mu;
 
-	-- FIXME: About 50% of total time is spent here
-	-- TODO: can we copy v?
-	if incrLU(P, LU, submatrix(v, , {0}), s) then (
+	-- ~6.2s in this line
+	-- TODO: can we not copy v?
+	P = incrLU(P, LU, submatrix(v, , {0}), s);
+	if s == m or (s < m and LU_(s, s) == 0) then (
+	    -- ~1.3s in this branch
 	    backSub(submatrix(LU, toList(0..s-1), toList(0..s)), lambda, s);
 	    -- TODO: don't remake a matrix every time
 	    g := elt - B2' * matrix submatrix(lambda, toList(0..s-1),);
 	    G2#elt = g;
 	    ) else (
+	    -- ~1.6s in this branch
 	    s = s + 1;
 	    -- TODO: add elt to VS and row reduce here
 	    V#elt = v;
@@ -116,12 +120,8 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 -------------------------------------------------------------------------------
 -- TODO: Move to engine
 incrLU = method()
-incrLU(MutableList, MutableMatrix, MutableMatrix, ZZ) := (P', LU, v, m) -> (
-    n := numrows LU;
-    P := rawLUincremental(toSequence P', raw LU, raw v, m);
-    scan(n, i -> P'#i = P#i);
-    if m == n then return true;
-    LU_(m, m) == 0
+incrLU(List, MutableMatrix, MutableMatrix, ZZ) := (P, LU, v, m) -> (
+    rawLUincremental(P, raw LU, raw v, m)
     )
 
 -------------------------------------------------------------------------------
@@ -456,12 +456,11 @@ viewHelp "FGLM"
 -------------------------------------------------------------------------------
 -- cyclic7
 -- gb: 1354.44
--- fglm: 353.37 -> 37.76 -> 39.67 (+ 0.45s gb in GRevLex w/ F4)
+-- fglm: 353.37 -> 37.76 -> 39.67 -> 25.83 (+ 0.48s gb in GRevLex w/ F4)
 restart
 gbTrace = 1
 debug needsPackage "FGLM"
 backSub = profile backSub
-forwardSub = profile forwardSub
 incrLU  = profile incrLU
 multiplicationMatrices = profile multiplicationMatrices
 
@@ -474,15 +473,14 @@ G2 = elapsedTime fglm(G0, R2);
 --assert(gens G1 == gens G2)
 
 profileSummary
---backSub: 35 times, used .938288 seconds
---forwardSub: 959 times, used 10.1295 seconds
---incrLU: 959 times, used 20.4525 seconds
---multiplicationMatrices: 1 times, used 1.89804 seconds
+--backSub: 35 times, used .279453 seconds
+--incrLU: 959 times, used 6.17558 seconds
+--multiplicationMatrices: 1 times, used 1.99896 seconds
 
 --T = new MutableList from toList(20:0);
 --ticker := cpuTime(); ctr := 0;
 --ctr = 1; T#ctr = T#ctr + cpuTime() - ticker; ticker = cpuTime();
---peek T
+peek T
 
 -------------------------------------------------------------------------------
 --- Longer tests

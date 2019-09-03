@@ -608,8 +608,8 @@ M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
   try
     {
       // FIXME: can we not allocate new permutation array?
-      std::vector<size_t> P1 = M2_arrayint_to_stdvector<size_t>(P);
-      return LU->LUincremental(P1, v, i);
+      std::vector<size_t> perm = M2_arrayint_to_stdvector<size_t>(P);
+      return LU->LUincremental(perm, v, i);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
