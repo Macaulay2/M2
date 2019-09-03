@@ -240,23 +240,18 @@ M2_arrayintOrNull LU(const Mat& A, Mat& L, Mat& U)
 }
 
 template <typename Mat>
-void LUincremental(std::vector<int>& P,
-                   Mat& LU,
-                   const Mat& v,
-                   int i)
+M2_arrayintOrNull LUincremental(std::vector<size_t>& P, Mat& LU, const Mat& v, int i)
 {
   throw exc::engine_error(
       "'LUincremental' not implemented for this kind of matrix over this ring");
 }
 
 template <typename Mat>
-void triangularSolve(Mat& Lv,
-                     Mat& x,
-                     int m,
-                     int strategy)
+void triangularSolve(Mat& Lv, Mat& x, int m, int strategy)
 {
   throw exc::engine_error(
-      "'triangularSolve' not implemented for this kind of matrix over this ring");
+      "'triangularSolve' not implemented for this kind of matrix over this "
+      "ring");
 }
 
 template <typename Mat, typename Mat2>
@@ -432,12 +427,8 @@ inline M2_arrayintOrNull LU(const DMat<RT>& A, DMat<RT>& L, DMat<RT>& U)
   Note: the rest of the matrix need not be 0 filled.
 */
 template <typename RT>
-void triangularSolve(DMat<RT>& Lv,
-                     DMat<RT>& x,
-                     int m,
-                     int strategy)
+void triangularSolve(DMat<RT>& Lv, DMat<RT>& x, int m, int strategy)
 {
-  std::cout << "calling TriangularSolve<RT>" << std::endl;
   // TODO: check rings match
   // TODO: no divide by zero
   // TODO: size of matrices
@@ -445,97 +436,102 @@ void triangularSolve(DMat<RT>& Lv,
   // TODO: for size 0 also
   switch (strategy)
     {
-    case 0:
-      for (size_t i = 0; i < m; i++)
-        {
-          auto& a = x.entry(i, 0);
-          x.ring().divide(a, Lv.entry(i, m), Lv.entry(i, i));
-          x.ring().negate(a, a);
-          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, i);
-          x.ring().negate(a, a);
-        }
-      break;
-    case 1:
-      for (size_t i = 0; i < m; i++)
-        {
-          auto& a = x.entry(i, 0);
-          x.ring().negate(a, Lv.entry(i, m));
-          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, i);
-          x.ring().negate(a, a);
-        }
-      break;
-    case 2:
-      for (size_t i = 1; i < m + 1; i++)
-        {
-          auto& a = x.entry(m-i, 0);
-          x.ring().divide(a, Lv.entry(m-i, m), Lv.entry(m-i, m-i));
-          x.ring().negate(a, a);
-          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, m-i);
-          x.ring().negate(a, a);
-        }
-      break;
-    case 3:
-      for (size_t i = 1; i < m + 1; i++)
-        {
-          auto& a = x.entry(m-i, 0);
-          x.ring().negate(a, Lv.entry(m-i, m));
-          MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, m-i);
-          x.ring().negate(a, a);
-        }
-      break;
+      case 0:
+        // TODO: change to iter
+        for (size_t i = 0; i < m; i++)
+          {
+            auto& a = x.entry(i, 0);
+            x.ring().divide(a, Lv.entry(i, m), Lv.entry(i, i));
+            x.ring().negate(a, a);
+            MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, i);
+            x.ring().negate(a, a);
+          }
+        break;
+      case 1:
+        // TODO: change to iter
+        for (size_t i = 0; i < m; i++)
+          {
+            auto& a = x.entry(i, 0);
+            x.ring().negate(a, Lv.entry(i, m));
+            MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, i);
+            x.ring().negate(a, a);
+          }
+        break;
+      case 2:
+        // TODO: change to iter
+        for (size_t i = 1; i < m + 1; i++)
+          {
+            auto& a = x.entry(m - i, 0);
+            x.ring().divide(a, Lv.entry(m - i, m), Lv.entry(m - i, m - i));
+            x.ring().negate(a, a);
+            MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, m - i);
+            x.ring().negate(a, a);
+          }
+        break;
+      case 3:
+        // TODO: change to iter
+        for (size_t i = 1; i < m + 1; i++)
+          {
+            auto& a = x.entry(m - i, 0);
+            x.ring().negate(a, Lv.entry(m - i, m));
+            MatElementaryOps<DMat<RT>>::column_op(Lv, m, a, m - i);
+            x.ring().negate(a, a);
+          }
+        break;
     }
 }
 
 /*
 //TODO:  Want to restrict to the case that RT is one of: M2::ARingZZp, ...
 template<>
-inline void LUincremental(std::vector<int>& P,
-                   DMat<M2::ARingZZpFlint>& LU,
-                   const DMat<M2::ARingZZpFlint>& v,
-                   int n)
+inline void LUincremental(std::vector<size_t>& P,
+                          DMat<M2::ARingZZpFlint>& LU,
+                          const DMat<M2::ARingZZpFlint>& v,
+                          int n)
 {
   std::cout << "calling LUincremental<ARingZZpFlint>" << std::endl;
 }
 */
 
 template <typename RT>
-void LUincremental(std::vector<int>& P,
-                   DMat<RT>& LU,
-                   const DMat<RT>& v,
-                   int m)
+M2_arrayintOrNull LUincremental(std::vector<size_t>& P, DMat<RT>& LU, const DMat<RT>& v, int m)
 {
-  std::cout << "calling LUincremental<RT>" << std::endl;
-
   size_t n = LU.numRows();
 
   // copy permuted v to m-th column of LU
-  for (int j = 0; j < n; j++) {
+  // TODO: change to iter
+  for (size_t j = 0; j < n; j++)
     LU.ring().set(LU.entry(j, m), v.entry(P[j], 0));
-  }
 
-  // forward solve
-  DMat<RT> x {LU.ring(), n, 1};
+  // reduce the m-th column of LU and forward solve
+  DMat<RT> x{LU.ring(), n, 1};
   triangularSolve(LU, x, m, 1);
-  for (int i = 0; i < m; i++) {
-    LU.ring().set(LU.entry(i, m), x.entry(i, 0)); 
-  }
+  // place solution of forward solve in U
+  // TODO: change to iter
+  for (size_t i = 0; i < m; i++)
+    LU.ring().set(LU.entry(i, m), x.entry(i, 0));
 
-  // find pivot and swap if needed
+  // look for a pivot in L
   int pivotPosition = -1;
-  for (int j = m; j < n; j++) {
-    if (!LU.ring().is_zero(LU.entry(j, m))) {
-      pivotPosition = j;
-      break;
-    }
-  }
-  if (pivotPosition == -1) return;
+  // TODO: change to iter
+  for (size_t j = m; j < n; j++)
+    if (!LU.ring().is_zero(LU.entry(j, m)))
+      {
+        pivotPosition = j;
+        break;
+      }
+  // if no pivot found, return
+  if (pivotPosition == -1) return stdvector_to_M2_arrayint(P);
+  // otherwise swap rows and update P
   MatElementaryOps<DMat<RT>>::interchange_rows(LU, pivotPosition, m);
   std::swap(P[pivotPosition], P[m]);
 
   // scale column of L
-  for (int j = m+1; j < n; j++) {
+  // TODO: change to iter
+  for (int j = m + 1; j < n; j++)
     LU.ring().divide(LU.entry(j, m), LU.entry(j, m), LU.entry(m, m));
-  }
+
+  return stdvector_to_M2_arrayint(P);
 }
 
 template <typename RT>
@@ -1359,7 +1355,7 @@ inline void increase_norm(gmp_RR& norm, const DMatCCC& mat)
   size_t len = mat.numRows() * mat.numColumns();
   for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
 }
-};
+};  // namespace MatrixOps
 
 #endif
 

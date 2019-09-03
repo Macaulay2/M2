@@ -607,9 +607,9 @@ M2_arrayintOrNull rawLUincremental(M2_arrayintOrNull P,
 {
   try
     {
-      std::vector<int> P1 = M2_arrayint_to_stdvector<int>(P);
-      LU->LUincremental(P1, v, i);
-      return stdvector_to_M2_arrayint(P1);
+      // FIXME: can we not allocate new permutation array?
+      std::vector<size_t> P1 = M2_arrayint_to_stdvector<size_t>(P);
+      return LU->LUincremental(P1, v, i);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -622,7 +622,6 @@ void rawTriangularSolve(MutableMatrix *Lv, /* modified in routine */
                         int m,
                         int strategy)
 {
-  std::cout << "hello from rawTriangularSolve in x-mutablemat" << std::endl;
   try
     {
       Lv->triangularSolve(x, m, strategy);

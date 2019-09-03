@@ -233,7 +233,7 @@ class MutableMatrix : public MutableEngineObject
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L, MutableMatrix *U) const = 0;
 
-  virtual void LUincremental(std::vector<int>& P, const MutableMatrix* v, int m) = 0;
+  virtual M2_arrayintOrNull LUincremental(std::vector<size_t>& P, const MutableMatrix* v, int m) = 0;
 
   virtual void triangularSolve(MutableMatrix* x, int m, int strategy) = 0;
 

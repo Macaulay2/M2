@@ -63,10 +63,10 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     G2 := new MutableHashTable from {}; -- leading term => gb element
     -- elements in the staircase
     B2 := new MutableHashTable from {1_R2 => true};
-    B2' := {1_R2};
+    B2' := matrix {{1_R2}};
 
     -- initiating LU-decomposition matrices
-    P := new MutableList from toList(0..m-1);
+    P := new MutableList from (0..m-1);
     v := transpose mutableMatrix {{1_kk} | toList ((m-1):0)};
     LU := mutableMatrix map(kk^m, kk^(m+1), 0);
     lambda := transpose mutableMatrix {toList (m:0_kk)};
@@ -85,7 +85,6 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     while #S > 0 do (
 	-- FIXME: About 25% of total time is spent here
 	-- TODO: use O(1) min for fun and profit
-	print 1/0;
 	(elt, vals) := min pairs S;
 	remove(S, elt);
 	if any(keys G2, lt -> elt % lt == 0) then continue;
@@ -93,18 +92,18 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 	v = M#i * V#mu;
 
 	-- FIXME: About 50% of total time is spent here
-	r := incrLU(P, LU, submatrix(v, , {0}), s);
-	if r == 0 then (
+	-- TODO: can we copy v?
+	if incrLU(P, LU, submatrix(v, , {0}), s) then (
 	    backSub(submatrix(LU, toList(0..s-1), toList(0..s)), lambda, s);
 	    -- TODO: don't remake a matrix every time
-	    g := elt - matrix {B2'} * matrix submatrix(lambda, toList(0..s-1), {0});
+	    g := elt - B2' * matrix submatrix(lambda, toList(0..s-1),);
 	    G2#elt = g;
 	    ) else (
 	    s = s + 1;
 	    -- TODO: add elt to VS and row reduce here
 	    V#elt = v;
 	    B2#elt = true;
-	    B2' = B2' | {elt};
+	    B2' = B2' | matrix {{elt}};
 	    -- Add the product of elt and generators of R2 to S
 	    for j to n - 1 do if not B2#?(R2_j * elt) then S#(R2_j * elt) = (j, elt);
 	    );
@@ -117,45 +116,13 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 -------------------------------------------------------------------------------
 -- TODO: Move to engine
 incrLU = method()
-incrLU(MutableList, MutableMatrix, MutableMatrix, ZZ) := (P', LU, v, n) -> (
-
-    m := numrows LU;
-    P := toSequence P';
-    print P;
-    print LU;
-    print transpose v;
-    print n;
-
-    rawLUincremental(P, raw LU, raw v, n);
--*
-    m := numrows LU;
-    -- permute rows of v according to P
-    rowPermute(v, 0, new List from P);
-    -- copy v to LU_{n}
-    for j to m - 1 do LU_(j, n) = v_(j, 0);
-    -- reduce LU_{n} + forward substitute
-    -- FIXME: about 25% of total time is spent in this loop
-    forwardSub(LU, v, n, Strategy => "incrLU");
-    -- place solution of forward substitution in U
-    for i to n - 1 do LU_(i, n) = v_(i, 0);
-    -- update P
-    n' := position(n..m-1, j -> LU_(j, n) != 0);
-    if ZZ === class n' then n' = n' + n else return 0;
-    if n != n' then (
-	rowSwap(LU, n, n');
-	P#n = P#n + P#n';
-	P#n' = P#n - P#n';
-	P#n = P#n - P#n';
-    );
-    -- set 1 to diagonal of L
-    for j from n + 1 to m - 1 do LU_(j, n) = LU_(j, n) / LU_(n, n);
-    -- return new v
-    transpose matrix { toList(n:0) | for j from n to m - 1 list LU_(j, n) }
-*-
-    scan(m, i -> P'#i = P#i);
-    print "hi";
-    LU_(n, n) == 0
-)
+incrLU(MutableList, MutableMatrix, MutableMatrix, ZZ) := (P', LU, v, m) -> (
+    n := numrows LU;
+    P := rawLUincremental(toSequence P', raw LU, raw v, m);
+    scan(n, i -> P'#i = P#i);
+    if m == n then return true;
+    LU_(m, m) == 0
+    )
 
 -------------------------------------------------------------------------------
 -- Fast back substitution code
@@ -694,6 +661,8 @@ LU = mutableMatrix map(kk^n,kk^(n+1),0)
 
 P = (0..n-1)
 P = new MutableList from P
+elapsedTime for i to n - 1 do incrLU(P, LU, M_{i}, i);
+elapsedTime LUdecomposition M;
 --rawLUincremental(P, raw LU, raw M_{0}, 0)
 incrLU(P, LU, M_{0}, 0)
 incrLU(P, LU, M_{1}, 1)
@@ -705,7 +674,6 @@ debug needsPackage "FGLM"
 R1 = ZZ/101[x,y,z]
 I1 = ideal(x*y + z - x*z, x^2 - z, 2*x^3 - x^2*y*z - 1)
 test(I1, Lex) 
-
 
 restart
 debug Core
