@@ -886,7 +886,7 @@ AC_MSG_CHECKING([whether givaro library is installed])
 if $PKG_CONFIG --exists givaro
 then AC_MSG_RESULT(yes)
      LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
-     CPPFLAGS="$CPPFLAGS `$PKG_CONFIG --cflags givaro`"
+     CPPFLAGS="$CPPFLAGS `$PKG_CONFIG --cflags-only-I givaro`"
 else AC_MSG_RESULT(no)
      BUILD_givaro=yes
 fi
