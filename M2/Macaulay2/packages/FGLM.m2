@@ -70,7 +70,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
     v := transpose mutableMatrix {{1_kk} | toList ((m-1):0)};
     LU := mutableMatrix map(kk^m, kk^(m+1), 0);
     lambda := transpose mutableMatrix {toList (m:0_kk)};
-    incrLU(P, LU, v, 0);
+    LUincremental(P, LU, v, 0);
 
     -- normal form translation table
     -- Note: we want dense mutable matrices
@@ -94,7 +94,7 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 
 	-- ~6.2s in this line
 	-- TODO: can we not copy v?
-	P = incrLU(P, LU, submatrix(v, , {0}), s);
+	P = LUincremental(P, LU, submatrix(v, , {0}), s);
 	if s == m or (s < m and LU_(s, s) == 0) then (
 	    -- ~1.3s in this branch
 	    backSub(submatrix(LU, toList(0..s-1), toList(0..s)), lambda, s);
@@ -118,27 +118,39 @@ fglm(GroebnerBasis, Ring) := GroebnerBasis => (G1, R2) -> (
 -------------------------------------------------------------------------------
 -- Fast incremental LU decomposition code
 -------------------------------------------------------------------------------
--- TODO: Move to engine
-incrLU = method()
-incrLU(List, MutableMatrix, MutableMatrix, ZZ) := (P, LU, v, m) -> (
+-- Inputs:
+--   permutation list of size n
+--   n x n+1 mutable matrix LU
+--   n x 1 mutable matrix v
+--   intger m
+-- Consequences:
+--   Updates LU according to v
+--   Updates v to r = v % L
+-- Outputs:
+--   Updated permutation list
+LUincremental = method()
+LUincremental(List, MutableMatrix, MutableMatrix, ZZ) := List => (P, LU, v, m) -> (
     rawLUincremental(P, raw LU, raw v, m)
     )
 
 -------------------------------------------------------------------------------
 -- Fast back substitution code
 -------------------------------------------------------------------------------
--- TODO: Move to engine
 -- Inputs:
 --   n x n+1 mutable matrix (U|v)
 --   n x 1 mutable matrix x
---   integer n
+--   integer m
 -- Consequences:
 --   Updates v to r = v % U
 --   Updates x such that v = Ux + r
 -- Notes: assumes U is upper triangular, but the actual values above the diagonal need not be zero
-backSub = method()
-backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
-    rawTriangularSolve(raw U, raw x, n, 2);
+-- If LUdecomposition => true, assumes the diagonal to be 1.
+backSub = method(Options => {Strategy => null}))
+backSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => (U, x, m) -> (
+    if opts.Strategy == "incremental" then
+      rawTriangularSolve(raw U, raw x, m, 3)
+    else
+      rawTriangularSolve(raw U, raw x, m, 2)
     )
 
 -*
@@ -153,28 +165,27 @@ backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
 -------------------------------------------------------------------------------
 -- Fast forward substitution code
 -------------------------------------------------------------------------------
--- TODO: Move to engine
 -- Inputs:
 --   n x n+1 mutable matrix (L|v)
 --   n x 1 mutable matrix x
---   integer n
+--   integer m
 -- Consequences:
 --   Updates v to r = v % L
 --   Updates x such that v = Lx + r
 -- Notes: assumes L is lower triangular, but the actual values below the diagonal need not be zero.
--- If LUdecomposition => true, assumes the diagonal to be 1. This option is mainly used for incrLU.
+-- If LUdecomposition => true, assumes the diagonal to be 1. This option is mainly used for LUincremental.
 forwardSub = method(Options => {Strategy => null})
-forwardSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => opts -> (L, x, n) -> (
-    if opts.Strategy == "incrLU" then
-      rawTriangularSolve(raw L, raw x, n, 1)
+forwardSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => opts -> (L, x, m) -> (
+    if opts.Strategy == "incremental" then
+      rawTriangularSolve(raw L, raw x, m, 1)
     else
-      rawTriangularSolve(raw L, raw x, n, 0)
+      rawTriangularSolve(raw L, raw x, m, 0)
     )
 
 -*
 forwardSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => opts -> (L, x, n) -> (
     for i to n - 1 do (
-	if opts.Strategy == "incrLU" then x_(i, 0) = L_(i, n) else x_(i, 0) = L_(i, n) / L_(i,i);
+	if opts.Strategy == "incremental" then x_(i, 0) = L_(i, n) else x_(i, 0) = L_(i, n) / L_(i,i);
 	columnAdd(L, n, -x_(i, 0), i);
 	);
     )
@@ -461,7 +472,7 @@ restart
 gbTrace = 1
 debug needsPackage "FGLM"
 backSub = profile backSub
-incrLU  = profile incrLU
+LUincremental  = profile LUincremental
 multiplicationMatrices = profile multiplicationMatrices
 
 --I1 = cyclic(7, MonomialOrder=>Lex)
@@ -474,7 +485,7 @@ G2 = elapsedTime fglm(G0, R2);
 
 profileSummary
 --backSub: 35 times, used .279453 seconds
---incrLU: 959 times, used 6.17558 seconds
+--LUincremental: 959 times, used 6.17558 seconds
 --multiplicationMatrices: 1 times, used 1.99896 seconds
 
 --T = new MutableList from toList(20:0);
@@ -488,7 +499,7 @@ peek T
 
 -- cyclic7
 -- gb: 1354.44
--- fglm: 353.367 -> 43.531
+-- fglm: 353.37 -> 43.53 -> 31.84
 restart
 debug needsPackage "FGLM"
 I = cyclic(7, MonomialOrder=>Lex)
@@ -541,7 +552,7 @@ G2 = elapsedTime fglm(I2, R1)
 
 -- virasoro
 -- gb: 8.91079
--- fglm: 52.1752 -> 6.033
+-- fglm: 52.1752 -> 6.033 -> 4.67
 restart
 needsPackage "FGLM"
 kk = ZZ/32003
@@ -617,7 +628,7 @@ A = transpose matrix"0,0,0,1;0,1,0,1;0,0,1,1" ** RR
   Q*L*U == A
 
 -*
--- add tests for incrLU and backSub
+-- add tests for LUincremental and backSub
 
 n = 1000
 kk = ZZ/32003
@@ -659,7 +670,7 @@ LU = mutableMatrix map(kk^n,kk^(n+1),0)
 
 P = (0..n-1)
 P = new MutableList from P
-elapsedTime for i to n - 1 do incrLU(P, LU, M_{i}, i);
+elapsedTime for i to n - 1 do LUincremental(P, LU, M_{i}, i);
 elapsedTime LUdecomposition M;
 --rawLUincremental(P, raw LU, raw M_{0}, 0)
 incrLU(P, LU, M_{0}, 0)
