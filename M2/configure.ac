@@ -882,11 +882,20 @@ if test $BUILD_glpk = yes
 then BUILTLIBS="-lglpk $BUILTLIBS"
 fi
 
+AC_DEFINE([HAVE_GIVARO_isunit],,[whether givaro has isunit])
 AC_MSG_CHECKING([whether givaro library is installed])
 if $PKG_CONFIG --exists givaro
 then AC_MSG_RESULT(yes)
      LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
      CPPFLAGS="$CPPFLAGS `$PKG_CONFIG --cflags-only-I givaro`"
+     AC_MSG_CHECKING([whether givaro has isUnit or isunit])
+     AC_LANG([C++])
+     AC_COMPILE_IFELSE(
+	 [AC_LANG_PROGRAM( [ #include <givaro/gfq.h>
+	 		     ],
+	 		   [ class Givaro::GFqDom<long int> foo; foo.isunit(0) ])],
+	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1])],
+	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0])])
 else AC_MSG_RESULT(no)
      BUILD_givaro=yes
 fi
