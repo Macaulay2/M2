@@ -9,6 +9,9 @@ CXX =
 FC  =
 AR  = 
 
+# This seems inconvenient, but how else can we know where ubuntu puts the "eigen" library?
+CPPFLAGS = -I/usr/include/eigen3 -I/usr/include/eigen3/unsupported
+
 # configure script options:
 OPTIONS =
 
