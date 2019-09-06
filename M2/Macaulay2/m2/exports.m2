@@ -880,6 +880,7 @@ export {
 	"mutable",
 	"mutableIdentity",
 	"mutableMatrix",
+	"nanosleep",
 	"needs",
 	"needsPackage",
 	"net",
