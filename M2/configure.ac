@@ -897,6 +897,7 @@ then AC_MSG_RESULT(yes)
 	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1])],
 	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0])])
 else AC_MSG_RESULT(no)
+     AC_DEFINE([HAVE_GIVARO_isunit], [0])
      BUILD_givaro=yes
 fi
 if test $BUILD_givaro = yes
