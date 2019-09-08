@@ -905,7 +905,8 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-AC_CHECK_HEADER(cdd/setoper.h,,BUILD_cddlib=yes)
+dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
+AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"

@@ -9,8 +9,8 @@ CXX =
 FC  =
 AR  = 
 
-# This seems inconvenient, but how else can we know where ubuntu puts the "eigen" library?
-CPPFLAGS = -I/usr/include/eigen3 -I/usr/include/eigen3/unsupported
+# This seems inconvenient, but how else can we know where ubuntu puts the "eigen" and "cdd" libraries?
+CPPFLAGS = -I/usr/include/eigen3 -I/usr/include/eigen3/unsupported -I/usr/include/cdd
 
 # configure script options:
 OPTIONS =
