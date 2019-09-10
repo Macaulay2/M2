@@ -145,9 +145,9 @@ LUincremental(List, MutableMatrix, MutableMatrix, ZZ) := List => (P, LU, v, m) -
 --   Updates x such that v = Ux + r
 -- Notes: assumes U is upper triangular, but the actual values above the diagonal need not be zero
 -- If LUdecomposition => true, assumes the diagonal to be 1.
-backSub = method(Options => {Strategy => null}))
-backSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => (U, x, m) -> (
-    if opts.Strategy == "incremental" then
+backSub = method(Options => {Strategy => null})
+backSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => opts -> (U, x, m) -> (
+    if opts.Strategy === "incremental" then
       rawTriangularSolve(raw U, raw x, m, 3)
     else
       rawTriangularSolve(raw U, raw x, m, 2)
@@ -176,7 +176,7 @@ backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
 -- If LUdecomposition => true, assumes the diagonal to be 1. This option is mainly used for LUincremental.
 forwardSub = method(Options => {Strategy => null})
 forwardSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => opts -> (L, x, m) -> (
-    if opts.Strategy == "incremental" then
+    if opts.Strategy === "incremental" then
       rawTriangularSolve(raw L, raw x, m, 1)
     else
       rawTriangularSolve(raw L, raw x, m, 0)
