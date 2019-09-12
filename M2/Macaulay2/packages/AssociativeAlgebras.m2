@@ -908,6 +908,7 @@ TEST ///
   I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
+  elapsedTime NCGB(I, 20);
   elapsedTime NCGB(I, 10);
   A = R/I
   assert(numcols ncBasis(0,A) == 1)
@@ -1032,6 +1033,17 @@ restart
 check "AssociativeAlgebras"
   -- 3 tests fail (3 Sep 2019):
   -- leadMonomial, ncBasis(-1, ...), and negative Weights in ring def.
+
+
+TEST /// 
+-*
+  restart
+  needsPackage "AssociativeAlgebras"
+*-
+  R = QQ{b,c}
+  I = ideal"bc"
+  NCGB(I, 10)
+///
 
 doc ///
 Key

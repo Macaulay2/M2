@@ -7,6 +7,8 @@
 #include "OverlapTable.hpp"
 #include <iostream>
 
+extern void tryOutMathicCode();
+
 class NCGroebner : public our_new_delete
 {
 private:
@@ -31,6 +33,7 @@ public:
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {
+    tryOutMathicCode();
     Word tmpWord;
     // process input polynomials
     for (auto i = 0; i < mInput.size(); ++i)
