@@ -2132,6 +2132,13 @@ assert(numgens ideal gens gb ideal R' == 54) -- this is not an invariant!
 icFractions R
 ///
 
+TEST ///
+    -- see https://github.com/Macaulay2/M2/issues/933
+    S=QQ[a..f]
+    I=ideal(a*b*c,a*d*f,c*e*f,b*e*d)
+    assert (integralClosure I == integralClosure trim I)
+///
+
 end 
 
 TEST ///
