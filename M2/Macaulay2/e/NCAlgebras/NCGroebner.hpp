@@ -33,7 +33,7 @@ public:
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {
-    tryOutMathicCode();
+    //    tryOutMathicCode();
     Word tmpWord;
     // process input polynomials
     for (auto i = 0; i < mInput.size(); ++i)
