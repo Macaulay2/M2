@@ -860,8 +860,8 @@ extendIdeal = (I,f) -> (
      M:=target f;
      iota:= matrix f;
      psi:=syz transpose presentation M;
-     beta:=(transpose gens I)//((transpose iota)*psi);
-     trim ideal(psi*beta))
+     trim ideal psi)
+
 
 TEST ///
   assert isNormal (QQ[x]/(x^2+1))
