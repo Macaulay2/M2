@@ -1244,23 +1244,23 @@ show TEX := x -> showTex x
 
 viewHelp = method(Dispatch=>Thing)
 
-installMethod(viewHelp, () -> (
-     i := applicationDirectory() | topFileName;
-     if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
-     show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
-     ))
-
 viewHelp String := key -> (		    -- assume key is a formatted key
      fn := locateDocumentationNode key;
      if fn === null then error("documentation not found for key ",key)
      else show new URL from {fn})
 
 viewHelp Thing := key -> (
-     (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
-     fn := prefix|tail;
-     if not fileExists fn then error("html file not found: ",fn);
-     show new URL from {fn})
-
+     if key === () then (				    -- show the top level help page
+	  i := applicationDirectory() | topFileName;
+	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
+	  show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
+          )
+     else (
+     	  (prefix,tail) := htmlFilename getPrimary makeDocumentTag key;
+     	  fn := prefix|tail;
+     	  if not fileExists fn then error("html file not found: ",fn);
+     	  show new URL from {fn}))
+     
 viewHelp = new Command from viewHelp
 
 indexHtml = dir -> (
