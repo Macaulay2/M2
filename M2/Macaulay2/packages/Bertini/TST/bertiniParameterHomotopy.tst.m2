@@ -43,7 +43,7 @@ apply(bPH/first,{1,2},(P,yValue)->assert(abs((matrix P)_(0,1)-yValue)<1e-6 ))
      f1=x^2-u1
      finalParameters0={1}
      finalParameters1={2}
-     bPH4=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x},OutputSyle=>"OutSolutions")            
+     bPH4=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x},OutputStyle=>"OutSolutions")            
      assert(class bPH4===List)
 --TODO: need new assertions
 --      assert(1===#radicalList({ (((bPH4_0_0))_0)^2,1})     )
@@ -55,7 +55,7 @@ apply(bPH/first,{1,2},(P,yValue)->assert(abs((matrix P)_(0,1)-yValue)<1e-6 ))
      finalParameters1={2}
      dir1 := temporaryFileName(); -- build a directory to store temporary data 
      makeDirectory dir1;  
-     bPH5=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)            
+     bPH5=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x},OutputStyle=>"OutNone",TopDirectory=>dir1)            
      B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")     
      B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")     
 --TODO: need new assertions
