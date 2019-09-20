@@ -39,6 +39,8 @@ darwin64-latestclang : always
 		--disable-strip \
 		--enable-download
 
+#--enable-build-libraries="mpir flint pari ntl"
+
 debug64-latestclang : always
 	mkdir -p builds.tmp/debug64-latestclang
 	cd builds.tmp/debug64-latestclang; ../../../../configure \
@@ -62,7 +64,8 @@ darwin64-appleclang : always
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-download
+		--enable-download \
+		--enable-build-libraries="mpir flint pari ntl"
 
 darwin64-clang : always
 	mkdir -p builds.tmp/darwin64-clang
