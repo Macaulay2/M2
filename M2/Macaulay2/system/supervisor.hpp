@@ -1,7 +1,7 @@
 #ifndef _system_supervisor_h_
 #define _system_supervisor_h_
 
-/* this next bit is copied from ../d/atomic.d, but it should be include, instead */
+/* this next bit is copied from ../d/atomic.d, but it should be included, instead */
 
   #include <atomic_ops.h>
 #ifndef atomic_field_decl
@@ -15,6 +15,7 @@
   #define store_Field(x,val) AO_store(&(x).field,val)
 #endif
 #include "mutexclass.hpp"
+#include "gc_std.hpp"
 #include <M2/gc-include.h>
 #include <set>
 #include <map> 
@@ -50,17 +51,17 @@ struct ThreadTask
   ///Is the task currently running
   bool m_Running;
   ///tasks to cancel upon completion
-  std::set<ThreadTask*> m_CancelTasks;
+  gc_set(ThreadTask*) m_CancelTasks;
   ///tasks to start upon completion
-  std::set<ThreadTask*> m_StartTasks;
+  gc_set(ThreadTask*) m_StartTasks;
   ///Is there a time limit for this task
   bool m_TimeLimit;
   ///Time limit in seconds for this task.  
   time_t m_Seconds;
   ///Dependencies that must be satisfied in order to start
-  std::set<ThreadTask*> m_Dependencies;
+  gc_set(ThreadTask*) m_Dependencies;
   ///Dependencies that have been finished
-  std::set<ThreadTask*> m_FinishedDependencies;
+  gc_set(ThreadTask*) m_FinishedDependencies;
   ///Mutex for accessing task
   pthreadMutex m_Mutex;
   ///run task
@@ -129,7 +130,7 @@ struct ThreadSupervisor
   ///Target number of threads to have running at once.
   int m_TargetNumThreads;
   ///map between pthread id's and thread information structures
-  std::map<pthread_t, struct ThreadSupervisorInformation*> m_ThreadMap;
+  gc_map(pthread_t, struct ThreadSupervisorInformation*) m_ThreadMap;
   ///list of ready to go tasks
   std::list<ThreadTask*> m_ReadyTasks;
   ///list of running tasks
@@ -147,7 +148,7 @@ struct ThreadSupervisor
   ///list of supervisor threads
   std::list<SupervisorThread*> m_Threads;
   ///set of initialized pointers
-  std::set<int*> m_ThreadLocalIdPtrSet;
+  gc_set(int*) m_ThreadLocalIdPtrSet;
   ///initialize
   void initialize();
   ///thread local id's

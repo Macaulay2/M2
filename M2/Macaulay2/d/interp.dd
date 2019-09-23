@@ -5,6 +5,7 @@ use evaluate;
 use parser;
 use texmacs;
 use actors5;
+
 import dirname(s:string):string;
 
 dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);

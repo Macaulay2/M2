@@ -1,14 +1,15 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+/* these two macros affect the definition of GC_INIT, but have to appear before the include directives, in order to take effect */
+#define GC_FREE_SPACE_DIVISOR 12
+#define GC_INITIAL_HEAP_SIZE 70000000
+
 #include "interp-exports.h"
 
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
 #define GDBM_STATIC
 #include <gdbm.h>
 
-/* these two macros affect GC_INIT below */
-#define GC_FREE_SPACE_DIVISOR 12
-#define GC_INITIAL_HEAP_SIZE 70000000
 #include <M2/gc-include.h>
 
 #include "M2mem.h"
@@ -511,17 +512,17 @@ int register_fun(int *count, char *filename, int lineno, char *funname) {
 #if defined HAVE___ENVIRON
     #define our_environ __environ
     #if !HAVE_DECL___ENVIRON
-    extern const char **__environ;
+    extern char ** __environ;
     #endif
 #elif defined HAVE__ENVIRON
     #define our_environ _environ
     #if !HAVE_DECL__ENVIRON
-    extern const char **_environ;
+    extern char ** _environ;
     #endif
 #elif defined HAVE_ENVIRON
     #define our_environ environ
     #if !HAVE_DECL_ENVIRON
-    extern const char **environ;
+    extern char ** environ;
     #endif
 #else
     #error "no environment variable available"
@@ -565,8 +566,8 @@ void* testFunc(void* q )
 struct saveargs
 {
   int argc;
-  const char** argv;
-  const char** envp;
+  const char * const * argv;
+  const char * const * envp;
   int volatile envc;
 };
 
@@ -577,10 +578,11 @@ static struct saveargs* vargs;
 void* interpFunc(void* vargs2)
 {
   struct saveargs* args = (struct saveargs*) vargs;
-  const char** saveenvp = args->envp;
-  const char** saveargv = args->argv;
+  char const * const * saveenvp = args->envp;
+  char const * const * saveargv = args->argv;
   int argc = args->argc;
   int volatile envc = args->envc;
+
      setInterpThread();
      reverse_run(thread_prepare_list);// -- re-initialize any thread local variables
 
@@ -617,7 +619,7 @@ int have_arg(char **argv, const char *arg) {
 
 int Macaulay2_main(argc,argv)
 int argc; 
-const char **argv;
+char * const * argv;
 {
 
      int volatile envc = 0;
@@ -632,7 +634,7 @@ const char **argv;
 #endif
      void main_inits();
 
-     const char **x = our_environ; 
+     char const * const *x = (char const * const *) our_environ; 
      while (*x) envc++, x++;
 
      GC_INIT();
@@ -763,12 +765,12 @@ const char **argv;
      system_handleInterruptsSetup(TRUE);
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
-     vargs->argv=saveargv;
-     vargs->argc=argc;
-     vargs->envp=saveenvp;
-     vargs->envc = envc;
+     vargs->argv= (char const * const *)saveargv;
+     vargs->argc= argc;
+     vargs->envp= (char const * const *)saveenvp;
+     vargs->envc= envc;
 
-     if (gotArg("--no-threads", saveargv)) {
+     if (gotArg("--no-threads", (const char **) saveargv)) {
 	  interpFunc(vargs);
 	  }
      else {
@@ -887,7 +889,7 @@ int system_randomint(void) {
    and is set to run before main starts. */
 
 void scc_core_prepare() {
-  GC_INIT();
+  GC_INIT();			/* it's probably redundant to include this here */
   IM2_initialize();
 }
 
