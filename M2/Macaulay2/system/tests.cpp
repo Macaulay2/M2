@@ -32,7 +32,7 @@ static int TS_Test1()
     {
       for(int j = 0; j < 20; ++j)
 	{
-	  struct tuple* tup = new tuple();
+	  struct tuple* tup = new (GC) tuple();
 	  tup->x = i;
 	  tup->y = j;
 	  tasks[i][j] = createThreadTask("Test",TS_Test1_Func,tup,0,0,0);

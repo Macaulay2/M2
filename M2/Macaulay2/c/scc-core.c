@@ -12,10 +12,10 @@ static char errfmt[] = "%s:%d:%d: %s";
 static char errfmtnc[] = "%s:%d: %s";
 
 void scc_core_prepare() {
-  static int called_yet;
-  if (called_yet) return;
-  called_yet = 1;
-  GC_INIT();
+     /* 
+	This function used to initialize libgc, but it gets initialized automatically, anyway. 
+	Probably we don't need this any longer.
+	*/
 }
 
 struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;

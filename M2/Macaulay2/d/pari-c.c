@@ -82,7 +82,7 @@ static void initpari() {
 static void closepari() {
   if (pari_disabled) return;
   if (self_initialized) {
-    pari_close_opts(INIT_DFTm);
+    pari_close_opts(init_flags);
     gen_0 = NULL;
     self_initialized = FALSE;
   }
