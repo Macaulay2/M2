@@ -446,7 +446,6 @@ usage := arg -> (
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
      filetime := fileTime fn;
-     if notify then << "--loading " << fn << newline;
      r := simpleLoad fn;
      markLoaded(fn,ofn,notify,filetime);
      true) else false
