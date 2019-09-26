@@ -802,19 +802,20 @@ then BUILTLIBS="-lgdbm $BUILTLIBS"
 fi
 
 AC_MSG_CHECKING(whether package bdw-gc is provided)
+dnl Note: we don't include -lgccpp below, because linking with that library is what replaces ::new and friends with GC_MALLOC_UNCOLLECTABLE and friends:
 if [ pkg-config --exists bdw-gc ]
 then AC_MSG_RESULT(yes)
      CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     LIBS="-lgc -lgccpp $LIBS"
+     LIBS="-lgc $LIBS"
      FOUND_gc=yes
 else AC_MSG_RESULT(no)
      BUILD_gc=yes
 fi
 if test $BUILD_gc = yes
-then BUILTLIBS="-lgc -lgccpp -lpthread $BUILTLIBS"
+then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
 fi
 
-# mpir and gmp server the same purpose
+# mpir and gmp serve the same purpose
 AC_LANG(C)
 AC_CHECK_HEADER(gmp.h, FOUND_gmp=yes ,FOUND_gmp=no )
 AC_CHECK_HEADER(mpir.h,FOUND_mpir=yes,FOUND_mpir=no)

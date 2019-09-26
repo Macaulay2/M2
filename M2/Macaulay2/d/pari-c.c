@@ -33,7 +33,7 @@
 
 #define PARISIZE 1000000
 #define MAXPRIME 0
-#define init_flags INIT_DFTm
+#define init_flags (INIT_DFTm | INIT_noINTGMPm)
 
 #if RETAIN_PARI_STATE
 static void initpari() __attribute__ ((constructor));
@@ -82,7 +82,7 @@ static void initpari() {
 static void closepari() {
   if (pari_disabled) return;
   if (self_initialized) {
-    pari_close_opts(INIT_DFTm);
+    pari_close_opts(init_flags);
     gen_0 = NULL;
     self_initialized = FALSE;
   }
