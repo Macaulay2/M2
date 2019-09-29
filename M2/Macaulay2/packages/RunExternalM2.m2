@@ -566,7 +566,7 @@ Node
 			fn=temporaryFileName()|".m2"
 			fn<<//// square = (x) -> (stderr<<"Running"<<endl; sleep(1); x^2); ////<<endl;
 			fn<<//// justexit = () -> ( exit(27); ); ////<<endl;
-			fn<<//// spin = (x) -> (stderr<<"Spinning!!"<<endl; startTime:=cpuTime(); while(cpuTime()-startTime<x) do (); return(x);); ////<<endl;
+			fn<<//// spin = (x) -> (stderr<<"Spinning!!"<<endl; startTime:=cpuTime(); while(cpuTime()-startTime<x) do for i to 10000000 do i; return(x);); ////<<endl;
 			fn<<flush;
 -- TODO: there seems to be a bug where the line count is wrong if I use a multi-line string with ////
 		Text
@@ -591,13 +591,12 @@ Node
 		Text
 			Here, we use @TO "resource limits"@ to limit the
 			routine to 2 seconds of computational time,
-			while the system is asked to use 3 seconds of computational time:
+			while the system is asked to use 10 seconds of computational time:
 		Example
-			h=runExternalM2(fn,"spin",5,PreRunScript=>"ulimit -t 2");
+			h=runExternalM2(fn,"spin",10,PreRunScript=>"ulimit -t 2");
 			h
-			fileExists(h#"output file")
-			if fileExists(h#"output file") then get(h#"output file")
-			fileExists(h#"answer file")
+			if h#"output file" =!= null and fileExists(h#"output file") then get(h#"output file")
+			if h#"answer file" =!= null and fileExists(h#"answer file") then get(h#"answer file")
 		Text
 
 			We can get quite a lot of detail on the resources used
