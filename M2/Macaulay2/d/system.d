@@ -141,7 +141,7 @@ export wait(pid:int):int := Ccode(returns, "
      #ifdef HAVE_WAITPID
       int status;
       if (waitpid(pid,&status,0) == -1) return -1;
-      return status >> 8;
+      return status;
      #else
       return -1;
      #endif
