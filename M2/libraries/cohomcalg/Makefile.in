@@ -4,7 +4,6 @@ HOMEPAGE = https://github.com/BenjaminJurke/cohomCalg/
 # note: download https://github.com/BenjaminJurke/cohomCalg/archive/v0.32.tar.gz but rename the file to cohomCalg-0.32.tar.gz
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 0.32
-BUILDOPTIONS := CC="@CC@" CXX="@CXX@" LD="@CXX@" CFLAGS="$(CFLAGS)"
 TARFILE = cohomCalg-$(VERSION).tar.gz
 LICENSEFILES = LICENSE
 CHECKTARGET = .
@@ -14,6 +13,7 @@ PROGRAMS = bin/cohomcalg
 STRIPFILES = $(PROGRAMS)
 TARDIR = cohomCalg-0.32
 include ../Makefile.library
+BUILDOPTIONS := CC="@CC@" CXX="@CXX@" LD="@CXX@" CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)"
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cohomcalg/Makefile
 # Local Variables:
 # mode: makefile-gmake
