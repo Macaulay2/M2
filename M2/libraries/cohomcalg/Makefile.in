@@ -1,17 +1,18 @@
 HOMEPAGE = http://wwwth.mpp.mpg.de/members/bjurke/cohomcalg/
 HOMEPAGE = http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/
+HOMEPAGE = https://github.com/BenjaminJurke/cohomCalg/
+# note: download https://github.com/BenjaminJurke/cohomCalg/archive/v0.32.tar.gz but rename the file to cohomCalg-0.32.tar.gz
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 031b
+VERSION = 0.32
 BUILDOPTIONS := CC="@CC@" CXX="@CXX@" LD="@CXX@" CFLAGS="$(CFLAGS)"
-TARFILE = cohomCalg-$(VERSION).zip
-UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
-LICENSEFILES = "GPLv3 License.txt"
+TARFILE = cohomCalg-$(VERSION).tar.gz
+LICENSEFILES = LICENSE
 CHECKTARGET = .
 CONFIGURECMD = :
 INSTALLCMD = :
 PROGRAMS = bin/cohomcalg
 STRIPFILES = $(PROGRAMS)
-TARDIR = .
+TARDIR = cohomCalg-0.32
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cohomcalg/Makefile
 # Local Variables:
