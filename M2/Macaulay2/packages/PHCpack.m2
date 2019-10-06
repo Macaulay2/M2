@@ -639,7 +639,8 @@ cascade (List) := o -> (system) -> (
     stdio << "writing output to file " << PHCoutputFile << endl;
   
   systemToFile(system,PHCinputFile);
-  s := concatenate("0\ny\n",PHCinputFile); -- option 0, system on file
+  s := concatenate("0\n0\ny\n",PHCinputFile); -- option 0, system on file
+  -- extra 0 for double precision
   s = concatenate(s,"\n",PHCoutputFile);   -- add name of the output file
   s = concatenate(s,"\n");
   s = concatenate(s,toString(startdim));   -- add top dimension
