@@ -59,7 +59,7 @@ CONFIGOPTIONS += --disable-shared
 endif
 
 ifeq (@DEBUG@,yes)
-CONFIGOPTIONS += --enable-gc-debug
+CONFIGOPTIONS += --enable-gc-debug  --enable-static
 CPPFLAGS += -DDBG_HDRS_ALL=1 -DGC_ABORT_ON_LEAK=1
 
 #   "--enable-gc-assertions" causes all the tests to fail on 64 bit mac os x
