@@ -37,6 +37,7 @@
   #include <gc/gc.h>
 
   #if defined(__cplusplus)
+    #define GC_NEW_ABORTS_ON_OOM
     #include <gc/gc_cpp.h>
   #endif
 #endif
