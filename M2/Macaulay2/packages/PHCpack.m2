@@ -1821,7 +1821,7 @@ load "./PHCpack/PHCpackDoc.m2";
 --##########################################################################
 
 -----------------------------------
--- cascade
+-- test 0: cascade
 -----------------------------------
 TEST/// 
       R=CC[x11,x22,x21,x12,x23,x13,x14,x24]
@@ -1830,7 +1830,7 @@ TEST///
 ///;
 
 -----------------------------------
---constructEmbedding
+--test 1: constructEmbedding
 -----------------------------------
 TEST///
       R=CC[x,y,z]
@@ -1840,7 +1840,7 @@ TEST///
       assert ( member(zz1, Emb) == true ) --one of the eqns is zz1
 ///;
 -----------------------------------
---factorWitnessSet
+-- test 2: factorWitnessSet
 -----------------------------------
 TEST///
     R = CC[x,y];
@@ -1851,16 +1851,15 @@ TEST///
 ///;
 
 -----------------------------------
---isCoordinateZero
+-- test 3: isCoordinateZero
 -----------------------------------
 TEST///
      P=point({{0,1.0e-12}})
      assert (isCoordinateZero(P,1,1.0e-10) == true)
 ///;     
 
-
 -----------------------------------
--- isWitnessSetMember
+-- test 4: isWitnessSetMember
 -----------------------------------
 TEST/// 
     R = CC [x,y]
@@ -1870,7 +1869,7 @@ TEST///
 ///;
 
 -----------------------------------
--- mixedVolume
+-- test 5: mixedVolume
 -----------------------------------
 TEST/// 
      R=CC[x,y,z] 
@@ -1888,7 +1887,7 @@ TEST///
 ///;
 
 -----------------------------------
--- nonZeroFilter
+-- test 6: nonZeroFilter
 -----------------------------------
 TEST/// 
      R = CC[x,y]; 
@@ -1899,7 +1898,7 @@ TEST///
 ///;
 
 -------------------------------------
---numericalIrreducibleDecomposition
+-- test 7: numericalIrreducibleDecomposition
 -------------------------------------
 
 TEST///
@@ -1911,7 +1910,7 @@ TEST///
 ///;      
 
 -----------------------------------
--- refineSolutions
+-- test 8: refineSolutions
 -----------------------------------
 TEST/// 
       R = CC[x,y]; 
@@ -1926,7 +1925,7 @@ TEST///
 ///;
 
 -----------------------------------
--- solveRationalSystem
+-- test 9: solveRationalSystem
 -----------------------------------
 TEST///
      QQ[x,y,z];
@@ -1938,7 +1937,7 @@ TEST///
 ///;
 
 -----------------------------------
--- solveSystem
+-- test 10: solveSystem
 -----------------------------------
 TEST/// 
      R=CC[x,y,z]
@@ -1954,9 +1953,8 @@ TEST///
      (abs((sol2-L_1#Coordinates)_0)<.00000000001 and abs((sol2-L_1#Coordinates)_1)<.00000000001 and abs((sol2-L_1#Coordinates)_2)<.00000000001))
 ///;
 
-
 -----------------------------------
--- toLaurentPolynomial
+-- test 11: toLaurentPolynomial
 -----------------------------------
 TEST///
      QQ[x,y,z];
@@ -1969,7 +1967,7 @@ TEST///
 ///;
 
 -----------------------------------
---topWitnessSet
+-- test 12: topWitnessSet
 -----------------------------------
 TEST///
     R = CC[x,y];
@@ -1980,7 +1978,7 @@ TEST///
 ///;    
     
 -----------------------------------
--- trackPaths
+-- test 13: trackPaths
 -----------------------------------
 TEST/// 
      R = CC[x,y]; 
@@ -1991,7 +1989,7 @@ TEST///
 ///;
 
 -----------------------------------
--- zeroFilter
+-- test 14: zeroFilter
 -----------------------------------
 TEST/// 
      R = CC[x,y]; 
