@@ -427,11 +427,21 @@ systemFromFile (String) := (name) -> (
       if #L_j != 0 then (
         if (L_j_(#L_j-1) != ";") then (
           -- we have to bite off the first "+" sign of the term
-          term = value substring(1,#L_j-1,L_j);
+          -- but check if the first character is a plus!
+          if (L_j_0 == "+") or (L_j_0 == "-") then
+             term = value substring(1,#L_j, L_j)  -- substring(1,#L_j-1,L_j)
+          else
+             term = value substring(0,#L_j, L_j); -- substring(0,#L_j-1,L_j);
           if (L_j_0 == "+") then p = p + term else p = p - term;
         ) else ( -- in this case (L_j_(#L_j-1) == ";") holds
-          term = value substring(1,#L_j-2,L_j);
-          if (L_j_0 == "+") then p = p + term else p = p - term;
+          if (L_j_0 == "+") or (L_j_0 == "-") then
+             term = value substring(1,#L_j-1,L_j)  -- substring(1,#L_j-2,L_j)
+          else
+             term = value substring(0,#L_j-1,L_j); -- substring(0,#L_j-2,L_j)
+          if (#L_j > 1) then -- take care of a lonely ";"
+          (
+             if (L_j_0 == "+") then p = p + term else p = p - term;
+          );
           stop = true; result = result | {p}
         );
       ); j = j + 1;
@@ -1826,7 +1836,9 @@ load "./PHCpack/PHCpackDoc.m2";
 TEST/// 
       R=CC[x11,x22,x21,x12,x23,x13,x14,x24]
       L={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14}
-      assert( # cascade L == 1 )--there is one component of dim.5.
+     -- assert( # cascade L == 1 )--there is one component of dim.5.
+      C=cascade(L, Verbose=>true)
+      assert(#C == 1)
 ///;
 
 -----------------------------------
