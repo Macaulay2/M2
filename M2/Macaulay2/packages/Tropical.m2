@@ -1,5 +1,3 @@
---path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
---Delete the line above when the "loading the wrong version" has been fixed.
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version 2>&1") >= "3.0" else false;
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version") >= "3.0" else false;
 
