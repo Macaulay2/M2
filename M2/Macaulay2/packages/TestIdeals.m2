@@ -19,14 +19,14 @@
 --protect FrobeniusPowerStrategy;
 
 newPackage( "TestIdeals",
-Version => "1.0",
-Date => "8/17/2018, 2018",
+Version => "1.01",
+Date => "3/22/2019, 2019",
 Authors => {
      {Name => "Erin Bela",
      Email => "ebela@nd.edu"
      },
      {Name => "Alberto F. Boix",
-     Email => "alberto.fernandezb@upf.edu"
+     Email => "albertof.boix@gmail.com"
      },
      {Name => "Juliette Bruce",
      Email => "juliette.bruce@math.wisc.edu",
@@ -50,7 +50,8 @@ Authors => {
      Email => "malec@hood.edu"
      },
      {Name => "Matthew Mastroeni",
-     Email => "mastroe2@illinois.edu"
+     Email => "mmastro@okstate.edu",
+     HomePage => "https://mnmastro.github.io/"
      },
      {Name => "Maral Mostafazadehfard",
      Email => "maralmostafazadehfard@gmail.com"
@@ -68,7 +69,7 @@ Authors => {
      },
      {Name => "Pedro Teixeira",
      Email => "pteixeir@knox.edu",
-     HomePage => "http://www.knox.edu/academics/faculty/teixeira-pedro.html"
+     HomePage => "https://www.knox.edu/academics/majors-and-minors/mathematics/faculty/teixeira-pedro"
      },
      {Name=> "Emily Witt",
      Email => "witt@ku.edu",
@@ -100,7 +101,6 @@ export{
     "Substitution",
 
 --Frobenius Powers (frobeniusPowers.m2)
-    "fastExponentiation",
     "frobenius",
     "frobeniusPower",
     "FrobeniusPowerStrategy",
@@ -116,15 +116,19 @@ export{
     "frobeniusTraceOnCanonicalModule", --Karl (this is Moty's find u function, but it returns a list if Macaulay2 doesn't identify 1 element).
     "isCohenMacaulay", --Karl (added recently, if anyone has ideas to improve this...)
     "isFRational", --Karl (added recently).
-    "IsLocal", --an option for isCohenMacaulay, isFRational, etc.
+    "AtOrigin", --an option for isCohenMacaulay, isFRational, etc.
     "testModule", --Karl (this subsumes a bunch of older functions)
     "parameterTestIdeal",
 
 -- Finjective.m2
-    "HSLGModule", --produces the non-F-injective module, ie the submodule of the canonical module
+    "FPureModule", --produces the non-F-injective module, ie the submodule of the canonical module
+    "descendIdeal",
     "isFInjective",
     "CanonicalStrategy", --how to check F-injectivity on the canonical module (Ext or Katzman)
     "Katzman", --an option for CanonicalStrategy
+    "CanonicalIdeal", --an option for passing the canonical ideal
+    "GeneratorList", --an option for passing a list of u-generators (in Katzman's notation) for the canonical ideal or a canonical-like ideal
+    "CurrentRing",--an option for passing a ring to work with
 
 -- testIdeals.m2
     "QGorensteinGenerator", --Karl (this finds y such that I^{[p^e]} : I = (y) + I^{[p^e]}, if it exists) **Documented**

@@ -1,18 +1,21 @@
 HOMEPAGE = http://wwwth.mpp.mpg.de/members/bjurke/cohomcalg/
 HOMEPAGE = http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/
+HOMEPAGE = https://github.com/BenjaminJurke/cohomCalg/
+# Note: download https://github.com/BenjaminJurke/cohomCalg/archive/v0.32.tar.gz but rename the file to cohomCalg-0.32.tar.gz
+# Warning: this no longer compiles with gcc version 4.8.5, and it doesn't help with
+#   https://github.com/Macaulay2/M2/issues/977, so we may want to go back to the old version.
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 031b
-BUILDOPTIONS := CC="@CC@" CXX="@CXX@" LD="@CXX@" CFLAGS="$(CFLAGS)"
-TARFILE = cohomCalg-$(VERSION).zip
-UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
-LICENSEFILES = "GPLv3 License.txt"
+VERSION = 0.32
+TARFILE = cohomCalg-$(VERSION).tar.gz
+LICENSEFILES = LICENSE
 CHECKTARGET = .
 CONFIGURECMD = :
 INSTALLCMD = :
 PROGRAMS = bin/cohomcalg
 STRIPFILES = $(PROGRAMS)
-TARDIR = .
+TARDIR = cohomCalg-0.32
 include ../Makefile.library
+BUILDOPTIONS := CC="@CC@" CXX="@CXX@" LD="@CXX@" CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)"
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cohomcalg/Makefile
 # Local Variables:
 # mode: makefile-gmake

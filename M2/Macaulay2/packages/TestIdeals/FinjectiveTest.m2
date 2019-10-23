@@ -24,27 +24,27 @@ TEST /// --cone over P1 times ordinary elliptic curve (non CM)
     assert( isFInjective(R) );
 ///
 
-TEST /// --HSLGModule cone over ordinary elliptic curve
+TEST /// --FPureModule cone over ordinary elliptic curve
     R = ZZ/7[x,y,z]/ideal(x^3+y^3+z^3);
-    HSLmod = HSLGModule(R);
+    HSLmod = FPureModule(CurrentRing => R);
     assert(HSLmod#0 == HSLmod#1);
 ///
 
 TEST /// --the isLocal option
     R = ZZ/5[x,y,z]/ideal((x-2)^3 + y^3 + z^3); --supersingular
-    assert( isFInjective(R, IsLocal=>true) );
+    assert( isFInjective(R, AtOrigin=>true) );
     assert( not isFInjective(R) );
 ///
 
-TEST /// --HSLGModule cone over supersingular elliptic curve
+TEST /// --FPureModule cone over supersingular elliptic curve
     R = ZZ/5[x,y,z]/ideal(x^3+y^3+z^3);
-    HSLmod = HSLGModule(R);
+    HSLmod = FPureModule(CurrentRing => R);
     assert(not (HSLmod#0 == HSLmod#1));
 ///
 
-TEST /// --HSLGModule cone over supersingular elliptic curve
+TEST /// --FPureModule of an F-pure pair
     R = ZZ/7[x,y]
-    HSLmod = HSLGModule(5/6, y^2-x^3);
+    HSLmod = FPureModule(5/6, y^2-x^3);
     assert((HSLmod#0 == HSLmod#1));
 ///
 
@@ -60,4 +60,18 @@ TEST /// --checking brute force F-injective vs canonicalStrategy
     S = ZZ/3[x,y,z]/ideal(x^3+y^2*z-x*z^2); --supersingular
     assert(not isFInjective(S));
     assert(not isFInjective(S, CanonicalStrategy=>null));
+///
+
+TEST /// --checking FPureModule vs descendIdeal #1
+    R = ZZ/7[x,y];
+    maxIdeal = ideal(x,y);
+    unitIdeal = ideal(sub(1,R));
+    f = x*y*(x+y);
+    unit = sub(1, R);
+    assert((FPureModule(2/3, f, CanonicalIdeal => maxIdeal, GeneratorList => {unit}))#0 == maxIdeal );
+    assert((FPureModule(2/3, f, CanonicalIdeal => unitIdeal, GeneratorList => {unit}))#0 == unitIdeal );
+    assert((descendIdeal(1, {4}, {f}, maxIdeal))#0 == maxIdeal);
+    assert((descendIdeal(1, {4}, {f}, unitIdeal))#0 == unitIdeal);
+    assert((FPureModule(37/48, f, CanonicalIdeal => unitIdeal, GeneratorList => {unit}))#0 == maxIdeal);
+    assert((FPureModule(37/48, f, CanonicalIdeal => unitIdeal, GeneratorList => {unit}))#0 == maxIdeal);
 ///

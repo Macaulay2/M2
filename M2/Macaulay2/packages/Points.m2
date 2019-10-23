@@ -737,16 +737,16 @@ doc ///
     i = randomPoints(r,n)
    Inputs
     r:ZZ
-     number of points
-    n:ZZ
      ambient dimension
+    n:ZZ
+     number of points
    Outputs
     i:Ideal
      ideal of the random points
    Description
     Text
      The script defines a ring R with r+1 variables, and calls
-     points(R,randomPointsMat(r,n))
+     points(R,randomPointsMat(R, n))
     Example
      betti res randomPoints(11,5)
    SeeAlso

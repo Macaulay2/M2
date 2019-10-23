@@ -159,7 +159,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 Licenses
 TestIdeals
-FThresholds
+FrobeniusThresholds
 Seminormalization
 AlgebraicSplines
 TriangularSets
@@ -186,3 +186,8 @@ SegreClasses
 SemidefiniteProgramming
 SOS
 MultiGradedRationalMap
+VirtualResolutions
+Quasidegrees
+DiffAlg
+DeterminantalRepresentations
+FGLM

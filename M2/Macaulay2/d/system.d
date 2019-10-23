@@ -57,6 +57,7 @@ export dup2(fd:int,fd2:int) ::= Ccode(int, "dup2(", fd, ",", fd2, ")" );
 export pow(x:double,y:double) ::= Ccode(double, "pow(", x, ",", y, ")" );
 export abort() ::= Ccode(exits,"abort()");
 export sleep(t:int):int := Ccode(int,"sleep(t)");
+export nanosleep(t:long):int := Ccode(returns,"struct timespec ts_sleep; ts_sleep.tv_sec = ",t,"/1000000000; ts_sleep.tv_nsec=",t,"%1000000000; return nanosleep(&ts_sleep, NULL);");
 export getpid():int := Ccode(int, "getpid()");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
 export getpgrp():int := Ccode(int, "
      #ifdef HAVE_GETPGRP
@@ -140,7 +141,7 @@ export wait(pid:int):int := Ccode(returns, "
      #ifdef HAVE_WAITPID
       int status;
       if (waitpid(pid,&status,0) == -1) return -1;
-      return status >> 8;
+      return status;
      #else
       return -1;
      #endif

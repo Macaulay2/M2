@@ -4209,7 +4209,7 @@ doc ///
 	beilinson(E^{{-1,0}})
 	T = chainComplex(psi)
 	C = beilinson T
-	betti T, betti C
+	betti T
   SeeAlso
     BundleType
     SubBundle

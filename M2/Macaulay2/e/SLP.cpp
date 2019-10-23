@@ -5,10 +5,15 @@
 // SLProgram
 SLProgram::SLProgram()
 {
-  // std::cout << "in SLProgram::SLProgram" << std::endl;
+  // std::cerr << "in SLProgram::SLProgram" << std::endl;
   inputCounter = 0;
 }
-SLProgram::~SLProgram() {}
+
+SLProgram::~SLProgram()
+{
+  // std::cerr << "~SLProgram" << std::endl;
+}
+
 SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a)
 {
   mNodes.push_back(MSum);
@@ -62,9 +67,9 @@ void SLProgram::setOutputPositions(const M2_arrayint a)
 void SLProgram::text_out(buffer& o) const
 {
   o << "SLProgram (" << newline;
-  o << "  inputs: " << inputCounter << newline;
-  o << "  #mNodes: " << mNodes.size() << newline;
-  o << "  outputs: " << mOutputPositions.size() << newline;
+  o << "  consts+vars: " << inputCounter << newline;
+  o << "  noninput nodes: " << mNodes.size() << newline;
+  o << "  output nodes: " << mOutputPositions.size() << newline;
   o << "  )" << newline;
 }
 
