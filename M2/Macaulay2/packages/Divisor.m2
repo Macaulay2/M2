@@ -1,11 +1,27 @@
+--this file is in the public domain
+
 newPackage( "Divisor",
-     Version => "0.3", Date => "May 30th, 2018", 
+     Version => "0.3", 
+     Date => "May 30th, 2018",
      Authors => {
-     	  { Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede" },
-     	  { Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com" }
-	  }, --this file is in the public domain
+	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
+     	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com", HomePage => "http://sites.psu.edu/zhaoningyang"}},
      Headline => "a package for working with Weil divisors",
-     PackageImports => {"IntegralClosure","RationalMaps"}
+     PackageImports => { "IntegralClosure", "RationalMaps" },
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Divisor Package for Macaulay2",
+	  "acceptance date" => "31 August 2018",
+	  "published article URI" => "https://msp.org/jsag/2018/8-1/p09.xhtml",
+	  "published article DOI" => "10.2140/jsag.2018.8.87",
+	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x09-Divisor.m2",
+	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
+	  "release at publication" => "0e40b423ff375d6eb0a98d6fbbe7be8b2db95a98",	    -- git commit number in hex
+	  "version at publication" => "0.3",
+	  "volume number" => "8",
+	  "volume URI" => "https://msp.org/jsag/2018/8-1/"
+	  }
      )
 export{
     --objects
@@ -84,6 +100,7 @@ export{
 	"Section", --an option for specifying a section when find a divisor corresponding to a module
     --hashtable keys
     "ideals"
+
 }
 
 ----------------------------------------------------------------

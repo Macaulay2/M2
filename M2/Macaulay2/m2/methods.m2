@@ -195,7 +195,7 @@ setupMethods((), {
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
 
-use = method()
+use = method(Dispatch => Thing)
 use Thing := identity
 
 dual = method(Options => true)

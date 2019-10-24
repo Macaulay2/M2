@@ -38,9 +38,11 @@ set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
 # terminology:
-#   usr-build  -- install tools needed for compilation here
-#   usr-host   -- install the results of compilation here, for the target machine
-#   usr-dist   -- install everything needed in the final Macaulay2 distribution here, for the target machine
+#   subdirectories of the source tree
+#     usr-build  -- install tools needed for rebuilding the configure script here, if needed
+#   subdirectories of the build tree
+#     usr-host   -- install the results of compilation of libraries, programs, and submodules, here, for the target machine
+#     usr-dist   -- place copies of everything needed in the final Macaulay2 distribution here, for the target machine
 
 check-stripped:
 	@ echo "-- checking for unstripped binaries"
@@ -314,12 +316,18 @@ help:
 	@ echo "  distclean         remove all generated files"
 	@ echo "  help              show this help"
 	@ echo ""
+	@ echo "targets for all libraries:"
+	@ echo "  all-in-libraries"
+	@ echo "  check-in-libraries"
+	@ echo "  install-in-libraries"
+	@ echo "  clean-in-libraries"
+	@ echo ""
 	@ echo "targets for all submodules:"
 	@ echo "  all-in-submodules"
 	@ echo "  build-in-submodules"
 	@ echo "  check-in-submodules"
-	@ echo "  clean-in-submodules"
 	@ echo "  install-in-submodules"
+	@ echo "  clean-in-submodules"
 	@ echo ""
 	@ echo "targets for a submodule FOO:"
 	@ echo "  all-in-FOO"

@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.14",
 	  TO "changes, 1.13",
 	  TO "changes, 1.12",
 	  TO "changes, 1.11",
@@ -31,6 +32,26 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added." }
+		    }
+	       },
+	  LI { "functionality added or improved:",
+          UL {
+              LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
+                  created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, GRevLex
+                      group counts as a block)"
+                  }
+              }
+          }
+	  }
+     }
+ 
+document {
+     Key => "changes, 1.14",
+     UL {
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI { "A bug related to determining the correct layout of a source directory prevented the function ", TO "help", " from
@@ -40,7 +61,61 @@ document {
 			 to global variables from being printed out as the name of the variable."
 			 }
 		    }
-	       }
+	       },
+     	  LI { "new packages:",
+     	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been added." },
+	       	    LI { TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been added." },
+		    LI { TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been added." },
+		    LI { TO "FGLM::FGLM", ", a package by Dylan Peifer and Mahrud Sayrafi for computing Groebner bases via the algorithm of Faugère, Gianni, Lazard, and Mora, has been added." }
+		    }
+	       },
+     	  LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "LieTypes::LieTypes", " and ", TO "ConformalBlocks::ConformalBlocks", ", two packages by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, have been published." },
+		    LI { star, " ", TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been published." },
+		    LI { star, " ", TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been published." },
+		    LI { star, " ", TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been published." },
+		    LI { star, " ", TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been published." },
+		    LI { star, " ", TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been published." }
+		    }
+	       },
+	  LI { "improved packages:",
+	       UL {
+		    LI { 
+		       	 TO "ReflexivePolytopesDB::ReflexivePolytopesDB", " now has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code."
+			 },
+		    LI { 
+		       	 TO "CohomCalg::CohomCalg", " also has a simplified interface and also 
+                         does not access the web during installation.  However, these changes will likely break previous code
+                         using this package."
+			 }
+		    }
+	       },
+	  LI { "new constants and operators:",		    -- get this with : git diff version-1.13 ../../m2/exports.m2
+	       UL {
+		    LI { "The symbol ", TO "Jupyter", " has been added." },
+		    LI { "The type ", TO "MultigradedBettiTally", " has been added." },
+		    LI { "The function ", TO "multigraded", " has been added." }
+		    }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.14%22+is%3Aclosed","closed 1.14 issues"}, ",
+			 for the issues and pull requests incorporated into 1.14."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.14","1.14 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.14."
+			 }
+		    }
+	       }	  
 	  }
      }
 
@@ -62,9 +137,9 @@ document {
 	       	    LI { TO "Truncations::Truncations", ", a package by David Eisenbud and Mike Stillman for truncating modules, has been added.
 			 It implements a better notion of truncation of a multigraded module.  Some bugs in the old function have been fixed.  
 			 The function ", TO "Truncations::truncate", " has been made functorial, but it no longer allows partial degrees to be given." },
-	       	    LI { TO "FThresholds::FThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
+	       	    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Erin Bela, Alberto F. Boix, Juliette Bruce, Drew Ellingson, Daniel Hernandez,
 			 Zhibek Kadyrsizova, Moty Katzman, Sara Malec, Matthew Mastroeni, Maral Mostafazadehfard, Marcus Robinson, Karl Schwede, Dan 
-			 Smolkin, Pedro Teixeira and Emily Witt for calculation of F-thresholds, has been added." },
+			 Smolkin, Pedro Teixeira and Emily Witt for calculation of Frobenious thresholds, has been added." },
 	       	    LI { TO "ToricInvariants::ToricInvariants", ", a package by Martin Helmer for computing Euclidean distance degrees, polar degrees,
 			 degree and codimension of the dual, and Chern-Mather classes of toric varieties, has been added." },
 	       	    LI { TO "SegreClasses::SegreClasses", ", a package by Martin Helmer and Corey Harris for testing containment of varieties and 
