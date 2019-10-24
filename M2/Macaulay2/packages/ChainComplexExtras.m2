@@ -807,7 +807,6 @@ document {
 		"C = koszulComplex(ideal vars R) ** (R^1/I);",
 		"m = res C;",
 		"isQuasiIsomorphism m",
-		"betti C",
 		"betti source m",
 		"C == target m"
 	     }
