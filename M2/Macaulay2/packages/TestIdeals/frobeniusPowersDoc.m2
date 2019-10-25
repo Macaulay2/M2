@@ -167,7 +167,8 @@ doc ///
 
 doc ///
     Key
-        frobeniusPreimage
+        frobeniusPreimage        
+        ( frobeniusPreimage, ZZ, Ideal )
     Headline
         finds the ideal of elements mapped into a given ideal, under all $p^{-e}$-linear maps
     Description
