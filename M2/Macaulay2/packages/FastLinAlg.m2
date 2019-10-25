@@ -1240,7 +1240,11 @@ doc ///
             @TO rank@.  To control the number of times {\tt getSubmatrixOfRank} considers
             submatrices, use the option {\tt MaxMinors}.
         Example
-            R = QQ[x,y,z]
+            R = QQ[x,y];
+            M = matrix{{x,y,2,0,2*x+y}, {0,0,1,0,x}, {x,y,0,0,y}};
+            rank M
+            isRankAtLeast(2, M)
+            isRankAtLeast(3, M)
         Text
             The option {tt Threads} can be used to somewhat multithread this function.  If {\tt allowableThreads} is above 2 and {\tt Threads} is set above 1, then this function will try to simultaneously compute the rank of the matrix while looking for a submatrix of a certain rank.
     SeeAlso
@@ -1266,12 +1270,20 @@ doc ///
     Description
         Text
             This function looks at subtrices of the given matrix, and tries to find
-            one of the specified rank.  If it fails to find such a matrix,
+            one of the specified rank.  If it succeeds, it returns a list of two lists.  
+            The first is the list of rows, the second is the list of columns, of the desired rank submatrix.
+            If it fails to find such a matrix,
             the function returns null.  The option {\tt MaxMinors} is used to
             control how many minors to consider.  If left {\tt null}, the number
             considered is based on the size of the matrix.
         Example
-            R = QQ[x,y,z]
+            R = QQ[x,y];
+            M = matrix{{x,y,2,0,2*x+y}, {0,0,1,0,x}, {x,y,0,0,y}};
+            l = getSubmatrixOfRank(2, M)
+            (M^(l#0))_(l#1)
+            l = getSubmatrixOfRank(2, M)
+            (M^(l#0))_(l#1)
+            getSubmatrixOfRank(3, M)
         Text
             The option {\tt Strategy} is used to used to control how the function computes
             the rank of the submatrices considered.  See @TO [getSubmatrixOfRank, Strategy]@.
