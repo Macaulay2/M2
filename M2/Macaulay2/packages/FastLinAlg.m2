@@ -320,6 +320,9 @@ replaceZeros(Matrix):= Matrix => o->(M2) -> (
 
     largeGen:= null;
     if (instance(PolynomialRing, ring M2) or instance(QuotientRing, ring M2)) then (largeGen = (product gens ambient ring M2)^(2*largeDeg+2)) else (largeGen = (max(flatten entries M2))^2);
+    if (sub(largeGen, ring M2) == 0) then (largeGen = (max(flatten entries M2))^2);
+    if (sub(largeGen, ring M2) == 0) then (largeGen == sub(1, ring M2));
+    largeGen = sub(largeGen, ring M2);
     --largeGen := (product gens ambient ring M2)^(2*largeDeg+2);
 
     i := 0;
@@ -469,10 +472,12 @@ replaceSmallestTerm(List, MutableMatrix) := opts -> (submatrixS, M1) -> (
   rowListS := submatrixS#0;
   colListS := submatrixS#1;
   mutedSM := M1;
+  M2 := sub(matrix M1, ambient ring M1);
   myRand := random(#rowListS);
   moddedRow := rowListS#(myRand);
   moddedCol := colListS#(myRand);
   val := (M1_(moddedRow, moddedCol))*((gens ambR)#(random(#(gens ambR))));
+  if (val == 0) then val = sub((max(flatten entries M2))^2, ring M1);
   mutedSM_(moddedRow, moddedCol) = val;
   return mutedSM;
   );
@@ -620,6 +625,7 @@ internalChooseMinor(ZZ, Ring, Matrix, Matrix) := opts -> (minorSize, ambR, nonze
     mutM2 := opts.MutableSmallest;
     mutM1 := opts.MutableLargest;
     local M2;
+    if (any(flatten entries matrix mutM2, z->z==0)) then error "internalChooseMinor: expected a matrix with no zero entries.";
     if (myRandom < opts.Strategy#LexSmallest) then (
         R2 = reorderPolynomialRing(Lex, ambR); --do the same with respect to a Lex ordering
         f = map(R2, ambR);
@@ -658,8 +664,8 @@ internalChooseMinor(ZZ, Ring, Matrix, Matrix) := opts -> (minorSize, ambR, nonze
     else if (myRandom < opts.Strategy#LexSmallest + opts.Strategy#LexSmallestTerm + opts.Strategy#LexLargest + opts.Strategy#GRevLexSmallest + opts.Strategy#GRevLexSmallestTerm + opts.Strategy#GRevLexLargest ) then (
         R2 = reorderPolynomialRing(GRevLex, ambR);
         f = map(R2, ambR);
-        M1 = f(matrix mutM1); --put the matrix in the ring with the new order
-        submatrixS1 = chooseSubmatrixLargestDegree(minorSize, M1);
+        M2 = f(matrix mutM1); --put the matrix in the ring with the new order
+        submatrixS1 = chooseSubmatrixLargestDegree(minorSize, M2);
         mutM1 = replaceLargestTerm(submatrixS1, mutM1);
         --this needs to be written
     )
@@ -828,7 +834,7 @@ projDim(Module) := opts -> (N1) -> (
     theseMinors := chooseGoodMinors(minorsCount, firstRank, firstDiff, goodMinorsOptions);
     curDim := dim theseMinors;
     if (debugLevel > 0) or opts.Verbose then print concatenate("projDim: first minors computed!  minors found =", toString(#first entries gens theseMinors), ", curDim =", toString(curDim));
-    if (curDim >= 0) then (1/0; return myLength);
+    if (curDim >= 0) then (return myLength);
 
     i := myLength-1;
     if (debugLevel > 0) or opts.Verbose then print "projDim: computed dim, now starting loop.";
@@ -858,9 +864,10 @@ isRankAtLeast = method(Options => optIsRankAtLeast);
 
 isRankAtLeast(ZZ, Matrix) := opts -> (n1, M0) -> (
   if (opts.Threads <= 2) or (not isGlobalSymbol "nanosleep") or (allowableThreads <= 3) then (
-      if (debugLevel > 0) then print "isRankAtLeast: Going to single threaded version.";
+      if ((debugLevel > 0) or (opts.Verbose==true)) then print "isRankAtLeast: Going to single threaded version.";
       return isRankAtLeastSingle(n1, M0, opts); --single threaded version, implementation below.
   );
+  if (M0 == 0) then return (n1 <= 0);
 
   if (n1 > numRows M0) or (n1 > numColumns M0) then return false;
   if (n1 == numRows M0) and (n1 == numColumns M0) then return (rank M0 == n1);
@@ -907,6 +914,7 @@ isRankAtLeastSingle = method(Options => optIsRankAtLeast);
 
 isRankAtLeastSingle(ZZ, Matrix) := opts -> (n1, M0) -> (
   if (n1 > numRows M0) or (n1 > numColumns M0) then return false;
+  if (M0 == 0) then return (n1 <= 0);
   if (n1 == numRows M0) and (n1 == numColumns M0) then return (rank M0 == n1);
   if (not (opts.MaxMinors === null)) then (if (opts.MaxMinors <= 0) then return (rank M0 == n1););
   --THIS IS A REALLY GOOD PLACE TO ADD MULTITHREADING, maybe run one standard rank call, plus a couple (or just one) of these calls, if multithreading is on.
@@ -919,6 +927,7 @@ getSubmatrixOfRank = method(Options => optIsRankAtLeast);
 getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
     --print opts;
     if (n1 > numRows M0) or (n1 > numColumns M0) then return null;
+    if (M0 == 0) then return null;
     R1 := ring M0;
     ambRing := null;
     if (instance(PolynomialRing, R1) or instance(QuotientRing, R1)) then (ambRing = ambient(R1)) else (ambRing = R1);
@@ -940,8 +949,10 @@ getSubmatrixOfRank(ZZ, Matrix) := opts -> (n1, M0) -> (
     );
     subMatrix := null;
     val := null;
+    --1/0;
     if (debugLevel > 0) or opts.Verbose then print ("getSubmatrixOfRank: Trying to find a submatrix of rank at least: " | toString(n1) | " with attempts = " | toString(attempts) | ".  DetStrategy=>" | toString(opts.DetStrategy));
-    while (i < attempts)  do (
+    while (i < attempts)  do (        
+        if (any(flatten entries matrix mutM2, z->z==0)) then error "getSubmatrixOfRank: expected a matrix with no zero entries.";
         subMatrix = internalChooseMinor(n1, ambRing, nonzeroM, M1, internalMinorsOptions++{MutableSmallest=>mutM2, MutableLargest=>mutM1});
         --if (debugLevel > 0) or opts.Verbose then print ("getSubmatrixOfRank: found subMatrix " | toString(subMatrix));
         if (not (subMatrix === null)) and (not (searchedSet#?(locationToSubmatrix(subMatrix)))) then (
