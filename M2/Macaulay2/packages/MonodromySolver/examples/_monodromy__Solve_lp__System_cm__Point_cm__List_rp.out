@@ -1,0 +1,19 @@
+-- -*- M2-comint -*- hash: 808489351
+
+i1 : setRandomSeed 0;
+
+i2 : S = CC[a,b,c];
+
+i3 : R = S[x,w];
+
+i4 : (h, f) = (a*x+b*w+c, 3*x^2 - w + 1);
+
+i5 : x0 = point {{ii_CC,-2}}; -- clearly a zero of f
+
+i6 : l = apply(2,i->random CC);
+
+i7 : p0 = point({append(l,- sum apply(l, x0.Coordinates,(i,x)->i*x))});
+
+i8 : (N, npaths) = monodromySolve(polySystem {h,f},p0,{x0},NumberOfNodes=>3);
+
+i9 : 

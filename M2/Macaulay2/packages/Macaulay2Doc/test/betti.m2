@@ -3,7 +3,6 @@ f = matrix {{a},{b}}
 g = matrix {{a,b},{c,d}}
 M = subquotient(f,g)
 m = basis(2,M) 
-betti m
 
 
 S = ZZ[x,Degrees => {-3} ]

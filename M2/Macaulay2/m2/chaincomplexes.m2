@@ -796,7 +796,9 @@ betti GradedModule := opts -> C -> (
      	  heftfn := heftfun(opts.Weights,heft C);
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
-	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
+	       (i,F) -> (
+		    if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
+		    apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n)))))
 
 -----------------------------------------------------------------------------
 MultigradedBettiTally = new Type of BettiTally
