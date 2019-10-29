@@ -6,7 +6,7 @@ needsPackage "Bertini"
 makeB'InputFile(storeBM2Files,
     AffVariableGroup=>{x},
     ParameterGroup=>{u},
-    B'Configs=>{{PARAMETERHOMOTOPY,1}},
+    BertiniInputConfiguration=>{{PARAMETERHOMOTOPY,1}},
     B'Polynomials=>{"x^2+u"}
     )
 runBertini(storeBM2Files)
@@ -17,7 +17,7 @@ assert(#importParameterFile(storeBM2Files,NameParameterFile=>"start_parameters")
 makeB'InputFile(storeBM2Files,
     AffVariableGroup=>{x},
     ParameterGroup=>{u},
-    B'Configs=>{{PARAMETERHOMOTOPY,2}},---NOTE THE 2!
+    BertiniInputConfiguration=>{ParameterHomotopy=>2},---NOTE THE 2!
     B'Polynomials=>{"x^2+u"}
     )
 writeParameterFile(storeBM2Files,{ -2},NameParameterFile=>"final_parameters")
@@ -33,7 +33,7 @@ assert(abs(   (importParameterFile(storeBM2Files,NameParameterFile=>"final_param
 makeB'InputFile(storeBM2Files,
     AffVariableGroup=>{x},
     ParameterGroup=>{u},
-    B'Configs=>{{PARAMETERHOMOTOPY,1}},
+    BertiniInputConfiguration=>{ParameterHomotopy=>1},
     B'Polynomials=>{"x^4+u"}
     )
 runBertini(storeBM2Files,PreparePH2=>true)
@@ -58,7 +58,7 @@ assert(abs(   (importParameterFile(storeBM2Files,NameParameterFile=>"final_param
 --This is steamlined with the b'PHSequence command. 
 
        makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},
-           B'Configs=>{{"PARAMETERHOMOTOPY",1}},
+           BertiniInputConfiguration=>{"PARAMETERHOMOTOPY"=>1},
            B'Polynomials=>{"x^3-t1","y-t2"})
        runBertini(storeBM2Files,PreparePH2=>true)
        setsOfParameters={{1,1},{1,2}}
