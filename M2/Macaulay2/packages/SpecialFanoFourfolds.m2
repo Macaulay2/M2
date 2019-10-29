@@ -2,11 +2,11 @@
 newPackage(
        "SpecialFanoFourfolds",
     	Version => "0.01", 
-        Date => "October 23, 2019",
+        Date => "October 29, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "A (work-in-progress) package for working with special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2",
         PackageExports => {"Resultants","Cremona"},
-    	DebuggingMode => false,
+    	DebuggingMode => true,
     	Reload => false
 	)
 
@@ -23,13 +23,16 @@ export{
    "parameterCount",
    "normalSheaf",
    "isAdmissible",
-   "detectCongruence"
+   "detectCongruence",
+   "coneOfLines",
+   "ideals"
 }
 
 needsPackage "CharacteristicClasses"; -- used to implement eulerChar
 needsPackage("RationalMaps",DebuggingMode=>false); -- used to implement inverse2
 needsPackage "Resultants";
 needsPackage "Cremona";
+debug Cremona;
 
 ------------------------------------------------------------------------
 --------------------------- Cubic fourfolds ----------------------------
@@ -66,7 +69,8 @@ specialCubicFourfold (Ideal) := o -> (S) -> (-- S must be saturated
     if not isField K then error "the coefficient ring needs to be a field";
     S = trim S;
     B := if unique degrees S == {{3}} then flatten entries gens S else flatten entries super basis(3,S);
-    C := 0; while (C === 0 or (dim ideal jacobian matrix C -1 >= 0)) do C = sum(#B,i -> random(K) * B_i); 
+    -- C := 0; while (C === 0 or (dim ideal jacobian matrix C -1 >= 0)) do C = sum(#B,i -> random(K) * B_i); 
+    C := sum(#B,i -> random(K) * B_i); 
     X := specialCubicFourfold(S,ideal C,NumNodes=>o.NumNodes);
     if o.NumNodes == 3 and degrees S === toList(13:{3}) and degree S == 7 and genera S == {-3, 0, 6} then if projectiveDegrees X#"cubicMap" == {1, 3, 9, 20, 30, 29} then (forceImage(X#"cubicMap",image(2,X#"cubicMap")); (X#"cubicMap")#"projectiveDegrees" = {1, 3, 9, 20, 30, 29});  -- Farkas-Verra surface   
     return X;
@@ -74,16 +78,24 @@ specialCubicFourfold (Ideal) := o -> (S) -> (-- S must be saturated
 
 specialCubicFourfold (String,Ring) := o -> (str,K) -> (
    if str === "quintic del Pezzo surface" then return specialCubicFourfold(image rationalMap(intersect for i to 3 list point Grass(0,2,K),3),NumNodes=>0);
-   if str === "C42" then return specialCubicFourfold(last last randomS42data(K),NumNodes=>5);
    if str === "C38" then return specialCubicFourfold(image rationalMap(Grass(0,2,K),{10,0,0,10}),NumNodes=>0);
-   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"C38\", \"C42\"";
+   if str === "Farkas-Verra C26" then (
+       t := gens Grass(0,2,K);
+       f := rationalMap(Grass(0,2,K),Grass(0,8,K),{t_0^5, t_0^4*t_1, t_0^3*t_1^2, t_0^2*t_1^3, t_0^4*t_2, t_0^3*t_1*t_2, t_0^2*t_1^2*t_2, t_0*t_1^3*t_2, t_1^4*t_2});
+       f = f * rationalMap(target f,Grass(0,5,K,Variable=>"x"),gens image basis(1,intersect apply(3,i -> (ideal random(1,target f)) + (ideal image basis(1,intersect(f point source f,f point source f))))));
+       return specialCubicFourfold(image f,NumNodes=>3);
+   );
+   if str === "C42" then return specialCubicFourfold(last last randomS42data(K),NumNodes=>5);
+   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"Farkas-Verra C26\", \"C38\", \"C42\"";
 );
 
 specialCubicFourfold (String) := o -> (str) -> specialCubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes);
 
 expression SpecialCubicFourfold := (X) -> expression("Cubic fourfold containing a surface of degree "|toString(X#"surfaceInvariants"_0)|" and sectional genus "|toString(X#"surfaceInvariants"_1));
 
-net SpecialCubicFourfold := (X) -> net ideal X;
+net SpecialCubicFourfold := (X) -> (
+   net("-- special cubic fourfold --"||("ambient projective space: "|nicePrint(ring X))||("surface: "|nicePrint(X#"idealSurface"))||"fourfold: "|nicePrint(X#"idealFourfold"))
+);
 
 SpecialCubicFourfold#{Standard,AfterPrint} = SpecialCubicFourfold#{Standard,AfterNoPrint} = (X) -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class X << " (" << expression X << ")" << endl;
@@ -91,9 +103,15 @@ SpecialCubicFourfold#{Standard,AfterPrint} = SpecialCubicFourfold#{Standard,Afte
 
 ideal SpecialCubicFourfold := (X) -> X#"idealFourfold";
 
+ideals = method();
+
+ideals (SpecialCubicFourfold) := (X) -> (X#"idealSurface",X#"idealFourfold");
+
 ring SpecialCubicFourfold := (X) -> ring ideal X;
 
 coefficientRing SpecialCubicFourfold := (X) -> coefficientRing ring X;
+
+map (SpecialCubicFourfold) := o -> (X) -> X#"cubicMap";
 
 parametrize (SpecialCubicFourfold) := (X) -> (
     if X#"parameterization" =!= null then return X#"parameterization";
@@ -107,9 +125,9 @@ parametrize (SpecialCubicFourfold) := (X) -> (
     error "not implemented yet";
 );
 
-parameterCount = method(Options => {NumNodes => 0, Verbose => true})
+parameterCount = method(Options => {Verbose => true})
 
-parameterCount (Ideal,Ideal) := o -> (S,X) -> (
+parameterCount (Ideal,Ideal,Boolean) := o -> (S,X,isSing) -> (
    if ring S =!= ring X then error "expected same ring";
    if not (isField coefficientRing ring S and isPolynomialRing ring S and isHomogeneous S and isHomogeneous X) then error "expected homogeneous ideals in a polynomial ring over a field";
    d := first first degrees X;
@@ -121,19 +139,20 @@ parameterCount (Ideal,Ideal) := o -> (S,X) -> (
    if o.Verbose then <<"S: "|toString(? S)<<endl;
    if o.Verbose then <<"X: "|toString(? X)<<endl;
    n := numgens ring S -1;
-   if o.NumNodes > 0 then (
-      R := (ring S)/S;
-      XX := Proj R;
-      IXX := sheaf ((module S) ** R);
-      y := rank Ext^1(IXX,OO_XX);
-      if o.Verbose then <<"dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = "|toString(y)<<endl; 
-      if y != 0 then <<"--warning: condition not satisfied: dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = 0"<<endl;
-   );
    N := normalSheaf S;
-   if o.NumNodes == 0 then (
-      h1N := rank HH^1 N;
-      if o.Verbose then <<"h^1(N_{S,P^"|toString(n)|"}) = "|toString(h1N)<<endl; 
-      if h1N != 0 then <<"--warning: condition not satisfied: h^1(N_{S,P^"|toString(n)|"}) = 0"<<endl;
+   if isSing then (
+   --   R := (ring S)/S;
+   --   XX := Proj R;
+   --   IXX := sheaf ((module S) ** R);
+   --   y := rank Ext^1(IXX,OO_XX);
+   --   if o.Verbose then <<"dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = "|toString(y)<<endl; 
+   --   if y != 0 then <<"--warning: condition not satisfied: dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = 0"<<endl;
+      if o.Verbose then <<"(assumption: dim Ext^1(I_{S,P^"|toString(n)|"},O_S) = 0)"<<endl; 
+   ) else (
+   --   h1N := rank HH^1 N;
+   --   if o.Verbose then <<"h^1(N_{S,P^"|toString(n)|"}) = "|toString(h1N)<<endl; 
+   --   if h1N != 0 then <<"--warning: condition not satisfied: h^1(N_{S,P^"|toString(n)|"}) = 0"<<endl;
+      if o.Verbose then <<"(assumption: h^1(N_{S,P^"|toString(n)|"}) = 0)"<<endl; 
    );
    h0N := rank HH^0 N;
    if o.Verbose then <<"h^0(N_{S,P^"|toString(n)|"}) = "|toString(h0N)<<endl; 
@@ -178,7 +197,9 @@ parameterCount (Ideal,Ideal) := o -> (S,X) -> (
    return w;
 );
 
-parameterCount (SpecialCubicFourfold) := o -> (X) -> parameterCount(X#"idealSurface",X#"idealFourfold",NumNodes=>X#"NumNodesSurface",Verbose=>true);
+parameterCount (Ideal,Ideal) := o -> (S,X) -> parameterCount(S,X,true,Verbose=>o.Verbose); 
+
+parameterCount (SpecialCubicFourfold) := o -> (X) -> parameterCount(X#"idealSurface",X#"idealFourfold",X#"NumNodesSurface" > 0,Verbose=>o.Verbose);
 
 normalSheaf = method(TypicalValue=>CoherentSheaf);
 
@@ -208,8 +229,8 @@ isAdmissible (ZZ) := (d) -> (
 
 isAdmissible (SpecialCubicFourfold) := (X) -> isAdmissible discriminant X;
 
-detectConguencesOf3Eminus1secantCurveOfDegreeE = method(Options => {Verbose => true})
-detectConguencesOf3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
+find3Eminus1secantCurveOfDegreeE = method(Options => {Verbose => true})
+find3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
    phi := X#"cubicMap";
    if not(unique degrees p == {{1}} and dim p == 1 and degree p == 1 and ring p === source phi) then error "expected the ideal of a point in the ambient projective space of the cubic fourfold";
    S := X#"idealSurface"; 
@@ -233,11 +254,11 @@ detectConguencesOf3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o
    T := secantCone(p,S);
    try assert(dim T -1 == 1) else error "expected secant cone to be one dimensional";
    degT := degree T;
-   V := coneOfLinesContained(image phi,phi p);
+   V := coneOfLines(image phi,phi p);
    try assert (dim V -1 == 1) else error "expected cone of lines to be one dimensional";
    degV := degree V;
    if o.Verbose then <<"number lines containing in Z and passing through the point phi(p): "<<degV<<endl;
-   if o.Verbose then <<"number 2-secant lines S: "<<degree T<<endl;
+   if o.Verbose then <<"number 2-secant lines to S passing through p: "<<degree T<<endl;
    E := saturate(V,phi T);   
    degE := degree E;
    try assert(degE + degT == degV) else error "internal error encountered";
@@ -280,16 +301,16 @@ detectConguencesOf3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o
    );
    try assert (lines2secant == 0) else error "internal error encountered";
    try assert(conics5secant + cubics8secant + quartics11secant + quintics14secant + sectics17secant == degE) else error "internal error encountered";
-   if o.Verbose then <<"number 5-secant conics S: "<<conics5secant<<endl;
+   if o.Verbose then <<"number 5-secant conics to S passing through p: "<<conics5secant<<endl;
    Out := {Lines2secant|{T},Conics5secant,Cubics8secant,Quartics11secant,Quintics14secant,Sectics17secant};
    if conics5secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-   if o.Verbose then<<"number 8-secant cubics S: "<<cubics8secant<<endl;
+   if o.Verbose then<<"number 8-secant cubics to S passing through p: "<<cubics8secant<<endl;
    if conics5secant + cubics8secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-   if o.Verbose then <<"number 11-secant quartics S: "<<quartics11secant<<endl;
+   if o.Verbose then <<"number 11-secant quartics to S passing through p: "<<quartics11secant<<endl;
    if conics5secant + cubics8secant + quartics11secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-   if o.Verbose then <<"number 14-secant quintics S: "<<quintics14secant<<endl;
+   if o.Verbose then <<"number 14-secant quintics to S passing through p: "<<quintics14secant<<endl;
    if conics5secant + cubics8secant + quartics11secant + quintics14secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-   if o.Verbose then <<"number 17-secant sectics S: "<<sectics17secant<<endl;
+   if o.Verbose then <<"number 17-secant sectics to S passing through p: "<<sectics17secant<<endl;
    return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
 );
 
@@ -317,15 +338,30 @@ secantCone (Ideal,Ideal) := (p,I) -> (
 detectCongruence = method();
 
 detectCongruence (SpecialCubicFourfold) := (X) -> (
-    (l,L) := detectConguencesOf3Eminus1secantCurveOfDegreeE(point ring X,X,Verbose=>true);
+    (l,L) := find3Eminus1secantCurveOfDegreeE(point ring X,X,Verbose=>true);
     e := for i to 5 do if l_i == 1 then break (i+1);
-    if e === null then error "no conguences detected";
-    p -> (
-       (l,L) := detectConguencesOf3Eminus1secantCurveOfDegreeE(p,X,Verbose=>false);
-       C := L_(e-1);
-       try assert(l_(e-1) == 1 and #C == 1 and dim C_0 == 2 and degree C_0 ==  e and degree(C_0 + X#"idealSurface") == 3*e-1 and isSubset(C_0,p)) else error "internal error encountered";
-       C_0
-    )
+    if e === null then error "no congruences detected";
+    return detectCongruence(X,e);
+);
+
+detectCongruence (SpecialCubicFourfold,ZZ) := (X,e) -> (
+   f := p -> (
+      phi := X#"cubicMap";
+      S := X#"idealSurface"; 
+      q := phi p;
+      E := coneOfLines(image phi,q);
+      g := rationalMap(q);
+      E' := g E;
+      g' := rationalMap(target g,Grass(0,1,coefficientRing g),{random(1,target g),random(1,target g)});
+      decE' := apply(select(decompose g' E',s -> (dim s,degree s) == (1,1)),y -> radical trim (g'^*y + E'));
+      decE := apply(decE',D -> g^* D);
+      P := apply(decE,D -> (D' := phi^* D; (degree D',dim D' -1, dim (D'+S) -1,degree (D'+S),D')));
+      P = select(P,s -> s_0 == e and s_1 == 1 and s_2 == 0 and s_3 == 3*e-1);
+      if #P != 1 then error "internal error encountered";
+      last first P
+    );
+    try f point ring X else error "no congruences detected";
+    f
 );
 
 randomS42data = method();
@@ -377,7 +413,7 @@ randomS42data (Ring) := (K) -> (
    C2' = i2^* C2';
    -- R := QQ[X,Y,Z];
    -- "input.sage"<<"P.<X, Y, Z> = QQ[];"<<endl<<"C1 = Conic("<<toString((trim sub(C1',vars R))_0)<<");"<<endl<<"C1.has_rational_point(point = True)"<<endl<<"C2 = Conic("<<toString((trim sub(C2',vars R))_0)<<");"<<endl<<"C2.has_rational_point(point = True)"<<endl<<close;
-   if char K == 0 then error "";
+   if char K == 0 then error "needed method to find a QQ-rational point on a conic";
    (p1',p2') := (point C1',point C2');
    h1 := ((rationalMap inverse rationalMap trim sub(p1',quotient C1')) * i1)||(ring Pl);
    h2 := ((rationalMap inverse rationalMap trim sub(p2',quotient C2')) * i2)||(ring Pl);
@@ -389,18 +425,16 @@ randomS42data (Ring) := (K) -> (
    D := first select({phi^* L1,phi^* L2},w-> dim w -1 == 2 and degree w == 5 and (genera w)_1 == 1);
    -- 
    psi := rationalMap(B,3);
-   e := embed(image psi,Point => psi point source psi );
-   eta := rationalMap(source e,source psi,gens randomSigma22OnDelPezzoFivefold(image psi,psi point source psi));
-   psi = (psi||(source e)) * e;
-   T := trim lift(psi D,ambient target psi);
+   T := psi D;
    --
-   try assert(dim T -1 == 2 and codim T == 7 and degree T == 9 and (genera T)_1 == 2) else error "internal error encountered";
+   try assert(dim T -1 == 2 and codim T == 6 and degree T == 9 and genera T == {0,2,8}) else error "internal error encountered";
    -- 
-   S42 := eta e^* T;
+   eta := rationalMap(quotient image psi,source psi,gens randomSigma22OnDelPezzoFivefold(image psi,psi point source psi));
+   S42 := eta T;
    --
    try assert(dim S42 -1 == 2 and degree S42 == 9 and genera S42 == {-5, 2, 8} and degrees S42 == toList(9:{3})) else error "internal error encountered";
    -- 
-   ((psi,D),((inverse eta) * e,S42))
+   ((psi,D),(rationalMap inverse eta,S42))
 );
 
 ------------------------------------------------------------------------
@@ -428,10 +462,10 @@ specialGushelMukaiFourfold (Ideal,Ideal) := o -> (S,X) -> (
         "surfaceInvariants" => (degree S,(genera S)_1,euler(hilbertPolynomial S)),
         "eulerCharSurface" => null,
         "classSurfaceInG14" => null,
-        "delPezzoFivevold" => Y,
+        "delPezzoFivefold" => Y,
         "embeddingInG14" => embedGMFourfoldInG14(X,Y,Point=>p),
         "discriminant" => null,
-        "quadraticMap" => (rationalMap(S,2))|Y,
+        "quadraticMap" => rationalMap(trim sub(S,quotient Y),2),
         "parameterization" => null
    }
 );
@@ -472,7 +506,7 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
    if str === "cubic scroll" then (
        h := parametrize ideal random(1,ambient G14);
        Y := h^* ideal G14;
-       return specialGushelMukaiFourfold(trim sub(h trim(coneOfLinesContained(Y,point Y) + (ideal random(1,ring Y))),G14),Point=>o.Point);
+       return specialGushelMukaiFourfold(trim sub(h trim(coneOfLines(Y,point Y) + (ideal random(1,ring Y))),G14),Point=>o.Point);
    );
    if str === "quintic del pezzo surface" then return specialGushelMukaiFourfold(trim sub(ideal(G14) + ideal(random(1,ambient G14),random(1,ambient G14),random(1,ambient G14),random(1,ambient G14)),G14),Point=>o.Point);
    if str === "quintic" then return specialGushelMukaiFourfold("quintic del pezzo surface",K,Point=>o.Point);
@@ -484,7 +518,7 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
    if str === "K3 surface of genus 8" then return specialGushelMukaiFourfold("K3 surface of degree 14",K,Point=>o.Point);
    if str === "surface of degree 9 and genus 2" then (
        (g,T) := first randomS42data(K);
-       return specialGushelMukaiFourfold(g(T),Point=>o.Point);     
+       return specialGushelMukaiFourfold((embed image g) g T,Point=>o.Point);     
    );
    error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\"";
 );
@@ -493,7 +527,9 @@ specialGushelMukaiFourfold (String) := o -> (str) -> specialGushelMukaiFourfold(
 
 expression SpecialGushelMukaiFourfold := (X) -> expression("Gushel-Mukai fourfold containing a surface of degree "|toString(X#"surfaceInvariants"_0)|" and sectional genus "|toString(X#"surfaceInvariants"_1)|(if X#"classSurfaceInG14" =!= null then (", with class "|toString(X#"classSurfaceInG14")|" in G(1,4)") else ""));
 
-net SpecialGushelMukaiFourfold := (X) -> net ideal X;
+net SpecialGushelMukaiFourfold := (X) -> (
+   net("-- special Gushel-Mukai fourfold --"||("ambient projective space: "|nicePrint(ring X))||("surface: "|nicePrint(X#"idealSurface"))||"fourfold: "|nicePrint(X#"idealFourfold"))
+);
 
 SpecialGushelMukaiFourfold#{Standard,AfterPrint} = SpecialGushelMukaiFourfold#{Standard,AfterNoPrint} = (X) -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class X << " (" << expression X << ")" << endl;
@@ -501,9 +537,13 @@ SpecialGushelMukaiFourfold#{Standard,AfterPrint} = SpecialGushelMukaiFourfold#{S
 
 ideal SpecialGushelMukaiFourfold := (X) -> X#"idealFourfold";
 
+ideals (SpecialGushelMukaiFourfold) := (X) -> (X#"idealSurface",X#"idealFourfold");
+
 ring SpecialGushelMukaiFourfold := (X) -> ring ideal X;
 
 coefficientRing SpecialGushelMukaiFourfold := (X) -> coefficientRing ring X;
+
+map (SpecialGushelMukaiFourfold) := o -> (X) -> X#"quadraticMap";
 
 parametrize (SpecialGushelMukaiFourfold) := (X) -> (
     if X#"parameterization" =!= null then return X#"parameterization";
@@ -569,15 +609,14 @@ ChangeCoordinates (List,PolynomialRing) := (a,R) -> (
    (f,f^-1)
 );
 
+coneOfLines = method(TypicalValue => Ideal)
 
-coneOfLinesContained = method(TypicalValue => Ideal)
-
-coneOfLinesContained (Ideal,Ideal) := (I,p) -> (
+coneOfLines (Ideal,Ideal) := (I,p) -> (
    if not isPolynomialRing ring I then error "expected ideal in a polynomial ring";
    if not isHomogeneous I then error "expected a homogeneous ideal";
    if not isField coefficientRing ring I then error "the coefficient ring needs to be a field";
    if ring p =!= ring I then error "expected same ring";
-   if not(dim p -1 == 0 and degree p == 1) then error "expected ideal of a point"; 
+   if not(unique degrees p == {{1}} and dim p -1 == 0 and degree p == 1) then error "expected the ideal of a point"; 
    a := flatten entries coefficients parametrize p;
    (f,g) := ChangeCoordinates(a,ring I);
    I = f I;
@@ -590,7 +629,7 @@ coneOfLinesContained (Ideal,Ideal) := (I,p) -> (
 randomSigma22OnDelPezzoFivefold = method();
 
 randomSigma22OnDelPezzoFivefold (Ideal,Ideal) := (DP5,p) -> (
-   V := coneOfLinesContained(DP5,p);
+   V := coneOfLines(DP5,p);
    j := parametrize ideal image basis(1,V);
    V' := j^* V;
    p' := j^* p;
@@ -675,7 +714,7 @@ pluckerEmbeddingOfG14 (QuotientRing) := o -> (G) -> (
    f := parametrizeG14(ideal G,Point=>o.Point);
    y := gens source f;
    V := matrix {{-108*y_3*y_4+108*y_2*y_5+24*y_2*y_6-108*y_3*y_6+243*y_4*y_6-36*y_5*y_6+235*y_6^2, 108*y_1*y_4-108*y_0*y_5-24*y_0*y_6+108*y_1*y_6+486*y_4*y_6-108*y_5*y_6+462*y_6^2, -108*y_1*y_2+108*y_0*y_3-243*y_0*y_6+36*y_1*y_6-486*y_2*y_6+108*y_3*y_6-81*y_6^2, 216*y_4*y_6+216*y_6^2, -216*y_2*y_6+72*y_6^2, 216*y_0*y_6+216*y_6^2, 216*y_5*y_6+48*y_6^2, -216*y_3*y_6+486*y_6^2, 216*y_1*y_6+972*y_6^2, 432*y_6^2}};
-   M := matrix apply(entries f,u -> findLinearCombination(u,V));
+   M := matrix apply(entries f,u -> linearCombination(u,V));
    phi := rationalMap(G'1'4,G,transpose(M * (transpose vars ambient G'1'4)));
    psi := rationalMap inverse map phi;
    try assert(isInverseMap(phi,psi)) else error "internal error encountered";
@@ -740,8 +779,8 @@ embedGMFourfoldInG14 (Ideal,Ideal) := o -> (G,DP5) -> (
 
 embedGMFourfoldInG14 (Ideal) := o -> (X) -> embedGMFourfoldInG14(X,varietyDefinedBylinearSyzygies X,Point=>o.Point);
 
-findLinearCombination = method();
-findLinearCombination (RingElement,Matrix) := (F,I) -> (
+linearCombination = method();
+linearCombination (RingElement,Matrix) := (F,I) -> (
    try assert(ring F === ring I and isPolynomialRing ring I and numRows I === 1) else error "internal error encountered";
    K := coefficientRing ring I;
    n := numgens ring I -1;
@@ -884,7 +923,7 @@ rationalMap (RationalMap,Ring) := o -> (Phi,Gr) -> (
    M := genericMatrix(R,k+1,n+1);
    N := M*(transpose A);
    mM := matrix{apply(subsets(n+1,k+1),m -> det submatrix(M,m))};
-   B := matrix apply(subsets(n+1,k+1),m -> findLinearCombination(det submatrix(N,m),mM));
+   B := matrix apply(subsets(n+1,k+1),m -> linearCombination(det submatrix(N,m),mM));
    Psi := rationalMap(Gr,Gr,transpose(B * transpose vars Gr));
    if o.Dominant === true or o.Dominant === infinity then forceInverseMap(Psi,rationalMap inverse map Psi);
    Psi
@@ -1105,7 +1144,7 @@ EXAMPLE {
 }
 
 document { 
-Key => {parameterCount,(parameterCount,SpecialCubicFourfold),(parameterCount,Ideal,Ideal),[parameterCount,NumNodes],[parameterCount,Verbose]},
+Key => {parameterCount,(parameterCount,SpecialCubicFourfold),(parameterCount,Ideal,Ideal),[parameterCount,Verbose]},
 Headline => "Nuer's parameter count", 
 Usage => "parameterCount X", 
 Inputs => {"X" => SpecialCubicFourfold => {"a special cubic fourfold containing a smooth surface ",TEX///$S$///}},
@@ -1121,6 +1160,7 @@ EXAMPLE {
 },
 SeeAlso => {normalSheaf}
 }
+undocumented {(parameterCount,Ideal,Ideal,Boolean)}
 
 document { 
     Key => {normalSheaf,(normalSheaf,Ideal),(normalSheaf,Ideal,Ideal)}, 
@@ -1147,10 +1187,13 @@ document {
 }
 
 document { 
-    Key => {detectCongruence,(detectCongruence,SpecialCubicFourfold)}, 
+    Key => {detectCongruence,(detectCongruence,SpecialCubicFourfold),(detectCongruence,SpecialCubicFourfold,ZZ)}, 
     Headline => "detect and return a congruence of (3e-1)-secant curve of degree e", 
-     Usage => "detectCongruence X",
-     Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ",TEX///$S\subset\mathbb{P}^5$///}}, 
+     Usage => "detectCongruence X 
+               detectCongruence(X,e)",
+     Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ",TEX///$S\subset\mathbb{P}^5$///},
+                "e" => ZZ => {"a positive integer (optional but recommended)"}
+               }, 
      Outputs => { 
           FunctionClosure => {"which takes the ideal of a (general) point ",TEX///$p\in\mathbb{P}^5$///," and returns the unique rational curve of degree ",TEX///$e$///,", ",TEX///$(3e-1)$///,"-secant to ",TEX///$S$///,", and passing through ",TEX///$p$///," (an error is thrown if such a curve does not exist or is not unique)"} 
           },
@@ -1176,7 +1219,8 @@ S = ideal(x_0*x_2*x_3-2*x_1*x_2*x_3-x_1*x_3^2-x_2*x_3^2-x_0*x_1*x_4+2*x_1^2*x_4-
      "p = point ring X -- random point on P^5",
      "time C = f p -- 5-secant conic to S",
      "codim C == 4 and degree C == 2 and codim(C+S) == 5 and degree(C+S) == 5 and isSubset(C,p)"
-}
+},
+SeeAlso => {coneOfLines}
 }
 
 document { 
@@ -1275,7 +1319,64 @@ EXAMPLE {
 }
 }
 
+document { 
+    Key => {coneOfLines,(coneOfLines,Ideal,Ideal)}, 
+    Headline => "cone of lines on a subvariety passing through a point", 
+     Usage => "coneOfLines(X,p)", 
+     Inputs => { "X" => Ideal => {"the ideal of a subvariety of ",TT"PP^n"},
+                 "p" => Ideal =>  {"the ideal of a point on ",TT"X"}
+          }, 
+     Outputs => { 
+          Ideal => {"the ideal of the subscheme of ",TT"PP^n"," consisting of the union of all lines contained in ",TT"X"," and passing through ",TT"p"} 
+          }, 
+      PARA{"In the example below we compute the cone of lines passing through the generic point of a smooth del Pezzo fourfold in ",TT "PP^7","."},
+    EXAMPLE { 
+          "K := frac(QQ[a,b,c,d,e]); P4 = K[t_0..t_4]; phi = rationalMap(minors(2,matrix{{t_0,t_1,t_2},{t_1,t_2,t_3}}) + t_4,2);",
+          "X = image phi",
+          "p = phi minors(2,(vars K)||(vars P4))",
+          "time V = coneOfLines(X,p)",
+          "(dim V -1,degree V)"
+          }
+}
 
+document { 
+    Key => {(map,SpecialCubicFourfold)}, 
+    Headline => "associated cubic map", 
+     Usage => "map X", 
+     Inputs => { "X" => SpecialCubicFourfold => {"containing a surface ",TEX///$S\subset\mathbb{P}^5$///}
+          }, 
+     Outputs => { 
+          RationalMap => {"the rational map from ",TEX///$\mathbb{P}^5$///," defined by the linear system of cubics through ",TEX///$S$///} 
+          }
+}
+
+document { 
+    Key => {(map,SpecialGushelMukaiFourfold)}, 
+    Headline => "associated quadratic map", 
+     Usage => "map X", 
+     Inputs => { "X" => SpecialGushelMukaiFourfold => {"containing a surface ",TEX///$S\subset Y$///,", where ",TEX///$Y\subset\mathbb{P}^8$///," is the unique del Pezzo fivefold containing ",TEX///$X$///}
+          }, 
+     Outputs => { 
+          RationalMap => {"the rational map from ",TEX///$Y$///," defined by the linear system of quadrics through ",TEX///$S$///} 
+          }
+}
+
+document { 
+    Key => {ideals,(ideals,SpecialCubicFourfold),(ideals,SpecialGushelMukaiFourfold)}, 
+    Headline => "corresponding ideals", 
+     Usage => "ideals X", 
+     Inputs => { "X" => SpecialCubicFourfold => {"or ",TO SpecialGushelMukaiFourfold}
+          }, 
+     Outputs => { 
+          Ideal => {"the ideal of the special surface contained in the fourfold"},
+          Ideal => {"the ideal of the fourfold ",TT "X"} 
+          },
+     EXAMPLE {
+     "X = specialCubicFourfold \"quintic del Pezzo surface\";",
+     "? first ideals X",
+     "? last ideals X"
+     }
+}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
