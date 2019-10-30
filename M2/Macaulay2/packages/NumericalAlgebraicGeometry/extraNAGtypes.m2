@@ -97,6 +97,26 @@ toExternalString fS
 toExternalString fT
 ///
 
+
+--TEST 
+/// -- package Serialization
+restart
+needsPackage "Serialization"
+MyList = new Type of List
+a = new MyList from {1}
+MyList | MyList := (c,d)-> c + d
+b = a | a    
+serialize b
+
+needsPackage "NumericalAlgebraicGeometry"
+declareVariable \ {x,y,t}
+S = matrix{{x^2-1},{y^3-1}}
+fS = gateSystem(matrix{{x,y}},S)
+errorDepth = 2
+serialize fS
+code x
+///
+
 -- jacobian PolySystem := ??? -- where is this used?
 
 ----------------------------------
