@@ -172,7 +172,7 @@ detGate List := L -*doubly nested list*- -> add2GC(
 DivideGate = new Type of Gate
 net DivideGate := g -> net Divide(first g.Inputs,last g.Inputs) 
 divideGate = method()
-divideGate List := divideGate(L#0,L#1)
+divideGate List := L -> divideGate(L#0,L#1)
 divideGate (Gate, Gate) := (a,b) -> add2GC(
     if b===zeroGate then error "division by zero"  else 
     if a===zeroGate then zeroGate else 
