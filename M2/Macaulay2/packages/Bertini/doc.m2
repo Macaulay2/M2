@@ -279,17 +279,17 @@ doc ///
 
 doc ///
   Key
-    OutputSyle
-    [bertiniParameterHomotopy, OutputSyle]
-    [bertiniZeroDimSolve,OutputSyle]
+    OutputStyle
+    [bertiniParameterHomotopy, OutputStyle]
+    [bertiniZeroDimSolve,OutputStyle]
   Headline
     Used to change the output style.
   Usage
-    bertiniParameterHomotopy(...,OutputSyle=>String)
-    bertiniZeroDimSolve(...,OutputSyle=>String)
+    bertiniParameterHomotopy(...,OutputStyle=>String)
+    bertiniZeroDimSolve(...,OutputStyle=>String)
   Description
     Text
-      Use OutputSyle to change the style of output.
+      Use OutputStyle to change the style of output.
 ///;
 
 
@@ -936,7 +936,7 @@ doc ///
    [bertiniImageMonodromyCollect,NameParameterFile]
    [bertiniImageMonodromyCollect,NameSolutionsFile]
    [bertiniImageMonodromyCollect,OnlyMoveParameters]
-   [bertiniUserHomotopy,OutputSyle]
+   [bertiniUserHomotopy,OutputStyle]
    [bertiniImageMonodromyCollect,PrintMidStatus]
    [bertiniUserHomotopy,RandomReal]
    [bertiniImageMonodromyCollect,ReturnPoints]
