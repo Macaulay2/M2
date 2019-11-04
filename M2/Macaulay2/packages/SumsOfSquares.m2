@@ -1,7 +1,7 @@
 newPackage(
-    "SOS",
-    Version => "2.0",
-    Date => "November 2018",
+    "SumsOfSquares",
+    Version => "2.1",
+    Date => "September 2019",
     Authors => {
      {Name => "Diego Cifuentes",
       Email => "diegcif@mit.edu",
@@ -19,7 +19,7 @@ newPackage(
     },
     Headline => "sums of squares",
     AuxiliaryFiles => true,
-    PackageImports => {"FourierMotzkin"},
+    PackageImports => {"FourierMotzkin", "Macaulay2Doc"},
     PackageExports => {"SemidefiniteProgramming"}
 )
 
@@ -31,7 +31,6 @@ export {
     "sosPoly",
     "solveSOS",
     "sosdecTernary",
-    "sumSOS",
     "sosInIdeal",
     "lowerBound",
     "checkSolver",
@@ -40,6 +39,7 @@ export {
 --Method options
     "GramMatrix",
     "MomentMatrix",
+    "Status",
     "RoundTol",
     "TraceObj"
 }
@@ -61,14 +61,14 @@ LowPrecision = 1e-4
 SOSPoly = new Type of HashTable
 
 sosPoly = method()
-sosPoly (Ring, List, List) := SOS => (R, polys, coeffs) -> (
+sosPoly (Ring, List, List) := (R, polys, coeffs) -> (
     new SOSPoly from {
         ring => R,
         gens => polys,
         coefficients => coeffs
         }
     )
-sosPoly (List, List) := SOS => (polys, coeffs) -> sosPoly(ring polys#0,polys,coeffs)
+sosPoly (List, List) := (polys, coeffs) -> sosPoly(ring polys#0,polys,coeffs)
 
 ring SOSPoly := S -> S#ring
 
@@ -81,21 +81,24 @@ length SOSPoly := S -> #(S#gens)
 substitute (SOSPoly,Ring) := (S,R) ->
     sosPoly(for g in S#gens list sub(g,R), S#coefficients)
 
+expression SOSPoly := S ->
+    new Sum from apply (S#coefficients,S#generators,(c,g) -> hold c * (hold g)^2)
+
 net SOSPoly := S -> (
-    if #gens S == 0 then return "0";
-    return "coeffs:"||net coefficients S||"gens:"||net gens S;
+    if #gens S == 0 then "0"
+    else net expression S
     )
 
 Number * SOSPoly := (a,S) -> (
     if a<0 then error "scalar must be nonnegative";
-    if a==0 then return sosPoly(ring S, {}, {});
-    return sosPoly(ring S, gens S, a * coefficients S);
+    if a==0 then sosPoly(ring S, {}, {})
+    else sosPoly(ring S, gens S, a * coefficients S)
     )
 
 SOSPoly + SOSPoly := (S,S') -> (
     R := ring S;
     if R =!= ring S' then error "cannot add elements of different rings";
-    return sosPoly(R,S#gens|S'#gens, S#coefficients|S'#coefficients);
+    sosPoly(R,S#gens|S'#gens, S#coefficients|S'#coefficients)
     )
 
 SOSPoly * SOSPoly := (g1,g2)-> (
@@ -104,25 +107,25 @@ SOSPoly * SOSPoly := (g1,g2)-> (
         for j in g2#gens list i*j);
     q2:=for i in g1#coefficients list(
         for j in g2#coefficients list i*j);
-    return sosPoly(g1#ring, flatten(q1),flatten(q2));
+    sosPoly(g1#ring, flatten(q1),flatten(q2))
     )
 
 SOSPoly ^ ZZ := (p1,D)->(
     if D<=0 then error "power should be a positive integer.";
     if odd D then error "power should be an even integer.";
-    p2 := (sumSOS p1)^(D//2);
-    return sosPoly(ring p1,{p2},{1});
+    p2 := (value p1)^(D//2);
+    sosPoly(ring p1,{p2},{1})
     )
 
 SOSPoly == RingElement := (S, f) -> (
     if ring S=!=ring f then
         error "Cannot compare elements of different rings. Try to use 'sub'.";
-    return sumSOS S == f;
+    value S == f
     )
 
 RingElement == SOSPoly := (f, S) -> S == f
 
-SOSPoly == SOSPoly := (S, S') -> S == sumSOS S'
+SOSPoly == SOSPoly := (S, S') -> S == value S'
 
 SOSPoly == Matrix := (S, F) -> (
     if numRows F!=1 or numColumns F!=1 then
@@ -132,11 +135,7 @@ SOSPoly == Matrix := (S, F) -> (
 
 Matrix == SOSPoly := (F, S) -> S == F
 
-sumSOS = method()
-
-sumSOS (List, List) := (g,d) -> sum for i to #g-1 list g_i^2 * d_i
-
-sumSOS SOSPoly := a -> sum for i to #(a#gens)-1 list a#gens_i^2 * a#coefficients_i
+value SOSPoly := a -> sum for i to #(a#gens)-1 list a#gens_i^2 * a#coefficients_i
 
 clean(RR,SOSPoly) := (tol,s) -> (
     if s===null then return (,);
@@ -149,19 +148,22 @@ clean(RR,SOSPoly) := (tol,s) -> (
     d = d_I;
     g = g_I;
     if kk =!= QQ then g = clean_tol \ g;
-    return sosPoly(R,g,d);
+    sosPoly(R,g,d)
     )
 
 SDPResult = new Type of HashTable
 
-sdpResult = (mon,Q,X,tval) -> (
+sdpResult = (mon,Q,X,tval,sdpstatus) -> (
     new SDPResult from {
         Monomials => mon,
         GramMatrix => Q,
         MomentMatrix => X,
         Parameters => tval,
+        Status => sdpstatus
         }
     )
+
+status SDPResult := o -> sol -> sol#Status
 
 net SDPResult := sol -> (
     mat2str := M -> 
@@ -175,18 +177,20 @@ net SDPResult := sol -> (
     tval := sol#Parameters;
     if tval=!=null and numRows tval>0 then
         str = append(str,{"Parameters",mat2str tval});
-    return netList(str,HorizontalSpace=>1,Alignment=>Center)
+    str = append(str,{"Status",sol#Status});
+    netList(str,HorizontalSpace=>3,Alignment=>Left,Boxes=>false)
     )
 
 -- Shortcut to extract keys from SDPResult:
-readSdpResult = sol -> (sol#Monomials, sol#GramMatrix, sol#MomentMatrix, sol#Parameters)
+readSdpResult = sol -> (sol#Monomials, sol#GramMatrix, sol#MomentMatrix, sol#Parameters, sol#Status)
 
 
 --##########################################################################--
 -- METHODS
 --##########################################################################--
 
-verbose = (s,o) -> if o.Verbose then print s
+verbose1 = (s,o) -> if o.Verbosity>=1 then print s
+verbose2 = (s,o) -> if o.Verbosity>=2 then print s
 
 -- library of nonnegative polynomials
 library = method()
@@ -227,7 +231,7 @@ library(String,Ring) := (name,R) -> library(name,gens R)
 isExactField = kk -> (
     try (kk = ring kk);
     kk = ultimate(coefficientRing,kk);
-    return precision 1_kk == infinity;
+    precision 1_kk == infinity
     )
 
 isZero = (tol,x) -> if isExactField x then x==0 else norm x<tol
@@ -244,7 +248,7 @@ changeMatrixField = (kk, M) -> (
     -- M is a matrix whose entries are polynomials whose coefficient
     -- ring should be changed.
     R := changeRingField(kk, ring M);
-    return matrix applyTable(entries M, m -> toRing(R,m));
+    matrix applyTable(entries M, m -> toRing(R,m))
     )
 
 toRing = method ()
@@ -261,8 +265,7 @@ toRing (Ring, RingElement) := (S,f) -> (
     mon = matrix {liftMonomial_S \ flatten entries mon};
     prec := precision kk;
     coef = matrix(QQ, {for c in flatten entries coef list roundQQ(prec,sub(c,RR))});
-    f' := (mon*transpose coef)_(0,0);
-    return f';
+    (mon*transpose coef)_(0,0)
     )
 
 toRing (Ring, SOSPoly) := (S, s) -> (
@@ -279,7 +282,7 @@ toRing (Ring, SOSPoly) := (S, s) -> (
     g' := toRing_S \ gens s;
     prec := precision kk;
     c' := for c in coefficients s list roundQQ(prec,sub(c,RR));
-    return sosPoly (S, g', c')
+    sosPoly (S, g', c')
     )
 
 liftMonomial = (S,f) -> (
@@ -287,7 +290,7 @@ liftMonomial = (S,f) -> (
     n := numgens S;
     e := first exponents f;
     e = e_(toList(0..n-1)); -- ignore some variables
-    return S_e;
+    S_e
     )
 
 
@@ -302,7 +305,7 @@ linsolve = (A,b) -> (
     tol := HighPrecision;
     x := solve(A,b,ClosestFit=>true);
     if norm(A*x-b) > tol then return;
-    return x;
+    x
     )
 
 truncatedSVD = (A,tol) -> (
@@ -317,7 +320,7 @@ truncatedSVD = (A,tol) -> (
         S = drop(S,#idx);
         U = submatrix'(U,,idx);
         Vt = submatrix'(Vt,idx,); );
-    return (S,U,Vt);
+    (S,U,Vt)
     )
 
 kernelGens = A -> (
@@ -326,7 +329,7 @@ kernelGens = A -> (
     if isExactField A then return gens kernel A;
     tol := HighPrecision;
     (S,U,Vt) := truncatedSVD(A,-tol);
-    return transpose Vt;
+    transpose Vt
     )
 
 zeros = (kk,m,n) -> map(kk^m,kk^n,{})
@@ -348,13 +351,13 @@ sosPoly(Matrix,Matrix) := (mon,Q) -> (
     idx := positions (d, i->i!=0);
     d = d_idx;
     g = g_idx;
-    return sosPoly(ring mon,g,d);
+    sosPoly(ring mon,g,d)
     )
 sosPoly(SDPResult) := sol -> if sol#GramMatrix=!=null then sosPoly(sol#Monomials, sol#GramMatrix)
 
 -- internal way to call solveSOS
 rawSolveSOS = method(
-     Options => {RoundTol => 3, Solver=>null, Verbose => false, TraceObj => false} )
+     Options => {RoundTol => 3, Solver=>null, Verbosity => 0, TraceObj => false} )
  
 rawSolveSOS(Matrix,Matrix,Matrix) := o -> (F,objP,mon) -> (
     -- Consider a parametric problem f = f_0 + f_1 p_1 + ... + f_s p_s
@@ -372,8 +375,8 @@ rawSolveSOS(Matrix,Matrix,Matrix) := o -> (F,objP,mon) -> (
     if not isMonomial then error("Vector must consist of monomials.");
          
     -- build SOS model --
-    (C,Ai,p0,V,A,B,b) := createSOSModel(F,mon,Verbose=>o.Verbose);
-    if C===null then return sdpResult(mon,,,);
+    (C,Ai,p0,V,A,B,b) := createSOSModel(F,mon,Verbosity=>o.Verbosity,RoundTol=>o.RoundTol);
+    if C===null then return sdpResult(mon,,,,);
 
     ndim := numRows C;
     np := numRows objP;
@@ -383,52 +386,52 @@ rawSolveSOS(Matrix,Matrix,Matrix) := o -> (F,objP,mon) -> (
             map(kk^(#Ai),kk^1,(i,j)-> trace Ai#i)
         else
             (transpose V * objP); 
-    if obj==0 then verbose( "Solving SOS feasibility problem...", o)
-    else verbose("Solving SOS optimization problem...", o);
+    if obj==0 then verbose2( "Solving SOS feasibility problem...", o)
+    else verbose2("Solving SOS optimization problem...", o);
 
-    (X,my,Q) := optimize(sdp(C,Ai,obj), Solver=>o.Solver, Verbose=>o.Verbose);
-    if Q===null then return sdpResult(mon,Q,X,);
+    (X,my,Q,sdpstatus) := optimize(sdp(C,Ai,obj), Solver=>o.Solver, Verbosity=>o.Verbosity);
+    if Q===null then return sdpResult(mon,Q,X,,sdpstatus);
     y := -my;
     pVec0 := (p0 + V*y);
 
-    if not isExactField kk then return sdpResult(mon,Q,X,pVec0);
+    if not isExactField kk then return sdpResult(mon,Q,X,pVec0,sdpstatus);
     if o.RoundTol > MaxRoundTol then(
         if o.RoundTol < infinity then
-            print "Warning: RoundTol is too high. Rounding will be skipped.";
-        return sdpResult(changeMatrixField(RR,mon),Q,X,pVec0);
+            verbose1("Warning: RoundTol is too high. Rounding will be skipped.", o);
+        return sdpResult(changeMatrixField(RR,mon),Q,X,pVec0,sdpstatus);
         );
 
     -- rational rounding --
-    (ok,Qp,pVec) := roundSolution(pVec0,Q,A,B,b,RoundTol=>o.RoundTol,Verbose=>o.Verbose);
-    if ok then return sdpResult(mon,Qp,X,pVec);
-    print "rounding failed, returning real solution";
-    return sdpResult(changeMatrixField(RR,mon),Q,X,pVec0);
+    (ok,Qp,pVec) := roundSolution(pVec0,Q,A,B,b,RoundTol=>o.RoundTol,Verbosity=>o.Verbosity);
+    if ok then return sdpResult(mon,Qp,X,pVec,sdpstatus);
+    verbose1("rounding failed, returning real solution", o);
+    sdpResult(changeMatrixField(RR,mon),Q,X,pVec0,sdpstatus)
     )
 
 -- Choose monomials internally:
 rawSolveSOS(Matrix,Matrix) := o -> (F,objP) -> (
-    mon := chooseMons (F,Verbose=>o.Verbose);
+    mon := chooseMons (F,Verbosity=>o.Verbosity);
     if mon===null then return (,,,);
-    return rawSolveSOS(F,objP,mon,o);
+    rawSolveSOS(F,objP,mon,o)
     )
 rawSolveSOS(Matrix) := o -> (F) -> 
     rawSolveSOS(F,zeros(QQ,numRows F-1,1),o)
 
 solveSOS = method(
-     Options => {RoundTol => 3, Solver=>null, Verbose => false, TraceObj => false} )
+     Options => {RoundTol => 3, Solver=>null, Verbosity => 0, TraceObj => false} )
 
 solveSOS(RingElement,RingElement,Matrix) := o -> (f,objFcn,mon) -> (
     (F,objP) := parameterVector(f,objFcn);
-    return rawSolveSOS(F,objP,mon,o);
+    rawSolveSOS(F,objP,mon,o)
     )
 solveSOS(RingElement,Matrix) := o -> (f,mon) -> 
     solveSOS(f,0_(ring f),mon,o)
 
 solveSOS(RingElement,RingElement) := o -> (f,objFcn) -> (
     (F,objP) := parameterVector(f,objFcn);
-    mon := chooseMons (F,Verbose=>o.Verbose);
+    mon := chooseMons (F,Verbosity=>o.Verbosity);
     if mon===null then return (,mon,,);
-    return rawSolveSOS(F,objP,mon,o);
+    rawSolveSOS(F,objP,mon,o)
     )
 solveSOS(RingElement) := o -> (f) -> 
     solveSOS(f,0_(ring f),o)
@@ -436,23 +439,23 @@ solveSOS(RingElement) := o -> (f) ->
 solveSOS(RingElement,RingElement,ZZ) := o -> (f,objFcn,D) -> (
     (F,objP) := parameterVector(f,objFcn);
     mon := chooseMons(F,D);
-    return solveSOS(f,objFcn,mon,o);
+    solveSOS(f,objFcn,mon,o)
     )
 solveSOS(RingElement,ZZ) := o -> (f,D) -> 
     solveSOS(f,0_(ring f),D,o)
 
 -- Main method to setup an SOS problem as an SDP problem
--- It is not exported, but there is (hidden) documentation for it.
 createSOSModel = method(
-    Options => {Verbose => false} )
+    Options => {Verbosity => 0, RoundTol => 3 } )
 createSOSModel(RingElement,Matrix) := o -> (f,v) -> (
     F := parameterVector(f);
-    return createSOSModel(F,v);
+    createSOSModel(F,v)
     )
 createSOSModel(Matrix,Matrix) := o -> (F,v) -> (
     kk := coefficientRing ring F;
     np := numRows F - 1;
     n := numRows v;
+    n2 := n*(n+1)//2;
     
     -- monomials in vvT
     vvT := entries(v* transpose v);
@@ -468,19 +471,51 @@ createSOSModel(Matrix,Matrix) := o -> (F,v) -> (
     b := map(kk^#K, kk^1, (i,j) -> coefficient(K#i,F_(0,0)) );
     
     -- Linear constraints: A, B
-    coeffMat := (x,A) -> applyTable(A, a -> coefficient(x,a));
-    A := matrix(kk, for i to #K1-1 list smat2vec(coeffMat(K1_i, vvT),Scaling=>2) );
-    A = A || zeros(kk,#K2,n*(n+1)//2);
+    constructA := (K1,vvT,k2) -> (
+        vvT' := smat2vec(vvT, Scaling=>2);
+        k1 := #K1;
+        idx := hashTable for i to k1-1 list K1_i => i;
+        a := new MutableList;
+        for j to n2-1 do (
+            (M,C) := coefficients(vvT'#j);
+            C = sub(C,kk);
+            for l to numRows(C)-1 list(
+                i := idx#(M_(0,l));
+                a#(#a) = (i,j)=>C_(l,0);
+                )
+            );
+        map(kk^(k1+k2), kk^n2, toList a)
+        );
+    constructAold := (K1,vvT,k2) -> (   --old construction is slow
+        coeffMat := (x,A) -> applyTable(A, a -> coefficient(x,a));
+        A := matrix(kk, for i to #K1-1 list smat2vec(coeffMat(K1_i, vvT),Scaling=>2) );
+        A || zeros(kk,k2,n2)
+        );
+    A := constructA(K1,vvT,#K2);
     
     -- Consider search-parameters:
-    B := map(kk^#K, kk^np, (i,j) -> -coefficient(K#i, F_(j+1,0)) );
+    constructB := (K,F) -> (
+        F0 := F^(toList(1..np));
+        (M,C) := coefficients transpose F0;
+        C0 := map(kk^1,kk^(numcols C),{}) || sub(C,kk);
+        idx := hashTable for j to numcols(M)-1 list M_(0,j) => j+1;
+        rows := for i to #K-1 list if idx#?(K#i) then idx#(K#i) else 0;
+        -(C0^rows)
+        );
+    constructBold := (K,F) ->   --old construction is slow
+        map(kk^#K, kk^np, (i,j) -> -coefficient(K#i, F_(j+1,0)) );
+    B := constructB(K,F);
+
+    if isExactField(A) and o.RoundTol==infinity then(
+        A = sub(A,RR); B = sub(B,RR); b = sub(b,RR);
+        );
     
-    (C,Ai,p0,V) := getImageModel(A,B,b);
+    (C,Ai,p0,V) := getImageModel(A,B,b,o);
     
-    return (C,Ai,p0,V,A,B,b);
+    (C,Ai,p0,V,A,B,b)
     )
 
-getImageModel = (A,B,b) -> (
+getImageModel = (A,B,b,o) -> (
     -- given the affine subspace {Aq + Bp = b}
     -- find a parametrization of the form
     -- Q = C + sum_i ti Ai
@@ -492,7 +527,7 @@ getImageModel = (A,B,b) -> (
     AB := A|B;
     x := linsolve(AB,b);
     if x===null then(
-        print "No Gram matrix exists. Terminate.";
+        verbose1("No Gram matrix exists. Terminate.", o);
         return (,,,) );
     c := x^{0..n1-1};
     p0 := x^{n1..n1+n2-1};
@@ -505,7 +540,7 @@ getImageModel = (A,B,b) -> (
     V := W^{n1..n1+n2-1};
     Ai := toSequence for k to r-1 list vec2smat(U_{k});
 
-    return (C,Ai,p0,V);
+    (C,Ai,p0,V)
     )
 
 parameterVector = method()
@@ -527,18 +562,18 @@ parameterVector(RingElement,RingElement) := (f,objFcn) -> (
         error("Objective should be a linear function of the parameters.");
     kk = coefficientRing kk;
     objP := matrix for t in p list {sub(coefficient(t,objFcn),kk)};
-    return (F,objP);
+    (F,objP)
     )
 parameterVector(RingElement) := (f) -> first parameterVector(f,0_(ring f))
 
 -- Choose monomial basis based on Newton polytope
 chooseMons = method(
-    Options => {Verbose => false} )
+    Options => {Verbosity => 0} )
 chooseMons(RingElement) := o -> (f) -> (
     F := parameterVector(f);
     mon := chooseMons(F);
     if mon===null then return;
-    return sub(mon,ring f);
+    sub(mon,ring f)
     )
 chooseMons(Matrix) := o -> (F) -> (
     R := ring F;
@@ -548,7 +583,7 @@ chooseMons(Matrix) := o -> (F) -> (
     monsPoly := g -> set first entries monomials g;
     monsList := G -> if #G>0 then sum(monsPoly\G) else {};
     filterVerts := (verts) -> (
-        -- only consider those without parameters (this is a hack!)
+        -- only consider those without parameters
         lmpars := monsList drop(flatten entries F,1);
         return select(verts, v -> not member(R_v,lmpars));
         );
@@ -580,19 +615,19 @@ chooseMons(Matrix) := o -> (F) -> (
     polytope = sub(polytope,ZZ);
     oddverts := select(entries transpose polytope, i->any(i,odd));
     if #filterVerts(oddverts)>0 then(
-        print("Newton polytope has odd vertices. Terminate.");
+        verbose1("Newton polytope has odd vertices. Terminate.", o);
         return;
         );
 
     -- Get candidate points
     cp := pointsInBox(mindeg,maxdeg,mindegs,maxdegs);
-    verbose("#candidate points: " | #cp, o);
+    verbose2("#candidate points: " | #cp, o);
     -- Only the even ones
     cpf := select(cp,i-> all(i,even)); 
-    verbose("#even points: " | #cpf, o);
+    verbose2("#even points: " | #cpf, o);
     -- Drop points that do not live on the subspace: 
     cpf2 := select(cpf,i-> matrix{i-shift}*basVtrans==0);
-    verbose("#points in subspace of exponent-points: " | #cpf2, o);
+    verbose2("#points in subspace of exponent-points: " | #cpf2, o);
     
     -- Find points within the polytope:
     lexponents := select(cpf2, i-> 
@@ -601,10 +636,10 @@ chooseMons(Matrix) := o -> (F) -> (
     assert all(flatten lexponents, isInteger );
     lexponents = apply(lexponents, i -> numerator \ i);
     lmSOS := for i in lexponents list R_i;
-    verbose("#points inside Newton polytope: " | #lmSOS, o);
+    verbose2("#points inside Newton polytope: " | #lmSOS, o);
 
     if #lmSOS==0 then return;
-    return matrix transpose {lmSOS};
+    matrix transpose {lmSOS}
     )
 
 -- Choose monomials, given a degree bound
@@ -613,8 +648,8 @@ chooseMons(Matrix,ZZ) := o -> (F,D) -> (
     R := ring F;
     mon := if isHomogeneous R and isHomogeneous F then basis(D//2,R)
         else basis(0,D//2,R);
-    verbose("#monomials: " | numColumns mon, o);
-    return transpose mon;
+    verbose2("#monomials: " | numColumns mon, o);
+    transpose mon
     )
 
 pointsInBox = (mindeg,maxdeg,mindegs,maxdegs) -> (
@@ -626,23 +661,22 @@ pointsInBox = (mindeg,maxdeg,mindegs,maxdegs) -> (
     mon := flatten entries basis(mindeg,maxdeg,R0);
     e := apply (mon, i -> flatten exponents i);
     -- Only those within the box of degrees[mindegs:maxdegs]:
-    e = select(e,i-> all(i-mindegs,j->j>=0) and all(maxdegs-i,j->j>=0)); 
-    return e;
+    select(e,i-> all(i-mindegs,j->j>=0) and all(maxdegs-i,j->j>=0))
     )
 
 --###################################
 -- Rational Rounding
 --###################################
 
-roundSolution = {RoundTol=>3,Verbose=>false} >> o -> (pVec0,Q,A,B,b) -> (
+roundSolution = {RoundTol=>3,Verbosity=>1} >> o -> (pVec0,Q,A,B,b) -> (
     -- round and project --
     d := o.RoundTol;
     np := numColumns B;
     pVec := null;
     
-    print "Start rational rounding";
+    verbose1("Start rational rounding", o);
     while (d < MaxRoundTol) do (
-        verbose("rounding step #" | d, o);
+        verbose2("rounding step #" | d, o);
         if np!=0 then (
             pVec = roundQQ(d,pVec0);
             bPar := b - B*pVec;
@@ -652,7 +686,7 @@ roundSolution = {RoundTol=>3,Verbose=>false} >> o -> (pVec0,Q,A,B,b) -> (
         (ok,Qp) := roundPSDmatrix(Q,A,bPar,d);
         if ok then break else d = d + 1;
         );
-    return (ok,Qp,pVec);
+    (ok,Qp,pVec)
     )
 
 --###################################
@@ -671,22 +705,22 @@ makeMultiples = (h, D, homog) -> (
         flatten entries b
         );
     H := for i to #h-1 list h#i * mon#i;
-    return (flatten H, mon);
+    (flatten H, mon)
     )
 
 sosInIdeal = method(
-     Options => {RoundTol => 3, Solver=>"CSDP", Verbose => false} )
+     Options => {RoundTol => 3, Solver=>"CSDP", Verbosity => 0} )
 sosInIdeal (Ring, ZZ) := o -> (R,D) -> (
     -- find sos polynomial in a quotient ring
     if odd D then error "D must be even";
     mon := chooseMons(matrix{{0_R}}, D);
     sol := solveSOS (0_R, mon, o);
-    (mon',Q,X,tval) := readSdpResult sol;
+    (mon',Q,X,tval,sdpstatus) := readSdpResult sol;
     if Q===null or isZero(MedPrecision,Q) then (
-        print("no sos polynomial in degree "|D);
-        return sdpResult(mon,,X,);
+        verbose1("no sos polynomial in degree "|D, o);
+        return sdpResult(mon,,X,,sdpstatus);
         );
-    return sol;
+    sol
     )
 sosInIdeal (Matrix,ZZ) := o -> (h,D) -> (
     -- h is a row vector of polynomials
@@ -703,14 +737,14 @@ sosInIdeal (Matrix,ZZ) := o -> (h,D) -> (
     (H,m) := makeMultiples(first entries h, D, homog);
     F := matrix transpose {{0}|H};
     sol := rawSolveSOS (F, o);
-    (mon,Q,X,tval) := readSdpResult sol;
+    (mon,Q,X,tval,sdpstatus) := readSdpResult sol;
     if Q===null or isZero(MedPrecision,Q) then (
-        print("no sos polynomial in degree "|D);
-        return (sdpResult(mon,,X,),null);
+        verbose1("no sos polynomial in degree "|D, o);
+        return (sdpResult(mon,,X,,sdpstatus),null);
         );
     tval = flatten entries tval;
     mult := getMultipliers(m,tval,ring mon);
-    return (sol,mult);
+    (sol,mult)
     )
 
 getMultipliers = (mon,tval,S) -> (
@@ -719,11 +753,11 @@ getMultipliers = (mon,tval,S) -> (
     k := -1;
     mult := matrix(S, for m in mon list
         {sum for i in m list( k=k+1; i*tval#k)} );
-    return mult;
+    mult
     )
 
 sosdecTernary = method(
-     Options => {RoundTol => 3, Solver=>"CSDP", Verbose => false} )
+     Options => {RoundTol => 3, Solver=>"CSDP", Verbosity => 0} )
 sosdecTernary(RingElement) := o -> (f) -> (
     -- Implements Hilbert's algorithm to write a non-negative ternary
     -- form as sos of rational functions.
@@ -742,14 +776,14 @@ sosdecTernary(RingElement) := o -> (f) -> (
         di = first degree fi;
         S = append(S,Si);
         );
-    (mon,Q,X,tval) := readSdpResult rawSolveSOS matrix{{fi}};
+    (mon,Q,X,tval,sdpstatus) := readSdpResult rawSolveSOS matrix{{fi}};
     if Q===null or isZero(MedPrecision,Q) then return (,);
     Si = sosPoly(mon,Q);
     if Si===null then return (,);
     S = append(S,Si);
     nums := for i to #S-1 list if odd i then continue else S#i;
     dens := for i to #S-1 list if even i then continue else S#i;
-    return (nums, dens);
+    (nums, dens)
     )
 
 --###################################
@@ -771,14 +805,14 @@ recoverSolution(Matrix,Matrix) := (mon,X) -> (
         y := mon_(i,i0);
         if sum degree y!=1 then continue;
         y => X_(i,i0) );
-    return sol;
+    sol
     )
 recoverSolution(SDPResult) := sol -> recoverSolution(sol#Monomials,sol#MomentMatrix)
 
 -- Unconstrained minimization 
 -- sos lower bound for the polynomial f
 lowerBound = method(
-     Options => {RoundTol => 3, Solver=>null, Verbose => false} )
+     Options => {RoundTol => 3, Solver=>null, Verbosity => 0} )
 lowerBound(RingElement) := o -> (f) -> lowerBound(f,-1,o)
 lowerBound(RingElement,ZZ) := o -> (f,D) -> drop(lowerBound(f,zeros(ring f,1,0),D,o),-1)
 
@@ -812,19 +846,19 @@ lowerBound(RingElement,Matrix,ZZ) := o -> (f,h,D) -> (
 
     -- call solveSOS
     o' := new OptionTable from
-        {RoundTol=>o.RoundTol, Solver=>o.Solver, Verbose=>o.Verbose};
+        {RoundTol=>o.RoundTol, Solver=>o.Solver, Verbosity=>o.Verbosity};
     mon := if isQuotientRing R then chooseMons(F,D)
-        else chooseMons (F,Verbose=>o.Verbose);
-    if mon===null then return (,sdpResult(,,,),);
+        else chooseMons (F,Verbosity=>o.Verbosity);
+    if mon===null then return (,sdpResult(,,,,),);
     sol := rawSolveSOS(F,objP,mon,o');
-    (mon',Q,X,tval) := readSdpResult sol;
+    (mon',Q,X,tval,sdpstatus) := readSdpResult sol;
     (bound,mult) := (,);
     if tval=!=null then(
         tval = flatten entries tval;
         bound = tval#0;
         mult = getMultipliers(m,drop(tval,1),ring mon');
         );
-    return (bound,sol,mult);
+    (bound,sol,mult)
     )
 
 
@@ -854,8 +888,9 @@ checkSolver(String,String) := (solver,fun) -> (
         {f, testsString t}
         );
     print "################################";
-    print("Summary");
-    print netList T;
+    print("SUMMARY");
+    print "################################";
+    print netList(T,Boxes=>false);
     )
 checkSolver(String,Function) := (solver,fun) -> checkSolver(solver,toString fun)
 checkSolver(String) := (solver) -> checkSolver(solver,"AllMethods")
@@ -889,27 +924,27 @@ checkSolveSOS = (solver) -> (
     t0:= (
         R := QQ[x,y];
         f := 4*x^4+y^4;
-        (mon,Q,X,tval) := readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) := readSdpResult solveSOS(f,Solver=>solver);
         isGram(f,mon,Q)
         );
 
     t1:= (
         f = 2*x^4+5*y^4-2*x^2*y^2+2*x^3*y;
-        (mon,Q,X,tval) = readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver);
         isGram(f,mon,Q)
         );
 
     t2:= (
         R = QQ[x,y,z];
         f = x^4+y^4+z^4-4*x*y*z+x+y+z+3;
-        (mon,Q,X,tval) = readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver);
         isGram(f,mon,Q)
         );
     
     t3:= (
         R = QQ[x,y,z,w];
         f = 2*x^4 + x^2*y^2 + y^4 - 4*x^2*z - 4*x*y*z - 2*y^2*w + y^2 - 2*y*z + 8*z^2 - 2*z*w + 2*w^2;
-        (mon,Q,X,tval) = readSdpResult solveSOS(f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver);
         isGram(f,mon,Q)
         );
 
@@ -917,7 +952,7 @@ checkSolveSOS = (solver) -> (
     t4:= (
         R = QQ[x][t];
         f = (t-1)*x^4+1/2*t*x+1;
-        (mon,Q,X,tval) = readSdpResult solveSOS (f,Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS (f,Solver=>solver);
         isGramParam(f,mon,Q,tval)
         );
 
@@ -926,7 +961,7 @@ checkSolveSOS = (solver) -> (
         R = QQ[x,y];
         S := R/ideal(x^2 + y^2 - 1);
         f = sub(10-x^2-y,S);
-        (mon,Q,X,tval) = readSdpResult solveSOS (f, 2, TraceObj=>true, Solver=>solver);
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS (f, 2, TraceObj=>true, Solver=>solver);
         isGram(f,mon,Q) and rank Q == 2
         );
 
@@ -934,17 +969,16 @@ checkSolveSOS = (solver) -> (
     t6:= (
         R = QQ[x,y][t];
         f = x^4*y^2 + x^2*y^4 - 3*x^2*y^2 + 1; --Motzkin
-        (mon,Q,X,tval) = readSdpResult solveSOS(f,Solver=>solver); 
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f,Solver=>solver); 
         ( Q === null )
         );
 
     t7:= (
-        (mon,Q,X,tval) = readSdpResult solveSOS(f-t,-t, Solver=>solver); 
+        (mon,Q,X,tval,sdpstatus) = readSdpResult solveSOS(f-t,-t, Solver=>solver); 
         ( Q === null )
         );
 
-    results := {t0,t1,t2,t3,t4,t5,t6,t7};
-    return results;
+    {t0,t1,t2,t3,t4,t5,t6,t7}
     )
 
 -- check sosdecTernary
@@ -955,8 +989,8 @@ checkSosdecTernary = (solver) -> (
 
     cmp := (f,p,q) -> (
         if p===null then return false;
-        d := product(sumSOS\p) - f*product(sumSOS\q);
-        return isZero(LowPrecision, d);
+        d := product(value\p) - f*product(value\q);
+        isZero(LowPrecision, d)
         );
 
     t0:= (
@@ -980,7 +1014,7 @@ checkSosdecTernary = (solver) -> (
         cmp(f,p,q)
         );
 
-    return {t0,t1,t2};
+    {t0,t1,t2}
     )
 
 
@@ -993,8 +1027,8 @@ checkSosInIdeal = (solver) -> (
     cmp := (h,s,mult) -> (
         if s===null then return false;
         h = sub(h,ring s);
-        d := (h*mult)_(0,0) - sumSOS s;
-        return isZero(MedPrecision, d);
+        d := (h*mult)_(0,0) - value s;
+        isZero(MedPrecision, d)
         );
 
     t0:= (
@@ -1049,7 +1083,7 @@ checkSosInIdeal = (solver) -> (
         (s=!=null and ideal gens s == ideal(x_R,y+1))
         );
     
-    return {t0,t1,t2,t3,t4,t5,t6};
+    {t0,t1,t2,t3,t4,t5,t6}
     )
 
 
@@ -1063,12 +1097,12 @@ checkLowerBound = (solver) -> (
     equal := (a,b) -> (
         if a===null then return false;
         d := if abs(b)<1 then abs(a-b) else abs(a-b)/abs(b);
-        return d < tol;
+        d < tol
         );
     cmp := (f,h,bound,mon,Q,mult) -> (
         if Q===null then return false;
         d := f - bound + (h*mult - transpose mon * Q * mon)_(0,0);
-        return isZero(MedPrecision, d);
+        isZero(MedPrecision, d)
         );
 
     --------------UNCONSTRAINED1--------------
@@ -1081,9 +1115,9 @@ checkLowerBound = (solver) -> (
 
     t1:= (
         R = RR[x,y];
-        f = (x-pi*y)^2 + x^2 + (y-4)^2;
+        f = (x-exp(1)*y)^2 + x^2 + (y-4)^2;
         (bound,sol) = lowerBound(f, Solver=>solver);
-        equal(bound,16*pi^2/(2+pi^2))
+        equal(bound,16*exp(2)/(2+exp(2)))
         );
 
     t2:= (
@@ -1106,7 +1140,7 @@ checkLowerBound = (solver) -> (
         f = y;
         h := matrix {{y-pi*x^2}};
         (bound,sol,mult) = lowerBound (f, h, 2, Solver=>solver);
-        (mon,Q,X,tval) := readSdpResult sol;
+        (mon,Q,X,tval,sdpstatus) := readSdpResult sol;
         equal(bound,0) and cmp(f,h,bound,mon,Q,mult)
         );
 
@@ -1115,7 +1149,7 @@ checkLowerBound = (solver) -> (
         f = z;
         h = matrix {{x^2 + y^2 + z^2 - 1}};
         (bound,sol,mult) = lowerBound (f, h, 4, Solver=>solver);
-        (mon,Q,X,tval) = readSdpResult sol;
+        (mon,Q,X,tval,sdpstatus) = readSdpResult sol;
         equal(bound,-1) and cmp(f,h,bound,mon,Q,mult)
         );
 
@@ -1127,11 +1161,11 @@ checkLowerBound = (solver) -> (
         f = sub(x-y,S);
         h = matrix {{sub(y^2 - y,S)}};
         (bound,sol,mult) = lowerBound(f, h, 2, Solver=>solver);
-        (mon,Q,X,tval) = readSdpResult sol;
+        (mon,Q,X,tval,sdpstatus) = readSdpResult sol;
         equal(bound,-1) and cmp(f,h,bound,mon,Q,mult)
         );
     
-    return {t0,t1,t2,t3,t4,t5,t6};
+    {t0,t1,t2,t3,t4,t5,t6}
     )
 
 --##########################################################################--
@@ -1140,10 +1174,10 @@ checkLowerBound = (solver) -> (
 
 beginDocumentation()
 
-load "./SOS/SOSdoc.m2"
+load "./SumsOfSquares/SOSdoc.m2"
 
 --0
-TEST /// --sosPoly and sumSOS
+TEST /// --sosPoly and value
     R = QQ[x,y,z]
     coeff1={3,1,1,1/4,1}
     pol1={-(1/2)*x^3*y-(1/2)*x*y^3+x*y*z^2, x^2*y^2-z^4, x^2*y*z-y*z^3,
@@ -1151,24 +1185,24 @@ TEST /// --sosPoly and sumSOS
     p1=sosPoly(R,pol1,coeff1)
     p2=x^6*y^2 + 2*x^4*y^4 + x^2*y^6 - 2*x^4*y^2*z^2 - 2*x^2*y^4*z^2 - 
     3*x^2*y^2*z^4 + x^2*z^6 + y^2*z^6 + z^8
-    assert(sumSOS(p1)===p2)
+    assert(value(p1)===p2)
 ///
 
 --1
 TEST /// --SOSmult
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     R = QQ[x,y,z,w]
     p1=sosPoly(R,{x^2-x*y,y^2+1,x},{1,2,3})
     p2=sosPoly(R,{y^3,x*w*z,y*z^2},{3,1/2,1/4})
-    assert(sumSOS(p1*p2)==sumSOS(p1)*sumSOS(p2))
-    assert(sumSOS(p1^4)==sumSOS(p1)^4)
+    assert(value(p1*p2)==value(p1)*value(p2))
+    assert(value(p1^4)==value(p1)^4)
 
     equal = (f1,f2) -> norm(f1-f2) < HighPrecision;
     R = RR[x,y,z,w]
     p1=sosPoly(R,{x^2-x*y,y^2+1,x},{1.32,1.47,12./7})
     p2=sosPoly(R,{y^3,x*w*z,y*z^2},{3.1,1.31,2.0})
-    assert( equal(sumSOS(p1*p2),sumSOS(p1)*sumSOS(p2)) )
-    assert( equal(sumSOS(p1^4),sumSOS(p1)^4) )
+    assert( equal(value(p1*p2),value(p1)*value(p2)) )
+    assert( equal(value(p1^4),value(p1)^4) )
 ///
 
 --2
@@ -1197,7 +1231,7 @@ TEST ///--substitute SOSPoly
 
 --4
 TEST ///--toRing
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     R = QQ[x,y];
     s = sosPoly(R, {x+1,y}, {2,3});
     S = RR[x,y];
@@ -1223,12 +1257,12 @@ TEST /// --sosdec
     Q=promote(Q,QQ)
     mon=matrix{{x^3},{x^2*z},{y*z^2}}
     f=sosPoly(mon,Q)
-    assert(f=!=null and sumSOS f==transpose mon * Q *mon)
+    assert(f=!=null and value f==transpose mon * Q *mon)
 ///
 
 --6
 TEST /// --chooseMons
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     R = QQ[x,y];
     f = x^4+2*x*y-x+y^4
     lmsos = chooseMons(f)
@@ -1257,7 +1291,7 @@ TEST /// --chooseMons
 
 --7
 TEST /// --createSOSModel
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     eval = (Q,v) -> (transpose v * Q * v)_(0,0)
     
     R = QQ[x][t];
@@ -1284,7 +1318,7 @@ TEST /// --createSOSModel
 
 --8
 TEST ///--makeMultiples
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     R = QQ[x,y,z]
     f1 = x + y
     f2 = x^2 + z^2
@@ -1309,32 +1343,29 @@ TEST ///--recoverSolution
 
 --10
 TEST /// --solveSOS
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     results := checkSolveSOS("CSDP")
     assert all(results,t->t=!=false);
 ///
 
 --11
----- I've commented this test out because it fails every night under Ubuntu 16.04
----- I don't know how to debug it.  -- Dan
--- TEST /// --lowerBound
---     debug needsPackage "SOS"
---     results := checkLowerBound("CSDP")
---     assert all(results,t->t=!=false);
--- ///
+TEST /// --lowerBound
+    debug needsPackage "SumsOfSquares"
+    results := checkLowerBound("CSDP")
+    assert all(results,t->t=!=false);
+///
 
 --12
 TEST /// --sosInIdeal
-    debug needsPackage "SOS"
+    debug needsPackage "SumsOfSquares"
     results := checkSosInIdeal("CSDP")
     assert all(results,t->t=!=false);
 ///
 
 --13
--- commented out because it keeps failing overnight under Ubuntu 16.04, host habanero
--- TEST /// --sosdecTernary
---     debug needsPackage "SOS"
---     results := checkSosdecTernary("CSDP")
---     assert all(results,t->t=!=false);
--- ///
+TEST /// --sosdecTernary
+    debug needsPackage "SumsOfSquares"
+    results := checkSosdecTernary("CSDP")
+    assert all(results,t->t=!=false);
+///
 
