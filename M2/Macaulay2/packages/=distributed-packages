@@ -184,7 +184,7 @@ ExteriorIdeals
 ToricInvariants
 SegreClasses
 SemidefiniteProgramming
-SOS
+SumsOfSquares
 MultiGradedRationalMap
 VirtualResolutions
 Quasidegrees
@@ -192,3 +192,5 @@ DiffAlg
 DeterminantalRepresentations
 FGLM
 FastLinAlg
+SpechtModule
+SpecialFanoFourfolds
