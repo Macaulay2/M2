@@ -135,6 +135,7 @@ Visualize
 EquivariantGB
 ExampleSystems
 RationalMaps
+FastLinAlg
 SpectralSequences
 SectionRing
 OldPolyhedra
@@ -193,4 +194,3 @@ DeterminantalRepresentations
 FGLM
 SpechtModule
 SpecialFanoFourfolds
-FastLinAlg
