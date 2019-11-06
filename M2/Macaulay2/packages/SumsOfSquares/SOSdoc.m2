@@ -775,50 +775,50 @@ doc /// --library
 -- Unexported methods (for developers)
 --###################################
 
-doc /// --createSOSModel
-    Key
-        createSOSModel
-        (createSOSModel,RingElement,Matrix)
-    Headline
-        space of Gram matrices of a polynomial (for developers)
-    Usage
-        (C,Ai,Bi,A,B,b) = createSOSModel(f,mon)
-    Inputs
-        f:RingElement
-          a polynomial
-        mon:Matrix
-          a vector of monomials
-    Outputs
-        C:Matrix
-        Ai:Sequence
-        Bi:Sequence
-        A:Matrix
-        B:Matrix
-        b:Matrix
-    Consequences
-    Description
-      Text
-        This method creates the kernel and image model of the Gram matrices of a polynomial $f$.
+-- doc /// --createSOSModel
+--     Key
+--         createSOSModel
+--         (createSOSModel,RingElement,Matrix)
+--     Headline
+--         space of Gram matrices of a polynomial (for developers)
+--     Usage
+--         (C,Ai,Bi,A,B,b) = createSOSModel(f,mon)
+--     Inputs
+--         f:RingElement
+--           a polynomial
+--         mon:Matrix
+--           a vector of monomials
+--     Outputs
+--         C:Matrix
+--         Ai:Sequence
+--         Bi:Sequence
+--         A:Matrix
+--         B:Matrix
+--         b:Matrix
+--     Consequences
+--     Description
+--       Text
+--         This method creates the kernel and image model of the Gram matrices of a polynomial $f$.
 
-        A Gram matrix representation of $f$ is a symmetric matrix $Q$ such that
-        $f = mon' Q mon$,
-        where $mon$ is a vector of monomials.
-        The set of all Gram matrices $Q$ is an affine subspace.
-        This subspace can be described in image form as
-        $Q = C - \sum_i y_i A_i$,
-        or in kernel form as
-        $A q = b$
-        where $q$ is the @TO2 {smat2vec,"vectorization"}@ of $Q$.
+--         A Gram matrix representation of $f$ is a symmetric matrix $Q$ such that
+--         $f = mon' Q mon$,
+--         where $mon$ is a vector of monomials.
+--         The set of all Gram matrices $Q$ is an affine subspace.
+--         This subspace can be described in image form as
+--         $Q = C - \sum_i y_i A_i$,
+--         or in kernel form as
+--         $A q = b$
+--         where $q$ is the @TO2 {smat2vec,"vectorization"}@ of $Q$.
 
-        For parametric sum-of-squares problems the image form is
-        $Q = C - \sum_i y_i A_i - \sum_j p_j B_j$,
-        where $p_j$ are the parameters,
-        and the kernel form is
-        $A q + B p = b$.
-      Code
-      Pre
-    SeeAlso
-///
+--         For parametric sum-of-squares problems the image form is
+--         $Q = C - \sum_i y_i A_i - \sum_j p_j B_j$,
+--         where $p_j$ are the parameters,
+--         and the kernel form is
+--         $A q + B p = b$.
+--       Code
+--       Pre
+--     SeeAlso
+-- ///
 
 --###################################
 -- Symbols
