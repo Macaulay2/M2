@@ -2741,13 +2741,13 @@ doc ///
     Example
       finParamValues={{1},{2}}
       bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
-      bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")
+      bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputStyle=>"OutSolutions")
       class bPH1_0_0
       class bPH2_0_0
     Example
       dir1 := temporaryFileName(); -- build a directory to store temporary data
       makeDirectory dir1;
-      bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)
+      bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputStyle=>"OutNone",TopDirectory=>dir1)
       B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
       B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
 ///
