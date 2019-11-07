@@ -135,6 +135,7 @@ Visualize
 EquivariantGB
 ExampleSystems
 RationalMaps
+FastLinAlg
 SpectralSequences
 SectionRing
 OldPolyhedra
@@ -184,7 +185,7 @@ ExteriorIdeals
 ToricInvariants
 SegreClasses
 SemidefiniteProgramming
-SOS
+SumsOfSquares
 MultiGradedRationalMap
 AssociativeAlgebras
 VirtualResolutions
@@ -192,3 +193,8 @@ Quasidegrees
 DiffAlg
 DeterminantalRepresentations
 FGLM
+SpechtModule
+SpecialFanoFourfolds
+FastLinAlg
+SpechtModule
+SpecialFanoFourfolds
