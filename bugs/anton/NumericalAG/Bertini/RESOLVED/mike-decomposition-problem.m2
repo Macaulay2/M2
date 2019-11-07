@@ -18,7 +18,8 @@ for d in keys W1 list {d, #W1#d}
     				    
 -- The following is WRONG:
 -- There are 8 components of dimension 0, not dimension 1.
--- but W2 has 8 dim=1 components, and one dim=2 component of degree 24.
+-- but W2 has 8 dim=1 components, and one dim=2 component of degree 14.
+errorDepth = 2
 numericalIrreducibleDecomposition(I, Software=>BERTINI)
 W2 = oo
 for d in keys W2 list if instance(d, ZZ) then {d, #W2#d} else continue

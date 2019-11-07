@@ -56,7 +56,6 @@ moveSlicingVariety(ProxyWSet,SlicingVariety) := (pr,S) -> (
     ) 
 
 TEST ///
-restart 
 debug needsPackage "NAGtypes"
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]

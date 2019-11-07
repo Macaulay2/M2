@@ -1,5 +1,8 @@
--- -*- M2-comint -*- {* hash: -1393920928 *}
---loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: -1393920928
+--loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
+-- COMPILE TIME: Oct 31 2019, 08:32:16
+--loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,t]; -- include the path variable in the ring
 
@@ -58,9 +61,9 @@ o14 : List
 
 i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = {{-1.45358+1.47955*ii, .387705+1.25319*ii}, {-1.14653-.745214*ii,
+o15 = {{.683735-.60461*ii, .541753+.199305*ii}, {1.34619+.263739*ii,
       -----------------------------------------------------------------------
-      .070959-.861925*ii}}
+      .550701-.670406*ii}}
 
 o15 : List
 
