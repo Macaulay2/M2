@@ -106,6 +106,7 @@ export{
     "FrobeniusPowerStrategy",
     "Naive",
     "Safe",
+    "frobeniusPreimage",
 
 -- parameterTestIdeal.m2
     "AssumeCM", --an option for function, if true, then the function will do less work.

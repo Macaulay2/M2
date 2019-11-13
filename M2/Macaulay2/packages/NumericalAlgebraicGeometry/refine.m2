@@ -99,7 +99,9 @@ refine Point := o -> P -> if P.?SolutionSystem then (
 
 -- this is the main function for M2
 refine (PolySystem,Point) := Point => o -> (F',s) -> 
-if member(o.Software,{BERTINI,PHCPACK}) then first refine(F',{s},o) else (
+if member(o.Software,{PHCPACK}) then first refine(F',{s},o) else 
+if member(o.Software,{BERTINI}) then refineBertini(F',s,o) else 
+(
     o = fillInDefaultOptions o;
     errorTolerance := o.ErrorTolerance;
     x := transpose matrix s; -- convert to vector 
@@ -208,19 +210,12 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
 	       ) 
 	   else error "refining projective solutions is not implemented yet";
     	  );  
-    if o.Software === PHCPACK then  return refinePHCpack(equations F,solsT,o)/point;
-    if o.Software === BERTINI then (
-	-- bits to decimals 
-	decimals := if o.Bits =!= infinity then ceiling(o.Bits * log 2 / log 10) else log_10 o.ErrorTolerance;
-	return bertiniRefineSols(decimals,equations F,solsT)
-	);
-
-     -- Software=>M2 (and Software=>M2engine for now)
-     apply(solsT, s->refine(F,    		  
-	     if class s === Point then s else point {s/toCC},
-	     o 
-	     ))
-     )         
+    if o.Software === PHCPACK then return refinePHCpack(equations F,solsT,o)/point 
+    else apply(solsT, s->refine(F,    		  
+	    if class s === Point then s else point {s/toCC},
+	    o 
+	    ))
+    )         
 TEST /// -- refine 
 sqrt2 = point {{sqrt(2p1000)}}
 R = CC[x]
