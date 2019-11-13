@@ -1,3 +1,8 @@
+-* 
+this seems to be a worksheet with experiments 
+for the paper with Paco Castro 
+*-
+
 restart
 DerLog = f -> image syz transpose (jacobian ideal f || matrix {{f}})
 --DL = DerLog f
@@ -19,8 +24,7 @@ isFreeAtOrigin = f -> (
      n := numgens ring f;  
      any((minors(n,mingens DL))_*, m -> m%f == 0 and (m//f)%ideal gens ring f != 0)
      )
-path = {".."}|path
-needsPackage "Dmodules"
+debug needsPackage "Dmodules"
 
 -- Paco's kappa 
 minOrderForAnnF1 = method(Options=>{OrderLimit=>infinity})
@@ -97,6 +101,7 @@ tests = {
 
 end
 TEST ///
+debug needsPackage "Dmodules"
 R = QQ[x_1,x_2]; f = x_1*x_2*(x_1+x_2)
 assert(
      diffRatFun({1,0},f)
