@@ -146,7 +146,7 @@ document {
 			 computing algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, has been added." },
 	       	    LI { TO "SemidefiniteProgramming::SemidefiniteProgramming", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. 
 			 Parrilo, and Helfried Peyrl for semidefinite programming, has been added." },
-	       	    LI { TO "SOS::SOS", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo,
+	       	    LI { TO "SumsOfSquares::SumsOfSquares", ", a package by Diego Cifuentes, Thomas Kahle, Pablo A. Parrilo,
 			 and Helfried Peyrl for sums of squares, has been added." },
 	       	    LI { TO "MultiGradedRationalMap::MultiGradedRationalMap", ", a package by Yairon Cid Ruiz for computing the degree
 			 and birationality of multigraded rational maps, has been added." 
