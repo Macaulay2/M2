@@ -14,6 +14,7 @@ FreeMonoid::FreeMonoid(
     mNumWeights(wtvecs.size() / variableNames.size())
 {
   auto ndegrees = degreeMonoid().n_vars();
+  auto nvars = variableNames.size();
   assert(nvars * ndegrees == mDegrees.size());
 
   for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)

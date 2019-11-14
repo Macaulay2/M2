@@ -12,12 +12,19 @@
 #include "NCAlgebras/SuffixTree.hpp"
 #include <iostream>
 
+extern void tryOutMathicCode();
+
 std::vector<int> monom1 {2, 0, 1};  // cab
 std::vector<int> monom2 {2, 2};  // cc
 std::vector<int> monom3 {1, 0, 1, 0};  // baba
 std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
 
 extern const QQ * globalQQ;
+
+TEST(NCReduction, tryit)
+{
+  tryOutMathicCode();
+}
 
 TEST(MonomialOrdering, create)
 {
@@ -85,7 +92,10 @@ TEST(FreeAlgebra, create)
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
-                                       {1,2,3});
+                                       {1,2,3},
+                                       {},
+                                       {1}
+                                       );
   EXPECT_TRUE(A != nullptr);
 }
 
@@ -94,7 +104,10 @@ TEST(FreeAlgebra, polyarithmetic)
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
-                                       {1,2,3});
+                                       {1,2,3},
+                                       {},
+                                       {1}
+                                       );
   FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
   A->var(*x, 0);
   A->var(*y, 1);
@@ -117,7 +130,8 @@ TEST(FreeAlgebra, polyarithmetic)
   A->setZero(*f);
   A->setZero(*g);
   A->from_long(*f,1);
-  A->from_word(*g,{});
+  std::vector<int> gdata {};
+  A->from_word(*g, gdata);
   // from_rational test? How to create an mpq_ptr?
   EXPECT_TRUE(f == g);
   EXPECT_TRUE(A->is_unit(*f));
@@ -174,7 +188,10 @@ TEST(FreeAlgebra, quotientArithmetic)
   FreeAlgebra* Q = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
-                                       {1,2,3});
+                                       {1,2,3},
+                                       {},
+                                       {1}
+                                       );
   FreeAlgebraElement X(Q), Y(Q), Z(Q), F(Q), G(Q), H(Q);
   Q->var(*X,0);
   Q->var(*Y,1);
@@ -211,7 +228,10 @@ TEST(FreeAlgebra, comparisons)
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
-                                       {1,2,3});
+                                       {1,2,3},
+                                       {},
+                                       {1}
+                                       );
   FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
   A->var(*x, 0);
   A->var(*y, 1);
@@ -226,7 +246,10 @@ TEST(FreeAlgebra, spairs)
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
-                                       {1,2,3});
+                                       {1,2,3},
+                                       {},
+                                       {1}
+                                       );
   FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
   Word leadWord, leadWordPrefix, leadWordSuffix;
   A->var(*x, 0);
@@ -236,6 +259,7 @@ TEST(FreeAlgebra, spairs)
   A->lead_word(leadWord,*f);
   A->lead_word_prefix(leadWordPrefix,*f,2);
   A->lead_word_suffix(leadWordSuffix,*f,1);
+  // TODO: did the offset change on our recent heft changes?
   EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWord.begin() && (*f).cbegin().monom().begin() + 5 == leadWord.end());
   EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWordPrefix.begin() && (*f).cbegin().monom().begin() + 4 == leadWordPrefix.end());
   EXPECT_TRUE((*f).cbegin().monom().begin() + 3 == leadWordSuffix.begin() && (*f).cbegin().monom().begin() + 5 == leadWordSuffix.end());
