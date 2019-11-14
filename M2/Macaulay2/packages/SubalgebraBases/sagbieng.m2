@@ -99,7 +99,7 @@ sagbiEngine = (Gens, maxnloops, printlevel) -> (
 	       newgens := RtoRS(matrix{Pending#d});
 	       spairs = spairs | newgens;
 	       Pending#d = {};);
-	  tsub := timing map(RS,rawSubduction(raw spairs, raw Gmap, raw gbJ));
+	  tsub := timing map(RS,rawSubduction(rawMonoidNumberOfBlocks raw monoid R, raw spairs, raw Gmap, raw gbJ));
 	  if printlevel > 0 then 
 	    << "    subduct done in " << tsub#0 << " seconds" << endl;
      	  tRS := timing compress RStoR(tsub#1);
