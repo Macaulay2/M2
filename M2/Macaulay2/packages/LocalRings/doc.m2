@@ -164,8 +164,7 @@ Description
     RP = localRing(R, ideal gens R);
     I = ideal"x5+y3+z3,x3+y5+z3,x3+y3+z5"
     M = RP^1/I
-    elapsedTime length M -- 0.55 seconds
-    elapsedTime hilbertSamuelFunction(M, 0, 6) -- 0.55 seconds
+    elapsedTime hilbertSamuelFunction(M, 0, 6)
     oo//sum
 
   Text
@@ -183,23 +182,39 @@ SeeAlso
   (length, Module)
 ///
 
-///
+doc ///
 Key
-   length
   (length, Module)
 Headline
-  Computes the length of modules over local rings
+  Computes the length of a module
 Usage
+  l = length M
 Inputs
+  M: Module
 Outputs
+  l: ZZ
+    the length of M
 Description
   Text
+    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    polynomial ring over a field k then length is the same as the degree.
+
+    If M is over a local ring then length is computed by summing the output of
+    the Hilbert-Samuel function until it vanishes.
   Example
+    R = QQ[x,y,z];
+    RP = localRing(R, ideal gens R);
+    I = ideal"x5+y3+z3,x3+y5+z3,x3+y3+z5"
+    M = RP^1/I
+    elapsedTime length M
 Consequences
   Item
-    If the algorithm terminates, the length of the module is stored in M.cache.length.
+    If the function terminates, the length of the module is stored in M.cache.length.
 Caveat
+  The input is not verified to have finite length, therefore the function is not guaranteed to terminate.
 SeeAlso
+  (degree, Module)
+  hilbertSamuelFunction
 ///
 
 end--

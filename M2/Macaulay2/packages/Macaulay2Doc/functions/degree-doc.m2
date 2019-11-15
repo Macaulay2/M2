@@ -163,20 +163,7 @@ document {
      SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
 
-document { 
-     Key => (length,Module),
-     Usage => "length M",
-     Inputs => {
-	  "M"
-	  },
-     Outputs => {
-	  ZZ => {"the length of ", TT "M"}
-	  },
-     "We assume that ", TT "M", " is a graded module over a singly graded 
-     polynomal ring or a quotient of a polynomial ring, 
-     over a field ", TT "k", ".  In this case, the length is the same as the degree, 
-     see ", TO (degree,Module), "."
-     }
+-- (length,Module) was moved to packages/LocalRings/doc.m2
 
 document { 
      Key => (degree,Ring),
