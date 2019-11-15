@@ -15,7 +15,9 @@ export {
     "saturateEdges",
     "FilterCondition",
     "FilterFailure",
-    "Randomizer"}
+    "Randomizer",
+    "Equivalencer",
+    "PartialSolBins"}
     
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
@@ -28,6 +30,7 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
     N := new HomotopyNode from {
         BasePoint => params,
         PartialSols => partialSols,
+	PartialSolBins => pointArray(G.Equivalencer \ points partialSols),
         Graph => G,
 	Edges => new MutableList from {}
     };
@@ -118,7 +121,7 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
 	)
     )
 
-homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Potential=>null, FilterCondition=>null, Randomizer=>null})
+homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Potential=>null, FilterCondition=>null, Randomizer=>null, Equivalencer=>(x->x)})
 installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 	Vertices => new MutableList from {},
 	Edges => new MutableList from {}
@@ -130,6 +133,7 @@ homotopyGraph System := o -> PF -> (
     G.Potential = o.Potential;
     G.FilterCondition = o.FilterCondition;
     G.Randomizer = o.Randomizer;
+    G.Equivalencer = o.Equivalencer;
     G
     )
 
@@ -260,25 +264,26 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	    s := newSols#i;
 	    if ((G.FilterCondition =!= null) and 
 		(G.FilterCondition(transpose matrix tail.BasePoint, transpose matrix s))) then (
-		<< "filtering failure (probably a path jump)" << endl;
+		<< "a path failed (as flagged by the FilterCondition option)" << endl;
 		s.SolutionStatus = FilterFailure;
 	       	correspondence#a = null; -- record failure		  
 		);
 	    if (status s =!= Regular) then (
-		<< "failure: status = " << status s << endl;
+		<< "a path failed: status = " << status s << endl;
 		correspondence#a = null; -- record failure
 		)
 	    else ( 
-		if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
+		if member(G.Equivalencer s, tail.PartialSolBins) then b:= position(G.Equivalencer s,tail.PartialSolBins) 
 		else (    
 		    s = point {coordinates s}; -- lose the rest of info
 		    appendPoint(tail.PartialSols, s);
+		    appendPoint(tail.PartialSolBins, G.Equivalencer s);
 		    b = n;
 		    n = n+1;
 		    );
 		if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 		then (
-		    print "failure: correspondence conflict";
+		    print "failure due to correspondence conflict (suggesting paths have jumped)";
 		    correspondence#a = null -- record failure 
 		    )
 		);
