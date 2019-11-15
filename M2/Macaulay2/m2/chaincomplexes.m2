@@ -836,7 +836,7 @@ rawMultigradedBettiTally = B -> (
         T = prepend(xAxis, T);
         T = apply(prepend("", yAxis), T, prepend);
         ) else (
-        T = table(toList (0 .. length rows - 1), sort keys H,
+        T = table(max((keys H)/(j -> #H#j)), sort keys H,
             (i,k) -> if i < #H#k then H#k#i else null);
         T = prepend(sort keys H,T);
         );
