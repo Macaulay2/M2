@@ -10,7 +10,7 @@ newPackage(
 	      PackageExports => {"MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2
 --in the version of August 21,2018	      
-	      DebuggingMode => false
+	      DebuggingMode => true
 	      )
     	    export{	  
 	--things related to Ext over a complete intersection
@@ -285,9 +285,6 @@ layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
 --    scan(length L -1, s->assert( HH_(s+1) L == 0));
     (L,aug)
     )
-
-
-
 
 layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
     --ff is a 1 x c matrix over a Gorenstein ring S and ff' = ff_{0..(c-2)}, ff'' = ff_{c-1}.
@@ -1868,6 +1865,91 @@ extIsOnePolynomial Module := M ->(
     (H, H == sub(po, {z =>z/2-1/2}))
     )
 
+horizontalConcatenate = L ->(
+   -- L is a list of matrices with the same number of rows
+   M := L_0;
+   scan(#L-1, i-> M = M|L_(i+1));
+   M)
+print "hello"
+
+///
+--make the Eisenbud-Shamash resolution as a Z/2 graded differential
+--module over the polynomial ring.
+--installPackage "CompleteIntersectionResolutions"
+restart
+loadPackage ("CompleteIntersectionResolutions", Reload =>true)
+debug CompleteIntersectionResolutions
+
+n = 3
+c = 2
+kk = ZZ/101
+R = kk[x_0..x_(n-1)]
+I = ideal apply(c, i->x_i^2)
+ff = gens I
+degs = I_*/degree
+G = source ff
+Rbar = R/I
+bar = map(Rbar, R)
+M = coker random(Rbar^2, Rbar^{-2,-3})
+RM = pushForward(bar, M)
+S = kk(monoid [X_1 .. X_c, gens R,
+          Degrees => {
+            apply(0 .. c-1, i -> prepend(-2, - degree ff_i)),
+            apply(0 .. n-1, j -> prepend( 0,   degree R_j))
+            }]
+)      
+SM = S**RM
+
+RtoS = map(S,R, DegreeMap => prepend_0)
+StoR = map(R,S, DegreeMap => d -> {d_1})
+SM = coker RtoS(presentation RM)
+F = res SM
+isHomogeneous F
+
+ell = length F
+Sff = RtoS ff
+H = makeHomotopies(Sff, F, 2*length F +1);
+--H#{J,i}: F_i(-degs_J) -> F_(i+2|J|-1), 
+--where J is a list of c elements and
+--degs_j is the sum of the degrees of f_j, j\in J
+--assert(source H#{{0,1},1} == F_1** R^{-2})
+
+--Now make the modules and maps over S;
+--the total differential should square to 0 after reducing mod IS.
+Q     ke = apply(length F +1, i->select(keys H, k -> k_1 == i)); --ke_i are
+the exponents in 2 variables --corresponding to homotopies from F_i F0
+= directSum apply (select(0..2*length F, i->i%2==0_1), i-> F_i); F1 =
+directSum apply (select(0..2*length F+1, i->i%2==1), i-> F_i); degrees
+F1 degrees F_1 monomialFromExponent = L -> product apply(#L,i->
+S_(i+c)^(L_i)) horizontalConcatenate apply(ke_0, J ->
+(monomialFromExponent(J_0_0)* H#{J_0,0})43w`s2
+)
+
+--make map from F_i
+
+i = 2 --even, <= length F
+L = apply(ke_i, u -> (
+    tar = u_1+2*sum(u_0)-1;
+--    print (u_0, degrees H#{u_0,i});
+    shift = if sum u_0 == 0 then 0 else -1-2*sum u_0;
+    (u, phi = map((F_tar),S^{{0,shift}}**F_i,
+	(monomialFromExponent(u_0) * H#{u_0,i})))
+    ))
+sum(L1 = select(L, p -> p_1 !=0), p->(u = p_0;phi = p_1;
+	    tar = u_1+2*sum(u_0)-1;
+    F1_[(tar-1)//2]*phi
+))
+
+sum apply(#L1, i->(
+	u = L1_i;
+	tar = u_0_1+2*sum u_0_0 -1;
+--	print tar;
+--	L1_i_0, tar, target L1_i_1 == source F1_[(tar-1)//2];
+	assert (target L1_i_1 == source F1_[(tar-1)//2]);
+	assert isHomogeneous L1_i_1;
+	<<degrees (source L1_i_1)<<endl;
+	<< degrees F_(u_0_1)<<endl;
+	F1_[(tar-1)//2]*L1_i_1))
 
 -----------------------------
 --------Documentation-----------documentation--DOCUMENT
