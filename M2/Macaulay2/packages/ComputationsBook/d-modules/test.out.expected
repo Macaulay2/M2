@@ -5,7 +5,7 @@ i2 : D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}]
 
 o2 = D
 
-o2 : PolynomialRing
+o2 : PolynomialRing, 3 differential variables
 
 i3 : Delta = ideal(Dx,Dy,Dz)
 
@@ -132,7 +132,7 @@ i21 : use D
 
 o21 = D
 
-o21 : PolynomialRing
+o21 : PolynomialRing, 4 differential variables
 
 i22 : R = (D^1/ideal(Dx,Dy,Dz,Dw))
 
@@ -363,7 +363,7 @@ i63 : D = ring JH3
 
 o63 = D
 
-o63 : PolynomialRing
+o63 : PolynomialRing, 6 differential variables
 
 i64 : findSocle(JH3,1_D)
 
@@ -474,9 +474,9 @@ o88 : HashTable
 
 i89 : I = gkz(matrix{{1,2}}, {5})
 
-              2
-o89 = ideal (D  - D , x D  + 2x D  - 5)
-              1    2   1 1     2 2
+                                2
+o89 = ideal (x D  + 2x D  - 5, D  - D )
+              1 1     2 2       1    2
 
 o89 : Ideal of QQ[x , x , D , D ]
                    1   2   1   2
