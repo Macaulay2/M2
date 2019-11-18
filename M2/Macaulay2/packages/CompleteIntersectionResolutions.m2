@@ -38,6 +38,7 @@ newPackage(
 	--Routines that make other resolutions
 	   "Shamash",
 	   "EisenbudShamash",
+	   "EisenbudShamashTotal",
 	   "layeredResolution",
 	   "makeFiniteResolution",	   
 	   "makeFiniteResolutionCodim2",	   	   
@@ -1874,8 +1875,8 @@ extIsOnePolynomial Module := M ->(
     )
 
 
-eisenbudShamashTotal = method(Options => {Check =>false})
-eisenbudShamashTotal Module := o -> M -> (
+EisenbudShamashTotal = method(Options => {Check =>false})
+EisenbudShamashTotal Module := o -> M -> (
 -*
     assumes M is defined over a ring of the form
     Rbar = R/(f1..fc), a complete intersection, and that
@@ -1969,7 +1970,7 @@ ff = gens I
 Rbar = R/I
 bar = map(Rbar, R)
 Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
-(d0,d1) = eisenbudShamashTotal Mbar
+(d0,d1) = EisenbudShamashTotal Mbar
 ---
 
 
@@ -2073,6 +2074,7 @@ Description
   {TO "TateResolution"},
   {TO "Shamash"},
   {TO "EisenbudShamash"},
+  {TO "EisenbudShamashTotal"},
   {TO "layeredResolution"},
   {TO "makeFiniteResolution"},
   {TO "makeFiniteResolutionCodim2"},
@@ -4718,6 +4720,63 @@ doc///
 	 EisenbudShamash
 	 makeHomotopies
      ///
+
+doc ///
+   Key
+    EisenbudShamashTotal
+    (EisenbudShamashTotal, Module)
+    [EisenbudShamashTotal,Check]    
+   Headline
+    precursor of total Ext
+   Usage
+    (d0,d1) =  EisenbudShamashTotal M
+   Inputs
+    M:Module
+     over a complete intersection
+   Outputs
+    d0:Matrix
+     map of free modules over an enlarged ring
+    d1:Matrix
+     map of free modules over an enlarged ring
+   Description
+    Text
+     assumes M is defined over a ring of the form
+     Rbar = R/(f1..fc), a complete intersection, and that
+     M has a finite free resolution over R.
+     Returns a pair of maps d0 = evenToOdd and d1 = oddToEven of free modules over
+     a larger ring S =  R[s_0..s_(c-1]], where the degrees of the s_i are
+     the negatives of the degrees of the f_i.
+    
+     The maps d0,d1 form a matrix factorization 
+     of sum(s_i f_i) and have the property that for any Rbar module N, 
+     HH_1 chainComplex {Hom(d0,N), Hom(d1,N)} = Ext^even_Rbar(M,N)
+     HH_1 chainComplex {Hom(d1,N), Hom(d0,N)} = Ext^odd_Rbar(M,N)    
+    Example
+     n = 3
+     c = 2
+     kk = ZZ/101
+     R = kk[x_0..x_(n-1)]
+     I = ideal apply(c, i->x_i^2)
+     I = ideal(x_0^2+x_1^2, x_2^3)
+     ff = gens I
+     Rbar = R/I
+     bar = map(Rbar, R)
+     Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
+     (d0,d1) = EisenbudShamashTotal Mbar
+
+     d0*d1
+     S = ring d0
+     phi = map(S,R)
+     phi I
+     Sbar = S/phi I
+     bar = map(Sbar,S)
+     prune HH_1 chainComplex {bar d0,bar d1}
+     annihilator prune HH_1 chainComplex {bar d1,bar d0}
+     d1*d0
+     d0*d1
+   SeeAlso
+    Ext
+///
 
 ------TESTs------
 TEST/// -- tests of the "with components" functions
