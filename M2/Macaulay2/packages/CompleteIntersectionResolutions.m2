@@ -1,7 +1,7 @@
 newPackage(
               "CompleteIntersectionResolutions",
-              Version => "2.1", 
-              Date => "November 16, 2018",
+              Version => "2.2", 
+              Date => "November 16, 2019",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
@@ -1101,11 +1101,16 @@ expo = method()
 expo(ZZ,ZZ) := (n,d) ->(
      --the next three lines define a function that returns
      --a list of all lists of n non-neg ints adding up to d.
+     if n <= 0 then return {};
      x:=local x;
      T := ZZ/2[x_0..x_(n-1)];
      flatten((flatten entries basis(d, T^1))/exponents)
      )
 
+TEST///
+assert (expo(2,4) == {{4, 0}, {3, 1}, {2, 2}, {1, 3}, {0, 4}})
+expo(3,0)
+///
 lessThan = (L1,L2) -> (
      --returns true if L1<L2 in the termwise partial order
      for i from 0 to #L1-1 do if L1#i>L2#i then return false;
@@ -1114,6 +1119,7 @@ lessThan = (L1,L2) -> (
     
 
 expo(ZZ,List):= (n,L) ->(
+     if n <= 0 then return {};    
      --returns the list of all elements of expo(n,d) that
      --are <L in the termwise partial order
      d := sum L;
@@ -1137,6 +1143,8 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      -- and, for each index list I with |I|<=d,
      -- sum s_J s_K = 0, when the sum is over all J+K = I
      S := ring f;
+     if source f == 0 then return hashTable{};
+     if numrows f != 1 then error"expected a 1 x ? matrix";
      flist := flatten entries f;
      lenf := #flist;
      degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
@@ -1865,13 +1873,85 @@ extIsOnePolynomial Module := M ->(
     (H, H == sub(po, {z =>z/2-1/2}))
     )
 
-horizontalConcatenate = L ->(
-   -- L is a list of matrices with the same number of rows
-   M := L_0;
-   scan(#L-1, i-> M = M|L_(i+1));
-   M)
-print "hello"
 
+eisenbudShamashTotal = method(Options => {Check =>false})
+eisenbudShamashTotal Module := o -> M -> (
+-*
+    assumes M is defined over a ring of the form
+    Rbar = R/(f1..fc), a complete intersection, and that
+    M has a finite free resolution over R.
+    Returns a pair of maps d0 = evenToOdd and d1 = oddToEven of free modules over
+    a larger ring S =  R[s_0..s_(c-1]], where the degrees of the s_i are
+    the negatives of the degrees of the f_i.
+    
+    The maps d0,d1 form a matrix factorization 
+    of sum(s_i f_i) and have the property that for any Rbar module N, 
+    HH_1 chainComplex {Hom(d0,N), Hom(d1,N)} = Ext^even_Rbar(M,N)
+    HH_1 chainComplex {Hom(d1,N), Hom(d0,N)} = Ext^odd_Rbar(M,N)    
+*-
+--setup
+Rbar := ring M;
+ff := presentation Rbar;
+c := numcols ff;
+if o.Check == true then assert(codim ideal ff == c);
+R := ring ff;
+kk := coefficientRing R;
+n := numgens R;
+bar := map(Rbar,R);
+RM := pushForward(bar, M); -- M as R-module
+if o.Check == true then assert(isHomogeneous RM and (res RM_(1+n) == 0));
+
+--define the structure on the resolution of RM that is necessary for defining the Rbar resolution
+--of M
+s := symbol s;
+S := kk[s_0..s_(c-1),gens R, Degrees => apply(c, i->-degree ff_i)|apply(n, i->degree R_i)];
+RtoS := map(S,R);
+SM := coker RtoS presentation RM; -- M as S-module.
+F := res SM;
+--separate into even and odd parts:
+F0 := directSum apply (select(0..length F, i->i%2==0), i-> dual F_i);
+F1 := directSum apply (select(0..length F, i->i%2==1), i-> dual F_i);
+
+Sff := RtoS ff;
+H := makeHomotopies(Sff, F);
+--H#{J,i}: F_i(-degs_J) -> F_(i+2|J|-1), 
+--where J is a list of c pos ints and
+--degs_J is the sum of the degrees of f_j, j\in J
+--assert(source H#{{0,1},1} == F_1** R^{-2})
+
+--Separate the homotopies into subsets:
+--ke_i are keys {J,j} in H
+--corresponding to possible homotopies whose *target* is F_i.
+ke := apply(length F + 1, i->select(keys H, k -> (
+	    k_1 === i - 2*sum k_0 + 1 and 
+	      0 <= min (i, k_1) and 
+	      length F >= max (i,k_1))));
+--a helper function:
+monomialFromExponent := L -> product apply(#L,i->S_i^(L_i)) ;
+
+--make the  maps 
+evenToOdd := apply(toList (0..length F//2),
+    (p := null;
+    i-> apply(ke_(2*i), u -> (
+    p = map(dual F_(u_1),dual F_(2*i),
+	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
+	);
+   F1_[(u_1-1)//2]*p*F0^[i]
+    ))));
+oddToEven := apply(toList(0..length F//2),
+    (p := null;
+    i-> apply(ke_(2*i+1), u -> (
+    p = map(dual F_(u_1),dual F_(2*i+1),
+	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
+	);
+   F0_[u_1//2]*p*F1^[i]
+    ))));
+if o.Check == true then assert(
+    all (flatten evenToOdd |flatten oddToEven, phi -> isHomogeneous phi == true));
+d0 := map(F1,F0,sum flatten evenToOdd);
+d1 := map(F0,F1,sum flatten oddToEven);
+(d0,d1)
+)
 ///
 --make the Eisenbud-Shamash resolution as a Z/2 graded differential
 --module over the polynomial ring.
@@ -1888,64 +1968,17 @@ I = ideal(x_0^2+x_1^2, x_2^3)
 ff = gens I
 Rbar = R/I
 bar = map(Rbar, R)
-M = prune coker random(Rbar^2, Rbar^{-2,-3})
-RM = prune pushForward(bar, M)
+Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
+(d0,d1) = eisenbudShamashTotal Mbar
 ---
-S = kk[s_0..s_(c-1),gens R, Degrees => apply(c, i->-degree ff_i)|apply(n, i->{1})]
-RtoS = map(S,R)
-SM = coker RtoS presentation RM
-F = res SM
-assert isHomogeneous F
-Sff = RtoS ff
-SI = ideal Sff
-H = makeHomotopies(Sff, F);
---H#{J,i}: F_i(-degs_J) -> F_(i+2|J|-1), 
---where J is a list of c pos ints and
---degs_J is the sum of the degrees of f_j, j\in J
---assert(source H#{{0,1},1} == F_1** R^{-2})
 
---Now make the modules and maps over S;
---the total differential should square to 0 after reducing mod IS.
-ke = apply(length F + 1, i->select(keys H, k -> (
-	    k_1 === i - 2*sum k_0 + 1 and 
-	      0 <= min (i, k_1) and 
-	      length F >= max (i,k_1))))
 
---ke_i are the exponents in 2 variables 
---corresponding to homotopies to F_i
 
-F0 = directSum apply (select(0..length F, i->i%2==0), i-> dual F_i);
-F1 = directSum apply (select(0..length F, i->i%2==1), i-> dual F_i);
-
-monomialFromExponent = L -> product apply(#L,i->S_i^(L_i)) 
-
---make all the  maps and check homogeneity
-L0 = apply(1+length F, i-> apply(ke_i, u -> (
-   map(dual F_(u_1),dual F_i,
-	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
-	))))
-assert all( (flatten L)/isHomogeneous, t ->t)
-
-evenToOdd = apply(toList (0..length F//2),
-    i-> apply(ke_(2*i), u -> (
-   p = map(dual F_(u_1),dual F_(2*i),
-	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
-	);
-   F1_[(u_1-1)//2]*p*F0^[i]
-    )))
-oddToEven = apply(toList(0..length F//2),
-    i-> apply(ke_(2*i+1), u -> (
-   p = map(dual F_(u_1),dual F_(2*i+1),
-	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
-	);
-    <<(i,u)<<endl;
-    << betti p<<endl<<endl;
-   F0_[u_1//2]*p*F1^[i]
-    )))
-d0 = map(F1,F0,sum flatten evenToOdd)
-d1 = map(F0,F1,sum flatten oddToEven)
 d0*d1
-Sbar = S/SI
+S = ring d0
+phi = map(S,R)
+phi I
+Sbar = S/phi I
 bar = map(Sbar,S)
 prune HH_1 chainComplex {bar d0,bar d1}
 annihilator prune HH_1 chainComplex {bar d1,bar d0}
