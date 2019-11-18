@@ -1916,13 +1916,17 @@ H = makeHomotopies(Sff, F, 2*length F +1);
 
 --Now make the modules and maps over S;
 --the total differential should square to 0 after reducing mod IS.
-Q     ke = apply(length F +1, i->select(keys H, k -> k_1 == i)); --ke_i are
-the exponents in 2 variables --corresponding to homotopies from F_i F0
-= directSum apply (select(0..2*length F, i->i%2==0_1), i-> F_i); F1 =
-directSum apply (select(0..2*length F+1, i->i%2==1), i-> F_i); degrees
-F1 degrees F_1 monomialFromExponent = L -> product apply(#L,i->
-S_(i+c)^(L_i)) horizontalConcatenate apply(ke_0, J ->
-(monomialFromExponent(J_0_0)* H#{J_0,0})43w`s2
+ke = apply(length F +1, i->select(keys H, k -> k_1 == i)); 
+--ke_i are the exponents in 2 variables 
+--corresponding to homotopies from F_i 
+F0= directSum apply (select(0..2*length F, i->i%2==0_1), i-> F_i); 
+F1 = directSum apply (select(0..2*length F+1, i->i%2==1), i-> F_i); 
+
+monomialFromExponent = L -> product apply(#L,i->
+S_(i+c)^(L_i)) 
+
+horizontalConcatenate apply(ke_0, J ->
+(monomialFromExponent(J_0_0)* H#{J_0,0})
 )
 
 --make map from F_i
