@@ -1948,7 +1948,7 @@ d0*d1
 Sbar = S/SI
 bar = map(Sbar,S)
 prune HH_1 chainComplex {bar d0,bar d1}
-prune HH_1 chainComplex {bar d1,bar d0}
+annihilator prune HH_1 chainComplex {bar d1,bar d0}
 d1*d0
 d0*d1
 ///
