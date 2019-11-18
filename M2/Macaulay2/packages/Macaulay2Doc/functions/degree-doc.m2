@@ -163,7 +163,34 @@ document {
      SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
 
--- (length,Module) was moved to packages/LocalRings/doc.m2
+doc ///
+Key
+  (length, Module)
+Headline
+  Computes the length of a module
+Usage
+  l = length M
+Inputs
+  M: Module
+Outputs
+  l: ZZ
+    the length of M
+Description
+  Text
+    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    polynomial ring over a field k then length is the same as the degree.
+
+    If M is over a local ring then length is computed by summing the output of
+    the Hilbert-Samuel function until it vanishes. Note that in this case the @TO LocalRings@
+    package must be loaded first.
+Consequences
+  Item
+    In the local case, the length of the module is stored in M.cache.length.
+Caveat
+  In the local case, the input is assumed to have finite length.
+SeeAlso
+  (degree, Module)
+///
 
 document { 
      Key => (degree,Ring),
