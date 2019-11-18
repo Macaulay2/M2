@@ -164,6 +164,9 @@ CXXFLAGS += -Wreturn-type
 # and apparently it can't be silenced in source code.
 CXXFLAGS += -Wno-unknown-pragmas
 
+# This hushes warnings about "struct" and "class" both being used.
+CXXFLAGS += -Wno-mismatched-tags
+
 python-c.o : | python-exports.h.tmp
 
 # see https://github.com/Macaulay2/M2/issues/430
