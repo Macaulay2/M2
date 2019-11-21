@@ -672,7 +672,7 @@ tateResolution(Module, List, List) := (M,low, high) ->(
     hi := apply(#regs, i->max(regs_i, high_i+1)); --hi
     N := presentation truncate(hi, M)**S^{hi};-- betti N
     Q := symExt(N,E); --betti Q
-    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi + 2 - length hi]
+    (res (coker Q,LengthLimit=>(sum hi-sum low)))**E^{hi}[sum hi]
     )
 
 
