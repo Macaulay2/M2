@@ -139,18 +139,88 @@ public:
   static const mathic::GeobucketBucketStorage bucketStorage = mathic::GeoStoreSameSizeBuffer;
 };
 
-std::unique_ptr<mathic::Geobucket<ReductionQueueConfiguration1>> makeQueue() //TODO: needs arguments
+std::unique_ptr<mathic::Geobucket<ReductionQueueConfiguration1>> makeReductionQueue() //TODO: needs arguments
 {
   ReductionQueueConfiguration1 C; //TODO: needs arguments
   
   return make_unique<mathic::Geobucket<ReductionQueueConfiguration1>>(C);
 }
 
+class PolynomialHeap
+{
+public:
+  virtual PolynomialHeap& addPolynomial(ring_elem coeff,
+                                        Word left,
+                                        Word right,
+                                        const Poly* poly);
 
+  virtual bool isZero() = 0;
+  virtual std::pair<ring_elem, Monom> viewLeadTerm() = 0;  // TODO: really want ConstMonom here...
+  virtual void removeLeadTerm() = 0;
+
+  virtual Poly* value() = 0; // returns the polynomial
+};
+
+class TrivialPolynomialHeap : public PolynomialHeap
+{
+  TrivialPolynomialHeap(const FreeAlgebra& F)
+    : mRing(F),
+      mValue{},
+      mIter(mValue.cbegin())
+  {
+  }
+
+  // prevent copy and assignment constructors
+  // allow move constructors, I guess?
+  TrivialPolynomialHeap operator=(const TrivialPolynomialHeap&) = delete;
+  TrivialPolynomialHeap(const TrivialPolynomialHeap&) = delete;
+  
+  TrivialPolynomialHeap& addPolynomial(ring_elem coeff,
+                                 Word left,
+                                 Word right,
+                                 const Poly* poly) override
+  {
+    Poly f;
+    Poly g;
+    // Create f = coeff * left * poly * right;
+    mRing.mult_by_term_left_and_right(f, *poly, coeff, left, right);
+    mRing.add(g, mIter, mValue.cend(), f.cbegin(), f.cend());
+    std::swap(g, mValue);
+    mIter = mValue.cbegin();
+    return *this;
+  }
+
+  bool isZero() override
+  {
+    return mIter == mValue.cend();
+  }
+  
+  std::pair<ring_elem, Monom> viewLeadTerm() override
+  {
+    return std::make_pair(mIter.coeff(), mIter.monom());
+  }
+
+  void removeLeadTerm() override
+  {
+    ++mIter;
+  }
+
+  Poly* value() override
+  {
+    auto result = new Poly;
+    mRing.copy(*result, mIter, mValue.cend());
+    return result;
+  }
+private:
+  FreeAlgebra mRing;
+  Poly mValue;
+  Poly::const_iterator mIter;
+};
+  
 class PolynomialHeap1
 {
 public:
-  PolynomialHeap1(const NCFreeAlgebra& F);
+  PolynomialHeap1(const FreeAlgebra& F);
 
   // prevent copy and assignment constructors
   // allow move constructors, I guess?

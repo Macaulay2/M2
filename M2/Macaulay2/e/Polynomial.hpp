@@ -196,12 +196,14 @@ public:
     // FRANK: Same as above, do we want to make a copy here?
     Monom monom() const { return Monom((&*(this->mMonomIt))); }
 
-    // MES: added 2- Dec 2017:
-    //    std::pair<ring_elem, Monom> operator*() const { return std::make_pair(coeff(), monom()); }
+    std::pair<ring_elem, Monom> operator*() const { return std::make_pair(coeff(), monom()); }
     
     // (in)equality checks
     bool operator==(const self_type& rhs) const { return (this->mCoeffIt == rhs.mCoeffIt); }
     bool operator!=(const self_type& rhs) const { return (this->mCoeffIt != rhs.mCoeffIt); }
+
+    coeffConstIterator cCoeffIterator() const { return mCoeffIt; }
+    monomConstIterator cMonomIterator() const { return mMonomIt; }
 
   private:
     coeffConstIterator mCoeffIt;

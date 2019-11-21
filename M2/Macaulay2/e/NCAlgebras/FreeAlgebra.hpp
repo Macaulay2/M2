@@ -35,6 +35,8 @@ public:
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
 
+  void copy(Poly& result, Poly::const_iterator fBegin, Poly::const_iterator fEnd) const;
+  
   void from_coefficient(Poly& result, const ring_elem a) const;
   void from_long(Poly& result, long n) const;
   void from_int(Poly& result, mpz_srcptr n) const; 
@@ -53,9 +55,16 @@ public:
   bool is_zero(const Poly& f) const { return n_terms(f) == 0; }
   bool is_equal(const Poly& f, const Poly& g) const;
   int compare_elems(const Poly& f, const Poly& g) const;
+
+  void add(Poly& result,
+           Poly::const_iterator fBegin,
+           Poly::const_iterator fEnd,
+           Poly::const_iterator gBegin,
+           Poly::const_iterator gEnd) const;
   
   void negate(Poly& result, const Poly& f) const; 
   void add(Poly& result, const Poly& f, const Poly& g) const;
+  
   void subtract(Poly& result, const Poly& f, const Poly& g) const;
   void mult(Poly& result, const Poly& f, const Poly& g) const;
   void power(Poly& result, const Poly& f, int n) const;

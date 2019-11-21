@@ -134,17 +134,21 @@ bool FreeAlgebra::from_rational(Poly& result, const mpq_ptr q) const
   return true;
 }
 
-void FreeAlgebra::copy(Poly& result, const Poly& f) const
+void FreeAlgebra::copy(Poly& result, Poly::const_iterator fBegin, Poly::const_iterator fEnd) const
 {
   clear(result);
   auto& resultCoeff = result.getCoeffInserter();
   auto& resultMonom = result.getMonomInserter();
   resultCoeff.insert(resultCoeff.end(),
-                     f.cbeginCoeff(),
-                     f.cendCoeff());
+                     fBegin.cCoeffIterator(),
+                     fEnd.cCoeffIterator());
   resultMonom.insert(resultMonom.end(),
-                     f.cbeginMonom(),
-                     f.cendMonom());
+                     fBegin.cMonomIterator(),
+                     fEnd.cMonomIterator());
+}
+void FreeAlgebra::copy(Poly& result, const Poly& f) const
+{
+  copy(result, f.cbegin(), f.cend());
 }
 
 void FreeAlgebra::swap(Poly& f, Poly& g) const
@@ -253,33 +257,37 @@ void FreeAlgebra::negate(Poly& result, const Poly& f) const
 
 void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
 {
-  auto fIt = f.cbegin();
-  auto gIt = g.cbegin();
-  auto fEnd = f.cend();
-  auto gEnd = g.cend();
+  add(result, f.cbegin(), f.cend(), g.cbegin(), g.cend());
+}
 
+void FreeAlgebra::add(Poly& result,
+                      Poly::const_iterator fBegin,
+                      Poly::const_iterator fEnd,
+                      Poly::const_iterator gBegin,
+                      Poly::const_iterator gEnd) const
+{
   auto& outcoeff = result.getCoeffInserter();
   auto& outmonom = result.getMonomInserter();
   
   // loop over the iterators for f and g, adding the bigger of the two to
   // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
-  while ((fIt != fEnd) && (gIt != gEnd))
+  while ((fBegin != fEnd) && (gBegin != gEnd))
     {
-      auto fMon = fIt.monom();
-      auto gMon = gIt.monom();
-      auto fCoeff = fIt.coeff();
-      auto gCoeff = gIt.coeff();
+      auto fMon = fBegin.monom();
+      auto gMon = gBegin.monom();
+      auto fCoeff = fBegin.coeff();
+      auto gCoeff = gBegin.coeff();
       switch(monoid().compare(fMon,gMon))
         {
         case LT:
           outcoeff.push_back(gCoeff);
           monoid().copy(gMon, outmonom);
-          gIt++;
+          gBegin++;
           break;
         case GT:
           outcoeff.push_back(fCoeff);
           monoid().copy(fMon, outmonom);
-          fIt++;
+          fBegin++;
           break;
         case EQ:
           ring_elem coeffResult = coefficientRing()->add(fCoeff,gCoeff);
@@ -288,26 +296,26 @@ void FreeAlgebra::add(Poly& result, const Poly& f, const Poly& g) const
               outcoeff.push_back(coeffResult);
               monoid().copy(gMon, outmonom);
             }
-          fIt++;
-          gIt++;
+          fBegin++;
+          gBegin++;
         }
     }
-  if (fIt == fEnd)
+  if (fBegin == fEnd)
     {
-      for ( ; gIt != gEnd; gIt++)
+      for ( ; gBegin != gEnd; gBegin++)
         {
-          auto gMon = gIt.monom();
-          auto gCoeff = gIt.coeff();
+          auto gMon = gBegin.monom();
+          auto gCoeff = gBegin.coeff();
           outcoeff.push_back(gCoeff);
           monoid().copy(gMon, outmonom);
         }
     }
-  if (gIt == gEnd)
+  if (gBegin == gEnd)
     {
-      for ( ; fIt != fEnd; fIt++)
+      for ( ; fBegin != fEnd; fBegin++)
         {
-          auto fMon = fIt.monom();
-          auto fCoeff = fIt.coeff();
+          auto fMon = fBegin.monom();
+          auto fCoeff = fBegin.coeff();
           outcoeff.push_back(fCoeff);
           monoid().copy(fMon, outmonom);
         }
