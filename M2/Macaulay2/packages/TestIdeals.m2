@@ -91,7 +91,7 @@ Certification => {
      "release at publication" => "fa98bdf2587243ef3e7e3042cac7cd9fc90fb6fc",	    -- git commit number in hex
      "version at publication" => "1.01",
      "volume number" => "9",
-     "volume URI" => "https://msp.org/jsag/2019/9-1/"
+     "volume URI" => "https://msp.org/jsag/2019/9-2/"
      }
 )
 
