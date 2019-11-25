@@ -6,7 +6,21 @@ newPackage(
 	    {Name => "Eloisa Grifo", Email => "grifo@umich.edu", HomePage => "http://www-personal.umich.edu/~grifo/"}
 	    },
 	Headline => "symbolic powers",
-	DebuggingMode => false
+	DebuggingMode => false,
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Calculations involving symbolic powers",
+	     "acceptance date" => "20 May 2019",
+	     "published article URI" => "https://msp.org/jsag/2019/9-1/p09.xhtml",
+	     "published article DOI" => "10.2140/jsag.2019.9.71",
+	     "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x09-SymbolicPowers.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SymbolicPowers.m2",
+	     "release at publication" => "fe3eea250b0c2c9a0ebbbd84cf44b7a52da63fc0",	    -- git commit number in hex
+	     "version at publication" => "2.0",
+	     "volume number" => "9",
+	     "volume URI" => "https://msp.org/jsag/2019/9-1/"
+	     }
         )
 
 
