@@ -25,7 +25,21 @@ newPackage(
 		  Email => "jsantos3@nd.edu", 
 		  HomePage => "http://math.nd.edu/people/graduate-students/graduate-directory-with-photos/"} 
 	    },
-    	Headline => "Schur functors of complexes"
+    	Headline => "Schur functors of complexes",
+	Certification => {
+	     "journal name" => "Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Computing Schur complexes",
+	     "acceptance date" => "21 August 2019",
+	     "published article URI" => "https://msp.org/jsag/2019/9-2/p02.xhtml",
+	     "published article DOI" => "10.2140/jsag.2019.9.111",
+	     "published code URI" => "https://msp.org/jsag/2019/9-2/jsag-v9-n2-x02-SchurComplexes.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+	     "release at publication" => "61384b8d76f8bfef42010911dae401d24bcc6ebe",	    -- git commit number in hex
+	     "version at publication" => "1.1",
+	     "volume number" => "9",
+	     "volume URI" => "https://msp.org/jsag/2019/9-1/"
+	     }
     	)
 
 export {"straightenTableau", "schurComplex"}
