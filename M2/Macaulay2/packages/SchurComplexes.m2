@@ -38,7 +38,7 @@ newPackage(
 	     "release at publication" => "61384b8d76f8bfef42010911dae401d24bcc6ebe",	    -- git commit number in hex
 	     "version at publication" => "1.1",
 	     "volume number" => "9",
-	     "volume URI" => "https://msp.org/jsag/2019/9-1/"
+	     "volume URI" => "https://msp.org/jsag/2019/9-2/"
 	     }
     	)
 
