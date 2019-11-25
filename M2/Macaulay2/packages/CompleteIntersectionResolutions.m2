@@ -2047,6 +2047,7 @@ loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 viewHelp "CompleteIntersectionResolutions"
+viewHelp EisenbudShamashTotal
 check "CompleteIntersectionResolutions"
 *-
 
@@ -4791,15 +4792,23 @@ doc ///
     Text
      Assume that M is defined over a ring of the form
      Rbar = R/(f_0..f_{c-1}), a complete intersection, and that
-     M has a finite free resolution over R.
-     The function returns a pair of maps d0 = evenToOdd and d1 = oddToEven of free modules over
-     a larger ring with variables of R and new variables s_0..s_{c-1}, where the degrees of the s_i are
-     the negatives of the degrees of the f_i.
+     M has a finite free resolution G over R. In this case M has a free resolution F over Rbar
+     whose dual, F^* is a finitely generated, Z/2-graded free module over a ring Sbar\cong Rbar[s_0..s_{c-1}], 
+     where the degrees of the s_i are
+     the negatives of the degrees of the f_i. This resolution is is constructed from the
+     dual of G,
+     together with the duals of the higher homotopies on G defined by Eisenbud.
+     
+     The function returns the differentials d0:F^*_{even} \to F^*_{odd} and 
+     d1:F^*_{odd}\to F^*_{even}.
     
      The maps d0,d1 form a matrix factorization 
-     of sum(c, i->s_i*f_i) and have the property that for any Rbar module N, 
-     HH_1 chainComplex {d0**N, d1**N} = Ext^{even}_Rbar(M,N)
-     HH_1 chainComplex {d1**N, d0**N} = Ext^{odd}_Rbar(M,N)    
+     of sum(c, i->s_i*f_i). The have the property that for any Rbar module N, 
+     
+     HH_1 chainComplex \{d0**N, d1**N\} = Ext^{even}_{Rbar}(M,N)
+     
+     HH_1 chainComplex \{d1**N, d0**N\} = Ext^{odd}_{Rbar}(M,N)    
+
     Example
      n = 3
      c = 2
@@ -4813,13 +4822,21 @@ doc ///
      (d0,d1) = EisenbudShamashTotal Mbar
      d0*d1
      d1*d0
-     
      S = ring d0
      phi = map(S,R)
-     phi I
-     Sbar = S/phi I
-     Sbar**(d0*d1)
-     bar = map(Sbar,S)
+     IS = phi I
+     Sbar = S/IS
+     SMbar = Sbar**Mbar
+    Text
+     Hom(d0,Sbar) and Hom(d1,Sbar) together form the resolution of Mbar;
+     thus the homology of one composition is 0, while the other is Mbar
+    Example
+     prune HH_1 chainComplex{dual (Sbar**d0), dual(Sbar**d1)} == 0
+     Mbar' = Sbar^1/(Sbar_0, Sbar_1)**SMbar
+     ideal presentation prune HH_1 chainComplex{dual (Sbar**d1), dual(Sbar**d0)} == ideal presentation Mbar'
+    Text
+     As a second example we compute Ext(Mbar, Rbar):
+    Example     
      prune HH_1 chainComplex {Sbar**d0,Sbar**d1}
      prune HH_1 chainComplex {Sbar**d1,Sbar**d0}     
      prune Ext(Mbar, Rbar^1)
@@ -4857,7 +4874,30 @@ Q = positions(degrees target presentation H, i-> i_0 == 0)
 f = sum(Q, p-> random (Sbar^1, Sbar^1)**homomorphism H_{p})
 assert (prune coker f == 0)
 ///
-
+TEST///
+     n = 3
+     c = 2
+     kk = ZZ/101
+     R = kk[x_0..x_(n-1)]
+     I = ideal(x_0^2, x_2^3)
+     ff = gens I
+     Rbar = R/I
+     bar = map(Rbar, R)
+     Mbar = prune coker random(Rbar^1, Rbar^{-2})
+     (d0,d1) = EisenbudShamashTotal Mbar
+     S = ring d0
+     phi = map(S,R)
+     IS = phi I
+     Sbar = S/IS
+     SMbar = Sbar**Mbar
+     q  = S_0*IS_0+S_1*IS_1
+     Mbar' = Sbar^1/(Sbar_0, Sbar_1)**SMbar
+     assert (q*id_(target d0) == d0*d1 )
+     assert (q*id_(target d1) == d1*d0 )
+     assert(prune HH_1 chainComplex{dual (Sbar**d0), dual(Sbar**d1)} == 0)
+     assert(ideal presentation prune HH_1 chainComplex{dual (Sbar**d1), dual(Sbar**d0)} ==
+     ideal presentation Mbar')
+///
 
 TEST/// -- tests of the "with components" functions
 S = ZZ/101[a,b]
