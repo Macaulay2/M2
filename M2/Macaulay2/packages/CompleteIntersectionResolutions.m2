@@ -10,7 +10,7 @@ newPackage(
 	      PackageExports => {"MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2
 --in the version of August 21,2018	      
-	      DebuggingMode => true
+	      DebuggingMode => false
 	      )
     	    export{	  
 	--things related to Ext over a complete intersection
@@ -1874,7 +1874,8 @@ extIsOnePolynomial Module := M ->(
     (H, H == sub(po, {z =>z/2-1/2}))
     )
 
-
+--make the Eisenbud-Shamash resolution as a Z/2 graded differential
+--module over the polynomial ring.
 EisenbudShamashTotal = method(Options => {Check =>false})
 EisenbudShamashTotal Module := o -> M -> (
 -*
@@ -1900,7 +1901,7 @@ kk := coefficientRing R;
 n := numgens R;
 bar := map(Rbar,R);
 RM := pushForward(bar, M); -- M as R-module
-if o.Check == true then assert(isHomogeneous RM and (res RM_(1+n) == 0));
+if o.Check == true then assert(isHomogeneous RM and ((res RM)_(n+1) == 0));
 
 --define the structure on the resolution of RM that is necessary for defining the Rbar resolution
 --of M
@@ -1929,19 +1930,17 @@ ke := apply(length F + 1, i->select(keys H, k -> (
 	      length F >= max (i,k_1))));
 --a helper function:
 monomialFromExponent := L -> product apply(#L,i->S_i^(L_i)) ;
-
+p := null;
 --make the  maps 
-evenToOdd := apply(toList (0..length F//2),
-    (p := null;
-    i-> apply(ke_(2*i), u -> (
+evenToOdd := apply((length F+2)//2,
+    (i-> apply(ke_(2*i), u -> (
     p = map(dual F_(u_1),dual F_(2*i),
 	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
 	);
    F1_[(u_1-1)//2]*p*F0^[i]
     ))));
-oddToEven := apply(toList(0..length F//2),
-    (p := null;
-    i-> apply(ke_(2*i+1), u -> (
+oddToEven := apply((length F+1)//2,
+    (i-> apply(ke_(2*i+1), u -> (
     p = map(dual F_(u_1),dual F_(2*i+1),
 	(monomialFromExponent(u_0) * dual H#{u_0,u_1})
 	);
@@ -1953,27 +1952,74 @@ d0 := map(F1,F0,sum flatten evenToOdd);
 d1 := map(F0,F1,sum flatten oddToEven);
 (d0,d1)
 )
+
 ///
---make the Eisenbud-Shamash resolution as a Z/2 graded differential
---module over the polynomial ring.
 restart
 loadPackage "CompleteIntersectionResolutions"
 debug CompleteIntersectionResolutions
+setRandomSeed 0
 
-n = 3
+n = 5
 c = 2
 kk = ZZ/101
 R = kk[x_0..x_(n-1)]
 I = ideal apply(c, i->x_i^2)
-I = ideal(x_0^2+x_1^2, x_2^3)
+--I = ideal(x_0^2+x_1^2, x_2^3)
+ff = gens I
+Rbar = R/I
+bar = map(Rbar, R)
+Mbar = prune coker random(Rbar^1, Rbar^{-2})
+--Mbar = coker vars Rbar
+(d0,d1) = EisenbudShamashTotal(Mbar, Check => true);
+d0*d1
+d1*d0
+S = ring d0
+RtoS = map(S,R)
+SI = RtoS I
+Sbar = S/SI
+N = coker (map(Sbar,Rbar)) presentation Mbar
+
+time E = prune (
+    HH_1 chainComplex {d0**N, d1**N}++
+    HH_1 chainComplex {d1**N, d0**N});
+
+time EE = Ext(Mbar,Mbar)
+simp = map(Sbar, ring EE, vars Sbar, DegreeMap => d-> {d_1})
+E' = coker simp presentation EE;
+H = Hom(E,E');
+Q = positions(degrees target presentation H, i-> i_0 == 0)
+f = sum(Q, p-> random (Sbar^1, Sbar^1)**homomorphism H_{p})
+assert (prune coker f == 0)
+
+---
+restart
+loadPackage "CompleteIntersectionResolutions"
+debug CompleteIntersectionResolutions
+
+n = 4
+c = 3
+kk = ZZ/101
+R = kk[x_0..x_(n-1)]
+I = ideal random(R^1, R^(apply(c, i->-i-1)))
+I = ideal random(R^1, R^(apply(c, i->-2)))
 ff = gens I
 Rbar = R/I
 bar = map(Rbar, R)
 Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
-(d0,d1) = EisenbudShamashTotal Mbar
+time (d0,d1) = EisenbudShamashTotal(Mbar, Check => false);
+S = ring d0
+RtoS = map(S,R)
+SI = RtoS I
+Sbar = S/SI
+N = coker (map(Sbar,Rbar)) presentation Mbar
+
+time E = prune (
+    HH_1 chainComplex {d0**N, d1**N}++
+    HH_1 chainComplex {d1**N, d0**N});
+
+time EE = Ext(N,N);
+
 ---
-
-
 
 d0*d1
 S = ring d0
@@ -1985,6 +2031,9 @@ prune HH_1 chainComplex {bar d0,bar d1}
 annihilator prune HH_1 chainComplex {bar d1,bar d0}
 d1*d0
 d0*d1
+
+needsPackage "Clifford"
+viewHelp Clifford
 ///
 
 -----------------------------
@@ -4727,7 +4776,7 @@ doc ///
     (EisenbudShamashTotal, Module)
     [EisenbudShamashTotal,Check]    
    Headline
-    precursor of total Ext
+    Precursor complex of total Ext
    Usage
     (d0,d1) =  EisenbudShamashTotal M
    Inputs
@@ -4740,45 +4789,76 @@ doc ///
      map of free modules over an enlarged ring
    Description
     Text
-     assumes M is defined over a ring of the form
-     Rbar = R/(f1..fc), a complete intersection, and that
+     Assume that M is defined over a ring of the form
+     Rbar = R/(f_0..f_{c-1}), a complete intersection, and that
      M has a finite free resolution over R.
-     Returns a pair of maps d0 = evenToOdd and d1 = oddToEven of free modules over
-     a larger ring S =  R[s_0..s_(c-1]], where the degrees of the s_i are
+     The function returns a pair of maps d0 = evenToOdd and d1 = oddToEven of free modules over
+     a larger ring with variables of R and new variables s_0..s_{c-1}, where the degrees of the s_i are
      the negatives of the degrees of the f_i.
     
      The maps d0,d1 form a matrix factorization 
-     of sum(s_i f_i) and have the property that for any Rbar module N, 
-     HH_1 chainComplex {Hom(d0,N), Hom(d1,N)} = Ext^even_Rbar(M,N)
-     HH_1 chainComplex {Hom(d1,N), Hom(d0,N)} = Ext^odd_Rbar(M,N)    
+     of sum(c, i->s_i*f_i) and have the property that for any Rbar module N, 
+     HH_1 chainComplex {d0**N, d1**N} = Ext^{even}_Rbar(M,N)
+     HH_1 chainComplex {d1**N, d0**N} = Ext^{odd}_Rbar(M,N)    
     Example
      n = 3
      c = 2
      kk = ZZ/101
      R = kk[x_0..x_(n-1)]
-     I = ideal apply(c, i->x_i^2)
-     I = ideal(x_0^2+x_1^2, x_2^3)
+     I = ideal(x_0^2, x_2^3)
      ff = gens I
      Rbar = R/I
      bar = map(Rbar, R)
-     Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
+     Mbar = prune coker random(Rbar^1, Rbar^{-2})
      (d0,d1) = EisenbudShamashTotal Mbar
-
      d0*d1
+     d1*d0
+     
      S = ring d0
      phi = map(S,R)
      phi I
      Sbar = S/phi I
+     Sbar**(d0*d1)
      bar = map(Sbar,S)
-     prune HH_1 chainComplex {bar d0,bar d1}
-     annihilator prune HH_1 chainComplex {bar d1,bar d0}
-     d1*d0
-     d0*d1
+     prune HH_1 chainComplex {Sbar**d0,Sbar**d1}
+     prune HH_1 chainComplex {Sbar**d1,Sbar**d0}     
+     prune Ext(Mbar, Rbar^1)
    SeeAlso
     Ext
 ///
 
 ------TESTs------
+TEST///
+setRandomSeed 0
+n = 3
+c = 2
+kk = ZZ/101
+R = kk[x_0..x_(n-1)]
+I = ideal apply(c, i->x_i^2)
+ff = gens I
+Rbar = R/I
+bar = map(Rbar, R)
+Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
+(d0,d1) = EisenbudShamashTotal(Mbar, Check => true)
+S = ring d0
+RtoS = map(S,R)
+SI = RtoS I
+Sbar = S/SI
+N = coker (map(Sbar,Rbar)) presentation Mbar
+
+E = prune (
+    HH_1 chainComplex {d0**N, d1**N}++
+    HH_1 chainComplex {d1**N, d0**N});
+EE = Ext(Mbar,Mbar);
+simp = map(Sbar, ring EE, vars Sbar, DegreeMap => d-> {d_1})
+E' = coker simp presentation EE;
+H = Hom(E,E');
+Q = positions(degrees target presentation H, i-> i_0 == 0)
+f = sum(Q, p-> random (Sbar^1, Sbar^1)**homomorphism H_{p})
+assert (prune coker f == 0)
+///
+
+
 TEST/// -- tests of the "with components" functions
 S = ZZ/101[a,b]
 M = S^{1,2}
