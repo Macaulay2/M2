@@ -41,7 +41,7 @@ document {
      	       UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added.
-			 (Actually, it was added in 1.14, but we forgot to say that in ", TO "changes, 1.14", "." }
+			 (Actually, it was added in 1.14, but we forgot to say that in ", TO "changes, 1.14", "." },
 		    LI { TO "FastLinAlg::FastLinAlg", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
 		    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been added." },
 		    LI { "The package ", TT "SOS", " has been renamed to ", TO "SumsOfSquares::SumsOfSquares", "." },
