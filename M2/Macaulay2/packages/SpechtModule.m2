@@ -6,7 +6,7 @@ newPackage(
         Authors => {{Name => "Jonathan Niño", 
                   Email => "ja.nino937@uniandes.edu.co", 
                   HomePage => "http://www.uniandes.edu.co"}},
-        Headline => "Methods for the Efficient Compution of Invariants for Permutation Groups.",
+        Headline => "invariants for permutation groups",
         DebuggingMode => false
         )
 		

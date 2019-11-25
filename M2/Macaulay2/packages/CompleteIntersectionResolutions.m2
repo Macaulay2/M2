@@ -5,7 +5,7 @@ newPackage(
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
-              Headline => "Analyzing Resolutions over a Complete Intersection",
+              Headline => "analyzing resolutions over a complete intersection",
 	      PackageImports => {"Truncations"},
 	      PackageExports => {"MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2

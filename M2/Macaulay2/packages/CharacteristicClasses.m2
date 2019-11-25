@@ -9,7 +9,7 @@ newPackage(
 		  HomePage => "https://math.berkeley.edu/~mhelmer/"},
 	      {Name => "Christine Jost", 
 		  Email => "christine.e.jost@gmail.com"}},
-    	Headline => "Computes CSM classes, Segre classes and the Euler Char. for some Subschemes of Smooth Complete Toric Varieties",
+    	Headline => "CSM classes, Segre classes and the Euler characteristic for some subschemes of smooth complete toric varieties",
     	DebuggingMode => false,
 	PackageImports => { "Elimination", "PrimaryDecomposition", "NormalToricVarieties"},
 	Configuration => { "pathToBertini" => ""},

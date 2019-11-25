@@ -76,7 +76,7 @@ Authors => {
      HomePage => "https://witt.faculty.ku.edu"
      }
 },
-Headline => "A package for calculations of singularities in positive characteristic",
+Headline => "singularities in positive characteristic",
 AuxiliaryFiles=>true,
 PackageExports=>{"Depth"}
 )

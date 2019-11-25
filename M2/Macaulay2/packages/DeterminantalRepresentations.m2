@@ -8,7 +8,7 @@ newPackage("DeterminantalRepresentations",
 		{Name => "Papri Dey",
 		Email => "papridey@berkeley.edu"}
 	},
-	Headline => "a package for computing determinantal representations",
+	Headline => "determinantal representations",
 	HomePage => "https://github.com/papridey/DeterminantalRepresentations",
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	DebuggingMode => false,

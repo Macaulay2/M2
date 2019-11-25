@@ -2,7 +2,7 @@
 newPackage("Dmodules", 
      Version => "1.4.0.1",
      Date => "01/28/2011",
-     Headline => "functions for computations with D-modules",
+     Headline => "D-modules",
      HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
      AuxiliaryFiles => true,
      Authors => {

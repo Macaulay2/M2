@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.15",
 	  TO "changes, 1.14",
 	  TO "changes, 1.13",
 	  TO "changes, 1.12",
@@ -30,22 +31,45 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.15",
      UL {
      	  LI { "new packages:",
      	       UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
-		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added." }
+		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added.
+			 (Actually, it was added in 1.14, but we forgot to say that in ", TO "changes, 1.14", "." }
+		    LI { TO "FastLinAlg::FastLinAlg", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
+		    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been added." },
+		    LI { "The package ", TT "SOS", " has been renamed to ", TO "SumsOfSquares::SumsOfSquares", "." },
+		    LI { TO "SpechtModule::SpechtModule", ", a package by Jonathan Niño for efficient computation of invariants for permutation groups, has been added." },
+		    LI { TO "SpecialFanoFourfolds::SpecialFanoFourfolds", ", a package by Giovanni Staglianò for special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2, has been added." }
 		    }
 	       },
 	  LI { "functionality added or improved:",
-          UL {
-              LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
-                  created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, GRevLex
-                      group counts as a block)"
-                  }
-              }
-          }
+	       UL {
+		    LI { "The function ", TO "nanosleep", " has been added by Boyana Martinova and Karl Schwede.  It allows the Macaulay2 process to sleep for short periods." },
+		    LI { "The sagbi engine command ", TT "rawSubduction", " has been fixed.  A new engine function ", TT "rawMonoidNumberOfBlocks", "  has been
+		       	 created, which returns the number of blocks of the monomial order of the monoid (each Weight function, Lex, or GRevLex group counts as a block)"
+		       	 }
+		   }
+	       },
+	  LI {
+	       "commits, issues, and pull requests on github",
+	       UL {
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/issues?q=milestone%3A%22version+1.15%22+is%3Aclosed","closed 1.15 issues"}, ",
+			 for the issues and pull requests incorporated into 1.15."
+			 },
+		    LI {
+			 "See ", HREF{"https://github.com/Macaulay2/M2/commits/release-1.15","1.15 commits"}, " for complete information
+			 about all changes to the code incorporated into 1.15."
+			 }
+		    }
+	       }	  
 	  }
      }
  

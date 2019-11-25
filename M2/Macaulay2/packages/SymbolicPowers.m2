@@ -5,7 +5,7 @@ newPackage(
 	Authors => {
 	    {Name => "Eloisa Grifo", Email => "grifo@umich.edu", HomePage => "http://www-personal.umich.edu/~grifo/"}
 	    },
-	Headline => "Calculations involving symbolic powers",
+	Headline => "symbolic powers",
 	DebuggingMode => false
         )
 
@@ -583,8 +583,7 @@ beginDocumentation()
 
 document { 
   Key => SymbolicPowers,
-  Headline => "A package for computing symbolic powers of ideals",
-   
+  Headline => "symbolic powers of ideals",
    PARA {
        "This package gives the ability to compute symbolic powers, and related invariants,
        of ideals in a polynomial ring or a quotient of a polynomial ring. For example, 

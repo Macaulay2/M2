@@ -4,7 +4,7 @@ newPackage(
     "LieTypes",
     Version => "0.5",
     Date => "June 22, 2018",
-    Headline => "Common types for Lie groups and Lie algebras",
+    Headline => "common types for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	  },

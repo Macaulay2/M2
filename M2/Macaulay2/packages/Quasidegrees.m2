@@ -5,7 +5,7 @@ newPackage(
     	Authors => {{Name => "Roberto Barrera", 
 		  Email => "rbarrera@math.tamu.edu", 
 		  HomePage => "http://www.math.tamu.edu/~rbarrera/"}},
-    	Headline => "a package to compute quasidegrees and graded local cohomology",
+    	Headline => "quasidegrees and graded local cohomology",
 	PackageImports => {"FourTiTwo", "Depth", "Polyhedra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

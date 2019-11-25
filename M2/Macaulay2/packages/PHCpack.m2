@@ -28,7 +28,7 @@ newPackage(
     {Name => "Contributing Author: Anna Seigal",
      HomePage => "https://math.berkeley.edu/~seigal/"}
   },
-  Headline => "Interface to PHCpack",
+  Headline => "interface to PHCpack",
   Configuration => { 
     "path" => "",
     "PHCexe"=>"phc", 

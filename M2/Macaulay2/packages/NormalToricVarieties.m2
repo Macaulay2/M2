@@ -24,7 +24,7 @@ newPackage(
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
       HomePage => "http://www.mast.queensu.ca/~ggsmith"}},
-  Headline => "a package for working with normal toric varieties",
+  Headline => "normal toric varieties",
   PackageExports => {"Polyhedra", "Schubert2"},
   PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
   DebuggingMode => false

@@ -139,9 +139,8 @@ newPackage(
 	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
-        Headline => "Chain complexes",
-        AuxiliaryFiles => false,
-        DebuggingMode => true
+        Headline => "chain complexes",
+        AuxiliaryFiles => false
         )
 
 export {

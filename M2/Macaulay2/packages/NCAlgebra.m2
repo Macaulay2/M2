@@ -1,5 +1,5 @@
 newPackage("NCAlgebra",
-     Headline => "Data types for Noncommutative algebras",
+     Headline => "data types for noncommutative algebras",
      Version => "1.0",
      Date => "July 2, 2016",
      Authors => {

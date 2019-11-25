@@ -1,5 +1,5 @@
 newPackage("NumericalImplicitization",
-    Headline => "a package for computing numerical invariants of images of varieties",
+    Headline => "numerical invariants of images of varieties",
     Version => "2.1.0",
     Date => "May 18, 2019",
     Authors => {

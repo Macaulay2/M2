@@ -47,7 +47,7 @@ newPackage(
 	    	Email => "ghummel1@hawk.iit.edu"
 	    }
 	},
-    	Headline => "A package for generating Erdos-Renyi-type random monomial ideals",
+    	Headline => "Erdos-Renyi-type random monomial ideals",
      	PackageImports => { "Depth", "BoijSoederberg", "Serialization" },
     	DebuggingMode => false
     	)
