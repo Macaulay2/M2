@@ -1714,12 +1714,45 @@ done
 
 AC_LANG(C)
 
-AC_MSG_CHECKING(whether package libxml-2.0 is provided)
-if [ pkg-config --exists libxml-2.0 ]
-then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-else AC_MSG_ERROR([no, package libxml-2.0 not found, install it])
+dnl        The installation of libxml2 under Mac OS X is problematic:
+dnl            (1) Starting with Mac OS X 10.15, /usr/include is not present.  The compilers look in
+dnl                /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include instead.  It's a good idea
+dnl                not to depend on that.
+dnl            (2) The libraries own include files have lines like this:
+dnl                   #include <libxml/xmlversion.h>
+dnl                but the files is found at this path
+dnl                   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2/libxml/xmlexports.h
+dnl        Combine (1) and (2) and we conclude that somehow we have to get this option on the compiler command line:
+dnl                   -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libxml2
+dnl        Ubuntu doesn't have this problem, because the configuration is done correctly:
+dnl                   $ pkg-config --cflags libxml-2.0
+dnl                   -I/usr/include/libxml2
+dnl        , and we can just use that.  Homebrew tries to emulate that by providing pkg-config files that provide the
+dnl        same value, but as we said above, /usr/include is not present, so that doesn't work!
+dnl
+dnl        The solution seems to be to use the C preprocessor to obtain the path to the file libxml include files, and
+dnl        to use that to automatically add the correct option to CPPFLAGS.  This assumes the system allows
+dnl	              #include <libxml2/libxml/xmlversion.h>
+dnl        to work, but not
+dnl	              #include <libxml/xmlversion.h>
+dnl        , so we test those two lines early.
+dnl
+if pkg-config --exists libxml-2.0
+then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'`
+     CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
 fi
+AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
+dnl now improve the situation:
+dnl ac_cv_header_
+AC_LANG(C)
+AC_PREPROC_IFELSE(
+   [AC_LANG_SOURCE([[
+	#include <libxml2/libxml/xmlexports.h>
+	]])],
+   LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `)
+AC_MSG_NOTICE(will search for include files also in $LIBXML_LOCATION)
+CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
+AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
 
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
