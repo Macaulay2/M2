@@ -29,7 +29,7 @@ newPackage(
 		  Name => "Thomas Kahle",
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
-    	Headline => "Specialized routines for binomial ideals",
+    	Headline => "specialized routines for binomial ideals",
 	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "Elimination"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",

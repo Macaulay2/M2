@@ -28,7 +28,7 @@ newPackage(
     	Authors => {{Name => "Thomas Kahle", 
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://thomas-kahle.de"}},
-	Headline => "Routines for cyclotomic fields"
+	Headline => "cyclotomic fields"
     	)
 
 export {"cyclotomicField",
@@ -147,7 +147,7 @@ beginDocumentation()
 
 document { 
         Key => Cyclotomic,
-        Headline => "a package for cyclotomic fields",
+        Headline => "cyclotomic fields",
         EM "Cyclotomic", " is a package for cyclotomic fields.  It is used in
         to construct extensions of the coefficient field during binomial
         primary decomposition using the package ", TO "Binomials::Binomials", "."
@@ -155,7 +155,7 @@ document {
 
 document {
      Key => {cyclotomicField},
-     Headline => "Cyclotomic Field Construction",
+     Headline => "cyclotomic field construction",
      Usage => "cyclotomicField (i)",
      Inputs => {
           "i" => { "an integer, the power of the root to be adjoined."}},

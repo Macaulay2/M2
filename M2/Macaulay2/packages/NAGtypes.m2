@@ -4,7 +4,7 @@ newPackage(
      "NAGtypes",
      Version => "1.14",
      Date => "Aug 2019",
-     Headline => "Common types used in Numerical Algebraic Geometry",
+     Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {

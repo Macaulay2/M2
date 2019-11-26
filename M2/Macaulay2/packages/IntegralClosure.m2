@@ -9,7 +9,7 @@ newPackage(
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
-    	Headline => "Integral Closure",
+    	Headline => "integral closure",
      	PackageImports => { "PrimaryDecomposition", "ReesAlgebra" },
     	DebuggingMode => false,
 	AuxiliaryFiles => true

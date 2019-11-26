@@ -13,8 +13,8 @@ doc ///
      studying toric subvarieties when compared to minimal graded free resolutions.
 
      Introduced by Berkesch, Erman, and Smith in {\em Virtual resolutions for a product of projective spaces}
-     (see @{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@) if $X$ is a smooth toric variety, $S$ the Cox ring of $X$
-     graded by the Picard group of $X$, and $B\subset S$ the irrelevant ideal of $X$, then
+     (see @{HREF("http://arxiv.org/abs/1703.07631","arXiv:1703.07631")}@) if $X$ is a smooth toric variety, $S$ is the Cox ring of $X$
+     graded by the Picard group of $X$, and $B\subset S$ is the irrelevant ideal of $X$, then
      a virtual resolution of a graded $S$-module $M$ is a complex of graded free $S$-modules, which
      sheafifies to a resolution of the associated sheaf of $M$.
 
@@ -75,47 +75,37 @@ doc ///
 doc ///
     Key
         isVirtual
-        (isVirtual,Ideal,Ideal,ChainComplex)
-        (isVirtual,Ideal,NormalToricVariety,ChainComplex)
-        (isVirtual,Module,Ideal,ChainComplex)
-        (isVirtual,Module,NormalToricVariety,ChainComplex)
+        (isVirtual,Ideal,ChainComplex)
+        (isVirtual,NormalToricVariety,ChainComplex)
     Headline
-        checks if a chain complex is a virtual resolution of a given module
+        checks whether a chain complex is a virtual resolution
     Usage
-        isVirtual(I,irr,C)
-        isVirtual(I,X,C)
-        isVirtual(M,irr,C)
-        isVirtual(M,X,C)
+        isVirtual(irr,C)
+        isVirtual(X,C)
     Inputs
-        I:Ideal
-            ideal that the virtual resolution should resolve
         irr:Ideal
             irrelevant ideal of the ring
         X:NormalToricVariety
             normal toric variety
         C:ChainComplex
-            chain complex we want to check is a virtual resolution
-        M:Module
-            module that the virtual resolution should resolve
+            chain complex we want to check if is a virtual resolution
     Outputs
         :Boolean
             true if C is a virtual resolution of I
             false if not
     Description
         Text
-            Given an ideal I, irrelevant ideal irr, and a chain complex C, isVirtual returns true if
-            C is a virtual resolution of I. If not, it returns false.
-
-            This is done by checking that the saturations of I and of the annihilator of $H_0(C)$
-            agree, then checking that the higher homology groups of C are supported on the irrelevant ideal.
+            Given the irrelevant ideal irr of a NormalToricVariety and a chain complex C, isVirtual returns true if
+            C is a virtual resolution of some module. If not, it returns false. This is done by checking that the 
+	    higher homology groups of C are supported on the irrelevant ideal.
 
             If debugLevel is larger than zero, the homological degree where isVirtual fails is printed.
         Example
           R = ZZ/101[s,t];
-          isVirtual(ideal(s),ideal(s,t),res ideal(t))
+          isVirtual(ideal(s,t),res ideal(t))
         Text
           Continuing our running example of three points $([1:1],[1:4])$, $([1:2],[1:5])$, and $([1:3],[1:6])$
-          in $\mathbb{P}^1 \times \mathbb{P}^1$, we can check that the virtual complex we compute below and
+          in $\mathbb{P}^1 \times \mathbb{P}^1$, we can check whether the virtual complex we compute below and
           in other places is in fact virtual.
         Example
           Y = toricProjectiveSpace(1)**toricProjectiveSpace(1);
@@ -127,16 +117,12 @@ doc ///
              ideal(x_1 - 3*x_0, x_3 - 6*x_2)), B);
           minres = res J;
           vres = virtualOfPair(J,{{3,1}});
-          isVirtual(J,B,vres)
+          isVirtual(B,vres)
         Text
           Finally, we can also use the Determinantal strategy, which implements Theorem 1.3 of
           @{HREF("http://arxiv.org/abs/1904.05994","arXiv:1904.05994")}@.
         Example
-          isVirtual(J,B,vres,Strategy=>Determinantal)
-    Caveat
-        For a module, isVirtual may return true for a proposed virtual resolution despite the chain complex
-        not being a virtual resolution; this occurs when the annihilator of the module and the annihilator of
-        $H_0(C)$ saturate to the same ideal.
+          isVirtual(B,vres,Strategy=>Determinantal)
 ///
 
 doc ///
@@ -155,14 +141,14 @@ doc ///
 
 doc ///
     Key
-        findGensUpToIrrelevance
-        (findGensUpToIrrelevance,ZZ,Ideal,Ideal)
-        (findGensUpToIrrelevance,ZZ,Ideal,NormalToricVariety)
+        idealSheafGens
+        (idealSheafGens,ZZ,Ideal,Ideal)
+        (idealSheafGens,ZZ,Ideal,NormalToricVariety)
     Headline
         creates a list of subsets of the minimal generators that generate a given ideal up to saturation
     Usage
-        findGensUpToIrrelevance(n,I,irr)
-        findGensUpToIrrelevance(n,I,X)
+        idealSheafGens(n,I,irr)
+        idealSheafGens(n,I,X)
     Inputs
         I:Ideal
         n:ZZ
@@ -171,40 +157,35 @@ doc ///
             irrelevant ideal
         X:NormalToricVariety
             normal toric variety whose Cox ring contains I
-
     Outputs
         :List
-            all subsets of size n of generators of I that generate I up to saturation with irr
+            all ideals generated by subsets of size n of generators of I that generate I up to saturation with irr
     Description
         Text
-            Given an ideal I, integer n, and irrelevant ideal irr, findGensUpToIrrelevance searches through
+            Given an ideal I, integer n, and irrelevant ideal irr, idealSheafGens searches through
             all n-subsets of the generators of I. If a subset generates the same irr-saturated ideal as the
-            irr-saturation of I, then that subset is added to a list. After running through all subsets, the list
-            is returned.
+            irr-saturation of I, then the ideal generated by that subset is added to a list.
+            After running through all subsets, the list is returned.
         Example
             R = ZZ/101[x_0,x_1,x_2,x_3,x_4,Degrees=>{2:{1,0},3:{0,1}}];
             B = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
             I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-            findGensUpToIrrelevance(2,I,B)
-    Caveat
-        If no subset of generators generates the ideal up to saturation, then the empty list is returned.
+            idealSheafGens(2,I,B)
 ///
 
 doc ///
     Key
         GeneralElements
-        [findGensUpToIrrelevance, GeneralElements]
+        [idealSheafGens, GeneralElements]
     Headline
         combines generators of same degree into a general linear combination
     Description
         Text
-            If GeneralElements is set to true, findGensUpToIrrelevance will replace the given ideal with
-            an ideal where all generators of the same degree are combined into a general linear combination
-            of those generators, then run findGensUpToIrrelevance on the new ideal. The first element in the
-            output will be the new ideal, followed by the subsets of generators that will generate the original
-            ideal up to saturation.
+            If GeneralElements is set to true, idealSheafGens will replace all generators of I of the same degree with
+            a new generator of the that degree which is a general linear combination of those generators, then run
+	     idealSheafGens on the new ideal.
     SeeAlso
-        findGensUpToIrrelevance
+        idealSheafGens
 ///
 
 doc ///
@@ -388,7 +369,7 @@ doc ///
       Text
            When randomCurveP1P2 generates a random curve in $\mathbb{P}^3$ using the SpaceCurves package, it is possible the resulting
            curve will intersect the base loci of the projections used to construct the curve in $\mathbb{P}^1\times\mathbb{P}^2$. If the curve
-           does intersect the base locusi it will generate a new random curve in $\mathbb{P}^3$. The option Attempts limits the number
+           does intersect the base locusi it will generate a new random curve in $\mathbb{P}^3$. The option Attempt limits the number
            of attempts to find a curve disjoint from the base loci before quitting. By default, Attempt is set to 1000.
     SeeAlso
         randomCurveP1P2
@@ -435,7 +416,7 @@ doc ///
                 P + Q + R
                 );
             C = resolveViaFatPoint (I, irr, {2,1,0})
-            isVirtual(I, irr, C)
+            isVirtual(irr, C)
 ///
 
 
@@ -487,12 +468,26 @@ doc ///
         Text
           Finally, we check that the result is indeed virtual.
         Example
-          isVirtual(J,B,vres)
+          isVirtual(B,vres)
     Caveat
         Given an element of the multigraded regularity, one must add the dimension vector of the product of projective spaces
         for this to return a virtual resolution.
 ///
 
+doc ///
+    Key
+        [virtualOfPair, Strategy]
+    Headline
+        compute a virtual resolution using a syzygy by syzygy strategy
+    Description
+        Text
+            If Strategy is unspecified, virtualOfPair will compute a minimal free resolution before removing summands
+	    in specified degrees. This is often the fastest strategy because resolutions are efficiently computed in
+	    the engine. For larger cases, setting Strategy => UseSyzygies will compute a virtual resolution by iteratively
+	    computing syzygies and removing the desired degrees.
+    SeeAlso
+        virtualOfPair
+///
 
 doc ///
     Key
@@ -524,7 +519,7 @@ doc ///
           minimal elements of the multigraded Castelnuovo-Mumford regularity of M as defined in Definition 1.1
           of [MS04] (see @{HREF("http://arxiv.org/abs/math/0305214","arXiv:math/0305214")}@). If the input is an ideal, multigraded regularity of S^1/I is computed.
 
-          This is done by calling the cohomologyHashTable method from TateOnProducts and checking for the
+          This is done by calling the @TO cohomologyHashTable@ method from @TO TateOnProducts@ and checking for the
           multidegrees where Hilbert polynomial and Hilbert function match and where the higher sheaf cohomology
           vanishes.
 
@@ -543,7 +538,7 @@ doc ///
           L = multigradedRegularity(X, J)
 
         Text
-          This method also accepts the ring provided by productOfProjectiveSpaces from TateOnProduct package.
+          This method also accepts the ring provided by @TO productOfProjectiveSpaces@ from the @TO TateOnProducts@ package.
     Caveat
         The input is assumed to be saturated.
 ///

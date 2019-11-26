@@ -4,9 +4,8 @@ newPackage(
     	Version => "0.01", 
         Date => "October 29, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "A (work-in-progress) package for working with special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2",
+    	Headline => "special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2",
         PackageExports => {"Resultants","Cremona"},
-    	DebuggingMode => true,
     	Reload => false
 	)
 

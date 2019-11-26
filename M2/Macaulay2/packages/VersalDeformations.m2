@@ -5,7 +5,7 @@
 -- UPDATE HISTORY : June 2018
 ---------------------------------------------------------------------------
 newPackage("VersalDeformations",
-    Headline => "A package for calculating versal deformations and local Hilbert schemes",
+    Headline => "versal deformations and local Hilbert schemes",
     Version => "2.0",
     Date => "June 1, 2018",
     Authors => {

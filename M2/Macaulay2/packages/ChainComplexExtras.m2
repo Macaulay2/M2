@@ -9,7 +9,7 @@ newPackage(
 	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
 	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
-     Headline => "Some additional ChainComplex Functions.",
+     Headline => "some additional ChainComplex Functions",
      DebuggingMode =>false
      )
 

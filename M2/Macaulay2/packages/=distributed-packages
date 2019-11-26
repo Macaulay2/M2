@@ -194,6 +194,4 @@ DeterminantalRepresentations
 FGLM
 SpechtModule
 SpecialFanoFourfolds
-FastLinAlg
-SpechtModule
-SpecialFanoFourfolds
+SchurComplexes

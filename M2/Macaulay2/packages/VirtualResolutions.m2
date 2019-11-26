@@ -10,9 +10,9 @@
 --                  updated 15 April 2019 at IMA Coding Sprint.
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
-    Version => "1.0",
-    Date => "April 14, 2018",
-    Headline => "Methods for virtual resolutions on products of projective spaces",
+    Version => "1.1",
+    Date => "November 13, 2018",
+    Headline => "virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},
         {Name => "Christine Berkesch", Email => "cberkesc@umn.edu",    HomePage => "http://math.umn.edu/~cberkesc/"},
@@ -22,10 +22,10 @@ newPackage ("VirtualResolutions",
         {Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",      HomePage => "http://math.umn.edu/~mahrud/"}
         },
     PackageExports => {
+        "SpaceCurves",
         "TateOnProducts",
         "NormalToricVarieties",
         "Elimination",
-        "SpaceCurves",
         "Depth"
         },
     AuxiliaryFiles => true
@@ -33,7 +33,7 @@ newPackage ("VirtualResolutions",
 
 export{
     "curveFromP3toP1P2",
-    "findGensUpToIrrelevance",
+    "idealSheafGens",
     "isVirtual",
     "virtualOfPair",
     "resolveViaFatPoint",
@@ -65,22 +65,32 @@ export{
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 load("./VirtualResolutions/Colon.m2")
-ourSaturation = (I,irr) -> saturationByElimination(I,irr)
+ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
 
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
---Input: F a free chain complex on Cox (X), alphas a list of degrees
+--Input: F a free chain complex on Cox(X), alphas a list of degrees
 --Output: A subcomplex of summands generated only in degrees in the list alphas.
 --Given a ring and its free resolution, keeps only the summands in resolution of specified degrees
 --If the list alphas contains only one element, the output will be summands generated in degree less than or equal to alpha.
 --See Algorithm 3.4 of [BES]
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-virtualOfPair = method()
-virtualOfPair (Ideal,        List) := (I, alphas) -> virtualOfPair(res I, alphas)
-virtualOfPair (Module,       List) := (M, alphas) -> virtualOfPair(res M, alphas)
-virtualOfPair (ChainComplex, List) := (F, alphas) -> (
+virtualOfPair = method(Options => {Strategy => null})
+virtualOfPair (Ideal,  List) := Boolean => opts -> (I, alphas) -> virtualOfPair((ring I)^1/I, alphas)
+virtualOfPair (Module, List) := Boolean => opts -> (M, alphas) -> (
+    if opts.Strategy == null then return virtualOfPair(res M, alphas);
+    if opts.Strategy == UseSyzygies then (
+	if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
+	m := presentation M;
+	apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha)));
+	L := {m} | while m != 0 list (
+	    m = syz m; apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m);
+	chainComplex L
+	)
+    )
+virtualOfPair (ChainComplex, List) := Boolean => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
     L := apply(length F, i -> (
             m := F.dd_(i+1); apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m));
@@ -116,23 +126,14 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 --------------------------------------------------------------------
 -- This method checks if a given complex is a virtual resolution by computing
 -- homology and checking whether its annihilator saturates to the whole ring.
--- Input: Ideal I (or module) - what the virtual resolution resolves
---       Ideal irr - the irrelevant ideal of the ring
+-- Input: Ideal irr - the irrelevant ideal of the ring
 --       Chain Complex C - proposed virtual resolution
 -- Output: Boolean - true if complex is virtual resolution, false otherwise
 -- Note: the Determinatal strategy is based on Theorem 1.3 of [Loper2019].
--- TODO: need to fix for modules; don't know how to saturate for modules
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 isVirtual = method(Options => {Strategy => null})
-isVirtual (Ideal, Ideal, ChainComplex) := Boolean => opts -> (I, irr, C) -> (
-    annHH0 := ideal(image(C.dd_1));
-    Isat := ourSaturation(I,irr);
-    annHH0sat := ourSaturation(annHH0,irr);
-    if not(Isat == annHH0sat) then (
-        if debugLevel >= 1 then print "isVirtual failed at homological degree 0";
-        return false;
-        );
+isVirtual (Ideal, ChainComplex) := Boolean => opts -> (irr, C) -> (
 -- if strategy "determinantal is selected, the method checks virtuality
 -- via the depth criterion on the saturated ideals of minors
     if opts.Strategy === "Determinantal" then (
@@ -156,8 +157,8 @@ isVirtual (Ideal, Ideal, ChainComplex) := Boolean => opts -> (I, irr, C) -> (
 -- supported on irrelevant ideal
     for i from 1 to length(C) do (
         annHHi := ann HH_i(C);
-        if annHHi != ideal(sub(1,ring I)) then (
-            if annHHi == 0 or ourSaturation(annHHi,irr) != ideal(sub(1,ring I)) then (
+        if annHHi != ideal(sub(1,ring C)) then (
+            if annHHi == 0 or ourSaturation(annHHi,irr) != ideal(sub(1,ring C)) then (
                 if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
                 return false;
                 );
@@ -166,56 +167,10 @@ isVirtual (Ideal, Ideal, ChainComplex) := Boolean => opts -> (I, irr, C) -> (
     true
     )
 
-isVirtual (Module, Ideal, ChainComplex) := Boolean => opts -> (M, irr,C) -> (
-    annM := ann(M);
-    annHH0 := ann(HH_0(C));
-    annMsat := ourSaturation(annM,irr);
-    annHH0sat := ourSaturation(annHH0,irr);
-    if not(annMsat == annHH0sat) then (
-        if debugLevel >= 1 then print "isVirtual failed at homological degree 0";
-        return false;
-        );
--- if strategy "determinantal is selected, the method checks virtuality
--- via the depth criterion on the saturated ideals of minors
-    if opts.Strategy === "Determinantal" then (
-        for i from 1 to length(C) do (
-            if rank(source(C.dd_i)) != (rank(C.dd_i) + rank(C.dd_(i+1))) then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-                );
-            );
-        for i from 1 to length(C) do (
-            minor := minors(rank(C.dd_i),C.dd_i);
-            minorSat := ourSaturation(minor,irr);
-            if depth(minorSat,ring(minorSat)) < i then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-            );
-        );
-    true
-    );
--- default strategy is calculating homology and checking homology is
--- supported on irrelevant ideal
-    for i from 1 to length(C) do (
-        annHHi := ann HH_i(C);
-        if annHHi != ideal(sub(1,ring M)) then (
-            if annHHi == 0 or ourSaturation(annHHi,irr) != ideal(sub(1,ring irr)) then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-                );
-            );
-        );
-    true
-    )
 
-isVirtual (Ideal, NormalToricVariety, ChainComplex) := Boolean => opts -> (I, X, C) -> (
-    if ring I != ring X then error "ideal is not in Cox ring of normal toric variety";
-    isVirtual(I, ideal X, C)
-    )
-
-isVirtual (Module, NormalToricVariety, ChainComplex) := Boolean => opts -> (M, X, C) -> (
-    if ring M != ring X then error "module is not in Cox ring of normal toric variety";
-    isVirtual(M, ideal X, C)
+isVirtual (NormalToricVariety, ChainComplex) := Boolean => opts -> (X, C) -> (
+    if ring C != ring X then error "chain complex is not in Cox ring of normal toric variety";
+    isVirtual(ideal X, C)
     )
 
 --------------------------------------------------------------------
@@ -223,19 +178,15 @@ isVirtual (Module, NormalToricVariety, ChainComplex) := Boolean => opts -> (M, X
 -- Input: ZZ n - size of subset of generators to check
 --       Ideal J - ideal of ring
 --       Ideal irr - irrelevant ideal
--- Output: all subsets of size of the generators of J that give
---         the same ideal as J up to saturation by the irrelevant ideal
---         If the option GeneralElements is set to true, then
---         before outputting the subsets, the ideal generatered by the
---         general elements is outputted
+-- Output: a list of ideals generated by subsets of size n of the generators of J
+--         that give the same ideal as J up to saturation by the irrelevant ideal
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-findGensUpToIrrelevance = method(Options => {GeneralElements => false})
-findGensUpToIrrelevance(ZZ, Ideal, Ideal) := List => opts -> (n, J, irr) -> (
+idealSheafGens = method(Options => {GeneralElements => false})
+idealSheafGens(ZZ, Ideal, Ideal) := List => opts -> (n, J, irr) -> (
     R := ring(J);
     k := coefficientRing(R);
     Jsat := ourSaturation(J,irr);
-    comps := decompose irr;
     if opts.GeneralElements == true then (
         degs := degrees(J);
         -- place of all unique degrees
@@ -243,26 +194,22 @@ findGensUpToIrrelevance(ZZ, Ideal, Ideal) := List => opts -> (n, J, irr) -> (
         -- creates an ideal where if degrees of generators match
         -- those generators are replaced by one generator that
         -- is a random combination of all generators of that degree
-        K := ideal(apply(allmatches, i -> sum(apply(i, j -> random(k) * J_j))));
-        J = K;
+        J = ideal(apply(allmatches, i -> sum(apply(i, j -> random(k) * J_j))));
         );
     lists := subsets(numgens(J), n);
     output := {};
-    if opts.GeneralElements == true then output = {J};
     apply(lists, l -> (
             I := ideal(J_*_l);
-            if ourSaturation(ourSaturation(I, comps_0), comps_1) == Jsat then (
-                output = append(output, l);
+            if ourSaturation(I, irr) == Jsat then (
+                output = append(output, I);
                 );
             )
         );
     output
     )
-
-findGensUpToIrrelevance(ZZ, Ideal, NormalToricVariety) := List => opts -> (n, J, X) -> (
-    findGensUpToIrrelevance(n, J, ideal X)
+idealSheafGens(ZZ, Ideal, NormalToricVariety) := List => opts -> (n, J, X) -> (
+    idealSheafGens(n, J, ideal X)
     )
-
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -510,7 +457,7 @@ multigradedPolynomialRing = n -> (
 ----- Description: This computes the multigraded regularity of a
 ----- module as defined in Definition 1.1 of [Maclagan, Smith 2004].
 ----- It returns a list of the minimal elements.
------ Caveat: This assumes M is B-saturated already i.e. H^1_I(M)=0
+----- Caveat: This assumes M is B-saturated already i.e. H^0_B(M)=0
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 multigradedRegularity = method()
@@ -547,7 +494,7 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
             if hilbertFunction(ell_0_0, M) != (map(QQ, ring H, ell_0_0))(H) then (
                 gt#(ell_0_0) = true;
                 );
-            -- Check that higher local cohomology vanishes (i.e., H^i_I(M) = 0 for i > 1)
+            -- Check that higher local cohomology vanishes (i.e., H^i_B(M) = 0 for i > 1)
             if ell_1 != 0 and ell_0_1 > 0 then (
                 gt#(ell_0_0) = true;
                 apply(n, j -> gt#(ell_0_0 + degree P_j) = true);
@@ -556,7 +503,7 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
         );
     low := apply(n, i -> min (L / (ell -> ell_0_0_i - 1)));
     I := ideal apply(L, ell -> if not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - low_j)) else 0);
-    apply(flatten entries mingens I, g -> (flatten exponents g) + low)
+    sort apply(flatten entries mingens I, g -> (flatten exponents g) + low)
     )
 
 --------------------------------------------------------------------
@@ -609,6 +556,6 @@ uninstallPackage "VirtualResolutions"
 restart
 installPackage "VirtualResolutions"
 restart
-needsPackage "VirtualResolutions"
+needsPackage("VirtualResolutions", FileName => "./VirtualResolutions.m2")
 elapsedTime check "VirtualResolutions"
 viewHelp "VirtualResolutions"

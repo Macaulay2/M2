@@ -16,7 +16,7 @@ newPackage(
 
 
                    },
-    	Headline => "Construction of random curves",
+    	Headline => "random curves",
 	PackageExports => {"RandomObjects","RandomSpaceCurves","RandomPlaneCurves","RandomGenus14Curves","RandomCanonicalCurves"},
     	DebuggingMode => false
         )

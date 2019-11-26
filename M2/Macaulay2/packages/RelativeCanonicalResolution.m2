@@ -8,7 +8,7 @@ newPackage(
 			   {Name => "Michael Hoff",
 			   Email => "hahn@math.uni-sb.de",
 			   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}},
-	Headline=> "computation of the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k"
+	Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k"
 	)
    
 export{"getFactors", 

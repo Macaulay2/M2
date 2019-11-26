@@ -16,10 +16,8 @@ newPackage(
      Email => "leykin@math.gatech.edu",
      HomePage => "http://www.math.gatech.edu/~leykin"}
   },
-  Headline => "Interface to Bertini",
+  Headline => "interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
- -- DebuggingMode => true,
-  DebuggingMode => true,
   AuxiliaryFiles => true,
   PackageExports => {"NAGtypes"},
   PackageImports => {"NAGtypes"},

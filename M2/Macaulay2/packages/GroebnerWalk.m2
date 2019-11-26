@@ -5,7 +5,7 @@ newPackage(
         Authors => {{Name => "Dylan Peifer",
                      Email => "djp282@cornell.edu",
                      HomePage => "https://www.math.cornell.edu/~djp282"}},
-        Headline => "Compute Groebner bases via the Groebner walk"
+        Headline => "Groebner bases via the Groebner walk"
         )
 
 -- Copyright 2017 Dylan Peifer

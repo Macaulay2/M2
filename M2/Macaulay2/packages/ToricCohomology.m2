@@ -1,5 +1,5 @@
 newPackage("ToricCohomology",
-    Headline => "A package for computing toric and multiproj cohomology",
+    Headline => "toric and multiproj cohomology",
     Version => "0.1",
     Date => "June 10, 2009",
     PackageImports => { "LLLBases", "FourierMotzkin" },
