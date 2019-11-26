@@ -4,7 +4,7 @@ GITURL = https://github.com/ivmai/bdwgc/
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 8.0.4
 LICENSEFILES = README.QUICK
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # We can also get the sources from the home page above or from
 #   https://github.com/ivmai/bdwgc/
