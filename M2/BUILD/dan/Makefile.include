@@ -61,7 +61,6 @@ find-M2:
 	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download $(CONFIGOPTIONS)
-# we avoid CC, CXX, and FC here, because gnu "make" sets default values for them, which we don't want to use:
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" FC="$(FC)" AR="$(AR)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
