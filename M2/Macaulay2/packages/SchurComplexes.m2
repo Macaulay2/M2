@@ -20,7 +20,7 @@ newPackage(
 		  HomePage => "https://www3.nd.edu/~craicu/"}, 
 	    {Name => "Steven V. Sam", 
 		  Email => "ssam@sd.edu", 
-		  HomePage => "math.ucsd.edu/~ssam/"}, 
+		  HomePage => "http://math.ucsd.edu/~ssam/"}, 
 	    {Name => "Joao Pedro Santos", 
 		  Email => "jsantos3@nd.edu", 
 		  HomePage => "http://math.nd.edu/people/graduate-students/graduate-directory-with-photos/"} 
