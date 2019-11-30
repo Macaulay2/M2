@@ -1739,6 +1739,7 @@ dnl        , so we test those two lines early.
 dnl
 if pkg-config --exists libxml-2.0
 then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'`
+     AC_MSG_NOTICE(pkg-config: will search for include files also in $XML_INCLUDE)
      CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
 fi
 AC_CHECK_HEADERS(libxml2/libxml/xmlexports.h)
@@ -1750,7 +1751,7 @@ AC_PREPROC_IFELSE(
 	#include <libxml2/libxml/xmlexports.h>
 	]])],
    LIBXML_LOCATION=` grep libxml2/libxml/xmlexports.h conftest.i | sed 's=.* "\(.*\)/libxml/xmlexports.h.*=\1=' `)
-AC_MSG_NOTICE(will search for include files also in $LIBXML_LOCATION)
+AC_MSG_NOTICE(found in libxml2: will search for include files also in $LIBXML_LOCATION)
 CPPFLAGS="-isystem $LIBXML_LOCATION $CPPFLAGS"
 AC_CHECK_HEADERS(libxml/xmlexports.h libxml/parser.h)
 
