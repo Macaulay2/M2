@@ -5,27 +5,22 @@ dnl appears as a literal value.
 dnl Note: it is best to increment version numbers on the master branch, so they are
 dnl       all incremented on the same branch, hence in a well-defined order, despite possible merging.
 
-dnl Things to do when incrementing the version number to X.Y.Z (or X.Y) :
-dnl    - increment the version number in the AC_INIT macro below
-dnl    - add an entry to distributions/deb/changelog
-dnl    - commit those two changed files
-dnl    - make a git tag of the form version-X.Y.Z
+dnl Things to do when incrementing the version number to X.Y.Z, say :
+dnl    - on the master branch:
+dnl      - increment the version number in the AC_INIT macro below
+dnl      - add an entry to distributions/deb/changelog
+dnl      - commit the two files and push upstream
+dnl      - make a git tag of the form version-X.Y.Z and push it to github
 dnl    	      git tag version-X.Y.Z
-dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
-dnl           git checkout -b release-X.Y.Z
-dnl    - push the new branch to github and track it
-dnl           git push -u origin release-X.Y.Z
-dnl    - push the new tag to github
 dnl           git push --tags origin version-X.Y.Z
 
-dnl Things to do when the release has been accomplished and pulling from the master branch to the release branch will not be needed:
-dnl    - on the master branch, increment the version number to X.Y.Z.1 in this file and add an
-dnl      entry to distributions/deb/changelog for it, setting Z=0 if it was
-dnl      omitted above.  Commit that change and make a tag.  I.e.:
-dnl           git checkout master
-dnl           # edit two files, as above, and commit
-dnl           git tag version-X.Y.Z.1
-dnl           git push --tags origin version-X.Y.Z.1
+dnl Things to do when developing a binary release for version X.Y
+dnl    - on the master branch:
+dnl      - increment version to X.Y, as described above
+dnl      - make a git branch of the form release-X.Y
+dnl           git branch release-X.Y
+dnl      - update version to X.Y.0.1, as described above, so development on the master branch can continue
+dnl    - switch to release-X.Y and develop it there, eventually merging it into the master branch
 
 dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
