@@ -13,6 +13,7 @@ INTERFACE2 = \
 
 INTERFACE = \
 	matrix-ncbasis \
+	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \
 	M2FreeAlgebraQuotient \
 	monordering \
@@ -174,7 +175,6 @@ COMMANDS2 = \
 	polyroots
 
 COMMANDS = \
-	NCAlgebras/NCReduction \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \

@@ -10,45 +10,8 @@
 #include "NCAlgebras/NCGroebner.hpp"
 #include "NCAlgebras/OverlapTable.hpp"
 #include "NCAlgebras/SuffixTree.hpp"
+#include "NCAlgebras/NCReduction.hpp"
 #include <iostream>
-
-extern void tryOutMathicCode();
-
-std::vector<int> monom1 {2, 0, 1};  // cab
-std::vector<int> monom2 {2, 2};  // cc
-std::vector<int> monom3 {1, 0, 1, 0};  // baba
-std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
-
-extern const QQ * globalQQ;
-
-TEST(NCReduction, tryit)
-{
-  tryOutMathicCode();
-}
-
-TEST(MonomialOrdering, create)
-{
-  auto mo1 = MonomialOrderings::Lex(5);
-  auto mo2 = MonomialOrderings::GroupLex(4);
-  auto mo3 = MonomialOrderings::join({mo1, mo2});
-  std::string answer3 { "MonomialOrder => {\n    Lex => 5,\n    GroupLex => 4\n    }" };
-  EXPECT_EQ(answer3, MonomialOrderings::toString(mo3));
-  EXPECT_EQ(9, rawNumberOfVariables(mo3));
-  EXPECT_TRUE(moIsLex(mo1));
-
-  auto mo4 = MonomialOrderings::GRevLex({3,2,5,7});
-  EXPECT_TRUE(moIsGRevLex(mo4));
-  auto mo5 = MonomialOrderings::GRevLex2({1,1,1,1});
-  EXPECT_TRUE(moIsGRevLex(mo5));
-  auto mo6 {
-    MonomialOrderings::join(
-    {
-     MonomialOrderings::GRevLex(3),
-     MonomialOrderings::GRevLex2(4),
-     MonomialOrderings::GRevLex4(5),
-     MonomialOrderings::GroupLex(3)
-    })};
-}
 
 const Monoid* degreeMonoid(const std::vector<std::string>& names)
 {
@@ -80,6 +43,79 @@ const PolynomialRing* degreeRing(int ndegrees)
   assert(ndegrees == 1);
   return degreeRing({"T"});
 }
+
+extern void tryOutMathicCode();
+
+std::vector<int> monom1 {2, 0, 1};  // cab
+std::vector<int> monom2 {2, 2};  // cc
+std::vector<int> monom3 {1, 0, 1, 0};  // baba
+std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
+
+extern const QQ * globalQQ;
+
+TEST(NCReduction, tryit)
+{
+  tryOutMathicCode();
+}
+
+TEST(NCReduction, TrivialPolynomialHeap)
+{
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,1,1},
+                                       {},
+                                       {1}
+                                       );
+  FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
+  A->var(*x, 0);
+  A->var(*y, 1);
+  A->var(*z, 2);
+  f = x + y;
+  g = y + z;
+  h = x + y + y + z;
+  
+  auto H { makePolynomialHeap(HeapTypes::Trivial, *A) };
+  H->addPolynomial(*f);
+  H->addPolynomial(*g);
+  EXPECT_TRUE(A->is_equal(* H->value(), *h));
+  EXPECT_TRUE(A->is_equal(* H->value(), *h));
+
+  H->removeLeadTerm();
+  EXPECT_FALSE(H->isZero());
+
+  H->removeLeadTerm();
+  EXPECT_FALSE(H->isZero());
+
+  H->removeLeadTerm();
+  EXPECT_TRUE(H->isZero());
+  EXPECT_TRUE(A->is_zero(* H->value()));
+}
+
+TEST(MonomialOrdering, create)
+{
+  auto mo1 = MonomialOrderings::Lex(5);
+  auto mo2 = MonomialOrderings::GroupLex(4);
+  auto mo3 = MonomialOrderings::join({mo1, mo2});
+  std::string answer3 { "MonomialOrder => {\n    Lex => 5,\n    GroupLex => 4\n    }" };
+  EXPECT_EQ(answer3, MonomialOrderings::toString(mo3));
+  EXPECT_EQ(9, rawNumberOfVariables(mo3));
+  EXPECT_TRUE(moIsLex(mo1));
+
+  auto mo4 = MonomialOrderings::GRevLex({3,2,5,7});
+  EXPECT_TRUE(moIsGRevLex(mo4));
+  auto mo5 = MonomialOrderings::GRevLex2({1,1,1,1});
+  EXPECT_TRUE(moIsGRevLex(mo5));
+  auto mo6 {
+    MonomialOrderings::join(
+    {
+     MonomialOrderings::GRevLex(3),
+     MonomialOrderings::GRevLex2(4),
+     MonomialOrderings::GRevLex4(5),
+     MonomialOrderings::GroupLex(3)
+    })};
+}
+
 
 TEST(FreeAlgebra, create)
 {

@@ -2,6 +2,7 @@
 #include <iostream>
 #include "stdinc-m2.hpp"
 #include "NCGroebner.hpp"
+#include "NCReduction.hpp"
 
 #include <mathic/TourTree.h>
 #include <mathic/Geobucket.h>
@@ -146,23 +147,10 @@ std::unique_ptr<mathic::Geobucket<ReductionQueueConfiguration1>> makeReductionQu
   return make_unique<mathic::Geobucket<ReductionQueueConfiguration1>>(C);
 }
 
-class PolynomialHeap
-{
-public:
-  virtual PolynomialHeap& addPolynomial(ring_elem coeff,
-                                        Word left,
-                                        Word right,
-                                        const Poly* poly);
-
-  virtual bool isZero() = 0;
-  virtual std::pair<ring_elem, Monom> viewLeadTerm() = 0;  // TODO: really want ConstMonom here...
-  virtual void removeLeadTerm() = 0;
-
-  virtual Poly* value() = 0; // returns the polynomial
-};
 
 class TrivialPolynomialHeap : public PolynomialHeap
 {
+public:  
   TrivialPolynomialHeap(const FreeAlgebra& F)
     : mRing(F),
       mValue{},
@@ -170,20 +158,31 @@ class TrivialPolynomialHeap : public PolynomialHeap
   {
   }
 
+  virtual ~TrivialPolynomialHeap() {}
+  
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
   TrivialPolynomialHeap operator=(const TrivialPolynomialHeap&) = delete;
   TrivialPolynomialHeap(const TrivialPolynomialHeap&) = delete;
-  
+
+  PolynomialHeap& addPolynomial(const Poly& poly) override
+  {
+    Poly g;
+    mRing.add(g, mIter, mValue.cend(), poly.cbegin(), poly.cend());
+    std::swap(g, mValue);
+    mIter = mValue.cbegin();
+    return *this;
+  }
+
   TrivialPolynomialHeap& addPolynomial(ring_elem coeff,
                                  Word left,
                                  Word right,
-                                 const Poly* poly) override
+                                 const Poly& poly) override
   {
     Poly f;
     Poly g;
     // Create f = coeff * left * poly * right;
-    mRing.mult_by_term_left_and_right(f, *poly, coeff, left, right);
+    mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
     mRing.add(g, mIter, mValue.cend(), f.cbegin(), f.cend());
     std::swap(g, mValue);
     mIter = mValue.cbegin();
@@ -202,6 +201,7 @@ class TrivialPolynomialHeap : public PolynomialHeap
 
   void removeLeadTerm() override
   {
+    assert(mIter != mValue.cend());
     ++mIter;
   }
 
@@ -216,7 +216,15 @@ private:
   Poly mValue;
   Poly::const_iterator mIter;
 };
-  
+
+std::unique_ptr<PolynomialHeap>
+makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
+{
+  if (type == HeapTypes::Trivial)
+    return make_unique<TrivialPolynomialHeap>(F);
+  return nullptr;
+}
+
 class PolynomialHeap1
 {
 public:
