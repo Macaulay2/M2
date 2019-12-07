@@ -6,12 +6,32 @@ DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@ISSUE@.dmg
 
 all: dmg tidy
-dmg: ../../$(PKG_DMG)
+.PRECIOUS dmg: ../../$(PKG_DMG)
+
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
+
+# In the following, we have to admit errors saying "is already signed", because some of our binary files have multiple links to them from directories.
 ../../$(PKG_DMG) : Makefile always file_preparation library_preparation top-directory-preparation
 	rm -f "$@"
+ifeq ($(SIGN),yes)
+	@for i in files/@package@/@tail_bindir@/* files/@package@/@tail_programsdir@/* files/@package@/@tail_libdir@/*dylib ;						\
+	do (set -x ; codesign --timestamp -o runtime -v -s "Developer ID Application: Daniel Grayson (C7RV9R283Q)" "$$i" 2>error.log) ;	\
+	   if test $$? != 0 ;														\
+	   then cat error.log ;														\
+	        ! grep --silent "is already signed" error.log && exit 1 ;								\
+	   fi ;																\
+	done
+endif
 	@echo "warning: sometimes the following command gives a mystical error message about '(ipc/send) invalid destination port' ... "
 	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
+ifeq ($(SIGN),yes)
+	codesign --timestamp -o runtime -v -s "Developer ID Application: Daniel Grayson (C7RV9R283Q)" "$@"
+	xcrun altool --notarize-app --primary-bundle-id "notarize-bar.dmg" --username danielrichardgrayson@gmail.com --password "@keychain:AC_PASSWORD" --file "$@"
+	: : : : now wait for confirmation of success of notarization to arrive by email, then press EOF : : : : : : : : : : : :
+	cat
+	stapler staple "$@"
+endif
+
 top-directory-preparation:
 	umask 022 ; $(MKDIR_P) files
 	ln -sf /Applications files/.
@@ -33,9 +53,7 @@ file_preparation: always
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
 # Read about all that with "man dyld".
 library_preparation: file_preparation
-
 	$(MKDIR_P) files/@package@/@tail_libdir@
-
 	(																\
 	  for i in files/@package@/@tail_bindir@/* ;											\
 	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
@@ -60,7 +78,6 @@ library_preparation: file_preparation
 	) | sort															\
 	  | uniq															\
 	  | while read f; do ls -l $$f ; (set -x ; @INSTALL_PROGRAM@ $$f files/@package@/@tail_libdir@ ) ; done
-
 	for i in files/@package@/@tail_libdir@/* ;							\
 	do if [ -f $$i -a -x $$i -a ! -h $$i ] ;							\
 	   then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'	\
@@ -77,7 +94,6 @@ library_preparation: file_preparation
 		     done ;										\
 	   fi ;												\
 	done
-
 	: dynamic libraries to be distributed:
 	cd files/@package@/@tail_libdir@ && for i in * ; do if [ -f $$i ] ; then (echo "-- $$i" ; set -x ; ls -l $$i ; otool -L $$i ) ; fi ; done
 
