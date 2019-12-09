@@ -94,19 +94,6 @@ darwin64-appleclang : always
 #		--enable-build-libraries="mpir flint pari ntl"
 #		--enable-dmg \
 
-darwin64-clang : always
-	mkdir -p builds.tmp/darwin64-clang
-	cd builds.tmp/darwin64-clang; ../../../../configure \
-		CC="clang -m64" CXX="clang++ -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-dmg \
-		--enable-build-libraries="mpir flint pari ntl"
-
 debug64-latestclang : always
 	mkdir -p builds.tmp/debug64-latestclang
 	cd builds.tmp/debug64-latestclang; ../../../../configure \
@@ -160,38 +147,6 @@ darwin64-gcc4.9 : always
 		--enable-dmg \
 		--enable-download \
 		--enable-build-libraries="mpir flint pari ntl"
-
-darwin64-clang : always
-	mkdir -p builds.tmp/darwin64-clang
-	cd builds.tmp/darwin64-clang; ../../../../configure \
-		CC="clang -m64" CXX="clang++ -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-dmg \
-		--enable-build-libraries="mpir flint pari ntl"
-
-darwin64-clang-3.8 : always
-	mkdir -p builds.tmp/darwin64-clang-3.8
-	cd builds.tmp/darwin64-clang-3.8; ../../../../configure \
-		CC="clang-3.8 -m64" CXX="clang++-3.8 -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
-
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-
-#  CXX="clang++-3.8 -stdlib=libc++"
-#  CXXFLAGS="$CXXFLAGS -nostdinc++ -I/usr/local/opt/llvm38/lib/llvm-3.8/include/c++/v1"
-#  LDFLAGS="$LDFLAGS -L/usr/local/opt/llvm38/lib/llvm-3.8/lib"
 
 
 darwin64-debug : always
