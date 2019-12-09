@@ -17,6 +17,15 @@ cmake-build: always
 ################
 ## mac os x ####
 ################
+darwin64-gcc9 : always
+	mkdir -p builds.tmp/darwin64-gcc9
+	cd builds.tmp/darwin64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 darwin64-gcc8 : always
 	mkdir -p builds.tmp/darwin64-gcc8
 	cd builds.tmp/darwin64-gcc8; ../../../../configure \
@@ -240,6 +249,15 @@ darwin64-profile-clang : always
 ###################
 ## linux ##########
 ###################
+linux-opt64-gcc9 : always
+	mkdir -p builds.tmp/opt64-gcc9
+	cd builds.tmp/opt64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+
 linux-opt64 : always
 	mkdir -p builds.tmp/opt64
 	cd builds.tmp/opt64; ../../../../configure \
