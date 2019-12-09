@@ -204,10 +204,10 @@ darwin64-profile-clang : always
 ###################
 ## linux ##########
 ###################
-linux-opt64-gcc9 : always
-	mkdir -p builds.tmp/opt64-gcc9
-	cd builds.tmp/opt64-gcc9; ../../../../configure \
-		CC=gcc-9 CXX=g++-9 \
+linux-opt64-gcc8 : always
+	mkdir -p builds.tmp/opt64-gcc8
+	cd builds.tmp/opt64-gcc8; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
