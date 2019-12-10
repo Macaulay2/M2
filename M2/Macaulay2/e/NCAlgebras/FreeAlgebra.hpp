@@ -114,6 +114,8 @@ public:
                                    const Word& leftW,
                                    const Word& rightW) const;
   void add_to_end(Poly& f, const Poly& g) const;
+  void add_to_end(Poly& f, ring_elem coeff, const Monom& monom) const;
+  
   void lead_term_as_poly(Poly& result, const Poly& f) const;
   void mult_by_coeff(Poly& result, const Poly& f, const ring_elem c) const;
   

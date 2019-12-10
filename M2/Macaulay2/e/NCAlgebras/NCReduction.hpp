@@ -23,7 +23,7 @@ public:
 };
 
 enum class HeapTypes {
-                      Trivial
+                      Trivial, Naive
 };
 
 std::unique_ptr<PolynomialHeap>

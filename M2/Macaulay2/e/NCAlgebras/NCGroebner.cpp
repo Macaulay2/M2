@@ -1,4 +1,5 @@
 #include "NCGroebner.hpp"
+#include "NCReduction.hpp"
 
 void NCGroebner::compute(int softDegreeLimit)
 {
@@ -109,7 +110,7 @@ const ConstPolyList& NCGroebner::currentValue()
   return mGroebner;
 }
 
-auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+auto NCGroebner::twoSidedReductionOld(const FreeAlgebra& A,
                                     const Poly* reducee,
                                     const ConstPolyList& reducers,
                                     const WordTable& W) -> Poly*
@@ -165,6 +166,54 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   A.clear(tmp1);
   A.clear(tmp2);
   A.clear(reduceeSoFar);
+  return remainder;
+}
+
+auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+                                    const Poly* reducee,
+                                    const ConstPolyList& reducers,
+                                    const WordTable& W) -> Poly*
+// auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
+//                                    const Poly* reducee,
+//                                    const ConstPolyList& reducers,
+//                                    const SuffixTree& W) -> Poly*
+{
+  // pair will be (i,j) where the ith word in wordtable appears in word in position j
+  std::pair<int,int> subwordPos; 
+  Word leftWord, rightWord;
+
+  Poly* remainder = new Poly;
+
+  auto heap { makePolynomialHeap(HeapTypes::Trivial, A) };
+  heap->addPolynomial(*reducee);
+
+  while (not heap->isZero())
+    {
+      // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
+      Word reduceeLeadWord;
+      std::pair<ring_elem, Monom> LT { heap->viewLeadTerm() };
+      A.monoid().wordFromMonom(reduceeLeadWord, LT.second);
+
+      if (W.subword(reduceeLeadWord,subwordPos))
+        {
+          // If there is one, perform reduceeSoFar -= coef * left * reducers[index] * right
+          A.monoid().wordPrefixFromMonom(leftWord, LT.second, subwordPos.second);
+          A.monoid().wordSuffixFromMonom(rightWord, LT.second, W[subwordPos.first].size()+subwordPos.second);
+
+          ring_elem c = A.coefficientRing()->negate(LT.first);
+          ring_elem d = reducers[subwordPos.first]->cbegin().coeff();
+          // TODO: Check to see if d is a unit before inverting.
+          auto coeffNeeded = A.coefficientRing()->divide(c,d);
+          heap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
+          
+        }
+      else
+        {
+          // If none, copy that term to the remainder (use add_to_end), and subtract that term
+          A.add_to_end(*remainder, LT.first, LT.second);
+          heap->removeLeadTerm();
+        }
+    }
   return remainder;
 }
 

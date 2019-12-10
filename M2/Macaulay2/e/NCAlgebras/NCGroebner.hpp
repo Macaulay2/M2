@@ -53,6 +53,11 @@ public:
 
   const ConstPolyList& currentValue();
 
+  static auto twoSidedReductionOld(const FreeAlgebra& A,
+                                const Poly* reducee,
+                                const ConstPolyList& reducers,
+                                const WordTable& W) -> Poly*;
+  
   static auto twoSidedReduction(const FreeAlgebra& A,
                                 const ConstPolyList& reducees,
                                 const ConstPolyList& reducers) -> ConstPolyList;

@@ -909,7 +909,6 @@ TEST ///
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
   elapsedTime NCGB(I, 20);
-  elapsedTime NCGB(I, 10);
   A = R/I
   assert(numcols ncBasis(0,A) == 1)
   assert(numcols ncBasis(1,A) == 3)
@@ -929,7 +928,7 @@ TEST ///
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2];
   I := ideal<F | B>;
-  # GroebnerBasis(B,15);
+  # GroebnerBasis(B,20);
   
   B := [a^2-1, b^2-1, c^2-1, a*b*a-b*a*b, b*c*b-c*b*c, a*c-c*a];
   I := ideal<F | B>; 

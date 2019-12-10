@@ -179,8 +179,8 @@ public:
                                  Word right,
                                  const Poly& poly) override
   {
-    Poly f;
-    Poly g;
+    mRing.setZero(f);
+    mRing.setZero(g);
     // Create f = coeff * left * poly * right;
     mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
     mRing.add(g, mIter, mValue.cend(), f.cbegin(), f.cend());
@@ -215,15 +215,9 @@ private:
   FreeAlgebra mRing;
   Poly mValue;
   Poly::const_iterator mIter;
+  Poly f; // tmp values.  Remember to zero them out before use.
+  Poly g;
 };
-
-std::unique_ptr<PolynomialHeap>
-makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
-{
-  if (type == HeapTypes::Trivial)
-    return make_unique<TrivialPolynomialHeap>(F);
-  return nullptr;
-}
 
 class PolynomialHeap1
 {
@@ -249,6 +243,97 @@ private:
   // Monomial pool // TODO: make this into its own class.
   // Pool for Entry's.
 };
+
+
+class NaivePolynomialHeap : public PolynomialHeap
+{
+public:  
+  NaivePolynomialHeap(const FreeAlgebra& F)
+    : mRing(F),
+      mValue{},
+      mIter(mValue.cbegin())
+  {
+  }
+
+  virtual ~NaivePolynomialHeap() {}
+  
+  // prevent copy and assignment constructors
+  // allow move constructors, I guess?
+  NaivePolynomialHeap operator=(const NaivePolynomialHeap&) = delete;
+  NaivePolynomialHeap(const NaivePolynomialHeap&) = delete;
+
+  PolynomialHeap& addPolynomial(const Poly& poly) override
+  {
+    Poly g;
+    mRing.add(g, mIter, mValue.cend(), poly.cbegin(), poly.cend());
+    std::swap(g, mValue);
+    mIter = mValue.cbegin();
+    return *this;
+  }
+
+  PolynomialHeap& addPolynomial(ring_elem coeff,
+                                 Word left,
+                                 Word right,
+                                 const Poly& poly) override
+  {
+    mRing.setZero(f);
+    mRing.setZero(g);
+    // Create f = coeff * left * poly * right;
+    mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
+    mRing.add(g, mIter, mValue.cend(), f.cbegin(), f.cend());
+    std::swap(g, mValue);
+    mIter = mValue.cbegin();
+    return *this;
+  }
+
+  bool isZero() override
+  {
+    return mIter == mValue.cend();
+  }
+  
+  std::pair<ring_elem, Monom> viewLeadTerm() override
+  {
+    return std::make_pair(mIter.coeff(), mIter.monom());
+  }
+
+  void removeLeadTerm() override
+  {
+    assert(mIter != mValue.cend());
+    ++mIter;
+  }
+
+  Poly* value() override
+  {
+    auto result = new Poly;
+    mRing.copy(*result, mIter, mValue.cend());
+    return result;
+  }
+private:
+  FreeAlgebra mRing;
+
+  //QueueConfigurationClass. Entry = [ring_elem, monomial_ptr]
+  // monomial memory storage.
+  // monomial hash table.
+  // Queue itself
+  
+  
+  Poly mValue;
+  Poly::const_iterator mIter;
+  Poly f; // tmp values.  Remember to zero them out before use.
+  Poly g;
+};
+
+
+
+std::unique_ptr<PolynomialHeap>
+makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
+{
+  if (type == HeapTypes::Trivial)
+    return make_unique<TrivialPolynomialHeap>(F);
+  if (type == HeapTypes::Naive)
+    return make_unique<NaivePolynomialHeap>(F);
+  return nullptr;
+}
 
 void tryOutMathicCode()
 {

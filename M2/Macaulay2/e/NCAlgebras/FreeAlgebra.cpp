@@ -540,6 +540,15 @@ void FreeAlgebra::add_to_end(Poly& f, const Poly& g) const
   outmonom.insert(outmonom.end(),g.cbeginMonom(),g.cendMonom());
 }
 
+void FreeAlgebra::add_to_end(Poly& f, ring_elem coeff, const Monom& monom) const
+{
+  if (coefficientRing()->is_zero(coeff)) return;
+  auto& outcoeff = f.getCoeffInserter();
+  auto& outmonom = f.getMonomInserter();
+  outcoeff.push_back(coeff);
+  outmonom.insert(outmonom.end(),monom.begin(), monom.end());
+}
+
 void FreeAlgebra::power(Poly& result, const Poly& f, int n) const
 {
   from_long(result, 1);
