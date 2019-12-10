@@ -11,7 +11,7 @@ newPackage(
 		  Email => "papadak@math.ist.utl.pt", 
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
-    	Headline => "Unprojection and the Kustin-Miller complex construction",
+    	Headline => "unprojection and the Kustin-Miller complex construction",
 	PackageExports => {"SimplicialComplexes"},
     	DebuggingMode => false,
 	Certification => {

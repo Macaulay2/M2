@@ -59,16 +59,19 @@ appendPoint(PointArray,Point) := (A,b) -> (
 appendPoints = method()
 appendPoints(PointArray,List) := (A,B) -> for b in B do appendPoint(A,b)
 
-member(Point,PointArray) := (b,A) -> position(b,A) =!= null
+member(Point,PointArray,FunctionClosure) := (b,A,eq) -> position(b,A,eq) =!= null
+member(Point,PointArray) := (b,A) -> member(b,A,x->x)
 
-position(Point,PointArray) := o -> (b,A) -> 
+position(Point,PointArray,FunctionClosure) := o -> (b, A, eq) -> 
     if FAST then (
 	if A#"raw" === null then return null;
 	ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
 	if ret == -1 then null else ret
-	) else position(keys A, k->areEqual(A#k,b,Tolerance => PointArrayTolerance))
-    
+	) else position(keys A, k->areEqual(eq A#k,eq b,Tolerance => PointArrayTolerance))
+position(Point,PointArray) := o -> (b, A) -> position(b, A, x -> x)
+
 PointArray_List := (A,inds) -> apply(inds,i->A#i)
+
 
 PointArray_ZZ := (A,i) -> A#i
 

@@ -1687,7 +1687,7 @@ TEST ///
 beginDocumentation()
 document { 
   Key => MultiplierIdeals,
-  Headline => "A package for computing multiplier ideals",
+  Headline => "multiplier ideals",
   PARA {
     EM "MultiplierIdeals",
     " is a package for computing multiplier ideals,

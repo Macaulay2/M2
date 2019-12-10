@@ -3,7 +3,7 @@ newPackage("Elimination",
      Version => "1.0", 
      Date => "January 5, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
-     Headline => "a package for elimination of variables"
+     Headline => "elimination of variables"
      )
 
 export {"eliminate", "sylvesterMatrix", "discriminant", "resultant"}

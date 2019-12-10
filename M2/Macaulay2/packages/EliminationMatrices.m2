@@ -12,7 +12,7 @@ newPackage("EliminationMatrices",
 	     {Name => "Laurent Busé", Email => "Laurent.Buse@inria.fr", HomePage => "http://www-sop.inria.fr/members/Laurent.Buse/"},
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
-   Headline => "Package for computing resultants",
+   Headline => "resultants",
    PackageImports => { "Elimination" },
    DebuggingMode => false
    )
@@ -796,7 +796,7 @@ beginDocumentation()
 ---------------------------------------------------------------
 document {
 	Key => {EliminationMatrices},
-	Headline => "A package for computing resultants.",
+	Headline => "resultants",
 	
 	TT "EliminationMatrices", " is a package for elimination theory, emphasizing universal formulas, in particular, resultant computations.",
 	

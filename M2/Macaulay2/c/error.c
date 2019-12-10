@@ -2,7 +2,7 @@
 
 #include "scc.h"
 
-void fatal(char *s,...)
+void fatal(const char *s,...)
 {
      va_list ap;
      va_start(ap,s);

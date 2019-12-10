@@ -6,7 +6,7 @@ newPackage(
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
-    	Headline => "Interface to Maple",
+    	Headline => "interface to Maple",
     	DebuggingMode => false,
         Configuration => {"MapleCommand"=>"maple"},
 	CacheExampleOutput => true,

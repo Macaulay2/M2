@@ -44,7 +44,7 @@ newPackage(
 			HomePage => "http://flash.lakeheadu.ca/~avantuyl/"
 		}
 	},
-	Headline => "a package for edge ideals.",
+	Headline => "edge ideals",
 	DebuggingMode => false
 )
 

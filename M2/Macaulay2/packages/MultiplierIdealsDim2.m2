@@ -7,7 +7,7 @@ newPackage(
         Authors  =>  {{Name  =>  "Ferran Dachs-Cadefau", 
                      Email  =>  "ferran.dachscadefau@wis.kuleuven.be",
                      HomePage  =>  "http://perswww.kuleuven.be/ferran_dachs_cadefau"}},
-        Headline  =>  "Package for computing MI in 2-dimensional rings",
+        Headline  =>  "multiplier ideals in 2-dimensional rings",
         DebuggingMode  =>  false
         )
 

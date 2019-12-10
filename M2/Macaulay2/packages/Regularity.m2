@@ -6,7 +6,7 @@ newPackage(
         {Name => "Alexandra Seceleanu", Email => "asecele2@uiuc.edu"},
         {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
         },
-   Headline => "computes the Castelnuovo-Mumford regularity of a given homogeneous ideal",
+   Headline => "Castelnuovo-Mumford regularity of a homogeneous ideal",
    DebuggingMode => false
    )
 --=========================================================================--

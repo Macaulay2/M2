@@ -44,7 +44,7 @@ subductquo = (m, F, J, I, d) -> (
      RtoRS := map(RS, R, (vars RS)_{0..numgens R-1});
      gbJ := gb(J, DegreeLimit=>d);
      m = m % I;
-     reduced = matrix{toList(numgens source m:0_R)};
+     reduced := matrix{toList(numgens source m:0_R)};
      while m != 0 do (
 	 m = matrix entries m;  -- to fix degrees
          errorterm1 := (RtoRS leadTerm m) % gbJ;
@@ -101,6 +101,7 @@ getSyzygies(Matrix, Ideal, Ideal) := (Gens, I, J) -> (
 	 );
     spairs = matrix entries (compress spairs);
     if spairs == 0 then (spairs = matrix{{0_RS}});
+    y := getSymbol "y";
     S := (coefficientRing R)[y_1 .. y_(nRS-nR)];
     PutS := map(S,RS, matrix{toList(nR:0_S)} | vars S);
     PutS spairs)
@@ -119,12 +120,19 @@ sagbiToplevel = (Gens, maxnloops, printlevel) -> (
      
 sagbiquo = method()
 sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
-     --local R, G, S, RS, RStoS, Gmap, inGmap, J;
-     --local d, maxdeg, nloops, Pending;
-     local newgens, newguys;
-     R := ring Gens;
+     (R, G, S, RS, RStoS, Gmap, inGmap, J) := 8:null;
+     (d, maxdeg, nloops, Pending) := 4:null;
+     (newgens, newguys) := 2:null;
+     gbI := null;    
+     Jquo := null;
+     gbJquo := null;
+     IinRS := null;
+     RtoRS := null;
+     RStoR := null;
+     numnewsagbi := null;
+     R = ring Gens;
      MOflag := setMonomialOrderFlag R;
-     maxdeg := maxnloops;
+     maxdeg = maxnloops;
      Pending = new MutableList from toList(maxdeg+1:{});
      autosubductionquo := (m) -> (
      	  -- m is the matrix whose entries we wish to reduce (subduct),
@@ -164,11 +172,10 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  R := ring m;
 	  M := monoid R;
 	  G = G | m;
-	  nR = numgens R;
-	  nG = numgens source G;
+	  nR := numgens R;
+	  nG := numgens source G;
      	  if MOflag == 5 then (
-	       RS = (coefficientRing R)[symbol b_1.. symbol b_nG, 
-	       	    symbol a_1.. symbol a_nR,
+	       RS = (coefficientRing R)[Variables=>nG+nR,--b_1..b_nG,a_1..a_nR,
 	       	    Degrees=>join(degrees source G, degrees source vars R),
 	       	    MonomialOrder => RevLex];
 	       RtoRS = map(RS,R,(vars RS)_{nG..nG+nR-1});
@@ -180,14 +187,12 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	       RStoS = map(RS,RS, (vars RS)_{0..nG-1} |
 		    matrix {toList(nR:0_RS)});)
    	  else (
-	       if MOflag == 0 or MOflag == 3 then (NewOrder = Eliminate nR)
-	       else if MOflag == 4 then (
-		    NewOrder = append(M.Options.MonomialOrder,nG))
-	       else (NewOrder = M.Options.MonomialOrder);
-	       RS = (coefficientRing R)[symbol a_1.. symbol a_nR, 
-	       	    symbol b_1.. symbol b_nG,
+	       newOrder := if MOflag == 0 or MOflag == 3 then Eliminate nR
+	       else if MOflag == 4 then append(M.Options.MonomialOrder,nG)
+	       else M.Options.MonomialOrder;
+	       RS = (coefficientRing R)[Variables=>nG+nR,--a_1..a_nR,b_1..b_nG,
 	       	    Degrees=>join(degrees source vars R, degrees source G),
-	       	    MonomialOrder => NewOrder];
+	       	    MonomialOrder => newOrder];
 	       RtoRS = map(RS,R,(vars RS)_{0..nR-1});
 	       RStoS = map(RS,RS, matrix {toList(nR:0_RS)} |
 		    (vars RS)_{nR .. nR+nG-1});
@@ -213,7 +218,7 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 		    appendToBasis matrix{Pending#e};
 		    Pending#e = {};)
 	       else (
-	       	    m = rowReduce(matrix{Pending#e}, e);
+	       	    m := rowReduce(matrix{Pending#e}, e);
 	       	    Pending#e = {};
 	       	    insertPending m;
 	       	    e = lowestDegree();
@@ -236,16 +241,16 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
        << numnewsagbi << " new generators" << endl;
        );
      d = d+1;
-     nloops := d;
+     nloops = d;
      isdone := false;
      while nloops <= maxnloops and not isdone do (
 	  nloops = nloops+1;
 	  if printlevel > 0 then 
 	    << "--- degree " << d << " ----" << endl;
-	  time gbJquo = gb(Jquo, DegreeLimit=>d);
-	  mtemp = gens gbJquo;
-	  spairs = submatrixByDegrees(split2(mtemp,RStoS mtemp),d);
-	  << "spairs = " << transpose spairs << endl;
+	  gbJquo = gb(Jquo, DegreeLimit=>d);
+	  mtemp := gens gbJquo;
+	  spairs := submatrixByDegrees(split2(mtemp,RStoS mtemp),d);
+	  if printlevel > 1 then << "spairs = " << transpose spairs << endl;
 	  spairs = compress Gmap(spairs);
 	  if Pending#d != {} then (
 	       if MOflag == 3 then (newgens = matrix{Pending#d})
@@ -255,8 +260,8 @@ sagbiquo(Matrix,Ideal,ZZ,ZZ) := (Gens, I, maxnloops, printlevel) -> (
 	  if numgens source spairs > 0 then (
 	       if MOflag == 3 then (
 		    newguys = subductquo(spairs, Gmap, Jquo, I, d))
-	       else (newguys = time autosubductionquo(spairs));
-	       stopcriteria = numgens source newguys)
+	       else (newguys = autosubductionquo(spairs));
+	       stopcriteria := numgens source newguys)
 	  else stopcriteria = 0;
           if stopcriteria > 0 then (
 	       if MOflag == 3 then (insertPending newguys)

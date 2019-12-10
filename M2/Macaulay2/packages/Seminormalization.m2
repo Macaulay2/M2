@@ -10,7 +10,7 @@ newPackage( "Seminormalization",
 		Email => "bserbinowski@gmail.com"
 		}
 	},
-	Headline => "a package for computing seminormalization of rings",
+	Headline => "seminormalization of rings",
 	PackageImports => {"IntegralClosure"},
 	PackageExports => {"Pullback", "PushForward"},
 	AuxiliaryFiles=>false
@@ -648,7 +648,7 @@ beginDocumentation()
 
 document {
 	Key => Seminormalization,
-	Headline => "a package used the seminormalize rings",
+	Headline => "a package used to seminormalize rings",
 	EM "Seminormalization", " is a package which can be used to seminormalize rings or more generally check if a ring is seminormal.  Roughly speaking a ring is non-normal if in the Spec, points are identified and tangent spaces killed.  Seminormal rings are those where only points are identified.  See the following for more discussion: ",
 	HREF("https://mathoverflow.net/questions/109395/is-there-a-geometric-intuition-underlying-the-notion-of-normal-varieties/", "MathOverflow question"),
 	BR{}, BR{},

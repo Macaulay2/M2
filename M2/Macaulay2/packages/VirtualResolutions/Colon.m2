@@ -130,6 +130,12 @@ saturationByElimination(Ideal, Ideal) := (I, J) -> (
     intersectionByElimination L
     )
 
+-- used when P = decompose irr
+saturationByElimination(Ideal, List) := (I, P) -> (
+    apply(P, J -> I = saturationByElimination(I,J));
+    I
+    )
+
 saturationByGrevLex(Ideal, Ideal) := (I, J) -> (
     L := for g in J_* list saturationByGrevLex(I, g);
     pows := L/last;
