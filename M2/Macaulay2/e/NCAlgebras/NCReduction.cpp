@@ -4,6 +4,7 @@
 #include "NCGroebner.hpp"
 #include "NCReduction.hpp"
 
+#include <memtailor.h>
 #include <mathic/TourTree.h>
 #include <mathic/Geobucket.h>
 #include <mathic/Heap.h>
@@ -324,6 +325,57 @@ private:
 };
 
 
+class MemoryBlock
+{
+public:
+  template<typename T>
+  std::pair<T*, T*> allocateArray(size_t nelems)
+  {
+    return mArena.allocArrayNoCon<T>(nelems);
+  }
+
+  template<typename T>
+  std::pair<T*, T*> shrinkLastAllocate(T* begin, T* end, T* newtop)
+  {
+    mArena.freeTopArray(begin, end);
+    std::pair<T*, T*> result = mArena.allocArrayNoCon<T>(newtop - begin);
+    if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
+    return result;
+  }
+
+  void deallocateAll()
+  {
+    mArena.freeAllAllocs();
+  }
+
+  size_t memoryUsedInBytes() { return mArena.getMemoryUse(); } 
+private:
+  memt::Arena mArena;
+};
+
+void testMemoryBlock()
+{
+  MemoryBlock B;
+  for (size_t i = 0; i < 1000; ++i)
+    {
+      size_t sz = 4 + (32343 * i) % 10;
+      auto range = B.allocateArray<int>(sz);
+      for (int j = 0; j < sz; j++)
+        range.first[j] = 100 * i + j;
+      if (i % 93 == 0)
+        {
+          range = B.shrinkLastAllocate(range.first, range.second, range.first + 4);
+          for (int j = 0; j < 4; j++)
+            range.first[j] = 100 * i + j;
+        }
+      if ((range.second - range.first != sz) and (range.second - range.first != 4))
+        std::cout << "size is wrong" << std::endl;
+      std::cout << "i = " << i << " sz = " << sz << " elems = ";
+      for (int* a = range.first; a != range.second; ++a)
+        std::cout << *a << " ";
+      std::cout << std::endl << "memory usage: " << B.memoryUsedInBytes() << std::endl;
+    }
+}
 
 std::unique_ptr<PolynomialHeap>
 makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)

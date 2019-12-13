@@ -53,6 +53,12 @@ std::vector<int> word {2, 0, 1, 2, 2, 1, 0, 1, 0};  // cabccbaba
 
 extern const QQ * globalQQ;
 
+TEST(MemoryBlock, tryit)
+{
+  extern void testMemoryBlock();
+  testMemoryBlock();
+}
+
 TEST(NCReduction, tryit)
 {
   tryOutMathicCode();
