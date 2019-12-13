@@ -36,6 +36,35 @@ Possible ways:
     PolynomialWithPosition pool. [leadmonomial, coeff, lmon, rmon, index into the poly we are using, which poly]
     F - aGb - cGd - ...
 #endif
+
+class MemoryBlock
+{
+public:
+  template<typename T>
+  std::pair<T*, T*> allocateArray(size_t nelems)
+  {
+    return mArena.allocArrayNoCon<T>(nelems);
+  }
+
+  template<typename T>
+  std::pair<T*, T*> shrinkLastAllocate(T* begin, T* end, T* newtop)
+  {
+    mArena.freeTopArray(begin, end);
+    std::pair<T*, T*> result = mArena.allocArrayNoCon<T>(newtop - begin);
+    if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
+    return result;
+  }
+
+  void deallocateAll()
+  {
+    mArena.freeAllAllocs();
+  }
+
+  size_t getMemoryUsedInBytes() { return mArena.getMemoryUse(); } 
+private:
+  memt::Arena mArena;
+};
+  
 class OurQueueConfiguration
 {
 public:
@@ -110,45 +139,6 @@ std::unique_ptr<mathic::Geobucket<OurQueueConfiguration1>> makeQueue1()
   return make_unique<mathic::Geobucket<OurQueueConfiguration1>>(C);
 }
 
-
-class ReductionQueueConfiguration1
-{
-public:
-  using Entry = int; // think of each Entry as a monomial.
-  enum class CompareResult {LT, EQ, GT};
-  CompareResult compare(const Entry& a, const Entry& b) const
-  {
-    if (a < b) return CompareResult::LT;
-    if (a > b) return CompareResult::GT;
-    return CompareResult::EQ;
-  }
-  bool cmpLessThan(CompareResult a) const { return a == CompareResult::LT; }
-
-  // Specific for Geobucket
-  const size_t minBucketSize = 2;
-  const size_t geoBase = 4;
-  static const size_t insertFactor = 4;
-
-  static const bool supportDeduplication = true;
-  bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
-  Entry deduplicate(Entry a, Entry b) const { return a + b + 1000; }
-
-  static const bool minBucketBinarySearch = false;
-  static const bool trackFront = true;
-  static const bool premerge = false;
-  static const bool collectMax = true;
-
-  static const mathic::GeobucketBucketStorage bucketStorage = mathic::GeoStoreSameSizeBuffer;
-};
-
-std::unique_ptr<mathic::Geobucket<ReductionQueueConfiguration1>> makeReductionQueue() //TODO: needs arguments
-{
-  ReductionQueueConfiguration1 C; //TODO: needs arguments
-  
-  return make_unique<mathic::Geobucket<ReductionQueueConfiguration1>>(C);
-}
-
-
 class TrivialPolynomialHeap : public PolynomialHeap
 {
 public:  
@@ -212,6 +202,12 @@ public:
     mRing.copy(*result, mIter, mValue.cend());
     return result;
   }
+
+  size_t getMemoryUsedInBytes() override
+  {
+    mValue.numTerms();
+  }
+
 private:
   FreeAlgebra mRing;
   Poly mValue;
@@ -220,39 +216,61 @@ private:
   Poly g;
 };
 
-class PolynomialHeap1
+////////////////////////////////////
+// NaivePolynomialHeap /////////////
+////////////////////////////////////
+
+class NaiveQueueConfiguration
 {
 public:
-  PolynomialHeap1(const FreeAlgebra& F);
+  NaiveQueueConfiguration(const FreeAlgebra& F) : mRing(F) {}
 
-  // prevent copy and assignment constructors
-  // allow move constructors, I guess?
-  PolynomialHeap1 operator=(const PolynomialHeap1&) = delete;
-  PolynomialHeap1(const PolynomialHeap1&) = delete;
+  using Entry = std::pair<ring_elem, Monom>;
   
-  PolynomialHeap1& addPolynomial(ring_elem coeff,
-                                 Word left,
-                                 Word right,
-                                 const Poly* poly);
+  enum class CompareResult {LT, EQ, GT};
+  CompareResult compare(const Entry& a, const Entry& b) const
+  {
+    int cmp = mRing.monoid().compare(a.second, b.second);
+    if (cmp < 0) return CompareResult::LT;
+    if (cmp > 0) return CompareResult::GT;
+    return CompareResult::EQ;
+  }
+  bool cmpLessThan(CompareResult a) const { return a == CompareResult::LT; }
 
-  bool isZero();
-  std::pair<ring_elem, Monom> viewLeadTerm();  // TODO: really want ConstMonom here...
-  void removeLeadTerm(); // no-op if value is 0.
+  // Specific for Geobucket
+  const size_t minBucketSize = 2;
+  const size_t geoBase = 4;
+  static const size_t insertFactor = 4;
 
-  // TODO: add in configuration code, and actual heap object.
+  static const bool supportDeduplication = true;
+  bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
+  Entry deduplicate(Entry a, Entry b) const
+  {
+    std::cout << "deduplicate called" << std::endl;
+    
+    ring_elem c = mRing.coefficientRing()->add(a.first, b.first);
+    return Entry(c, a.second);
+  }
+
+  static const bool minBucketBinarySearch = false;
+  static const bool trackFront = true;
+  static const bool premerge = false;
+  static const bool collectMax = true;
+
+  static const mathic::GeobucketBucketStorage bucketStorage = mathic::GeoStoreSameSizeBuffer;
 private:
-  // Monomial pool // TODO: make this into its own class.
-  // Pool for Entry's.
+  const FreeAlgebra& mRing;
 };
 
-
+template<template<typename> typename Queue>
 class NaivePolynomialHeap : public PolynomialHeap
 {
-public:  
+public:
+  using Entry = NaiveQueueConfiguration::Entry;
+
   NaivePolynomialHeap(const FreeAlgebra& F)
     : mRing(F),
-      mValue{},
-      mIter(mValue.cbegin())
+      mQueue(NaiveQueueConfiguration(F))
   {
   }
 
@@ -263,95 +281,79 @@ public:
   NaivePolynomialHeap operator=(const NaivePolynomialHeap&) = delete;
   NaivePolynomialHeap(const NaivePolynomialHeap&) = delete;
 
-  PolynomialHeap& addPolynomial(const Poly& poly) override
+  NaivePolynomialHeap& addPolynomial(const Poly& poly) override
   {
-    Poly g;
-    mRing.add(g, mIter, mValue.cend(), poly.cbegin(), poly.cend());
-    std::swap(g, mValue);
-    mIter = mValue.cbegin();
+    for (auto i = poly.cbegin(); i != poly.cend(); ++i)
+      {
+        auto rg = mMonomialSpace.allocateArray<int>(i.monom().size());
+        std::copy(i.monom().begin(), i.monom().end(), rg.first);
+        mQueue.push(Entry(i.coeff(), Monom(rg.first)));
+      }
     return *this;
   }
 
-  PolynomialHeap& addPolynomial(ring_elem coeff,
+  NaivePolynomialHeap& addPolynomial(ring_elem coeff,
                                  Word left,
                                  Word right,
-                                 const Poly& poly) override
+                                const Poly& poly) override
   {
-    mRing.setZero(f);
-    mRing.setZero(g);
-    // Create f = coeff * left * poly * right;
+    Poly f;
     mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
-    mRing.add(g, mIter, mValue.cend(), f.cbegin(), f.cend());
-    std::swap(g, mValue);
-    mIter = mValue.cbegin();
+    addPolynomial(f);
     return *this;
   }
-
+    
   bool isZero() override
   {
-    return mIter == mValue.cend();
+    // idempotent function.
+    while (not mQueue.empty())
+      {
+        Entry e = mQueue.top();
+        if (mRing.coefficientRing()->is_zero(e.first))
+          mQueue.pop();
+        else
+          return false;
+      }
+    return true;
   }
   
   std::pair<ring_elem, Monom> viewLeadTerm() override
   {
-    return std::make_pair(mIter.coeff(), mIter.monom());
+    return mQueue.top();
+    // loop
+    // look at lead element in queue
+    // if coeff is 0, pop it, else continue
   }
 
   void removeLeadTerm() override
   {
-    assert(mIter != mValue.cend());
-    ++mIter;
+    mQueue.pop();
   }
 
   Poly* value() override
   {
-    auto result = new Poly;
-    mRing.copy(*result, mIter, mValue.cend());
-    return result;
+    Poly* f = new Poly;
+    while (! isZero())
+      {
+        auto tm = viewLeadTerm();
+        mRing.add_to_end(*f, tm.first, tm.second);
+        removeLeadTerm();
+      }
+    addPolynomial(*f);
+    return f;
   }
+
+  size_t getMemoryUsedInBytes() override
+  {
+    return mQueue.getMemoryUse() + mMonomialSpace.getMemoryUsedInBytes();
+  }
+  
 private:
   FreeAlgebra mRing;
-
-  //QueueConfigurationClass. Entry = [ring_elem, monomial_ptr]
-  // monomial memory storage.
-  // monomial hash table.
-  // Queue itself
-  
-  
-  Poly mValue;
-  Poly::const_iterator mIter;
-  Poly f; // tmp values.  Remember to zero them out before use.
-  Poly g;
+  Queue<NaiveQueueConfiguration> mQueue;
+  MemoryBlock mMonomialSpace;
 };
 
-
-class MemoryBlock
-{
-public:
-  template<typename T>
-  std::pair<T*, T*> allocateArray(size_t nelems)
-  {
-    return mArena.allocArrayNoCon<T>(nelems);
-  }
-
-  template<typename T>
-  std::pair<T*, T*> shrinkLastAllocate(T* begin, T* end, T* newtop)
-  {
-    mArena.freeTopArray(begin, end);
-    std::pair<T*, T*> result = mArena.allocArrayNoCon<T>(newtop - begin);
-    if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
-    return result;
-  }
-
-  void deallocateAll()
-  {
-    mArena.freeAllAllocs();
-  }
-
-  size_t memoryUsedInBytes() { return mArena.getMemoryUse(); } 
-private:
-  memt::Arena mArena;
-};
 
 void testMemoryBlock()
 {
@@ -373,7 +375,7 @@ void testMemoryBlock()
       std::cout << "i = " << i << " sz = " << sz << " elems = ";
       for (int* a = range.first; a != range.second; ++a)
         std::cout << *a << " ";
-      std::cout << std::endl << "memory usage: " << B.memoryUsedInBytes() << std::endl;
+      std::cout << std::endl << "memory usage: " << B.getMemoryUsedInBytes() << std::endl;
     }
 }
 
@@ -382,8 +384,12 @@ makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
 {
   if (type == HeapTypes::Trivial)
     return make_unique<TrivialPolynomialHeap>(F);
-  if (type == HeapTypes::Naive)
-    return make_unique<NaivePolynomialHeap>(F);
+  if (type == HeapTypes::NaiveGeobucket)
+    return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
+  if (type == HeapTypes::NaiveTourTree)
+    return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
+  // if (type == HeapTypes::NaiveHeap)
+  //   return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
   return nullptr;
 }
 

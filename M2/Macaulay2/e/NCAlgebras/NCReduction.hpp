@@ -16,14 +16,20 @@ public:
                                         const Poly& poly) = 0;
 
   virtual bool isZero() = 0;
-  virtual std::pair<ring_elem, Monom> viewLeadTerm() = 0;  // TODO: really want ConstMonom here...
+
+  // viewLeadTerm: should only be called if isZero() returns false.
+  virtual std::pair<ring_elem, Monom> viewLeadTerm() = 0;
+
+  // removeLeadTerm: should only be called if isZero() returns false.
   virtual void removeLeadTerm() = 0;
 
   virtual Poly* value() = 0; // returns the polynomial
+
+  virtual size_t getMemoryUsedInBytes() = 0;
 };
 
 enum class HeapTypes {
-                      Trivial, Naive
+                      Trivial, NaiveGeobucket, NaiveHeap, NaiveTourTree
 };
 
 std::unique_ptr<PolynomialHeap>

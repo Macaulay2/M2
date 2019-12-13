@@ -184,7 +184,13 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
 
   Poly* remainder = new Poly;
 
-  auto heap { makePolynomialHeap(HeapTypes::Trivial, A) };
+  std::cout << "starting reduction" << std::endl;
+
+  buffer o;
+  A.elem_text_out(o, *reducee, true, false, false);
+  std::cout << "poly: " << o.str() << std::endl;
+
+  auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
   heap->addPolynomial(*reducee);
 
   while (not heap->isZero())
@@ -213,6 +219,13 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
           A.add_to_end(*remainder, LT.first, LT.second);
           heap->removeLeadTerm();
         }
+      buffer o;
+      A.elem_text_out(o, *remainder, true, false, false);
+      std::cout << "remainder: " << o.str() << std::endl;
+
+      o.reset();
+      A.elem_text_out(o, * (heap->value()), true, false, false);
+      std::cout << "poly: " << o.str() << std::endl;
     }
   return remainder;
 }

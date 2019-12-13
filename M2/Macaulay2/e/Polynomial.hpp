@@ -22,6 +22,7 @@ struct Monom
   // 2 monomials: xzx, xy (dot is only there for readability)
   //   5 3 0 2 1 . 4 2 0 1
 {
+  Monom() : mValue(nullptr) {}
   Monom(const int* value) : mValue(value) {}
   //  const int* operator*() const { return mValue; }
   const int* operator+(int i) const { return mValue+i; }
