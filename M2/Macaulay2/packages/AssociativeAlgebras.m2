@@ -916,6 +916,7 @@ TEST ///
   assert(numcols ncBasis(3,A) == 10)
   assert(numcols ncBasis(4,A) == 15)
   assert(numcols ncBasis(5,A) == 21)
+  assert(numcols ncBasis(6,A) == 28)
   assert(numcols ncBasis(10,A) == 66)
 ///
 

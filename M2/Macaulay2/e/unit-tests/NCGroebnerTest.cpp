@@ -98,6 +98,45 @@ TEST(NCReduction, TrivialPolynomialHeap)
   EXPECT_TRUE(A->is_zero(* H->value()));
 }
 
+TEST(NCReduction, NaivePolynomialHeap)
+{
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z" },
+                                       degreeRing(1),
+                                       {1,1,1},
+                                       {},
+                                       {1}
+                                       );
+  FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A), mh(A);
+  A->var(*x, 0);
+  A->var(*y, 1);
+  A->var(*z, 2);
+  f = x + y;
+  g = y + z;
+  h = x + y + y + z;
+  mh = -h;
+
+  auto H { makePolynomialHeap(HeapTypes::NaiveGeobucket, *A) };
+  H->addPolynomial(*f);
+  H->addPolynomial(*g);
+  EXPECT_TRUE(A->is_equal(* H->value(), *h));
+  EXPECT_TRUE(A->is_equal(* H->value(), *h));
+
+  H->removeLeadTerm();
+  EXPECT_FALSE(H->isZero());
+
+  H->removeLeadTerm();
+  EXPECT_FALSE(H->isZero());
+
+  H->removeLeadTerm();
+  EXPECT_TRUE(H->isZero());
+  EXPECT_TRUE(A->is_zero(* H->value()));
+  H->addPolynomial(*h);
+  H->addPolynomial(*mh);
+  EXPECT_TRUE(H->isZero());
+  EXPECT_TRUE(A->is_zero(* H->value()));
+}
+
 TEST(MonomialOrdering, create)
 {
   auto mo1 = MonomialOrderings::Lex(5);

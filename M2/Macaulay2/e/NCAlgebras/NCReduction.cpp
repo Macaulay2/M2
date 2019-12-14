@@ -227,13 +227,22 @@ public:
 
   using Entry = std::pair<ring_elem, Monom>;
   
-  enum class CompareResult {LT, EQ, GT};
+  enum class CompareResult {LT, EQ, GT, Error};
   CompareResult compare(const Entry& a, const Entry& b) const
   {
     int cmp = mRing.monoid().compare(a.second, b.second);
-    if (cmp < 0) return CompareResult::LT;
-    if (cmp > 0) return CompareResult::GT;
-    return CompareResult::EQ;
+    buffer o;
+    mRing.monoid().elem_text_out(o,a.second);
+    o << " ";
+    mRing.monoid().elem_text_out(o,b.second);
+    o << " " << cmp;
+    std::cout << "Monomial Compare: " << o.str() << std::endl;
+    if (cmp == LT) return CompareResult::LT;
+    if (cmp == GT) return CompareResult::GT;
+    if (cmp == EQ) return CompareResult::EQ;
+    
+    std::cout << "Unexpected monomial comparison error in heap." << std::endl << std::flush;
+    return CompareResult::Error;
   }
   bool cmpLessThan(CompareResult a) const { return a == CompareResult::LT; }
 
@@ -246,13 +255,26 @@ public:
   bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
   Entry deduplicate(Entry a, Entry b) const
   {
-    std::cout << "deduplicate called" << std::endl;
-    
     ring_elem c = mRing.coefficientRing()->add(a.first, b.first);
+     
+    buffer o;
+    mRing.monoid().elem_text_out(o,a.second);
+    o << " ";
+    mRing.monoid().elem_text_out(o,b.second);
+    std::cout << "Deduplicate called with monomials: " << o.str() << std::endl;
+    
+    o.reset();
+    mRing.coefficientRing()->elem_text_out(o,a.first);
+    o << " + ";
+    mRing.coefficientRing()->elem_text_out(o,b.first);
+    o << " = ";
+    mRing.coefficientRing()->elem_text_out(o,c);
+    std::cout << "Sum : " << o.str() << std::endl;
+    
     return Entry(c, a.second);
   }
 
-  static const bool minBucketBinarySearch = false;
+  static const bool minBucketBinarySearch = true;
   static const bool trackFront = true;
   static const bool premerge = false;
   static const bool collectMax = true;
@@ -333,7 +355,7 @@ public:
   Poly* value() override
   {
     Poly* f = new Poly;
-    while (! isZero())
+    while (not isZero())
       {
         auto tm = viewLeadTerm();
         mRing.add_to_end(*f, tm.first, tm.second);

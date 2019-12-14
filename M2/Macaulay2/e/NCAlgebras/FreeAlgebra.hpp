@@ -201,6 +201,12 @@ public:
     mRing->subtract(*result, **this, *g);
     return result;  // this is a copy
   }
+  FreeAlgebraElement operator-() const
+  {
+    FreeAlgebraElement result(mRing);
+    mRing->negate(*result, **this);
+    return result;
+  }
   FreeAlgebraElement operator*(const FreeAlgebraElement& g)
   {
     FreeAlgebraElement result(mRing);

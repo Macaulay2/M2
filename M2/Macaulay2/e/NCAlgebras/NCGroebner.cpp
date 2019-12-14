@@ -190,7 +190,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   A.elem_text_out(o, *reducee, true, false, false);
   std::cout << "poly: " << o.str() << std::endl;
 
-  auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
+  auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
   heap->addPolynomial(*reducee);
 
   while (not heap->isZero())
@@ -211,7 +211,6 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
           // TODO: Check to see if d is a unit before inverting.
           auto coeffNeeded = A.coefficientRing()->divide(c,d);
           heap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
-          
         }
       else
         {
