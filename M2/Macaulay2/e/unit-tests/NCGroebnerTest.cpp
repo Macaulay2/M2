@@ -101,13 +101,14 @@ TEST(NCReduction, TrivialPolynomialHeap)
 TEST(NCReduction, NaivePolynomialHeap)
 {
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
-                                       { "x", "y", "z" },
+                                       { "x", "y", "z"},
                                        degreeRing(1),
                                        {1,1,1},
                                        {},
                                        {1}
                                        );
   FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A), mh(A);
+  FreeAlgebraElement F(A), G(A);
   A->var(*x, 0);
   A->var(*y, 1);
   A->var(*z, 2);
@@ -115,6 +116,10 @@ TEST(NCReduction, NaivePolynomialHeap)
   g = y + z;
   h = x + y + y + z;
   mh = -h;
+  // strangely enough, this doesn't give an error unless you use *all* the terms
+  // stopping F early will not cause the error.
+  F = y*z*x*z - y*z*y*y - y*z*z*x - z*x*y*z + z*x*z*y - z*y*y*y - z*z*x*y - z*z*y*x - z*z*z*z;
+  G = -y*z*x*z - y*z*y*y - y*z*z*x;
 
   auto H { makePolynomialHeap(HeapTypes::NaiveGeobucket, *A) };
   H->addPolynomial(*f);
@@ -135,6 +140,12 @@ TEST(NCReduction, NaivePolynomialHeap)
   H->addPolynomial(*mh);
   EXPECT_TRUE(H->isZero());
   EXPECT_TRUE(A->is_zero(* H->value()));
+
+  H->addPolynomial(*F);
+  H->addPolynomial(*G);
+  buffer o;
+  A->elem_text_out(o,* (H->value()), true, false, false);
+  std::cout << o.str() << std::endl;
 }
 
 TEST(MonomialOrdering, create)
