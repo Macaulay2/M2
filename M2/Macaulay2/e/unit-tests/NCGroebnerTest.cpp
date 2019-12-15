@@ -122,6 +122,7 @@ TEST(NCReduction, NaivePolynomialHeap)
   G = -y*z*x*z - y*z*y*y - y*z*z*x;
 
   auto H { makePolynomialHeap(HeapTypes::NaiveGeobucket, *A) };
+  std::cout << H->getName() << std::endl;
   H->addPolynomial(*f);
   H->addPolynomial(*g);
   EXPECT_TRUE(A->is_equal(* H->value(), *h));

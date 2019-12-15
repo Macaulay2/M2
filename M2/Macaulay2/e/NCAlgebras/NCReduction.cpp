@@ -208,6 +208,8 @@ public:
     mValue.numTerms();
   }
 
+  std::string getName() const override { return std::string("Trivial Heap"); }
+  
 private:
   FreeAlgebra mRing;
   Poly mValue;
@@ -251,6 +253,12 @@ public:
   const size_t geoBase = 4;
   static const size_t insertFactor = 4;
 
+  // specific for Heap
+  static const bool fastIndex = false;
+  // if set to true, a faster way of calculating indices is used
+  // but for this to work, sizeof(Entry) must be a power of two (which it
+  // should already be, since both Monom and ring_elem are really pointers?
+  
   static const bool supportDeduplication = true;
   bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
   Entry deduplicate(Entry a, Entry b) const
@@ -369,6 +377,8 @@ public:
   {
     return mQueue.getMemoryUse() + mMonomialSpace.getMemoryUsedInBytes();
   }
+
+  std::string getName() const override { return mQueue.getName(); }
   
 private:
   FreeAlgebra mRing;
@@ -410,8 +420,8 @@ makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
     return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
   if (type == HeapTypes::NaiveTourTree)
     return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
-  // if (type == HeapTypes::NaiveHeap)
-  //   return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
+  if (type == HeapTypes::NaiveHeap)
+     return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
   return nullptr;
 }
 

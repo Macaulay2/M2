@@ -191,7 +191,8 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   A.elem_text_out(o, *reducee, true, false, false);
   std::cout << "poly: " << o.str() << std::endl;
 
-  auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
+  //auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
+  auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
   heap->addPolynomial(*reducee);
 
   while (not heap->isZero())

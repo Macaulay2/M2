@@ -26,6 +26,8 @@ public:
   virtual Poly* value() = 0; // returns the polynomial
 
   virtual size_t getMemoryUsedInBytes() = 0;
+
+  virtual std::string getName() const = 0; // returns the 'type' of the underlying heap structure
 };
 
 enum class HeapTypes {
