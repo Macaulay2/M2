@@ -185,15 +185,9 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   Poly* remainder = new Poly;
   Poly tmp; // temp polynomial for seeing what is being added to heap.
 
-  std::cout << "starting reduction" << std::endl;
-
-  buffer o;
-  A.elem_text_out(o, *reducee, true, false, false);
-  std::cout << "poly: " << o.str() << std::endl;
-
   //auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
 
-  auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
+  auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
   heap->addPolynomial(*reducee);
 
   while (not heap->isZero())
@@ -214,11 +208,6 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
           // TODO: Check to see if d is a unit before inverting.
           auto coeffNeeded = A.coefficientRing()->divide(c,d);
           
-          // attempt to debug dupes in heap
-          o.reset();
-          A.elem_text_out(o, * (heap->value()), true, false, false);
-          std::cout << "heap poly before add: " << o.str() << std::endl;
-
           A.clear(tmp);
           A.mult_by_term_left_and_right(tmp,
                                         *reducers[subwordPos.first],
@@ -226,15 +215,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                         leftWord, 
                                         rightWord);
           
-          o.reset();
-          A.elem_text_out(o, tmp, true, false, false);
-          std::cout << "poly added to the heap: " << o.str() << std::endl;
-
           heap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
-
-          o.reset();
-          A.elem_text_out(o, * (heap->value()), true, false, false);
-          std::cout << "heap poly after add: " << o.str() << std::endl;
         }
       else
         {
@@ -243,13 +224,6 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
           A.add_to_end(*remainder, LT.first, LT.second);
           heap->removeLeadTerm();
         }
-      o.reset();
-      A.elem_text_out(o, *remainder, true, false, false);
-      std::cout << "remainder: " << o.str() << std::endl;
-
-      //o.reset();
-      //A.elem_text_out(o, * (heap->value()), true, false, false);
-      //std::cout << "poly: " << o.str() << std::endl;
     }
   return remainder;
 }

@@ -125,6 +125,8 @@ TEST(NCReduction, NaiveDedupPolynomialHeap)
   std::cout << H->getName() << std::endl;
   H->addPolynomial(*f);
   H->addPolynomial(*g);
+  std::cout << "H->value() = " << FreeAlgebraElement(A, *H->value());
+  std::cout << "  H->value() = " << FreeAlgebraElement(A, *H->value()) << std::endl;
   EXPECT_TRUE(A->is_equal(* H->value(), *h));
   EXPECT_TRUE(A->is_equal(* H->value(), *h));
 
@@ -175,10 +177,14 @@ TEST(NCReduction, NaivePolynomialHeap)
   auto H { makePolynomialHeap(HeapTypes::NaiveGeobucket, *A) };
   std::cout << H->getName() << std::endl;
   H->addPolynomial(*f);
+  std::cout << "H->value() = " << FreeAlgebraElement(A, *H->value()) << std::endl;
   H->addPolynomial(*g);
+  std::cout << "H->value() = " << FreeAlgebraElement(A, *H->value()) << std::endl;  
   EXPECT_TRUE(A->is_equal(* H->value(), *h));
   EXPECT_TRUE(A->is_equal(* H->value(), *h));
 
+  std::cout << "about to call removeLeadTerm" << std::endl;
+  
   H->removeLeadTerm();
   EXPECT_FALSE(H->isZero());
 

@@ -173,9 +173,18 @@ public:
   {
     mRing->init(mPoly);
   }
+  FreeAlgebraElement(const FreeAlgebra* F, const Poly& f)
+    : mRing(F),
+      mPoly(f)
+  {
+  }
   ~FreeAlgebraElement()
   {
     mRing->clear(mPoly);
+  }
+  const FreeAlgebra& ring() const
+  {
+    return *mRing;
   }
   Poly& operator*()
   {
@@ -219,11 +228,12 @@ public:
     mRing->power(*result, **this, n);
     return result;  // this is a copy
   }
-  
 private:
   const FreeAlgebra* mRing;
   Poly mPoly;
 };
+
+std::ostream& operator<<(std::ostream& o, const FreeAlgebraElement& f);
 
 // FreeAlgebraHeap and the SumCollector below are used for eval and mult
 

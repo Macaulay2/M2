@@ -4,6 +4,14 @@
 
 using ExponentVector = int*;
 
+std::ostream& operator<<(std::ostream& o, const FreeAlgebraElement& f)
+{
+  buffer b;
+  f.ring().elem_text_out(b, *f, true, false, false);
+  o << b.str();
+  return o;
+}
+
 // FreeAlgebraHeap functions
 
 FreeAlgebraHeap::FreeAlgebraHeap(const FreeAlgebra& FF)
