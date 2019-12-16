@@ -292,6 +292,76 @@ private:
   const FreeAlgebra& mRing;
 };
 
+class NaiveDedupQueueConfiguration
+{
+public:
+  NaiveDedupQueueConfiguration(const FreeAlgebra& F) : mRing(F) {}
+
+  using Entry = std::pair<ring_elem, Monom>;
+  
+  enum class CompareResult {LT, EQ, GT, Error};
+  CompareResult compare(const Entry& a, const Entry& b) const
+  {
+    int cmp = mRing.monoid().compare(a.second, b.second);
+    buffer o;
+    mRing.monoid().elem_text_out(o,a.second);
+    o << " ";
+    mRing.monoid().elem_text_out(o,b.second);
+    o << " " << cmp;
+    std::cout << "Monomial Compare: " << o.str() << std::endl;
+    if (cmp == LT) return CompareResult::LT;
+    if (cmp == GT) return CompareResult::GT;
+    if (cmp == EQ) return CompareResult::EQ;
+    
+    std::cout << "Unexpected monomial comparison error in heap." << std::endl << std::flush;
+    return CompareResult::Error;
+  }
+  bool cmpLessThan(CompareResult a) const { return a == CompareResult::LT; }
+
+  // Specific for Geobucket
+  const size_t minBucketSize = 2;
+  const size_t geoBase = 4;
+  static const size_t insertFactor = 4;
+
+  // specific for Heap
+  static const bool fastIndex = false;
+  // if set to true, a faster way of calculating indices is used
+  // but for this to work, sizeof(Entry) must be a power of two (which it
+  // should already be, since both Monom and ring_elem are really pointers?
+  
+  static const bool supportDeduplication = true;
+  bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
+  Entry deduplicate(Entry a, Entry b) const
+  {
+    ring_elem c = mRing.coefficientRing()->add(a.first, b.first);
+     
+    buffer o;
+    mRing.monoid().elem_text_out(o,a.second);
+    o << " ";
+    mRing.monoid().elem_text_out(o,b.second);
+    std::cout << "Deduplicate called with monomials: " << o.str() << std::endl;
+    
+    o.reset();
+    mRing.coefficientRing()->elem_text_out(o,a.first);
+    o << " + ";
+    mRing.coefficientRing()->elem_text_out(o,b.first);
+    o << " = ";
+    mRing.coefficientRing()->elem_text_out(o,c);
+    std::cout << "Sum : " << o.str() << std::endl;
+    
+    return Entry(c, a.second);
+  }
+
+  static const bool minBucketBinarySearch = true;
+  static const bool trackFront = true;
+  static const bool premerge = false;
+  static const bool collectMax = true;
+
+  static const mathic::GeobucketBucketStorage bucketStorage = mathic::GeoStoreSameSizeBuffer;
+private:
+  const FreeAlgebra& mRing;
+};
+
 template<template<typename> typename Queue>
 class NaivePolynomialHeap : public PolynomialHeap
 {
@@ -387,7 +457,102 @@ private:
 };
 
 
-void testMemoryBlock()
+template<template<typename> typename Queue>
+class NaiveDedupPolynomialHeap : public PolynomialHeap
+{
+public:
+  using Entry = NaiveDedupQueueConfiguration::Entry;
+
+  NaiveDedupPolynomialHeap(const FreeAlgebra& F)
+    : mRing(F),
+      mQueue(NaiveDedupQueueConfiguration(F))
+  {
+  }
+
+  virtual ~NaiveDedupPolynomialHeap() {}
+  
+  // prevent copy and assignment constructors
+  // allow move constructors, I guess?
+  NaiveDedupPolynomialHeap operator=(const NaiveDedupPolynomialHeap&) = delete;
+  NaiveDedupPolynomialHeap(const NaiveDedupPolynomialHeap&) = delete;
+
+  NaiveDedupPolynomialHeap& addPolynomial(const Poly& poly) override
+  {
+    for (auto i = poly.cbegin(); i != poly.cend(); ++i)
+      {
+        auto rg = mMonomialSpace.allocateArray<int>(i.monom().size());
+        std::copy(i.monom().begin(), i.monom().end(), rg.first);
+        mQueue.push(Entry(i.coeff(), Monom(rg.first)));
+      }
+    return *this;
+  }
+
+  NaiveDedupPolynomialHeap& addPolynomial(ring_elem coeff,
+                                 Word left,
+                                 Word right,
+                                const Poly& poly) override
+  {
+    Poly f;
+    mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
+    addPolynomial(f);
+    return *this;
+  }
+    
+  bool isZero() override
+  {
+    // idempotent function.
+    while (not mQueue.empty())
+      {
+        Entry e = mQueue.top();
+        if (mRing.coefficientRing()->is_zero(e.first))
+          mQueue.pop();
+        else
+          return false;
+      }
+    return true;
+  }
+  
+  std::pair<ring_elem, Monom> viewLeadTerm() override
+  {
+    return mQueue.top();
+    // loop
+    // look at lead element in queue
+    // if coeff is 0, pop it, else continue
+  }
+
+  void removeLeadTerm() override
+  {
+    mQueue.pop();
+  }
+
+  Poly* value() override
+  {
+    Poly* f = new Poly;
+    while (not isZero())
+      {
+        auto tm = viewLeadTerm();
+        mRing.add_to_end(*f, tm.first, tm.second);
+        removeLeadTerm();
+      }
+    addPolynomial(*f);
+    return f;
+  }
+
+  size_t getMemoryUsedInBytes() override
+  {
+    return mQueue.getMemoryUse() + mMonomialSpace.getMemoryUsedInBytes();
+  }
+
+  std::string getName() const override { return mQueue.getName(); }
+  
+private:
+  FreeAlgebra mRing;
+  Queue<NaiveDedupQueueConfiguration> mQueue;
+  MemoryBlock mMonomialSpace;
+};
+
+
+bool testMemoryBlock()
 {
   MemoryBlock B;
   for (size_t i = 0; i < 1000; ++i)
@@ -403,12 +568,13 @@ void testMemoryBlock()
             range.first[j] = 100 * i + j;
         }
       if ((range.second - range.first != sz) and (range.second - range.first != 4))
-        std::cout << "size is wrong" << std::endl;
-      std::cout << "i = " << i << " sz = " << sz << " elems = ";
-      for (int* a = range.first; a != range.second; ++a)
-        std::cout << *a << " ";
-      std::cout << std::endl << "memory usage: " << B.getMemoryUsedInBytes() << std::endl;
+        return false;
+      //      std::cout << "i = " << i << " sz = " << sz << " elems = ";
+      //      for (int* a = range.first; a != range.second; ++a)
+      //        std::cout << *a << " ";
+      //      std::cout << std::endl << "memory usage: " << B.getMemoryUsedInBytes() << std::endl;
     }
+  return true;
 }
 
 std::unique_ptr<PolynomialHeap>
@@ -416,6 +582,8 @@ makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
 {
   if (type == HeapTypes::Trivial)
     return make_unique<TrivialPolynomialHeap>(F);
+  if (type == HeapTypes::NaiveDedupGeobucket)
+    return make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
   if (type == HeapTypes::NaiveGeobucket)
     return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
   if (type == HeapTypes::NaiveTourTree)

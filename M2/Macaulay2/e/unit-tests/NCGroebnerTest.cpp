@@ -55,8 +55,8 @@ extern const QQ * globalQQ;
 
 TEST(MemoryBlock, tryit)
 {
-  extern void testMemoryBlock();
-  testMemoryBlock();
+  extern bool testMemoryBlock();
+  EXPECT_TRUE(testMemoryBlock()); // TODO: this test is a bit lame currently
 }
 
 TEST(NCReduction, tryit)
@@ -96,6 +96,57 @@ TEST(NCReduction, TrivialPolynomialHeap)
   H->removeLeadTerm();
   EXPECT_TRUE(H->isZero());
   EXPECT_TRUE(A->is_zero(* H->value()));
+}
+
+TEST(NCReduction, NaiveDedupPolynomialHeap)
+{
+  FreeAlgebra* A = FreeAlgebra::create(globalQQ,
+                                       { "x", "y", "z"},
+                                       degreeRing(1),
+                                       {1,1,1},
+                                       {},
+                                       {1}
+                                       );
+  FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A), mh(A);
+  FreeAlgebraElement F(A), G(A);
+  A->var(*x, 0);
+  A->var(*y, 1);
+  A->var(*z, 2);
+  f = x + y;
+  g = y + z;
+  h = x + y + y + z;
+  mh = -h;
+  // strangely enough, this doesn't give an error unless you use *all* the terms
+  // stopping F early will not cause the error.
+  F = y*z*x*z - y*z*y*y - y*z*z*x - z*x*y*z + z*x*z*y - z*y*y*y - z*z*x*y - z*z*y*x - z*z*z*z;
+  G = -y*z*x*z - y*z*y*y - y*z*z*x;
+
+  auto H { makePolynomialHeap(HeapTypes::NaiveDedupGeobucket, *A) };
+  std::cout << H->getName() << std::endl;
+  H->addPolynomial(*f);
+  H->addPolynomial(*g);
+  EXPECT_TRUE(A->is_equal(* H->value(), *h));
+  EXPECT_TRUE(A->is_equal(* H->value(), *h));
+
+  H->removeLeadTerm();
+  EXPECT_FALSE(H->isZero());
+
+  H->removeLeadTerm();
+  EXPECT_FALSE(H->isZero());
+
+  H->removeLeadTerm();
+  EXPECT_TRUE(H->isZero());
+  EXPECT_TRUE(A->is_zero(* H->value()));
+  H->addPolynomial(*h);
+  H->addPolynomial(*mh);
+  EXPECT_TRUE(H->isZero());
+  EXPECT_TRUE(A->is_zero(* H->value()));
+
+  H->addPolynomial(*F);
+  H->addPolynomial(*G);
+  buffer o;
+  A->elem_text_out(o,* (H->value()), true, false, false);
+  std::cout << o.str() << std::endl;
 }
 
 TEST(NCReduction, NaivePolynomialHeap)
