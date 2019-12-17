@@ -61,27 +61,17 @@ file_preparation: always
 library_preparation: file_preparation
 	$(MKDIR_P) files/@package@/@tail_libdir@
 
-	( set -e;															\
-	  for i in files/@package@/@tail_bindir@/* ;											\
-	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
-	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'					\
-		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
-		  | while read f;													\
-		    do echo "library preparation: error *** : file $$i uses dynamic library $$f" >&2;					\
-		       exit 1;														\
-		       done ;														\
-	     fi ;															\
-	  done &&															\
-	  for i in files/@package@/@tail_programsdir@/* ;										\
-	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
-	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'					\
-		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
-		  | while read f;													\
-		    do echo "library preparation: error *** : file $$i uses dynamic library $$f" >&2;					\
-		       exit 1;														\
-		    done ;														\
-	     fi ;															\
-	  done																\
+	( set -e;											\
+	  for i in files/@package@/@tail_bindir@/* files/@package@/@tail_programsdir@/* ;		\
+	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;							\
+	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'	\
+		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'				\
+		  | while read f;									\
+		    do echo "library preparation: error *** : file $$i uses dynamic library $$f" >&2;	\
+		       exit 1;										\
+		       done ;										\
+	     fi ;											\
+	  done												\
 	) >libraries.tmp ;
 
 	<libraries.tmp												\
