@@ -46,7 +46,7 @@ file_preparation: always
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
 
-# Sadly, the number "../"s in the install_name_tool commands below depends on the particular Macaulay2 Layout.
+# Sadly, the number of "../"s in the install_name_tool commands below depends on the particular Macaulay2 Layout.
 # The dynamic libraries we might need to relocate are these: libstdc++.6.dylib libgcc_s.1.dylib
 # and that's only if we compile with a non-system build of gcc.
 # Three symbolic prefixes for finding a library :
