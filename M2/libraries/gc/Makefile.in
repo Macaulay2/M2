@@ -54,7 +54,7 @@ VPATH = @srcdir@
 CONFIGOPTIONS += --enable-threads=posix
 
 ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --disable-shared --enable-static
 endif
 
 ifeq (@DEBUG@,yes)
