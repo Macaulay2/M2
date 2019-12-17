@@ -54,6 +54,10 @@ file_preparation: always
 #     @loader_path     : relative to the path to the library that wants the library
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
 # Read about all that with "man dyld".
+# We used to remap binaries using the dynamic libraries that are not part of the OS to point to the copy we provide
+# in the disk image file by using "@executable_path", but such binaries are not acceptable to "gatekeeper", which is responsible
+# for deciding whether a program about to run is trusted.  So now we just signal an error, instead.  Normal users don't make disk image
+# distributions, so it will only be the Macaulay2 maintainers who have to deal with such errors.  We hope.
 library_preparation: file_preparation
 	$(MKDIR_P) files/@package@/@tail_libdir@
 
