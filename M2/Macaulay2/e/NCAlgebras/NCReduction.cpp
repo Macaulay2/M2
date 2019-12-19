@@ -185,9 +185,9 @@ public:
     return mIter == mValue.cend();
   }
   
-  std::pair<ring_elem, Monom> viewLeadTerm() override
+  std::pair<Monom, ring_elem> viewLeadTerm() override
   {
-    return std::make_pair(mIter.coeff(), mIter.monom());
+    return std::make_pair(mIter.monom(), mIter.coeff());
   }
 
   void removeLeadTerm() override
@@ -227,12 +227,12 @@ class NaiveQueueConfiguration
 public:
   NaiveQueueConfiguration(const FreeAlgebra& F) : mRing(F) {}
 
-  using Entry = std::pair<ring_elem, Monom>;
+  using Entry = std::pair<Monom, ring_elem>;
   
   enum class CompareResult {LT, EQ, GT, Error};
   CompareResult compare(const Entry& a, const Entry& b) const
   {
-    int cmp = mRing.monoid().compare(a.second, b.second);
+    int cmp = mRing.monoid().compare(a.first, b.first);
     if (cmp == LT) return CompareResult::LT;
     if (cmp == GT) return CompareResult::GT;
     if (cmp == EQ) return CompareResult::EQ;
@@ -273,12 +273,12 @@ class NaiveDedupQueueConfiguration
 public:
   NaiveDedupQueueConfiguration(const FreeAlgebra& F) : mRing(F) {}
 
-  using Entry = std::pair<ring_elem, Monom>;
+  using Entry = std::pair<Monom, ring_elem>;
   
   enum class CompareResult {LT, EQ, GT, Error};
   CompareResult compare(const Entry& a, const Entry& b) const
   {
-    int cmp = mRing.monoid().compare(a.second, b.second);
+    int cmp = mRing.monoid().compare(a.first, b.first);
     if (cmp == LT) return CompareResult::LT;
     if (cmp == GT) return CompareResult::GT;
     if (cmp == EQ) return CompareResult::EQ;
@@ -303,8 +303,8 @@ public:
   bool cmpEqual(CompareResult a) const { return a == CompareResult::EQ; }
   Entry deduplicate(Entry a, Entry b) const
   {
-    ring_elem c = mRing.coefficientRing()->add(a.first, b.first);
-    return Entry(c, a.second);
+    ring_elem c = mRing.coefficientRing()->add(a.second, b.second);
+    return Entry(a.first, c);
   }
 
   static const bool minBucketBinarySearch = true;
@@ -327,7 +327,7 @@ public:
     : mRing(F),
       mQueue(NaiveQueueConfiguration(F)),
       mLeadTermSet(false),
-      mLeadTerm(F.coefficientRing()->zero(), Monom())
+      mLeadTerm(Monom(), F.coefficientRing()->zero())
   {
   }
 
@@ -349,7 +349,7 @@ public:
       {
         auto rg = mMonomialSpace.allocateArray<int>(i.monom().size());
         std::copy(i.monom().begin(), i.monom().end(), rg.first);
-        mQueue.push(Entry(i.coeff(), Monom(rg.first)));
+        mQueue.push(Entry(Monom(rg.first), i.coeff()));
       }
     return *this;
   }
@@ -373,14 +373,14 @@ public:
     while (not mQueue.empty())
       {
         Entry e = mQueue.top();
-        if (mRing.monoid().compare(e.second, lt.second) == EQ)
+        if (mRing.monoid().compare(e.first, lt.first) == EQ)
           {
-            lt.first = mRing.coefficientRing()->add(lt.first, e.first);
+            lt.second = mRing.coefficientRing()->add(lt.second, e.second);
             mQueue.pop();
           }
         else
           {
-            if (not mRing.coefficientRing()->is_zero(lt.first))
+            if (not mRing.coefficientRing()->is_zero(lt.second))
               {
                 mLeadTermSet = true;
                 mLeadTerm = lt;
@@ -390,7 +390,7 @@ public:
               lt = mQueue.pop();
           }
       }
-    if (not mRing.coefficientRing()->is_zero(lt.first))
+    if (not mRing.coefficientRing()->is_zero(lt.second))
       {
         mLeadTermSet = true;
         mLeadTerm = lt;
@@ -399,7 +399,7 @@ public:
     return true;
   }
   
-  std::pair<ring_elem, Monom> viewLeadTerm() override
+  std::pair<Monom, ring_elem> viewLeadTerm() override
   {
     if (isZero())
       {
@@ -427,7 +427,7 @@ public:
     while (not isZero())
       {
         auto tm = viewLeadTerm();
-        mRing.add_to_end(*f, tm.first, tm.second);
+        mRing.add_to_end(*f, tm.second, tm.first);
         removeLeadTerm();
       }
     addPolynomial(*f);
@@ -446,7 +446,7 @@ private:
   Queue<NaiveQueueConfiguration> mQueue;
   MemoryBlock mMonomialSpace;
   bool mLeadTermSet; // true means mLeadTerm is set, to a non-zero value.
-  std::pair<ring_elem, Monom> mLeadTerm;
+  std::pair<Monom, ring_elem> mLeadTerm;
 };
 
 
@@ -475,7 +475,7 @@ public:
       {
         auto rg = mMonomialSpace.allocateArray<int>(i.monom().size());
         std::copy(i.monom().begin(), i.monom().end(), rg.first);
-        mQueue.push(Entry(i.coeff(), Monom(rg.first)));
+        mQueue.push(Entry(Monom(rg.first), i.coeff()));
       }
     return *this;
   }
@@ -497,7 +497,300 @@ public:
     while (not mQueue.empty())
       {
         Entry e = mQueue.top();
-        if (mRing.coefficientRing()->is_zero(e.first))
+        if (mRing.coefficientRing()->is_zero(e.second))
+          mQueue.pop();
+        else
+          return false;
+      }
+    return true;
+  }
+  
+  std::pair<Monom, ring_elem> viewLeadTerm() override
+  {
+    return mQueue.top();
+  }
+
+  void removeLeadTerm() override
+  {
+    mQueue.pop();
+  }
+
+  Poly* value() override
+  {
+    Poly* f = new Poly;
+    while (not isZero())
+      {
+        auto tm = viewLeadTerm();
+        mRing.add_to_end(*f, tm.second, tm.first);
+        removeLeadTerm();
+      }
+    addPolynomial(*f);
+    return f;
+  }
+
+  size_t getMemoryUsedInBytes() override
+  {
+    return mQueue.getMemoryUse() + mMonomialSpace.getMemoryUsedInBytes();
+  }
+
+  std::string getName() const override { return mQueue.getName(); }
+  
+private:
+  FreeAlgebra mRing;
+  Queue<NaiveDedupQueueConfiguration> mQueue;
+  MemoryBlock mMonomialSpace;
+};
+
+class MonomHashEq
+{
+public:
+  MonomHashEq(const FreeMonoid& M) : mMonoid(M) {}
+
+  size_t operator()(const Monom m) const // hash function
+  {
+    return 0; 
+  }
+
+  bool operator() (const Monom a, const Monom b) const
+  {
+    return mMonoid.compare(a, b) == LT;
+  }
+private:
+  const FreeMonoid& mMonoid;
+};
+
+class MapPolynomialHeap : public PolynomialHeap
+{
+public:
+  using Entry = std::pair<Monom, ring_elem>;
+
+  MapPolynomialHeap(const FreeAlgebra& F)
+    : mRing(F),
+      mHashEq(F.monoid()),
+      mMap(mHashEq)
+  {
+  }
+
+  virtual ~MapPolynomialHeap() {}
+  
+  // prevent copy and assignment constructors
+  // allow move constructors, I guess?
+  MapPolynomialHeap operator=(const MapPolynomialHeap&) = delete;
+  MapPolynomialHeap(const MapPolynomialHeap&) = delete;
+
+  void addTerm(Entry tm)
+  {
+    auto result = mMap.find(tm.first);
+    bool found = (result != mMap.end());
+    if (found)
+      {
+        result->second = mRing.coefficientRing()->add(tm.second, result->second);
+      }
+    else
+      {
+        // need to allocate new term, and insert into hash table and the queue.
+        auto rg = mMonomialSpace.allocateArray<int>(tm.first.size());
+        std::copy(tm.first.begin(), tm.first.end(), rg.first);
+        mMap.insert({Monom(rg.first), tm.second});
+      }
+  }
+  
+  MapPolynomialHeap& addPolynomial(const Poly& poly) override
+  {
+    for (auto i = poly.cbegin(); i != poly.cend(); ++i)
+      {
+        addTerm(Entry(i.monom(), i.coeff()));
+      }
+    return *this;
+  }
+
+  MapPolynomialHeap& addPolynomial(ring_elem coeff,
+                                 Word left,
+                                 Word right,
+                                const Poly& poly) override
+  {
+    Poly f;
+    mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
+    addPolynomial(f);
+    return *this;
+  }
+    
+  bool isZero() override
+  {
+    // idempotent function.
+    while (not mMap.empty())
+      {
+        const Entry& e = *(mMap.begin());
+        if (mRing.coefficientRing()->is_zero(e.second))
+          mMap.erase(mMap.begin());
+        else
+          return false;
+      }
+    return true;
+  }
+  
+  std::pair<Monom, ring_elem> viewLeadTerm() override
+  {
+    return * (mMap.begin());
+  }
+
+  void removeLeadTerm() override
+  {
+    mMap.erase(mMap.begin());
+  }
+
+  Poly* value() override
+  {
+    Poly* f = new Poly;
+    while (not isZero())
+      {
+        auto tm = viewLeadTerm();
+        mRing.add_to_end(*f, tm.second, tm.first);
+        removeLeadTerm();
+      }
+    addPolynomial(*f);
+    return f;
+  }
+
+  size_t getMemoryUsedInBytes() override
+  {
+    return 0;
+  }
+
+  std::string getName() const override { return "map heap"; }
+  
+private:
+  FreeAlgebra mRing;
+  MonomHashEq mHashEq;
+  std::map<Monom, ring_elem, MonomHashEq> mMap;
+  MemoryBlock mMonomialSpace;
+};
+
+#if 0
+class HashedConfiguration
+{
+public:
+ HashedConfiguration(const FreeAlgebra& F) : mRing(F) {}
+
+  using Entry = Monom;
+  using Term = Entry *;
+
+  // Members needed for Geobucket, TourTree and Heap data structures.
+  enum class CompareResult {LT, EQ, GT, Error};
+  CompareResult compare(const Entry& a, const Entry& b) const
+  {
+    int cmp = mRing.monoid().compare(a->second, b->second);
+    if (cmp == LT) return CompareResult::LT;
+    if (cmp == GT) return CompareResult::GT;
+    if (cmp == EQ) return CompareResult::EQ;
+    
+    std::cout << "Unexpected monomial comparison error in heap." << std::endl << std::flush;
+    return CompareResult::Error;
+  }
+
+  bool cmpLessThan(CompareResult a) const { return a == CompareResult::LT; }
+
+  // Specific for Geobucket
+  const size_t minBucketSize = 2;
+  const size_t geoBase = 4;
+  static const size_t insertFactor = 4;
+
+  // specific for Heap
+  static const bool fastIndex = false;
+  // if set to true, a faster way of calculating indices is used
+  // but for this to work, sizeof(Entry) must be a power of two (which it
+  // should already be, since both Monom and ring_elem are really pointers?
+  
+  static const bool supportDeduplication = false;
+  bool cmpEqual(CompareResult a) const; // no implementation needed
+  Entry deduplicate(Entry a, Entry b) const; // no implementation needed
+
+  static const bool minBucketBinarySearch = true;
+  static const bool trackFront = true;
+  static const bool premerge = false;
+  static const bool collectMax = true;
+
+  static const mathic::GeobucketBucketStorage bucketStorage = mathic::GeoStoreSameSizeBuffer;
+
+   // Members needed for unordered_set
+  size_t operator()(const Term& term) const // hash value
+  {
+    return 0;
+  }
+  bool operator()(Term& term1, Term& term2) const   // check for equality
+  {
+    return compare(&term1, &term2) == CompareResult::EQ;
+  }
+private:
+  const FreeAlgebra& mRing;
+};
+
+template<template<typename> typename Queue>
+class HashedPolynomialHeap : public PolynomialHeap
+{
+public:
+  using Term = HashedConfiguration::Term;
+  using Entry = HashedConfiguration::Entry;
+
+  HashedPolynomialHeap(const FreeAlgebra& F)
+    : mRing(F),
+      mConfig(HashedConfiguration(F)),
+      mQueue(mConfig),
+      mHash(1024, mConfig, mConfig)
+  {
+  }
+
+  virtual ~HashedPolynomialHeap() {}
+  
+  // prevent copy and assignment constructors
+  // allow move constructors, I guess?
+  HashedPolynomialHeap operator=(const HashedPolynomialHeap&) = delete;
+  HashedPolynomialHeap(const HashedPolynomialHeap&) = delete;
+
+  HashedPolynomialHeap& addTerm(Term tm)
+  {
+    auto result = mHash.find(tm);
+    bool found = (result != mHash.end());
+    if (found)
+      {
+        const_cast<ring_elem&>(result->first) = mRing.coefficientRing()->add(tm.first, result->first);
+      }
+    else
+      {
+        // need to allocate new term, and insert into hash table and the queue.
+        auto rg = mMonomialSpace.allocateArray<int>(tm.second.size());
+        std::copy(tm.second.begin(), tm.second.end(), rg.first);
+        mQueue.push(&*(inserted.first));
+        auto inserted = mHash.insert(Term(tm.first, rg.first)); // TODO: add in assert check that this insert succeeds
+      }
+    return *this;
+  }
+  
+  HashedPolynomialHeap& addPolynomial(const Poly& poly) override
+  {
+    for (auto i = poly.cbegin(); i != poly.cend(); ++i)
+      addTerm(Term(i.coeff(), i.monom()));
+    return *this;
+  }
+
+  HashedPolynomialHeap& addPolynomial(ring_elem coeff,
+                                 Word left,
+                                 Word right,
+                                const Poly& poly) override
+  {
+    Poly f;
+    mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
+    addPolynomial(f);
+    return *this;
+  }
+    
+  bool isZero() override
+  {
+    // idempotent function.
+    while (not mQueue.empty())
+      {
+        Entry e = mQueue.top();
+        if (mRing.coefficientRing()->is_zero(e->first))
           mQueue.pop();
         else
           return false;
@@ -507,7 +800,7 @@ public:
   
   std::pair<ring_elem, Monom> viewLeadTerm() override
   {
-    return mQueue.top();
+    return * mQueue.top();
     // loop
     // look at lead element in queue
     // if coeff is 0, pop it, else continue
@@ -540,9 +833,12 @@ public:
   
 private:
   FreeAlgebra mRing;
-  Queue<NaiveDedupQueueConfiguration> mQueue;
+  HashedConfiguration mConfig;
+  Queue<HashedConfiguration> mQueue;
+  std::unordered_map<Monom, ring_elem, HashedConfiguration, HashedConfiguration> mHash;
   MemoryBlock mMonomialSpace;
 };
+#endif
 
 
 bool testMemoryBlock()
@@ -573,16 +869,22 @@ bool testMemoryBlock()
 std::unique_ptr<PolynomialHeap>
 makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
 {
-  if (type == HeapTypes::Trivial)
+  switch (type) {
+    //  case HeapTypes::HashedGeobucket:
+    //    return make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
+  case HeapTypes::Map:
+    return make_unique<MapPolynomialHeap>(F);
+  case HeapTypes::Trivial:
     return make_unique<TrivialPolynomialHeap>(F);
-  if (type == HeapTypes::NaiveDedupGeobucket)
+  case HeapTypes::NaiveDedupGeobucket:
     return make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
-  if (type == HeapTypes::NaiveGeobucket)
+  case HeapTypes::NaiveGeobucket:
     return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
-  //  if (type == HeapTypes::NaiveTourTree)
-  //    return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
-  //  if (type == HeapTypes::NaiveHeap)
-  //     return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
+  case HeapTypes::NaiveTourTree:
+    return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
+  case HeapTypes::NaiveHeap:
+    return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
+  };
   return nullptr;
 }
 

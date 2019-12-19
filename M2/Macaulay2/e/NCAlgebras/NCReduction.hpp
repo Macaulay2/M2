@@ -18,7 +18,7 @@ public:
   virtual bool isZero() = 0;
 
   // viewLeadTerm: should only be called if isZero() returns false.
-  virtual std::pair<ring_elem, Monom> viewLeadTerm() = 0;
+  virtual std::pair<Monom, ring_elem> viewLeadTerm() = 0;
 
   // removeLeadTerm: should only be called if isZero() returns false.
   virtual void removeLeadTerm() = 0;
@@ -31,7 +31,13 @@ public:
 };
 
 enum class HeapTypes {
-                      Trivial, NaiveGeobucket, NaiveHeap, NaiveTourTree, NaiveDedupGeobucket
+  Trivial,
+  Map,
+  NaiveGeobucket,
+  NaiveHeap,
+  NaiveTourTree,
+  NaiveDedupGeobucket,
+  HashedGeobucket
 };
 
 std::unique_ptr<PolynomialHeap>

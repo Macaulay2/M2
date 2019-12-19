@@ -185,25 +185,29 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   Poly* remainder = new Poly;
   Poly tmp; // temp polynomial for seeing what is being added to heap.
 
-  //auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
 
-  auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
+
+  auto heap { makePolynomialHeap(HeapTypes::Map, A) };
+  // auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
+  //auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
+  //  auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
+
   heap->addPolynomial(*reducee);
 
   while (not heap->isZero())
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
       Word reduceeLeadWord;
-      std::pair<ring_elem, Monom> LT { heap->viewLeadTerm() };
-      A.monoid().wordFromMonom(reduceeLeadWord, LT.second);
+      std::pair<Monom, ring_elem> LT { heap->viewLeadTerm() };
+      A.monoid().wordFromMonom(reduceeLeadWord, LT.first);
 
       if (W.subword(reduceeLeadWord,subwordPos))
         {
           // If there is one, perform reduceeSoFar -= coef * left * reducers[index] * right
-          A.monoid().wordPrefixFromMonom(leftWord, LT.second, subwordPos.second);
-          A.monoid().wordSuffixFromMonom(rightWord, LT.second, W[subwordPos.first].size()+subwordPos.second);
+          A.monoid().wordPrefixFromMonom(leftWord, LT.first, subwordPos.second);
+          A.monoid().wordSuffixFromMonom(rightWord, LT.first, W[subwordPos.first].size()+subwordPos.second);
 
-          ring_elem c = A.coefficientRing()->negate(LT.first);
+          ring_elem c = A.coefficientRing()->negate(LT.second);
           ring_elem d = reducers[subwordPos.first]->cbegin().coeff();
           // TODO: Check to see if d is a unit before inverting.
           auto coeffNeeded = A.coefficientRing()->divide(c,d);
@@ -221,7 +225,7 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
         {
           // If none, copy that term to the remainder (use add_to_end)
           // and subtract that term
-          A.add_to_end(*remainder, LT.first, LT.second);
+          A.add_to_end(*remainder, LT.second, LT.first);
           heap->removeLeadTerm();
         }
     }

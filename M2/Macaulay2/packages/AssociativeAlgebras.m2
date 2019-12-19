@@ -918,6 +918,10 @@ TEST ///
   assert(numcols ncBasis(5,A) == 21)
   assert(numcols ncBasis(6,A) == 28)
   assert(numcols ncBasis(10,A) == 66)
+  
+  elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec
+  elapsedTime NCGB(I, 21); -- 9.8 sec
+  elapsedTime NCGB(I, 22); -- 16.23 sec
 ///
 
 ///
