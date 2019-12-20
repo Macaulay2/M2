@@ -27,6 +27,8 @@ public:
 
   virtual size_t getMemoryUsedInBytes() = 0;
 
+  virtual void clear() = 0;
+  
   virtual std::string getName() const = 0; // returns the 'type' of the underlying heap structure
 };
 

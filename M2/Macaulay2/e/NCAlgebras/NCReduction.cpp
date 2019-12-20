@@ -150,7 +150,9 @@ public:
   }
 
   virtual ~TrivialPolynomialHeap() {}
-  
+
+  void clear() { mRing.setZero(mValue); mIter = mValue.cbegin(); }
+    
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
   TrivialPolynomialHeap operator=(const TrivialPolynomialHeap&) = delete;
@@ -332,6 +334,16 @@ public:
   }
 
   virtual ~NaivePolynomialHeap() {}
+
+  void clear() {
+    // clear the heap.  The free algebra is kept the same
+    // but all other aspects are reset.  The MonomialSpace
+    // has all its data freed to the arena, but is available for
+    // use without any new allocations for the next computation.
+    mLeadTermSet = false;
+    mQueue.clear();
+    mMonomialSpace.deallocateAll();
+  }
   
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
@@ -463,6 +475,15 @@ public:
   }
 
   virtual ~NaiveDedupPolynomialHeap() {}
+
+  void clear() {
+    // clear the heap.  The free algebra is kept the same
+    // but all other aspects are reset.  The MonomialSpace
+    // has all its data freed to the arena, but is available for
+    // use without any new allocations for the next computation.
+    mQueue.clear();
+    mMonomialSpace.deallocateAll();
+  }
   
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
@@ -572,6 +593,15 @@ public:
   }
 
   virtual ~MapPolynomialHeap() {}
+
+  void clear() {
+    // clear the heap.  The free algebra is kept the same
+    // but all other aspects are reset.  The MonomialSpace
+    // has all its data freed to the arena, but is available for
+    // use without any new allocations for the next computation.
+    mMap.clear();
+    mMonomialSpace.deallocateAll();
+  }
   
   // prevent copy and assignment constructors
   // allow move constructors, I guess?

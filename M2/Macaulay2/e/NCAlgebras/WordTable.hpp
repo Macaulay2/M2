@@ -60,6 +60,8 @@ public:
 
   ~WordTable() {}
 
+  void clear() { mMonomials.clear(); }
+
   size_t monomialCount() const { return mMonomials.size(); }
 
   size_t insert(Word w);

@@ -5,6 +5,7 @@
 #include "WordTable.hpp"
 #include "SuffixTree.hpp"
 #include "OverlapTable.hpp"
+#include "NCReduction.hpp"
 #include <iostream>
 
 extern void tryOutMathicCode();
@@ -12,28 +13,29 @@ extern void tryOutMathicCode();
 class NCGroebner : public our_new_delete
 {
 private:
-  const M2FreeAlgebra& mM2FreeAlgebra;
+  const FreeAlgebra& mFreeAlgebra;
 
   WordTable mWordTable;
   //SuffixTree mWordTable;
   OverlapTable mOverlapTable;
   const ConstPolyList mInput;
   ConstPolyList mGroebner;
+  mutable std::unique_ptr<PolynomialHeap> mHeap;
   
   int mTopComputedDegree;
   int mHardDegreeLimit;
 
 public:
 
-  NCGroebner(const M2FreeAlgebra& A,
+  NCGroebner(const FreeAlgebra& A,
              const ConstPolyList& input,
              int hardDegreeLimit)
-    : mM2FreeAlgebra(A),
+    : mFreeAlgebra(A),
       mInput(input),
+      mHeap(std::move(makePolynomialHeap(HeapTypes::Map,A))),
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {
-    //    tryOutMathicCode();
     Word tmpWord;
     // process input polynomials
     for (auto i = 0; i < mInput.size(); ++i)
@@ -43,36 +45,33 @@ public:
                              true,
                              std::make_tuple(i,-1,-1));
       }
-  
   }
 
-  const M2FreeAlgebra& m2FreeAlgebra() const { return mM2FreeAlgebra; }
-  const FreeAlgebra& freeAlgebra() const { return m2FreeAlgebra().freeAlgebra(); }
+  const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
   
   void compute(int softDegreeLimit);
 
   const ConstPolyList& currentValue();
 
-  static auto twoSidedReductionOld(const FreeAlgebra& A,
-                                const Poly* reducee,
-                                const ConstPolyList& reducers,
-                                const WordTable& W) -> Poly*;
-  
-  static auto twoSidedReduction(const FreeAlgebra& A,
-                                const ConstPolyList& reducees,
-                                const ConstPolyList& reducers) -> ConstPolyList;
+  // old version of reduction code
+  auto twoSidedReductionOld(const FreeAlgebra& A,
+                            const Poly* reducee,
+                            const ConstPolyList& reducers,
+                            const WordTable& W) -> Poly*;
 
-  static auto twoSidedReduction(const FreeAlgebra& A,
-                                const Poly* reducee,
-                                const ConstPolyList& reducers,
-                                const WordTable& W) -> Poly*;
-
+  // this is the old version of the SuffixTree reduction code.
   // static auto twoSidedReduction(const FreeAlgebra& A,
   //                               const Poly* reducee,
   //                               const ConstPolyList& reducers,
   //                               const SuffixTree& W) -> Poly*;
 
+  auto twoSidedReduction(const ConstPolyList& reducees) const -> ConstPolyList;
+
+  // this is logically const, but not actually because the heap may be changed by
+  // this function.
   auto twoSidedReduction(const Poly* reducee) const -> Poly*;
+
+  auto initReductionOnly() -> void;
   
   static auto createOverlapPoly(const FreeAlgebra& A,
                                 const ConstPolyList& polyList,

@@ -2,6 +2,7 @@
 #define _free_algebra_quotient_hpp_
 
 #include "FreeAlgebra.hpp"
+#include "NCGroebner.hpp"
 #include "SuffixTree.hpp"
 #include <memory>
 
@@ -9,13 +10,14 @@ class FreeAlgebraQuotient : public our_new_delete
 {
 private:
   const FreeAlgebra& mFreeAlgebra;
-  std::unique_ptr<ConstPolyList> mGroebner;
-  WordTable mWordTable;
+  NCGroebner mGroebner;
+  // placed word tables in NCGroebner object
+  //WordTable mWordTable;
   //SuffixTree mWordTable;
   int mMaxdeg;
   
 public:
-  FreeAlgebraQuotient(const FreeAlgebra& A, std::unique_ptr<ConstPolyList> GB, int maxdeg);
+  FreeAlgebraQuotient(const FreeAlgebra& A, ConstPolyList& GB, int maxdeg);
 
   const FreeMonoid& monoid() const { return mFreeAlgebra.monoid(); }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }

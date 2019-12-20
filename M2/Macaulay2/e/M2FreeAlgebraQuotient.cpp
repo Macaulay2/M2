@@ -33,7 +33,7 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
                                                      )
 {
   std::unique_ptr<ConstPolyList> gbElements = copyMatrixToVector(F, GB);
-  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), std::move(gbElements), maxdeg));
+  auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), *gbElements, maxdeg));
   M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, std::move(A));
   result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), nullptr);
   result->zeroV = result->from_long(0);

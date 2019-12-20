@@ -9,26 +9,23 @@ SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 }
 
 FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
-                                         std::unique_ptr<ConstPolyList> GB,
+                                         ConstPolyList& GB,
                                          int maxdeg)
   : mFreeAlgebra(A),
-    mGroebner(std::move(GB)),
+    mGroebner(A,GB,maxdeg),
     mMaxdeg(maxdeg)
 {
-   // Build the word table for the reduction
-   for (auto f : *mGroebner)
-     {
-       Word tmp;
-       A.monoid().wordFromMonom(tmp,f->cbegin().monom());
-       mWordTable.insert(tmp);
-     }
+  // this NCGroebner object is used for reductions only.
+  // will eventually separate the 'reduction' code from the 'GB' code
+  // into two separate classes, but for now we have just one.
+  mGroebner.initReductionOnly();
 }
 
 void FreeAlgebraQuotient::normalizeInPlace(Poly& f) const
 {
   // for now, we will simply reduce the poly f and copy the result into f.
   // TODO: Make this work 'in place'.
-  auto fRed = NCGroebner::twoSidedReduction(freeAlgebra(),&f,*mGroebner,mWordTable);
+  auto fRed = mGroebner.twoSidedReduction(&f);
   freeAlgebra().swap(f,*fRed);
 }
 

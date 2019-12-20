@@ -1,5 +1,4 @@
 #include "NCGroebner.hpp"
-#include "NCReduction.hpp"
 
 void NCGroebner::compute(int softDegreeLimit)
 {
@@ -60,6 +59,8 @@ void NCGroebner::compute(int softDegreeLimit)
                   std::cout << "SuffixTree before inserting : " << tmpWord << std::endl;
                   std::cout << mWordTable << std::endl;
                 }
+              // this inserts tmpWord into word table and also finds
+              // the new right overlaps with this word.
               mWordTable.insert(tmpWord,newOverlaps);
               if (M2_gbTrace >= 4)
                 {
@@ -67,12 +68,11 @@ void NCGroebner::compute(int softDegreeLimit)
                   std::cout << mWordTable << std::endl;
                 }
               
-              // TODO: Fix bug here!
-              // std::cout << "Here1" << std::endl << std::flush;
               insertNewOverlaps(newOverlaps);
-              // std::cout << "Here2" << std::endl << std::flush;
 
               newOverlaps.clear();
+              // this function finds the left overlaps with the most recently
+              // inserted word.
               mWordTable.leftOverlaps(newOverlaps);
               insertNewOverlaps(newOverlaps);
 
@@ -110,6 +110,9 @@ const ConstPolyList& NCGroebner::currentValue()
   return mGroebner;
 }
 
+// this is the old (non heap object) version of the reduction code
+// it will no longer work since we have retooled the NCGroebner object
+// to no longer use static functions.
 auto NCGroebner::twoSidedReductionOld(const FreeAlgebra& A,
                                     const Poly* reducee,
                                     const ConstPolyList& reducers,
@@ -169,15 +172,15 @@ auto NCGroebner::twoSidedReductionOld(const FreeAlgebra& A,
   return remainder;
 }
 
-auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-                                    const Poly* reducee,
-                                    const ConstPolyList& reducers,
-                                    const WordTable& W) -> Poly*
-// auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-//                                    const Poly* reducee,
-//                                    const ConstPolyList& reducers,
-//                                    const SuffixTree& W) -> Poly*
+// new version of reduction code which uses a heap structure
+auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
 {
+  // easy access to variables in the class
+  const FreeAlgebra& A{ freeAlgebra() };
+  const ConstPolyList& reducers{ mGroebner };
+  const WordTable& W{ mWordTable };
+  // SuffixTree& W{ mWordTable };
+  
   // pair will be (i,j) where the ith word in wordtable appears in word in position j
   std::pair<int,int> subwordPos; 
   Word leftWord, rightWord;
@@ -185,20 +188,18 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
   Poly* remainder = new Poly;
   Poly tmp; // temp polynomial for seeing what is being added to heap.
 
-
-
-  auto heap { makePolynomialHeap(HeapTypes::Map, A) };
+  // auto heap { makePolynomialHeap(HeapTypes::Map, A) };
   // auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
-  //auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
-  //  auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
+  // auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
+  // auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
+  mHeap->clear();
+  mHeap->addPolynomial(*reducee);
 
-  heap->addPolynomial(*reducee);
-
-  while (not heap->isZero())
+  while (not mHeap->isZero())
     {
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
       Word reduceeLeadWord;
-      std::pair<Monom, ring_elem> LT { heap->viewLeadTerm() };
+      std::pair<Monom, ring_elem> LT { mHeap->viewLeadTerm() };
       A.monoid().wordFromMonom(reduceeLeadWord, LT.first);
 
       if (W.subword(reduceeLeadWord,subwordPos))
@@ -219,48 +220,43 @@ auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
                                         leftWord, 
                                         rightWord);
           
-          heap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
+          mHeap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
         }
       else
         {
           // If none, copy that term to the remainder (use add_to_end)
           // and subtract that term
           A.add_to_end(*remainder, LT.second, LT.first);
-          heap->removeLeadTerm();
+          mHeap->removeLeadTerm();
         }
     }
   return remainder;
 }
 
-auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-                                   const ConstPolyList& reducees,
-                                   const ConstPolyList& reducers) -> ConstPolyList
+auto NCGroebner::twoSidedReduction(const ConstPolyList& reducees) const -> ConstPolyList
 {
-  WordTable W;
-  //SuffixTree W;
-  // Build the word table for the reduction
-  for (auto& f : reducers)
-    {
-      auto i = f->cbegin();
-      Word tmp;
-      A.monoid().wordFromMonom(tmp,i.monom());
-      W.insert(tmp);
-    }
   ConstPolyList result;
   for (auto i = reducees.cbegin(); i != reducees.cend(); ++i)
-    result.push_back(twoSidedReduction(A, *i, reducers, W));
+    result.push_back(twoSidedReduction(*i));
   return result;
 }
 
-auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
+auto NCGroebner::initReductionOnly() -> void
 {
-  return twoSidedReduction(freeAlgebra(),
-                           reducee,
-                           mGroebner,
-                           mWordTable);
+  // this function clears out mWordTable, places mInput in mGroebner,
+  // and builds the word table.
+  mWordTable.clear();
+  for (auto& f : mInput)
+    {
+      mGroebner.push_back(f);
+      auto i = f->cbegin();
+      Word tmp;
+      freeAlgebra().monoid().wordFromMonom(tmp,i.monom());
+      mWordTable.insert(tmp);
+    }  
 }
- 
-auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
+
+ auto NCGroebner::createOverlapPoly(const FreeAlgebra& A,
                                    const ConstPolyList& polyList,
                                    int polyIndex1,
                                    int overlapIndex,
