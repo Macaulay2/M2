@@ -9,6 +9,8 @@
 #include <mathic/Geobucket.h>
 #include <mathic/Heap.h>
 
+#include "myalloc.hpp"
+
 #if 0
 Reasoning about using these structures in noncomm reduction.
 Possible ways:
@@ -584,6 +586,7 @@ class MapPolynomialHeap : public PolynomialHeap
 {
 public:
   using Entry = std::pair<Monom, ring_elem>;
+  using ConstEntry = std::pair<const Monom, ring_elem>;
 
   MapPolynomialHeap(const FreeAlgebra& F)
     : mRing(F),
@@ -692,7 +695,7 @@ public:
 private:
   FreeAlgebra mRing;
   MonomHashEq mHashEq;
-  std::map<Monom, ring_elem, MonomHashEq> mMap;
+  std::map<Monom, ring_elem, MonomHashEq, StatsAllocator<ConstEntry>> mMap;
   MemoryBlock mMonomialSpace;
 };
 

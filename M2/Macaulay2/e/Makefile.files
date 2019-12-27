@@ -12,6 +12,7 @@ INTERFACE2 = \
 
 
 INTERFACE = \
+	myalloc \
 	matrix-ncbasis \
 	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \

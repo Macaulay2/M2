@@ -13,6 +13,19 @@
 // format
 // [total length] wt0 wt1 ... w(tr-1) w0 w1  ... ws
 
+class StatsFreeMonoid
+{
+public:
+  static size_t mCompares;
+
+  void reset()
+  {
+    mCompares = 0;
+  }
+};
+
+std::ostream& operator<<(std::ostream& o, StatsFreeMonoid a);
+
 class Word;
 
 class FreeMonoid : public our_new_delete
