@@ -1,12 +1,12 @@
 #include "myalloc.hpp"
 
-size_t StatsAlloc::mNumAllocs = 0;
-size_t StatsAlloc::mNumDeallocs = 0;
-size_t StatsAlloc::mAllocSize = 0;
-size_t StatsAlloc::mCurrentAllocSize = 0;
-size_t StatsAlloc::mHighWater = 0;
+size_t AllocLogger::mNumAllocs = 0;
+size_t AllocLogger::mNumDeallocs = 0;
+size_t AllocLogger::mAllocSize = 0;
+size_t AllocLogger::mCurrentAllocSize = 0;
+size_t AllocLogger::mHighWater = 0;
 
-std::ostream& operator<<(std::ostream& o, StatsAlloc a)
+std::ostream& operator<<(std::ostream& o, AllocLogger a)
 {
   o << "allocs/deallocs, total/high/current size allocated: "
     << a.mNumAllocs << "/" << a.mNumDeallocs << "  "

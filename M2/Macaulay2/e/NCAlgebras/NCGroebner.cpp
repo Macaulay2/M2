@@ -1,5 +1,5 @@
 #include "NCGroebner.hpp"
-#include "myalloc.hpp"
+#include "../myalloc.hpp"
 
 void NCGroebner::compute(int softDegreeLimit)
 {
@@ -231,8 +231,8 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
           mHeap->removeLeadTerm();
         }
     }
-  std::cout << StatsAlloc() << std::endl;
-  std::cout << StatsFreeMonoid() << std::endl;
+  std::cout << AllocLogger() << std::endl;
+  std::cout << FreeMonoidLogger() << std::endl;
   return remainder;
 }
 

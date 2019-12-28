@@ -1,8 +1,8 @@
 #include "FreeMonoid.hpp"
 
-size_t StatsFreeMonoid::mCompares = 0;
+size_t FreeMonoidLogger::mCompares = 0;
 
-std::ostream& operator<<(std::ostream& o, StatsFreeMonoid a)
+std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a)
 {
   o << "# compares: " << a.mCompares;
   return o;
@@ -101,7 +101,7 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // then compare word length
   // then compare with lex
 
-  StatsFreeMonoid::mCompares++;
+  FreeMonoidLogger::logCompare();
   
   for (int j = 1; j <= mNumWeights; ++j)
     {

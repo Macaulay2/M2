@@ -1,9 +1,20 @@
+// Copyright 2019, The Macaulay2 team.
+
 #ifndef __myalloc_hpp_
 #define __myalloc_hpp_
 
 #include <iostream>
 
-class StatsAlloc
+// This class is static as it appears easiest if all allocator objects
+// are essentially identical.  It could be a static member of StatsAllocator,
+// but then each type T would have a different stats object.
+//
+// This class is meant for debugging/benchmark use only.
+// This class is not thread safe.
+//
+// TODO: perhaps include mathicgb logging facility, or perhaps even boost.
+// However, this is much simpler for the moment.
+class AllocLogger
 {
 public:
   static size_t mNumAllocs;
@@ -12,16 +23,33 @@ public:
   static size_t mCurrentAllocSize;
   static size_t mHighWater;
   
-  void reset() {
+  static void reset() {
     mNumAllocs = 0;
     mAllocSize = 0;
     mNumDeallocs = 0;
     mCurrentAllocSize = 0;
     mHighWater = 0;
   }
+
+  static void logAlloc(size_t num, size_t sz)
+  {
+    ++AllocLogger::mNumAllocs;
+    AllocLogger::mAllocSize += num * sz;
+    AllocLogger::mCurrentAllocSize += num * sz;
+    if (AllocLogger::mCurrentAllocSize > AllocLogger::mHighWater)
+      AllocLogger::mHighWater = AllocLogger::mCurrentAllocSize;
+    // std::cout << "allocating   " << num << " elements, each of size " << sz << std::endl;
+  }
+
+  static void logDealloc(size_t num, size_t sz)
+  {
+    ++AllocLogger::mNumDeallocs;
+    AllocLogger::mCurrentAllocSize -= num * sz;
+    // std::cout << "deallocating " << num << " elements, each of size " << sz << std::endl;
+  }
 };
 
-std::ostream& operator<<(std::ostream& o, StatsAlloc a);
+std::ostream& operator<<(std::ostream& o, AllocLogger a);
 
 /* The following code is adapted from the book
  * "The C++ Standard Library - A Tutorial and Reference"
@@ -40,20 +68,13 @@ public:
   
   T* allocate(size_t num)
   {
-    ++StatsAlloc::mNumAllocs;
-    StatsAlloc::mAllocSize += num * sizeof(T);
-    StatsAlloc::mCurrentAllocSize += num * sizeof(T);
-    if (StatsAlloc::mCurrentAllocSize > StatsAlloc::mHighWater)
-      StatsAlloc::mHighWater = StatsAlloc::mCurrentAllocSize;
-    // std::cout << "allocating   " << num << " elements, each of size " << sizeof(T) << std::endl;
+    AllocLogger::logAlloc(num, sizeof(T));
     return static_cast<T*>(::operator new(num * sizeof(T)));
   }
   
   void deallocate(T* p, std::size_t num)
   {
-    ++StatsAlloc::mNumDeallocs;
-    StatsAlloc::mCurrentAllocSize -= num * sizeof(T);
-    // std::cout << "deallocating " << num << " elements, each of size " << sizeof(T) << std::endl;
+    AllocLogger::logDealloc(num, sizeof(T));
     ::operator delete(p);
   }
 };

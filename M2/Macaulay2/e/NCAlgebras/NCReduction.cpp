@@ -1,6 +1,6 @@
 #include <memory>
 #include <iostream>
-#include "stdinc-m2.hpp"
+#include "../stdinc-m2.hpp"
 #include "NCGroebner.hpp"
 #include "NCReduction.hpp"
 
@@ -9,7 +9,7 @@
 #include <mathic/Geobucket.h>
 #include <mathic/Heap.h>
 
-#include "myalloc.hpp"
+#include "../myalloc.hpp"
 
 #if 0
 Reasoning about using these structures in noncomm reduction.
