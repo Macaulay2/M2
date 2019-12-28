@@ -1,5 +1,6 @@
 #include <memory>
 #include <iostream>
+#include <queue>
 #include "stdinc-m2.hpp"
 #include "NCGroebner.hpp"
 #include "NCReduction.hpp"
@@ -562,20 +563,21 @@ private:
   MemoryBlock mMonomialSpace;
 };
 
-class MonomHashEq
+class MonomConfig
 {
 public:
-  MonomHashEq(const FreeMonoid& M) : mMonoid(M) {}
+  MonomConfig(const FreeMonoid& M) : mMonoid(M) {}
 
-  size_t operator()(const Monom m) const // hash function
+  size_t operator()(Monom m) const // hash function
   {
     return 0; 
   }
 
-  bool operator() (const Monom a, const Monom b) const
+  bool operator() (Monom a, Monom b) const
   {
     return mMonoid.compare(a, b) == LT;
   }
+  
 private:
   const FreeMonoid& mMonoid;
 };
@@ -587,8 +589,8 @@ public:
 
   MapPolynomialHeap(const FreeAlgebra& F)
     : mRing(F),
-      mHashEq(F.monoid()),
-      mMap(mHashEq)
+      mMonomConfig(F.monoid()),
+      mMap(mMonomConfig)
   {
   }
 
@@ -624,7 +626,7 @@ public:
         mMap.insert({Monom(rg.first), tm.second});
       }
   }
-  
+
   MapPolynomialHeap& addPolynomial(const Poly& poly) override
   {
     for (auto i = poly.cbegin(); i != poly.cend(); ++i)
@@ -642,6 +644,10 @@ public:
     Poly f;
     mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
     addPolynomial(f);
+    for (auto i = poly.cbegin(); i != poly.cend(); ++i)
+      {
+        
+      }
     return *this;
   }
     
@@ -691,10 +697,186 @@ public:
   
 private:
   FreeAlgebra mRing;
-  MonomHashEq mHashEq;
-  std::map<Monom, ring_elem, MonomHashEq> mMap;
+  MonomConfig mMonomConfig;
+  std::map<Monom, ring_elem, MonomConfig> mMap;
   MemoryBlock mMonomialSpace;
 };
+
+class EntryConfig
+{
+public:
+
+  using Entry = std::pair<Monom,ring_elem>;
+    
+  EntryConfig(const FreeMonoid& M) : mMonoid(M) {}
+
+  size_t operator()(Monom m) const // hash function
+  {
+    return 0; 
+  }
+
+  bool operator() (Entry a, Entry b) const
+  {
+    return mMonoid.compare(a.first, b.first) == LT;
+  }
+  
+private:
+  const FreeMonoid& mMonoid;
+};
+
+class PriorityQueuePolynomialHeap : public PolynomialHeap
+{
+public:
+  using Entry = std::pair<Monom, ring_elem>;
+  using Container = std::vector<Entry>;
+
+  PriorityQueuePolynomialHeap(const FreeAlgebra& F)
+    : mRing(F),
+      mEntryConfig(F.monoid()),
+      mQueue(mEntryConfig),
+      mLeadTermSet(false),
+      mLeadTerm(Monom(), F.coefficientRing()->zero())
+  {
+  }
+
+  virtual ~PriorityQueuePolynomialHeap() {}
+
+  void clear() {
+    // clear the heap.  The free algebra is kept the same
+    // but all other aspects are reset.  The MonomialSpace
+    // has all its data freed to the arena, but is available for
+    // use without any new allocations for the next computation.
+    mLeadTermSet = false;
+    while (!mQueue.empty())
+      mQueue.pop();
+    mMonomialSpace.deallocateAll();
+  }
+  
+  // prevent copy and assignment constructors
+  // allow move constructors, I guess?
+  PriorityQueuePolynomialHeap operator=(const PriorityQueuePolynomialHeap&) = delete;
+  PriorityQueuePolynomialHeap(const PriorityQueuePolynomialHeap&) = delete;
+
+  PriorityQueuePolynomialHeap& addEntry(const Entry& entry)
+  {
+    auto rg = mMonomialSpace.allocateArray<int>(entry.first.size());
+    std::copy(entry.first.begin(), entry.first.end(), rg.first);
+    mQueue.push(Entry(Monom(rg.first), entry.second));    
+  }
+
+  PriorityQueuePolynomialHeap& addPolynomial(const Poly& poly) override
+  {
+    if (mLeadTermSet)
+      {
+        mQueue.push(mLeadTerm);
+        mLeadTermSet = false;
+      }
+    for (auto i = poly.cbegin(); i != poly.cend(); ++i)
+      addEntry(Entry(i.monom(),i.coeff()));
+    return *this;
+  }
+
+  PriorityQueuePolynomialHeap& addPolynomial(ring_elem coeff,
+                                 Word left,
+                                 Word right,
+                                const Poly& poly) override
+  {
+    
+    Poly f;
+    mRing.mult_by_term_left_and_right(f, poly, coeff, left, right);
+    addPolynomial(f);
+    return *this;
+  }
+    
+  bool isZero() override
+  {
+    if (mLeadTermSet) return false;
+    if (mQueue.empty()) return true;
+    Entry lt = mQueue.top();
+    mQueue.pop();
+    while (not mQueue.empty())
+      {
+        Entry e = mQueue.top();
+        if (mRing.monoid().compare(e.first, lt.first) == EQ)
+          {
+            lt.second = mRing.coefficientRing()->add(lt.second, e.second);
+            mQueue.pop();
+          }
+        else
+          {
+            if (not mRing.coefficientRing()->is_zero(lt.second))
+              {
+                mLeadTermSet = true;
+                mLeadTerm = lt;
+                return false;
+              }
+            else
+              {
+                lt = mQueue.top();
+                mQueue.pop();
+              }
+          }
+      }
+    if (not mRing.coefficientRing()->is_zero(lt.second))
+      {
+        mLeadTermSet = true;
+        mLeadTerm = lt;
+        return false;
+      }
+    return true;
+  }
+  
+  std::pair<Monom, ring_elem> viewLeadTerm() override
+  {
+    if (isZero())
+      {
+        std::cout << "viewLeadTerm called without checking if polynomial is zero" << std::endl;
+        assert(false);
+      }
+    assert(mLeadTermSet);
+    return mLeadTerm;
+  }
+
+  void removeLeadTerm() override
+  {
+    if (isZero()) return;
+    assert(mLeadTermSet); // should only be called if mLeadTermSet is true.
+    if (mLeadTermSet)
+      mLeadTermSet = false;
+  }
+
+  Poly* value() override
+  {
+    Poly* f = new Poly;
+    if (mLeadTermSet)
+      mQueue.push(mLeadTerm);
+    mLeadTermSet = false;
+    while (not isZero())
+      {
+        auto tm = viewLeadTerm();
+        mRing.add_to_end(*f, tm.second, tm.first);
+        removeLeadTerm();
+      }
+    addPolynomial(*f);
+    return f;
+  }
+
+  size_t getMemoryUsedInBytes() override
+  {
+    return (mQueue.size()*sizeof(Entry)) + mMonomialSpace.getMemoryUsedInBytes();
+  }
+
+  std::string getName() const override { return "Priority queue heap."; }
+  
+private:
+  FreeAlgebra mRing;
+  EntryConfig mEntryConfig;
+  std::priority_queue<Entry,Container,EntryConfig> mQueue;
+  MemoryBlock mMonomialSpace;
+  bool mLeadTermSet; // true means mLeadTerm is set, to a non-zero value.
+  Entry mLeadTerm;
+};
+
 
 #if 0
 class HashedConfiguration
@@ -904,6 +1086,8 @@ makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
     //    return make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
   case HeapTypes::Map:
     return make_unique<MapPolynomialHeap>(F);
+  case HeapTypes::PriorityQueue:
+    return make_unique<PriorityQueuePolynomialHeap>(F);
   case HeapTypes::Trivial:
     return make_unique<TrivialPolynomialHeap>(F);
   case HeapTypes::NaiveDedupGeobucket:

@@ -34,7 +34,8 @@ public:
 
 enum class HeapTypes {
   Trivial,
-  Map,
+  Map, // based on std::map
+  PriorityQueue, // based on std::priority_queue (with underlying std::vector)
   NaiveGeobucket,
   NaiveHeap,
   NaiveTourTree,
