@@ -2,10 +2,11 @@
 newPackage(
        "SpecialFanoFourfolds",
     	Version => "0.01", 
-        Date => "October 29, 2019",
+        Date => "December 3, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2",
+    	Headline => "A (work-in-progress) package for working with special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2",
         PackageExports => {"Resultants","Cremona"},
+    	DebuggingMode => false,
     	Reload => false
 	)
 
@@ -85,7 +86,8 @@ specialCubicFourfold (String,Ring) := o -> (str,K) -> (
        return specialCubicFourfold(image f,NumNodes=>3);
    );
    if str === "C42" then return specialCubicFourfold(last last randomS42data(K),NumNodes=>5);
-   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"Farkas-Verra C26\", \"C38\", \"C42\"";
+   if str === "C48" then return specialCubicFourfold(randomS48 K,NumNodes=>6);
+   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"Farkas-Verra C26\", \"C38\", \"C42\", \"C48\"";
 );
 
 specialCubicFourfold (String) := o -> (str) -> specialCubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes);
@@ -434,6 +436,23 @@ randomS42data (Ring) := (K) -> (
    try assert(dim S42 -1 == 2 and degree S42 == 9 and genera S42 == {-5, 2, 8} and degrees S42 == toList(9:{3})) else error "internal error encountered";
    -- 
    ((psi,D),(rationalMap inverse eta,S42))
+);
+
+randomS48 = method();
+randomS48 (Ring) := (K) -> (
+   (f,D) := first randomS42data(K);
+    S := f D;
+    V := image f;
+    p := f point source f;
+    C := coneOfLines(V,p);
+    j := (rationalMap p)|C;
+    C' := image j;
+    i := parametrize ideal image basis(1,C');
+    C'' := i^* C';
+    l := plucker(C'',1);
+    g := null;
+    while g === null do try g = rationalMap sub(trim lift(j^* i sub(plucker sub(point trim lift(l,ambient ring l),ring l),vars ring C''),ambient source j),quotient V);
+    g S
 );
 
 ------------------------------------------------------------------------
