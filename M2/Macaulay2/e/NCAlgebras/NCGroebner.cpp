@@ -196,8 +196,13 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
   mHeap->clear();
   mHeap->addPolynomial(*reducee);
 
+  FreeMonoidLogger::reset();
+  
+  size_t loop_count = 0;
   while (not mHeap->isZero())
     {
+      loop_count++;
+      
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
       Word reduceeLeadWord;
       std::pair<Monom, ring_elem> LT { mHeap->viewLeadTerm() };
@@ -231,8 +236,8 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
           mHeap->removeLeadTerm();
         }
     }
-  std::cout << AllocLogger() << std::endl;
-  std::cout << FreeMonoidLogger() << std::endl;
+  //  std::cout << "reduction: " << "#steps: " << loop_count << " " << FreeMonoidLogger() << std::endl;
+  //  std::cout << "           " << AllocLogger() << std::endl;
   return remainder;
 }
 

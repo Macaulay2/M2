@@ -3,7 +3,7 @@
 size_t AllocLogger::mNumAllocs = 0;
 size_t AllocLogger::mNumDeallocs = 0;
 size_t AllocLogger::mAllocSize = 0;
-size_t AllocLogger::mCurrentAllocSize = 0;
+long AllocLogger::mCurrentAllocSize = 0;
 size_t AllocLogger::mHighWater = 0;
 
 std::ostream& operator<<(std::ostream& o, AllocLogger a)

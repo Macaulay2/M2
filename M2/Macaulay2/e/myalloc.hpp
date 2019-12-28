@@ -20,7 +20,7 @@ public:
   static size_t mNumAllocs;
   static size_t mAllocSize;
   static size_t mNumDeallocs;
-  static size_t mCurrentAllocSize;
+  static long mCurrentAllocSize;
   static size_t mHighWater;
   
   static void reset() {
