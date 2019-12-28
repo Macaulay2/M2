@@ -1,4 +1,5 @@
 #include "NCGroebner.hpp"
+#include "../myalloc.hpp"
 
 void NCGroebner::compute(int softDegreeLimit)
 {
@@ -175,6 +176,10 @@ auto NCGroebner::twoSidedReductionOld(const FreeAlgebra& A,
 // new version of reduction code which uses a heap structure
 auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
 {
+  // stats for benchmarking, debug only...
+  size_t loop_count = 0;
+  size_t nterms = 0; // number of terms added in to the heap
+
   // easy access to variables in the class
   const FreeAlgebra& A{ freeAlgebra() };
   const ConstPolyList& reducers{ mGroebner };
@@ -193,10 +198,15 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
   // auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
   // auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
   mHeap->clear();
+  nterms += reducee->numTerms();
   mHeap->addPolynomial(*reducee);
 
+  FreeMonoidLogger::reset();
+  
   while (not mHeap->isZero())
     {
+      loop_count++;
+      
       // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
       Word reduceeLeadWord;
       std::pair<Monom, ring_elem> LT { mHeap->viewLeadTerm() };
@@ -219,8 +229,12 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
                                         coeffNeeded, 
                                         leftWord, 
                                         rightWord);
-          
-          mHeap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
+
+          nterms += tmp.numTerms();
+          mHeap->addPolynomial(tmp);
+
+          // nterms += reducers[subwordPos.first]->numTerms();
+          // mHeap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
         }
       else
         {
@@ -230,6 +244,10 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
           mHeap->removeLeadTerm();
         }
     }
+  // std::cout << "reduction: " << "#steps: " << loop_count << std::endl;
+  // std::cout << "           " << FreeMonoidLogger() << std::endl;
+  // std::cout << "           " << "#terms: " << nterms << std::endl;
+  // std::cout << "           " << AllocLogger() << std::endl;
   return remainder;
 }
 

@@ -904,10 +904,13 @@ TEST ///
   restart
   needsPackage "AssociativeAlgebras"
 *-
+  R = QQ{a,b,c}
   R = (ZZ/32003){a,b,c}
   I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
+  elapsedTime NCGB(I, 4);
+
   elapsedTime NCGB(I, 10);
   A = R/I
   assert(numcols ncBasis(0,A) == 1)
@@ -919,9 +922,10 @@ TEST ///
   assert(numcols ncBasis(6,A) == 28)
   assert(numcols ncBasis(10,A) == 66)
   
-  elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec
-  elapsedTime NCGB(I, 21); -- 9.8 sec
-  elapsedTime NCGB(I, 22); -- 16.23 sec
+  -- Did these in order, in same session, right after defining I (reason for speedup: almost certainly skype)
+  elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec, at home it is 4.2 sec (same computer)...
+  elapsedTime NCGB(I, 21); -- 9.8 sec, 6.9 sec at home, same computer, Map
+  elapsedTime NCGB(I, 22); -- 16.23 sec, 11.7 sec at home, same computer, Map
 ///
 
 ///

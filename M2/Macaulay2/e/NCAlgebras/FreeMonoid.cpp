@@ -1,5 +1,13 @@
 #include "FreeMonoid.hpp"
 
+size_t FreeMonoidLogger::mCompares = 0;
+
+std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a)
+{
+  o << "# compares: " << a.mCompares;
+  return o;
+}
+
 FreeMonoid::FreeMonoid(
           const std::vector<std::string>& variableNames,
           const PolynomialRing* degreeRing,
@@ -93,6 +101,8 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // then compare word length
   // then compare with lex
 
+  FreeMonoidLogger::logCompare();
+  
   for (int j = 1; j <= mNumWeights; ++j)
     {
       if (m1[j] > m2[j]) return GT;

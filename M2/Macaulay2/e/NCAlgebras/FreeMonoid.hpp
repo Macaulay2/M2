@@ -13,6 +13,24 @@
 // format
 // [total length] wt0 wt1 ... w(tr-1) w0 w1  ... ws
 
+class FreeMonoidLogger
+{
+public:
+  static size_t mCompares;
+
+  static void reset()
+  {
+    mCompares = 0;
+  }
+
+  static void logCompare()
+  {
+    mCompares++;
+  }
+};
+
+std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a);
+
 class Word;
 
 class FreeMonoid : public our_new_delete
