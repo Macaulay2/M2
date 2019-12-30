@@ -13,7 +13,7 @@ newPackage select((
     Authors => {{Name => "David Cook II",
                  Email => "dwcook@eiu.edu",
                  HomePage => "http://ux1.eiu.edu/~dwcook/"}},
-    Headline => "Interface to nauty",
+    Headline => "interface to nauty",
     Configuration => {"path" => ""},
     PackageExports => {"EdgeIdeals"},
     DebuggingMode => false,

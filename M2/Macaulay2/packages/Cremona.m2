@@ -4,7 +4,7 @@ newPackage(
 	Version => "4.3", 
         Date => "March 27, 2019",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
-    	Headline => "Some computations for rational maps between projective varieties",
+    	Headline => "rational maps between projective varieties",
         AuxiliaryFiles => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

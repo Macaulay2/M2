@@ -18,7 +18,7 @@ newPackage select((
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
-        Headline => "Package for processing partially ordered sets (posets)",
+        Headline => "partially ordered sets (posets)",
         Configuration => {
             "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
             "DefaultPrecompute" => true,

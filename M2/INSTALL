@@ -119,7 +119,7 @@ various modern operating systems:
 
   Scientific linux (Red Hat, CentOS, ...):
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo wget
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo redhat-lsb wget
     Install other software:
       Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
         way (untar, configure, make, make install).
@@ -182,15 +182,16 @@ various modern operating systems:
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
-    To create the directory /usr/include, along with the files in it, there are two steps:
-        (A) One installs the Xcode Command Line Tools using the following command.
-      	      xcode-select --install
-	(B) Starting with Mac OS X version 10.14 (Mojave), one must run an additional command:
+    Install the Xcode Command Line Tools using the following command.
+          xcode-select --install
+       (Starting with Mac OS X version 10.15 (Catalina), /usr/include does not exist and cannot be
+        made to exist, so our previous instructions for getting it no longer apply and have been removed.)
+       (Mac OS X version 10.14 (Mojave), one must run an additional command:
 	      sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-	    An alternative to the command above is to use the finder to navigate to the directory
+  	    An alternative to the command above is to use the finder to navigate to the directory
 	      /Library/Developer/CommandLineTools/Packages
 	    and then to "open" the package file to get it installed.
-	 Note: After upgrading the OS, if /usr/include is again missing, simply repeat.
+        Note: After upgrading the OS, if /usr/include is again missing, simply repeat.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 

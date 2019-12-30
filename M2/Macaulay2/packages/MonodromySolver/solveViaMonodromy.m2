@@ -101,7 +101,8 @@ ms'option'list = {
 	Verbose => false,
 	EdgesSaturated => false,
 	FilterCondition => null,
-	Randomizer => null}
+	Randomizer => null,
+	Equivalencer => null}
 
 
 dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
@@ -210,7 +211,7 @@ createSeedPair (System, Point) := o -> (P, x0) -> (
     b := evaluate(G, point matrix 0_(CC^m), x0);
     K := numericalKernel(transpose A, 1e-5) ;
     offset := solve(transpose A,transpose b,ClosestFit=>true);
-    p0 := point(K* random(CC^(m-n), CC^1) - offset);
+    p0 := point(K* random(CC^(numcols K), CC^1) - offset);
     (p0, x0)
     )
 
@@ -240,7 +241,8 @@ staticMonodromySolve = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false,
 	FilterCondition => null,
-	Randomizer => null})
+	Randomizer => null,
+	Equivalencer => null})
 staticMonodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
     	isGS := instance(PS,GateSystem);
         if (isGS and not o#"new tracking routine") then error "GateSystem requires new tracking routine";
@@ -251,8 +253,12 @@ staticMonodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
 
 	if mutableOptions.StoppingCriterion === null then 
 		mutableOptions.StoppingCriterion = (n,L) -> n >= mutableOptions.NumberOfRepeats;
-		
-	HG := homotopyGraph(PS, Potential=>o.Potential);
+	-- 
+	equivalencer := if (o.Equivalencer =!= null) then o.Equivalencer else x -> x;
+	randomizer := if (o.Randomizer =!= null) then o.Randomizer else x -> x;
+	filterCondition := if (o.FilterCondition =!= null) then o.FilterCondition else x -> false;
+	assert all({equivalencer,randomizer,filterCondition},f->instance(f,Function));
+	HG := homotopyGraph(PS, Potential=>o.Potential, Randomizer => randomizer, FilterCondition => filterCondition, Equivalencer => equivalencer);
 	if o.TargetSolutionCount =!= null then (
 		HG.TargetSolutionCount = o.TargetSolutionCount;
 	);
@@ -422,7 +428,8 @@ dynamicMonodromySolve = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false,
 	FilterCondition => null,
-	Randomizer => null})
+	Randomizer => null,
+	Equivalencer => null})
 dynamicMonodromySolve (MutableHashTable, Point, List) := o -> (PS,point0,s0) -> (
 	mutableOptions := new MutableHashTable from o;
 	if mutableOptions.TargetSolutionCount === null then 
@@ -464,7 +471,8 @@ coreMonodromySolve = method(Options=>{
 	Verbose => false,
 	EdgesSaturated => false,
 	FilterCondition => null,
-	Randomizer => null})
+	Randomizer => null,
+	Equivalencer => null})
 coreMonodromySolve HomotopyGraph := o -> HG -> coreMonodromySolve(HG, first HG#"Vertices", o)
 coreMonodromySolve (HomotopyGraph, HomotopyNode) := o -> (HG,node1) -> (
 	selectEdgeAndDirection := o.SelectEdgeAndDirection;

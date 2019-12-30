@@ -5,7 +5,7 @@ newPackage(
        "CoincidentRootLoci",
 	Version => "0.1.1", 
         Date => "June 1, 2018",
-    	Headline => "A package for computations with coincident root loci",
+    	Headline => "coincident root loci",
         Authors => {{Name => "M. C. Brambilla", Email => "brambilla@dipmat.univpm.it"},
                     {Name => "G. Staglianò", Email => "giovannistagliano@gmail.com"}},
         PackageExports => {"Cremona","Resultants"},

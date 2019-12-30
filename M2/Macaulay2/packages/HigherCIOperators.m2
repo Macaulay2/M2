@@ -5,7 +5,7 @@ newPackage(
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
-        Headline => "Higer CI operators",
+        Headline => "higher CI operators",
         DebuggingMode => false,
      	PackageImports => { "CompleteIntersectionResolutions" },
 	PackageExports =>{"MCMApproximations"}

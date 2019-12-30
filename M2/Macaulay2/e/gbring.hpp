@@ -185,7 +185,7 @@ class GBRing : public our_new_delete
 
   size_t exponent_byte_size() const { return exp_size; }
   // use ALLOCATE_EXPONENTS(R->exponent_byte_size())
-  // to allocate on the stack an unitialized exponent vector (#ints = nvars+2)
+  // to allocate on the stack an uninitialized exponent vector (#ints = nvars+2)
   // it will be deallocated at the end of that function
 
   //////////////////////

@@ -8,7 +8,7 @@ newPackage(
         Authors => {{Name => "Tair Akhmejanov", 
                   Email => "ta328@cornell.edu", 
                   HomePage => "http://www.math.cornell.edu/~takhmejanov"}},
-        Headline => "Compute the permanents of a matrix"
+        Headline => "permanents of a matrix"
         )
 
 export {"ryser", 

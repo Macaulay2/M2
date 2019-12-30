@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.11", 
+    	Version => "1.12", 
     	Date => "Nov 2017",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},

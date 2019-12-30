@@ -16,7 +16,7 @@ newPackage(
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
-    Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
+    Headline => "numerical methods in Schubert Calculus",
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",

@@ -13,5 +13,5 @@
 		"release at publication" => "",	    -- git commit number in hex
 		"version at publication" => "",
 		"volume number" => "9",
-		"volume URI" => "https://msp.org/jsag/2019/9-1/"
+		"volume URI" => "https://msp.org/jsag/2019/9-2/"
 		}

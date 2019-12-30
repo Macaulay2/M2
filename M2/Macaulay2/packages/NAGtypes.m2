@@ -4,7 +4,7 @@ newPackage(
      "NAGtypes",
      Version => "1.14",
      Date => "Aug 2019",
-     Headline => "Common types used in Numerical Algebraic Geometry",
+     Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
@@ -111,7 +111,6 @@ differencePointSet (PointSet,PointSet) := o -> (A,B) -> (
     )
 
 TEST /// 
-    restart
     needsPackage "NAGtypes"
     A = set {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}}} /point // pointSet
     B = {{{1,3.1}},{{0,3}}}/point//pointSet
