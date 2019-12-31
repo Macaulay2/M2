@@ -198,6 +198,16 @@ linux-debug64 : always
 		--enable-download \
 		--enable-build-libraries="gc mpir flint pari ntl"
 
+linux-debug64 : always
+        mkdir -p builds.tmp/debug64
+        cd builds.tmp/debug64; ../../../../configure \
+	        --prefix="`pwd`/installed" \
+            CPPFLAGS="-DENGINE_DEBUG_" \
+            CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+            --enable-debug \
+            --disable-optimize \
+            --enable-download  # --enable-build-libraries="gc mpir flint pari ntl"
+
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64
 	cd builds.tmp/profile64; ../../../../configure \
