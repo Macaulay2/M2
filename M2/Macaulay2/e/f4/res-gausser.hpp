@@ -25,7 +25,7 @@ class CoefficientVector
   void* mValue;
 };
 
-class ResGausser
+class ResGausser : public our_new_delete
 {
  protected:
   static long numAdditions;

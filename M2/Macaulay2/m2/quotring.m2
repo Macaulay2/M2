@@ -38,7 +38,7 @@ Ring / Module := QuotientRing => (R,I) -> (
      then error ("expected ", toString I, " to be an ideal of ", toString R);
      R / ideal I)
 
-savedQuotients := new MutableHashTable
+savedQuotients = new MutableHashTable
 
 liftZZmodQQ := (r,S) -> (
      needsPackage "LLLBases";
