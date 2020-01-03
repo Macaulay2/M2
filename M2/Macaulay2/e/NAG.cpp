@@ -63,7 +63,7 @@ SLP<Field>::SLP()
 template <class Field>
 SLP<Field>::~SLP()
 {
-  delete nodes;
+  GC_free(nodes);
   if (handle != NULL)
     {
       printf("closing library\n");
