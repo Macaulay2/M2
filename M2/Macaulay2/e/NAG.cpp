@@ -63,7 +63,7 @@ SLP<Field>::SLP()
 template <class Field>
 SLP<Field>::~SLP()
 {
-  GC_free(nodes);
+  deletearray(nodes);
   if (handle != NULL)
     {
       printf("closing library\n");
@@ -153,7 +153,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
 template <class Field>
 void SLP<Field>::make_nodes(element_type*& a, int size)
 {
-  a = newarray_atomic(complex, size);
+  a = newarray_atomic(element_type, size);
 }
 
 template <class Field>
