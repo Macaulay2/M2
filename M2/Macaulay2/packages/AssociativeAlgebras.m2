@@ -923,9 +923,17 @@ TEST ///
   assert(numcols ncBasis(10,A) == 66)
   
   -- Did these in order, in same session, right after defining I (reason for speedup: almost certainly skype)
-  elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec, at home it is 4.2 sec (same computer)...
-  elapsedTime NCGB(I, 21); -- 9.8 sec, 6.9 sec at home, same computer, Map
-  elapsedTime NCGB(I, 22); -- 16.23 sec, 11.7 sec at home, same computer, Map
+  elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec, at home it is 4.2 sec (same computer)... 
+    -- 27/12/2019, Mike MBP: now 2.7 sec
+
+  elapsedTime NCGB(I, 21); -- 9.8 sec, 6.9 sec at home, same computer, Map.
+    -- 27/12/2019, Mike MBP: 4.4 sec
+
+  elapsedTime NCGB(I, 22); -- 16.23 sec, 11.7 sec at home, same computer, Map.
+    -- 27/12/2019, Mike MBP: 7.3 sec
+
+  elapsedTime NCGB(I, 23); 
+    -- 27/12/2019, Mike MBP: 12.2 sec
 ///
 
 ///

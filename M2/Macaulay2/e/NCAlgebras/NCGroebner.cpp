@@ -11,6 +11,7 @@ void NCGroebner::compute(int softDegreeLimit)
       std::cout << "Overlap table after including generators:" << std::endl;
       mOverlapTable.dump(std::cout, true);
     }
+  size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
       auto toBeProcessed = mOverlapTable.nextDegreeOverlaps().second;
@@ -31,6 +32,7 @@ void NCGroebner::compute(int softDegreeLimit)
             }
           auto overlapPoly = createOverlapPoly(overlap);
 
+          n_spairs++;
           auto redOverlapPoly = twoSidedReduction(overlapPoly);
           delete overlapPoly;
           if (!freeAlgebra().is_zero(*redOverlapPoly))
@@ -104,6 +106,7 @@ void NCGroebner::compute(int softDegreeLimit)
       // remove the lowest degree overlaps from the overlap table
       mOverlapTable.removeLowestDegree();
     }
+  std::cout << "number of spair reductions: " << n_spairs << std::endl;
 }
 
 const ConstPolyList& NCGroebner::currentValue()
@@ -244,8 +247,7 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
           mHeap->removeLeadTerm();
         }
     }
-  // std::cout << "reduction: " << "#steps: " << loop_count << std::endl;
-  // std::cout << "           " << FreeMonoidLogger() << std::endl;
+  // std::cout << "reduction: " << "#steps: " << loop_count << " " << FreeMonoidLogger() << std::endl;
   // std::cout << "           " << "#terms: " << nterms << std::endl;
   // std::cout << "           " << AllocLogger() << std::endl;
   return remainder;
