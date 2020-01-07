@@ -247,9 +247,9 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
           mHeap->removeLeadTerm();
         }
     }
-  // std::cout << "reduction: " << "#steps: " << loop_count << " " << FreeMonoidLogger() << std::endl;
-  // std::cout << "           " << "#terms: " << nterms << std::endl;
-  // std::cout << "           " << AllocLogger() << std::endl;
+  std::cout << "reduction: " << "#steps: " << loop_count << " " << FreeMonoidLogger() << std::endl;
+  std::cout << "           " << "#terms: " << nterms << std::endl;
+  std::cout << "           " << AllocLogger() << std::endl;
   return remainder;
 }
 

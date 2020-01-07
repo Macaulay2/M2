@@ -38,7 +38,7 @@ public:
     AllocLogger::mCurrentAllocSize += num * sz;
     if (AllocLogger::mCurrentAllocSize > AllocLogger::mHighWater)
       AllocLogger::mHighWater = AllocLogger::mCurrentAllocSize;
-    // std::cout << "allocating   " << num << " elements, each of size " << sz << std::endl;
+    //    std::cout << "allocating   " << num << " elements, each of size " << sz << std::endl;
   }
 
   static void logDealloc(size_t num, size_t sz)
@@ -69,7 +69,7 @@ public:
   T* allocate(size_t num)
   {
     AllocLogger::logAlloc(num, sizeof(T));
-    return static_cast<T*>(::operator new(num * sizeof(T)));
+    return static_cast<T*>(::operator new (num * sizeof(T)));
   }
   
   void deallocate(T* p, std::size_t num)

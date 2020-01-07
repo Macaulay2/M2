@@ -32,7 +32,7 @@ public:
              int hardDegreeLimit)
     : mFreeAlgebra(A),
       mInput(input),
-      mHeap(std::move(makePolynomialHeap(HeapTypes::Map,A))),
+      mHeap(std::move(makePolynomialHeap(HeapTypes::PriorityQueue,A))),
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {
