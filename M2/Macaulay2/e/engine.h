@@ -74,6 +74,16 @@ extern "C" {
   M2_string engineMemory(); /* connected MES to engineMemory */
 
   /**************************************************/
+  /**** Integer factorization ***********************/
+  /**************************************************/
+
+  M2_bool flintIsPrime(gmp_ZZ a);
+
+  M2_bool flintIsPseudoprime(gmp_ZZ a);
+
+  M2_arrayint flintFactorInteger(gmp_ZZ a);
+  
+  /**************************************************/
   /**** Monomial routines ***************************/
   /**************************************************/
   /* Monomials in the engine: are not associated with a monoid, and may have negative

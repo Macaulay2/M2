@@ -1485,6 +1485,8 @@ export (x:CC) ^ (y:ZZ):CC := (
      exp(log(x)*y));
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
 
+export arrayZZ := array(ZZ);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d gmp.o "
 -- End:

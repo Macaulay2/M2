@@ -66,21 +66,21 @@ isPrime2 := n -> (			  -- assume n > 2
 
 biggest := 2^31-1
 
-isPseudoprime ZZ := Boolean => Pari$ispseudoprime
+isPseudoprime ZZ := Boolean => (n) -> (
+    error "isPseudoprime not yet reimplemented"
+    )
 
-isPrime ZZ := Boolean => (
-     if instance(Pari$isprime,Function) then Pari$isprime
-     else 
-     n -> (
-	  n = abs n;
-	  n > 1 and
-	  if n <= biggest 
-	  then (
-	       v := factor n;
-	       # v === 1 and v#0#1 === 1
-	       )
-	  else isPrime1 n and (n == 2 or isPrime2 n)
-	  ))
+isPrime ZZ := Boolean => n -> (
+    -- << "warning: need to use flint to compute primality" << std::endl;
+    n = abs n;
+    n > 1 and
+    if n <= biggest 
+    then (
+        v := factor n;
+        # v === 1 and v#0#1 === 1
+        )
+    else isPrime1 n and (n == 2 or isPrime2 n)
+    )
 
 random ZZ := ZZ => opts -> n -> if n > 0 then rawRandomZZ n else error "random: expected a positive integer"
 random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (

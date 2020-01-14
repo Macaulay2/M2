@@ -705,7 +705,7 @@ AC_SUBST(BUILTLIBS,)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr readline ntl flint factory lapack frobby glpk cddlib fplll givaro linbox boost mpc qd mpack gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -728,9 +728,6 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack ")
 # 	  specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 #    mpc needs mpfr
 #    ntl needs gmp (or mpir)
-#    pari uses gmp
-#         pari calls mp_set_memory_functions to install its own memory allocation functions
-#	  for use by gmp -- this is not thread safe, so we should PREVENT IT somehow
 #    4ti2 needs glpk
 #    glpk needs gmp (or mpir)
 #    topcom depends on cddlib
@@ -779,7 +776,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 
@@ -912,12 +909,6 @@ AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
-fi
-
-AC_LANG(C)
-AC_CHECK_HEADER(pari/pari.h,LIBS="-lpari $LIBS",BUILD_pari=yes)
-if test $BUILD_pari = yes
-then BUILTLIBS="-lpari $BUILTLIBS"
 fi
 
 AC_LANG(C)

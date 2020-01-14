@@ -9,7 +9,7 @@ header "
 #include <flint/arith.h>
 #include <flint/fmpz_factor.h>
 
-util_arrayZZ flint_factor(gmp_ZZ x) {
+gmp_arrayZZ flint_factor(gmp_ZZ x) {
      int i;
      fmpz_t n;
      fmpz_set_mpz(n, x);
@@ -17,7 +17,7 @@ util_arrayZZ flint_factor(gmp_ZZ x) {
      fmpz_factor_init(factor);
      fmpz_factor(factor,n);
      int len = factor->num;
-     util_arrayZZ result = getmemarraytype(util_arrayZZ,2*len+1);
+     gmp_arrayZZ result = getmemarraytype(gmp_arrayZZ,2*len+1);
      result->len = 2*len+1;
      __mpz_struct *tmp;
      tmp = (void *)getmem(sizeof(__mpz_struct));

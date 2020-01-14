@@ -88,11 +88,6 @@ endif
 M2_DFILES += actors5.d
 M2_DFILES += actors6.dd
 M2_DFILES += threads.dd
-M2_DFILES += pari.d
-M2_HFILES += pari-c.h
-M2_CFILES += pari-c.c
-M2_HFILES += pari-gnump.h
-M2_CFILES += pari-gnump.c
 
 M2_DFILES += flint.d
 
