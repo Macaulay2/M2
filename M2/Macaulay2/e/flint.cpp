@@ -7,6 +7,7 @@
 #include "error.h"
 #include "engine-includes.hpp"
 #include "gmp-util.h"
+#include <vector>
 
 bool flintIsPrime(gmp_ZZ a)
 {
