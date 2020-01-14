@@ -67,11 +67,11 @@ isPrime2 := n -> (			  -- assume n > 2
 biggest := 2^31-1
 
 isPseudoprime ZZ := Boolean => (n) -> (
-    error "isPseudoprime not yet reimplemented"
+    rawZZisPseudoprime n -- calls flint
     )
 
 isPrime ZZ := Boolean => n -> (
-    -- << "warning: need to use flint to compute primality" << std::endl;
+    return rawZZisPrime n; -- calls flint
     n = abs n;
     n > 1 and
     if n <= biggest 

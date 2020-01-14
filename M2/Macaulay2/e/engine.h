@@ -73,15 +73,15 @@ extern "C" {
 
   M2_string engineMemory(); /* connected MES to engineMemory */
 
-  /**************************************************/
-  /**** Integer factorization ***********************/
-  /**************************************************/
+  /*****************************************************/
+  /**** Integer primality and factorization (via flint)*/
+  /*****************************************************/
 
-  M2_bool flintIsPrime(gmp_ZZ a);
+  M2_bool rawZZisPrime(gmp_ZZ a);
 
-  M2_bool flintIsPseudoprime(gmp_ZZ a);
+  M2_bool rawZZisPseudoprime(gmp_ZZ a);
 
-  gmp_arrayZZ flintFactorInteger(gmp_ZZ a);
+  gmp_arrayZZ rawZZfactor(gmp_ZZ a);
   
   /**************************************************/
   /**** Monomial routines ***************************/

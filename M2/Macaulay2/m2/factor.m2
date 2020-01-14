@@ -79,9 +79,14 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      TtoR.cache.inverse = RtoT;
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
-factor ZZ := ( f -> opts -> f ) (
-    n -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i})
+factor ZZ := opts -> n -> (
+    if n === 0 then Product { Power{0,1} }
+    else (
+	r := rawZZfactor n;
+	Product apply(r#0,r#1,(p,i)-> Power{p,i}) -- !!!
+	)
     )
+ 
 factor QQ := opts -> (r) -> factor numerator r / factor denominator r
 -----------------------------------------------------------------------------
 topCoefficients = method()
