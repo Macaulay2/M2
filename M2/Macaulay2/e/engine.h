@@ -81,7 +81,7 @@ extern "C" {
 
   M2_bool flintIsPseudoprime(gmp_ZZ a);
 
-  M2_arrayint flintFactorInteger(gmp_ZZ a);
+  gmp_arrayZZ flintFactorInteger(gmp_ZZ a);
   
   /**************************************************/
   /**** Monomial routines ***************************/
