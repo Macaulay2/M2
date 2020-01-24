@@ -19,9 +19,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # set the project name, version, and languages
 project(macaulay2 VERSION 1.15 LANGUAGES C CXX)
 
-set(SOURCE /home/mahrud/Projects/M2/M2/M2)
+set(SOURCE ${PROJECT_SOURCE_DIR})
 set(BOOTSTRAP ${SOURCE}/BUILD/mahrud/build)
-# set(BOOTSTRAP ${SOURCE}/BUILD/mike/builds.tmp/darwin64-clang # Mike's
+# set(BOOTSTRAP ${SOURCE}/BUILD/mike/builds.tmp/darwin64-clang) # Mike's
 
 add_subdirectory(Macaulay2/c)
 add_subdirectory(Macaulay2/d)
@@ -32,6 +32,8 @@ add_subdirectory(Macaulay2/system)
 add_subdirectory(Macaulay2/kernel)
 
 # TODO
+#add_subdirectory(include)
+#add_subdirectory(usr-host)
 #add_subdirectory(Macaulay2/book)
 #add_subdirectory(Macaulay2/compat)
 #add_subdirectory(Macaulay2/e-includes)
@@ -43,5 +45,6 @@ add_subdirectory(Macaulay2/kernel)
 #add_subdirectory(Macaulay2/subdirs)
 #add_subdirectory(Macaulay2/tests)
 #add_subdirectory(Macaulay2/util)
+# Also: mathic, mathicgb, memtailor, fflas_ffpack
 
 #add_subdirectory(BUILD/mahrud/build-gcc/libraries/gc/build/gc-8.0.4)

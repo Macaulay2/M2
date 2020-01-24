@@ -1,8 +1,6 @@
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
-add_library(regex OBJECT
-  regex.c
-  )
+add_library(regex OBJECT regex.c)
 
 target_compile_definitions(regex PUBLIC
   -Dre_compile_fastmap=M2_re_compile_fastmap
@@ -15,7 +13,7 @@ target_compile_definitions(regex PUBLIC
   -Dre_set_syntax=M2_re_set_syntax
   -Dregcomp=M2_regcomp
   -Dregerror=M2_regerror
-  -Dregexec=M2_regexec 
+  -Dregexec=M2_regexec
   -Dregfree=M2_regfree
   )
 
@@ -25,12 +23,11 @@ target_include_directories(regex
     ${SOURCE}/include
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
-    ${BOOTSTRAP}/usr-host/include/cdd 
-    ${SOURCE}/submodules/memtailor/src 
-    ${SOURCE}/submodules/mathic/src 
-    ${SOURCE}/submodules/mathicgb/src 
+    ${BOOTSTRAP}/usr-host/include/cdd
+    ${SOURCE}/submodules/memtailor/src
+    ${SOURCE}/submodules/mathic/src
+    ${SOURCE}/submodules/mathicgb/src
     ${SOURCE}/submodules/fflas_ffpack/src
     /usr/include/libxml2
     /usr/include/eigen3
   )
-

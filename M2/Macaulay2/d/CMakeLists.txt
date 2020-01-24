@@ -75,9 +75,10 @@ endforeach(FILENAME)
 
 # cd ${SOURCE}/Macaulay2/d && etags  mysql.d python-c.c python.d  debug.c  gmp_aux.c  main.c  getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h  arithmetic.d atomic.d M2.d system.d strings.d varstrin.d strings1.d errio.d vararray.d ctype.d nets.d varnets.d interrupts.d pthread0.d stdiop0.d  gmp.d engine.dd xml.d stdio0.d parse.d expr.d stdio.d stdiop.d err.d gmp1.d tokens.d getline.d lex.d parser.d binding.d basic.d convertr.d common.d util.d struct.d classes.dd buckets.dd equality.dd hashtables.dd sets.dd version.dd evaluate.d mysqldummy.d pthread.d actors.d actors2.dd actors3.d actors4.d xmlactors.d actors5.d actors6.dd threads.dd flint.d interface.dd interface2.d texmacs.d interp.dd  M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c xml-c.c
 
-# if [ -f ../../../../../Macaulay2/d/.gdbinit.mahrud ]; then cp ../../../../../Macaulay2/d/.gdbinit.mahrud .gdbinit; fi
+# What is this for?
+# if [ -f ${SOURCE}/Macaulay2/d/.gdbinit.mahrud ]; then cp ${SOURCE}/Macaulay2/d/.gdbinit.mahrud .gdbinit; fi
 
-add_library(interpreter STATIC
+add_library(interpreter OBJECT
   ${CLIST}
   startup.c
   gmp_aux.c
@@ -90,6 +91,9 @@ add_library(interpreter STATIC
   xml-c.c
   debug.c # Where is this done normally?
   )
+
+# TODO: Is this needed for standalone use? How?
+# target_link_libraries(interpreter gc)
 
 target_include_directories(interpreter
   PUBLIC

@@ -9,8 +9,8 @@ set(SOURCES
   betti.cpp util.cpp GF.cpp ZZ.cpp ZZp.cpp reader.cpp matrix-stream.cpp cra.cpp aring-zz-gmp.cpp aring-qq-gmp.cpp aring-zz-flint.cpp aring-qq-flint.cpp aring-zzp-flint.cpp aring-RR.cpp aring-CC.cpp aring-RRR.cpp aring-CCC.cpp aring-tower.cpp aring-gf-flint-big.cpp aring-gf-flint.cpp aring-m2-gf.cpp aring-zzp.cpp aring-gf-givaro.cpp aring-zzp-ffpack.cpp aring.cpp schurSn.cpp schur2.cpp dpoly.cpp tower.cpp interreduce.cpp gb-test1.cpp finalize.cpp NAG.cpp SLP.cpp overflow.cpp memory-status.cpp imonorder.cpp sagbi.cpp monideal-minprimes.cpp lapack.cpp LLL.cpp fractionfreeLU.cpp ntl-interface.cpp fplll-interface.cpp mat.cpp dmat.cpp coeffrings.cpp Eschreyer.cpp gbweight.cpp qring.cpp polyquotient.cpp poly.cpp debug.cpp comp.cpp comp-gb.cpp comp-gb-proxy.cpp comp-gb-declared.cpp comp-res.cpp res-a0.cpp res-a0-poly.cpp res-a1.cpp res-a1-poly.cpp res-a2.cpp reducedgb.cpp reducedgb-field.cpp reducedgb-marked.cpp reducedgb-field-local.cpp reducedgb-ZZ.cpp montable.cpp montableZZ.cpp schorder.cpp assprime.cpp buffer.cpp comb.cpp det.cpp frac.cpp franzi-brp.cpp freemod.cpp gb-default.cpp gb-homog2.cpp gb-sugarless.cpp gb-toric.cpp gb-walk.cpp gbring.cpp gauss.cpp hermite.cpp hilb.cpp int-bag.cpp intarray.cpp matrix.cpp matrix-con.cpp mem.cpp monideal.cpp monoid.cpp monomial.cpp ntuple.cpp polyring.cpp pfaff.cpp relem.cpp ring.cpp ringmap.cpp schur.cpp skew.cpp skewpoly.cpp solvable.cpp spair.cpp text-io.cpp varpower.cpp weylalg.cpp interrupted.cpp newdelete.cpp flint.cpp rand.cpp ntl-internal.cpp ntl-debugio.cpp matrix-kbasis.cpp matrix-symm.cpp matrix-sort.cpp ring-vecs.cpp res-a2-gb.cpp engine.cpp x-aring.cpp x-monom.cpp x-monoid.cpp x-relem.cpp x-free.cpp x-mat.cpp x-gb.cpp x-ringmap.cpp x-mutablemat.cpp franzi-gb.cpp franzi-interface.cpp x-monideal.cpp x-factor.cpp polyroots.cpp
   )
 
-add_library(engine STATIC ${SOURCES})
-  
+add_library(engine OBJECT ${SOURCES})
+
 target_include_directories(engine
   PUBLIC
     ${BOOTSTRAP}/usr-host/include

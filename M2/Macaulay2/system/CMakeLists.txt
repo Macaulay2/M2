@@ -14,14 +14,13 @@ target_include_directories(system
     ${SOURCE}/include
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
-    ${BOOTSTRAP}/usr-host/include/cdd 
-    ${SOURCE}/submodules/memtailor/src 
-    ${SOURCE}/submodules/mathic/src 
-    ${SOURCE}/submodules/mathicgb/src 
+    ${BOOTSTRAP}/usr-host/include/cdd
+    ${SOURCE}/submodules/memtailor/src
+    ${SOURCE}/submodules/mathic/src
+    ${SOURCE}/submodules/mathicgb/src
     ${SOURCE}/submodules/fflas_ffpack/src
     /usr/include/libxml2
     /usr/include/eigen3
     ${SOURCE}/Macaulay2/d
     ${SOURCE}/Macaulay2/c
   )
-
