@@ -7,6 +7,3 @@ cd "@pre_infodir@"
 for i in *.info
 do (set -x ; install-info --quiet --info-dir="@infodir@" "$i")
 done
-if [ @DUMPDATA@ = yes ]
-then (set -x ; "@bindir@"/M2 --stop --dumpdata)
-fi
