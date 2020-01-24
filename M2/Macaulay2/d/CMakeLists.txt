@@ -5,7 +5,6 @@ set(CLIST arithmetic-tmp.c atomic-tmp.c M2-tmp.c system-tmp.c strings-tmp.c vars
 
 add_custom_target(generate-d ALL DEPENDS ${CLIST})
 
-
 # FIXME
 execute_process(
   COMMAND
@@ -89,6 +88,7 @@ add_library(interpreter STATIC
   M2mem.c
   gdbm_interface.c
   xml-c.c
+  debug.c # Where is this done normally?
   )
 
 target_include_directories(interpreter
