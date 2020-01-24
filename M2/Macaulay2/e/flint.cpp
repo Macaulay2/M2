@@ -45,18 +45,24 @@ gmp_arrayZZ rawZZfactor(gmp_ZZ x)
   gmp_arrayZZ result = getmemarraytype(gmp_arrayZZ,2*len+1);
   result->len = 2*len+1;
   __mpz_struct *tmp;
+  // The sign is the first element of the result.
   tmp = newitem(__mpz_struct);
   mpz_init(tmp);
   mpz_set_si(tmp, factor->sign);
+  mpz_reallocate_limbs(tmp);
   result->array[0] = tmp;
   for (int i=0; i<len; i++) {
+    // Get the i-th factor
     tmp = newitem(__mpz_struct);
     mpz_init(tmp);
     fmpz_get_mpz(tmp,factor->p + i);
+    mpz_reallocate_limbs(tmp);
     result->array[2*i+1] = tmp;
+    // Get the i-th factor and its exponent
     tmp = newitem(__mpz_struct);
     mpz_init(tmp);
     fmpz_get_mpz(tmp,(fmpz *)(factor->exp + i));
+    mpz_reallocate_limbs(tmp);    
     result->array[2*i+2] = tmp;
   }
   fmpz_factor_clear(factor);

@@ -82,8 +82,10 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
 factor ZZ := opts -> n -> (
     if n === 0 then Product { Power{0,1} }
     else (
-	r := rawZZfactor n;
-	Product apply(r#0,r#1,(p,i)-> Power{p,i}) -- !!!
+	r := rawZZfactor n; -- format is: (sign, factor1, exponent1, factor2, exponent2, ...)
+        nfactors := #r//2;
+        assert(#r == 2*nfactors + 1);
+        r#0 * Product for i from 1 to nfactors list Power{r#(2*i-1), r#(2*i)}
 	)
     )
  
