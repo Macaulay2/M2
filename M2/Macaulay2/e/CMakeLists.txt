@@ -26,7 +26,7 @@ target_include_directories(engine
     ${SOURCE}/submodules/mathicgb/src
     ${SOURCE}/submodules/fflas_ffpack/src
     /usr/include/libxml2
-    /usr/include/eigen3
+    /usr/local/include/eigen3
     ${CMAKE_CURRENT_BINARY_DIR}/../d
     ${SOURCE}/Macaulay2/c
   )

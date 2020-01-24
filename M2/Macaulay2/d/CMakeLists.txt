@@ -80,7 +80,6 @@ endforeach(FILENAME)
 
 add_library(interpreter OBJECT
   ${CLIST}
-  startup.c
   gmp_aux.c
   main.c
   M2types.c
@@ -90,6 +89,7 @@ add_library(interpreter OBJECT
   gdbm_interface.c
   xml-c.c
   debug.c # Where is this done normally?
+  ${BOOTSTRAP}/Macaulay2/d/startup.c
   )
 
 # TODO: Is this needed for standalone use? How?
@@ -99,6 +99,7 @@ target_include_directories(interpreter
   PUBLIC
     ${SOURCE}/include
     # Order matters here
+    ${SOURCE}/Macaulay2/regex
     ${SOURCE}/Macaulay2/e
     ${SOURCE}/Macaulay2/c
     ${SOURCE}/Macaulay2/d

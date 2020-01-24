@@ -20,14 +20,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(macaulay2 VERSION 1.15 LANGUAGES C CXX)
 
 set(SOURCE ${PROJECT_SOURCE_DIR})
-set(BOOTSTRAP ${SOURCE}/BUILD/mahrud/build)
-# set(BOOTSTRAP ${SOURCE}/BUILD/mike/builds.tmp/darwin64-clang) # Mike's
+# set(BOOTSTRAP ${SOURCE}/BUILD/mahrud/build)
+set(BOOTSTRAP ${SOURCE}/BUILD/mike/builds.tmp/darwin64-latestclang) # Mike's
+message(${BOOTSTRAP})
 
 add_subdirectory(Macaulay2/c)
+add_subdirectory(Macaulay2/regex)
 add_subdirectory(Macaulay2/d)
 add_subdirectory(Macaulay2/e)
 add_subdirectory(Macaulay2/bin)
-add_subdirectory(Macaulay2/regex)
 add_subdirectory(Macaulay2/system)
 add_subdirectory(Macaulay2/kernel)
 

@@ -11,8 +11,15 @@ add_executable(M2-binary timestamp.c)
 target_link_libraries(M2-binary
   regex interpreter engine system kernel
   # Order matters here!
-  factory mathicgb mathic memtailor frobby cdd givaro lapack blas xml2 lzma z
-  tbb dl gfortran m quadmath lapack blas readline tinfo ntl flint gmp glpk mpc mpfr gmpxx gmp gc gdbm pthread tbb dl m c
+  factory   mathicgb mathic memtailor readline history frobby flint cdd givaro
+  "-framework Accelerate"
+  xml2 lzma z
+  "-framework Accelerate"
+  readline ncurses ntl glpk
+  mpc mpfr gmpxx  gmp  gc gdbm tbb
+  m c  memtailor  mathic  mathicgb
+  # factory mathicgb mathic memtailor frobby cdd givaro lapack blas xml2 lzma z
+  # tbb dl m quadmath lapack blas readline tinfo ntl flint gmp glpk mpc mpfr gmpxx gmp gc gdbm pthread tbb dl m c
   )
 
 target_include_directories(M2-binary
