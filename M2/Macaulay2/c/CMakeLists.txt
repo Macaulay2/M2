@@ -42,10 +42,12 @@ target_include_directories(scc1
     ${SOURCE}/Macaulay2/c
     ${SOURCE}/include
     ${BOOTSTRAP}/include
+    /usr/local/include
   PRIVATE
   )
 
-target_link_libraries(scc1 gdbm m gc)
+#target_link_directories(scc1 PUBLIC /usr/local/lib)
+target_link_libraries(scc1 "-L/usr/local/lib" gdbm m gc)
 
 # Why do we do this?
 # CC scc-core.c

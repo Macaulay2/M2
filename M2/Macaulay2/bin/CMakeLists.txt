@@ -11,6 +11,8 @@ add_executable(M2-binary timestamp.c)
 target_link_libraries(M2-binary
   regex interpreter engine system kernel
   # Order matters here!
+  "-L/usr/local/lib"
+  stdc++
   factory   mathicgb mathic memtailor readline history frobby flint cdd givaro
   "-framework Accelerate"
   xml2 lzma z
@@ -34,6 +36,7 @@ target_include_directories(M2-binary
     ${SOURCE}/submodules/fflas_ffpack/src
     /usr/include/libxml2
     /usr/include/eigen3
+    /usr/local/include
   )
 
 target_link_directories(M2-binary PUBLIC
