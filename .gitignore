@@ -12,6 +12,7 @@
 /M2/include/M2/config.h.in.stamp
 /M2/Macaulay2/m2/TAGS.doc
 /M2/cmake-build-debug
+/M2/cmake-build-release
 /M2/.idea
 /builds
 .DS_Store

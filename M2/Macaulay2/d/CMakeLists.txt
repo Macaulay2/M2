@@ -115,5 +115,13 @@ target_include_directories(interpreter
     ../../submodules/mathic/src
     ../../submodules/mathicgb/src
   )
-
+target_compile_options(interpreter PRIVATE
+ -Wall -Wno-shadow
+ -Wno-sign-conversion -Wno-sign-compare
+ -Wno-parentheses
+ -Wstrict-aliasing -Wfatal-errors
+ -Wimplicit-function-declaration -Wno-uninitialized
+ -Wno-cast-qual -Wno-unused -Wno-unused-label -Wreturn-type
+ -Wno-mismatched-tags
+ )
 add_dependencies(interpreter generate-d)
