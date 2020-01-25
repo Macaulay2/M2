@@ -83,6 +83,7 @@ calculateB'Trace(String) := o ->(
 
 
 --New method
+-*
  importSliceFile=method(TypicalValue=>String,Options=>{
  	NameWitnessSliceFile=>"linear_slice_file",
   	Verbose=>false}    )
@@ -104,7 +105,7 @@ calculateB'Trace(String) := o ->(
  	)	);
      return{theConstants,theLinearSystems}
      )
-
+*-
 
 
 
