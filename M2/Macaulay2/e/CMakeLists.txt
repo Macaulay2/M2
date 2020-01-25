@@ -8,13 +8,13 @@ set(UNDETERMINED
   gb-trace.hpp
   overflow-test.cpp
   test.dd
-  timing.hpp
   aring-wrap # both cpp and hpp
   points # both cpp and hpp
   )
 
 # these files are include only.
 set(HPPONLYFILES
+  timing.hpp
   SLP-defs.hpp
   SLP-imp.hpp
   aring-glue.hpp
@@ -293,20 +293,27 @@ target_include_directories(engine
     ${SOURCE}/submodules/memtailor/src
     ${SOURCE}/submodules/mathic/src
     ${SOURCE}/submodules/mathicgb/src
-    ${SOURCE}/submodules/fflas_ffpack/src
+    SYSTEM ${SOURCE}/submodules/fflas_ffpack/src
     /usr/include/libxml2
     /usr/local/include/eigen3
     ${CMAKE_CURRENT_BINARY_DIR}/../d
     ${SOURCE}/Macaulay2/c
+    SYSTEM /usr/local/include
   )
 
 target_compile_options(engine PRIVATE
-  -Wall -Wno-shadow -Wno-sign-conversion
-  -Wno-sign-compare -Wno-parentheses -Wno-sign-compare
-  -Wuninitialized -Wno-error=pragmas
-  -Wno-mismatched-tags
-  -Wno-unused-local-typedefs -Wno-unknown-pragmas
-  -Wno-cast-qual
+  -Wall -Wuninitialized
+  -Wextra -Wno-unused-parameter
+#  -pedantic-errors -Wno-extra-semi # we cannot put this in since fflas_ffpack appears to use gnu extensions...
+#  -Wno-shadow # not needed for appleclang
+#  -Wno-parentheses # not needed for appleclang
+  -Wno-sign-conversion
+  -Wno-sign-compare
+#  -Wno-error=pragmas # not needed for appleclang
+  -Wno-unknown-pragmas
+  -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
+#  -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
+#  -Wno-cast-qual # not needed for appleclang
   )
 
 # TODO

@@ -114,7 +114,7 @@ ARingGFGivaro::ARingGFGivaro(UTT charact_,
   getModPolynomialCoeffs();
 }
 
-const M2_arrayint ARingGFGivaro::findMinimalPolynomial(UTT charac, UTT dim)
+M2_arrayint ARingGFGivaro::findMinimalPolynomial(UTT charac, UTT dim)
 {
   // ARingGFGivaro tmp(charac,dim);
   // return tmp.getModPolynomialCoeffs();

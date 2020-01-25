@@ -463,7 +463,7 @@ bool RingElement::getSmallIntegerCoefficients(
   return true;
 }
 
-const M2_arrayintOrNull RingElement::getSmallIntegerCoefficients() const
+M2_arrayintOrNull RingElement::getSmallIntegerCoefficients() const
 {
   std::vector<long> coeffs;
   if (!getSmallIntegerCoefficients(coeffs)) return 0;

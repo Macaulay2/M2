@@ -104,7 +104,7 @@ class RingElement : public EngineObject
   // otherwise: returns true, and sets result_coeffs.
   // (Mainly useful for univariate poly rings over finite fields)
   bool getSmallIntegerCoefficients(std::vector<long> &result_coeffs) const;
-  const M2_arrayintOrNull getSmallIntegerCoefficients() const;
+  M2_arrayintOrNull getSmallIntegerCoefficients() const;
 };
 
 inline RingElement::RingElement(const Ring *R0, ring_elem f) : R(R0), val(f) {}
