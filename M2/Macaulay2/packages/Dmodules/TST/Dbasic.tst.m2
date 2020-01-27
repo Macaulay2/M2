@@ -1,6 +1,10 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 needsPackage "Dmodules";
+--Things needing tests: createCommAlgebra, Fourier, FourierInverse, Dtransposition
+--ensureQuotientModule, Dprune, reduceCompres
+
+--Does createCommAlgebra even exist??
 
 -- Boundary cases
 x = symbol x; Dx = symbol Dx;
@@ -15,6 +19,13 @@ assert (singLocus I0 == 0);
 assert (singLocus I1 == ideal(1_W));
 assert (charIdeal I0 == 0);
 assert (chI = charIdeal I1; chI == ideal(1_(ring chI)) );
+
+-- Dbasics basics
+R = QQ[r,s];
+A = makeWeylAlgebra R;
+B = QQ[r,s,dr,ds,WeylAlgebra => {r=>dr,s=>ds}];
+assert (describe A===describe B);
+
 
 -- Boundary cases for module scripts
 M = directSum(cokernel gens I0, cokernel gens I1);
@@ -107,3 +118,4 @@ assert(gbw(I, w1) == gbw(I, w2));
 D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}, Degrees => {2,4,-3,9}];
 assert(describe extractVarsAlgebra D === describe(QQ[u,v, Degrees => {2,4}]));
 assert(describe extractDiffsAlgebra D === describe(QQ[Du,Dv, Degrees => {-3,9}]));
+
