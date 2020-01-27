@@ -12,7 +12,7 @@ newPackage(
     Authors => {
         {Name => "Mikhail Zinin", Email => "mzinin@gmail.com"}
     },
-    Headline => "Involutive Pommaret basis in a Boolean ring",
+    Headline => "involutive Pommaret basis in a Boolean ring",
     PackageImports => {"BooleanGB"},
     DebuggingMode => false
     )

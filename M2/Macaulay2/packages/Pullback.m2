@@ -395,7 +395,7 @@ beginDocumentation()
 
 document{
   Key => Pullback,
-  Headline => "Pullback in the category of rings",
+  Headline => "pullback in the category of rings",
   EM "Pullback", " is a package that implements pullback for diagrams of rings",
   Caveat => "Works only for maps of rings finitely generated over a base field and one of the two maps is surjective"
   }

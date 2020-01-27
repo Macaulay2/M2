@@ -82,8 +82,8 @@ Here are commands that will get you a good development environment under
 various modern operating systems:
 
   Ubuntu and Debian:
-    Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator
+    Install packages as root with:
+      apt-get install -y -q sudo autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -116,9 +116,9 @@ various modern operating systems:
     Install packages with:
       sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
 
-  Scientific linux:
+  Scientific linux (Red Hat, CentOS, ...):
     Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo redhat-lsb wget
     Install other software:
       Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
         way (untar, configure, make, make install).
@@ -133,6 +133,7 @@ various modern operating systems:
 	  . /opt/rh/devtoolset-2/enable
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
+      Alternatively, see the instructions at https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/.
 
   Suse Linux Leap 42.1:
 
@@ -157,20 +158,33 @@ various modern operating systems:
       sudo pacman-key --refresh-keys
       sudo pacman --sync --refresh --sysupgrade
 
+  Gentoo Linux:
+
+    To install generally needed packages, run this command as root:
+
+       emerge --ask -n sudo xauth git emacs
+
+       Note: for emacs, set the USE variables (package.use), so emacs will use X11 when available:
+		app-editors/emacs X
+		app-emacs/emacs-common-gentoo X
+
+    To install packages needed by Macaulay2, run this command:
+
+       emerge --ask -n yasm sys-process/time
+
+    To install packages potentially usable by Macaulay2, run this command:
+
+       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl pari topcom
+
+       Note: various variables, licenses, and options will have to be set
+
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
-    To create the directory /usr/include, along with the files in it, one installs the Xcode
-      Command Line Tools using the following command:
-      	 xcode-select --install
-      After upgrading the OS, it may be necessary to install it again: one symptom of
-        forgetting to do this is that /usr/include may be missing.
-      Starting with Mac OS X version 10.14 (Mojave), /usr/include needs to be created with
-        this additional command:
-	   sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-	An alternative to the command above is to use the finder to navigate to the directory
-	   /Library/Developer/CommandLineTools/Packages
-	and then to "open" the package file to get it installed.
+    Install the Xcode Command Line Tools using the following command.
+          xcode-select --install
+       (Starting with Mac OS X version 10.15 (Catalina), /usr/include does not exist and cannot be
+        made to exist, so our previous instructions for getting it no longer apply and have been removed.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 

@@ -6,7 +6,7 @@
 -- UPDATE HISTORY : August 2012 
 ---------------------------------------------------------------------------
 newPackage("Polyhedra2",
-    Headline => "A package for computations with convex polyhedra",
+    Headline => "convex polyhedra",
     Version => ".1",
     Date => "August 5, 2011",
     Authors => {

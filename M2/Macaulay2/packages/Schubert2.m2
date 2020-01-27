@@ -12,7 +12,7 @@ newPackage(
 	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-    	Headline => "computations of characteristic classes for varieties without equations",
+    	Headline => "characteristic classes for varieties without equations",
         DebuggingMode => false,
 	PackageImports => {"SchurRings","PushForward"}
     	)

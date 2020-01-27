@@ -26,6 +26,14 @@ A = makeWeylAlgebra R;
 B = QQ[r,s,dr,ds,WeylAlgebra => {r=>dr,s=>ds}];
 assert (describe A===describe B);
 
+--all things Fourier
+D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}, Degrees => {1,5,-3,-4}];
+L = u^3 + u*v*Dv + 4*u*Du^3*Dv;
+assert (Fourier L ==  -Du^3 + Du*Dv*v - 4*Du*u^3*v);
+assert (degree Fourier u == {-3});
+I = ideal (u*v^2, u*Du, v*Du+Dv^2);
+assert (Fourier I == ideal (-Du*Dv^2, -Du*u, -Dv*u+v^2));
+
 
 -- Boundary cases for module scripts
 M = directSum(cokernel gens I0, cokernel gens I1);

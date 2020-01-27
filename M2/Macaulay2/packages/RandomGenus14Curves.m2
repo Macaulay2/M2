@@ -9,7 +9,7 @@ newPackage(
 	             Email => "bothmer@uni-math.gwdg.de",
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
-    	Headline => "Construction of random smooth curves of genus 14",
+    	Headline => "random smooth curves of genus 14",
      	PackageExports => {"RandomObjects"},
 	PackageImports => {"Truncations"},
     	DebuggingMode => false
