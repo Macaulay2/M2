@@ -5,7 +5,7 @@
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
 find_package(BISON REQUIRED)
-BISON_TARGET(scc1 grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
+BISON_TARGET(scc1 ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
   DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/grammar.h
   COMPILE_FLAGS -yvdlt)
 
@@ -39,8 +39,8 @@ add_executable(scc1
 
 target_include_directories(scc1
   PUBLIC
-    ${SOURCE}/Macaulay2/c
-    ${SOURCE}/include
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c
+    ${CMAKE_SOURCE_DIR}/include
     ${BOOTSTRAP}/include
     /usr/local/include
   PRIVATE
@@ -53,4 +53,4 @@ target_link_libraries(scc1 "-L/usr/local/lib" gdbm m gc)
 # CC scc-core.c
 
 # Add this also:
-# cd ${SOURCE}/Macaulay2/c && etags scc1.h readfile.h error.h dictionary.h list.h cprint.h type.h chk.h compat.h debugging.h scc.h grammar.h keywords.h scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c debugging.c grammar.y scc-core.h scc-core.c
+# cd ${CMAKE_SOURCE_DIR}/Macaulay2/c && etags scc1.h readfile.h error.h dictionary.h list.h cprint.h type.h chk.h compat.h debugging.h scc.h grammar.h keywords.h scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c debugging.c grammar.y scc-core.h scc-core.c

@@ -269,35 +269,28 @@ set(SOURCES
   ${HPPFILES}
   )
 
-# set(SOURCES
-#   error.c table.c exptable.c monordering.c complex.c
-#   eigen.cpp monomial-sets.cpp mutablecomplex.cpp localring.cpp
-#   f4/res-monomial-sorter.cpp f4/res-varpower-monomial.cpp f4/res-f4-monlookup.cpp f4/res-moninfo-dense.cpp f4/res-moninfo-sparse.cpp f4/res-moninfo.cpp f4/res-poly-ring.cpp f4/res-f4-m2-interface.cpp f4/res-schreyer-frame.cpp f4/res-f4.cpp f4/res-f4-computation.cpp f4/res-gausser.cpp f4/res-gausser-ZZp.cpp f4/res-gausser-QQ.cpp f4/res-gausser-QQ-hybrid.cpp f4/f4.cpp f4/f4-syz.cpp f4/f4-mem.cpp f4/f4-monlookup.cpp f4/f4-types.cpp f4/f4-computation.cpp f4/f4-spairs.cpp f4/f4-m2-interface.cpp f4/hilb-fcn.cpp f4/monhashtable.cpp f4/monsort.cpp f4/moninfo.cpp f4/ntuple-monomial.cpp f4/varpower-monomial.cpp f4/gausser.cpp
-#   betti.cpp util.cpp GF.cpp ZZ.cpp ZZp.cpp reader.cpp matrix-stream.cpp cra.cpp aring-zz-gmp.cpp aring-qq-gmp.cpp aring-zz-flint.cpp aring-qq-flint.cpp aring-zzp-flint.cpp aring-RR.cpp aring-CC.cpp aring-RRR.cpp aring-CCC.cpp aring-tower.cpp aring-gf-flint-big.cpp aring-gf-flint.cpp aring-m2-gf.cpp aring-zzp.cpp aring-gf-givaro.cpp aring-zzp-ffpack.cpp aring.cpp schurSn.cpp schur2.cpp dpoly.cpp tower.cpp interreduce.cpp gb-test1.cpp finalize.cpp NAG.cpp SLP.cpp overflow.cpp memory-status.cpp imonorder.cpp sagbi.cpp monideal-minprimes.cpp lapack.cpp LLL.cpp fractionfreeLU.cpp ntl-interface.cpp fplll-interface.cpp mat.cpp dmat.cpp coeffrings.cpp Eschreyer.cpp gbweight.cpp qring.cpp polyquotient.cpp poly.cpp debug.cpp comp.cpp comp-gb.cpp comp-gb-proxy.cpp comp-gb-declared.cpp comp-res.cpp res-a0.cpp res-a0-poly.cpp res-a1.cpp res-a1-poly.cpp res-a2.cpp reducedgb.cpp reducedgb-field.cpp reducedgb-marked.cpp reducedgb-field-local.cpp reducedgb-ZZ.cpp montable.cpp montableZZ.cpp schorder.cpp assprime.cpp buffer.cpp comb.cpp det.cpp frac.cpp franzi-brp.cpp freemod.cpp gb-default.cpp gb-homog2.cpp gb-sugarless.cpp gb-toric.cpp gb-walk.cpp gbring.cpp gauss.cpp hermite.cpp hilb.cpp int-bag.cpp intarray.cpp matrix.cpp matrix-con.cpp mem.cpp monideal.cpp monoid.cpp monomial.cpp ntuple.cpp polyring.cpp pfaff.cpp relem.cpp ring.cpp ringmap.cpp schur.cpp skew.cpp skewpoly.cpp solvable.cpp spair.cpp text-io.cpp varpower.cpp weylalg.cpp interrupted.cpp newdelete.cpp flint.cpp rand.cpp ntl-internal.cpp ntl-debugio.cpp matrix-kbasis.cpp matrix-symm.cpp matrix-sort.cpp ring-vecs.cpp res-a2-gb.cpp engine.cpp x-aring.cpp x-monom.cpp x-monoid.cpp x-relem.cpp x-free.cpp x-mat.cpp x-gb.cpp x-ringmap.cpp x-mutablemat.cpp franzi-gb.cpp franzi-interface.cpp x-monideal.cpp x-factor.cpp polyroots.cpp
-#   )
-
 add_library(engine OBJECT ${SOURCES})
 
-add_dependencies(engine interpreter)
+add_dependencies(engine interpreter e-includes)
 
 target_include_directories(engine
   PUBLIC
     ${BOOTSTRAP}/usr-host/include
-    ${SOURCE}/Macaulay2/e
-    # ../e-includes # FIXME
-    ${BOOTSTRAP}/Macaulay2/e-includes
-    ${SOURCE}/include
+    ${CMAKE_SOURCE_DIR}/Macaulay2/e
+    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
+    ${CMAKE_SOURCE_DIR}/include
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
     ${BOOTSTRAP}/usr-host/include/cdd
-    ${SOURCE}/submodules/memtailor/src
-    ${SOURCE}/submodules/mathic/src
-    ${SOURCE}/submodules/mathicgb/src
-    SYSTEM ${SOURCE}/submodules/fflas_ffpack/src
+    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
+    SYSTEM ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/src
     /usr/include/libxml2
+    /usr/include/eigen3
     /usr/local/include/eigen3
-    ${CMAKE_CURRENT_BINARY_DIR}/../d
-    ${SOURCE}/Macaulay2/c
+    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    ${CMAKE_SOURCE_DIR}/Macaulay2/c
     SYSTEM /usr/local/include
   )
 

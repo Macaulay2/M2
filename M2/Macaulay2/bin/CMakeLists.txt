@@ -7,6 +7,8 @@
 # Any other sources?
 add_executable(M2-binary timestamp.c)
 
+add_dependencies(M2-binary factory)
+
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter engine system kernel
@@ -26,14 +28,14 @@ target_link_libraries(M2-binary
 
 target_include_directories(M2-binary
   PUBLIC
-    ${SOURCE}include
+    ${CMAKE_SOURCE_DIR}include
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
     ${BOOTSTRAP}/usr-host/include/cdd
-    ${SOURCE}/submodules/memtailor/src
-    ${SOURCE}/submodules/mathic/src
-    ${SOURCE}/submodules/mathicgb/src
-    ${SOURCE}/submodules/fflas_ffpack/src
+    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
+    ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/src
     /usr/include/libxml2
     /usr/include/eigen3
     /usr/local/include
@@ -48,4 +50,5 @@ target_link_directories(M2-binary PUBLIC
   /lib64
   /usr/lib64
   /usr/lib
+  /usr/local/lib
   )
