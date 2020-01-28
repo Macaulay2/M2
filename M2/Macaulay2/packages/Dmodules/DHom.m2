@@ -12,7 +12,7 @@ List ^ List := (Vars, Exps) -> (
 
 -- This routine takes a weight vector w of strictly positive integers
 -- and returns the exponents beta in N^n such that 
--- ( k_0 < w_1 beta_1 + ... + w_n bet_n <= k_1) 
+-- ( k_0 < w_1 beta_1 + ... + w_n beta_n <= k_1) 
 findExps := (w, k0, k1) -> (
      local minimum, local alpha, local tempExps;
      -- base case: weight vector w has dim 1
