@@ -1,6 +1,3 @@
---ToMake:
---isThetaRing
---isDpaired
 
 --Input: J an ideal in a Weyl algebra
 --Output: True if ideal is torus fixed, as in SST Thm. 2.3.3(1). False if not.
@@ -55,8 +52,6 @@ thetaBracketSub(List,Ring) := (RingElement) => (b,S)->(
 
 --Input: element in D in a torus fixed ideal
 --Output: List of corresponding gens from homogeneous pieces in the distraction, viewed in ring S
---
---Later: could make S into a thetaRing that cached in WeylAlgebra for S and leave it out of method input
 genToDistractionGens = method();
 genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
     n := (numgens ring f)//2;
@@ -68,8 +63,6 @@ genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
 	 pTheta := sum apply(q#1,v->( sub(v#0,S)*( 
 		     product apply(length v#1,k->( product apply(v#1#k,i->( S_k-i))))
 		     )));
-	 --pTheta := sum apply(q#1,v->( sub(v#0,S)*(S_(v#1)) ));--I need to add some factorials here!!!
-	 --error "pTheta is wrong";
 	 phi := map(S,S,S_*-b);
 	 pThetaMinusb := phi(pTheta);
 	 thetaBracketSub(b,S)*pThetaMinusb
@@ -84,6 +77,13 @@ thetaIdeal(Ideal,Ring) := (Ideal) => (J,S) ->(
     if n != numgens S then error "mismatched numbers of variables";
     ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
 )
+
+--holnomic ideal I
+--weight w
+--indicialIdeal = method();
+--FINISH
+--  = thetaIdeal(inw(I,flatten{-w|w}))
+
 
 --Input: 0-dimensional primary ideal I
 --Output: corresponding point, as a vector, with its multiplicity  
@@ -119,7 +119,8 @@ cssExpts(Ideal,List) := List => (H,w)->(
     	apply(L,l-> solveMax(l))
 	)
 
---Input: holonomic D-ideal H, weight vector w as List, option: Tries = number of times to test 
+--Input: holonomic D-ideal H, weight vector w as List, 
+--???????????????--Option: Tries = number of times to test 
 --       with a random vector to check ideal is torus-fixed
 --Output: list of starting monomial exponents for H wrt w, with multiplicities
 cssExptsMult = method(); 
@@ -140,6 +141,47 @@ restart; --
 --uninstallPackage "Dmodules"
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
 needsPackage "Dmodules";
+
+
+
+----
+W = makeWeylAlgebra(QQ[x,y])
+vars W
+thetax = x*dx
+thetay = y*dy
+P1 = thetax^2*(thetax-2)-x*(thetax+thetay+1)*(thetax+2)*(thetax+3)
+P2 = thetay^2*(thetay-3)-y*(thetax+thetay+1)*(thetay+2)*(thetay+3)
+I = ideal(P1,P2)
+w = {1,11}
+inw(I,flatten{-w|w})
+
+S = QQ[t_1,t_2]
+thetaIdeal(I,S)
+cssExptsMult(I,w)
+--{{4, {0, 0}}, {2, {2, 0}}, {2, {0, 3}}, {1, {2, 3}}}
+--matches SST Ex 2.5.13
+
+-----
+
+A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
+beta = {1,0,0}
+I = gkz(A,beta)
+w = {1,1,1,1,0}
+S = QQ[t_1..t_5]
+isTorusFixed I --false
+J = inw(I,flatten{-w|w}) 
+isTorusFixed J --true
+thetaIdeal(J,S) == ideal(t_1 +t_2 +t_3+t_4 +t_5 -1, t_1 +t_2 -t_4, t_2 +t_3 -t_4, t_1*t_3, t_2*t_4)
+cssExptsMult(I,w) --{{4, {0, 0, 0, 0, 1}}}
+--matches Ex 2.6.4
+
+
+----------
+
+3.1.4 in sst
+
+-------
+
 A = matrix{{1,1,1,1},{0,1,3,4}}
 beta = {1,2}  
 Hbeta = gkz(A,beta)
@@ -150,17 +192,6 @@ cssExptsMult(Hbeta,w)
 --Now, check that isTorusFixed is also computing p(theta) correctly...
 J = inw(Hbeta,(-w)|w);
 S = QQ[t_1..t_4]
-
-    n := numgens ring J//2;
-    testIdeal := ideal flatten apply(J_*,f->( 
-	    if isHomogeneous f then f else( 
-		apply(apbFactor(f),v->(		
-			a := take(v#0,n)|apply(n,i-> 0);
-			b := apply(n,i-> 0)|drop(v#0,n);
-			pTheta := sum apply(v#1,u->( u#0*((ring J)_((u#1)|(u#1)) )));
-			(ring J)_a*pTheta*(ring J)_b
-			)))));
-    J == testIdeal
 
 
 
