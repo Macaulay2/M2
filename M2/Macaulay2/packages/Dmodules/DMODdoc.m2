@@ -108,7 +108,8 @@ document {
 	  TO {"logCohomology", " -- logarithmic cohomology groups"},
 	  TO {"lct", "-- log canonical threshold"},
 	  {TO "multiplierIdeal", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
-	  TO "hasRationalSing"
+	  TO "hasRationalSing",
+	  TO {"Canonical Series Tutorial", "-- find series solutions of regular systems"}
 	  },
 
      HEADER3 "Programming aids:",
