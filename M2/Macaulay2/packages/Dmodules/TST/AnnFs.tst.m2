@@ -1,10 +1,27 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
--- AnnFs
+-- TESTS TO WRITE (exported symbols);
+--    AnnFs List
+--    kDiffs
+--    kOrderAnnFa
+--    kOrderAnnFs
+--    kappaAnnF1PlanarCurve
+
+-- TESTS TO WRITE (unexported symbols);
+--    diffRatFun (List, RingElement)
+--    diffRatFun (List, RingElement, ZZ)
+--    kCoeffVectorWRTs
+
 needsPackage "Dmodules"
 Dtrace 1
+
+----------
+-- AnnFs
+----------
 pInfo(1, "testing AnnFs...")
 
+
+-- TEST: AnnFs RingElement
 x = symbol x; z = symbol z; d = symbol d; Dz = symbol Dz;
 R = QQ[x_1..x_4, z, d_1..d_4, Dz, WeylAlgebra => ( toList(1..4) / (i -> (x_i => d_i)) | {z => Dz} ) ]
 f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3
@@ -24,8 +41,15 @@ assert ( Ann == ideal {
 	  x_1 * d_1 - x_3 * d_3 - 2 * x_4 * d_4 + z * Dz - s,
 	  3 * x_4 * z * d_4 - z^2 * Dz + x_2 * d_3 + 2 * x_3 * d_4
 	  })
+  
+  
+-- TEST: AnnFs List
+-- **TODO**
 
--- AnnFIs
+
+-----------
+-- AnnIFs
+-----------
 x = symbol x; dx = symbol dx;
 W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
 Ann = AnnIFs(ideal dx, x^2)

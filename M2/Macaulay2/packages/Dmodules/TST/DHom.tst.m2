@@ -1,5 +1,53 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+-- TESTS TO WRITE (exported symbols);
+--    List ^ List
+
+--    PolySols Module
+--    PolySols Module .... with Alg => Duality
+--    PolySols (Module, List)
+--    PolySols (Module, List) .... with Alg => Duality
+
+--    PolyExt Ideal
+--    PolyExt Module
+--    PolyExt (ZZ, Ideal)
+--    PolyExt (ZZ, Module)
+
+--    RatSols Ideal
+--    RatSols (Ideal, List)
+--    RatSols (Ideal, RingElement)
+--    RatSols (Ideal, List, List)
+
+--    RatExt Ideal
+--    RatExt Module
+--    RatExt (Ideal, RingElement)
+--    RatExt (Module, RatExt)
+--    RatExt (ZZ, Module)
+--    RatExt (ZZ, Ideal)
+--    RatExt (ZZ, Ideal, RingElement)
+--    RatExt (ZZ, Module, RingElement)
+
+--    DHom (Module, Module, List)
+
+--    DExt (Module, Module, List)
+
+--    ExternalProduct (Module, Module)
+--    ExternalProduct (ChainComplex, ChainComplex)
+--    ExternalProduct (Module, Module) .... with TwistMap => true
+--    ExternalProduct (ChainComplex, ChainComplex) .... with TwistMap => true
+
+
+
+-- TESTS TO WRITE (unexported symbols);
+--    divideOutGCD RingElement
+--    divideOutGCD Matrix
+
+--    TwistOperator (Ideal, RingElement, ZZ)
+--    TwistOperator (Ideal, List, List)
+--    TwistOperator (RingElement, RingElement, ZZ)
+--    TwistOperator (RingElement, List, List)
+
+
 needsPackage "Dmodules";
 
 ----------------------- TESTS for PolySols -------------------------
