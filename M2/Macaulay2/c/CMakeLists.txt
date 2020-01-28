@@ -39,18 +39,15 @@ add_executable(scc1
 
 target_include_directories(scc1
   PUBLIC
-    ${CMAKE_SOURCE_DIR}/Macaulay2/c
+    .
     ${CMAKE_SOURCE_DIR}/include
     ${BOOTSTRAP}/include
     /usr/local/include
-  PRIVATE
   )
 
+# FIXME: what library is missing that requires -L...?
 #target_link_directories(scc1 PUBLIC /usr/local/lib)
 target_link_libraries(scc1 "-L/usr/local/lib" gdbm m gc)
 
 # Why do we do this?
 # CC scc-core.c
-
-# Add this also:
-# cd ${CMAKE_SOURCE_DIR}/Macaulay2/c && etags scc1.h readfile.h error.h dictionary.h list.h cprint.h type.h chk.h compat.h debugging.h scc.h grammar.h keywords.h scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c debugging.c grammar.y scc-core.h scc-core.c

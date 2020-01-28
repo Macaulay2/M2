@@ -10,7 +10,7 @@ add_custom_command(OUTPUT geores.hpp geogbvec.hpp statuscodes.h
   COMMAND
     sed -e "s/geobucket/respolyHeap/g" -e "s/FREEMODULETYPE/const res2_poly/g" -e "s/VECTYPE/res2term */g" ${CMAKE_CURRENT_SOURCE_DIR}/geoT.hpp > geores.hpp
   COMMAND
-    sed -re "s/\(.*\):\(.*\):\(.*\)/  \\2 = \\1,/" ${CMAKE_CURRENT_SOURCE_DIR}/statuscodes > statuscodes.h
+    sed -e "s/\\(.*\\):\\(.*\\):\\(.*\\)/  \\2 = \\1,/" ${CMAKE_CURRENT_SOURCE_DIR}/statuscodes > statuscodes.h
   COMMAND
     echo "  DUMMY_STATUS_CODE" >> statuscodes.h
   VERBATIM

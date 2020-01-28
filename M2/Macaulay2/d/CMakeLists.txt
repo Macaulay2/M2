@@ -6,7 +6,18 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 1)
 # Order matters here
 set(CLIST arithmetic-tmp.c atomic-tmp.c M2-tmp.c system-tmp.c strings-tmp.c varstrin-tmp.c strings1-tmp.c errio-tmp.c vararray-tmp.c ctype-tmp.c nets-tmp.c varnets-tmp.c interrupts-tmp.c pthread0-tmp.c stdiop0-tmp.c gmp-tmp.c engine-tmp.cc xml-tmp.c stdio0-tmp.c parse-tmp.c expr-tmp.c stdio-tmp.c stdiop-tmp.c err-tmp.c gmp1-tmp.c tokens-tmp.c getline-tmp.c lex-tmp.c parser-tmp.c binding-tmp.c basic-tmp.c convertr-tmp.c common-tmp.c util-tmp.c struct-tmp.c classes-tmp.cc buckets-tmp.cc equality-tmp.cc hashtables-tmp.cc sets-tmp.cc version-tmp.cc evaluate-tmp.c mysqldummy-tmp.c pthread-tmp.c actors-tmp.c actors2-tmp.cc actors3-tmp.c actors4-tmp.c xmlactors-tmp.c actors5-tmp.c actors6-tmp.cc threads-tmp.cc flint-tmp.c interface-tmp.cc interface2-tmp.c texmacs-tmp.c interp-tmp.cc)
 
-add_custom_target(generate-d ALL DEPENDS ${CLIST})
+add_custom_target(generate-d ALL DEPENDS ${CLIST} distributed-packages.h)
+
+file(READ "../packages/\=distributed-packages" PACKAGES REGEX "^[a-zA-Z0-9]+$")
+string(REPLACE "\n" " " PACKAGES ${PACKAGES})
+string(STRIP ${PACKAGES} PACKAGES)
+
+add_custom_command(OUTPUT distributed-packages.h
+  COMMAND
+    ${CMAKE_COMMAND} -E echo "#define DISTRIBUTED_PACKAGES \"${PACKAGES}\"" > distributed-packages.h
+  VERBATIM
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 # FIXME
 execute_process(
@@ -100,33 +111,38 @@ add_library(interpreter OBJECT
 
 target_include_directories(interpreter
   PUBLIC
+    .
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-    # Order matters here
     ${CMAKE_SOURCE_DIR}/Macaulay2/regex
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
-    ${CMAKE_SOURCE_DIR}/Macaulay2/d
+    ${CMAKE_BINARY_DIR}/Macaulay2/d
+    ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
+    # Order matters here
     ${BOOTSTRAP}/include
-    ${BOOTSTRAP}/Macaulay2/d
-    ${BOOTSTRAP}/Macaulay2/e
+    ${BOOTSTRAP}/Macaulay2/d # only need distributed-packages.h
     ${BOOTSTRAP}/usr-host/include
   PRIVATE
-    /usr/include/eigen3
-    /usr/include/libxml2
-    ../../submodules/memtailor/src
-    ../../submodules/mathic/src
-    ../../submodules/mathicgb/src
+    ${LIBXML2_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathic/src
+    ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
   )
 
-target_compile_options(interpreter PRIVATE
- -Wall -Wno-shadow
- -Wno-sign-conversion -Wno-sign-compare
- -Wno-parentheses
- -Wstrict-aliasing -Wfatal-errors
- -Wimplicit-function-declaration -Wno-uninitialized
- -Wno-cast-qual -Wno-unused -Wno-unused-label -Wreturn-type
- -Wno-mismatched-tags
- )
+if(SUPPRESS_COMPILER_WARNINGS)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(interpreter PRIVATE
+      -Wall -Wno-shadow
+      -Wno-sign-conversion -Wno-sign-compare
+      -Wno-parentheses
+      -Wstrict-aliasing -Wfatal-errors
+      -Wimplicit-function-declaration -Wno-uninitialized
+      -Wno-cast-qual -Wno-unused -Wno-unused-label -Wreturn-type
+      -Wno-mismatched-tags
+      )
+  endif()
+  # add other compilers here
+endif()
 
 add_dependencies(interpreter generate-d e-includes)

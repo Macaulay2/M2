@@ -273,6 +273,8 @@ add_library(engine OBJECT ${SOURCES})
 
 add_dependencies(engine interpreter e-includes)
 
+target_link_libraries(engine Eigen3::Eigen)
+
 target_include_directories(engine
   PUBLIC
     ${BOOTSTRAP}/usr-host/include
@@ -282,32 +284,46 @@ target_include_directories(engine
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
     ${BOOTSTRAP}/usr-host/include/cdd
+  PRIVATE
+    ${LIBXML2_INCLUDE_DIR}
+    ${EIGEN3_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/submodules/memtailor/src
     ${CMAKE_SOURCE_DIR}/submodules/mathic/src
     ${CMAKE_SOURCE_DIR}/submodules/mathicgb/src
     SYSTEM ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/src
-    /usr/include/libxml2
-    /usr/include/eigen3
-    /usr/local/include/eigen3
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
     SYSTEM /usr/local/include
   )
 
-target_compile_options(engine PRIVATE
-  -Wall -Wuninitialized
-  -Wextra -Wno-unused-parameter
-#  -pedantic-errors -Wno-extra-semi # we cannot put this in since fflas_ffpack appears to use gnu extensions...
-#  -Wno-shadow # not needed for appleclang
-#  -Wno-parentheses # not needed for appleclang
-  -Wno-sign-conversion
-  -Wno-sign-compare
-#  -Wno-error=pragmas # not needed for appleclang
-  -Wno-unknown-pragmas
-  -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
-#  -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
-#  -Wno-cast-qual # not needed for appleclang
-  )
+if(SUPPRESS_COMPILER_WARNINGS)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # using Clang or AppleClang
+    target_compile_options(engine PRIVATE
+      -Wall -Wuninitialized
+      -Wextra -Wno-unused-parameter
+      #  -pedantic-errors -Wno-extra-semi # we cannot put this in since fflas_ffpack appears to use gnu extensions...
+      #  -Wno-shadow # not needed for appleclang
+      #  -Wno-parentheses # not needed for appleclang
+      -Wno-sign-conversion
+      -Wno-sign-compare
+      #  -Wno-error=pragmas # not needed for appleclang
+      -Wno-unknown-pragmas
+      -Wno-mismatched-tags # needed currently, but if we clean up includes, should not be needed?
+      #  -Wno-unused-local-typedefs # one warning, in mathic.h from x-aring.cpp
+      #  -Wno-cast-qual # not needed for appleclang
+      )
+  endif()
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # using GCC
+  endif()
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    # using Intel C++
+  endif()
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # using Visual Studio C++
+  endif()
+endif()
 
 # TODO
 if(FALSE)
