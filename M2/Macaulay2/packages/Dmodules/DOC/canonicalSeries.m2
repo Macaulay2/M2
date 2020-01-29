@@ -149,12 +149,12 @@ doc ///
 
 doc ///
    Key
-     thetaIdeal
-     (thetaIdeal, Ideal, Ring)
+     distraction
+     (distraction, Ideal, Ring)
    Headline
      the image in the thetaRing of a torus-fixed ideal in a Weyl algebra
    Usage
-     thetaIdeal(I,thetaRing)
+     distraction(I,S)
    Inputs
      I:
        Ideal in a WeylAlgebra that is torus-fixed
