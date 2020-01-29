@@ -46,16 +46,6 @@ doc ///
       The indicial ideal of I with respect to w is produced by extending the initial ideal to the ring of 
       differential operators with rational function coefficients, and contract to thetaRing. The exponents of I
       with respect to w are the roots of the indicial ideal, counted with multiplicities. 
-     
---   Example
---      2+2
-
-
---      R = QQ[x]
---      W = makeWA R
---      I = ideal(x*(1-x)*dx^2-(1-x)*dx+1)
---      inw(I,{-1,1})  
-
     Example
      needsPackage "Dmodules"
      R1 = QQ[z]
@@ -66,22 +56,15 @@ doc ///
      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b) -- the Gauss hypergeometric equation, exponents 0, 1-c 
      cssExpts(J,{1})
      inw(J,{-1,1})
-     thetaIdeal(oo,QQ[s])
+     distraction(oo,QQ[s])
      factor oo_0
      c=1  -- Now we have a single exponent of multiplicity 2
      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b)
      cssExpts(J,{1})
      cssExptsMult(J,{1})
-    
-     
-      
     Text  
       The first step is to rewrite elements of the initial ideal in a terms of the thetaRing, in a way that will allow us to easily
       extend and contract see [SST] 
-      
-
-    
-    
     Example
       R2 = QQ[x_1..x_3]
       W2 = makeWA R2
@@ -94,18 +77,15 @@ doc ///
       factor oo	  -- now it looks like a descending factorial
       f = x_1^2*x_2^2*x_3*dx_1*dx_2^2*dx_3^2
       genToDistractionGens(f,thetaRing)
-      
     Text
       Here is an example that can be continued when more functions are implemented.
       This is worked out as [page 138, ex 3.5.3, SST]. 
-      
     Example
       A = matrix{{1,1,1},{0,1,2}}
       --I = gkz(A,{10,8},R2)
       I = gkz(A,{10,8})
       holonomicRank(I)
       cssExpts(I,{1,0,0})
-    
     Text
       In this case, the series corresponding to the exponent 
       (2,8,0) is logarithm-free (actually, this is a hypergeometric polynomial),
@@ -144,17 +124,16 @@ doc ///
       R = QQ[x_1..x_4]
       W = makeWA R
       describe W
-      2+2
 ///
 
 doc ///
    Key
-     thetaIdeal
-     (thetaIdeal, Ideal, Ring)
+     distraction
+     (distraction, Ideal, Ring)
    Headline
      the image in the thetaRing of a torus-fixed ideal in a Weyl algebra
    Usage
-     thetaIdeal(I,thetaRing)
+     distraction(I,thetaRing)
    Inputs
      I:
        Ideal in a WeylAlgebra that is torus-fixed
@@ -164,6 +143,7 @@ doc ///
        [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Lemma 2.3.1] to I.
    Description
     Text
+      This computes the distraction of a torus fixed D-ideal [SST, Corollary 2.3.5].
       This is necessary to compute indicial ideals [SST, Theorem 2.3.9, Corollary 2.3.5]; 
       the roots of the indicial ideals are the exponents of the starting terms of canonical series
       solutions of regular holonomic D-ideals.

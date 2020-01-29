@@ -4,31 +4,46 @@ needsPackage "Dmodules"
 Dtrace 1
 pInfo(1, "testing localCohom...")
 
-X = symbol X; dX = symbol dX;
-Y = symbol Y; dY = symbol dY;
-Z = symbol Z; dZ = symbol dZ;
+x = symbol x; dx = symbol dx;
+y = symbol y; dy = symbol dy;
+z = symbol z; dz = symbol dz;
  
-W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]
-I = ideal (X*(Y-Z), X*Y*Z)
-M = ideal (dX, dY, dZ)
+W = QQ[x, dx, y, dy, z, dz, WeylAlgebra=>{x=>dx, y=>dy, z=>dz}]
+I = ideal (x*(y-z), x*y*z)
+J = ideal (dx, dy, dz)
 
 time h = localCohom I
-time h = localCohom (I, W^1/M, Strategy=>Walther)
+time h = localCohom (I, W^1/J, Strategy=>Walther)
 time h = localCohom (I, Strategy=>Walther, LocStrategy=>OaTaWa)
 time h = localCohom (I, Strategy=>Walther, LocStrategy=>Oaku)
 time h = localCohom (I, Strategy=>OaTa)
 pruneLocalCohom h
 ---------------------------------------------------------------
-W = QQ[X, dX, Y, dY, WeylAlgebra=>{X=>dX, Y=>dY}]
-I = ideal (X^2+Y^2, X*Y)
-M = ideal (dX, dY)
+W = QQ[x, dx, y, dy, WeylAlgebra=>{x=>dx, y=>dy}];
+I = ideal (x^2+y^2, x*y);
+J = ideal (dx, dy);
+K = ideal(x^3,y^3);
 
 time h = localCohom I
-time h = localCohom (I, W^1/M, Strategy=>Walther)
+time h = localCohom (I, W^1/J, Strategy=>Walther)
 time h = localCohom (I, Strategy=>Walther, LocStrategy=>OTW)
 time h = localCohom (I, Strategy=>Walther, LocStrategy=>Oaku)
 time h = localCohom (I, Strategy=>OaTa)
 pruneLocalCohom h
+
+m = ideal(x,y);
+L = pruneLocalCohom localCohom(m);
+assert (rank L#0 == 0);
+assert (rank L#1 == 0);
+assert (rank L#2 == 1);
+Mat = (pruneLocalCohom localCohom(2,I))#2;
+assert (sub((minimalPrimes charIdeal coker Mat)_0,W)==ideal(x,y));
+L' = localCohom (m, W^1/K, Strategy=>OaTa);
+assert (L'#0==W^1/ideal(x^3,y^3));
+
+
+---localCohom(m,W^1/K) gives an error.  These strategies need rechecking and correcting.
+
 ---------------------------------------------------------------
 x = symbol x; dx = symbol dx; 
 W = QQ[x, dx, WeylAlgebra=>{x=>dx}]

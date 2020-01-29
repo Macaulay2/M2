@@ -1,18 +1,26 @@
+--add export command
+
+--isTorusFixed
+--distraction
+--indicialIdeal
+--cssExpts
+--cssExptsMult
+
 
 --Input: J an ideal in a Weyl algebra
---Output: True if ideal is torus fixed, as in SST Thm. 2.3.3(1). False if not.
+--Output: True if ideal is torus fixed, as in SST Lem. 2.3.1. False if not.
 isTorusFixed = method();
 isTorusFixed(Ideal) := Boolean => (J)->(
     n := numgens ring J//2;
-    testIdeal := ideal flatten apply(J_*,f->( 
-	    if isHomogeneous f then f else( 
-		apply(apbFactor(f),v->(		
-			a := take(v#0,n)|apply(n,i-> 0);
-			b := apply(n,i-> 0)|drop(v#0,n);
-			pTheta := sum apply(v#1,u->( u#0*((ring J)_((u#1)|(u#1)) )));
-			(ring J)_a*pTheta*(ring J)_b
-			)))));
-    J == testIdeal
+    J' := ideal flatten apply(J_*,f->( 
+	    apply(apbFactor(f
+		    ),v->(		
+		    a := take(v#0,n)|apply(n,i-> 0);
+		    b := apply(n,i-> 0)|drop(v#0,n);
+		    pTheta := sum apply(v#1,u->( u#0*((ring J)_((u#1)|(u#1)) )));
+		    (ring J)_a*pTheta*(ring J)_b
+		    ))));
+    J == J'
     )
 
 --Input: element in Weyl algebra in a torus-fixed ideal
@@ -68,11 +76,12 @@ genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
 	 thetaBracketSub(b,S)*pThetaMinusb
 	 ))
 )
-		    
+
+--this was called thetaIdeal in the past		    
 --Input: torus-fixed left D-ideal J
 --Output: the distraction of J, viewed in ring S
-thetaIdeal = method(); 
-thetaIdeal(Ideal,Ring) := (Ideal) => (J,S) ->(
+distraction = method(); 
+distraction(Ideal,Ring) := (Ideal) => (J,S) ->(
     n := numgens ring J//2;
     if n != numgens S then error "mismatched numbers of variables";
     ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
@@ -82,7 +91,9 @@ thetaIdeal(Ideal,Ring) := (Ideal) => (J,S) ->(
 --weight w
 --indicialIdeal = method();
 --FINISH
---  = thetaIdeal(inw(I,flatten{-w|w}))
+--  = distraction(inw(I,flatten{-w|w}))
+
+
 
 
 --Input: 0-dimensional primary ideal I
@@ -105,7 +116,7 @@ beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
 	if #w != n then error "weight vector has wrong length";
 	J := inw(H,(-w)|w);
     	if not isTorusFixed(J) then error "ideal is not torus-fixed"; 
-        primaryDecomposition thetaIdeal(J,S)
+        primaryDecomposition distraction(J,S)
 	)
 
 --Input: holonomic D-ideal H, weight vector w as List
@@ -120,8 +131,6 @@ cssExpts(Ideal,List) := List => (H,w)->(
 	)
 
 --Input: holonomic D-ideal H, weight vector w as List, 
---???????????????--Option: Tries = number of times to test 
---       with a random vector to check ideal is torus-fixed
 --Output: list of starting monomial exponents for H wrt w, with multiplicities
 cssExptsMult = method(); 
 cssExptsMult(Ideal,List) := List => (H,w)->(
@@ -133,6 +142,7 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
 	)    
     
 
+
 end;
 --------------------
 --------------------
@@ -141,206 +151,5 @@ restart; --
 --uninstallPackage "Dmodules"
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
 needsPackage "Dmodules";
-
-
-
-----
-W = makeWeylAlgebra(QQ[x,y])
-vars W
-thetax = x*dx
-thetay = y*dy
-P1 = thetax^2*(thetax-2)-x*(thetax+thetay+1)*(thetax+2)*(thetax+3)
-P2 = thetay^2*(thetay-3)-y*(thetax+thetay+1)*(thetay+2)*(thetay+3)
-I = ideal(P1,P2)
-w = {1,11}
-inw(I,flatten{-w|w})
-
-S = QQ[t_1,t_2]
-thetaIdeal(I,S)
-cssExptsMult(I,w)
---{{4, {0, 0}}, {2, {2, 0}}, {2, {0, 3}}, {1, {2, 3}}}
---matches SST Ex 2.5.13
-
------
-
-A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
-beta = {1,0,0}
-I = gkz(A,beta)
-w = {1,1,1,1,0}
-S = QQ[t_1..t_5]
-isTorusFixed I --false
-J = inw(I,flatten{-w|w}) 
-isTorusFixed J --true
-thetaIdeal(J,S) == ideal(t_1 +t_2 +t_3+t_4 +t_5 -1, t_1 +t_2 -t_4, t_2 +t_3 -t_4, t_1*t_3, t_2*t_4)
-cssExptsMult(I,w) --{{4, {0, 0, 0, 0, 1}}}
---matches Ex 2.6.4
-
-
-----------
-
-3.1.4 in sst
-
--------
-
-A = matrix{{1,1,1,1},{0,1,3,4}}
-beta = {1,2}  
-Hbeta = gkz(A,beta)
-w = {2,999,51,1}
-cssExptsMult(Hbeta,w)
-
-
---Now, check that isTorusFixed is also computing p(theta) correctly...
-J = inw(Hbeta,(-w)|w);
-S = QQ[t_1..t_4]
-
-
-
-
-
-
-Dis = ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
-numgens Dis
-decompose Dis
-numgens J
-
-J = inw(Hbeta,(-w)|w);
-S = QQ[t_1..t_4]
-f = J_7
-isTorusFixed J
-primaryDecomposition ideal apply(J_*,f-> genToDistractionGens(f,S))
-
-
-A = matrix{{1,1,1},{0,1,2}}
-beta = {0,-1}
-Hbeta = gkz(A,beta)
-w = {1,51,2}
-cssExptsMult(Hbeta,w)
-
-
-A = matrix{{1,1,1,1},{0,1,2,3}}
-beta = {7,6}
-Hbeta = gkz(A,beta)
-w = {1,7,51,2}
-n= (numgens ring H)//2;
-S := QQ[t_1..t_n];
---L := beginExptComp(H,w,n,S);
-if not isHolonomic(H) then error "ideal is not holonomic";
-if #w != n then error "weight vector has wrong length";
-J := inw(H,(-w)|w);
-if not isTorusFixed(J) then error "ideal is not torus-fixed"; 
-transpose gens J
-T = thetaIdeal(J,S)
-transpose gens T
-degree T
-primaryDecomposition T    
-associatedPrimes T
-A
-beta
-i = 13; netList {J_i, genToDistractionGens(J_i,S)}
-
-genToDistractionGens(RingElement,Ring) := List => (f,S) -> (
-f = J_i
-    n := (numgens ring f)//2;
-    if n != numgens S then error "mismatched numbers of variables";
-    apbF := apbFactor(f);
-apbF
-    sum apply(apbF,q->( 
-q = apbF#0
-         b:= drop(q#0,n);
-b
-v = q#1#0
-	 pTheta := sum apply(q#1,v->( sub(v#0,S)*( 
-		     product apply(length v#1,k->( product apply(v#1#k,i->( S_k-i))))
-			 S_(v#1)) ));
-pTheta
-	 phi := map(S,S,S_*-b);
-	 pThetaMinusb := phi(pTheta);
-	 thetaBracketSub(b,S)*pThetaMinusb
-	 ))
-)
-
-
-
-
-
-thetaIdeal(Hbeta,S)
-
-apply(L,l->( {degree l,solveMax(l)}))
-
-cssExptsMult(Hbeta,w)
-
-
-
-
-
-
-primaryDecomposition thetaIdeal(J,S)
-
-cssExptsMult(Hbeta,w)
-
-H = Hbeta
-n = (numgens ring H)//2
-S = QQ[t_1..t_n];
-L = beginExptComp(H,w,n,S)
-L
-apply(L,l->( 
-L
-	l = L#1
-	{degree l,solveMax(l)}
-	))
-
-
-J = inw(Hbeta,(-w)|w);
-isTorusFixed J
-
------
-W = makeWA(QQ[x,y,z])
-thetaIdeal(ideal(dx,dy^2,dy*z*dz),QQ[t_1..t_3])
-primaryDecomposition thetaIdeal(ideal(dx*dy*(dz-1),dy^2*(dz-1),dy*z*dz*(dz-1)),QQ[t_1..t_3])
-
-
-
-
-
-
-
-
-A = matrix{{1,1,1,1,1,1},{-2,0,0,0,0,1},{0,1,0,1,0,0},{1,1,2,0,0,1}}
-beta = {2,1,0,2}  
-Hbeta = gkz(A,beta)
-w = {2,999,51,1,101,7}
-J = inw(Hbeta,flatten {-w,w});
-S = QQ[t_1..t_(numgens ring J//2)]
-isTorusFixed J
-
-
-f = J_6+J_7
-(apbFactor f)#0
-
-genToDistractionGens(f,S)
-
-
-createDpairs (ring f)
-(ring f).dpairVars
-
-
-
-
-x^a*p(t)*D^b:
-(4 t_5 + 3 t_6 - 3)*D_2*D_5
---a = {0,0,0,0,0,0}
---b = {0,1,0,0,1,0}
---p(t) = (4 t_5 + 3 t_6 - 3)
-
-thetaIdeal(J,S)
-exptsMult(Hbeta,w)
-
-
-
-
-
-
-check local/global
-check basic examples with hard-coded output
-check 
-
+viewHelp cssExpts
+viewHelp Dmodules

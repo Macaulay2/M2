@@ -36,7 +36,7 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "diffOps","PolyGens","BasisElts","putWeylAlgebra","inw","gbw",
      "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
      "BMM","pruneCechComplexCC","populateCechComplexCC",
-     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "thetaIdeal", 
+     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "distraction", "indicialIdeal",  
      "cssExpts", "cssExptsMult", "isTorusFixed"
      }
    
