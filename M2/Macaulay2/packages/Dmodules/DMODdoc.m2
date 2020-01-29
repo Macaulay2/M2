@@ -108,7 +108,16 @@ document {
 	  TO {"logCohomology", " -- logarithmic cohomology groups"},
 	  TO {"lct", "-- log canonical threshold"},
 	  {TO "multiplierIdeal", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
-	  TO "hasRationalSing",
+	  TO "hasRationalSing"
+	  },
+
+     HEADER3 "Canonical Series:",
+     UL{
+	  TO {"distraction", "--  the image in the thetaRing of a torus-fixed ideal in a Weyl algebra"},
+	  TO {"genToDistractionGens", " -- the image in the thetaRing of a torus-fixed element in a Weyl algebra"},
+	  TO {"cssExpts", " -- the exponents of the canonical series solutions of I"},
+	  TO {"cssExptsMult", " -- the exponents of the canonical series solutions of I with multiplicities"},
+	  TO {"isTorusFixed", " -- checks if an ideal in a Weyl algebra is torus-fixed"},
 	  TO {"Canonical Series Tutorial", "-- find series solutions of regular systems"}
 	  },
 

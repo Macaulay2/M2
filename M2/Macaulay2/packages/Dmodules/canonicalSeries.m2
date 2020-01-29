@@ -151,5 +151,5 @@ restart; --
 --uninstallPackage "Dmodules"
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
 needsPackage "Dmodules";
-
-
+viewHelp cssExpts
+viewHelp Dmodules
