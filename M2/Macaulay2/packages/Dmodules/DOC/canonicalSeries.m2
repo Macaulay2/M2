@@ -154,7 +154,7 @@ doc ///
    Headline
      the image in the thetaRing of a torus-fixed ideal in a Weyl algebra
    Usage
-     distraction(I,S)
+     distraction(I,thetaRing)
    Inputs
      I:
        Ideal in a WeylAlgebra that is torus-fixed
