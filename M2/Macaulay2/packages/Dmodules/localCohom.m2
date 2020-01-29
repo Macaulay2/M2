@@ -1,6 +1,5 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local localCohomUli
 local localCohomOT
 local localCohomILOaku
 local computeLocalCohomOT
