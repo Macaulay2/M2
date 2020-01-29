@@ -1,10 +1,9 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 needsPackage "Dmodules";
---Things needing tests: createCommAlgebra, Fourier, FourierInverse, Dtransposition
---ensureQuotientModule, Dprune, reduceCompres
+--Things needing tests: Dprune (waiting for documentation)
 
---Does createCommAlgebra even exist??
+methods createCommAlgebra
 
 -- Boundary cases
 x = symbol x; Dx = symbol Dx;
@@ -27,13 +26,21 @@ B = QQ[r,s,dr,ds,WeylAlgebra => {r=>dr,s=>ds}];
 assert (describe A===describe B);
 
 --all things Fourier
-D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}, Degrees => {1,5,-3,-4}];
+D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}];
 L = u^3 + u*v*Dv + 4*u*Du^3*Dv;
 assert (Fourier L ==  -Du^3 + Du*Dv*v - 4*Du*u^3*v);
-assert (degree Fourier u == {-3});
 I = ideal (u*v^2, u*Du, v*Du+Dv^2);
 assert (Fourier I == ideal (-Du*Dv^2, -Du*u, -Dv*u+v^2));
-
+M = matrix{{Du, v},{Dv, u^2}};
+assert (Fourier M == matrix{{u, -Dv}, {v, Du^2}});
+assert (entries Fourier M == entries matrix{{u, -Dv}, {v, Du^2}});
+assert (Fourier coker M == coker matrix{{u, -Dv}, {v, Du^2}});
+C = res Fourier coker M;
+assert (rank C_0==2);
+J = ideal (u*Du+Dv);
+assert (FourierInverse J == ideal(-Du*u-v));
+assert (FourierInverse Dv == -v);
+assert (FourierInverse coker M == coker FourierInverse M);
 
 -- Boundary cases for module scripts
 M = directSum(cokernel gens I0, cokernel gens I1);
@@ -121,6 +128,15 @@ w2 = {1,-3,108,-1,4,-5};
 I1 = inw(I, w1);
 assert(I1 == substitute(inw(I, w2), ring I1));
 assert(gbw(I, w1) == gbw(I, w2));
+
+-- DTransposition performs the standard involution of the Weyl algebra which sends x^aDx^b to (-Dx)^bx^a
+D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}];
+assert (Dtransposition (u*Du) ==-Du*u);
+assert (Dtransposition ideal (u*Dv^2+Du^2*Dv) == ideal (u*Dv^2-Du^2*Dv));
+assert (entries Dtransposition matrix {{u*Du, v}, {v*Dv^2, u^2}} == entries matrix {{-Du*u, v}, {Dv^2*v, u^2}});
+C1 = Dtransposition res ideal(u*Du);
+C2 = res ideal(-Du*u);
+assert (C1_1==C2_1);
 
 -- extract polynomial ring of ordinary variables and, separately, of differentials from Weyl algebras
 D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}, Degrees => {2,4,-3,9}];
