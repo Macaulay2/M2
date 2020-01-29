@@ -149,12 +149,12 @@ doc ///
 
 doc ///
    Key
-     thetaIdeal
-     (thetaIdeal, Ideal, Ring)
+     distraction
+     (distraction, Ideal, Ring)
    Headline
      the image in the thetaRing of a torus-fixed ideal in a Weyl algebra
    Usage
-     thetaIdeal(I,thetaRing)
+     distraction(I,thetaRing)
    Inputs
      I:
        Ideal in a WeylAlgebra that is torus-fixed
@@ -164,6 +164,7 @@ doc ///
        [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Lemma 2.3.1] to I.
    Description
     Text
+      This computes the distraction of a torus fixed D-ideal [SST, Corollary 2.3.5].
       This is necessary to compute indicial ideals [SST, Theorem 2.3.9, Corollary 2.3.5]; 
       the roots of the indicial ideals are the exponents of the starting terms of canonical series
       solutions of regular holonomic D-ideals.
