@@ -216,15 +216,12 @@ factorBFunction(RingElement) := Product => f -> (
      if coefficientRing R =!= QQ then
      error "expected polynomial over QQ";
      
-     pInfo(666, {"f =" , f});
      l := listForm f;
      d := product(l, u -> denominator(u#1));
      l = l / (u -> (u#0, lift(u#1*d, ZZ)));
      R' := ZZ(monoid [R_0]);
      f = sum (l, u -> u#1*R'_(u#0));
      f = factor f;
-     pInfo(666, {"f =" , f});
-     
      f = select(f, u-> first degree u#0 > 0);
      
      result := apply(f, u->(
@@ -232,14 +229,13 @@ factorBFunction(RingElement) := Product => f -> (
 	       coeff := listForm u#0 / (v->v#1);
 	       Power(R_0 + (if #coeff> 1 then (coeff#1/coeff#0) else 0), u#1)
 	       ));
-     result
+     if #result==0 then 1_R' else result
      );-- end factorBFunction
 
 bFunctionRoots = method()
 bFunctionRoots RingElement := List => f -> (
-     p := factorBFunction f;
-     apply(toList p, 
-	  u -> - leadCoefficient substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) )
+     if f==1 then {} else apply(toList factorBFunction f, 
+	 u -> - leadCoefficient substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) )
      );
 getIntRoots = method()
 getIntRoots RingElement := List => f -> (

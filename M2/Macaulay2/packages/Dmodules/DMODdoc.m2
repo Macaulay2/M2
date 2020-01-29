@@ -1,25 +1,5 @@
 -- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
-TEST /// input "Dmodules/TST/gkz.tst.m2" ///
-TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
-TEST /// input "Dmodules/TST/DHom.tst.m2" ///
-TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
-TEST /// input "Dmodules/TST/Ddual.tst.m2" ///
-TEST /// input "Dmodules/TST/DeRham.tst.m2" ///
-TEST /// input "Dmodules/TST/Dlocalize.tst.m2" ///
-TEST /// input "Dmodules/TST/Dresolution.tst.m2" ///
-TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
-TEST /// input "Dmodules/TST/WeylClosure.tst.m2" ///
-TEST /// input "Dmodules/TST/b-function.ideal.tst.m2" ///
-TEST /// input "Dmodules/TST/b-function.module.tst.m2" ///
-TEST /// input "Dmodules/TST/localCohom.tst.m2" ///
-TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
-TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
-TEST /// input "Dmodules/TST/stafford.tst.m2" ///
-TEST /// input "Dmodules/TST/CC.tst.m2" ///
-TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
-TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
-
 load "Dmodules/DOC/tutorial.m2" -- basic tutorial
 load "Dmodules/DOC/Dbasic.m2"   -- basic commands
 load "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
@@ -1599,7 +1579,7 @@ document {
 ----------------------------------------------------------------------------
 document {
      Key => {Dprune, (Dprune, Matrix), (Dprune, Module)},
-     Headline => "prunes a matrix over a Weyl algebra",
+     Headline => "prunes a D-module",
      Usage => "Dprune M",
      Inputs => {
 	  "M" => {ofClass Matrix, " or ", ofClass Module} 
@@ -1608,9 +1588,14 @@ document {
 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
 	  },
      -- "description",
-     -- EXAMPLE lines ///
-     --   	  XXXXXXXXXXXXXXX  
-     -- 	  ///,
+     EXAMPLE lines ///
+     	 W = makeWA(QQ[x,y])
+	 M = matrix{{x,dx}} 
+	 Dprune M
+	 Dprune coker M
+     	 M = matrix{{x,dx},{x,y}}
+	 Dprune M
+      	 ///,
      -- Caveat => {},
      -- SeeAlso => {}
      }

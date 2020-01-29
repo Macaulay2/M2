@@ -290,15 +290,16 @@ Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
 
      d := #positions(w, i -> (i>0));
      MF := cokernel Fourier relations M; 
-     outputRequest := {HomologyModules};
-     restrictOut := (computeRestriction (MF, w, k-1, k+1,
-	       outputRequest, options))#HomologyModules#k;
-     
+     outputRequest := {HomologyModules, BFunction};
+     restriction := computeRestriction (MF, w, k-1, k+1,
+	 outputRequest, options);
+     restrictOut := restriction#HomologyModules#k;
+    
      resW := ring restrictOut;
      nrW := numgens resW;
      if nrW == 0 then Mout := restrictOut
      else Mout = FourierInverse restrictOut; 
-     
+     Mout.cache.BFunction = restriction#BFunction;
      Mout
      )     
 
