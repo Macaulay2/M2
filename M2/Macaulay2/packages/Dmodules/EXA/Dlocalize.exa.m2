@@ -1,7 +1,5 @@
-path = join ( path, {"../"})
-load "Dloadfile.m2"
-Dtrace 4
-
+restart
+needsPackage "Dmodules"
 ------------------------- EXAMPLES for Dlocalization --------------------------------
 
 -- Example 1: Simple example
@@ -81,3 +79,20 @@ Dlocalize(M, 0_W)
 Dlocalize(M, 0_W, Strategy => Oaku)
 Dlocalize(M, 1_W)
 Dlocalize(M, 1_W, Strategy => Oaku)
+
+-- Example 7: Compare OTW and OTWcyclic
+W = makeWA (QQ[x,y,z])
+I = PolyAnn(x*y-z^2+2)
+fs = {x*y+z^2-4,x*y*z,x*y+z^3,x*y*z+z^2} 
+for f in fs do (
+    elapsedTime resOTW := Dlocalize(I,f,Strategy => OTW);
+    elapsedTime resOTWcyclic := Dlocalize(I,f,Strategy => OTW);
+    assert(resOTW == resOTWcyclic)
+    )
+
+-- Example 8:
+W = makeWA(QQ[x,y]);
+M = coker matrix{{dx,dy,0,0},{0,0,x,y}}
+f=x^2+y^2;
+Mf=Dlocalize(M,f); 
+assert(Mf == Dlocalize(W^1/ideal(dx,dy),f))

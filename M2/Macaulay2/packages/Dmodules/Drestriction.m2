@@ -36,12 +36,8 @@ findExps := (w, k0, k1) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
--- Computes the derived restriction complex of D+n/I or (D_n)^r/N
+-- Computes the derived restriction complex of D_n/I or (D_n)^r/N
 -- with respect to the weight vector w
---
--- CAVEATS:
--- 1. Currently, the routines only work for cyclic modules since b-function
---     only works for ideals
 --     
 -- Computes the p-th derived restriction module of D_n/I or (D_n)^r/N 
 -- with respect to the weight vector w

@@ -75,15 +75,15 @@ computeLocalization = (M, f, output, options) -> (
    -- MES: the original version did not use zeroize.
    ensureQuotientModule(M, "expected input to be a cokernel");
    -- case 2: M is a cokernel
-   if r > 1 then error "non-cyclic modules not yet supported";
-
+   
    outputList := {};
    pInfo(1, "localize: Computing localization with " | 
 	toString options.Strategy | " strategy...");
    
-   if (options.Strategy == Oaku) then (
+   if (options.Strategy === Oaku) then (
 	pInfo(1, "localize: Warning: Oaku's strategy requires 
 	     module to be f-saturated");
+	if r > 1 then error "non-cyclic modules not yet supported with this strategy";
 	I := ideal relations M;
      	tInfo := toString first timing (AnnI := AnnIFs2 (I,f););
 	pInfo(2, "\t\t\t time = " | tInfo | " seconds");
@@ -147,7 +147,9 @@ computeLocalization = (M, f, output, options) -> (
 	     );
 	)
    
-   else if options.Strategy == OTW then (
+   else if options.Strategy === OTWcyclic then (
+       
+       if r==1 then (
        	N := relations M;
        	nW := numgens W;
        	createDpairs W;
@@ -262,8 +264,45 @@ computeLocalization = (M, f, output, options) -> (
 		  locMap = map(locModule, M, matrix{{f^(-bestPower)}});
 		  );	     
 	     );
+	 )
 	)
-   else error "Only recognizes strategies Oaku and OTW (default)";
+   else if options.Strategy === OTW then (
+       N := matrix presentation M;
+       nW := numgens W;
+       createDpairs W;
+       n := #W.dpairVars#0;
+       m :=numColumns(N);
+       -- create the auxilary ring D_n<a,Da> 
+       a := symbol a;
+       Da := symbol Da;
+       LW := (coefficientRing W)(monoid [(entries vars W)#0, a, Da,
+	       WeylAlgebra => append(W.monoid.Options.WeylAlgebra, a=>Da)]);
+       a = LW_a;
+       Da = LW_Da;
+       nLW := numgens LW;
+       WtoLW := map(LW, W, (vars LW)_{0..nW-1});
+       LWtoW := map(W, LW, (vars W) | matrix{{0_W,0_W}});
+       -- weight vectors for integration to a = 0
+       w := append( toList(n:0), -1);
+       wt := join( toList(nW:0), {1,-1} );
+       -- twist generators of I into generators of twistI;
+       Lf := WtoLW f;
+       twistList := apply( toList(0..nLW-1), 
+	   i -> LW_i - (LW_i*Lf - Lf*LW_i) * a^2 * Da );
+       twistMap := map(LW, LW, matrix{twistList});
+       diag := apply( toList(0..r-1),
+	   i -> twistList);
+       LN=mutableMatrix(LW,r,m);
+       for i from 0 to r-1 do  
+       for j from 0 to m-1 do
+       LN_(i,j)= twistMap(WtoLW N_(i,j));
+       col := apply( toList(0..r-1),
+	   i -> 1-Lf*a);
+       twistN := diagonalMatrix(col) | matrix LN;
+       locData := Dintegration(0,coker twistN,-w);
+       locModule := map(W,ring locData, gens W)**locData;       
+       )
+   else error "Only recognizes strategies Oaku, OTWcyclic, and OTW (default)";
 
    if member(LocModule, output) then outputList = append(outputList, 
 	LocModule => locModule);
@@ -271,11 +310,15 @@ computeLocalization = (M, f, output, options) -> (
 	LocMap => locMap);
    if member(GeneratorPower, output) then outputList = append(outputList, 
 	GeneratorPower => bestPower);
-   if options.Strategy == OTW then (
+   if options.Strategy === OTWcyclic then (
    	if member(IntegrateBfunction, output) then outputList = append(outputList,
 	     IntegrateBfunction => factorBFunction bpoly);
 	);
-   if options.Strategy == Oaku then (
+    if options.Strategy === OTW then (
+   	if member(IntegrateBfunction, output) then outputList = append(outputList,
+	     IntegrateBfunction => factorBFunction bpoly);
+	);
+   if options.Strategy === Oaku then (
    	if member(Bfunction, output) then outputList = append(outputList,
 	     Bfunction => factorBFunction bpoly);
 	if member(annFS, output) then outputList = append(outputList,
@@ -285,7 +328,6 @@ computeLocalization = (M, f, output, options) -> (
    	);
    hashTable outputList
    )
-
 
 AnnIFs2 = method()
 AnnIFs2(Ideal, RingElement) := (I, f) -> (
@@ -341,3 +383,4 @@ AnnIFs2(Ideal, RingElement) := (I, f) -> (
 	  );
      ideal (preGens / WTtoWS) 
      )
+
