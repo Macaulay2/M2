@@ -1,10 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 -- TESTS TO WRITE (exported symbols);
---    List ^ List
-
---    PolySols Module
---    PolySols Module .... with Alg => Duality
 --    PolySols (Module, List)
 --    PolySols (Module, List) .... with Alg => Duality
 
@@ -50,21 +46,41 @@
 
 needsPackage "Dmodules";
 
+
+----------------------- TESTS for ^ -----------------------
+
+x = symbol x; y = symbol y; z = symbol z;
+assert({x,y,z}^{2,3,4} == x^2*y^3*z^4);
+
+
+
 ----------------------- TESTS for PolySols -------------------------
 
--- Test 1: Simple example
+-- Test 1: Simple example 
 x = symbol x; Dx = symbol Dx;
 W = QQ[x,Dx,WeylAlgebra => {x=>Dx}];
 I = ideal(x*Dx^4);
-ans = ideal(1, x, x^2, x^3);
-assert( ans == substitute(ideal PolySols I, W) );
-assert( ans == substitute(ideal PolySols (I, Alg => Duality), W) );
+ansGD = {1, x, x^2, x^3};
+ansDuality = {-1, x, -x^2, x^3};
+assert( ansGD == PolySols I / (f -> substitute(f, W)) );
+assert( ansGD == PolySols comodule I / (f -> substitute(f, W)) );
+assert( ansDuality == PolySols(I, Alg => Duality) / (f -> substitute(f, W)) );
+assert( ansDuality == PolySols(comodule I, Alg => Duality) / (f -> substitute(f, W)) );
 
 -- Test 2: Polynomial solutions of an Appell F1
 I = AppellF1({-1,5,4,-2}, Vars => Local);
-I1 = ideal PolySols I;
-I2 = ideal PolySols (I, Alg => Duality);
-assert(I1 == substitute(I2, ring I1));
+sols1 = PolySols I;
+R = ring sols1#0;
+sols2 = PolySols (I, Alg => Duality) / (f -> substitute(f, R));
+solsMat = lift(last coefficients matrix{sols1 | sols2}, coefficientRing R)
+sols1' = solsMat_{0..<#sols1};
+sols2' = solsMat_{#sols1..< numColumns solsMat};
+assert(image sols1' == image sols2');
+
+
+
+--------------------- TESTS for PolyExt -----------------------
+
 
 --------------------- TESTS for RatSols -----------------------
 
@@ -74,6 +90,7 @@ y = symbol y; Dy = symbol Dy;
 W = QQ[x,y,Dx,Dy,WeylAlgebra =>{x=>Dx, y=>Dy}];
 tx = x*Dx;
 ty = y*Dy;
+
 I = ideal(tx*(tx+ty)-x*(tx+ty+3)*(tx-1),
      ty*(tx+ty)-y*(tx+ty+3)*(ty+1));
 assert(#RatSols(I, y, {10,1}) == 1);

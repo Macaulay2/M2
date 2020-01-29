@@ -121,10 +121,15 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
 --------------------------------------------------------------------
 diffRatFun = method()
 diffRatFun (List, RingElement) := RingElement => (m,f) -> (
+    -- INPUT: 	m    a list of nonnegative integers
+    -- 	    	f    a polynomial or rational function
+    -- OUTPUT: Let D_i be the partial derivative with respect to the ith variable in 
+    -- ring of f. Then the output is the result of applying to f the product of the
+    -- differential operators D_i^(m_i).
      if isPolynomialRing (Q:=ring f) then diff(Q_m,f)
      else if isField Q and isPolynomialRing (R:=last Q.baseRings) then (
 	  assert isPolynomialRing R;    
-	  a := position(m,i->i>0);
+	  a := position(m,i->i>0); -- position of the first nonzero entry of m
 	  if a === null then f
 	  else (
 	       g := numerator f;
@@ -135,6 +140,13 @@ diffRatFun (List, RingElement) := RingElement => (m,f) -> (
      else error "polynomial or rational function function expected"   
      )
 diffRatFun (List, RingElement, RingElement, ZZ) := (m,g,f,a) -> (
+    -- INPUT: 	m       a list of nonnegative integers
+    -- 	    	f,g     polynomials
+    --	        a    	an integer
+    -- OUTPUT: Let D_i be the partial derivative with respect to the ith variable in 
+    -- ring of f. Then the output is essentially the result of applying to g/f^a the 
+    -- product of the differential operators D_i^(m_i), except that the output is given
+    -- in the form (numer, denom, power of denom).
      R := ring f;
      p := position(m,i->i>0);
      if p === null then (g,f,a)

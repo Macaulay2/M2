@@ -20,6 +20,7 @@ Dtrace 1
 ----------
 pInfo(1, "testing AnnFs...")
 
+----------------- TEST AnnFs -------------------
 
 -- TEST: AnnFs RingElement
 x = symbol x; z = symbol z; d = symbol d; Dz = symbol Dz;
@@ -44,18 +45,27 @@ assert ( Ann == ideal {
   
   
 -- TEST: AnnFs List
--- **TODO**
 
 
------------
--- AnnIFs
------------
+
+----------------- TEST AnnIFs -------------------
 x = symbol x; dx = symbol dx;
 W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
 Ann = AnnIFs(ideal dx, x^2)
 WS = ring Ann
 assert( Ann == ideal (x*dx - 2*WS_2) )  
 
+
+
+----------------- TEST diffRatFun -------------------
+diffRatFun := value(Dmodules#"private dictionary"#"diffRatFun")
+
+-- Test 1
+x = symbol x, y = symbol y;
+R = QQ[x,y];
+f = 1/(x^4 + y);
+ans = -24*x^3/(x^4+y)^4;
+assert(diffRatFun({1,2}, f) == ans);
 
 
 
