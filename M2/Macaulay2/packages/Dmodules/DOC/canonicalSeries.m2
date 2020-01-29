@@ -134,6 +134,10 @@ doc ///
        in thetaRing that is the result of applying [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Lemma 2.3.1] to f.
    Description
     Text
+      This function rewrites a monomial $x^u \partial^v$ as a product $x^a p(\theta) \partial^b$,
+      where $\theta_i = x_i \partial_i$ for $i = 1,\dots, n$.
+      This is a step in a procedure for checking that D-ideal is torus-fixed, and is 
+      used in the isTorusFixed routine.
       Code
       Pre
     Example
@@ -160,6 +164,9 @@ doc ///
        [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Lemma 2.3.1] to I.
    Description
     Text
+      This is necessary to compute indicial ideals [SST, Theorem 2.3.9, Corollary 2.3.5]; 
+      the roots of the indicial ideals are the exponents of the starting terms of canonical series
+      solutions of regular holonomic D-ideals.
       Code
       Pre
     Example
@@ -185,7 +192,8 @@ doc ///
        in the direction of (-w,w), as in 
        [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Theorem 2.3.11].
    Description
-    Text
+    Text 
+      There are examples in the tutorial that can be moved here.
       Code
       Pre
     Example
@@ -213,6 +221,7 @@ doc ///
        together with their multiplicities. 
    Description
     Text
+      There are examples in the tutorial that can be moved here.
       Code
       Pre
     Example
@@ -235,6 +244,11 @@ doc ///
        true if I is torus-fixed, false if not
    Description
     Text
+       There is a natural action of the n-dimensional algebraic torus on $D$ 
+       where $t \in (\mathbb{C}^*)^n$ acts on $\partial_i$ as $t_i\partial_i$ and on 
+       $x_i$ as $t_i^{-1}x_i$. The function isTorusFixed verifies whether a D-ideal is 
+       invariant under this action. 
+       
        [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@], 
        just before Lemma 2.3.1.
 ///
