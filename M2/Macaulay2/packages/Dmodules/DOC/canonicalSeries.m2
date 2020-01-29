@@ -95,8 +95,24 @@ doc ///
       f = x_1^2*x_2^2*x_3*dx_1*dx_2^2*dx_3^2
       genToDistractionGens(f,thetaRing)
       
-
-
+    Text
+      Here is an example that can be continued when more functions are implemented.
+      This is worked out as [page 138, ex 3.5.3, SST]. 
+      
+    Example
+      A = matrix{{1,1,1},{0,1,2}}
+      --I = gkz(A,{10,8},R2)
+      I = gkz(A,{10,8})
+      holonomicRank(I)
+      cssExpts(I,{1,0,0})
+    
+    Text
+      In this case, the series corresponding to the exponent 
+      (2,8,0) is logarithm-free (actually, this is a hypergeometric polynomial),
+      while the series corresponding to (0,12,-2) has logarithms. 
+      [SST, page 138] has the polynomial, and four terms of the logarithmic series.
+      
+    
 ///
 
 
