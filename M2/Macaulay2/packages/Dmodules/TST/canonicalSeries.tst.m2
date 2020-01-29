@@ -17,17 +17,38 @@ for b in {0,1} do(
 
 
 
+----
+W = makeWeylAlgebra(QQ[x,y])
+vars W
+thetax = x*dx
+thetay = y*dy
+P1 = thetax^2*(thetax-2)-x*(thetax+thetay+1)*(thetax+2)*(thetax+3)
+P2 = thetay^2*(thetay-3)-y*(thetax+thetay+1)*(thetay+2)*(thetay+3)
+I = ideal(P1,P2)
+w = {1,11}
+inw(I,flatten{-w|w})
+
+S = QQ[t_1,t_2]
+distraction(I,S)
+cssExptsMult(I,w)
+--{{4, {0, 0}}, {2, {2, 0}}, {2, {0, 3}}, {1, {2, 3}}}
+--matches SST Ex 2.5.13
+
+-----
+
+A = matrix{{1,1,1,1,1},{1,1,0,-1,0},{0,1,1,-1,0}}
+beta = {1,0,0}
+I = gkz(A,beta)
+w = {1,1,1,1,0}
+S = QQ[t_1..t_5]
+isTorusFixed I --false
+J = inw(I,flatten{-w|w}) 
+isTorusFixed J --true
+distraction(J,S) == ideal(t_1 +t_2 +t_3+t_4 +t_5 -1, t_1 +t_2 -t_4, t_2 +t_3 -t_4, t_1*t_3, t_2*t_4)
+cssExptsMult(I,w) --{{4, {0, 0, 0, 0, 1}}}
+--matches Ex 2.6.4
 
 
---A homog 012
-I = ideal(D_2^2-D_1*D_3,x_1*D_1+x_2*D_2+x_3*D_3,x_2*D_2+2*x_3*D_3+1)
-w = {{
-
-
-
-needsPackage "Dmodules"
-H = gkz(matrix{{1,1,1},{0,1,2}},{0,-1})
-toString H
 
 
 
