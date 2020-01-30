@@ -88,6 +88,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 	  input to be a quotient module";
      	  if numgens target gens M > 1 then error "non-cyclic
 	  modules not yet supported for Grobner deformation method";
+	  if #w != n then error ("PolySols expected a weight vector of length" | n);
      	  if any(w, i -> i <= 0) then error "expected strictly
 	  positive weight vector";
 	  

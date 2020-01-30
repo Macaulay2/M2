@@ -1,18 +1,10 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 -- TESTS TO WRITE (exported symbols);
---    PolySols (Module, List)
---    PolySols (Module, List) .... with Alg => Duality
-
 --    PolyExt Ideal
 --    PolyExt Module
 --    PolyExt (ZZ, Ideal)
 --    PolyExt (ZZ, Module)
-
---    RatSols Ideal
---    RatSols (Ideal, List)
---    RatSols (Ideal, RingElement)
---    RatSols (Ideal, List, List)
 
 --    RatExt Ideal
 --    RatExt Module
@@ -47,9 +39,59 @@
 needsPackage "Dmodules";
 
 
+----- A utility function for the tests in this file (and tests for it) -------
+
+compareSpans = method();
+compareSpans (List, List) := (list1, list2) -> (
+    -- INPUT: list1, list2      two lists of polynomials (assumed to be in the same ring)
+    -- OUTPUT: true if the lists have the same span (over the coefficient ring), 
+    -- false otherwise.
+    if #list1 == 0 and #list2 == 0 then true
+    else if #list1 == 0 and #list2 != 0 then false
+    else if #list1 != 0 and #list2 == 0 then false
+    else (
+	combinedList := list1 | list2;
+	combinedMat := matrix {combinedList}; -- This ensures coeffMat1 and coeffMat2
+	                                      -- have same number of cols.
+	combinedCoeffMat := lift(last coefficients combinedMat,
+	    coefficientRing ring combinedMat);
+	coeffMat1 := combinedCoeffMat_{0..<#list1};
+	coeffMat2 := combinedCoeffMat_{#list1..<#combinedList};
+	
+	-- Sanity checks
+	assert(numColumns coeffMat1 == #list1);
+	assert(numColumns coeffMat2 == #list2);
+	
+	image coeffMat1 == image coeffMat2
+	)
+    );
+
+-- Test 1:
+S = QQ[x,y,z];
+mylist1 = {x, y};
+mylist2 = {x + y, x-y};
+assert(compareSpans(mylist1, mylist2));
+
+-- Test 2:
+mylist1 = {1, x, y};
+mylist2 = {1, x + y, x-y};
+assert(compareSpans(mylist1, mylist2));
+
+-- Test 3:
+mylist1 = {x, y};
+mylist2 = {1, x + y, x-y};
+assert(not compareSpans(mylist1, mylist2));
+
+-- Test 4:
+mylist1 = {1, x, y};
+mylist2 = {x + y, x-y};
+assert(not compareSpans(mylist1, mylist2));
+
+
 ----------------------- TESTS for ^ -----------------------
 
 x = symbol x; y = symbol y; z = symbol z;
+R = QQ[x,y,z];
 assert({x,y,z}^{2,3,4} == x^2*y^3*z^4);
 
 
@@ -72,10 +114,18 @@ I = AppellF1({-1,5,4,-2}, Vars => Local);
 sols1 = PolySols I;
 R = ring sols1#0;
 sols2 = PolySols (I, Alg => Duality) / (f -> substitute(f, R));
-solsMat = lift(last coefficients matrix{sols1 | sols2}, coefficientRing R)
-sols1' = solsMat_{0..<#sols1};
-sols2' = solsMat_{#sols1..< numColumns solsMat};
-assert(image sols1' == image sols2');
+assert(compareSpans(sols1, sols2));
+
+-- Test 3: Testing weights
+x = symbol x; y = symbol y; Dx = symbol Dx; Dy = symbol Dy;
+W = QQ[x,y,Dx,Dy,WeylAlgebra => {x=>Dx,y=>Dy}];
+weight = {9, 7};
+I = ideal {x*y*Dx+y^2*Dy-2*y, x^2*Dy^2+2*x*y*Dy^2-y^2*Dy^2-2*x*Dy+2*y*Dy-2};
+ansGD = PolySols(I, weight);
+R = ring ansGD#0;
+ansDuality = PolySols(I, Alg => Duality) / (f -> sub(f, R));
+assert(compareSpans(ansGD, ansDuality));
+
 
 
 
@@ -84,7 +134,7 @@ assert(image sols1' == image sols2');
 
 --------------------- TESTS for RatSols -----------------------
 
--- Test 3: 
+-- Test 1: 
 x = symbol x; Dx = symbol Dx;
 y = symbol y; Dy = symbol Dy;
 W = QQ[x,y,Dx,Dy,WeylAlgebra =>{x=>Dx, y=>Dy}];
@@ -95,6 +145,16 @@ I = ideal(tx*(tx+ty)-x*(tx+ty+3)*(tx-1),
      ty*(tx+ty)-y*(tx+ty+3)*(ty+1));
 assert(#RatSols(I, y, {10,1}) == 1);
 assert(#RatSols(I, y-1, {10,1}) == 1);
+
+--Test 2:
+singLocFactors = {x,y,x-1,y-1,x-y};
+R = extractVarsAlgebra W;
+K = frac R;
+allSols = RatSols(I,  singLocFactors, {10,1}) / (f -> sub(f, K));
+ans = {(-x+y)/(-y^4 + 3*y^3 - 3*y^2 + y), (-x*y^3 + 3*x*y^2 - 3*x*y + 4*x - 3*y)/(-y^4 + 3*y^3 - 3*y^2 + y)};
+
+thelcd = lcm((allSols | ans) / denominator);
+assert compareSpans( thelcd*allSols / (f -> lift(f, R)), thelcd*ans / (f -> lift(f, R)));
 
 
 ---------------------- TESTS forDHom and DExt ------------------------
