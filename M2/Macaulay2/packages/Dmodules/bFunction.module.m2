@@ -135,11 +135,7 @@ bFunction2(Module, List, List) := o -> (M, w, m) -> (
 
 
 TEST ///
-Dtrace 1
-pInfo(1, "testing bFunction(Module)...")
-     
-x = symbol x; Dx = symbol Dx; 
-y = symbol y; Dy = symbol Dy; 
+debug Dmodules
 W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 w = {1,1}
 m = zeroize transpose matrix{{-Dy^2-Dy, -x*Dx-x*Dy-x+1, y*Dy^2+y*Dy-Dy-7},
