@@ -140,8 +140,6 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
     	L := beginExptComp(H,w,n,S);
     	apply(L,l->( {degree l,solveMax(l)}))
 	)    
-    
-
 
 end;
 --------------------
@@ -153,3 +151,5 @@ path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", pat
 needsPackage "Dmodules";
 viewHelp cssExpts
 viewHelp Dmodules
+
+
