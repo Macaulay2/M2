@@ -90,7 +90,7 @@ distraction(Ideal,Ring) := (Ideal) => (J,S) ->(
 --Input: holonomic ideal I, weight w in the form of a List
 --Output: the indicial ideal of I with respect to w
 indicialIdeal = method();
-indicialIdeal(Ideal,List) := (Ideal) => ->(
+indicialIdeal(Ideal,List) := (Ideal) => (I,w) ->(
     distraction(inw(I,flatten{-w|w}))
     )
 

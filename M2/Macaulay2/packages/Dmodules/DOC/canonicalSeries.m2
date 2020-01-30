@@ -163,7 +163,7 @@ doc ///
 doc ///
    Key
      indicialIdeal
-     (indicialIdeal, Ideal, Ring)
+     (indicialIdeal, Ideal, List)
    Headline
      the image in the thetaRing of an indicial ideal in a Weyl algebra
    Usage
