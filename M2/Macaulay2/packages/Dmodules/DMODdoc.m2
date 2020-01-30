@@ -800,7 +800,7 @@ document {
      Key => {RatExt, (RatExt,Module), (RatExt,ZZ,Ideal,RingElement), (RatExt,ZZ,Ideal), 
 	  (RatExt,Ideal,RingElement), (RatExt,Ideal),(RatExt,ZZ,Module,RingElement), 
 	  (RatExt,ZZ,Module), (RatExt,Module,RingElement)},
-     Headline => "Ext(holonomic D-module, polynomial ring localized at the sigular locus)",
+     Headline => "Ext(holonomic D-module, polynomial ring localized at the singular locus)",
      Usage => "RatExt M, RatExt I; RatExt(M,f), RatExt(I,f);
                RatExt(i,M), RatExt(i,I); RatExt(i,M,f), RatExt(i,I,f)",
      Inputs => {

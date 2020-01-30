@@ -16,7 +16,6 @@ for b in {0,1} do(
     )
 
 
-
 ----
 W = makeWeylAlgebra(QQ[x,y])
 vars W

@@ -82,7 +82,6 @@ doc ///
       This is worked out as [page 138, ex 3.5.3, SST]. 
     Example
       A = matrix{{1,1,1},{0,1,2}}
-      --I = gkz(A,{10,8},R2)
       I = gkz(A,{10,8})
       holonomicRank(I)
       cssExpts(I,{1,0,0})
@@ -231,5 +230,12 @@ doc ///
        
        [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@], 
        just before Lemma 2.3.1.
+     Example
+        W = makeWA(QQ[x_1,x_2])
+     	I = ideal(x_1*dx_1*(x_1*dx_1+b), x_1*dx_1*(x_2*dx_2+b),
+	    x_2*dx_2*(x_1*dx_1+b), x_2*dx_2*(x_2*dx_2+b))
+    	isTorusFixed F1
+	J = ideal()
+    
 ///
 
