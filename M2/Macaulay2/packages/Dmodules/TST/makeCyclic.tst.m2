@@ -12,6 +12,7 @@ x = symbol x; dx = symbol dx;
 R = QQ[x, dx, WeylAlgebra => {x=>dx}]
 M = matrix {{dx, 0, 0}, {0, dx, 0}, {0, 0, dx}}
 h = makeCyclic M
+assert (entries h.Generator == entries matrix{{x^2},{x},{1}});
 assert (listForm bFunction(h.AnnG,{1}) == listForm bFunction(cokernel M, {1}, {0,1,2}))
 assert (holonomicRank h.AnnG == holonomicRank cokernel M)
 assert (singLocus h.AnnG == singLocus cokernel M)
@@ -29,9 +30,3 @@ assert (listForm b1 == listForm b2)
 b2 = bFunction(cokernel M, {1}, {2,1,0})
 b3 = bFunction(h.AnnG, {1})
 assert (listForm b3 == listForm b2)
-
-
-
-
-
-
