@@ -35,7 +35,6 @@ doc ///
     Text 
       Contains the following functions: 
       
-      
     Text 
       Currently, this contains the computation of exponents with respect to a weight vector. Completing the canonical series computation is in the future.
       To compute the exponents for a D-ideal I with respect to w, do as follows. 
@@ -46,6 +45,7 @@ doc ///
       The indicial ideal of I with respect to w is produced by extending the initial ideal to the ring of 
       differential operators with rational function coefficients, and contract to thetaRing. The exponents of I
       with respect to w are the roots of the indicial ideal, counted with multiplicities. 
+
     Example
      needsPackage "Dmodules"
      R1 = QQ[z]
@@ -149,7 +149,53 @@ doc ///
       Code
       Pre
     Example
-      2+2
+      R1 = QQ[z]
+      W1 = makeWA R1
+      a=1/2
+      b=3
+      c=5/3
+      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b) -- the Gauss hypergeometric equation, exponents 0, 1-c 
+      cssExpts(J,{1})
+      K = inw(J,{-1,1})
+      distraction(K,QQ[s])
+///
+
+doc ///
+   Key
+     indicialIdeal
+     (indicialIdeal, Ideal, Ring)
+   Headline
+     the image in the thetaRing of an indicial ideal in a Weyl algebra
+   Usage
+     indicialIdeal(I,w)
+   Inputs
+     I:
+       Ideal in a WeylAlgebra that is torus-fixed
+     w:
+       List in the numbers of variables, to yield a weight vector (-w,w) in the Weyl algebra
+   Outputs 
+     :Ideal 
+       that results from intersecting with the thetaRing of D with the result of extending 
+       the ideal in_(-w,w)(I) with the rational function 
+       field in the Weyl algebra variables, as in 
+       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Theorem 2.3.9] to I.
+   Description
+    Text
+      This computes the distraction of a torus fixed D-ideal [SST, Corollary 2.3.5].
+      This is necessary to compute indicial ideals [SST, Theorem 2.3.9, Corollary 2.3.5]; 
+      the roots of the indicial ideals are the exponents of the starting terms of canonical series
+      solutions of regular holonomic D-ideals.
+    Example
+      R1 = QQ[z]
+      W1 = makeWA R1
+      a=1/2
+      b=3
+      c=5/3
+      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b) -- the Gauss hypergeometric equation, exponents 0, 1-c 
+      cssExpts(J,{1})
+      K = inw(J,{-1,1})
+      distraction(K,QQ[s])
+      indicialIdeal(J,w) -- returns the same answer as the previous distraction command
 ///
 
 doc ///
@@ -176,7 +222,13 @@ doc ///
       Code
       Pre
     Example
-      2+2
+      R1 = QQ[z]
+      W1 = makeWA R1
+      a=1/2
+      b=3
+      c=5/3
+      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b) -- the Gauss hypergeometric equation, exponents 0, 1-c 
+      cssExpts(J,{1})
 ///
 
 doc ///
@@ -201,10 +253,18 @@ doc ///
    Description
     Text
       There are examples in the tutorial that can be moved here.
-      Code
-      Pre
     Example
-      2+2
+      R1 = QQ[z]
+      W1 = makeWA R1
+      a=1/2
+      b=3
+      c=5/3
+      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b) -- the Gauss hypergeometric equation, exponents 0, 1-c 
+      cssExpts(J,{1})
+      c=1  -- Now we have a single exponent of multiplicity 2
+      J = ideal(z*(1-z)*dz^2+(c-(a+b+1)*z)*dz-a*b)
+      cssExpts(J,{1})
+      cssExptsMult(J,{1})
 ///
 
 doc ///
@@ -234,8 +294,6 @@ doc ///
         W = makeWA(QQ[x_1,x_2])
      	I = ideal(x_1*dx_1*(x_1*dx_1+b), x_1*dx_1*(x_2*dx_2+b),
 	    x_2*dx_2*(x_1*dx_1+b), x_2*dx_2*(x_2*dx_2+b))
-    	isTorusFixed F1
-	J = ideal()
-    
+    	isTorusFixed I
 ///
 

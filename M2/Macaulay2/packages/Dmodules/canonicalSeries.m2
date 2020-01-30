@@ -87,12 +87,13 @@ distraction(Ideal,Ring) := (Ideal) => (J,S) ->(
     ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
 )
 
---holnomic ideal I
---weight w
---indicialIdeal = method();
---FINISH
---  = distraction(inw(I,flatten{-w|w}))
 
+--Input: holonomic ideal I, weight w in the form of a List
+--Output: the indicial ideal of I with respect to w
+indicialIdeal = method();
+indicialIdeal(Ideal,List) := (Ideal) => ->(
+    distraction(inw(I,flatten{-w|w}))
+    )
 
 
 
