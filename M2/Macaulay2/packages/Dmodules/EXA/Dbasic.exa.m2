@@ -13,8 +13,7 @@ randomMatrix = (m,n,d,W) -> (
     )
 M = randomMatrix(2,3,1,W)
 M = randomMatrix(3,2,1,W)
-Dprune M
-prune M
+Dprune M == prune M
 
 -- 1. Basic invariants
 -- GKZ of the twisted quartic

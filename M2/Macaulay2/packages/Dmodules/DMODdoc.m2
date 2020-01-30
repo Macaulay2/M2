@@ -1587,25 +1587,22 @@ document {
      Outputs => {
 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
 	  },
-     -- "description",
+     "Finds another (possibly smaller) representation of a D-module. 
+     If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.",
      EXAMPLE lines ///
      	 W = makeWA(QQ[x,y])
-	 M = matrix{{x,dx}} 
+	 M = matrix{{x,dx},{1,1}} 
 	 Dprune M
 	 Dprune coker M
      	 M = matrix{{x,dx},{x,y}}
 	 Dprune M
       	 ///,
      -- Caveat => {},
-     -- SeeAlso => {}
+     SeeAlso => {pruneCechComplexCC}
      }
 document {
-     Key => [Dprune,optGB],
-     Headline => "indicates whether Grobner basis should be computed"
-     }
-document {
-     Key => optGB,
-     Headline => "indicates whether Grobner basis should be computed"
+     Key => { [Dprune,optGB], optGB },
+     Headline => "indicates whether a Grobner basis should be computed"
      }
 document {
      Key => {
