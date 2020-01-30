@@ -188,3 +188,25 @@ gbW2 (Ideal, List) := (I, w) -> (
      setHomSwitch(true);
      gbw(I, w)
      )
+
+TEST///
+x = symbol x;
+dx = symbol dx;
+y = symbol y;
+dy = symbol dy;
+-- Tests finding Grobner basis in case when u+v>0
+W = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx,y=>dy}]
+I = ideal(x^2+y^3, x*y);
+J = ideal(x+dy,x*dx+y*dy);
+K = ideal(y*dx, x*dx+y);
+assert (entries gens gbw(I,{2,1,0,0}) == entries matrix {{x*y,x^2+y^3,y^4}});
+assert (entries gens gbw(I,{1,2,0,0}) == entries matrix {{x*y,x^3,x^2+y^3}});
+assert (entries gens gbw(J,{4,3,2,1}) == entries matrix{{1}});
+assert (entries gens gbw(K,{2,1,0,0}) == entries matrix {{y*dx, x*dx+y, y^2}});
+assert (entries gens gbw(K,{1,2,0,0}) == entries matrix {{x*dx^2+dx, x*dx+y}});
+-- Testing when u+v = 0
+assert (entries gens gbw(K,{2,3,-2,-3}) == entries matrix {{y*dx, x*dx+y,x*dx^2+dx}});
+assert (entries gens gbw(K,{3,2,-3,-2})==entries matrix {{y*dx, x*dx+y,x*dx^2+dx}});
+assert (entries gens gbw(K,{0,0,0,0}) == entries matrix {{y*dx, x*dx+y, y^2}});
+///
+
