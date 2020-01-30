@@ -93,7 +93,6 @@ addHook(Module, symbol codim, (opts,M) -> (
 
 TEST /// input "Dmodules/TST/gkz.tst.m2" ///
 TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
-TEST /// input "Dmodules/TST/DHom.tst.m2" ///
 TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
 TEST /// input "Dmodules/TST/Ddual.tst.m2" ///
 TEST /// input "Dmodules/TST/Dresolution.tst.m2" ///
