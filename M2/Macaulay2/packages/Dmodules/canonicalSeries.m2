@@ -1,5 +1,4 @@
---add export command
-
+--add export command: 
 --isTorusFixed
 --distraction
 --indicialIdeal
