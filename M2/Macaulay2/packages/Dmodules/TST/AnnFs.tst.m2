@@ -67,9 +67,3 @@ f = 1/(x^4 + y);
 ans = -24*x^3/(x^4+y)^4;
 assert(diffRatFun({1,2}, f) == ans);
 
-
-
-
-
-
-
