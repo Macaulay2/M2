@@ -122,6 +122,7 @@ target_include_directories(interpreter
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/Macaulay2/d # only need distributed-packages.h
     ${BOOTSTRAP}/usr-host/include
+    /usr/local/include
   PRIVATE
     ${LIBXML2_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIR}

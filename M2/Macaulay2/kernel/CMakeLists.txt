@@ -13,10 +13,11 @@ add_library(kernel OBJECT
 
 target_include_directories(kernel
   PUBLIC
+    /usr/local/include
+    ${BOOTSTRAP}/include
+    ${BOOTSTRAP}/usr-host/include
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${CMAKE_BINARY_DIR}/Macaulay2/e-includes
-
-    ${BOOTSTRAP}/include
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c

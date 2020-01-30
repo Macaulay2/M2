@@ -9,7 +9,9 @@ add_library(system OBJECT
 target_include_directories(system
   PUBLIC
     .
+    /usr/local/include
     ${BOOTSTRAP}/include
+    ${BOOTSTRAP}/usr-host/include
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
     ${CMAKE_SOURCE_DIR}/Macaulay2/e

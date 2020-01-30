@@ -12,7 +12,7 @@
 set(CMAKE_BUILD_DEBUG on)
 set(SUPPRESS_COMPILER_WARNINGS on)
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.13)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
@@ -24,6 +24,7 @@ project(macaulay2 VERSION 1.15 LANGUAGES C CXX)
 # FIXME: usr-dist/common/share gives error?!
 set(SHARE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share)
 set(CORE_DIR  ${SHARE_DIR}/Macaulay2/Core)
+
 
 # FIXME: currently various pieces and libraries are not built by cmake
 # BUILD/cmake-bootstrap should be a symlink to an existing build directory
