@@ -37,7 +37,7 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
      "BMM","pruneCechComplexCC","populateCechComplexCC",
      "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "distraction", "indicialIdeal",  
-     "cssExpts", "cssExptsMult", "solveFrobeniusIdeal", "isTorusFixed"
+     "cssExpts", "cssExptsMult", "solveFrobeniusIdeal", "isTorusFixed", "ICmodule", "ICcohom"
      }
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
@@ -78,6 +78,9 @@ load "./Dmodules/multiplierIdeals.m2"
 -- Christine's algorithms
 load "./Dmodules/canonicalSeries.m2"
 
+-- Andras' algorithms
+load "./Dmodules/intersectionCohom.m2"
+
 -- HOOKS
 
 addHook(Module, symbol resolution, (o,M) -> (
@@ -91,10 +94,7 @@ addHook(Module, symbol codim, (opts,M) -> (
 	  op := options R;
 	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break (dim R - Ddim M)))
 
-TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
 TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
-TEST /// input "Dmodules/TST/localCohom.tst.m2" ///
-TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
 
 
 beginDocumentation()

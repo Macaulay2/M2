@@ -2,11 +2,54 @@
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
--- this routine computes the de Rham cohomolgy of K^n - V(f) using the
--- algorithm of Oaku-Takayama.
+-- Computes deRham cohomology of a smooth affine variety. For more options on localCohom strategy use ICcohom instead.
+-- Special algorithm for the de Rham cohomolgy of K^n - V(f) using the algorithm of Oaku-Takayama.
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+
+
 deRham = method( Options => {Strategy => Schreyer})
+deRham Ideal := options -> I -> (
+    R:= ring I;
+    if class R =!= PolynomialRing
+    then error "expected an ideal in a polynomial ring";
+    primes := minimalPrimes I;
+    if #primes > 1 then error "The variety defined by the ideal must be irreducible";
+    P := primes#0;
+    S := ideal (singularLocus P);
+    if R != S then error "expected an ideal defining a smooth affine variety";
+    n:= numgens R;
+    d:= dim I;
+    c:= n-d;
+    H:=localCohom(c,I);
+    M:=minimalPresentation H;
+    integrateTable := Dintegration(M, apply(n,i->1), options);
+    new HashTable from (for i from 0 to d list i=>integrateTable#(d-i))
+)
+
+deRham (ZZ, Ideal) := options -> (k, I) -> (    
+     R:= ring I;
+    if class R =!= PolynomialRing
+    then error "expected an ideal in a polynomial ring";
+    primes := minimalPrimes I;
+    if #primes > 1 then error "The variety defined by the ideal must be irreducible";
+    P := primes#0;
+    S := ideal (singularLocus P);
+    if R != S then error "expected an ideal defining a smooth affine variety";
+    n:= numgens R;
+    d:= dim I;
+    if k>d then 0
+    else (
+    	c:= n-d;
+    	H:=localCohom(c,I);
+    	M:=minimalPresentation H;
+    	Dintegration(d-k, M, apply(n,i->1),options)
+	)
+)
+
+
+
 deRham RingElement := options -> f -> (
      pInfo(1, "ENTERING deRham ...");     
      R := ring f;

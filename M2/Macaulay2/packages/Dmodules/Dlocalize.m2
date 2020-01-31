@@ -297,6 +297,7 @@ computeLocalization = (M, f, output, options) -> (
 	   i -> 1-Lf*a);
        twistN = diagonalMatrix(col) | matrix LN;
        locIntegrationModule := Dintegration(0,coker twistN,-w);
+       --realize it over the original Weyl Algebra 
        locModule = map(W,ring locIntegrationModule, gens W)**locIntegrationModule;  
        bpoly = value locIntegrationModule.cache.BFunction;
        bpoly = substitute(bpoly, {(ring bpoly)_0 => (ring bpoly)_0 + 1});
