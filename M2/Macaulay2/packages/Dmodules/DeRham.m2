@@ -317,7 +317,6 @@ x = symbol x; y = symbol y;
 R = QQ[x,y]
 default := hashTable {0=>QQ^1, 1=>QQ^0, 2=>QQ^0};
 F2 = deRham(1_R); -- affine space
-assert all (keys default, i -> (F1#i == default#i));
 assert all (keys default, i -> (F2#i == default#i));
 
 --Small change doesn't affect deRham groups

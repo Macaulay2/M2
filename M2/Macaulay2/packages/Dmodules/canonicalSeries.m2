@@ -1,5 +1,4 @@
---add export command
-
+--add export command: 
 --isTorusFixed
 --distraction
 --indicialIdeal
@@ -87,12 +86,13 @@ distraction(Ideal,Ring) := (Ideal) => (J,S) ->(
     ideal flatten apply(J_*,j-> genToDistractionGens(j,S))
 )
 
---holnomic ideal I
---weight w
---indicialIdeal = method();
---FINISH
---  = distraction(inw(I,flatten{-w|w}))
 
+--Input: holonomic ideal I, weight w in the form of a List
+--Output: the indicial ideal of I with respect to w
+indicialIdeal = method();
+indicialIdeal(Ideal,List) := (Ideal) => (I,w) ->(
+    distraction(inw(I,flatten{-w|w}))
+    )
 
 
 
@@ -140,8 +140,6 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
     	L := beginExptComp(H,w,n,S);
     	apply(L,l->( {degree l,solveMax(l)}))
 	)    
-    
-
 
 end;
 --------------------
@@ -151,5 +149,8 @@ restart; --
 --uninstallPackage "Dmodules"
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path);
 needsPackage "Dmodules";
+check Dmodules
 viewHelp cssExpts
 viewHelp Dmodules
+
+

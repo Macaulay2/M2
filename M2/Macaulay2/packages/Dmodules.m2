@@ -91,22 +91,9 @@ addHook(Module, symbol codim, (opts,M) -> (
 	  op := options R;
 	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then break (dim R - Ddim M)))
 
-TEST /// input "Dmodules/TST/gkz.tst.m2" ///
-TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
-TEST /// input "Dmodules/TST/DHom.tst.m2" ///
 TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
-TEST /// input "Dmodules/TST/Ddual.tst.m2" ///
-TEST /// input "Dmodules/TST/Dresolution.tst.m2" ///
 TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
-TEST /// input "Dmodules/TST/WeylClosure.tst.m2" ///
-TEST /// input "Dmodules/TST/b-function.ideal.tst.m2" ///
-TEST /// input "Dmodules/TST/b-function.module.tst.m2" ///
 TEST /// input "Dmodules/TST/localCohom.tst.m2" ///
-TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
-TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
-TEST /// input "Dmodules/TST/stafford.tst.m2" ///
-TEST /// input "Dmodules/TST/CC.tst.m2" ///
-TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
 TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
 
 
