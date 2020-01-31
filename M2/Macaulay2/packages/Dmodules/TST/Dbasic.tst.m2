@@ -95,40 +95,6 @@ assert ( singLocus J == ideal(f) );
 assert ( singLocus K == ideal(f) );
 assert ( singLocus L == ideal(f) );
 
--- Initial ideals and gb's in the same Grobner cone
-A = matrix{{1,1,1},{0,2,7}};
-b = {1,5};
-I = gkz(A,b);
-
--- weight vector of the form (-u,u)
-w1 = {-1,-10,-30,1,10,30};
-w2 = {-1,-10,-31,1,10,31};
-I1 = inw(I, w1);
-G1 = gbw(I, w1);
-assert(I1 == inw(I, w2));
-assert(G1 == gbw(I, w2));
-setHomSwitch false;
-I1' = inw(I, w1);
-G1' = gbw(I, w1);
-assert(I1' == I1);
-assert(G1' == G1);
-assert(I1' == inw(I, w2));
-assert(G1' == gbw(I, w2));
-setHomSwitch true;
-
--- weight vector (u,v) with u+v > 0
-w1 = {0,1,2,3,4,100};
-w2 = {0,1,2,3,4,101};
-assert(inw(I,w1) == inw(I, w2));
-assert(gbw(I,w1) == gbw(I, w2));
-
--- weight vector (u,v) with some comp's of u+v > 0, others equal to 0.
-w1 = {1,-3,107,-1,4,-5};
-w2 = {1,-3,108,-1,4,-5};
-I1 = inw(I, w1);
-assert(I1 == substitute(inw(I, w2), ring I1));
-assert(gbw(I, w1) == gbw(I, w2));
-
 -- DTransposition performs the standard involution of the Weyl algebra which sends x^aDx^b to (-Dx)^bx^a
 D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}];
 assert (Dtransposition (u*Du) ==-Du*u);
