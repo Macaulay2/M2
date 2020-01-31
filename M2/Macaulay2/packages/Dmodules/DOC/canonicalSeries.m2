@@ -195,7 +195,8 @@ doc ///
       cssExpts(J,{1})
       K = inw(J,{-1,1})
       distraction(K,QQ[s])
-      indicialIdeal(J,w) -- returns the same answer as the previous distraction command
+      -- FIXME
+      -- indicialIdeal(J,{-11}) -- returns the same answer as the previous distraction command
 ///
 
 doc ///
@@ -297,3 +298,28 @@ doc ///
     	isTorusFixed I
 ///
 
+
+doc ///
+   Key
+     solveFrobeniusIdeal
+     (solveFrobeniusIdeal, Ideal)
+   Headline
+     solving Frobenius ideals
+   Usage
+     solveFrobeniusIdeal I
+   Inputs
+     I:
+       a Frobenius ideal which is m-primary
+   Outputs
+     :List
+       a list of polynomials in logarithms of the variable
+   Description
+    Text
+      See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Algorithm 2.3.14].
+
+      Here is [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Example 2.3.16]:
+    Example
+      R = QQ[t_1..t_5];
+      I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3);
+      netList solveFrobeniusIdeal I
+///
