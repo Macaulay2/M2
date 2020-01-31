@@ -637,3 +637,25 @@ D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}, Degrees => {2,4,-3,9}];
 assert(describe extractVarsAlgebra D === describe(QQ[u,v, Degrees => {2,4}]));
 assert(describe extractDiffsAlgebra D === describe(QQ[Du,Dv, Degrees => {-3,9}]));
 ///
+
+TEST///
+needsPackage("Dmodules")
+W = makeWA(QQ[x,y])
+assert (W^1*x  == image matrix{{x}});
+assert (entries map(W^1,W^1,x)=={{x}});
+N = W^1*dy*x+W^1*dy*y;
+assert(N==image matrix{{x*dy, y*dy+1}});
+assert((W^1*x+W^1*y)/N == subquotient (matrix {{x,y}},matrix{{x*dy, y*dy+1}}));
+-- isWeylAlgebra
+
+assert isWeylAlgebra W
+assert not isWeylAlgebra ZZ
+assert not isWeylAlgebra QQ
+assert not isWeylAlgebra (ZZ/101)
+assert not isWeylAlgebra (QQ[x]/x^23)
+assert not isWeylAlgebra (
+    S = QQ[x,y,SkewCommutative=>true]
+    )
+WH = QQ[x,dx,h,WeylAlgebra=>{x=>dx, h}]
+assert isWeylAlgebra WH
+///
