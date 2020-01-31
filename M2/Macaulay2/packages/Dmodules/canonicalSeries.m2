@@ -181,7 +181,7 @@ solveFrobeniusIdeal Ideal := Ideal => I -> (
 	-- TODO: R_j * lambda is easier to reduce, so add that instead?
 	for j to n - 1 do if not M#?(R_j * alpha) then N#(R_j * alpha) = (j, alpha);
 	);
-    sort values S
+    values S
     )
 
 
@@ -193,8 +193,8 @@ TEST /// -- test solveFrobeniusIdeal
   R = QQ[t_1..t_5]
   I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)
   F = solveFrobeniusIdeal I
-  assert(F_3 == 1/8*(t_2+t_4-2*t_5)*(2*t_1-t_2+2*t_3+t_4-4*t_5))
-  assert(-2*F_2+F_1 == t_2 + t_4 - 2*t_5)
+  assert(F_2 == 1/8*(t_2+t_4-2*t_5)*(2*t_1-t_2+2*t_3+t_4-4*t_5))
+  assert(-2*F_1+F_0 == t_2 + t_4 - 2*t_5)
 ///
 
 end;

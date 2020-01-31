@@ -50,7 +50,6 @@ cssExptsMult(I,w) --{{4, {0, 0, 0, 0, 1}}}
 
 
 
-end --
 
 path = prepend("~/Desktop/Workshop-2019-Minneapolis/M2/Macaulay2/packages/", path)
 installPackage "Dmodules"

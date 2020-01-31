@@ -86,8 +86,9 @@ Dresolution Module := options -> M -> (
      pInfo (2, "\t Degree " | 0 | "...");
      pInfo (2, "\t\t\t Rank = " | rank target N | "\t time = 0. seconds");
      pInfo (2, "\t Degree " | 1 | "...");
-     (tInfo, m) := timing(schreyerOrder gens gb N);
-     pInfo (2, "\t\t\t Rank = " | rank source N | "\t time = " | tInfo | " seconds");
+     tInfo := toString first timing (m := schreyerOrder gens gb N);
+     pInfo (2, "\t\t\t Rank = " | rank source N | "\t time = " |
+	  tInfo | " seconds");
 
      M.cache.resolution = new ChainComplex;
      M.cache.resolution.ring = W;
