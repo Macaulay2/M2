@@ -37,7 +37,7 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
      "BMM","pruneCechComplexCC","populateCechComplexCC",
      "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "distraction", "indicialIdeal",  
-     "cssExpts", "cssExptsMult", "isTorusFixed"
+     "cssExpts", "cssExptsMult", "solveFrobeniusIdeal", "isTorusFixed"
      }
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))

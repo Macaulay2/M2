@@ -132,7 +132,7 @@ cssExpts(Ideal,List) := List => (H,w)->(
 
 --Input: holonomic D-ideal H, weight vector w as List, 
 --Output: list of starting monomial exponents for H wrt w, with multiplicities
-cssExptsMult = method(); 
+cssExptsMult = method();
 cssExptsMult(Ideal,List) := List => (H,w)->(
 	n:= (numgens ring H)//2;
 	t := symbol t;
@@ -140,6 +140,62 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
     	L := beginExptComp(H,w,n,S);
     	apply(L,l->( {degree l,solveMax(l)}))
 	)    
+
+-- Perform a lexographic breadth first search on monomials in k[x_1..x_n] \ S_< (I)
+-- and compute c#(alpha, beta) as in Algorithm 2.3.14 of SST (pp. 74)
+-- Input:  an Ideal, zero-dimensional Frobenius m-primary ideal
+-- Output: a HashTable, { beta => f_beta } 
+solveFrobeniusIdeal = method();
+solveFrobeniusIdeal Ideal := Ideal => I -> (
+    R := ring I;
+    n := # gens R;
+    if dim I > 0 then error "expected zero-dimensional ideal";
+    -- standard monomials S_<(I)
+    S := new MutableHashTable from apply( first entries basis (R^1/I), elt -> (elt, elt) );
+    B := keys S;
+    -- the coefficients c#(alpha,beta)
+    c := new MutableHashTable from {};
+    -- non-standard monomials N_<(I)
+    N := new MutableHashTable from flatten for i to n - 1 list for beta in B list R_i * beta => (i, beta);
+    -- monomials that we have already visited
+    M := new MutableHashTable from S;
+
+    while #N > 0 do (
+    	-- the vals in the hash table can be potentially used to speed up computation
+	(alpha, vals) := min pairs N;
+	remove(N, alpha);
+	M#alpha = true;
+
+	if S#?alpha then continue;
+
+	lambda := alpha % I;
+	if lambda == 0 then continue;
+
+	coeffs := last coefficients(lambda, Monomials => keys S);
+	for j to #B - 1 do c#(alpha, B_j) = coeffs_0_j;
+	apply(B,  beta ->
+	    S#beta = S#beta + c#(alpha, beta) * ((first exponents beta)/(k -> k!)//product) / ((first exponents alpha)/(k -> k!)//product) * alpha
+	    );
+
+	-- Add the product of alpha and generators of R to N
+	-- TODO: R_j * lambda is easier to reduce, so add that instead?
+	for j to n - 1 do if not M#?(R_j * alpha) then N#(R_j * alpha) = (j, alpha);
+	);
+    values S
+    )
+
+
+--------------------
+-- Tests section
+--------------------
+
+TEST /// -- test solveFrobeniusIdeal
+  R = QQ[t_1..t_5]
+  I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)
+  F = solveFrobeniusIdeal I
+  assert(F_2 == 1/8*(t_2+t_4-2*t_5)*(2*t_1-t_2+2*t_3+t_4-4*t_5))
+  assert(-2*F_1+F_0 == t_2 + t_4 - 2*t_5)
+///
 
 end;
 --------------------
