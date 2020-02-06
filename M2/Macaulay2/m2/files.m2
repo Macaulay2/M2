@@ -498,6 +498,7 @@ installMethod(setup, () -> (
      mungeFile("~/"|".bashrc",startToken,endToken,M2profileRead) or
      mungeFile("~/"|".login",startToken,endToken,M2loginRead) or
      fileExists("~/"|".tcshrc" ) and mungeFile("~/"|".tcshrc",startToken,endToken,M2loginRead) or
+     fileExists("~/"|".zshrc" ) and mungeFile("~/"|".zshrc",startToken,endToken,M2loginRead) or
      mungeFile("~/"|".cshrc",startToken,endToken,M2loginRead) or
      mungeEmacs(); ))
 
