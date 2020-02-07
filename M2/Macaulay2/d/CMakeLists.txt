@@ -21,8 +21,8 @@ add_custom_command(OUTPUT distributed-packages.h
 
 # FIXME
 add_custom_command(OUTPUT startup.c
-  COMMAND
-    ./config.status Macaulay2/d/startup.m2
+#  COMMAND
+#    ./config.status Macaulay2/d/startup.m2
   COMMAND
     ${CMAKE_COMMAND} -E copy ${BOOTSTRAP}/Macaulay2/d/startup.c
                              ${CMAKE_CURRENT_BINARY_DIR}/startup.c

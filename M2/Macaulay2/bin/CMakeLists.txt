@@ -12,16 +12,17 @@ add_dependencies(M2-binary factory)
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter engine system kernel
+  blas lapack
   # Order matters here!
-  "-L/usr/local/lib"
-  stdc++
+#  "-L/usr/local/lib"
+#  stdc++
   factory   mathicgb mathic memtailor readline history frobby flint cdd givaro
-  "-framework Accelerate"
+#  "-framework Accelerate"
   xml2 lzma z
-  "-framework Accelerate"
+#  "-framework Accelerate"
   readline ncurses ntl glpk
-  mpc mpfr gmpxx  gmp  gc gdbm tbb
-  m c  memtailor  mathic  mathicgb
+  mpc mpfr gmpxx  gmp  gc gdbm # tbb
+  m c  # memtailor  mathic  mathicgb
   # factory mathicgb mathic memtailor frobby cdd givaro lapack blas xml2 lzma z
   # tbb dl m quadmath lapack blas readline tinfo ntl flint gmp glpk mpc mpfr gmpxx gmp gc gdbm pthread tbb dl m c
   )

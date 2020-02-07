@@ -76,4 +76,6 @@ add_custom_target(platform-libs ALL
     ln -fs ${BOOTSTRAP}/usr-dist/x86*/libexec ${CMAKE_BINARY_DIR}/Macaulay2
   COMMAND
     ln -fs ${BOOTSTRAP}/usr-dist/x86*/lib64   ${CMAKE_BINARY_DIR}/Macaulay2
+  COMMAND
+    ln -fs ${BOOTSTRAP}/usr-dist/x86*/lib   ${CMAKE_BINARY_DIR}/Macaulay2
   )
