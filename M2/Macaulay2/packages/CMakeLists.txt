@@ -1,4 +1,4 @@
-# TODO: add all packages; these are the bare minimum
+# TODO: unmark-packages?
 
 set(PACKAGE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share/Macaulay2)
 
@@ -26,7 +26,19 @@ endforeach()
 # TODO
 # Macaulay2/packages/Style/Makefile
 
-# TODO
-# cd ${PACKAGE}-temporary && M2-binary  -q --stop --silent -e errorDepth=3 -e debugLevel=0  -e "installPackage(\"${PACKAGE}\", RemakeAllDocumentation => false, IgnoreExampleErrors => false, RerunExamples => false, CheckDocumentation => true, UserMode => false, Verbose => false, InstallPrefix => \"${CMAKE_BINARY_DIR}/Macaulay2/share/\", SeparateExec => true, DebuggingMode => true); exit 0"
+list(TRANSFORM DISTRIBUTED_PACKAGES APPEND "-docs" OUTPUT_VARIABLE PACKAGE_DOCS)
 
-# TODO: unmark-packages?
+add_custom_target(package-docs ALL DEPENDS ${PACKAGE_DOCS})
+add_dependencies(package-docs packages)
+
+foreach(PACKAGE ${DISTRIBUTED_PACKAGES})
+  add_custom_command(OUTPUT ${PACKAGE}-docs
+    COMMENT
+      "Generating documentation for package ${PACKAGE}"
+    COMMAND
+      M2-binary  -q --stop --silent -e errorDepth=3 -e debugLevel=0  -e "installPackage(\"${PACKAGE}\", RemakeAllDocumentation => false, IgnoreExampleErrors => false, RerunExamples => false, CheckDocumentation => true, UserMode => false, Verbose => false, InstallPrefix => \"${DIST_DIR}/\", SeparateExec => true, DebuggingMode => true); exit 0"
+    VERBATIM
+    DEPENDS m2
+    )
+endforeach()
+

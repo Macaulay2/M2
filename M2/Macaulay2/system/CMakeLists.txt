@@ -18,3 +18,5 @@ target_include_directories(system
     ${CMAKE_BINARY_DIR}/Macaulay2/d
     ${LIBXML2_INCLUDE_DIR}
   )
+
+add_dependencies(system interpreter) # needs pthread-exports.h

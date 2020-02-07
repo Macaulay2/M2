@@ -6,7 +6,7 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 1)
 # Order matters here
 set(CLIST arithmetic-tmp.c atomic-tmp.c M2-tmp.c system-tmp.c strings-tmp.c varstrin-tmp.c strings1-tmp.c errio-tmp.c vararray-tmp.c ctype-tmp.c nets-tmp.c varnets-tmp.c interrupts-tmp.c pthread0-tmp.c stdiop0-tmp.c gmp-tmp.c engine-tmp.cc xml-tmp.c stdio0-tmp.c parse-tmp.c expr-tmp.c stdio-tmp.c stdiop-tmp.c err-tmp.c gmp1-tmp.c tokens-tmp.c getline-tmp.c lex-tmp.c parser-tmp.c binding-tmp.c basic-tmp.c convertr-tmp.c common-tmp.c util-tmp.c struct-tmp.c classes-tmp.cc buckets-tmp.cc equality-tmp.cc hashtables-tmp.cc sets-tmp.cc version-tmp.cc evaluate-tmp.c mysqldummy-tmp.c pthread-tmp.c actors-tmp.c actors2-tmp.cc actors3-tmp.c actors4-tmp.c xmlactors-tmp.c actors5-tmp.c actors6-tmp.cc threads-tmp.cc flint-tmp.c interface-tmp.cc interface2-tmp.c texmacs-tmp.c interp-tmp.cc)
 
-add_custom_target(generate-d ALL DEPENDS ${CLIST} distributed-packages.h)
+add_custom_target(generate-d ALL DEPENDS ${CLIST} startup.c distributed-packages.h)
 
 file(READ "../packages/\=distributed-packages" PACKAGES REGEX "^[a-zA-Z0-9]+$")
 string(REPLACE "\n" " " PACKAGES ${PACKAGES})
@@ -20,13 +20,13 @@ add_custom_command(OUTPUT distributed-packages.h
   )
 
 # FIXME
-execute_process(
+add_custom_command(OUTPUT startup.c
   COMMAND
     ./config.status Macaulay2/d/startup.m2
   COMMAND
     ${CMAKE_COMMAND} -E copy ${BOOTSTRAP}/Macaulay2/d/startup.c
                              ${CMAKE_CURRENT_BINARY_DIR}/startup.c
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../..
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   )
 
 # -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\\1\\n"/'

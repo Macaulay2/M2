@@ -1,4 +1,4 @@
-# MAHRUD: Does SCC stand for Simple C Compiler?
+# Safe C Compiler (SCC)
 # In this directory, we compile "scc1", the D to C translator, which we want to run
 # on the "build" machine, in the sense of autoconf.
 

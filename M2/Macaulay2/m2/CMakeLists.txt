@@ -12,8 +12,6 @@ add_custom_command(OUTPUT ${CORE_DIR}/statuscodes
   COMMENT
     "Generating ../Share/Macaulay2/Core/statuscodes"
   COMMAND
-    ${CMAKE_COMMAND} -E make_directory ${CORE_DIR}
-  COMMAND
     ${CMAKE_COMMAND} -E copy_if_different statuscodes ${CORE_DIR}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Macaulay2/e-includes
   )
@@ -22,8 +20,6 @@ add_custom_command(OUTPUT ${CORELIST} ${CORE_DIR}/loadsequence ${CORE_DIR}/insta
   COMMENT
     "Generating ../Share/Macaulay2/Core/*.m2"
   COMMAND
-    ${CMAKE_COMMAND} -E make_directory ${CORE_DIR}
-  COMMAND
     ${CMAKE_COMMAND} -E copy_if_different ${M2LIST} loadsequence installedpackages ${CORE_DIR}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
@@ -31,8 +27,6 @@ add_custom_command(OUTPUT ${CORELIST} ${CORE_DIR}/loadsequence ${CORE_DIR}/insta
 add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
   COMMAND
     M2-binary -q --silent --stop -e errorDepth=0 --no-preload --no-tvalues ${CMAKE_CURRENT_SOURCE_DIR}/tvalues-make.m2 -e "make \"${CMAKE_SOURCE_DIR}/Macaulay2/d/\"; exit 0"
-  COMMAND
-    ${CMAKE_COMMAND} -E make_directory ${CORE_DIR}
   COMMAND
     ${CMAKE_COMMAND} -E copy_if_different tvalues.m2 ${CORE_DIR}
   VERBATIM

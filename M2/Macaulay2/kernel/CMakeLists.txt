@@ -22,3 +22,5 @@ target_include_directories(kernel
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
     ${CMAKE_SOURCE_DIR}/Macaulay2/c
   )
+
+add_dependencies(kernel interpreter) # needs pthread-exports.h
