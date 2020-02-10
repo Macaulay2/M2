@@ -510,7 +510,8 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if # findFiles rundir == 1
      then removeDirectory rundir
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
-     stderr << "M2: *** Error " << (if r<256 then r else r//256) << endl;
+     r = if r<256 then r else r//256;
+     stderr << "M2: *** Error " << r << endl;
      if r == 2 then error "interrupted";
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;
