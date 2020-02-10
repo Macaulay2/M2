@@ -1181,6 +1181,7 @@ makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the r
      )
 
 runnable := fn -> (
+     if fn == "" then false;
      if isAbsolutePath fn then fileExists fn
      else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists)
      )
@@ -1190,8 +1191,9 @@ show URL := x -> (
      url := x#0;
      if runnable "open" then browser := "open" -- Apple varieties
      else if runnable "xdg-open" then browser = "xdg-open" -- most Linux distributions
+     else if runnable getenv "WWWBROWSER" then browser = getenv "WWWBROWSER" -- compatibility
      else if runnable "firefox" then browser = "firefox" -- backup
-     else error "neither open nor xdg-open are found";
+     else error "neither open nor xdg-open are found and WWWBROWSER is not set";
      cmd := { browser, url };
      if fork() == 0 then (
 	  setGroupID(0,0);
