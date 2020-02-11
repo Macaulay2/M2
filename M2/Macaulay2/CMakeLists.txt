@@ -1,7 +1,6 @@
 # TODO: should we add [all,check,clean,distclean]-in-$dir?
 
 # TODO:
-#add_subdirectory(compat)
 #add_subdirectory(util)
 add_subdirectory(regex)
 add_subdirectory(c)

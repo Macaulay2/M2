@@ -465,7 +465,9 @@ describeReturnCode = r -> (
 
 runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
-     stderr << "--making " << desc << " in file " << outf << endl;
+     stderr << "--making " << desc;
+     if debugLevel > 0 then stderr << " in file " << outf;
+     stderr << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      setseed := " --no-randomize";
@@ -481,7 +483,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
      cmd := ulimit | "cd " | rundir | "; " | env | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
-     stderr << cmd << endl;
+     if debugLevel > 0 then stderr << cmd << endl;
      makeDirectory rundir;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
