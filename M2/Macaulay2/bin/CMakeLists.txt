@@ -7,24 +7,17 @@
 # Any other sources?
 add_executable(M2-binary timestamp.c)
 
-add_dependencies(M2-binary factory)
+add_dependencies(M2-binary factory-target)
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter engine system kernel
   blas lapack
   # Order matters here!
-#  "-L/usr/local/lib"
-#  stdc++
-  factory   mathicgb mathic memtailor readline history frobby flint cdd givaro
-#  "-framework Accelerate"
-  xml2 lzma z
-#  "-framework Accelerate"
-  readline ncurses ntl glpk
-  mpc mpfr gmpxx  gmp  gc gdbm # tbb
-  m c  # memtailor  mathic  mathicgb
-  # factory mathicgb mathic memtailor frobby cdd givaro lapack blas xml2 lzma z
-  # tbb dl m quadmath lapack blas readline tinfo ntl flint gmp glpk mpc mpfr gmpxx gmp gc gdbm pthread tbb dl m c
+  factory mathicgb mathic memtailor readline history frobby flint cdd givaro
+  xml2 lzma z ncurses ntl glpk mpc mpfr gmpxx gmp gc gdbm m c
+  pthread dl # needed on linux
+  # tbb quadmath tinfo # are these needed?
   )
 
 target_link_directories(M2-binary PUBLIC
