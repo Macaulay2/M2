@@ -14,12 +14,17 @@ set(SUPPRESS_COMPILER_WARNINGS on)
 
 cmake_minimum_required(VERSION 3.14)
 
-# specify the C++ standard
+## specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# set the project name, version, and languages
-project(macaulay2 VERSION 1.15 LANGUAGES C CXX)
+## set the project name, version, and languages
+project(Macaulay2
+  VERSION 1.15.0.2 # branch eigen on cmake
+  DESCRIPTION "A software system for algebraic geometry research"
+  HOMEPAGE_URL https://faculty.math.illinois.edu/Macaulay2/
+  LANGUAGES C CXX
+  )
 
 # FIXME: usr-dist/common/share gives error?!
 set(SHARE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share)
@@ -31,21 +36,45 @@ set(CORE_DIR  ${SHARE_DIR}/Macaulay2/Core)
 set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
 message("## Bootstrapping from previous build in: ${BOOTSTRAP}")
 
-# Find necessary packages
-# bdw-gc givaro atomic_ops factory/singular-factory
-find_package(Eigen3  3.3 REQUIRED NO_MODULE)
-find_package(LibXml2 2.9 REQUIRED)
+# FIXME: should these stay here or go to bin/CMakeLists.txt?
+## Find libraries available as CMake modules
 find_package(BLAS    3.8 REQUIRED)
 find_package(LAPACK  3.8 REQUIRED)
-find_package(LibLZMA 5.2 REQUIRED)
-find_package(Curses  6.1 REQUIRED) # ncurses
+find_package(Eigen3  3.3 REQUIRED NO_MODULE)
+find_package(LibXml2 2.9 REQUIRED)
 find_package(Threads 2.1 REQUIRED) # pthread
+find_package(Curses  6.1 REQUIRED) # ncurses
+find_package(LibLZMA 5.2 REQUIRED)
+find_package(PkgConfig   REQUIRED QUIET)
 
-# Kick off the Macaulay2 directory
-add_subdirectory(Macaulay2)
+## Set paths for pkg-config
+set(ENV{PKG_CONFIG_PATH} "${BOOTSTRAP}/usr-host/lib/pkgconfig:${BOOTSTRAP}/submodules/mathicgb/build/autotools:${BOOTSTRAP}/submodules/mathic/build/autotools:${BOOTSTRAP}/submodules/memtailor/build/autotools")
 
-# Installation directories:
+## Find libraries available via pkg-config
+pkg_search_module(GIVARO    REQUIRED givaro                   IMPORTED_TARGET)
+pkg_search_module(MATHICGB  REQUIRED mathicgb                 IMPORTED_TARGET)
+pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
+#pkg_search_module(FFLAS     REQUIRED fflas-ffpack             IMPORTED_TARGET) requires givaro 4.0.3, we have 4.0.2??
+pkg_search_module(READLINE  REQUIRED readline                 IMPORTED_TARGET)
+pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
+
+## Find all other libraries
+find_library(LIBHISTORY history)
+find_library(LIBFROBBY frobby)
+find_library(LIBGLPK glpk)
+find_library(LIBGDBM gdbm)
+find_library(LIBCDD cdd)
+find_library(LIBMPC mpc)
+find_library(LIBDL dl)
+find_library(LIBM m)
+find_library(LIBC c)
+find_library(LIBZ z)
+
+## Installation directories:
 option(CMAKE_INSTALL_PREFIX "installation prefix" /usr/local)
+
+## Kick off the Macaulay2 directory
+add_subdirectory(Macaulay2)
 
 # FIXME
 execute_process(

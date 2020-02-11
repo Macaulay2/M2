@@ -29,7 +29,7 @@ set(debugLevel 0) # TODO: add option to set the M2 debugging level
 list(TRANSFORM PACKAGES APPEND ".m2" OUTPUT_VARIABLE PACKAGE_OUTPUTS)
 
 ## Copy packages and auxiliary files to the destination
-add_custom_target(copy-packages DEPENDS ${PACKAGE_OUTPUTS})
+add_custom_target(copy-packages ALL DEPENDS ${PACKAGE_OUTPUTS})
 
 foreach(PACKAGE ${PACKAGES})
   add_custom_command(OUTPUT ${PACKAGE_DIR}/${PACKAGE}.m2
@@ -51,17 +51,17 @@ endforeach()
 ## eg: install-Style install-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
 ## Install packages and make documentation
-add_custom_target(install-packages ALL DEPENDS ${INSTALL_TARGETS})
+add_custom_target(install-packages DEPENDS ${INSTALL_TARGETS})
 
 ## eg: check-Style check-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
 ## Uninstall packages
-add_custom_target(uninstall-packages ALL DEPENDS ${UNINSTALL_TARGETS})
+add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 
 ## eg: check-Style check-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE CHECK_TARGETS)
 ## Run tests and check packages
-add_custom_target(check-packages ALL DEPENDS ${CHECK_TARGETS})
+add_custom_target(check-packages DEPENDS ${CHECK_TARGETS})
 
 
 ## Arguments for M2-binary and installPackage

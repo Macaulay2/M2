@@ -12,12 +12,19 @@ add_dependencies(M2-binary factory-target)
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
   regex interpreter engine system kernel
-  blas lapack
-  # Order matters here!
-  factory mathicgb mathic memtailor readline history frobby flint cdd givaro
-  xml2 lzma z ncurses ntl glpk mpc mpfr gmpxx gmp gc gdbm m c
-  pthread dl # needed on linux
-  # tbb quadmath tinfo # are these needed?
+  Threads::Threads
+  ${LAPACK_LIBRARIES} # lapack depends on blas
+  ${LIBXML2_LIBRARIES}
+  ${CURSES_LIBRARIES}
+  ${LZMA_LIBRARIES}
+  PkgConfig::MATHICGB # mathicgb depends on mathic and memtailor
+  PkgConfig::FACTORY # factory depends on flint mpft ntl gmp omalloc singular_resources
+  PkgConfig::GIVARO # givaro depends on gmpxx and gmp
+  PkgConfig::READLINE
+  PkgConfig::GC
+  ${LIBHISTORY} ${LIBFROBBY} ${LIBCDD} ${LIBZ} ${LIBMPC} ${LIBGDBM} ${LIBM} ${LIBC}
+  ${LIBGLPK} ${LIBMPC} ${LIBGDBM} ${LIBM} ${LIBC} ${LIBZ} ${LIBDL} # dl is needed on linux
+  # tbb quadmath tinfo # are these not needed?
   )
 
 target_link_directories(M2-binary PUBLIC
