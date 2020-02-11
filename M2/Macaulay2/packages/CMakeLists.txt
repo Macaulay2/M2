@@ -49,10 +49,20 @@ endforeach()
 #################################################################################
 
 ## eg: install-Style install-Macaulay2Doc ...
-list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE PACKAGE_TARGETS)
-
+list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
 ## Install packages and make documentation
-add_custom_target(install-packages ALL DEPENDS ${PACKAGE_TARGETS})
+add_custom_target(install-packages ALL DEPENDS ${INSTALL_TARGETS})
+
+## eg: check-Style check-Macaulay2Doc ...
+list(TRANSFORM PACKAGES PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
+## Uninstall packages
+add_custom_target(uninstall-packages ALL DEPENDS ${UNINSTALL_TARGETS})
+
+## eg: check-Style check-Macaulay2Doc ...
+list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE CHECK_TARGETS)
+## Run tests and check packages
+add_custom_target(check-packages ALL DEPENDS ${CHECK_TARGETS})
+
 
 ## Arguments for M2-binary and installPackage
 set(ARGS -q --stop --silent -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
@@ -77,10 +87,37 @@ foreach(PACKAGE ${PACKAGES})
       M2-binary ${ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${INSTALL_ARGS}) $<SEMICOLON> exit 0\"
     DEPENDS copy-packages
     )
+
+  # TODO
+  ## Custom target for uninstalling the package
+  add_custom_target(uninstall-${PACKAGE}
+    COMMENT
+      "Uninstalling package ${PACKAGE}"
+#    COMMAND
+#      rm -rf
+#        @pre_libm2dir@/$1
+#        @pre_infodir@/$1.info
+#        @pre_infodir@/$1.info.errors
+#        @pre_packagesdir@/$1
+#        @pre_docdir@/$1
+    )
+
+  # FIXME: what is if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 ?
+  ## Custom target for checking the package
+  add_custom_target(check-${PACKAGE}
+    COMMENT
+      "Checking package ${PACKAGE}"
+    COMMAND
+      M2-binary ${ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
+      check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
+    DEPENDS install-${PACKAGE}
+    )
+
+  ## Everything bagel
+  add_custom_target(all-${PACKAGE} DEPENDS install-${PACKAGE} check-${PACKAGE})
 endforeach()
 
 #################################################################################
 
-# TODO: check-<PACKAGE> install-<PACKAGE> uninstall-package-<PACKAGE> all-<PACKAGE>
-# TODO: test check big-check
+# TODO: test? big-check?
 # TODO: EngineTests and other packages under development that should be checked but not installed
