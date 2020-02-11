@@ -55,13 +55,13 @@ add_custom_target(install-packages DEPENDS ${INSTALL_TARGETS})
 
 ## eg: check-Style check-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "check-" OUTPUT_VARIABLE CHECK_TARGETS)
-## Uninstall packages
-add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
-
-## eg: check-Style check-Macaulay2Doc ...
-list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE CHECK_TARGETS)
 ## Run tests and check packages
 add_custom_target(check-packages DEPENDS ${CHECK_TARGETS})
+
+## eg: uninstall-Style uninstall-Macaulay2Doc ...
+list(TRANSFORM PACKAGES PREPEND "uninstall-" OUTPUT_VARIABLE UNINSTALL_TARGETS)
+## Uninstall packages
+add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 
 
 ## Arguments for M2-binary and installPackage
