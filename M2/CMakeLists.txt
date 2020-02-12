@@ -54,7 +54,8 @@ set(ENV{PKG_CONFIG_PATH} "${BOOTSTRAP}/usr-host/lib/pkgconfig:${BOOTSTRAP}/submo
 pkg_search_module(GIVARO    REQUIRED givaro                   IMPORTED_TARGET)
 pkg_search_module(MATHICGB  REQUIRED mathicgb                 IMPORTED_TARGET)
 pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
-#pkg_search_module(FFLAS     REQUIRED fflas-ffpack             IMPORTED_TARGET) requires givaro 4.0.3, we have 4.0.2??
+# To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
+pkg_search_module(FFLAS     REQUIRED fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(READLINE  REQUIRED readline                 IMPORTED_TARGET)
 pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
 
