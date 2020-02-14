@@ -44,6 +44,7 @@ darwin64-latestclang : always
 		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
+		--with-integer-package=mpir \
 		--disable-strip \
 		--enable-download
 
