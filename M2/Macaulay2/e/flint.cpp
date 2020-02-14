@@ -37,7 +37,9 @@ gmp_arrayZZ flintToFrontend(std::vector<fmpz_t>); // this function copies data t
 gmp_arrayZZ rawZZfactor(gmp_ZZ x)
 {
   fmpz_t n;
+  fmpz_init(n);
   fmpz_set_mpz(n, x);
+  //std::cout << "factoring fmpz " << static_cast<void*>(n) << std::endl;
   fmpz_factor_t factor;
   fmpz_factor_init(factor);
   fmpz_factor(factor,n);
@@ -62,10 +64,11 @@ gmp_arrayZZ rawZZfactor(gmp_ZZ x)
     tmp = newitem(__mpz_struct);
     mpz_init(tmp);
     fmpz_get_mpz(tmp,(fmpz *)(factor->exp + i));
-    mpz_reallocate_limbs(tmp);    
+    mpz_reallocate_limbs(tmp);
     result->array[2*i+2] = tmp;
   }
   fmpz_factor_clear(factor);
+  fmpz_clear(n);
   return result;
 }
 
