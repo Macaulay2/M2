@@ -3,12 +3,12 @@
 --   viewHelp SpecialFanoFourfolds
 ----------------------------------------------------------------
 
-if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
+-- if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
 
 newPackage(
        "SpecialFanoFourfolds",
     	Version => "0.9", 
-        Date => "February 15, 2020",
+        Date => "February 17, 2020",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "A package for working with special cubic fourfolds and special prime Fano fourfolds of degree 10 and index 2",
         PackageExports => {"Resultants","Cremona"},
@@ -60,12 +60,12 @@ specialCubicFourfold (Ideal,Ideal) := o -> (S,X) -> (
    if not (isPolynomialRing ring X and isHomogeneous X and numgens ring X == 6 and numgens X == 1 and degree X == 3) then error "expected the principal ideal of a cubic fourfold";
    if not(isHomogeneous S and dim S -1 == 2) then error "expected the ideal of a surface";
    if not isSubset(X,S) then error "the given surface is not contained in the cubic fourfold";
-   isSing := if ch > 0 then (
-        codim ideal jacobian X <= 5
-   ) else (
-        codim ideal jacobian reduceToPrimeCharacteristic X <= 5
-   );
-   if isSing then error "expected a smooth cubic fourfold";
+--   isSing := if ch > 0 then (
+--        codim ideal jacobian X <= 5
+--   ) else (
+--        codim ideal jacobian reduceToPrimeCharacteristic X <= 5
+--   );
+--   if isSing then error "expected a smooth cubic fourfold";
    if not (instance(o.NumNodes,ZZ) and o.NumNodes >= 0) then error "NumNodes option expects a non-negative integer";
    new SpecialCubicFourfold from {
         "idealFourfold" => X,
@@ -77,7 +77,7 @@ specialCubicFourfold (Ideal,Ideal) := o -> (S,X) -> (
         "NumNodesSurface" => o.NumNodes,
         "map" => null,
         "parameterization" => null,
-        "label" => ""
+        "label" => null
    }
 );
 
@@ -392,7 +392,7 @@ secantCone (Ideal,Ideal) := (I,p) -> (
 
 detectCongruence = method();
 
-hintCongruence := method();
+hintCongruence = method();
 hintCongruence (MutableHashTable) := (X) -> (
    if X#"label" =!= null then return; 
    if X#"map" =!= null then if (X#"map")#"idealImage" =!= null then return;
@@ -578,13 +578,13 @@ specialGushelMukaiFourfold (Ideal,Ideal) := o -> (S,X) -> (
    if not (isPolynomialRing ring X and isHomogeneous X and degrees X === toList(6:{2}) and numgens ring X == 9 and codim X == 4 and degree X == 10 and (genera X)_3 == 6) then error "expected (the ideal of) a 4-dimensional subvariety of PP^8 of degree 10 and sectional genus 6 cut out by 6 quadrics"; 
    if not(isHomogeneous S and dim S -1 == 2) then error "expected the ideal of a surface";
    if not isSubset(X,S) then error "the given surface is not contained in the fourfold";
-   isSing := if ch > 0 then (
-        dim(X + minors(4,jacobian X,Strategy=>Cofactor)) > 0
-   ) else (
-        redX := reduceToPrimeCharacteristic X;
-        dim(redX + minors(4,jacobian redX,Strategy=>Cofactor)) > 0
-   );
-   if isSing then error "expected a smooth GM fourfold";
+--   isSing := if ch > 0 then (
+--        dim(X + minors(4,jacobian X,Strategy=>Cofactor)) > 0
+--   ) else (
+--        redX := reduceToPrimeCharacteristic X;
+--        dim(redX + minors(4,jacobian redX,Strategy=>Cofactor)) > 0
+--   );
+--   if isSing then error "expected a smooth GM fourfold";
    Y := varietyDefinedBylinearSyzygies X;
    if p === null then p = point Y else (
        try assert(isIdeal(p) and ring(p) === ring(X) and degrees(p) === toList(8:{1}) and dim(p) == 1 and isSubset(Y,p)) else error "the option Point expects the ideal of a point on the del Pezzo fivefold containing the Gushel-Mukai fourfold";
@@ -601,7 +601,7 @@ specialGushelMukaiFourfold (Ideal,Ideal) := o -> (S,X) -> (
         "discriminant" => null,
         "map" => null,
         "parameterization" => null,
-        "label" => ""
+        "label" => null
    }
 );
 
@@ -901,7 +901,7 @@ detectCongruence (SpecialGushelMukaiFourfold,ZZ) := (X,e) -> (
 
 parameterCount (SpecialGushelMukaiFourfold) := o -> (X) -> (
    (S,G) := ideals X;
-   Y := ideal source map X;
+   Y := ideal source X#"fromDelPezzoFivefoldToG14";
    if o.Verbose then <<"S: "|toString(? S)<<endl;
    if o.Verbose then <<"X: GM fourfold containing S"<<endl;
    if o.Verbose then <<"Y: del Pezzo fivefold containing X"<<endl;
@@ -1379,7 +1379,7 @@ constrTriple (String,Ideal,Ideal) := (name,V,C) -> (
 tables = method();
 tables (ZZ,Ring) := (i,K) -> (
     if K =!= ZZ/(char K) then error "not implemented yet: coefficient ring different from ZZ/p";
-    if i < 1 or i > 25 then error "expected integer between 1 and 21+4";
+    if i < 1 or i > 21 then error "expected integer between 1 and 21";
     ringP5 := Grass(0,5,K,Variable=>"x");
     x := gens ringP5;
     ringP2 := Grass(0,2,K,Variable=>"t");
@@ -1499,27 +1499,6 @@ tables (ZZ,Ring) := (i,K) -> (
         C = v arandom({2},intersect(p_0,p_1,p_2,p_3));
         return constrTriple("s",V,C);
     );
-    --
-    if i == 22 or i == 23 then (
-        v = rationalMap(ringP2,ringP5,gens (ideal vars ringP2)^2);
-        V = image v;
-        C = v arandom({1},source v);
-        return constrTriple("s",V,C);
-    ); 
-    if i == 24 then (
-        p = for i to 6 list point ringP2;
-        v = rationalMap(ringP2,ringP5,gens image basis(4,intersect(intersect(p_{0..5}),p_6^2)));
-        V = image v;
-        C = v arandom({1},p_0);
-        return constrTriple("s",V,C);
-    );
-    if i == 25 then (
-        p = for i to 3 list point ringP2;
-        v = rationalMap(ringP2,ringP5,gens image basis(3,intersect p));
-        V = image v;
-        C = v arandom({1},p_0);
-        return constrTriple("s",V,C);
-    ); 
 );
 
 tables (Ring,String) := (K,Name) -> ( -- store all data in a file
@@ -1531,13 +1510,13 @@ F << "   x := gens Grass(0,5,ZZ/"|toString(ch)|///,Variable=>"x");///<<endl;
 F << ///   cubicScrollSurface := ideal(x_5,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_1^2-x_0*x_2);///<<endl;
 F << ///   quarticScrollThreefold := ideal(x_0*x_2+x_2*x_4-x_1*x_5-x_2*x_5+x_5^2,x_0*x_1*x_3+x_1*x_3*x_4+x_0*x_1*x_5-x_1*x_2*x_5-x_2^2*x_5-x_0*x_3*x_5+x_2*x_4*x_5-x_3*x_4*x_5-x_0*x_5^2+x_2*x_5^2,x_0^2*x_3+2*x_0*x_3*x_4+x_3*x_4^2+x_0^2*x_5-x_0*x_3*x_5+x_0*x_4*x_5-x_3*x_4*x_5-x_0*x_5^2-x_1*x_5^2-x_2*x_5^2+x_4*x_5^2+x_5^3,x_1*x_2^2+x_2^3-x_1^2*x_3-x_1*x_2*x_3+x_1*x_2*x_4-x_2^2*x_4-x_1^2*x_5-x_1*x_2*x_5-x_2^2*x_5+2*x_1*x_3*x_5+x_2*x_3*x_5-x_2*x_4*x_5+2*x_1*x_5^2+x_2*x_5^2-x_3*x_5^2-x_5^3);///<<endl;
 close F;
-T := {,"cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","quarticScrollThreefold","cubicScrollSurface","cubicScrollSurface","quarticScrollThreefold","cubicScrollSurface","quarticScrollThreefold","quarticScrollThreefold","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","quarticScrollThreefold","quarticScrollThreefold","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface"};
-inters := {,0,0,0,0,7,0,0,5,0,4,6,0,0,0,0,0,0,3,6,0,0,0,0,0,0};
-degsV :=  {,2,2,8,4,3,1,3,2,1,4,4,8,7,4,6,6,5,4,4,4,7,4,4,6,5};
-degsC :=  {,2,1,4,3,2,1,3,1,1,4,4,4,4,2,4,3,3,5,4,4,4,2,2,3,2};
+T := {,"cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","quarticScrollThreefold","cubicScrollSurface","cubicScrollSurface","quarticScrollThreefold","cubicScrollSurface","quarticScrollThreefold","quarticScrollThreefold","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","cubicScrollSurface","quarticScrollThreefold","quarticScrollThreefold","cubicScrollSurface","cubicScrollSurface"};
+inters := {,0,0,0,0,7,0,0,5,0,4,6,0,0,0,0,0,0,3,6,0,0};
+degsV :=  {,2,2,8,4,3,1,3,2,1,4,4,8,7,4,6,6,5,4,4,4,7};
+degsC :=  {,2,1,4,3,2,1,3,1,1,4,4,4,4,2,4,3,3,5,4,4,4};
 local A;
 x := gens Grass(0,5,ZZ/ch,Variable=>"x");
-for i from 1 to 25 do (
+for i from 1 to 21 do (
    A = tables(i,ZZ/ch);
    if degree A_0 == 3 then (
        assert(A_0 === ideal(x_5,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_1^2-x_0*x_2));
@@ -1560,23 +1539,17 @@ close F;
 );
 
 tables (ZZ) := (i) -> (
+    if i < 1 or i > 21 then error "expected integer between 1 and 21";
     try value get "data_examples.dat" else error("file \"data_examples.dat\" not found. You can make it using tables(K,\"data_examples\")");
     tables i
 ); 
 
 fourfoldFromTriple = (i,E) -> (
     psi := rationalMap(E_0,max flatten degrees E_0,Dominant=>2);
-    if i <= 21 then (
-       X := specialGushelMukaiFourfold(psi E_1);
-       X#"label" = i;
-       return X;
-    );
-    Z := ideal target psi;
     p := trim lift(psi point source psi,ambient target psi);
-    n := if i == 22 then 6 else if i == 23 then 7 else if i == 24 then 12 else if i == 25 then 15;
-    P := if i == 22 then randomSigma31OnDelPezzoFivefold(Z,p) else randomSigma22OnDelPezzoFivefold(Z,p);
-    psi' := psi * rationalMap(target psi,source psi,gens trim sub(P,target psi));
-    specialCubicFourfold(psi' E_1,NumNodes=>n)
+    X := specialGushelMukaiFourfold(psi E_1,Point=>p);
+    X#"label" = i;
+    return X;
 );
 
 tables (ZZ,Ring,Nothing) := (i,K,nu) -> (
@@ -1924,7 +1897,7 @@ document {
 Key => {tables,(tables,ZZ,Ring),(tables,ZZ),(tables,ZZ,Ring,Nothing),(tables,ZZ,Nothing)},
 Headline => "make examples of reducible surfaces in PP^5", 
 Usage => "tables(i,K)", 
-Inputs => {"i" => ZZ => {"an integer between 1 and 21+4"},
+Inputs => {"i" => ZZ => {"an integer between 1 and 21"},
            "K" => Ring => {"the coefficient ring"}
           },
 Outputs => {{"a triple of ideals ",TEX///$(B,V,C)$///,", which represents a reducible surface in ",TEX///$\mathbb{P}^5$///," as indicated in the paper \"On some families of Gushel-Mukai fourfolds\""}},
