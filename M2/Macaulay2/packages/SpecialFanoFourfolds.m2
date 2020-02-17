@@ -3,7 +3,7 @@
 --   viewHelp SpecialFanoFourfolds
 ----------------------------------------------------------------
 
--- if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
+if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
 
 newPackage(
        "SpecialFanoFourfolds",
@@ -60,12 +60,12 @@ specialCubicFourfold (Ideal,Ideal) := o -> (S,X) -> (
    if not (isPolynomialRing ring X and isHomogeneous X and numgens ring X == 6 and numgens X == 1 and degree X == 3) then error "expected the principal ideal of a cubic fourfold";
    if not(isHomogeneous S and dim S -1 == 2) then error "expected the ideal of a surface";
    if not isSubset(X,S) then error "the given surface is not contained in the cubic fourfold";
---   isSing := if ch > 0 then (
---        codim ideal jacobian X <= 5
---   ) else (
---        codim ideal jacobian reduceToPrimeCharacteristic X <= 5
---   );
---   if isSing then error "expected a smooth cubic fourfold";
+   isSing := if ch > 0 then (
+        codim ideal jacobian X <= 5
+   ) else (
+        codim ideal jacobian reduceToPrimeCharacteristic X <= 5
+   );
+   if isSing then error "expected a smooth cubic fourfold";
    if not (instance(o.NumNodes,ZZ) and o.NumNodes >= 0) then error "NumNodes option expects a non-negative integer";
    new SpecialCubicFourfold from {
         "idealFourfold" => X,
@@ -578,13 +578,13 @@ specialGushelMukaiFourfold (Ideal,Ideal) := o -> (S,X) -> (
    if not (isPolynomialRing ring X and isHomogeneous X and degrees X === toList(6:{2}) and numgens ring X == 9 and codim X == 4 and degree X == 10 and (genera X)_3 == 6) then error "expected (the ideal of) a 4-dimensional subvariety of PP^8 of degree 10 and sectional genus 6 cut out by 6 quadrics"; 
    if not(isHomogeneous S and dim S -1 == 2) then error "expected the ideal of a surface";
    if not isSubset(X,S) then error "the given surface is not contained in the fourfold";
---   isSing := if ch > 0 then (
---        dim(X + minors(4,jacobian X,Strategy=>Cofactor)) > 0
---   ) else (
---        redX := reduceToPrimeCharacteristic X;
---        dim(redX + minors(4,jacobian redX,Strategy=>Cofactor)) > 0
---   );
---   if isSing then error "expected a smooth GM fourfold";
+   isSing := if ch > 0 then (
+        dim(X + minors(4,jacobian X,Strategy=>Cofactor)) > 0
+   ) else (
+        redX := reduceToPrimeCharacteristic X;
+        dim(redX + minors(4,jacobian redX,Strategy=>Cofactor)) > 0
+   );
+   if isSing then error "expected a smooth GM fourfold";
    Y := varietyDefinedBylinearSyzygies X;
    if p === null then p = point Y else (
        try assert(isIdeal(p) and ring(p) === ring(X) and degrees(p) === toList(8:{1}) and dim(p) == 1 and isSubset(Y,p)) else error "the option Point expects the ideal of a point on the del Pezzo fivefold containing the Gushel-Mukai fourfold";
@@ -1732,44 +1732,17 @@ Headline => "A (work-in-progress) package for working with special cubic fourfol
 document { 
 Key => {SpecialGushelMukaiFourfold, (discriminant,SpecialGushelMukaiFourfold), (parametrize,SpecialGushelMukaiFourfold)}, 
 Headline => "the class of all special Gushel-Mukai fourfolds",
-PARA{
-"An (ordinary) Gushel-Mukai fourfold is the intersection of a smooth del Pezzo fivefold ",
-TEX///$\mathbb{G}(1,4)\cap\mathbb{P}^8\subset \mathbb{P}^8$///,
-" with a quadric hypersurface in ",
-TEX///$\mathbb{P}^8$///,
-". A Gushel-Mukai fourfold is said to be ",EM"special",
-" if it contains a surface whose cohomology class ",EM "does not come",
-" from the Grassmannian ",
-TEX///$\mathbb{G}(1,4)$///,
-". The special Gushel-Mukai fourfolds are parametrized by a countable union of (not necessarily irreducible) hypersurfaces in the corresponding moduli space, 
-labelled by the positive integers ",
-TEX///$d = 0,2,4\ ({mod}\ 8)$///,
-". For precise definition and results, we refer mainly to the paper ",
-HREF{"https://arxiv.org/abs/1302.1398","Special prime Fano fourfolds of degree 10 and index 2"},
-", by O. Debarre, A. Iliev, and L. Manivel."
-},
-PARA{
-"The above integer ",TEX///$d$///,
-" is called ",EM "discriminant",", and it can be computed by the method ",TO (discriminant,SpecialGushelMukaiFourfold),
-". The method just applies a formula given in Section 7 of the aforementioned paper,
-obtaining the data required through the methods ",TO cycleClass,", ",
-TO EulerCharacteristic," and ",TO Euler," (the option ",TT "Algorithm"," allows you to select the method)."},
-PARA{
-"Some special Gushel-Mukai fourfolds are known to be rational. The method ", TO (parametrize,SpecialGushelMukaiFourfold), 
-" can compute the birational map from ",TEX///$\mathbb{P}^4$///," (or, e.g., from a quadric hypersurface in ",TEX///$\mathbb{P}^5$///,
-") to the fourfold." 
-},
-PARA{
-"The main constructor for the objects of the class ", TO SpecialGushelMukaiFourfold, 
-" is the method ",TO specialGushelMukaiFourfold,". In the following example, we construct a Gushel-Mukai fourfold containing a so-called ",
-TEX///$\tau$///,"-quadric. Then we verify that its discriminant is 10, and we also get a birational parameterization."},
+PARA{"An (ordinary) Gushel-Mukai fourfold is the intersection of a smooth del Pezzo fivefold ",TEX///$\mathbb{G}(1,4)\cap\mathbb{P}^8\subset \mathbb{P}^8$///," with a quadric hypersurface in ",TEX///$\mathbb{P}^8$///,". A Gushel-Mukai fourfold is said to be ",EM"special"," if it contains a surface whose cohomology class ",EM "does not come"," from the Grassmannian ",TEX///$\mathbb{G}(1,4)$///,". The special Gushel-Mukai fourfolds are parametrized by a countable union of (not necessarily irreducible) hypersurfaces in the corresponding moduli space, labelled by the integers ", TEX///$d \geq 10$///," with ",TEX///$d = 0,2,4\ ({mod}\ 8)$///,". For precise definition and results, we refer mainly to the paper ",HREF{"https://arxiv.org/abs/1302.1398","Special prime Fano fourfolds of degree 10 and index 2"},", by O. Debarre, A. Iliev, and L. Manivel."},
+PARA{"The above integer ",TEX///$d$///," is called ",EM "discriminant",", and it can be computed by the method ",TO (discriminant,SpecialGushelMukaiFourfold),". The method just applies a formula given in Section 7 of the aforementioned paper, obtaining the data required through the methods ",TO cycleClass,", ",TO EulerCharacteristic," and ",TO Euler," (the option ",TT "Algorithm"," allows you to select the method)."},
+PARA{"Some special Gushel-Mukai fourfolds are known to be rational. The method ", TO (parametrize,SpecialGushelMukaiFourfold)," can compute the birational map from ",TEX///$\mathbb{P}^4$///," (or, e.g., from a quadric hypersurface in ",TEX///$\mathbb{P}^5$///,") to the fourfold." },
+PARA{"The main constructor for the objects of the class ", TO SpecialGushelMukaiFourfold," is the method ",TO specialGushelMukaiFourfold,". In the following example, we construct a Gushel-Mukai fourfold containing a so-called ",TEX///$\tau$///,"-quadric. Then we verify that its discriminant is 10, and we also get a birational parameterization."},
 EXAMPLE {
-"K = ZZ/33331; P8 = K[x_0..x_8];", 
-"S = ideal(x_6-x_7,x_5,x_3-x_4,x_1,x_0-x_4,x_2*x_7-x_4*x_8);",
-"X = ideal(x_4*x_6-x_3*x_7+x_1*x_8,x_4*x_5-x_2*x_7+x_0*x_8,x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8,x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7,x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8,x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8);",
-"time G = specialGushelMukaiFourfold(S,X);",
-"time discriminant G",
-"time phi = parametrize G",
+"K = ZZ/33331; ringP8 = K[x_0..x_8];", 
+"idealS = ideal(x_6-x_7,x_5,x_3-x_4,x_1,x_0-x_4,x_2*x_7-x_4*x_8);",
+"idealX = ideal(x_4*x_6-x_3*x_7+x_1*x_8,x_4*x_5-x_2*x_7+x_0*x_8,x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8,x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7,x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8,x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8);",
+"time X = specialGushelMukaiFourfold(idealS,idealX);",
+"time discriminant X",
+"time phi = parametrize X",
 "describe phi"
 }
 }
@@ -1990,18 +1963,25 @@ document {
           FunctionClosure => {"which takes the ideal of a (general) point ",TEX///$p\in\mathbb{P}^5$///," and returns the unique rational curve of degree ",TEX///$e$///,", ",TEX///$(3e-1)$///,"-secant to ",TEX///$S$///,", and passing through ",TEX///$p$///," (an error is thrown if such a curve does not exist or is not unique)"} 
           },
      EXAMPLE {
-    "-- A general cubic fourfold in C_26
+    "-- A general cubic fourfold of discriminant 26
 X = specialCubicFourfold(\"Farkas-Verra C26\",ZZ/33331);",
     "describe X",
      "time f = detectCongruence X;",
      "p = point ring X -- random point on P^5",
      "time C = f p -- 5-secant conic to the surface",
-     "codim C == 4 and degree C == 2 and codim(C+(first ideals X)) == 5 and degree(C+(first ideals X)) == 5 and isSubset(C,p)"
+     "assert(codim C == 4 and degree C == 2 and codim(C+(first ideals X)) == 5 and degree(C+(first ideals X)) == 5 and isSubset(C,p))"
 },
 PARA{"The same method can be also applied to a ",TO SpecialGushelMukaiFourfold,". In this case it will detect and return a congruence of (2e-1)-secant curve of degree e inside the unique del Pezzo fivefold containing the GM fourfold."},
-EXAMPLE{"Y = specialGushelMukaiFourfold(\"surface of degree 9 and genus 2\",ZZ/33331);",
-        "describe Y",
-        "time detectCongruence(Y,2);"},
+EXAMPLE{"-- A general GM fourfold of discriminant 20
+X = specialGushelMukaiFourfold(\"surface of degree 9 and genus 2\",ZZ/33331);",
+        "describe X",
+        "time f = detectCongruence X;",
+        "Y = source map X; -- del Pezzo fivefold containing X",
+        "p = point Y -- random point on Y",
+        "time C = f p -- 3-secant conic to the surface",
+        "S = sub(first ideals X,Y);",
+        "assert(dim C -1 == 1 and degree C == 2 and dim(C+S)-1 == 0 and degree(C+S) == 3 and isSubset(C,p))"
+},
 SeeAlso => {coneOfLines}
 }
 
@@ -2076,8 +2056,8 @@ EXAMPLE {
             x_0^2*x_1+133*x_1*x_2*x_3+48*x_0*x_3^2+68*x_1*x_3^2+54*x_2*x_3^2-18*x_3^3-70*x_0^2*x_4+278*x_0*x_1*x_4-330*x_1^2*x_4+24*x_0*x_2*x_4+44*x_1*x_2*x_4-54*x_2^2*x_4-361*x_0*x_3*x_4+156*x_1*x_3*x_4+18*x_2*x_3*x_4+120*x_3^2*x_4-4*x_0*x_4^2+177*x_1*x_4^2-120*x_2*x_4^2+54*x_3*x_4^2+54*x_4^3+23*x_0*x_1*x_5-44*x_1^2*x_5-69*x_1*x_2*x_5-93*x_0*x_3*x_5-63*x_1*x_3*x_5+39*x_3^2*x_5+39*x_0*x_4*x_5+144*x_1*x_4*x_5-93*x_2*x_4*x_5-54*x_3*x_4*x_5+39*x_1*x_5^2,
             x_0^3+224*x_1*x_2*x_3+80*x_0*x_3^2+115*x_1*x_3^2+91*x_2*x_3^2-30*x_3^3-119*x_0^2*x_4+470*x_0*x_1*x_4-555*x_1^2*x_4+41*x_0*x_2*x_4+75*x_1*x_2*x_4-91*x_2^2*x_4-608*x_0*x_3*x_4+263*x_1*x_3*x_4+30*x_2*x_3*x_4+202*x_3^2*x_4-8*x_0*x_4^2+297*x_1*x_4^2-202*x_2*x_4^2+91*x_3*x_4^2+91*x_4^3+39*x_0*x_1*x_5-76*x_1^2*x_5-118*x_1*x_2*x_5-158*x_0*x_3*x_5-105*x_1*x_3*x_5+67*x_3^2*x_5+68*x_0*x_4*x_5+245*x_1*x_4*x_5-158*x_2*x_4*x_5-91*x_3*x_4*x_5+67*x_1*x_5^2);",
    "idX = ideal(x_1^2*x_3+x_0*x_2*x_3-6*x_1*x_2*x_3-x_0*x_3^2-4*x_1*x_3^2-3*x_2*x_3^2+2*x_0^2*x_4-10*x_0*x_1*x_4+13*x_1^2*x_4-x_0*x_2*x_4-3*x_1*x_2*x_4+3*x_2^2*x_4+14*x_0*x_3*x_4-8*x_1*x_3*x_4-4*x_3^2*x_4+x_0*x_4^2-7*x_1*x_4^2+4*x_2*x_4^2-2*x_3*x_4^2-2*x_4^3-x_0*x_1*x_5+x_1^2*x_5+2*x_1*x_2*x_5+3*x_0*x_3*x_5+3*x_1*x_3*x_5-x_3^2*x_5-x_0*x_4*x_5-4*x_1*x_4*x_5+3*x_2*x_4*x_5+2*x_3*x_4*x_5-x_1*x_5^2);",
-   "time X = specialCubicFourfold(idS,idX,NumNodes=>3)",
-   "time discriminant X"
+   "time X = specialCubicFourfold(idS,idX,NumNodes=>3);",
+   "time describe X"
 }
 }
 
@@ -2202,6 +2182,17 @@ document {
 ------------------------------- Tests ----------------------------------
 ------------------------------------------------------------------------
 
+TEST///
+(S,f) = schubertCycle({2,2},Grass(1,4,ZZ/33331,Variable=>"x"),"standard");
+assert(f S == tangentialChowForm(ideal((Grass(0,4,ZZ/33331,Variable=>"x"))_3,(Grass(0,4,ZZ/33331,Variable=>"x"))_4),1,1));
+--
+(S,f) = schubertCycle({3,2,1},Grass(2,5,ZZ/33331,Variable=>"x"),"standard");
+use ring S;
+assert(f S == ideal(x_(3,4,5),x_(2,4,5),x_(1,4,5),x_(0,4,5),x_(2,3,5),x_(1,3,5),x_(0,3,5),x_(1,2,5),x_(0,2,5),x_(0,1,5),x_(2,3,4),x_(1,3,4),x_(0,3,4),x_(1,2,4),x_(1,2,3)));
+///
+
+end
+
 TEST ///
 K := ZZ/3331;
 --
@@ -2228,10 +2219,14 @@ time assert(discriminant X7 == 20)
 ///
 
 TEST///
-(S,f) = schubertCycle({2,2},Grass(1,4,ZZ/33331,Variable=>"x"),"standard");
-assert(f S == tangentialChowForm(ideal((Grass(0,4,ZZ/33331,Variable=>"x"))_3,(Grass(0,4,ZZ/33331,Variable=>"x"))_4),1,1));
---
-(S,f) = schubertCycle({3,2,1},Grass(2,5,ZZ/33331,Variable=>"x"),"standard");
-use ring S;
-assert(f S == ideal(x_(3,4,5),x_(2,4,5),x_(1,4,5),x_(0,4,5),x_(2,3,5),x_(1,3,5),x_(0,3,5),x_(1,2,5),x_(0,2,5),x_(0,1,5),x_(2,3,4),x_(1,3,4),x_(0,3,4),x_(1,2,4),x_(1,2,3)));
+K = ZZ/65521;
+X = for i from 1 to 21 list (
+   A = tables(i,K);
+   time specialGushelMukaiFourfold (rationalMap(A_0,max flatten degrees A_0,Dominant=>2)) A_1
+); 
+assert(apply(X,w -> time discriminant w) === {10,10,10,10,10,10,12,12,12,16,16,16,18,18,18,18,20,20,24,24,26})
+S = apply(X,w -> first ideals w);
+assert(apply(S,s -> degree s) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12})
 ///
+
+
