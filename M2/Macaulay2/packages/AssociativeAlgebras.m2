@@ -657,9 +657,8 @@ homogDual Ideal := I -> (
    mat := transpose last coefficients(gens I,Monomials=>flatten entries bas);
    mat = sub(mat, coefficientRing A);
    dualGens := bas*(gens ker mat);
-   J := ideal flatten entries dualGens
+   if dualGens == 0 then ideal {0_A} else ideal flatten entries dualGens
 )
-
 
 -- TODO: Make this work eventually
 --NCRing ** NCRing := (A,B) -> (
@@ -703,8 +702,12 @@ R2 = QQ {y,Degrees=>{2}}
 S = freeProduct(R1,R2)
 T = qTensorProduct(R1,R2,-1)
 --- homog dual
-R = QQ[x,y]
-S = homogDual R
+R1 = QQ[x,y]
+S1 = homogDual R1
+ideal S1
+R3 = QQ[x,y]/ideal{x^2,x*y,y^2}
+S3 = homogDual R3
+ideal S3
 --- getting promote to work
 kk = ZZ/32003
 A = kk[x,y]
