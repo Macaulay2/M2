@@ -154,7 +154,7 @@ public:
 
   virtual ~TrivialPolynomialHeap() {}
 
-  void clear() { mRing.setZero(mValue); mIter = mValue.cbegin(); }
+  void clear() override { mRing.setZero(mValue); mIter = mValue.cbegin(); }
     
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
@@ -210,7 +210,7 @@ public:
 
   size_t getMemoryUsedInBytes() override
   {
-    mValue.numTerms();
+    return mValue.numTerms();
   }
 
   std::string getName() const override { return std::string("Trivial Heap"); }
@@ -322,7 +322,7 @@ private:
   const FreeAlgebra& mRing;
 };
 
-template<template<typename> typename Queue>
+template<template<typename> class Queue>
 class NaivePolynomialHeap : public PolynomialHeap
 {
 public:
@@ -338,7 +338,7 @@ public:
 
   virtual ~NaivePolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -465,7 +465,7 @@ private:
 };
 
 
-template<template<typename> typename Queue>
+template<template<typename> class Queue>
 class NaiveDedupPolynomialHeap : public PolynomialHeap
 {
 public:
@@ -479,7 +479,7 @@ public:
 
   virtual ~NaiveDedupPolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -598,7 +598,7 @@ public:
 
   virtual ~MapPolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -913,7 +913,7 @@ public:
 
   virtual ~PriorityQueuePolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -933,7 +933,8 @@ public:
   {
     auto rg = mMonomialSpace.allocateArray<int>(entry.first.size());
     std::copy(entry.first.begin(), entry.first.end(), rg.first);
-    mQueue.push(Entry(Monom(rg.first), entry.second));    
+    mQueue.push(Entry(Monom(rg.first), entry.second));
+    return *this;
   }
 
   PriorityQueuePolynomialHeap& addPolynomial(const Poly& poly) override
