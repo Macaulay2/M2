@@ -106,7 +106,6 @@ checkHeft = (degs, heftvec) -> (
 Ring List := (A, args) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}, Heft=>null};
-   error "test";
    (opts,args) = override(opts,toSequence args);
    varList := args;
    if not (A.?Engine and A.Engine) then
@@ -138,6 +137,8 @@ Ring List := (A, args) -> (
        (symbol baseRings) => append(A.baseRings,A)
        };
    newGens := for i from 0 to #varSymbols-1 list varSymbols#i <- new R from R.RawRing_i;
+   R.promoteDegree = makepromoter degreeLength R;
+   R.liftDegree = makepromoter degreeLength R;
    R.generators = newGens;
    commonEngineRingInitializations R;
    --- need to fix net of an RingElement coming from a NCPolynomial ring.
@@ -497,7 +498,11 @@ BUG ///
 restart
 needsPackage "AssociativeAlgebras"
 --needsPackage "NCAlgebra"
-R = (ZZ/32003){a,b,c}
+kk = ZZ/32003
+A = kk[x,y]
+R = kk{a,b,c}
+promote(kk^3, R)
+promote(kk^3, A)
 I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
@@ -512,6 +517,12 @@ T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
 R = QQ {x}
 f = map(R,R,{-x})
 gens R / baseName
+
+kk = ZZ/32003
+A = kk[x,y]
+B = A{z,w, DegreeRank=>2}
+promote(A^{1,2,3}, B) -- this is not an optimal situation.  We need to allow DegreeMap...
+assert(ring promote(kk^3, B) === B) -- fails at the moment.
 ///
 
 beginDocumentation()

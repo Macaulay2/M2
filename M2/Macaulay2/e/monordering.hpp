@@ -2,6 +2,7 @@
 #define __monordering_hpp_
 
 #include <string>
+#include <vector>
 
 enum MonomialOrdering_type
 {
