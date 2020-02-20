@@ -1,27 +1,33 @@
 #set(CMAKE_VERBOSE_MAKEFILE on)
 
-## Example:
-## $ cmake -DRerunExamples=ON [source directory]
-## $ VERBOSE=1 make LocalRings
-## Note: options are sticky!
+## Set options via the cmake command line:
+## $ cmake -DM2_RerunExamples=true -DPACKAGES=LocalRings .
+## Note that options prefixed with M2_* are sticky. Use -U to revert to default:
+## $ cmake -UM2_RerunExamples .
 
 set(PACKAGE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share/Macaulay2)
 
 ## eg: Style Macaulay2Doc ...
 file(STRINGS "\=distributed-packages" DISTRIBUTED_PACKAGES)
-## the default is to install all distributed packages
-# TODO: add option to modify the list of packages to install
-set(PACKAGES "${DISTRIBUTED_PACKAGES}")
 
+## Package options
+## The default is to install all distributed packages
+set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
+set(M2_ReinstallPackages       "false" CACHE STRING   "reinstall the packages")
 # TODO: use ReinstallPackages or unmark-packages target?
-option(ReinstallPackages      "reinstall the packages"               OFF)
-option(CheckDocumentation     "check documentation for completeness" ON)
-option(IgnoreExampleErrors    "ignore errors in example code"        OFF)
-option(RemakeAllDocumentation "remake all documentation"             OFF)
-option(RerunExamples          "rerun example output files"           OFF)
-# TODO: Options only get ON or OFF, what's a nice way to get optional values from env?
-set(errorDepth 3) # TODO: add option to set the error printing depth
-set(debugLevel 0) # TODO: add option to set the M2 debugging level
+## Arguments to M2
+set(M2_errorDepth                  "3" CACHE STRING "set the error printing depth")
+set(M2_debugLevel                  "0" CACHE STRING "set the debugging level")
+## Options to installPackage
+set(M2_CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
+set(M2_IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
+set(M2_RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
+set(M2_RerunExamples           "false" CACHE STRING "rerun example outpuat files")
+
+# errors
+# set(PACKAGES
+#  Macaulay2Doc CoincidentRootLoci Bertini QuillenSuslin MonodromySolver
+#  StatePolytope PHCpack MultiplierIdeals NumericalAlgebraicGeometry )
 
 #################################################################################
 
@@ -48,6 +54,9 @@ endforeach()
 
 #################################################################################
 
+# TODO: how to handle EngineTests and other packages under development that
+# should be checked but not installed
+
 ## eg: install-Style install-Macaulay2Doc ...
 list(TRANSFORM PACKAGES PREPEND "install-" OUTPUT_VARIABLE INSTALL_TARGETS)
 ## Install packages and make documentation
@@ -65,13 +74,13 @@ add_custom_target(uninstall-packages DEPENDS ${UNINSTALL_TARGETS})
 
 
 ## Arguments for M2-binary and installPackage
-set(ARGS -q --stop --silent -e errorDepth=${errorDepth} -e debugLevel=${debugLevel})
-set(INSTALL_ARGS
+set(M2_ARGS -q --stop --silent -e errorDepth=${M2_errorDepth} -e debugLevel=${M2_debugLevel})
+set(M2_INSTALL_ARGS
   Verbose                => $<IF:$<BOOL:${CMAKE_VERBOSE_MAKEFILE}>,true,false>,
-  RerunExamples          => $<IF:$<BOOL:${RerunExamples}>,true,false>,
-  CheckDocumentation     => $<IF:$<BOOL:${CheckDocumentation}>,true,false>,
-  IgnoreExampleErrors    => $<IF:$<BOOL:${IgnoreExampleErrors}>,true,false>,
-  RemakeAllDocumentation => $<IF:$<BOOL:${RemakeAllDocumentation}>,true,false>,
+  RerunExamples          => ${M2_RerunExamples},
+  CheckDocumentation     => ${M2_CheckDocumentation},
+  IgnoreExampleErrors    => ${M2_IgnoreExampleErrors},
+  RemakeAllDocumentation => ${M2_RemakeAllDocumentation},
   InstallPrefix          => \\"${DIST_DIR}/\\",
   UserMode               => false,
   SeparateExec           => true,
@@ -84,11 +93,11 @@ foreach(PACKAGE ${PACKAGES})
     COMMENT
       "Installing package ${PACKAGE}"
     COMMAND
-      M2-binary ${ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${INSTALL_ARGS}) $<SEMICOLON> exit 0\"
+      M2-binary ${M2_ARGS} -e \"installPackage(\\"${PACKAGE}\\", ${M2_INSTALL_ARGS}) $<SEMICOLON> exit 0\"
     DEPENDS copy-packages
     )
 
-  # TODO
+  # TODO: use cmake -E remove?
   ## Custom target for uninstalling the package
   add_custom_target(uninstall-${PACKAGE}
     COMMENT
@@ -108,7 +117,7 @@ foreach(PACKAGE ${PACKAGES})
     COMMENT
       "Checking package ${PACKAGE}"
     COMMAND
-      M2-binary ${ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
+      M2-binary ${M2_ARGS} -e \"needsPackage(\\"${PACKAGE}\\", LoadDocumentation=>true, DebuggingMode=>true) $<SEMICOLON>
       check(${PACKAGE}, UserMode=>false) $<SEMICOLON> exit 0\"
     DEPENDS install-${PACKAGE}
     )
@@ -120,4 +129,3 @@ endforeach()
 #################################################################################
 
 # TODO: test? big-check?
-# TODO: EngineTests and other packages under development that should be checked but not installed

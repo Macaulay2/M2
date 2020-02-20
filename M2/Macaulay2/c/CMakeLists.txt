@@ -48,7 +48,7 @@ target_include_directories(scc1
 
 # FIXME: what library is missing that requires -L...?
 target_link_directories(scc1 PUBLIC /usr/local/lib ${BOOTSTRAP}/usr-host/lib)
-target_link_libraries(scc1 gdbm m gc)
+target_link_libraries(scc1 gdbm gc)
 
 # Why do we do this?
 # CC scc-core.c
