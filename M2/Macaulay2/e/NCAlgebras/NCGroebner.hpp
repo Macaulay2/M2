@@ -29,10 +29,11 @@ public:
 
   NCGroebner(const FreeAlgebra& A,
              const ConstPolyList& input,
-             int hardDegreeLimit)
+             int hardDegreeLimit
+             )
     : mFreeAlgebra(A),
       mInput(input),
-      mHeap(makePolynomialHeap(HeapTypes::PriorityQueue,A)),
+      mHeap(makePolynomialHeap(HeapType::PriorityQueue,A)),
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {

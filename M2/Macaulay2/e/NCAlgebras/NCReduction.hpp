@@ -32,19 +32,19 @@ public:
   virtual std::string getName() const = 0; // returns the 'type' of the underlying heap structure
 };
 
-enum class HeapTypes {
+enum class HeapType {
   Trivial,
   Map, // based on std::map
   PriorityQueue, // based on std::priority_queue (with underlying std::vector)
   NaiveGeobucket,
   NaiveHeap,
   NaiveTourTree,
-  NaiveDedupGeobucket
-  //  HashedGeobucket
+  NaiveDedupGeobucket,
+  HashedGeobucket
 };
 
 std::unique_ptr<PolynomialHeap>
-makePolynomialHeap(HeapTypes type, const FreeAlgebra& F);
+makePolynomialHeap(HeapType type, const FreeAlgebra& F);
 
 #endif
 

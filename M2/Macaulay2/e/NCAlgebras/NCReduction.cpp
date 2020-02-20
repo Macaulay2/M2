@@ -154,7 +154,7 @@ public:
 
   virtual ~TrivialPolynomialHeap() {}
 
-  void clear() override { mRing.setZero(mValue); mIter = mValue.cbegin(); }
+  void clear() { mRing.setZero(mValue); mIter = mValue.cbegin(); }
     
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
@@ -210,7 +210,7 @@ public:
 
   size_t getMemoryUsedInBytes() override
   {
-    return mValue.numTerms();
+    mValue.numTerms();
   }
 
   std::string getName() const override { return std::string("Trivial Heap"); }
@@ -322,7 +322,7 @@ private:
   const FreeAlgebra& mRing;
 };
 
-template<template<typename> class Queue>
+template<template<typename> typename Queue>
 class NaivePolynomialHeap : public PolynomialHeap
 {
 public:
@@ -338,7 +338,7 @@ public:
 
   virtual ~NaivePolynomialHeap() {}
 
-  void clear() override {
+  void clear() {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -465,7 +465,7 @@ private:
 };
 
 
-template<template<typename> class Queue>
+template<template<typename> typename Queue>
 class NaiveDedupPolynomialHeap : public PolynomialHeap
 {
 public:
@@ -479,7 +479,7 @@ public:
 
   virtual ~NaiveDedupPolynomialHeap() {}
 
-  void clear() override {
+  void clear() {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -598,7 +598,7 @@ public:
 
   virtual ~MapPolynomialHeap() {}
 
-  void clear() override {
+  void clear() {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -913,7 +913,7 @@ public:
 
   virtual ~PriorityQueuePolynomialHeap() {}
 
-  void clear() override {
+  void clear() {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -933,8 +933,7 @@ public:
   {
     auto rg = mMonomialSpace.allocateArray<int>(entry.first.size());
     std::copy(entry.first.begin(), entry.first.end(), rg.first);
-    mQueue.push(Entry(Monom(rg.first), entry.second));
-    return *this;
+    mQueue.push(Entry(Monom(rg.first), entry.second));    
   }
 
   PriorityQueuePolynomialHeap& addPolynomial(const Poly& poly) override
@@ -1079,24 +1078,24 @@ bool testMemoryBlock()
 }
 
 std::unique_ptr<PolynomialHeap>
-makePolynomialHeap(HeapTypes type, const FreeAlgebra& F)
+makePolynomialHeap(HeapType type, const FreeAlgebra& F)
 {
   switch (type) {
-    //  case HeapTypes::HashedGeobucket:
+    //  case HeapType::HashedGeobucket:
     //    return make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
-  case HeapTypes::Map:
+  case HeapType::Map:
     return make_unique<MapPolynomialHeap>(F);
-  case HeapTypes::PriorityQueue:
+  case HeapType::PriorityQueue:
     return make_unique<PriorityQueuePolynomialHeap>(F);
-  case HeapTypes::Trivial:
+  case HeapType::Trivial:
     return make_unique<TrivialPolynomialHeap>(F);
-  case HeapTypes::NaiveDedupGeobucket:
+  case HeapType::NaiveDedupGeobucket:
     return make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
-  case HeapTypes::NaiveGeobucket:
+  case HeapType::NaiveGeobucket:
     return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
-  case HeapTypes::NaiveTourTree:
+  case HeapType::NaiveTourTree:
     return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
-  case HeapTypes::NaiveHeap:
+  case HeapType::NaiveHeap:
     return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
   };
   return nullptr;

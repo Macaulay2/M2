@@ -668,7 +668,7 @@ homogDual Ideal := I -> (
 BUG ///
 --- things to get fixed:
 1) basis rather than ncBasis
-3) Check that the type "Ring" inputs above are actually either FreeAlgebra or FreeAlgebraQuotient
+2) Check that the type "Ring" inputs above are actually either FreeAlgebra or FreeAlgebraQuotient
 
 --- bringing over ring constructions
 restart
