@@ -3,7 +3,7 @@
 
 #include "../M2FreeAlgebra.hpp"
 #include "WordTable.hpp"
-#include "SuffixTree.hpp"
+//#include "SuffixTree.hpp"
 #include "OverlapTable.hpp"
 #include "NCReduction.hpp"
 #include <iostream>

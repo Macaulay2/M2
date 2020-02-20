@@ -10,6 +10,7 @@ INTERFACE2 = \
 	interrupted \
 	newdelete \
 
+#  NCAlgebras/SuffixTree \
 
 INTERFACE = \
 	myalloc \
@@ -23,7 +24,6 @@ INTERFACE = \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/OverlapTable \
-	NCAlgebras/SuffixTree \
 	monomial-collection \
 	Polynomial \
 	M2FreeAlgebra \
