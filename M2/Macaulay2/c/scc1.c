@@ -2,6 +2,7 @@
 
 #include "scc.h"
 
+scope global_scope;
 FILE *dependfile;
 char *targetname;
 char *outfilename;
