@@ -18,7 +18,7 @@
 struct POS { char *filename; short lineno, column; } ;
 typedef struct NODE *node;
 typedef struct SCOPE *scope;
-scope global_scope;
+extern scope global_scope;
 typedef node (*chkfun) (node,scope);
 
 #define clear_memory(v) memset(v,0,sizeof(*v))
