@@ -3,11 +3,6 @@
 
 void NCGroebner::compute(int softDegreeLimit)
 {
-  if (M2_gbTrace >= 2)
-    {
-      std::cout << "Overlap table after including generators:" << std::endl;
-      mOverlapTable.dump(std::cout, true);
-    }
   size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
@@ -59,6 +54,7 @@ void NCGroebner::compute(int softDegreeLimit)
 
 void NCGroebner::addToGroebnerBasis(Poly * toAdd)
 {
+   // add in auto-reduction here?
    freeAlgebra().makeMonicInPlace(*toAdd);
    mGroebner.push_back(toAdd);
 }
@@ -82,68 +78,6 @@ void NCGroebner::updateOverlaps(const Poly * toAdd)
 const ConstPolyList& NCGroebner::currentValue()
 {
   return mGroebner;
-}
-
-// this is the old (non heap object) version of the reduction code
-// it will no longer work since we have retooled the NCGroebner object
-// to no longer use static functions.
-auto NCGroebner::twoSidedReductionOld(const FreeAlgebra& A,
-                                    const Poly* reducee,
-                                    const ConstPolyList& reducers,
-                                    const WordTable& W) -> Poly*
-// auto NCGroebner::twoSidedReduction(const FreeAlgebra& A,
-//                                    const Poly* reducee,
-//                                    const ConstPolyList& reducers,
-//                                    const SuffixTree& W) -> Poly*
-{
-  // pair will be (i,j) where the ith word in wordtable appears in word in position j
-  std::pair<int,int> subwordPos; 
-  Poly tmp1,tmp2,reduceeSoFar;
-  Poly* remainder = new Poly;
-  Word leftWord, rightWord;
-
-  A.copy(reduceeSoFar,*reducee);
-
-  while (!A.is_zero(reduceeSoFar))
-    {
-      // Find (left, right, index) s.t. left*reducers[index]*right == leadMonomial(reduceeSoFar).
-      Word reduceeLM;
-      A.monoid().wordFromMonom(reduceeLM,reduceeSoFar.cbegin().monom());
-      if (W.subword(reduceeLM,subwordPos))
-        {
-          // If there is one, perform reduceeSoFar -= coef * left * reducers[index] * right
-          leftWord = A.lead_word_prefix(reduceeSoFar, subwordPos.second);
-          rightWord = A.lead_word_suffix(reduceeSoFar, W[subwordPos.first].size()+subwordPos.second);
-          A.setZero(tmp1);
-          A.setZero(tmp2);
-          auto c = reduceeSoFar.cbegin().coeff();
-          auto d = reducers[subwordPos.first]->cbegin().coeff();
-          // TODO: Check to see if d is a unit before inverting.
-          auto coeffNeeded = A.coefficientRing()->divide(c,d);
-          A.mult_by_term_left_and_right(tmp1,
-                                         *reducers[subwordPos.first],
-                                        coeffNeeded,
-                                        //reduceeSoFar.cbegin().coeff(),
-                                         leftWord,
-                                         rightWord);
-          A.subtract(tmp2,reduceeSoFar,tmp1);
-          A.swap(reduceeSoFar,tmp2);
-        }
-      else
-        {
-          // If none, copy that term to the remainder (use add_to_end), and subtract that term
-          A.setZero(tmp1);
-          A.setZero(tmp2);
-          A.lead_term_as_poly(tmp1,reduceeSoFar);
-          A.add_to_end(*remainder,tmp1);
-          A.subtract(tmp2,reduceeSoFar,tmp1);
-          A.swap(reduceeSoFar,tmp2);
-        }
-    }
-  A.clear(tmp1);
-  A.clear(tmp2);
-  A.clear(reduceeSoFar);
-  return remainder;
 }
 
 // new version of reduction code which uses a heap structure
@@ -369,53 +303,6 @@ auto NCGroebner::isOverlapNecessary(Overlap o) const -> bool
   retval = !mWordTable.isNontrivialSuperword(w, std::get<0>(o), std::get<2>(o));
   return retval;
 }
-
-// Heap for reduction? work in progress, to be sure.
-#if 0
-class NCPolyHeap
-{
-  using Poly = M2FreeAlgebra::Poly;
-  const M2FreeAlgebra& mRing;  // Our elements will be vectors in here
-  Poly mHeap[GEOHEAP_SIZE];
-  Poly::Iterator mLead[GEOHEAP_SIZE];
-  int mTop; // largest index into mHeap which has a polynomial in it.
-
-  bool leadTermComputed;
-  ring_elem mLeadCoefficient;
-  ConstMonomial mLeadMonomial;
- public:
-  NCPolyHeap(const M2FreeAlgebra& F);
-  ~NCPolyHeap();
-
-  void add(const Poly& f);
-
-  void subtractMultiple(ring_elem coeff, Word& left, const Poly* g, Word& right);
-
-  bool computeLeadTerm();
-  ring_elem leadTermCoefficient();
-  ConstMonomial leadTermMonomial();
-  
-    Poly value();  // Returns the linearized value, and resets the NCPolyHeap.
-
-  ring_elem getValue();
-  void add(ring_elem f1);
-  
-  const Poly& debug_list(int i) const
-  {
-    return mHeap[i];
-  }  // DO NOT USE, except for debugging purposes!
-};
-
-// will eventually use this in the reduction code.
-class PolyWithPosition
-{
-public:
-  PolyWithPosition(std::unique_ptr<Poly>(f));
-private:
-  Poly* mPoly;
-  Poly::iterator mLead;
-};
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

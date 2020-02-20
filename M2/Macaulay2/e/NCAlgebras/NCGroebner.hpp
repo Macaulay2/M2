@@ -98,63 +98,6 @@ public:
 
 #endif
 
-// Notes: 5 March 2019:
-// working on naive remainder function.
-// might need to refactor monomials, ConstMonomial-->Word.
-//   also make a PolynomialALgebra class that is slim, current PolynomialALgebra
-//   will be a wrapper on that.
-  
-//   Notes from 19 Feb 2019.
-  
-//   For polynomial reduction:
-
-//   Use PolyWithPos as an Entry
-//   Use mathic Geobucket code (and/or Heap, TourTree)
-//     Use code/ideas from ReducerPack from mathicgb. (will need to crib from this code).
-//     Probably: a hash table for all monomials/words in out polynomials.
-//     SO: PolyWithPos: array of [ring_elem coeff, pointer to a monomial in the hash table structure, iterator in]
-
-//     PolyWithPos structure
-//     add(f, g: PolyWithPos): PolyWithPos;
-//     multByTerm(m:Term, f : PolyWithPos, n:Term) : PolyWithPos;
-//     remainder(f:PolyWithPos, G:GroebnerList) : PolyWithPos;
-
-//     Poly: will contain the integers defining its monomials
-//     PolyHashed: will contain pointers to monomials.
-//       PolyHashedWithPos
-//     MonomialPool: actual monomials are stored here.
-//       add in a new monomial.
-//       clear all the monomials.
-//       need: hash function for words.
-//     MonomialPool: hashtable of monomials
-//     Poly: {coeffs: CoefficientArray, monoms: array of pointers}
-//     PolyIter{Poly}
-//     PolyWithPos: {PolyIter}
-
-#if 0
-  class Reductor
-  {
-  public:
-    Reductor(Poly*); // also needs the ring information.
-
-    void subtract(ConstMonomial& left, Poly* gbElement, ConstMonomial& right, Coefficient c);
-
-    // returns true if leadMonom is set, returns false if entire poly represented is zero.
-    bool leadMonomial(ConstMonomial& leadMonom); 
-  };
-
-  class PolynomialConstructor
-  {
-  public:
-    PolynomialConstructor(); // input should be a ring.
-    appendTerm(Coefficient c, ConstMonomial& m);
-    appendMonomial(ConstMonomial& m);
-    Poly* value();
-  };
-  // during reduction: structure to keep track of what reductions we have done.
-
-#endif
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil
