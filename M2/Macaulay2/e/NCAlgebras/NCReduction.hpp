@@ -2,6 +2,7 @@
 #define __ncreduction_hpp__
 
 #include "NCGroebner.hpp"
+#include <string>
 
 class PolynomialHeap
 {
@@ -42,6 +43,9 @@ enum class HeapType {
   NaiveDedupGeobucket,
   HashedGeobucket
 };
+
+HeapType getHeapType(int strategy);
+std::string getHeapName(HeapType type);
 
 std::unique_ptr<PolynomialHeap>
 makePolynomialHeap(HeapType type, const FreeAlgebra& F);

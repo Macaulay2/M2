@@ -1077,6 +1077,43 @@ bool testMemoryBlock()
   return true;
 }
 
+HeapType getHeapType(int strategy)
+{
+  // The first 3 bits of strategy encode which heap type to use.
+  switch (strategy & 7) {
+  case 0: return HeapType::Map;  // good one
+  case 1: return HeapType::PriorityQueue; // good one
+  case 2: return HeapType::Trivial;
+  case 3: return HeapType::NaiveDedupGeobucket;
+  case 4: return HeapType::NaiveGeobucket;
+  case 5: return HeapType::NaiveTourTree;
+  case 6: return HeapType::NaiveHeap;
+  default: return HeapType::Map;
+  }
+}
+
+std::string getHeapName(HeapType type)
+{
+  switch (type) {
+  case HeapType::Map:
+    return "Map";
+  case HeapType::PriorityQueue:
+    return "PriorityQueue";
+  case HeapType::Trivial:
+    return "Trivial";
+  case HeapType::NaiveDedupGeobucket:
+    return "NaiveDedupGeobucket";
+  case HeapType::NaiveGeobucket:
+    return "NaiveGeobucket";
+  case HeapType::NaiveTourTree:
+    return "NaiveTourTree";
+  case HeapType::NaiveHeap:
+    return "NaiveHeap";
+  case HeapType::HashedGeobucket:
+    return "HashedGeobucket";
+  };
+}
+
 std::unique_ptr<PolynomialHeap>
 makePolynomialHeap(HeapType type, const FreeAlgebra& F)
 {

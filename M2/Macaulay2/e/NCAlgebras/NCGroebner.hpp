@@ -1,6 +1,8 @@
 #ifndef _NCGroebner_hpp_
 #define _NCGroebner_hpp_
 
+#include "../buffer.hpp"
+#include "../text-io.hpp"
 #include "../M2FreeAlgebra.hpp"
 #include "WordTable.hpp"
 //#include "SuffixTree.hpp"
@@ -29,14 +31,23 @@ public:
 
   NCGroebner(const FreeAlgebra& A,
              const ConstPolyList& input,
-             int hardDegreeLimit
+             int hardDegreeLimit,
+             int strategy
              )
     : mFreeAlgebra(A),
       mInput(input),
-      mHeap(makePolynomialHeap(HeapType::PriorityQueue,A)),
+      mHeap(makePolynomialHeap(getHeapType(strategy), A)),
       mTopComputedDegree(-1),
       mHardDegreeLimit(hardDegreeLimit)
   {
+    if (M2_gbTrace >= 1)
+      {
+        buffer o;
+        o << "[NCGB] reduction heap:  "
+          << getHeapName(getHeapType(strategy))
+          << newline;
+        emit_line(o.str());
+      }
     Word tmpWord;
     // process input polynomials
     for (auto i = 0; i < mInput.size(); ++i)

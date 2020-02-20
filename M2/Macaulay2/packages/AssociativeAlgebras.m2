@@ -216,20 +216,20 @@ isWellDefined FreeAlgebra := Boolean => R -> (
     )
 -- listForm
 
-NCGB = method()
-NCGB(Ideal, ZZ) := (I, maxdeg) -> (
+NCGB = method(Options => {Strategy=>0})
+NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
-        gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, 0));
+        gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, opts.Strategy));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
     )
-NCGB Ideal := (I) -> (
+NCGB Ideal := opts -> (I) -> (
     if I.cache.?NCGB then I.cache.NCGB#1
     else (
         maxdegI := first max(degrees source gens I); -- TODO: change once multidegrees are allowed.
-        NCGB(I, 2*maxdegI)
+        NCGB(I, 2*maxdegI, opts)
         )
     )
     

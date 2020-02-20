@@ -12,7 +12,7 @@ FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
                                          ConstPolyList& GB,
                                          int maxdeg)
   : mFreeAlgebra(A),
-    mGroebner(A,GB,maxdeg),
+    mGroebner(A,GB,maxdeg,0),
     mMaxdeg(maxdeg)
 {
   // this NCGroebner object is used for reductions only.

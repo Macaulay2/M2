@@ -1233,7 +1233,7 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int st
   if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
-      NCGroebner G(A->freeAlgebra(), elems, maxdeg);
+      NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
       G.compute(maxdeg); // this argument is actually the soft degree limit
       auto result = copyPolyVector(A, G.currentValue());
       return vectorToMatrix(A, result);
@@ -1255,7 +1255,7 @@ const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* re
     {
       auto reducees = matrixToVector(A, toBeReduced);
       auto reducers = matrixToVector(A, reducerMatrix);
-      NCGroebner G(A->freeAlgebra(),reducers, 0);
+      NCGroebner G(A->freeAlgebra(),reducers, 0, 0);
       G.initReductionOnly();
       auto result = G.twoSidedReduction(reducees);
       return vectorToMatrix(A, result);
