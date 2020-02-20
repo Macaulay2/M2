@@ -725,19 +725,25 @@ bool FreeAlgebra::multi_degree(const Poly& f,
   return ishomog;
 }
 
-void FreeAlgebra::lead_word(Word& result, const Poly& f) const
+Word FreeAlgebra::lead_word(const Poly& f) const
 {
-  monoid().wordFromMonom(result,f.cbegin().monom());
+   Word result;
+   monoid().wordFromMonom(result,f.cbegin().monom());
+   return result;
 }
 
-void FreeAlgebra::lead_word_prefix(Word& result, const Poly& f, int endIndex) const
+Word FreeAlgebra::lead_word_prefix(const Poly& f, int endIndex) const
 {
+  Word result;
   monoid().wordPrefixFromMonom(result,f.cbegin().monom(),endIndex);
+  return result;
 }
 
-void FreeAlgebra::lead_word_suffix(Word& result, const Poly& f, int beginIndex) const
+Word FreeAlgebra::lead_word_suffix(const Poly& f, int beginIndex) const
 {
+  Word result;
   monoid().wordSuffixFromMonom(result,f.cbegin().monom(),beginIndex);
+  return result;
 }
 
 // Local Variables:

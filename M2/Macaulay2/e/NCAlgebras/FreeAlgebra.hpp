@@ -121,9 +121,9 @@ public:
   
   SumCollector* make_SumCollector() const;
 
-  void lead_word(Word& result, const Poly& f) const;
-  void lead_word_prefix(Word& result, const Poly& f, int endIndex) const;
-  void lead_word_suffix(Word& result, const Poly& f, int beginIndex) const;
+  Word lead_word(const Poly& f) const;
+  Word lead_word_prefix(const Poly& f, int endIndex) const;
+  Word lead_word_suffix(const Poly& f, int beginIndex) const;
 
   // this stuff has yet to be moved over from ../M2FreeAlgebra
 #if 0  

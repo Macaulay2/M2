@@ -668,7 +668,6 @@ homogDual Ideal := I -> (
 BUG ///
 --- things to get fixed:
 1) basis rather than ncBasis
-2) multiplying matrices in nc case not working
 3) Check that the type "Ring" inputs above are actually either FreeAlgebra or FreeAlgebraQuotient
 
 --- bringing over ring constructions
@@ -686,7 +685,7 @@ I = ideal(2*a*b + 3*b*a + 5*c^2,
 S = R/I
 centralElements(S,3)
 T = skewPolynomialRing(ZZ/32003,-1,{x,y,z})
-T = threeDimSklyanin(QQ,{x,y,z})
+T = threeDimSklyanin(QQ,{x,y,z}, DegreeLimit => 15)
 -- this finishes in Bergman (old NCAlgebra), but not in our new code
 T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 10)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})

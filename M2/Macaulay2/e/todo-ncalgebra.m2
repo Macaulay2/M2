@@ -8,8 +8,6 @@
     There are several types of monomials: ExponentVector (NTuple), MonomialWithCompare, MonomialWHash, MonomialWHashCompare,
     CompareHashComponentDegree (some subset of these?), VarPower/NTuple/Packed (one of these), Const/NONconst.  Most should be const!
     
-  
-
 to do list for 16 Jan 2020.
 
 1. make more reduction engines
@@ -26,7 +24,7 @@ to do list for 16 Jan 2020.
     . take results of matrix reduction, add to GB.  rinse and repeat
 6. Anick resolution
 7. GB's for left/right modules.
-
+8. Merge ncEngine back into master - clean up the code!
 
 todo list being redone with start of semester, 22 Aug 2019 FM+MS
 0. rename PolynomialAlgebra.m2 package.  To AssociativeAlgebras.  DONE

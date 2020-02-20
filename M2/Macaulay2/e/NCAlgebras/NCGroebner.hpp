@@ -40,7 +40,7 @@ public:
     // process input polynomials
     for (auto i = 0; i < mInput.size(); ++i)
       {
-        freeAlgebra().lead_word(tmpWord,*mInput[i]);
+        tmpWord = freeAlgebra().lead_word(*mInput[i]);
         mOverlapTable.insert(freeAlgebra().monoid().wordHeft(tmpWord),
                              true,
                              std::make_tuple(i,-1,-1));
@@ -70,6 +70,10 @@ public:
   // this is logically const, but not actually because the heap may be changed by
   // this function.
   auto twoSidedReduction(const Poly* reducee) const -> Poly*;
+
+  void addToGroebnerBasis(Poly* toAdd);
+
+  void updateOverlaps(const Poly* toAdd);
 
   auto initReductionOnly() -> void;
   
