@@ -25,7 +25,15 @@ export {
     "normalElements",
     "skewPolynomialRing",
     "threeDimSklyanin",
-    "fourDimSklyanin"
+    "fourDimSklyanin",
+    "oreIdeal",
+    "oreExtension",
+    "freeProduct",
+    "qTensorProduct",
+    "toNCRing",
+    "isFreeAlgebraOrQuotient",
+    "homogDual",
+    "quadraticClosure"
     }
 
 debug Core
@@ -67,6 +75,8 @@ toString FreeAlgebra := R -> (
     -- else toString expression R
     )
 
+ambient FreeAlgebra := R -> R
+
 combineWeightsAndDegree = (nvars, wtvecs, degvector) -> (
     -- nvars: ZZ
     -- wtvecs: List (of lists of ZZ's)
@@ -106,9 +116,9 @@ checkHeft = (degs, heftvec) -> (
 Ring List := (A, args) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}, Heft=>null};
-   error "test";
    (opts,args) = override(opts,toSequence args);
-   varList := args;
+   --- for some reason, override returns the elt itself if there is only one variable
+   varList := if class args === Sequence then args else {args};
    if not (A.?Engine and A.Engine) then
        error "expected coefficient ring handled by the engine";
    varSymbols := findSymbols toSequence varList;
@@ -394,6 +404,35 @@ normalElements(RingMap,ZZ) := (phi,n) -> (
 --- Noncommutative Ring Constructions
 ----------------------------------------
 
+isFreeAlgebraOrQuotient = method()
+isFreeAlgebraOrQuotient Ring := R -> (class R === FreeAlgebra) or (class R === FreeAlgebraQuotient)
+
+isExterior = method()
+isExterior Ring := A -> (
+   sc := apply(subsets(gens A,2), s-> s_0*s_1+s_1*s_0);
+   sq := apply(gens A, g->g^2);
+   all(sc|sq, x-> x==0)
+)
+
+toNCRing = method()
+toNCRing Ring := R -> (
+   isComm := isCommutative R;
+   isExter := isExterior R;
+   if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
+   --- generate the (skew)commutivity relations
+   Q := coefficientRing R;
+   A := Q ((gens R) / baseName | {Degrees=> degrees R});
+   phi := map(A,ambient R,gens A);
+   commRelations := apply(subsets(gens A,2), s-> s_0*s_1+(-1)^(if isComm then -1 else 0)*s_1*s_0);
+   extRelations := if isExter then apply(gens A, s -> s^2) else {};
+   --- here is the defining ideal of the commutative algebra, inside the tensor algebra
+   I := ideal (commRelations | extRelations | ((flatten entries gens ideal R) / phi));
+   commIgb := gb ideal R;
+   maxDeg := (((flatten entries gens commIgb) / degree) | {{0}}) / sum // max;
+   Igb := NCGB(I, 2*maxDeg);
+   A/I
+)
+
 validSkewMatrix = method()
 validSkewMatrix Matrix := M -> (
    rows := numgens source M;
@@ -486,12 +525,150 @@ fourDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    fourDimSklyanin(R,{alpha,beta,gamma}, varList)
 )
 
+oreIdeal = method(Options => {Degree => 1})
+oreIdeal (Ring,RingMap,RingMap,RingElement) := 
+oreIdeal (Ring,RingMap,RingMap,Symbol) := opts -> (B,sigma,delta,X) -> (
+   -- This version assumes that the derivation is zero on B
+   -- Don't yet have multiple rings with the same variables names working yet.  Not sure how to
+   -- get the symbol with the same name as the variable.
+   X = baseName X;
+   kk := coefficientRing B;
+   varsList := ((gens B) / baseName) | {X};
+   A := ambient B;
+   C := kk (varsList | {Degrees => (degrees A | {opts.Degree})});
+   fromBtoC := map(C,B,drop(gens C, -1));
+   fromAtoC := map(C,A,drop(gens C, -1));
+   X = value X;
+   ideal (apply(flatten entries gens ideal B, f -> fromAtoC promote(f,A)) |
+            apply(gens B, x -> X*(fromBtoC x) - (fromBtoC sigma x)*X - (fromBtoC delta x)))
+)
+
+oreIdeal (Ring,RingMap,Symbol) := 
+oreIdeal (Ring,RingMap,RingElement) := opts -> (B,sigma,X) -> (
+   zeroMap := map(B,B,toList ((numgens B):0));
+   oreIdeal(B,sigma,zeroMap,X,opts)
+)
+
+oreExtension = method(Options => options oreIdeal)
+oreExtension (Ring,RingMap,RingMap,Symbol) := 
+oreExtension (Ring,RingMap,RingMap,RingElement) := opts -> (B,sigma,delta,X) -> (
+   X = baseName X;
+   I := oreIdeal(B,sigma,delta,X,opts);
+   C := ring I;
+   C/I
+)
+
+oreExtension (Ring,RingMap,Symbol) := 
+oreExtension (Ring,RingMap,RingElement) := opts -> (B,sigma,X) -> (
+   X = baseName X;
+   I := oreIdeal(B,sigma,X,opts);
+   C := ring I;
+   C/I
+)
+
+freeProduct = method()
+freeProduct (Ring,Ring) := (A,B) -> (
+   R := coefficientRing A;
+   if R =!= (coefficientRing B) then error "Input rings must have same coefficient ring.";
+   gensA := gens A;
+   gensB := gens B;
+   newgens := gensA | gensB;     
+   if #unique(newgens) != (#gensA + #gensB) then error "Input rings have a common generator.";
+
+   I := flatten entries gens ideal A;
+   J := flatten entries gens ideal B;
+   
+   A' := ambient A;
+   B' := ambient B;
+    
+   --- bring over heft vectors, etc, of the factors as well? 
+   C := R (newgens | {Degrees => (degrees A | degrees B)});
+   gensAinC := take(gens C, #gensA);
+   gensBinC := drop(gens C, #gensA);
+   incA := map(C,A',gensAinC);
+   incB := map(C,B',gensBinC);
+   IinC := I / incA;
+   JinC := J / incB;
+   newIdealGens := select( (IinC | JinC), x -> x !=0);       
+   if newIdealGens == {} then C 
+   else C/(ideal newIdealGens)
+)
+
+qTensorProduct = method()
+qTensorProduct (Ring, Ring, ZZ) :=
+qTensorProduct (Ring, Ring, QQ) :=
+qTensorProduct (Ring, Ring, RingElement) := (A,B,q) -> (
+   -- this is the q-commuting tensor product of rings
+   F := freeProduct(A,B);
+   R := coefficientRing A;
+   q = promote(q,R);
+   gensAinF := take(gens F, #gens A);
+   gensBinF := drop(gens F, #gens A);   
+   -- create the commutation relations among generators of A and B
+   K := flatten apply(gensAinF, g-> apply( gensBinF, h-> h*g-q*g*h));
+
+   if class F === FreeAlgebra then F/(ideal K)
+   else (
+      I := gens ideal F;
+      C := ambient F;
+      newI := ideal select( (I | matrix {K}), g -> g!=0);
+      -- can we be clever with not re-computing GB here?
+      C/newI
+   )
+)
+
+quadraticClosure = method()
+quadraticClosure Ring := B -> quadraticClosure toNCRing B
+
+quadraticClosure FreeAlgebra :=
+quadraticClosure FreeAlgebraQuotient := B -> (
+   I := ideal B;
+   J := quadraticClosure(I);
+   A := ambient B;
+   A/J
+)
+
+quadraticClosure Ideal := I -> (
+   J := select(flatten entries gens I, g -> (sum degree g)<=2);
+   ideal J
+)
+
+homogDual = method()
+homogDual Ring := B -> homogDual toNCRing B
+
+homogDual FreeAlgebra :=
+homogDual FreeAlgebraQuotient := B -> (
+   I := ideal B;
+   J := homogDual(I);
+   A := ring J;
+   A/J
+)
+
+homogDual Ideal := I -> (
+   if class ring I =!= FreeAlgebra then
+      error "Expected an ideal in the tensor algebra.";
+   d:=degree first flatten entries gens I;
+   if not all(flatten entries gens I, g->(degree g)==d)
+      then error "Expected a pure ideal.";
+   A := I.ring;
+   bas := ncBasis(d,A);
+   mat := transpose last coefficients(gens I,Monomials=>flatten entries bas);
+   mat = sub(mat, coefficientRing A);
+   dualGens := bas*(gens ker mat);
+   J := ideal flatten entries dualGens
+)
+
+
+-- TODO: Make this work eventually
+--NCRing ** NCRing := (A,B) -> (
+--   qTensorProduct(A,B,promote(1,coefficientRing A))
+--)
 
 BUG ///
 --- things to get fixed:
 1) basis rather than ncBasis
 2) multiplying matrices in nc case not working
-3) bug in creating a free algebra in a single variable?
+3) Check that the type "Ring" inputs above are actually either FreeAlgebra or FreeAlgebraQuotient
 
 --- bringing over ring constructions
 restart
@@ -509,9 +686,19 @@ T = threeDimSklyanin(QQ,{x,y,z})
 T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 10)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
 --- playing with ore extensions
-R = QQ {x}
+R = QQ {x,Degrees=>{1}}
 f = map(R,R,{-x})
-gens R / baseName
+S = oreExtension(R,f,y,Degree=>{2})
+g = map(S,S,{-x,-y})
+T = oreExtension(S,g,z,Degree=>{3})
+-- free products
+R1 = QQ {x,Degrees=>{1}}
+R2 = QQ {y,Degrees=>{2}}
+S = freeProduct(R1,R2)
+T = qTensorProduct(R1,R2,-1)
+--- homog dual
+R = QQ[x,y]
+S = homogDual R
 ///
 
 beginDocumentation()
