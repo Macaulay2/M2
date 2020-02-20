@@ -1809,17 +1809,19 @@ enum gbTraceValues
    *******************************************/
 
   /* Returns a 2-sided GB of the 2-sided ideal from the one-row matrix 'input' computed up to and including
-     degree 'maxdeg'. 
+     degree 'maxdeg'.  This 'maxdeg' is the heft degree (in the case of multigradings).
+     'strategy': is an integer whose various bits encode stratgy options
      Assumptions:
        1. input is a one row matrix, whose entries are the generators of a 2-sided ideal.
-       2. The grading is singly graded (restriction to be removed).
-       3. If the computation is interrupted, we return the elements we have constructed so far.
-       4. use gbTrace as usual to get verbose messages during computation.
+       2. If the computation is interrupted, we return the elements we have constructed so far.
+       3. use gbTrace as usual to get verbose messages during computation.
      Not done yet:
-       multi-gradings, writing GB elements in terms of original generators.
+       writing GB elements in terms of original generators.
        We will need a new function
+     Strategy bits:
+       bits 0..3: choice of reduction heap strategy.
   */
-  const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg);
+  const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int strategy);
 
   const Matrix* rawNCReductionTwoSided(const Matrix* toBeReduced, const Matrix* reducers);
 

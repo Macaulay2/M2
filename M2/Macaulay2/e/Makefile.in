@@ -25,10 +25,10 @@ all: tags
 endif
 TAGS tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
-		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
+	@srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 	@srcdir@/NCAlgebras/*.hpp @srcdir@/NCAlgebras/*.cpp \
-		 @srcdir@/unit-tests/*.cpp \
-		 @srcdir@/../e-includes/statuscodes
+	@srcdir@/unit-tests/*.cpp \
+	@srcdir@/../e-includes/statuscodes
 	@ echo " ** making etags file"
 	@ cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
