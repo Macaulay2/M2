@@ -1226,7 +1226,7 @@ const Matrix* vectorToMatrix(const M2FreeAlgebraOrQuotient* A,
   return mat.to_matrix();
 }
 
-const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg)
+const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int strategy)
 {
   const Ring* R = input->get_ring();
   const M2FreeAlgebra* A = R->cast_to_M2FreeAlgebra();

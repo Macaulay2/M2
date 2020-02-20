@@ -220,7 +220,7 @@ NCGB = method()
 NCGB(Ideal, ZZ) := (I, maxdeg) -> (
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
-        gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg));
+        gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, 0));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
