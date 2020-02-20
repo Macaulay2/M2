@@ -76,16 +76,6 @@ export { "NCRing", "NCQuotientRing", "NCPolynomialRing",
 	 "NCChainComplex"
 }
 
-exportMutable {
-    "bergmanPath"
-    }
-
-bergmanPath = getenv "BERGMANPATH"
-if bergmanPath == "" then error(
-    "You must install bergman, and then set the environment variable BERGMANPATH "|
-    "to point to the root of the downloaded bergman software you have"
-    )
-
 --- symbols in hash tables of exported types
 protect generatorSymbols
 protect weights
@@ -1419,11 +1409,7 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       -- if we don't want to recompute the GB, we need to tell Bergman that there are no
       -- Spairs to work on for twice the max degree of the gens we send it so it
       -- doesn't try to create any more Spairs.
-      fil << "(load \"" << bergmanPath << "/lap/clisp/unix/hseries.fas\")" << endl;
-      -- This is trying to get the 'bmload' environment variable to load correctly.
-      -- fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
-      -- or is it this:?
-      -- (from master) fil << "(load (mkbmpathexpand \"$bmload/lap/clisp/unix/hseries.fas\"))" << endl;
+      fil << "(load (mkbmpathexpand \"$bmload/lap/clisp/unix/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1679,17 +1665,13 @@ normalFormBergman (NCRingElement, NCGroebnerBasis) := opts -> (f,ncgb) ->
 
 -- can't be a method.  Too many arguments
 --writeHSInitFile = method()
-writeHSInitFile = (tempInit,
-                   tempInput,
-		   tempGBOutput,
-		   tempPBOutput,
-		   tempHSOutput) -> (
+writeHSInitFile := (tempInit,
+                    tempInput,
+		    tempGBOutput,
+		    tempPBOutput,
+		    tempHSOutput) -> (
    fil := openOut tempInit;
-   fil << "(setf (getenv \"bmload\") \"" << bergmanPath << "/lap/clisp/unix\")" << endl;
-   -- This is trying to get the 'bmload' environment variable to load correctly.
-   -- fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
-   -- or this:
-   -- fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload/lap/clisp/unix\"))" << endl;
+   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload/lap/clisp/unix\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
@@ -3550,7 +3532,7 @@ wallTiming = f -> (
 --- include the documentation
 load "./NCAlgebra/NCAlgebraDoc.m2"
 
-end--
+end
 
 ---- installing and loading the package
 restart
@@ -3563,6 +3545,5 @@ viewHelp "NCAlgebra"
 
 loadPackage "UnitTestsNCA"
 check UnitTestsNCA
-
 
 
