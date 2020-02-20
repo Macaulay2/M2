@@ -278,6 +278,117 @@ ncBasis(InfiniteNumber,ZZ,Ring) := opts -> (lo,hi,R) -> ncBasis(lo, {hi}, R, opt
 ncBasis(ZZ,InfiniteNumber,Ring) := opts -> (lo,hi,R) -> ncBasis({lo}, hi, R, opts)
 ncBasis Ring := opts -> R -> ncBasis(-infinity, infinity, R, opts)
 
+-------------------------
+--- beginning to port over stuff from NCAlgebra
+
+leftMultiplicationMap = method()
+leftMultiplicationMap(RingElement,ZZ) := (f,n) -> (
+   B := f.ring;
+   m := degree f;
+   if m === -infinity then m = 0;
+   nBasis := flatten entries basis(n,B);
+   nmBasis := flatten entries basis(n+m,B);
+   leftMultiplicationMap(f,nBasis,nmBasis)
+)
+
+leftMultiplicationMap(RingElement,ZZ,ZZ) := (f,n,m) -> (
+   B := f.ring;
+   nBasis := flatten entries basis(n,B);
+   mBasis := flatten entries basis(m,B);
+   leftMultiplicationMap(f,nBasis,mBasis)
+)
+
+leftMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
+   local retVal;
+   A := ring f;
+   R := coefficientRing A;
+   if not isHomogeneous f then error "Expected a homogeneous element.";
+   if fromBasis == {} and toBasis == {} then (
+      retVal = map(R^0,R^0,0);
+      retVal
+   )
+   else if fromBasis == {} then (
+      retVal = map(R^(#toBasis), R^0,0);
+      retVal
+   )
+   else if toBasis == {} then (
+      retVal = map(R^0,R^(#fromBasis),0);
+      retVal
+   )
+   else (
+      coefficients(f*fromBasis,Monomials=>toBasis)
+   )
+)
+
+rightMultiplicationMap = method()
+rightMultiplicationMap(RingElement,ZZ) := (f,n) -> (
+   B := f.ring;
+   m := degree f;
+   if m === -infinity then m = 0;
+   nBasis := flatten entries basis(n,B);
+   nmBasis := flatten entries basis(n+m,B);
+   rightMultiplicationMap(f,nBasis,nmBasis)
+)
+
+rightMultiplicationMap(RingElement,ZZ,ZZ) := (f,n,m) -> (   
+   if f != 0 and degree f != m-n then error "Expected third argument to be the degree of f, if nonzero.";
+   B := f.ring;
+   nBasis := flatten entries basis(n,B);
+   mBasis := flatten entries basis(m,B);
+   rightMultiplicationMap(f,nBasis,mBasis)
+)
+
+rightMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
+   local retVal;
+   A := ring f;
+   R := coefficientRing A;
+   if not isHomogeneous f then error "Expected a homogeneous element.";
+   if fromBasis == {} and toBasis == {} then (
+      retVal = map(R^0,R^0,0);
+      retVal
+   )
+   else if fromBasis == {} then (
+      retVal = map(R^(#toBasis), R^0,0);
+      retVal
+   )
+   else if toBasis == {} then (
+      retVal = map(R^0,R^(#fromBasis),0);
+      retVal
+   )
+   else (
+      coefficients(fromBasis*f, Monomials=>toBasis)
+   )
+)
+
+centralElements = method()
+centralElements(Ring,ZZ) := (B,n) -> (
+   idB := map(B,B,gens B);
+   normalElements(idB,n)
+)
+
+normalElements = method()
+normalElements(RingMap,ZZ) := (phi,n) -> (
+   if source phi =!= target phi then error "Expected an automorphism.";
+   B := source phi;
+   ringVars := gens B;
+   diffMatrix := matrix apply(ringVars, x -> {leftMultiplicationMap(phi x,n) - rightMultiplicationMap(x,n)});
+   nBasis := basis(n,B);
+   kerDiff := ker diffMatrix;
+   R := ring diffMatrix;
+   if kerDiff == 0 then sub(matrix{{}},R) else nBasis * (gens kerDiff)
+)
+
+TEST ///
+restart
+needsPackage "AssociativeAlgebras"
+R = (ZZ/32003){a,b,c}
+I = ideal(2*a*b + 3*b*a + 5*c^2,
+             2*b*c + 3*c*b + 5*a^2,
+             2*c*a + 3*a*c + 5*b^2)
+Igb = NCGB(I,10)
+S = R/I
+///
+
 beginDocumentation()
 
 BENCHMARK = method()
