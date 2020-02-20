@@ -39,8 +39,8 @@ enum class HeapTypes {
   NaiveGeobucket,
   NaiveHeap,
   NaiveTourTree,
-  NaiveDedupGeobucket,
-  HashedGeobucket
+  NaiveDedupGeobucket
+  //  HashedGeobucket
 };
 
 std::unique_ptr<PolynomialHeap>

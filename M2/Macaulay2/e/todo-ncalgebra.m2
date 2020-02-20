@@ -1,3 +1,33 @@
+13 Feb 2020, notes on classes, implementation, preparing for Frank's visit to Ithaca.
+
+1. Monomials:
+  Monomials are stored in a "monomial memory space".
+    Each polynomial, matrix, computation, or hash table etc can have one of these.
+    Each monomial is a sequence of numbers, all the same size, starting with the length
+      of the entire thing.
+    There are several types of monomials: ExponentVector (NTuple), MonomialWithCompare, MonomialWHash, MonomialWHashCompare,
+    CompareHashComponentDegree (some subset of these?), VarPower/NTuple/Packed (one of these), Const/NONconst.  Most should be const!
+    
+  
+
+to do list for 16 Jan 2020.
+
+1. make more reduction engines
+    . set/hashtable to make monomials unique, paired with a heap.
+2. stats for reduction engines.
+    . display and look at: (#loops, #monomials added, #zeros)
+3. Connect up as much of NCAlgebra package with new code as possible.
+4. interreduction
+5. F4 reduction
+    . use hash table
+    . use SparseMatrix type to create matrices
+    . logic to actually create the matrix
+    . reduce the matrix
+    . take results of matrix reduction, add to GB.  rinse and repeat
+6. Anick resolution
+7. GB's for left/right modules.
+
+
 todo list being redone with start of semester, 22 Aug 2019 FM+MS
 0. rename PolynomialAlgebra.m2 package.  To AssociativeAlgebras.  DONE
 1. get code back working:  rawNCFreeAlgebra has changed arguments.
