@@ -18,10 +18,19 @@ export {
     "NCGB", -- uugh: change name!
     "NCReduction2Sided",
     "FreeAlgebra", -- change this name too!
-    "sequenceToVariableSymbols"
+    "sequenceToVariableSymbols",
+    "leftMultiplicationMap",
+    "rightMultiplicationMap",
+    "centralElements",
+    "normalElements",
+    "skewPolynomialRing",
+    "threeDimSklyanin",
+    "fourDimSklyanin"
     }
 
 debug Core
+
+BUG = str -> ()
 
 FreeAlgebra = new Type of EngineRing
 FreeAlgebra.synonym = "free algebra"
@@ -97,6 +106,7 @@ checkHeft = (degs, heftvec) -> (
 Ring List := (A, args) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    opts := new OptionTable from {Degrees=>null, DegreeRank=>null, Weights=>{}, Heft=>null};
+   error "test";
    (opts,args) = override(opts,toSequence args);
    varList := args;
    if not (A.?Engine and A.Engine) then
@@ -283,18 +293,19 @@ ncBasis Ring := opts -> R -> ncBasis(-infinity, infinity, R, opts)
 
 leftMultiplicationMap = method()
 leftMultiplicationMap(RingElement,ZZ) := (f,n) -> (
-   B := f.ring;
-   m := degree f;
+   B := ring f;
+   -- TODO: Make sure this is what we want in multigraded case
+   m := sum degree f;
    if m === -infinity then m = 0;
-   nBasis := flatten entries basis(n,B);
-   nmBasis := flatten entries basis(n+m,B);
+   nBasis := flatten entries ncBasis(n,B);
+   nmBasis := flatten entries ncBasis(n+m,B);
    leftMultiplicationMap(f,nBasis,nmBasis)
 )
 
 leftMultiplicationMap(RingElement,ZZ,ZZ) := (f,n,m) -> (
-   B := f.ring;
-   nBasis := flatten entries basis(n,B);
-   mBasis := flatten entries basis(m,B);
+   B := ring f;
+   nBasis := flatten entries ncBasis(n,B);
+   mBasis := flatten entries ncBasis(m,B);
    leftMultiplicationMap(f,nBasis,mBasis)
 )
 
@@ -316,25 +327,25 @@ leftMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
       retVal
    )
    else (
-      coefficients(f*fromBasis,Monomials=>toBasis)
+      last coefficients(matrix{apply(fromBasis, g -> f*g)},Monomials=>toBasis)
    )
 )
 
 rightMultiplicationMap = method()
 rightMultiplicationMap(RingElement,ZZ) := (f,n) -> (
-   B := f.ring;
-   m := degree f;
+   B := ring f;
+   m := sum degree f;
    if m === -infinity then m = 0;
-   nBasis := flatten entries basis(n,B);
-   nmBasis := flatten entries basis(n+m,B);
+   nBasis := flatten entries ncBasis(n,B);
+   nmBasis := flatten entries ncBasis(n+m,B);
    rightMultiplicationMap(f,nBasis,nmBasis)
 )
 
 rightMultiplicationMap(RingElement,ZZ,ZZ) := (f,n,m) -> (   
    if f != 0 and degree f != m-n then error "Expected third argument to be the degree of f, if nonzero.";
-   B := f.ring;
-   nBasis := flatten entries basis(n,B);
-   mBasis := flatten entries basis(m,B);
+   B := ring f;
+   nBasis := flatten entries ncBasis(n,B);
+   mBasis := flatten entries ncBasis(m,B);
    rightMultiplicationMap(f,nBasis,mBasis)
 )
 
@@ -356,7 +367,7 @@ rightMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
       retVal
    )
    else (
-      coefficients(fromBasis*f, Monomials=>toBasis)
+      last coefficients(matrix{apply(fromBasis, g -> g*f)}, Monomials=>toBasis)
    )
 )
 
@@ -372,21 +383,135 @@ normalElements(RingMap,ZZ) := (phi,n) -> (
    B := source phi;
    ringVars := gens B;
    diffMatrix := matrix apply(ringVars, x -> {leftMultiplicationMap(phi x,n) - rightMultiplicationMap(x,n)});
-   nBasis := basis(n,B);
+   diffMatrix = sub(diffMatrix, coefficientRing B);
+   nBasis := ncBasis(n,B);
    kerDiff := ker diffMatrix;
    R := ring diffMatrix;
-   if kerDiff == 0 then sub(matrix{{}},R) else nBasis * (gens kerDiff)
+   if kerDiff == 0 then sub(matrix{{}},R) else nBasis * gens kerDiff
 )
 
-TEST ///
+----------------------------------------
+--- Noncommutative Ring Constructions
+----------------------------------------
+
+validSkewMatrix = method()
+validSkewMatrix Matrix := M -> (
+   rows := numgens source M;
+   cols := numgens target M;
+   if rows != cols then return false;
+   invOffDiag := all(apply(rows, i -> all(apply(toList(i..cols-1), j -> isUnit M_i_j and isUnit M_j_i and (M_j_i)^(-1) == M_i_j),b->b==true)),c->c==true);
+   oneOnDiag := all(rows, i -> M_i_i == 1);
+   invOffDiag and oneOnDiag
+)
+
+skewPolynomialRing = method()
+skewPolynomialRing (Ring,Matrix,List) := (R,skewMatrix,varList) -> (
+   if not validSkewMatrix skewMatrix then
+      error "Expected a matrix M such that M_ij = M_ji^(-1).";
+   if ring skewMatrix =!= R then error "Expected skewing matrix over base ring.";
+   A := R varList;
+   gensA := gens A;
+   I := ideal apply(subsets(numgens A, 2), p -> 
+            (gensA_(p#0))*(gensA_(p#1)) - (skewMatrix_(p#0)_(p#1))*(gensA_(p#1))*(gensA_(p#0)));
+   -- Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing));
+   B := A/I;
+   B
+)
+
+skewPolynomialRing (Ring,ZZ,List) := 
+skewPolynomialRing (Ring,QQ,List) := 
+skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
+   -- if class skewElt =!= R then error "Expected ring element over base ring.";
+   A := R varList;
+   gensA := gens A;
+   I := ideal apply(subsets(numgens A, 2), p ->
+            (gensA_(p#0))*(gensA_(p#1)) - promote(skewElt,R)*(gensA_(p#1))*(gensA_(p#0)));
+   -- Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing));
+   B := A/I;
+   B
+)
+
+threeDimSklyanin = method(Options => {DegreeLimit => 10})
+threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
+   if #params != 3 or #varList != 3 then error "Expected lists of length 3.";
+   if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
+      error "Expected list of variables in third argument.";
+   A := R varList;
+   gensA := gens A;
+   I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
+       params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
+       params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
+   --Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing), DegreeLimit=>opts#DegreeLimit);
+   -- installGB := not (A#BergmanRing or bergmanCoefficientRing gens I =!= null);
+   Igb := NCGB(I, opts#DegreeLimit);
+   -- Igb := ncGroebnerBasis(I, InstallGB=>installGB, DegreeLimit=>opts#DegreeLimit);
+   B := A/I;
+   B
+)
+threeDimSklyanin (Ring, List) := opts -> (R, varList) -> (
+   if char R =!= 0 then error "For random Sklyanin, QQ coefficients are required.";
+   threeDimSklyanin(R,{random(QQ),random(QQ), random(QQ)}, varList)
+)
+
+fourDimSklyanin = method(Options => {DegreeLimit => 10})
+fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
+   if #params != 3 or #varList != 4 then error "Expected three parameters and four variables.";
+   if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
+      error "Expected list of variables in third argument.";
+   A := R varList;
+   gensA := gens A;
+   varList = gens A;
+   f1 := (varList#0*varList#1 - varList#1*varList#0) - params#0*(varList#2*varList#3 + varList#3*varList#2);
+   f2 := (varList#0*varList#2 - varList#2*varList#0) - params#1*(varList#3*varList#1 + varList#1*varList#3);
+   f3 := (varList#0*varList#3 - varList#3*varList#0) - params#2*(varList#1*varList#2 + varList#2*varList#1);
+   g1 := (varList#0*varList#1 + varList#1*varList#0) - (varList#2*varList#3 - varList#3*varList#2);
+   g2 := (varList#0*varList#2 + varList#2*varList#0) - (varList#3*varList#1 - varList#1*varList#3);
+   g3 := (varList#0*varList#3 + varList#3*varList#0) - (varList#1*varList#2 - varList#2*varList#1);
+
+   I := ideal {f1,f2,f3,g1,g2,g3};
+   Igb := NCGB(I, opts#DegreeLimit);
+   --installGB := not (A#BergmanRing or bergmanCoefficientRing gens I =!= null);
+   --Igb := ncGroebnerBasis(I, InstallGB=>installGB, DegreeLimit=>opts#DegreeLimit);
+   B := A/I;
+   B
+)
+fourDimSklyanin (Ring, List) := opts -> (R, varList) -> (
+   if char R != 0 and char R < 100 then error "For random Sklyanin, QQ coefficients or characteristic larger than 100 are required.";
+   --- generate a generic four dimensional Sklyanin that is AS regular
+   alpha := random(QQ);
+   while (alpha == 0) do alpha = random(QQ);
+   beta := random(QQ);
+   while (beta == 0 or (1 + alpha*beta) == 0) do beta = random(QQ);
+   gamma := (-alpha-beta)/(1 + alpha*beta);
+   fourDimSklyanin(R,{alpha,beta,gamma}, varList)
+)
+
+
+BUG ///
+--- things to get fixed:
+1) basis rather than ncBasis
+2) multiplying matrices in nc case not working
+3) bug in creating a free algebra in a single variable?
+
+--- bringing over ring constructions
 restart
 needsPackage "AssociativeAlgebras"
+--needsPackage "NCAlgebra"
 R = (ZZ/32003){a,b,c}
 I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
-Igb = NCGB(I,10)
 S = R/I
+centralElements(S,3)
+T = skewPolynomialRing(ZZ/32003,-1,{x,y,z})
+T = threeDimSklyanin(QQ,{x,y,z})
+-- this finishes in Bergman (old NCAlgebra), but not in our new code
+T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 10)
+T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
+--- playing with ore extensions
+R = QQ {x}
+f = map(R,R,{-x})
+gens R / baseName
 ///
 
 beginDocumentation()
@@ -1097,6 +1222,9 @@ TEST ///
   g = (a*c + b*d)^2
   assert(#(terms g) == 4)
 ///  
+
+--- bugs 2/20/2020
+
 
 TEST ///
 -*
