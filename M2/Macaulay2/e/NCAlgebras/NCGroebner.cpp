@@ -3,10 +3,25 @@
 
 void NCGroebner::compute(int softDegreeLimit)
 {
+  if (mIsGraded)
+    computeHomogeneous(softDegreeLimit);
+  else
+    computeInhomogeneous(softDegreeLimit);
+}
+
+void NCGroebner::computeHomogeneous(int softDegreeLimit)
+{
   size_t n_spairs = 0;
   while (!mOverlapTable.isFinished(softDegreeLimit))
     {
-      auto toBeProcessed = mOverlapTable.nextDegreeOverlaps().second;
+      auto degSet = mOverlapTable.nextDegreeOverlaps();
+      auto toBeProcessed = degSet.second;
+      if (M2_gbTrace >= 1)
+        {
+          buffer o;
+          o << "[" << degSet.first << "](" << toBeProcessed->size() << ")";
+          emit(o.str());
+        }
       while(!toBeProcessed->empty())
         {
           auto overlap = toBeProcessed->front();
@@ -49,7 +64,75 @@ void NCGroebner::compute(int softDegreeLimit)
       // remove the lowest degree overlaps from the overlap table
       mOverlapTable.removeLowestDegree();
     }
-  std::cout << "number of spair reductions: " << n_spairs << std::endl;
+  if (M2_gbTrace >= 1)
+    {
+      buffer o;
+      o << "[NCGB] number of spair reductions: " << n_spairs;
+      emit_line(o.str());
+    }
+}
+
+void NCGroebner::computeInhomogeneous(int softDegreeLimit)
+{
+  size_t n_spairs = 0;
+  while (!mOverlapTable.isFinished(softDegreeLimit))
+    {
+      auto degSet = mOverlapTable.nextDegreeOverlaps();
+      auto toBeProcessed = degSet.second;
+      if (M2_gbTrace >= 1)
+        {
+          buffer o;
+          o << "[" << degSet.first << "](" << toBeProcessed->size() << ")";
+          emit(o.str());
+        }
+      while(!toBeProcessed->empty())
+        {
+          auto overlap = toBeProcessed->front();
+          //if this is a `real' overlap, and the overlap is not necessary, then move
+          //on to the next overlap.
+          if (std::get<1>(overlap) != -1 && !isOverlapNecessary(overlap))
+            {
+              toBeProcessed->pop_front();
+              if (M2_gbTrace >= 2)
+                {
+                  std::cout << "Reduction avoided using 2nd criterion." << std::endl;
+                  std::cout << "table after pop:";
+                  mOverlapTable.dump(std::cout,true);
+                }
+              // TODO: is this logic correct?  Is the overlap actually skipped?
+              continue;
+            }
+          auto overlapPoly = createOverlapPoly(overlap);
+
+          n_spairs++;
+          auto redOverlapPoly = twoSidedReduction(overlapPoly);
+          delete overlapPoly;
+
+          if (!freeAlgebra().is_zero(*redOverlapPoly))
+            {
+              addToGroebnerBasis(redOverlapPoly);
+              updateOverlaps(redOverlapPoly);
+            }
+          else
+            {
+              // if reduction is zero
+              if (M2_gbTrace >= 4)
+                {
+                  std::cout << "Overlap " << overlap << " reduced to zero."
+                            << std::endl;
+                }
+            }
+          toBeProcessed->pop_front();
+        }
+      // remove the lowest degree overlaps from the overlap table
+      mOverlapTable.removeLowestDegree();
+    }
+  if (M2_gbTrace >= 1)
+    {
+      buffer o;
+      o << "[NCGB] number of spair reductions: " << n_spairs;
+      emit_line(o.str());
+    }
 }
 
 void NCGroebner::addToGroebnerBasis(Poly * toAdd)
@@ -100,10 +183,6 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
   Poly* remainder = new Poly;
   Poly tmp; // temp polynomial for seeing what is being added to heap.
 
-  // auto heap { makePolynomialHeap(HeapTypes::Map, A) };
-  // auto heap { makePolynomialHeap(HeapTypes::NaiveGeobucket, A) };
-  // auto heap { makePolynomialHeap(HeapTypes::NaiveTourTree, A) };
-  // auto heap { makePolynomialHeap(HeapTypes::NaiveHeap, A) };
   mHeap->clear();
   nterms += reducee->numTerms();
   mHeap->addPolynomial(*reducee);
@@ -139,9 +218,6 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
 
           nterms += tmp.numTerms();
           mHeap->addPolynomial(tmp);
-
-          // nterms += reducers[subwordPos.first]->numTerms();
-          // mHeap->addPolynomial(coeffNeeded, leftWord, rightWord, * reducers[subwordPos.first]);
         }
       else
         {
@@ -151,7 +227,7 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
           mHeap->removeLeadTerm();
         }
     }
-  if (M2_gbTrace >= 1)
+  if (M2_gbTrace >= 5)
     {
       std::cout << "reduction: " << "#steps: " << loop_count << " " << FreeMonoidLogger() << std::endl;
       std::cout << "           " << "#terms: " << nterms << std::endl;

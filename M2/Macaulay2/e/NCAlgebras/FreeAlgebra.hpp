@@ -87,6 +87,11 @@ public:
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
   bool multi_degree(const Poly& f, int *already_allocated_degree_vector) const;
 
+  // Returns the pair (d, ishomog) where
+  // d is the largest heft of the degree of each monomial in 'f'.
+  // ishomog is true when all monomials have the same *heft* degree
+  std::pair<int, bool> heft_degree(const Poly& f) const;
+  
   void mult_by_term_right(Poly& result,
                           const Poly& f,
                           const ring_elem c,

@@ -23,7 +23,6 @@ public:
   // will call find to see if degree exists, and if not will call
   // insert.  If degree exists, append overlap to value of degree
   auto insert(int deg, bool isGenerator, Overlap o) -> void;
-  auto insert(bool areGenerators, std::vector<Overlap> os) -> void;
   
   // is the overlap map empty?
   auto isFinished() const -> bool;

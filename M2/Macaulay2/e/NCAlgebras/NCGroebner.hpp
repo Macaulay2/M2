@@ -22,8 +22,10 @@ private:
   OverlapTable mOverlapTable;
   const ConstPolyList mInput;
   ConstPolyList mGroebner;
+  std::vector<int> mGeneratorDegrees; // heft degree or sugar degree of corresponding mGroebner element.
   mutable std::unique_ptr<PolynomialHeap> mHeap;
-  
+
+  bool mIsGraded;
   int mTopComputedDegree;
   int mHardDegreeLimit;
 
@@ -50,12 +52,23 @@ public:
       }
     Word tmpWord;
     // process input polynomials
+    mIsGraded = true;
     for (auto i = 0; i < mInput.size(); ++i)
       {
+        auto d = freeAlgebra().heft_degree(*mInput[i]);
+        mGeneratorDegrees.push_back(d.first);
+        if (not d.second)
+          mIsGraded = false;
         tmpWord = freeAlgebra().lead_word(*mInput[i]);
-        mOverlapTable.insert(freeAlgebra().monoid().wordHeft(tmpWord),
+        mOverlapTable.insert(d.first, // previously: freeAlgebra().monoid().wordHeft(tmpWord),
                              true,
                              std::make_tuple(i,-1,-1));
+      }
+    if (M2_gbTrace >= 1)
+      {
+        buffer o;
+        o << "[NCGB] input is " << (mIsGraded ? "homogeneous" : "inhomogeneous") << newline;
+        emit_line(o.str());
       }
   }
 
@@ -63,6 +76,11 @@ public:
   
   void compute(int softDegreeLimit);
 
+  // This function uses sugar degree, and heuristics to deal with non-minimally
+  // constructed Groebner basis elements
+  void computeInhomogeneous(int softDegreeLimit);
+  void computeHomogeneous(int softDegreeLimit);
+  
   const ConstPolyList& currentValue();
 
   // old version of reduction code

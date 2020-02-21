@@ -484,14 +484,14 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
        params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
    --Igb := ncGroebnerBasis(I, InstallGB=>(not A#BergmanRing), DegreeLimit=>opts#DegreeLimit);
    -- installGB := not (A#BergmanRing or bergmanCoefficientRing gens I =!= null);
-   Igb := NCGB(I, opts#DegreeLimit);
+   Igb := NCGB(I, opts.DegreeLimit);
    -- Igb := ncGroebnerBasis(I, InstallGB=>installGB, DegreeLimit=>opts#DegreeLimit);
    B := A/I;
    B
 )
 threeDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    if char R =!= 0 then error "For random Sklyanin, QQ coefficients are required.";
-   threeDimSklyanin(R,{random(QQ),random(QQ), random(QQ)}, varList)
+   threeDimSklyanin(R,{random(QQ),random(QQ), random(QQ)}, varList, opts)
 )
 
 fourDimSklyanin = method(Options => {DegreeLimit => 10})
@@ -510,7 +510,7 @@ fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    g3 := (varList#0*varList#3 + varList#3*varList#0) - (varList#1*varList#2 - varList#2*varList#1);
 
    I := ideal {f1,f2,f3,g1,g2,g3};
-   Igb := NCGB(I, opts#DegreeLimit);
+   Igb := NCGB(I, opts.DegreeLimit);
    --installGB := not (A#BergmanRing or bergmanCoefficientRing gens I =!= null);
    --Igb := ncGroebnerBasis(I, InstallGB=>installGB, DegreeLimit=>opts#DegreeLimit);
    B := A/I;
@@ -519,12 +519,12 @@ fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
 fourDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    if char R != 0 and char R < 100 then error "For random Sklyanin, QQ coefficients or characteristic larger than 100 are required.";
    --- generate a generic four dimensional Sklyanin that is AS regular
-   alpha := random(QQ);
-   while (alpha == 0) do alpha = random(QQ);
-   beta := random(QQ);
-   while (beta == 0 or (1 + alpha*beta) == 0) do beta = random(QQ);
+   alpha := random R;
+   while (alpha == 0) do alpha = random R;
+   beta := random R;
+   while (beta == 0 or (1 + alpha*beta) == 0) do beta = random R;
    gamma := (-alpha-beta)/(1 + alpha*beta);
-   fourDimSklyanin(R,{alpha,beta,gamma}, varList)
+   fourDimSklyanin(R,{alpha,beta,gamma}, varList, opts)
 )
 
 oreIdeal = method(Options => {Degree => 1})
@@ -679,16 +679,28 @@ A = kk[x,y]
 R = kk{a,b,c}
 promote(kk^3, R)
 promote(kk^3, A)
+
+kk = ZZ/32003
+R = kk{a,b,c}
 I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
+gbTrace=1
+NCGB(I, 10, Strategy=>0)
+
 S = R/I
 centralElements(S,3)
 T = skewPolynomialRing(ZZ/32003,-1,{x,y,z})
-T = threeDimSklyanin(QQ,{x,y,z}, DegreeLimit => 15)
+T = threeDimSklyanin(QQ,{x,y,z}, DegreeLimit => 10)
 -- this finishes in Bergman (old NCAlgebra), but not in our new code
 T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 10)
+T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 4)
+T = fourDimSklyanin(ZZ/32003,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
+
+-- the following seems wrong
+T = fourDimSklyanin(ZZ/32003,{x,y,z,w}, DegreeLimit => 20);
+ideal T
 --- playing with ore extensions
 R = QQ {x,Degrees=>{1}}
 f = map(R,R,{-x})

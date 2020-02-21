@@ -725,6 +725,28 @@ bool FreeAlgebra::multi_degree(const Poly& f,
   return ishomog;
 }
 
+std::pair<int, bool> FreeAlgebra::heft_degree(const Poly& f) const
+{
+  bool ishomog = true;
+  Word tmp;
+  auto i = f.cbegin();
+  if (i == f.cend()) return std::make_pair(0, true);
+  monoid().wordFromMonom(tmp, i.monom());
+  int maxheft = monoid().wordHeft(tmp);
+  for (++i; i != f.cend(); ++i)
+    {
+      monoid().wordFromMonom(tmp, i.monom());
+      int thisheft = monoid().wordHeft(tmp);
+      if (thisheft != maxheft)
+        {
+          ishomog = false;
+          if (thisheft > maxheft)
+            maxheft = thisheft;
+        }
+    }
+  return std::make_pair(maxheft, ishomog);
+}
+
 Word FreeAlgebra::lead_word(const Poly& f) const
 {
    Word result;
