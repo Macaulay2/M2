@@ -696,15 +696,29 @@ I = ideal I_*; NCGB(I, 10, Strategy=>4); -- works
 I = ideal I_*; NCGB(I, 10, Strategy=>5); -- works
 I = ideal I_*; NCGB(I, 10, Strategy=>6); -- works -- hmm, doesn't seem to work well
 
+restart
+needsPackage "AssociativeAlgebras"
+R = QQ{a,b,c, Weights=>{{1,0,0},{0,1,0},{0,0,1}}}
+I = ideal {a^2 - 1, b^2 - 1, c^2 - 1, a*b*a - b*a*b, b*c*b - c*b*c, a*c - c*a}
+NCGB(I,10)
+
 S = R/I
 centralElements(S,3)
 T = skewPolynomialRing(ZZ/32003,-1,{x,y,z})
 T = threeDimSklyanin(QQ,{x,y,z}, DegreeLimit => 10)
--- this finishes in Bergman (old NCAlgebra), but not in our new code
-T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 8)
+time T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 8)
 T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})
+
+kk = QQ
+kk = ZZ/32003
+R = kk{x,y,z,w}
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+time Igb = NCGB(I, 10);
+S = R/I
+#(flatten entries ncBasis(8,S)) == binomial(8+3,3)
+flatten entries Igb / degree
 
 -- the following seems wrong
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w}, DegreeLimit => 20);
@@ -1404,9 +1418,12 @@ TEST ///
   I := ideal<F | B>;
   # GroebnerBasis(B,20);
   
-  B := [a^2-1, b^2-1, c^2-1, a*b*a-b*a*b, b*c*b-c*b*c, a*c-c*a];
+  kk := Rationals();
+  kk := FiniteField(32003);
+  F<x,y,z,w> := FreeAlgebra(kk,4);
+  B := [x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x];
   I := ideal<F | B>; 
-  GroebnerBasis(B,3); 
+  Igb := GroebnerBasis(B,10); 
 ///
 
 TEST ///
