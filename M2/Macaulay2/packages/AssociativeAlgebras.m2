@@ -288,7 +288,8 @@ ncBasis(List,List,Ring) := opts -> (lo,hi,R) -> (
     if not all(hi, i -> instance(i,ZZ)) then error ("expected a list of integers: ", toString hi);
     limit := if opts.Limit === infinity then -1 else if instance(opts.Limit,ZZ) then opts.Limit else
        error "expected 'Limit' option to be an integer or infinity";
-    gbR := NCGB ideal R;
+    if #hi == 1 and hi#0 < 0 then return map(R^1, R^0, {{}}); -- disallow use of "-1" meaning infinity, at top level.
+    gbR := if #hi == 1 then NCGB(ideal R, hi#0) else NCGB(ideal R);
     result := map(ring gbR, rawNCBasis(raw gbR, lo, hi, limit));
     map(R^1,, promote(result, R))
     )
@@ -1423,7 +1424,7 @@ TEST ///
 TEST ///
 -*
   restart
-  debug needsPackage "AssociativeAlgebras"
+  needsPackage "AssociativeAlgebras"
 *-
   -- note that variables in the base of a FreeAlgebra commute
   -- with the variables adjoined.  I.e. QQ{x}{y} is the same as QQ[x,y]
@@ -1438,7 +1439,7 @@ TEST ///
   assert(numcols ncBasis(2,S) == 4)
   assert(numcols ncBasis(2,T) == 4)
   assert(numcols ncBasis(0,S) == 1)
-  ncBasis(-1,S) -- bug
+  assert(ncBasis(-1,S) == 0)
   g = (a*c + b*d)^2
   assert(#(terms g) == 4)
 ///  
@@ -1496,6 +1497,16 @@ assert isHomogeneous J
 assert(NCReduction2Sided(x*y*x*y*x, ideal J) == c*a)
 ///
 
+TEST /// 
+-*
+  restart
+  needsPackage "AssociativeAlgebras"
+*-
+  R = QQ{b,c}
+  I = ideal"bc"
+  assert(NCGB(I, 10) == matrix{{b*c}})
+///
+
 end--
 
 restart
@@ -1506,19 +1517,9 @@ installPackage "AssociativeAlgebras"
 viewHelp "AssociativeAlgebras"
 restart
 check "AssociativeAlgebras"
-  -- 3 tests fail (3 Sep 2019):
-  -- leadMonomial, ncBasis(-1, ...), and negative Weights in ring def.
+  -- 21 Feb 2020: 2 tests fail (and all unit tests in NCGroebnerTest pass too):
+  --   leadMonomial, and negative Weights in ring def.
 
-
-TEST /// 
--*
-  restart
-  needsPackage "AssociativeAlgebras"
-*-
-  R = QQ{b,c}
-  I = ideal"bc"
-  NCGB(I, 10)
-///
 
 doc ///
 Key
@@ -1534,11 +1535,6 @@ Description
   Pre
 Caveat
 SeeAlso
-///
-
-TEST ///
--- test code and assertions here
--- may have as many TEST sections as needed
 ///
 
 restart
