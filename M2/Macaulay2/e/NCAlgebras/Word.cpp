@@ -14,6 +14,12 @@ std::ostream& operator<<(std::ostream& o, const Word& w)
   return o;
 }
 
+std::ostream& operator<<(std::ostream& o, const WordWithData& w)
+{
+  o << w.word() << "(" << w.ecartDegree() << ")";
+  return o;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
