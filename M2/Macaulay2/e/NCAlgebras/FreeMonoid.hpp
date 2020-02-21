@@ -1,7 +1,7 @@
 #ifndef _free_monoid_hpp_
 #define _free_monoid_hpp_
 
-#include "polyring.hpp"
+#include "polyring.hpp" // For the degrees ring
 #include "Polynomial.hpp"
 #include "Word.hpp"
 
@@ -30,8 +30,6 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a);
-
-class Word;
 
 class FreeMonoid : public our_new_delete
 {

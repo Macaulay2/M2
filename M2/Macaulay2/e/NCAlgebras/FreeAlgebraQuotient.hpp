@@ -17,7 +17,7 @@ private:
   int mMaxdeg;
   
 public:
-  FreeAlgebraQuotient(const FreeAlgebra& A, ConstPolyList& GB, int maxdeg);
+  FreeAlgebraQuotient(const FreeAlgebra& A, const ConstPolyList& GB, int maxdeg);
 
   const FreeMonoid& monoid() const { return mFreeAlgebra.monoid(); }
   const Monoid& degreeMonoid() const { return monoid().degreeMonoid(); }

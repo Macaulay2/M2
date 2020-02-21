@@ -9,7 +9,7 @@ SumCollector* FreeAlgebraQuotient::make_SumCollector() const
 }
 
 FreeAlgebraQuotient::FreeAlgebraQuotient(const FreeAlgebra& A,
-                                         ConstPolyList& GB,
+                                         const ConstPolyList& GB,
                                          int maxdeg)
   : mFreeAlgebra(A),
     mGroebner(A,GB,maxdeg,0),

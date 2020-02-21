@@ -81,7 +81,7 @@ TEST(NCReduction, TrivialPolynomialHeap)
   g = y + z;
   h = x + y + y + z;
   
-  auto H { makePolynomialHeap(HeapTypes::Trivial, *A) };
+  auto H { makePolynomialHeap(HeapType::Trivial, *A) };
   H->addPolynomial(*f);
   H->addPolynomial(*g);
   EXPECT_TRUE(A->is_equal(* H->value(), *h));
@@ -121,7 +121,7 @@ TEST(NCReduction, NaiveDedupPolynomialHeap)
   F = y*z*x*z - y*z*y*y - y*z*z*x - z*x*y*z + z*x*z*y - z*y*y*y - z*z*x*y - z*z*y*x - z*z*z*z;
   G = -y*z*x*z - y*z*y*y - y*z*z*x;
 
-  auto H { makePolynomialHeap(HeapTypes::NaiveDedupGeobucket, *A) };
+  auto H { makePolynomialHeap(HeapType::NaiveDedupGeobucket, *A) };
   std::cout << H->getName() << std::endl;
   H->addPolynomial(*f);
   H->addPolynomial(*g);
@@ -174,7 +174,7 @@ TEST(NCReduction, NaivePolynomialHeap)
   F = y*z*x*z - y*z*y*y - y*z*z*x - z*x*y*z + z*x*z*y - z*y*y*y - z*z*x*y - z*z*y*x - z*z*z*z;
   G = -y*z*x*z - y*z*y*y - y*z*z*x;
 
-  auto H { makePolynomialHeap(HeapTypes::NaiveGeobucket, *A) };
+  auto H { makePolynomialHeap(HeapType::NaiveGeobucket, *A) };
   std::cout << H->getName() << std::endl;
   H->addPolynomial(*f);
   std::cout << "H->value() = " << FreeAlgebraElement(A, *H->value()) << std::endl;
@@ -350,13 +350,14 @@ TEST(FreeAlgebra, quotientArithmetic)
   G = X*Z + Z*X;
   H = Y*Z + Z*Y;
   
-  auto GB = std::unique_ptr<ConstPolyList> (new ConstPolyList);
+  //  auto GB = std::unique_ptr<ConstPolyList> (new ConstPolyList);
+  auto GB = new ConstPolyList;
   GB->push_back(&*F);
   GB->push_back(&*G);
   GB->push_back(&*H);
   EXPECT_TRUE(GB->size() == 3);
 
-  FreeAlgebraQuotient* A = new FreeAlgebraQuotient(*Q,std::move(GB),-1);
+  FreeAlgebraQuotient* A = new FreeAlgebraQuotient(*Q, *GB, -1); // are we transferring ownership of GB?
 
   FreeAlgebraQuotientElement x(A), y(A), z(A), f(A), g(A), h(A);
 
@@ -396,19 +397,18 @@ TEST(FreeAlgebra, spairs)
   FreeAlgebra* A = FreeAlgebra::create(globalQQ,
                                        { "x", "y", "z" },
                                        degreeRing(1),
-                                       {1,2,3},
-                                       {},
+                                       {3,2,1},
+                                       {3,2,1},
                                        {1}
                                        );
   FreeAlgebraElement x(A), y(A), z(A), f(A), g(A), h(A);
-  Word leadWord, leadWordPrefix, leadWordSuffix;
   A->var(*x, 0);
   A->var(*y, 1);
   A->var(*z, 2);
   f = x*y*x + z*y*z;
-  A->lead_word(leadWord,*f);
-  A->lead_word_prefix(leadWordPrefix,*f,2);
-  A->lead_word_suffix(leadWordSuffix,*f,1);
+  Word leadWord = A->lead_word(*f);
+  Word leadWordPrefix = A->lead_word_prefix(*f,2);
+  Word leadWordSuffix = A->lead_word_suffix(*f,1);
   // TODO: did the offset change on our recent heft changes?
   EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWord.begin() && (*f).cbegin().monom().begin() + 5 == leadWord.end());
   EXPECT_TRUE((*f).cbegin().monom().begin() + 2 == leadWordPrefix.begin() && (*f).cbegin().monom().begin() + 4 == leadWordPrefix.end());
@@ -708,14 +708,14 @@ TEST(WordTable, skylanin)
   W.superwords(Word(std::vector<int> {1, 1}), matches);
   std::vector<std::pair<int,int>> ans2
     {
-     std::make_tuple(3,0),
-     std::make_tuple(4,0),
-     std::make_tuple(5,2),
-     std::make_tuple(6,0),
-     std::make_tuple(6,1),
-     std::make_tuple(6,2),
-     std::make_tuple(12,3),
-     std::make_tuple(12,4)
+     std::make_pair(3,0),
+     std::make_pair(4,0),
+     std::make_pair(5,2),
+     std::make_pair(6,0),
+     std::make_pair(6,1),
+     std::make_pair(6,2),
+     std::make_pair(12,3),
+     std::make_pair(12,4)
     };
   std::sort(ans2.begin(),ans2.end());
   std::sort(matches.begin(),matches.end());
