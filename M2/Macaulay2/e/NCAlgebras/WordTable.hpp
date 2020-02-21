@@ -111,10 +111,8 @@ private:
   std::vector<int> mIndices; // -1 means word was retired, cannot be used in this class any longer.
 };
 
-std::ostream& operator<<(std::ostream& o, const Word& w);
 std::ostream& operator<<(std::ostream& o, const WordTable& wordTable);
 
-std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstPolyList& gb);
 
 #endif
 

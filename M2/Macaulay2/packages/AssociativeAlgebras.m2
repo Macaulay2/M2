@@ -700,7 +700,7 @@ centralElements(S,3)
 T = skewPolynomialRing(ZZ/32003,-1,{x,y,z})
 T = threeDimSklyanin(QQ,{x,y,z}, DegreeLimit => 10)
 -- this finishes in Bergman (old NCAlgebra), but not in our new code
-T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 10)
+T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 8)
 T = fourDimSklyanin(QQ,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w},DegreeLimit => 4)
 T = fourDimSklyanin(ZZ/32003,{x,y,z,w})

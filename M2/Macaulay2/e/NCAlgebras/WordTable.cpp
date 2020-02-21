@@ -254,21 +254,6 @@ void WordTable::rightOverlaps(std::vector<Overlap>& newRightOverlaps) const
     }
 }
 
-std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstPolyList& gb)
-{
-  std::unique_ptr<WordTable> W { new WordTable };
-  
-  // Build the word table for the reduction
-  for (auto& f : gb)
-    {
-      auto i = f->cbegin();
-      Word tmp;
-      A.monoid().wordFromMonom(tmp,i.monom());
-      W->insert(tmp);
-    }
-  return W;
-}
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

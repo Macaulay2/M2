@@ -3,6 +3,22 @@
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/WordTable.hpp"
 #include "interrupted.hpp"
+#include <memory>
+
+std::unique_ptr<WordTable> constructWordTable(const FreeAlgebra& A, const ConstPolyList& gb)
+{
+  std::unique_ptr<WordTable> W { new WordTable };
+  
+  // Build the word table for the reduction
+  for (auto& f : gb)
+    {
+      auto i = f->cbegin();
+      Word tmp;
+      A.monoid().wordFromMonom(tmp,i.monom());
+      W->insert(tmp);
+    }
+  return W;
+}
 
 class NCBasis
 {
