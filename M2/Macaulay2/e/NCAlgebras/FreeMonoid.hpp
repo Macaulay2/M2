@@ -3,7 +3,7 @@
 
 #include "polyring.hpp"
 #include "Polynomial.hpp"
-#include "WordTable.hpp"
+#include "Word.hpp"
 
 // TODO for weights in orders
 //  1. make sure it is input correctly from front end.

@@ -15,6 +15,7 @@ INTERFACE2 = \
 INTERFACE = \
 	myalloc \
 	matrix-ncbasis \
+	NCAlgebras/Word \
 	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \
 	M2FreeAlgebraQuotient \

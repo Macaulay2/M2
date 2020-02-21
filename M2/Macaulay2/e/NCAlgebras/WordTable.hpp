@@ -7,46 +7,19 @@
 
 #include "FreeMonoid.hpp"
 #include "../Polynomial.hpp"
+#include "Word.hpp"
+
+// TODO
+// have a vector std::vector<int> of indices of each word.
+//   an index of -1 means that that element has been removed.
+// changes to code:
+//   insert: push_back of the index, return that index.
+//   routines that search over words in the table:
+//     each should continue from any element with -1, ignoring it.
+//   retire(index): set index to -1, set word to null's.
+// move Word code to Word.hpp DONE
 
 class FreeAlgebra;
-
-class Word
-{
-public:
-  friend std::ostream& operator<<(std::ostream& o, const Word& w);
-
-  // warning: the pointers begin, end, should not go out of scope while this Word is in use.
-  Word() : mBegin(nullptr), mEnd(nullptr) {}
-
-  Word(const int* begin, const int* end) : mBegin(begin), mEnd(end) {}
-
-  // keyword 'explicit' to prevent calling this constructor implicitly.  It
-  // causes some strange behavior in debugging.
-  // to be honest, we should only be using this in the unit-tests file ONLY
-  explicit Word(const std::vector<int>& val) : mBegin(val.data()), mEnd(val.data() + val.size()) {}
-
-  void init(const int* begin, const int* end) { mBegin = begin; mEnd = end; }
-  // this constructor is a bit dangerous since we have several std::vector<int> types running around
-  //void init(const std::vector<int>& val) { mBegin = val.data(); mEnd = val.data() + val.size(); }
-                                 
-  const int* begin() const { return mBegin; }
-  const int* end() const { return mEnd; }
-
-  size_t size() const { return mEnd - mBegin; }
-
-  bool operator==(Word rhs)
-  {
-    if (size() != rhs.size()) return false;
-    for (auto i=0; i<size(); ++i)
-      if (mBegin[i] != rhs.mBegin[i])
-        return false;
-    return true;
-  }
-
-private:
-  const int* mBegin;
-  const int* mEnd;
-};
 
 using Overlap = std::tuple<int,int,int>;
 
@@ -135,6 +108,7 @@ private:
 
 private:
   std::vector<Word> mMonomials;
+  std::vector<int> mIndices; // -1 means word was retired, cannot be used in this class any longer.
 };
 
 std::ostream& operator<<(std::ostream& o, const Word& w);

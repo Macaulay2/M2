@@ -5,6 +5,7 @@
 #include "Polynomial.hpp"
 #include "NCAlgebras/FreeMonoid.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
+#include <memory>
 
 using ExponentVector = int*;
 

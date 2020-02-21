@@ -4,6 +4,7 @@
 #include "../buffer.hpp"
 #include "../text-io.hpp"
 #include "../M2FreeAlgebra.hpp"
+#include "Word.hpp"
 #include "WordTable.hpp"
 //#include "SuffixTree.hpp"
 #include "OverlapTable.hpp"
@@ -20,9 +21,13 @@ private:
   WordTable mWordTable;
   //SuffixTree mWordTable;
   OverlapTable mOverlapTable;
+
   const ConstPolyList mInput;
-  ConstPolyList mGroebner;
   std::vector<int> mGeneratorDegrees; // heft degree or sugar degree of corresponding mGroebner element.
+
+  ConstPolyList mGroebner;
+  std::vector<int> mGroebnerDegrees; // sugar degree.  -1 means removed.
+
   mutable std::unique_ptr<PolynomialHeap> mHeap;
 
   bool mIsGraded;

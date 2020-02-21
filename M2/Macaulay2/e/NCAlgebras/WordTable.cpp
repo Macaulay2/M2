@@ -1,19 +1,6 @@
 #include "FreeAlgebra.hpp"
 #include "WordTable.hpp"
 
-std::ostream& operator<<(std::ostream& o, const Word& w)
-{
-  o << "[";
-  int i = 0;
-  for (; i < w.size() - 1; ++i)
-    {
-      o << w.begin()[i] << ",";
-    }
-  o << w.begin()[i];
-  o << "]";
-  return o;
-}
-
 std::ostream& operator<<(std::ostream& o, const WordTable& wordTable)
 {
   if (wordTable.mMonomials.size() == 0) return o;

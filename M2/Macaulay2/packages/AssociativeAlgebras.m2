@@ -681,12 +681,19 @@ promote(kk^3, R)
 promote(kk^3, A)
 
 kk = ZZ/32003
+--kk = QQ
 R = kk{a,b,c}
 I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
 gbTrace=1
-NCGB(I, 10, Strategy=>0)
+I = ideal I_*; NCGB(I, 10, Strategy=>0);
+--I = ideal I_*; NCGB(I, 10, Strategy=>1); -- crash
+I = ideal I_*; NCGB(I, 10, Strategy=>2); -- works
+--I = ideal I_*; NCGB(I, 10, Strategy=>3); -- infinite loop
+I = ideal I_*; NCGB(I, 10, Strategy=>4); -- works
+I = ideal I_*; NCGB(I, 10, Strategy=>5); -- works
+I = ideal I_*; NCGB(I, 10, Strategy=>6); -- works -- hmm, doesn't seem to work well
 
 S = R/I
 centralElements(S,3)

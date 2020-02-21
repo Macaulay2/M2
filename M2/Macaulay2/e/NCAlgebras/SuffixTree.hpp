@@ -8,7 +8,7 @@
 #include <map>
 //#include <gtest/gtest.h>
 
-#include "WordTable.hpp"
+#include "Word.hpp"
 
 // used in return value for WordTable as well
 using Overlap = std::tuple<int,int,int>;

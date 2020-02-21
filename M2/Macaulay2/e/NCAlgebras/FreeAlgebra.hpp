@@ -4,7 +4,7 @@
 #include "../polyring.hpp"
 #include "../Polynomial.hpp"
 #include "FreeMonoid.hpp"
-#include "WordTable.hpp"
+#include "Word.hpp"
 
 class FreeAlgebra : public our_new_delete
 {

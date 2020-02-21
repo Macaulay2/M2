@@ -1,5 +1,4 @@
 #include "FreeAlgebra.hpp"
-#include "WordTable.hpp"
 #include "ringmap.hpp"
 
 using ExponentVector = int*;
