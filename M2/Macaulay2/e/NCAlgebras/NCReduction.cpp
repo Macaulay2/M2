@@ -577,7 +577,9 @@ public:
 
   bool operator() (const Monom a, const Monom b) const
   {
-    return mMonoid.compare(a, b) == LT;
+    return mMonoid.compare(a, b) == GT;
+    // less than makes things sorted in reverse!
+    // return mMonoid.compare(a, b) == LT;
   }
 private:
   const FreeMonoid& mMonoid;
@@ -889,6 +891,8 @@ public:
 
   bool operator() (Entry a, Entry b) const
   {
+    // TODO: Need to be clear which one wants!
+    //return mMonoid.compare(a.first, b.first) == GT;
     return mMonoid.compare(a.first, b.first) == LT;
   }
   
