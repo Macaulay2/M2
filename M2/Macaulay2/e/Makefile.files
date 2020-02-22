@@ -198,7 +198,9 @@ COMMANDS = \
 	franzi-gb \
 	franzi-interface
 
-NAMES_H = ringelem \
+NAMES_H = \
+	NCAlgebras/MemoryBlock \
+	ringelem \
 	style \
 	hash \
 	index \

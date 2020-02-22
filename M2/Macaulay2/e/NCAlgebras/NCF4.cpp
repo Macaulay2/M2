@@ -1,4 +1,4 @@
-#include "NCF4.hpp"
+#include "NCAlgebras/NCF4.hpp"
 
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,

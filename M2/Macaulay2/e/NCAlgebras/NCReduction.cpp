@@ -4,8 +4,7 @@
 #include "../stdinc-m2.hpp"
 #include "NCGroebner.hpp"
 #include "NCReduction.hpp"
-
-#include <memtailor.h>
+#include "NCAlgebras/MemoryBlock.hpp"
 #include <mathic/TourTree.h>
 #include <mathic/Geobucket.h>
 #include <mathic/Heap.h>
@@ -40,34 +39,6 @@ Possible ways:
     F - aGb - cGd - ...
 #endif
 
-class MemoryBlock
-{
-public:
-  template<typename T>
-  std::pair<T*, T*> allocateArray(size_t nelems)
-  {
-    return mArena.allocArrayNoCon<T>(nelems);
-  }
-
-  template<typename T>
-  std::pair<T*, T*> shrinkLastAllocate(T* begin, T* end, T* newtop)
-  {
-    mArena.freeTopArray(begin, end);
-    std::pair<T*, T*> result = mArena.allocArrayNoCon<T>(newtop - begin);
-    if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
-    return result;
-  }
-
-  void deallocateAll()
-  {
-    mArena.freeAllAllocs();
-  }
-
-  size_t getMemoryUsedInBytes() { return mArena.getMemoryUse(); } 
-private:
-  memt::Arena mArena;
-};
-  
 class OurQueueConfiguration
 {
 public:
