@@ -24,6 +24,7 @@ INTERFACE = \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
+	NCAlgebras/NCF4 \
 	NCAlgebras/OverlapTable \
 	monomial-collection \
 	Polynomial \

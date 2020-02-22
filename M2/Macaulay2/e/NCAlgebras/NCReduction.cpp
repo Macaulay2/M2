@@ -154,7 +154,7 @@ public:
 
   virtual ~TrivialPolynomialHeap() {}
 
-  void clear() { mRing.setZero(mValue); mIter = mValue.cbegin(); }
+  void clear() override { mRing.setZero(mValue); mIter = mValue.cbegin(); }
     
   // prevent copy and assignment constructors
   // allow move constructors, I guess?
@@ -338,7 +338,7 @@ public:
 
   virtual ~NaivePolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -479,7 +479,7 @@ public:
 
   virtual ~NaiveDedupPolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -600,7 +600,7 @@ public:
 
   virtual ~MapPolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
@@ -917,7 +917,7 @@ public:
 
   virtual ~PriorityQueuePolynomialHeap() {}
 
-  void clear() {
+  void clear() override {
     // clear the heap.  The free algebra is kept the same
     // but all other aspects are reset.  The MonomialSpace
     // has all its data freed to the arena, but is available for
