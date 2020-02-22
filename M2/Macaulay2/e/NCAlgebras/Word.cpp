@@ -4,12 +4,15 @@
 std::ostream& operator<<(std::ostream& o, const Word& w)
 {
   o << "[";
-  int i = 0;
-  for (; i < w.size() - 1; ++i)
+  if (w.size() > 0)
     {
-      o << w.begin()[i] << ",";
+      int i = 0;
+      for (; i < w.size() - 1; ++i)
+        {
+          o << w.begin()[i] << ",";
+        }
+      o << w.begin()[i];
     }
-  o << w.begin()[i];
   o << "]";
   return o;
 }

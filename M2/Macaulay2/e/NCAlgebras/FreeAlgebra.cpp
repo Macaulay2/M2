@@ -505,6 +505,21 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
 
 void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
                                               const Poly& f,
+                                              const Monom leftM,
+                                              const Monom rightM) const
+{
+  // return (c*leftM)*f*rightM
+  auto& outcoeff = result.getCoeffInserter();
+  auto& outmonom = result.getMonomInserter();
+  for(auto i=f.cbegin(); i != f.cend(); i++)
+    {
+      outcoeff.push_back(i.coeff());
+      monoid().mult3(leftM, i.monom(), rightM, outmonom);
+    }
+}
+
+void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
+                                              const Poly& f,
                                               const ring_elem c,
                                               const Word& leftW,
                                               const Word& rightW) const
@@ -515,6 +530,21 @@ void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
   Monom leftTmpMonom(leftTmp.data());
   Monom rightTmpMonom(rightTmp.data());
   mult_by_term_left_and_right(result,f,c,leftTmpMonom,rightTmpMonom);
+  leftTmp.clear();
+  rightTmp.clear();
+}
+
+void FreeAlgebra::mult_by_term_left_and_right(Poly& result,
+                                              const Poly& f,
+                                              const Word& leftW,
+                                              const Word& rightW) const
+{
+  std::vector<int> leftTmp, rightTmp;
+  monoid().monomInsertFromWord(leftTmp,leftW);
+  monoid().monomInsertFromWord(rightTmp,rightW);
+  Monom leftTmpMonom(leftTmp.data());
+  Monom rightTmpMonom(rightTmp.data());
+  mult_by_term_left_and_right(result,f,leftTmpMonom,rightTmpMonom);
   leftTmp.clear();
   rightTmp.clear();
 }

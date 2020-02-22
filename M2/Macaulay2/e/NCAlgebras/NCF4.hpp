@@ -30,8 +30,8 @@ private:
   // memory space for monomials and words for F4 matrix.
   using ColumnIndices = std::pair<int*, int*>;
   using PreRow = std::tuple<Word, int, Word>;
-  using Row = std::pair<std::vector<ring_elem>*, // pointer to existing vector in a GB polynomial
-                         ColumnIndices>;
+  using Row = std::pair<VECTOR(ring_elem), // copy of existing coeff vector
+                        ColumnIndices>; // components corresponding to monomials appearing
   using Column = std::pair<Monom, int>;
 
   // Where is the actual data stored (i.e. ring_elem's and monomials?)
@@ -46,15 +46,16 @@ private:
   //    
   
   MemoryBlock mMonomialSpace;
-  //TODO: need a hash table here too, for column monomials.
-  std::deque<PreRow> mReducerTodo;
-  std::deque<PreRow> mOverlapsTodo;
-  int mCurrentReducer;
-  int mCurrentOverlap;
+  MonomEq mMonomEq;
+  std::map<Monom, std::pair<int,int>, MonomEq> mColumnMonomials;
+  std::vector<PreRow> mReducersTodo;
+  std::vector<PreRow> mOverlapsTodo;
   std::vector<Column> mColumns;
   std::vector<Row> mReducers;
   std::vector<Row> mOverlaps;
-
+  int mCurrentReducer;
+  int mCurrentOverlap;
+  
   // build matrix, from std::vector of overlap pairs.
   void fromOverlapPairs(std::deque<PreRow>&result, const std::deque<Overlap>& tobeProcessed);
   void buildMatrix(const std::vector<PreRow>);
@@ -79,6 +80,16 @@ public:
   void compute(int softDegreeLimit);
 private:
   void process(const std::deque<Overlap>& overlapsToProcess);
+
+  void buildF4Matrix(const std::deque<Overlap>& overlapsToProcess);
+
+  void matrixReset();
+
+  Row processPreRow(PreRow r);
+
+  void preRowsFromOverlap(const Overlap& o);
+
+  std::pair<bool, PreRow> findDivisor(Monom mon);
 };
   
 #endif

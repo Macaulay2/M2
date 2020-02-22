@@ -131,6 +131,19 @@ private:
   int wordWeight(Word& word, const std::vector<int>& weight, int start_index) const;
 };
 
+class MonomEq
+{
+public:
+  MonomEq(const FreeMonoid& M) : mMonoid(M) {}
+
+  bool operator() (const Monom a, const Monom b) const
+  {
+    return mMonoid.compare(a, b) == GT;
+  }
+private:
+  const FreeMonoid& mMonoid;
+};
+
 #endif
 
 // Local Variables:

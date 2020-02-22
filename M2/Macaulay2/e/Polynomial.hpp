@@ -258,9 +258,10 @@ public:
   void copyAllCoeffs(const coeffVector & rhs ) { mCoefficients = rhs; }
   void copyAllMonoms(const monomVector & rhs ) { mMonomials = rhs; }
 
-  const coeffVector & getCoeffVector() const { return mCoefficients; }
 
 #endif  
+  const coeffVector & getCoeffVector() const { return mCoefficients; }
+
   const monomVector & getMonomVector() const { return mMonomials; }
   monomVector & getMonomInserter() { return mMonomials; }
 

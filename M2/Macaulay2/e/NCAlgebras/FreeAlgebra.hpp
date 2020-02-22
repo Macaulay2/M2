@@ -105,6 +105,10 @@ public:
                                    const ring_elem c,
                                    const Monom leftM,
                                    const Monom rightM) const;
+  void mult_by_term_left_and_right(Poly& result,
+                                   const Poly& f,
+                                   const Monom leftM,
+                                   const Monom rightM) const;
   void mult_by_term_left(Poly& result,
                          const Poly& f,
                          const ring_elem c,
@@ -116,6 +120,10 @@ public:
   void mult_by_term_left_and_right(Poly& result,
                                    const Poly& f,
                                    const ring_elem c,
+                                   const Word& leftW,
+                                   const Word& rightW) const;
+  void mult_by_term_left_and_right(Poly& result,
+                                   const Poly& f,
                                    const Word& leftW,
                                    const Word& rightW) const;
   void add_to_end(Poly& f, const Poly& g) const;

@@ -536,25 +536,6 @@ private:
   MemoryBlock mMonomialSpace;
 };
 
-class MonomHashEq
-{
-public:
-  MonomHashEq(const FreeMonoid& M) : mMonoid(M) {}
-
-  size_t operator()(const Monom m) const // hash function
-  {
-    return 0; 
-  }
-
-  bool operator() (const Monom a, const Monom b) const
-  {
-    return mMonoid.compare(a, b) == GT;
-    // less than makes things sorted in reverse!
-    // return mMonoid.compare(a, b) == LT;
-  }
-private:
-  const FreeMonoid& mMonoid;
-};
 
 class MapPolynomialHeap : public PolynomialHeap
 {
@@ -564,8 +545,8 @@ public:
 
   MapPolynomialHeap(const FreeAlgebra& F)
     : mRing(F),
-      mHashEq(F.monoid()),
-      mMap(mHashEq)
+      mMonomEq(F.monoid()),
+      mMap(mMonomEq)
   {
   }
 
@@ -668,8 +649,8 @@ public:
   
 private:
   FreeAlgebra mRing;
-  MonomHashEq mHashEq;
-  std::map<Monom, ring_elem, MonomHashEq, StatsAllocator<ConstEntry>> mMap;
+  MonomEq mMonomEq;
+  std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
   MemoryBlock mMonomialSpace;
 };
 
