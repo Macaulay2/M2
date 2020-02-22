@@ -15,20 +15,21 @@ INTERFACE2 = \
 INTERFACE = \
 	myalloc \
 	matrix-ncbasis \
+	NCAlgebras/VectorArithmetic \
 	NCAlgebras/Word \
 	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \
 	M2FreeAlgebraQuotient \
-	monordering \
 	NCAlgebras/FreeAlgebra \
 	NCAlgebras/FreeMonoid \
 	NCAlgebras/WordTable \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/NCF4 \
 	NCAlgebras/OverlapTable \
-	monomial-collection \
-	Polynomial \
 	M2FreeAlgebra \
+	Polynomial \
+	monordering \
+	monomial-collection \
 	monomial-sets \
 	mutablecomplex \
 	localring \
@@ -200,6 +201,7 @@ COMMANDS = \
 
 NAMES_H = \
 	NCAlgebras/MemoryBlock \
+	NCAlgebras/Range \
 	ringelem \
 	style \
 	hash \

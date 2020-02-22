@@ -60,7 +60,10 @@ void NCF4::compute(int softDegreeLimit)
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
   buildF4Matrix(overlapsToProcess);
-
+  displayF4Matrix(std::cout);
+  sortF4Matrix();
+  displayF4Matrix(std::cout);
+  
   // reduce it
 
   // auto-reduce the new elements
@@ -233,6 +236,107 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
   Word suffix = Word(newword.begin() + divisorInfo.second + divisorWord.size(),
                      newword.end());
   return std::make_pair(true, PreRow(prefix, divisorInfo.first, suffix));
+}
+
+void NCF4::sortF4Matrix()
+{
+  std::vector<int> perm { mColumnMonomials.size(), -1};
+  int count = 0;
+  for (auto& i : mColumnMonomials)
+    {
+      int origIndex = i.second.first;
+      perm[origIndex] = count;
+      i.second.first = count;
+      ++count;
+    }
+
+  // Now we run through the rows
+  for (auto& r : mReducers)
+    {
+      auto& comps = r.second;
+      for (int i=0; i < comps.second - comps.first; ++i)
+        comps.first[i] = perm[comps.first[i]];
+    }
+
+  for (auto& r : mOverlaps)
+    {
+      auto& comps = r.second;
+      for (int i=0; i < comps.second - comps.first; ++i)
+        comps.first[i] = perm[comps.first[i]];
+    }
+}
+
+void NCF4::displayF4Matrix(std::ostream& o) const
+{
+  // Display sizes:
+  o << "(#cols, #reducer rows, #spair rows) = ("
+    << mColumnMonomials.size() << ", "
+    << mReducers.size() << ", "
+    << mOverlaps.size() << ")"
+    << std::endl
+    << "  ";
+  // Now column monomials
+  for (auto i : mColumnMonomials)
+    {
+      buffer b;
+      freeAlgebra().monoid().elem_text_out(b, i.first);
+      o << b.str() << "(" << i.second.first << ", " << i.second.second << ") ";
+      // each i is a pair (const Monom, pair(int,int)).
+    }
+  o << std::endl;
+  
+  // For each row, and each overlap row, display the non-zero comps, non-zero coeffs.
+  if (mReducers.size() != mReducersTodo.size())
+    {
+      o << "***ERROR*** expected mReducers and mReducersTodo to have the same length!" << std::endl;
+      exit(1);
+    }
+  const Ring* kk = freeAlgebra().coefficientRing();
+  for (int count = 0; count < mReducers.size(); ++count)
+    {
+      PreRow pr = mReducersTodo[count];
+      o << count << " ("<< std::get<0>(pr) << ", "
+        << std::get<1>(pr) << ", "
+        << std::get<2>(pr) << ") ";
+      if (mReducers[count].first.size() != mReducers[count].second.second - mReducers[count].second.first)
+        {
+          o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
+          exit(1);
+        }
+      for (int i=0; i < mReducers[count].first.size(); ++i)
+        {
+          buffer b;
+          kk->elem_text_out(b, mReducers[count].first[i]);
+          o << "[" << b.str() << "," << mReducers[count].second.first[i] << "] ";
+        }
+      o << std::endl;
+    }
+
+  // For each row, and each overlap row, display the non-zero comps, non-zero coeffs.
+  if (mOverlaps.size() != mOverlapsTodo.size())
+    {
+      o << "***ERROR*** expected mOverlaps and mOverlapsTodo to have the same length!" << std::endl;
+      exit(1);
+    }
+  for (int count = 0; count < mOverlaps.size(); ++count)
+    {
+      PreRow pr = mOverlapsTodo[count];
+      o << count << " ("<< std::get<0>(pr) << ", "
+        << std::get<1>(pr) << ", "
+        << std::get<2>(pr) << ") ";
+      if (mOverlaps[count].first.size() != mOverlaps[count].second.second - mOverlaps[count].second.first)
+        {
+          o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
+          exit(1);
+        }
+      for (int i=0; i < mOverlaps[count].first.size(); ++i)
+        {
+          buffer b;
+          kk->elem_text_out(b, mOverlaps[count].first[i]);
+          o << "[" << b.str() << "," << mOverlaps[count].second.first[i] << "] ";
+        }
+      o << std::endl;
+    }
 }
 
 // Local Variables:

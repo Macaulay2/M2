@@ -78,11 +78,15 @@ public:
   const ConstPolyList& currentValue() const { return mGroebner; }
 
   void compute(int softDegreeLimit);
+
+  void displayF4Matrix(std::ostream& o) const;
 private:
   void process(const std::deque<Overlap>& overlapsToProcess);
 
   void buildF4Matrix(const std::deque<Overlap>& overlapsToProcess);
 
+  void sortF4Matrix();
+  
   void matrixReset();
 
   Row processPreRow(PreRow r);
