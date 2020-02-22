@@ -688,6 +688,7 @@ I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
 gbTrace=1
+I = ideal I_*; NCGB(I, 10, Strategy=>16);
 I = ideal I_*; NCGB(I, 10, Strategy=>0);
 --I = ideal I_*; NCGB(I, 10, Strategy=>1); -- crash
 I = ideal I_*; NCGB(I, 10, Strategy=>2); -- works

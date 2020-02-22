@@ -36,7 +36,7 @@ public:
 
   auto size() const -> size_t;
 
-  auto removeLowestDegree() -> void;
+  auto removeLowestDegree() -> void; // TODO: logic BUG in inhomogeneous case: won't delete what we want!
 
   auto overlapWordLength(Overlap o) const -> int;
 

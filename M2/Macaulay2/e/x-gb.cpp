@@ -16,6 +16,7 @@
 #include "M2FreeAlgebra.hpp"
 #include "NCAlgebras/FreeAlgebra.hpp"
 #include "NCAlgebras/NCGroebner.hpp"
+#include "NCAlgebras/NCF4.hpp"
 
 #include "poly.hpp"
 #include <sstream>
@@ -1233,10 +1234,22 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int st
   if (A != nullptr and input->n_rows() == 1)
     {
       auto elems = matrixToVector(A, input);
-      NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
-      G.compute(maxdeg); // this argument is actually the soft degree limit
-      auto result = copyPolyVector(A, G.currentValue());
-      return vectorToMatrix(A, result);
+      bool isF4 = strategy & 16;
+      if (isF4)
+        {
+          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy);
+          G.compute(maxdeg); // this argument is actually the soft degree limit
+          auto result = copyPolyVector(A, G.currentValue());
+          return vectorToMatrix(A, result);
+        }
+      else
+        {
+          NCGroebner G(A->freeAlgebra(), elems, maxdeg, strategy);
+          G.compute(maxdeg); // this argument is actually the soft degree limit
+          auto result = copyPolyVector(A, G.currentValue());
+          return vectorToMatrix(A, result);
+        }
+
     }
   ERROR("expected a one row matrix over a noncommutative algebra");
   return nullptr;
