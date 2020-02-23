@@ -11,7 +11,7 @@ void VectorArithmetic::denseRowCancelFromSparse(Range<ring_elem> dense,
                                                 const Range<ring_elem>& coeffs,
                                                 const Range<int>& comps) const
 {
-  ring_elem a = coeffs[comps[0]];
+  ring_elem a = dense[comps[0]];
   for (int i=0; i < comps.size(); i++)
     {
       ring_elem tmp = mRing->mult(a, coeffs[i]);

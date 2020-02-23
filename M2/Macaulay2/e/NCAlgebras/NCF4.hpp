@@ -71,6 +71,13 @@ private:
   
   void matrixReset();
 
+  // These functions are essentially from NCGroebner
+  void addToGroebnerBasis(const Poly * toAdd);
+  void updateOverlaps(const Poly * toAdd);
+  auto overlapHeft(Overlap o) const -> int;
+  auto insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void;
+  ConstPolyList newGBelements();  // From current F4 matrix.
+
   Row processPreRow(PreRow r);
 
   void preRowsFromOverlap(const Overlap& o);

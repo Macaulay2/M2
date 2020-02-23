@@ -69,6 +69,68 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   // auto-reduce the new elements
   
   // convert back to GB elements...
+  ConstPolyList newElems = newGBelements();
+  for (auto& f : newElems)
+    {
+      addToGroebnerBasis(f);
+      updateOverlaps(f);
+    }
+}
+
+void NCF4::addToGroebnerBasis(const Poly * toAdd)
+{
+  mGroebner.push_back(toAdd);
+}
+
+void NCF4::updateOverlaps(const Poly * toAdd)
+{
+   std::vector<Overlap> newOverlaps;
+   Word newLeadWord = freeAlgebra().lead_word(*toAdd);
+
+   // the word table insert places the right overlaps into newOverlaps
+   mWordTable.insert(newLeadWord,newOverlaps);
+   insertNewOverlaps(newOverlaps);
+
+   newOverlaps.clear();
+   // this function finds the left overlaps with the most recently
+   // inserted word.
+   mWordTable.leftOverlaps(newOverlaps);
+   insertNewOverlaps(newOverlaps);
+}
+
+auto NCF4::overlapHeft(Overlap o) const -> int
+// overlap: of a pair of words v, w, v = a*s, w = s*b, returns the
+// heft degree of a*s*b.
+// o = triple (index of left GB element, pos, index of right GB element,
+//   pos is the location in left GB element where s starts.
+{
+  Word tmpL = freeAlgebra().lead_word(*mGroebner[std::get<0>(o)]);
+  Word tmpR = freeAlgebra().lead_word(*mGroebner[std::get<2>(o)]);
+  int len_of_s = tmpL.size() - std::get<1>(o);
+  return freeAlgebra().monoid().wordHeft(tmpL) +
+    freeAlgebra().monoid().wordHeft(tmpR, len_of_s);
+}
+
+auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
+{
+   for (auto newOverlap : newOverlaps)
+     mOverlapTable.insert(overlapHeft(newOverlap),
+                          false,
+                          newOverlap);
+}
+
+ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
+{
+  ConstPolyList result;
+  for (int i=mFirstOverlap; i<mRows.size(); i++)
+    {
+      if (mRows[i].second.size() == 0) continue;
+      Poly* f = new Poly;
+      for (int j=0; j < mRows[i].second.size(); j++)
+        freeAlgebra().add_to_end(*f, mRows[i].first[j], mColumns[mRows[i].second[j]].first);
+      result.push_back(f);
+    }
+  return result;
 }
 
 void NCF4::matrixReset()
