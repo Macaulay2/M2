@@ -135,13 +135,14 @@ ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
 
 void NCF4::matrixReset()
 {
-  mMonomialSpace.deallocateAll();
   mReducersTodo.clear();
   mOverlapsTodo.clear();
   mColumns.clear();
+  mColumnMonomials.clear();
   mRows.clear();
   mOverlaps.clear();
   mFirstOverlap = 0;
+  mMonomialSpace.deallocateAll();
 }
 
 void NCF4::preRowsFromOverlap(const Overlap& o)
@@ -204,6 +205,7 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
       mRows.push_back(r);
     }
+  int numReducersAtFirst = mReducersTodo.size();
 
   for (int i=0; i < mOverlapsTodo.size(); ++i)
     {
@@ -211,7 +213,7 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       mOverlaps.push_back(r);
     }
 
-  for (int i=0 ; i < mReducersTodo.size(); ++i)
+  for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
     {
       Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
       mRows.push_back(r);
