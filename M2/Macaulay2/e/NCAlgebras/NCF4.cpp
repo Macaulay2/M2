@@ -63,8 +63,8 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   displayF4Matrix(std::cout);
   sortF4Matrix();
   displayF4Matrix(std::cout);
-  
-  // reduce it
+  reduceF4Matrix();
+  displayF4Matrix(std::cout);
 
   // auto-reduce the new elements
   
@@ -77,10 +77,9 @@ void NCF4::matrixReset()
   mReducersTodo.clear();
   mOverlapsTodo.clear();
   mColumns.clear();
-  mReducers.clear();
+  mRows.clear();
   mOverlaps.clear();
-  mCurrentReducer = 0;
-  mCurrentOverlap = 0;
+  mFirstOverlap = 0;
 }
 
 void NCF4::preRowsFromOverlap(const Overlap& o)
@@ -138,22 +137,30 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   std::cout << "About to process mReducersTodo" << std::endl;
   // process each element in mReducersTodo
 
-  for ( ; mCurrentReducer < mReducersTodo.size(); ++mCurrentReducer)
+  for (int i=0 ; i < mReducersTodo.size(); ++i)
     {
-      Row r = processPreRow(mReducersTodo[mCurrentReducer]); // this often adds new elements to mReducersTodo
-      mReducers.push_back(r);
+      Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
+      mRows.push_back(r);
     }
 
-  for ( ; mCurrentOverlap < mOverlapsTodo.size(); ++mCurrentOverlap)
+  for (int i=0; i < mOverlapsTodo.size(); ++i)
     {
-      Row r = processPreRow(mOverlapsTodo[mCurrentOverlap]); // this often adds new elements to mReducersTodo
+      Row r = processPreRow(mOverlapsTodo[i]); // this often adds new elements to mReducersTodo
       mOverlaps.push_back(r);
     }
 
-  for ( ; mCurrentReducer < mReducersTodo.size(); ++mCurrentReducer)
+  for (int i=0 ; i < mReducersTodo.size(); ++i)
     {
-      Row r = processPreRow(mReducersTodo[mCurrentReducer]); // this often adds new elements to mReducersTodo
-      mReducers.push_back(r);
+      Row r = processPreRow(mReducersTodo[i]); // this often adds new elements to mReducersTodo
+      mRows.push_back(r);
+    }
+
+  // Now we move the overlaps into mRows, and set mFirstOverlap.
+  mFirstOverlap = mRows.size();
+  for (int i=0; i < mOverlapsTodo.size(); ++i)
+    {
+      mRows.push_back(mOverlaps[i]);
+      mReducersTodo.push_back(mOverlapsTodo[i]);
     }
 }
 
@@ -215,8 +222,10 @@ NCF4::Row NCF4::processPreRow(PreRow r)
         }
     }
   std::cout << std::endl;
-  // the following line causes a copy of the coeff vector of 'elem'.
-  return(Row(elem.getCoeffVector(), componentRange));
+  ring_elem* ptr = newarray(ring_elem, elem.getCoeffVector().size());
+  Range<ring_elem> coeffrange(ptr, ptr + elem.getCoeffVector().size());
+  std::copy(elem.getCoeffVector().cbegin(), elem.getCoeffVector().cend(), coeffrange.begin());
+  return(Row(coeffrange, componentRange));
 }
 
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
@@ -239,6 +248,8 @@ std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)
 }
 
 void NCF4::sortF4Matrix()
+// Besides sorting the columns (using 'perm'), this also sets the
+// pivot rows of each column index (in the new sorted order).
 {
   std::vector<int> perm { mColumnMonomials.size(), -1};
   int count = 0;
@@ -246,23 +257,63 @@ void NCF4::sortF4Matrix()
     {
       int origIndex = i.second.first;
       perm[origIndex] = count;
+      mColumns.push_back(Column(i.first, i.second.second));
       i.second.first = count;
       ++count;
     }
 
   // Now we run through the rows
-  for (auto& r : mReducers)
+  for (auto& r : mRows)
     {
       auto& comps = r.second;
-      for (int i=0; i < comps.second - comps.first; ++i)
-        comps.first[i] = perm[comps.first[i]];
+      for (int i=0; i < comps.size(); ++i)
+        comps[i] = perm[comps[i]];
     }
+}
 
-  for (auto& r : mOverlaps)
+void NCF4::reduceF4Matrix()
+{
+  VectorArithmetic V(freeAlgebra().coefficientRing());
+
+  // Create the dense array.
+  ring_elem zero = freeAlgebra().coefficientRing()->zero();
+  std::vector<ring_elem> denseVector(mColumnMonomials.size(), zero);
+  Range<ring_elem> dense(denseVector);
+
+  // reduce each overlap row by mRows.
+  for (int i=mFirstOverlap; i < mRows.size(); ++i)
     {
-      auto& comps = r.second;
-      for (int i=0; i < comps.second - comps.first; ++i)
-        comps.first[i] = perm[comps.first[i]];
+      int sz = mRows[i].second.size();
+      assert(sz > 0);
+      int firstcol = -1; // will be set to the first non-zero value in the result
+      int first = mRows[i].second[0];
+      int last = mRows[i].second[sz-1];
+
+      V.sparseRowToDenseRow(dense, mRows[i].first, mRows[i].second);
+      do {
+        int pivotrow = mColumns[first].second;
+        if (pivotrow >= 0)
+          {
+            V.denseRowCancelFromSparse(dense, mRows[pivotrow].first, mRows[pivotrow].second);
+            int last1 = mRows[pivotrow].second.cend()[-1]; // last component in the row corresponding to pivotrow
+            last = (last1 > last ? last1 : last);
+          }
+        else if (firstcol == -1)
+          {
+            firstcol = first;
+          }
+        first = V.denseRowNextNonzero(dense, first+1, last);
+      } while (first <= last);
+      V.denseRowToSparseRow(dense,
+                            mRows[i].first,
+                            mRows[i].second,
+                            firstcol,
+                            last);
+      if (mRows[i].first.size() > 0)
+        {
+          V.sparseRowMakeMonic(mRows[i].first);
+          mColumns[firstcol].second = i;
+        }
     }
 }
 
@@ -271,8 +322,8 @@ void NCF4::displayF4Matrix(std::ostream& o) const
   // Display sizes:
   o << "(#cols, #reducer rows, #spair rows) = ("
     << mColumnMonomials.size() << ", "
-    << mReducers.size() << ", "
-    << mOverlaps.size() << ")"
+    << mFirstOverlap << ", "
+    << mRows.size() - mFirstOverlap << ")"
     << std::endl
     << "  ";
   // Now column monomials
@@ -286,54 +337,28 @@ void NCF4::displayF4Matrix(std::ostream& o) const
   o << std::endl;
   
   // For each row, and each overlap row, display the non-zero comps, non-zero coeffs.
-  if (mReducers.size() != mReducersTodo.size())
+  if (mRows.size() != mReducersTodo.size())
     {
-      o << "***ERROR*** expected mReducers and mReducersTodo to have the same length!" << std::endl;
+      o << "***ERROR*** expected mRows and mReducersTodo to have the same length!" << std::endl;
       exit(1);
     }
   const Ring* kk = freeAlgebra().coefficientRing();
-  for (int count = 0; count < mReducers.size(); ++count)
+  for (int count = 0; count < mRows.size(); ++count)
     {
       PreRow pr = mReducersTodo[count];
       o << count << " ("<< std::get<0>(pr) << ", "
         << std::get<1>(pr) << ", "
         << std::get<2>(pr) << ") ";
-      if (mReducers[count].first.size() != mReducers[count].second.second - mReducers[count].second.first)
+      if (mRows[count].first.size() != mRows[count].second.size())
         {
           o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
           exit(1);
         }
-      for (int i=0; i < mReducers[count].first.size(); ++i)
+      for (int i=0; i < mRows[count].first.size(); ++i)
         {
           buffer b;
-          kk->elem_text_out(b, mReducers[count].first[i]);
-          o << "[" << b.str() << "," << mReducers[count].second.first[i] << "] ";
-        }
-      o << std::endl;
-    }
-
-  // For each row, and each overlap row, display the non-zero comps, non-zero coeffs.
-  if (mOverlaps.size() != mOverlapsTodo.size())
-    {
-      o << "***ERROR*** expected mOverlaps and mOverlapsTodo to have the same length!" << std::endl;
-      exit(1);
-    }
-  for (int count = 0; count < mOverlaps.size(); ++count)
-    {
-      PreRow pr = mOverlapsTodo[count];
-      o << count << " ("<< std::get<0>(pr) << ", "
-        << std::get<1>(pr) << ", "
-        << std::get<2>(pr) << ") ";
-      if (mOverlaps[count].first.size() != mOverlaps[count].second.second - mOverlaps[count].second.first)
-        {
-          o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
-          exit(1);
-        }
-      for (int i=0; i < mOverlaps[count].first.size(); ++i)
-        {
-          buffer b;
-          kk->elem_text_out(b, mOverlaps[count].first[i]);
-          o << "[" << b.str() << "," << mOverlaps[count].second.first[i] << "] ";
+          kk->elem_text_out(b, mRows[count].first[i]);
+          o << "[" << b.str() << "," << mRows[count].second[i] << "] ";
         }
       o << std::endl;
     }

@@ -685,6 +685,7 @@ promote(kk^3, A)
 restart
 needsPackage "AssociativeAlgebras"
 kk = ZZ/32003
+kk = QQ
 R = kk{a,b,c}
 I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,

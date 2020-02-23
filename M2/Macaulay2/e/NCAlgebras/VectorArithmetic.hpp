@@ -9,7 +9,6 @@ class VectorArithmetic
 {
 private:
   const Ring* mRing;
-  VECTOR<ring_elem> mRingElemStore;
   
 public:
   VectorArithmetic(const Ring* R) : mRing(R) {}
