@@ -315,7 +315,7 @@ void NCF4::sortF4Matrix()
 // Besides sorting the columns (using 'perm'), this also sets the
 // pivot rows of each column index (in the new sorted order).
 {
-  std::vector<int> perm { mColumnMonomials.size(), -1};
+  std::vector<int> perm (static_cast<size_t>(mColumnMonomials.size()), -1);
   int count = 0;
   for (auto& i : mColumnMonomials)
     {
