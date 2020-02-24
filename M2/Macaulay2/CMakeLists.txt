@@ -1,5 +1,9 @@
 # TODO: should we add [all,check,clean,distclean]-in-$dir?
 
+#AC_OUTPUT() # files configured in this folder
+set(PACKAGE_VERSION ${Macaulay2_VERSION})
+configure_file(README.in README)
+
 # TODO:
 #add_subdirectory(util)
 add_subdirectory(regex)
@@ -13,7 +17,7 @@ add_subdirectory(bin)
 add_subdirectory(m2)
 #add_subdirectory(man)
 add_subdirectory(packages)
-#add_subdirectory(emacs)
+add_subdirectory(emacs)
 #add_subdirectory(html-check-links)
 #add_subdirectory(tests)
 #add_subdirectory(book)

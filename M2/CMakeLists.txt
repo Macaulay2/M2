@@ -1,5 +1,6 @@
 ################################## WARNING!! ##################################
 ## This is not yet the official build system of Macaulay2. See INSTALL.
+## Why use CMake at all? See https://lwn.net/Articles/188693/.
 ##
 ## Instructions:
 ##  1. Build M2 using configure and make in M2/BUILD/cmake-bootstrap directory
@@ -12,41 +13,28 @@
 ## Any help in removing the bootstrap dependence is welcome!
 ###############################################################################
 
-#set(CMAKE_VERBOSE_MAKEFILE on)
-set(CMAKE_BUILD_TYPE Debug)
-set(SUPPRESS_COMPILER_WARNINGS on)
+## Works with 3.14 and tested through 3.16
+cmake_minimum_required(VERSION 3.14...3.16)
 
-cmake_minimum_required(VERSION 3.14)
-
-## specify the C++ standard
+## Specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-## set the project name, version, and languages
+## Set the project name, version, and languages
+## This is the source of truth for the Macaulay2 version number
 project(Macaulay2
-  VERSION 1.15.0.2 # branch eigen on cmake
-  DESCRIPTION "A software system for algebraic geometry research"
-  HOMEPAGE_URL https://faculty.math.illinois.edu/Macaulay2/
-  LANGUAGES C CXX
+  VERSION	1.15.0.2 # branch eigen on cmake
+  DESCRIPTION	"A software system for algebraic geometry research"
+  HOMEPAGE_URL	https://faculty.math.illinois.edu/Macaulay2/ # http://macaulay2.com/ Macaulay2@math.uiuc.edu 
+  LANGUAGES	C CXX
   )
 
-## Static checks
-set(CMAKE_LINK_WHAT_YOU_USE TRUE)
-#set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE iwyu --transitive_includes_only)
-#set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
-#set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,cppcoreguidelines-*,clang-analyzer-*,modernize-*,performance-*,readability-*)
-#set(CMAKE_CXX_CPPCHECK cppcheck --std=c++11)
-#set(CMAKE_CXX_CPPLINT  cpplint  --linelength=79)
+## Enable support for folders in IDEs
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-## Set version info
-#configure_file (
-#  "${PROJECT_SOURCE_DIR}/include/My/Version.h.in"
-#  "${PROJECT_BINARY_DIR}/include/My/Version.h"
-#  )
-# You should include the binary include directory as well when building your project.
-
-## Include extra CMake files that are used for testing and linting.
-#include(${CMAKE_SOURCE_DIR}/cmake/unit_test.cmake)
+set(CMAKE_BUILD_TYPE		Debug) # TODO: Release
+set(CMAKE_VERBOSE_MAKEFILE	OFF) # Useful for debugging build system issues
+set(SUPPRESS_COMPILER_WARNINGS	ON) # Mahrud: this is just for me to work on CMake issues
 
 # FIXME: usr-dist/common/share gives error?!
 set(SHARE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share)
@@ -56,11 +44,18 @@ set(CORE_DIR  ${SHARE_DIR}/Macaulay2/Core)
 # FIXME: currently various pieces and libraries are not built by cmake
 # BUILD/cmake-bootstrap should be a symlink to an existing build directory
 set(BOOTSTRAP ${CMAKE_SOURCE_DIR}/BUILD/cmake-bootstrap)
-set(DIST_TYPE ${CMAKE_SYSTEM_PROCESSOR}-Linux-Fedora-31)
-message("## Bootstrapping from previous build in ${BOOTSTRAP} for ${DIST_TYPE}")
+message("## Bootstrapping from previous build in ${BOOTSTRAP}")
 
 ## Set path for CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+include(configure)     ## CMake script for configuring various variables
+include(prechecks)     ## CMake script for preprocessor tests and linting
+include(distributions) ## CMake script for making distribution packages
+
+## Configure M2/config.h
+# TODO: review other config files in the config folder
+#configure_file(include/M2/config.h.in-cmake include/M2/config.h)
+#include_directories(${PROJECT_BINARY_DIR}/include)
 
 # FIXME: should these stay here or go to bin/CMakeLists.txt?
 # TODO: which ones need to be patched and built?
@@ -68,12 +63,14 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 find_package(BLAS    3.8 REQUIRED)
 find_package(LAPACK  3.8 REQUIRED)
 find_package(Eigen3  3.3 REQUIRED NO_MODULE)
-find_package(LibXml2 2.9 REQUIRED)
+find_package(LibXml2 2.9 REQUIRED) # need xmlNewNode
 find_package(Threads 2.1 REQUIRED) # pthread
 find_package(Curses  6.1 REQUIRED) # ncurses
-find_package(LibLZMA 5.2 REQUIRED)
+find_package(LibLZMA 5.2 REQUIRED) # need lzma_end
 find_package(MPIR    3.0 REQUIRED) # cmake/FindMPIR.cmake
 find_package(GLPK   4.59 REQUIRED) # cmake/FindGLPK.cmake
+# OpenMP is required for building the library csdp and good for building the library normaliz
+find_package(OpenMP      REQUIRED) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
 find_package(PkgConfig   REQUIRED QUIET)
 
 ## Set paths for pkg-config
@@ -90,6 +87,7 @@ pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
 # To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
 pkg_search_module(FFLAS     REQUIRED fflas-ffpack             IMPORTED_TARGET)
 pkg_search_module(READLINE  REQUIRED readline                 IMPORTED_TARGET)
+# TODO: should we export GC_LARGE_ALLOC_WARN_INTERVAL=1?
 pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
 
 ## Find all other libraries
@@ -98,12 +96,23 @@ find_library(LIBFROBBY frobby)
 find_library(LIBGDBM gdbm)
 #find_library(LIBCDD cdd)
 find_library(LIBMPC mpc)
-find_library(LIBM m) # math.h
+find_library(LIBM m) # need pow from math.h
 find_library(LIBC c)
-find_library(LIBZ z)
+find_library(LIBZ z) # need gzopen
 
-## Installation directories:
-# set(CMAKE_INSTALL_PREFIX /usr) # this doesn't work, where should it be set?
+# TODO:
+#test:
+#	: "PKG_CONFIG_PATH    = $(PKG_CONFIG_PATH)"
+#	: "M2_PKG_CONFIG_PATH = $(M2_PKG_CONFIG_PATH)"
+#	:
+#	: "GIVARO_CXXFLAGS       = $(GIVARO_CXXFLAGS)"
+#	: "FFLAS_FFPACK_CXXFLAGS = $(FFLAS_FFPACK_CXXFLAGS)"
+#	: "M2_CXXFLAGS           = $(M2_CXXFLAGS)"
+#	: "M2_BOTH               = $(M2_BOTH)"
+#	:
+#	: "GIVARO_LIBS           = $(GIVARO_LIBS)"
+#	: "FFLAS_FFPACK_LIBS     = $(FFLAS_FFPACK_LIBS)"
+#	: "M2_LIBRARIES          = $(M2_LIBRARIES)"
 
 ## Kick off the Macaulay2 directory
 add_subdirectory(Macaulay2)
@@ -131,9 +140,9 @@ add_custom_target(copy_licenses ALL
 
 # FIXME
 add_custom_target(generate_symlinks ALL
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${DIST_TYPE}/lib      ${CMAKE_BINARY_DIR}/Macaulay2/
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${DIST_TYPE}/lib64    ${CMAKE_BINARY_DIR}/Macaulay2/
-  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${DIST_TYPE}/libexec  ${CMAKE_BINARY_DIR}/Macaulay2/
+  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/lib      ${CMAKE_BINARY_DIR}/Macaulay2/
+  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/lib64    ${CMAKE_BINARY_DIR}/Macaulay2/
+  COMMAND ln -fs ${BOOTSTRAP}/usr-dist/${MACHINE}/libexec  ${CMAKE_BINARY_DIR}/Macaulay2/
   COMMAND ln -fs ${CMAKE_BINARY_DIR}/Macaulay2/bin/M2-binary ${CMAKE_BINARY_DIR}/M2
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CORE_DIR}
   )
