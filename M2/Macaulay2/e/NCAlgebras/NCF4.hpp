@@ -60,6 +60,9 @@ public:
   void compute(int softDegreeLimit);
 
   void displayF4Matrix(std::ostream& o) const;
+
+  void displayFullF4Matrix(std::ostream& o) const;
+
 private:
   void process(const std::deque<Overlap>& overlapsToProcess);
 

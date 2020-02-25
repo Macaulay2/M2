@@ -60,11 +60,11 @@ void NCF4::compute(int softDegreeLimit)
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
   buildF4Matrix(overlapsToProcess);
-  displayF4Matrix(std::cout);
+  displayFullF4Matrix(std::cout);
   sortF4Matrix();
-  displayF4Matrix(std::cout);
+  displayFullF4Matrix(std::cout);
   reduceF4Matrix();
-  displayF4Matrix(std::cout);
+  displayFullF4Matrix(std::cout);
 
   // auto-reduce the new elements
   
@@ -122,11 +122,11 @@ auto NCF4::insertNewOverlaps(std::vector<Overlap>& newOverlaps) -> void
 ConstPolyList NCF4::newGBelements()  // From current F4 matrix.
 {
   ConstPolyList result;
-  for (int i=mFirstOverlap; i<mRows.size(); i++)
+  for (int i = mFirstOverlap; i < mRows.size(); i++)
     {
       if (mRows[i].second.size() == 0) continue;
       Poly* f = new Poly;
-      for (int j=0; j < mRows[i].second.size(); j++)
+      for (int j = 0; j < mRows[i].second.size(); j++)
         freeAlgebra().add_to_end(*f, mRows[i].first[j], mColumns[mRows[i].second[j]].first);
       result.push_back(f);
     }
@@ -197,7 +197,8 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       preRowsFromOverlap(o);
     }
 
-  std::cout << "About to process mReducersTodo" << std::endl;
+  std::cout << "About to process mReducersTodo, pass 1: "
+            << mReducersTodo.size() << " elements." << std::endl;
   // process each element in mReducersTodo
 
   for (int i=0 ; i < mReducersTodo.size(); ++i)
@@ -207,11 +208,17 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
     }
   int numReducersAtFirst = mReducersTodo.size();
 
+  std::cout << "About to process mOverlapsTodo"
+            << mOverlapsTodo.size() << " elements." << std::endl;
+
   for (int i=0; i < mOverlapsTodo.size(); ++i)
     {
       Row r = processPreRow(mOverlapsTodo[i]); // this often adds new elements to mReducersTodo
       mOverlaps.push_back(r);
     }
+
+  std::cout << "About to process mReducersTodo, pass 2"
+            << mReducersTodo.size() << " elements." << std::endl;
 
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
     {
@@ -282,7 +289,7 @@ NCF4::Row NCF4::processPreRow(PreRow r)
       else
         {
           *nextcolloc++ = (*it).second.first;
-          std::cout << (*it).second.first << " ";
+          std::cout << "f" << (*it).second.first << " ";
         }
     }
   std::cout << std::endl;
@@ -347,6 +354,7 @@ void NCF4::reduceF4Matrix()
   // reduce each overlap row by mRows.
   for (int i=mFirstOverlap; i < mRows.size(); ++i)
     {
+      std::cout << "Reducing row number : " << i << std::endl;
       int sz = mRows[i].second.size();
       assert(sz > 0);
       int firstcol = -1; // will be set to the first non-zero value in the result
@@ -378,6 +386,7 @@ void NCF4::reduceF4Matrix()
           V.sparseRowMakeMonic(mRows[i].first);
           mColumns[firstcol].second = i;
         }
+      displayFullF4Matrix(std::cout);
     }
 }
 
@@ -422,7 +431,57 @@ void NCF4::displayF4Matrix(std::ostream& o) const
         {
           buffer b;
           kk->elem_text_out(b, mRows[count].first[i]);
-          o << "[" << b.str() << "," << mRows[count].second[i] << "] ";
+          o << "[" << mRows[count].second[i] << "," << b.str() << "] ";
+        }
+      o << std::endl;
+    }
+}
+
+void NCF4::displayFullF4Matrix(std::ostream& o) const
+{
+  // Display sizes:
+  o << "(#cols, #reducer rows, #spair rows) = ("
+    << mColumnMonomials.size() << ", "
+    << mFirstOverlap << ", "
+    << mRows.size() - mFirstOverlap << ")"
+    << std::endl
+    << "  ";
+  // Now column monomials
+  for (auto i : mColumnMonomials)
+    {
+      buffer b;
+      freeAlgebra().monoid().elem_text_out(b, i.first);
+      o << b.str() << "(" << i.second.first << ", " << i.second.second << ") ";
+      // each i is a pair (const Monom, pair(int,int)).
+    }
+  o << std::endl;  
+  // For each row, and each overlap row, display the non-zero comps, non-zero coeffs.
+  if (mRows.size() != mReducersTodo.size())
+    {
+      o << "***ERROR*** expected mRows and mReducersTodo to have the same length!" << std::endl;
+      exit(1);
+    }
+  const Ring* kk = freeAlgebra().coefficientRing();
+  for (int count = 0; count < mRows.size(); ++count)
+    {
+      PreRow pr = mReducersTodo[count];
+      o << count << " ("<< std::get<0>(pr) << ", "
+        << std::get<1>(pr) << ", "
+        << std::get<2>(pr) << ") ";
+      int count2 = 0;
+      for (int i=0; i < mColumnMonomials.size(); i++)
+        {
+          if (count2 == mRows[count].first.size() or mRows[count].second[count2] != i)
+            {
+              o << " 0 ";
+            }
+          else
+            {
+              buffer b;
+              kk->elem_text_out(b,mRows[count].first[count2]);
+              o << " " << b.str() << " ";
+              count2++;
+            }
         }
       o << std::endl;
     }
