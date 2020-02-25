@@ -14,14 +14,6 @@
     #define GC_LINUX_THREADS
   #endif 
 
-  #ifdef HAVE_WINSOCK2_H
-   #include <winsock2.h>
-     /* Under mingw64, winsock2.h should be included before including windows.h,
-	and pthread.h and gc.h include windows.h;
-	therefore winsock2.h should be included before pthread.h and gc.h */
-   #undef ERROR
-  #endif
-
   #define _REENTRANT 1
   #include <pthread.h>
 
