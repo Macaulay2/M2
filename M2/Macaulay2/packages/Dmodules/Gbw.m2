@@ -43,9 +43,26 @@ inw (Matrix, List) := (m, w) -> (
 	  WtotempW := map(tempW, W, vars tempW);
 	  tempWtoCA := map(W.CommAlgebra, tempW, vars W.CommAlgebra );
 	  tempm := WtotempW m;
-	  gbtempm := gb tempm;
-	  inm := compress tempWtoCA leadTerm(1, gens gbtempm);
+	  gbtempm := gens gb tempm;
+	  t:=numgens target gbtempm;
+	  s:=numgens source gbtempm;
+	  N:=mutableMatrix(tempW,t,s);
+	  wdeg:=0;
+	  maxi:=0;
+	  for j from 0 to s-1 do (
+	      maxi=0;
+	  for i from 0 to t-1 do (
+	      fo := listForm gbtempm_(i,j);
+     	      wdeg = max apply(fo,t->sum(#w,i->t#0#i*w#i));
+	      if wdeg>maxi then maxi=wdeg;
+	      );
+	  for i from 0 to t-1 do (
+	       N_(i,j)=part(maxi,w,gbtempm_(i,j));
+	      );
+	  );
+	  inm := compress tempWtoCA (matrix N)
 	  )
+
 
      -- case 2: use V-homogenization if u+v = 0 
      --	    and HOMOGENIZATION is turned off

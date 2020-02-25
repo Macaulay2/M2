@@ -29,7 +29,7 @@ deRham Ideal := options -> I -> (
 )
 
 deRham (ZZ, Ideal) := options -> (k, I) -> (    
-     R:= ring I;
+    R:= ring I;
     if class R =!= PolynomialRing
     then error "expected an ideal in a polynomial ring";
     primes := minimalPrimes I;

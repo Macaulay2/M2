@@ -300,7 +300,6 @@ computeLocalization = (M, f, output, options) -> (
        --realize it over the original Weyl Algebra 
        locModule = map(W,ring locIntegrationModule, gens W)**locIntegrationModule;  
        bpoly = value locIntegrationModule.cache.BFunction;
-       bpoly = substitute(bpoly, {(ring bpoly)_0 => (ring bpoly)_0 + 1});
        bestPower = -max(getIntRoots bpoly | {0}) - 2;
        locMap = if locModule == 0 then map(W^0, M, map(W^0,W^1,0))
        else map(locModule, M, f^(-bestPower)*map(W^r));
