@@ -183,8 +183,15 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   Word suffix1(leadWordRight.begin() + overlapLen, leadWordRight.end());
   Word prefix1 {}; // trivial word
   
-  mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
-  mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+  // it *matters* which one is a reducer and which one is an overlap.
+  // this is due to how the word table lookup works -- it prefers looking
+  // for prefixes over suffixes and thus if you insert the suffix overlap
+  // it will inadvertently add in too much when building reducer list.
+
+  //mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
+  //mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+  mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
+  mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
 }
 
 void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
@@ -207,6 +214,8 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
       mRows.push_back(r);
     }
   int numReducersAtFirst = mReducersTodo.size();
+
+  std::cout << "numReducersAtFirst : " << numReducersAtFirst << std::endl;
 
   std::cout << "About to process mOverlapsTodo"
             << mOverlapsTodo.size() << " elements." << std::endl;
