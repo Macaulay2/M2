@@ -35,7 +35,10 @@ void VectorArithmetic::denseRowToSparseRow(Range<ring_elem> dense,
                                            int last) const
 {
   int len = 0;
-  for (int i = first; i <= last; i++)
+  
+  // first can be -1 if the row is zero.  in this case, we should
+  // not be accessing dense[i] for i negative.
+  for (int i = first; i >= 0 and i <= last; i++)
     if (!mRing->is_zero(dense[i])) len++;
 
   ring_elem* ptr = newarray(ring_elem, len);
@@ -45,7 +48,7 @@ void VectorArithmetic::denseRowToSparseRow(Range<ring_elem> dense,
   comps = Range<int>(ptr2, ptr2 + len);
 
   int next = 0;
-  for (int i = first; i <= last; i++)
+  for (int i = first; i >= 0 and i <= last; i++)
     if (!mRing->is_zero(dense[i]))
       {
         coeffs[next] = dense[i];

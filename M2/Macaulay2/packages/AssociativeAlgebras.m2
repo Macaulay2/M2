@@ -691,7 +691,8 @@ I = ideal(2*a*b + 3*b*a + 5*c^2,
              2*b*c + 3*c*b + 5*a^2,
              2*c*a + 3*a*c + 5*b^2)
 gbTrace=1
-I = ideal I_*; NCGB(I, 10, Strategy=>16);
+I = ideal I_*; NCGB(I, 3, Strategy=>16)
+I = ideal I_*; NCGB(I, 3, Strategy=>0)
 
 --- this is the matrix in degree 3 for the above computation after column sort, if
 --- one would like to manipulate it for checking purposes.
@@ -716,6 +717,7 @@ M = map (kk^21, kk^27, { (0,1) => 1, (0,3) => 3/2, (0,8) => 5/2,
 			  (18,1) => 1, (18,16) => 2/5, (18,22) => 3/5,
 			  (19,0) => 1, (19,15) => 2/5, (19,21) => 3/5,
 			  (20,2) => 1, (20,17) => 2/5, (20,23) => 3/5})
+M = mutableMatrix M
 
 I = ideal I_*; NCGB(I, 10, Strategy=>0);
 --I = ideal I_*; NCGB(I, 10, Strategy=>1); -- crash
