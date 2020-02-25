@@ -1,60 +1,97 @@
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-# FIXME: This is hardcoded for now. Change it to your version here:
+## Issue can be set via command line:
+# $ cmake -DISSUE=Catch-22 .
+## Unset cached issue with cmake -UISSUE .
 
-set(ISSUE_FLAVOR   "Fedora") # e.g. Fedora, Ubuntu
-set(ISSUE_RELEASE  "31")     # e.g. 31, 7.10
+# TODO: look into this:
+# https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderUSD/blob/master/cmake/macros/PlatformIntrospection.cmake
 
-#if test ! "$ISSUE"
-#then if test -f /usr/bin/sw_vers
-#     then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
-#          ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
-#     elif test -f /usr/bin/lsb_release
-#     then ISSUE_FLAVOR=`lsb_release -s --id`
-#          ISSUE_RELEASE=`lsb_release -s --release`
-#     elif test -f /etc/os-release
-#     then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
-#          ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
-#     elif test -f /usr/lib/os-release
-#     then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
-#          ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
-#     elif test -f /bin/freebsd-version
-#     then ISSUE_FLAVOR=FreeBSD
-#          ISSUE_RELEASE=`freebsd-version`
-#     elif test -f /etc/system-release
-#     then ISSUE_FLAVOR=[`</etc/system-release head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-#          ISSUE_RELEASE=[`</etc/system-release head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-#     elif test -f /etc/issue
-#     then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-#          ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-#     fi
-#     # translate to something standard (for us), and verify :
-#     case $ISSUE_FLAVOR in
-#         "Mac OS X") ISSUE_FLAVOR=MacOS ;;
-#	 "debian"|"Debian"*) ISSUE_FLAVOR=Debian ;;
-#         "ubuntu"|"Ubuntu") ISSUE_FLAVOR=Ubuntu ;;
-#	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-#	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
-#	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-#	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-#	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-#	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
-#	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
-#	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
-#	 "arch") ISSUE_FLAVOR=ArchLinux ; ISSUE_RELEASE=none ;;
-#	 "") AC_MSG_ERROR([issue not found]) ;;
-#	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
-#     esac
-#     ISSUE_FLAVOR=`echo $ISSUE_FLAVOR | sed 's/ /-/g'`
-#     case $ISSUE_RELEASE in
-#         none) ISSUE=$ISSUE_FLAVOR ;;
-#	 "")   AC_MSG_NOTICE([release number not found])
-#	       ISSUE_RELEASE=unknown
-#	       ISSUE=$ISSUE_FLAVOR-unknown ;;
-#	 *)    ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-#     esac
-#
-#fi
+# TODO: which of these are still relevant? Can CMake replace any?
+if("${ISSUE}" STREQUAL "")
+  find_program(SW_VERS      sw_vers)
+  find_program(LSB_RELEASE  lsb_release)
+  find_file(OS_RELEASE      os-release      HINTS /etc /usr/lib)
+  find_file(FREEBSD_VERSION freebsd-version HINTS /etc)
+  find_file(SYSTEM_RELEASE  system-release  HINTS /etc)
+  find_file(ISSUE_FILE      issue           HINTS /etc)
 
-## some operating systems have no ISSUE_FLAVOR, e.g., MacOS
-#test "$ISSUE" || ISSUE=$REL
+  # TODO: check each one of these
+  if(EXISTS ${SW_VERS})
+    execute_process(COMMAND ${SW_VERS} -productName
+      OUTPUT_VARIABLE ISSUE_FLAVOR
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND ${SW_VERS} -productVersion
+      OUTPUT_VARIABLE ISSUE_RELEASE
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+  elseif(EXISTS ${LSB_RELEASE})
+    execute_process(COMMAND ${LSB_RELEASE} -s --id
+      OUTPUT_VARIABLE ISSUE_FLAVOR
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND ${LSB_RELEASE} -s --release
+      OUTPUT_VARIABLE ISSUE_RELEASE
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+  elseif(EXISTS ${OS_RELEASE_FOUND})
+    execute_process(COMMAND . ${OS_RELEASE} COMMAND echo $ID
+      OUTPUT_VARIABLE ISSUE_FLAVOR
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND . ${OS_RELEASE} COMMAND echo $VERSION_ID
+      OUTPUT_VARIABLE ISSUE_RELEASE
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+  elseif(EXISTS ${FREEBSD_VERSION_FOUND})
+    set(ISSUE_FLAVOR FreeBSD)
+    execute_process(COMMAND ${FREEBSD_VERSION}
+      OUTPUT_VARIABLE ISSUE_RELEASE
+      ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+  elseif(EXISTS ${SYSTEM_RELEASE_FOUND})
+    #system-release
+    #     then ISSUE_FLAVOR=[`</etc/system-release  head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+    #          ISSUE_RELEASE=[`</etc/system-release head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+  elseif(EXISTS ${ISSUE_FILE_FOUND})
+    file(READ ${ISSUE_FILE} ISSUE_FILE_CONTENT)
+    #string(REGEX REPLACE ISSUE_FLAVOR=[`</etc/issue           head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+    #string(REGEX REPLACE ISSUE_RELEASE=[`</etc/issue          head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+  else()
+    message("## cound not determine issue")
+    # TODO: what does this resolve to in macOS?
+    set(ISSUE         ${CMAKE_SYSTEM})
+    set(ISSUE_FLAVOR  ${CMAKE_SYSTEM_NAME})
+    set(ISSUE_RELEASE ${CMAKE_SYSTEM_VERSION})
+  endif()
+
+  if(${ISSUE_FLAVOR} MATCHES "Mac OS X")
+    set(ISSUE_FLAVOR MacOS)
+  elseif(${ISSUE_FLAVOR} MATCHES "(debian|Debian).*")
+    set(ISSUE_FLAVOR Debian)
+  elseif(${ISSUE_FLAVOR} MATCHES "(ubuntu|Ubuntu)")
+    set(ISSUE_FLAVOR Ubuntu)
+  elseif(${ISSUE_FLAVOR} MATCHES "FedoraCore.*")
+    set(ISSUE_FLAVOR FedoraCore)
+  elseif(${ISSUE_FLAVOR} MATCHES "Fedora.*")
+    set(ISSUE_FLAVOR Fedora)
+  elseif(${ISSUE_FLAVOR} MATCHES "RedHatEnterprise.*")
+    set(ISSUE_FLAVOR RedHatEnterprise)
+  elseif(${ISSUE_FLAVOR} MATCHES "RedHat.*")
+    set(ISSUE_FLAVOR RedHat)
+  elseif(${ISSUE_FLAVOR} MATCHES "Scientific.*")
+    set(ISSUE_FLAVOR "ScientificLinux")
+  elseif(${ISSUE_FLAVOR} MATCHES "Raspbian.*")
+    set(ISSUE_FLAVOR Raspbian)
+  elseif(${ISSUE_FLAVOR} MATCHES ".*openSUSE")
+    set(ISSUE_FLAVOR openSUSE)
+  elseif(${ISSUE_FLAVOR} MATCHES "SUSE LINUX")
+    set(ISSUE_FLAVOR SuseLinux)
+  elseif(${ISSUE_FLAVOR} MATCHES "arch")
+    set(ISSUE         ArchLinux)
+    set(ISSUE_FLAVOR  ArchLinux)
+    set(ISSUE_RELEASE none)
+  else()
+    message("## could not recognize issue flavor: ${ISSUE_FLAVOR}")
+  endif()
+
+  string(REPLACE " " "-" ISSUE_FLAVOR "${ISSUE_FLAVOR}")
+
+  if(NOT "${ISSUE_RELEASE}" MATCHES "(none|unknown)")
+    set(ISSUE "${ISSUE_FLAVOR}-${ISSUE_RELEASE}")
+  endif()
+endif()

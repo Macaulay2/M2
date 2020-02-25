@@ -13,14 +13,22 @@ message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_D
 
 ################################################################
 
+# TODO: Which environment variables still relevant?
+## Relevant environment variable values, if any:
+foreach(X CC CXX AR CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
+  if(NOT ("$ENV{${X}}" STREQUAL ""))
+    set(${X} "$ENV{${X}}" CACHE STRING "")
+    message("## Set via environment:   ${X} = ${${X}}")
+  endif()
+endforeach()
+
+## Sets ISSUE, ISSUE_FLAVOR, and ISSUE_RELEASE
 include(flavor)
 
 ## Complete machine description (to appear in name of tar file)
 set(OS      ${CMAKE_SYSTEM_NAME})             # e.g. `uname -s`, Linux, Darwin
 set(REL     ${CMAKE_SYSTEM_VERSION})          # e.g. `uname -r`
 set(ARCH    ${CMAKE_SYSTEM_PROCESSOR})        # e.g. `uname -p`, x86_64, arm
-# FIXME: see issue.cmake
-set(ISSUE   ${ISSUE_FLAVOR}-${ISSUE_RELEASE}) # e.g. Fedora-31, Ubuntu-7.10
 set(MACHINE ${ARCH}-${OS}-${ISSUE})           # e.g. x86_64-Linux-Fedora-31
 SITE_NAME(NODENAME)                           # e.g. `uname -n`
 
@@ -54,6 +62,7 @@ option(ENABLE_STRIP "discard symbols from object files"  OFF)
 
 # TODO: unnecessary?
 if("${OS}" STREQUAL "Darwin")
+  set(SHARED OFF) # TODO: Gatekeeper issue
   # we don't know what this does, but some apple documentation writers seem to like it:
 #  LDFLAGS="$LDFLAGS -bind_at_load"
   # this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
@@ -61,7 +70,7 @@ if("${OS}" STREQUAL "Darwin")
 #  LDFLAGS="$LDFLAGS -Wl,-search_paths_first"
 endif()
 
-# TODO: where use SHARED setting? In e?
+# TODO: where do we use the SHARED setting? In e?
 
 if(${OPTIMIZE})
 #  CFLAGS="$CFLAGS -O2"
@@ -123,16 +132,6 @@ endif()
 #endif()
 
 ################################################################
-
-# TODO: Are environment variables still relevant?
-## Relevant environment variable values, if any:
-foreach(X CC FC CXX AR CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR)
-  if(NOT ("$ENV{${X}}" STREQUAL ""))
-    # TODO: Save in cache?
-    set(${X} $ENV{${X}})
-    message("## Set via environment:   ${X} = ${${X}}")
-  endif()
-endforeach()
 
 message("## Operating system information:
      ISSUE             = ${ISSUE}
@@ -225,9 +224,6 @@ message("## Operating system information:
 #AC_DEFINE_UNQUOTED(WITH_NEWLINE_CRLF,$WITH_NEWLINE_CRLF,[whether newline is cr lf])
 #AC_DEFINE_UNQUOTED(WITH_NEWLINE_CR, $WITH_NEWLINE_CR,   [whether newline is cr])
 
-#AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
-#AC_DEFINE_UNQUOTED(hostsystemtype,"$host",the type of system on which the package runs)
-
 ################################################################
 
 #content of version:
@@ -261,11 +257,9 @@ message("## Operating system information:
 #pari version = 2.11.2
 #flint version = 2.5.2
 #mpfr version = 4.0.2
-#host = x86_64-pc-linux-gnu
 #executable extension =
 #packages = Style Macaulay2Doc ...
 #git description = version-1.14.0.1-403-g698a43717742958165ea6909edc971f2c1435d4a
-#build = x86_64-pc-linux-gnu
 #operating system = Linux
 #frobby version = 0.9.0
 #endianness = dcba
