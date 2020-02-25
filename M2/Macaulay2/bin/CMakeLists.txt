@@ -5,7 +5,7 @@
 # set(CMAKE_VERBOSE_MAKEFILE on)
 
 # Any other sources?
-add_executable(M2-binary timestamp.c)
+add_executable(M2-binary timestamp.cpp)
 
 # NOTE: is d/debug.o extra?
 target_link_libraries(M2-binary
@@ -14,16 +14,19 @@ target_link_libraries(M2-binary
   ${LAPACK_LIBRARIES} # lapack depends on blas
   ${LIBXML2_LIBRARIES}
   ${LZMA_LIBRARIES}
-  ${MPIR_LIBRARIES}
-  PkgConfig::MATHICGB # mathicgb depends on mathic and memtailor
+#  ${MPIR_LIBRARIES}
+#  PkgConfig::MATHICGB # mathicgb depends on mathic and memtailor
   PkgConfig::FACTORY # factory depends on flint mpfr ntl gmp
   # PkgConfig::FFLAS # fflas-ffpack depends on openmp, givaro, gmpxx, and gmp
   PkgConfig::GIVARO # givaro depends on gmpxx and gmp
-  PkgConfig::READLINE
+#  PkgConfig::READLINE
   PkgConfig::GC
   # ${LIBCDD}
   # TODO: should we check and link only when each of these are present?
-  ${LIBHISTORY} ${LIBFROBBY} ${LIBGDBM} ${LIBM} ${LIBC} ${LIBGDBM} ${LIBM} ${LIBC} ${CMAKE_DL_LIBS} # dl is needed on linux
+#  ${LIBHISTORY} ${LIBFROBBY}
+history frobby
+memtailor mathic mathicgb readline termcap
+  ${LIBGDBM} ${LIBM} ${LIBC} ${LIBGDBM} ${LIBM} ${LIBC} ${CMAKE_DL_LIBS} # dl is needed on linux
   # ${CURSES_LIBRARIES} ${GLPK_LIBRARIES} ${LIBMPC} ${LIBZ} tbb quadmath tinfo # are these not needed?
   )
 

@@ -67,7 +67,7 @@ find_package(LibXml2 2.9 REQUIRED) # need xmlNewNode
 find_package(Threads 2.1 REQUIRED) # pthread
 find_package(Curses  6.1 REQUIRED) # ncurses
 find_package(LibLZMA 5.2 REQUIRED) # need lzma_end
-find_package(MPIR    3.0 REQUIRED) # cmake/FindMPIR.cmake
+#find_package(MPIR    3.0 REQUIRED) # cmake/FindMPIR.cmake
 find_package(GLPK   4.59 REQUIRED) # cmake/FindGLPK.cmake
 # OpenMP is required for building the library csdp and good for building the library normaliz
 find_package(OpenMP      REQUIRED) # TODO: use OPENMP_LIBS/CXXFLAGS for csdb
@@ -85,14 +85,14 @@ pkg_search_module(MATHICGB  REQUIRED mathicgb                 IMPORTED_TARGET)
 # /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/usr-dist//usr/share/factory/
 pkg_search_module(FACTORY   REQUIRED factory singular-factory IMPORTED_TARGET)
 # To fix the error, change the givaro requirement in ${BOOTSTRAP}/usr-host/lib/pkgconfig/fflas-ffpack.pc to 4.0.2
-pkg_search_module(FFLAS     REQUIRED fflas-ffpack             IMPORTED_TARGET)
-pkg_search_module(READLINE  REQUIRED readline                 IMPORTED_TARGET)
+#pkg_search_module(FFLAS     REQUIRED fflas-ffpack             IMPORTED_TARGET)
+#pkg_search_module(READLINE  REQUIRED readline                 IMPORTED_TARGET)
 # TODO: should we export GC_LARGE_ALLOC_WARN_INTERVAL=1?
 pkg_search_module(GC        REQUIRED bdw-gc                   IMPORTED_TARGET)
 
 ## Find all other libraries
 find_library(LIBHISTORY history)
-find_library(LIBFROBBY frobby)
+#find_library(LIBFROBBY frobby)
 find_library(LIBGDBM gdbm)
 #find_library(LIBCDD cdd)
 find_library(LIBMPC mpc)
