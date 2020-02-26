@@ -2,7 +2,7 @@
 # In this directory, we compile "scc1", the D to C translator, which we want to run
 # on the "build" machine, in the sense of autoconf.
 
-#set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 find_package(BISON REQUIRED)
 BISON_TARGET(scc1 ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y ${CMAKE_CURRENT_BINARY_DIR}/grammar.c
@@ -40,14 +40,16 @@ add_executable(scc1
 target_include_directories(scc1
   PUBLIC
     .
+    # TODO: which one?
     ${CMAKE_SOURCE_DIR}/include
+#    ${CMAKE_BINARY_DIR}/include
     ${BOOTSTRAP}/include
     ${BOOTSTRAP}/usr-host/include
     /usr/local/include
   )
 
-# FIXME: what library is missing that requires -L...?
-target_link_directories(scc1 PUBLIC /usr/local/lib ${BOOTSTRAP}/usr-host/lib)
+# FIXME: what library is missing that requires usr-host/lib?
+target_link_directories(scc1 PUBLIC /usr/local/lib) # ${BOOTSTRAP}/usr-host/lib)
 target_link_libraries(scc1 gdbm gc)
 
 # Why do we do this?

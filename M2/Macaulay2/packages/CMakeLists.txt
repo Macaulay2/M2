@@ -7,9 +7,6 @@
 
 set(PACKAGE_DIR ${CMAKE_BINARY_DIR}/Macaulay2/share/Macaulay2)
 
-## eg: Style Macaulay2Doc ...
-file(STRINGS "\=distributed-packages" DISTRIBUTED_PACKAGES)
-
 ## Package options
 ## The default is to install all distributed packages
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
@@ -48,7 +45,7 @@ foreach(PACKAGE ${PACKAGES})
         ${CMAKE_COMMAND} -E copy_directory  ${PACKAGE}    ${PACKAGE_DIR}/${PACKAGE} \;
       fi
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS m2
+    DEPENDS Core
     )
 endforeach()
 

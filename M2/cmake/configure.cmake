@@ -9,6 +9,7 @@ execute_process(
   ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
   )
 
+# TODO: when this is stable, use STATUS instead of ##
 message("## Configuring Macaulay2 version ${PROJECT_VERSION} from commit ${GIT_DESCRIPTION}")
 
 ################################################################
@@ -36,8 +37,8 @@ SITE_NAME(NODENAME)                           # e.g. `uname -n`
 # The suffix "-binary" distinguishes the binary program M2-binary from the shell script M2.
 # The purpose of the shell script M2 is to set LD_LIBRARY_PATH appropriately.
 set(M2SUFFIX "") # used to be set by --progam-suffix
-set(EXEEXT   "")
-set(EXE      "-binary${M2SUFFIX}${EXEEXT}")
+set(EXEEXT   "${CMAKE_EXECUTABLE_SUFFIX}") # DEPRECATE: used in config.h.cmake, version.dd, and M2-init.el.in
+set(EXE      "-binary${M2SUFFIX}${CMAKE_EXECUTABLE_SUFFIX}")
 
 ################################################################
 

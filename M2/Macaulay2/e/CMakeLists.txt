@@ -1,6 +1,18 @@
-#set(CMAKE_VERBOSE_MAKEFILE on)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 # TODO: add -DNDEBUG compiler definition
+
+# Use globbing to find source files.
+# Any source files added to include/ or src/ will automatically be added to the project.
+#file(GLOB_RECURSE INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+#file(GLOB_RECURSE SOURCE_FILES_NO_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+#list(REMOVE_ITEM SOURCE_FILES_NO_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+#set(SOURCE_FILES ${SOURCE_FILES_NO_MAIN} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+
+#add_library(engine OBJECT  ${INCLUDE_FILES} ${SOURCE_FILES_NO_MAIN} ${SOURCE_FILES})
+
+# TODO: consider using:
+# source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/base/dir" PREFIX "Header Files" FILES ${FILE_LIST})
 
 set(UNDETERMINED
   dmat-ffpack.cpp
@@ -269,13 +281,20 @@ set(SOURCES
   ${HPPFILES}
   )
 
-add_library(engine OBJECT ${SOURCES})
+# TODO: write the M2Config.cmake module for users
+add_library(M2-engine SHARED ${SOURCES})
 
-add_dependencies(engine interpreter e-includes)
+# TODO: install the unstripped library with debug_info in the appropriate place.
+# On Fedora: /usr/lib/debug/usr/lib64/
 
-target_link_libraries(engine Eigen3::Eigen)
+add_dependencies(M2-engine interpreter e-includes)
 
-target_include_directories(engine
+target_link_libraries(M2-engine Eigen3::Eigen)
+
+#TODO: look into this pattern
+#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#    $<INSTALL_INTERFACE:include>
+target_include_directories(M2-engine
   PUBLIC
     ${BOOTSTRAP}/usr-host/include
     ${CMAKE_SOURCE_DIR}/Macaulay2/e
@@ -296,10 +315,11 @@ target_include_directories(engine
     SYSTEM /usr/local/include
   )
 
+# TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 if(SUPPRESS_COMPILER_WARNINGS)
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # using Clang or AppleClang
-    target_compile_options(engine PRIVATE
+    target_compile_options(M2-engine PRIVATE
       -Wall -Wuninitialized
       -Wextra -Wno-unused-parameter
       #  -pedantic-errors -Wno-extra-semi # we cannot put this in since fflas_ffpack appears to use gnu extensions...

@@ -4,9 +4,10 @@ set(M2LIST autoload.m2 chaincomplexes.m2 classes.m2 code.m2 colon.m2 combinatori
 
 list(TRANSFORM M2LIST PREPEND ${CORE_DIR}/ OUTPUT_VARIABLE CORELIST)
 
-add_custom_target(m2 ALL DEPENDS ${CORELIST} ${CORE_DIR}/tvalues.m2 ${CORE_DIR}/loadsequence ${CORE_DIR}/installedpackages)
+add_custom_target(Core ALL DEPENDS ${CORELIST} ${CORE_DIR}/tvalues.m2 ${CORE_DIR}/loadsequence ${CORE_DIR}/installedpackages)
 
-# TODO: version.m2?
+#AC_OUTPUT() # files configured in this folder
+#Macaulay2/m2/version.m2
 
 add_custom_command(OUTPUT ${CORE_DIR}/statuscodes
   COMMENT

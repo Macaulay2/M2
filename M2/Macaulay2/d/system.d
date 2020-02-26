@@ -15,13 +15,6 @@ header "
  #include <assert.h>
 #endif
 #ifdef HAVE_PTHREAD_H
- #ifdef HAVE_WINSOCK2_H
-  #include <winsock2.h>
-    /* under mingw64 winsock2.h should be included before including windows.h
-	pthread.h includes windows.h
-	 therefore winsock2.h should be included before pthread */
-  #undef ERROR
- #endif
  #include <pthread.h>
 #endif
 #ifdef HAVE_SYS_WAIT_H

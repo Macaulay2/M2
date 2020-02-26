@@ -20,6 +20,9 @@ cmake_minimum_required(VERSION 3.14...3.16)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+#set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/usr-dist)
+set(CMAKE_STAGING_PREFIX ${CMAKE_BINARY_DIR}/usr-dist)
+
 ## Set the project name, version, and languages
 ## This is the source of truth for the Macaulay2 version number
 project(Macaulay2
@@ -54,7 +57,7 @@ include(distributions) ## CMake script for making distribution packages
 
 ## Configure M2/config.h
 # TODO: review other config files in the config folder
-#configure_file(include/M2/config.h.in-cmake include/M2/config.h)
+#configure_file(include/M2/config.h.cmake include/M2/config.h)
 #include_directories(${PROJECT_BINARY_DIR}/include)
 
 # FIXME: should these stay here or go to bin/CMakeLists.txt?

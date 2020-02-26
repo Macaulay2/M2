@@ -34,7 +34,7 @@
 
 // TODO: used in Macaulay2/d/version.dd. Still needed?
 /* suffix the compiler appends to executable filenames */
-#define EXEEXT "${EXEEXT}"
+#define EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}"
 
 // TODO: What is the default?
 /* whether experimental code has been enabled */
@@ -343,29 +343,18 @@
 /* complete machine description (to appear in name of tar file) */
 #define MACHINE "${MACHINE}"
 
+// TODO: rename to HOSTNAME
 /* hostname used for compilation */
 #define NODENAME "${NODENAME}"
 
 /* the list of packages included with the release of Macaulay2 */
-#define PACKAGES "${PACKAGES}"
-
-/* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "Macaulay2@math.uiuc.edu"
+#define PACKAGES	"${PACKAGES}"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "Macaulay2"
-
-/* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Macaulay2 ${Macaulay2_VERSION}"
-
-/* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "Macaulay2"
-
-/* Define to the home page for this package. */
-#define PACKAGE_URL "${Macaulay2_HOMEPAGE_URL}"
+#define PACKAGE_NAME	"${PROJECT_NAME}"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "${Macaulay2_VERSION}"
+#define PACKAGE_VERSION	"${PROJECT_VERSION}"
 
 /* whether profiling has been enabled */
 #cmakedefine PROFILING 1
