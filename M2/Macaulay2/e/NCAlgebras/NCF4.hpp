@@ -28,7 +28,9 @@ private:
   // and data for the matrix itself.
 
   // memory space for monomials and words for F4 matrix.
+  // PreRow is the prefix, gb element and suffix for a reducer or overlap.
   using PreRow = std::tuple<Word, int, Word>;
+
   using Row = std::pair<Range<ring_elem>,
                         Range<int>>; // components corresponding to monomials appearing
   using Column = std::pair<Monom, int>; // monomial, pivot row for this monomial (if not -1).

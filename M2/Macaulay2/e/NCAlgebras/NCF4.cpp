@@ -60,11 +60,8 @@ void NCF4::compute(int softDegreeLimit)
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
   buildF4Matrix(overlapsToProcess);
-  displayFullF4Matrix(std::cout);
   sortF4Matrix();
-  displayFullF4Matrix(std::cout);
   reduceF4Matrix();
-  displayFullF4Matrix(std::cout);
 
   // auto-reduce the new elements
   
@@ -169,14 +166,10 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // first prerow will be: (1, gbLeftIndex, x^c)
   // second prerow will be: (x^a, gbRightIndex, 1)
       
-  std::cout << gbLeftIndex << " " << overlapPos << " " << gbRightIndex << std::endl;
-
   Word leadWordLeft = freeAlgebra().lead_word(*mGroebner[gbLeftIndex]);
   Word leadWordRight = freeAlgebra().lead_word(*mGroebner[gbRightIndex]);
   int overlapLen = leadWordLeft.size() - overlapPos;
 
-  std::cout << leadWordLeft << " " << leadWordRight << " " << overlapLen << std::endl;      
-  
   Word suffix2 {}; // trivial word
   Word prefix2(leadWordLeft.begin(), leadWordLeft.begin() + overlapPos);
   
@@ -184,28 +177,31 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   Word prefix1 {}; // trivial word
   
   // it *matters* which one is a reducer and which one is an overlap.
-  // this is due to how the word table lookup works -- it prefers looking
-  // for prefixes over suffixes and thus if you insert the suffix overlap
-  // it will inadvertently add in too much when building reducer list.
+  // this is due to how the word table lookup works -- it searches them
+  // in the order that they were entered into the word table, which may
+  // not be sorted in term order.
 
-  //mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
-  //mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
-  mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
-  mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+  if (gbLeftIndex > gbRightIndex)
+    {
+      mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
+      mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+    }
+  else
+    {  
+      mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
+      mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+    }
 }
 
 void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 {
   matrixReset();
 
-  std::cout << "About to create PreRows from overlapsToProcess" << std::endl;
   for (auto o : overlapsToProcess)
     {
       preRowsFromOverlap(o);
     }
 
-  std::cout << "About to process mReducersTodo, pass 1: "
-            << mReducersTodo.size() << " elements." << std::endl;
   // process each element in mReducersTodo
 
   for (int i=0 ; i < mReducersTodo.size(); ++i)
@@ -215,19 +211,11 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
     }
   int numReducersAtFirst = mReducersTodo.size();
 
-  std::cout << "numReducersAtFirst : " << numReducersAtFirst << std::endl;
-
-  std::cout << "About to process mOverlapsTodo"
-            << mOverlapsTodo.size() << " elements." << std::endl;
-
   for (int i=0; i < mOverlapsTodo.size(); ++i)
     {
       Row r = processPreRow(mOverlapsTodo[i]); // this often adds new elements to mReducersTodo
       mOverlaps.push_back(r);
     }
-
-  std::cout << "About to process mReducersTodo, pass 2"
-            << mReducersTodo.size() << " elements." << std::endl;
 
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
     {
@@ -246,10 +234,6 @@ void NCF4::buildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
 
 NCF4::Row NCF4::processPreRow(PreRow r)
 {
-  std::cout << "processing PreRow("<< std::get<0>(r) << ", "
-            << std::get<1>(r) << ", "
-            << std::get<2>(r) << ")" << std::endl;
-
   Word left = std::get<0>(r);
   int gbIndex = std::get<1>(r);
   Word right = std::get<2>(r);
@@ -274,12 +258,10 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   //        
 
   int nterms = elem.numTerms();
-  std::cout << "nterms = " << nterms << std::endl;
   auto componentRange = mMonomialSpace.allocateArray<int>(nterms);
   int* nextcolloc = componentRange.first;
   for (auto i = elem.cbegin(); i != elem.cend(); ++i)
     {
-      std::cout << "next monomial: ";
       Monom m = i.monom();
       auto it = mColumnMonomials.find(m);
       if (it == mColumnMonomials.end())
@@ -293,15 +275,12 @@ NCF4::Row NCF4::processPreRow(PreRow r)
           mColumnMonomials.insert({newmon, {newColumnIndex, divisornum}});
           if (divresult.first) mReducersTodo.push_back(divresult.second);
           *nextcolloc++ = newColumnIndex;
-          std::cout << "n" << newColumnIndex << " ";
         }
       else
         {
           *nextcolloc++ = (*it).second.first;
-          std::cout << "f" << (*it).second.first << " ";
         }
     }
-  std::cout << std::endl;
   ring_elem* ptr = newarray(ring_elem, elem.getCoeffVector().size());
   Range<ring_elem> coeffrange(ptr, ptr + elem.getCoeffVector().size());
   std::copy(elem.getCoeffVector().cbegin(), elem.getCoeffVector().cend(), coeffrange.begin());
@@ -363,7 +342,6 @@ void NCF4::reduceF4Matrix()
   // reduce each overlap row by mRows.
   for (int i=mFirstOverlap; i < mRows.size(); ++i)
     {
-      std::cout << "Reducing row number : " << i << std::endl;
       int sz = mRows[i].second.size();
       assert(sz > 0);
       int firstcol = -1; // will be set to the first non-zero value in the result
@@ -395,7 +373,6 @@ void NCF4::reduceF4Matrix()
           V.sparseRowMakeMonic(mRows[i].first);
           mColumns[firstcol].second = i;
         }
-      displayFullF4Matrix(std::cout);
     }
 }
 
