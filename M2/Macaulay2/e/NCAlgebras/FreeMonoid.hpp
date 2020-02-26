@@ -138,7 +138,8 @@ public:
 
   bool operator() (const Monom a, const Monom b) const
   {
-    return mMonoid.compare(a, b) == GT;
+    int retval = mMonoid.compare(a, b);
+    return (retval == GT);
   }
 private:
   const FreeMonoid& mMonoid;

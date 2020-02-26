@@ -26,7 +26,7 @@ public:
 
   size_t size() const { return mEnd - mBegin; }
 
-  bool operator==(Word rhs)
+  bool operator==(Word rhs) const
   {
     if (size() != rhs.size()) return false;
     for (auto i=0; i<size(); ++i)

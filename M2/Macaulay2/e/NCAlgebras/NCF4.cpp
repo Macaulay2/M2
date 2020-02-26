@@ -61,6 +61,7 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 {
   buildF4Matrix(overlapsToProcess);
   sortF4Matrix();
+  if (M2_gbTrace >= 100) displayFullF4Matrix(std::cout);
   reduceF4Matrix();
 
   // auto-reduce the new elements
@@ -181,15 +182,17 @@ void NCF4::preRowsFromOverlap(const Overlap& o)
   // in the order that they were entered into the word table, which may
   // not be sorted in term order.
 
+  PreRow pr1 = PreRow(prefix1, gbLeftIndex, suffix1);
+  PreRow pr2 = PreRow(prefix2, gbRightIndex, suffix2);
   if (gbLeftIndex > gbRightIndex)
     {
-      mOverlapsTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
-      mReducersTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+      mReducersTodo.push_back(pr2);
+      mOverlapsTodo.push_back(pr1);
     }
   else
     {  
-      mReducersTodo.push_back(PreRow(prefix1, gbLeftIndex, suffix1));
-      mOverlapsTodo.push_back(PreRow(prefix2, gbRightIndex, suffix2));
+      mReducersTodo.push_back(pr1);
+      mOverlapsTodo.push_back(pr2);
     }
 }
 
@@ -264,6 +267,7 @@ NCF4::Row NCF4::processPreRow(PreRow r)
     {
       Monom m = i.monom();
       auto it = mColumnMonomials.find(m);
+      //auto tempColMons = mColumnMonomials;
       if (it == mColumnMonomials.end())
         {
           auto rg = mMonomialSpace.allocateArray<int>(m.size());
@@ -274,6 +278,22 @@ NCF4::Row NCF4::processPreRow(PreRow r)
           int newColumnIndex = mColumnMonomials.size();
           mColumnMonomials.insert({newmon, {newColumnIndex, divisornum}});
           if (divresult.first) mReducersTodo.push_back(divresult.second);
+          /*
+          if (divresult.first and divresult.second != r and gbIndex >= 0 and i == elem.cbegin())
+            {
+              // these are the prerows missed when excluding the lead term.
+              // if we leave out this term but the divresult code didn't pick this
+              // way to write the term as a multiple of an element of the word table
+              // then it won't reduce properly.
+              std::cout << "\nLooked For " << m << " in {";
+              for (auto mp : tempColMons) std::cout << mp.first; std::cout << "}" << std::endl;
+
+              std::cout << "(" << left << "," << gbIndex << "," << right << ") ";
+              std::cout << "(" << std::get<0>(divresult.second) << ","
+                               << std::get<1>(divresult.second) << ","
+                               << std::get<2>(divresult.second) << ")" << std::endl;
+            }
+          */
           *nextcolloc++ = newColumnIndex;
         }
       else
@@ -285,6 +305,22 @@ NCF4::Row NCF4::processPreRow(PreRow r)
   Range<ring_elem> coeffrange(ptr, ptr + elem.getCoeffVector().size());
   std::copy(elem.getCoeffVector().cbegin(), elem.getCoeffVector().cend(), coeffrange.begin());
   return(Row(coeffrange, componentRange));
+}
+
+// this function is meant for debugging only
+// prerows should not be inserted twice
+int NCF4::prerowInReducersTodo(PreRow pr) const
+{
+  int retval = -1;
+  for (int i = 0; i < mReducersTodo.size(); i++)
+    {
+      if (pr == mReducersTodo[i])
+        {
+          retval = i;
+          break;
+        }
+    }
+  return retval;
 }
 
 std::pair<bool, NCF4::PreRow> NCF4::findDivisor(Monom mon)

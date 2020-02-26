@@ -76,6 +76,8 @@ private:
   
   void matrixReset();
 
+  int prerowInReducersTodo(PreRow pr) const;
+
   // These functions are essentially from NCGroebner
   void addToGroebnerBasis(const Poly * toAdd);
   void updateOverlaps(const Poly * toAdd);
